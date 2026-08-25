@@ -7,6 +7,10 @@
 //!
 //! Every test uses `TestDb::with`, so a failed assertion drops the throwaway
 //! database instead of leaving it on the shared cluster.
+//!
+//! Roles are cluster-scoped. Every test that alters a role takes `RoleLock`
+//! first, a PostgreSQL advisory lock on the maintenance database, so two gate
+//! runs on one cluster serialize their `ALTER ROLE` statements.
 
 #![allow(
     clippy::unwrap_used,
@@ -19,16 +23,74 @@
 use std::process::{Command, Output};
 
 use cadus_store::test_support::TestDb;
-use sqlx::AssertSqlSafe;
+use sqlx::{AssertSqlSafe, Connection, PgConnection};
 use uuid::Uuid;
 
 /// The line that the operator reads in `docker compose logs migrate`.
 const APPLIED_SIX: &str = "cadus-migrate: applied 6 migrations (6 total)";
 
+/// The environment variable that holds the superuser DSN of the test cluster.
+const TEST_DSN_VAR: &str = "CADUS_TEST_DATABASE_URL";
+
+/// The key of the advisory lock that guards the `ALTER ROLE` statements.
+///
 /// Roles are cluster-scoped, and two `ALTER ROLE` statements on one role at the
-/// same time give "tuple concurrently updated". The tests of this file run in
-/// parallel, so every test that alters a role takes this lock first.
-static ROLE_LOCK: tokio::sync::Mutex<()> = tokio::sync::Mutex::const_new(());
+/// same time give "tuple concurrently updated". A mutex of this process
+/// serializes the threads of this test binary only, and `docs/plans/M0.md` runs
+/// several worktrees against one cluster, so the lock must live in the cluster
+/// (finding #11). `pg_advisory_lock` gives such a lock.
+///
+/// 7241001 is an arbitrary but fixed number. It has one rule: every caller that
+/// alters a cluster role in this repository takes this one key. Nothing else in
+/// the repository takes an advisory lock, so the key collides with nothing.
+const ROLE_LOCK_KEY: i64 = 7_241_001;
+
+/// A cluster-wide lock on the `ALTER ROLE` statements of this file and of the
+/// `cadus-migrate` run that each test starts.
+///
+/// PostgreSQL scopes an advisory lock to the database of the session, so the
+/// lock connection opens the maintenance database that `CADUS_TEST_DATABASE_URL`
+/// names and not the throwaway database of the test. Every run on this cluster
+/// shares that maintenance database, so the lock serializes the runs.
+struct RoleLock(PgConnection);
+
+impl RoleLock {
+    /// Take the lock. The call waits until every other holder gives it back.
+    async fn acquire() -> RoleLock {
+        let dsn =
+            std::env::var(TEST_DSN_VAR).unwrap_or_else(|_| panic!("{TEST_DSN_VAR} is not set"));
+        let mut conn = PgConnection::connect(&dsn)
+            .await
+            .unwrap_or_else(|e| panic!("the lock connection failed: {e}"));
+        // The key is a constant of this file, so no input reaches the text.
+        // `pg_advisory_lock` returns void, which the checked macros do not map,
+        // so this statement stays outside them (R2).
+        sqlx::query(AssertSqlSafe(format!(
+            "SELECT pg_advisory_lock({ROLE_LOCK_KEY})"
+        )))
+        .execute(&mut conn)
+        .await
+        .unwrap_or_else(|e| panic!("pg_advisory_lock({ROLE_LOCK_KEY}) failed: {e}"));
+        RoleLock(conn)
+    }
+
+    /// Give the lock back.
+    ///
+    /// A panic of the test body skips this call. The session then ends with the
+    /// dropped connection, and PostgreSQL releases the lock of a session that
+    /// ends, so a red test also gives the lock back.
+    async fn release(self) {
+        let mut conn = self.0;
+        let released = sqlx::query_scalar::<_, bool>(AssertSqlSafe(format!(
+            "SELECT pg_advisory_unlock({ROLE_LOCK_KEY})"
+        )))
+        .fetch_one(&mut conn)
+        .await
+        .unwrap_or_else(|e| panic!("pg_advisory_unlock({ROLE_LOCK_KEY}) failed: {e}"));
+        assert!(released, "this session did not hold the role lock");
+        let _ = conn.close().await;
+    }
+}
 
 /// Run the binary against `dsn` with the given arguments.
 ///
@@ -87,7 +149,7 @@ async fn fresh_database_reports_six_applied() {
 #[tokio::test]
 async fn admin_login_flag_grants_the_login() {
     TestDb::with(|db| async move {
-        let _role_lock = ROLE_LOCK.lock().await;
+        let role_lock = RoleLock::acquire().await;
 
         // Roles are cluster-scoped, so an earlier run leaves the login behind.
         // Put the role back to the state of migration 0001 first. Without this
@@ -123,6 +185,7 @@ async fn admin_login_flag_grants_the_login() {
             admin_can_login(&db).await,
             "cadus_admin must have a login after the flag"
         );
+        role_lock.release().await;
     })
     .await;
 }
@@ -135,7 +198,7 @@ async fn admin_login_flag_grants_the_login() {
 #[tokio::test]
 async fn admin_login_sets_the_app_password() {
     TestDb::with(|db| async move {
-        let _role_lock = ROLE_LOCK.lock().await;
+        let role_lock = RoleLock::acquire().await;
 
         sqlx::query("ALTER ROLE cadus_app PASSWORD NULL")
             .execute(&db.admin)
@@ -183,6 +246,7 @@ async fn admin_login_sets_the_app_password() {
             "the binary must not print the password"
         );
         assert!(has_password, "cadus_app must hold a password after the run");
+        role_lock.release().await;
     })
     .await;
 }
@@ -191,7 +255,7 @@ async fn admin_login_sets_the_app_password() {
 #[tokio::test]
 async fn empty_password_variable_exits_with_code_two() {
     TestDb::with(|db| async move {
-        let _role_lock = ROLE_LOCK.lock().await;
+        let role_lock = RoleLock::acquire().await;
 
         let output = Command::new(env!("CARGO_BIN_EXE_cadus-migrate"))
             .arg("--admin-login")
@@ -207,8 +271,46 @@ async fn empty_password_variable_exits_with_code_two() {
             stderr.contains("cadus-migrate: configuration error: CADUS_APP_PASSWORD is empty"),
             "stderr: {stderr}"
         );
+        role_lock.release().await;
     })
     .await;
+}
+
+/// Finding #11: the role lock lives in the cluster, not in this process.
+///
+/// A second connection reads `pg_locks`. The granted row must carry the key of
+/// this file and the OID of the maintenance database. A lock on a throwaway
+/// database, or no lock at all, gives a count of 0, because a second gate run
+/// connects to its own throwaway database and would not wait.
+#[tokio::test]
+async fn the_role_lock_is_cluster_wide() {
+    let lock = RoleLock::acquire().await;
+
+    let dsn = std::env::var(TEST_DSN_VAR).unwrap();
+    let mut observer = PgConnection::connect(&dsn).await.unwrap();
+    // A bigint advisory key of this size gives classid 0, objid = the key, and
+    // objsubid 1. `database` is the OID of the database of the lock session.
+    let granted = sqlx::query_scalar!(
+        r#"SELECT count(*) AS "count!"
+           FROM pg_locks
+           WHERE locktype = 'advisory'
+             AND classid = 0
+             AND objid = 7241001
+             AND objsubid = 1
+             AND granted
+             AND database = (SELECT oid FROM pg_database WHERE datname = current_database())"#
+    )
+    .fetch_one(&mut observer)
+    .await
+    .unwrap();
+    observer.close().await.unwrap();
+
+    lock.release().await;
+
+    assert_eq!(
+        granted, 1,
+        "the role lock must be one granted advisory lock on the maintenance database"
+    );
 }
 
 /// Read `rolcanlogin` of the `cadus_admin` role.
