@@ -41,6 +41,17 @@ cargo sqlx prepare --check --workspace -- --all-targets  ok
 scripts/check_migrations.sh                              name/fresh/rerun/drop PASS
 ```
 
+### Adversarial review round 1 (stage 4)
+
+Six lenses, four find/refute rounds: 104 findings raised, 46 confirmed by independent
+refuters (`docs/reviews/M0-review-1.md`). Blockers: CI never migrated its gate database;
+`cadus_app` could delete another tenant's rows through the `users` FK cascade; the
+transaction-local scope of the tenant GUC and the BYPASSRLS half of the boot guard had
+no test; the RLS tests read cluster role state instead of the migration. Fix units
+FIX1–FIX5 address all 46; round 2 runs on the fixed tree.
+
+Cost note: round 1 used 128 agents. Round 2 is capped at two rounds, major+ only.
+
 ### Open findings
 
 - (M3) `events.payload` is `jsonb` (D7). 1.0 stored `json` because its diagnostic

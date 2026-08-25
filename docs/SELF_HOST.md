@@ -102,8 +102,10 @@ reaches the port, and a container network is not an authentication boundary.
   binary target or a broken compose key then fails the gate instead of the
   operator's next bring-up.
 - **Latency and token budgets (L\*, T\*).** The benchmarks land with M4 and M5
-  and run in the same gate job. Model calls run in the worker (R4); a change that
-  puts one on a request path does not merge.
+  and run in the same gate job. Model calls run in the worker (R4). The gate pins the
+  dependency lists of `cadus-web` and `cadus-worker` (`tests/purity.rs` in each
+  crate): a new HTTP-client or model-SDK dependency on either crate is a test
+  failure and a reviewable diff. The gate does not inspect handler bodies.
 - **Runtime.** `/api/ready` runs one `SELECT 1` through the web pool. It reports
   the datastore only, and it reports nothing about `cadus-worker`: a 200 from
   `/api/ready` is no proof that the async layer runs. M0 gives the worker no

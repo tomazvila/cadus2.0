@@ -87,6 +87,11 @@ services:
       DATABASE_URL: postgresql://cadus_app:${CADUS_APP_PASSWORD:?set CADUS_APP_PASSWORD in .env}@db:5432/cadus
       BIND_ADDR: 0.0.0.0:8080
       RUST_LOG: ${RUST_LOG:-info}
+      # cadus-web drains open connections for this long after SIGTERM, then exits 0.
+      SHUTDOWN_DEADLINE_SECS: ${SHUTDOWN_DEADLINE_SECS:-10}
+    # Longer than SHUTDOWN_DEADLINE_SECS, so the process exits by itself and
+    # Docker never has to send SIGKILL (exit 137).
+    stop_grace_period: 20s
     depends_on:
       migrate:
         condition: service_completed_successfully

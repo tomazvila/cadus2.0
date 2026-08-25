@@ -46,7 +46,8 @@ DO $$ BEGIN
 EXCEPTION WHEN duplicate_object OR unique_violation THEN NULL;
 END $$;
 
--- Make cadus_admin a member of cadus_app. The worker connects as cadus_admin for
--- the cross-tenant scan, then does SET ROLE cadus_app inside each per-tenant
--- drain. RLS becomes a backstop again for that inner unit of work.
+-- Make cadus_admin a member of cadus_app. In M0 the worker connects as
+-- cadus_admin and holds BYPASSRLS for its whole life; it runs no SET ROLE.
+-- The membership prepares the M5 shape: SET ROLE cadus_app inside each
+-- per-tenant drain, so RLS is a backstop again for that unit of work.
 GRANT cadus_app TO cadus_admin;
