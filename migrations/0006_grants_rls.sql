@@ -22,7 +22,7 @@
 --
 -- Tables with no user_id stay outside the user_id-keyed derivation above:
 --   users               -- finding #4: the key is id, not user_id. users carries
---                          its own per-command policies (users_read,
+--                          its own per-command policies (users_read_self,
 --                          users_insert, users_update_self) further down.
 --   auth_rate_counters  -- fixed-window counters; the table has no tenant column.
 --   content_store       -- curriculum content, not learner data. Finding #14
@@ -49,6 +49,17 @@ GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO cadus_app, cadus_admin;
 -- cadus_app until someone notices at runtime. The default applies to objects that
 -- the migration-running role creates. RLS on a new tenant table still needs its
 -- own ENABLE, FORCE, and policy in that migration.
+--
+-- Finding #6: the TABLES object type of ALTER DEFAULT PRIVILEGES also covers a
+-- view and a materialized view. A view runs with the rights of its owner, and
+-- the owner is the migration runner, a superuser in the shipped compose stack.
+-- Such a view bypasses row-level security and the append-only revoke on events,
+-- so an auto-updatable view over events gives cadus_app the UPDATE and the
+-- DELETE that the append-only revoke below takes away. Schema public therefore holds no view and no
+-- materialized view. rls_coverage_is_the_literal_list asserts that count as 0,
+-- and app_role_privilege_matrix_is_the_literal_table enumerates pg_class, not
+-- pg_tables, so a later view lands in the matrix and fails the literal list.
+-- A migration that adds a view revokes the default grant on it and states why.
 ALTER DEFAULT PRIVILEGES IN SCHEMA public
     GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO cadus_app, cadus_admin;
 ALTER DEFAULT PRIVILEGES IN SCHEMA public
@@ -70,15 +81,25 @@ REVOKE UPDATE, DELETE, TRUNCATE ON events FROM cadus_app;
 --
 -- C3, finding #4: table-wide UPDATE stayed with the runtime role, so a session
 -- bound to tenant A rewrote tenant B's password_hash and set is_admin = true on
--- its own row. Two controls replace that grant.
+-- its own row.
+--
+-- Round-3 findings #4, #5, and #11 show that the round-2 fix narrowed UPDATE
+-- only. INSERT stayed table-wide, so cadus_app wrote is_admin = true and picked
+-- its own id on a new row. SELECT stayed USING (true), so a bound tenant read
+-- every other account's email, password_hash, and is_admin. Three controls
+-- replace the blanket grant.
 --
 -- 1. Per-command policies. users keeps the key id, not user_id, so it stays out
---    of the tenant_isolation set. SELECT and INSERT stay open, because sign-up
---    and sign-in touch users before a tenant context exists. UPDATE matches the
---    caller's own row only, and an unbound session matches no row at all. There
---    is no DELETE policy, because the REVOKE above already stops a DELETE.
--- 2. A column list. id and is_admin leave the UPDATE grant, so no policy and no
---    code defect decides the admin flag.
+--    of the tenant_isolation set. SELECT and UPDATE reach the caller's own row
+--    only, and an unbound session matches no row at all. INSERT stays open,
+--    because sign-up creates the row that becomes the tenant. There is no DELETE
+--    policy, because the REVOKE above already stops a DELETE.
+-- 2. Two column lists, one on INSERT and one on UPDATE. Neither list holds id or
+--    is_admin, so the runtime role never writes the admin flag and never picks a
+--    primary key. Both columns come from the defaults of 0002_identity.sql:
+--    gen_random_uuid() for id, false for is_admin.
+-- 3. Two SECURITY DEFINER functions for the login path, which reads users before
+--    a tenant context exists. The block after this one holds them.
 -- --------------------------------------------------------------------------
 -- #2: take DELETE and TRUNCATE on users away from the runtime role.
 REVOKE DELETE, TRUNCATE ON users FROM cadus_app;
@@ -87,8 +108,12 @@ REVOKE DELETE, TRUNCATE ON users FROM cadus_app;
 ALTER TABLE users ENABLE ROW LEVEL SECURITY;
 -- #4: FORCE keeps a non-superuser owner inside the policies.
 ALTER TABLE users FORCE ROW LEVEL SECURITY;
--- #4: the login path reads users by email before a tenant context exists.
-CREATE POLICY users_read ON users FOR SELECT USING (true);
+-- #11: a SELECT reaches the caller's own row only. USING (true) plus the
+-- table-wide SELECT grant gave every bound tenant every other account's email,
+-- password_hash, is_admin, and disabled_at. The login path, which runs before a
+-- tenant context exists, goes through auth_user_by_email and auth_user_by_id.
+CREATE POLICY users_read_self ON users FOR SELECT
+    USING (id = nullif(current_setting('app.user_id', true), '')::uuid);
 -- #4: sign-up inserts the row that becomes the tenant.
 CREATE POLICY users_insert ON users FOR INSERT WITH CHECK (true);
 -- #4: an UPDATE reaches the caller's own row only. The nullif guard is the same
@@ -101,6 +126,84 @@ REVOKE UPDATE ON users FROM cadus_app;
 -- #4: give back every column of users except id and is_admin.
 GRANT UPDATE (email, password_hash, email_verified_at, disabled_at, created_at)
     ON users TO cadus_app;
+-- #4 and #5: drop the table-wide INSERT of the runtime role. The round-2 column
+-- list covered UPDATE only, so a sign-up statement still wrote is_admin = true.
+REVOKE INSERT ON users FROM cadus_app;
+-- #4 and #5: give back every column of users except id and is_admin. Both come
+-- from their defaults on an INSERT that names neither column.
+GRANT INSERT (email, password_hash, email_verified_at, disabled_at, created_at)
+    ON users TO cadus_app;
+
+-- --------------------------------------------------------------------------
+-- C3, finding #11: the two login functions.
+--
+-- users_read_self closes the plain SELECT for an unbound session, and the login
+-- path is unbound by definition: it reads users to learn which id to bind. Two
+-- SECURITY DEFINER functions serve that one read and nothing else.
+--
+-- auth_user_by_email serves the password login and the OAuth link by email.
+-- auth_user_by_id serves the session-cookie path: auth_sessions gives a
+-- user_id, and the account status decides the bind. Each function returns one
+-- row of the five columns that an account-status decision needs, for the one
+-- account that the caller names. A caller reads no other account, and a caller
+-- with no argument reads nothing.
+--
+-- SECURITY DEFINER runs the body with the rights of the function owner. The
+-- owner is the migration runner. In the shipped compose stack that role is the
+-- postgres superuser, which bypasses row-level security, so the body sees the
+-- row. A deployment that runs the migrations as a non-superuser owner gives that
+-- owner BYPASSRLS, or the login lookup returns zero rows.
+--
+-- SET search_path = public pins the name resolution of the body, so a caller
+-- with its own search_path cannot point the body at a different users table.
+-- EXECUTE goes to PUBLIC by default, so the REVOKE runs first and the GRANT then
+-- names the two roles that log a user in.
+--
+-- REQUIREMENT NOTE for M5 (docs/SCHEMA.md repeats it): the auth layer calls
+-- these two functions for every read of users that happens before the bind. A
+-- plain SELECT on users returns zero rows there. An INSERT with a RETURNING
+-- clause also fails, because Postgres applies the SELECT policy to the new row,
+-- so sign-up inserts without RETURNING and then calls auth_user_by_email.
+-- --------------------------------------------------------------------------
+CREATE FUNCTION auth_user_by_email(p_email citext)
+RETURNS TABLE (
+    id                uuid,
+    password_hash     text,
+    email_verified_at timestamptz,
+    disabled_at       timestamptz,
+    is_admin          boolean
+)
+LANGUAGE sql
+SECURITY DEFINER
+SET search_path = public
+STABLE
+AS $$
+    SELECT u.id, u.password_hash, u.email_verified_at, u.disabled_at, u.is_admin
+    FROM users u
+    WHERE u.email = p_email
+$$;
+REVOKE ALL ON FUNCTION auth_user_by_email(citext) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION auth_user_by_email(citext) TO cadus_app, cadus_admin;
+
+CREATE FUNCTION auth_user_by_id(p_id uuid)
+RETURNS TABLE (
+    id                uuid,
+    password_hash     text,
+    email_verified_at timestamptz,
+    disabled_at       timestamptz,
+    is_admin          boolean
+)
+LANGUAGE sql
+SECURITY DEFINER
+SET search_path = public
+STABLE
+AS $$
+    SELECT u.id, u.password_hash, u.email_verified_at, u.disabled_at, u.is_admin
+    FROM users u
+    WHERE u.id = p_id
+$$;
+REVOKE ALL ON FUNCTION auth_user_by_id(uuid) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION auth_user_by_id(uuid) TO cadus_app, cadus_admin;
 
 -- --------------------------------------------------------------------------
 -- D9, finding #8: sqlx creates public._sqlx_migrations before it applies the
@@ -124,6 +227,13 @@ REVOKE ALL ON _sqlx_migrations FROM cadus_app;
 -- --------------------------------------------------------------------------
 -- #5: take every privilege on the model-call ledger away from the runtime role.
 REVOKE ALL ON model_call_log FROM cadus_app;
+-- #12: model_call_log.id is bigserial, so the table owns a sequence, and the
+-- blanket sequence grant above gave cadus_app USAGE and SELECT on it. A tenant
+-- connection read last_value, which counts the model calls of every tenant, and
+-- ran nextval, which moved the primary key of the ledger. REVOKE ALL on the
+-- table leaves a sequence untouched, so the sequence needs its own statement.
+-- app_role_sequence_privileges_are_the_literal_table pins the result.
+REVOKE ALL ON SEQUENCE model_call_log_id_seq FROM cadus_app;
 
 -- --------------------------------------------------------------------------
 -- C6, finding #14: content_store binds approval to the digest, so an edited body

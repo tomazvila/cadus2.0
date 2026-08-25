@@ -1,0 +1,56 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n            SELECT c.relname::text AS \"table_name!\",\n                   has_table_privilege('cadus_app', c.oid, 'SELECT')   AS \"may_select!\",\n                   has_table_privilege('cadus_app', c.oid, 'INSERT')   AS \"may_insert!\",\n                   has_table_privilege('cadus_app', c.oid, 'UPDATE')   AS \"may_update!\",\n                   has_table_privilege('cadus_app', c.oid, 'DELETE')   AS \"may_delete!\",\n                   has_table_privilege('cadus_app', c.oid, 'TRUNCATE') AS \"may_truncate!\"\n            FROM pg_class c\n            JOIN pg_namespace n ON n.oid = c.relnamespace\n            WHERE n.nspname = 'public' AND c.relkind IN ('r', 'p', 'v', 'm')\n            ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "table_name!",
+        "type_info": "Text",
+        "origin": "Expression"
+      },
+      {
+        "ordinal": 1,
+        "name": "may_select!",
+        "type_info": "Bool",
+        "origin": "Expression"
+      },
+      {
+        "ordinal": 2,
+        "name": "may_insert!",
+        "type_info": "Bool",
+        "origin": "Expression"
+      },
+      {
+        "ordinal": 3,
+        "name": "may_update!",
+        "type_info": "Bool",
+        "origin": "Expression"
+      },
+      {
+        "ordinal": 4,
+        "name": "may_delete!",
+        "type_info": "Bool",
+        "origin": "Expression"
+      },
+      {
+        "ordinal": 5,
+        "name": "may_truncate!",
+        "type_info": "Bool",
+        "origin": "Expression"
+      }
+    ],
+    "parameters": {
+      "Left": []
+    },
+    "nullable": [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ]
+  },
+  "hash": "53b6f5c5cb97e0b103e7a9e46e39e6edf5b7a4c721fa09a3e4d0d256f7b6d39b"
+}
