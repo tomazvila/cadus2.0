@@ -81,6 +81,53 @@ const ALL_USER_ID_TABLES: [&str; 16] = [
 const POLICY_PREDICATE: &str =
     "(user_id = (NULLIF(current_setting('app.user_id'::text, true), ''::text))::uuid)";
 
+/// The literal text of the `users_update_self` predicate (finding #4).
+///
+/// `users` is keyed by `id`, not by `user_id`, so it stays outside the
+/// `tenant_isolation` set and carries its own per-command policies. The
+/// predicate is otherwise the same shape, `nullif` guard included.
+const USERS_UPDATE_PREDICATE: &str =
+    "(id = (NULLIF(current_setting('app.user_id'::text, true), ''::text))::uuid)";
+
+/// Finding #16: the live table privileges of `cadus_app`, table by table.
+///
+/// The array is `(table_name, [SELECT, INSERT, UPDATE, DELETE, TRUNCATE])`, in
+/// the byte order of the table name. Every table of schema `public` is here,
+/// `_sqlx_migrations` included, so a widened grant in a later migration fails
+/// this test instead of reaching production.
+///
+/// `has_table_privilege` reports a column-level grant as `false`, so the UPDATE
+/// cell of `users` is `false` even though `cadus_app` writes five of its columns.
+/// `app_role_privilege_matrix_is_the_literal_table` asserts the column grants
+/// separately.
+const APP_TABLE_PRIVILEGES: [(&str, [bool; 5]); 20] = [
+    // #8: the runtime role holds nothing on the migration ledger.
+    ("_sqlx_migrations", [false, false, false, false, false]),
+    ("anki_cards_created", [true, true, true, true, false]),
+    ("anki_queue", [true, true, true, true, false]),
+    ("auth_rate_counters", [true, true, true, true, false]),
+    ("auth_sessions", [true, true, true, true, false]),
+    ("auth_tokens", [true, true, true, true, false]),
+    // #14: the request tier reads approved content and never writes it.
+    ("content_store", [true, false, false, false, false]),
+    ("diag_states", [true, true, true, true, false]),
+    ("diagnosis_jobs", [true, true, true, true, false]),
+    ("email_outbox", [true, true, true, true, false]),
+    // C2: events is append-only for the runtime role.
+    ("events", [true, true, false, false, false]),
+    ("learner_models", [true, true, true, true, false]),
+    // #5: only the worker spends tokens, and the worker is cadus_admin.
+    ("model_call_log", [false, false, false, false, false]),
+    ("oauth_accounts", [true, true, true, true, false]),
+    ("profiles", [true, true, true, true, false]),
+    ("serving_pool", [true, true, true, true, false]),
+    ("session_plans", [true, true, true, true, false]),
+    ("user_settings", [true, true, true, true, false]),
+    // #2 and #4: no DELETE, no TRUNCATE, and UPDATE is column-level only.
+    ("users", [true, true, false, false, false]),
+    ("web_states", [true, true, true, true, false]),
+];
+
 /// The line of `migrations/0001_roles.sql` that gives `cadus_app` its
 /// attributes. Finding #6: the roles are cluster-scoped and `CREATE ROLE` is
 /// guarded, so a long-lived cluster keeps the old attributes and the catalog
@@ -95,6 +142,9 @@ fn sqlstate(err: &sqlx::Error) -> String {
         None => format!("not a database error: {err}"),
     }
 }
+
+/// One row of `pg_policy`: table, policy name, command, USING, WITH CHECK.
+type PolicyRow = (String, String, String, Option<String>, Option<String>);
 
 fn to_owned(names: &[&str]) -> Vec<String> {
     names.iter().map(|name| (*name).to_string()).collect()
@@ -160,8 +210,10 @@ async fn app_role_cannot_update_events() {
 /// with `ON DELETE CASCADE`. Postgres runs a referential-action trigger with
 /// row-level security off, so a `DELETE` on `users` erases another tenant's rows
 /// through the cascade. Account deletion is an admin operation.
-/// `cadus_app` keeps SELECT, INSERT, and UPDATE, because sign-up and sign-in
-/// touch `users` before a tenant context exists.
+/// `cadus_app` keeps SELECT and INSERT, because sign-up and sign-in touch
+/// `users` before a tenant context exists. Finding #4 narrowed UPDATE to the
+/// caller's own row and to a column list;
+/// `app_role_updates_only_its_own_user_row` proves that part.
 #[tokio::test]
 async fn app_role_cannot_delete_users() {
     TestDb::with(|db| async move {
@@ -196,22 +248,25 @@ async fn app_role_cannot_delete_users() {
             .unwrap();
         assert_eq!(children, 1);
 
-        // SELECT, INSERT, and UPDATE stay with the runtime role.
+        // SELECT stays with the runtime role, with no tenant context bound.
         let seen = sqlx::query_scalar!(r#"SELECT count(*) AS "count!" FROM users"#)
             .fetch_one(&db.app)
             .await
             .unwrap();
         assert_eq!(seen, 1);
 
+        // #4: an UPDATE of the caller's own row still succeeds inside a tenant.
+        let mut tx = begin_tenant(&db.app, user).await.unwrap();
         let updated = sqlx::query!(
             "UPDATE users SET email_verified_at = now() WHERE id = $1",
             user
         )
-        .execute(&db.app)
+        .execute(&mut *tx)
         .await
         .unwrap()
         .rows_affected();
         assert_eq!(updated, 1);
+        tx.commit().await.unwrap();
     })
     .await;
 }
@@ -239,23 +294,284 @@ async fn app_role_cannot_touch_the_migration_ledger() {
     .await;
 }
 
-/// T6, finding #24: the app role inserts into `model_call_log`.
+/// T6, findings #24 and #5: `cadus_admin` writes `model_call_log`, and the
+/// runtime role reaches it with no statement at all.
 ///
-/// `model_call_log.id` is the only bigserial column of the schema, so the insert
-/// needs `USAGE` on `model_call_log_id_seq`. `ALTER DEFAULT PRIVILEGES` does not
-/// cover that sequence: 0005 creates it before 0006 sets the defaults.
+/// Finding #24: `model_call_log.id` is the only bigserial column of the schema,
+/// so the insert needs `USAGE` on `model_call_log_id_seq`. `ALTER DEFAULT
+/// PRIVILEGES` does not cover that sequence: 0005 creates it before 0006 sets
+/// the defaults. The insert here runs under `SET ROLE cadus_admin`, so the
+/// sequence grant of that role is still under test.
+///
+/// Finding #5: the table carries `user_id`, `session_id`, token counts, and
+/// `cost_usd`, and it stays outside row-level security, so a table-wide grant
+/// gave one tenant every tenant's rows and a one-statement wipe of the T6
+/// ledger. T2 names the worker as the only unit that spends tokens, and the
+/// worker connects as `cadus_admin`.
 #[tokio::test]
-async fn app_role_inserts_into_model_call_log() {
+async fn admin_role_inserts_into_model_call_log() {
     TestDb::with(|db| async move {
+        // One fixed connection: SET ROLE outlives a statement, so the test
+        // returns the connection to the pool with RESET ROLE.
+        let mut conn = db.admin.acquire().await.unwrap();
+        sqlx::query("SET ROLE cadus_admin")
+            .execute(&mut *conn)
+            .await
+            .unwrap();
+
         let id = sqlx::query_scalar!(
             "INSERT INTO model_call_log (purpose, model_id, latency_ms)
              VALUES ('test', 'none', 1)
              RETURNING id"
         )
-        .fetch_one(&db.app)
+        .fetch_one(&mut *conn)
         .await
         .unwrap();
         assert_eq!(id, 1);
+
+        sqlx::query("RESET ROLE").execute(&mut *conn).await.unwrap();
+        drop(conn);
+
+        // #5: the runtime role writes no row and reads no row.
+        let insert_err = sqlx::query!(
+            "INSERT INTO model_call_log (purpose, model_id, latency_ms)
+             VALUES ('test', 'none', 1)"
+        )
+        .execute(&db.app)
+        .await
+        .unwrap_err();
+        assert_eq!(sqlstate(&insert_err), "42501");
+
+        let select_err = sqlx::query_scalar!(r#"SELECT count(*) AS "count!" FROM model_call_log"#)
+            .fetch_one(&db.app)
+            .await
+            .unwrap_err();
+        assert_eq!(sqlstate(&select_err), "42501");
+    })
+    .await;
+}
+
+/// C6, finding #14: the runtime role reads `content_store` and never writes it.
+///
+/// `content_store` binds approval to the digest (`migrations/0005_content.sql`),
+/// so an edited body is a new row that needs its own approval. Table-wide
+/// INSERT, UPDATE, and DELETE let the request tier rewrite an approved body in
+/// place and insert a row that already carried `status = 'approved'`.
+#[tokio::test]
+async fn app_role_reads_content_store_and_never_writes_it() {
+    TestDb::with(|db| async move {
+        sqlx::query!(
+            "INSERT INTO content_store (digest, kp_id, kind, body, status)
+             VALUES ('sha256:seed', 'kp.x', 'template',
+                     '{\"statement\": \"reviewed\"}'::jsonb, 'approved')"
+        )
+        .execute(&db.admin)
+        .await
+        .unwrap();
+
+        // The serve path reads approved content.
+        let seen = sqlx::query_scalar!(r#"SELECT count(*) AS "count!" FROM content_store"#)
+            .fetch_one(&db.app)
+            .await
+            .unwrap();
+        assert_eq!(seen, 1);
+
+        let update_err = sqlx::query!("UPDATE content_store SET body = '{}'::jsonb")
+            .execute(&db.app)
+            .await
+            .unwrap_err();
+        assert_eq!(sqlstate(&update_err), "42501");
+
+        let insert_err = sqlx::query!(
+            "INSERT INTO content_store (digest, kp_id, kind, body, status)
+             VALUES ('sha256:new', 'kp.x', 'template', '{}'::jsonb, 'approved')"
+        )
+        .execute(&db.app)
+        .await
+        .unwrap_err();
+        assert_eq!(sqlstate(&insert_err), "42501");
+
+        // The approved body is still the one the admin seeded.
+        let statement = sqlx::query_scalar!(
+            r#"SELECT body ->> 'statement' AS "statement!"
+               FROM content_store WHERE digest = 'sha256:seed'"#
+        )
+        .fetch_one(&db.admin)
+        .await
+        .unwrap();
+        assert_eq!(statement, "reviewed");
+    })
+    .await;
+}
+
+/// C3, finding #4: the runtime role updates its own `users` row and nothing else.
+///
+/// `users` is keyed by `id`, so it stays outside the `tenant_isolation` set and
+/// carries three per-command policies instead. Table-wide UPDATE let a session
+/// bound to tenant A rewrite tenant B's `password_hash`. A column list keeps
+/// `is_admin` out of reach of the runtime role in every case.
+#[tokio::test]
+async fn app_role_updates_only_its_own_user_row() {
+    TestDb::with(|db| async move {
+        let user_a = db.seed_user("self-a@example.test").await;
+        let user_b = db.seed_user("self-b@example.test").await;
+
+        // Both catalog flags are on, so a non-superuser owner stays inside the
+        // policies too.
+        let flags = sqlx::query!(
+            r#"
+            SELECT c.relrowsecurity      AS "rls_enabled!",
+                   c.relforcerowsecurity AS "rls_forced!"
+            FROM pg_class c
+            JOIN pg_namespace n ON n.oid = c.relnamespace
+            WHERE n.nspname = 'public' AND c.relname = 'users'
+            "#
+        )
+        .fetch_one(&db.admin)
+        .await
+        .unwrap();
+        assert!(flags.rls_enabled, "relrowsecurity must be true on users");
+        assert!(
+            flags.rls_forced,
+            "relforcerowsecurity must be true on users"
+        );
+
+        // Bound to A, an UPDATE of B's row matches no row.
+        let mut tx = begin_tenant(&db.app, user_a).await.unwrap();
+        let cross_tenant = sqlx::query!(
+            "UPDATE users SET email_verified_at = now() WHERE id = $1",
+            user_b
+        )
+        .execute(&mut *tx)
+        .await
+        .unwrap()
+        .rows_affected();
+        assert_eq!(cross_tenant, 0);
+        tx.commit().await.unwrap();
+
+        // B is untouched.
+        let b_unverified = sqlx::query_scalar!(
+            r#"SELECT (email_verified_at IS NULL) AS "unverified!" FROM users WHERE id = $1"#,
+            user_b
+        )
+        .fetch_one(&db.admin)
+        .await
+        .unwrap();
+        assert!(b_unverified, "tenant B keeps email_verified_at NULL");
+
+        // Bound to A, an UPDATE of A's own row matches exactly one row.
+        let mut tx = begin_tenant(&db.app, user_a).await.unwrap();
+        let own_row = sqlx::query!(
+            "UPDATE users SET email_verified_at = now() WHERE id = $1",
+            user_a
+        )
+        .execute(&mut *tx)
+        .await
+        .unwrap()
+        .rows_affected();
+        assert_eq!(own_row, 1);
+        tx.commit().await.unwrap();
+
+        // #4: the column list stops the admin flag before any policy runs.
+        let mut tx = begin_tenant(&db.app, user_a).await.unwrap();
+        let admin_err = sqlx::query!("UPDATE users SET is_admin = true WHERE id = $1", user_a)
+            .execute(&mut *tx)
+            .await
+            .unwrap_err();
+        assert_eq!(sqlstate(&admin_err), "42501");
+        let _ = tx.rollback().await;
+
+        // The login path reads users by email with no tenant context bound.
+        let found = sqlx::query_scalar!(
+            r#"SELECT count(*) AS "count!" FROM users WHERE email = $1::text::citext"#,
+            "self-b@example.test"
+        )
+        .fetch_one(&db.app)
+        .await
+        .unwrap();
+        assert_eq!(found, 1);
+    })
+    .await;
+}
+
+/// C2, C3, U3, finding #16: the table privileges of `cadus_app` are the literal
+/// matrix of `APP_TABLE_PRIVILEGES`.
+///
+/// The hand-picked negative assertions elsewhere in this file leave the rest of
+/// the ACL unpinned, so a widened blanket grant of TRUNCATE, which row-level
+/// security does not cover at all, passed the whole suite. This test reads every
+/// table of schema `public` and compares the whole matrix.
+#[tokio::test]
+async fn app_role_privilege_matrix_is_the_literal_table() {
+    TestDb::with(|db| async move {
+        let rows = sqlx::query!(
+            r#"
+            SELECT t.tablename::text AS "table_name!",
+                   has_table_privilege('cadus_app', 'public.' || quote_ident(t.tablename),
+                                       'SELECT')   AS "may_select!",
+                   has_table_privilege('cadus_app', 'public.' || quote_ident(t.tablename),
+                                       'INSERT')   AS "may_insert!",
+                   has_table_privilege('cadus_app', 'public.' || quote_ident(t.tablename),
+                                       'UPDATE')   AS "may_update!",
+                   has_table_privilege('cadus_app', 'public.' || quote_ident(t.tablename),
+                                       'DELETE')   AS "may_delete!",
+                   has_table_privilege('cadus_app', 'public.' || quote_ident(t.tablename),
+                                       'TRUNCATE') AS "may_truncate!"
+            FROM pg_tables t
+            WHERE t.schemaname = 'public'
+            "#
+        )
+        .fetch_all(&db.admin)
+        .await
+        .unwrap();
+
+        // Sort in Rust. A SQL `ORDER BY` on text follows the database collation,
+        // and the order of `user_settings` against `users` differs between
+        // collations.
+        let mut found: Vec<(String, [bool; 5])> = rows
+            .iter()
+            .map(|row| {
+                (
+                    row.table_name.clone(),
+                    [
+                        row.may_select,
+                        row.may_insert,
+                        row.may_update,
+                        row.may_delete,
+                        row.may_truncate,
+                    ],
+                )
+            })
+            .collect();
+        found.sort();
+
+        let expected: Vec<(String, [bool; 5])> = APP_TABLE_PRIVILEGES
+            .iter()
+            .map(|(table, privileges)| ((*table).to_string(), *privileges))
+            .collect();
+        assert_eq!(found, expected);
+
+        // #4: `has_table_privilege` reports a column-level grant as false, so the
+        // UPDATE cell of `users` needs a second, column-level assertion.
+        let columns = sqlx::query!(
+            r#"
+            SELECT has_column_privilege('cadus_app', 'users', 'is_admin', 'UPDATE')
+                       AS "may_update_is_admin!",
+                   has_column_privilege('cadus_app', 'users', 'password_hash', 'UPDATE')
+                       AS "may_update_password_hash!"
+            "#
+        )
+        .fetch_one(&db.admin)
+        .await
+        .unwrap();
+        assert!(
+            !columns.may_update_is_admin,
+            "cadus_app must not update users.is_admin"
+        );
+        assert!(
+            columns.may_update_password_hash,
+            "cadus_app must update users.password_hash"
+        );
     })
     .await;
 }
@@ -563,47 +879,79 @@ async fn rls_coverage_is_the_literal_list() {
             r#"
             SELECT c.relname::text AS "table_name!",
                    p.polname::text AS "policy_name!",
+                   p.polcmd::text  AS "command!",
                    pg_get_expr(p.polqual, p.polrelid)      AS "using_expr?",
                    pg_get_expr(p.polwithcheck, p.polrelid) AS "with_check_expr?"
             FROM pg_policy p
             JOIN pg_class c ON c.oid = p.polrelid
             JOIN pg_namespace n ON n.oid = c.relnamespace
             WHERE n.nspname = 'public'
-            ORDER BY c.relname, p.polname
             "#
         )
         .fetch_all(&db.admin)
         .await
         .unwrap();
 
-        let found: Vec<(String, String)> = policies
+        // Pin the name, the command, and both expressions of every policy. A
+        // migration that keeps the name `tenant_isolation` and drops the WITH
+        // CHECK clause, or that drops the nullif guard, fails here. Sort in Rust:
+        // a SQL `ORDER BY` on text follows the database collation, and the order
+        // of `user_settings` against `users` differs between collations.
+        let mut found: Vec<PolicyRow> = policies
             .iter()
-            .map(|row| (row.table_name.clone(), row.policy_name.clone()))
+            .map(|row| {
+                (
+                    row.table_name.clone(),
+                    row.policy_name.clone(),
+                    row.command.clone(),
+                    row.using_expr.clone(),
+                    row.with_check_expr.clone(),
+                )
+            })
             .collect();
-        let expected: Vec<(String, String)> = RLS_TABLES
-            .iter()
-            .map(|table| ((*table).to_string(), "tenant_isolation".to_string()))
-            .collect();
-        assert_eq!(found, expected);
+        found.sort();
 
-        // Pin the text of every policy, not only its name. A migration that keeps
-        // the name `tenant_isolation` and drops the WITH CHECK clause, or that
-        // drops the nullif guard, fails here.
-        assert_eq!(policies.len(), 12);
-        for row in &policies {
-            assert_eq!(
-                row.using_expr.as_deref(),
-                Some(POLICY_PREDICATE),
-                "USING expression on {}",
-                row.table_name
-            );
-            assert_eq!(
-                row.with_check_expr.as_deref(),
-                Some(POLICY_PREDICATE),
-                "WITH CHECK expression on {}",
-                row.table_name
-            );
-        }
+        let mut expected: Vec<PolicyRow> = RLS_TABLES
+            .iter()
+            .map(|table| {
+                (
+                    (*table).to_string(),
+                    "tenant_isolation".to_string(),
+                    // '*' is the polcmd of a policy that covers every command.
+                    "*".to_string(),
+                    Some(POLICY_PREDICATE.to_string()),
+                    Some(POLICY_PREDICATE.to_string()),
+                )
+            })
+            .collect();
+        // #4: the three per-command policies of `users`. 'a' is INSERT, 'r' is
+        // SELECT, and 'w' is UPDATE. There is no DELETE policy, because 0006
+        // revokes DELETE on `users` from the runtime role.
+        expected.push((
+            "users".to_string(),
+            "users_insert".to_string(),
+            "a".to_string(),
+            None,
+            Some("true".to_string()),
+        ));
+        expected.push((
+            "users".to_string(),
+            "users_read".to_string(),
+            "r".to_string(),
+            Some("true".to_string()),
+            None,
+        ));
+        expected.push((
+            "users".to_string(),
+            "users_update_self".to_string(),
+            "w".to_string(),
+            Some(USERS_UPDATE_PREDICATE.to_string()),
+            Some(USERS_UPDATE_PREDICATE.to_string()),
+        ));
+        expected.sort();
+
+        assert_eq!(found.len(), 15);
+        assert_eq!(found, expected);
     })
     .await;
 }

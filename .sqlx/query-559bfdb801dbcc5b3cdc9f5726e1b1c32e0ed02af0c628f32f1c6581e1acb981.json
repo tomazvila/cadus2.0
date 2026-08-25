@@ -1,0 +1,49 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n            SELECT c.relname::text AS \"table_name!\",\n                   p.polname::text AS \"policy_name!\",\n                   p.polcmd::text  AS \"command!\",\n                   pg_get_expr(p.polqual, p.polrelid)      AS \"using_expr?\",\n                   pg_get_expr(p.polwithcheck, p.polrelid) AS \"with_check_expr?\"\n            FROM pg_policy p\n            JOIN pg_class c ON c.oid = p.polrelid\n            JOIN pg_namespace n ON n.oid = c.relnamespace\n            WHERE n.nspname = 'public'\n            ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "table_name!",
+        "type_info": "Text",
+        "origin": "Expression"
+      },
+      {
+        "ordinal": 1,
+        "name": "policy_name!",
+        "type_info": "Text",
+        "origin": "Expression"
+      },
+      {
+        "ordinal": 2,
+        "name": "command!",
+        "type_info": "Text",
+        "origin": "Expression"
+      },
+      {
+        "ordinal": 3,
+        "name": "using_expr?",
+        "type_info": "Text",
+        "origin": "Expression"
+      },
+      {
+        "ordinal": 4,
+        "name": "with_check_expr?",
+        "type_info": "Text",
+        "origin": "Expression"
+      }
+    ],
+    "parameters": {
+      "Left": []
+    },
+    "nullable": [
+      null,
+      null,
+      null,
+      null,
+      null
+    ]
+  },
+  "hash": "559bfdb801dbcc5b3cdc9f5726e1b1c32e0ed02af0c628f32f1c6581e1acb981"
+}

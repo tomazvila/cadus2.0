@@ -12,7 +12,7 @@
 --   auth_sessions   -- looked up before a tenant context exists
 --   oauth_accounts  -- looked up before a tenant context exists
 --   auth_tokens     -- looked up before a tenant context exists
---   model_call_log  -- operator telemetry; user_id is nullable
+--   model_call_log  -- finding #5: cadus_app holds no privilege on it
 --
 -- Finding #15: diagnosis_jobs and email_outbox left the exempt list. The old
 -- reason was "the worker claims (or drains) across tenants". The worker connects
@@ -20,8 +20,13 @@
 -- on the missing policy. The exemption only gave cadus_app every tenant's
 -- attempt payload, diagnosis result, and email address.
 --
--- Tables with no user_id never enter the RLS set: users, auth_rate_counters,
--- content_store. content_store holds curriculum content, not learner data.
+-- Tables with no user_id stay outside the user_id-keyed derivation above:
+--   users               -- finding #4: the key is id, not user_id. users carries
+--                          its own per-command policies (users_read,
+--                          users_insert, users_update_self) further down.
+--   auth_rate_counters  -- fixed-window counters; the table has no tenant column.
+--   content_store       -- curriculum content, not learner data. Finding #14
+--                          takes INSERT, UPDATE, and DELETE away from cadus_app.
 --
 -- The list is literal on purpose. A migration describes the schema as of its own
 -- revision. A later table gets its own ENABLE, FORCE, and policy in a later
@@ -35,7 +40,8 @@ GRANT USAGE ON SCHEMA public TO cadus_app, cadus_admin;
 GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO cadus_app;
 GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO cadus_admin;
 
--- bigserial columns need the sequence too (model_call_log.id).
+-- bigserial columns need the sequence too (model_call_log.id). Finding #5: only
+-- cadus_admin writes that table now, so the grant matters for that role.
 GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO cadus_app, cadus_admin;
 
 -- Default privileges: a table or sequence that a LATER migration creates becomes
@@ -56,16 +62,45 @@ ALTER DEFAULT PRIVILEGES IN SCHEMA public
 REVOKE UPDATE, DELETE, TRUNCATE ON events FROM cadus_app;
 
 -- --------------------------------------------------------------------------
--- C3, finding #2: users is the RLS-exempt parent of every tenant table, and each
--- child references it with ON DELETE CASCADE. Postgres runs a referential-action
+-- C3, finding #2: users is the parent of every tenant table, and each child
+-- references it with ON DELETE CASCADE. Postgres runs a referential-action
 -- trigger with row-level security off, so a DELETE on users erases another
 -- tenant's rows through the cascade and no policy sees it. Account deletion is an
--- admin operation, so the runtime role loses DELETE and TRUNCATE here. cadus_app
--- keeps SELECT, INSERT, and UPDATE: sign-up and sign-in read and write users
--- before a tenant context exists.
+-- admin operation, so the runtime role loses DELETE and TRUNCATE here.
+--
+-- C3, finding #4: table-wide UPDATE stayed with the runtime role, so a session
+-- bound to tenant A rewrote tenant B's password_hash and set is_admin = true on
+-- its own row. Two controls replace that grant.
+--
+-- 1. Per-command policies. users keeps the key id, not user_id, so it stays out
+--    of the tenant_isolation set. SELECT and INSERT stay open, because sign-up
+--    and sign-in touch users before a tenant context exists. UPDATE matches the
+--    caller's own row only, and an unbound session matches no row at all. There
+--    is no DELETE policy, because the REVOKE above already stops a DELETE.
+-- 2. A column list. id and is_admin leave the UPDATE grant, so no policy and no
+--    code defect decides the admin flag.
 -- --------------------------------------------------------------------------
 -- #2: take DELETE and TRUNCATE on users away from the runtime role.
 REVOKE DELETE, TRUNCATE ON users FROM cadus_app;
+
+-- #4: turn the policy layer on for users.
+ALTER TABLE users ENABLE ROW LEVEL SECURITY;
+-- #4: FORCE keeps a non-superuser owner inside the policies.
+ALTER TABLE users FORCE ROW LEVEL SECURITY;
+-- #4: the login path reads users by email before a tenant context exists.
+CREATE POLICY users_read ON users FOR SELECT USING (true);
+-- #4: sign-up inserts the row that becomes the tenant.
+CREATE POLICY users_insert ON users FOR INSERT WITH CHECK (true);
+-- #4: an UPDATE reaches the caller's own row only. The nullif guard is the same
+-- one that the tenant_isolation policies use; the note below explains it.
+CREATE POLICY users_update_self ON users FOR UPDATE
+    USING (id = nullif(current_setting('app.user_id', true), '')::uuid)
+    WITH CHECK (id = nullif(current_setting('app.user_id', true), '')::uuid);
+-- #4: drop the table-wide UPDATE of the runtime role.
+REVOKE UPDATE ON users FROM cadus_app;
+-- #4: give back every column of users except id and is_admin.
+GRANT UPDATE (email, password_hash, email_verified_at, disabled_at, created_at)
+    ON users TO cadus_app;
 
 -- --------------------------------------------------------------------------
 -- D9, finding #8: sqlx creates public._sqlx_migrations before it applies the
@@ -77,6 +112,29 @@ REVOKE DELETE, TRUNCATE ON users FROM cadus_app;
 -- --------------------------------------------------------------------------
 -- #8: take every privilege on the migration ledger away from the runtime role.
 REVOKE ALL ON _sqlx_migrations FROM cadus_app;
+
+-- --------------------------------------------------------------------------
+-- T2, T6, finding #5: model_call_log holds one row per model call, with user_id,
+-- session_id, token counts, and cost_usd. The table stayed outside row-level
+-- security, so a tenant connection read every learner's rows and erased the whole
+-- cost ledger in one statement. T2 names the worker as the only unit that spends
+-- tokens, and the worker connects as cadus_admin. The runtime role therefore
+-- keeps no privilege here. The table stays outside the RLS set for a new reason:
+-- cadus_app reaches it with no statement at all.
+-- --------------------------------------------------------------------------
+-- #5: take every privilege on the model-call ledger away from the runtime role.
+REVOKE ALL ON model_call_log FROM cadus_app;
+
+-- --------------------------------------------------------------------------
+-- C6, finding #14: content_store binds approval to the digest, so an edited body
+-- is a new row that needs its own approval (0005_content.sql). The blanket grant
+-- let the runtime role rewrite the body of an approved row in place and insert a
+-- row that already carried status = 'approved'. The request tier reads approved
+-- content, the worker authors it as cadus_admin, and approval is an admin
+-- operation, so the runtime role keeps SELECT and nothing else.
+-- --------------------------------------------------------------------------
+-- #14: leave the runtime role with SELECT on content_store.
+REVOKE INSERT, UPDATE, DELETE ON content_store FROM cadus_app;
 
 -- --------------------------------------------------------------------------
 -- C3: row-level security on every tenant table.

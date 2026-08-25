@@ -20,7 +20,7 @@ lineage is 1.0's `docs/DATA_MODEL.md` §9.
 | Role | Login | RLS | Use |
 |---|---|---|---|
 | `cadus_owner` | NOLOGIN | — | Reserved for a deployment that runs the migrations as a non-superuser owner. It owns nothing in the shipped stack. |
-| `cadus_app` | LOGIN | enforced (NOBYPASSRLS) | The runtime role. No UPDATE, DELETE, or TRUNCATE on `events`. No DELETE or TRUNCATE on `users`. No privilege on `_sqlx_migrations`. |
+| `cadus_app` | LOGIN | enforced (NOBYPASSRLS) | The runtime role. See the privilege table below. `crates/store/tests/rls.rs` pins the whole matrix. |
 | `cadus_admin` | NOLOGIN | BYPASSRLS | Cross-tenant sweeps. Member of `cadus_app` for per-tenant drains. |
 
 ### Who runs the migrations
@@ -38,12 +38,35 @@ inside the tenant policy.
 after the blanket grant. `cadus_app` keeps SELECT and INSERT. A wrong grade is
 superseded by a `regraded` event. The grant enforces this, not a convention.
 
-## Two more revokes in `0006_grants_rls`
+## The other revokes in `0006_grants_rls`
 
-| Statement | Reason |
-|---|---|
-| `REVOKE DELETE, TRUNCATE ON users FROM cadus_app` | `users` is the RLS-exempt parent of every tenant table, and each child references it with `ON DELETE CASCADE`. Postgres runs a referential-action trigger with row-level security off, so a `DELETE` on `users` erases another tenant's rows and no policy sees it. Account deletion is an admin operation. `cadus_app` keeps SELECT, INSERT, and UPDATE, because sign-up and sign-in touch `users` before a tenant context exists. |
-| `REVOKE ALL ON _sqlx_migrations FROM cadus_app` | sqlx creates the ledger before the first migration runs, so the blanket grant swept it in. A `DELETE` on the ledger makes the next deploy replay `0002` and stop with an error; an `UPDATE` of a checksum makes every later run fail with `VersionMismatch`. `cadus_admin` keeps the ledger for an operator repair. |
+| Statement | Finding | Reason |
+|---|---|---|
+| `REVOKE DELETE, TRUNCATE ON users FROM cadus_app` | #2 | `users` is the parent of every tenant table, and each child references it with `ON DELETE CASCADE`. Postgres runs a referential-action trigger with row-level security off, so a `DELETE` on `users` erases another tenant's rows and no policy sees it. Account deletion is an admin operation. |
+| `REVOKE UPDATE ON users FROM cadus_app` then `GRANT UPDATE (email, password_hash, email_verified_at, disabled_at, created_at) ON users TO cadus_app` | #4 | Table-wide UPDATE let a session bound to tenant A rewrite tenant B's `password_hash` and set `is_admin = true` on its own row. The column list keeps `id` and `is_admin` out of reach of the runtime role. The `users_update_self` policy below narrows the rows. |
+| `REVOKE ALL ON _sqlx_migrations FROM cadus_app` | #8 | sqlx creates the ledger before the first migration runs, so the blanket grant swept it in. A `DELETE` on the ledger makes the next deploy replay `0002` and stop with an error; an `UPDATE` of a checksum makes every later run fail with `VersionMismatch`. `cadus_admin` keeps the ledger for an operator repair. |
+| `REVOKE ALL ON model_call_log FROM cadus_app` | #5 | The table holds `user_id`, `session_id`, token counts, and `cost_usd`, and it stays outside row-level security, so a table-wide grant gave one tenant every tenant's rows and a one-statement wipe of the T6 ledger. T2 names the worker as the only unit that spends tokens, and the worker connects as `cadus_admin`. |
+| `REVOKE INSERT, UPDATE, DELETE ON content_store FROM cadus_app` | #14 | C6 binds approval to the digest, so an edited body is a new row that needs its own approval. The blanket grant let the request tier rewrite an approved body in place and insert a row that already carried `status = 'approved'`. The request tier reads approved content, the worker authors it as `cadus_admin`, and approval is an admin operation. |
+
+### The privilege matrix of `cadus_app`
+
+`has_table_privilege` for every table of schema `public`. The test
+`app_role_privilege_matrix_is_the_literal_table` (finding #16) asserts this whole
+matrix, so a widened grant in a later migration fails the suite.
+
+| Table | SELECT | INSERT | UPDATE | DELETE | TRUNCATE |
+|---|---|---|---|---|---|
+| `_sqlx_migrations` | no | no | no | no | no |
+| `content_store` | yes | no | no | no | no |
+| `events` | yes | yes | no | no | no |
+| `model_call_log` | no | no | no | no | no |
+| `users` | yes | yes | column-level | no | no |
+| every other table | yes | yes | yes | yes | no |
+
+`has_table_privilege` reports a column-level grant as `false`, so the UPDATE cell
+of `users` reads `false` in the catalog. `has_column_privilege('cadus_app',
+'users', 'password_hash', 'UPDATE')` is `true` and the same call for `is_admin`
+is `false`.
 
 ## Row-level security (C3)
 
@@ -69,6 +92,21 @@ to NULL, so a cleared context returns zero rows like an unset one.
 `diag_states`, `user_settings`, `web_states`, `anki_queue`, `anki_cards_created`,
 `serving_pool`, `diagnosis_jobs`, `email_outbox`.
 
+### `users` carries its own per-command policies (finding #4)
+
+`users` is keyed by `id`, not by `user_id`, so it stays outside the
+`tenant_isolation` set. It still gets `ENABLE` and `FORCE ROW LEVEL SECURITY`,
+and three policies:
+
+| Policy | Command | Predicate |
+|---|---|---|
+| `users_read` | SELECT | `USING (true)` — the login path reads `users` by email before a tenant context exists. |
+| `users_insert` | INSERT | `WITH CHECK (true)` — sign-up inserts the row that becomes the tenant. |
+| `users_update_self` | UPDATE | `USING` and `WITH CHECK` on `id = nullif(current_setting('app.user_id', true), '')::uuid` — an UPDATE reaches the caller's own row only, and an unbound session matches no row. |
+
+There is no DELETE policy, because `0006_grants_rls` already revokes DELETE and
+TRUNCATE on `users` from the runtime role.
+
 **Exempt tables that carry `user_id` (4 tables), with the reason for each:**
 
 | Table | Reason |
@@ -76,7 +114,7 @@ to NULL, so a cleared context returns zero rows like an unset one.
 | `auth_sessions` | Looked up before a tenant context exists. |
 | `oauth_accounts` | Looked up before a tenant context exists. |
 | `auth_tokens` | Looked up before a tenant context exists. |
-| `model_call_log` | Operator telemetry. `user_id` is nullable. |
+| `model_call_log` | Finding #5: `cadus_app` holds no privilege on it, so no runtime statement reaches the table. Only `cadus_admin` reads and writes it. |
 
 `diagnosis_jobs` and `email_outbox` left the exempt list. The old reason was "the
 worker claims (or drains) across tenants". The worker connects as `cadus_admin`,
@@ -86,8 +124,11 @@ diagnosis result, and email address. `email_outbox.user_id` is nullable
 (`ON DELETE SET NULL`), and a NULL `user_id` matches no tenant, so an orphaned
 row stays visible to `cadus_admin` only.
 
-Tables with no `user_id` never enter the RLS set: `users`, `auth_rate_counters`,
-`content_store` (curriculum content, not learner data).
+Tables with no `user_id` stay outside that derivation: `users`,
+`auth_rate_counters`, and `content_store`. `users` carries the three per-command
+policies above. `auth_rate_counters` holds fixed-window counters and has no tenant
+column at all. `content_store` holds curriculum content, not learner data, and
+finding #14 protects it with a revoke instead of a policy.
 
 The lists are literal in the migration. A migration describes the schema as of its
 own revision. A later tenant table needs its own `ENABLE`, `FORCE`, and policy in

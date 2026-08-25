@@ -1,0 +1,56 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n            SELECT t.tablename::text AS \"table_name!\",\n                   has_table_privilege('cadus_app', 'public.' || quote_ident(t.tablename),\n                                       'SELECT')   AS \"may_select!\",\n                   has_table_privilege('cadus_app', 'public.' || quote_ident(t.tablename),\n                                       'INSERT')   AS \"may_insert!\",\n                   has_table_privilege('cadus_app', 'public.' || quote_ident(t.tablename),\n                                       'UPDATE')   AS \"may_update!\",\n                   has_table_privilege('cadus_app', 'public.' || quote_ident(t.tablename),\n                                       'DELETE')   AS \"may_delete!\",\n                   has_table_privilege('cadus_app', 'public.' || quote_ident(t.tablename),\n                                       'TRUNCATE') AS \"may_truncate!\"\n            FROM pg_tables t\n            WHERE t.schemaname = 'public'\n            ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "table_name!",
+        "type_info": "Text",
+        "origin": "Expression"
+      },
+      {
+        "ordinal": 1,
+        "name": "may_select!",
+        "type_info": "Bool",
+        "origin": "Expression"
+      },
+      {
+        "ordinal": 2,
+        "name": "may_insert!",
+        "type_info": "Bool",
+        "origin": "Expression"
+      },
+      {
+        "ordinal": 3,
+        "name": "may_update!",
+        "type_info": "Bool",
+        "origin": "Expression"
+      },
+      {
+        "ordinal": 4,
+        "name": "may_delete!",
+        "type_info": "Bool",
+        "origin": "Expression"
+      },
+      {
+        "ordinal": 5,
+        "name": "may_truncate!",
+        "type_info": "Bool",
+        "origin": "Expression"
+      }
+    ],
+    "parameters": {
+      "Left": []
+    },
+    "nullable": [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ]
+  },
+  "hash": "7489b21e891f79ebd1e99d66b9576f6641653b38561a6dae4cfc042e2156fa87"
+}

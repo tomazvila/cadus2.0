@@ -1,0 +1,38 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n            SELECT c.relrowsecurity      AS \"rls_enabled!\",\n                   c.relforcerowsecurity AS \"rls_forced!\"\n            FROM pg_class c\n            JOIN pg_namespace n ON n.oid = c.relnamespace\n            WHERE n.nspname = 'public' AND c.relname = 'users'\n            ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "rls_enabled!",
+        "type_info": "Bool",
+        "origin": {
+          "Table": {
+            "table": "pg_class",
+            "name": "relrowsecurity"
+          }
+        }
+      },
+      {
+        "ordinal": 1,
+        "name": "rls_forced!",
+        "type_info": "Bool",
+        "origin": {
+          "Table": {
+            "table": "pg_class",
+            "name": "relforcerowsecurity"
+          }
+        }
+      }
+    ],
+    "parameters": {
+      "Left": []
+    },
+    "nullable": [
+      false,
+      false
+    ]
+  },
+  "hash": "38f0b6c5378c8b29ceff914d14c07b6894bfa47109c2245e7a64c81fd869c04f"
+}
