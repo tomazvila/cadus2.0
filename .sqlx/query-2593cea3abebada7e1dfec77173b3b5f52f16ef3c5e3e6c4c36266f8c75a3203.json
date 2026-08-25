@@ -1,0 +1,28 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        SELECT c.relname::text AS \"table_name!\",\n               p.polname::text AS \"policy_name!\"\n        FROM pg_policy p\n        JOIN pg_class c ON c.oid = p.polrelid\n        JOIN pg_namespace n ON n.oid = c.relnamespace\n        WHERE n.nspname = 'public'\n        ORDER BY c.relname, p.polname\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "table_name!",
+        "type_info": "Text",
+        "origin": "Expression"
+      },
+      {
+        "ordinal": 1,
+        "name": "policy_name!",
+        "type_info": "Text",
+        "origin": "Expression"
+      }
+    ],
+    "parameters": {
+      "Left": []
+    },
+    "nullable": [
+      null,
+      null
+    ]
+  },
+  "hash": "2593cea3abebada7e1dfec77173b3b5f52f16ef3c5e3e6c4c36266f8c75a3203"
+}

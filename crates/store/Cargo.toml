@@ -10,10 +10,27 @@ publish.workspace = true
 name = "cadus_store"
 path = "src/lib.rs"
 
+[[bin]]
+name = "cadus-migrate"
+path = "src/bin/cadus-migrate.rs"
+
 [dependencies]
 cadus-core = { workspace = true }
 sqlx = { workspace = true }
 tokio = { workspace = true }
+uuid = { workspace = true }
+thiserror = { workspace = true }
+tracing = { workspace = true }
+
+# `test-support` gates the throwaway-database helper. Production builds leave it
+# off, so no test code enters the runtime binaries.
+[features]
+test-support = []
+
+# The crate enables its own feature for its tests, so `tests/rls.rs` sees
+# `cadus_store::test_support`.
+[dev-dependencies]
+cadus-store = { path = ".", features = ["test-support"] }
 
 [lints]
 workspace = true
