@@ -19,12 +19,26 @@
 #   (c) binaries -- the three binaries of the Dockerfile exist in every image the
 #                   compose file builds. The image promise is one image and three
 #                   commands.
-#   (d) commands -- every `command:` binary of the compose file exists in the
-#                   image that runs it. `docker compose config` treats a
-#                   `command:` as opaque strings, so a renamed binary target
-#                   passed the old gate and gave the operator an
-#                   `exec: "cadus-webb": executable file not found in $PATH`
-#                   crash loop (finding #12).
+#   (d) commands -- the whole `command:` of every service that builds the app
+#                   image is correct. `docker compose config` treats a
+#                   `command:` as opaque strings, so the compose file itself
+#                   proves nothing. The check has three parts:
+#                     1. The service HAS a `command:`. Without one the container
+#                        runs the Dockerfile `CMD` (`cadus-web`), so a deleted
+#                        `command:` on `worker` starts a second web server on the
+#                        cadus_admin DSN, the C3 boot guard rejects the
+#                        BYPASSRLS role, and the container crash-loops
+#                        (finding #9).
+#                     2. The first token names one of the three binaries and
+#                        exists in the image. A renamed binary target gave the
+#                        operator an
+#                        `exec: "cadus-webb": executable file not found in $PATH`
+#                        crash loop (finding #12).
+#                     3. Every further token is in the allowlist of that binary
+#                        (ALLOWED_ARGUMENTS below). `cadus-migrate --admin-loginn`
+#                        prints its usage and exits 2, and `web` and `worker`
+#                        then never start, because both wait for
+#                        `service_completed_successfully` (finding #9).
 #   (e) deploy   -- scripts/deploy.sh exists, is executable, and parses. It is
 #                   THE upgrade procedure (finding #16), so a broken file must
 #                   fail the gate and not the operator's upgrade.
@@ -63,6 +77,16 @@ export CADUS_ADMIN_PASSWORD=x
 # The three binaries that the Dockerfile installs.
 BINARIES=(cadus-web cadus-worker cadus-migrate)
 
+# Check (d) part 3: the arguments that each binary accepts in a `command:`.
+# Keep this list literal. A binary with an empty value takes no argument at all.
+# `cadus-migrate` reads one flag (`--admin-login`); `cadus-web` and
+# `cadus-worker` read their whole configuration from the environment.
+declare -A ALLOWED_ARGUMENTS=(
+    [cadus-migrate]="--admin-login"
+    [cadus-web]=""
+    [cadus-worker]=""
+)
+
 rc=0
 
 # ---------------------------------------------------------------------------
@@ -97,8 +121,16 @@ fi
 # Read the plan out of the resolved compose file.
 #
 # `built_images` holds one image name per service with a `build:` section.
-# `service_commands` holds one `<image> <binary> <service>` line per service
-# with a `command:`.
+#
+# `service_commands` holds one line per service with a `build:` section, and one
+# for EVERY such service: a service that builds the app image but declares no
+# `command:` gets a line too. The old extractor skipped it, so a deleted
+# `command:` reported PASS (finding #9). The line is
+# `<image> <service> <status> [token ...]`, where <status> is:
+#   ok    -- the tokens after it are the whole `command:`
+#   none  -- the service declares no `command:`
+#   space -- a `command:` token is empty or holds a space, so the line below
+#            cannot carry it in a word-split field
 # ---------------------------------------------------------------------------
 read_plan() {
     printf '%s' "$config_json" | python3 -c '
@@ -112,16 +144,24 @@ project = doc.get("name", "")
 
 for name, service in sorted(doc.get("services", {}).items()):
     image = service.get("image") or "{}-{}".format(project, name)
+    if not service.get("build"):
+        # The app image is the image this repository builds. A service with no
+        # build section runs a third-party image (db, caddy) and keeps its own
+        # entrypoint.
+        continue
     if what == "images":
-        if service.get("build"):
-            print(image)
+        print(image)
         continue
     command = service.get("command")
-    if not command:
-        continue
     if isinstance(command, str):
         command = shlex.split(command)
-    print(image, command[0], name)
+    if not command:
+        print(image, name, "none")
+        continue
+    if any(len(str(token).split()) != 1 for token in command):
+        print(image, name, "space")
+        continue
+    print(image, name, "ok", *command)
 ' "$1"
 }
 
@@ -155,25 +195,63 @@ if [ "$binaries_ok" -eq 1 ]; then
 fi
 
 # ---------------------------------------------------------------------------
-# (d) every `command:` binary exists in the image that runs it
+# (d) every service that builds the app image runs a known binary with allowed
+#     arguments
 # ---------------------------------------------------------------------------
 commands_ok=1
 command_count=0
-while read -r image binary service; do
-    [ -n "$image" ] || continue
+while IFS= read -r line; do
+    [ -n "$line" ] || continue
+    read -r -a fields <<<"$line"
+    image="${fields[0]}"
+    service="${fields[1]}"
+    status="${fields[2]}"
     command_count=$((command_count + 1))
+
+    if [ "$status" = "none" ]; then
+        echo "FAIL: commands -- service $service builds the app image and declares no command:, so the container runs the Dockerfile CMD"
+        commands_ok=0
+        rc=1
+        continue
+    fi
+
+    if [ "$status" = "space" ]; then
+        echo "FAIL: commands -- service $service has an empty command: token, or one with a space in it"
+        commands_ok=0
+        rc=1
+        continue
+    fi
+
+    binary="${fields[3]}"
+    if [ -z "${ALLOWED_ARGUMENTS[$binary]+set}" ]; then
+        echo "FAIL: commands -- service $service runs \`$binary\`, which is not one of: ${BINARIES[*]}"
+        commands_ok=0
+        rc=1
+        continue
+    fi
+
     if ! docker run --rm --entrypoint sh "$image" -c 'command -v "$1"' sh "$binary" \
         >/dev/null 2>&1; then
         echo "FAIL: commands -- service $service runs \`$binary\`, which image $image does not carry"
         commands_ok=0
         rc=1
+        continue
     fi
+
+    allowed=" ${ALLOWED_ARGUMENTS[$binary]} "
+    for argument in "${fields[@]:4}"; do
+        if [[ "$allowed" != *" $argument "* ]]; then
+            echo "FAIL: commands -- service $service gives \`$binary\` the argument \`$argument\`; $binary takes: ${ALLOWED_ARGUMENTS[$binary]:-no argument}"
+            commands_ok=0
+            rc=1
+        fi
+    done
 done <<EOF
 $service_commands
 EOF
 
 if [ "$commands_ok" -eq 1 ]; then
-    echo "PASS: commands -- every command: binary exists in its image ($command_count checked)"
+    echo "PASS: commands -- every service that builds the app image runs a known binary with allowed arguments ($command_count checked)"
 fi
 
 # ---------------------------------------------------------------------------

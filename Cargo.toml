@@ -42,6 +42,11 @@ http-body-util = { version = "0.1.5" }
 # Development only. The core purity test parses Cargo.toml with it.
 toml = { version = "1.1.4" }
 
+# Development only. The R4 purity tests of `cadus-web` and `cadus-worker` read
+# the RESOLVED dependency graph with it. A manifest text tells one crate's own
+# tables; the resolved graph tells every crate that links into the binary.
+cargo_metadata = { version = "0.23.1" }
+
 # The gate runs clippy with `-D warnings`, so these lints block a merge.
 # Test code opts out with `#![cfg_attr(test, allow(...))]` in each crate root
 # and `#![allow(...)]` at the top of each integration test file.
