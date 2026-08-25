@@ -3,7 +3,10 @@
 --
 -- Roles are cluster-scoped, not database-scoped. A second database on the same
 -- cluster runs this migration again, so each CREATE ROLE has a pg_roles guard.
--- The guard makes the statement idempotent.
+-- The guard makes the statement idempotent. Two databases on one cluster run
+-- this migration at the same time in tests, so the EXCEPTION clause also
+-- absorbs the error of a lost race. Postgres reports it as duplicate_object or
+-- as unique_violation on pg_authid, so the clause names both.
 --
 -- Extensions:
 --   citext  -- case-folded email in users.email (1.0 lineage).
@@ -18,6 +21,7 @@ DO $$ BEGIN
   IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'cadus_owner') THEN
     CREATE ROLE cadus_owner NOLOGIN NOSUPERUSER;
   END IF;
+EXCEPTION WHEN duplicate_object OR unique_violation THEN NULL;
 END $$;
 
 -- cadus_app is the runtime role. RLS applies to it (NOSUPERUSER NOBYPASSRLS).
@@ -26,6 +30,7 @@ DO $$ BEGIN
   IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'cadus_app') THEN
     CREATE ROLE cadus_app LOGIN NOSUPERUSER NOBYPASSRLS NOCREATEDB NOCREATEROLE;
   END IF;
+EXCEPTION WHEN duplicate_object OR unique_violation THEN NULL;
 END $$;
 
 -- cadus_admin runs cross-tenant sweeps (worker queue drains, full replay).
@@ -34,6 +39,7 @@ DO $$ BEGIN
   IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'cadus_admin') THEN
     CREATE ROLE cadus_admin NOLOGIN NOSUPERUSER BYPASSRLS;
   END IF;
+EXCEPTION WHEN duplicate_object OR unique_violation THEN NULL;
 END $$;
 
 -- Make cadus_admin a member of cadus_app. The worker connects as cadus_admin for
