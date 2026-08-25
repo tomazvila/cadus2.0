@@ -1,0 +1,48 @@
+[workspace]
+resolver = "2"
+members = ["crates/*"]
+
+[workspace.package]
+edition = "2024"
+rust-version = "1.94"
+version = "0.1.0"
+license = "MIT OR Apache-2.0"
+publish = false
+
+[workspace.dependencies]
+cadus-core = { path = "crates/core" }
+cadus-store = { path = "crates/store" }
+
+tokio = { version = "1.53.1", features = ["full"] }
+axum = { version = "0.8.9" }
+sqlx = { version = "0.9.0", default-features = false, features = [
+    "runtime-tokio",
+    "tls-rustls",
+    "postgres",
+    "uuid",
+    "chrono",
+    "json",
+    "migrate",
+    "macros",
+] }
+serde = { version = "1.0.229", features = ["derive"] }
+serde_json = { version = "1.0.151" }
+uuid = { version = "1.25.0", features = ["v4", "serde"] }
+chrono = { version = "0.4.45", features = ["serde"] }
+tracing = { version = "0.1.44" }
+tracing-subscriber = { version = "0.3.23", features = ["env-filter"] }
+anyhow = { version = "1.0.104" }
+thiserror = { version = "2.0.20" }
+
+# Development only. The core purity test parses Cargo.toml with it.
+toml = { version = "1.1.4" }
+
+# The gate runs clippy with `-D warnings`, so these lints block a merge.
+# Test code opts out with `#![cfg_attr(test, allow(...))]` in each crate root
+# and `#![allow(...)]` at the top of each integration test file.
+[workspace.lints.clippy]
+unwrap_used = "warn"
+expect_used = "warn"
+panic = "warn"
+todo = "warn"
+unimplemented = "warn"
