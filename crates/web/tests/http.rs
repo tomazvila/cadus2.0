@@ -1,11 +1,14 @@
 //! Proof tests for the M0 HTTP surface and the C3 boot guard.
 //!
-//! Tests 1, 2, 3, and 6 drive the router and the guard in process. Tests 4 and
-//! 5 start the real binary as a child process, because an exit code and a
-//! signal handler exist only in a real process.
+//! Tests 1, 2, 3, and 6 drive the router and the guard in process. Tests 4, 5,
+//! 7, 8, and 9 start the real binary as a child process, because an exit code
+//! and a signal handler exist only in a real process.
 //!
 //! Every assertion names a literal value: a literal status code, literal body
 //! bytes, a literal role name, a literal exit code.
+//!
+//! Every child process gets `RUST_LOG=info`. An ambient `RUST_LOG` of the
+//! developer shell must not decide the result of a test (finding #12).
 
 #![allow(
     clippy::unwrap_used,
@@ -99,6 +102,37 @@ fn wait_for_exit(child: &mut Child, limit: Duration, what: &str) {
             }
         }
     }
+}
+
+/// Poll `/api/health` until the server answers, and return the answer.
+///
+/// The server needs a pool and a listener first, so the poll runs for at most
+/// 10 seconds. A child that ends early fails the test at once.
+fn wait_until_healthy(child: &mut Child, address: &str) -> (u16, String) {
+    let deadline = Instant::now() + Duration::from_secs(10);
+    while Instant::now() < deadline {
+        if let Some(early) = child.try_wait().expect("try_wait on the child") {
+            let _ = child.kill();
+            panic!("cadus-web exited early with {early:?}");
+        }
+        if let Some(result) = http_get(address, "/api/health") {
+            return result;
+        }
+        sleep(Duration::from_millis(100));
+    }
+    let _ = child.kill();
+    let _ = child.wait();
+    panic!("cadus-web did not answer /api/health within 10 s");
+}
+
+/// Send `SIGTERM` to one child process.
+fn send_sigterm(child: &Child) {
+    let killed = Command::new("kill")
+        .arg("-TERM")
+        .arg(child.id().to_string())
+        .status()
+        .expect("run kill");
+    assert_eq!(killed.code(), Some(0));
 }
 
 /// (1) `/api/health` answers 200 with exactly `{"ok":true}`.
@@ -198,6 +232,7 @@ async fn binary_exits_3_with_a_superuser_dsn() {
     let mut child = Command::new(env!("CARGO_BIN_EXE_cadus-web"))
         .env("DATABASE_URL", &dsn)
         .env("BIND_ADDR", "127.0.0.1:0")
+        .env("RUST_LOG", "info")
         .stdout(Stdio::piped())
         .stderr(Stdio::piped())
         .spawn()
@@ -228,44 +263,17 @@ async fn binary_serves_health_and_stops_on_sigterm() {
     let mut child = Command::new(env!("CARGO_BIN_EXE_cadus-web"))
         .env("DATABASE_URL", &dsn)
         .env("BIND_ADDR", &address)
+        .env("RUST_LOG", "info")
         .stdout(Stdio::piped())
         .stderr(Stdio::piped())
         .spawn()
         .expect("start cadus-web");
 
-    // Poll for at most 10 seconds. The server needs a pool and a listener
-    // first.
-    let deadline = Instant::now() + Duration::from_secs(10);
-    let mut answer = None;
-    while Instant::now() < deadline {
-        if let Some(early) = child.try_wait().expect("try_wait on the child") {
-            let _ = child.kill();
-            panic!("cadus-web exited early with {early:?}");
-        }
-        if let Some(result) = http_get(&address, "/api/health") {
-            answer = Some(result);
-            break;
-        }
-        sleep(Duration::from_millis(100));
-    }
-
-    let (code, body) = match answer {
-        Some(result) => result,
-        None => {
-            let _ = child.kill();
-            let _ = child.wait();
-            panic!("cadus-web did not answer /api/health within 10 s");
-        }
-    };
+    let (code, body) = wait_until_healthy(&mut child, &address);
     assert_eq!(code, 200);
     assert_eq!(body, "{\"ok\":true}");
 
-    let killed = Command::new("kill")
-        .arg("-TERM")
-        .arg(child.id().to_string())
-        .status()
-        .expect("run kill");
-    assert_eq!(killed.code(), Some(0));
+    send_sigterm(&child);
 
     wait_for_exit(&mut child, Duration::from_secs(5), "graceful shutdown");
     let output = child.wait_with_output().expect("collect the child output");
@@ -300,4 +308,109 @@ async fn ready_returns_503_on_a_closed_pool() {
     assert_eq!(&body[..], b"{\"ready\":false}");
 
     db.drop().await;
+}
+
+/// (7) A client that holds a half-sent request does not block the stop.
+///
+/// The client sends a request line and one header, and never sends the empty
+/// line that ends the headers. The drain of `axum::serve` waits for that
+/// connection, so without a deadline the process never exits and the container
+/// runtime kills it (finding #9). `SHUTDOWN_DEADLINE_SECS=1` bounds the drain.
+#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+async fn binary_exits_zero_with_a_half_sent_request_open() {
+    let db = TestDb::create().await;
+    let dsn = dsn_for(&db.name, Some("cadus_app"));
+    let port = free_port();
+    let address = format!("127.0.0.1:{port}");
+
+    let mut child = Command::new(env!("CARGO_BIN_EXE_cadus-web"))
+        .env("DATABASE_URL", &dsn)
+        .env("BIND_ADDR", &address)
+        .env("SHUTDOWN_DEADLINE_SECS", "1")
+        .env("RUST_LOG", "info")
+        .stdout(Stdio::piped())
+        .stderr(Stdio::piped())
+        .spawn()
+        .expect("start cadus-web");
+
+    let (code, _body) = wait_until_healthy(&mut child, &address);
+    assert_eq!(code, 200);
+
+    // The half-sent request. The connection stays open for the whole test.
+    let mut stalled = TcpStream::connect(&address).expect("open the stalled connection");
+    write!(stalled, "GET /api/health HTTP/1.1\r\nHost: {address}\r\n")
+        .expect("send half of a request");
+    stalled.flush().expect("flush the stalled connection");
+
+    send_sigterm(&child);
+
+    wait_for_exit(&mut child, Duration::from_secs(15), "bounded shutdown");
+    let output = child.wait_with_output().expect("collect the child output");
+    let stderr = String::from_utf8_lossy(&output.stderr);
+    assert_eq!(
+        output.status.code(),
+        Some(0),
+        "the server must exit 0 at the shutdown deadline; stderr:\n{stderr}"
+    );
+
+    drop(stalled);
+    db.drop().await;
+}
+
+/// (8) An absent `DATABASE_URL` is a start error: exit code exactly 2.
+///
+/// The module header documents "2 for a start error" and no test covered it
+/// (finding #42).
+#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+async fn binary_exits_2_without_a_database_url() {
+    let mut child = Command::new(env!("CARGO_BIN_EXE_cadus-web"))
+        .env_remove("DATABASE_URL")
+        .env("BIND_ADDR", "127.0.0.1:0")
+        .env("RUST_LOG", "info")
+        .stdout(Stdio::piped())
+        .stderr(Stdio::piped())
+        .spawn()
+        .expect("start cadus-web");
+
+    wait_for_exit(&mut child, Duration::from_secs(10), "start error");
+    let output = child.wait_with_output().expect("collect the child output");
+
+    assert_eq!(output.status.code(), Some(2));
+    let stderr = String::from_utf8_lossy(&output.stderr);
+    assert!(
+        stderr.contains("DATABASE_URL"),
+        "stderr does not name the variable: {stderr}"
+    );
+}
+
+/// (9) A `BIND_ADDR` that is not valid Unicode is a start error, not a silent
+/// fall back to `0.0.0.0:8080` (finding #31).
+///
+/// The value below holds the byte `0xff`, which is not valid UTF-8. The
+/// configuration check runs before the database connect, so the unreachable DSN
+/// below costs the test no time.
+#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+async fn binary_exits_2_with_a_bind_addr_that_is_not_unicode() {
+    use std::ffi::OsStr;
+    use std::os::unix::ffi::OsStrExt;
+
+    let broken = OsStr::from_bytes(b"127.0.0.1:19099\xff");
+    let mut child = Command::new(env!("CARGO_BIN_EXE_cadus-web"))
+        .env("DATABASE_URL", "postgresql://nobody@127.0.0.1:1/nodb")
+        .env("BIND_ADDR", broken)
+        .env("RUST_LOG", "info")
+        .stdout(Stdio::piped())
+        .stderr(Stdio::piped())
+        .spawn()
+        .expect("start cadus-web");
+
+    wait_for_exit(&mut child, Duration::from_secs(10), "bad BIND_ADDR");
+    let output = child.wait_with_output().expect("collect the child output");
+
+    assert_eq!(output.status.code(), Some(2));
+    let stderr = String::from_utf8_lossy(&output.stderr);
+    assert!(
+        stderr.contains("BIND_ADDR"),
+        "stderr does not name the variable: {stderr}"
+    );
 }

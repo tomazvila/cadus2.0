@@ -1,8 +1,12 @@
 //! Entry point of the Cadus background worker (R4).
 //!
-//! The program reads `DATABASE_URL`, opens a pool, logs the identity of its
-//! database role, and runs the tick loop until SIGTERM or Ctrl-C. It exits 0
-//! after a clean stop and 2 after an error.
+//! The program reads `DATABASE_URL` and `WORKER_TICK_SECS`, installs the stop
+//! signals, opens a pool, logs the identity of its database role, and runs the
+//! tick loop until SIGTERM or SIGINT. It exits 0 after a clean stop and 2 after
+//! an error.
+//!
+//! The signal handlers exist before the pool opens, so a signal during the
+//! connect also gives exit code 0.
 
 use std::process::ExitCode;
 
@@ -39,7 +43,20 @@ fn init_tracing() {
 async fn run() -> Result<u64, WorkerError> {
     let db = DbConfig::from_env()?;
     let cfg = WorkerConfig::from_env()?;
-    let pool = cadus_store::connect(&db).await?;
+
+    // Install the stop signals before the connect. The handlers exist from this
+    // point, so a SIGTERM during the connect gives exit code 0 instead of a kill
+    // by signal (finding #39).
+    let mut shutdown = Shutdown::install()?;
+
+    let pool = tokio::select! {
+        biased;
+        () = shutdown.wait() => {
+            tracing::info!("cadus-worker: the stop signal came before the database connect");
+            return Ok(0);
+        }
+        result = cadus_store::connect(&db) => result?,
+    };
 
     // The worker connects as `cadus_admin`. That role holds BYPASSRLS by design:
     // it claims `diagnosis_jobs` and refills `serving_pool` across every tenant,
@@ -55,37 +72,69 @@ async fn run() -> Result<u64, WorkerError> {
         "cadus-worker: database role"
     );
 
-    let ticks = cadus_worker::run(&pool, &cfg, shutdown_signal()).await?;
+    let ticks = cadus_worker::run(&pool, &cfg, shutdown.wait()).await?;
     pool.close().await;
     Ok(ticks)
 }
 
-/// Complete on SIGTERM or on Ctrl-C. `docker stop` sends SIGTERM, so this is the
-/// normal stop path of the deployment.
-async fn shutdown_signal() {
-    let ctrl_c = async {
-        if tokio::signal::ctrl_c().await.is_err() {
-            std::future::pending::<()>().await;
-        }
-    };
-
+/// The installed stop signals of the process.
+///
+/// `install` registers the handlers at once, so a signal from that moment on
+/// reaches the program. `wait` completes on the first signal. `docker stop`
+/// sends SIGTERM, so that is the normal stop path of the deployment.
+struct Shutdown {
     #[cfg(unix)]
-    let terminate = async {
+    terminate: tokio::signal::unix::Signal,
+    #[cfg(unix)]
+    interrupt: tokio::signal::unix::Signal,
+}
+
+impl Shutdown {
+    /// Register the handlers for `SIGTERM` and `SIGINT`.
+    #[cfg(unix)]
+    fn install() -> Result<Self, WorkerError> {
         use tokio::signal::unix::{SignalKind, signal};
-        match signal(SignalKind::terminate()) {
-            Ok(mut stream) => {
-                stream.recv().await;
-            }
-            // The handler did not install. Leave the Ctrl-C branch to stop us.
-            Err(_) => std::future::pending::<()>().await,
-        }
-    };
 
+        let terminate = signal(SignalKind::terminate())
+            .map_err(|err| WorkerError::Signal(format!("the SIGTERM handler failed: {err}")))?;
+        let interrupt = signal(SignalKind::interrupt())
+            .map_err(|err| WorkerError::Signal(format!("the SIGINT handler failed: {err}")))?;
+        Ok(Self {
+            terminate,
+            interrupt,
+        })
+    }
+
+    /// A platform without unix signals has nothing to register here.
     #[cfg(not(unix))]
-    let terminate = std::future::pending::<()>();
+    fn install() -> Result<Self, WorkerError> {
+        Ok(Self {})
+    }
 
-    tokio::select! {
-        _ = ctrl_c => tracing::info!("cadus-worker: Ctrl-C received"),
-        _ = terminate => tracing::info!("cadus-worker: SIGTERM received"),
+    /// Complete on the first `SIGTERM` or `SIGINT`.
+    #[cfg(unix)]
+    async fn wait(&mut self) {
+        let Self {
+            terminate,
+            interrupt,
+        } = self;
+        tokio::select! {
+            _ = terminate.recv() => tracing::info!("cadus-worker: SIGTERM received"),
+            _ = interrupt.recv() => tracing::info!("cadus-worker: SIGINT received"),
+        }
+    }
+
+    /// Complete on Ctrl-C. A platform without unix signals has no `SIGTERM`.
+    #[cfg(not(unix))]
+    async fn wait(&mut self) {
+        match tokio::signal::ctrl_c().await {
+            Ok(()) => tracing::info!("cadus-worker: Ctrl-C received"),
+            Err(err) => {
+                tracing::error!(error = %err, "cadus-worker: the Ctrl-C handler failed");
+                // The handler is gone. Park here, so the loop keeps running
+                // instead of a stop at once.
+                std::future::pending::<()>().await;
+            }
+        }
     }
 }

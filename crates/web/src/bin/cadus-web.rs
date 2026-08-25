@@ -3,24 +3,41 @@
 //! The start sequence is:
 //!
 //! 1. Start the tracing subscriber. `RUST_LOG` selects the level.
-//! 2. Read `DATABASE_URL` and open the connection pool.
-//! 3. Run the C3 boot guard. A role that bypasses row-level security stops the
+//! 2. Read `DATABASE_URL`, `BIND_ADDR` (default `0.0.0.0:8080`), and
+//!    `SHUTDOWN_DEADLINE_SECS` (default 10).
+//! 3. Install the stop signals. The handlers exist before the pool opens, so a
+//!    signal during the connect gives a clean stop.
+//! 4. Open the connection pool.
+//! 5. Run the C3 boot guard. A role that bypasses row-level security stops the
 //!    process with exit code 3.
-//! 4. Bind `BIND_ADDR` (default `0.0.0.0:8080`) and serve.
-//! 5. Stop on `SIGTERM` or `Ctrl-C`, let the open requests finish, and exit 0.
+//! 6. Bind the address and serve.
+//! 7. Stop on `SIGTERM` or `SIGINT`, let the open requests finish, and exit 0.
+//!    The drain has a deadline: at the deadline the process closes the open
+//!    connections and still exits 0.
 //!
 //! Exit codes: 0 for a clean stop, 2 for a start error, 3 for the boot guard.
 
+use std::future::IntoFuture;
 use std::net::SocketAddr;
 use std::process::ExitCode;
+use std::time::Duration;
 
 use cadus_store::{DbConfig, StoreError};
 use cadus_web::{AppState, router};
 use tokio::net::TcpListener;
 use tracing_subscriber::EnvFilter;
 
+/// The environment variable that holds the listen address.
+const BIND_ADDR_VAR: &str = "BIND_ADDR";
+
 /// The address to bind when `BIND_ADDR` is absent.
 const DEFAULT_BIND_ADDR: &str = "0.0.0.0:8080";
+
+/// The environment variable that bounds the drain after the stop signal.
+const SHUTDOWN_DEADLINE_VAR: &str = "SHUTDOWN_DEADLINE_SECS";
+
+/// The drain deadline in seconds when `SHUTDOWN_DEADLINE_SECS` is absent.
+const DEFAULT_SHUTDOWN_DEADLINE_SECS: u64 = 10;
 
 /// The reason that stops the start sequence.
 enum Fatal {
@@ -41,10 +58,12 @@ async fn main() -> ExitCode {
         }
         Err(Fatal::RlsBypass { role }) => {
             tracing::error!("refusing to start: role {role} bypasses RLS");
+            eprintln!("cadus-web: refusing to start: role {role} bypasses RLS");
             ExitCode::from(3)
         }
         Err(Fatal::Startup(message)) => {
             tracing::error!("cadus-web: {message}");
+            eprintln!("cadus-web: {message}");
             ExitCode::from(2)
         }
     }
@@ -61,9 +80,26 @@ fn init_tracing() {
 
 async fn run() -> Result<(), Fatal> {
     let cfg = DbConfig::from_env().map_err(|err| Fatal::Startup(err.to_string()))?;
-    let pool = cadus_store::connect(&cfg)
-        .await
-        .map_err(|err| Fatal::Startup(err.to_string()))?;
+    // Read every configuration value before the pool opens. A bad value then
+    // stops the process at once instead of after the connect timeout.
+    let addr = bind_addr()?;
+    let deadline = shutdown_deadline()?;
+
+    // Install the stop signals before the connect. The handlers exist from this
+    // point, so a SIGTERM during the connect gives exit code 0 instead of a kill
+    // by signal (finding #39).
+    let mut shutdown = Shutdown::install()?;
+
+    let pool = tokio::select! {
+        biased;
+        () = shutdown.wait() => {
+            tracing::info!("cadus-web: the stop signal came before the database connect");
+            return Ok(());
+        }
+        result = cadus_store::connect(&cfg) => {
+            result.map_err(|err| Fatal::Startup(err.to_string()))?
+        }
+    };
 
     // C3: stop here if row-level security does not apply to this role.
     match cadus_web::boot_check(&pool).await {
@@ -72,7 +108,6 @@ async fn run() -> Result<(), Fatal> {
         Err(err) => return Err(Fatal::Startup(err.to_string())),
     }
 
-    let addr = bind_addr()?;
     let listener = TcpListener::bind(addr)
         .await
         .map_err(|err| Fatal::Startup(format!("bind {addr} failed: {err}")))?;
@@ -82,59 +117,153 @@ async fn run() -> Result<(), Fatal> {
     tracing::info!(address = %local, "cadus-web: listening");
 
     let app = router(AppState { pool: pool.clone() });
-    let result = axum::serve(listener, app)
-        .with_graceful_shutdown(shutdown_signal())
-        .await;
+
+    // `fired_rx` reports the moment of the stop signal, so the deadline below
+    // starts at the signal and not at the start of the process.
+    let (fired_tx, fired_rx) = tokio::sync::oneshot::channel::<()>();
+    let server = axum::serve(listener, app)
+        .with_graceful_shutdown(async move {
+            let mut shutdown = shutdown;
+            shutdown.wait().await;
+            tracing::info!("cadus-web: graceful shutdown starts");
+            let _ = fired_tx.send(());
+        })
+        .into_future();
+    let mut server = std::pin::pin!(server);
+
+    // The drain has a deadline. Without one, a client that opened a request and
+    // never finished the headers keeps the process alive without end, and the
+    // container runtime kills it (finding #9).
+    let result = tokio::select! {
+        outcome = &mut server => outcome,
+        _ = fired_rx => match tokio::time::timeout(deadline, &mut server).await {
+            Ok(outcome) => outcome,
+            Err(_elapsed) => {
+                tracing::info!("shutdown deadline reached; closing");
+                Ok(())
+            }
+        },
+    };
 
     pool.close().await;
     result.map_err(|err| Fatal::Startup(format!("serve failed: {err}")))
 }
 
 /// Read `BIND_ADDR`, or use the default.
+///
+/// A value that is not valid Unicode is a start error. The old code sent that
+/// value to the default and bound every interface without a word (finding #31).
 fn bind_addr() -> Result<SocketAddr, Fatal> {
-    let raw = std::env::var("BIND_ADDR").unwrap_or_else(|_| DEFAULT_BIND_ADDR.to_string());
-    raw.parse()
-        .map_err(|err| Fatal::Startup(format!("BIND_ADDR {raw} is not a socket address: {err}")))
+    let raw = match std::env::var(BIND_ADDR_VAR) {
+        Ok(raw) => raw,
+        Err(std::env::VarError::NotPresent) => DEFAULT_BIND_ADDR.to_string(),
+        Err(std::env::VarError::NotUnicode(_)) => {
+            return Err(Fatal::Startup(format!(
+                "{BIND_ADDR_VAR} is not valid Unicode"
+            )));
+        }
+    };
+    raw.parse().map_err(|err| {
+        Fatal::Startup(format!(
+            "{BIND_ADDR_VAR} {raw} is not a socket address: {err}"
+        ))
+    })
 }
 
-/// Wait for `SIGTERM` or `Ctrl-C`.
+/// Read `SHUTDOWN_DEADLINE_SECS`, or use the default of 10 seconds.
 ///
-/// The function returns on the first of the two signals. `axum::serve` then
-/// stops the accept loop and lets the open requests finish.
-async fn shutdown_signal() {
-    let ctrl_c = async {
+/// A present value that is not a positive whole number of seconds is a start
+/// error, because a silent fallback hides an operator mistake.
+fn shutdown_deadline() -> Result<Duration, Fatal> {
+    let raw = match std::env::var(SHUTDOWN_DEADLINE_VAR) {
+        Ok(raw) => raw,
+        Err(std::env::VarError::NotPresent) => {
+            return Ok(Duration::from_secs(DEFAULT_SHUTDOWN_DEADLINE_SECS));
+        }
+        Err(std::env::VarError::NotUnicode(_)) => {
+            return Err(Fatal::Startup(format!(
+                "{SHUTDOWN_DEADLINE_VAR} is not valid Unicode"
+            )));
+        }
+    };
+
+    let trimmed = raw.trim();
+    if trimmed.is_empty() {
+        return Err(Fatal::Startup(format!(
+            "{SHUTDOWN_DEADLINE_VAR} is empty; give a whole number of seconds or remove the \
+             variable"
+        )));
+    }
+    let secs: u64 = trimmed.parse().map_err(|_| {
+        Fatal::Startup(format!(
+            "{SHUTDOWN_DEADLINE_VAR} must be a whole number of seconds, not {trimmed:?}"
+        ))
+    })?;
+    if secs == 0 {
+        return Err(Fatal::Startup(format!(
+            "{SHUTDOWN_DEADLINE_VAR} must be 1 or more"
+        )));
+    }
+    Ok(Duration::from_secs(secs))
+}
+
+/// The installed stop signals of the process.
+///
+/// `install` registers the handlers at once, so a signal from that moment on
+/// reaches the program. `wait` completes on the first signal.
+struct Shutdown {
+    #[cfg(unix)]
+    terminate: tokio::signal::unix::Signal,
+    #[cfg(unix)]
+    interrupt: tokio::signal::unix::Signal,
+}
+
+impl Shutdown {
+    /// Register the handlers for `SIGTERM` and `SIGINT`.
+    #[cfg(unix)]
+    fn install() -> Result<Self, Fatal> {
+        use tokio::signal::unix::{SignalKind, signal};
+
+        let terminate = signal(SignalKind::terminate())
+            .map_err(|err| Fatal::Startup(format!("the SIGTERM handler failed: {err}")))?;
+        let interrupt = signal(SignalKind::interrupt())
+            .map_err(|err| Fatal::Startup(format!("the SIGINT handler failed: {err}")))?;
+        Ok(Self {
+            terminate,
+            interrupt,
+        })
+    }
+
+    /// A platform without unix signals has nothing to register here.
+    #[cfg(not(unix))]
+    fn install() -> Result<Self, Fatal> {
+        Ok(Self {})
+    }
+
+    /// Complete on the first `SIGTERM` or `SIGINT`.
+    #[cfg(unix)]
+    async fn wait(&mut self) {
+        let Self {
+            terminate,
+            interrupt,
+        } = self;
+        tokio::select! {
+            _ = terminate.recv() => tracing::info!("cadus-web: SIGTERM received"),
+            _ = interrupt.recv() => tracing::info!("cadus-web: SIGINT received"),
+        }
+    }
+
+    /// Complete on Ctrl-C. A platform without unix signals has no `SIGTERM`.
+    #[cfg(not(unix))]
+    async fn wait(&mut self) {
         match tokio::signal::ctrl_c().await {
             Ok(()) => tracing::info!("cadus-web: Ctrl-C received"),
             Err(err) => {
                 tracing::error!(error = %err, "cadus-web: the Ctrl-C handler failed");
-                // The handler is gone. Park this branch, so the SIGTERM branch
-                // stays in charge instead of an immediate shutdown.
+                // The handler is gone. Park here, so the process keeps serving
+                // instead of a stop at once.
                 std::future::pending::<()>().await;
             }
         }
-    };
-
-    #[cfg(unix)]
-    let terminate = async {
-        match tokio::signal::unix::signal(tokio::signal::unix::SignalKind::terminate()) {
-            Ok(mut stream) => {
-                stream.recv().await;
-                tracing::info!("cadus-web: SIGTERM received");
-            }
-            Err(err) => {
-                tracing::error!(error = %err, "cadus-web: the SIGTERM handler failed");
-                std::future::pending::<()>().await;
-            }
-        }
-    };
-
-    #[cfg(not(unix))]
-    let terminate = std::future::pending::<()>();
-
-    tokio::select! {
-        () = ctrl_c => {}
-        () = terminate => {}
     }
-
-    tracing::info!("cadus-web: graceful shutdown starts");
 }
