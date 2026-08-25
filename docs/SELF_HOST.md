@@ -5,24 +5,37 @@ One server, one `docker compose` stack. No cloud vendor, no managed service.
 ## Bring-up
 
 1. Install Docker Engine with the Compose plugin, then clone this repository.
-2. `cp .env.example .env`, and set `SITE_ADDRESS` to your domain. Use `:80` for
-   an http-only test on a bare IP. `SITE_ADDRESS` has no default: every
-   `docker compose` command fails with `required variable SITE_ADDRESS is
-   missing a value` until you set it. A silent http-only fallback on a domain
-   that the operator believes is on HTTPS is worse than a loud stop.
-3. For a domain, point its DNS record at this server and open ports 80 and 443.
+2. `cp .env.example .env`. The copied file carries `SITE_ADDRESS=:80`, which
+   serves http only and suits a test on a bare IP. For a real site, set
+   `SITE_ADDRESS` to your domain. Every key in the `Required` block of `.env`
+   has no default: each `docker compose` command fails with
+   `required variable <KEY> is missing a value` until you set the key. A silent
+   fallback on a domain that the operator believes is on HTTPS is worse than a
+   loud stop.
+3. Set the three passwords in `.env`. Generate each one separately:
+   ```sh
+   openssl rand -hex 24
+   ```
+   `POSTGRES_PASSWORD` is the superuser password. `CADUS_APP_PASSWORD` and
+   `CADUS_ADMIN_PASSWORD` are the passwords of the two runtime roles. Hex output
+   needs no percent-encoding inside a DSN.
+4. For a domain, point its DNS record at this server and open ports 80 and 443.
    Caddy then gets a Let's Encrypt certificate by itself.
-4. `docker compose up -d --build`
-5. Do a check of the bring-up:
+5. `docker compose up -d --build`
+6. Do a check of the bring-up:
    ```sh
    docker compose ps            # db healthy, migrate exited 0, web and worker up
    docker compose logs migrate  # every migration applied, or nothing to apply
-   docker compose exec web curl -fsS http://127.0.0.1:8080/api/health
+   docker compose logs web      # the line `listening on` means the server is up
+   curl -fsS http://localhost/api/health   # from the host, through Caddy
    ```
+   Run the `curl` command on the host, not in a container: the runtime image
+   carries no `curl` and no `wget`. For a domain in `SITE_ADDRESS`, replace
+   `http://localhost` with `https://<your domain>`.
 
 `migrate` is a one-shot: it runs `cadus-migrate --admin-login` and exits. `web`
 and `worker` start only after it exits 0, so the schema is never behind the
-code. To upgrade, pull the new commit and run step 4 again; the migrate step
+code. To upgrade, pull the new commit and run step 5 again; the migrate step
 applies only what is new.
 
 ## The role model (C3)
@@ -45,28 +58,55 @@ table carries `FORCE ROW LEVEL SECURITY` and the `tenant_isolation` policy, so
 whose role bypasses RLS — never point `web` at the superuser DSN.
 
 `cadus_admin` is `NOLOGIN` in the schema, because a `BYPASSRLS` login is a
-deployment decision. The `migrate` service therefore runs one more statement
-after the migrations: `ALTER ROLE cadus_admin LOGIN`. The `--admin-login` flag
-of `cadus-migrate` runs it, so the runtime image carries no `psql` and no other
-database client. It is idempotent. `cadus-migrate` with any other argument
-prints its usage and exits 2. The worker does `SET ROLE cadus_app` inside each
-per-tenant unit of work, so RLS stays a backstop there.
+deployment decision. The `migrate` service therefore runs three more statements
+after the migrations: `ALTER ROLE cadus_app PASSWORD ...`,
+`ALTER ROLE cadus_admin PASSWORD ...`, and `ALTER ROLE cadus_admin LOGIN`. The
+`--admin-login` flag of `cadus-migrate` runs them from `CADUS_APP_PASSWORD` and
+`CADUS_ADMIN_PASSWORD`, so the runtime image carries no `psql` and no other
+database client. A migration holds no password, because a password is
+deployment state, not a schema fact. Every statement is idempotent, so a re-run
+is a no-op and a changed password in `.env` reaches the database on the next
+`docker compose up -d`. `cadus-migrate` with any other argument prints its
+usage and exits 2.
+
+In M0 the worker process holds `BYPASSRLS` for its whole life. It runs no
+`SET ROLE`, so RLS is not a backstop inside the worker. The M0 worker writes no
+tenant row: it ticks and runs a heartbeat query. The per-tenant `SET ROLE
+cadus_app` lands with M5, together with the first cross-tenant sweep. Until
+then, treat every worker statement as cross-tenant by default and do a review of
+each new one for its tenant predicate.
 
 The database publishes no port and sits on the private `backend` network. Caddy
-sits on `frontend` only and has no route to it. `trust` auth is safe on that
-segment, so no DSN carries a password.
+sits on `frontend` only and has no route to it. The network segment is not the
+only control: every DSN carries a password, and the `db` service runs without
+`POSTGRES_HOST_AUTH_METHOD: trust`. Trust auth accepts every process that
+reaches the port, and a container network is not an authentication boundary.
 
 ## Where the budgets are checked
 
 - **The gate.** `scripts/gate.sh` runs fmt, clippy with `-D warnings`, the tests,
-  `cargo sqlx prepare --check`, and `scripts/check_migrations.sh`. It is the
-  merge gate on a laptop and in CI (`.github/workflows/ci.yml`, every push and
-  pull request).
+  `cargo sqlx prepare --check`, `scripts/check_migrations.sh`, and
+  `scripts/check_ops.sh`. It is the merge gate on a laptop and in CI
+  (`.github/workflows/ci.yml`, every push and pull request). It needs
+  `CADUS_TEST_DATABASE_URL` and `docker`: it exits 2 and runs no check when the
+  variable is unset, and it fails with `GATE FAILED: docker is required` when
+  docker is absent. See `README.md` for the one-time database setup.
 - **Migration discipline (D9).** `scripts/check_migrations.sh` proves the file
-  names run `0001`, `0002`, ... with no gap, that a fresh database takes every
-  migration, and that a second run applies nothing.
+  names run `0001`, `0002`, ... with no gap, that every shipped migration still
+  matches `migrations/CHECKSUMS`, that a fresh database takes every migration,
+  and that a second run applies nothing. Migrations are forward-only: an edit to
+  a file that a deployment already applied stops the `migrate` service on the
+  next upgrade, so the checksum record fails the gate first.
+- **The ops surface (U6).** `scripts/check_ops.sh` runs `docker compose config`
+  on `docker-compose.yml` and builds the image from `Dockerfile`. A renamed
+  binary target or a broken compose key then fails the gate instead of the
+  operator's next bring-up.
 - **Latency and token budgets (L\*, T\*).** The benchmarks land with M4 and M5
   and run in the same gate job. Model calls run in the worker (R4); a change that
   puts one on a request path does not merge.
-- **Runtime.** `/api/ready` reports datastore and worker state. Caddy 404s it at
-  the edge on purpose; scrape it over the compose network at `web:8080`.
+- **Runtime.** `/api/ready` runs one `SELECT 1` through the web pool. It reports
+  the datastore only, and it reports nothing about `cadus-worker`: a 200 from
+  `/api/ready` is no proof that the async layer runs. M0 gives the worker no
+  monitoring endpoint; read `docker compose logs worker` instead. Caddy 404s
+  `/api/ready` at the edge on purpose; scrape it over the compose network at
+  `web:8080`.

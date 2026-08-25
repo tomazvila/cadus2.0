@@ -4,14 +4,16 @@
 #                                                   and 443 and point the DNS
 #                                                   record at this server.
 #   :80                                          -> http only, for a test on a
-#                                                   bare IP. This is the default.
+#                                                   bare IP. .env.example ships
+#                                                   this value.
 {$SITE_ADDRESS} {
 	encode zstd gzip
 
-	# Operational endpoints stay off the internet. /api/ready reports datastore
-	# and worker state. Scrape it over the compose network (web:8080), never
-	# through Caddy. The container liveness probe uses /api/health, so a 404 at
-	# the edge breaks nothing.
+	# Operational endpoints stay off the internet. /api/ready runs one SELECT 1
+	# through the web pool: it reports the datastore only. It reports nothing
+	# about cadus-worker. Scrape it over the compose network (web:8080), never
+	# through Caddy. /api/health stays reachable at the edge, so a 404 here
+	# breaks no bring-up check.
 	@ops path /api/ready /metrics /metrics/*
 	handle @ops {
 		respond 404

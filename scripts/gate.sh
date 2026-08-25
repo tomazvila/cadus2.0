@@ -1,5 +1,16 @@
 #!/usr/bin/env bash
 # Cadus 2.0 merge gate. Run it from any directory. It fails on the first failed step.
+#
+# Before the first run, create the gate database and apply the migrations to it.
+# `cargo sqlx prepare --check` compiles the query macros against that database,
+# so an empty database fails the run with `relation "users" does not exist`:
+#
+#   export DATABASE_URL=postgresql://test:test@127.0.0.1:55434/cadus2_gate
+#   cargo sqlx database create
+#   cargo sqlx migrate run          # from the repository root
+#   CADUS_TEST_DATABASE_URL="$DATABASE_URL" scripts/gate.sh
+#
+# Repeat `cargo sqlx migrate run` after every new migration.
 set -euo pipefail
 
 # Put the project toolchain first, if it is installed on this machine.
@@ -35,14 +46,38 @@ cargo test --workspace
 echo "== cargo sqlx prepare --check --workspace -- --all-targets"
 DATABASE_URL="$CADUS_TEST_DATABASE_URL" cargo sqlx prepare --check --workspace -- --all-targets
 
+# A missing check script is a failure, not a skip. The same rule as the unset
+# DSN above: the gate runs every check or it fails.
+if [ ! -f scripts/check_migrations.sh ]; then
+    echo "GATE FAILED: scripts/check_migrations.sh is missing"
+    exit 2
+fi
+
+echo "== scripts/check_migrations.sh"
 if [ -x scripts/check_migrations.sh ]; then
-    echo "== scripts/check_migrations.sh"
     DATABASE_URL="$CADUS_TEST_DATABASE_URL" scripts/check_migrations.sh
-elif [ -f scripts/check_migrations.sh ]; then
-    echo "== scripts/check_migrations.sh"
-    DATABASE_URL="$CADUS_TEST_DATABASE_URL" bash scripts/check_migrations.sh
 else
-    echo "SKIPPED: scripts/check_migrations.sh (file does not exist)"
+    DATABASE_URL="$CADUS_TEST_DATABASE_URL" bash scripts/check_migrations.sh
+fi
+
+# The ops surface is the last step: it builds the image, and the build takes the
+# most time. docs/plans/M0.md makes `docker compose config` and the image build
+# the acceptance check of U6, so the gate runs both.
+if ! command -v docker >/dev/null 2>&1; then
+    echo "GATE FAILED: docker is required"
+    exit 2
+fi
+
+if [ ! -f scripts/check_ops.sh ]; then
+    echo "GATE FAILED: scripts/check_ops.sh is missing"
+    exit 2
+fi
+
+echo "== scripts/check_ops.sh"
+if [ -x scripts/check_ops.sh ]; then
+    scripts/check_ops.sh
+else
+    bash scripts/check_ops.sh
 fi
 
 echo "GATE OK"
