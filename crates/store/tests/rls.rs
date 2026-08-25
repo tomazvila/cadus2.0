@@ -42,6 +42,13 @@ const EXEMPT_TABLES: [&str; 6] = [
     "oauth_accounts",
 ];
 
+/// The literal text of the `tenant_isolation` predicate, as Postgres prints it
+/// from the catalog. Both `USING` and `WITH CHECK` carry this text on all 10
+/// policies. The literal pins the `nullif` guard and the `true` missing-ok flag,
+/// so an edit of `migrations/0006_grants_rls.sql` cannot pass in silence (C3).
+const POLICY_PREDICATE: &str =
+    "(user_id = (NULLIF(current_setting('app.user_id'::text, true), ''::text))::uuid)";
+
 /// Return the SQLSTATE of a database error, or a message that names the miss.
 fn sqlstate(err: &sqlx::Error) -> String {
     match err.as_database_error().and_then(|db| db.code()) {
@@ -218,7 +225,9 @@ async fn rls_coverage_is_the_literal_list() {
     let policies = sqlx::query!(
         r#"
         SELECT c.relname::text AS "table_name!",
-               p.polname::text AS "policy_name!"
+               p.polname::text AS "policy_name!",
+               pg_get_expr(p.polqual, p.polrelid)      AS "using_expr?",
+               pg_get_expr(p.polwithcheck, p.polrelid) AS "with_check_expr?"
         FROM pg_policy p
         JOIN pg_class c ON c.oid = p.polrelid
         JOIN pg_namespace n ON n.oid = c.relnamespace
@@ -240,6 +249,25 @@ async fn rls_coverage_is_the_literal_list() {
         .collect();
     assert_eq!(found, expected);
 
+    // Pin the text of every policy, not only its name. A migration that keeps
+    // the name `tenant_isolation` and drops the WITH CHECK clause, or that
+    // drops the nullif guard, fails here.
+    assert_eq!(policies.len(), 10);
+    for row in &policies {
+        assert_eq!(
+            row.using_expr.as_deref(),
+            Some(POLICY_PREDICATE),
+            "USING expression on {}",
+            row.table_name
+        );
+        assert_eq!(
+            row.with_check_expr.as_deref(),
+            Some(POLICY_PREDICATE),
+            "WITH CHECK expression on {}",
+            row.table_name
+        );
+    }
+
     db.drop().await;
 }
 
@@ -256,5 +284,58 @@ async fn migrate_is_idempotent() {
         .unwrap();
     assert_eq!(count, 6);
 
+    db.drop().await;
+}
+
+/// C3: a reset tenant context yields zero rows and raises no error.
+///
+/// The `nullif(..., '')` guard in the policy is load-bearing. `RESET` leaves the
+/// empty string in the GUC, not NULL, and a raw `''::uuid` cast raises SQLSTATE
+/// `22P02`. That error breaks a pooled connection that a unit of work released.
+/// The guard maps `''` to NULL, so a cleared context reads nothing.
+#[tokio::test]
+async fn reset_guc_yields_zero_rows() {
+    let db = TestDb::create().await;
+    let user = db.seed_user("reset-guc@example.test").await;
+
+    sqlx::query!(
+        "INSERT INTO events (user_id, seq, ts, type, payload)
+         VALUES ($1, 1, now(), 'attempt', '{}'::jsonb)",
+        user
+    )
+    .execute(&db.admin)
+    .await
+    .unwrap();
+
+    // One connection for the whole test. A session-level set_config outlives a
+    // transaction, so the reset case needs the same connection throughout.
+    let mut conn = db.app.acquire().await.unwrap();
+
+    sqlx::query!(
+        "SELECT set_config('app.user_id', $1, false)",
+        user.to_string()
+    )
+    .fetch_one(&mut *conn)
+    .await
+    .unwrap();
+
+    let bound_count = sqlx::query_scalar!(r#"SELECT count(*) AS "count!" FROM events"#)
+        .fetch_one(&mut *conn)
+        .await
+        .unwrap();
+    assert_eq!(bound_count, 1);
+
+    sqlx::query("RESET app.user_id")
+        .execute(&mut *conn)
+        .await
+        .unwrap();
+
+    let reset_count = sqlx::query_scalar!(r#"SELECT count(*) AS "count!" FROM events"#)
+        .fetch_one(&mut *conn)
+        .await
+        .unwrap();
+    assert_eq!(reset_count, 0);
+
+    drop(conn);
     db.drop().await;
 }

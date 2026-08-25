@@ -5,8 +5,11 @@ One server, one `docker compose` stack. No cloud vendor, no managed service.
 ## Bring-up
 
 1. Install Docker Engine with the Compose plugin, then clone this repository.
-2. `cp .env.example .env`, and set `SITE_ADDRESS` to your domain. Leave the
-   default `:80` for an http-only test on a bare IP.
+2. `cp .env.example .env`, and set `SITE_ADDRESS` to your domain. Use `:80` for
+   an http-only test on a bare IP. `SITE_ADDRESS` has no default: every
+   `docker compose` command fails with `required variable SITE_ADDRESS is
+   missing a value` until you set it. A silent http-only fallback on a domain
+   that the operator believes is on HTTPS is worse than a loud stop.
 3. For a domain, point its DNS record at this server and open ports 80 and 443.
    Caddy then gets a Let's Encrypt certificate by itself.
 4. `docker compose up -d --build`
@@ -17,10 +20,10 @@ One server, one `docker compose` stack. No cloud vendor, no managed service.
    docker compose exec web curl -fsS http://127.0.0.1:8080/api/health
    ```
 
-`migrate` is a one-shot: it runs `cadus-migrate` and exits. `web` and `worker`
-start only after it exits 0, so the schema is never behind the code. To upgrade,
-pull the new commit and run step 4 again; the migrate step applies only what is
-new.
+`migrate` is a one-shot: it runs `cadus-migrate --admin-login` and exits. `web`
+and `worker` start only after it exits 0, so the schema is never behind the
+code. To upgrade, pull the new commit and run step 4 again; the migrate step
+applies only what is new.
 
 ## The role model (C3)
 
@@ -43,9 +46,11 @@ whose role bypasses RLS — never point `web` at the superuser DSN.
 
 `cadus_admin` is `NOLOGIN` in the schema, because a `BYPASSRLS` login is a
 deployment decision. The `migrate` service therefore runs one more statement
-after the migrations: `ALTER ROLE cadus_admin LOGIN`. It is idempotent. The
-worker does `SET ROLE cadus_app` inside each per-tenant unit of work, so RLS
-stays a backstop there.
+after the migrations: `ALTER ROLE cadus_admin LOGIN`. The `--admin-login` flag
+of `cadus-migrate` runs it, so the runtime image carries no `psql` and no other
+database client. It is idempotent. `cadus-migrate` with any other argument
+prints its usage and exits 2. The worker does `SET ROLE cadus_app` inside each
+per-tenant unit of work, so RLS stays a backstop there.
 
 The database publishes no port and sits on the private `backend` network. Caddy
 sits on `frontend` only and has no route to it. `trust` auth is safe on that

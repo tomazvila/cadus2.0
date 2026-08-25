@@ -85,6 +85,21 @@ impl TestDb {
         TestDb { name, admin, app }
     }
 
+    /// The superuser DSN of this database.
+    ///
+    /// A test that spawns a binary gives it this string in `DATABASE_URL`.
+    /// `CADUS_TEST_DATABASE_URL` has the form
+    /// `postgresql://user:password@host:port/dbname` and carries no query
+    /// string, so a replacement of the last path segment names this database.
+    pub fn superuser_dsn(&self) -> String {
+        let dsn =
+            std::env::var(TEST_DSN_VAR).unwrap_or_else(|_| panic!("{TEST_DSN_VAR} is not set"));
+        let (base, _) = dsn
+            .rsplit_once('/')
+            .unwrap_or_else(|| panic!("{TEST_DSN_VAR} carries no database path segment"));
+        format!("{base}/{}", self.name)
+    }
+
     /// Insert one user and return its id. The admin pool does the insert,
     /// because `users` carries no tenant column and the app role has no tenant
     /// context yet.

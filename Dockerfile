@@ -36,16 +36,15 @@ RUN cargo build --release --workspace
 FROM debian:bookworm-slim AS runtime
 
 # ca-certificates: outbound TLS to the model API (R4 authoring and diagnosis).
-# postgresql-client: the compose `migrate` service runs one statement that the
-# migrations cannot run themselves --
+# The image carries no database client. The one statement that the migrations
+# cannot run themselves --
 #   ALTER ROLE cadus_admin LOGIN
-# Migration 0001 creates cadus_admin as NOLOGIN on purpose, and the worker DSN
-# needs a login. A migration must not make that decision for every deployment,
-# so the deployment makes it. psql 15 from bookworm speaks to a Postgres 16
-# server for plain SQL; only pg_dump needs a version match, and this image runs
-# no dump.
+# -- is the `--admin-login` flag of cadus-migrate. Migration 0001 creates
+# cadus_admin as NOLOGIN on purpose, and the worker DSN needs a login. A
+# migration must not make that decision for every deployment, so the deployment
+# makes it through the flag.
 RUN apt-get update \
- && apt-get install -y --no-install-recommends ca-certificates postgresql-client \
+ && apt-get install -y --no-install-recommends ca-certificates \
  && rm -rf /var/lib/apt/lists/*
 
 # A non-root system user. The binaries need no write access to the image tree.
