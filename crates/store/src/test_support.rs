@@ -2,8 +2,9 @@
 //!
 //! `TestDb::with` is the only entry point. It creates a database on the cluster
 //! that `CADUS_TEST_DATABASE_URL` names, migrates it, runs the test body, and
-//! drops the database in every case, a panic in the body included. Two pools
-//! connect to that database:
+//! drops the database in every case: a panic in the body, a failed migration,
+//! and a failed pool all end with the database gone. Two pools connect to that
+//! database:
 //!
 //! - `admin`: the superuser of the test cluster. It seeds fixtures, because a
 //!   superuser bypasses row-level security.
@@ -32,12 +33,12 @@ pub struct TestDb {
     pub app: PgPool,
 }
 
+/// The default runtime role of a throwaway database.
+const DEFAULT_APP_ROLE: &str = "cadus_app";
+
 impl TestDb {
-    /// Create a fresh database, migrate it, and open both pools.
-    ///
-    /// This method stays private. `TestDb::with` is the only entry point,
-    /// because it also drops the database of a test body that panics.
-    async fn create() -> TestDb {
+    /// The maintenance connection options of the test cluster.
+    fn maintenance_options() -> PgConnectOptions {
         let dsn = match std::env::var(TEST_DSN_VAR) {
             Ok(dsn) if !dsn.is_empty() => dsn,
             _ => panic!(
@@ -45,10 +46,16 @@ impl TestDb {
                  for example postgresql://test:test@127.0.0.1:55434/postgres"
             ),
         };
+        dsn.parse()
+            .unwrap_or_else(|e| panic!("{TEST_DSN_VAR} is not a valid Postgres DSN: {e}"))
+    }
 
-        let maintenance: PgConnectOptions = dsn
-            .parse()
-            .unwrap_or_else(|e| panic!("{TEST_DSN_VAR} is not a valid Postgres DSN: {e}"));
+    /// Create a fresh database and return its name.
+    ///
+    /// Every panic of this method happens before `CREATE DATABASE`, so a
+    /// failure here leaves nothing on the cluster.
+    async fn create_database() -> String {
+        let maintenance = Self::maintenance_options();
 
         // A UUID gives the 8 hex characters of the name. The name is an
         // identifier, and an identifier cannot be a bind parameter, so this one
@@ -62,9 +69,16 @@ impl TestDb {
             .execute(&mut conn)
             .await
             .unwrap_or_else(|e| panic!("CREATE DATABASE {name} failed: {e}"));
-        conn.close()
-            .await
-            .unwrap_or_else(|e| panic!("close of the maintenance connection failed: {e}"));
+        let _ = conn.close().await;
+        name
+    }
+
+    /// Migrate the database that `name` names and open both pools.
+    ///
+    /// The caller drops the database when this method panics. `TestDb::with` is
+    /// the only caller.
+    async fn open(name: String, app_role: &str) -> TestDb {
+        let maintenance = Self::maintenance_options();
 
         let admin = PgPoolOptions::new()
             .max_connections(4)
@@ -83,7 +97,7 @@ impl TestDb {
                 maintenance
                     .clone()
                     .database(&name)
-                    .username("cadus_app")
+                    .username(app_role)
                     .password(""),
             )
             .await
@@ -107,7 +121,43 @@ impl TestDb {
         Fut: Future<Output = T> + Send + 'static,
         T: Send + 'static,
     {
-        let db = Arc::new(TestDb::create().await);
+        Self::with_app_role(DEFAULT_APP_ROLE, body).await
+    }
+
+    /// `TestDb::with` with a different runtime role for the `app` pool.
+    ///
+    /// The setup after `CREATE DATABASE` runs in a task of its own too, so a
+    /// panic of the migration step or of the app pool also becomes a
+    /// `JoinError`. This function drops the database first and then raises that
+    /// panic again, so a broken migration and a wrong role name leave no
+    /// database on the shared cluster (finding #10).
+    ///
+    /// A test gives a role that does not exist to prove that contract.
+    pub async fn with_app_role<F, Fut, T>(app_role: &'static str, body: F) -> T
+    where
+        F: FnOnce(Arc<TestDb>) -> Fut + Send + 'static,
+        Fut: Future<Output = T> + Send + 'static,
+        T: Send + 'static,
+    {
+        let name = Self::create_database().await;
+
+        let setup = {
+            let name = name.clone();
+            tokio::spawn(async move { TestDb::open(name, app_role).await })
+        }
+        .await;
+
+        let db = match setup {
+            Ok(db) => Arc::new(db),
+            Err(err) => {
+                Self::drop_database_named(&name).await;
+                if err.is_panic() {
+                    std::panic::resume_unwind(err.into_panic());
+                }
+                panic!("the setup of {name} did not finish: {err}");
+            }
+        };
+
         let outcome = tokio::spawn(body(Arc::clone(&db))).await;
         db.drop_database().await;
         match outcome {
@@ -176,7 +226,14 @@ impl TestDb {
     async fn drop_database(&self) {
         self.app.close().await;
         self.admin.close().await;
+        Self::drop_database_named(&self.name).await;
+    }
 
+    /// Drop the database that `name` names. The drop is best effort.
+    ///
+    /// `TestDb::with_app_role` calls this after a failed setup, when no `TestDb`
+    /// value exists.
+    async fn drop_database_named(name: &str) {
         let Ok(dsn) = std::env::var(TEST_DSN_VAR) else {
             return;
         };
@@ -188,8 +245,7 @@ impl TestDb {
         };
         // FORCE ends a connection that a leaked pool still holds.
         let _ = sqlx::query(AssertSqlSafe(format!(
-            "DROP DATABASE IF EXISTS \"{}\" WITH (FORCE)",
-            self.name
+            "DROP DATABASE IF EXISTS \"{name}\" WITH (FORCE)"
         )))
         .execute(&mut conn)
         .await;

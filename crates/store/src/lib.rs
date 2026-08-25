@@ -20,7 +20,7 @@
 
 use std::time::Duration;
 
-use sqlx::postgres::PgPoolOptions;
+use sqlx::postgres::{PgConnectOptions, PgPoolOptions};
 use sqlx::{PgPool, Postgres, Transaction};
 use uuid::Uuid;
 
@@ -31,30 +31,91 @@ pub mod test_support;
 /// compile time, so the binaries carry the schema and need no file access.
 static MIGRATOR: sqlx::migrate::Migrator = sqlx::migrate!("../../migrations");
 
+/// The environment variable that holds the statement timeout, in milliseconds.
+pub const STATEMENT_TIMEOUT_VAR: &str = "DB_STATEMENT_TIMEOUT_MS";
+
+/// The statement timeout that applies when `DB_STATEMENT_TIMEOUT_MS` is absent.
+///
+/// `ACQUIRE_TIMEOUT` bounds the checkout of a connection and nothing after it.
+/// A database that accepts the socket and answers no query therefore holds the
+/// readiness probe of `cadus-web` and the tick of `cadus-worker` open without a
+/// bound. `statement_timeout` adds the server-side bound: the backend cancels
+/// the statement and reports SQLSTATE 57014. 5000 ms is longer than every M0
+/// query and shorter than every scrape interval in `deploy/Caddyfile`.
+pub const DEFAULT_STATEMENT_TIMEOUT_MS: u64 = 5000;
+
 /// The connection configuration of the store.
 #[derive(Clone)]
 pub struct DbConfig {
     pub database_url: String,
+    /// The `statement_timeout` of every connection of the pool, in
+    /// milliseconds. 0 turns the timeout off.
+    pub statement_timeout_ms: u64,
 }
 
 impl DbConfig {
-    /// Read `DATABASE_URL` from the environment.
-    ///
-    /// The function returns `StoreError::Config` when the variable is absent,
-    /// empty, or not valid Unicode.
-    pub fn from_env() -> Result<Self, StoreError> {
-        match std::env::var("DATABASE_URL") {
-            Ok(url) if url.is_empty() => {
-                Err(StoreError::Config("DATABASE_URL is empty".to_string()))
-            }
-            Ok(url) => Ok(Self { database_url: url }),
-            Err(std::env::VarError::NotPresent) => {
-                Err(StoreError::Config("DATABASE_URL is not set".to_string()))
-            }
-            Err(std::env::VarError::NotUnicode(_)) => Err(StoreError::Config(
-                "DATABASE_URL is not valid Unicode".to_string(),
-            )),
+    /// Build a configuration from a connection string with the default
+    /// statement timeout.
+    pub fn new(database_url: impl Into<String>) -> Self {
+        Self {
+            database_url: database_url.into(),
+            statement_timeout_ms: DEFAULT_STATEMENT_TIMEOUT_MS,
         }
+    }
+
+    /// Read `DATABASE_URL` and `DB_STATEMENT_TIMEOUT_MS` from the environment.
+    ///
+    /// The function returns `StoreError::Config` when `DATABASE_URL` is absent,
+    /// empty, or not valid Unicode, and when `DB_STATEMENT_TIMEOUT_MS` holds
+    /// anything other than a whole number of milliseconds. An absent
+    /// `DB_STATEMENT_TIMEOUT_MS` gives `DEFAULT_STATEMENT_TIMEOUT_MS`.
+    pub fn from_env() -> Result<Self, StoreError> {
+        let database_url = match std::env::var("DATABASE_URL") {
+            Ok(url) if url.is_empty() => {
+                return Err(StoreError::Config("DATABASE_URL is empty".to_string()));
+            }
+            Ok(url) => url,
+            Err(std::env::VarError::NotPresent) => {
+                return Err(StoreError::Config("DATABASE_URL is not set".to_string()));
+            }
+            Err(std::env::VarError::NotUnicode(_)) => {
+                return Err(StoreError::Config(
+                    "DATABASE_URL is not valid Unicode".to_string(),
+                ));
+            }
+        };
+
+        let raw = match std::env::var(STATEMENT_TIMEOUT_VAR) {
+            Ok(value) => Some(value),
+            Err(std::env::VarError::NotPresent) => None,
+            Err(std::env::VarError::NotUnicode(_)) => {
+                return Err(StoreError::Config(format!(
+                    "{STATEMENT_TIMEOUT_VAR} is not valid Unicode"
+                )));
+            }
+        };
+
+        Ok(Self {
+            database_url,
+            statement_timeout_ms: parse_statement_timeout(raw.as_deref())?,
+        })
+    }
+}
+
+/// Read the statement timeout from the raw value of the variable.
+///
+/// `None` means the variable is absent, so the default applies. Every other
+/// value must be a whole number of milliseconds. A value that is not a whole
+/// number is a configuration error: the store never guesses a bound that an
+/// operator wrote by hand.
+fn parse_statement_timeout(raw: Option<&str>) -> Result<u64, StoreError> {
+    match raw {
+        None => Ok(DEFAULT_STATEMENT_TIMEOUT_MS),
+        Some(value) => value.parse::<u64>().map_err(|_| {
+            StoreError::Config(format!(
+                "{STATEMENT_TIMEOUT_VAR} must be a whole number of milliseconds, not {value:?}"
+            ))
+        }),
     }
 }
 
@@ -64,6 +125,7 @@ impl std::fmt::Debug for DbConfig {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         f.debug_struct("DbConfig")
             .field("database_url", &"<redacted>")
+            .field("statement_timeout_ms", &self.statement_timeout_ms)
             .finish()
     }
 }
@@ -112,14 +174,31 @@ pub enum StoreError {
 /// `deploy/Caddyfile`.
 pub const ACQUIRE_TIMEOUT: Duration = Duration::from_secs(5);
 
+/// Build the connection options of the pool.
+///
+/// The function puts `statement_timeout` into the startup options of the
+/// connection, so the bound also holds for a connection that the pool opens
+/// later. A `statement_timeout_ms` of 0 adds no option and leaves the server
+/// default in place.
+pub fn connect_options(cfg: &DbConfig) -> Result<PgConnectOptions, StoreError> {
+    let options: PgConnectOptions = cfg.database_url.parse()?;
+    if cfg.statement_timeout_ms == 0 {
+        return Ok(options);
+    }
+    Ok(options.options([("statement_timeout", cfg.statement_timeout_ms.to_string())]))
+}
+
 /// Open a connection pool with the given configuration.
 pub async fn connect(cfg: &DbConfig) -> Result<PgPool, StoreError> {
     let pool = PgPoolOptions::new()
         .max_connections(16)
         .acquire_timeout(ACQUIRE_TIMEOUT)
-        .connect(&cfg.database_url)
+        .connect_with(connect_options(cfg)?)
         .await?;
-    tracing::debug!("store: connection pool is open");
+    tracing::debug!(
+        statement_timeout_ms = cfg.statement_timeout_ms,
+        "store: connection pool is open"
+    );
     Ok(pool)
 }
 
@@ -193,4 +272,61 @@ pub async fn begin_tenant(
     .fetch_one(&mut *tx)
     .await?;
     Ok(tx)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::{DEFAULT_STATEMENT_TIMEOUT_MS, DbConfig, StoreError, parse_statement_timeout};
+
+    /// R4: an absent variable gives the documented default of 5000 ms.
+    #[test]
+    fn an_absent_statement_timeout_gives_the_default() {
+        assert_eq!(parse_statement_timeout(None).unwrap(), 5000);
+        assert_eq!(DEFAULT_STATEMENT_TIMEOUT_MS, 5000);
+        assert_eq!(DbConfig::new("postgresql://h/d").statement_timeout_ms, 5000);
+    }
+
+    /// A whole number passes through unchanged. 0 turns the timeout off.
+    #[test]
+    fn a_whole_number_passes_through() {
+        assert_eq!(parse_statement_timeout(Some("200")).unwrap(), 200);
+        assert_eq!(parse_statement_timeout(Some("0")).unwrap(), 0);
+    }
+
+    /// A value that is not a whole number is a configuration error. The store
+    /// stops instead of a silent fall back to the default.
+    #[test]
+    fn a_value_that_is_not_a_whole_number_is_a_configuration_error() {
+        for raw in ["", "5s", "-1", "2.5", "5000ms"] {
+            let err = parse_statement_timeout(Some(raw))
+                .expect_err("a value that is not a whole number must be an error");
+            let StoreError::Config(message) = err else {
+                panic!("expected StoreError::Config for {raw:?}, got {err}");
+            };
+            assert_eq!(
+                message,
+                format!(
+                    "DB_STATEMENT_TIMEOUT_MS must be a whole number of milliseconds, not {raw:?}"
+                )
+            );
+        }
+    }
+
+    /// The timeout reaches the startup options of the connection as the literal
+    /// `-c statement_timeout=<ms>`. 0 adds no option at all.
+    #[test]
+    fn the_timeout_becomes_a_startup_option() {
+        let cfg = DbConfig {
+            database_url: "postgresql://u@h:5432/d".to_string(),
+            statement_timeout_ms: 250,
+        };
+        let options = super::connect_options(&cfg).unwrap();
+        assert_eq!(options.get_options(), Some("-c statement_timeout=250"));
+
+        let off = DbConfig {
+            database_url: "postgresql://u@h:5432/d".to_string(),
+            statement_timeout_ms: 0,
+        };
+        assert_eq!(super::connect_options(&off).unwrap().get_options(), None);
+    }
 }
