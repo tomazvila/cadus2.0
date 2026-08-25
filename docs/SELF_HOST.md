@@ -59,7 +59,22 @@ scripts/deploy.sh
 3. `docker compose run --rm migrate` -- a non-zero exit stops the script, and
    the old `web` and `worker` still serve traffic on the old schema.
 4. `docker compose up -d --no-deps web worker caddy` -- the new image takes
-   over.
+   over. The script then waits up to 30 s for three facts: `web` reports state
+   `running`, `worker` reports state `running`, and `docker compose logs web`
+   holds the line `listening on`. If the deadline passes, the script prints the
+   last 40 log lines of the service that failed and exits 1.
+
+`docker compose up -d` returns 0 as soon as the containers START, not when they
+stay up, so step 4 does its own check. A `web` that reads a bad value out of
+`.env` exits 2 before it binds and `restart: unless-stopped` restarts it without
+end; the old script printed `DEPLOY OK` over a site that answered every visitor
+with 502 (review round 4, finding #13). A failed step 4 leaves the new schema in
+place: correct the fault and run the script again.
+
+`scripts/deploy.sh --no-caddy` starts `web` and `worker` only and leaves `caddy`
+alone. `DEPLOY_SKIP_CADDY=1 scripts/deploy.sh` does the same. Use it on a stack
+that terminates TLS somewhere else, and in a test bring-up that binds no port
+80. Any other argument stops the script with exit 2.
 
 WARNING: Do not upgrade an existing stack with `docker compose up -d`. Compose
 creates every container first and starts them second, so it destroys the
@@ -203,21 +218,33 @@ steps above keep the volume.
   next upgrade, so the checksum record fails the gate first.
 - **The upgrade (D9).** `scripts/deploy.sh` runs the four steps of the
   "Upgrade" section above in order. It aborts on a `migrate` that exits
-  non-zero and leaves the running site alone.
+  non-zero and leaves the running site alone. It aborts on a `web` or `worker`
+  that does not reach state `running` within 30 s, or on a `web` that never logs
+  `listening on`, and prints the last 40 log lines of that service.
 - **The ops surface (U6).** `scripts/check_ops.sh` runs the operator's own
   commands: `docker compose config` resolves `docker-compose.yml`, and
   `docker compose build` builds every service that has a `build:` section. It
   then runs a container from each built image and proves that `cadus-web`,
-  `cadus-worker`, and `cadus-migrate` are on the `PATH` there, and that every
-  `command:` of the compose file names a binary the image carries. A renamed
-  binary target, a wrong `dockerfile:` key, or a mistyped `command:` then fails
-  the gate instead of the operator's next bring-up (review round 2, finding
-  #12).
+  `cadus-worker`, and `cadus-migrate` are on the `PATH` there. For every service
+  that builds the app image it proves three more facts: the service HAS a
+  `command:`, its first token names one of the three binaries and exists in the
+  image, and every further token is in the allowlist of that binary
+  (`cadus-migrate` takes `--admin-login`; `cadus-web` and `cadus-worker` take no
+  argument). A renamed binary target, a wrong `dockerfile:` key, a deleted
+  `command:`, or a mistyped flag then fails the gate instead of the operator's
+  next bring-up (review round 2, finding #12; review round 4, finding #9).
 - **Latency and token budgets (L\*, T\*).** The benchmarks land with M4 and M5
-  and run in the same gate job. Model calls run in the worker (R4). The gate pins the
-  dependency lists of `cadus-web` and `cadus-worker` (`tests/purity.rs` in each
-  crate): a new HTTP-client or model-SDK dependency on either crate is a test
-  failure and a reviewable diff. The gate does not inspect handler bodies.
+  and run in the same gate job. Model calls run in the worker (R4). The gate
+  reads the RESOLVED dependency graph from `cargo metadata` (`tests/purity.rs`
+  in `crates/web` and in `crates/worker`). It walks the normal dependency
+  closure of `cadus-web` and of `cadus-worker` across every target platform and
+  rejects `reqwest`, `ureq`, `isahc`, `curl`, `tokio-tungstenite`, and the model
+  SDKs anywhere in it, so a client inside `cadus-store` or under a
+  `[target.'cfg(...)'.dependencies]` table fails the gate too (review round 4,
+  finding #6). Both tests also pin the literal list of DIRECT normal
+  dependencies of `cadus-web`, `cadus-worker`, and `cadus-store`, so any new
+  dependency of the three tier crates is a reviewable diff. The gate does not
+  inspect handler bodies.
 - **Runtime.** `/api/ready` runs one `SELECT 1` through the web pool. It reports
   the datastore only, and it reports nothing about `cadus-worker`: a 200 from
   `/api/ready` is no proof that the async layer runs. M0 gives the worker no
