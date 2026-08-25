@@ -1,0 +1,60 @@
+# Cadus 2.0 merge gate in CI (C3, D9).
+#
+# The job runs `scripts/gate.sh`, the same script a developer runs on a laptop.
+# CI adds no extra step and no weaker step. The gate holds the whole contract:
+# fmt, clippy with -D warnings, the test suite, `cargo sqlx prepare --check`,
+# and `scripts/check_migrations.sh`.
+name: gate
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  gate:
+    name: gate
+    runs-on: ubuntu-latest
+
+    # A throwable Postgres 16 for the SQL part of the gate. `trust` auth keeps
+    # the DSN password-free, which matches the self-host stack and the test
+    # cluster developers use.
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: test
+          POSTGRES_PASSWORD: test
+          POSTGRES_HOST_AUTH_METHOD: trust
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+
+    env:
+      CADUS_TEST_DATABASE_URL: postgresql://test:test@localhost:5432/cadus2_ci
+
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v4
+
+      - name: Install the Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+
+      - name: Restore the cargo cache
+        uses: Swatinem/rust-cache@v2
+
+      - name: Install sqlx-cli
+        run: cargo install sqlx-cli --no-default-features --features postgres,rustls --locked
+
+      - name: Create the gate database
+        run: cargo sqlx database create
+        env:
+          DATABASE_URL: ${{ env.CADUS_TEST_DATABASE_URL }}
+
+      - name: Run the gate
+        run: scripts/gate.sh

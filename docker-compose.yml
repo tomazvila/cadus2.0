@@ -1,0 +1,130 @@
+# Cadus 2.0 -- self-host stack for ONE server (C3, R4, D9). No cloud vendor, no
+# managed service. Bring it up with:
+#
+#   cp .env.example .env      # set SITE_ADDRESS
+#   docker compose up -d --build
+#
+# See docs/SELF_HOST.md.
+
+name: cadus2
+
+# ONE image, three commands. `migrate`, `web`, and `worker` all build from this
+# block, so the three processes always run the same commit.
+x-app-image: &app-image
+  build:
+    context: .
+    dockerfile: Dockerfile
+
+services:
+  # Postgres -- the system of record. It has no `ports:` and it sits on the
+  # `backend` network only, so Caddy has no route to it. `trust` auth is safe on
+  # that private, password-free segment.
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_DB: cadus
+      POSTGRES_HOST_AUTH_METHOD: trust
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d cadus"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    networks: [backend]
+    restart: unless-stopped
+
+  # One-shot: apply migrations/, then give the admin role a login.
+  #
+  # Step 1 is `cadus-migrate`. It reads DATABASE_URL and applies every pending
+  # migration. It is idempotent, so a re-run is a no-op.
+  # Step 2 is `ALTER ROLE cadus_admin LOGIN`. Migration 0001 creates cadus_admin
+  # as NOLOGIN, because a BYPASSRLS role that can log in is a deployment
+  # decision, not a schema fact. The `worker` service connects as that role, so
+  # the deployment grants the login here. The statement is idempotent.
+  #
+  # The DSN is the Postgres superuser: only a superuser creates roles, installs
+  # citext, and alters a role.
+  migrate:
+    <<: *app-image
+    command:
+      - sh
+      - -c
+      - >-
+        cadus-migrate &&
+        psql "$$DATABASE_URL" -c 'ALTER ROLE cadus_admin LOGIN'
+    environment:
+      DATABASE_URL: postgresql://postgres@db:5432/cadus
+    depends_on:
+      db:
+        condition: service_healthy
+    networks: [backend]
+    restart: "no"
+
+  # The HTTP tutor. It connects as cadus_app: NOSUPERUSER, NOBYPASSRLS, and
+  # denied UPDATE/DELETE on `events`. RLS isolates the tenants (C3), and the
+  # boot guard refuses a DSN whose role bypasses RLS.
+  #
+  # No `ports:` -- Caddy is the only ingress. The service is on both networks:
+  # `frontend` to take traffic from Caddy, `backend` to reach the database.
+  web:
+    <<: *app-image
+    command: ["cadus-web"]
+    environment:
+      DATABASE_URL: postgresql://cadus_app@db:5432/cadus
+      BIND_ADDR: 0.0.0.0:8080
+      RUST_LOG: ${RUST_LOG:-info}
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    networks: [frontend, backend]
+    restart: unless-stopped
+
+  # The async layer (R4): model calls and cross-tenant sweeps run here, never on
+  # a request path. It connects as cadus_admin, which is BYPASSRLS for the
+  # cross-tenant scan and a member of cadus_app for the per-tenant unit of work.
+  # `backend` only -- the worker takes no inbound traffic.
+  worker:
+    <<: *app-image
+    command: ["cadus-worker"]
+    environment:
+      DATABASE_URL: postgresql://cadus_admin@db:5432/cadus
+      RUST_LOG: ${RUST_LOG:-info}
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    networks: [backend]
+    restart: unless-stopped
+
+  # Reverse proxy and automatic HTTPS. Put a real domain in SITE_ADDRESS and
+  # Caddy fetches a Let's Encrypt certificate by itself. It needs ports 80 and
+  # 443 open and the DNS record pointed at this server.
+  # `frontend` only -- Caddy reaches `web` and has no route to `db`.
+  caddy:
+    image: caddy:2
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      SITE_ADDRESS: ${SITE_ADDRESS:-:80}
+    volumes:
+      - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    depends_on:
+      - web
+    networks: [frontend]
+    restart: unless-stopped
+
+# Two segments. `frontend` (caddy <-> web) is the only path the internet-facing
+# proxy sees. `backend` (migrate/web/worker <-> db) carries the password-free
+# trust-auth database traffic and is unreachable from caddy.
+networks:
+  frontend:
+  backend:
+
+volumes:
+  db-data:
+  caddy-data:
+  caddy-config:

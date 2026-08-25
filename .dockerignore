@@ -1,0 +1,18 @@
+# Keep the build context small and keep host state out of the image.
+
+# The host build tree. The builder stage compiles from scratch inside the image;
+# a host target/ is gigabytes and its artifacts do not match the image toolchain.
+target
+
+# Version control and agent state.
+.git
+.gitignore
+.claude
+
+# Frontend install output (M6 adds the SPA; the line lands first so a local
+# install never enters the build context).
+node_modules
+
+# Local environment and compose overrides never belong in the image.
+.env
+docker-compose.override.yml
