@@ -1,7 +1,7 @@
 # Cadus 2.0 -- self-host stack for ONE server (C3, R4, D9). No cloud vendor, no
 # managed service. Bring it up with:
 #
-#   cp .env.example .env      # set SITE_ADDRESS
+#   cp .env.example .env      # set SITE_ADDRESS and the three passwords
 #   docker compose up -d --build
 #
 # See docs/SELF_HOST.md.
@@ -17,14 +17,19 @@ x-app-image: &app-image
 
 services:
   # Postgres -- the system of record. It has no `ports:` and it sits on the
-  # `backend` network only, so Caddy has no route to it. `trust` auth is safe on
-  # that private, password-free segment.
+  # `backend` network only, so Caddy has no route to it.
+  #
+  # Every role needs a password. `POSTGRES_HOST_AUTH_METHOD: trust` is absent on
+  # purpose: trust auth accepts every process that reaches the port, and a
+  # container network is not an authentication boundary. Under trust auth, any
+  # other container on `backend` and any host user who reaches the container IP
+  # connects as the superuser.
   db:
     image: postgres:16
     environment:
       POSTGRES_USER: postgres
       POSTGRES_DB: cadus
-      POSTGRES_HOST_AUTH_METHOD: trust
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env - run openssl rand -hex 24}
     volumes:
       - db-data:/var/lib/postgresql/data
     healthcheck:
@@ -35,16 +40,19 @@ services:
     networks: [backend]
     restart: unless-stopped
 
-  # One-shot: apply migrations/, then give the admin role a login.
+  # One-shot: apply migrations/, set the two role passwords, then give the admin
+  # role a login.
   #
-  # `cadus-migrate --admin-login` does both steps in one process. It reads
-  # DATABASE_URL, applies every pending migration, and then runs
-  # `ALTER ROLE cadus_admin LOGIN`. Migration 0001 creates cadus_admin as
-  # NOLOGIN, because a BYPASSRLS role that can log in is a deployment decision,
-  # not a schema fact. The `worker` service connects as that role, so the
-  # deployment grants the login here. Both steps are idempotent, so a re-run is
-  # a no-op. The flag replaces a psql call, so the image carries no database
-  # client.
+  # `cadus-migrate --admin-login` does the three steps in one process. It reads
+  # DATABASE_URL and applies every pending migration. It reads
+  # CADUS_APP_PASSWORD and CADUS_ADMIN_PASSWORD and runs `ALTER ROLE ...
+  # PASSWORD` for cadus_app and for cadus_admin. It then runs `ALTER ROLE
+  # cadus_admin LOGIN`. Migration 0001 creates cadus_admin as NOLOGIN, because a
+  # BYPASSRLS role with a login is a deployment decision, not a schema fact.
+  # The `worker` service connects as that role, so the deployment grants the
+  # login here. A migration holds no password, because a password is deployment
+  # state. Every step is idempotent, so a re-run is a no-op. The flag replaces a
+  # psql call, so the image carries no database client.
   #
   # The DSN is the Postgres superuser: only a superuser creates roles, installs
   # citext, and alters a role.
@@ -52,7 +60,9 @@ services:
     <<: *app-image
     command: ["cadus-migrate", "--admin-login"]
     environment:
-      DATABASE_URL: postgresql://postgres@db:5432/cadus
+      DATABASE_URL: postgresql://postgres:${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}@db:5432/cadus
+      CADUS_APP_PASSWORD: ${CADUS_APP_PASSWORD:?set CADUS_APP_PASSWORD in .env - run openssl rand -hex 24}
+      CADUS_ADMIN_PASSWORD: ${CADUS_ADMIN_PASSWORD:?set CADUS_ADMIN_PASSWORD in .env - run openssl rand -hex 24}
     depends_on:
       db:
         condition: service_healthy
@@ -65,11 +75,16 @@ services:
   #
   # No `ports:` -- Caddy is the only ingress. The service is on both networks:
   # `frontend` to take traffic from Caddy, `backend` to reach the database.
+  #
+  # No `healthcheck:` -- the runtime image carries no curl and no wget, and the
+  # image stays small. `docker compose logs web` prints `listening on` when the
+  # server is up. The end-to-end check runs from the host through Caddy with
+  # `curl -fsS http://localhost/api/health`.
   web:
     <<: *app-image
     command: ["cadus-web"]
     environment:
-      DATABASE_URL: postgresql://cadus_app@db:5432/cadus
+      DATABASE_URL: postgresql://cadus_app:${CADUS_APP_PASSWORD:?set CADUS_APP_PASSWORD in .env}@db:5432/cadus
       BIND_ADDR: 0.0.0.0:8080
       RUST_LOG: ${RUST_LOG:-info}
     depends_on:
@@ -79,14 +94,14 @@ services:
     restart: unless-stopped
 
   # The async layer (R4): model calls and cross-tenant sweeps run here, never on
-  # a request path. It connects as cadus_admin, which is BYPASSRLS for the
-  # cross-tenant scan and a member of cadus_app for the per-tenant unit of work.
+  # a request path. It connects as cadus_admin, which holds BYPASSRLS for the
+  # cross-tenant scan. In M0 the process holds BYPASSRLS for its whole life.
   # `backend` only -- the worker takes no inbound traffic.
   worker:
     <<: *app-image
     command: ["cadus-worker"]
     environment:
-      DATABASE_URL: postgresql://cadus_admin@db:5432/cadus
+      DATABASE_URL: postgresql://cadus_admin:${CADUS_ADMIN_PASSWORD:?set CADUS_ADMIN_PASSWORD in .env}@db:5432/cadus
       RUST_LOG: ${RUST_LOG:-info}
     depends_on:
       migrate:
@@ -109,7 +124,7 @@ services:
       - "80:80"
       - "443:443"
     environment:
-      SITE_ADDRESS: ${SITE_ADDRESS:?set SITE_ADDRESS in .env — your domain, or :80 for http-only}
+      SITE_ADDRESS: ${SITE_ADDRESS:?set SITE_ADDRESS in .env - your domain, or :80 for http-only}
     volumes:
       - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
       - caddy-data:/data
@@ -120,8 +135,9 @@ services:
     restart: unless-stopped
 
 # Two segments. `frontend` (caddy <-> web) is the only path the internet-facing
-# proxy sees. `backend` (migrate/web/worker <-> db) carries the password-free
-# trust-auth database traffic and is unreachable from caddy.
+# proxy sees. `backend` (migrate/web/worker <-> db) carries the database traffic
+# and is unreachable from caddy. Every DSN on it carries a password, so the
+# network segment is a second control and not the only one.
 networks:
   frontend:
   backend:

@@ -3,7 +3,7 @@
 # The job runs `scripts/gate.sh`, the same script a developer runs on a laptop.
 # CI adds no extra step and no weaker step. The gate holds the whole contract:
 # fmt, clippy with -D warnings, the test suite, `cargo sqlx prepare --check`,
-# and `scripts/check_migrations.sh`.
+# `scripts/check_migrations.sh`, and `scripts/check_ops.sh`.
 name: gate
 
 on:
@@ -15,16 +15,14 @@ jobs:
     name: gate
     runs-on: ubuntu-latest
 
-    # A throwable Postgres 16 for the SQL part of the gate. `trust` auth keeps
-    # the DSN password-free, which matches the self-host stack and the test
-    # cluster developers use.
+    # A throwable Postgres 16 for the SQL part of the gate. The DSN carries the
+    # password, so the container needs no `trust` auth.
     services:
       postgres:
         image: postgres:16
         env:
           POSTGRES_USER: test
           POSTGRES_PASSWORD: test
-          POSTGRES_HOST_AUTH_METHOD: trust
         ports:
           - 5432:5432
         options: >-
@@ -53,6 +51,15 @@ jobs:
 
       - name: Create the gate database
         run: cargo sqlx database create
+        env:
+          DATABASE_URL: ${{ env.CADUS_TEST_DATABASE_URL }}
+
+      # The gate runs `cargo sqlx prepare --check`, which compiles the query
+      # macros against this database. An empty database has no `users` table, so
+      # the compile fails. Apply the migrations first. Run this from the
+      # repository root, because `cargo sqlx migrate run` reads `migrations/`.
+      - name: Migrate the gate database
+        run: cargo sqlx migrate run
         env:
           DATABASE_URL: ${{ env.CADUS_TEST_DATABASE_URL }}
 

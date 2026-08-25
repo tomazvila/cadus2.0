@@ -9,14 +9,23 @@
 # The default CMD runs cadus-web. The orchestrator overrides it per service.
 #
 # Multi-stage:
-#   * builder  -- rust:1-bookworm compiles the whole workspace in release mode.
-#   * runtime  -- debian:bookworm-slim carries the three binaries and the SQL
-#                 migrations only. It carries no compiler and no source.
+#   * builder  -- rust:1.98-bookworm compiles the whole workspace in release mode.
+#   * runtime  -- debian:bookworm-slim carries the three binaries only. It
+#                 carries no compiler, no source, and no SQL file. `sqlx` embeds
+#                 the migrations in cadus-migrate at compile time.
 
 # --------------------------------------------------------------------------- #
 # Stage 1 -- builder: compile the workspace
 # --------------------------------------------------------------------------- #
-FROM rust:1-bookworm AS builder
+# Pin the exact toolchain version that `rust:1-bookworm` carries today. The tag
+# `rust:1` moves, and a moved tag changes the compiler under an unchanged
+# commit. `.dockerignore` keeps `rust-toolchain.toml` out of the build context:
+# that file names the channel `stable`, rustup treats `stable` and `1.98.0` as
+# two different toolchains, and rustup then downloads a second complete
+# toolchain from static.rust-lang.org before the first crate compiles. The image
+# build needs no rustup egress and no rustfmt and no clippy. The gate runs those
+# two on the host.
+FROM rust:1.98-bookworm AS builder
 
 WORKDIR /src
 
@@ -31,7 +40,7 @@ COPY . .
 RUN cargo build --release --workspace
 
 # --------------------------------------------------------------------------- #
-# Stage 2 -- runtime: slim, non-root, three binaries plus the migrations
+# Stage 2 -- runtime: slim, non-root, three binaries
 # --------------------------------------------------------------------------- #
 FROM debian:bookworm-slim AS runtime
 
@@ -56,9 +65,6 @@ WORKDIR /app
 COPY --from=builder /src/target/release/cadus-web /usr/local/bin/cadus-web
 COPY --from=builder /src/target/release/cadus-worker /usr/local/bin/cadus-worker
 COPY --from=builder /src/target/release/cadus-migrate /usr/local/bin/cadus-migrate
-
-# The SQL migrations ship as data. cadus-migrate reads them from this path.
-COPY migrations /app/migrations
 
 RUN chown -R cadus:cadus /app
 
