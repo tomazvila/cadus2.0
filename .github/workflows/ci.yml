@@ -15,14 +15,30 @@ jobs:
     name: gate
     runs-on: ubuntu-latest
 
-    # A throwable Postgres 16 for the SQL part of the gate. The DSN carries the
-    # password, so the container needs no `trust` auth.
+    # A throwable Postgres 16 for the SQL part of the gate.
+    #
+    # `POSTGRES_HOST_AUTH_METHOD: trust` is required, not a convenience. The test
+    # harness opens a second pool as the `cadus_app` role
+    # (`crates/store/src/test_support.rs`), and `migrations/0001_roles.sql`
+    # creates that role with no password. Without trust auth the `postgres:16`
+    # image appends `host all all all scram-sha-256` to `pg_hba.conf`, the runner
+    # reaches the service through the docker bridge, and every database-backed
+    # test dies with `password authentication failed for user "cadus_app"`. The
+    # gate is then red on every push and gives no signal (finding #1).
+    #
+    # The container is a throwaway: it holds no production data, it lives for the
+    # length of one job, and only that job reaches it. It is the same throwaway
+    # cluster that README.md and `test_support.rs` document for a laptop. The
+    # deployment is the opposite case: `docker-compose.yml` runs the database
+    # WITHOUT trust auth, because a container network is not an authentication
+    # boundary.
     services:
       postgres:
         image: postgres:16
         env:
           POSTGRES_USER: test
           POSTGRES_PASSWORD: test
+          POSTGRES_HOST_AUTH_METHOD: trust
         ports:
           - 5432:5432
         options: >-

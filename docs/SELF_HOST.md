@@ -65,9 +65,10 @@ after the migrations: `ALTER ROLE cadus_app PASSWORD ...`,
 `CADUS_ADMIN_PASSWORD`, so the runtime image carries no `psql` and no other
 database client. A migration holds no password, because a password is
 deployment state, not a schema fact. Every statement is idempotent, so a re-run
-is a no-op and a changed password in `.env` reaches the database on the next
-`docker compose up -d`. `cadus-migrate` with any other argument prints its
-usage and exits 2.
+is a no-op and a changed `CADUS_APP_PASSWORD` or `CADUS_ADMIN_PASSWORD` in
+`.env` reaches the database on the next `docker compose up -d`.
+`POSTGRES_PASSWORD` is the exception: see "Rotate a password" below.
+`cadus-migrate` with any other argument prints its usage and exits 2.
 
 In M0 the worker process holds `BYPASSRLS` for its whole life. It runs no
 `SET ROLE`, so RLS is not a backstop inside the worker. The M0 worker writes no
@@ -81,6 +82,71 @@ sits on `frontend` only and has no route to it. The network segment is not the
 only control: every DSN carries a password, and the `db` service runs without
 `POSTGRES_HOST_AUTH_METHOD: trust`. Trust auth accepts every process that
 reaches the port, and a container network is not an authentication boundary.
+
+## Rotate a password
+
+`.env` holds three passwords, and they do not behave the same way.
+
+| Key | Role | Reaches the database through |
+|---|---|---|
+| `CADUS_APP_PASSWORD` | `cadus_app` | `cadus-migrate --admin-login`, on every bring-up |
+| `CADUS_ADMIN_PASSWORD` | `cadus_admin` | `cadus-migrate --admin-login`, on every bring-up |
+| `POSTGRES_PASSWORD` | `postgres` (superuser) | initdb only, on the FIRST start |
+
+### The two runtime passwords
+
+1. Put the new value in `.env`. Generate it with `openssl rand -hex 24`.
+2. Run `docker compose up -d`.
+
+`migrate` runs `ALTER ROLE ... PASSWORD` for both roles and `web` and `worker`
+start with the new DSN. No manual SQL is needed.
+
+### The superuser password
+
+WARNING: Do not rotate `POSTGRES_PASSWORD` in `.env` alone. The value is
+write-once. The `postgres:16` image reads it at initdb, that is on the first
+start with an empty `db-data` volume. On an existing volume the `db` container
+ignores a new value, but compose still puts
+that value into the `migrate` DSN. A rotation in `.env` alone therefore
+recreates `web` and `worker`, stops `migrate` with
+`password authentication failed for user "postgres"`, and takes the site down
+(review round 2, finding #13).
+
+Change the role first and `.env` second:
+
+1. Generate the new value:
+   ```sh
+   openssl rand -hex 24
+   ```
+2. Write it into the running role:
+   ```sh
+   docker compose exec db psql -U postgres -c "ALTER ROLE postgres PASSWORD '<new value>'"
+   ```
+   The same command form rotates a runtime role, for example
+   `ALTER ROLE cadus_app PASSWORD '<new value>'`, but the two runtime roles need
+   no manual step: `migrate` writes them from `.env`.
+3. Put the same value into `POSTGRES_PASSWORD` in `.env`.
+4. Run `docker compose up -d`.
+5. Do a check: `docker compose ps` shows `migrate` exited 0, and `web` and
+   `worker` up.
+
+### Recover a rotation that ran in the wrong order
+
+If `.env` already carries the new value and `migrate` exits 2 with
+`password authentication failed for user "postgres"`, the database still holds
+the OLD password. Write the new one into the role and start the stack again:
+
+```sh
+docker compose exec db psql -U postgres -c "ALTER ROLE postgres PASSWORD '<the value now in .env>'"
+docker compose up -d
+```
+
+`docker compose exec db psql -U postgres` needs no password: the image writes
+`local all all trust` into `pg_hba.conf`, and `exec` runs inside the container.
+
+CAUTION: Do not run `docker compose down -v` to recover. That command deletes the
+`db-data` volume and every learner row with it. No data loss is needed here: the
+steps above keep the volume.
 
 ## Where the budgets are checked
 
@@ -97,10 +163,15 @@ reaches the port, and a container network is not an authentication boundary.
   and that a second run applies nothing. Migrations are forward-only: an edit to
   a file that a deployment already applied stops the `migrate` service on the
   next upgrade, so the checksum record fails the gate first.
-- **The ops surface (U6).** `scripts/check_ops.sh` runs `docker compose config`
-  on `docker-compose.yml` and builds the image from `Dockerfile`. A renamed
-  binary target or a broken compose key then fails the gate instead of the
-  operator's next bring-up.
+- **The ops surface (U6).** `scripts/check_ops.sh` runs the operator's own
+  commands: `docker compose config` resolves `docker-compose.yml`, and
+  `docker compose build` builds every service that has a `build:` section. It
+  then runs a container from each built image and proves that `cadus-web`,
+  `cadus-worker`, and `cadus-migrate` are on the `PATH` there, and that every
+  `command:` of the compose file names a binary the image carries. A renamed
+  binary target, a wrong `dockerfile:` key, or a mistyped `command:` then fails
+  the gate instead of the operator's next bring-up (review round 2, finding
+  #12).
 - **Latency and token budgets (L\*, T\*).** The benchmarks land with M4 and M5
   and run in the same gate job. Model calls run in the worker (R4). The gate pins the
   dependency lists of `cadus-web` and `cadus-worker` (`tests/purity.rs` in each

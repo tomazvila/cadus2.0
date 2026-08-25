@@ -17,7 +17,18 @@
 //!
 //! Exit codes: 0 for a clean stop, 2 for a start error, 3 for the boot guard.
 
-use std::future::IntoFuture;
+#![cfg_attr(
+    test,
+    allow(
+        clippy::unwrap_used,
+        clippy::expect_used,
+        clippy::panic,
+        clippy::todo,
+        clippy::unimplemented
+    )
+)]
+
+use std::future::{Future, IntoFuture};
 use std::net::SocketAddr;
 use std::process::ExitCode;
 use std::time::Duration;
@@ -102,7 +113,23 @@ async fn run() -> Result<(), Fatal> {
     };
 
     // C3: stop here if row-level security does not apply to this role.
-    match cadus_web::boot_check(&pool).await {
+    //
+    // The guard runs inside the same select as the connect above. A database
+    // that accepts the connection and then answers no query made the old code
+    // deaf to SIGTERM and SIGINT for the whole stall (finding #7).
+    //
+    // The stop branch returns without a pool close on purpose. The process ends
+    // at that return, so the operating system closes the sockets. A wait for a
+    // database that answers nothing only delays the stop the operator asked for.
+    let guard = tokio::select! {
+        biased;
+        () = shutdown.wait() => {
+            tracing::info!("cadus-web: the stop signal came before the boot guard");
+            return Ok(());
+        }
+        result = cadus_web::boot_check(&pool) => result,
+    };
+    match guard {
         Ok(info) => tracing::info!(role = %info.name, "cadus-web: the boot guard passed"),
         Err(StoreError::RlsBypass { role, .. }) => return Err(Fatal::RlsBypass { role }),
         Err(err) => return Err(Fatal::Startup(err.to_string())),
@@ -145,8 +172,23 @@ async fn run() -> Result<(), Fatal> {
         },
     };
 
-    pool.close().await;
+    close_within(deadline, pool.close()).await;
     result.map_err(|err| Fatal::Startup(format!("serve failed: {err}")))
+}
+
+/// Wait for `close` for at most `deadline`, then log the fact and give up.
+///
+/// `PgPool::close` waits for every checked-out connection to come back. A
+/// database that answers nothing never gives one back, so the plain call runs
+/// without end and defeats the drain deadline above: the process logs
+/// `shutdown deadline reached; closing` and then stays alive until the
+/// container runtime sends SIGKILL (finding #6). The bound below keeps the exit
+/// inside the same budget. The process exits 0 either way, because the open
+/// sockets end with the process.
+async fn close_within<F: Future<Output = ()>>(deadline: Duration, close: F) {
+    if tokio::time::timeout(deadline, close).await.is_err() {
+        tracing::info!("pool close deadline reached");
+    }
 }
 
 /// Read `BIND_ADDR`, or use the default.
@@ -265,5 +307,40 @@ impl Shutdown {
                 std::future::pending::<()>().await;
             }
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use std::time::{Duration, Instant};
+
+    /// `close_within` returns at its deadline, even when the close never ends.
+    ///
+    /// `PgPool::close` waits for every checked-out connection, so a database
+    /// that answers nothing makes the plain call run without end (finding #6).
+    /// The never-resolving future below stands for that case. The outer timeout
+    /// of 5 s fails the test when the bound is gone.
+    #[tokio::test]
+    async fn close_within_returns_at_the_deadline() {
+        let start = Instant::now();
+        let outcome = tokio::time::timeout(
+            Duration::from_secs(5),
+            super::close_within(Duration::from_millis(200), std::future::pending::<()>()),
+        )
+        .await;
+        let elapsed = start.elapsed();
+
+        assert!(
+            outcome.is_ok(),
+            "close_within must return within 5 s, it took {elapsed:?} or more"
+        );
+        assert!(
+            elapsed >= Duration::from_millis(200),
+            "close_within must wait for the whole deadline, it took {elapsed:?}"
+        );
+        assert!(
+            elapsed < Duration::from_secs(2),
+            "close_within must return soon after the deadline, it took {elapsed:?}"
+        );
     }
 }
