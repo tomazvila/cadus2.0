@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n        SELECT c.relname::text        AS \"table_name!\",\n               c.relrowsecurity       AS \"rls_enabled!\",\n               c.relforcerowsecurity  AS \"rls_forced!\"\n        FROM pg_class c\n        JOIN pg_namespace n ON n.oid = c.relnamespace\n        JOIN pg_attribute a ON a.attrelid = c.oid\n                           AND a.attname = 'user_id'\n                           AND a.attnum > 0\n                           AND NOT a.attisdropped\n        WHERE n.nspname = 'public' AND c.relkind = 'r'\n        ORDER BY c.relname\n        ",
+  "query": "\n            SELECT c.relname::text        AS \"table_name!\",\n                   c.relrowsecurity       AS \"rls_enabled!\",\n                   c.relforcerowsecurity  AS \"rls_forced!\"\n            FROM pg_class c\n            JOIN pg_namespace n ON n.oid = c.relnamespace\n            JOIN pg_attribute a ON a.attrelid = c.oid\n                               AND a.attname = 'user_id'\n                               AND a.attnum > 0\n                               AND NOT a.attisdropped\n            WHERE n.nspname = 'public' AND c.relkind = 'r'\n            ORDER BY c.relname\n            ",
   "describe": {
     "columns": [
       {
@@ -41,5 +41,5 @@
       false
     ]
   },
-  "hash": "b976b8a705421cdf31e3bf8af0cf916e4ab1b8ce57909cb0d6caf16451754f33"
+  "hash": "0c25a68d57412c9749225c4b93c70ac3ac59ad2b7c97f026deb4b56fad9435c2"
 }

@@ -8,6 +8,9 @@
 //!
 //! Every child process gets `RUST_LOG=info`. An ambient `RUST_LOG` of the
 //! developer shell must not decide the result of a test (finding #12).
+//!
+//! Every test that needs a database uses `TestDb::with`, so a failed assertion
+//! drops the throwaway database instead of leaving it on the shared cluster.
 
 #![allow(
     clippy::unwrap_used,
@@ -52,29 +55,29 @@ fn superuser_dsn(db_name: &str) -> String {
 /// fails.
 #[tokio::test]
 async fn run_counts_ticks_until_shutdown() {
-    let db = TestDb::create().await;
-    let cfg = WorkerConfig {
-        tick: Duration::from_millis(50),
-    };
+    TestDb::with(|db| async move {
+        let cfg = WorkerConfig {
+            tick: Duration::from_millis(50),
+        };
 
-    let ticks = cadus_worker::run(
-        &db.admin,
-        &cfg,
-        tokio::time::sleep(Duration::from_millis(400)),
-    )
-    .await
-    .expect("the tick loop must not fail");
+        let ticks = cadus_worker::run(
+            &db.admin,
+            &cfg,
+            tokio::time::sleep(Duration::from_millis(400)),
+        )
+        .await
+        .expect("the tick loop must not fail");
 
-    assert!(
-        ticks >= 3,
-        "the loop must reach at least 3 ticks in 400 ms, it reached {ticks}"
-    );
-    assert!(
-        ticks <= 12,
-        "the loop must stop at 12 ticks or fewer in 400 ms, it reached {ticks}"
-    );
-
-    db.drop().await;
+        assert!(
+            ticks >= 3,
+            "the loop must reach at least 3 ticks in 400 ms, it reached {ticks}"
+        );
+        assert!(
+            ticks <= 12,
+            "the loop must stop at 12 ticks or fewer in 400 ms, it reached {ticks}"
+        );
+    })
+    .await;
 }
 
 /// (2) R4: the heartbeat touches the database.
@@ -84,22 +87,23 @@ async fn run_counts_ticks_until_shutdown() {
 /// alone keeps the old tests green (finding #19).
 #[tokio::test]
 async fn run_fails_when_the_pool_is_closed() {
-    let db = TestDb::create().await;
-    let pool = db.admin.clone();
-    pool.close().await;
+    TestDb::with(|db| async move {
+        let pool = db.admin.clone();
+        pool.close().await;
 
-    let cfg = WorkerConfig {
-        tick: Duration::from_millis(20),
-    };
+        let cfg = WorkerConfig {
+            tick: Duration::from_millis(20),
+        };
 
-    let result = cadus_worker::run(&pool, &cfg, tokio::time::sleep(Duration::from_secs(5))).await;
+        let result =
+            cadus_worker::run(&pool, &cfg, tokio::time::sleep(Duration::from_secs(5))).await;
 
-    assert!(
-        result.is_err(),
-        "a closed pool must make the tick loop fail, it gave {result:?}"
-    );
-
-    db.drop().await;
+        assert!(
+            result.is_err(),
+            "a closed pool must make the tick loop fail, it gave {result:?}"
+        );
+    })
+    .await;
 }
 
 /// (3) The stop signal wins while a heartbeat query is in flight.
@@ -139,46 +143,46 @@ async fn shutdown_wins_over_a_heartbeat_that_does_not_answer() {
 /// (4) The binary starts, ticks once per second, and exits 0 on SIGTERM.
 #[tokio::test]
 async fn binary_ticks_and_exits_zero_on_sigterm() {
-    let db = TestDb::create().await;
-    let dsn = superuser_dsn(&db.name);
+    TestDb::with(|db| async move {
+        let dsn = superuser_dsn(&db.name);
 
-    let child = tokio::process::Command::new(env!("CARGO_BIN_EXE_cadus-worker"))
-        .env("DATABASE_URL", &dsn)
-        .env("WORKER_TICK_SECS", "1")
-        .env("RUST_LOG", "info")
-        .stdout(std::process::Stdio::piped())
-        .stderr(std::process::Stdio::piped())
-        .spawn()
-        .expect("the worker binary must start");
+        let child = tokio::process::Command::new(env!("CARGO_BIN_EXE_cadus-worker"))
+            .env("DATABASE_URL", &dsn)
+            .env("WORKER_TICK_SECS", "1")
+            .env("RUST_LOG", "info")
+            .stdout(std::process::Stdio::piped())
+            .stderr(std::process::Stdio::piped())
+            .spawn()
+            .expect("the worker binary must start");
 
-    let pid = child.id().expect("the child must report a pid");
+        let pid = child.id().expect("the child must report a pid");
 
-    tokio::time::sleep(Duration::from_millis(2500)).await;
+        tokio::time::sleep(Duration::from_millis(2500)).await;
 
-    // SAFETY: `pid` names a child process of this test, and the process is
-    // still alive because nothing reaped it yet.
-    let sent = unsafe { libc::kill(pid as libc::pid_t, libc::SIGTERM) };
-    assert_eq!(sent, 0, "kill(SIGTERM) must return 0");
+        // SAFETY: `pid` names a child process of this test, and the process is
+        // still alive because nothing reaped it yet.
+        let sent = unsafe { libc::kill(pid as libc::pid_t, libc::SIGTERM) };
+        assert_eq!(sent, 0, "kill(SIGTERM) must return 0");
 
-    let output = tokio::time::timeout(Duration::from_secs(10), child.wait_with_output())
-        .await
-        .expect("the worker must exit within 10 s after SIGTERM")
-        .expect("reading the worker output must succeed");
+        let output = tokio::time::timeout(Duration::from_secs(10), child.wait_with_output())
+            .await
+            .expect("the worker must exit within 10 s after SIGTERM")
+            .expect("reading the worker output must succeed");
 
-    let mut log = String::from_utf8_lossy(&output.stdout).into_owned();
-    log.push_str(&String::from_utf8_lossy(&output.stderr));
+        let mut log = String::from_utf8_lossy(&output.stdout).into_owned();
+        log.push_str(&String::from_utf8_lossy(&output.stderr));
 
-    assert_eq!(
-        output.status.code(),
-        Some(0),
-        "the worker must exit 0 after SIGTERM; log:\n{log}"
-    );
-    assert!(
-        log.contains("heartbeat tick=2"),
-        "the log must hold `heartbeat tick=2`; log:\n{log}"
-    );
-
-    db.drop().await;
+        assert_eq!(
+            output.status.code(),
+            Some(0),
+            "the worker must exit 0 after SIGTERM; log:\n{log}"
+        );
+        assert!(
+            log.contains("heartbeat tick=2"),
+            "the log must hold `heartbeat tick=2`; log:\n{log}"
+        );
+    })
+    .await;
 }
 
 /// (5) A stop signal during the database connect gives exit code 0.

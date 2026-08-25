@@ -59,7 +59,8 @@ Cost note: round 1 used 128 agents. Round 2 is capped at two rounds, major+ only
   parity test must cover diagnostic events.
 - (deploy) `citext` needs the Postgres contrib package; the official `postgres:16`
   image ships it.
-- (tests) `TestDb::drop` is best effort; a panicking test leaks its `cadus2_t_*`
-  database on the throwaway cluster.
+- (tests, closed by FIX6) `TestDb::with` is the only entry point. It drops the
+  `cadus2_t_*` database of a test body that panics. `TestDb::create` and
+  `TestDb::drop` are gone from the public API.
 - (docs drift, 1.0) `web_states` payload column is `doc` in 1.0 DDL, `state` in 1.0
   docs; 2.0 follows the DDL.

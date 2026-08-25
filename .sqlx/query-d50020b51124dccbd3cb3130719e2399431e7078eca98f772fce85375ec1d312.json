@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n        SELECT c.relname::text AS \"table_name!\",\n               p.polname::text AS \"policy_name!\",\n               pg_get_expr(p.polqual, p.polrelid)      AS \"using_expr?\",\n               pg_get_expr(p.polwithcheck, p.polrelid) AS \"with_check_expr?\"\n        FROM pg_policy p\n        JOIN pg_class c ON c.oid = p.polrelid\n        JOIN pg_namespace n ON n.oid = c.relnamespace\n        WHERE n.nspname = 'public'\n        ORDER BY c.relname, p.polname\n        ",
+  "query": "\n            SELECT c.relname::text AS \"table_name!\",\n                   p.polname::text AS \"policy_name!\",\n                   pg_get_expr(p.polqual, p.polrelid)      AS \"using_expr?\",\n                   pg_get_expr(p.polwithcheck, p.polrelid) AS \"with_check_expr?\"\n            FROM pg_policy p\n            JOIN pg_class c ON c.oid = p.polrelid\n            JOIN pg_namespace n ON n.oid = c.relnamespace\n            WHERE n.nspname = 'public'\n            ORDER BY c.relname, p.polname\n            ",
   "describe": {
     "columns": [
       {
@@ -38,5 +38,5 @@
       null
     ]
   },
-  "hash": "47206e611b62431593e5518d45fd1d65eb1972062406df1ad923c2abdff57901"
+  "hash": "d50020b51124dccbd3cb3130719e2399431e7078eca98f772fce85375ec1d312"
 }

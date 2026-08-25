@@ -9,6 +9,9 @@
 //!
 //! Every child process gets `RUST_LOG=info`. An ambient `RUST_LOG` of the
 //! developer shell must not decide the result of a test (finding #12).
+//!
+//! Every test that needs a database uses `TestDb::with`, so a failed assertion
+//! drops the throwaway database instead of leaving it on the shared cluster.
 
 #![allow(
     clippy::unwrap_used,
@@ -172,114 +175,113 @@ async fn health_returns_200_and_exact_body() {
 /// (2) `/api/ready` answers 200 with `{"ready":true}` on a live app pool.
 #[tokio::test]
 async fn ready_returns_200_on_a_live_pool() {
-    let db = TestDb::create().await;
-    let app = router(AppState {
-        pool: db.app.clone(),
-    });
+    TestDb::with(|db| async move {
+        let app = router(AppState {
+            pool: db.app.clone(),
+        });
 
-    let response = app
-        .oneshot(
-            Request::builder()
-                .uri("/api/ready")
-                .body(Body::empty())
-                .unwrap(),
-        )
-        .await
-        .unwrap();
+        let response = app
+            .oneshot(
+                Request::builder()
+                    .uri("/api/ready")
+                    .body(Body::empty())
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
 
-    assert_eq!(response.status(), StatusCode::OK);
-    let body = response.into_body().collect().await.unwrap().to_bytes();
-    assert_eq!(&body[..], b"{\"ready\":true}");
-
-    db.drop().await;
+        assert_eq!(response.status(), StatusCode::OK);
+        let body = response.into_body().collect().await.unwrap().to_bytes();
+        assert_eq!(&body[..], b"{\"ready\":true}");
+    })
+    .await;
 }
 
 /// (3) C3: the guard rejects the superuser pool and accepts the app pool.
 #[tokio::test]
 async fn boot_check_rejects_a_role_that_bypasses_rls() {
-    let db = TestDb::create().await;
-
-    match boot_check(&db.admin).await {
-        Err(StoreError::RlsBypass { superuser, .. }) => {
-            assert!(superuser, "the test cluster admin is a superuser")
+    TestDb::with(|db| async move {
+        match boot_check(&db.admin).await {
+            Err(StoreError::RlsBypass { superuser, .. }) => {
+                assert!(superuser, "the test cluster admin is a superuser")
+            }
+            Err(other) => panic!("the guard gave the wrong error: {other}"),
+            Ok(info) => panic!("the guard accepted the superuser role {}", info.name),
         }
-        Err(other) => panic!("the guard gave the wrong error: {other}"),
-        Ok(info) => panic!("the guard accepted the superuser role {}", info.name),
-    }
 
-    let info = boot_check(&db.app)
-        .await
-        .expect("the guard accepts the app role");
-    assert_eq!(
-        info,
-        RoleInfo {
-            name: "cadus_app".to_string(),
-            superuser: false,
-            bypass_rls: false,
-        }
-    );
-
-    db.drop().await;
+        let info = boot_check(&db.app)
+            .await
+            .expect("the guard accepts the app role");
+        assert_eq!(
+            info,
+            RoleInfo {
+                name: "cadus_app".to_string(),
+                superuser: false,
+                bypass_rls: false,
+            }
+        );
+    })
+    .await;
 }
 
 /// (4) The binary refuses to start with a role that bypasses row-level
 /// security. The exit code is exactly 3 and stderr names the reason.
 #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
 async fn binary_exits_3_with_a_superuser_dsn() {
-    let db = TestDb::create().await;
-    let dsn = dsn_for(&db.name, None);
+    TestDb::with(|db| async move {
+        let dsn = dsn_for(&db.name, None);
 
-    let mut child = Command::new(env!("CARGO_BIN_EXE_cadus-web"))
-        .env("DATABASE_URL", &dsn)
-        .env("BIND_ADDR", "127.0.0.1:0")
-        .env("RUST_LOG", "info")
-        .stdout(Stdio::piped())
-        .stderr(Stdio::piped())
-        .spawn()
-        .expect("start cadus-web");
+        let mut child = Command::new(env!("CARGO_BIN_EXE_cadus-web"))
+            .env("DATABASE_URL", &dsn)
+            .env("BIND_ADDR", "127.0.0.1:0")
+            .env("RUST_LOG", "info")
+            .stdout(Stdio::piped())
+            .stderr(Stdio::piped())
+            .spawn()
+            .expect("start cadus-web");
 
-    wait_for_exit(&mut child, Duration::from_secs(10), "boot guard");
-    let output = child.wait_with_output().expect("collect the child output");
+        wait_for_exit(&mut child, Duration::from_secs(10), "boot guard");
+        let output = child.wait_with_output().expect("collect the child output");
 
-    assert_eq!(output.status.code(), Some(3));
-    let stderr = String::from_utf8_lossy(&output.stderr);
-    assert!(
-        stderr.contains("bypasses RLS"),
-        "stderr does not name the reason: {stderr}"
-    );
-
-    db.drop().await;
+        assert_eq!(output.status.code(), Some(3));
+        let stderr = String::from_utf8_lossy(&output.stderr);
+        assert!(
+            stderr.contains("bypasses RLS"),
+            "stderr does not name the reason: {stderr}"
+        );
+    })
+    .await;
 }
 
 /// (5) The binary serves `/api/health` with the app role and stops on SIGTERM
 /// with exit code 0.
 #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
 async fn binary_serves_health_and_stops_on_sigterm() {
-    let db = TestDb::create().await;
-    let dsn = dsn_for(&db.name, Some("cadus_app"));
-    let port = free_port();
-    let address = format!("127.0.0.1:{port}");
+    TestDb::with(|db| async move {
+        let dsn = dsn_for(&db.name, Some("cadus_app"));
+        let port = free_port();
+        let address = format!("127.0.0.1:{port}");
 
-    let mut child = Command::new(env!("CARGO_BIN_EXE_cadus-web"))
-        .env("DATABASE_URL", &dsn)
-        .env("BIND_ADDR", &address)
-        .env("RUST_LOG", "info")
-        .stdout(Stdio::piped())
-        .stderr(Stdio::piped())
-        .spawn()
-        .expect("start cadus-web");
+        let mut child = Command::new(env!("CARGO_BIN_EXE_cadus-web"))
+            .env("DATABASE_URL", &dsn)
+            .env("BIND_ADDR", &address)
+            .env("RUST_LOG", "info")
+            .stdout(Stdio::piped())
+            .stderr(Stdio::piped())
+            .spawn()
+            .expect("start cadus-web");
 
-    let (code, body) = wait_until_healthy(&mut child, &address);
-    assert_eq!(code, 200);
-    assert_eq!(body, "{\"ok\":true}");
+        let (code, body) = wait_until_healthy(&mut child, &address);
+        assert_eq!(code, 200);
+        assert_eq!(body, "{\"ok\":true}");
 
-    send_sigterm(&child);
+        send_sigterm(&child);
 
-    wait_for_exit(&mut child, Duration::from_secs(5), "graceful shutdown");
-    let output = child.wait_with_output().expect("collect the child output");
-    assert_eq!(output.status.code(), Some(0));
-
-    db.drop().await;
+        wait_for_exit(&mut child, Duration::from_secs(5), "graceful shutdown");
+        let output = child.wait_with_output().expect("collect the child output");
+        assert_eq!(output.status.code(), Some(0));
+    })
+    .await;
 }
 
 /// (6) `/api/ready` answers 503 with `{"ready":false}` when the pool is closed.
@@ -288,26 +290,26 @@ async fn binary_serves_health_and_stops_on_sigterm() {
 /// answer.
 #[tokio::test]
 async fn ready_returns_503_on_a_closed_pool() {
-    let db = TestDb::create().await;
-    let pool = db.app.clone();
-    pool.close().await;
-    let app = router(AppState { pool });
+    TestDb::with(|db| async move {
+        let pool = db.app.clone();
+        pool.close().await;
+        let app = router(AppState { pool });
 
-    let response = app
-        .oneshot(
-            Request::builder()
-                .uri("/api/ready")
-                .body(Body::empty())
-                .unwrap(),
-        )
-        .await
-        .unwrap();
+        let response = app
+            .oneshot(
+                Request::builder()
+                    .uri("/api/ready")
+                    .body(Body::empty())
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
 
-    assert_eq!(response.status(), StatusCode::SERVICE_UNAVAILABLE);
-    let body = response.into_body().collect().await.unwrap().to_bytes();
-    assert_eq!(&body[..], b"{\"ready\":false}");
-
-    db.drop().await;
+        assert_eq!(response.status(), StatusCode::SERVICE_UNAVAILABLE);
+        let body = response.into_body().collect().await.unwrap().to_bytes();
+        assert_eq!(&body[..], b"{\"ready\":false}");
+    })
+    .await;
 }
 
 /// (7) A client that holds a half-sent request does not block the stop.
@@ -318,43 +320,44 @@ async fn ready_returns_503_on_a_closed_pool() {
 /// runtime kills it (finding #9). `SHUTDOWN_DEADLINE_SECS=1` bounds the drain.
 #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
 async fn binary_exits_zero_with_a_half_sent_request_open() {
-    let db = TestDb::create().await;
-    let dsn = dsn_for(&db.name, Some("cadus_app"));
-    let port = free_port();
-    let address = format!("127.0.0.1:{port}");
+    TestDb::with(|db| async move {
+        let dsn = dsn_for(&db.name, Some("cadus_app"));
+        let port = free_port();
+        let address = format!("127.0.0.1:{port}");
 
-    let mut child = Command::new(env!("CARGO_BIN_EXE_cadus-web"))
-        .env("DATABASE_URL", &dsn)
-        .env("BIND_ADDR", &address)
-        .env("SHUTDOWN_DEADLINE_SECS", "1")
-        .env("RUST_LOG", "info")
-        .stdout(Stdio::piped())
-        .stderr(Stdio::piped())
-        .spawn()
-        .expect("start cadus-web");
+        let mut child = Command::new(env!("CARGO_BIN_EXE_cadus-web"))
+            .env("DATABASE_URL", &dsn)
+            .env("BIND_ADDR", &address)
+            .env("SHUTDOWN_DEADLINE_SECS", "1")
+            .env("RUST_LOG", "info")
+            .stdout(Stdio::piped())
+            .stderr(Stdio::piped())
+            .spawn()
+            .expect("start cadus-web");
 
-    let (code, _body) = wait_until_healthy(&mut child, &address);
-    assert_eq!(code, 200);
+        let (code, _body) = wait_until_healthy(&mut child, &address);
+        assert_eq!(code, 200);
 
-    // The half-sent request. The connection stays open for the whole test.
-    let mut stalled = TcpStream::connect(&address).expect("open the stalled connection");
-    write!(stalled, "GET /api/health HTTP/1.1\r\nHost: {address}\r\n")
-        .expect("send half of a request");
-    stalled.flush().expect("flush the stalled connection");
+        // The half-sent request. The connection stays open for the whole test.
+        let mut stalled = TcpStream::connect(&address).expect("open the stalled connection");
+        write!(stalled, "GET /api/health HTTP/1.1\r\nHost: {address}\r\n")
+            .expect("send half of a request");
+        stalled.flush().expect("flush the stalled connection");
 
-    send_sigterm(&child);
+        send_sigterm(&child);
 
-    wait_for_exit(&mut child, Duration::from_secs(15), "bounded shutdown");
-    let output = child.wait_with_output().expect("collect the child output");
-    let stderr = String::from_utf8_lossy(&output.stderr);
-    assert_eq!(
-        output.status.code(),
-        Some(0),
-        "the server must exit 0 at the shutdown deadline; stderr:\n{stderr}"
-    );
+        wait_for_exit(&mut child, Duration::from_secs(15), "bounded shutdown");
+        let output = child.wait_with_output().expect("collect the child output");
+        let stderr = String::from_utf8_lossy(&output.stderr);
+        assert_eq!(
+            output.status.code(),
+            Some(0),
+            "the server must exit 0 at the shutdown deadline; stderr:\n{stderr}"
+        );
 
-    drop(stalled);
-    db.drop().await;
+        drop(stalled);
+    })
+    .await;
 }
 
 /// (8) An absent `DATABASE_URL` is a start error: exit code exactly 2.

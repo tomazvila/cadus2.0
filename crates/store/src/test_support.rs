@@ -1,8 +1,9 @@
 //! Throwaway test databases for the row-level-security proofs (C2, C3).
 //!
-//! Each test creates its own database on the cluster that
-//! `CADUS_TEST_DATABASE_URL` names, migrates it, and drops it at the end. Two
-//! pools connect to that database:
+//! `TestDb::with` is the only entry point. It creates a database on the cluster
+//! that `CADUS_TEST_DATABASE_URL` names, migrates it, runs the test body, and
+//! drops the database in every case, a panic in the body included. Two pools
+//! connect to that database:
 //!
 //! - `admin`: the superuser of the test cluster. It seeds fixtures, because a
 //!   superuser bypasses row-level security.
@@ -33,7 +34,10 @@ pub struct TestDb {
 
 impl TestDb {
     /// Create a fresh database, migrate it, and open both pools.
-    pub async fn create() -> TestDb {
+    ///
+    /// This method stays private. `TestDb::with` is the only entry point,
+    /// because it also drops the database of a test body that panics.
+    async fn create() -> TestDb {
         let dsn = match std::env::var(TEST_DSN_VAR) {
             Ok(dsn) if !dsn.is_empty() => dsn,
             _ => panic!(
@@ -169,15 +173,6 @@ impl TestDb {
 
     /// Close both pools and drop the database. The drop is best effort: a failed
     /// cleanup must not fail a test that already gave its verdict.
-    ///
-    /// `TestDb::with` is the safer form, because it also drops the database of a
-    /// test that panics. This method stays for a test that holds the `TestDb` by
-    /// value.
-    pub async fn drop(self) {
-        self.drop_database().await;
-    }
-
-    /// Close both pools and drop the database.
     async fn drop_database(&self) {
         self.app.close().await;
         self.admin.close().await;
