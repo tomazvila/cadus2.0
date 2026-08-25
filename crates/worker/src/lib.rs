@@ -43,9 +43,9 @@ impl Default for WorkerConfig {
 impl WorkerConfig {
     /// Read `WORKER_TICK_SECS` from the environment.
     ///
-    /// An absent variable gives the default of 5 seconds. A value that is not a
-    /// positive whole number of seconds is a configuration error, because a
-    /// silent fallback hides an operator mistake.
+    /// An absent variable gives the default of 5 seconds. A present value that
+    /// is not a positive whole number of seconds is a configuration error,
+    /// because a silent fallback hides an operator mistake.
     pub fn from_env() -> Result<Self, WorkerError> {
         let raw = match std::env::var(TICK_SECS_VAR) {
             Ok(raw) => raw,
@@ -56,10 +56,20 @@ impl WorkerConfig {
                 )));
             }
         };
+        Self::from_raw(&raw)
+    }
 
+    /// Parse one present value of `WORKER_TICK_SECS`.
+    ///
+    /// An empty value and a whitespace value are configuration errors. The
+    /// variable is set, so the operator intended a period and gave none. A
+    /// fallback to the default hides that mistake (finding #40).
+    fn from_raw(raw: &str) -> Result<Self, WorkerError> {
         let trimmed = raw.trim();
         if trimmed.is_empty() {
-            return Ok(Self::default());
+            return Err(WorkerError::Config(format!(
+                "{TICK_SECS_VAR} is empty; give a whole number of seconds or remove the variable"
+            )));
         }
 
         let secs: u64 = trimmed.parse().map_err(|_| {
@@ -93,6 +103,10 @@ pub enum WorkerError {
     /// The store refused to give a pool or a role report.
     #[error("store error: {0}")]
     Store(#[from] cadus_store::StoreError),
+
+    /// The process could not install a stop-signal handler.
+    #[error("signal error: {0}")]
+    Signal(String),
 }
 
 /// Run the tick loop until the shutdown future completes. Return the number of
@@ -105,6 +119,10 @@ pub enum WorkerError {
 /// The loop takes the first tick at once, then one tick per configured period.
 /// A tick that overruns the period delays the next tick; the loop never bursts
 /// to catch up.
+///
+/// The shutdown future also runs against the heartbeat query. A query that never
+/// answers therefore does not block the stop: the loop leaves the query and
+/// returns the tick count that it completed.
 ///
 /// M0 runs no jobs. Two later milestones add work inside this loop:
 ///
@@ -126,13 +144,25 @@ pub async fn run(
     tracing::info!(tick_ms = cfg.tick.as_millis() as u64, "worker: loop starts");
 
     loop {
+        // Step 1: wait for the next tick. `biased` gives the shutdown branch the
+        // first look on every pass, so a ready shutdown always wins over a ready
+        // tick.
         tokio::select! {
-            // `biased` gives the shutdown branch the first look on every pass,
-            // so a ready shutdown always wins over a ready tick.
             biased;
             _ = &mut shutdown => break,
-            _ = interval.tick() => {
-                heartbeat(pool).await?;
+            _ = interval.tick() => {}
+        }
+
+        // Step 2: run the heartbeat as a branch of the same kind of select, not
+        // inside a branch body. A branch body that waits keeps the shutdown
+        // future unpolled, so a stuck query made the worker deaf to SIGTERM
+        // (finding #10). Here the shutdown future wins while the query is in
+        // flight, and the loop drops the query.
+        tokio::select! {
+            biased;
+            _ = &mut shutdown => break,
+            result = heartbeat(pool) => {
+                result?;
                 ticks += 1;
                 tracing::info!("heartbeat tick={ticks}");
             }
@@ -150,4 +180,70 @@ async fn heartbeat(pool: &PgPool) -> Result<(), WorkerError> {
         .await?;
     tracing::trace!(one, "worker: heartbeat query is complete");
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::{WorkerConfig, WorkerError};
+    use std::time::Duration;
+
+    /// The parse of one raw value. Each expected string below is a literal.
+    #[test]
+    fn from_raw_rejects_an_empty_value() {
+        let err = WorkerConfig::from_raw("").expect_err("an empty value is an error");
+        assert_eq!(
+            err.to_string(),
+            "configuration error: WORKER_TICK_SECS is empty; give a whole number of seconds or \
+             remove the variable"
+        );
+    }
+
+    #[test]
+    fn from_raw_rejects_a_whitespace_value() {
+        let err = WorkerConfig::from_raw("   ").expect_err("a whitespace value is an error");
+        assert_eq!(
+            err.to_string(),
+            "configuration error: WORKER_TICK_SECS is empty; give a whole number of seconds or \
+             remove the variable"
+        );
+    }
+
+    #[test]
+    fn from_raw_rejects_zero() {
+        let err = WorkerConfig::from_raw("0").expect_err("zero is an error");
+        assert_eq!(
+            err.to_string(),
+            "configuration error: WORKER_TICK_SECS must be 1 or more"
+        );
+    }
+
+    #[test]
+    fn from_raw_rejects_a_word() {
+        let err = WorkerConfig::from_raw("soon").expect_err("a word is an error");
+        assert_eq!(
+            err.to_string(),
+            "configuration error: WORKER_TICK_SECS must be a whole number of seconds, not \"soon\""
+        );
+    }
+
+    #[test]
+    fn from_raw_accepts_a_whole_number() {
+        let cfg = WorkerConfig::from_raw(" 7 ").expect("7 seconds is a valid period");
+        assert_eq!(
+            cfg,
+            WorkerConfig {
+                tick: Duration::from_secs(7)
+            }
+        );
+    }
+
+    /// The error type keeps its variant. A test that only reads the text passes
+    /// with any variant, so this one names the variant too.
+    #[test]
+    fn an_empty_value_gives_the_config_variant() {
+        match WorkerConfig::from_raw("") {
+            Err(WorkerError::Config(_)) => {}
+            other => panic!("the parse must give WorkerError::Config, it gave {other:?}"),
+        }
+    }
 }
