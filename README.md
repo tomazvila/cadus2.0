@@ -28,9 +28,12 @@ Run `cargo sqlx migrate run` again after every new migration. `cargo sqlx
 prepare --check` compiles the query macros against that database, so an empty
 database fails the gate with `relation "users" does not exist`.
 
-`scripts/check_ops.sh` needs `docker` on PATH. It runs `docker compose config`
-and `docker build`. The gate fails with `GATE FAILED: docker is required` when
-docker is absent.
+`scripts/check_ops.sh` needs `docker` and `python3` on PATH. It runs
+`docker compose config`, then `docker compose build`, then one container per
+built image to prove that `cadus-web`, `cadus-worker`, and `cadus-migrate` are
+on the `PATH` there and that every `command:` of `docker-compose.yml` names a
+binary the image carries. The gate fails with `GATE FAILED: docker is required`
+when docker is absent.
 
 Migrations are forward-only. After you add `migrations/NNNN_name.sql`, run
 `scripts/check_migrations.sh --freeze` and commit `migrations/CHECKSUMS` with

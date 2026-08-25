@@ -11,6 +11,9 @@
 //!
 //! Every test that needs a database uses `TestDb::with`, so a failed assertion
 //! drops the throwaway database instead of leaving it on the shared cluster.
+//!
+//! Test 6 needs no database: it speaks the Postgres wire protocol itself and
+//! stops answering at the exact moment the test wants.
 
 #![allow(
     clippy::unwrap_used,
@@ -20,6 +23,10 @@
     clippy::unimplemented
 )]
 
+use std::io::{Read, Write};
+use std::net::{TcpListener, TcpStream};
+use std::sync::Arc;
+use std::sync::atomic::{AtomicBool, Ordering};
 use std::time::{Duration, Instant};
 
 use cadus_store::test_support::TestDb;
@@ -223,5 +230,165 @@ async fn binary_exits_zero_on_sigterm_during_the_connect() {
         output.status.code(),
         Some(0),
         "the worker must exit 0 after a SIGTERM during the connect; log:\n{log}"
+    );
+}
+
+// ---------------------------------------------------------------------------
+// A Postgres server that finishes the handshake and then answers no query.
+// ---------------------------------------------------------------------------
+
+/// The Postgres `SSLRequest` code. The client sends it before the startup
+/// message, and this server declines with a single `N`.
+const SSL_REQUEST_CODE: u32 = 80877103;
+
+/// `ReadyForQuery`, transaction status `I` (idle).
+const READY_FOR_QUERY: [u8; 6] = [b'Z', 0, 0, 0, 5, b'I'];
+
+/// Start a server that speaks the Postgres handshake and then goes deaf.
+///
+/// The server answers the TLS probe, the startup message, and the pool
+/// liveness ping, so `cadus_store::connect` succeeds and the pool hands out a
+/// connection. It answers nothing after the first `Parse` or `Query` message,
+/// so `cadus_store::current_role` never returns. That is the exact state of a
+/// database that accepts a connection and then stops replying.
+///
+/// The return value is the port and a flag that turns true when the first query
+/// message arrives. The threads end with the test process.
+fn start_deaf_postgres() -> (u16, Arc<AtomicBool>) {
+    let listener = TcpListener::bind("127.0.0.1:0").expect("bind the deaf server");
+    let port = listener.local_addr().expect("local address").port();
+    let query_seen = Arc::new(AtomicBool::new(false));
+    let flag = Arc::clone(&query_seen);
+
+    std::thread::spawn(move || {
+        for stream in listener.incoming() {
+            let Ok(stream) = stream else { return };
+            let flag = Arc::clone(&flag);
+            std::thread::spawn(move || {
+                let _ = serve_deaf(stream, &flag);
+            });
+        }
+    });
+
+    (port, query_seen)
+}
+
+/// Read exactly `len` bytes, or report the read error.
+fn read_exact(stream: &mut TcpStream, len: usize) -> std::io::Result<Vec<u8>> {
+    let mut buf = vec![0u8; len];
+    stream.read_exact(&mut buf)?;
+    Ok(buf)
+}
+
+/// Read the first four bytes as a big-endian unsigned number.
+fn be_u32(bytes: &[u8]) -> u32 {
+    u32::from_be_bytes([bytes[0], bytes[1], bytes[2], bytes[3]])
+}
+
+/// Serve one connection: finish the handshake, answer the ping, go deaf.
+fn serve_deaf(mut stream: TcpStream, query_seen: &AtomicBool) -> std::io::Result<()> {
+    // (a) The startup phase. Every packet here carries a length and no type
+    // byte. Decline TLS with `N` and take the next packet as the startup
+    // message.
+    loop {
+        let header = read_exact(&mut stream, 4)?;
+        let body = read_exact(&mut stream, be_u32(&header) as usize - 4)?;
+        if body.len() >= 4 && be_u32(&body) == SSL_REQUEST_CODE {
+            stream.write_all(b"N")?;
+            stream.flush()?;
+            continue;
+        }
+        break;
+    }
+
+    // (b) Report a finished start-up: AuthenticationOk, one ParameterStatus,
+    // BackendKeyData, ReadyForQuery.
+    stream.write_all(&[b'R', 0, 0, 0, 8, 0, 0, 0, 0])?;
+    let payload = b"server_version\x0016.0\x00";
+    let mut status = vec![b'S'];
+    status.extend_from_slice(&(payload.len() as u32 + 4).to_be_bytes());
+    status.extend_from_slice(payload);
+    stream.write_all(&status)?;
+    stream.write_all(&[b'K', 0, 0, 0, 12, 0, 0, 0, 1, 0, 0, 0, 1])?;
+    stream.write_all(&READY_FOR_QUERY)?;
+    stream.flush()?;
+
+    // (c) Answer the pool liveness ping (a bare `Sync`), then go deaf on the
+    // first real query. Every packet here carries a type byte and a length.
+    let mut deaf = false;
+    loop {
+        let kind = read_exact(&mut stream, 1)?[0];
+        let header = read_exact(&mut stream, 4)?;
+        let _body = read_exact(&mut stream, be_u32(&header) as usize - 4)?;
+        match kind {
+            b'X' => return Ok(()),
+            b'P' | b'Q' => {
+                deaf = true;
+                query_seen.store(true, Ordering::SeqCst);
+            }
+            b'S' if !deaf => {
+                stream.write_all(&READY_FOR_QUERY)?;
+                stream.flush()?;
+            }
+            _ => {}
+        }
+    }
+}
+
+/// (6) A stop signal during the role report gives exit code 0.
+///
+/// The DSN points at a server that finishes the handshake and then answers no
+/// query, so `cadus_store::current_role` never returns. The test waits for the
+/// query to reach that server, so the process is inside the role report when
+/// the signal arrives. A bare `await` there makes the process deaf to SIGTERM
+/// for the whole stall (finding #8).
+#[tokio::test]
+async fn binary_exits_zero_on_sigterm_during_the_role_report() {
+    let (port, query_seen) = start_deaf_postgres();
+
+    let child = tokio::process::Command::new(env!("CARGO_BIN_EXE_cadus-worker"))
+        .env("DATABASE_URL", format!("postgresql://x@127.0.0.1:{port}/x"))
+        .env("WORKER_TICK_SECS", "1")
+        .env("RUST_LOG", "info")
+        .stdout(std::process::Stdio::piped())
+        .stderr(std::process::Stdio::piped())
+        .spawn()
+        .expect("the worker binary must start");
+
+    let pid = child.id().expect("the child must report a pid");
+
+    // Wait until the role query reaches the deaf server. The process is then
+    // inside `current_role` and answers only through the signal path.
+    let deadline = Instant::now() + Duration::from_secs(10);
+    while !query_seen.load(Ordering::SeqCst) {
+        assert!(
+            Instant::now() < deadline,
+            "the worker must send its role query within 10 s"
+        );
+        tokio::time::sleep(Duration::from_millis(50)).await;
+    }
+    tokio::time::sleep(Duration::from_millis(300)).await;
+
+    // SAFETY: `pid` names a child process of this test, and the process is
+    // still alive because nothing reaped it yet.
+    let sent = unsafe { libc::kill(pid as libc::pid_t, libc::SIGTERM) };
+    assert_eq!(sent, 0, "kill(SIGTERM) must return 0");
+
+    let output = tokio::time::timeout(Duration::from_secs(5), child.wait_with_output())
+        .await
+        .expect("the worker must exit within 5 s after SIGTERM during the role report")
+        .expect("reading the worker output must succeed");
+
+    let mut log = String::from_utf8_lossy(&output.stdout).into_owned();
+    log.push_str(&String::from_utf8_lossy(&output.stderr));
+
+    assert_eq!(
+        output.status.code(),
+        Some(0),
+        "the worker must exit 0 after SIGTERM during the role report; log:\n{log}"
+    );
+    assert!(
+        log.contains("cadus-worker: the stop signal came before the role report"),
+        "the log must name the role report as the point of the stop; log:\n{log}"
     );
 }

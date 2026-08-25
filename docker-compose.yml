@@ -24,6 +24,28 @@ services:
   # container network is not an authentication boundary. Under trust auth, any
   # other container on `backend` and any host user who reaches the container IP
   # connects as the superuser.
+  #
+  # WARNING: Do not rotate POSTGRES_PASSWORD in `.env` alone. The value is
+  # write-once. The `postgres:16` image reads it at initdb only, that is on the
+  # first start with an empty `db-data` volume. On a volume that already holds a
+  # database the container ignores a new value, but
+  # compose still writes the new value into the `migrate` DSN below. A rotation
+  # of POSTGRES_PASSWORD in `.env` alone therefore recreates `web` and `worker`,
+  # stops `migrate` with `password authentication failed for user "postgres"`,
+  # and leaves the site down (finding #13). The two runtime passwords are NOT
+  # write-once: `cadus-migrate --admin-login` writes CADUS_APP_PASSWORD and
+  # CADUS_ADMIN_PASSWORD into the roles on every bring-up.
+  #
+  # To rotate POSTGRES_PASSWORD, change the role first and `.env` second:
+  #
+  #   docker compose exec db psql -U postgres -c "ALTER ROLE postgres PASSWORD '<new>'"
+  #   # put the same <new> value into .env
+  #   docker compose up -d
+  #
+  # `docs/SELF_HOST.md`, section "Rotate a password", holds the full procedure
+  # and the recovery for a rotation that was done in the wrong order. Never run
+  # `docker compose down -v` to recover: that command destroys `db-data` and
+  # every learner row with it.
   db:
     image: postgres:16
     environment:
