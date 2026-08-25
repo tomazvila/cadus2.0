@@ -6,7 +6,7 @@
 # broken compose key first appears on the operator's server. This script runs
 # the operator's own commands in the gate instead.
 #
-# The script does four checks and prints one line per check:
+# The script does six checks and prints one line per check:
 #   (a) compose  -- `docker compose config` resolves docker-compose.yml. The
 #                   placeholder values below stand in for `.env`, which the
 #                   repository never carries. Every `:?` variable of the compose
@@ -25,6 +25,15 @@
 #                   passed the old gate and gave the operator an
 #                   `exec: "cadus-webb": executable file not found in $PATH`
 #                   crash loop (finding #12).
+#   (e) deploy   -- scripts/deploy.sh exists, is executable, and parses. It is
+#                   THE upgrade procedure (finding #16), so a broken file must
+#                   fail the gate and not the operator's upgrade.
+#   (f) invariants -- two compose facts that a review round paid for:
+#                   the `db` healthcheck probes TCP (`-h`), because the initdb
+#                   temp server answers the unix socket while port 5432 still
+#                   refuses (finding #15); and `migrate` gets no
+#                   DB_STATEMENT_TIMEOUT_MS, because a migration runs without a
+#                   statement bound (finding #1).
 #
 # Compose names a built image `<project>-<service>` when the service declares no
 # `image:` key. The script reads the project name and the service names from
@@ -165,6 +174,68 @@ EOF
 
 if [ "$commands_ok" -eq 1 ]; then
     echo "PASS: commands -- every command: binary exists in its image ($command_count checked)"
+fi
+
+# ---------------------------------------------------------------------------
+# (e) the upgrade script is present, executable, and parses
+# ---------------------------------------------------------------------------
+deploy_ok=1
+if [ ! -f scripts/deploy.sh ]; then
+    echo "FAIL: deploy   -- scripts/deploy.sh is missing"
+    deploy_ok=0
+    rc=1
+elif [ ! -x scripts/deploy.sh ]; then
+    echo "FAIL: deploy   -- scripts/deploy.sh is not executable"
+    deploy_ok=0
+    rc=1
+elif ! bash -n scripts/deploy.sh; then
+    echo "FAIL: deploy   -- scripts/deploy.sh does not parse"
+    deploy_ok=0
+    rc=1
+fi
+
+if [ "$deploy_ok" -eq 1 ]; then
+    echo "PASS: deploy   -- scripts/deploy.sh is present, executable, and parses"
+fi
+
+# ---------------------------------------------------------------------------
+# (f) the two compose invariants of review round 3
+# ---------------------------------------------------------------------------
+invariant_log=""
+if invariant_log="$(printf '%s' "$config_json" | python3 -c '
+import json
+import sys
+
+doc = json.load(sys.stdin)
+services = doc.get("services", {})
+problems = []
+
+db = services.get("db", {})
+test = db.get("healthcheck", {}).get("test", [])
+if isinstance(test, str):
+    test = [test]
+probe = " ".join(str(part) for part in test)
+if "pg_isready" not in probe:
+    problems.append("the db healthcheck does not run pg_isready: " + probe)
+elif " -h " not in probe:
+    problems.append("the db healthcheck does not probe TCP (no -h): " + probe)
+
+migrate_env = services.get("migrate", {}).get("environment", {}) or {}
+if "DB_STATEMENT_TIMEOUT_MS" in migrate_env:
+    problems.append("migrate carries DB_STATEMENT_TIMEOUT_MS; a migration runs unbounded")
+
+for line in problems:
+    print(line)
+')"; then
+    if [ -n "$invariant_log" ]; then
+        printf 'FAIL: invariants -- %s\n' "$invariant_log"
+        rc=1
+    else
+        echo "PASS: invariants -- db probes TCP, and migrate carries no query bound"
+    fi
+else
+    echo "FAIL: invariants -- the compose invariant check did not run"
+    rc=1
 fi
 
 exit "$rc"

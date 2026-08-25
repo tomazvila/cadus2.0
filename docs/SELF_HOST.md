@@ -26,17 +26,52 @@ One server, one `docker compose` stack. No cloud vendor, no managed service.
    ```sh
    docker compose ps            # db healthy, migrate exited 0, web and worker up
    docker compose logs migrate  # every migration applied, or nothing to apply
-   docker compose logs web      # the line `listening on` means the server is up
+   docker compose logs web | grep 'listening on'   # the server bound its port
    curl -fsS http://localhost/api/health   # from the host, through Caddy
    ```
    Run the `curl` command on the host, not in a container: the runtime image
    carries no `curl` and no `wget`. For a domain in `SITE_ADDRESS`, replace
    `http://localhost` with `https://<your domain>`.
 
+   `cadus-web` writes the literal line `cadus-web: listening on <address>` at
+   level `info` when it binds its port. That line is the check for the web
+   tier: `web` publishes no port and carries no healthcheck, so
+   `docker compose ps` reports `Up` from the moment the process is exec'd.
+
 `migrate` is a one-shot: it runs `cadus-migrate --admin-login` and exits. `web`
 and `worker` start only after it exits 0, so the schema is never behind the
-code. To upgrade, pull the new commit and run step 5 again; the migrate step
-applies only what is new.
+code.
+
+## Upgrade
+
+Step 5 above is for the FIRST bring-up. To upgrade a stack that already serves
+traffic, pull the new commit and run the upgrade script:
+
+```sh
+git pull
+scripts/deploy.sh
+```
+
+`scripts/deploy.sh` is THE upgrade procedure. It does four steps in this order:
+
+1. `docker compose build` -- the running containers keep the old image.
+2. `docker compose up -d db`, then a wait for the healthcheck.
+3. `docker compose run --rm migrate` -- a non-zero exit stops the script, and
+   the old `web` and `worker` still serve traffic on the old schema.
+4. `docker compose up -d --no-deps web worker caddy` -- the new image takes
+   over.
+
+WARNING: Do not upgrade an existing stack with `docker compose up -d`. Compose
+creates every container first and starts them second, so it destroys the
+serving `web` and `worker` BEFORE `migrate` runs. A migration that then fails
+leaves both in state `Created`. `restart: unless-stopped` gives no recovery,
+because Docker never started them, and `docker compose start web` refuses while
+the `service_completed_successfully` dependency is unsatisfied. The site is down
+and stays down (review round 3, finding #16). The script keeps the old version
+up until the new schema is in place.
+
+If step 3 fails, read the output of `migrate`, correct the migration, and run
+the script again. The site serves the old version for the whole time.
 
 ## The role model (C3)
 
@@ -66,7 +101,7 @@ after the migrations: `ALTER ROLE cadus_app PASSWORD ...`,
 database client. A migration holds no password, because a password is
 deployment state, not a schema fact. Every statement is idempotent, so a re-run
 is a no-op and a changed `CADUS_APP_PASSWORD` or `CADUS_ADMIN_PASSWORD` in
-`.env` reaches the database on the next `docker compose up -d`.
+`.env` reaches the database on the next upgrade.
 `POSTGRES_PASSWORD` is the exception: see "Rotate a password" below.
 `cadus-migrate` with any other argument prints its usage and exits 2.
 
@@ -96,10 +131,13 @@ reaches the port, and a container network is not an authentication boundary.
 ### The two runtime passwords
 
 1. Put the new value in `.env`. Generate it with `openssl rand -hex 24`.
-2. Run `docker compose up -d`.
+2. Run `scripts/deploy.sh`.
 
 `migrate` runs `ALTER ROLE ... PASSWORD` for both roles and `web` and `worker`
-start with the new DSN. No manual SQL is needed.
+start with the new DSN. No manual SQL is needed. Use the script, not
+`docker compose up -d`: a changed password changes the DSN of `web` and
+`worker`, so compose recreates both containers before `migrate` runs. See
+"Upgrade" above.
 
 ### The superuser password
 
@@ -126,7 +164,7 @@ Change the role first and `.env` second:
    `ALTER ROLE cadus_app PASSWORD '<new value>'`, but the two runtime roles need
    no manual step: `migrate` writes them from `.env`.
 3. Put the same value into `POSTGRES_PASSWORD` in `.env`.
-4. Run `docker compose up -d`.
+4. Run `scripts/deploy.sh`.
 5. Do a check: `docker compose ps` shows `migrate` exited 0, and `web` and
    `worker` up.
 
@@ -138,7 +176,7 @@ the OLD password. Write the new one into the role and start the stack again:
 
 ```sh
 docker compose exec db psql -U postgres -c "ALTER ROLE postgres PASSWORD '<the value now in .env>'"
-docker compose up -d
+scripts/deploy.sh
 ```
 
 `docker compose exec db psql -U postgres` needs no password: the image writes
@@ -163,6 +201,9 @@ steps above keep the volume.
   and that a second run applies nothing. Migrations are forward-only: an edit to
   a file that a deployment already applied stops the `migrate` service on the
   next upgrade, so the checksum record fails the gate first.
+- **The upgrade (D9).** `scripts/deploy.sh` runs the four steps of the
+  "Upgrade" section above in order. It aborts on a `migrate` that exits
+  non-zero and leaves the running site alone.
 - **The ops surface (U6).** `scripts/check_ops.sh` runs the operator's own
   commands: `docker compose config` resolves `docker-compose.yml`, and
   `docker compose build` builds every service that has a `build:` section. It
@@ -186,8 +227,27 @@ steps above keep the volume.
 
 ## Query bound
 
-`DB_STATEMENT_TIMEOUT_MS` (default `5000`) bounds every query of the web and worker
-pools through `statement_timeout`. Set `0` to remove the bound. A value that is not a
-whole number stops `cadus-web` and `cadus-worker` at start with a configuration error.
-sqlx 0.9 exposes no TCP keepalive, so a socket that a firewall drops silently is not
-bounded by this setting.
+`DB_STATEMENT_TIMEOUT_MS` (default `5000`) bounds every query of the web and
+worker pools through `statement_timeout`. Set `0` to remove the bound. A value
+that is not a whole number stops `cadus-web` and `cadus-worker` at start with a
+configuration error. sqlx 0.9 exposes no TCP keepalive, so a socket that a
+firewall drops silently is not bounded by this setting.
+
+The bound covers the web and worker pools; `cadus-migrate` ignores it. A
+migration runs without a statement bound, because a migration takes as long as
+it takes. A 5 s bound cancelled a slow `CREATE INDEX` or a DDL statement that
+waited for a lock, exited the one-shot 2, and took the whole stack down (review
+round 3, finding #1). `docker-compose.yml` therefore does not forward
+`DB_STATEMENT_TIMEOUT_MS` to the `migrate` service.
+
+## Stop budget
+
+`SHUTDOWN_DEADLINE_SECS` (default `10`) is ONE budget for the whole stop of
+`cadus-web`. After `SIGTERM` the drain of the open requests gets the budget, and
+the pool close gets what is left of it, at least 1 second. The total stop time
+is therefore `SHUTDOWN_DEADLINE_SECS` + 1 s or less, which stays inside the
+`stop_grace_period` of 20 s that `docker-compose.yml` sets, so Docker never
+sends `SIGKILL` and the container reports exit 0. The old code spent the budget
+twice and took 20.01 s at the default, which gave exit 137 on every restart
+(review round 3, finding #7). Keep `SHUTDOWN_DEADLINE_SECS` below 19, or raise
+`stop_grace_period` with it.

@@ -12,9 +12,13 @@
 //!
 //! Every test that needs a database uses `TestDb::with`, so a failed assertion
 //! drops the throwaway database instead of leaving it on the shared cluster.
+//! Every spawned binary sits inside `KillOnDrop`, so a failed assertion also
+//! kills and reaps the child instead of leaving a server on a live port
+//! (finding #14).
 //!
 //! Test 10 needs no database: it speaks the Postgres wire protocol itself and
-//! stops answering at the exact moment the test wants.
+//! stops answering at the exact moment the test wants. Test 11 needs no
+//! database either: it proves the `KillOnDrop` guard on an unwind.
 
 #![allow(
     clippy::unwrap_used,
@@ -28,7 +32,7 @@ use std::io::{Read, Write};
 use std::net::{TcpListener, TcpStream};
 use std::process::{Child, Command, Stdio};
 use std::sync::Arc;
-use std::sync::atomic::{AtomicBool, Ordering};
+use std::sync::atomic::{AtomicBool, AtomicU32, Ordering};
 use std::thread::sleep;
 use std::time::{Duration, Instant};
 
@@ -75,6 +79,66 @@ fn free_port() -> u16 {
     let port = listener.local_addr().expect("local address").port();
     drop(listener);
     port
+}
+
+/// A child process that never outlives the test that made it.
+///
+/// `std::process::Child` neither kills nor reaps on drop. A panic between the
+/// spawn and the stop therefore left a live `cadus-web` process: it reparented
+/// to PID 1, kept its listen port, and answered `/api/health` forever, because
+/// the liveness handler touches no database (finding #14). This guard kills the
+/// child and reaps it on every path, the unwind path included.
+struct KillOnDrop(Option<Child>);
+
+impl KillOnDrop {
+    /// Take ownership of a spawned child.
+    fn new(child: Child) -> Self {
+        Self(Some(child))
+    }
+
+    /// Borrow the child.
+    fn as_ref(&self) -> &Child {
+        self.0.as_ref().expect("the guard still holds the child")
+    }
+
+    /// Borrow the child for a call that needs it mutable.
+    fn as_mut(&mut self) -> &mut Child {
+        self.0.as_mut().expect("the guard still holds the child")
+    }
+
+    /// Give the child back for a call that consumes it, such as
+    /// `wait_with_output`. The guard is empty from here, so its `Drop` does
+    /// nothing.
+    fn into_inner(mut self) -> Child {
+        self.0.take().expect("the guard still holds the child")
+    }
+}
+
+impl Drop for KillOnDrop {
+    fn drop(&mut self) {
+        if let Some(mut child) = self.0.take() {
+            // `kill` on a process that already exited gives an error. Ignore
+            // both results: the wait reaps the child either way.
+            let _ = child.kill();
+            let _ = child.wait();
+        }
+    }
+}
+
+/// Report whether a process id still names a process.
+///
+/// `kill -0` sends no signal and reports the right to send one. A reaped child
+/// is gone, so the command fails; an unreaped zombie still answers, which is
+/// why `KillOnDrop` waits as well as kills.
+fn process_is_alive(pid: u32) -> bool {
+    Command::new("kill")
+        .arg("-0")
+        .arg(pid.to_string())
+        .stdout(Stdio::null())
+        .stderr(Stdio::null())
+        .status()
+        .expect("run kill -0")
+        .success()
 }
 
 /// Send one HTTP/1.0 request and return the status code and the body.
@@ -236,17 +300,22 @@ async fn binary_exits_3_with_a_superuser_dsn() {
     TestDb::with(|db| async move {
         let dsn = dsn_for(&db.name, None);
 
-        let mut child = Command::new(env!("CARGO_BIN_EXE_cadus-web"))
-            .env("DATABASE_URL", &dsn)
-            .env("BIND_ADDR", "127.0.0.1:0")
-            .env("RUST_LOG", "info")
-            .stdout(Stdio::piped())
-            .stderr(Stdio::piped())
-            .spawn()
-            .expect("start cadus-web");
+        let mut child = KillOnDrop::new(
+            Command::new(env!("CARGO_BIN_EXE_cadus-web"))
+                .env("DATABASE_URL", &dsn)
+                .env("BIND_ADDR", "127.0.0.1:0")
+                .env("RUST_LOG", "info")
+                .stdout(Stdio::piped())
+                .stderr(Stdio::piped())
+                .spawn()
+                .expect("start cadus-web"),
+        );
 
-        wait_for_exit(&mut child, Duration::from_secs(10), "boot guard");
-        let output = child.wait_with_output().expect("collect the child output");
+        wait_for_exit(child.as_mut(), Duration::from_secs(10), "boot guard");
+        let output = child
+            .into_inner()
+            .wait_with_output()
+            .expect("collect the child output");
 
         assert_eq!(output.status.code(), Some(3));
         let stderr = String::from_utf8_lossy(&output.stderr);
@@ -259,7 +328,13 @@ async fn binary_exits_3_with_a_superuser_dsn() {
 }
 
 /// (5) The binary serves `/api/health` with the app role and stops on SIGTERM
-/// with exit code 0.
+/// with exit code 0, and its log names the port it bound.
+///
+/// The log line is part of the operator contract: docker-compose.yml and
+/// docs/SELF_HOST.md both tell the operator that `cadus-web: listening on`
+/// proves the web tier is up, and `web` carries no healthcheck for that reason.
+/// The old code put the address in a structured field, so the literal never
+/// appeared (finding #10).
 #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
 async fn binary_serves_health_and_stops_on_sigterm() {
     TestDb::with(|db| async move {
@@ -267,24 +342,39 @@ async fn binary_serves_health_and_stops_on_sigterm() {
         let port = free_port();
         let address = format!("127.0.0.1:{port}");
 
-        let mut child = Command::new(env!("CARGO_BIN_EXE_cadus-web"))
-            .env("DATABASE_URL", &dsn)
-            .env("BIND_ADDR", &address)
-            .env("RUST_LOG", "info")
-            .stdout(Stdio::piped())
-            .stderr(Stdio::piped())
-            .spawn()
-            .expect("start cadus-web");
+        let mut child = KillOnDrop::new(
+            Command::new(env!("CARGO_BIN_EXE_cadus-web"))
+                .env("DATABASE_URL", &dsn)
+                .env("BIND_ADDR", &address)
+                .env("RUST_LOG", "info")
+                .stdout(Stdio::piped())
+                .stderr(Stdio::piped())
+                .spawn()
+                .expect("start cadus-web"),
+        );
 
-        let (code, body) = wait_until_healthy(&mut child, &address);
+        let (code, body) = wait_until_healthy(child.as_mut(), &address);
         assert_eq!(code, 200);
         assert_eq!(body, "{\"ok\":true}");
 
-        send_sigterm(&child);
+        send_sigterm(child.as_ref());
 
-        wait_for_exit(&mut child, Duration::from_secs(5), "graceful shutdown");
-        let output = child.wait_with_output().expect("collect the child output");
+        wait_for_exit(child.as_mut(), Duration::from_secs(5), "graceful shutdown");
+        let output = child
+            .into_inner()
+            .wait_with_output()
+            .expect("collect the child output");
         assert_eq!(output.status.code(), Some(0));
+
+        let stderr = String::from_utf8_lossy(&output.stderr);
+        assert!(
+            stderr.contains("listening on 127.0.0.1:"),
+            "the log must carry the literal `listening on 127.0.0.1:`; stderr:\n{stderr}"
+        );
+        assert!(
+            stderr.contains(&format!("cadus-web: listening on {address}")),
+            "the log must name the bound address in the message; stderr:\n{stderr}"
+        );
     })
     .await;
 }
@@ -317,12 +407,19 @@ async fn ready_returns_503_on_a_closed_pool() {
     .await;
 }
 
-/// (7) A client that holds a half-sent request does not block the stop.
+/// (7) A client that holds a half-sent request does not block the stop, and the
+/// whole stop stays inside one budget.
 ///
 /// The client sends a request line and one header, and never sends the empty
 /// line that ends the headers. The drain of `axum::serve` waits for that
 /// connection, so without a deadline the process never exits and the container
-/// runtime kills it (finding #9). `SHUTDOWN_DEADLINE_SECS=1` bounds the drain.
+/// runtime kills it (finding #9). `SHUTDOWN_DEADLINE_SECS=2` bounds the drain.
+///
+/// The test also measures SIGTERM to exit. `SHUTDOWN_DEADLINE_SECS` is one
+/// budget for the drain and the pool close together, so the stop must end
+/// within 2 s plus the 1 s close floor. The literal bound below is 4 s: it
+/// leaves a second for a loaded machine and still fails a second full budget
+/// (finding #7).
 #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
 async fn binary_exits_zero_with_a_half_sent_request_open() {
     TestDb::with(|db| async move {
@@ -330,17 +427,19 @@ async fn binary_exits_zero_with_a_half_sent_request_open() {
         let port = free_port();
         let address = format!("127.0.0.1:{port}");
 
-        let mut child = Command::new(env!("CARGO_BIN_EXE_cadus-web"))
-            .env("DATABASE_URL", &dsn)
-            .env("BIND_ADDR", &address)
-            .env("SHUTDOWN_DEADLINE_SECS", "1")
-            .env("RUST_LOG", "info")
-            .stdout(Stdio::piped())
-            .stderr(Stdio::piped())
-            .spawn()
-            .expect("start cadus-web");
+        let mut child = KillOnDrop::new(
+            Command::new(env!("CARGO_BIN_EXE_cadus-web"))
+                .env("DATABASE_URL", &dsn)
+                .env("BIND_ADDR", &address)
+                .env("SHUTDOWN_DEADLINE_SECS", "2")
+                .env("RUST_LOG", "info")
+                .stdout(Stdio::piped())
+                .stderr(Stdio::piped())
+                .spawn()
+                .expect("start cadus-web"),
+        );
 
-        let (code, _body) = wait_until_healthy(&mut child, &address);
+        let (code, _body) = wait_until_healthy(child.as_mut(), &address);
         assert_eq!(code, 200);
 
         // The half-sent request. The connection stays open for the whole test.
@@ -349,15 +448,25 @@ async fn binary_exits_zero_with_a_half_sent_request_open() {
             .expect("send half of a request");
         stalled.flush().expect("flush the stalled connection");
 
-        send_sigterm(&child);
+        let stop_started = Instant::now();
+        send_sigterm(child.as_ref());
 
-        wait_for_exit(&mut child, Duration::from_secs(15), "bounded shutdown");
-        let output = child.wait_with_output().expect("collect the child output");
+        wait_for_exit(child.as_mut(), Duration::from_secs(15), "bounded shutdown");
+        let elapsed = stop_started.elapsed();
+        let output = child
+            .into_inner()
+            .wait_with_output()
+            .expect("collect the child output");
         let stderr = String::from_utf8_lossy(&output.stderr);
         assert_eq!(
             output.status.code(),
             Some(0),
             "the server must exit 0 at the shutdown deadline; stderr:\n{stderr}"
+        );
+        assert!(
+            elapsed < Duration::from_secs(4),
+            "SIGTERM to exit must stay under 4 s with SHUTDOWN_DEADLINE_SECS=2, it took \
+             {elapsed:?}; stderr:\n{stderr}"
         );
 
         drop(stalled);
@@ -371,17 +480,22 @@ async fn binary_exits_zero_with_a_half_sent_request_open() {
 /// (finding #42).
 #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
 async fn binary_exits_2_without_a_database_url() {
-    let mut child = Command::new(env!("CARGO_BIN_EXE_cadus-web"))
-        .env_remove("DATABASE_URL")
-        .env("BIND_ADDR", "127.0.0.1:0")
-        .env("RUST_LOG", "info")
-        .stdout(Stdio::piped())
-        .stderr(Stdio::piped())
-        .spawn()
-        .expect("start cadus-web");
+    let mut child = KillOnDrop::new(
+        Command::new(env!("CARGO_BIN_EXE_cadus-web"))
+            .env_remove("DATABASE_URL")
+            .env("BIND_ADDR", "127.0.0.1:0")
+            .env("RUST_LOG", "info")
+            .stdout(Stdio::piped())
+            .stderr(Stdio::piped())
+            .spawn()
+            .expect("start cadus-web"),
+    );
 
-    wait_for_exit(&mut child, Duration::from_secs(10), "start error");
-    let output = child.wait_with_output().expect("collect the child output");
+    wait_for_exit(child.as_mut(), Duration::from_secs(10), "start error");
+    let output = child
+        .into_inner()
+        .wait_with_output()
+        .expect("collect the child output");
 
     assert_eq!(output.status.code(), Some(2));
     let stderr = String::from_utf8_lossy(&output.stderr);
@@ -403,17 +517,22 @@ async fn binary_exits_2_with_a_bind_addr_that_is_not_unicode() {
     use std::os::unix::ffi::OsStrExt;
 
     let broken = OsStr::from_bytes(b"127.0.0.1:19099\xff");
-    let mut child = Command::new(env!("CARGO_BIN_EXE_cadus-web"))
-        .env("DATABASE_URL", "postgresql://nobody@127.0.0.1:1/nodb")
-        .env("BIND_ADDR", broken)
-        .env("RUST_LOG", "info")
-        .stdout(Stdio::piped())
-        .stderr(Stdio::piped())
-        .spawn()
-        .expect("start cadus-web");
+    let mut child = KillOnDrop::new(
+        Command::new(env!("CARGO_BIN_EXE_cadus-web"))
+            .env("DATABASE_URL", "postgresql://nobody@127.0.0.1:1/nodb")
+            .env("BIND_ADDR", broken)
+            .env("RUST_LOG", "info")
+            .stdout(Stdio::piped())
+            .stderr(Stdio::piped())
+            .spawn()
+            .expect("start cadus-web"),
+    );
 
-    wait_for_exit(&mut child, Duration::from_secs(10), "bad BIND_ADDR");
-    let output = child.wait_with_output().expect("collect the child output");
+    wait_for_exit(child.as_mut(), Duration::from_secs(10), "bad BIND_ADDR");
+    let output = child
+        .into_inner()
+        .wait_with_output()
+        .expect("collect the child output");
 
     assert_eq!(output.status.code(), Some(2));
     let stderr = String::from_utf8_lossy(&output.stderr);
@@ -536,15 +655,17 @@ fn serve_deaf(mut stream: TcpStream, query_seen: &AtomicBool) -> std::io::Result
 async fn binary_exits_zero_on_sigterm_during_the_boot_guard() {
     let (port, query_seen) = start_deaf_postgres();
 
-    let mut child = Command::new(env!("CARGO_BIN_EXE_cadus-web"))
-        .env("DATABASE_URL", format!("postgresql://x@127.0.0.1:{port}/x"))
-        .env("BIND_ADDR", "127.0.0.1:0")
-        .env("SHUTDOWN_DEADLINE_SECS", "1")
-        .env("RUST_LOG", "info")
-        .stdout(Stdio::piped())
-        .stderr(Stdio::piped())
-        .spawn()
-        .expect("start cadus-web");
+    let mut child = KillOnDrop::new(
+        Command::new(env!("CARGO_BIN_EXE_cadus-web"))
+            .env("DATABASE_URL", format!("postgresql://x@127.0.0.1:{port}/x"))
+            .env("BIND_ADDR", "127.0.0.1:0")
+            .env("SHUTDOWN_DEADLINE_SECS", "1")
+            .env("RUST_LOG", "info")
+            .stdout(Stdio::piped())
+            .stderr(Stdio::piped())
+            .spawn()
+            .expect("start cadus-web"),
+    );
 
     // Wait until the guard query reaches the deaf server. The process is then
     // inside `boot_check` and answers only through the signal path.
@@ -558,14 +679,17 @@ async fn binary_exits_zero_on_sigterm_during_the_boot_guard() {
     }
     sleep(Duration::from_millis(300));
 
-    send_sigterm(&child);
+    send_sigterm(child.as_ref());
 
     wait_for_exit(
-        &mut child,
+        child.as_mut(),
         Duration::from_secs(5),
         "stop during the boot guard",
     );
-    let output = child.wait_with_output().expect("collect the child output");
+    let output = child
+        .into_inner()
+        .wait_with_output()
+        .expect("collect the child output");
     let stderr = String::from_utf8_lossy(&output.stderr);
 
     assert_eq!(
@@ -576,5 +700,53 @@ async fn binary_exits_zero_on_sigterm_during_the_boot_guard() {
     assert!(
         stderr.contains("cadus-web: the stop signal came before the boot guard"),
         "the log must name the boot guard as the point of the stop; stderr:\n{stderr}"
+    );
+}
+
+/// (11) A panic between the spawn and the stop leaves no live child.
+///
+/// `std::process::Child` neither kills nor reaps on drop, so the old tests left
+/// a `cadus-web` process that reparented to PID 1 and held its listen port
+/// forever (finding #14). The closure below spawns the binary and then panics,
+/// exactly as a failed assertion does. `catch_unwind` catches the panic, so the
+/// test itself passes, and `kill -0` then proves the child is gone.
+///
+/// The DSN points at a closed port, so the child stays inside the sqlx connect
+/// for its whole 30 s acquire timeout. The child is therefore alive at the
+/// moment of the panic, and only the guard can end it.
+///
+/// The panic message below reaches the test log. It is expected.
+#[test]
+fn kill_on_drop_ends_the_child_when_the_test_body_panics() {
+    let pid_slot = Arc::new(AtomicU32::new(0));
+    let inner = Arc::clone(&pid_slot);
+
+    let outcome = std::panic::catch_unwind(move || {
+        let child = KillOnDrop::new(
+            Command::new(env!("CARGO_BIN_EXE_cadus-web"))
+                .env("DATABASE_URL", "postgresql://x@127.0.0.1:1/x")
+                .env("BIND_ADDR", "127.0.0.1:0")
+                .env("RUST_LOG", "info")
+                .stdout(Stdio::piped())
+                .stderr(Stdio::piped())
+                .spawn()
+                .expect("start cadus-web"),
+        );
+        let pid = child.as_ref().id();
+        inner.store(pid, Ordering::SeqCst);
+
+        sleep(Duration::from_millis(300));
+        assert!(process_is_alive(pid), "the child must run before the panic");
+
+        panic!("expected panic: this stands for a failed assertion");
+    });
+
+    assert!(outcome.is_err(), "the closure must unwind");
+
+    let pid = pid_slot.load(Ordering::SeqCst);
+    assert_ne!(pid, 0, "the closure must report the pid of the child");
+    assert!(
+        !process_is_alive(pid),
+        "the guard must kill and reap the child; pid {pid} is still there"
     );
 }

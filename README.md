@@ -38,3 +38,12 @@ when docker is absent.
 Migrations are forward-only. After you add `migrations/NNNN_name.sql`, run
 `scripts/check_migrations.sh --freeze` and commit `migrations/CHECKSUMS` with
 the new file.
+
+## Deploy
+
+`docker compose up -d --build` brings a new server up. `scripts/deploy.sh`
+upgrades a server that already serves traffic: it builds the image, starts `db`,
+runs the migrations in a one-shot, and replaces `web`, `worker`, and `caddy`
+only after that one-shot exits 0. Never upgrade a running stack with
+`docker compose up -d`: compose destroys the serving containers before the
+migration runs. See docs/SELF_HOST.md, section "Upgrade".
