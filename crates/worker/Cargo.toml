@@ -17,7 +17,18 @@ path = "src/bin/cadus-worker.rs"
 [dependencies]
 cadus-core = { workspace = true }
 cadus-store = { workspace = true }
+sqlx = { workspace = true }
+thiserror = { workspace = true }
 tokio = { workspace = true }
+tracing = { workspace = true }
+tracing-subscriber = { workspace = true }
+
+[dev-dependencies]
+# The tests build the throwaway database that the process test points the binary at.
+cadus-store = { workspace = true, features = ["test-support"] }
+# Test only. `tests/run.rs` sends SIGTERM to the worker process with `libc::kill`.
+# A direct system call keeps the test independent of an external `kill` program.
+libc = "0.2.189"
 
 [lints]
 workspace = true
