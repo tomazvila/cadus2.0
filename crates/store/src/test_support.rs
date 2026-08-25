@@ -14,6 +14,9 @@
 
 #![allow(clippy::expect_used, clippy::panic, clippy::unwrap_used)]
 
+use std::future::Future;
+use std::sync::Arc;
+
 use sqlx::postgres::{PgConnectOptions, PgPoolOptions};
 use sqlx::{AssertSqlSafe, Connection, PgConnection, PgPool};
 use uuid::Uuid;
@@ -85,19 +88,70 @@ impl TestDb {
         TestDb { name, admin, app }
     }
 
+    /// Create a database, run `body`, and drop the database in every case.
+    ///
+    /// `body` runs in its own task, so a panic in the test body becomes a
+    /// `JoinError` instead of an unwind through this function. The database goes
+    /// away first, and this function then raises the original panic again. A red
+    /// test therefore leaves no database on the shared cluster.
+    ///
+    /// The body receives an `Arc<TestDb>`, because the task needs an owned
+    /// handle and this function keeps one for the cleanup.
+    pub async fn with<F, Fut, T>(body: F) -> T
+    where
+        F: FnOnce(Arc<TestDb>) -> Fut + Send + 'static,
+        Fut: Future<Output = T> + Send + 'static,
+        T: Send + 'static,
+    {
+        let db = Arc::new(TestDb::create().await);
+        let outcome = tokio::spawn(body(Arc::clone(&db))).await;
+        db.drop_database().await;
+        match outcome {
+            Ok(value) => value,
+            // `resume_unwind` carries the original payload, so the test reports
+            // the message and the location of the first panic.
+            Err(err) if err.is_panic() => std::panic::resume_unwind(err.into_panic()),
+            Err(err) => panic!("the test body did not finish: {err}"),
+        }
+    }
+
     /// The superuser DSN of this database.
     ///
     /// A test that spawns a binary gives it this string in `DATABASE_URL`.
+    pub fn superuser_dsn(&self) -> String {
+        Self::superuser_dsn_for(&self.name)
+    }
+
+    /// The superuser DSN of any database on the test cluster.
+    ///
     /// `CADUS_TEST_DATABASE_URL` has the form
     /// `postgresql://user:password@host:port/dbname` and carries no query
-    /// string, so a replacement of the last path segment names this database.
-    pub fn superuser_dsn(&self) -> String {
+    /// string, so a replacement of the last path segment names the database.
+    pub fn superuser_dsn_for(name: &str) -> String {
         let dsn =
             std::env::var(TEST_DSN_VAR).unwrap_or_else(|_| panic!("{TEST_DSN_VAR} is not set"));
         let (base, _) = dsn
             .rsplit_once('/')
             .unwrap_or_else(|| panic!("{TEST_DSN_VAR} carries no database path segment"));
-        format!("{base}/{}", self.name)
+        format!("{base}/{name}")
+    }
+
+    /// Open a pool on this database as `role` with `max_connections`.
+    ///
+    /// The test cluster uses trust authentication, so the empty password is
+    /// enough for every role. `max_connections(1)` gives a test one fixed
+    /// session, which makes a setting that outlives a transaction visible.
+    pub async fn pool_as(&self, role: &str, max_connections: u32) -> PgPool {
+        let dsn =
+            std::env::var(TEST_DSN_VAR).unwrap_or_else(|_| panic!("{TEST_DSN_VAR} is not set"));
+        let options: PgConnectOptions = dsn
+            .parse()
+            .unwrap_or_else(|e| panic!("{TEST_DSN_VAR} is not a valid Postgres DSN: {e}"));
+        PgPoolOptions::new()
+            .max_connections(max_connections)
+            .connect_with(options.database(&self.name).username(role).password(""))
+            .await
+            .unwrap_or_else(|e| panic!("pool as {role} for {} failed: {e}", self.name))
     }
 
     /// Insert one user and return its id. The admin pool does the insert,
@@ -115,7 +169,16 @@ impl TestDb {
 
     /// Close both pools and drop the database. The drop is best effort: a failed
     /// cleanup must not fail a test that already gave its verdict.
+    ///
+    /// `TestDb::with` is the safer form, because it also drops the database of a
+    /// test that panics. This method stays for a test that holds the `TestDb` by
+    /// value.
     pub async fn drop(self) {
+        self.drop_database().await;
+    }
+
+    /// Close both pools and drop the database.
+    async fn drop_database(&self) {
         self.app.close().await;
         self.admin.close().await;
 

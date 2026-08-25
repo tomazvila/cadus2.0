@@ -18,6 +18,8 @@
     )
 )]
 
+use std::time::Duration;
+
 use sqlx::postgres::PgPoolOptions;
 use sqlx::{PgPool, Postgres, Transaction};
 use uuid::Uuid;
@@ -100,10 +102,21 @@ pub enum StoreError {
     },
 }
 
+/// How long an acquire waits for a connection before it gives up.
+///
+/// The sqlx default is 30 s. The readiness probe of `cadus-web` acquires from
+/// this pool, so the default holds the probe open for 30 s during a database
+/// outage, and a scraper with a shorter client timeout records a timeout in
+/// place of the 503 that the handler promises. 5 s is longer than a normal
+/// connect on a loaded host and shorter than every scrape interval in
+/// `deploy/Caddyfile`.
+pub const ACQUIRE_TIMEOUT: Duration = Duration::from_secs(5);
+
 /// Open a connection pool with the given configuration.
 pub async fn connect(cfg: &DbConfig) -> Result<PgPool, StoreError> {
     let pool = PgPoolOptions::new()
         .max_connections(16)
+        .acquire_timeout(ACQUIRE_TIMEOUT)
         .connect(&cfg.database_url)
         .await?;
     tracing::debug!("store: connection pool is open");

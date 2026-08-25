@@ -5,7 +5,9 @@
 //!
 //! ```text
 //! cadus-migrate                 apply every pending migration
-//! cadus-migrate --admin-login   apply, then ALTER ROLE cadus_admin LOGIN
+//! cadus-migrate --admin-login   apply, then ALTER ROLE cadus_admin LOGIN,
+//!                               then set the role passwords that the
+//!                               environment gives
 //! ```
 //!
 //! The program prints the number of migrations that this run applied and exits
@@ -21,7 +23,7 @@
 use std::process::ExitCode;
 
 use cadus_store::{DbConfig, StoreError};
-use sqlx::PgPool;
+use sqlx::{AssertSqlSafe, PgPool};
 
 /// The usage text. An unknown argument prints it on stderr.
 const USAGE: &str = "\
@@ -32,7 +34,19 @@ Apply every pending migration to the database that DATABASE_URL names.
   --admin-login   After the migrations, run ALTER ROLE cadus_admin LOGIN.
                   Migration 0001 creates cadus_admin as NOLOGIN. The worker
                   DSN needs the login, so the deployment grants it here.
-                  The statement is idempotent.";
+                  The statement is idempotent.
+
+                  The flag also reads two optional variables:
+                    CADUS_APP_PASSWORD    ALTER ROLE cadus_app PASSWORD ...
+                    CADUS_ADMIN_PASSWORD  ALTER ROLE cadus_admin PASSWORD ...
+                  A variable that is absent leaves the password of that role
+                  as it is. An empty variable is an error.";
+
+/// The environment variable that holds the new password of `cadus_app`.
+const APP_PASSWORD_VAR: &str = "CADUS_APP_PASSWORD";
+
+/// The environment variable that holds the new password of `cadus_admin`.
+const ADMIN_PASSWORD_VAR: &str = "CADUS_ADMIN_PASSWORD";
 
 /// What this run does after the migrations.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -78,8 +92,20 @@ async fn run(mode: Mode) -> Result<(), StoreError> {
     cadus_store::migrate(&pool).await?;
     let after = applied_count(&pool).await?;
 
+    // The report goes to stdout after the pool is closed, so a failed statement
+    // never prints a success line.
+    let mut password_roles: Vec<&str> = Vec::new();
     if mode == Mode::AdminLogin {
         grant_admin_login(&pool).await?;
+        for (role, var) in [
+            ("cadus_app", APP_PASSWORD_VAR),
+            ("cadus_admin", ADMIN_PASSWORD_VAR),
+        ] {
+            if let Some(password) = password_from_env(var)? {
+                set_role_password(&pool, role, &password).await?;
+                password_roles.push(role);
+            }
+        }
     }
 
     pool.close().await;
@@ -91,6 +117,51 @@ async fn run(mode: Mode) -> Result<(), StoreError> {
     if mode == Mode::AdminLogin {
         println!("cadus-migrate: cadus_admin LOGIN granted");
     }
+    for role in password_roles {
+        println!("cadus-migrate: password set for {role}");
+    }
+    Ok(())
+}
+
+/// Read a password variable.
+///
+/// The function returns `None` when the variable is absent, and
+/// `StoreError::Config` when the variable is empty or not valid Unicode. An
+/// empty password is a configuration mistake, not a request to clear the
+/// password, so the program stops instead of guessing.
+fn password_from_env(var: &str) -> Result<Option<String>, StoreError> {
+    match std::env::var(var) {
+        Ok(value) if value.is_empty() => Err(StoreError::Config(format!("{var} is empty"))),
+        Ok(value) => Ok(Some(value)),
+        Err(std::env::VarError::NotPresent) => Ok(None),
+        Err(std::env::VarError::NotUnicode(_)) => {
+            Err(StoreError::Config(format!("{var} is not valid Unicode")))
+        }
+    }
+}
+
+/// Set the password of a role.
+///
+/// The deployment needs this step because the runtime image carries no `psql`,
+/// and because a password lets the database refuse `trust` authentication.
+///
+/// `ALTER ROLE` is a utility statement. PostgreSQL parses it before it binds
+/// parameters, so `$1` is impossible here and the password goes into the
+/// statement text. The text becomes an SQL string literal with every single
+/// quote doubled. `standard_conforming_strings` is on by default, so a
+/// backslash carries no escape meaning and the doubled quote is the only
+/// escape that the literal needs. The role name is a constant of this program
+/// and never comes from input.
+///
+/// NOTE: the statement text holds the password. Keep `log_statement` off on the
+/// production cluster.
+async fn set_role_password(pool: &PgPool, role: &str, password: &str) -> Result<(), StoreError> {
+    let literal = password.replace('\'', "''");
+    sqlx::query(AssertSqlSafe(format!(
+        "ALTER ROLE {role} PASSWORD '{literal}'"
+    )))
+    .execute(pool)
+    .await?;
     Ok(())
 }
 
