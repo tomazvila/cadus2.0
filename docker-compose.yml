@@ -4,6 +4,11 @@
 #   cp .env.example .env      # set SITE_ADDRESS and the three passwords
 #   docker compose up -d --build
 #
+# That command is for the FIRST bring-up only. To upgrade a stack that already
+# serves traffic, run `scripts/deploy.sh`. `docker compose up -d` recreates
+# `web` and `worker` BEFORE it runs `migrate`, so a migration that fails leaves
+# the site down with no running container to fall back on (finding #16).
+#
 # See docs/SELF_HOST.md.
 
 name: cadus2
@@ -40,7 +45,7 @@ services:
   #
   #   docker compose exec db psql -U postgres -c "ALTER ROLE postgres PASSWORD '<new>'"
   #   # put the same <new> value into .env
-  #   docker compose up -d
+  #   scripts/deploy.sh
   #
   # `docs/SELF_HOST.md`, section "Rotate a password", holds the full procedure
   # and the recovery for a rotation that was done in the wrong order. Never run
@@ -54,8 +59,15 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env - run openssl rand -hex 24}
     volumes:
       - db-data:/var/lib/postgresql/data
+    # The probe goes over TCP (`-h 127.0.0.1`), because TCP is what the other
+    # containers use. Without `-h`, pg_isready takes the unix socket in
+    # /var/run/postgresql. The `postgres:16` entrypoint runs its initdb temp
+    # server with `listen_addresses=''`, so that socket answers while port 5432
+    # still refuses every connection: Docker marked `db` healthy, `migrate`
+    # started, and the one-shot died with `pool timed out while waiting for an
+    # open connection` (finding #15). The TCP probe cannot see the temp server.
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d cadus"]
+      test: ["CMD-SHELL", "pg_isready -h 127.0.0.1 -U postgres -d cadus"]
       interval: 5s
       timeout: 5s
       retries: 20
@@ -78,6 +90,13 @@ services:
   #
   # The DSN is the Postgres superuser: only a superuser creates roles, installs
   # citext, and alters a role.
+  #
+  # DB_STATEMENT_TIMEOUT_MS is absent from the block below on purpose.
+  # `cadus-migrate` always runs without a statement bound: a migration takes as
+  # long as it takes. A 5 s bound cancelled a slow CREATE INDEX or a DDL
+  # statement that waited for a lock, exited the one-shot 2, and left `web` and
+  # `worker` in `Created` with no operator knob to raise it (finding #1). The
+  # bound applies to the `web` and `worker` pools only.
   migrate:
     <<: *app-image
     command: ["cadus-migrate", "--admin-login"]
@@ -99,8 +118,10 @@ services:
   # `frontend` to take traffic from Caddy, `backend` to reach the database.
   #
   # No `healthcheck:` -- the runtime image carries no curl and no wget, and the
-  # image stays small. `docker compose logs web` prints `listening on` when the
-  # server is up. The end-to-end check runs from the host through Caddy with
+  # image stays small. `docker compose logs web` prints the literal line
+  # `cadus-web: listening on <address>` when the server is up, so
+  # `docker compose logs web | grep 'listening on'` is the check. The end-to-end
+  # check runs from the host through Caddy with
   # `curl -fsS http://localhost/api/health`.
   web:
     <<: *app-image
@@ -110,12 +131,27 @@ services:
       BIND_ADDR: 0.0.0.0:8080
       RUST_LOG: ${RUST_LOG:-info}
       # cadus-web drains open connections for this long after SIGTERM, then exits 0.
+      # This is ONE budget for the whole stop: the drain gets it, and the pool
+      # close gets what is left of it, at least 1 s.
       SHUTDOWN_DEADLINE_SECS: ${SHUTDOWN_DEADLINE_SECS:-10}
       # Bound on every query of the pool, in milliseconds (0 = none).
       DB_STATEMENT_TIMEOUT_MS: ${DB_STATEMENT_TIMEOUT_MS:-5000}
-    # Longer than SHUTDOWN_DEADLINE_SECS, so the process exits by itself and
-    # Docker never has to send SIGKILL (exit 137).
+    # Longer than the stop budget, so the process exits by itself and Docker
+    # never has to send SIGKILL (exit 137). Total stop time
+    # <= SHUTDOWN_DEADLINE_SECS + 1 s < stop_grace_period 20 s. The old code
+    # spent the deadline twice and took 20.01 s at the default of 10 s, so the
+    # container ended with exit 137 on every restart (finding #7).
     stop_grace_period: 20s
+    # `migrate` must exit 0 before this service starts, so the schema is never
+    # behind the code.
+    #
+    # WARNING: On an existing stack, do NOT upgrade with `docker compose up -d`.
+    # Compose creates every container first and starts them second, so it
+    # destroys the serving `web` and `worker` BEFORE `migrate` runs. A migration
+    # that then fails leaves both in `Created`; `restart: unless-stopped` never
+    # fires, because Docker never started them, and the site stays down
+    # (finding #16). Use `scripts/deploy.sh`: it runs `migrate` first and starts
+    # the new containers only after the one-shot exits 0.
     depends_on:
       migrate:
         condition: service_completed_successfully

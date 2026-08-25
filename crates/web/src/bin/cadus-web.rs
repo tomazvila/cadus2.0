@@ -15,6 +15,10 @@
 //!    The drain has a deadline: at the deadline the process closes the open
 //!    connections and still exits 0.
 //!
+//! `SHUTDOWN_DEADLINE_SECS` is ONE budget for the whole stop. The drain gets
+//! the budget, and the pool close gets what is left of it, at least 1 second.
+//! The total stop time is therefore `SHUTDOWN_DEADLINE_SECS` + 1 s or less.
+//!
 //! Exit codes: 0 for a clean stop, 2 for a start error, 3 for the boot guard.
 
 #![cfg_attr(
@@ -31,7 +35,7 @@
 use std::future::{Future, IntoFuture};
 use std::net::SocketAddr;
 use std::process::ExitCode;
-use std::time::Duration;
+use std::time::{Duration, Instant};
 
 use cadus_store::{DbConfig, StoreError};
 use cadus_web::{AppState, router};
@@ -49,6 +53,12 @@ const SHUTDOWN_DEADLINE_VAR: &str = "SHUTDOWN_DEADLINE_SECS";
 
 /// The drain deadline in seconds when `SHUTDOWN_DEADLINE_SECS` is absent.
 const DEFAULT_SHUTDOWN_DEADLINE_SECS: u64 = 10;
+
+/// The least time the pool close gets after the drain.
+///
+/// A drain that spends the whole budget leaves nothing for the close. This
+/// floor gives the checked-out connections a last second to come back.
+const MIN_POOL_CLOSE: Duration = Duration::from_secs(1);
 
 /// The reason that stops the start sequence.
 enum Fatal {
@@ -141,7 +151,11 @@ async fn run() -> Result<(), Fatal> {
     let local = listener
         .local_addr()
         .map_err(|err| Fatal::Startup(format!("local address of the listener failed: {err}")))?;
-    tracing::info!(address = %local, "cadus-web: listening");
+    // The address belongs in the message text, not in a structured field. The
+    // compose comment and docs/SELF_HOST.md tell the operator to look for the
+    // literal `cadus-web: listening on`, and a field renders as `address=...`
+    // after the message, so that literal never appeared (finding #10).
+    tracing::info!("cadus-web: listening on {local}");
 
     let app = router(AppState { pool: pool.clone() });
 
@@ -161,19 +175,48 @@ async fn run() -> Result<(), Fatal> {
     // The drain has a deadline. Without one, a client that opened a request and
     // never finished the headers keeps the process alive without end, and the
     // container runtime kills it (finding #9).
+    //
+    // The drain and the pool close below share ONE budget. `drain_elapsed`
+    // holds the part of it that the drain spent (finding #7).
+    let mut drain_elapsed = Duration::ZERO;
     let result = tokio::select! {
         outcome = &mut server => outcome,
-        _ = fired_rx => match tokio::time::timeout(deadline, &mut server).await {
-            Ok(outcome) => outcome,
-            Err(_elapsed) => {
-                tracing::info!("shutdown deadline reached; closing");
-                Ok(())
-            }
-        },
+        _ = fired_rx => {
+            let started = Instant::now();
+            let outcome = match tokio::time::timeout(deadline, &mut server).await {
+                Ok(outcome) => outcome,
+                Err(_elapsed) => {
+                    tracing::info!("shutdown deadline reached; closing");
+                    Ok(())
+                }
+            };
+            drain_elapsed = started.elapsed();
+            outcome
+        }
     };
 
-    close_within(deadline, pool.close()).await;
+    close_within(close_budget(deadline, drain_elapsed), pool.close()).await;
     result.map_err(|err| Fatal::Startup(format!("serve failed: {err}")))
+}
+
+/// Give the pool close what is left of the stop budget.
+///
+/// `SHUTDOWN_DEADLINE_SECS` is one budget, not two. The old code spent the full
+/// value on the drain and then a second full value on the pool close, so a stop
+/// took up to 2 x `SHUTDOWN_DEADLINE_SECS`: 20.01 s at the compose default of
+/// 10 s, past the `stop_grace_period` of 20 s, and Docker ended the container
+/// with SIGKILL and exit 137 (finding #7).
+///
+/// The close still gets `MIN_POOL_CLOSE`, so a drain that spends the whole
+/// budget leaves the checked-out connections a last second. Total stop time
+/// <= SHUTDOWN_DEADLINE_SECS + 1 s < stop_grace_period 20 s.
+fn close_budget(deadline: Duration, drain_elapsed: Duration) -> Duration {
+    let left = deadline.saturating_sub(drain_elapsed);
+    if left < MIN_POOL_CLOSE {
+        MIN_POOL_CLOSE
+    } else {
+        left
+    }
 }
 
 /// Wait for `close` for at most `deadline`, then log the fact and give up.
@@ -183,8 +226,9 @@ async fn run() -> Result<(), Fatal> {
 /// without end and defeats the drain deadline above: the process logs
 /// `shutdown deadline reached; closing` and then stays alive until the
 /// container runtime sends SIGKILL (finding #6). The bound below keeps the exit
-/// inside the same budget. The process exits 0 either way, because the open
-/// sockets end with the process.
+/// inside the same budget. `close_budget` gives that bound: it is the rest of
+/// the stop budget, not a second full one. The process exits 0 either way,
+/// because the open sockets end with the process.
 async fn close_within<F: Future<Output = ()>>(deadline: Duration, close: F) {
     if tokio::time::timeout(deadline, close).await.is_err() {
         tracing::info!("pool close deadline reached");
@@ -313,6 +357,58 @@ impl Shutdown {
 #[cfg(test)]
 mod tests {
     use std::time::{Duration, Instant};
+
+    /// One budget, not two: the pool close gets the rest of the drain budget.
+    ///
+    /// The old code passed the full `SHUTDOWN_DEADLINE_SECS` to the drain and
+    /// then the full value again to the pool close, so a stop took twice the
+    /// budget and Docker sent SIGKILL at the 20 s `stop_grace_period`
+    /// (finding #7). Every number below is a literal.
+    #[test]
+    fn close_budget_is_the_rest_of_the_stop_budget() {
+        // A drain that used 3 s of a 10 s budget leaves 7 s.
+        assert_eq!(
+            super::close_budget(Duration::from_secs(10), Duration::from_secs(3)),
+            Duration::from_secs(7)
+        );
+        // A drain that used the whole budget still leaves the 1 s floor.
+        assert_eq!(
+            super::close_budget(Duration::from_secs(10), Duration::from_secs(10)),
+            Duration::from_secs(1)
+        );
+        // The floor also covers a drain that overran the budget.
+        assert_eq!(
+            super::close_budget(Duration::from_secs(2), Duration::from_secs(30)),
+            Duration::from_secs(1)
+        );
+        // A rest below the floor is raised to the floor.
+        assert_eq!(
+            super::close_budget(Duration::from_secs(10), Duration::from_millis(9500)),
+            Duration::from_secs(1)
+        );
+        // A stop with no signal spends nothing, so the whole budget is left.
+        assert_eq!(
+            super::close_budget(Duration::from_secs(10), Duration::ZERO),
+            Duration::from_secs(10)
+        );
+    }
+
+    /// The total stop time stays under the `stop_grace_period` of 20 s.
+    ///
+    /// docker-compose.yml sets `stop_grace_period: 20s` and defaults
+    /// `SHUTDOWN_DEADLINE_SECS` to 10. Drain plus close must stay below 20 s,
+    /// or the container ends with SIGKILL and exit 137 (finding #7).
+    #[test]
+    fn drain_plus_close_stays_under_the_stop_grace_period() {
+        let deadline = Duration::from_secs(super::DEFAULT_SHUTDOWN_DEADLINE_SECS);
+        let worst = deadline + super::close_budget(deadline, deadline);
+
+        assert_eq!(worst, Duration::from_secs(11));
+        assert!(
+            worst < Duration::from_secs(20),
+            "the stop must end before stop_grace_period 20 s, it takes {worst:?}"
+        );
+    }
 
     /// `close_within` returns at its deadline, even when the close never ends.
     ///

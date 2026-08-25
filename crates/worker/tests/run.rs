@@ -11,6 +11,9 @@
 //!
 //! Every test that needs a database uses `TestDb::with`, so a failed assertion
 //! drops the throwaway database instead of leaving it on the shared cluster.
+//! Every spawned binary sits inside `KillOnDrop`, so a failed assertion also
+//! kills and reaps the child instead of leaving a worker process behind
+//! (finding #14).
 //!
 //! Test 6 needs no database: it speaks the Postgres wire protocol itself and
 //! stops answering at the exact moment the test wants.
@@ -35,6 +38,56 @@ use sqlx::postgres::PgPoolOptions;
 
 /// The environment variable that holds the superuser DSN of the test cluster.
 const TEST_DSN_VAR: &str = "CADUS_TEST_DATABASE_URL";
+
+/// A child process that never outlives the test that made it.
+///
+/// `tokio::process::Child` neither kills nor reaps the process on drop, so a
+/// panic between the spawn and the SIGTERM left a live `cadus-worker` process
+/// that reparented to PID 1 and ticked forever (finding #14). This guard kills
+/// the child and reaps it on every path, the unwind path included.
+struct KillOnDrop(Option<tokio::process::Child>);
+
+impl KillOnDrop {
+    /// Take ownership of a spawned child.
+    fn new(child: tokio::process::Child) -> Self {
+        Self(Some(child))
+    }
+
+    /// Borrow the child.
+    fn as_ref(&self) -> &tokio::process::Child {
+        self.0.as_ref().expect("the guard still holds the child")
+    }
+
+    /// Give the child back for a call that consumes it, such as
+    /// `wait_with_output`. The guard is empty from here, so its `Drop` does
+    /// nothing.
+    fn into_inner(mut self) -> tokio::process::Child {
+        self.0.take().expect("the guard still holds the child")
+    }
+}
+
+impl Drop for KillOnDrop {
+    fn drop(&mut self) {
+        let Some(mut child) = self.0.take() else {
+            return;
+        };
+        // `start_kill` sends SIGKILL and returns at once. `try_wait` then reaps
+        // the child. A short poll is enough: SIGKILL is not catchable.
+        let _ = child.start_kill();
+        let deadline = Instant::now() + Duration::from_secs(5);
+        loop {
+            match child.try_wait() {
+                Ok(Some(_)) | Err(_) => return,
+                Ok(None) => {
+                    if Instant::now() >= deadline {
+                        return;
+                    }
+                    std::thread::sleep(Duration::from_millis(20));
+                }
+            }
+        }
+    }
+}
 
 /// Build the superuser DSN of one throwaway database.
 ///
@@ -153,16 +206,18 @@ async fn binary_ticks_and_exits_zero_on_sigterm() {
     TestDb::with(|db| async move {
         let dsn = superuser_dsn(&db.name);
 
-        let child = tokio::process::Command::new(env!("CARGO_BIN_EXE_cadus-worker"))
-            .env("DATABASE_URL", &dsn)
-            .env("WORKER_TICK_SECS", "1")
-            .env("RUST_LOG", "info")
-            .stdout(std::process::Stdio::piped())
-            .stderr(std::process::Stdio::piped())
-            .spawn()
-            .expect("the worker binary must start");
+        let child = KillOnDrop::new(
+            tokio::process::Command::new(env!("CARGO_BIN_EXE_cadus-worker"))
+                .env("DATABASE_URL", &dsn)
+                .env("WORKER_TICK_SECS", "1")
+                .env("RUST_LOG", "info")
+                .stdout(std::process::Stdio::piped())
+                .stderr(std::process::Stdio::piped())
+                .spawn()
+                .expect("the worker binary must start"),
+        );
 
-        let pid = child.id().expect("the child must report a pid");
+        let pid = child.as_ref().id().expect("the child must report a pid");
 
         tokio::time::sleep(Duration::from_millis(2500)).await;
 
@@ -171,10 +226,13 @@ async fn binary_ticks_and_exits_zero_on_sigterm() {
         let sent = unsafe { libc::kill(pid as libc::pid_t, libc::SIGTERM) };
         assert_eq!(sent, 0, "kill(SIGTERM) must return 0");
 
-        let output = tokio::time::timeout(Duration::from_secs(10), child.wait_with_output())
-            .await
-            .expect("the worker must exit within 10 s after SIGTERM")
-            .expect("reading the worker output must succeed");
+        let output = tokio::time::timeout(
+            Duration::from_secs(10),
+            child.into_inner().wait_with_output(),
+        )
+        .await
+        .expect("the worker must exit within 10 s after SIGTERM")
+        .expect("reading the worker output must succeed");
 
         let mut log = String::from_utf8_lossy(&output.stdout).into_owned();
         log.push_str(&String::from_utf8_lossy(&output.stderr));
@@ -200,16 +258,18 @@ async fn binary_ticks_and_exits_zero_on_sigterm() {
 /// them later dies by the signal and reports no exit code at all (finding #39).
 #[tokio::test]
 async fn binary_exits_zero_on_sigterm_during_the_connect() {
-    let child = tokio::process::Command::new(env!("CARGO_BIN_EXE_cadus-worker"))
-        .env("DATABASE_URL", "postgresql://x@127.0.0.1:1/x")
-        .env("WORKER_TICK_SECS", "1")
-        .env("RUST_LOG", "info")
-        .stdout(std::process::Stdio::piped())
-        .stderr(std::process::Stdio::piped())
-        .spawn()
-        .expect("the worker binary must start");
+    let child = KillOnDrop::new(
+        tokio::process::Command::new(env!("CARGO_BIN_EXE_cadus-worker"))
+            .env("DATABASE_URL", "postgresql://x@127.0.0.1:1/x")
+            .env("WORKER_TICK_SECS", "1")
+            .env("RUST_LOG", "info")
+            .stdout(std::process::Stdio::piped())
+            .stderr(std::process::Stdio::piped())
+            .spawn()
+            .expect("the worker binary must start"),
+    );
 
-    let pid = child.id().expect("the child must report a pid");
+    let pid = child.as_ref().id().expect("the child must report a pid");
 
     tokio::time::sleep(Duration::from_millis(300)).await;
 
@@ -218,10 +278,13 @@ async fn binary_exits_zero_on_sigterm_during_the_connect() {
     let sent = unsafe { libc::kill(pid as libc::pid_t, libc::SIGTERM) };
     assert_eq!(sent, 0, "kill(SIGTERM) must return 0");
 
-    let output = tokio::time::timeout(Duration::from_secs(15), child.wait_with_output())
-        .await
-        .expect("the worker must exit within 15 s after SIGTERM")
-        .expect("reading the worker output must succeed");
+    let output = tokio::time::timeout(
+        Duration::from_secs(15),
+        child.into_inner().wait_with_output(),
+    )
+    .await
+    .expect("the worker must exit within 15 s after SIGTERM")
+    .expect("reading the worker output must succeed");
 
     let mut log = String::from_utf8_lossy(&output.stdout).into_owned();
     log.push_str(&String::from_utf8_lossy(&output.stderr));
@@ -346,16 +409,18 @@ fn serve_deaf(mut stream: TcpStream, query_seen: &AtomicBool) -> std::io::Result
 async fn binary_exits_zero_on_sigterm_during_the_role_report() {
     let (port, query_seen) = start_deaf_postgres();
 
-    let child = tokio::process::Command::new(env!("CARGO_BIN_EXE_cadus-worker"))
-        .env("DATABASE_URL", format!("postgresql://x@127.0.0.1:{port}/x"))
-        .env("WORKER_TICK_SECS", "1")
-        .env("RUST_LOG", "info")
-        .stdout(std::process::Stdio::piped())
-        .stderr(std::process::Stdio::piped())
-        .spawn()
-        .expect("the worker binary must start");
+    let child = KillOnDrop::new(
+        tokio::process::Command::new(env!("CARGO_BIN_EXE_cadus-worker"))
+            .env("DATABASE_URL", format!("postgresql://x@127.0.0.1:{port}/x"))
+            .env("WORKER_TICK_SECS", "1")
+            .env("RUST_LOG", "info")
+            .stdout(std::process::Stdio::piped())
+            .stderr(std::process::Stdio::piped())
+            .spawn()
+            .expect("the worker binary must start"),
+    );
 
-    let pid = child.id().expect("the child must report a pid");
+    let pid = child.as_ref().id().expect("the child must report a pid");
 
     // Wait until the role query reaches the deaf server. The process is then
     // inside `current_role` and answers only through the signal path.
@@ -374,10 +439,13 @@ async fn binary_exits_zero_on_sigterm_during_the_role_report() {
     let sent = unsafe { libc::kill(pid as libc::pid_t, libc::SIGTERM) };
     assert_eq!(sent, 0, "kill(SIGTERM) must return 0");
 
-    let output = tokio::time::timeout(Duration::from_secs(5), child.wait_with_output())
-        .await
-        .expect("the worker must exit within 5 s after SIGTERM during the role report")
-        .expect("reading the worker output must succeed");
+    let output = tokio::time::timeout(
+        Duration::from_secs(5),
+        child.into_inner().wait_with_output(),
+    )
+    .await
+    .expect("the worker must exit within 5 s after SIGTERM during the role report")
+    .expect("reading the worker output must succeed");
 
     let mut log = String::from_utf8_lossy(&output.stdout).into_owned();
     log.push_str(&String::from_utf8_lossy(&output.stderr));
