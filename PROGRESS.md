@@ -73,6 +73,16 @@ INSERT still wrote `is_admin`, and SELECT still exposed every `password_hash`; t
 shutdown spent its deadline twice (20.01 s against a 20 s grace period). Fix units
 FIX8a–c address all 16.
 
+### Adversarial review round 4
+
+On the tree after FIX8 (commit 1bdfdf1): 28 raised, 14 confirmed
+(`docs/reviews/M0-review-4.md`). Blocker: the three auth tables carry `user_id`, hold
+no RLS, and keep full DML for `cadus_app`, so a bound tenant forges a session for any
+account. The round-3 login functions returned any account's `password_hash` to any
+caller and declared `search_path = public` without `pg_temp`. Fix units FIX9a–c
+address all 14. The loop did not go dry after four rounds (16, 16, 14 confirmed);
+see "Decision for the owner" below.
+
 ### Open findings
 
 - (M3) `events.payload` is `jsonb` (D7). 1.0 stored `json` because its diagnostic
