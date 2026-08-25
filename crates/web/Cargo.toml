@@ -19,6 +19,17 @@ cadus-core = { workspace = true }
 cadus-store = { workspace = true }
 axum = { workspace = true }
 tokio = { workspace = true }
+sqlx = { workspace = true }
+serde_json = { workspace = true }
+tracing = { workspace = true }
+tracing-subscriber = { workspace = true }
+
+# The HTTP tests drive the router in process and start the binary as a child
+# process. `test-support` gives them a throwaway database.
+[dev-dependencies]
+cadus-store = { workspace = true, features = ["test-support"] }
+tower = { workspace = true }
+http-body-util = { workspace = true }
 
 [lints]
 workspace = true
