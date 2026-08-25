@@ -63,6 +63,16 @@ UPDATE on `users` (cross-tenant `password_hash`/`is_admin` writes), no privilege
 had no test, `pool.close()` and the boot probes ran outside the shutdown select, no
 statement timeout on the pool. Fix units FIX7a–c address all 16.
 
+### Adversarial review round 3
+
+On the tree after FIX7 (commit ffe0f62): 31 raised, 16 confirmed
+(`docs/reviews/M0-review-3.md`). Several are follow-on defects of earlier fixes: the
+orchestrator's advisory lock in `cadus-migrate` was database-scoped, not cluster-wide
+(reproduced 8/8); the new 5 s statement timeout also bound the migration run; `users`
+INSERT still wrote `is_admin`, and SELECT still exposed every `password_hash`; the web
+shutdown spent its deadline twice (20.01 s against a 20 s grace period). Fix units
+FIX8a–c address all 16.
+
 ### Open findings
 
 - (M3) `events.payload` is `jsonb` (D7). 1.0 stored `json` because its diagnostic

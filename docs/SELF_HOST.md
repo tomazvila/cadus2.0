@@ -251,3 +251,11 @@ sends `SIGKILL` and the container reports exit 0. The old code spent the budget
 twice and took 20.01 s at the default, which gave exit 137 on every restart
 (review round 3, finding #7). Keep `SHUTDOWN_DEADLINE_SECS` below 19, or raise
 `stop_grace_period` with it.
+
+## Role lock database
+
+`cadus-migrate --admin-login` alters cluster-scoped roles. Two migrate runs on one
+cluster serialize on an advisory lock that lives in `CADUS_MAINTENANCE_DB` (default
+`postgres`), because Postgres scopes an advisory lock to one database. The migrate
+role must be able to connect to that database. `cadus-migrate` ignores
+`DB_STATEMENT_TIMEOUT_MS` and runs every migration without a statement bound.

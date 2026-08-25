@@ -102,6 +102,9 @@ services:
     command: ["cadus-migrate", "--admin-login"]
     environment:
       DATABASE_URL: postgresql://postgres:${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}@db:5432/cadus
+      # Database in which cadus-migrate takes the cluster-wide role lock.
+      # The official image always creates `postgres`.
+      CADUS_MAINTENANCE_DB: ${CADUS_MAINTENANCE_DB:-postgres}
       CADUS_APP_PASSWORD: ${CADUS_APP_PASSWORD:?set CADUS_APP_PASSWORD in .env - run openssl rand -hex 24}
       CADUS_ADMIN_PASSWORD: ${CADUS_ADMIN_PASSWORD:?set CADUS_ADMIN_PASSWORD in .env - run openssl rand -hex 24}
     depends_on:
