@@ -12,7 +12,20 @@
 //!
 //! The program prints the number of migrations that this run applied and exits
 //! 0. On an error it prints the error on stderr and exits 2. An unknown
-//! argument prints the usage on stderr and exits 2.
+//! argument prints the usage on stderr and exits 2. On `SIGTERM` or `SIGINT`
+//! the program prints `cadus-migrate: stopped by signal` on stderr and exits 3.
+//!
+//! The stop signals are the signals that `cadus-web` and `cadus-worker` handle
+//! too. The compose stack runs this program as PID 1, and the kernel drops a
+//! signal that PID 1 leaves at the default disposition, so a run that waits on
+//! the role lock ends with SIGKILL and exit 137 without these handlers
+//! (finding #12).
+//!
+//! `--admin-login` takes a password of 16 to 128 characters from the set
+//! `A-Z a-z 0-9 - _`. A password outside that rule stops the run with exit code
+//! 2 before the first statement. The three runtime DSNs carry the password in a
+//! URL with no percent-encoding, so a character such as `@` or `%` rotates the
+//! role and locks the application out (finding #14).
 //!
 //! `--admin-login` keeps `psql` out of the runtime image. Migration 0001
 //! creates `cadus_admin` as `NOLOGIN`, because a `BYPASSRLS` login is a
@@ -22,7 +35,8 @@
 //!
 //! The program runs with `statement_timeout` off. A migration waits on the
 //! migration lock of sqlx and on the DDL locks of the statements it applies. A
-//! cancel there is worse than a wait (finding #3).
+//! cancel there is worse than a wait (finding #3). A stop signal is the one
+//! exception, because the operator asks for that cancel.
 
 #![cfg_attr(
     test,
@@ -36,6 +50,7 @@
 )]
 
 use std::ffi::OsString;
+use std::future::Future;
 use std::process::ExitCode;
 use std::time::Duration;
 
@@ -57,13 +72,27 @@ Apply every pending migration to the database that DATABASE_URL names.
                     CADUS_APP_PASSWORD    ALTER ROLE cadus_app PASSWORD ...
                     CADUS_ADMIN_PASSWORD  ALTER ROLE cadus_admin PASSWORD ...
                   A variable that is absent leaves the password of that role
-                  as it is. An empty variable is an error.";
+                  as it is. An empty variable is an error. A password holds
+                  16 to 128 characters of the set A-Z a-z 0-9 - _ and nothing
+                  else, so the value is safe inside a DSN.";
 
 /// The environment variable that holds the new password of `cadus_app`.
 const APP_PASSWORD_VAR: &str = "CADUS_APP_PASSWORD";
 
 /// The environment variable that holds the new password of `cadus_admin`.
 const ADMIN_PASSWORD_VAR: &str = "CADUS_ADMIN_PASSWORD";
+
+/// The least number of characters of a role password.
+///
+/// `openssl rand -hex 24` gives 48 characters, so the generator of the message
+/// below stays well above this bound.
+const PASSWORD_MIN_LEN: usize = 16;
+
+/// The most characters of a role password.
+const PASSWORD_MAX_LEN: usize = 128;
+
+/// The line that a stop signal prints on stderr.
+const STOPPED_BY_SIGNAL: &str = "cadus-migrate: stopped by signal";
 
 /// The environment variable that names the maintenance database of the cluster.
 const MAINTENANCE_DB_VAR: &str = "CADUS_MAINTENANCE_DB";
@@ -98,6 +127,15 @@ enum Mode {
     AdminLogin,
 }
 
+/// How a run ended.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum Outcome {
+    /// The run did every step of its mode.
+    Done,
+    /// A stop signal ended the run.
+    Stopped,
+}
+
 #[tokio::main]
 async fn main() -> ExitCode {
     // `args_os` never panics. `args` unwraps every argument and aborts the
@@ -109,13 +147,167 @@ async fn main() -> ExitCode {
         return ExitCode::from(2);
     };
 
-    match run(mode).await {
-        Ok(()) => ExitCode::SUCCESS,
+    // The password rule runs before the connect, so a password that a DSN
+    // cannot carry stops the program before the first statement (finding #14).
+    if mode == Mode::AdminLogin
+        && let Err(message) = check_password_rule()
+    {
+        eprintln!("cadus-migrate: {message}");
+        return ExitCode::from(2);
+    }
+
+    // Install the stop signals before the connect. The handlers exist from this
+    // point, so a SIGTERM during the connect, during the migrations, or during
+    // the unbounded wait of the role lock ends the run (finding #12).
+    let mut shutdown = match Shutdown::install() {
+        Ok(shutdown) => shutdown,
+        Err(err) => {
+            eprintln!("cadus-migrate: {err}");
+            return ExitCode::from(2);
+        }
+    };
+
+    match run(mode, &mut shutdown).await {
+        Ok(Outcome::Done) => ExitCode::SUCCESS,
+        Ok(Outcome::Stopped) => {
+            eprintln!("{STOPPED_BY_SIGNAL}");
+            ExitCode::from(3)
+        }
         Err(err) => {
             eprintln!("cadus-migrate: {err}");
             ExitCode::from(2)
         }
     }
+}
+
+/// The installed stop signals of the process.
+///
+/// `install` registers the handlers at once, so a signal from that moment on
+/// reaches the program. `wait` completes on the first signal. `docker stop`
+/// sends SIGTERM, so that is the normal stop path of the deployment.
+/// `cadus-web` and `cadus-worker` carry the same shape.
+struct Shutdown {
+    #[cfg(unix)]
+    terminate: tokio::signal::unix::Signal,
+    #[cfg(unix)]
+    interrupt: tokio::signal::unix::Signal,
+}
+
+impl Shutdown {
+    /// Register the handlers for `SIGTERM` and `SIGINT`.
+    #[cfg(unix)]
+    fn install() -> Result<Self, StoreError> {
+        use tokio::signal::unix::{SignalKind, signal};
+
+        let terminate = signal(SignalKind::terminate())
+            .map_err(|err| StoreError::Config(format!("the SIGTERM handler failed: {err}")))?;
+        let interrupt = signal(SignalKind::interrupt())
+            .map_err(|err| StoreError::Config(format!("the SIGINT handler failed: {err}")))?;
+        Ok(Self {
+            terminate,
+            interrupt,
+        })
+    }
+
+    /// A platform without unix signals has nothing to register here.
+    #[cfg(not(unix))]
+    fn install() -> Result<Self, StoreError> {
+        Ok(Self {})
+    }
+
+    /// Complete on the first `SIGTERM` or `SIGINT`.
+    #[cfg(unix)]
+    async fn wait(&mut self) {
+        let Self {
+            terminate,
+            interrupt,
+        } = self;
+        tokio::select! {
+            _ = terminate.recv() => (),
+            _ = interrupt.recv() => (),
+        }
+    }
+
+    /// Complete on Ctrl-C. A platform without unix signals has no `SIGTERM`.
+    #[cfg(not(unix))]
+    async fn wait(&mut self) {
+        if tokio::signal::ctrl_c().await.is_err() {
+            // The handler is gone. Park here, so the run goes on instead of a
+            // stop that no operator asked for.
+            std::future::pending::<()>().await;
+        }
+    }
+}
+
+/// Run `work` until it ends or a stop signal arrives.
+///
+/// `Ok(None)` means the signal came first. The caller then returns
+/// `Outcome::Stopped`, and the process exits 3.
+///
+/// The drop of the work future closes its connection, so a statement that is
+/// still in flight rolls back. A stop signal is an explicit request of the
+/// operator, and a cancel is the answer to it. The `statement_timeout` of 0
+/// above covers the other case: a bound that no operator asked for.
+async fn until_signal<T>(
+    shutdown: &mut Shutdown,
+    work: impl Future<Output = Result<T, StoreError>>,
+) -> Result<Option<T>, StoreError> {
+    tokio::select! {
+        biased;
+        () = shutdown.wait() => Ok(None),
+        result = work => result.map(Some),
+    }
+}
+
+/// Check every password variable of this run against the character rule.
+///
+/// The function returns the message of the first variable that breaks the rule.
+/// An absent variable, an empty variable, and a variable that is not valid
+/// Unicode pass this check: `password_from_env` reports those three with its own
+/// message, and that message names the defect better than this one.
+fn check_password_rule() -> Result<(), String> {
+    for var in [APP_PASSWORD_VAR, ADMIN_PASSWORD_VAR] {
+        match std::env::var(var) {
+            Ok(value) if value.is_empty() => (),
+            Ok(value) if password_follows_rule(&value) => (),
+            Ok(_) => return Err(password_rule_message(var)),
+            Err(_) => (),
+        }
+    }
+    Ok(())
+}
+
+/// Report whether a password holds allowed characters only and a length inside
+/// the bounds.
+///
+/// The allowed set is `A-Z a-z 0-9 - _`. Every character of that set goes
+/// through a `postgresql://user:password@host/db` URL unchanged, so the value
+/// that reaches the role is the value that the runtime DSN carries. `@` ends the
+/// user information, `#` starts a fragment, and `%` opens a percent escape, so
+/// each of those three makes the DSN name another host or another password with
+/// no error at all (finding #14).
+///
+/// The length bound is the second half of the rule: a short password is weak,
+/// and a long one is a paste mistake.
+fn password_follows_rule(password: &str) -> bool {
+    let length = password.chars().count();
+    if !(PASSWORD_MIN_LEN..=PASSWORD_MAX_LEN).contains(&length) {
+        return false;
+    }
+    password
+        .chars()
+        .all(|c| c.is_ascii_alphanumeric() || c == '-' || c == '_')
+}
+
+/// Build the message that a password outside the rule prints.
+///
+/// The message names the variable, the allowed set, the bounds, and one command
+/// that gives a value which passes.
+fn password_rule_message(var: &str) -> String {
+    format!(
+        "{var} holds a character outside [A-Za-z0-9_-] or a length outside \
+         {PASSWORD_MIN_LEN}..={PASSWORD_MAX_LEN}; generate one with: openssl rand -hex 24"
+    )
 }
 
 /// Read the command line. Return `None` for every argument that this program
@@ -142,22 +334,42 @@ fn migrate_config() -> Result<DbConfig, StoreError> {
     })
 }
 
-async fn run(mode: Mode) -> Result<(), StoreError> {
+async fn run(mode: Mode, shutdown: &mut Shutdown) -> Result<Outcome, StoreError> {
     let cfg = migrate_config()?;
-    let pool = cadus_store::connect(&cfg).await?;
 
-    let before = applied_count(&pool).await?;
-    cadus_store::migrate(&pool).await?;
-    let after = applied_count(&pool).await?;
+    // Every await of this function runs under the stop signals. A run that the
+    // signal ends returns here without a pool close: the process exits at that
+    // return, so the operating system closes the sockets, and a wait for a
+    // database that answers nothing only delays the stop (finding #12).
+    let Some(pool) = until_signal(shutdown, cadus_store::connect(&cfg)).await? else {
+        return Ok(Outcome::Stopped);
+    };
+
+    let Some(before) = until_signal(shutdown, applied_count(&pool)).await? else {
+        return Ok(Outcome::Stopped);
+    };
+    if until_signal(shutdown, cadus_store::migrate(&pool))
+        .await?
+        .is_none()
+    {
+        return Ok(Outcome::Stopped);
+    }
+    let Some(after) = until_signal(shutdown, applied_count(&pool)).await? else {
+        return Ok(Outcome::Stopped);
+    };
 
     // The report goes to stdout after the pool is closed, so a failed statement
     // never prints a success line.
     let mut password_roles: Vec<&str> = Vec::new();
     if mode == Mode::AdminLogin {
-        let lock = RoleLock::acquire(&cfg).await?;
-        let result = alter_roles(&pool, &mut password_roles).await;
+        let Some(lock) = until_signal(shutdown, RoleLock::acquire(&cfg)).await? else {
+            return Ok(Outcome::Stopped);
+        };
+        let result = until_signal(shutdown, alter_roles(&pool, &mut password_roles)).await;
         lock.release().await;
-        result?;
+        if result?.is_none() {
+            return Ok(Outcome::Stopped);
+        }
     }
 
     pool.close().await;
@@ -172,7 +384,7 @@ async fn run(mode: Mode) -> Result<(), StoreError> {
     for role in password_roles {
         println!("cadus-migrate: password set for {role}");
     }
-    Ok(())
+    Ok(Outcome::Done)
 }
 
 /// A cluster-wide lock on the `ALTER ROLE` statements of this program.
@@ -374,7 +586,10 @@ mod tests {
     use std::ffi::OsString;
     use std::os::unix::ffi::OsStringExt;
 
-    use super::{Mode, alter_role_password_statement, message_is_concurrent_update, parse_args};
+    use super::{
+        Mode, alter_role_password_statement, message_is_concurrent_update, parse_args,
+        password_follows_rule, password_rule_message,
+    };
 
     /// Finding #8: a single quote in the password becomes two single quotes, so
     /// the password stays inside the SQL string literal.
@@ -425,6 +640,63 @@ mod tests {
         assert!(!message_is_concurrent_update(
             "role \"cadus_app\" does not exist"
         ));
+    }
+
+    /// Finding #14: a character outside `[A-Za-z0-9_-]` breaks the rule. Each
+    /// character below changes the meaning of a DSN.
+    #[test]
+    fn a_character_outside_the_set_breaks_the_rule() {
+        for password in [
+            "corr@horse#battery1",
+            "0123456789abcdef@",
+            "0123456789abcdef#",
+            "0123456789abcdef%",
+            "0123456789abcdef/",
+            "0123456789abcdef:",
+            "0123456789abcdef?",
+            "0123456789 abcdef",
+            "0123456789abcdef'",
+            "0123456789abcdéf",
+        ] {
+            assert!(
+                !password_follows_rule(password),
+                "{password:?} must break the rule"
+            );
+        }
+    }
+
+    /// Finding #14: the length bound is 16..=128, and both ends are inclusive.
+    #[test]
+    fn the_length_bounds_are_sixteen_and_one_hundred_twenty_eight() {
+        assert!(!password_follows_rule(&"a".repeat(15)));
+        assert!(password_follows_rule(&"a".repeat(16)));
+        assert!(password_follows_rule(&"a".repeat(128)));
+        assert!(!password_follows_rule(&"a".repeat(129)));
+        assert!(!password_follows_rule(""));
+    }
+
+    /// Finding #14: the output of the generator that the message names passes
+    /// the rule, and so does every character of the allowed set.
+    #[test]
+    fn the_generated_password_follows_the_rule() {
+        // 48 characters, the length of `openssl rand -hex 24`.
+        assert!(password_follows_rule(
+            "9f2c1d4b7a6e0358cf91d24e7b60a5c38d1f4e29b70c6a55"
+        ));
+        assert!(password_follows_rule(
+            "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_"
+        ));
+    }
+
+    /// Finding #14: the message names the variable, the set, the bounds, and
+    /// the generator.
+    #[test]
+    fn the_rule_message_is_the_literal_line() {
+        assert_eq!(
+            password_rule_message("CADUS_APP_PASSWORD"),
+            "CADUS_APP_PASSWORD holds a character outside [A-Za-z0-9_-] or a length outside \
+             16..=128; generate one with: openssl rand -hex 24"
+        );
     }
 
     /// The two known command lines keep their meaning.
