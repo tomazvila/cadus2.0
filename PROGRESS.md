@@ -31,7 +31,7 @@ Orchestrator glue: migration 0001 absorbs a lost `CREATE ROLE` race
 The policy text uses `nullif(current_setting('app.user_id', true), '')::uuid` so a
 `RESET` GUC fails closed (zero rows) instead of raising 22P02.
 
-### Gate on integrated `main` (before FIX1 and review)
+### Gate on integrated `main` before review (commit 48be9e9)
 
 ```
 cargo fmt --all --check                                  ok
@@ -83,7 +83,54 @@ caller and declared `search_path = public` without `pg_temp`. Fix units FIX9a–
 address all 14. The loop did not go dry after four rounds (16, 16, 14 confirmed);
 see "Decision for the owner" below.
 
+### Final gate on `main` after FIX9 (M0 close)
+
+```
+cargo fmt --all --check                                  ok
+cargo clippy --all-targets --workspace -- -D warnings    ok
+cargo test --workspace                                   96 passed, 0 failed
+cargo sqlx prepare --check --workspace -- --all-targets  ok
+scripts/check_migrations.sh   name, frozen, fresh, rerun, drop   PASS
+scripts/check_ops.sh          compose, build, binaries, commands, deploy, invariants   PASS
+```
+
+What M0 delivers: workspace `core`/`store`/`web`/`worker`; migrations 0001–0006 with
+frozen checksums; 15 RLS-scoped tables with pinned policy text, a literal privilege
+matrix for `cadus_app` (tables, columns, sequences, functions, FK delete actions);
+the append-only `events` proof (UPDATE/DELETE → 42501); the C3 boot guard (superuser
+and BYPASSRLS, exit 3); `cadus-migrate` with a cluster-wide role lock, password rule,
+and signal handling; `/api/health`, `/api/ready`; worker heartbeat loop; CI workflow;
+Dockerfile, compose stack, `scripts/deploy.sh`, `docs/SELF_HOST.md`, `docs/SCHEMA.md`.
+
+### Decision for the owner — review loop did not go dry
+
+HANDOVER.md §2 stage 4 loops until two consecutive review rounds find nothing new.
+After four rounds the count per round was 46, 16, 16, 14 confirmed findings; every
+confirmed finding was fixed and the fix was mutation-checked. Tokens spent by
+subagents: implement waves ≈ 2.4 M; review rounds ≈ 7.7 M + 3.9 M + 3.8 M + 3.8 M.
+Each further round costs about 4 M tokens and, on the evidence of rounds 2–4, finds
+10–16 more findings, most of them second-order effects of earlier fixes on the
+grants/RLS surface. The orchestrator stopped after round 4 and asks the owner to
+choose: (a) continue the loop on M0 at this cost, or (b) accept M0 with the open
+findings below and let M1/M2 proceed, with M5 (auth) as the milestone that revisits
+the `users`/auth-table policies with real handler code.
+
 ### Open findings
+
+- (M5 contract) The auth layer must call the five SECURITY DEFINER lookups
+  (`auth_user_by_email`, `auth_user_by_id`, `auth_session_by_token_hash`,
+  `auth_token_by_hash`, `oauth_account_lookup`) BEFORE binding a tenant, then bind and
+  write through the policies. `docs/SCHEMA.md` "The M5 auth contract" has the call order.
+- (accepted, not fixed) default `BIND_ADDR` untested; R4 purity pins the resolved
+  dependency graph, not handler bodies; no TCP keepalive in sqlx 0.9; CI publishes the
+  service port on all runner interfaces; the deaf-Postgres test server is duplicated in
+  the web and worker tests; the `tuple concurrently updated` retry has no end-to-end
+  test; `scripts/deploy.sh` step 4 (caddy) was not run end to end on this box (ports
+  80/443 are held by another stack); `crates/store` has no direct-dependency literal
+  pin (its closure is covered by the web and worker purity tests); shellcheck is not in
+  the gate.
+- (fragile pin) `public_functions_are_the_literal_list` pins the citext extension
+  function count at 47; a Postgres/citext upgrade changes one literal.
 
 - (M3) `events.payload` is `jsonb` (D7). 1.0 stored `json` because its diagnostic
   projection read key order. The 2.0 projector must not depend on key order; the M3

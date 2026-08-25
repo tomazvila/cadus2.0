@@ -286,3 +286,16 @@ cluster serialize on an advisory lock that lives in `CADUS_MAINTENANCE_DB` (defa
 `postgres`), because Postgres scopes an advisory lock to one database. The migrate
 role must be able to connect to that database. `cadus-migrate` ignores
 `DB_STATEMENT_TIMEOUT_MS` and runs every migration without a statement bound.
+
+## Password rule and exit codes
+
+`CADUS_APP_PASSWORD` and `CADUS_ADMIN_PASSWORD` hold 16 to 128 characters of the set
+`A-Z a-z 0-9 _ -` only, because the compose DSNs carry the raw value inside a URL.
+`openssl rand -hex 24` satisfies the rule. `cadus-migrate` refuses any other value
+with exit code 2 before it runs a statement.
+
+| Binary | 0 | 2 | 3 |
+|---|---|---|---|
+| `cadus-web` | clean stop | start error (config, connect, bind) | boot guard: the role bypasses RLS (C3) |
+| `cadus-worker` | clean stop | start error | — |
+| `cadus-migrate` | done | error or bad argument | stopped by signal |

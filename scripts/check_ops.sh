@@ -71,8 +71,9 @@ done
 # variable, and the repository carries no `.env`.
 export SITE_ADDRESS=:80
 export POSTGRES_PASSWORD=x
-export CADUS_APP_PASSWORD=x
-export CADUS_ADMIN_PASSWORD=x
+# Placeholders that obey the cadus-migrate password rule (16..=128 of [A-Za-z0-9_-]).
+export CADUS_APP_PASSWORD=0123456789abcdef0123456789abcdef0123456789abcdef
+export CADUS_ADMIN_PASSWORD=fedcba9876543210fedcba9876543210fedcba9876543210
 
 # The three binaries that the Dockerfile installs.
 BINARIES=(cadus-web cadus-worker cadus-migrate)
