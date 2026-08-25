@@ -15,8 +15,12 @@
 
 CREATE EXTENSION IF NOT EXISTS citext;
 
--- cadus_owner owns the schema. The migration runner connects as it in production.
--- NOLOGIN: nothing authenticates as the owner directly.
+-- cadus_owner is reserved for a deployment that runs the migrations as a
+-- non-superuser owner. Findings #25 and #36: in the shipped compose stack the
+-- migration runner is the postgres superuser, which owns every object and
+-- bypasses row-level security, so cadus_owner owns nothing there. FORCE ROW
+-- LEVEL SECURITY in 0006 protects the non-superuser owner shape only.
+-- NOLOGIN: nothing authenticates as the owner today.
 DO $$ BEGIN
   IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'cadus_owner') THEN
     CREATE ROLE cadus_owner NOLOGIN NOSUPERUSER;

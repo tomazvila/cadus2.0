@@ -70,5 +70,7 @@ CREATE TABLE email_outbox (
     sent_at         timestamptz
 );
 
--- The worker drains pending mail in creation order across all tenants.
+-- The worker drains pending mail in creation order across all tenants. Finding
+-- #15: email_outbox is inside RLS (see 0006_grants_rls). The worker connects as
+-- cadus_admin, which holds BYPASSRLS, so the drain still crosses every tenant.
 CREATE INDEX email_outbox_pending ON email_outbox (created_at) WHERE status = 'pending';

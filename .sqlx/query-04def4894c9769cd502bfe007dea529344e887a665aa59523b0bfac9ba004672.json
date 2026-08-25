@@ -1,0 +1,15 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "INSERT INTO events (user_id, seq, ts, type, attempt_id, payload)\n             VALUES ($1, $2, now(), 'attempt', 'attempt-1', '{}'::jsonb)\n             ON CONFLICT (user_id, attempt_id) WHERE attempt_id IS NOT NULL DO NOTHING",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Uuid",
+        "Int8"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "04def4894c9769cd502bfe007dea529344e887a665aa59523b0bfac9ba004672"
+}

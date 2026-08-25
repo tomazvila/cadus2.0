@@ -65,8 +65,9 @@ CREATE TABLE model_call_log (
 CREATE INDEX model_call_log_ts ON model_call_log (ts);
 CREATE INDEX model_call_log_user_session ON model_call_log (user_id, session_id);
 
--- D-S6 queue: A4 async miss diagnosis. The worker claims across tenants, so this
--- table stays outside RLS (see 0006_grants_rls).
+-- D-S6 queue: A4 async miss diagnosis. Finding #15: this table is inside RLS
+-- (see 0006_grants_rls). The worker claims a job as cadus_admin, which holds
+-- BYPASSRLS, so the claim still crosses every tenant.
 CREATE TABLE diagnosis_jobs (
     id          uuid PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id     uuid NOT NULL REFERENCES users(id) ON DELETE CASCADE,

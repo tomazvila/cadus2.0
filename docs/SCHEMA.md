@@ -19,15 +19,31 @@ lineage is 1.0's `docs/DATA_MODEL.md` §9.
 
 | Role | Login | RLS | Use |
 |---|---|---|---|
-| `cadus_owner` | NOLOGIN | — | Owns the schema. The migration runner connects as it. |
-| `cadus_app` | LOGIN | enforced (NOBYPASSRLS) | The runtime role. No UPDATE, DELETE, or TRUNCATE on `events`. |
+| `cadus_owner` | NOLOGIN | — | Reserved for a deployment that runs the migrations as a non-superuser owner. It owns nothing in the shipped stack. |
+| `cadus_app` | LOGIN | enforced (NOBYPASSRLS) | The runtime role. No UPDATE, DELETE, or TRUNCATE on `events`. No DELETE or TRUNCATE on `users`. No privilege on `_sqlx_migrations`. |
 | `cadus_admin` | NOLOGIN | BYPASSRLS | Cross-tenant sweeps. Member of `cadus_app` for per-tenant drains. |
+
+### Who runs the migrations
+
+In the shipped compose stack the migration runner is the `postgres` superuser
+(`docker-compose.yml`, the `migrate` service). That role owns every object and
+bypasses row-level security, so `FORCE ROW LEVEL SECURITY` gives no protection
+there. `FORCE` protects the other deployment shape: a non-superuser owner
+(`cadus_owner`, when a deployment chooses it) runs the statements and stays
+inside the tenant policy.
 
 ## Append-only events (C2)
 
 `0006_grants_rls` runs `REVOKE UPDATE, DELETE, TRUNCATE ON events FROM cadus_app`
 after the blanket grant. `cadus_app` keeps SELECT and INSERT. A wrong grade is
 superseded by a `regraded` event. The grant enforces this, not a convention.
+
+## Two more revokes in `0006_grants_rls`
+
+| Statement | Reason |
+|---|---|
+| `REVOKE DELETE, TRUNCATE ON users FROM cadus_app` | `users` is the RLS-exempt parent of every tenant table, and each child references it with `ON DELETE CASCADE`. Postgres runs a referential-action trigger with row-level security off, so a `DELETE` on `users` erases another tenant's rows and no policy sees it. Account deletion is an admin operation. `cadus_app` keeps SELECT, INSERT, and UPDATE, because sign-up and sign-in touch `users` before a tenant context exists. |
+| `REVOKE ALL ON _sqlx_migrations FROM cadus_app` | sqlx creates the ledger before the first migration runs, so the blanket grant swept it in. A `DELETE` on the ledger makes the next deploy replay `0002` and stop with an error; an `UPDATE` of a checksum makes every later run fail with `VersionMismatch`. `cadus_admin` keeps the ledger for an operator repair. |
 
 ## Row-level security (C3)
 
@@ -39,7 +55,8 @@ USING      (user_id = nullif(current_setting('app.user_id', true), '')::uuid)
 WITH CHECK (user_id = nullif(current_setting('app.user_id', true), '')::uuid)
 ```
 
-`FORCE` applies the policy to the table owner too. The `true` argument (`missing_ok`)
+`FORCE` applies the policy to the table owner too, but only when the owner is not a
+superuser. See "Who runs the migrations" above. The `true` argument (`missing_ok`)
 makes an unset GUC resolve to NULL, so an unscoped query returns zero rows instead
 of an error. The failure mode is closed.
 
@@ -48,20 +65,26 @@ of an error. The failure mode is closed.
 app.user_id` leaves `''` and `''::uuid` raises SQLSTATE `22P02`. `nullif` maps `''`
 to NULL, so a cleared context returns zero rows like an unset one.
 
-**RLS-scoped (10 tables):** `events`, `learner_models`, `profiles`, `session_plans`,
+**RLS-scoped (12 tables):** `events`, `learner_models`, `profiles`, `session_plans`,
 `diag_states`, `user_settings`, `web_states`, `anki_queue`, `anki_cards_created`,
-`serving_pool`.
+`serving_pool`, `diagnosis_jobs`, `email_outbox`.
 
-**Exempt tables that carry `user_id` (6 tables), with the reason for each:**
+**Exempt tables that carry `user_id` (4 tables), with the reason for each:**
 
 | Table | Reason |
 |---|---|
 | `auth_sessions` | Looked up before a tenant context exists. |
 | `oauth_accounts` | Looked up before a tenant context exists. |
 | `auth_tokens` | Looked up before a tenant context exists. |
-| `email_outbox` | The worker drains it across tenants. |
-| `diagnosis_jobs` | The worker claims jobs across tenants. |
 | `model_call_log` | Operator telemetry. `user_id` is nullable. |
+
+`diagnosis_jobs` and `email_outbox` left the exempt list. The old reason was "the
+worker claims (or drains) across tenants". The worker connects as `cadus_admin`,
+which holds BYPASSRLS, so the cross-tenant scan never depended on the missing
+policy. The exemption only gave `cadus_app` every tenant's attempt payload,
+diagnosis result, and email address. `email_outbox.user_id` is nullable
+(`ON DELETE SET NULL`), and a NULL `user_id` matches no tenant, so an orphaned
+row stays visible to `cadus_admin` only.
 
 Tables with no `user_id` never enter the RLS set: `users`, `auth_rate_counters`,
 `content_store` (curriculum content, not learner data).
