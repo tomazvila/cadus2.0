@@ -11,6 +11,11 @@
 //! - `app`: the runtime role `cadus_app`. Row-level security applies to it, so a
 //!   test that uses this pool proves the production behavior.
 //!
+//! `TestDb::with_role` adds the same contract for a cluster role: it creates the
+//! role, runs the body, and drops the role in every case, a panic included. A
+//! role outlives the throwaway database, so a test that needs one takes this
+//! function and never a bare `CREATE ROLE` (finding #9).
+//!
 //! The module panics on a setup failure. A panic is correct here: a test harness
 //! that cannot build its fixture must stop, not report a false result.
 
@@ -167,6 +172,95 @@ impl TestDb {
             Err(err) if err.is_panic() => std::panic::resume_unwind(err.into_panic()),
             Err(err) => panic!("the test body did not finish: {err}"),
         }
+    }
+
+    /// Create a cluster role, run `body`, and drop the role in every case.
+    ///
+    /// A role is cluster-scoped, so `TestDb::with` does not clean it up: the
+    /// drop of the throwaway database leaves a role behind. A test body that
+    /// creates a role and drops it at the end therefore leaks the role on every
+    /// panic before that drop, and the test cluster uses `trust`
+    /// authentication, so a leaked `LOGIN SUPERUSER` role is a login for every
+    /// user of the host (finding #9).
+    ///
+    /// The role name is `<name_prefix>_<8 hex>`, so two runs on one cluster
+    /// never collide. `attributes` is the option list of `CREATE ROLE`, for
+    /// example `LOGIN SUPERUSER`. Both strings are literals of the test file:
+    /// the statement is an identifier plus an option list, and neither is a
+    /// bind parameter, so this statement stays outside the compile-time checked
+    /// macros (R2).
+    ///
+    /// The body runs in a task of its own, and the pool opens in a task of its
+    /// own, so a panic of either one becomes a `JoinError`. This function drops
+    /// the role first and then raises that panic again.
+    ///
+    /// The body receives the `TestDb`, the role name, and a pool of one
+    /// connection that is connected as the role.
+    pub async fn with_role<F, Fut, T>(
+        db: &Arc<TestDb>,
+        name_prefix: &str,
+        attributes: &str,
+        body: F,
+    ) -> T
+    where
+        F: FnOnce(Arc<TestDb>, String, PgPool) -> Fut + Send + 'static,
+        Fut: Future<Output = T> + Send + 'static,
+        T: Send + 'static,
+    {
+        let role = format!(
+            "{name_prefix}_{}",
+            &Uuid::new_v4().simple().to_string()[..8]
+        );
+        sqlx::query(AssertSqlSafe(format!(
+            "CREATE ROLE \"{role}\" {attributes}"
+        )))
+        .execute(&db.admin)
+        .await
+        .unwrap_or_else(|e| panic!("CREATE ROLE {role} failed: {e}"));
+
+        let opened = {
+            let db = Arc::clone(db);
+            let role = role.clone();
+            tokio::spawn(async move { db.pool_as(&role, 1).await })
+        }
+        .await;
+
+        let pool = match opened {
+            Ok(pool) => pool,
+            Err(err) => {
+                let _ = Self::drop_role(&db.admin, &role).await;
+                if err.is_panic() {
+                    std::panic::resume_unwind(err.into_panic());
+                }
+                panic!("the pool of {role} did not open: {err}");
+            }
+        };
+
+        let outcome = tokio::spawn(body(Arc::clone(db), role.clone(), pool.clone())).await;
+        pool.close().await;
+        let dropped = Self::drop_role(&db.admin, &role).await;
+
+        match outcome {
+            Ok(value) => {
+                // The body gave its verdict, so a failed drop is the only news
+                // left. A leaked role is the defect that this function exists
+                // to stop, so the failure stops the test.
+                dropped.unwrap_or_else(|e| panic!("DROP ROLE {role} failed: {e}"));
+                value
+            }
+            // `resume_unwind` carries the original payload, so the test reports
+            // the message and the location of the first panic.
+            Err(err) if err.is_panic() => std::panic::resume_unwind(err.into_panic()),
+            Err(err) => panic!("the body of {role} did not finish: {err}"),
+        }
+    }
+
+    /// Drop a cluster role. The caller decides what a failure means.
+    async fn drop_role(admin: &PgPool, role: &str) -> Result<(), sqlx::Error> {
+        sqlx::query(AssertSqlSafe(format!("DROP ROLE IF EXISTS \"{role}\"")))
+            .execute(admin)
+            .await
+            .map(|_| ())
     }
 
     /// The superuser DSN of this database.

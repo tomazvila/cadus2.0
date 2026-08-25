@@ -1,10 +1,12 @@
 //! Tests of the public store API that the row-level-security suite does not
 //! reach: the transaction-local tenant binding, both halves of the C3 boot
 //! guard, the acquire timeout, the statement timeout, the redacting `Debug`
-//! impl, and the cleanup contract of `TestDb::with`.
+//! impl, and the cleanup contract of `TestDb::with` and `TestDb::with_role`.
 //!
 //! Every test that needs a database uses `TestDb::with`, so a failed assertion
 //! drops its throwaway database instead of leaving it on the shared cluster.
+//! Every test that needs a cluster role uses `TestDb::with_role`, so a failed
+//! assertion drops that role too (finding #9).
 
 #![allow(
     clippy::unwrap_used,
@@ -18,8 +20,7 @@ use std::time::{Duration, Instant};
 
 use cadus_store::test_support::TestDb;
 use cadus_store::{DbConfig, StoreError, assert_rls_enforced, begin_tenant};
-use sqlx::{AssertSqlSafe, Connection, PgConnection};
-use uuid::Uuid;
+use sqlx::{Connection, PgConnection};
 
 /// C3: `begin_tenant` binds the tenant to the transaction only.
 ///
@@ -68,29 +69,21 @@ async fn tenant_binding_is_transaction_local() {
 /// C3 boot guard: a role with `BYPASSRLS` and without superuser is rejected.
 ///
 /// `cadus_admin` has this exact shape in the deployment, so the guard must
-/// reject it on the two flags separately. The role is cluster-scoped: the test
-/// gives it a unique name and drops it before the assertions run.
+/// reject it on the two flags separately. The role is cluster-scoped, so
+/// `TestDb::with_role` creates it and drops it in every case (finding #9).
 #[tokio::test]
 async fn boot_guard_rejects_bypassrls_non_superuser() {
     TestDb::with(|db| async move {
-        let role = format!(
-            "cadus2_t_bypass_{}",
-            &Uuid::new_v4().simple().to_string()[..8]
-        );
-        sqlx::query(AssertSqlSafe(format!(
-            "CREATE ROLE \"{role}\" LOGIN NOSUPERUSER BYPASSRLS"
-        )))
-        .execute(&db.admin)
-        .await
-        .unwrap();
-
-        let pool = db.pool_as(&role, 1).await;
-        let outcome = assert_rls_enforced(&pool).await;
-        pool.close().await;
-
-        let dropped = sqlx::query(AssertSqlSafe(format!("DROP ROLE IF EXISTS \"{role}\"")))
-            .execute(&db.admin)
-            .await;
+        let (role, outcome) = TestDb::with_role(
+            &db,
+            "cadus2_t_bypass",
+            "LOGIN NOSUPERUSER BYPASSRLS",
+            |_db, role, pool| async move {
+                let outcome = assert_rls_enforced(&pool).await;
+                (role, outcome)
+            },
+        )
+        .await;
 
         let err = outcome.expect_err("the guard must reject a BYPASSRLS role");
         let StoreError::RlsBypass {
@@ -103,7 +96,6 @@ async fn boot_guard_rejects_bypassrls_non_superuser() {
         };
         assert_eq!(rejected, role);
         assert_eq!((superuser, bypass_rls), (false, true));
-        dropped.unwrap();
     })
     .await;
 }
@@ -112,44 +104,36 @@ async fn boot_guard_rejects_bypassrls_non_superuser() {
 ///
 /// `CREATE ROLE ... SUPERUSER` leaves `rolbypassrls` false, and a superuser
 /// still reads every tenant. The `info.superuser` half of the guard is the only
-/// term that rejects this role, so this test pins that term (finding #9). The
-/// role is cluster-scoped: the test gives it a unique name and drops it before
-/// the assertions run.
+/// term that rejects this role, so this test pins that term (round-2 finding
+/// #9). The role is cluster-scoped, so `TestDb::with_role` creates it and drops
+/// it in every case (round-3 finding #9).
 #[tokio::test]
 async fn boot_guard_rejects_superuser_without_bypassrls() {
     TestDb::with(|db| async move {
-        let role = format!(
-            "cadus2_t_super_{}",
-            &Uuid::new_v4().simple().to_string()[..8]
-        );
-        sqlx::query(AssertSqlSafe(format!(
-            "CREATE ROLE \"{role}\" LOGIN SUPERUSER"
-        )))
-        .execute(&db.admin)
-        .await
-        .unwrap();
+        let ((role, flags), outcome) = TestDb::with_role(
+            &db,
+            "cadus2_t_super",
+            "LOGIN SUPERUSER",
+            |db, role, pool| async move {
+                // Read the catalog first. The test is only about the superuser
+                // term if the role really carries SUPERUSER without BYPASSRLS.
+                let flags = sqlx::query!(
+                    r#"SELECT rolsuper AS "superuser!", rolbypassrls AS "bypass_rls!"
+                       FROM pg_roles WHERE rolname = $1"#,
+                    role
+                )
+                .fetch_one(&db.admin)
+                .await
+                .unwrap();
 
-        // Read the catalog first. The test is only about the superuser term if
-        // the role really carries SUPERUSER without BYPASSRLS.
-        let flags = sqlx::query!(
-            r#"SELECT rolsuper AS "superuser!", rolbypassrls AS "bypass_rls!"
-               FROM pg_roles WHERE rolname = $1"#,
-            role
+                let outcome = assert_rls_enforced(&pool).await;
+                ((role, (flags.superuser, flags.bypass_rls)), outcome)
+            },
         )
-        .fetch_one(&db.admin)
-        .await
-        .unwrap();
-
-        let pool = db.pool_as(&role, 1).await;
-        let outcome = assert_rls_enforced(&pool).await;
-        pool.close().await;
-
-        let dropped = sqlx::query(AssertSqlSafe(format!("DROP ROLE IF EXISTS \"{role}\"")))
-            .execute(&db.admin)
-            .await;
+        .await;
 
         assert_eq!(
-            (flags.superuser, flags.bypass_rls),
+            flags,
             (true, false),
             "CREATE ROLE ... SUPERUSER must leave rolbypassrls false"
         );
@@ -164,9 +148,56 @@ async fn boot_guard_rejects_superuser_without_bypassrls() {
         };
         assert_eq!(rejected, role);
         assert_eq!((superuser, bypass_rls), (true, false));
-        dropped.unwrap();
     })
     .await;
+}
+
+/// Finding #9: `TestDb::with_role` drops the role of a test body that panics.
+///
+/// The body runs in a task of its own, so this test reads the panic as a
+/// `JoinError` and then asks the cluster for the role of that run. The role
+/// carries `LOGIN SUPERUSER`, the exact shape that the boot-guard test needs
+/// and that a leak turns into a password-free superuser login on a `trust`
+/// cluster.
+#[tokio::test]
+async fn with_role_drops_the_role_of_a_panicking_body() {
+    let (name_tx, name_rx) = tokio::sync::oneshot::channel();
+
+    let body = tokio::spawn(async move {
+        TestDb::with(|db| async move {
+            TestDb::with_role(
+                &db,
+                "cadus2_t_leak",
+                "LOGIN SUPERUSER",
+                |_db, role, _pool| async move {
+                    let _ = name_tx.send(role);
+                    panic!("this test body fails on purpose");
+                },
+            )
+            .await
+        })
+        .await
+    });
+
+    let role = name_rx.await.expect("the body must report its role");
+    let outcome = body.await;
+    assert!(
+        outcome.is_err(),
+        "with_role() must raise the panic of the body again"
+    );
+
+    let dsn = std::env::var("CADUS_TEST_DATABASE_URL").unwrap();
+    let mut conn = PgConnection::connect(&dsn).await.unwrap();
+    let left_behind = sqlx::query_scalar!(
+        r#"SELECT count(*) AS "count!" FROM pg_roles WHERE rolname = $1"#,
+        role
+    )
+    .fetch_one(&mut conn)
+    .await
+    .unwrap();
+    conn.close().await.unwrap();
+
+    assert_eq!(left_behind, 0, "the panicking body left the role {role}");
 }
 
 /// `TestDb::with` drops the database of a test body that panics.
