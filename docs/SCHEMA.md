@@ -114,9 +114,10 @@ of an error. The failure mode is closed.
 app.user_id` leaves `''` and `''::uuid` raises SQLSTATE `22P02`. `nullif` maps `''`
 to NULL, so a cleared context returns zero rows like an unset one.
 
-**RLS-scoped (12 tables):** `events`, `learner_models`, `profiles`, `session_plans`,
+**RLS-scoped (15 tables):** `events`, `learner_models`, `profiles`, `session_plans`,
 `diag_states`, `user_settings`, `web_states`, `anki_queue`, `anki_cards_created`,
-`serving_pool`, `diagnosis_jobs`, `email_outbox`.
+`serving_pool`, `diagnosis_jobs`, `email_outbox`, `auth_sessions`, `auth_tokens`,
+`oauth_accounts`.
 
 ### `users` carries its own per-command policies (finding #4)
 
@@ -133,52 +134,145 @@ and three policies:
 There is no DELETE policy, because `0006_grants_rls` already revokes DELETE and
 TRUNCATE on `users` from the runtime role.
 
-### The pre-tenant login path (finding #11)
+### The pre-tenant lookup functions (findings #11, #1, #2, #4)
 
-`users_read` was `USING (true)`, and the SELECT grant is table-wide, so a bound
-tenant read every account's `email`, `password_hash`, `is_admin`, and
-`disabled_at`. `users_read_self` closes that read. The login path, which runs
-before a tenant context exists, goes through two SECURITY DEFINER functions of
-`0006_grants_rls`:
+Every policy above gives an unbound caller zero rows, and the auth paths are
+unbound by definition: each one reads a key to learn which `user_id` to bind.
+`0006_grants_rls` serves those reads with five SECURITY DEFINER functions and
+nothing else.
 
-| Function | Argument | Use |
-|---|---|---|
-| `auth_user_by_email(citext)` | the submitted email | Password login and the OAuth link by email. |
-| `auth_user_by_id(uuid)` | `auth_sessions.user_id` | The session-cookie path: read the account status before the bind. |
+| Function | Argument | Returns | Use |
+|---|---|---|---|
+| `auth_user_by_email(citext)` | the submitted email | `(id, password_hash, email_verified_at, disabled_at, is_admin)` | Password login, sign-up read-back, the OAuth link by email. |
+| `auth_user_by_id(uuid)` | a `user_id` | the same five columns | The account status behind a session cookie. |
+| `auth_session_by_token_hash(text)` | SHA-256 of the cookie | `(user_id, expires_at, last_seen_at)` | The session cookie. |
+| `auth_token_by_hash(text)` | SHA-256 of the token | `(user_id, purpose, expires_at, consumed_at)` | Password reset and email verification. |
+| `oauth_account_lookup(text, text)` | `(provider, provider_account_id)` | `(user_id)` | The OAuth callback. |
 
-Each returns one row of `(id, password_hash, email_verified_at, disabled_at,
-is_admin)` for the one account that the caller names. Each carries `SET
-search_path = public`, so a caller's own `search_path` cannot point the body at
-another `users` table. `REVOKE ALL ... FROM PUBLIC` takes the automatic EXECUTE
-away, and `GRANT EXECUTE` names `cadus_app` and `cadus_admin`.
+Three properties hold for all five.
+
+1. **An unbound caller only.** Each body carries
+   `nullif(current_setting('app.user_id', true), '') IS NULL`, so a bound tenant
+   gets zero rows from every function, its own account included. Round-4 finding
+   #2: a SECURITY DEFINER body runs with the rights of the owner, so an unguarded
+   function let a tenant bound to A read B's `password_hash` and `is_admin` while
+   `users_read_self` saw nothing. The guard tests the caller, not the argument.
+2. **One account, and only the columns a decision needs.**
+3. **`SET search_path = public, pg_temp`.** Round-4 finding #4: Postgres searches
+   the temporary schema BEFORE every schema that `search_path` names whenever
+   `pg_temp` is not written out, so `SET search_path = public` resolved to the
+   effective list `pg_temp, public`. A caller ran `CREATE TEMP TABLE users` plus
+   one INSERT, and both login functions returned the attacker's row with
+   `is_admin = true`. Naming `pg_temp` last puts the temporary schema after
+   `public`.
+
+`REVOKE ALL ... FROM PUBLIC` takes the automatic EXECUTE away from each function,
+and `GRANT EXECUTE` names `cadus_app` and `cadus_admin`.
+`ALTER DEFAULT PRIVILEGES REVOKE EXECUTE ON FUNCTIONS FROM PUBLIC` closes a
+function of a later migration by default (finding #7). That statement carries no
+`IN SCHEMA` clause: a schema-scoped default ACL is a delta that Postgres adds to
+the hard-wired default, so the PUBLIC entry survives a schema-scoped REVOKE. The
+global form replaces the hard-wired default instead.
 
 SECURITY DEFINER runs the body with the rights of the function owner, which is
 the migration runner. In the shipped stack that role is the `postgres` superuser
 and bypasses row-level security. A deployment that runs the migrations as a
-non-superuser owner gives that owner BYPASSRLS, or the lookup returns zero rows.
+non-superuser owner gives that owner BYPASSRLS, or every lookup returns zero rows.
 
-**REQUIREMENT NOTE for M5 (auth).** The auth layer calls these two functions for
-every read of `users` that happens before the tenant bind. Three consequences:
+### The M5 auth contract: the call order
 
-1. A plain `SELECT ... FROM users` on the `cadus_app` connection returns zero
-   rows until `app.user_id` is set. Sign-in, password reset, and email
-   verification therefore call `auth_user_by_email`; the session-cookie path
-   calls `auth_user_by_id`.
-2. Sign-up inserts without a `RETURNING` clause. Postgres applies the SELECT
-   policy to the new row of an `INSERT ... RETURNING`, and the row is invisible
-   to the unbound session, so the statement fails. The handler inserts, then
-   calls `auth_user_by_email` for the new `id`.
-3. After the bind, a plain `SELECT` on `users` reads the caller's own row, so the
-   profile and settings pages need no function.
+This is the binding contract for M5. A step that says "unbound" runs on a
+`cadus_app` connection with no `app.user_id` set. A step that says "bound" runs
+inside a unit of work that has set `app.user_id` to the `user_id` of that step.
 
-**Exempt tables that carry `user_id` (4 tables), with the reason for each:**
+**Password login**
+
+1. Unbound: `SELECT * FROM auth_user_by_email($email)`. Zero rows means "unknown
+   account". Verify the password against `password_hash`. Refuse a NULL
+   `password_hash` (an OAuth-only account), a NULL `email_verified_at` if the
+   deployment demands verification, and a non-NULL `disabled_at`.
+2. Bind `app.user_id` to the returned `id`.
+3. Bound: `INSERT INTO auth_sessions (token_hash, user_id, created_at,
+   last_seen_at, expires_at) VALUES (...)` with `user_id` equal to the bound id.
+   The `tenant_isolation` WITH CHECK clause refuses any other `user_id`.
+
+**Sign-up**
+
+1. Unbound: `INSERT INTO users (email, password_hash) VALUES (...)` with **no**
+   `RETURNING` clause. Postgres applies the SELECT policy to the returned row,
+   and an unbound session sees no row, so `RETURNING` fails. The INSERT names
+   neither `id` nor `is_admin`: the column grant holds neither.
+2. Unbound: `SELECT * FROM auth_user_by_email($email)` for the new `id`.
+3. Bind, then write the session as in step 3 of password login.
+
+**Session cookie**
+
+1. Unbound: `SELECT * FROM auth_session_by_token_hash($sha256_of_cookie)`. Zero
+   rows means "no session". Refuse an `expires_at` in the past.
+2. Unbound: `SELECT * FROM auth_user_by_id($user_id)` for the account status.
+   Refuse a non-NULL `disabled_at`.
+3. Bind `app.user_id` to that `user_id`.
+4. Bound, at most once per hour: `UPDATE auth_sessions SET last_seen_at = now()
+   WHERE token_hash = $1`. The policy admits the row, because it belongs to the
+   bound tenant.
+5. Bound: sign-out is `DELETE FROM auth_sessions WHERE token_hash = $1`, and
+   "sign out everywhere" is `DELETE FROM auth_sessions`. The policy holds both
+   statements to the bound tenant.
+
+**Password reset and email verification**
+
+1. Unbound: `SELECT * FROM auth_token_by_hash($sha256_of_token)`. Zero rows means
+   "unknown token". Refuse a non-NULL `consumed_at` (single use) and an
+   `expires_at` in the past. Check `purpose` against the endpoint.
+2. Bind `app.user_id` to the returned `user_id`.
+3. Bound, in one transaction: `UPDATE auth_tokens SET consumed_at = now() WHERE
+   token_hash = $1 AND consumed_at IS NULL`, then the write the purpose calls for
+   (`UPDATE users SET password_hash = $2 WHERE id = $bound`, or `UPDATE users SET
+   email_verified_at = now() WHERE id = $bound`). A zero row count on the token
+   UPDATE means another request spent it first: stop and roll back.
+4. Bound: a password change ends every other session with
+   `DELETE FROM auth_sessions WHERE token_hash <> $current`.
+
+Token creation belongs to the same shape: the request that asks for a reset is
+unbound, so it calls `auth_user_by_email` first, binds, and then inserts the
+`auth_tokens` row for the bound `user_id`.
+
+**OAuth callback**
+
+1. Unbound: `SELECT * FROM oauth_account_lookup($provider, $provider_account_id)`.
+   One row gives the linked `user_id`: bind it and write the session.
+2. Zero rows means the provider account is not linked yet. Unbound:
+   `SELECT * FROM auth_user_by_email($email_from_provider)`.
+   - One row: the account exists. Bind it, then bound:
+     `INSERT INTO oauth_accounts (provider, provider_account_id, user_id,
+     email_at_link) VALUES (...)` with the bound id. Link only an email that the
+     provider states as verified.
+   - Zero rows: run the sign-up steps above with a NULL `password_hash`, bind,
+     and then insert the `oauth_accounts` row.
+
+**After the bind.** A plain `SELECT` on `users` reads the caller's own row, and a
+plain `SELECT` on `auth_sessions`, `auth_tokens`, and `oauth_accounts` reads the
+caller's own rows. The profile page, the settings page, and the session list need
+no function. Calling a function after the bind returns zero rows, so the handler
+must not use one there.
+
+**Rate limiting.** `auth_rate_counters` carries no `user_id` and no policy, so an
+unbound `INSERT ... ON CONFLICT (scope, key, window_start) DO UPDATE` works at any
+point of the flow.
+
+**Exempt tables that carry `user_id` (1 table), with the reason:**
 
 | Table | Reason |
 |---|---|
-| `auth_sessions` | Looked up before a tenant context exists. |
-| `oauth_accounts` | Looked up before a tenant context exists. |
-| `auth_tokens` | Looked up before a tenant context exists. |
 | `model_call_log` | Findings #5 and #12: `cadus_app` holds no privilege on the table and none on its identity sequence, so no runtime statement reaches either. Only `cadus_admin` reads and writes them. |
+
+`auth_sessions`, `auth_tokens`, and `oauth_accounts` left the exempt list with
+round-4 finding #1. The old reason was "looked up before a tenant context
+exists", which round 3 had already rejected for `users`. All three carry
+`user_id` and full DML for `cadus_app`, so one INSERT into `auth_sessions` minted
+a live cookie for any account and the web tier then bound `app.user_id` to the
+victim, one SELECT read every live session, and one DELETE logged out the whole
+deployment. The pre-tenant reads go through the functions above.
 
 `diagnosis_jobs` and `email_outbox` left the exempt list. The old reason was "the
 worker claims (or drains) across tenants". The worker connects as `cadus_admin`,
@@ -197,6 +291,17 @@ finding #14 protects it with a revoke instead of a policy.
 The lists are literal in the migration. A migration describes the schema as of its
 own revision. A later tenant table needs its own `ENABLE`, `FORCE`, and policy in
 a later migration.
+
+## The other literal pins in `crates/store/tests/rls.rs`
+
+Round 4 found three catalog surfaces that no test read, so a later migration
+changed each one with the whole gate green.
+
+| Test | Surface | Finding |
+|---|---|---|
+| `no_column_level_acl_outside_the_literal_list` | `pg_attribute.attacl` for every column of schema `public`. `has_table_privilege` reports a column grant as `false`, so `GRANT UPDATE (payload) ON events TO cadus_app` rewrote the authoritative event document with every C2 test green. The literal list holds the five `users` columns and nothing else. | #5 |
+| `public_functions_are_the_literal_list` | `pg_proc` for every function of schema `public`: name, `prosecdef`, `proconfig`, and the EXECUTE bits of `cadus_app`, `cadus_admin`, and PUBLIC. The old test matched the name prefix `auth_user_by_`, so a new SECURITY DEFINER helper was invisible. Every other function of the schema belongs to the `citext` extension. | #7, #4 |
+| `foreign_key_delete_actions_are_the_literal_list` | `pg_constraint.confdeltype` for every foreign key of schema `public`. `events_user_id_fkey` must stay `r` (RESTRICT): C2 says the event log outlives the account, and a flip to CASCADE erased a learner's whole history on one `DELETE FROM users`. | #8 |
 
 ## Two deliberate differences from 1.0
 

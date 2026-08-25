@@ -22,22 +22,31 @@ use cadus_store::test_support::TestDb;
 use cadus_store::{StoreError, assert_rls_enforced, begin_tenant};
 use uuid::Uuid;
 
-/// The 12 tables that carry a tenant policy (`docs/SCHEMA.md`, C3).
+/// The 15 tables that carry a tenant policy (`docs/SCHEMA.md`, C3).
 ///
-/// `diagnosis_jobs` and `email_outbox` joined the list with finding #15. The
-/// worker reads both as `cadus_admin`, which holds BYPASSRLS, so the old
+/// `diagnosis_jobs` and `email_outbox` joined the list with round-3 finding #15.
+/// The worker reads both as `cadus_admin`, which holds BYPASSRLS, so the old
 /// exemption bought nothing and gave `cadus_app` every tenant's payload.
+///
+/// `auth_sessions`, `auth_tokens`, and `oauth_accounts` joined the list with
+/// round-4 finding #1. All three carried `user_id` and full DML for `cadus_app`
+/// with no policy, so one INSERT into `auth_sessions` minted a live cookie for
+/// any account and opened every other tenant table behind it. The pre-tenant
+/// reads go through the SECURITY DEFINER functions of `0006_grants_rls.sql`.
 ///
 /// The order is the `C` collation order of `pg_class.relname`, because the
 /// catalog queries below order by that column.
-const RLS_TABLES: [&str; 12] = [
+const RLS_TABLES: [&str; 15] = [
     "anki_cards_created",
     "anki_queue",
+    "auth_sessions",
+    "auth_tokens",
     "diag_states",
     "diagnosis_jobs",
     "email_outbox",
     "events",
     "learner_models",
+    "oauth_accounts",
     "profiles",
     "serving_pool",
     "session_plans",
@@ -45,13 +54,8 @@ const RLS_TABLES: [&str; 12] = [
     "web_states",
 ];
 
-/// The 4 tables that carry a `user_id` and stay outside row-level security.
-const EXEMPT_TABLES: [&str; 4] = [
-    "auth_sessions",
-    "auth_tokens",
-    "model_call_log",
-    "oauth_accounts",
-];
+/// The 1 table that carries a `user_id` and stays outside row-level security.
+const EXEMPT_TABLES: [&str; 1] = ["model_call_log"];
 
 /// The union of the two lists above: every `public` table with a `user_id`
 /// column. The literal union pins that no table sits outside both buckets
@@ -76,7 +80,7 @@ const ALL_USER_ID_TABLES: [&str; 16] = [
 ];
 
 /// The literal text of the `tenant_isolation` predicate, as Postgres prints it
-/// from the catalog. Both `USING` and `WITH CHECK` carry this text on all 12
+/// from the catalog. Both `USING` and `WITH CHECK` carry this text on all 15
 /// policies. The literal pins the `nullif` guard and the `true` missing-ok flag,
 /// so an edit of `migrations/0006_grants_rls.sql` cannot pass in silence (C3).
 const POLICY_PREDICATE: &str =
@@ -152,6 +156,117 @@ const APP_TABLE_PRIVILEGES: [(&str, [bool; 5]); 20] = [
     // column-level only.
     ("users", [true, false, false, false, false]),
     ("web_states", [true, true, true, true, false]),
+];
+
+/// Round-4 finding #7: every function of schema `public` that a migration
+/// creates, as `(name, prosecdef, proconfig, cadus_app EXECUTE, cadus_admin
+/// EXECUTE, PUBLIC EXECUTE)`.
+///
+/// A SECURITY DEFINER function runs with the rights of its owner, and the owner
+/// is the migration runner, a superuser in the shipped stack. Such a function
+/// reads every tenant's rows outside the policies and outside the append-only
+/// revoke, and `EXECUTE` on a new function goes to PUBLIC by default. The old
+/// suite pinned two functions by a name prefix, so a new one was invisible.
+///
+/// Round-4 finding #4: `proconfig` carries `pg_temp` in every entry. Postgres
+/// searches the temporary schema BEFORE every schema that `search_path` names
+/// whenever `pg_temp` is not written out, so `SET search_path = public` let a
+/// caller point the body at its own `pg_temp.users`. Naming `pg_temp` last puts
+/// the temporary schema after `public`.
+///
+/// The list holds no function of an extension.
+/// `public_functions_are_the_literal_list` pins those separately.
+const PUBLIC_FUNCTIONS: [(&str, bool, &str, bool, bool, bool); 5] = [
+    // #1: the session cookie, read before the tenant bind.
+    (
+        "auth_session_by_token_hash",
+        true,
+        r#"{"search_path=public, pg_temp"}"#,
+        true,
+        true,
+        false,
+    ),
+    // #1: the password-reset and email-verification token.
+    (
+        "auth_token_by_hash",
+        true,
+        r#"{"search_path=public, pg_temp"}"#,
+        true,
+        true,
+        false,
+    ),
+    // #11: the password login and the OAuth link by email.
+    (
+        "auth_user_by_email",
+        true,
+        r#"{"search_path=public, pg_temp"}"#,
+        true,
+        true,
+        false,
+    ),
+    // #11: the account status behind a session cookie.
+    (
+        "auth_user_by_id",
+        true,
+        r#"{"search_path=public, pg_temp"}"#,
+        true,
+        true,
+        false,
+    ),
+    // #1: the OAuth callback.
+    (
+        "oauth_account_lookup",
+        true,
+        r#"{"search_path=public, pg_temp"}"#,
+        true,
+        true,
+        false,
+    ),
+];
+
+/// Round-4 finding #5: every column-level ACL of schema `public`, as
+/// `(table, column, acl entry without the grantor)`.
+///
+/// `has_table_privilege` reports a column grant as `false`, so the privilege
+/// matrix is blind to one. `GRANT UPDATE (payload) ON events TO cadus_app`
+/// therefore rewrote the authoritative event document with every C2 test green.
+/// `aw` is INSERT plus UPDATE: the two column lists of `users` in
+/// `0006_grants_rls.sql`. Neither list holds `id` or `is_admin`.
+const COLUMN_ACL_GRANTS: [(&str, &str, &str); 5] = [
+    ("users", "created_at", "cadus_app=aw"),
+    ("users", "disabled_at", "cadus_app=aw"),
+    ("users", "email", "cadus_app=aw"),
+    ("users", "email_verified_at", "cadus_app=aw"),
+    ("users", "password_hash", "cadus_app=aw"),
+];
+
+/// Round-4 finding #8: every foreign key of schema `public`, as
+/// `(table, constraint, confdeltype)`.
+///
+/// `confdeltype` is the `ON DELETE` action: `c` is CASCADE, `r` is RESTRICT,
+/// `n` is SET NULL, and `a` is NO ACTION. `events` must stay `r`: C2 says the
+/// event log outlives the account, and a flip to CASCADE erases a learner's
+/// whole history on one `DELETE FROM users` with the store suite green.
+const FOREIGN_KEY_DELETE_ACTIONS: [(&str, &str, &str); 18] = [
+    ("anki_cards_created", "anki_cards_created_user_id_fkey", "c"),
+    ("anki_queue", "anki_queue_user_id_fkey", "c"),
+    ("auth_sessions", "auth_sessions_user_id_fkey", "c"),
+    ("auth_tokens", "auth_tokens_user_id_fkey", "c"),
+    ("content_store", "content_store_approved_by_fkey", "n"),
+    ("diag_states", "diag_states_user_id_fkey", "c"),
+    ("diagnosis_jobs", "diagnosis_jobs_user_id_fkey", "c"),
+    ("email_outbox", "email_outbox_user_id_fkey", "n"),
+    // C2: the log outlives the account.
+    ("events", "events_user_id_fkey", "r"),
+    ("learner_models", "learner_models_user_id_fkey", "c"),
+    ("model_call_log", "model_call_log_user_id_fkey", "n"),
+    ("oauth_accounts", "oauth_accounts_user_id_fkey", "c"),
+    ("profiles", "profiles_user_id_fkey", "c"),
+    ("serving_pool", "serving_pool_content_digest_fkey", "a"),
+    ("serving_pool", "serving_pool_user_id_fkey", "c"),
+    ("session_plans", "session_plans_user_id_fkey", "c"),
+    ("user_settings", "user_settings_user_id_fkey", "c"),
+    ("web_states", "web_states_user_id_fkey", "c"),
 ];
 
 /// The line of `migrations/0001_roles.sql` that gives `cadus_app` its
@@ -612,14 +727,19 @@ async fn app_role_inserts_no_id_and_no_admin_flag() {
     .await;
 }
 
-/// C3, finding #11: the runtime role reads its own `users` row and no other, and
-/// the login path goes through the two SECURITY DEFINER functions.
+/// C3, findings #11 (round 3) and #2 (round 4): the runtime role reads its own
+/// `users` row and no other, through a plain SELECT and through the login
+/// functions alike.
 ///
 /// `users_read` was `USING (true)` over a table-wide SELECT grant, so a bound
 /// tenant read every account's `email`, `password_hash`, `is_admin`, and
 /// `disabled_at`. The SELECT policy now carries the same `id` predicate as the
-/// UPDATE policy. `auth_user_by_email` and `auth_user_by_id` serve the one read
-/// that happens before a tenant is bound.
+/// UPDATE policy.
+///
+/// Round-4 finding #2: the two login functions gave the same read back, because
+/// a SECURITY DEFINER body runs with the rights of the superuser owner and
+/// neither body looked at the caller. The old assertion here pinned that
+/// behavior as intended. Both functions now answer an unbound caller only.
 #[tokio::test]
 async fn app_role_reads_only_its_own_user_row() {
     TestDb::with(|db| async move {
@@ -665,18 +785,32 @@ async fn app_role_reads_only_its_own_user_row() {
         .unwrap();
         assert_eq!(hashes, 0);
 
-        // The password-login lookup by email reaches B and returns B's id.
-        let by_email = sqlx::query_scalar!(
-            r#"SELECT id AS "id!" FROM auth_user_by_email($1::text::citext)"#,
+        // Round-4 finding #2: the login functions answer an UNBOUND caller only.
+        // The old suite asserted the opposite here, so no test could fail on a
+        // bound tenant that read another account's password_hash and is_admin.
+        // `pre_tenant_lookups_answer_an_unbound_caller_only` proves the whole
+        // shape, for all five functions.
+        let mut tx = begin_tenant(&db.app, user_a).await.unwrap();
+        let by_email_bound = sqlx::query_scalar!(
+            r#"SELECT count(*) AS "count!" FROM auth_user_by_email($1::text::citext)"#,
             "read-b@example.test"
         )
-        .fetch_all(&db.app)
+        .fetch_one(&mut *tx)
         .await
         .unwrap();
-        assert_eq!(by_email, vec![user_b]);
+        assert_eq!(by_email_bound, 0);
+        let by_id_bound = sqlx::query_scalar!(
+            r#"SELECT count(*) AS "count!" FROM auth_user_by_id($1)"#,
+            user_b
+        )
+        .fetch_one(&mut *tx)
+        .await
+        .unwrap();
+        assert_eq!(by_id_bound, 0);
+        tx.commit().await.unwrap();
 
-        // The session-cookie lookup by id reaches B and returns one row with the
-        // columns that an account-status decision needs.
+        // Unbound, the login lookup reaches B and returns the columns that an
+        // account-status decision needs.
         let by_id = sqlx::query!(
             r#"
             SELECT id AS "id!", password_hash AS "password_hash?", is_admin AS "is_admin!"
@@ -691,59 +825,6 @@ async fn app_role_reads_only_its_own_user_row() {
         assert_eq!(by_id[0].id, user_b);
         assert_eq!(by_id[0].password_hash.as_deref(), Some("VICTIM-HASH"));
         assert!(!by_id[0].is_admin);
-
-        // The two functions are SECURITY DEFINER with a pinned search_path, and
-        // EXECUTE belongs to the two login roles, not to PUBLIC.
-        let mut definitions = sqlx::query!(
-            r#"
-            SELECT p.proname::text     AS "name!",
-                   p.prosecdef         AS "security_definer!",
-                   p.proconfig::text   AS "config?",
-                   has_function_privilege('cadus_app', p.oid, 'EXECUTE')   AS "app_execute!",
-                   has_function_privilege('cadus_admin', p.oid, 'EXECUTE') AS "admin_execute!",
-                   has_function_privilege('public', p.oid, 'EXECUTE')      AS "public_execute!"
-            FROM pg_proc p
-            JOIN pg_namespace n ON n.oid = p.pronamespace
-            WHERE n.nspname = 'public' AND p.proname LIKE 'auth\_user\_by\_%'
-            "#
-        )
-        .fetch_all(&db.admin)
-        .await
-        .unwrap()
-        .iter()
-        .map(|row| {
-            (
-                row.name.clone(),
-                row.security_definer,
-                row.config.clone(),
-                row.app_execute,
-                row.admin_execute,
-                row.public_execute,
-            )
-        })
-        .collect::<Vec<_>>();
-        definitions.sort();
-        assert_eq!(
-            definitions,
-            vec![
-                (
-                    "auth_user_by_email".to_string(),
-                    true,
-                    Some("{search_path=public}".to_string()),
-                    true,
-                    true,
-                    false,
-                ),
-                (
-                    "auth_user_by_id".to_string(),
-                    true,
-                    Some("{search_path=public}".to_string()),
-                    true,
-                    true,
-                    false,
-                ),
-            ]
-        );
     })
     .await;
 }
@@ -845,22 +926,40 @@ async fn app_role_privilege_matrix_is_the_literal_table() {
     .await;
 }
 
-/// D9, finding #20: `ALTER DEFAULT PRIVILEGES` holds the literal grant surface.
+/// D9, findings #20 (round 2) and #7 (round 4): `ALTER DEFAULT PRIVILEGES` holds
+/// the literal grant surface.
 ///
-/// The two statements exist so that a table or a sequence of a later migration
-/// is grantable without a manual GRANT. The entries carry the grantor after a
-/// slash, so the test compares the part before it.
+/// The two schema-scoped statements exist so that a table or a sequence of a
+/// later migration is grantable without a manual GRANT. The entries carry the
+/// grantor after a slash, so the test compares the part before it.
+///
+/// Round-4 finding #7: the third statement takes the automatic PUBLIC EXECUTE
+/// away from a function of a later migration, so a SECURITY DEFINER helper is
+/// closed until a migration grants it. That statement carries no `IN SCHEMA`
+/// clause: a schema-scoped default ACL is a delta that Postgres adds to the
+/// hard-wired default, so the PUBLIC entry survives a schema-scoped REVOKE. The
+/// global form replaces the hard-wired default instead. The global entry has
+/// `defaclnamespace = 0`, so this test reads every row of `pg_default_acl`.
 #[tokio::test]
 async fn default_privileges_are_the_literal_grants() {
     TestDb::with(|db| async move {
+        // The owner of a default-privilege entry is the migration runner, and
+        // that role name differs between deployments: `postgres` in the shipped
+        // compose stack, the test superuser here. `db.admin` runs the migrations,
+        // so `current_user` on that pool names the same role.
+        let owner = sqlx::query_scalar!(r#"SELECT current_user AS "owner!""#)
+            .fetch_one(&db.admin)
+            .await
+            .unwrap();
+
         let rows = sqlx::query!(
             r#"
-            SELECT d.defaclobjtype::text        AS "obj_type!",
+            SELECT coalesce(n.nspname, '')::text  AS "schema_name!",
+                   d.defaclobjtype::text          AS "obj_type!",
                    split_part(entry::text, '/', 1) AS "acl_entry!"
             FROM pg_default_acl d
-            JOIN pg_namespace n ON n.oid = d.defaclnamespace
+            LEFT JOIN pg_namespace n ON n.oid = d.defaclnamespace
             CROSS JOIN LATERAL unnest(d.defaclacl) AS entry
-            WHERE n.nspname = 'public'
             "#
         )
         .fetch_all(&db.admin)
@@ -869,24 +968,55 @@ async fn default_privileges_are_the_literal_grants() {
 
         // Sort in Rust. A SQL `ORDER BY` on text follows the database collation, and
         // the case order of 'S' against 'r' differs between collations.
-        let mut found: Vec<(String, String)> = rows
+        let mut found: Vec<(String, String, String)> = rows
             .iter()
-            .map(|row| (row.obj_type.clone(), row.acl_entry.clone()))
+            .map(|row| {
+                (
+                    row.schema_name.clone(),
+                    row.obj_type.clone(),
+                    row.acl_entry.clone(),
+                )
+            })
             .collect();
         found.sort();
-        let expected: Vec<(String, String)> = vec![
-            ("S".to_string(), "cadus_admin=rU".to_string()),
-            ("S".to_string(), "cadus_app=rU".to_string()),
-            ("r".to_string(), "cadus_admin=arwd".to_string()),
-            ("r".to_string(), "cadus_app=arwd".to_string()),
+        let mut expected: Vec<(String, String, String)> = vec![
+            // #7: the global function default. The owner keeps EXECUTE and
+            // nobody else holds it, so PUBLIC has no entry here. A PUBLIC entry
+            // prints with an empty grantee, as `=X`.
+            (String::new(), "f".to_string(), format!("{owner}=X")),
+            (
+                "public".to_string(),
+                "S".to_string(),
+                "cadus_admin=rU".to_string(),
+            ),
+            (
+                "public".to_string(),
+                "S".to_string(),
+                "cadus_app=rU".to_string(),
+            ),
+            (
+                "public".to_string(),
+                "r".to_string(),
+                "cadus_admin=arwd".to_string(),
+            ),
+            (
+                "public".to_string(),
+                "r".to_string(),
+                "cadus_app=arwd".to_string(),
+            ),
         ];
+        expected.sort();
         assert_eq!(found, expected);
 
-        // The two object types are exactly tables ('r') and sequences ('S').
+        // The three object types are exactly tables ('r'), sequences ('S'), and
+        // functions ('f').
         let mut obj_types: Vec<String> = rows.iter().map(|row| row.obj_type.clone()).collect();
         obj_types.sort();
         obj_types.dedup();
-        assert_eq!(obj_types, vec!["S".to_string(), "r".to_string()]);
+        assert_eq!(
+            obj_types,
+            vec!["S".to_string(), "f".to_string(), "r".to_string()]
+        );
     })
     .await;
 }
@@ -1220,7 +1350,7 @@ async fn rls_coverage_is_the_literal_list() {
         ));
         expected.sort();
 
-        assert_eq!(found.len(), 15);
+        assert_eq!(found.len(), 18);
         assert_eq!(found, expected);
 
         // #6: schema public holds no view and no materialized view. A view runs
@@ -1436,6 +1566,647 @@ async fn reset_guc_yields_zero_rows() {
         assert_eq!(reset_count, 0);
 
         drop(conn);
+    })
+    .await;
+}
+
+/// C3, round-4 finding #1: the runtime role writes no auth row of another
+/// account and reads no auth row of another account.
+///
+/// `auth_sessions`, `auth_tokens`, and `oauth_accounts` each carry `user_id` and
+/// each kept table-wide SELECT, INSERT, UPDATE, and DELETE for `cadus_app` with
+/// no policy. One INSERT into `auth_sessions` therefore minted a live cookie for
+/// any account, and the web tier bound `app.user_id` to that account and opened
+/// every other tenant table behind it. The three tables now carry the same
+/// `tenant_isolation` policy as `events`.
+#[tokio::test]
+async fn app_role_cannot_forge_an_auth_row_for_another_account() {
+    TestDb::with(|db| async move {
+        let user_a = db.seed_user("forge-a@example.test").await;
+        let user_b = db.seed_user("forge-b@example.test").await;
+
+        // B holds one live session, one reset token, and one linked provider.
+        sqlx::query!(
+            "INSERT INTO auth_sessions
+                 (token_hash, user_id, created_at, last_seen_at, expires_at)
+             VALUES ('session-of-b', $1, now(), now(), now() + interval '1 day')",
+            user_b
+        )
+        .execute(&db.admin)
+        .await
+        .unwrap();
+        sqlx::query!(
+            "INSERT INTO auth_tokens (token_hash, user_id, purpose, expires_at)
+             VALUES ('token-of-b', $1, 'password_reset', now() + interval '1 day')",
+            user_b
+        )
+        .execute(&db.admin)
+        .await
+        .unwrap();
+        sqlx::query!(
+            "INSERT INTO oauth_accounts
+                 (provider, provider_account_id, user_id, email_at_link)
+             VALUES ('google', 'provider-id-of-b', $1, 'forge-b@example.test')",
+            user_b
+        )
+        .execute(&db.admin)
+        .await
+        .unwrap();
+
+        // Bound to A, the forged session for B fails the WITH CHECK clause.
+        let mut tx = begin_tenant(&db.app, user_a).await.unwrap();
+        let session_err = sqlx::query!(
+            "INSERT INTO auth_sessions
+                 (token_hash, user_id, created_at, last_seen_at, expires_at)
+             VALUES ('forged-cookie', $1, now(), now(), now() + interval '30 days')",
+            user_b
+        )
+        .execute(&mut *tx)
+        .await
+        .unwrap_err();
+        assert_eq!(sqlstate(&session_err), "42501");
+        let _ = tx.rollback().await;
+
+        let mut tx = begin_tenant(&db.app, user_a).await.unwrap();
+        let token_err = sqlx::query!(
+            "INSERT INTO auth_tokens (token_hash, user_id, purpose, expires_at)
+             VALUES ('forged-reset', $1, 'password_reset', now() + interval '1 day')",
+            user_b
+        )
+        .execute(&mut *tx)
+        .await
+        .unwrap_err();
+        assert_eq!(sqlstate(&token_err), "42501");
+        let _ = tx.rollback().await;
+
+        let mut tx = begin_tenant(&db.app, user_a).await.unwrap();
+        let oauth_err = sqlx::query!(
+            "INSERT INTO oauth_accounts
+                 (provider, provider_account_id, user_id, email_at_link)
+             VALUES ('google', 'attacker-provider-id', $1, 'forge-a@example.test')",
+            user_b
+        )
+        .execute(&mut *tx)
+        .await
+        .unwrap_err();
+        assert_eq!(sqlstate(&oauth_err), "42501");
+        let _ = tx.rollback().await;
+
+        // Bound to A, none of B's auth rows is visible, and a DELETE of the whole
+        // table reaches no row of B.
+        let mut tx = begin_tenant(&db.app, user_a).await.unwrap();
+        let sessions = sqlx::query_scalar!(r#"SELECT count(*) AS "count!" FROM auth_sessions"#)
+            .fetch_one(&mut *tx)
+            .await
+            .unwrap();
+        assert_eq!(sessions, 0);
+        let tokens = sqlx::query_scalar!(r#"SELECT count(*) AS "count!" FROM auth_tokens"#)
+            .fetch_one(&mut *tx)
+            .await
+            .unwrap();
+        assert_eq!(tokens, 0);
+        let links = sqlx::query_scalar!(r#"SELECT count(*) AS "count!" FROM oauth_accounts"#)
+            .fetch_one(&mut *tx)
+            .await
+            .unwrap();
+        assert_eq!(links, 0);
+        let wiped = sqlx::query!("DELETE FROM auth_sessions")
+            .execute(&mut *tx)
+            .await
+            .unwrap()
+            .rows_affected();
+        assert_eq!(wiped, 0);
+        tx.commit().await.unwrap();
+
+        // B's session survived the DELETE that A ran.
+        let survivors = sqlx::query_scalar!(r#"SELECT count(*) AS "count!" FROM auth_sessions"#)
+            .fetch_one(&db.admin)
+            .await
+            .unwrap();
+        assert_eq!(survivors, 1);
+
+        // After the bind, B writes its own session, touches it, and consumes its
+        // own token. The policy admits every write of the account itself.
+        let mut tx = begin_tenant(&db.app, user_b).await.unwrap();
+        let created = sqlx::query!(
+            "INSERT INTO auth_sessions
+                 (token_hash, user_id, created_at, last_seen_at, expires_at)
+             VALUES ('own-session-of-b', $1, now(), now(), now() + interval '30 days')",
+            user_b
+        )
+        .execute(&mut *tx)
+        .await
+        .unwrap()
+        .rows_affected();
+        assert_eq!(created, 1);
+        let touched = sqlx::query!(
+            "UPDATE auth_sessions SET last_seen_at = now() WHERE token_hash = 'session-of-b'"
+        )
+        .execute(&mut *tx)
+        .await
+        .unwrap()
+        .rows_affected();
+        assert_eq!(touched, 1);
+        let consumed = sqlx::query!(
+            "UPDATE auth_tokens SET consumed_at = now() WHERE token_hash = 'token-of-b'"
+        )
+        .execute(&mut *tx)
+        .await
+        .unwrap()
+        .rows_affected();
+        assert_eq!(consumed, 1);
+        tx.commit().await.unwrap();
+    })
+    .await;
+}
+
+/// C3, round-4 findings #1 and #2: every pre-tenant lookup function answers an
+/// unbound caller and gives a bound caller zero rows.
+///
+/// A SECURITY DEFINER body runs with the rights of the owner, and the owner is a
+/// superuser in the shipped stack, so an unguarded function is a hole straight
+/// through every policy: a tenant bound to A called `auth_user_by_email` and read
+/// B's `password_hash` and `is_admin`. Each body now carries
+/// `nullif(current_setting('app.user_id', true), '') IS NULL`. The auth paths are
+/// unbound by definition, and every read after the bind goes through a policy.
+#[tokio::test]
+async fn pre_tenant_lookups_answer_an_unbound_caller_only() {
+    TestDb::with(|db| async move {
+        let user_a = db.seed_user("lookup-a@example.test").await;
+        let user_b = db.seed_user("lookup-b@example.test").await;
+
+        sqlx::query!(
+            "UPDATE users SET password_hash = 'VICTIM-HASH', is_admin = true WHERE id = $1",
+            user_b
+        )
+        .execute(&db.admin)
+        .await
+        .unwrap();
+        sqlx::query!(
+            "INSERT INTO auth_sessions
+                 (token_hash, user_id, created_at, last_seen_at, expires_at)
+             VALUES ('cookie-of-b', $1, now(), now(), now() + interval '1 day')",
+            user_b
+        )
+        .execute(&db.admin)
+        .await
+        .unwrap();
+        sqlx::query!(
+            "INSERT INTO auth_tokens (token_hash, user_id, purpose, expires_at)
+             VALUES ('reset-of-b', $1, 'password_reset', now() + interval '1 day')",
+            user_b
+        )
+        .execute(&db.admin)
+        .await
+        .unwrap();
+        sqlx::query!(
+            "INSERT INTO oauth_accounts
+                 (provider, provider_account_id, user_id, email_at_link)
+             VALUES ('google', 'provider-id-of-b', $1, 'lookup-b@example.test')",
+            user_b
+        )
+        .execute(&db.admin)
+        .await
+        .unwrap();
+
+        // Unbound: each function returns exactly B's one row.
+        let session = sqlx::query!(
+            r#"SELECT user_id AS "user_id!" FROM auth_session_by_token_hash($1)"#,
+            "cookie-of-b"
+        )
+        .fetch_all(&db.app)
+        .await
+        .unwrap();
+        assert_eq!(session.len(), 1);
+        assert_eq!(session[0].user_id, user_b);
+
+        let token = sqlx::query!(
+            r#"
+            SELECT user_id AS "user_id!", purpose AS "purpose!", consumed_at AS "consumed_at?"
+            FROM auth_token_by_hash($1)
+            "#,
+            "reset-of-b"
+        )
+        .fetch_all(&db.app)
+        .await
+        .unwrap();
+        assert_eq!(token.len(), 1);
+        assert_eq!(token[0].user_id, user_b);
+        assert_eq!(token[0].purpose, "password_reset");
+        assert_eq!(token[0].consumed_at, None);
+
+        let link = sqlx::query!(
+            r#"SELECT user_id AS "user_id!" FROM oauth_account_lookup($1, $2)"#,
+            "google",
+            "provider-id-of-b"
+        )
+        .fetch_all(&db.app)
+        .await
+        .unwrap();
+        assert_eq!(link.len(), 1);
+        assert_eq!(link[0].user_id, user_b);
+
+        let by_email = sqlx::query!(
+            r#"
+            SELECT id AS "id!", is_admin AS "is_admin!"
+            FROM auth_user_by_email($1::text::citext)
+            "#,
+            "lookup-b@example.test"
+        )
+        .fetch_all(&db.app)
+        .await
+        .unwrap();
+        assert_eq!(by_email.len(), 1);
+        assert_eq!(by_email[0].id, user_b);
+        assert!(by_email[0].is_admin);
+
+        // Bound to A: every one of the five functions returns zero rows, with B's
+        // own key as the argument.
+        let mut tx = begin_tenant(&db.app, user_a).await.unwrap();
+        let bound_session = sqlx::query_scalar!(
+            r#"SELECT count(*) AS "count!" FROM auth_session_by_token_hash($1)"#,
+            "cookie-of-b"
+        )
+        .fetch_one(&mut *tx)
+        .await
+        .unwrap();
+        assert_eq!(bound_session, 0);
+        let bound_token = sqlx::query_scalar!(
+            r#"SELECT count(*) AS "count!" FROM auth_token_by_hash($1)"#,
+            "reset-of-b"
+        )
+        .fetch_one(&mut *tx)
+        .await
+        .unwrap();
+        assert_eq!(bound_token, 0);
+        let bound_link = sqlx::query_scalar!(
+            r#"SELECT count(*) AS "count!" FROM oauth_account_lookup($1, $2)"#,
+            "google",
+            "provider-id-of-b"
+        )
+        .fetch_one(&mut *tx)
+        .await
+        .unwrap();
+        assert_eq!(bound_link, 0);
+        let bound_email = sqlx::query_scalar!(
+            r#"SELECT count(*) AS "count!" FROM auth_user_by_email($1::text::citext)"#,
+            "lookup-b@example.test"
+        )
+        .fetch_one(&mut *tx)
+        .await
+        .unwrap();
+        assert_eq!(bound_email, 0);
+        let bound_id = sqlx::query_scalar!(
+            r#"SELECT count(*) AS "count!" FROM auth_user_by_id($1)"#,
+            user_b
+        )
+        .fetch_one(&mut *tx)
+        .await
+        .unwrap();
+        assert_eq!(bound_id, 0);
+
+        // A bound caller reads its own account through the function too: zero
+        // rows, because the guard tests the caller, not the argument.
+        let bound_self = sqlx::query_scalar!(
+            r#"SELECT count(*) AS "count!" FROM auth_user_by_id($1)"#,
+            user_a
+        )
+        .fetch_one(&mut *tx)
+        .await
+        .unwrap();
+        assert_eq!(bound_self, 0);
+        tx.commit().await.unwrap();
+    })
+    .await;
+}
+
+/// C3, round-4 finding #4: a temp table named `users` does not reach the body of
+/// a SECURITY DEFINER function.
+///
+/// Postgres searches the temporary schema BEFORE every schema that `search_path`
+/// names whenever `pg_temp` is not written out, so `SET search_path = public`
+/// resolved to the effective list `pg_temp, public`. A caller ran `CREATE TEMP
+/// TABLE users` plus one INSERT, and `auth_user_by_email` then returned the
+/// attacker's row with `is_admin = true` and an attacker-chosen `password_hash`.
+/// `SET search_path = public, pg_temp` puts the temporary schema last.
+#[tokio::test]
+async fn security_definer_functions_ignore_a_temp_users_table() {
+    TestDb::with(|db| async move {
+        let user_b = db.seed_user("temp-b@example.test").await;
+        sqlx::query!(
+            "UPDATE users SET password_hash = 'REAL-HASH' WHERE id = $1",
+            user_b
+        )
+        .execute(&db.admin)
+        .await
+        .unwrap();
+
+        // One fixed connection: a temp table belongs to one session.
+        let app = db.pool_as("cadus_app", 1).await;
+        sqlx::query(
+            "CREATE TEMP TABLE users (
+                 id                uuid,
+                 email             citext,
+                 password_hash     text,
+                 email_verified_at timestamptz,
+                 is_admin          boolean,
+                 disabled_at       timestamptz,
+                 created_at        timestamptz
+             )",
+        )
+        .execute(&app)
+        .await
+        .unwrap();
+        sqlx::query(
+            "INSERT INTO pg_temp.users VALUES
+                 ('00000000-0000-0000-0000-0000deadbeef', 'ghost@example.test',
+                  '$argon2-attacker', now(), true, NULL, now()),
+                 ('00000000-0000-0000-0000-0000deadbeee', 'temp-b@example.test',
+                  '$argon2-attacker', now(), true, NULL, now())",
+        )
+        .execute(&app)
+        .await
+        .unwrap();
+
+        // The temp table holds both rows, so the fixture itself is sound.
+        // `pg_temp` exists in this one session only, so the compile-time checked
+        // macro cannot see it. This one query stays a plain query (R2).
+        let planted: i64 = sqlx::query_scalar("SELECT count(*) FROM pg_temp.users")
+            .fetch_one(&app)
+            .await
+            .unwrap();
+        assert_eq!(planted, 2);
+
+        // The account that exists only in the temp table is invisible.
+        let ghost = sqlx::query_scalar!(
+            r#"SELECT count(*) AS "count!" FROM auth_user_by_email($1::text::citext)"#,
+            "ghost@example.test"
+        )
+        .fetch_one(&app)
+        .await
+        .unwrap();
+        assert_eq!(ghost, 0);
+
+        // The account that both tables hold comes back from `public.users`.
+        let real = sqlx::query!(
+            r#"
+            SELECT id AS "id!", password_hash AS "password_hash?", is_admin AS "is_admin!"
+            FROM auth_user_by_email($1::text::citext)
+            "#,
+            "temp-b@example.test"
+        )
+        .fetch_all(&app)
+        .await
+        .unwrap();
+        assert_eq!(real.len(), 1);
+        assert_eq!(real[0].id, user_b);
+        assert_eq!(real[0].password_hash.as_deref(), Some("REAL-HASH"));
+        assert!(!real[0].is_admin);
+
+        // `auth_user_by_id` reads the real table too.
+        let by_id = sqlx::query!(
+            r#"SELECT password_hash AS "password_hash?" FROM auth_user_by_id($1)"#,
+            user_b
+        )
+        .fetch_all(&app)
+        .await
+        .unwrap();
+        assert_eq!(by_id.len(), 1);
+        assert_eq!(by_id[0].password_hash.as_deref(), Some("REAL-HASH"));
+
+        app.close().await;
+    })
+    .await;
+}
+
+/// C2, C3, round-4 finding #5: the column-level ACLs of schema `public` are the
+/// literal list of `COLUMN_ACL_GRANTS`.
+///
+/// `has_table_privilege` reports a column grant as `false`, so the privilege
+/// matrix is blind to one: `GRANT UPDATE (payload) ON events TO cadus_app`
+/// rewrote the authoritative event document with every C2 test green. This test
+/// reads `pg_attribute.attacl` for every column of the schema, so a column grant
+/// on `events`, `content_store`, or `model_call_log` fails the literal list.
+#[tokio::test]
+async fn no_column_level_acl_outside_the_literal_list() {
+    TestDb::with(|db| async move {
+        let rows = sqlx::query!(
+            r#"
+            SELECT c.relname::text                  AS "table_name!",
+                   a.attname::text                  AS "column_name!",
+                   split_part(entry::text, '/', 1)  AS "acl_entry!"
+            FROM pg_attribute a
+            JOIN pg_class c ON c.oid = a.attrelid
+            JOIN pg_namespace n ON n.oid = c.relnamespace
+            CROSS JOIN LATERAL unnest(a.attacl) AS entry
+            WHERE n.nspname = 'public'
+              AND a.attnum > 0
+              AND NOT a.attisdropped
+            "#
+        )
+        .fetch_all(&db.admin)
+        .await
+        .unwrap();
+
+        // Sort in Rust. A SQL `ORDER BY` on text follows the database collation.
+        let mut found: Vec<(String, String, String)> = rows
+            .iter()
+            .map(|row| {
+                (
+                    row.table_name.clone(),
+                    row.column_name.clone(),
+                    row.acl_entry.clone(),
+                )
+            })
+            .collect();
+        found.sort();
+
+        let expected: Vec<(String, String, String)> = COLUMN_ACL_GRANTS
+            .iter()
+            .map(|(table, column, acl)| {
+                (
+                    (*table).to_string(),
+                    (*column).to_string(),
+                    (*acl).to_string(),
+                )
+            })
+            .collect();
+        assert_eq!(found, expected);
+    })
+    .await;
+}
+
+/// C3, round-4 findings #4 and #7: the functions of schema `public` are the
+/// literal list of `PUBLIC_FUNCTIONS`, and every other function there belongs to
+/// the `citext` extension.
+///
+/// A SECURITY DEFINER function owned by the migration runner bypasses row-level
+/// security and the append-only revoke, and `EXECUTE` on a new function goes to
+/// PUBLIC by default. The old suite matched the name prefix `auth_user_by_`, so a
+/// new helper was invisible to every test. This test enumerates `pg_proc`.
+#[tokio::test]
+async fn public_functions_are_the_literal_list() {
+    TestDb::with(|db| async move {
+        let rows = sqlx::query!(
+            r#"
+            SELECT p.proname::text        AS "name!",
+                   p.prosecdef            AS "security_definer!",
+                   coalesce(p.proconfig::text, '') AS "config!",
+                   has_function_privilege('cadus_app', p.oid, 'EXECUTE')   AS "app_execute!",
+                   has_function_privilege('cadus_admin', p.oid, 'EXECUTE') AS "admin_execute!",
+                   has_function_privilege('public', p.oid, 'EXECUTE')      AS "public_execute!",
+                   EXISTS (
+                       SELECT 1 FROM pg_depend d
+                       WHERE d.objid = p.oid
+                         AND d.classid = 'pg_proc'::regclass
+                         AND d.deptype = 'e'
+                   ) AS "from_extension!"
+            FROM pg_proc p
+            JOIN pg_namespace n ON n.oid = p.pronamespace
+            WHERE n.nspname = 'public'
+            "#
+        )
+        .fetch_all(&db.admin)
+        .await
+        .unwrap();
+
+        // The functions that a migration creates, one by one.
+        let mut found: Vec<(String, bool, String, bool, bool, bool)> = rows
+            .iter()
+            .filter(|row| !row.from_extension)
+            .map(|row| {
+                (
+                    row.name.clone(),
+                    row.security_definer,
+                    row.config.clone(),
+                    row.app_execute,
+                    row.admin_execute,
+                    row.public_execute,
+                )
+            })
+            .collect();
+        found.sort();
+
+        let expected: Vec<(String, bool, String, bool, bool, bool)> = PUBLIC_FUNCTIONS
+            .iter()
+            .map(|(name, secdef, config, app, admin, public)| {
+                (
+                    (*name).to_string(),
+                    *secdef,
+                    (*config).to_string(),
+                    *app,
+                    *admin,
+                    *public,
+                )
+            })
+            .collect();
+        assert_eq!(found, expected);
+
+        // The rest of schema `public` belongs to one extension, `citext`. The
+        // count and the distinct shape are both literal, so a second extension,
+        // or a SECURITY DEFINER function inside one, fails this test.
+        let extension_functions = rows.iter().filter(|row| row.from_extension).count();
+        assert_eq!(extension_functions, 47);
+
+        let mut shapes: Vec<(bool, String, bool)> = rows
+            .iter()
+            .filter(|row| row.from_extension)
+            .map(|row| (row.security_definer, row.config.clone(), row.public_execute))
+            .collect();
+        shapes.sort();
+        shapes.dedup();
+        assert_eq!(shapes, vec![(false, String::new(), true)]);
+
+        let mut extensions = sqlx::query_scalar!(
+            r#"
+            SELECT e.extname::text AS "name!"
+            FROM pg_extension e
+            JOIN pg_namespace n ON n.oid = e.extnamespace
+            WHERE n.nspname = 'public'
+            "#
+        )
+        .fetch_all(&db.admin)
+        .await
+        .unwrap();
+        extensions.sort();
+        assert_eq!(extensions, vec!["citext".to_string()]);
+    })
+    .await;
+}
+
+/// C2, D9, round-4 finding #8: the `ON DELETE` action of every foreign key is
+/// the literal list of `FOREIGN_KEY_DELETE_ACTIONS`.
+///
+/// `migrations/0003_event_log.sql` names RESTRICT as the guarantee that the event
+/// log outlives the account, and round-1 finding #2 was a cascade that destroyed
+/// rows through this same parent. No test read the action, so the mutation from
+/// RESTRICT to CASCADE on `events` survived the whole store suite. One
+/// `DELETE FROM users` then erased a learner's whole history.
+#[tokio::test]
+async fn foreign_key_delete_actions_are_the_literal_list() {
+    TestDb::with(|db| async move {
+        let rows = sqlx::query!(
+            r#"
+            SELECT c.relname::text       AS "table_name!",
+                   con.conname::text     AS "constraint_name!",
+                   con.confdeltype::text AS "delete_action!"
+            FROM pg_constraint con
+            JOIN pg_class c ON c.oid = con.conrelid
+            JOIN pg_namespace n ON n.oid = c.relnamespace
+            WHERE n.nspname = 'public' AND con.contype = 'f'
+            "#
+        )
+        .fetch_all(&db.admin)
+        .await
+        .unwrap();
+
+        // Sort in Rust. A SQL `ORDER BY` on text follows the database collation.
+        let mut found: Vec<(String, String, String)> = rows
+            .iter()
+            .map(|row| {
+                (
+                    row.table_name.clone(),
+                    row.constraint_name.clone(),
+                    row.delete_action.clone(),
+                )
+            })
+            .collect();
+        found.sort();
+
+        let expected: Vec<(String, String, String)> = FOREIGN_KEY_DELETE_ACTIONS
+            .iter()
+            .map(|(table, constraint, action)| {
+                (
+                    (*table).to_string(),
+                    (*constraint).to_string(),
+                    (*action).to_string(),
+                )
+            })
+            .collect();
+        assert_eq!(found, expected);
+
+        // The functional half of the pin: a `users` row with an event cannot be
+        // deleted, not even by the superuser owner.
+        let user = db.seed_user("restrict-guard@example.test").await;
+        sqlx::query!(
+            "INSERT INTO events (user_id, seq, ts, type, payload)
+             VALUES ($1, 1, now(), 'attempt', '{}'::jsonb)",
+            user
+        )
+        .execute(&db.admin)
+        .await
+        .unwrap();
+        let delete_err = sqlx::query!("DELETE FROM users WHERE id = $1", user)
+            .execute(&db.admin)
+            .await
+            .unwrap_err();
+        // 23503 is foreign_key_violation: the RESTRICT action refused the delete.
+        assert_eq!(sqlstate(&delete_err), "23503");
+        let survivors = sqlx::query_scalar!(r#"SELECT count(*) AS "count!" FROM events"#)
+            .fetch_one(&db.admin)
+            .await
+            .unwrap();
+        assert_eq!(survivors, 1);
     })
     .await;
 }

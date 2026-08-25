@@ -2,9 +2,22 @@
 -- Requirements: C3 (multi-tenant Postgres), D9 (schema lineage from 1.0).
 --
 -- Column definitions carry over from 1.0 (migrations/versions/0001_baseline.py)
--- without change. These tables are looked up by their own keys (email,
--- token_hash, (scope, key, window_start)) before a tenant context exists, so
--- 0006_grants_rls leaves them exempt from row-level security.
+-- without change.
+--
+-- Row-level security (0006_grants_rls, review round 4 finding #11 corrects this
+-- paragraph):
+--   users            -- ENABLE and FORCE, with the three per-command policies
+--                       users_read_self, users_insert, and users_update_self.
+--   auth_sessions    -- ENABLE and FORCE, with the tenant_isolation policy.
+--   auth_tokens      -- ENABLE and FORCE, with the tenant_isolation policy.
+--   oauth_accounts   -- ENABLE and FORCE, with the tenant_isolation policy.
+--   auth_rate_counters -- exempt. The table has no user_id column and no tenant.
+--
+-- The four tables above are looked up by their own keys (email, token_hash,
+-- (provider, provider_account_id)) before a tenant context exists. A policy
+-- gives an unbound caller zero rows, so 0006_grants_rls serves each pre-tenant
+-- lookup with a SECURITY DEFINER function that answers an unbound caller only.
+-- docs/SCHEMA.md holds the call order that M5 follows.
 
 CREATE TABLE users (
     id                uuid PRIMARY KEY DEFAULT gen_random_uuid(),

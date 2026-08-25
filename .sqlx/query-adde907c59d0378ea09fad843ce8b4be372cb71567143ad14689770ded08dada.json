@@ -1,0 +1,35 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n            SELECT c.relname::text                  AS \"table_name!\",\n                   a.attname::text                  AS \"column_name!\",\n                   split_part(entry::text, '/', 1)  AS \"acl_entry!\"\n            FROM pg_attribute a\n            JOIN pg_class c ON c.oid = a.attrelid\n            JOIN pg_namespace n ON n.oid = c.relnamespace\n            CROSS JOIN LATERAL unnest(a.attacl) AS entry\n            WHERE n.nspname = 'public'\n              AND a.attnum > 0\n              AND NOT a.attisdropped\n            ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "table_name!",
+        "type_info": "Text",
+        "origin": "Expression"
+      },
+      {
+        "ordinal": 1,
+        "name": "column_name!",
+        "type_info": "Text",
+        "origin": "Expression"
+      },
+      {
+        "ordinal": 2,
+        "name": "acl_entry!",
+        "type_info": "Text",
+        "origin": "Expression"
+      }
+    ],
+    "parameters": {
+      "Left": []
+    },
+    "nullable": [
+      null,
+      null,
+      null
+    ]
+  },
+  "hash": "adde907c59d0378ea09fad843ce8b4be372cb71567143ad14689770ded08dada"
+}

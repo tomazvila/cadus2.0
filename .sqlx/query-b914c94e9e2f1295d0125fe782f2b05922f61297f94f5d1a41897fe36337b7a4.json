@@ -1,0 +1,68 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n            SELECT p.proname::text        AS \"name!\",\n                   p.prosecdef            AS \"security_definer!\",\n                   coalesce(p.proconfig::text, '') AS \"config!\",\n                   has_function_privilege('cadus_app', p.oid, 'EXECUTE')   AS \"app_execute!\",\n                   has_function_privilege('cadus_admin', p.oid, 'EXECUTE') AS \"admin_execute!\",\n                   has_function_privilege('public', p.oid, 'EXECUTE')      AS \"public_execute!\",\n                   EXISTS (\n                       SELECT 1 FROM pg_depend d\n                       WHERE d.objid = p.oid\n                         AND d.classid = 'pg_proc'::regclass\n                         AND d.deptype = 'e'\n                   ) AS \"from_extension!\"\n            FROM pg_proc p\n            JOIN pg_namespace n ON n.oid = p.pronamespace\n            WHERE n.nspname = 'public'\n            ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "name!",
+        "type_info": "Text",
+        "origin": "Expression"
+      },
+      {
+        "ordinal": 1,
+        "name": "security_definer!",
+        "type_info": "Bool",
+        "origin": {
+          "Table": {
+            "table": "pg_proc",
+            "name": "prosecdef"
+          }
+        }
+      },
+      {
+        "ordinal": 2,
+        "name": "config!",
+        "type_info": "Text",
+        "origin": "Expression"
+      },
+      {
+        "ordinal": 3,
+        "name": "app_execute!",
+        "type_info": "Bool",
+        "origin": "Expression"
+      },
+      {
+        "ordinal": 4,
+        "name": "admin_execute!",
+        "type_info": "Bool",
+        "origin": "Expression"
+      },
+      {
+        "ordinal": 5,
+        "name": "public_execute!",
+        "type_info": "Bool",
+        "origin": "Expression"
+      },
+      {
+        "ordinal": 6,
+        "name": "from_extension!",
+        "type_info": "Bool",
+        "origin": "Expression"
+      }
+    ],
+    "parameters": {
+      "Left": []
+    },
+    "nullable": [
+      null,
+      false,
+      null,
+      null,
+      null,
+      null,
+      null
+    ]
+  },
+  "hash": "b914c94e9e2f1295d0125fe782f2b05922f61297f94f5d1a41897fe36337b7a4"
+}
