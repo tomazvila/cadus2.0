@@ -183,3 +183,11 @@ steps above keep the volume.
   monitoring endpoint; read `docker compose logs worker` instead. Caddy 404s
   `/api/ready` at the edge on purpose; scrape it over the compose network at
   `web:8080`.
+
+## Query bound
+
+`DB_STATEMENT_TIMEOUT_MS` (default `5000`) bounds every query of the web and worker
+pools through `statement_timeout`. Set `0` to remove the bound. A value that is not a
+whole number stops `cadus-web` and `cadus-worker` at start with a configuration error.
+sqlx 0.9 exposes no TCP keepalive, so a socket that a firewall drops silently is not
+bounded by this setting.

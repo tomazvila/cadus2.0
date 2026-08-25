@@ -96,16 +96,23 @@ async fn run(mode: Mode) -> Result<(), StoreError> {
     // never prints a success line.
     let mut password_roles: Vec<&str> = Vec::new();
     if mode == Mode::AdminLogin {
-        grant_admin_login(&pool).await?;
-        for (role, var) in [
-            ("cadus_app", APP_PASSWORD_VAR),
-            ("cadus_admin", ADMIN_PASSWORD_VAR),
-        ] {
-            if let Some(password) = password_from_env(var)? {
-                set_role_password(&pool, role, &password).await?;
-                password_roles.push(role);
-            }
-        }
+        // Roles are cluster-scoped. Two migrate runs on one cluster (two
+        // databases, or a test next to a deploy) that ALTER the same role at
+        // the same time fail with "tuple concurrently updated". A cluster-wide
+        // advisory lock serializes them. The key is the one that
+        // crates/store/tests/migrate_bin.rs holds around its own ALTER ROLE
+        // statements (review-2 finding #11).
+        let mut lock_conn = pool.acquire().await?;
+        sqlx::query("SELECT pg_advisory_lock(7241001)")
+            .execute(&mut *lock_conn)
+            .await?;
+        let result = alter_roles(&pool, &mut password_roles).await;
+        let unlock = sqlx::query("SELECT pg_advisory_unlock(7241001)")
+            .execute(&mut *lock_conn)
+            .await;
+        drop(lock_conn);
+        result?;
+        unlock?;
     }
 
     pool.close().await;
@@ -119,6 +126,25 @@ async fn run(mode: Mode) -> Result<(), StoreError> {
     }
     for role in password_roles {
         println!("cadus-migrate: password set for {role}");
+    }
+    Ok(())
+}
+
+/// Grant the admin login and set the role passwords that the environment
+/// names. The caller holds the cluster-wide role lock.
+async fn alter_roles(
+    pool: &sqlx::PgPool,
+    password_roles: &mut Vec<&'static str>,
+) -> Result<(), StoreError> {
+    grant_admin_login(pool).await?;
+    for (role, var) in [
+        ("cadus_app", APP_PASSWORD_VAR),
+        ("cadus_admin", ADMIN_PASSWORD_VAR),
+    ] {
+        if let Some(password) = password_from_env(var)? {
+            set_role_password(pool, role, &password).await?;
+            password_roles.push(role);
+        }
     }
     Ok(())
 }

@@ -63,10 +63,12 @@ fi
 # The ops surface is the last step: it builds the image, and the build takes the
 # most time. docs/plans/M0.md makes `docker compose config` and the image build
 # the acceptance check of U6, so the gate runs both.
-if ! command -v docker >/dev/null 2>&1; then
-    echo "GATE FAILED: docker is required"
-    exit 2
-fi
+for tool in docker python3; do
+    if ! command -v "$tool" >/dev/null 2>&1; then
+        echo "GATE FAILED: $tool is required (scripts/check_ops.sh)"
+        exit 2
+    fi
+done
 
 if [ ! -f scripts/check_ops.sh ]; then
     echo "GATE FAILED: scripts/check_ops.sh is missing"

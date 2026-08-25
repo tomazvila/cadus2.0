@@ -111,6 +111,8 @@ services:
       RUST_LOG: ${RUST_LOG:-info}
       # cadus-web drains open connections for this long after SIGTERM, then exits 0.
       SHUTDOWN_DEADLINE_SECS: ${SHUTDOWN_DEADLINE_SECS:-10}
+      # Bound on every query of the pool, in milliseconds (0 = none).
+      DB_STATEMENT_TIMEOUT_MS: ${DB_STATEMENT_TIMEOUT_MS:-5000}
     # Longer than SHUTDOWN_DEADLINE_SECS, so the process exits by itself and
     # Docker never has to send SIGKILL (exit 137).
     stop_grace_period: 20s
@@ -129,6 +131,7 @@ services:
     command: ["cadus-worker"]
     environment:
       DATABASE_URL: postgresql://cadus_admin:${CADUS_ADMIN_PASSWORD:?set CADUS_ADMIN_PASSWORD in .env}@db:5432/cadus
+      DB_STATEMENT_TIMEOUT_MS: ${DB_STATEMENT_TIMEOUT_MS:-5000}
       RUST_LOG: ${RUST_LOG:-info}
     depends_on:
       migrate:

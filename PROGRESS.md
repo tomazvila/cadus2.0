@@ -50,7 +50,18 @@ transaction-local scope of the tenant GUC and the BYPASSRLS half of the boot gua
 no test; the RLS tests read cluster role state instead of the migration. Fix units
 FIX1–FIX5 address all 46; round 2 runs on the fixed tree.
 
-Cost note: round 1 used 128 agents. Round 2 is capped at two rounds, major+ only.
+Cost note: round 1 used 128 agents. Rounds 2 and 3 are capped at two find/refute
+rounds each, major+ only.
+
+### Adversarial review round 2
+
+On the tree after FIX1–FIX5: 32 raised, 16 confirmed (`docs/reviews/M0-review-2.md`).
+Blocker: FIX5 removed trust auth from the CI Postgres service, so the passwordless
+`cadus_app` test pool cannot authenticate in CI. Majors: `cadus_app` kept table-wide
+UPDATE on `users` (cross-tenant `password_hash`/`is_admin` writes), no privilege on
+`model_call_log` and `content_store` was revoked, the superuser half of the boot guard
+had no test, `pool.close()` and the boot probes ran outside the shutdown select, no
+statement timeout on the pool. Fix units FIX7a–c address all 16.
 
 ### Open findings
 
