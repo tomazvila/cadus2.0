@@ -286,6 +286,10 @@ impl Work {
                     hi_closed: *hi_closed,
                 })
             }
+            // The label is not part of the value, so the canonical form drops it.
+            // `check` is the step that compares the two labels (FIXM2b, review
+            // findings #2, #10, #16).
+            Ast::Assign { value, .. } => self.node(value),
             Ast::Ineq { var, op, bound } => {
                 let bound = Box::new(self.node(bound)?);
                 Ok(match op {

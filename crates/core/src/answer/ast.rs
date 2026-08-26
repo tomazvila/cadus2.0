@@ -139,6 +139,17 @@ pub enum Ast {
         /// The bound.
         bound: Box<Ast>,
     },
+    /// A value with its label, written `x = 5` (review findings #2, #10, #16).
+    ///
+    /// The label is the name the answer gives its value. It never reaches the
+    /// value itself: `check` compares the two labels, and `canon` reads the value
+    /// alone. 1.0 deleted the label, which made `x = 4` and `y = 4` one answer.
+    Assign {
+        /// The variable name, with its case as the answer writes it.
+        var: String,
+        /// The value the label names.
+        value: Box<Ast>,
+    },
     /// A chained inequality `lo <= var <= hi`, with the end style of each side.
     Chain {
         /// The lower bound.

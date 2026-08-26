@@ -22,6 +22,25 @@ const FUNCTIONS: [&str; 17] = [
 /// The spelled Greek variable names the grammar knows.
 const GREEK_VARIABLES: [&str; 4] = ["theta", "alpha", "beta", "lamda"];
 
+/// The letters a multi-letter run splits into (review known item "multi-letter runs").
+///
+/// `3xy^2` is the product `3*x*y**2`, so a short run of these letters becomes one
+/// variable per letter. The list leaves out the letters that carry another
+/// meaning: `d` starts a differential (`dx`), `e` is Euler's number, `i` and `j`
+/// name the imaginary unit and a unit vector, `l` and `o` are the shapes of `1`
+/// and `0`. A run that holds any other letter stays undecidable, which is what
+/// keeps the prose class (`yes`, `no`, `DNE`) out of the grammar (C4).
+const RUN_LETTERS: [char; 20] = [
+    'a', 'b', 'c', 'f', 'g', 'h', 'k', 'm', 'n', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y',
+    'z',
+];
+
+/// The longest letter run the parser splits into single-letter variables.
+///
+/// A longer run is a word, not a product. The corpus writes no product of more
+/// than three juxtaposed variables without an operator.
+const MAX_RUN_LETTERS: usize = 3;
+
 /// The largest literal exponent the grammar allows (1.0 `_MAX_EXPONENT`).
 const MAX_EXPONENT: i64 = 1_000;
 
@@ -112,8 +131,15 @@ impl Parser<'_> {
         result
     }
 
-    /// Parse the whole answer: a relation, a bare tuple, or one value.
+    /// Parse the whole answer: a label, a relation, a bare tuple, or one value.
     fn parse_answer(&mut self) -> Result<Ast, Undecidable> {
+        if let Some(var) = self.read_value_label() {
+            let value = self.parse_answer()?;
+            return Ok(Ast::Assign {
+                var,
+                value: Box::new(value),
+            });
+        }
         let first = self.parse_expr()?;
         if let Some(op) = self.peek_comparison() {
             self.bump();
@@ -127,6 +153,27 @@ impl Parser<'_> {
             items.push(self.parse_expr()?);
         }
         Ok(Ast::Tuple(items))
+    }
+
+    /// Read a leading `<var> =` label and return the variable name.
+    ///
+    /// The label stands at the start of the answer and nowhere else, so a second
+    /// `=` leaves text after the answer and the parser refuses the whole string.
+    /// The name is one letter or a spelled Greek name; every other name in front
+    /// of an `=` is an equation, which is outside the grammar (review finding #2).
+    fn read_value_label(&mut self) -> Option<String> {
+        if self.at != 0 || self.peek_at(1) != Some(&Tok::Eq) {
+            return None;
+        }
+        let Some(Tok::Ident(name)) = self.peek() else {
+            return None;
+        };
+        let name = name.clone();
+        if !is_variable_name(&name) {
+            return None;
+        }
+        self.at += 2;
+        Some(name)
     }
 
     /// Read a comparison operator at the cursor.
@@ -210,6 +257,10 @@ impl Parser<'_> {
                     factors = vec![mixed];
                     continue;
                 }
+                if parser.eat_times_letter(factors.last()) {
+                    factors.push(parser.parse_unary()?);
+                    continue;
+                }
                 if parser.starts_operand() {
                     if matches!(parser.peek(), Some(Tok::Num(_))) {
                         parser.check_implicit_number(factors.last())?;
@@ -254,9 +305,43 @@ impl Parser<'_> {
         matches!(self.peek(), Some(Tok::Num(_) | Tok::Ident(_) | Tok::LParen))
     }
 
+    /// Take a spaced `x` that stands between two numbers, which means times.
+    ///
+    /// 27 authored corpus answers of 5 topics write the times sign as `x`
+    /// (`6 x 10^3`, `2 x 2 x 3`). Every other `x` is the variable, so the reading
+    /// asks for a space on both sides and a number literal on both sides
+    /// (review finding #18).
+    fn eat_times_letter(&mut self, previous: Option<&Ast>) -> bool {
+        if !matches!(
+            previous,
+            Some(Ast::Integer(_) | Ast::Decimal { .. } | Ast::Fraction { .. } | Ast::Mixed { .. })
+        ) {
+            return false;
+        }
+        let Some(token) = self.tokens.get(self.at) else {
+            return false;
+        };
+        if !token.space_before || token.kind != Tok::Ident("x".to_string()) {
+            return false;
+        }
+        let Some(next) = self.tokens.get(self.at + 1) else {
+            return false;
+        };
+        if !next.space_before || !matches!(next.kind, Tok::Num(_)) {
+            return false;
+        }
+        self.bump();
+        true
+    }
+
     /// Read a mixed number `a b/c` when the factors so far are exactly the whole part.
     ///
     /// The space in front of `b` is required, which is what tells `3 1/2` from `31/2`.
+    ///
+    /// The fractional part must be proper and plainly written: `0 < b < c`, no
+    /// leading zero, and no three-digit numerator. A three-digit run after a space
+    /// is the thousands group of the V4 table, so `1 000/3` and `1 200/300` are
+    /// undecidable and never become a value the checker invented (finding #7).
     fn read_mixed_number(&mut self, factors: &[Ast]) -> Result<Option<Ast>, Undecidable> {
         let [only] = factors else {
             return Ok(None);
@@ -277,13 +362,16 @@ impl Parser<'_> {
         let Some(Tok::Num(denominator)) = self.peek_at(2) else {
             return Ok(None);
         };
-        if numerator.contains('.') || denominator.contains('.') {
+        if !is_plain_digit_run(numerator) || !is_plain_digit_run(denominator) {
+            return Ok(None);
+        }
+        if numerator.chars().count() == 3 {
             return Ok(None);
         }
         let numerator = parse_integer(numerator)?;
         let denominator = parse_integer(denominator)?;
-        if denominator.is_zero() {
-            return Err(Undecidable::new("a mixed number with a zero denominator"));
+        if numerator.is_zero() || numerator >= denominator {
+            return Ok(None);
         }
         self.at += 3;
         Ok(Some(Ast::Mixed {
@@ -312,7 +400,42 @@ impl Parser<'_> {
     /// `exp(t)`, which the grammar holds exactly. Every other base takes an integer
     /// exponent, because `Ast::Pow` carries an integer and nothing else (D6).
     fn parse_power(&mut self) -> Result<Ast, Undecidable> {
+        if let Some(letters) = self.peek_letter_run() {
+            self.bump();
+            return self.finish_letter_run(&letters);
+        }
         let base = self.parse_atom()?;
+        self.apply_power(base)
+    }
+
+    /// Read the letters of a splittable run at the cursor.
+    fn peek_letter_run(&self) -> Option<Vec<char>> {
+        let Some(Tok::Ident(name)) = self.peek() else {
+            return None;
+        };
+        letter_run(name)
+    }
+
+    /// Build the product of a split letter run. The power binds to the last letter.
+    ///
+    /// `3xy^2` is `3*x*y**2`, so the exponent belongs to `y` alone.
+    fn finish_letter_run(&mut self, letters: &[char]) -> Result<Ast, Undecidable> {
+        let Some((last, leading)) = letters.split_last() else {
+            return Err(Undecidable::new(
+                "a name that is not a function or variable",
+            ));
+        };
+        let mut factors: Vec<Ast> = leading
+            .iter()
+            .map(|letter| Ast::Var(letter.to_string()))
+            .collect();
+        let base = Ast::Var(last.to_string());
+        factors.push(self.apply_power(base)?);
+        Ok(collapse(factors, Ast::Mul))
+    }
+
+    /// Read at most one power after an atom the parser already took.
+    fn apply_power(&mut self, base: Ast) -> Result<Ast, Undecidable> {
         if !self.eat(&Tok::Pow) {
             return Ok(base);
         }
@@ -433,11 +556,38 @@ impl Parser<'_> {
         if !self.starts_operand() {
             return Err(Undecidable::new("a function name with no argument"));
         }
-        let argument = self.parse_power()?;
+        let argument = self.parse_juxtaposed_argument()?;
         let call = Ast::Func(name.to_string(), vec![argument]);
         Ok(match power {
             Some(exponent) => Ast::Pow(Box::new(call), exponent),
             None => call,
+        })
+    }
+
+    /// Parse the bracket-free argument of a function.
+    ///
+    /// The argument is the juxtaposed chain of atoms with their powers, so
+    /// `cos 2x` is `cos(2*x)` and `sin 3t^2` is `sin(3*t**2)`. The chain stops at
+    /// `+`, `-`, `,`, `)`, `=`, `<`, `>`, and at an explicit `*` or `/`, because
+    /// none of them starts a factor. 1.0 reads the five authored corpus answers
+    /// of this shape the same way (review finding #3).
+    fn parse_juxtaposed_argument(&mut self) -> Result<Ast, Undecidable> {
+        self.nested(|parser| {
+            let mut factors = vec![parser.parse_power()?];
+            loop {
+                if parser.eat_times_letter(factors.last()) {
+                    factors.push(parser.parse_power()?);
+                    continue;
+                }
+                if !parser.starts_operand() {
+                    break;
+                }
+                if matches!(parser.peek(), Some(Tok::Num(_))) {
+                    parser.check_implicit_number(factors.last())?;
+                }
+                factors.push(parser.parse_power()?);
+            }
+            Ok(collapse(factors, Ast::Mul))
         })
     }
 
@@ -487,6 +637,58 @@ impl Parser<'_> {
         self.expect(close, reason)?;
         Ok(items)
     }
+}
+
+/// Whether `name` is a name a value label may carry.
+///
+/// One letter, or a spelled Greek name. A function name is never a label.
+fn is_variable_name(name: &str) -> bool {
+    if FUNCTIONS.contains(&name) {
+        return false;
+    }
+    GREEK_VARIABLES.contains(&name) || name.chars().count() == 1
+}
+
+/// Split a multi-letter run into its single-letter variables, or refuse it.
+///
+/// The run splits only when every letter is a [`RUN_LETTERS`] letter, the letters
+/// differ from each other, and the run is at most [`MAX_RUN_LETTERS`] long. A
+/// repeated letter is a spelling, not a product: a variable times itself is
+/// written as a power. Everything else — a function name, a Greek name, a
+/// differential (`dx`), a word (`yes`), a label (`HT`), an upper-case run
+/// (`DNE`) — stays undecidable (C4).
+fn letter_run(name: &str) -> Option<Vec<char>> {
+    let letters: Vec<char> = name.chars().collect();
+    if letters.len() < 2 || letters.len() > MAX_RUN_LETTERS {
+        return None;
+    }
+    if FUNCTIONS.contains(&name) || GREEK_VARIABLES.contains(&name) || name == "pi" {
+        return None;
+    }
+    for (index, letter) in letters.iter().enumerate() {
+        if !RUN_LETTERS.contains(letter) {
+            return None;
+        }
+        if letters.get(index + 1..)?.contains(letter) {
+            return None;
+        }
+    }
+    Some(letters)
+}
+
+/// Whether the text is a digit run that carries no grouping and no leading zero.
+fn is_plain_digit_run(text: &str) -> bool {
+    let mut chars = text.chars();
+    let Some(first) = chars.next() else {
+        return false;
+    };
+    if !first.is_ascii_digit() {
+        return false;
+    }
+    if first == '0' && chars.clone().next().is_some() {
+        return false;
+    }
+    chars.all(|c| c.is_ascii_digit())
 }
 
 /// Build an interval from the two ends of a mixed bracket pair.

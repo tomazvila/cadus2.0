@@ -45,6 +45,8 @@ pub enum Tok {
     Gt,
     /// `>=`
     Ge,
+    /// `=`
+    Eq,
 }
 
 /// A token and whether whitespace comes in front of it.
@@ -163,6 +165,9 @@ fn read_symbol(chars: &[char], at: usize) -> Result<(Tok, usize), Undecidable> {
         (',', _) => Tok::Comma,
         ('<', _) => Tok::Lt,
         ('>', _) => Tok::Gt,
+        // The value label `x =` reaches the parser now (review finding #2). Every
+        // other `=` is a relation, and the parser refuses it.
+        ('=', _) => Tok::Eq,
         _ => return Err(Undecidable::new("a character outside the grammar")),
     };
     Ok((token, 1))

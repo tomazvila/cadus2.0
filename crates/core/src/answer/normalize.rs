@@ -9,8 +9,18 @@
 //!   spec section 2.2) plus the additions that `docs/plans/M2.md` lists for 2.0.
 //!
 //! The 1.0 order is kept where 1.0 has one. 2.0 adds `\frac{a}{b}`, `\sqrt{a}`,
-//! `^{n}`, a trailing `%`, a leading `x =` prefix, and a `*` before a `sqrt` that
-//! a digit or a closing parenthesis touches.
+//! `^{n}`, a `%` that binds to the number in front of it, and a `*` before a
+//! `sqrt` that a digit or a closing parenthesis touches.
+//!
+//! Three readings changed after review round 1 (`docs/reviews/M2-review-1.md`):
+//!
+//! - A `<var> =` label stays in the source. The parser makes it an
+//!   [`crate::answer::Ast::Assign`] node and `check` compares the two labels
+//!   (findings #2, #10, #16). 1.0 deleted the label, which made `x = 4` and
+//!   `y = 4` one answer.
+//! - A `%` divides the number it follows, never the whole body (finding #17).
+//! - A vulgar-fraction glyph after a digit run is the fractional part of a mixed
+//!   number, so `2⅓` is `2 1/3` and not `2*(1/3)` (findings #1, #9).
 
 /// The largest answer the checker looks at, in characters (spec section 7.9, item 9).
 pub const MAX_ANSWER_CHARS: usize = 4_000;
@@ -25,7 +35,7 @@ const MAX_NESTING: usize = 32;
 const SPACE_SEPARATORS: [char; 5] = [' ', '\u{00a0}', '\u{202f}', '\u{2009}', '\u{2007}'];
 
 /// The plain Unicode substitutions of 1.0 `_UNICODE_SIMPLE`.
-const UNICODE_SIMPLE: [(char, &str); 18] = [
+const UNICODE_SIMPLE: [(char, &str); 13] = [
     ('π', "pi"),
     ('τ', "(2*pi)"),
     ('∞', "oo"),
@@ -38,12 +48,20 @@ const UNICODE_SIMPLE: [(char, &str); 18] = [
     ('α', "alpha"),
     ('β', "beta"),
     ('λ', "lamda"),
-    ('½', "(1/2)"),
-    ('⅓', "(1/3)"),
-    ('⅔', "(2/3)"),
-    ('¼', "(1/4)"),
-    ('¾', "(3/4)"),
     ('°', ""),
+];
+
+/// The vulgar-fraction glyphs, in their two readings.
+///
+/// The second string is the reading of the glyph on its own. The third string is
+/// the reading of the glyph after a digit run: the fractional part of a mixed
+/// number, so `2⅓` is the value `7/3` and not `2*(1/3)` (review finding #1).
+const VULGAR_FRACTIONS: [(char, &str, &str); 5] = [
+    ('½', "(1/2)", " 1/2"),
+    ('⅓', "(1/3)", " 1/3"),
+    ('⅔', "(2/3)", " 2/3"),
+    ('¼', "(1/4)", " 1/4"),
+    ('¾', "(3/4)", " 3/4"),
 ];
 
 /// The result of [`normalize`].
@@ -82,14 +100,13 @@ fn to_source(text: &str) -> String {
     let collapsed = collapse_whitespace(no_period);
     let collapsed = collapsed.trim();
 
-    // A trailing percent sign leaves before the thousands reading and comes back as
-    // a division at the end, so `1,500%` still sees its comma group.
+    // A trailing percent sign leaves before the thousands reading and comes back
+    // after it, so `1,500%` still sees its comma group as one grouped integer.
     let (body, is_percent) = match collapsed.strip_suffix('%') {
         Some(rest) => (rest.trim_end(), true),
         None => (collapsed, false),
     };
 
-    let body = strip_value_label(body);
     let body = rewrite_latex_braces(&body.chars().collect::<Vec<char>>(), 0);
     let body = body.replace('^', "**");
     let body = body
@@ -102,12 +119,62 @@ fn to_source(text: &str) -> String {
     let body = unicode_math_to_ascii(&body);
     let body = strip_thousands_groups(body.trim());
 
-    let body = if is_percent {
-        format!("({body})/100")
-    } else {
-        body
-    };
+    let body = if is_percent { body + "%" } else { body };
+    let body = bind_percent(&body);
     body.trim().to_string()
+}
+
+/// Divide the number in front of each `%` by 100 (review finding #17).
+///
+/// A percent binds to its own number, so `3 + 4%` is `3 + (4)/100` and not
+/// `(3 + 4)/100`. A `%` that no number touches stays in the string, and the
+/// lexer then refuses the answer.
+fn bind_percent(body: &str) -> String {
+    let mut out = String::with_capacity(body.len() + 8);
+    // The byte index where the `100` of the last rewrite starts. A second `%` on
+    // that `100` is a second reading of one number, so the pass refuses it.
+    let mut guard: Option<usize> = None;
+    for c in body.chars() {
+        if c != '%' {
+            out.push(c);
+            continue;
+        }
+        let trimmed = out.trim_end().len();
+        match number_start(out.get(..trimmed).unwrap_or("")) {
+            Some(start) if guard != Some(start) => {
+                let number = out.get(start..trimmed).unwrap_or("").to_string();
+                out.truncate(start);
+                out.push('(');
+                out.push_str(&number);
+                out.push_str(")/100");
+                guard = Some(out.len() - "100".len());
+            }
+            _ => out.push('%'),
+        }
+    }
+    out
+}
+
+/// Find the byte index where the number literal at the end of `text` starts.
+///
+/// The scan reads bytes, which is safe: an ASCII digit byte and the `.` byte
+/// never stand inside a multi-byte character.
+fn number_start(text: &str) -> Option<usize> {
+    let bytes = text.as_bytes();
+    let mut start = bytes.len();
+    let mut digits = 0_usize;
+    while start > 0 {
+        let byte = *bytes.get(start - 1)?;
+        if byte.is_ascii_digit() {
+            digits += 1;
+            start -= 1;
+        } else if byte == b'.' {
+            start -= 1;
+        } else {
+            break;
+        }
+    }
+    if digits == 0 { None } else { Some(start) }
 }
 
 /// Remove one outer `$…$` pair (1.0 `sympy_check.py:40-41`).
@@ -152,24 +219,6 @@ fn casefold(s: &str) -> String {
         }
     }
     out
-}
-
-/// Remove a leading `x =` or `y =` label (2.0 addition, `docs/plans/M2.md` V4 row).
-fn strip_value_label(s: &str) -> &str {
-    let trimmed = s.trim_start();
-    let mut chars = trimmed.chars();
-    let Some(first) = chars.next() else {
-        return s;
-    };
-    if !matches!(first, 'x' | 'y' | 'X' | 'Y') {
-        return s;
-    }
-    let rest = chars.as_str().trim_start();
-    let Some(after_eq) = rest.strip_prefix('=') else {
-        return s;
-    };
-    let value = after_eq.trim_start();
-    if value.is_empty() { s } else { value }
 }
 
 /// Rewrite the LaTeX brace forms that 2.0 adds: `\frac{a}{b}`, `\sqrt{a}`, `^{n}`.
@@ -274,14 +323,26 @@ fn matching_delimiter(chars: &[char], at: usize, open: char, close: char) -> Opt
 
 /// Rewrite the house Unicode maths glyphs (1.0 `_unicode_math_to_ascii`).
 ///
-/// 2.0 adds one thing: a `*` in front of the `sqrt` when the glyph touches a digit,
-/// a letter, or a closing parenthesis, so `15√3` becomes `15*sqrt(3)`.
+/// 2.0 adds two things: a `*` in front of the `sqrt` when the glyph touches a
+/// digit, a letter, or a closing parenthesis, so `15√3` becomes `15*sqrt(3)`;
+/// and the mixed-number reading of a vulgar fraction that follows a digit run,
+/// so `3½` becomes `3 1/2` and keeps the value seven halves.
 fn unicode_math_to_ascii(s: &str) -> String {
     let chars: Vec<char> = s.chars().collect();
     let with_roots = rewrite_roots(&chars, 0);
     let with_powers = rewrite_superscripts(&with_roots);
     let mut out = String::with_capacity(with_powers.len());
     for c in with_powers.chars() {
+        if let Some((_, alone, after_digits)) =
+            VULGAR_FRACTIONS.iter().find(|(from, _, _)| *from == c)
+        {
+            if matches!(out.chars().last(), Some(last) if last.is_ascii_digit()) {
+                out.push_str(after_digits);
+            } else {
+                out.push_str(alone);
+            }
+            continue;
+        }
         match UNICODE_SIMPLE.iter().find(|(from, _)| *from == c) {
             Some((_, to)) => out.push_str(to),
             None => out.push(c),

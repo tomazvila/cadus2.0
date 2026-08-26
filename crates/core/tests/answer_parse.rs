@@ -13,7 +13,9 @@
 
 use std::collections::BTreeSet;
 
-use cadus_core::answer::{Ast, Const, IneqOp, MAX_ANSWER_CHARS, normalize, parse};
+use cadus_core::answer::{
+    Ast, Canon, Const, IneqOp, MAX_ANSWER_CHARS, canonical_form, normalize, parse,
+};
 use num_bigint::BigInt;
 
 /// One corpus row of `crates/core/tests/fixtures/answers/corpus_1_0.jsonl`.
@@ -81,6 +83,16 @@ fn var(name: &str) -> Ast {
     Ast::Var(name.to_string())
 }
 
+/// Build a function call node with one argument.
+fn call(name: &str, argument: Ast) -> Ast {
+    Ast::Func(name.to_string(), vec![argument])
+}
+
+/// Canonicalize one answer, and fail the test when the grammar refuses it.
+fn value(text: &str) -> Canon {
+    canonical_form(text).unwrap_or_else(|e| panic!("{text:?}: {}", e.reason))
+}
+
 // ---------------------------------------------------------------------------
 // V4 — normalization
 // ---------------------------------------------------------------------------
@@ -109,7 +121,9 @@ fn the_2_0_additions_of_the_v4_table_give_the_literal_source() {
         ("\\sqrt{2}", "sqrt(2)"),
         ("x^{2}", "x**(2)"),
         ("50%", "(50)/100"),
-        ("x = 5", "5"),
+        // The label stays in the source. The parser reads it, and `check`
+        // compares the two labels (review findings #2, #10, #16).
+        ("x = 5", "x = 5"),
         ("2\\cdot 3", "2* 3"),
         ("6\\times 7", "6* 7"),
         ("8÷2", "8/2"),
@@ -155,6 +169,50 @@ fn the_string_key_casefolds_and_keeps_the_1_0_order() {
     for (input, want) in pins {
         assert_eq!(normalize(input).string_key, want, "string key of {input:?}");
     }
+}
+
+#[test]
+fn a_percent_divides_the_number_in_front_of_it_and_not_the_body() {
+    // Review finding #17. The old reading wrapped the whole body, so `3 + 4%`
+    // became `(3 + 4)/100` and a learner answer 43 times the authored value was
+    // graded correct.
+    let pins: [(&str, &str); 6] = [
+        ("50%", "(50)/100"),
+        ("3 + 4%", "3 + (4)/100"),
+        ("1 + 49%", "1 + (49)/100"),
+        ("2*4%", "2*(4)/100"),
+        ("1,500%", "(1500)/100"),
+        ("0.5%", "(0.5)/100"),
+    ];
+    for (input, want) in pins {
+        assert_eq!(normalize(input).source, want, "source of {input:?}");
+    }
+    assert_eq!(value("3 + 4%"), value("3.04"));
+    assert_ne!(value("3 + 4%"), value("7/100"));
+    assert_ne!(value("1 + 49%"), value("1/2"));
+    assert_eq!(value("50%"), value("1/2"));
+}
+
+#[test]
+fn a_vulgar_fraction_after_a_digit_run_is_a_mixed_number() {
+    // Review findings #1 and #9. The old reading made `3½` the product `3*(1/2)`,
+    // so a learner who wrote three and a half was correct against `1.5`.
+    let pins: [(&str, &str); 6] = [
+        ("½", "(1/2)"),
+        ("3½", "3 1/2"),
+        ("2⅓", "2 1/3"),
+        ("5¾", "5 3/4"),
+        ("x½", "x(1/2)"),
+        ("(2)½", "(2)(1/2)"),
+    ];
+    for (input, want) in pins {
+        assert_eq!(normalize(input).source, want, "source of {input:?}");
+    }
+    assert_eq!(value("3½"), value("7/2"));
+    assert_eq!(value("2⅓"), value("7/3"));
+    assert_ne!(value("2⅓"), value("2/3"));
+    assert_ne!(value("3½"), value("1.5"));
+    assert_eq!(value("3½"), value("3 1/2"));
 }
 
 // ---------------------------------------------------------------------------
@@ -242,10 +300,285 @@ fn implicit_multiplication_parses() {
             Ast::Add(vec![var("x"), Ast::Neg(Box::new(int(1)))]),
         ])
     );
+    // `6 x 10^3` moved to `a_spaced_x_between_two_numbers_is_the_times_sign`:
+    // the `x` of that answer is the times sign (review finding #18).
+    assert_eq!(
+        ast("6 y 10^3"),
+        Ast::Mul(vec![int(6), var("y"), Ast::Pow(Box::new(int(10)), 3)])
+    );
+}
+
+#[test]
+fn a_vulgar_fraction_glyph_parses_to_the_mixed_number() {
+    assert_eq!(
+        ast("3½"),
+        Ast::Mixed {
+            whole: BigInt::from(3),
+            numerator: BigInt::from(1),
+            denominator: BigInt::from(2)
+        }
+    );
+    assert_eq!(
+        ast("2⅓"),
+        Ast::Mixed {
+            whole: BigInt::from(2),
+            numerator: BigInt::from(1),
+            denominator: BigInt::from(3)
+        }
+    );
+    assert_eq!(
+        ast("-3½"),
+        Ast::Mixed {
+            whole: BigInt::from(-3),
+            numerator: BigInt::from(1),
+            denominator: BigInt::from(2)
+        }
+    );
+}
+
+#[test]
+fn the_mixed_number_production_refuses_a_thousands_group() {
+    // Review finding #7. `1 000/3` is a space-grouped numerator, not a mixed
+    // number, so the checker refuses it instead of inventing the value 1.
+    for text in [
+        "1 000/3",
+        "1 200/300",
+        "2 000/500",
+        "1\u{a0}000/3",
+        "3 0/2",
+        "3 3/2",
+        "3 2/2",
+        "3 05/10",
+        "3 1/0",
+    ] {
+        assert_eq!(
+            parse(&normalize(text).source).unwrap_err().reason,
+            "two numbers stand side by side",
+            "{text:?} must stay undecidable"
+        );
+    }
+    assert_eq!(value("1000/3"), value("1000/3"));
+    assert_ne!(canonical_form("1 000/3").ok(), Some(value("1")));
+}
+
+#[test]
+fn a_value_label_stays_on_the_tree() {
+    // Review findings #2, #10 and #16. The label named the answer's variable, and
+    // 1.0 deleted it, so `x = 4` and `y = 4` were one answer.
+    assert_eq!(
+        ast("x = 5"),
+        Ast::Assign {
+            var: "x".to_string(),
+            value: Box::new(int(5))
+        }
+    );
+    assert_eq!(
+        ast("Y=-2"),
+        Ast::Assign {
+            var: "Y".to_string(),
+            value: Box::new(Ast::Neg(Box::new(int(2))))
+        }
+    );
+    assert_eq!(
+        ast("y = x"),
+        Ast::Assign {
+            var: "y".to_string(),
+            value: Box::new(var("x"))
+        }
+    );
+    assert_eq!(
+        ast("theta = 2"),
+        Ast::Assign {
+            var: "theta".to_string(),
+            value: Box::new(int(2))
+        }
+    );
+    assert_ne!(ast("x = 5"), ast("y = 5"));
+    assert_ne!(ast("y = x"), ast("x = y"));
+    for text in ["x = y = 5", "2 = 3", "sin = 2", "x =", "= 5", "x + 1 = 5"] {
+        assert!(
+            parse(&normalize(text).source).is_err(),
+            "{text:?} must stay undecidable"
+        );
+    }
+}
+
+#[test]
+fn a_bracket_free_function_argument_takes_the_whole_juxtaposed_chain() {
+    // Review findings #3, #4 and #6, with the 1.0 reading of the five authored
+    // corpus answers. The second literal of each row is the 1.0 `sympy_source`
+    // and the third is the 1.0 `canonical` of `corpus_1_0.jsonl`.
+    assert_eq!(ast("cos 2x"), call("cos", Ast::Mul(vec![int(2), var("x")])));
+    assert_eq!(
+        ast("$\\cos 2t$"),
+        call("cos", Ast::Mul(vec![int(2), var("t")]))
+    );
+    assert_eq!(
+        ast("$(4/3)\\sin 3t$"),
+        Ast::Mul(vec![
+            Ast::Fraction {
+                numerator: BigInt::from(4),
+                denominator: BigInt::from(3)
+            },
+            call("sin", Ast::Mul(vec![int(3), var("t")])),
+        ])
+    );
+    assert_eq!(
+        ast("$2\\cos 2t + (5/2)\\sin 2t$"),
+        Ast::Add(vec![
+            Ast::Mul(vec![int(2), call("cos", Ast::Mul(vec![int(2), var("t")]))]),
+            Ast::Mul(vec![
+                Ast::Fraction {
+                    numerator: BigInt::from(5),
+                    denominator: BigInt::from(2)
+                },
+                call("sin", Ast::Mul(vec![int(2), var("t")])),
+            ]),
+        ])
+    );
+    assert_eq!(
+        ast("$\\cos 3t + 2\\sin 3t$"),
+        Ast::Add(vec![
+            call("cos", Ast::Mul(vec![int(3), var("t")])),
+            Ast::Mul(vec![int(2), call("sin", Ast::Mul(vec![int(3), var("t")]))]),
+        ])
+    );
+    // The chain stops where the ruling says it stops.
+    assert_eq!(
+        ast("sin 3t^2"),
+        call(
+            "sin",
+            Ast::Mul(vec![int(3), Ast::Pow(Box::new(var("t")), 2)])
+        )
+    );
+    assert_eq!(
+        ast("sqrt 2/2"),
+        Ast::Div(Box::new(call("sqrt", int(2))), Box::new(int(2)))
+    );
+    assert_eq!(
+        ast("cos 2*x"),
+        Ast::Mul(vec![call("cos", int(2)), var("x")])
+    );
+    assert_eq!(
+        ast("cos 2 + x"),
+        Ast::Add(vec![call("cos", int(2)), var("x")])
+    );
+    // C4: the new reading must not admit the old, meaningless value.
+    assert_eq!(value("cos 2x"), value("cos(2*x)"));
+    assert_ne!(value("cos 2x"), value("x*cos(2)"));
+    assert_ne!(value("cos 2x"), value("cos(2)*x"));
+    assert_ne!(value("cos 2x"), value("cos(2*y)"));
+    assert_eq!(value("$(4/3)\\sin 3t$"), value("(4/3)*sin(3*t)"));
+    assert_ne!(value("$(4/3)\\sin 3t$"), value("(4/3)*t*sin(3)"));
+}
+
+#[test]
+fn a_spaced_x_between_two_numbers_is_the_times_sign() {
+    // Review finding #18. 27 authored corpus answers of 5 topics spell the times
+    // sign `x`; every other `x` stays the variable.
     assert_eq!(
         ast("6 x 10^3"),
-        Ast::Mul(vec![int(6), var("x"), Ast::Pow(Box::new(int(10)), 3)])
+        Ast::Mul(vec![int(6), Ast::Pow(Box::new(int(10)), 3)])
     );
+    assert_eq!(ast("2 x 2 x 3"), Ast::Mul(vec![int(2), int(2), int(3)]));
+    assert_eq!(ast("5 x 5 x 5"), Ast::Mul(vec![int(5), int(5), int(5)]));
+    assert_eq!(
+        ast("2.5 x 10^-4"),
+        Ast::Mul(vec![
+            Ast::Decimal {
+                mantissa: BigInt::from(25),
+                scale: 1
+            },
+            Ast::Pow(Box::new(int(10)), -4)
+        ])
+    );
+    // Every other `x` is the variable.
+    assert_eq!(ast("2x"), Ast::Mul(vec![int(2), var("x")]));
+    assert_eq!(ast("3 x"), Ast::Mul(vec![int(3), var("x")]));
+    assert_eq!(ast("3 x y"), Ast::Mul(vec![int(3), var("x"), var("y")]));
+    assert_eq!(ast("x 3"), Ast::Mul(vec![var("x"), int(3)]));
+    assert_eq!(ast("3x 4"), Ast::Mul(vec![int(3), var("x"), int(4)]));
+    // The times sign needs a space on both sides. `x4` is a label, as `R2` is.
+    assert_eq!(
+        parse(&normalize("3 x4").source).unwrap_err().reason,
+        "a number glued to a name reads as a label"
+    );
+    assert_eq!(
+        ast("3x 4x"),
+        Ast::Mul(vec![int(3), var("x"), int(4), var("x")])
+    );
+    // C4: the value of the product, and not the value of a polynomial.
+    assert_eq!(value("6 x 10^3"), value("6000"));
+    assert_ne!(value("6 x 10^3"), value("6000*x"));
+    assert_eq!(value("2 x 2 x 3"), value("12"));
+    assert_ne!(value("2 x 2 x 3"), value("12x^2"));
+    assert_ne!(value("2 x 2 x 3"), value("11"));
+    assert_eq!(value("6 x 10^3"), value("6 × 10^3"));
+    assert_eq!(value("6 x 10^3"), value("6*10**3"));
+}
+
+#[test]
+fn a_short_letter_run_splits_into_single_letter_variables() {
+    // The known item of the M2 fix wave: `3xy^2` is `3*x*y**2`, and the power
+    // binds to the last letter only.
+    assert_eq!(
+        ast("3xy^2"),
+        Ast::Mul(vec![
+            int(3),
+            Ast::Mul(vec![var("x"), Ast::Pow(Box::new(var("y")), 2)])
+        ])
+    );
+    assert_eq!(ast("xy"), Ast::Mul(vec![var("x"), var("y")]));
+    assert_eq!(ast("$xz$"), Ast::Mul(vec![var("x"), var("z")]));
+    assert_eq!(
+        ast("$yz/(x + z)^2$"),
+        Ast::Div(
+            Box::new(Ast::Mul(vec![var("y"), var("z")])),
+            Box::new(Ast::Pow(Box::new(Ast::Add(vec![var("x"), var("z")])), 2))
+        )
+    );
+    assert_eq!(
+        ast("4ab^3"),
+        Ast::Mul(vec![
+            int(4),
+            Ast::Mul(vec![var("a"), Ast::Pow(Box::new(var("b")), 3)])
+        ])
+    );
+    // C4: the split must not admit a different monomial.
+    assert_eq!(value("3xy^2"), value("3*x*y**2"));
+    assert_ne!(value("3xy^2"), value("3*x**2*y"));
+    assert_ne!(value("3xy^2"), value("(3*x*y)**2"));
+    assert_ne!(value("3xy^2"), value("3*x*y"));
+    assert_eq!(value("xy"), value("y*x"));
+    assert_ne!(value("xy"), value("x*z"));
+}
+
+#[test]
+fn a_letter_run_the_grammar_does_not_own_stays_undecidable() {
+    for text in [
+        // A differential.
+        "dx",
+        "3x^2 dx",
+        "dy/dx",
+        "2y · dy/dx",
+        // A word, an upper-case label, and a name with a digit.
+        "yes",
+        "no",
+        "oo",
+        "DNE",
+        "$\\{HH, HT, TH, TT\\}$",
+        "$sY(s) - y(0)$",
+        "x2y",
+        // A repeated letter, and a run that is too long.
+        "xx",
+        "abcd",
+        "min",
+    ] {
+        assert!(
+            parse(&normalize(text).source).is_err(),
+            "{text:?} must stay undecidable"
+        );
+    }
 }
 
 #[test]
@@ -381,8 +714,10 @@ fn the_prose_class_never_parses() {
 
 #[test]
 fn out_of_grammar_shapes_never_parse() {
+    // `xy` left this list in the M2 fix wave: a short run of variable letters is
+    // the product `x*y` now. `a_letter_run_the_grammar_does_not_own_stays_
+    // undecidable` holds the runs that stay outside the grammar.
     for text in [
-        "xy",
         "9 R2",
         "23 R14",
         "x + 2 remainder 3",
@@ -486,21 +821,23 @@ fn deep_nesting_is_refused_and_never_overflows_the_stack() {
 /// - `interval_ineq` 29 parse. The M2 plan adds the interval production, so the
 ///   spec's residue of 34 shrinks to the 5 rows that are prose, a general
 ///   inequality, or the integral sign.
-/// - `equation` 1 parses. The V4 table of `docs/plans/M2.md` strips a leading
-///   `y =` label, which turns `y = x` into the value `x`.
-/// - `value_with_unit` 9 parse. `5 m/s` and `2x + h` are legal expressions over the
-///   variables `m`, `s` and `h`; only a multi-letter unit (`km`, `min`, `cm`) fails.
+/// - `equation` 1 parses. `y = x` is the value `x` with the label `y`, which the
+///   parser reads as `Ast::Assign` (review finding #2).
+/// - `value_with_unit` 11 parse. `5 m/s`, `2x + h`, `60 km/h` and `2π cm^2` are
+///   legal expressions over single-letter variables; the multi-letter unit `min`
+///   holds an `i`, which no letter run splits on, so `7 L/min` still fails.
 /// - `comma_list` 28 parse. 15 of the 43 rows are prose that carries a comma
 ///   (`slope 3, y-intercept -5`), so they belong to the section 7.6 class.
-/// - `expression_symbolic` 621 and `expression_numeric` 228 parse. The residue is
-///   the section 8.2 outlier set: a free or fractional exponent, `log_b`, `dy/dx`,
-///   `n!`, `∞`, a label set, and a multi-letter identifier.
+/// - `expression_symbolic` 632 and `expression_numeric` 228 parse. The 11 rows
+///   the fix wave adds are the multi-letter runs (`3xy^2`, `$12xy$`, `4ab^3`) and
+///   `50th`. The residue is the section 8.2 outlier set: a free or fractional
+///   exponent, `log_b`, `dy/dx`, `n!`, `∞`, a label set, and a differential.
 const SHAPE_COUNTS: [(&str, usize, usize); 15] = [
     ("comma_list", 28, 15),
     ("decimal", 128, 0),
     ("equation", 1, 0),
     ("expression_numeric", 228, 5),
-    ("expression_symbolic", 621, 65),
+    ("expression_symbolic", 632, 54),
     ("fraction", 350, 2),
     ("integer", 1622, 0),
     ("interval_ineq", 29, 5),
@@ -510,11 +847,11 @@ const SHAPE_COUNTS: [(&str, usize, usize); 15] = [
     ("prose_or_words", 0, 167),
     ("quotient_remainder", 0, 16),
     ("set_or_list", 5, 0),
-    ("value_with_unit", 9, 3),
+    ("value_with_unit", 11, 1),
 ];
 
 #[test]
-fn the_corpus_splits_into_3214_parsed_and_278_undecidable_answers() {
+fn the_corpus_splits_into_3227_parsed_and_265_undecidable_answers() {
     let rows = corpus();
     assert_eq!(rows.len(), 3_492, "corpus size");
     let mut parsed = 0_usize;
@@ -526,8 +863,8 @@ fn the_corpus_splits_into_3214_parsed_and_278_undecidable_answers() {
             refused += 1;
         }
     }
-    assert_eq!(parsed, 3_214, "answers inside the grammar");
-    assert_eq!(refused, 278, "answers outside the grammar");
+    assert_eq!(parsed, 3_227, "answers inside the grammar");
+    assert_eq!(refused, 265, "answers outside the grammar");
 }
 
 #[test]
@@ -562,7 +899,7 @@ fn the_undecidable_answers_are_exactly_the_committed_fixture() {
         missing.is_empty() && extra.is_empty(),
         "the residue moved: missing {missing:?}, extra {extra:?}"
     );
-    assert_eq!(committed.len(), 278);
+    assert_eq!(committed.len(), 265);
 }
 
 #[test]
