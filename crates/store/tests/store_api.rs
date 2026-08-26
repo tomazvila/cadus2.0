@@ -320,6 +320,7 @@ async fn statement_timeout_cancels_a_query_that_runs_too_long() {
         let cfg = DbConfig {
             database_url: db.superuser_dsn(),
             statement_timeout_ms: 200,
+            client_timeout_ms: cadus_store::DEFAULT_CLIENT_TIMEOUT_MS,
         };
         let pool = cadus_store::connect(&cfg).await.unwrap();
 
@@ -381,7 +382,7 @@ fn db_config_debug_redacts_the_password() {
 
     assert_eq!(
         rendered,
-        r#"DbConfig { database_url: "<redacted>", statement_timeout_ms: 5000 }"#
+        r#"DbConfig { database_url: "<redacted>", statement_timeout_ms: 5000, client_timeout_ms: 10000 }"#
     );
     assert!(
         !rendered.contains("secret"),

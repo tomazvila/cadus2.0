@@ -18,6 +18,7 @@
     )
 )]
 
+use std::future::Future;
 use std::time::Duration;
 
 use sqlx::postgres::{PgConnectOptions, PgPoolOptions};
@@ -44,6 +45,22 @@ pub const STATEMENT_TIMEOUT_VAR: &str = "DB_STATEMENT_TIMEOUT_MS";
 /// query and shorter than every scrape interval in `deploy/Caddyfile`.
 pub const DEFAULT_STATEMENT_TIMEOUT_MS: u64 = 5000;
 
+/// The environment variable that holds the client-side query bound, in
+/// milliseconds.
+pub const CLIENT_TIMEOUT_VAR: &str = "DB_CLIENT_TIMEOUT_MS";
+
+/// The client-side query bound that applies when `DB_CLIENT_TIMEOUT_MS` is
+/// absent.
+///
+/// `statement_timeout` is a server-side bound: the server cancels the statement
+/// and reports SQLSTATE 57014, so that bound needs a live server. sqlx 0.9 sets
+/// no TCP keepalive, so a server that disappears in the middle of a query
+/// leaves the caller in a read that the kernel never ends. `bounded` adds the
+/// client-side bound for that case. 10000 ms is longer than
+/// `DEFAULT_STATEMENT_TIMEOUT_MS`, so a live server answers 57014 first and the
+/// client-side bound stays the last resort.
+pub const DEFAULT_CLIENT_TIMEOUT_MS: u64 = 10_000;
+
 /// The connection configuration of the store.
 #[derive(Clone)]
 pub struct DbConfig {
@@ -51,6 +68,9 @@ pub struct DbConfig {
     /// The `statement_timeout` of every connection of the pool, in
     /// milliseconds. 0 turns the timeout off.
     pub statement_timeout_ms: u64,
+    /// The client-side bound of one query, in milliseconds. 0 turns the bound
+    /// off. `bounded` applies it.
+    pub client_timeout_ms: u64,
 }
 
 impl DbConfig {
@@ -60,15 +80,18 @@ impl DbConfig {
         Self {
             database_url: database_url.into(),
             statement_timeout_ms: DEFAULT_STATEMENT_TIMEOUT_MS,
+            client_timeout_ms: DEFAULT_CLIENT_TIMEOUT_MS,
         }
     }
 
-    /// Read `DATABASE_URL` and `DB_STATEMENT_TIMEOUT_MS` from the environment.
+    /// Read `DATABASE_URL`, `DB_STATEMENT_TIMEOUT_MS`, and
+    /// `DB_CLIENT_TIMEOUT_MS` from the environment.
     ///
     /// The function returns `StoreError::Config` when `DATABASE_URL` is absent,
-    /// empty, or not valid Unicode, and when `DB_STATEMENT_TIMEOUT_MS` holds
-    /// anything other than a whole number of milliseconds. An absent
-    /// `DB_STATEMENT_TIMEOUT_MS` gives `DEFAULT_STATEMENT_TIMEOUT_MS`.
+    /// empty, or not valid Unicode, and when `DB_STATEMENT_TIMEOUT_MS` or
+    /// `DB_CLIENT_TIMEOUT_MS` holds anything other than a whole number of
+    /// milliseconds. An absent bound variable gives the default of that
+    /// bound.
     pub fn from_env() -> Result<Self, StoreError> {
         let database_url = match std::env::var("DATABASE_URL") {
             Ok(url) if url.is_empty() => {
@@ -95,9 +118,20 @@ impl DbConfig {
             }
         };
 
+        let raw_client = match std::env::var(CLIENT_TIMEOUT_VAR) {
+            Ok(value) => Some(value),
+            Err(std::env::VarError::NotPresent) => None,
+            Err(std::env::VarError::NotUnicode(_)) => {
+                return Err(StoreError::Config(format!(
+                    "{CLIENT_TIMEOUT_VAR} is not valid Unicode"
+                )));
+            }
+        };
+
         Ok(Self {
             database_url,
             statement_timeout_ms: parse_statement_timeout(raw.as_deref())?,
+            client_timeout_ms: parse_client_timeout(raw_client.as_deref())?,
         })
     }
 }
@@ -119,6 +153,22 @@ fn parse_statement_timeout(raw: Option<&str>) -> Result<u64, StoreError> {
     }
 }
 
+/// Read the client-side query bound from the raw value of the variable.
+///
+/// The rule is the rule of `parse_statement_timeout`: `None` gives the default,
+/// a whole number passes through, 0 turns the bound off, and every other value
+/// is a configuration error.
+fn parse_client_timeout(raw: Option<&str>) -> Result<u64, StoreError> {
+    match raw {
+        None => Ok(DEFAULT_CLIENT_TIMEOUT_MS),
+        Some(value) => value.parse::<u64>().map_err(|_| {
+            StoreError::Config(format!(
+                "{CLIENT_TIMEOUT_VAR} must be a whole number of milliseconds, not {value:?}"
+            ))
+        }),
+    }
+}
+
 /// The connection string holds the database password. Keep it out of every log
 /// line and every panic message.
 impl std::fmt::Debug for DbConfig {
@@ -126,6 +176,7 @@ impl std::fmt::Debug for DbConfig {
         f.debug_struct("DbConfig")
             .field("database_url", &"<redacted>")
             .field("statement_timeout_ms", &self.statement_timeout_ms)
+            .field("client_timeout_ms", &self.client_timeout_ms)
             .finish()
     }
 }
@@ -152,6 +203,10 @@ pub enum StoreError {
     /// A migration failed to apply.
     #[error("migration error: {0}")]
     Migrate(#[from] sqlx::migrate::MigrateError),
+
+    /// A query ran longer than the client-side bound.
+    #[error("the query did not answer within {after_ms} ms")]
+    Timeout { after_ms: u64 },
 
     /// C3 boot guard: the connected role escapes row-level security.
     #[error(
@@ -200,6 +255,75 @@ pub async fn connect(cfg: &DbConfig) -> Result<PgPool, StoreError> {
         "store: connection pool is open"
     );
     Ok(pool)
+}
+
+/// A pool and the client-side query bound that belongs to it.
+///
+/// `connect` still returns a bare `PgPool`, so `cadus-web` and `cadus-worker`
+/// need no change. A caller that wants the client-side bound builds a `Db` and
+/// gives it to `bounded`.
+#[derive(Debug, Clone)]
+pub struct Db {
+    pool: PgPool,
+    client_timeout_ms: u64,
+}
+
+impl Db {
+    /// Build a `Db` from a pool and a bound in milliseconds. 0 turns the bound
+    /// off.
+    pub fn new(pool: PgPool, client_timeout_ms: u64) -> Self {
+        Self {
+            pool,
+            client_timeout_ms,
+        }
+    }
+
+    /// Open a pool with `connect` and keep the bound of the configuration.
+    pub async fn connect(cfg: &DbConfig) -> Result<Self, StoreError> {
+        Ok(Self::new(connect(cfg).await?, cfg.client_timeout_ms))
+    }
+
+    /// The pool of this handle.
+    pub fn pool(&self) -> &PgPool {
+        &self.pool
+    }
+
+    /// The client-side query bound, in milliseconds. 0 means no bound.
+    pub fn client_timeout_ms(&self) -> u64 {
+        self.client_timeout_ms
+    }
+
+    /// The client-side query bound as a `Duration`. `None` means no bound.
+    pub fn client_timeout(&self) -> Option<Duration> {
+        match self.client_timeout_ms {
+            0 => None,
+            ms => Some(Duration::from_millis(ms)),
+        }
+    }
+}
+
+/// Run a query future under the client-side bound of `db`.
+///
+/// The function returns `StoreError::Timeout` when the future does not finish
+/// inside the bound. A bound of 0 runs the future without a bound.
+///
+/// A server that vanishes in the middle of a query leaves the caller in a read
+/// that never ends: sqlx 0.9 sets no TCP keepalive, and `statement_timeout`
+/// needs a live server to cancel the statement. This bound is the last resort
+/// for that case.
+pub async fn bounded<T, Fut>(db: &Db, fut: Fut) -> Result<T, StoreError>
+where
+    Fut: Future<Output = Result<T, sqlx::Error>>,
+{
+    let Some(bound) = db.client_timeout() else {
+        return Ok(fut.await?);
+    };
+    match tokio::time::timeout(bound, fut).await {
+        Ok(outcome) => Ok(outcome?),
+        Err(_) => Err(StoreError::Timeout {
+            after_ms: db.client_timeout_ms,
+        }),
+    }
 }
 
 /// Apply every migration that the database does not have yet.
@@ -276,7 +400,10 @@ pub async fn begin_tenant(
 
 #[cfg(test)]
 mod tests {
-    use super::{DEFAULT_STATEMENT_TIMEOUT_MS, DbConfig, StoreError, parse_statement_timeout};
+    use super::{
+        DEFAULT_CLIENT_TIMEOUT_MS, DEFAULT_STATEMENT_TIMEOUT_MS, DbConfig, StoreError,
+        parse_client_timeout, parse_statement_timeout,
+    };
 
     /// R4: an absent variable gives the documented default of 5000 ms.
     #[test]
@@ -284,6 +411,30 @@ mod tests {
         assert_eq!(parse_statement_timeout(None).unwrap(), 5000);
         assert_eq!(DEFAULT_STATEMENT_TIMEOUT_MS, 5000);
         assert_eq!(DbConfig::new("postgresql://h/d").statement_timeout_ms, 5000);
+    }
+
+    /// The client-side bound follows the same three rules, with a default of
+    /// 10000 ms. `DB_CLIENT_TIMEOUT_MS=300` gives the 300 ms bound that
+    /// `tests/client_timeout.rs` applies.
+    #[test]
+    fn the_client_timeout_reads_the_same_three_rules() {
+        assert_eq!(parse_client_timeout(None).unwrap(), 10000);
+        assert_eq!(DEFAULT_CLIENT_TIMEOUT_MS, 10000);
+        assert_eq!(DbConfig::new("postgresql://h/d").client_timeout_ms, 10000);
+        assert_eq!(parse_client_timeout(Some("300")).unwrap(), 300);
+        assert_eq!(parse_client_timeout(Some("0")).unwrap(), 0);
+
+        for raw in ["", "5s", "-1", "2.5", "10000ms"] {
+            let err = parse_client_timeout(Some(raw))
+                .expect_err("a value that is not a whole number must be an error");
+            let StoreError::Config(message) = err else {
+                panic!("expected StoreError::Config for {raw:?}, got {err}");
+            };
+            assert_eq!(
+                message,
+                format!("DB_CLIENT_TIMEOUT_MS must be a whole number of milliseconds, not {raw:?}")
+            );
+        }
     }
 
     /// A whole number passes through unchanged. 0 turns the timeout off.
@@ -319,6 +470,7 @@ mod tests {
         let cfg = DbConfig {
             database_url: "postgresql://u@h:5432/d".to_string(),
             statement_timeout_ms: 250,
+            client_timeout_ms: DEFAULT_CLIENT_TIMEOUT_MS,
         };
         let options = super::connect_options(&cfg).unwrap();
         assert_eq!(options.get_options(), Some("-c statement_timeout=250"));
@@ -326,6 +478,7 @@ mod tests {
         let off = DbConfig {
             database_url: "postgresql://u@h:5432/d".to_string(),
             statement_timeout_ms: 0,
+            client_timeout_ms: DEFAULT_CLIENT_TIMEOUT_MS,
         };
         assert_eq!(super::connect_options(&off).unwrap().get_options(), None);
     }
