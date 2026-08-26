@@ -5,12 +5,25 @@
 //! ends the read with [`Undecidable`].
 
 use super::Undecidable;
+use super::normalize::{FRACTION_CLOSE, FRACTION_OPEN};
 
 /// One token of the grammar.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum Tok {
     /// A number literal: digits, with at most one point.
     Num(String),
+    /// A literal fraction that the answer writes as one glyph.
+    ///
+    /// [`crate::answer::normalize`] writes the vulgar glyphs (`½`) and a
+    /// `\frac{b}{c}` of two digit runs in this one spelling, so the parser reads
+    /// all five mixed-number spellings through one production (review round 2,
+    /// findings #1, #2). Both parts are runs of ASCII digits.
+    Frac {
+        /// The digits above the bar.
+        numerator: String,
+        /// The digits below the bar.
+        denominator: String,
+    },
     /// A run of ASCII letters.
     Ident(String),
     /// `+`
@@ -91,6 +104,13 @@ pub fn lex(source: &str) -> Result<Vec<Token>, Undecidable> {
             space_before = false;
             continue;
         }
+        if c == FRACTION_OPEN {
+            let (kind, next) = read_fraction(&chars, i)?;
+            tokens.push(Token { kind, space_before });
+            i = next;
+            space_before = false;
+            continue;
+        }
         if c.is_ascii_alphabetic() {
             let mut end = i;
             while matches!(chars.get(end), Some(l) if l.is_ascii_alphabetic()) {
@@ -140,6 +160,45 @@ fn read_number(chars: &[char], at: usize) -> Result<(String, usize), Undecidable
     }
     let text: String = chars.get(at..index).unwrap_or(&[]).iter().collect();
     Ok((text, index))
+}
+
+/// Read a literal-fraction token at `at` and return it and the index after it.
+///
+/// The shape is one open mark, a run of digits, a slash, a run of digits, and
+/// one close mark. [`crate::answer::normalize`] is the only writer of the marks.
+fn read_fraction(chars: &[char], at: usize) -> Result<(Tok, usize), Undecidable> {
+    let malformed = Undecidable::new("a fraction mark the reader cannot read");
+    let mut index = at + 1;
+    let numerator = read_digits(chars, index);
+    index += numerator.chars().count();
+    if chars.get(index) != Some(&'/') {
+        return Err(malformed);
+    }
+    index += 1;
+    let denominator = read_digits(chars, index);
+    index += denominator.chars().count();
+    if chars.get(index) != Some(&FRACTION_CLOSE) {
+        return Err(malformed);
+    }
+    if numerator.is_empty() || denominator.is_empty() {
+        return Err(malformed);
+    }
+    Ok((
+        Tok::Frac {
+            numerator,
+            denominator,
+        },
+        index + 1,
+    ))
+}
+
+/// Read the run of ASCII digits that starts at `at`.
+fn read_digits(chars: &[char], at: usize) -> String {
+    let mut index = at;
+    while matches!(chars.get(index), Some(c) if c.is_ascii_digit()) {
+        index += 1;
+    }
+    chars.get(at..index).unwrap_or(&[]).iter().collect()
 }
 
 /// Read one operator or bracket at `at` and return it with its width.

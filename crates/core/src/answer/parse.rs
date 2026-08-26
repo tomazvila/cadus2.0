@@ -82,6 +82,18 @@ struct Parser<'a> {
     depth: usize,
 }
 
+/// The fraction that stands after a whole number, in either token shape.
+struct FractionPart {
+    /// The digits above the bar, as the answer writes them.
+    numerator: String,
+    /// The digits below the bar, as the answer writes them.
+    denominator: String,
+    /// The token index after the fraction.
+    next: usize,
+    /// True for the `b/c` spelling of three tokens, false for one [`Tok::Frac`].
+    digit_run: bool,
+}
+
 impl Parser<'_> {
     /// Look at the next token without taking it.
     fn peek(&self) -> Option<&Tok> {
@@ -276,33 +288,73 @@ impl Parser<'_> {
 
     /// Refuse a number that follows an operand where it reads as a label, not a product.
     ///
-    /// Two rules, and both of them come from how a learner writes:
+    /// Three rules, and all of them come from how a learner writes:
     ///
     /// - A number after a number is never a product. `2 3` is a typing slip, and
     ///   `9 R2` is a quotient with a remainder (spec section 8.3), not `9*R*2`.
+    ///   The rule reads through a leading sign, so `-2 3` is a slip too.
     /// - A number glued to a name is a label: `R2`, `H1`, `x2` name one thing. A
-    ///   space makes it a product, which is how `6 x 10**3` reads.
+    ///   space makes it a product, which is how `6 y 10**3` reads.
+    /// - A space-grouped number is one value on a full match of the whole string
+    ///   and nowhere else (the V4 table). After a factor, the second group of
+    ///   `x/1 000` is not the factor 0, so the answer is undecidable (review
+    ///   round 2, finding #11).
     fn check_implicit_number(&self, previous: Option<&Ast>) -> Result<(), Undecidable> {
-        let previous_is_literal = matches!(
-            previous,
-            Some(Ast::Integer(_) | Ast::Decimal { .. } | Ast::Fraction { .. } | Ast::Mixed { .. })
-        );
-        if previous_is_literal {
+        if previous.is_some_and(is_numeric_literal) {
             return Err(Undecidable::new("two numbers stand side by side"));
         }
-        let spaced = self.tokens.get(self.at).is_some_and(|t| t.space_before);
-        if spaced {
-            Ok(())
-        } else {
-            Err(Undecidable::new(
+        let Some(token) = self.tokens.get(self.at) else {
+            return Err(Undecidable::new("the answer ends where a value belongs"));
+        };
+        if !token.space_before {
+            return Err(Undecidable::new(
                 "a number glued to a name reads as a label",
-            ))
+            ));
         }
+        if self.continues_a_space_group(&token.kind) {
+            return Err(Undecidable::new(
+                "a space-grouped number stands after a factor",
+            ));
+        }
+        Ok(())
+    }
+
+    /// Whether the spaced number at the cursor is one group of a grouped number.
+    ///
+    /// The V4 table deletes the separators of `1 000` on a full match of the
+    /// whole answer and nowhere else. After a factor, the second group reaches
+    /// the parser as its own number, so `x/1 000` reads as `x/1 * 0` and gives
+    /// the value 0 that no learner wrote (review round 2, finding #11).
+    ///
+    /// Two shapes are a group and no factor:
+    ///
+    /// - three digits with a number token in front of them, which is the shape
+    ///   of `1 000`, `2 500`, and `1 999`;
+    /// - a run of more than one digit that starts with a zero, which no learner
+    ///   writes as a factor.
+    ///
+    /// `x 100` holds no group, because no number stands in front of the run, so
+    /// it keeps the product reading that 1.0 gives it.
+    fn continues_a_space_group(&self, kind: &Tok) -> bool {
+        let Tok::Num(text) = kind else {
+            return false;
+        };
+        if !text.chars().all(|c| c.is_ascii_digit()) {
+            return false;
+        }
+        if text.chars().count() > 1 && text.starts_with('0') {
+            return true;
+        }
+        let before = self.at.checked_sub(1).and_then(|at| self.tokens.get(at));
+        text.chars().count() == 3 && matches!(before.map(|token| &token.kind), Some(Tok::Num(_)))
     }
 
     /// Whether the cursor is on a token that can start a factor.
     fn starts_operand(&self) -> bool {
-        matches!(self.peek(), Some(Tok::Num(_) | Tok::Ident(_) | Tok::LParen))
+        matches!(
+            self.peek(),
+            Some(Tok::Num(_) | Tok::Ident(_) | Tok::LParen | Tok::Frac { .. })
+        )
     }
 
     /// Take a spaced `x` or `X` that stands between two numbers, which means times.
@@ -313,11 +365,12 @@ impl Parser<'_> {
     /// other `x` and `X` is the variable, so the reading asks for a space on both
     /// sides and a number literal on both sides (review finding #18). `X` alone
     /// and `2X` therefore stay the variable.
+    ///
+    /// The literal on the left carries its sign, because 22 of the 27 authored
+    /// times-`x` answers are scientific notation and a measurement is negative:
+    /// `-2.5 x 10^-4` is -0.00025 (review round 2, finding #12).
     fn eat_times_letter(&mut self, previous: Option<&Ast>) -> bool {
-        if !matches!(
-            previous,
-            Some(Ast::Integer(_) | Ast::Decimal { .. } | Ast::Fraction { .. } | Ast::Mixed { .. })
-        ) {
+        if !previous.is_some_and(is_numeric_literal) {
             return false;
         }
         let Some(token) = self.tokens.get(self.at) else {
@@ -336,51 +389,100 @@ impl Parser<'_> {
         true
     }
 
-    /// Read a mixed number `a b/c` when the factors so far are exactly the whole part.
+    /// Read the mixed number that a number token in front of a fraction makes.
     ///
-    /// The space in front of `b` is required, which is what tells `3 1/2` from `31/2`.
+    /// This function is the one place that reads a mixed number. It takes all
+    /// five spellings of the review round 2 ruling, because the fraction reaches
+    /// it in one of two token shapes:
     ///
-    /// The fractional part must be proper and plainly written: `0 < b < c`, no
-    /// leading zero, and no three-digit numerator. A three-digit run after a space
-    /// is the thousands group of the V4 table, so `1 000/3` and `1 200/300` are
-    /// undecidable and never become a value the checker invented (finding #7).
+    /// - `Num Slash Num` after a space, which is `2 1/2`. The space is what tells
+    ///   `3 1/2` from `31/2`, and the lexer joins two glued digit runs anyway.
+    /// - one [`Tok::Frac`] token, which is `2½`, `2 ½`, `2\frac{1}{2}`, and
+    ///   `2 \frac{1}{2}`. [`crate::answer::normalize`] writes every glyph and
+    ///   every literal `\frac` in that one spelling, glued or spaced.
+    ///
+    /// The fractional part must be proper and plainly written: `0 < b < c` and no
+    /// leading zero. The digit-run spelling adds one rule of its own: a
+    /// three-digit numerator after a space is the thousands group of the V4
+    /// table, so `1 000/3` and `1 200/300` stay undecidable and never become a
+    /// value the checker invented (finding #7).
+    ///
+    /// A number token in front of a fraction is a mixed number or it is nothing.
+    /// `2\frac{3}{2}` is neither the mixed number 7/2 nor the product 3, and
+    /// `x 2½` carries no whole part at all; a checker that picks one of the two
+    /// readings grades a wrong answer correct (C4). The `b/c` spelling keeps its
+    /// round 1 refusal ("two numbers stand side by side") in the same shapes,
+    /// which the caller raises.
+    ///
+    /// A token that is no number in front of the fraction makes an ordinary
+    /// product, so `x½` is `x/2` and `(2)½` is 1.
     fn read_mixed_number(&mut self, factors: &[Ast]) -> Result<Option<Ast>, Undecidable> {
-        let [only] = factors else {
+        let Some(part) = self.read_fraction_part() else {
             return Ok(None);
         };
-        let Some(whole) = whole_number(only) else {
+        // The whole part is a bare number literal, and the token in front of the
+        // fraction carries it. A bracketed value takes no mixed part.
+        let previous = self.at.checked_sub(1).and_then(|at| self.tokens.get(at));
+        if !matches!(previous.map(|token| &token.kind), Some(Tok::Num(_))) {
             return Ok(None);
+        }
+        let whole = match factors {
+            [only] => whole_number(only),
+            _ => None,
         };
-        let Some(Token {
-            kind: Tok::Num(numerator),
-            space_before: true,
-        }) = self.tokens.get(self.at)
-        else {
-            return Ok(None);
+        let Some(whole) = whole else {
+            if part.digit_run {
+                return Ok(None);
+            }
+            return Err(Undecidable::new(
+                "a fraction stands after a number that is no whole part",
+            ));
         };
-        if self.peek_at(1) != Some(&Tok::Slash) {
-            return Ok(None);
-        }
-        let Some(Tok::Num(denominator)) = self.peek_at(2) else {
-            return Ok(None);
+        let Some((numerator, denominator)) = proper_fraction_part(&part) else {
+            if part.digit_run {
+                return Ok(None);
+            }
+            return Err(Undecidable::new(
+                "a mixed number whose fraction is not proper",
+            ));
         };
-        if !is_plain_digit_run(numerator) || !is_plain_digit_run(denominator) {
-            return Ok(None);
-        }
-        if numerator.chars().count() == 3 {
-            return Ok(None);
-        }
-        let numerator = parse_integer(numerator)?;
-        let denominator = parse_integer(denominator)?;
-        if numerator.is_zero() || numerator >= denominator {
-            return Ok(None);
-        }
-        self.at += 3;
+        self.at = part.next;
         Ok(Some(Ast::Mixed {
             whole,
             numerator,
             denominator,
         }))
+    }
+
+    /// Read the fraction that stands at the cursor, in either token shape.
+    fn read_fraction_part(&self) -> Option<FractionPart> {
+        let token = self.tokens.get(self.at)?;
+        match &token.kind {
+            Tok::Frac {
+                numerator,
+                denominator,
+            } => Some(FractionPart {
+                numerator: numerator.clone(),
+                denominator: denominator.clone(),
+                next: self.at + 1,
+                digit_run: false,
+            }),
+            Tok::Num(numerator) if token.space_before => {
+                if self.peek_at(1) != Some(&Tok::Slash) {
+                    return None;
+                }
+                let Some(Tok::Num(denominator)) = self.peek_at(2) else {
+                    return None;
+                };
+                Some(FractionPart {
+                    numerator: numerator.clone(),
+                    denominator: denominator.clone(),
+                    next: self.at + 3,
+                    digit_run: true,
+                })
+            }
+            _ => None,
+        }
     }
 
     /// Parse a sign chain in front of a power.
@@ -495,6 +597,15 @@ impl Parser<'_> {
                     parser.bump();
                     parse_number(&text)
                 }
+                Tok::Frac {
+                    numerator,
+                    denominator,
+                } => {
+                    let numerator = numerator.clone();
+                    let denominator = denominator.clone();
+                    parser.bump();
+                    literal_fraction(&numerator, &denominator)
+                }
                 Tok::Ident(name) => {
                     let name = name.clone();
                     parser.bump();
@@ -569,15 +680,26 @@ impl Parser<'_> {
     /// Parse the bracket-free argument of a function.
     ///
     /// The argument is the juxtaposed chain of atoms with their powers, so
-    /// `cos 2x` is `cos(2*x)` and `sin 3t^2` is `sin(3*t**2)`. The chain stops at
-    /// `+`, `-`, `,`, `)`, `=`, `<`, `>`, and at an explicit `*` or `/`, because
-    /// none of them starts a factor. 1.0 reads the five authored corpus answers
-    /// of this shape the same way (review finding #3).
+    /// `cos 2x` is `cos(2*x)` and `sin 3t^2` is `sin(3*t**2)`. The chain runs
+    /// through an explicit `*` as well, so `cos 2*x` is `cos(2*x)` and not
+    /// `x*cos(2)`: the two spellings are one answer, and 1.0 reads both of them
+    /// as `cos(2*x)` (review round 2, findings #4 and #15).
+    ///
+    /// The chain stops at `/`, `+`, `-`, `,`, `)`, `=`, `<`, and `>`. The stop at
+    /// `/` is the round 1 ruling that keeps `sqrt 2/2` at `sqrt(2)/2`.
     fn parse_juxtaposed_argument(&mut self) -> Result<Ast, Undecidable> {
         self.nested(|parser| {
             let mut factors = vec![parser.parse_power()?];
             loop {
+                if let Some(mixed) = parser.read_mixed_number(&factors)? {
+                    factors = vec![mixed];
+                    continue;
+                }
                 if parser.eat_times_letter(factors.last()) {
+                    factors.push(parser.parse_power()?);
+                    continue;
+                }
+                if parser.eat(&Tok::Star) {
                     factors.push(parser.parse_power()?);
                     continue;
                 }
@@ -686,6 +808,35 @@ fn letter_run(name: &str) -> Option<Vec<char>> {
     Some(letters)
 }
 
+/// Read the fraction part as a proper fraction, or refuse it.
+///
+/// The checks are the same for every mixed-number spelling: two plain digit
+/// runs, and `0 < b < c`. The digit-run spelling refuses a three-digit numerator
+/// as well, because a three-digit run after a space is a thousands group.
+fn proper_fraction_part(part: &FractionPart) -> Option<(BigInt, BigInt)> {
+    if !is_plain_digit_run(&part.numerator) || !is_plain_digit_run(&part.denominator) {
+        return None;
+    }
+    if part.digit_run && part.numerator.chars().count() == 3 {
+        return None;
+    }
+    let numerator = part.numerator.parse::<BigInt>().ok()?;
+    let denominator = part.denominator.parse::<BigInt>().ok()?;
+    if numerator.is_zero() || numerator >= denominator {
+        return None;
+    }
+    Some((numerator, denominator))
+}
+
+/// Whether the node is a number literal, with or without a leading sign.
+fn is_numeric_literal(node: &Ast) -> bool {
+    match node {
+        Ast::Integer(_) | Ast::Decimal { .. } | Ast::Fraction { .. } | Ast::Mixed { .. } => true,
+        Ast::Neg(inner) => is_numeric_literal(inner),
+        _ => false,
+    }
+}
+
 /// Whether the text is a digit run that carries no grouping and no leading zero.
 fn is_plain_digit_run(text: &str) -> bool {
     let mut chars = text.chars();
@@ -776,6 +927,22 @@ fn make_quotient(dividend: Ast, divisor: Ast) -> Result<Ast, Undecidable> {
         return Err(Undecidable::new("a quotient with a zero divisor"));
     }
     Ok(Ast::Div(Box::new(dividend), Box::new(divisor)))
+}
+
+/// Build the value of a literal-fraction token.
+///
+/// The two parts are runs of ASCII digits, so the denominator is never negative.
+/// A zero denominator refuses the answer, as `1/0` does.
+fn literal_fraction(numerator: &str, denominator: &str) -> Result<Ast, Undecidable> {
+    let numerator = parse_integer(numerator)?;
+    let denominator = parse_integer(denominator)?;
+    if denominator.is_zero() {
+        return Err(Undecidable::new("a fraction with a zero denominator"));
+    }
+    Ok(Ast::Fraction {
+        numerator,
+        denominator,
+    })
 }
 
 /// Read the value of a node that is a signed integer literal, if it is one.
