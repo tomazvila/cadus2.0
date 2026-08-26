@@ -12,4 +12,8 @@
 )]
 
 pub mod answer;
+pub mod config;
 pub mod curriculum;
+pub mod event;
+pub mod learner;
+pub mod numeric;
