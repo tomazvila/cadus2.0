@@ -92,6 +92,15 @@
 //! product of two sums charges the count of terms of the one sum times the count
 //! of terms of the other, and every sum it builds goes through the term bound, so
 //! a common denominator that grows costs the budget and then stops.
+//!
+//! The budget charges the REBUILD of a sum as well, at one step per term. A sum
+//! is a map of terms, and an add, a multiply, a promotion, and a demotion each
+//! copy or walk the whole map. A budget that charges the count of operations
+//! alone therefore bounds the wrong quantity a second time: 846 factors of `1`
+//! beside a 280-term sum spent 846 steps of the budget and 378 ms of a release
+//! build, which is 1.26 times the whole 300 ms of L2 for one grade (M2 review 4,
+//! finding 2). [`Work::rebuild`] is the charge, and every clone and every walk
+//! of a whole sum runs through it.
 
 use std::collections::{BTreeMap, BTreeSet};
 
@@ -312,6 +321,17 @@ impl Work {
         let words = bits / BITS_PER_STEP;
         let units = usize::try_from(words.saturating_mul(words)).unwrap_or(usize::MAX);
         self.spend(units)
+    }
+
+    /// Charge one step for every term of a sum the arithmetic rebuilds.
+    ///
+    /// A sum is a map of terms, and an operation that clones it, walks it, or
+    /// demotes it costs one step per term. The budget charged the COUNT of
+    /// operations and not the COST of one, so 846 factors of `1` beside a
+    /// 280-term sum cost 378 ms in a release build, which is 1.26 times the
+    /// whole 300 ms of L2 for one grade (M2 review 4, finding 2).
+    fn rebuild(&mut self, sum: &Poly) -> Result<(), Undecidable> {
+        self.spend(sum.len())
     }
 
     /// Refuse a rational past the size bound, and charge its width.
@@ -604,6 +624,7 @@ impl Work {
 
     /// Add two sums.
     fn poly_add(&mut self, left: &Poly, right: &Poly) -> Result<Poly, Undecidable> {
+        self.rebuild(left)?;
         let mut sum = left.clone();
         for (monomial, coefficient) in right {
             self.spend(1)?;
@@ -620,12 +641,15 @@ impl Work {
     /// stay inside the work bound.
     fn poly_mul(&mut self, left: &Poly, right: &Poly) -> Result<Poly, Undecidable> {
         // A factor of 1 is the common case of the form: every value whose
-        // denominator is one term carries this exact sum. The short cut keeps an
-        // ordinary answer at the cost it had before the rational-function form.
+        // denominator is one term carries this exact sum. The short cut skips
+        // the term-by-term product, and it still copies the whole sum, so it
+        // charges the copy (M2 review 4, finding 2).
         if is_one(left) {
+            self.rebuild(right)?;
             return Ok(right.clone());
         }
         if is_one(right) {
+            self.rebuild(left)?;
             return Ok(left.clone());
         }
         self.spend(left.len().saturating_mul(right.len()))?;
@@ -655,6 +679,7 @@ impl Work {
             let (monomial, coefficient) = self.power_of_term(&monomial, &coefficient, exponent)?;
             return Ok(term(monomial, coefficient));
         }
+        self.rebuild(base)?;
         let mut result = one_poly();
         let mut square = base.clone();
         let mut left = exponent;
@@ -1027,7 +1052,13 @@ impl Work {
     }
 
     /// Build the canonical value of one numerator over one denominator.
+    ///
+    /// The rules of [`Work::quotient`] read every term of the two sums, and the
+    /// demotion of [`from_frac`] reads every term of the numerator again, so the
+    /// step charges both sums (M2 review 4, finding 2).
     fn value(&mut self, num: Poly, den: Poly) -> Result<Canon, Undecidable> {
+        self.rebuild(&num)?;
+        self.rebuild(&den)?;
         let quotient = self.quotient(num, den)?;
         Ok(from_frac(quotient))
     }
@@ -1162,6 +1193,9 @@ impl Work {
         let num = match value {
             Canon::Rational(number) => term(Monomial::new(), number.clone()),
             Canon::Radical(parts) => {
+                // The promotion touches every part, so it charges every part
+                // (M2 review 4, finding 2).
+                self.spend(parts.len())?;
                 let mut sum = Poly::new();
                 for (basis, coefficient) in parts {
                     let mut monomial = Monomial::new();
@@ -1178,8 +1212,13 @@ impl Work {
                 }
                 sum
             }
-            Canon::Poly(parts) => parts.clone(),
+            Canon::Poly(parts) => {
+                self.rebuild(parts)?;
+                parts.clone()
+            }
             Canon::Value { num, den } => {
+                self.rebuild(num)?;
+                self.rebuild(den)?;
                 return Ok(Frac {
                     num: num.clone(),
                     den: den.clone(),

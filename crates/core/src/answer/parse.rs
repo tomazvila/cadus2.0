@@ -527,6 +527,12 @@ impl Parser<'_> {
     ///
     /// A token that is no number in front of the fraction makes an ordinary
     /// product, so `x½` is `x/2` and `(2)½` is 1.
+    ///
+    /// A `/` or a `^` in front of the fraction takes the number token into a
+    /// quotient or a power, and a token inside a factor is no whole part. The
+    /// `b/c` spelling refuses that shape here, the same as the four other
+    /// spellings do, so `t/4 3/4`, `x/2 1/2`, and `x^2 1/2` are undecidable
+    /// (review round 4, finding #1).
     fn read_mixed_number(&mut self, factors: &[Ast]) -> Result<Option<Ast>, Undecidable> {
         let Some(part) = self.read_fraction_part() else {
             return Ok(None);
@@ -542,7 +548,18 @@ impl Parser<'_> {
             _ => None,
         };
         let Some((negative, whole)) = whole else {
-            if part.digit_run {
+            // The `b/c` spelling hands the answer back to the caller only where
+            // the caller refuses it as well: `9/2 1/2` and `x 2 1/2` end on a
+            // number literal, and `check_implicit_number` raises "two numbers
+            // stand side by side" for both.
+            //
+            // A `/` or a `^` folds the number token into an `Ast::Div` or an
+            // `Ast::Pow`, and neither node is a number literal, so the caller
+            // took the product reading: `t/4 3/4` became 3t/16 and graded a
+            // wrong answer correct (C4). The token is inside a factor, so it is
+            // no whole part, and the answer is undecidable (review round 4,
+            // finding #1).
+            if part.digit_run && factors.last().is_some_and(is_numeric_literal) {
                 return Ok(None);
             }
             return Err(Undecidable::new(

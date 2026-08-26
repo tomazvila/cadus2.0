@@ -97,17 +97,27 @@ here because A2 must reject these spellings at authoring time as well.
 | `1,500%` | `a comma-grouped number stands in a longer answer` | The comma thousands group is a FULL match of the whole string (1.0 `_COMMA_GROUPS_RE`). A grouped number inside a longer answer keeps two readings, the number 1500 and the tuple `1, 500` (round 3, finding #6). |
 | `3 + 1,500` | `a comma-grouped number stands in a longer answer` | The same rule, without a percent. |
 | `1 500%` | `two numbers stand side by side` | The space thousands group is a full match too, so `1 500` inside a longer answer is two numbers. The old percent rewrite inserted a bracket that bypassed the refusal, and `1 500%` then meant two different values (round 3, finding #6). |
+| `t/4 3/4` | `a fraction stands after a number that is no whole part` | A `/` takes the number token into the quotient `t/4`, so that token is inside a factor and it is no whole part. The old parser read `((t/4)*3)/4` = 3t/16, and the mixed-number rule reads `t/(4 + 3/4)` = 4t/19, so a wrong answer graded correct (round 4, finding #1). |
+| `x/2 1/2` | `a fraction stands after a number that is no whole part` | The same rule, with a variable numerator. |
+| `cos(x)/2 1/2` | `a fraction stands after a number that is no whole part` | The same rule, with a function call in front of the `/`. |
+| `pi/2 1/2` | `a fraction stands after a number that is no whole part` | The same rule, with a constant in front of the `/`. |
+| `x^2 1/2` | `a fraction stands after a number that is no whole part` | A `^` takes the number token into the power `x**2`, so that token is no whole part either (round 4, finding #1). |
+| `x 2^3 1/2` | `a fraction stands after a number that is no whole part` | The same rule, with the power as the last factor of a longer product. |
 
-The mirror spellings `x 3 1/2`, `2.5 1/2`, `1/2 1/2`, and `3 3/2` take the round 1 refusal
-`two numbers stand side by side`, so the `a b/c` spelling and the token spelling of one
-shape give one answer. `crates/core/tests/answer_parse.rs` pins every reason above as a
-literal, and `crates/core/tests/answer_divergence.rs` pins the `x/1 000` refusal and the
-`2\frac{3}{2}` refusal.
+The mirror spellings `x 3 1/2`, `2.5 1/2`, `1/2 1/2`, `3 3/2`, `9/2 1/2`, and `x 2 1/2`
+take the round 1 refusal `two numbers stand side by side`, so the `a b/c` spelling and the
+token spelling of one shape give one answer. The glyph and the `\frac` spellings of the six
+round-4 rows above (`t/4 ¾`, `t/4 \frac{3}{4}`, `x^2 ½`, `pi/2 ½`) take the same reason as
+the row itself, which is the point of the round-4 fix: one shape, one verdict.
+`crates/core/tests/answer_parse.rs` pins every reason above as a literal,
+`crates/core/tests/answer_check.rs` pins the round-4 rows at the verdict level, and
+`crates/core/tests/answer_divergence.rs` pins the `x/1 000` refusal and the `2\frac{3}{2}`
+refusal.
 
-None of the fifteen answers above is a corpus answer, so the split of the section below
-does not move. Re-verified on 2026-08-27, after FIXM2g, FIXM2h, and FIXM2i: 3,492 corpus
-answers, 3,227 parsed, 265 refused, and the committed `undecidable_1_0.jsonl` holds the
-same 265 rows as before round 3.
+None of the twenty-one answers above is a corpus answer, so the split of the section below
+does not move. Re-verified on 2026-08-27, after FIXM2j: 3,492 corpus answers, 3,227 parsed,
+265 refused, and the committed `undecidable_1_0.jsonl` holds the same 265 rows as before
+round 3.
 
 ### The refusal reason the grammar gives
 

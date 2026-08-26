@@ -106,6 +106,20 @@ fn one_check_budget() -> Duration {
     }
 }
 
+/// The wall-clock budget of one check of a crafted worst-case answer.
+///
+/// The round-4 ruling of finding #2 puts the reviewer's 4,000-character case at
+/// 50 ms in a release build. A debug build runs the exact arithmetic about ten
+/// times slower, so the debug budget is ten times the release one, the same
+/// scale as [`one_check_budget`] carries.
+fn bomb_budget() -> Duration {
+    if release_bench() {
+        Duration::from_millis(50)
+    } else {
+        Duration::from_millis(500)
+    }
+}
+
 /// The wall-clock budget of one pass over the whole corpus.
 fn corpus_budget() -> Duration {
     if release_bench() {
@@ -366,6 +380,38 @@ fn a_decimal_becomes_an_exact_rational() {
     assert_eq!(form("12.0"), Canon::Rational(whole(12)));
     assert_eq!(form("3 1/2"), Canon::Rational(ratio(7, 2)));
     assert_eq!(form("-2 1/4"), Canon::Rational(ratio(-9, 4)));
+}
+
+#[test]
+fn a_fraction_after_a_divided_or_raised_number_gets_no_verdict() {
+    // M2 review 4, finding #1. The `b/c` mixed-number spelling fell back to the
+    // product reading when a `/` or a `^` had already taken the number token, so
+    // the authored answer `3*t/16` accepted the learner answer `t/4 3/4`. The
+    // mixed-number rule reads that answer as `t/(4 + 3/4)` = 4t/19, so 2.0
+    // graded a wrong answer correct (C4). The glyph and the `\frac` spellings of
+    // the same shape refused it, so one rule gave two verdicts.
+    for (expected, learner) in [
+        ("3*t/16", "t/4 3/4"),
+        ("4*t/19", "t/4 3/4"),
+        ("x/4", "x/2 1/2"),
+        ("x^2/2", "x^2 1/2"),
+        ("cos(x)/4", "cos(x)/2 1/2"),
+        ("pi/4", "pi/2 1/2"),
+    ] {
+        for (left, right) in [(expected, learner), (learner, expected)] {
+            match check(left, right, E) {
+                Outcome::Undecidable(refused) => assert_eq!(
+                    refused.reason, "a fraction stands after a number that is no whole part",
+                    "{left:?} against {right:?}"
+                ),
+                other => panic!("{left:?} against {right:?} gave {other:?}"),
+            }
+        }
+    }
+    // The mixed number itself keeps its verdict, in both kinds.
+    assert_eq!(check("5/2", "2 1/2", N), decided(true, false));
+    assert_eq!(check("5/2", "2 1/2", E), decided(true, false));
+    assert_eq!(check("2 1/2", "2.5", N), decided(true, false));
 }
 
 #[test]
@@ -656,6 +702,49 @@ fn an_open_interval_end_is_not_a_closed_one() {
     assert_eq!(check("x >= 4", "x > 4", E), decided(false, false));
     assert_eq!(check("(0, 1]", "[0, 1)", E), decided(false, false));
     assert_eq!(check("(0, 1]", "[0, 1]", E), decided(false, false));
+}
+
+#[test]
+fn a_descending_chain_carries_its_upper_end_closedness() {
+    // M2 review 4, finding #3. The round-1 fix pinned the ASCENDING chain only,
+    // so `hi_closed: op == IneqOp::Ge` of the descending arm was never evaluated
+    // as false and `hi_closed: true` survived the whole suite. A closed end that
+    // accepts a strict one grades a wrong learner answer correct (C4).
+    //
+    // A descending chain names the same set as its ascending twin, and the
+    // FIRST operator of the descending spelling carries the UPPER end.
+    assert_eq!(form("3 >= x > -1"), form("-1 < x <= 3"));
+    assert_eq!(form("3 > x >= -1"), form("-1 <= x < 3"));
+    assert_eq!(form("3 ≥ x > -1"), form("-1 < x ≤ 3"));
+    assert_eq!(form("3 > x ≥ -1"), form("-1 ≤ x < 3"));
+    let upper_closed = Canon::Interval {
+        var: Some("x".to_string()),
+        lo: Some(Box::new(Canon::Rational(whole(-1)))),
+        lo_closed: false,
+        hi: Some(Box::new(Canon::Rational(whole(3)))),
+        hi_closed: true,
+    };
+    assert_eq!(form("3 >= x > -1"), upper_closed);
+    let upper_open = Canon::Interval {
+        var: Some("x".to_string()),
+        lo: Some(Box::new(Canon::Rational(whole(-1)))),
+        lo_closed: true,
+        hi: Some(Box::new(Canon::Rational(whole(3)))),
+        hi_closed: false,
+    };
+    assert_eq!(form("3 > x >= -1"), upper_open);
+    // C4: the four descending spellings are four different sets. 1.0 answers
+    // False for every pair below.
+    assert_ne!(form("3 >= x > -1"), form("3 > x > -1"));
+    assert_ne!(form("3 >= x >= -1"), form("3 >= x > -1"));
+    assert_ne!(form("3 > x >= -1"), form("3 > x > -1"));
+    assert_ne!(form("3 >= x >= -1"), form("3 > x >= -1"));
+    assert_eq!(check("3 >= x > -1", "3 > x > -1", E), decided(false, false));
+    assert_eq!(
+        check("-1 <= x <= 3", "3 > x >= -1", E),
+        decided(false, false)
+    );
+    assert_eq!(check("-1 <= x < 3", "3 > x >= -1", E), decided(true, false));
 }
 
 #[test]
@@ -979,6 +1068,42 @@ fn a_reciprocal_of_a_product_meets_a_product_of_reciprocals() {
     assert_eq!(check("x/(x+1) + 1/(x+1)", "1", E), decided(true, false));
     assert_ne!(form("1/(x+1) + 1/(x+1)^2"), form("(x+2)/(x+1)^2"));
     assert_ne!(form("(x+2)/(x+1)"), form("1"));
+}
+
+#[test]
+fn a_scalar_ratio_needs_the_same_monomials_on_both_sides() {
+    // M2 review 4, finding #4. Every rule-5 test used a numerator and a
+    // denominator over the SAME monomials, so the key half of the guard
+    // (`num.len() != den.len() || !num.keys().eq(den.keys())`) decided nothing
+    // and its loss survived the whole suite. Without the key half,
+    // `(x+1)/(y+1)` collapses to the number 1, and the learner answer `1`
+    // grades correct against a quotient of two unrelated polynomials (C4).
+    // 1.0 answers False for every `assert_ne!` pair below.
+    //
+    // Two sums of TWO terms each over DIFFERENT monomials. The count of terms
+    // matches, so the key test is the deciding half.
+    assert_ne!(form("(x+1)/(y+1)"), form("1"));
+    assert_ne!(form("(x+2)/(y+2)"), form("1"));
+    assert_ne!(form("(x+1)/(y+1)"), form("(x+2)/(y+2)"));
+    assert_eq!(check("(x+1)/(y+1)", "1", E), decided(false, false));
+    assert_eq!(check("1", "(x+1)/(y+1)", E), decided(false, false));
+    // The rule itself still fires where the monomials DO match.
+    assert_eq!(check("(2x+2)/(x+1)", "2", E), decided(true, false));
+    assert_eq!(check("2", "(2x+2)/(x+1)", E), decided(true, false));
+    assert_eq!(form("(2x+2)/(x+1)"), Canon::Rational(whole(2)));
+    assert_eq!(form("(x+1)/(x+1)"), Canon::Rational(whole(1)));
+    // The form runs no polynomial GCD, so a quotient that a common polynomial
+    // factor would reduce stays two values. That is the documented narrowing of
+    // the module header, and 1.0 answers True for this pair.
+    assert_ne!(form("(x^2+x)/(x+1)"), form("x"));
+    assert_eq!(check("(x^2+x)/(x+1)", "x", E), decided(false, false));
+    // Same monomials, and no rational multiple: the coefficient half decides.
+    assert_ne!(form("(x+y)/(x-y)"), form("(x-y)/(x+y)"));
+    assert_ne!(form("(x+y)/(x-y)"), form("1"));
+    assert_eq!(
+        check("(x+y)/(x-y)", "(x-y)/(x+y)", E),
+        decided(false, false)
+    );
 }
 
 #[test]
@@ -1391,6 +1516,129 @@ fn the_reciprocal_bomb_of_review_1_is_refused_inside_the_budget() {
         elapsed < one_check_budget,
         "the 2,072-character bomb took {elapsed:?}, and the budget is {one_check_budget:?}"
     );
+}
+
+/// Build the sum-rebuild bomb of M2 review 4, finding 2.
+///
+/// The answer is one bracket that holds the 280-term sum `e**2 + … + e**281`,
+/// and `factors` factors of `1` follow it. Every factor costs one node step, and
+/// every factor rebuilt all 280 terms three times over: once in `frac_of`, once
+/// in the `is_one` short cut of `poly_mul`, and once in the demotion that
+/// `value` runs. `MAX_STEPS` bounded the COUNT of operations and not the COST of
+/// one, so 846 factors cost 188 ms of canonicalization in a release build.
+///
+/// The shape is inside the section 8.1 grammar, holds no LaTeX and no glyph, and
+/// stays inside the 4,000-character input cap.
+fn sum_rebuild_bomb(factors: usize) -> String {
+    let mut bomb = wide_sum(280);
+    for _ in 0..factors {
+        bomb.push_str("*1");
+    }
+    bomb
+}
+
+/// Build one bracketed sum of `terms` powers of `e`.
+fn wide_sum(terms: usize) -> String {
+    let parts: Vec<String> = (2..2 + terms).map(|power| format!("e^{power}")).collect();
+    format!("({})", parts.join("+"))
+}
+
+#[test]
+fn the_sum_rebuild_bomb_of_review_4_is_refused_inside_the_budget() {
+    // M2 review 4, finding 2. The work bound charges one step per term the
+    // arithmetic touches now, so the rebuild of a wide sum costs what it is
+    // worth. The reviewer's pair cost 378 ms in a release build, which is 1.26
+    // times the whole 300 ms of L2 for one deterministic grade.
+    let expected = sum_rebuild_bomb(846);
+    assert_eq!(
+        expected.chars().count(),
+        3_267,
+        "the reviewer's first answer length"
+    );
+    let learner = expected.replacen('(', "(0+", 1);
+    assert_eq!(
+        learner.chars().count(),
+        3_269,
+        "the reviewer's second answer length"
+    );
+    let budget = bomb_budget();
+    let start = Instant::now();
+    let outcome = check(&expected, &learner, E);
+    let elapsed = start.elapsed();
+    match &outcome {
+        Outcome::Undecidable(refused) => {
+            assert_eq!(refused.reason, "the answer goes past the work bound");
+        }
+        other => panic!("the bomb gave {other:?}"),
+    }
+    assert!(
+        elapsed < budget,
+        "the 3,267-character pair took {elapsed:?}, and the budget is {budget:?}"
+    );
+    // The learner side alone reaches the same cost with a short authored answer,
+    // and the learner writes that side.
+    let learner_bomb = sum_rebuild_bomb(1_212);
+    assert_eq!(
+        learner_bomb.chars().count(),
+        3_999,
+        "the learner-side answer length"
+    );
+    let start = Instant::now();
+    let outcome = check("42", &learner_bomb, N);
+    let elapsed = start.elapsed();
+    match &outcome {
+        Outcome::Undecidable(refused) => {
+            assert_eq!(refused.reason, "the answer goes past the work bound");
+        }
+        other => panic!("the learner-side bomb gave {other:?}"),
+    }
+    assert!(
+        elapsed < budget,
+        "the 3,999-character learner answer took {elapsed:?}, and the budget is {budget:?}"
+    );
+}
+
+#[test]
+fn a_wide_sum_costs_its_terms_and_a_narrow_one_does_not() {
+    // M2 review 4, finding 2. The charge is one step per term touched, so an
+    // ordinary answer of a few terms keeps the cost it had, and a sum of
+    // hundreds of terms pays for every rebuild. The two assertions below hold
+    // the rule in both directions.
+    //
+    // A 20-term sum with one factor of `1` is inside the budget and decides.
+    let sum = wide_sum(20);
+    assert_eq!(
+        check(&sum, &format!("{sum}*1"), E),
+        decided(true, false),
+        "one factor beside a 20-term sum"
+    );
+    // The same sum with 100 factors is past the budget.
+    let wide = format!("{sum}{}", "*1".repeat(100));
+    match check("42", &wide, N) {
+        Outcome::Undecidable(refused) => {
+            assert_eq!(refused.reason, "the answer goes past the work bound");
+        }
+        other => panic!("100 factors beside a 20-term sum gave {other:?}"),
+    }
+    // The rule holds for a polynomial sum too, and a polynomial takes another
+    // path through the promotion than a sum of powers of `e` takes.
+    let powers: Vec<String> = (2..22).map(|power| format!("x^{power}")).collect();
+    let polynomial = format!("({})", powers.join("+"));
+    assert_eq!(
+        check(&polynomial, &format!("{polynomial}*1"), E),
+        decided(true, false),
+        "one factor beside a 20-term polynomial"
+    );
+    let wide_polynomial = format!("{polynomial}{}", "*1".repeat(100));
+    match check("42", &wide_polynomial, N) {
+        Outcome::Undecidable(refused) => {
+            assert_eq!(refused.reason, "the answer goes past the work bound");
+        }
+        other => panic!("100 factors beside a 20-term polynomial gave {other:?}"),
+    }
+    // A two-term sum keeps its verdict through the same count of factors.
+    let narrow = format!("(x+1){}", "*1".repeat(100));
+    assert_eq!(check("x+1", &narrow, E), decided(true, false));
 }
 
 #[test]

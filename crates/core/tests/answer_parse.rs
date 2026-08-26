@@ -750,6 +750,53 @@ fn a_fraction_token_that_is_not_proper_takes_no_mixed_number_reading() {
 }
 
 #[test]
+fn a_number_token_a_divisor_or_an_exponent_took_is_no_whole_part() {
+    // M2 review 4, finding #1. `read_mixed_number` tested the previous TOKEN and
+    // read the whole part from the previous FACTOR. A `/` or a `^` folds the
+    // number token into an `Ast::Div` or an `Ast::Pow`, the caller's backstop
+    // refuses a number literal only, and the `b/c` spelling took the product
+    // reading: `t/4 3/4` parsed to `((t/4)*3)/4` = 3t/16, and the checker graded
+    // the wrong learner answer correct (C4). The four other spellings of the
+    // same shape refused it, so one rule gave two verdicts.
+    for text in [
+        "t/4 3/4",
+        "x/2 1/2",
+        "x^2 1/2",
+        "cos(x)/2 1/2",
+        "pi/2 1/2",
+        "x 2^3 1/2",
+        "sqrt(2)/2 1/2",
+    ] {
+        assert_eq!(
+            refusal(text),
+            "a fraction stands after a number that is no whole part",
+            "{text:?} takes no reading"
+        );
+    }
+    // The glyph and the `\frac` spellings of the same shape keep the same
+    // refusal, which is the point of the fix: one shape, one verdict.
+    for text in ["t/4 ¾", "t/4 \\frac{3}{4}", "x^2 ½", "pi/2 ½"] {
+        assert_eq!(
+            refusal(text),
+            "a fraction stands after a number that is no whole part",
+            "{text:?} takes no reading"
+        );
+    }
+    // The two shapes the caller already refused keep their own message, because
+    // the factor in front of the fraction is a number literal there.
+    for text in ["9/2 1/2", "x 2 1/2", "2*3 1/2"] {
+        assert_eq!(
+            refusal(text),
+            "two numbers stand side by side",
+            "{text:?} takes no reading"
+        );
+    }
+    // The mixed number itself is untouched.
+    assert_eq!(ast("2 1/2"), mixed(2, 1, 2));
+    assert_eq!(ast("t/4"), Ast::Div(Box::new(var("t")), Box::new(int(4))));
+}
+
+#[test]
 fn a_latex_root_is_a_token_and_a_factor_of_the_product_beside_it() {
     // Review round 2 finding #9, restated for the token grammar of round 3.
     // Round 2 wrote a product sign into the source in front of `\sqrt`, and that
