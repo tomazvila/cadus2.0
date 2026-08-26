@@ -15,9 +15,10 @@
 //! kills and reaps the child instead of leaving a worker process behind
 //! (finding #14).
 //!
-//! Test 6 needs no database: `cadus_store::test_support::DeafPostgres` speaks
-//! the Postgres wire protocol itself and stops answering at the exact moment
-//! the test wants.
+//! Test 6 and test 7 need no database:
+//! `cadus_store::test_support::DeafPostgres` speaks the Postgres wire protocol
+//! itself and stops answering at the exact moment the test wants. Test 7 also
+//! reads the log of the loop with a tracing subscriber of its own (L1).
 
 #![allow(
     clippy::unwrap_used,
@@ -27,11 +28,23 @@
     clippy::unimplemented
 )]
 
+use std::sync::{Arc, Mutex};
 use std::time::{Duration, Instant};
 
 use cadus_store::test_support::{DeafPostgres, TestDb};
+use cadus_store::{DEFAULT_CLIENT_TIMEOUT_MS, Db, DbConfig, connect_options};
 use cadus_worker::WorkerConfig;
+use sqlx::PgPool;
 use sqlx::postgres::PgPoolOptions;
+
+/// Wrap a pool in the `Db` that `run` takes, with the documented default
+/// client-side bound of 10000 ms.
+///
+/// `DEFAULT_CLIENT_TIMEOUT_MS` is the value that an absent `DB_CLIENT_TIMEOUT_MS`
+/// gives, so these tests run the loop exactly as the deployment does.
+fn db_with(pool: PgPool) -> Db {
+    Db::new(pool, DEFAULT_CLIENT_TIMEOUT_MS)
+}
 
 /// The environment variable that holds the superuser DSN of the test cluster.
 const TEST_DSN_VAR: &str = "CADUS_TEST_DATABASE_URL";
@@ -118,7 +131,7 @@ async fn run_counts_ticks_until_shutdown() {
         };
 
         let ticks = cadus_worker::run(
-            &db.admin,
+            &db_with(db.admin.clone()),
             &cfg,
             tokio::time::sleep(Duration::from_millis(400)),
         )
@@ -152,8 +165,12 @@ async fn run_fails_when_the_pool_is_closed() {
             tick: Duration::from_millis(20),
         };
 
-        let result =
-            cadus_worker::run(&pool, &cfg, tokio::time::sleep(Duration::from_secs(5))).await;
+        let result = cadus_worker::run(
+            &db_with(pool),
+            &cfg,
+            tokio::time::sleep(Duration::from_secs(5)),
+        )
+        .await;
 
         assert!(
             result.is_err(),
@@ -182,7 +199,11 @@ async fn shutdown_wins_over_a_heartbeat_that_does_not_answer() {
     let start = Instant::now();
     let outcome = tokio::time::timeout(
         Duration::from_secs(5),
-        cadus_worker::run(&pool, &cfg, tokio::time::sleep(Duration::from_millis(200))),
+        cadus_worker::run(
+            &db_with(pool),
+            &cfg,
+            tokio::time::sleep(Duration::from_millis(200)),
+        ),
     )
     .await;
     let elapsed = start.elapsed();
@@ -354,4 +375,117 @@ async fn binary_exits_zero_on_sigterm_during_the_role_report() {
         log.contains("cadus-worker: the stop signal came before the role report"),
         "the log must name the role report as the point of the stop; log:\n{log}"
     );
+}
+
+/// A writer that keeps every log byte in memory.
+///
+/// `tracing_subscriber::fmt` needs a `MakeWriter`. This one hands out a clone of
+/// itself, and every clone appends to the same buffer, so the test reads the
+/// whole log after the loop stops.
+#[derive(Clone, Default)]
+struct Capture(Arc<Mutex<Vec<u8>>>);
+
+impl Capture {
+    /// The captured log as one string.
+    fn text(&self) -> String {
+        let bytes = self.0.lock().expect("the capture lock is not poisoned");
+        String::from_utf8_lossy(&bytes).into_owned()
+    }
+}
+
+impl std::io::Write for Capture {
+    fn write(&mut self, buf: &[u8]) -> std::io::Result<usize> {
+        self.0
+            .lock()
+            .expect("the capture lock is not poisoned")
+            .extend_from_slice(buf);
+        Ok(buf.len())
+    }
+
+    fn flush(&mut self) -> std::io::Result<()> {
+        Ok(())
+    }
+}
+
+impl<'a> tracing_subscriber::fmt::MakeWriter<'a> for Capture {
+    type Writer = Capture;
+
+    fn make_writer(&'a self) -> Self::Writer {
+        self.clone()
+    }
+}
+
+/// (7) L1: a heartbeat that does not answer logs a warning and the loop goes on.
+///
+/// `DeafPostgres::start_silent` accepts the connection and writes nothing, so
+/// the sqlx connect never finishes. Only the client-side bound of
+/// `cadus_store::bounded` ends the wait. A stalled database must not kill the
+/// worker: the loop logs `heartbeat timed out after 300 ms` at warn level and
+/// takes the next tick, and it still returns when the shutdown future resolves.
+///
+/// The pool is lazy, so the connect starts inside the heartbeat. The acquire
+/// timeout of 5 s is the backstop of the test itself: it is longer than the 1 s
+/// run, so a warning proves the 300 ms bound and not the acquire timeout.
+///
+/// `client_timeout_ms: 300` is the value that `DB_CLIENT_TIMEOUT_MS=300` gives.
+/// The unit test `the_client_timeout_reads_the_same_three_rules` in
+/// `crates/store/src/lib.rs` pins that step, so this test sets the field and
+/// touches no process environment: a `set_var` reaches every other test in this
+/// binary.
+///
+/// `tracing::subscriber::set_default` binds the subscriber to THIS thread only,
+/// so the other tests of this binary keep their own log.
+#[tokio::test]
+async fn run_logs_a_heartbeat_timeout_and_keeps_ticking() {
+    let deaf = DeafPostgres::start_silent();
+    let cfg = DbConfig {
+        database_url: deaf.dsn(),
+        statement_timeout_ms: 0,
+        client_timeout_ms: 300,
+    };
+    let pool = PgPoolOptions::new()
+        .max_connections(1)
+        .acquire_timeout(Duration::from_secs(5))
+        .connect_lazy_with(connect_options(&cfg).expect("the deaf DSN parses"));
+    let db = Db::new(pool.clone(), cfg.client_timeout_ms);
+
+    let capture = Capture::default();
+    let subscriber = tracing_subscriber::fmt()
+        .with_writer(capture.clone())
+        .with_ansi(false)
+        .with_max_level(tracing::Level::WARN)
+        .finish();
+    let recorder = tracing::subscriber::set_default(subscriber);
+
+    let start = Instant::now();
+    let outcome = tokio::time::timeout(
+        Duration::from_secs(5),
+        cadus_worker::run(
+            &db,
+            &WorkerConfig {
+                tick: Duration::from_millis(50),
+            },
+            tokio::time::sleep(Duration::from_secs(1)),
+        ),
+    )
+    .await;
+    let elapsed = start.elapsed();
+    drop(recorder);
+
+    let log = capture.text();
+    let ticks = outcome
+        .expect("run must return within 5 s")
+        .expect("a heartbeat timeout must not fail the loop");
+
+    assert_eq!(ticks, 0, "no heartbeat answered, so the count must be 0");
+    assert!(
+        log.contains("heartbeat timed out after 300 ms"),
+        "the log must hold the literal `heartbeat timed out after 300 ms`; log:\n{log}"
+    );
+    assert!(
+        elapsed < Duration::from_secs(3),
+        "run must return soon after the 1 s shutdown, it took {elapsed:?}"
+    );
+
+    pool.close().await;
 }

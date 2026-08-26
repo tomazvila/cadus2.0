@@ -19,7 +19,9 @@
 //! Test 10 needs no database: `cadus_store::test_support::DeafPostgres` speaks
 //! the Postgres wire protocol itself and stops answering at the exact moment
 //! the test wants. Test 11 needs no
-//! database either: it proves the `KillOnDrop` guard on an unwind.
+//! database either: it proves the `KillOnDrop` guard on an unwind. Test 12
+//! points a lazy pool at that same server and measures the readiness probe
+//! against the client-side query bound (L1).
 
 #![allow(
     clippy::unwrap_used,
@@ -40,11 +42,23 @@ use std::time::{Duration, Instant};
 use axum::body::Body;
 use axum::http::{Request, StatusCode};
 use cadus_store::test_support::{DeafPostgres, TestDb};
-use cadus_store::{RoleInfo, StoreError};
+use cadus_store::{DEFAULT_CLIENT_TIMEOUT_MS, Db, DbConfig, RoleInfo, StoreError, connect_options};
 use cadus_web::{AppState, boot_check, router};
 use http_body_util::BodyExt;
+use sqlx::PgPool;
 use sqlx::postgres::PgPoolOptions;
 use tower::ServiceExt;
+
+/// Wrap a pool in the `Db` that `AppState` holds, with the documented default
+/// client-side bound of 10000 ms.
+///
+/// `DEFAULT_CLIENT_TIMEOUT_MS` is the value that an absent `DB_CLIENT_TIMEOUT_MS`
+/// gives, so these tests run the router exactly as the deployment does.
+fn state_with(pool: PgPool) -> AppState {
+    AppState {
+        db: Db::new(pool, DEFAULT_CLIENT_TIMEOUT_MS),
+    }
+}
 
 /// The environment variable that holds the superuser DSN of the test cluster.
 const TEST_DSN_VAR: &str = "CADUS_TEST_DATABASE_URL";
@@ -217,7 +231,7 @@ async fn health_returns_200_and_exact_body() {
     let pool = PgPoolOptions::new()
         .connect_lazy("postgresql://nobody@127.0.0.1:1/nodb")
         .expect("a lazy pool needs no server");
-    let app = router(AppState { pool });
+    let app = router(state_with(pool));
 
     let response = app
         .oneshot(
@@ -246,9 +260,7 @@ async fn health_returns_200_and_exact_body() {
 #[tokio::test]
 async fn ready_returns_200_on_a_live_pool() {
     TestDb::with(|db| async move {
-        let app = router(AppState {
-            pool: db.app.clone(),
-        });
+        let app = router(state_with(db.app.clone()));
 
         let response = app
             .oneshot(
@@ -271,7 +283,7 @@ async fn ready_returns_200_on_a_live_pool() {
 #[tokio::test]
 async fn boot_check_rejects_a_role_that_bypasses_rls() {
     TestDb::with(|db| async move {
-        match boot_check(&db.admin).await {
+        match boot_check(&Db::new(db.admin.clone(), DEFAULT_CLIENT_TIMEOUT_MS)).await {
             Err(StoreError::RlsBypass { superuser, .. }) => {
                 assert!(superuser, "the test cluster admin is a superuser")
             }
@@ -279,7 +291,7 @@ async fn boot_check_rejects_a_role_that_bypasses_rls() {
             Ok(info) => panic!("the guard accepted the superuser role {}", info.name),
         }
 
-        let info = boot_check(&db.app)
+        let info = boot_check(&Db::new(db.app.clone(), DEFAULT_CLIENT_TIMEOUT_MS))
             .await
             .expect("the guard accepts the app role");
         assert_eq!(
@@ -389,7 +401,7 @@ async fn ready_returns_503_on_a_closed_pool() {
     TestDb::with(|db| async move {
         let pool = db.app.clone();
         pool.close().await;
-        let app = router(AppState { pool });
+        let app = router(state_with(pool));
 
         let response = app
             .oneshot(
@@ -648,4 +660,63 @@ fn kill_on_drop_ends_the_child_when_the_test_body_panics() {
         !process_is_alive(pid),
         "the guard must kill and reap the child; pid {pid} is still there"
     );
+}
+
+/// (12) L1: `/api/ready` answers 503 inside the client-side bound when the
+/// database accepts the socket and then answers nothing.
+///
+/// `DeafPostgres::start_silent` accepts the connection and writes nothing, so
+/// the sqlx connect never finishes. `statement_timeout` cannot help here: it is
+/// a server-side bound and it needs a live server. sqlx 0.9 sets no TCP
+/// keepalive, so the read never ends either. Only the client-side bound of
+/// `cadus_store::bounded` ends the wait, and the handler then gives the
+/// documented 503.
+///
+/// The pool is lazy, so the connect starts inside the handler. The acquire
+/// timeout of 5 s is the backstop of the test itself: it is longer than the 2 s
+/// that the assertion allows, so a pass proves the 300 ms bound and not the
+/// acquire timeout.
+///
+/// `client_timeout_ms: 300` is the value that `DB_CLIENT_TIMEOUT_MS=300` gives.
+/// The unit test `the_client_timeout_reads_the_same_three_rules` in
+/// `crates/store/src/lib.rs` pins that step, so this test sets the field and
+/// touches no process environment: a `set_var` reaches every other test in this
+/// binary.
+#[tokio::test]
+async fn ready_returns_503_when_the_database_answers_nothing() {
+    let deaf = DeafPostgres::start_silent();
+    let cfg = DbConfig {
+        database_url: deaf.dsn(),
+        statement_timeout_ms: 0,
+        client_timeout_ms: 300,
+    };
+    let pool = PgPoolOptions::new()
+        .max_connections(1)
+        .acquire_timeout(Duration::from_secs(5))
+        .connect_lazy_with(connect_options(&cfg).expect("the deaf DSN parses"));
+    let app = router(AppState {
+        db: Db::new(pool.clone(), cfg.client_timeout_ms),
+    });
+
+    let start = Instant::now();
+    let response = app
+        .oneshot(
+            Request::builder()
+                .uri("/api/ready")
+                .body(Body::empty())
+                .unwrap(),
+        )
+        .await
+        .unwrap();
+    let elapsed = start.elapsed();
+
+    assert_eq!(response.status(), StatusCode::SERVICE_UNAVAILABLE);
+    let body = response.into_body().collect().await.unwrap().to_bytes();
+    assert_eq!(&body[..], b"{\"ready\":false}");
+    assert!(
+        elapsed < Duration::from_secs(2),
+        "the readiness probe took {elapsed:?}, so the client-side bound did not apply"
+    );
+
+    pool.close().await;
 }

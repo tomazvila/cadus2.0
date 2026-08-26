@@ -25,15 +25,18 @@ use axum::http::StatusCode;
 use axum::response::{IntoResponse, Response};
 use axum::routing::get;
 use axum::{Json, Router};
-use cadus_store::{RoleInfo, StoreError};
+use cadus_store::{Db, RoleInfo, StoreError, bounded};
 use serde_json::json;
-use sqlx::PgPool;
 
 /// The state that every handler shares. The process keeps no session data in
 /// memory, so the app tier stays stateless (C3).
+///
+/// The state carries a `Db`, not a bare `PgPool`. A `Db` holds the pool AND the
+/// client-side query bound of `DB_CLIENT_TIMEOUT_MS`, so every handler that
+/// takes this state applies the bound with `cadus_store::bounded` (R4, L1).
 #[derive(Clone)]
 pub struct AppState {
-    pub pool: PgPool,
+    pub db: Db,
 }
 
 /// Build the axum application.
@@ -57,14 +60,22 @@ async fn health() -> Response {
 /// The answer is `200` with `{"ready":true}` when the database replies, and
 /// `503` with `{"ready":false}` when it does not. A load balancer reads the
 /// status code, so the code carries the verdict and the body repeats it.
+///
+/// The query runs inside `cadus_store::bounded`, so `DB_CLIENT_TIMEOUT_MS`
+/// bounds it (L1). A database that accepts the socket and then answers nothing
+/// held this handler open without end, because `statement_timeout` needs a live
+/// server and sqlx 0.9 sets no TCP keepalive. The bound turns that stall into
+/// the same `503` that every other database fault gives.
 async fn ready(State(state): State<AppState>) -> Response {
-    match sqlx::query_scalar!(r#"SELECT 1 AS "one!""#)
-        .fetch_one(&state.pool)
-        .await
-    {
+    let query = sqlx::query_scalar!(r#"SELECT 1 AS "one!""#).fetch_one(state.db.pool());
+    match bounded(&state.db, query).await {
         Ok(1) => (StatusCode::OK, Json(json!({ "ready": true }))).into_response(),
         Ok(other) => {
             tracing::warn!(value = other, "web: the readiness probe got a wrong value");
+            unready()
+        }
+        Err(StoreError::Timeout { after_ms }) => {
+            tracing::warn!("web: the readiness probe timed out after {after_ms} ms");
             unready()
         }
         Err(err) => {
@@ -89,8 +100,18 @@ fn unready() -> Response {
 /// The check itself lives in `cadus_store::assert_rls_enforced`. The web crate
 /// only wires it into the start sequence, so one implementation serves every
 /// binary.
-pub async fn boot_check(pool: &PgPool) -> Result<RoleInfo, StoreError> {
-    cadus_store::assert_rls_enforced(pool).await
+///
+/// The guard query runs inside `cadus_store::bounded` too, so a database that
+/// answers nothing gives `StoreError::Timeout` instead of a start that never
+/// ends (L1).
+///
+/// `bounded` takes a future that gives `Result<T, sqlx::Error>`, and the guard
+/// gives `Result<RoleInfo, StoreError>`. The future below therefore wraps the
+/// answer of the guard in `Ok`, and the `?` takes it out again. `bounded` adds
+/// the bound and nothing else.
+pub async fn boot_check(db: &Db) -> Result<RoleInfo, StoreError> {
+    let guard = async { Ok(cadus_store::assert_rls_enforced(db.pool()).await) };
+    bounded(db, guard).await?
 }
 
 /// The environment variable that holds the listen address.

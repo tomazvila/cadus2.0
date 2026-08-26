@@ -18,7 +18,7 @@
 use std::future::Future;
 use std::time::Duration;
 
-use sqlx::PgPool;
+use cadus_store::{Db, StoreError, bounded};
 
 /// The environment variable that holds the tick period in whole seconds.
 const TICK_SECS_VAR: &str = "WORKER_TICK_SECS";
@@ -124,6 +124,11 @@ pub enum WorkerError {
 /// answers therefore does not block the stop: the loop leaves the query and
 /// returns the tick count that it completed.
 ///
+/// The heartbeat runs inside `cadus_store::bounded`, so `DB_CLIENT_TIMEOUT_MS`
+/// bounds it (L1). A bound that expires logs `heartbeat timed out after <n> ms`
+/// at warn level and the loop takes the next tick. A stalled database must not
+/// kill the worker, and it must not make the worker deaf to SIGTERM.
+///
 /// M0 runs no jobs. Two later milestones add work inside this loop:
 ///
 /// - M4 adds pool refill (D-O4): instantiate a template, verify the answer, and
@@ -131,11 +136,7 @@ pub enum WorkerError {
 /// - M5 adds the diagnosis queue claim (D-O5): take one `diagnosis_jobs` row
 ///   with `SELECT ... FOR UPDATE SKIP LOCKED`, so two workers never claim the
 ///   same job and neither one blocks the other.
-pub async fn run(
-    pool: &PgPool,
-    cfg: &WorkerConfig,
-    shutdown: impl Future,
-) -> Result<u64, WorkerError> {
+pub async fn run(db: &Db, cfg: &WorkerConfig, shutdown: impl Future) -> Result<u64, WorkerError> {
     let mut ticks: u64 = 0;
     let mut interval = tokio::time::interval(cfg.tick);
     interval.set_missed_tick_behavior(tokio::time::MissedTickBehavior::Delay);
@@ -161,10 +162,19 @@ pub async fn run(
         tokio::select! {
             biased;
             _ = &mut shutdown => break,
-            result = heartbeat(pool) => {
-                result?;
-                ticks += 1;
-                tracing::info!("heartbeat tick={ticks}");
+            result = heartbeat(db) => match result {
+                Ok(()) => {
+                    ticks += 1;
+                    tracing::info!("heartbeat tick={ticks}");
+                }
+                // Step 3: a bound that expires is news, not a fatal error. The
+                // database stalled; the worker keeps its loop and stays open to
+                // SIGTERM. Every other database error still stops the worker,
+                // because it names a fault that a retry does not repair.
+                Err(WorkerError::Store(StoreError::Timeout { after_ms })) => {
+                    tracing::warn!("heartbeat timed out after {after_ms} ms");
+                }
+                Err(err) => return Err(err),
             }
         }
     }
@@ -174,10 +184,13 @@ pub async fn run(
 }
 
 /// Run the heartbeat query. The compiler checks it against the schema (R2).
-async fn heartbeat(pool: &PgPool) -> Result<(), WorkerError> {
-    let one = sqlx::query_scalar!(r#"SELECT 1 AS "one!""#)
-        .fetch_one(pool)
-        .await?;
+///
+/// The query runs inside `cadus_store::bounded`, so a database that accepts the
+/// socket and then answers nothing gives `StoreError::Timeout` instead of a
+/// wait without end (L1).
+async fn heartbeat(db: &Db) -> Result<(), WorkerError> {
+    let query = sqlx::query_scalar!(r#"SELECT 1 AS "one!""#).fetch_one(db.pool());
+    let one = bounded(db, query).await?;
     tracing::trace!(one, "worker: heartbeat query is complete");
     Ok(())
 }

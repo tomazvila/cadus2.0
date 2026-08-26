@@ -36,7 +36,7 @@ use std::future::{Future, IntoFuture};
 use std::process::ExitCode;
 use std::time::{Duration, Instant};
 
-use cadus_store::{DbConfig, StoreError};
+use cadus_store::{Db, DbConfig, StoreError};
 use cadus_web::{AppState, BIND_ADDR_VAR, router};
 use tokio::net::TcpListener;
 use tracing_subscriber::EnvFilter;
@@ -104,13 +104,16 @@ async fn run() -> Result<(), Fatal> {
     // by signal (finding #39).
     let mut shutdown = Shutdown::install()?;
 
-    let pool = tokio::select! {
+    // `Db::connect` opens the pool AND keeps the client-side bound of
+    // `DB_CLIENT_TIMEOUT_MS`. Every query below therefore runs inside that
+    // bound (L1).
+    let db = tokio::select! {
         biased;
         () = shutdown.wait() => {
             tracing::info!("cadus-web: the stop signal came before the database connect");
             return Ok(());
         }
-        result = cadus_store::connect(&cfg) => {
+        result = Db::connect(&cfg) => {
             result.map_err(|err| Fatal::Startup(err.to_string()))?
         }
     };
@@ -121,6 +124,10 @@ async fn run() -> Result<(), Fatal> {
     // that accepts the connection and then answers no query made the old code
     // deaf to SIGTERM and SIGINT for the whole stall (finding #7).
     //
+    // `boot_check` also applies the client-side bound of `DB_CLIENT_TIMEOUT_MS`,
+    // so a database that never answers ends the start with exit code 2 instead
+    // of a wait without end (L1).
+    //
     // The stop branch returns without a pool close on purpose. The process ends
     // at that return, so the operating system closes the sockets. A wait for a
     // database that answers nothing only delays the stop the operator asked for.
@@ -130,7 +137,7 @@ async fn run() -> Result<(), Fatal> {
             tracing::info!("cadus-web: the stop signal came before the boot guard");
             return Ok(());
         }
-        result = cadus_web::boot_check(&pool) => result,
+        result = cadus_web::boot_check(&db) => result,
     };
     match guard {
         Ok(info) => tracing::info!(role = %info.name, "cadus-web: the boot guard passed"),
@@ -152,7 +159,7 @@ async fn run() -> Result<(), Fatal> {
     // after the message, so that literal never appeared (finding #10).
     tracing::info!("cadus-web: listening on {local}");
 
-    let app = router(AppState { pool: pool.clone() });
+    let app = router(AppState { db: db.clone() });
 
     // `fired_rx` reports the moment of the stop signal, so the deadline below
     // starts at the signal and not at the start of the process.
@@ -190,7 +197,7 @@ async fn run() -> Result<(), Fatal> {
         }
     };
 
-    close_within(close_budget(deadline, drain_elapsed), pool.close()).await;
+    close_within(close_budget(deadline, drain_elapsed), db.pool().close()).await;
     result.map_err(|err| Fatal::Startup(format!("serve failed: {err}")))
 }
 

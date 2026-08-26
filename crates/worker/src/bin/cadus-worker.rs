@@ -24,7 +24,7 @@ use std::future::Future;
 use std::process::ExitCode;
 use std::time::Duration;
 
-use cadus_store::DbConfig;
+use cadus_store::{Db, DbConfig, bounded};
 use cadus_worker::{WorkerConfig, WorkerError};
 
 /// The bound on the pool close after the tick loop stops.
@@ -61,7 +61,7 @@ fn init_tracing() {
 }
 
 async fn run() -> Result<u64, WorkerError> {
-    let db = DbConfig::from_env()?;
+    let db_cfg = DbConfig::from_env()?;
     let cfg = WorkerConfig::from_env()?;
 
     // Install the stop signals before the connect. The handlers exist from this
@@ -69,13 +69,16 @@ async fn run() -> Result<u64, WorkerError> {
     // by signal (finding #39).
     let mut shutdown = Shutdown::install()?;
 
-    let pool = tokio::select! {
+    // `Db::connect` opens the pool AND keeps the client-side bound of
+    // `DB_CLIENT_TIMEOUT_MS`. Every query below therefore runs inside that
+    // bound (L1).
+    let db = tokio::select! {
         biased;
         () = shutdown.wait() => {
             tracing::info!("cadus-worker: the stop signal came before the database connect");
             return Ok(0);
         }
-        result = cadus_store::connect(&db) => result?,
+        result = Db::connect(&db_cfg) => result?,
     };
 
     // The worker connects as `cadus_admin`. That role holds BYPASSRLS by design:
@@ -87,7 +90,8 @@ async fn run() -> Result<u64, WorkerError> {
     //
     // The report runs inside the same select as the connect above. A database
     // that accepts the connection and then answers no query made the old code
-    // deaf to SIGTERM for the whole stall (finding #8).
+    // deaf to SIGTERM for the whole stall (finding #8). The report also runs
+    // inside the client-side bound of `DB_CLIENT_TIMEOUT_MS` (L1).
     //
     // The stop branch returns without a pool close on purpose. The process ends
     // at that return, so the operating system closes the sockets. A wait for a
@@ -98,7 +102,7 @@ async fn run() -> Result<u64, WorkerError> {
             tracing::info!("cadus-worker: the stop signal came before the role report");
             return Ok(0);
         }
-        result = cadus_store::current_role(&pool) => result?,
+        result = role_report(&db) => result?,
     };
     tracing::info!(
         role = %role.name,
@@ -107,9 +111,20 @@ async fn run() -> Result<u64, WorkerError> {
         "cadus-worker: database role"
     );
 
-    let ticks = cadus_worker::run(&pool, &cfg, shutdown.wait()).await?;
-    close_within(POOL_CLOSE_DEADLINE, pool.close()).await;
+    let ticks = cadus_worker::run(&db, &cfg, shutdown.wait()).await?;
+    close_within(POOL_CLOSE_DEADLINE, db.pool().close()).await;
     Ok(ticks)
+}
+
+/// Read the identity of the database role under the client-side bound.
+///
+/// `bounded` takes a future that gives `Result<T, sqlx::Error>`, and
+/// `cadus_store::current_role` gives `Result<RoleInfo, StoreError>`. The future
+/// below therefore wraps the answer of the report in `Ok`, and the `?` takes it
+/// out again. `bounded` adds the bound and nothing else.
+async fn role_report(db: &Db) -> Result<cadus_store::RoleInfo, cadus_store::StoreError> {
+    let report = async { Ok(cadus_store::current_role(db.pool()).await) };
+    bounded(db, report).await?
 }
 
 /// Wait for `close` for at most `deadline`, then log the fact and give up.
