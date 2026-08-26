@@ -69,6 +69,16 @@ structure (no string rewrites); canon replaces `Inverse` atoms with an expanded
 numerator/denominator pair (no GCD). Fix units FIXM2g–i, then verification round 4. If
 round 4 confirms another C4 blocker, M2 stops for an owner decision on the grammar design.
 
+Fix units FIXM2g–i fixed all 14: LaTeX and glyph constructs are lexer tokens
+(`\frac` with recursive brace lexing, `\sqrt`, `^{}`, `\cdot`, `\times`, `%` postfix,
+vulgar glyphs, `√`, superscripts, `°`); a percent node wraps exactly its primary; the
+juxtaposed argument stops at a function name; `-0 1/2` keeps its sign; canon uses
+`Canon::Value {num, den}` (expanded, no polynomial GCD; `x/x = 1` by exponents); `sqrt` of
+a rational reduces; `Atom::E` folds the integer part. Oracle set regenerated with a
+SymPy-generated rational-rewrite family: 17,874 pairs, class 3 agreement
+16,554/16,554, 355 documented divergences in 14 specific classes (D6 240, bare `e` 46,
+times-x 24, no-GCD 6, no-radical-rationalization 6, …). Gate green with the live oracle.
+
 Known items before the M2 fix wave were: the lexer refused a multi-letter run (`3xy^2`, 11
 corpus answers on 9 topics) — split unknown letter runs into single-letter variables
 except function names and differentials; `e` and `E` both read as Euler's number (1.0
