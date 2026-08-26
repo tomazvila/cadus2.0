@@ -26,7 +26,12 @@ sqlx = { version = "0.9.0", default-features = false, features = [
     "macros",
 ] }
 serde = { version = "1.0.229", features = ["derive"] }
-serde_json = { version = "1.0.151" }
+# `float_roundtrip` is REQUIRED for M3 parity (R5). Without it, `serde_json`'s
+# number parser is off by one unit in the last place on some inputs: it reads
+# `0.36925854946048403` as `0.369258549460484`, which is a different `f64`. The
+# 1.0 oracle reads the correctly rounded value, so the fold would diverge on the
+# first such float in an event payload or a cached learner model.
+serde_json = { version = "1.0.151", features = ["float_roundtrip"] }
 # YAML for the curriculum loader (M1, C5). `serde_norway` is a maintained fork of
 # the archived `serde_yaml`; it tracks serde 1.x, keeps mapping order in
 # `serde_norway::Value`, and its derive support honors
@@ -45,6 +50,19 @@ num-traits = { version = "0.2.19" }
 # `num-integer` gives the gcd of the content normalization (M2 U2, D6).
 num-rational = { version = "0.4.2" }
 num-integer = { version = "0.1.47" }
+
+# M3 (spec section 7 traps T8/T9). `chrono` gives the calendar arithmetic of the
+# UTC instants and `chrono-tz` compiles the IANA time-zone database in, so
+# `local_day` needs no file at run time. Both are pure computation: no network,
+# no database, no model call.
+chrono-tz = { version = "0.10.4" }
+# SHA-1 for `problem_text_hash` (M3 U1, spec trap T17). It is the 1.0 digest of a
+# problem text; the value is a dedup key, never a security claim.
+sha1 = { version = "0.10.6" }
+# Insertion-ordered map for the places where 1.0 relies on Python dict order
+# (M3, spec trap T6): the `balances` map of `diagnostic_placed` and the ability
+# delta map of the FIRe update.
+indexmap = { version = "2.14.0", features = ["serde"] }
 uuid = { version = "1.25.0", features = ["v4", "serde"] }
 chrono = { version = "0.4.45", features = ["serde"] }
 tracing = { version = "0.1.44" }

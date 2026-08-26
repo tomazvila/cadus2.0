@@ -10,9 +10,9 @@ publish.workspace = true
 name = "cadus_core"
 path = "src/lib.rs"
 
-# R3 core purity. Keep this list at num-bigint, num-integer, num-rational,
-# num-traits, serde, serde_json, serde_norway, sha2, and thiserror.
-# `crates/core/tests/purity.rs` asserts the exact key set.
+# R3 core purity. Keep this list at chrono, chrono-tz, indexmap, num-bigint,
+# num-integer, num-rational, num-traits, serde, serde_json, serde_norway, sha1,
+# sha2, and thiserror. `crates/core/tests/purity.rs` asserts the exact key set.
 #
 # `serde_norway` is the one YAML crate of the core: a maintained fork of the
 # archived `serde_yaml`. It keeps mapping order in `Value`, and its derive support
@@ -23,9 +23,21 @@ path = "src/lib.rs"
 # big rationals and nothing else, so they keep the core pure.
 #
 # `sha2` gives the SHA-256 of the canonical dump, which is the curriculum hash
-# (M1 U4, spec section 3). It computes a digest and nothing else, so it keeps the
-# core pure: no network, no database, no model call.
+# (M1 U4, spec section 3), and the SHA-256 of the config preimage, which is
+# `config_hash` (M3 U1, spec trap T16). `sha1` gives `problem_text_hash` (spec
+# trap T17). Both compute a digest and nothing else, so they keep the core pure:
+# no network, no database, no model call.
+#
+# `chrono` and `chrono-tz` give the M3 time math. The core never reads a clock:
+# `now` is an explicit parameter, and every instant is UTC microseconds. The
+# time-zone database is compiled into `chrono-tz`, so `local_day` opens no file.
+#
+# `indexmap` gives the insertion-ordered map that spec trap T6 needs, where 1.0
+# relies on Python dict order.
 [dependencies]
+chrono = { workspace = true }
+chrono-tz = { workspace = true }
+indexmap = { workspace = true }
 num-bigint = { workspace = true }
 num-integer = { workspace = true }
 num-rational = { workspace = true }
@@ -33,6 +45,7 @@ num-traits = { workspace = true }
 serde = { workspace = true }
 serde_json = { workspace = true }
 serde_norway = { workspace = true }
+sha1 = { workspace = true }
 sha2 = { workspace = true }
 thiserror = { workspace = true }
 

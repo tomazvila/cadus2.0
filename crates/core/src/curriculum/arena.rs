@@ -28,8 +28,8 @@
 //!   [`load_curriculum`] still blocks on a fatal parse-stage finding, the same
 //!   as 1.0 `Graph.load`.
 
-use std::collections::HashMap;
 use std::collections::hash_map::Entry;
+use std::collections::{BTreeSet, HashMap};
 use std::path::Path;
 
 use super::finding::Finding;
@@ -657,6 +657,126 @@ impl Curriculum {
             return 1.0;
         }
         self.reach_weights(a).get(b.index()).copied().unwrap_or(0.0)
+    }
+
+    /// `W(a -> b)` addressed by external id, for the FIRe knockout predicate
+    /// (1.0 `Graph.encompassing_weight`, `cadus/graph.py:455-465`).
+    ///
+    /// An id with no encompassing node gives `0.0`, and `a == b` gives `1.0`
+    /// before any lookup, the same as 1.0.
+    pub fn encompassing_weight_by_id(&self, a: &str, b: &str) -> f64 {
+        if a == b {
+            return 1.0;
+        }
+        let (Some(src), Some(dst)) = (self.enc_node_by_id(a), self.enc_node_by_id(b)) else {
+            return 0.0;
+        };
+        let weights = graph::relax(&self.enc, src.as_u32(), self.enc_node_count());
+        weights.get(dst.index()).copied().unwrap_or(0.0)
+    }
+
+    /// `W(src -> b)` for every node `b` with a positive weight, as `(id, weight)`
+    /// pairs SORTED BY ID (1.0 `Graph.reach_weights`, `cadus/graph.py:435-443`).
+    ///
+    /// This is the downward implicit credit of PEDAGOGY 4. A phantom target is
+    /// present, because a dangling prerequisite id enters the encompassing maps
+    /// and the FIRe engine then makes state for it (parity trap T15).
+    ///
+    /// 1.0 iterates this map with `sorted(weights.items())`, so the pairs come
+    /// back in byte order of the id, which is the Python code-point order of a
+    /// UTF-8 id (parity trap T18). `src` itself holds `1.0`; every 1.0 caller
+    /// skips it. An id with no encompassing node gives an EMPTY list, because
+    /// its only 1.0 entry is that skipped self weight.
+    pub fn reach_weights_by_id(&self, src: &str) -> Vec<(&str, f64)> {
+        match self.enc_node_by_id(src) {
+            Some(node) => self.weights_by_id(&graph::relax(
+                &self.enc,
+                node.as_u32(),
+                self.enc_node_count(),
+            )),
+            None => Vec::new(),
+        }
+    }
+
+    /// `W(a -> dst)` for every node `a` with a positive weight, as `(id, weight)`
+    /// pairs SORTED BY ID (1.0 `Graph.upward_weights`, `cadus/graph.py:445-453`).
+    ///
+    /// This is the upward failure penalty of PEDAGOGY 4. The ordering rule and
+    /// the empty-list rule of [`Curriculum::reach_weights_by_id`] hold here too.
+    pub fn upward_weights_by_id(&self, dst: &str) -> Vec<(&str, f64)> {
+        match self.enc_node_by_id(dst) {
+            Some(node) => self.weights_by_id(&graph::relax(
+                &self.enc_rev,
+                node.as_u32(),
+                self.enc_node_count(),
+            )),
+            None => Vec::new(),
+        }
+    }
+
+    /// The local neighborhood that seeds an untouched topic's ability
+    /// (1.0 `Graph.neighborhood`, `cadus/graph.py:408-431`), SORTED BY ID.
+    ///
+    /// The union is: the direct prerequisites that are topics, the key
+    /// prerequisite edges, the key prerequisites of every knowledge point, the
+    /// `encompassings_extra` targets, the sources of every reverse encompassing
+    /// edge (weight-0 edges included, which is why the reverse map keeps them),
+    /// and the topics of the same module. The topic itself and every dangling id
+    /// drop out at the end.
+    ///
+    /// 1.0 returns a SET and the caller iterates it, so the order is
+    /// hash-randomized there (parity trap T5). This returns the sorted order,
+    /// which removes the class of bug.
+    ///
+    /// An id with no topic gives an EMPTY list. 1.0 raises `KeyError` there; the
+    /// 2.0 fold reports no panic on any event stream, and an empty neighborhood
+    /// makes [`crate::fire::initial_ability`] fall back to its neutral prior.
+    pub fn neighborhood(&self, id: &str) -> Vec<&str> {
+        let Some(idx) = self.idx_of(id) else {
+            return Vec::new();
+        };
+        let Some(topic) = self.topic(idx) else {
+            return Vec::new();
+        };
+        let mut out: BTreeSet<&str> = BTreeSet::new();
+        for prereq in self.prerequisites(idx) {
+            out.insert(self.id_of(prereq));
+        }
+        for edge in &topic.prerequisites {
+            if edge.key {
+                out.insert(edge.id.as_str());
+            }
+        }
+        for kp in &topic.knowledge_points {
+            for key in &kp.key_prerequisites {
+                out.insert(key.as_str());
+            }
+        }
+        for edge in &topic.encompassings_extra {
+            out.insert(edge.id.as_str());
+        }
+        for link in self.enc_reverse(self.enc_node(idx)) {
+            out.insert(self.enc_node_id(link.target));
+        }
+        for &sibling in self.topics_in_module(self.module_of(idx)) {
+            out.insert(self.id_of(sibling));
+        }
+        out.remove(id);
+        out.into_iter()
+            .filter(|other| self.idx_of(other).is_some())
+            .collect()
+    }
+
+    /// Turn a node-indexed weight vector into the `(id, weight)` pairs of 1.0,
+    /// sorted by id. A zero weight is absent, because 1.0 never stores one.
+    fn weights_by_id(&self, weights: &[f64]) -> Vec<(&str, f64)> {
+        let mut out: Vec<(&str, f64)> = (0_u32..)
+            .zip(weights.iter().copied())
+            .filter(|&(_, weight)| weight > 0.0)
+            .map(|(node, weight)| (self.enc_node_id(EncNode::from_u32(node)), weight))
+            .collect();
+        out.sort_by(|left, right| left.0.cmp(right.0));
+        out
     }
 
     // -- helpers ----------------------------------------------------------- //
