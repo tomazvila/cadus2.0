@@ -37,6 +37,19 @@ rules, a killable oracle worker. Regenerated: corpus split 3,227 parsed / 265
 undecidable; oracle set 14,989 pairs, class 3 agreement 14,037/14,037, 21 documented
 divergences. Gate with the live oracle green.
 
+### Adversarial review round 2 (M2)
+
+One find/refute round on the fixed tree: 20 raised, 17 confirmed, 7 blockers
+(`docs/reviews/M2-review-2.md`). The round-1 mixed-number reading covered only the
+glued glyph: `2 ½`, `2\frac{1}{2}` still read as products (`check("1", "2 ½")` was true);
+the juxtaposed function argument stopped at an explicit `*` (`cos 2*x` = `x*cos(2)`);
+`\sqrt{}` after a letter glued into one name; a space-grouped number after a factor
+invented a value; canon kept two forms for `e^(x+2)` and for reciprocals of powers; the
+oracle harness had a catch-all divergence reason. Ruling: one mixed-number rule in the
+parser for every spelling; the argument chain continues through `*`; one `Inverse` per
+monomial; no catch-all reason. Fix units FIXM2d–e, regeneration FIXM2f, then one
+verification round, then M2 closes with any leftover recorded.
+
 Known items before the M2 fix wave were: the lexer refused a multi-letter run (`3xy^2`, 11
 corpus answers on 9 topics) — split unknown letter runs into single-letter variables
 except function names and differentials; `e` and `E` both read as Euler's number (1.0
