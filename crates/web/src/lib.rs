@@ -92,3 +92,143 @@ fn unready() -> Response {
 pub async fn boot_check(pool: &PgPool) -> Result<RoleInfo, StoreError> {
     cadus_store::assert_rls_enforced(pool).await
 }
+
+/// The environment variable that holds the listen address.
+pub const BIND_ADDR_VAR: &str = "BIND_ADDR";
+
+/// The address to bind when `BIND_ADDR` is absent.
+pub const DEFAULT_BIND_ADDR: &str = "0.0.0.0:8080";
+
+/// The reason that [`bind_addr`] refuses a value of `BIND_ADDR`.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum BindAddrError {
+    /// The value is not valid Unicode.
+    NotUnicode,
+    /// The value is valid Unicode, but it is not `host:port`.
+    NotSocketAddr {
+        /// The value, as the operator wrote it.
+        value: String,
+        /// The text of the parse error.
+        reason: String,
+    },
+}
+
+impl std::fmt::Display for BindAddrError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::NotUnicode => write!(f, "{BIND_ADDR_VAR} is not valid Unicode"),
+            Self::NotSocketAddr { value, reason } => {
+                write!(
+                    f,
+                    "{BIND_ADDR_VAR} {value} is not a socket address: {reason}"
+                )
+            }
+        }
+    }
+}
+
+impl std::error::Error for BindAddrError {}
+
+/// Resolve the listen address from the raw value of `BIND_ADDR`.
+///
+/// The function is pure. It reads no environment and it opens no socket, so a
+/// test drives every branch without a bind. The binary calls it with
+/// `std::env::var_os(BIND_ADDR_VAR)` and binds the answer.
+///
+/// The rules are:
+///
+/// - `None` gives the default `0.0.0.0:8080`.
+/// - A value that parses as `host:port` comes back unchanged.
+/// - A value that is not valid Unicode gives [`BindAddrError::NotUnicode`]. The
+///   old code sent that value to the default and bound every interface without
+///   a word (round-3 finding #31).
+/// - Any other value gives [`BindAddrError::NotSocketAddr`].
+pub fn bind_addr(raw: Option<std::ffi::OsString>) -> Result<String, BindAddrError> {
+    let Some(raw) = raw else {
+        return Ok(DEFAULT_BIND_ADDR.to_string());
+    };
+    let value = raw.into_string().map_err(|_| BindAddrError::NotUnicode)?;
+    match value.parse::<std::net::SocketAddr>() {
+        Ok(_) => Ok(value),
+        Err(err) => Err(BindAddrError::NotSocketAddr {
+            reason: err.to_string(),
+            value,
+        }),
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use std::ffi::OsString;
+
+    use super::{BindAddrError, bind_addr};
+
+    /// An absent `BIND_ADDR` binds every interface on port 8080.
+    ///
+    /// The Dockerfile, docker-compose.yml, and `docs/SELF_HOST.md` expose 8080
+    /// and set no `BIND_ADDR`, so this literal is the contract of the image. A
+    /// bind test cannot hold that contract: port 8080 collides on the build
+    /// machine.
+    #[test]
+    fn absent_bind_addr_gives_the_default() {
+        assert_eq!(bind_addr(None), Ok("0.0.0.0:8080".to_string()));
+    }
+
+    /// A valid value comes back unchanged, character for character.
+    #[test]
+    fn a_socket_address_comes_back_unchanged() {
+        assert_eq!(
+            bind_addr(Some(OsString::from("127.0.0.1:0"))),
+            Ok("127.0.0.1:0".to_string())
+        );
+        assert_eq!(
+            bind_addr(Some(OsString::from("[::1]:8443"))),
+            Ok("[::1]:8443".to_string())
+        );
+    }
+
+    /// A value that is not valid Unicode is a start error, not the default.
+    ///
+    /// The byte 0xff is not valid UTF-8. On unix an environment variable holds
+    /// any byte string, so a typo reaches this branch.
+    #[cfg(unix)]
+    #[test]
+    fn a_non_unicode_value_is_an_error() {
+        use std::os::unix::ffi::OsStringExt;
+
+        let raw = OsString::from_vec(vec![0x31, 0x32, 0x37, 0xff]);
+
+        assert_eq!(bind_addr(Some(raw)), Err(BindAddrError::NotUnicode));
+    }
+
+    /// A value that is not `host:port` is a start error too.
+    #[test]
+    fn a_value_that_is_not_a_socket_address_is_an_error() {
+        let answer = bind_addr(Some(OsString::from("not-an-address")));
+
+        assert!(
+            matches!(
+                &answer,
+                Err(BindAddrError::NotSocketAddr { value, .. }) if value == "not-an-address"
+            ),
+            "BIND_ADDR=not-an-address must fail, it gave {answer:?}"
+        );
+    }
+
+    /// The error text names the variable and the value.
+    #[test]
+    fn the_error_text_names_the_variable() {
+        assert_eq!(
+            BindAddrError::NotUnicode.to_string(),
+            "BIND_ADDR is not valid Unicode"
+        );
+        assert_eq!(
+            BindAddrError::NotSocketAddr {
+                value: "1.2.3.4".to_string(),
+                reason: "invalid socket address syntax".to_string(),
+            }
+            .to_string(),
+            "BIND_ADDR 1.2.3.4 is not a socket address: invalid socket address syntax"
+        );
+    }
+}

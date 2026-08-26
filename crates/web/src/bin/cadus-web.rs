@@ -33,20 +33,13 @@
 )]
 
 use std::future::{Future, IntoFuture};
-use std::net::SocketAddr;
 use std::process::ExitCode;
 use std::time::{Duration, Instant};
 
 use cadus_store::{DbConfig, StoreError};
-use cadus_web::{AppState, router};
+use cadus_web::{AppState, BIND_ADDR_VAR, router};
 use tokio::net::TcpListener;
 use tracing_subscriber::EnvFilter;
-
-/// The environment variable that holds the listen address.
-const BIND_ADDR_VAR: &str = "BIND_ADDR";
-
-/// The address to bind when `BIND_ADDR` is absent.
-const DEFAULT_BIND_ADDR: &str = "0.0.0.0:8080";
 
 /// The environment variable that bounds the drain after the stop signal.
 const SHUTDOWN_DEADLINE_VAR: &str = "SHUTDOWN_DEADLINE_SECS";
@@ -145,7 +138,9 @@ async fn run() -> Result<(), Fatal> {
         Err(err) => return Err(Fatal::Startup(err.to_string())),
     }
 
-    let listener = TcpListener::bind(addr)
+    // `bind_addr` accepted the string only after a `SocketAddr` parse, so this
+    // bind resolves the literal address and asks no name server.
+    let listener = TcpListener::bind(addr.as_str())
         .await
         .map_err(|err| Fatal::Startup(format!("bind {addr} failed: {err}")))?;
     let local = listener
@@ -237,23 +232,12 @@ async fn close_within<F: Future<Output = ()>>(deadline: Duration, close: F) {
 
 /// Read `BIND_ADDR`, or use the default.
 ///
-/// A value that is not valid Unicode is a start error. The old code sent that
-/// value to the default and bound every interface without a word (finding #31).
-fn bind_addr() -> Result<SocketAddr, Fatal> {
-    let raw = match std::env::var(BIND_ADDR_VAR) {
-        Ok(raw) => raw,
-        Err(std::env::VarError::NotPresent) => DEFAULT_BIND_ADDR.to_string(),
-        Err(std::env::VarError::NotUnicode(_)) => {
-            return Err(Fatal::Startup(format!(
-                "{BIND_ADDR_VAR} is not valid Unicode"
-            )));
-        }
-    };
-    raw.parse().map_err(|err| {
-        Fatal::Startup(format!(
-            "{BIND_ADDR_VAR} {raw} is not a socket address: {err}"
-        ))
-    })
+/// The rules live in `cadus_web::bind_addr`, a pure function. This wrapper only
+/// reads the environment and maps the error to an exit code, so the unit tests
+/// of the library cover every rule without a bind (item FIX10b/a).
+fn bind_addr() -> Result<String, Fatal> {
+    cadus_web::bind_addr(std::env::var_os(BIND_ADDR_VAR))
+        .map_err(|err| Fatal::Startup(err.to_string()))
 }
 
 /// Read `SHUTDOWN_DEADLINE_SECS`, or use the default of 10 seconds.
