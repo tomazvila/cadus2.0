@@ -260,22 +260,18 @@ impl LearnerModel {
 
     /// The bytes the parity oracle compares (spec section 9).
     ///
-    /// Canonical JSON of the model with `built_from_ts` REMOVED: sorted keys, compact
-    /// separators, non-ASCII text unescaped, no trailing newline. The 1.0 side builds
-    /// the same bytes with
-    /// `json.dumps(payload, sort_keys=True, separators=(",", ":"), ensure_ascii=False)`.
+    /// This is [`crate::projector::canonical_blob`] and nothing else. The blob has ONE
+    /// definition, the way `problem_text_hash` has one: a second spelling of the float
+    /// text or the key order gives bytes that never compare equal, and the digest then
+    /// diverges silently.
     ///
     /// # Errors
     ///
     /// Returns [`EventError::Serialize`] when a timestamp is outside the
     /// representable range.
     pub fn parity_blob(&self) -> Result<String, EventError> {
-        let mut value =
-            serde_json::to_value(self).map_err(|error| EventError::Serialize(error.to_string()))?;
-        if let Some(object) = value.as_object_mut() {
-            object.remove("built_from_ts");
-        }
-        serde_json::to_string(&value).map_err(|error| EventError::Serialize(error.to_string()))
+        crate::projector::canonical_blob(self)
+            .map_err(|error| EventError::Serialize(error.to_string()))
     }
 
     /// The SHA-256 of [`LearnerModel::parity_blob`], as lowercase hex.
