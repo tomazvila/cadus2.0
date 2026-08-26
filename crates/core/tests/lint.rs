@@ -32,13 +32,15 @@ use cadus_core::curriculum::{Finding, lint_curriculum};
 const YAML_TAIL: &str = "<yaml parser message>";
 
 /// Every committed fixture tree: one per lint code of spec section 5, plus the
-/// extra trees named in the comments below. The last three trees are multi-rule:
-/// they fix the authored order against the id order and put nine codes in one
-/// tree, so the byte comparison sees every `sorted()` site and the order of the
-/// rule blocks. A missing directory fails the walk, so a deleted fixture cannot
-/// pass unnoticed.
-const FIXTURES: [&str; 22] = [
+/// extra trees named in the comments below. Five trees are order trees: they fix
+/// the authored order against the id order, put nine codes in one tree, span two
+/// modules over two courses, and repeat one course id, so the byte comparison
+/// sees every `sorted()` site, the order of the rule blocks, and the
+/// last-entry-wins rule of the catalog. A missing directory fails the walk, so a
+/// deleted fixture cannot pass unnoticed.
+const FIXTURES: [&str; 24] = [
     "clean",                          // the 1.0 curriculum_mini copy: 0 findings
+    "course_id_repeated",             // the catalog keeps the LAST entry of an id
     "cycle",                          // 8
     "cycle_duplicate_missing_ref",    // nine codes, and both skip rules at once
     "duplicate_topic_id",             // 6
@@ -52,10 +54,11 @@ const FIXTURES: [&str; 22] = [
     "missing_ref",                    // 7, all three messages
     "module_inconsistent",            // 14, the "spans multiple courses" message
     "module_inconsistent_empty_name", // 14, the "empty module name" message
+    "module_spans_two_modules",       // 14, the `sorted(module_courses)` site
     "no_exemplar",                    // 10
     "no_kp",                          // 9
     "noncore_ancestor_of_core",       // 13, with the "(+n more)" tail
-    "order_not_id_order",             // every `sorted()` site of the lint
+    "order_not_id_order",             // three `sorted()` sites of the lint
     "schema",                         // 2
     "unreachable_from_floor",         // 16
     "weight_out_of_range",            // 3
@@ -425,6 +428,47 @@ fn the_lint_walks_topic_ids_in_sorted_order_not_in_authored_order() {
     assert_eq!(
         findings[2].context.as_deref(),
         Some(["a".to_owned(), "y".to_owned()].as_slice())
+    );
+}
+
+#[test]
+fn two_modules_over_two_courses_come_in_sorted_module_order() {
+    // Review finding 12. 1.0 walks `sorted(module_courses.items())`
+    // (`cadus/graph.py:780`), which is the fourth `sorted()` site of the lint.
+    // Fixture `module_spans_two_modules` authors `Zeta` before `Alpha` in both
+    // courses, and both modules span both courses, so a port that walks the map
+    // in load order or in reverse swaps the two findings. Every value below is
+    // the committed 1.0 output.
+    let findings = lint_curriculum(&fixture("module_spans_two_modules"));
+    assert_eq!(
+        codes(&findings),
+        vec!["module_inconsistent", "module_inconsistent"]
+    );
+    assert_eq!(
+        messages(&findings),
+        vec![
+            "module 'Alpha' spans multiple courses: ['c1', 'c2']",
+            "module 'Zeta' spans multiple courses: ['c1', 'c2']",
+        ]
+    );
+}
+
+#[test]
+fn a_repeated_course_id_resolves_to_the_last_catalog_entry() {
+    // Review finding 11. 1.0 builds `{c.id: c for c in catalog.courses}`
+    // (`cadus/graph.py:824`), so a repeated course id keeps the LAST entry.
+    // Fixture `course_id_repeated` declares `c1` at order 1 and again at order
+    // 3, and c2 grounds its floor on `mastery_floor_course: c1`. The floor of c2
+    // therefore unions every course at or below order 3, `mid` included, and
+    // `b` is reachable. A port that keeps the first entry unions only order 1
+    // and adds `[unreachable_from_floor] topic 'b' is not reachable from course
+    // c2's floor/roots`. The two advisory findings below are the committed 1.0
+    // output: `c1` holds no unit file, and the catalog names it twice.
+    let findings = lint_curriculum(&fixture("course_id_repeated"));
+    assert_eq!(codes(&findings), vec!["empty_course", "empty_course"]);
+    assert_eq!(
+        messages(&findings),
+        vec!["course c1 has no unit files", "course c1 has no unit files",]
     );
 }
 

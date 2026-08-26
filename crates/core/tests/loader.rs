@@ -15,6 +15,7 @@
     clippy::unimplemented
 )]
 
+use std::os::unix::ffi::OsStringExt;
 use std::path::{Path, PathBuf};
 
 use cadus_core::curriculum::{
@@ -447,12 +448,56 @@ fn the_checked_in_tree_writes_no_yaml_1_1_boolean() {
 // --------------------------------------------------------------------------- //
 
 #[test]
-fn nan_and_the_infinities_are_out_of_range() {
-    // Review finding 1. `difficulty` and `weight` must be finite and in 0..=1.
-    // The four messages below are the 1.0 output for this fixture: pydantic
-    // `Field(ge=0.0, le=1.0)` reports the upper bound for NaN and for `.inf`,
-    // and the lower bound for `-.inf`.
+fn the_non_finite_literals_are_rejected_numeric_forms() {
+    // Review findings 3 to 6, 8, 10 and 14. `.nan`, `.inf` and `-.inf` are YAML
+    // 1.1 spellings that no plain decimal number writes, so the numeric-literal
+    // rule of spec section 7 refuses all three. 1.0 reads the three values and
+    // reports the range instead (`Input should be less than or equal to 1` for
+    // `.nan` and `.inf`, the lower bound for `-.inf`); the range messages stay
+    // pinned on the overflow fixture below, where the spelling is accepted.
     let parsed = parse_curriculum(&fixture("loader-nonfinite"));
+    assert_eq!(
+        triples(&parsed),
+        vec![
+            (
+                "schema",
+                "c/00.yaml:7: numeric literal form '.nan' is not accepted; write a plain decimal \
+                 number",
+                Some("c/00.yaml"),
+            ),
+            (
+                "schema",
+                "c/00.yaml:12: numeric literal form '.inf' is not accepted; write a plain decimal \
+                 number",
+                Some("c/00.yaml"),
+            ),
+            (
+                "schema",
+                "c/00.yaml:17: numeric literal form '.nan' is not accepted; write a plain decimal \
+                 number",
+                Some("c/00.yaml"),
+            ),
+            (
+                "schema",
+                "c/00.yaml:20: numeric literal form '-.inf' is not accepted; write a plain \
+                 decimal number",
+                Some("c/00.yaml"),
+            ),
+        ]
+    );
+    assert!(parsed.units.is_empty(), "the file is dropped");
+    assert!(parsed.findings[0].fatal);
+}
+
+#[test]
+fn a_decimal_literal_that_overflows_f64_keeps_the_1_0_range_messages() {
+    // Review findings 3 and 5. `1.0e+400` is a plain decimal float with a signed
+    // exponent, so the numeric-literal rule accepts the spelling; the value
+    // overflows to an infinity. The three messages below are the 1.0 output for
+    // this fixture: pydantic reports the upper bound for `+inf` in a `difficulty`
+    // field, the lower bound for `-inf`, and `Input should be a finite number`
+    // in an `expected_time_secs` field.
+    let parsed = parse_curriculum(&fixture("loader-overflow-float"));
     assert_eq!(
         triples(&parsed),
         vec![
@@ -463,17 +508,12 @@ fn nan_and_the_infinities_are_out_of_range() {
             ),
             (
                 "schema",
-                "topics.1.difficulty: Input should be less than or equal to 1",
-                Some("c/00.yaml"),
-            ),
-            (
-                "weight_out_of_range",
-                "topics.1.prerequisites.0.weight: Input should be less than or equal to 1",
+                "topics.1.difficulty: Input should be greater than or equal to 0",
                 Some("c/00.yaml"),
             ),
             (
                 "schema",
-                "topics.2.difficulty: Input should be greater than or equal to 0",
+                "topics.2.expected_time_secs: Input should be a finite number",
                 Some("c/00.yaml"),
             ),
         ]
@@ -575,35 +615,213 @@ fn a_duplicate_mapping_key_is_a_schema_finding() {
 }
 
 #[test]
-fn the_yaml_1_1_integer_forms_are_schema_findings() {
-    // Review findings 18 and 21. PyYAML reads `030` as 24, `1_200` as 1200 and
-    // `1:30` as 90, and a Python integer has no upper bound. 2.0 refuses all
-    // four and names the value to write.
+fn a_duplicate_key_in_the_root_mapping_names_its_line() {
+    // Review finding 7. The parser writes a location for a duplicate inside a
+    // nested mapping and none for one in the root mapping, so the root case
+    // reads the line out of the text. The fixture repeats `topics:` at the root;
+    // the second block starts on line 10. 1.0 keeps the last block and loads the
+    // file with the topic `b`.
+    let parsed = parse_curriculum(&fixture("loader-duplicate-root-key"));
+    assert_eq!(
+        triples(&parsed),
+        vec![(
+            "schema",
+            "c/00.yaml: duplicate mapping key 'topics' at line 10",
+            Some("c/00.yaml"),
+        )]
+    );
+    assert!(parsed.findings[0].fatal);
+    assert!(parsed.units.is_empty(), "the file is dropped");
+}
+
+#[test]
+fn a_unit_file_name_that_is_not_valid_utf8_is_a_yaml_finding() {
+    // Review finding 13. Python `pathlib.Path.glob` decodes a directory name
+    // with `surrogateescape`, so 1.0 matches `*.yaml` on the name and reads the
+    // file: a 1.0 load of this tree reads 2 unit files and the topics `latin`
+    // and `plain`. 2.0 holds every file name as a `String`, so it reports the
+    // drop instead of skipping the file in silence. The tree is built here,
+    // because git and the fixture tools would have to carry the raw byte.
+    let root = std::env::temp_dir().join(format!("cadus-not-utf8-{}", std::process::id()));
+    let course = root.join("c");
+    let _ = std::fs::remove_dir_all(&root);
+    std::fs::create_dir_all(&course).expect("the temporary tree is writable");
+    std::fs::write(
+        root.join("courses.yaml"),
+        "courses:\n- id: c\n  name: C\n  order: 1\n",
+    )
+    .expect("courses.yaml is writable");
+    let unit = |id: &str| {
+        format!(
+            "unit: u\ncourse: c\nmodule: M\ntopics:\n  - id: {id}\n    name: A\n    \
+             difficulty: 0.3\n    answer_kind: numeric\n    expected_time_secs: 30\n"
+        )
+    };
+    std::fs::write(course.join("00-plain.yaml"), unit("plain")).expect("the unit file is writable");
+    // `\xff` is no UTF-8 sequence at all, so the name has no `str` form.
+    let mut raw = b"01-caf\xff.yaml".to_vec();
+    let name = std::ffi::OsString::from_vec(std::mem::take(&mut raw));
+    std::fs::write(course.join(&name), unit("latin")).expect("the unit file is writable");
+
+    let parsed = parse_curriculum(&root);
+    assert_eq!(
+        triples(&parsed),
+        vec![(
+            "yaml",
+            "c/01-caf\u{fffd}.yaml: file name is not valid UTF-8",
+            Some("c/01-caf\u{fffd}.yaml"),
+        )]
+    );
+    assert!(parsed.findings[0].fatal);
+    let ids: Vec<&str> = parsed
+        .units
+        .iter()
+        .map(|u| u.unit.topics[0].id.as_str())
+        .collect();
+    assert_eq!(ids, vec!["plain"], "the other file still loads");
+    std::fs::remove_dir_all(&root).expect("the temporary tree is removable");
+}
+
+#[test]
+fn an_integer_literal_outside_i64_is_one_message_on_every_path() {
+    // Review finding 6. A literal above `i64::MAX` takes three paths inside the
+    // parser: 19 or 20 digits fit a `u64`, 39 digits fit no integer type and
+    // arrive as an `f64`, and 320 digits overflow the `f64` too and arrive as a
+    // string. 1.0 reads all three as Python integers (18446744073709551616 and
+    // up), so no pydantic text fits them; spec section 7 fixes one 2.0 message
+    // for every one of them.
     let parsed = parse_curriculum(&fixture("loader-integer-forms"));
     assert_eq!(
         triples(&parsed),
         vec![
             (
                 "schema",
-                "topics.0.expected_time_secs: integer 030 is not accepted; write 24",
+                "topics.0.expected_time_secs: integer literal outside the 64-bit range",
                 Some("c/00.yaml"),
             ),
             (
                 "schema",
-                "topics.1.expected_time_secs: integer 1_200 is not accepted; write 1200",
+                "topics.1.expected_time_secs: integer literal outside the 64-bit range",
                 Some("c/00.yaml"),
             ),
             (
                 "schema",
-                "topics.2.expected_time_secs: integer 1:30 is not accepted; write 90",
-                Some("c/00.yaml"),
-            ),
-            (
-                "schema",
-                "topics.3.expected_time_secs: integer literal outside the 64-bit range",
+                "topics.2.expected_time_secs: integer literal outside the 64-bit range",
                 Some("c/00.yaml"),
             ),
         ]
+    );
+}
+
+// --------------------------------------------------------------------------- //
+// The numeric literal forms 2.0 refuses
+// --------------------------------------------------------------------------- //
+
+#[test]
+fn every_rejected_numeric_literal_form_names_the_form_and_the_file() {
+    // Review findings 3, 4, 5, 8, 10 and 14. 2.0 accepts a plain decimal integer
+    // and a plain decimal float in `order`, `difficulty`, `expected_time_secs`
+    // and `weight`, and refuses every other spelling (spec section 7, "2.0
+    // strictness"). Each unit file below writes one refused spelling.
+    //
+    // 1.0 reads the tree the other way: it loads `08` as 8, `060` as 48, `0b101`
+    // as 5, `0x1F` as 31, `1_000` as 1000, `1:30` as 90 and `0.7_5` as 0.75, and
+    // it drops the three files that write `1e3`, `1.0e2` and `0o17` with
+    // `Input should be a valid integer, unable to parse string as an integer`.
+    // The two loaders therefore disagree on every file of this tree, which is
+    // why 2.0 names the form and the fix in its own words.
+    let parsed = parse_curriculum(&fixture("loader-numeric-forms"));
+    let rejected = |file: &'static str, line: u32, raw: &str| {
+        (
+            "schema".to_owned(),
+            format!(
+                "c/{file}:{line}: numeric literal form '{raw}' is not accepted; \
+                 write a plain decimal number"
+            ),
+            Some(format!("c/{file}")),
+        )
+    };
+    let found: Vec<(String, String, Option<String>)> = parsed
+        .findings
+        .iter()
+        .map(|f| (f.code.clone(), f.message.clone(), f.file.clone()))
+        .collect();
+    assert_eq!(
+        found,
+        vec![
+            rejected("00-leading-zero-08.yaml", 9, "08"),
+            rejected("01-leading-zero-060.yaml", 9, "060"),
+            rejected("02-exponent-1e3.yaml", 9, "1e3"),
+            rejected("03-exponent-1-0e2.yaml", 9, "1.0e2"),
+            rejected("04-octal-0o17.yaml", 9, "0o17"),
+            rejected("05-binary-0b101.yaml", 9, "0b101"),
+            rejected("06-hex-0x1F.yaml", 9, "0x1F"),
+            rejected("07-underscore-1_000.yaml", 9, "1_000"),
+            rejected("08-underscore-float-0-7_5.yaml", 7, "0.7_5"),
+            rejected("09-sexagesimal-1-30.yaml", 9, "1:30"),
+            rejected("10-nan.yaml", 7, ".nan"),
+            rejected("11-inf.yaml", 7, ".inf"),
+            // The flow form `{id: a, weight: 0.7_5, key: false}`, with a comment
+            // behind the closing brace.
+            rejected("12-flow-weight.yaml", 16, "0.7_5"),
+        ]
+    );
+    assert!(parsed.units.is_empty(), "every file is dropped");
+    assert!(parsed.findings.iter().all(|finding| finding.fatal));
+}
+
+#[test]
+fn a_rejected_numeric_literal_in_the_catalog_drops_the_catalog() {
+    // The same rule on the `order` key of `courses.yaml`. 1.0 drops the whole
+    // tree here too, with `courses.0.order: Input should be a valid integer,
+    // unable to parse string as an integer`.
+    let parsed = parse_curriculum(&fixture("loader-numeric-forms-order"));
+    assert_eq!(
+        triples(&parsed),
+        vec![(
+            "schema",
+            "courses.yaml:4: numeric literal form '1e3' is not accepted; write a plain decimal \
+             number",
+            Some("courses.yaml"),
+        )]
+    );
+    assert!(parsed.catalog.is_none(), "the catalog is dropped");
+    assert!(parsed.units.is_empty());
+}
+
+#[test]
+fn the_accepted_numeric_forms_load_with_the_1_0_values() {
+    // The other half of the rule: a plain decimal integer, a plain decimal float
+    // and a plain decimal float with a signed exponent. A 1.0 load of this
+    // fixture reads `difficulty` 0.15 and 0.75, `expected_time_secs` 60 and
+    // 1200, `weight` 0.0 and `order` 2, and writes no parse-stage finding.
+    let parsed = parse_curriculum(&fixture("loader-numeric-accepted"));
+    assert_eq!(triples(&parsed), Vec::new());
+    let catalog = parsed.catalog.clone().expect("courses.yaml loads");
+    assert_eq!(catalog.courses[0].order, 2);
+    let topics = &parsed.units[0].unit.topics;
+    assert_eq!(topics[0].difficulty, 0.15);
+    assert_eq!(topics[0].expected_time_secs, 60);
+    assert_eq!(topics[1].difficulty, 0.75);
+    assert_eq!(topics[1].expected_time_secs, 1200);
+    assert_eq!(topics[1].prerequisites[0].weight, 0.0);
+}
+
+#[test]
+fn a_numeric_value_on_a_continuation_line_is_not_scanned() {
+    // The documented limit of the pre-scan (spec section 7, "2.0 strictness").
+    // The fixture writes `difficulty:` on one line and `0.7_5` on the next, so
+    // the line scan sees no value and the type check reports the scalar the
+    // YAML 1.2 parser made of it. 1.0 reads the value 0.75 and loads the file.
+    let parsed = parse_curriculum(&fixture("loader-numeric-continuation"));
+    assert_eq!(
+        triples(&parsed),
+        vec![(
+            "schema",
+            "topics.0.difficulty: Input should be a valid number, unable to parse string as a \
+             number",
+            Some("c/00.yaml"),
+        )]
     );
 }
 
@@ -816,4 +1034,82 @@ fn the_checked_in_tree_uses_no_yaml_1_1_form() {
         }
     }
     assert_eq!(hits, Vec::<String>::new(), "YAML 1.1 forms in the tree");
+}
+
+/// True for the two numeric spellings 2.0 accepts: a plain decimal integer with
+/// no leading zero, and a plain decimal float with an optional signed exponent.
+///
+/// This is a second, independent reading of the rule of spec section 7. It is
+/// written against the text of the rule, not against the loader.
+fn is_plain_decimal_form(value: &str) -> bool {
+    let body = value.strip_prefix('-').unwrap_or(value);
+    let digits = |text: &str| !text.is_empty() && text.chars().all(|c| c.is_ascii_digit());
+    match body.split_once('.') {
+        None => digits(body) && (body == "0" || !body.starts_with('0')),
+        Some((whole, rest)) => {
+            let (fraction, exponent) = match rest.split_once(['e', 'E']) {
+                None => (rest, None),
+                Some((fraction, exponent)) => (fraction, Some(exponent)),
+            };
+            let exponent_ok = match exponent {
+                None => true,
+                Some(exponent) => {
+                    let signed = exponent.strip_prefix(['+', '-']);
+                    signed.is_some_and(digits)
+                }
+            };
+            digits(whole) && digits(fraction) && exponent_ok
+        }
+    }
+}
+
+#[test]
+fn the_checked_in_tree_writes_only_plain_decimal_numbers() {
+    // The guard for the numeric-literal rule of spec section 7, "2.0
+    // strictness". Every other spelling of `order`, `difficulty`,
+    // `expected_time_secs` and `weight` is a form the two YAML versions read
+    // differently, or read as no number at all, so the tree may write none of
+    // them. The positive control runs first, so a scan that stopped working
+    // cannot report a clean tree.
+    for form in ["1", "0", "-2", "0.3", "60.0", "1.5e-1", "-1.0e+30"] {
+        assert!(is_plain_decimal_form(form), "{form} is a plain decimal");
+    }
+    for form in [
+        "08", "060", "00", "1e3", "1.0e2", "0o17", "0b101", "0x1F", "1_000", "0.7_5", "1:30",
+        ".nan", ".inf", "-.inf", "1.", ".5", "+30",
+    ] {
+        assert!(!is_plain_decimal_form(form), "{form} is no plain decimal");
+    }
+
+    const KEYS: [&str; 4] = ["order", "difficulty", "expected_time_secs", "weight"];
+    let mut hits: Vec<String> = Vec::new();
+    for path in yaml_files(&curriculum_root()) {
+        let text = std::fs::read_to_string(&path).expect("a unit file is readable");
+        let name = path.display().to_string();
+        for (index, line) in text.lines().enumerate() {
+            let line = line.split_once(" #").map_or(line, |(head, _)| head);
+            let mut items: Vec<&str> =
+                vec![line.trim_start().trim_start_matches("- ").trim_start()];
+            if let Some(start) = line.find('{') {
+                let flow = &line[start + 1..];
+                let flow = flow.split_once('}').map_or(flow, |(head, _)| head);
+                items.extend(flow.split(',').map(str::trim));
+            }
+            for item in items {
+                for key in KEYS {
+                    let Some(value) = item
+                        .strip_prefix(key)
+                        .and_then(|rest| rest.strip_prefix(':'))
+                        .map(str::trim)
+                    else {
+                        continue;
+                    };
+                    if !is_plain_decimal_form(value) {
+                        hits.push(format!("{name}:{}: {key}: {value}", index + 1));
+                    }
+                }
+            }
+        }
+    }
+    assert_eq!(hits, Vec::<String>::new(), "numeric forms in the tree");
 }

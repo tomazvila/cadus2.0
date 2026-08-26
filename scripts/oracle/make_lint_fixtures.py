@@ -5,10 +5,13 @@ One minimal broken tree per lint code of `docs/reference/curriculum-1.0-spec.md`
 section 5, translated from 1.0 `tests/test_graph.py:518-797`. `clean/` is a copy
 of the 1.0 fixture `tests/fixtures/curriculum_mini`.
 
-The last three trees are multi-rule. `order_not_id_order` authors its topics out
-of id order, so every `sorted()` site of the lint changes the output.
-`many_codes` and `cycle_duplicate_missing_ref` trip nine distinct codes each, so
-the order of the rule blocks changes the output.
+Five trees pin an order or a tie-break rule. `order_not_id_order` authors its
+topics out of id order, so three `sorted()` sites of the lint change the output;
+`module_spans_two_modules` holds two modules that each span two courses, which
+is the fourth site. `many_codes` and `cycle_duplicate_missing_ref` trip nine
+distinct codes each, so the order of the rule blocks changes the output.
+`course_id_repeated` declares one course id twice, so the last-entry-wins rule
+of the mastery floor changes the output.
 
 Run it with the 1.0 interpreter, then regenerate every `expected.json`:
 
@@ -463,6 +466,63 @@ def build(base: Path) -> None:
             },
         },
     )
+
+    # 20. module_spans_two_modules — two module names, each over the same two
+    #     courses. 1.0 walks `sorted(module_courses.items())`, so it reports
+    #     `Alpha` before `Zeta` although both courses author `Zeta` first. One
+    #     module cannot show that order: a one-element walk has no order.
+    _write(
+        base / "module_spans_two_modules",
+        [
+            {"id": "c1", "name": "C1", "order": 1, "mastery_floor": ["a"]},
+            {"id": "c2", "name": "C2", "order": 2, "mastery_floor": ["c"]},
+        ],
+        {
+            "c1/00.yaml": {"unit": "u1", "course": "c1", "module": "Zeta", "topics": [_topic("a")]},
+            "c1/01.yaml": {
+                "unit": "u2",
+                "course": "c1",
+                "module": "Alpha",
+                "topics": [_topic("b", prereqs=[{"id": "a", "weight": 0.5}])],
+            },
+            "c2/00.yaml": {"unit": "u3", "course": "c2", "module": "Zeta", "topics": [_topic("c")]},
+            "c2/01.yaml": {
+                "unit": "u4",
+                "course": "c2",
+                "module": "Alpha",
+                "topics": [_topic("d", prereqs=[{"id": "c", "weight": 0.5}])],
+            },
+        },
+    )
+
+    # 21. course_id_repeated — the catalog declares `c1` twice, with a different
+    #     `order`. 1.0 builds `{c.id: c for c in catalog.courses}`, so the
+    #     `mastery_floor_course: c1` of c2 resolves to the LAST entry (order 3)
+    #     and the floor unions every course at or below order 3, `mid` included.
+    #     A port that keeps the FIRST entry unions only order 1 and reports a
+    #     spurious `unreachable_from_floor` for `b`.
+    root = _write(
+        base / "course_id_repeated",
+        [
+            {"id": "c1", "name": "C1", "order": 1},
+            {"id": "mid", "name": "Mid", "order": 2},
+            {"id": "c1", "name": "C1 again", "order": 3},
+            {"id": "c2", "name": "C2", "order": 4, "mastery_floor_course": "c1"},
+        ],
+        {
+            "mid/00.yaml": {"unit": "u1", "course": "mid", "module": "M1", "topics": [_topic("mm")]},
+            "c2/00.yaml": {
+                "unit": "u2",
+                "course": "c2",
+                "module": "M2",
+                "topics": [_topic("b", prereqs=[{"id": "mm", "weight": 0.5}])],
+            },
+        },
+    )
+    # `c1/` holds no unit file, so the tree reports `empty_course` once per
+    # catalog entry. `.gitkeep` keeps the empty directory in git.
+    (root / "c1").mkdir(exist_ok=True)
+    (root / "c1" / ".gitkeep").write_text("", encoding="utf-8")
 
     # `empty` — no courses.yaml at all.
     root = base / "empty"
