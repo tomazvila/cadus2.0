@@ -154,6 +154,9 @@ pub enum LoadError {
 /// changes after the build.
 #[derive(Debug, Clone, PartialEq)]
 pub struct Curriculum {
+    /// The number of unit files the parse stage read. 1.0 keeps the same number
+    /// in `Graph.units` (`cadus/graph.py:242`), and the dump reports it.
+    unit_count: usize,
     topics: Vec<Topic>,
     by_id: HashMap<String, TopicIdx>,
     /// The interned course, module, and unit names.
@@ -191,6 +194,7 @@ impl Curriculum {
     pub fn build(raw: RawCurriculum) -> Result<Self, CurriculumError> {
         let RawCurriculum { catalog, units } = raw;
 
+        let unit_count = units.len();
         let total: usize = units.iter().map(|unit| unit.unit.topics.len()).sum();
         if total > u32::MAX as usize {
             return Err(CurriculumError::TooManyTopics {
@@ -317,6 +321,7 @@ impl Curriculum {
         } = builder;
 
         Ok(Self {
+            unit_count,
             topics,
             by_id,
             labels,
@@ -347,6 +352,12 @@ impl Curriculum {
     /// The number of topics.
     pub fn topic_count(&self) -> usize {
         self.topics.len()
+    }
+
+    /// The number of unit files the parse stage read. A file the parse stage
+    /// dropped on a schema error is not here, the same as 1.0 `Graph.units`.
+    pub fn unit_count(&self) -> usize {
+        self.unit_count
     }
 
     /// One topic, or `None` when the index belongs to another build.
