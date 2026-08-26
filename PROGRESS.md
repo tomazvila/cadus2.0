@@ -286,7 +286,7 @@ the `users`/auth-table policies with real handler code.
 
 ### Owner answers (2026-08-26)
 
-O1: start fresh, no event migration. O3: React + TypeScript rewrite in M6. Review
+O1: start fresh, no event migration. O2 (2026-08-27): DeepSeek V4 via OpenRouter now, local Qwen 3.6 later; no T4 caps (single owner-user, not public). O3: React + TypeScript rewrite in M6. Review
 loop: stop after four rounds, fix the accepted-not-fixed items, continue with M1. See
 `docs/DECISIONS.md`.
 
