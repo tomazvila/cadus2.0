@@ -9,3 +9,4 @@ Decisions that REQUIREMENTS.md §8 left open. Each line records the answer and t
 | O3 | Rewrite the frontend as a React + TypeScript SPA. Do not keep the 1.0 SPA. | 2026-08-26 | M6 builds the new SPA against the HTTP API. The 1.0 `static/` tree is a design reference only (Tokyo Night). |
 | — | Review loop: stop after four rounds; fix the accepted-not-fixed items; continue with M1. | 2026-08-26 | Recorded in PROGRESS.md. |
 | — | Continue with M3 when M2 is closed. | 2026-08-27 | The M3 survey of the 1.0 scheduler/projector starts in parallel with the M2 verification round; M3 units start after the M2 close commit. |
+| — | Continue with M4 when M3 is closed. | 2026-08-27 | The M4 survey (1.0 templates, exemplar rotation, anti-repeat) starts in parallel with the M3 pipeline; M4 units start after the M3 close commit. |
