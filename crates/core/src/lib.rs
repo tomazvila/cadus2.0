@@ -20,4 +20,5 @@ pub mod learner;
 pub mod numeric;
 pub mod projector;
 pub mod selector;
+pub mod template;
 pub mod xp;
