@@ -25,7 +25,22 @@ Blocker: in a release build LLVM rewrites `0.5.powf(x)` to `exp2(-x)`, one ulp o
 debug profile only. Rulings: `black_box` the base, add a release-profile parity step to
 the gate; event `Slug`s strip whitespace as 1.0 does; overflow and out-of-range integers
 become fold errors; boundary tests at equality; the selector oracle compares with n = 40.
-Fix units FIXM3a–b.
+Fix units FIXM3a–b fixed all 15 (commit below); the gate now runs the parity tests in
+the release profile too.
+
+### M3 close (2026-08-27)
+
+Final gate on `main`: all steps PASS in both profiles, live oracle enabled. What M3
+delivers: `cadus_core::{event, learner, config, numeric, fire, xp, projector, selector}`
+— the 16 event types on the 1.0 wire shape, the learner model with a 2.0 `through_seq`
+cursor outside the parity blob, `config_hash` byte-exact, the FIRe engine and XP with the
+CPython numeric semantics (Neumaier sum, half-even rounding, correctly-rounded `round_dp`,
+glibc `pow` through `black_box`), the projector with `apply_regrades`, full and incremental
+projection, and the selector with every 1.0 ordering rule (quiz sampling is 2.0's own
+RNG — trap T11). Parity: 20 seeded streams fold to the 1.0 digests in three timezone
+settings; the selector matches 1.0 on 10 states with n = 40; incremental-fold divergence
+classes are pinned to 1.0's digests. Review: one round, 15 confirmed, all fixed.
+M3 closes on the milestone cap (the owner asked for M4 next).
 
 Ruling recorded here: 1.0's `project_incremental` does not re-fold a `regraded` event
 that supersedes an already-cached grade (1.0 `projector.py:794-830`); 1.0's service

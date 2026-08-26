@@ -383,6 +383,15 @@ If `open_plan` is given, it delegates to `_reserve_open_plan` (`selector.py:1630
 
 ---
 
+**Incremental-fold divergence classes (1.0 behavior, reproduced by the port).**
+`project_incremental` seeds FIRe from the cached model and replays the prior half light,
+so (a) a `regraded` event in the new half that supersedes an already-folded grade, and
+(b) a `profile_reset` whose effect the cache already holds, both give a model that differs
+from the full replay. 1.0's service layer forces a full replay only on a `Regraded` event
+or a `PROJECTOR_VERSION` bump (`service.py:272`). The divergent splits and their 1.0
+digests are pinned in `crates/core/tests/fixtures/events/incremental_1_0.json`; M5's
+`project_and_save` reproduces the 1.0 rule, not a wider one.
+
 ## 8. Pinned behaviors from the 1.0 tests
 
 **There is no `tests/test_projector*.py`.** Fold behavior is pinned in `test_regrade.py`, `test_ability_seeding.py`, and `test_peelback.py`. `tests/test_service.py` is Postgres-gated (skips without `CADUS_TEST_DATABASE_URL`), but its literals remain valid oracles.
