@@ -655,6 +655,152 @@ fn an_exponential_obeys_the_exponent_law() {
     assert_eq!(check("e^x*e^y", "e^x", E), decided(false, false));
 }
 
+#[test]
+fn an_internal_space_collapses() {
+    // Spec section 9.3 names "internal space collapse" as a True generator
+    // family, and M2 review 2, finding 16, found it missing from the oracle
+    // harness. The literals below are the four examples of that family, plus its
+    // neighbors. Every verdict is the 1.0 verdict, measured with
+    // `scripts/oracle/check_1_0.py`.
+    // 1.0: True.
+    run_table(&[
+        ("1/2", "1 / 2", N, true),
+        ("1+2x", "1 + 2 x", E, true),
+        ("(4, 17)", "( 4 , 17 )", E, true),
+        ("x^2", "x ^ 2", E, true),
+        ("2x^2 - 3x + 1", "2 x ^ 2 - 3 x + 1", E, true),
+        ("2x", "2 x", E, true),
+        ("{1, 2}", "{ 1 , 2 }", E, true),
+        ("1/(x+1)", "1 / ( x + 1 )", E, true),
+        ("sqrt(2)/2", "sqrt ( 2 ) / 2", E, true),
+        ("e^(x+2)", "e ^ ( x + 2 )", E, true),
+        // A sign in front of the answer, and the same pair on both kinds.
+        ("-1/2", "- 1 / 2", N, true),
+        ("1/2", "1 / 2", E, true),
+        ("x^2", "x ^ 2", N, true),
+    ]);
+    // C4: the space tolerance must admit no other value. 1.0: False for every
+    // pair below.
+    run_table(&[
+        ("1/2", "1 / 3", N, false),
+        ("1+2x", "1 + 3 x", E, false),
+        ("(4, 17)", "( 17 , 4 )", E, false),
+        ("x^2", "x ^ 3", E, false),
+        ("2x", "2 y", E, false),
+        ("-1/2", "1 / 2", N, false),
+    ]);
+}
+
+#[test]
+fn the_whole_part_of_an_exponent_is_the_atom_e() {
+    // M2 review 2, finding 8. `e**(a+k)` for a whole `k` is `e**k * e**a`, so the
+    // whole part of the argument folds into the atom `e`. Every pair below is a
+    // 1.0 verdict, measured with `scripts/oracle/check_1_0.py`.
+    // 1.0: True.
+    run_table(&[
+        ("e^(x+2)", "e^2*e^x", E, true),
+        ("e^2*e^x", "e^(x+2)", E, true),
+        ("e^(x+2)", "e^x*e^2", E, true),
+        ("e^(x+2)", "e^2 e^x", E, true),
+        ("e^(x+1)", "e*e^x", E, true),
+        ("e^(x-1)", "e^x/e", E, true),
+        ("e^(2x+2)", "e^2*e^(2x)", E, true),
+        ("exp(x+2)", "exp(2)*exp(x)", E, true),
+        ("2e^(x+2)", "2*e^2*e^x", E, true),
+        // The same pair on the other answer kind.
+        ("e^(x+2)", "e^2*e^x", N, true),
+    ]);
+    // The canonical form of `e**(x+2)`: the atom `e` with exponent 2, times the
+    // exponential of `x`.
+    let x = Canon::Poly(BTreeMap::from([(monomial(&[(var("x"), 1)]), whole(1))]));
+    let folded = Canon::Poly(BTreeMap::from([(
+        monomial(&[(Atom::E, 2), (Atom::Exp(Box::new(x)), 1)]),
+        whole(1),
+    )]));
+    assert_eq!(form("e^(x+2)"), folded);
+    assert_eq!(form("e^2*e^x"), folded);
+    // C4: the fold must admit no other value. 1.0: False for every pair below.
+    run_table(&[
+        ("e^(x+2)", "e^(x+3)", E, false),
+        ("e^(x+2)", "e^2*e^(2x)", E, false),
+        ("e^(x+2)", "e^2+e^x", E, false),
+        ("e^(x+2)", "e^x+2", E, false),
+        ("e^(x+2)", "2*e^x", E, false),
+        // The sign of the variable part, and the sign of the whole part.
+        ("e^(2-x)", "e^2*e^x", E, false),
+        ("e^(x+2)", "e^(x+2)*e", E, false),
+        // A whole part is a whole number. One half stays inside the exponential.
+        ("e^(x+1/2)", "e*e^x", E, false),
+        ("e^(x+2)", "e^(x+3)", N, false),
+    ]);
+    // A fraction in the argument keeps its own exponential, and the two spellings
+    // of it still meet.
+    assert_eq!(form("e^(x+1/2)"), form("e^(1/2)*e^x"));
+    assert_ne!(form("e^(x+1/2)"), form("e^(x+3/2)"));
+}
+
+#[test]
+fn a_reciprocal_of_a_sum_holds_one_atom_and_one_divisor() {
+    // M2 review 2, findings 13 and 17. A power of a reciprocal is the reciprocal
+    // of the power, and two reciprocals in one product are the reciprocal of the
+    // product. Every verdict below is the 1.0 verdict, measured with
+    // `scripts/oracle/check_1_0.py`.
+    // 1.0: True.
+    run_table(&[
+        ("1/(x+1)^2", "(1/(x+1))^2", E, true),
+        ("(1/(x+1))^2", "1/(x+1)^2", E, true),
+        ("4/((x - 2)(x + 2))", "4/(x - 2) * 1/(x + 2)", E, true),
+        ("1/((s - 2)(s - 5))", "(1/(s - 2))(1/(s - 5))", E, true),
+        ("1/(x+1)^2", "1/(x+1) * 1/(x+1)", E, true),
+        ("1/((x-2)(x+2))", "(1/(x-2))/(x+2)", E, true),
+        ("1/((x-2)(x+2))", "1/(x^2-4)", E, true),
+        // Three divisors, and one of them already merged.
+        ("1/((x+1)(x+2)(x+3))", "1/(x+1) * 1/((x+2)(x+3))", E, true),
+        // A divisor that comes back into the numerator.
+        ("1/(1/(x+1))", "x+1", E, true),
+        ("2/(1/(x+1))", "2x+2", E, true),
+        // The two divisors cancel into a rational.
+        ("1/(sqrt(2)+1)*1/(sqrt(2)-1)", "1", E, true),
+        // The sign travels with the content, not with the divisor.
+        ("1/(x+1)*1/(-x-1)", "-1/(x+1)^2", E, true),
+        // A space around every operator, and the other answer kind.
+        ("1/(x+1)^2", "1 / ( x + 1 ) ^ 2", E, true),
+        ("1/(x+1)^2", "(1/(x+1))^2", N, true),
+        ("(1/2)^2", "1/2^2", N, true),
+    ]);
+    // The canonical form of `1/(x+1)**2`: one `Inverse` atom, with exponent 1,
+    // over the expanded divisor.
+    let divisor = Canon::Poly(BTreeMap::from([
+        (monomial(&[(var("x"), 2)]), whole(1)),
+        (monomial(&[(var("x"), 1)]), whole(2)),
+        (Monomial::new(), whole(1)),
+    ]));
+    let reciprocal = Canon::Poly(BTreeMap::from([(
+        monomial(&[(Atom::Inverse(Box::new(divisor)), 1)]),
+        whole(1),
+    )]));
+    assert_eq!(form("1/(x+1)^2"), reciprocal);
+    assert_eq!(form("(1/(x+1))^2"), reciprocal);
+    assert_eq!(form("1/(x+1) * 1/(x+1)"), reciprocal);
+    // C4: the merge must admit no other value. 1.0: False for every pair below.
+    run_table(&[
+        ("1/(x+1)^2", "1/(x+1)", E, false),
+        ("1/(x+1)", "1/(x+1)^2", E, false),
+        ("1/((x-2)(x+2))", "1/((x-2)(x+3))", E, false),
+        ("(1/(x+1))^2", "1/(x+1)^3", E, false),
+        ("1/(x+1)^2", "-1/(x+1)^2", E, false),
+        ("1/((x-2)(x+2))", "1/(x^2+4)", E, false),
+        ("4/((x-2)(x+2))", "5/((x-2)(x+2))", E, false),
+        ("1/(x+1)", "x+1", E, false),
+        ("1/(x+1)^2", "1/(x+1)", N, false),
+    ]);
+    // The merge multiplies two divisors and it cancels no common factor, so the
+    // documented narrowing stands: `(x**2-1)/(x-1)` and `x+1` stay two values.
+    // The pair itself is pinned in `answer_divergence.rs`, with the 1.0 verdict.
+    assert_ne!(form("(x**2-1)/(x-1)"), form("x+1"));
+    assert_ne!(form("1/(x^2-1)"), form("1/(x-1)"));
+}
+
 /// Build the canonical form of one labeled whole number, `<var> = <value>`.
 fn labeled(var: &str, value: i64) -> Canon {
     let ast = Ast::Assign {

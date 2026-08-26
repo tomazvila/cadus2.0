@@ -475,6 +475,79 @@ fn generate_padding(row: &Row) -> Option<String> {
     Some(format!("  {}  ", row.answer))
 }
 
+/// The characters the internal-space family puts a space around.
+///
+/// A run of them stays one token, so `**` stays `**`, `<=` stays `<=`, and
+/// `x^-2` stays `x ^- 2`. Splitting a run would build an answer no learner types
+/// and would ask the oracle a question about the split, not about the space.
+const SPACED_OPERATORS: [char; 11] = ['+', '-', '*', '/', '^', '(', ')', ',', '=', '<', '>'];
+
+/// Space out every operator of the answer (spec section 9.3, "internal space
+/// collapse").
+///
+/// The learner spaces the answer out and the checker collapses the spaces again
+/// (V4): `1/2` becomes `1 / 2`, `1+2x` becomes `1 + 2 x`, `(4, 17)` becomes
+/// `( 4 , 17 )`, and `x^2` becomes `x ^ 2`. The expected verdict is True.
+///
+/// The family is the one spec section 9.3 names and `GENERATORS` omitted, so the
+/// 100% class-3 agreement of review round 1 measured the generators that were
+/// written and not the parity of the checker (M2 review 2, finding 16).
+fn generate_internal_spaces(row: &Row) -> Option<String> {
+    // A `$…$` wrapper keeps its two ends glued to the answer. A learner spaces
+    // the maths out, never the wrapper.
+    let trimmed = row.answer.trim();
+    let wrapped = trimmed.len() >= 2 && trimmed.starts_with('$') && trimmed.ends_with('$');
+    let body = if wrapped {
+        trimmed.get(1..trimmed.len().checked_sub(1)?)?
+    } else {
+        trimmed
+    };
+    let spaced = space_out(body)?;
+    let candidate = if wrapped {
+        format!("${spaced}$")
+    } else {
+        spaced
+    };
+    changed(row, candidate)
+}
+
+/// Put one space around every operator of one answer body.
+fn space_out(text: &str) -> Option<String> {
+    let chars: Vec<char> = text.chars().collect();
+    let mut out = String::new();
+    let mut index = 0;
+    while let Some(ch) = chars.get(index).copied() {
+        if SPACED_OPERATORS.contains(&ch) {
+            let start = index;
+            while matches!(chars.get(index), Some(c) if SPACED_OPERATORS.contains(c)) {
+                index += 1;
+            }
+            push_spaced(&mut out, chars.get(start..index)?);
+            continue;
+        }
+        // A digit that a letter follows is the implicit product `2x` of the spec
+        // example `1 + 2 x`.
+        if ch.is_ascii_digit()
+            && matches!(chars.get(index + 1), Some(next) if next.is_ascii_alphabetic())
+        {
+            out.push(ch);
+            out.push(' ');
+            index += 1;
+            continue;
+        }
+        out.push(ch);
+        index += 1;
+    }
+    Some(out.split_whitespace().collect::<Vec<&str>>().join(" "))
+}
+
+/// Put one space in front of a token and one space after it.
+fn push_spaced(out: &mut String, token: &[char]) {
+    out.push(' ');
+    out.extend(token);
+    out.push(' ');
+}
+
 fn generate_trailing_period(row: &Row) -> Option<String> {
     Some(format!("{}.", row.answer))
 }
@@ -748,7 +821,7 @@ fn generate_appended_junk(row: &Row) -> Option<String> {
 /// Every generator of spec section 9.3, in a fixed order.
 ///
 /// The order fixes the pair order, so the generated set is reproducible.
-const GENERATORS: [Generator; 33] = [
+const GENERATORS: [Generator; 34] = [
     Generator {
         name: "identity",
         intent: Intent::Same,
@@ -758,6 +831,11 @@ const GENERATORS: [Generator; 33] = [
         name: "whitespace_padding",
         intent: Intent::Same,
         make: generate_padding,
+    },
+    Generator {
+        name: "internal_spaces",
+        intent: Intent::Same,
+        make: generate_internal_spaces,
     },
     Generator {
         name: "trailing_period",
@@ -1103,6 +1181,17 @@ impl Class {
 /// `docs/reference/checker-1.0-spec.md` names, and every one of them has a pinned
 /// test in `crates/core/tests/answer_divergence.rs`. A pair that leaves 1.0 for
 /// any other reason stays in class 3 and fails the parity assertion.
+///
+/// A reason moves a pair out of class 3 only when a predicate of
+/// [`documented_reason`] names it, and every one of those predicates cites the
+/// 1.0 line it ports. Two reasons carry no predicate, and both count 0 in this
+/// generated set: prose never enters the set, and a SymPy name leaves 2.0
+/// undecidable. "A transcendental identity is not simplified" is the third: 1.0
+/// reaches it through `simplify(lhs - rhs) == 0` (`sympy_check.py:358-359`), and
+/// no test of the two answer strings decides whether SymPy needed that rung. The
+/// old substring test claimed it did, and it excused five parse divergences that
+/// hold no identity (M2 review 2, findings 10 and 14). The narrowing keeps its
+/// literal pairs in `answer_divergence.rs` instead.
 const DOCUMENTED_REASONS: [&str; 9] = [
     // The four the M2 plan names. The first one is a 2.0 decision; the other
     // three are 1.0 defects that 2.0 refuses to reproduce.
@@ -1294,17 +1383,6 @@ fn both_sides_are_numbers(pair: &Pair) -> bool {
     numeric(&pair.expected) && numeric(&pair.learner)
 }
 
-/// Whether either side names a transcendental function.
-fn names_a_transcendental(pair: &Pair) -> bool {
-    const NAMES: [&str; 12] = [
-        "sin", "cos", "tan", "sec", "csc", "cot", "sinh", "cosh", "tanh", "exp", "ln", "log",
-    ];
-    NAMES.iter().any(|name| {
-        normalize(&pair.expected).source.contains(name)
-            || normalize(&pair.learner).source.contains(name)
-    })
-}
-
 /// Name the documented reason a pair diverges, when one covers it.
 ///
 /// The order is fixed, so one pair gets one reason. A pair that no predicate
@@ -1322,9 +1400,12 @@ fn documented_reason(
         if both_sides_are_numbers(pair) {
             return Some("no float tolerance rung (D6)");
         }
-        if names_a_transcendental(pair) {
-            return Some("a transcendental identity is not simplified (V1)");
-        }
+        // No catch-all sits here. A 1.0 `simplify` result is not readable from
+        // the two answer strings, so a pair that names a transcendental function
+        // is NOT a transcendental identity by that fact alone: the five
+        // `cos 2*x` pairs of M2 review 2, findings 10 and 14, are a parse
+        // divergence and the old substring test hid them. An unexplained
+        // divergence stays in class 3 and fails the parity assertion (R5).
         return None;
     }
     // 2.0 says yes where 1.0 said no, because a 1.0 stage refused the answer.
@@ -1515,10 +1596,10 @@ fn print_report(report: &Report) {
 // ---------------------------------------------------------------------------
 
 /// The literal size of the generated set.
-const GENERATED_PAIRS: usize = 14_989;
+const GENERATED_PAIRS: usize = 16_052;
 
 /// The literal pair count of every generator, in name order.
-const GENERATOR_COUNTS: [(&str, usize); 36] = [
+const GENERATOR_COUNTS: [(&str, usize); 37] = [
     ("appended_junk", 1562),
     ("ascii_to_unicode", 70),
     ("caret_power", 0),
@@ -1534,6 +1615,7 @@ const GENERATOR_COUNTS: [(&str, usize); 36] = [
     ("figure_space_thousands", 44),
     ("fraction_to_decimal", 79),
     ("identity", 1562),
+    ("internal_spaces", 1063),
     ("implicit_multiplication", 59),
     ("last_digit_bumped", 1519),
     ("narrow_space_thousands", 44),
@@ -1558,11 +1640,14 @@ const GENERATOR_COUNTS: [(&str, usize); 36] = [
 ];
 
 /// The literal pair count of every divergence class.
+///
+/// The counts are measured against the live 1.0 checker, not read back from the
+/// committed file.
 const CLASS_COUNTS: [(&str, usize); 5] = [
     ("class 1 outside_grammar", 931),
     ("class 2 prose_expected", 0),
-    ("class 3 comparable", 14037),
-    ("class 4 documented_divergence", 21),
+    ("class 3 comparable", 15099),
+    ("class 4 documented_divergence", 22),
     ("oracle_silent", 0),
 ];
 
@@ -1570,32 +1655,92 @@ const CLASS_COUNTS: [(&str, usize); 5] = [
 ///
 /// The first four reasons are the ones `docs/plans/M2.md` names. This generated
 /// set reaches none of them except the float rung: prose never enters the set
-/// (the set holds only in-grammar answers), and a SymPy name such as `zoo`
-/// leaves 2.0 undecidable, which is class 1. Both stay pinned by literal pairs
-/// in `crates/core/tests/answer_divergence.rs`.
+/// (the set holds only in-grammar answers), a SymPy name such as `zoo` leaves
+/// 2.0 undecidable, which is class 1, and no predicate claims a 1.0
+/// simplification. All three stay pinned by literal pairs in
+/// `crates/core/tests/answer_divergence.rs`.
+///
+/// The five pairs that the deleted substring test moved under the transcendental
+/// reason are the `cos 2*x` parse divergence of M2 review 2, findings 10 and 14.
+/// They belong to class 3, and they agree once the juxtaposed-argument rule of
+/// the parser reads `cos 2*x` as `cos(2*x)`.
 const REASON_COUNTS: [(&str, usize); 9] = [
     ("no float tolerance rung (D6)", 2),
-    ("a transcendental identity is not simplified (V1)", 5),
+    ("a transcendental identity is not simplified (V1)", 0),
     ("prose is not a value (V2)", 0),
     ("a SymPy name is not a value (V2)", 0),
     (
         "the 1.0 exponent-tower guard refuses a legal power (spec 5.1)",
-        2,
+        3,
     ),
     (
         "the 1.0 tokenizer reads a Python number literal (spec 3.1)",
-        6,
+        8,
     ),
     (
         "the 1.0 radical rewrite misses a nested group (spec 2.2)",
         1,
     ),
-    ("a chained inequality raises inside 1.0 (spec 7.7)", 4),
+    ("a chained inequality raises inside 1.0 (spec 7.7)", 6),
     (
         "the 1.0 rewriter deletes a backslash and leaves a brace group (spec 7.7)",
-        1,
+        2,
     ),
 ];
+
+#[test]
+fn a_divergence_leaves_class_3_only_when_a_predicate_names_a_1_0_line() {
+    // M2 review 2, findings 10 and 14. The old ladder ended in a substring test
+    // for a function name, so every 1.0-True / 2.0-False pair whose text held
+    // `sin`, `cos`, `ln`, `log`, or `exp` left class 3 with the reason "a
+    // transcendental identity is not simplified". The five `cos 2*x` pairs of
+    // the `explicit_multiplication` generator hold no identity: they are the
+    // juxtaposed-function-argument parse divergence, and they belong in class 3.
+    let parse_divergence = probe_pair("cos 2x", "cos 2*x", "expression_symbolic");
+    let one_zero_says_yes = OracleVerdict {
+        equivalent: true,
+        notation: false,
+    };
+    assert_eq!(
+        documented_reason(&parse_divergence, false, one_zero_says_yes),
+        None
+    );
+    // The same answer with a `sin` in it, and with a `log` in it.
+    let with_sin = probe_pair("(4/3)sin 3t", "(4/3)*sin 3*t", "expression_symbolic");
+    assert_eq!(documented_reason(&with_sin, false, one_zero_says_yes), None);
+    let with_log = probe_pair("log(2x)", "2*log(x)", "expression_symbolic");
+    assert_eq!(documented_reason(&with_log, false, one_zero_says_yes), None);
+    // The identity that IS the documented narrowing gets no reason here either:
+    // no test of the two strings reads a 1.0 `simplify` result. The pair is
+    // pinned by its literal verdict in `answer_divergence.rs`.
+    let identity = probe_pair("sin(x)**2+cos(x)**2", "1", "expression_symbolic");
+    assert_eq!(documented_reason(&identity, false, one_zero_says_yes), None);
+    // The one predicate of this branch still names its own pairs: two numbers
+    // that 1.0 calls equal at its float tolerance, and 2.0 does not (D6).
+    let two_numbers = probe_pair("1/1000", "1/1001", "fraction");
+    assert_eq!(
+        documented_reason(&two_numbers, false, one_zero_says_yes),
+        Some("no float tolerance rung (D6)")
+    );
+    // A prose answer keeps its own reason, whatever the two verdicts are.
+    let prose = probe_pair("yes", "no", "prose_or_words");
+    assert_eq!(
+        documented_reason(&prose, false, one_zero_says_yes),
+        Some("prose is not a value (V2)")
+    );
+}
+
+/// Build one pair for a predicate test.
+fn probe_pair(expected: &str, learner: &str, shape: &str) -> Pair {
+    Pair {
+        generator: "probe",
+        intent: Intent::Same,
+        expected: expected.to_string(),
+        learner: learner.to_string(),
+        kind: AnswerKind::Expression,
+        shape: shape.to_string(),
+    }
+}
 
 #[test]
 fn the_generated_set_is_deterministic_and_capped() {
