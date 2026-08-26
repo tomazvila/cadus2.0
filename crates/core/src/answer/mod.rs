@@ -6,10 +6,22 @@
 //!
 //! The module has four stages:
 //!
-//! 1. [`normalize`] rewrites learner notation into a parser source and a string key.
-//! 2. [`parse`] reads that source into an [`Ast`], or refuses it with [`Undecidable`].
+//! 1. [`normalize`] applies the whole-string steps of the V4 table and writes a
+//!    reader source and a string key.
+//! 2. [`parse`] lexes that source into tokens and reads the tokens into an
+//!    [`Ast`], or refuses it with [`Undecidable`].
 //! 3. [`canon`] reads an [`Ast`] into the canonical form [`Canon`].
 //! 4. [`check`] compares two answers and returns an [`Outcome`].
+//!
+//! # A construct is a token, not a string rewrite
+//!
+//! Review round 3 (`docs/reviews/M2-review-3.md`) moves every LaTeX and glyph
+//! construct of the V4 table out of [`normalize`] and into
+//! [`lexer`]: `\frac{A}{B}`, `\sqrt{A}`, `\sqrt A`, `^{n}`, `\cdot`, `\times`,
+//! `\left`, `\right`, `%`, the vulgar glyphs, `√`, the superscript digits, and
+//! `°`. A string rewrite carries no structure, so a later pass re-associated it
+//! and four C4 false positives came out of that (findings #1, #2, #3, #4, #6,
+//! #8). A token carries its own structure, and the parser builds the node.
 //!
 //! Every refusal is an [`Undecidable`] value. No stage panics, on any input.
 

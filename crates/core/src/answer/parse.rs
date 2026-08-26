@@ -4,9 +4,28 @@
 //! and inequality productions that `docs/plans/M2.md` fixes. Everything outside it is
 //! [`Undecidable`]. The parser never panics and it never runs an unbounded search:
 //! it reads each token once and it caps its own nesting.
+//!
+//! # The constructs of the V4 table are tokens
+//!
+//! Review round 3 (`docs/reviews/M2-review-3.md`) moves every LaTeX and glyph
+//! construct into [`crate::answer::lexer`], and this module builds the tree from
+//! the tokens. The four shapes the ruling names are:
+//!
+//! - a fraction: [`Tok::Frac`] becomes [`Ast::Fraction`] when both bodies are
+//!   integer literals, and the quotient [`Ast::Div`] of the two bodies when they
+//!   are not. One construct is one node, whatever whitespace its braces hold.
+//! - a root: [`Tok::Sqrt`], [`Tok::Root`] and the name `sqrt` all become
+//!   [`Ast::Sqrt`], so one value has one node.
+//! - a percent: [`Tok::Percent`] divides the primary in front of it by 100, and
+//!   the node it builds holds that primary and nothing else, so no `/` and no
+//!   `**` beside it re-associates (findings #3, #4, #6).
+//! - a mixed number: [`Ast::Mixed`] carries the magnitude of the whole part, and
+//!   a negative mixed number is that node inside an [`Ast::Neg`]. The sign comes
+//!   from the sign token, never from the integer value, so `-0 1/2` keeps its
+//!   minus (finding #7).
 
 use num_bigint::BigInt;
-use num_traits::Zero;
+use num_traits::{Signed, Zero};
 
 use super::Undecidable;
 use super::ast::{Ast, Const, IneqOp};
@@ -84,10 +103,11 @@ struct Parser<'a> {
 
 /// The fraction that stands after a whole number, in either token shape.
 struct FractionPart {
-    /// The digits above the bar, as the answer writes them.
-    numerator: String,
-    /// The digits below the bar, as the answer writes them.
-    denominator: String,
+    /// The two digit runs of the fraction, as the answer writes them.
+    ///
+    /// `None` when a body of the [`Tok::Frac`] token is not one number literal,
+    /// which is every `\frac` whose braces hold an expression.
+    digits: Option<(String, String)>,
     /// The token index after the fraction.
     next: usize,
     /// True for the `b/c` spelling of three tokens, false for one [`Tok::Frac`].
@@ -129,6 +149,43 @@ impl Parser<'_> {
         }
     }
 
+    /// Parse the token list that a construct carries, and require the whole list.
+    ///
+    /// `\frac{A}{B}` and `\sqrt{A}` carry their bodies as token lists, so the
+    /// body is parsed here and never spliced back into the outer token stream.
+    /// A body that holds no expression, or that leaves a token over, refuses the
+    /// whole answer.
+    fn parse_body(&self, tokens: &[Token], reason: &'static str) -> Result<Ast, Undecidable> {
+        if tokens.is_empty() {
+            return Err(Undecidable::new(reason));
+        }
+        if self.depth >= MAX_DEPTH {
+            return Err(Undecidable::new("the answer nests too deeply"));
+        }
+        let mut inner = Parser {
+            tokens,
+            at: 0,
+            depth: self.depth + 1,
+        };
+        let ast = inner.parse_expr()?;
+        if inner.at != tokens.len() {
+            return Err(Undecidable::new(reason));
+        }
+        Ok(ast)
+    }
+
+    /// Build the value of a [`Tok::Frac`] token from its two bodies.
+    fn fraction_value(
+        &self,
+        numerator: &[Token],
+        denominator: &[Token],
+    ) -> Result<Ast, Undecidable> {
+        let reason = "a fraction with a body the reader cannot read";
+        let numerator = self.parse_body(numerator, reason)?;
+        let denominator = self.parse_body(denominator, reason)?;
+        make_quotient(numerator, denominator)
+    }
+
     /// Run `body` one level deeper, or refuse an answer that nests too far.
     fn nested<T>(
         &mut self,
@@ -162,9 +219,50 @@ impl Parser<'_> {
         }
         let mut items = vec![first];
         while self.eat(&Tok::Comma) {
+            self.check_bare_comma_group()?;
             items.push(self.parse_expr()?);
         }
         Ok(Ast::Tuple(items))
+    }
+
+    /// Refuse a comma thousands group that the whole-answer rule did not strip.
+    ///
+    /// The V4 table strips `1,500` on a full match of the whole answer and
+    /// nowhere else. A comma group that reaches the parser therefore stands in a
+    /// longer answer — `1,500%` or `3 + 1,500` — where it is neither the grouped
+    /// number nor a tuple of two values. The rule mirrors
+    /// [`Parser::continues_a_space_group`], so the two separators of the V4
+    /// table get one answer and `1 500%` and `1,500%` are both undecidable
+    /// (review round 3, finding #6).
+    ///
+    /// A bracket makes the tuple explicit, so `(1,500)` keeps the 1.0 reading.
+    /// The shape of a group is the 1.0 `_COMMA_GROUPS_RE` shape: one to three
+    /// digits, the comma, and three digits with no space after the comma.
+    fn check_bare_comma_group(&self) -> Result<(), Undecidable> {
+        let before = self.at.checked_sub(2).and_then(|at| self.tokens.get(at));
+        let Some(Tok::Num(left)) = before.map(|token| &token.kind) else {
+            return Ok(());
+        };
+        let Some(token) = self.tokens.get(self.at) else {
+            return Ok(());
+        };
+        let Tok::Num(right) = &token.kind else {
+            return Ok(());
+        };
+        if token.space_before {
+            return Ok(());
+        }
+        let plain = |text: &str| text.chars().all(|c| c.is_ascii_digit());
+        if plain(left)
+            && (1..=3).contains(&left.chars().count())
+            && plain(right)
+            && right.chars().count() == 3
+        {
+            return Err(Undecidable::new(
+                "a comma-grouped number stands in a longer answer",
+            ));
+        }
+        Ok(())
     }
 
     /// Read a leading `<var> =` label and return the variable name.
@@ -350,10 +448,23 @@ impl Parser<'_> {
     }
 
     /// Whether the cursor is on a token that can start a factor.
+    ///
+    /// `\sqrt{2}` and `√2` are factors of a product, so `5x\sqrt{2}` is
+    /// `5*x*sqrt(2)` and `2\times\sqrt{3}` is `2*sqrt(3)`. Round 2 wrote a
+    /// product sign into the source for the same reading, and that sign landed
+    /// on the last letter of `\cdot` (review round 3, finding #8). A token needs
+    /// no sign.
     fn starts_operand(&self) -> bool {
         matches!(
             self.peek(),
-            Some(Tok::Num(_) | Tok::Ident(_) | Tok::LParen | Tok::Frac { .. })
+            Some(
+                Tok::Num(_)
+                    | Tok::Ident(_)
+                    | Tok::LParen
+                    | Tok::Frac { .. }
+                    | Tok::Sqrt(_)
+                    | Tok::Root
+            )
         )
     }
 
@@ -427,10 +538,10 @@ impl Parser<'_> {
             return Ok(None);
         }
         let whole = match factors {
-            [only] => whole_number(only),
+            [only] => signed_whole(only),
             _ => None,
         };
-        let Some(whole) = whole else {
+        let Some((negative, whole)) = whole else {
             if part.digit_run {
                 return Ok(None);
             }
@@ -447,11 +558,23 @@ impl Parser<'_> {
             ));
         };
         self.at = part.next;
-        Ok(Some(Ast::Mixed {
+        let mixed = Ast::Mixed {
             whole,
             numerator,
             denominator,
-        }))
+        };
+        // The sign comes from the sign token, and the node keeps it outside the
+        // whole part. `-0` is the integer zero, so a rule that reads the value
+        // drops the minus of `-0 1/2` and grades minus one half as plus one half
+        // (review round 3, finding #7).
+        let value = if negative {
+            Ast::Neg(Box::new(mixed))
+        } else {
+            mixed
+        };
+        // A mixed number is a primary, so it takes the postfix `%` as every
+        // other primary does: `3 1/2%` is three and a half hundredths.
+        Ok(Some(self.apply_percent(value)?))
     }
 
     /// Read the fraction that stands at the cursor, in either token shape.
@@ -462,8 +585,7 @@ impl Parser<'_> {
                 numerator,
                 denominator,
             } => Some(FractionPart {
-                numerator: numerator.clone(),
-                denominator: denominator.clone(),
+                digits: digit_run_body(numerator).zip(digit_run_body(denominator)),
                 next: self.at + 1,
                 digit_run: false,
             }),
@@ -475,8 +597,7 @@ impl Parser<'_> {
                     return None;
                 };
                 Some(FractionPart {
-                    numerator: numerator.clone(),
-                    denominator: denominator.clone(),
+                    digits: Some((numerator.clone(), denominator.clone())),
                     next: self.at + 3,
                     digit_run: true,
                 })
@@ -509,7 +630,30 @@ impl Parser<'_> {
             return self.finish_letter_run(&letters);
         }
         let base = self.parse_atom()?;
+        let base = self.apply_percent(base)?;
         self.apply_power(base)
+    }
+
+    /// Read the postfix `%` after a primary, and divide that primary by 100.
+    ///
+    /// The percent binds to the primary in front of it and to nothing else
+    /// (`docs/plans/M2.md`, round 1 finding #17). The node holds that primary,
+    /// so `15/30%` is `15/(30/100)` = 50 and `4%^2` is `(4/100)^2`. Round 2
+    /// spliced the text `(n)/100` into the source instead, and the `/100` then
+    /// bound to the operator beside it: `15/30%` became `(15/30)/100`, which is
+    /// a hundredth of a hundredth of the value the learner wrote (review round
+    /// 3, findings #3, #4).
+    ///
+    /// One primary takes one percent. `50%%` is a slip, not a value, so the
+    /// second sign refuses the answer.
+    fn apply_percent(&mut self, value: Ast) -> Result<Ast, Undecidable> {
+        if !self.eat(&Tok::Percent) {
+            return Ok(value);
+        }
+        if self.peek() == Some(&Tok::Percent) {
+            return Err(Undecidable::new("two percent signs on one number"));
+        }
+        make_quotient(value, Ast::Integer(BigInt::from(100)))
     }
 
     /// Read the letters of a splittable run at the cursor.
@@ -533,7 +677,7 @@ impl Parser<'_> {
             .iter()
             .map(|letter| Ast::Var(letter.to_string()))
             .collect();
-        let base = Ast::Var(last.to_string());
+        let base = self.apply_percent(Ast::Var(last.to_string()))?;
         factors.push(self.apply_power(base)?);
         Ok(collapse(factors, Ast::Mul))
     }
@@ -576,6 +720,13 @@ impl Parser<'_> {
             .parse()
             .map_err(|_| Undecidable::new("an exponent outside the evaluation bound"))?;
         self.bump();
+        // `2^50%` writes the exponent 50/100, and [`Ast::Pow`] carries a whole
+        // number and nothing else (D6). The percent binds tighter than the
+        // power, so this is the same refusal that `2^0.5` gets, and the answer
+        // never takes the second reading `(2^50)/100` (review round 3, #3, #4).
+        if self.peek() == Some(&Tok::Percent) {
+            return Err(Undecidable::new("an exponent that is not a whole number"));
+        }
         if parenthesized && !self.eat(&Tok::RParen) {
             return Err(Undecidable::new("an exponent that is not a whole number"));
         }
@@ -604,7 +755,17 @@ impl Parser<'_> {
                     let numerator = numerator.clone();
                     let denominator = denominator.clone();
                     parser.bump();
-                    literal_fraction(&numerator, &denominator)
+                    parser.fraction_value(&numerator, &denominator)
+                }
+                Tok::Sqrt(body) => {
+                    let body = body.clone();
+                    parser.bump();
+                    let argument = parser.parse_body(&body, "a root with no argument")?;
+                    Ok(Ast::Sqrt(Box::new(argument)))
+                }
+                Tok::Root => {
+                    parser.bump();
+                    parser.parse_root_glyph()
                 }
                 Tok::Ident(name) => {
                     let name = name.clone();
@@ -624,6 +785,52 @@ impl Parser<'_> {
                 _ => Err(Undecidable::new("a symbol where a value belongs")),
             }
         })
+    }
+
+    /// Read the one primary that the radical glyph `√` takes.
+    ///
+    /// 1.0 gives the glyph a bracketed group, a number, or a name
+    /// (`sympy_check.py:153-157`), and 2.0 keeps that reading, so `15√3` is
+    /// `15*sqrt(3)` and `√x^2` is `sqrt(x)^2`. A function name after the glyph
+    /// is two function names in a row, which the grammar does not read.
+    fn parse_root_glyph(&mut self) -> Result<Ast, Undecidable> {
+        let no_argument = Undecidable::new("a root with no argument");
+        let Some(token) = self.tokens.get(self.at) else {
+            return Err(no_argument);
+        };
+        let argument = match &token.kind {
+            Tok::LParen => self.parse_paren_group()?,
+            Tok::Num(text) => {
+                let text = text.clone();
+                self.bump();
+                parse_number(&text)?
+            }
+            Tok::Frac {
+                numerator,
+                denominator,
+            } => {
+                let numerator = numerator.clone();
+                let denominator = denominator.clone();
+                self.bump();
+                self.fraction_value(&numerator, &denominator)?
+            }
+            Tok::Ident(name) if !FUNCTIONS.contains(&name.as_str()) => {
+                let name = name.clone();
+                self.bump();
+                match letter_run(&name) {
+                    Some(letters) => collapse(
+                        letters
+                            .iter()
+                            .map(|letter| Ast::Var(letter.to_string()))
+                            .collect(),
+                        Ast::Mul,
+                    ),
+                    None => self.parse_name(&name)?,
+                }
+            }
+            _ => return Err(no_argument),
+        };
+        Ok(Ast::Sqrt(Box::new(argument)))
     }
 
     /// Turn an identifier into a function call, a constant, or a variable.
@@ -658,7 +865,7 @@ impl Parser<'_> {
                     "a function call with the wrong count of arguments",
                 ));
             }
-            return Ok(Ast::Func(name.to_string(), args));
+            return Ok(make_call(name, args));
         }
         // `sec**2 x` is the house spelling of `sec(x)**2` (spec section 8.2).
         let power = if self.eat(&Tok::Pow) {
@@ -670,7 +877,7 @@ impl Parser<'_> {
             return Err(Undecidable::new("a function name with no argument"));
         }
         let argument = self.parse_juxtaposed_argument()?;
-        let call = Ast::Func(name.to_string(), vec![argument]);
+        let call = make_call(name, vec![argument]);
         Ok(match power {
             Some(exponent) => Ast::Pow(Box::new(call), exponent),
             None => call,
@@ -685,12 +892,16 @@ impl Parser<'_> {
     /// `x*cos(2)`: the two spellings are one answer, and 1.0 reads both of them
     /// as `cos(2*x)` (review round 2, findings #4 and #15).
     ///
-    /// The chain stops at `/`, `+`, `-`, `,`, `)`, `=`, `<`, and `>`. The stop at
-    /// `/` is the round 1 ruling that keeps `sqrt 2/2` at `sqrt(2)/2`.
+    /// The chain stops at `/`, `+`, `-`, `,`, `)`, `=`, `<`, `>`, and at a
+    /// function. The stop at `/` is the round 1 ruling that keeps `sqrt 2/2` at
+    /// `sqrt(2)/2`; the stop at a function is the round 3 ruling of finding #5.
     fn parse_juxtaposed_argument(&mut self) -> Result<Ast, Undecidable> {
         self.nested(|parser| {
             let mut factors = vec![parser.parse_power()?];
             loop {
+                if parser.stops_the_argument_chain() {
+                    break;
+                }
                 if let Some(mixed) = parser.read_mixed_number(&factors)? {
                     factors = vec![mixed];
                     continue;
@@ -713,6 +924,35 @@ impl Parser<'_> {
             }
             Ok(collapse(factors, Ast::Mul))
         })
+    }
+
+    /// Whether the next factor of a bracket-free argument is a function.
+    ///
+    /// A bracket-free argument ends where the next function starts, so
+    /// `sec x tan x` is `sec(x)*tan(x)` and `2 sin x cos x` is
+    /// `2*sin(x)*cos(x)`. Round 2 continued the chain over every operand, so the
+    /// authored `sec x tan x` meant `sec(x*tan(x))`: the correct learner answer
+    /// `sec(x)tan(x)` was graded wrong and the meaningless `sec(x tan x)` was
+    /// graded correct on three authored `derivatives-trig` answers (review round
+    /// 3, finding #5).
+    ///
+    /// The test reads through one explicit `*`, because the chain runs through
+    /// `*` (round 2, findings #4, #15). Without that, `sec x * tan x` and
+    /// `sec x tan x` would be two values of one answer.
+    ///
+    /// A function is a name of [`FUNCTIONS`], a `\sqrt{…}` token, or the glyph
+    /// `√`. The last two are the name `sqrt` in another spelling, so all three
+    /// stop the chain in the same place.
+    fn stops_the_argument_chain(&self) -> bool {
+        let ahead = match self.peek() {
+            Some(Tok::Star) => self.peek_at(1),
+            other => other,
+        };
+        match ahead {
+            Some(Tok::Ident(name)) => FUNCTIONS.contains(&name.as_str()),
+            Some(Tok::Sqrt(_) | Tok::Root) => true,
+            _ => false,
+        }
     }
 
     /// Parse `( … )`: a group, an ordered tuple, or the open end of an interval.
@@ -814,18 +1054,49 @@ fn letter_run(name: &str) -> Option<Vec<char>> {
 /// runs, and `0 < b < c`. The digit-run spelling refuses a three-digit numerator
 /// as well, because a three-digit run after a space is a thousands group.
 fn proper_fraction_part(part: &FractionPart) -> Option<(BigInt, BigInt)> {
-    if !is_plain_digit_run(&part.numerator) || !is_plain_digit_run(&part.denominator) {
+    let (numerator, denominator) = part.digits.as_ref()?;
+    if !is_plain_digit_run(numerator) || !is_plain_digit_run(denominator) {
         return None;
     }
-    if part.digit_run && part.numerator.chars().count() == 3 {
+    if part.digit_run && numerator.chars().count() == 3 {
         return None;
     }
-    let numerator = part.numerator.parse::<BigInt>().ok()?;
-    let denominator = part.denominator.parse::<BigInt>().ok()?;
+    let numerator = numerator.parse::<BigInt>().ok()?;
+    let denominator = denominator.parse::<BigInt>().ok()?;
     if numerator.is_zero() || numerator >= denominator {
         return None;
     }
     Some((numerator, denominator))
+}
+
+/// Read the digit run of one `\frac` brace body, when the body is exactly one.
+///
+/// The body reaches the parser as a token list, so whitespace inside the braces
+/// changes nothing: `\frac{ 1 }{2}` and `\frac{1}{2}` hold the same one token.
+/// Round 2 tested the brace text instead, and one space there turned the mixed
+/// number `2\frac{ 1}{2}` into the product 1 (review round 3, findings #1, #2).
+fn digit_run_body(tokens: &[Token]) -> Option<String> {
+    match tokens {
+        [only] => match &only.kind {
+            Tok::Num(text) => Some(text.clone()),
+            _ => None,
+        },
+        _ => None,
+    }
+}
+
+/// Read the sign token and the magnitude of a whole-number literal.
+///
+/// The sign comes from the [`Ast::Neg`] node that the sign token built, and
+/// never from the integer value. `-0` is the integer zero, so a rule that reads
+/// the value alone drops the minus of `-0 1/2` and grades minus one half as plus
+/// one half (review round 3, finding #7).
+fn signed_whole(node: &Ast) -> Option<(bool, BigInt)> {
+    match node {
+        Ast::Integer(value) => Some((value.is_negative(), value.abs())),
+        Ast::Neg(inner) => signed_whole(inner).map(|(negative, magnitude)| (!negative, magnitude)),
+        _ => None,
+    }
 }
 
 /// Whether the node is a number literal, with or without a leading sign.
@@ -929,20 +1200,19 @@ fn make_quotient(dividend: Ast, divisor: Ast) -> Result<Ast, Undecidable> {
     Ok(Ast::Div(Box::new(dividend), Box::new(divisor)))
 }
 
-/// Build the value of a literal-fraction token.
+/// Build a function application, with one node for every square root.
 ///
-/// The two parts are runs of ASCII digits, so the denominator is never negative.
-/// A zero denominator refuses the answer, as `1/0` does.
-fn literal_fraction(numerator: &str, denominator: &str) -> Result<Ast, Undecidable> {
-    let numerator = parse_integer(numerator)?;
-    let denominator = parse_integer(denominator)?;
-    if denominator.is_zero() {
-        return Err(Undecidable::new("a fraction with a zero denominator"));
+/// `sqrt(2)`, `\sqrt{2}` and `√2` are one value, so all three build
+/// [`Ast::Sqrt`] and the canonicalizer meets one shape (review round 3, the
+/// structural ruling).
+fn make_call(name: &str, mut args: Vec<Ast>) -> Ast {
+    if name == "sqrt"
+        && args.len() == 1
+        && let Some(argument) = args.pop()
+    {
+        return Ast::Sqrt(Box::new(argument));
     }
-    Ok(Ast::Fraction {
-        numerator,
-        denominator,
-    })
+    Ast::Func(name.to_string(), args)
 }
 
 /// Read the value of a node that is a signed integer literal, if it is one.

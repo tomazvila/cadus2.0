@@ -86,9 +86,15 @@ pub enum Ast {
         /// The denominator. Always positive and never zero.
         denominator: BigInt,
     },
-    /// A mixed number `a b/c`, which reads as `sign(a) * (|a| + b/c)`.
+    /// A mixed number `a b/c`, which reads as `a + b/c`.
+    ///
+    /// The whole part is the magnitude, and it is never negative. The parser
+    /// wraps a negative mixed number in [`Ast::Neg`], because the sign belongs
+    /// to the sign token and not to the integer value: `-0` is the integer zero,
+    /// and a whole part that carries the sign drops the minus of `-0 1/2`
+    /// (review round 3, finding #7).
     Mixed {
-        /// The whole part. Its sign is the sign of the whole value.
+        /// The magnitude of the whole part. Never negative.
         whole: BigInt,
         /// The numerator of the fractional part. Never negative.
         numerator: BigInt,
@@ -100,6 +106,9 @@ pub enum Ast {
     /// A named constant.
     Const(Const),
     /// A square root.
+    ///
+    /// Every root builds this node: the name `sqrt`, `\sqrt{a}`, `\sqrt a`, and
+    /// the glyph `√` (review round 3, the structural ruling).
     Sqrt(Box<Ast>),
     /// A power with an integer exponent. The grammar allows no other exponent.
     Pow(Box<Ast>, i64),

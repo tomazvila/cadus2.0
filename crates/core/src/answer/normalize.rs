@@ -1,64 +1,70 @@
-//! Learner-notation tolerance (V4).
+//! Learner-notation tolerance (V4), the string half.
 //!
 //! [`normalize`] produces the two strings that the checker compares on. The 1.0
 //! pipeline has two separate rewrites and this module keeps both of them:
 //!
 //! - `string_key` is the casefolded key of the string rung (1.0 `_normalize`,
 //!   spec section 2.1).
-//! - `source` is the case-preserving parser input (1.0 `to_sympy_source`,
-//!   spec section 2.2) plus the additions that `docs/plans/M2.md` lists for 2.0.
+//! - `source` is the case-preserving reader input (1.0 `to_sympy_source`,
+//!   spec section 2.2), cut down to the steps that a string rewrite does
+//!   without a grammar.
 //!
-//! The 1.0 order is kept where 1.0 has one. 2.0 adds `\frac{a}{b}`, `\sqrt{a}`,
-//! `^{n}`, a `%` that binds to the number in front of it, and a `*` before a
-//! `sqrt` that a letter, a digit, or a closing parenthesis touches.
+//! # This module owns no construct
 //!
-//! Three readings changed after review round 1 (`docs/reviews/M2-review-1.md`):
+//! Review round 3 (`docs/reviews/M2-review-3.md`, findings #1, #2, #3, #4, #6,
+//! #8) measures the cost of a construct that a string rewrite owns. A `\frac`
+//! with one space inside a brace fell out of the literal-fraction spelling and
+//! became a product; a `%` wrote the bare text `(n)/100`, which re-associated
+//! under `/` and under `**`; a product sign written in front of `\sqrt` landed
+//! on the last letter of `\cdot`. Every one of those defects graded a wrong
+//! answer correct (C4).
 //!
-//! - A `<var> =` label stays in the source. The parser makes it an
-//!   [`crate::answer::Ast::Assign`] node and `check` compares the two labels
-//!   (findings #2, #10, #16). 1.0 deleted the label, which made `x = 4` and
-//!   `y = 4` one answer.
-//! - A `%` divides the number it follows, never the whole body (finding #17).
-//! - A vulgar-fraction glyph after a digit run is the fractional part of a mixed
-//!   number, so `2⅓` is `2 1/3` and not `2*(1/3)` (findings #1, #9).
+//! The orchestrator ruling of round 3 moves every construct out of this module.
+//! `\frac{a}{b}`, `\sqrt{a}`, `\sqrt a`, `^{n}`, `\cdot`, `\times`, `\left`,
+//! `\right`, `%`, the vulgar glyphs, `√`, the superscript digits, and `°` are
+//! tokens of [`crate::answer::lexer`], and [`crate::answer::parse`] builds the
+//! tree from those tokens. A token carries structure, so no later pass
+//! re-associates it.
 //!
-//! # The mixed-number rule has one place, and it is the parser
+//! # What is left
 //!
-//! Review round 2 (`docs/reviews/M2-review-2.md`, findings #1, #2, #3, #5, #6,
-//! #7) shows the cost of a look-back in this module: `2½` read as the mixed
-//! number 5/2 while `2 ½` and `2\frac{1}{2}` read as the product 1, so the
-//! checker graded one value three ways.
+//! Six steps, and every one of them is a property of the whole string:
 //!
-//! The rule now lives in [`crate::answer::parse`] alone. This module writes
-//! every vulgar glyph and every literal `\frac{b}{c}` as one literal-fraction
-//! token, spelled [`FRACTION_OPEN`] `b/c` [`FRACTION_CLOSE`]. The lexer reads
-//! that spelling as one [`crate::answer::lexer::Tok::Frac`] token, so the parser
-//! sees the token shape `Num [space] fraction` for all five mixed-number
-//! spellings (`2 1/2`, `2½`, `2 ½`, `2\frac{1}{2}`, `2 \frac{1}{2}`) and applies
-//! the `0 < b < c` and plain-digit checks in one function.
+//! 1. one outer `$…$` pair,
+//! 2. trailing periods,
+//! 3. whitespace collapse,
+//! 4. the casefolded string key,
+//! 5. the comma or space thousands group, on a full match,
+//! 6. the one-character Unicode table of operators and constants.
 //!
-//! The two mark characters keep the two readings apart. A learner who writes the
-//! product `2(1/2)` keeps the value 1, because a typed parenthesis is never a
-//! mark. The marks reach the source from the glyph and from `\frac` alone.
+//! The `<var> =` label of review round 1 (findings #2, #10, #16) stays in the
+//! source: [`crate::answer::parse`] makes it an [`crate::answer::Ast::Assign`]
+//! node, and `check` compares the two labels. 1.0 deleted the label, which made
+//! `x = 4` and `y = 4` one answer.
 
 /// The largest answer the checker looks at, in characters (spec section 7.9, item 9).
 pub const MAX_ANSWER_CHARS: usize = 4_000;
 
-/// The largest brace or parenthesis nesting the rewriter descends into.
-///
-/// A deeper input keeps its text. The cap bounds the recursion, so a hostile
-/// string cannot exhaust the stack.
-const MAX_NESTING: usize = 32;
-
 /// The space characters that group digits (1.0 `_SPACE_SEPARATORS`).
+///
+/// [`collapse_whitespace`] runs first and maps every one of them to an ASCII
+/// space, so the group test meets the ASCII space alone. The list stays whole
+/// because it names the 1.0 rule.
 const SPACE_SEPARATORS: [char; 5] = [' ', '\u{00a0}', '\u{202f}', '\u{2009}', '\u{2007}'];
 
-/// The plain Unicode substitutions of 1.0 `_UNICODE_SIMPLE`.
-const UNICODE_SIMPLE: [(char, &str); 13] = [
+/// The one-character Unicode substitutions of 1.0 `_UNICODE_SIMPLE`.
+///
+/// Every entry is one character that stands for one operator or one constant.
+/// The constructs that carry an argument (`√`, the vulgar glyphs, the
+/// superscript digits, `°`) left this table for [`crate::answer::lexer`] in
+/// review round 3.
+const UNICODE_SIMPLE: [(char, &str); 14] = [
     ('π', "pi"),
     ('τ', "(2*pi)"),
     ('∞', "oo"),
     ('·', "*"),
+    ('×', "*"),
+    ('÷', "/"),
     ('−', "-"),
     ('–', "-"),
     ('≤', "<="),
@@ -67,44 +73,20 @@ const UNICODE_SIMPLE: [(char, &str); 13] = [
     ('α', "alpha"),
     ('β', "beta"),
     ('λ', "lamda"),
-    ('°', ""),
-];
-
-/// The mark that opens a literal-fraction token in the source.
-///
-/// The character is U+27E6. No learner keyboard writes it, and no other rewrite
-/// of this module produces it, so the mark tells the token `2⟦1/2⟧` (the glyph
-/// `2½`) from the product `2(1/2)` that a learner types.
-pub const FRACTION_OPEN: char = '⟦';
-
-/// The mark that closes a literal-fraction token in the source (U+27E7).
-pub const FRACTION_CLOSE: char = '⟧';
-
-/// The vulgar-fraction glyphs, with the numerator and the denominator of each.
-///
-/// Every glyph becomes one literal-fraction token, in every position. The parser
-/// decides whether a whole number in front of the token makes a mixed number
-/// (review round 2, findings #1, #2, #3, #5, #6, #7).
-const VULGAR_FRACTIONS: [(char, &str, &str); 5] = [
-    ('½', "1", "2"),
-    ('⅓', "1", "3"),
-    ('⅔', "2", "3"),
-    ('¼', "1", "4"),
-    ('¾', "3", "4"),
 ];
 
 /// The result of [`normalize`].
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Normalized {
-    /// The parser input. Case is preserved.
+    /// The reader input. Case is preserved.
     pub source: String,
     /// The casefolded key of the string-equality rung.
     pub string_key: String,
 }
 
-/// Rewrite one answer string into its string key and its parser source (V4).
+/// Rewrite one answer string into its string key and its reader source (V4).
 ///
-/// The function never fails. An answer that no rung can read still produces two
+/// The function never fails. An answer that no rung reads still produces two
 /// strings; [`crate::answer::parse`] is the step that refuses it.
 #[must_use]
 pub fn normalize(text: &str) -> Normalized {
@@ -122,88 +104,17 @@ fn to_string_key(text: &str) -> String {
     casefold(&collapsed).trim().to_string()
 }
 
-/// Build the parser source (1.0 `to_sympy_source` plus the 2.0 additions).
+/// Build the reader source: the string steps of the V4 table.
+///
+/// The Unicode table runs in front of the thousands step, because the table
+/// maps the Unicode minus to the ASCII minus and the group shape reads that
+/// sign.
 fn to_source(text: &str) -> String {
     let stripped = strip_dollars(text.trim());
     let no_period = stripped.trim_end_matches('.').trim();
     let collapsed = collapse_whitespace(no_period);
-    let collapsed = collapsed.trim();
-
-    // A trailing percent sign leaves before the thousands reading and comes back
-    // after it, so `1,500%` still sees its comma group as one grouped integer.
-    let (body, is_percent) = match collapsed.strip_suffix('%') {
-        Some(rest) => (rest.trim_end(), true),
-        None => (collapsed, false),
-    };
-
-    let body = rewrite_latex_braces(&body.chars().collect::<Vec<char>>(), 0);
-    let body = body.replace('^', "**");
-    let body = body
-        .replace("\\cdot", "*")
-        .replace("\\times", "*")
-        .replace("\\left", "")
-        .replace("\\right", "")
-        .replace('\\', "");
-    let body = body.replace('×', "*").replace('÷', "/");
-    let body = unicode_math_to_ascii(&body);
-    let body = strip_thousands_groups(body.trim());
-
-    let body = if is_percent { body + "%" } else { body };
-    let body = bind_percent(&body);
-    body.trim().to_string()
-}
-
-/// Divide the number in front of each `%` by 100 (review finding #17).
-///
-/// A percent binds to its own number, so `3 + 4%` is `3 + (4)/100` and not
-/// `(3 + 4)/100`. A `%` that no number touches stays in the string, and the
-/// lexer then refuses the answer.
-fn bind_percent(body: &str) -> String {
-    let mut out = String::with_capacity(body.len() + 8);
-    // The byte index where the `100` of the last rewrite starts. A second `%` on
-    // that `100` is a second reading of one number, so the pass refuses it.
-    let mut guard: Option<usize> = None;
-    for c in body.chars() {
-        if c != '%' {
-            out.push(c);
-            continue;
-        }
-        let trimmed = out.trim_end().len();
-        match number_start(out.get(..trimmed).unwrap_or("")) {
-            Some(start) if guard != Some(start) => {
-                let number = out.get(start..trimmed).unwrap_or("").to_string();
-                out.truncate(start);
-                out.push('(');
-                out.push_str(&number);
-                out.push_str(")/100");
-                guard = Some(out.len() - "100".len());
-            }
-            _ => out.push('%'),
-        }
-    }
-    out
-}
-
-/// Find the byte index where the number literal at the end of `text` starts.
-///
-/// The scan reads bytes, which is safe: an ASCII digit byte and the `.` byte
-/// never stand inside a multi-byte character.
-fn number_start(text: &str) -> Option<usize> {
-    let bytes = text.as_bytes();
-    let mut start = bytes.len();
-    let mut digits = 0_usize;
-    while start > 0 {
-        let byte = *bytes.get(start - 1)?;
-        if byte.is_ascii_digit() {
-            digits += 1;
-            start -= 1;
-        } else if byte == b'.' {
-            start -= 1;
-        } else {
-            break;
-        }
-    }
-    if digits == 0 { None } else { Some(start) }
+    let body = unicode_operators_to_ascii(collapsed.trim());
+    strip_thousands_groups(body.trim()).trim().to_string()
 }
 
 /// Remove one outer `$…$` pair (1.0 `sympy_check.py:40-41`).
@@ -250,178 +161,10 @@ fn casefold(s: &str) -> String {
     out
 }
 
-/// Rewrite the LaTeX brace forms that 2.0 adds: `\frac{a}{b}`, `\sqrt{a}`, `^{n}`.
-///
-/// The rewrite runs before the backslash deletion, because 1.0 deletes every
-/// remaining backslash and that is what hides `\frac` from the parser.
-///
-/// Two readings come from review round 2. A `\frac{b}{c}` of two digit runs
-/// becomes one literal-fraction token, which gives the mixed number `2\frac{1}{2}`
-/// the token shape the parser reads (finding #1). A `\sqrt` takes a product sign
-/// in front of it when a letter, a digit, or a `)` touches it, as `√` does, so
-/// `5x\sqrt{2}` is `5*x*sqrt(2)` and not the name `xsqrt` (finding #9).
-fn rewrite_latex_braces(chars: &[char], depth: usize) -> String {
-    if depth > MAX_NESTING {
-        return chars.iter().collect();
-    }
-    let mut out = String::with_capacity(chars.len());
-    let mut i = 0;
-    while i < chars.len() {
-        if let Some((numerator, denominator, next)) = read_frac(chars, i) {
-            match literal_fraction(numerator, denominator) {
-                Some(token) => out.push_str(&token),
-                None => {
-                    out.push_str("((");
-                    out.push_str(&rewrite_latex_braces(numerator, depth + 1));
-                    out.push_str(")/(");
-                    out.push_str(&rewrite_latex_braces(denominator, depth + 1));
-                    out.push_str("))");
-                }
-            }
-            i = next;
-            continue;
-        }
-        if let Some(after_keyword) = match_literal(chars, i, "\\sqrt") {
-            push_product_sign(&mut out);
-            match read_braced_after(chars, i, "\\sqrt") {
-                Some((body, next)) => {
-                    out.push_str("sqrt(");
-                    out.push_str(&rewrite_latex_braces(body, depth + 1));
-                    out.push(')');
-                    i = next;
-                }
-                // `\sqrt 2` and `\sqrt x` carry no braces. The keyword still
-                // takes the product sign, and the parser reads the bare argument
-                // that follows the name.
-                None => {
-                    out.push_str("sqrt");
-                    i = after_keyword;
-                }
-            }
-            continue;
-        }
-        if let Some((body, next)) = read_braced_after(chars, i, "^") {
-            out.push_str("**(");
-            out.push_str(&rewrite_latex_braces(body, depth + 1));
-            out.push(')');
-            i = next;
-            continue;
-        }
-        if let Some(c) = chars.get(i) {
-            out.push(*c);
-        }
-        i += 1;
-    }
-    out
-}
-
-/// Write the literal-fraction token of two digit runs, or refuse the pair.
-///
-/// A `\frac` of two digit runs is a literal fraction, so it becomes the token
-/// the parser reads as one value. Every other `\frac` keeps the `((a)/(b))`
-/// spelling of round 1, because its numerator and its denominator hold
-/// expressions and no mixed number reads them.
-fn literal_fraction(numerator: &[char], denominator: &[char]) -> Option<String> {
-    let digits = |run: &[char]| !run.is_empty() && run.iter().all(char::is_ascii_digit);
-    if !digits(numerator) || !digits(denominator) {
-        return None;
-    }
-    let numerator: String = numerator.iter().collect();
-    let denominator: String = denominator.iter().collect();
-    Some(format!(
-        "{FRACTION_OPEN}{numerator}/{denominator}{FRACTION_CLOSE}"
-    ))
-}
-
-/// Add a product sign when the text so far ends in a letter, a digit, or a `)`.
-fn push_product_sign(out: &mut String) {
-    if matches!(out.chars().last(), Some(c) if c.is_alphanumeric() || c == ')') {
-        out.push('*');
-    }
-}
-
-/// Match `keyword` at `at`, immediately followed by a balanced `{…}` group.
-///
-/// Return the group body and the index after the closing brace.
-fn read_braced_after<'a>(
-    chars: &'a [char],
-    at: usize,
-    keyword: &str,
-) -> Option<(&'a [char], usize)> {
-    let after_keyword = match_literal(chars, at, keyword)?;
-    if chars.get(after_keyword) != Some(&'{') {
-        return None;
-    }
-    let close = matching_delimiter(chars, after_keyword, '{', '}')?;
-    Some((chars.get(after_keyword + 1..close)?, close + 1))
-}
-
-/// Match `\frac{a}{b}` at `at` and return the two bodies and the index after it.
-fn read_frac(chars: &[char], at: usize) -> Option<(&[char], &[char], usize)> {
-    let (numerator, after_first) = read_braced_after(chars, at, "\\frac")?;
-    if chars.get(after_first) != Some(&'{') {
-        return None;
-    }
-    let close = matching_delimiter(chars, after_first, '{', '}')?;
-    let denominator = chars.get(after_first + 1..close)?;
-    Some((numerator, denominator, close + 1))
-}
-
-/// Match the characters of `literal` at `at` and return the index after them.
-fn match_literal(chars: &[char], at: usize, literal: &str) -> Option<usize> {
-    let mut index = at;
-    for want in literal.chars() {
-        if chars.get(index) != Some(&want) {
-            return None;
-        }
-        index += 1;
-    }
-    Some(index)
-}
-
-/// Find the delimiter that closes the `open` at `at`. Nesting is counted.
-fn matching_delimiter(chars: &[char], at: usize, open: char, close: char) -> Option<usize> {
-    if chars.get(at) != Some(&open) {
-        return None;
-    }
-    let mut depth = 0_usize;
-    for (offset, c) in chars.get(at..)?.iter().enumerate() {
-        if *c == open {
-            depth += 1;
-        } else if *c == close {
-            depth = depth.checked_sub(1)?;
-            if depth == 0 {
-                return Some(at + offset);
-            }
-        }
-    }
-    None
-}
-
-/// Rewrite the house Unicode maths glyphs (1.0 `_unicode_math_to_ascii`).
-///
-/// 2.0 adds two things: a `*` in front of the `sqrt` when the glyph touches a
-/// digit, a letter, or a closing parenthesis, so `15√3` becomes `15*sqrt(3)`;
-/// and the literal-fraction token of a vulgar glyph, so `3½` becomes `3⟦1/2⟧`
-/// and the parser reads the mixed number seven halves.
-fn unicode_math_to_ascii(s: &str) -> String {
-    let chars: Vec<char> = s.chars().collect();
-    let with_roots = rewrite_roots(&chars, 0);
-    let with_powers = rewrite_superscripts(&with_roots);
-    let mut out = String::with_capacity(with_powers.len());
-    for c in with_powers.chars() {
-        if let Some((_, numerator, denominator)) =
-            VULGAR_FRACTIONS.iter().find(|(from, _, _)| *from == c)
-        {
-            // The glyph carries no space and no look-back. One spelling reaches
-            // the parser, and the parser owns the mixed-number rule.
-            out.push(FRACTION_OPEN);
-            out.push_str(numerator);
-            out.push('/');
-            out.push_str(denominator);
-            out.push(FRACTION_CLOSE);
-            continue;
-        }
+/// Replace the one-character operator and constant glyphs (1.0 `_UNICODE_SIMPLE`).
+fn unicode_operators_to_ascii(s: &str) -> String {
+    let mut out = String::with_capacity(s.len());
+    for c in s.chars() {
         match UNICODE_SIMPLE.iter().find(|(from, _)| *from == c) {
             Some((_, to)) => out.push_str(to),
             None => out.push(c),
@@ -430,151 +173,13 @@ fn unicode_math_to_ascii(s: &str) -> String {
     out
 }
 
-/// Rewrite `√(…)` and `√token` into `sqrt(…)` (1.0 `sympy_check.py:153-157`).
-fn rewrite_roots(chars: &[char], depth: usize) -> String {
-    if depth > MAX_NESTING {
-        return chars.iter().collect();
-    }
-    let mut out = String::with_capacity(chars.len());
-    let mut i = 0;
-    while i < chars.len() {
-        if chars.get(i) != Some(&'√') {
-            if let Some(c) = chars.get(i) {
-                out.push(*c);
-            }
-            i += 1;
-            continue;
-        }
-        push_product_sign(&mut out);
-        i += 1;
-        while matches!(chars.get(i), Some(c) if c.is_whitespace()) {
-            i += 1;
-        }
-        if chars.get(i) == Some(&'(') {
-            match matching_delimiter(chars, i, '(', ')') {
-                Some(close) => {
-                    let body = chars.get(i + 1..close).unwrap_or(&[]);
-                    out.push_str("sqrt(");
-                    out.push_str(&rewrite_roots(body, depth + 1));
-                    out.push(')');
-                    i = close + 1;
-                }
-                None => out.push_str("sqrt"),
-            }
-            continue;
-        }
-        match read_root_token(chars, i) {
-            Some(next) => {
-                out.push_str("sqrt(");
-                for c in chars.get(i..next).unwrap_or(&[]) {
-                    out.push(*c);
-                }
-                out.push(')');
-                i = next;
-            }
-            None => out.push_str("sqrt"),
-        }
-    }
-    out
-}
-
-/// Read the bare token a `√` takes: an identifier, or a number (1.0 `:156`).
-fn read_root_token(chars: &[char], at: usize) -> Option<usize> {
-    let first = *chars.get(at)?;
-    let mut index = at;
-    if first.is_alphabetic() {
-        while matches!(chars.get(index), Some(c) if c.is_alphanumeric() || *c == '_') {
-            index += 1;
-        }
-        return Some(index);
-    }
-    if !first.is_ascii_digit() {
-        return None;
-    }
-    while matches!(chars.get(index), Some(c) if c.is_ascii_digit()) {
-        index += 1;
-    }
-    if chars.get(index) == Some(&'.')
-        && matches!(chars.get(index + 1), Some(c) if c.is_ascii_digit())
-    {
-        index += 1;
-        while matches!(chars.get(index), Some(c) if c.is_ascii_digit()) {
-            index += 1;
-        }
-    }
-    Some(index)
-}
-
-/// Rewrite a run of superscript digits after a word character or `)` into `**n`.
-fn rewrite_superscripts(s: &str) -> String {
-    let mut out = String::with_capacity(s.len());
-    let mut pending = String::new();
-    for c in s.chars() {
-        if let Some(digit) = superscript_digit(c) {
-            pending.push(digit);
-            continue;
-        }
-        flush_superscripts(&mut out, &mut pending);
-        out.push(c);
-    }
-    flush_superscripts(&mut out, &mut pending);
-    out
-}
-
-/// Append a collected superscript run to `out`, as `**n` where 1.0 writes `**n`.
-fn flush_superscripts(out: &mut String, pending: &mut String) {
-    if pending.is_empty() {
-        return;
-    }
-    let attaches =
-        matches!(out.chars().last(), Some(c) if c.is_alphanumeric() || c == '_' || c == ')');
-    if attaches {
-        out.push_str("**");
-        out.push_str(pending);
-    } else {
-        // 1.0 leaves a detached superscript alone, and the parser then refuses it.
-        for c in pending.chars() {
-            out.push(superscript_char(c));
-        }
-    }
-    pending.clear();
-}
-
-/// Map a superscript digit to its ASCII digit.
-const fn superscript_digit(c: char) -> Option<char> {
-    match c {
-        '⁰' => Some('0'),
-        '¹' => Some('1'),
-        '²' => Some('2'),
-        '³' => Some('3'),
-        '⁴' => Some('4'),
-        '⁵' => Some('5'),
-        '⁶' => Some('6'),
-        '⁷' => Some('7'),
-        '⁸' => Some('8'),
-        '⁹' => Some('9'),
-        _ => None,
-    }
-}
-
-/// Map an ASCII digit back to its superscript, for a detached run.
-const fn superscript_char(c: char) -> char {
-    match c {
-        '0' => '⁰',
-        '1' => '¹',
-        '2' => '²',
-        '3' => '³',
-        '4' => '⁴',
-        '5' => '⁵',
-        '6' => '⁶',
-        '7' => '⁷',
-        '8' => '⁸',
-        '9' => '⁹',
-        _ => c,
-    }
-}
-
 /// Delete comma or space thousands groups, but only on a full match (1.0 `:102-105`).
+///
+/// The rule reads the whole answer, so a group is one value only when it is the
+/// whole answer. `1 000` is 1000. `x/1 000`, `3 + 1 500%` and `1 500%` are not
+/// the whole answer, so the group stays apart and the parser refuses the second
+/// run instead of inventing a factor (review round 2 finding #11, review round 3
+/// finding #6).
 fn strip_thousands_groups(s: &str) -> String {
     if is_grouped_integer(s, &[',']) {
         return s.chars().filter(|c| *c != ',').collect();
