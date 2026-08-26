@@ -347,6 +347,24 @@ pub enum TaskType {
     MultiStep,
 }
 
+impl TaskType {
+    /// The 1.0 wire spelling of the variant (`TaskType`, `model.py:49-61`).
+    ///
+    /// The selector builds a task id out of it, so the text is load-bearing:
+    /// a multi-step task id reads `{session}-multi-step`, with the hyphen.
+    #[must_use]
+    pub const fn as_str(self) -> &'static str {
+        match self {
+            Self::Lesson => "lesson",
+            Self::Review => "review",
+            Self::Quiz => "quiz",
+            Self::Drill => "drill",
+            Self::Diagnostic => "diagnostic",
+            Self::MultiStep => "multi-step",
+        }
+    }
+}
+
 /// The grader's work-quality tier. It also spells `quality_tier` on a result event.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord, Serialize, Deserialize)]
 pub enum WorkQuality {
