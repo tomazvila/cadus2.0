@@ -9,14 +9,25 @@
 //!
 //! `crates/core/tests/fixtures/answers/oracle_verdicts_1_0.jsonl` holds one line
 //! per generated pair, recorded once with the live 1.0 checker through
-//! `scripts/oracle/check_1_0.py`. The test always compares against that file. To
-//! record it again, or to prove the file still matches the live 1.0 checker:
+//! `scripts/oracle/check_1_0.py`. The test always compares against that file.
+//!
+//! To dump the generated pairs:
 //!
 //! ```text
 //! CADUS_ORACLE_DUMP=/tmp/pairs.jsonl cargo test -p cadus-core --test answer_oracle
-//! CADUS_ORACLE_PYTHON=/home/deploy/dev/cadus/.venv/bin/python \
-//!     cargo test -p cadus-core --test answer_oracle -- --ignored --nocapture
 //! ```
+//!
+//! To prove the file still matches the live 1.0 checker, set
+//! `CADUS_ORACLE_PYTHON` and run the file:
+//!
+//! ```text
+//! CADUS_ORACLE_PYTHON=/home/deploy/dev/cadus/.venv/bin/python \
+//!     cargo test -p cadus-core --test answer_oracle
+//! ```
+//!
+//! No test of this file carries `#[ignore]`. The live tests read
+//! `CADUS_ORACLE_PYTHON` and they print a skip line when it is unset, so
+//! `-- --ignored` selects nothing and proves nothing (review finding #12).
 //!
 //! # The four divergence classes (spec section 9.3)
 //!
@@ -1504,54 +1515,54 @@ fn print_report(report: &Report) {
 // ---------------------------------------------------------------------------
 
 /// The literal size of the generated set.
-const GENERATED_PAIRS: usize = 14_875;
+const GENERATED_PAIRS: usize = 14_989;
 
 /// The literal pair count of every generator, in name order.
 const GENERATOR_COUNTS: [(&str, usize); 36] = [
-    ("appended_junk", 1549),
+    ("appended_junk", 1562),
     ("ascii_to_unicode", 70),
     ("caret_power", 0),
     ("coarse_decimal", 92),
     ("comma_space_removed", 197),
     ("comma_thousands", 44),
     ("decimal_to_fraction", 105),
-    ("digit_transposition", 601),
-    ("dollar_wrapped", 1291),
+    ("digit_transposition", 604),
+    ("dollar_wrapped", 1298),
     ("dot_thousands", 44),
     ("equivalent_fraction", 165),
-    ("explicit_multiplication", 399),
+    ("explicit_multiplication", 408),
     ("figure_space_thousands", 44),
     ("fraction_to_decimal", 79),
-    ("identity", 1549),
+    ("identity", 1562),
     ("implicit_multiplication", 59),
-    ("last_digit_bumped", 1508),
+    ("last_digit_bumped", 1519),
     ("narrow_space_thousands", 44),
     ("nbsp_thousands", 44),
     ("over_thousand", 256),
-    ("plus_spaced", 332),
+    ("plus_spaced", 337),
     ("set_element_changed", 9),
     ("set_reordered", 11),
-    ("sign_flipped", 1546),
+    ("sign_flipped", 1559),
     ("space_thousands", 44),
-    ("star_power", 326),
-    ("sum_reorder", 203),
+    ("star_power", 333),
+    ("sum_reorder", 206),
     ("thin_space_thousands", 44),
     ("times_thousand", 300),
-    ("trailing_period", 1549),
+    ("trailing_period", 1562),
     ("trailing_zero", 408),
     ("tuple_swapped", 151),
-    ("unicode_to_ascii", 60),
-    ("whitespace_padding", 1549),
-    ("wrong_exponent", 170),
+    ("unicode_to_ascii", 61),
+    ("whitespace_padding", 1562),
+    ("wrong_exponent", 173),
     ("wrong_radicand", 33),
 ];
 
 /// The literal pair count of every divergence class.
 const CLASS_COUNTS: [(&str, usize); 5] = [
-    ("class 1 outside_grammar", 935),
+    ("class 1 outside_grammar", 931),
     ("class 2 prose_expected", 0),
-    ("class 3 comparable", 13924),
-    ("class 4 documented_divergence", 16),
+    ("class 3 comparable", 14037),
+    ("class 4 documented_divergence", 21),
     ("oracle_silent", 0),
 ];
 
@@ -1564,7 +1575,7 @@ const CLASS_COUNTS: [(&str, usize); 5] = [
 /// in `crates/core/tests/answer_divergence.rs`.
 const REASON_COUNTS: [(&str, usize); 9] = [
     ("no float tolerance rung (D6)", 2),
-    ("a transcendental identity is not simplified (V1)", 0),
+    ("a transcendental identity is not simplified (V1)", 5),
     ("prose is not a value (V2)", 0),
     ("a SymPy name is not a value (V2)", 0),
     (
@@ -1807,6 +1818,85 @@ fn the_live_oracle_reproduces_the_committed_verdicts() {
         moved.join("\n")
     );
     println!("the live 1.0 checker reproduced {} verdicts", pairs.len());
+}
+
+/// Ask the live 1.0 oracle for one pair, and return the raw response line.
+///
+/// The helper starts one harness process, sends one request, and reads one
+/// response. It exists for the guard test below, which needs its own guard.
+fn one_live_response(python: &str, request: &serde_json::Value, timeout_s: &str) -> String {
+    use std::io::{BufRead, BufReader, Write};
+    use std::process::{Command, Stdio};
+
+    let script = Path::new(env!("CARGO_MANIFEST_DIR"))
+        .join("../../scripts/oracle/check_1_0.py")
+        .canonicalize()
+        .unwrap_or_else(|e| panic!("find scripts/oracle/check_1_0.py: {e}"));
+    let mut child = Command::new(python)
+        .arg(&script)
+        .arg("--timeout")
+        .arg(timeout_s)
+        .stdin(Stdio::piped())
+        .stdout(Stdio::piped())
+        .spawn()
+        .unwrap_or_else(|e| panic!("start {}: {e}", script.display()));
+    {
+        let mut stdin = child.stdin.take().unwrap_or_else(|| panic!("no stdin"));
+        writeln!(stdin, "{request}").unwrap_or_else(|e| panic!("write the request: {e}"));
+    }
+    let stdout = child.stdout.take().unwrap_or_else(|| panic!("no stdout"));
+    let mut reader = BufReader::new(stdout);
+    let mut ready = String::new();
+    reader
+        .read_line(&mut ready)
+        .unwrap_or_else(|e| panic!("read the ready line: {e}"));
+    assert!(ready.contains("\"ready\""), "the oracle said {ready:?}");
+    let mut response = String::new();
+    reader
+        .read_line(&mut response)
+        .unwrap_or_else(|e| panic!("read the response: {e}"));
+    let _ = child.wait();
+    response.trim().to_string()
+}
+
+/// A pair the guard stops is recorded as a timeout, never as a decided verdict.
+///
+/// Review finding #21: the old guard raised a `Timeout` exception inside the 1.0
+/// process, and the bare `except Exception` handlers of 1.0 `_sympy_equivalent`
+/// caught it and returned `False`. The harness now runs every 1.0 call in a
+/// child process and terminates that process on the deadline, so 1.0 cannot
+/// swallow the guard. The pair below is the work bomb of spec section 3.2.
+#[test]
+fn a_stopped_oracle_call_is_a_timeout_and_never_a_decided_verdict() {
+    let Ok(python) = std::env::var("CADUS_ORACLE_PYTHON") else {
+        println!("skipped: set CADUS_ORACLE_PYTHON to run against the live 1.0 checker");
+        return;
+    };
+    let request = serde_json::json!({
+        "expected": "(x+1)**200",
+        "learner": "x**200+1",
+        "kind": "expression",
+        "id": "stall",
+    });
+    let response = one_live_response(&python, &request, "0.05");
+    println!("stall response: {response}");
+    assert_eq!(
+        response, r#"{"equivalent": null, "id": "stall", "notation": null, "timeout": true}"#,
+        "the guard must report a timeout, and it must decide nothing"
+    );
+    // The worker respawns, so the next pair still gets a real 1.0 verdict.
+    let next = serde_json::json!({
+        "expected": "7329",
+        "learner": "7.329",
+        "kind": "numeric",
+        "id": "after",
+    });
+    let after = one_live_response(&python, &next, "0.05");
+    println!("after response: {after}");
+    assert_eq!(
+        after, r#"{"equivalent": true, "id": "after", "notation": true, "timeout": false}"#,
+        "a fast pair keeps its decided 1.0 verdict"
+    );
 }
 
 // ---------------------------------------------------------------------------

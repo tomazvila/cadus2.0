@@ -518,6 +518,25 @@ fn a_spaced_x_between_two_numbers_is_the_times_sign() {
 }
 
 #[test]
+fn a_spaced_upper_case_x_between_two_numbers_is_the_times_sign() {
+    // Review round 1, the times-`x` ruling: the reading takes the upper-case
+    // letter too, because a learner writes the times sign in both cases.
+    assert_eq!(
+        ast("6 X 10^3"),
+        Ast::Mul(vec![int(6), Ast::Pow(Box::new(int(10)), 3)])
+    );
+    assert_eq!(value("6 X 10^3"), value("6000"));
+    assert_eq!(ast("3 X 4"), Ast::Mul(vec![int(3), int(4)]));
+    assert_eq!(value("3 X 4"), value("12"));
+    assert_ne!(value("3 X 4"), value("12*X"));
+    // Every other `X` stays the variable.
+    assert_eq!(ast("X"), var("X"));
+    assert_eq!(ast("2X"), Ast::Mul(vec![int(2), var("X")]));
+    assert_eq!(ast("3 X"), Ast::Mul(vec![int(3), var("X")]));
+    assert_ne!(value("2X"), value("2"));
+}
+
+#[test]
 fn a_short_letter_run_splits_into_single_letter_variables() {
     // The known item of the M2 fix wave: `3xy^2` is `3*x*y**2`, and the power
     // binds to the last letter only.

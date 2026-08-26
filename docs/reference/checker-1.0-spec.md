@@ -750,6 +750,38 @@ last-resort with the `notation` tag, exactly as `dot_thousands_variant` does.
 **93.4% of the corpus (3,262 of 3,492 answers) is inside the proposed grammar.**
 384 of the 478 topics (80.3%) have every answer inside it.
 
+> **Measured, 2026-08-27 (M2 U1 plus the review round 1 fixes).** The built grammar
+> accepts **3,227 of the 3,492 answers (92.41%)** and refuses **265 (7.59%)**. 362 of the
+> 478 topics have every answer inside it. The estimate above is 3,262; the built number is
+> 35 lower. The estimate counted whole shape buckets, and the parser decides one answer at
+> a time. The measured per-bucket split is the literal table `SHAPE_COUNTS` of
+> `crates/core/tests/answer_parse.rs`:
+>
+> | shape bucket | parsed | refused |
+> |---|---:|---:|
+> | `integer` | 1622 | 0 |
+> | `expression_symbolic` | 632 | 54 |
+> | `fraction` | 350 | 2 |
+> | `expression_numeric` | 228 | 5 |
+> | `ordered_tuple` | 178 | 0 |
+> | `decimal` | 128 | 0 |
+> | `interval_ineq` | 29 | 5 |
+> | `comma_list` | 28 | 15 |
+> | `value_with_unit` | 11 | 1 |
+> | `mixed_number` | 8 | 0 |
+> | `other` | 7 | 0 |
+> | `set_or_list` | 5 | 0 |
+> | `equation` | 1 | 0 |
+> | `prose_or_words` | 0 | 167 |
+> | `quotient_remainder` | 0 | 16 |
+>
+> Three rules of `docs/plans/M2.md` and of review round 1 move the number away from the
+> estimate. The **interval production** gives 29 `interval_ineq` rows to the grammar. The
+> **multi-letter split** gives 11 of the 12 `value_with_unit` rows and 10
+> `expression_symbolic` rows. The **three-digit numerator rule** of finding #7 narrows the
+> mixed-number production — `1 000/3` is undecidable — and it costs no corpus row.
+> `docs/reference/undecidable-answers.md` holds the 265 refusals, group by group.
+
 Within the 919 expression rows, 882 (96.0%) use only the whitelisted function set. The 37
 outliers are: `log_b(x)` / `log_2(x)` / `log_3(x)` pseudo-functions (a subscripted base — 14
 rows), `dy/dx` derivative notation (2), `n!` (1), `3x^2 dx` (1), `sin^2 θ` / `sec θ` / `tan θ`
@@ -766,6 +798,21 @@ rows), `dy/dx` derivative notation (2), `n!` (1), `3x^2 dx` (1), `sin^2 θ` / `s
 | `value_with_unit` | 12 | 0.3 | `5 m/s`, `7 L/min` — the unit is part of the answer | Add `value unit` with a unit token compared as an opaque casefolded string |
 | `equation` | 1 | 0.0 | `y = x` | Re-kind, or add `lhs = rhs` compared as `canon(lhs - rhs) == 0` up to a nonzero rational scale |
 | **total excluded** | **230** | **6.6** | | |
+
+> **Measured, 2026-08-27.** The built grammar refuses **265** answers, not 230. The five
+> buckets above give only **189** of them: `prose_or_words` 167, `quotient_remainder` 16,
+> `interval_ineq` 5 of 34, `value_with_unit` 1 of 12, and `equation` 0 of 1. The interval
+> production, the multi-letter split, and the value label recover the other 41 rows of
+> these buckets. The remaining **76** refusals sit in buckets this table counted as
+> covered: `expression_symbolic` 54 (a rational or symbolic exponent, a subscripted
+> logarithm base, a subscripted variable, a factorial, an approximation marker, a label
+> set), `comma_list` 15, `expression_numeric` 5, and `fraction` 2. 189 + 76 = 265.
+>
+> Two answers the multi-letter split recovered are a poor outcome, not a good one:
+> `60 km/h` reads as `60*k*m/h` and `2π cm^2` reads as `2*pi*c*m**2`, so `2π cm^2` equals
+> `2π m^2c`. `50th` reads as `50*t*h`, so the learner answer `50` is marked wrong.
+> `docs/reference/undecidable-answers.md` section 3.18 lists the three and asks for a
+> re-kind or a `value unit` production.
 
 **Recommendation for the M2 spec:** implement the §8.1 grammar plus the `interval`
 production and a `choice` answer kind. That lifts coverage from 93.4% to roughly 98%, and

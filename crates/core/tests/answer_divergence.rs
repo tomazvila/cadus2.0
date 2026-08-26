@@ -217,10 +217,18 @@ fn a_value_label_is_a_tolerance_and_not_a_value() {
     // side alone falls away, and the two values compare.
     assert_eq!(check("5", "x=5", N), decided(true, false));
     assert_eq!(check("x=5", "5", N), decided(true, false));
+    // Review round 1, the label ruling: the tolerance is symmetric, so the four
+    // string-level pairs below are the whole rule. The 1.0 verdicts come from
+    // the oracle on 2026-08-27; 1.0 has no label reading, so only its casefolded
+    // string rung ever says True here.
+    assert_eq!(check("x = 5", "5", N), decided(true, false));
+    assert_eq!(check("5", "x = 5", N), decided(true, false));
     // A label on both sides names the unknown the answer answers for, so two
-    // different names are two different answers — the 1.0 verdict as well
-    // (False for `x = 4` against `y = 4`, True for `x = 4` against `X = 4`).
-    // `crates/core/tests/answer_check.rs` pins that rule on the canonical form.
+    // different names are two different answers. 1.0: False.
+    assert_eq!(check("x = 4", "y = 4", N), decided(false, false));
+    // The two names compare casefolded, as the string rung does (V4). 1.0: True,
+    // through that same casefolded string rung.
+    assert_eq!(check("x = 4", "X = 4", N), decided(true, false));
 }
 
 #[test]
@@ -255,6 +263,38 @@ fn a_range_and_a_list_of_two_numbers_stay_different_answers() {
     // chained inequality is a predicate over a variable and a list is a pair of
     // numbers, so the two are different answers.
     assert_eq!(check("-1 ≤ x ≤ 3", "[-1, 3]", E), decided(false, false));
+}
+
+#[test]
+fn the_grammar_rulings_of_review_round_1_move_three_verdicts() {
+    // The three measured divergences of FIXM2a. Every 1.0 verdict below comes
+    // from the oracle on 2026-08-27, and every one of them is a ruling of
+    // `docs/reviews/M2-review-1.md`, not a defect.
+    //
+    // 1.0: False. `to_sympy_source` rewrites `×` into `*`
+    // (`/home/deploy/dev/cadus/cadus_web/sympy_check.py:97`) but it keeps the
+    // letter `x`, so the left side is the polynomial `6*x*10**3` and the right
+    // side is the number 6000. 2.0 reads a spaced `x` between two number
+    // literals as the times sign (finding #18), so both sides are 6000.
+    assert_eq!(check("6 x 10^3", "6 × 10^3", N), decided(true, false));
+    assert_eq!(check("6 x 10^3", "6000", N), decided(true, false));
+    // The same reading takes the upper-case letter (the times-`x` ruling).
+    assert_eq!(check("6 X 10^3", "6000", N), decided(true, false));
+    assert_eq!(check("3 X 4", "12", N), decided(true, false));
+    //
+    // 1.0: True. `2 x 2 x 3` becomes the SymPy source `2*x*2*x*3`, which is
+    // `12*x**2`, and that is the right side. 2.0 reads the two spaced letters as
+    // times signs, so the left side is the number 12.
+    assert_eq!(check("2 x 2 x 3", "12x^2", E), decided(false, false));
+    assert_eq!(check("2 x 2 x 3", "12", E), decided(true, false));
+    //
+    // 1.0: True. `_UNICODE_SIMPLE` maps `⅓` to the string `(1/3)`
+    // (`/home/deploy/dev/cadus/cadus_web/sympy_check.py:141`), so `2⅓` becomes
+    // `2(1/3)`, which SymPy reads as the product 2/3. 2.0 reads a vulgar glyph
+    // after a digit run as the fractional part of a mixed number (findings #1
+    // and #9), so `2⅓` is 7/3.
+    assert_eq!(check("2/3", "2⅓", N), decided(false, false));
+    assert_eq!(check("7/3", "2⅓", N), decided(true, false));
 }
 
 // ---------------------------------------------------------------------------

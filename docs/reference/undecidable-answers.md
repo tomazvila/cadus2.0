@@ -1,4 +1,5 @@
-Source: the 2.0 answer grammar of M2, measured on 2026-08-26 against
+Source: the 2.0 answer grammar of M2, measured on 2026-08-27 after the review round 1
+fixes (FIXM2a and FIXM2b), against
 `crates/core/tests/fixtures/answers/corpus_1_0.jsonl` (3,492 answers, 478 topics).
 
 # The undecidable answers — the V2 residue for re-kinding
@@ -16,7 +17,7 @@ CADUS_RESIDUE_DUMP=/tmp/residue.jsonl \
 
 The dump writes one JSON line per refused answer: `answer`, `answer_kind`, `shape`,
 `topic_id`, `kp_id`, `exemplar_index`, `source` (the normalized parser input), and
-`reason` (the refusal of the grammar). The identity of the 278 answers is also a
+`reason` (the refusal of the grammar). The identity of the 265 answers is also a
 committed fixture, `crates/core/tests/fixtures/answers/undecidable_1_0.jsonl`, and
 `crates/core/tests/answer_parse.rs` fails when the set moves.
 
@@ -27,24 +28,52 @@ committed fixture, `crates/core/tests/fixtures/answers/undecidable_1_0.jsonl`, a
 | Measure | Value |
 |---|---:|
 | corpus answers | 3,492 |
-| answers inside the grammar | 3,214 (92.04%) |
-| answers the grammar refuses | **278 (7.96%)** |
-| topics that hold a refused answer | 124 of 478 |
-| refused answers on `expression` topics | 208 |
-| refused answers on `numeric` topics | 70 |
+| answers inside the grammar | 3,227 (92.41%) |
+| answers the grammar refuses | **265 (7.59%)** |
+| topics that hold a refused answer | 116 of 478 |
+| refused answers on `expression` topics | 198 |
+| refused answers on `numeric` topics | 67 |
+
+Round 1 of the review moved the split from 3,214 / 278 to 3,227 / 265. The 13 recovered
+answers are the ten multi-letter variable runs of group 5 (`$12xy$`, `$3yz^2$`,
+`$a^4 + 4a^3 b + 6a^2 b^2 + 4ab^3 + b^4$`, and seven more), plus `2π cm^2`, `60 km/h`,
+and `50th`. Section 3.18 explains why the last three are decided but are still authored
+in the wrong kind.
 
 `docs/reference/checker-1.0-spec.md` section 8.3 estimated 230 refusals. The measured
-number is 278. The estimate counted whole shape buckets, and the grammar decides one
-answer at a time. The difference runs both ways: the `interval_ineq` bucket gave 29 of
-its 34 rows to the grammar, and the `expression_symbolic` bucket lost 65 rows the
-estimate had counted as covered. `crates/core/tests/answer_parse.rs` records the five
-buckets that split.
+number is 265. The estimate counted whole shape buckets, and the grammar decides one
+answer at a time, so the difference runs both ways.
+
+The estimate excluded five whole buckets: `prose_or_words` (167), `interval_ineq` (34),
+`quotient_remainder` (16), `value_with_unit` (12), and `equation` (1). Those buckets give
+189 refusals, not 230, because three productions of 2.0 reach into three of them:
+
+- The **interval production** of `docs/plans/M2.md` is not in the spec section 8.1
+  grammar. It gives 29 of the 34 `interval_ineq` rows to the grammar.
+- The **multi-letter split** of review round 1 splits a short run of unknown letters into
+  single-letter variables, so `3xy^2` is `3*x*y**2`. It gives 11 of the 12
+  `value_with_unit` rows to the grammar. Section 3.18 shows why two of those 11 rows are
+  a poor outcome.
+- The **value label** of review findings #2, #10, and #16 reads a leading `<var> =` as
+  `Assign(var, value)`. It gives the one `equation` row (`y = x`) to the grammar.
+
+The estimate counted the other buckets as covered. They hold 76 refusals: 54 in
+`expression_symbolic` (a rational or symbolic exponent, a subscripted logarithm base, a
+subscripted variable, a factorial, an approximation marker, a label set), 15 in
+`comma_list`, 5 in `expression_numeric`, and 2 in `fraction`. 189 + 76 = 265.
+
+The **three-digit numerator rule** of review finding #7 narrows the mixed-number
+production against the section 8.1 grammar: a mixed number needs a proper fraction in
+plain digit runs (`0 < b < c`, no leading zero, no three-digit numerator), because a
+three-digit run after a space is the thousands group of the V4 table. `1 000/3` is
+therefore undecidable. The rule costs no corpus row — all 8 `mixed_number` rows parse —
+but it is the reason the grammar is narrower than the estimate assumed.
 
 ### The refusal reason the grammar gives
 
 | Reason | n |
 |---|---:|
-| `a name that is not a function or variable` | 212 |
+| `a name that is not a function or variable` | 199 |
 | `an exponent that is not a whole number` | 28 |
 | `a character outside the grammar` | 21 |
 | `a number glued to a name reads as a label` | 11 |
@@ -57,21 +86,21 @@ Every refusal is an `Undecidable` value. The checker never guesses, and it never
 
 ## 2. The groups
 
-The 17 groups below are disjoint, and they sum to 278.
+The 17 groups below are disjoint, and they sum to 265.
 
 | # | Group | n | topics | Recommended action |
 |---|---|---:|---:|---|
-| 1 | prose and single words | 169 | 78 | Add a `choice` answer kind, or re-kind to `multi-step` |
+| 1 | prose and single words | 168 | 78 | Add a `choice` answer kind, or re-kind to `multi-step` |
 | 2 | a fractional or symbolic exponent | 28 | 12 | Extend the grammar: a rational exponent and a symbolic exponent |
 | 3 | quotient and remainder | 16 | 5 | Author the answer as a tuple, or add a `q R r` production |
 | 4 | a prose list with commas | 15 | 9 | Re-kind to `multi-step`; author the two vectors as tuples |
-| 5 | a multi-letter variable run | 11 | 9 | Extend the lexer: split an unknown letter run into variables |
+| 5 | a differential | 1 | 1 | Keep the refusal; re-kind the topic to `multi-step` |
 | 6 | a subscripted logarithm base | 10 | 3 | Extend the lexer: read `log_b(x)` as the two-argument `log` |
 | 7 | a general inequality | 5 | 3 | Extend the grammar: an inequality between two expressions |
 | 8 | infinity | 4 | 1 | Add an infinity value, or add a `choice` answer kind |
 | 9 | a label set | 4 | 2 | Add a `choice` answer kind over opaque label tokens |
 | 10 | an approximation marker | 4 | 2 | Author the exact value; state the rounding in the prompt |
-| 11 | a value with a unit | 3 | 3 | Extend the grammar: a value and an opaque unit token |
+| 11 | a value with a unit | 1 | 1 | Extend the grammar: a value and an opaque unit token |
 | 12 | the `arctan` spelling | 2 | 1 | Add `arcsin`, `arccos`, `arctan` as spellings of the whitelist |
 | 13 | an undefined quotient | 2 | 1 | Add a `choice` answer kind with the option `undefined` |
 | 14 | derivative notation `dy/dx` | 2 | 1 | Re-kind to `multi-step` |
@@ -81,28 +110,31 @@ The 17 groups below are disjoint, and they sum to 278.
 
 ### What each action buys
 
-- **A `choice` answer kind** (groups 1, 8, 9, 13) covers **179 answers on 82 topics**.
+- **A `choice` answer kind** (groups 1, 8, 9, 13) covers **178 answers on 82 topics**.
   Authoring gives a closed option set per exemplar, and the checker decides by set
   membership after casefolding. The check is exact, it runs no arithmetic, and it closes
   the largest 1.0 correctness gap: 1.0 reads `yes` as the product `e*s*y`, so every
   anagram of a word answer passes (`docs/reference/checker-1.0-spec.md` section 7.6).
-- **Seven grammar extensions** (groups 2, 5, 6, 7, 11, 12, 15) recover **58 answers on 30
+- **Six grammar extensions** (groups 2, 6, 7, 11, 12, 15) recover **45 answers on 21
   topics**. Every one of them stays decidable: no search, no float, no simplification.
-- **Re-kinding to `multi-step`** covers the remaining **41 answers on about 20 topics**.
-  A `multi-step` topic gets the model grader, which is what the 1.0 design intended for an
-  answer that is not a value.
+  Two of the five rows of group 7 stay out, because their answers are prose and an
+  integral sign.
+- **Re-kinding to `multi-step`** covers the remaining **42 answers on about 20 topics**:
+  groups 3, 4, 5, 10, 14, 16, 17, and the two rows of group 7 that no extension reaches.
+  A `multi-step` topic gets the model grader, which is what the 1.0 design intended for
+  an answer that is not a value.
 
-The grammar extensions lift grammar coverage from 92.04% to 93.7%. The `choice` kind adds
-a further 5.1%. The 41 re-kinded answers then claim no deterministic verdict, which is
-the correct outcome for them.
+The grammar extensions lift grammar coverage from 92.41% to 93.70%. The `choice` kind
+adds a further 5.10%. The 42 re-kinded answers then claim no deterministic verdict, which
+is the correct outcome for them.
 
 ---
 
 ## 3. The groups in detail
 
-### 3.1 Prose and single words — 169 answers, 78 topics
+### 3.1 Prose and single words — 168 answers, 78 topics
 
-`answer_kind` is `expression` on 122 of them and `numeric` on 47. There are 70 distinct
+`answer_kind` is `expression` on 122 of them and `numeric` on 46. There are 69 distinct
 answers, compared without case. The most frequent:
 
 | Answer | n |
@@ -119,20 +151,24 @@ answers, compared without case. The most frequent:
 | `undefined` | 3 |
 | `infinitely many` | 3 |
 
-The tail holds one or two of each: `equal`, `open`, `closed`, `left`, `right`, `down`,
-`prime`, `composite`, `parallel`, `perpendicular`, `obtuse`, `square`, `rhombus`,
-`rectangle`, `trinomial`, `binomial`, `bisect`, `washers`, `growth`, `decay`, `jump`,
-`removable`, `infinite`, `smaller`, `more`, `none`, `neither`, `even`, `true`, `false`,
-`ASA`, `50th`, `65th percentile`, `85th percentile`, `II`, `III`, `exactly one`,
-`both negative`, `quadrant II`, `the y-axis`, `the left sum`, `Interpolation`,
-`Extrapolation`, `vertices`, `sides`, `liters`, `18 degrees Celsius`, `overestimate`,
-`infinitely many solutions`, and ten graded sentences such as
-`underestimate — chords lie below a concave-down curve`,
-`yes — compositions of continuous functions are continuous`, and
-`the object traveled approximately 51 meters during the first 6 seconds`.
+The tail holds one or two of each: `18 degrees Celsius`, `2 down`, `65th percentile`,
+`85th percentile`, `ASA`, `binomial`, `bisect`, `both negative`, `closed`, `composite`,
+`decay`, `equal`, `even`, `exactly one`, `Extrapolation`, `false`, `growth`, `II`, `III`,
+`infinite`, `infinitely many solutions`, `Interpolation`, `jump`, `left`, `liters`,
+`more`, `neither`, `none`, `obtuse`, `open`, `overestimate`, `parallel`, `perpendicular`,
+`prime`, `quadrant II`, `rectangle`, `removable`, `rhombus`, `right`, `sides`, `smaller`,
+`square`, `the left sum`, `the y-axis`, `trinomial`, `true`, `vertices`, `washers`.
 
-**Action.** Add a `choice` answer kind. About 160 of the 169 are one short option and fit
-a closed option set directly. The ten graded sentences do not; re-kind those topics to
+Ten graded sentences close the group: `2 both ways`, `2x - 2 (both ways)`,
+`7 (the values are 6.7, 6.97, 7.03, 7.3)`, `Both equal 5`, `GCF (factor out 5 first)`,
+`the definite integral ∫_a^b f(x) dx`,
+`the object traveled approximately 51 meters during the first 6 seconds`,
+`the temperature stayed constant`,
+`underestimate — chords lie below a concave-down curve`, and
+`yes — compositions of continuous functions are continuous`.
+
+**Action.** Add a `choice` answer kind. 158 of the 168 are one short option and fit a
+closed option set directly. The ten graded sentences do not; re-kind those topics to
 `multi-step`.
 
 **Why this group matters most.** 1.0 claims a deterministic verdict on all of them and
@@ -166,7 +202,7 @@ Topics: `division-with-remainders`, `long-division`, `long-division-one-digit`,
 `polynomial-division`, `synthetic-division`.
 
 Two spellings: `9 R2`, `6 R2`, `5 R3`, `8 R2`, `23 R14`, `41 R16`, `41 R8`, `241 R2`,
-`71 R3`, `152 R3`; and `x + 2 remainder 3`, `2x + 3 remainder 5`,
+`71 R3`, `152 R3`; and `x + 2 remainder 3` (twice), `2x + 3 remainder 5`,
 `x^2 + x + 1 remainder 6`, `2x^2 + 4x + 5 remainder 11`, `x^2 - 2x remainder 6`.
 
 **Action.** Author the answer as the tuple `(quotient, remainder)`. The tuple production
@@ -176,9 +212,10 @@ add a `q R r` production that reads both spellings into the same tuple.
 ### 3.4 A prose list with commas — 15 answers, 9 topics
 
 The 1.0 shape classifier calls these `comma_list`, and each item is prose:
-`slope 3, y-intercept -5`, `degree 3, leading coefficient 4`, `rise 2, run 3`,
-`initial value 7, growth factor 3`, `closed circle at 0, ray to the left`,
-`left 3, right 4, two-sided DNE`,
+`slope 3, y-intercept -5`, `slope 0, y-intercept 5`, `slope 1, y-intercept 0`,
+`degree 3, leading coefficient 4`, `degree 3, leading coefficient -5`, `rise 2, run 3`,
+`initial value 7, growth factor 3`, `initial value 200, growth factor 1/2`,
+`closed circle at 0, ray to the left`, `left 3, right 4, two-sided DNE`,
 `shift right 1, stretch vertically by 2, reflect across the x-axis`,
 `long leg 3√3, hypotenuse 6`, `no — the left side suggests 2, the right side 7`,
 `$\langle -1, -1, -1 \rangle$`, `$\langle -y, -z, -x \rangle$`.
@@ -192,28 +229,22 @@ quantities, and a label is prose. The two `\langle … \rangle` vector answers o
 `computing-div-curl` are the exception: author them as tuples and they enter the grammar
 at once.
 
-### 3.5 A multi-letter variable run — 11 answers, 9 topics
+### 3.5 A differential — 1 answer, 1 topic
 
-The lexer reads `xy` as one name, `xy` is not a whitelisted variable, and the answer is
-refused. Topics: `binomial-expansion`, `boolean-algebra-basics`,
-`differentials-error-propagation`, `dividing-polynomials-by-monomials`,
-`first-order-partial-derivatives`, `gcf-of-monomials`, `implicit-differentiation`,
-`partial-derivatives`, `three-dimensional-coordinates`.
+`3x^2 dx` on `differentials-error-propagation`.
 
-The answers: `$xy$`, `$xz$`, `$12xy$`, `6xy^3`, `$3yz^2$`, `3xy^2 + 2y`, `-3xy + 2`,
-`$yz/(x + z)^2$`, `-2xy/(x^2 + 2y)`, `$a^4 + 4a^3 b + 6a^2 b^2 + 4ab^3 + b^4$`, and
-`3x^2 dx`.
+Review round 1 added the multi-letter split, so a short run of unknown letters becomes one
+variable per letter and `3xy^2` is `3*x*y**2`. That rule recovered the other ten answers
+of this group (`$xy$`, `$xz$`, `$12xy$`, `6xy^3`, `$3yz^2$`, `3xy^2 + 2y`, `-3xy + 2`,
+`$yz/(x + z)^2$`, `-2xy/(x^2 + 2y)`, `$a^4 + 4a^3 b + 6a^2 b^2 + 4ab^3 + b^4$`).
 
-1.0 splits such a run with SymPy's `implicit_multiplication_application`
-(`docs/reference/checker-1.0-spec.md` section 3.1), so `3xy^2` reads as `3*x*y**2`.
+The split stops at a differential on purpose. It would read `3x^2 dx` as `3*x**2*d*x`,
+which is the silent semantic corruption of spec section 7.8. The rule therefore refuses a
+run that starts with `d` and one more letter (`dx`, `dy`, `dt`).
 
-**Action.** Extend the lexer. When a letter run is not a whitelisted function name, not a
-Greek name, and not a single letter, split it into single-letter variables. That recovers
-10 of the 11.
-
-**Caution.** The split reads `3x^2 dx` as `3*x**2*d*x`, which is the silent semantic
-corruption of spec section 7.8. Refuse a run that starts with a differential (`dx`, `dy`,
-`dt`) instead of splitting it, and leave `differentials-error-propagation` in the residue.
+**Action.** Keep the refusal, and re-kind `differentials-error-propagation` to
+`multi-step`. A decidable reading of `dx` needs a differential atom, and one topic does
+not pay for it.
 
 ### 3.6 A subscripted logarithm base — 10 answers, 3 topics
 
@@ -268,8 +299,8 @@ The members are labels, not values. `HT` is one outcome, not `H` times `T`.
 
 **Action.** Add a `choice` answer kind whose option is an unordered set of opaque label
 tokens, and compare the two sets after casefolding each token. Do not send a label
-through the expression grammar: the multi-letter split of group 5 reads `HT` as `H*T` and
-makes `HT` and `TH` the same outcome.
+through the expression grammar: an upper-case run stays out of the multi-letter split of
+group 5 today, and a lower-case reading of it would make `HT` and `TH` the same outcome.
 
 ### 3.10 An approximation marker — 4 answers, 2 topics
 
@@ -282,14 +313,13 @@ tolerance rung. D6 forbids a float in an equality decision, and a tolerance is e
 a rounded answer must stay authored, give the exemplar the rounded number as the exact
 expected value and drop the `≈`.
 
-### 3.11 A value with a unit — 3 answers, 3 topics
+### 3.11 A value with a unit — 1 answer, 1 topic
 
-`7 L/min` (`average-instantaneous-rate`), `2π cm^2` (`differentials-error-propagation`),
-`60 km/h` (`estimating-derivatives`).
+`7 L/min` (`average-instantaneous-rate`). The upper-case `L` is not a variable letter of
+the multi-letter split, so the answer stays out of the grammar.
 
-A one-letter unit already parses as a variable, so `5 m/s` is inside the grammar today —
-by accident. It compares `m` and `s` as variables, and `5 m/s` therefore equals `5 s/m`
-under no reading a learner intends.
+The other two answers of this group now parse, and section 3.18 explains why that is not
+a good outcome.
 
 **Action.** Extend the grammar with a `value unit` production. Read the trailing unit
 token as an opaque casefolded string, compare it separately from the value, and give a
@@ -343,19 +373,49 @@ value, and `sY` is also a multi-letter run.
 
 **Action.** Re-kind the topic to `multi-step`.
 
+### 3.18 Decided, but better re-kinded — 3 answers, 3 topics
+
+These three answers are inside the grammar, so they are not part of the 265. The grammar
+decides them, and the decision is honest arithmetic on a reading the author did not mean.
+The list is here because a decided answer with the wrong meaning is harder to find than a
+refused one.
+
+| Answer | Topic | What 2.0 reads |
+|---|---|---|
+| `50th` | `percentiles` | `50*t*h` |
+| `60 km/h` | `estimating-derivatives` | `60*k*m/h` |
+| `2π cm^2` | `differentials-error-propagation` | `2*pi*c*m**2` |
+
+The multi-letter split gives every unknown letter run a variable per letter, so a unit and
+an ordinal suffix become a product of variables. The consequences:
+
+- `50th` against the learner answer `50` is **false**, because `50*t*h` is not 50. The
+  learner who writes the number is marked wrong.
+- `50th` against `50ht` is **true**, because multiplication commutes.
+- `60 km/h` against `60 h/km` is false, which is right by accident, but `2π cm^2` against
+  `2π m^2c` is **true**, which is right under no reading a learner intends.
+
+**Action.** Re-kind `percentiles` to `multi-step`, or author `50` and put the ordinal in
+the prompt. Author the two unit answers against the `value unit` production of group 11
+when it lands, and author the value alone until then. A2 must reject an authored answer
+whose letter run is a unit, an ordinal suffix, or any other non-variable spelling.
+
 ---
 
 ## 4. What to do first
 
-1. **Add the `choice` answer kind** (A2, V2). It covers 179 answers on 82 topics, it
+1. **Add the `choice` answer kind** (A2, V2). It covers 178 answers on 82 topics, it
    closes the largest 1.0 correctness gap, and it runs no arithmetic.
-2. **Add the multi-letter split and the rational exponent** (groups 2 and 5). Together
-   they recover 38 answers on 20 topics for two lexer rules and one canonical-form rule.
-3. **Add `log_b`, the general inequality, the unit token, `arctan`, and `a_1`**
-   (groups 6, 7, 11, 12, 15). They recover 20 answers on 10 topics.
-4. **Re-kind the rest** (groups 3, 4, 14, 16, 17, and the tail of group 1). About 41
-   answers are not values, and `multi-step` is the honest kind for them.
+2. **Add the rational exponent and the `value unit` production** (groups 2 and 11, and
+   section 3.18). Together they recover 29 answers and they close the accidental unit
+   reading that the multi-letter split opened.
+3. **Add `log_b`, the general inequality, `arctan`, and `a_1`** (groups 6, 7, 12, 15).
+   They recover 16 answers on 8 topics.
+4. **Re-kind the rest** (groups 3, 4, 5, 10, 14, 16, 17, and the ten graded sentences of
+   group 1). About 42 answers are not values, and `multi-step` is the honest kind for
+   them.
 
-Until then, A2 must reject the 278 answers at authoring time. A topic that carries one of
-them claims a deterministic verdict the checker cannot support, and that claim is the 1.0
-defect the M2 plan set out to remove.
+Until then, A2 must reject the 265 answers at authoring time, and it must reject the
+three answers of section 3.18 as well. A topic that carries one of them claims a
+deterministic verdict the checker cannot support, and that claim is the 1.0 defect the M2
+plan set out to remove.

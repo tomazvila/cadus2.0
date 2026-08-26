@@ -305,12 +305,14 @@ impl Parser<'_> {
         matches!(self.peek(), Some(Tok::Num(_) | Tok::Ident(_) | Tok::LParen))
     }
 
-    /// Take a spaced `x` that stands between two numbers, which means times.
+    /// Take a spaced `x` or `X` that stands between two numbers, which means times.
     ///
     /// 27 authored corpus answers of 5 topics write the times sign as `x`
-    /// (`6 x 10^3`, `2 x 2 x 3`). Every other `x` is the variable, so the reading
-    /// asks for a space on both sides and a number literal on both sides
-    /// (review finding #18).
+    /// (`6 x 10^3`, `2 x 2 x 3`). A learner writes the same sign in upper case,
+    /// so `6 X 10^3` is 6000 too (review round 1, the times-`x` ruling). Every
+    /// other `x` and `X` is the variable, so the reading asks for a space on both
+    /// sides and a number literal on both sides (review finding #18). `X` alone
+    /// and `2X` therefore stay the variable.
     fn eat_times_letter(&mut self, previous: Option<&Ast>) -> bool {
         if !matches!(
             previous,
@@ -321,7 +323,7 @@ impl Parser<'_> {
         let Some(token) = self.tokens.get(self.at) else {
             return false;
         };
-        if !token.space_before || token.kind != Tok::Ident("x".to_string()) {
+        if !token.space_before || !is_times_letter(&token.kind) {
             return false;
         }
         let Some(next) = self.tokens.get(self.at + 1) else {
@@ -636,6 +638,14 @@ impl Parser<'_> {
         }
         self.expect(close, reason)?;
         Ok(items)
+    }
+}
+
+/// Whether a token is the single letter `x` or `X` that stands for times.
+fn is_times_letter(kind: &Tok) -> bool {
+    match kind {
+        Tok::Ident(name) => name == "x" || name == "X",
+        _ => false,
     }
 }
 
