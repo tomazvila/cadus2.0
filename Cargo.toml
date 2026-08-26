@@ -59,6 +59,18 @@ chrono-tz = { version = "0.10.4" }
 # SHA-1 for `problem_text_hash` (M3 U1, spec trap T17). It is the 1.0 digest of a
 # problem text; the value is a dedup key, never a security claim.
 sha1 = { version = "0.10.6" }
+# Seeded, reproducible randomness for the template draws (M4 U1, spec section 3.2).
+# `rand_chacha` gives `ChaCha8Rng`, a counter-based stream cipher generator whose
+# output depends on the seed alone, so a reviewer reproduces any served instance
+# from the recorded `u64`. `default-features = false` keeps `getrandom` and the
+# whole operating-system entropy path out of the pure core (R3): the core never
+# takes a seed from the machine, the caller passes one.
+rand_chacha = { version = "0.3.1", default-features = false }
+# The `RngCore` and `SeedableRng` traits of the generator above. It is a trait
+# crate: no network, no database, no model call, and no entropy source when
+# `default-features = false` drops `getrandom`.
+rand_core = { version = "0.6.4", default-features = false }
+
 # Insertion-ordered map for the places where 1.0 relies on Python dict order
 # (M3, spec trap T6): the `balances` map of `diagnostic_placed` and the ability
 # delta map of the FIRe update.

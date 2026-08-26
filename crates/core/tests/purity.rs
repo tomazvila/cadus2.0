@@ -11,7 +11,17 @@
 use std::collections::BTreeSet;
 
 /// Names that must never appear in a dependency table of `cadus-core`.
-const FORBIDDEN: [&str; 6] = ["tokio", "sqlx", "axum", "hyper", "reqwest", "tower"];
+/// `getrandom` is on the list because it reads operating-system entropy. The core
+/// takes every seed from its caller, so a dependency on it is a purity break (R3).
+const FORBIDDEN: [&str; 7] = [
+    "tokio",
+    "sqlx",
+    "axum",
+    "hyper",
+    "reqwest",
+    "tower",
+    "getrandom",
+];
 
 /// Read and parse `crates/core/Cargo.toml`.
 fn manifest() -> toml::Value {
@@ -54,7 +64,7 @@ fn all_dependency_keys(manifest: &toml::Value) -> BTreeSet<String> {
 }
 
 #[test]
-fn core_dependency_set_is_exactly_the_thirteen_pure_crates() {
+fn core_dependency_set_is_exactly_the_fifteen_pure_crates() {
     let manifest = manifest();
     let mut found = runtime_dependency_keys(&manifest);
     found.sort();
@@ -68,6 +78,8 @@ fn core_dependency_set_is_exactly_the_thirteen_pure_crates() {
             "num-integer".to_string(),
             "num-rational".to_string(),
             "num-traits".to_string(),
+            "rand_chacha".to_string(),
+            "rand_core".to_string(),
             "serde".to_string(),
             "serde_json".to_string(),
             "serde_norway".to_string(),
@@ -75,7 +87,7 @@ fn core_dependency_set_is_exactly_the_thirteen_pure_crates() {
             "sha2".to_string(),
             "thiserror".to_string()
         ],
-        "R3: [dependencies] of cadus-core must be exactly chrono, chrono-tz, indexmap, num-bigint, num-integer, num-rational, num-traits, serde, serde_json, serde_norway, sha1, sha2, thiserror"
+        "R3: [dependencies] of cadus-core must be exactly chrono, chrono-tz, indexmap, num-bigint, num-integer, num-rational, num-traits, rand_chacha, rand_core, serde, serde_json, serde_norway, sha1, sha2, thiserror"
     );
 }
 

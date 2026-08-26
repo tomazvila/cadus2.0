@@ -36,7 +36,7 @@ pub use ast::{Ast, Const, IneqOp};
 pub use canon::{Atom, Basis, Canon, Monomial, Poly, canon};
 pub use check::{Outcome, Verdict, canonical_form, check, same_answer};
 pub use normalize::{MAX_ANSWER_CHARS, Normalized, normalize};
-pub use parse::parse;
+pub use parse::{parse, parse_with_functions};
 
 /// The answer is outside the decidable grammar, so the checker has no verdict (V2).
 ///
