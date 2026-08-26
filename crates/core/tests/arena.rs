@@ -17,7 +17,8 @@
 use std::path::{Path, PathBuf};
 
 use cadus_core::curriculum::{
-    Curriculum, CurriculumError, EncNode, KpIdx, TopicIdx, load_curriculum, load_raw_curriculum,
+    Curriculum, CurriculumError, EncNode, Finding, KpIdx, LoadError, TopicIdx, load_curriculum,
+    load_raw_curriculum,
 };
 
 /// The curriculum tree of the repository (C5).
@@ -407,6 +408,53 @@ fn mastery_floor_sizes_are_the_spec_literals() {
     assert_eq!(curriculum.mastery_floor("no-such-course"), None);
 }
 
+/// Finding #11. `arena-floor-order` declares base(order 1), mid(order 2) and
+/// top(order 3, `mastery_floor_course: mid`). 1.0 on the fixture:
+/// `mastery_floor('top') = ['b1', 'b2', 'm1']` and `mastery_floor('mid') = []`.
+/// A floor that took the referenced course alone would give `['m1']`.
+#[test]
+fn a_mid_order_mastery_floor_course_unions_every_lower_course() {
+    let curriculum = arena("arena-floor-order");
+    let top = curriculum
+        .mastery_floor("top")
+        .expect("top is a course of the catalog");
+    assert_eq!(top.len(), 3, "base has two topics and mid has one");
+    assert_eq!(ids(&curriculum, &top), ["b1", "b2", "m1"]);
+    assert!(
+        curriculum
+            .mastery_floor("mid")
+            .expect("mid is a course of the catalog")
+            .is_empty(),
+        "mid names no floor of its own"
+    );
+}
+
+/// Findings #7 and #9. `arena-course-duplicate` declares the course id `b`
+/// twice. 1.0 on the fixture: `course_by_id['b']` is `B second` with order 5,
+/// and `mastery_floor('c') = ['a1', 'a2', 'c1', 'c2']`. Keeping the first entry
+/// would give order 2 and the floor `['a1', 'a2']`.
+#[test]
+fn a_repeated_course_id_resolves_to_the_last_catalog_entry() {
+    let curriculum = arena("arena-course-duplicate");
+    let course = curriculum
+        .course("b")
+        .expect("b is a course of the catalog");
+    assert_eq!(course.name, "B second");
+    assert_eq!(course.order, 5);
+    assert_eq!(curriculum.courses().len(), 4, "the catalog keeps both rows");
+
+    let floor = curriculum
+        .mastery_floor("c")
+        .expect("c is a course of the catalog");
+    assert_eq!(ids(&curriculum, &floor), ["a1", "a2", "c1", "c2"]);
+    assert!(
+        curriculum
+            .mastery_floor("a")
+            .expect("a is a course of the catalog")
+            .is_empty()
+    );
+}
+
 // --------------------------------------------------------------------------- //
 // Fixtures: order, closures, and max-over-paths
 // --------------------------------------------------------------------------- //
@@ -585,6 +633,80 @@ fn a_weight_zero_edge_is_absent_forward_and_present_in_reverse() {
     );
 }
 
+/// Finding #22. `arena-repeated-edge` declares b -> a twice, with the weights
+/// 0.2 and 0.7, and z -> a once with the weight 0.0. 1.0 on the fixture:
+///
+/// ```text
+/// _enc {'a': {}, 'b': {'a': 0.7}, 'z': {}}
+/// _enc_rev {'a': {'b': 0.7, 'z': 0.0}, 'b': {}, 'z': {}}
+/// prereqs {'a': [], 'b': ['a'], 'z': ['a']}
+/// dependents {'a': ['b', 'z'], 'b': [], 'z': []}
+/// ```
+#[test]
+fn a_repeated_edge_keeps_the_maximum_weight_in_both_encompassing_maps() {
+    let curriculum = arena("arena-repeated-edge");
+    let a = idx(&curriculum, "a");
+    let b = idx(&curriculum, "b");
+    let z = idx(&curriculum, "z");
+
+    assert_eq!(
+        links(&curriculum, curriculum.enc_node(b), true),
+        [("a", 0.7)],
+        "the forward map holds one entry and keeps the larger weight"
+    );
+    assert_eq!(
+        links(&curriculum, curriculum.enc_node(a), false),
+        [("b", 0.7), ("z", 0.0)],
+        "the reverse map keeps the larger weight and holds the weight-0 edge"
+    );
+    assert_eq!(curriculum.enc_forward_count(), 1);
+    assert_eq!(curriculum.enc_reverse_count(), 2);
+
+    assert_eq!(
+        ids(
+            &curriculum,
+            &curriculum.prerequisites(b).collect::<Vec<_>>()
+        ),
+        ["a"],
+        "the repeated edge gives one prerequisite entry"
+    );
+    assert_eq!(
+        ids(&curriculum, &curriculum.dependents(a).collect::<Vec<_>>()),
+        ["b", "z"]
+    );
+    assert_eq!(curriculum.prereq_edge_count(), 2);
+    assert_eq!(curriculum.dependent_edge_count(), 2);
+    assert_eq!(curriculum.encompassing_weight(b, a), 0.7);
+    assert_eq!(
+        curriculum.encompassing_weight(z, a),
+        0.0,
+        "a weight-0 edge carries no credit"
+    );
+}
+
+// --------------------------------------------------------------------------- //
+// Fixtures: closures over a cycle (1.0 `_closure`)
+// --------------------------------------------------------------------------- //
+
+/// Finding #23. `cycle-3` authors the prerequisite loop a -> b -> c -> a. 1.0
+/// `_closure` drops the start node even when the cycle leads back to it, so on
+/// the fixture `g.ancestors('a') == {'b', 'c'}` and
+/// `g.descendants('a') == {'b', 'c'}`, and the same holds for `b` and `c`.
+#[test]
+fn a_closure_over_a_cycle_leaves_out_the_start_node() {
+    let curriculum = arena("cycle-3");
+    let a = idx(&curriculum, "a");
+    let b = idx(&curriculum, "b");
+    let c = idx(&curriculum, "c");
+
+    assert_eq!(ids(&curriculum, &curriculum.ancestors(a)), ["b", "c"]);
+    assert_eq!(ids(&curriculum, &curriculum.descendants(a)), ["b", "c"]);
+    assert_eq!(ids(&curriculum, &curriculum.ancestors(b)), ["a", "c"]);
+    assert_eq!(ids(&curriculum, &curriculum.descendants(b)), ["a", "c"]);
+    assert_eq!(ids(&curriculum, &curriculum.ancestors(c)), ["a", "b"]);
+    assert_eq!(ids(&curriculum, &curriculum.descendants(c)), ["a", "b"]);
+}
+
 // --------------------------------------------------------------------------- //
 // Fixtures: the one build error (parity traps 13 and 14)
 // --------------------------------------------------------------------------- //
@@ -604,6 +726,58 @@ fn a_duplicate_topic_id_stops_the_build() {
     );
     // The 1.0 finding message for this fixture.
     assert_eq!(error.to_string(), "topic id 'alpha' defined more than once");
+}
+
+/// Findings #12 and #13. `arena-parse-fatal` writes `weight: 1.5`, so the parse
+/// stage drops the whole unit file and reports one fatal finding. 1.0 on the
+/// fixture raises
+/// `CurriculumError: [weight_out_of_range] topics.1.prerequisites.0.weight:
+/// Input should be less than or equal to 1`.
+#[test]
+fn a_fatal_parse_finding_stops_the_load() {
+    let error = load_curriculum(&fixture("arena-parse-fatal"))
+        .expect_err("a dropped unit file makes the arena misrepresent the tree");
+    assert_eq!(
+        error,
+        LoadError::Curriculum(CurriculumError::FatalFindings {
+            findings: vec![
+                Finding::new(
+                    "weight_out_of_range",
+                    "topics.1.prerequisites.0.weight: Input should be less than or equal to 1",
+                )
+                .with_file("demo/01-basics.yaml"),
+            ],
+        })
+    );
+    // The 1.0 `CurriculumError` text, `[code] message` joined with `; `.
+    assert_eq!(
+        error.to_string(),
+        "[weight_out_of_range] topics.1.prerequisites.0.weight: \
+Input should be less than or equal to 1"
+    );
+
+    // The parse stage still hands the findings back for the lint of U3.
+    let parsed = load_raw_curriculum(&fixture("arena-parse-fatal"));
+    let (_raw, findings) = parsed.expect("the parse stage itself reports, it does not block");
+    assert_eq!(findings.len(), 1);
+    assert_eq!(findings[0].code, "weight_out_of_range");
+    assert!(findings[0].fatal);
+}
+
+/// An advisory finding drops no content, so the load continues after it.
+/// `arena-course-duplicate` declares the course `b` with no unit directory, and
+/// 1.0 loads the tree with two `missing_course_dir` findings.
+#[test]
+fn an_advisory_parse_finding_does_not_stop_the_load() {
+    let (curriculum, findings) =
+        load_curriculum(&fixture("arena-course-duplicate")).expect("the tree loads");
+    assert_eq!(curriculum.topic_count(), 4);
+    assert_eq!(findings.len(), 2);
+    for finding in &findings {
+        assert_eq!(finding.code, "missing_course_dir");
+        assert_eq!(finding.message, "no unit directory b/ for course");
+        assert!(!finding.fatal);
+    }
 }
 
 #[test]

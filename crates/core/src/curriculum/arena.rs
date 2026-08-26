@@ -21,8 +21,12 @@
 //!   default, so a weight-0 edge is absent; the reverse map records every edge,
 //!   weight 0 included (trap 8). `neighborhood()` in 1.0 reads the reverse keys,
 //!   which is why the two differ.
+//! - A repeated course id keeps the LAST catalog entry, because 1.0 writes the
+//!   dict comprehension `{c.id: c for c in catalog.courses}`.
 //! - A duplicate topic id is the one content defect that stops a build
 //!   (trap 14); every graph-stage lint code is tolerated (trap 13).
+//!   [`load_curriculum`] still blocks on a fatal parse-stage finding, the same
+//!   as 1.0 `Graph.load`.
 
 use std::collections::HashMap;
 use std::collections::hash_map::Entry;
@@ -137,6 +141,28 @@ pub enum CurriculumError {
         /// The largest number an index can address.
         limit: u32,
     },
+    /// The parse stage reported a fatal finding, so content was dropped. 1.0
+    /// `Graph.load` raises `CurriculumError` here (`cadus/graph.py:328-334`);
+    /// an arena built from the rest would misrepresent the curriculum
+    /// (parity trap 13).
+    #[error("{}", join_findings(findings))]
+    FatalFindings {
+        /// Every parse-stage finding, advisory ones included. 1.0 hands the
+        /// whole list to `CurriculumError`, so the text names all of them.
+        findings: Vec<Finding>,
+    },
+}
+
+/// The 1.0 `CurriculumError` text: `[code] message`, joined with `; `.
+fn join_findings(findings: &[Finding]) -> String {
+    if findings.is_empty() {
+        return "invalid curriculum".to_owned();
+    }
+    findings
+        .iter()
+        .map(|finding| format!("[{}] {}", finding.code, finding.message))
+        .collect::<Vec<String>>()
+        .join("; ")
 }
 
 /// A curriculum tree could not be read into an arena.
@@ -284,11 +310,11 @@ impl Curriculum {
             .map(TopicIdx)
             .collect();
 
+        // 1.0 writes `{c.id: c for c in catalog.courses}`, so a repeated course
+        // id keeps the LAST entry. `lint.rs` builds the same map the same way.
         let mut course_by_id = HashMap::with_capacity(catalog.courses.len());
         for (position, course) in catalog.courses.iter().enumerate() {
-            course_by_id
-                .entry(course.id.as_str().to_owned())
-                .or_insert(position);
+            course_by_id.insert(course.id.as_str().to_owned(), position);
         }
 
         let mut topics_by_course: HashMap<String, Vec<TopicIdx>> = HashMap::new();
@@ -644,11 +670,22 @@ impl Curriculum {
 
 /// Read a curriculum tree into an arena, with the parse-stage findings.
 ///
-/// The load tolerates every graph-stage defect, the same as 1.0 `Graph.load`
-/// (parity trap 13). The caller decides what a fatal parse-stage finding means;
-/// the lint runner of U3 fails on any finding at all.
+/// The load tolerates every graph-stage defect and blocks on a fatal
+/// parse-stage finding, the same as 1.0 `Graph.load` (parity trap 13). A fatal
+/// finding means the parse stage dropped content, so the arena would
+/// misrepresent the curriculum; the error carries every finding.
+///
+/// An advisory finding drops nothing, so the load continues and hands the
+/// finding back. The lint runner of U3 reads the parse stage directly with
+/// [`parse_curriculum`](super::load::parse_curriculum) and fails on any finding
+/// at all, fatal or not.
 pub fn load_curriculum(root: &Path) -> Result<(Curriculum, Vec<Finding>), LoadError> {
     let (raw, findings) = load_raw_curriculum(root)?;
+    if findings.iter().any(|finding| finding.fatal) {
+        return Err(LoadError::Curriculum(CurriculumError::FatalFindings {
+            findings,
+        }));
+    }
     let curriculum = Curriculum::build(raw)?;
     Ok((curriculum, findings))
 }
