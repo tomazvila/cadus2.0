@@ -2044,6 +2044,13 @@ async fn no_column_level_acl_outside_the_literal_list() {
 /// security and the append-only revoke, and `EXECUTE` on a new function goes to
 /// PUBLIC by default. The old suite matched the name prefix `auth_user_by_`, so a
 /// new helper was invisible to every test. This test enumerates `pg_proc`.
+///
+/// The extension half reads the property, not the number. An earlier version
+/// pinned the count of citext functions at 47, and a Postgres or citext upgrade
+/// changed that one literal without changing one fact that the test guards. The
+/// test now names no count: every function that `pg_depend` ties to an extension
+/// belongs to `citext`, is SECURITY INVOKER, and carries the default ACL, so no
+/// `cadus_app` EXECUTE grant hides inside the extension.
 #[tokio::test]
 async fn public_functions_are_the_literal_list() {
     TestDb::with(|db| async move {
@@ -2055,12 +2062,16 @@ async fn public_functions_are_the_literal_list() {
                    has_function_privilege('cadus_app', p.oid, 'EXECUTE')   AS "app_execute!",
                    has_function_privilege('cadus_admin', p.oid, 'EXECUTE') AS "admin_execute!",
                    has_function_privilege('public', p.oid, 'EXECUTE')      AS "public_execute!",
-                   EXISTS (
-                       SELECT 1 FROM pg_depend d
+                   p.proacl IS NULL       AS "acl_is_default!",
+                   (
+                       SELECT e.extname::text
+                       FROM pg_depend d
+                       JOIN pg_extension e ON e.oid = d.refobjid
                        WHERE d.objid = p.oid
                          AND d.classid = 'pg_proc'::regclass
                          AND d.deptype = 'e'
-                   ) AS "from_extension!"
+                       LIMIT 1
+                   ) AS "extension?"
             FROM pg_proc p
             JOIN pg_namespace n ON n.oid = p.pronamespace
             WHERE n.nspname = 'public'
@@ -2073,7 +2084,7 @@ async fn public_functions_are_the_literal_list() {
         // The functions that a migration creates, one by one.
         let mut found: Vec<(String, bool, String, bool, bool, bool)> = rows
             .iter()
-            .filter(|row| !row.from_extension)
+            .filter(|row| row.extension.is_none())
             .map(|row| {
                 (
                     row.name.clone(),
@@ -2102,20 +2113,36 @@ async fn public_functions_are_the_literal_list() {
             .collect();
         assert_eq!(found, expected);
 
-        // The rest of schema `public` belongs to one extension, `citext`. The
-        // count and the distinct shape are both literal, so a second extension,
-        // or a SECURITY DEFINER function inside one, fails this test.
-        let extension_functions = rows.iter().filter(|row| row.from_extension).count();
-        assert_eq!(extension_functions, 47);
-
-        let mut shapes: Vec<(bool, String, bool)> = rows
+        // The rest of schema `public` belongs to one extension, `citext`.
+        // `migrations/0002_identity.sql` creates that extension, so the list
+        // below is never empty; an empty list means the walk lost every
+        // extension row and the loop after it proves nothing.
+        let extension_functions: Vec<_> = rows
             .iter()
-            .filter(|row| row.from_extension)
-            .map(|row| (row.security_definer, row.config.clone(), row.public_execute))
+            .filter(|row| row.extension.is_some())
             .collect();
-        shapes.sort();
-        shapes.dedup();
-        assert_eq!(shapes, vec![(false, String::new(), true)]);
+        assert!(
+            !extension_functions.is_empty(),
+            "schema public holds no extension function, so citext is gone"
+        );
+        for row in &extension_functions {
+            assert_eq!(
+                row.extension.as_deref(),
+                Some("citext"),
+                "function {} belongs to another extension",
+                row.name
+            );
+            assert!(
+                !row.security_definer,
+                "extension function {} is SECURITY DEFINER, so it bypasses row-level security",
+                row.name
+            );
+            assert!(
+                row.acl_is_default,
+                "extension function {} carries an EXECUTE grant of its own; the default ACL is the only one this schema allows",
+                row.name
+            );
+        }
 
         let mut extensions = sqlx::query_scalar!(
             r#"

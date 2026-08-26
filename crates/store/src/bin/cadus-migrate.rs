@@ -530,17 +530,44 @@ async fn grant_admin_login(pool: &PgPool) -> Result<(), StoreError> {
 /// guard: it covers a writer that the lock does not reach, for example a `psql`
 /// session of an operator, or a run of an older version of this program.
 async fn run_role_statement(pool: &PgPool, sql: String) -> Result<(), StoreError> {
+    retry_concurrent_update(ROLE_ATTEMPT_LIMIT, ROLE_RETRY_BACKOFF, || {
+        let sql = sql.clone();
+        async move {
+            sqlx::query(AssertSqlSafe(sql)).execute(pool).await?;
+            Ok(())
+        }
+    })
+    .await
+}
+
+/// Run `op` again after a "tuple concurrently updated" error.
+///
+/// `attempts` is the total number of calls of `op`, and `backoff` is the wait
+/// between two calls. The loop stops at the first success. An error of another
+/// kind stops the loop at the first call, because only this one condition is
+/// transient.
+///
+/// The retry lives here, apart from the statement, so a test drives it with a
+/// closure and needs no second writer on the cluster.
+async fn retry_concurrent_update<F, Fut>(
+    attempts: u32,
+    backoff: Duration,
+    mut op: F,
+) -> Result<(), StoreError>
+where
+    F: FnMut() -> Fut,
+    Fut: Future<Output = Result<(), sqlx::Error>>,
+{
     let mut attempt: u32 = 1;
     loop {
-        let outcome = sqlx::query(AssertSqlSafe(sql.clone())).execute(pool).await;
-        let Err(err) = outcome else {
+        let Err(err) = op().await else {
             return Ok(());
         };
-        if attempt >= ROLE_ATTEMPT_LIMIT || !is_concurrent_update(&err) {
+        if attempt >= attempts || !is_concurrent_update(&err) {
             return Err(StoreError::Db(err));
         }
         attempt += 1;
-        tokio::time::sleep(ROLE_RETRY_BACKOFF).await;
+        tokio::time::sleep(backoff).await;
     }
 }
 
@@ -586,10 +613,138 @@ mod tests {
     use std::ffi::OsString;
     use std::os::unix::ffi::OsStringExt;
 
+    use std::borrow::Cow;
+    use std::cell::Cell;
+    use std::error::Error as StdError;
+    use std::time::Duration;
+
+    use cadus_store::StoreError;
+    use sqlx::error::{DatabaseError, ErrorKind};
+
     use super::{
-        Mode, alter_role_password_statement, message_is_concurrent_update, parse_args,
-        password_follows_rule, password_rule_message,
+        Mode, ROLE_ATTEMPT_LIMIT, alter_role_password_statement, message_is_concurrent_update,
+        parse_args, password_follows_rule, password_rule_message, retry_concurrent_update,
     };
+
+    /// A database error of the test. PostgreSQL reports "tuple concurrently
+    /// updated" with SQLSTATE XX000, the code of every internal error, so this
+    /// error carries that code and the message decides the retry.
+    #[derive(Debug)]
+    struct FakeDatabaseError(String);
+
+    impl std::fmt::Display for FakeDatabaseError {
+        fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+            f.write_str(&self.0)
+        }
+    }
+
+    impl StdError for FakeDatabaseError {}
+
+    impl DatabaseError for FakeDatabaseError {
+        fn message(&self) -> &str {
+            &self.0
+        }
+
+        fn code(&self) -> Option<Cow<'_, str>> {
+            Some(Cow::Borrowed("XX000"))
+        }
+
+        fn as_error(&self) -> &(dyn StdError + Send + Sync + 'static) {
+            self
+        }
+
+        fn as_error_mut(&mut self) -> &mut (dyn StdError + Send + Sync + 'static) {
+            self
+        }
+
+        fn into_error(self: Box<Self>) -> Box<dyn StdError + Send + Sync + 'static> {
+            self
+        }
+
+        fn kind(&self) -> ErrorKind {
+            ErrorKind::Other
+        }
+    }
+
+    /// Build a database error with this message.
+    fn db_error(message: &str) -> sqlx::Error {
+        sqlx::Error::Database(Box::new(FakeDatabaseError(message.to_string())))
+    }
+
+    /// Read the message of a `StoreError::Db`.
+    fn db_message(err: &StoreError) -> String {
+        let StoreError::Db(inner) = err else {
+            panic!("expected StoreError::Db, got {err}");
+        };
+        match inner.as_database_error() {
+            Some(db_err) => db_err.message().to_string(),
+            None => panic!("expected a database error, got {inner}"),
+        }
+    }
+
+    /// The message that PostgreSQL reports for the transient condition.
+    const CONCURRENT: &str = "tuple concurrently updated";
+
+    /// Finding "the retry has no end-to-end test": two transient failures and
+    /// then a success give `Ok` after exactly three calls.
+    #[tokio::test]
+    async fn the_retry_stops_at_the_first_success() {
+        let calls = Cell::new(0u32);
+        let outcome = retry_concurrent_update(ROLE_ATTEMPT_LIMIT, Duration::ZERO, || {
+            let call = calls.get() + 1;
+            calls.set(call);
+            async move {
+                if call <= 2 {
+                    return Err(db_error(CONCURRENT));
+                }
+                Ok(())
+            }
+        })
+        .await;
+
+        assert!(outcome.is_ok(), "expected Ok, got {outcome:?}");
+        assert_eq!(calls.get(), 3);
+    }
+
+    /// The attempt limit is 5, so six transient failures give an error after
+    /// exactly five calls. The error carries the message of the last failure.
+    #[tokio::test]
+    async fn the_retry_gives_up_at_the_attempt_limit() {
+        assert_eq!(ROLE_ATTEMPT_LIMIT, 5);
+        let calls = Cell::new(0u32);
+        let outcome = retry_concurrent_update(ROLE_ATTEMPT_LIMIT, Duration::ZERO, || {
+            let call = calls.get() + 1;
+            calls.set(call);
+            async move {
+                if call <= 6 {
+                    return Err(db_error(CONCURRENT));
+                }
+                Ok(())
+            }
+        })
+        .await;
+
+        let err = outcome.expect_err("six failures must end in an error");
+        assert_eq!(db_message(&err), "tuple concurrently updated");
+        assert_eq!(calls.get(), 5);
+    }
+
+    /// An error of another kind is not transient, so the loop stops after
+    /// exactly one call and reports that error.
+    #[tokio::test]
+    async fn another_message_stops_the_retry_at_the_first_call() {
+        let calls = Cell::new(0u32);
+        let outcome = retry_concurrent_update(ROLE_ATTEMPT_LIMIT, Duration::ZERO, || {
+            let call = calls.get() + 1;
+            calls.set(call);
+            async move { Err(db_error("permission denied for table pg_authid")) }
+        })
+        .await;
+
+        let err = outcome.expect_err("a permission error must end the run");
+        assert_eq!(db_message(&err), "permission denied for table pg_authid");
+        assert_eq!(calls.get(), 1);
+    }
 
     /// Finding #8: a single quote in the password becomes two single quotes, so
     /// the password stays inside the SQL string literal.
