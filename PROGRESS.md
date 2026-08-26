@@ -59,6 +59,16 @@ Regenerated: 17,047 oracle pairs, class 3 agreement 15,940/15,940, 176 documente
 divergences (156 of them the D6 class: a decimal approximation of an exact value is
 wrong in 2.0 — see "Decision for the owner" under M2). Gate with the live oracle green.
 
+### Adversarial review round 3 (M2)
+
+One find/refute round: 18 raised, 14 confirmed, 5 blockers (`docs/reviews/M2-review-3.md`):
+a space inside `\frac{ 1}{2}` defeated the mixed-number token; the percent rewrite
+`(N)/100` re-associated under `/`; a juxtaposed argument swallowed a following function
+name (`sec x tan x`). Ruling: LaTeX and glyph constructs become lexer tokens with parsed
+structure (no string rewrites); canon replaces `Inverse` atoms with an expanded
+numerator/denominator pair (no GCD). Fix units FIXM2g–i, then verification round 4. If
+round 4 confirms another C4 blocker, M2 stops for an owner decision on the grammar design.
+
 Known items before the M2 fix wave were: the lexer refused a multi-letter run (`3xy^2`, 11
 corpus answers on 9 topics) — split unknown letter runs into single-letter variables
 except function names and differentials; `e` and `E` both read as Euler's number (1.0
