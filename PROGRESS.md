@@ -115,6 +115,12 @@ choose: (a) continue the loop on M0 at this cost, or (b) accept M0 with the open
 findings below and let M1/M2 proceed, with M5 (auth) as the milestone that revisits
 the `users`/auth-table policies with real handler code.
 
+### Owner answers (2026-08-26)
+
+O1: start fresh, no event migration. O3: React + TypeScript rewrite in M6. Review
+loop: stop after four rounds, fix the accepted-not-fixed items, continue with M1. See
+`docs/DECISIONS.md`.
+
 ### Open findings
 
 - (M5 contract) The auth layer must call the five SECURITY DEFINER lookups
