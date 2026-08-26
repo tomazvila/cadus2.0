@@ -79,6 +79,14 @@ SymPy-generated rational-rewrite family: 17,874 pairs, class 3 agreement
 16,554/16,554, 355 documented divergences in 14 specific classes (D6 240, bare `e` 46,
 times-x 24, no-GCD 6, no-radical-rationalization 6, …). Gate green with the live oracle.
 
+### Adversarial review round 4 (M2)
+
+One find/refute round on the restructured tree: 9 raised, 4 confirmed, 0 blockers
+(`docs/reviews/M2-review-4.md`): a `b/c` fraction after a `/`- or `^`-consumed number
+took the product reading; one 4,000-char in-grammar answer cost 378 ms in release (the
+work bound did not charge sum rebuilds); two missing negative tests. Fix unit FIXM2j;
+then M2 closes (four rounds: 21, 17, 14, 4).
+
 Known items before the M2 fix wave were: the lexer refused a multi-letter run (`3xy^2`, 11
 corpus answers on 9 topics) — split unknown letter runs into single-letter variables
 except function names and differentials; `e` and `E` both read as Euler's number (1.0
