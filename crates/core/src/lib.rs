@@ -18,6 +18,7 @@ pub mod event;
 pub mod fire;
 pub mod learner;
 pub mod numeric;
+pub mod pool;
 pub mod projector;
 pub mod selector;
 pub mod template;
