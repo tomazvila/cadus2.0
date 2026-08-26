@@ -54,6 +54,17 @@ with explicit findings and does not emulate PyYAML; the spec §7 "2.0 strictness
 lists every deliberate difference. Fix units FIXM1a–c fixed all 27 (commit 7d49756);
 gate with the live oracle: 205 tests, 0 failed.
 
+### Adversarial review round 2 (M1) and close
+
+One find/refute round on the fixed tree: 15 raised, 15 confirmed
+(`docs/reviews/M1-review-2.md`): the float text broke shortest-digit ties away from zero
+where CPython rounds to even; `-0.0` sorted below `0.0`; YAML 1.2-only numeric spellings
+(`1e3`, `0o17`, `08`) loaded where 1.0 refused; fixture gaps. Ruling: an integer field
+accepts a plain decimal integer or a plain decimal float only; every other spelling is a
+`schema` finding found by a line-level pre-scan (spec §7 lists the limits). Fix units
+FIXM1d–e fixed all 15; the float text now matches CPython `repr` over a 494,972-value
+sweep (0 mismatches). M1 closes on the two-round cap.
+
 Open notes for later milestones:
 - `encompassing_weight` runs one relaxation per call (1.0 memoizes per source); M3
   calls `reach_weights` once per source.

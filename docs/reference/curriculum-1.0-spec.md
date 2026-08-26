@@ -238,6 +238,11 @@ with `\\mid` resolves to one backslash (`proofs/01-proof-techniques.yaml:56`).
     decimal exponent is >= -4 and < 16, else scientific `d.ddde±XX` with a signed exponent
     of at least two digits; a whole number prints as `1.0`. The dump renders its own float
     text (`python_repr_f64` in `dump.rs`); serde_json's ryu output differs below 1e-4.
+    Tie rule: when the value is an exact decimal halfway point between the two shortest
+    candidates, CPython chooses the even last digit (Rust's formatter rounds away from
+    zero); the exact-halfway test and the round-trip test are both required (2^-24 and
+    5e-324 are the counterexamples to each alone). `-0.0` prints as `-0.0` and sorts equal
+    to `0.0`, so a row comparison falls through to the next element.
 17. Do not port the mtime cache; load once into an `Arc` arena.
 18. The curriculum hash is a 2.0 decision (see §3).
 
