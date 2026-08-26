@@ -14,7 +14,9 @@
 set -euo pipefail
 
 # Put the project toolchain first, if it is installed on this machine.
-for dir in "$HOME/.local/share/cadus2-tooling/gcc/bin" "$HOME/.cargo/bin"; do
+for dir in "$HOME/.local/share/cadus2-tooling/gcc/bin" \
+    "$HOME/.local/share/cadus2-tooling/shellcheck-bin/bin" \
+    "$HOME/.cargo/bin"; do
     if [ -d "$dir" ]; then
         PATH="$dir:$PATH"
     fi
@@ -69,6 +71,16 @@ for tool in docker python3; do
         exit 2
     fi
 done
+
+# The shell scripts are ops code, and the gate reads them like the Rust code.
+# A missing linter is a failure, not a skip: the same rule as the unset DSN
+# above. The GitHub ubuntu runners ship shellcheck. README.md, section
+# "The gate", gives the one-line install for a laptop.
+if ! command -v shellcheck >/dev/null 2>&1; then
+    echo "GATE FAILED: shellcheck is required"
+    echo "get it with: nix build nixpkgs#shellcheck.bin -o ~/.local/share/cadus2-tooling/shellcheck"
+    exit 2
+fi
 
 if [ ! -f scripts/check_ops.sh ]; then
     echo "GATE FAILED: scripts/check_ops.sh is missing"

@@ -6,7 +6,7 @@
 # broken compose key first appears on the operator's server. This script runs
 # the operator's own commands in the gate instead.
 #
-# The script does six checks and prints one line per check:
+# The script does eight checks and prints one line per check:
 #   (a) compose  -- `docker compose config` resolves docker-compose.yml. The
 #                   placeholder values below stand in for `.env`, which the
 #                   repository never carries. Every `:?` variable of the compose
@@ -42,25 +42,43 @@
 #   (e) deploy   -- scripts/deploy.sh exists, is executable, and parses. It is
 #                   THE upgrade procedure (finding #16), so a broken file must
 #                   fail the gate and not the operator's upgrade.
-#   (f) invariants -- two compose facts that a review round paid for:
+#   (f) invariants -- three compose facts that a review round paid for:
 #                   the `db` healthcheck probes TCP (`-h`), because the initdb
 #                   temp server answers the unix socket while port 5432 still
-#                   refuses (finding #15); and `migrate` gets no
-#                   DB_STATEMENT_TIMEOUT_MS, because a migration runs without a
-#                   statement bound (finding #1).
+#                   refuses (finding #15); and `migrate` gets neither
+#                   DB_STATEMENT_TIMEOUT_MS nor DB_CLIENT_TIMEOUT_MS, because a
+#                   migration runs without a query bound (finding #1).
+#   (g) shell    -- `shellcheck -S warning scripts/*.sh`. The scripts here are
+#                   ops code: deploy.sh is THE upgrade procedure, and an unquoted
+#                   expansion or a lost exit code in it lands on the operator's
+#                   server. The gate reads the shell like the Rust.
+#   (h) ci       -- every published port of .github/workflows/ci.yml binds
+#                   127.0.0.1. The gate database in CI runs with trust auth, so
+#                   a `5432:5432` line puts a superuser port on every interface
+#                   of the runner for the length of the job.
 #
 # Compose names a built image `<project>-<service>` when the service declares no
 # `image:` key. The script reads the project name and the service names from
 # `docker compose config --format json`, so it needs no hard-coded image name.
 #
-# Input: docker and python3 on PATH. The script reads no `.env` file and writes
-# no state outside the local docker image store.
+# Input: docker, python3, and shellcheck on PATH. The script reads no `.env`
+# file and writes no state outside the local docker image store.
 set -euo pipefail
+
+# Put the project toolchain first, if it is installed on this machine.
+for dir in "$HOME/.local/share/cadus2-tooling/gcc/bin" \
+    "$HOME/.local/share/cadus2-tooling/shellcheck-bin/bin" \
+    "$HOME/.cargo/bin"; do
+    if [ -d "$dir" ]; then
+        PATH="$dir:$PATH"
+    fi
+done
+export PATH
 
 repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$repo_root"
 
-for tool in docker python3; do
+for tool in docker python3 shellcheck; do
     if ! command -v "$tool" >/dev/null 2>&1; then
         echo "FAIL: input   -- $tool is not on PATH" >&2
         exit 2
@@ -300,8 +318,9 @@ elif " -h " not in probe:
     problems.append("the db healthcheck does not probe TCP (no -h): " + probe)
 
 migrate_env = services.get("migrate", {}).get("environment", {}) or {}
-if "DB_STATEMENT_TIMEOUT_MS" in migrate_env:
-    problems.append("migrate carries DB_STATEMENT_TIMEOUT_MS; a migration runs unbounded")
+for key in ("DB_STATEMENT_TIMEOUT_MS", "DB_CLIENT_TIMEOUT_MS"):
+    if key in migrate_env:
+        problems.append("migrate carries " + key + "; a migration runs unbounded")
 
 for line in problems:
     print(line)
@@ -314,6 +333,87 @@ for line in problems:
     fi
 else
     echo "FAIL: invariants -- the compose invariant check did not run"
+    rc=1
+fi
+
+# ---------------------------------------------------------------------------
+# (g) the shell scripts pass shellcheck
+#
+# `-S warning` is the gate level: it reports error and warning and holds back
+# style and info. Fix a warning; do not silence it. A `# shellcheck disable=`
+# line needs a comment above it that says why the rule does not apply here.
+# ---------------------------------------------------------------------------
+shell_log=""
+if shell_log="$(shellcheck -S warning scripts/*.sh 2>&1)"; then
+    echo "PASS: shell    -- shellcheck -S warning reports nothing on scripts/*.sh"
+else
+    echo "FAIL: shell    -- shellcheck -S warning reports a finding on scripts/*.sh"
+    printf '%s\n' "$shell_log"
+    rc=1
+fi
+
+# ---------------------------------------------------------------------------
+# (h) the CI workflow publishes every service port on the loopback interface
+#
+# The Postgres service of the gate job runs with POSTGRES_HOST_AUTH_METHOD=trust
+# (`.github/workflows/ci.yml` says why). A `ports:` entry of `5432:5432` binds
+# every interface of the runner, so any process that reaches the runner over the
+# network connects to that database as the superuser. `127.0.0.1:5432:5432`
+# keeps the port on the runner itself, and the gate steps run there.
+#
+# The reader below is a line scan, not a YAML parser: the runner image and this
+# box carry no PyYAML.
+# ---------------------------------------------------------------------------
+workflow="ci.yml"
+ci_log=""
+if [ ! -f ".github/workflows/$workflow" ]; then
+    echo "FAIL: ci       -- .github/workflows/$workflow is missing"
+    rc=1
+elif ci_log="$(python3 -c '
+import io
+import sys
+
+path = sys.argv[1]
+problems = []
+in_ports = False
+ports_indent = 0
+entries = 0
+
+for number, raw in enumerate(io.open(path, encoding="utf-8"), start=1):
+    line = raw.rstrip("\n")
+    stripped = line.strip()
+    if not stripped or stripped.startswith("#"):
+        continue
+    indent = len(line) - len(line.lstrip())
+    if stripped == "ports:":
+        in_ports = True
+        ports_indent = indent
+        continue
+    if not in_ports:
+        continue
+    if not stripped.startswith("-") or indent <= ports_indent:
+        in_ports = False
+        continue
+    value = stripped[1:].strip().strip("\"'"'"'")
+    entries += 1
+    if not value.startswith("127.0.0.1:"):
+        problems.append("line %d publishes %s on every interface" % (number, value))
+
+if entries == 0:
+    problems.append("the workflow publishes no port; the reader found no ports: entry")
+
+for problem in problems:
+    print(problem)
+' ".github/workflows/$workflow" 2>&1)"; then
+    if [ -n "$ci_log" ]; then
+        printf 'FAIL: ci       -- %s\n' "$ci_log"
+        rc=1
+    else
+        echo "PASS: ci       -- every published port of $workflow binds 127.0.0.1"
+    fi
+else
+    echo "FAIL: ci       -- the workflow port check did not run"
+    printf '%s\n' "$ci_log"
     rc=1
 fi
 

@@ -20,7 +20,9 @@ One server, one `docker compose` stack. No cloud vendor, no managed service.
    `CADUS_ADMIN_PASSWORD` are the passwords of the two runtime roles. Hex output
    needs no percent-encoding inside a DSN.
 4. For a domain, point its DNS record at this server and open ports 80 and 443.
-   Caddy then gets a Let's Encrypt certificate by itself.
+   Caddy then gets a Let's Encrypt certificate by itself. If another stack on
+   this server already holds port 80 or port 443, move the HOST ports of Caddy
+   with `CADDY_HTTP_PORT` and `CADDY_HTTPS_PORT`. See "Proxy ports" below.
 5. `docker compose up -d --build`
 6. Do a check of the bring-up:
    ```sh
@@ -71,10 +73,15 @@ end; the old script printed `DEPLOY OK` over a site that answered every visitor
 with 502 (review round 4, finding #13). A failed step 4 leaves the new schema in
 place: correct the fault and run the script again.
 
+The default path starts all of `web`, `worker`, and `caddy`, so the proxy runs
+the image and the Caddyfile of the new commit. Step 4 then prints the check
+command with the port that Caddy really publishes, so a moved `CADDY_HTTP_PORT`
+gives the right URL.
+
 `scripts/deploy.sh --no-caddy` starts `web` and `worker` only and leaves `caddy`
 alone. `DEPLOY_SKIP_CADDY=1 scripts/deploy.sh` does the same. Use it on a stack
-that terminates TLS somewhere else, and in a test bring-up that binds no port
-80. Any other argument stops the script with exit 2.
+that terminates TLS somewhere else: the operator keeps that proxy, and the
+script never touches it. Any other argument stops the script with exit 2.
 
 WARNING: Do not upgrade an existing stack with `docker compose up -d`. Compose
 creates every container first and starts them second, so it destroys the
@@ -207,9 +214,11 @@ steps above keep the volume.
   `cargo sqlx prepare --check`, `scripts/check_migrations.sh`, and
   `scripts/check_ops.sh`. It is the merge gate on a laptop and in CI
   (`.github/workflows/ci.yml`, every push and pull request). It needs
-  `CADUS_TEST_DATABASE_URL` and `docker`: it exits 2 and runs no check when the
-  variable is unset, and it fails with `GATE FAILED: docker is required` when
-  docker is absent. See `README.md` for the one-time database setup.
+  `CADUS_TEST_DATABASE_URL`, `docker`, and `shellcheck`: it exits 2 and runs no
+  check when the variable is unset, it fails with
+  `GATE FAILED: docker is required` when docker is absent, and with
+  `GATE FAILED: shellcheck is required` when shellcheck is absent. See
+  `README.md` for the one-time database setup and for the shellcheck install.
 - **Migration discipline (D9).** `scripts/check_migrations.sh` proves the file
   names run `0001`, `0002`, ... with no gap, that every shipped migration still
   matches `migrations/CHECKSUMS`, that a fresh database takes every migration,
@@ -233,6 +242,14 @@ steps above keep the volume.
   argument). A renamed binary target, a wrong `dockerfile:` key, a deleted
   `command:`, or a mistyped flag then fails the gate instead of the operator's
   next bring-up (review round 2, finding #12; review round 4, finding #9).
+- **The shell scripts.** `scripts/check_ops.sh` runs
+  `shellcheck -S warning scripts/*.sh`. `scripts/deploy.sh` is THE upgrade
+  procedure, so an unquoted expansion or a lost exit code in it lands on the
+  operator's server. Fix a finding; do not silence it.
+- **The CI workflow.** The last check of `scripts/check_ops.sh` proves that
+  every published port of `.github/workflows/ci.yml` binds `127.0.0.1`. The gate
+  database in CI runs with trust auth, so a `5432:5432` line puts a superuser
+  port on every interface of the runner for the length of the job.
 - **Latency and token budgets (L\*, T\*).** The benchmarks land with M4 and M5
   and run in the same gate job. Model calls run in the worker (R4). The gate
   reads the RESOLVED dependency graph from `cargo metadata` (`tests/purity.rs`
@@ -267,6 +284,49 @@ waited for a lock, exited the one-shot 2, and took the whole stack down (review
 round 3, finding #1). `docker-compose.yml` therefore does not forward
 `DB_STATEMENT_TIMEOUT_MS` to the `migrate` service.
 
+`DB_CLIENT_TIMEOUT_MS` (default `10000`) is the second bound and works on the
+CLIENT side: it bounds the whole call in `cadus-web` and `cadus-worker`, not the
+statement in Postgres. Set `0` to remove it. The value is a whole number of
+milliseconds, like `DB_STATEMENT_TIMEOUT_MS`.
+
+The two bounds cover two different faults:
+
+| Key | Side | Ends |
+|---|---|---|
+| `DB_STATEMENT_TIMEOUT_MS` | server | a statement that RUNS too long |
+| `DB_CLIENT_TIMEOUT_MS` | client | any call that does not come back, a dropped socket included |
+
+Keep `DB_CLIENT_TIMEOUT_MS` above `DB_STATEMENT_TIMEOUT_MS`. The server then
+reports the timeout first and names the statement, and the client bound stays
+the backstop for the case the server never answers. sqlx 0.9 exposes no TCP
+keepalive, so this client bound is what ends a socket that a firewall drops
+silently. `cadus-migrate` ignores `DB_CLIENT_TIMEOUT_MS` for the same reason it
+ignores the server bound, and `docker-compose.yml` does not forward it to the
+`migrate` service. `scripts/check_ops.sh` check (f) fails the gate if either key
+reaches `migrate`.
+
+## Proxy ports
+
+`CADDY_HTTP_PORT` (default `80`) and `CADDY_HTTPS_PORT` (default `443`) set the
+HOST ports of the `caddy` service. Caddy keeps ports 80 and 443 INSIDE the
+container, so the Caddyfile and `SITE_ADDRESS` do not change with these keys.
+
+Keep the defaults for a real site. Let's Encrypt reaches port 80 and port 443
+only, so a moved port gets no certificate. Move the ports for a test bring-up on
+a server where another stack already holds 80 and 443, and set
+`SITE_ADDRESS=:80` for that bring-up:
+
+```sh
+# .env
+SITE_ADDRESS=:80
+CADDY_HTTP_PORT=18080
+CADDY_HTTPS_PORT=18443
+```
+
+The stack then answers on `http://127.0.0.1:18080/api/health`. `scripts/deploy.sh`
+prints that URL in its check command, because it reads the published port from
+`docker compose port caddy 80`.
+
 ## Stop budget
 
 `SHUTDOWN_DEADLINE_SECS` (default `10`) is ONE budget for the whole stop of
@@ -285,7 +345,8 @@ twice and took 20.01 s at the default, which gave exit 137 on every restart
 cluster serialize on an advisory lock that lives in `CADUS_MAINTENANCE_DB` (default
 `postgres`), because Postgres scopes an advisory lock to one database. The migrate
 role must be able to connect to that database. `cadus-migrate` ignores
-`DB_STATEMENT_TIMEOUT_MS` and runs every migration without a statement bound.
+`DB_STATEMENT_TIMEOUT_MS` and `DB_CLIENT_TIMEOUT_MS` and runs every migration
+without a query bound.
 
 ## Password rule and exit codes
 

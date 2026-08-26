@@ -38,11 +38,18 @@
 # Input: docker with the Compose plugin, and a `.env` file beside
 # docker-compose.yml. The script writes no file.
 #
+# Step 4 starts `caddy` too, so the proxy always runs the image and the
+# Caddyfile of the new commit. CADDY_HTTP_PORT and CADDY_HTTPS_PORT in `.env`
+# move the HOST ports of that proxy (defaults 80 and 443), so a box on which
+# another stack already holds 80 and 443 still runs the whole four-service
+# deploy.
+#
 # Options:
 #   --no-caddy            Start `web` and `worker` only, and leave `caddy`
 #                         alone. `DEPLOY_SKIP_CADDY=1` does the same. Use it on
-#                         a stack that terminates TLS somewhere else, and in a
-#                         test bring-up that binds no port 80.
+#                         a stack that terminates TLS somewhere else: the
+#                         operator keeps that proxy, and this script never
+#                         touches it.
 #
 # Exit codes: 0 for a finished upgrade, 1 for a failed step, 2 for a bad
 # argument or a missing input.
@@ -175,7 +182,22 @@ while true; do
 done
 
 echo "DEPLOY OK"
+
+# The check command below names the port that Caddy really publishes.
+# CADDY_HTTP_PORT moves that host port, so a fixed `http://localhost` line sends
+# the operator to another stack, or to a closed port. `docker compose port`
+# prints `<address>:<port>`; the part after the last colon is the port.
+health_url="http://localhost/api/health"
+if [ "$skip_caddy" != "1" ]; then
+    published="$(docker compose port caddy 80 2>/dev/null || true)"
+    published="${published%%$'\n'*}"
+    http_port="${published##*:}"
+    if [ -n "$http_port" ] && [ "$http_port" != "80" ]; then
+        health_url="http://127.0.0.1:${http_port}/api/health"
+    fi
+fi
+
 echo "Do a check:"
 echo "  docker compose ps"
 echo "  docker compose logs web | grep 'listening on'"
-echo "  curl -fsS http://localhost/api/health"
+echo "  curl -fsS ${health_url}"
