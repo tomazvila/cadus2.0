@@ -110,15 +110,19 @@ pub fn render(statement: &str, bindings: &Bindings) -> Result<String, RenderErro
     Ok(out)
 }
 
-/// Every placeholder name the statement writes, in name order.
+/// Every placeholder name the statement writes, and the first stray brace.
 ///
-/// # Errors
-///
-/// Returns [`RenderError::StrayBrace`] for the first brace that is neither
-/// doubled nor part of a placeholder.
-pub fn placeholders(statement: &str) -> Result<BTreeSet<String>, RenderError> {
+/// The scan reads the whole statement. It does not stop at the first stray
+/// brace: it records that brace, steps over the one character, and goes on
+/// collecting names. The gate of U2 needs both answers from one pass, because
+/// 1.0 reports an undeclared parameter BEFORE it reports a stray brace
+/// (`problem_templates.py:513-522`), and a scan that stopped at the brace could
+/// not name an undeclared parameter that comes after it.
+#[must_use]
+pub fn scan(statement: &str) -> (BTreeSet<String>, Option<StrayBrace>) {
     let chars: Vec<char> = statement.chars().collect();
     let mut names = BTreeSet::new();
+    let mut stray: Option<StrayBrace> = None;
     let mut at = 0_usize;
     while let Some(character) = chars.get(at).copied() {
         if character != '{' && character != '}' {
@@ -136,12 +140,28 @@ pub fn placeholders(statement: &str) -> Result<BTreeSet<String>, RenderError> {
             at = end;
             continue;
         }
-        return Err(RenderError::StrayBrace {
-            index: at,
-            snippet: snippet_from(&chars, at),
-        });
+        if stray.is_none() {
+            stray = Some(StrayBrace {
+                index: at,
+                snippet: snippet_from(&chars, at),
+            });
+        }
+        at += 1;
     }
-    Ok(names)
+    (names, stray)
+}
+
+/// Every placeholder name the statement writes, in name order.
+///
+/// # Errors
+///
+/// Returns [`RenderError::StrayBrace`] for the first brace that is neither
+/// doubled nor part of a placeholder.
+pub fn placeholders(statement: &str) -> Result<BTreeSet<String>, RenderError> {
+    match scan(statement) {
+        (names, None) => Ok(names),
+        (_, Some(StrayBrace { index, snippet })) => Err(RenderError::StrayBrace { index, snippet }),
+    }
 }
 
 /// The first brace that is neither doubled nor part of a placeholder.
@@ -150,11 +170,7 @@ pub fn placeholders(statement: &str) -> Result<BTreeSet<String>, RenderError> {
 /// U2 turns the report into the rejection message 1.0 writes.
 #[must_use]
 pub fn stray_brace(statement: &str) -> Option<StrayBrace> {
-    match placeholders(statement) {
-        Ok(_) => None,
-        Err(RenderError::StrayBrace { index, snippet }) => Some(StrayBrace { index, snippet }),
-        Err(RenderError::Undeclared { .. }) => None,
-    }
+    scan(statement).1
 }
 
 /// Read a `{name}` placeholder that starts at `at`, and the index after it.

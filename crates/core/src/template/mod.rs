@@ -10,7 +10,7 @@
 //! **No model call runs here, at authoring time or at serve time (T1).** No float
 //! enters any value (D6). No step panics on any document (C4).
 //!
-//! # The five pieces
+//! # The seven pieces
 //!
 //! | Module | What it owns |
 //! |---|---|
@@ -20,6 +20,7 @@
 //! | [`render`] | the statement scanner over the `{name}` grammar |
 //! | [`eval`] | the exact evaluator of `answer_expr` and the answer writer |
 //! | [`draw`] | the seeded draws and the candidate stream |
+//! | [`gate`] | the verification gate: every check, with the reason it writes |
 //!
 //! # The path of one instance
 //!
@@ -51,6 +52,7 @@ pub mod document;
 pub mod domain;
 pub mod draw;
 pub mod eval;
+pub mod gate;
 pub mod render;
 
 pub use constraint::{
@@ -74,4 +76,9 @@ pub use eval::{
     Answer, EVAL_FUNCTIONS, EXTRA_FUNCTIONS, EvalError, MAX_FACTORIAL, MAX_VALUE_BITS, answer,
     evaluate, parse_answer_expr, write,
 };
-pub use render::{RenderError, SNIPPET_CHARS, StrayBrace, placeholders, render, stray_brace};
+pub use gate::{
+    Envelope, FREE_SYMBOLS, GATE_SAMPLES, GATE_SEED, GateSpec, MAX_EXPONENT, NON_ANSWERS,
+    RESERVED_NAMES, Rejection, TEMPLATABLE_KINDS, Verified, exemplar_envelope, gate, gate_body,
+    with_space_size,
+};
+pub use render::{RenderError, SNIPPET_CHARS, StrayBrace, placeholders, render, scan, stray_brace};
