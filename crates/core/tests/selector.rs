@@ -25,13 +25,14 @@ use cadus_core::curriculum::{AnswerKind, Curriculum, load_curriculum};
 use cadus_core::event::{KpProgress, TaskType, Timestamp, TopicStatus};
 use cadus_core::learner::{PendingRemediation, QuizState, TopicState};
 use cadus_core::selector::{
-    DIFFICULTY_TARGET, QUIZ_RETAKE_DELAY_DAYS, REMEDIATION_QUIZ_MISS, SeededSampler,
-    SessionContext, SessionPlan, Task, arrange_lessons, blocking_gap_ancestors, compose_session,
-    compress, course_scope, due_reviews, frontier, gap_course_for, gap_fill_chain_for_stack,
-    importance, in_retry_delay, interleave, mastered_set, multistep_components, multistep_is_due,
-    nearly_due, order_lessons, quiz_budget, quiz_composer, quiz_difficulty_target, quiz_is_due,
-    remediation_for_quiz_miss, remediation_for_repeat_fail, resolve_gap_fill_stack, review_mix,
-    schedule_drills, serveable_gap_frontier,
+    DIFFICULTY_TARGET, DRILL_INTERVAL_DAYS, DRILL_MASTERY_ABILITY, QUIZ_RECENT_DAYS,
+    QUIZ_RETAKE_DELAY_DAYS, REMEDIATION_QUIZ_MISS, SeededSampler, SessionContext, SessionPlan,
+    Task, arrange_lessons, blocking_gap_ancestors, compose_session, compress, course_scope,
+    due_reviews, frontier, gap_course_for, gap_fill_chain_for_stack, importance, in_retry_delay,
+    interleave, mastered_set, multistep_components, multistep_is_due, nearly_due, order_lessons,
+    quiz_budget, quiz_composer, quiz_difficulty_target, quiz_is_due, remediation_for_quiz_miss,
+    remediation_for_repeat_fail, resolve_gap_fill_stack, review_mix, schedule_drills,
+    serveable_gap_frontier,
 };
 
 use common::{DAY_US, T_US, days};
@@ -1895,4 +1896,159 @@ fn compress_matches_the_literal_1_0_transcription() {
         assert_eq!(fast.surviving, surviving, "example {example}: surviving");
         assert_eq!(fast.knockouts, knockouts, "example {example}: knockouts");
     }
+}
+
+// --------------------------------------------------------------------------- //
+// The selector boundaries, read AT the threshold
+// --------------------------------------------------------------------------- //
+//
+// Every expected value below came from the live 1.0 selector on the same input,
+// through `scripts/oracle/dump_selector_boundaries_1_0.py`. M3 review round 1,
+// findings #8, #9, and #10.
+
+/// 3.49 days in microseconds: one step INSIDE the drill cadence window.
+const DRILL_GAP_INSIDE_US: i64 = 301_536_000_000;
+
+/// 3.5 days in microseconds: the drill cadence window itself.
+const DRILL_GAP_AT_WINDOW_US: i64 = 302_400_000_000;
+
+/// 3.51 days in microseconds: one step OUTSIDE the drill cadence window.
+const DRILL_GAP_OUTSIDE_US: i64 = 303_264_000_000;
+
+#[test]
+fn schedule_drills_brackets_the_automaticity_bar() {
+    // `selector.py:113` holds `DRILL_MASTERY_ABILITY = 0.95` and `selector.py:866`
+    // drops a topic whose `ability >= DRILL_MASTERY_ABILITY`. 1.0 on this graph:
+    // ability 0.949 -> ['d'], 0.95 -> [], 0.951 -> [] (finding #9).
+    assert!((DRILL_MASTERY_ABILITY - 0.95).abs() < f64::EPSILON);
+    let graph = graph_of(vec![topic("d").drill(true).build()], &[]);
+
+    let below = states_of(vec![("d", LearnedSpec::new(0.9).ability(0.949).build())]);
+    assert_eq!(schedule_drills(&below, &graph, T_US, None), ids(&["d"]));
+
+    let at_bar = states_of(vec![("d", LearnedSpec::new(0.9).ability(0.95).build())]);
+    assert_eq!(
+        schedule_drills(&at_bar, &graph, T_US, None),
+        Vec::<String>::new()
+    );
+
+    let above = states_of(vec![("d", LearnedSpec::new(0.9).ability(0.951).build())]);
+    assert_eq!(
+        schedule_drills(&above, &graph, T_US, None),
+        Vec::<String>::new()
+    );
+}
+
+#[test]
+fn schedule_drills_brackets_the_cadence_window() {
+    // `selector.py:116` holds `DRILL_INTERVAL_DAYS = 3.5` and `selector.py:868`
+    // skips a topic while `t - last_drill_at < timedelta(days=3.5)`. 1.0 on this
+    // graph: a gap of 3.49 days -> [], 3.5 days -> ['d'], 3.51 days -> ['d'].
+    // The gap of exactly 3.5 days is the one the strict `<` decides (finding #9).
+    assert!((DRILL_INTERVAL_DAYS - 3.5).abs() < f64::EPSILON);
+    let graph = graph_of(vec![topic("d").drill(true).build()], &[]);
+    let states = states_of(vec![("d", LearnedSpec::new(0.9).ability(0.8).build())]);
+
+    let mut inside: BTreeMap<String, i64> = BTreeMap::new();
+    inside.insert("d".to_owned(), T_US - DRILL_GAP_INSIDE_US);
+    assert_eq!(
+        schedule_drills(&states, &graph, T_US, Some(&inside)),
+        Vec::<String>::new()
+    );
+
+    let mut at_window: BTreeMap<String, i64> = BTreeMap::new();
+    at_window.insert("d".to_owned(), T_US - DRILL_GAP_AT_WINDOW_US);
+    assert_eq!(
+        schedule_drills(&states, &graph, T_US, Some(&at_window)),
+        ids(&["d"])
+    );
+
+    let mut outside: BTreeMap<String, i64> = BTreeMap::new();
+    outside.insert("d".to_owned(), T_US - DRILL_GAP_OUTSIDE_US);
+    assert_eq!(
+        schedule_drills(&states, &graph, T_US, Some(&outside)),
+        ids(&["d"])
+    );
+}
+
+#[test]
+fn the_quiz_recency_window_is_read_at_its_boundary() {
+    // `selector.py:84` holds `QUIZ_RECENT_DAYS = 14` and `selector.py:711` is
+    // `(t - learned_at[tid]) <= timedelta(days=QUIZ_RECENT_DAYS)`, so a topic
+    // learned exactly 14 days ago is still recent. Three learned topics, aged 13,
+    // 14, and 15 days: 1.0 puts q13 and q14 in `recent` and q15 in `mid`, for seed
+    // 7 and for seed 42 (finding #10).
+    assert_eq!(QUIZ_RECENT_DAYS, 14);
+    let quiz_ids = ["q13", "q14", "q15"];
+    let graph = graph_of(quiz_ids.iter().map(|id| topic(id).build()).collect(), &[]);
+    let states: BTreeMap<String, TopicState> = quiz_ids
+        .iter()
+        .map(|id| ((*id).to_owned(), learned(0.9)))
+        .collect();
+    let mut learned_at: BTreeMap<String, i64> = BTreeMap::new();
+    learned_at.insert("q13".to_owned(), T_US - days(13));
+    learned_at.insert("q14".to_owned(), T_US - days(14));
+    learned_at.insert("q15".to_owned(), T_US - days(15));
+
+    let cfg = cfg();
+    for seed in [7_u64, 42] {
+        let plan = quiz_composer(
+            &states,
+            &graph,
+            &cfg,
+            T_US,
+            &mut sampler(seed),
+            Some(&learned_at),
+        );
+        let mut rows: Vec<(String, &str, i64)> = plan
+            .questions
+            .iter()
+            .map(|question| {
+                (
+                    question.topic.clone(),
+                    question.stratum,
+                    question.time_budget_secs,
+                )
+            })
+            .collect();
+        rows.sort();
+        assert_eq!(
+            rows,
+            vec![
+                ("q13".to_owned(), "recent", 45),
+                ("q14".to_owned(), "recent", 45),
+                ("q15".to_owned(), "mid", 45),
+            ],
+            "seed {seed}"
+        );
+    }
+}
+
+#[test]
+fn the_lesson_knockout_mass_is_a_compensated_sum() {
+    // Trap T1 at `selector.py:602`: the knockout mass is a CPython `sum()` over the
+    // review targets. Ten targets at weight 0.1 each total exactly 1.0 in CPython
+    // 3.12 and later, where a naive left-to-right add gives 0.9999999999999999.
+    // The topic is not core and has no dependent, so the importance IS the mass:
+    // the live 1.0 `importance` on this graph prints 1.0 (finding #8).
+    let leaves: Vec<String> = (0..10).map(|index| format!("leaf-{index}")).collect();
+    let edges: Vec<(&str, f64, bool)> = leaves
+        .iter()
+        .map(|id| (id.as_str(), 0.1_f64, false))
+        .collect();
+    let mut topics: Vec<Topic> = leaves.iter().map(|id| topic(id).build()).collect();
+    topics.push(topic("lesson-topic").core(false).prereqs(&edges).build());
+    let graph = graph_of(topics, &[]);
+
+    let targets: BTreeSet<String> = leaves.iter().cloned().collect();
+    let scope = course_scope(&graph, None);
+    let mass = importance("lesson-topic", &graph, &targets, &scope);
+
+    // The comparison is EXACT: the naive total differs from 1.0 by one unit in the
+    // last place, which is below `f64::EPSILON`.
+    assert_eq!(
+        mass.to_bits(),
+        1.0_f64.to_bits(),
+        "the knockout mass is {mass:?}, so the total is not compensated"
+    );
 }

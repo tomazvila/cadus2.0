@@ -16,6 +16,7 @@
     clippy::unimplemented
 )]
 
+use std::collections::BTreeMap;
 use std::path::{Path, PathBuf};
 use std::process::Command;
 use std::sync::OnceLock;
@@ -23,6 +24,7 @@ use std::sync::OnceLock;
 use cadus_core::config::Config;
 use cadus_core::curriculum::{Curriculum, load_curriculum};
 use cadus_core::event::{Event, Timestamp, TopicStatus, WorkQuality};
+use cadus_core::fire::initial_ability;
 use cadus_core::learner::{LearnerModel, TopicState, VelocityState};
 use cadus_core::projector::{
     PROJECTOR_VERSION, ProjectionInput, Projector, apply_regrades, blob_digest, canonical_blob,
@@ -429,17 +431,62 @@ fn the_coverage_stream_exercises_the_named_branches() {
 /// after the reset. `ability_update` and `apply_attempt` skip a target that is ABSENT
 /// from the states, while a present-and-default target takes a delta — so a resume that
 /// seeds from the filtered cache stops propagating onto the reset topic. Splits 21 to
-/// 31 put the reset in the light half and a graded event after it. 1.0 answers this at
-/// the service layer, which sends such a stream down the full-replay path
-/// (`service.py:257-280`). The port reproduces the divergence rather than hides it.
+/// 31 put the reset in the light half and a graded event after it.
+///
+/// **1.0 does NOT route such a stream away from the incremental path.**
+/// `service.py:272` forces a full replay on a `Regraded` event or on a
+/// `projector_version` mismatch, and on nothing else; a `ProfileReset` matches neither
+/// arm, and `service.py` never imports `ProfileReset`. REQUIREMENTS.md D4 reserves the
+/// full replay for the same two triggers in 2.0, so the reset class stays on the
+/// incremental path on BOTH sides. The port therefore reproduces 1.0 here rather than
+/// hides the divergence: it leaves the full replay at these splits and at no other, and
+/// it lands on the SAME model 1.0 lands on (`incremental_1_0.json`; finding #4 of the
+/// M3 review round 1).
 const COVERAGE_DIVERGING_SPLITS: [usize; 11] = [21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31];
+
+/// The coverage stream's row of `incremental_1_0.json`
+/// (`scripts/oracle/incremental_splits_1_0.py`), read once for the test binary.
+fn coverage_incremental_row() -> &'static serde_json::Value {
+    static ROW: OnceLock<serde_json::Value> = OnceLock::new();
+    ROW.get_or_init(|| {
+        let text =
+            std::fs::read_to_string(fixture("incremental_1_0.json")).expect("the index reads");
+        let index: serde_json::Value = serde_json::from_str(&text).expect("the index parses");
+        index["streams"]
+            .as_array()
+            .expect("the index holds an array of streams")
+            .iter()
+            .find(|entry| entry["stream"] == "stream_u3_coverage.jsonl")
+            .expect("the coverage stream has a row")
+            .clone()
+    })
+}
+
+/// The 1.0 incremental digest of the coverage stream at `split`.
+///
+/// `None` when 1.0 agrees with its own full replay at that split.
+fn coverage_incremental_digest(split: usize) -> Option<String> {
+    coverage_incremental_row()["mismatching_digests"][split.to_string()]
+        .as_str()
+        .map(ToOwned::to_owned)
+}
+
+/// The 1.0 full-replay digest of the coverage stream.
+fn coverage_full_digest() -> String {
+    coverage_incremental_row()["full_digest"]
+        .as_str()
+        .expect("the row holds a full digest")
+        .to_owned()
+}
 
 #[test]
 fn incremental_matches_full_replay_at_the_same_splits_as_one_point_zero() {
     let events = stream("stream_u3_coverage.jsonl");
     let cfg = Config::default();
     let input = ProjectionInput::new(tree(), &cfg, now());
-    let full = canonical_blob(&project(&events, &input).unwrap()).unwrap();
+    let full_model = project(&events, &input).unwrap();
+    let full = canonical_blob(&full_model).unwrap();
+    assert_eq!(blob_digest(&full_model).unwrap(), coverage_full_digest());
 
     let mut diverging: Vec<usize> = Vec::new();
     for split in 0..=events.len() {
@@ -451,6 +498,38 @@ fn incremental_matches_full_replay_at_the_same_splits_as_one_point_zero() {
         }
     }
     assert_eq!(diverging, COVERAGE_DIVERGING_SPLITS.to_vec());
+}
+
+#[test]
+fn the_diverging_splits_land_on_the_same_model_one_point_zero_lands_on() {
+    // The `profile_reset` divergence stays on the incremental path in 1.0
+    // (`service.py:272`), so the port must reproduce 1.0's OWN divergent model at every
+    // one of these splits, not merely leave the full replay there.
+    let events = stream("stream_u3_coverage.jsonl");
+    assert_eq!(events.len(), COVERAGE_EVENTS);
+    let cfg = Config::default();
+    let input = ProjectionInput::new(tree(), &cfg, now());
+    let full = coverage_full_digest();
+
+    for split in 0..=events.len() {
+        let (prior, fresh) = events.split_at(split);
+        let cached = project(prior, &input).unwrap();
+        let incremental = project_incremental(&cached, prior, fresh, &input).unwrap();
+        let actual = blob_digest(&incremental).unwrap();
+        let expected = coverage_incremental_digest(split).unwrap_or_else(|| full.clone());
+        assert_eq!(
+            actual, expected,
+            "split {split}: the resume gives a different model than 1.0 gives"
+        );
+    }
+
+    // Every recorded divergent split carries a digest of its own. One equal to the full
+    // replay would make the comparison above vacuous.
+    for split in COVERAGE_DIVERGING_SPLITS {
+        let divergent = coverage_incremental_digest(split)
+            .unwrap_or_else(|| panic!("split {split} has no 1.0 digest"));
+        assert_ne!(divergent, full, "split {split}");
+    }
 }
 
 #[test]
@@ -1169,4 +1248,231 @@ fn an_empty_log_takes_now_as_the_reference_instant() {
     assert!(model.topics.is_empty());
     assert_eq!(model.xp.goal, 40);
     assert_eq!(model.velocity, VelocityState::default());
+}
+
+// --------------------------------------------------------------------------- //
+// The boundary streams — one guard per stream, read AT equality
+// --------------------------------------------------------------------------- //
+//
+// Each stream under `tests/fixtures/events/boundary/` is the smallest stream that
+// puts ONE guard of the fold exactly on its threshold, where a `<` and a `<=` port
+// part company. The expected digest and every expected field below come from the
+// 1.0 oracle on that committed stream:
+//
+//   cd /home/deploy/dev/cadus && .venv/bin/python \
+//     scripts/oracle/dump_projector_1_0.py \
+//     crates/core/tests/fixtures/events/boundary/<name>.jsonl \
+//     --curriculum curriculum
+//
+// `the_live_oracle_agrees_on_every_boundary_stream` re-derives all five digests
+// from the live 1.0 code, so a literal here can never drift away from 1.0.
+// M3 review round 1, findings #6, #7, #8, #14, #15.
+
+/// The 1.0 fold of `boundary/quiz_score_at_retake_threshold.jsonl` (finding #6).
+const BOUNDARY_QUIZ_AT_THRESHOLD: &str =
+    "38bc0908db878e777b373a58fe9203068d4fdf69bcfa7e73211c6e73331c3e96";
+
+/// The 1.0 fold of `boundary/placed_balance_zero.jsonl` (finding #7).
+const BOUNDARY_PLACED_BALANCE_ZERO: &str =
+    "627f5cbcdf457b104682534c1a7985e9010e3e0a191c22aee22de707974061d7";
+
+/// The 1.0 fold of `boundary/xp_window_cancelling_sum.jsonl` (finding #8).
+const BOUNDARY_XP_CANCELLING_SUM: &str =
+    "5d0ef91630f930c9e56576952c2d158309255739e5d5fc55be041e2a0d76de80";
+
+/// The 1.0 fold of `boundary/velocity_window_start_day.jsonl` (finding #14).
+const BOUNDARY_VELOCITY_WINDOW_START: &str =
+    "22af94ca29e7d339b3112fb0a89d7da9e08ab050137e8cf1ad791df3c8d6e1ff";
+
+/// The 1.0 fold of `boundary/streak_reference_day_at_goal.jsonl` (finding #15).
+const BOUNDARY_STREAK_AT_GOAL: &str =
+    "c5e3438c51dc169d775b88879ba672223292bf9c37b0ac8167316b924a8f4956";
+
+/// Every boundary stream, with the 1.0 digest of its fold.
+const BOUNDARY_STREAMS: [(&str, &str); 5] = [
+    (
+        "boundary/quiz_score_at_retake_threshold.jsonl",
+        BOUNDARY_QUIZ_AT_THRESHOLD,
+    ),
+    (
+        "boundary/placed_balance_zero.jsonl",
+        BOUNDARY_PLACED_BALANCE_ZERO,
+    ),
+    (
+        "boundary/xp_window_cancelling_sum.jsonl",
+        BOUNDARY_XP_CANCELLING_SUM,
+    ),
+    (
+        "boundary/velocity_window_start_day.jsonl",
+        BOUNDARY_VELOCITY_WINDOW_START,
+    ),
+    (
+        "boundary/streak_reference_day_at_goal.jsonl",
+        BOUNDARY_STREAK_AT_GOAL,
+    ),
+];
+
+#[test]
+fn a_quiz_score_equal_to_the_retake_threshold_leaves_no_retake_pending() {
+    // `projector.py:262` is `score < cfg.quiz.retake_below`, and `retake_below` is
+    // 0.8. The stream scores exactly 0.8, so a `<=` port sets `retake_pending` and
+    // serves a retake 1.0 never serves (finding #6).
+    let events = stream("boundary/quiz_score_at_retake_threshold.jsonl");
+    assert_eq!(events.len(), 2);
+    let cfg = Config::default();
+    assert!((cfg.quiz.retake_below - 0.8).abs() < f64::EPSILON);
+
+    let model = fold(&events);
+    assert!(!model.quiz.retake_pending);
+    assert_eq!(
+        model.quiz.last_at.map(|day| day.to_string()).as_deref(),
+        Some("2026-05-04")
+    );
+    assert_eq!(blob_digest(&model).unwrap(), BOUNDARY_QUIZ_AT_THRESHOLD);
+}
+
+#[test]
+fn an_initial_placement_balance_of_exactly_zero_places_nothing() {
+    // `projector.py:340-344` is `tid in graph.topics and balance > 0.0` on the
+    // NON-refresh path. A balance of exactly 0.0 leaves the topic untouched, so a
+    // `>=` port seeds a state that makes the topic review-eligible (finding #7).
+    let events = stream("boundary/placed_balance_zero.jsonl");
+    assert_eq!(events.len(), 2);
+    let model = fold(&events);
+
+    // The 2.5 balance is placed; the 0.0 balance is not, and `finalize` keeps no
+    // key for it.
+    assert_eq!(model.topics.len(), 1);
+    let placed = &model.topics["adding-integers"];
+    assert_eq!(placed.status, TopicStatus::Placed);
+    assert!((placed.rep_num - 2.0).abs() < f64::EPSILON);
+    assert!(!model.topics.contains_key("absolute-value"));
+    assert_eq!(blob_digest(&model).unwrap(), BOUNDARY_PLACED_BALANCE_ZERO);
+}
+
+#[test]
+fn the_velocity_window_total_is_compensated_at_the_xp_site() {
+    // Trap T1 at `xp.py:207`: the window total is a CPython `sum()`, which is
+    // compensated since 3.12. The three awards are `1e16`, `1.0`, `-1e16` on one
+    // day, so the compensated total is 1.0 and the naive total is 0.0. The
+    // velocity then reads 1.0 / 28 = 0.0357 against a naive 0.0 (finding #8).
+    let events = stream("boundary/xp_window_cancelling_sum.jsonl");
+    assert_eq!(events.len(), 5);
+    let model = fold(&events);
+
+    assert!((model.velocity.xp_per_day_28d - 0.0357).abs() < f64::EPSILON);
+    // The whole-log total is compensated too, and the per-day tally is the naive
+    // `+=` of 1.0 — the two disagree on this stream, which is 1.0 behavior.
+    assert_eq!(model.xp.total, 1);
+    assert_eq!(model.xp.today, 0);
+    assert_eq!(blob_digest(&model).unwrap(), BOUNDARY_XP_CANCELLING_SUM);
+}
+
+#[test]
+fn an_xp_entry_on_the_first_day_of_the_window_is_inside_it() {
+    // `xp.py:192-194` puts `window_days` days INCLUDING the reference day in the
+    // window, and the membership test is `day >= start`. The reference day is
+    // 2026-05-04, so the window starts on 2026-04-07, which is the day of the first
+    // award. A `> start` port drops that award: 84 / 28 = 3.0 becomes 56 / 28 = 2.0,
+    // and the ETA moves by years (finding #14).
+    let events = stream("boundary/velocity_window_start_day.jsonl");
+    assert_eq!(events.len(), 3);
+    let model = fold(&events);
+
+    assert_eq!(model.xp.total, 84);
+    assert!((model.velocity.xp_per_day_28d - 3.0).abs() < f64::EPSILON);
+    assert_eq!(
+        model.velocity.eta.map(|day| day.to_string()).as_deref(),
+        Some("2033-07-18")
+    );
+    assert_eq!(blob_digest(&model).unwrap(), BOUNDARY_VELOCITY_WINDOW_START);
+}
+
+#[test]
+fn a_reference_day_exactly_at_the_goal_counts_toward_the_streak() {
+    // `xp.py:178` is `if daily.get(today, 0.0) < goal`, so a day EQUAL to the goal
+    // is not "in progress": the count starts at the reference day itself. The goal
+    // is 40 and both days total exactly 40, so the streak is 2. A `<=` port starts
+    // at yesterday and reports 1 (finding #15).
+    let events = stream("boundary/streak_reference_day_at_goal.jsonl");
+    assert_eq!(events.len(), 2);
+    let model = fold(&events);
+
+    assert_eq!(model.xp.goal, 40);
+    assert_eq!(model.xp.today, 40);
+    assert_eq!(model.xp.streak_days, 2);
+    assert_eq!(model.xp.total, 80);
+    assert_eq!(blob_digest(&model).unwrap(), BOUNDARY_STREAK_AT_GOAL);
+}
+
+#[test]
+fn the_live_oracle_agrees_on_every_boundary_stream() {
+    if std::env::var("CADUS_ORACLE_PYTHON").is_err() {
+        eprintln!("skipped: CADUS_ORACLE_PYTHON is not set");
+        return;
+    }
+    for (name, digest) in BOUNDARY_STREAMS {
+        let expected = live_oracle_blob(name, None).expect("the oracle runs");
+        let actual = canonical_blob(&fold(&stream(name))).unwrap();
+        assert!(
+            actual == expected,
+            "{name}: {}",
+            first_difference(&actual, &expected)
+        );
+        // The committed literal is the digest of those same 1.0 bytes.
+        assert_eq!(
+            blob_digest(&fold(&stream(name))).unwrap(),
+            digest,
+            "{name}: the committed digest is not the live 1.0 digest"
+        );
+    }
+}
+
+/// The four neighbor abilities, in the id order the port sums them in.
+///
+/// `sum()` of this list is 4.0 in CPython 3.12 and later, in EVERY order, because
+/// the built-in is compensated. A naive left-to-right add of this order loses the
+/// two small values against `1e100` and gives 0.0.
+const CANCELLING_ABILITIES: [f64; 4] = [1.0, 1e100, 3.0, -1e100];
+
+#[test]
+fn the_ability_seed_of_an_untouched_topic_is_a_compensated_mean() {
+    // Trap T1 at `fire.py:361`: the neighborhood mean is a CPython `sum()`. The four
+    // touched neighbors below carry a cancelling pair, so the compensated total is
+    // 4.0 and the mean is 1.0, where a naive total is 0.0 and the mean is 0.0.
+    // `.venv/bin/python -c "print(sum([1.0, 1e100, 3.0, -1e100]))"` prints 4.0 on
+    // 3.13.5, and prints it for every permutation of the list, so the 1.0 set order
+    // (trap T5) does not move the answer (finding #8).
+    let seeded = common::topic("seeded-topic", &[], 0.3, &[]);
+    let neighbors = ["n1-neighbor", "n2-neighbor", "n3-neighbor", "n4-neighbor"];
+    let mut topics = vec![seeded];
+    for id in neighbors {
+        topics.push(common::topic(id, &[], 0.3, &[]));
+    }
+    // One module, so every neighbor is in the seeded topic's neighborhood.
+    let graph = common::graph(topics);
+
+    let mut states: BTreeMap<String, TopicState> = BTreeMap::new();
+    for (id, ability) in neighbors.iter().zip(CANCELLING_ABILITIES) {
+        states.insert(
+            (*id).to_owned(),
+            TopicState {
+                status: TopicStatus::Learning,
+                ability,
+                ..TopicState::default()
+            },
+        );
+    }
+    let cfg = Config::default();
+    let seed = initial_ability("seeded-topic", &graph, &states, &cfg);
+    assert!(
+        (seed - 1.0).abs() < f64::EPSILON,
+        "the ability seed is {seed}, so the neighborhood total is not compensated"
+    );
+
+    // The neutral prior still answers when no neighbor is touched, so the value
+    // above is the mean and not the fallback.
+    let untouched: BTreeMap<String, TopicState> = BTreeMap::new();
+    let neutral = initial_ability("seeded-topic", &graph, &untouched, &cfg);
+    assert!((neutral - 0.5).abs() < f64::EPSILON, "{neutral}");
 }

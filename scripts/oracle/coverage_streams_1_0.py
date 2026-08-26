@@ -70,7 +70,16 @@ PROBES = [
     ("diag.initial", 5, "diagnostic_placed, initial placement"),
     ("diag.refresh", 5, "diagnostic_placed with refresh true"),
     ("diag.promote_guard", 5, "H2 guard: negative balance on an untouched topic"),
-    ("diag.promote_guard_zero", 5, "H2 guard at its boundary: a balance of exactly 0.0"),
+    (
+        "diag.promote_guard_zero",
+        5,
+        "H2 REFRESH guard at its boundary: a balance of exactly 0.0",
+    ),
+    (
+        "diag.placed_balance_zero",
+        5,
+        "the INITIAL placement filter at its boundary: a balance of exactly 0.0",
+    ),
     ("diag.conditional_peel", 5, "a conditional placement peeled back by a miss"),
     ("reset.applied", 6, "profile_reset clears accumulated state"),
     ("round.day_half_tie", 7, "a local-day XP total on an exact .5 tie"),
@@ -79,7 +88,12 @@ PROBES = [
     ("quiz.row_off_curriculum", 8, "a quiz per_topic row off the curriculum"),
     ("quiz.retake_false", 8, "a quiz score at or above retake_below"),
     ("quiz.retake_true", 8, "a quiz score below retake_below"),
-    ("streak.day_at_goal", 9, "a local day exactly at the goal"),
+    ("streak.day_at_goal", 9, "ANY local day exactly at the goal"),
+    (
+        "streak.reference_day_at_goal",
+        9,
+        "the REFERENCE day exactly at the goal, which the first comparison reads",
+    ),
     ("streak.day_one_below", 9, "a local day one XP below the goal"),
     ("streak.gap_day", 9, "a gap day inside the streak block"),
     ("streak.tz_shifts_day", 9, "the block moves a day between UTC and the tz"),
@@ -87,6 +101,22 @@ PROBES = [
     ("regrade.superseding", 10, "a later correction on an already-corrected target"),
     ("regrade.no_preceding_attempt", 10, "a correction whose target has no attempt"),
 ]
+
+#: Where a probe that no committed stream reaches IS pinned. The report prints one
+#: of these lines per unreached probe, so an unreached and unpinned probe is loud.
+PINNED_ELSEWHERE = {
+    "fire.interval_cap_730": "`crates/core/tests/fire.rs`, a direct unit test",
+    "fire.speed_clamp_lo": "`crates/core/tests/fire.rs`, a direct unit test",
+    "fire.speed_clamp_hi": "`crates/core/tests/fire.rs`, a direct unit test",
+    "diag.placed_balance_zero": (
+        "`crates/core/tests/projector.rs`, on "
+        "`fixtures/events/boundary/placed_balance_zero.jsonl`"
+    ),
+    "streak.reference_day_at_goal": (
+        "`crates/core/tests/projector.rs`, on "
+        "`fixtures/events/boundary/streak_reference_day_at_goal.jsonl`"
+    ),
+}
 
 NOOP_TYPES = frozenset(
     {
@@ -263,6 +293,13 @@ def install(probe: Probe, cfg):
 
     def probed_placed(self, event, apply_fire):
         probe.hit("diag.refresh" if event.refresh else "diag.initial")
+        if not event.refresh:
+            # The INITIAL placement filter is `balance > 0.0` (projector.py:340-344),
+            # a different guard from the refresh promote guard below. A `>=` port
+            # folds identically unless some row sits exactly on 0.0.
+            for tid, balance in event.balances.items():
+                if tid in self.graph.topics and balance == 0.0:
+                    probe.hit("diag.placed_balance_zero")
         return raw_placed(self, event, apply_fire)
 
     def probed_refresh(self, event, diag_answers):
@@ -360,10 +397,16 @@ def scan_events(probe: Probe, rows: list[dict], graph) -> None:
 
 def scan_xp(probe: Probe, state, goal: int) -> None:
     """Record the streak and rounding probes off the folded XP ledger."""
-    from cadus.xp import daily_totals, xp_per_day
+    from cadus.xp import daily_totals, local_day, xp_per_day
 
     for tz in (None, COVERAGE_TZ):
         daily = daily_totals(state.xp_events, tz)
+        # `current_streak` reads the REFERENCE day first, and that comparison decides
+        # whether today counts toward the streak. A past day at the goal only ever
+        # reaches the `while` loop, so the two probes are separate.
+        reference_day = local_day(state.last_ts, tz)
+        if close(daily.get(reference_day, 0.0), float(goal)):
+            probe.hit("streak.reference_day_at_goal")
         for day, total in daily.items():
             if close(total - math.floor(total), 0.5, 1e-9):
                 probe.hit("round.day_half_tie")
@@ -488,11 +531,11 @@ def main() -> int:
     lines += ["", "## Branches no stream reaches", ""]
     if missing:
         lines += [
-            "The 1.0 code makes these unreachable from any event stream, so",
-            "`crates/core/tests/fire.rs` pins each one with a direct unit test:",
+            "No committed stream of the family above reaches these, so each one is",
+            "pinned by a test of its own:",
             "",
         ]
-        lines += [f"- `{p}`" for p in missing]
+        lines += [f"- `{p}` -- {PINNED_ELSEWHERE.get(p, 'UNPINNED: this row needs a test')}" for p in missing]
         lines += [
             "",
             "`interval_for` never reaches its 730.0 cap, because the default",
@@ -500,6 +543,11 @@ def main() -> int:
             "`speed_for` never reaches either clamp, because `(0.5 + a) / (0.5 + d)` with",
             "`a` in [0, 1] and `d` in the curriculum's [0.05, 0.75] spans [0.4, 3.0),",
             "open at the top, so neither 0.33 nor 3.0 binds.",
+            "",
+            "The two boundary rows are reachable from a stream, and the streams that",
+            "reach them are `tests/fixtures/events/boundary/`: the seeded family emits",
+            "no balance of exactly 0.0 on the initial placement path and no reference",
+            "day exactly at the goal (M3 review round 1, findings #7 and #15).",
         ]
     else:
         lines.append("Every probe of spec section 9 is reached by a committed stream.")
