@@ -22,7 +22,7 @@ pub mod parse;
 
 pub use ast::{Ast, Const, IneqOp};
 pub use canon::{Atom, Basis, Canon, Monomial, Poly, canon};
-pub use check::{Outcome, Verdict, canonical_form, check};
+pub use check::{Outcome, Verdict, canonical_form, check, same_answer};
 pub use normalize::{MAX_ANSWER_CHARS, Normalized, normalize};
 pub use parse::parse;
 

@@ -11,8 +11,8 @@
 //! 1. The answer kind is not `numeric` and not `expression`: [`Outcome::Undecidable`].
 //! 2. The two string keys are equal: `correct = true`.
 //! 3. Both sides parse and canonicalize: the verdict is the equality of the two
-//!    canonical forms. If either side leaves the grammar, the outcome is
-//!    [`Outcome::Undecidable`] (V2).
+//!    canonical forms, under the label rule of [`same_answer`]. If either side
+//!    leaves the grammar, the outcome is [`Outcome::Undecidable`] (V2).
 //! 4. The learner wrote a period-grouped integer whose value matches: `correct =
 //!    true` with `notation = true` (spec section 2.4).
 //! 5. Otherwise: `correct = false`.
@@ -111,7 +111,7 @@ pub fn check(expected: &str, learner: &str, kind: AnswerKind) -> Outcome {
         Ok(value) => value,
         Err(reason) => return Outcome::Undecidable(reason),
     };
-    if expected_value == learner_value {
+    if same_answer(&expected_value, &learner_value) {
         return Outcome::decided(true);
     }
     // Rung 4. The learner side alone may carry the period grouping.
@@ -119,6 +119,40 @@ pub fn check(expected: &str, learner: &str, kind: AnswerKind) -> Outcome {
         return Outcome::notation();
     }
     Outcome::decided(false)
+}
+
+/// Whether the learner value is the authored value, under the label rule.
+///
+/// A leading `x =` on an answer is a label, and a label is a tolerance and not a
+/// value. The rule follows `docs/reviews/M2-review-1.md`:
+///
+/// - If one side carries a label and the other side carries none, the label falls
+///   away and the two values compare.
+/// - If both sides carry a label, the two variable names must be the same name,
+///   casefolded. `x = 4` and `y = 4` are therefore two different answers, which
+///   is the 1.0 verdict.
+///
+/// Every other pair of canonical forms compares by equality.
+#[must_use]
+pub fn same_answer(expected: &Canon, learner: &Canon) -> bool {
+    match (expected, learner) {
+        (
+            Canon::Assign {
+                var: expected_var,
+                value: expected_value,
+            },
+            Canon::Assign {
+                var: learner_var,
+                value: learner_value,
+            },
+        ) => {
+            expected_var.to_lowercase() == learner_var.to_lowercase()
+                && same_answer(expected_value, learner_value)
+        }
+        (Canon::Assign { value, .. }, other) => same_answer(value, other),
+        (other, Canon::Assign { value, .. }) => same_answer(other, value),
+        (left, right) => left == right,
+    }
 }
 
 /// Normalize, parse, and canonicalize one answer string.
@@ -147,7 +181,7 @@ fn dot_thousands_variant(expected: &Canon, learner_key: &str) -> bool {
     }
     let digits: String = learner_key.chars().filter(|c| *c != '.').collect();
     match canonical(&digits) {
-        Ok(value) => value == *expected,
+        Ok(value) => same_answer(expected, &value),
         Err(_) => false,
     }
 }

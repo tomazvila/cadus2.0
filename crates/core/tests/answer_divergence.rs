@@ -209,6 +209,21 @@ fn e_is_eulers_number_on_both_sides() {
 }
 
 #[test]
+fn a_value_label_is_a_tolerance_and_not_a_value() {
+    // 1.0, measured on 2026-08-26 with the oracle: False for `5` against `x=5`
+    // and False for `x=5` against `5`. 1.0 has no label reading, so the whole
+    // string goes to SymPy and the assignment raises. 2.0 adds the leading
+    // `<var> =` label as a V4 tolerance (`docs/plans/M2.md`): a label on one
+    // side alone falls away, and the two values compare.
+    assert_eq!(check("5", "x=5", N), decided(true, false));
+    assert_eq!(check("x=5", "5", N), decided(true, false));
+    // A label on both sides names the unknown the answer answers for, so two
+    // different names are two different answers — the 1.0 verdict as well
+    // (False for `x = 4` against `y = 4`, True for `x = 4` against `X = 4`).
+    // `crates/core/tests/answer_check.rs` pins that rule on the canonical form.
+}
+
+#[test]
 fn a_transcendental_identity_is_not_decided() {
     // 1.0: True, through `simplify(lhs - rhs) == 0` in 16 ms (spec section 3.2).
     // 2.0 compares canonical forms and runs no simplification (V1), so a function
