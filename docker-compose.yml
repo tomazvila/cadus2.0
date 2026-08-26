@@ -139,6 +139,12 @@ services:
       SHUTDOWN_DEADLINE_SECS: ${SHUTDOWN_DEADLINE_SECS:-10}
       # Bound on every query of the pool, in milliseconds (0 = none).
       DB_STATEMENT_TIMEOUT_MS: ${DB_STATEMENT_TIMEOUT_MS:-5000}
+      # Client-side bound on every query, in milliseconds (0 = none). The
+      # server-side bound above cancels a statement that RUNS too long. This
+      # one bounds the whole call in the client, so a socket that a firewall
+      # drops silently also ends. Keep it above DB_STATEMENT_TIMEOUT_MS, so the
+      # server reports the timeout first and the client bound stays the backstop.
+      DB_CLIENT_TIMEOUT_MS: ${DB_CLIENT_TIMEOUT_MS:-10000}
     # Longer than the stop budget, so the process exits by itself and Docker
     # never has to send SIGKILL (exit 137). Total stop time
     # <= SHUTDOWN_DEADLINE_SECS + 1 s < stop_grace_period 20 s. The old code
@@ -171,6 +177,9 @@ services:
     environment:
       DATABASE_URL: postgresql://cadus_admin:${CADUS_ADMIN_PASSWORD:?set CADUS_ADMIN_PASSWORD in .env}@db:5432/cadus
       DB_STATEMENT_TIMEOUT_MS: ${DB_STATEMENT_TIMEOUT_MS:-5000}
+      # Client-side bound on every query, in milliseconds (0 = none). See the
+      # `web` service above.
+      DB_CLIENT_TIMEOUT_MS: ${DB_CLIENT_TIMEOUT_MS:-10000}
       RUST_LOG: ${RUST_LOG:-info}
     depends_on:
       migrate:
@@ -187,11 +196,18 @@ services:
   # message below, exactly as 1.0 does. A default of `:80` is worse: it turns a
   # forgotten .env into a silent http-only site on a domain that the operator
   # believes is on HTTPS. Fail loudly instead.
+  #
+  # CADDY_HTTP_PORT and CADDY_HTTPS_PORT set the HOST ports only. The defaults
+  # are the real ports 80 and 443, which Let's Encrypt needs. Change them when
+  # another stack already holds 80 and 443 on this box, for example in a test
+  # bring-up beside a live site. Caddy keeps ports 80 and 443 inside the
+  # container, so the Caddyfile and SITE_ADDRESS stay the same. A moved port
+  # reaches no ACME server: set SITE_ADDRESS=:80 for such a bring-up.
   caddy:
     image: caddy:2
     ports:
-      - "80:80"
-      - "443:443"
+      - "${CADDY_HTTP_PORT:-80}:80"
+      - "${CADDY_HTTPS_PORT:-443}:443"
     environment:
       SITE_ADDRESS: ${SITE_ADDRESS:?set SITE_ADDRESS in .env - your domain, or :80 for http-only}
     volumes:

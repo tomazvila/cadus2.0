@@ -39,8 +39,13 @@ jobs:
           POSTGRES_USER: test
           POSTGRES_PASSWORD: test
           POSTGRES_HOST_AUTH_METHOD: trust
+        # Publish on the loopback interface only. `5432:5432` binds every
+        # interface of the runner, and the service runs with trust auth, so any
+        # process that reaches the runner over the network connects as the
+        # superuser. The gate steps run on the runner host and reach the
+        # database at `localhost:5432`, so the loopback bind is enough.
         ports:
-          - 5432:5432
+          - 127.0.0.1:5432:5432
         options: >-
           --health-cmd "pg_isready -h 127.0.0.1 -U test"
           --health-interval 5s
