@@ -1,0 +1,1585 @@
+{
+  "AnkiCardCreated": {
+    "additionalProperties": false,
+    "properties": {
+      "deck": {
+        "title": "Deck",
+        "type": "string"
+      },
+      "front_hash": {
+        "title": "Front Hash",
+        "type": "string"
+      },
+      "note_id": {
+        "title": "Note Id",
+        "type": "integer"
+      },
+      "session": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Session"
+      },
+      "topic": {
+        "minLength": 1,
+        "title": "Topic",
+        "type": "string"
+      },
+      "ts": {
+        "format": "date-time",
+        "title": "Ts",
+        "type": "string"
+      },
+      "type": {
+        "const": "anki_card_created",
+        "default": "anki_card_created",
+        "title": "Type",
+        "type": "string"
+      },
+      "v": {
+        "default": 1,
+        "title": "V",
+        "type": "integer"
+      }
+    },
+    "required": [
+      "ts",
+      "topic",
+      "deck",
+      "note_id",
+      "front_hash"
+    ],
+    "title": "AnkiCardCreated",
+    "type": "object"
+  },
+  "Attempt": {
+    "$defs": {
+      "AnswerKind": {
+        "enum": [
+          "numeric",
+          "expression",
+          "multi-step",
+          "proof"
+        ],
+        "title": "AnswerKind",
+        "type": "string"
+      },
+      "AttemptProblem": {
+        "additionalProperties": false,
+        "description": "The problem body carried on an ``attempt`` event.",
+        "properties": {
+          "expected": {
+            "title": "Expected",
+            "type": "string"
+          },
+          "text": {
+            "title": "Text",
+            "type": "string"
+          }
+        },
+        "required": [
+          "text",
+          "expected"
+        ],
+        "title": "AttemptProblem",
+        "type": "object"
+      },
+      "TaskType": {
+        "enum": [
+          "lesson",
+          "review",
+          "quiz",
+          "drill",
+          "diagnostic",
+          "multi-step"
+        ],
+        "title": "TaskType",
+        "type": "string"
+      },
+      "WorkQuality": {
+        "description": "Grader's work-quality tier; also used for ``quality_tier`` on results.",
+        "enum": [
+          "perfect",
+          "nearly_perfect",
+          "passable",
+          "nearly_passable",
+          "poor",
+          "blowoff"
+        ],
+        "title": "WorkQuality",
+        "type": "string"
+      }
+    },
+    "additionalProperties": false,
+    "description": "The load-bearing event: one graded problem attempt (DATA_MODEL \u00a72).\n\n``attempt_id`` is a caller-supplied idempotency key (see deviations in the\ntask report) so ``cadus record`` can dedupe re-sent attempts.",
+    "properties": {
+      "answer_kind": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/AnswerKind"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "assisted": {
+        "default": false,
+        "title": "Assisted",
+        "type": "boolean"
+      },
+      "attempt_id": {
+        "title": "Attempt Id",
+        "type": "string"
+      },
+      "correct": {
+        "title": "Correct",
+        "type": "boolean"
+      },
+      "error_tags": {
+        "items": {
+          "type": "string"
+        },
+        "title": "Error Tags",
+        "type": "array"
+      },
+      "given_answer": {
+        "title": "Given Answer",
+        "type": "string"
+      },
+      "grader_note": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Grader Note"
+      },
+      "kp": {
+        "anyOf": [
+          {
+            "minLength": 1,
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Kp"
+      },
+      "problem": {
+        "$ref": "#/$defs/AttemptProblem"
+      },
+      "secs": {
+        "minimum": 0,
+        "title": "Secs",
+        "type": "integer"
+      },
+      "session": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Session"
+      },
+      "task_id": {
+        "title": "Task Id",
+        "type": "string"
+      },
+      "task_type": {
+        "$ref": "#/$defs/TaskType"
+      },
+      "topic": {
+        "minLength": 1,
+        "title": "Topic",
+        "type": "string"
+      },
+      "ts": {
+        "format": "date-time",
+        "title": "Ts",
+        "type": "string"
+      },
+      "type": {
+        "const": "attempt",
+        "default": "attempt",
+        "title": "Type",
+        "type": "string"
+      },
+      "v": {
+        "default": 1,
+        "title": "V",
+        "type": "integer"
+      },
+      "work": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Work"
+      },
+      "work_quality": {
+        "$ref": "#/$defs/WorkQuality"
+      }
+    },
+    "required": [
+      "ts",
+      "attempt_id",
+      "task_id",
+      "topic",
+      "task_type",
+      "problem",
+      "given_answer",
+      "correct",
+      "secs",
+      "work_quality"
+    ],
+    "title": "Attempt",
+    "type": "object"
+  },
+  "ConfigChanged": {
+    "additionalProperties": false,
+    "properties": {
+      "git_ref": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Git Ref"
+      },
+      "session": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Session"
+      },
+      "summary": {
+        "title": "Summary",
+        "type": "string"
+      },
+      "ts": {
+        "format": "date-time",
+        "title": "Ts",
+        "type": "string"
+      },
+      "type": {
+        "const": "config_changed",
+        "default": "config_changed",
+        "title": "Type",
+        "type": "string"
+      },
+      "v": {
+        "default": 1,
+        "title": "V",
+        "type": "integer"
+      }
+    },
+    "required": [
+      "ts",
+      "summary"
+    ],
+    "title": "ConfigChanged",
+    "type": "object"
+  },
+  "CurriculumChanged": {
+    "additionalProperties": false,
+    "properties": {
+      "git_ref": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Git Ref"
+      },
+      "session": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Session"
+      },
+      "summary": {
+        "title": "Summary",
+        "type": "string"
+      },
+      "ts": {
+        "format": "date-time",
+        "title": "Ts",
+        "type": "string"
+      },
+      "type": {
+        "const": "curriculum_changed",
+        "default": "curriculum_changed",
+        "title": "Type",
+        "type": "string"
+      },
+      "v": {
+        "default": 1,
+        "title": "V",
+        "type": "integer"
+      }
+    },
+    "required": [
+      "ts",
+      "summary"
+    ],
+    "title": "CurriculumChanged",
+    "type": "object"
+  },
+  "DiagnosticAnswer": {
+    "additionalProperties": false,
+    "properties": {
+      "correct": {
+        "title": "Correct",
+        "type": "boolean"
+      },
+      "secs": {
+        "minimum": 0,
+        "title": "Secs",
+        "type": "integer"
+      },
+      "session": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Session"
+      },
+      "topic": {
+        "minLength": 1,
+        "title": "Topic",
+        "type": "string"
+      },
+      "ts": {
+        "format": "date-time",
+        "title": "Ts",
+        "type": "string"
+      },
+      "type": {
+        "const": "diagnostic_answer",
+        "default": "diagnostic_answer",
+        "title": "Type",
+        "type": "string"
+      },
+      "v": {
+        "default": 1,
+        "title": "V",
+        "type": "integer"
+      },
+      "weight": {
+        "maximum": 1.0,
+        "minimum": 0.0,
+        "title": "Weight",
+        "type": "number"
+      }
+    },
+    "required": [
+      "ts",
+      "topic",
+      "correct",
+      "secs",
+      "weight"
+    ],
+    "title": "DiagnosticAnswer",
+    "type": "object"
+  },
+  "DiagnosticPlaced": {
+    "additionalProperties": false,
+    "properties": {
+      "balances": {
+        "additionalProperties": {
+          "type": "number"
+        },
+        "title": "Balances",
+        "type": "object"
+      },
+      "conditional": {
+        "items": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "title": "Conditional",
+        "type": "array"
+      },
+      "refresh": {
+        "default": false,
+        "title": "Refresh",
+        "type": "boolean"
+      },
+      "session": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Session"
+      },
+      "ts": {
+        "format": "date-time",
+        "title": "Ts",
+        "type": "string"
+      },
+      "type": {
+        "const": "diagnostic_placed",
+        "default": "diagnostic_placed",
+        "title": "Type",
+        "type": "string"
+      },
+      "v": {
+        "default": 1,
+        "title": "V",
+        "type": "integer"
+      }
+    },
+    "required": [
+      "ts"
+    ],
+    "title": "DiagnosticPlaced",
+    "type": "object"
+  },
+  "Enrolled": {
+    "additionalProperties": false,
+    "properties": {
+      "course": {
+        "minLength": 1,
+        "title": "Course",
+        "type": "string"
+      },
+      "reason": {
+        "anyOf": [
+          {
+            "enum": [
+              "gap-fill",
+              "gap-return"
+            ],
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Reason"
+      },
+      "return_to": {
+        "anyOf": [
+          {
+            "minLength": 1,
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Return To"
+      },
+      "session": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Session"
+      },
+      "ts": {
+        "format": "date-time",
+        "title": "Ts",
+        "type": "string"
+      },
+      "type": {
+        "const": "enrolled",
+        "default": "enrolled",
+        "title": "Type",
+        "type": "string"
+      },
+      "v": {
+        "default": 1,
+        "title": "V",
+        "type": "integer"
+      }
+    },
+    "required": [
+      "ts",
+      "course"
+    ],
+    "title": "Enrolled",
+    "type": "object"
+  },
+  "LearnerModel": {
+    "$defs": {
+      "KPProgress": {
+        "description": "Per-KP progress recorded on TopicState. Extend as FIRe (T2.1) needs.",
+        "enum": [
+          "passed",
+          "failed_once",
+          "failed_twice"
+        ],
+        "title": "KPProgress",
+        "type": "string"
+      },
+      "PendingRemediation": {
+        "additionalProperties": false,
+        "properties": {
+          "kind": {
+            "title": "Kind",
+            "type": "string"
+          },
+          "targets": {
+            "items": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "title": "Targets",
+            "type": "array"
+          }
+        },
+        "required": [
+          "kind"
+        ],
+        "title": "PendingRemediation",
+        "type": "object"
+      },
+      "QuizState": {
+        "additionalProperties": false,
+        "properties": {
+          "last_at": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Last At"
+          },
+          "retake_pending": {
+            "default": false,
+            "title": "Retake Pending",
+            "type": "boolean"
+          },
+          "xp_since": {
+            "default": 0,
+            "title": "Xp Since",
+            "type": "integer"
+          }
+        },
+        "title": "QuizState",
+        "type": "object"
+      },
+      "TopicState": {
+        "additionalProperties": false,
+        "description": "Per-topic FIRe state (populated by the T2.1 engine).",
+        "properties": {
+          "ability": {
+            "default": 0.0,
+            "title": "Ability",
+            "type": "number"
+          },
+          "conditional": {
+            "default": false,
+            "title": "Conditional",
+            "type": "boolean"
+          },
+          "explicit_only": {
+            "default": false,
+            "title": "Explicit Only",
+            "type": "boolean"
+          },
+          "interval_days": {
+            "default": 0.0,
+            "title": "Interval Days",
+            "type": "number"
+          },
+          "kp_progress": {
+            "additionalProperties": {
+              "$ref": "#/$defs/KPProgress"
+            },
+            "title": "Kp Progress",
+            "type": "object"
+          },
+          "last_problems": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Last Problems",
+            "type": "array"
+          },
+          "memoryBase": {
+            "default": 0.0,
+            "title": "Memorybase",
+            "type": "number"
+          },
+          "repNum": {
+            "default": 0.0,
+            "title": "Repnum",
+            "type": "number"
+          },
+          "speed": {
+            "default": 1.0,
+            "title": "Speed",
+            "type": "number"
+          },
+          "status": {
+            "$ref": "#/$defs/TopicStatus",
+            "default": "untouched"
+          },
+          "t0": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "T0"
+          }
+        },
+        "title": "TopicState",
+        "type": "object"
+      },
+      "TopicStatus": {
+        "enum": [
+          "untouched",
+          "frontier",
+          "learning",
+          "placed",
+          "floor"
+        ],
+        "title": "TopicStatus",
+        "type": "string"
+      },
+      "VelocityState": {
+        "additionalProperties": false,
+        "properties": {
+          "course_progress": {
+            "default": 0.0,
+            "title": "Course Progress",
+            "type": "number"
+          },
+          "eta": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Eta"
+          },
+          "topics_per_week_28d": {
+            "default": 0.0,
+            "title": "Topics Per Week 28D",
+            "type": "number"
+          },
+          "xp_per_day_28d": {
+            "default": 0.0,
+            "title": "Xp Per Day 28D",
+            "type": "number"
+          }
+        },
+        "title": "VelocityState",
+        "type": "object"
+      },
+      "XPState": {
+        "additionalProperties": false,
+        "properties": {
+          "goal": {
+            "default": 40,
+            "title": "Goal",
+            "type": "integer"
+          },
+          "streak_days": {
+            "default": 0,
+            "title": "Streak Days",
+            "type": "integer"
+          },
+          "today": {
+            "default": 0,
+            "title": "Today",
+            "type": "integer"
+          },
+          "total": {
+            "default": 0,
+            "title": "Total",
+            "type": "integer"
+          }
+        },
+        "title": "XPState",
+        "type": "object"
+      }
+    },
+    "additionalProperties": false,
+    "description": "The rebuildable derived state (``learner/model.json``).",
+    "properties": {
+      "built_from_ts": {
+        "anyOf": [
+          {
+            "format": "date-time",
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Built From Ts"
+      },
+      "config_hash": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Config Hash"
+      },
+      "pending_remediation": {
+        "items": {
+          "$ref": "#/$defs/PendingRemediation"
+        },
+        "title": "Pending Remediation",
+        "type": "array"
+      },
+      "projector_version": {
+        "anyOf": [
+          {
+            "type": "integer"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Projector Version"
+      },
+      "quiz": {
+        "$ref": "#/$defs/QuizState"
+      },
+      "topics": {
+        "additionalProperties": {
+          "$ref": "#/$defs/TopicState"
+        },
+        "title": "Topics",
+        "type": "object"
+      },
+      "velocity": {
+        "$ref": "#/$defs/VelocityState"
+      },
+      "xp": {
+        "$ref": "#/$defs/XPState"
+      }
+    },
+    "title": "LearnerModel",
+    "type": "object"
+  },
+  "LessonResult": {
+    "$defs": {
+      "WorkQuality": {
+        "description": "Grader's work-quality tier; also used for ``quality_tier`` on results.",
+        "enum": [
+          "perfect",
+          "nearly_perfect",
+          "passable",
+          "nearly_passable",
+          "poor",
+          "blowoff"
+        ],
+        "title": "WorkQuality",
+        "type": "string"
+      }
+    },
+    "additionalProperties": false,
+    "properties": {
+      "assisted": {
+        "default": false,
+        "title": "Assisted",
+        "type": "boolean"
+      },
+      "failed_at_kp": {
+        "anyOf": [
+          {
+            "minLength": 1,
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Failed At Kp"
+      },
+      "passed": {
+        "title": "Passed",
+        "type": "boolean"
+      },
+      "quality_tier": {
+        "$ref": "#/$defs/WorkQuality"
+      },
+      "session": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Session"
+      },
+      "topic": {
+        "minLength": 1,
+        "title": "Topic",
+        "type": "string"
+      },
+      "ts": {
+        "format": "date-time",
+        "title": "Ts",
+        "type": "string"
+      },
+      "type": {
+        "const": "lesson_result",
+        "default": "lesson_result",
+        "title": "Type",
+        "type": "string"
+      },
+      "v": {
+        "default": 1,
+        "title": "V",
+        "type": "integer"
+      },
+      "xp": {
+        "default": 0.0,
+        "title": "Xp",
+        "type": "number"
+      }
+    },
+    "required": [
+      "ts",
+      "topic",
+      "passed",
+      "quality_tier"
+    ],
+    "title": "LessonResult",
+    "type": "object"
+  },
+  "ProfileReset": {
+    "additionalProperties": false,
+    "description": "F7/DD-5 clean-slate escape hatch: reset the named topics to an untouched\nstate (as if never seen), event-sourced so ``learner/`` is never hand-edited.\nAn empty ``topics`` list is a no-op.",
+    "properties": {
+      "session": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Session"
+      },
+      "topics": {
+        "items": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "title": "Topics",
+        "type": "array"
+      },
+      "ts": {
+        "format": "date-time",
+        "title": "Ts",
+        "type": "string"
+      },
+      "type": {
+        "const": "profile_reset",
+        "default": "profile_reset",
+        "title": "Type",
+        "type": "string"
+      },
+      "v": {
+        "default": 1,
+        "title": "V",
+        "type": "integer"
+      }
+    },
+    "required": [
+      "ts"
+    ],
+    "title": "ProfileReset",
+    "type": "object"
+  },
+  "QuizResult": {
+    "$defs": {
+      "QuizTopicResult": {
+        "additionalProperties": false,
+        "properties": {
+          "correct": {
+            "title": "Correct",
+            "type": "boolean"
+          },
+          "secs": {
+            "minimum": 0,
+            "title": "Secs",
+            "type": "integer"
+          },
+          "topic": {
+            "minLength": 1,
+            "title": "Topic",
+            "type": "string"
+          }
+        },
+        "required": [
+          "topic",
+          "correct",
+          "secs"
+        ],
+        "title": "QuizTopicResult",
+        "type": "object"
+      }
+    },
+    "additionalProperties": false,
+    "properties": {
+      "per_topic": {
+        "items": {
+          "$ref": "#/$defs/QuizTopicResult"
+        },
+        "title": "Per Topic",
+        "type": "array"
+      },
+      "quiz_id": {
+        "title": "Quiz Id",
+        "type": "string"
+      },
+      "score": {
+        "title": "Score",
+        "type": "number"
+      },
+      "session": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Session"
+      },
+      "ts": {
+        "format": "date-time",
+        "title": "Ts",
+        "type": "string"
+      },
+      "type": {
+        "const": "quiz_result",
+        "default": "quiz_result",
+        "title": "Type",
+        "type": "string"
+      },
+      "v": {
+        "default": 1,
+        "title": "V",
+        "type": "integer"
+      },
+      "xp": {
+        "default": 0.0,
+        "title": "Xp",
+        "type": "number"
+      }
+    },
+    "required": [
+      "ts",
+      "quiz_id",
+      "score"
+    ],
+    "title": "QuizResult",
+    "type": "object"
+  },
+  "Regraded": {
+    "$defs": {
+      "RegradedAttempt": {
+        "additionalProperties": false,
+        "description": "The replacement grade fields for one superseded ``attempt`` (see\n:class:`Regraded`). ``correct`` is deliberately absent: a correction restates how\nwell the work was done, never whether the answer was right.",
+        "properties": {
+          "attempt_id": {
+            "title": "Attempt Id",
+            "type": "string"
+          },
+          "error_tags": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Error Tags",
+            "type": "array"
+          },
+          "grader_note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Grader Note"
+          },
+          "work_quality": {
+            "$ref": "#/$defs/WorkQuality"
+          }
+        },
+        "required": [
+          "attempt_id",
+          "work_quality"
+        ],
+        "title": "RegradedAttempt",
+        "type": "object"
+      },
+      "WorkQuality": {
+        "description": "Grader's work-quality tier; also used for ``quality_tier`` on results.",
+        "enum": [
+          "perfect",
+          "nearly_perfect",
+          "passable",
+          "nearly_passable",
+          "poor",
+          "blowoff"
+        ],
+        "title": "WorkQuality",
+        "type": "string"
+      }
+    },
+    "additionalProperties": false,
+    "description": "An append-only CORRECTION of grades already in the log (DATA_MODEL \u00a72.1).\n\nThe ``events`` table is append-only and ``cadus_app`` holds no UPDATE or DELETE on\nit, so a grade recorded in error is not editable. It is superseded instead: this\nevent names the task it corrects and carries the replacement values, and\n:func:`cadus.projector.apply_regrades` folds them onto their targets BEFORE the\nprojector sees the stream. Every derived number \u2014 XP, streak, velocity, the FIRe\nability and memory states \u2014 therefore comes out of the ordinary replay math with\ncorrected inputs. Nothing recomputes a second time and no handler duplicates a rule.\n\nThe correction is written, not derived, and that is the point: the values here are\na dated statement about what the grade should have been, and the original event\nstays in the log beside it. ``reason`` is mandatory so the log says why.\n\n``quality_tier`` / ``xp`` supersede the task's ``lesson_result`` or\n``review_result``; leave both ``None`` to correct attempts only. The result is\nmatched to this task through the attempts that precede it \u2014 see\n:func:`~cadus.projector.apply_regrades` for the matching rule and its limits.",
+    "properties": {
+      "attempts": {
+        "items": {
+          "$ref": "#/$defs/RegradedAttempt"
+        },
+        "title": "Attempts",
+        "type": "array"
+      },
+      "quality_tier": {
+        "anyOf": [
+          {
+            "$ref": "#/$defs/WorkQuality"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null
+      },
+      "reason": {
+        "title": "Reason",
+        "type": "string"
+      },
+      "session": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Session"
+      },
+      "task_id": {
+        "title": "Task Id",
+        "type": "string"
+      },
+      "topic": {
+        "minLength": 1,
+        "title": "Topic",
+        "type": "string"
+      },
+      "ts": {
+        "format": "date-time",
+        "title": "Ts",
+        "type": "string"
+      },
+      "type": {
+        "const": "regraded",
+        "default": "regraded",
+        "title": "Type",
+        "type": "string"
+      },
+      "v": {
+        "default": 1,
+        "title": "V",
+        "type": "integer"
+      },
+      "xp": {
+        "anyOf": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Xp"
+      }
+    },
+    "required": [
+      "ts",
+      "task_id",
+      "topic",
+      "reason"
+    ],
+    "title": "Regraded",
+    "type": "object"
+  },
+  "RemediationTriggered": {
+    "additionalProperties": false,
+    "properties": {
+      "kind": {
+        "title": "Kind",
+        "type": "string"
+      },
+      "session": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Session"
+      },
+      "source_topic": {
+        "minLength": 1,
+        "title": "Source Topic",
+        "type": "string"
+      },
+      "targets": {
+        "items": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "title": "Targets",
+        "type": "array"
+      },
+      "ts": {
+        "format": "date-time",
+        "title": "Ts",
+        "type": "string"
+      },
+      "type": {
+        "const": "remediation_triggered",
+        "default": "remediation_triggered",
+        "title": "Type",
+        "type": "string"
+      },
+      "v": {
+        "default": 1,
+        "title": "V",
+        "type": "integer"
+      }
+    },
+    "required": [
+      "ts",
+      "kind",
+      "source_topic"
+    ],
+    "title": "RemediationTriggered",
+    "type": "object"
+  },
+  "ReviewResult": {
+    "$defs": {
+      "WorkQuality": {
+        "description": "Grader's work-quality tier; also used for ``quality_tier`` on results.",
+        "enum": [
+          "perfect",
+          "nearly_perfect",
+          "passable",
+          "nearly_passable",
+          "poor",
+          "blowoff"
+        ],
+        "title": "WorkQuality",
+        "type": "string"
+      }
+    },
+    "additionalProperties": false,
+    "properties": {
+      "assisted": {
+        "default": false,
+        "title": "Assisted",
+        "type": "boolean"
+      },
+      "passed": {
+        "title": "Passed",
+        "type": "boolean"
+      },
+      "quality_tier": {
+        "$ref": "#/$defs/WorkQuality"
+      },
+      "session": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Session"
+      },
+      "task_id": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Task Id"
+      },
+      "topic": {
+        "minLength": 1,
+        "title": "Topic",
+        "type": "string"
+      },
+      "ts": {
+        "format": "date-time",
+        "title": "Ts",
+        "type": "string"
+      },
+      "type": {
+        "const": "review_result",
+        "default": "review_result",
+        "title": "Type",
+        "type": "string"
+      },
+      "v": {
+        "default": 1,
+        "title": "V",
+        "type": "integer"
+      },
+      "weighted_score": {
+        "title": "Weighted Score",
+        "type": "number"
+      },
+      "xp": {
+        "default": 0.0,
+        "title": "Xp",
+        "type": "number"
+      }
+    },
+    "required": [
+      "ts",
+      "topic",
+      "passed",
+      "weighted_score",
+      "quality_tier"
+    ],
+    "title": "ReviewResult",
+    "type": "object"
+  },
+  "SessionEnd": {
+    "additionalProperties": false,
+    "properties": {
+      "minutes": {
+        "default": 0.0,
+        "title": "Minutes",
+        "type": "number"
+      },
+      "session": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Session"
+      },
+      "ts": {
+        "format": "date-time",
+        "title": "Ts",
+        "type": "string"
+      },
+      "type": {
+        "const": "session_end",
+        "default": "session_end",
+        "title": "Type",
+        "type": "string"
+      },
+      "v": {
+        "default": 1,
+        "title": "V",
+        "type": "integer"
+      },
+      "xp_earned": {
+        "default": 0.0,
+        "title": "Xp Earned",
+        "type": "number"
+      }
+    },
+    "required": [
+      "ts"
+    ],
+    "title": "SessionEnd",
+    "type": "object"
+  },
+  "SessionStart": {
+    "additionalProperties": false,
+    "properties": {
+      "session": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Session"
+      },
+      "ts": {
+        "format": "date-time",
+        "title": "Ts",
+        "type": "string"
+      },
+      "type": {
+        "const": "session_start",
+        "default": "session_start",
+        "title": "Type",
+        "type": "string"
+      },
+      "v": {
+        "default": 1,
+        "title": "V",
+        "type": "integer"
+      }
+    },
+    "required": [
+      "ts"
+    ],
+    "title": "SessionStart",
+    "type": "object"
+  },
+  "TaskServed": {
+    "$defs": {
+      "ServedProblem": {
+        "additionalProperties": false,
+        "description": "A problem stub recorded on ``task_served``.\n\nNOTE: ``text_hash`` is inert \u2014 nothing computes or reads it. The live\nnear-duplicate guard is :func:`cadus.projector.problem_text_hash` over the\n*attempt's* problem text, feeding ``recent_problem_hashes`` (Hard Rule 4).\nThe field is kept rather than dropped because removing a field from an event\nschema would break replay of historical events.",
+        "properties": {
+          "expected_time_secs": {
+            "exclusiveMinimum": 0,
+            "title": "Expected Time Secs",
+            "type": "integer"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "text_hash": {
+            "title": "Text Hash",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "text_hash",
+          "expected_time_secs"
+        ],
+        "title": "ServedProblem",
+        "type": "object"
+      },
+      "TaskType": {
+        "enum": [
+          "lesson",
+          "review",
+          "quiz",
+          "drill",
+          "diagnostic",
+          "multi-step"
+        ],
+        "title": "TaskType",
+        "type": "string"
+      }
+    },
+    "additionalProperties": false,
+    "properties": {
+      "component_topics": {
+        "items": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "title": "Component Topics",
+        "type": "array"
+      },
+      "kp": {
+        "anyOf": [
+          {
+            "minLength": 1,
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Kp"
+      },
+      "problems": {
+        "items": {
+          "$ref": "#/$defs/ServedProblem"
+        },
+        "title": "Problems",
+        "type": "array"
+      },
+      "seed": {
+        "anyOf": [
+          {
+            "type": "integer"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Seed"
+      },
+      "session": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Session"
+      },
+      "task_id": {
+        "title": "Task Id",
+        "type": "string"
+      },
+      "task_type": {
+        "$ref": "#/$defs/TaskType"
+      },
+      "topic": {
+        "anyOf": [
+          {
+            "minLength": 1,
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "title": "Topic"
+      },
+      "ts": {
+        "format": "date-time",
+        "title": "Ts",
+        "type": "string"
+      },
+      "type": {
+        "const": "task_served",
+        "default": "task_served",
+        "title": "Type",
+        "type": "string"
+      },
+      "v": {
+        "default": 1,
+        "title": "V",
+        "type": "integer"
+      }
+    },
+    "required": [
+      "ts",
+      "task_id",
+      "task_type"
+    ],
+    "title": "TaskServed",
+    "type": "object"
+  }
+}
