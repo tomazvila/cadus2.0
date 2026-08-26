@@ -13,9 +13,16 @@ Requirement IDs: R5, D3, D4, C2, C4. Plan: `docs/plans/M3.md`. Spec:
 | U2 FIRe + XP | `m3/u2` | 56 tests; every pinned 1.0 literal |
 | U3 projector: fold, `apply_regrades`, `finalize`, `project`, `project_incremental`, canonical blob | `m3/u3` | 38 tests; stream 1 digest `ba128459…` matches 1.0; incremental == full at every split |
 | U4 selector: `compose_session` with every ordering rule, `compress`, `order_lessons`, interleave, multistep, task ids, `QuizSampler` (2.0 RNG, not CPython parity — trap T11) | `m3/u4` | 44 tests; L1 core cost 2.5 ms in release against a 5 ms budget |
-| U5 stream generator (seeds 2–20), 1.0 digests, property tests, selector oracle | `m3/u5b` | in progress (the first U5 agent was cut off by an API error; its 19 streams were kept as WIP) |
+| U5 stream generator (seeds 2–20), 1.0 digests, property tests, selector oracle, measured coverage | `m3/u5b` | 20/20 streams match the 1.0 digest in UTC, America/New_York, and without regrades; selector plan equals 1.0 on 10 seeded states; 4 mutations red (one after a generator extension) |
 
-Gate on `main` after U1–U4 (commit 506a024): 555 tests, 0 failed, live oracle enabled.
+Gate on `main` after U1–U5: all steps PASS, live oracle enabled.
+
+Ruling recorded here: 1.0's `project_incremental` does not re-fold a `regraded` event
+that supersedes an already-cached grade (1.0 `projector.py:794-830`); 1.0's service
+layer forces a full replay when the new events hold a `regraded` (spec §5). The port
+reproduces the primitive exactly (`incremental_1_0.json` pins the divergent splits and
+digests). M5 requirement: `project_and_save` forces a full replay on any `regraded`
+event, as 1.0 does.
 
 ## M2 — answer checker: grammar, exact arithmetic, oracle fuzz (2026-08-26)
 
