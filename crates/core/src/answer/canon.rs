@@ -23,16 +23,22 @@
 //! - `sqrt(8)` becomes `2*sqrt(2)` and `sqrt(4)` becomes `2`. A radicand that is
 //!   not a whole number stays a function application.
 //! - `exp(k)` for an integer `k` becomes the atom `e` with exponent `k`, so
-//!   `e**2` and `exp(2)` are one value. Every other argument becomes
+//!   `e**2` and `exp(2)` are one value. The whole-number PART of an argument
+//!   becomes the atom `e` too, so `e**(x+2)` and `e**2 * e**x` are one value and
+//!   `e**(x+2)` and `e**(x+3)` are two values. The rest of the argument becomes
 //!   [`Atom::Exp`], which obeys the exponent law: `e**(-x)` and `1/e**x` are one
 //!   value, and `e**x` and `e**(2*x)` are two values.
 //! - `ln` and `log` are one function, the natural logarithm, as they are in 1.0.
 //! - A division by a sum of two or more terms keeps the sum as an
 //!   [`Atom::Inverse`]. The sum is content-normalized first: its coefficients are
 //!   coprime integers and its greatest monomial carries a positive sign, so
-//!   `2/(2*x+2)` and `1/(x+1)` are one value. Cancellation by a polynomial
-//!   greatest common divisor is beyond this unit, so `(x**2-1)/(x-1)` and `x+1`
-//!   stay different values.
+//!   `2/(2*x+2)` and `1/(x+1)` are one value. One monomial holds at most one such
+//!   atom, and that atom always has exponent 1: a power of the atom moves into
+//!   the divisor and two atoms multiply their divisors, so `(1/(x+1))**2` and
+//!   `1/(x+1)**2` are one value and `1/(x-2) * 1/(x+2)` and `1/((x-2)*(x+2))`
+//!   are one value. The rule multiplies two divisors and it cancels no common
+//!   factor: cancellation by a polynomial greatest common divisor is beyond this
+//!   unit, so `(x**2-1)/(x-1)` and `x+1` stay different values.
 //! - `sin(x)**2 + cos(x)**2` and `1` are different values. That is the documented
 //!   narrowing of 1.0 (V1).
 //!
@@ -489,14 +495,20 @@ impl Work {
         let mut product = Poly::new();
         for (left_monomial, left_coefficient) in &left {
             for (right_monomial, right_coefficient) in &right {
-                let (monomial, coefficient) = self.multiply_terms(
+                let value = self.multiply_terms(
                     left_monomial,
                     left_coefficient,
                     right_monomial,
                     right_coefficient,
                 )?;
-                self.insert_term(&mut product, monomial, coefficient)?;
-                bound_terms(&product)?;
+                // One product of two terms is one term, unless a reciprocal atom
+                // came back into the numerator. Then it is a sum (see
+                // [`Work::add_inverse`]), so every term of it goes into the
+                // product.
+                for (monomial, coefficient) in self.sum_of(&value)? {
+                    self.insert_term(&mut product, monomial, coefficient)?;
+                    bound_terms(&product)?;
+                }
             }
         }
         Ok(from_sum(product))
@@ -556,8 +568,8 @@ impl Work {
         let inverse = reciprocal_of(&content)?;
         let mut coefficient = self.bounded(inverse)?;
         let atom = Atom::Inverse(Box::new(from_sum(primitive)));
-        self.add_atom(&mut monomial, &mut coefficient, &atom, 1)?;
-        Ok(from_sum(term(monomial, coefficient)))
+        let extra = self.add_atom(&mut monomial, &mut coefficient, &atom, 1)?;
+        self.finish_terms(monomial, coefficient, extra.into_iter().collect())
     }
 
     /// Apply a whitelisted function to canonical arguments.
@@ -589,9 +601,8 @@ impl Work {
     /// are one value. Every other `a` gives [`Atom::Exp`].
     fn exponential(&mut self, argument: &Canon) -> Result<Canon, Undecidable> {
         let mut monomial = Monomial::new();
-        let mut coefficient = BigRational::one();
-        self.add_exp(&mut monomial, &mut coefficient, argument, 1)?;
-        Ok(from_sum(term(monomial, coefficient)))
+        self.add_exp(&mut monomial, argument, 1)?;
+        Ok(from_sum(term(monomial, BigRational::one())))
     }
 
     /// Reduce `sqrt(n)` for a whole number `n` into `outside * sqrt(radicand)`.
@@ -612,10 +623,11 @@ impl Work {
         let (outside, radicand) = extract_square(value)?;
         let mut monomial = Monomial::new();
         let mut coefficient = self.bounded(BigRational::from_integer(outside))?;
+        let mut extra = None;
         if !radicand.is_one() {
-            self.add_atom(&mut monomial, &mut coefficient, &Atom::Sqrt(radicand), 1)?;
+            extra = self.add_atom(&mut monomial, &mut coefficient, &Atom::Sqrt(radicand), 1)?;
         }
-        Ok(from_sum(term(monomial, coefficient)))
+        self.finish_terms(monomial, coefficient, extra.into_iter().collect())
     }
 
     /// Add one term into a sum, and drop a term whose coefficient cancels to zero.
@@ -641,21 +653,27 @@ impl Work {
         Ok(())
     }
 
-    /// Multiply two terms into one term.
+    /// Multiply two terms into one value.
+    ///
+    /// The value is one term, unless [`Work::add_inverse`] took a divisor back
+    /// into the numerator. Then it is that term times a sum.
     fn multiply_terms(
         &mut self,
         left_monomial: &Monomial,
         left_coefficient: &BigRational,
         right_monomial: &Monomial,
         right_coefficient: &BigRational,
-    ) -> Result<(Monomial, BigRational), Undecidable> {
+    ) -> Result<Canon, Undecidable> {
         let mut monomial = left_monomial.clone();
         let product = left_coefficient * right_coefficient;
         let mut coefficient = self.bounded(product)?;
+        let mut extras = Vec::new();
         for (atom, exponent) in right_monomial {
-            self.add_atom(&mut monomial, &mut coefficient, atom, *exponent)?;
+            if let Some(extra) = self.add_atom(&mut monomial, &mut coefficient, atom, *exponent)? {
+                extras.push(extra);
+            }
         }
-        Ok((monomial, coefficient))
+        self.finish_terms(monomial, coefficient, extras)
     }
 
     /// Raise one term to an integer power.
@@ -667,13 +685,37 @@ impl Work {
     ) -> Result<Canon, Undecidable> {
         let mut out_monomial = Monomial::new();
         let mut out_coefficient = self.rational_power(coefficient, exponent)?;
+        let mut extras = Vec::new();
         for (atom, atom_exponent) in monomial {
             let scaled = atom_exponent
                 .checked_mul(exponent)
                 .ok_or_else(|| Undecidable::new("an exponent past the size bound"))?;
-            self.add_atom(&mut out_monomial, &mut out_coefficient, atom, scaled)?;
+            if let Some(extra) =
+                self.add_atom(&mut out_monomial, &mut out_coefficient, atom, scaled)?
+            {
+                extras.push(extra);
+            }
         }
-        Ok(from_sum(term(out_monomial, out_coefficient)))
+        self.finish_terms(out_monomial, out_coefficient, extras)
+    }
+
+    /// Build one term, times every factor its atoms took out of it.
+    ///
+    /// [`Work::add_inverse`] is the one rule that takes a factor out: a negative
+    /// power of a reciprocal, and a merge of two reciprocals, are both a sum and
+    /// not an atom. Every other atom takes nothing out, so the common path
+    /// multiplies nothing.
+    fn finish_terms(
+        &mut self,
+        monomial: Monomial,
+        coefficient: BigRational,
+        extras: Vec<Canon>,
+    ) -> Result<Canon, Undecidable> {
+        let mut value = from_sum(term(monomial, coefficient));
+        for extra in extras {
+            value = self.multiply(&value, &extra)?;
+        }
+        Ok(value)
     }
 
     /// Multiply one atom power into a monomial, and move every square into the
@@ -682,38 +724,39 @@ impl Work {
     /// A monomial holds at most one [`Atom::Sqrt`], and that atom always has
     /// exponent 1. `sqrt(2)**3` moves a factor 2 out, and `sqrt(2)*sqrt(3)`
     /// becomes `sqrt(6)`. A monomial holds at most one [`Atom::Exp`] too, and a
-    /// power of it moves into its argument.
+    /// power of it moves into its argument. A monomial holds at most one
+    /// [`Atom::Inverse`] too, with exponent 1.
+    ///
+    /// The returned value is a factor the caller multiplies into the term. Only
+    /// [`Work::add_inverse`] returns one; see [`Work::finish_terms`].
     fn add_atom(
         &mut self,
         monomial: &mut Monomial,
         coefficient: &mut BigRational,
         atom: &Atom,
         exponent: i64,
-    ) -> Result<(), Undecidable> {
+    ) -> Result<Option<Canon>, Undecidable> {
         if exponent == 0 {
-            return Ok(());
+            return Ok(None);
         }
         if let Atom::Exp(inner) = atom {
             let inner = inner.as_ref().clone();
-            return self.add_exp(monomial, coefficient, &inner, exponent);
+            self.add_exp(monomial, &inner, exponent)?;
+            return Ok(None);
+        }
+        if let Atom::Inverse(divisor) = atom {
+            let divisor = divisor.as_ref().clone();
+            return self.add_inverse(monomial, &divisor, exponent);
         }
         let Atom::Sqrt(radicand) = atom else {
-            let previous = monomial.get(atom).copied().unwrap_or(0);
-            let total = previous
-                .checked_add(exponent)
-                .ok_or_else(|| Undecidable::new("an exponent past the size bound"))?;
-            if total == 0 {
-                monomial.remove(atom);
-            } else {
-                monomial.insert(atom.clone(), total);
-            }
-            return Ok(());
+            insert_atom(monomial, atom, exponent)?;
+            return Ok(None);
         };
         let (squares, rest) = exponent.div_mod_floor(&2);
         let factor = self.int_power(radicand, squares)?;
         *coefficient = self.bounded(&*coefficient * factor)?;
         if rest == 0 {
-            return Ok(());
+            return Ok(None);
         }
         let present = monomial.iter().find_map(|(key, _)| match key {
             Atom::Sqrt(value) => Some(value.clone()),
@@ -721,7 +764,7 @@ impl Work {
         });
         let Some(present) = present else {
             monomial.insert(Atom::Sqrt(radicand.clone()), 1);
-            return Ok(());
+            return Ok(None);
         };
         monomial.remove(&Atom::Sqrt(present.clone()));
         let (outside, merged) = extract_square(&(present * radicand))?;
@@ -729,7 +772,71 @@ impl Work {
         if !merged.is_one() {
             monomial.insert(Atom::Sqrt(merged), 1);
         }
-        Ok(())
+        Ok(None)
+    }
+
+    /// Multiply `(1/divisor)**exponent` into a monomial.
+    ///
+    /// A monomial holds at most one [`Atom::Inverse`] and that atom always has
+    /// exponent 1, so one value has one canonical form (M2 review 2, findings 13
+    /// and 17):
+    ///
+    /// - A power of the atom moves into the divisor: `(1/(x+1))**2` and
+    ///   `1/(x+1)**2` are one value.
+    /// - Two atoms in one monomial multiply their divisors:
+    ///   `1/(x-2) * 1/(x+2)` and `1/((x-2)*(x+2))` are one value.
+    ///
+    /// The rule multiplies two divisors and it never cancels a common factor, so
+    /// `(x**2-1)/(x-1)` and `x+1` stay two values, as the module header says.
+    ///
+    /// The new divisor goes back through [`Work::reciprocal`], which normalizes
+    /// the content and picks the narrowest form again. A negative exponent
+    /// therefore takes the divisor back into the numerator, where it is a sum and
+    /// not an atom; the function returns that sum as a factor for the caller.
+    fn add_inverse(
+        &mut self,
+        monomial: &mut Monomial,
+        divisor: &Canon,
+        exponent: i64,
+    ) -> Result<Option<Canon>, Undecidable> {
+        if exponent == 0 {
+            return Ok(None);
+        }
+        self.spend(1)?;
+        if exponent < 0 {
+            let magnitude = exponent
+                .checked_neg()
+                .ok_or_else(|| Undecidable::new("an exponent past the size bound"))?;
+            return Ok(Some(self.raise(divisor, magnitude)?));
+        }
+        let present = monomial.iter().find_map(|(key, power)| match key {
+            Atom::Inverse(value) => Some((value.as_ref().clone(), *power)),
+            _ => None,
+        });
+        let Some((other, other_exponent)) = present else {
+            if exponent == 1 {
+                monomial.insert(Atom::Inverse(Box::new(divisor.clone())), 1);
+                return Ok(None);
+            }
+            let power = self.raise(divisor, exponent)?;
+            return Ok(Some(self.reciprocal(&power)?));
+        };
+        monomial.remove(&Atom::Inverse(Box::new(other.clone())));
+        let left = self.raise(&other, other_exponent)?;
+        let right = self.raise(divisor, exponent)?;
+        let product = self.multiply(&left, &right)?;
+        Ok(Some(self.reciprocal(&product)?))
+    }
+
+    /// Raise a canonical value to an integer power, and keep the first power.
+    ///
+    /// `power` reaches the same value for exponent 1, through one multiplication
+    /// by 1. The short cut keeps the common merge of two reciprocals cheap.
+    fn raise(&mut self, value: &Canon, exponent: i64) -> Result<Canon, Undecidable> {
+        if exponent == 1 {
+            return Ok(value.clone());
+        }
+        self.power(value, exponent)
     }
 
     /// Multiply `e**(exponent * inner)` into a monomial.
@@ -738,10 +845,15 @@ impl Work {
     /// two exponentials add their arguments. A whole argument gives the atom
     /// [`Atom::E`] instead, so `exp(x)*exp(-x)` is 1 and `exp(x)*exp(2-x)` is
     /// `e**2`.
+    ///
+    /// The whole-number PART of the argument gives [`Atom::E`] too, so
+    /// `e**(x+2)`, `e**2 * e**x`, and `e**x * e**2` are one value and
+    /// `e**(x+2)` and `e**(x+3)` are two values (M2 review 2, finding 8).
+    /// Without the split the two spellings of the exponent law hold two atoms
+    /// that never rejoin.
     fn add_exp(
         &mut self,
         monomial: &mut Monomial,
-        coefficient: &mut BigRational,
         inner: &Canon,
         exponent: i64,
     ) -> Result<(), Undecidable> {
@@ -765,13 +877,26 @@ impl Work {
             }
             None => scaled,
         };
-        match integer_value(&total).as_ref().and_then(BigInt::to_i64) {
-            Some(whole) => self.add_atom(monomial, coefficient, &Atom::E, whole),
-            None => {
-                monomial.insert(Atom::Exp(Box::new(total)), 1);
-                Ok(())
-            }
+        // A collection carries no arithmetic, so it keeps the whole argument.
+        let Ok(mut argument) = self.sum_of(&total) else {
+            monomial.insert(Atom::Exp(Box::new(total)), 1);
+            return Ok(());
+        };
+        let constant = Monomial::new();
+        let whole = argument
+            .get(&constant)
+            .filter(|value| value.is_integer())
+            .map(BigRational::to_integer)
+            .as_ref()
+            .and_then(BigInt::to_i64);
+        if let Some(whole) = whole {
+            argument.remove(&constant);
+            insert_atom(monomial, &Atom::E, whole)?;
         }
+        if !argument.is_empty() {
+            monomial.insert(Atom::Exp(Box::new(from_sum(argument))), 1);
+        }
+        Ok(())
     }
 
     /// Raise an integer to an integer power, as an exact rational.
@@ -913,6 +1038,24 @@ fn atom_value(atom: Atom) -> Canon {
     let mut monomial = Monomial::new();
     monomial.insert(atom, 1);
     from_sum(term(monomial, BigRational::one()))
+}
+
+/// Multiply a plain atom power into a monomial, and drop a zero exponent.
+///
+/// The atom is a plain one: a variable, a function call, `pi`, or `e`. The three
+/// atoms that carry a law of their own ([`Atom::Sqrt`], [`Atom::Exp`], and
+/// [`Atom::Inverse`]) go through [`Work::add_atom`] instead.
+fn insert_atom(monomial: &mut Monomial, atom: &Atom, exponent: i64) -> Result<(), Undecidable> {
+    let previous = monomial.get(atom).copied().unwrap_or(0);
+    let total = previous
+        .checked_add(exponent)
+        .ok_or_else(|| Undecidable::new("an exponent past the size bound"))?;
+    if total == 0 {
+        monomial.remove(atom);
+    } else {
+        monomial.insert(atom.clone(), total);
+    }
+    Ok(())
 }
 
 /// Build a one-term sum, or the empty sum when the coefficient is zero.
