@@ -15,7 +15,7 @@ use std::io::Write;
 use std::path::Path;
 use std::process::ExitCode;
 
-use cadus_core::curriculum::{Finding, canonical_dump, curriculum_hash, load_curriculum};
+use cadus_core::curriculum::{canonical_dump, curriculum_hash, load_curriculum};
 
 /// The exit code of any error. The parity contract of spec section 8 fixes it
 /// at 2, so a shell tells an error apart from a difference in the output.
@@ -32,22 +32,14 @@ fn main() -> ExitCode {
         return fail("usage: dump_curriculum <dir>");
     }
 
-    let (curriculum, findings) = match load_curriculum(Path::new(&root)) {
+    // `load_curriculum` blocks on a fatal parse-stage finding and tolerates
+    // every graph-stage code, the same as 1.0 `Graph.load` (parity trap 13). A
+    // tree that 1.0 refuses to load has no dump, and the library error carries
+    // the finding list, so the binary keeps no guard of its own.
+    let (curriculum, _findings) = match load_curriculum(Path::new(&root)) {
         Ok(loaded) => loaded,
         Err(error) => return fail(&format!("dump_curriculum: {error}")),
     };
-
-    // 1.0 `Graph.load` raises on a fatal parse-stage finding and tolerates every
-    // graph-stage code (parity trap 13). The dump follows it: a tree that 1.0
-    // refuses to load has no dump.
-    let fatal: Vec<&Finding> = findings.iter().filter(|f| f.fatal).collect();
-    if !fatal.is_empty() {
-        let mut lines = format!("dump_curriculum: {} fatal finding(s):", fatal.len());
-        for finding in fatal {
-            lines.push_str(&format!("\n  [{}] {}", finding.code, finding.message));
-        }
-        return fail(&lines);
-    }
 
     let dump = canonical_dump(&curriculum);
     let hash = curriculum_hash(&curriculum);

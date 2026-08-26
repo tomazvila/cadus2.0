@@ -1,0 +1,46 @@
+unit: Demo unit
+course: demo
+module: Demo module
+topics:
+  # Every difficulty and every weight below sits on one side of a Python `repr`
+  # threshold, so the dump and the 1.0 oracle only agree while the dump writes
+  # the Python float text (parity trap 16).
+  - id: a
+    name: A
+    difficulty: 0.85
+    answer_kind: numeric
+    expected_time_secs: 60
+  - id: b
+    name: B
+    difficulty: 0.00001
+    answer_kind: numeric
+    expected_time_secs: 60
+    prerequisites:
+      - id: a
+        weight: 0.000015
+  - id: c
+    name: C
+    difficulty: 0.0000001234
+    answer_kind: numeric
+    expected_time_secs: 60
+    prerequisites:
+      - id: b
+        weight: 0.0001
+      - id: a
+        weight: 6.300000000000001e-05
+  - id: d
+    name: D
+    difficulty: 0.0001
+    answer_kind: numeric
+    expected_time_secs: 60
+    prerequisites:
+      - id: c
+        weight: 0.00009999
+  - id: e
+    name: E
+    difficulty: 1.0
+    answer_kind: numeric
+    expected_time_secs: 60
+    prerequisites:
+      - id: d
+        weight: 0.0

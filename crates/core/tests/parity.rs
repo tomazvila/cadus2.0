@@ -31,7 +31,8 @@ use std::path::{Path, PathBuf};
 use std::process::Command;
 
 use cadus_core::curriculum::{
-    Curriculum, DUMP_SCHEMA, canonical_dump, curriculum_hash, load_curriculum, sha256_hex,
+    Curriculum, DUMP_SCHEMA, canonical_dump, curriculum_hash, load_curriculum, python_repr_f64,
+    sha256_hex,
 };
 
 /// The semantic curriculum hash of the checked-in tree (spec section 3).
@@ -51,6 +52,13 @@ fn repo_root() -> PathBuf {
 /// The curriculum tree of the repository (C5).
 fn curriculum_root() -> PathBuf {
     repo_root().join("curriculum")
+}
+
+/// One fixture tree under `crates/core/tests/fixtures/`.
+fn fixture(name: &str) -> PathBuf {
+    Path::new(env!("CARGO_MANIFEST_DIR"))
+        .join("tests/fixtures")
+        .join(name)
 }
 
 /// The arena of the checked-in tree.
@@ -122,6 +130,62 @@ fn canonical_dump_holds_the_literal_edge_rows_and_the_topological_ends() {
     assert!(dump.contains("\"cycle\":null,"));
 }
 
+// --------------------------------------------------------------------------- //
+// The Python float text (parity trap 16, finding #3)
+// --------------------------------------------------------------------------- //
+
+/// Every pair below is `(value, repr(value))` from CPython 3.13, the 1.0
+/// interpreter. Ten of the thirty values straddle a threshold: `0.0001` and
+/// `9.999e-05` sit on the two sides of the small-exponent threshold, and
+/// `9999999999999998.0` and `1e+16` sit on the two sides of the large one.
+///
+/// `serde_json` writes `0.00001`, `1.234e-7`, `1e16` and `9999999999999998`
+/// for four of them, so this table fails on the pre-fix formatter.
+#[test]
+fn python_repr_f64_matches_the_python_repr_table() {
+    let table: [(f64, &str); 30] = [
+        (0.0, "0.0"),
+        (-0.0, "-0.0"),
+        (1.0, "1.0"),
+        (0.5, "0.5"),
+        (0.85, "0.85"),
+        (0.1, "0.1"),
+        (0.3, "0.3"),
+        (1e-4, "0.0001"),
+        (9.999e-5, "9.999e-05"),
+        (1e-05, "1e-05"),
+        (1.5e-05, "1.5e-05"),
+        (1.234e-07, "1.234e-07"),
+        (6.300_000_000_000_001e-5, "6.300000000000001e-05"),
+        (0.000_123_4, "0.0001234"),
+        (0.000_123_456_789_012_345_67, "0.00012345678901234567"),
+        (1e15, "1000000000000000.0"),
+        (9_999_999_999_999_998.0, "9999999999999998.0"),
+        (1e16, "1e+16"),
+        (1.000_000_000_000_000_2e16, "1.0000000000000002e+16"),
+        (123_456_789_012_345_680.0, "1.2345678901234568e+17"),
+        (1e17, "1e+17"),
+        (2.5e-323, "2.5e-323"),
+        (5e-324, "5e-324"),
+        (1.797_693_134_862_315_7e308, "1.7976931348623157e+308"),
+        (2.225_073_858_507_201_4e-308, "2.2250738585072014e-308"),
+        (0.096_768_000_000_000_02, "0.09676800000000002"),
+        (0.000_450_000_000_000_000_04, "0.00045000000000000004"),
+        (0.000_476_279_999_999_999_93, "0.00047627999999999993"),
+        (-0.85, "-0.85"),
+        (-1.234e-07, "-1.234e-07"),
+    ];
+    for (value, expected) in table {
+        assert_eq!(python_repr_f64(value), expected, "repr of {value:?}");
+    }
+
+    // The three values Python `repr` writes without a JSON form. `float()` maps
+    // them to `null` before the dump, so they never reach the text.
+    assert_eq!(python_repr_f64(f64::NAN), "nan");
+    assert_eq!(python_repr_f64(f64::INFINITY), "inf");
+    assert_eq!(python_repr_f64(f64::NEG_INFINITY), "-inf");
+}
+
 #[test]
 fn sha256_hex_matches_the_published_vectors() {
     // FIPS 180-2 test vectors. They pin the digest, not the dump.
@@ -190,15 +254,66 @@ fn the_binary_exits_2_without_a_directory() {
 /// because a machine with no 1.0 checkout still has to pass the gate.
 #[test]
 fn the_rust_dump_equals_the_live_1_0_dump() {
-    let Ok(python) = std::env::var("CADUS_ORACLE_PYTHON") else {
-        eprintln!("skipped: set CADUS_ORACLE_PYTHON to run the 1.0 oracle");
+    let Some(python) = oracle_python() else {
         return;
     };
+    let (expected, stderr) = oracle_dump(&python, &curriculum_root());
+    compare_dumps(&curriculum_root(), &expected);
+    assert_eq!(stderr, format!("sha256={TREE_HASH}\n"));
+}
 
+/// The `arena-float-repr` fixture puts a float on both sides of every Python
+/// `repr` threshold, so this comparison fails whenever the dump writes a float
+/// the way `serde_json` does (finding #3).
+///
+/// The fixture authors `difficulty` 0.85, 0.00001, 0.0000001234, 0.0001 and
+/// 1.0, and the weights 0.000015, 0.0001, 6.300000000000001e-05, 0.00009999 and
+/// 0.0. The oracle writes them `0.85`, `1e-05`, `1.234e-07`, `0.0001`, `1.0`,
+/// `1.5e-05`, `0.0001`, `6.300000000000001e-05`, `9.999e-05` and `0.0`.
+#[test]
+fn the_rust_dump_equals_the_live_1_0_dump_on_the_float_fixture() {
+    let Some(python) = oracle_python() else {
+        return;
+    };
+    let root = fixture("arena-float-repr");
+    let (expected, _stderr) = oracle_dump(&python, &root);
+    compare_dumps(&root, &expected);
+
+    // The float texts the fixture exists for, quoted from the oracle output.
+    let text = String::from_utf8_lossy(&expected).into_owned();
+    for literal in [
+        "\"difficulty\":0.85",
+        "\"difficulty\":1e-05",
+        "\"difficulty\":1.234e-07",
+        "\"difficulty\":0.0001",
+        "\"difficulty\":1.0",
+        "[\"b\",\"a\",1.5e-05]",
+        "[\"c\",\"a\",6.300000000000001e-05]",
+        "[\"d\",\"c\",9.999e-05]",
+        "[\"e\",\"d\",0.0,false]",
+    ] {
+        assert!(text.contains(literal), "the 1.0 dump must hold {literal}");
+    }
+}
+
+/// The interpreter of the 1.0 virtual environment, or `None` with a note.
+fn oracle_python() -> Option<String> {
+    match std::env::var("CADUS_ORACLE_PYTHON") {
+        Ok(python) => Some(python),
+        Err(_) => {
+            eprintln!("skipped: set CADUS_ORACLE_PYTHON to run the 1.0 oracle");
+            None
+        }
+    }
+}
+
+/// Run the 1.0 oracle on one tree. It gives the dump plus a newline, and the
+/// `sha256=` line the oracle writes to standard error.
+fn oracle_dump(python: &str, root: &Path) -> (Vec<u8>, String) {
     let script = repo_root().join("scripts/oracle/dump_curriculum_1_0.py");
-    let output = Command::new(&python)
+    let output = Command::new(python)
         .arg(&script)
-        .arg(curriculum_root())
+        .arg(root)
         .output()
         .unwrap_or_else(|e| panic!("run {python} {}: {e}", script.display()));
     assert!(
@@ -206,24 +321,23 @@ fn the_rust_dump_equals_the_live_1_0_dump() {
         "the 1.0 oracle failed: {}",
         String::from_utf8_lossy(&output.stderr)
     );
+    let stderr = String::from_utf8_lossy(&output.stderr).into_owned();
+    (output.stdout, stderr)
+}
 
-    // The oracle writes the dump and one newline; the hash goes to stderr.
-    let expected = output.stdout;
-    let mut actual = canonical_dump(&tree()).into_bytes();
+/// Compare the Rust dump of one tree against the oracle bytes, byte for byte.
+fn compare_dumps(root: &Path, expected: &[u8]) {
+    let (curriculum, _findings) = load_curriculum(root).expect("the tree loads");
+    let mut actual = canonical_dump(&curriculum).into_bytes();
     actual.push(b'\n');
-
     if actual != expected {
-        let at = first_difference(&actual, &expected);
+        let at = first_difference(&actual, expected);
         panic!(
             "the dumps differ at byte {at}\n  rust:   {}\n  python: {}",
             window(&actual, at),
-            window(&expected, at)
+            window(expected, at)
         );
     }
-    assert_eq!(
-        String::from_utf8_lossy(&output.stderr),
-        format!("sha256={TREE_HASH}\n")
-    );
 }
 
 /// The index of the first differing byte of two byte strings.

@@ -10,8 +10,11 @@
 //! - Every object key is sorted (the oracle sets `sort_keys=True`). This module
 //!   inserts each key in sorted order, so the output is sorted whatever map type
 //!   `serde_json` is built with.
-//! - Floats take the shortest form that round-trips, the same rule as the
-//!   Python `repr` of a float (parity trap 16).
+//! - Floats take the text of the Python `repr` of a float (parity trap 16).
+//!   [`python_repr_f64`] writes it. `serde_json` writes a different text for the
+//!   same value — it keeps fixed notation below `1e-4` and it writes an
+//!   unpadded exponent — so [`canonical_dump`] renders the JSON itself with
+//!   [`render`] and never calls `serde_json::to_string` on a number.
 //! - `topics` is sorted by id. `prereq_edges` and `encompassing_edges` are
 //!   sorted the way Python sorts lists: element by element, left to right.
 //!
@@ -62,10 +65,141 @@ pub fn canonical_dump(c: &Curriculum) -> String {
     root.insert("topics".to_owned(), topics(c));
     root.insert("topo_order".to_owned(), topo_order(c));
 
-    // Every value here is a string, a number, a bool, `null`, an array, or an
-    // object with string keys, so the serializer has no failure to report. An
-    // empty string would fail the parity test loudly rather than pass silently.
-    serde_json::to_string(&Value::Object(root)).unwrap_or_default()
+    let mut out = String::new();
+    render(&Value::Object(root), &mut out);
+    out
+}
+
+// --------------------------------------------------------------------------- //
+// The JSON text
+// --------------------------------------------------------------------------- //
+
+/// Append the canonical JSON text of one value.
+///
+/// The rules are the `json.dumps` arguments of the oracle: the separators are
+/// `,` and `:`, and non-ASCII text stays unescaped. `serde_json` escapes a
+/// string the same way `json.dumps(ensure_ascii=False)` does, so a string goes
+/// through `serde_json`. A float does not: [`python_repr_f64`] writes it.
+fn render(value: &Value, out: &mut String) {
+    match value {
+        Value::Null => out.push_str("null"),
+        Value::Bool(true) => out.push_str("true"),
+        Value::Bool(false) => out.push_str("false"),
+        Value::Number(number) => render_number(number, out),
+        // A `&str` always serializes, so the fallback is unreachable. An empty
+        // string fails the parity test loudly rather than passes silently.
+        Value::String(item) => out.push_str(&json_string(item.as_str())),
+        Value::Array(items) => {
+            out.push('[');
+            for (position, item) in items.iter().enumerate() {
+                if position > 0 {
+                    out.push(',');
+                }
+                render(item, out);
+            }
+            out.push(']');
+        }
+        Value::Object(map) => {
+            out.push('{');
+            for (position, (key, item)) in map.iter().enumerate() {
+                if position > 0 {
+                    out.push(',');
+                }
+                out.push_str(&json_string(key.as_str()));
+                out.push(':');
+                render(item, out);
+            }
+            out.push('}');
+        }
+    }
+}
+
+/// Append the canonical JSON text of one number.
+///
+/// A count is an integer and takes the plain decimal text. A `difficulty` or a
+/// `weight` is a float and takes the Python `repr` text (parity trap 16).
+fn render_number(number: &Number, out: &mut String) {
+    if number.is_f64() {
+        match number.as_f64() {
+            Some(value) => out.push_str(&python_repr_f64(value)),
+            None => out.push_str("null"),
+        }
+        return;
+    }
+    out.push_str(&number.to_string());
+}
+
+/// One JSON string, escaped the way `json.dumps(ensure_ascii=False)` escapes it.
+fn json_string(value: &str) -> String {
+    serde_json::to_string(value).unwrap_or_default()
+}
+
+/// The text Python `repr` writes for a float (parity trap 16).
+///
+/// The digits are the shortest run that round-trips, which is what Rust `{:e}`
+/// writes and what Python picks. The notation follows the Python rule: fixed
+/// notation while the exponent is at or above -4 and below 16, and `d.ddde±XX`
+/// with a signed exponent of at least two digits outside that range. An integral
+/// value in fixed notation keeps a `.0` tail, so `1` reads `1.0`.
+///
+/// `NaN` and the infinities give `nan`, `inf`, and `-inf`, the Python `repr`
+/// text. They have no JSON form, so [`float`] maps them to `null` before the
+/// dump ever reaches this function.
+pub fn python_repr_f64(value: f64) -> String {
+    if value.is_nan() {
+        return "nan".to_owned();
+    }
+    if value.is_infinite() {
+        return if value.is_sign_negative() {
+            "-inf".to_owned()
+        } else {
+            "inf".to_owned()
+        };
+    }
+
+    // Rust writes `-d.ddde<exp>` with the shortest digits that round-trip.
+    let shortest = format!("{value:e}");
+    let Some((mantissa, exponent_text)) = shortest.split_once('e') else {
+        return shortest;
+    };
+    let Ok(exponent) = exponent_text.parse::<i32>() else {
+        return shortest;
+    };
+    let (sign, unsigned) = match mantissa.strip_prefix('-') {
+        Some(rest) => ("-", rest),
+        None => ("", mantissa),
+    };
+
+    if (-4..16).contains(&exponent) {
+        let digits: String = unsigned.chars().filter(|item| *item != '.').collect();
+        return fixed_notation(sign, &digits, exponent);
+    }
+    let separator = if exponent < 0 { '-' } else { '+' };
+    let magnitude = exponent.unsigned_abs();
+    format!("{sign}{unsigned}e{separator}{magnitude:02}")
+}
+
+/// The fixed-notation form of `sign`, `digits`, and a decimal `exponent`.
+///
+/// `digits` holds the significant digits with no point and no sign. The point
+/// goes after `exponent + 1` digits. Python pads with zeros on either side and
+/// writes a `.0` tail when no digit falls after the point.
+fn fixed_notation(sign: &str, digits: &str, exponent: i32) -> String {
+    let point = exponent.saturating_add(1);
+    if point <= 0 {
+        let zeros = "0".repeat(usize::try_from(-point).unwrap_or(0));
+        return format!("{sign}0.{zeros}{digits}");
+    }
+    let Ok(point) = usize::try_from(point) else {
+        return format!("{sign}{digits}.0");
+    };
+    if point >= digits.len() {
+        let zeros = "0".repeat(point - digits.len());
+        return format!("{sign}{digits}{zeros}.0");
+    }
+    let head = digits.get(..point).unwrap_or(digits);
+    let tail = digits.get(point..).unwrap_or("");
+    format!("{sign}{head}.{tail}")
 }
 
 /// The curriculum hash: the lowercase hex SHA-256 of the [`canonical_dump`]
@@ -413,17 +547,18 @@ fn count(value: usize) -> Value {
     u64::try_from(value).map_or(Value::Null, |n| Value::Number(Number::from(n)))
 }
 
-/// A float as a JSON number.
+/// A float as a JSON number. [`render_number`] gives it the Python `repr` text.
 ///
 /// `NaN` and the infinities have no JSON form. Python writes the non-standard
-/// `NaN` and `Infinity` there; this dump writes `null`. No curriculum value is
-/// one of them: `difficulty` and `weight` both hold a number in 0..=1.
+/// `NaN` and `Infinity` there; this dump writes `null`. The loader rejects both
+/// forms, so no curriculum value reaches this point: `difficulty` and `weight`
+/// both hold a finite number in 0..=1.
 fn float(value: f64) -> Value {
     Number::from_f64(value).map_or(Value::Null, Value::Number)
 }
 
-/// Order two weights. No weight is `NaN`, so the total order of `f64` matches
-/// the Python comparison.
+/// Order two weights. The loader rejects `NaN`, so the total order of `f64`
+/// matches the Python comparison.
 fn compare_float(a: f64, b: f64) -> Ordering {
     a.total_cmp(&b)
 }

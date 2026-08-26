@@ -1,0 +1,19 @@
+unit: Demo unit
+course: demo
+module: Demo module
+topics:
+  - id: alpha
+    name: Alpha
+    difficulty: 0.1
+    answer_kind: numeric
+    expected_time_secs: 60
+  # `weight: 1.5` is out of range, so the parse stage drops this whole file and
+  # reports one fatal finding. 1.0 `Graph.load` raises there.
+  - id: beta
+    name: Beta
+    difficulty: 0.1
+    answer_kind: numeric
+    expected_time_secs: 60
+    prerequisites:
+      - id: alpha
+        weight: 1.5

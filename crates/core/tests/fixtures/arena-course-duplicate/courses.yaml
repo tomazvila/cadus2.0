@@ -1,0 +1,17 @@
+# The catalog declares the id `b` twice. 1.0 builds `{c.id: c for c in courses}`,
+# so the LAST entry wins and `mastery_floor_course: b` grounds on order 5.
+# Course `b` has no unit directory, so the load reports two advisory findings.
+courses:
+  - id: a
+    name: A course
+    order: 1
+  - id: b
+    name: B first
+    order: 2
+  - id: b
+    name: B second
+    order: 5
+  - id: c
+    name: C course
+    order: 3
+    mastery_floor_course: b
