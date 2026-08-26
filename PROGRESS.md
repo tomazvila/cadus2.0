@@ -127,16 +127,14 @@ loop: stop after four rounds, fix the accepted-not-fixed items, continue with M1
   (`auth_user_by_email`, `auth_user_by_id`, `auth_session_by_token_hash`,
   `auth_token_by_hash`, `oauth_account_lookup`) BEFORE binding a tenant, then bind and
   write through the policies. `docs/SCHEMA.md` "The M5 auth contract" has the call order.
-- (accepted, not fixed) default `BIND_ADDR` untested; R4 purity pins the resolved
-  dependency graph, not handler bodies; no TCP keepalive in sqlx 0.9; CI publishes the
-  service port on all runner interfaces; the deaf-Postgres test server is duplicated in
-  the web and worker tests; the `tuple concurrently updated` retry has no end-to-end
-  test; `scripts/deploy.sh` step 4 (caddy) was not run end to end on this box (ports
-  80/443 are held by another stack); `crates/store` has no direct-dependency literal
-  pin (its closure is covered by the web and worker purity tests); shellcheck is not in
-  the gate.
-- (fragile pin) `public_functions_are_the_literal_list` pins the citext extension
-  function count at 47; a Postgres/citext upgrade changes one literal.
+- (closed 2026-08-26, FIX10) The accepted-not-fixed items of M0 are fixed: default
+  `BIND_ADDR` pinned by a pure function test; R4 purity scans handler sources for socket
+  and process tokens; a client-side query bound `DB_CLIENT_TIMEOUT_MS` (sqlx 0.9 has no
+  TCP keepalive); CI binds the service port on 127.0.0.1; one shared deaf-Postgres test
+  server; the `tuple concurrently updated` retry has unit tests; `cadus-store` has a
+  purity test; shellcheck runs in the gate; `scripts/deploy.sh` ran end to end with caddy
+  on `CADDY_HTTP_PORT=18080`.
+- (closed 2026-08-26) The citext function-count pin is replaced by a per-function check.
 
 - (M3) `events.payload` is `jsonb` (D7). 1.0 stored `json` because its diagnostic
   projection read key order. The 2.0 projector must not depend on key order; the M3
