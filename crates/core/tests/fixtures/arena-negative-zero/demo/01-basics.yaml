@@ -1,0 +1,39 @@
+unit: Demo unit
+course: demo
+module: Demo module
+topics:
+  - id: a
+    name: A
+    difficulty: 0.1
+    answer_kind: numeric
+    expected_time_secs: 60
+  # `b` declares the edge b -> a twice with the two signs of zero and two `key`
+  # flags. Python holds `-0.0 == 0.0`, so the sort of `prereq_edges` falls
+  # through to the `key` flag and `false` comes first (finding #2).
+  - id: b
+    name: B
+    difficulty: 0.2
+    answer_kind: numeric
+    expected_time_secs: 60
+    prerequisites:
+      - id: a
+        weight: -0.0
+        key: true
+      - id: a
+        weight: 0.0
+        key: false
+  # `c` declares the same two signs with ONE `key` flag, so the sort has no
+  # element left to compare. Both sorts are stable, so the two rows keep the
+  # order of the file: `0.0` first, then `-0.0`.
+  - id: c
+    name: C
+    difficulty: 0.3
+    answer_kind: numeric
+    expected_time_secs: 60
+    prerequisites:
+      - id: a
+        weight: 0.0
+        key: true
+      - id: a
+        weight: -0.0
+        key: true

@@ -633,34 +633,47 @@ fn a_weight_zero_edge_is_absent_forward_and_present_in_reverse() {
     );
 }
 
-/// Finding #22. `arena-repeated-edge` declares b -> a twice, with the weights
-/// 0.2 and 0.7, and z -> a once with the weight 0.0. 1.0 on the fixture:
+/// Findings #22 and #9. `arena-repeated-edge` declares b -> a twice with the
+/// larger weight FIRST (0.7 then 0.2) and c -> a twice with the larger weight
+/// LAST (0.2 then 0.7), so the pair separates "keep the maximum" from both
+/// "keep the first weight" and "keep the last weight". `z -> a` carries the
+/// weight 0. 1.0 on the fixture:
 ///
 /// ```text
-/// _enc {'a': {}, 'b': {'a': 0.7}, 'z': {}}
-/// _enc_rev {'a': {'b': 0.7, 'z': 0.0}, 'b': {}, 'z': {}}
-/// prereqs {'a': [], 'b': ['a'], 'z': ['a']}
-/// dependents {'a': ['b', 'z'], 'b': [], 'z': []}
+/// $ /home/deploy/dev/cadus/.venv/bin/python  (sys.path -> /home/deploy/dev/cadus)
+/// topics ['a', 'b', 'c', 'z']
+/// _enc {'a': {}, 'b': {'a': 0.7}, 'c': {'a': 0.7}, 'z': {}}
+/// _enc_rev {'a': {'b': 0.7, 'c': 0.7, 'z': 0.0}, 'b': {}, 'c': {}, 'z': {}}
+/// prereqs {'a': set(), 'b': {'a'}, 'c': {'a'}, 'z': {'a'}}
+/// dependents {'a': ['b', 'c', 'z'], 'b': [], 'c': [], 'z': []}
+/// W b a 0.7
+/// W c a 0.7
 /// ```
 #[test]
 fn a_repeated_edge_keeps_the_maximum_weight_in_both_encompassing_maps() {
     let curriculum = arena("arena-repeated-edge");
     let a = idx(&curriculum, "a");
     let b = idx(&curriculum, "b");
+    let c = idx(&curriculum, "c");
     let z = idx(&curriculum, "z");
 
     assert_eq!(
         links(&curriculum, curriculum.enc_node(b), true),
         [("a", 0.7)],
-        "the forward map holds one entry and keeps the larger weight"
+        "the larger weight comes first, and the forward map keeps it"
+    );
+    assert_eq!(
+        links(&curriculum, curriculum.enc_node(c), true),
+        [("a", 0.7)],
+        "the larger weight comes last, and the forward map keeps it"
     );
     assert_eq!(
         links(&curriculum, curriculum.enc_node(a), false),
-        [("b", 0.7), ("z", 0.0)],
-        "the reverse map keeps the larger weight and holds the weight-0 edge"
+        [("b", 0.7), ("c", 0.7), ("z", 0.0)],
+        "the reverse map keeps the larger weight of each pair and the weight-0 edge"
     );
-    assert_eq!(curriculum.enc_forward_count(), 1);
-    assert_eq!(curriculum.enc_reverse_count(), 2);
+    assert_eq!(curriculum.enc_forward_count(), 2);
+    assert_eq!(curriculum.enc_reverse_count(), 3);
 
     assert_eq!(
         ids(
@@ -671,12 +684,28 @@ fn a_repeated_edge_keeps_the_maximum_weight_in_both_encompassing_maps() {
         "the repeated edge gives one prerequisite entry"
     );
     assert_eq!(
-        ids(&curriculum, &curriculum.dependents(a).collect::<Vec<_>>()),
-        ["b", "z"]
+        ids(
+            &curriculum,
+            &curriculum.prerequisites(c).collect::<Vec<_>>()
+        ),
+        ["a"]
     );
-    assert_eq!(curriculum.prereq_edge_count(), 2);
-    assert_eq!(curriculum.dependent_edge_count(), 2);
-    assert_eq!(curriculum.encompassing_weight(b, a), 0.7);
+    assert_eq!(
+        ids(&curriculum, &curriculum.dependents(a).collect::<Vec<_>>()),
+        ["b", "c", "z"]
+    );
+    assert_eq!(curriculum.prereq_edge_count(), 3);
+    assert_eq!(curriculum.dependent_edge_count(), 3);
+    assert_eq!(
+        curriculum.encompassing_weight(b, a),
+        0.7,
+        "0.7 first, then 0.2: a rule of the last weight gives 0.2 here"
+    );
+    assert_eq!(
+        curriculum.encompassing_weight(c, a),
+        0.7,
+        "0.2 first, then 0.7: a rule of the first weight gives 0.2 here"
+    );
     assert_eq!(
         curriculum.encompassing_weight(z, a),
         0.0,

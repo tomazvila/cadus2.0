@@ -7,11 +7,24 @@ topics:
     difficulty: 0.1
     answer_kind: numeric
     expected_time_secs: 60
-  # `b` declares the edge b -> a twice, with two weights. 1.0 keeps the maximum
-  # in both encompassing maps and keeps one entry in the prerequisite set.
+  # `b` declares the edge b -> a twice with the LARGER weight first. 1.0 keeps
+  # the maximum in both encompassing maps, so a rule of "keep the last weight"
+  # gives 0.2 here and 1.0 gives 0.7 (finding #9).
   - id: b
     name: B
     difficulty: 0.2
+    answer_kind: numeric
+    expected_time_secs: 60
+    prerequisites:
+      - id: a
+        weight: 0.7
+      - id: a
+        weight: 0.2
+  # `c` declares the same pair in the other order. The two topics together
+  # separate "keep the maximum" from both "keep the first" and "keep the last".
+  - id: c
+    name: C
+    difficulty: 0.25
     answer_kind: numeric
     expected_time_secs: 60
     prerequisites:

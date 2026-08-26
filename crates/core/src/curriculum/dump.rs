@@ -137,10 +137,16 @@ fn json_string(value: &str) -> String {
 /// The text Python `repr` writes for a float (parity trap 16).
 ///
 /// The digits are the shortest run that round-trips, which is what Rust `{:e}`
-/// writes and what Python picks. The notation follows the Python rule: fixed
-/// notation while the exponent is at or above -4 and below 16, and `d.ddde±XX`
-/// with a signed exponent of at least two digits outside that range. An integral
-/// value in fixed notation keeps a `.0` tail, so `1` reads `1.0`.
+/// writes and what Python picks. The two formatters differ on one point: an
+/// exact tie between the two shortest candidates. Rust rounds such a tie away
+/// from zero; CPython `repr` (David Gay, mode 0) rounds it to the even last
+/// digit. [`even_last_digit_on_a_tie`] puts the CPython rule back.
+///
+/// The notation follows the Python rule: fixed notation while the exponent is
+/// at or above -4 and below 16, and `d.ddde±XX` with a signed exponent of at
+/// least two digits outside that range. An integral value in fixed notation
+/// keeps a `.0` tail, so `1` reads `1.0`. Scientific notation keeps no `.0`
+/// tail, so `1e-05` has one digit.
 ///
 /// `NaN` and the infinities give `nan`, `inf`, and `-inf`, the Python `repr`
 /// text. They have no JSON form, so [`float`] maps them to `null` before the
@@ -169,14 +175,144 @@ pub fn python_repr_f64(value: f64) -> String {
         Some(rest) => ("-", rest),
         None => ("", mantissa),
     };
+    let mut digits: String = unsigned.chars().filter(|item| *item != '.').collect();
+    even_last_digit_on_a_tie(value, &mut digits, exponent);
 
     if (-4..16).contains(&exponent) {
-        let digits: String = unsigned.chars().filter(|item| *item != '.').collect();
         return fixed_notation(sign, &digits, exponent);
     }
     let separator = if exponent < 0 { '-' } else { '+' };
     let magnitude = exponent.unsigned_abs();
-    format!("{sign}{unsigned}e{separator}{magnitude:02}")
+    let head = digits.get(..1).unwrap_or("0");
+    let tail = digits.get(1..).unwrap_or("");
+    let point = if tail.is_empty() { "" } else { "." };
+    format!("{sign}{head}{point}{tail}e{separator}{magnitude:02}")
+}
+
+/// Apply the CPython tie rule to the shortest digit run of `value` (finding #1).
+///
+/// `digits` holds the significant digits with no point and no sign, and
+/// `exponent` is the decimal exponent of the first digit, so the run stands for
+/// the integer `N` scaled by `10^k` with `k = exponent - (digits.len() - 1)`.
+///
+/// Rust and CPython both take the shortest run and, inside that length, the
+/// candidate closest to `value`. They differ only when `value` sits exactly
+/// halfway between two candidates: Rust takes the one away from zero, which is
+/// `N`, and CPython takes the one with the even last digit. `N` and `N - 1`
+/// have last digits of opposite parity, so the rule fires only while the last
+/// digit of `N` is odd, and then the answer is `N - 1`.
+///
+/// A tie needs two tests, and both are necessary.
+///
+/// 1. The halfway point of `N - 1` and `N` is the decimal `W * 10^(k - 1)` with
+///    `W = 10 * N - 5`, whose digit run is `N - 1` followed by a `5`. A last
+///    digit of `N` that is odd never borrows, so that run has the length of
+///    `digits` plus one. [`is_exact_decimal`] tests `value == W * 10^(k - 1)`
+///    exactly, in integer arithmetic.
+/// 2. `N - 1` scaled by `10^k` parses back to `value`. A value on a binade
+///    boundary has a rounding interval twice as wide above as below, so the
+///    lower candidate can miss the value even while the halfway point is exact.
+///    `2^-24` is such a value: it is exactly `5.9604644775390625e-08`, yet
+///    `5.960464477539062e-08` parses to the float below it, and CPython writes
+///    `5.960464477539063e-08`.
+fn even_last_digit_on_a_tie(value: f64, digits: &mut String, exponent: i32) {
+    let Some(last) = digits.chars().next_back() else {
+        return;
+    };
+    let Some(units) = last.to_digit(10) else {
+        return;
+    };
+    if units % 2 == 0 {
+        return;
+    }
+    let length = i32::try_from(digits.len()).unwrap_or(0);
+    let Some(k) = exponent.checked_sub(length.saturating_sub(1)) else {
+        return;
+    };
+    let Some(j) = k.checked_sub(1) else {
+        return;
+    };
+
+    // The midpoint digit run: the last digit down one, then a `5`.
+    let head = digits.get(..digits.len().saturating_sub(1)).unwrap_or("");
+    let mut midpoint = String::with_capacity(digits.len() + 1);
+    midpoint.push_str(head);
+    midpoint.push(char::from_digit(units - 1, 10).unwrap_or('0'));
+    midpoint.push('5');
+    let Ok(w) = midpoint.parse::<u128>() else {
+        return;
+    };
+    if !is_exact_decimal(value, w, j) {
+        return;
+    }
+
+    // Build the even neighbor. An odd last digit never borrows.
+    let mut lower = String::with_capacity(digits.len());
+    lower.push_str(head);
+    lower.push(char::from_digit(units - 1, 10).unwrap_or('0'));
+
+    // Test 2: the neighbor parses back to the same float. If it does not, keep
+    // the digits of Rust.
+    if format!("{lower}e{k}").parse::<f64>() != Ok(value.abs()) {
+        return;
+    }
+    *digits = lower;
+}
+
+/// Test `|value| == w * 10^exponent` in exact arithmetic.
+///
+/// A finite `f64` is exactly `m * 2^p` with an integer `m`. Strip the factors of
+/// two from `m` to get an odd `m_odd` and a corrected `e`, so
+/// `|value| = m_odd * 2^e`. Because `m_odd` is odd, the equality can hold only
+/// while `e` equals `exponent`, and it then reduces to a comparison of the odd
+/// parts: `m_odd * 5^-exponent == w` below zero, and `m_odd == w * 5^exponent`
+/// at or above zero. An overflow of the power of five means the two sides
+/// cannot be equal, so the test gives `false`.
+fn is_exact_decimal(value: f64, w: u128, exponent: i32) -> bool {
+    let bits = value.abs().to_bits();
+    let biased = (bits >> 52) & 0x7ff;
+    let fraction = bits & 0x000f_ffff_ffff_ffff;
+    let (mantissa, mut power) = if biased == 0 {
+        (fraction, -1074i32)
+    } else {
+        // A normal number carries the hidden bit and a bias of 1023, less the
+        // 52 fraction bits.
+        (fraction | (1u64 << 52), (biased as i32) - 1075)
+    };
+    if mantissa == 0 {
+        return false;
+    }
+    let shift = mantissa.trailing_zeros();
+    let odd = u128::from(mantissa >> shift);
+    power = match i32::try_from(shift)
+        .ok()
+        .and_then(|bits| power.checked_add(bits))
+    {
+        Some(sum) => sum,
+        None => return false,
+    };
+    if power != exponent {
+        return false;
+    }
+    if exponent < 0 {
+        let Some(scale) = checked_power_of_five(exponent.unsigned_abs()) else {
+            return false;
+        };
+        return odd.checked_mul(scale) == Some(w);
+    }
+    let Some(scale) = checked_power_of_five(exponent.unsigned_abs()) else {
+        return false;
+    };
+    w.checked_mul(scale) == Some(odd)
+}
+
+/// `5^power` as a `u128`, or `None` when it does not fit.
+fn checked_power_of_five(power: u32) -> Option<u128> {
+    let mut total: u128 = 1;
+    for _ in 0..power {
+        total = total.checked_mul(5)?;
+    }
+    Some(total)
 }
 
 /// The fixed-notation form of `sign`, `digits`, and a decimal `exponent`.
@@ -557,8 +693,16 @@ fn float(value: f64) -> Value {
     Number::from_f64(value).map_or(Value::Null, Value::Number)
 }
 
-/// Order two weights. The loader rejects `NaN`, so the total order of `f64`
-/// matches the Python comparison.
+/// Order two weights the way Python orders two floats (finding #2).
+///
+/// Python compares with `<` and `>`, where `-0.0 == 0.0`, so a pair of zeros
+/// that differ only in sign is equal and the comparison falls through to the
+/// next element of the row. `f64::total_cmp` puts `-0.0` below `0.0` and swaps
+/// such a pair, so this function uses `partial_cmp` instead.
+///
+/// `partial_cmp` gives `None` for a `NaN` only. The loader rejects `NaN` in a
+/// `weight`, so no dump reaches that arm; `Equal` there keeps the fall-through
+/// rule and keeps the sort total.
 fn compare_float(a: f64, b: f64) -> Ordering {
-    a.total_cmp(&b)
+    a.partial_cmp(&b).unwrap_or(Ordering::Equal)
 }
