@@ -440,13 +440,78 @@ fn a_radical_product_extracts_the_square_of_the_merged_radicand() {
 }
 
 #[test]
-fn a_radicand_that_is_not_a_whole_number_stays_a_function() {
+fn a_radicand_that_is_not_a_rational_number_stays_a_function() {
+    // The reading changed in M2 review 3, findings 9 and 11: a RATIONAL radicand
+    // reduces now, and only a radicand outside the rationals keeps the function
+    // application. `a_rational_radicand_reduces_to_the_same_value` below owns the
+    // reduced half.
     let x = Canon::Poly(BTreeMap::from([(monomial(&[(var("x"), 1)]), whole(1))]));
     assert_eq!(form("sqrt(x)"), Canon::Func("sqrt".to_string(), vec![x]));
+    // A negative radicand is not a real number, so it keeps its application too.
     assert_eq!(
-        form("sqrt(1/2)"),
-        Canon::Func("sqrt".to_string(), vec![Canon::Rational(ratio(1, 2))])
+        form("sqrt(-1/2)"),
+        Canon::Func("sqrt".to_string(), vec![Canon::Rational(ratio(-1, 2))])
     );
+    assert_eq!(
+        form("sqrt(-4)"),
+        Canon::Func("sqrt".to_string(), vec![Canon::Rational(whole(-4))])
+    );
+}
+
+#[test]
+fn a_rational_radicand_reduces_to_the_same_value() {
+    // M2 review 3, findings 9 and 11. `sqrt(p/q)` is `sqrt(p*q)/q`, so a rational
+    // radicand reduces the same way a whole one does. Every verdict below is the
+    // 1.0 verdict, measured with `scripts/oracle/check_1_0.py`.
+    // The canonical forms, as literals.
+    assert_eq!(form("sqrt(1/2)"), radical(2, ratio(1, 2)));
+    assert_eq!(form("sqrt(1/2)"), form("sqrt(2)/2"));
+    assert_eq!(form("sqrt(4/9)"), Canon::Rational(ratio(2, 3)));
+    assert_eq!(form("sqrt(9/16)"), Canon::Rational(ratio(3, 4)));
+    assert_eq!(form("sqrt(0.25)"), Canon::Rational(ratio(1, 2)));
+    assert_eq!(form("sqrt(2/3)"), radical(6, ratio(1, 3)));
+    assert_eq!(form("sqrt(8/2)"), Canon::Rational(whole(2)));
+    // 1.0: True for every pair below.
+    run_table(&[
+        ("sqrt(2)/2", "sqrt(1/2)", N, true),
+        ("√2/2", "√(1/2)", N, true),
+        ("2/3", "sqrt(4/9)", N, true),
+        ("3/2", "sqrt(9/4)", N, true),
+        ("3/4", "√(9/16)", N, true),
+        ("1/2", "sqrt(0.25)", N, true),
+        ("1/2", "√(1/4)", N, true),
+        ("√3/3", "√(1/3)", N, true),
+        ("sqrt(6)/3", "sqrt(2/3)", N, true),
+        // 1/sqrt(2) already reduced before this fix; the two neighbors now agree.
+        ("√2/2", "1/√2", N, true),
+        ("sqrt(1/2)", "1/sqrt(2)", E, true),
+        // The same value under a product, a quotient, a power, and a function.
+        ("2*sqrt(2)/2", "2*sqrt(1/2)", E, true),
+        ("sqrt(2)/4", "sqrt(1/2)/2", E, true),
+        ("1/2", "sqrt(1/2)^2", E, true),
+        ("sin(sqrt(2)/2)", "sin(sqrt(1/2))", E, true),
+        ("x*sqrt(2)/2", "x*sqrt(1/2)", E, true),
+        ("sqrt(2)/(2x)", "sqrt(1/2)/x", E, true),
+        // The same pair on the other answer kind.
+        ("sqrt(2)/2", "sqrt(1/2)", E, true),
+    ]);
+    // C4: the reduction must admit no other value. 1.0: False for every pair
+    // below. Each learner answer is a wrong value in the same spelling.
+    run_table(&[
+        ("sqrt(2)/2", "sqrt(1/3)", N, false),
+        ("sqrt(2)/2", "sqrt(2/2)", N, false),
+        ("sqrt(2)/2", "-sqrt(1/2)", N, false),
+        ("sqrt(2)/2", "sqrt(1/2)/2", N, false),
+        ("2/3", "sqrt(4/3)", N, false),
+        ("2/3", "sqrt(9/4)", N, false),
+        ("3/4", "√(9/17)", N, false),
+        ("1/2", "sqrt(0.26)", N, false),
+        ("1/2", "sqrt(1/2)", N, false),
+        ("sqrt(6)/3", "sqrt(3/2)", N, false),
+        ("sin(sqrt(2)/2)", "sin(sqrt(1/3))", E, false),
+        ("x*sqrt(2)/2", "y*sqrt(1/2)", E, false),
+        ("sqrt(2)/2", "sqrt(1/3)", E, false),
+    ]);
 }
 
 #[test]
@@ -740,10 +805,13 @@ fn the_whole_part_of_an_exponent_is_the_atom_e() {
 }
 
 #[test]
-fn a_reciprocal_of_a_sum_holds_one_atom_and_one_divisor() {
-    // M2 review 2, findings 13 and 17. A power of a reciprocal is the reciprocal
-    // of the power, and two reciprocals in one product are the reciprocal of the
-    // product. Every verdict below is the 1.0 verdict, measured with
+fn a_reciprocal_of_a_sum_is_one_denominator() {
+    // The name changed with the form: M2 review 3 replaced the `Inverse` ATOM
+    // with the quotient `Canon::Value { num, den }`, so a reciprocal is no longer
+    // an atom of a monomial. The verdicts of M2 review 2, findings 13 and 17,
+    // are unchanged: a power of a reciprocal is the reciprocal of the power, and
+    // two reciprocals in one product are the reciprocal of the product. Every
+    // verdict below is the 1.0 verdict, measured with
     // `scripts/oracle/check_1_0.py`.
     // 1.0: True.
     run_table(&[
@@ -768,17 +836,16 @@ fn a_reciprocal_of_a_sum_holds_one_atom_and_one_divisor() {
         ("1/(x+1)^2", "(1/(x+1))^2", N, true),
         ("(1/2)^2", "1/2^2", N, true),
     ]);
-    // The canonical form of `1/(x+1)**2`: one `Inverse` atom, with exponent 1,
-    // over the expanded divisor.
-    let divisor = Canon::Poly(BTreeMap::from([
-        (monomial(&[(var("x"), 2)]), whole(1)),
-        (monomial(&[(var("x"), 1)]), whole(2)),
-        (Monomial::new(), whole(1)),
-    ]));
-    let reciprocal = Canon::Poly(BTreeMap::from([(
-        monomial(&[(Atom::Inverse(Box::new(divisor)), 1)]),
-        whole(1),
-    )]));
+    // The canonical form of `1/(x+1)**2`: the numerator 1 over the expanded
+    // denominator. M2 review 3 replaced the `Inverse` atom with this quotient.
+    let reciprocal = Canon::Value {
+        num: BTreeMap::from([(Monomial::new(), whole(1))]),
+        den: BTreeMap::from([
+            (monomial(&[(var("x"), 2)]), whole(1)),
+            (monomial(&[(var("x"), 1)]), whole(2)),
+            (Monomial::new(), whole(1)),
+        ]),
+    };
     assert_eq!(form("1/(x+1)^2"), reciprocal);
     assert_eq!(form("(1/(x+1))^2"), reciprocal);
     assert_eq!(form("1/(x+1) * 1/(x+1)"), reciprocal);
@@ -799,6 +866,302 @@ fn a_reciprocal_of_a_sum_holds_one_atom_and_one_divisor() {
     // The pair itself is pinned in `answer_divergence.rs`, with the 1.0 verdict.
     assert_ne!(form("(x**2-1)/(x-1)"), form("x+1"));
     assert_ne!(form("1/(x^2-1)"), form("1/(x-1)"));
+}
+
+#[test]
+fn a_reciprocal_of_a_product_meets_a_product_of_reciprocals() {
+    // M2 review 3, finding 10. A divisor that carries a common monomial factor
+    // used to stay whole inside the `Inverse` atom, so `1/(x(x+h))` and
+    // `1/x * 1/(x+h)` were two canonical forms of one value. The quotient form
+    // clears every negative exponent into the denominator, so the two meet.
+    // Every verdict below is the 1.0 verdict, measured with
+    // `scripts/oracle/check_1_0.py`.
+    // The canonical form of `1/(x*(x+h))`: the numerator 1 over the EXPANDED
+    // denominator `x**2 + h*x`.
+    let quotient = Canon::Value {
+        num: BTreeMap::from([(Monomial::new(), whole(1))]),
+        den: BTreeMap::from([
+            (monomial(&[(var("x"), 2)]), whole(1)),
+            (monomial(&[(var("h"), 1), (var("x"), 1)]), whole(1)),
+        ]),
+    };
+    assert_eq!(form("1/(x(x+h))"), quotient);
+    assert_eq!(form("1/x * 1/(x+h)"), quotient);
+    assert_eq!(form("1/(x^2+xh)"), quotient);
+    // 1.0: True for every pair below. The three corpus answers of the finding
+    // are `-1/(x(x + h))` and `-2/(x(x + h))` (curriculum/calculus-1/
+    // 01-derivative.yaml, difference-quotients kp3) and `1/(2√x (1 + x))`
+    // (02-differentiation-rules.yaml, derivatives-inverse-trig kp2).
+    run_table(&[
+        ("-1/(x(x + h))", "-1/x * 1/(x + h)", E, true),
+        ("-2/(x(x + h))", "-2/x * 1/(x + h)", E, true),
+        ("1/(2√x (1 + x))", "1/(2√x) * 1/(1 + x)", E, true),
+        ("-1/(x(x + h))", "(-1/x)/(x + h)", E, true),
+        ("-1/(x(x + h))", "-(1/x)(1/(x+h))", E, true),
+        ("-3/(x(x + h))", "-3/(x^2 + hx)", E, true),
+        ("1/(x(x+1))", "1/x/(x+1)", E, true),
+        ("1/(2x(x+1))", "1/(2x) * 1/(x+1)", E, true),
+        ("h/(x(x+h))", "h/x * 1/(x+h)", E, true),
+        ("x/(x(x+1))", "1/(x+1)", E, true),
+        ("x^2/(x(x+1))", "x/(x+1)", E, true),
+        // Three divisors, in the three groupings a learner writes.
+        ("1/(x(x+1)(x+2))", "1/x * 1/(x+1) * 1/(x+2)", E, true),
+        ("1/(x(x+1)(x+2))", "1/x * 1/((x+1)(x+2))", E, true),
+        ("1/(x(x+1)(x+2))", "1/(x(x+1)) * 1/(x+2)", E, true),
+        // A constant, a root, and an exponential in front of the divisor. A root
+        // and an exponential never carry a negative exponent, so the denominator
+        // alone gives their content.
+        ("1/(e(x+1))", "1/e * 1/(x+1)", E, true),
+        ("1/(pi(x+1))", "1/pi * 1/(x+1)", E, true),
+        ("1/(sqrt(2)(x+1))", "1/sqrt(2) * 1/(x+1)", E, true),
+        ("1/(√2(x+1))", "√2/(2(x+1))", E, true),
+        ("2/(sqrt(2)(x+1))", "sqrt(2)/(x+1)", E, true),
+        ("sqrt(2)/(sqrt(2)(x+1))", "1/(x+1)", E, true),
+        ("1/(e^x(x+1))", "1/e^x * 1/(x+1)", E, true),
+        ("1/(e^x(x+1))", "e^(-x)/(x+1)", E, true),
+        ("1/(sin(x)(x+1))", "1/sin(x) * 1/(x+1)", E, true),
+        ("e^x/(x+1)", "e^x * 1/(x+1)", E, true),
+        ("pi/(x+1)", "pi * 1/(x+1)", E, true),
+        ("√2/(x+1)", "√2 * 1/(x+1)", E, true),
+        // The construct under a sign, a power, a division, and a function name.
+        ("-1/(x(x+1))", "-(1/x * 1/(x+1))", E, true),
+        ("1/(-x(x+1))", "-1/(x(x+1))", E, true),
+        ("(1/(x(x+1)))^2", "1/(x(x+1))^2", E, true),
+        ("(1/x * 1/(x+1))^2", "1/(x^2(x+1)^2)", E, true),
+        ("(1/(sqrt(2)(x+1)))^3", "(1/sqrt(2) * 1/(x+1))^3", E, true),
+        ("1/(x(x+1))/2", "1/(2x(x+1))", E, true),
+        ("2/(1/(x(x+1)))", "2x^2+2x", E, true),
+        ("sin(1/(x(x+1)))", "sin(1/x * 1/(x+1))", E, true),
+        ("sqrt(1/(x(x+1)))", "sqrt(1/x * 1/(x+1))", E, true),
+        ("log(1/(x(x+1)))", "log(1/x * 1/(x+1))", E, true),
+        ("sin(1/(sqrt(2)(x+1)))", "sin(1/sqrt(2) * 1/(x+1))", E, true),
+        // A space around every operator, a decimal coefficient, and both kinds.
+        ("1/(x(x + h))", "1 / ( x ( x + h ) )", E, true),
+        ("1/(2(x+1))", "0.5/(x+1)", E, true),
+        ("-1/(x(x + h))", "-1/(x(x + h))", N, true),
+        ("1/(x(x+1))", "1/x * 1/(x+1)", N, true),
+    ]);
+    // C4: the rule must admit no other value. 1.0: False for every pair below.
+    // Each learner answer is a WRONG value in the same spelling.
+    run_table(&[
+        ("-1/(x(x + h))", "-1/x * 1/(x - h)", E, false),
+        ("-1/(x(x + h))", "1/x * 1/(x + h)", E, false),
+        ("-1/(x(x + h))", "-1/(x(x + h))^2", E, false),
+        ("1/(x(x+h))", "1/(x(x-h))", E, false),
+        ("1/(x(x+h))", "1/(x^2+2xh)", E, false),
+        ("1/(2√x (1 + x))", "1/(2√x) * 1/(1 - x)", E, false),
+        ("1/(x(x+1))", "-1/(x(x+1))", E, false),
+        ("1/(x(x+1))", "1/(x(x+1)) + 1", E, false),
+        ("1/(x^2+x)", "1/(x^2-x)", E, false),
+        ("1/(x(x+1)(x+2))", "1/x * 1/(x+1) * 1/(x+3)", E, false),
+        ("1/(sqrt(2)(x+1))", "1/sqrt(2) * 1/(x+2)", E, false),
+        ("1/(sqrt(3)(x+1))", "1/sqrt(2) * 1/(x+1)", E, false),
+        ("1/(e^x(x+1))", "1/e^x * 1/(x+2)", E, false),
+        ("1/(e^x(x+1))", "e^(x)/(x+1)", E, false),
+        ("1/(sin(x)(x+1))", "1/sin(x) * 1/(x+2)", E, false),
+        ("1/(sqrt(2)x+1)", "1/(sqrt(2)(x+1))", E, false),
+        ("1/(x(x+1))", "1/x * 1/(x+2)", N, false),
+    ]);
+    // A denominator of ONE term is negative exponents, not a quotient: `1/x`
+    // stays a monomial and `1/(2x)` is one half of it.
+    assert_eq!(
+        form("1/x"),
+        Canon::Poly(BTreeMap::from([(monomial(&[(var("x"), -1)]), whole(1))]))
+    );
+    assert_eq!(form("1/x"), form("x^-1"));
+    assert_ne!(form("1/x"), form("1/x^2"));
+    assert_eq!(check("1/(2x)", "0.5/x", E), decided(true, false));
+    // The rule cancels a MONOMIAL factor and no polynomial factor. 1.0 answers
+    // True for both pairs below and 2.0 answers False for the second: that is
+    // the documented narrowing of the module header.
+    assert_eq!(check("(x+1)/(x+1)", "1", E), decided(true, false));
+    assert_eq!(check("(2x+2)/(x+1)", "2", E), decided(true, false));
+    assert_eq!(check("x/(x+1) + 1/(x+1)", "1", E), decided(true, false));
+    assert_ne!(form("1/(x+1) + 1/(x+1)^2"), form("(x+2)/(x+1)^2"));
+    assert_ne!(form("(x+2)/(x+1)"), form("1"));
+}
+
+#[test]
+fn a_sum_of_two_quotients_goes_over_the_common_denominator() {
+    // M2 review 3, finding 13. Two terms with two different divisors were never
+    // put over one denominator, so 16 authored corpus answers were two values
+    // apart from their own combined spelling. Every verdict below is the 1.0
+    // verdict, measured with `scripts/oracle/check_1_0.py`.
+    //
+    // The 16 authored corpus answers of the finding, in both spellings. The
+    // topic of each answer follows it.
+    run_table(&[
+        // derivatives-natural-log (curriculum/calculus-1/03-transcendental.yaml).
+        ("2/x + 1/(x + 1)", "(3x + 2)/(x(x + 1))", E, true),
+        ("(3x + 2)/(x(x + 1))", "2/x + 1/(x + 1)", E, true),
+        ("2/x - 1/(x + 3)", "(x + 6)/(x(x + 3))", E, true),
+        ("3/x + 2x", "(2x^2 + 3)/x", E, true),
+        ("5e^x - 2/x", "(5x e^x - 2)/x", E, true),
+        // adding-subtracting-rational-expressions.
+        ("4/((x - 2)(x + 2))", "1/(x - 2) - 1/(x + 2)", E, true),
+        (
+            "(5x - 1)/((x + 1)(x - 1))",
+            "3/(x + 1) + 2/(x - 1)",
+            E,
+            true,
+        ),
+        (
+            "(5x - 9)/((x + 3)(x - 3))",
+            "4/(x + 3) + 1/(x - 3)",
+            E,
+            true,
+        ),
+        ("(x + 3)/((x + 1)(x + 2))", "2/(x + 1) - 1/(x + 2)", E, true),
+        (
+            "(3x + 8)/((x - 4)(x + 4))",
+            "5/(2(x - 4)) + 1/(2(x + 4))",
+            E,
+            true,
+        ),
+        ("(2x + 3)/x^2", "2/x + 3/x^2", E, true),
+        ("(3 + x)/(3x)", "1/3 + 1/x", E, true),
+        // complex-fractions.
+        ("(x + 1)/(x - 1)", "1 + 2/(x - 1)", E, true),
+        ("(3 - x)/(3 + x)", "-1 + 6/(x + 3)", E, true),
+        // dividing-rational-expressions.
+        ("(x + 2)/(x - 2)", "1 + 4/(x - 2)", E, true),
+        // multiplying-dividing-rational-expressions.
+        ("(x - 3)/(x + 1)", "1 - 4/(x + 1)", E, true),
+        // The four further topics the finding names, one answer each.
+        // rational-expressions-common-denominators.
+        ("2x/(x + 1)", "2 - 2/(x + 1)", E, true),
+        ("(5x - 1)/(x - 3)", "5 + 14/(x - 3)", E, true),
+        // rational-expressions.
+        ("(x - 2)/(x + 2)", "1 - 4/(x + 2)", E, true),
+        ("(x + 2)/(x + 3)", "1 - 1/(x + 3)", E, true),
+        // multiplying-rational-expressions.
+        ("(x + 2)/x", "1 + 2/x", E, true),
+        ("(x + 3)/(x - 2)", "1 + 5/(x - 2)", E, true),
+        // difference-quotients.
+        ("1/x + 1/(x + h)", "(2x + h)/(x(x + h))", E, true),
+        // Two equal denominators stay one denominator, and a sum that cancels
+        // is zero.
+        ("1/(x+1) + 1/(x+1)", "2/(x+1)", E, true),
+        ("1/(x+1) - 1/(x+1)", "0", E, true),
+        ("1/(x-1) + 1/(1-x)", "0", E, true),
+        ("(a+b)/(a b)", "1/a + 1/b", E, true),
+        // The same pairs on the other answer kind.
+        ("2/x + 1/(x + 1)", "(3x + 2)/(x(x + 1))", N, true),
+        ("(2x + 3)/x^2", "2/x + 3/x^2", N, true),
+        ("4/((x - 2)(x + 2))", "1/(x - 2) - 1/(x + 2)", N, true),
+    ]);
+    // The canonical form of `2/x + 1/(x+1)`: the expanded numerator `3*x + 2`
+    // over the expanded denominator `x**2 + x`.
+    let combined = Canon::Value {
+        num: BTreeMap::from([
+            (monomial(&[(var("x"), 1)]), whole(3)),
+            (Monomial::new(), whole(2)),
+        ]),
+        den: BTreeMap::from([
+            (monomial(&[(var("x"), 2)]), whole(1)),
+            (monomial(&[(var("x"), 1)]), whole(1)),
+        ]),
+    };
+    assert_eq!(form("2/x + 1/(x + 1)"), combined);
+    assert_eq!(form("(3x + 2)/(x(x + 1))"), combined);
+    assert_eq!(form("(3x + 2)/(x^2 + x)"), combined);
+    // C4: the common denominator must admit no other value. 1.0: False for every
+    // pair below. Each learner answer is a wrong value in the same spelling.
+    run_table(&[
+        ("2/x + 1/(x + 1)", "(3x + 3)/(x(x + 1))", E, false),
+        ("2/x + 1/(x + 1)", "(3x + 2)/(x(x - 1))", E, false),
+        ("2/x + 1/(x + 1)", "(2x + 3)/(x(x + 1))", E, false),
+        ("2/x - 1/(x + 3)", "(x + 6)/(x(x - 3))", E, false),
+        ("2/x - 1/(x + 3)", "(x - 6)/(x(x + 3))", E, false),
+        ("4/((x - 2)(x + 2))", "1/(x - 2) + 1/(x + 2)", E, false),
+        (
+            "(5x - 1)/((x + 1)(x - 1))",
+            "2/(x + 1) + 3/(x - 1)",
+            E,
+            false,
+        ),
+        ("(x + 2)/(x - 2)", "1 + 4/(x + 2)", E, false),
+        ("(x + 2)/(x - 2)", "1 - 4/(x - 2)", E, false),
+        ("2x/(x + 1)", "2 + 2/(x + 1)", E, false),
+        ("(2x + 3)/x^2", "2/x + 3/x", E, false),
+        ("(3 + x)/(3x)", "1/3 + 1/(3x)", E, false),
+        ("1/x + 1/(x + h)", "(2x + h)/(x(x - h))", E, false),
+        ("(a+b)/(a b)", "1/a - 1/b", E, false),
+        ("2/x + 1/(x + 1)", "(3x + 3)/(x(x + 1))", N, false),
+    ]);
+}
+
+#[test]
+fn the_integer_part_of_a_fractional_exponent_is_the_atom_e() {
+    // M2 review 3, finding 12. The `Atom::E` fold fired only for a WHOLE
+    // constant term, so the exponent law failed for a fractional exponent. The
+    // fold now takes the integer part, and the integer part is the FLOOR, so a
+    // negative exponent has one spelling as well. Every verdict below is the 1.0
+    // verdict, measured with `scripts/oracle/check_1_0.py`.
+    // 1.0: True.
+    run_table(&[
+        ("e^(5/2)", "e^2*e^(1/2)", E, true),
+        ("e^(3/2)", "e*e^(1/2)", E, true),
+        ("e^(x+5/2)", "e^2*e^(x+1/2)", E, true),
+        ("e^(x+3/2)", "e*e^(x+1/2)", E, true),
+        ("e^(5/2)", "e^(1/2)*e^2", E, true),
+        ("e^(5/2)", "e^2 e^(1/2)", E, true),
+        ("exp(5/2)", "exp(2)*exp(1/2)", E, true),
+        ("e^(7/2)", "e^3*e^(1/2)", E, true),
+        ("e^(7/2)", "e^2*e^(3/2)", E, true),
+        ("2e^(5/2)", "2*e^2*e^(1/2)", E, true),
+        // The floor is what makes the two spellings of a negative exponent meet.
+        ("e^(-5/2)", "e^-3*e^(1/2)", E, true),
+        ("e^(-5/2)", "e^-2*e^(-1/2)", E, true),
+        ("e^(-3/2)", "e^-2*e^(1/2)", E, true),
+        ("e^(-1/2)", "1/e^(1/2)", E, true),
+        ("1/e^(5/2)", "e^-3*e^(1/2)", E, true),
+        // The construct under a division, a product, a power, and a function.
+        ("e^(5/2)/2", "e^2*e^(1/2)/2", E, true),
+        ("e^(5/2)*x", "x*e^2*e^(1/2)", E, true),
+        ("(e^(5/2))^2", "e^5", E, true),
+        ("sin(e^(5/2))", "sin(e^2*e^(1/2))", E, true),
+        // The integer half of the fold, which FIXM2e added, still holds.
+        ("e^(x+2)", "e^2*e^x", E, true),
+        ("e^(x+1/2)", "e^(1/2)*e^x", E, true),
+        // The same pair on the other answer kind.
+        ("e^(5/2)", "e^2*e^(1/2)", N, true),
+    ]);
+    // The canonical form of `e**(5/2)`: the atom `e` with exponent 2, times the
+    // exponential of one half. `e**(-5/2)` takes the floor, so it is the atom
+    // `e` with exponent -3 times the same exponential.
+    let root_of_e = Canon::Poly(BTreeMap::from([(
+        monomial(&[
+            (Atom::E, 2),
+            (Atom::Exp(Box::new(Canon::Rational(ratio(1, 2)))), 1),
+        ]),
+        whole(1),
+    )]));
+    assert_eq!(form("e^(5/2)"), root_of_e);
+    assert_eq!(form("e^2*e^(1/2)"), root_of_e);
+    let negative = Canon::Poly(BTreeMap::from([(
+        monomial(&[
+            (Atom::E, -3),
+            (Atom::Exp(Box::new(Canon::Rational(ratio(1, 2)))), 1),
+        ]),
+        whole(1),
+    )]));
+    assert_eq!(form("e^(-5/2)"), negative);
+    assert_eq!(form("e^-2*e^(-1/2)"), negative);
+    // C4: the fold must admit no other value. 1.0: False for every pair below.
+    run_table(&[
+        ("e^(5/2)", "e^2*e^(3/2)", E, false),
+        ("e^(5/2)", "e^3*e^(1/2)", E, false),
+        ("e^(5/2)", "e^2+e^(1/2)", E, false),
+        ("e^(5/2)", "e^(5/3)", E, false),
+        ("e^(5/2)", "e^(2/5)", E, false),
+        ("e^(5/2)", "-e^2*e^(1/2)", E, false),
+        ("e^(x+5/2)", "e^2*e^(x+3/2)", E, false),
+        ("e^(x+5/2)", "e^3*e^(x+1/2)", E, false),
+        ("e^(x+5/2)", "e^2*e^(2x+1/2)", E, false),
+        ("e^(x+1/2)", "e*e^x", E, false),
+        ("e^(x+2)", "e^(x+3)", E, false),
+    ]);
 }
 
 /// Build the canonical form of one labeled whole number, `<var> = <value>`.
@@ -942,6 +1305,12 @@ fn the_corpus_self_check_holds_the_l2_budget() {
 fn the_corpus_canonicalization_holds_the_l2_budget() {
     // The self-check above stops on the string rung, so it never reaches the
     // arithmetic. This test drives the whole path and asserts the same budget.
+    //
+    // Measured after the rational-function form of M2 review 3 (release build,
+    // this machine): 11.3 ms for the 3,492 answers, and 129.9 µs for the worst
+    // one, `24(2x + 1)^2 (1 + (2x + 1)^3)^3`. The worst rational-function PAIR
+    // is `(3x + 8)/((x - 4)(x + 4))` against `5/(2(x - 4)) + 1/(2(x + 4))` at
+    // 47.2 µs, so the new products cost about one third of the worst answer.
     let corpus = corpus();
     let mut worst = Duration::ZERO;
     let mut worst_answer = "";

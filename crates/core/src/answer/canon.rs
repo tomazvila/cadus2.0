@@ -6,39 +6,69 @@
 //!
 //! # The one internal form
 //!
-//! Arithmetic runs on a sum of terms. A term is a rational coefficient and a
-//! monomial, and a monomial maps an [`Atom`] to an integer exponent. The atoms are
-//! a square root of a squarefree integer, `pi`, `e`, an exponential with an
-//! argument that is not a whole number, a variable, a function call, and the
-//! reciprocal of a sum. One form therefore holds a rational, a radical, a Laurent
-//! polynomial, and a function application together.
+//! Arithmetic runs on a rational function: one numerator sum over one
+//! denominator sum. A sum is a map of terms, a term is a rational coefficient and
+//! a monomial, and a monomial maps an [`Atom`] to an integer exponent. The atoms
+//! are a square root of a squarefree integer, `pi`, `e`, an exponential with an
+//! argument that is not a whole number, a variable, and a function call. One form
+//! therefore holds a rational, a radical, a Laurent polynomial, a function
+//! application, and a quotient of two polynomials together.
 //!
-//! [`Canon`] is the outside view of that form. `from_sum` demotes a sum to the
-//! narrowest variant that holds it, and the demotion is total and deterministic, so
-//! two equal values always produce the same [`Canon`].
+//! [`Canon`] is the outside view of that form. `from_frac` demotes a quotient to
+//! the narrowest variant that holds it, and the demotion is total and
+//! deterministic, so two equal values always produce the same [`Canon`].
+//!
+//! # The rational-function form (M2 review 3, findings 9 to 13)
+//!
+//! [`Canon::Value`] holds the numerator and the denominator of one value. The
+//! form obeys six rules, and the six rules together give one spelling per
+//! value:
+//!
+//! 1. Both sides are expanded sums. No factored form survives.
+//! 2. A denominator of one term folds into the numerator as negative exponents,
+//!    so `1/x` is the monomial `x**-1` and never a quotient.
+//! 3. A quotient with a denominator of two terms or more carries no common
+//!    monomial factor and no negative exponent: the numerator and the
+//!    denominator both divide by the greatest monomial that divides every term
+//!    of the two. `1/x * 1/(x+h)` therefore becomes `1/(x**2+x*h)`, which is the
+//!    form of `1/(x*(x+h))`, and `(6*s**3-17*s**2+15*s)/(s**4-3*s**3)` becomes
+//!    `(6*s**2-17*s+15)/(s**3-3*s**2)`. The step takes a MONOMIAL content, the
+//!    way rule 4 takes a rational content. It takes no polynomial factor.
+//!    A square root and an exponential never carry a negative exponent, so for
+//!    those two atoms the denominator alone gives the content:
+//!    `1/(sqrt(2)*(x+1))` and `1/sqrt(2) * 1/(x+1)` are one value.
+//! 4. The denominator is content- and sign-normalized: its coefficients are
+//!    coprime integers and its greatest monomial carries a positive sign. The
+//!    rational scale moves into the numerator, so `1/(x+1)` and `2/(2*x+2)` are
+//!    one value.
+//! 5. A numerator that is a rational multiple of the denominator is that
+//!    rational: `(x+1)/(x+1)` is 1 and `(2*x+2)/(x+1)` is 2.
+//! 6. A sum of two quotients goes over the product of the two denominators, and
+//!    two equal denominators stay one denominator.
+//!
+//! The form cancels no polynomial common factor: a greatest common divisor of
+//! two polynomials is beyond this unit. `(x**2-1)/(x-1)` and `x+1` therefore stay
+//! two values, and `1/(x+1) + 1/(x+1)**2` and `(x+2)/(x+1)**2` stay two values.
+//! Both narrowings are documented, and `answer_divergence.rs` pins the first one
+//! with the 1.0 verdict.
 //!
 //! # What the form decides, and what it refuses
 //!
 //! - A decimal becomes an exact rational: `0.7` is `7/10`, never a float (D6).
-//! - `sqrt(8)` becomes `2*sqrt(2)` and `sqrt(4)` becomes `2`. A radicand that is
-//!   not a whole number stays a function application.
+//! - `sqrt(8)` becomes `2*sqrt(2)` and `sqrt(4)` becomes `2`. A rational radicand
+//!   reduces too, through `sqrt(p/q) = sqrt(p*q)/q`, so `sqrt(1/2)` is
+//!   `sqrt(2)/2` and `sqrt(4/9)` is `2/3`. A radicand that is not a rational
+//!   number stays a function application.
 //! - `exp(k)` for an integer `k` becomes the atom `e` with exponent `k`, so
-//!   `e**2` and `exp(2)` are one value. The whole-number PART of an argument
-//!   becomes the atom `e` too, so `e**(x+2)` and `e**2 * e**x` are one value and
-//!   `e**(x+2)` and `e**(x+3)` are two values. The rest of the argument becomes
-//!   [`Atom::Exp`], which obeys the exponent law: `e**(-x)` and `1/e**x` are one
-//!   value, and `e**x` and `e**(2*x)` are two values.
+//!   `e**2` and `exp(2)` are one value. The INTEGER PART of the rational constant
+//!   term of the argument becomes the atom `e` too, so `e**(x+2)` and
+//!   `e**2 * e**x` are one value, and `e**(5/2)` and `e**2 * e**(1/2)` are one
+//!   value. The integer part is the floor, so the constant that stays behind is
+//!   always in the half-open range 0 to 1 and a negative exponent has one
+//!   spelling as well. The rest of the argument becomes [`Atom::Exp`], which
+//!   obeys the exponent law: `e**(-x)` and `1/e**x` are one value, and `e**x`
+//!   and `e**(2*x)` are two values.
 //! - `ln` and `log` are one function, the natural logarithm, as they are in 1.0.
-//! - A division by a sum of two or more terms keeps the sum as an
-//!   [`Atom::Inverse`]. The sum is content-normalized first: its coefficients are
-//!   coprime integers and its greatest monomial carries a positive sign, so
-//!   `2/(2*x+2)` and `1/(x+1)` are one value. One monomial holds at most one such
-//!   atom, and that atom always has exponent 1: a power of the atom moves into
-//!   the divisor and two atoms multiply their divisors, so `(1/(x+1))**2` and
-//!   `1/(x+1)**2` are one value and `1/(x-2) * 1/(x+2)` and `1/((x-2)*(x+2))`
-//!   are one value. The rule multiplies two divisors and it cancels no common
-//!   factor: cancellation by a polynomial greatest common divisor is beyond this
-//!   unit, so `(x**2-1)/(x-1)` and `x+1` stay different values.
 //! - `sin(x)**2 + cos(x)**2` and `1` are different values. That is the documented
 //!   narrowing of 1.0 (V1).
 //!
@@ -57,6 +87,11 @@
 //! arithmetic builds goes through [`Work::bounded`], and every intermediate of
 //! the content normalization goes through [`Work::bounded_int`], so no operation
 //! and no fold runs outside the budget.
+//!
+//! The products of the rational-function form are inside the same budget. Every
+//! product of two sums charges the count of terms of the one sum times the count
+//! of terms of the other, and every sum it builds goes through the term bound, so
+//! a common denominator that grows costs the budget and then stops.
 
 use std::collections::{BTreeMap, BTreeSet};
 
@@ -134,8 +169,6 @@ pub enum Atom {
     Var(String),
     /// An application of a whitelisted function to canonical arguments.
     Call(String, Vec<Canon>),
-    /// The reciprocal of a content-normalized sum of two or more terms.
-    Inverse(Box<Canon>),
 }
 
 /// A product of atoms with integer exponents. No exponent is zero.
@@ -174,6 +207,17 @@ pub enum Canon {
     Radical(BTreeMap<Basis, BigRational>),
     /// A sparse multivariate polynomial.
     Poly(Poly),
+    /// A quotient of two expanded sums, with a denominator of two terms or more.
+    ///
+    /// The variant is the rational-function form of the module header. A
+    /// denominator of one term never reaches it: that denominator is negative
+    /// exponents of the numerator, and the value is a [`Canon::Poly`].
+    Value {
+        /// The numerator. Never the empty sum, and never a negative exponent.
+        num: Poly,
+        /// The denominator. Two terms or more, content- and sign-normalized.
+        den: Poly,
+    },
     /// One application of a whitelisted function, with canonical arguments.
     Func(String, Vec<Canon>),
     /// An ordered tuple.
@@ -210,6 +254,16 @@ pub enum Canon {
         /// The labeled value.
         value: Box<Canon>,
     },
+}
+
+/// One value as a numerator over a denominator, inside the arithmetic.
+///
+/// The six rules of the module header hold after [`Work::quotient`] builds it.
+struct Frac {
+    /// The numerator sum.
+    num: Poly,
+    /// The denominator sum.
+    den: Poly,
 }
 
 /// Read one parsed answer into its canonical form.
@@ -329,6 +383,8 @@ impl Work {
             Ast::Var(name) => Ok(atom_value(Atom::Var(name.clone()))),
             Ast::Const(Const::Pi) => Ok(atom_value(Atom::Pi)),
             Ast::Const(Const::E) => Ok(atom_value(Atom::E)),
+            // The root of the grammar. `\sqrt{a}`, `√a`, and `sqrt(a)` all build
+            // this one node, so the three spellings take one path (FIXM2g).
             Ast::Sqrt(inner) => {
                 let argument = self.node(inner)?;
                 self.call("sqrt", vec![argument])
@@ -358,11 +414,18 @@ impl Work {
                 }
                 Ok(product)
             }
+            // Division and the `\frac{a}{b}` node are one operation. FIXM2g adds
+            // `Ast::Frac(a, b)`; that node takes this same arm, and the arm reads
+            //
+            //     Ast::Frac(numerator, denominator) => { … self.divide(…) }
+            //
+            // `Ast::Percent(p)` of the same unit is `p / 100`, so its arm divides
+            // by the literal 100. Neither variant is in `answer/ast.rs` yet, so
+            // neither arm compiles yet; `divide` is the one function both need.
             Ast::Div(dividend, divisor) => {
                 let dividend = self.node(dividend)?;
                 let divisor = self.node(divisor)?;
-                let inverse = self.reciprocal(&divisor)?;
-                self.multiply(&dividend, &inverse)
+                self.divide(&dividend, &divisor)
             }
             Ast::Func(name, arguments) => {
                 let values = self.items(arguments)?;
@@ -476,48 +539,47 @@ impl Work {
         self.rational(value)
     }
 
-    /// Add two canonical values.
+    /// Add two canonical values, over the common denominator.
+    ///
+    /// Two equal denominators stay one denominator, and two different ones give
+    /// the product. The rule is what puts `2/x + 1/(x+1)` and `(3*x+2)/(x*(x+1))`
+    /// into one form (M2 review 3, finding 13).
     fn add(&mut self, left: &Canon, right: &Canon) -> Result<Canon, Undecidable> {
-        let mut sum = self.sum_of(left)?;
-        for (monomial, coefficient) in self.sum_of(right)? {
-            self.spend(1)?;
-            self.insert_term(&mut sum, monomial, coefficient)?;
+        let left = self.frac_of(left)?;
+        let right = self.frac_of(right)?;
+        if left.den == right.den {
+            let num = self.poly_add(&left.num, &right.num)?;
+            return self.value(num, left.den);
         }
-        bound_terms(&sum)?;
-        Ok(from_sum(sum))
+        let left_part = self.poly_mul(&left.num, &right.den)?;
+        let right_part = self.poly_mul(&right.num, &left.den)?;
+        let num = self.poly_add(&left_part, &right_part)?;
+        let den = self.poly_mul(&left.den, &right.den)?;
+        self.value(num, den)
     }
 
     /// Multiply two canonical values.
     fn multiply(&mut self, left: &Canon, right: &Canon) -> Result<Canon, Undecidable> {
-        let left = self.sum_of(left)?;
-        let right = self.sum_of(right)?;
-        self.spend(left.len().saturating_mul(right.len()))?;
-        let mut product = Poly::new();
-        for (left_monomial, left_coefficient) in &left {
-            for (right_monomial, right_coefficient) in &right {
-                let value = self.multiply_terms(
-                    left_monomial,
-                    left_coefficient,
-                    right_monomial,
-                    right_coefficient,
-                )?;
-                // One product of two terms is one term, unless a reciprocal atom
-                // came back into the numerator. Then it is a sum (see
-                // [`Work::add_inverse`]), so every term of it goes into the
-                // product.
-                for (monomial, coefficient) in self.sum_of(&value)? {
-                    self.insert_term(&mut product, monomial, coefficient)?;
-                    bound_terms(&product)?;
-                }
-            }
-        }
-        Ok(from_sum(product))
+        let left = self.frac_of(left)?;
+        let right = self.frac_of(right)?;
+        let num = self.poly_mul(&left.num, &right.num)?;
+        let den = self.poly_mul(&left.den, &right.den)?;
+        self.value(num, den)
+    }
+
+    /// Divide one canonical value by another.
+    fn divide(&mut self, left: &Canon, right: &Canon) -> Result<Canon, Undecidable> {
+        let left = self.frac_of(left)?;
+        let right = self.frac_of(right)?;
+        let num = self.poly_mul(&left.num, &right.den)?;
+        let den = self.poly_mul(&left.den, &right.num)?;
+        self.value(num, den)
     }
 
     /// Raise a canonical value to an integer power.
     fn power(&mut self, base: &Canon, exponent: i64) -> Result<Canon, Undecidable> {
-        let sum = self.sum_of(base)?;
-        if sum.is_empty() {
+        let base = self.frac_of(base)?;
+        if base.num.is_empty() {
             return if exponent > 0 {
                 Ok(Canon::Rational(BigRational::zero()))
             } else {
@@ -527,49 +589,85 @@ impl Work {
         if exponent == 0 {
             return Ok(Canon::Rational(BigRational::one()));
         }
-        if let Some((monomial, coefficient)) = one_term(&sum) {
-            self.spend(monomial.len().saturating_add(1))?;
-            return self.power_of_term(&monomial, &coefficient, exponent);
-        }
         if exponent < 0 {
             let magnitude = exponent
                 .checked_neg()
                 .ok_or_else(|| Undecidable::new("an exponent past the size bound"))?;
-            let positive = self.power(base, magnitude)?;
-            return self.reciprocal(&positive);
+            let num = self.poly_pow(&base.den, magnitude)?;
+            let den = self.poly_pow(&base.num, magnitude)?;
+            return self.value(num, den);
         }
-        let mut result = Canon::Rational(BigRational::one());
+        let num = self.poly_pow(&base.num, exponent)?;
+        let den = self.poly_pow(&base.den, exponent)?;
+        self.value(num, den)
+    }
+
+    /// Add two sums.
+    fn poly_add(&mut self, left: &Poly, right: &Poly) -> Result<Poly, Undecidable> {
+        let mut sum = left.clone();
+        for (monomial, coefficient) in right {
+            self.spend(1)?;
+            self.insert_term(&mut sum, monomial.clone(), coefficient.clone())?;
+        }
+        bound_terms(&sum)?;
+        Ok(sum)
+    }
+
+    /// Multiply two sums, term by term.
+    ///
+    /// The charge is the count of terms of the one sum times the count of terms
+    /// of the other, so the common denominators of the rational-function form
+    /// stay inside the work bound.
+    fn poly_mul(&mut self, left: &Poly, right: &Poly) -> Result<Poly, Undecidable> {
+        // A factor of 1 is the common case of the form: every value whose
+        // denominator is one term carries this exact sum. The short cut keeps an
+        // ordinary answer at the cost it had before the rational-function form.
+        if is_one(left) {
+            return Ok(right.clone());
+        }
+        if is_one(right) {
+            return Ok(left.clone());
+        }
+        self.spend(left.len().saturating_mul(right.len()))?;
+        let mut product = Poly::new();
+        for (left_monomial, left_coefficient) in left {
+            for (right_monomial, right_coefficient) in right {
+                let (monomial, coefficient) = self.multiply_terms(
+                    left_monomial,
+                    left_coefficient,
+                    right_monomial,
+                    right_coefficient,
+                )?;
+                self.insert_term(&mut product, monomial, coefficient)?;
+                bound_terms(&product)?;
+            }
+        }
+        Ok(product)
+    }
+
+    /// Raise one sum to a power of one or more.
+    fn poly_pow(&mut self, base: &Poly, exponent: i64) -> Result<Poly, Undecidable> {
+        if exponent <= 0 {
+            return Ok(one_poly());
+        }
+        if let Some((monomial, coefficient)) = one_term(base) {
+            self.spend(monomial.len().saturating_add(1))?;
+            let (monomial, coefficient) = self.power_of_term(&monomial, &coefficient, exponent)?;
+            return Ok(term(monomial, coefficient));
+        }
+        let mut result = one_poly();
         let mut square = base.clone();
         let mut left = exponent;
         while left > 0 {
             if left % 2 == 1 {
-                result = self.multiply(&result, &square)?;
+                result = self.poly_mul(&result, &square)?;
             }
             left /= 2;
             if left > 0 {
-                square = self.multiply(&square, &square)?;
+                square = self.poly_mul(&square, &square)?;
             }
         }
         Ok(result)
-    }
-
-    /// Build the reciprocal of a canonical value.
-    fn reciprocal(&mut self, value: &Canon) -> Result<Canon, Undecidable> {
-        let sum = self.sum_of(value)?;
-        if sum.is_empty() {
-            return Err(Undecidable::new("a division by zero"));
-        }
-        if let Some((monomial, coefficient)) = one_term(&sum) {
-            self.spend(monomial.len().saturating_add(1))?;
-            return self.power_of_term(&monomial, &coefficient, -1);
-        }
-        let (content, primitive) = self.content_normalize(&sum)?;
-        let mut monomial = Monomial::new();
-        let inverse = reciprocal_of(&content)?;
-        let mut coefficient = self.bounded(inverse)?;
-        let atom = Atom::Inverse(Box::new(from_sum(primitive)));
-        let extra = self.add_atom(&mut monomial, &mut coefficient, &atom, 1)?;
-        self.finish_terms(monomial, coefficient, extra.into_iter().collect())
     }
 
     /// Apply a whitelisted function to canonical arguments.
@@ -581,9 +679,10 @@ impl Work {
         let name = if name == "ln" { "log" } else { name };
         if arguments.len() == 1 {
             if name == "sqrt"
-                && let Some(value) = arguments.first().and_then(integer_value)
+                && let Some(Canon::Rational(value)) = arguments.first()
             {
-                return self.root_of_integer(&value, arguments);
+                let value = value.clone();
+                return self.root_of_rational(&value, arguments);
             }
             if name == "exp"
                 && let Some(argument) = arguments.first()
@@ -605,10 +704,14 @@ impl Work {
         Ok(from_sum(term(monomial, BigRational::one())))
     }
 
-    /// Reduce `sqrt(n)` for a whole number `n` into `outside * sqrt(radicand)`.
-    fn root_of_integer(
+    /// Reduce `sqrt(p/q)` into `sqrt(p*q)/q` (M2 review 3, findings 9 and 11).
+    ///
+    /// `p/q` is in lowest terms with a positive `q`, so `p*q` is a whole number
+    /// and the identity is exact. `sqrt(1/2)` therefore becomes `sqrt(2)/2` and
+    /// `sqrt(4/9)` becomes `2/3`, which are the two forms 1.0 answers True for.
+    fn root_of_rational(
         &mut self,
-        value: &BigInt,
+        value: &BigRational,
         arguments: Vec<Canon>,
     ) -> Result<Canon, Undecidable> {
         if value.is_negative() {
@@ -619,15 +722,38 @@ impl Work {
         if value.is_zero() {
             return Ok(Canon::Rational(BigRational::zero()));
         }
+        let denominator = value.denom().clone();
+        let radicand = value.numer() * &denominator;
+        self.bounded_int(&radicand)?;
+        let root = self.root_of_integer(&radicand, arguments)?;
+        if denominator.is_one() {
+            return Ok(root);
+        }
+        let scale = BigRational::new(BigInt::one(), denominator);
+        let scale = Canon::Rational(self.bounded(scale)?);
+        self.multiply(&root, &scale)
+    }
+
+    /// Reduce `sqrt(n)` for a whole number `n` into `outside * sqrt(radicand)`.
+    fn root_of_integer(
+        &mut self,
+        value: &BigInt,
+        arguments: Vec<Canon>,
+    ) -> Result<Canon, Undecidable> {
+        if value.is_negative() {
+            return Ok(atom_value(Atom::Call("sqrt".to_string(), arguments)));
+        }
+        if value.is_zero() {
+            return Ok(Canon::Rational(BigRational::zero()));
+        }
         self.spend(1)?;
         let (outside, radicand) = extract_square(value)?;
         let mut monomial = Monomial::new();
         let mut coefficient = self.bounded(BigRational::from_integer(outside))?;
-        let mut extra = None;
         if !radicand.is_one() {
-            extra = self.add_atom(&mut monomial, &mut coefficient, &Atom::Sqrt(radicand), 1)?;
+            self.add_atom(&mut monomial, &mut coefficient, &Atom::Sqrt(radicand), 1)?;
         }
-        self.finish_terms(monomial, coefficient, extra.into_iter().collect())
+        Ok(from_sum(term(monomial, coefficient)))
     }
 
     /// Add one term into a sum, and drop a term whose coefficient cancels to zero.
@@ -653,27 +779,21 @@ impl Work {
         Ok(())
     }
 
-    /// Multiply two terms into one value.
-    ///
-    /// The value is one term, unless [`Work::add_inverse`] took a divisor back
-    /// into the numerator. Then it is that term times a sum.
+    /// Multiply two terms into one term.
     fn multiply_terms(
         &mut self,
         left_monomial: &Monomial,
         left_coefficient: &BigRational,
         right_monomial: &Monomial,
         right_coefficient: &BigRational,
-    ) -> Result<Canon, Undecidable> {
+    ) -> Result<(Monomial, BigRational), Undecidable> {
         let mut monomial = left_monomial.clone();
         let product = left_coefficient * right_coefficient;
         let mut coefficient = self.bounded(product)?;
-        let mut extras = Vec::new();
         for (atom, exponent) in right_monomial {
-            if let Some(extra) = self.add_atom(&mut monomial, &mut coefficient, atom, *exponent)? {
-                extras.push(extra);
-            }
+            self.add_atom(&mut monomial, &mut coefficient, atom, *exponent)?;
         }
-        self.finish_terms(monomial, coefficient, extras)
+        Ok((monomial, coefficient))
     }
 
     /// Raise one term to an integer power.
@@ -682,40 +802,16 @@ impl Work {
         monomial: &Monomial,
         coefficient: &BigRational,
         exponent: i64,
-    ) -> Result<Canon, Undecidable> {
+    ) -> Result<(Monomial, BigRational), Undecidable> {
         let mut out_monomial = Monomial::new();
         let mut out_coefficient = self.rational_power(coefficient, exponent)?;
-        let mut extras = Vec::new();
         for (atom, atom_exponent) in monomial {
             let scaled = atom_exponent
                 .checked_mul(exponent)
                 .ok_or_else(|| Undecidable::new("an exponent past the size bound"))?;
-            if let Some(extra) =
-                self.add_atom(&mut out_monomial, &mut out_coefficient, atom, scaled)?
-            {
-                extras.push(extra);
-            }
+            self.add_atom(&mut out_monomial, &mut out_coefficient, atom, scaled)?;
         }
-        self.finish_terms(out_monomial, out_coefficient, extras)
-    }
-
-    /// Build one term, times every factor its atoms took out of it.
-    ///
-    /// [`Work::add_inverse`] is the one rule that takes a factor out: a negative
-    /// power of a reciprocal, and a merge of two reciprocals, are both a sum and
-    /// not an atom. Every other atom takes nothing out, so the common path
-    /// multiplies nothing.
-    fn finish_terms(
-        &mut self,
-        monomial: Monomial,
-        coefficient: BigRational,
-        extras: Vec<Canon>,
-    ) -> Result<Canon, Undecidable> {
-        let mut value = from_sum(term(monomial, coefficient));
-        for extra in extras {
-            value = self.multiply(&value, &extra)?;
-        }
-        Ok(value)
+        Ok((out_monomial, out_coefficient))
     }
 
     /// Multiply one atom power into a monomial, and move every square into the
@@ -724,39 +820,29 @@ impl Work {
     /// A monomial holds at most one [`Atom::Sqrt`], and that atom always has
     /// exponent 1. `sqrt(2)**3` moves a factor 2 out, and `sqrt(2)*sqrt(3)`
     /// becomes `sqrt(6)`. A monomial holds at most one [`Atom::Exp`] too, and a
-    /// power of it moves into its argument. A monomial holds at most one
-    /// [`Atom::Inverse`] too, with exponent 1.
-    ///
-    /// The returned value is a factor the caller multiplies into the term. Only
-    /// [`Work::add_inverse`] returns one; see [`Work::finish_terms`].
+    /// power of it moves into its argument.
     fn add_atom(
         &mut self,
         monomial: &mut Monomial,
         coefficient: &mut BigRational,
         atom: &Atom,
         exponent: i64,
-    ) -> Result<Option<Canon>, Undecidable> {
+    ) -> Result<(), Undecidable> {
         if exponent == 0 {
-            return Ok(None);
+            return Ok(());
         }
         if let Atom::Exp(inner) = atom {
             let inner = inner.as_ref().clone();
-            self.add_exp(monomial, &inner, exponent)?;
-            return Ok(None);
-        }
-        if let Atom::Inverse(divisor) = atom {
-            let divisor = divisor.as_ref().clone();
-            return self.add_inverse(monomial, &divisor, exponent);
+            return self.add_exp(monomial, &inner, exponent);
         }
         let Atom::Sqrt(radicand) = atom else {
-            insert_atom(monomial, atom, exponent)?;
-            return Ok(None);
+            return insert_atom(monomial, atom, exponent);
         };
         let (squares, rest) = exponent.div_mod_floor(&2);
         let factor = self.int_power(radicand, squares)?;
         *coefficient = self.bounded(&*coefficient * factor)?;
         if rest == 0 {
-            return Ok(None);
+            return Ok(());
         }
         let present = monomial.iter().find_map(|(key, _)| match key {
             Atom::Sqrt(value) => Some(value.clone()),
@@ -764,7 +850,7 @@ impl Work {
         });
         let Some(present) = present else {
             monomial.insert(Atom::Sqrt(radicand.clone()), 1);
-            return Ok(None);
+            return Ok(());
         };
         monomial.remove(&Atom::Sqrt(present.clone()));
         let (outside, merged) = extract_square(&(present * radicand))?;
@@ -772,71 +858,7 @@ impl Work {
         if !merged.is_one() {
             monomial.insert(Atom::Sqrt(merged), 1);
         }
-        Ok(None)
-    }
-
-    /// Multiply `(1/divisor)**exponent` into a monomial.
-    ///
-    /// A monomial holds at most one [`Atom::Inverse`] and that atom always has
-    /// exponent 1, so one value has one canonical form (M2 review 2, findings 13
-    /// and 17):
-    ///
-    /// - A power of the atom moves into the divisor: `(1/(x+1))**2` and
-    ///   `1/(x+1)**2` are one value.
-    /// - Two atoms in one monomial multiply their divisors:
-    ///   `1/(x-2) * 1/(x+2)` and `1/((x-2)*(x+2))` are one value.
-    ///
-    /// The rule multiplies two divisors and it never cancels a common factor, so
-    /// `(x**2-1)/(x-1)` and `x+1` stay two values, as the module header says.
-    ///
-    /// The new divisor goes back through [`Work::reciprocal`], which normalizes
-    /// the content and picks the narrowest form again. A negative exponent
-    /// therefore takes the divisor back into the numerator, where it is a sum and
-    /// not an atom; the function returns that sum as a factor for the caller.
-    fn add_inverse(
-        &mut self,
-        monomial: &mut Monomial,
-        divisor: &Canon,
-        exponent: i64,
-    ) -> Result<Option<Canon>, Undecidable> {
-        if exponent == 0 {
-            return Ok(None);
-        }
-        self.spend(1)?;
-        if exponent < 0 {
-            let magnitude = exponent
-                .checked_neg()
-                .ok_or_else(|| Undecidable::new("an exponent past the size bound"))?;
-            return Ok(Some(self.raise(divisor, magnitude)?));
-        }
-        let present = monomial.iter().find_map(|(key, power)| match key {
-            Atom::Inverse(value) => Some((value.as_ref().clone(), *power)),
-            _ => None,
-        });
-        let Some((other, other_exponent)) = present else {
-            if exponent == 1 {
-                monomial.insert(Atom::Inverse(Box::new(divisor.clone())), 1);
-                return Ok(None);
-            }
-            let power = self.raise(divisor, exponent)?;
-            return Ok(Some(self.reciprocal(&power)?));
-        };
-        monomial.remove(&Atom::Inverse(Box::new(other.clone())));
-        let left = self.raise(&other, other_exponent)?;
-        let right = self.raise(divisor, exponent)?;
-        let product = self.multiply(&left, &right)?;
-        Ok(Some(self.reciprocal(&product)?))
-    }
-
-    /// Raise a canonical value to an integer power, and keep the first power.
-    ///
-    /// `power` reaches the same value for exponent 1, through one multiplication
-    /// by 1. The short cut keeps the common merge of two reciprocals cheap.
-    fn raise(&mut self, value: &Canon, exponent: i64) -> Result<Canon, Undecidable> {
-        if exponent == 1 {
-            return Ok(value.clone());
-        }
-        self.power(value, exponent)
+        Ok(())
     }
 
     /// Multiply `e**(exponent * inner)` into a monomial.
@@ -846,11 +868,12 @@ impl Work {
     /// [`Atom::E`] instead, so `exp(x)*exp(-x)` is 1 and `exp(x)*exp(2-x)` is
     /// `e**2`.
     ///
-    /// The whole-number PART of the argument gives [`Atom::E`] too, so
-    /// `e**(x+2)`, `e**2 * e**x`, and `e**x * e**2` are one value and
-    /// `e**(x+2)` and `e**(x+3)` are two values (M2 review 2, finding 8).
-    /// Without the split the two spellings of the exponent law hold two atoms
-    /// that never rejoin.
+    /// The INTEGER PART of the rational constant term gives [`Atom::E`] too, so
+    /// `e**(x+2)` and `e**2 * e**x` are one value, and `e**(5/2)` and
+    /// `e**2 * e**(1/2)` are one value (M2 review 3, finding 12). The integer
+    /// part is the floor, not the truncation: the constant that stays behind is
+    /// then always in the half-open range 0 to 1, so `e**(-5/2)`,
+    /// `e**-3 * e**(1/2)`, and `e**-2 * e**(-1/2)` are one value too.
     fn add_exp(
         &mut self,
         monomial: &mut Monomial,
@@ -877,21 +900,31 @@ impl Work {
             }
             None => scaled,
         };
-        // A collection carries no arithmetic, so it keeps the whole argument.
-        let Ok(mut argument) = self.sum_of(&total) else {
+        // A collection carries no arithmetic, and a quotient carries no constant
+        // term of its own, so both keep the whole argument.
+        let Ok(argument) = self.frac_of(&total) else {
             monomial.insert(Atom::Exp(Box::new(total)), 1);
             return Ok(());
         };
+        if !is_one(&argument.den) {
+            monomial.insert(Atom::Exp(Box::new(total)), 1);
+            return Ok(());
+        }
+        let mut argument = argument.num;
         let constant = Monomial::new();
-        let whole = argument
-            .get(&constant)
-            .filter(|value| value.is_integer())
-            .map(BigRational::to_integer)
-            .as_ref()
-            .and_then(BigInt::to_i64);
-        if let Some(whole) = whole {
-            argument.remove(&constant);
-            insert_atom(monomial, &Atom::E, whole)?;
+        if let Some(value) = argument.get(&constant).cloned() {
+            let whole = value.floor().to_integer();
+            if let Some(step) = whole.to_i64() {
+                let rest = self.bounded(value - BigRational::from_integer(whole))?;
+                if rest.is_zero() {
+                    argument.remove(&constant);
+                } else {
+                    argument.insert(constant, rest);
+                }
+                if step != 0 {
+                    insert_atom(monomial, &Atom::E, step)?;
+                }
+            }
         }
         if !argument.is_empty() {
             monomial.insert(Atom::Exp(Box::new(from_sum(argument))), 1);
@@ -993,15 +1026,141 @@ impl Work {
         Ok((content, primitive))
     }
 
-    /// Promote a canonical form back into the internal sum of terms.
+    /// Build the canonical value of one numerator over one denominator.
+    fn value(&mut self, num: Poly, den: Poly) -> Result<Canon, Undecidable> {
+        let quotient = self.quotient(num, den)?;
+        Ok(from_frac(quotient))
+    }
+
+    /// Put one numerator over one denominator into the rational-function form.
+    ///
+    /// The rules of the module header run here, in order: a denominator of one
+    /// term folds into the numerator as negative exponents; every negative
+    /// exponent of a true quotient clears into the denominator; and the
+    /// denominator is content- and sign-normalized with the scale moved into the
+    /// numerator. The step cancels no polynomial common factor.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`Undecidable`] for a zero denominator, and for a value past the
+    /// work, term, or size bound.
+    fn quotient(&mut self, num: Poly, den: Poly) -> Result<Frac, Undecidable> {
+        if den.is_empty() {
+            return Err(Undecidable::new("a division by zero"));
+        }
+        if num.is_empty() {
+            return Ok(Frac {
+                num,
+                den: one_poly(),
+            });
+        }
+        if is_one(&den) {
+            return Ok(Frac { num, den });
+        }
+        // Rule 3. A true quotient carries no common monomial factor and no
+        // negative exponent. `1/x * 1/(x+h)` therefore reaches the form of
+        // `1/(x*(x+h))` (M2 review 3, finding 10). The step covers rule 2 as
+        // well: a denominator of one term divides itself away, and the fold
+        // below finishes it.
+        let common = common_monomial(&num, &den);
+        let (num, den) = if common.is_empty() {
+            (num, den)
+        } else {
+            self.spend(common.len())?;
+            let (monomial, coefficient) = self.power_of_term(&common, &BigRational::one(), -1)?;
+            let factor = term(monomial, coefficient);
+            let num = self.poly_mul(&num, &factor)?;
+            let den = self.poly_mul(&den, &factor)?;
+            (num, den)
+        };
+        if one_term(&den).is_some() {
+            // Rule 2. A denominator of one term is negative exponents of the
+            // numerator, so `1/x` stays the monomial `x**-1`. A product of two
+            // sums of two terms or more reaches this line too, when two atoms
+            // merge: `(sqrt(2)+1)*(sqrt(2)-1)` is 1.
+            return self.fold_monomial_denominator(num, &den);
+        }
+        // Rule 4. The denominator holds coprime integer coefficients and a
+        // positive greatest monomial; the scale moves into the numerator.
+        let (content, primitive) = self.content_normalize(&den)?;
+        let scale = reciprocal_of(&content)?;
+        let scale = self.bounded(scale)?;
+        let num = self.poly_mul(&num, &term(Monomial::new(), scale))?;
+        if num.is_empty() {
+            return Ok(Frac {
+                num,
+                den: one_poly(),
+            });
+        }
+        // Rule 5. A numerator that is a rational multiple of the denominator is
+        // that rational: `(x+1)/(x+1)` is 1 and `(2*x+2)/(x+1)` is 2. The test
+        // compares the two monomial keys first and the two coefficient ratios
+        // after, so it costs no division of one polynomial by another.
+        if let Some(scalar) = self.scalar_ratio(&num, &primitive)? {
+            return Ok(Frac {
+                num: term(Monomial::new(), scalar),
+                den: one_poly(),
+            });
+        }
+        Ok(Frac {
+            num,
+            den: primitive,
+        })
+    }
+
+    /// Read the rational `r` of `num = r * den`, when there is one.
+    ///
+    /// The two sums must hold the same monomials, and every coefficient of the
+    /// one must be the same multiple of the coefficient of the other. The test
+    /// runs no polynomial division: it is the numerator half of the content
+    /// normalization of rule 4.
+    fn scalar_ratio(&mut self, num: &Poly, den: &Poly) -> Result<Option<BigRational>, Undecidable> {
+        if num.len() != den.len() || !num.keys().eq(den.keys()) {
+            return Ok(None);
+        }
+        let mut ratio: Option<BigRational> = None;
+        for (left, right) in num.values().zip(den.values()) {
+            self.spend(1)?;
+            match &ratio {
+                None => ratio = Some(self.bounded(left / right)?),
+                Some(present) => {
+                    let scaled = self.bounded(present * right)?;
+                    if &scaled != left {
+                        return Ok(None);
+                    }
+                }
+            }
+        }
+        Ok(ratio)
+    }
+
+    /// Fold a denominator of one term into the numerator as negative exponents.
+    ///
+    /// Rule 2 of the module header. `1/x` therefore stays the monomial `x**-1`,
+    /// and `1/sqrt(2)` stays `sqrt(2)/2`, because the reciprocal of the term goes
+    /// through the same atom laws as every other product.
+    fn fold_monomial_denominator(&mut self, num: Poly, den: &Poly) -> Result<Frac, Undecidable> {
+        let Some((monomial, coefficient)) = one_term(den) else {
+            return Err(Undecidable::new("a division by zero"));
+        };
+        self.spend(monomial.len().saturating_add(1))?;
+        let (monomial, coefficient) = self.power_of_term(&monomial, &coefficient, -1)?;
+        let num = self.poly_mul(&num, &term(monomial, coefficient))?;
+        Ok(Frac {
+            num,
+            den: one_poly(),
+        })
+    }
+
+    /// Promote a canonical form back into the internal quotient of two sums.
     ///
     /// # Errors
     ///
     /// Returns [`Undecidable`] for a collection: a tuple, a set, a list, a range,
     /// and a labeled value carry no arithmetic.
-    fn sum_of(&mut self, value: &Canon) -> Result<Poly, Undecidable> {
-        match value {
-            Canon::Rational(number) => Ok(term(Monomial::new(), number.clone())),
+    fn frac_of(&mut self, value: &Canon) -> Result<Frac, Undecidable> {
+        let num = match value {
+            Canon::Rational(number) => term(Monomial::new(), number.clone()),
             Canon::Radical(parts) => {
                 let mut sum = Poly::new();
                 for (basis, coefficient) in parts {
@@ -1017,19 +1176,31 @@ impl Work {
                     }
                     self.insert_term(&mut sum, monomial, coefficient.clone())?;
                 }
-                Ok(sum)
+                sum
             }
-            Canon::Poly(parts) => Ok(parts.clone()),
+            Canon::Poly(parts) => parts.clone(),
+            Canon::Value { num, den } => {
+                return Ok(Frac {
+                    num: num.clone(),
+                    den: den.clone(),
+                });
+            }
             Canon::Func(name, arguments) => {
                 let mut monomial = Monomial::new();
                 monomial.insert(Atom::Call(name.clone(), arguments.clone()), 1);
-                Ok(term(monomial, BigRational::one()))
+                term(monomial, BigRational::one())
             }
             Canon::Tuple(_) | Canon::Set(_) | Canon::List(_) | Canon::Interval { .. } => {
-                Err(Undecidable::new("arithmetic on a collection"))
+                return Err(Undecidable::new("arithmetic on a collection"));
             }
-            Canon::Assign { .. } => Err(Undecidable::new("arithmetic on a labeled value")),
-        }
+            Canon::Assign { .. } => {
+                return Err(Undecidable::new("arithmetic on a labeled value"));
+            }
+        };
+        Ok(Frac {
+            num,
+            den: one_poly(),
+        })
     }
 }
 
@@ -1042,9 +1213,9 @@ fn atom_value(atom: Atom) -> Canon {
 
 /// Multiply a plain atom power into a monomial, and drop a zero exponent.
 ///
-/// The atom is a plain one: a variable, a function call, `pi`, or `e`. The three
-/// atoms that carry a law of their own ([`Atom::Sqrt`], [`Atom::Exp`], and
-/// [`Atom::Inverse`]) go through [`Work::add_atom`] instead.
+/// The atom is a plain one: a variable, a function call, `pi`, or `e`. The two
+/// atoms that carry a law of their own ([`Atom::Sqrt`] and [`Atom::Exp`]) go
+/// through [`Work::add_atom`] instead.
 fn insert_atom(monomial: &mut Monomial, atom: &Atom, exponent: i64) -> Result<(), Undecidable> {
     let previous = monomial.get(atom).copied().unwrap_or(0);
     let total = previous
@@ -1067,6 +1238,87 @@ fn term(monomial: Monomial, coefficient: BigRational) -> Poly {
     sum
 }
 
+/// Build the sum that holds the number 1.
+fn one_poly() -> Poly {
+    term(Monomial::new(), BigRational::one())
+}
+
+/// Whether a sum is the number 1.
+fn is_one(sum: &Poly) -> bool {
+    match single_term(sum) {
+        Some((monomial, coefficient)) => monomial.is_empty() && coefficient.is_one(),
+        None => false,
+    }
+}
+
+/// Build the greatest monomial that divides every term of two sums.
+///
+/// The monomial is the monomial content of the quotient, and it carries each
+/// atom to the LEAST power any term of the two sums gives it. A term that holds
+/// no such atom gives it the power 0, so the result carries a positive power
+/// only when every term of both sums holds that atom.
+///
+/// The monomial content is the reason the form is canonical. Rule 3 without it
+/// clears the negative exponents but keeps a common factor: `4/s - 5/s**2 +
+/// 2/(s-3)` reaches the denominator `s**3-3*s**2` and the same value written
+/// `(2*s**3 + 4*s**2*(s-3) - 5*s*(s-3))/(s**3*(s-3))` reaches `s**4-3*s**3`. The
+/// content takes the factor `s` out of the second one and the two meet.
+///
+/// The step takes a MONOMIAL content only. It runs no polynomial division and it
+/// takes no polynomial factor, so `(x**2-1)/(x-1)` keeps its denominator.
+fn common_monomial(num: &Poly, den: &Poly) -> Monomial {
+    let mut common = least_of([num, den]);
+    // [`Atom::Sqrt`] and [`Atom::Exp`] never carry a negative exponent:
+    // `1/sqrt(2)` is `sqrt(2)/2` and `1/e**x` is `e**(-x)`. A numerator therefore
+    // cannot hold one of them back, and the content of the denominator alone is
+    // the right content for those two atoms. Without this line
+    // `1/(sqrt(2)*(x+1))` and `1/sqrt(2) * 1/(x+1)` are two forms of one value.
+    for (atom, exponent) in least_of([den]) {
+        if exponent > 0 && matches!(atom, Atom::Sqrt(_) | Atom::Exp(_)) {
+            common.insert(atom, exponent);
+        }
+    }
+    common
+}
+
+/// Build the monomial of the least power of each atom of a group of sums.
+fn least_of<'a, I: IntoIterator<Item = &'a Poly>>(sums: I) -> Monomial {
+    let mut least: Option<Monomial> = None;
+    for sum in sums {
+        for monomial in sum.keys() {
+            least = Some(match least {
+                None => monomial.clone(),
+                Some(present) => least_powers(&present, monomial),
+            });
+        }
+    }
+    least.unwrap_or_default()
+}
+
+/// Build the monomial of the least power of each atom of two monomials.
+///
+/// An atom that one monomial does not hold has the power 0 there, so it survives
+/// only with a negative power. A power of 0 leaves the result.
+fn least_powers(left: &Monomial, right: &Monomial) -> Monomial {
+    let mut least = Monomial::new();
+    for (atom, exponent) in left {
+        let other = right.get(atom).copied().unwrap_or(0);
+        let value = (*exponent).min(other);
+        if value != 0 {
+            least.insert(atom.clone(), value);
+        }
+    }
+    for (atom, exponent) in right {
+        if left.contains_key(atom) {
+            continue;
+        }
+        if *exponent < 0 {
+            least.insert(atom.clone(), *exponent);
+        }
+    }
+    least
+}
+
 /// Read the only term of a sum, when the sum has exactly one.
 fn single_term(sum: &Poly) -> Option<(&Monomial, &BigRational)> {
     if sum.len() == 1 {
@@ -1081,14 +1333,6 @@ fn single_term(sum: &Poly) -> Option<(&Monomial, &BigRational)> {
 /// The copy frees the borrow of the sum, so the caller keeps the work budget.
 fn one_term(sum: &Poly) -> Option<(Monomial, BigRational)> {
     single_term(sum).map(|(monomial, coefficient)| (monomial.clone(), coefficient.clone()))
-}
-
-/// Read the whole-number value of a canonical form, when it is one.
-fn integer_value(value: &Canon) -> Option<BigInt> {
-    match value {
-        Canon::Rational(number) if number.is_integer() => Some(number.to_integer()),
-        _ => None,
-    }
 }
 
 /// Refuse a sum that goes past the term bound.
@@ -1168,10 +1412,24 @@ fn checked(value: Option<u128>) -> Result<u128, Undecidable> {
     value.ok_or_else(|| Undecidable::new("a radicand past the factoring bound"))
 }
 
-/// Demote a sum of terms to the narrowest canonical variant that holds it.
+/// Demote a quotient to the narrowest canonical variant that holds it.
 ///
 /// The demotion is total and deterministic, which is what makes equality of two
 /// canonical forms an equality of two values.
+fn from_frac(quotient: Frac) -> Canon {
+    if quotient.num.is_empty() {
+        return Canon::Rational(BigRational::zero());
+    }
+    if is_one(&quotient.den) {
+        return from_sum(quotient.num);
+    }
+    Canon::Value {
+        num: quotient.num,
+        den: quotient.den,
+    }
+}
+
+/// Demote a sum of terms to the narrowest canonical variant that holds it.
 fn from_sum(sum: Poly) -> Canon {
     if sum.is_empty() {
         return Canon::Rational(BigRational::zero());
