@@ -89,12 +89,25 @@ here because A2 must reject these spellings at authoring time as well.
 | `2.5½` | `a fraction stands after a number that is no whole part` | The same rule. A whole part is a bare whole number, and a decimal is not one (round 2, finding #2). |
 | `1/2 ½` | `a fraction stands after a number that is no whole part` | The same rule. The term in front is the fraction `1/2`, so two fractions side by side take no reading (round 2, finding #2). |
 | `x/1 000` | `a space-grouped number stands after a factor` | A space-grouped number is a whole answer or a full operand at the top level. After a factor it takes no reading, and the old parser read `x/1 * 0` (round 2, finding #11). |
+| `2\frac{x+1}{2}` | `a mixed number whose fraction is not proper` | A `\frac` after a number is the fractional part of a mixed number, and a mixed number needs two plain digit runs. A brace body that holds an expression takes no reading (round 3, the structural ruling). |
+| `2\frac{+1}{2}` | `a mixed number whose fraction is not proper` | The same rule. A sign is not a plain digit run, so `+1` is no numerator of a mixed number. |
+| `√√16` | `a root with no argument` | The glyph `√` is a lexer token that takes one primary. A second `√` is no primary, so the outer root has no argument (round 3, the structural ruling). |
+| `2^50%` | `an exponent that is not a whole number` | A `%` is a postfix on the primary it follows, so the exponent is 1/2 and not a whole number. The old string rewrite wrote `2**(50)/100`, which is 5 and grades a wrong answer correct (round 3, findings #3, #4). |
+| `50%%` | `two percent signs on one number` | One primary takes at most one percent postfix. Two readings stand behind the second sign — 0.5% and 0.005 — and the grammar picks neither. |
+| `1,500%` | `a comma-grouped number stands in a longer answer` | The comma thousands group is a FULL match of the whole string (1.0 `_COMMA_GROUPS_RE`). A grouped number inside a longer answer keeps two readings, the number 1500 and the tuple `1, 500` (round 3, finding #6). |
+| `3 + 1,500` | `a comma-grouped number stands in a longer answer` | The same rule, without a percent. |
+| `1 500%` | `two numbers stand side by side` | The space thousands group is a full match too, so `1 500` inside a longer answer is two numbers. The old percent rewrite inserted a bracket that bypassed the refusal, and `1 500%` then meant two different values (round 3, finding #6). |
 
 The mirror spellings `x 3 1/2`, `2.5 1/2`, `1/2 1/2`, and `3 3/2` take the round 1 refusal
 `two numbers stand side by side`, so the `a b/c` spelling and the token spelling of one
 shape give one answer. `crates/core/tests/answer_parse.rs` pins every reason above as a
 literal, and `crates/core/tests/answer_divergence.rs` pins the `x/1 000` refusal and the
 `2\frac{3}{2}` refusal.
+
+None of the fifteen answers above is a corpus answer, so the split of the section below
+does not move. Re-verified on 2026-08-27, after FIXM2g, FIXM2h, and FIXM2i: 3,492 corpus
+answers, 3,227 parsed, 265 refused, and the committed `undecidable_1_0.jsonl` holds the
+same 265 rows as before round 3.
 
 ### The refusal reason the grammar gives
 

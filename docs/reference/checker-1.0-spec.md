@@ -115,6 +115,25 @@ eq('5',    'x=5',    numeric) = False        | src = 'x=5'
 eq('2*x+1','y=2x+1', expression) = False     | src = 'y=2x+1'
 ```
 
+**2.0 runs no rewrite of this shape.** Everything above describes 1.0, and it stays the
+description of 1.0. Review round 3 (`docs/reviews/M2-review-3.md`, findings #1–#4, #6, #8)
+measured what a string rewrite costs: a `\frac` with one space inside a brace fell out of
+the fraction spelling and became a product, a `%` wrote the bare text `(n)/100` which
+re-associated under `/` and under `**`, and a product sign written in front of `\sqrt`
+landed on the last letter of `\cdot`. Every one of those graded a wrong answer correct (C4).
+
+`cadus_core::answer::normalize` therefore keeps SIX whole-string steps and owns no
+construct: one outer `$…$` pair, trailing periods, whitespace collapse, the casefolded
+string key, the comma or space thousands group on a full match, and the one-character
+Unicode table of operators and constants. Every other item of the table is a token of
+`cadus_core::answer::lexer`, and `cadus_core::answer::parse` builds the node from the
+token: `\frac{A}{B}` (brace bodies lexed recursively, so whitespace inside a brace changes
+nothing), `\sqrt{A}`, `\sqrt A`, `^{A}`, `\cdot`, `\times`, `\left` and `\right` (both
+dropped), `%` as a postfix on the preceding primary, the vulgar glyphs, `√`, the
+superscript digits, and `°`. A token carries its own structure, so no later pass
+re-associates it. `docs/plans/M2.md`, section "Revised after review (round 3)", holds the
+ruling.
+
 ### 2.3 Rung order in `answers_equivalent` (`sympy_check.py:367-400`)
 
 ```
@@ -807,6 +826,17 @@ keeps the `((a)/(b))` rewrite of the row above.
 > `expression_symbolic` rows. The **three-digit numerator rule** of finding #7 narrows the
 > mixed-number production — `1 000/3` is undecidable — and it costs no corpus row.
 > `docs/reference/undecidable-answers.md` holds the 265 refusals, group by group.
+>
+> **Re-measured, 2026-08-27 (after FIXM2g, FIXM2h, and FIXM2i).** The split does not move:
+> 3,492 answers, 3,227 parsed, 265 refused, and the committed `undecidable_1_0.jsonl` is
+> unchanged. Round 3 moved every construct out of `normalize` and into the lexer (see
+> section 2.2), and the move changed which TREE an answer builds, not which answers the
+> grammar accepts. The new refusals of round 3 are all shapes the grammar refused before,
+> for a reason the table above already counts: `2\frac{x+1}{2}` and `2\frac{+1}{2}` are "a
+> mixed number whose fraction is not proper", `√√16` is "a root with no argument", `2^50%`
+> is "an exponent that is not a whole number", `50%%` is "two percent signs on one number",
+> `1,500%` and `3 + 1,500` are "a comma-grouped number stands in a longer answer", and
+> `1 500%` is "two numbers stand side by side". None of the seven is a corpus answer.
 
 Within the 919 expression rows, 882 (96.0%) use only the whitelisted function set. The 37
 outliers are: `log_b(x)` / `log_2(x)` / `log_3(x)` pseudo-functions (a subscripted base — 14

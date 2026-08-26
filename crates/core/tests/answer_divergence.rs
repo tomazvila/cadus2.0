@@ -181,8 +181,10 @@ fn a_rounded_decimal_is_not_the_exact_value() {
 #[test]
 fn a_decimal_of_ten_significant_digits_is_not_the_value_it_rounds() {
     // The `significant_decimal` generator family of spec section 9.3, added in
-    // FIXM2f. It is the largest documented divergence of the generated set: 154
-    // of the 156 pairs under the reason "no float tolerance rung (D6)".
+    // FIXM2f. It is the largest documented divergence of the generated set: 238
+    // of the 240 pairs under the reason "no float tolerance rung (D6)". FIXM2i
+    // widened the family from a rational and a radical to every irrational
+    // number the grammar holds, so `pi` and `e` joined the roots.
     //
     // 1.0: True for all five, on the 1e-6 `evalf` rung
     // (`sympy_check.py:345-352`). 2.0: False, because a decimal is an exact
@@ -554,6 +556,19 @@ fn the_grammar_rulings_of_review_round_3_move_the_construct_verdicts() {
         "an exponent that is not a whole number",
     );
     assert_undecidable("0.5", "50%%", N, "two percent signs on one number");
+    // The glyph `√` is a token that takes one primary, and a second `√` is no
+    // primary, so a doubled radical claims no verdict. 1.0: False, because the
+    // radical pattern leaves the outer glyph and SymPy reads a bare name
+    // (FIXM2i, `docs/reference/undecidable-answers.md`).
+    assert_undecidable("2", "√√16", E, "a root with no argument");
+    // The `+` of a brace body is no plain digit run, so the fractional part of
+    // the mixed number takes no reading. 1.0: False.
+    assert_undecidable(
+        "5/2",
+        "2\\frac{+1}{2}",
+        E,
+        "a mixed number whose fraction is not proper",
+    );
     //
     // 3. A thousands group is one value on a full match of the whole answer and
     //    nowhere else (finding #6). Round 2 of 2.0 read `1 500%` as 15 and
@@ -608,6 +623,66 @@ fn the_grammar_rulings_of_review_round_3_move_the_construct_verdicts() {
         decided(true, false)
     );
     assert_eq!(check("216", "27\\times\\sqrt{64}", E), decided(true, false));
+}
+
+#[test]
+fn the_canonical_rational_form_runs_no_polynomial_gcd() {
+    // FIXM2h replaced the `Inverse` atom with the rational-function form: every
+    // value is `Poly / Poly`, both expanded, and NO polynomial GCD runs. The
+    // narrowing is a decision of `docs/plans/M2.md`, and FIXM2i measured it: 6
+    // pairs of the rational-rewrite sweep leave class 3 under the reason "no
+    // polynomial GCD (V1 narrowing)", and every one of them is a shared
+    // polynomial factor between two denominators.
+    //
+    // The 1.0 verdicts below come from the oracle on 2026-08-27. 1.0 reaches
+    // True through `simplify(lhs - rhs) == 0`, which is the search 2.0 refuses
+    // (D6, L2).
+    //
+    // 1.0: True. The two denominators share the factor `(x - 1)`.
+    assert_eq!(
+        check("-4(x + 1)/(x - 1)^3", "-4/(x - 1)**2 - 8/(x - 1)**3", E),
+        decided(false, false)
+    );
+    // 1.0: True. The learner cancelled the common factor of the quotient.
+    assert_eq!(
+        check("(x^2 - 1)/(x - 1)", "x + 1", E),
+        decided(false, false)
+    );
+    // The same form keeps every agreement it can reach without a GCD: two
+    // spellings of one quotient are one value, because both sides expand.
+    assert_eq!(
+        check("2/x + 1/(x + 1)", "(3*x + 2)/(x*(x + 1))", E),
+        decided(true, false)
+    );
+    assert_eq!(
+        check("1/(x*(x + 1))", "1/x * 1/(x + 1)", E),
+        decided(true, false)
+    );
+}
+
+#[test]
+fn the_canonical_form_rationalizes_no_radical() {
+    // The second narrowing FIXM2i measured: 6 pairs leave class 3 under the
+    // reason "no radical rationalization (V1 narrowing)". 2.0 keeps a root of a
+    // non-rational radicand as one atom, and it never folds `sqrt(A)*sqrt(A)`
+    // into `A`, because that identity needs `A >= 0` and the grammar carries no
+    // domain (V1, D6).
+    //
+    // 1.0: True for every row, through `radsimp` inside `simplify`. The verdicts
+    // come from the oracle on 2026-08-27.
+    assert_eq!(check("1/(2√x)", "sqrt(x)/(2*x)", E), decided(false, false));
+    assert_eq!(
+        check("x/√(x^2 + 9)", "x*sqrt(x**2 + 9)/(x**2 + 9)", E),
+        decided(false, false)
+    );
+    assert_eq!(
+        check("1/√(1 - x^2)", "-sqrt(1 - x**2)/(x**2 - 1)", E),
+        decided(false, false)
+    );
+    // A root of a RATIONAL radicand reduces on both sides, so the narrowing
+    // takes no pair there (FIXM2h, review round 3, findings 9 and 11).
+    assert_eq!(check("1/sqrt(2)", "sqrt(2)/2", E), decided(true, false));
+    assert_eq!(check("sqrt(4/9)", "2/3", E), decided(true, false));
 }
 
 // ---------------------------------------------------------------------------

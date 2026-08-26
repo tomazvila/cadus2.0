@@ -29,6 +29,26 @@
 //! `CADUS_ORACLE_PYTHON` and they print a skip line when it is unset, so
 //! `-- --ignored` selects nothing and proves nothing (review finding #12).
 //!
+//! # Where the rewrite spellings come from
+//!
+//! The six `rewrite_*` families take their learner text from
+//! `crates/core/tests/fixtures/answers/rational_rewrites_1_0.jsonl`, which
+//! `scripts/oracle/rewrite_1_0.py` wrote from SymPy through the 1.0 parser
+//! (M2 review 3, finding #14). SymPy GENERATES a spelling there; it judges
+//! nothing. Every verdict still comes from `check_1_0.py`.
+//!
+//! # Regenerating the two fixtures, in this order
+//!
+//! ```text
+//! CADUS_REWRITE_REGEN=1 CADUS_ORACLE_PYTHON=/home/deploy/dev/cadus/.venv/bin/python \
+//!     cargo test -p cadus-core --test answer_oracle regenerate_the_rewrite_fixture
+//! CADUS_ORACLE_RECORD=1 CADUS_ORACLE_PYTHON=/home/deploy/dev/cadus/.venv/bin/python \
+//!     cargo test -p cadus-core --test answer_oracle record_the_oracle_verdicts
+//! ```
+//!
+//! The spellings change the generated pair set, so the verdict file follows the
+//! spelling file and never the other way around.
+//!
 //! # The four divergence classes (spec section 9.3)
 //!
 //! 1. Either side leaves the decidable grammar, so 2.0 refuses a verdict (V2).
@@ -55,7 +75,9 @@ use std::collections::{BTreeMap, BTreeSet};
 use std::fmt::Write as _;
 use std::path::{Path, PathBuf};
 
-use cadus_core::answer::{Canon, Outcome, canonical_form, check, normalize, parse};
+use num_traits::{One as _, Zero as _};
+
+use cadus_core::answer::{Ast, Atom, Canon, Outcome, canonical_form, check, normalize, parse};
 use cadus_core::curriculum::AnswerKind;
 
 /// The largest number of pairs the test runs (the task bound of U3).
@@ -82,11 +104,36 @@ struct CorpusLine {
 }
 
 /// One corpus answer that the 2.0 grammar accepts.
+///
+/// # Why the row carries three readings of one answer
+///
+/// FIXM2g moved every LaTeX and glyph construct out of `normalize` and into the
+/// lexer, so [`Row::source`] is no longer SymPy-like source: it keeps `\frac`,
+/// `\pi`, `√`, and `^`. A builder that read a value or a structure out of that
+/// string read the wrong thing, and 328 pairs left the set without a word (M2
+/// review 3, the FIXM2i regeneration ruling). Every such builder now reads
+/// [`Row::printed`], which is the parsed tree written back as ASCII, or
+/// [`Row::canon`], which is the exact value.
 struct Row {
     /// The authored answer, verbatim.
     answer: String,
     /// The normalized parser source of that answer (V4).
+    ///
+    /// Two families read this string, and both of them ask a question about the
+    /// surface spelling and not about the value: `explicit_multiplication` needs
+    /// the juxtaposition the author wrote, and `internal_spaces` needs the
+    /// author's own operators.
     source: String,
+    /// The parsed tree of that source, written back as ASCII reader source.
+    ///
+    /// The text is a function of the tree alone, so it holds `sqrt(`, `**`,
+    /// `pi`, and `*` whatever the author wrote. Every builder that reads a
+    /// number, a term, a factor, or a bracket out of an answer reads this.
+    printed: String,
+    /// The parsed tree of the answer.
+    ast: Ast,
+    /// The canonical form of the answer, when the checker decides one.
+    canon: Option<Canon>,
     /// The shape bucket of spec section 5.
     shape: String,
     /// The authored answer kind.
@@ -123,17 +170,201 @@ fn in_grammar_rows() -> Vec<Row> {
             continue;
         }
         let source = normalize(&parsed.answer).source;
-        if parse(&source).is_err() {
+        let Ok(ast) = parse(&source) else {
             continue;
-        }
+        };
+        let printed = print_ast(&ast, PREC_LOWEST);
+        let canon = canonical_form(&parsed.answer).ok();
         rows.push(Row {
             answer: parsed.answer,
             source,
+            printed,
+            ast,
+            canon,
             shape: parsed.shape,
             kind,
         });
     }
     rows
+}
+
+// ---------------------------------------------------------------------------
+// The answer tree, written back as ASCII reader source
+// ---------------------------------------------------------------------------
+
+/// The binding power of a sum: the weakest.
+const PREC_LOWEST: u8 = 1;
+/// The binding power of a product.
+const PREC_PRODUCT: u8 = 2;
+/// The binding power of a divisor and of a negation.
+const PREC_UNARY: u8 = 3;
+/// The binding power of a power base: the strongest.
+const PREC_POWER: u8 = 4;
+
+/// Write one answer tree back as ASCII reader source.
+///
+/// The text carries the structure of the tree and nothing of the spelling the
+/// author chose, so `\frac{1}{2}`, `½`, and `1/2` all print `1/2`. Both checkers
+/// read the result: the operators are `+ - * / **`, the root is `sqrt(…)`, and
+/// the constants are `pi` and `e`.
+///
+/// `parent` is the binding power the position needs. A node that binds more
+/// weakly than its position takes a bracket pair.
+///
+/// A mixed number always prints as the bracketed sum `(2 + 1/2)`. The bare form
+/// `2 1/2` is a juxtaposition, and 1.0 reads a juxtaposition as a product, so the
+/// bare form would ask the oracle about the mixed-number rule and not about the
+/// family that built it.
+fn print_ast(ast: &Ast, parent: u8) -> String {
+    match ast {
+        Ast::Integer(value) => {
+            let text = value.to_string();
+            let negative = text.starts_with('-');
+            bracket_if(text, negative && parent >= PREC_PRODUCT)
+        }
+        Ast::Decimal { mantissa, scale } => {
+            let text = decimal_text(&mantissa.to_string(), *scale);
+            let negative = text.starts_with('-');
+            bracket_if(text, negative && parent >= PREC_PRODUCT)
+        }
+        Ast::Fraction {
+            numerator,
+            denominator,
+        } => {
+            let text = format!("{numerator}/{denominator}");
+            let negative = text.starts_with('-');
+            bracket_if(
+                text,
+                parent > PREC_PRODUCT || (negative && parent >= PREC_PRODUCT),
+            )
+        }
+        Ast::Mixed {
+            whole,
+            numerator,
+            denominator,
+        } => format!("({whole} + {numerator}/{denominator})"),
+        Ast::Var(name) => name.clone(),
+        Ast::Const(value) => value.name().to_string(),
+        Ast::Sqrt(inner) => format!("sqrt({})", print_ast(inner, PREC_LOWEST)),
+        Ast::Pow(base, exponent) => {
+            // A negative exponent takes a bracket pair, so `x**-2` never reaches
+            // either parser: 1.0 reads that string with the Python tokenizer.
+            let power = if *exponent < 0 {
+                format!("({exponent})")
+            } else {
+                exponent.to_string()
+            };
+            let body = format!("{}**{power}", print_ast(base, PREC_POWER));
+            bracket_if(body, parent >= PREC_POWER)
+        }
+        Ast::Neg(inner) => bracket_if(
+            format!("-{}", print_ast(inner, PREC_UNARY)),
+            parent >= PREC_UNARY,
+        ),
+        Ast::Add(terms) => {
+            let mut out = String::new();
+            for (index, term) in terms.iter().enumerate() {
+                match (index, term) {
+                    (0, _) => out.push_str(&print_ast(term, PREC_LOWEST)),
+                    // A subtracted term needs no bracket around a product: the
+                    // binary `-` binds more weakly than the `*` it holds.
+                    (_, Ast::Neg(inner)) => {
+                        let _ = write!(out, " - {}", print_ast(inner, PREC_PRODUCT));
+                    }
+                    _ => {
+                        let _ = write!(out, " + {}", print_ast(term, PREC_LOWEST));
+                    }
+                }
+            }
+            bracket_if(out, parent > PREC_LOWEST)
+        }
+        Ast::Mul(factors) => {
+            let parts: Vec<String> = factors
+                .iter()
+                .map(|factor| print_ast(factor, PREC_PRODUCT))
+                .collect();
+            bracket_if(parts.join("*"), parent > PREC_PRODUCT)
+        }
+        Ast::Div(left, right) => bracket_if(
+            format!(
+                "{}/{}",
+                print_ast(left, PREC_PRODUCT),
+                print_ast(right, PREC_UNARY)
+            ),
+            parent > PREC_PRODUCT,
+        ),
+        Ast::Func(name, arguments) => format!("{name}({})", print_list(arguments)),
+        Ast::Tuple(items) => format!("({})", print_list(items)),
+        Ast::Set(items) => format!("{{{}}}", print_list(items)),
+        Ast::List(items) => format!("[{}]", print_list(items)),
+        Ast::Interval {
+            lo,
+            hi,
+            lo_closed,
+            hi_closed,
+        } => format!(
+            "{}{}, {}{}",
+            if *lo_closed { '[' } else { '(' },
+            print_ast(lo, PREC_LOWEST),
+            print_ast(hi, PREC_LOWEST),
+            if *hi_closed { ']' } else { ')' }
+        ),
+        Ast::Ineq { var, op, bound } => {
+            format!("{var} {} {}", op.symbol(), print_ast(bound, PREC_LOWEST))
+        }
+        Ast::Assign { var, value } => format!("{var} = {}", print_ast(value, PREC_LOWEST)),
+        Ast::Chain {
+            lo,
+            lo_closed,
+            var,
+            hi_closed,
+            hi,
+        } => format!(
+            "{} {} {var} {} {}",
+            print_ast(lo, PREC_LOWEST),
+            if *lo_closed { "<=" } else { "<" },
+            if *hi_closed { "<=" } else { "<" },
+            print_ast(hi, PREC_LOWEST)
+        ),
+    }
+}
+
+/// Wrap `text` in a bracket pair when the position asks for one.
+fn bracket_if(text: String, wrap: bool) -> String {
+    if wrap { format!("({text})") } else { text }
+}
+
+/// Print a comma-separated argument list.
+fn print_list(items: &[Ast]) -> String {
+    items
+        .iter()
+        .map(|item| print_ast(item, PREC_LOWEST))
+        .collect::<Vec<String>>()
+        .join(", ")
+}
+
+/// Write `mantissa / 10**scale` as a decimal literal.
+fn decimal_text(mantissa: &str, scale: u32) -> String {
+    let negative = mantissa.starts_with('-');
+    let mut digits = mantissa.trim_start_matches('-').to_string();
+    let scale = scale as usize;
+    if scale == 0 {
+        return if negative {
+            format!("-{digits}")
+        } else {
+            digits
+        };
+    }
+    while digits.len() <= scale {
+        digits.insert(0, '0');
+    }
+    let point = digits.len() - scale;
+    digits.insert(point, '.');
+    if negative {
+        format!("-{digits}")
+    } else {
+        digits
+    }
 }
 
 // ---------------------------------------------------------------------------
@@ -239,7 +470,7 @@ fn group_digits(digits: &str, separator: &str) -> String {
 
 /// Write one integer answer with `separator` between its thousands groups.
 fn thousands_grouped(row: &Row, separator: &str) -> Option<String> {
-    let (negative, digits) = integer_digits(&row.source)?;
+    let (negative, digits) = integer_digits(&row.printed)?;
     if digits.len() < 4 || digits.len() > 15 || digits.starts_with('0') {
         return None;
     }
@@ -377,6 +608,14 @@ impl Numbers<'_> {
                     }
                     total /= divisor;
                 }
+                // A juxtaposed name or group is a product, because 1.0 parses
+                // with `implicit_multiplication_application`: `3pi` is `3*pi`
+                // and `2sqrt(3)` is `2*sqrt(3)` (`sympy_check.py:253`). Two
+                // numbers that only touch stay two answers, so the rule needs a
+                // name or a bracket on the right.
+                Some(ch) if ch.is_ascii_alphabetic() || ch == '(' => {
+                    total *= self.power()?;
+                }
                 _ => return Some(total),
             }
         }
@@ -442,11 +681,6 @@ impl Numbers<'_> {
                 self.at += 1;
             }
         }
-        // A name that touches the literal is an implicit product, and the reader
-        // reads no product of a number and a name.
-        if matches!(self.peek(), Some(c) if c.is_ascii_alphanumeric()) {
-            return None;
-        }
         let text: String = self.chars.get(start..self.at)?.iter().collect();
         text.parse::<f64>().ok()
     }
@@ -461,18 +695,23 @@ impl Numbers<'_> {
         match name.as_str() {
             "pi" => Some(std::f64::consts::PI),
             "e" => Some(std::f64::consts::E),
+            // A bracket-free radical is a call too, because SymPy
+            // `implicit_application` writes the brackets: 1.0 reads `2sqrt 2 - 2`
+            // as `2*sqrt(2) - 2` (`sympy_check.py:253`).
             "sqrt" => {
                 self.skip_spaces();
-                if self.peek() != Some('(') {
-                    return None;
-                }
-                self.at += 1;
-                let value = self.sum()?;
-                self.skip_spaces();
-                if self.peek() != Some(')') {
-                    return None;
-                }
-                self.at += 1;
+                let value = if self.peek() == Some('(') {
+                    self.at += 1;
+                    let inner = self.sum()?;
+                    self.skip_spaces();
+                    if self.peek() != Some(')') {
+                        return None;
+                    }
+                    self.at += 1;
+                    inner
+                } else {
+                    self.primary()?
+                };
                 if value < 0.0 {
                     return None;
                 }
@@ -628,8 +867,23 @@ const UNICODE_TO_ASCII: [(&str, &str); 30] = [
     ("⁹", "^9"),
 ];
 
-/// Rewrite every `√` of `text` into a `sqrt(…)` call.
+/// Rewrite every `√` of `text` into a `sqrt(…)` call, at every depth.
+///
+/// 1.0 runs its two radical patterns to a fixed point (`sympy_check.py:148`), so
+/// `√(2 + √3)` becomes `sqrt(2 + sqrt(3))` and not `sqrt(2 + √3)`.
 fn radical_to_call(text: &str) -> String {
+    let mut out = text.to_string();
+    loop {
+        let next = radical_to_call_once(&out);
+        if next == out {
+            return out;
+        }
+        out = next;
+    }
+}
+
+/// Rewrite the radicals of one pass.
+fn radical_to_call_once(text: &str) -> String {
     let chars: Vec<char> = text.chars().collect();
     let mut out = String::new();
     let mut index = 0;
@@ -772,6 +1026,11 @@ fn changed_source(row: &Row, candidate: String) -> Option<String> {
     (candidate != row.source).then_some(candidate)
 }
 
+/// The same rule for a generator that rewrites the printed tree.
+fn changed_printed(row: &Row, candidate: String) -> Option<String> {
+    (candidate != row.printed).then_some(candidate)
+}
+
 fn generate_identity(row: &Row) -> Option<String> {
     Some(row.answer.clone())
 }
@@ -904,20 +1163,20 @@ fn generate_dot_thousands(row: &Row) -> Option<String> {
 }
 
 fn generate_equivalent_fraction(row: &Row) -> Option<String> {
-    let (numerator, denominator) = fraction_parts(&row.source)?;
-    let factor = 2 + (row.source.len() % 8) as i128;
+    let (numerator, denominator) = fraction_parts(&row.printed)?;
+    let factor = 2 + (row.printed.len() % 8) as i128;
     let numerator = numerator.checked_mul(factor)?;
     let denominator = denominator.checked_mul(factor)?;
     Some(format!("{numerator}/{denominator}"))
 }
 
 fn generate_fraction_to_decimal(row: &Row) -> Option<String> {
-    let (numerator, denominator) = fraction_parts(&row.source)?;
+    let (numerator, denominator) = fraction_parts(&row.printed)?;
     exact_decimal(numerator, denominator)
 }
 
 fn generate_decimal_to_fraction(row: &Row) -> Option<String> {
-    let (negative, whole, fraction) = decimal_parts(&row.source)?;
+    let (negative, whole, fraction) = decimal_parts(&row.printed)?;
     if fraction.len() > 12 {
         return None;
     }
@@ -928,14 +1187,14 @@ fn generate_decimal_to_fraction(row: &Row) -> Option<String> {
 }
 
 fn generate_trailing_zero(row: &Row) -> Option<String> {
-    if decimal_parts(&row.source).is_some() {
-        return Some(format!("{}0", row.source));
+    if decimal_parts(&row.printed).is_some() {
+        return Some(format!("{}0", row.printed));
     }
-    let (_, digits) = integer_digits(&row.source)?;
+    let (_, digits) = integer_digits(&row.printed)?;
     if digits.len() > 15 {
         return None;
     }
-    Some(format!("{}.0", row.source))
+    Some(format!("{}.0", row.printed))
 }
 
 fn generate_star_power(row: &Row) -> Option<String> {
@@ -971,20 +1230,44 @@ fn generate_explicit_multiplication(row: &Row) -> Option<String> {
 }
 
 /// Drop the `*` between a number and a name, the way a learner writes it.
+///
+/// The family reads the printed tree, so it reaches `2*x` whatever the author
+/// wrote. A `*` that follows a divisor keeps its star: `4/3*sin(x)` and
+/// `4/3sin(x)` are two readings of one string, and the family asks about the
+/// juxtaposition and not about the precedence of an implicit product.
 fn generate_implicit_multiplication(row: &Row) -> Option<String> {
-    let chars: Vec<char> = row.source.chars().collect();
+    let chars: Vec<char> = row.printed.chars().collect();
     let mut out = String::new();
     for (index, ch) in chars.iter().enumerate() {
         if *ch == '*' {
             let previous = chars.get(index.wrapping_sub(1)).copied().unwrap_or(' ');
             let next = chars.get(index + 1).copied().unwrap_or(' ');
-            if previous.is_ascii_digit() && next.is_ascii_alphabetic() {
+            if previous.is_ascii_digit()
+                && next.is_ascii_alphabetic()
+                && !follows_a_divisor(&chars, index)
+            {
                 continue;
             }
         }
         out.push(*ch);
     }
-    changed_source(row, out)
+    changed_printed(row, out)
+}
+
+/// Whether the number that ends at `index` is the divisor of a `/`.
+fn follows_a_divisor(chars: &[char], index: usize) -> bool {
+    let mut back = index;
+    while back > 0 {
+        back -= 1;
+        let Some(ch) = chars.get(back).copied() else {
+            return false;
+        };
+        if ch.is_ascii_digit() || ch == '.' {
+            continue;
+        }
+        return ch == '/';
+    }
+    false
 }
 
 fn generate_unicode_to_ascii(row: &Row) -> Option<String> {
@@ -1009,7 +1292,7 @@ fn generate_ascii_to_unicode(row: &Row) -> Option<String> {
 }
 
 fn generate_sum_reorder(row: &Row) -> Option<String> {
-    let parts = top_level_split(&row.source, '+')?;
+    let parts = top_level_split(&row.printed, '+')?;
     if parts.len() < 2 {
         return None;
     }
@@ -1019,7 +1302,7 @@ fn generate_sum_reorder(row: &Row) -> Option<String> {
 }
 
 fn generate_set_reordered(row: &Row) -> Option<String> {
-    let mut items = bracket_items(&row.source, '{', '}')?;
+    let mut items = bracket_items(&row.printed, '{', '}')?;
     if items.len() < 2 {
         return None;
     }
@@ -1047,43 +1330,63 @@ fn generate_case_flip(row: &Row) -> Option<String> {
 /// grades the pair False (D6). The divergence is the documented class "no float
 /// tolerance rung (D6)", and [`the_1_0_float_rung_closes_the_gap`] names it.
 fn generate_significant_decimal(row: &Row) -> Option<String> {
-    if !takes_a_rounded_decimal(&row.source) {
+    if !takes_a_rounded_decimal(row.canon.as_ref()?) {
         return None;
     }
-    let value = numeric_value(&row.source)?;
-    changed_source(row, ten_significant_digits(value)?)
+    let value = numeric_value(&row.printed)?;
+    changed_printed(row, ten_significant_digits(value)?)
 }
 
-/// Whether the value of `source` is a rational with no exact decimal, or a
-/// radical.
+/// Whether the value takes a rounded decimal: it is a number, and it is not the
+/// decimal it writes.
 ///
-/// Every other value takes no rounded decimal, and the pair reaches no float
-/// rung: an integer and a terminating decimal are the decimal they write, and a
-/// value with a free symbol leaves the rung altogether.
-fn takes_a_rounded_decimal(source: &str) -> bool {
-    if source.contains("sqrt(") {
-        return true;
-    }
-    match fraction_parts(source) {
-        Some((numerator, denominator)) => !terminates(numerator, denominator),
-        None => false,
+/// The predicate reads the CANONICAL FORM, and no longer the normalized source.
+/// FIXM2g made every construct a lexer token, so the source of `√(2 + √3)/2`
+/// keeps its `√` and the old `source.contains("sqrt(")` test went silently false
+/// (M2 review 3, the FIXM2i ruling). The canonical form carries the value, so
+/// the question the family asks is the question the predicate asks.
+///
+/// A rational with a terminating decimal is the decimal it writes, so it takes
+/// no rounded decimal. Every other exact number — a repeating rational, a
+/// radical, `pi`, `e` — does. A value with a free symbol is no number at all.
+fn takes_a_rounded_decimal(canon: &Canon) -> bool {
+    match canon {
+        Canon::Rational(value) => !terminates_exactly(value),
+        // A radical map holds a root, a `pi`, or an `e` against a rational
+        // coefficient. The rational alone never builds this variant.
+        Canon::Radical(_) => true,
+        // A symbol-free product of roots, such as `sqrt(2 + sqrt(3))`. A radicand
+        // that is not a rational stays an `Atom::Call` of the name `sqrt`.
+        Canon::Poly(poly) => an_irrational_number(poly),
+        _ => false,
     }
 }
 
-/// Whether the decimal expansion of `numerator / denominator` ends.
-fn terminates(numerator: i128, denominator: i128) -> bool {
-    let divisor = gcd(numerator.abs(), denominator.abs());
-    if divisor == 0 {
-        return true;
+/// Whether a polynomial is one irrational number with no free symbol.
+fn an_irrational_number(poly: &cadus_core::answer::Poly) -> bool {
+    let mut irrational = false;
+    for (atom, _) in poly.keys().flatten() {
+        match atom {
+            Atom::Var(_) => return false,
+            Atom::Call(name, _) if name != "sqrt" => return false,
+            _ => irrational = true,
+        }
     }
-    let mut rest = (denominator / divisor).abs();
-    while rest % 2 == 0 {
-        rest /= 2;
+    irrational
+}
+
+/// Whether the decimal expansion of an exact rational ends.
+fn terminates_exactly(value: &num_rational::BigRational) -> bool {
+    let mut rest = value.denom().clone();
+    let two = num_bigint::BigInt::from(2);
+    let five = num_bigint::BigInt::from(5);
+    while (&rest % &two).is_zero() {
+        rest /= &two;
     }
-    while rest % 5 == 0 {
-        rest /= 5;
+    while (&rest % &five).is_zero() {
+        rest /= &five;
     }
-    rest == 1
+    rest.is_one()
 }
 
 /// Write `value` with ten significant digits.
@@ -1127,10 +1430,10 @@ fn ten_significant_digits(value: f64) -> Option<String> {
 /// across a `+` or a binary `-` builds a different value, and the family asks
 /// about commutativity and not about arithmetic.
 fn generate_product_reorder(row: &Row) -> Option<String> {
-    if !is_one_term(&row.source) {
+    if !is_one_term(&row.printed) {
         return None;
     }
-    let factors = product_factors(&row.source)?;
+    let factors = product_factors(&row.printed)?;
     if factors.len() < 2 {
         return None;
     }
@@ -1148,7 +1451,7 @@ fn generate_product_reorder(row: &Row) -> Option<String> {
             }
         })
         .collect();
-    changed_source(row, joined.join("*"))
+    changed_printed(row, joined.join("*"))
 }
 
 /// Write the answer with one algebraic step applied (spec section 9.3,
@@ -1162,9 +1465,9 @@ fn generate_product_reorder(row: &Row) -> Option<String> {
 ///    is the same step in the other direction: the corpus authors the factored
 ///    form (`(x + 3)(x - 3)`) and the learner multiplies it out.
 fn generate_algebraic_refactor(row: &Row) -> Option<String> {
-    let candidate = factor_a_difference_of_squares(&row.source)
-        .or_else(|| multiply_out_last_group(&row.source));
-    changed_source(row, candidate?)
+    let candidate = factor_a_difference_of_squares(&row.printed)
+        .or_else(|| multiply_out_last_group(&row.printed));
+    changed_printed(row, candidate?)
 }
 
 /// Write `a**2 - b**2` as `(a - b)*(a + b)`.
@@ -1288,22 +1591,220 @@ fn matching_open(chars: &[char]) -> Option<usize> {
     None
 }
 
+// ---------------------------------------------------------------------------
+// The rational-rewrite family (M2 review 3, finding #14)
+// ---------------------------------------------------------------------------
+
+/// One line of `crates/core/tests/fixtures/answers/rational_rewrites_1_0.jsonl`.
+///
+/// The file holds one spelling per (answer, kind, rule). SymPy wrote every
+/// spelling through `scripts/oracle/rewrite_1_0.py`, from the tree the 1.0 parser
+/// itself reads. SymPy judges nothing: `check_1_0.py` still records the verdict of
+/// every pair, and 1.0 grades a spelling like any other learner answer.
+#[derive(Clone, PartialEq, Eq, serde::Deserialize, serde::Serialize)]
+struct RewriteLine {
+    /// The authored corpus answer, verbatim.
+    answer: String,
+    /// The authored answer kind.
+    kind: String,
+    /// The SymPy rule that wrote the spelling.
+    rule: String,
+    /// The spelling, as `str()` printed it.
+    learner: String,
+    /// Whether SymPy `cancel(expected - learner)` is zero.
+    cancel_zero: bool,
+    /// Whether SymPy `radsimp(expected - learner)` is zero.
+    radsimp_zero: bool,
+}
+
+/// The rules of `scripts/oracle/rewrite_1_0.py`, in the order that file runs them.
+const REWRITE_RULES: [&str; 6] = ["together", "apart", "cancel", "factor", "expand", "radsimp"];
+
+/// Read the committed rewrite spellings.
+fn committed_rewrites() -> &'static Vec<RewriteLine> {
+    static CACHE: std::sync::OnceLock<Vec<RewriteLine>> = std::sync::OnceLock::new();
+    CACHE.get_or_init(|| {
+        let path = fixture("rational_rewrites_1_0.jsonl");
+        let text = std::fs::read_to_string(&path)
+            .unwrap_or_else(|e| panic!("read {}: {e}", path.display()));
+        text.lines()
+            .filter(|line| !line.trim().is_empty())
+            .map(|line| serde_json::from_str(line).unwrap_or_else(|e| panic!("row {line}: {e}")))
+            .collect()
+    })
+}
+
+/// The spelling of one rule, keyed by (answer, kind, rule).
+fn rewrite_by_rule() -> &'static BTreeMap<(String, String, String), String> {
+    static CACHE: std::sync::OnceLock<BTreeMap<(String, String, String), String>> =
+        std::sync::OnceLock::new();
+    CACHE.get_or_init(|| {
+        let mut map = BTreeMap::new();
+        for row in committed_rewrites() {
+            map.insert(
+                (row.answer.clone(), row.kind.clone(), row.rule.clone()),
+                row.learner.clone(),
+            );
+        }
+        map
+    })
+}
+
+/// The SymPy difference evidence of one pair, keyed by (expected, learner, kind).
+///
+/// The two flags are the only reason a pair may leave class 3 under the two
+/// rewrite divergences. They are recorded facts about SymPy, not verdicts: a
+/// verdict always comes from the 1.0 checker.
+fn rewrite_evidence() -> &'static BTreeMap<PairKey, (bool, bool)> {
+    static CACHE: std::sync::OnceLock<BTreeMap<PairKey, (bool, bool)>> = std::sync::OnceLock::new();
+    CACHE.get_or_init(|| {
+        let mut map = BTreeMap::new();
+        for row in committed_rewrites() {
+            map.insert(
+                (row.answer.clone(), row.learner.clone(), row.kind.clone()),
+                (row.cancel_zero, row.radsimp_zero),
+            );
+        }
+        map
+    })
+}
+
+/// Whether the answer is one scalar value that holds a denominator or a radical.
+///
+/// The gate reads the TREE and never the source text: FIXM2g leaves `\frac`,
+/// `√`, and `\sqrt` in the source, and a text test would miss every one of them.
+///
+/// A tuple, a set, a list, a range, an inequality, and a labeled value are all
+/// refused, whatever they hold. SymPy reads `(1/2, 8)` as a plain Python tuple,
+/// and `cancel` of a tuple returns the numerator, the denominator, and the terms
+/// of a rational function, so the "spelling" would be a value no learner ever
+/// writes and no rule of the family names.
+fn holds_a_denominator_or_a_radical(ast: &Ast) -> bool {
+    match ast {
+        Ast::Fraction { .. } | Ast::Mixed { .. } | Ast::Div(_, _) | Ast::Sqrt(_) => true,
+        Ast::Pow(base, exponent) => *exponent < 0 || holds_a_denominator_or_a_radical(base),
+        Ast::Integer(_) | Ast::Decimal { .. } | Ast::Var(_) | Ast::Const(_) => false,
+        Ast::Neg(inner) => holds_a_denominator_or_a_radical(inner),
+        Ast::Add(items) | Ast::Mul(items) | Ast::Func(_, items) => {
+            items.iter().any(holds_a_denominator_or_a_radical)
+        }
+        Ast::Tuple(_)
+        | Ast::Set(_)
+        | Ast::List(_)
+        | Ast::Interval { .. }
+        | Ast::Chain { .. }
+        | Ast::Ineq { .. }
+        | Ast::Assign { .. } => false,
+    }
+}
+
+/// Whether SymPy reads the answer as the value 2.0 reads.
+///
+/// The family asks about a REWRITE, so it needs a spelling of the SAME value.
+/// SymPy reads the answer through the 1.0 rewrite, and two constructs of the V4
+/// table make that reading another value:
+///
+/// 1. A mixed number. 1.0 has no mixed-number reading, so `3 1/2` is the product
+///    `3*(1/2)`, and `together` of that product is `3/2`.
+/// 2. A spaced `x` as the times sign. 1.0 reads the letter as a free symbol, so
+///    `3 x 10^-2` is `3*x/100` and not the number 0.03.
+///
+/// Both are documented divergences with literal pairs in
+/// `crates/core/tests/answer_divergence.rs`. A spelling built on top of one of
+/// them measures the base divergence again, and never the rewrite.
+fn the_two_checkers_read_the_answer_alike(row: &Row) -> bool {
+    if holds_a_mixed_number(&row.ast) {
+        return false;
+    }
+    !(names_a_bare_word(&one_zero_source(&row.answer), "x") && !holds_the_variable_x(&row.answer))
+}
+
+/// Whether the answer tree holds a mixed number at any depth.
+fn holds_a_mixed_number(ast: &Ast) -> bool {
+    match ast {
+        Ast::Mixed { .. } => true,
+        Ast::Neg(inner) | Ast::Sqrt(inner) | Ast::Pow(inner, _) => holds_a_mixed_number(inner),
+        Ast::Add(items)
+        | Ast::Mul(items)
+        | Ast::Func(_, items)
+        | Ast::Tuple(items)
+        | Ast::Set(items)
+        | Ast::List(items) => items.iter().any(holds_a_mixed_number),
+        Ast::Div(left, right) => holds_a_mixed_number(left) || holds_a_mixed_number(right),
+        Ast::Interval { lo, hi, .. } | Ast::Chain { lo, hi, .. } => {
+            holds_a_mixed_number(lo) || holds_a_mixed_number(hi)
+        }
+        Ast::Ineq { bound, .. } => holds_a_mixed_number(bound),
+        Ast::Assign { value, .. } => holds_a_mixed_number(value),
+        Ast::Integer(_) | Ast::Decimal { .. } | Ast::Fraction { .. } => false,
+        Ast::Var(_) | Ast::Const(_) => false,
+    }
+}
+
+/// The committed spelling of one rule, when the family applies to the row.
+fn rewrite_spelling(row: &Row, rule: &str) -> Option<String> {
+    if !holds_a_denominator_or_a_radical(&row.ast) {
+        return None;
+    }
+    if !the_two_checkers_read_the_answer_alike(row) {
+        return None;
+    }
+    let key = (
+        row.answer.clone(),
+        row.kind.as_str().to_string(),
+        rule.to_string(),
+    );
+    let learner = rewrite_by_rule().get(&key)?.clone();
+    let learner = changed(row, learner)?;
+    changed_printed(row, learner)
+}
+
+/// Put the fractions of the answer over one common denominator.
+fn generate_rewrite_together(row: &Row) -> Option<String> {
+    rewrite_spelling(row, "together")
+}
+
+/// Split the answer into partial fractions.
+fn generate_rewrite_apart(row: &Row) -> Option<String> {
+    rewrite_spelling(row, "apart")
+}
+
+/// Cancel the common factors of the numerator and the denominator.
+fn generate_rewrite_cancel(row: &Row) -> Option<String> {
+    rewrite_spelling(row, "cancel")
+}
+
+/// Factor the answer.
+fn generate_rewrite_factor(row: &Row) -> Option<String> {
+    rewrite_spelling(row, "factor")
+}
+
+/// Multiply the answer out.
+fn generate_rewrite_expand(row: &Row) -> Option<String> {
+    rewrite_spelling(row, "expand")
+}
+
+/// Rationalize the radicals of the answer.
+fn generate_rewrite_radsimp(row: &Row) -> Option<String> {
+    rewrite_spelling(row, "radsimp")
+}
+
 fn generate_last_digit_bumped(row: &Row) -> Option<String> {
-    bump_last_digit(&row.source)
+    bump_last_digit(&row.printed)
 }
 
 fn generate_sign_flipped(row: &Row) -> Option<String> {
-    if row.source.chars().all(|c| c == '0' || c == '-') {
+    if row.printed.chars().all(|c| c == '0' || c == '-') {
         return None;
     }
-    match row.source.strip_prefix('-') {
+    match row.printed.strip_prefix('-') {
         Some(rest) => Some(rest.to_string()),
-        None => Some(format!("-{}", row.source)),
+        None => Some(format!("-{}", row.printed)),
     }
 }
 
 fn generate_digit_transposition(row: &Row) -> Option<String> {
-    let chars: Vec<char> = row.source.chars().collect();
+    let chars: Vec<char> = row.printed.chars().collect();
     let mut position = None;
     for index in 0..chars.len().saturating_sub(1) {
         let left = chars.get(index).copied().unwrap_or(' ');
@@ -1319,7 +1820,7 @@ fn generate_digit_transposition(row: &Row) -> Option<String> {
 }
 
 fn generate_times_thousand(row: &Row) -> Option<String> {
-    let (negative, digits) = integer_digits(&row.source)?;
+    let (negative, digits) = integer_digits(&row.printed)?;
     if digits.len() > 12 || digits == "0" {
         return None;
     }
@@ -1328,7 +1829,7 @@ fn generate_times_thousand(row: &Row) -> Option<String> {
 }
 
 fn generate_over_thousand(row: &Row) -> Option<String> {
-    let (negative, digits) = integer_digits(&row.source)?;
+    let (negative, digits) = integer_digits(&row.printed)?;
     if digits.len() > 3 || digits == "0" {
         return None;
     }
@@ -1337,7 +1838,7 @@ fn generate_over_thousand(row: &Row) -> Option<String> {
 }
 
 fn generate_coarse_decimal(row: &Row) -> Option<String> {
-    let (numerator, denominator) = fraction_parts(&row.source)?;
+    let (numerator, denominator) = fraction_parts(&row.printed)?;
     let scaled = numerator.checked_mul(1_000)?;
     if scaled % denominator == 0 {
         return None;
@@ -1352,7 +1853,7 @@ fn generate_coarse_decimal(row: &Row) -> Option<String> {
 }
 
 fn generate_tuple_swapped(row: &Row) -> Option<String> {
-    let mut items = bracket_items(&row.source, '(', ')')?;
+    let mut items = bracket_items(&row.printed, '(', ')')?;
     if items.len() < 2 || items.first() == items.get(1) {
         return None;
     }
@@ -1361,7 +1862,7 @@ fn generate_tuple_swapped(row: &Row) -> Option<String> {
 }
 
 fn generate_set_element_changed(row: &Row) -> Option<String> {
-    let items = bracket_items(&row.source, '{', '}')?;
+    let items = bracket_items(&row.printed, '{', '}')?;
     let first = items.first()?;
     let bumped = bump_last_digit(first)?;
     if items.contains(&bumped) {
@@ -1373,11 +1874,11 @@ fn generate_set_element_changed(row: &Row) -> Option<String> {
 }
 
 fn generate_wrong_radicand(row: &Row) -> Option<String> {
-    bump_number_after(&row.source, "sqrt(")
+    bump_number_after(&row.printed, "sqrt(")
 }
 
 fn generate_wrong_exponent(row: &Row) -> Option<String> {
-    bump_number_after(&row.source, "**")
+    bump_number_after(&row.printed, "**")
 }
 
 fn generate_appended_junk(row: &Row) -> Option<String> {
@@ -1399,7 +1900,11 @@ fn generate_appended_junk(row: &Row) -> Option<String> {
 /// FIXM2e and FIXM2f: five families were missing, and the 100% class-3
 /// agreement measured the generators that were written and not the parity of
 /// the checker.
-const GENERATORS: [Generator; 38] = [
+///
+/// M2 review 3, finding 14, showed the same gap one level deeper: no family
+/// rewrote a rational expression, so the pair set never reached the shape where
+/// the two checkers disagree. The six `rewrite_*` families close it.
+const GENERATORS: [Generator; 44] = [
     Generator {
         name: "identity",
         intent: Intent::Same,
@@ -1592,6 +2097,40 @@ const GENERATORS: [Generator; 38] = [
         name: "algebraic_refactor",
         intent: Intent::Same,
         make: generate_algebraic_refactor,
+    },
+    // The rational-rewrite family of M2 review 3, finding #14. Every one of the
+    // six is a step a learner performs by hand on an answer with a denominator
+    // or a radical, and SymPy writes the spelling. The six come last, so the
+    // pair order of every older generator does not move.
+    Generator {
+        name: "rewrite_together",
+        intent: Intent::Same,
+        make: generate_rewrite_together,
+    },
+    Generator {
+        name: "rewrite_apart",
+        intent: Intent::Same,
+        make: generate_rewrite_apart,
+    },
+    Generator {
+        name: "rewrite_cancel",
+        intent: Intent::Same,
+        make: generate_rewrite_cancel,
+    },
+    Generator {
+        name: "rewrite_factor",
+        intent: Intent::Same,
+        make: generate_rewrite_factor,
+    },
+    Generator {
+        name: "rewrite_expand",
+        intent: Intent::Same,
+        make: generate_rewrite_expand,
+    },
+    Generator {
+        name: "rewrite_radsimp",
+        intent: Intent::Same,
+        make: generate_rewrite_radsimp,
     },
 ];
 
@@ -1813,7 +2352,13 @@ impl Class {
 /// old substring test claimed it did, and it excused five parse divergences that
 /// hold no identity (M2 review 2, findings 10 and 14). The narrowing keeps its
 /// literal pairs in `answer_divergence.rs` instead.
-const DOCUMENTED_REASONS: [&str; 9] = [
+const DOCUMENTED_REASONS: [&str; 14] = [
+    // The two narrowings of the canonical rational form (FIXM2h). Both mark a
+    // correct learner WRONG in 2.0, and both carry a SPECIFIC predicate: the
+    // recorded SymPy evidence must say the difference is zero, AND the two
+    // canonical forms must differ in the named place.
+    "no polynomial GCD (V1 narrowing)",
+    "no radical rationalization (V1 narrowing)",
     // The four the M2 plan names. The first one is a 2.0 decision; the other
     // three are 1.0 defects that 2.0 refuses to reproduce.
     "no float tolerance rung (D6)",
@@ -1827,6 +2372,11 @@ const DOCUMENTED_REASONS: [&str; 9] = [
     "the 1.0 radical rewrite misses a nested group (spec 2.2)",
     "a chained inequality raises inside 1.0 (spec 7.7)",
     "the 1.0 rewriter deletes a backslash and leaves a brace group (spec 7.7)",
+    "the 1.0 namespace reads a bare `e` as a free symbol (spec 3.1)",
+    // Two rulings of the review rounds. Both are DIVERGENCES and not defects:
+    // 2.0 reads a construct that 1.0 hands to SymPy as a symbol.
+    "2.0 reads a spaced `x` as the times sign (review 1, finding 18)",
+    "the juxtaposed argument stops at a function name (review 3, finding 5)",
 ];
 
 /// Whether 1.0 refuses `source` for a tower of powers (1.0 `_POW_TOWER_RE`).
@@ -2006,8 +2556,14 @@ fn a_chained_inequality(text: &str) -> bool {
 /// A numeric pair that is farther apart than the rung tolerance keeps no reason.
 /// It stays in class 3 and it fails the parity assertion (R5).
 fn the_1_0_float_rung_closes_the_gap(pair: &Pair) -> bool {
-    let expected_source = normalize(&pair.expected).source;
-    let learner_source = normalize(&pair.learner).source;
+    // The rung reads the 1.0 rewrite of the two answers, and it never reads the
+    // 2.0 normalized source. FIXM2g left every construct in that source as a
+    // token, so `√`, `\pi`, and `^` stay in it; a reader that took it for SymPy
+    // source read the wrong string (M2 review 3, the FIXM2i ruling). 1.0
+    // evaluates `to_sympy_source(text)` (`sympy_check.py:78`), so the harness
+    // ports that rewrite and reads its result.
+    let expected_source = one_zero_source(&pair.expected);
+    let learner_source = one_zero_source(&pair.learner);
     let (Some(expected_value), Some(learner_value)) = (
         numeric_value(&expected_source),
         numeric_value(&learner_source),
@@ -2024,8 +2580,296 @@ fn the_1_0_float_rung_closes_the_gap(pair: &Pair) -> bool {
 }
 
 /// Whether Python `float()` reads the whole source (1.0 `_numeric_equal`).
+///
+/// The caller passes the 1.0 rewrite of [`one_zero_source`], which is the exact
+/// string `sympy_check.py:180` hands to `float()`.
 fn reads_as_a_python_float(source: &str) -> bool {
     integer_digits(source).is_some() || decimal_parts(source).is_some()
+}
+
+/// The harness port of 1.0 `to_sympy_source` (`sympy_check.py:78-105`).
+///
+/// The function writes the string that the two 1.0 float rungs evaluate. It is a
+/// port of 1.0, not a call into 2.0: the harness must not ask the code under test
+/// what the other checker reads.
+///
+/// The steps keep the order of the 1.0 function, because the order decides the
+/// result: the caret becomes `**` before the backslash goes away, and the radical
+/// takes its group before the plain glyph table runs.
+fn one_zero_source(text: &str) -> String {
+    let mut out = text.trim().to_string();
+    if out.chars().count() > 1 && out.starts_with('$') && out.ends_with('$') {
+        out = out
+            .get(1..out.len().saturating_sub(1))
+            .unwrap_or_default()
+            .to_string();
+    }
+    out = out.trim_end_matches('.').trim().to_string();
+    out = out.replace('^', "**");
+    out = out.replace("\\cdot", "*").replace("\\times", "*");
+    out = out.replace("\\left", "").replace("\\right", "");
+    out = out.replace('\\', "");
+    out = out.replace('×', "*").replace('÷', "/");
+    out = radical_to_call(&out);
+    out = superscript_to_power(&out);
+    for (glyph, ascii) in UNICODE_TO_ASCII {
+        // The superscript rows of the table write a caret, and the step above
+        // already wrote the `**` that 1.0 writes there.
+        if ascii.starts_with('^') {
+            continue;
+        }
+        out = out.replace(glyph, ascii);
+    }
+    strip_thousands_groups(&out)
+}
+
+/// Rewrite `x²` into `x**2` (1.0 `_unicode_math_to_ascii`).
+fn superscript_to_power(text: &str) -> String {
+    const SUPERSCRIPTS: [(char, char); 10] = [
+        ('⁰', '0'),
+        ('¹', '1'),
+        ('²', '2'),
+        ('³', '3'),
+        ('⁴', '4'),
+        ('⁵', '5'),
+        ('⁶', '6'),
+        ('⁷', '7'),
+        ('⁸', '8'),
+        ('⁹', '9'),
+    ];
+    let digit_of = |ch: char| {
+        SUPERSCRIPTS
+            .iter()
+            .find(|(glyph, _)| *glyph == ch)
+            .map(|(_, digit)| *digit)
+    };
+    let chars: Vec<char> = text.chars().collect();
+    let mut out = String::new();
+    let mut index = 0;
+    while let Some(ch) = chars.get(index).copied() {
+        let Some(digit) = digit_of(ch) else {
+            out.push(ch);
+            index += 1;
+            continue;
+        };
+        // The 1.0 pattern needs a word character or a `)` in front of the run.
+        let anchored = matches!(out.chars().last(), Some(previous)
+            if previous.is_alphanumeric() || previous == '_' || previous == ')');
+        if !anchored {
+            out.push(ch);
+            index += 1;
+            continue;
+        }
+        out.push_str("**");
+        out.push(digit);
+        index += 1;
+        while let Some(next) = chars.get(index).copied().and_then(digit_of) {
+            out.push(next);
+            index += 1;
+        }
+    }
+    out
+}
+
+/// Delete the thousands separators of a plain grouped integer (1.0
+/// `_COMMA_GROUPS_RE` and `_SPACE_GROUPS_RE`, both applied as a full match).
+fn strip_thousands_groups(text: &str) -> String {
+    let trimmed = text.trim();
+    for separator in [",", " ", "\u{00a0}", "\u{202f}", "\u{2009}", "\u{2007}"] {
+        let Some((negative, digits)) = split_groups(trimmed, separator) else {
+            continue;
+        };
+        return if negative {
+            format!("-{digits}")
+        } else {
+            digits
+        };
+    }
+    text.to_string()
+}
+
+/// Read `-?\d{1,3}(SEP\d{3})+` as a whole, and return the sign and the digits.
+fn split_groups(text: &str, separator: &str) -> Option<(bool, String)> {
+    let (negative, rest) = match text.strip_prefix('-') {
+        Some(rest) => (true, rest),
+        None => (false, text),
+    };
+    let parts: Vec<&str> = rest.split(separator).collect();
+    if parts.len() < 2 {
+        return None;
+    }
+    let head = parts.first()?;
+    if head.is_empty() || head.len() > 3 || !head.chars().all(|c| c.is_ascii_digit()) {
+        return None;
+    }
+    for group in parts.get(1..)? {
+        if group.len() != 3 || !group.chars().all(|c| c.is_ascii_digit()) {
+            return None;
+        }
+    }
+    Some((negative, parts.concat()))
+}
+
+/// The radical atoms of one canonical form, as sorted text.
+///
+/// The set holds every root the value carries: an `Atom::Sqrt` of an integer, an
+/// `Atom::Call` of the name `sqrt` over a value the grammar keeps whole, and the
+/// radicand of a [`Basis`] that is not 1.
+fn radical_atoms(canon: &Canon) -> BTreeSet<String> {
+    let mut out = BTreeSet::new();
+    collect_radical_atoms(canon, &mut out);
+    out
+}
+
+/// Walk one canonical form and collect its radical atoms.
+fn collect_radical_atoms(canon: &Canon, out: &mut BTreeSet<String>) {
+    match canon {
+        Canon::Rational(_) => {}
+        Canon::Radical(terms) => {
+            for basis in terms.keys() {
+                if !basis.radicand.is_one() {
+                    out.insert(format!("sqrt({})", basis.radicand));
+                }
+            }
+        }
+        Canon::Poly(poly) => collect_poly_radicals(poly, out),
+        Canon::Value { num, den } => {
+            collect_poly_radicals(num, out);
+            collect_poly_radicals(den, out);
+        }
+        Canon::Func(_, args) | Canon::Tuple(args) | Canon::List(args) => {
+            for arg in args {
+                collect_radical_atoms(arg, out);
+            }
+        }
+        Canon::Set(members) => {
+            for member in members {
+                collect_radical_atoms(member, out);
+            }
+        }
+        Canon::Interval { lo, hi, .. } => {
+            for end in [lo, hi].into_iter().flatten() {
+                collect_radical_atoms(end, out);
+            }
+        }
+        Canon::Assign { value, .. } => collect_radical_atoms(value, out),
+    }
+}
+
+/// Collect the radical atoms of one polynomial.
+fn collect_poly_radicals(poly: &cadus_core::answer::Poly, out: &mut BTreeSet<String>) {
+    for (atom, exponent) in poly.keys().flatten() {
+        match atom {
+            Atom::Sqrt(radicand) => {
+                out.insert(format!("sqrt({radicand})**{exponent}"));
+            }
+            Atom::Call(name, args) if name == "sqrt" => {
+                out.insert(format!("sqrt({args:?})**{exponent}"));
+                for arg in args {
+                    collect_radical_atoms(arg, out);
+                }
+            }
+            Atom::Call(_, args) => {
+                for arg in args {
+                    collect_radical_atoms(arg, out);
+                }
+            }
+            Atom::Exp(inner) => collect_radical_atoms(inner, out),
+            Atom::Pi | Atom::E | Atom::Var(_) => {}
+        }
+    }
+}
+
+/// The denominator of one canonical form, as text. Empty means "no denominator".
+///
+/// A [`Canon::Value`] carries its denominator in the `den` field. A
+/// [`Canon::Poly`] carries a MONOMIAL denominator as the negative exponents of
+/// its atoms, because FIXM2h moves a monomial divisor into the numerator.
+fn denominator_key(canon: &Canon) -> String {
+    match canon {
+        Canon::Value { den, .. } => format!("{den:?}"),
+        Canon::Poly(poly) => {
+            let mut divisors: BTreeSet<String> = BTreeSet::new();
+            for (atom, exponent) in poly.keys().flatten() {
+                if *exponent < 0 {
+                    divisors.insert(format!("{atom:?}**{}", -exponent));
+                }
+            }
+            if divisors.is_empty() {
+                String::new()
+            } else {
+                divisors.into_iter().collect::<Vec<String>>().join("*")
+            }
+        }
+        _ => String::new(),
+    }
+}
+
+/// The two canonical forms of one pair, when the checker decides both.
+fn both_canonical_forms(pair: &Pair) -> Option<(Canon, Canon)> {
+    let expected = canonical_form(&pair.expected).ok()?;
+    let learner = canonical_form(&pair.learner).ok()?;
+    Some((expected, learner))
+}
+
+/// Whether 2.0 refuses the pair because it runs no polynomial GCD (FIXM2h).
+///
+/// The predicate is SPECIFIC, and it names two facts that must both hold:
+///
+/// 1. `scripts/oracle/rewrite_1_0.py` recorded `cancel(expected - learner) == 0`,
+///    so the two answers are one value and the difference needs a polynomial GCD.
+/// 2. The two canonical forms differ IN A DENOMINATOR.
+///
+/// A pair that misses either fact keeps no reason. It stays in class 3, and it
+/// fails the parity assertion as a 2.0 bug (R5). No catch-all sits here.
+fn no_polynomial_gcd(pair: &Pair) -> bool {
+    let key = (
+        pair.expected.clone(),
+        pair.learner.clone(),
+        pair.kind.as_str().to_string(),
+    );
+    let Some((cancel_zero, _)) = rewrite_evidence().get(&key).copied() else {
+        return false;
+    };
+    if !cancel_zero {
+        return false;
+    }
+    let Some((expected, learner)) = both_canonical_forms(pair) else {
+        return false;
+    };
+    let left = denominator_key(&expected);
+    let right = denominator_key(&learner);
+    left != right && !(left.is_empty() && right.is_empty())
+}
+
+/// Whether 2.0 refuses the pair because it rationalizes no radical (FIXM2h).
+///
+/// The predicate is SPECIFIC, and it names two facts that must both hold:
+///
+/// 1. `scripts/oracle/rewrite_1_0.py` recorded `radsimp(expected - learner) == 0`,
+///    so the two answers are one value under the radical laws.
+/// 2. The two canonical forms differ IN A RADICAL ATOM.
+///
+/// `sqrt(x)*sqrt(x)` is the shape: 2.0 keeps two `sqrt(x)` atoms and never folds
+/// them into `x`, because the fold holds for a non-negative `x` only.
+fn no_radical_rationalization(pair: &Pair) -> bool {
+    let key = (
+        pair.expected.clone(),
+        pair.learner.clone(),
+        pair.kind.as_str().to_string(),
+    );
+    let Some((_, radsimp_zero)) = rewrite_evidence().get(&key).copied() else {
+        return false;
+    };
+    if !radsimp_zero {
+        return false;
+    }
+    let Some((expected, learner)) = both_canonical_forms(pair) else {
+        return false;
+    };
+    let left = radical_atoms(&expected);
+    let right = radical_atoms(&learner);
+    left != right && !(left.is_empty() && right.is_empty())
 }
 
 /// Name the documented reason a pair diverges, when one covers it.
@@ -2044,6 +2888,15 @@ fn documented_reason(
     if oracle.equivalent && !rust_correct {
         if the_1_0_float_rung_closes_the_gap(pair) {
             return Some("no float tolerance rung (D6)");
+        }
+        // The two narrowings of the canonical rational form, in a fixed order.
+        // A radical shape takes the radical reason, and every other shape takes
+        // the GCD reason, so one pair gets one reason.
+        if no_radical_rationalization(pair) {
+            return Some("no radical rationalization (V1 narrowing)");
+        }
+        if no_polynomial_gcd(pair) {
+            return Some("no polynomial GCD (V1 narrowing)");
         }
         // No catch-all sits here. A 1.0 `simplify` result is not readable from
         // the two answer strings, so a pair that names a transcendental function
@@ -2080,8 +2933,211 @@ fn documented_reason(
                 "the 1.0 rewriter deletes a backslash and leaves a brace group (spec 7.7)",
             );
         }
+        if one_side_alone_names_a_bare_e(pair) {
+            return Some("the 1.0 namespace reads a bare `e` as a free symbol (spec 3.1)");
+        }
+        if a_spaced_times_x(pair) {
+            return Some("2.0 reads a spaced `x` as the times sign (review 1, finding 18)");
+        }
+        if a_bracket_free_argument_meets_a_function(&pair.expected)
+            || a_bracket_free_argument_meets_a_function(&pair.learner)
+        {
+            return Some("the juxtaposed argument stops at a function name (review 3, finding 5)");
+        }
     }
     None
+}
+
+/// The names the 2.0 grammar reads as functions (`answer::parse`, `FUNCTIONS`).
+///
+/// The list is a literal copy, so a change in the grammar cannot quietly change
+/// the reason a pair leaves class 3.
+const FUNCTION_NAMES: [&str; 17] = [
+    "sqrt", "sin", "cos", "tan", "sec", "csc", "cot", "asin", "acos", "atan", "sinh", "cosh",
+    "tanh", "exp", "ln", "log", "abs",
+];
+
+/// Whether one side writes a times sign as the spaced letter `x` (or `X`).
+///
+/// 2.0 reads a spaced `x` between two values as multiplication (M2 review 1,
+/// finding #18), and 1.0 hands the letter to SymPy as a free symbol. The
+/// predicate is specific: the 1.0 source of the side must name the bare letter,
+/// AND the 2.0 value of that same side must carry no variable of that name. A
+/// side that really does hold the variable `x` keeps no reason here.
+fn a_spaced_times_x(pair: &Pair) -> bool {
+    [&pair.expected, &pair.learner]
+        .into_iter()
+        .any(|side| names_a_bare_word(&one_zero_source(side), "x") && !holds_the_variable_x(side))
+}
+
+/// Whether the 2.0 value of `answer` carries the variable `x`.
+fn holds_the_variable_x(answer: &str) -> bool {
+    let Ok(canon) = canonical_form(answer) else {
+        return false;
+    };
+    let mut names = BTreeSet::new();
+    collect_variable_names(&canon, &mut names);
+    names.contains("x")
+}
+
+/// Collect the variable names of one canonical form.
+fn collect_variable_names(canon: &Canon, out: &mut BTreeSet<String>) {
+    match canon {
+        Canon::Rational(_) | Canon::Radical(_) => {}
+        Canon::Poly(poly) => collect_poly_variables(poly, out),
+        Canon::Value { num, den } => {
+            collect_poly_variables(num, out);
+            collect_poly_variables(den, out);
+        }
+        Canon::Func(_, args) | Canon::Tuple(args) | Canon::List(args) => {
+            for arg in args {
+                collect_variable_names(arg, out);
+            }
+        }
+        Canon::Set(members) => {
+            for member in members {
+                collect_variable_names(member, out);
+            }
+        }
+        Canon::Interval { var, lo, hi, .. } => {
+            if let Some(name) = var {
+                out.insert(name.clone());
+            }
+            for end in [lo, hi].into_iter().flatten() {
+                collect_variable_names(end, out);
+            }
+        }
+        Canon::Assign { value, .. } => collect_variable_names(value, out),
+    }
+}
+
+/// Collect the variable names of one polynomial.
+fn collect_poly_variables(poly: &cadus_core::answer::Poly, out: &mut BTreeSet<String>) {
+    for (atom, _) in poly.keys().flatten() {
+        match atom {
+            Atom::Var(name) => {
+                out.insert(name.clone());
+            }
+            Atom::Call(_, args) => {
+                for arg in args {
+                    collect_variable_names(arg, out);
+                }
+            }
+            Atom::Exp(inner) => collect_variable_names(inner, out),
+            Atom::Sqrt(_) | Atom::Pi | Atom::E => {}
+        }
+    }
+}
+
+/// Whether `text` holds the whole word `word`.
+fn names_a_bare_word(text: &str, word: &str) -> bool {
+    let mut run = String::new();
+    for ch in text.chars() {
+        if ch.is_alphanumeric() || ch == '_' {
+            run.push(ch);
+            continue;
+        }
+        if run.eq_ignore_ascii_case(word) {
+            return true;
+        }
+        run.clear();
+    }
+    run.eq_ignore_ascii_case(word)
+}
+
+/// Whether `text` writes a bracket-free function argument that a second function
+/// name follows.
+///
+/// `sec x tan x` is the shape. 2.0 stops the argument at the second name and
+/// reads `sec(x)*tan(x)`; SymPy `implicit_multiplication_application` swallows
+/// the name and reads `sec(x*tan(x))` (M2 review 3, finding #5, and the ruling of
+/// that round). The predicate names the construct, and it fires on no other:
+/// the first name must carry NO bracket, and a second function name must follow
+/// it before any bracket or operator.
+fn a_bracket_free_argument_meets_a_function(text: &str) -> bool {
+    let words = word_runs(text);
+    for (index, (word, follows_open)) in words.iter().enumerate() {
+        if !FUNCTION_NAMES.contains(&word.as_str()) || *follows_open {
+            continue;
+        }
+        // The argument runs on until the next function name, so the second name
+        // is the first one that follows, at any distance.
+        let follows = words
+            .get(index + 1..)
+            .unwrap_or_default()
+            .iter()
+            .any(|(later, _)| FUNCTION_NAMES.contains(&later.as_str()));
+        if follows {
+            return true;
+        }
+    }
+    false
+}
+
+/// The word runs of `text`, each with a flag for a `(` that follows it.
+fn word_runs(text: &str) -> Vec<(String, bool)> {
+    let chars: Vec<char> = text.chars().collect();
+    let mut out: Vec<(String, bool)> = Vec::new();
+    let mut index = 0;
+    while index < chars.len() {
+        let ch = chars.get(index).copied().unwrap_or(' ');
+        if !ch.is_ascii_alphabetic() {
+            index += 1;
+            continue;
+        }
+        let start = index;
+        while matches!(chars.get(index), Some(c) if c.is_ascii_alphanumeric() || *c == '_') {
+            index += 1;
+        }
+        let word: String = chars.get(start..index).unwrap_or_default().iter().collect();
+        let mut scan = index;
+        while matches!(chars.get(scan), Some(c) if c.is_whitespace()) {
+            scan += 1;
+        }
+        out.push((word, chars.get(scan) == Some(&'(')));
+    }
+    out
+}
+
+/// Whether one side alone writes Euler's number as the bare name `e`.
+///
+/// `_safe_sympy_globals` runs `from sympy import *`, and that namespace holds
+/// `E` and `exp` and no lowercase `e` (`sympy_check.py:170`). `parse_expr` then
+/// reads `e` as a free symbol, so 1.0 grades `e**2` against `exp(2)` False. 2.0
+/// reads `e` and `E` as one constant (`crates/core/tests/answer_divergence.rs`,
+/// `e_is_eulers_number_on_both_sides`).
+///
+/// The predicate is specific: it fires only when ONE side carries the bare name.
+/// Two sides that both carry it reach the same free symbol in 1.0, so 1.0 and
+/// 2.0 agree on that pair and the divergence has another cause.
+fn one_side_alone_names_a_bare_e(pair: &Pair) -> bool {
+    names_a_bare_e(&one_zero_source(&pair.expected))
+        != names_a_bare_e(&one_zero_source(&pair.learner))
+}
+
+/// Whether `source` names Euler's number as the bare token `e`.
+///
+/// A letter in front of the `e` makes it part of a longer name (`sec`, `exp`).
+/// A digit in front does NOT: SymPy `implicit_multiplication` splits `3e**x`
+/// into `3*e**x`, measured on 2026-08-27. A digit AFTER the `e` makes the whole
+/// run a float literal, and `3e5` is the number 300000.
+fn names_a_bare_e(source: &str) -> bool {
+    let chars: Vec<char> = source.chars().collect();
+    for (index, ch) in chars.iter().enumerate() {
+        if *ch != 'e' {
+            continue;
+        }
+        let before = index
+            .checked_sub(1)
+            .and_then(|i| chars.get(i))
+            .copied()
+            .unwrap_or(' ');
+        let after = chars.get(index + 1).copied().unwrap_or(' ');
+        if !before.is_alphabetic() && before != '_' && !after.is_alphanumeric() && after != '_' {
+            return true;
+        }
+    }
+    false
 }
 
 /// One classified pair.
@@ -2151,6 +3207,8 @@ struct Report {
     per_intent: BTreeMap<&'static str, usize>,
     per_class: BTreeMap<&'static str, usize>,
     per_reason: BTreeMap<&'static str, usize>,
+    /// One line per pair of each documented reason, for the review record.
+    per_reason_pairs: BTreeMap<&'static str, Vec<String>>,
     comparable: usize,
     comparable_agreed: usize,
     disagreements: Vec<String>,
@@ -2164,6 +3222,7 @@ fn build_report(pairs: &[Pair], verdicts: &BTreeMap<PairKey, Option<OracleVerdic
         per_intent: BTreeMap::new(),
         per_class: BTreeMap::new(),
         per_reason: BTreeMap::new(),
+        per_reason_pairs: BTreeMap::new(),
         comparable: 0,
         comparable_agreed: 0,
         disagreements: Vec::new(),
@@ -2186,6 +3245,14 @@ fn build_report(pairs: &[Pair], verdicts: &BTreeMap<PairKey, Option<OracleVerdic
         *report.per_class.entry(classified.class.name()).or_insert(0) += 1;
         if let Some(reason) = classified.reason {
             *report.per_reason.entry(reason).or_insert(0) += 1;
+            report
+                .per_reason_pairs
+                .entry(reason)
+                .or_default()
+                .push(format!(
+                    "{}: {:?} against {:?}",
+                    pair.generator, pair.expected, pair.learner
+                ));
         }
         if classified.class == Class::Comparable {
             report.comparable += 1;
@@ -2222,6 +3289,16 @@ fn print_report(report: &Report) {
     for (name, count) in &report.per_reason {
         println!("{name}: {count}");
     }
+    // The two rewrite narrowings are the new divergences of FIXM2i, and the M2
+    // plan quotes their pairs, so the report names every one of them.
+    for reason in [
+        "no polynomial GCD (V1 narrowing)",
+        "no radical rationalization (V1 narrowing)",
+    ] {
+        for line in report.per_reason_pairs.get(reason).into_iter().flatten() {
+            println!("[{reason}] {line}");
+        }
+    }
     let percent = if report.comparable == 0 {
         100.0
     } else {
@@ -2241,11 +3318,11 @@ fn print_report(report: &Report) {
 // ---------------------------------------------------------------------------
 
 /// The literal size of the generated set.
-const GENERATED_PAIRS: usize = 17_047;
+const GENERATED_PAIRS: usize = 17_874;
 
 /// The literal pair count of every generator, in name order.
-const GENERATOR_COUNTS: [(&str, usize); 41] = [
-    ("algebraic_refactor", 58),
+const GENERATOR_COUNTS: [(&str, usize); 47] = [
+    ("algebraic_refactor", 65),
     ("appended_junk", 1562),
     ("ascii_to_unicode", 70),
     ("caret_power", 0),
@@ -2258,22 +3335,28 @@ const GENERATOR_COUNTS: [(&str, usize); 41] = [
     ("dollar_wrapped", 1298),
     ("dot_thousands", 44),
     ("equivalent_fraction", 165),
-    ("explicit_multiplication", 404),
+    ("explicit_multiplication", 351),
     ("figure_space_thousands", 44),
     ("fraction_to_decimal", 79),
     ("identity", 1562),
+    ("implicit_multiplication", 270),
     ("internal_spaces", 1063),
-    ("implicit_multiplication", 63),
     ("last_digit_bumped", 1519),
     ("narrow_space_thousands", 44),
     ("nbsp_thousands", 44),
     ("over_thousand", 256),
     ("plus_spaced", 337),
-    ("product_reorder", 48),
+    ("product_reorder", 276),
+    ("rewrite_apart", 50),
+    ("rewrite_cancel", 78),
+    ("rewrite_expand", 25),
+    ("rewrite_factor", 27),
+    ("rewrite_radsimp", 17),
+    ("rewrite_together", 116),
     ("set_element_changed", 9),
     ("set_reordered", 11),
     ("sign_flipped", 1559),
-    ("significant_decimal", 154),
+    ("significant_decimal", 248),
     ("space_thousands", 44),
     ("star_power", 333),
     ("sum_reorder", 206),
@@ -2281,11 +3364,11 @@ const GENERATOR_COUNTS: [(&str, usize); 41] = [
     ("times_thousand", 300),
     ("trailing_period", 1562),
     ("trailing_zero", 408),
-    ("tuple_swapped", 151),
-    ("unicode_to_ascii", 61),
+    ("tuple_swapped", 183),
+    ("unicode_to_ascii", 54),
     ("whitespace_padding", 1562),
-    ("wrong_exponent", 173),
-    ("wrong_radicand", 33),
+    ("wrong_exponent", 175),
+    ("wrong_radicand", 37),
 ];
 
 /// The literal pair count of every divergence class.
@@ -2293,40 +3376,45 @@ const GENERATOR_COUNTS: [(&str, usize); 41] = [
 /// The counts are measured against the live 1.0 checker, not read back from the
 /// committed file.
 const CLASS_COUNTS: [(&str, usize); 5] = [
-    ("class 1 outside_grammar", 931),
+    ("class 1 outside_grammar", 965),
     ("class 2 prose_expected", 0),
-    ("class 3 comparable", 15940),
-    ("class 4 documented_divergence", 176),
+    ("class 3 comparable", 16554),
+    ("class 4 documented_divergence", 355),
     ("oracle_silent", 0),
 ];
 
 /// The literal pair count of every documented divergence reason.
 ///
-/// The first four reasons are the ones `docs/plans/M2.md` names. This generated
-/// set reaches none of them except the float rung: prose never enters the set
-/// (the set holds only in-grammar answers), a SymPy name such as `zoo` leaves
-/// 2.0 undecidable, which is class 1, and no predicate claims a 1.0
-/// simplification. All three stay pinned by literal pairs in
-/// `crates/core/tests/answer_divergence.rs`.
+/// The reasons come in three groups.
 ///
-/// The five pairs that the deleted substring test moved under the transcendental
-/// reason are the `cos 2*x` parse divergence of M2 review 2, findings 10 and 14.
-/// They belong to class 3, and they agree once the juxtaposed-argument rule of
-/// the parser reads `cos 2*x` as `cos(2*x)`.
+/// 1. The two narrowings of the canonical rational form (FIXM2h). Both carry 6
+///    pairs, and `print_report` names every one of them, so the M2 plan quotes
+///    them by their text. Both mark a correct learner WRONG in 2.0.
+/// 2. The four reasons `docs/plans/M2.md` names. This generated set reaches none
+///    of them except the float rung: prose never enters the set (the set holds
+///    only in-grammar answers), a SymPy name such as `zoo` leaves 2.0
+///    undecidable, which is class 1, and no predicate claims a 1.0
+///    simplification. All three stay pinned by literal pairs in
+///    `crates/core/tests/answer_divergence.rs`.
+/// 3. The 1.0 defects and the grammar rulings that this set reaches. Every one of
+///    them marks a correct learner WRONG in 1.0, and 2.0 decides it correctly.
 ///
-/// The float rung carries 156 pairs, and 154 of them come from the
+/// The float rung carries 240 pairs, and 238 of them come from the
 /// `significant_decimal` family that spec section 9.3 names: a rational with no
-/// exact decimal, or a radical, against its own value in ten significant digits.
-/// 1.0 grades every one of them True on a float rung, and 2.0 grades them False
-/// (D6). `crates/core/tests/answer_divergence.rs` pins one pair of each shape.
-const REASON_COUNTS: [(&str, usize); 9] = [
-    ("no float tolerance rung (D6)", 156),
+/// exact decimal, a radical, `pi`, or `e`, against its own value in ten
+/// significant digits. 1.0 grades every one of them True on a float rung, and
+/// 2.0 grades them False (D6). `crates/core/tests/answer_divergence.rs` pins one
+/// pair of each shape.
+const REASON_COUNTS: [(&str, usize); 14] = [
+    ("no polynomial GCD (V1 narrowing)", 6),
+    ("no radical rationalization (V1 narrowing)", 6),
+    ("no float tolerance rung (D6)", 240),
     ("a transcendental identity is not simplified (V1)", 0),
     ("prose is not a value (V2)", 0),
     ("a SymPy name is not a value (V2)", 0),
     (
         "the 1.0 exponent-tower guard refuses a legal power (spec 5.1)",
-        3,
+        11,
     ),
     (
         "the 1.0 tokenizer reads a Python number literal (spec 3.1)",
@@ -2339,7 +3427,19 @@ const REASON_COUNTS: [(&str, usize); 9] = [
     ("a chained inequality raises inside 1.0 (spec 7.7)", 6),
     (
         "the 1.0 rewriter deletes a backslash and leaves a brace group (spec 7.7)",
-        2,
+        3,
+    ),
+    (
+        "the 1.0 namespace reads a bare `e` as a free symbol (spec 3.1)",
+        46,
+    ),
+    (
+        "2.0 reads a spaced `x` as the times sign (review 1, finding 18)",
+        24,
+    ),
+    (
+        "the juxtaposed argument stops at a function name (review 3, finding 5)",
+        4,
     ),
 ];
 
@@ -2452,23 +3552,39 @@ fn the_harness_reader_reads_a_number_and_refuses_a_name() {
     assert_eq!(numeric_value("2**-1"), Some(0.5));
     assert_eq!(numeric_value("pi"), Some(std::f64::consts::PI));
     assert_eq!(numeric_value("e"), Some(std::f64::consts::E));
-    // A free symbol, an unknown name, a bare radical, an implicit product, an
-    // unbalanced bracket, and a division by zero are all refusals.
+    // A juxtaposed name is a product, and a bracket-free radical is a call,
+    // because 1.0 parses with `implicit_multiplication_application`
+    // (`sympy_check.py:253`): `3pi` is `3*pi` and `2sqrt 2 - 2` is
+    // `2*sqrt(2) - 2`. FIXM2i: the old reader refused both, and the float rung
+    // then explained none of the 78 `pi` and radical pairs of the
+    // `significant_decimal` family.
+    assert_eq!(numeric_value("3pi"), Some(3.0 * std::f64::consts::PI));
+    assert_eq!(numeric_value("2sqrt(3)"), Some(2.0 * 3.0_f64.sqrt()));
+    assert_eq!(numeric_value("2*sqrt 2"), Some(2.0 * 2.0_f64.sqrt()));
+    assert_eq!(numeric_value("2(3)"), Some(6.0));
+    // A free symbol, an unknown name, an implicit product of a number and a
+    // free symbol, an unbalanced bracket, and a division by zero are all
+    // refusals.
     assert_eq!(numeric_value("x"), None);
     assert_eq!(numeric_value("2*cos(0)"), None);
-    assert_eq!(numeric_value("2*sqrt 2"), None);
     assert_eq!(numeric_value("2x"), None);
     assert_eq!(numeric_value("(1 + 2"), None);
     assert_eq!(numeric_value("1/0"), None);
-    // Two values that only touch are two answers, not one.
+    // Two numbers that only touch are two answers, not one.
     assert_eq!(numeric_value("1 2"), None);
 }
 
 /// Build one corpus row for a generator test.
 fn probe_row(answer: &str, shape: &str) -> Row {
+    let source = normalize(answer).source;
+    let ast = parse(&source).unwrap_or_else(|e| panic!("parse {answer:?}: {e}"));
+    let printed = print_ast(&ast, PREC_LOWEST);
     Row {
         answer: answer.to_string(),
-        source: normalize(answer).source,
+        source,
+        printed,
+        ast,
+        canon: canonical_form(answer).ok(),
         shape: shape.to_string(),
         kind: AnswerKind::Expression,
     }
@@ -2509,6 +3625,17 @@ fn the_significant_decimal_family_writes_ten_significant_digits() {
     assert_eq!(
         generate_significant_decimal(&probe_row("√(2 + √3)/2", "expression_numeric")),
         Some("0.9659258263".to_string())
+    );
+    // FIXM2i widened the gate to every irrational number the grammar holds, so
+    // `pi` and `e` join the roots. The old gate read the source for `sqrt(`, and
+    // it missed both, and it missed `√` after FIXM2g.
+    assert_eq!(
+        generate_significant_decimal(&probe_row("2π", "expression_numeric")),
+        Some("6.283185307".to_string())
+    );
+    assert_eq!(
+        generate_significant_decimal(&probe_row("$3\\pi$", "expression_numeric")),
+        Some("9.424777961".to_string())
     );
     // A rational with an exact decimal, an integer, and a value with a free
     // symbol are all refusals: the pair carries no float rung.
@@ -2568,9 +3695,11 @@ fn the_algebraic_refactor_family_factors_and_multiplies_out() {
         generate_algebraic_refactor(&probe_row("(x + 3)(x - 3)", "expression_symbolic")),
         Some("(x + 3)*(x) - (x + 3)*(3)".to_string())
     );
+    // The family reads the PRINTED tree, so the juxtaposed `2(x + 3)` of the
+    // author reaches the rule as the product `2*(x + 3)` (FIXM2i).
     assert_eq!(
         generate_algebraic_refactor(&probe_row("2(x + 3)(x - 3)", "expression_symbolic")),
-        Some("2(x + 3)*(x) - 2(x + 3)*(3)".to_string())
+        Some("2*(x + 3)*(x) - 2*(x + 3)*(3)".to_string())
     );
     // A function argument is no factor, and a sum of two terms that are not
     // both squares takes neither rule.
@@ -2586,6 +3715,156 @@ fn the_algebraic_refactor_family_factors_and_multiplies_out() {
         generate_algebraic_refactor(&probe_row("1/(x + 1)", "expression_symbolic")),
         None
     );
+}
+
+#[test]
+fn the_printer_writes_the_tree_and_not_the_spelling() {
+    // FIXM2g leaves every construct in the source as a token, so the printed
+    // tree is the only ASCII reading of an answer the builders can trust.
+    let printed = |answer: &str| probe_row(answer, "expression_symbolic").printed;
+    assert_eq!(printed("\\frac{1}{2}"), "1/2");
+    assert_eq!(printed("½"), "1/2");
+    assert_eq!(printed("$(-2, 5\\pi/4)$"), "(-2, 5*pi/4)");
+    assert_eq!(printed("$(1, \\sqrt 3)$"), "(1, sqrt(3))");
+    assert_eq!(printed("36x^2y^2"), "36*x**2*y**2");
+    assert_eq!(printed("15√3"), "15*sqrt(3)");
+    assert_eq!(printed("x^3 - 6x^2 + 12x - 8"), "x**3 - 6*x**2 + 12*x - 8");
+    assert_eq!(printed("1/(x*(x + 1))"), "1/(x*(x + 1))");
+    assert_eq!(printed("7.2 x 10^-4"), "7.2*10**(-4)");
+    // A mixed number prints as a bracketed sum, because 1.0 reads the bare
+    // juxtaposition `2 1/2` as the product `2*(1/2)`.
+    assert_eq!(printed("2\\frac{1}{2}"), "(2 + 1/2)");
+    assert_eq!(printed("-1 ≤ x ≤ 3"), "-1 <= x <= 3");
+    assert_eq!(printed("{1, 3, 5}"), "{1, 3, 5}");
+}
+
+#[test]
+fn the_rewrite_family_reads_the_committed_sympy_spelling() {
+    // The six families take their spelling from the committed fixture, and the
+    // fixture holds the `str()` of the SymPy rule. The four rows below are
+    // literals of `crates/core/tests/fixtures/answers/rational_rewrites_1_0.jsonl`.
+    let row = probe_row("2/x + 1/(x + 1)", "expression_symbolic");
+    assert_eq!(
+        generate_rewrite_together(&row),
+        Some("(3*x + 2)/(x*(x + 1))".to_string())
+    );
+    assert_eq!(
+        generate_rewrite_cancel(&row),
+        Some("(3*x + 2)/(x**2 + x)".to_string())
+    );
+    let radical = probe_row("1/(2√x)", "expression_symbolic");
+    assert_eq!(
+        generate_rewrite_radsimp(&radical),
+        Some("sqrt(x)/(2*x)".to_string())
+    );
+    // An answer with no denominator and no radical takes no spelling, whatever
+    // the fixture holds.
+    let whole = probe_row("x**2 - 1", "expression_symbolic");
+    assert_eq!(generate_rewrite_factor(&whole), None);
+    // A mixed number takes none either: 1.0 reads `3 1/2` as `3*(1/2)`, so the
+    // gate keeps the whole row out of the file and out of the family.
+    let mixed = probe_row("3 1/2", "fraction");
+    assert!(!the_two_checkers_read_the_answer_alike(&mixed));
+    assert_eq!(generate_rewrite_together(&mixed), None);
+    // A spaced `x` is the times sign in 2.0 and a free symbol in 1.0.
+    let times = probe_row("7.2 x 10^-4", "decimal");
+    assert!(!the_two_checkers_read_the_answer_alike(&times));
+    assert_eq!(generate_rewrite_together(&times), None);
+    // The two rows above are the only shapes the gate refuses. A plain rational
+    // and a radical both pass it.
+    assert!(the_two_checkers_read_the_answer_alike(&row));
+    assert!(the_two_checkers_read_the_answer_alike(&radical));
+    assert!(the_two_checkers_read_the_answer_alike(&whole));
+}
+
+#[test]
+fn the_two_rewrite_narrowings_need_the_recorded_sympy_evidence() {
+    let one_zero_says_yes = OracleVerdict {
+        equivalent: true,
+        notation: false,
+    };
+    // A denominator that needs a polynomial GCD. The evidence line of the
+    // fixture says `cancel(expected - learner) == 0`, and the two canonical
+    // forms differ in a denominator.
+    let gcd = probe_pair(
+        "-4(x + 1)/(x - 1)^3",
+        "-4/(x - 1)**2 - 8/(x - 1)**3",
+        "expression_symbolic",
+    );
+    assert_eq!(
+        documented_reason(&gcd, false, one_zero_says_yes),
+        Some("no polynomial GCD (V1 narrowing)")
+    );
+    // A radical the rewrite moves out of the denominator.
+    let radical = probe_pair("1/(2√x)", "sqrt(x)/(2*x)", "expression_symbolic");
+    assert_eq!(
+        documented_reason(&radical, false, one_zero_says_yes),
+        Some("no radical rationalization (V1 narrowing)")
+    );
+    // The SAME two answers, without the recorded evidence, keep no reason: the
+    // predicate is not "the two canonical forms differ".
+    let unrecorded = probe_pair("1/(2*sqrt(x))", "sqrt(x)/(2*x)", "expression_symbolic");
+    assert_eq!(
+        documented_reason(&unrecorded, false, one_zero_says_yes),
+        None
+    );
+    // A pair of the fixture whose canonical forms agree in every denominator and
+    // every radical atom keeps no reason either. The fixture records
+    // `radsimp_zero: true` for the row below, and neither side holds a radical,
+    // so the canonical-form test is the one that refuses the reason.
+    let no_radical = probe_pair("$(4/3)\\sin 3t$", "4*sin(3*t)/3", "expression_symbolic");
+    assert_eq!(
+        documented_reason(&no_radical, false, one_zero_says_yes),
+        None
+    );
+    let same_shape = probe_pair(
+        "2/x + 1/(x + 1)",
+        "(3*x + 2)/(x*(x + 1))",
+        "expression_symbolic",
+    );
+    assert_eq!(
+        documented_reason(&same_shape, false, one_zero_says_yes),
+        None
+    );
+}
+
+#[test]
+fn the_three_grammar_rulings_name_their_own_pairs() {
+    let one_zero_says_no = OracleVerdict {
+        equivalent: false,
+        notation: false,
+    };
+    // 1.0 has no lowercase `e`, so `3e**x` is a free symbol to the power `x`.
+    let euler = probe_pair("3e^(3x)", "3exp(3x)", "expression_symbolic");
+    assert_eq!(
+        documented_reason(&euler, true, one_zero_says_no),
+        Some("the 1.0 namespace reads a bare `e` as a free symbol (spec 3.1)")
+    );
+    // Two sides that both write the bare `e` reach one free symbol in 1.0.
+    let both_sides = probe_pair("3e^(3x)", "3*e^(3*x)", "expression_symbolic");
+    assert_eq!(documented_reason(&both_sides, true, one_zero_says_no), None);
+    // The spaced times sign.
+    let times = probe_pair("2 x 2 x 3", "2*3*2", "expression_symbolic");
+    assert_eq!(
+        documented_reason(&times, true, one_zero_says_no),
+        Some("2.0 reads a spaced `x` as the times sign (review 1, finding 18)")
+    );
+    // An answer that really holds the variable `x` keeps no times-sign reason.
+    let variable = probe_pair("2*x", "x*2", "expression_symbolic");
+    assert_eq!(documented_reason(&variable, true, one_zero_says_no), None);
+    // The juxtaposed argument that stops at a function name.
+    let chain = probe_pair("sec x tan x", "tan(x)*sec(x)", "expression_symbolic");
+    assert_eq!(
+        documented_reason(&chain, true, one_zero_says_no),
+        Some("the juxtaposed argument stops at a function name (review 3, finding 5)")
+    );
+    // One function name with a bracket-free argument is no chain.
+    let single = probe_pair("ln x + C", "C + log(x)", "expression_symbolic");
+    assert_eq!(documented_reason(&single, true, one_zero_says_no), None);
+    // Two function names that both carry their own brackets are no chain either:
+    // SymPy swallows nothing there, and both checkers read one product.
+    let bracketed = probe_pair("sin(x)*cos(x)", "cos(x)*sin(x)", "expression_symbolic");
+    assert_eq!(documented_reason(&bracketed, true, one_zero_says_no), None);
 }
 
 /// Build one pair for a predicate test.
@@ -2679,7 +3958,7 @@ fn the_two_checkers_agree_on_every_comparable_pair() {
 }
 
 #[test]
-fn every_documented_reason_is_one_of_the_named_nine() {
+fn every_documented_reason_is_one_of_the_named_fourteen() {
     for (name, _) in REASON_COUNTS {
         assert!(
             DOCUMENTED_REASONS.contains(&name),
@@ -2714,6 +3993,196 @@ fn the_committed_verdict_file_covers_the_generated_set_exactly() {
 // ---------------------------------------------------------------------------
 // The live oracle
 // ---------------------------------------------------------------------------
+
+/// Ask the live rewrite helper for the spellings of every row that qualifies.
+///
+/// The helper is `scripts/oracle/rewrite_1_0.py`. It runs one request at a time,
+/// and the caller reads one response before it writes the next one, so neither
+/// pipe ever fills.
+fn live_rewrites(python: &str) -> Vec<RewriteLine> {
+    use std::io::{BufRead, BufReader, Write};
+    use std::process::{Command, Stdio};
+
+    let script = Path::new(env!("CARGO_MANIFEST_DIR"))
+        .join("../../scripts/oracle/rewrite_1_0.py")
+        .canonicalize()
+        .unwrap_or_else(|e| panic!("find scripts/oracle/rewrite_1_0.py: {e}"));
+    let mut child = Command::new(python)
+        .arg(&script)
+        .arg("--timeout")
+        .arg("10.0")
+        .stdin(Stdio::piped())
+        .stdout(Stdio::piped())
+        .spawn()
+        .unwrap_or_else(|e| panic!("start {}: {e}", script.display()));
+    let mut stdin = child.stdin.take().unwrap_or_else(|| panic!("no stdin"));
+    let stdout = child.stdout.take().unwrap_or_else(|| panic!("no stdout"));
+    let mut reader = BufReader::new(stdout);
+    let mut ready = String::new();
+    reader
+        .read_line(&mut ready)
+        .unwrap_or_else(|e| panic!("read the ready line: {e}"));
+    assert!(ready.contains("\"ready\""), "the helper said {ready:?}");
+
+    let mut ask = |request: &serde_json::Value| -> serde_json::Value {
+        writeln!(stdin, "{request}").unwrap_or_else(|e| panic!("write the request: {e}"));
+        stdin.flush().unwrap_or_else(|e| panic!("flush: {e}"));
+        let mut line = String::new();
+        reader
+            .read_line(&mut line)
+            .unwrap_or_else(|e| panic!("read the response: {e}"));
+        serde_json::from_str(&line).unwrap_or_else(|e| panic!("response {line}: {e}"))
+    };
+
+    let mut out: Vec<RewriteLine> = Vec::new();
+    let mut offered = 0_usize;
+    let mut refused_by_1_0 = 0_usize;
+    for row in in_grammar_rows() {
+        if !holds_a_denominator_or_a_radical(&row.ast)
+            || !the_two_checkers_read_the_answer_alike(&row)
+        {
+            continue;
+        }
+        offered += 1;
+        let response = ask(&serde_json::json!({
+            "op": "rewrite",
+            "answer": row.answer,
+        }));
+        // 1.0 refuses some corpus answers itself (`\frac{1}{2}` reaches SymPy as
+        // `frac{1}{2}`). The helper reports the error, and the row carries no
+        // spelling. That is a 1.0 defect, and other tests pin it.
+        if response.get("error").is_some() {
+            refused_by_1_0 += 1;
+            continue;
+        }
+        let spellings = response
+            .get("spellings")
+            .and_then(serde_json::Value::as_array)
+            .cloned()
+            .unwrap_or_default();
+        for spelling in spellings {
+            let rule = spelling
+                .get("rule")
+                .and_then(serde_json::Value::as_str)
+                .unwrap_or_default()
+                .to_string();
+            let learner = spelling
+                .get("text")
+                .and_then(serde_json::Value::as_str)
+                .unwrap_or_default()
+                .to_string();
+            if !REWRITE_RULES.contains(&rule.as_str()) {
+                panic!("the helper wrote the unknown rule {rule:?}");
+            }
+            // A spelling that repeats the answer or the printed tree is no
+            // variant, and it would only repeat a pair another family builds.
+            if learner == row.answer || learner == row.printed {
+                continue;
+            }
+            let difference = ask(&serde_json::json!({
+                "op": "difference",
+                "expected": row.answer,
+                "learner": learner,
+            }));
+            let flag = |name: &str| {
+                difference
+                    .get(name)
+                    .and_then(serde_json::Value::as_bool)
+                    .unwrap_or(false)
+            };
+            out.push(RewriteLine {
+                answer: row.answer.clone(),
+                kind: row.kind.as_str().to_string(),
+                rule,
+                learner,
+                cancel_zero: flag("cancel_zero"),
+                radsimp_zero: flag("radsimp_zero"),
+            });
+        }
+    }
+    drop(stdin);
+    let _ = child.wait();
+    println!(
+        "rewrite: {offered} rows offered, {refused_by_1_0} refused by the 1.0 parser, \
+         {} spellings kept",
+        out.len()
+    );
+    out.sort_by(|left, right| {
+        (&left.answer, &left.kind, &left.rule).cmp(&(&right.answer, &right.kind, &right.rule))
+    });
+    out
+}
+
+/// Write `rational_rewrites_1_0.jsonl` from the live helper, when asked.
+///
+/// The step runs once, by hand, and it commits its result:
+///
+/// ```text
+/// CADUS_REWRITE_REGEN=1 CADUS_ORACLE_PYTHON=/home/deploy/dev/cadus/.venv/bin/python \
+///     cargo test -p cadus-core --test answer_oracle regenerate_the_rewrite_fixture
+/// ```
+#[test]
+fn regenerate_the_rewrite_fixture_when_asked() {
+    if std::env::var("CADUS_REWRITE_REGEN").is_err() {
+        return;
+    }
+    let Ok(python) = std::env::var("CADUS_ORACLE_PYTHON") else {
+        panic!("set CADUS_ORACLE_PYTHON to regenerate the rewrite fixture");
+    };
+    let rows = live_rewrites(&python);
+    let mut out = String::new();
+    for row in &rows {
+        let line = serde_json::to_string(row).unwrap_or_else(|e| panic!("write a row: {e}"));
+        let _ = writeln!(out, "{line}");
+    }
+    let path = fixture("rational_rewrites_1_0.jsonl");
+    std::fs::write(&path, out).unwrap_or_else(|e| panic!("write {}: {e}", path.display()));
+    println!(
+        "wrote {} rewrite spellings to {}",
+        rows.len(),
+        path.display()
+    );
+}
+
+/// Prove the committed spellings still say what the live helper says.
+#[test]
+fn the_live_rewrite_helper_reproduces_the_committed_spellings() {
+    let Ok(python) = std::env::var("CADUS_ORACLE_PYTHON") else {
+        println!("skipped: set CADUS_ORACLE_PYTHON to run the live rewrite helper");
+        return;
+    };
+    if std::env::var("CADUS_REWRITE_REGEN").is_ok() {
+        println!("skipped: the regeneration test owns the file in this run");
+        return;
+    }
+    let live = live_rewrites(&python);
+    let committed = committed_rewrites();
+    assert_eq!(
+        live.len(),
+        committed.len(),
+        "the live helper wrote {} spellings and the file holds {}",
+        live.len(),
+        committed.len()
+    );
+    let mut moved = Vec::new();
+    for (live, recorded) in live.iter().zip(committed.iter()) {
+        if live != recorded {
+            moved.push(format!(
+                "{:?} {}: recorded {:?}, live {:?}",
+                recorded.answer, recorded.rule, recorded.learner, live.learner
+            ));
+        }
+    }
+    assert!(
+        moved.is_empty(),
+        "the live rewrite helper no longer matches the committed file:\n{}",
+        moved.join("\n")
+    );
+    println!(
+        "the live rewrite helper reproduced {} spellings",
+        live.len()
+    );
+}
 
 /// Ask the live 1.0 checker for every verdict of the generated set.
 fn live_verdicts(python: &str, pairs: &[Pair]) -> Vec<Option<OracleVerdict>> {
@@ -2785,6 +4254,57 @@ fn live_verdicts(python: &str, pairs: &[Pair]) -> Vec<Option<OracleVerdict>> {
     out
 }
 
+/// Write `oracle_verdicts_1_0.jsonl` from the live 1.0 checker, when asked.
+///
+/// The step runs once, by hand, after a generator change, and it commits its
+/// result:
+///
+/// ```text
+/// CADUS_ORACLE_RECORD=1 CADUS_ORACLE_PYTHON=/home/deploy/dev/cadus/.venv/bin/python \
+///     cargo test -p cadus-core --test answer_oracle record_the_oracle_verdicts
+/// ```
+#[test]
+fn record_the_oracle_verdicts_when_asked() {
+    if std::env::var("CADUS_ORACLE_RECORD").is_err() {
+        return;
+    }
+    let Ok(python) = std::env::var("CADUS_ORACLE_PYTHON") else {
+        panic!("set CADUS_ORACLE_PYTHON to record the 1.0 verdicts");
+    };
+    let pairs = generated_pairs();
+    let live = live_verdicts(&python, &pairs);
+    assert_eq!(live.len(), pairs.len(), "the oracle answered every pair");
+    let mut out = String::new();
+    for (pair, verdict) in pairs.iter().zip(live.iter()) {
+        let line = match verdict {
+            Some(verdict) => serde_json::json!({
+                "expected": pair.expected,
+                "learner": pair.learner,
+                "kind": pair.kind.as_str(),
+                "equivalent": verdict.equivalent,
+                "notation": verdict.notation,
+                "timeout": false,
+            }),
+            None => serde_json::json!({
+                "expected": pair.expected,
+                "learner": pair.learner,
+                "kind": pair.kind.as_str(),
+                "equivalent": serde_json::Value::Null,
+                "notation": serde_json::Value::Null,
+                "timeout": true,
+            }),
+        };
+        let _ = writeln!(out, "{line}");
+    }
+    let path = fixture("oracle_verdicts_1_0.jsonl");
+    std::fs::write(&path, out).unwrap_or_else(|e| panic!("write {}: {e}", path.display()));
+    println!(
+        "recorded {} 1.0 verdicts in {}",
+        pairs.len(),
+        path.display()
+    );
+}
+
 /// Prove the committed file still says what the live 1.0 checker says.
 ///
 /// The test needs the 1.0 interpreter, which only this build box has, so it runs
@@ -2797,6 +4317,10 @@ fn the_live_oracle_reproduces_the_committed_verdicts() {
         println!("skipped: set CADUS_ORACLE_PYTHON to run against the live 1.0 checker");
         return;
     };
+    if std::env::var("CADUS_ORACLE_RECORD").is_ok() {
+        println!("skipped: the record test owns the file in this run");
+        return;
+    }
     let pairs = generated_pairs();
     let live = live_verdicts(&python, &pairs);
     assert_eq!(live.len(), pairs.len(), "the oracle answered every pair");
