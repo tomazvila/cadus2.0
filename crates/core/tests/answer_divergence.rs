@@ -110,6 +110,56 @@ fn an_answer_past_the_work_bound_gets_no_verdict() {
     );
 }
 
+#[test]
+fn a_space_grouped_number_after_a_factor_gets_no_deterministic_verdict() {
+    // Review round 2, finding #11. 1.0, measured on 2026-08-26: True for
+    // `0` against `x/1 000` and True for `250*x` against `x/2 500`. SymPy reads
+    // the second group as its own factor, so `x/1 000` is `x/1*0`, which is 0.
+    // The V4 table strips a space-grouped number on a full match of the whole
+    // answer and nowhere else, so a group that reaches the parser stands after a
+    // factor and 2.0 claims no verdict instead of inventing the value 0 (C4).
+    assert_undecidable(
+        "0",
+        "x/1 000",
+        E,
+        "a space-grouped number stands after a factor",
+    );
+    assert_undecidable(
+        "250*x",
+        "x/2 500",
+        E,
+        "a space-grouped number stands after a factor",
+    );
+    assert_undecidable(
+        "0",
+        "sin x/1 000",
+        E,
+        "a space-grouped number stands after a factor",
+    );
+    // 1.0: False. The correct learner answer was already wrong in 1.0, and it
+    // stays undecidable in 2.0, so the model grades it (V2).
+    assert_undecidable(
+        "x/1000",
+        "x/1 000",
+        E,
+        "a space-grouped number stands after a factor",
+    );
+}
+
+#[test]
+fn a_mixed_number_whose_fraction_is_not_proper_gets_no_verdict() {
+    // Review round 2, finding #1. `2\frac{3}{2}` is neither the mixed number 7/2
+    // nor the product 3. 1.0, measured on 2026-08-26: False for `3` against
+    // `2\frac{3}{2}`, because 1.0 deleted the backslash and could not parse the
+    // string. 2.0 refuses the string instead of picking one of the two readings.
+    assert_undecidable(
+        "3",
+        "2\\frac{3}{2}",
+        N,
+        "a mixed number whose fraction is not proper",
+    );
+}
+
 // ---------------------------------------------------------------------------
 // Class 2 — no float rung (D6, V1)
 // ---------------------------------------------------------------------------
@@ -295,6 +345,77 @@ fn the_grammar_rulings_of_review_round_1_move_three_verdicts() {
     // and #9), so `2⅓` is 7/3.
     assert_eq!(check("2/3", "2⅓", N), decided(false, false));
     assert_eq!(check("7/3", "2⅓", N), decided(true, false));
+}
+
+#[test]
+fn the_grammar_rulings_of_review_round_2_move_five_verdicts() {
+    // The measured divergences of FIXM2d. Every 1.0 verdict below comes from the
+    // oracle on 2026-08-26, and every one of them follows a ruling of
+    // `docs/reviews/M2-review-2.md`, not a defect.
+    //
+    // 1. The mixed number, in all five spellings (findings #1, #2, #3, #5, #6,
+    //    #7). 1.0: True for `1` against `2 ½`, because `_UNICODE_SIMPLE` maps the
+    //    glyph to `(1/2)` and SymPy reads the product. That True is the C4 false
+    //    positive: a learner who wrote two and a half was correct against the
+    //    authored answer 1 on the topic that teaches mixed numbers.
+    assert_eq!(check("1", "2 ½", N), decided(false, false));
+    assert_eq!(check("1", "2\\frac{1}{2}", N), decided(false, false));
+    assert_eq!(check("1", "2 ½", E), decided(false, false));
+    assert_eq!(check("1", "2\\frac{1}{2}", E), decided(false, false));
+    // 1.0: False for the same learner answer against its own value. 2.0 reads
+    // one value for the five spellings.
+    assert_eq!(check("5/2", "2 ½", N), decided(true, false));
+    assert_eq!(check("5/2", "2½", N), decided(true, false));
+    assert_eq!(check("5/2", "2 1/2", N), decided(true, false));
+    assert_eq!(check("5/2", "2\\frac{1}{2}", N), decided(true, false));
+    assert_eq!(check("5/2", "2 \\frac{1}{2}", N), decided(true, false));
+    assert_eq!(check("-5/2", "-2 ½", N), decided(true, false));
+    assert_eq!(check("-2.5", "-2 ½", N), decided(true, false));
+    assert_eq!(check("7/2", "2 ½ + 1", N), decided(true, false));
+    // 1.0: True. The two spellings of the product keep the product, in 1.0 and
+    // in 2.0, so the mixed-number reading takes no learner answer from them.
+    assert_eq!(check("1", "2(1/2)", N), decided(true, false));
+    assert_eq!(check("1", "2*½", N), decided(true, false));
+    assert_eq!(check("1", "(2)½", N), decided(true, false));
+    assert_eq!(check("x/2", "x½", E), decided(true, false));
+    //
+    // 2. The bracket-free function argument runs through an explicit `*`
+    //    (findings #4, #15). 1.0: True for all five authored corpus answers of
+    //    the shape, and False for `cos 2*x` against `x*cos(2)`. Round 1 read the
+    //    learner spelling as `x*cos(2)`, which gave the correct learner a False
+    //    and the meaningless answer a True.
+    assert_eq!(check("cos 2x", "cos 2*x", E), decided(true, false));
+    assert_eq!(check("$\\cos 2t$", "cos 2*t", E), decided(true, false));
+    assert_eq!(
+        check("$(4/3)\\sin 3t$", "(4/3)*sin 3*t", E),
+        decided(true, false)
+    );
+    assert_eq!(check("cos 2*x", "x*cos(2)", E), decided(false, false));
+    //
+    // 3. The times-`x` reading takes a negated literal on its left (finding
+    //    #12). 1.0: False for `-0.00025` against `-2.5 x 10^-4`, because 1.0
+    //    keeps the letter and reads the polynomial `-0.00025*x`. 22 of the 27
+    //    authored times-`x` answers are scientific notation.
+    assert_eq!(check("-0.00025", "-2.5 x 10^-4", N), decided(true, false));
+    assert_eq!(check("-300000", "-3 x 10^5", N), decided(true, false));
+    // 1.0: True for `-1617x` against `-3 x 539`, which is the mirror C4 hole:
+    // the polynomial accepted a learner who meant the number. 2.0 closes it.
+    assert_eq!(check("-1617x", "-3 x 539", E), decided(false, false));
+    assert_eq!(check("-1617", "-3 x 539", E), decided(true, false));
+    //
+    // 4. A `\sqrt` takes a product sign after a letter, a digit, or a `)`
+    //    (finding #9). 1.0: False for every row, because `to_sympy_source`
+    //    deletes the backslash and SymPy reads the name `xsqrt`. Round 1 gave
+    //    the same answer no verdict, while `5x√2` was decided correct.
+    assert_eq!(check("5*x*sqrt(2)", "5x\\sqrt{2}", E), decided(true, false));
+    assert_eq!(check("5*x*sqrt(2)", "5x\\sqrt 2", E), decided(true, false));
+    assert_eq!(
+        check("3*x*sqrt(2*x)", "3x\\sqrt{2x}", E),
+        decided(true, false)
+    );
+    // 1.0: False for the radical glyph as well, and 2.0 keeps its round 1
+    // reading of it, so the two spellings of one value get one verdict.
+    assert_eq!(check("5*x*sqrt(2)", "5x√2", E), decided(true, false));
 }
 
 // ---------------------------------------------------------------------------

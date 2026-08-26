@@ -106,7 +106,10 @@ fn the_pinned_pairs_of_spec_section_6_1_give_the_literal_source() {
         ("15√3", "15*sqrt(3)"),
         ("x²+1", "x**2+1"),
         ("30°", "30"),
-        ("½", "(1/2)"),
+        // 2.0 writes the glyph as one literal-fraction token, in every position.
+        // 1.0 wrote `(1/2)`, and that spelling made `2 ½` the product 1 (review
+        // round 2, finding #2). The value of the lone glyph is the same 1/2.
+        ("½", "⟦1/2⟧"),
         ("1 + 2x.", "1 + 2x"),
     ];
     for (input, want) in pins {
@@ -116,9 +119,18 @@ fn the_pinned_pairs_of_spec_section_6_1_give_the_literal_source() {
 
 #[test]
 fn the_2_0_additions_of_the_v4_table_give_the_literal_source() {
-    let pins: [(&str, &str); 12] = [
-        ("\\frac{1}{2}", "((1)/(2))"),
+    let pins: [(&str, &str); 16] = [
+        // A `\frac` of two digit runs is one literal-fraction token, so the
+        // parser reads `2\frac{1}{2}` as a mixed number (round 2, finding #1).
+        ("\\frac{1}{2}", "⟦1/2⟧"),
+        ("2\\frac{1}{2}", "2⟦1/2⟧"),
+        ("2 \\frac{1}{2}", "2 ⟦1/2⟧"),
+        // Every other `\frac` keeps the bracketed quotient of round 1.
+        ("\\frac{x+1}{2}", "((x+1)/(2))"),
         ("\\sqrt{2}", "sqrt(2)"),
+        // A letter, a digit, or a `)` in front of a `\sqrt` takes a product
+        // sign, as it does in front of `√` (round 2, finding #9).
+        ("5x\\sqrt{2}", "5x*sqrt(2)"),
         ("x^{2}", "x**(2)"),
         ("50%", "(50)/100"),
         // The label stays in the source. The parser reads it, and `check`
@@ -147,8 +159,8 @@ fn the_unicode_table_of_1_0_gives_the_literal_source() {
         ("−5", "-5"),
         ("–5", "-5"),
         ("θ", "theta"),
-        ("⅓", "(1/3)"),
-        ("¾", "(3/4)"),
+        ("⅓", "⟦1/3⟧"),
+        ("¾", "⟦3/4⟧"),
         ("2³", "2**3"),
     ];
     for (input, want) in pins {
@@ -198,12 +210,12 @@ fn a_vulgar_fraction_after_a_digit_run_is_a_mixed_number() {
     // Review findings #1 and #9. The old reading made `3½` the product `3*(1/2)`,
     // so a learner who wrote three and a half was correct against `1.5`.
     let pins: [(&str, &str); 6] = [
-        ("½", "(1/2)"),
-        ("3½", "3 1/2"),
-        ("2⅓", "2 1/3"),
-        ("5¾", "5 3/4"),
-        ("x½", "x(1/2)"),
-        ("(2)½", "(2)(1/2)"),
+        ("½", "⟦1/2⟧"),
+        ("3½", "3⟦1/2⟧"),
+        ("2⅓", "2⟦1/3⟧"),
+        ("5¾", "5⟦3/4⟧"),
+        ("x½", "x⟦1/2⟧"),
+        ("(2)½", "(2)⟦1/2⟧"),
     ];
     for (input, want) in pins {
         assert_eq!(normalize(input).source, want, "source of {input:?}");
@@ -213,6 +225,192 @@ fn a_vulgar_fraction_after_a_digit_run_is_a_mixed_number() {
     assert_ne!(value("2⅓"), value("2/3"));
     assert_ne!(value("3½"), value("1.5"));
     assert_eq!(value("3½"), value("3 1/2"));
+}
+
+#[test]
+fn every_spelling_of_a_mixed_number_has_one_value() {
+    // Review round 2, findings #1, #2, #3, #5, #6, #7. The round 1 reading fired
+    // on the glued glyph alone: `2½` was 5/2 while `2 ½` and `2\frac{1}{2}` were
+    // the product 1. One value in five spellings therefore got two verdicts, and
+    // the wrong learner answer two and a half was correct against the authored 1
+    // on the topic that writes mixed numbers (C4).
+    let spellings: [&str; 7] = [
+        "2 1/2",
+        "2½",
+        "2 ½",
+        "2\u{a0}½",
+        "2\u{2009}½",
+        "2\\frac{1}{2}",
+        "2 \\frac{1}{2}",
+    ];
+    for text in spellings {
+        assert_eq!(
+            ast(text),
+            Ast::Mixed {
+                whole: BigInt::from(2),
+                numerator: BigInt::from(1),
+                denominator: BigInt::from(2)
+            },
+            "{text:?} is one mixed number"
+        );
+        assert_eq!(value(text), value("5/2"), "{text:?} is five halves");
+        // C4: the product reading is the wrong value, and no spelling admits it.
+        assert_ne!(value(text), value("1"), "{text:?} is not the product 1");
+    }
+    // The sign of the whole part carries over the whole value.
+    for text in ["-2 1/2", "-2½", "-2 ½", "-2\\frac{1}{2}", "-2 \\frac{1}{2}"] {
+        assert_eq!(value(text), value("-5/2"), "{text:?} is minus five halves");
+        assert_ne!(value(text), value("-1"), "{text:?} is not minus one");
+        assert_ne!(value(text), value("5/2"), "{text:?} keeps its sign");
+    }
+    // The neighbors of the rule. A mixed number is one operand of the term it
+    // stands in, and it takes no second fraction.
+    assert_eq!(value("2 ½ + 1"), value("7/2"));
+    assert_eq!(value("2\\frac{1}{2} + 1"), value("7/2"));
+    assert_eq!(value("2 ½*2"), value("5"));
+    assert_eq!(value("1 - 2 ½"), value("-3/2"));
+    assert_eq!(value("3 ⅓"), value("10/3"));
+    assert_eq!(value("5 ¾"), value("23/4"));
+    assert_eq!(value("2\\frac{7}{12}"), value("31/12"));
+    // A learner who writes the product still gets the product. An explicit `*`,
+    // a bracket, and a bracketed whole part are three spellings of one half of
+    // two, and every one of them keeps the value 1.
+    assert_eq!(value("2*½"), value("1"));
+    assert_eq!(value("2(1/2)"), value("1"));
+    assert_eq!(value("(2)½"), value("1"));
+    assert_eq!(value("2*\\frac{1}{2}"), value("1"));
+    assert_eq!(value("x½"), value("x/2"));
+    assert_eq!(value("x\\frac{1}{2}"), value("x/2"));
+    // The lone fraction keeps its own value in every position.
+    assert_eq!(value("½"), value("1/2"));
+    assert_eq!(value("\\frac{1}{2}"), value("1/2"));
+    assert_eq!(value("1/½"), value("2"));
+    assert_eq!(value("½ + ½"), value("1"));
+    assert_eq!(value("sqrt ½"), value("sqrt(1/2)"));
+}
+
+#[test]
+fn a_fraction_token_that_is_not_proper_takes_no_mixed_number_reading() {
+    // C4. `2\frac{3}{2}` is neither the mixed number 7/2 nor the product 3, and
+    // a checker that picks one of the two readings grades a wrong answer
+    // correct. The `0 < b < c` and plain-digit rules of the `a b/c` spelling
+    // hold for the token spelling, and a failure refuses the whole answer.
+    for text in [
+        "2\\frac{3}{2}",
+        "2\\frac{2}{2}",
+        "2\\frac{0}{5}",
+        "2\\frac{01}{2}",
+        "2 \\frac{5}{4}",
+        "-2\\frac{3}{2}",
+    ] {
+        assert_eq!(
+            parse(&normalize(text).source).unwrap_err().reason,
+            "a mixed number whose fraction is not proper",
+            "{text:?} takes no reading"
+        );
+    }
+    // A number token in front of a fraction is a mixed number or it is nothing.
+    // The `b/c` spelling refuses the same shapes through the round 1 rule, so
+    // the two spellings of one shape get one answer.
+    for text in ["x 2½", "2.5½", "1/2 ½"] {
+        assert_eq!(
+            parse(&normalize(text).source).unwrap_err().reason,
+            "a fraction stands after a number that is no whole part",
+            "{text:?} takes no reading"
+        );
+    }
+    for text in ["x 3 1/2", "2.5 1/2", "1/2 1/2"] {
+        assert_eq!(
+            parse(&normalize(text).source).unwrap_err().reason,
+            "two numbers stand side by side",
+            "{text:?} takes no reading"
+        );
+    }
+    // A token that is no number in front of the fraction makes a product.
+    assert_eq!(value("x½"), value("x/2"));
+    assert_eq!(value("(2)½"), value("1"));
+    // The rule reads the same inside a bracket-free function argument, so the
+    // brackets change no value.
+    assert_eq!(value("sin 2½"), value("sin(5/2)"));
+    assert_eq!(value("sin 2½"), value("sin(2 ½)"));
+    assert_eq!(value("sin 2 ½"), value("sin(5/2)"));
+    assert_ne!(value("sin 2½"), value("sin(1)"));
+    // The same fraction with no whole number in front of it keeps its value.
+    assert_eq!(value("\\frac{3}{2}"), value("3/2"));
+    assert_eq!(value("\\frac{0}{5}"), value("0"));
+    assert_eq!(value("2*\\frac{3}{2}"), value("3"));
+    // A zero denominator refuses the answer, as `1/0` does.
+    assert_eq!(
+        parse(&normalize("\\frac{1}{0}").source).unwrap_err().reason,
+        "a fraction with a zero denominator"
+    );
+}
+
+#[test]
+fn a_latex_root_takes_a_product_sign_after_a_letter_a_digit_or_a_bracket() {
+    // Review round 2, finding #9. `\sqrt{a}` wrote `sqrt(` with no product sign,
+    // so a letter in front of it glued into the name `xsqrt` and the answer got
+    // no verdict, while the same value written `5x√2` was decided correct.
+    let pins: [(&str, &str); 6] = [
+        ("5x\\sqrt{2}", "5x*sqrt(2)"),
+        ("5x\\sqrt 2", "5x*sqrt 2"),
+        ("3x\\sqrt{2x}", "3x*sqrt(2x)"),
+        ("2\\sqrt{3}", "2*sqrt(3)"),
+        ("(x+1)\\sqrt{2}", "(x+1)*sqrt(2)"),
+        ("\\sqrt{2}", "sqrt(2)"),
+    ];
+    for (input, want) in pins {
+        assert_eq!(normalize(input).source, want, "source of {input:?}");
+    }
+    assert_eq!(value("5x\\sqrt{2}"), value("5*x*sqrt(2)"));
+    assert_eq!(value("5x\\sqrt{2}"), value("5x√2"));
+    assert_eq!(value("5x\\sqrt 2"), value("5*x*sqrt(2)"));
+    assert_eq!(value("3x\\sqrt{2x}"), value("3*x*sqrt(2*x)"));
+    assert_eq!(value("2\\sqrt{3}"), value("2*sqrt(3)"));
+    // C4: the product sign changes no value, and it admits no wrong one.
+    assert_ne!(value("5x\\sqrt{2}"), value("5*x*sqrt(3)"));
+    assert_ne!(value("5x\\sqrt{2}"), value("5*sqrt(2)"));
+    assert_ne!(value("5x\\sqrt{2}"), value("10*x"));
+    // The 11 authored corpus answers of the bare `\sqrt` form keep their value.
+    assert_eq!(value("$2\\sqrt 2 - 2$"), value("2*sqrt(2) - 2"));
+    assert_eq!(value("$\\pi \\sqrt 2$"), value("pi*sqrt(2)"));
+}
+
+#[test]
+fn a_space_grouped_number_after_a_factor_is_undecidable() {
+    // Review round 2, finding #11. The guard fired for a literal in front alone,
+    // so `x/1 000` read as `x/1 * 0` and canonicalized to 0: an authored answer
+    // of 0 accepted a learner who wrote a thousandth of x (C4).
+    for text in [
+        "x/1 000",
+        "2x/1 000",
+        "pi/1 000",
+        "sin x/1 000",
+        "x/2 500",
+        "x*1 000",
+        "(x+1) 000",
+        "x 0000",
+    ] {
+        let reason = parse(&normalize(text).source).unwrap_err().reason;
+        assert!(
+            reason == "a space-grouped number stands after a factor"
+                || reason == "two numbers stand side by side",
+            "{text:?} gave {reason:?}"
+        );
+    }
+    assert!(canonical_form("x/1 000").is_err());
+    assert!(canonical_form("x/2 500").is_err());
+    // The V4 full-match rule still reads a space-grouped number as one value.
+    assert_eq!(value("1 000"), value("1000"));
+    assert_eq!(value("7\u{00a0}329"), value("7329"));
+    // A spaced number that no number stands in front of holds no group, so it
+    // keeps the product reading that 1.0 gives it (1.0: True for all four).
+    assert_eq!(value("x 3"), value("3*x"));
+    assert_eq!(value("x 100"), value("100*x"));
+    assert_eq!(value("x 500"), value("500*x"));
+    assert_eq!(value("6 y 10^3"), value("6000*y"));
+    assert_eq!(value("3x 4"), value("12*x"));
+    assert_eq!(value("2x 500"), value("1000*x"));
 }
 
 // ---------------------------------------------------------------------------
@@ -456,10 +654,6 @@ fn a_bracket_free_function_argument_takes_the_whole_juxtaposed_chain() {
         Ast::Div(Box::new(call("sqrt", int(2))), Box::new(int(2)))
     );
     assert_eq!(
-        ast("cos 2*x"),
-        Ast::Mul(vec![call("cos", int(2)), var("x")])
-    );
-    assert_eq!(
         ast("cos 2 + x"),
         Ast::Add(vec![call("cos", int(2)), var("x")])
     );
@@ -470,6 +664,63 @@ fn a_bracket_free_function_argument_takes_the_whole_juxtaposed_chain() {
     assert_ne!(value("cos 2x"), value("cos(2*y)"));
     assert_eq!(value("$(4/3)\\sin 3t$"), value("(4/3)*sin(3*t)"));
     assert_ne!(value("$(4/3)\\sin 3t$"), value("(4/3)*t*sin(3)"));
+}
+
+#[test]
+fn the_bracket_free_argument_runs_through_an_explicit_product_sign() {
+    // Review round 2, findings #4 and #15. The chain stopped at `*`, so `cos 2*x`
+    // was `x*cos(2)`: the meaningless value was correct against the authored
+    // `cos 2*x`, and the correct `cos 2*x` was wrong against the authored
+    // `cos 2x` on five corpus answers. 1.0 reads both spellings as `cos(2*x)`.
+    assert_eq!(
+        ast("cos 2*x"),
+        call("cos", Ast::Mul(vec![int(2), var("x")]))
+    );
+    assert_eq!(
+        ast("sin 3*t^2"),
+        call(
+            "sin",
+            Ast::Mul(vec![int(3), Ast::Pow(Box::new(var("t")), 2)])
+        )
+    );
+    assert_eq!(
+        ast("$2\\cos 2*t + (5/2)\\sin 2*t$"),
+        Ast::Add(vec![
+            Ast::Mul(vec![int(2), call("cos", Ast::Mul(vec![int(2), var("t")]))]),
+            Ast::Mul(vec![
+                Ast::Fraction {
+                    numerator: BigInt::from(5),
+                    denominator: BigInt::from(2)
+                },
+                call("sin", Ast::Mul(vec![int(2), var("t")])),
+            ]),
+        ])
+    );
+    // The five authored corpus answers of the shape take the learner spelling.
+    assert_eq!(value("cos 2x"), value("cos 2*x"));
+    assert_eq!(value("$\\cos 2t$"), value("cos 2*t"));
+    assert_eq!(value("$(4/3)\\sin 3t$"), value("(4/3)*sin 3*t"));
+    assert_eq!(
+        value("$2\\cos 2t + (5/2)\\sin 2t$"),
+        value("2*cos 2*t + (5/2)*sin 2*t")
+    );
+    assert_eq!(
+        value("$\\cos 3t + 2\\sin 3t$"),
+        value("cos 3*t + 2*sin 3*t")
+    );
+    // C4: the chain admits no wrong value. The old reading is a different value,
+    // and the stops of the ruling stay where round 1 put them.
+    assert_ne!(value("cos 2*x"), value("x*cos(2)"));
+    assert_ne!(value("cos 2*x"), value("cos(2)*x"));
+    assert_ne!(value("cos 2*x"), value("cos(2*y)"));
+    assert_ne!(value("cos 2*x"), value("cos(x)"));
+    assert_eq!(value("sqrt 2*2"), value("sqrt(4)"));
+    assert_eq!(value("sqrt 2/2"), value("sqrt(2)/2"));
+    assert_ne!(value("sqrt 2/2"), value("sqrt(1)"));
+    assert_eq!(value("cos 2 + x"), value("cos(2) + x"));
+    assert_ne!(value("cos 2 + x"), value("cos(2 + x)"));
+    assert_eq!(value("cos 2 - x"), value("cos(2) - x"));
+    assert_eq!(value("cos 2, 3"), value("(cos(2), 3)"));
 }
 
 #[test]
@@ -515,6 +766,39 @@ fn a_spaced_x_between_two_numbers_is_the_times_sign() {
     assert_ne!(value("2 x 2 x 3"), value("11"));
     assert_eq!(value("6 x 10^3"), value("6 × 10^3"));
     assert_eq!(value("6 x 10^3"), value("6*10**3"));
+}
+
+#[test]
+fn the_times_letter_takes_a_negated_literal_on_its_left() {
+    // Review round 2, finding #12. The reading matched a bare literal, and
+    // `parse_unary` puts a leading minus in `Ast::Neg`, so `3 x 10^5` was 300000
+    // while `-3 x 10^5` was the polynomial `-300000*x`. 22 of the 27 authored
+    // times-`x` answers are scientific notation, and a measurement is negative.
+    assert_eq!(
+        ast("-3 x 10^5"),
+        Ast::Mul(vec![
+            Ast::Neg(Box::new(int(3))),
+            Ast::Pow(Box::new(int(10)), 5)
+        ])
+    );
+    assert_eq!(value("-3 x 10^5"), value("-300000"));
+    assert_eq!(value("-2.5 x 10^-4"), value("-0.00025"));
+    assert_eq!(value("-2.5 x 10^-4"), value("-2.5 × 10^-4"));
+    assert_eq!(value("-7.2 x 10^-4"), value("-0.00072"));
+    assert_eq!(value("-3 X 4"), value("-12"));
+    assert_eq!(value("-1/2 x 10^2"), value("-50"));
+    // C4: the number is not a polynomial, and the mirror hole is closed.
+    assert_ne!(value("-3 x 10^5"), value("-300000*x"));
+    assert_ne!(value("-2.5 x 10^-4"), value("-0.00025*x"));
+    assert_ne!(value("-3 x 539"), value("-1617x"));
+    assert_eq!(value("-3 x 539"), value("-1617"));
+    // The sign belongs to the left literal alone. Every other `x` stays the
+    // variable, in both cases and with or without a space.
+    assert_eq!(value("-3x"), value("-3*x"));
+    assert_eq!(value("-3 x"), value("-3*x"));
+    assert_eq!(value("-2X"), value("-2*X"));
+    assert_eq!(value("2 - 3 x 5"), value("-13"));
+    assert_eq!(value("-2 1/2 x 2"), value("-5"));
 }
 
 #[test]
