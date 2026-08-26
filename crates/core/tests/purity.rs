@@ -54,7 +54,7 @@ fn all_dependency_keys(manifest: &toml::Value) -> BTreeSet<String> {
 }
 
 #[test]
-fn core_dependency_set_is_exactly_the_seven_pure_crates() {
+fn core_dependency_set_is_exactly_the_nine_pure_crates() {
     let manifest = manifest();
     let mut found = runtime_dependency_keys(&manifest);
     found.sort();
@@ -62,6 +62,8 @@ fn core_dependency_set_is_exactly_the_seven_pure_crates() {
         found,
         vec![
             "num-bigint".to_string(),
+            "num-integer".to_string(),
+            "num-rational".to_string(),
             "num-traits".to_string(),
             "serde".to_string(),
             "serde_json".to_string(),
@@ -69,7 +71,7 @@ fn core_dependency_set_is_exactly_the_seven_pure_crates() {
             "sha2".to_string(),
             "thiserror".to_string()
         ],
-        "R3: [dependencies] of cadus-core must be exactly num-bigint, num-traits, serde, serde_json, serde_norway, sha2, thiserror"
+        "R3: [dependencies] of cadus-core must be exactly num-bigint, num-integer, num-rational, num-traits, serde, serde_json, serde_norway, sha2, thiserror"
     );
 }
 
