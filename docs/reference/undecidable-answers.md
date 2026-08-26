@@ -1,6 +1,10 @@
 Source: the 2.0 answer grammar of M2, measured on 2026-08-27 after the review round 1
 fixes (FIXM2a and FIXM2b), against
 `crates/core/tests/fixtures/answers/corpus_1_0.jsonl` (3,492 answers, 478 topics).
+Re-measured after the review round 2 fixes (FIXM2d and FIXM2e): the split does not move.
+FIXM2d changed the mixed-number rule, the juxtaposed function argument, the space-group
+rule, the times-`x` rule, and the LaTeX root, and every one of the 3,227 accepted answers
+and every one of the 265 refused answers keeps its side of the line.
 
 # The undecidable answers — the V2 residue for re-kinding
 
@@ -68,6 +72,29 @@ plain digit runs (`0 < b < c`, no leading zero, no three-digit numerator), becau
 three-digit run after a space is the thousands group of the V4 table. `1 000/3` is
 therefore undecidable. The rule costs no corpus row — all 8 `mixed_number` rows parse —
 but it is the reason the grammar is narrower than the estimate assumed.
+
+### Refused by rule
+
+The answers below are outside the grammar by a deliberate decision, and no corpus row
+holds one of them today, so they add nothing to the 265. A curriculum author who writes
+one gets an `Undecidable` and no verdict, which is the point: each shape has two readings,
+and a checker that picks one of the two grades a wrong answer correct. The list stands
+here because A2 must reject these spellings at authoring time as well.
+
+| Answer | Refusal reason | Rule |
+|---|---|---|
+| `1 000/3` | `two numbers stand side by side` | A mixed number needs `0 < b < c` in plain digit runs. A three-digit run after a space is a thousands group of the V4 table (round 1, finding #7). |
+| `2\frac{3}{2}` | `a mixed number whose fraction is not proper` | The same rule, for the literal-fraction token. `2\frac{3}{2}` is neither the mixed number 7/2 nor the product 3 (round 2, finding #1). |
+| `x 2½` | `a fraction stands after a number that is no whole part` | A number token in front of a fraction is a mixed number or the answer is undecidable. The term in front here is the product `x*2` and not a bare whole number (round 2, findings #2, #3). |
+| `2.5½` | `a fraction stands after a number that is no whole part` | The same rule. A whole part is a bare whole number, and a decimal is not one (round 2, finding #2). |
+| `1/2 ½` | `a fraction stands after a number that is no whole part` | The same rule. The term in front is the fraction `1/2`, so two fractions side by side take no reading (round 2, finding #2). |
+| `x/1 000` | `a space-grouped number stands after a factor` | A space-grouped number is a whole answer or a full operand at the top level. After a factor it takes no reading, and the old parser read `x/1 * 0` (round 2, finding #11). |
+
+The mirror spellings `x 3 1/2`, `2.5 1/2`, `1/2 1/2`, and `3 3/2` take the round 1 refusal
+`two numbers stand side by side`, so the `a b/c` spelling and the token spelling of one
+shape give one answer. `crates/core/tests/answer_parse.rs` pins every reason above as a
+literal, and `crates/core/tests/answer_divergence.rs` pins the `x/1 000` refusal and the
+`2\frac{3}{2}` refusal.
 
 ### The refusal reason the grammar gives
 

@@ -59,6 +59,11 @@ use cadus_core::answer::{Canon, Outcome, canonical_form, check, normalize, parse
 use cadus_core::curriculum::AnswerKind;
 
 /// The largest number of pairs the test runs (the task bound of U3).
+///
+/// The generated set holds 17,047 pairs, so the cap drops none of them today.
+/// If a new generator takes the set past the cap, [`generated_pairs`] prints the
+/// total it drops and one line per dropped pair, because a dropped pair is a
+/// pair the parity report never asks the 1.0 oracle about.
 const PAIR_CAP: usize = 20_000;
 
 /// The seed of the selection shuffle. A fixed seed makes the set reproducible.
@@ -284,6 +289,306 @@ fn exact_decimal(numerator: i128, denominator: i128) -> Option<String> {
     let (whole, fraction) = digits.split_at(digits.len() - scale as usize);
     let body = format!("{whole}.{fraction}");
     Some(if negative { format!("-{body}") } else { body })
+}
+
+/// Read one numeric source into a `f64`, or refuse it.
+///
+/// The reader is the harness's own, and it is deliberately small: it reads the
+/// values that the two 1.0 float rungs compare, and nothing else. A free symbol,
+/// a bare `sqrt 2`, an implicit product such as `2x`, and every other name give
+/// `None`, and the caller then refuses the pair. The grammar is
+///
+/// ```text
+/// sum     := product (('+' | '-') product)*
+/// product := unary (('*' | '/') unary)*
+/// unary   := ('-' | '+') unary | power
+/// power   := primary ('**' unary)?
+/// primary := number | 'pi' | 'e' | 'sqrt' '(' sum ')' | '(' sum ')'
+/// ```
+///
+/// The reader owns its arithmetic, so a change in `answer::canon` never moves
+/// the pairs it builds or the divergences it explains.
+fn numeric_value(source: &str) -> Option<f64> {
+    let chars: Vec<char> = source.chars().collect();
+    let mut reader = Numbers {
+        chars: &chars,
+        at: 0,
+    };
+    let value = reader.sum()?;
+    reader.skip_spaces();
+    if reader.at != chars.len() {
+        return None;
+    }
+    value.is_finite().then_some(value)
+}
+
+/// The reader state of [`numeric_value`].
+struct Numbers<'a> {
+    chars: &'a [char],
+    at: usize,
+}
+
+impl Numbers<'_> {
+    /// Step over every space in front of the next token.
+    fn skip_spaces(&mut self) {
+        while matches!(self.chars.get(self.at), Some(c) if c.is_whitespace()) {
+            self.at += 1;
+        }
+    }
+
+    /// The character at the reader position.
+    fn peek(&self) -> Option<char> {
+        self.chars.get(self.at).copied()
+    }
+
+    fn sum(&mut self) -> Option<f64> {
+        let mut total = self.product()?;
+        loop {
+            self.skip_spaces();
+            match self.peek() {
+                Some('+') => {
+                    self.at += 1;
+                    total += self.product()?;
+                }
+                Some('-') => {
+                    self.at += 1;
+                    total -= self.product()?;
+                }
+                _ => return Some(total),
+            }
+        }
+    }
+
+    fn product(&mut self) -> Option<f64> {
+        let mut total = self.unary()?;
+        loop {
+            self.skip_spaces();
+            match self.peek() {
+                // A `**` is a power, and the power rule owns it.
+                Some('*') if self.chars.get(self.at + 1) != Some(&'*') => {
+                    self.at += 1;
+                    total *= self.unary()?;
+                }
+                Some('/') => {
+                    self.at += 1;
+                    let divisor = self.unary()?;
+                    if divisor == 0.0 {
+                        return None;
+                    }
+                    total /= divisor;
+                }
+                _ => return Some(total),
+            }
+        }
+    }
+
+    fn unary(&mut self) -> Option<f64> {
+        self.skip_spaces();
+        match self.peek() {
+            Some('-') => {
+                self.at += 1;
+                Some(-self.unary()?)
+            }
+            Some('+') => {
+                self.at += 1;
+                self.unary()
+            }
+            _ => self.power(),
+        }
+    }
+
+    fn power(&mut self) -> Option<f64> {
+        let base = self.primary()?;
+        self.skip_spaces();
+        if self.peek() == Some('*') && self.chars.get(self.at + 1) == Some(&'*') {
+            self.at += 2;
+            let exponent = self.unary()?;
+            return Some(base.powf(exponent));
+        }
+        Some(base)
+    }
+
+    fn primary(&mut self) -> Option<f64> {
+        self.skip_spaces();
+        let ch = self.peek()?;
+        if ch == '(' {
+            self.at += 1;
+            let value = self.sum()?;
+            self.skip_spaces();
+            if self.peek() != Some(')') {
+                return None;
+            }
+            self.at += 1;
+            return Some(value);
+        }
+        if ch.is_ascii_digit() || ch == '.' {
+            return self.number();
+        }
+        if ch.is_ascii_alphabetic() {
+            return self.name();
+        }
+        None
+    }
+
+    /// Read one decimal literal.
+    fn number(&mut self) -> Option<f64> {
+        let start = self.at;
+        while matches!(self.peek(), Some(c) if c.is_ascii_digit()) {
+            self.at += 1;
+        }
+        if self.peek() == Some('.') {
+            self.at += 1;
+            while matches!(self.peek(), Some(c) if c.is_ascii_digit()) {
+                self.at += 1;
+            }
+        }
+        // A name that touches the literal is an implicit product, and the reader
+        // reads no product of a number and a name.
+        if matches!(self.peek(), Some(c) if c.is_ascii_alphanumeric()) {
+            return None;
+        }
+        let text: String = self.chars.get(start..self.at)?.iter().collect();
+        text.parse::<f64>().ok()
+    }
+
+    /// Read one of the three names the reader knows.
+    fn name(&mut self) -> Option<f64> {
+        let start = self.at;
+        while matches!(self.peek(), Some(c) if c.is_ascii_alphabetic()) {
+            self.at += 1;
+        }
+        let name: String = self.chars.get(start..self.at)?.iter().collect();
+        match name.as_str() {
+            "pi" => Some(std::f64::consts::PI),
+            "e" => Some(std::f64::consts::E),
+            "sqrt" => {
+                self.skip_spaces();
+                if self.peek() != Some('(') {
+                    return None;
+                }
+                self.at += 1;
+                let value = self.sum()?;
+                self.skip_spaces();
+                if self.peek() != Some(')') {
+                    return None;
+                }
+                self.at += 1;
+                if value < 0.0 {
+                    return None;
+                }
+                Some(value.sqrt())
+            }
+            _ => None,
+        }
+    }
+}
+
+/// Split `text` into its top-level terms, each with its own sign.
+///
+/// A `+` or a `-` is a term separator only when an operand ends in front of it,
+/// so the leading sign of `-2*x` stays with its term and `x**-2` keeps its
+/// exponent. Returns `None` when the brackets do not balance or a term is blank.
+fn signed_terms(text: &str) -> Option<Vec<(bool, String)>> {
+    let chars: Vec<char> = text.chars().collect();
+    let mut depth = 0_i32;
+    let mut terms: Vec<(bool, String)> = Vec::new();
+    let mut negative = false;
+    let mut current = String::new();
+    for (index, ch) in chars.iter().enumerate() {
+        match ch {
+            '(' | '[' | '{' => depth += 1,
+            ')' | ']' | '}' => {
+                depth -= 1;
+                if depth < 0 {
+                    return None;
+                }
+            }
+            _ => {}
+        }
+        if depth == 0 && (*ch == '+' || *ch == '-') && ends_an_operand(&chars, index) {
+            terms.push((negative, current.trim().to_string()));
+            negative = *ch == '-';
+            current = String::new();
+            continue;
+        }
+        current.push(*ch);
+    }
+    if depth != 0 {
+        return None;
+    }
+    terms.push((negative, current.trim().to_string()));
+    // A leading `-` on the first term is a sign, not a separator, so it is still
+    // in the term text. The caller reads the flag, and the flag is false here.
+    if terms.iter().any(|(_, body)| body.is_empty()) {
+        return None;
+    }
+    Some(terms)
+}
+
+/// Whether an operand ends immediately in front of `index`.
+fn ends_an_operand(chars: &[char], index: usize) -> bool {
+    let mut back = index;
+    while back > 0 {
+        back -= 1;
+        let Some(ch) = chars.get(back).copied() else {
+            return false;
+        };
+        if ch.is_whitespace() {
+            continue;
+        }
+        return ch.is_ascii_alphanumeric() || ch == ')' || ch == ']' || ch == '}' || ch == '.';
+    }
+    false
+}
+
+/// Whether `text` is one multiplicative term: no `+` and no binary `-` outside a
+/// bracket.
+fn is_one_term(text: &str) -> bool {
+    matches!(signed_terms(text), Some(terms) if terms.len() == 1)
+}
+
+/// Split `text` into its top-level factors, at every `*` that is not a `**`.
+///
+/// Returns `None` when the brackets do not balance or a factor is blank.
+fn product_factors(text: &str) -> Option<Vec<String>> {
+    let chars: Vec<char> = text.chars().collect();
+    let mut depth = 0_i32;
+    let mut factors: Vec<String> = Vec::new();
+    let mut current = String::new();
+    let mut index = 0;
+    while let Some(ch) = chars.get(index).copied() {
+        match ch {
+            '(' | '[' | '{' => depth += 1,
+            ')' | ']' | '}' => {
+                depth -= 1;
+                if depth < 0 {
+                    return None;
+                }
+            }
+            _ => {}
+        }
+        if depth == 0 && ch == '*' {
+            if chars.get(index + 1) == Some(&'*') {
+                current.push_str("**");
+                index += 2;
+                continue;
+            }
+            factors.push(current.trim().to_string());
+            current = String::new();
+            index += 1;
+            continue;
+        }
+        current.push(ch);
+        index += 1;
+    }
+    if depth != 0 {
+        return None;
+    }
+    factors.push(current.trim().to_string());
+    if factors.iter().any(String::is_empty) {
+        return None;
+    }
+    Some(factors)
 }
 
 /// The plain Unicode table of 1.0 `_UNICODE_SIMPLE`, plus the superscripts.
@@ -722,6 +1027,267 @@ fn generate_set_reordered(row: &Row) -> Option<String> {
     changed(row, format!("{{{}}}", items.join(", ")))
 }
 
+/// Write the answer in upper case (spec section 9.3, "case flip").
+///
+/// The expected verdict is True on both sides, and both checkers reach it on
+/// their string rung: 1.0 `_normalize` casefolds (`sympy_check.py:44`), and 2.0
+/// builds the same casefolded `string_key` (`answer::normalize`, spec section
+/// 2.1). Neither parser casefolds, so the family measures the rung and not the
+/// grammar: `SQRT(2)` never reaches a `sqrt` call, and `2*X` never reaches the
+/// variable `x`.
+fn generate_case_flip(row: &Row) -> Option<String> {
+    changed(row, row.answer.to_ascii_uppercase())
+}
+
+/// Write the answer as a decimal of ten significant digits (spec section 9.3,
+/// "decimal to >= 8 significant digits").
+///
+/// The family applies to a rational with no exact decimal and to a radical. 1.0
+/// grades the pair True on a float rung; 2.0 holds exact values only, so it
+/// grades the pair False (D6). The divergence is the documented class "no float
+/// tolerance rung (D6)", and [`the_1_0_float_rung_closes_the_gap`] names it.
+fn generate_significant_decimal(row: &Row) -> Option<String> {
+    if !takes_a_rounded_decimal(&row.source) {
+        return None;
+    }
+    let value = numeric_value(&row.source)?;
+    changed_source(row, ten_significant_digits(value)?)
+}
+
+/// Whether the value of `source` is a rational with no exact decimal, or a
+/// radical.
+///
+/// Every other value takes no rounded decimal, and the pair reaches no float
+/// rung: an integer and a terminating decimal are the decimal they write, and a
+/// value with a free symbol leaves the rung altogether.
+fn takes_a_rounded_decimal(source: &str) -> bool {
+    if source.contains("sqrt(") {
+        return true;
+    }
+    match fraction_parts(source) {
+        Some((numerator, denominator)) => !terminates(numerator, denominator),
+        None => false,
+    }
+}
+
+/// Whether the decimal expansion of `numerator / denominator` ends.
+fn terminates(numerator: i128, denominator: i128) -> bool {
+    let divisor = gcd(numerator.abs(), denominator.abs());
+    if divisor == 0 {
+        return true;
+    }
+    let mut rest = (denominator / divisor).abs();
+    while rest % 2 == 0 {
+        rest /= 2;
+    }
+    while rest % 5 == 0 {
+        rest /= 5;
+    }
+    rest == 1
+}
+
+/// Write `value` with ten significant digits.
+///
+/// The count is ten and not eight, so the pair stays inside the 1e-6 tolerance
+/// of the 1.0 `evalf` rung for every magnitude the corpus holds.
+///
+/// The place count comes from the decimal text of the value, and not from
+/// `log10`: a library logarithm is not correctly rounded, and one unit in the
+/// last place at a power of ten moves the digit count and with it the generated
+/// pair. Rust formats a `f64` in Rust and not in the C library, so the text is
+/// the same on every build box and the generated set stays reproducible.
+fn ten_significant_digits(value: f64) -> Option<String> {
+    if !value.is_finite() || value == 0.0 {
+        return None;
+    }
+    let text = format!("{:.30}", value.abs());
+    let (whole, fraction) = text.split_once('.')?;
+    let places = if whole == "0" {
+        // The value is under one. Every leading zero of the fraction takes one
+        // more place, so ten significant digits still follow it.
+        let zeros = fraction.chars().take_while(|c| *c == '0').count();
+        10_i64.checked_add(i64::try_from(zeros).ok()?)?
+    } else {
+        // The value is at least one, and its whole part already carries digits.
+        9_i64
+            .checked_sub(i64::try_from(whole.len()).ok()?)?
+            .checked_add(1)?
+    };
+    let places = usize::try_from(places).ok()?;
+    if places > 30 {
+        return None;
+    }
+    Some(format!("{value:.places$}"))
+}
+
+/// Reorder the factors of a product (spec section 9.3, "commutative reorder").
+///
+/// `2*x` becomes `x*2`, and the expected verdict is True on both sides. The rule
+/// applies only when the whole source is one multiplicative term: a rotation
+/// across a `+` or a binary `-` builds a different value, and the family asks
+/// about commutativity and not about arithmetic.
+fn generate_product_reorder(row: &Row) -> Option<String> {
+    if !is_one_term(&row.source) {
+        return None;
+    }
+    let factors = product_factors(&row.source)?;
+    if factors.len() < 2 {
+        return None;
+    }
+    let mut rotated = factors;
+    rotated.rotate_left(1);
+    let joined: Vec<String> = rotated
+        .iter()
+        .map(|factor| {
+            // A factor that starts with its own sign takes a bracket, because
+            // `x*-2` is a spelling no learner types.
+            if factor.starts_with('-') || factor.starts_with('+') {
+                format!("({factor})")
+            } else {
+                factor.clone()
+            }
+        })
+        .collect();
+    changed_source(row, joined.join("*"))
+}
+
+/// Write the answer with one algebraic step applied (spec section 9.3,
+/// "algebraic refactor").
+///
+/// The expected verdict is True on both sides. Two rules run, in a fixed order:
+///
+/// 1. A difference of two squares takes its factored form, which is the pair the
+///    spec names: `(x-1)*(x+1)` for `x**2-1`.
+/// 2. A product whose last factor is a parenthesized sum multiplies out, which
+///    is the same step in the other direction: the corpus authors the factored
+///    form (`(x + 3)(x - 3)`) and the learner multiplies it out.
+fn generate_algebraic_refactor(row: &Row) -> Option<String> {
+    let candidate = factor_a_difference_of_squares(&row.source)
+        .or_else(|| multiply_out_last_group(&row.source));
+    changed_source(row, candidate?)
+}
+
+/// Write `a**2 - b**2` as `(a - b)*(a + b)`.
+fn factor_a_difference_of_squares(source: &str) -> Option<String> {
+    let terms = signed_terms(source)?;
+    if terms.len() != 2 {
+        return None;
+    }
+    let (left_negative, left) = terms.first()?;
+    let (right_negative, right) = terms.get(1)?;
+    if *left_negative || !*right_negative {
+        return None;
+    }
+    let a = square_root_text(left)?;
+    let b = square_root_text(right)?;
+    Some(format!("({a} - {b})*({a} + {b})"))
+}
+
+/// The square root of one term, when the term is a plain square.
+///
+/// The term is a whole number that is a perfect square, or `name**2`, or
+/// `k*name**2` and `kname**2` with a perfect-square `k`.
+fn square_root_text(term: &str) -> Option<String> {
+    let term = term.trim();
+    if let Some((negative, digits)) = integer_digits(term) {
+        if negative {
+            return None;
+        }
+        let value: i128 = digits.parse().ok()?;
+        return Some(integer_square_root(value)?.to_string());
+    }
+    let digits: String = term.chars().take_while(char::is_ascii_digit).collect();
+    let rest = term.get(digits.len()..)?.trim_start_matches('*');
+    let name = rest.strip_suffix("**2")?;
+    if name.is_empty()
+        || !name.chars().all(|c| c.is_ascii_alphanumeric())
+        || name.starts_with(|c: char| c.is_ascii_digit())
+    {
+        return None;
+    }
+    if digits.is_empty() {
+        return Some(name.to_string());
+    }
+    let coefficient: i128 = digits.parse().ok()?;
+    let root = integer_square_root(coefficient)?;
+    Some(format!("{root}*{name}"))
+}
+
+/// The exact square root of a whole number, when the number is a square.
+fn integer_square_root(value: i128) -> Option<i128> {
+    if value < 0 {
+        return None;
+    }
+    let mut root = 0_i128;
+    while root.checked_mul(root)? < value {
+        root += 1;
+    }
+    (root * root == value).then_some(root)
+}
+
+/// Multiply the last parenthesized sum of a product out over its other factor.
+fn multiply_out_last_group(source: &str) -> Option<String> {
+    let text = source.trim();
+    let chars: Vec<char> = text.chars().collect();
+    if chars.last() != Some(&')') {
+        return None;
+    }
+    let start = matching_open(&chars)?;
+    if start == 0 {
+        return None;
+    }
+    // The group must be a factor and not a function argument. A function name
+    // puts a letter in front of the bracket, and a `/` in front of it makes the
+    // group a divisor.
+    let before = chars.get(start - 1).copied()?;
+    if !(before == ')' || before.is_ascii_digit() || before == '*') {
+        return None;
+    }
+    let prefix_end = if before == '*' { start - 1 } else { start };
+    let prefix: String = chars.get(..prefix_end)?.iter().collect();
+    let prefix = prefix.trim();
+    if prefix.is_empty() || !is_one_term(prefix) {
+        return None;
+    }
+    let inner: String = chars.get(start + 1..chars.len() - 1)?.iter().collect();
+    let terms = signed_terms(&inner)?;
+    if terms.len() < 2 {
+        return None;
+    }
+    let mut out = String::new();
+    for (index, (negative, body)) in terms.iter().enumerate() {
+        if index == 0 {
+            if *negative {
+                out.push('-');
+            }
+        } else if *negative {
+            out.push_str(" - ");
+        } else {
+            out.push_str(" + ");
+        }
+        let _ = write!(out, "{prefix}*({body})");
+    }
+    Some(out)
+}
+
+/// The index of the bracket that the last character of `chars` closes.
+fn matching_open(chars: &[char]) -> Option<usize> {
+    let mut depth = 0_i32;
+    for index in (0..chars.len()).rev() {
+        match chars.get(index).copied()? {
+            ')' => depth += 1,
+            '(' => {
+                depth -= 1;
+                if depth == 0 {
+                    return Some(index);
+                }
+            }
+            _ => {}
+        }
+    }
+    None
+}
+
 fn generate_last_digit_bumped(row: &Row) -> Option<String> {
     bump_last_digit(&row.source)
 }
@@ -821,7 +1387,19 @@ fn generate_appended_junk(row: &Row) -> Option<String> {
 /// Every generator of spec section 9.3, in a fixed order.
 ///
 /// The order fixes the pair order, so the generated set is reproducible.
-const GENERATORS: [Generator; 34] = [
+///
+/// The array holds every family the spec names except one, and the exception is
+/// "word anagram" (`sey` for `yes`). That family applies to prose only, and no
+/// prose answer reaches the pair set: `yes` leaves the 2.0 grammar, so the pair
+/// is class 1 for every generator, and it measures nothing. The 1.0 anagram
+/// defect stays pinned by its literal pair in
+/// `crates/core/tests/answer_divergence.rs`.
+///
+/// M2 review 2, finding 16, showed that this doc comment was false before
+/// FIXM2e and FIXM2f: five families were missing, and the 100% class-3
+/// agreement measured the generators that were written and not the parity of
+/// the checker.
+const GENERATORS: [Generator; 38] = [
     Generator {
         name: "identity",
         intent: Intent::Same,
@@ -992,6 +1570,29 @@ const GENERATORS: [Generator; 34] = [
         intent: Intent::Different,
         make: generate_set_element_changed,
     },
+    // The four families of spec section 9.3 that M2 review 2, finding 16, names
+    // as missing. They come last, so the pair order of every older generator
+    // does not move.
+    Generator {
+        name: "case_flip",
+        intent: Intent::Same,
+        make: generate_case_flip,
+    },
+    Generator {
+        name: "significant_decimal",
+        intent: Intent::Same,
+        make: generate_significant_decimal,
+    },
+    Generator {
+        name: "product_reorder",
+        intent: Intent::Same,
+        make: generate_product_reorder,
+    },
+    Generator {
+        name: "algebraic_refactor",
+        intent: Intent::Same,
+        make: generate_algebraic_refactor,
+    },
 ];
 
 /// The two generators that hunt a wrong radicand and a wrong exponent, and the
@@ -1083,6 +1684,26 @@ fn generated_pairs() -> Vec<Pair> {
         order.swap(index, swap);
     }
     order.truncate(PAIR_CAP);
+    let kept: BTreeSet<usize> = order.iter().copied().collect();
+    // The cap is a task bound, not a measurement. A dropped pair is a pair the
+    // parity report never asks the oracle about, so the harness names every one
+    // of them and it names the total.
+    println!(
+        "the pair cap dropped {} of {} pairs",
+        pairs.len() - kept.len(),
+        pairs.len()
+    );
+    for (index, pair) in pairs.iter().enumerate() {
+        if !kept.contains(&index) {
+            println!(
+                "CAP DROPPED {}: {:?} against {:?} on {}",
+                pair.generator,
+                pair.expected,
+                pair.learner,
+                pair.kind.as_str()
+            );
+        }
+    }
     order.sort_unstable();
     order
         .into_iter()
@@ -1366,21 +1987,45 @@ fn a_chained_inequality(text: &str) -> bool {
     )
 }
 
-/// Whether both sides carry a value with no free symbol.
+/// Whether the gap between the two values is inside a 1.0 float rung.
 ///
-/// That is the precondition of the 1.0 float rung: `_sympy_equivalent` compares
-/// `evalf()` results at a 1e-6 relative tolerance when neither side has a free
-/// symbol (`sympy_check.py:345-352`), and `_numeric_equal` compares plain floats
-/// at 1e-9 (`sympy_check.py:172-174`). 2.0 holds exact values only (D6), so two
-/// near numbers are two different answers.
-fn both_sides_are_numbers(pair: &Pair) -> bool {
-    let numeric = |text: &str| {
-        matches!(
-            canonical_form(text),
-            Ok(Canon::Rational(_) | Canon::Radical(_))
-        )
+/// "Both sides are numbers" is not a reason on its own. The old predicate asked
+/// only that, and it excused every numeric disagreement; a wrong number is a
+/// wrong answer in 1.0 too. This predicate reads the two values with the harness
+/// reader of [`numeric_value`] and asks the question the rung asks.
+///
+/// 1.0 runs two float rungs. `_numeric_equal` compares two plain `float()`
+/// values at 1e-9 (`sympy_check.py:172-174`), and it is the only rung that runs
+/// when Python `float()` reads both sources. `_sympy_equivalent` compares two
+/// `evalf()` results at 1e-6 when neither side holds a free symbol
+/// (`sympy_check.py:345-352`). 2.0 holds exact values only (D6), so a decimal of
+/// ten significant digits is not the rational or the radical it approximates.
+///
+/// The reader is also the free-symbol test that the 1e-6 rung needs: it knows
+/// the number literals, `pi`, `e`, and `sqrt`, and it refuses every other name.
+/// A numeric pair that is farther apart than the rung tolerance keeps no reason.
+/// It stays in class 3 and it fails the parity assertion (R5).
+fn the_1_0_float_rung_closes_the_gap(pair: &Pair) -> bool {
+    let expected_source = normalize(&pair.expected).source;
+    let learner_source = normalize(&pair.learner).source;
+    let (Some(expected_value), Some(learner_value)) = (
+        numeric_value(&expected_source),
+        numeric_value(&learner_source),
+    ) else {
+        return false;
     };
-    numeric(&pair.expected) && numeric(&pair.learner)
+    let tolerance =
+        if reads_as_a_python_float(&expected_source) && reads_as_a_python_float(&learner_source) {
+            1e-9
+        } else {
+            1e-6
+        };
+    (expected_value - learner_value).abs() <= tolerance * expected_value.abs().max(1.0)
+}
+
+/// Whether Python `float()` reads the whole source (1.0 `_numeric_equal`).
+fn reads_as_a_python_float(source: &str) -> bool {
+    integer_digits(source).is_some() || decimal_parts(source).is_some()
 }
 
 /// Name the documented reason a pair diverges, when one covers it.
@@ -1397,7 +2042,7 @@ fn documented_reason(
     }
     // 2.0 says no where 1.0 said yes.
     if oracle.equivalent && !rust_correct {
-        if both_sides_are_numbers(pair) {
+        if the_1_0_float_rung_closes_the_gap(pair) {
             return Some("no float tolerance rung (D6)");
         }
         // No catch-all sits here. A 1.0 `simplify` result is not readable from
@@ -1596,13 +2241,15 @@ fn print_report(report: &Report) {
 // ---------------------------------------------------------------------------
 
 /// The literal size of the generated set.
-const GENERATED_PAIRS: usize = 16_052;
+const GENERATED_PAIRS: usize = 17_047;
 
 /// The literal pair count of every generator, in name order.
-const GENERATOR_COUNTS: [(&str, usize); 37] = [
+const GENERATOR_COUNTS: [(&str, usize); 41] = [
+    ("algebraic_refactor", 58),
     ("appended_junk", 1562),
     ("ascii_to_unicode", 70),
     ("caret_power", 0),
+    ("case_flip", 735),
     ("coarse_decimal", 92),
     ("comma_space_removed", 197),
     ("comma_thousands", 44),
@@ -1611,20 +2258,22 @@ const GENERATOR_COUNTS: [(&str, usize); 37] = [
     ("dollar_wrapped", 1298),
     ("dot_thousands", 44),
     ("equivalent_fraction", 165),
-    ("explicit_multiplication", 408),
+    ("explicit_multiplication", 404),
     ("figure_space_thousands", 44),
     ("fraction_to_decimal", 79),
     ("identity", 1562),
     ("internal_spaces", 1063),
-    ("implicit_multiplication", 59),
+    ("implicit_multiplication", 63),
     ("last_digit_bumped", 1519),
     ("narrow_space_thousands", 44),
     ("nbsp_thousands", 44),
     ("over_thousand", 256),
     ("plus_spaced", 337),
+    ("product_reorder", 48),
     ("set_element_changed", 9),
     ("set_reordered", 11),
     ("sign_flipped", 1559),
+    ("significant_decimal", 154),
     ("space_thousands", 44),
     ("star_power", 333),
     ("sum_reorder", 206),
@@ -1646,8 +2295,8 @@ const GENERATOR_COUNTS: [(&str, usize); 37] = [
 const CLASS_COUNTS: [(&str, usize); 5] = [
     ("class 1 outside_grammar", 931),
     ("class 2 prose_expected", 0),
-    ("class 3 comparable", 15099),
-    ("class 4 documented_divergence", 22),
+    ("class 3 comparable", 15940),
+    ("class 4 documented_divergence", 176),
     ("oracle_silent", 0),
 ];
 
@@ -1664,8 +2313,14 @@ const CLASS_COUNTS: [(&str, usize); 5] = [
 /// reason are the `cos 2*x` parse divergence of M2 review 2, findings 10 and 14.
 /// They belong to class 3, and they agree once the juxtaposed-argument rule of
 /// the parser reads `cos 2*x` as `cos(2*x)`.
+///
+/// The float rung carries 156 pairs, and 154 of them come from the
+/// `significant_decimal` family that spec section 9.3 names: a rational with no
+/// exact decimal, or a radical, against its own value in ten significant digits.
+/// 1.0 grades every one of them True on a float rung, and 2.0 grades them False
+/// (D6). `crates/core/tests/answer_divergence.rs` pins one pair of each shape.
 const REASON_COUNTS: [(&str, usize); 9] = [
-    ("no float tolerance rung (D6)", 2),
+    ("no float tolerance rung (D6)", 156),
     ("a transcendental identity is not simplified (V1)", 0),
     ("prose is not a value (V2)", 0),
     ("a SymPy name is not a value (V2)", 0),
@@ -1727,6 +2382,209 @@ fn a_divergence_leaves_class_3_only_when_a_predicate_names_a_1_0_line() {
     assert_eq!(
         documented_reason(&prose, false, one_zero_says_yes),
         Some("prose is not a value (V2)")
+    );
+}
+
+#[test]
+fn a_numeric_divergence_needs_the_1_0_float_tolerance() {
+    // M2 review 2 asked for a specific predicate and not a catch-all. "Both
+    // sides are numbers" excused every numeric disagreement; the rung the
+    // predicate ports compares two floats at a tolerance, so the predicate
+    // compares two floats at that tolerance.
+    let one_zero_says_yes = OracleVerdict {
+        equivalent: true,
+        notation: false,
+    };
+    // Inside the 1e-6 `evalf` rung (`sympy_check.py:345-352`).
+    let inside = probe_pair("1/1000", "1/1001", "fraction");
+    assert_eq!(
+        documented_reason(&inside, false, one_zero_says_yes),
+        Some("no float tolerance rung (D6)")
+    );
+    let decimal_of_a_fraction = probe_pair("5/12", "0.4166666667", "fraction");
+    assert_eq!(
+        documented_reason(&decimal_of_a_fraction, false, one_zero_says_yes),
+        Some("no float tolerance rung (D6)")
+    );
+    let decimal_of_a_radical = probe_pair("8*sqrt(2)", "11.31370850", "expression_numeric");
+    assert_eq!(
+        documented_reason(&decimal_of_a_radical, false, one_zero_says_yes),
+        Some("no float tolerance rung (D6)")
+    );
+    let nested_radical = probe_pair("√(2 + √3)/2", "0.9659258263", "expression_numeric");
+    assert_eq!(
+        documented_reason(&nested_radical, false, one_zero_says_yes),
+        Some("no float tolerance rung (D6)")
+    );
+    // Outside every rung. Two numbers that differ keep no reason, and the pair
+    // stays in class 3 (R5).
+    let coarse = probe_pair("2/3", "0.667", "fraction");
+    assert_eq!(documented_reason(&coarse, false, one_zero_says_yes), None);
+    let far_apart = probe_pair("7329", "7330", "integer");
+    assert_eq!(
+        documented_reason(&far_apart, false, one_zero_says_yes),
+        None
+    );
+    // Two plain decimals take the tighter 1e-9 rung (`sympy_check.py:172-174`),
+    // so a gap inside the 1e-6 rung keeps no reason here.
+    let two_decimals = probe_pair("1.0000000", "1.0000005", "decimal");
+    assert_eq!(
+        documented_reason(&two_decimals, false, one_zero_says_yes),
+        None
+    );
+    // A free symbol leaves the rung: the reader refuses the side, so no reason.
+    let with_a_symbol = probe_pair("x/3", "0.3333333333*x", "expression_symbolic");
+    assert_eq!(
+        documented_reason(&with_a_symbol, false, one_zero_says_yes),
+        None
+    );
+}
+
+#[test]
+fn the_harness_reader_reads_a_number_and_refuses_a_name() {
+    assert_eq!(numeric_value("1/8"), Some(0.125));
+    assert_eq!(numeric_value("-5/6"), Some(-5.0 / 6.0));
+    assert_eq!(numeric_value("2*sqrt(4)/4"), Some(1.0));
+    assert_eq!(numeric_value("sqrt(2 + sqrt(4))"), Some(2.0));
+    assert_eq!(numeric_value("(2 + 4)/3"), Some(2.0));
+    assert_eq!(numeric_value("2**3"), Some(8.0));
+    assert_eq!(numeric_value("-2**2"), Some(-4.0));
+    assert_eq!(numeric_value("2**-1"), Some(0.5));
+    assert_eq!(numeric_value("pi"), Some(std::f64::consts::PI));
+    assert_eq!(numeric_value("e"), Some(std::f64::consts::E));
+    // A free symbol, an unknown name, a bare radical, an implicit product, an
+    // unbalanced bracket, and a division by zero are all refusals.
+    assert_eq!(numeric_value("x"), None);
+    assert_eq!(numeric_value("2*cos(0)"), None);
+    assert_eq!(numeric_value("2*sqrt 2"), None);
+    assert_eq!(numeric_value("2x"), None);
+    assert_eq!(numeric_value("(1 + 2"), None);
+    assert_eq!(numeric_value("1/0"), None);
+    // Two values that only touch are two answers, not one.
+    assert_eq!(numeric_value("1 2"), None);
+}
+
+/// Build one corpus row for a generator test.
+fn probe_row(answer: &str, shape: &str) -> Row {
+    Row {
+        answer: answer.to_string(),
+        source: normalize(answer).source,
+        shape: shape.to_string(),
+        kind: AnswerKind::Expression,
+    }
+}
+
+#[test]
+fn the_case_flip_family_writes_the_answer_in_upper_case() {
+    assert_eq!(
+        generate_case_flip(&probe_row("sqrt(2)", "expression_numeric")),
+        Some("SQRT(2)".to_string())
+    );
+    assert_eq!(
+        generate_case_flip(&probe_row("2*x + 1", "expression_symbolic")),
+        Some("2*X + 1".to_string())
+    );
+    // An answer with no lower-case letter is no variant.
+    assert_eq!(generate_case_flip(&probe_row("7329", "integer")), None);
+    assert_eq!(
+        generate_case_flip(&probe_row("(4, 17)", "ordered_tuple")),
+        None
+    );
+}
+
+#[test]
+fn the_significant_decimal_family_writes_ten_significant_digits() {
+    assert_eq!(
+        generate_significant_decimal(&probe_row("1/3", "fraction")),
+        Some("0.3333333333".to_string())
+    );
+    assert_eq!(
+        generate_significant_decimal(&probe_row("-5/6", "fraction")),
+        Some("-0.8333333333".to_string())
+    );
+    assert_eq!(
+        generate_significant_decimal(&probe_row("8*sqrt(2)", "expression_numeric")),
+        Some("11.31370850".to_string())
+    );
+    assert_eq!(
+        generate_significant_decimal(&probe_row("√(2 + √3)/2", "expression_numeric")),
+        Some("0.9659258263".to_string())
+    );
+    // A rational with an exact decimal, an integer, and a value with a free
+    // symbol are all refusals: the pair carries no float rung.
+    assert_eq!(
+        generate_significant_decimal(&probe_row("1/2", "fraction")),
+        None
+    );
+    assert_eq!(
+        generate_significant_decimal(&probe_row("7329", "integer")),
+        None
+    );
+    assert_eq!(
+        generate_significant_decimal(&probe_row("sqrt(x)", "expression_symbolic")),
+        None
+    );
+}
+
+#[test]
+fn the_product_reorder_family_rotates_the_factors() {
+    assert_eq!(
+        generate_product_reorder(&probe_row("2*x", "expression_symbolic")),
+        Some("x*2".to_string())
+    );
+    assert_eq!(
+        generate_product_reorder(&probe_row("8*sqrt(2)", "expression_numeric")),
+        Some("sqrt(2)*8".to_string())
+    );
+    assert_eq!(
+        generate_product_reorder(&probe_row("2*sqrt(3)/3", "expression_numeric")),
+        Some("sqrt(3)/3*2".to_string())
+    );
+    // A sum is no product, and a rotation across its `-` builds another value.
+    assert_eq!(
+        generate_product_reorder(&probe_row("9*pi - 18", "expression_numeric")),
+        None
+    );
+    assert_eq!(
+        generate_product_reorder(&probe_row("x**2", "expression_symbolic")),
+        None
+    );
+}
+
+#[test]
+fn the_algebraic_refactor_family_factors_and_multiplies_out() {
+    // The pair spec section 9.3 names.
+    assert_eq!(
+        generate_algebraic_refactor(&probe_row("x**2 - 1", "expression_symbolic")),
+        Some("(x - 1)*(x + 1)".to_string())
+    );
+    assert_eq!(
+        generate_algebraic_refactor(&probe_row("4x**2 - 49", "expression_symbolic")),
+        Some("(2*x - 7)*(2*x + 7)".to_string())
+    );
+    // The same step in the other direction: the corpus authors the factored
+    // form and the learner multiplies it out.
+    assert_eq!(
+        generate_algebraic_refactor(&probe_row("(x + 3)(x - 3)", "expression_symbolic")),
+        Some("(x + 3)*(x) - (x + 3)*(3)".to_string())
+    );
+    assert_eq!(
+        generate_algebraic_refactor(&probe_row("2(x + 3)(x - 3)", "expression_symbolic")),
+        Some("2(x + 3)*(x) - 2(x + 3)*(3)".to_string())
+    );
+    // A function argument is no factor, and a sum of two terms that are not
+    // both squares takes neither rule.
+    assert_eq!(
+        generate_algebraic_refactor(&probe_row("sqrt(1 + x**2)", "expression_symbolic")),
+        None
+    );
+    assert_eq!(
+        generate_algebraic_refactor(&probe_row("x**2 - 3", "expression_symbolic")),
+        None
+    );
+    assert_eq!(
+        generate_algebraic_refactor(&probe_row("1/(x + 1)", "expression_symbolic")),
+        None
     );
 }
 

@@ -411,6 +411,15 @@ One JSON object per line, sorted keys, `ensure_ascii=False`:
 | `x²+1` | `x**3+1` | expression | False |
 | `√2` | `2` | numeric | False |
 
+**The `½` row in 2.0.** 1.0 rewrites `½` to the text `(1/2)` (`sympy_check.py:141`). 2.0
+rewrites it to the literal-fraction token `⟦1/2⟧` (marks U+27E6 and U+27E7), and
+`\frac{1}{2}` — two plain digit runs — becomes the same token. Section 8.1 gives the rule
+and the reason. The pinned verdict does not move: `½` against `1/2` is True in both
+versions, and `2*½`, `2(1/2)`, `(2)½`, and `x½` keep the product reading in 2.0 as they do
+in 1.0. What the token changes is the pair 1.0 never had: `2½` and `2\frac{1}{2}` are the
+mixed number 5/2 in 2.0. 1.0 graded the first as the product 1, and 1.0 did not parse the
+second. `crates/core/tests/answer_parse.rs` pins all five spellings.
+
 `test_non_numeric_pairs_fall_through_to_the_symbolic_rung` (`:109-129`):
 
 | expected | given | kind | want |
@@ -731,6 +740,23 @@ superscripts and `√`; **and, new in 2.0**: `\frac{a}{b}` → `(a)/(b)`, `\sqrt
 `^{n}` → `**(n)`, a trailing `%` → `/100`, a leading `x =` / `y =` prefix stripped, a
 trailing unit token stripped and compared separately. The dot-thousands variant stays
 last-resort with the `notation` tag, exactly as `dot_thousands_variant` does.
+
+**The literal-fraction token (2.0, review round 2).** A vulgar-fraction glyph does **not**
+become `(1/2)` in 2.0, and a `\frac{b}{c}` of two plain digit runs does not become
+`((b)/(c))`. Both become one **literal-fraction token**, written `⟦b/c⟧` with the marks
+U+27E6 and U+27E7, and the lexer reads that spelling as one `Tok::Frac`. So `½` is
+`⟦1/2⟧` and `\frac{1}{2}` is `⟦1/2⟧`. The two marks are on no learner keyboard and no
+other rewrite of `answer::normalize` produces them, so the token never comes from the
+learner's own text.
+
+The token exists because the mixed-number rule needs one place, and that place is the
+parser. `parse::read_mixed_number` sees the one shape `Num [space] fraction` for all five
+spellings — `2 1/2`, `2½`, `2 ½`, `2\frac{1}{2}`, and `2 \frac{1}{2}` — and it applies the
+`0 < b < c` and plain-digit rules once. All five give 5/2, and none of them gives the
+product 1. The learner's own product keeps its own reading: `2(1/2)` is 1, because the
+learner wrote brackets and not the token. A token that no number precedes makes a product,
+so `x½` is `x/2` and `(2)½` is 1. `\frac{a}{b}` with anything but two plain digit runs
+keeps the `((a)/(b))` rewrite of the row above.
 
 ### 8.2 Coverage against the corpus (3,492 answers)
 

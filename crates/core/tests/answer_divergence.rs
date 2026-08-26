@@ -178,6 +178,32 @@ fn a_rounded_decimal_is_not_the_exact_value() {
     assert_eq!(check("2/3", "0.667", N), decided(false, false));
 }
 
+#[test]
+fn a_decimal_of_ten_significant_digits_is_not_the_value_it_rounds() {
+    // The `significant_decimal` generator family of spec section 9.3, added in
+    // FIXM2f. It is the largest documented divergence of the generated set: 154
+    // of the 156 pairs under the reason "no float tolerance rung (D6)".
+    //
+    // 1.0: True for all five, on the 1e-6 `evalf` rung
+    // (`sympy_check.py:345-352`). 2.0: False, because a decimal is an exact
+    // rational and it is not the rational or the radical it approximates (D6).
+    // Each pair below is one shape of the family, taken from the generated set.
+    // A rational with no exact decimal:
+    assert_eq!(check("5/12", "0.4166666667", N), decided(false, false));
+    // The same, with a negative value:
+    assert_eq!(check("-5/6", "-0.8333333333", E), decided(false, false));
+    // A radical with a whole coefficient:
+    assert_eq!(check("8*sqrt(2)", "11.31370850", E), decided(false, false));
+    // A radical over a divisor:
+    assert_eq!(check("2√3/3", "1.154700538", E), decided(false, false));
+    // A nested radical. `both_sides_are_numbers` refused this shape, so the
+    // harness left it in class 3; the tolerance predicate names it.
+    assert_eq!(
+        check("√(2 + √3)/2", "0.9659258263", E),
+        decided(false, false)
+    );
+}
+
 // ---------------------------------------------------------------------------
 // Class 3 — the kind gate and the wrong-answer verdict (A3)
 // ---------------------------------------------------------------------------
