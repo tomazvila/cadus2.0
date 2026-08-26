@@ -228,7 +228,10 @@ A double-quoted YAML scalar with `\\mid` resolves to one backslash
     findings block a load.
 14. `Graph.__init__` raises on duplicate topic id; lint does not.
 15. UTF-8 everywhere; no case folding.
-16. JSON floats: shortest round-trip in both languages; verify on the whole dump.
+16. JSON floats: Python `repr` rule — shortest round-trip digits; fixed notation when the
+    decimal exponent is >= -4 and < 16, else scientific `d.ddde±XX` with a signed exponent
+    of at least two digits; a whole number prints as `1.0`. The dump renders its own float
+    text (`python_repr_f64` in `dump.rs`); serde_json's ryu output differs below 1e-4.
 17. Do not port the mtime cache; load once into an `Arc` arena.
 18. The curriculum hash is a 2.0 decision (see §3).
 
