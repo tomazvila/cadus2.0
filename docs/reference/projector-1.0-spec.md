@@ -552,11 +552,15 @@ Extend `gen_stream_1_0.py` with `--seed N`, emitting `m3_stream_{N}.jsonl`. Draw
 
 **Properties to assert** for each generated stream:
 - `rust_fold(stream) == python_fold(stream)` byte-for-byte on the canonical blob.
-- `project_incremental(cached_at_k, prior, new) == project(all)` for every split `k` (already verified for stream #1).
+- `project_incremental(cached_at_k, prior, new) == project(all)` for every split `k` — **except where 1.0 itself diverges**, see the correction below.
 - `apply_regrades` is idempotent: applying it twice equals applying it once.
 - `repNum >= 0.0` and `memoryBase >= 0.0` for every topic after every event.
 - `memory_at` is non-increasing in `t` for `t >= t0`.
 - Implicit credit never exceeds the direct credit it derives from.
 - Removing the `regraded` events and re-folding gives the pre-correction model — which pins that the original events stay intact.
+
+**Correction (M3 U5).** The blanket claim "incremental == full replay at every split" is **false for 1.0**, and stream #1 hid it. `project_incremental` seeds the FIRe topic states from the cached model and replays the prior half light (`apply_fire=False`). When a `regraded` event arrives in the NEW half and supersedes a grade the PRIOR half already folded, the cache carries the uncorrected FIRe state and the correction never reaches FIRe, so the two paths land on different models. 1.0 documents this at `projector.py:794-830` and routes such a stream down the full-replay path in `service.project_and_save`.
+
+Measured against the live 1.0 code: `stream_1.jsonl` agrees at all 48 splits, and every seeded stream disagrees at splits 73-78 (three of them through 79) — the splits that put a correction after the events it corrects. `scripts/oracle/incremental_splits_1_0.py` records the divergent split indices and the 1.0 digest of each divergent fold in `crates/core/tests/fixtures/events/incremental_1_0.json`. The port must therefore agree with the full replay at the same splits AND land on the same divergent model at the other splits. `crates/core/tests/parity_events.rs` asserts both.
 
 **Do not** let the generator sample through `random.Random` in a way the port must reproduce (T11). Keep the RNG on the generator side only; the fold itself reads no randomness.
