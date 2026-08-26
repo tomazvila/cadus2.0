@@ -5,6 +5,11 @@
 //! into the decidable grammar (V1), canonicalizes both with exact arithmetic (D6),
 //! and compares the two canonical forms.
 //!
+//! The comparison is an equality of two [`Canon`] values and nothing else. Every
+//! algebraic rule lives in [`super::canon`], which is why a rational expression
+//! needs no rung of its own: `2/x + 1/(x+1)` and `(3*x+2)/(x*(x+1))` reach one
+//! canonical quotient there (M2 review 3, findings 9 to 13).
+//!
 //! # The rungs, in order
 //!
 //! 0. The learner answer is blank: `correct = false` (1.0 `blank_answer_grade`).
