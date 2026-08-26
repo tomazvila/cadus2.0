@@ -50,6 +50,15 @@ parser for every spelling; the argument chain continues through `*`; one `Invers
 monomial; no catch-all reason. Fix units FIXM2d–e, regeneration FIXM2f, then one
 verification round, then M2 closes with any leftover recorded.
 
+Fix units FIXM2d–f fixed all 17: one mixed-number rule in the parser for every spelling
+(literal-fraction token `⟦b/c⟧`), the argument chain through `*`, the `\sqrt` product
+sign, space-grouped numbers refused after a factor, negated times-x, `Atom::E` folding,
+one `Inverse` per monomial, no catch-all divergence reason, four more generator
+families (case flip, ten significant digits, product reorder, algebraic refactor).
+Regenerated: 17,047 oracle pairs, class 3 agreement 15,940/15,940, 176 documented
+divergences (156 of them the D6 class: a decimal approximation of an exact value is
+wrong in 2.0 — see "Decision for the owner" under M2). Gate with the live oracle green.
+
 Known items before the M2 fix wave were: the lexer refused a multi-letter run (`3xy^2`, 11
 corpus answers on 9 topics) — split unknown letter runs into single-letter variables
 except function names and differentials; `e` and `E` both read as Euler's number (1.0
