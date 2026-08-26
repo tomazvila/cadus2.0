@@ -75,6 +75,21 @@ from datetime import UTC, datetime, timedelta
 
 SEED = 20260302  # recorded on task_served; nothing in the fold reads it
 
+#: The fixture directory of this repository, found from this file's own path. It is
+#: the default `--out-dir`, so a regenerated stream lands where the tests read it.
+FIXTURES = os.path.normpath(
+    os.path.join(
+        os.path.dirname(os.path.abspath(__file__)),
+        "..",
+        "..",
+        "crates",
+        "core",
+        "tests",
+        "fixtures",
+        "events",
+    )
+)
+
 #: A real prerequisite chain from the `foundations` course, so the FIRe
 #: encompassing propagation (downward credit / upward penalty) actually fires.
 #:   absolute-value
@@ -808,7 +823,10 @@ def build_seeded_stream(seed: int, cfg, graph) -> list[object]:
     # `top` is answered, so its ability blends; `step_c` is not, so it keeps its own.
     # `step_b` was reset to untouched but carries a POSITIVE balance, so the refresh
     # promotes it. `spares[5]` is untouched with a non-positive balance, which is the
-    # H2 promote-guard: it is skipped.
+    # H2 promote-guard: it is skipped. `spares[6]` carries the guard's BOUNDARY, a
+    # balance of exactly 0.0 -- also non-positive, so it is skipped too. Without that
+    # row, a `balance < 0.0` guard folds identically to the `balance <= 0.0` guard 1.0
+    # writes, and the boundary goes untested.
     for index, weight in enumerate([1.0, 0.8]):
         events.append(
             DiagnosticAnswer(
@@ -828,6 +846,9 @@ def build_seeded_stream(seed: int, cfg, graph) -> list[object]:
         (step_c, 3.0),
     ]
     rng.shuffle(refresh)
+    # Appended AFTER the shuffle on purpose: it draws no randomness, so every later
+    # phase keeps the draws it had before this row existed.
+    refresh.append((spares[6], 0.0))
     events.append(
         DiagnosticPlaced(
             ts=at(400, 10),
@@ -1121,11 +1142,7 @@ def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--seed", type=int, default=1)
     ap.add_argument("--out", default=None, help="the stream file to write")
-    ap.add_argument(
-        "--out-dir",
-        default="/tmp/claude-1000/-home-deploy-dev-cadus2-0/"
-        "423a634f-40c8-4ad8-9fdd-67df2281434b/scratchpad",
-    )
+    ap.add_argument("--out-dir", default=FIXTURES)
     ap.add_argument("--curriculum", default="/home/deploy/dev/cadus2.0/curriculum")
     ap.add_argument("--config", default="/home/deploy/dev/cadus/config.yaml")
     args = ap.parse_args()
@@ -1150,7 +1167,7 @@ def main() -> int:
         os.makedirs(os.path.dirname(os.path.abspath(stream_path)), exist_ok=True)
     else:
         os.makedirs(args.out_dir, exist_ok=True)
-        stream_path = os.path.join(args.out_dir, f"m3_stream_{args.seed}.jsonl")
+        stream_path = os.path.join(args.out_dir, f"stream_{args.seed}.jsonl")
 
     blob = "\n".join(canonical_lines(events)) + "\n"
     with open(stream_path, "w", encoding="utf-8") as handle:
