@@ -10,11 +10,16 @@ publish.workspace = true
 name = "cadus_core"
 path = "src/lib.rs"
 
-# R3 core purity. Keep this list at serde, serde_json, and thiserror.
-# `crates/core/tests/purity.rs` asserts the exact key set.
+# R3 core purity. Keep this list at serde, serde_json, serde_norway, and
+# thiserror. `crates/core/tests/purity.rs` asserts the exact key set.
+#
+# `serde_norway` is the one YAML crate of the core: a maintained fork of the
+# archived `serde_yaml`. It keeps mapping order in `Value`, and its derive support
+# honors `#[serde(deny_unknown_fields)]`, which the curriculum schema needs.
 [dependencies]
 serde = { workspace = true }
 serde_json = { workspace = true }
+serde_norway = { workspace = true }
 thiserror = { workspace = true }
 
 [dev-dependencies]

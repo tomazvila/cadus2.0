@@ -10,3 +10,5 @@
         clippy::unimplemented
     )
 )]
+
+pub mod curriculum;
