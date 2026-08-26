@@ -51,7 +51,8 @@ it, and lists the seed numbers otherwise.
 | 5 | `diag.initial` | diagnostic_placed, initial placement | no | all |
 | 5 | `diag.refresh` | diagnostic_placed with refresh true | no | all |
 | 5 | `diag.promote_guard` | H2 guard: negative balance on an untouched topic | no | 2, 3, 4, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20 |
-| 5 | `diag.promote_guard_zero` | H2 guard at its boundary: a balance of exactly 0.0 | no | all |
+| 5 | `diag.promote_guard_zero` | H2 REFRESH guard at its boundary: a balance of exactly 0.0 | no | all |
+| 5 | `diag.placed_balance_zero` | the INITIAL placement filter at its boundary: a balance of exactly 0.0 | no | none |
 | 5 | `diag.conditional_peel` | a conditional placement peeled back by a miss | no | all |
 | 6 | `reset.applied` | profile_reset clears accumulated state | no | all |
 | 7 | `round.day_half_tie` | a local-day XP total on an exact .5 tie | yes | all |
@@ -60,7 +61,8 @@ it, and lists the seed numbers otherwise.
 | 8 | `quiz.row_off_curriculum` | a quiz per_topic row off the curriculum | no | all |
 | 8 | `quiz.retake_false` | a quiz score at or above retake_below | no | all |
 | 8 | `quiz.retake_true` | a quiz score below retake_below | no | all |
-| 9 | `streak.day_at_goal` | a local day exactly at the goal | no | all |
+| 9 | `streak.day_at_goal` | ANY local day exactly at the goal | no | all |
+| 9 | `streak.reference_day_at_goal` | the REFERENCE day exactly at the goal, which the first comparison reads | no | none |
 | 9 | `streak.day_one_below` | a local day one XP below the goal | no | all |
 | 9 | `streak.gap_day` | a gap day inside the streak block | no | all |
 | 9 | `streak.tz_shifts_day` | the block moves a day between UTC and the tz | no | all |
@@ -70,15 +72,22 @@ it, and lists the seed numbers otherwise.
 
 ## Branches no stream reaches
 
-The 1.0 code makes these unreachable from any event stream, so
-`crates/core/tests/fire.rs` pins each one with a direct unit test:
+No committed stream of the family above reaches these, so each one is
+pinned by a test of its own:
 
-- `fire.interval_cap_730`
-- `fire.speed_clamp_lo`
-- `fire.speed_clamp_hi`
+- `fire.interval_cap_730` -- `crates/core/tests/fire.rs`, a direct unit test
+- `fire.speed_clamp_lo` -- `crates/core/tests/fire.rs`, a direct unit test
+- `fire.speed_clamp_hi` -- `crates/core/tests/fire.rs`, a direct unit test
+- `diag.placed_balance_zero` -- `crates/core/tests/projector.rs`, on `fixtures/events/boundary/placed_balance_zero.jsonl`
+- `streak.reference_day_at_goal` -- `crates/core/tests/projector.rs`, on `fixtures/events/boundary/streak_reference_day_at_goal.jsonl`
 
 `interval_for` never reaches its 730.0 cap, because the default
 `interval_table` ends at 480.0 and interpolation never leaves the table.
 `speed_for` never reaches either clamp, because `(0.5 + a) / (0.5 + d)` with
 `a` in [0, 1] and `d` in the curriculum's [0.05, 0.75] spans [0.4, 3.0),
 open at the top, so neither 0.33 nor 3.0 binds.
+
+The two boundary rows are reachable from a stream, and the streams that
+reach them are `tests/fixtures/events/boundary/`: the seeded family emits
+no balance of exactly 0.0 on the initial placement path and no reference
+day exactly at the goal (M3 review round 1, findings #7 and #15).

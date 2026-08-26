@@ -44,8 +44,15 @@ use cadus_core::projector::{
 };
 use cadus_core::selector::{SeededSampler, SessionContext, compose_session};
 
-/// The number of committed streams.
+/// The number of committed `stream_N.jsonl` streams.
 const STREAMS: usize = 20;
+
+/// The coverage stream `stream_u3_coverage.jsonl`, which `incremental_1_0.json`
+/// records beside the numbered streams.
+///
+/// It is the only committed stream that carries the `profile_reset` incremental
+/// divergence class (M3 review round 1, finding #4).
+const COVERAGE_STREAM: &str = "stream_u3_coverage.jsonl";
 
 /// The `config_hash` of the default config (spec section 9).
 const CONFIG_HASH: &str = "797575e985c12149";
@@ -63,7 +70,18 @@ const NEW_YORK: &str = "America/New_York";
 const GOAL: i64 = 40;
 
 /// The task cap `dump_selector_1_0.py` composed with.
-const SELECTOR_N: usize = 8;
+///
+/// It is 40, above the longest recorded plan, so the comparison reaches the quiz,
+/// multi-step, and drill sections of `compose_session`. At the session cap of 8
+/// every seeded plan is already full of remediation, review, and lesson tasks
+/// (M3 review round 1, finding #13).
+const SELECTOR_N: usize = 40;
+
+/// The longest plan any seeded state records, which is below [`SELECTOR_N`].
+///
+/// A plan AT the cap would mean the cap truncates it again, so the whole-plan
+/// comparison would end early once more.
+const SELECTOR_LONGEST_PLAN: usize = 14;
 
 /// The number of seeded selector states.
 const SELECTOR_SEEDS: usize = 10;
@@ -141,6 +159,11 @@ struct IncrementalIndex {
     streams: Vec<StreamIncremental>,
 }
 
+/// One served task of `selector_1_0.json`, in the recorded shape.
+///
+/// `[task_type, topic, is_remediation, nearly_due, n_problems, time_budget_secs]`.
+type TaskRow = (String, Option<String>, bool, bool, Option<i64>, Option<i64>);
+
 /// One seeded state of `selector_1_0.json`.
 #[derive(Debug, Deserialize)]
 struct SelectorState {
@@ -154,8 +177,9 @@ struct SelectorState {
     course_id: Option<String>,
     /// The instant the plan composed at: the last event's `ts`.
     t: String,
-    /// `[task_type, topic, is_remediation, nearly_due]` per served task.
-    tasks: Vec<(String, Option<String>, bool, bool)>,
+    /// `[task_type, topic, is_remediation, nearly_due, n_problems,
+    /// time_budget_secs]` per served task.
+    tasks: Vec<TaskRow>,
 }
 
 /// `selector_1_0.json`, the committed 1.0 `compose_session` plans.
@@ -437,7 +461,9 @@ fn the_incremental_index_holds_the_pinned_metadata() {
     assert_eq!(index.oracle, "scripts/oracle/incremental_splits_1_0.py");
     assert_eq!(index.config_hash, CONFIG_HASH);
     assert_eq!(index.projector_version, PROJECTOR_VERSION);
-    assert_eq!(index.streams.len(), STREAMS);
+    // The 20 numbered streams and the coverage stream.
+    assert_eq!(index.streams.len(), STREAMS + 1);
+    assert_eq!(index.streams[STREAMS].stream, COVERAGE_STREAM);
     for number in 1..=STREAMS {
         let entry = incremental_row(number);
         let digests = row(number);
@@ -464,6 +490,20 @@ fn the_incremental_index_holds_the_pinned_metadata() {
     // `stream_1.jsonl` carries no correction into a later half, so 1.0 agrees with
     // the full replay at every one of its splits (spec section 9).
     assert!(incremental_row(1).mismatching_splits.is_empty());
+
+    // The coverage row: the `profile_reset` class. Its digests are pinned the same
+    // way, and `tests/projector.rs` asserts the port lands on them.
+    let coverage = incremental_index()
+        .streams
+        .iter()
+        .find(|entry| entry.stream == COVERAGE_STREAM)
+        .expect("the coverage stream has a row");
+    assert_eq!(coverage.events, 33);
+    assert_eq!(
+        coverage.mismatching_splits,
+        [21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31]
+    );
+    assert_eq!(coverage.mismatching_digests.len(), 11);
 }
 
 #[test]
@@ -511,6 +551,34 @@ fn the_coverage_table_is_committed_beside_the_fixtures() {
         assert!(
             text.contains(&format!("\n| {item} | `")),
             "coverage.md records no spec section 9 item {item}"
+        );
+    }
+
+    // Two guards the seeded family does NOT reach. The table said `all` for a probe
+    // beside each of them, and a reviewer read the boundary as measured (M3 review
+    // round 1, findings #7 and #15). Each now has a row of its own that reads
+    // `none`, and a boundary stream that pins it.
+    for (probe, pinned_by) in [
+        (
+            "diag.placed_balance_zero",
+            "boundary/placed_balance_zero.jsonl",
+        ),
+        (
+            "streak.reference_day_at_goal",
+            "boundary/streak_reference_day_at_goal.jsonl",
+        ),
+    ] {
+        assert!(
+            text.contains(&format!("| `{probe}` |")),
+            "coverage.md has no `{probe}` row"
+        );
+        assert!(
+            text.contains(&format!("`{probe}` -- ")),
+            "coverage.md does not say where `{probe}` is pinned"
+        );
+        assert!(
+            fixture(pinned_by).exists(),
+            "{pinned_by} is missing, so `{probe}` is unpinned"
         );
     }
 }
@@ -932,24 +1000,25 @@ fn enrolled_course(events: &[Event]) -> Option<String> {
 }
 
 /// The 2.0 task row in the shape `selector_1_0.json` records.
-fn task_rows(
-    plan_tasks: &[cadus_core::selector::Task],
-) -> Vec<(String, Option<String>, bool, bool)> {
+fn task_rows(plan_tasks: &[cadus_core::selector::Task]) -> Vec<TaskRow> {
     plan_tasks
         .iter()
         .map(|task| {
-            let topic = if task.task_type == TaskType::Quiz {
-                // Trap T11: the quiz sample is a documented non-parity, so the row
-                // carries no topic on either side and compares by presence only.
-                None
-            } else {
-                task.topic.clone()
-            };
+            // Trap T11: the quiz sample is a documented non-parity, so a quiz row
+            // carries no topic and no size on either side, and compares by presence
+            // only. `topic`, `n_problems`, and `time_budget_secs` all read the
+            // sampled questions.
+            let quiz = task.task_type == TaskType::Quiz;
+            let topic = if quiz { None } else { task.topic.clone() };
+            let n_problems = if quiz { None } else { task.n_problems };
+            let budget = if quiz { None } else { task.time_budget_secs };
             (
                 task.task_type.as_str().to_owned(),
                 topic,
                 task.is_remediation,
                 task.nearly_due,
+                n_problems,
+                budget,
             )
         })
         .collect()
@@ -963,11 +1032,35 @@ fn the_selector_index_holds_the_pinned_metadata() {
     assert_eq!(index.config_hash, CONFIG_HASH);
     assert_eq!(index.projector_version, PROJECTOR_VERSION);
     assert_eq!(index.states.len(), SELECTOR_SEEDS);
+    // Every section of `compose_session` reaches the comparison. Without the drill
+    // and the multi-step rows the cap truncated the plan (finding #13).
+    let kinds: BTreeSet<&str> = index
+        .states
+        .iter()
+        .flat_map(|state| state.tasks.iter().map(|task| task.0.as_str()))
+        .collect();
+    for kind in ["review", "lesson", "quiz", "multi-step", "drill"] {
+        assert!(
+            kinds.contains(kind),
+            "no seeded state records a `{kind}` task"
+        );
+    }
     for (position, state) in index.states.iter().enumerate() {
         assert_eq!(state.seed, position + 1);
         assert_eq!(state.stream, format!("stream_{}.jsonl", state.seed));
         assert_eq!(state.session_id, format!("s{}", state.seed));
-        assert!(state.tasks.len() <= SELECTOR_N, "{}", state.stream);
+        // A plan AT the cap is a truncated plan, and a truncated plan hides
+        // whatever `compose_session` appends last (finding #13).
+        assert!(
+            state.tasks.len() < SELECTOR_N,
+            "{}: the plan fills the cap, so the comparison stops early",
+            state.stream
+        );
+        assert!(
+            state.tasks.len() <= SELECTOR_LONGEST_PLAN,
+            "{}: a plan is longer than the recorded longest plan",
+            state.stream
+        );
     }
 }
 

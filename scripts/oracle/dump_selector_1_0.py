@@ -5,9 +5,16 @@ Read-only against the 1.0 code base. For each seed `k` in 1..10 it folds
 `stream_k.jsonl` with the 1.0 projector, calls the 1.0 `compose_session` on the
 resulting state, and prints the served task list as canonical JSON.
 
-The recorded shape per task is `[task_type, topic, is_remediation, nearly_due]`.
+The recorded shape per task is
+`[task_type, topic, is_remediation, nearly_due, n_problems, time_budget_secs]`.
 `crates/core/tests/parity_events.rs` reads the committed output and asserts the
 2.0 `compose_session` gives the same list.
+
+**The cap is 40, not the session cap 8.** With `n = 8` every seeded state fills
+the plan with remediation, review, and lesson tasks, so the quiz, multi-step, and
+drill sections of `compose_session` end after the compared window and no
+assertion reaches them (M3 review round 1, finding #13). A cap of 40 is above the
+longest recorded plan, so the whole plan of every state is compared.
 
 The context is exactly what BOTH sides derive from the same committed stream, so
 neither side needs a value the other cannot rebuild:
@@ -17,14 +24,16 @@ neither side needs a value the other cannot rebuild:
 * `course_id` -- the `course` of the last `enrolled` event,
 * `pending_remediation` -- the folded queue,
 * `quiz_state` -- the folded quiz cadence,
-* `session_id` -- `"s{k}"`, `n` -- 8, `rng` -- `seeded_rng(k)`.
+* `session_id` -- `"s{k}"`, `n` -- 40, `rng` -- `seeded_rng(k)`.
 
 Every other keyword keeps its 1.0 default, which is the 2.0
 `SessionContext::default()` value.
 
 **Trap T11.** The quiz sampler is a documented non-parity: 2.0 does not
 reproduce the CPython `random.sample` sequence. A quiz task therefore records
-`null` for its topic, and the test compares a quiz row by presence only.
+`null` for its topic, its `n_problems`, and its `time_budget_secs` -- each of the
+three reads the sampled questions -- and the test compares a quiz row by presence
+only.
 
 Usage:
   dump_selector_1_0.py [--fixtures DIR] [--out FILE] [--seeds N]
@@ -38,8 +47,9 @@ import json
 import os
 from datetime import UTC, datetime
 
-#: The task count `compose_session` is capped at.
-DEFAULT_N = 8
+#: The task count `compose_session` is capped at. It is above the longest
+#: recorded plan, so the comparison covers the whole plan (finding #13).
+DEFAULT_N = 40
 
 #: The number of seeded states: seed `k` folds `stream_k.jsonl`.
 DEFAULT_SEEDS = 10
@@ -127,11 +137,25 @@ def main() -> int:
             n=args.n,
         )
 
+        def is_quiz(task) -> bool:
+            """Whether the task is the sampled quiz (trap T11)."""
+            return task.task_type.value == "quiz"
+
         def topic_id(task) -> str | None:
             """The task's topic id, or `None` for a quiz (trap T11) or a topicless task."""
-            if task.task_type.value == "quiz" or task.topic is None:
+            if is_quiz(task) or task.topic is None:
                 return None
             return task.topic.id
+
+        def payload(task, value) -> int | None:
+            """A task size field, or `None` for a quiz (trap T11).
+
+            `n_problems` and `time_budget_secs` both read the sampled quiz
+            questions, so a quiz row carries neither.
+            """
+            if is_quiz(task) or value is None:
+                return None
+            return int(value)
 
         tasks = [
             [
@@ -139,6 +163,8 @@ def main() -> int:
                 topic_id(task),
                 bool(task.is_remediation),
                 bool(task.nearly_due),
+                payload(task, task.n_problems),
+                payload(task, task.time_budget_secs),
             ]
             for task in plan.tasks
         ]
@@ -161,7 +187,14 @@ def main() -> int:
         "goal": args.goal,
         "projector_version": PROJECTOR_VERSION,
         "config_hash": config_hash(cfg),
-        "task_shape": ["task_type", "topic", "is_remediation", "nearly_due"],
+        "task_shape": [
+            "task_type",
+            "topic",
+            "is_remediation",
+            "nearly_due",
+            "n_problems",
+            "time_budget_secs",
+        ],
         "quiz_topic_is_null": "trap T11: the quiz sample is a documented non-parity",
         "states": states,
     }

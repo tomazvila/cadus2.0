@@ -418,7 +418,38 @@
         78
       ],
       "stream": "stream_20.jsonl"
+    },
+    {
+      "events": 33,
+      "full_digest": "276de9945869db8221c90184b089215c6dec16f8fafcb3b29bd9c02766f3d8b4",
+      "mismatching_digests": {
+        "21": "592f38a23d37758451ce89075af6b869167974c3651f65331c72641cec3443b1",
+        "22": "592f38a23d37758451ce89075af6b869167974c3651f65331c72641cec3443b1",
+        "23": "592f38a23d37758451ce89075af6b869167974c3651f65331c72641cec3443b1",
+        "24": "592f38a23d37758451ce89075af6b869167974c3651f65331c72641cec3443b1",
+        "25": "592f38a23d37758451ce89075af6b869167974c3651f65331c72641cec3443b1",
+        "26": "592f38a23d37758451ce89075af6b869167974c3651f65331c72641cec3443b1",
+        "27": "592f38a23d37758451ce89075af6b869167974c3651f65331c72641cec3443b1",
+        "28": "592f38a23d37758451ce89075af6b869167974c3651f65331c72641cec3443b1",
+        "29": "592f38a23d37758451ce89075af6b869167974c3651f65331c72641cec3443b1",
+        "30": "dca25141a229fe682bb6218b227c231b73e2bb8bb3095544fe900c3d4b4fcce7",
+        "31": "dca25141a229fe682bb6218b227c231b73e2bb8bb3095544fe900c3d4b4fcce7"
+      },
+      "mismatching_splits": [
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31
+      ],
+      "stream": "stream_u3_coverage.jsonl"
     }
   ],
-  "why": "project_incremental seeds FIRe from the cached model, so a `regraded` event in the new half that supersedes a grade the prior half already folded never reaches FIRe. 1.0 documents this and routes such a stream down the full-replay path. The port must diverge at the SAME splits and to the SAME model."
+  "why": "project_incremental seeds FIRe from the cached model, so a `regraded` event in the new half that supersedes a grade the prior half already folded never reaches FIRe. 1.0 documents this and routes such a stream down the full-replay path (service.py:272 -- a Regraded event or a projector_version mismatch, and nothing else). A profile_reset is the second class: finalize drops the reset topic's default state, so the resume stops propagating onto it, and service.py:272 leaves such a stream on the incremental path. The port must diverge at the SAME splits and to the SAME model in both classes."
 }

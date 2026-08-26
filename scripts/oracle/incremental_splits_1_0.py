@@ -14,6 +14,15 @@ reaches FIRe. `cadus.projector.project_incremental` documents this, and
 `cadus.service.project_and_save` sends such a stream down the full-replay path
 instead.
 
+A `profile_reset` is a SECOND divergence class with the same cause and no
+correction in it. `finalize` drops a topic state that equals a default one, so a
+reset topic leaves the cached model; `ability_update` (`fire.py:399`) then skips a
+target that is absent from the states, and the resume stops propagating onto that
+topic. `cadus.service.project_and_save` (`service.py:272`) forces the full replay
+on a `Regraded` event or a `projector_version` mismatch and on nothing else, so a
+reset stream stays on the incremental path in 1.0. `stream_u3_coverage.jsonl`
+carries that class, so this oracle reads it beside the numbered streams.
+
 The 2.0 port must reproduce 1.0 EXACTLY: it must agree with the full replay at
 the same splits, and it must produce the same divergent model at the same splits.
 So this file records both -- the mismatching split indices and the 1.0 digest of
@@ -32,6 +41,9 @@ import json
 import os
 import re
 from datetime import UTC, datetime
+
+#: The streams outside the `stream_N.jsonl` family that this oracle also reads.
+EXTRA_STREAMS = ["stream_u3_coverage.jsonl"]
 
 FIXTURES = os.path.normpath(
     os.path.join(
@@ -88,6 +100,11 @@ def main() -> int:
         (n for n in os.listdir(args.fixtures) if re.fullmatch(r"stream_\d+\.jsonl", n)),
         key=lambda n: int(n.removeprefix("stream_").removesuffix(".jsonl")),
     )
+    # The coverage stream carries the `profile_reset` divergence class, which no
+    # numbered stream reaches. It sorts last, after the numbered streams.
+    for extra in EXTRA_STREAMS:
+        if os.path.exists(os.path.join(args.fixtures, extra)):
+            names.append(extra)
 
     streams = []
     for name in names:
@@ -135,8 +152,12 @@ def main() -> int:
             "project_incremental seeds FIRe from the cached model, so a `regraded` "
             "event in the new half that supersedes a grade the prior half already "
             "folded never reaches FIRe. 1.0 documents this and routes such a stream "
-            "down the full-replay path. The port must diverge at the SAME splits and "
-            "to the SAME model."
+            "down the full-replay path (service.py:272 -- a Regraded event or a "
+            "projector_version mismatch, and nothing else). A profile_reset is the "
+            "second class: finalize drops the reset topic's default state, so the "
+            "resume stops propagating onto it, and service.py:272 leaves such a "
+            "stream on the incremental path. The port must diverge at the SAME "
+            "splits and to the SAME model in both classes."
         ),
         "streams": streams,
     }

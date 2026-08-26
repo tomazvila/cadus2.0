@@ -26,7 +26,7 @@ use cadus_core::xp::{
     BLOWOFF_ESCALATION, DEFAULT_XP_PER_TOPIC, RUSH_PENALTY_MULT, RUSH_TIME_FRACTION,
     VELOCITY_WINDOW_DAYS, VelocityInput, base_xp, compute_velocity_state, course_progress,
     current_streak, daily_totals, estimate_eta, is_rushing, quality_multiplier, task_xp,
-    topics_per_week, xp_per_day,
+    topics_per_week, window_start, xp_per_day,
 };
 use common::{MINI_FRACTIONS, MINI_NUMBERS, assert_approx, mini_curriculum, noon_us, on, utc};
 
@@ -445,4 +445,49 @@ fn xp_values_are_bit_exact_with_1_0() {
         task_xp(TaskType::Review, WorkQuality::Blowoff, &cfg, 0, 1, true),
         -2.5
     );
+}
+
+// --------------------------------------------------------------------------- //
+// The XP boundaries, read AT the threshold
+// --------------------------------------------------------------------------- //
+//
+// The 1.0 answers below came from the live 1.0 engine:
+//
+//   .venv/bin/python -c "from cadus.xp import current_streak, xp_per_day, \
+//       _window_start; ..."
+//
+// M3 review round 1, findings #14 and #15. The whole-fold form of each boundary,
+// with a committed 1.0 digest, is in `crates/core/tests/projector.rs` on
+// `tests/fixtures/events/boundary/`.
+
+#[test]
+fn xp_per_day_counts_the_day_the_window_starts_on() {
+    // `xp.py:192-194` puts `window_days` days INCLUDING the reference day in the
+    // window, and `xp.py:207` tests `local_day(ts) >= start`. With a reference day
+    // of 2026-07-14 and a 28-day window, 1.0 gives a start of 2026-06-17, so the
+    // entry ON that day is inside the window and the entry one day earlier is not.
+    // The live 1.0 `xp_per_day` on these two entries prints 1.0; a `> start` port
+    // prints 0.0 (finding #14).
+    assert_eq!(
+        window_start(noon_us(2026, 7, 14), utc(), VELOCITY_WINDOW_DAYS).unwrap(),
+        on(2026, 6, 17)
+    );
+    let entries = [(noon_us(2026, 6, 17), 28.0), (noon_us(2026, 6, 16), 999.0)];
+    let rate = xp_per_day(&entries, noon_us(2026, 7, 14), utc(), VELOCITY_WINDOW_DAYS).unwrap();
+    assert_eq!(rate, 1.0);
+}
+
+#[test]
+fn a_reference_day_exactly_at_the_goal_starts_the_streak_today() {
+    // `xp.py:178` is `if daily.get(today, 0.0) < goal`, so a reference day EQUAL to
+    // the goal is not "in progress": the count starts at the reference day itself.
+    // The live 1.0 `current_streak` gives 2 here, and 1 when the reference day is
+    // one XP below the goal (finding #15).
+    let entries = [(noon_us(2026, 7, 13), 40.0), (noon_us(2026, 7, 14), 40.0)];
+    let mut daily = daily_totals(&entries, utc()).unwrap();
+    assert_eq!(daily[&on(2026, 7, 14)], 40.0);
+    assert_eq!(current_streak(&daily, 40.0, on(2026, 7, 14)), 2);
+
+    daily.insert(on(2026, 7, 14), 39.0);
+    assert_eq!(current_streak(&daily, 40.0, on(2026, 7, 14)), 1);
 }
