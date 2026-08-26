@@ -1,0 +1,159 @@
+unit: numbers
+course: testcourse
+module: Numbers
+topics:
+  - id: counting
+    name: Counting Whole Numbers
+    core: true
+    difficulty: 0.05
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 20
+    prerequisites: []          # root topic (also the course mastery floor)
+    knowledge_points:
+      - id: kp1
+        name: Count forward to 100
+        exemplars:
+          - problem: "What number comes right after 47?"
+            answer: "48"
+            solution_sketch: "The successor of n is n + 1."
+          - problem: "Continue the count: 8, 9, 10, ?"
+            answer: "11"
+    diagnostic_exemplar:
+      problem: "What number is one more than 99?"
+      answer: "100"
+
+  - id: addition
+    name: Addition of Whole Numbers
+    core: true
+    difficulty: 0.1
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 30
+    prerequisites:
+      - id: counting
+        weight: 1.0
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: Single-digit sums
+        key_prerequisites: [counting]
+        exemplars:
+          - problem: "Compute 3 + 4."
+            answer: "7"
+          - problem: "Compute 6 + 2."
+            answer: "8"
+    diagnostic_exemplar:
+      problem: "Compute 7 + 8."
+      answer: "15"
+
+  - id: subtraction
+    name: Subtraction of Whole Numbers
+    core: true
+    difficulty: 0.15
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 35
+    prerequisites:
+      - id: addition
+        weight: 0.8
+        key: true
+      - id: counting
+        weight: 0.5
+    knowledge_points:
+      - id: kp1
+        name: Single-digit differences
+        key_prerequisites: [addition]
+        exemplars:
+          - problem: "Compute 9 - 4."
+            answer: "5"
+          - problem: "Compute 7 - 7."
+            answer: "0"
+    diagnostic_exemplar:
+      problem: "Compute 15 - 8."
+      answer: "7"
+
+  - id: multiplication
+    name: Multiplication of Whole Numbers
+    core: true
+    difficulty: 0.3
+    drill: true                # the fluency / automaticity-drill topic
+    answer_kind: numeric
+    expected_time_secs: 40
+    prerequisites:
+      - id: addition
+        weight: 0.9
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: Times tables to 10
+        key_prerequisites: [addition]
+        constraints: "factors <= 10"
+        exemplars:
+          - problem: "Compute 6 x 7."
+            answer: "42"
+          - problem: "Compute 8 x 4."
+            answer: "32"
+      - id: kp2
+        name: Multiplying by multiples of ten
+        key_prerequisites: [addition]
+        exemplars:
+          - problem: "Compute 30 x 4."
+            answer: "120"
+          - problem: "Compute 7 x 50."
+            answer: "350"
+    diagnostic_exemplar:
+      problem: "Compute 9 x 6."
+      answer: "54"
+    anki_seeds:
+      - front: "6 x 7 = ?"
+        back: "42"
+        type: basic
+
+  - id: division
+    name: Division of Whole Numbers
+    core: true
+    difficulty: 0.4
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 60
+    prerequisites:
+      - id: multiplication
+        weight: 0.85
+        key: true
+      - id: subtraction
+        weight: 0.6
+    knowledge_points:
+      - id: kp1
+        name: Exact division as the inverse of multiplication
+        key_prerequisites: [multiplication]
+        exemplars:
+          - problem: "Compute 56 / 8."
+            answer: "7"
+          - problem: "Compute 81 / 9."
+            answer: "9"
+    diagnostic_exemplar:
+      problem: "Compute 72 / 6."
+      answer: "12"
+
+  - id: place-value
+    name: Place Value
+    core: true                 # prereq of core fraction-basics → core (PEDAGOGY §1 invariant, F13)
+    difficulty: 0.2
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 45
+    prerequisites:
+      - id: counting
+        weight: 0.0            # weight-0 conceptual-familiarity edge (no implicit reps)
+    knowledge_points:
+      - id: kp1
+        name: Identify tens and units
+        exemplars:
+          - problem: "Which digit is in the tens place of 74?"
+            answer: "7"
+          - problem: "What is the value of the 3 in 137?"
+            answer: "30"
+    diagnostic_exemplar:
+      problem: "Write the place value of the 5 in 253."
+      answer: "50"

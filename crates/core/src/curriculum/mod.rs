@@ -7,6 +7,7 @@
 pub mod arena;
 pub mod finding;
 pub mod graph;
+pub mod lint;
 pub mod load;
 pub mod model;
 
@@ -15,6 +16,7 @@ pub use arena::{
 };
 pub use finding::Finding;
 pub use graph::{Csr, EncCsr, EncEdge};
+pub use lint::lint_curriculum;
 pub use load::{
     ParseError, Parsed, ParsedUnit, RawCurriculum, RawTopic, RawUnit, load_raw_curriculum,
     parse_curriculum,
