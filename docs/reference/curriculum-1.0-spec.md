@@ -17,7 +17,9 @@ curriculum/
   from `course.id` (`graph.py:583`). Unit files: `sorted(course_dir.glob("*.yaml"))`
   (`graph.py:593`) — non-recursive, `.yaml` only; `.yml` is invisible. The name is
   the only test `pathlib.Path.glob` applies: it returns a dot-prefixed name and it
-  follows a symlink, so the port filters on neither.
+  follows a symlink, so the port filters on neither. `glob` also decodes a name that
+  is not valid UTF-8, with `surrogateescape`, and reads the file; the port holds every
+  file name as a `String` and reports the drop instead (section 7, "2.0 strictness").
 - Real tree: 13 course directories, 88 unit files, 89 YAML files.
 - Every model forbids unknown keys (`model.py:26-29`, `extra="forbid"`). Rust:
   `#[serde(deny_unknown_fields)]` on every struct.
@@ -200,13 +202,17 @@ edges; `course` field vs directory; `order` uniqueness.
 
 ## 6. Exemplars and constraints
 
-Exemplar = `{problem, answer, solution_sketch?}`, LaTeX inside `$...$`, YAML
-single-quoted scalars; 85 of 88 files contain non-ASCII. `constraints` is a free-text
-string on every KP (3138/3138) — the M1 loader carries it as an opaque String; A1/D-S4
-structured constraints are a 2.0 addition, not a port. The one `encompassings_extra`:
-`foundations/07-polynomials-quadratics.yaml:950-954` (`difference-of-squares`, 0.3).
-A double-quoted YAML scalar with `\\mid` resolves to one backslash
-(`proofs/01-proof-techniques.yaml:47`).
+Exemplar = `{problem, answer, solution_sketch?}` (6800 exemplars, 5399 with a
+`solution_sketch`), LaTeX inside `$...$`, YAML single-quoted scalars; 85 of the 88 unit
+files contain non-ASCII, and `courses.yaml` contains none:
+`grep -lP '[^\x00-\x7F]' curriculum -r | wc -l` = 85. Count the characters, not the
+Latin-1 bytes: a scan for a character in `U+0080..U+00FF` alone finds 32 files, because
+most of the tree writes an em dash (`U+2014`) and no accented letter. `constraints` is a
+free-text string on every KP (3138/3138, none empty) — the M1 loader carries it as an
+opaque String; A1/D-S4 structured constraints are a 2.0 addition, not a port. The one
+`encompassings_extra`: `foundations/07-polynomials-quadratics.yaml:950-954`
+(`factoring-trinomials` -> `difference-of-squares`, 0.3). A double-quoted YAML scalar
+with `\\mid` resolves to one backslash (`proofs/01-proof-techniques.yaml:56`).
 
 ## 7. Parity traps
 
@@ -252,19 +258,80 @@ Rejected by 2.0, accepted by 1.0:
 | `core: yes` (also `no`, `on`, `off`, `y`, `n`, in any case) | `True` | `topics.0.core: YAML 1.1 boolean 'yes' is not accepted; write true or false` |
 | `core: "true"` (a string pydantic coerces) | `True` | `topics.0.core: string 'true' is not accepted; write true or false` |
 | `core: 1`, `core: 0` | `True`, `False` | `topics.0.core: number 1 is not accepted; write true or false` |
-| `expected_time_secs: 030` (octal) | `24` | `topics.0.expected_time_secs: integer 030 is not accepted; write 24` |
-| `expected_time_secs: 1_200` (underscore) | `1200` | `topics.0.expected_time_secs: integer 1_200 is not accepted; write 1200` |
-| `expected_time_secs: 1:30` (sexagesimal) | `90` | `topics.0.expected_time_secs: integer 1:30 is not accepted; write 90` |
 | `expected_time_secs: "30"` (a quoted integer) | `30` | `topics.0.expected_time_secs: string '30' is not accepted; write 30` |
 | `difficulty: "0.3"` (a quoted number) | `0.3` | `topics.0.difficulty: string '0.3' is not accepted; write the number unquoted` |
 | `difficulty: true` | `1.0` | `topics.0.difficulty: boolean true is not accepted; write a number` |
 | an integer literal outside `i64` | the Python integer | `topics.0.expected_time_secs: integer literal outside the 64-bit range` |
 | a repeated mapping key | the last value | `c/00.yaml: duplicate mapping key 'name' at line 5` |
 | `<<: *anchor` (a merge key) | the merged fields | `topics.1.<<: merge keys are not accepted; write the fields out` |
+| a unit file name that is not valid UTF-8 | the file, name decoded with `surrogateescape` | `c/01-caf<U+FFFD>.yaml: file name is not valid UTF-8` (the `yaml` code) |
+| every numeric literal form below | see the next table | `c/00.yaml:9: numeric literal form '1_000' is not accepted; write a plain decimal number` |
 
-An integer literal outside `i64` takes two paths inside the parser — one literal
-above `i64::MAX` still fits `u64`, one past `u64` fits no number at all — and both
-paths report the one message above, with the `schema` code and the dotted location.
+An integer literal outside `i64` takes four paths inside the parser — 19 or 20 digits
+fit a `u64`, 20 to 38 digits fit a `u128` and make the parser refuse the document, 39
+digits arrive as an `f64`, and about 309 digits overflow the `f64` and arrive as a
+string — and all four paths report the one message above, with the `schema` code and
+the dotted location.
+
+A repeated mapping key reports its line from the parser when the duplicate sits inside
+a nested mapping, and from a scan of the raw text when it sits in the root mapping,
+where the parser writes no location: the line of the second `<key>:` at column 1.
+
+### The numeric literal rule
+
+`order`, `difficulty`, `expected_time_secs` and `weight` accept two spellings:
+
+- a plain decimal integer, `-?[0-9]+`, with no leading zero except `0` itself;
+- a plain decimal float, `-?[0-9]+\.[0-9]+`, with an optional exponent that carries a
+  sign, `[eE][+-][0-9]+`. YAML 1.1 needs both the decimal point and the sign, so a form
+  without them is no number to 1.0 at all.
+
+`60.0`, `1.5e-1`, `-1.0e+30`, `0.3` and `120` are accepted. Every other spelling is a
+`schema` finding with the message above. The table gives the complete list, and what
+1.0 makes of each one:
+
+| Form | 1.0 reads | 1.0 in an integer field | 1.0 in a `difficulty` field |
+|---|---|---|---|
+| `08`, `060` (leading zero, octal to PyYAML) | `8`, `48` | loads | out of range |
+| `1_000` (underscore group) | `1000` | loads | out of range |
+| `1:30` (sexagesimal) | `90` | loads | out of range |
+| `0x1F`, `0b101` (hexadecimal, binary) | `31`, `5` | loads | out of range |
+| `0.7_5` (underscore in a float) | `0.75` | fractional part | loads |
+| `1e3`, `1.0e2` (exponent with no sign) | the string | `unable to parse string as an integer` | out of range |
+| `0o17` (YAML 1.2 octal) | the string | `unable to parse string as an integer` | `unable to parse string as a number` |
+| `.nan`, `.inf`, `-.inf` | the float | `Input should be a finite number` | out of range |
+
+The first five rows are the rows that matter: 1.0 loads that content and 2.0 refuses
+it. `1e3`, `1.0e2` and `0o17` run the other way — `serde_norway` resolves all three
+under the YAML 1.2 core schema, so 2.0 would load a tree that 1.0 refuses to load at
+all. The rule closes both directions with one message.
+
+Every rejected literal is a `schema` finding, a `weight` included: the form is wrong,
+not the range of the value. The location is the file and the line, and not the dotted
+path of the other schema findings, because the scan reads text and text has no dotted
+path. A rejected literal in `courses.yaml` drops the catalog, and with it the load.
+
+The rule reads the raw text, because the parsed value keeps the number and not the
+spelling: `0x1F` and `31` arrive as the same value. The scan reads one line at a time,
+in the block form `^\s*(- )?<key>:\s*<value>\s*(#.*)?$` and in the flow form
+`{id: a, weight: 0.3}`, and it skips a quoted scalar, which the type check reports.
+A rejected literal drops the file before the schema walk, the same as a parser error,
+so the file reports its numeric literals and nothing else.
+
+The scan reads lines, not YAML structure, so it has two limits. The first: a line
+inside a block scalar or inside a multi-line quoted scalar is read like any other
+line, and a line of prose that opens with `weight: 0x1F` is a finding. The tree
+writes no such line, and the guard test named below keeps it that way. The second:
+a value on a continuation line is not scanned.
+
+```yaml
+difficulty:
+  0.7_5      # not scanned; the type check reports the scalar instead
+```
+
+Such a value reaches the type check as the string the YAML 1.2 parser made of it, and
+gets the message of its type: `topics.0.difficulty: Input should be a valid number,
+unable to parse string as a number`. The checked-in tree writes no such line.
 
 Accepted by 2.0, the same as 1.0:
 
@@ -285,14 +352,17 @@ Accepted by 2.0, rejected by 1.0:
   directory. 1.0 raises an uncaught `OSError` and reads nothing; 2.0 reports a `yaml`
   finding and reads the other files. The loader never panics on content.
 
-Parity, not strictness: NaN and the two infinities are out of range for `difficulty`
-and `weight`. pydantic reports `Input should be less than or equal to 1` for NaN and
-for `.inf`, and `Input should be greater than or equal to 0` for `-.inf`. 2.0 reports
-the same three messages.
+Parity, not strictness: a decimal literal that overflows `f64` is an infinity, and an
+infinity is out of range for `difficulty` and `weight`. pydantic reports `Input should
+be less than or equal to 1` for `1.0e+400` and `Input should be greater than or equal
+to 0` for `-1.0e+400`, and `Input should be a finite number` in an integer field. 2.0
+reports the same three messages. The literal spellings `.nan`, `.inf` and `-.inf` no
+longer reach that check: the numeric literal rule refuses the spelling first.
 
-The checked-in tree writes none of the rejected forms. The test
-`the_checked_in_tree_uses_no_yaml_1_1_form` (`crates/core/tests/loader.rs`) reads all
-89 files and lists every line that writes one.
+The checked-in tree writes none of the rejected forms. Two tests in
+`crates/core/tests/loader.rs` read all 89 files and list every line that writes one:
+`the_checked_in_tree_uses_no_yaml_1_1_form` for the booleans and the merge key, and
+`the_checked_in_tree_writes_only_plain_decimal_numbers` for the four numeric fields.
 
 ## 8. Parity oracle
 

@@ -127,8 +127,8 @@ pub fn parse_curriculum(root: &Path) -> Parsed {
                 };
             }
         },
-        Err(finding) => {
-            findings.push(*finding);
+        Err(read_findings) => {
+            findings.extend(read_findings);
             return Parsed {
                 catalog: None,
                 units: Vec::new(),
@@ -150,8 +150,8 @@ pub fn parse_curriculum(root: &Path) -> Parsed {
             ));
             continue;
         }
-        let file_names = match unit_file_names(&course_dir) {
-            Ok(names) => names,
+        let entries = match unit_entries(&course_dir) {
+            Ok(entries) => entries,
             Err(error) => {
                 findings.push(
                     Finding::new("yaml", format!("{course_id}/: {error}"))
@@ -160,19 +160,34 @@ pub fn parse_curriculum(root: &Path) -> Parsed {
                 continue;
             }
         };
-        if file_names.is_empty() {
+        if entries.is_empty() {
             // An empty course omits no topics, so the finding is advisory.
             findings.push(Finding::advisory(
                 "empty_course",
                 format!("course {course_id} has no unit files"),
             ));
         }
-        for file_name in file_names {
+        for entry in entries {
+            let file_name = match entry {
+                UnitEntry::Name(name) => name,
+                UnitEntry::NotUtf8(lossy) => {
+                    // 1.0 `pathlib.Path.glob` decodes the name with
+                    // `surrogateescape` and reads the file; 2.0 holds file names
+                    // as `String`, so it reports the drop (spec section 7,
+                    // "2.0 strictness").
+                    let rel = format!("{course_id}/{lossy}");
+                    findings.push(
+                        Finding::new("yaml", format!("{rel}: file name is not valid UTF-8"))
+                            .with_file(rel),
+                    );
+                    continue;
+                }
+            };
             let rel = format!("{course_id}/{file_name}");
             let document = match read_document(&course_dir.join(&file_name), &rel) {
                 Ok(document) => document,
-                Err(finding) => {
-                    findings.push(*finding);
+                Err(read_findings) => {
+                    findings.extend(read_findings);
                     continue;
                 }
             };
@@ -302,48 +317,197 @@ pub fn load_raw_curriculum(root: &Path) -> Result<(RawCurriculum, Vec<Finding>),
 // File reading
 // --------------------------------------------------------------------------- //
 
-/// The unit file names of one course directory, in code-point order.
+/// One `*.yaml` entry of a course directory.
+enum UnitEntry {
+    /// The file name, which is valid UTF-8.
+    Name(String),
+    /// The file name in its lossy form, because the name is not valid UTF-8.
+    NotUtf8(String),
+}
+
+/// The `*.yaml` entries of one course directory, in byte order.
 ///
 /// The glob of 1.0 is `*.yaml` and it is not recursive, so a subdirectory and a
 /// `.yml` file stay invisible (parity traps 2 and 3). The name test is the only
 /// test: Python `pathlib.Path.glob` reads a dot-prefixed name and follows a
 /// symlink, so a filter on either one drops content that 1.0 loads.
-fn unit_file_names(course_dir: &Path) -> Result<Vec<String>, std::io::Error> {
-    let mut names = Vec::new();
+///
+/// A name that is not valid UTF-8 is an entry too. 1.0 reads such a file and 2.0
+/// holds every file name as a `String`, so the caller reports the drop instead
+/// of skipping the entry in silence.
+fn unit_entries(course_dir: &Path) -> Result<Vec<UnitEntry>, std::io::Error> {
+    let mut entries: Vec<(Vec<u8>, UnitEntry)> = Vec::new();
     for entry in fs::read_dir(course_dir)? {
         let entry = entry?;
-        let Some(name) = entry.file_name().to_str().map(str::to_owned) else {
-            continue;
-        };
-        if !name.ends_with(UNIT_EXTENSION) {
+        let name = entry.file_name();
+        let bytes = name.as_encoded_bytes().to_vec();
+        if !bytes.ends_with(UNIT_EXTENSION.as_bytes()) {
             continue;
         }
-        names.push(name);
+        let item = match name.to_str() {
+            Some(text) => UnitEntry::Name(text.to_owned()),
+            None => UnitEntry::NotUtf8(name.to_string_lossy().into_owned()),
+        };
+        entries.push((bytes, item));
     }
-    // A `String` sorts by its bytes, and UTF-8 bytes sort in code-point order.
-    names.sort();
-    Ok(names)
+    // The bytes of a name sort the way 1.0 sorts the path string: UTF-8 bytes
+    // sort in code-point order.
+    entries.sort_by(|left, right| left.0.cmp(&right.0));
+    Ok(entries.into_iter().map(|(_, item)| item).collect())
 }
 
 /// Read one YAML file. An empty document is `{}` (spec section 1).
 ///
-/// The finding is boxed because it is much larger than the `Value` of the happy
-/// path (`clippy::result_large_err`).
-fn read_document(path: &Path, rel: &str) -> Result<Value, Box<Finding>> {
-    let text = fs::read_to_string(path).map_err(|error| {
-        Box::new(Finding::new("yaml", format!("{rel}: {error}")).with_file(rel))
-    })?;
+/// The error carries every finding that drops the file: one parser finding, or
+/// the numeric-literal findings of [`numeric_form_findings`].
+fn read_document(path: &Path, rel: &str) -> Result<Value, Vec<Finding>> {
+    let text = fs::read_to_string(path)
+        .map_err(|error| vec![Finding::new("yaml", format!("{rel}: {error}")).with_file(rel)])?;
     // Accept a UTF-8 BOM. An editor on Windows writes one, the Python side
     // removes it before the parser sees it, and libyaml does not (spec section 7,
     // "2.0 strictness").
     let text = text.strip_prefix('\u{feff}').unwrap_or(text.as_str());
     let value: Value = serde_norway::from_str(text)
-        .map_err(|error| Box::new(parse_finding(rel, &error.to_string())))?;
+        .map_err(|error| vec![parse_finding(rel, text, &error.to_string())])?;
+    // The parsed value keeps the number, not the spelling the author wrote, so
+    // the numeric-literal rule reads the text (spec section 7, "2.0 strictness").
+    let numeric = numeric_form_findings(text, rel);
+    if !numeric.is_empty() {
+        return Err(numeric);
+    }
     Ok(if is_falsy(&value) {
         Value::Mapping(Mapping::new())
     } else {
         value
     })
+}
+
+// --------------------------------------------------------------------------- //
+// Numeric literal forms
+// --------------------------------------------------------------------------- //
+
+/// The four fields that hold a number (spec section 1).
+const NUMERIC_KEYS: [&str; 4] = ["order", "difficulty", "expected_time_secs", "weight"];
+
+/// The findings of the numeric-literal pre-scan of one file.
+///
+/// 2.0 accepts a plain decimal integer and a plain decimal float in the four
+/// numeric fields, and refuses every other spelling (spec section 7, "2.0
+/// strictness"). The two YAML versions read those other spellings differently,
+/// or one of them reads no number at all, so a shared spelling is the only form
+/// the two implementations agree on.
+///
+/// The scan reads the raw text, because the parsed `Value` holds the number and
+/// not the spelling: `0x1F` and `31` arrive as the same `Value`. It reads one
+/// line at a time, in the block form `difficulty: 0.3` and in the flow form
+/// `{id: a, weight: 0.3}`. A value on a continuation line is not scanned; spec
+/// section 7 documents the limit.
+fn numeric_form_findings(text: &str, rel: &str) -> Vec<Finding> {
+    let mut out = Vec::new();
+    for (index, line) in text.lines().enumerate() {
+        for raw in numeric_values(line) {
+            if !is_numeric_literal(raw) || is_plain_decimal(raw) {
+                continue;
+            }
+            let message = format!(
+                "numeric literal form '{raw}' is not accepted; write a plain decimal number"
+            );
+            out.push(
+                Finding::new("schema", format!("{rel}:{}: {message}", index + 1)).with_file(rel),
+            );
+        }
+    }
+    out
+}
+
+/// Every value one line writes into a numeric field.
+///
+/// The block form is `^\s*(- )?<key>:\s*<value>\s*(#.*)?$`; the flow form is one
+/// `<key>: <value>` item of a `{...}` mapping. A line writes at most one block
+/// value, and any number of flow values.
+fn numeric_values(line: &str) -> Vec<&str> {
+    // YAML starts a comment at a `#` that follows a space, so `0.3 # note` is
+    // the value `0.3` and `0.3#4` is not.
+    let line = line.split_once(" #").map_or(line, |(head, _)| head);
+    let mut out = Vec::new();
+    let head = line.trim_start();
+    let head = match head.strip_prefix("- ") {
+        Some(rest) => rest.trim_start(),
+        None => head,
+    };
+    if let Some(value) = numeric_item(head) {
+        out.push(value.trim_end());
+    }
+    if let Some(start) = line.find('{') {
+        let flow = &line[start + 1..];
+        let flow = flow.split_once('}').map_or(flow, |(head, _)| head);
+        for item in flow.split(',') {
+            if let Some(value) = numeric_item(item.trim_start()) {
+                out.push(value.trim_end());
+            }
+        }
+    }
+    out
+}
+
+/// The value of a `<key>: <value>` item, when the key is a numeric field.
+fn numeric_item(item: &str) -> Option<&str> {
+    for key in NUMERIC_KEYS {
+        if let Some(rest) = item.strip_prefix(key)
+            && let Some(value) = rest.strip_prefix(':')
+        {
+            return Some(value.trim_start());
+        }
+    }
+    None
+}
+
+/// True for a value the author wrote as a number.
+///
+/// A number starts with a digit, a sign or a decimal point. Every other value —
+/// a quoted scalar, a boolean word, a block indicator, plain text — belongs to
+/// the type check, which reports it with the message of its own type.
+fn is_numeric_literal(raw: &str) -> bool {
+    matches!(raw.chars().next(), Some('-' | '+' | '.') | Some('0'..='9'))
+}
+
+/// True for the two spellings 2.0 accepts: a plain decimal integer `-?[0-9]+`
+/// with no leading zero, and a plain decimal float `-?[0-9]+\.[0-9]+` with an
+/// optional signed exponent. YAML 1.1 needs the decimal point and the sign of
+/// the exponent, so `1e3` and `1.0e2` are not numbers to 1.0 at all.
+fn is_plain_decimal(raw: &str) -> bool {
+    let body = raw.strip_prefix('-').unwrap_or(raw);
+    let (whole, rest) = split_digits(body);
+    if whole.is_empty() {
+        return false;
+    }
+    let Some(rest) = rest.strip_prefix('.') else {
+        // An integer. A leading zero is an octal number to 1.0.
+        return rest.is_empty() && (whole == "0" || !whole.starts_with('0'));
+    };
+    let (fraction, rest) = split_digits(rest);
+    if fraction.is_empty() {
+        return false;
+    }
+    if rest.is_empty() {
+        return true;
+    }
+    let Some(rest) = rest.strip_prefix(['e', 'E']) else {
+        return false;
+    };
+    let Some(rest) = rest.strip_prefix(['+', '-']) else {
+        return false;
+    };
+    let (exponent, rest) = split_digits(rest);
+    !exponent.is_empty() && rest.is_empty()
+}
+
+/// The leading ASCII digits of a text, and the rest of it.
+fn split_digits(text: &str) -> (&str, &str) {
+    let end = text
+        .find(|character: char| !character.is_ascii_digit())
+        .unwrap_or(text.len());
+    text.split_at(end)
 }
 
 /// True when Python reads the value as false. 1.0 writes `model_validate(data or {})`,
@@ -548,9 +712,17 @@ impl<'a> Checker<'a> {
                 return;
             }
             Value::String(text) => {
-                let message = string_number_message(text);
-                self.report(&message);
-                return;
+                // A decimal literal that overflows `f64` arrives as a string.
+                // 1.0 reads the infinity and reports the range, so the range
+                // check below reports it too.
+                match text.trim().parse::<f64>() {
+                    Ok(number) if !number.is_finite() => number,
+                    _ => {
+                        let message = string_number_message(text);
+                        self.report(&message);
+                        return;
+                    }
+                }
             }
             _ => {
                 self.report("Input should be a valid number");
@@ -816,26 +988,45 @@ fn int_message(value: &Value) -> Option<String> {
                 );
             }
             if !(I64_MIN_AS_F64..I64_MAX_EXCLUSIVE_AS_F64).contains(&float) {
-                return Some(
-                    "Unable to parse input string as an integer, exceeded maximum size".to_owned(),
-                );
+                // A literal of 39 or more digits arrives here as an `f64`. It is
+                // one more integer literal outside `i64`, so it reports the one
+                // message of spec section 7.
+                return Some(OUT_OF_RANGE_INTEGER.to_owned());
             }
             None
         }
         Value::Bool(flag) => Some(format!("boolean {flag} is not accepted; write an integer")),
-        Value::String(text) => Some(match yaml_1_1_integer(text) {
-            Yaml11Integer::Value(number) => {
-                format!("integer {text} is not accepted; write {number}")
+        Value::String(text) => Some(match text.trim().parse::<i64>() {
+            Ok(number) => format!("string '{text}' is not accepted; write {number}"),
+            Err(_) => {
+                if is_decimal_digits(text.trim()) {
+                    // A literal of about 309 or more digits overflows `f64` too,
+                    // and arrives as a string.
+                    OUT_OF_RANGE_INTEGER.to_owned()
+                } else if text
+                    .trim()
+                    .parse::<f64>()
+                    .is_ok_and(|number| !number.is_finite())
+                {
+                    // A decimal literal that overflows `f64`. 1.0 reads the
+                    // infinity and pydantic reports this text for it.
+                    "Input should be a finite number".to_owned()
+                } else {
+                    "Input should be a valid integer, unable to parse string as an integer"
+                        .to_owned()
+                }
             }
-            Yaml11Integer::OutOfRange => OUT_OF_RANGE_INTEGER.to_owned(),
-            Yaml11Integer::No => match text.trim().parse::<i64>() {
-                Ok(number) => format!("string '{text}' is not accepted; write {number}"),
-                Err(_) => "Input should be a valid integer, unable to parse string as an integer"
-                    .to_owned(),
-            },
         }),
         _ => Some("Input should be a valid integer".to_owned()),
     }
+}
+
+/// True for a decimal integer literal with an optional sign and at least one
+/// digit. The pre-scan accepts the spelling; `str::parse` refuses the value only
+/// because no `i64` holds it.
+fn is_decimal_digits(text: &str) -> bool {
+    let body = text.strip_prefix('-').unwrap_or(text);
+    !body.is_empty() && body.bytes().all(|byte| byte.is_ascii_digit())
 }
 
 /// The message for a value that is not a boolean, or `None` when it is one.
@@ -865,17 +1056,14 @@ fn bool_message(value: &Value) -> Option<String> {
 }
 
 /// The message for a string in a `difficulty` or `weight` field.
+///
+/// The numeric-literal pre-scan owns every unquoted spelling, so the text here
+/// is a quoted scalar, or a plain scalar the type check reads as text.
 fn string_number_message(text: &str) -> String {
-    match yaml_1_1_integer(text) {
-        Yaml11Integer::Value(number) => format!("integer {text} is not accepted; write {number}"),
-        Yaml11Integer::OutOfRange => OUT_OF_RANGE_INTEGER.to_owned(),
-        Yaml11Integer::No => {
-            if text.trim().parse::<f64>().is_ok() {
-                format!("string '{text}' is not accepted; write the number unquoted")
-            } else {
-                "Input should be a valid number, unable to parse string as a number".to_owned()
-            }
-        }
+    if text.trim().parse::<f64>().is_ok() {
+        format!("string '{text}' is not accepted; write the number unquoted")
+    } else {
+        "Input should be a valid number, unable to parse string as a number".to_owned()
     }
 }
 
@@ -897,110 +1085,29 @@ fn is_lax_bool_text(text: &str) -> bool {
     )
 }
 
-/// What a plain scalar is worth to the YAML 1.1 integer resolver of PyYAML.
-enum Yaml11Integer {
-    /// A YAML 1.1 integer literal and the value 1.0 gives it.
-    Value(i64),
-    /// A YAML 1.1 integer literal that no `i64` holds.
-    OutOfRange,
-    /// Not a YAML 1.1 integer literal.
-    No,
-}
-
-/// The value PyYAML gives a plain scalar that YAML 1.2 reads as a string: an
-/// octal `060`, an underscore group `1_200`, or a sexagesimal `1:30`.
-fn yaml_1_1_integer(text: &str) -> Yaml11Integer {
-    let (negative, digits) = match text.strip_prefix('-') {
-        Some(rest) => (true, rest),
-        None => (false, text.strip_prefix('+').unwrap_or(text)),
-    };
-    let leads = digits.starts_with(|character: char| character.is_ascii_digit());
-    let value = if digits.contains(':') {
-        sexagesimal_value(digits)
-    } else if let Some(octal) = digits.strip_prefix('0').filter(|_| digits.len() > 1) {
-        radix_value(octal, 8)
-    } else if digits.contains('_') && leads {
-        radix_value(digits, 10)
-    } else {
-        return Yaml11Integer::No;
-    };
-    match value {
-        None => Yaml11Integer::No,
-        Some(None) => Yaml11Integer::OutOfRange,
-        Some(Some(value)) if negative => match value.checked_neg() {
-            Some(value) => Yaml11Integer::Value(value),
-            None => Yaml11Integer::OutOfRange,
-        },
-        Some(Some(value)) => Yaml11Integer::Value(value),
-    }
-}
-
-/// The value of a digit group with `_` separators. The outer `None` means the
-/// text is not a digit group of that radix; the inner one means it overflows.
-fn radix_value(text: &str, radix: u32) -> Option<Option<i64>> {
-    let mut value: Option<i64> = Some(0);
-    let mut digits = 0_usize;
-    for character in text.chars() {
-        if character == '_' {
-            continue;
-        }
-        let digit = character.to_digit(radix)?;
-        digits += 1;
-        value = value
-            .and_then(|value| value.checked_mul(i64::from(radix)))
-            .and_then(|value| value.checked_add(i64::from(digit)));
-    }
-    if digits == 0 {
-        return None;
-    }
-    Some(value)
-}
-
-/// The value of a `1:30` sexagesimal group: base 60, most significant first.
-///
-/// The PyYAML pattern is `[1-9][0-9_]*(:[0-5]?[0-9])+`, so the first group is a
-/// decimal number and every later group is one base-60 place.
-fn sexagesimal_value(text: &str) -> Option<Option<i64>> {
-    let mut value: Option<i64> = Some(0);
-    let mut groups = 0_usize;
-    for group in text.split(':') {
-        let digits = if groups == 0 {
-            if !group.starts_with(|character: char| ('1'..='9').contains(&character)) {
-                return None;
-            }
-            radix_value(group, 10)?
-        } else {
-            let place = group.parse::<i64>().ok().filter(|place| *place < 60)?;
-            if group.len() > 2 {
-                return None;
-            }
-            Some(place)
-        };
-        groups += 1;
-        value = value
-            .and_then(|value| value.checked_mul(60))
-            .and_then(|value| digits.and_then(|digits| value.checked_add(digits)));
-    }
-    if groups < 2 {
-        return None;
-    }
-    Some(value)
-}
-
 /// The finding for a document the YAML parser rejects.
 ///
 /// Two of those rejections are YAML 1.1 forms that 1.0 accepts, and the parser
 /// text names neither the form nor the fix, so the port writes its own message
 /// with the `schema` code (spec section 7, "2.0 strictness"). Every other parser
 /// error keeps the 1.0 `yaml` code and text.
-fn parse_finding(rel: &str, error: &str) -> Finding {
+fn parse_finding(rel: &str, text: &str, error: &str) -> Finding {
     if let Some((_, tail)) = error.split_once(DUPLICATE_KEY_MARKER)
         && let Some((key, tail)) = tail.split_once('"')
     {
-        let line = tail
+        let parser_line = tail
             .split_once("at line ")
             .and_then(|(_, tail)| tail.split(' ').next())
-            .unwrap_or("?");
+            .map(str::to_owned);
+        // The parser writes a location for a duplicate inside a nested mapping
+        // and none for one in the root mapping, so the root case reads the line
+        // out of the text: the second line that opens the key at column 1.
+        let line = match parser_line {
+            Some(line) => line,
+            None => {
+                root_key_line(text, key).map_or_else(|| "?".to_owned(), |line| line.to_string())
+            }
+        };
         return Finding::new(
             "schema",
             format!("{rel}: duplicate mapping key '{key}' at line {line}"),
@@ -1018,6 +1125,26 @@ fn parse_finding(rel: &str, error: &str) -> Finding {
         }
     }
     Finding::new("yaml", format!("{rel}: {error}")).with_file(rel)
+}
+
+/// The line of the second `<key>:` at column 1 of a document, counted from 1.
+///
+/// A root-level key starts its line, so the scan needs no parser state.
+fn root_key_line(text: &str, key: &str) -> Option<usize> {
+    let mut seen = false;
+    for (index, line) in text.lines().enumerate() {
+        let Some(rest) = line.strip_prefix(key) else {
+            continue;
+        };
+        if !rest.starts_with(':') {
+            continue;
+        }
+        if seen {
+            return Some(index + 1);
+        }
+        seen = true;
+    }
+    None
 }
 
 /// The dotted form of the bracket path of a parser error: `topics[0].id` becomes
