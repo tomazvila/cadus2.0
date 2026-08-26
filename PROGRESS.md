@@ -17,6 +17,16 @@ Requirement IDs: R5, D3, D4, C2, C4. Plan: `docs/plans/M3.md`. Spec:
 
 Gate on `main` after U1–U5: all steps PASS, live oracle enabled.
 
+### Adversarial review round 1 (M3)
+
+Six lenses, two find/refute rounds: 25 raised, 15 confirmed (`docs/reviews/M3-review-1.md`).
+Blocker: in a release build LLVM rewrites `0.5.powf(x)` to `exp2(-x)`, one ulp off glibc
+`pow`, so the optimized fold diverged from 1.0 on 10% of streams — the gate tested the
+debug profile only. Rulings: `black_box` the base, add a release-profile parity step to
+the gate; event `Slug`s strip whitespace as 1.0 does; overflow and out-of-range integers
+become fold errors; boundary tests at equality; the selector oracle compares with n = 40.
+Fix units FIXM3a–b.
+
 Ruling recorded here: 1.0's `project_incremental` does not re-fold a `regraded` event
 that supersedes an already-cached grade (1.0 `projector.py:794-830`); 1.0's service
 layer forces a full replay when the new events hold a `regraded` (spec §5). The port
