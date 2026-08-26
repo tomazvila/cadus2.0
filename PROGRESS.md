@@ -2,6 +2,21 @@
 
 One entry per milestone cycle (HANDOVER.md §2). Newest first.
 
+## M3 — core scheduler/projector port, incremental fold, parity (2026-08-27)
+
+Requirement IDs: R5, D3, D4, C2, C4. Plan: `docs/plans/M3.md`. Spec:
+`docs/reference/projector-1.0-spec.md`. Oracle: `scripts/oracle/dump_projector_1_0.py`.
+
+| Unit | Branch | Result |
+|---|---|---|
+| U1 events (16 types), learner model, config (`config_hash` preimage byte-exact), numeric helpers (Neumaier sum, round-half-even, correctly-rounded `round_dp`, `local_day`) | `m3/u1` | 57 tests; `serde_json` needed `float_roundtrip`; 5 mutations red |
+| U2 FIRe + XP | `m3/u2` | 56 tests; every pinned 1.0 literal |
+| U3 projector: fold, `apply_regrades`, `finalize`, `project`, `project_incremental`, canonical blob | `m3/u3` | 38 tests; stream 1 digest `ba128459…` matches 1.0; incremental == full at every split |
+| U4 selector: `compose_session` with every ordering rule, `compress`, `order_lessons`, interleave, multistep, task ids, `QuizSampler` (2.0 RNG, not CPython parity — trap T11) | `m3/u4` | 44 tests; L1 core cost 2.5 ms in release against a 5 ms budget |
+| U5 stream generator (seeds 2–20), 1.0 digests, property tests, selector oracle | `m3/u5b` | in progress (the first U5 agent was cut off by an API error; its 19 streams were kept as WIP) |
+
+Gate on `main` after U1–U4 (commit 506a024): 555 tests, 0 failed, live oracle enabled.
+
 ## M2 — answer checker: grammar, exact arithmetic, oracle fuzz (2026-08-26)
 
 Requirement IDs: V1–V4, D6, A3, C4, L2, R5. Plan: `docs/plans/M2.md`. Spec:
