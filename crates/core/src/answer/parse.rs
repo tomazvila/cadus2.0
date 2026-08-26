@@ -75,6 +75,31 @@ const MAX_DEPTH: usize = 96;
 /// Returns [`Undecidable`] for every string outside the grammar, for an input longer
 /// than [`MAX_ANSWER_CHARS`], and for an exponent outside the evaluation bound.
 pub fn parse(source: &str) -> Result<Ast, Undecidable> {
+    parse_with_functions(source, &[])
+}
+
+/// Parse one source string with extra function names admitted (M4 U1, V2).
+///
+/// The template `answer_expr` of M4 reads inside this grammar plus a short
+/// arithmetic function set: `gcd`, `lcm`, `floor`, `ceiling`, `min`, `max`,
+/// `factorial`, and `binomial` (`docs/plans/M4.md`, the fixed decision "one
+/// grammar"). An extra name builds [`Ast::Func`] the way a whitelisted name
+/// does, so [`crate::template::eval`] evaluates it exactly and erases it before
+/// the answer string exists. The answer string therefore always lies in the
+/// grammar [`parse`] alone reads.
+///
+/// An extra name takes one or two arguments, and it takes them in brackets. The
+/// caller checks the exact count, because the count belongs to the function and
+/// not to the grammar.
+///
+/// `extra` holds one name per function and no duplicate. A name that is already
+/// a whitelisted function, a Greek variable, or `pi` changes nothing.
+///
+/// # Errors
+///
+/// Returns [`Undecidable`] for every string outside the grammar, for an input longer
+/// than [`MAX_ANSWER_CHARS`], and for an exponent outside the evaluation bound.
+pub fn parse_with_functions(source: &str, extra: &[&str]) -> Result<Ast, Undecidable> {
     if source.chars().count() > MAX_ANSWER_CHARS {
         return Err(Undecidable::new("the answer is longer than the input cap"));
     }
@@ -86,6 +111,7 @@ pub fn parse(source: &str) -> Result<Ast, Undecidable> {
         tokens: &tokens,
         at: 0,
         depth: 0,
+        extra,
     };
     let ast = parser.parse_answer()?;
     if parser.at != tokens.len() {
@@ -99,6 +125,27 @@ struct Parser<'a> {
     tokens: &'a [Token],
     at: usize,
     depth: usize,
+    /// The extra function names of [`parse_with_functions`]. Empty for [`parse`].
+    extra: &'a [&'a str],
+}
+
+impl Parser<'_> {
+    /// Whether the name is a function of this parse.
+    fn is_function(&self, name: &str) -> bool {
+        FUNCTIONS.contains(&name) || self.extra.contains(&name)
+    }
+
+    /// The argument counts the named function takes.
+    ///
+    /// `log` takes a base as its second argument. An extra name takes one or two
+    /// arguments; the caller of [`parse_with_functions`] checks the exact count.
+    fn call_arity(&self, name: &str) -> std::ops::RangeInclusive<usize> {
+        if name == "log" || self.extra.contains(&name) {
+            1..=2
+        } else {
+            1..=1
+        }
+    }
 }
 
 /// The fraction that stands after a whole number, in either token shape.
@@ -166,6 +213,7 @@ impl Parser<'_> {
             tokens,
             at: 0,
             depth: self.depth + 1,
+            extra: self.extra,
         };
         let ast = inner.parse_expr()?;
         if inner.at != tokens.len() {
@@ -279,7 +327,7 @@ impl Parser<'_> {
             return None;
         };
         let name = name.clone();
-        if !is_variable_name(&name) {
+        if !is_variable_name(&name, self.extra) {
             return None;
         }
         self.at += 2;
@@ -678,7 +726,7 @@ impl Parser<'_> {
         let Some(Tok::Ident(name)) = self.peek() else {
             return None;
         };
-        letter_run(name)
+        letter_run(name, self.extra)
     }
 
     /// Build the product of a split letter run. The power binds to the last letter.
@@ -831,10 +879,10 @@ impl Parser<'_> {
                 self.bump();
                 self.fraction_value(&numerator, &denominator)?
             }
-            Tok::Ident(name) if !FUNCTIONS.contains(&name.as_str()) => {
+            Tok::Ident(name) if !self.is_function(name) => {
                 let name = name.clone();
                 self.bump();
-                match letter_run(&name) {
+                match letter_run(&name, self.extra) {
                     Some(letters) => collapse(
                         letters
                             .iter()
@@ -852,7 +900,7 @@ impl Parser<'_> {
 
     /// Turn an identifier into a function call, a constant, or a variable.
     fn parse_name(&mut self, name: &str) -> Result<Ast, Undecidable> {
-        if FUNCTIONS.contains(&name) {
+        if self.is_function(name) {
             return self.parse_call(name);
         }
         if name == "pi" {
@@ -876,7 +924,7 @@ impl Parser<'_> {
     fn parse_call(&mut self, name: &str) -> Result<Ast, Undecidable> {
         if self.eat(&Tok::LParen) {
             let args = self.parse_items(&Tok::RParen, "a function call with no closing bracket")?;
-            let allowed = if name == "log" { 1..=2 } else { 1..=1 };
+            let allowed = self.call_arity(name);
             if !allowed.contains(&args.len()) {
                 return Err(Undecidable::new(
                     "a function call with the wrong count of arguments",
@@ -966,7 +1014,7 @@ impl Parser<'_> {
             other => other,
         };
         match ahead {
-            Some(Tok::Ident(name)) => FUNCTIONS.contains(&name.as_str()),
+            Some(Tok::Ident(name)) => self.is_function(name),
             Some(Tok::Sqrt(_) | Tok::Root) => true,
             _ => false,
         }
@@ -1030,9 +1078,10 @@ fn is_times_letter(kind: &Tok) -> bool {
 
 /// Whether `name` is a name a value label may carry.
 ///
-/// One letter, or a spelled Greek name. A function name is never a label.
-fn is_variable_name(name: &str) -> bool {
-    if FUNCTIONS.contains(&name) {
+/// One letter, or a spelled Greek name. A function name is never a label, and
+/// `extra` holds the function names of [`parse_with_functions`].
+fn is_variable_name(name: &str, extra: &[&str]) -> bool {
+    if FUNCTIONS.contains(&name) || extra.contains(&name) {
         return false;
     }
     GREEK_VARIABLES.contains(&name) || name.chars().count() == 1
@@ -1041,17 +1090,23 @@ fn is_variable_name(name: &str) -> bool {
 /// Split a multi-letter run into its single-letter variables, or refuse it.
 ///
 /// The run splits only when every letter is a [`RUN_LETTERS`] letter, the letters
-/// differ from each other, and the run is at most [`MAX_RUN_LETTERS`] long. A
+/// differ from each other, the run is not a function name of this parse (`extra`
+/// holds the extra names, so `gcd` stays one function and never becomes the
+/// product `g*c*d`), and the run is at most [`MAX_RUN_LETTERS`] long. A
 /// repeated letter is a spelling, not a product: a variable times itself is
 /// written as a power. Everything else — a function name, a Greek name, a
 /// differential (`dx`), a word (`yes`), a label (`HT`), an upper-case run
 /// (`DNE`) — stays undecidable (C4).
-fn letter_run(name: &str) -> Option<Vec<char>> {
+fn letter_run(name: &str, extra: &[&str]) -> Option<Vec<char>> {
     let letters: Vec<char> = name.chars().collect();
     if letters.len() < 2 || letters.len() > MAX_RUN_LETTERS {
         return None;
     }
-    if FUNCTIONS.contains(&name) || GREEK_VARIABLES.contains(&name) || name == "pi" {
+    if FUNCTIONS.contains(&name)
+        || extra.contains(&name)
+        || GREEK_VARIABLES.contains(&name)
+        || name == "pi"
+    {
         return None;
     }
     for (index, letter) in letters.iter().enumerate() {
