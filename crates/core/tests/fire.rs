@@ -24,8 +24,9 @@ use cadus_core::event::{TopicStatus, WorkQuality};
 use cadus_core::fire::{
     ASSISTED_CREDIT, AttemptResult, INTERVAL_CAP_DAYS, NEARLY_DUE_THRESHOLD,
     PASS_QUALITY_THRESHOLD, PropagationKind, QUALITY_Q, ReviewState, TEST_PREP_DUE_THRESHOLD,
-    ability_update, apply_attempt, decay_for, grade_review, initial_ability, interval_for,
-    is_pass_quality, knockout, memory_at, quality_q, raw_delta, review_state, speed_for,
+    ability_update, apply_attempt, apply_attempt_checked, decay_for, grade_review, initial_ability,
+    interval_for, is_pass_quality, knockout, memory_at, quality_q, raw_delta, review_state,
+    speed_for,
 };
 use cadus_core::learner::TopicState;
 use common::{Learned, T_US, assert_approx, days, graph, learned, p364_graph, plain_topic, topic};
@@ -916,4 +917,75 @@ fn fire_values_are_bit_exact_with_1_0() {
         grade_review(&[true, true, true, true, false], &cfg),
         (false, 0.666_666_666_666_666_6)
     );
+}
+
+// --------------------------------------------------------------------------- //
+// Review 1 finding #1: the memory decay calls the platform `pow` (trap T21)
+// --------------------------------------------------------------------------- //
+
+/// The exponent of the state below, as the port computes it. CPython prints the
+/// same value for `((T - t0).total_seconds()) / 86400.0 / 1.0`.
+const T21_EXPONENT: f64 = 0.034_594_907_407_407_41;
+
+#[test]
+fn memory_at_keeps_the_cpython_pow_value() {
+    // 2989 seconds before T, over a one-day interval. CPython 3.13 on this box:
+    //   0.5 ** 0.03459490740740741 == 0.9763058580317109
+    //   math.exp2(-0.03459490740740741) == 0.976305858031711
+    // The two differ by one unit in the last place. An optimized build rewrites a
+    // LITERAL base into the `exp2` call, so `fire::pow_half` hides the base behind
+    // `std::hint::black_box` and the fold keeps the CPython value in BOTH profiles.
+    let state = Learned::new(1.0)
+        .interval(1.0)
+        .t0(T_US - 2_989_000_000)
+        .state();
+    assert_eq!(memory_at(&state, T_US), 0.976_305_858_031_710_9);
+    assert_eq!(T21_EXPONENT, 0.034_594_907_407_407_41);
+}
+
+// --------------------------------------------------------------------------- //
+// Review 1 finding #11: a decay outside the finite range stops the fold
+// --------------------------------------------------------------------------- //
+
+/// A state whose `t0` is 12418 days AFTER the read instant, over a 4.5-day
+/// interval. The exponent is `-2759.5555555555557`, and CPython raises
+/// `OverflowError: (34, 'Numerical result out of range')` at `cadus/fire.py:179`.
+fn overflow_state() -> TopicState {
+    Learned::new(1.0)
+        .interval(4.5)
+        .t0(T_US + days(12418))
+        .state()
+}
+
+#[test]
+fn memory_at_leaves_the_finite_range_where_cpython_raises() {
+    assert!(!memory_at(&overflow_state(), T_US).is_finite());
+    // The 1.0 fold builds no model there, so the port must not fold it either.
+    assert!(memory_at(&learned(1.0), T_US).is_finite());
+}
+
+#[test]
+fn apply_attempt_checked_reports_the_non_finite_topic() {
+    let cfg = Config::default();
+    let tree = graph(vec![plain_topic("a", &[])]);
+    let states = states_of(&[("a", overflow_state())]);
+    let attempt = AttemptResult::new("a", true, WorkQuality::Perfect);
+
+    let error = apply_attempt_checked(&states, &attempt, &tree, &cfg, T_US).unwrap_err();
+    assert_eq!(error.topic, "a");
+    assert_eq!(
+        error.to_string(),
+        "the decay of topic `a` is not a finite number"
+    );
+
+    // The unchecked form keeps its old result. Only the fold stops.
+    let (new_states, props) = apply_attempt(&states, &attempt, &tree, &cfg, T_US);
+    assert!(props.is_empty());
+    assert!(!new_states.get("a").unwrap().memory_base.is_finite());
+
+    // A finite state reports nothing.
+    let good = states_of(&[("a", learned(1.0))]);
+    let (ok_states, _props) =
+        apply_attempt_checked(&good, &attempt, &tree, &cfg, T_US).expect("a finite state folds");
+    assert!(ok_states.get("a").unwrap().memory_base.is_finite());
 }

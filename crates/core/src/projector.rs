@@ -49,15 +49,16 @@ use crate::event::{
     Timestamp, TopicStatus, WorkQuality,
 };
 use crate::fire::{
-    AttemptResult, ability_update, apply_attempt, clamp, difficulty, initial_ability, interval_for,
-    py_min, speed_for,
+    AttemptResult, ability_update, apply_attempt_checked, clamp, difficulty, initial_ability,
+    interval_for, py_min, speed_for,
 };
 use crate::learner::{
     LAST_PROBLEMS_WINDOW, LearnerModel, PendingRemediation, QuizState, TopicState, VelocityState,
     XpState, problem_text_hash,
 };
 use crate::numeric::{
-    TimeError, local_day_in, neumaier_sum, resolve_timezone, round_half_even_i64, to_datetime,
+    OutOfRangeError, TimeError, local_day_in, neumaier_sum, resolve_timezone, round_half_even_i64,
+    to_datetime,
 };
 use crate::xp::{
     VELOCITY_WINDOW_DAYS, VelocityInput, compute_velocity_state, current_streak, daily_totals,
@@ -93,6 +94,24 @@ pub enum ProjectorError {
     /// The config or the model did not serialize.
     #[error("serialize: {0}")]
     Serialize(String),
+    /// A topic decay left the finite range at one event of the stream.
+    ///
+    /// CPython raises `OverflowError` in `0.5 ** exponent` at the same input and the
+    /// 1.0 fold then builds NO model, so the 2.0 fold builds none either.
+    #[error("the decay of topic `{topic}` at event {event_index} is not a finite number")]
+    NonFinite {
+        /// The id of the topic whose decay left the finite range.
+        topic: String,
+        /// The 0-based index of the event in the sequence the fold applied. For a
+        /// resume that sequence is the corrected stream of `project_incremental`.
+        event_index: usize,
+    },
+    /// A rounded XP value that the `i64` range does not hold.
+    ///
+    /// Python `int()` has unbounded precision, so 1.0 keeps the exact big integer
+    /// there. This is a DOCUMENTED divergence (spec section 7, trap T22).
+    #[error("{0}")]
+    OutOfRange(#[from] OutOfRangeError),
 }
 
 /// A refreshed topic's `repNum`: the mean of the current one and the refresh evidence
@@ -141,6 +160,14 @@ pub struct Projector<'a> {
     last_practice: BTreeMap<String, i64>,
     diag_answers: BTreeMap<String, Vec<(bool, f64)>>,
     last_ts: Option<i64>,
+
+    /// The count of the events the fold applied. It is also the 0-based index of the
+    /// event the fold applies now.
+    applied: usize,
+
+    /// The first error the fold met. It stops the fold and [`Projector::finalize`]
+    /// reports it, the way the 1.0 exception stops the 1.0 fold.
+    failure: Option<ProjectorError>,
 }
 
 impl<'a> Projector<'a> {
@@ -163,6 +190,8 @@ impl<'a> Projector<'a> {
             last_practice: BTreeMap::new(),
             diag_answers: BTreeMap::new(),
             last_ts: None,
+            applied: 0,
+            failure: None,
         }
     }
 
@@ -213,7 +242,14 @@ impl<'a> Projector<'a> {
     /// the fold and hands the corrected events over instead. `task_served`,
     /// `session_start`, `session_end`, `anki_card_created`, `config_changed`, and
     /// `curriculum_changed` carry no derived state, so they are no-ops.
+    ///
+    /// After a failed event the fold applies NOTHING more, and
+    /// [`Projector::finalize`] reports the failure. A 1.0 exception ends the 1.0 fold
+    /// at the same event.
     pub fn apply(&mut self, event: &Event, apply_fire: bool) {
+        if self.failure.is_some() {
+            return;
+        }
         let ts = event.ts().micros();
         if self.last_ts.is_none_or(|last| ts > last) {
             self.last_ts = Some(ts);
@@ -237,6 +273,13 @@ impl<'a> Projector<'a> {
             | Event::ConfigChanged(_)
             | Event::CurriculumChanged(_) => {}
         }
+        self.applied += 1;
+    }
+
+    /// The failure the fold met, or `None` when the fold met none.
+    #[must_use]
+    pub const fn failure(&self) -> Option<&ProjectorError> {
+        self.failure.as_ref()
     }
 
     // -- per-event handlers ------------------------------------------------- //
@@ -607,8 +650,15 @@ impl<'a> Projector<'a> {
         }
 
         let attempt = AttemptResult::new(topic, passed, quality).with_assisted(assisted);
-        let (new_states, _props) = apply_attempt(&states, &attempt, graph, cfg, t_us);
-        self.topics = new_states;
+        match apply_attempt_checked(&states, &attempt, graph, cfg, t_us) {
+            Ok((new_states, _props)) => self.topics = new_states,
+            Err(error) => {
+                self.failure = Some(ProjectorError::NonFinite {
+                    topic: error.topic,
+                    event_index: self.applied,
+                });
+            }
+        }
     }
 
     /// Stamp a lesson failure (`projector.py:544-568`).
@@ -722,7 +772,8 @@ impl<'a> Projector<'a> {
     ///
     /// # Errors
     ///
-    /// Returns [`ProjectorError::Time`] for an instant `chrono` does not represent.
+    /// Returns [`ProjectorError::Time`] for an instant `chrono` does not represent, or
+    /// [`ProjectorError::OutOfRange`] for an `xp_since` outside the `i64` range.
     pub fn quiz_state(&self) -> Result<QuizState, ProjectorError> {
         let mut xp_since = 0.0_f64;
         for &(ts, xp) in &self.xp_events {
@@ -736,7 +787,7 @@ impl<'a> Projector<'a> {
         };
         Ok(QuizState {
             last_at,
-            xp_since: round_half_even_i64(xp_since),
+            xp_since: round_half_even_i64(xp_since)?,
             retake_pending: self.quiz_retake_pending,
         })
     }
@@ -749,7 +800,8 @@ impl<'a> Projector<'a> {
     ///
     /// # Errors
     ///
-    /// Returns [`ProjectorError::Time`] for an instant `chrono` does not represent.
+    /// Returns [`ProjectorError::Time`] for an instant `chrono` does not represent, or
+    /// [`ProjectorError::OutOfRange`] for a total outside the `i64` range.
     pub fn xp_state(&self, t_ref: i64) -> Result<XpState, ProjectorError> {
         let total = self.total_xp();
         let daily = daily_totals(&self.xp_events, self.zone)?;
@@ -760,8 +812,8 @@ impl<'a> Projector<'a> {
         )]
         let goal = self.goal as f64;
         Ok(XpState {
-            total: round_half_even_i64(total),
-            today: round_half_even_i64(daily.get(&today).copied().unwrap_or(0.0)),
+            total: round_half_even_i64(total)?,
+            today: round_half_even_i64(daily.get(&today).copied().unwrap_or(0.0))?,
             goal: self.goal,
             streak_days: current_streak(&daily, goal, today),
         })
@@ -808,9 +860,14 @@ impl<'a> Projector<'a> {
     ///
     /// # Errors
     ///
-    /// Returns [`ProjectorError::Time`] for an unrepresentable instant, or
+    /// Returns the failure the fold met ([`ProjectorError::NonFinite`]), or
+    /// [`ProjectorError::Time`] for an unrepresentable instant,
+    /// [`ProjectorError::OutOfRange`] for an XP total outside the `i64` range, or
     /// [`ProjectorError::Serialize`] when the config hash preimage does not build.
     pub fn finalize(&self, now: Timestamp) -> Result<LearnerModel, ProjectorError> {
+        if let Some(error) = &self.failure {
+            return Err(error.clone());
+        }
         let t_ref = self.last_ts.unwrap_or_else(|| now.micros());
         let topics: BTreeMap<String, TopicState> = self
             .topics

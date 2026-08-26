@@ -22,9 +22,14 @@
 )]
 
 use std::collections::BTreeSet;
+use std::path::PathBuf;
+use std::sync::OnceLock;
 
+use cadus_core::config::Config;
+use cadus_core::curriculum::{Curriculum, load_curriculum};
 use cadus_core::event::{Event, EventError, Slug, Timestamp, TopicStatus};
 use cadus_core::learner::{LearnerModel, TopicState};
+use cadus_core::projector::{ProjectionInput, ProjectorError, blob_digest, project};
 
 /// The 47-event oracle stream, in canonical JSON, one event per line.
 const STREAM_1: &str = include_str!("fixtures/events/stream_1.jsonl");
@@ -37,6 +42,73 @@ const MODEL_1: &str = include_str!("fixtures/events/model_1.json");
 
 /// The digest the M3 plan pins for the fold of `stream_1.jsonl`.
 const MODEL_1_DIGEST: &str = "ba128459985e0815db7446cb2af16452ec07d304b7efaa0952fc6567404245f5";
+
+/// The build instant the 1.0 oracle pins with `--now`.
+const NOW: &str = "2000-01-01T00:00:00Z";
+
+/// The daily XP goal the 1.0 oracle folds with.
+const GOAL: i64 = 40;
+
+/// The two-event stream of review finding #3, with a clean topic id.
+const CLEAN_STREAM: &str = concat!(
+    r#"{"course":"foundations","ts":"2026-03-01T09:00:00Z","type":"enrolled","v":1}"#,
+    "\n",
+    r#"{"assisted":false,"passed":true,"quality_tier":"perfect","topic":"absolute-value","ts":"2026-03-02T09:00:00Z","type":"lesson_result","v":1,"xp":10.0}"#,
+);
+
+/// The same stream with the topic id padded, which 1.0 strips.
+const PADDED_STREAM: &str = concat!(
+    r#"{"course":"foundations","ts":"2026-03-01T09:00:00Z","type":"enrolled","v":1}"#,
+    "\n",
+    r#"{"assisted":false,"passed":true,"quality_tier":"perfect","topic":" absolute-value ","ts":"2026-03-02T09:00:00Z","type":"lesson_result","v":1,"xp":10.0}"#,
+);
+
+/// The three-event stream of review finding #11: a lesson stamped 2060 and a review
+/// of the same topic stamped 2026, so the decay exponent is about -2759.
+const OVERFLOW_STREAM: &str = concat!(
+    r#"{"course":"foundations","ts":"2026-01-01T09:00:00Z","type":"enrolled","v":1}"#,
+    "\n",
+    r#"{"assisted":false,"passed":true,"quality_tier":"perfect","topic":"absolute-value-inequalities","ts":"2060-01-01T09:00:00Z","type":"lesson_result","v":1,"xp":10.0}"#,
+    "\n",
+    r#"{"assisted":false,"passed":true,"quality_tier":"perfect","task_id":"t-1","topic":"absolute-value-inequalities","ts":"2026-01-02T09:00:00Z","type":"review_result","v":1,"weighted_score":1.0,"xp":5.0}"#,
+);
+
+/// The one-event stream of review finding #12: an XP value the `i64` range misses.
+const HUGE_XP_STREAM: &str = r#"{"assisted":false,"passed":true,"quality_tier":"nearly_perfect","topic":"adding-subtracting-rational-expressions","ts":"2027-04-15T17:00:00Z","type":"review_result","v":1,"weighted_score":0.0,"xp":-1e+308}"#;
+
+/// The checked-in curriculum tree, loaded once for the whole test binary.
+fn tree() -> &'static Curriculum {
+    static TREE: OnceLock<Curriculum> = OnceLock::new();
+    TREE.get_or_init(|| {
+        let root = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../..");
+        let (curriculum, _findings) =
+            load_curriculum(&root.join("curriculum")).expect("the tree loads");
+        curriculum
+    })
+}
+
+/// Fold a JSONL stream with the oracle defaults: UTC, `now` at [`NOW`], goal 40.
+fn fold(stream: &str) -> Result<LearnerModel, ProjectorError> {
+    let events: Vec<Event> = stream
+        .lines()
+        .map(str::trim)
+        .filter(|line| !line.is_empty())
+        .map(|line| Event::from_json(line).unwrap_or_else(|error| panic!("{line}: {error}")))
+        .collect();
+    let cfg = Config::default();
+    let input = ProjectionInput::new(tree(), &cfg, Timestamp::parse(NOW).unwrap()).with_goal(GOAL);
+    project(&events, &input)
+}
+
+/// The blob digest of a folded stream.
+fn fold_digest(stream: &str) -> String {
+    blob_digest(&fold(stream).expect("the fold succeeds")).unwrap()
+}
+
+/// The error a folded stream reports.
+fn fold_error(stream: &str) -> ProjectorError {
+    fold(stream).expect_err("the fold reports an error")
+}
 
 // --------------------------------------------------------------------------- //
 // Round-trip: every line of the oracle stream
@@ -316,6 +388,97 @@ fn an_empty_curriculum_id_is_rejected() {
         Slug::new("absolute-value").unwrap().as_str(),
         "absolute-value"
     );
+}
+
+// --------------------------------------------------------------------------- //
+// Review 1 findings #3 and #5: the pydantic `strip_whitespace` of every Slug
+// --------------------------------------------------------------------------- //
+
+#[test]
+fn a_slug_loses_its_outer_whitespace() {
+    // 1.0 `model.py:23`:
+    // `Slug = Annotated[str, StringConstraints(min_length=1, strip_whitespace=True)]`.
+    assert_eq!(
+        Slug::new(" absolute-value ").unwrap().as_str(),
+        "absolute-value"
+    );
+    assert_eq!(
+        Slug::new("absolute-value\t").unwrap().as_str(),
+        "absolute-value"
+    );
+    assert_eq!(
+        Slug::new("absolute-value\n").unwrap().as_str(),
+        "absolute-value"
+    );
+    // The trim runs FIRST, so a whitespace-only id has nothing left and is an error,
+    // the way pydantic applies `min_length=1` to the stripped value.
+    assert!(Slug::new("   ").is_err());
+    assert_eq!(
+        Slug::new(" ").unwrap_err().to_string(),
+        "event JSON is invalid: a curriculum id must not be empty"
+    );
+    // An id with an inner space keeps it: only the OUTER whitespace goes away.
+    assert_eq!(Slug::new("two words").unwrap().as_str(), "two words");
+}
+
+#[test]
+fn a_padded_topic_id_parses_to_the_real_topic() {
+    let text = r#"{"assisted":false,"passed":true,"quality_tier":"perfect","topic":" absolute-value ","ts":"2026-03-02T09:00:00Z","type":"lesson_result","v":1,"xp":10.0}"#;
+    let Event::LessonResult(result) = Event::from_json(text).unwrap() else {
+        panic!("expected a lesson_result event");
+    };
+    assert_eq!(result.topic.as_str(), "absolute-value");
+    // A whitespace-only id is a validation error, as it is in 1.0.
+    let text = r#"{"assisted":false,"passed":true,"quality_tier":"perfect","topic":" ","ts":"2026-03-02T09:00:00Z","type":"lesson_result","v":1,"xp":10.0}"#;
+    assert!(Event::from_json(text).is_err());
+}
+
+#[test]
+fn the_padded_stream_folds_to_the_1_0_digest_of_the_clean_stream() {
+    // Both streams below fold to this digest in 1.0, run on this box:
+    //   scripts/oracle/dump_projector_1_0.py <stream> --curriculum curriculum
+    // Review round 1, finding #3, names the same value.
+    const DIGEST: &str = "af3cc77f069edf252691c90d0f32fcfbc6cf95d9882fdf677b3b6b256a2101e7";
+    assert_eq!(fold_digest(CLEAN_STREAM), DIGEST);
+    assert_eq!(fold_digest(PADDED_STREAM), DIGEST);
+}
+
+// --------------------------------------------------------------------------- //
+// Review 1 findings #11 and #12: what the fold reports instead of a wrong model
+// --------------------------------------------------------------------------- //
+
+#[test]
+fn a_non_finite_decay_stops_the_fold() {
+    // 1.0 raises `OverflowError: (34, 'Numerical result out of range')` at
+    // `cadus/fire.py:179` on this stream and builds NO model. Verified on this box
+    // with scripts/oracle/dump_projector_1_0.py. The raise happens at the third
+    // event (index 2), in the explicit `memory_at` of `apply_attempt`.
+    let error = fold_error(OVERFLOW_STREAM);
+    assert_eq!(
+        error,
+        ProjectorError::NonFinite {
+            topic: "absolute-value-inequalities".to_owned(),
+            event_index: 2,
+        }
+    );
+    assert_eq!(
+        error.to_string(),
+        "the decay of topic `absolute-value-inequalities` at event 2 is not a finite number"
+    );
+}
+
+#[test]
+fn an_xp_total_outside_the_i64_range_stops_the_fold() {
+    // A DOCUMENTED divergence (spec section 7, trap T22). 1.0 folds this one event
+    // into a model whose `quiz.xp_since` is the exact 309-digit Python integer
+    // `-100000000000000001097906362944045541740492309677311846336810682903...`,
+    // verified on this box. An `i64` does not hold it, so the 2.0 fold reports it.
+    let error = fold_error(HUGE_XP_STREAM);
+    assert_eq!(
+        error.to_string(),
+        "the rounded value -1e+308 is outside the i64 range"
+    );
+    assert!(matches!(error, ProjectorError::OutOfRange(_)));
 }
 
 #[test]

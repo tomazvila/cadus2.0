@@ -19,6 +19,8 @@ use chrono::{DateTime, NaiveDate, NaiveDateTime, Utc};
 use chrono_tz::Tz;
 use thiserror::Error;
 
+use crate::curriculum::python_repr_f64;
+
 /// Microseconds in one second. The divisor of the 1.0 `total_seconds()` first step.
 const MICROSECONDS_PER_SECOND: f64 = 1_000_000.0;
 
@@ -79,17 +81,59 @@ pub fn round_half_even(x: f64) -> f64 {
     }
 }
 
+/// The lowest value an `i64` holds, as an `f64`. `-2**63` is exact in both types.
+const I64_MIN_AS_FLOAT: f64 = -9_223_372_036_854_775_808.0;
+
+/// `2**63`, the first value above the `i64` range. `i64::MAX` itself is not an
+/// `f64`, so the test of the upper bound is a STRICT `<` against this number: the
+/// largest `f64` the range holds is `9223372036854774784.0`, which is `2**63 - 1024`.
+const I64_BOUND_AS_FLOAT: f64 = 9_223_372_036_854_775_808.0;
+
+/// A rounded value that the `i64` range does not hold.
+///
+/// Python `int()` has unbounded precision, so 1.0 keeps the exact big integer where
+/// this error stops the 2.0 fold. Spec section 7, trap T22, records the divergence.
+#[derive(Debug, Clone, PartialEq, Eq, Error)]
+#[error("the rounded value {value} is outside the i64 range")]
+pub struct OutOfRangeError {
+    /// The rounded value, in the Python `repr` text of the port.
+    pub value: String,
+}
+
 /// Round `x` to an integer the way Python's `int(round(x))` does (trap T3).
 ///
-/// A value outside the `i64` range saturates, and `NaN` becomes `0`, because the core
-/// never panics. Python raises `OverflowError` there. No 1.0 call site reaches it:
-/// every input is an XP total or a day count.
+/// # Errors
+///
+/// Returns [`OutOfRangeError`] for `NaN`, for an infinity, and for a finite value
+/// outside the `i64` range. Python `int(round(x))` returns an exact big integer for
+/// the finite case and raises for the other two. The 2.0 fold reports the error at
+/// all three, because the learner model holds an `i64`.
+#[expect(
+    clippy::cast_possible_truncation,
+    reason = "the bounds test proves the value is inside the i64 range"
+)]
+pub fn round_half_even_i64(x: f64) -> Result<i64, OutOfRangeError> {
+    let rounded = round_half_even(x);
+    if (I64_MIN_AS_FLOAT..I64_BOUND_AS_FLOAT).contains(&rounded) {
+        return Ok(rounded as i64);
+    }
+    Err(OutOfRangeError {
+        value: python_repr_f64(rounded),
+    })
+}
+
+/// [`round_half_even_i64`], saturating at the `i64` bounds, with `NaN` at `0`.
+///
+/// Use it ONLY where the input is bounded by construction and no learner number
+/// reaches it: the two selector budgets, which round an authored count and a fixed
+/// window. Every 1.0 `int(round(...))` over learner data uses
+/// [`round_half_even_i64`] and reports the out-of-range value.
 #[must_use]
 #[expect(
     clippy::cast_possible_truncation,
-    reason = "the saturating cast is the documented out-of-range rule"
+    reason = "the saturating cast is the documented rule of the bounded call sites"
 )]
-pub fn round_half_even_i64(x: f64) -> i64 {
+pub fn round_half_even_i64_saturating(x: f64) -> i64 {
     round_half_even(x) as i64
 }
 

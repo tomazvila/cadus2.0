@@ -42,6 +42,14 @@ cargo clippy --all-targets --workspace -- -D warnings
 echo "== cargo test --workspace"
 cargo test --workspace
 
+# The parity fold runs a SECOND time in the release profile (spec section 7, trap
+# T21). The debug profile emits a real `pow` call for every `powf`, while an
+# optimized build rewrites a literal base into `exp2`, which is a different number
+# in the last bit. The digests must hold in both profiles, so a rewrite that the
+# debug run cannot see fails the gate here.
+echo "== cargo test --release -p cadus-core --test parity_events --test projector"
+cargo test --release -p cadus-core --test parity_events --test projector
+
 # `--all-targets` puts the queries of the tests into the check too. Without it
 # the check covers the library and the binaries only, and a stale query file of a
 # test stays hidden until an offline build breaks.

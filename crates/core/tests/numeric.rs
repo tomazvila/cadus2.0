@@ -22,7 +22,7 @@ use cadus_core::config::Config;
 use cadus_core::learner::problem_text_hash;
 use cadus_core::numeric::{
     TimeError, days_between, local_day, neumaier_sum, resolve_timezone, round_dp, round_half_even,
-    round_half_even_i64,
+    round_half_even_i64, round_half_even_i64_saturating,
 };
 
 // --------------------------------------------------------------------------- //
@@ -106,23 +106,70 @@ fn round_half_even_covers_the_other_python_results() {
 
 #[test]
 fn round_half_even_i64_matches_the_python_int_result() {
-    assert_eq!(round_half_even_i64(2.5), 2);
-    assert_eq!(round_half_even_i64(0.5), 0);
-    assert_eq!(round_half_even_i64(-3.5), -4);
-    assert_eq!(round_half_even_i64(4.5), 4);
-    assert_eq!(round_half_even_i64(-0.5), 0);
+    assert_eq!(round_half_even_i64(2.5), Ok(2));
+    assert_eq!(round_half_even_i64(0.5), Ok(0));
+    assert_eq!(round_half_even_i64(-3.5), Ok(-4));
+    assert_eq!(round_half_even_i64(4.5), Ok(4));
+    assert_eq!(round_half_even_i64(-0.5), Ok(0));
     // Trap T7: the XP artifact that reaches the log unrounded.
-    assert_eq!(round_half_even_i64(8.924_999_999_999_999), 9);
+    assert_eq!(round_half_even_i64(8.924_999_999_999_999), Ok(9));
     // Spec section 8: the regrade model literals, `xp.total == -4` then `== 7`.
-    assert_eq!(round_half_even_i64(-3.5), -4);
-    assert_eq!(round_half_even_i64(7.0), 7);
+    assert_eq!(round_half_even_i64(-3.5), Ok(-4));
+    assert_eq!(round_half_even_i64(7.0), Ok(7));
+}
+
+// --------------------------------------------------------------------------- //
+// Review 1 finding #12: the i64 boundary of `int(round(x))`
+// --------------------------------------------------------------------------- //
+
+/// The largest `f64` inside the `i64` range: `2**63 - 1024`. The spacing of the
+/// doubles there is 1024, verified on this box with
+/// `math.nextafter(float(2**63), 0)`.
+const LAST_IN_RANGE: f64 = 9_223_372_036_854_774_784.0;
+
+#[test]
+fn round_half_even_i64_holds_the_last_representable_value() {
+    assert_eq!(
+        round_half_even_i64(LAST_IN_RANGE),
+        Ok(9_223_372_036_854_774_784)
+    );
+    // `i64::MIN` is `-2**63`, which is exact in both types.
+    assert_eq!(
+        round_half_even_i64(-9_223_372_036_854_775_808.0),
+        Ok(-9_223_372_036_854_775_808)
+    );
 }
 
 #[test]
-fn round_half_even_i64_saturates_rather_than_panics() {
-    assert_eq!(round_half_even_i64(f64::NAN), 0);
-    assert_eq!(round_half_even_i64(f64::INFINITY), i64::MAX);
-    assert_eq!(round_half_even_i64(f64::NEG_INFINITY), i64::MIN);
+fn round_half_even_i64_reports_the_value_above_the_range() {
+    // `i64::MAX as f64` is already `2**63`, and the next double up is `2**63 + 2048`,
+    // so `+ 1024.0` rounds half to even back to `2**63`. Either way the value is
+    // outside the range.
+    let above = 9_223_372_036_854_775_808.0_f64 + 1024.0;
+    assert_eq!(above, 9_223_372_036_854_775_808.0);
+    let error = round_half_even_i64(above).unwrap_err();
+    assert_eq!(
+        error.to_string(),
+        "the rounded value 9.223372036854776e+18 is outside the i64 range"
+    );
+    // Python: `int(round(-1e308))` is an exact 309-digit integer (review finding #12).
+    assert!(round_half_even_i64(-1e308).is_err());
+    assert!(round_half_even_i64(f64::NAN).is_err());
+    assert!(round_half_even_i64(f64::INFINITY).is_err());
+    assert!(round_half_even_i64(f64::NEG_INFINITY).is_err());
+}
+
+#[test]
+fn the_saturating_form_keeps_the_bounded_call_sites_free_of_errors() {
+    assert_eq!(round_half_even_i64_saturating(f64::NAN), 0);
+    assert_eq!(round_half_even_i64_saturating(f64::INFINITY), i64::MAX);
+    assert_eq!(round_half_even_i64_saturating(f64::NEG_INFINITY), i64::MIN);
+    // The two 1.0 selector budgets: `30 * 1.5` and `3.5 * 86_400_000_000`.
+    assert_eq!(round_half_even_i64_saturating(45.0), 45);
+    assert_eq!(
+        round_half_even_i64_saturating(302_400_000_000.0),
+        302_400_000_000
+    );
 }
 
 // --------------------------------------------------------------------------- //

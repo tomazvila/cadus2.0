@@ -22,6 +22,7 @@
 //! reference instant is always a parameter (trap T10).
 
 use std::collections::{BTreeMap, BTreeSet};
+use std::hint::black_box;
 
 use chrono::{Days, NaiveDate, TimeDelta};
 use chrono_tz::Tz;
@@ -121,6 +122,10 @@ pub fn tier_multiplier(quality: WorkQuality, cfg: &Config) -> f64 {
 ///
 /// CPython raises a float to an integer power through `pow`, so the exponent goes
 /// through [`f64::powf`] here and not through repeated multiplication.
+///
+/// The base is a constant, so it goes through [`black_box`] (trap T21): a literal
+/// base lets LLVM rewrite the `pow` call in an optimized build, and a rewritten call
+/// is a different number in the last bit from the one CPython computes.
 #[must_use]
 #[expect(
     clippy::cast_precision_loss,
@@ -130,7 +135,7 @@ pub fn quality_multiplier(quality: WorkQuality, cfg: &Config, consecutive_blowof
     let mult = tier_multiplier(quality, cfg);
     if quality == WorkQuality::Blowoff {
         let run = consecutive_blowoffs.max(1);
-        return mult * BLOWOFF_ESCALATION.powf((run - 1) as f64);
+        return mult * black_box(BLOWOFF_ESCALATION).powf((run - 1) as f64);
     }
     mult
 }

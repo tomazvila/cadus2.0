@@ -36,7 +36,7 @@ use crate::curriculum::{Curriculum, TopicIdx};
 use crate::event::{EventError, KpProgress, Slug, TaskType, Timestamp};
 use crate::fire::{ReviewState, has_review_history, memory_at, review_state};
 use crate::learner::{PendingRemediation, QuizState, TopicState};
-use crate::numeric::{neumaier_sum, round_dp, round_half_even_i64, to_datetime};
+use crate::numeric::{neumaier_sum, round_dp, round_half_even_i64_saturating, to_datetime};
 pub use crate::xp::is_mastered;
 
 /// One day, in microseconds.
@@ -958,13 +958,16 @@ const fn i64_as_float(count: i64) -> f64 {
 
 /// The per-question time budget: the authored expected time times 1.5, rounded
 /// half to even (`_quiz_budget`, `selector.py:676-678`).
+///
+/// The input is an authored count, which the `i64` range holds, so the budget uses
+/// the saturating rounding form and reports no error.
 #[must_use]
 pub fn quiz_budget(graph: &Curriculum, tid: &str) -> i64 {
     let seconds = graph
         .idx_of(tid)
         .and_then(|idx| graph.topic(idx))
         .map_or(0, |topic| topic.expected_time_secs);
-    round_half_even_i64(i64_as_float(seconds) * QUIZ_TIME_FACTOR)
+    round_half_even_i64_saturating(i64_as_float(seconds) * QUIZ_TIME_FACTOR)
 }
 
 /// A microsecond delta as seconds, the way `timedelta.total_seconds` reads it.
@@ -1193,6 +1196,9 @@ pub fn quiz_is_due(
 /// A topic qualifies when it is drill-tagged, mastered, still below the
 /// automaticity bar, and outside the drill cadence window. `last_drill_at` maps
 /// a topic id to the UTC microseconds of its last drill.
+///
+/// The cadence window rounds two constants, so it uses the saturating rounding
+/// form and reports no error.
 #[must_use]
 pub fn schedule_drills(
     states: &BTreeMap<String, TopicState>,
@@ -1200,7 +1206,7 @@ pub fn schedule_drills(
     t_us: i64,
     last_drill_at: Option<&BTreeMap<String, i64>>,
 ) -> Vec<String> {
-    let window_us = round_half_even_i64(DRILL_INTERVAL_DAYS * i64_as_float(DAY_US));
+    let window_us = round_half_even_i64_saturating(DRILL_INTERVAL_DAYS * i64_as_float(DAY_US));
     let mut out: Vec<String> = Vec::new();
     for idx in every_index(graph) {
         let Some(topic) = graph.topic(idx) else {

@@ -166,25 +166,42 @@ impl<'de> Deserialize<'de> for Timestamp {
 
 /// A non-empty curriculum id: a topic, a course, or a knowledge point.
 ///
-/// 1.0 declares these with `min_length=1`, so an empty id is a validation error there
-/// and an error value here. The type orders by byte, which is the code-point order
-/// Python's `sorted()` gives for a `str` (trap T18).
+/// 1.0 declares these as
+/// `Annotated[str, StringConstraints(min_length=1, strip_whitespace=True)]`
+/// (`model.py:23`), so pydantic REMOVES the outer whitespace and then applies the
+/// length rule. The port does the same: the value keeps its trimmed form, and a
+/// value with nothing left after the trim is an error. Without the trim a padded
+/// topic id folds onto a phantom topic and the real one keeps no credit.
+///
+/// [`crate::curriculum::model::Slug`] is the same 1.0 type on the curriculum side
+/// and carries the same rule. The two stay separate types because they report
+/// through different error enums.
+///
+/// The trim is Rust `str::trim`, which removes the Unicode `White_Space` set.
+/// Python `str.strip()` removes that set AND the four separators `U+001C` to
+/// `U+001F`, so an id padded with one of those four keeps it here. The same rule
+/// holds on the curriculum side, and no authored id carries such a character.
+///
+/// The type orders by byte, which is the code-point order Python's `sorted()` gives
+/// for a `str` (trap T18).
 #[derive(Debug, Clone, Default, PartialEq, Eq, Hash, PartialOrd, Ord, Serialize)]
 #[serde(transparent)]
 pub struct Slug(String);
 
 impl Slug {
-    /// Build a slug from text.
+    /// Build a slug from text. The outer whitespace goes away.
     ///
     /// # Errors
     ///
-    /// Returns [`EventError::Json`] when the text is empty.
+    /// Returns [`EventError::Json`] when nothing is left after the trim, which
+    /// covers the empty string and a whitespace-only id.
     pub fn new(text: impl Into<String>) -> Result<Self, EventError> {
         let text = text.into();
-        if text.is_empty() {
+        let trimmed = text.trim();
+        if trimmed.is_empty() {
             return Err(EventError::Json("a curriculum id must not be empty".into()));
         }
-        Ok(Self(text))
+        Ok(Self(trimmed.to_owned()))
     }
 
     /// The id as text.

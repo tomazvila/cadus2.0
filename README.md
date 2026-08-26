@@ -9,8 +9,19 @@ the core; the core depends on no adapter (R3).
 ## The gate
 
 Run `scripts/gate.sh` before every commit. It runs `cargo fmt`, `cargo clippy`
-with `-D warnings`, the test suite, `cargo sqlx prepare --check`,
-`scripts/check_migrations.sh`, and `scripts/check_ops.sh`.
+with `-D warnings`, the test suite, the parity fold in the release profile,
+`cargo sqlx prepare --check`, `scripts/check_migrations.sh`, and
+`scripts/check_ops.sh`.
+
+The release step is `cargo test --release -p cadus-core --test parity_events
+--test projector`, and it is not a duplicate of `cargo test --workspace`. The
+debug profile emits a real `pow` call for every `powf`; an optimized build
+rewrites a call with a LITERAL base into `exp2`, which differs from `pow` by one
+unit in the last place. CPython computes `0.5 ** x` through `pow`, so a
+rewritten call folds a learner model that is not the 1.0 model. The core hides
+every such base behind `std::hint::black_box`, and this step proves that the 20
+committed streams keep their 1.0 digests in the profile the Docker image ships.
+See `docs/reference/projector-1.0-spec.md`, section 7, trap T21.
 
 `CADUS_TEST_DATABASE_URL` is required, not optional: the gate exits 2 and runs
 no check when the variable is unset. The DSN needs superuser rights, and the

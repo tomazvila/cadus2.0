@@ -24,6 +24,7 @@
 //!   `t0 is None` gate covers penalties only.
 
 use std::collections::BTreeMap;
+use std::hint::black_box;
 
 use indexmap::IndexMap;
 
@@ -146,11 +147,27 @@ impl ReviewState {
     }
 }
 
+/// `0.5 ** exponent`, through the platform `pow` (trap T21).
+///
+/// The base is a literal, so LLVM rewrites `0.5_f64.powf(x)` into `exp2(-x)` in an
+/// optimized build. glibc `exp2` and glibc `pow` differ by one unit in the last
+/// place, and CPython `0.5 ** x` calls `pow`, so the rewrite makes the release fold
+/// diverge from the 1.0 fold while the debug fold agrees with it.
+/// [`black_box`] hides the base from the optimizer and keeps the real `pow` call.
+/// Do NOT remove it, and do not write a literal base at any other `powf` site.
+#[must_use]
+fn pow_half(exponent: f64) -> f64 {
+    black_box(0.5_f64).powf(exponent)
+}
+
 /// The memory of a topic at `t_us`: `memoryBase * 0.5 ** (days / interval)`
 /// (`fire.py:169-179`).
 ///
 /// A topic with no `t0`, or with a non-positive interval, has no decay reference,
 /// so its undecayed `memoryBase` comes back.
+///
+/// The result is not finite where CPython raises `OverflowError` in the same
+/// expression. [`apply_attempt_checked`] reports that state instead of folding it.
 #[must_use]
 pub fn memory_at(state: &TopicState, t_us: i64) -> f64 {
     let Some(t0) = state.t0 else {
@@ -160,7 +177,7 @@ pub fn memory_at(state: &TopicState, t_us: i64) -> f64 {
         return state.memory_base;
     }
     let exponent = days_between(t0.micros(), t_us) / state.interval_days;
-    state.memory_base * 0.5_f64.powf(exponent)
+    state.memory_base * pow_half(exponent)
 }
 
 /// The review band of `state` at `t_us` (`fire.py:214-248`).
@@ -398,19 +415,37 @@ pub fn apply_update(
     failed: bool,
     cfg: &Config,
 ) -> TopicState {
+    apply_update_inner(state, raw, t_us, failed, cfg).0
+}
+
+/// [`apply_update`] and whether every decay value it read was finite.
+///
+/// The flag is `false` where the memory or the decay factor left the finite range.
+/// CPython raises `OverflowError` at that input in `0.5 ** exponent`, and the 1.0
+/// fold builds no model. For an infinite exponent CPython returns `inf` without an
+/// error, and the port stops there too: a non-finite `memoryBase` writes JSON
+/// `null`, and the stored model then reads back as an error.
+fn apply_update_inner(
+    state: &TopicState,
+    raw: f64,
+    t_us: i64,
+    failed: bool,
+    cfg: &Config,
+) -> (TopicState, bool) {
     let factor = if failed {
         decay_for(state, t_us, cfg)
     } else {
         1.0
     };
+    let memory = memory_at(state, t_us);
     let new_rep = py_max(0.0, state.rep_num + state.speed * factor * raw);
-    let new_base = py_max(0.0, memory_at(state, t_us) + raw);
+    let new_base = py_max(0.0, memory + raw);
     let mut next = state.clone();
     next.rep_num = new_rep;
     next.memory_base = new_base;
     next.t0 = Some(Timestamp::from_micros(t_us));
     next.interval_days = interval_for(new_rep, cfg);
-    next
+    (next, factor.is_finite() && memory.is_finite())
 }
 
 /// The outcome of one graded task on a topic — the input of [`apply_attempt`].
@@ -507,6 +542,9 @@ pub struct Propagation {
 ///   it would suppress its first-touch ability seed.
 ///
 /// Either leg drops a propagation whose magnitude is below `min_credit`.
+///
+/// The states come back even where a decay value is not finite. The fold calls
+/// [`apply_attempt_checked`], which reports that topic instead.
 #[must_use]
 pub fn apply_attempt(
     states: &BTreeMap<String, TopicState>,
@@ -515,18 +553,80 @@ pub fn apply_attempt(
     cfg: &Config,
     t_us: i64,
 ) -> (BTreeMap<String, TopicState>, Vec<Propagation>) {
+    let (new_states, props, _bad) = apply_attempt_inner(states, attempt, graph, cfg, t_us);
+    (new_states, props)
+}
+
+/// The topic whose decayed memory or decay factor is not a finite number.
+///
+/// CPython raises `OverflowError` at the same input (`0.5 ** exponent`), and the 1.0
+/// fold then builds NO model. The 2.0 fold reports this instead of storing a model
+/// that reads back as an error.
+#[derive(Debug, Clone, PartialEq, Eq, thiserror::Error)]
+#[error("the decay of topic `{topic}` is not a finite number")]
+pub struct NonFiniteDecay {
+    /// The id of the topic whose decay left the finite range.
+    pub topic: String,
+}
+
+/// [`apply_attempt`], with the non-finite decay reported instead of folded.
+///
+/// # Errors
+///
+/// Returns [`NonFiniteDecay`] for the FIRST topic, in the read order of
+/// [`apply_attempt`], whose [`memory_at`] or [`decay_for`] value is not finite.
+pub fn apply_attempt_checked(
+    states: &BTreeMap<String, TopicState>,
+    attempt: &AttemptResult,
+    graph: &Curriculum,
+    cfg: &Config,
+    t_us: i64,
+) -> Result<(BTreeMap<String, TopicState>, Vec<Propagation>), NonFiniteDecay> {
+    let (new_states, props, bad) = apply_attempt_inner(states, attempt, graph, cfg, t_us);
+    match bad {
+        Some(topic) => Err(NonFiniteDecay { topic }),
+        None => Ok((new_states, props)),
+    }
+}
+
+/// The one body of [`apply_attempt`] and [`apply_attempt_checked`].
+///
+/// The third value is the first topic with a non-finite decay, in the order the
+/// function reads the states. The fold of that attempt still runs, so both public
+/// forms take the same path and only the report differs.
+fn apply_attempt_inner(
+    states: &BTreeMap<String, TopicState>,
+    attempt: &AttemptResult,
+    graph: &Curriculum,
+    cfg: &Config,
+    t_us: i64,
+) -> (
+    BTreeMap<String, TopicState>,
+    Vec<Propagation>,
+    Option<String>,
+) {
     let mut new_states = states.clone();
     let topic = attempt.topic.as_str();
     let passed = attempt.passed;
     let q = quality_q(attempt.quality);
     let assisted = attempt.assisted;
 
+    // The first topic whose decay left the finite range. A later one never
+    // replaces it, because 1.0 stops at the first raise.
+    let mut bad: Option<String> = None;
+    let mut note = |id: &str, finite: bool| {
+        if !finite && bad.is_none() {
+            bad = Some(id.to_owned());
+        }
+    };
+
     let explicit = new_states.get(topic).cloned().unwrap_or_default();
-    let raw = raw_delta(q, memory_at(&explicit, t_us), passed, cfg, assisted);
-    new_states.insert(
-        topic.to_owned(),
-        apply_update(&explicit, raw, t_us, !passed, cfg),
-    );
+    let memory = memory_at(&explicit, t_us);
+    note(topic, memory.is_finite());
+    let raw = raw_delta(q, memory, passed, cfg, assisted);
+    let (next, finite) = apply_update_inner(&explicit, raw, t_us, !passed, cfg);
+    note(topic, finite);
+    new_states.insert(topic.to_owned(), next);
 
     let mut props: Vec<Propagation> = Vec::new();
 
@@ -539,14 +639,15 @@ pub fn apply_attempt(
             if recipient.speed < cfg.fire.explicit_speed_threshold {
                 continue;
             }
-            let credit = raw_delta(q, memory_at(&recipient, t_us), true, cfg, assisted) * weight;
+            let recipient_memory = memory_at(&recipient, t_us);
+            note(target, recipient_memory.is_finite());
+            let credit = raw_delta(q, recipient_memory, true, cfg, assisted) * weight;
             if credit.abs() < cfg.fire.min_credit {
                 continue;
             }
-            new_states.insert(
-                target.to_owned(),
-                apply_update(&recipient, credit, t_us, false, cfg),
-            );
+            let (next, finite) = apply_update_inner(&recipient, credit, t_us, false, cfg);
+            note(target, finite);
+            new_states.insert(target.to_owned(), next);
             props.push(Propagation {
                 topic: target.to_owned(),
                 raw_delta: credit,
@@ -567,10 +668,9 @@ pub fn apply_attempt(
             if penalty.abs() < cfg.fire.min_credit {
                 continue;
             }
-            new_states.insert(
-                target.to_owned(),
-                apply_update(&recipient, penalty, t_us, true, cfg),
-            );
+            let (next, finite) = apply_update_inner(&recipient, penalty, t_us, true, cfg);
+            note(target, finite);
+            new_states.insert(target.to_owned(), next);
             props.push(Propagation {
                 topic: target.to_owned(),
                 raw_delta: penalty,
@@ -580,7 +680,7 @@ pub fn apply_attempt(
         }
     }
 
-    (new_states, props)
+    (new_states, props, bad)
 }
 
 /// Whether practicing `candidate_topic` knocks out `due_topic`'s review
