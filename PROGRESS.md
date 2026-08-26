@@ -18,6 +18,16 @@ the live re-run runs in the gate with `CADUS_ORACLE_PYTHON` set.
 
 Gate on integrated `main`: 276 tests, 0 failed; all gate steps PASS.
 
+### Adversarial review round 1 (M2)
+
+Six lenses (false-positive, false-negative, correctness/safety, parity/oracle, test
+quality, spec/docs), two find/refute rounds: 39 raised, 21 confirmed
+(`docs/reviews/M2-review-1.md`). Blockers (C4 false positives): `2⅓` read as `2*(1/3)`;
+the `x =` label strip dropped the variable so `x = 4` equaled `y = 4`; `cos 2x` bound one
+atom (`x*cos(2)`); a percent rescaled the whole body; an unbounded LCM cost 8.4 s on one
+in-grammar answer; a space-grouped numerator read as a mixed number. Rulings are in the
+record. Fix units FIXM2a–c.
+
 Known items for the M2 fix wave: the lexer refuses a multi-letter run (`3xy^2`, 11
 corpus answers on 9 topics) — split unknown letter runs into single-letter variables
 except function names and differentials; `e` and `E` both read as Euler's number (1.0
