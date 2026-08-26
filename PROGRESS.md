@@ -21,6 +21,16 @@ test pins the hash and the length literals.
 
 Gate on integrated `main` (commit 128b032): 182 tests, 0 failed; all gate steps PASS.
 
+### Adversarial review round 1 (M1)
+
+Five lenses (parity, correctness, purity/budgets, test quality, data/spec), two
+find/refute rounds: 30 raised, 27 confirmed (`docs/reviews/M1-review-1.md`). Blockers:
+NaN passed the 0..=1 range check; hidden and symlinked unit files were dropped. Ruling:
+2.0 rejects YAML 1.1-only forms (`yes`, octal, `1_200`, merge keys, duplicate keys)
+with explicit findings and does not emulate PyYAML; the spec §7 "2.0 strictness" section
+lists every deliberate difference. Fix units FIXM1a–c fixed all 27 (commit 7d49756);
+gate with the live oracle: 205 tests, 0 failed.
+
 Open notes for later milestones:
 - `encompassing_weight` runs one relaxation per call (1.0 memoizes per source); M3
   calls `reach_weights` once per source.
