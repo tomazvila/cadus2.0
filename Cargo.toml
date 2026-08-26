@@ -27,6 +27,12 @@ sqlx = { version = "0.9.0", default-features = false, features = [
 ] }
 serde = { version = "1.0.229", features = ["derive"] }
 serde_json = { version = "1.0.151" }
+# YAML for the curriculum loader (M1, C5). `serde_norway` is a maintained fork of
+# the archived `serde_yaml`; it tracks serde 1.x, keeps mapping order in
+# `serde_norway::Value`, and its derive support honors
+# `#[serde(deny_unknown_fields)]`, which the curriculum schema needs (spec 1).
+# It is the ONE YAML crate of the pure core (R3).
+serde_norway = { version = "0.9.42" }
 uuid = { version = "1.25.0", features = ["v4", "serde"] }
 chrono = { version = "0.4.45", features = ["serde"] }
 tracing = { version = "0.1.44" }
