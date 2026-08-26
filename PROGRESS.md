@@ -154,6 +154,13 @@ listed for re-kinding in `docs/reference/undecidable-answers.md`.
 
 Review record: four rounds, 21 + 17 + 14 + 4 confirmed, all fixed and mutation-checked.
 
+### Decision for the owner (M5, before U8 starts)
+
+The tier a deterministic miss records (`docs/plans/M5.md` D-M5-2): the plan uses
+`nearly_passable` (XP ×0.3, below the pass line) for a decided wrong answer and `poor`
+for a blank; the async diagnosis adds tags and prose but never moves the tier. The 1.0
+model chose the tier per miss. Say if you want a different tier.
+
 ### Decision for the owner (M2)
 
 The D6 rule makes a decimal approximation of an exact value WRONG in 2.0: `0.3333333333`
