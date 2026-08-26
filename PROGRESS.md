@@ -2,6 +2,29 @@
 
 One entry per milestone cycle (HANDOVER.md §2). Newest first.
 
+## M2 — answer checker: grammar, exact arithmetic, oracle fuzz (2026-08-26)
+
+Requirement IDs: V1–V4, D6, A3, C4, L2, R5. Plan: `docs/plans/M2.md`. Spec:
+`docs/reference/checker-1.0-spec.md`. Corpus: `crates/core/tests/fixtures/answers/`.
+
+| Unit | Branch | Result |
+|---|---|---|
+| U1 normalize + lexer + recursive-descent parser (grammar §8.1 + intervals), 4,000-char cap, no panic on any input (10 s fuzz) | `m2/u1` | corpus split 3,214 parse / 278 undecidable (committed as `undecidable_1_0.jsonl`); 20 tests; 4 mutations red |
+| U2 canonical forms (BigRational, squarefree radicals, sparse polynomials with signed exponents and Inverse atoms, sets/tuples/lists/intervals) + `check` with the rung order and the dot-thousands reading; MAX_STEPS work bound | `m2/u2` | every pinned 1.0 pair of spec §6 gives the 1.0 verdict; 38 documented divergences pinned to the 2.0 verdict; 4 mutations red |
+| U3 oracle harness (`scripts/oracle/check_1_0.py`), 36 notation generators, committed 1.0 verdicts, residue report | `m2/u3` | 14,875 pairs: class 3 comparable 13,924 with 100% agreement, class 4 documented 16, class 1 outside grammar 935; `docs/reference/undecidable-answers.md` lists the 278 residue answers |
+
+Stage 5 (oracle parity): the committed verdict fixture came from the live 1.0 oracle;
+the live re-run runs in the gate with `CADUS_ORACLE_PYTHON` set.
+
+Gate on integrated `main`: 276 tests, 0 failed; all gate steps PASS.
+
+Known items for the M2 fix wave: the lexer refuses a multi-letter run (`3xy^2`, 11
+corpus answers on 9 topics) — split unknown letter runs into single-letter variables
+except function names and differentials; `e` and `E` both read as Euler's number (1.0
+reads lowercase `e` as a symbol); spec §8.2/§8.3 counts to annotate with the measured
+split; new 1.0 defects found by the fuzz (the Python tokenizer reads `2j` as an imaginary
+literal, so 1.0 marks the live answers `$3i - 2j$` wrong).
+
 ## M1 — curriculum arena, loader, lint port, parity (2026-08-26)
 
 Requirement IDs: D1, D2, C5, R5. Plan: `docs/plans/M1.md`. Spec:
