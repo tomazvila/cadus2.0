@@ -139,6 +139,13 @@ pub enum Ast {
         /// The bound.
         bound: Box<Ast>,
     },
+    /// A value with the label of the unknown it answers for, from `x = 4`.
+    Assign {
+        /// The labeled variable, as the answer spells it.
+        var: String,
+        /// The labeled value.
+        value: Box<Ast>,
+    },
     /// A chained inequality `lo <= var <= hi`, with the end style of each side.
     Chain {
         /// The lower bound.

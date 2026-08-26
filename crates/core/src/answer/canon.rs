@@ -8,9 +8,10 @@
 //!
 //! Arithmetic runs on a sum of terms. A term is a rational coefficient and a
 //! monomial, and a monomial maps an [`Atom`] to an integer exponent. The atoms are
-//! a square root of a squarefree integer, `pi`, `e`, a variable, a function call,
-//! and the reciprocal of a sum. One form therefore holds a rational, a radical, a
-//! Laurent polynomial, and a function application together.
+//! a square root of a squarefree integer, `pi`, `e`, an exponential with an
+//! argument that is not a whole number, a variable, a function call, and the
+//! reciprocal of a sum. One form therefore holds a rational, a radical, a Laurent
+//! polynomial, and a function application together.
 //!
 //! [`Canon`] is the outside view of that form. `from_sum` demotes a sum to the
 //! narrowest variant that holds it, and the demotion is total and deterministic, so
@@ -22,7 +23,10 @@
 //! - `sqrt(8)` becomes `2*sqrt(2)` and `sqrt(4)` becomes `2`. A radicand that is
 //!   not a whole number stays a function application.
 //! - `exp(k)` for an integer `k` becomes the atom `e` with exponent `k`, so
-//!   `e**2` and `exp(2)` are one value.
+//!   `e**2` and `exp(2)` are one value. Every other argument becomes
+//!   [`Atom::Exp`], which obeys the exponent law: `e**(-x)` and `1/e**x` are one
+//!   value, and `e**x` and `e**(2*x)` are two values.
+//! - `ln` and `log` are one function, the natural logarithm, as they are in 1.0.
 //! - A division by a sum of two or more terms keeps the sum as an
 //!   [`Atom::Inverse`]. The sum is content-normalized first: its coefficients are
 //!   coprime integers and its greatest monomial carries a positive sign, so
@@ -38,8 +42,16 @@
 //! answer that goes past one of them is [`Undecidable`]; it never becomes a wrong
 //! verdict (C4). No step reads a clock and no step runs a search, so the cost of a
 //! check depends on the input only (L2).
+//!
+//! The work bound charges the width of a number as well as the count of terms.
+//! One operation on a wide rational costs about the square of one operation on a
+//! machine-word rational, so a budget that counts term operations alone bounds
+//! the wrong quantity: 2,000 term operations on 4,096-bit coefficients cost
+//! 155 ms in a release build (M2 review 1, finding 11). Every rational the
+//! arithmetic builds goes through [`Work::bounded`], and every intermediate of
+//! the content normalization goes through [`Work::bounded_int`], so no operation
+//! and no fold runs outside the budget.
 
-use std::collections::btree_map::Entry;
 use std::collections::{BTreeMap, BTreeSet};
 
 use num_bigint::BigInt;
@@ -55,9 +67,10 @@ const MAX_TERMS: usize = 512;
 
 /// The largest count of coefficient operations one canonicalization spends.
 ///
-/// The number is a latency bound, not a taste. A debug build runs one operation
-/// in about 70 microseconds on the build box, so the budget holds one check well
-/// inside the 300 ms of L2. `(x+1)**200` goes past the budget and is
+/// The number is a latency bound, not a taste. The budget pays for the count of
+/// coefficient operations and for the width of every number those operations
+/// build (see [`BITS_PER_STEP`]), so the worst answer inside the budget stays
+/// well inside the 300 ms of L2. `(x+1)**200` goes past the budget and is
 /// [`Undecidable`]; 1.0 spends 276 ms of the same budget on that one answer
 /// (spec section 3.2), which is the concrete case for V1.
 const MAX_STEPS: usize = 2_000;
@@ -65,8 +78,18 @@ const MAX_STEPS: usize = 2_000;
 /// The largest bit width of a numerator or a denominator.
 ///
 /// 4,096 bits is about 1,233 decimal digits. A learner answer never needs one,
-/// and a bigger number turns a multiplication into a latency problem.
+/// and a bigger number turns a multiplication into a latency problem. The width
+/// charge of [`Work::spend_width`] refuses a number of about 2,880 bits earlier
+/// still, because one operation of that width already costs the whole budget.
 const MAX_BITS: u64 = 4_096;
+
+/// The count of bits in one unit of width, for the width charge.
+///
+/// One machine word is the unit. A number under one word costs no extra unit, so
+/// an ordinary answer spends what it spent before this rule. The charge grows
+/// with the square of the count of words, so the budget bounds bit operations
+/// and not term operations alone (L2). See [`Work::spend_width`].
+const BITS_PER_STEP: u64 = 64;
 
 /// The largest nesting the canonicalizer descends into.
 const MAX_DEPTH: usize = 128;
@@ -95,6 +118,12 @@ pub enum Atom {
     Pi,
     /// Euler's number.
     E,
+    /// `e` raised to a value that is not a whole number.
+    ///
+    /// The atom always carries exponent 1 in a monomial. A power of the atom
+    /// moves into the argument, so `e**(-x)` and `1/e**x` are one value and
+    /// `(e**x)**3` is `e**(3*x)`.
+    Exp(Box<Canon>),
     /// A variable of the answer.
     Var(String),
     /// An application of a whitelisted function to canonical arguments.
@@ -164,6 +193,17 @@ pub enum Canon {
         /// True when the upper end belongs to the range. False when `hi` is `None`.
         hi_closed: bool,
     },
+    /// A value with the label of the unknown it answers for.
+    ///
+    /// A leading `x =` on an answer builds this variant. The canonical form keeps
+    /// the label and the value apart, so `x = 4` and `y = 4` are never one value;
+    /// `check` owns the rule that compares two labels.
+    Assign {
+        /// The labeled variable, as the answer spells it.
+        var: String,
+        /// The labeled value.
+        value: Box<Canon>,
+    },
 }
 
 /// Read one parsed answer into its canonical form.
@@ -199,6 +239,61 @@ impl Work {
         }
     }
 
+    /// Charge the width of one number to the work budget.
+    ///
+    /// The charge is the square of the width in machine words, because a
+    /// multiplication and a greatest common divisor of two big integers cost
+    /// about the square of the operand width. A number under one word costs
+    /// nothing, so an ordinary answer spends what it spent before this rule. A
+    /// number of about 2,880 bits costs the whole budget on its own, which is
+    /// the correct price: one operation of that width is already a latency
+    /// problem.
+    fn spend_width(&mut self, bits: u64) -> Result<(), Undecidable> {
+        let words = bits / BITS_PER_STEP;
+        let units = usize::try_from(words.saturating_mul(words)).unwrap_or(usize::MAX);
+        self.spend(units)
+    }
+
+    /// Refuse a rational past the size bound, and charge its width.
+    ///
+    /// Every rational the arithmetic builds goes through this function, so no
+    /// operand grows past the size bound and no operation runs outside the
+    /// budget.
+    fn bounded(&mut self, value: BigRational) -> Result<BigRational, Undecidable> {
+        let bits = value.numer().bits().max(value.denom().bits());
+        if bits > MAX_BITS {
+            return Err(Undecidable::new("a number past the size bound"));
+        }
+        self.spend_width(bits)?;
+        Ok(value)
+    }
+
+    /// Refuse an integer past the size bound, and charge its width.
+    fn bounded_int(&mut self, value: &BigInt) -> Result<(), Undecidable> {
+        let bits = value.bits();
+        if bits > MAX_BITS {
+            return Err(Undecidable::new("a number past the size bound"));
+        }
+        self.spend_width(bits)
+    }
+
+    /// Wrap a rational in its canonical form, after the size bound.
+    fn rational(&mut self, value: BigRational) -> Result<Canon, Undecidable> {
+        Ok(Canon::Rational(self.bounded(value)?))
+    }
+
+    /// Read a literal fraction, or refuse a zero denominator.
+    fn exact_fraction(
+        &mut self,
+        numerator: &BigInt,
+        denominator: &BigInt,
+    ) -> Result<Canon, Undecidable> {
+        if denominator.is_zero() {
+            return Err(Undecidable::new("a division by zero"));
+        }
+        self.rational(BigRational::new(numerator.clone(), denominator.clone()))
+    }
+
     /// Canonicalize one node, one level deeper.
     fn node(&mut self, ast: &Ast) -> Result<Canon, Undecidable> {
         self.spend(1)?;
@@ -214,12 +309,12 @@ impl Work {
     /// Canonicalize one node by its kind.
     fn dispatch(&mut self, ast: &Ast) -> Result<Canon, Undecidable> {
         match ast {
-            Ast::Integer(value) => rational(BigRational::from_integer(value.clone())),
+            Ast::Integer(value) => self.rational(BigRational::from_integer(value.clone())),
             Ast::Decimal { mantissa, scale } => self.decimal(mantissa, *scale),
             Ast::Fraction {
                 numerator,
                 denominator,
-            } => exact_fraction(numerator, denominator),
+            } => self.exact_fraction(numerator, denominator),
             Ast::Mixed {
                 whole,
                 numerator,
@@ -270,6 +365,13 @@ impl Work {
             Ast::Tuple(items) => Ok(Canon::Tuple(self.items(items)?)),
             Ast::List(items) => Ok(Canon::List(self.items(items)?)),
             Ast::Set(items) => Ok(Canon::Set(self.items(items)?.into_iter().collect())),
+            Ast::Assign { var, value } => {
+                let value = self.node(value)?;
+                Ok(Canon::Assign {
+                    var: var.clone(),
+                    value: Box::new(value),
+                })
+            }
             Ast::Interval {
                 lo,
                 hi,
@@ -341,7 +443,7 @@ impl Work {
         }
         self.spend(1)?;
         let denominator = BigInt::from(10_u32).pow(scale);
-        rational(BigRational::new(mantissa.clone(), denominator))
+        self.rational(BigRational::new(mantissa.clone(), denominator))
     }
 
     /// Read a mixed number `a b/c` as `sign(a) * (|a| + b/c)`.
@@ -362,15 +464,15 @@ impl Work {
         } else {
             magnitude
         };
-        rational(value)
+        self.rational(value)
     }
 
     /// Add two canonical values.
     fn add(&mut self, left: &Canon, right: &Canon) -> Result<Canon, Undecidable> {
-        let mut sum = to_sum(left)?;
-        for (monomial, coefficient) in to_sum(right)? {
+        let mut sum = self.sum_of(left)?;
+        for (monomial, coefficient) in self.sum_of(right)? {
             self.spend(1)?;
-            insert_term(&mut sum, monomial, coefficient)?;
+            self.insert_term(&mut sum, monomial, coefficient)?;
         }
         bound_terms(&sum)?;
         Ok(from_sum(sum))
@@ -378,19 +480,19 @@ impl Work {
 
     /// Multiply two canonical values.
     fn multiply(&mut self, left: &Canon, right: &Canon) -> Result<Canon, Undecidable> {
-        let left = to_sum(left)?;
-        let right = to_sum(right)?;
+        let left = self.sum_of(left)?;
+        let right = self.sum_of(right)?;
         self.spend(left.len().saturating_mul(right.len()))?;
         let mut product = Poly::new();
         for (left_monomial, left_coefficient) in &left {
             for (right_monomial, right_coefficient) in &right {
-                let (monomial, coefficient) = multiply_terms(
+                let (monomial, coefficient) = self.multiply_terms(
                     left_monomial,
                     left_coefficient,
                     right_monomial,
                     right_coefficient,
                 )?;
-                insert_term(&mut product, monomial, coefficient)?;
+                self.insert_term(&mut product, monomial, coefficient)?;
                 bound_terms(&product)?;
             }
         }
@@ -399,7 +501,7 @@ impl Work {
 
     /// Raise a canonical value to an integer power.
     fn power(&mut self, base: &Canon, exponent: i64) -> Result<Canon, Undecidable> {
-        let sum = to_sum(base)?;
+        let sum = self.sum_of(base)?;
         if sum.is_empty() {
             return if exponent > 0 {
                 Ok(Canon::Rational(BigRational::zero()))
@@ -410,9 +512,9 @@ impl Work {
         if exponent == 0 {
             return Ok(Canon::Rational(BigRational::one()));
         }
-        if let Some((monomial, coefficient)) = single_term(&sum) {
+        if let Some((monomial, coefficient)) = one_term(&sum) {
             self.spend(monomial.len().saturating_add(1))?;
-            return power_of_term(monomial, coefficient, exponent);
+            return self.power_of_term(&monomial, &coefficient, exponent);
         }
         if exponent < 0 {
             let magnitude = exponent
@@ -438,43 +540,55 @@ impl Work {
 
     /// Build the reciprocal of a canonical value.
     fn reciprocal(&mut self, value: &Canon) -> Result<Canon, Undecidable> {
-        let sum = to_sum(value)?;
+        let sum = self.sum_of(value)?;
         if sum.is_empty() {
             return Err(Undecidable::new("a division by zero"));
         }
-        if let Some((monomial, coefficient)) = single_term(&sum) {
+        if let Some((monomial, coefficient)) = one_term(&sum) {
             self.spend(monomial.len().saturating_add(1))?;
-            return power_of_term(monomial, coefficient, -1);
+            return self.power_of_term(&monomial, &coefficient, -1);
         }
-        self.spend(sum.len())?;
-        let (content, primitive) = content_normalize(&sum)?;
+        let (content, primitive) = self.content_normalize(&sum)?;
         let mut monomial = Monomial::new();
-        let mut coefficient = bounded(reciprocal_of(&content)?)?;
+        let inverse = reciprocal_of(&content)?;
+        let mut coefficient = self.bounded(inverse)?;
         let atom = Atom::Inverse(Box::new(from_sum(primitive)));
-        add_atom(&mut monomial, &mut coefficient, &atom, 1)?;
+        self.add_atom(&mut monomial, &mut coefficient, &atom, 1)?;
         Ok(from_sum(term(monomial, coefficient)))
     }
 
     /// Apply a whitelisted function to canonical arguments.
     fn call(&mut self, name: &str, arguments: Vec<Canon>) -> Result<Canon, Undecidable> {
         self.spend(1)?;
+        // `ln` and `log` are one function: the natural logarithm. 1.0 makes `ln`
+        // an alias of `log`, and the corpus authors both spellings on the topic
+        // `change-of-base-formula`.
+        let name = if name == "ln" { "log" } else { name };
         if arguments.len() == 1 {
-            let only = arguments.first().and_then(integer_value);
-            if let Some(value) = only {
-                if name == "sqrt" {
-                    return self.root_of_integer(&value, arguments);
-                }
-                if name == "exp"
-                    && let Some(exponent) = value.to_i64()
-                {
-                    let mut monomial = Monomial::new();
-                    let mut coefficient = BigRational::one();
-                    add_atom(&mut monomial, &mut coefficient, &Atom::E, exponent)?;
-                    return Ok(from_sum(term(monomial, coefficient)));
-                }
+            if name == "sqrt"
+                && let Some(value) = arguments.first().and_then(integer_value)
+            {
+                return self.root_of_integer(&value, arguments);
+            }
+            if name == "exp"
+                && let Some(argument) = arguments.first()
+            {
+                let argument = argument.clone();
+                return self.exponential(&argument);
             }
         }
         Ok(atom_value(Atom::Call(name.to_string(), arguments)))
+    }
+
+    /// Read `exp(a)` into the canonical exponential.
+    ///
+    /// A whole `a` gives the atom `e` with exponent `a`, so `exp(2)` and `e**2`
+    /// are one value. Every other `a` gives [`Atom::Exp`].
+    fn exponential(&mut self, argument: &Canon) -> Result<Canon, Undecidable> {
+        let mut monomial = Monomial::new();
+        let mut coefficient = BigRational::one();
+        self.add_exp(&mut monomial, &mut coefficient, argument, 1)?;
+        Ok(from_sum(term(monomial, coefficient)))
     }
 
     /// Reduce `sqrt(n)` for a whole number `n` into `outside * sqrt(radicand)`.
@@ -494,25 +608,301 @@ impl Work {
         self.spend(1)?;
         let (outside, radicand) = extract_square(value)?;
         let mut monomial = Monomial::new();
-        let mut coefficient = bounded(BigRational::from_integer(outside))?;
+        let mut coefficient = self.bounded(BigRational::from_integer(outside))?;
         if !radicand.is_one() {
-            add_atom(&mut monomial, &mut coefficient, &Atom::Sqrt(radicand), 1)?;
+            self.add_atom(&mut monomial, &mut coefficient, &Atom::Sqrt(radicand), 1)?;
         }
         Ok(from_sum(term(monomial, coefficient)))
     }
-}
 
-/// Wrap a rational in its canonical form, after the size bound.
-fn rational(value: BigRational) -> Result<Canon, Undecidable> {
-    Ok(Canon::Rational(bounded(value)?))
-}
-
-/// Read a literal fraction, or refuse a zero denominator.
-fn exact_fraction(numerator: &BigInt, denominator: &BigInt) -> Result<Canon, Undecidable> {
-    if denominator.is_zero() {
-        return Err(Undecidable::new("a division by zero"));
+    /// Add one term into a sum, and drop a term whose coefficient cancels to zero.
+    fn insert_term(
+        &mut self,
+        sum: &mut Poly,
+        monomial: Monomial,
+        coefficient: BigRational,
+    ) -> Result<(), Undecidable> {
+        if coefficient.is_zero() {
+            return Ok(());
+        }
+        let total = match sum.get(&monomial) {
+            Some(present) => present.clone() + coefficient,
+            None => coefficient,
+        };
+        let total = self.bounded(total)?;
+        if total.is_zero() {
+            sum.remove(&monomial);
+        } else {
+            sum.insert(monomial, total);
+        }
+        Ok(())
     }
-    rational(BigRational::new(numerator.clone(), denominator.clone()))
+
+    /// Multiply two terms into one term.
+    fn multiply_terms(
+        &mut self,
+        left_monomial: &Monomial,
+        left_coefficient: &BigRational,
+        right_monomial: &Monomial,
+        right_coefficient: &BigRational,
+    ) -> Result<(Monomial, BigRational), Undecidable> {
+        let mut monomial = left_monomial.clone();
+        let product = left_coefficient * right_coefficient;
+        let mut coefficient = self.bounded(product)?;
+        for (atom, exponent) in right_monomial {
+            self.add_atom(&mut monomial, &mut coefficient, atom, *exponent)?;
+        }
+        Ok((monomial, coefficient))
+    }
+
+    /// Raise one term to an integer power.
+    fn power_of_term(
+        &mut self,
+        monomial: &Monomial,
+        coefficient: &BigRational,
+        exponent: i64,
+    ) -> Result<Canon, Undecidable> {
+        let mut out_monomial = Monomial::new();
+        let mut out_coefficient = self.rational_power(coefficient, exponent)?;
+        for (atom, atom_exponent) in monomial {
+            let scaled = atom_exponent
+                .checked_mul(exponent)
+                .ok_or_else(|| Undecidable::new("an exponent past the size bound"))?;
+            self.add_atom(&mut out_monomial, &mut out_coefficient, atom, scaled)?;
+        }
+        Ok(from_sum(term(out_monomial, out_coefficient)))
+    }
+
+    /// Multiply one atom power into a monomial, and move every square into the
+    /// coefficient.
+    ///
+    /// A monomial holds at most one [`Atom::Sqrt`], and that atom always has
+    /// exponent 1. `sqrt(2)**3` moves a factor 2 out, and `sqrt(2)*sqrt(3)`
+    /// becomes `sqrt(6)`. A monomial holds at most one [`Atom::Exp`] too, and a
+    /// power of it moves into its argument.
+    fn add_atom(
+        &mut self,
+        monomial: &mut Monomial,
+        coefficient: &mut BigRational,
+        atom: &Atom,
+        exponent: i64,
+    ) -> Result<(), Undecidable> {
+        if exponent == 0 {
+            return Ok(());
+        }
+        if let Atom::Exp(inner) = atom {
+            let inner = inner.as_ref().clone();
+            return self.add_exp(monomial, coefficient, &inner, exponent);
+        }
+        let Atom::Sqrt(radicand) = atom else {
+            let previous = monomial.get(atom).copied().unwrap_or(0);
+            let total = previous
+                .checked_add(exponent)
+                .ok_or_else(|| Undecidable::new("an exponent past the size bound"))?;
+            if total == 0 {
+                monomial.remove(atom);
+            } else {
+                monomial.insert(atom.clone(), total);
+            }
+            return Ok(());
+        };
+        let (squares, rest) = exponent.div_mod_floor(&2);
+        let factor = self.int_power(radicand, squares)?;
+        *coefficient = self.bounded(&*coefficient * factor)?;
+        if rest == 0 {
+            return Ok(());
+        }
+        let present = monomial.iter().find_map(|(key, _)| match key {
+            Atom::Sqrt(value) => Some(value.clone()),
+            _ => None,
+        });
+        let Some(present) = present else {
+            monomial.insert(Atom::Sqrt(radicand.clone()), 1);
+            return Ok(());
+        };
+        monomial.remove(&Atom::Sqrt(present.clone()));
+        let (outside, merged) = extract_square(&(present * radicand))?;
+        *coefficient = self.bounded(&*coefficient * BigRational::from_integer(outside))?;
+        if !merged.is_one() {
+            monomial.insert(Atom::Sqrt(merged), 1);
+        }
+        Ok(())
+    }
+
+    /// Multiply `e**(exponent * inner)` into a monomial.
+    ///
+    /// The exponent law lives here: a power of the atom scales the argument, and
+    /// two exponentials add their arguments. A whole argument gives the atom
+    /// [`Atom::E`] instead, so `exp(x)*exp(-x)` is 1 and `exp(x)*exp(2-x)` is
+    /// `e**2`.
+    fn add_exp(
+        &mut self,
+        monomial: &mut Monomial,
+        coefficient: &mut BigRational,
+        inner: &Canon,
+        exponent: i64,
+    ) -> Result<(), Undecidable> {
+        if exponent == 0 {
+            return Ok(());
+        }
+        let scaled = if exponent == 1 {
+            inner.clone()
+        } else {
+            let factor = Canon::Rational(BigRational::from_integer(BigInt::from(exponent)));
+            self.multiply(&factor, inner)?
+        };
+        let present = monomial.iter().find_map(|(key, _)| match key {
+            Atom::Exp(value) => Some(value.as_ref().clone()),
+            _ => None,
+        });
+        let total = match present {
+            Some(value) => {
+                monomial.remove(&Atom::Exp(Box::new(value.clone())));
+                self.add(&value, &scaled)?
+            }
+            None => scaled,
+        };
+        match integer_value(&total).as_ref().and_then(BigInt::to_i64) {
+            Some(whole) => self.add_atom(monomial, coefficient, &Atom::E, whole),
+            None => {
+                monomial.insert(Atom::Exp(Box::new(total)), 1);
+                Ok(())
+            }
+        }
+    }
+
+    /// Raise an integer to an integer power, as an exact rational.
+    fn int_power(&mut self, base: &BigInt, exponent: i64) -> Result<BigRational, Undecidable> {
+        if exponent == 0 {
+            return Ok(BigRational::one());
+        }
+        if base.is_zero() {
+            return if exponent > 0 {
+                Ok(BigRational::zero())
+            } else {
+                Err(Undecidable::new("a division by zero"))
+            };
+        }
+        let magnitude = exponent
+            .checked_abs()
+            .and_then(|value| u32::try_from(value).ok())
+            .ok_or_else(|| Undecidable::new("an exponent past the size bound"))?;
+        if base.bits().saturating_mul(u64::from(magnitude)) > MAX_BITS {
+            return Err(Undecidable::new("a number past the size bound"));
+        }
+        let power = base.pow(magnitude);
+        let value = if exponent > 0 {
+            BigRational::from_integer(power)
+        } else {
+            BigRational::new(BigInt::one(), power)
+        };
+        self.bounded(value)
+    }
+
+    /// Raise a rational to an integer power, as an exact rational.
+    fn rational_power(
+        &mut self,
+        value: &BigRational,
+        exponent: i64,
+    ) -> Result<BigRational, Undecidable> {
+        if value.is_zero() {
+            return if exponent > 0 {
+                Ok(BigRational::zero())
+            } else {
+                Err(Undecidable::new("a division by zero"))
+            };
+        }
+        let numerator = self.int_power(value.numer(), exponent)?;
+        let denominator = self.int_power(value.denom(), exponent)?;
+        self.bounded(numerator / denominator)
+    }
+
+    /// Split a sum into its rational content and its primitive part.
+    ///
+    /// The primitive part has coprime integer coefficients, and its greatest
+    /// monomial carries a positive coefficient. The content holds the sign.
+    /// `2*x + 2` therefore becomes `2` and `x + 1`, so `1/(x+1)` and `2/(2*x+2)`
+    /// are one value.
+    ///
+    /// The fold runs the size bound and the width charge after every step. The
+    /// least common multiple of many coprime denominators grows fast, and an
+    /// unbounded fold cost one check 8.4 s of CPU (M2 review 1, finding 5). The
+    /// width charge on the coefficients already empties the budget before a
+    /// bomb of that shape reaches this function, so the two bounds hold the same
+    /// case twice.
+    fn content_normalize(&mut self, sum: &Poly) -> Result<(BigRational, Poly), Undecidable> {
+        let mut numerator_gcd = BigInt::zero();
+        let mut denominator_lcm = BigInt::one();
+        for coefficient in sum.values() {
+            self.spend(1)?;
+            numerator_gcd = numerator_gcd.gcd(coefficient.numer());
+            denominator_lcm = denominator_lcm.lcm(coefficient.denom());
+            self.bounded_int(&numerator_gcd)?;
+            self.bounded_int(&denominator_lcm)?;
+        }
+        if numerator_gcd.is_zero() {
+            return Err(Undecidable::new("a division by zero"));
+        }
+        let leading_is_negative = sum
+            .iter()
+            .next_back()
+            .is_some_and(|(_, coefficient)| coefficient.is_negative());
+        let magnitude = BigRational::new(numerator_gcd, denominator_lcm);
+        let signed = if leading_is_negative {
+            -magnitude
+        } else {
+            magnitude
+        };
+        let content = self.bounded(signed)?;
+        let divisor = reciprocal_of(&content)?;
+        let mut primitive = Poly::new();
+        for (monomial, coefficient) in sum {
+            let scaled = self.bounded(coefficient * &divisor)?;
+            if !scaled.is_zero() {
+                primitive.insert(monomial.clone(), scaled);
+            }
+        }
+        Ok((content, primitive))
+    }
+
+    /// Promote a canonical form back into the internal sum of terms.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`Undecidable`] for a collection: a tuple, a set, a list, a range,
+    /// and a labeled value carry no arithmetic.
+    fn sum_of(&mut self, value: &Canon) -> Result<Poly, Undecidable> {
+        match value {
+            Canon::Rational(number) => Ok(term(Monomial::new(), number.clone())),
+            Canon::Radical(parts) => {
+                let mut sum = Poly::new();
+                for (basis, coefficient) in parts {
+                    let mut monomial = Monomial::new();
+                    if !basis.radicand.is_one() {
+                        monomial.insert(Atom::Sqrt(basis.radicand.clone()), 1);
+                    }
+                    if basis.pi != 0 {
+                        monomial.insert(Atom::Pi, basis.pi);
+                    }
+                    if basis.e != 0 {
+                        monomial.insert(Atom::E, basis.e);
+                    }
+                    self.insert_term(&mut sum, monomial, coefficient.clone())?;
+                }
+                Ok(sum)
+            }
+            Canon::Poly(parts) => Ok(parts.clone()),
+            Canon::Func(name, arguments) => {
+                let mut monomial = Monomial::new();
+                monomial.insert(Atom::Call(name.clone(), arguments.clone()), 1);
+                Ok(term(monomial, BigRational::one()))
+            }
+            Canon::Tuple(_) | Canon::Set(_) | Canon::List(_) | Canon::Interval { .. } => {
+                Err(Undecidable::new("arithmetic on a collection"))
+            }
+            Canon::Assign { .. } => Err(Undecidable::new("arithmetic on a labeled value")),
+        }
+    }
 }
 
 /// Build the canonical value of one atom with exponent 1 and coefficient 1.
@@ -540,20 +930,19 @@ fn single_term(sum: &Poly) -> Option<(&Monomial, &BigRational)> {
     }
 }
 
+/// Copy the only term of a sum, when the sum has exactly one.
+///
+/// The copy frees the borrow of the sum, so the caller keeps the work budget.
+fn one_term(sum: &Poly) -> Option<(Monomial, BigRational)> {
+    single_term(sum).map(|(monomial, coefficient)| (monomial.clone(), coefficient.clone()))
+}
+
 /// Read the whole-number value of a canonical form, when it is one.
 fn integer_value(value: &Canon) -> Option<BigInt> {
     match value {
         Canon::Rational(number) if number.is_integer() => Some(number.to_integer()),
         _ => None,
     }
-}
-
-/// Refuse a numerator or a denominator that goes past the size bound.
-fn bounded(value: BigRational) -> Result<BigRational, Undecidable> {
-    if value.numer().bits() > MAX_BITS || value.denom().bits() > MAX_BITS {
-        return Err(Undecidable::new("a number past the size bound"));
-    }
-    Ok(value)
 }
 
 /// Refuse a sum that goes past the term bound.
@@ -570,188 +959,6 @@ fn reciprocal_of(value: &BigRational) -> Result<BigRational, Undecidable> {
         return Err(Undecidable::new("a division by zero"));
     }
     Ok(value.recip())
-}
-
-/// Add one term into a sum, and drop a term whose coefficient cancels to zero.
-fn insert_term(
-    sum: &mut Poly,
-    monomial: Monomial,
-    coefficient: BigRational,
-) -> Result<(), Undecidable> {
-    if coefficient.is_zero() {
-        return Ok(());
-    }
-    match sum.entry(monomial) {
-        Entry::Vacant(slot) => {
-            slot.insert(bounded(coefficient)?);
-        }
-        Entry::Occupied(mut slot) => {
-            let total = bounded(slot.get().clone() + coefficient)?;
-            if total.is_zero() {
-                slot.remove();
-            } else {
-                slot.insert(total);
-            }
-        }
-    }
-    Ok(())
-}
-
-/// Multiply two terms into one term.
-fn multiply_terms(
-    left_monomial: &Monomial,
-    left_coefficient: &BigRational,
-    right_monomial: &Monomial,
-    right_coefficient: &BigRational,
-) -> Result<(Monomial, BigRational), Undecidable> {
-    let mut monomial = left_monomial.clone();
-    let mut coefficient = bounded(left_coefficient * right_coefficient)?;
-    for (atom, exponent) in right_monomial {
-        add_atom(&mut monomial, &mut coefficient, atom, *exponent)?;
-    }
-    Ok((monomial, coefficient))
-}
-
-/// Raise one term to an integer power.
-fn power_of_term(
-    monomial: &Monomial,
-    coefficient: &BigRational,
-    exponent: i64,
-) -> Result<Canon, Undecidable> {
-    let mut out_monomial = Monomial::new();
-    let mut out_coefficient = rational_power(coefficient, exponent)?;
-    for (atom, atom_exponent) in monomial {
-        let scaled = atom_exponent
-            .checked_mul(exponent)
-            .ok_or_else(|| Undecidable::new("an exponent past the size bound"))?;
-        add_atom(&mut out_monomial, &mut out_coefficient, atom, scaled)?;
-    }
-    Ok(from_sum(term(out_monomial, out_coefficient)))
-}
-
-/// Multiply one atom power into a monomial, and move every square into the coefficient.
-///
-/// A monomial holds at most one [`Atom::Sqrt`], and that atom always has exponent
-/// 1. `sqrt(2)**3` moves a factor 2 out, and `sqrt(2)*sqrt(3)` becomes `sqrt(6)`.
-fn add_atom(
-    monomial: &mut Monomial,
-    coefficient: &mut BigRational,
-    atom: &Atom,
-    exponent: i64,
-) -> Result<(), Undecidable> {
-    if exponent == 0 {
-        return Ok(());
-    }
-    let Atom::Sqrt(radicand) = atom else {
-        let previous = monomial.get(atom).copied().unwrap_or(0);
-        let total = previous
-            .checked_add(exponent)
-            .ok_or_else(|| Undecidable::new("an exponent past the size bound"))?;
-        if total == 0 {
-            monomial.remove(atom);
-        } else {
-            monomial.insert(atom.clone(), total);
-        }
-        return Ok(());
-    };
-    let (squares, rest) = exponent.div_mod_floor(&2);
-    *coefficient = bounded(&*coefficient * int_power(radicand, squares)?)?;
-    if rest == 0 {
-        return Ok(());
-    }
-    let present = monomial.iter().find_map(|(key, _)| match key {
-        Atom::Sqrt(value) => Some(value.clone()),
-        _ => None,
-    });
-    let Some(present) = present else {
-        monomial.insert(Atom::Sqrt(radicand.clone()), 1);
-        return Ok(());
-    };
-    monomial.remove(&Atom::Sqrt(present.clone()));
-    let (outside, merged) = extract_square(&(present * radicand))?;
-    *coefficient = bounded(&*coefficient * BigRational::from_integer(outside))?;
-    if !merged.is_one() {
-        monomial.insert(Atom::Sqrt(merged), 1);
-    }
-    Ok(())
-}
-
-/// Raise an integer to an integer power, as an exact rational.
-fn int_power(base: &BigInt, exponent: i64) -> Result<BigRational, Undecidable> {
-    if exponent == 0 {
-        return Ok(BigRational::one());
-    }
-    if base.is_zero() {
-        return if exponent > 0 {
-            Ok(BigRational::zero())
-        } else {
-            Err(Undecidable::new("a division by zero"))
-        };
-    }
-    let magnitude = exponent
-        .checked_abs()
-        .and_then(|value| u32::try_from(value).ok())
-        .ok_or_else(|| Undecidable::new("an exponent past the size bound"))?;
-    if base.bits().saturating_mul(u64::from(magnitude)) > MAX_BITS {
-        return Err(Undecidable::new("a number past the size bound"));
-    }
-    let power = base.pow(magnitude);
-    let value = if exponent > 0 {
-        BigRational::from_integer(power)
-    } else {
-        BigRational::new(BigInt::one(), power)
-    };
-    bounded(value)
-}
-
-/// Raise a rational to an integer power, as an exact rational.
-fn rational_power(value: &BigRational, exponent: i64) -> Result<BigRational, Undecidable> {
-    if value.is_zero() {
-        return if exponent > 0 {
-            Ok(BigRational::zero())
-        } else {
-            Err(Undecidable::new("a division by zero"))
-        };
-    }
-    let numerator = int_power(value.numer(), exponent)?;
-    let denominator = int_power(value.denom(), exponent)?;
-    bounded(numerator / denominator)
-}
-
-/// Split a sum into its rational content and its primitive part.
-///
-/// The primitive part has coprime integer coefficients, and its greatest monomial
-/// carries a positive coefficient. The content holds the sign. `2*x + 2` therefore
-/// becomes `2` and `x + 1`, so `1/(x+1)` and `2/(2*x+2)` are one value.
-fn content_normalize(sum: &Poly) -> Result<(BigRational, Poly), Undecidable> {
-    let mut numerator_gcd = BigInt::zero();
-    let mut denominator_lcm = BigInt::one();
-    for coefficient in sum.values() {
-        numerator_gcd = numerator_gcd.gcd(coefficient.numer());
-        denominator_lcm = denominator_lcm.lcm(coefficient.denom());
-    }
-    if numerator_gcd.is_zero() {
-        return Err(Undecidable::new("a division by zero"));
-    }
-    let leading_is_negative = sum
-        .iter()
-        .next_back()
-        .is_some_and(|(_, coefficient)| coefficient.is_negative());
-    let magnitude = BigRational::new(numerator_gcd, denominator_lcm);
-    let content = bounded(if leading_is_negative {
-        -magnitude
-    } else {
-        magnitude
-    })?;
-    let divisor = reciprocal_of(&content)?;
-    let mut primitive = Poly::new();
-    for (monomial, coefficient) in sum {
-        let scaled = bounded(coefficient * &divisor)?;
-        if !scaled.is_zero() {
-            primitive.insert(monomial.clone(), scaled);
-        }
-    }
-    Ok((content, primitive))
 }
 
 /// Split a positive integer into `outside^2 * radicand` with a squarefree radicand.
@@ -813,44 +1020,6 @@ fn extract_square(value: &BigInt) -> Result<(BigInt, BigInt), Undecidable> {
 /// Turn an overflowed unsigned product into a refusal.
 fn checked(value: Option<u128>) -> Result<u128, Undecidable> {
     value.ok_or_else(|| Undecidable::new("a radicand past the factoring bound"))
-}
-
-/// Promote a canonical form back into the internal sum of terms.
-///
-/// # Errors
-///
-/// Returns [`Undecidable`] for a collection: a tuple, a set, a list, and a range
-/// carry no arithmetic.
-fn to_sum(value: &Canon) -> Result<Poly, Undecidable> {
-    match value {
-        Canon::Rational(number) => Ok(term(Monomial::new(), number.clone())),
-        Canon::Radical(parts) => {
-            let mut sum = Poly::new();
-            for (basis, coefficient) in parts {
-                let mut monomial = Monomial::new();
-                if !basis.radicand.is_one() {
-                    monomial.insert(Atom::Sqrt(basis.radicand.clone()), 1);
-                }
-                if basis.pi != 0 {
-                    monomial.insert(Atom::Pi, basis.pi);
-                }
-                if basis.e != 0 {
-                    monomial.insert(Atom::E, basis.e);
-                }
-                insert_term(&mut sum, monomial, coefficient.clone())?;
-            }
-            Ok(sum)
-        }
-        Canon::Poly(parts) => Ok(parts.clone()),
-        Canon::Func(name, arguments) => {
-            let mut monomial = Monomial::new();
-            monomial.insert(Atom::Call(name.clone(), arguments.clone()), 1);
-            Ok(term(monomial, BigRational::one()))
-        }
-        Canon::Tuple(_) | Canon::Set(_) | Canon::List(_) | Canon::Interval { .. } => {
-            Err(Undecidable::new("arithmetic on a collection"))
-        }
-    }
 }
 
 /// Demote a sum of terms to the narrowest canonical variant that holds it.

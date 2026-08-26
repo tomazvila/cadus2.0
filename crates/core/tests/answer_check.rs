@@ -20,7 +20,10 @@
 use std::collections::BTreeMap;
 use std::time::{Duration, Instant};
 
-use cadus_core::answer::{Atom, Basis, Canon, Monomial, Outcome, Verdict, canonical_form, check};
+use cadus_core::answer::check::same_answer;
+use cadus_core::answer::{
+    Ast, Atom, Basis, Canon, Monomial, Outcome, Verdict, canon, canonical_form, check,
+};
 use cadus_core::curriculum::AnswerKind;
 use num_bigint::BigInt;
 use num_rational::BigRational;
@@ -69,6 +72,47 @@ fn var(name: &str) -> Atom {
 /// Canonicalize one answer, and fail the test when the grammar refuses it.
 fn form(text: &str) -> Canon {
     canonical_form(text).unwrap_or_else(|e| panic!("{text:?}: {}", e.reason))
+}
+
+/// Build a radical literal from one radicand and its coefficient.
+fn radical(radicand: i64, coefficient: BigRational) -> Canon {
+    Canon::Radical(BTreeMap::from([(
+        Basis {
+            radicand: BigInt::from(radicand),
+            pi: 0,
+            e: 0,
+        },
+        coefficient,
+    )]))
+}
+
+/// Whether the run asks for the release budget of L2.
+///
+/// A debug build runs the exact arithmetic about ten times slower than a release
+/// build, so the two builds carry two budgets. `CADUS_RELEASE_BENCH` selects the
+/// release budget of 5 ms per check and 1 s per corpus pass. A plain
+/// `cargo test` run keeps the debug budget of 50 ms and 5 s, which measures the
+/// work and not the scheduler (`docs/reviews/M2-review-1.md`, finding 20).
+fn release_bench() -> bool {
+    std::env::var_os("CADUS_RELEASE_BENCH").is_some()
+}
+
+/// The wall-clock budget of one check.
+fn one_check_budget() -> Duration {
+    if release_bench() {
+        Duration::from_millis(5)
+    } else {
+        Duration::from_millis(50)
+    }
+}
+
+/// The wall-clock budget of one pass over the whole corpus.
+fn corpus_budget() -> Duration {
+    if release_bench() {
+        Duration::from_secs(1)
+    } else {
+        Duration::from_secs(5)
+    }
 }
 
 // ---------------------------------------------------------------------------
@@ -360,6 +404,42 @@ fn a_radical_is_reduced_to_a_squarefree_radicand() {
 }
 
 #[test]
+fn a_radical_product_extracts_the_square_of_the_merged_radicand() {
+    // M2 review 1, finding 15. `sqrt(2)*sqrt(3)` alone leaves the merge untested:
+    // its merged radicand, 6, is already squarefree. Every pair below merges into
+    // a radicand that carries a square, so the extraction has to run.
+    assert_eq!(form("sqrt(2)*sqrt(8)"), Canon::Rational(whole(4)));
+    assert_eq!(form("sqrt(2)*sqrt(2)"), Canon::Rational(whole(2)));
+    assert_eq!(form("sqrt(12)*sqrt(3)"), Canon::Rational(whole(6)));
+    assert_eq!(form("sqrt(6)*sqrt(3)"), radical(2, whole(3)));
+    assert_eq!(form("sqrt(2)*sqrt(6)"), radical(3, whole(2)));
+    // 1.0 answers True for every pair below.
+    assert_eq!(check("4", "sqrt(2)*sqrt(8)", N), decided(true, false));
+    assert_eq!(check("2", "sqrt(2)*sqrt(2)", N), decided(true, false));
+    assert_eq!(check("6", "sqrt(12)*sqrt(3)", N), decided(true, false));
+    assert_eq!(
+        check("3*sqrt(2)", "sqrt(6)*sqrt(3)", E),
+        decided(true, false)
+    );
+    assert_eq!(
+        check("2*sqrt(3)", "sqrt(2)*sqrt(6)", E),
+        decided(true, false)
+    );
+    // C4: the merge must not accept a different value. Each learner answer below
+    // is the product of two radicals with a different value.
+    assert_eq!(check("4", "sqrt(2)*sqrt(6)", N), decided(false, false));
+    assert_eq!(check("16", "sqrt(2)*sqrt(8)", N), decided(false, false));
+    assert_eq!(
+        check("3*sqrt(2)", "sqrt(6)*sqrt(2)", E),
+        decided(false, false)
+    );
+    assert_eq!(
+        check("2*sqrt(3)", "sqrt(6)*sqrt(3)", E),
+        decided(false, false)
+    );
+}
+
+#[test]
 fn a_radicand_that_is_not_a_whole_number_stays_a_function() {
     let x = Canon::Poly(BTreeMap::from([(monomial(&[(var("x"), 1)]), whole(1))]));
     assert_eq!(form("sqrt(x)"), Canon::Func("sqrt".to_string(), vec![x]));
@@ -411,6 +491,202 @@ fn a_set_is_unordered_and_a_list_and_a_tuple_are_ordered() {
     assert_eq!(check("(4, 17)", "(17, 4)", N), decided(false, false));
     // A tuple compares its members by value, which 1.0 cannot do (spec 7.7).
     assert_eq!(check("(4, 17)", "(4, 17.0)", N), decided(true, false));
+}
+
+#[test]
+fn a_set_a_list_and_a_tuple_are_three_different_answers() {
+    // M2 review 1, finding 14. The test above reorders inside one collection
+    // kind only, so nothing pinned the kind itself. 1.0 answers False for every
+    // cross-kind pair below and True for the repeated set member.
+    let one_three_five = Canon::Set(
+        [
+            Canon::Rational(whole(1)),
+            Canon::Rational(whole(3)),
+            Canon::Rational(whole(5)),
+        ]
+        .into_iter()
+        .collect(),
+    );
+    assert_eq!(form("{1, 3, 5}"), one_three_five);
+    assert_eq!(
+        form("[1, 3, 5]"),
+        Canon::List(vec![
+            Canon::Rational(whole(1)),
+            Canon::Rational(whole(3)),
+            Canon::Rational(whole(5)),
+        ])
+    );
+    assert_eq!(
+        form("(1, 3, 5)"),
+        Canon::Tuple(vec![
+            Canon::Rational(whole(1)),
+            Canon::Rational(whole(3)),
+            Canon::Rational(whole(5)),
+        ])
+    );
+    assert_eq!(check("{1, 3, 5}", "[1, 3, 5]", E), decided(false, false));
+    assert_eq!(check("{1, 3, 5}", "(1, 3, 5)", E), decided(false, false));
+    assert_eq!(check("[1, 3, 5]", "(1, 3, 5)", E), decided(false, false));
+    assert_eq!(check("[1, 3, 5]", "{1, 3, 5}", E), decided(false, false));
+    // A repeated set member collapses, and a repeated list member does not.
+    assert_eq!(check("{1, 3, 5}", "{1, 3, 5, 5}", E), decided(true, false));
+    assert_eq!(check("[1, 3, 5]", "[1, 3, 5, 5]", E), decided(false, false));
+}
+
+#[test]
+fn an_open_interval_end_is_not_a_closed_one() {
+    // M2 review 1, finding 13. Every range assertion of U2 pinned a closed end,
+    // so three closedness mutants lived. 1.0 answers False for every pair below.
+    let open_chain = Canon::Interval {
+        var: Some("x".to_string()),
+        lo: Some(Box::new(Canon::Rational(whole(-1)))),
+        lo_closed: false,
+        hi: Some(Box::new(Canon::Rational(whole(3)))),
+        hi_closed: false,
+    };
+    assert_eq!(form("-1 < x < 3"), open_chain);
+    let open_above = Canon::Interval {
+        var: Some("x".to_string()),
+        lo: None,
+        lo_closed: false,
+        hi: Some(Box::new(Canon::Rational(whole(3)))),
+        hi_closed: false,
+    };
+    assert_eq!(form("x < 3"), open_above);
+    let open_below = Canon::Interval {
+        var: Some("x".to_string()),
+        lo: Some(Box::new(Canon::Rational(whole(4)))),
+        lo_closed: false,
+        hi: None,
+        hi_closed: false,
+    };
+    assert_eq!(form("x > 4"), open_below);
+    let half_open_high = Canon::Interval {
+        var: None,
+        lo: Some(Box::new(Canon::Rational(whole(0)))),
+        lo_closed: false,
+        hi: Some(Box::new(Canon::Rational(whole(1)))),
+        hi_closed: true,
+    };
+    assert_eq!(form("(0, 1]"), half_open_high);
+    let half_open_low = Canon::Interval {
+        var: None,
+        lo: Some(Box::new(Canon::Rational(whole(0)))),
+        lo_closed: true,
+        hi: Some(Box::new(Canon::Rational(whole(1)))),
+        hi_closed: false,
+    };
+    assert_eq!(form("[0, 1)"), half_open_low);
+    // C4: a strict end never accepts a closed one, in either direction.
+    assert_eq!(
+        check("-1 <= x <= 3", "-1 < x < 3", E),
+        decided(false, false)
+    );
+    assert_eq!(
+        check("-1 < x < 3", "-1 <= x <= 3", E),
+        decided(false, false)
+    );
+    assert_eq!(check("x <= 3", "x < 3", E), decided(false, false));
+    assert_eq!(check("x > 4", "x >= 4", E), decided(false, false));
+    assert_eq!(check("x >= 4", "x > 4", E), decided(false, false));
+    assert_eq!(check("(0, 1]", "[0, 1)", E), decided(false, false));
+    assert_eq!(check("(0, 1]", "[0, 1]", E), decided(false, false));
+}
+
+#[test]
+fn ln_and_log_are_one_function() {
+    // M2 review 1, finding 8. 1.0 makes `ln` an alias of `log`, and the corpus
+    // authors both spellings on the topic `change-of-base-formula`.
+    // 1.0: True for the first two pairs.
+    assert_eq!(
+        check("log(12)/log(5)", "ln(12)/ln(5)", E),
+        decided(true, false)
+    );
+    assert_eq!(
+        check("ln(7)/ln(3)", "log(7)/log(3)", E),
+        decided(true, false)
+    );
+    assert_eq!(form("ln(x)"), form("log(x)"));
+    // C4: the alias must not accept another value or another function.
+    assert_eq!(
+        check("log(12)/log(5)", "ln(12)/ln(7)", E),
+        decided(false, false)
+    );
+    assert_eq!(check("ln(2)", "log(3)", E), decided(false, false));
+    assert_eq!(check("ln(x)", "sin(x)", E), decided(false, false));
+    assert_eq!(check("ln(x)", "log(x, 2)", E), decided(false, false));
+}
+
+#[test]
+fn an_exponential_obeys_the_exponent_law() {
+    // M2 review 1, finding 19. A reciprocal of an exponential is the negative
+    // exponent. 1.0 answers True for every pair below.
+    assert_eq!(check("e^(-x)", "1/e^x", E), decided(true, false));
+    assert_eq!(
+        check("e^(-x)(2x - x^2)", "(2x - x^2)/e^x", E),
+        decided(true, false)
+    );
+    assert_eq!(
+        check("-2x e^(-x^2)", "-2x/e^(x^2)", E),
+        decided(true, false)
+    );
+    assert_eq!(
+        check("$-(x^2 + 2x + 2)/e^x + C$", "-(x^2 + 2x + 2)e^(-x) + C", E),
+        decided(true, false)
+    );
+    assert_eq!(check("exp(x)**3", "exp(3*x)", E), decided(true, false));
+    assert_eq!(check("1", "e^x*e^(-x)", E), decided(true, false));
+    // A whole argument keeps the atom `e`, so `exp(2)` and `e**2` stay one value.
+    assert_eq!(check("e**2", "e^x*e^(2-x)", E), decided(true, false));
+    // The canonical form of a symbolic exponential.
+    let x = Canon::Poly(BTreeMap::from([(monomial(&[(var("x"), 1)]), whole(1))]));
+    let exponential = Canon::Poly(BTreeMap::from([(
+        monomial(&[(Atom::Exp(Box::new(x)), 1)]),
+        whole(1),
+    )]));
+    assert_eq!(form("e^x"), exponential);
+    assert_eq!(form("exp(x)"), exponential);
+    // C4: the exponent law must not accept a different exponent or a sign flip.
+    assert_eq!(check("e^x", "e^(2x)", E), decided(false, false));
+    assert_eq!(check("e^x", "e^(-x)", E), decided(false, false));
+    assert_eq!(check("1/e^x", "e^x", E), decided(false, false));
+    assert_eq!(check("e^(x^2)", "e^x", E), decided(false, false));
+    assert_eq!(check("e^(2x)", "2*e^x", E), decided(false, false));
+    assert_eq!(check("e^x*e^y", "e^x", E), decided(false, false));
+}
+
+/// Build the canonical form of one labeled whole number, `<var> = <value>`.
+fn labeled(var: &str, value: i64) -> Canon {
+    let ast = Ast::Assign {
+        var: var.to_string(),
+        value: Box::new(Ast::Integer(BigInt::from(value))),
+    };
+    canon(&ast).unwrap_or_else(|e| panic!("{var} = {value}: {}", e.reason))
+}
+
+#[test]
+fn a_value_label_names_the_unknown_it_answers_for() {
+    // M2 review 1, the ruling on findings 2, 10, and 16. A leading `x =` is a
+    // label. 1.0 answers False for `x = 4` against `y = 4`.
+    assert_eq!(
+        labeled("x", 4),
+        Canon::Assign {
+            var: "x".to_string(),
+            value: Box::new(Canon::Rational(whole(4))),
+        }
+    );
+    assert!(same_answer(&labeled("x", 4), &labeled("x", 4)));
+    // Two labels: the two names are one name, casefolded, or the answer is wrong.
+    assert!(same_answer(&labeled("x", 4), &labeled("X", 4)));
+    assert!(!same_answer(&labeled("x", 4), &labeled("y", 4)));
+    assert!(!same_answer(&labeled("y", 4), &labeled("x", 4)));
+    assert!(!same_answer(&labeled("x", 4), &labeled("x", 5)));
+    // One label only: the label falls away (the V4 tolerance of M2.md).
+    let four = Canon::Rational(whole(4));
+    assert!(same_answer(&four, &labeled("y", 4)));
+    assert!(same_answer(&labeled("y", 4), &four));
+    assert!(!same_answer(&four, &labeled("y", 5)));
+    assert!(!same_answer(&labeled("y", 5), &four));
 }
 
 #[test]
@@ -503,13 +779,16 @@ fn the_corpus_self_check_holds_the_l2_budget() {
         );
     }
     let total = start.elapsed();
+    let corpus_budget = corpus_budget();
     assert!(
-        total < Duration::from_secs(1),
-        "the 3,492 self-checks took {total:?}, and the budget is 1 s"
+        total < corpus_budget,
+        "the 3,492 self-checks took {total:?}, and the budget is {corpus_budget:?}"
     );
+    let one_check_budget = one_check_budget();
     assert!(
-        worst < Duration::from_millis(5),
-        "the longest single check took {worst:?} on {worst_answer:?}, and the budget is 5 ms"
+        worst < one_check_budget,
+        "the longest single check took {worst:?} on {worst_answer:?}, \
+         and the budget is {one_check_budget:?}"
     );
 }
 
@@ -531,14 +810,97 @@ fn the_corpus_canonicalization_holds_the_l2_budget() {
         }
     }
     let total = start.elapsed();
+    let corpus_budget = corpus_budget();
     assert!(
-        total < Duration::from_secs(1),
-        "the 3,492 canonicalizations took {total:?}, and the budget is 1 s"
+        total < corpus_budget,
+        "the 3,492 canonicalizations took {total:?}, and the budget is {corpus_budget:?}"
     );
+    let one_check_budget = one_check_budget();
     assert!(
-        worst < Duration::from_millis(5),
-        "the longest canonicalization took {worst:?} on {worst_answer:?}, and the budget is 5 ms"
+        worst < one_check_budget,
+        "the longest canonicalization took {worst:?} on {worst_answer:?}, \
+         and the budget is {one_check_budget:?}"
     );
+}
+
+/// Build the reciprocal bomb of M2 review 1, finding 5.
+///
+/// The answer is `1/(a/3**250 + b/5**250 + …)`: every term carries a coprime
+/// denominator, so the least common multiple of the content normalization grows
+/// by about 580 bits per term. The shape is inside the section 8.1 grammar and
+/// inside the 4,000-character input cap.
+fn reciprocal_bomb(terms: usize) -> String {
+    const NAMES: [&str; 40] = [
+        "a", "b", "c", "d", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s",
+        "u", "v", "w", "x", "y", "z", "A", "B", "C", "D", "F", "G", "H", "I", "J", "K", "L", "M",
+        "N", "O", "P", "Q",
+    ];
+    const PRIMES: [u32; 40] = [
+        3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89,
+        97, 101, 103, 107, 109, 113, 127, 131, 137, 139, 149, 151, 157, 163, 167, 173, 179,
+    ];
+    let mut parts: Vec<String> = Vec::new();
+    for index in 0..terms {
+        let name = NAMES[index % NAMES.len()];
+        let prime = PRIMES[index % PRIMES.len()];
+        let power = 1 + index / NAMES.len();
+        let numerator = if power == 1 {
+            name.to_string()
+        } else {
+            format!("{name}**{power}")
+        };
+        parts.push(format!("{numerator}/{prime}**250"));
+    }
+    // The last term brings the answer to the 2,072 characters of the review.
+    parts.push("R/2**11".to_string());
+    format!("1/({})", parts.join(" + "))
+}
+
+#[test]
+fn the_reciprocal_bomb_of_review_1_is_refused_inside_the_budget() {
+    // M2 review 1, findings 5 and 11. The content normalization folded an
+    // unbounded least common multiple, and this one answer cost 8.4 s of CPU in
+    // a release build. The fold now runs the size bound and the width charge
+    // after every step.
+    let bomb = reciprocal_bomb(143);
+    assert_eq!(bomb.chars().count(), 2_072, "the reviewer's answer length");
+    let start = Instant::now();
+    let outcome = check("1", &bomb, E);
+    let elapsed = start.elapsed();
+    assert!(
+        matches!(outcome, Outcome::Undecidable(_)),
+        "the bomb gave {outcome:?}"
+    );
+    let one_check_budget = one_check_budget();
+    assert!(
+        elapsed < one_check_budget,
+        "the 2,072-character bomb took {elapsed:?}, and the budget is {one_check_budget:?}"
+    );
+}
+
+#[test]
+fn a_wide_coefficient_costs_more_than_a_narrow_one() {
+    // M2 review 1, finding 11. `MAX_STEPS` charged term operations only, so a
+    // 20-character answer spent 155 ms in a release build on 4,096-bit
+    // coefficients. The budget now charges the width of every number it builds.
+    for bomb in [
+        "((7/3)**23*x+y)**616",
+        "(x+(7/3)**23)**512",
+        "(2*x+3*y)**900",
+    ] {
+        let start = Instant::now();
+        let outcome = check("1", bomb, E);
+        let elapsed = start.elapsed();
+        assert!(
+            matches!(outcome, Outcome::Undecidable(_)),
+            "{bomb:?} gave {outcome:?}"
+        );
+        let one_check_budget = one_check_budget();
+        assert!(
+            elapsed < one_check_budget,
+            "{bomb:?} took {elapsed:?}, and the budget is {one_check_budget:?}"
+        );
+    }
 }
 
 // ---------------------------------------------------------------------------
