@@ -2,7 +2,10 @@
 //!
 //! Every number and every message below is a literal from
 //! `docs/reference/curriculum-1.0-spec.md` or from a run of the 1.0 loader over
-//! the fixture. No expected value comes from the code under test.
+//! the fixture. No expected value comes from the code under test. The messages
+//! of the forms 2.0 refuses and 1.0 accepts come from the table of spec
+//! section 7, "2.0 strictness"; each test names the 1.0 behavior it departs
+//! from.
 
 #![allow(
     clippy::unwrap_used,
@@ -403,14 +406,16 @@ fn unit_files_load_in_code_point_order_and_not_recursively() {
 fn a_yaml_1_1_boolean_yes_is_a_schema_error() {
     // Pinned choice: the loader reads YAML 1.2, so `yes` is the string "yes"
     // and not the boolean true. 1.0 runs PyYAML, which reads YAML 1.1 and
-    // accepts `yes`. The checked-in tree writes `true` and `false` only
-    // (`grep -rn "core: " curriculum`), so the two loaders agree on it.
+    // accepts `yes`. The message is 2.0's own (review finding 16): it names the
+    // form and the fix, and it does not borrow the pydantic text for a value
+    // pydantic accepts. The checked-in tree writes `true` and `false` only, so
+    // the two loaders agree on it.
     let parsed = parse_curriculum(&fixture("yaml-1-1-booleans"));
     assert_eq!(
         triples(&parsed),
         vec![(
             "schema",
-            "topics.0.core: Input should be a valid boolean, unable to interpret input",
+            "topics.0.core: YAML 1.1 boolean 'yes' is not accepted; write true or false",
             Some("demo/01-basics.yaml"),
         )]
     );
@@ -435,4 +440,380 @@ fn the_checked_in_tree_writes_no_yaml_1_1_boolean() {
     // Spec section 3: `core: True 725, False 365` and `drill: True 22`.
     assert_eq!(cores, 725, "core topics");
     assert_eq!(drills, 22, "drill topics");
+}
+
+// --------------------------------------------------------------------------- //
+// Numbers out of range
+// --------------------------------------------------------------------------- //
+
+#[test]
+fn nan_and_the_infinities_are_out_of_range() {
+    // Review finding 1. `difficulty` and `weight` must be finite and in 0..=1.
+    // The four messages below are the 1.0 output for this fixture: pydantic
+    // `Field(ge=0.0, le=1.0)` reports the upper bound for NaN and for `.inf`,
+    // and the lower bound for `-.inf`.
+    let parsed = parse_curriculum(&fixture("loader-nonfinite"));
+    assert_eq!(
+        triples(&parsed),
+        vec![
+            (
+                "schema",
+                "topics.0.difficulty: Input should be less than or equal to 1",
+                Some("c/00.yaml"),
+            ),
+            (
+                "schema",
+                "topics.1.difficulty: Input should be less than or equal to 1",
+                Some("c/00.yaml"),
+            ),
+            (
+                "weight_out_of_range",
+                "topics.1.prerequisites.0.weight: Input should be less than or equal to 1",
+                Some("c/00.yaml"),
+            ),
+            (
+                "schema",
+                "topics.2.difficulty: Input should be greater than or equal to 0",
+                Some("c/00.yaml"),
+            ),
+        ]
+    );
+    assert!(parsed.units.is_empty(), "the file is dropped");
+}
+
+// --------------------------------------------------------------------------- //
+// File discovery: dot-prefixed and symlinked unit files
+// --------------------------------------------------------------------------- //
+
+#[test]
+fn a_dot_prefixed_and_a_symlinked_unit_file_both_load() {
+    // Review finding 2. 1.0 globs with `pathlib.Path.glob`, which returns a
+    // dot-prefixed name and follows a symlink. A 1.0 load of this fixture reads
+    // 3 unit files and the topics `hid`, `plain` and `linked`. A dot sorts
+    // before a digit, so the hidden file is first.
+    let parsed = parse_curriculum(&fixture("loader-hidden-and-symlinked-units"));
+    assert_eq!(triples(&parsed), Vec::new());
+    let names: Vec<&str> = parsed.units.iter().map(|u| u.file_name.as_str()).collect();
+    assert_eq!(
+        names,
+        vec![".00-hidden.yaml", "01-plain.yaml", "02-linked.yaml"]
+    );
+    let ids: Vec<&str> = parsed
+        .units
+        .iter()
+        .map(|u| u.unit.topics[0].id.as_str())
+        .collect();
+    assert_eq!(ids, vec!["hid", "plain", "linked"]);
+}
+
+// --------------------------------------------------------------------------- //
+// The lax scalars of 1.0 that 2.0 keeps
+// --------------------------------------------------------------------------- //
+
+#[test]
+fn a_whole_number_float_is_an_integer() {
+    // Review finding 4. 1.0 pydantic validates in lax mode, so
+    // `expected_time_secs: 60.0` is 60 and `order: 1.0` is 1. A 1.0 lint of this
+    // fixture writes no parse-stage finding. Spec section 7, "2.0 strictness".
+    let parsed = parse_curriculum(&fixture("loader-lax-numbers"));
+    assert_eq!(triples(&parsed), Vec::new());
+    let catalog = parsed.catalog.clone().expect("courses.yaml loads");
+    assert_eq!(catalog.courses[0].order, 1);
+    assert_eq!(parsed.units[0].unit.topics[0].expected_time_secs, 60);
+}
+
+#[test]
+fn a_utf8_bom_is_accepted() {
+    // Review finding 20. The BOM shifts the first key to column 3, which ends
+    // the document for libyaml. Python removes it before the parser runs, so 1.0
+    // reads the file with no finding. Spec section 7, "2.0 strictness".
+    let parsed = parse_curriculum(&fixture("loader-bom"));
+    assert_eq!(triples(&parsed), Vec::new());
+    assert_eq!(parsed.units.len(), 1);
+    assert_eq!(parsed.units[0].unit.topics[0].id.as_str(), "a");
+}
+
+#[test]
+fn a_yaml_1_1_scalar_in_a_string_field_stays_a_string() {
+    // Review finding 17. 1.0 refuses this fixture with three `schema` findings
+    // (`topics.0.name`, `topics.1.name` and
+    // `topics.1.diagnostic_exemplar.answer`: `Input should be a valid string`),
+    // because PyYAML resolves `no` to a boolean and `2020-01-01` to a date. 2.0
+    // reads YAML 1.2, where both stay the text the author wrote, and keeps them.
+    // Spec section 7, "2.0 strictness".
+    let parsed = parse_curriculum(&fixture("loader-yaml-1-1-strings"));
+    assert_eq!(triples(&parsed), Vec::new());
+    let topics = &parsed.units[0].unit.topics;
+    assert_eq!(topics[0].name, "no");
+    assert_eq!(topics[1].name, "2020-01-01");
+    let exemplar = topics[1]
+        .diagnostic_exemplar
+        .as_ref()
+        .expect("the fixture writes a diagnostic exemplar");
+    assert_eq!(exemplar.answer, "no");
+}
+
+// --------------------------------------------------------------------------- //
+// The YAML 1.1 forms 2.0 refuses
+// --------------------------------------------------------------------------- //
+
+#[test]
+fn a_duplicate_mapping_key_is_a_schema_finding() {
+    // Review finding 8. PyYAML keeps the last value and 1.0 loads the file with
+    // no finding; `serde_norway` refuses the document. 2.0 names the form and
+    // the line instead of passing the parser text through.
+    let parsed = parse_curriculum(&fixture("loader-duplicate-key"));
+    assert_eq!(
+        triples(&parsed),
+        vec![(
+            "schema",
+            "c/00.yaml: duplicate mapping key 'name' at line 5",
+            Some("c/00.yaml"),
+        )]
+    );
+    assert!(parsed.findings[0].fatal);
+}
+
+#[test]
+fn the_yaml_1_1_integer_forms_are_schema_findings() {
+    // Review findings 18 and 21. PyYAML reads `030` as 24, `1_200` as 1200 and
+    // `1:30` as 90, and a Python integer has no upper bound. 2.0 refuses all
+    // four and names the value to write.
+    let parsed = parse_curriculum(&fixture("loader-integer-forms"));
+    assert_eq!(
+        triples(&parsed),
+        vec![
+            (
+                "schema",
+                "topics.0.expected_time_secs: integer 030 is not accepted; write 24",
+                Some("c/00.yaml"),
+            ),
+            (
+                "schema",
+                "topics.1.expected_time_secs: integer 1_200 is not accepted; write 1200",
+                Some("c/00.yaml"),
+            ),
+            (
+                "schema",
+                "topics.2.expected_time_secs: integer 1:30 is not accepted; write 90",
+                Some("c/00.yaml"),
+            ),
+            (
+                "schema",
+                "topics.3.expected_time_secs: integer literal outside the 64-bit range",
+                Some("c/00.yaml"),
+            ),
+        ]
+    );
+}
+
+#[test]
+fn an_integer_past_the_unsigned_range_is_the_same_schema_finding() {
+    // Review finding 21. `18446744073709551616` fits no `serde_norway` number,
+    // so the parser refuses the whole document. The port reports the same code,
+    // the same dotted location and the same message as the literal one step
+    // below the range (the test above), and not the parser's own text.
+    let parsed = parse_curriculum(&fixture("loader-huge-integer"));
+    assert_eq!(
+        triples(&parsed),
+        vec![(
+            "schema",
+            "topics.0.expected_time_secs: integer literal outside the 64-bit range",
+            Some("c/00.yaml"),
+        )]
+    );
+}
+
+#[test]
+fn a_merge_key_is_one_schema_finding() {
+    // Review finding 19. PyYAML flattens `<<` into the mapping and 1.0 loads
+    // both topics. 2.0 refuses the form, and reports it once: the merged fields
+    // are absent only because of the merge key, so a "Field required" finding
+    // for each of them names a phantom defect.
+    let parsed = parse_curriculum(&fixture("loader-merge-key"));
+    assert_eq!(
+        triples(&parsed),
+        vec![(
+            "schema",
+            "topics.1.<<: merge keys are not accepted; write the fields out",
+            Some("c/00.yaml"),
+        )]
+    );
+}
+
+#[test]
+fn the_scalar_forms_1_0_coerces_carry_the_2_0_message() {
+    // Review findings 16 and 27. 1.0 validates in pydantic lax mode, so it reads
+    // `"0.3"` as 0.3, `"30"` as 30, `1` as true, `"true"` as true, and `true` as
+    // 1.0 in a float field. 2.0 refuses each one, and refuses it in its own
+    // words: pydantic's wording is reserved for the values pydantic also
+    // refuses. The two messages for `topics.4.core` and `topics.5.core` below
+    // are the 1.0 output for this fixture; 1.0 reports nothing for the other
+    // five topics.
+    let parsed = parse_curriculum(&fixture("loader-strict-scalars"));
+    assert_eq!(
+        triples(&parsed),
+        vec![
+            (
+                "schema",
+                "topics.0.difficulty: string '0.3' is not accepted; write the number unquoted",
+                Some("c/00.yaml"),
+            ),
+            (
+                "schema",
+                "topics.1.expected_time_secs: string '30' is not accepted; write 30",
+                Some("c/00.yaml"),
+            ),
+            (
+                "schema",
+                "topics.2.core: number 1 is not accepted; write true or false",
+                Some("c/00.yaml"),
+            ),
+            (
+                "schema",
+                "topics.3.core: string 'true' is not accepted; write true or false",
+                Some("c/00.yaml"),
+            ),
+            (
+                "schema",
+                "topics.4.core: Input should be a valid boolean, unable to interpret input",
+                Some("c/00.yaml"),
+            ),
+            (
+                "schema",
+                "topics.5.core: Input should be a valid boolean",
+                Some("c/00.yaml"),
+            ),
+            (
+                "schema",
+                "topics.6.difficulty: boolean true is not accepted; write a number",
+                Some("c/00.yaml"),
+            ),
+        ]
+    );
+}
+
+// --------------------------------------------------------------------------- //
+// The checked-in tree writes no YAML 1.1 form
+// --------------------------------------------------------------------------- //
+
+/// Every `*.yaml` file under a directory, at any depth.
+fn yaml_files(dir: &Path) -> Vec<PathBuf> {
+    let mut out = Vec::new();
+    let mut stack = vec![dir.to_path_buf()];
+    while let Some(next) = stack.pop() {
+        for entry in std::fs::read_dir(&next).expect("the tree is readable") {
+            let path = entry.expect("a directory entry").path();
+            if path.is_dir() {
+                stack.push(path);
+            } else if path
+                .extension()
+                .is_some_and(|extension| extension == "yaml")
+            {
+                out.push(path);
+            }
+        }
+    }
+    out.sort();
+    out
+}
+
+/// The plain scalar one line writes, or `None` when the line writes a quoted
+/// scalar, a block, a comment, or no value at all.
+///
+/// This walk is deliberately independent of the loader: it reads the bytes an
+/// author wrote, so it sees the difference between `answer: no` and
+/// `answer: "no"` that the parsed document no longer holds.
+fn plain_scalar(line: &str) -> Option<&str> {
+    let mut rest = line.trim();
+    while let Some(tail) = rest.strip_prefix("- ") {
+        rest = tail.trim_start();
+    }
+    if rest.starts_with('#') {
+        return None;
+    }
+    let value = match rest.split_once(": ") {
+        Some((_, value)) => value.trim(),
+        None if rest.ends_with(':') => return None,
+        None => rest,
+    };
+    if value.is_empty() || value.starts_with(['\'', '"', '|', '>', '&', '*', '#', '{', '[']) {
+        return None;
+    }
+    Some(value)
+}
+
+/// True for a plain scalar that YAML 1.1 resolves to a boolean or an integer and
+/// YAML 1.2 leaves as a string (spec section 7, "2.0 strictness").
+fn is_yaml_1_1_form(value: &str) -> bool {
+    let lower = value.to_ascii_lowercase();
+    if matches!(lower.as_str(), "y" | "n" | "yes" | "no" | "on" | "off") {
+        return true;
+    }
+    let digits = lower.trim_start_matches(['-', '+']);
+    if digits.is_empty() {
+        return false;
+    }
+    let octal = digits.len() > 1
+        && digits.starts_with('0')
+        && digits[1..].chars().all(|c| ('0'..='7').contains(&c));
+    let underscored =
+        digits.contains('_') && digits.chars().all(|c| c.is_ascii_digit() || c == '_');
+    let sexagesimal =
+        digits.contains(':') && digits.chars().all(|c| c.is_ascii_digit() || c == ':');
+    octal || underscored || sexagesimal
+}
+
+#[test]
+fn the_checked_in_tree_uses_no_yaml_1_1_form() {
+    // The guard for the pinned choice of spec section 7, "2.0 strictness": the
+    // tree must load the same way under 1.0 and under 2.0, so it may write no
+    // form the two versions read differently. The positive control below runs
+    // first, so a scan that stopped working cannot report a clean tree.
+    for line in [
+        "  core: yes",
+        "  drill: Off",
+        "  - N",
+        "  expected_time_secs: 030",
+        "  expected_time_secs: 1_200",
+        "  expected_time_secs: 1:30",
+    ] {
+        let value = plain_scalar(line).expect("the line writes a plain scalar");
+        assert!(is_yaml_1_1_form(value), "{line} writes a YAML 1.1 form");
+    }
+    for line in [
+        "  answer: \"no\"",
+        "  answer: 'yes'",
+        "  core: true",
+        "  expected_time_secs: 30",
+        "  difficulty: 0.3",
+        "  problem: |",
+        "  # a comment",
+    ] {
+        let clean = plain_scalar(line).is_none_or(|value| !is_yaml_1_1_form(value));
+        assert!(clean, "{line} writes no YAML 1.1 form");
+    }
+
+    let files = yaml_files(&curriculum_root());
+    // Spec section 1: 88 unit files plus `courses.yaml`.
+    assert_eq!(files.len(), 89, "YAML files in the tree");
+
+    let mut hits: Vec<String> = Vec::new();
+    for path in &files {
+        let text = std::fs::read_to_string(path).expect("a unit file is readable");
+        let name = path.display().to_string();
+        assert!(!text.starts_with('\u{feff}'), "{name} starts with a BOM");
+        for (index, line) in text.lines().enumerate() {
+            let number = index + 1;
+            if line.trim_start().starts_with("<<") {
+                hits.push(format!("{name}:{number}: merge key"));
+            }
+            if let Some(value) = plain_scalar(line)
+                && is_yaml_1_1_form(value)
+            {
+                hits.push(format!("{name}:{number}: {value}"));
+            }
+        }
+    }
+    assert_eq!(hits, Vec::<String>::new(), "YAML 1.1 forms in the tree");
 }

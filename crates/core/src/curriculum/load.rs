@@ -30,6 +30,26 @@ const COURSES_FILE: &str = "courses.yaml";
 /// The extension of a unit file. 1.0 globs `*.yaml`, so `.yml` is invisible.
 const UNIT_EXTENSION: &str = ".yaml";
 
+/// The YAML merge key. PyYAML flattens it into the mapping; 2.0 rejects it.
+const MERGE_KEY: &str = "<<";
+
+/// The message for an integer literal that no `i64` holds. Python integers have
+/// no upper bound, so 1.0 reads such a literal and 2.0 refuses it.
+const OUT_OF_RANGE_INTEGER: &str = "integer literal outside the 64-bit range";
+
+/// The text `serde_norway` writes for a repeated mapping key, up to the key.
+const DUPLICATE_KEY_MARKER: &str = "duplicate entry with key \"";
+
+/// The text `serde_norway` writes for an integer literal outside `i64`/`u64`.
+const BIG_INTEGER_MARKERS: [&str; 2] = [" as u128, expected", " as i128, expected"];
+
+/// `i64::MIN` as an `f64`. The conversion is exact: the value is a power of two.
+const I64_MIN_AS_F64: f64 = -9_223_372_036_854_775_808.0;
+
+/// The first `f64` above `i64::MAX`. `i64::MAX` itself has no `f64` form, so the
+/// range test is half-open and `as i64` never saturates.
+const I64_MAX_EXCLUSIVE_AS_F64: f64 = 9_223_372_036_854_775_808.0;
+
 /// The parse stage could not start.
 #[derive(Debug, Clone, PartialEq, Eq, thiserror::Error)]
 pub enum ParseError {
@@ -285,18 +305,17 @@ pub fn load_raw_curriculum(root: &Path) -> Result<(RawCurriculum, Vec<Finding>),
 /// The unit file names of one course directory, in code-point order.
 ///
 /// The glob of 1.0 is `*.yaml` and it is not recursive, so a subdirectory and a
-/// `.yml` file stay invisible (parity traps 2 and 3).
+/// `.yml` file stay invisible (parity traps 2 and 3). The name test is the only
+/// test: Python `pathlib.Path.glob` reads a dot-prefixed name and follows a
+/// symlink, so a filter on either one drops content that 1.0 loads.
 fn unit_file_names(course_dir: &Path) -> Result<Vec<String>, std::io::Error> {
     let mut names = Vec::new();
     for entry in fs::read_dir(course_dir)? {
         let entry = entry?;
-        if !entry.file_type()?.is_file() {
-            continue;
-        }
         let Some(name) = entry.file_name().to_str().map(str::to_owned) else {
             continue;
         };
-        if name.starts_with('.') || !name.ends_with(UNIT_EXTENSION) {
+        if !name.ends_with(UNIT_EXTENSION) {
             continue;
         }
         names.push(name);
@@ -314,9 +333,12 @@ fn read_document(path: &Path, rel: &str) -> Result<Value, Box<Finding>> {
     let text = fs::read_to_string(path).map_err(|error| {
         Box::new(Finding::new("yaml", format!("{rel}: {error}")).with_file(rel))
     })?;
-    let value: Value = serde_norway::from_str(&text).map_err(|error| {
-        Box::new(Finding::new("yaml", format!("{rel}: {error}")).with_file(rel))
-    })?;
+    // Accept a UTF-8 BOM. An editor on Windows writes one, the Python side
+    // removes it before the parser sees it, and libyaml does not (spec section 7,
+    // "2.0 strictness").
+    let text = text.strip_prefix('\u{feff}').unwrap_or(text.as_str());
+    let value: Value = serde_norway::from_str(text)
+        .map_err(|error| Box::new(parse_finding(rel, &error.to_string())))?;
     Ok(if is_falsy(&value) {
         Value::Mapping(Mapping::new())
     } else {
@@ -358,10 +380,11 @@ where
     if !checker.out.is_empty() {
         return Err(checker.out);
     }
-    // A residual error means the walk and the types disagree. Report it rather
-    // than drop the file in silence.
+    // A residual error means the walk and the types disagree. The walk covers
+    // every field of spec section 1, so this is a backstop: report it with the
+    // file as the location rather than drop the file in silence.
     T::deserialize(document.clone())
-        .map_err(|error| vec![Finding::new("schema", format!(": {error}")).with_file(file)])
+        .map_err(|error| vec![Finding::new("schema", format!("{file}: {error}")).with_file(file)])
 }
 
 /// Walks a YAML document against the schema of spec section 1 and collects the
@@ -412,9 +435,22 @@ impl<'a> Checker<'a> {
     }
 
     /// The mapping of a struct value, or `None` after a report.
+    ///
+    /// A merge key stops the walk of that mapping. PyYAML flattens `<<` into the
+    /// mapping and 2.0 does not (spec section 7, "2.0 strictness"), so every
+    /// merged field looks absent. One finding on the merge key names the cause;
+    /// a list of "Field required" findings names a phantom one.
     fn struct_map<'v>(&mut self, value: &'v Value, type_name: &str) -> Option<&'v Mapping> {
         match value {
-            Value::Mapping(map) => Some(map),
+            Value::Mapping(map) => {
+                if map.contains_key(Value::String(MERGE_KEY.to_owned())) {
+                    self.push(MERGE_KEY);
+                    self.report("merge keys are not accepted; write the fields out");
+                    self.pop();
+                    return None;
+                }
+                Some(map)
+            }
             _ => {
                 self.report(&format!(
                     "Input should be a valid dictionary or instance of {type_name}"
@@ -492,48 +528,57 @@ impl<'a> Checker<'a> {
     }
 
     fn check_bool(&mut self, value: &Value) {
-        if !matches!(value, Value::Bool(_)) {
-            let message = if matches!(value, Value::String(_)) {
-                "Input should be a valid boolean, unable to interpret input"
-            } else {
-                "Input should be a valid boolean"
-            };
-            self.report(message);
+        if let Some(message) = bool_message(value) {
+            self.report(&message);
         }
     }
 
     /// A float in the closed range 0..=1 (`difficulty` and `weight`).
     fn check_unit_interval(&mut self, value: &Value) {
-        let Some(number) = as_f64(value) else {
-            let message = if matches!(value, Value::String(_)) {
-                "Input should be a valid number, unable to parse string as a number"
-            } else {
-                "Input should be a valid number"
-            };
-            self.report(message);
-            return;
+        let number = match value {
+            Value::Number(number) => match number.as_f64() {
+                Some(number) => number,
+                None => {
+                    self.report("Input should be a valid number");
+                    return;
+                }
+            },
+            Value::Bool(flag) => {
+                self.report(&format!("boolean {flag} is not accepted; write a number"));
+                return;
+            }
+            Value::String(text) => {
+                let message = string_number_message(text);
+                self.report(&message);
+                return;
+            }
+            _ => {
+                self.report("Input should be a valid number");
+                return;
+            }
         };
-        if number < 0.0 {
-            self.report_range("Input should be greater than or equal to 0");
-        } else if number > 1.0 {
+        // 1.0 pydantic reports the upper bound for NaN and for both infinities
+        // out of the two bounds it holds, so the port reports the same one.
+        if number.is_nan() || number > 1.0 {
             self.report_range("Input should be less than or equal to 1");
+        } else if number < 0.0 {
+            self.report_range("Input should be greater than or equal to 0");
         }
     }
 
     fn check_int(&mut self, value: &Value) {
-        if as_i64(value).is_none() {
-            let message = int_message(value);
-            self.report(message);
+        if let Some(message) = int_message(value) {
+            self.report(&message);
         }
     }
 
     fn check_positive_int(&mut self, value: &Value) {
-        match as_i64(value) {
-            Some(number) if number > 0 => {}
-            Some(_) => self.report_range("Input should be greater than 0"),
+        match int_message(value) {
+            Some(message) => self.report(&message),
             None => {
-                let message = int_message(value);
-                self.report(message);
+                if as_i64(value).is_none_or(|number| number <= 0) {
+                    self.report_range("Input should be greater than 0");
+                }
             }
         }
     }
@@ -726,16 +771,8 @@ fn key_name(key: &Value) -> String {
     }
 }
 
-/// The float behind a YAML scalar. A YAML integer is a valid float here, the
-/// same as in 1.0.
-fn as_f64(value: &Value) -> Option<f64> {
-    match value {
-        Value::Number(number) => number.as_f64(),
-        _ => None,
-    }
-}
-
-/// The integer behind a YAML scalar. A float with no fractional part counts.
+/// The integer behind a YAML scalar. A float with no fractional part counts,
+/// the same as 1.0 pydantic in lax mode (spec section 7, "2.0 strictness").
 fn as_i64(value: &Value) -> Option<i64> {
     let Value::Number(number) = value else {
         return None;
@@ -744,19 +781,249 @@ fn as_i64(value: &Value) -> Option<i64> {
         return Some(integer);
     }
     let float = number.as_f64()?;
-    if float.fract() == 0.0 && float >= i64::MIN as f64 && float <= i64::MAX as f64 {
+    if float.fract() == 0.0 && (I64_MIN_AS_F64..I64_MAX_EXCLUSIVE_AS_F64).contains(&float) {
         return Some(float as i64);
     }
     None
 }
 
-/// The message for a value that is not an integer.
-fn int_message(value: &Value) -> &'static str {
+/// The message for a value that is not an integer, or `None` when it is one.
+///
+/// 1.0 validates in pydantic lax mode, so it accepts values 2.0 refuses. This
+/// function writes the pydantic text only where pydantic also refuses the value.
+/// Every other message is 2.0's own, and it names the fix (spec section 7,
+/// "2.0 strictness").
+fn int_message(value: &Value) -> Option<String> {
     match value {
-        Value::Number(_) => "Input should be a valid integer, got a number with a fractional part",
-        Value::String(_) => "Input should be a valid integer, unable to parse string as an integer",
-        _ => "Input should be a valid integer",
+        Value::Number(number) => {
+            if number.as_i64().is_some() {
+                return None;
+            }
+            if number.as_u64().is_some() {
+                // Above `i64::MAX`. Python integers have no upper bound.
+                return Some(OUT_OF_RANGE_INTEGER.to_owned());
+            }
+            let Some(float) = number.as_f64() else {
+                return Some("Input should be a valid integer".to_owned());
+            };
+            if !float.is_finite() {
+                return Some("Input should be a finite number".to_owned());
+            }
+            if float.fract() != 0.0 {
+                return Some(
+                    "Input should be a valid integer, got a number with a fractional part"
+                        .to_owned(),
+                );
+            }
+            if !(I64_MIN_AS_F64..I64_MAX_EXCLUSIVE_AS_F64).contains(&float) {
+                return Some(
+                    "Unable to parse input string as an integer, exceeded maximum size".to_owned(),
+                );
+            }
+            None
+        }
+        Value::Bool(flag) => Some(format!("boolean {flag} is not accepted; write an integer")),
+        Value::String(text) => Some(match yaml_1_1_integer(text) {
+            Yaml11Integer::Value(number) => {
+                format!("integer {text} is not accepted; write {number}")
+            }
+            Yaml11Integer::OutOfRange => OUT_OF_RANGE_INTEGER.to_owned(),
+            Yaml11Integer::No => match text.trim().parse::<i64>() {
+                Ok(number) => format!("string '{text}' is not accepted; write {number}"),
+                Err(_) => "Input should be a valid integer, unable to parse string as an integer"
+                    .to_owned(),
+            },
+        }),
+        _ => Some("Input should be a valid integer".to_owned()),
     }
+}
+
+/// The message for a value that is not a boolean, or `None` when it is one.
+fn bool_message(value: &Value) -> Option<String> {
+    match value {
+        Value::Bool(_) => None,
+        Value::String(text) => Some(if is_yaml_1_1_bool(text) {
+            format!("YAML 1.1 boolean '{text}' is not accepted; write true or false")
+        } else if is_lax_bool_text(text) {
+            format!("string '{text}' is not accepted; write true or false")
+        } else {
+            "Input should be a valid boolean, unable to interpret input".to_owned()
+        }),
+        Value::Number(number) => Some(match number.as_f64() {
+            // 1.0 pydantic reads 0 and 1 as booleans, in both the integer and
+            // the float form.
+            Some(float) if float == 0.0 || float == 1.0 => {
+                format!("number {number} is not accepted; write true or false")
+            }
+            Some(float) if float.is_finite() && float.fract() == 0.0 => {
+                "Input should be a valid boolean, unable to interpret input".to_owned()
+            }
+            _ => "Input should be a valid boolean".to_owned(),
+        }),
+        _ => Some("Input should be a valid boolean".to_owned()),
+    }
+}
+
+/// The message for a string in a `difficulty` or `weight` field.
+fn string_number_message(text: &str) -> String {
+    match yaml_1_1_integer(text) {
+        Yaml11Integer::Value(number) => format!("integer {text} is not accepted; write {number}"),
+        Yaml11Integer::OutOfRange => OUT_OF_RANGE_INTEGER.to_owned(),
+        Yaml11Integer::No => {
+            if text.trim().parse::<f64>().is_ok() {
+                format!("string '{text}' is not accepted; write the number unquoted")
+            } else {
+                "Input should be a valid number, unable to parse string as a number".to_owned()
+            }
+        }
+    }
+}
+
+/// True for a plain scalar that YAML 1.1 reads as a boolean and YAML 1.2 reads
+/// as a string. The YAML 1.1 words are `y`, `n`, `yes`, `no`, `on` and `off`, in
+/// any case (`true` and `false` are booleans in both versions).
+fn is_yaml_1_1_bool(text: &str) -> bool {
+    matches!(
+        text.to_ascii_lowercase().as_str(),
+        "y" | "n" | "yes" | "no" | "on" | "off"
+    )
+}
+
+/// True for a string that 1.0 pydantic reads as a boolean in lax mode.
+fn is_lax_bool_text(text: &str) -> bool {
+    matches!(
+        text.to_ascii_lowercase().as_str(),
+        "true" | "false" | "t" | "f" | "1" | "0" | "yes" | "no" | "on" | "off" | "y" | "n"
+    )
+}
+
+/// What a plain scalar is worth to the YAML 1.1 integer resolver of PyYAML.
+enum Yaml11Integer {
+    /// A YAML 1.1 integer literal and the value 1.0 gives it.
+    Value(i64),
+    /// A YAML 1.1 integer literal that no `i64` holds.
+    OutOfRange,
+    /// Not a YAML 1.1 integer literal.
+    No,
+}
+
+/// The value PyYAML gives a plain scalar that YAML 1.2 reads as a string: an
+/// octal `060`, an underscore group `1_200`, or a sexagesimal `1:30`.
+fn yaml_1_1_integer(text: &str) -> Yaml11Integer {
+    let (negative, digits) = match text.strip_prefix('-') {
+        Some(rest) => (true, rest),
+        None => (false, text.strip_prefix('+').unwrap_or(text)),
+    };
+    let leads = digits.starts_with(|character: char| character.is_ascii_digit());
+    let value = if digits.contains(':') {
+        sexagesimal_value(digits)
+    } else if let Some(octal) = digits.strip_prefix('0').filter(|_| digits.len() > 1) {
+        radix_value(octal, 8)
+    } else if digits.contains('_') && leads {
+        radix_value(digits, 10)
+    } else {
+        return Yaml11Integer::No;
+    };
+    match value {
+        None => Yaml11Integer::No,
+        Some(None) => Yaml11Integer::OutOfRange,
+        Some(Some(value)) if negative => match value.checked_neg() {
+            Some(value) => Yaml11Integer::Value(value),
+            None => Yaml11Integer::OutOfRange,
+        },
+        Some(Some(value)) => Yaml11Integer::Value(value),
+    }
+}
+
+/// The value of a digit group with `_` separators. The outer `None` means the
+/// text is not a digit group of that radix; the inner one means it overflows.
+fn radix_value(text: &str, radix: u32) -> Option<Option<i64>> {
+    let mut value: Option<i64> = Some(0);
+    let mut digits = 0_usize;
+    for character in text.chars() {
+        if character == '_' {
+            continue;
+        }
+        let digit = character.to_digit(radix)?;
+        digits += 1;
+        value = value
+            .and_then(|value| value.checked_mul(i64::from(radix)))
+            .and_then(|value| value.checked_add(i64::from(digit)));
+    }
+    if digits == 0 {
+        return None;
+    }
+    Some(value)
+}
+
+/// The value of a `1:30` sexagesimal group: base 60, most significant first.
+///
+/// The PyYAML pattern is `[1-9][0-9_]*(:[0-5]?[0-9])+`, so the first group is a
+/// decimal number and every later group is one base-60 place.
+fn sexagesimal_value(text: &str) -> Option<Option<i64>> {
+    let mut value: Option<i64> = Some(0);
+    let mut groups = 0_usize;
+    for group in text.split(':') {
+        let digits = if groups == 0 {
+            if !group.starts_with(|character: char| ('1'..='9').contains(&character)) {
+                return None;
+            }
+            radix_value(group, 10)?
+        } else {
+            let place = group.parse::<i64>().ok().filter(|place| *place < 60)?;
+            if group.len() > 2 {
+                return None;
+            }
+            Some(place)
+        };
+        groups += 1;
+        value = value
+            .and_then(|value| value.checked_mul(60))
+            .and_then(|value| digits.and_then(|digits| value.checked_add(digits)));
+    }
+    if groups < 2 {
+        return None;
+    }
+    Some(value)
+}
+
+/// The finding for a document the YAML parser rejects.
+///
+/// Two of those rejections are YAML 1.1 forms that 1.0 accepts, and the parser
+/// text names neither the form nor the fix, so the port writes its own message
+/// with the `schema` code (spec section 7, "2.0 strictness"). Every other parser
+/// error keeps the 1.0 `yaml` code and text.
+fn parse_finding(rel: &str, error: &str) -> Finding {
+    if let Some((_, tail)) = error.split_once(DUPLICATE_KEY_MARKER)
+        && let Some((key, tail)) = tail.split_once('"')
+    {
+        let line = tail
+            .split_once("at line ")
+            .and_then(|(_, tail)| tail.split(' ').next())
+            .unwrap_or("?");
+        return Finding::new(
+            "schema",
+            format!("{rel}: duplicate mapping key '{key}' at line {line}"),
+        )
+        .with_file(rel);
+    }
+    for marker in BIG_INTEGER_MARKERS {
+        if let Some((head, _)) = error.split_once(marker) {
+            let loc = head
+                .split_once(": invalid type")
+                .map_or(rel, |(loc, _)| loc);
+            let loc = if loc.is_empty() { rel } else { loc };
+            return Finding::new("schema", format!("{}: {OUT_OF_RANGE_INTEGER}", dotted(loc)))
+                .with_file(rel);
+        }
+    }
+    Finding::new("yaml", format!("{rel}: {error}")).with_file(rel)
+}
+
+/// The dotted form of the bracket path of a parser error: `topics[0].id` becomes
+/// `topics.0.id`, which is the location shape of spec section 5, rule 2.
+fn dotted(loc: &str) -> String {
+    loc.replace('[', ".").replace(']', "")
 }
 
 /// `'a', 'b' or 'c'` — the alternatives list of a pydantic enum message.

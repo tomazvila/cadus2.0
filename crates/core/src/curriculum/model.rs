@@ -8,11 +8,50 @@
 
 use std::fmt;
 
+use serde::de::{Deserializer, Unexpected, Visitor};
 use serde::{Deserialize, Serialize};
 
 /// The default of `Topic::core` (spec section 1).
 fn default_true() -> bool {
     true
+}
+
+/// Reads an integer field the way 1.0 pydantic reads one in lax mode: a YAML
+/// float with no fractional part is an integer, so `expected_time_secs: 60.0`
+/// is 60 (spec section 7, "2.0 strictness"). The loader walk accepts the same
+/// values, so the two stay in step and no file is dropped between them.
+struct LaxI64;
+
+impl Visitor<'_> for LaxI64 {
+    type Value = i64;
+
+    fn expecting(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
+        formatter.write_str("an integer, or a float with no fractional part")
+    }
+
+    fn visit_i64<E: serde::de::Error>(self, value: i64) -> Result<i64, E> {
+        Ok(value)
+    }
+
+    fn visit_u64<E: serde::de::Error>(self, value: u64) -> Result<i64, E> {
+        i64::try_from(value).map_err(|_| E::invalid_value(Unexpected::Unsigned(value), &self))
+    }
+
+    fn visit_f64<E: serde::de::Error>(self, value: f64) -> Result<i64, E> {
+        // The upper bound is exclusive: `i64::MAX` has no `f64` form, so the
+        // cast below would saturate on the first float above it.
+        if value.fract() == 0.0
+            && (-9_223_372_036_854_775_808.0..9_223_372_036_854_775_808.0).contains(&value)
+        {
+            return Ok(value as i64);
+        }
+        Err(E::invalid_value(Unexpected::Float(value), &self))
+    }
+}
+
+/// Deserialize an integer field in the lax mode of 1.0 (see [`LaxI64`]).
+fn lax_i64<'de, D: Deserializer<'de>>(deserializer: D) -> Result<i64, D::Error> {
+    deserializer.deserialize_any(LaxI64)
 }
 
 /// A slug is empty after the outer whitespace is removed.
@@ -186,6 +225,7 @@ pub struct Topic {
     #[serde(default)]
     pub drill: bool,
     pub answer_kind: AnswerKind,
+    #[serde(deserialize_with = "lax_i64")]
     pub expected_time_secs: i64,
     #[serde(default)]
     pub prerequisites: Vec<PrereqEdge>,
@@ -220,6 +260,7 @@ pub struct Unit {
 pub struct Course {
     pub id: Slug,
     pub name: String,
+    #[serde(deserialize_with = "lax_i64")]
     pub order: i64,
     #[serde(default)]
     pub mastery_floor: Vec<Slug>,

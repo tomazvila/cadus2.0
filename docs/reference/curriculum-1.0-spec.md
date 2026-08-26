@@ -15,7 +15,9 @@ curriculum/
 
 - `courses.yaml` is mandatory (`cadus/graph.py:570-572`). The directory name comes
   from `course.id` (`graph.py:583`). Unit files: `sorted(course_dir.glob("*.yaml"))`
-  (`graph.py:593`) — non-recursive, `.yaml` only; `.yml` is invisible.
+  (`graph.py:593`) — non-recursive, `.yaml` only; `.yml` is invisible. The name is
+  the only test `pathlib.Path.glob` applies: it returns a dot-prefixed name and it
+  follows a symlink, so the port filters on neither.
 - Real tree: 13 course directories, 88 unit files, 89 YAML files.
 - Every model forbids unknown keys (`model.py:26-29`, `extra="forbid"`). Rust:
   `#[serde(deny_unknown_fields)]` on every struct.
@@ -109,7 +111,14 @@ Distinct weights in the tree: 0.0, 0.2, 0.25, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.85
 - Encompassing maps (`graph.py:286-321`): `_enc[src][dst]` keeps only weights that
   beat the 0.0 default (weight-0 edges absent); `_enc_rev[dst][src]` records every
   edge, weight 0 included, because `neighborhood()` reads its keys. Counts: 3200
-  forward, 3282 reverse, from 3282 declared edges (81 weight-0 edges, 1 duplicated pair).
+  forward, 3282 reverse, from 3282 declared edges (3281 prerequisites and 1
+  `encompassings_extra`). Of the 3282, 82 carry weight 0, which is exactly the
+  forward/reverse difference: 3200 + 82 = 3282. All 3282 `(src, dst)` pairs are
+  distinct, so no declared edge repeats and the "keep the larger weight" branch of
+  `_add_enc` (`graph.py:314-321`) never runs on the checked-in tree; a test of that
+  branch needs a synthetic fixture. Measured with the 1.0 code on the tree in this
+  repository: `weight-0 declared edges 82`, `duplicated (src, dst) pairs 0`,
+  `_enc forward entries 3200`, `_enc_rev entries 3282`.
 - `W(a -> b)` = max over paths of the product of edge weights, by a stack-based
   relaxation (`graph.py:178-198`), memoized per source; `W(a, a) = 1.0`; strict `>`
   comparison, LIFO pop order over an insertion-ordered map.
@@ -208,7 +217,8 @@ A double-quoted YAML scalar with `\\mid` resolves to one backslash
 5. `multi-step` wire value.
 6. `Slug` strips whitespace before matching.
 7. Dangling prerequisites dropped; dangling `encompassings_extra` kept.
-8. `_enc` / `_enc_rev` asymmetry for weight-0 edges (81 real edges).
+8. `_enc` / `_enc_rev` asymmetry for weight-0 edges (82 real edges; every declared
+   pair is distinct, so the max-keeps-the-larger branch needs a synthetic fixture).
 9. Float products in `W` are order-sensitive in the last bit; replay the LIFO order
    or compare with a tolerance in the parity test.
 10. No order dependence on hash-set iteration.
@@ -221,6 +231,65 @@ A double-quoted YAML scalar with `\\mid` resolves to one backslash
 16. JSON floats: shortest round-trip in both languages; verify on the whole dump.
 17. Do not port the mtime cache; load once into an `Arc` arena.
 18. The curriculum hash is a 2.0 decision (see §3).
+
+### 2.0 strictness
+
+1.0 reads YAML with PyYAML `safe_load`, which resolves the YAML 1.1 tag set, and it
+validates with pydantic in lax mode. 2.0 reads YAML with `serde_norway`, which
+resolves the YAML 1.2 core schema, and 2.0 does not emulate PyYAML. This section
+lists every deliberate difference between the two loaders. The 2.0 loader reports
+each rejected form with the `schema` code and a message that names the form and the
+fix. The pydantic message text stays reserved for the values pydantic also rejects,
+so a 1.0 message never appears on a value 1.0 accepts.
+
+Rejected by 2.0, accepted by 1.0:
+
+| Form | 1.0 reads | 2.0 message |
+|---|---|---|
+| `core: yes` (also `no`, `on`, `off`, `y`, `n`, in any case) | `True` | `topics.0.core: YAML 1.1 boolean 'yes' is not accepted; write true or false` |
+| `core: "true"` (a string pydantic coerces) | `True` | `topics.0.core: string 'true' is not accepted; write true or false` |
+| `core: 1`, `core: 0` | `True`, `False` | `topics.0.core: number 1 is not accepted; write true or false` |
+| `expected_time_secs: 030` (octal) | `24` | `topics.0.expected_time_secs: integer 030 is not accepted; write 24` |
+| `expected_time_secs: 1_200` (underscore) | `1200` | `topics.0.expected_time_secs: integer 1_200 is not accepted; write 1200` |
+| `expected_time_secs: 1:30` (sexagesimal) | `90` | `topics.0.expected_time_secs: integer 1:30 is not accepted; write 90` |
+| `expected_time_secs: "30"` (a quoted integer) | `30` | `topics.0.expected_time_secs: string '30' is not accepted; write 30` |
+| `difficulty: "0.3"` (a quoted number) | `0.3` | `topics.0.difficulty: string '0.3' is not accepted; write the number unquoted` |
+| `difficulty: true` | `1.0` | `topics.0.difficulty: boolean true is not accepted; write a number` |
+| an integer literal outside `i64` | the Python integer | `topics.0.expected_time_secs: integer literal outside the 64-bit range` |
+| a repeated mapping key | the last value | `c/00.yaml: duplicate mapping key 'name' at line 5` |
+| `<<: *anchor` (a merge key) | the merged fields | `topics.1.<<: merge keys are not accepted; write the fields out` |
+
+An integer literal outside `i64` takes two paths inside the parser — one literal
+above `i64::MAX` still fits `u64`, one past `u64` fits no number at all — and both
+paths report the one message above, with the `schema` code and the dotted location.
+
+Accepted by 2.0, the same as 1.0:
+
+- A UTF-8 BOM. The loader removes it before the parse. Python removes it in the
+  reader, and libyaml does not.
+- A whole-number float in an integer field. `expected_time_secs: 60.0` is 60 and
+  `order: 1.0` is 1. This is the pydantic lax rule, and content generators write it.
+- A dot-prefixed unit file and a symlinked unit file. `pathlib.Path.glob` returns
+  both, so both belong to the load and to the load index.
+
+Accepted by 2.0, rejected by 1.0:
+
+- A YAML 1.1 scalar in a string field. `name: no` is the string `no`, and
+  `name: 2020-01-01` is the string `2020-01-01`. PyYAML resolves the first one to a
+  boolean and the second one to a date, and pydantic then reports `Input should be a
+  valid string`. 2.0 keeps the text the author wrote.
+- A directory, or a symlink to a missing file, named `*.yaml` inside a course
+  directory. 1.0 raises an uncaught `OSError` and reads nothing; 2.0 reports a `yaml`
+  finding and reads the other files. The loader never panics on content.
+
+Parity, not strictness: NaN and the two infinities are out of range for `difficulty`
+and `weight`. pydantic reports `Input should be less than or equal to 1` for NaN and
+for `.inf`, and `Input should be greater than or equal to 0` for `-.inf`. 2.0 reports
+the same three messages.
+
+The checked-in tree writes none of the rejected forms. The test
+`the_checked_in_tree_uses_no_yaml_1_1_form` (`crates/core/tests/loader.rs`) reads all
+89 files and lists every line that writes one.
 
 ## 8. Parity oracle
 
