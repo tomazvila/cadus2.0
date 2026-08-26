@@ -5,6 +5,11 @@ One minimal broken tree per lint code of `docs/reference/curriculum-1.0-spec.md`
 section 5, translated from 1.0 `tests/test_graph.py:518-797`. `clean/` is a copy
 of the 1.0 fixture `tests/fixtures/curriculum_mini`.
 
+The last three trees are multi-rule. `order_not_id_order` authors its topics out
+of id order, so every `sorted()` site of the lint changes the output.
+`many_codes` and `cycle_duplicate_missing_ref` trip nine distinct codes each, so
+the order of the rule blocks changes the output.
+
 Run it with the 1.0 interpreter, then regenerate every `expected.json`:
 
     /home/deploy/dev/cadus/.venv/bin/python scripts/oracle/make_lint_fixtures.py
@@ -289,6 +294,172 @@ def build(base: Path) -> None:
                 "course": "c2",
                 "module": "M2",
                 "topics": [_topic("b", prereqs=[{"id": "a", "weight": 0.5}])],
+            },
+        },
+    )
+
+    # --- multi-rule trees: authored order, and many codes in one tree ------ #
+
+    # 17. order_not_id_order — the authored topic order is NOT the id order, so
+    #     every `sorted()` site of the lint changes the output. c1 authors
+    #     `z`, `m`, `y`, `a`; c2 authors `x`, `b`. `z` and `m` are non-core
+    #     ancestors of core topics, c2 holds two unreachable topics, and the last
+    #     topic carries a key prerequisite that is a sibling, not an ancestor.
+    #     A port that walks in load order names the wrong example topic, orders
+    #     the two `noncore_ancestor_of_core` findings the other way, and orders
+    #     the two `unreachable_from_floor` findings the other way.
+    _write(
+        base / "order_not_id_order",
+        [
+            {"id": "c1", "name": "C1", "order": 1, "mastery_floor": ["z"]},
+            {"id": "c2", "name": "C2", "order": 2},
+        ],
+        {
+            "c1/00.yaml": {
+                "unit": "u1",
+                "course": "c1",
+                "module": "M1",
+                "topics": [
+                    _topic("z", core=False),
+                    _topic("m", core=False),
+                    _topic(
+                        "y",
+                        prereqs=[
+                            {"id": "z", "weight": 0.5},
+                            {"id": "m", "weight": 0.5},
+                        ],
+                    ),
+                    _topic(
+                        "a",
+                        prereqs=[
+                            {"id": "z", "weight": 0.5},
+                            {"id": "m", "weight": 0.5},
+                        ],
+                    ),
+                ],
+            },
+            "c2/00.yaml": {
+                "unit": "u2",
+                "course": "c2",
+                "module": "M2",
+                "topics": [
+                    _topic("x", prereqs=[{"id": "m", "weight": 0.5}]),
+                    _topic(
+                        "b",
+                        prereqs=[{"id": "m", "weight": 0.5}],
+                        kps=[_kp(key_prereqs=["x"])],
+                    ),
+                ],
+            },
+        },
+    )
+
+    # 18. many_codes — nine distinct codes in one tree, so the sequence of the
+    #     rule blocks is visible: missing_ref, then the per-topic cardinality and
+    #     key-prerequisite rules, then noncore_ancestor_of_core, then the two
+    #     module_inconsistent forms, then mastery_floor_ambiguous, then
+    #     unreachable_from_floor. A port that swaps two rule blocks changes the
+    #     order of this list.
+    _write(
+        base / "many_codes",
+        [
+            {"id": "c1", "name": "C1", "order": 1, "mastery_floor": ["nbase"]},
+            {
+                "id": "c2",
+                "name": "C2",
+                "order": 2,
+                "mastery_floor": ["nbase"],
+                "mastery_floor_course": "c1",
+            },
+            {"id": "c3", "name": "C3", "order": 3},
+        ],
+        {
+            "c1/00.yaml": {
+                "unit": "u1",
+                "course": "c1",
+                "module": "Shared",
+                "topics": [
+                    _topic("nbase", core=False),
+                    _topic("zcore", prereqs=[{"id": "nbase", "weight": 0.5}], kps=[]),
+                    _topic(
+                        "acore",
+                        prereqs=[{"id": "nbase", "weight": 0.5}],
+                        kps=[_kp(exemplars=0)],
+                        diag=False,
+                    ),
+                ],
+            },
+            "c2/00.yaml": {
+                "unit": "u2",
+                "course": "c2",
+                "module": "Shared",
+                "topics": [
+                    _topic(
+                        "mid",
+                        prereqs=[{"id": "ghost", "weight": 0.5}],
+                        extra=[{"id": "phantom", "weight": 0.3}],
+                        kps=[_kp(key_prereqs=["nowhere"])],
+                    )
+                ],
+            },
+            "c3/00.yaml": {
+                "unit": "u3",
+                "course": "c3",
+                "module": "   ",
+                "topics": [
+                    _topic(
+                        "zun",
+                        prereqs=[{"id": "acore", "weight": 0.5}],
+                        kps=[_kp(key_prereqs=["zcore"])],
+                    ),
+                    _topic("aun", prereqs=[{"id": "acore", "weight": 0.5}]),
+                ],
+            },
+        },
+    )
+
+    # 19. cycle_duplicate_missing_ref — nine codes, and both skip conditions of
+    #     spec section 5, rule 16 at once. `cyc1`, `cyc2` and `orphan` are all
+    #     ungrounded, so a port that drops the guard adds three
+    #     `unreachable_from_floor` findings here. The other six codes make the
+    #     order of the rule blocks visible around the two skipped rules.
+    _write(
+        base / "cycle_duplicate_missing_ref",
+        [
+            {"id": "c1", "name": "C1", "order": 1, "mastery_floor": ["zdup"]},
+            {"id": "c2", "name": "C2", "order": 2},
+        ],
+        {
+            "c1/00.yaml": {
+                "unit": "u1",
+                "course": "c1",
+                "module": "Shared",
+                "topics": [
+                    _topic("zdup"),
+                    _topic("zdup"),
+                    _topic("cyc1", prereqs=[{"id": "cyc2", "weight": 0.5}]),
+                    _topic("cyc2", prereqs=[{"id": "cyc1", "weight": 0.5}]),
+                    _topic("mref", prereqs=[{"id": "ghost", "weight": 0.5}]),
+                    _topic("nbase", core=False),
+                    _topic("zkid", prereqs=[{"id": "nbase", "weight": 0.5}], kps=[]),
+                    _topic(
+                        "akid",
+                        prereqs=[{"id": "nbase", "weight": 0.5}],
+                        kps=[_kp(exemplars=0)],
+                        diag=False,
+                    ),
+                    _topic(
+                        "kpx",
+                        prereqs=[{"id": "zdup", "weight": 0.5}],
+                        kps=[_kp(key_prereqs=["mref"])],
+                    ),
+                ],
+            },
+            "c2/00.yaml": {
+                "unit": "u2",
+                "course": "c2",
+                "module": "Shared",
+                "topics": [_topic("orphan", prereqs=[{"id": "zdup", "weight": 0.5}])],
             },
         },
     )
