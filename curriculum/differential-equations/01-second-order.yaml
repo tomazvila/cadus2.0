@@ -1,0 +1,794 @@
+unit: second-order
+course: differential-equations
+module: "Second-Order Linear Equations"
+topics:
+  - id: characteristic-equation-real-roots
+    name: "The Characteristic Equation: Real Roots"
+    core: true
+    difficulty: 0.66
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 150
+    prerequisites:
+      - id: quadratic-formula
+        weight: 0.5
+        key: true
+      - id: derivatives-exp-log
+        weight: 0.4
+        key: true
+      - id: linear-first-order-integrating-factor
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: Deriving the characteristic equation
+        key_prerequisites: [derivatives-exp-log]
+        exemplars:
+          - problem: "Substitute $y = e^{rx}$ into $y'' - y' - 6y = 0$ and state the resulting equation for $r$."
+            answer: "$r^2 - r - 6 = 0$"
+            solution_sketch: "$y' = re^{rx}$, $y'' = r^2 e^{rx}$; factoring out $e^{rx} \\neq 0$ leaves the quadratic."
+          - problem: "Write the characteristic equation of $y'' + 5y' + 6y = 0$."
+            answer: "$r^2 + 5r + 6 = 0$"
+          - problem: "For which values of $r$ is $y = e^{rx}$ a solution of $y'' - 9y = 0$?"
+            answer: "$r = 3$ or $r = -3$"
+            solution_sketch: "$r^2 - 9 = 0$."
+        constraints: "read coefficients straight into ar^2 + br + c = 0; quadratics factor over the integers"
+      - id: kp2
+        name: Distinct real roots
+        key_prerequisites: [quadratic-formula]
+        exemplars:
+          - problem: "Find the general solution of $y'' - y' - 6y = 0$."
+            answer: "$y = c_1 e^{3x} + c_2 e^{-2x}$"
+            solution_sketch: "Characteristic equation $r^2 - r - 6 = (r-3)(r+2) = 0$, roots $3$ and $-2$."
+          - problem: "Find the general solution of $y'' - 4y = 0$."
+            answer: "$y = c_1 e^{2x} + c_2 e^{-2x}$"
+            solution_sketch: "$r^2 - 4 = 0$ gives $r = \\pm 2$."
+          - problem: "Find the general solution of $y'' + 5y' + 6y = 0$."
+            answer: "$y = c_1 e^{-2x} + c_2 e^{-3x}$"
+            solution_sketch: "$r^2 + 5r + 6 = (r+2)(r+3) = 0$."
+        constraints: "characteristic quadratic factors over the integers; write both exponentials with c_1, c_2"
+      - id: kp3
+        name: IVPs with distinct real roots
+        key_prerequisites: [quadratic-formula]
+        exemplars:
+          - problem: "Solve $y'' - y' - 2y = 0$ with $y(0) = 3$, $y'(0) = 0$."
+            answer: "$y = e^{2x} + 2e^{-x}$"
+            solution_sketch: "Roots $2, -1$: $c_1 + c_2 = 3$ and $2c_1 - c_2 = 0$ give $c_1 = 1$, $c_2 = 2$."
+          - problem: "Solve $y'' - 4y = 0$ with $y(0) = 1$, $y'(0) = 2$."
+            answer: "$y = e^{2x}$"
+            solution_sketch: "$c_1 + c_2 = 1$ and $2c_1 - 2c_2 = 2$ give $c_1 = 1$, $c_2 = 0$."
+        constraints: "two initial conditions produce a 2x2 linear system with small integer solutions"
+    diagnostic_exemplar:
+      problem: 'Solve $y'''' + y'' - 2y = 0$ with $y(0) = 4$, $y''(0) = -2$.'
+      answer: '$y = 2e^{x} + 2e^{-2x}$'
+      solution_sketch: 'The characteristic equation $r^2 + r - 2 = 0$ has roots $1$ and $-2$, so $y = c_1 e^x + c_2 e^{-2x}$. The conditions give $c_1 + c_2 = 4$ and $c_1 - 2c_2 = -2$, hence $c_1 = c_2 = 2$.'
+    anki_seeds:
+      - front: "Characteristic equation of ay'' + by' + cy = 0?"
+        back: "$ar^2 + br + c = 0$ (substitute $y = e^{rx}$)."
+        type: basic
+      - front: "General solution when the characteristic equation has distinct real roots r1, r2?"
+        back: "$y = c_1 e^{r_1 x} + c_2 e^{r_2 x}$"
+        type: basic
+
+  - id: homogeneous-constant-coefficients
+    name: Homogeneous Constant-Coefficient Equations
+    core: true
+    difficulty: 0.72
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 180
+    prerequisites:
+      - id: characteristic-equation-real-roots
+        weight: 0.7
+        key: true
+      - id: derivatives-trig
+        weight: 0.4
+        key: false
+      - id: complex-numbers
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: Repeated roots
+        key_prerequisites: [characteristic-equation-real-roots]
+        exemplars:
+          - problem: "Find the general solution of $y'' - 6y' + 9y = 0$."
+            answer: "$y = (c_1 + c_2 x)e^{3x}$"
+            solution_sketch: "$r^2 - 6r + 9 = (r-3)^2$: double root $3$, so the second solution picks up a factor of $x$."
+          - problem: "Find the general solution of $y'' + 4y' + 4y = 0$."
+            answer: "$y = (c_1 + c_2 x)e^{-2x}$"
+            solution_sketch: "$(r+2)^2 = 0$: double root $-2$."
+          - problem: "Solve $y'' - 2y' + y = 0$ with $y(0) = 1$, $y'(0) = 0$."
+            answer: "$y = (1 - x)e^x$"
+            solution_sketch: "$(r-1)^2 = 0$ gives $y = (c_1 + c_2 x)e^x$; $y(0) = c_1 = 1$ and $y'(0) = c_1 + c_2 = 0$ give $c_2 = -1$."
+        constraints: "perfect-square characteristic polynomials; the x-factor on the second solution is the point"
+      - id: kp2
+        name: Complex roots
+        key_prerequisites: [characteristic-equation-real-roots, derivatives-trig, complex-numbers]
+        exemplars:
+          - problem: 'Find the general solution of $y'''' + 4y = 0$.'
+            answer: '$y = c_1 \cos 2x + c_2 \sin 2x$'
+            solution_sketch: '$r^2 + 4 = 0$ gives $r = \pm 2i$, so $\alpha = 0$, $\beta = 2$.'
+          - problem: 'Find the general solution of $y'''' + 2y'' + 5y = 0$.'
+            answer: '$y = e^{-x}(c_1 \cos 2x + c_2 \sin 2x)$'
+            solution_sketch: '$r = \frac{-2 \pm \sqrt{4 - 20}}{2} = -1 \pm 2i$: exponential envelope $e^{-x}$, oscillation frequency $2$.'
+          - problem: 'Solve $y'''' + 9y = 0$ with $y(0) = 2$, $y''(0) = 3$.'
+            answer: '$y = 2\cos 3x + \sin 3x$'
+            solution_sketch: '$y = c_1 \cos 3x + c_2 \sin 3x$; $y(0) = c_1 = 2$ and $y''(0) = 3c_2 = 3$ give $c_2 = 1$.'
+        constraints: "roots alpha +/- beta i with integer alpha, beta; answers as e^{alpha x}(c_1 cos beta x + c_2 sin beta x)"
+      - id: kp3
+        name: Choosing the case
+        key_prerequisites: [characteristic-equation-real-roots, complex-numbers]
+        exemplars:
+          - problem: "Classify the roots of $y'' + 2y' + y = 0$ and solve."
+            answer: "Double root $r = -1$: $y = (c_1 + c_2 x)e^{-x}$."
+            solution_sketch: "Discriminant $4 - 4 = 0$."
+          - problem: "Classify the roots of $y'' - 2y' + 5y = 0$ and solve."
+            answer: "Complex roots $1 \\pm 2i$: $y = e^{x}(c_1 \\cos 2x + c_2 \\sin 2x)$."
+            solution_sketch: "Discriminant $4 - 20 < 0$."
+          - problem: "Solve $y'' + 4y' + 5y = 0$ with $y(0) = 1$, $y'(0) = -2$."
+            answer: "$y = e^{-2x}\\cos x$"
+            solution_sketch: "$r = -2 \\pm i$; $y = e^{-2x}(c_1\\cos x + c_2 \\sin x)$ with $c_1 = 1$ and $y'(0) = -2c_1 + c_2 = -2$ giving $c_2 = 0$."
+        constraints: "one equation from each root case may appear; the solver must pick the case from the discriminant"
+    diagnostic_exemplar:
+      problem: 'Solve $y'''' + 6y'' + 13y = 0$ with $y(0) = 2$, $y''(0) = -6$.'
+      answer: '$y = 2e^{-3x}\cos 2x$'
+      solution_sketch: '$r^2 + 6r + 13 = 0$ gives $r = -3 \pm 2i$, so $y = e^{-3x}(c_1\cos 2x + c_2 \sin 2x)$. Then $c_1 = 2$ and $y''(0) = -3c_1 + 2c_2 = -6$ forces $c_2 = 0$.'
+    anki_seeds:
+      - front: "General solution when the characteristic equation has a double root r?"
+        back: "$y = (c_1 + c_2 x)e^{rx}$"
+        type: basic
+      - front: 'General solution when the characteristic roots are $\alpha \pm \beta i$?'
+        back: '$y = e^{\alpha x}(c_1 \cos \beta x + c_2 \sin \beta x)$'
+        type: basic
+
+  - id: linear-independence-wronskian
+    name: Linear Independence and the Wronskian
+    core: true
+    difficulty: 0.70
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 150
+    prerequisites:
+      - id: homogeneous-constant-coefficients
+        weight: 0.5
+        key: true
+      - id: determinants
+        weight: 0.5
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: Computing Wronskians
+        key_prerequisites: [determinants]
+        exemplars:
+          - problem: "Compute the Wronskian of $y_1 = e^x$ and $y_2 = e^{-x}$."
+            answer: "$W = -2$"
+            solution_sketch: "$W = y_1 y_2' - y_1' y_2 = e^x(-e^{-x}) - e^x e^{-x} = -2$."
+          - problem: 'Compute the Wronskian of $y_1 = \cos x$ and $y_2 = \sin x$.'
+            answer: '$W = 1$'
+            solution_sketch: '$\cos x \cdot \cos x - (-\sin x)\sin x = \cos^2 x + \sin^2 x = 1$.'
+          - problem: "Compute the Wronskian of $y_1 = e^{2x}$ and $y_2 = xe^{2x}$."
+            answer: "$W = e^{4x}$"
+            solution_sketch: "$e^{2x}(1 + 2x)e^{2x} - 2e^{2x} \\cdot xe^{2x} = e^{4x}(1 + 2x - 2x) = e^{4x}$."
+        constraints: "fundamental pairs from constant-coefficient equations; W simplifies to a constant or single exponential"
+      - id: kp2
+        name: Testing independence
+        key_prerequisites: [determinants]
+        exemplars:
+          - problem: "Compute $W(x, x^2)$ and decide whether $x$ and $x^2$ are linearly independent on $x > 0$."
+            answer: "$W = x^2 \\neq 0$: independent."
+            solution_sketch: "$W = x \\cdot 2x - 1 \\cdot x^2 = x^2$."
+          - problem: "Are $e^x$ and $e^{x+1}$ linearly independent?"
+            answer: "No: $e^{x+1} = e \\cdot e^x$ is a constant multiple, and $W = 0$."
+          - problem: "Show that $y_1 = e^{3x}$, $y_2 = e^{-2x}$ form a fundamental set for $y'' - y' - 6y = 0$."
+            answer: "Both solve the equation and $W = -5e^{x} \\neq 0$."
+            solution_sketch: "$W = e^{3x}(-2e^{-2x}) - 3e^{3x}e^{-2x} = -5e^x$."
+        constraints: "one pair is secretly proportional; nonvanishing W certifies a fundamental set"
+      - id: kp3
+        name: Superposition and general solutions
+        key_prerequisites: [homogeneous-constant-coefficients]
+        exemplars:
+          - problem: "If $y_1$ and $y_2$ solve $y'' + py' + qy = 0$ with $W(y_1, y_2) \\neq 0$, what is the general solution?"
+            answer: "$y = c_1 y_1 + c_2 y_2$"
+            solution_sketch: "Superposition: any linear combination solves the homogeneous equation, and independence makes the family complete."
+          - problem: "If $y_1$ and $y_2$ both solve $y'' + y = x$, is $y_1 + y_2$ a solution of the same equation?"
+            answer: "No: it satisfies $y'' + y = 2x$."
+            solution_sketch: "Superposition only holds for homogeneous equations; the difference $y_1 - y_2$ solves the homogeneous one."
+        constraints: "conceptual: superposition holds exactly for homogeneous linear equations"
+    diagnostic_exemplar:
+      problem: 'Show that $y_1 = e^{2x}$ and $y_2 = e^{-3x}$ form a fundamental set of solutions of $y'''' + y'' - 6y = 0$, and write the general solution.'
+      answer: 'Both solve the equation (the characteristic roots are $2$ and $-3$), and $W = y_1 y_2'' - y_1'' y_2 = -5e^{-x} \neq 0$, so they are independent: the general solution is $y = c_1 e^{2x} + c_2 e^{-3x}$.'
+      solution_sketch: '$r^2 + r - 6 = (r-2)(r+3)$; the Wronskian is $e^{2x}(-3e^{-3x}) - 2e^{2x}e^{-3x} = -5e^{-x}$, never zero.'
+    anki_seeds:
+      - front: "Wronskian of two solutions y_1, y_2?"
+        back: "$W = y_1 y_2' - y_1' y_2$"
+        type: basic
+      - front: "Two solutions of a second-order linear homogeneous ODE form a fundamental set iff..."
+        back: "their Wronskian is nonzero."
+        type: basic
+
+  - id: reduction-of-order
+    name: Reduction of Order
+    core: false                # special-case technique; terminal
+    difficulty: 0.76
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 300
+    prerequisites:
+      - id: homogeneous-constant-coefficients
+        weight: 0.6
+        key: true
+      - id: linear-independence-wronskian
+        weight: 0.3
+        key: false
+      - id: integration-substitution
+        weight: 0.3
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "The substitution $y = v\\,y_1$"
+        key_prerequisites: [homogeneous-constant-coefficients]
+        exemplars:
+          - problem: "Given that $y_1 = e^{3x}$ solves $y'' - 6y' + 9y = 0$, substitute $y = ve^{3x}$ and find the equation for $v$."
+            answer: "$v'' = 0$, so $v = x$ gives the second solution $y_2 = xe^{3x}$."
+            solution_sketch: "$y' = (v' + 3v)e^{3x}$, $y'' = (v'' + 6v' + 9v)e^{3x}$; substituting, every $v$ and $v'$ term cancels."
+          - problem: "Why does a double root $r$ of the characteristic equation produce the second solution $xe^{rx}$?"
+            answer: "Reduction of order with $y_1 = e^{rx}$ gives $v'' = 0$, so $v = x$ (the constant solution just reproduces $y_1$)."
+        constraints: "constant-coefficient repeated-root cases; all v', v terms must visibly cancel"
+      - id: kp2
+        name: Variable-coefficient equations with a known solution
+        key_prerequisites: [homogeneous-constant-coefficients, integration-substitution]
+        exemplars:
+          - problem: "Given that $y_1 = x^2$ solves $x^2y'' - 3xy' + 4y = 0$ ($x > 0$), find a second independent solution."
+            answer: "$y_2 = x^2 \\ln x$"
+            solution_sketch: "$y = vx^2$ leads to $xv'' + v' = 0$, i.e. $(xv')' = 0$, so $v' = 1/x$ and $v = \\ln x$."
+          - problem: "Given that $y_1 = x$ solves $x^2y'' + xy' - y = 0$ ($x > 0$), find a second independent solution."
+            answer: "$y_2 = \\dfrac{1}{x}$"
+            solution_sketch: "$y = vx$ gives $xv'' + 3v' = 0$, so $v' = x^{-3}$ and $v = -\\tfrac{1}{2}x^{-2}$; any multiple works, so take $y_2 = 1/x$."
+        constraints: "Cauchy-Euler-type equations with y_1 = x^m given; the v-equation is first order in v'"
+      - id: kp3
+        name: The reduction-of-order formula
+        key_prerequisites: [homogeneous-constant-coefficients, integration-substitution]
+        exemplars:
+          - problem: 'Use $y_2 = y_1 \int \dfrac{e^{-\int p\,dx}}{y_1^2}\,dx$ to find a second solution of $y'''' - 2y'' + y = 0$ from $y_1 = e^x$.'
+            answer: "$y_2 = xe^x$"
+            solution_sketch: '$p = -2$, so $e^{-\int p} = e^{2x}$ and the integrand is $e^{2x}/e^{2x} = 1$; the integral is $x$.'
+          - problem: "Use the formula to find a second solution of $x^2y'' - 3xy' + 4y = 0$ from $y_1 = x^2$ ($x > 0$)."
+            answer: "$y_2 = x^2 \\ln x$"
+            solution_sketch: "In standard form $p = -3/x$, so $e^{-\\int p} = x^3$; the integrand is $x^3/x^4 = 1/x$."
+        constraints: "divide to standard form before reading p; integrals reduce to powers or ln"
+    diagnostic_exemplar:
+      problem: 'Given that $y_1 = x$ solves $x^2 y'''' - xy'' + y = 0$ ($x > 0$), find a second independent solution.'
+      answer: '$y_2 = x\ln x$'
+      solution_sketch: 'Put $y = vx$: then $y'' = v''x + v$ and $y'''' = v''''x + 2v''$, and the equation collapses to $x^3 v'''' + x^2 v'' = 0$, i.e. $(xv'')'' = 0$. Hence $v'' = C/x$ and $v = \ln x$, giving $y_2 = x\ln x$.'
+    anki_seeds:
+      - front: "Reduction-of-order formula for a second solution of y'' + py' + qy = 0 given y_1?"
+        back: '$y_2 = y_1 \int \dfrac{e^{-\int p\,dx}}{y_1^2}\,dx$'
+        type: basic
+      - front: "Why does a double characteristic root give solutions e^{rx} and xe^{rx}?"
+        back: "Reduction of order yields v'' = 0, whose independent solution is v = x."
+        type: basic
+
+  - id: undetermined-coefficients-basic
+    name: "Undetermined Coefficients: Polynomials and Exponentials"
+    core: true
+    difficulty: 0.72
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 180
+    prerequisites:
+      - id: characteristic-equation-real-roots
+        weight: 0.5
+        key: true
+      - id: homogeneous-constant-coefficients
+        weight: 0.5
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: "The structure $y = y_h + y_p$"
+        key_prerequisites: [homogeneous-constant-coefficients]
+        exemplars:
+          - problem: "Given that $y_p = 2$ is a particular solution of $y'' - 3y' + 2y = 4$, write the general solution."
+            answer: "$y = c_1 e^{x} + c_2 e^{2x} + 2$"
+            solution_sketch: "Homogeneous roots $1, 2$; add $y_p$ to the homogeneous family."
+          - problem: "Verify that $y_p = 2x^2 - 1$ is a particular solution of $y'' + 4y = 8x^2$."
+            answer: "Yes: $y_p'' + 4y_p = 4 + 8x^2 - 4 = 8x^2$."
+        constraints: "the general solution is always y_h plus one particular solution; verify by substitution"
+      - id: kp2
+        name: Polynomial forcing
+        key_prerequisites: [homogeneous-constant-coefficients]
+        exemplars:
+          - problem: "Find the general solution of $y'' - y' - 2y = 4x$."
+            answer: "$y = c_1 e^{2x} + c_2 e^{-x} - 2x + 1$"
+            solution_sketch: "Try $y_p = Ax + B$: $-A - 2(Ax + B) = 4x$ gives $A = -2$, then $-A - 2B = 0$ gives $B = 1$. Homogeneous roots: $2, -1$."
+          - problem: "Find a particular solution of $y'' + 4y = 8x^2$."
+            answer: "$y_p = 2x^2 - 1$"
+            solution_sketch: "Try $y_p = Ax^2 + Bx + C$: $2A + 4Ax^2 + 4Bx + 4C = 8x^2$ gives $A = 2$, $B = 0$, $C = -1$."
+        constraints: "forcing is a polynomial of degree <= 2; match the full trial polynomial of the same degree; integer coefficients"
+      - id: kp3
+        name: Exponential forcing
+        key_prerequisites: [homogeneous-constant-coefficients]
+        exemplars:
+          - problem: "Find the general solution of $y'' + 3y' + 2y = 6e^{x}$."
+            answer: "$y = c_1 e^{-x} + c_2 e^{-2x} + e^{x}$"
+            solution_sketch: "Try $y_p = Ae^x$: $(1 + 3 + 2)Ae^x = 6e^x$ gives $A = 1$."
+          - problem: "Find a particular solution of $y'' + y = 5e^{2x}$."
+            answer: "$y_p = e^{2x}$"
+            solution_sketch: "Try $y_p = Ae^{2x}$: $(4 + 1)A = 5$ gives $A = 1$."
+        constraints: "single e^{kx} forcing; k never a characteristic root here; A = (forcing coeff)/(char. polynomial at k)"
+    diagnostic_exemplar:
+      problem: 'Find the general solution of $y'''' + 3y'' + 2y = 20e^{3x}$.'
+      answer: '$y = c_1 e^{-x} + c_2 e^{-2x} + e^{3x}$'
+      solution_sketch: 'The homogeneous roots are $-1$ and $-2$. Trying $y_p = Ae^{3x}$ gives $(9 + 9 + 2)A = 20A = 20$, so $A = 1$.'
+    anki_seeds:
+      - front: "General solution of a nonhomogeneous linear ODE?"
+        back: "$y = y_h + y_p$: the full homogeneous family plus any one particular solution."
+        type: basic
+      - front: "Undetermined coefficients: trial for forcing $ke^{ax}$ (a not a characteristic root)?"
+        back: "$y_p = Ae^{ax}$"
+        type: basic
+
+  - id: undetermined-coefficients
+    name: Undetermined Coefficients
+    core: true
+    difficulty: 0.76
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 240
+    prerequisites:
+      - id: undetermined-coefficients-basic
+        weight: 0.7
+        key: true
+      - id: derivatives-trig
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: Sinusoidal forcing
+        key_prerequisites: [undetermined-coefficients-basic, derivatives-trig]
+        exemplars:
+          - problem: 'Find a particular solution of $y'''' + 2y'' + y = 10\sin x$.'
+            answer: '$y_p = -5\cos x$'
+            solution_sketch: 'Try $y_p = a\cos x + b\sin x$; substituting gives $2b\cos x - 2a\sin x = 10\sin x$, so $b = 0$, $a = -5$.'
+          - problem: 'Find a particular solution of $y'''' - y = 2\sin x$.'
+            answer: '$y_p = -\sin x$'
+            solution_sketch: 'Try $y_p = a\sin x$ (no $y''$ term to mix in cosine): $-a\sin x - a\sin x = 2\sin x$ gives $a = -1$.'
+        constraints: "forcing k sin(omega x) or k cos(omega x) with integer omega; always try both cos and sin when a y' term is present"
+      - id: kp2
+        name: The resonance modification
+        key_prerequisites: [undetermined-coefficients-basic]
+        exemplars:
+          - problem: "Find a particular solution of $y'' - y = e^x$."
+            answer: "$y_p = \\dfrac{x e^x}{2}$"
+            solution_sketch: "$e^x$ solves the homogeneous equation, so try $y_p = Axe^x$: substituting gives $2Ae^x = e^x$, so $A = \\tfrac{1}{2}$."
+          - problem: 'What trial form should be used for a particular solution of $y'''' + 4y = \cos 2x$, and why?'
+            answer: '$y_p = x(A\cos 2x + B\sin 2x)$, because $\cos 2x$ and $\sin 2x$ already solve the homogeneous equation.'
+          - problem: 'Find the general solution of $y'''' + 4y = \cos 2x$.'
+            answer: '$y = c_1 \cos 2x + c_2 \sin 2x + \dfrac{x \sin 2x}{4}$'
+            solution_sketch: 'With $y_p = x(A\cos 2x + B\sin 2x)$, substitution gives $-4A\sin 2x + 4B\cos 2x = \cos 2x$, so $A = 0$, $B = \tfrac{1}{4}$.'
+        constraints: "forcing duplicates exactly one homogeneous solution; multiply the trial by x (never x^2 here)"
+      - id: kp3
+        name: Products and superposition of forcings
+        key_prerequisites: [undetermined-coefficients-basic]
+        exemplars:
+          - problem: "Find a particular solution of $y'' - 3y' + 2y = 4x + 6e^{3x}$."
+            answer: "$y_p = 2x + 3 + 3e^{3x}$"
+            solution_sketch: "Superposition: the $4x$ part gives $y_p = 2x + 3$; for the $6e^{3x}$ part, $(9 - 9 + 2)A = 2A = 6$ gives $A = 3$. Add the two."
+          - problem: 'Find a particular solution of $y'''' + 2y'' + y = xe^{x}$.'
+            answer: '$y_p = \dfrac{(x - 1)e^x}{4}$'
+            solution_sketch: 'Try $y_p = (Ax + B)e^x$: substitution gives $(4Ax + 4A + 4B)e^x = xe^x$, so $A = \tfrac{1}{4}$, $B = -\tfrac{1}{4}$.'
+          - problem: 'State the trial form for a particular solution of $y'''' + 4y = x\sin 2x$.'
+            answer: '$y_p = x\left[(Ax + B)\cos 2x + (Cx + D)\sin 2x\right]$'
+            solution_sketch: 'Polynomial-times-sinusoid forcing at the resonant frequency: full degree-1 polynomials on both cos and sin, times the extra $x$.'
+        constraints: "sums of forcings split by superposition; products take polynomial-coefficient trials; state trial forms fully"
+    diagnostic_exemplar:
+      problem: 'Find a particular solution of $y'''' - y = 4e^{x} + 3$.'
+      answer: '$y_p = 2xe^{x} - 3$'
+      solution_sketch: 'The homogeneous roots are $\pm 1$, so $e^x$ is resonant and the trial form is $Axe^x$: then $y'''' - y = 2Ae^x = 4e^x$ gives $A = 2$. For the constant forcing, $y_p = B$ with $-B = 3$, so $B = -3$. Superpose.'
+    anki_seeds:
+      - front: "Undetermined coefficients: what do you do when the trial solution solves the homogeneous equation?"
+        back: "Multiply the trial by x (by x^2 for a double root)."
+        type: basic
+      - front: "Forcing g_1 + g_2: how do you find a particular solution?"
+        back: "Superposition: find particular solutions for g_1 and g_2 separately and add them."
+        type: basic
+
+  - id: variation-of-parameters
+    name: Variation of Parameters
+    core: false                # terminal solution technique; nothing builds on it
+    difficulty: 0.82
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 300
+    prerequisites:
+      - id: linear-independence-wronskian
+        weight: 0.6
+        key: true
+      - id: homogeneous-constant-coefficients
+        weight: 0.5
+        key: true
+      - id: integration-by-parts
+        weight: 0.4
+        key: false
+      - id: undetermined-coefficients
+        weight: 0.3
+        key: false
+      - id: trigonometric-integrals
+        weight: 0.3
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: Setting up the formulas
+        key_prerequisites: [linear-independence-wronskian]
+        exemplars:
+          - problem: 'For $y'''' + y = \sec x$, write the variation-of-parameters equations for $u_1''$ and $u_2''$ using $y_1 = \cos x$, $y_2 = \sin x$.'
+            answer: '$u_1'' = -\dfrac{y_2 g}{W} = -\sin x \sec x = -\tan x$; $u_2'' = \dfrac{y_1 g}{W} = \cos x \sec x = 1$.'
+            solution_sketch: '$W = 1$ and $g(x) = \sec x$; plug into $u_1'' = -y_2 g/W$, $u_2'' = y_1 g/W$.'
+          - problem: "For $y'' - 2y' + y = \\dfrac{e^x}{x}$ ($x > 0$), with $y_1 = e^x$, $y_2 = xe^x$, find $u_1'$ and $u_2'$."
+            answer: "$u_1' = -1$; $u_2' = \\dfrac{1}{x}$"
+            solution_sketch: "$W = e^{2x}$; $u_1' = -xe^x \\cdot \\dfrac{e^x/x}{e^{2x}} = -1$ and $u_2' = e^x \\cdot \\dfrac{e^x/x}{e^{2x}} = \\dfrac{1}{x}$."
+        constraints: "equation already in standard form (leading coefficient 1); the u' expressions simplify before integrating"
+      - id: kp2
+        name: Trigonometric forcing
+        key_prerequisites: [linear-independence-wronskian, trigonometric-integrals]
+        exemplars:
+          - problem: 'Solve $y'''' + y = \sec x$ on $(-\pi/2, \pi/2)$.'
+            answer: '$y = c_1 \cos x + c_2 \sin x + \cos x \ln|\cos x| + x\sin x$'
+            solution_sketch: '$u_1 = \int -\tan x\,dx = \ln|\cos x|$ and $u_2 = \int 1\,dx = x$, so $y_p = y_1 u_1 + y_2 u_2$.'
+          - problem: 'Solve $y'''' + y = \csc x$ on $(0, \pi)$.'
+            answer: '$y = c_1 \cos x + c_2 \sin x - x\cos x + \sin x \ln|\sin x|$'
+            solution_sketch: '$u_1'' = -\sin x \csc x = -1$ gives $u_1 = -x$; $u_2'' = \cos x \csc x = \cot x$ gives $u_2 = \ln|\sin x|$.'
+          - problem: 'Solve $y'''' + y = \tan x$ on $(-\pi/2, \pi/2)$.'
+            answer: '$y = c_1 \cos x + c_2 \sin x - \cos x \ln|\sec x + \tan x|$'
+            solution_sketch: '$u_1'' = -\sin x\tan x = \cos x - \sec x$ gives $u_1 = \sin x - \ln|\sec x + \tan x|$; $u_2'' = \sin x$ gives $u_2 = -\cos x$; the $\sin x\cos x$ terms cancel.'
+        constraints: "forcing sec x, csc x, tan x on intervals where they are continuous; integrals reduce to ln and power forms"
+      - id: kp3
+        name: Rational and exponential forcing
+        key_prerequisites: [linear-independence-wronskian, integration-by-parts]
+        exemplars:
+          - problem: "Solve $y'' - 2y' + y = \\dfrac{e^x}{x}$ for $x > 0$."
+            answer: "$y = c_1 e^x + c_2 xe^x + xe^x \\ln x$"
+            solution_sketch: "$u_1 = -x$ and $u_2 = \\ln x$, so $y_p = -xe^x + xe^x \\ln x$; the $-xe^x$ term is absorbed into $c_2 xe^x$."
+          - problem: "Use variation of parameters to find a particular solution of $y'' - y = e^x$."
+            answer: "$y_p = \\dfrac{xe^x}{2}$ (after absorbing a multiple of $e^x$)"
+            solution_sketch: "$W = -2$; $u_1' = \\tfrac{1}{2}$, $u_2' = -\\tfrac{e^{2x}}{2}$ give $u_1 = \\tfrac{x}{2}$, $u_2 = -\\tfrac{e^{2x}}{4}$; $y_p = \\tfrac{x}{2}e^x - \\tfrac{e^x}{4}$."
+        constraints: "forcing e^{kx}/x or duplicating exponentials; absorb any homogeneous-solution terms into the constants"
+    diagnostic_exemplar:
+      problem: 'Use variation of parameters to solve $y'''' - 2y'' + y = \dfrac{e^x}{x^2}$ for $x > 0$.'
+      answer: '$y = c_1 e^{x} + c_2 x e^{x} - e^{x}\ln x$'
+      solution_sketch: 'With $y_1 = e^x$, $y_2 = xe^x$ and $W = e^{2x}$: $u_1'' = -\frac{y_2 g}{W} = -\frac{1}{x}$ and $u_2'' = \frac{y_1 g}{W} = \frac{1}{x^2}$, so $u_1 = -\ln x$ and $u_2 = -\frac{1}{x}$. Then $y_p = -e^x\ln x - e^x$, and the $-e^x$ is absorbed into $c_1 e^x$.'
+    anki_seeds:
+      - front: "Variation of parameters formulas for y'' + py' + qy = g?"
+        back: '$u_1'' = -\dfrac{y_2 g}{W}$, $u_2'' = \dfrac{y_1 g}{W}$; then $y_p = u_1 y_1 + u_2 y_2$.'
+        type: basic
+      - front: "When do you reach for variation of parameters instead of undetermined coefficients?"
+        back: "When the forcing is not polynomial/exponential/sinusoidal — e.g. sec x, tan x, e^x/x."
+        type: basic
+
+  - id: cauchy-euler-equations
+    name: Cauchy-Euler Equations
+    core: false                # special-case equation type; terminal
+    difficulty: 0.78
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 240
+    prerequisites:
+      - id: homogeneous-constant-coefficients
+        weight: 0.7
+        key: true
+      - id: logarithm-properties
+        weight: 0.3
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "The $x^r$ substitution"
+        key_prerequisites: [homogeneous-constant-coefficients]
+        exemplars:
+          - problem: "Write the indicial equation for $x^2y'' - 4xy' + 6y = 0$ and solve the ODE for $x > 0$."
+            answer: "$r(r-1) - 4r + 6 = r^2 - 5r + 6 = 0$: $y = c_1 x^2 + c_2 x^3$."
+            solution_sketch: "Substituting $y = x^r$ turns each term $x^k y^{(k)}$ into a multiple of $x^r$."
+          - problem: "Find the general solution of $x^2y'' + 2xy' - 6y = 0$ for $x > 0$."
+            answer: "$y = c_1 x^2 + \\dfrac{c_2}{x^3}$"
+            solution_sketch: "$r(r-1) + 2r - 6 = r^2 + r - 6 = (r+3)(r-2) = 0$."
+          - problem: "Find the general solution of $x^2y'' - 2y = 0$ for $x > 0$."
+            answer: "$y = c_1 x^2 + \\dfrac{c_2}{x}$"
+            solution_sketch: "$r(r-1) - 2 = (r-2)(r+1) = 0$."
+        constraints: "indicial equation r(r-1) + ar + b = 0 factors over the integers; solutions are power functions on x > 0"
+      - id: kp2
+        name: Repeated and complex roots
+        key_prerequisites: [homogeneous-constant-coefficients, logarithm-properties]
+        exemplars:
+          - problem: "Find the general solution of $x^2y'' - 3xy' + 4y = 0$ for $x > 0$."
+            answer: "$y = (c_1 + c_2 \\ln x)x^2$"
+            solution_sketch: "$r(r-1) - 3r + 4 = (r-2)^2 = 0$: double root $2$; the second solution gains a $\\ln x$ factor."
+          - problem: "Find the general solution of $x^2y'' + xy' + y = 0$ for $x > 0$."
+            answer: '$y = c_1 \cos(\ln x) + c_2 \sin(\ln x)$'
+            solution_sketch: '$r(r-1) + r + 1 = r^2 + 1 = 0$: roots $\pm i$, giving $\cos(\beta\ln x)$, $\sin(\beta\ln x)$ with $\beta = 1$.'
+        constraints: "double roots gain ln x; complex roots alpha +/- beta i give x^alpha cos(beta ln x), x^alpha sin(beta ln x)"
+      - id: kp3
+        name: Cauchy-Euler IVPs
+        key_prerequisites: [homogeneous-constant-coefficients]
+        exemplars:
+          - problem: "Solve $x^2y'' - 2y = 0$ for $x > 0$ with $y(1) = 3$, $y'(1) = 0$."
+            answer: "$y = x^2 + \\dfrac{2}{x}$"
+            solution_sketch: "$y = c_1x^2 + c_2/x$; $c_1 + c_2 = 3$ and $2c_1 - c_2 = 0$ give $c_1 = 1$, $c_2 = 2$."
+          - problem: "Solve $x^2y'' - 4xy' + 6y = 0$ for $x > 0$ with $y(1) = 1$, $y'(1) = 2$."
+            answer: "$y = x^2$"
+            solution_sketch: "$y = c_1x^2 + c_2x^3$; $c_1 + c_2 = 1$ and $2c_1 + 3c_2 = 2$ give $c_1 = 1$, $c_2 = 0$."
+        constraints: "initial conditions at x = 1 so the 2x2 system has small integer solutions; state the domain x > 0"
+    diagnostic_exemplar:
+      problem: 'Solve $x^2 y'''' - 3xy'' + 4y = 0$ for $x > 0$ with $y(1) = 2$, $y''(1) = 5$.'
+      answer: '$y = (2 + \ln x)x^2$'
+      solution_sketch: 'The indicial equation $r(r-1) - 3r + 4 = (r-2)^2 = 0$ has the double root $2$, so $y = (c_1 + c_2\ln x)x^2$. Then $y(1) = c_1 = 2$ and $y''(1) = 2c_1 + c_2 = 5$ give $c_2 = 1$.'
+    anki_seeds:
+      - front: "Indicial equation of the Cauchy-Euler equation x^2 y'' + a x y' + b y = 0?"
+        back: "$r(r-1) + ar + b = 0$ (substitute $y = x^r$)."
+        type: basic
+      - front: "Cauchy-Euler equation with a double indicial root r: general solution?"
+        back: '$y = (c_1 + c_2 \ln x)x^r$'
+        type: basic
+
+  - id: free-undamped-oscillations
+    name: Free Undamped Oscillations
+    core: false                # physical-model branch; terminal
+    difficulty: 0.72
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 240
+    prerequisites:
+      - {id: sinusoid-phase-shift, weight: 0.3, key: false}       # amplitude-phase form R cos(t - phi) is the phase-shift skill
+      - id: homogeneous-constant-coefficients
+        weight: 0.7
+        key: true
+      - id: trig-identities-basic
+        weight: 0.3
+        key: false
+      # kp3 rewrites c1 cos + c2 sin as R cos(t - phi), which needs the
+      # angle-addition formula; previously supplied only accidentally via a
+      # bogus taylor-maclaurin-series edge removed in W2.
+      - id: sum-difference-identities
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: The equation of motion
+        key_prerequisites: [homogeneous-constant-coefficients]
+        exemplars:
+          - problem: "A $2$ kg mass hangs on a spring with stiffness $k = 32$ N/m, no damping. Write the equation of motion and its general solution."
+            answer: "$x'' + 16x = 0$; $x = c_1 \\cos 4t + c_2 \\sin 4t$ (natural frequency $\\omega = 4$ rad/s)."
+            solution_sketch: "$mx'' + kx = 0$ gives $x'' + (k/m)x = 0$ with $\\omega = \\sqrt{k/m} = \\sqrt{16} = 4$."
+          - problem: "For $x'' + 25x = 0$, state the natural frequency and the period."
+            answer: '$\omega = 5$ rad/s; period $\dfrac{2\pi}{5}$.'
+          - problem: "A $1$ kg mass on a spring with $k = 9$ N/m oscillates freely. What is the period?"
+            answer: '$\dfrac{2\pi}{3}$'
+            solution_sketch: '$\omega = \sqrt{9/1} = 3$; $T = 2\pi/\omega$.'
+        constraints: "k/m a perfect square; report omega = sqrt(k/m) and period 2 pi / omega"
+      - id: kp2
+        name: Oscillation IVPs
+        key_prerequisites: [homogeneous-constant-coefficients]
+        exemplars:
+          - problem: "Solve $x'' + 16x = 0$ with $x(0) = 3$, $x'(0) = 0$."
+            answer: "$x = 3\\cos 4t$"
+            solution_sketch: "$x = c_1\\cos 4t + c_2 \\sin 4t$; the initial conditions give $c_1 = 3$, $c_2 = 0$."
+          - problem: "Solve $x'' + 4x = 0$ with $x(0) = 0$, $x'(0) = 6$."
+            answer: "$x = 3\\sin 2t$"
+            solution_sketch: "$x(0) = 0$ kills the cosine and $x'(0) = 2c_2 = 6$ gives $c_2 = 3$."
+          - problem: "Solve $x'' + 9x = 0$ with $x(0) = 2$, $x'(0) = -3$."
+            answer: "$x = 2\\cos 3t - \\sin 3t$"
+            solution_sketch: "$c_1 = 2$; $x'(0) = 3c_2 = -3$ gives $c_2 = -1$."
+        constraints: "initial data chosen so c_1, c_2 are small integers; x'(0) fixes c_2 through the factor omega"
+      - id: kp3
+        name: Amplitude and phase
+        key_prerequisites: [trig-identities-basic, sum-difference-identities]
+        exemplars:
+          - problem: 'A mass oscillates as $x = 3\cos 2t + 4\sin 2t$. Find the amplitude of the motion.'
+            answer: '$5$'
+            solution_sketch: '$R = \sqrt{a^2 + b^2} = \sqrt{9 + 16} = 5$.'
+          - problem: 'Write $x = \cos t + \sqrt{3}\sin t$ in the form $R\cos(t - \varphi)$.'
+            answer: '$x = 2\cos\left(t - \dfrac{\pi}{3}\right)$'
+            solution_sketch: '$R = \sqrt{1 + 3} = 2$; $\tan\varphi = \dfrac{b}{a} = \sqrt{3}$ with $a, b > 0$ gives $\varphi = \pi/3$.'
+          - problem: 'Find the amplitude of $x = 6\cos t + 8\sin t$.'
+            answer: '$10$'
+        constraints: "amplitudes from Pythagorean pairs (3,4,5), (6,8,10), (1,sqrt3,2); phase angles at standard unit-circle values"
+    diagnostic_exemplar:
+      problem: 'A mass satisfies $x'''' + 9x = 0$ with $x(0) = 3$ and $x''(0) = -12$. Solve the initial value problem and find the amplitude of the motion.'
+      answer: '$x = 3\cos 3t - 4\sin 3t$; amplitude $5$.'
+      solution_sketch: 'The natural frequency is $\omega = 3$, so $x = c_1\cos 3t + c_2\sin 3t$ with $c_1 = 3$ and $3c_2 = -12$, i.e. $c_2 = -4$. The amplitude is $\sqrt{3^2 + 4^2} = 5$.'
+    anki_seeds:
+      - front: "Natural frequency of the undamped oscillator mx'' + kx = 0?"
+        back: '$\omega = \sqrt{k/m}$'
+        type: basic
+      - front: 'Amplitude of $x = a\cos\omega t + b\sin\omega t$?'
+        back: '$R = \sqrt{a^2 + b^2}$'
+        type: basic
+
+  - id: spring-mass-oscillations
+    name: Spring-Mass Systems and Oscillations
+    core: false                # physical-model application; terminal
+    difficulty: 0.78
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 300
+    prerequisites:
+      - id: free-undamped-oscillations
+        weight: 0.7
+        key: true
+      - id: undetermined-coefficients
+        weight: 0.5
+        key: true
+      - id: trig-identities-basic
+        weight: 0.3
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: Damped motion classification
+        key_prerequisites: [free-undamped-oscillations]
+        exemplars:
+          - problem: "Classify the motion $x'' + 6x' + 9x = 0$ as underdamped, critically damped, or overdamped."
+            answer: "Critically damped: the characteristic equation has the double root $r = -3$."
+            solution_sketch: "$r^2 + 6r + 9 = (r+3)^2$: discriminant zero."
+          - problem: 'Classify $x'''' + 2x'' + 10x = 0$ and give the general solution.'
+            answer: 'Underdamped: $x = e^{-t}(c_1 \cos 3t + c_2 \sin 3t)$, quasi-frequency $3$.'
+            solution_sketch: '$r = -1 \pm 3i$ from $r^2 + 2r + 10 = 0$: complex roots mean oscillation inside a decaying envelope.'
+          - problem: "Classify $x'' + 5x' + 4x = 0$."
+            answer: "Overdamped: distinct real roots $r = -1$ and $r = -4$, no oscillation."
+            solution_sketch: "$r^2 + 5r + 4 = (r+1)(r+4)$: positive discriminant."
+        constraints: "classification by the discriminant of r^2 + (c/m)r + k/m; integer roots or integer alpha, beta"
+      - id: kp2
+        name: Damped IVPs
+        key_prerequisites: [free-undamped-oscillations]
+        exemplars:
+          - problem: "Solve $x'' + 4x' + 3x = 0$ with $x(0) = 2$, $x'(0) = 0$."
+            answer: "$x = 3e^{-t} - e^{-3t}$"
+            solution_sketch: "Overdamped, roots $-1, -3$: $c_1 + c_2 = 2$ and $-c_1 - 3c_2 = 0$ give $c_1 = 3$, $c_2 = -1$."
+          - problem: "Solve $x'' + 2x' + 5x = 0$ with $x(0) = 1$, $x'(0) = -1$."
+            answer: "$x = e^{-t}\\cos 2t$"
+            solution_sketch: "$r = -1 \\pm 2i$: $x = e^{-t}(c_1\\cos 2t + c_2\\sin 2t)$; $c_1 = 1$ and $x'(0) = -c_1 + 2c_2 = -1$ give $c_2 = 0$."
+        constraints: "roots integer or integer alpha, beta; initial data chosen so constants are small integers"
+      - id: kp3
+        name: Forced motion and resonance
+        key_prerequisites: [free-undamped-oscillations, undetermined-coefficients]
+        exemplars:
+          - problem: 'Does $x'''' + 25x = 10\cos 5t$ exhibit resonance? Find a particular solution.'
+            answer: 'Yes: the forcing frequency $5$ equals the natural frequency. $x_p = t\sin 5t$, whose amplitude grows without bound.'
+            solution_sketch: 'Try $x_p = t(A\cos 5t + B\sin 5t)$; substitution gives $10B\cos 5t - 10A \sin 5t = 10\cos 5t$, so $A = 0$, $B = 1$.'
+          - problem: 'Find a particular solution of $x'''' + 4x = 3\cos t$.'
+            answer: '$x_p = \cos t$'
+            solution_sketch: 'Try $x_p = A\cos t$: $(-1 + 4)A = 3$ gives $A = 1$; no resonance since $1 \neq 2$.'
+        constraints: "undamped forced oscillators only; resonance iff forcing frequency equals sqrt(k/m)"
+    diagnostic_exemplar:
+      problem: 'Does $x'''' + 16x = 8\cos 4t$ exhibit resonance? Find a particular solution.'
+      answer: 'Yes: the forcing frequency $4$ equals the undamped natural frequency. $x_p = t\sin 4t$, whose amplitude grows without bound.'
+      solution_sketch: 'Since $\cos 4t$ solves the homogeneous equation, the trial form is $x_p = t(A\cos 4t + B\sin 4t)$; substituting gives $-8A\sin 4t + 8B\cos 4t = 8\cos 4t$, so $A = 0$ and $B = 1$.'
+    anki_seeds:
+      - front: "Damped oscillator mx'' + cx' + kx = 0: the motion is underdamped when..."
+        back: "the discriminant c^2 - 4mk is negative (complex roots: oscillation in a decaying envelope)."
+        type: basic
+      - front: "Pure resonance in x'' + omega^2 x = F cos(gamma t) occurs when..."
+        back: "gamma = omega: the particular solution gains a factor of t and grows without bound."
+        type: basic
+
+  - id: rlc-circuit-equations
+    name: RLC Circuits
+    core: false                # physical-model application; terminal
+    difficulty: 0.76
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 240
+    prerequisites:
+      - id: spring-mass-oscillations
+        weight: 0.6
+        key: true
+      - id: undetermined-coefficients
+        weight: 0.3
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: The circuit equation and the mechanical analogy
+        key_prerequisites: [spring-mass-oscillations]
+        exemplars:
+          - problem: "A series circuit has inductance $L = 1$ H, no resistance, capacitance $C = \\tfrac{1}{16}$ F, and no source. Write the ODE for the charge $Q(t)$ and its general solution."
+            answer: "$Q'' + 16Q = 0$; $Q = c_1\\cos 4t + c_2 \\sin 4t$."
+            solution_sketch: "$LQ'' + RQ' + \\dfrac{Q}{C} = E(t)$ with $L = 1$, $R = 0$, $1/C = 16$, $E = 0$."
+          - problem: "In the mechanical analogy for $LQ'' + RQ' + Q/C = E$, which mechanical quantities correspond to $L$, $R$, and $1/C$?"
+            answer: "$L \\leftrightarrow$ mass $m$, $R \\leftrightarrow$ damping $c$, $1/C \\leftrightarrow$ stiffness $k$ (and $E \\leftrightarrow$ external force)."
+          - problem: "For $L = 2$, $R = 8$, $C = \\tfrac{1}{8}$, $E = 0$, write the charge ODE in standard form and classify the response."
+            answer: "$Q'' + 4Q' + 4Q = 0$: critically damped (double root $-2$)."
+            solution_sketch: "$2Q'' + 8Q' + 8Q = 0$; divide by $2$; $(r+2)^2 = 0$."
+        constraints: "L, R, 1/C chosen so the standard-form coefficients are small integers; always state the analogy explicitly"
+      - id: kp2
+        name: Free circuit response
+        key_prerequisites: [spring-mass-oscillations]
+        exemplars:
+          - problem: "Solve $Q'' + 2Q' + 5Q = 0$ with $Q(0) = 3$, $Q'(0) = -3$."
+            answer: "$Q = 3e^{-t}\\cos 2t$"
+            solution_sketch: "$r = -1 \\pm 2i$; $c_1 = 3$ and $Q'(0) = -c_1 + 2c_2 = -3$ give $c_2 = 0$."
+          - problem: "A circuit has $L = 1$, $R = 6$, $C = \\tfrac{1}{9}$, $E = 0$. Classify the response."
+            answer: "$Q'' + 6Q' + 9Q = 0$: critically damped."
+            solution_sketch: "$(r + 3)^2 = 0$."
+        constraints: "same classification machinery as damped springs; the current is I = Q'"
+      - id: kp3
+        name: Driven circuits and steady state
+        key_prerequisites: [spring-mass-oscillations, undetermined-coefficients]
+        exemplars:
+          - problem: "Find the steady-state charge for $Q'' + 2Q' + 5Q = 10$."
+            answer: "$Q = 2$"
+            solution_sketch: "Constant particular solution: $5Q = 10$; the homogeneous part decays to zero."
+          - problem: 'Find the steady-state charge for $Q'''' + 2Q'' + Q = 10\sin t$ and its amplitude.'
+            answer: '$Q_p = -5\cos t$; amplitude $5$.'
+            solution_sketch: 'Try $Q_p = a\cos t + b\sin t$: substitution gives $2b\cos t - 2a\sin t = 10\sin t$, so $b = 0$, $a = -5$; the damped homogeneous solution dies out.'
+        constraints: "steady state = the particular solution that persists after transients decay; sinusoidal sources with integer frequency"
+    diagnostic_exemplar:
+      problem: 'A series circuit has $L = 1$ H, $R = 2\ \Omega$, $C = \tfrac{1}{5}$ F and a constant source $E = 10$ V. Write the differential equation for the charge $Q(t)$ and find the steady-state charge.'
+      answer: '$Q'''' + 2Q'' + 5Q = 10$; steady-state charge $Q = 2$.'
+      solution_sketch: '$LQ'''' + RQ'' + Q/C = E$ gives $Q'''' + 2Q'' + 5Q = 10$. The homogeneous part decays (roots $-1 \pm 2i$), so the steady state is the constant particular solution $5Q = 10$, i.e. $Q = 2$.'
+    anki_seeds:
+      - front: "Series RLC circuit ODE for the charge Q?"
+        back: "$LQ'' + RQ' + Q/C = E(t)$, with current $I = Q'$."
+        type: basic
+      - front: "Mechanical analogy for a series RLC circuit?"
+        back: "L ↔ mass, R ↔ damping, 1/C ↔ spring stiffness, E ↔ external force."
+        type: basic
+
+  - id: boundary-value-problems-intro
+    name: Boundary Value Problems
+    core: false                # terminal problem genre
+    difficulty: 0.76
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 240
+    prerequisites:
+      - id: homogeneous-constant-coefficients
+        weight: 0.7
+        key: true
+      - id: unit-circle
+        weight: 0.3
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: Solving two-point BVPs
+        key_prerequisites: [homogeneous-constant-coefficients]
+        exemplars:
+          - problem: "Solve $y'' = 0$ with $y(0) = 1$, $y(1) = 3$."
+            answer: "$y = 1 + 2x$"
+            solution_sketch: "General solution $y = ax + b$; fit both endpoint values."
+          - problem: "Solve $y'' + y = 0$ with $y(0) = 0$, $y(\\pi/2) = 5$."
+            answer: "$y = 5\\sin x$"
+            solution_sketch: "$y = c_1\\cos x + c_2\\sin x$; $y(0) = 0$ forces $c_1 = 0$ and $y(\\pi/2) = c_2 = 5$."
+        constraints: "conditions at two different points; endpoints at 0 and rational multiples of pi where sin/cos take clean values"
+      - id: kp2
+        name: "Existence outcomes: unique, none, or infinitely many"
+        key_prerequisites: [homogeneous-constant-coefficients, unit-circle]
+        exemplars:
+          - problem: "Find all solutions of $y'' + y = 0$ with $y(0) = 0$, $y(\\pi) = 0$."
+            answer: "$y = c\\sin x$ for every constant $c$: infinitely many solutions."
+            solution_sketch: "$c_1 = 0$ from the first condition; the second reads $c_2 \\sin\\pi = 0$, true for all $c_2$."
+          - problem: "Solve $y'' + y = 0$ with $y(0) = 0$, $y(\\pi) = 1$."
+            answer: "No solution."
+            solution_sketch: "$c_1 = 0$ forces $y = c_2\\sin x$, but $y(\\pi) = 0 \\neq 1$."
+          - problem: "How does this differ from initial value problems for the same equation?"
+            answer: "An IVP (conditions at one point) always has exactly one solution; a BVP can have one, none, or infinitely many."
+        constraints: "the boundary data hits or misses zeros of sin; all three outcomes must be represented across problems"
+      - id: kp3
+        name: Eigenvalue problems
+        key_prerequisites: [homogeneous-constant-coefficients, unit-circle]
+        exemplars:
+          - problem: "Find all $\\lambda > 0$ for which $y'' + \\lambda y = 0$, $y(0) = y(\\pi) = 0$ has nonzero solutions."
+            answer: "$\\lambda = n^2$ for $n = 1, 2, 3, \\ldots$, with $y = \\sin nx$."
+            solution_sketch: "$y = \\sin(\\sqrt{\\lambda}\\,x)$ needs $\\sin(\\sqrt{\\lambda}\\,\\pi) = 0$, i.e. $\\sqrt{\\lambda} = n$."
+          - problem: "State the eigenvalues of $y'' + \\lambda y = 0$, $y(0) = y(L) = 0$."
+            answer: '$\lambda_n = \dfrac{n^2\pi^2}{L^2}$, with eigenfunctions $\sin\dfrac{n\pi x}{L}$.'
+          - problem: "What is the smallest positive eigenvalue of $y'' + \\lambda y = 0$, $y(0) = y(1) = 0$?"
+            answer: '$\pi^2$'
+        constraints: "Dirichlet conditions only; eigenvalues (n pi / L)^2 with L in {1, pi, 2}"
+    diagnostic_exemplar:
+      problem: 'Find all values $\lambda > 0$ for which $y'''' + \lambda y = 0$ with $y(0) = y(2) = 0$ has nonzero solutions, and give those solutions.'
+      answer: '$\lambda_n = \dfrac{n^2\pi^2}{4}$ for $n = 1, 2, 3, \ldots$, with $y = \sin\dfrac{n\pi x}{2}$ (up to a constant multiple).'
+      solution_sketch: 'For $\lambda > 0$ the general solution is $y = c_1\cos\sqrt{\lambda}\,x + c_2\sin\sqrt{\lambda}\,x$. Then $y(0) = 0$ forces $c_1 = 0$, and $y(2) = c_2\sin 2\sqrt{\lambda} = 0$ has a nonzero solution only when $2\sqrt{\lambda} = n\pi$.'
+    anki_seeds:
+      - front: "A boundary value problem differs from an IVP in that..."
+        back: "conditions are imposed at two different points — and a solution may be unique, nonexistent, or non-unique."
+        type: basic
+      - front: "Eigenvalues of y'' + lambda y = 0 with y(0) = y(L) = 0?"
+        back: '$\lambda_n = (n\pi/L)^2$, eigenfunctions $\sin(n\pi x/L)$.'
+        type: basic

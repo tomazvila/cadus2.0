@@ -1,0 +1,1268 @@
+unit: measurement-coordinate
+course: geometry
+module: "Measurement & Coordinate Geometry"
+topics:
+  - id: triangle-area
+    name: Areas of Triangles and Rectangles
+    core: true
+    difficulty: 0.26
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 60
+    prerequisites:
+      - id: evaluating-expressions
+        weight: 0.6
+        key: true
+      - id: multiplying-fractions
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: Rectangle and triangle area formulas
+        key_prerequisites: [evaluating-expressions]
+        exemplars:
+          - problem: 'Find the area of a rectangle with sides $8$ and $5$.'
+            answer: "40"
+          - problem: 'Find the area of a triangle with base $10$ and height $7$.'
+            answer: "35"
+            solution_sketch: '$\frac{1}{2} \cdot 10 \cdot 7 = 35$.'
+        constraints: "whole-number dimensions; even base-height products for triangles"
+      - id: kp2
+        name: Use the height, not a slant side
+        key_prerequisites: [evaluating-expressions]
+        exemplars:
+          - problem: 'A triangle has base $24$, sides $13$ and $13$, and the height to that base is $5$. Find its area.'
+            answer: "60"
+            solution_sketch: 'Only the base and its height matter: $\frac{1}{2} \cdot 24 \cdot 5 = 60$.'
+          - problem: 'A right triangle has legs $9$ and $4$. Find its area.'
+            answer: "18"
+            solution_sketch: 'The legs are a base-height pair: $\frac{1}{2} \cdot 9 \cdot 4 = 18$.'
+        constraints: "height given explicitly or as a leg; slant sides appear as distractors"
+      - id: kp3
+        name: Work backwards from an area
+        key_prerequisites: [evaluating-expressions, multiplying-fractions]
+        exemplars:
+          - problem: 'A triangle has area $42$ and base $12$. Find its height.'
+            answer: "7"
+            solution_sketch: '$\frac{1}{2} \cdot 12 \cdot h = 42 \Rightarrow h = 7$.'
+          - problem: 'A rectangle has area $72$ and one side of length $9$. Find the other side.'
+            answer: "8"
+        constraints: "divide out cleanly to whole numbers"
+    diagnostic_exemplar:
+      problem: 'A triangle has base $16$, sides $17$ and $17$, and the height to that base is $15$. Find its area.'
+      answer: "120"
+      solution_sketch: 'Only the base and its height matter: $\frac{1}{2} \cdot 16 \cdot 15 = 120$.'
+    anki_seeds:
+      - front: "Area of a triangle:"
+        back: "(1/2) x base x height"
+        type: basic
+      - front: "The height in the triangle area formula must be ... to the base."
+        back: "perpendicular"
+        type: basic
+
+  - id: parallelogram-trapezoid-area
+    name: Areas of Parallelograms and Trapezoids
+    core: true
+    difficulty: 0.30
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 90
+    prerequisites:
+      - id: triangle-area
+        weight: 0.7
+        key: true
+      - id: multiplying-fractions
+        weight: 0.3
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: Parallelogram area
+        key_prerequisites: [triangle-area]
+        exemplars:
+          - problem: 'Find the area of a parallelogram with base $9$ and height $6$.'
+            answer: "54"
+          - problem: 'Find the area of a parallelogram with base $12$ and height $8$.'
+            answer: "96"
+            solution_sketch: '$A = bh = 96$.'
+        constraints: "height given explicitly (never assume a slant side is the height)"
+      - id: kp2
+        name: Trapezoid area
+        key_prerequisites: [triangle-area, multiplying-fractions]
+        exemplars:
+          - problem: 'Find the area of a trapezoid with bases $7$ and $13$ and height $6$.'
+            answer: "60"
+            solution_sketch: '$\frac{1}{2}(7 + 13) \cdot 6 = 60$.'
+          - problem: 'Find the area of a trapezoid with bases $5$ and $11$ and height $4$.'
+            answer: "32"
+            solution_sketch: '$\frac{1}{2}(16) \cdot 4 = 32$.'
+        constraints: "base sums even, so areas are whole"
+      - id: kp3
+        name: Rhombus and kite area from diagonals
+        key_prerequisites: [triangle-area, multiplying-fractions]
+        exemplars:
+          - problem: 'Find the area of a rhombus with diagonals $10$ and $14$.'
+            answer: "70"
+            solution_sketch: '$\frac{1}{2} d_1 d_2 = \frac{1}{2} \cdot 10 \cdot 14 = 70$.'
+          - problem: 'Find the area of a kite with diagonals $6$ and $9$.'
+            answer: "27"
+            solution_sketch: '$\frac{1}{2} \cdot 6 \cdot 9 = 27$.'
+        constraints: "diagonal products even, so areas are whole"
+    diagnostic_exemplar:
+      problem: 'A trapezoid with bases $6$ and $10$ and height $5$ has the same area as a rhombus with diagonals $8$ and $d$. Find $d$.'
+      answer: '10'
+      solution_sketch: 'Trapezoid area $= \frac{1}{2}(6 + 10)(5) = 40$; rhombus area $= \frac{1}{2}(8)(d) = 40$ gives $d = 10$.'
+    anki_seeds:
+      - front: "Area of a trapezoid:"
+        back: "(1/2)(b1 + b2) x height"
+        type: basic
+      - front: "Area of a rhombus (or kite) from its diagonals:"
+        back: "(1/2) x d1 x d2"
+        type: basic
+
+  - id: area-triangles-quadrilaterals
+    name: Areas of Triangles and Quadrilaterals
+    core: true
+    difficulty: 0.40
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 90
+    prerequisites:
+      - id: triangle-area
+        weight: 0.8
+        key: true
+      - id: parallelogram-trapezoid-area
+        weight: 0.8
+        key: true
+      - id: pythagorean-theorem
+        weight: 0.5
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: Composite figures
+        key_prerequisites: [triangle-area, parallelogram-trapezoid-area]
+        exemplars:
+          - problem: 'An L-shaped region is the union of an $8 \times 5$ rectangle and a non-overlapping $4 \times 3$ rectangle. Find its total area.'
+            answer: "52"
+            solution_sketch: '$40 + 12 = 52$.'
+          - problem: 'A figure consists of a $10 \times 6$ rectangle topped by a triangle with base $10$ and height $4$. Find its total area.'
+            answer: "80"
+            solution_sketch: '$60 + \frac{1}{2} \cdot 10 \cdot 4 = 80$.'
+        constraints: "composites decompose into two rectangles or a rectangle and triangle"
+      - id: kp2
+        name: Heights via the Pythagorean theorem
+        key_prerequisites: [triangle-area, pythagorean-theorem]
+        exemplars:
+          - problem: 'A triangle has sides $5$, $5$, and base $6$. Find its area.'
+            answer: "12"
+            solution_sketch: 'The height to the base is $\sqrt{5^2 - 3^2} = 4$; area $= \frac{1}{2} \cdot 6 \cdot 4 = 12$.'
+          - problem: 'An isosceles trapezoid has legs $5$ and bases $10$ and $16$. Find its area.'
+            answer: "52"
+            solution_sketch: 'Overhang $= \frac{16 - 10}{2} = 3$; height $= \sqrt{5^2 - 3^2} = 4$; area $= \frac{1}{2}(26)(4) = 52$.'
+        constraints: "isosceles heights via Pythagorean triples on half the base or the overhang"
+      - id: kp3
+        name: Working backwards from areas
+        key_prerequisites: [triangle-area, parallelogram-trapezoid-area]
+        exemplars:
+          - problem: 'A trapezoid has area $60$, with bases $7$ and $13$. Find its height.'
+            answer: "6"
+            solution_sketch: '$\frac{1}{2}(20)h = 60 \Rightarrow h = 6$.'
+          - problem: 'A rhombus has area $96$ and one diagonal of length $12$. Find the other diagonal.'
+            answer: "16"
+            solution_sketch: '$\frac{1}{2} \cdot 12 \cdot d = 96 \Rightarrow d = 16$.'
+          - problem: 'A parallelogram has area $91$ and base $13$. Find its height.'
+            answer: "7"
+        constraints: "divide out cleanly to whole numbers"
+    diagnostic_exemplar:
+      problem: 'A triangle has sides $10$, $10$, and base $12$. Find its area.'
+      answer: "48"
+      solution_sketch: 'Height $= \sqrt{10^2 - 6^2} = 8$; area $= \frac{1}{2} \cdot 12 \cdot 8 = 48$.'
+    anki_seeds:
+      - front: "Strategy for the area of a composite figure:"
+        back: "split it into rectangles and triangles, then add (or subtract) the pieces"
+        type: basic
+      - front: "Height of an isosceles triangle with equal sides s and base b:"
+        back: "sqrt(s^2 - (b/2)^2)"
+        type: basic
+
+  - id: composite-figure-areas
+    name: Composite and Shaded Areas
+    core: false                # applications leaf topic
+    difficulty: 0.44
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 150
+    prerequisites:
+      - id: area-triangles-quadrilaterals
+        weight: 0.7
+        key: true
+      - id: circle-area-circumference
+        weight: 0.5
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: Figures combining polygons and semicircles
+        key_prerequisites: [area-triangles-quadrilaterals, circle-area-circumference]
+        exemplars:
+          - problem: 'A figure is a $10 \times 4$ rectangle with a semicircle of diameter $4$ attached to one short side. Find its total area (exact).'
+            answer: '$40 + 2\pi$'
+            solution_sketch: 'Rectangle $40$ plus semicircle $\frac{1}{2}\pi \cdot 2^2 = 2\pi$.'
+          - problem: 'A running track encloses a $100 \times 40$ rectangle with a semicircle of diameter $40$ on each end. Find the enclosed area (exact).'
+            answer: '$4000 + 400\pi$'
+            solution_sketch: 'Rectangle $4000$; the two semicircles form a circle of radius $20$: $400\pi$.'
+        constraints: "semicircle diameters match a side; exact pi answers"
+      - id: kp2
+        name: Shaded regions by subtraction
+        key_prerequisites: [area-triangles-quadrilaterals, circle-area-circumference]
+        exemplars:
+          - problem: 'A circle of radius $5$ is inscribed in a square of side $10$. Find the area inside the square but outside the circle (exact).'
+            answer: '$100 - 25\pi$'
+            solution_sketch: 'Square minus circle: $100 - 25\pi$.'
+          - problem: 'Find the area of the ring (annulus) between concentric circles of radii $5$ and $3$ (exact).'
+            answer: '$16\pi$'
+            solution_sketch: '$25\pi - 9\pi = 16\pi$.'
+        constraints: "outer area minus inner area; exact answers"
+      - id: kp3
+        name: Multi-piece decompositions
+        key_prerequisites: [area-triangles-quadrilaterals, circle-area-circumference]
+        exemplars:
+          - problem: 'A square of side $8$ has a quarter circle of radius $8$ removed (centered at one corner). Find the remaining area (exact).'
+            answer: '$64 - 16\pi$'
+            solution_sketch: 'Quarter circle $= \frac{1}{4} \cdot 64\pi = 16\pi$; $64 - 16\pi$.'
+          - problem: 'A trapezoid with bases $8$ and $12$ and height $6$ has a triangular notch of base $4$ and height $3$ removed. Find the remaining area.'
+            answer: "54"
+            solution_sketch: '$\frac{1}{2}(20)(6) - \frac{1}{2}(4)(3) = 60 - 6 = 54$.'
+        constraints: "at most two pieces removed; results stay positive"
+    diagnostic_exemplar:
+      problem: 'A square of side $8$ has a semicircle of diameter $8$ removed from it (the semicircle lies inside the square with its diameter along one side). Find the remaining area (exact, in terms of $\pi$).'
+      answer: '$64 - 8\pi$'
+      solution_sketch: 'Square $64$; semicircle of radius $4$ has area $\frac{1}{2}\pi(16) = 8\pi$; subtract.'
+    anki_seeds:
+      - front: "Area of an annulus (ring) with outer radius R and inner radius r:"
+        back: "pi (R^2 - r^2)"
+        type: basic
+      - front: "Shaded-region strategy when one figure sits inside another:"
+        back: "outer area minus inner area"
+        type: basic
+
+  - id: area-regular-polygons
+    name: Areas of Regular Polygons
+    core: false                # applications leaf topic
+    difficulty: 0.46
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 150
+    prerequisites:
+      - id: area-triangles-quadrilaterals
+        weight: 0.6
+        key: true
+      - id: special-right-triangles
+        weight: 0.5
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: Area from apothem and perimeter
+        key_prerequisites: [area-triangles-quadrilaterals]
+        exemplars:
+          - problem: 'A regular polygon has perimeter $60$ and apothem $9$. Find its area.'
+            answer: "270"
+            solution_sketch: '$A = \frac{1}{2} a P = \frac{1}{2} \cdot 9 \cdot 60 = 270$.'
+          - problem: 'A regular polygon has area $168$ and apothem $7$. Find its perimeter.'
+            answer: "48"
+            solution_sketch: '$\frac{1}{2} \cdot 7 \cdot P = 168 \Rightarrow P = 48$.'
+        constraints: "give perimeter and apothem as numbers (no over-specified side counts); clean products"
+      - id: kp2
+        name: Regular hexagons and equilateral triangles
+        key_prerequisites: [area-triangles-quadrilaterals, special-right-triangles]
+        exemplars:
+          - problem: 'Find the area of an equilateral triangle with side $6$ (exact).'
+            answer: "9*sqrt(3)"
+            solution_sketch: '$A = \frac{\sqrt{3}}{4} s^2 = \frac{\sqrt{3}}{4} \cdot 36 = 9\sqrt{3}$.'
+          - problem: 'Find the area of a regular hexagon with side $4$ (exact).'
+            answer: "24*sqrt(3)"
+            solution_sketch: 'Six equilateral triangles: $6 \cdot \frac{\sqrt{3}}{4} \cdot 16 = 24\sqrt{3}$.'
+          - problem: 'Find the area of a regular hexagon with side $6$ (exact).'
+            answer: "54*sqrt(3)"
+            solution_sketch: '$6 \cdot \frac{\sqrt{3}}{4} \cdot 36 = 54\sqrt{3}$.'
+        constraints: "exact radical answers written as k*sqrt(n); hexagon = six equilateral triangles"
+      - id: kp3
+        name: Apothems via special right triangles
+        key_prerequisites: [area-triangles-quadrilaterals, special-right-triangles]
+        exemplars:
+          - problem: 'Find the apothem of a regular hexagon with side $6$ (exact).'
+            answer: "3*sqrt(3)"
+            solution_sketch: 'The apothem is the height of an equilateral triangle of side $6$: $\frac{6\sqrt{3}}{2} = 3\sqrt{3}$.'
+          - problem: 'A square has side $10$. Find its apothem.'
+            answer: "5"
+            solution_sketch: 'The apothem of a square is half its side.'
+        constraints: "restrict to squares, equilateral triangles, and hexagons so 30-60-90 or 45-45-90 triangles suffice"
+    diagnostic_exemplar:
+      problem: 'Find the apothem of a regular hexagon with side $6$, then use it with the perimeter to find the area of the hexagon. Give the area (exact, in simplest radical form).'
+      answer: '54*sqrt(3)'
+      solution_sketch: 'The apothem is the height of an equilateral triangle of side $6$ split in half: $3\sqrt{3}$. Area $= \frac{1}{2}ap = \frac{1}{2}(3\sqrt{3})(36) = 54\sqrt{3}$.'
+    anki_seeds:
+      - front: "Area of a regular polygon with apothem a and perimeter P:"
+        back: "(1/2) x a x P"
+        type: basic
+      - front: "A regular hexagon with side s decomposes into..."
+        back: "six equilateral triangles of side s"
+        type: basic
+
+  - id: distance-midpoint-formulas
+    name: Distance and Midpoint Formulas
+    core: true
+    difficulty: 0.36
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 120
+    prerequisites:
+      - id: pythagorean-theorem
+        weight: 0.7
+        key: true
+      - id: coordinate-plane
+        weight: 0.6
+        key: true
+      - id: square-roots
+        weight: 0.4
+        key: false
+      - id: simplifying-radicals
+        weight: 0.3
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: Distance between two points
+        key_prerequisites: [pythagorean-theorem, coordinate-plane]
+        exemplars:
+          - problem: 'Find the distance between $(1, 2)$ and $(4, 6)$.'
+            answer: "5"
+            solution_sketch: '$\sqrt{3^2 + 4^2} = 5$.'
+          - problem: 'Find the distance between $(-2, 3)$ and $(3, -9)$.'
+            answer: "13"
+            solution_sketch: '$\sqrt{5^2 + 12^2} = 13$.'
+        constraints: "coordinate differences form Pythagorean triples"
+      - id: kp2
+        name: Midpoint and missing endpoint
+        key_prerequisites: [coordinate-plane]
+        exemplars:
+          - problem: 'Find the midpoint of the segment from $(2, -4)$ to $(8, 10)$.'
+            answer: "(5, 3)"
+            solution_sketch: 'Average each coordinate: $\left(\frac{2+8}{2}, \frac{-4+10}{2}\right)$.'
+          - problem: '$M(1, 2)$ is the midpoint of $\overline{AB}$ with $A(-3, 6)$. Find $B$.'
+            answer: "(5, -2)"
+            solution_sketch: '$B = (2 \cdot 1 - (-3),\ 2 \cdot 2 - 6) = (5, -2)$.'
+        constraints: "coordinate sums even so midpoints are integer points"
+      - id: kp3
+        name: Distances with radical answers
+        key_prerequisites: [pythagorean-theorem, simplifying-radicals]
+        exemplars:
+          - problem: 'Find the distance between $(0, 0)$ and $(4, 6)$, in simplest radical form.'
+            answer: "2*sqrt(13)"
+            solution_sketch: '$\sqrt{16 + 36} = \sqrt{52} = 2\sqrt{13}$.'
+          - problem: 'Find the distance between $(-1, 2)$ and $(3, 6)$, in simplest radical form.'
+            answer: "4*sqrt(2)"
+            solution_sketch: '$\sqrt{4^2 + 4^2} = \sqrt{32} = 4\sqrt{2}$.'
+        constraints: "radicands with a perfect-square factor; answers in simplest radical form, written as k*sqrt(n)"
+    diagnostic_exemplar:
+      problem: 'Find the distance from the midpoint of the segment joining $(2, -4)$ and $(8, 10)$ to the point $(3, 7)$, in simplest radical form.'
+      answer: '2*sqrt(5)'
+      solution_sketch: 'Midpoint $= (5, 3)$; distance $= \sqrt{(5-3)^2 + (3-7)^2} = \sqrt{20} = 2\sqrt{5}$.'
+    anki_seeds:
+      - front: 'Distance formula between $(x_1, y_1)$ and $(x_2, y_2)$:'
+        back: '$\sqrt{(x_2 - x_1)^2 + (y_2 - y_1)^2}$'
+        type: basic
+      - front: 'Midpoint formula between $(x_1, y_1)$ and $(x_2, y_2)$:'
+        back: '$\left(\frac{x_1 + x_2}{2}, \frac{y_1 + y_2}{2}\right)$'
+        type: basic
+
+  - id: partitioning-line-segments
+    name: Partitioning Line Segments
+    core: false                # midpoint generalization with no in-tree consumer; a coordinate-geometry destination, not machinery
+    difficulty: 0.42
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 120
+    prerequisites:
+      - id: distance-midpoint-formulas
+        weight: 0.7
+        key: true
+      - id: ratios-proportions
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: Partition points with integer coordinates
+        key_prerequisites: [distance-midpoint-formulas, ratios-proportions]
+        exemplars:
+          - problem: 'Point $P$ lies on the directed segment from $A(1, 2)$ to $B(7, 11)$ so that $AP : PB = 2 : 1$. Find $P$.'
+            answer: "(5, 8)"
+            solution_sketch: '$P = A + \frac{2}{3}(B - A) = (1 + \frac{2}{3} \cdot 6,\ 2 + \frac{2}{3} \cdot 9) = (5, 8)$.'
+          - problem: 'Point $P$ lies on the directed segment from $A(-3, 2)$ to $B(5, -6)$ so that $AP : PB = 3 : 1$. Find $P$.'
+            answer: "(3, -4)"
+            solution_sketch: '$P = A + \frac{3}{4}(B - A) = (-3 + 6,\ 2 - 6)$.'
+          - problem: 'Point $P$ lies on the directed segment from $A(0, 4)$ to $B(8, 0)$ so that $AP : PB = 1 : 3$. Find $P$.'
+            answer: "(2, 3)"
+            solution_sketch: '$P = A + \frac{1}{4}(B - A) = (0 + 2,\ 4 - 1)$.'
+        constraints: "ratio m:n with m+n dividing both coordinate differences so P has integer coordinates; direction A to B stated explicitly; answer as an ordered pair"
+      - id: kp2
+        name: Partition points with fractional coordinates
+        key_prerequisites: [distance-midpoint-formulas, ratios-proportions]
+        exemplars:
+          - problem: 'Point $P$ lies on the directed segment from $A(1, 1)$ to $B(4, 3)$ so that $AP : PB = 1 : 2$. Find $P$ (exact coordinates).'
+            answer: "(2, 5/3)"
+            solution_sketch: '$P = A + \frac{1}{3}(B - A) = (1 + 1,\ 1 + \frac{2}{3}) = (2, \frac{5}{3})$.'
+          - problem: 'Point $P$ lies on the directed segment from $A(-2, 3)$ to $B(3, -1)$ so that $AP : PB = 3 : 2$. Find $P$ (exact coordinates).'
+            answer: "(1, 3/5)"
+            solution_sketch: '$P = A + \frac{3}{5}(B - A) = (-2 + 3,\ 3 - \frac{12}{5}) = (1, \frac{3}{5})$.'
+        constraints: "coordinates that do not divide evenly; answers as ordered pairs with exact fractions, never decimals"
+      - id: kp3
+        name: Recover the ratio or an endpoint
+        key_prerequisites: [distance-midpoint-formulas, ratios-proportions]
+        exemplars:
+          - problem: 'Point $P(3, 3)$ lies on the directed segment from $A(1, 2)$ to $B(7, 5)$. Find the ratio $AP/PB$ as a fraction.'
+            answer: "1/2"
+            solution_sketch: '$P - A = (2, 1) = \frac{1}{3}(B - A)$, so $AP : PB = 1 : 2$ and $AP/PB = \frac{1}{2}$.'
+          - problem: 'Point $P(3, 1)$ divides the directed segment from $A(-1, -3)$ to $B$ so that $AP : PB = 2 : 3$. Find $B$.'
+            answer: "(9, 7)"
+            solution_sketch: '$P - A = (4, 4) = \frac{2}{5}(B - A)$, so $B - A = (10, 10)$ and $B = (9, 7)$.'
+        constraints: "collinear points guaranteed; ratio answers as a single reduced fraction AP/PB, endpoint answers as ordered pairs; integer data"
+    diagnostic_exemplar:
+      problem: 'Point $P(1, 3)$ divides the directed segment from $A(-3, 1)$ to $B$ so that $AP : PB = 2 : 1$. Find $B$.'
+      answer: "(3, 4)"
+      solution_sketch: '$P - A = (4, 2) = \frac{2}{3}(B - A)$, so $B - A = (6, 3)$ and $B = (3, 4)$.'
+    anki_seeds:
+      - front: 'Point dividing the directed segment from A to B in the ratio m:n:'
+        back: 'P = A + (m/(m+n))(B - A)'
+        type: basic
+      - front: "The midpoint is the partition-formula case m:n = ..."
+        back: "1:1"
+        type: basic
+
+  - id: translations-coordinate-plane
+    name: Translations in the Coordinate Plane
+    core: true
+    difficulty: 0.24
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 60
+    prerequisites:
+      - id: coordinate-plane
+        weight: 0.7
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: Apply a translation rule
+        key_prerequisites: [coordinate-plane]
+        exemplars:
+          - problem: 'Apply the translation $(x, y) \to (x + 3, y - 2)$ to the point $(1, 4)$.'
+            answer: "(4, 2)"
+          - problem: 'Translate $(-2, 5)$ four units right and three units down.'
+            answer: "(2, 2)"
+            solution_sketch: '$(-2 + 4, 5 - 3) = (2, 2)$.'
+        constraints: "integer coordinates and shifts"
+      - id: kp2
+        name: Find the translation rule
+        key_prerequisites: [coordinate-plane]
+        exemplars:
+          - problem: 'A translation maps $(3, 1)$ to $(7, -2)$. Its rule has the form $(x, y) \to (x + a, y + b)$. Give the ordered pair $(a, b)$.'
+            answer: "(4, -3)"
+            solution_sketch: '$a = 7 - 3 = 4$, $b = -2 - 1 = -3$.'
+          - problem: 'The translation $(x, y) \to (x - 5, y + 1)$ maps some point to $(0, 3)$. Find the original point.'
+            answer: "(5, 2)"
+            solution_sketch: 'Reverse the shift: $(0 + 5, 3 - 1)$.'
+        constraints: "subtract coordinates to find the shift; ask for the shift as an ordered pair; include reverse questions"
+      - id: kp3
+        name: Translations are rigid motions
+        key_prerequisites: [coordinate-plane]
+        exemplars:
+          - problem: 'A segment of length $5$ is translated by $(x, y) \to (x + 7, y - 4)$. What is the length of its image?'
+            answer: "5"
+            solution_sketch: 'Translations preserve distance.'
+          - problem: 'A triangle with area $12$ is translated $6$ units up. What is the area of its image?'
+            answer: "12"
+        constraints: "conceptual invariance questions; lengths, angles, and areas preserved"
+    diagnostic_exemplar:
+      problem: 'The translation $(x, y) \to (x + 4, y - 2)$ maps some point to $(1, 5)$. Find the original point.'
+      answer: "(-3, 7)"
+      solution_sketch: 'Reverse the shift: $(1 - 4, 5 + 2) = (-3, 7)$.'
+    anki_seeds:
+      - front: "The translation rule 'a right, b up' in coordinates:"
+        back: "(x, y) -> (x + a, y + b)"
+        type: basic
+      - front: "Rigid motions (translations, reflections, rotations) preserve..."
+        back: "distances and angle measures"
+        type: basic
+
+  - id: reflections-coordinate-plane
+    name: Reflections in the Coordinate Plane
+    core: false                # terminal coordinate-transformation branch
+    difficulty: 0.28
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 90
+    prerequisites:
+      - id: translations-coordinate-plane
+        weight: 0.6
+        key: true
+      - id: coordinate-plane
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: Reflect over the axes
+        key_prerequisites: [translations-coordinate-plane]
+        exemplars:
+          - problem: 'Reflect $(3, -2)$ over the x-axis.'
+            answer: "(3, 2)"
+            solution_sketch: 'Over the x-axis: $(x, y) \to (x, -y)$.'
+          - problem: 'Reflect $(3, -2)$ over the y-axis.'
+            answer: "(-3, -2)"
+            solution_sketch: 'Over the y-axis: $(x, y) \to (-x, y)$.'
+        constraints: "integer points; name the axis explicitly"
+      - id: kp2
+        name: Reflect over the line y = x
+        key_prerequisites: [translations-coordinate-plane]
+        exemplars:
+          - problem: 'Reflect $(5, -1)$ over the line $y = x$.'
+            answer: "(-1, 5)"
+            solution_sketch: 'Over $y = x$: swap coordinates.'
+          - problem: 'Reflect $(2, 7)$ over the line $y = x$.'
+            answer: "(7, 2)"
+        constraints: "swap the coordinates"
+      - id: kp3
+        name: Reflect over vertical and horizontal lines
+        key_prerequisites: [translations-coordinate-plane]
+        exemplars:
+          - problem: 'Reflect $(1, 3)$ over the vertical line $x = 4$.'
+            answer: "(7, 3)"
+            solution_sketch: 'The point is $3$ left of the line, so its image is $3$ right: $x'' = 2 \cdot 4 - 1 = 7$.'
+          - problem: 'Reflect $(2, -5)$ over the horizontal line $y = 1$.'
+            answer: "(2, 7)"
+            solution_sketch: '$y'' = 2 \cdot 1 - (-5) = 7$.'
+        constraints: "image coordinate = 2(line value) - coordinate; integer results"
+    diagnostic_exemplar:
+      problem: 'Reflect $(3, -2)$ over the vertical line $x = 5$.'
+      answer: "(7, -2)"
+      solution_sketch: '$x'' = 2 \cdot 5 - 3 = 7$; the $y$-coordinate is unchanged.'
+    anki_seeds:
+      - front: "Reflection over the x-axis:"
+        back: "(x, y) -> (x, -y)"
+        type: basic
+      - front: "Reflection over the y-axis:"
+        back: "(x, y) -> (-x, y)"
+        type: basic
+      - front: "Reflection over the line y = x:"
+        back: "(x, y) -> (y, x)"
+        type: basic
+
+  - id: rotations-coordinate-plane
+    name: Rotations in the Coordinate Plane
+    core: false                # terminal coordinate-transformation branch
+    difficulty: 0.32
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 90
+    prerequisites:
+      - id: reflections-coordinate-plane
+        weight: 0.6
+        key: true
+      - id: coordinate-plane
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: Rotate 90 degrees counterclockwise about the origin
+        key_prerequisites: [reflections-coordinate-plane]
+        exemplars:
+          - problem: 'Rotate $(3, 1)$ by $90^\circ$ counterclockwise about the origin.'
+            answer: "(-1, 3)"
+            solution_sketch: '$90^\circ$ CCW: $(x, y) \to (-y, x)$.'
+          - problem: 'Rotate $(2, -4)$ by $90^\circ$ counterclockwise about the origin.'
+            answer: "(4, 2)"
+        constraints: "integer points; rotations about the origin only"
+      - id: kp2
+        name: Rotate 180 degrees about the origin
+        key_prerequisites: [reflections-coordinate-plane]
+        exemplars:
+          - problem: 'Rotate $(-5, 2)$ by $180^\circ$ about the origin.'
+            answer: "(5, -2)"
+            solution_sketch: '$180^\circ$: $(x, y) \to (-x, -y)$.'
+          - problem: 'Rotate $(7, -3)$ by $180^\circ$ about the origin.'
+            answer: "(-7, 3)"
+        constraints: "negate both coordinates"
+      - id: kp3
+        name: Rotate 270 degrees and identify rotations
+        key_prerequisites: [reflections-coordinate-plane]
+        exemplars:
+          - problem: 'Rotate $(1, 6)$ by $270^\circ$ counterclockwise about the origin.'
+            answer: "(6, -1)"
+            solution_sketch: '$270^\circ$ CCW ($= 90^\circ$ CW): $(x, y) \to (y, -x)$.'
+          - problem: 'A rotation about the origin maps $(4, 0)$ to $(0, -4)$. Through how many degrees counterclockwise?'
+            answer: "270"
+            solution_sketch: '$(x, y) \to (y, -x)$ matches $270^\circ$ CCW.'
+        constraints: "quarter-turn rules only; specify CCW unless stated"
+    diagnostic_exemplar:
+      problem: 'Rotate $(4, -3)$ by $270^\circ$ counterclockwise about the origin.'
+      answer: "(-3, -4)"
+      solution_sketch: '$270^\circ$ CCW ($= 90^\circ$ CW): $(x, y) \to (y, -x)$ gives $(-3, -4)$.'
+    anki_seeds:
+      - front: "Rotation 90 degrees counterclockwise about the origin:"
+        back: "(x, y) -> (-y, x)"
+        type: basic
+      - front: "Rotation 180 degrees about the origin:"
+        back: "(x, y) -> (-x, -y)"
+        type: basic
+
+  - id: line-rotational-symmetry
+    name: Line and Rotational Symmetry
+    core: false                # terminal recognition skill; nothing in the tree consumes it (and its rotations prerequisite is supplemental)
+    difficulty: 0.34
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 60
+    prerequisites:
+      - id: rotations-coordinate-plane
+        weight: 0.6
+        key: true
+      - id: interior-angles-polygons
+        weight: 0.3
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: Count lines of symmetry
+        key_prerequisites: [reflections-coordinate-plane]
+        exemplars:
+          - problem: 'How many lines of symmetry does a (non-square) rectangle have?'
+            answer: "2"
+          - problem: 'How many lines of symmetry does an isosceles triangle that is not equilateral have?'
+            answer: "1"
+          - problem: 'How many lines of symmetry does a regular pentagon have?'
+            answer: "5"
+            solution_sketch: 'A regular $n$-gon has $n$ lines of symmetry; here $n = 5$.'
+        constraints: "familiar figures only: triangles by type, quadrilaterals by type, regular polygons up to 12 sides; the answer is the count as a plain integer"
+      - id: kp2
+        name: Order and smallest angle of rotational symmetry
+        key_prerequisites: [rotations-coordinate-plane]
+        exemplars:
+          - problem: 'What is the smallest positive rotation, in degrees, that maps a regular hexagon onto itself?'
+            answer: "60"
+            solution_sketch: '$360^\circ/6 = 60^\circ$.'
+          - problem: 'What is the order of rotational symmetry of a (non-square) rectangle?'
+            answer: "2"
+            solution_sketch: 'Only $180^\circ$ and $360^\circ$ map it to itself.'
+        constraints: "the degree unit is named in the stem, never in the answer — answers are bare whole numbers (an angle in degrees or an integer order); figures as in kp1 plus the parallelogram"
+      - id: kp3
+        name: Symmetry of regular polygons
+        key_prerequisites: [interior-angles-polygons, rotations-coordinate-plane]
+        exemplars:
+          - problem: 'A regular polygon has a smallest positive rotational symmetry of $24^\circ$. How many sides does it have?'
+            answer: "15"
+            solution_sketch: '$360/24 = 15$.'
+          - problem: 'How many lines of symmetry does a regular polygon with rotational symmetry of order $9$ have?'
+            answer: "9"
+            solution_sketch: 'A regular $n$-gon has both $n$ lines of symmetry and rotational symmetry of order $n$.'
+        constraints: "n between 3 and 24 with 360/n a whole number of degrees; convert between side count, order, smallest rotation, and line count"
+    diagnostic_exemplar:
+      problem: 'A regular polygon maps onto itself under a rotation of $40^\circ$ and under no smaller positive rotation. How many lines of symmetry does it have?'
+      answer: "9"
+      solution_sketch: '$360/40 = 9$ sides; a regular $n$-gon has $n$ lines of symmetry.'
+    anki_seeds:
+      - front: "A regular n-gon has ... lines of symmetry and rotational symmetry of order ..."
+        back: "n; n"
+        type: basic
+      - front: "Smallest positive rotation mapping a regular n-gon to itself:"
+        back: "360/n degrees"
+        type: basic
+
+  - id: composite-transformations
+    name: Compositions of Transformations
+    core: false                # terminal transformation destination; nothing downstream consumes compositions, and its reflection/rotation prerequisites are supplemental (rule 1)
+    difficulty: 0.38
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 120
+    prerequisites:
+      - id: rotations-coordinate-plane
+        weight: 0.7
+        key: true
+      - id: reflections-coordinate-plane
+        weight: 0.6
+        key: true
+      - id: translations-coordinate-plane
+        weight: 0.5
+        key: false
+      - id: rigid-motions-congruence
+        weight: 0.3
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: Apply a sequence of transformations
+        key_prerequisites: [rotations-coordinate-plane, reflections-coordinate-plane, translations-coordinate-plane]
+        exemplars:
+          - problem: 'Reflect $(3, 1)$ over the y-axis, then apply the translation $(x, y) \to (x + 2, y - 1)$. Give the final image.'
+            answer: "(-1, 0)"
+            solution_sketch: 'Reflection: $(3, 1) \to (-3, 1)$. Translation: $(-3 + 2, 1 - 1) = (-1, 0)$.'
+          - problem: 'Rotate $(2, -1)$ by $90^\circ$ counterclockwise about the origin, then reflect the result over the x-axis. Give the final image.'
+            answer: "(1, -2)"
+            solution_sketch: 'Rotation: $(x, y) \to (-y, x)$ gives $(1, 2)$. Reflection: $(1, 2) \to (1, -2)$.'
+          - problem: 'Apply the translation $(x, y) \to (x - 1, y + 3)$ to $(4, -2)$, then rotate the result $180^\circ$ about the origin. Give the final image.'
+            answer: "(-3, -1)"
+            solution_sketch: 'Translation: $(3, 1)$. Rotation $180^\circ$: $(-3, -1)$.'
+        constraints: "two steps from the single-motion menus (axis/y=x reflections, quarter-turn rotations about the origin, integer translations); apply strictly in the stated order — vary the order across problems since composition is not commutative; integer coordinates throughout"
+      - id: kp2
+        name: Find the single equivalent motion
+        key_prerequisites: [rotations-coordinate-plane, reflections-coordinate-plane]
+        exemplars:
+          - problem: 'Reflecting over the x-axis and then over the y-axis is equivalent to a single rotation about the origin. Through how many degrees?'
+            answer: "180"
+            solution_sketch: '$(x, y) \to (x, -y) \to (-x, -y)$, which is the $180^\circ$ rotation.'
+          - problem: 'The composition of reflections over the parallel lines $y = 1$ and then $y = 4$ is a vertical translation $(x, y) \to (x, y + k)$. Find $k$.'
+            answer: "6"
+            solution_sketch: 'First reflection: $y \to 2 - y$; second: $y \to 8 - (2 - y) = y + 6$. In general, twice the distance between the lines.'
+          - problem: 'A $90^\circ$ counterclockwise rotation about the origin is followed by a $180^\circ$ rotation about the origin. The composition is a single counterclockwise rotation through how many degrees?'
+            answer: "270"
+            solution_sketch: 'Rotations about the same center compose by adding angles: $90 + 180 = 270$.'
+        constraints: "compositions with clean classifications: two axis reflections (rotation by 180), reflections over two parallel horizontal or vertical lines (translation by twice the gap), two origin rotations (add the angles mod 360); the answer is a single number — degrees or the translation amount"
+      - id: kp3
+        name: Glide reflections
+        key_prerequisites: [reflections-coordinate-plane, translations-coordinate-plane]
+        exemplars:
+          - problem: 'A glide reflection reflects over the x-axis, then translates by $(x, y) \to (x + 4, y)$. Find the image of $(2, 3)$.'
+            answer: "(6, -3)"
+            solution_sketch: 'Reflection: $(2, -3)$. Glide along the mirror: $(6, -3)$.'
+          - problem: 'A glide reflection reflects over the y-axis, then translates by $(x, y) \to (x, y - 3)$. Find the image of $(-4, 2)$.'
+            answer: "(4, -1)"
+            solution_sketch: 'Reflection: $(4, 2)$. Translation: $(4, -1)$.'
+          - problem: 'A segment of length $7$ undergoes a glide reflection. What is the length of its image?'
+            answer: "7"
+            solution_sketch: 'A glide reflection composes two rigid motions, so it is itself a rigid motion and preserves lengths.'
+        constraints: "mirror is a coordinate axis and the translation is parallel to that axis (the defining condition); integer coordinates; include an invariance question — glide reflections are rigid motions"
+    diagnostic_exemplar:
+      problem: 'A glide reflection reflects over the $x$-axis and then translates by $(x, y) \to (x + 5, y)$. Find the image of $(-2, 4)$.'
+      answer: '(3, -4)'
+      solution_sketch: 'Reflect: $(-2, 4) \mapsto (-2, -4)$; then translate parallel to the mirror line: $(3, -4)$.'
+    anki_seeds:
+      - front: "A glide reflection is the composition of..."
+        back: "a reflection and a translation parallel to the mirror line"
+        type: basic
+      - front: "Reflecting over two parallel lines a distance d apart is equivalent to..."
+        back: "a translation of 2d perpendicular to the lines"
+        type: basic
+      - front: "Reflecting over two lines meeting at angle theta is equivalent to..."
+        back: "a rotation of 2 x theta about their intersection point"
+        type: basic
+
+  - id: volume-prisms
+    name: Volumes of Prisms
+    core: true
+    difficulty: 0.30
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 90
+    prerequisites:
+      - id: triangle-area
+        weight: 0.7
+        key: true
+      - id: parallelogram-trapezoid-area
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: Rectangular prisms and cubes
+        key_prerequisites: [triangle-area]
+        exemplars:
+          - problem: 'Find the volume of a $5 \times 4 \times 3$ rectangular prism.'
+            answer: "60"
+          - problem: 'Find the volume of a cube with edge $4$.'
+            answer: "64"
+            solution_sketch: '$4^3 = 64$.'
+        constraints: "whole-number dimensions"
+      - id: kp2
+        name: Triangular prisms
+        key_prerequisites: [triangle-area]
+        exemplars:
+          - problem: 'A triangular prism has a base triangle with base $6$ and height $4$, and the prism is $10$ long. Find its volume.'
+            answer: "120"
+            solution_sketch: 'Base area $= \frac{1}{2} \cdot 6 \cdot 4 = 12$; $V = Bh = 12 \cdot 10 = 120$.'
+          - problem: 'A prism''s base is a right triangle with legs $3$ and $4$, and the prism is $7$ long. Find its volume.'
+            answer: "42"
+            solution_sketch: 'Base area $= 6$; $V = 6 \cdot 7 = 42$.'
+        constraints: "triangle dimensions with even products; whole answers"
+      - id: kp3
+        name: Any prism is base area times height
+        key_prerequisites: [triangle-area, parallelogram-trapezoid-area]
+        exemplars:
+          - problem: 'A prism has base area $22$ and height $5$. Find its volume.'
+            answer: "110"
+          - problem: 'A prism''s base is a trapezoid with bases $4$ and $8$ and height $3$, and the prism is $6$ long. Find its volume.'
+            answer: "108"
+            solution_sketch: 'Base area $= \frac{1}{2}(12)(3) = 18$; $V = 18 \cdot 6 = 108$.'
+        constraints: "V = (base area) x height; whole numbers"
+    diagnostic_exemplar:
+      problem: 'A prism''s base is a trapezoid with bases $5$ and $9$ and height $4$, and the prism is $7$ long. Find its volume.'
+      answer: "196"
+      solution_sketch: 'Base area $= \frac{1}{2}(5 + 9) \cdot 4 = 28$; $V = 28 \cdot 7 = 196$.'
+    anki_seeds:
+      - front: "Volume of a rectangular prism:"
+        back: "length x width x height"
+        type: basic
+      # Cross-sections as declarative recall (recorded decision): the visualisation skill
+      # cannot be graded from typed answers, but the facts are worth retaining.
+      - front: "A cross-section of a prism taken parallel to its base is..."
+        back: "congruent to the base — the cross-section is uniform along the prism, which is why V = (base area) x height."
+        type: basic
+
+  - id: volume-cylinders
+    name: Volumes of Cylinders
+    core: true
+    difficulty: 0.32
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 90
+    prerequisites:
+      - id: circle-area-circumference
+        weight: 0.7
+        key: true
+      - id: volume-prisms
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: Cylinder volume from the radius
+        key_prerequisites: [circle-area-circumference]
+        exemplars:
+          - problem: 'Find the volume of a cylinder with radius $3$ and height $7$ (exact, in terms of $\pi$).'
+            answer: '$63\pi$'
+            solution_sketch: '$V = \pi r^2 h = 9\pi \cdot 7 = 63\pi$.'
+          - problem: 'Find the volume of a cylinder with radius $2$ and height $9$ (exact).'
+            answer: '$36\pi$'
+        constraints: "answers exact in terms of pi; integer radius and height"
+      - id: kp2
+        name: Cylinder volume from the diameter
+        key_prerequisites: [circle-area-circumference]
+        exemplars:
+          - problem: 'Find the volume of a cylinder with diameter $10$ and height $4$ (exact).'
+            answer: '$100\pi$'
+            solution_sketch: '$r = 5$; $V = 25\pi \cdot 4 = 100\pi$.'
+          - problem: 'Find the volume of a cylinder with diameter $8$ and height $5$ (exact).'
+            answer: '$80\pi$'
+            solution_sketch: '$r = 4$; $V = 16\pi \cdot 5 = 80\pi$.'
+        constraints: "even diameters; convert to radius first"
+      - id: kp3
+        name: Applications and comparisons
+        key_prerequisites: [circle-area-circumference, volume-prisms]
+        exemplars:
+          - problem: 'A cylindrical tank has diameter $12$ and height $5$. Find its volume (exact).'
+            answer: '$180\pi$'
+            solution_sketch: '$r = 6$; $36\pi \cdot 5 = 180\pi$.'
+          - problem: 'Two cylinders have radius $2$ and height $10$, and radius $4$ and height $3$. Give the volume of the one that holds more (exact).'
+            answer: '$48\pi$'
+            solution_sketch: '$4\pi \cdot 10 = 40\pi$ against $16\pi \cdot 3 = 48\pi$, so the second is larger.'
+        constraints: "exact pi answers; comparison items ask for the larger volume"
+    diagnostic_exemplar:
+      problem: 'Find the volume of a cylinder with diameter $10$ and height $3$ (exact, in terms of $\pi$).'
+      answer: '$75\pi$'
+      solution_sketch: '$r = 5$; $V = \pi \cdot 25 \cdot 3 = 75\pi$.'
+    anki_seeds:
+      - front: "Volume of a cylinder with radius r and height h:"
+        back: "pi r^2 h"
+        type: basic
+
+  - id: volume-prisms-cylinders
+    name: Volumes of Prisms and Cylinders
+    core: true
+    difficulty: 0.38
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 120
+    prerequisites:
+      - id: volume-prisms
+        weight: 0.8
+        key: true
+      - id: volume-cylinders
+        weight: 0.8
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: Work backwards from a volume
+        key_prerequisites: [volume-prisms, volume-cylinders]
+        exemplars:
+          - problem: 'A cylinder with radius $3$ has volume $54\pi$. Find its height.'
+            answer: "6"
+            solution_sketch: '$9\pi h = 54\pi \Rightarrow h = 6$.'
+          - problem: 'A rectangular prism with an $8 \times 5$ base has volume $240$. Find its height.'
+            answer: "6"
+            solution_sketch: '$40h = 240 \Rightarrow h = 6$.'
+          - problem: 'A cylinder has volume $90\pi$ and height $10$. Find its radius.'
+            answer: "3"
+            solution_sketch: '$\pi r^2 \cdot 10 = 90\pi \Rightarrow r^2 = 9$.'
+        constraints: "divide volume by base area (or solve for r via a perfect square); integer answers"
+      - id: kp2
+        name: Composite solids
+        key_prerequisites: [volume-prisms, volume-cylinders]
+        exemplars:
+          - problem: 'A solid is an $8 \times 4 \times 3$ box topped by a half-cylinder of radius $2$ running the full length $8$. Find its volume (exact).'
+            answer: '$96 + 16\pi$'
+            solution_sketch: 'Box $96$; half-cylinder $\frac{1}{2}\pi \cdot 4 \cdot 8 = 16\pi$.'
+          - problem: 'A cylindrical hole of radius $1$ is drilled straight through a $5 \times 4 \times 4$ block along its length $5$. Find the remaining volume (exact).'
+            answer: '$80 - 5\pi$'
+            solution_sketch: '$80 - \pi \cdot 1^2 \cdot 5 = 80 - 5\pi$.'
+        constraints: "one prism plus or minus one cylinder piece; exact pi answers"
+      - id: kp3
+        name: Equal volumes and scaling
+        key_prerequisites: [volume-prisms, volume-cylinders]
+        exemplars:
+          - problem: 'A cylinder with radius $6$ and height $2$ has the same volume as a cylinder with radius $3$ and height $h$. Find $h$.'
+            answer: "8"
+            solution_sketch: '$72\pi = 9\pi h \Rightarrow h = 8$.'
+          - problem: 'If a cylinder''s radius is doubled and its height is unchanged, its volume is multiplied by what factor?'
+            answer: "4"
+            solution_sketch: '$V \propto r^2$.'
+        constraints: "clean ratios; factor questions ask for the multiplier"
+    diagnostic_exemplar:
+      problem: 'A solid is a $6 \times 4 \times 3$ box topped by a half-cylinder of radius $2$ running the full length $6$. Find its volume (exact, in terms of $\pi$).'
+      answer: '$72 + 12\pi$'
+      solution_sketch: 'Box $= 72$; half-cylinder $= \frac{1}{2}\pi \cdot 2^2 \cdot 6 = 12\pi$.'
+    anki_seeds:
+      - front: "Volume of any prism or cylinder:"
+        back: "V = B x h (base area times height)"
+        type: basic
+      - front: "Doubling a cylinder's radius (same height) multiplies its volume by..."
+        back: "4"
+        type: basic
+
+  - id: volume-pyramids-cones-spheres
+    name: Volumes of Pyramids, Cones, and Spheres
+    core: true
+    difficulty: 0.46
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 150
+    prerequisites:
+      - id: volume-prisms-cylinders
+        weight: 0.8
+        key: true
+      - id: pythagorean-theorem
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: Pyramid volumes
+        key_prerequisites: [volume-prisms-cylinders]
+        exemplars:
+          - problem: 'Find the volume of a pyramid with a $6 \times 6$ square base and height $10$.'
+            answer: "120"
+            solution_sketch: '$V = \frac{1}{3} \cdot 36 \cdot 10 = 120$.'
+          - problem: 'Find the volume of a pyramid with a $5 \times 9$ rectangular base and height $8$.'
+            answer: "120"
+            solution_sketch: '$V = \frac{1}{3} \cdot 45 \cdot 8 = 120$.'
+        constraints: "base area times height divisible by 3"
+      - id: kp2
+        name: Cone volumes
+        key_prerequisites: [volume-prisms-cylinders, pythagorean-theorem]
+        exemplars:
+          - problem: 'Find the volume of a cone with radius $6$ and height $4$ (exact, in terms of $\pi$).'
+            answer: '$48\pi$'
+            solution_sketch: '$V = \frac{1}{3}\pi r^2 h = \frac{1}{3} \cdot 36\pi \cdot 4 = 48\pi$.'
+          - problem: 'A cone has radius $5$ and slant height $13$. Find its volume (exact).'
+            answer: '$100\pi$'
+            solution_sketch: '$h = \sqrt{13^2 - 5^2} = 12$; $V = \frac{1}{3} \cdot 25\pi \cdot 12 = 100\pi$.'
+        constraints: "r^2 h divisible by 3; slant-height versions use Pythagorean triples"
+      - id: kp3
+        name: Sphere and hemisphere volumes
+        key_prerequisites: [volume-prisms-cylinders]
+        exemplars:
+          - problem: 'Find the volume of a sphere with radius $3$ (exact, in terms of $\pi$).'
+            answer: '$36\pi$'
+            solution_sketch: '$V = \frac{4}{3}\pi \cdot 27 = 36\pi$.'
+          - problem: 'Find the volume of a sphere with radius $6$ (exact).'
+            answer: '$288\pi$'
+            solution_sketch: '$\frac{4}{3}\pi \cdot 216 = 288\pi$.'
+          - problem: 'Find the volume of a hemisphere with radius $3$ (exact).'
+            answer: '$18\pi$'
+        constraints: "radii multiples of 3 so coefficients are whole"
+    diagnostic_exemplar:
+      problem: 'A cone has radius $6$ and slant height $10$; a hemisphere has radius $6$. Give the volume of whichever of the two is larger (exact, in terms of $\pi$).'
+      answer: '$144\pi$'
+      solution_sketch: 'Cone: $h = \sqrt{100 - 36} = 8$, so $V = \frac{1}{3}\pi(36)(8) = 96\pi$. Hemisphere: $V = \frac{2}{3}\pi(216) = 144\pi$, which is larger.'
+    anki_seeds:
+      - front: "A pyramid or cone has ... the volume of the prism or cylinder with the same base and height."
+        back: "one third"
+        type: basic
+      - front: "Volume of a sphere with radius r:"
+        back: "(4/3) pi r^3"
+        type: basic
+      - front: "What shape is a cross-section of a sphere, or of a cone cut parallel to its base?"
+        back: "A circle — for the sphere any plane cut; for the cone the circle shrinks toward the apex."
+        type: basic
+
+  - id: surface-area-solids
+    name: Surface Areas of Solids
+    core: true
+    difficulty: 0.48
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 180
+    prerequisites:
+      - id: area-triangles-quadrilaterals
+        weight: 0.6
+        key: true
+      - id: circle-area-circumference
+        weight: 0.5
+        key: true
+      - id: pythagorean-theorem
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: Prism and cube surface area
+        key_prerequisites: [area-triangles-quadrilaterals]
+        exemplars:
+          - problem: 'Find the surface area of a $3 \times 4 \times 5$ rectangular prism.'
+            answer: "94"
+            solution_sketch: '$2(3 \cdot 4 + 3 \cdot 5 + 4 \cdot 5) = 2(12 + 15 + 20) = 94$.'
+          - problem: 'Find the surface area of a cube with edge $6$.'
+            answer: "216"
+            solution_sketch: '$6 \cdot 6^2 = 216$.'
+        constraints: "small integer dimensions; sum all six faces"
+      - id: kp2
+        name: Cylinder surface area
+        key_prerequisites: [circle-area-circumference]
+        exemplars:
+          - problem: 'Find the surface area of a cylinder with radius $4$ and height $6$ (exact, in terms of $\pi$).'
+            answer: '$80\pi$'
+            solution_sketch: '$2\pi r^2 + 2\pi r h = 32\pi + 48\pi = 80\pi$.'
+          - problem: 'Find the lateral (side-only) surface area of a cylinder with radius $5$ and height $9$ (exact).'
+            answer: '$90\pi$'
+            solution_sketch: 'Lateral area $= 2\pi r h = 90\pi$.'
+        constraints: "distinguish total vs lateral area; exact pi answers"
+      - id: kp3
+        name: Pyramid, cone, and sphere surface area
+        key_prerequisites: [area-triangles-quadrilaterals, circle-area-circumference, pythagorean-theorem]
+        exemplars:
+          - problem: 'A square pyramid has base edge $10$ and slant height $13$. Find its total surface area.'
+            answer: "360"
+            solution_sketch: 'Base $100$ plus $4 \cdot \frac{1}{2} \cdot 10 \cdot 13 = 260$; total $360$.'
+          - problem: 'Find the total surface area of a cone with radius $3$ and slant height $5$ (exact).'
+            answer: '$24\pi$'
+            solution_sketch: '$\pi r^2 + \pi r \ell = 9\pi + 15\pi = 24\pi$.'
+          - problem: 'Find the surface area of a sphere with radius $5$ (exact).'
+            answer: '$100\pi$'
+            solution_sketch: '$4\pi r^2 = 100\pi$.'
+        constraints: "slant heights given or derivable from a Pythagorean triple"
+    diagnostic_exemplar:
+      problem: 'A square pyramid has base edge $12$ and slant height $10$. Find its total surface area.'
+      answer: "384"
+      solution_sketch: 'Base $144$ plus $4 \cdot \frac{1}{2} \cdot 12 \cdot 10 = 240$; total $384$.'
+    anki_seeds:
+      - front: "Total surface area of a cylinder:"
+        back: "2 pi r^2 + 2 pi r h"
+        type: basic
+      - front: "Lateral surface area of a cone with radius r and slant height l:"
+        back: "pi r l"
+        type: basic
+      - front: "Surface area of a sphere:"
+        back: "4 pi r^2"
+        type: basic
+      # Nets are covered as declarative recall here rather than as a topic: the skill is
+      # spatial visualisation of a diagram the tutor can neither show nor check, so a typed
+      # version degenerates to fact recall (recorded decision, curriculum-hole-checklist.md).
+      - front: "What is a net of a solid, and what is it used for?"
+        back: "The solid unfolded flat into its faces; the total area of the net IS the surface area."
+        type: basic
+
+  - id: similar-solids-scaling
+    name: Similar Solids and Scaling
+    core: false                # applications leaf topic
+    difficulty: 0.50
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 150
+    prerequisites:
+      - id: volume-prisms-cylinders
+        weight: 0.6
+        key: true
+      - id: dilations-scale-factors
+        weight: 0.5
+        key: true
+      - id: surface-area-solids
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: Length, area, and volume scale factors
+        key_prerequisites: [dilations-scale-factors, volume-prisms-cylinders]
+        exemplars:
+          - problem: 'Two similar solids have linear scale factor $3$. By what factor do their surface areas differ?'
+            answer: "9"
+            solution_sketch: 'Areas scale by $k^2 = 9$.'
+          - problem: 'Two similar prisms have edges in ratio $2:5$. Find the ratio of their surface areas, as a single fraction (smaller to larger).'
+            answer: "4/25"
+            solution_sketch: 'Areas scale by $k^2$: $\left(\frac{2}{5}\right)^2 = \frac{4}{25}$.'
+          - problem: 'Two similar solids have linear scale factor $3$. By what factor do their volumes differ?'
+            answer: "27"
+            solution_sketch: 'Volumes scale by $k^3 = 27$.'
+        constraints: "k a small integer or simple ratio; ask for area (k^2) or volume (k^3) factors; ratios requested as a single fraction"
+      - id: kp2
+        name: Recover the linear ratio from areas or volumes
+        key_prerequisites: [dilations-scale-factors, volume-prisms-cylinders]
+        exemplars:
+          - problem: 'Two similar solids have volumes in ratio $8:27$. Find the ratio of their surface areas, as a single fraction (first to second).'
+            answer: "4/9"
+            solution_sketch: 'Linear ratio $= \sqrt[3]{8} : \sqrt[3]{27} = 2:3$; areas $\frac{4}{9}$.'
+          - problem: 'Two similar solids have volumes in ratio $125:64$. Find their linear scale ratio, as a single fraction (first to second).'
+            answer: "5/4"
+            solution_sketch: 'Cube roots: $\frac{5}{4}$.'
+        constraints: "perfect-cube volume ratios; ratios requested as a single fraction"
+      - id: kp3
+        name: Compute scaled measurements
+        key_prerequisites: [dilations-scale-factors, volume-prisms-cylinders]
+        exemplars:
+          - problem: 'Two similar cylinders have scale factor $2$; the smaller has volume $30\pi$. Find the volume of the larger (exact).'
+            answer: '$240\pi$'
+            solution_sketch: '$30\pi \cdot 2^3 = 240\pi$.'
+          - problem: 'A model is built at scale $1:3$ of a solid whose volume is $54$ cubic units. Find the model''s volume.'
+            answer: "2"
+            solution_sketch: '$54 / 27 = 2$.'
+          - problem: 'Two similar solids have scale factor $3$; the smaller has surface area $40$. Find the larger''s surface area.'
+            answer: "360"
+            solution_sketch: '$40 \cdot 9 = 360$.'
+        constraints: "volumes divisible by k^3; areas by k^2"
+    diagnostic_exemplar:
+      problem: 'Two similar solids have linear scale ratio $2:3$, and the smaller has volume $40$. Find the volume of the larger.'
+      answer: "135"
+      solution_sketch: '$40 \cdot \frac{27}{8} = 135$.'
+    anki_seeds:
+      - front: "If similar figures have linear scale factor k, areas scale by..."
+        back: "k^2"
+        type: basic
+      - front: "If similar solids have linear scale factor k, volumes scale by..."
+        back: "k^3"
+        type: basic
+
+  - id: density-measurement-problems
+    name: Density and Measurement Problems
+    core: false                # applications leaf topic
+    difficulty: 0.44
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 180
+    prerequisites:
+      - {id: metric-unit-conversion, weight: 0.4, key: false}       # kp3 is 'Capacity and unit conversion'
+      - id: volume-prisms-cylinders
+        weight: 0.6
+        key: true
+      - id: ratios-proportions
+        weight: 0.5
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: Density from mass and volume
+        key_prerequisites: [volume-prisms-cylinders, ratios-proportions]
+        exemplars:
+          - problem: 'A metal block measuring $5 \times 4 \times 2$ cm has mass $312$ g. Find its density in g/cm$^3$.'
+            answer: "7.8"
+            solution_sketch: 'Volume $= 40$ cm$^3$; density $= 312/40 = 7.8$ g/cm$^3$.'
+          - problem: 'A sample has mass $500$ g and volume $25$ cm$^3$. Find its density in g/cm$^3$.'
+            answer: "20"
+        constraints: "density = mass / volume; volumes from simple prisms; one decimal place at most"
+      - id: kp2
+        name: Population density
+        key_prerequisites: [ratios-proportions]
+        exemplars:
+          - problem: 'A city of $30000$ people covers $12$ square kilometers. Find its population density, in people per square kilometer.'
+            answer: "2500"
+            solution_sketch: '$30000 / 12 = 2500$.'
+          - problem: 'A town has population density $8000$ people per square kilometer and population $96000$. Find its area, in square kilometers.'
+            answer: "12"
+            solution_sketch: '$96000 / 8000 = 12$.'
+        constraints: "quotients come out whole"
+      - id: kp3
+        name: Capacity and unit conversion
+        key_prerequisites: [volume-prisms-cylinders, ratios-proportions]
+        exemplars:
+          - problem: 'A tank measures $50 \times 40 \times 30$ cm. How many liters does it hold? ($1$ L $= 1000$ cm$^3$.)'
+            answer: "60"
+            solution_sketch: '$60000$ cm$^3 = 60$ L.'
+          - problem: 'A $60$-liter tank is filled at $5$ liters per minute. How many minutes does filling take?'
+            answer: "12"
+            solution_sketch: '$60 / 5 = 12$.'
+        constraints: "1 L = 1000 cm^3; whole-number results"
+    diagnostic_exemplar:
+      problem: 'A cube with edge $4$ cm has mass $320$ g. Find its density in g/cm$^3$.'
+      answer: "5"
+      solution_sketch: 'Volume $= 64$ cm$^3$; $320/64 = 5$.'
+    anki_seeds:
+      - front: "Density ="
+        back: "mass / volume"
+        type: basic
+      - front: "1 liter equals ... cubic centimeters."
+        back: "1000"
+        type: basic
+
+  - id: coordinate-geometry-proofs
+    name: Coordinate Geometry Proofs
+    core: false                # proof-practice genre; terminal
+    difficulty: 0.52
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 240
+    prerequisites:
+      - id: distance-midpoint-formulas
+        weight: 0.8
+        key: true
+      - id: slope
+        weight: 0.6
+        key: true
+      - id: special-parallelograms
+        weight: 0.4
+        key: false
+      - id: writing-geometric-proofs
+        weight: 0.5
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: Parallel and perpendicular via slope
+        key_prerequisites: [slope]
+        exemplars:
+          - problem: 'Show that quadrilateral $A(0,0)$, $B(4,1)$, $C(6,5)$, $D(2,4)$ is a parallelogram.'
+            answer: 'Slopes: $AB = DC = \frac{1}{4}$ and $BC = AD = 2$; both pairs of opposite sides are parallel, so $ABCD$ is a parallelogram.'
+            solution_sketch: '$m_{AB} = \frac{1}{4}$, $m_{DC} = \frac{5-4}{6-2} = \frac{1}{4}$; $m_{BC} = \frac{5-1}{6-4} = 2$, $m_{AD} = \frac{4}{2} = 2$.'
+          - problem: 'Are the segments through $(0,0),(3,2)$ and through $(1,5),(-3,11)$ perpendicular? Justify with slopes.'
+            answer: 'Yes; slopes $\frac{2}{3}$ and $-\frac{3}{2}$ multiply to $-1$.'
+            solution_sketch: 'Second slope $= \frac{11-5}{-3-1} = -\frac{3}{2}$; product with $\frac{2}{3}$ is $-1$.'
+        constraints: "integer coordinates; slopes must be stated as the justification"
+      - id: kp2
+        name: Classify triangles with the distance formula
+        key_prerequisites: [distance-midpoint-formulas]
+        exemplars:
+          - problem: 'Classify the triangle $A(0,0)$, $B(6,0)$, $C(3,3)$ as precisely as possible.'
+            answer: 'Isosceles right triangle: $AC = BC = 3\sqrt{2}$ and $AC^2 + BC^2 = 36 = AB^2$.'
+            solution_sketch: '$AC = \sqrt{9+9} = 3\sqrt{2} = BC$; $18 + 18 = 36 = 6^2$, so the angle at $C$ is right.'
+          - problem: 'Show that the triangle $P(1,1)$, $Q(4,5)$, $R(-3,4)$ is isosceles.'
+            answer: '$PQ = PR = 5$, so two sides are congruent.'
+            solution_sketch: '$PQ = \sqrt{3^2+4^2} = 5$; $PR = \sqrt{(-4)^2+3^2} = 5$.'
+        constraints: "distances land on Pythagorean triples or clean radicals; classification must cite the computed lengths"
+      - id: kp3
+        name: Quadrilateral proofs via midpoints and diagonals
+        key_prerequisites: [distance-midpoint-formulas, slope]
+        exemplars:
+          - problem: 'Show that the diagonals of quadrilateral $A(0,0)$, $B(5,0)$, $C(7,3)$, $D(2,3)$ bisect each other, and state what that proves.'
+            answer: 'Midpoint of $\overline{AC}$ = midpoint of $\overline{BD}$ = $\left(\frac{7}{2}, \frac{3}{2}\right)$; the diagonals bisect each other, so $ABCD$ is a parallelogram.'
+            solution_sketch: 'Midpoint of $AC$: $(3.5, 1.5)$; midpoint of $BD$: $(3.5, 1.5)$.'
+          - problem: 'Quadrilateral $ABCD$ is known to be a parallelogram with $A(0,0)$, $B(6,3)$, $C(4,7)$, $D(-2,4)$. Use its diagonals to decide whether it is a rectangle.'
+            answer: 'Yes: $AC = BD = \sqrt{65}$, and a parallelogram with congruent diagonals is a rectangle.'
+            solution_sketch: '$AC = \sqrt{4^2 + 7^2} = \sqrt{65}$; $BD = \sqrt{(-8)^2 + 1^2} = \sqrt{65}$.'
+        constraints: "each conclusion must name the theorem used (diagonal bisection, congruent diagonals, perpendicular diagonals)"
+    diagnostic_exemplar:
+      problem: 'Use the diagonals of quadrilateral $A(0,0)$, $B(4,2)$, $C(3,4)$, $D(-1,2)$ to prove that it is a rectangle.'
+      answer: 'Diagonals AC and BD have the same midpoint (3/2, 2), so they bisect each other and ABCD is a parallelogram; and AC = BD = 5, so this parallelogram has congruent diagonals and is therefore a rectangle'
+      solution_sketch: 'Midpoint of $\overline{AC} = \left(\frac{3}{2}, 2\right)$ = midpoint of $\overline{BD}$; $AC = \sqrt{9 + 16} = 5$ and $BD = \sqrt{25 + 0} = 5$.'
+    anki_seeds:
+      - front: "Two nonvertical lines are perpendicular iff their slopes..."
+        back: "multiply to -1 (are negative reciprocals)"
+        type: basic
+      - front: "Coordinate proof that a quadrilateral is a parallelogram (fastest test):"
+        back: "the two diagonals share the same midpoint"
+        type: basic
+      - front: "A parallelogram with congruent diagonals is a..."
+        back: "rectangle"
+        type: basic

@@ -1,0 +1,738 @@
+unit: triangles-congruence
+course: geometry
+module: "Triangles & Congruence"
+topics:
+  - id: classifying-triangles
+    name: Classifying Triangles
+    core: true
+    difficulty: 0.25
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 60
+    prerequisites:
+      - id: triangle-angle-sum
+        weight: 0.6
+        key: true
+      - id: measuring-segments-angles
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: Classify by sides
+        key_prerequisites: [measuring-segments-angles]
+        exemplars:
+          - problem: 'A triangle has sides $7$, $7$, and $10$. Classify it by its sides.'
+            answer: 'isosceles'
+          - problem: 'A triangle has sides $6$, $6$, and $6$. Classify it by its sides.'
+            answer: 'equilateral'
+          - problem: 'A triangle has sides $5$, $7$, and $9$. Classify it by its sides.'
+            answer: 'scalene'
+        constraints: "side names: scalene/isosceles/equilateral; integer sides that satisfy the triangle inequality"
+      - id: kp2
+        name: Classify by angles
+        key_prerequisites: [triangle-angle-sum]
+        exemplars:
+          - problem: 'A triangle has angles $20^\circ$, $30^\circ$, and $130^\circ$. Classify it by its angles.'
+            answer: 'obtuse'
+          - problem: 'A triangle has angles $35^\circ$, $55^\circ$, and $90^\circ$. Classify it by its angles.'
+            answer: 'right'
+          - problem: 'A triangle has angles $50^\circ$, $60^\circ$, and $70^\circ$. Classify it by its angles.'
+            answer: 'acute'
+        constraints: "angle names: acute/right/obtuse; angle triples sum to 180"
+      - id: kp3
+        name: Classify after finding the missing angle
+        key_prerequisites: [triangle-angle-sum]
+        exemplars:
+          - problem: 'Two angles of a triangle measure $42^\circ$ and $48^\circ$. Classify the triangle by its angles.'
+            answer: 'right'
+            solution_sketch: 'Third angle $= 180 - 42 - 48 = 90^\circ$.'
+          - problem: 'Two angles of a triangle measure $70^\circ$ and $55^\circ$. Classify the triangle by its angles.'
+            answer: 'acute'
+            solution_sketch: 'Third angle $= 55^\circ$; all three are under $90^\circ$.'
+        constraints: "give two angles; the third decides the class"
+    diagnostic_exemplar:
+      problem: 'A triangle has exactly two congruent sides, and two of its angles measure $41^\circ$ each. Classify it by its sides and by its angles.'
+      answer: 'isosceles and obtuse'
+      solution_sketch: 'Exactly two congruent sides make it isosceles (not equilateral); the third angle is $180 - 41 - 41 = 98^\circ > 90^\circ$, so it is obtuse.'
+    anki_seeds:
+      - front: "A triangle with exactly two congruent sides is..."
+        back: "isosceles"
+        type: basic
+      - front: "A triangle with all angles under 90 degrees is..."
+        back: "acute"
+        type: basic
+
+  - id: triangle-inequality-classification
+    name: Triangle Inequality and Classification
+    core: true
+    difficulty: 0.3
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 90
+    prerequisites:
+      - id: classifying-triangles
+        weight: 0.6
+        key: true
+      - id: triangle-angle-sum
+        weight: 0.4
+        key: false
+      - id: linear-inequalities
+        weight: 0.3
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: Can three lengths form a triangle?
+        key_prerequisites: [linear-inequalities]
+        exemplars:
+          - problem: 'Can segments of length $4$, $5$, and $10$ form a triangle?'
+            answer: 'No; $4 + 5 = 9 < 10$.'
+            solution_sketch: 'Each pair of sides must sum to more than the third; $4 + 5 < 10$ fails.'
+          - problem: 'Can segments of length $6$, $8$, and $12$ form a triangle?'
+            answer: 'Yes; every pair sums to more than the third side.'
+            solution_sketch: 'Check the tightest case: $6 + 8 = 14 > 12$.'
+        constraints: "integer side lengths 1-30; only the smallest-two sum needs checking"
+      - id: kp2
+        name: Range of the third side
+        key_prerequisites: [linear-inequalities]
+        exemplars:
+          - problem: 'Two sides of a triangle measure $5$ and $9$. What values are possible for the third side $x$?'
+            answer: '4 < x < 14'
+            solution_sketch: '$|9 - 5| < x < 9 + 5$.'
+          - problem: 'Two sides of a triangle measure $7$ and $7$. What values are possible for the third side $x$?'
+            answer: '0 < x < 14'
+        constraints: "answer as a strict double inequality difference < x < sum"
+      - id: kp3
+        name: Order sides and angles
+        key_prerequisites: [classifying-triangles]
+        exemplars:
+          - problem: 'In $\triangle ABC$, $AB = 7$, $BC = 9$, and $CA = 12$. Which angle is largest?'
+            answer: '$\angle B$'
+            solution_sketch: 'The largest angle sits opposite the longest side $CA = 12$, and the angle opposite $\overline{CA}$ is $\angle B$.'
+          - problem: 'In $\triangle DEF$, $m\angle D = 50^\circ$, $m\angle E = 60^\circ$, and $m\angle F = 70^\circ$. Which side is longest?'
+            answer: '$\overline{DE}$'
+            solution_sketch: 'The longest side sits opposite the largest angle $\angle F$.'
+        constraints: "distinct side lengths / angle measures; ask for largest or smallest only"
+    diagnostic_exemplar:
+      problem: 'Two sides of a triangle measure $8$ and $3$. List all possible integer lengths for the third side.'
+      answer: '6, 7, 8, 9, or 10'
+      solution_sketch: '$8 - 3 < x < 8 + 3$, so $5 < x < 11$.'
+    anki_seeds:
+      - front: "Triangle inequality: the sum of any two sides of a triangle must be..."
+        back: "greater than the third side"
+        type: basic
+      - front: "Given two sides a and b, the third side x satisfies..."
+        back: "|a - b| < x < a + b"
+        type: basic
+      - front: "In a triangle, the largest angle is opposite the..."
+        back: "longest side"
+        type: basic
+
+  - id: triangle-inequality-applications
+    name: Triangle Inequality Applications
+    core: false                # applications leaf topic
+    difficulty: 0.35
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 120
+    prerequisites:
+      - id: triangle-inequality-classification
+        weight: 0.8
+        key: true
+      - id: linear-inequalities
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: Count the integer possibilities
+        key_prerequisites: [triangle-inequality-classification]
+        exemplars:
+          - problem: 'Two sides of a triangle measure $5$ and $12$. How many integer values are possible for the third side?'
+            answer: "9"
+            solution_sketch: '$7 < x < 17$ gives $x \in \{8, \dots, 16\}$: $9$ values.'
+          - problem: 'Two sides of a triangle measure $4$ and $4$. How many integer values are possible for the third side?'
+            answer: "7"
+            solution_sketch: '$0 < x < 8$ gives $x \in \{1, \dots, 7\}$.'
+        constraints: "strict inequalities; count integers in the open interval"
+      - id: kp2
+        name: Bound the perimeter
+        key_prerequisites: [triangle-inequality-classification, linear-inequalities]
+        exemplars:
+          - problem: 'Two sides of a triangle measure $6$ and $10$. Between what two values must the perimeter $p$ lie?'
+            answer: '20 < p < 32'
+            solution_sketch: 'Third side satisfies $4 < x < 16$; add $16$ to every part.'
+          - problem: 'Two sides of a triangle measure $9$ and $9$. Between what two values must the perimeter $p$ lie?'
+            answer: '18 < p < 36'
+            solution_sketch: '$0 < x < 18$, so $18 < 18 + x < 36$.'
+        constraints: "answer as a strict double inequality on the perimeter"
+      - id: kp3
+        name: Feasible isosceles side sets
+        key_prerequisites: [triangle-inequality-classification]
+        exemplars:
+          - problem: 'Can an isosceles triangle have sides $4$, $4$, and $10$?'
+            answer: 'No; $4 + 4 = 8 < 10$.'
+          - problem: 'An isosceles triangle has perimeter $20$ and one side of length $8$. Find all possible side sets.'
+            answer: '$\{8, 8, 4\}$ and $\{6, 6, 8\}$'
+            solution_sketch: 'Legs $8$: base $20 - 16 = 4$ (valid, $8+4>8$). Base $8$: legs $6$ each (valid, $6+6>8$). Both pass the triangle inequality.'
+        constraints: "check both the legs-given and base-given cases; verify each candidate with the triangle inequality"
+    diagnostic_exemplar:
+      problem: 'An isosceles triangle has perimeter $24$ and one side of length $10$. Find all possible side sets.'
+      answer: '$\{10, 10, 4\}$ and $\{7, 7, 10\}$'
+      solution_sketch: 'Legs $10$: base $24 - 20 = 4$ (valid, $10 + 4 > 10$). Base $10$: legs $7$ each (valid, $7 + 7 > 10$). Both pass the triangle inequality.'
+    anki_seeds:
+      - front: "The perimeter of a triangle with known sides a, b and unknown third side lies strictly between..."
+        back: "a + b + |a - b| and 2(a + b)"
+        type: basic
+
+  - id: rigid-motions-congruence
+    name: Rigid Motions and Congruence
+    core: true
+    difficulty: 0.32
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 90
+    prerequisites:
+      - id: coordinate-plane
+        weight: 0.6
+        key: true
+      - id: segment-angle-addition
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: Identify rigid motions
+        key_prerequisites: []
+        exemplars:
+          - problem: 'Which of the following is NOT a rigid motion: translation, reflection, rotation, dilation?'
+            answer: 'dilation'
+            solution_sketch: 'A dilation with scale factor other than $1$ changes distances.'
+          - problem: 'What two measurements does every rigid motion preserve?'
+            answer: 'Distances (segment lengths) and angle measures.'
+        constraints: "the three rigid motions vs dilation; conceptual identification only"
+      - id: kp2
+        name: Apply rigid motions to coordinates
+        key_prerequisites: [coordinate-plane]
+        exemplars:
+          - problem: 'The translation $(x, y) \mapsto (x + 3, y - 2)$ maps $(4, 5)$ to which point?'
+            answer: "(7, 3)"
+          - problem: 'Reflection across the $x$-axis maps $(3, -7)$ to which point?'
+            answer: "(3, 7)"
+            solution_sketch: 'Reflection across the $x$-axis negates the $y$-coordinate.'
+          - problem: 'Reflection across the $y$-axis maps $(-2, 5)$ to which point?'
+            answer: "(2, 5)"
+        constraints: "translations by integer vectors; reflections across the axes only; integer coordinates"
+      - id: kp3
+        name: Congruence via rigid motions
+        key_prerequisites: [segment-angle-addition, coordinate-plane]
+        exemplars:
+          - problem: 'A rotation maps $\triangle ABC$ exactly onto $\triangle DEF$. Are the triangles congruent?'
+            answer: 'Yes; a rigid motion mapping one figure onto another is exactly what congruence means.'
+          - problem: 'A translation maps $\triangle ABC$ to $\triangle DEF$ with $A \mapsto D$, $B \mapsto E$. If $AB = 9$, find $DE$.'
+            answer: "9"
+            solution_sketch: 'Rigid motions preserve lengths.'
+        constraints: "single rigid motion; read off preserved lengths or angles"
+    diagnostic_exemplar:
+      problem: 'A reflection across the $y$-axis maps $\triangle ABC$ onto $\triangle DEF$, with vertex $A(-6, 2)$ mapping to $D$. Give the coordinates of $D$, and state whether $\triangle ABC \cong \triangle DEF$ and why.'
+      answer: 'D = (6, 2); yes, the triangles are congruent — a reflection is a rigid motion (it preserves distances and angles), and a rigid motion carrying one figure onto another is exactly what congruence means'
+      solution_sketch: 'Reflection across the $y$-axis negates the $x$-coordinate; rigid motions preserve lengths and angle measures.'
+    anki_seeds:
+      - front: "The three rigid motions are..."
+        back: "translations, reflections, and rotations"
+        type: basic
+      - front: "Two figures are congruent exactly when some ... maps one onto the other"
+        back: "rigid motion (or composition of rigid motions)"
+        type: basic
+
+  - id: sss-sas-congruence
+    name: SSS and SAS Congruence
+    core: true
+    difficulty: 0.35
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 120
+    prerequisites:
+      - id: triangle-angle-sum
+        weight: 0.6
+        key: true
+      - id: rigid-motions-congruence
+        weight: 0.4
+        key: false
+      - id: triangle-inequality-classification
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: Recognize SSS
+        key_prerequisites: [triangle-inequality-classification]
+        exemplars:
+          - problem: 'Two triangles have all three pairs of corresponding sides congruent. Which congruence criterion applies?'
+            answer: 'SSS'
+          - problem: 'Given $\overline{AB} \cong \overline{DE}$, $\overline{BC} \cong \overline{EF}$, and $\overline{CA} \cong \overline{FD}$, which criterion shows $\triangle ABC \cong \triangle DEF$?'
+            answer: 'SSS'
+        constraints: "three side pairs marked; no angle information given"
+      - id: kp2
+        name: Recognize SAS and the included angle
+        key_prerequisites: [triangle-angle-sum]
+        exemplars:
+          - problem: 'Two triangles have two pairs of congruent sides, and the angles between those sides are congruent. Which congruence criterion applies?'
+            answer: 'SAS'
+            solution_sketch: 'Side-Angle-Side: the congruent angle is included between the two congruent sides.'
+          - problem: 'In $\triangle ABC$, sides $\overline{AB}$ and $\overline{BC}$ are marked. Is $\angle A$ the included angle for these two sides?'
+            answer: 'No; the included angle is $\angle B$, the angle between $\overline{AB}$ and $\overline{BC}$.'
+        constraints: "the included/non-included distinction is the point; two sides and one angle marked"
+      - id: kp3
+        name: Solve for marked values under SSS or SAS
+        key_prerequisites: [triangle-angle-sum]
+        exemplars:
+          - problem: '$\triangle ABC \cong \triangle DEF$ by SAS with $AB = 3x - 4$ and $DE = 2x + 3$ ($\overline{AB}$ corresponds to $\overline{DE}$). Find $AB$.'
+            answer: "17"
+            solution_sketch: '$3x - 4 = 2x + 3 \Rightarrow x = 7$; $AB = 17$.'
+          - problem: 'The included angles of an SAS pair measure $(2x + 16)^\circ$ and $(4x - 8)^\circ$. Find their common measure, in degrees.'
+            answer: "40"
+            solution_sketch: '$2x + 16 = 4x - 8 \Rightarrow x = 12$; each angle is $40^\circ$.'
+        constraints: "corresponding parts equal; linear expressions with integer solutions"
+    diagnostic_exemplar:
+      problem: 'In $\triangle ABC$ and $\triangle XYZ$: $\overline{AB} \cong \overline{XY}$, $\overline{AC} \cong \overline{XZ}$, and $\angle A \cong \angle X$, where $m\angle A = (2x + 16)^\circ$ and $m\angle X = (4x - 8)^\circ$. Name the congruence criterion and find $m\angle A$, in degrees.'
+      answer: 'SAS; m∠A = 40 degrees'
+      solution_sketch: '$\angle A$ is included between $\overline{AB}$ and $\overline{AC}$, so the criterion is SAS; $2x + 16 = 4x - 8$ gives $x = 12$ and $m\angle A = 40^\circ$.'
+    anki_seeds:
+      - front: "SAS congruence requires the congruent angle to be ... the two congruent sides"
+        back: "included between"
+        type: basic
+      - front: "SSS congruence uses ... pairs of congruent sides"
+        back: "three"
+        type: basic
+
+  - id: asa-aas-congruence
+    name: ASA and AAS Congruence
+    core: true
+    difficulty: 0.36
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 120
+    prerequisites:
+      - id: sss-sas-congruence
+        weight: 0.7
+        key: true
+      - id: triangle-angle-sum
+        weight: 0.5
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: Recognize ASA and the included side
+        key_prerequisites: [sss-sas-congruence]
+        exemplars:
+          - problem: 'Two triangles have two pairs of congruent angles, and the sides between those angles are congruent. Which congruence criterion applies?'
+            answer: 'ASA'
+          - problem: 'Given $\angle A \cong \angle D$, $\overline{AB} \cong \overline{DE}$, and $\angle B \cong \angle E$, which criterion shows $\triangle ABC \cong \triangle DEF$?'
+            answer: 'ASA'
+            solution_sketch: 'The congruent side $\overline{AB}$ is included between the angles at $A$ and $B$.'
+        constraints: "the side lies between the two marked angles"
+      - id: kp2
+        name: Recognize AAS
+        key_prerequisites: [sss-sas-congruence, triangle-angle-sum]
+        exemplars:
+          - problem: 'Given $\angle A \cong \angle D$, $\angle B \cong \angle E$, and $\overline{BC} \cong \overline{EF}$, which criterion shows $\triangle ABC \cong \triangle DEF$?'
+            answer: 'AAS'
+            solution_sketch: '$\overline{BC}$ is not between the angles at $A$ and $B$, so the pattern is Angle-Angle-Side.'
+          - problem: 'Two triangles have two pairs of congruent angles and a pair of congruent non-included sides. Which congruence criterion applies?'
+            answer: 'AAS'
+        constraints: "the side does not lie between the two marked angles"
+      - id: kp3
+        name: Why AAS works
+        key_prerequisites: [triangle-angle-sum]
+        exemplars:
+          - problem: 'Given $\angle A \cong \angle D$ and $\angle B \cong \angle E$, what follows about $\angle C$ and $\angle F$, and why?'
+            answer: '$\angle C \cong \angle F$; both equal $180^\circ$ minus the other two angles.'
+            solution_sketch: 'Triangle angle sum forces the third pair, which is how AAS reduces to ASA.'
+          - problem: 'Both triangles have $\angle A = 50^\circ$, $\angle B = 60^\circ$, and $AB = 8$. Are they congruent, and by which criterion?'
+            answer: 'Yes, by ASA.'
+        constraints: "third-angle theorem reasoning; angle pairs summing under 180"
+    diagnostic_exemplar:
+      problem: 'In $\triangle ABC$ and $\triangle DEF$: $\angle A \cong \angle D$, $\angle B \cong \angle E$, and $\overline{BC} \cong \overline{EF}$. State the congruence criterion, and explain why the triangles are congruent even though the congruent sides are not between the marked angles.'
+      answer: 'AAS; the third angles are congruent too (each is 180° minus the other two), so the given side becomes an included side and ASA applies'
+      solution_sketch: 'Third-angle theorem: $\angle C \cong \angle F$, and $\overline{BC}$ lies between $\angle B$ and $\angle C$.'
+    anki_seeds:
+      - front: "ASA vs AAS: in ASA the congruent side is ... the two angles"
+        back: "included between"
+        type: basic
+      - front: "AAS reduces to ASA because of the..."
+        back: "third-angle theorem (triangle angle sum)"
+        type: basic
+
+  - id: hl-congruence
+    name: Hypotenuse-Leg Congruence
+    core: true
+    difficulty: 0.38
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 120
+    prerequisites:
+      - id: sss-sas-congruence
+        weight: 0.6
+        key: true
+      - id: pythagorean-theorem
+        weight: 0.5
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: Recognize HL
+        key_prerequisites: [sss-sas-congruence]
+        exemplars:
+          - problem: 'Two right triangles have congruent hypotenuses and one pair of congruent legs. Which congruence criterion applies?'
+            answer: 'HL'
+          - problem: 'HL looks like SSA, which is not a valid criterion in general. Why is HL valid?'
+            answer: 'The right angle fixes the remaining leg via the Pythagorean theorem, so HL is effectively SSS.'
+        constraints: "right triangles only; hypotenuse plus one leg marked"
+      - id: kp2
+        name: Identify the hypotenuse
+        key_prerequisites: [pythagorean-theorem]
+        exemplars:
+          - problem: 'In right $\triangle ABC$ with the right angle at $C$, which side is the hypotenuse?'
+            answer: '$\overline{AB}$'
+            solution_sketch: 'The hypotenuse is the side opposite the right angle.'
+          - problem: 'A right triangle has legs $9$ and $12$. Find the hypotenuse.'
+            answer: "15"
+            solution_sketch: '$\sqrt{9^2 + 12^2} = \sqrt{225} = 15$.'
+        constraints: "Pythagorean triples only; right angle named by vertex"
+      - id: kp3
+        name: HL with variables
+        key_prerequisites: [sss-sas-congruence]
+        exemplars:
+          - problem: 'Right triangles are congruent by HL; their hypotenuses measure $5x - 3$ and $3x + 11$. Find the hypotenuse length.'
+            answer: "32"
+            solution_sketch: '$5x - 3 = 3x + 11 \Rightarrow x = 7$; hypotenuse $= 32$.'
+          - problem: 'Right triangles are congruent by HL; the corresponding legs measure $2x + 7$ and $4x - 9$. Find the leg length.'
+            answer: "23"
+            solution_sketch: '$2x + 7 = 4x - 9 \Rightarrow x = 8$; leg $= 23$.'
+        constraints: "corresponding parts equal; linear expressions with integer solutions"
+    diagnostic_exemplar:
+      problem: 'In right triangles $\triangle ABC$ (right angle at $C$) and $\triangle DEF$ (right angle at $F$), $\overline{AB} \cong \overline{DE}$ and $\overline{BC} \cong \overline{EF}$, with $AB = 5x - 3$ and $DE = 3x + 11$. Name the congruence criterion and find $AB$.'
+      answer: 'HL; AB = 32'
+      solution_sketch: '$\overline{AB}$ and $\overline{DE}$ are the hypotenuses (opposite the right angles) and $\overline{BC}$, $\overline{EF}$ are corresponding legs, so HL applies; $5x - 3 = 3x + 11$ gives $x = 7$ and $AB = 32$.'
+    anki_seeds:
+      - front: "HL congruence applies only to ... triangles"
+        back: "right"
+        type: basic
+      - front: "HL requires congruent hypotenuses and..."
+        back: "one pair of congruent corresponding legs"
+        type: basic
+
+  - id: triangle-congruence-criteria
+    name: Triangle Congruence Criteria
+    core: true
+    difficulty: 0.4
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 150
+    prerequisites:
+      - id: sss-sas-congruence
+        weight: 0.7
+        key: true
+      - id: asa-aas-congruence
+        weight: 0.7
+        key: true
+      - id: hl-congruence
+        weight: 0.5
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: Choose the criterion from marked information
+        key_prerequisites: [sss-sas-congruence, asa-aas-congruence, hl-congruence]
+        exemplars:
+          - problem: 'In quadrilateral $ABCD$, $\overline{AB} \cong \overline{CB}$ and $\overline{AD} \cong \overline{CD}$, and diagonal $\overline{BD}$ is drawn. Which of SSS, SAS, ASA, AAS, and HL proves $\triangle ABD \cong \triangle CBD$?'
+            answer: 'SSS'
+            solution_sketch: 'The shared diagonal gives $\overline{BD} \cong \overline{BD}$ (reflexive), so all three pairs of sides match: SSS.'
+          - problem: 'In $\triangle ABC$ and $\triangle DEF$, $\angle A \cong \angle D$, $\angle C \cong \angle F$, and $\overline{AB} \cong \overline{DE}$. Which of the five criteria applies?'
+            answer: 'AAS'
+            solution_sketch: 'The congruent side $\overline{AB}$ lies between $\angle A$ and $\angle B$, not between the two congruent angles $\angle A$ and $\angle C$, so it is non-included: AAS, not ASA.'
+          - problem: 'In $\triangle ABC$ with $\overline{AB} \cong \overline{AC}$, the altitude $\overline{AD}$ is drawn to $\overline{BC}$. Which of the five criteria proves $\triangle ABD \cong \triangle ACD$?'
+            answer: 'HL'
+            solution_sketch: 'The altitude makes right angles at $D$; the hypotenuses $\overline{AB}$ and $\overline{AC}$ are congruent and the leg $\overline{AD}$ is shared, so HL applies.'
+        constraints: "criteria drawn from SSS, SAS, ASA, AAS, HL; each item needs one deduction first (a shared side, vertical angles, or the angle sum) before the criterion is named, and the choice ranges over all five"
+      - id: kp2
+        name: Recognize non-criteria
+        key_prerequisites: [asa-aas-congruence]
+        exemplars:
+          - problem: 'Two triangles have all three pairs of corresponding angles congruent (AAA). Must the triangles be congruent?'
+            answer: 'No; AAA guarantees the same shape (similarity) but not the same size.'
+            solution_sketch: 'Two equilateral triangles with sides $1$ and $2$ have equal angles but are not congruent.'
+          - problem: 'Two triangles agree in two sides and a non-included angle (SSA). Is SSA a valid congruence criterion?'
+            answer: 'No; SSA can produce two different triangles (the ambiguous case).'
+        constraints: "AAA and SSA only; ask for the reason, not just yes/no"
+      - id: kp3
+        name: Write the congruence statement with correct correspondence
+        key_prerequisites: [sss-sas-congruence, asa-aas-congruence]
+        exemplars:
+          - problem: 'Given $\overline{AB} \cong \overline{DE}$, $\overline{BC} \cong \overline{EF}$, and $\overline{AC} \cong \overline{DF}$, state the triangle congruence and its criterion.'
+            answer: '$\triangle ABC \cong \triangle DEF$ by SSS'
+            solution_sketch: 'Match vertices in the order forced by the congruent sides: $A \leftrightarrow D$, $B \leftrightarrow E$, $C \leftrightarrow F$.'
+          - problem: 'Given $\angle A \cong \angle D$, $\overline{AB} \cong \overline{DE}$, and $\angle B \cong \angle E$, state the triangle congruence and its criterion.'
+            answer: '$\triangle ABC \cong \triangle DEF$ by ASA'
+        constraints: "vertex order in the statement must respect the correspondence; give the criterion"
+    diagnostic_exemplar:
+      problem: 'In quadrilateral $PQRS$, $\overline{PQ} \cong \overline{RQ}$ and $\overline{PS} \cong \overline{RS}$, and diagonal $\overline{QS}$ is drawn. State the triangle congruence this gives and its criterion.'
+      answer: '$\triangle PQS \cong \triangle RQS$ by SSS'
+      solution_sketch: 'The shared diagonal gives $\overline{QS} \cong \overline{QS}$ (reflexive), completing three side pairs; the vertex order follows the correspondence $P \leftrightarrow R$.'
+    anki_seeds:
+      - front: "The five valid triangle congruence criteria are..."
+        back: "SSS, SAS, ASA, AAS, HL (right triangles)"
+        type: basic
+      - front: "Why is SSA not a congruence criterion?"
+        back: "Two sides and a non-included angle can produce two different triangles (the ambiguous case)."
+        type: basic
+      - front: "AAA guarantees triangles are..."
+        back: "similar, not necessarily congruent"
+        type: basic
+
+  - id: isosceles-equilateral-triangles
+    name: Isosceles and Equilateral Triangles
+    core: true
+    difficulty: 0.35
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 120
+    prerequisites:
+      - id: triangle-angle-sum
+        weight: 0.7
+        key: true
+      - id: triangle-congruence-criteria
+        weight: 0.4
+        key: false
+      - id: two-step-equations
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: Base angles theorem
+        key_prerequisites: [triangle-angle-sum]
+        exemplars:
+          - problem: 'An isosceles triangle has vertex angle $40^\circ$. Find each base angle, in degrees.'
+            answer: "70"
+            solution_sketch: 'Base angles are equal: $(180 - 40)/2 = 70$.'
+          - problem: 'An isosceles triangle has a base angle of $65^\circ$. Find the vertex angle, in degrees.'
+            answer: "50"
+            solution_sketch: '$180 - 2 \cdot 65 = 50$.'
+        constraints: "whole-degree angles; vertex angle even so base angles are whole"
+      - id: kp2
+        name: Equilateral and equiangular triangles
+        key_prerequisites: [triangle-angle-sum]
+        exemplars:
+          - problem: 'What is the measure of each angle of an equilateral triangle, in degrees?'
+            answer: "60"
+          - problem: 'An equilateral triangle has sides $3x - 2$ and $x + 10$. Find the side length.'
+            answer: "16"
+            solution_sketch: '$3x - 2 = x + 10 \Rightarrow x = 6$; side $= 3(6) - 2 = 16$.'
+        constraints: "equilateral iff equiangular; linear side expressions with integer solutions"
+      - id: kp3
+        name: Converse of the base angles theorem
+        key_prerequisites: [two-step-equations]
+        exemplars:
+          - problem: 'In $\triangle ABC$, $\angle B \cong \angle C$, $AB = 5x - 7$, and $AC = 2x + 8$. Find $AB$.'
+            answer: "18"
+            solution_sketch: 'Congruent base angles force $AB = AC$: $5x - 7 = 2x + 8 \Rightarrow x = 5$, so $AB = 18$.'
+          - problem: 'In $\triangle PQR$, $PQ = PR$ and $m\angle Q = (3x + 5)^\circ$, $m\angle R = (5x - 19)^\circ$. Find $m\angle Q$, in degrees.'
+            answer: "41"
+            solution_sketch: 'Base angles equal: $3x + 5 = 5x - 19 \Rightarrow x = 12$, so $m\angle Q = 41^\circ$.'
+        constraints: "sides opposite congruent angles are congruent; integer solutions"
+    diagnostic_exemplar:
+      problem: 'An isosceles triangle has vertex angle $(2x)^\circ$ and base angles $(3x + 10)^\circ$ each. Find the vertex angle, in degrees.'
+      answer: "40"
+      solution_sketch: '$2x + 2(3x + 10) = 180 \Rightarrow 8x + 20 = 180 \Rightarrow x = 20$; vertex $= 40^\circ$.'
+    anki_seeds:
+      - front: "Base angles theorem: the angles opposite the congruent sides of an isosceles triangle are..."
+        back: "congruent"
+        type: basic
+      - front: "Each angle of an equilateral triangle measures..."
+        back: "60 degrees"
+        type: basic
+
+  - id: medians-centroids
+    name: Medians and Centroids
+    core: false                # named terminal triangle theorem
+    difficulty: 0.38
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 120
+    prerequisites:
+      - id: segment-angle-addition
+        weight: 0.5
+        key: true
+      - id: ratios-proportions
+        weight: 0.5
+        key: false
+      - id: coordinate-plane
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: Medians and midpoints
+        key_prerequisites: [segment-angle-addition]
+        exemplars:
+          - problem: '$\overline{BD}$ is a median of $\triangle ABC$ with $D$ on $\overline{AC}$. If $AC = 18$, find $AD$.'
+            answer: "9"
+            solution_sketch: 'A median ends at the midpoint of the opposite side.'
+          - problem: 'How many medians does a triangle have?'
+            answer: "3"
+        constraints: "even side lengths so midpoint splits are whole numbers"
+      - id: kp2
+        name: The centroid divides each median 2:1
+        key_prerequisites: [ratios-proportions]
+        exemplars:
+          - problem: 'Median $\overline{AM}$ of $\triangle ABC$ has length $18$, with centroid $G$. Find $AG$.'
+            answer: "12"
+            solution_sketch: 'The centroid sits $\frac{2}{3}$ of the way from the vertex: $\frac{2}{3} \cdot 18 = 12$.'
+          - problem: 'The centroid $G$ lies on median $\overline{AM}$ with $GM = 5$. Give the ordered pair $(AG, AM)$.'
+            answer: "(10, 15)"
+            solution_sketch: '$AG = 2 \cdot GM = 10$; $AM = AG + GM = 15$.'
+        constraints: "median lengths divisible by 3; vertex-to-centroid is the long piece; two-part answers requested as an ordered pair"
+      - id: kp3
+        name: Centroid computations with variables and coordinates
+        key_prerequisites: [ratios-proportions, coordinate-plane]
+        exemplars:
+          - problem: 'A triangle has vertices $(0, 0)$, $(6, 0)$, and $(0, 9)$. Find its centroid.'
+            answer: "(2, 3)"
+            solution_sketch: 'The centroid averages the vertices: $\left(\frac{0+6+0}{3}, \frac{0+0+9}{3}\right)$.'
+          - problem: 'On median $\overline{AM}$ with centroid $G$: $AG = 4x$ and $GM = x + 3$. Find $AM$.'
+            answer: "18"
+            solution_sketch: '$AG = 2 \cdot GM$: $4x = 2x + 6 \Rightarrow x = 3$; $AM = 12 + 6 = 18$.'
+        constraints: "vertex coordinates chosen so the centroid is integral; linear expressions with integer solutions"
+    diagnostic_exemplar:
+      problem: 'On median $\overline{AM}$ of $\triangle ABC$ with centroid $G$: $AG = 3x$ and $GM = x + 4$. Find $AM$.'
+      answer: "36"
+      solution_sketch: '$AG = 2 \cdot GM$: $3x = 2x + 8 \Rightarrow x = 8$; $AG = 24$, $GM = 12$, so $AM = 36$.'
+    anki_seeds:
+      - front: "The centroid divides each median in the ratio ... measured from the vertex"
+        back: "2 : 1"
+        type: basic
+      - front: "The centroid of a triangle with vertices A, B, C has coordinates..."
+        back: "the average of the three vertices: ((x1+x2+x3)/3, (y1+y2+y3)/3)"
+        type: basic
+
+  - id: bisectors-in-triangles
+    name: Bisectors in Triangles
+    core: false                # named terminal triangle theorem
+    difficulty: 0.42
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 150
+    prerequisites:
+      - id: perpendicular-bisectors
+        weight: 0.6
+        key: true
+      - id: angle-bisectors
+        weight: 0.6
+        key: true
+      - id: triangle-congruence-criteria
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: Circumcenter equidistant from the vertices
+        key_prerequisites: [perpendicular-bisectors]
+        exemplars:
+          - problem: 'The perpendicular bisectors of the sides of $\triangle ABC$ meet at $P$ (the circumcenter). If $PA = 13$, find $PC$.'
+            answer: "13"
+            solution_sketch: 'The circumcenter is equidistant from all three vertices.'
+          - problem: 'Is the circumcenter of a triangle equidistant from its vertices or from its sides? Answer with one word: vertices or sides.'
+            answer: 'vertices'
+            solution_sketch: 'Perpendicular bisectors of the sides concur at the point equidistant from the three vertices.'
+        constraints: "concurrency stated; read off equidistance; conceptual items are answered with one word"
+      - id: kp2
+        name: Incenter equidistant from the sides
+        key_prerequisites: [angle-bisectors]
+        exemplars:
+          - problem: 'The angle bisectors of $\triangle ABC$ meet at $I$ (the incenter). The distance from $I$ to side $\overline{AB}$ is $4$. Find the distance from $I$ to side $\overline{BC}$.'
+            answer: "4"
+            solution_sketch: 'The incenter is equidistant from all three sides.'
+          - problem: 'Is the incenter of a triangle equidistant from its vertices or from its sides? Answer with one word: vertices or sides.'
+            answer: 'sides'
+            solution_sketch: 'The angle bisectors concur at the point equidistant from the three sides.'
+        constraints: "distances measured perpendicular to the sides; conceptual items are answered with one word"
+      - id: kp3
+        name: Concurrency points with variables
+        key_prerequisites: [perpendicular-bisectors, angle-bisectors]
+        exemplars:
+          - problem: '$P$ is the circumcenter of $\triangle ABC$ with $PA = 5x - 8$ and $PB = 3x + 4$. Find $PA$.'
+            answer: "22"
+            solution_sketch: '$5x - 8 = 3x + 4 \Rightarrow x = 6$; $PA = 22$.'
+          - problem: '$I$ is the incenter of $\triangle DEF$; its distances to sides $\overline{DE}$ and $\overline{EF}$ are $2x + 3$ and $4x - 9$. Find the common distance.'
+            answer: "15"
+            solution_sketch: '$2x + 3 = 4x - 9 \Rightarrow x = 6$; distance $= 15$.'
+        constraints: "linear expressions with integer solutions; equidistance supplies the equation"
+    diagnostic_exemplar:
+      problem: '$G$ is the circumcenter of $\triangle ABC$ with $GA = 7x - 9$ and $GB = 4x + 12$. Find $GA$.'
+      answer: "40"
+      solution_sketch: '$7x - 9 = 4x + 12 \Rightarrow x = 7$; $GA = 40$.'
+    anki_seeds:
+      - front: "The circumcenter is the concurrency point of the ... and is equidistant from the vertices"
+        back: "perpendicular bisectors of the sides"
+        type: basic
+      - front: "The incenter is the concurrency point of the ... and is equidistant from the sides"
+        back: "angle bisectors"
+        type: basic
+
+  - id: congruence-proofs-cpctc
+    name: Congruence Proofs and CPCTC
+    core: false                # proof-practice genre; terminal
+    difficulty: 0.45
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 240
+    prerequisites:
+      - id: triangle-congruence-criteria
+        weight: 0.8
+        key: true
+      - id: writing-geometric-proofs
+        weight: 0.7
+        key: true
+      - id: isosceles-equilateral-triangles
+        weight: 0.4
+        key: false
+      - id: angle-relationships
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: Prove triangles congruent using shared parts
+        key_prerequisites: [triangle-congruence-criteria]
+        exemplars:
+          - problem: 'Given $\overline{AB} \cong \overline{AD}$ and $\overline{CB} \cong \overline{CD}$, prove $\triangle ABC \cong \triangle ADC$.'
+            answer: '$\overline{AC} \cong \overline{AC}$ (reflexive), so the triangles are congruent by SSS.'
+            solution_sketch: 'Two given pairs of sides plus the shared side $\overline{AC}$ give SSS.'
+          - problem: '$M$ is the midpoint of both $\overline{AC}$ and $\overline{BD}$. Prove $\triangle AMB \cong \triangle CMD$.'
+            answer: '$\overline{AM} \cong \overline{CM}$ and $\overline{BM} \cong \overline{DM}$ (midpoints); $\angle AMB \cong \angle CMD$ (vertical angles); SAS.'
+            solution_sketch: 'Midpoint gives both side pairs; the included angles are vertical angles.'
+        constraints: "reasons limited to given, reflexive, midpoint/bisector definitions, vertical angles, then SSS/SAS/ASA/AAS"
+      - id: kp2
+        name: CPCTC conclusions
+        key_prerequisites: [triangle-congruence-criteria]
+        exemplars:
+          - problem: 'From $\triangle AMB \cong \triangle CMD$ (with $A \leftrightarrow C$, $M \leftrightarrow M$, $B \leftrightarrow D$), what can you conclude about $\overline{AB}$ and $\overline{CD}$, and why?'
+            answer: '$\overline{AB} \cong \overline{CD}$ by CPCTC.'
+            solution_sketch: '$\overline{AB}$ and $\overline{CD}$ are corresponding parts of the congruent triangles.'
+          - problem: 'Given $\overline{AB} \cong \overline{AD}$ and $\overline{CB} \cong \overline{CD}$, prove $\overline{AC}$ bisects $\angle BAD$.'
+            answer: '$\triangle ABC \cong \triangle ADC$ by SSS (reflexive $\overline{AC}$); then $\angle BAC \cong \angle DAC$ by CPCTC, so $\overline{AC}$ bisects $\angle BAD$.'
+            solution_sketch: 'Prove the triangles congruent first, then read off the corresponding angles.'
+        constraints: "CPCTC only after a congruence is established; the conclusion must name corresponding parts"
+      - id: kp3
+        name: Two-stage proofs through an auxiliary congruence
+        key_prerequisites: [triangle-congruence-criteria, isosceles-equilateral-triangles]
+        exemplars:
+          - problem: 'In isosceles $\triangle ABC$ with $\overline{AB} \cong \overline{AC}$, $M$ is the midpoint of $\overline{BC}$. Prove $\overline{AM} \perp \overline{BC}$.'
+            answer: '$\triangle ABM \cong \triangle ACM$ by SSS (given, midpoint, reflexive); $\angle AMB \cong \angle AMC$ by CPCTC, and they form a linear pair, so each is $90^\circ$.'
+            solution_sketch: 'Congruent linear-pair angles must each be right angles.'
+          - problem: 'Given $\overline{PQ} \parallel \overline{SR}$ and $\overline{PQ} \cong \overline{SR}$, with diagonal $\overline{QS}$ drawn, prove $\overline{PS} \cong \overline{QR}$.'
+            answer: '$\angle PQS \cong \angle RSQ$ (alternate interior angles), $\overline{QS} \cong \overline{QS}$; $\triangle PQS \cong \triangle RSQ$ by SAS; $\overline{PS} \cong \overline{QR}$ by CPCTC.'
+            solution_sketch: 'Parallel segments give the included angle pair; the diagonal is the shared side.'
+        constraints: "at most two stages; every statement carries a reason"
+    diagnostic_exemplar:
+      problem: 'Given $\overline{AB} \parallel \overline{DC}$ and $\overline{AB} \cong \overline{DC}$, with diagonal $\overline{BD}$ drawn, prove $\overline{AD} \cong \overline{CB}$.'
+      answer: '$\angle ABD \cong \angle CDB$ (alternate interior angles from $\overline{AB} \parallel \overline{DC}$); $\overline{BD} \cong \overline{BD}$ (reflexive); so $\triangle ABD \cong \triangle CDB$ by SAS, and $\overline{AD} \cong \overline{CB}$ by CPCTC.'
+      solution_sketch: 'The parallel segments give the included angle pair at the transversal $\overline{BD}$; the diagonal is the shared side; CPCTC reads off the conclusion.'
+    anki_seeds:
+      - front: "CPCTC stands for..."
+        back: "Corresponding Parts of Congruent Triangles are Congruent"
+        type: basic
+      - front: "In two-triangle proofs, a side shared by both triangles is congruent to itself by the..."
+        back: "reflexive property"
+        type: basic

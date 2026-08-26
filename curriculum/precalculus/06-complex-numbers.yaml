@@ -1,0 +1,320 @@
+unit: complex-numbers
+course: precalculus
+module: "Complex Numbers"
+topics:
+  - id: complex-numbers
+    name: Complex Number Arithmetic
+    core: true
+    difficulty: 0.55
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 120
+    prerequisites:
+      - id: square-roots
+        weight: 0.6
+        key: true
+      - id: polynomial-multiplication
+        weight: 0.5
+        key: true
+      - id: quadratic-formula
+        weight: 0.5
+      - id: combining-like-terms
+        weight: 0.4
+      - id: discriminant
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Powers of i and square roots of negatives
+        key_prerequisites: [square-roots]
+        constraints: "reduce i^n via i^4 = 1; radicands are perfect squares times -1"
+        exemplars:
+          - problem: 'Simplify $\sqrt{-49}$.'
+            answer: "7i"
+          - problem: 'Simplify $i^{27}$.'
+            answer: "-i"
+            solution_sketch: '$27 = 4 \cdot 6 + 3$, so $i^{27} = i^3 = -i$.'
+      - id: kp2
+        name: Add, subtract, and multiply
+        key_prerequisites: [combining-like-terms, polynomial-multiplication]
+        constraints: "operands a + bi with single-digit integer a, b; products FOIL with i² = -1; answers in a + bi form"
+        exemplars:
+          - problem: 'Compute $(3 + 2i) + (1 - 5i)$.'
+            answer: "4 - 3i"
+          - problem: 'Compute $(2 + 3i)(4 - i)$.'
+            answer: "11 + 10i"
+            solution_sketch: '$8 - 2i + 12i - 3i^2 = 8 + 10i + 3$.'
+      - id: kp3
+        name: Divide using the conjugate; complex roots of quadratics
+        key_prerequisites: [polynomial-multiplication, quadratic-formula]
+        constraints: "divisors a + bi with |a|, |b| <= 3; quadratics with integer coefficients and negative discriminant; answers in a + bi form with exact fractions"
+        exemplars:
+          - problem: 'Compute $\frac{3 + 2i}{1 - i}$.'
+            answer: "1/2 + (5/2)i"
+            solution_sketch: 'Multiply by $\frac{1+i}{1+i}$: $\frac{(3+2i)(1+i)}{2} = \frac{1 + 5i}{2}$.'
+          - problem: 'Solve $x^2 - 2x + 5 = 0$ and give the root whose imaginary part is positive.'
+            answer: "1 + 2i"
+            solution_sketch: '$x = \frac{2 \pm \sqrt{4 - 20}}{2} = 1 \pm 2i$; the root with positive imaginary part is $1 + 2i$.'
+    diagnostic_exemplar:
+      problem: 'Compute $\dfrac{2 + \sqrt{-9}}{1 + i}$, giving the answer in $a + bi$ form.'
+      answer: '5/2 + (1/2)i'
+      solution_sketch: '$\sqrt{-9} = 3i$; multiply by $\frac{1-i}{1-i}$: $\frac{(2 + 3i)(1 - i)}{2} = \frac{5 + i}{2}$.'
+    anki_seeds:
+      - front: "i² = ?"
+        back: "-1"
+        type: basic
+      - front: "To divide complex numbers, multiply numerator and denominator by..."
+        back: "The conjugate of the denominator."
+        type: basic
+
+  - id: complex-plane-modulus-conjugate
+    name: The Complex Plane, Modulus, and Conjugate
+    core: true
+    difficulty: 0.5
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 120
+    prerequisites:
+      - id: complex-numbers
+        weight: 0.8
+        key: true
+      - id: pythagorean-theorem
+        weight: 0.5
+        key: true
+      - id: coordinate-plane
+        weight: 0.3
+      - id: distance-midpoint-formulas
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Plot and identify real and imaginary parts
+        key_prerequisites: [coordinate-plane]
+        constraints: "a + bi with single-digit integer a, b covering all four quadrants; answers as ordered pairs (a, b)"
+        exemplars:
+          - problem: 'Which ordered pair in the plane represents $3 - 2i$?'
+            answer: "(3, -2)"
+            solution_sketch: 'The real part is the $x$-coordinate and the imaginary part the $y$-coordinate, so $3 - 2i$ plots at $(3, -2)$, in Quadrant IV.'
+          - problem: 'Give the ordered pair (real part, imaginary part) of $-4 + 7i$.'
+            answer: "(-4, 7)"
+            solution_sketch: 'In $a + bi$ the real part is $a = -4$ and the imaginary part is $b = 7$.'
+      - id: kp2
+        name: Modulus as distance from the origin
+        key_prerequisites: [pythagorean-theorem, distance-midpoint-formulas]
+        constraints: "prefer Pythagorean triples; include one radical answer"
+        exemplars:
+          - problem: 'Compute $|3 + 4i|$.'
+            answer: "5"
+            solution_sketch: '$\sqrt{9 + 16}$.'
+          - problem: 'Compute $|1 - i|$.'
+            answer: "√2"
+          - problem: 'Compute $|{-2} + 2\sqrt{3}\,i|$.'
+            answer: "4"
+            solution_sketch: '$\sqrt{4 + 12} = 4$.'
+      - id: kp3
+        name: Conjugates and the identity z·z̄ = |z|²
+        key_prerequisites: [complex-numbers]
+        constraints: "z = a + bi with small integers; z·z̄ products come out to a² + b², a plain integer"
+        exemplars:
+          - problem: 'State the conjugate of $2 - 5i$.'
+            answer: "2 + 5i"
+          - problem: 'Compute $(3 + 4i)(3 - 4i)$.'
+            answer: "25"
+            solution_sketch: '$z\bar{z} = |z|^2 = 9 + 16$.'
+    diagnostic_exemplar:
+      problem: 'Compute $(6 - 8i)(6 + 8i)$, and confirm that your value equals $|6 - 8i|^2$.'
+      answer: '100'
+      solution_sketch: '$z\bar z = 6^2 + 8^2 = 100$, and $|6 - 8i| = \sqrt{36 + 64} = 10$, whose square is $100$.'
+    anki_seeds:
+      - front: "|a + bi| = ?"
+        back: "√(a² + b²)"
+        type: basic
+      - front: "z · z̄ = ?"
+        back: "|z|² (a nonnegative real number)"
+        type: basic
+
+  - id: conjugate-root-theorem
+    name: The Conjugate Root Theorem
+    # supplemental: terminal theorem — closes the FTA topic's "roots over ℂ" dangle;
+    # nothing downstream consumes it (re-audit R-17).
+    core: false
+    difficulty: 0.6
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 200
+    prerequisites:
+      - id: complex-numbers
+        weight: 0.6
+        key: true
+      - id: fundamental-theorem-algebra-multiplicity
+        weight: 0.6
+        key: true
+      - id: complex-plane-modulus-conjugate
+        weight: 0.4
+      - id: polynomial-division
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Nonreal roots come in conjugate pairs
+        key_prerequisites: [complex-numbers, fundamental-theorem-algebra-multiplicity]
+        constraints: "polynomials always stated to have real coefficients; degrees 3-5; count arguments pair nonreal roots and use degree parity"
+        exemplars:
+          - problem: 'A cubic with real coefficients has roots $2$ and $1 + i$. What is its third root?'
+            answer: "1 - i"
+            solution_sketch: 'Real coefficients force nonreal roots into conjugate pairs.'
+          - problem: 'Can a polynomial with real coefficients have $3i$ as a root but not $-3i$?'
+            answer: "no"
+            solution_sketch: 'If $p$ has real coefficients, $p(\bar{z}) = \overline{p(z)}$, so roots pair with their conjugates.'
+          - problem: 'A degree-$5$ polynomial with real coefficients has $2i$ and $1 - i$ among its roots. How many real roots must it have?'
+            answer: "1"
+            solution_sketch: 'The conjugates $-2i$ and $1 + i$ are also roots: four nonreal roots, leaving exactly one real root.'
+      - id: kp2
+        name: Build a real polynomial from a complex root
+        key_prerequisites: [complex-numbers, complex-plane-modulus-conjugate]
+        constraints: 'use $z + \bar{z} = 2a$ and $z\bar{z} = a^2 + b^2$ for the quadratic factor; small integer $a$, $b$; monic answers'
+        exemplars:
+          - problem: 'Write a monic quadratic with real coefficients having $3 + 2i$ as a root. Expand it.'
+            answer: "x^2 - 6x + 13"
+            solution_sketch: 'The roots are $3 \pm 2i$: sum $6$, product $9 + 4 = 13$, so $x^2 - 6x + 13$.'
+          - problem: 'Write a monic cubic with real coefficients whose roots include $1$ and $2 - i$. Expand it.'
+            answer: "x^3 - 5x^2 + 9x - 5"
+            solution_sketch: '$(x - 1)\left(x^2 - 4x + 5\right)$, since $2 \pm i$ give sum $4$ and product $5$.'
+      - id: kp3
+        name: Find the remaining roots
+        key_prerequisites: [fundamental-theorem-algebra-multiplicity, complex-numbers]
+        constraints: "divide out the conjugate-pair quadratic; the remaining factor is linear or a factorable quadratic with integer roots"
+        exemplars:
+          - problem: 'Given that $1 + 2i$ is a root of $p(x) = x^3 - 3x^2 + 7x - 5$, find the other roots.'
+            answer: "1 - 2i and 1"
+            solution_sketch: 'The pair $1 \pm 2i$ gives the factor $x^2 - 2x + 5$; dividing leaves $x - 1$.'
+          - problem: 'Given that $2i$ is a root of $p(x) = x^4 + x^3 + 2x^2 + 4x - 8$, find all roots of $p$.'
+            answer: "2i, -2i, -2, and 1"
+            solution_sketch: '$\pm 2i$ give the factor $x^2 + 4$; dividing leaves $x^2 + x - 2 = (x + 2)(x - 1)$.'
+    diagnostic_exemplar:
+      problem: 'Given that $1 + 2i$ is a root of $p(x) = x^3 - 5x^2 + 11x - 15$, find the other roots.'
+      answer: "1 - 2i and 3"
+      solution_sketch: 'Real coefficients force the conjugate $1 - 2i$; the pair gives the factor $x^2 - 2x + 5$, and dividing leaves $x - 3$.'
+    anki_seeds:
+      - front: "Conjugate root theorem?"
+        back: "If a polynomial has real coefficients and a + bi is a root, then a − bi is also a root."
+        type: basic
+      - front: "For z = a + bi, the real quadratic (x − z)(x − z̄) expands to..."
+        back: "x² − 2ax + (a² + b²)."
+        type: basic
+
+  - id: complex-polar-form-de-moivre
+    name: Polar Form and De Moivre's Theorem
+    core: false                # supplemental, with nth-roots-complex-numbers: terminal branch
+    difficulty: 0.6
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 240
+    prerequisites:
+      - id: complex-plane-modulus-conjugate
+        weight: 0.7
+        key: true
+      - id: unit-circle
+        weight: 0.6
+        key: true
+      - id: inverse-trig-functions
+        weight: 0.3
+      - id: radians-degrees
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Rectangular to polar form
+        key_prerequisites: [complex-plane-modulus-conjugate, unit-circle]
+        constraints: "arguments limited to unit-circle angles; give θ in [0, 2π)"
+        exemplars:
+          - problem: 'Write $1 + i$ in polar form $r(\cos\theta + i\sin\theta)$.'
+            answer: "√2 (cos π/4 + i sin π/4)"
+          - problem: 'Write $1 - \sqrt{3}\,i$ in polar form with $\theta \in [0, 2\pi)$.'
+            answer: "2 (cos 5π/3 + i sin 5π/3)"
+            solution_sketch: '$r = \sqrt{1 + 3} = 2$; the point lies in Quadrant IV with reference angle $\pi/3$.'
+      - id: kp2
+        name: Polar to rectangular form
+        key_prerequisites: [unit-circle]
+        constraints: "r a small integer; θ a unit-circle angle; answers exact in a + bi form with radicals allowed"
+        exemplars:
+          - problem: 'Convert $4\left(\cos\frac{\pi}{3} + i\sin\frac{\pi}{3}\right)$ to rectangular form.'
+            answer: "2 + 2√3 i"
+            solution_sketch: '$4 \cdot \frac{1}{2} + 4 \cdot \frac{\sqrt{3}}{2} i$.'
+          - problem: 'Convert $2\left(\cos\frac{3\pi}{4} + i\sin\frac{3\pi}{4}\right)$ to rectangular form.'
+            answer: "-√2 + √2 i"
+      - id: kp3
+        name: Powers via De Moivre
+        key_prerequisites: [complex-plane-modulus-conjugate, unit-circle]
+        constraints: "exponents 3-8; final answers in rectangular form"
+        exemplars:
+          - problem: 'Use De Moivre''s theorem to compute $(1 + i)^8$.'
+            answer: "16"
+            solution_sketch: '$(\sqrt{2})^8 \operatorname{cis}(8 \cdot \frac{\pi}{4}) = 16 \operatorname{cis} 2\pi = 16$.'
+          - problem: 'Compute $\left(\cos\frac{\pi}{6} + i\sin\frac{\pi}{6}\right)^3$.'
+            answer: "i"
+          - problem: 'Compute $(1 - \sqrt{3}\,i)^3$.'
+            answer: "-8"
+            solution_sketch: '$2^3 \operatorname{cis}(3 \cdot \frac{5\pi}{3}) = 8 \operatorname{cis} 5\pi = 8 \operatorname{cis} \pi = -8$.'
+    diagnostic_exemplar:
+      problem: 'Use De Moivre''s theorem to compute $(1 + i)^6$ in rectangular form.'
+      answer: "-8i"
+      solution_sketch: '$1 + i = \sqrt{2}\operatorname{cis}\frac{\pi}{4}$, so $(1+i)^6 = 8\operatorname{cis}\frac{3\pi}{2} = -8i$.'
+    anki_seeds:
+      - front: "De Moivre's theorem: [r(cos θ + i sin θ)]ⁿ = ?"
+        back: "rⁿ (cos nθ + i sin nθ)"
+        type: basic
+
+  - id: nth-roots-complex-numbers
+    name: nth Roots of Complex Numbers
+    core: false                # supplemental: terminal capstone of the complex-number branch
+    difficulty: 0.65
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 300
+    prerequisites:
+      - id: complex-polar-form-de-moivre
+        weight: 0.8
+        key: true
+      - id: unit-circle
+        weight: 0.4
+      - id: rational-exponents
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Square roots of a complex number
+        key_prerequisites: [complex-polar-form-de-moivre]
+        constraints: "moduli that are perfect squares; answers in rectangular form"
+        exemplars:
+          - problem: 'Find both square roots of $-4$.'
+            answer: "2i and -2i"
+          - problem: 'Find both square roots of $9i$ in rectangular form.'
+            answer: "3√2/2 + (3√2/2)i and -3√2/2 - (3√2/2)i"
+            solution_sketch: '$9i = 9\operatorname{cis}\frac{\pi}{2}$; roots $3\operatorname{cis}\frac{\pi}{4}$ and $3\operatorname{cis}\frac{5\pi}{4}$.'
+      - id: kp2
+        name: Cube roots
+        key_prerequisites: [complex-polar-form-de-moivre, unit-circle]
+        constraints: "radicands ±8, ±27; spacing 2π/3 between roots"
+        exemplars:
+          - problem: 'Find all cube roots of $8$.'
+            answer: "2, -1 + √3 i, -1 - √3 i"
+            solution_sketch: 'Roots $2\operatorname{cis}\frac{2\pi k}{3}$ for $k = 0, 1, 2$.'
+          - problem: 'Find all cube roots of $-27$.'
+            answer: "3/2 + (3√3/2)i, -3, 3/2 - (3√3/2)i"
+            solution_sketch: '$-27 = 27\operatorname{cis}\pi$; roots $3\operatorname{cis}\frac{\pi + 2\pi k}{3}$.'
+      - id: kp3
+        name: Fourth roots and roots of unity
+        key_prerequisites: [complex-polar-form-de-moivre, unit-circle]
+        constraints: "radicands 1, 16, 81 (fourth roots land on the axes); root counts and spacing 2π/n for n <= 8"
+        exemplars:
+          - problem: 'Find all fourth roots of $16$.'
+            answer: "2, 2i, -2, -2i"
+          - problem: 'How many sixth roots of unity are there, and what is the angle between consecutive roots?'
+            answer: "6 roots, spaced 60° (π/3) apart on the unit circle"
+    diagnostic_exemplar:
+      problem: 'Find all cube roots of $27$.'
+      answer: "3, -3/2 + (3√3/2)i, -3/2 - (3√3/2)i"
+      solution_sketch: 'Write $27 = 27\operatorname{cis} 0$: the cube roots all have modulus $\sqrt[3]{27} = 3$ and arguments $0, \frac{2\pi}{3}, \frac{4\pi}{3}$ — three points equally spaced on the circle of radius $3$.'
+    anki_seeds:
+      - front: "The n nth roots of r·cis θ are..."
+        back: "r^(1/n) · cis((θ + 2πk)/n) for k = 0, 1, …, n-1"
+        type: basic
+      - front: "The nth roots of a complex number are spaced how, geometrically?"
+        back: "Equally around a circle of radius r^(1/n), separated by 2π/n."
+        type: basic

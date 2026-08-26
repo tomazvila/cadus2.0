@@ -1,0 +1,666 @@
+unit: group-fundamentals
+course: abstract-algebra
+module: "Group Fundamentals"
+topics:
+  - id: group-examples-cayley-tables
+    name: "Concrete Groups and Cayley Tables"
+    core: true
+    difficulty: 0.55
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 120
+    prerequisites:
+      - id: groups-intro
+        weight: 0.9
+        key: true
+      - id: modular-arithmetic
+        weight: 0.6
+        key: true
+      - id: binary-operations
+        weight: 0.4
+        key: false
+      - id: gcf-lcm
+        weight: 0.3
+        key: false
+      # Phase C: "abelian" is now taught (proofs/abelian-groups); kp3 asks
+      # abelian-or-not verdicts about concrete groups.
+      - id: abelian-groups
+        weight: 0.3
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "The standard zoo: Z_n, U(n), symmetries"
+        key_prerequisites: [groups-intro, modular-arithmetic]
+        exemplars:
+          - problem: 'List the elements of $U(8)$, the group of units modulo $8$ under multiplication.'
+            answer: '$\{1, 3, 5, 7\}$'
+            solution_sketch: '$U(n)$ consists of the residues coprime to $n$. Of $1,\dots,7$, exactly $1,3,5,7$ are coprime to $8$.'
+          - problem: 'In the additive group $\mathbb{Z}_{12}$, compute $9 + 7$.'
+            answer: "4"
+            solution_sketch: '$9 + 7 = 16 \equiv 4 \pmod{12}$.'
+        constraints: "groups drawn from Z_n (n <= 20), U(n) (n <= 15), and symmetry descriptions; no abstract axioms yet"
+      - id: kp2
+        name: "Reading and completing Cayley tables"
+        key_prerequisites: [groups-intro, binary-operations]
+        exemplars:
+          - problem: 'In the Cayley table of $U(8) = \{1,3,5,7\}$ under multiplication mod $8$, what entry sits in row $3$, column $5$?'
+            answer: "7"
+            solution_sketch: '$3 \cdot 5 = 15 \equiv 7 \pmod 8$.'
+          - problem: 'In the Cayley table of a group of order $6$, how many times does the identity $e$ appear in a single row?'
+            answer: "1"
+            solution_sketch: 'Each element appears exactly once in every row and column (the Sudoku/cancellation property): if $ax = ay$ then multiplying by $a^{-1}$ gives $x = y$, so no row can repeat an entry.'
+        constraints: "tables of order at most 6; use the once-per-row-and-column property"
+      - id: kp3
+        name: "Abelian or not; checking inverses in context"
+        key_prerequisites: [groups-intro, modular-arithmetic]
+        exemplars:
+          - problem: 'Find the inverse of $5$ in the additive group $\mathbb{Z}_{12}$.'
+            answer: "7"
+            solution_sketch: 'Need $5 + x \equiv 0 \pmod{12}$, so $x = 12 - 5 = 7$.'
+          - problem: 'Find the inverse of $3$ in $U(8)$.'
+            answer: "3"
+            solution_sketch: '$3 \cdot 3 = 9 \equiv 1 \pmod 8$, so $3$ is its own inverse.'
+        constraints: "inverses in Z_n (additive) and U(n) (multiplicative), n <= 20; occasionally ask whether the group is abelian"
+    diagnostic_exemplar:
+      problem: 'Give the inverse of $7$ in $U(10)$, the group of units modulo $10$.'
+      answer: "3"
+      solution_sketch: 'Residues coprime to $10$ are $1,3,7,9$. Since $7 \cdot 3 = 21 \equiv 1 \pmod{10}$, $7^{-1} = 3$.'
+    anki_seeds:
+      - front: "What are the elements of $U(n)$?"
+        back: "The residues in $\\{1, \\dots, n-1\\}$ that are coprime to $n$, under multiplication mod $n$."
+        type: basic
+      - front: "In a Cayley table of a group, how often does each element appear in a given row?"
+        back: "Exactly once (rows and columns are permutations of the group)."
+        type: basic
+
+  - id: elementary-group-properties
+    name: "Elementary Group Properties"
+    core: true
+    difficulty: 0.58
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 240
+    prerequisites:
+      - id: groups-intro
+        weight: 0.9
+        key: true
+      - id: direct-proof
+        weight: 0.5
+        key: true
+      - id: group-examples-cayley-tables
+        weight: 0.4
+        key: false
+      # Phase C: kp3 proves groups abelian (g^2 = e => abelian); the definition and
+      # first abelian arguments live in proofs/abelian-groups.
+      - id: abelian-groups
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Uniqueness of identity and inverses"
+        key_prerequisites: [groups-intro, direct-proof]
+        exemplars:
+          - problem: 'Prove that a group $G$ has exactly one identity element.'
+            answer: 'If $e$ and $e''$ are both identities, then $e = e e'' = e''$.'
+            solution_sketch: 'Evaluate $e e''$ two ways: treating $e''$ as an identity gives $e$; treating $e$ as an identity gives $e''$. Hence $e = e''$.'
+          - problem: 'Prove that each $a \in G$ has exactly one inverse.'
+            answer: 'If $b, c$ both invert $a$, then $b = b(ac) = (ba)c = c$.'
+            solution_sketch: 'Use associativity: $b = be = b(ac) = (ba)c = ec = c$.'
+        constraints: "two-line uniqueness arguments; cite associativity explicitly"
+      - id: kp2
+        name: "Cancellation and solving equations in groups"
+        key_prerequisites: [groups-intro]
+        exemplars:
+          - problem: 'In a group $G$, prove the left cancellation law: $ax = ay \implies x = y$.'
+            answer: 'Multiply on the left by $a^{-1}$: $x = a^{-1}ax = a^{-1}ay = y$.'
+            solution_sketch: 'Left-multiply both sides by $a^{-1}$ and use associativity plus $a^{-1}a = e$.'
+          - problem: 'In a group, solve for $x$: $a x b = c$. Express $x$ in terms of $a, b, c$.'
+            answer: '$x = a^{-1} c b^{-1}$'
+            solution_sketch: 'Left-multiply by $a^{-1}$, right-multiply by $b^{-1}$; order matters since $G$ may be non-abelian.'
+        constraints: "abstract elements; answers must respect non-commutativity (no reordering)"
+      - id: kp3
+        name: "Socks-shoes and power rules"
+        key_prerequisites: [groups-intro, direct-proof]
+        exemplars:
+          - problem: 'Prove that $(ab)^{-1} = b^{-1}a^{-1}$ in any group.'
+            answer: '$(ab)(b^{-1}a^{-1}) = a(bb^{-1})a^{-1} = aa^{-1} = e$, and inverses are unique.'
+            solution_sketch: 'Check that $b^{-1}a^{-1}$ multiplied against $ab$ on either side gives $e$; uniqueness of inverses finishes it.'
+          - problem: 'In a group where $g^2 = e$ for every element $g$, prove $G$ is abelian.'
+            answer: 'For $a,b$: $ab = (ab)^{-1} = b^{-1}a^{-1} = ba$.'
+            solution_sketch: 'Every element is its own inverse, so $ab = (ab)^{-1} = b^{-1}a^{-1} = ba$.'
+        constraints: "socks-shoes, (a^{-1})^{-1} = a, and short structural consequences"
+    diagnostic_exemplar:
+      problem: 'Let $G$ be a group in which $(ab)^2 = a^2 b^2$ for all $a, b \in G$. Prove that $G$ is abelian.'
+      answer: 'Expanding, $(ab)^2 = abab$ and $a^2b^2 = aabb$, so $abab = aabb$. Multiply on the left by $a^{-1}$ and on the right by $b^{-1}$ (equivalently, cancel $a$ on the left and $b$ on the right): $ba = ab$. Since $a, b$ were arbitrary, $G$ is abelian.'
+      solution_sketch: 'Write out both squares, then use the left and right cancellation laws, which follow from the existence of inverses.'
+    anki_seeds:
+      - front: "Socks-shoes property: $(ab)^{-1} = $ ?"
+        back: "$b^{-1}a^{-1}$ (inverses reverse the order)."
+        type: basic
+      - front: "If $g^2 = e$ for all $g$ in a group $G$, what can you conclude?"
+        back: "$G$ is abelian."
+        type: basic
+
+  - id: order-of-an-element
+    name: "Order of an Element"
+    core: true
+    difficulty: 0.58
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 120
+    prerequisites:
+      - id: group-examples-cayley-tables
+        weight: 0.8
+        key: true
+      - id: modular-arithmetic
+        weight: 0.5
+        key: false
+      - id: gcf-lcm
+        weight: 0.6
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: "Computing orders by direct powering"
+        key_prerequisites: [group-examples-cayley-tables]
+        exemplars:
+          - problem: 'Find the order of $3$ in $U(7)$.'
+            answer: "6"
+            solution_sketch: 'Powers of $3$ mod $7$: $3, 2, 6, 4, 5, 1$ — six steps to reach $1$, so $|3| = 6$.'
+          - problem: 'Find the order of $9$ in $U(10)$.'
+            answer: "2"
+            solution_sketch: '$9^2 = 81 \equiv 1 \pmod{10}$, and $9 \neq 1$, so the order is $2$.'
+        constraints: "multiplicative orders in U(n), n <= 13; answer is the smallest positive exponent giving 1"
+      - id: kp2
+        name: "Additive orders via n/gcd(a, n)"
+        key_prerequisites: [group-examples-cayley-tables, modular-arithmetic, gcf-lcm]
+        exemplars:
+          - problem: 'Find the order of $8$ in the additive group $\mathbb{Z}_{12}$.'
+            answer: "3"
+            solution_sketch: '$|a| = n/\gcd(a,n) = 12/\gcd(8,12) = 12/4 = 3$; indeed $8+8+8 = 24 \equiv 0$.'
+          - problem: 'Find the order of $10$ in $\mathbb{Z}_{25}$.'
+            answer: "5"
+            solution_sketch: '$25/\gcd(10,25) = 25/5 = 5$.'
+        constraints: "additive groups Z_n, n <= 60; expect the n/gcd(a,n) shortcut"
+      - id: kp3
+        name: "Order facts: powers, inverses, finiteness"
+        key_prerequisites: [group-examples-cayley-tables, gcf-lcm]
+        exemplars:
+          - problem: 'If $|g| = 12$, find the order of $g^8$.'
+            answer: "3"
+            solution_sketch: '$|g^k| = |g|/\gcd(k, |g|) = 12/\gcd(8,12) = 3$.'
+          - problem: 'If $|g| = n$, what is the order of $g^{-1}$?'
+            answer: '$n$'
+            solution_sketch: '$(g^{-1})^k = (g^k)^{-1}$, which equals $e$ exactly when $g^k = e$; so $g$ and $g^{-1}$ have the same order.'
+        constraints: "use |g^k| = |g|/gcd(k,|g|); orders <= 30"
+    diagnostic_exemplar:
+      problem: 'In $U(13)$ the element $2$ has order $12$. Find the order of $2^{8}$ in $U(13)$.'
+      answer: '3'
+      solution_sketch: 'If $|g| = n$ then $|g^{k}| = n/\gcd(n,k)$, so the order is $12/\gcd(12,8) = 12/4 = 3$. Check directly: $2^{8} = 256 \equiv 9 \pmod{13}$ and $9^{3} = 729 = 56 \cdot 13 + 1 \equiv 1$.'
+    anki_seeds:
+      - front: "Order of $a$ in the additive group $\\mathbb{Z}_n$?"
+        back: "$n/\\gcd(a, n)$."
+        type: basic
+      - front: "If $|g| = n$, then $|g^k| = $ ?"
+        back: "$n/\\gcd(k, n)$."
+        type: basic
+      - front: "The order of an element $g$ is defined as..."
+        back: "The smallest positive integer $n$ with $g^n = e$ (infinite if no such $n$ exists)."
+        type: basic
+
+  - id: subgroups-subgroup-tests
+    name: "Subgroups and Subgroup Tests"
+    core: true
+    difficulty: 0.62
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 240
+    prerequisites:
+      - id: elementary-group-properties
+        weight: 0.8
+        key: true
+      - id: set-operations
+        weight: 0.3
+        key: false
+      - id: order-of-an-element
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Verifying and refuting subgroups"
+        key_prerequisites: [elementary-group-properties, set-operations]
+        exemplars:
+          - problem: 'Is $H = \{0, 1\}$ a subgroup of $\mathbb{Z}_4$? Justify.'
+            answer: 'No: $1 + 1 = 2 \notin H$, so $H$ is not closed.'
+            solution_sketch: 'Check closure first; it already fails, so $H$ is not a subgroup.'
+          - problem: 'Prove that the set $2\mathbb{Z}$ of even integers is a subgroup of $(\mathbb{Z}, +)$.'
+            answer: 'Nonempty ($0 \in 2\mathbb{Z}$); for $2a, 2b$, $2a - 2b = 2(a-b) \in 2\mathbb{Z}$; done by the one-step test.'
+            solution_sketch: 'Apply the one-step test: nonempty and closed under $x - y$ (additive $xy^{-1}$).'
+        constraints: "candidate subsets of Z, Z_n, U(n); failures via closure, identity, or inverses"
+      - id: kp2
+        name: "One-step and finite subgroup tests"
+        key_prerequisites: [elementary-group-properties]
+        exemplars:
+          - problem: 'State the one-step subgroup test.'
+            answer: 'A nonempty subset $H$ of a group $G$ is a subgroup iff $ab^{-1} \in H$ for all $a, b \in H$.'
+            solution_sketch: 'Nonempty plus closure under $ab^{-1}$ yields identity ($aa^{-1}$), inverses ($ea^{-1}$), and closure ($a(b^{-1})^{-1}$).'
+          - problem: 'Let $H$ be a nonempty finite subset of a group, closed under the group operation. Prove $H$ is a subgroup.'
+            answer: 'For $a \in H$ the powers $a, a^2, \dots$ stay in $H$ and must repeat, giving $a^m = e \in H$ and $a^{-1} = a^{m-1} \in H$.'
+            solution_sketch: 'Finiteness forces $a^i = a^j$ ($i < j$), so $a^{j-i} = e$; then $e \in H$ and $a^{-1} = a^{j-i-1} \in H$.'
+        constraints: "prove or apply the one-step / two-step / finite subgroup tests"
+      - id: kp3
+        name: "Centers and centralizers"
+        key_prerequisites: [elementary-group-properties]
+        exemplars:
+          - problem: 'Define the center $Z(G)$ and prove it is a subgroup of $G$.'
+            answer: '$Z(G) = \{z : zg = gz \ \forall g\}$; it contains $e$, and for $z, w \in Z(G)$, $(zw^{-1})g = g(zw^{-1})$, so the one-step test applies.'
+            solution_sketch: '$e$ commutes with everything. If $z, w$ are central then $w^{-1}$ is central (conjugate the relation $wg = gw$), and products of central elements are central.'
+          - problem: 'What is the center of an abelian group $G$?'
+            answer: '$Z(G) = G$'
+            solution_sketch: 'Every element commutes with every other, so all of $G$ is central.'
+        constraints: "center and centralizer of a single element; proofs via the subgroup tests"
+    diagnostic_exemplar:
+      problem: 'Let $G$ be a group and $a \in G$. Prove that the centralizer $C(a) = \{g \in G : ga = ag\}$ is a subgroup of $G$.'
+      answer: '$C(a)$ is nonempty: $ea = ae$, so $e \in C(a)$. Let $g, h \in C(a)$. From $ha = ah$, multiplying by $h^{-1}$ on both sides gives $ah^{-1} = h^{-1}a$. Then $(gh^{-1})a = g(h^{-1}a) = g(ah^{-1}) = (ga)h^{-1} = (ag)h^{-1} = a(gh^{-1})$, so $gh^{-1} \in C(a)$. By the one-step subgroup test, $C(a) \le G$.'
+      solution_sketch: 'Check nonemptiness, then verify the one-step test $gh^{-1} \in C(a)$; the key move is turning $ha = ah$ into $ah^{-1} = h^{-1}a$.'
+    anki_seeds:
+      - front: "One-step subgroup test?"
+        back: "Nonempty $H \\subseteq G$ is a subgroup iff $ab^{-1} \\in H$ for all $a, b \\in H$."
+        type: basic
+      - front: "Finite subgroup test?"
+        back: "A nonempty finite subset closed under the group operation is a subgroup."
+        type: basic
+      - front: "Definition of the center $Z(G)$?"
+        back: "$\\{z \\in G : zg = gz \\text{ for all } g \\in G\\}$; always a subgroup."
+        type: basic
+
+  - id: cyclic-groups-generators
+    name: "Cyclic Groups and Generators"
+    core: true
+    difficulty: 0.62
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 150
+    prerequisites:
+      - id: order-of-an-element
+        weight: 0.9
+        key: true
+      - id: subgroups-subgroup-tests
+        weight: 0.5
+        key: false
+      - id: fermat-euler-theorems
+        weight: 0.4
+        key: true
+      # Phase C: kp3 proves every cyclic group is abelian — a direct use of the
+      # commutativity material in proofs/abelian-groups.
+      - id: abelian-groups
+        weight: 0.2
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Cyclic subgroups generated by an element"
+        key_prerequisites: [order-of-an-element, subgroups-subgroup-tests]
+        exemplars:
+          - problem: 'List the elements of $\langle 9 \rangle$ in $\mathbb{Z}_{12}$.'
+            answer: '$\{0, 3, 6, 9\}$'
+            solution_sketch: 'Multiples of $9$ mod $12$: $9, 6, 3, 0$; equivalently $\langle 9 \rangle = \langle \gcd(9,12) \rangle = \langle 3 \rangle$.'
+          - problem: 'List the elements of $\langle 3 \rangle$ in $U(7)$.'
+            answer: '$\{1, 2, 3, 4, 5, 6\}$ — all of $U(7)$.'
+            solution_sketch: 'Powers of $3$ mod $7$ are $3, 2, 6, 4, 5, 1$, so $3$ generates the whole group.'
+        constraints: "ambient groups Z_n (n <= 24) or U(p) (p <= 13); answer as a set"
+      - id: kp2
+        name: "Finding all generators"
+        key_prerequisites: [order-of-an-element, fermat-euler-theorems]
+        exemplars:
+          - problem: 'Find all generators of $\mathbb{Z}_{12}$.'
+            answer: '$1, 5, 7, 11$'
+            solution_sketch: '$k$ generates $\mathbb{Z}_n$ iff $\gcd(k,n) = 1$; the units mod $12$ are $1,5,7,11$.'
+          - problem: 'If $g$ generates a cyclic group of order $10$, which powers $g^k$ ($1 \le k \le 10$) also generate it?'
+            answer: '$g^1, g^3, g^7, g^9$'
+            solution_sketch: '$g^k$ generates iff $\gcd(k, 10) = 1$, i.e. $k \in \{1,3,7,9\}$.'
+        constraints: "counts and lists of generators; expect the gcd criterion and Euler phi counts"
+      - id: kp3
+        name: "Structural facts about cyclic groups"
+        key_prerequisites: [order-of-an-element, subgroups-subgroup-tests]
+        exemplars:
+          - problem: 'Prove that every cyclic group is abelian.'
+            answer: 'Any two elements are $g^i$ and $g^j$, and $g^i g^j = g^{i+j} = g^j g^i$.'
+            solution_sketch: 'Powers of a single generator commute because integer addition commutes.'
+          - problem: 'Is $U(8)$ cyclic?'
+            answer: 'No: every non-identity element has order $2$, but a cyclic group of order $4$ needs an element of order $4$.'
+            solution_sketch: '$3^2 = 5^2 = 7^2 = 1$ mod $8$, so no element has order $4 = |U(8)|$.'
+        constraints: "short proofs or cyclic/non-cyclic verdicts with an order-based reason"
+    diagnostic_exemplar:
+      problem: 'How many generators does $\mathbb{Z}_{20}$ have, and is $U(8)$ cyclic?'
+      answer: '$\mathbb{Z}_{20}$ has $\varphi(20) = 8$ generators; $U(8)$ is not cyclic.'
+      solution_sketch: 'Generators of $\mathbb{Z}_{20}$ are the residues coprime to $20$, and $\varphi(20) = 8$. In $U(8)$ every non-identity element has order $2$.'
+    anki_seeds:
+      - front: "When does $k$ generate $\\mathbb{Z}_n$?"
+        back: "Exactly when $\\gcd(k, n) = 1$; there are $\\varphi(n)$ generators."
+        type: basic
+      - front: "Every cyclic group is ______ (commutativity)."
+        back: "Abelian."
+        type: basic
+
+  - id: subgroups-of-cyclic-groups
+    name: "Subgroups of Cyclic Groups"
+    core: false                # terminal classification result
+    difficulty: 0.66
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 150
+    prerequisites:
+      - id: cyclic-groups-generators
+        weight: 0.9
+        key: true
+      - id: euclidean-algorithm
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "The fundamental theorem of cyclic groups"
+        key_prerequisites: [cyclic-groups-generators]
+        exemplars:
+          - problem: 'How many subgroups does $\mathbb{Z}_{12}$ have?'
+            answer: "6"
+            solution_sketch: 'A cyclic group of order $n$ has exactly one subgroup per divisor of $n$; $12$ has divisors $1,2,3,4,6,12$.'
+          - problem: 'List the orders of all subgroups of a cyclic group of order $30$.'
+            answer: '$1, 2, 3, 5, 6, 10, 15, 30$'
+            solution_sketch: 'Subgroup orders are exactly the divisors of $30$.'
+        constraints: "n <= 60; one subgroup per divisor, all cyclic"
+      - id: kp2
+        name: "Finding the subgroup of a given order"
+        key_prerequisites: [cyclic-groups-generators, euclidean-algorithm]
+        exemplars:
+          - problem: 'Find the unique subgroup of order $4$ in $\mathbb{Z}_{12}$.'
+            answer: '$\{0, 3, 6, 9\}$'
+            solution_sketch: 'The subgroup of order $d$ in $\mathbb{Z}_n$ is $\langle n/d \rangle$; here $\langle 12/4 \rangle = \langle 3 \rangle$.'
+          - problem: 'In $\mathbb{Z}_{20}$, list the elements of the subgroup $\langle 8 \rangle$.'
+            answer: '$\{0, 4, 8, 12, 16\}$'
+            solution_sketch: '$\langle a \rangle = \langle \gcd(a, n) \rangle$; $\gcd(8,20) = 4$, so $\langle 8 \rangle = \langle 4 \rangle$, which has $20/4 = 5$ elements.'
+        constraints: "use <a> = <gcd(a,n)> and the order-d subgroup <n/d>; n <= 60"
+      - id: kp3
+        name: "Counting elements of each order"
+        key_prerequisites: [cyclic-groups-generators, fermat-euler-theorems]
+        exemplars:
+          - problem: 'How many elements of order $5$ does $\mathbb{Z}_{15}$ have?'
+            answer: "4"
+            solution_sketch: 'Elements of order $d$ in a cyclic group number $\varphi(d)$ when $d \mid n$; $\varphi(5) = 4$ (namely $3, 6, 9, 12$).'
+          - problem: 'How many elements of order $6$ does $\mathbb{Z}_6$ have?'
+            answer: "2"
+            solution_sketch: '$\varphi(6) = 2$: the generators $1$ and $5$.'
+        constraints: "phi(d) counts for d | n; n <= 40"
+    diagnostic_exemplar:
+      problem: 'How many elements of order $9$ does $\mathbb{Z}_{18}$ have?'
+      answer: "6"
+      solution_sketch: 'Elements of order $d$ in a cyclic group number $\varphi(d)$ when $d \mid n$; $\varphi(9) = 6$.'
+    anki_seeds:
+      - front: "Subgroups of a cyclic group of order $n$?"
+        back: "Exactly one (cyclic) subgroup of order $d$ for each divisor $d$ of $n$."
+        type: basic
+      - front: "In $\\mathbb{Z}_n$, $\\langle a \\rangle = \\langle ? \\rangle$ in standard form."
+        back: "$\\langle \\gcd(a, n) \\rangle$."
+        type: basic
+      - front: "Number of elements of order $d$ in a cyclic group of order $n$ (with $d \\mid n$)?"
+        back: "$\\varphi(d)$."
+        type: basic
+
+  - id: dihedral-groups
+    name: "Dihedral Groups"
+    core: true
+    difficulty: 0.62
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 150
+    prerequisites:
+      - id: group-examples-cayley-tables
+        weight: 0.7
+        key: true
+      - id: order-of-an-element
+        weight: 0.6
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: "Symmetries of the n-gon; size of D_n"
+        key_prerequisites: [group-examples-cayley-tables]
+        exemplars:
+          - problem: 'What is the order of $D_5$, the symmetry group of a regular pentagon?'
+            answer: "10"
+            solution_sketch: '$D_n$ has $n$ rotations and $n$ reflections, so $|D_5| = 2 \cdot 5 = 10$.'
+          - problem: 'How many rotations (including the identity) does $D_8$ contain?'
+            answer: "8"
+            solution_sketch: '$D_n$ contains the $n$ rotations by multiples of $360^\circ/n$.'
+        constraints: "n between 3 and 12; counts of rotations, reflections, total order"
+      - id: kp2
+        name: "Computing with r and s: the relation sr = r^{-1}s"
+        key_prerequisites: [order-of-an-element]
+        exemplars:
+          - problem: 'In $D_4$ with rotation $r$ (order $4$) and reflection $s$, simplify $s r s$.'
+            answer: '$r^3$'
+            solution_sketch: 'The defining relation $srs^{-1} = r^{-1}$ with $s^{-1} = s$ gives $srs = r^{-1} = r^3$.'
+          - problem: 'In $D_n$, a reflection $s$ and the product $rs$ have the same order. What is it?'
+            answer: "2"
+            solution_sketch: 'Reflections square to the identity; $rs$ is again a reflection (it reverses orientation), so $(rs)^2 = e$ as well.'
+        constraints: "presentations with r^n = s^2 = e, srs = r^{-1}; simplify words of length <= 5"
+      - id: kp3
+        name: "Element orders and the center of D_n"
+        key_prerequisites: [order-of-an-element]
+        exemplars:
+          - problem: 'How many elements of order $2$ does $D_4$ have?'
+            answer: "5"
+            solution_sketch: 'The $4$ reflections plus the half-turn $r^2$; the rotations $r, r^3$ have order $4$.'
+          - problem: 'Find the order of the rotation $r^2$ in $D_6$ (where $r$ has order $6$).'
+            answer: "3"
+            solution_sketch: '$|r^2| = 6/\gcd(2,6) = 3$.'
+        constraints: "element-order counts in D_n for n <= 8"
+    diagnostic_exemplar:
+      problem: 'In $D_5$, the symmetry group of the regular pentagon ($r$ the rotation of order $5$, $s$ a reflection), how many elements have order $2$?'
+      answer: '5'
+      solution_sketch: 'Each of the five reflections $r^{k}s$ squares to the identity: $(r^{k}s)(r^{k}s) = r^{k}(sr^{k}s) = r^{k}r^{-k} = e$. A rotation $r^{k}$ has order $2$ only if $5 \mid 2k$, impossible for $1 \le k \le 4$. So exactly the $5$ reflections.'
+    anki_seeds:
+      - front: "Order of the dihedral group $D_n$?"
+        back: "$2n$: $n$ rotations and $n$ reflections."
+        type: basic
+      - front: "Key relation in $D_n$ between a reflection $s$ and rotation $r$?"
+        back: "$srs^{-1} = r^{-1}$ (equivalently $sr = r^{-1}s$)."
+        type: basic
+
+  - id: permutations-cycle-notation
+    name: "Permutations and Cycle Notation"
+    core: true
+    difficulty: 0.60
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 150
+    prerequisites:
+      - id: functions-injective-surjective
+        weight: 0.6
+        key: true
+      - id: function-composition-inverse
+        weight: 0.6
+        key: true
+      - id: group-examples-cayley-tables
+        weight: 0.5
+        key: false
+      - id: gcf-lcm
+        weight: 0.5
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: "Cycle form, S_n, and composing permutations"
+        key_prerequisites: [functions-injective-surjective, function-composition-inverse]
+        exemplars:
+          - problem: 'In $S_5$, compute the product $(1\,2\,3)(3\,4\,5)$, composing right to left. Give the answer in cycle notation.'
+            answer: '$(1\,2\,3\,4\,5)$'
+            solution_sketch: 'Apply $(3\,4\,5)$ first, then $(1\,2\,3)$. Trace: $1\to1\to2$, $2\to2\to3$, $3\to4\to4$, $4\to5\to5$, $5\to3\to1$. Result: the 5-cycle $(1\,2\,3\,4\,5)$.'
+          - problem: 'What is the order of the group $S_4$?'
+            answer: "24"
+            solution_sketch: '$|S_n| = n!$; $4! = 24$.'
+        constraints: "S_n for n <= 7; state the right-to-left composition convention in every product problem"
+      - id: kp2
+        name: "Inverses and disjoint cycle decomposition"
+        key_prerequisites: [function-composition-inverse]
+        exemplars:
+          - problem: 'Find the inverse of $(1\,3\,5\,2)$ in $S_5$, in cycle notation.'
+            answer: '$(1\,2\,5\,3)$'
+            solution_sketch: 'Reverse the cycle: $(1\,3\,5\,2)^{-1} = (2\,5\,3\,1) = (1\,2\,5\,3)$.'
+          - problem: 'Write the permutation of $\{1,\dots,6\}$ given by $1\mapsto 4, 2\mapsto 5, 3\mapsto 3, 4\mapsto 6, 5\mapsto 2, 6\mapsto 1$ as a product of disjoint cycles.'
+            answer: '$(1\,4\,6)(2\,5)$'
+            solution_sketch: 'Follow orbits: $1 \to 4 \to 6 \to 1$ and $2 \to 5 \to 2$; $3$ is fixed.'
+        constraints: "n <= 8; disjoint cycle output, fixed points omitted"
+      - id: kp3
+        name: "Order of a permutation via lcm"
+        key_prerequisites: [function-composition-inverse, gcf-lcm]
+        exemplars:
+          - problem: 'Find the order of $(1\,2\,3)(4\,5)$ in $S_5$.'
+            answer: "6"
+            solution_sketch: 'The order of a product of disjoint cycles is the lcm of their lengths: $\mathrm{lcm}(3,2) = 6$.'
+          - problem: 'What is the largest possible order of an element of $S_7$?'
+            answer: "12"
+            solution_sketch: 'Partition $7$ to maximize lcm: $3 + 4$ gives $\mathrm{lcm}(3,4) = 12$, better than $7$, $2+5$ ($10$), or $1+2+4$ ($4$).'
+        constraints: "disjoint cycle types in S_n, n <= 10; lcm of cycle lengths"
+    diagnostic_exemplar:
+      problem: 'In $S_6$, let $\sigma = (1\,4\,6)(2\,5)$. Compute $\sigma^{-1}$ in cycle notation and the order of $\sigma$.'
+      answer: '$\sigma^{-1} = (1\,6\,4)(2\,5)$; order $6$.'
+      solution_sketch: 'Invert each disjoint cycle by reversal; the order is $\mathrm{lcm}(3, 2) = 6$.'
+    anki_seeds:
+      - front: "Order of a permutation written in disjoint cycles?"
+        back: "The lcm of the cycle lengths."
+        type: basic
+      - front: "$|S_n| = $ ?"
+        back: "$n!$"
+        type: basic
+      - front: "How do you invert a cycle $(a_1\\,a_2\\,\\dots\\,a_k)$?"
+        back: "Reverse it: $(a_k\\,\\dots\\,a_2\\,a_1)$."
+        type: basic
+
+  - id: even-odd-permutations
+    name: "Even and Odd Permutations; the Alternating Group"
+    core: true
+    difficulty: 0.65
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 150
+    prerequisites:
+      - id: permutations-cycle-notation
+        weight: 0.9
+        key: true
+      - id: subgroups-subgroup-tests
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Transposition decompositions and parity"
+        key_prerequisites: [permutations-cycle-notation]
+        exemplars:
+          - problem: 'Write the cycle $(1\,2\,3\,4)$ as a product of transpositions and state its parity.'
+            answer: '$(1\,4)(1\,3)(1\,2)$ — three transpositions, so odd.'
+            solution_sketch: 'A $k$-cycle equals $k-1$ transpositions; $4 - 1 = 3$ is odd.'
+          - problem: 'Is the permutation $(1\,4\,6)(2\,5)(3\,7)$ even or odd?'
+            answer: 'Even.'
+            solution_sketch: 'Transposition counts: $2 + 1 + 1 = 4$, an even total.'
+        constraints: "parity of products of disjoint cycles in S_n, n <= 9; k-cycle is even iff k is odd"
+      - id: kp2
+        name: "The alternating group A_n"
+        key_prerequisites: [permutations-cycle-notation, subgroups-subgroup-tests]
+        exemplars:
+          - problem: 'What is the order of $A_4$?'
+            answer: "12"
+            solution_sketch: 'Exactly half of $S_n$ is even for $n \ge 2$: $|A_4| = 4!/2 = 12$.'
+          - problem: 'Is $(1\,2\,3)$ an element of $A_5$?'
+            answer: 'Yes: a 3-cycle is even ($2$ transpositions).'
+            solution_sketch: '3-cycles decompose into two transpositions, hence are even and lie in $A_n$.'
+        constraints: "membership in A_n and |A_n| = n!/2; n <= 8"
+      - id: kp3
+        name: "Parity under products and inverses"
+        key_prerequisites: [permutations-cycle-notation]
+        exemplars:
+          - problem: 'The product of two odd permutations is even or odd?'
+            answer: 'Even.'
+            solution_sketch: 'Parities add mod $2$: odd + odd = even.'
+          - problem: 'Can $(1\,2)$ be written as a product of $4$ transpositions?'
+            answer: 'No: $(1\,2)$ is odd, and any product of $4$ transpositions is even; parity is well-defined.'
+            solution_sketch: 'The parity of the number of transpositions is an invariant of the permutation.'
+        constraints: "parity algebra; well-definedness facts, no full proof of invariance required"
+    diagnostic_exemplar:
+      problem: 'Determine the parity of $\sigma = (1\,3\,5)(2\,4)(6\,7)$ in $S_7$, and state $|A_7|$.'
+      answer: '$\sigma$ is even ($2+1+1 = 4$ transpositions); $|A_7| = 7!/2 = 2520$.'
+      solution_sketch: 'Count $k-1$ transpositions per $k$-cycle and sum; half of $5040$ permutations are even.'
+    anki_seeds:
+      - front: "A $k$-cycle is even exactly when..."
+        back: "$k$ is odd (it decomposes into $k-1$ transpositions)."
+        type: basic
+      - front: "$|A_n| = $ ? (for $n \\ge 2$)"
+        back: "$n!/2$."
+        type: basic
+
+  - id: general-linear-group
+    name: "The General Linear Group"
+    core: false                # concrete-example destination: nothing downstream consumes matrix groups (no representation theory in the tree)
+    difficulty: 0.68
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 180
+    prerequisites:
+      - id: matrix-inverses
+        weight: 0.7
+        key: true
+      - id: determinants-2x2
+        weight: 0.6
+        key: true
+      - id: elementary-group-properties
+        weight: 0.5
+        key: true
+      - id: subgroups-subgroup-tests
+        weight: 0.4
+        key: false
+      - id: determinant-properties-cramers-rule
+        weight: 0.3
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "GL_n as a group of invertible matrices"
+        key_prerequisites: [matrix-inverses, determinants-2x2, elementary-group-properties]
+        exemplars:
+          - problem: 'Why is the set of ALL $2 \times 2$ real matrices under multiplication not a group, and how does $GL_2(\mathbb{R})$ repair this?'
+            answer: 'Matrices with $\det = 0$ (e.g. the zero matrix) have no inverse. $GL_2(\mathbb{R})$ keeps exactly the invertible matrices ($\det \neq 0$); products stay invertible since $\det(AB) = \det A \, \det B \neq 0$, the identity $I$ is there, and inverses exist by definition.'
+            solution_sketch: 'Check each group axiom on the invertible matrices; closure is the multiplicativity of the determinant.'
+          - problem: 'Is $A = \begin{pmatrix} 1 & 2 \\ 2 & 4 \end{pmatrix}$ an element of $GL_2(\mathbb{R})$?'
+            answer: 'No: $\det A = 1 \cdot 4 - 2 \cdot 2 = 0$, so $A$ is not invertible.'
+            solution_sketch: 'Membership in $GL_n$ is exactly $\det \neq 0$.'
+        constraints: "membership tests via 2x2 determinants with integer entries |a_ij| <= 5; axiom checks cite det multiplicativity"
+      - id: kp2
+        name: "Computing in GL_2(R): products, inverses, orders"
+        key_prerequisites: [matrix-inverses, elementary-group-properties]
+        exemplars:
+          - problem: 'In $GL_2(\mathbb{R})$, let $A = \begin{pmatrix} 1 & 1 \\ 0 & 1 \end{pmatrix}$ and $B = \begin{pmatrix} 1 & 0 \\ 1 & 1 \end{pmatrix}$. Compute $AB$ and $BA$. Is $GL_2(\mathbb{R})$ abelian?'
+            answer: '$AB = \begin{pmatrix} 2 & 1 \\ 1 & 1 \end{pmatrix}$ but $BA = \begin{pmatrix} 1 & 1 \\ 1 & 2 \end{pmatrix}$ — so $GL_2(\mathbb{R})$ is not abelian.'
+            solution_sketch: 'Multiply both ways; one non-commuting pair refutes commutativity.'
+          - problem: 'Find the order of $R = \begin{pmatrix} 0 & -1 \\ 1 & 0 \end{pmatrix}$ in $GL_2(\mathbb{R})$.'
+            answer: "4"
+            solution_sketch: '$R^2 = -I$ and $R^4 = I$, with $R, R^2, R^3 \neq I$: $R$ is rotation by $90^\circ$, of order $4$.'
+        constraints: "2x2 integer matrices, entries |a_ij| <= 3; inverses via the 2x2 formula; element orders <= 6"
+      - id: kp3
+        name: "Subgroups: SL_n and finite general linear groups"
+        key_prerequisites: [determinants-2x2, subgroups-subgroup-tests]
+        exemplars:
+          - problem: 'Prove that $SL_2(\mathbb{R}) = \{A \in GL_2(\mathbb{R}) : \det A = 1\}$ is a subgroup of $GL_2(\mathbb{R})$.'
+            answer: 'It is nonempty ($I \in SL_2$), and for $\det A = \det B = 1$ we get $\det(AB^{-1}) = \det A / \det B = 1$ — the one-step subgroup test.'
+            solution_sketch: 'Determinant multiplicativity plus $\det(B^{-1}) = 1/\det B$ feed the one-step test.'
+          - problem: 'Compute $|GL_2(\mathbb{Z}_2)|$, the number of invertible $2 \times 2$ matrices over $\mathbb{Z}_2$.'
+            answer: "6"
+            solution_sketch: 'The first column is any nonzero vector ($2^2 - 1 = 3$ choices); the second is anything outside the span of the first ($2^2 - 2 = 2$ choices): $3 \cdot 2 = 6$. (In fact $GL_2(\mathbb{Z}_2) \cong S_3$.)'
+        constraints: "SL_n via the one-step test; counts |GL_2(Z_p)| = (p^2 - 1)(p^2 - p) for p in {2, 3} with the column-counting argument"
+    diagnostic_exemplar:
+      problem: 'Show that $SL_2(\mathbb{Z}_5) = \{A \in GL_2(\mathbb{Z}_5) : \det A = 1\}$ is a subgroup of $GL_2(\mathbb{Z}_5)$, and find the order of $A = \begin{pmatrix} 1 & 1 \\ 0 & 1 \end{pmatrix}$ in it.'
+      answer: '$SL_2(\mathbb{Z}_5)$ is nonempty since $\det I = 1$, and if $\det A = \det B = 1$ then $\det(AB^{-1}) = \det A / \det B = 1$, so $AB^{-1} \in SL_2(\mathbb{Z}_5)$; the one-step subgroup test applies. For the order: $A^{n} = \begin{pmatrix} 1 & n \\ 0 & 1 \end{pmatrix}$, which is the identity first when $n \equiv 0 \pmod 5$, so $A$ has order $5$.'
+      solution_sketch: 'Use multiplicativity of the determinant with the one-step test, then compute powers of the shear matrix and see when the top-right entry vanishes mod $5$.'
+    anki_seeds:
+      - front: "$GL_n(\\mathbb{R})$ is defined as..."
+        back: "The group of invertible $n \\times n$ real matrices under matrix multiplication — equivalently those with $\\det \\neq 0$."
+        type: basic
+      - front: "Why is $GL_n$ closed under multiplication?"
+        back: "$\\det(AB) = \\det A \\, \\det B \\neq 0$ when both factors are invertible."
+        type: basic
+      - front: "$|GL_2(\\mathbb{Z}_p)| = $ ?"
+        back: "$(p^2 - 1)(p^2 - p)$: any nonzero first column, then any second column off the line spanned by the first."
+        type: basic

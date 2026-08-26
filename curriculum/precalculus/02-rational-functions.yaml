@@ -1,0 +1,239 @@
+unit: rational-functions
+course: precalculus
+module: "Rational Functions & Asymptotes"
+topics:
+  - id: vertical-horizontal-asymptotes
+    name: Vertical and Horizontal Asymptotes
+    core: true
+    difficulty: 0.5
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 120
+    prerequisites:
+      - id: rational-expressions
+        weight: 0.7
+        key: true
+      - id: domain-range
+        weight: 0.5
+        key: true
+      - id: factoring-trinomials
+        weight: 0.4
+      - id: negative-zero-exponents
+        weight: 0.2
+      # the y = k/x reciprocal parent graph is the on-ramp picture for asymptote
+      # behavior (re-audit R-03); familiarity, not full encompassment.
+      - id: inverse-variation
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Vertical asymptotes and holes
+        key_prerequisites: [rational-expressions, factoring-trinomials]
+        constraints: "denominators factor over the integers; include one hole case (common factor)"
+        exemplars:
+          - problem: 'Find the vertical asymptotes of $f(x) = \frac{x + 1}{(x - 2)(x + 3)}$.'
+            answer: "x = 2 and x = -3"
+          - problem: 'Does $f(x) = \frac{x^2 - 1}{x - 1}$ have a vertical asymptote at $x = 1$, or a hole?'
+            answer: "a hole"
+            solution_sketch: '$\frac{(x-1)(x+1)}{x-1}$ simplifies to $x + 1$; the factor cancels.'
+      - id: kp2
+        name: Horizontal asymptotes by comparing degrees
+        key_prerequisites: [rational-expressions]
+        constraints: "cover all three cases: deg top < deg bottom, equal, greater"
+        exemplars:
+          - problem: 'Find the horizontal asymptote of $f(x) = \frac{2x + 1}{x - 3}$.'
+            answer: "y = 2"
+            solution_sketch: 'Equal degrees: ratio of leading coefficients.'
+          - problem: 'Find the horizontal asymptote of $f(x) = \frac{x}{x^2 + 1}$.'
+            answer: "y = 0"
+          - problem: 'Does $f(x) = \frac{x^2}{x - 1}$ have a horizontal asymptote?'
+            answer: "no"
+            solution_sketch: 'Numerator degree exceeds denominator degree.'
+      - id: kp3
+        name: Full asymptote inventory
+        key_prerequisites: [rational-expressions, domain-range]
+        constraints: "numerator and denominator of degree <= 2; denominators factor over the integers; report every vertical asymptote plus the horizontal asymptote (or its absence)"
+        exemplars:
+          - problem: 'Find all asymptotes of $f(x) = \frac{3x^2 + 1}{x^2 - 4}$.'
+            answer: "vertical: x = 2, x = -2; horizontal: y = 3"
+          - problem: 'Find all asymptotes of $f(x) = \frac{1}{x + 5}$.'
+            answer: "vertical: x = -5; horizontal: y = 0"
+    diagnostic_exemplar:
+      problem: 'Find every vertical asymptote, every hole, and the horizontal asymptote of $f(x) = \frac{2x^2 - 6x}{x^2 - 9}$.'
+      answer: 'hole at x = 3; vertical asymptote x = -3; horizontal asymptote y = 2'
+      solution_sketch: '$f(x) = \frac{2x(x-3)}{(x-3)(x+3)} = \frac{2x}{x+3}$ for $x \neq 3$: the canceled factor leaves a hole at $x = 3$, the surviving zero gives $x = -3$, and equal degrees give $y = 2$.'
+    anki_seeds:
+      - front: "Horizontal asymptote when numerator and denominator have equal degree?"
+        back: "y = (ratio of leading coefficients)"
+        type: basic
+      - front: "A canceled common factor in a rational function produces a ... , not a vertical asymptote."
+        back: "hole"
+        type: basic
+
+  - id: slant-asymptotes
+    name: Slant Asymptotes
+    core: false                # supplemental: special-case technique feeding only the graphing leaf
+    difficulty: 0.55
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 150
+    prerequisites:
+      - id: polynomial-division
+        weight: 0.7
+        key: true
+      - id: vertical-horizontal-asymptotes
+        weight: 0.6
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: When a slant asymptote exists
+        key_prerequisites: [vertical-horizontal-asymptotes]
+        constraints: "slant iff numerator degree = denominator degree + 1"
+        exemplars:
+          - problem: 'Does $f(x) = \frac{x^2 + 1}{x - 1}$ have a slant asymptote?'
+            answer: "yes"
+            solution_sketch: 'Numerator degree is exactly one more than denominator degree.'
+          - problem: 'Does $f(x) = \frac{x^3}{x - 1}$ have a slant asymptote?'
+            answer: "no"
+            solution_sketch: 'The degree gap is $2$, so the quotient is quadratic, not linear.'
+      - id: kp2
+        name: Find the slant asymptote by division
+        key_prerequisites: [polynomial-division]
+        constraints: "the asymptote is the quotient of the division; ask for the expression mx + b alone"
+        exemplars:
+          - problem: 'The graph of $f(x) = \frac{x^2 + 3x + 5}{x + 1}$ has slant asymptote $y = mx + b$. Give the expression $mx + b$.'
+            answer: "x + 2"
+            solution_sketch: '$x^2 + 3x + 5 = (x + 1)(x + 2) + 3$; discard the remainder, leaving $y = x + 2$.'
+          - problem: 'The graph of $f(x) = \frac{x^2 - 4x + 1}{x - 2}$ has slant asymptote $y = mx + b$. Give the expression $mx + b$.'
+            answer: "x - 2"
+            solution_sketch: '$x^2 - 4x + 1 = (x - 2)(x - 2) - 3$, so the asymptote is $y = x - 2$.'
+    diagnostic_exemplar:
+      problem: 'The graph of $f(x) = \frac{x^2 + x}{x - 1}$ has slant asymptote $y = mx + b$. Give the expression $mx + b$.'
+      answer: "x + 2"
+      solution_sketch: '$x^2 + x = (x - 1)(x + 2) + 2$, so the asymptote is $y = x + 2$.'
+    anki_seeds:
+      - front: "A rational function has a slant asymptote exactly when..."
+        back: "The numerator's degree is exactly one more than the denominator's; the asymptote is the quotient from polynomial division."
+        type: basic
+
+  - id: graphing-rational-functions
+    name: Graphing Rational Functions
+    core: false                # supplemental, with slant-asymptotes: terminal graphing branch
+    difficulty: 0.6
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 240
+    prerequisites:
+      - id: vertical-horizontal-asymptotes
+        weight: 0.7
+        key: true
+      - id: slant-asymptotes
+        weight: 0.4
+      - id: domain-range
+        weight: 0.4
+      - id: graphing-linear-equations
+        weight: 0.3
+      - id: quadratic-graphs-vertex
+        weight: 0.2
+    knowledge_points:
+      - id: kp1
+        name: Intercepts
+        key_prerequisites: [vertical-horizontal-asymptotes]
+        constraints: "x-intercepts from numerator zeros (never where the denominator vanishes); y-intercept as f(0); integer or small-fraction coordinates"
+        exemplars:
+          - problem: 'Find the $x$- and $y$-intercepts of $f(x) = \frac{x - 2}{x + 1}$.'
+            answer: "x-intercept (2, 0); y-intercept (0, -2)"
+          - problem: 'Find the intercepts of $f(x) = \frac{x^2 - 1}{x^2 - 4}$.'
+            answer: "x-intercepts (1, 0) and (-1, 0); y-intercept (0, 1/4)"
+            solution_sketch: '$f(0) = \frac{-1}{-4} = \frac{1}{4}$.'
+      - id: kp2
+        name: Behavior near a vertical asymptote
+        key_prerequisites: [vertical-horizontal-asymptotes]
+        constraints: "one-sided sign analysis via test points"
+        exemplars:
+          - problem: 'For $f(x) = \frac{1}{x - 3}$, does $f(x)$ go to $+\infty$ or $-\infty$ as $x$ approaches $3$ from the right?'
+            answer: "+∞"
+            solution_sketch: 'Just right of $3$, the denominator is small and positive.'
+          - problem: 'For $f(x) = \frac{1}{x - 3}$, what happens as $x$ approaches $3$ from the left?'
+            answer: "f(x) → -∞"
+      - id: kp3
+        name: Assemble the full feature set
+        key_prerequisites: [vertical-horizontal-asymptotes, slant-asymptotes]
+        constraints: "degrees <= 2 with integer zeros and poles; list vertical asymptote(s), horizontal asymptote, and intercepts in one answer"
+        exemplars:
+          - problem: 'For $f(x) = \frac{x^2 - 1}{x^2 - 4}$, list the vertical asymptotes, horizontal asymptote, and intercepts.'
+            answer: "VA: x = 2, x = -2; HA: y = 1; x-intercepts (±1, 0); y-intercept (0, 1/4)"
+          - problem: 'For $f(x) = \frac{2x}{x + 3}$, list the asymptotes and intercepts.'
+            answer: "VA: x = -3; HA: y = 2; intercept (0, 0)"
+    diagnostic_exemplar:
+      problem: 'For $f(x) = \frac{x + 3}{x - 1}$, state the vertical asymptote, the horizontal asymptote, both intercepts, and whether $f(x) \to +\infty$ or $-\infty$ as $x \to 1^+$.'
+      answer: 'VA: x = 1; HA: y = 1; x-intercept (-3, 0); y-intercept (0, -3); f(x) → +∞ as x → 1⁺'
+      solution_sketch: 'The denominator vanishes at $x = 1$ (numerator $4 \neq 0$ there), equal degrees give $y = 1$, $f(0) = -3$, $f(-3) = 0$; just right of $1$ the numerator is positive and the denominator is a small positive, so $f \to +\infty$.'
+    anki_seeds:
+      - front: "Intercepts of a rational function f = p/q:"
+        back: "x-intercepts where p(x) = 0 (and q(x) ≠ 0); y-intercept is f(0)."
+        type: basic
+      - front: "To decide whether f goes to +∞ or −∞ beside a vertical asymptote..."
+        back: "test the sign of f at a point just to that side of the asymptote."
+        type: basic
+
+  - id: rational-inequalities
+    name: Rational Inequalities
+    core: false                # supplemental: extension of polynomial-inequalities; terminal
+    difficulty: 0.6
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 180
+    prerequisites:
+      - id: polynomial-inequalities
+        weight: 0.6
+        key: true
+      - id: rational-equations
+        weight: 0.5
+        key: true
+      - id: vertical-horizontal-asymptotes
+        weight: 0.4
+      - id: compound-inequalities
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Sign chart for a single ratio
+        key_prerequisites: [polynomial-inequalities]
+        constraints: "linear numerator and denominator with integer zeros"
+        exemplars:
+          - problem: 'Solve $\frac{x - 2}{x + 1} > 0$.'
+            answer: "x < -1 or x > 2"
+            solution_sketch: 'Critical points $-1$ and $2$; the ratio is positive outside them.'
+          - problem: 'Solve $\frac{x + 5}{x - 3} < 0$.'
+            answer: "-5 < x < 3"
+      - id: kp2
+        name: Move everything to one side first
+        key_prerequisites: [rational-equations, polynomial-inequalities]
+        constraints: "never multiply both sides by an expression of unknown sign"
+        exemplars:
+          - problem: 'Solve $\frac{x}{x - 3} \le 2$.'
+            answer: "x < 3 or x ≥ 6"
+            solution_sketch: '$\frac{x}{x-3} - 2 = \frac{6 - x}{x - 3} \le 0$; sign chart over $3$ and $6$.'
+          - problem: 'Solve $\frac{2}{x} \ge 1$ for $x \ne 0$.'
+            answer: "0 < x ≤ 2"
+            solution_sketch: '$\frac{2 - x}{x} \ge 0$: both parts positive exactly on $(0, 2]$.'
+      - id: kp3
+        name: Endpoints at zeros versus undefined points
+        key_prerequisites: [polynomial-inequalities]
+        constraints: "non-strict inequalities only; numerator zeros included, denominator zeros always excluded; linear numerator and denominator with integer zeros"
+        exemplars:
+          - problem: 'Solve $\frac{x + 2}{x - 1} \ge 0$.'
+            answer: "x ≤ -2 or x > 1"
+            solution_sketch: 'Include $x = -2$ (numerator zero); exclude $x = 1$ (undefined).'
+          - problem: 'In $\frac{x - 4}{x + 3} \le 0$, which endpoint is included: $4$ or $-3$?'
+            answer: "4 (the solution is -3 < x ≤ 4)"
+    diagnostic_exemplar:
+      problem: 'Solve $\frac{x}{x - 2} \le 3$.'
+      answer: "x < 2 or x ≥ 3"
+      solution_sketch: 'Move everything left: $\frac{x}{x-2} - 3 = \frac{6 - 2x}{x - 2} \le 0$; sign chart over $2$ and $3$; include $x = 3$ (numerator zero), exclude $x = 2$ (undefined).'
+    anki_seeds:
+      - front: "Why can't you multiply both sides of a rational inequality by the denominator?"
+        back: "The denominator's sign is unknown; multiplying by a negative would flip the inequality. Move everything to one side and sign-chart instead."
+        type: basic
+      - front: "In a rational inequality with ≥, points where the denominator is zero are always..."
+        back: "Excluded (the function is undefined there)."
+        type: basic

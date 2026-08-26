@@ -1,0 +1,1303 @@
+unit: linear-graphs
+course: foundations
+module: "Linear Relationships"
+topics:
+  - id: plotting-points
+    name: "Plotting Points"
+    core: true
+    difficulty: 0.20
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 45
+    prerequisites:
+      - id: number-line-integers
+        weight: 0.6
+        key: true
+      - id: integer-addition-subtraction
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: "Ordered pairs and the origin"
+        key_prerequisites: []
+        exemplars:
+          - problem: 'Starting at the origin, you move $3$ right and $5$ up. Give the coordinates of where you land.'
+            answer: "(3, 5)"
+          - problem: 'In the ordered pair $(2, 7)$, which number is the x-coordinate?'
+            answer: "2"
+        constraints: "first quadrant; ordered pair (x, y), horizontal first"
+      - id: kp2
+        name: "Points with negative coordinates"
+        key_prerequisites: [number-line-integers]
+        exemplars:
+          - problem: 'Give the coordinates of the point $4$ units left and $3$ units up from the origin.'
+            answer: "(-4, 3)"
+          - problem: 'To plot $(5, -2)$, you move $5$ right and then how far in which direction?'
+            answer: "2 down"
+        constraints: "integer coordinates between -10 and 10; left/down are negative"
+      - id: kp3
+        name: "Points on the axes"
+        key_prerequisites: [number-line-integers]
+        exemplars:
+          - problem: 'Give the coordinates of the point on the x-axis that is $6$ units left of the origin.'
+            answer: "(-6, 0)"
+          - problem: 'A point lies on the y-axis $3$ units below the origin. Give its coordinates.'
+            answer: "(0, -3)"
+        constraints: "one coordinate is always 0 for a point on an axis"
+    diagnostic_exemplar:
+      problem: 'Give the coordinates of the point on the x-axis $5$ units left of the origin.'
+      answer: '(-5, 0)'
+      solution_sketch: 'Left of the origin makes $x$ negative, and a point on the x-axis has $y = 0$.'
+    anki_seeds:
+      - front: "In an ordered pair (x, y), the first number gives the ___ position and the second the ___ position."
+        back: "horizontal (x); vertical (y)"
+        type: basic
+
+  - id: coordinate-plane
+    name: "The Coordinate Plane"
+    core: true
+    difficulty: 0.25
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 45
+    prerequisites:
+      - id: plotting-points
+        weight: 0.7
+        key: true
+      - id: integer-addition-subtraction
+        weight: 0.4
+        key: true
+      - id: place-value
+        weight: 0.0
+    knowledge_points:
+      - id: kp1
+        name: "Quadrants and axes"
+        key_prerequisites: [plotting-points]
+        exemplars:
+          - problem: 'In which quadrant does the point $(-3, 5)$ lie?'
+            answer: "II"
+          - problem: 'The point $(0, -6)$ lies on which axis?'
+            answer: "the y-axis"
+        constraints: "quadrants numbered I-IV counterclockwise; points on an axis are in no quadrant"
+      - id: kp2
+        name: "Sign patterns and reflections"
+        key_prerequisites: [plotting-points]
+        exemplars:
+          - problem: 'A point has a negative x-coordinate and a negative y-coordinate. Which quadrant is it in?'
+            answer: "III"
+          - problem: 'Reflect $(3, -2)$ across the x-axis. Give the new coordinates.'
+            answer: "(3, 2)"
+            solution_sketch: 'Reflecting across the x-axis flips the sign of the y-coordinate.'
+        constraints: "reflections across one axis only; integer coordinates"
+      - id: kp3
+        name: "Distance along a gridline"
+        key_prerequisites: [integer-addition-subtraction]
+        exemplars:
+          - problem: 'How far apart are $(2, 5)$ and $(2, -1)$?'
+            answer: "6"
+            solution_sketch: 'Same x, so distance is $|5 - (-1)| = 6$.'
+          - problem: 'How far apart are $(-4, 3)$ and $(1, 3)$?'
+            answer: "5"
+            solution_sketch: 'Same y, so distance is $|-4 - 1| = 5$.'
+        constraints: "points share an x- or y-coordinate; distance is a positive integer"
+    diagnostic_exemplar:
+      problem: 'Reflect the point $(-3, 4)$ across the x-axis. In which quadrant does the image lie?'
+      answer: 'III'
+      solution_sketch: 'The image is $(-3, -4)$: both coordinates negative.'
+    anki_seeds:
+      - front: "The four quadrants by sign of (x, y), counterclockwise from top-right:"
+        back: "I (+,+), II (-,+), III (-,-), IV (+,-)"
+        type: basic
+
+  - id: interpreting-graphs-qualitatively
+    name: "Interpreting Graphs Qualitatively"
+    core: false                # qualitative reading destination, terminal
+    difficulty: 0.30
+    drill: false
+    # Every answer is a prose interpretation of a graph — SymPy can never adjudicate it.
+    answer_kind: multi-step
+    expected_time_secs: 75
+    prerequisites:
+      - id: coordinate-plane
+        weight: 0.6
+        key: true
+      - id: number-line-integers
+        weight: 0.2
+    knowledge_points:
+      - id: kp1
+        name: "Increasing, decreasing, constant"
+        key_prerequisites: [coordinate-plane]
+        exemplars:
+          - problem: 'A distance-time graph is flat (horizontal) from $t = 2$ to $t = 5$. What is the walker doing during that time?'
+            answer: "standing still (distance is not changing)"
+          - problem: 'A temperature graph goes downward from left to right all day. Is the temperature increasing or decreasing?'
+            answer: "decreasing"
+        constraints: "single-variable-vs-time stories; segments are clearly rising, flat, or falling"
+      - id: kp2
+        name: "Read meaning from a point on a graph"
+        key_prerequisites: [coordinate-plane]
+        exemplars:
+          - problem: 'On a graph of total cost vs. items bought, the point $(4, 10)$ lies on the graph. What does it tell you?'
+            answer: "4 items cost €10 in total"
+          - problem: 'On a height-vs-time graph of a thrown ball, what does the highest point of the graph represent?'
+            answer: "the maximum height the ball reaches"
+        constraints: "interpret one labeled point or feature; axes always named in the problem"
+      - id: kp3
+        name: "Compare steepness"
+        key_prerequisites: [coordinate-plane]
+        exemplars:
+          - problem: 'Two runners'' distance-time graphs start at the origin; runner A''s line is steeper than runner B''s. Who is faster?'
+            answer: "runner A"
+          - problem: 'A graph rises steeply at first, then rises gently. When was the quantity growing faster?'
+            answer: "at the start (the steep part)"
+        constraints: "steeper means faster change; no slope computation required"
+    diagnostic_exemplar:
+      problem: 'A distance-time graph rises steeply, then rises gently, then is flat. Rank the three parts from fastest to slowest movement.'
+      answer: 'the steep part is fastest, then the gentle part, and the flat part is slowest (not moving)'
+      solution_sketch: 'Steeper means faster; a flat segment means the distance is not changing.'
+    anki_seeds:
+      - front: "On a quantity-vs-time graph: a rising segment means the quantity is ___, flat means ___, falling means ___."
+        back: "increasing; constant; decreasing"
+        type: basic
+
+  - id: constant-of-proportionality
+    name: "The Constant of Proportionality"
+    core: true
+    difficulty: 0.35
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 60
+    prerequisites:
+      - id: ratios-proportions
+        weight: 0.7
+        key: true
+      - id: dividing-fractions
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: "Find k from one pair"
+        key_prerequisites: [ratios-proportions]
+        exemplars:
+          - problem: '$y$ is proportional to $x$, and $y = 18$ when $x = 6$. Find the constant $k$.'
+            answer: "3"
+            solution_sketch: '$k = \frac{y}{x} = \frac{18}{6} = 3$.'
+          - problem: '$y$ is proportional to $x$, and $y = 10$ when $x = 4$. Find $k$.'
+            answer: "2.5"
+            solution_sketch: '$k = \frac{10}{4} = 2.5$.'
+        constraints: "k = y/x; k may be a simple fraction or decimal"
+      - id: kp2
+        name: "Find k from a table"
+        key_prerequisites: [ratios-proportions]
+        exemplars:
+          - problem: 'The table $(2, 5)$, $(4, 10)$, $(6, 15)$ is proportional. What is $k$?'
+            answer: "2.5"
+            solution_sketch: 'Any row gives $k$: $\frac{5}{2} = 2.5$.'
+          - problem: 'The table $(3, 12)$, $(5, 20)$ is proportional. What is $k$?'
+            answer: "4"
+        constraints: "every row gives the same y/x ratio"
+      - id: kp3
+        name: "k as a unit rate"
+        key_prerequisites: [dividing-fractions]
+        exemplars:
+          - problem: '$3$ kilograms of apples cost €7.50. What is the price per kilogram, in euros?'
+            answer: "2.50"
+            solution_sketch: '$7.50 \div 3 = 2.50$.'
+          - problem: 'A car travels $120$ kilometres in $3$ hours at constant speed. What is its unit rate, in km per hour?'
+            answer: "40"
+            solution_sketch: '$120 \div 3 = 40$.'
+        constraints: "one quantity per one unit of the other; clean division"
+    diagnostic_exemplar:
+      problem: '$4$ kilograms of cheese cost €30. What is the price per kilogram, in euros?'
+      answer: '7.50'
+      solution_sketch: '$k = \frac{30}{4} = 7.5$.'
+    anki_seeds:
+      - front: "For a proportional relationship y = kx, the constant of proportionality k equals:"
+        back: "y/x (the unit rate: y per one unit of x)"
+        type: basic
+
+  - id: proportional-relationships
+    name: "Proportional Relationships"
+    core: true
+    difficulty: 0.40
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 80
+    prerequisites:
+      - id: constant-of-proportionality
+        weight: 0.7
+        key: true
+      - id: ratios-proportions
+        weight: 0.4
+      - id: coordinate-plane
+        weight: 0.3
+      - id: dividing-fractions
+        weight: 0.2
+    knowledge_points:
+      - id: kp1
+        name: "Write and use the equation y = kx"
+        key_prerequisites: [constant-of-proportionality]
+        exemplars:
+          - problem: '$y$ is proportional to $x$ with $k = 2.5$. Find $y$ when $x = 6$.'
+            answer: "15"
+            solution_sketch: '$y = 2.5(6) = 15$.'
+          - problem: 'A proportional relationship passes through $(3, 21)$. Its equation is $y = kx$. Find $k$.'
+            answer: "7"
+            solution_sketch: '$k = \frac{21}{3} = 7$, so the equation is $y = 7x$.'
+        constraints: "equation form y = kx"
+      - id: kp2
+        name: "Recognize proportionality from tables and graphs"
+        key_prerequisites: [coordinate-plane]
+        exemplars:
+          - problem: 'A proportional graph passes through the origin and $(1, 4)$. Find $y$ when $x = 9$.'
+            answer: "36"
+            solution_sketch: '$k = 4$, so $y = 4(9) = 36$.'
+          - problem: 'Is the table $(1, 3)$, $(2, 6)$, $(3, 10)$ proportional?'
+            answer: "no"
+            solution_sketch: '$\frac{3}{1} = \frac{6}{2} = 3$ but $\frac{10}{3} \ne 3$.'
+        constraints: "proportional graphs are straight lines through the origin; tables have constant y/x"
+      - id: kp3
+        name: "Solve for either variable"
+        key_prerequisites: [constant-of-proportionality]
+        exemplars:
+          - problem: '$y$ is proportional to $x$, and $y = 20$ when $x = 4$. Find $x$ when $y = 45$.'
+            answer: "9"
+            solution_sketch: '$k = 5$; $45 = 5x$ gives $x = 9$.'
+          - problem: 'Earnings follow $y = 6x$ euros for $x$ hours. How many hours to earn €90?'
+            answer: "15"
+            solution_sketch: '$90 = 6x$; $x = 15$.'
+        constraints: "find k first, then solve; integer or half-integer answers"
+    diagnostic_exemplar:
+      problem: '$y$ is proportional to $x$, and $y = 18$ when $x = 4$. Find $x$ when $y = 63$.'
+      answer: '14'
+      solution_sketch: '$k = \frac{18}{4} = 4.5$; then $x = \frac{63}{4.5} = 14$.'
+    anki_seeds:
+      - front: "A proportional relationship has the form y = ___ and its graph is a line through the ___."
+        back: "y = kx; the origin (k is the constant of proportionality / unit rate)"
+        type: basic
+
+  - id: graphing-proportional-relationships
+    name: "Graphing Proportional Relationships"
+    core: false                # graphing destination; proportional-relationships stays core
+    difficulty: 0.40
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 80
+    prerequisites:
+      - id: proportional-relationships
+        weight: 0.6
+        key: true
+      - id: coordinate-plane
+        weight: 0.5
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: "Graph y = kx from two points"
+        key_prerequisites: [proportional-relationships, coordinate-plane]
+        exemplars:
+          - problem: 'To graph $y = 3x$, give the points at $x = 0$ and $x = 2$.'
+            answer: "(0, 0) and (2, 6)"
+          - problem: 'Every proportional graph passes through which point?'
+            answer: "the origin (0, 0)"
+        constraints: "always include the origin plus one more lattice point"
+      - id: kp2
+        name: "Read k from a graph"
+        key_prerequisites: [proportional-relationships]
+        exemplars:
+          - problem: 'A proportional graph passes through $(5, 20)$. What is $k$?'
+            answer: "4"
+            solution_sketch: '$k = \frac{20}{5} = 4$.'
+          - problem: 'A proportional graph passes through $(4, 3)$. What is $k$?'
+            answer: "3/4"
+        constraints: "k = y/x from any graphed point; fractional k allowed"
+      - id: kp3
+        name: "Compare unit rates across representations"
+        key_prerequisites: [proportional-relationships]
+        exemplars:
+          - problem: 'Line A passes through $(1, 5)$; line B passes through $(2, 8)$. Which has the larger unit rate?'
+            answer: "line A"
+            solution_sketch: '$k_A = 5$, $k_B = 4$.'
+          - problem: 'A proportional graph passes through $(2, 9)$. Does it grow faster than $y = 4x$?'
+            answer: "yes"
+            solution_sketch: 'Its $k = 4.5 > 4$.'
+        constraints: "compare k values; one comparison per problem"
+    diagnostic_exemplar:
+      problem: 'A proportional relationship is graphed through $(6, 15)$. Find $k$ and write the equation.'
+      answer: "k = 2.5; y = 2.5x"
+      solution_sketch: '$k = \frac{15}{6} = 2.5$.'
+    anki_seeds:
+      - front: "On the graph of a proportional relationship, the constant k is the y-value at x = ___."
+        back: "1 (the point (1, k) is on the line)"
+        type: basic
+
+  - id: slope-from-a-graph
+    name: "Slope from a Graph"
+    core: true
+    difficulty: 0.32
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 60
+    prerequisites:
+      - id: coordinate-plane
+        weight: 0.6
+        key: true
+      - id: dividing-fractions
+        weight: 0.3
+      - id: integer-addition-subtraction
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: "Rise over run"
+        key_prerequisites: [coordinate-plane]
+        exemplars:
+          - problem: 'Between two points on a line, the graph rises $6$ units over a run of $3$ units to the right. What is the slope?'
+            answer: "2"
+            solution_sketch: '$\frac{6}{3} = 2$.'
+          - problem: 'A line rises $3$ units over a run of $6$ units. What is the slope?'
+            answer: "1/2"
+        constraints: "positive rise and run; reduce fractions"
+      - id: kp2
+        name: "Sign of the slope from direction"
+        key_prerequisites: [coordinate-plane]
+        exemplars:
+          - problem: 'A line falls from left to right. Is its slope positive or negative?'
+            answer: "negative"
+          - problem: 'A line drops $4$ units for every $2$ units it runs to the right. What is the slope?'
+            answer: "-2"
+            solution_sketch: 'Rise is $-4$ over run $2$: $-2$.'
+        constraints: "downward left-to-right means negative rise"
+      - id: kp3
+        name: "Slope between two graphed lattice points"
+        key_prerequisites: [coordinate-plane]
+        exemplars:
+          - problem: 'A graphed line passes through $(0, 1)$ and $(2, 5)$. Count the rise and run to find the slope.'
+            answer: "2"
+            solution_sketch: 'Rise $4$, run $2$: slope $2$.'
+          - problem: 'A graphed line passes through $(0, 3)$ and $(1, 1)$. What is the slope?'
+            answer: "-2"
+            solution_sketch: 'Rise $-2$, run $1$.'
+        constraints: "lattice points close together; counting, not the formula"
+    diagnostic_exemplar:
+      problem: 'A graphed line passes through $(0, 4)$ and $(3, -2)$. What is the slope?'
+      answer: "-2"
+      solution_sketch: 'Rise over run: $\frac{-2 - 4}{3 - 0} = \frac{-6}{3} = -2$.'
+    anki_seeds:
+      - front: "Slope read from a graph = ___ over ___."
+        back: "rise over run (vertical change over horizontal change)"
+        type: basic
+
+  - id: slope-from-two-points
+    name: "Slope from Two Points"
+    core: true
+    difficulty: 0.38
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 70
+    prerequisites:
+      - id: slope-from-a-graph
+        weight: 0.6
+        key: true
+      - id: integer-addition-subtraction
+        weight: 0.6
+        key: true
+      - id: coordinate-plane
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: "Apply the slope formula"
+        key_prerequisites: [integer-addition-subtraction]
+        exemplars:
+          - problem: 'Find the slope of the line through $(1, 2)$ and $(4, 8)$.'
+            answer: "2"
+            solution_sketch: '$\frac{8 - 2}{4 - 1} = \frac{6}{3} = 2$.'
+          - problem: 'Find the slope of the line through $(0, 0)$ and $(5, 10)$.'
+            answer: "2"
+        constraints: "positive integer slopes"
+      - id: kp2
+        name: "Points with negative coordinates"
+        key_prerequisites: [integer-addition-subtraction]
+        exemplars:
+          - problem: 'Find the slope of the line through $(-2, -3)$ and $(1, 3)$.'
+            answer: "2"
+            solution_sketch: '$\frac{3 - (-3)}{1 - (-2)} = \frac{6}{3} = 2$.'
+          - problem: 'Find the slope of the line through $(-1, 4)$ and $(2, -5)$.'
+            answer: "-3"
+            solution_sketch: '$\frac{-5 - 4}{2 - (-1)} = \frac{-9}{3} = -3$.'
+        constraints: "watch subtraction of negatives; integer slopes"
+      - id: kp3
+        name: "Either order works"
+        key_prerequisites: [integer-addition-subtraction]
+        exemplars:
+          - problem: 'Compute the slope through $(3, 7)$ and $(5, 11)$ subtracting in both orders. What do you get?'
+            answer: "2 both ways"
+            solution_sketch: '$\frac{11 - 7}{5 - 3} = 2$ and $\frac{7 - 11}{3 - 5} = 2$.'
+          - problem: 'Find the slope of the line through $(6, 1)$ and $(2, 9)$.'
+            answer: "-2"
+            solution_sketch: '$\frac{9 - 1}{2 - 6} = \frac{8}{-4} = -2$.'
+        constraints: "consistent order in numerator and denominator"
+    diagnostic_exemplar:
+      problem: 'Find the slope of the line through $(-3, 5)$ and $(1, -3)$.'
+      answer: '-2'
+      solution_sketch: '$\frac{-3 - 5}{1 - (-3)} = \frac{-8}{4} = -2$.'
+    anki_seeds:
+      - front: "When using m = (y2 - y1)/(x2 - x1), the coordinates must be subtracted in the ___ order in numerator and denominator."
+        back: "same order (swap both or neither)"
+        type: basic
+
+  - id: horizontal-vertical-slopes
+    name: "Slopes of Horizontal and Vertical Lines"
+    core: true
+    difficulty: 0.36
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 55
+    prerequisites:
+      - id: slope-from-a-graph
+        weight: 0.6
+        key: true
+      - id: coordinate-plane
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: "Horizontal lines have slope 0"
+        key_prerequisites: [slope-from-a-graph]
+        exemplars:
+          - problem: 'Find the slope of the line through $(2, 4)$ and $(7, 4)$.'
+            answer: "0"
+            solution_sketch: 'Rise is $0$, so slope is $0$ (horizontal).'
+          - problem: 'What is the slope of the line $y = 3$?'
+            answer: "0"
+        constraints: "equal y-coordinates"
+      - id: kp2
+        name: "Vertical lines have undefined slope"
+        key_prerequisites: [slope-from-a-graph]
+        exemplars:
+          - problem: 'Find the slope of the line through $(3, 1)$ and $(3, 6)$.'
+            answer: "undefined"
+            solution_sketch: 'Run is $0$, so slope is undefined (vertical).'
+          - problem: 'What is the slope of the line $x = -2$?'
+            answer: "undefined"
+        constraints: "equal x-coordinates"
+      - id: kp3
+        name: "Equations y = c and x = c"
+        key_prerequisites: [coordinate-plane]
+        exemplars:
+          - problem: 'The horizontal line through $(4, -5)$ has equation $y = c$. Find $c$.'
+            answer: "-5"
+            solution_sketch: 'A horizontal line fixes $y$ at the point''s $y$-coordinate.'
+          - problem: 'The vertical line through $(2, 7)$ has equation $x = c$. Find $c$.'
+            answer: "2"
+            solution_sketch: 'A vertical line fixes $x$ at the point''s $x$-coordinate.'
+        constraints: "horizontal fixes y; vertical fixes x"
+    diagnostic_exemplar:
+      problem: 'Find the slope of the line through $(5, 2)$ and $(5, 9)$.'
+      answer: 'undefined'
+      solution_sketch: 'Equal x-coordinates: the line is vertical, so the slope is undefined.'
+    anki_seeds:
+      - front: "A horizontal line has slope {{c1::0}} and a vertical line has slope {{c2::undefined}}."
+        back: "0; undefined"
+        type: cloze
+
+  - id: slope
+    name: "Slope of a Line"
+    core: true
+    difficulty: 0.42
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 80
+    prerequisites:
+      - id: slope-from-two-points
+        weight: 0.7
+        key: true
+      - id: horizontal-vertical-slopes
+        weight: 0.4
+        key: true
+      - id: dividing-fractions
+        weight: 0.4
+      - id: negative-fractions-decimals
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: "Negative and fractional slopes"
+        key_prerequisites: [slope-from-two-points, dividing-fractions]
+        exemplars:
+          - problem: 'Find the slope of the line through $(2, 5)$ and $(6, 1)$.'
+            answer: "-1"
+            solution_sketch: '$\frac{1 - 5}{6 - 2} = -\frac{4}{4} = -1$.'
+          - problem: 'Find the slope of the line through $(-1, 3)$ and $(3, 5)$.'
+            answer: "1/2"
+            solution_sketch: '$\frac{5 - 3}{3 - (-1)} = \frac{2}{4} = \frac{1}{2}$.'
+        constraints: "reduce the fraction; keep sign"
+      - id: kp2
+        name: "Find an unknown coordinate from the slope"
+        key_prerequisites: [slope-from-two-points]
+        exemplars:
+          - problem: 'The line through $(2, 3)$ and $(5, y)$ has slope $2$. Find $y$.'
+            answer: "9"
+            solution_sketch: '$\frac{y - 3}{3} = 2$, so $y - 3 = 6$ and $y = 9$.'
+          - problem: 'The line through $(x, 1)$ and $(4, 7)$ has slope $3$. Find $x$.'
+            answer: "2"
+            solution_sketch: '$\frac{6}{4 - x} = 3$, so $4 - x = 2$ and $x = 2$.'
+        constraints: "one unknown coordinate; integer answers"
+      - id: kp3
+        name: "Collinearity and comparing steepness"
+        key_prerequisites: [slope-from-two-points]
+        exemplars:
+          - problem: 'Are $(0, 1)$, $(2, 5)$, and $(5, 11)$ collinear?'
+            answer: "yes"
+            solution_sketch: 'Slopes $\frac{4}{2} = 2$ and $\frac{6}{3} = 2$ match.'
+          - problem: 'Which line is steeper: through $(0, 0)$ and $(2, 7)$, or through $(0, 0)$ and $(3, 9)$? Give the steeper line''s slope.'
+            answer: "7/2"
+            solution_sketch: 'Slopes $\frac{7}{2} = 3.5$ vs $3$; the line through $(2, 7)$ is steeper.'
+        constraints: "compare or chain two slope computations"
+    diagnostic_exemplar:
+      problem: 'The line through $(1, 2)$ and $(4, y)$ has slope $-2$. Find $y$.'
+      answer: '-4'
+      solution_sketch: '$\frac{y - 2}{4 - 1} = -2$; $y - 2 = -6$; $y = -4$.'
+    anki_seeds:
+      - front: "Slope formula for points (x1, y1) and (x2, y2):"
+        back: "m = (y2 - y1)/(x2 - x1) = rise/run"
+        type: basic
+
+  - id: slope-as-rate-of-change
+    name: "Slope as a Rate of Change"
+    core: false                # head of the terminal linear-interpretation branch
+    difficulty: 0.44
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 80
+    prerequisites:
+      - id: slope
+        weight: 0.7
+        key: true
+      - id: proportional-relationships
+        weight: 0.3
+      - id: decimal-operations
+        weight: 0.2
+    knowledge_points:
+      - id: kp1
+        name: "Compute a rate from two data points"
+        key_prerequisites: [slope]
+        exemplars:
+          - problem: 'At $1$ pm a tank holds $40$ L; at $4$ pm it holds $25$ L. Find the rate of change, in litres per hour.'
+            answer: "-5"
+            solution_sketch: '$\frac{25 - 40}{4 - 1} = -5$ L per hour.'
+          - problem: 'A plant grows from $6$ cm on day $2$ to $18$ cm on day $6$. Find the growth rate, in cm per day.'
+            answer: "3"
+            solution_sketch: '$\frac{18 - 6}{6 - 2} = 3$ cm per day.'
+        constraints: "state units; integer rates"
+      - id: kp2
+        name: "Interpret the sign of a rate"
+        key_prerequisites: [slope]
+        exemplars:
+          - problem: 'A bank balance changes at $-15$ euros per week. Is the balance increasing or decreasing?'
+            answer: "decreasing"
+            solution_sketch: 'A negative rate means the balance falls — here by €15 each week.'
+          - problem: 'The slope of a temperature-vs-time graph is $0$ overnight. What does that mean?'
+            answer: "the temperature stayed constant"
+        constraints: "sign carries the direction of change"
+      - id: kp3
+        name: "Rate of change from a table"
+        key_prerequisites: [slope]
+        exemplars:
+          - problem: 'A table shows $(2 \text{ h}, 90 \text{ km})$ and $(5 \text{ h}, 225 \text{ km})$. Find the speed, in km per hour.'
+            answer: "45"
+            solution_sketch: '$\frac{225 - 90}{5 - 2} = 45$ km/h.'
+          - problem: 'A cost table shows $3$ shirts cost €27 and $7$ shirts cost €63. Find the cost per shirt, in euros.'
+            answer: "9"
+            solution_sketch: '$\frac{63 - 27}{7 - 3} = 9$ euros per shirt.'
+        constraints: "two table rows; clean division"
+    diagnostic_exemplar:
+      problem: 'A candle is $30$ cm tall at $t = 0$ and $18$ cm tall at $t = 4$ hours. Find the rate of change of its height, in cm per hour.'
+      answer: "-3"
+      solution_sketch: '$\frac{18 - 30}{4 - 0} = -3$ cm per hour.'
+    anki_seeds:
+      - front: "In a linear model, the slope is the ___ of change, measured in units of ___ per unit of ___."
+        back: "rate; y per x"
+        type: basic
+
+  - id: solutions-of-two-variable-equations
+    name: "Solutions of Equations in Two Variables"
+    core: true
+    difficulty: 0.35
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 60
+    prerequisites:
+      - id: evaluating-expressions
+        weight: 0.6
+        key: true
+      - id: two-step-equations
+        weight: 0.5
+        key: true
+      - id: coordinate-plane
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: "Check a candidate pair"
+        key_prerequisites: [evaluating-expressions]
+        exemplars:
+          - problem: 'Is $(2, 5)$ a solution of $y = 3x - 1$?'
+            answer: "yes"
+            solution_sketch: '$3(2) - 1 = 5$.'
+          - problem: 'Is $(1, 4)$ a solution of $2x + y = 7$?'
+            answer: "no"
+            solution_sketch: '$2(1) + 4 = 6 \ne 7$.'
+        constraints: "substitute both coordinates; yes/no answers"
+      - id: kp2
+        name: "Find y given x"
+        key_prerequisites: [evaluating-expressions]
+        exemplars:
+          - problem: 'For $y = 2x + 3$, find $y$ when $x = 4$.'
+            answer: "11"
+          - problem: 'For $3x + y = 10$, find $y$ when $x = 2$.'
+            answer: "4"
+            solution_sketch: '$6 + y = 10$; $y = 4$.'
+        constraints: "integer inputs and outputs"
+      - id: kp3
+        name: "Find x given y"
+        key_prerequisites: [two-step-equations]
+        exemplars:
+          - problem: 'For $y = 2x - 5$, find $x$ when $y = 9$.'
+            answer: "7"
+            solution_sketch: '$9 = 2x - 5$; $2x = 14$; $x = 7$.'
+          - problem: 'For $x + 2y = 12$, find $x$ when $y = 3$.'
+            answer: "6"
+        constraints: "requires solving a one- or two-step equation"
+    diagnostic_exemplar:
+      problem: 'For $y = 3x - 4$, find $x$ when $y = 11$.'
+      answer: '5'
+      solution_sketch: '$11 = 3x - 4$; $3x = 15$; $x = 5$.'
+    anki_seeds:
+      - front: "A solution of an equation in two variables is an ordered pair that ___."
+        back: "makes the equation true when both values are substituted"
+        type: basic
+
+  - id: graphing-from-a-table
+    name: "Graphing a Line from a Table"
+    core: true
+    difficulty: 0.38
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 80
+    prerequisites:
+      - id: solutions-of-two-variable-equations
+        weight: 0.7
+        key: true
+      - id: coordinate-plane
+        weight: 0.5
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: "Build a table of solutions"
+        key_prerequisites: [solutions-of-two-variable-equations]
+        exemplars:
+          - problem: 'Make a table for $y = 2x + 1$ at $x = 0$, $1$, $2$.'
+            answer: "(0, 1), (1, 3), (2, 5)"
+          - problem: 'Make a table for $y = -x + 4$ at $x = 0$, $2$, $4$.'
+            answer: "(0, 4), (2, 2), (4, 0)"
+        constraints: "3 evenly spaced x-values; integer outputs"
+      - id: kp2
+        name: "Plot the rows and connect"
+        key_prerequisites: [coordinate-plane]
+        exemplars:
+          - problem: 'The table gives $(0, -2)$, $(1, 1)$, $(2, 4)$. Do the plotted points lie on one straight line?'
+            answer: "yes"
+            solution_sketch: '$y$ rises by a constant $3$ for each unit of $x$.'
+          - problem: 'From a table for $y = x - 3$, which point lies on the x-axis?'
+            answer: "(3, 0)"
+        constraints: "constant differences confirm a line"
+      - id: kp3
+        name: "Extend the pattern"
+        key_prerequisites: [solutions-of-two-variable-equations]
+        exemplars:
+          - problem: 'A line''s table shows $(0, 5)$, $(1, 8)$, $(2, 11)$. Find $y$ at $x = 5$.'
+            answer: "20"
+            solution_sketch: 'Step $+3$ per unit: $5 + 3(5) = 20$.'
+          - problem: 'The table $(1, 2)$, $(2, 6)$, $(3, 10)$ is linear. By how much does $y$ increase per unit of $x$?'
+            answer: "4"
+        constraints: "use the constant difference, not the equation"
+    diagnostic_exemplar:
+      problem: "A line's table shows $(0, 3)$, $(1, 7)$, $(2, 11)$. Find $y$ at $x = 6$."
+      answer: "27"
+      solution_sketch: '$y$ climbs by $4$ per step from $3$, so $y = 4x + 3$ and $y(6) = 27$.'
+    anki_seeds:
+      - front: "In a table of a linear equation with evenly spaced x-values, the y-values change by ___."
+        back: "a constant amount (equal steps)"
+        type: basic
+
+  - id: x-y-intercepts
+    name: "x- and y-Intercepts"
+    core: true
+    difficulty: 0.42
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 75
+    prerequisites:
+      - id: solutions-of-two-variable-equations
+        weight: 0.6
+        key: true
+      - id: two-step-equations
+        weight: 0.5
+        key: true
+      - id: graphing-from-a-table
+        weight: 0.2
+    knowledge_points:
+      - id: kp1
+        name: "y-intercept: set x = 0"
+        key_prerequisites: [solutions-of-two-variable-equations]
+        exemplars:
+          - problem: 'Find the y-intercept of $y = 3x - 6$.'
+            answer: "(0, -6)"
+          - problem: 'Find the y-intercept of $2x + y = 8$.'
+            answer: "(0, 8)"
+        constraints: "give the intercept as a point"
+      - id: kp2
+        name: "x-intercept: set y = 0"
+        key_prerequisites: [two-step-equations]
+        exemplars:
+          - problem: 'Find the x-intercept of $y = 3x - 6$.'
+            answer: "(2, 0)"
+            solution_sketch: '$0 = 3x - 6$; $x = 2$.'
+          - problem: 'Find the x-intercept of $2x + y = 8$.'
+            answer: "(4, 0)"
+        constraints: "integer intercepts"
+      - id: kp3
+        name: "Both intercepts from standard form"
+        key_prerequisites: [two-step-equations]
+        exemplars:
+          - problem: 'Find the x-intercept and the y-intercept of $3x + 4y = 12$. Give them as two points, x-intercept first.'
+            answer: "(4, 0), (0, 3)"
+            solution_sketch: '$y = 0 \to x = 4$; $x = 0 \to y = 3$.'
+          - problem: 'Find the x-intercept and the y-intercept of $5x - 2y = 10$. Give them as two points, x-intercept first.'
+            answer: "(2, 0), (0, -5)"
+            solution_sketch: '$y = 0 \to 5x = 10 \to x = 2$; $x = 0 \to -2y = 10 \to y = -5$.'
+        constraints: "coefficients divide the constant evenly"
+    diagnostic_exemplar:
+      problem: 'Find the x-intercept and the y-intercept of $3x - 2y = 12$. Give them as two points, x-intercept first.'
+      answer: '(4, 0), (0, -6)'
+      solution_sketch: '$y = 0 \to 3x = 12 \to x = 4$; $x = 0 \to -2y = 12 \to y = -6$.'
+    anki_seeds:
+      - front: "To find intercepts of a line: x-intercept ->, y-intercept ->"
+        back: "x-intercept: set y = 0 and solve; y-intercept: set x = 0 and solve"
+        type: basic
+
+  - id: reading-slope-intercept-equations
+    name: "Reading Slope-Intercept Equations"
+    core: true
+    difficulty: 0.40
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 60
+    prerequisites:
+      - id: slope
+        weight: 0.6
+        key: true
+      - id: solutions-of-two-variable-equations
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: "Read m and b directly"
+        key_prerequisites: [slope]
+        exemplars:
+          - problem: 'State the slope and y-intercept of $y = 3x - 5$.'
+            answer: "slope 3, y-intercept -5"
+          - problem: 'State the y-intercept of $y = -2x + 4$.'
+            answer: "4"
+        constraints: "read coefficients directly"
+      - id: kp2
+        name: "Rearranged and implicit forms"
+        key_prerequisites: [slope]
+        exemplars:
+          - problem: 'What is the slope of $y = 4 - 2x$?'
+            answer: "-2"
+            solution_sketch: 'Rewrite as $y = -2x + 4$.'
+          - problem: 'State the slope and y-intercept of $y = x$.'
+            answer: "slope 1, y-intercept 0"
+        constraints: "terms may appear in either order; missing coefficients are 1 or 0"
+      - id: kp3
+        name: "Slope as rise/run in the equation"
+        key_prerequisites: [slope]
+        exemplars:
+          - problem: 'State the slope and y-intercept of $y = 5$.'
+            answer: "slope 0, y-intercept 5"
+          - problem: 'For $y = \frac{2}{3}x - 1$, give the rise and run of the slope.'
+            answer: "rise 2, run 3"
+        constraints: "fractional slopes as rise over run"
+    diagnostic_exemplar:
+      problem: 'What is the slope of $y = 6 - \frac{3}{4}x$?'
+      answer: '-3/4'
+      solution_sketch: 'Reorder to $y = -\frac{3}{4}x + 6$.'
+    anki_seeds:
+      - front: "Slope-intercept form of a line:"
+        back: "y = mx + b, where m is the slope and b is the y-intercept"
+        type: basic
+
+  - id: slope-intercept-form
+    name: "Slope-Intercept Form"
+    core: true
+    difficulty: 0.45
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 90
+    prerequisites:
+      - id: reading-slope-intercept-equations
+        weight: 0.7
+        key: true
+      - id: slope
+        weight: 0.5
+        key: true
+      - id: one-step-equations
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: "Write the equation from slope and a point"
+        key_prerequisites: [reading-slope-intercept-equations, one-step-equations]
+        exemplars:
+          - problem: 'Write the equation of the line with slope $4$ and y-intercept $-1$.'
+            answer: "y = 4x - 1"
+          - problem: 'A line has slope $2$ and passes through $(3, 5)$. Write its equation.'
+            answer: "y = 2x - 1"
+            solution_sketch: '$b = 5 - 2(3) = -1$.'
+        constraints: "solve for b using the point"
+      - id: kp2
+        name: "Write the equation from two points"
+        key_prerequisites: [slope]
+        exemplars:
+          - problem: 'Write the equation of the line through $(1, 3)$ and $(2, 5)$.'
+            answer: "y = 2x + 1"
+            solution_sketch: '$m = 2$; $b = 3 - 2(1) = 1$.'
+          - problem: 'Write the equation of the line through $(0, -4)$ and $(2, 0)$.'
+            answer: "y = 2x - 4"
+            solution_sketch: '$m = 2$; $b = -4$.'
+        constraints: "find slope first, then b"
+      - id: kp3
+        name: "Write the equation from intercept information"
+        key_prerequisites: [slope]
+        exemplars:
+          - problem: 'Write the equation of the line with x-intercept $(3, 0)$ and y-intercept $(0, 6)$.'
+            answer: "y = -2x + 6"
+            solution_sketch: '$m = \frac{6 - 0}{0 - 3} = -2$; $b = 6$.'
+          - problem: 'A line crosses the y-axis at $4$ and passes through $(2, 10)$. Write its equation.'
+            answer: "y = 3x + 4"
+            solution_sketch: '$m = \frac{10 - 4}{2 - 0} = 3$.'
+        constraints: "intercepts given as points or values"
+    diagnostic_exemplar:
+      problem: 'Write the slope-intercept equation of the line through $(1, 5)$ and $(3, 9)$.'
+      answer: 'y = 2x + 3'
+      solution_sketch: '$m = \frac{9 - 5}{3 - 1} = 2$; then $5 = 2(1) + b$ gives $b = 3$.'
+    anki_seeds:
+      - front: "Given slope m and a point (x1, y1), the y-intercept is b = ___."
+        back: "b = y1 - m*x1"
+        type: basic
+
+  - id: graphing-linear-equations
+    name: "Graphing Linear Equations"
+    core: true
+    difficulty: 0.45
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 100
+    prerequisites:
+      - id: slope-intercept-form
+        weight: 0.6
+        key: true
+      - id: graphing-from-a-table
+        weight: 0.4
+        key: true
+      - id: x-y-intercepts
+        weight: 0.4
+        key: true
+      - id: horizontal-vertical-slopes
+        weight: 0.3
+      - id: coordinate-plane
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: "Graph from slope and y-intercept"
+        key_prerequisites: [slope-intercept-form]
+        exemplars:
+          - problem: 'For $y = 2x - 3$, give the y-intercept and one more point found with the slope.'
+            answer: "(0, -3) and (1, -1)"
+            solution_sketch: 'Start at $(0, -3)$; rise $2$, run $1$ to $(1, -1)$.'
+          - problem: 'For $y = -x + 4$, give the y-intercept and the next point using the slope.'
+            answer: "(0, 4) and (1, 3)"
+        constraints: "plot (0, b), then use rise/run"
+      - id: kp2
+        name: "Graph using intercepts"
+        key_prerequisites: [x-y-intercepts]
+        exemplars:
+          - problem: 'To graph $2x + 3y = 6$ by intercepts, which two points do you plot?'
+            answer: "(3, 0) and (0, 2)"
+          - problem: 'To graph $x - y = 4$ by intercepts, which two points do you plot?'
+            answer: "(4, 0) and (0, -4)"
+        constraints: "standard-form equations with integer intercepts"
+      - id: kp3
+        name: "Graph horizontal and vertical lines"
+        key_prerequisites: [horizontal-vertical-slopes]
+        exemplars:
+          - problem: 'Describe the graph of $x = 4$.'
+            answer: "a vertical line through (4, 0)"
+          - problem: 'Describe the graph of $y = -2$.'
+            answer: "a horizontal line through (0, -2)"
+        constraints: "x = c vertical; y = c horizontal"
+    diagnostic_exemplar:
+      problem: 'To graph $3x + 2y = 12$ by intercepts, which two points do you plot?'
+      answer: '(4, 0) and (0, 6)'
+      solution_sketch: '$y = 0$ gives $x = 4$; $x = 0$ gives $y = 6$.'
+    anki_seeds:
+      - front: "Three standard ways to graph a line:"
+        back: "slope-intercept (plot b, use rise/run); intercepts (plot both, connect); table of values"
+        type: basic
+
+  - id: point-slope-form
+    name: "Point-Slope Form"
+    core: true
+    difficulty: 0.46
+    drill: false
+    # Answers are equations of lines (and slope/point pairs), not single expressions —
+    # the SymPy override cannot parse "=" at all, so the tutor grades them.
+    answer_kind: multi-step
+    expected_time_secs: 80
+    prerequisites:
+      - id: slope
+        weight: 0.6
+        key: true
+      - id: slope-intercept-form
+        weight: 0.4
+        key: true
+      - id: distributive-property
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: "Write point-slope form"
+        key_prerequisites: [slope]
+        exemplars:
+          - problem: 'Write the point-slope equation of the line with slope $3$ through $(2, 5)$.'
+            answer: "y - 5 = 3(x - 2)"
+          - problem: 'Write the point-slope equation of the line with slope $-1$ through $(-4, 2)$.'
+            answer: "y - 2 = -1(x + 4)"
+        constraints: "y - y1 = m(x - x1); keep signs"
+      - id: kp2
+        name: "Read the slope and point from the form"
+        key_prerequisites: [slope]
+        exemplars:
+          - problem: 'For $y + 3 = 5(x - 1)$, state the slope and the point used.'
+            answer: "slope 5, point (1, -3)"
+          - problem: 'For $y - 2 = -4(x + 6)$, state the point used.'
+            answer: "(-6, 2)"
+        constraints: "watch the sign flips: y + 3 means y1 = -3"
+      - id: kp3
+        name: "Convert to slope-intercept form"
+        key_prerequisites: [distributive-property]
+        exemplars:
+          - problem: 'Convert $y - 5 = 2(x - 3)$ to slope-intercept form.'
+            answer: "y = 2x - 1"
+            solution_sketch: '$y = 2x - 6 + 5 = 2x - 1$.'
+          - problem: 'Convert $y - 1 = -3(x + 2)$ to slope-intercept form.'
+            answer: "y = -3x - 5"
+            solution_sketch: '$y = -3x - 6 + 1 = -3x - 5$.'
+        constraints: "distribute then isolate y"
+    diagnostic_exemplar:
+      problem: 'Using point-slope form, write the line through $(1, 4)$ with slope $2$ in slope-intercept form.'
+      answer: "y = 2x + 2"
+      solution_sketch: '$y - 4 = 2(x - 1)$; $y = 2x - 2 + 4 = 2x + 2$.'
+    anki_seeds:
+      - front: "Point-slope form of a line through (x1, y1) with slope m:"
+        back: "y - y1 = m(x - x1)"
+        type: basic
+
+  - id: point-slope-standard-form
+    name: "Point-Slope and Standard Form"
+    core: true
+    difficulty: 0.50
+    drill: false
+    # Answers are equations in standard / slope-intercept form; SymPy cannot parse "=".
+    answer_kind: multi-step
+    expected_time_secs: 110
+    prerequisites:
+      - id: point-slope-form
+        weight: 0.7
+        key: true
+      - id: multi-step-equations
+        weight: 0.4
+        key: true
+      - id: slope-intercept-form
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: "Convert to standard form"
+        key_prerequisites: [point-slope-form, multi-step-equations]
+        exemplars:
+          - problem: 'Write $y = 2x + 3$ in standard form with integer coefficients.'
+            answer: "2x - y = -3"
+            solution_sketch: 'Move $2x$ left: $-2x + y = 3$, or $2x - y = -3$.'
+          - problem: 'Write $y - 1 = \frac{1}{2}(x - 4)$ in standard form with integer coefficients.'
+            answer: "x - 2y = 2"
+            solution_sketch: '$y = \frac{1}{2}x - 1$; multiply by $2$: $2y = x - 2$, so $x - 2y = 2$.'
+        constraints: "standard form Ax + By = C with integer A, B, C"
+      - id: kp2
+        name: "Standard form to slope-intercept"
+        key_prerequisites: [multi-step-equations]
+        exemplars:
+          - problem: 'Write $3x + 2y = 12$ in slope-intercept form.'
+            answer: "y = -3/2 x + 6"
+            solution_sketch: '$2y = -3x + 12$; $y = -\frac{3}{2} x + 6$.'
+          - problem: 'Find the slope of $4x - 5y = 20$.'
+            answer: "4/5"
+            solution_sketch: '$-5y = -4x + 20$; $y = \frac{4}{5}x - 4$.'
+        constraints: "isolate y; fractional slopes allowed"
+      - id: kp3
+        name: "Line through two points, in standard form"
+        key_prerequisites: [point-slope-form]
+        exemplars:
+          - problem: 'Write the line through $(1, 2)$ and $(3, 8)$ in standard form.'
+            answer: "3x - y = 1"
+            solution_sketch: '$m = 3$; $y = 3x - 1$; move terms: $3x - y = 1$.'
+          - problem: 'Write the line through $(2, 5)$ and $(4, 6)$ in standard form.'
+            answer: "x - 2y = -8"
+            solution_sketch: '$m = \frac{1}{2}$; $y = \frac{1}{2}x + 4$; times $2$: $2y = x + 8$.'
+        constraints: "clear fractions to get integer coefficients"
+    diagnostic_exemplar:
+      problem: 'Write the line through $(2, 1)$ and $(4, 7)$ in standard form $Ax + By = C$.'
+      answer: '3x - y = 5'
+      solution_sketch: 'Slope $3$; $y - 1 = 3(x - 2)$; $y = 3x - 5$; so $3x - y = 5$.'
+    anki_seeds:
+      - front: "Standard form of a linear equation:"
+        back: "Ax + By = C, with A, B, C integers"
+        type: basic
+      - front: "The slope of Ax + By = C (B nonzero) is:"
+        back: "m = -A/B"
+        type: basic
+
+  - id: slopes-of-parallel-perpendicular-lines
+    name: "Slopes of Parallel and Perpendicular Lines"
+    core: true
+    difficulty: 0.45
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 70
+    prerequisites:
+      - id: slope
+        weight: 0.6
+        key: true
+      - id: reading-slope-intercept-equations
+        weight: 0.5
+        key: true
+      - id: negative-fractions-decimals
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: "Parallel: equal slopes"
+        key_prerequisites: [reading-slope-intercept-equations]
+        exemplars:
+          - problem: 'Are the lines $y = 2x + 1$ and $y = 2x - 5$ parallel, perpendicular, or neither?'
+            answer: "parallel"
+            solution_sketch: 'Equal slopes (both $2$).'
+          - problem: 'What is the slope of any line parallel to $y = -3x + 4$?'
+            answer: "-3"
+        constraints: "parallel: equal slopes, different intercepts"
+      - id: kp2
+        name: "Perpendicular: negative reciprocals"
+        key_prerequisites: [slope]
+        exemplars:
+          - problem: 'What is the slope of any line perpendicular to $y = 3x + 2$?'
+            answer: "-1/3"
+            solution_sketch: 'Negative reciprocal of $3$.'
+          - problem: 'What is the slope of any line perpendicular to $y = -\frac{2}{5}x + 1$?'
+            answer: "5/2"
+            solution_sketch: 'Negative reciprocal of $-\frac{2}{5}$.'
+        constraints: "flip and negate; product of the slopes is -1"
+      - id: kp3
+        name: "Classify a pair of lines"
+        key_prerequisites: [reading-slope-intercept-equations]
+        exemplars:
+          - problem: 'Are $y = \frac{1}{2}x + 3$ and $y = -2x - 1$ parallel, perpendicular, or neither?'
+            answer: "perpendicular"
+            solution_sketch: '$\frac{1}{2} \cdot (-2) = -1$.'
+          - problem: 'Are $y = 3x + 2$ and $y = -3x + 2$ parallel, perpendicular, or neither?'
+            answer: "neither"
+            solution_sketch: 'Slopes $3$ and $-3$: not equal, product $-9 \ne -1$.'
+        constraints: "one comparison per problem; slopes readable from the equations"
+    diagnostic_exemplar:
+      problem: 'Are $y = \frac{2}{3}x + 1$ and $y = -\frac{3}{2}x - 4$ parallel, perpendicular, or neither?'
+      answer: 'perpendicular'
+      solution_sketch: 'The slopes multiply to $-1$.'
+    anki_seeds:
+      - front: "Slope relationship: parallel lines have ___ slopes; perpendicular lines have ___ slopes."
+        back: "equal slopes; negative-reciprocal slopes (their product is -1)"
+        type: basic
+
+  - id: parallel-perpendicular-lines
+    name: "Parallel and Perpendicular Lines"
+    core: false
+    difficulty: 0.50
+    drill: false
+    # Answers are equations of lines plus a classification; SymPy cannot parse "=".
+    answer_kind: multi-step
+    expected_time_secs: 100
+    prerequisites:
+      - id: slopes-of-parallel-perpendicular-lines
+        weight: 0.7
+        key: true
+      - id: slope-intercept-form
+        weight: 0.5
+        key: true
+      - id: point-slope-standard-form
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: "Write a parallel line through a point"
+        key_prerequisites: [slope-intercept-form]
+        exemplars:
+          - problem: 'Write the line parallel to $y = 4x - 1$ through $(2, 3)$.'
+            answer: "y = 4x - 5"
+            solution_sketch: '$m = 4$; $b = 3 - 4(2) = -5$.'
+          - problem: 'Write the line parallel to $y = -x + 6$ through $(1, 1)$.'
+            answer: "y = -x + 2"
+            solution_sketch: '$m = -1$; $b = 1 - (-1)(1) = 2$.'
+        constraints: "keep the same slope; solve for b"
+      - id: kp2
+        name: "Write a perpendicular line through a point"
+        key_prerequisites: [slope-intercept-form]
+        exemplars:
+          - problem: 'Write the line perpendicular to $y = 2x + 1$ through $(4, 1)$.'
+            answer: "y = -1/2 x + 3"
+            solution_sketch: '$m = -\frac{1}{2}$; $b = 1 - (-\frac{1}{2})(4) = 3$.'
+          - problem: 'Write the line perpendicular to $y = -3x$ through $(6, 0)$.'
+            answer: "y = 1/3 x - 2"
+            solution_sketch: '$m = \frac{1}{3}$; $b = 0 - (\frac{1}{3})(6) = -2$.'
+        constraints: "use the negative reciprocal slope"
+      - id: kp3
+        name: "Work from standard form"
+        key_prerequisites: [point-slope-standard-form]
+        exemplars:
+          - problem: 'Write the line through the origin perpendicular to $2x + 3y = 6$.'
+            answer: "y = 3/2 x"
+            solution_sketch: 'Given slope $-\frac{2}{3}$; perpendicular slope $\frac{3}{2}$; $b = 0$.'
+          - problem: 'Are $2x + 3y = 6$ and $3x - 2y = 4$ parallel, perpendicular, or neither?'
+            answer: "perpendicular"
+            solution_sketch: 'Slopes $-\frac{2}{3}$ and $\frac{3}{2}$; product is $-1$.'
+        constraints: "convert to find the slope first"
+    diagnostic_exemplar:
+      problem: 'Write the equation of the line perpendicular to $2x + 3y = 6$ through $(4, 1)$.'
+      answer: 'y = 3/2 x - 5'
+      solution_sketch: 'The given line has slope $-\frac{2}{3}$, so use $\frac{3}{2}$: $1 = 6 + b$ gives $b = -5$.'
+    anki_seeds:
+      - front: "To write a line through point P parallel or perpendicular to a given line:"
+        back: "find the given slope; keep it (parallel) or take the negative reciprocal (perpendicular); then b = y1 - m*x1"
+        type: basic
+
+  - id: interpreting-linear-models
+    name: "Interpreting Linear Models"
+    core: false                # terminal linear-interpretation branch
+    difficulty: 0.48
+    drill: false
+    # Answers are prose interpretations of slope and intercept in context.
+    answer_kind: multi-step
+    expected_time_secs: 90
+    prerequisites:
+      - id: slope-as-rate-of-change
+        weight: 0.6
+        key: true
+      - id: slope-intercept-form
+        weight: 0.5
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: "Meaning of the slope in context"
+        key_prerequisites: [slope-as-rate-of-change]
+        exemplars:
+          - problem: 'A repair costs $C = 12h + 40$ euros for $h$ hours of work. What does the $12$ represent?'
+            answer: "the cost per hour of work (€12 per hour)"
+          - problem: 'In the tank model $y = -5x + 50$, what does the $-5$ represent?'
+            answer: "the tank drains 5 L per minute"
+        constraints: "slope = rate with units"
+      - id: kp2
+        name: "Meaning of the y-intercept in context"
+        key_prerequisites: [slope-intercept-form]
+        exemplars:
+          - problem: 'In the model $y = -5x + 50$, what does the $50$ represent?'
+            answer: "the starting amount of water (50 L)"
+          - problem: 'In $C = 12h + 40$, what does the $40$ represent?'
+            answer: "the fixed fee charged regardless of hours (€40)"
+        constraints: "intercept = starting or fixed value"
+      - id: kp3
+        name: "Evaluate a model and interpret the result"
+        key_prerequisites: [slope-intercept-form]
+        exemplars:
+          - problem: 'A tank holds $50$ L and drains $5$ L per minute. How much water remains after $4$ minutes?'
+            answer: "30 L"
+            solution_sketch: '$y = -5(4) + 50 = 30$.'
+          - problem: 'A population follows $P = 8t + 100$ (people after $t$ years). Find $P$ at $t = 5$.'
+            answer: "140"
+        constraints: "evaluate at a given input; interpret with units"
+    diagnostic_exemplar:
+      problem: 'A phone plan costs $y = 0.10x + 20$ euros for $x$ minutes. What do the $0.10$ and the $20$ represent?'
+      answer: "€0.10 per minute (the rate); €20 fixed monthly fee (the starting value)"
+      solution_sketch: 'In $y = mx + b$ the slope is the cost of one more minute and the intercept is the cost at $x = 0$.'
+    anki_seeds:
+      - front: "In a real-world linear model y = mx + b, m is the ___ and b is the ___."
+        back: "rate of change (per-unit amount); starting or fixed value"
+        type: basic
+
+  - id: linear-word-problems
+    name: "Linear Models and Word Problems"
+    core: false                # enrichment / applications leaf topic
+    difficulty: 0.55
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 150
+    prerequisites:
+      - id: interpreting-linear-models
+        weight: 0.6
+        key: true
+      - id: slope-intercept-form
+        weight: 0.4
+        key: true
+      - id: multi-step-equations
+        weight: 0.4
+      - id: graphing-linear-equations
+        weight: 0.2
+    knowledge_points:
+      - id: kp1
+        name: "Build a linear cost model"
+        key_prerequisites: [slope-intercept-form]
+        exemplars:
+          - problem: 'A taxi charges €3 plus €2 per kilometre. Write the cost equation for k kilometres.'
+            answer: "y = 2k + 3"
+          - problem: 'Using that model, what is the cost of a $7$-kilometre ride?'
+            answer: "€17"
+            solution_sketch: '$2(7) + 3 = 17$.'
+        constraints: "rate is the slope; fixed fee is the y-intercept"
+      - id: kp2
+        name: "Build a model from two data points"
+        key_prerequisites: [slope-intercept-form]
+        exemplars:
+          - problem: 'A burning candle is $20$ cm tall after $2$ hours and $14$ cm tall after $5$ hours. Write its height model $h = mt + b$.'
+            answer: "h = -2t + 24"
+            solution_sketch: '$m = \frac{14 - 20}{5 - 2} = -2$; $b = 20 - (-2)(2) = 24$.'
+          - problem: 'A gym membership costs €95 total after $3$ months and €215 after $7$ months. Write the cost model.'
+            answer: "y = 30m + 5"
+            solution_sketch: '$m = \frac{215 - 95}{7 - 3} = 30$; $b = 95 - 30(3) = 5$.'
+        constraints: "treat the data as two points; integer slope and intercept"
+      - id: kp3
+        name: "Solve for the input in a linear model"
+        key_prerequisites: [multi-step-equations]
+        exemplars:
+          - problem: 'You start with €20 and save €8 per week. After how many weeks will you have €76?'
+            answer: "7"
+            solution_sketch: '$8x + 20 = 76$; $8x = 56$; $x = 7$.'
+          - problem: 'A plant is $4$ cm tall and grows $3$ cm per week. After how many weeks is it $25$ cm?'
+            answer: "7"
+            solution_sketch: '$3x + 4 = 25$; $x = 7$.'
+        constraints: "set the model equal to the target and solve"
+    diagnostic_exemplar:
+      problem: 'A candle is $24$ cm tall after $1$ hour of burning and $12$ cm tall after $5$ hours. After how many hours of burning is it $6$ cm tall?'
+      answer: '7'
+      solution_sketch: '$m = \frac{12 - 24}{5 - 1} = -3$ and $b = 27$; solve $6 = -3t + 27$ to get $t = 7$.'
+    anki_seeds:
+      - front: "In a linear model y = mx + b, the per-unit rate and the fixed fee map to..."
+        back: "rate = slope m; fixed fee = y-intercept b"
+        type: basic
+      - front: "To build a linear model from two data readings..."
+        back: "treat them as points: m = Δy/Δx, then b = y₁ − m·x₁"
+        type: basic

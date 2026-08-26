@@ -1,0 +1,441 @@
+unit: yoneda
+course: category-theory
+module: "Yoneda & Representables"
+topics:
+  - id: representable-functors
+    name: Representable Functors
+    core: true
+    difficulty: 0.75
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 240
+    prerequisites:
+      - id: hom-functors
+        weight: 0.5
+        key: true
+      - id: natural-isomorphisms
+        weight: 0.4
+        key: true
+      - id: covariant-contravariant-functors
+        weight: 0.2
+      - id: universal-properties
+        weight: 0.3
+      # Phase C reconciliation: kp2's whole skill is the freeness argument — the learner
+      # proves $U\colon\mathbf{Grp}\to\mathbf{Set}$ representable by $\mathbb{Z} = F(\{a\})$
+      # because homs out of a free group are determined by the generator's image
+      # (free-groups-presentations kp1/kp2, quoted almost verbatim).
+      - id: free-groups-presentations
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Definition of representability
+        key_prerequisites: [hom-functors]
+        constraints: "Definitions and one-line illustrations only; always name both the representing object and the natural isomorphism $\\mathrm{Hom}(A,-)\\cong F$, and say which variance is in play; the only concrete instance is the identity functor on $\\mathbf{Set}$, represented by a one-point set."
+        exemplars:
+          - problem: "Define a representable functor $\\mathcal C\\to\\mathbf{Set}$ and a representation of it."
+            answer: "$F$ with a natural iso $\\mathrm{Hom}(A,-)\\cong F$ for some $A$; the pair (object, iso) is a representation."
+            solution_sketch: "$F\\colon\\mathcal C\\to\\mathbf{Set}$ is representable if there is an object $A$ and a natural isomorphism $\\alpha\\colon\\mathrm{Hom}(A,-)\\xRightarrow{\\cong}F$. The pair $(A,\\alpha)$ is a representation and $A$ the representing object. Contravariantly, $F\\colon\\mathcal C^{op}\\to\\mathbf{Set}$ is representable if $F\\cong\\mathrm{Hom}(-,A)$."
+          - problem: "Illustrate the definition by exhibiting a representation of the identity functor $\\mathrm{Id}\\colon\\mathbf{Set}\\to\\mathbf{Set}$."
+            answer: "$\\mathrm{Id}\\cong\\mathrm{Hom}(\\{*\\},-)$; the representing object is the one-point set $\\{*\\}$."
+            solution_sketch: "A function $\\{*\\}\\to X$ is determined by the image of $*$, an arbitrary element of $X$, so $\\mathrm{Hom}_{\\mathbf{Set}}(\\{*\\},X)\\cong X$ via $f\\mapsto f(*)$. This is natural in $X$: for $g\\colon X\\to Y$, post-composition $g\\circ(-)$ corresponds to applying $g$. Hence $\\mathrm{Id}\\cong\\mathrm{Hom}(\\{*\\},-)$, a representation with representing object $\\{*\\}$ and universal element $*\\in\\mathrm{Id}(\\{*\\})$."
+      - id: kp2
+        name: Recognizing representable functors
+        key_prerequisites: [natural-isomorphisms, free-groups-presentations]
+        constraints: "Forgetful functors out of $\\mathbf{Mon}$, $\\mathbf{Grp}$ or $\\mathbf{Ab}$, whose representing object is the free object on one generator ($\\mathbb N$, $\\mathbb Z$); the argument must be that a homomorphism out of the free object is determined by, and free on, the image of that generator, with naturality in the target noted."
+        exemplars:
+          - problem: "Show the forgetful functor $U\\colon\\mathbf{Mon}\\to\\mathbf{Set}$ is representable and name the representing object."
+            answer: "$U\\cong\\mathrm{Hom}_{\\mathbf{Mon}}(\\mathbb N,-)$; the representing object is $\\mathbb N$, the free monoid on one generator."
+            solution_sketch: "A homomorphism $\\mathbb N\\to M$ (with $\\mathbb N=(\\{0,1,2,\\dots\\},+)$, free on one generator) is determined by the image of $1$, an arbitrary element of $M$. So $\\mathrm{Hom}_{\\mathbf{Mon}}(\\mathbb N,M)\\cong UM$ naturally in $M$, giving $U\\cong\\mathrm{Hom}(\\mathbb N,-)$: $U$ is representable, represented by $\\mathbb N$."
+          - problem: "Show the forgetful functor $U\\colon\\mathbf{Grp}\\to\\mathbf{Set}$ is representable and name the representing object."
+            answer: "$U\\cong\\mathrm{Hom}_{\\mathbf{Grp}}(\\mathbb Z,-)$; the representing object is $\\mathbb Z$, the free group on one generator."
+            solution_sketch: "A group homomorphism $\\mathbb Z\\to G$ is determined by the image of the generator $1$, which may be any element of $G$ since $\\mathbb Z$ is free on one generator. Thus $\\mathrm{Hom}_{\\mathbf{Grp}}(\\mathbb Z,G)\\cong UG$ via $\\varphi\\mapsto\\varphi(1)$, naturally in $G$. Hence $U\\cong\\mathrm{Hom}(\\mathbb Z,-)$, so $U$ is representable, represented by $\\mathbb Z$."
+      - id: kp3
+        name: Uniqueness of the representing object
+        key_prerequisites: [universal-properties]
+        constraints: "Abstract identity-chasing proofs from a natural isomorphism of representables: set the comparison maps as $\\theta_A(1_A)$ and $\\theta^{-1}_B(1_B)$, obtain each formula $\\theta_X(h)=h\\circ g$ by naturality, then evaluate at the two identities; no elements of any concrete category."
+        exemplars:
+          - problem: "Prove that if $\\mathrm{Hom}(A,-)\\cong\\mathrm{Hom}(B,-)$ then $A\\cong B$."
+            answer: "The natural iso yields inverse comparison maps $A\\to B$ and $B\\to A$."
+            solution_sketch: "Let $\\theta\\colon\\mathrm{Hom}(A,-)\\cong\\mathrm{Hom}(B,-)$ be natural and set $g=\\theta_A(1_A)\\colon B\\to A$ and $f=\\theta^{-1}_B(1_B)\\colon A\\to B$. Naturality of $\\theta$ at $h\\colon A\\to X$, applied to $1_A$, gives $\\theta_X(h)=\\theta_X(h\\circ 1_A)=h\\circ\\theta_A(1_A)=h\\circ g$; the same argument for the natural transformation $\\theta^{-1}$ gives $\\theta^{-1}_X(k)=k\\circ f$ for $k\\colon B\\to X$. Now chase the identities. Taking $X=B$ and $h=f$: $\\theta_B(f)=f\\circ g$, while $\\theta_B(f)=\\theta_B(\\theta^{-1}_B(1_B))=1_B$, so $f\\circ g=1_B$. Taking $X=A$ and $k=g$: $\\theta^{-1}_A(g)=g\\circ f$, while $\\theta^{-1}_A(g)=\\theta^{-1}_A(\\theta_A(1_A))=1_A$, so $g\\circ f=1_A$. Hence $f$ and $g$ are mutually inverse and $A\\cong B$: representing objects are unique up to isomorphism (a special case of the Yoneda embedding being fully faithful)."
+          - problem: "Prove that if $\\mathrm{Hom}(-,A)\\cong\\mathrm{Hom}(-,B)$ (contravariant representables) then $A\\cong B$ by a unique compatible isomorphism."
+            answer: "Chase the identities through the natural iso to obtain mutually inverse maps $A\\to B$ and $B\\to A$."
+            solution_sketch: "Let $\\theta\\colon\\mathrm{Hom}(-,A)\\cong\\mathrm{Hom}(-,B)$ be natural. Set $f=\\theta_A(1_A)\\colon A\\to B$ and $g=\\theta_B^{-1}(1_B)\\colon B\\to A$. Naturality of $\\theta$ at $g$ applied to $1_A$ gives $\\theta_B(g)=f\\circ g$, but $\\theta_B(g)=1_B$, so $f\\circ g=1_B$; naturality of $\\theta^{-1}$ at $f$ applied to $1_B$ gives $g\\circ f=1_A$. Hence $A\\cong B$, and the iso is unique since the contravariant Yoneda embedding is fully faithful."
+    diagnostic_exemplar:
+      problem: "Prove that the forgetful functor $U\\colon\\mathbf{Ab}\\to\\mathbf{Set}$ is representable, naming the representing object and the natural isomorphism, and prove that any two representing objects for $U$ are isomorphic."
+      answer: "Representability: $\\mathbb Z$ is the free abelian group on one generator, so a homomorphism $\\varphi\\colon\\mathbb Z\\to A$ is determined by $\\varphi(1)$, which may be any element of $A$. Hence $\\theta_A\\colon\\mathrm{Hom}_{\\mathbf{Ab}}(\\mathbb Z,A)\\to UA$, $\\varphi\\mapsto\\varphi(1)$, is a bijection, and it is natural in $A$: for $f\\colon A\\to B$, $\\theta_B(f\\circ\\varphi)=f(\\varphi(1))=Uf(\\theta_A(\\varphi))$. So $U\\cong\\mathrm{Hom}_{\\mathbf{Ab}}(\\mathbb Z,-)$ with representing object $\\mathbb Z$. Uniqueness: suppose $\\mathrm{Hom}(A,-)\\cong U\\cong\\mathrm{Hom}(B,-)$, so there is a natural isomorphism $\\psi\\colon\\mathrm{Hom}(A,-)\\Rightarrow\\mathrm{Hom}(B,-)$. Put $g=\\psi_A(1_A)\\colon B\\to A$ and $f=\\psi_B^{-1}(1_B)\\colon A\\to B$. Naturality of $\\psi$ at $h\\colon A\\to X$ applied to $1_A$ gives $\\psi_X(h)=h\\circ g$, and likewise $\\psi^{-1}_X(k)=k\\circ f$. Taking $X=B$, $h=f$: $f\\circ g=\\psi_B(f)=\\psi_B(\\psi_B^{-1}(1_B))=1_B$; taking $X=A$, $k=g$: $g\\circ f=\\psi^{-1}_A(g)=\\psi^{-1}_A(\\psi_A(1_A))=1_A$. So $A\\cong B$: the representing object is unique up to isomorphism."
+      solution_sketch: "For representability use that $\\mathbb Z$ is free on one generator, so $\\varphi\\mapsto\\varphi(1)$ is a bijection and naturality says evaluation at $1$ commutes with post-composition. For uniqueness, feed the identities through the natural isomorphism: $\\psi_A(1_A)$ and $\\psi_B^{-1}(1_B)$ are the mutually inverse maps."
+    anki_seeds:
+      - front: "A representable functor is..."
+        back: "a functor naturally isomorphic to some hom-functor $\\mathrm{Hom}(A,-)$ (covariant) or $\\mathrm{Hom}(-,A)$ (contravariant)."
+        type: basic
+      - front: "Representing objects are unique up to {{c1::isomorphism}}."
+        back: "isomorphism"
+        type: cloze
+
+  - id: universal-elements
+    name: Universal Elements
+    core: true
+    difficulty: 0.75
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 210
+    prerequisites:
+      - id: representable-functors
+        weight: 0.5
+        key: true
+      - id: universal-properties
+        weight: 0.4
+        key: true
+      - id: natural-transformations
+        weight: 0.2
+    knowledge_points:
+      - id: kp1
+        name: Universal elements and representations
+        key_prerequisites: [representable-functors]
+        constraints: "State the pair $(A,u)$ with $u\\in FA$ and its exists-unique clause before anything else; concrete instances are forgetful functors (or small products of them) out of $\\mathbf{Vect}_k$, $\\mathbf{Mon}$ or $\\mathbf{Grp}$, whose universal element is a generator of a free object on at most two generators."
+        exemplars:
+          - problem: "Define a universal element of $F\\colon\\mathcal C\\to\\mathbf{Set}$ and relate it to a representation."
+            answer: "$(A,u)$ with $u\\in FA$ so that every $x\\in FX$ equals $Fh(u)$ for a unique $h\\colon A\\to X$; equivalent to $F\\cong\\mathrm{Hom}(A,-)$."
+            solution_sketch: "A universal element of $F$ is an object $A$ and $u\\in FA$ such that for every $X$ and $x\\in FX$ there is a unique $h\\colon A\\to X$ with $(Fh)(u)=x$. Given a representation $\\alpha\\colon\\mathrm{Hom}(A,-)\\cong F$, the element $u=\\alpha_A(1_A)$ is universal; conversely a universal element defines a representation by $h\\mapsto (Fh)(u)$. So 'representable' equals 'has a universal element'."
+          - problem: "Identify the universal element of the forgetful functor $U\\colon\\mathbf{Vect}_k\\to\\mathbf{Set}$."
+            answer: "$(k,1)$: the scalar $1\\in Uk$ is universal, giving $U\\cong\\mathrm{Hom}_{\\mathbf{Vect}_k}(k,-)$."
+            solution_sketch: "Take $A=k$, the ground field as a one-dimensional space, and $u=1\\in Uk$. For any vector space $V$ and any $v\\in UV$ there is a unique linear map $h\\colon k\\to V$ with $Uh(1)=h(1)=v$, namely $h(\\lambda)=\\lambda v$. Thus $(k,1)$ is a universal element, so $U$ is representable with $U\\cong\\mathrm{Hom}_{\\mathbf{Vect}_k}(k,-)$."
+      - id: kp2
+        name: Universal properties are universal elements
+        key_prerequisites: [universal-properties]
+        constraints: "Products and coproducts only: name the functor $F$ of candidate structures, then give the universal element as the tuple of projections or of injections, and match the exists-unique clause against the (co)product's universal property."
+        exemplars:
+          - problem: "Express the product $A\\times B$ as a universal element of $F(X)=\\mathrm{Hom}(X,A)\\times\\mathrm{Hom}(X,B)$."
+            answer: "The universal element is the pair of projections $(\\pi_1,\\pi_2)\\in F(A\\times B)$."
+            solution_sketch: "$F(X)=\\mathrm{Hom}(X,A)\\times\\mathrm{Hom}(X,B)$ is contravariant. The pair $(\\pi_1,\\pi_2)\\in F(A\\times B)$ is universal: for any $X$ and $(f,g)\\in F(X)$ there is a unique $h=\\langle f,g\\rangle\\colon X\\to A\\times B$ with $F(h)(\\pi_1,\\pi_2)=(\\pi_1 h,\\pi_2 h)=(f,g)$. Thus the product's universal property says exactly that $(\\pi_1,\\pi_2)$ is a universal element representing $F$."
+          - problem: "Express the coproduct $A+B$ as a universal element of $F(X)=\\mathrm{Hom}(A,X)\\times\\mathrm{Hom}(B,X)$."
+            answer: "The universal element is the pair of injections $(\\iota_1,\\iota_2)\\in F(A+B)$."
+            solution_sketch: "$F(X)=\\mathrm{Hom}(A,X)\\times\\mathrm{Hom}(B,X)$ is covariant in $X$. The pair $(\\iota_1,\\iota_2)\\in F(A+B)$ is universal: for any $X$ and $(f,g)\\in F(X)$ there is a unique $h=[f,g]\\colon A+B\\to X$ with $F(h)(\\iota_1,\\iota_2)=(h\\iota_1,h\\iota_2)=(f,g)$. So the coproduct's universal property says exactly that $(\\iota_1,\\iota_2)$ is a universal element representing $F$, i.e. $F\\cong\\mathrm{Hom}(A+B,-)$."
+    diagnostic_exemplar:
+      problem: "Let $F\\colon\\mathbf{Mon}\\to\\mathbf{Set}$ send a monoid $M$ to the set $UM\\times UM$ of ordered pairs of its elements, and a homomorphism $h$ to $(m,m')\\mapsto(h(m),h(m'))$. Exhibit a universal element of $F$ and verify the universal-element condition in full."
+      answer: "Take $A=\\{a,b\\}^*$, the free monoid on two letters, and $u=(a,b)\\in FA$. Given any monoid $M$ and any $(m,m')\\in FM=UM\\times UM$, freeness says there is exactly one homomorphism $h\\colon\\{a,b\\}^*\\to M$ with $h(a)=m$ and $h(b)=m'$ (existence: extend letterwise and multiply out, $h(x_1\\cdots x_n)=h(x_1)\\cdots h(x_n)$, $h(\\varepsilon)=e$; uniqueness: a homomorphism is determined on words by its values on letters). For that $h$, $(Fh)(u)=(h(a),h(b))=(m,m')$, and any $h'$ with $(Fh')(u)=(m,m')$ has $h'(a)=m$, $h'(b)=m'$, hence $h'=h$. So every element of $FM$ is $(Fh)(u)$ for a unique $h\\colon A\\to M$: $(\\{a,b\\}^*,(a,b))$ is a universal element, and equivalently $F\\cong\\mathrm{Hom}_{\\mathbf{Mon}}(\\{a,b\\}^*,-)$."
+      solution_sketch: "Guess the free object: $F$ asks for two elements, so take the free monoid on two letters with $u=(a,b)$. The universal-element condition is then the freeness property itself — exactly one homomorphism sends the two letters to any prescribed pair — so verify existence and uniqueness of that extension."
+    anki_seeds:
+      - front: "A universal element of $F\\colon\\mathcal C\\to\\mathbf{Set}$ is..."
+        back: "$(A,u)$, $u\\in FA$, such that every $x\\in FX$ equals $Fh(u)$ for a unique $h\\colon A\\to X$."
+        type: basic
+      - front: "Recognition trigger: a universal property is a {{c1::universal element}} of an associated $\\mathbf{Set}$-valued functor."
+        back: "universal element"
+        type: cloze
+
+  - id: yoneda-statement-mechanics
+    name: The Yoneda Lemma — Statement and Computations
+    core: true
+    difficulty: 0.8
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 240
+    prerequisites:
+      - id: representable-functors
+        weight: 0.5
+        key: true
+      - id: universal-elements
+        weight: 0.4
+        key: true
+      - id: hom-functors
+        weight: 0.3
+      - id: functor-categories
+        weight: 0.3
+      - id: natural-transformations
+        weight: 0.2
+    knowledge_points:
+      - id: kp1
+        name: The statement in both variances
+        key_prerequisites: [representable-functors]
+        constraints: "Always state the bijection map $\\alpha\\mapsto\\alpha_A(1_A)$ and its inverse; keep track of which functor is covariant."
+        exemplars:
+          - problem: "State the Yoneda lemma for a functor $F\\colon\\mathcal C\\to\\mathbf{Set}$ and object $A$, including the bijection map."
+            answer: "$\\mathrm{Nat}(\\mathrm{Hom}(A,-),F)\\cong FA$, natural in $A$ and $F$, via $\\alpha\\mapsto\\alpha_A(1_A)$."
+            solution_sketch: "The Yoneda lemma gives a bijection $\\mathrm{Nat}(\\mathrm{Hom}(A,-),F)\\cong FA$ for every $F\\colon\\mathcal C\\to\\mathbf{Set}$ and every object $A$, natural in both. It sends a natural transformation $\\alpha$ to $\\alpha_A(1_A)\\in FA$; the inverse sends $u\\in FA$ to the transformation with component $\\mathrm{Hom}(A,X)\\to FX$, $h\\mapsto (Fh)(u)$."
+          - problem: "State the contravariant (presheaf) form of the Yoneda lemma and say how the inverse map changes."
+            answer: "$\\mathrm{Nat}(\\mathrm{Hom}(-,A),G)\\cong GA$ for $G\\colon\\mathcal{C}^{op}\\to\\mathbf{Set}$, with $\\alpha\\mapsto\\alpha_A(1_A)$ and inverse $u\\mapsto\\big(h\\mapsto(Gh)(u)\\big)$ where now $Gh$ runs backwards."
+            solution_sketch: "For a presheaf $G\\colon\\mathcal{C}^{op}\\to\\mathbf{Set}$ and an object $A$, the lemma reads $\\mathrm{Nat}(\\mathrm{Hom}(-,A),G)\\cong GA$, again by $\\alpha\\mapsto\\alpha_A(1_A)$. The inverse sends $u\\in GA$ to the transformation with component at $X$ given by $\\mathrm{Hom}(X,A)\\to GX$, $h\\mapsto(Gh)(u)$; here $h\\colon X\\to A$ and $Gh\\colon GA\\to GX$, so the formula type-checks with the reversed variance. Both forms have the same proof, one being the other applied to $\\mathcal{C}^{op}$."
+      - id: kp2
+        name: Counting natural transformations out of a representable
+        key_prerequisites: [hom-functors]
+        constraints: "Either instantiate the lemma at a second representable and read off the resulting hom-set, or count with finite sets of size at most 4; in a counting problem name the set $FA$ being counted and give its cardinality as an explicit number."
+        exemplars:
+          - problem: "Instantiate the covariant Yoneda lemma at $F=\\mathrm{Hom}(B,-)$ and read off the resulting set and map."
+            answer: "$\\mathrm{Nat}(\\mathrm{Hom}(A,-),\\mathrm{Hom}(B,-))\\cong\\mathrm{Hom}(B,A)$, via $\\alpha\\mapsto\\alpha_A(1_A)$."
+            solution_sketch: "The lemma gives $\\mathrm{Nat}(\\mathrm{Hom}(A,-),F)\\cong FA$. Putting $F=\\mathrm{Hom}(B,-)$ makes $FA=\\mathrm{Hom}(B,A)$, so $\\mathrm{Nat}(\\mathrm{Hom}(A,-),\\mathrm{Hom}(B,-))\\cong\\mathrm{Hom}(B,A)$, with $\\alpha\\mapsto\\alpha_A(1_A)$ landing in $\\mathrm{Hom}(B,A)$. The direction reverses in $A$: the covariant hom-embedding $A\\mapsto\\mathrm{Hom}(A,-)$ is contravariant on objects."
+          - problem: "In $\\mathbf{Set}$, count the natural transformations $\\mathrm{Hom}(\\{1,2\\},-)\\Rightarrow\\mathrm{Hom}(\\{1,2,3\\},-)$, and count the natural transformations $\\mathrm{Hom}(\\{*\\},-)\\Rightarrow P$ where $P$ is the covariant power-set functor."
+            answer: "$8$ and $2$."
+            solution_sketch: "By Yoneda, $\\mathrm{Nat}(\\mathrm{Hom}(A,-),F)\\cong FA$, so the count is just $|FA|$. First case: $A=\\{1,2\\}$ and $F=\\mathrm{Hom}(\\{1,2,3\\},-)$, so $FA=\\mathrm{Hom}(\\{1,2,3\\},\\{1,2\\})$, the functions from a $3$-element set to a $2$-element set: $2^3=8$. Second case: $A=\\{*\\}$ and $F=P$, so $FA=\\mathcal{P}(\\{*\\})=\\{\\varnothing,\\{*\\}\\}$, giving $2$. Each transformation is recovered from its value $u=\\alpha_A(1_A)$ by $h\\mapsto(Fh)(u)$."
+      - id: kp3
+        name: The one-object case — monoid and group actions
+        key_prerequisites: [functor-categories]
+        constraints: "Identify the presheaf category as right actions before applying the lemma."
+        exemplars:
+          - problem: "For a monoid $M$, identify the presheaf category on $BM$ and describe the representable presheaf."
+            answer: "Presheaves on $BM$ are right $M$-sets; the representable one is $M$ acting on itself on the right."
+            solution_sketch: "A presheaf $X\\colon BM^{op}\\to\\mathbf{Set}$ picks a set $X(*)$ and, for each $m\\in M$, a map $X(m)\\colon X(*)\\to X(*)$ with $X(mn)=X(n)\\circ X(m)$ and $X(e)=\\mathrm{id}$ — that is a right action $x\\cdot m$. The representable presheaf $\\mathrm{Hom}(-,*)$ has underlying set $\\mathrm{Hom}(*,*)=M$, and a morphism $m$ acts by pre-composition $h\\mapsto h\\circ m=hm$: the right regular action of $M$ on itself."
+          - problem: "Use the Yoneda lemma on $BM$ to describe the equivariant maps from the regular right $M$-set to an arbitrary right $M$-set $X$, and count them for $M=\\mathbb{Z}/3$ and $X=M$."
+            answer: "They correspond bijectively to elements of $X$ via $\\alpha\\mapsto\\alpha(e)$; for $M=X=\\mathbb{Z}/3$ there are exactly $3$."
+            solution_sketch: "Yoneda gives $\\mathrm{Nat}(\\mathrm{Hom}(-,*),X)\\cong X(*)$ via $\\alpha\\mapsto\\alpha_*(1_*)=\\alpha(e)$. A natural transformation of presheaves on $BM$ is exactly an $M$-equivariant map, so equivariant maps $M\\to X$ correspond to elements of $X$: the map is determined by the image of $e$, and $\\alpha(m)=\\alpha(e)\\cdot m$. For $M=X=\\mathbb{Z}/3$ with the regular action, $|X|=3$, so there are exactly $3$ equivariant maps — one for each element, namely translation by it."
+    diagnostic_exemplar:
+      problem: "Let $M=\\mathbb Z/4$ (written additively) be viewed as a one-object category, so that presheaves on it are right $M$-sets. Let $X=\\{p,q\\}$ carry the right action in which the generator $1$ swaps $p$ and $q$. Use the Yoneda lemma to describe the natural transformations from the representable presheaf (the regular right $M$-set $M$) to $X$, and say exactly how many there are."
+      answer: "The action is well defined: sending $1$ to the transposition of $\\{p,q\\}$ extends to a homomorphism $\\mathbb Z/4\\to\\mathrm{Sym}(X)$ because the transposition has order $2$, which divides $4$. Writing $*$ for the unique object, the representable presheaf is $\\mathrm{Hom}(-,*)=M$ with right multiplication, and the contravariant Yoneda lemma gives $\\mathrm{Nat}(\\mathrm{Hom}(-,*),X)\\cong X(*)=X$ via $\\alpha\\mapsto\\alpha(e)$, where $e=0$ is the identity. Concretely the transformation attached to $x\\in X$ is $\\alpha^x(m)=x\\cdot m$, which is equivariant since $(x\\cdot m)\\cdot m'=x\\cdot(mm')$, and $\\alpha^x(e)=x$ recovers $x$. So the equivariant maps $M\\to X$ correspond bijectively to the elements of $X$, and there are exactly $2$ of them (namely $m\\mapsto p\\cdot m$ and $m\\mapsto q\\cdot m$)."
+      solution_sketch: "First check the action is well defined: a transposition has order $2$, which divides $4$. Then apply Yoneda at the unique object, $\\mathrm{Nat}(\\mathrm{Hom}(-,*),X)\\cong X$ by $\\alpha\\mapsto\\alpha(e)$, so the equivariant maps are $m\\mapsto x\\cdot m$, one for each element $x$."
+    anki_seeds:
+      - front: "The Yoneda lemma states..."
+        back: "$\\mathrm{Nat}(\\mathrm{Hom}(A,-),F)\\cong FA$ naturally, via $\\alpha\\mapsto\\alpha_A(1_A)$."
+        type: basic
+      - front: "Inverse of the Yoneda map sends $u\\in FA$ to..."
+        back: "the natural transformation $h\\mapsto (Fh)(u)$."
+        type: basic
+      - front: "How many natural transformations $\\mathrm{Hom}(A,-)\\Rightarrow F$ are there?"
+        back: "exactly $|FA|$ — they are in bijection with the elements of $FA$."
+        type: basic
+
+  - id: yoneda-lemma
+    name: The Yoneda Lemma
+    core: true
+    difficulty: 0.85
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 300
+    prerequisites:
+      - id: yoneda-statement-mechanics
+        weight: 0.6
+        key: true
+      - id: representable-functors
+        weight: 0.4
+        key: true
+      - id: natural-transformations
+        weight: 0.4
+        key: true
+      - id: functor-categories
+        weight: 0.3
+      - id: universal-elements
+        weight: 0.3
+      - id: hom-functors
+        weight: 0.2
+    knowledge_points:
+      - id: kp1
+        name: Proof of the bijection
+        key_prerequisites: [natural-transformations]
+        constraints: "Write both maps explicitly, $\\Theta(u)_X(h)=(Fh)(u)$ and $\\Psi(\\alpha)=\\alpha_A(1_A)$; naturality of $\\Theta(u)$ must cite the composition law of $F$, and each round trip must cite either $F(1_A)=1_{FA}$ or naturality of $\\alpha$ — one citation per step, no elements of $\\mathcal C$."
+        exemplars:
+          - problem: "Prove that $\\Theta(u)$, defined by $\\Theta(u)_X(h)=(Fh)(u)$ for $u\\in FA$, really is a natural transformation $\\mathrm{Hom}(A,-)\\Rightarrow F$."
+            answer: "Naturality at $k\\colon X\\to Y$ is the composition law $F(k\\circ h)=Fk\\circ Fh$."
+            solution_sketch: "Fix $u\\in FA$ and set $\\Theta(u)_X\\colon\\mathrm{Hom}(A,X)\\to FX$, $h\\mapsto(Fh)(u)$; the type is right since $Fh\\colon FA\\to FX$. For $k\\colon X\\to Y$, naturality asks $Fk\\circ\\Theta(u)_X=\\Theta(u)_Y\\circ\\mathrm{Hom}(A,k)$. On $h\\in\\mathrm{Hom}(A,X)$ the left side gives $Fk\\big((Fh)(u)\\big)=F(k\\circ h)(u)$ by functoriality, and the right side gives $\\Theta(u)_Y(k\\circ h)=F(k\\circ h)(u)$. They agree, so $\\Theta(u)$ is natural."
+          - problem: "Prove the two maps $\\Psi(\\alpha)=\\alpha_A(1_A)$ and $\\Theta(u)_X(h)=(Fh)(u)$ are mutually inverse."
+            answer: "$\\Psi\\Theta=\\mathrm{id}$ by $F(1_A)=1$; $\\Theta\\Psi=\\mathrm{id}$ by naturality of $\\alpha$."
+            solution_sketch: "First, $\\Theta(u)$ is natural by functoriality of $F$. Then $\\Psi(\\Theta(u))=\\Theta(u)_A(1_A)=(F1_A)(u)=u$, so $\\Psi\\Theta=\\mathrm{id}$. Conversely, for any $\\alpha$ and $h\\colon A\\to X$, naturality of $\\alpha$ at $h$ applied to $1_A$ gives $\\alpha_X(h)=\\alpha_X(h\\circ 1_A)=(Fh)(\\alpha_A(1_A))=\\Theta(\\Psi(\\alpha))_X(h)$, so $\\Theta\\Psi=\\mathrm{id}$. Hence the correspondence is a bijection."
+      - id: kp2
+        name: Naturality of the Yoneda isomorphism
+        key_prerequisites: [functor-categories]
+        constraints: "Name the two induced maps forming the square, then evaluate both routes on a transformation $\\alpha$."
+        exemplars:
+          - problem: "Prove that the Yoneda bijection $\\mathrm{Nat}(\\mathrm{Hom}(A,-),F)\\cong FA$ is natural in $F$."
+            answer: "For $\\phi\\colon F\\Rightarrow F'$ both routes send $\\alpha\\mapsto\\phi_A(\\alpha_A(1_A))$, so the square commutes."
+            solution_sketch: "Write $\\Psi_F(\\alpha)=\\alpha_A(1_A)$. A natural transformation $\\phi\\colon F\\Rightarrow F'$ induces post-composition $\\phi\\circ(-)$ on $\\mathrm{Nat}(\\mathrm{Hom}(A,-),-)$ and $\\phi_A$ on evaluation at $A$. Then $\\Psi_{F'}(\\phi\\circ\\alpha)=(\\phi\\circ\\alpha)_A(1_A)=\\phi_A(\\alpha_A(1_A))=\\phi_A(\\Psi_F(\\alpha))$, so the naturality square commutes. Hence the Yoneda isomorphism is natural in $F$."
+          - problem: "Prove that the Yoneda bijection is natural in $A$: for $f\\colon A\\to B$, pre-composing with $f^*\\colon\\mathrm{Hom}(B,-)\\Rightarrow\\mathrm{Hom}(A,-)$ corresponds to applying $Ff$."
+            answer: "Both routes send $\\alpha\\mapsto\\alpha_B(f)$."
+            solution_sketch: "For $f\\colon A\\to B$ let $f^*$ have components $(f^*)_X(g)=g\\circ f$, so $\\alpha\\mapsto\\alpha\\circ f^*$ maps $\\mathrm{Nat}(\\mathrm{Hom}(A,-),F)$ to $\\mathrm{Nat}(\\mathrm{Hom}(B,-),F)$; on the other side the map is $Ff\\colon FA\\to FB$. Route one: $\\Psi_B(\\alpha\\circ f^*)=(\\alpha\\circ f^*)_B(1_B)=\\alpha_B(1_B\\circ f)=\\alpha_B(f)$. Route two: $Ff\\big(\\Psi_A(\\alpha)\\big)=Ff\\big(\\alpha_A(1_A)\\big)$, which by naturality of $\\alpha$ at $f$ equals $\\alpha_B(f\\circ 1_A)=\\alpha_B(f)$. The two agree, so the bijection is natural in $A$ as well."
+      - id: kp3
+        name: The contravariant form and its computational corollary
+        key_prerequisites: [functor-categories]
+        constraints: "Apply the contravariant form at a second presheaf: name the presheaf $G$ being substituted, read off the resulting hom-set, and when $G$ is a representable $\\mathrm{Hom}(-,A)$ say whether the bijection is an isomorphism of monoids."
+        exemplars:
+          - problem: "State the contravariant Yoneda lemma and compute $\\mathrm{Nat}(\\mathrm{Hom}(-,A),\\mathrm{Hom}(-,B))$."
+            answer: "$\\mathrm{Nat}(\\mathrm{Hom}(-,A),G)\\cong GA$; with $G=\\mathrm{Hom}(-,B)$ this is $\\mathrm{Hom}(A,B)$."
+            solution_sketch: "For presheaves $G\\colon\\mathcal C^{op}\\to\\mathbf{Set}$, $\\mathrm{Nat}(\\mathrm{Hom}(-,A),G)\\cong GA$ naturally. Taking $G=\\mathrm{Hom}(-,B)$ yields $\\mathrm{Nat}(\\mathrm{Hom}(-,A),\\mathrm{Hom}(-,B))\\cong\\mathrm{Hom}(A,B)$: natural transformations between representables are exactly morphisms of the representing objects — the computational core of the Yoneda embedding."
+          - problem: "Use the contravariant Yoneda lemma to compute the monoid of natural endomorphisms of the presheaf $\\mathrm{Hom}(-,A)$."
+            answer: "$\\mathrm{Nat}(\\mathrm{Hom}(-,A),\\mathrm{Hom}(-,A))\\cong\\mathrm{End}(A)$, an isomorphism of monoids."
+            solution_sketch: "Taking $G=\\mathrm{Hom}(-,A)$ in $\\mathrm{Nat}(\\mathrm{Hom}(-,A),G)\\cong GA$ gives $\\mathrm{Nat}(\\mathrm{Hom}(-,A),\\mathrm{Hom}(-,A))\\cong\\mathrm{Hom}(A,A)=\\mathrm{End}(A)$, with $\\alpha\\mapsto\\alpha_A(1_A)$ and inverse $f\\mapsto f_*=f\\circ(-)$. Since $(g\\circ f)_*=g_*\\circ f_*$ and $(1_A)_*=1$, the bijection respects composition and units, so it is an isomorphism of monoids."
+    diagnostic_exemplar:
+      problem: "Prove the contravariant Yoneda lemma: for a presheaf $G\\colon\\mathcal C^{op}\\to\\mathbf{Set}$ and an object $A$, the assignment $\\Psi(\\alpha)=\\alpha_A(1_A)$ is a bijection $\\mathrm{Nat}(\\mathrm{Hom}(-,A),G)\\to GA$. Exhibit the inverse, verify both round trips, and check that the bijection is natural in $G$."
+      answer: "Inverse: for $u\\in GA$ define $\\Theta(u)_X\\colon\\mathrm{Hom}(X,A)\\to GX$ by $\\Theta(u)_X(h)=(Gh)(u)$. This is natural: for $k\\colon W\\to X$ the presheaf $\\mathrm{Hom}(-,A)$ acts by pre-composition, and $\\Theta(u)_W(h\\circ k)=G(h\\circ k)(u)=\\big(Gk\\circ Gh\\big)(u)=Gk\\big(\\Theta(u)_X(h)\\big)$, using the contravariant composition law $G(h\\circ k)=Gk\\circ Gh$. Round trip 1: $\\Psi(\\Theta(u))=\\Theta(u)_A(1_A)=G(1_A)(u)=u$, since $G(1_A)=1_{GA}$. Round trip 2: for $\\alpha$ natural and $h\\colon X\\to A$, naturality of $\\alpha$ at $h$ reads $\\alpha_X\\circ(-\\circ h)=Gh\\circ\\alpha_A$; evaluating both sides at $1_A$ gives $\\alpha_X(h)=Gh(\\alpha_A(1_A))=\\Theta(\\Psi(\\alpha))_X(h)$, so $\\Theta\\Psi=\\mathrm{id}$. Hence $\\Psi$ is a bijection with inverse $\\Theta$. Naturality in $G$: for $\\varphi\\colon G\\Rightarrow G'$ the square compares $\\alpha\\mapsto\\varphi\\cdot\\alpha\\mapsto(\\varphi\\cdot\\alpha)_A(1_A)=\\varphi_A(\\alpha_A(1_A))$ with $\\alpha\\mapsto\\alpha_A(1_A)\\mapsto\\varphi_A(\\alpha_A(1_A))$; the two routes agree, so the square commutes."
+      solution_sketch: "Both directions are a chase of the identity. $\\Psi$ evaluates at $1_A$, and naturality of $\\alpha$ at $h$ applied to $1_A$ forces $\\alpha_X(h)=Gh(\\alpha_A(1_A))$ — which is what the inverse $\\Theta(u)_X(h)=(Gh)(u)$ must be. The other round trip is $G(1_A)=1_{GA}$, and naturality in $G$ is a one-line comparison of the two routes."
+    anki_seeds:
+      - front: "Key step in the proof of the Yoneda lemma?"
+        back: "apply naturality of $\\alpha$ at $h$ to $1_A$: $\\alpha_X(h)=(Fh)(\\alpha_A(1_A))$."
+        type: basic
+      - front: "$\\mathrm{Nat}(\\mathrm{Hom}(-,A),\\mathrm{Hom}(-,B))\\cong$ {{c1::$\\mathrm{Hom}(A,B)$}}."
+        back: "$\\mathrm{Hom}(A,B)$"
+        type: cloze
+      - front: "The Yoneda isomorphism is natural in which variables?"
+        back: "both — in the functor $F$ and in the object $A$."
+        type: basic
+
+  - id: yoneda-embedding
+    name: The Yoneda Embedding
+    core: true
+    difficulty: 0.82
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 270
+    prerequisites:
+      - id: yoneda-lemma
+        weight: 0.5
+        key: true
+      - id: full-faithful-functors
+        weight: 0.4
+        key: true
+      - id: functor-categories
+        weight: 0.2
+      - id: covariant-contravariant-functors
+        weight: 0.2
+    knowledge_points:
+      - id: kp1
+        name: The embedding as a functor
+        key_prerequisites: [yoneda-lemma]
+        constraints: "Define $\\mathbf y$ on objects and on morphisms and say which composition it uses (post-composition for the presheaf version, pre-composition for the covariant-hom version, which is contravariant on $\\mathcal C$); functoriality is a one-line check of each law."
+        exemplars:
+          - problem: "Define the Yoneda embedding $\\mathbf{y}\\colon\\mathcal C\\to[\\mathcal C^{op},\\mathbf{Set}]$ and confirm it is a functor."
+            answer: "$\\mathbf{y}(A)=\\mathrm{Hom}(-,A)$, $\\mathbf{y}(f)=f\\circ(-)$ (post-composition)."
+            solution_sketch: "The Yoneda embedding sends $A$ to the representable presheaf $\\mathrm{Hom}(-,A)$ and $f\\colon A\\to B$ to the natural transformation $f_*=f\\circ(-)\\colon\\mathrm{Hom}(-,A)\\Rightarrow\\mathrm{Hom}(-,B)$. Functoriality holds because $(g f)_*=g_*\\circ f_*$ and $(1_A)_*=1$; each $f_*$ is natural since post- and pre-composition commute by associativity."
+          - problem: "Describe the covariant-hom embedding $A\\mapsto\\mathrm{Hom}(A,-)$ into $[\\mathcal C,\\mathbf{Set}]$ and confirm it is functorial (contravariant on $\\mathcal C$)."
+            answer: "$f\\colon A\\to B$ maps to $f^*=(-)\\circ f\\colon\\mathrm{Hom}(B,-)\\Rightarrow\\mathrm{Hom}(A,-)$ (pre-composition)."
+            solution_sketch: "Send each object $A$ to $\\mathrm{Hom}(A,-)$ and each $f\\colon A\\to B$ to $f^*=(-)\\circ f$, the natural transformation with component $\\mathrm{Hom}(B,X)\\to\\mathrm{Hom}(A,X)$, $g\\mapsto g\\circ f$. Each $f^*$ is natural since pre- and post-composition commute. Because $(g\\circ f)^*=f^*\\circ g^*$ and $(1_A)^*=1$, the assignment is a contravariant functor $\\mathcal C\\to[\\mathcal C,\\mathbf{Set}]$, i.e. a functor $\\mathcal C^{op}\\to[\\mathcal C,\\mathbf{Set}]$."
+      - id: kp2
+        name: Full faithfulness
+        key_prerequisites: [full-faithful-functors]
+        constraints: "Two routes only: quote the contravariant Yoneda lemma at a second representable, or argue directly by evaluating at identities ($f_*(1_A)=f$ for faithfulness, $\\theta=\\big(\\theta_A(1_A)\\big)_*$ for fullness); name which of full and faithful each step establishes."
+        exemplars:
+          - problem: "Prove the Yoneda embedding is fully faithful."
+            answer: "The contravariant Yoneda lemma gives $\\mathrm{Nat}(\\mathbf{y}A,\\mathbf{y}B)\\cong\\mathrm{Hom}(A,B)$, and the bijection is $f\\mapsto f_*$."
+            solution_sketch: "By the contravariant Yoneda lemma, $\\mathrm{Nat}(\\mathrm{Hom}(-,A),\\mathrm{Hom}(-,B))\\cong\\mathrm{Hom}(A,B)$, and unwinding the bijection shows the transformation corresponding to $f$ is exactly $f_*=\\mathbf{y}(f)$. Hence $\\mathbf{y}_{A,B}\\colon\\mathrm{Hom}(A,B)\\to\\mathrm{Nat}(\\mathbf{y}A,\\mathbf{y}B)$ is a bijection, so $\\mathbf{y}$ is fully faithful."
+          - problem: "Give a direct proof, evaluating at identities, that $\\mathbf{y}$ is both faithful and full."
+            answer: "Faithful: $f_*(1_A)=f$; full: any $\\theta$ equals $f_*$ for $f=\\theta_A(1_A)$."
+            solution_sketch: "Faithful: if $f_*=g_*\\colon\\mathrm{Hom}(-,A)\\Rightarrow\\mathrm{Hom}(-,B)$, evaluate components at $1_A\\in\\mathrm{Hom}(A,A)$ to get $f=f_*(1_A)=g_*(1_A)=g$. Full: given natural $\\theta\\colon\\mathrm{Hom}(-,A)\\Rightarrow\\mathrm{Hom}(-,B)$, set $f=\\theta_A(1_A)$; naturality of $\\theta$ at any $h\\colon X\\to A$ applied to $1_A$ gives $\\theta_X(h)=\\theta_X(1_A\\circ h)=f\\circ h=f_*(h)$, so $\\theta=f_*=\\mathbf{y}(f)$. Hence $\\mathbf{y}$ is fully faithful."
+      - id: kp3
+        name: Objects are determined by their points
+        key_prerequisites: [full-faithful-functors]
+        constraints: "Consequences of full faithfulness — reflection of isomorphisms, objects determined by their points; every step must cite full faithfulness or the naturality of $\\mathbf y(f)$, and a hypothesis quantified over all objects $X$ must be instantiated at a specific $X$ (typically $X=A$ or $X=B$)."
+        exemplars:
+          - problem: "Explain why $A\\cong B$ iff $\\mathrm{Hom}(-,A)\\cong\\mathrm{Hom}(-,B)$, and why $\\mathcal C$ embeds into presheaves."
+            answer: "Fully faithful functors reflect isomorphisms; $\\mathcal C$ is a full subcategory of $[\\mathcal C^{op},\\mathbf{Set}]$."
+            solution_sketch: "A fully faithful functor reflects isomorphisms, so $\\mathbf{y}A\\cong\\mathbf{y}B$ implies $A\\cong B$; functors always preserve isos, giving the converse. Thus an object is determined up to isomorphism by its presheaf of points $\\mathrm{Hom}(-,A)$. Since $\\mathbf{y}$ is fully faithful, it identifies $\\mathcal C$ with a full subcategory of the presheaf category $[\\mathcal C^{op},\\mathbf{Set}]$ — every category is (equivalent to) a category of structured sets and maps."
+          - problem: "Prove that $f\\colon A\\to B$ is an isomorphism iff $f_*\\colon\\mathrm{Hom}(X,A)\\to\\mathrm{Hom}(X,B)$ is a bijection for every object $X$."
+            answer: "$f$ iso $\\iff\\mathbf{y}(f)$ a natural iso $\\iff$ each component $f_*$ is a bijection."
+            solution_sketch: "$\\mathbf{y}$ is fully faithful, hence reflects isomorphisms: $f$ is an iso iff $\\mathbf{y}(f)=f_*\\colon\\mathrm{Hom}(-,A)\\Rightarrow\\mathrm{Hom}(-,B)$ is an isomorphism of presheaves. A natural transformation of $\\mathbf{Set}$-valued functors is an isomorphism iff each component is a bijection. So $f$ is an iso iff $f_*\\colon\\mathrm{Hom}(X,A)\\to\\mathrm{Hom}(X,B)$ is bijective for all $X$ — isomorphisms are detected on generalized elements."
+    diagnostic_exemplar:
+      problem: "Let $f\\colon A\\to B$ be a homomorphism of groups such that for every group $X$ the map $f_*\\colon\\mathrm{Hom}_{\\mathbf{Grp}}(X,A)\\to\\mathrm{Hom}_{\\mathbf{Grp}}(X,B)$, $h\\mapsto f\\circ h$, is a bijection. Prove that $f$ is an isomorphism, and identify the natural transformation whose components the maps $f_*$ are."
+      answer: "The maps $f_*$ are exactly the components of $\\mathbf y(f)=f\\circ(-)\\colon\\mathrm{Hom}(-,A)\\Rightarrow\\mathrm{Hom}(-,B)$, the image of $f$ under the Yoneda embedding $\\mathbf y\\colon\\mathbf{Grp}\\to[\\mathbf{Grp}^{op},\\mathbf{Set}]$; the hypothesis says every component is a bijection, i.e. $\\mathbf y(f)$ is a natural isomorphism. Since $\\mathbf y$ is fully faithful and fully faithful functors reflect isomorphisms, $f$ is an isomorphism. Directly: take $X=B$; surjectivity of $f_*\\colon\\mathrm{Hom}(B,A)\\to\\mathrm{Hom}(B,B)$ gives $g\\colon B\\to A$ with $f\\circ g=1_B$. Then, in $\\mathrm{Hom}(A,B)$, $f\\circ(g\\circ f)=(f\\circ g)\\circ f=f=f\\circ 1_A$, and injectivity of $f_*\\colon\\mathrm{Hom}(A,A)\\to\\mathrm{Hom}(A,B)$ gives $g\\circ f=1_A$. So $g$ is a two-sided inverse and $f$ is an isomorphism."
+      solution_sketch: "Recognise the family $f_*$ as the components of $\\mathbf y(f)$, so the hypothesis says $\\mathbf y(f)$ is a natural isomorphism; $\\mathbf y$ is fully faithful and therefore reflects isomorphisms. Concretely the same conclusion comes from taking $X=B$ to produce the inverse and $X=A$ to force the other identity."
+    anki_seeds:
+      - front: "The Yoneda embedding $\\mathbf{y}\\colon\\mathcal C\\to[\\mathcal C^{op},\\mathbf{Set}]$ sends $A\\mapsto$? and $f\\mapsto$?"
+        back: "$A\\mapsto\\mathrm{Hom}(-,A)$; $f\\mapsto f_*$ (post-composition)."
+        type: basic
+      - front: "What key property does the Yoneda embedding have?"
+        back: "it is fully faithful."
+        type: basic
+      - front: "A fully faithful embedding lets you conclude $A\\cong B$ from {{c1::$\\mathrm{Hom}(-,A)\\cong\\mathrm{Hom}(-,B)$}}."
+        back: "$\\mathrm{Hom}(-,A)\\cong\\mathrm{Hom}(-,B)$"
+        type: cloze
+
+  - id: category-of-elements
+    name: The Category of Elements
+    core: false
+    difficulty: 0.78
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 210
+    prerequisites:
+      - id: representable-functors
+        weight: 0.4
+        key: true
+      - id: universal-elements
+        weight: 0.4
+        key: true
+      - id: comma-categories
+        weight: 0.3
+      - id: functor-categories
+        weight: 0.2
+      - id: slice-categories
+        weight: 0.2
+    knowledge_points:
+      - id: kp1
+        name: Definition
+        key_prerequisites: [representable-functors]
+        constraints: "Give objects as pairs $(C,x)$ with $x\\in FC$ and state the morphism condition in the direction matching the variance ($Ff(x)=x'$ for a covariant $F$, $(Ff)(y)=x$ for a presheaf), then name the projection functor to $\\mathcal C$."
+        exemplars:
+          - problem: "Define the category of elements $\\int F$ of a functor $F\\colon\\mathcal C\\to\\mathbf{Set}$ and its projection to $\\mathcal C$."
+            answer: "Objects $(C,x)$, $x\\in FC$; morphisms $(C,x)\\to(C',x')$ are $f\\colon C\\to C'$ with $Ff(x)=x'$; projection forgets $x$."
+            solution_sketch: "$\\int F$ has objects the pairs $(C,x)$ with $x\\in FC$, and a morphism $(C,x)\\to(C',x')$ is $f\\colon C\\to C'$ with $(Ff)(x)=x'$. Identities and composition are inherited from $\\mathcal C$, and $\\pi\\colon\\int F\\to\\mathcal C$, $(C,x)\\mapsto C$, is a functor."
+          - problem: "Define the category of elements $\\int F$ of a presheaf $F\\colon\\mathcal C^{op}\\to\\mathbf{Set}$, noting how the morphism condition differs from the covariant case."
+            answer: "Objects $(C,x)$, $x\\in FC$; a morphism $(C,x)\\to(D,y)$ is $f\\colon C\\to D$ with $(Ff)(y)=x$."
+            solution_sketch: "For a presheaf $F$, objects of $\\int F$ are pairs $(C,x)$ with $x\\in FC$, and a morphism $(C,x)\\to(D,y)$ is a map $f\\colon C\\to D$ in $\\mathcal C$ such that $(Ff)(y)=x$ — the constraint runs the other way, since $Ff\\colon FD\\to FC$. Composition and identities come from $\\mathcal C$, and the projection $\\int F\\to\\mathcal C$, $(C,x)\\mapsto C$, is a functor."
+      - id: kp2
+        name: Representability via an initial element
+        key_prerequisites: [universal-elements]
+        constraints: "Match the initial object (covariant $F$) or terminal object (presheaf $F$) of $\\int F$ against the exists-unique clause of a universal element; a negative verdict must exhibit a specific object of $\\int F$ admitting no morphism from (or to) the candidate, using finite sets in $\\mathbf{Set}$."
+        exemplars:
+          - problem: "Prove $F$ is representable iff $\\int F$ has an initial object, and identify that object."
+            answer: "An initial object of $\\int F$ is exactly a universal element $(A,u)$, hence a representation."
+            solution_sketch: "An initial object $(A,u)$ of $\\int F$ admits, for every $(X,x)$, a unique morphism $(A,u)\\to(X,x)$, i.e. a unique $h\\colon A\\to X$ with $(Fh)(u)=x$ — precisely a universal element of $F$. By the universal-element characterization this is equivalent to $F\\cong\\mathrm{Hom}(A,-)$. So $F$ is representable iff $\\int F$ has an initial object."
+          - problem: "Prove a presheaf $F\\colon\\mathcal C^{op}\\to\\mathbf{Set}$ is representable iff its category of elements $\\int F$ has a terminal object, and identify it."
+            answer: "A terminal object of $\\int F$ is exactly a universal element $(A,u)$, hence a representation $F\\cong\\mathrm{Hom}(-,A)$."
+            solution_sketch: "In $\\int F$ (presheaf convention), a terminal object $(A,u)$ admits, for every $(C,x)$, a unique morphism $(C,x)\\to(A,u)$, i.e. a unique $f\\colon C\\to A$ with $(Ff)(u)=x$ — precisely a universal element of the presheaf $F$. Then $f\\mapsto(Ff)(u)$ gives a natural isomorphism $\\mathrm{Hom}(-,A)\\cong F$. So $F$ is representable iff $\\int F$ has a terminal object."
+    diagnostic_exemplar:
+      problem: "Let $P\\colon\\mathbf{Set}\\to\\mathbf{Set}$ be the covariant power-set functor ($P(S)=\\mathcal P(S)$, $P(f)(T)=f[T]$). Write down the objects and morphisms of its category of elements $\\int P$, and use the initial-object criterion to decide whether $P$ is representable. Justify your verdict."
+      answer: "Objects of $\\int P$ are pairs $(S,T)$ with $S$ a set and $T\\subseteq S$; a morphism $(S,T)\\to(S',T')$ is a function $f\\colon S\\to S'$ with $P(f)(T)=f[T]=T'$; the projection $\\int P\\to\\mathbf{Set}$ forgets $T$. Criterion: $P$ is representable iff $\\int P$ has an initial object (an initial object is exactly a universal element). Suppose $(S_0,T_0)$ were initial. There must be a morphism $(S_0,T_0)\\to(\\varnothing,\\varnothing)$, i.e. a function $S_0\\to\\varnothing$, which forces $S_0=\\varnothing$ and hence $T_0=\\varnothing$. But then consider the object $(\\{*\\},\\{*\\})$: the only function $\\varnothing\\to\\{*\\}$ is the empty function, and its image is $\\varnothing\\neq\\{*\\}$, so there is no morphism $(S_0,T_0)\\to(\\{*\\},\\{*\\})$ at all. Hence $\\int P$ has no initial object and $P$ is not representable."
+      solution_sketch: "Describe $\\int P$ as a set together with a distinguished subset, then apply the criterion that $P$ is representable iff $\\int P$ has an initial object. Testing a candidate against the object $(\\varnothing,\\varnothing)$ pins it down to $(\\varnothing,\\varnothing)$, and from there nothing maps to $(\\{*\\},\\{*\\})$ because the empty function has empty image."
+    anki_seeds:
+      - front: "Objects of the category of elements $\\int F$ (for $F\\colon\\mathcal C\\to\\mathbf{Set}$)?"
+        back: "pairs $(C,x)$ with $x\\in FC$."
+        type: basic
+      - front: "A morphism $(C,x)\\to(C',x')$ in $\\int F$ (for $F\\colon\\mathcal C\\to\\mathbf{Set}$) is..."
+        back: "a map $f\\colon C\\to C'$ with $Ff(x)=x'$."
+        type: basic
+      - front: "$F$ is representable iff $\\int F$ has an {{c1::initial object}} (the universal element)."
+        back: "initial object"
+        type: cloze
+
+  - id: consequences-of-yoneda
+    name: Consequences of Yoneda
+    core: false
+    difficulty: 0.8
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 240
+    prerequisites:
+      - id: yoneda-embedding
+        weight: 0.4
+        key: true
+      - id: yoneda-lemma
+        weight: 0.4
+        key: true
+      - id: representable-functors
+        weight: 0.2
+    knowledge_points:
+      - id: kp1
+        name: Uniqueness of adjoints
+        key_prerequisites: [yoneda-lemma]
+        constraints: "Chain hom-set bijections into a natural isomorphism of representables, then invoke full faithfulness of the Yoneda embedding; instances limited to free-forgetful adjunctions over $\\mathbf{Set}$, and 'canonically' must be cashed out as 'by a unique isomorphism compatible with the units, natural in the argument'."
+        exemplars:
+          - problem: "Apply the Yoneda uniqueness of left adjoints to $U\\colon\\mathbf{Mon}\\to\\mathbf{Set}$: deduce that any two constructions of 'the free monoid on $X$' are canonically isomorphic, and say what 'canonically' buys you."
+            answer: "Any two left adjoints $F,F'$ of $U$ satisfy $FX\\cong F'X$ by a unique isomorphism compatible with the units, natural in $X$."
+            solution_sketch: "Suppose $F$ and $F'$ are both left adjoint to $U$ — for instance words over $X$ and finite lists over $X$. For every monoid $M$ we get $\\mathrm{Hom}_{\\mathbf{Mon}}(FX,M)\\cong\\mathrm{Hom}_{\\mathbf{Set}}(X,UM)\\cong\\mathrm{Hom}_{\\mathbf{Mon}}(F'X,M)$, natural in $M$, so the two representable functors $\\mathrm{Hom}(FX,-)$ and $\\mathrm{Hom}(F'X,-)$ agree. The Yoneda embedding is fully faithful, so this natural isomorphism comes from a unique isomorphism $FX\\cong F'X$, and naturality in $X$ makes the family a natural isomorphism $F\\cong F'$. 'Canonically' means the comparison is the unique map matching the two insertions of generators, so no choice of basis, ordering, or normal form enters — the free monoid is well defined by its universal property alone."
+          - problem: "Dually, use Yoneda to prove that right adjoints of $F$ are unique up to natural isomorphism."
+            answer: "$\\mathrm{Hom}(-,GD)\\cong\\mathrm{Hom}(-,G'D)$ naturally; the contravariant Yoneda embedding gives $GD\\cong G'D$ naturally."
+            solution_sketch: "If $F\\dashv G$ and $F\\dashv G'$, then for all $C,D$: $\\mathrm{Hom}(C,GD)\\cong\\mathrm{Hom}(FC,D)\\cong\\mathrm{Hom}(C,G'D)$, natural in $C$. So $\\mathrm{Hom}(-,GD)\\cong\\mathrm{Hom}(-,G'D)$ as presheaves; since the contravariant Yoneda embedding is fully faithful, $GD\\cong G'D$ by a unique isomorphism, natural in $D$. Hence $G\\cong G'$."
+      - id: kp2
+        name: Cayley's theorem as a shadow of Yoneda
+        key_prerequisites: [yoneda-embedding]
+        constraints: "The one-object Yoneda embedding for a monoid or a group: give the map $m\\mapsto(x\\mapsto mx)$ explicitly, deduce injectivity by evaluating at the unit, and name the target ($\\mathrm{End}(M)$ for a monoid, $\\mathrm{Sym}(G)$ for a group)."
+        exemplars:
+          - problem: "State the Yoneda-based generalization of Cayley's theorem for a monoid $M$."
+            answer: "$m\\mapsto(x\\mapsto mx)$ is an injective monoid homomorphism $M\\to\\mathrm{End}(M)$; it is the one-object Yoneda embedding."
+            solution_sketch: "Regard $M$ as the one-object category $BM$. The Yoneda embedding $BM\\to[BM^{op},\\mathbf{Set}]$ is fully faithful; the single representable presheaf has underlying set $M$, and the embedding sends the morphism $m$ to post-composition $m_*$, i.e. left multiplication $L_m\\colon x\\mapsto mx$. Then $L_{mn}=L_m\\circ L_n$ and $L_e=\\mathrm{id}$, so $m\\mapsto L_m$ is a monoid homomorphism $M\\to\\mathrm{End}(M)$, injective by faithfulness ($L_m(e)=m$). This is Cayley's theorem for monoids: every monoid acts faithfully on itself, a special case of Yoneda."
+          - problem: "Derive the classical Cayley theorem: every group $G$ embeds into the symmetric group $\\mathrm{Sym}(G)$."
+            answer: "$g\\mapsto(x\\mapsto gx)$ is an injective homomorphism $G\\to\\mathrm{Sym}(G)$, the one-object Yoneda embedding."
+            solution_sketch: "View $G$ as the one-object groupoid $BG$; the Yoneda embedding $BG\\to[BG^{op},\\mathbf{Set}]$ is fully faithful. On the single object each $g$ acts by left multiplication $\\lambda_g\\colon x\\mapsto gx$, a bijection with inverse $\\lambda_{g^{-1}}$ (as $G$ is a groupoid), so it lands in $\\mathrm{Sym}(G)$. The map $g\\mapsto\\lambda_g$ satisfies $\\lambda_{gh}=\\lambda_g\\circ\\lambda_h$ and is injective ($\\lambda_g=\\mathrm{id}\\Rightarrow g=g\\cdot e=e$), so it is a faithful representation — Cayley's theorem as a special case of Yoneda."
+    diagnostic_exemplar:
+      problem: "Let $G\\colon\\mathcal D\\to\\mathcal C$ have two left adjoints, $F\\dashv G$ and $F'\\dashv G$. Use the Yoneda embedding to prove that $F\\cong F'$ by a natural isomorphism, saying exactly which property of the embedding you use."
+      answer: "For every object $C$ of $\\mathcal C$ chain the two adjunction bijections: $\\mathrm{Hom}_{\\mathcal D}(FC,D)\\cong\\mathrm{Hom}_{\\mathcal C}(C,GD)\\cong\\mathrm{Hom}_{\\mathcal D}(F'C,D)$, and each is natural in $D$, so the composite is a natural isomorphism of covariant representables $\\mathrm{Hom}(FC,-)\\cong\\mathrm{Hom}(F'C,-)$. The covariant Yoneda embedding $A\\mapsto\\mathrm{Hom}(A,-)$ is fully faithful (Yoneda lemma applied at a second representable), and a fully faithful functor reflects isomorphisms; therefore $FC\\cong F'C$, by the unique isomorphism $\\theta_C$ corresponding to the identity under the chained bijections. Both adjunction bijections are also natural in $C$, so for $c\\colon C\\to C'$ the square $\\theta_{C'}\\circ Fc=F'c\\circ\\theta_C$ commutes; the $\\theta_C$ are therefore the components of a natural isomorphism $F\\cong F'$. Left adjoints of $G$ are unique up to natural isomorphism."
+      solution_sketch: "Chain the two adjunction bijections to get a natural isomorphism of covariant representables $\\mathrm{Hom}(FC,-)\\cong\\mathrm{Hom}(F'C,-)$; the property used is that the Yoneda embedding is fully faithful and hence reflects isomorphisms. Naturality of the same bijections in $C$ makes the resulting isomorphisms the components of one natural isomorphism."
+    anki_seeds:
+      - front: "Yoneda corollary: adjoints are unique up to..."
+        back: "natural isomorphism (their representables agree, so Yoneda identifies them)."
+        type: basic
+      - front: "Cayley's theorem is a special case of {{c1::the Yoneda embedding}} being fully faithful."
+        back: "the Yoneda embedding"
+        type: cloze

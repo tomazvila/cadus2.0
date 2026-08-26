@@ -1,0 +1,851 @@
+unit: circles
+course: geometry
+module: "Circles"
+topics:
+  - id: circle-circumference
+    name: Circumference of a Circle
+    core: true
+    difficulty: 0.22
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 60
+    prerequisites:
+      - id: evaluating-expressions
+        weight: 0.6
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: Circumference from the radius
+        key_prerequisites: [evaluating-expressions]
+        exemplars:
+          - problem: 'A circle has radius $6$. Find its circumference (exact, in terms of $\pi$).'
+            answer: '$12\pi$'
+            solution_sketch: '$C = 2\pi r = 12\pi$.'
+          - problem: 'A circle has radius $4$. Find its circumference (exact).'
+            answer: '$8\pi$'
+        constraints: "integer radius; answers exact in terms of pi"
+      - id: kp2
+        name: Circumference from the diameter
+        key_prerequisites: [evaluating-expressions]
+        exemplars:
+          - problem: 'A circle has diameter $10$. Find its circumference (exact).'
+            answer: '$10\pi$'
+            solution_sketch: '$C = \pi d$.'
+          - problem: 'A circular track has diameter $70$ meters. Find the length of one lap (exact, in meters).'
+            answer: '$70\pi$'
+        constraints: "integer diameter; C = pi d"
+      - id: kp3
+        name: Recover the radius or diameter
+        key_prerequisites: [evaluating-expressions]
+        exemplars:
+          - problem: 'A circle has circumference $20\pi$. Find its radius.'
+            answer: "10"
+            solution_sketch: '$2\pi r = 20\pi \Rightarrow r = 10$.'
+          - problem: 'A circle has circumference $14\pi$. Find its diameter.'
+            answer: "14"
+            solution_sketch: '$\pi d = 14\pi \Rightarrow d = 14$.'
+        constraints: "circumference given as an integer multiple of pi"
+    diagnostic_exemplar:
+      problem: 'A circle has circumference $18\pi$. Find its radius.'
+      answer: "9"
+      solution_sketch: '$2\pi r = 18\pi \Rightarrow r = 9$.'
+    anki_seeds:
+      - front: "The ratio of any circle's circumference to its diameter:"
+        back: "pi"
+        type: basic
+
+  - id: circle-area
+    name: Area of a Circle
+    core: true
+    difficulty: 0.24
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 60
+    prerequisites:
+      - id: evaluating-expressions
+        weight: 0.6
+        key: true
+      - id: circle-circumference
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: Area from the radius
+        key_prerequisites: [evaluating-expressions]
+        exemplars:
+          - problem: 'A circle has radius $5$. Find its area (exact, in terms of $\pi$).'
+            answer: '$25\pi$'
+            solution_sketch: '$A = \pi r^2 = 25\pi$.'
+          - problem: 'A circle has radius $8$. Find its area (exact).'
+            answer: '$64\pi$'
+        constraints: "integer radius; answers exact in terms of pi"
+      - id: kp2
+        name: Area from the diameter
+        key_prerequisites: [evaluating-expressions, circle-circumference]
+        exemplars:
+          - problem: 'A circle has diameter $18$. Find its area (exact).'
+            answer: '$81\pi$'
+            solution_sketch: '$r = 9$, so $A = 81\pi$.'
+          - problem: 'A circle has diameter $14$. Find its area (exact).'
+            answer: '$49\pi$'
+            solution_sketch: '$r = 7$, so $A = 49\pi$.'
+        constraints: "even diameters; convert to radius first"
+      - id: kp3
+        name: Recover the radius from the area
+        key_prerequisites: [evaluating-expressions]
+        exemplars:
+          - problem: 'A circle has area $49\pi$. Find its radius.'
+            answer: "7"
+            solution_sketch: '$\pi r^2 = 49\pi \Rightarrow r = \sqrt{49} = 7$.'
+          - problem: 'A circle has area $121\pi$. Find its diameter.'
+            answer: "22"
+            solution_sketch: '$r = 11$, so $d = 22$.'
+        constraints: "perfect-square areas so the radius is whole"
+    diagnostic_exemplar:
+      problem: 'A circle has area $81\pi$. Find its diameter.'
+      answer: "18"
+      solution_sketch: '$\pi r^2 = 81\pi \Rightarrow r = 9$, so $d = 18$.'
+    anki_seeds:
+      - front: "If a circle's radius doubles, its area is multiplied by..."
+        back: "4"
+        type: basic
+
+  - id: circle-area-circumference
+    name: Circle Area and Circumference
+    core: true
+    difficulty: 0.28
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 90
+    prerequisites:
+      - id: circle-circumference
+        weight: 0.8
+        key: true
+      - id: circle-area
+        weight: 0.8
+        key: true
+      - id: square-roots
+        weight: 0.3
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: Circumference to area
+        key_prerequisites: [circle-circumference, circle-area]
+        exemplars:
+          - problem: 'A circle has circumference $12\pi$. Find its area (exact).'
+            answer: '$36\pi$'
+            solution_sketch: '$r = 6$, so $A = 36\pi$.'
+          - problem: 'A circle has circumference $8\pi$. Find its area (exact).'
+            answer: '$16\pi$'
+            solution_sketch: '$r = 4$, so $A = 16\pi$.'
+        constraints: "circumference an even multiple of pi so the radius is whole"
+      - id: kp2
+        name: Area to circumference
+        key_prerequisites: [circle-area, square-roots]
+        exemplars:
+          - problem: 'A circle has area $100\pi$. Find its circumference (exact).'
+            answer: '$20\pi$'
+            solution_sketch: '$r = 10$; $C = 20\pi$.'
+          - problem: 'A circle has area $36\pi$. Find its circumference (exact).'
+            answer: '$12\pi$'
+            solution_sketch: '$r = 6$; $C = 12\pi$.'
+        constraints: "perfect-square areas so the radius is whole"
+      - id: kp3
+        name: Semicircles and applications
+        key_prerequisites: [circle-circumference, circle-area]
+        exemplars:
+          - problem: 'Find the area of a semicircle with radius $4$ (exact).'
+            answer: '$8\pi$'
+            solution_sketch: '$\frac{1}{2}\pi \cdot 16 = 8\pi$.'
+          - problem: 'Find the perimeter of a semicircle with radius $6$ (exact; include the diameter).'
+            answer: '$6\pi + 12$'
+            solution_sketch: 'Half the circumference plus the diameter: $\frac{1}{2}(12\pi) + 12 = 6\pi + 12$.'
+        constraints: "state whether the straight edge counts toward perimeter; exact answers"
+    diagnostic_exemplar:
+      problem: 'A semicircle has area $8\pi$. Find its perimeter (exact, in terms of $\pi$; include the diameter).'
+      answer: '$4\pi + 8$'
+      solution_sketch: '$\frac{1}{2}\pi r^2 = 8\pi$ gives $r = 4$; the perimeter is the half-circumference plus the diameter: $4\pi + 8$.'
+    anki_seeds:
+      - front: "Circumference of a circle with radius r:"
+        back: "C = 2 pi r (equivalently pi d)"
+        type: basic
+      - front: "Area of a circle with radius r:"
+        back: "A = pi r^2"
+        type: basic
+
+  - id: central-angles-arcs
+    name: Central Angles and Arcs
+    core: true
+    difficulty: 0.32
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 90
+    prerequisites:
+      - id: angle-relationships
+        weight: 0.6
+        key: true
+      - id: circle-circumference
+        weight: 0.3
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: A central angle equals its arc
+        key_prerequisites: [angle-relationships]
+        exemplars:
+          - problem: 'A central angle measures $80^\circ$. Find the measure of its intercepted arc, in degrees.'
+            answer: "80"
+          - problem: 'Arc $AB$ of a circle measures $65^\circ$. Find the central angle $\angle AOB$, in degrees.'
+            answer: "65"
+        constraints: "arc measure equals central angle measure; whole degrees"
+      - id: kp2
+        name: Arc addition and major arcs
+        key_prerequisites: [angle-relationships]
+        exemplars:
+          - problem: 'A minor arc of a circle measures $140^\circ$. Find the corresponding major arc, in degrees.'
+            answer: "220"
+            solution_sketch: 'The arcs of a full circle sum to $360$: $360 - 140 = 220$.'
+          - problem: 'On a circle, arc $AB = 110^\circ$ and arc $BC = 90^\circ$ (non-overlapping). Find the measure of arc $ABC$, in degrees.'
+            answer: "200"
+            solution_sketch: 'Adjacent arcs add: $110 + 90 = 200$.'
+        constraints: "arcs sum to 360; adjacent arcs add"
+      - id: kp3
+        name: Diameters and equally spaced points
+        key_prerequisites: [angle-relationships]
+        exemplars:
+          - problem: 'A diameter divides a circle into two arcs. What is the measure of each, in degrees?'
+            answer: "180"
+          - problem: 'Five points are equally spaced around a circle. Find the measure of the arc between two adjacent points, in degrees.'
+            answer: "72"
+            solution_sketch: '$360 / 5 = 72$.'
+        constraints: "equally spaced points divide 360 evenly"
+    diagnostic_exemplar:
+      problem: 'A minor arc measures $130^\circ$. Find the corresponding major arc, in degrees.'
+      answer: "230"
+      solution_sketch: '$360 - 130 = 230$.'
+    anki_seeds:
+      - front: "The measure of an arc equals the measure of its..."
+        back: "central angle"
+        type: basic
+      - front: "The arc measures of a full circle sum to..."
+        back: "360 degrees"
+        type: basic
+
+  - id: inscribed-angles
+    name: Inscribed Angles
+    core: false                # terminal circle-theorem branch
+    difficulty: 0.36
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 120
+    prerequisites:
+      - id: central-angles-arcs
+        weight: 0.7
+        key: true
+      - id: triangle-angle-sum
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: The inscribed angle theorem
+        key_prerequisites: [central-angles-arcs]
+        exemplars:
+          - problem: 'An inscribed angle intercepts an arc of $100^\circ$. Find the inscribed angle, in degrees.'
+            answer: "50"
+            solution_sketch: 'An inscribed angle is half its intercepted arc.'
+          - problem: 'An inscribed angle measures $35^\circ$. Find the central angle that intercepts the same arc, in degrees.'
+            answer: "70"
+        constraints: "even arc measures so inscribed angles are whole degrees"
+      - id: kp2
+        name: Angles in a semicircle
+        key_prerequisites: [central-angles-arcs, triangle-angle-sum]
+        exemplars:
+          - problem: 'An angle is inscribed in a semicircle. What is its measure, in degrees?'
+            answer: "90"
+            solution_sketch: 'It intercepts a $180^\circ$ arc, so it measures $90^\circ$ (Thales).'
+          - problem: 'Triangle $ABC$ is inscribed in a circle with $\overline{AB}$ a diameter, and $m\angle A = 32^\circ$. Find $m\angle B$, in degrees.'
+            answer: "58"
+            solution_sketch: '$\angle C = 90^\circ$ (semicircle), so $\angle B = 180 - 90 - 32 = 58^\circ$.'
+        constraints: "diameter identified explicitly; whole degrees"
+      - id: kp3
+        name: Inscribed angles on the same arc
+        key_prerequisites: [central-angles-arcs]
+        exemplars:
+          - problem: 'Inscribed angles $\angle ADB$ and $\angle ACB$ intercept the same arc $AB$. If $m\angle ADB = 28^\circ$, find $m\angle ACB$, in degrees.'
+            answer: "28"
+            solution_sketch: 'Inscribed angles on the same arc are congruent.'
+          - problem: 'Inscribed angle $\angle ACB$ measures $41^\circ$. Find the measure of arc $AB$, in degrees.'
+            answer: "82"
+        constraints: "same-arc pairs equal; arc = twice the inscribed angle"
+    diagnostic_exemplar:
+      problem: 'Triangle $ABC$ is inscribed in a circle with $\overline{AB}$ a diameter, and $m\angle A = 37^\circ$. Find the measure of arc $AC$, in degrees.'
+      answer: '106'
+      solution_sketch: '$\angle C = 90^\circ$ (angle in a semicircle), so $m\angle B = 53^\circ$; arc $AC$ is intercepted by the inscribed angle $\angle B$, hence measures $2 \cdot 53 = 106^\circ$.'
+    anki_seeds:
+      - front: "An inscribed angle equals ... of its intercepted arc."
+        back: "half"
+        type: basic
+      - front: "An angle inscribed in a semicircle measures..."
+        back: "90 degrees"
+        type: basic
+
+  - id: central-inscribed-angles
+    name: Central and Inscribed Angles
+    core: false                # terminal circle-theorem branch
+    difficulty: 0.4
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 120
+    prerequisites:
+      - id: inscribed-angles
+        weight: 0.8
+        key: true
+      - id: central-angles-arcs
+        weight: 0.5
+        key: false
+      - id: triangle-angle-sum
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: Inscribed quadrilaterals
+        key_prerequisites: [inscribed-angles]
+        exemplars:
+          - problem: 'Quadrilateral $ABCD$ is inscribed in a circle with $m\angle A = 95^\circ$. Find $m\angle C$, in degrees.'
+            answer: "85"
+            solution_sketch: 'Opposite angles of a cyclic quadrilateral are supplementary.'
+          - problem: 'Cyclic quadrilateral $PQRS$ has $m\angle Q = (4x)^\circ$ and $m\angle S = (2x + 30)^\circ$. Find $m\angle Q$, in degrees.'
+            answer: "100"
+            solution_sketch: '$4x + 2x + 30 = 180 \Rightarrow x = 25$; $m\angle Q = 100^\circ$.'
+        constraints: "opposite angles supplementary; linear setups with integer solutions"
+      - id: kp2
+        name: Combining central and inscribed angles
+        key_prerequisites: [inscribed-angles, central-angles-arcs, triangle-angle-sum]
+        exemplars:
+          - problem: 'In circle $O$, central angle $\angle AOB$ measures $100^\circ$, and $C$ lies on the major arc $AB$. Find $m\angle ACB$, in degrees.'
+            answer: "50"
+            solution_sketch: 'The inscribed angle is half the $100^\circ$ arc.'
+          - problem: 'In circle $O$, central angle $\angle AOB = 100^\circ$. Find a base angle of isosceles triangle $OAB$, in degrees.'
+            answer: "40"
+            solution_sketch: '$OA = OB$ are radii: $(180 - 100)/2 = 40$.'
+        constraints: "radii form isosceles triangles; multi-step but whole degrees"
+      - id: kp3
+        name: Arcs of inscribed polygons
+        key_prerequisites: [inscribed-angles, central-angles-arcs]
+        exemplars:
+          - problem: 'A triangle inscribed in a circle cuts off arcs in the ratio $2:3:4$ (measures $2x$, $3x$, $4x$). Find the triangle''s largest angle, in degrees.'
+            answer: "80"
+            solution_sketch: '$9x = 360 \Rightarrow x = 40$; arcs $80, 120, 160$; each angle is half the opposite arc, so the largest is $80^\circ$.'
+          - problem: 'An equilateral triangle is inscribed in a circle. Find the measure of each arc it cuts off, in degrees.'
+            answer: "120"
+            solution_sketch: '$360 / 3 = 120$.'
+        constraints: "arc ratios summing to 360; each inscribed angle is half its opposite arc"
+    diagnostic_exemplar:
+      problem: 'A triangle inscribed in a circle cuts off arcs in the ratio $3:4:5$ (measures $3x$, $4x$, $5x$). Find the triangle''s largest angle, in degrees.'
+      answer: "75"
+      solution_sketch: '$12x = 360 \Rightarrow x = 30$; arcs $90, 120, 150$; each angle is half the opposite arc, so the largest is $75^\circ$.'
+    anki_seeds:
+      - front: "Opposite angles of a cyclic (inscribed) quadrilateral are..."
+        back: "supplementary"
+        type: basic
+      - front: "A central angle is ... the inscribed angle intercepting the same arc."
+        back: "twice"
+        type: basic
+
+  - id: arc-length-sector-area
+    name: Arc Length and Sector Area
+    core: false                # application of the circle formulas; terminal
+    difficulty: 0.46
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 150
+    prerequisites:
+      - id: circle-area-circumference
+        weight: 0.8
+        key: true
+      - id: ratios-proportions
+        weight: 0.5
+        key: false
+      - id: central-angles-arcs
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: Arc length as a fraction of circumference
+        key_prerequisites: [circle-area-circumference, ratios-proportions]
+        exemplars:
+          - problem: 'Find the length of an arc with radius $9$ and central angle $60^\circ$ (exact, in terms of $\pi$).'
+            answer: '$3\pi$'
+            solution_sketch: '$\frac{60}{360} \cdot 2\pi \cdot 9 = \frac{1}{6} \cdot 18\pi = 3\pi$.'
+          - problem: 'Find the length of an arc with radius $12$ and central angle $150^\circ$ (exact).'
+            answer: '$10\pi$'
+            solution_sketch: '$\frac{150}{360} \cdot 24\pi = \frac{5}{12} \cdot 24\pi = 10\pi$.'
+        constraints: "angles dividing 360 into clean fractions; exact pi answers"
+      - id: kp2
+        name: Sector area as a fraction of circle area
+        key_prerequisites: [circle-area-circumference, ratios-proportions]
+        exemplars:
+          - problem: 'Find the area of a sector with radius $6$ and central angle $120^\circ$ (exact).'
+            answer: '$12\pi$'
+            solution_sketch: '$\frac{120}{360} \cdot 36\pi = 12\pi$.'
+          - problem: 'Find the area of a sector with radius $10$ and central angle $45^\circ$ (exact).'
+            answer: '$25\pi/2$'
+            solution_sketch: '$\frac{45}{360} \cdot 100\pi = \frac{100\pi}{8} = \frac{25\pi}{2}$.'
+        constraints: "answers exact; simple fractions of pi allowed, written inline as k*pi/m"
+      - id: kp3
+        name: Recover the central angle or radius
+        key_prerequisites: [circle-area-circumference, ratios-proportions]
+        exemplars:
+          - problem: 'An arc of a circle with radius $8$ has length $4\pi$. Find the central angle, in degrees.'
+            answer: "90"
+            solution_sketch: '$C = 16\pi$; the arc is $\frac{4\pi}{16\pi} = \frac{1}{4}$ of the circle, so $90^\circ$.'
+          - problem: 'A sector of a circle with radius $9$ has area $27\pi$. Find the central angle, in degrees.'
+            answer: "120"
+            solution_sketch: 'Circle area $= 81\pi$; fraction $= \frac{27}{81} = \frac{1}{3}$, so $120^\circ$.'
+        constraints: "fractions reduce cleanly to whole-degree angles"
+    diagnostic_exemplar:
+      problem: 'A sector of a circle with radius $6$ has area $9\pi$. Find the length of its arc (exact, in terms of $\pi$).'
+      answer: '$3\pi$'
+      solution_sketch: 'The whole circle has area $36\pi$, so the sector is $\frac{9\pi}{36\pi} = \frac{1}{4}$ of it (a $90^\circ$ angle); the arc is $\frac{1}{4}$ of the circumference $12\pi$, i.e. $3\pi$.'
+    anki_seeds:
+      - front: "Arc length for central angle theta (degrees) and radius r:"
+        back: "(theta/360) x 2 pi r"
+        type: basic
+      - front: "Sector area for central angle theta (degrees) and radius r:"
+        back: "(theta/360) x pi r^2"
+        type: basic
+
+  - id: circle-segment-area
+    name: Area of a Circular Segment
+    core: false                # terminal application (sector minus triangle); both anchors are supplemental and nothing downstream consumes it
+    difficulty: 0.6            # L4 audit: was 0.52, below its own prereq triangle-area-sine (0.7)
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 180
+    prerequisites:
+      - id: arc-length-sector-area
+        weight: 0.8
+        key: true
+      - id: triangle-area-sine
+        weight: 0.6
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: Segments cut off by a right central angle
+        key_prerequisites: [arc-length-sector-area]
+        exemplars:
+          - problem: 'A chord of a circle with radius $6$ subtends a central angle of $90^\circ$. Find the area of the minor segment (exact).'
+            answer: "9*pi - 18"
+            solution_sketch: 'Sector: $\frac{90}{360} \cdot 36\pi = 9\pi$. Triangle: right isosceles with legs $6$, area $\frac{1}{2} \cdot 6 \cdot 6 = 18$. Segment $= 9\pi - 18$.'
+          - problem: 'A chord of a circle with radius $4$ subtends a central angle of $90^\circ$. Find the area of the minor segment (exact).'
+            answer: "4*pi - 8"
+            solution_sketch: 'Sector $4\pi$ minus triangle $\frac{1}{2} \cdot 4 \cdot 4 = 8$.'
+        constraints: "central angle 90 degrees so the triangle is right isosceles with legs r; exact answers written inline as k*pi - m"
+      - id: kp2
+        name: Segments with special central angles
+        key_prerequisites: [arc-length-sector-area, triangle-area-sine]
+        exemplars:
+          - problem: 'A chord of a circle with radius $6$ subtends a central angle of $60^\circ$. Find the area of the minor segment (exact).'
+            answer: "6*pi - 9*sqrt(3)"
+            solution_sketch: 'Sector: $\frac{60}{360} \cdot 36\pi = 6\pi$. Triangle: $\frac{1}{2} \cdot 6 \cdot 6 \cdot \sin 60^\circ = 9\sqrt{3}$. Segment $= 6\pi - 9\sqrt{3}$.'
+          - problem: 'A chord of a circle with radius $12$ subtends a central angle of $120^\circ$. Find the area of the minor segment (exact).'
+            answer: "48*pi - 36*sqrt(3)"
+            solution_sketch: 'Sector: $\frac{120}{360} \cdot 144\pi = 48\pi$. Triangle: $\frac{1}{2} \cdot 144 \cdot \sin 120^\circ = 36\sqrt{3}$.'
+          - problem: 'A chord of a circle with radius $10$ subtends a central angle of $30^\circ$. Find the area of the minor segment (exact).'
+            answer: "25*pi/3 - 25"
+            solution_sketch: 'Sector: $\frac{30}{360} \cdot 100\pi = \frac{25\pi}{3}$. Triangle: $\frac{1}{2} \cdot 100 \cdot \sin 30^\circ = 25$.'
+        constraints: "central angles 30, 60, 120, or 150 degrees so the isosceles triangle area (1/2)r^2 sin(theta) is exact; exact answers as k*pi/m - n or k*pi - n*sqrt(3)"
+      - id: kp3
+        name: Major segments
+        key_prerequisites: [arc-length-sector-area, triangle-area-sine]
+        exemplars:
+          - problem: 'A chord of a circle with radius $6$ subtends a central angle of $90^\circ$. Find the area of the major segment (exact).'
+            answer: "27*pi + 18"
+            solution_sketch: 'Circle area $36\pi$ minus the minor segment $9\pi - 18$ gives $27\pi + 18$.'
+          - problem: 'A chord of a circle with radius $6$ subtends a central angle of $120^\circ$. Find the area of the major segment (exact).'
+            answer: "24*pi + 9*sqrt(3)"
+            solution_sketch: 'Minor segment: $12\pi - 9\sqrt{3}$. Major segment: $36\pi - (12\pi - 9\sqrt{3}) = 24\pi + 9\sqrt{3}$.'
+        constraints: "major segment = circle area minus minor segment; same angle menu as kp2 plus 90 degrees; exact answers"
+    diagnostic_exemplar:
+      problem: 'A chord of a circle with radius $8$ subtends a central angle of $60^\circ$. Find the area of the minor segment (exact).'
+      answer: "32*pi/3 - 16*sqrt(3)"
+      solution_sketch: 'Sector: $\frac{60}{360} \cdot 64\pi = \frac{32\pi}{3}$. Triangle: $\frac{1}{2} \cdot 64 \cdot \sin 60^\circ = 16\sqrt{3}$. Subtract.'
+    anki_seeds:
+      - front: "Area of a circular segment (radius r, central angle theta in degrees):"
+        back: "(theta/360) x pi r^2 - (1/2) r^2 sin(theta)  (sector minus triangle)"
+        type: basic
+      - front: "A chord divides a circle's interior into..."
+        back: "a minor segment and a major segment"
+        type: basic
+      - front: "Major segment area ="
+        back: "circle area - minor segment area"
+        type: basic
+
+  - id: tangent-properties
+    name: Tangent Properties
+    core: false                # terminal circle-theorem branch
+    difficulty: 0.42
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 120
+    prerequisites:
+      - id: pythagorean-theorem
+        weight: 0.6
+        key: true
+      - id: central-angles-arcs
+        weight: 0.3
+        key: false
+      - id: polygon-angle-sums
+        weight: 0.3
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: Tangent perpendicular to the radius
+        key_prerequisites: [pythagorean-theorem]
+        exemplars:
+          - problem: 'A tangent from external point $P$ touches a circle of radius $5$ at $T$. If the center $O$ satisfies $OP = 13$, find the tangent length $PT$.'
+            answer: "12"
+            solution_sketch: '$\triangle OTP$ is right-angled at $T$: $PT = \sqrt{13^2 - 5^2} = 12$.'
+          - problem: 'A tangent from $P$ touches a circle of radius $8$ at $T$, and $OP = 17$. Find $PT$.'
+            answer: "15"
+            solution_sketch: '$\sqrt{17^2 - 8^2} = 15$.'
+        constraints: "Pythagorean triples; radius-tangent right angle is the key step"
+      - id: kp2
+        name: Two tangents from an external point
+        key_prerequisites: [pythagorean-theorem]
+        exemplars:
+          - problem: 'Two tangent segments are drawn to a circle from the same external point. One measures $9$. Find the other.'
+            answer: "9"
+            solution_sketch: 'Tangent segments from a common external point are congruent.'
+          - problem: 'Tangent segments from external point $P$ measure $2x + 3$ and $x + 10$. Find the tangent length.'
+            answer: "17"
+            solution_sketch: '$2x + 3 = x + 10 \Rightarrow x = 7$; length $= 17$.'
+        constraints: "congruent tangent pairs; linear setups with integer solutions"
+      - id: kp3
+        name: Angle between two tangents
+        key_prerequisites: [polygon-angle-sums]
+        exemplars:
+          - problem: 'Tangents from $P$ touch circle $O$ at $A$ and $B$, and central angle $\angle AOB = 130^\circ$. Find $m\angle APB$, in degrees.'
+            answer: "50"
+            solution_sketch: 'Quadrilateral $PAOB$ has right angles at $A$ and $B$: $360 - 90 - 90 - 130 = 50$.'
+          - problem: 'Tangents from $P$ meet a circle at $A$ and $B$ with $m\angle APB = 40^\circ$. Find central angle $\angle AOB$, in degrees.'
+            answer: "140"
+            solution_sketch: '$\angle APB + \angle AOB = 180$ in quadrilateral $PAOB$.'
+        constraints: "the tangent-tangent angle and the central angle are supplementary"
+    diagnostic_exemplar:
+      problem: 'Tangents from external point $P$ touch a circle of radius $6$ centered at $O$ at the points $A$ and $B$, with $OP = 10$. Find $PA + PB$.'
+      answer: '16'
+      solution_sketch: 'The radius is perpendicular to the tangent, so $PA = \sqrt{10^2 - 6^2} = 8$; the two tangent segments from $P$ are congruent, so $PA + PB = 16$.'
+    anki_seeds:
+      - front: "A tangent line meets the radius drawn to the point of tangency at..."
+        back: "a right angle"
+        type: basic
+      - front: "Two tangent segments drawn from the same external point are..."
+        back: "congruent"
+        type: basic
+
+  - id: chord-properties
+    name: Chord Properties
+    core: false                # terminal circle-theorem branch
+    difficulty: 0.42
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 120
+    prerequisites:
+      - id: pythagorean-theorem
+        weight: 0.6
+        key: true
+      - id: central-angles-arcs
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: Perpendicular from the center bisects a chord
+        key_prerequisites: [pythagorean-theorem]
+        exemplars:
+          - problem: 'A circle has radius $10$; a chord measures $16$. Find the distance from the center to the chord.'
+            answer: "6"
+            solution_sketch: 'The perpendicular from the center bisects the chord: $\sqrt{10^2 - 8^2} = 6$.'
+          - problem: 'A chord lies $4$ units from the center of a circle with radius $5$. Find the chord''s length.'
+            answer: "6"
+            solution_sketch: 'Half-chord $= \sqrt{25 - 16} = 3$, so the chord is $6$.'
+        constraints: "half-chord, distance, radius form a Pythagorean triple"
+      - id: kp2
+        name: Congruent chords, arcs, and distances
+        key_prerequisites: [central-angles-arcs]
+        exemplars:
+          - problem: 'Chords $\overline{AB}$ and $\overline{CD}$ of a circle are congruent, and arc $AB$ measures $75^\circ$. Find arc $CD$, in degrees.'
+            answer: "75"
+            solution_sketch: 'Congruent chords cut off congruent arcs.'
+          - problem: 'Two chords of a circle are both $9$ units long. The first lies $4$ units from the center. How far from the center is the second?'
+            answer: "4"
+            solution_sketch: 'Congruent chords are equidistant from the center.'
+        constraints: "congruent chords <-> congruent arcs <-> equal distances"
+      - id: kp3
+        name: Find the radius from a chord
+        key_prerequisites: [pythagorean-theorem]
+        exemplars:
+          - problem: 'A chord of length $24$ lies $5$ units from the center of a circle. Find the radius.'
+            answer: "13"
+            solution_sketch: '$r = \sqrt{12^2 + 5^2} = 13$.'
+          - problem: 'A chord of length $40$ lies $21$ units from the center. Find the radius.'
+            answer: "29"
+            solution_sketch: '$r = \sqrt{20^2 + 21^2} = 29$.'
+        constraints: "half-chord and distance form a Pythagorean triple with the radius"
+    diagnostic_exemplar:
+      problem: 'A chord of length $24$ sits in a circle of radius $13$. How far is the chord from the center?'
+      answer: "5"
+      solution_sketch: '$\sqrt{13^2 - 12^2} = 5$.'
+    anki_seeds:
+      - front: "The perpendicular from the center of a circle to a chord..."
+        back: "bisects the chord"
+        type: basic
+      - front: "Congruent chords of a circle are ... from the center."
+        back: "equidistant"
+        type: basic
+
+  - id: chords-tangents-arcs
+    name: Chords, Tangents, and Arcs
+    core: false                # terminal circle-theorem branch
+    difficulty: 0.5
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 150
+    prerequisites:
+      - id: tangent-properties
+        weight: 0.7
+        key: true
+      - id: chord-properties
+        weight: 0.7
+        key: true
+      - id: central-inscribed-angles
+        weight: 0.5
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: Intersecting chords - segment products
+        key_prerequisites: [chord-properties]
+        exemplars:
+          - problem: 'Two chords intersect inside a circle. One is split into segments $3$ and $8$; the other into $4$ and $x$. Find $x$.'
+            answer: "6"
+            solution_sketch: '$3 \cdot 8 = 4x \Rightarrow x = 6$.'
+          - problem: 'Two chords intersect inside a circle. One is split into segments $2$ and $12$; the other into $6$ and $x$. Find $x$.'
+            answer: "4"
+            solution_sketch: '$2 \cdot 12 = 6x \Rightarrow x = 4$.'
+        constraints: "products equal; integer answers"
+      - id: kp2
+        name: Intersecting chords - angle measures
+        key_prerequisites: [central-inscribed-angles]
+        exemplars:
+          - problem: 'Two chords intersect inside a circle, forming an angle that intercepts arcs of $70^\circ$ and $110^\circ$. Find the angle, in degrees.'
+            answer: "90"
+            solution_sketch: 'The angle is half the sum of the intercepted arcs: $\frac{70 + 110}{2} = 90$.'
+          - problem: 'Two chords intersect inside a circle, forming an angle that intercepts arcs of $55^\circ$ and $89^\circ$. Find the angle, in degrees.'
+            answer: "72"
+            solution_sketch: '$\frac{55 + 89}{2} = 72$.'
+        constraints: "angle = half the arc sum; arc sums even"
+      - id: kp3
+        name: Combined chord and tangent computations
+        key_prerequisites: [tangent-properties, chord-properties]
+        exemplars:
+          - problem: 'Chords $\overline{AB}$ and $\overline{CD}$ intersect at $P$ with $AP = 4$, $PB = 9$, and $CP = 6$. Find the length of chord $\overline{CD}$.'
+            answer: "12"
+            solution_sketch: '$4 \cdot 9 = 6 \cdot PD \Rightarrow PD = 6$; $CD = 6 + 6 = 12$.'
+          - problem: 'In a circle of radius $10$, a chord lies $6$ from the center, and a tangent is drawn from a point $P$ with $OP = 26$. Find (chord length) $+$ (tangent length).'
+            answer: "40"
+            solution_sketch: 'Chord $= 2\sqrt{100 - 36} = 16$; tangent $= \sqrt{26^2 - 10^2} = 24$; sum $= 40$.'
+        constraints: "multi-step; Pythagorean triples and clean products"
+    diagnostic_exemplar:
+      problem: 'Chords $\overline{AB}$ and $\overline{CD}$ intersect at $P$ with $AP = 3$, $PB = 8$, and $CP = 4$. Find the length of chord $\overline{CD}$.'
+      answer: "10"
+      solution_sketch: '$3 \cdot 8 = 4 \cdot PD \Rightarrow PD = 6$; $CD = 4 + 6 = 10$.'
+    anki_seeds:
+      - front: "When two chords intersect inside a circle, the products of their segments are..."
+        back: "equal"
+        type: basic
+      - front: "The angle between two chords intersecting inside a circle equals..."
+        back: "half the sum of the two intercepted arcs"
+        type: basic
+
+  - id: secant-tangent-angles
+    name: Secant and Tangent Angles
+    core: false                # terminal circle-theorem branch
+    difficulty: 0.52
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 150
+    prerequisites:
+      - id: central-inscribed-angles
+        weight: 0.7
+        key: true
+      - id: tangent-properties
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: Tangent-chord angles
+        key_prerequisites: [central-inscribed-angles]
+        exemplars:
+          - problem: 'A tangent and a chord meet at the point of tangency, and the chord cuts off an arc of $150^\circ$ on the angle''s side. Find the tangent-chord angle, in degrees.'
+            answer: "75"
+            solution_sketch: 'A tangent-chord angle is half its intercepted arc: $150/2 = 75$.'
+          - problem: 'A tangent-chord angle measures $62^\circ$. Find its intercepted arc, in degrees.'
+            answer: "124"
+        constraints: "even arcs so angles are whole degrees"
+      - id: kp2
+        name: Angles formed by two secants
+        key_prerequisites: [central-inscribed-angles]
+        exemplars:
+          - problem: 'Two secants from an external point intercept arcs of $120^\circ$ (far) and $40^\circ$ (near). Find the angle at the external point, in degrees.'
+            answer: "40"
+            solution_sketch: 'External angle $= \frac{120 - 40}{2} = 40$.'
+          - problem: 'Two secants from an external point form a $25^\circ$ angle, and the far intercepted arc measures $110^\circ$. Find the near arc, in degrees.'
+            answer: "60"
+            solution_sketch: '$\frac{110 - x}{2} = 25 \Rightarrow x = 60$.'
+        constraints: "external angle = half the difference of intercepted arcs"
+      - id: kp3
+        name: Angles formed by two tangents
+        key_prerequisites: [central-inscribed-angles]
+        exemplars:
+          - problem: 'Two tangents from an external point intercept arcs of $210^\circ$ and $150^\circ$. Find the angle between the tangents, in degrees.'
+            answer: "30"
+            solution_sketch: '$\frac{210 - 150}{2} = 30$.'
+          - problem: 'Two tangents from an external point form a $40^\circ$ angle. Find the major intercepted arc, in degrees.'
+            answer: "220"
+            solution_sketch: '$x + y = 360$ and $\frac{x - y}{2} = 40$, so $x = 220$.'
+        constraints: "the two arcs sum to 360; half-difference formula"
+    diagnostic_exemplar:
+      problem: 'Two tangents from an external point form a $50^\circ$ angle. Find the major intercepted arc, in degrees.'
+      answer: "230"
+      solution_sketch: '$x + y = 360$ and $\frac{x - y}{2} = 50$, so $x - y = 100$ and $x = 230$.'
+    anki_seeds:
+      - front: "An angle formed outside a circle by two secants/tangents equals..."
+        back: "half the difference of the intercepted arcs"
+        type: basic
+      - front: "A tangent-chord angle equals..."
+        back: "half its intercepted arc"
+        type: basic
+
+  - id: secant-tangent-segment-lengths
+    name: Secant and Tangent Segment Lengths
+    core: false                # terminal circle-theorem branch
+    difficulty: 0.52
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 150
+    prerequisites:
+      - id: chords-tangents-arcs
+        weight: 0.7
+        key: true
+      - id: quadratic-equations-factoring
+        weight: 0.3
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: Two secants from an external point
+        key_prerequisites: [chords-tangents-arcs]
+        exemplars:
+          - problem: 'From external point $P$, a secant meets a circle at $A$ then $B$ with $PA = 4$ and $PB = 12$. A second secant meets it at $C$ then $D$ with $PC = 6$. Find $PD$.'
+            answer: "8"
+            solution_sketch: '$PA \cdot PB = PC \cdot PD$: $4 \cdot 12 = 6 \cdot PD \Rightarrow PD = 8$.'
+          - problem: 'From $P$, secants give $PA = 5$, $PB = 16$, $PC = 8$. Find $PD$.'
+            answer: "10"
+            solution_sketch: '$5 \cdot 16 = 8 \cdot PD \Rightarrow PD = 10$.'
+        constraints: "use whole (external x whole) products; near point listed first; integer answers"
+      - id: kp2
+        name: Secant-tangent relationships
+        key_prerequisites: [chords-tangents-arcs]
+        exemplars:
+          - problem: 'From external point $P$, a tangent touches the circle at $T$ and a secant meets it at $A$ then $B$, with $PA = 3$ and $PB = 12$. Find $PT$.'
+            answer: "6"
+            solution_sketch: '$PT^2 = PA \cdot PB = 36 \Rightarrow PT = 6$.'
+          - problem: 'From $P$, the tangent length is $PT = 10$ and the secant''s near intersection gives $PA = 5$. Find the chord length $AB$.'
+            answer: "15"
+            solution_sketch: '$PT^2 = PA \cdot PB \Rightarrow PB = 100/5 = 20$; $AB = PB - PA = 15$.'
+        constraints: "PT^2 = PA x PB; perfect squares for tangent answers"
+      - id: kp3
+        name: Solve with a variable segment
+        key_prerequisites: [chords-tangents-arcs, quadratic-equations-factoring]
+        exemplars:
+          - problem: 'From external point $P$, a tangent has length $6$ and a secant meets the circle at $A$ then $B$ with $PA = x$ and $AB = 5$. Find $PA$.'
+            answer: "4"
+            solution_sketch: '$x(x + 5) = 36 \Rightarrow x^2 + 5x - 36 = 0 \Rightarrow (x + 9)(x - 4) = 0 \Rightarrow x = 4$.'
+          - problem: 'From external point $P$, a tangent has length $8$ and a secant meets the circle at $A$ then $B$ with $PA = x$ and $AB = 12$. Find $PA$.'
+            answer: "4"
+            solution_sketch: '$x(x + 12) = 64 \Rightarrow x^2 + 12x - 64 = 0 \Rightarrow (x + 16)(x - 4) = 0 \Rightarrow x = 4$.'
+        constraints: "quadratics that factor over the integers; reject the negative root"
+    diagnostic_exemplar:
+      problem: 'From external point $P$, a tangent has length $10$ and a secant meets the circle at $A$ then $B$ with $PA = x$ and $AB = 21$. Find $PA$.'
+      answer: "4"
+      solution_sketch: '$x(x + 21) = 100 \Rightarrow x^2 + 21x - 100 = 0 \Rightarrow (x + 25)(x - 4) = 0 \Rightarrow x = 4$.'
+    anki_seeds:
+      - front: "Tangent PT and secant PAB from the same external point P satisfy..."
+        back: "PT^2 = PA x PB (tangent squared = external x whole)"
+        type: basic
+      - front: "Two secants PAB, PCD from the same external point satisfy..."
+        back: "PA x PB = PC x PD"
+        type: basic
+
+  - id: equations-of-circles
+    name: Equations of Circles
+    core: true
+    difficulty: 0.55
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 180
+    prerequisites:
+      - id: distance-midpoint-formulas
+        weight: 0.7
+        key: true
+      - id: completing-the-square
+        weight: 0.5
+        key: true
+      - id: circle-area-circumference
+        weight: 0.3
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: Standard form from center and radius
+        key_prerequisites: [distance-midpoint-formulas]
+        exemplars:
+          - problem: 'Write the equation of the circle with center $(2, -3)$ and radius $4$.'
+            answer: '$(x - 2)^2 + (y + 3)^2 = 16$'
+            solution_sketch: 'Standard form $(x - h)^2 + (y - k)^2 = r^2$.'
+          - problem: 'Write the equation of the circle centered at the origin with radius $\sqrt{7}$.'
+            answer: '$x^2 + y^2 = 7$'
+        constraints: "integer centers; r^2 stays exact"
+      - id: kp2
+        name: Read off the center and radius; test points
+        key_prerequisites: [distance-midpoint-formulas]
+        exemplars:
+          - problem: 'State the center and radius of $(x + 1)^2 + (y - 5)^2 = 36$.'
+            answer: 'center $(-1, 5)$, radius $6$'
+            solution_sketch: '$h = -1$, $k = 5$, $r = \sqrt{36} = 6$.'
+          - problem: 'Does the point $(3, 2)$ lie on the circle $x^2 + y^2 = 13$? Answer yes or no.'
+            answer: 'yes'
+            solution_sketch: '$3^2 + 2^2 = 13$.'
+        constraints: "perfect-square r^2 when a numeric radius is requested; watch the sign flips"
+      - id: kp3
+        name: General form and completing the square
+        key_prerequisites: [distance-midpoint-formulas, completing-the-square]
+        exemplars:
+          - problem: 'Find the center and radius of $x^2 + y^2 - 6x + 4y - 12 = 0$.'
+            answer: 'center $(3, -2)$, radius $5$'
+            solution_sketch: '$(x - 3)^2 + (y + 2)^2 = 12 + 9 + 4 = 25$.'
+          - problem: 'Find the radius of $x^2 + y^2 + 2x - 8y + 8 = 0$.'
+            answer: "3"
+            solution_sketch: '$(x + 1)^2 + (y - 4)^2 = -8 + 1 + 16 = 9$, so $r = 3$.'
+          - problem: 'Write the equation of the circle with center $(1, 2)$ passing through $(4, 6)$.'
+            answer: '$(x - 1)^2 + (y - 2)^2 = 25$'
+            solution_sketch: '$r = \sqrt{3^2 + 4^2} = 5$, so $r^2 = 25$.'
+        constraints: "even linear coefficients so completing the square is clean; positive right side"
+    diagnostic_exemplar:
+      problem: 'Find the center and radius of $x^2 + y^2 - 4x + 6y - 3 = 0$.'
+      answer: 'center $(2, -3)$, radius $4$'
+      solution_sketch: '$(x - 2)^2 + (y + 3)^2 = 3 + 4 + 9 = 16$, so $r = 4$.'
+    anki_seeds:
+      - front: 'Standard form of a circle with center $(h, k)$ and radius $r$:'
+        back: '$(x - h)^2 + (y - k)^2 = r^2$'
+        type: basic
+      - front: 'To find the center/radius of $x^2 + y^2 + Dx + Ey + F = 0$:'
+        back: "complete the square in x and y"
+        type: basic

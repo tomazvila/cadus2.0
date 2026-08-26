@@ -1,0 +1,736 @@
+unit: random-variables
+course: probability-statistics
+module: "Random Variables & Distributions"
+topics:
+  - id: discrete-probability-distributions
+    name: "Discrete Probability Distributions"
+    core: true
+    difficulty: 0.4
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 120
+    prerequisites:
+      - id: basic-probability
+        weight: 0.7
+        key: true
+      - id: decimal-operations
+        weight: 0.3
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Random variables and their tables"
+        key_prerequisites: [basic-probability]
+        exemplars:
+          - problem: 'Let $X$ be the number of heads in two flips of a fair coin. Give the probability distribution of $X$ as the ordered triple $(P(X=0), P(X=1), P(X=2))$, using exact fractions.'
+            answer: '$(1/4, 1/2, 1/4)$'
+            solution_sketch: 'Outcomes $TT, TH, HT, HH$ are equally likely; count heads in each.'
+          - problem: '$X$ is the value of one roll of a fair die. Find $P(X = 3)$.'
+            answer: "1/6"
+        constraints: "random variables built from coins, dice, or draws; 3-4 values; exact fractions"
+      - id: kp2
+        name: "Validity and missing probabilities"
+        key_prerequisites: [decimal-operations]
+        exemplars:
+          - problem: '$X$ takes values $1, 2, 3$ with $P(X=1) = 0.2$ and $P(X=2) = 0.5$. Find $P(X=3)$.'
+            answer: "0.3"
+            solution_sketch: 'Probabilities sum to $1$: $1 - 0.2 - 0.5 = 0.3$.'
+          - problem: 'A proposed distribution has $P(X=0) = 1/2$, $P(X=1) = 1/3$, $P(X=2) = 1/4$. Find the total of these three probabilities (a valid distribution totals exactly $1$).'
+            answer: "13/12"
+            solution_sketch: '$\frac{1}{2} + \frac{1}{3} + \frac{1}{4} = \frac{6+4+3}{12} = \frac{13}{12} \neq 1$, so the proposed distribution is not valid.'
+        constraints: "3-4 values; one missing probability or a validity check; probabilities as fractions or one-decimal values"
+      - id: kp3
+        name: "Event probabilities from a table"
+        key_prerequisites: [basic-probability]
+        exemplars:
+          - problem: '$X$ takes values $1, 2, 3$ with probabilities $1/6, 1/3, 1/2$. Find $P(X \ge 2)$.'
+            answer: "5/6"
+            solution_sketch: '$P(X=2) + P(X=3) = \frac{1}{3} + \frac{1}{2} = \frac{5}{6}$.'
+          - problem: '$X$ is the number of heads in two flips of a fair coin. Find $P(X \le 1)$.'
+            answer: "3/4"
+            solution_sketch: '$\frac{1}{4} + \frac{1}{2} = \frac{3}{4}$, or $1 - P(X=2) = 1 - \frac{1}{4}$.'
+        constraints: "inequalities over 3-4 listed values; sums of at most 3 fractions"
+    diagnostic_exemplar:
+      problem: '$X$ takes values $1, 2, 3$ with $P(X=1) = 1/4$ and $P(X=2) = 2/5$. Give $(P(X=3), P(X \ge 2))$ as an ordered pair.'
+      answer: '$(7/20, 3/4)$'
+      solution_sketch: '$P(X=3) = 1 - 1/4 - 2/5 = 7/20$; $P(X \ge 2) = 2/5 + 7/20 = 3/4$.'
+    anki_seeds:
+      - front: 'The probabilities in a valid distribution must each be in $[0,1]$ and must sum to {{c1::1}}.'
+        back: '1'
+        type: cloze
+      - front: 'A random variable is...'
+        back: 'A numerical quantity whose value depends on the outcome of a random experiment.'
+        type: basic
+
+  - id: discrete-random-variables
+    name: "Discrete Random Variables & Expected Value"
+    core: true
+    difficulty: 0.45
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 150
+    prerequisites:
+      - id: discrete-probability-distributions
+        weight: 0.8
+        key: true
+      - id: summation-notation
+        weight: 0.5
+        key: true
+      - id: decimal-operations
+        weight: 0.3
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Expected value"
+        key_prerequisites: [discrete-probability-distributions, summation-notation]
+        exemplars:
+          - problem: '$X$ takes values $0, 1, 2$ with probabilities $1/4, 1/2, 1/4$. Find $E[X]$.'
+            answer: "1"
+            solution_sketch: '$0 \cdot \frac{1}{4} + 1 \cdot \frac{1}{2} + 2 \cdot \frac{1}{4} = 0 + \frac{1}{2} + \frac{1}{2} = 1$.'
+          - problem: 'Find the expected value of one roll of a fair six-sided die.'
+            answer: "3.5"
+            solution_sketch: '$\frac{1+2+3+4+5+6}{6} = \frac{21}{6} = 3.5$.'
+          - problem: 'A game pays €10 with probability $1/5$ and nothing otherwise. Find the expected payout, in euros.'
+            answer: "2"
+            solution_sketch: '$10 \cdot \frac{1}{5} + 0 \cdot \frac{4}{5} = 2$.'
+        constraints: "3-6 values; E[X] a clean fraction or ends in .5; payouts in whole euros"
+      - id: kp2
+        name: "Expected value as a long-run average"
+        key_prerequisites: [discrete-probability-distributions]
+        exemplars:
+          - problem: 'A game pays €5 with probability $1/4$ and €1 with probability $3/4$. Over many plays, what is the average payout per play, in euros?'
+            answer: "2"
+            solution_sketch: '$5 \cdot \frac{1}{4} + 1 \cdot \frac{3}{4} = \frac{5}{4} + \frac{3}{4} = 2$ — the long-run average is $E[X]$.'
+          - problem: 'A fair coin is flipped once; let $X = 1$ for heads and $X = 0$ for tails. Find $E[X]$ — a value $X$ itself never takes.'
+            answer: "1/2"
+            solution_sketch: '$1 \cdot \frac{1}{2} + 0 \cdot \frac{1}{2} = \frac{1}{2}$; the long-run average need not be an attainable value.'
+        constraints: "one computation phrased as a long-run average, one where E[X] is not an attainable value"
+      - id: kp3
+        name: "Linearity: E[aX + b]"
+        key_prerequisites: [summation-notation]
+        exemplars:
+          - problem: 'Given $E[X] = 4$, find $E[3X - 2]$.'
+            answer: "10"
+            solution_sketch: '$E[aX+b] = aE[X] + b = 3 \cdot 4 - 2 = 10$.'
+          - problem: 'A raffle ticket costs €2 and its prize $W$ (in euros) has $E[W] = 0.50$. Find the expected net gain from buying one ticket, in euros.'
+            answer: "-1.50"
+            solution_sketch: 'Net $= W - 2$, so $E[W - 2] = 0.5 - 2 = -1.5$ euros.'
+        constraints: "a, b small integers; money answers to the cent"
+    diagnostic_exemplar:
+      problem: '$X$ takes values $0, 1, 2$ with probabilities $1/6, 1/2, 1/3$. Find $E[3X + 2]$.'
+      answer: '11/2'
+      solution_sketch: '$E[X] = 0 + 1/2 + 2/3 = 7/6$; $E[3X + 2] = 3 \cdot 7/6 + 2 = 11/2$.'
+    anki_seeds:
+      - front: 'Expected value of a discrete random variable?'
+        back: '$E[X] = \sum x_i \, p_i$ — each value weighted by its probability.'
+        type: basic
+      - front: 'Linearity of expectation: $E[aX + b] =$ ?'
+        back: '$aE[X] + b$.'
+        type: basic
+
+  - id: expected-value-applications
+    name: "Expected Value Applications"
+    core: false                # applications leaf topic
+    difficulty: 0.5
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 180
+    prerequisites:
+      - id: discrete-random-variables
+        weight: 0.8
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: "Fair games and fair prices"
+        key_prerequisites: [discrete-random-variables]
+        exemplars:
+          - problem: 'A game costs €2 to play and pays €10 with probability $1/5$. Find the expected net gain, in euros (a value of $0$ means the game is fair).'
+            answer: "0"
+            solution_sketch: '$10 \cdot \frac{1}{5} - 2 = 2 - 2 = 0$; a fair game has expected net gain $0$.'
+          - problem: 'You roll a fair die and win that many euros. What entry price, in euros, makes the game fair?'
+            answer: "3.50"
+            solution_sketch: 'Fair price $= E[\text{payout}] = 3.5$.'
+        constraints: "payouts in whole euros; fair price is E[payout]; answers are bare euro amounts, to the cent"
+      - id: kp2
+        name: "Insurance and warranties"
+        key_prerequisites: [discrete-random-variables]
+        exemplars:
+          - problem: 'An insurer charges €50 for a policy that pays €1000 with probability $1/25$. Find the insurer''s expected profit per policy, in euros.'
+            answer: "10"
+            solution_sketch: '$50 - 1000 \cdot \frac{1}{25} = 50 - 40 = 10$.'
+          - problem: 'A €20 warranty pays for a €300 replacement with probability $1/20$. Find the seller''s expected profit per warranty, in euros.'
+            answer: "5"
+            solution_sketch: '$20 - 300 \cdot \frac{1}{20} = 20 - 15 = 5$.'
+        constraints: "claim probabilities are unit fractions; expected payouts come out to whole euros; answers are bare euro amounts"
+      - id: kp3
+        name: "Comparing options by expected value"
+        key_prerequisites: [discrete-random-variables]
+        exemplars:
+          - problem: 'Option A: a sure €4. Option B: €12 with probability $2/5$, else nothing. Find the expected value of the better option, in euros.'
+            answer: "4.80"
+            solution_sketch: 'Compare $4$ with $12 \cdot \frac{2}{5} = \frac{24}{5} = 4.8$; option B is better.'
+          - problem: 'A raffle sells $200$ tickets at €1 each for one €150 prize. Find the expected net gain per ticket, in euros.'
+            answer: "-0.25"
+            solution_sketch: '$\frac{150}{200} - 1 = \frac{3}{4} - 1 = -\frac{1}{4}$ euros.'
+        constraints: "two options or one net-gain computation; expected values differ or land on clean cents"
+    diagnostic_exemplar:
+      problem: 'A game costs €3 to play; you win €12 with probability $1/6$ and nothing otherwise. Find the expected net gain, in euros.'
+      answer: "-1"
+      solution_sketch: '$12 \cdot \frac{1}{6} - 3 = 2 - 3 = -1$ euro.'
+    anki_seeds:
+      - front: 'A game is fair when...'
+        back: 'The expected net gain is $0$.'
+        type: basic
+      - front: 'Insurer''s expected profit per policy $=$ ?'
+        back: 'Premium $-$ expected payout.'
+        type: basic
+
+  - id: law-of-large-numbers
+    name: "The Law of Large Numbers"
+    core: false                # stated theorem; nothing builds on it
+    difficulty: 0.45
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 120
+    prerequisites:
+      - id: discrete-random-variables
+        weight: 0.7
+        key: true
+      - id: experimental-theoretical-probability
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "What the law says"
+        key_prerequisites: [discrete-random-variables, experimental-theoretical-probability]
+        exemplars:
+          - problem: 'As the number of flips of a fair coin grows very large, what value does the proportion of heads approach?'
+            answer: "1/2"
+            solution_sketch: 'The law of large numbers: relative frequency approaches the true probability.'
+          - problem: 'As the number of rolls of a fair die grows very large, what value does the average of the rolls approach?'
+            answer: "3.5"
+            solution_sketch: 'The sample mean approaches $E[X] = 3.5$.'
+        constraints: "long-run limits equal the probability or the expected value; exact answers"
+      - id: kp2
+        name: "What the law does not say"
+        key_prerequisites: [discrete-random-variables]
+        exemplars:
+          - problem: 'A fair coin lands heads $5$ times in a row. Find $P(\text{heads on the next flip})$.'
+            answer: "1/2"
+            solution_sketch: 'Flips are independent; past results do not change the next flip.'
+          - problem: 'A game is won with probability $1/3$ on each independent play. After four straight losses, find the probability of winning the next play.'
+            answer: "1/3"
+            solution_sketch: 'Independent trials have no memory; a win is never "due" — that is the gambler''s fallacy.'
+        constraints: "streak setups; the correct answer ignores the streak"
+      - id: kp3
+        name: "Long-run predictions"
+        key_prerequisites: [discrete-random-variables]
+        exemplars:
+          - problem: 'A fair die is rolled $600$ times. About how many $6$s should be expected?'
+            answer: "100"
+            solution_sketch: '$600 \cdot \frac{1}{6} = 100$; the actual count will be near, not exactly, $100$.'
+          - problem: 'A casino game has an expected player loss of €0.50 per play. About how much, in euros, does the casino expect to gain over $1000$ plays?'
+            answer: "500"
+            solution_sketch: '$1000 \cdot 0.50 = 500$ euros — reliable because of the law of large numbers.'
+        constraints: "n times the probability or expected value is a whole number of units"
+    diagnostic_exemplar:
+      problem: 'A game is won with probability $\frac{1}{3}$ on each independent play. After four straight losses, about how many wins should be expected in the next $600$ plays?'
+      answer: '200'
+      solution_sketch: 'The plays are independent, so the losing streak changes nothing: the long-run rate is still $\frac{1}{3}$, and $600 \cdot \frac{1}{3} = 200$.'
+    anki_seeds:
+      - front: 'Law of large numbers (informal)?'
+        back: 'As the number of independent trials grows, the sample proportion (and sample mean) approaches the true probability (expected value).'
+        type: basic
+      - front: 'Does a streak of heads make tails more likely next flip?'
+        back: 'No — trials are independent; expecting a correction is the gambler''s fallacy.'
+        type: basic
+
+  - id: variance-random-variables
+    name: "Variance of Random Variables"
+    core: true
+    difficulty: 0.5
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 180
+    prerequisites:
+      - id: discrete-random-variables
+        weight: 0.8
+        key: true
+      - id: variance-standard-deviation
+        weight: 0.5
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Variance from the definition"
+        key_prerequisites: [discrete-random-variables, variance-standard-deviation]
+        exemplars:
+          - problem: '$X$ is $+1$ or $-1$, each with probability $1/2$. Find $\operatorname{Var}(X)$.'
+            answer: "1"
+            solution_sketch: '$\mu = 0$; $(X - \mu)^2 = 1$ always, so $\operatorname{Var}(X) = 1$.'
+          - problem: '$X$ is $0$ or $2$, each with probability $1/2$. Find $\operatorname{Var}(X)$.'
+            answer: "1"
+            solution_sketch: '$\mu = 1$; squared deviations are both $1$, so the variance is $1$.'
+        constraints: "2-3 values with an easy mean; squared deviations are small integers"
+      - id: kp2
+        name: "Shortcut: Var(X) = E[X^2] - (E[X])^2"
+        key_prerequisites: [discrete-random-variables]
+        exemplars:
+          - problem: '$X$ is $1$ or $3$, each with probability $1/2$. Compute $\operatorname{Var}(X)$ via $E[X^2] - (E[X])^2$.'
+            answer: "1"
+            solution_sketch: '$E[X] = 2$, $E[X^2] = \frac{1 + 9}{2} = 5$; $\operatorname{Var}(X) = 5 - 4 = 1$.'
+          - problem: 'Find the variance of one roll of a fair six-sided die.'
+            answer: "35/12"
+            solution_sketch: '$E[X] = \frac{7}{2}$, $E[X^2] = \frac{1+4+9+16+25+36}{6} = \frac{91}{6}$; $\operatorname{Var} = \frac{91}{6} - \frac{49}{4} = \frac{182 - 147}{12} = \frac{35}{12}$.'
+        constraints: "values <= 6; answers exact fractions; require the shortcut formula"
+      - id: kp3
+        name: "Standard deviation of a random variable"
+        key_prerequisites: [discrete-random-variables, variance-standard-deviation]
+        exemplars:
+          - problem: '$X$ is $1$ or $5$, each with probability $1/2$. Find $\operatorname{SD}(X)$.'
+            answer: "2"
+            solution_sketch: '$\mu = 3$; deviations $\pm 2$, so $\operatorname{Var}(X) = 4$ and $\operatorname{SD}(X) = 2$.'
+          - problem: '$X$ takes values $0, 1, 2$ with probabilities $1/4, 1/2, 1/4$; $\operatorname{Var}(X) = 1/2$. Find $\operatorname{SD}(X)$, exactly.'
+            answer: "sqrt(2)/2"
+            solution_sketch: '$\operatorname{SD}(X) = \sqrt{1/2} = \frac{1}{\sqrt{2}} = \frac{\sqrt{2}}{2}$.'
+        constraints: "variances are perfect squares or simple fractions; exact radicals allowed, written as sqrt(...)"
+    diagnostic_exemplar:
+      problem: '$X$ is $1$ or $4$, each with probability $1/2$. Find $\operatorname{SD}(X)$.'
+      answer: '3/2'
+      solution_sketch: '$E[X] = 5/2$, $E[X^2] = 17/2$; $\operatorname{Var}(X) = 17/2 - 25/4 = 9/4$; $\operatorname{SD}(X) = 3/2$.'
+    anki_seeds:
+      - front: 'Variance shortcut formula?'
+        back: '$\operatorname{Var}(X) = E[X^2] - (E[X])^2$.'
+        type: basic
+      - front: '$\operatorname{SD}(X) =$ ? (in terms of variance)'
+        back: '$\sqrt{\operatorname{Var}(X)}$.'
+        type: basic
+
+  - id: linear-transformations-random-variables
+    name: "Linear Transformations of Random Variables"
+    core: true
+    difficulty: 0.5
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 120
+    prerequisites:
+      - id: variance-random-variables
+        weight: 0.8
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: "Shifts: adding a constant"
+        key_prerequisites: [variance-random-variables]
+        exemplars:
+          - problem: 'Marks $X$ (out of $10$) have mean $7$ and SD $0.8$. Every mark is raised by $1$. Give the new mean and SD as the ordered pair (mean, SD).'
+            answer: '$(8, 0.8)$'
+            solution_sketch: 'A shift moves the mean by $b$ and leaves the spread unchanged.'
+          - problem: 'Given $\operatorname{Var}(X) = 7$, find $\operatorname{Var}(X + 10)$.'
+            answer: "7"
+        constraints: "b in {-10..10}; emphasize that SD and variance are unchanged by shifts"
+      - id: kp2
+        name: "Scaling: multiplying by a constant"
+        key_prerequisites: [variance-random-variables]
+        exemplars:
+          - problem: 'Given $\operatorname{SD}(X) = 2$, find $\operatorname{SD}(3X)$.'
+            answer: "6"
+            solution_sketch: 'Standard deviation scales by $|a|$: $3 \cdot 2 = 6$.'
+          - problem: 'Given $\operatorname{Var}(X) = 3$, find $\operatorname{Var}(2X)$.'
+            answer: "12"
+            solution_sketch: 'Variance scales by $a^2$: $4 \cdot 3 = 12$.'
+        constraints: "a in {-3..3}; distinguish SD scaling (|a|) from variance scaling (a^2)"
+      - id: kp3
+        name: "Combined transformations aX + b"
+        key_prerequisites: [variance-random-variables]
+        exemplars:
+          - problem: 'Given $\operatorname{Var}(X) = 3$, find $\operatorname{Var}(2X + 5)$.'
+            answer: "12"
+            solution_sketch: 'The shift does not change variance; scaling multiplies it by $a^2$: $4 \cdot 3 = 12$.'
+          - problem: 'Taxi journeys have length $X$ km with mean $6$ and SD $2$. The fare in euros is $Y = 1.5X + 4$. Give the mean and SD of $Y$ as the ordered pair (mean, SD).'
+            answer: '$(13, 3)$'
+            solution_sketch: 'Mean: $1.5 \cdot 6 + 4 = 13$; SD: $1.5 \cdot 2 = 3$ (the $+4$ does not affect spread).'
+        constraints: "a, b small constants (integers or one-decimal rates); answers whole numbers"
+    diagnostic_exemplar:
+      problem: 'Given $E[X] = 10$ and $\operatorname{SD}(X) = 4$, let $Y = 2X + 3$. Give $(E[Y], \operatorname{SD}(Y))$ as an ordered pair.'
+      answer: '$(23, 8)$'
+      solution_sketch: '$E[Y] = 2 \cdot 10 + 3 = 23$; $\operatorname{SD}(Y) = 2 \cdot 4 = 8$.'
+    anki_seeds:
+      - front: '$\operatorname{Var}(aX + b) =$ ?'
+        back: '$a^2 \operatorname{Var}(X)$ — the shift $b$ has no effect.'
+        type: basic
+      - front: 'Adding a constant to a random variable changes its mean but not its...'
+        back: 'Spread (SD and variance are unchanged).'
+        type: basic
+
+  - id: sums-of-random-variables
+    name: "Sums of Random Variables"
+    core: false                # terminal random-variable result
+    difficulty: 0.55
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 150
+    prerequisites:
+      - id: variance-random-variables
+        weight: 0.7
+        key: true
+      - id: linear-transformations-random-variables
+        weight: 0.4
+        key: false
+      - id: independent-events
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Means add"
+        key_prerequisites: [variance-random-variables]
+        exemplars:
+          - problem: 'Given $E[X] = 3$ and $E[Y] = 5$, find $E[X + Y]$.'
+            answer: "8"
+            solution_sketch: 'Expectations always add: $3 + 5 = 8$.'
+          - problem: 'Two fair dice are rolled. Find the expected value of their sum.'
+            answer: "7"
+            solution_sketch: '$E[X_1 + X_2] = 3.5 + 3.5 = 7$.'
+        constraints: "2-3 variables; means are integers or half-integers"
+      - id: kp2
+        name: "Variances add for independent variables"
+        key_prerequisites: [variance-random-variables, independent-events]
+        exemplars:
+          - problem: '$X$ and $Y$ are independent with $\operatorname{Var}(X) = 9$ and $\operatorname{Var}(Y) = 16$. Give $(\operatorname{Var}(X + Y), \operatorname{SD}(X + Y))$ as an ordered pair.'
+            answer: '$(25, 5)$'
+            solution_sketch: '$9 + 16 = 25$; $\sqrt{25} = 5$. SDs do not add — variances do.'
+          - problem: 'Two fair dice are rolled independently; each roll has variance $35/12$. Find the variance of the sum.'
+            answer: "35/6"
+            solution_sketch: '$\frac{35}{12} + \frac{35}{12} = \frac{35}{6}$.'
+        constraints: "independence stated explicitly; variances sum to a perfect square when SD is requested"
+      - id: kp3
+        name: "Differences of independent variables"
+        key_prerequisites: [variance-random-variables, independent-events]
+        exemplars:
+          - problem: '$X$ and $Y$ are independent with $E[X] = 30$, $E[Y] = 25$, $\operatorname{Var}(X) = 16$, $\operatorname{Var}(Y) = 9$. Give $(E[X - Y], \operatorname{Var}(X - Y))$ as an ordered pair.'
+            answer: '$(5, 25)$'
+            solution_sketch: 'Means subtract: $30 - 25 = 5$. Variances still add: $16 + 9 = 25$.'
+          - problem: '$X$ and $Y$ are independent with $\operatorname{Var}(X) = 9$ and $\operatorname{Var}(Y) = 4$. Find $\operatorname{Var}(X - Y)$.'
+            answer: "13"
+            solution_sketch: '$\operatorname{Var}(-Y) = \operatorname{Var}(Y)$, so variances still add: $9 + 4 = 13$ — subtracting an independent variable adds just as much spread as adding it.'
+        constraints: "two computations; variances add for both sums and differences"
+    diagnostic_exemplar:
+      problem: '$X$ and $Y$ are independent with $E[X] = 8$, $E[Y] = 5$, $\operatorname{Var}(X) = 6$, $\operatorname{Var}(Y) = 3$. Give $(E[X - Y], \operatorname{Var}(X - Y))$ as an ordered pair.'
+      answer: '$(3, 9)$'
+      solution_sketch: 'Means subtract: $8 - 5 = 3$; variances of independent variables add even for differences: $6 + 3 = 9$.'
+    anki_seeds:
+      - front: '$E[X + Y] =$ ? (any $X, Y$)'
+        back: '$E[X] + E[Y]$ — expectations always add.'
+        type: basic
+      - front: '$\operatorname{Var}(X + Y) = \operatorname{Var}(X) + \operatorname{Var}(Y)$ requires...'
+        back: '$X$ and $Y$ independent (uncorrelated).'
+        type: basic
+      - front: 'For independent $X, Y$: $\operatorname{Var}(X - Y) =$ ?'
+        back: '$\operatorname{Var}(X) + \operatorname{Var}(Y)$ — variances add even for differences.'
+        type: basic
+
+  - id: binomial-probability
+    name: "Binomial Probabilities"
+    core: true
+    difficulty: 0.5
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 180
+    prerequisites:
+      - id: combinations
+        weight: 0.7
+        key: true
+      - id: independent-events
+        weight: 0.6
+        key: true
+      - id: discrete-probability-distributions
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Recognizing the binomial setting"
+        key_prerequisites: [independent-events]
+        exemplars:
+          - problem: 'Which is binomial: (a) the number of heads in $10$ flips of a fair coin; (b) the number of rolls of a die until the first $6$?'
+            answer: '(a)'
+            solution_sketch: 'Binomial needs a fixed $n$, two outcomes, constant $p$, independent trials; (b) has no fixed number of trials.'
+          - problem: 'Five cards are drawn without replacement and the number of hearts is counted. Is this binomial: (a) yes; (b) no?'
+            answer: '(b)'
+            solution_sketch: 'Without replacement the trials are not independent and $p$ changes from draw to draw.'
+        constraints: "one valid and one invalid setting per set; the answer labels the option, the reasoning names the failed condition"
+      - id: kp2
+        name: "P(X = k) with p = 1/2"
+        key_prerequisites: [combinations, independent-events]
+        exemplars:
+          - problem: 'A fair coin is flipped $4$ times. Find $P(\text{exactly } 2 \text{ heads})$.'
+            answer: "3/8"
+            solution_sketch: '$\binom{4}{2} \left(\frac{1}{2}\right)^4 = \frac{6}{16} = \frac{3}{8}$.'
+          - problem: 'A fair coin is flipped $5$ times. Find $P(\text{exactly } 3 \text{ heads})$.'
+            answer: "5/16"
+            solution_sketch: '$\binom{5}{3} \left(\frac{1}{2}\right)^5 = \frac{10}{32} = \frac{5}{16}$.'
+        constraints: "n <= 6; p = 1/2; answers exact fractions"
+      - id: kp3
+        name: "P(X = k) with general p"
+        key_prerequisites: [combinations, independent-events]
+        exemplars:
+          - problem: 'Each trial succeeds with probability $1/3$; there are $3$ independent trials. Find $P(\text{exactly } 2 \text{ successes})$.'
+            answer: "2/9"
+            solution_sketch: '$\binom{3}{2} \left(\frac{1}{3}\right)^2 \left(\frac{2}{3}\right)^1 = 3 \cdot \frac{1}{9} \cdot \frac{2}{3} = \frac{6}{27} = \frac{2}{9}$.'
+          - problem: 'A fair die is rolled $4$ times. Find $P(\text{exactly one } 6)$.'
+            answer: "125/324"
+            solution_sketch: '$\binom{4}{1} \cdot \frac{1}{6} \cdot \left(\frac{5}{6}\right)^3 = 4 \cdot \frac{125}{1296} = \frac{500}{1296} = \frac{125}{324}$.'
+        constraints: "n <= 6; p in {1/3, 1/4, 1/6}; answers exact fractions"
+    diagnostic_exemplar:
+      problem: 'Each trial succeeds with probability $1/4$; there are $3$ independent trials. Find $P(\text{exactly } 2 \text{ successes})$.'
+      answer: "9/64"
+      solution_sketch: '$\binom{3}{2} \left(\frac{1}{4}\right)^2 \left(\frac{3}{4}\right) = 3 \cdot \frac{1}{16} \cdot \frac{3}{4} = \frac{9}{64}$.'
+    anki_seeds:
+      - front: 'Binomial probability formula?'
+        back: '$P(X = k) = \binom{n}{k} p^k (1-p)^{n-k}$.'
+        type: basic
+      - front: 'The four binomial conditions: fixed $n$, two outcomes per trial, constant $p$, and {{c1::independent}} trials.'
+        back: 'independent'
+        type: cloze
+
+  - id: binomial-distribution
+    name: "Binomial Distribution"
+    core: false                # named distribution; terminal
+    difficulty: 0.55
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 240
+    prerequisites:
+      - id: binomial-probability
+        weight: 0.8
+        key: true
+      - id: discrete-random-variables
+        weight: 0.5
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "At-least and at-most probabilities"
+        key_prerequisites: [binomial-probability]
+        exemplars:
+          - problem: 'A fair coin is flipped $3$ times. Find $P(\text{at least one head})$.'
+            answer: "7/8"
+            solution_sketch: '$1 - P(0 \text{ heads}) = 1 - \frac{1}{8} = \frac{7}{8}$.'
+          - problem: 'A fair die is rolled twice. Find $P(\text{at least one } 6)$ using the binomial with $n = 2$, $p = 1/6$.'
+            answer: "11/36"
+            solution_sketch: '$1 - \left(\frac{5}{6}\right)^2 = 1 - \frac{25}{36} = \frac{11}{36}$.'
+        constraints: "n <= 4; require the complement for at-least-one; at-most sums over <= 3 terms"
+      - id: kp2
+        name: "Mean and variance: np and np(1-p)"
+        key_prerequisites: [binomial-probability, discrete-random-variables]
+        exemplars:
+          - problem: '$X$ is binomial with $n = 20$, $p = 1/4$. Find $E[X]$ and $\operatorname{Var}(X)$.'
+            answer: '$E[X] = 5$, $\operatorname{Var}(X) = 15/4$'
+            solution_sketch: '$E[X] = np = 5$; $\operatorname{Var}(X) = np(1-p) = 20 \cdot \frac{1}{4} \cdot \frac{3}{4} = \frac{15}{4}$.'
+          - problem: '$X$ is binomial with $n = 10$, $p = 1/2$. Find $E[X]$ and $\operatorname{Var}(X)$.'
+            answer: '$E[X] = 5$, $\operatorname{Var}(X) = 5/2$'
+            solution_sketch: '$np = 5$; $np(1-p) = 10 \cdot \frac{1}{2} \cdot \frac{1}{2} = \frac{5}{2}$.'
+        constraints: "np an integer or half-integer; p a simple fraction"
+      - id: kp3
+        name: "Building the full distribution"
+        key_prerequisites: [binomial-probability]
+        exemplars:
+          - problem: 'A fair coin is flipped $4$ times; $X$ counts heads. Find $P(X \ge 3)$.'
+            answer: "5/16"
+            solution_sketch: '$P(X=3) + P(X=4) = \frac{4}{16} + \frac{1}{16} = \frac{5}{16}$.'
+          - problem: '$X$ is binomial with $n = 3$, $p = 1/3$. Give the full distribution of $X$.'
+            answer: '$P(X=0) = 8/27$, $P(X=1) = 4/9$, $P(X=2) = 2/9$, $P(X=3) = 1/27$.'
+            solution_sketch: '$\left(\frac{2}{3}\right)^3 = \frac{8}{27}$; $3 \cdot \frac{1}{3} \cdot \frac{4}{9} = \frac{12}{27}$; $3 \cdot \frac{1}{9} \cdot \frac{2}{3} = \frac{6}{27}$; $\frac{1}{27}$ — and they sum to $1$.'
+        constraints: "n <= 4; sums of two binomial terms or full 4-row tables; verify the table sums to 1"
+    diagnostic_exemplar:
+      problem: 'A fair coin is flipped $4$ times; $X$ counts heads. Find $P(X \ge 3)$ and $E[X]$.'
+      answer: '$P(X \ge 3) = 5/16$; $E[X] = 2$'
+      solution_sketch: '$\frac{4}{16} + \frac{1}{16} = \frac{5}{16}$; $E[X] = np = 4 \cdot \frac{1}{2} = 2$.'
+    anki_seeds:
+      - front: 'Mean and variance of a binomial random variable?'
+        back: '$E[X] = np$, $\operatorname{Var}(X) = np(1-p)$.'
+        type: basic
+      - front: 'For a binomial variable, $P(X \ge 1) =$ ?'
+        back: '$1 - (1-p)^n$ — the complement of zero successes.'
+        type: basic
+
+  - id: first-success-probabilities
+    name: "First-Success Probabilities"
+    core: false                # terminal geometric-distribution branch
+    difficulty: 0.5
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 120
+    prerequisites:
+      - id: independent-events
+        weight: 0.7
+        key: true
+      - id: multiplying-fractions
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Failure-then-success chains"
+        key_prerequisites: [independent-events, multiplying-fractions]
+        exemplars:
+          - problem: 'A fair coin is flipped until heads. Find $P(\text{first head on flip } 2)$.'
+            answer: "1/4"
+            solution_sketch: 'Tail then head: $\frac{1}{2} \cdot \frac{1}{2} = \frac{1}{4}$.'
+          - problem: 'A fair die is rolled until a $6$ appears. Find $P(\text{first } 6 \text{ on roll } 2)$.'
+            answer: "5/36"
+            solution_sketch: 'One failure then a success: $\frac{5}{6} \cdot \frac{1}{6} = \frac{5}{36}$.'
+        constraints: "exactly one failure before the success; p in {1/2, 1/3, 1/4, 1/6}"
+      - id: kp2
+        name: "First success on trial k"
+        key_prerequisites: [independent-events, multiplying-fractions]
+        exemplars:
+          - problem: 'A fair die is rolled until a $6$ appears. Find $P(\text{first } 6 \text{ on roll } 3)$.'
+            answer: "25/216"
+            solution_sketch: 'Two failures then a success: $\left(\frac{5}{6}\right)^2 \cdot \frac{1}{6} = \frac{25}{216}$.'
+          - problem: 'A fair coin is flipped until heads. Find $P(\text{first head on flip } 4)$.'
+            answer: "1/16"
+            solution_sketch: '$\left(\frac{1}{2}\right)^3 \cdot \frac{1}{2} = \frac{1}{16}$.'
+        constraints: "k <= 4; p in {1/2, 1/3, 1/4, 1/6}; answers exact fractions"
+      - id: kp3
+        name: "First success within k trials"
+        key_prerequisites: [independent-events]
+        exemplars:
+          - problem: 'A fair coin is flipped until heads. Find $P(\text{first head within } 2 \text{ flips})$.'
+            answer: "3/4"
+            solution_sketch: '$\frac{1}{2} + \frac{1}{4} = \frac{3}{4}$, or $1 - P(\text{both tails}) = 1 - \frac{1}{4}$.'
+          - problem: 'Trials succeed with probability $1/3$. Find the probability the first success comes within two trials.'
+            answer: "5/9"
+            solution_sketch: '$1 - \left(\frac{2}{3}\right)^2 = 1 - \frac{4}{9} = \frac{5}{9}$.'
+        constraints: "k <= 3; allow either summing cases or the all-failures complement"
+    diagnostic_exemplar:
+      problem: 'Trials succeed independently with probability $1/4$. Find the probability that the first success comes within $2$ trials.'
+      answer: '7/16'
+      solution_sketch: 'Complement of two straight failures: $1 - (3/4)^2 = 7/16$.'
+    anki_seeds:
+      - front: 'P(first success on trial $k$) is built by multiplying...'
+        back: '$k-1$ failure probabilities, then one success probability.'
+        type: basic
+      - front: 'P(first success within $k$ trials) $=$ ?'
+        back: '$1 - (1-p)^k$ — the complement of $k$ straight failures.'
+        type: basic
+
+  - id: geometric-distribution
+    name: "Geometric Distribution"
+    core: false                # terminal geometric-distribution branch
+    difficulty: 0.55
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 180
+    prerequisites:
+      - id: first-success-probabilities
+        weight: 0.8
+        key: true
+      - id: discrete-random-variables
+        weight: 0.5
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "The formula P(X = k) = (1-p)^(k-1) p"
+        key_prerequisites: [first-success-probabilities]
+        exemplars:
+          - problem: 'Trials succeed with probability $1/5$. Use the geometric formula to find $P(X = 3)$.'
+            answer: "16/125"
+            solution_sketch: '$\left(\frac{4}{5}\right)^2 \cdot \frac{1}{5} = \frac{16}{25} \cdot \frac{1}{5} = \frac{16}{125}$.'
+          - problem: '$X$ is geometric with $p = 1/2$. Find $P(X = 5)$.'
+            answer: "1/32"
+            solution_sketch: '$\left(\frac{1}{2}\right)^4 \cdot \frac{1}{2} = \frac{1}{32}$.'
+        constraints: "k <= 5; p in {1/2, 1/3, 1/4, 1/5, 1/6}; answers exact fractions"
+      - id: kp2
+        name: "Tail and cumulative probabilities"
+        key_prerequisites: [first-success-probabilities]
+        exemplars:
+          - problem: 'A fair die is rolled until a $6$ appears. Find $P(\text{no } 6 \text{ in the first two rolls})$, i.e. $P(X > 2)$.'
+            answer: "25/36"
+            solution_sketch: '$P(X > k) = (1-p)^k = \left(\frac{5}{6}\right)^2 = \frac{25}{36}$.'
+          - problem: '$X$ is geometric with $p = 1/4$. Find $P(X > 3)$.'
+            answer: "27/64"
+            solution_sketch: 'Three straight failures: $\left(\frac{3}{4}\right)^3 = \frac{27}{64}$.'
+        constraints: "k <= 3; use P(X > k) = (1-p)^k; answers exact fractions"
+      - id: kp3
+        name: "Expected number of trials: 1/p"
+        key_prerequisites: [first-success-probabilities]
+        exemplars:
+          - problem: 'A fair die is rolled until a $6$ appears. Find the expected number of rolls.'
+            answer: "6"
+            solution_sketch: '$E[X] = 1/p = 1/(1/6) = 6$.'
+          - problem: 'Trials succeed with probability $2/5$. Find the expected number of trials until the first success.'
+            answer: "5/2"
+            solution_sketch: '$E[X] = \frac{1}{2/5} = \frac{5}{2}$.'
+        constraints: "p a simple fraction; answer 1/p exactly"
+    diagnostic_exemplar:
+      problem: '$X$ is geometric with $p = \frac{1}{3}$. Give $(P(X = 2),\ P(X > 2),\ E[X])$ as an ordered triple, using exact fractions.'
+      answer: '$(2/9, 4/9, 3)$'
+      solution_sketch: '$P(X=2) = \frac{2}{3}\cdot\frac{1}{3} = \frac{2}{9}$; $P(X > 2) = \left(\frac{2}{3}\right)^2 = \frac{4}{9}$; $E[X] = 1/p = 3$.'
+    anki_seeds:
+      - front: 'Geometric probability formula (first success on trial $k$)?'
+        back: '$P(X = k) = (1-p)^{k-1} p$.'
+        type: basic
+      - front: 'Mean of a geometric random variable?'
+        back: '$E[X] = \frac{1}{p}$.'
+        type: basic
+      - front: 'Geometric tail: $P(X > k) =$ ?'
+        back: '$(1-p)^k$ — the first $k$ trials all fail.'
+        type: basic
+
+  - id: uniform-distribution
+    name: "Uniform Distributions"
+    core: false                # terminal probability-model branch
+    difficulty: 0.45
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 120
+    prerequisites:
+      - id: discrete-random-variables
+        weight: 0.6
+        key: true
+      - id: geometric-probability-models
+        weight: 0.5
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Discrete uniform distributions"
+        key_prerequisites: [discrete-random-variables]
+        exemplars:
+          - problem: '$X$ is a random integer from $1$ to $10$, all equally likely. Give $(P(X = 7), P(X \le 3))$ as an ordered pair, using exact fractions.'
+            answer: '$(1/10, 3/10)$'
+            solution_sketch: 'Each of the $10$ values has probability $1/10$; three favorable values give $3/10$.'
+          - problem: '$X$ is a random integer from $1$ to $9$, all equally likely. Find $E[X]$.'
+            answer: "5"
+            solution_sketch: 'By symmetry the mean is the middle value: $\frac{1+9}{2} = 5$.'
+        constraints: "n <= 20 equally likely integers; means are integers or half-integers"
+      - id: kp2
+        name: "Continuous uniform as length"
+        key_prerequisites: [geometric-probability-models]
+        exemplars:
+          - problem: '$X$ is uniform on $[0, 10]$. Find $P(2 \le X \le 5)$.'
+            answer: "3/10"
+            solution_sketch: 'Probability is length over total length: $\frac{5-2}{10} = \frac{3}{10}$.'
+          - problem: 'A bus arrives at a uniformly random time in a $20$-minute window, and you arrive exactly at the start of the window. Find $P(\text{you wait more than } 15 \text{ minutes})$.'
+            answer: "1/4"
+            solution_sketch: '$\frac{20 - 15}{20} = \frac{1}{4}$.'
+        constraints: "intervals with integer endpoints; answers exact fractions in lowest terms"
+      - id: kp3
+        name: "Midpoints and percent points"
+        key_prerequisites: [discrete-random-variables, geometric-probability-models]
+        exemplars:
+          - problem: '$X$ is uniform on $[4, 10]$. Find $E[X]$.'
+            answer: "7"
+            solution_sketch: 'The mean of a uniform distribution is the midpoint: $\frac{4+10}{2} = 7$.'
+          - problem: '$X$ is uniform on $[0, 8]$. Find the value $c$ with $P(X \le c) = 3/4$.'
+            answer: "6"
+            solution_sketch: '$\frac{c}{8} = \frac{3}{4}$ gives $c = 6$.'
+        constraints: "endpoints and target probabilities chosen so answers are integers"
+    diagnostic_exemplar:
+      problem: '$X$ is uniform on $[2, 10]$. Give $(P(3 \le X \le 7),\ \text{the value } c \text{ with } P(X \le c) = 3/4)$ as an ordered pair.'
+      answer: '$(1/2, 8)$'
+      solution_sketch: 'Length $4$ of $8$: $1/2$; $c = 2 + \frac{3}{4} \cdot 8 = 8$.'
+    anki_seeds:
+      - front: 'Discrete uniform on $n$ values: each value has probability...'
+        back: '$\frac{1}{n}$.'
+        type: basic
+      - front: 'For a continuous uniform distribution, $P(a \le X \le b) =$ ?'
+        back: '$\frac{b - a}{\text{total length}}$ — probability is proportional to length.'
+        type: basic
+      - front: 'Mean of a uniform distribution on $[a, b]$?'
+        back: 'The midpoint $\frac{a+b}{2}$.'
+        type: basic

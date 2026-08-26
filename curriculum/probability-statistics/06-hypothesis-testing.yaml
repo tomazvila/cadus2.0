@@ -1,0 +1,549 @@
+unit: hypothesis-testing
+course: probability-statistics
+module: "Hypothesis Testing"
+topics:
+  - id: hypothesis-tests-logic
+    name: "The Logic of Significance Tests"
+    core: true                 # the decision framework every test topic (z, t, chi-square, slope) builds on
+    difficulty: 0.55
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 180
+    prerequisites:
+      - id: sampling-distributions
+        weight: 0.8
+        key: true
+      - id: normal-distribution
+        weight: 0.4
+        key: false
+      - id: populations-samples
+        weight: 0.3
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Null and alternative hypotheses"
+        key_prerequisites: [populations-samples]
+        exemplars:
+          - problem: 'A machine should fill bags with $500$ g of flour on average, and an inspector suspects underfilling. State the null and alternative hypotheses.'
+            answer: '$H_0: \mu = 500$; $H_1: \mu < 500$ (one-sided, since only underfilling is suspected).'
+          - problem: 'A coin is suspected of being unfair, in either direction. State the hypotheses about $p = P(\text{heads})$.'
+            answer: '$H_0: p = \frac{1}{2}$; $H_1: p \ne \frac{1}{2}$ (two-sided).'
+        constraints: "concrete scenarios naming a parameter; the answer states both hypotheses and whether the test is one- or two-sided; hypotheses are about parameters (mu, p), never about x-bar"
+      - id: kp2
+        name: "The p-value"
+        key_prerequisites: [sampling-distributions, normal-distribution]
+        exemplars:
+          - problem: 'Define the p-value of a test.'
+            answer: 'The probability, computed assuming $H_0$ is true, of getting data at least as extreme as what was observed.'
+          - problem: 'In a two-sided test, the sample mean lands $2$ SEs away from $\mu_0$. Using the empirical rule, approximate the p-value.'
+            answer: '$p \approx 0.05$ — under $H_0$, a sample mean at least $2$ SEs out happens about $5\%$ of the time.'
+          - problem: 'In a two-sided test, the sample mean lands $3$ SEs from $\mu_0$. Approximate the p-value, and say what a small p-value indicates.'
+            answer: '$p \approx 0.003$; such data would be very rare if $H_0$ were true, so they are strong evidence against $H_0$.'
+        constraints: "p-values only at empirical-rule distances (1, 2, or 3 SEs, giving 0.32, 0.05, 0.003); interpretation items must include the assuming-H0 clause"
+      - id: kp3
+        name: "The decision rule"
+        key_prerequisites: [sampling-distributions]
+        exemplars:
+          - problem: 'A test gives $p = 0.012$ and the significance level is $\alpha = 0.05$. State the decision.'
+            answer: 'Reject $H_0$: $p = 0.012 \le 0.05$, so the data are too surprising to sit comfortably with $H_0$.'
+          - problem: 'A test gives $p = 0.20$ at $\alpha = 0.05$. State the decision. Does this prove $H_0$ is true?'
+            answer: 'Fail to reject $H_0$; and no — the data are merely consistent with $H_0$, which is not evidence that it is true.'
+        constraints: "explicit p and alpha; answers use reject / fail to reject, never accept H0; one item per set probes the fail-to-reject-is-not-proof distinction"
+    diagnostic_exemplar:
+      problem: 'Packets should average $\mu = 250$ g. A sample of $n = 36$ packets gives a mean $2.5$ SEs below $250$. For a two-sided test at $\alpha = 0.05$: state the hypotheses, approximate the p-value with the empirical rule, and give the decision.'
+      answer: '$H_0: \mu = 250$ vs $H_1: \mu \ne 250$; a mean at least $2.5$ SEs out is rarer than the $5\%$ chance of $2$ SEs, so $p < 0.05$ — reject $H_0$.'
+      solution_sketch: 'State $H_0$ (the no-effect claim) against a two-sided $H_1$, then judge the observed distance against the empirical rule''s benchmark: $2$ SEs out already leaves only $5\%$, so $2.5$ SEs is rarer still and $p < \alpha$.'
+    anki_seeds:
+      - front: 'p-value?'
+        back: 'The probability, assuming $H_0$, of data at least as extreme as what was observed.'
+        type: basic
+      - front: 'Decision rule at significance level $\alpha$?'
+        back: 'Reject $H_0$ when $p \le \alpha$; otherwise fail to reject.'
+        type: basic
+      - front: 'Why say "fail to reject $H_0$" instead of "accept $H_0$"?'
+        back: 'A large p-value shows the data are consistent with $H_0$, not that $H_0$ is true.'
+        type: basic
+
+  - id: type-i-ii-errors
+    name: "Type I & II Errors"
+    core: true                 # alpha and the error trade-off are machinery every downstream test topic uses
+    difficulty: 0.55
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 150
+    prerequisites:
+      - id: hypothesis-tests-logic
+        weight: 0.8
+        key: true
+      - id: conditional-probability
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Naming the two errors"
+        key_prerequisites: [hypothesis-tests-logic]
+        exemplars:
+          - problem: 'A smoke alarm sounds when there is no fire. Taking $H_0$: "there is no fire", which error type is this?'
+            answer: 'Type I — rejecting a true $H_0$ (a false alarm).'
+          - problem: 'A screening test fails to flag a disease that is present. Taking $H_0$: "no disease", which error type is this?'
+            answer: 'Type II — failing to reject a false $H_0$ (a miss).'
+        constraints: "H0 is always stated explicitly in the scenario; answers name the type and phrase it as reject-true or fail-to-reject-false"
+      - id: kp2
+        name: "The significance level is P(Type I)"
+        key_prerequisites: [hypothesis-tests-logic, conditional-probability]
+        exemplars:
+          - problem: 'A test uses $\alpha = 0.05$. If $H_0$ is in fact true, what is the probability the test wrongly rejects it?'
+            answer: '$0.05$ — the significance level is exactly the Type I error probability.'
+          - problem: 'To make Type I errors rarer, should $\alpha$ be raised or lowered — and what does that do to Type II errors?'
+            answer: 'Lower $\alpha$; the test then rejects less readily, so Type II errors (missed effects) become more likely.'
+        constraints: "alpha in {0.01, 0.05, 0.10}; trade-off items must state the effect on the other error type"
+      - id: kp3
+        name: "Power and the cost of each error"
+        key_prerequisites: [hypothesis-tests-logic]
+        exemplars:
+          - problem: 'The power of a test is $P(\text{reject } H_0 \text{ when } H_1 \text{ is true}) = 1 - \beta$. A test has $\beta = 0.2$; find its power.'
+            answer: '$0.8$.'
+          - problem: 'A trial tests $H_0$: "the new drug has no effect". Which error type approves a useless drug, and which discards a useful one?'
+            answer: 'Type I approves a useless drug; Type II discards a useful one.'
+          - problem: 'Name one change to a study that increases power without raising $\alpha$.'
+            answer: 'Increase the sample size — a larger $n$ shrinks the SE, so real effects stand out more clearly.'
+        constraints: "power computed only via 1 - beta; context items weigh the real-world cost of each error"
+    diagnostic_exemplar:
+      problem: 'A factory tests each batch with $H_0$: "the batch meets the specification", at $\alpha = 0.01$, and the test has Type II error probability $\beta = 0.15$. Describe a Type I and a Type II error in context, give the probability of a Type I error when $H_0$ is true, and give the power of the test.'
+      answer: 'Type I: rejecting a good batch — probability 0.01 (the significance level); Type II: passing a batch that violates the specification; power = 1 - β = 0.85'
+      solution_sketch: '$\alpha$ is exactly $P(\text{reject } H_0 \mid H_0 \text{ true})$, and power $= 1 - \beta$.'
+    anki_seeds:
+      - front: 'Type I vs Type II error?'
+        back: 'Type I: reject a true $H_0$. Type II: fail to reject a false $H_0$.'
+        type: basic
+      - front: '$\alpha$ is the probability of which error?'
+        back: 'Type I (computed assuming $H_0$ is true).'
+        type: basic
+      - front: 'Power of a test?'
+        back: '$1 - \beta$: the probability of rejecting $H_0$ when it is false.'
+        type: basic
+
+  - id: one-sample-z-test
+    name: "One-Sample z-Test for a Mean"
+    core: true                 # the template the t-test (and slope inference) instantiates
+    difficulty: 0.6
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 240
+    prerequisites:
+      - id: hypothesis-tests-logic
+        weight: 0.8
+        key: true
+      - id: standard-error
+        weight: 0.6
+        key: true
+      - id: type-i-ii-errors
+        weight: 0.4
+        key: false
+      - id: normal-distribution
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Computing the z statistic"
+        key_prerequisites: [standard-error, hypothesis-tests-logic]
+        exemplars:
+          - problem: 'Test $H_0: \mu = 500$ with known $\sigma = 12$. A sample of $n = 36$ gives $\bar{x} = 505$. Compute the test statistic $z$.'
+            answer: '$\operatorname{SE} = 12/\sqrt{36} = 2$; $z = \dfrac{505 - 500}{2} = 2.5$.'
+          - problem: 'Test $H_0: \mu = 80$ with $\sigma = 10$, $n = 25$, $\bar{x} = 76$. Compute $z$.'
+            answer: '$\operatorname{SE} = 10/5 = 2$; $z = \dfrac{76 - 80}{2} = -2$.'
+        constraints: "sigma known and stated; n a perfect square; z comes out to halves or whole numbers"
+      - id: kp2
+        name: "Decision by critical value"
+        key_prerequisites: [hypothesis-tests-logic, normal-distribution]
+        exemplars:
+          - problem: 'A two-sided z-test at $\alpha = 0.05$ uses $z^* = 2$ (empirical-rule value). The data give $z = 2.5$. State the decision.'
+            answer: 'Reject $H_0$: $|2.5| > 2$, so the sample mean is too far from $\mu_0$ to be ordinary chance at the $5\%$ level.'
+          - problem: 'Same test, but the data give $z = -1.5$. State the decision.'
+            answer: 'Fail to reject $H_0$: $|-1.5| < 2$ — within ordinary sampling variability.'
+          - problem: 'A one-sided test of $H_1: \mu > \mu_0$ at $\alpha = 0.05$ uses $z^* = 1.645$ (given). The data give $z = 1.8$. State the decision.'
+            answer: 'Reject $H_0$: $1.8 > 1.645$, in the direction $H_1$ predicts.'
+        constraints: "two-sided tests use z* = 2 (empirical-rule value); any one-sided or exact critical value is supplied in the problem"
+      - id: kp3
+        name: "The full test with conclusion in context"
+        key_prerequisites: [hypothesis-tests-logic, standard-error, type-i-ii-errors]
+        exemplars:
+          - problem: 'Flour bags are labelled $250$ g and the filling process has $\sigma = 6$ g. A sample of $n = 36$ bags has $\bar{x} = 247$ g. Test $H_0: \mu = 250$ against $H_1: \mu < 250$ at $\alpha = 0.05$ with $z^* = -1.645$ (given), and conclude in context.'
+            answer: '$\operatorname{SE} = 1$; $z = -3 < -1.645$: reject $H_0$ — strong evidence the bags are underfilled ($p \approx 0.003/2$, well under $\alpha$).'
+          - problem: 'A drinks machine should dispense $330$ ml with $\sigma = 4$ ml. A sample of $n = 16$ cans has $\bar{x} = 331.5$ ml. Two-sided test at $\alpha = 0.05$ with $z^* = 2$. Conclude in context.'
+            answer: '$\operatorname{SE} = 1$; $z = 1.5$, and $|1.5| < 2$: fail to reject $H_0$ — no convincing evidence the mean differs from $330$ ml.'
+        constraints: "metric contexts; conclusions restate the decision in the scenario's units; empirical-rule p-values (0.32, 0.05, 0.003) quoted when |z| lands on 1, 2, or 3"
+    diagnostic_exemplar:
+      problem: 'Cement sacks are labelled $25$ kg and the process has $\sigma = 0.4$ kg. A sample of $n = 16$ sacks has $\bar{x} = 24.7$ kg. Test $H_0: \mu = 25$ against $H_1: \mu \ne 25$ at $\alpha = 0.05$ ($z^* = 2$). Give $z$, the decision, and a conclusion in context.'
+      answer: '$\operatorname{SE} = 0.4/4 = 0.1$; $z = -3$; $|-3| > 2$, so reject $H_0$ — strong evidence the sacks are underfilled ($p \approx 0.003$).'
+      solution_sketch: 'The $\sigma$-known case: $\operatorname{SE} = \sigma/\sqrt{n}$, $z = (\bar x - \mu_0)/\operatorname{SE}$, and reject when $|z|$ exceeds the supplied $z^* = 2$. Finish in context — say what it means for the sacks, not merely that $H_0$ is rejected.'
+    anki_seeds:
+      - front: 'One-sample z statistic?'
+        back: '$z = \dfrac{\bar{x} - \mu_0}{\sigma/\sqrt{n}}$.'
+        type: basic
+      - front: 'Two-sided rejection rule at $\alpha = 0.05$ (empirical rule)?'
+        back: 'Reject when $|z| > 2$ (exact value: $1.96$).'
+        type: basic
+
+  - id: one-proportion-z-test
+    name: "One-Proportion z-Test"
+    core: false                # terminal inference destination, like chi-square-goodness-of-fit; nothing downstream builds on it
+    difficulty: 0.65
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 240
+    prerequisites:
+      - id: sample-proportions
+        weight: 0.7
+        key: true
+      - id: one-sample-z-test
+        weight: 0.7
+        key: true
+      - id: hypothesis-tests-logic
+        weight: 0.4
+        key: false
+      - id: confidence-intervals
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Hypotheses about p and the normal-approximation conditions"
+        key_prerequisites: [hypothesis-tests-logic, sample-proportions]
+        exemplars:
+          - problem: 'A coin is suspected of being unfair in either direction and will be flipped $n = 100$ times. State the hypotheses about $p = P(\text{heads})$, and check the conditions $np_0 \ge 10$ and $n(1 - p_0) \ge 10$.'
+            answer: '$H_0: p = \frac{1}{2}$ vs $H_1: p \ne \frac{1}{2}$ (two-sided); $np_0 = 50 \ge 10$ and $n(1 - p_0) = 50 \ge 10$, so the normal approximation for $\hat{p}$ is justified.'
+          - problem: 'A supplier claims at most $10\%$ of parts are defective; an inspector suspects the rate is higher and will examine $n = 200$ parts. State the hypotheses and check the conditions.'
+            answer: '$H_0: p = 0.1$ vs $H_1: p > 0.1$ (one-sided); $np_0 = 20 \ge 10$ and $n(1 - p_0) = 180 \ge 10$ — conditions met.'
+        constraints: "hypotheses are about p, never about p-hat; both np0 and n(1 - p0) computed explicitly against the >= 10 bar; one- vs two-sided justified from the scenario"
+      - id: kp2
+        name: "The z statistic for a proportion"
+        key_prerequisites: [sample-proportions, one-sample-z-test]
+        exemplars:
+          - problem: 'Test $H_0: p = \frac{1}{5}$ for a defect rate. In $n = 100$ parts, $28$ are defective. Compute the test statistic $z$.'
+            answer: '$\operatorname{SE} = \sqrt{\frac{(1/5)(4/5)}{100}} = \frac{1}{25} = 0.04$; $\hat{p} = 0.28$; $z = \dfrac{0.28 - 0.20}{0.04} = 2$.'
+          - problem: 'Test $H_0: p = \frac{1}{2}$ for a coin. In $n = 25$ flips, $16$ are heads. Compute $z$.'
+            answer: '$\operatorname{SE} = \sqrt{\frac{1/4}{25}} = \frac{1}{10}$; $\hat{p} = 0.64$; $z = \dfrac{0.64 - 0.50}{0.1} = 1.4$.'
+        constraints: "p0 a simple fraction with p0(1-p0)/n a perfect square of a fraction, so the SE is exact; the SE under H0 uses p0, never p-hat; z comes out to tenths, halves, or whole numbers"
+      - id: kp3
+        name: "The full test, and the z-interval for p"
+        key_prerequisites: [one-sample-z-test, confidence-intervals]
+        exemplars:
+          - problem: 'A coin suspected of unfairness is flipped $n = 400$ times and lands heads $230$ times. Test $H_0: p = \frac{1}{2}$ against $H_1: p \ne \frac{1}{2}$ at $\alpha = 0.05$ with $z^* = 2$. Conclude in context.'
+            answer: '$\operatorname{SE} = \sqrt{\frac{1/4}{400}} = \frac{1}{40} = 0.025$; $\hat{p} = 0.575$; $z = \dfrac{0.575 - 0.5}{0.025} = 3 > 2$: reject $H_0$ — strong evidence the coin is unfair ($p \approx 0.003$).'
+          - problem: 'In a survey of $n = 100$ customers, $80$ are satisfied. Give the $95\%$ confidence interval $\hat{p} \pm z^* \sqrt{\hat{p}(1-\hat{p})/n}$ with $z^* = 2$, and interpret it.'
+            answer: '$\operatorname{SE} = \sqrt{\frac{(4/5)(1/5)}{100}} = \frac{1}{25} = 0.04$; interval $0.8 \pm 0.08$, i.e. $(0.72, 0.88)$ — a range of plausible values for the true satisfaction proportion $p$.'
+        constraints: "two-sided tests use z* = 2 (empirical-rule value); any one-sided or exact critical value is supplied in the problem; the interval's SE uses p-hat (contrast with the test's p0 stated when both appear); conclusions restate the decision in the scenario's terms"
+    diagnostic_exemplar:
+      problem: 'A coin is suspected of being unfair. In $n = 100$ flips it lands heads $65$ times. Test $H_0: p = \frac{1}{2}$ against $H_1: p \ne \frac{1}{2}$ at $\alpha = 0.05$ ($z^* = 2$). Give the conditions check, $z$, and the decision in context.'
+      answer: '$np_0 = n(1-p_0) = 50 \ge 10$; $\operatorname{SE} = \sqrt{\frac{1/4}{100}} = \frac{1}{20} = 0.05$; $z = \dfrac{0.65 - 0.5}{0.05} = 3$; $|3| > 2$, so reject $H_0$ — strong evidence the coin is unfair ($p \approx 0.003$).'
+      solution_sketch: 'Check $np_0 \geq 10$ and $n(1-p_0) \geq 10$ first, then build the SE from the null value $p_0$ (not from $\hat p$), form $z = (\hat p - p_0)/\operatorname{SE}$, and compare with the supplied $z^* = 2$.'
+    anki_seeds:
+      - front: 'One-proportion z statistic?'
+        back: '$z = \dfrac{\hat{p} - p_0}{\sqrt{p_0(1-p_0)/n}}$ — the SE under $H_0$ uses $p_0$, not $\hat{p}$.'
+        type: basic
+      - front: 'Conditions for the one-proportion z-test?'
+        back: '$np_0 \ge 10$ and $n(1-p_0) \ge 10$, so $\hat{p}$ is approximately normal.'
+        type: basic
+      - front: '$95\%$ z-interval for a proportion?'
+        back: '$\hat{p} \pm z^* \sqrt{\dfrac{\hat{p}(1-\hat{p})}{n}}$ (the interval''s SE uses $\hat{p}$).'
+        type: basic
+
+  - id: t-distribution
+    name: "The t-Distribution"
+    core: true                 # machinery for the one-sample t-test and slope inference downstream
+    difficulty: 0.55
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 120
+    prerequisites:
+      - id: sampling-distributions
+        weight: 0.6
+        key: true
+      - id: variance-standard-deviation
+        weight: 0.5
+        key: false
+      - id: normal-distribution
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Estimated standard error and degrees of freedom"
+        key_prerequisites: [variance-standard-deviation, sampling-distributions]
+        exemplars:
+          - problem: 'When $\sigma$ is unknown, the SE of $\bar{x}$ is estimated by $s/\sqrt{n}$. A sample of $n = 9$ has $s = 12$; compute the estimated standard error.'
+            answer: "4"
+            solution_sketch: '$s/\sqrt{n} = 12/3 = 4$; using $s$ in place of $\sigma$ is what brings in the t-distribution.'
+          - problem: 'A one-sample t procedure uses a sample of $n = 15$. Give the degrees of freedom.'
+            answer: "14"
+            solution_sketch: '$\text{df} = n - 1 = 14$.'
+        constraints: "n a perfect square when the SE is computed; df = n - 1 asked directly"
+      - id: kp2
+        name: "Heavier tails, approaching the normal"
+        key_prerequisites: [normal-distribution]
+        exemplars:
+          - problem: 'Excerpt of two-sided $95\%$ critical values — df $4$: $2.776$; df $30$: $2.042$; normal: $1.960$. As the degrees of freedom grow, the t critical value approaches which number?'
+            answer: "1.960"
+            solution_sketch: 'With more data, $s$ pins down $\sigma$ and the t-distribution converges to the standard normal, whose $95\%$ value is $1.960$.'
+          - problem: 'Using the same excerpt: how much larger is the df-$4$ critical value than the normal value $1.960$?'
+            answer: "0.816"
+            solution_sketch: '$2.776 - 1.960 = 0.816$ — small samples pay a premium for estimating $\sigma$.'
+        constraints: "table excerpts always printed in the problem; comparisons quantitative (differences), not verbal"
+      - id: kp3
+        name: "Reading critical values"
+        key_prerequisites: [sampling-distributions, normal-distribution]
+        exemplars:
+          - problem: 'Table row for df $9$: $t^* = 2.262$ ($95\%$), $3.250$ ($99\%$). For a procedure with $n = 10$ at the $95\%$ level, give $t^*$.'
+            answer: "2.262"
+            solution_sketch: '$\text{df} = 10 - 1 = 9$; read the $95\%$ column.'
+          - problem: 'Same row. At the $99\%$ level, give $t^*$.'
+            answer: "3.250"
+            solution_sketch: 'Higher confidence demands a wider reach: $3.250 > 2.262$.'
+        constraints: "the needed t-table row is supplied in the problem; the learner selects df = n - 1 and the confidence level"
+    diagnostic_exemplar:
+      problem: 'A sample of $n = 9$ has $s = 6$. The table row for df $8$ gives $t^* = 2.306$ ($95\%$) and $t^* = 3.355$ ($99\%$). Give (the estimated standard error of $\bar{x}$, the $95\%$ two-sided critical value for this sample) as an ordered pair.'
+      answer: '$(2, 2.306)$'
+      solution_sketch: '$s/\sqrt{n} = 6/3 = 2$; the degrees of freedom are $n - 1 = 8$, so the $95\%$ row entry $2.306$ is the critical value.'
+    anki_seeds:
+      - front: 'When t instead of z?'
+        back: 'When $\sigma$ is unknown and estimated by the sample standard deviation $s$.'
+        type: basic
+      - front: 'Degrees of freedom for a one-sample t procedure?'
+        back: '$n - 1$.'
+        type: basic
+      - front: 'Shape of the t-distribution versus the normal?'
+        back: 'Heavier tails; it approaches the standard normal as the degrees of freedom grow.'
+        type: basic
+
+  - id: one-sample-t-test
+    name: "One-Sample t-Test"
+    core: true                 # the workhorse test when sigma is unknown; slope inference instantiates it
+    difficulty: 0.65
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 240
+    prerequisites:
+      - id: one-sample-z-test
+        weight: 0.8
+        key: true
+      - id: t-distribution
+        weight: 0.7
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: "The t statistic"
+        key_prerequisites: [one-sample-z-test, t-distribution]
+        exemplars:
+          - problem: 'Test $H_0: \mu = 100$. A sample of $n = 16$ has $\bar{x} = 104$ and $s = 8$. Compute $t$ and the degrees of freedom.'
+            answer: '$\operatorname{SE} = 8/4 = 2$; $t = \dfrac{104 - 100}{2} = 2$; df $= 15$.'
+          - problem: 'Test $H_0: \mu = 60$ with $n = 9$, $\bar{x} = 57$, $s = 6$. Compute $t$ and the df.'
+            answer: '$\operatorname{SE} = 2$; $t = -1.5$; df $= 8$.'
+        constraints: "sigma never given — only s; s and n give integer SEs; t comes out to halves or whole numbers"
+      - id: kp2
+        name: "Decision with a t critical value"
+        key_prerequisites: [t-distribution, one-sample-z-test]
+        exemplars:
+          - problem: 'A two-sided t-test at $\alpha = 0.05$ has $t = 2.0$ with df $= 15$; the table gives $t^* = 2.131$. State the decision, and contrast it with what the z-value $z^* = 2$ would have said.'
+            answer: 'Fail to reject $H_0$: $|2.0| < 2.131$. A z-test would (wrongly) have rejected — the wider t critical value is the price of estimating $\sigma$ from $16$ observations.'
+          - problem: 'Same table value $t^* = 2.131$ (df $15$), but the data give $t = -2.5$. Decision?'
+            answer: 'Reject $H_0$: $|-2.5| > 2.131$.'
+        constraints: "t* always supplied together with its df; include one case whose decision differs from the naive z* = 2 rule"
+      - id: kp3
+        name: "The full t-test in context"
+        key_prerequisites: [one-sample-z-test, t-distribution]
+        exemplars:
+          - problem: 'Espresso shots should average $30$ ml. A sample of $n = 16$ shots has $\bar{x} = 28.8$ ml and $s = 3.2$ ml. Test $H_0: \mu = 30$ against $H_1: \mu \ne 30$ at $\alpha = 0.05$ with $t^* = 2.131$ (df $15$). Conclude in context.'
+            answer: '$\operatorname{SE} = 0.8$; $t = -1.5$; $|-1.5| < 2.131$: fail to reject $H_0$ — no convincing evidence the dose is off.'
+          - problem: 'A battery brand claims a mean life of $20$ hours. A sample of $n = 9$ has $\bar{x} = 18.5$ h and $s = 1.8$ h. Test $H_0: \mu = 20$ against $H_1: \mu < 20$ at $\alpha = 0.05$ with one-sided $t^* = -1.860$ (df $8$, given). Conclude in context.'
+            answer: '$\operatorname{SE} = 0.6$; $t = -2.5 < -1.860$: reject $H_0$ — evidence the batteries fall short of the claimed $20$ hours.'
+        constraints: "metric contexts; conclusions in the scenario's units; both one- and two-sided cases appear across a set"
+    diagnostic_exemplar:
+      problem: 'A bakery''s loaves should weigh $800$ g on average. A sample of $n = 16$ loaves has $\bar{x} = 806$ g and $s = 8$ g. Test $H_0: \mu = 800$ against $H_1: \mu \ne 800$ at $\alpha = 0.05$ ($t^* = 2.131$, df $15$). Give $t$, the decision, and a conclusion in context.'
+      answer: '$\operatorname{SE} = 2$; $t = 3$; $|3| > 2.131$, so reject $H_0$ — evidence the loaves are heavier than $800$ g on average.'
+      solution_sketch: 'Same shape as the z-test with $s$ in place of an unknown $\sigma$: $\operatorname{SE} = s/\sqrt{n}$ and $t = (\bar x - \mu_0)/\operatorname{SE}$, compared with the supplied $t^* = 2.131$ on $n - 1 = 15$ df.'
+    anki_seeds:
+      - front: 'One-sample t statistic?'
+        back: '$t = \dfrac{\bar{x} - \mu_0}{s/\sqrt{n}}$, with $n - 1$ degrees of freedom.'
+        type: basic
+      - front: 'What changes from the z-test to the t-test?'
+        back: '$s$ replaces $\sigma$, and critical values come from the t-distribution with $n - 1$ df.'
+        type: basic
+
+  - id: two-sample-t-test
+    name: "Two-Sample t-Test"
+    core: false                # terminal inference destination, like inference-for-slope; nothing downstream builds on it
+    difficulty: 0.7
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 240
+    prerequisites:
+      - id: one-sample-t-test
+        weight: 0.8
+        key: true
+      - id: sums-of-random-variables
+        weight: 0.6
+        key: true
+      - id: experimental-design-basics
+        weight: 0.0            # conceptual only: treatment/control designs are what the test analyzes
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Hypotheses and the standard error of a difference"
+        key_prerequisites: [sums-of-random-variables, one-sample-t-test]
+        exemplars:
+          - problem: 'An experiment compares a treatment group (population mean $\mu_1$) with a control group (population mean $\mu_2$), and the researchers suspect a difference in either direction. State the hypotheses in terms of $\mu_1 - \mu_2$.'
+            answer: '$H_0: \mu_1 - \mu_2 = 0$ (equivalently $\mu_1 = \mu_2$); $H_1: \mu_1 - \mu_2 \ne 0$ (two-sided).'
+          - problem: 'Independent samples have $s_1 = 12$, $n_1 = 16$ and $s_2 = 16$, $n_2 = 16$. Compute $\operatorname{SE} = \sqrt{s_1^2/n_1 + s_2^2/n_2}$, and say why the variances add even though the means are subtracted.'
+            answer: '$\operatorname{SE} = \sqrt{\frac{144}{16} + \frac{256}{16}} = \sqrt{9 + 16} = 5$; for independent samples $\operatorname{Var}(\bar{X}_1 - \bar{X}_2) = \operatorname{Var}(\bar{X}_1) + \operatorname{Var}(\bar{X}_2)$ — subtracting an independent quantity adds just as much spread as adding it.'
+        constraints: "hypotheses about mu1 - mu2 (or mu1 = mu2), never about x-bars; s_i^2/n_i come out to integers or exact decimals whose sum is a perfect square, so the SE is exact"
+      - id: kp2
+        name: "The two-sample t statistic and conservative df"
+        key_prerequisites: [one-sample-t-test, sums-of-random-variables]
+        exemplars:
+          - problem: 'Independent samples give $\bar{x}_1 = 84$, $s_1 = 4$, $n_1 = 8$ and $\bar{x}_2 = 78$, $s_2 = 4$, $n_2 = 8$. Compute $t = \dfrac{\bar{x}_1 - \bar{x}_2}{\sqrt{s_1^2/n_1 + s_2^2/n_2}}$ and the conservative degrees of freedom $\min(n_1, n_2) - 1$.'
+            answer: '$\operatorname{SE} = \sqrt{2 + 2} = 2$; $t = \dfrac{84 - 78}{2} = 3$; conservative df $= 8 - 1 = 7$.'
+          - problem: 'Independent samples give $\bar{x}_1 = 498$, $s_1 = 15$, $n_1 = 25$ and $\bar{x}_2 = 508$, $s_2 = 16$, $n_2 = 16$. Compute $t$ and the conservative df.'
+            answer: '$\operatorname{SE} = \sqrt{9 + 16} = 5$; $t = \dfrac{498 - 508}{5} = -2$; conservative df $= \min(25, 16) - 1 = 15$.'
+        constraints: "SE comes out whole or half; t to halves or whole numbers; the conservative df = min(n1, n2) - 1 convention is stated in the problem and asked explicitly"
+      - id: kp3
+        name: "Analyzing a treatment/control experiment end-to-end"
+        key_prerequisites: [one-sample-t-test, experimental-design-basics]
+        exemplars:
+          - problem: '$32$ tomato plants are randomly split: $16$ get a new fertiliser, $16$ get none. Yields: treated $\bar{x}_1 = 960$ g, $s_1 = 120$ g; control $\bar{x}_2 = 810$ g, $s_2 = 160$ g. Test $H_0: \mu_1 = \mu_2$ against $H_1: \mu_1 \ne \mu_2$ at $\alpha = 0.05$ with $t^* = 2.131$ (conservative df $15$, given). Conclude in context — may the conclusion be causal?'
+            answer: '$\operatorname{SE} = \sqrt{900 + 1600} = 50$; $t = \dfrac{150}{50} = 3 > 2.131$: reject $H_0$ — evidence the fertiliser raises yield, and because plants were randomly assigned, the difference can be attributed to the fertiliser itself.'
+          - problem: 'Two filling machines are compared: machine A gives $n_1 = 25$ bottles with $\bar{x}_1 = 502$ ml, $s_1 = 15$ ml; machine B gives $n_2 = 16$ bottles with $\bar{x}_2 = 498$ ml, $s_2 = 16$ ml. Two-sided test at $\alpha = 0.05$ with $t^* = 2.131$ (conservative df $15$). Conclude in context.'
+            answer: '$\operatorname{SE} = \sqrt{9 + 16} = 5$; $t = \dfrac{502 - 498}{5} = 0.8$, and $|0.8| < 2.131$: fail to reject $H_0$ — no convincing evidence the machines fill differently.'
+        constraints: "metric contexts; t* always supplied with its (conservative) df; conclusions in the scenario's units; causal language only when the scenario states random assignment, never for observational comparisons"
+    diagnostic_exemplar:
+      problem: '$32$ students are randomly split: $16$ revise with a study app, $16$ without, and all sit the same exam marked out of $10$. App group: $\bar{x}_1 = 8.0$, $s_1 = 1.2$; control: $\bar{x}_2 = 6.5$, $s_2 = 1.6$. Test $H_0: \mu_1 = \mu_2$ against $H_1: \mu_1 \ne \mu_2$ at $\alpha = 0.05$ with $t^* = 2.131$ (conservative df $15$). Give $t$, the decision, and a conclusion in context.'
+      answer: '$\operatorname{SE} = \sqrt{0.09 + 0.16} = 0.5$; $t = \dfrac{8.0 - 6.5}{0.5} = 3$; $|3| > 2.131$, so reject $H_0$ — evidence the app improves marks, and random assignment lets the difference be attributed to the app.'
+      solution_sketch: 'Two independent samples, so the standard errors combine in quadrature: $\operatorname{SE} = \sqrt{s_1^2/n_1 + s_2^2/n_2}$ and $t = (\bar x_1 - \bar x_2)/\operatorname{SE}$ against the supplied $t^* = 2.131$. Random assignment is what upgrades the conclusion from association to cause.'
+    anki_seeds:
+      - front: 'Two-sample t statistic?'
+        back: '$t = \dfrac{\bar{x}_1 - \bar{x}_2}{\sqrt{s_1^2/n_1 + s_2^2/n_2}}$.'
+        type: basic
+      - front: 'Why do the variances add in the two-sample SE when the means are subtracted?'
+        back: 'For independent samples, $\operatorname{Var}(\bar{X}_1 - \bar{X}_2) = \operatorname{Var}(\bar{X}_1) + \operatorname{Var}(\bar{X}_2)$.'
+        type: basic
+      - front: 'Conservative degrees of freedom for a two-sample t-test?'
+        back: '$\min(n_1, n_2) - 1$.'
+        type: basic
+
+  - id: chi-square-goodness-of-fit
+    name: "Chi-Square Goodness-of-Fit"
+    core: false                # terminal test destination; the independence variant is deliberately omitted — one variant teaches the chi-square reasoning (requirements section 7)
+    difficulty: 0.65
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 240
+    prerequisites:
+      - id: hypothesis-tests-logic
+        weight: 0.7
+        key: true
+      - id: discrete-probability-distributions
+        weight: 0.5
+        key: false
+      - id: summation-notation
+        weight: 0.3
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Expected counts under H0"
+        key_prerequisites: [discrete-probability-distributions]
+        exemplars:
+          - problem: 'A die is rolled $60$ times. Under $H_0$: "the die is fair", what is the expected count for each face?'
+            answer: '$60 \cdot \frac{1}{6} = 10$ per face.'
+          - problem: 'A shop claims its sales split $50\%$ red, $30\%$ blue, $20\%$ green. In $200$ sales, give the three expected counts.'
+            answer: '$100$, $60$, and $40$ — each is $n \cdot p_i$.'
+        constraints: "n times p_i is always a whole number; at most 6 categories"
+      - id: kp2
+        name: "The chi-square statistic"
+        key_prerequisites: [summation-notation, discrete-probability-distributions]
+        exemplars:
+          - problem: 'Observed counts $(12, 8, 10)$ against expected counts $(10, 10, 10)$. Compute $\chi^2 = \sum \dfrac{(O - E)^2}{E}$.'
+            answer: '$\chi^2 = \dfrac{4 + 4 + 0}{10} = 0.8$.'
+          - problem: 'Observed $(25, 15)$ against expected $(20, 20)$. Compute $\chi^2$.'
+            answer: '$\chi^2 = \dfrac{25}{20} + \dfrac{25}{20} = 2.5$.'
+        constraints: "(O - E)^2 values divide cleanly by E; observed and expected totals match; chi-square to at most 2 decimals"
+      - id: kp3
+        name: "Decision and degrees of freedom"
+        key_prerequisites: [hypothesis-tests-logic]
+        exemplars:
+          - problem: 'A goodness-of-fit test over $k = 4$ categories gives $\chi^2 = 7.9$; the critical value at $\alpha = 0.05$ with df $= 3$ is $7.815$ (given). State the df rule and the decision.'
+            answer: 'df $= k - 1 = 3$; $7.9 > 7.815$: reject $H_0$ — the claimed distribution does not fit the data.'
+          - problem: '$\chi^2 = 2.5$ over $k = 2$ categories; critical value $3.841$ (df $1$, $\alpha = 0.05$). Decision — and why is the test right-tailed only?'
+            answer: 'Fail to reject: $2.5 < 3.841$. Only large $\chi^2$ signals disagreement between observed and expected; small values mean good fit, which is no evidence against $H_0$.'
+        constraints: "critical values always supplied with their df; df = k - 1; rejection is right-tail only"
+    diagnostic_exemplar:
+      problem: 'A four-sided die is rolled $100$ times: observed counts $(30, 30, 22, 18)$. Test $H_0$: "the die is fair" at $\alpha = 0.05$; the critical value with df $= 3$ is $7.815$ (given). Compute $\chi^2$ and decide.'
+      answer: 'Expected $25$ each; $\chi^2 = \dfrac{25 + 25 + 9 + 49}{25} = 4.32 < 7.815$: fail to reject $H_0$ — the counts are consistent with a fair die.'
+      solution_sketch: 'A fair die makes every expected count $100/4 = 25$; sum $\frac{(O - E)^2}{E}$ over the four cells and compare with the supplied critical value $7.815$ — falling below it means the discrepancies are within chance variation.'
+    anki_seeds:
+      - front: 'Chi-square statistic?'
+        back: '$\chi^2 = \sum \dfrac{(O - E)^2}{E}$ over all categories.'
+        type: basic
+      - front: 'Degrees of freedom for goodness-of-fit with $k$ categories?'
+        back: '$k - 1$.'
+        type: basic
+      - front: 'Chi-square rejection region?'
+        back: 'Right tail only — large values signal misfit between observed and expected counts.'
+        type: basic
+
+  - id: inference-for-slope
+    name: "Inference for the Regression Slope"
+    core: false                # caps the supplemental regression branch; nothing downstream — kept supplemental rather than flipping least-squares-line back to core (R-2)
+    difficulty: 0.7
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 240
+    prerequisites:
+      - id: least-squares-line
+        weight: 0.7
+        key: true
+      - id: one-sample-t-test
+        weight: 0.7
+        key: true
+      - id: correlation-regression
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "The slope varies from sample to sample"
+        key_prerequisites: [least-squares-line, one-sample-t-test]
+        exemplars:
+          - problem: 'State the null and alternative hypotheses for "there is no linear relationship between $x$ and $y$" in terms of the population slope $\beta$.'
+            answer: '$H_0: \beta = 0$; $H_1: \beta \ne 0$ — under $H_0$ the fitted slope $b$ differs from $0$ only by sampling variation.'
+          - problem: 'A regression of crop yield on fertiliser amount gives $b = 1.4$ with $\operatorname{SE}_b = 0.7$. Why can we not conclude $\beta > 0$ from $b > 0$ alone?'
+            answer: 'Because $b$ varies from sample to sample; $1.4$ is only $2$ SEs from $0$, a distance chance alone could produce — hence a formal test is needed.'
+        constraints: "hypotheses are about beta, never about b; SE_b is always supplied, never computed from raw data"
+      - id: kp2
+        name: "The t statistic for the slope"
+        key_prerequisites: [one-sample-t-test, least-squares-line]
+        exemplars:
+          - problem: 'A regression on $n = 22$ points gives $b = 1.5$ with $\operatorname{SE}_b = 0.5$. Compute $t$ and the degrees of freedom.'
+            answer: '$t = \dfrac{1.5}{0.5} = 3$; df $= n - 2 = 20$.'
+          - problem: 'A regression on $n = 12$ points gives $b = -0.8$ with $\operatorname{SE}_b = 0.4$. Compute $t$ and the df.'
+            answer: '$t = -2$; df $= 10$.'
+        constraints: "b / SE_b comes out to halves or whole numbers; df = n - 2 asked explicitly"
+      - id: kp3
+        name: "Test and confidence interval for the slope"
+        key_prerequisites: [one-sample-t-test, least-squares-line]
+        exemplars:
+          - problem: 'Hours studied ($x$) against mark out of $10$ ($y$), $n = 22$: $b = 1.5$, $\operatorname{SE}_b = 0.5$, $t^* = 2.086$ (df $20$, $\alpha = 0.05$, two-sided). Test $H_0: \beta = 0$ and conclude in context.'
+            answer: '$t = 3 > 2.086$: reject $H_0$ — evidence that each extra hour of study is associated with a higher mark.'
+          - problem: 'Same regression. Give the $95\%$ confidence interval $b \pm t^* \operatorname{SE}_b$ and relate it to the test.'
+            answer: '$1.5 \pm 2.086 \cdot 0.5 = 1.5 \pm 1.043$, i.e. $(0.457, 2.543)$; $0$ is not in the interval, agreeing with the rejection of $H_0$.'
+        constraints: "t* supplied with df = n - 2; CI endpoints to 3 decimals; when both test and CI appear, their agreement is stated"
+    diagnostic_exemplar:
+      problem: 'A regression of daily heating cost in EUR ($y$) on outdoor temperature in °C ($x$) over $n = 22$ days gives $b = -2.5$ with $\operatorname{SE}_b = 1.0$; $t^* = 2.086$ (df $20$, $\alpha = 0.05$). Test $H_0: \beta = 0$ and conclude in context.'
+      answer: '$t = -2.5$ and $|-2.5| > 2.086$: reject $H_0$ — evidence of a real linear relationship, with cost falling by about $2.5$ EUR per additional degree.'
+      solution_sketch: 'The slope test is an ordinary t-test: $t = (b - 0)/\operatorname{SE}_b$ against the supplied $t^* = 2.086$ on $n - 2 = 20$ df. Rejecting says the slope is distinguishable from zero; state it in EUR per degree.'
+    anki_seeds:
+      - front: '"No linear relationship" as a hypothesis?'
+        back: '$H_0: \beta = 0$, about the population slope.'
+        type: basic
+      - front: 't statistic for a regression slope?'
+        back: '$t = b / \operatorname{SE}_b$ with $n - 2$ degrees of freedom.'
+        type: basic
+      - front: '$95\%$ confidence interval for the slope?'
+        back: '$b \pm t^* \operatorname{SE}_b$ (df $= n - 2$).'
+        type: basic

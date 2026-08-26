@@ -1,0 +1,1048 @@
+unit: limits-continuity
+course: calculus-1
+module: "Limits & Continuity"
+topics:
+  - id: limits-from-tables
+    name: Estimating Limits from Tables
+    core: true
+    difficulty: 0.42
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 75
+    prerequisites:
+      - id: evaluating-functions
+        weight: 0.7
+        key: true
+      - id: function-notation
+        weight: 0.5
+        key: true
+      - id: comparing-ordering-decimals
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Estimate a limit from a two-sided table
+        key_prerequisites: [evaluating-functions]
+        exemplars:
+          - problem: 'For $f(x) = \frac{x^2 - 4}{x - 2}$, a table gives $f(1.9) = 3.9$, $f(1.99) = 3.99$, $f(2.01) = 4.01$, $f(2.1) = 4.1$. Estimate $\lim_{x \to 2} f(x)$.'
+            answer: "4"
+            solution_sketch: 'The values close in on $4$ from both sides, so the limit is $4$.'
+          - problem: 'A table gives $g(2.9) = 5.8$, $g(2.99) = 5.98$, $g(3.01) = 6.02$, $g(3.1) = 6.2$. Estimate $\lim_{x \to 3} g(x)$.'
+            answer: "6"
+        constraints: "table values approach an integer limit symmetrically from both sides"
+      - id: kp2
+        name: Build the table yourself
+        key_prerequisites: [evaluating-functions, function-notation]
+        exemplars:
+          - problem: 'For $g(x) = 3x + 1$, compute $g(1.9)$, $g(1.99)$, $g(2.01)$, $g(2.1)$ and use them to estimate $\lim_{x \to 2} g(x)$.'
+            answer: "7 (the values are 6.7, 6.97, 7.03, 7.3)"
+            solution_sketch: 'Evaluate at inputs closing in on $2$ from each side; the outputs close in on $7$.'
+          - problem: 'To probe $\lim_{x \to 5} f(x)$ numerically, which list of inputs is appropriate: (a) $4.9, 4.99, 5.01, 5.1$ or (b) $4, 4.5, 6, 7$? Answer (a) or (b).'
+            answer: "(a)"
+            solution_sketch: 'The inputs must close in on $5$ from both sides; list (b) never gets near $5$.'
+        constraints: "linear or quadratic functions; probe points within 0.1 of the target"
+      - id: kp3
+        name: Read one-sided trends from a table
+        key_prerequisites: [evaluating-functions]
+        exemplars:
+          - problem: 'A table gives $h(0.9) = 2.71$, $h(0.99) = 2.9701$, $h(0.999) = 2.997$. What value does $h(x)$ approach as $x \to 1^-$?'
+            answer: "3"
+          - problem: 'A table gives $f(3.9) = 2$, $f(3.99) = 2$, $f(4.01) = 7$, $f(4.1) = 7$. Do the two sides of the table suggest the same limiting value at $x = 4$?'
+            answer: "no — the left side suggests 2, the right side 7"
+        constraints: "one-sided reads only; no limit-existence theory beyond comparing the two sides"
+    diagnostic_exemplar:
+      problem: 'For $g(x) = 2x + 1$, compute $g(2.9)$, $g(2.99)$, $g(3.01)$, $g(3.1)$ and use them to estimate $\lim_{x \to 3} g(x)$.'
+      answer: '7'
+      solution_sketch: 'The four values are $6.8$, $6.98$, $7.02$, $7.2$ — they close in on $7$ from the left and from the right, so the limit is $7$.'
+    anki_seeds:
+      - front: "To estimate lim_{x→a} f(x) numerically, evaluate f at inputs that..."
+        back: "approach a from BOTH sides (e.g. a ± 0.1, a ± 0.01), never at a itself"
+        type: basic
+      - front: "A table of values can only ___ a limit, never ___ it."
+        back: "suggest (estimate); prove"
+        type: basic
+
+  - id: limits-graphical-numerical
+    name: Limits Graphically and Numerically
+    core: true
+    difficulty: 0.45
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 90
+    prerequisites:
+      - id: limits-from-tables
+        weight: 0.8
+        key: true
+      - id: function-notation
+        weight: 0.5
+        key: true
+      - id: domain-range
+        weight: 0.4
+      - id: coordinate-plane
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: Read limits from a graph
+        key_prerequisites: [limits-from-tables, function-notation]
+        exemplars:
+          - problem: 'The graph of $f$ is the line $y = x + 1$ with an open dot at $(2, 3)$ and a filled dot at $(2, 5)$ (so $f(2) = 5$). Find $\lim_{x \to 2} f(x)$.'
+            answer: "3"
+            solution_sketch: 'The branches approach height $3$ from both sides (the open dot); the filled dot''s value $f(2) = 5$ does not affect the limit.'
+          - problem: 'The graph of $g$ is the parabola $y = x^2$ with a hole at $(1, 1)$ and no other marked point (so $g(1)$ is undefined). Find $\lim_{x \to 1} g(x)$.'
+            answer: "1"
+            solution_sketch: 'The parabola closes in on height $1$ from both sides; a limit does not require the function to be defined there.'
+        constraints: "graphs described by a base curve plus open/filled dots; heights are small integers"
+      - id: kp2
+        name: The limit ignores the value at the point
+        key_prerequisites: [function-notation, domain-range]
+        exemplars:
+          - problem: 'Let $f(x) = x + 2$ for $x \neq 1$ and $f(1) = 5$. Find $\lim_{x \to 1} f(x)$.'
+            answer: "3"
+            solution_sketch: 'Near (but not at) $x = 1$, $f(x) = x + 2 \to 3$; the value $f(1) = 5$ is irrelevant to the limit.'
+          - problem: 'Let $g(x) = x^2$ for $x \neq 2$ and $g(2) = 0$. Find $\lim_{x \to 2} g(x)$.'
+            answer: "4"
+        constraints: "piecewise redefinition at a single point; limit differs from the function value"
+      - id: kp3
+        name: Recognize when a limit does not exist
+        key_prerequisites: [function-notation, limits-from-tables]
+        exemplars:
+          - problem: 'Let $f(x) = \frac{|x|}{x}$. A table gives $f(-0.1) = -1$, $f(-0.01) = -1$, $f(0.01) = 1$, $f(0.1) = 1$. What is $\lim_{x \to 0} f(x)$?'
+            answer: "DNE"
+            solution_sketch: 'From the left the values approach $-1$; from the right, $1$. Since the sides disagree, the two-sided limit does not exist.'
+          - problem: 'A table for $h$ near $x = 4$ gives $h(3.9) = 2$, $h(3.99) = 2$, $h(4.01) = 7$, $h(4.1) = 7$. What is $\lim_{x \to 4} h(x)$?'
+            answer: "DNE"
+        constraints: "left and right values approach two different finite numbers; answer is DNE"
+    diagnostic_exemplar:
+      problem: 'The graph of $h$ is the line $y = 2x$ for $x < 3$ and the horizontal line $y = 1$ for $x > 3$, with a filled dot at $(3, 1)$. Find $\lim_{x \to 3} h(x)$, or answer DNE if it does not exist.'
+      answer: 'DNE'
+      solution_sketch: 'The left branch rises to $6$ while the right branch sits at $1$; the value $h(3) = 1$ is irrelevant, and because the one-sided limits differ the two-sided limit does not exist.'
+    anki_seeds:
+      - front: "The limit of f(x) as x → a depends on values of f near a, but never on..."
+        back: "the value f(a) itself (f need not even be defined at a)"
+        type: basic
+      - front: "A two-sided limit exists only when..."
+        back: "the left-hand and right-hand limits both exist and are equal"
+        type: basic
+
+  - id: limit-laws
+    name: Limit Laws
+    core: true
+    difficulty: 0.5
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 90
+    prerequisites:
+      - id: limits-graphical-numerical
+        weight: 0.8
+        key: true
+      - id: evaluating-expressions
+        weight: 0.5
+        key: true
+      - id: order-of-operations
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Sum, difference, and constant-multiple laws
+        key_prerequisites: [limits-graphical-numerical]
+        exemplars:
+          - problem: 'Given $\lim_{x \to a} f(x) = 3$ and $\lim_{x \to a} g(x) = -2$, find $\lim_{x \to a} [f(x) + g(x)]$.'
+            answer: "1"
+          - problem: 'Given $\lim_{x \to a} f(x) = 3$ and $\lim_{x \to a} g(x) = -2$, find $\lim_{x \to a} [2f(x) - g(x)]$.'
+            answer: "8"
+            solution_sketch: '$2 \cdot 3 - (-2) = 8$ by the constant-multiple and difference laws.'
+        constraints: "given limits are small integers; combine with sum/difference/constant-multiple laws only"
+      - id: kp2
+        name: Product and quotient laws
+        key_prerequisites: [limits-graphical-numerical, evaluating-expressions]
+        exemplars:
+          - problem: 'Given $\lim_{x \to a} f(x) = 3$ and $\lim_{x \to a} g(x) = -2$, find $\lim_{x \to a} [f(x) \cdot g(x)]$.'
+            answer: "-6"
+          - problem: 'Given $\lim_{x \to a} f(x) = 3$ and $\lim_{x \to a} g(x) = -2$, find $\lim_{x \to a} \frac{f(x)}{g(x)}$.'
+            answer: "-3/2"
+            solution_sketch: 'The quotient law applies since the denominator limit $-2 \neq 0$: $\frac{3}{-2} = -\frac{3}{2}$.'
+          - problem: 'Given $\lim_{x \to a} f(x) = 4$, find $\lim_{x \to a} [f(x)]^2$.'
+            answer: "16"
+        constraints: "denominator limit nonzero for quotients; include a power via the product law"
+      - id: kp3
+        name: Direct substitution for polynomials and rational functions
+        key_prerequisites: [evaluating-expressions]
+        exemplars:
+          - problem: 'Evaluate $\lim_{x \to 2} (x^2 + 3x - 1)$.'
+            answer: "9"
+            solution_sketch: 'Polynomials are continuous, so substitute: $4 + 6 - 1 = 9$.'
+          - problem: 'Evaluate $\lim_{x \to -1} (x^3 - 2x)$.'
+            answer: "1"
+          - problem: 'Evaluate $\lim_{x \to 3} \frac{x + 1}{x - 1}$.'
+            answer: "2"
+            solution_sketch: 'The denominator is nonzero at $x = 3$, so substitute: $\frac{4}{2} = 2$.'
+        constraints: "polynomial or rational function with nonzero denominator at the point; integer or simple fraction answers"
+    diagnostic_exemplar:
+      problem: 'Given $\lim_{x \to 3} f(x) = 2$, evaluate $\lim_{x \to 3} \frac{x^2 f(x) - 2}{x + 1}$.'
+      answer: '4'
+      solution_sketch: 'Direct substitution gives $x^2 \to 9$ and $x + 1 \to 4$; the product law gives $9 \cdot 2 = 18$, the difference law $16$, and the quotient law $16/4 = 4$.'
+    anki_seeds:
+      - front: "The quotient limit law lim f/g = (lim f)/(lim g) requires..."
+        back: "lim g ≠ 0"
+        type: basic
+      - front: "For a polynomial p, lim_{x→a} p(x) = ?"
+        back: "p(a) — evaluate by direct substitution (polynomials are continuous everywhere)"
+        type: basic
+
+  - id: one-sided-limits
+    name: One-Sided Limits
+    core: true
+    difficulty: 0.5
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 90
+    prerequisites:
+      - id: limits-graphical-numerical
+        weight: 0.8
+        key: true
+      - id: absolute-value
+        weight: 0.5
+        key: true
+      - id: piecewise-absolute-value-graphs
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: One-sided limits where the function lives on one side
+        key_prerequisites: [limits-graphical-numerical]
+        exemplars:
+          - problem: 'Evaluate $\lim_{x \to 0^+} \sqrt{x}$.'
+            answer: "0"
+          - problem: 'Evaluate $\lim_{x \to 2^+} \left(\sqrt{x - 2} + 3\right)$.'
+            answer: "3"
+            solution_sketch: 'For $x$ just above $2$, $\sqrt{x - 2}$ is tiny and positive, so the expression approaches $0 + 3 = 3$.'
+          - problem: 'Only one of $\lim_{x \to 2^-} \sqrt{x - 2}$ and $\lim_{x \to 2^+} \sqrt{x - 2}$ makes sense. Evaluate the one that does.'
+            answer: "0"
+            solution_sketch: 'For $x < 2$ the radicand is negative, so $\sqrt{x-2}$ has no values on the left and that one-sided limit is meaningless; from the right the radicand is small and positive, so the limit is $0$.'
+        constraints: "square-root expressions defined on one side of the point; limits are small integers"
+      - id: kp2
+        name: Absolute-value sign quotients
+        key_prerequisites: [absolute-value, limits-graphical-numerical]
+        exemplars:
+          - problem: 'Evaluate $\lim_{x \to 5^-} \frac{|x - 5|}{x - 5}$.'
+            answer: "-1"
+            solution_sketch: 'For $x < 5$, $|x - 5| = -(x - 5)$, so the quotient is identically $-1$ on the left.'
+          - problem: 'Evaluate $\lim_{x \to 0^+} \frac{2|x|}{x}$.'
+            answer: "2"
+          - problem: 'Evaluate $\lim_{x \to -2^+} \frac{|x + 2|}{x + 2}$.'
+            answer: "1"
+        constraints: "quotients of the form c|x - a|/(x - a); resolve the absolute value by the sign of the side"
+      - id: kp3
+        name: Two-sided limit exists iff the one-sided limits agree
+        key_prerequisites: [limits-graphical-numerical]
+        exemplars:
+          - problem: 'Given $\lim_{x \to 3^-} f(x) = 4$ and $\lim_{x \to 3^+} f(x) = 4$, find $\lim_{x \to 3} f(x)$.'
+            answer: "4"
+          - problem: 'Given $\lim_{x \to 1^-} g(x) = 2$ and $\lim_{x \to 1^+} g(x) = 6$, find $\lim_{x \to 1} g(x)$.'
+            answer: "DNE"
+            solution_sketch: 'The one-sided limits differ ($2 \neq 6$), so the two-sided limit does not exist.'
+          - problem: 'Evaluate $\lim_{x \to 0} \frac{|x|}{x}$.'
+            answer: "DNE"
+            solution_sketch: 'The left limit is $-1$ and the right limit is $1$; they disagree, so the two-sided limit does not exist.'
+        constraints: "compare given or computed one-sided limits; answer a number, or DNE when the sides disagree"
+    diagnostic_exemplar:
+      problem: 'Evaluate $\lim_{x \to 7} \frac{|x - 7|}{x - 7}$, or answer DNE if it does not exist.'
+      answer: 'DNE'
+      solution_sketch: 'For $x < 7$ the quotient is $-1$ and for $x > 7$ it is $+1$; the one-sided limits disagree, so the two-sided limit does not exist.'
+    anki_seeds:
+      - front: "lim_{x→a⁻} means x approaches a from values that are ___ a; lim_{x→a⁺} from values ___ a."
+        back: "less than; greater than"
+        type: basic
+      - front: "For x < a, |x - a| equals..."
+        back: "-(x - a), so |x - a|/(x - a) = -1 on the left of a"
+        type: basic
+
+  - id: limits-piecewise-functions
+    name: Limits of Piecewise Functions
+    core: true
+    difficulty: 0.52
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 120
+    prerequisites:
+      - id: one-sided-limits
+        weight: 0.8
+        key: true
+      - id: evaluating-functions
+        weight: 0.5
+        key: true
+      - id: piecewise-absolute-value-graphs
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: One-sided limits at a branch point
+        key_prerequisites: [one-sided-limits, evaluating-functions]
+        exemplars:
+          - problem: 'Let $f(x) = x + 1$ for $x < 2$ and $f(x) = x^2$ for $x \geq 2$. Find $\lim_{x \to 2^-} f(x)$, $\lim_{x \to 2^+} f(x)$, and $\lim_{x \to 2} f(x)$.'
+            answer: "left 3, right 4, two-sided DNE"
+            solution_sketch: 'Use the $x < 2$ branch from the left ($2 + 1 = 3$) and the $x \geq 2$ branch from the right ($2^2 = 4$); they disagree, so the two-sided limit does not exist.'
+          - problem: 'Let $g(x) = 2x$ for $x < 3$ and $g(x) = 9 - x$ for $x \geq 3$. Find $\lim_{x \to 3} g(x)$.'
+            answer: "6"
+            solution_sketch: 'Left limit $2 \cdot 3 = 6$, right limit $9 - 3 = 6$; they agree, so the limit is $6$.'
+        constraints: "two-branch piecewise with polynomial branches; one matching and one mismatching case per problem set"
+      - id: kp2
+        name: Limits away from the branch point
+        key_prerequisites: [evaluating-functions]
+        exemplars:
+          - problem: 'Let $f(x) = x + 1$ for $x < 2$ and $f(x) = x^2$ for $x \geq 2$. Find $\lim_{x \to 1} f(x)$.'
+            answer: "2"
+            solution_sketch: 'Near $x = 1$ only the $x < 2$ branch matters: $x + 1 \to 2$.'
+          - problem: 'Let $g(x) = 2x$ for $x < 3$ and $g(x) = 9 - x$ for $x \geq 3$. Find $\lim_{x \to 5} g(x)$.'
+            answer: "4"
+        constraints: "the target point sits strictly inside one branch; substitute into that branch only"
+      - id: kp3
+        name: Branch points with a separately defined value
+        key_prerequisites: [one-sided-limits, evaluating-functions]
+        exemplars:
+          - problem: 'Let $f(x) = x + 4$ for $x < -1$, $f(-1) = 2$, and $f(x) = -x + 2$ for $x > -1$. Find $\lim_{x \to -1} f(x)$.'
+            answer: "3"
+            solution_sketch: 'Left limit $-1 + 4 = 3$ and right limit $1 + 2 = 3$ agree; the lone value $f(-1) = 2$ does not affect the limit.'
+          - problem: 'Let $h(x) = x^2$ for $x \neq 3$ and $h(3) = 0$. Find $\lim_{x \to 3} h(x)$.'
+            answer: "9"
+        constraints: "the value at the branch point differs from the limit; both one-sided limits agree"
+    diagnostic_exemplar:
+      problem: 'Let $f(x) = 3x - 1$ for $x < 2$, $f(2) = 10$, and $f(x) = x + 3$ for $x > 2$. Find $\lim_{x \to 2} f(x)$.'
+      answer: '5'
+      solution_sketch: 'Left limit $3(2) - 1 = 5$; right limit $2 + 3 = 5$. They agree, so the limit is $5$ — the separately defined value $f(2) = 10$ plays no role.'
+    anki_seeds:
+      - front: "To find a limit of a piecewise function at a branch point, you must..."
+        back: "compute both one-sided limits, each from its own branch, and check that they agree"
+        type: basic
+      - front: "Away from the branch points, the limit of a piecewise function is computed by..."
+        back: "substituting into the single branch that contains the target point"
+        type: basic
+
+  - id: factoring-limits
+    name: Limits by Factoring
+    core: true
+    difficulty: 0.52
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 120
+    prerequisites:
+      - id: limit-laws
+        weight: 0.8
+        key: true
+      - id: factoring-trinomials
+        weight: 0.6
+        key: true
+      - id: difference-of-squares
+        weight: 0.5
+      - id: factoring-gcf
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Recognize the 0/0 indeterminate form
+        key_prerequisites: [limit-laws]
+        exemplars:
+          - problem: 'Substitute $x = 3$ into $\frac{x^2 - 9}{x - 3}$. What form results? (Answer with the resulting quotient of the two values, e.g. $7/0$.)'
+            answer: "0/0"
+            solution_sketch: 'Numerator and denominator both vanish at $3$, giving the indeterminate form $\frac{0}{0}$ — the limit must be found another way (here, by factoring).'
+          - problem: 'What form does direct substitution give for $\lim_{x \to 2} \frac{x^2 - 1}{x - 2}$? (Answer with the resulting quotient of the two values.)'
+            answer: "3/0"
+            solution_sketch: 'A nonzero numerator over a zero denominator is not indeterminate: the limit is infinite or does not exist, and factoring will not help.'
+          - problem: 'Substitute $x = 1$ into $\frac{x^2 + 1}{x + 1}$ and evaluate the limit if possible.'
+            answer: "1"
+            solution_sketch: 'Substitution gives $\frac{2}{2} = 1$ — no indeterminate form, so the limit is simply $1$.'
+        constraints: "one case each of 0/0, nonzero/0, and clean substitution; the student names the form as a quotient"
+      - id: kp2
+        name: Cancel a difference of squares
+        key_prerequisites: [difference-of-squares, limit-laws]
+        exemplars:
+          - problem: 'Evaluate $\lim_{x \to 2} \frac{x^2 - 4}{x - 2}$.'
+            answer: "4"
+            solution_sketch: 'Factor: $\frac{(x-2)(x+2)}{x-2} = x + 2$ for $x \neq 2$; the limit is $2 + 2 = 4$.'
+          - problem: 'Evaluate $\lim_{x \to -3} \frac{x^2 - 9}{x + 3}$.'
+            answer: "-6"
+            solution_sketch: '$\frac{(x-3)(x+3)}{x+3} = x - 3 \to -6$.'
+          - problem: 'Evaluate $\lim_{x \to 4} \frac{x - 4}{x^2 - 16}$.'
+            answer: "1/8"
+            solution_sketch: 'Factor the denominator: $\frac{x-4}{(x-4)(x+4)} = \frac{1}{x+4} \to \frac{1}{8}$.'
+        constraints: "0/0 form; difference of squares in numerator or denominator; integer or unit-fraction answers"
+      - id: kp3
+        name: Cancel a factored trinomial
+        key_prerequisites: [factoring-trinomials, limit-laws]
+        exemplars:
+          - problem: 'Evaluate $\lim_{x \to 3} \frac{x^2 - x - 6}{x - 3}$.'
+            answer: "5"
+            solution_sketch: '$x^2 - x - 6 = (x-3)(x+2)$; cancel and substitute to get $5$.'
+          - problem: 'Evaluate $\lim_{x \to -1} \frac{x^2 + 3x + 2}{x + 1}$.'
+            answer: "1"
+          - problem: 'Evaluate $\lim_{x \to 2} \frac{x^2 - 5x + 6}{x^2 - 4}$.'
+            answer: "-1/4"
+            solution_sketch: '$\frac{(x-2)(x-3)}{(x-2)(x+2)} = \frac{x-3}{x+2} \to \frac{-1}{4}$.'
+        constraints: "0/0 form; trinomials factor over the integers with (x - a) as the common factor"
+    diagnostic_exemplar:
+      problem: 'Evaluate $\lim_{x \to 4} \frac{x^2 - x - 12}{x - 4}$.'
+      answer: "7"
+      solution_sketch: 'Factor the numerator: $\frac{(x-4)(x+3)}{x-4} = x + 3$ for $x \neq 4$, and that tends to $7$.'
+    anki_seeds:
+      - front: "When direct substitution gives 0/0, the limit..."
+        back: "may still exist — the form is indeterminate; simplify algebraically and try again"
+        type: basic
+      - front: "Substitution giving (nonzero)/0 means..."
+        back: "the limit is infinite or DNE — no algebraic cancellation can fix it"
+        type: basic
+
+  - id: limits-algebraic
+    name: Algebraic Limit Techniques
+    core: true
+    difficulty: 0.58
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 150
+    prerequisites:
+      - id: factoring-limits
+        weight: 0.8
+        key: true
+      - id: simplifying-radicals
+        weight: 0.5
+        key: true
+      - id: complex-fractions
+        weight: 0.5
+      - id: rational-expressions
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: Rationalize to resolve 0/0
+        key_prerequisites: [simplifying-radicals, factoring-limits]
+        exemplars:
+          - problem: 'Evaluate $\lim_{x \to 0} \frac{\sqrt{x + 4} - 2}{x}$.'
+            answer: "1/4"
+            solution_sketch: 'Multiply by $\frac{\sqrt{x+4}+2}{\sqrt{x+4}+2}$: the fraction becomes $\frac{1}{\sqrt{x+4}+2} \to \frac{1}{4}$.'
+          - problem: 'Evaluate $\lim_{x \to 9} \frac{\sqrt{x} - 3}{x - 9}$.'
+            answer: "1/6"
+            solution_sketch: '$x - 9 = (\sqrt{x}-3)(\sqrt{x}+3)$, so the fraction is $\frac{1}{\sqrt{x}+3} \to \frac{1}{6}$.'
+          - problem: 'Evaluate $\lim_{x \to 0} \frac{\sqrt{x + 9} - 3}{x}$.'
+            answer: "1/6"
+        constraints: "one square root; conjugate multiplication produces a clean cancellation; answers are unit fractions"
+      - id: kp2
+        name: Simplify complex fractions and difference quotients
+        key_prerequisites: [complex-fractions, factoring-limits]
+        exemplars:
+          - problem: 'Evaluate $\lim_{h \to 0} \frac{(3 + h)^2 - 9}{h}$.'
+            answer: "6"
+            solution_sketch: 'Expand: $\frac{6h + h^2}{h} = 6 + h \to 6$.'
+          - problem: 'Evaluate $\lim_{x \to 0} \frac{\frac{1}{x + 2} - \frac{1}{2}}{x}$.'
+            answer: "-1/4"
+            solution_sketch: 'Combine: $\frac{2 - (x+2)}{2(x+2)} = \frac{-x}{2(x+2)}$; divide by $x$ to get $\frac{-1}{2(x+2)} \to -\frac{1}{4}$.'
+          - problem: 'Evaluate $\lim_{h \to 0} \frac{\frac{1}{1 + h} - 1}{h}$.'
+            answer: "-1"
+            solution_sketch: '$\frac{1 - (1+h)}{1+h} = \frac{-h}{1+h}$; divide by $h$ to get $\frac{-1}{1+h} \to -1$.'
+        constraints: "difference-quotient shape; small integer parameters; exact fraction answers"
+      - id: kp3
+        name: Choose the right technique
+        key_prerequisites: [factoring-limits, simplifying-radicals]
+        exemplars:
+          - problem: 'Evaluate $\lim_{x \to 16} \frac{\sqrt{x} - 4}{x - 16}$.'
+            answer: "1/8"
+            solution_sketch: 'Factor $x - 16 = (\sqrt{x}-4)(\sqrt{x}+4)$: the fraction is $\frac{1}{\sqrt{x}+4} \to \frac{1}{8}$.'
+          - problem: 'Evaluate $\lim_{h \to 0} \frac{(2 + h)^3 - 8}{h}$.'
+            answer: "12"
+            solution_sketch: 'Expand: $(2+h)^3 = 8 + 12h + 6h^2 + h^3$, so the quotient is $12 + 6h + h^2 \to 12$.'
+          - problem: 'Evaluate $\lim_{x \to 0} \frac{\frac{1}{x + 3} - \frac{1}{3}}{x}$.'
+            answer: "-1/9"
+            solution_sketch: 'Combine over $3(x+3)$: the quotient is $\frac{-1}{3(x+3)} \to -\frac{1}{9}$.'
+        constraints: "mixed 0/0 forms requiring factoring, expanding, rationalizing, or combining fractions; state exact answers"
+    diagnostic_exemplar:
+      problem: 'Evaluate $\lim_{x \to 0} \frac{\frac{1}{x + 4} - \frac{1}{4}}{x}$.'
+      answer: '-1/16'
+      solution_sketch: 'Combine the numerator: $\frac{1}{x+4} - \frac{1}{4} = \frac{-x}{4(x+4)}$. Dividing by $x$ leaves $\frac{-1}{4(x+4)} \to -\frac{1}{16}$.'
+    anki_seeds:
+      - front: "To evaluate a 0/0 limit containing √(x) - a, multiply by..."
+        back: "the conjugate (√(x) + a)/(√(x) + a)"
+        type: basic
+      - front: "For a 0/0 limit built from small fractions (a complex fraction), first..."
+        back: "combine the inner fractions over a common denominator, then cancel the outer variable"
+        type: basic
+
+  - id: limits-at-infinity-rational
+    name: Limits at Infinity of Rational Functions
+    core: true
+    difficulty: 0.55
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 120
+    prerequisites:
+      - id: limit-laws
+        weight: 0.7
+        key: true
+      - id: vertical-horizontal-asymptotes
+        weight: 0.5
+        key: true
+      - id: rational-expressions
+        weight: 0.4
+      - id: polynomial-end-behavior-graphing
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Equal or smaller numerator degree
+        key_prerequisites: [limit-laws]
+        exemplars:
+          - problem: 'Evaluate $\lim_{x \to \infty} \frac{3x^2 - 5}{2x^2 + 1}$.'
+            answer: "3/2"
+            solution_sketch: 'Divide top and bottom by $x^2$: $\frac{3 - 5/x^2}{2 + 1/x^2} \to \frac{3}{2}$.'
+          - problem: 'Evaluate $\lim_{x \to \infty} \frac{5x + 1}{x^2 + 3}$.'
+            answer: "0"
+          - problem: 'Evaluate $\lim_{x \to \infty} \frac{7x^3 + x}{2x^3 - 5}$.'
+            answer: "7/2"
+        constraints: "rational functions; equal degrees give the leading-coefficient ratio, smaller numerator degree gives 0"
+      - id: kp2
+        name: Larger numerator degree gives an infinite limit
+        key_prerequisites: [limit-laws, vertical-horizontal-asymptotes]
+        exemplars:
+          - problem: 'Evaluate $\lim_{x \to \infty} \frac{x^3 + 1}{x + 2}$.'
+            answer: "∞"
+            solution_sketch: 'The quotient behaves like $x^2$, which grows without bound.'
+          - problem: 'Evaluate $\lim_{x \to \infty} \frac{2x^2 + 3}{1 - x}$.'
+            answer: "-∞"
+            solution_sketch: 'The quotient behaves like $\frac{2x^2}{-x} = -2x \to -\infty$.'
+          - problem: 'Evaluate $\lim_{x \to -\infty} \frac{x^2 + 1}{x + 5}$.'
+            answer: "-∞"
+            solution_sketch: 'The quotient behaves like $x$, which tends to $-\infty$.'
+        constraints: "numerator degree exceeds denominator degree by 1 or 2; determine the sign from the leading terms"
+      - id: kp3
+        name: Horizontal asymptotes of rational functions
+        key_prerequisites: [vertical-horizontal-asymptotes, limit-laws]
+        exemplars:
+          - problem: 'The graph of $f(x) = \frac{2x + 1}{x - 4}$ has horizontal asymptote $y = c$. Find $c$.'
+            answer: "2"
+            solution_sketch: 'Equal degrees: the asymptote is the ratio of leading coefficients, $\frac{2}{1}$.'
+          - problem: 'The graph of $f(x) = \frac{3 - x}{2x + 5}$ has horizontal asymptote $y = c$. Find $c$.'
+            answer: "-1/2"
+            solution_sketch: 'Equal degrees: the asymptote is the ratio of leading coefficients, $\frac{-1}{2}$.'
+          - problem: 'The graph of $f(x) = \frac{4x}{x^2 + 1}$ has horizontal asymptote $y = c$. Find $c$.'
+            answer: "0"
+            solution_sketch: 'The denominator degree is larger, so the quotient tends to $0$ and the asymptote is $y = 0$.'
+        constraints: "compare degrees (equal, or denominator higher); the answer is the leading-coefficient ratio, or 0"
+    diagnostic_exemplar:
+      problem: 'Evaluate $\lim_{x \to -\infty} \frac{2x^2 + 3}{x + 5}$.'
+      answer: '-∞'
+      solution_sketch: 'The numerator degree exceeds the denominator degree by one, so the quotient behaves like $2x$; as $x \to -\infty$ this tends to $-\infty$.'
+    anki_seeds:
+      - front: "For a rational function with equal numerator and denominator degree, lim_{x→±∞} equals..."
+        back: "the ratio of the leading coefficients"
+        type: basic
+      - front: "If the denominator degree exceeds the numerator degree, lim_{x→±∞} of the rational function is..."
+        back: "0 (horizontal asymptote y = 0)"
+        type: basic
+
+  - id: one-sided-infinite-limits
+    name: One-Sided Limits, Infinite Limits, and Asymptotes
+    core: true
+    difficulty: 0.6
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 150
+    prerequisites:
+      - id: one-sided-limits
+        weight: 0.7
+        key: true
+      - id: limits-at-infinity-rational
+        weight: 0.6
+        key: true
+      - id: limit-laws
+        weight: 0.4
+      - id: rational-expression-restrictions
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Infinite limits and one-sided sign analysis
+        key_prerequisites: [one-sided-limits, limit-laws]
+        exemplars:
+          - problem: 'Evaluate $\lim_{x \to 0^+} \frac{1}{x}$.'
+            answer: "∞"
+          - problem: 'Evaluate $\lim_{x \to 2^-} \frac{1}{x - 2}$.'
+            answer: "-∞"
+            solution_sketch: 'As $x \to 2^-$ the denominator is small and negative, so the fraction blows up to $-\infty$.'
+          - problem: 'Evaluate $\lim_{x \to 3^+} \frac{x + 1}{3 - x}$.'
+            answer: "-∞"
+            solution_sketch: 'The numerator approaches $4 > 0$ while $3 - x$ is small and negative, so the quotient tends to $-\infty$.'
+        constraints: "nonzero numerator over a vanishing denominator; determine the sign from the chosen side"
+      - id: kp2
+        name: Vertical asymptotes versus holes
+        key_prerequisites: [limit-laws, one-sided-limits]
+        exemplars:
+          - problem: 'Find the vertical asymptote of $f(x) = \frac{x + 1}{x - 3}$.'
+            answer: "x = 3"
+          - problem: 'Does $f(x) = \frac{x^2 - 4}{x - 2}$ have a vertical asymptote at $x = 2$?'
+            answer: "no — the factor cancels, leaving a hole at (2, 4)"
+            solution_sketch: '$f(x) = x + 2$ for $x \neq 2$: the limit at $2$ is finite, so the gap is a removable hole, not an asymptote.'
+          - problem: 'Find all vertical asymptotes and holes of $f(x) = \frac{x + 5}{x^2 - 25}$.'
+            answer: "vertical asymptote x = 5; hole at x = -5"
+            solution_sketch: '$f(x) = \frac{1}{x - 5}$ for $x \neq -5$: the surviving zero of the denominator gives the asymptote, the canceled one a hole.'
+        constraints: "factor and cancel first; distinguish surviving denominator zeros (asymptotes) from canceled ones (holes)"
+      - id: kp3
+        name: Complete asymptote and end-behavior analysis
+        key_prerequisites: [limits-at-infinity-rational, one-sided-limits]
+        exemplars:
+          - problem: 'Find all vertical and horizontal asymptotes of $f(x) = \frac{2x^2}{x^2 - 9}$.'
+            answer: "vertical: x = 3 and x = -3; horizontal: y = 2"
+            solution_sketch: 'The denominator vanishes (without cancellation) at $x = \pm 3$; equal degrees give the horizontal asymptote $y = 2$.'
+          - problem: 'Find all vertical and horizontal asymptotes of $f(x) = \frac{x - 1}{x^2 + 1}$.'
+            answer: "no vertical asymptote; horizontal: y = 0"
+          - problem: 'Evaluate $\lim_{x \to 1} \frac{1}{(x - 1)^2}$.'
+            answer: "∞"
+            solution_sketch: 'Both one-sided limits are $+\infty$ (the square keeps the denominator positive), so the two-sided infinite limit is $\infty$.'
+        constraints: "rational functions; report every vertical and horizontal asymptote, or a two-sided infinite limit"
+    diagnostic_exemplar:
+      problem: 'Find all vertical asymptotes, all holes, and the horizontal asymptote of $f(x) = \frac{x - 3}{x^2 - 9}$.'
+      answer: 'vertical asymptote x = -3; hole at x = 3; horizontal asymptote y = 0'
+      solution_sketch: '$f(x) = \frac{x-3}{(x-3)(x+3)} = \frac{1}{x+3}$ for $x \neq 3$: the canceled factor leaves a hole at $x = 3$, the surviving zero gives the vertical asymptote $x = -3$, and the denominator degree exceeds the numerator degree, so $y = 0$.'
+    anki_seeds:
+      - front: "f has a vertical asymptote at x = a when..."
+        back: "f(x) → ∞ or -∞ as x → a from the left or the right"
+        type: basic
+      - front: "A zero of the denominator that cancels with the numerator produces a ___; one that survives produces a ___."
+        back: "hole (removable); vertical asymptote"
+        type: basic
+
+  - id: limits-at-infinity-radicals
+    name: Limits at Infinity with Radicals
+    core: false                # worked special case of limits at infinity
+    difficulty: 0.62
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 180
+    prerequisites:
+      - id: limits-at-infinity-rational
+        weight: 0.8
+        key: true
+      - id: simplifying-radicals-variables
+        weight: 0.5
+        key: true
+      - id: absolute-value
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: Factor x out of a square root (x → ∞)
+        key_prerequisites: [limits-at-infinity-rational, simplifying-radicals-variables]
+        exemplars:
+          - problem: 'Evaluate $\lim_{x \to \infty} \frac{\sqrt{4x^2 + 1}}{x}$.'
+            answer: "2"
+            solution_sketch: 'For $x > 0$, $\sqrt{4x^2 + 1} = x\sqrt{4 + 1/x^2}$, so the quotient tends to $\sqrt{4} = 2$.'
+          - problem: 'Evaluate $\lim_{x \to \infty} \frac{\sqrt{9x^2 + x}}{2x}$.'
+            answer: "3/2"
+        constraints: "leading coefficient under the root is a perfect square; x → +∞ only"
+      - id: kp2
+        name: The sign trap as x → -∞
+        key_prerequisites: [limits-at-infinity-rational, simplifying-radicals-variables]
+        exemplars:
+          - problem: 'Evaluate $\lim_{x \to -\infty} \frac{\sqrt{4x^2 + 1}}{x}$.'
+            answer: "-2"
+            solution_sketch: '$\sqrt{x^2} = |x| = -x$ for $x < 0$, so $\sqrt{4x^2+1} = -x\sqrt{4 + 1/x^2}$ and the quotient tends to $-2$.'
+          - problem: 'Evaluate $\lim_{x \to -\infty} \frac{\sqrt{x^2 + 3}}{x + 1}$.'
+            answer: "-1"
+        constraints: "x → -∞; the student must replace √(x²) by -x, producing the negative of the naive answer"
+      - id: kp3
+        name: Conjugates at infinity
+        key_prerequisites: [limits-at-infinity-rational]
+        exemplars:
+          - problem: 'Evaluate $\lim_{x \to \infty} \left(\sqrt{x^2 + 6x} - x\right)$.'
+            answer: "3"
+            solution_sketch: 'Multiply by the conjugate: $\frac{6x}{\sqrt{x^2+6x} + x} = \frac{6}{\sqrt{1 + 6/x} + 1} \to \frac{6}{2} = 3$.'
+          - problem: 'Evaluate $\lim_{x \to \infty} \left(\sqrt{x^2 + 4} - x\right)$.'
+            answer: "0"
+            solution_sketch: 'The conjugate gives $\frac{4}{\sqrt{x^2+4} + x} \to 0$.'
+          - problem: 'Evaluate $\lim_{x \to \infty} \left(\sqrt{x^2 + 2x} - x\right)$.'
+            answer: "1"
+        constraints: "∞ - ∞ form; conjugate multiplication yields (linear or constant)/(two growing roots); answers are b/2 for x² + bx, 0 for x² + c"
+    diagnostic_exemplar:
+      problem: 'Evaluate $\lim_{x \to \infty} \left(\sqrt{x^2 + 8x} - x\right)$.'
+      answer: "4"
+      solution_sketch: 'Multiply by the conjugate: $\sqrt{x^2+8x} - x = \frac{8x}{\sqrt{x^2+8x} + x}$; dividing top and bottom by $x$ gives $\frac{8}{\sqrt{1 + 8/x} + 1} \to \frac{8}{2} = 4$.'
+    anki_seeds:
+      - front: "√(x²) equals..."
+        back: "|x| — which is -x when x < 0 (the key trap in limits as x → -∞)"
+        type: basic
+      - front: "lim_{x→∞} (√(x² + bx) - x) = ?"
+        back: "b/2 (multiply by the conjugate)"
+        type: basic
+
+  - id: squeeze-theorem
+    name: The Squeeze Theorem
+    core: true
+    difficulty: 0.58
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 120
+    prerequisites:
+      - id: limit-laws
+        weight: 0.7
+        key: true
+      - id: trig-graphs-basic
+        weight: 0.4
+      - id: compound-inequalities
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Apply the squeeze theorem to given bounds
+        key_prerequisites: [limit-laws, compound-inequalities]
+        exemplars:
+          - problem: 'Suppose $4 - x^2 \leq g(x) \leq 4 + x^2$ for all $x \neq 0$. Find $\lim_{x \to 0} g(x)$.'
+            answer: "4"
+            solution_sketch: 'Both bounds tend to $4$ as $x \to 0$, so the squeeze theorem forces $g(x) \to 4$.'
+          - problem: 'Suppose $2x \leq f(x) \leq x^2 + 1$ for all $x$ near $1$. Find $\lim_{x \to 1} f(x)$.'
+            answer: "2"
+            solution_sketch: 'At $x \to 1$ the lower bound tends to $2$ and the upper bound to $2$; squeezed between them, $f(x) \to 2$.'
+        constraints: "both bounds have the same limit at the target point; bounds are polynomials"
+      - id: kp2
+        name: Bounded factor times a vanishing factor
+        key_prerequisites: [limit-laws, trig-graphs-basic]
+        exemplars:
+          - problem: 'Evaluate $\lim_{x \to 0} x^2 \sin\left(\frac{1}{x}\right)$.'
+            answer: "0"
+            solution_sketch: '$-x^2 \leq x^2 \sin(1/x) \leq x^2$ since $|\sin| \leq 1$; both bounds tend to $0$.'
+          - problem: 'Evaluate $\lim_{x \to 0} x \cos\left(\frac{1}{x}\right)$.'
+            answer: "0"
+          - problem: 'Evaluate $\lim_{x \to \infty} \frac{\sin x}{x}$.'
+            answer: "0"
+            solution_sketch: '$-\frac{1}{x} \leq \frac{\sin x}{x} \leq \frac{1}{x}$ for $x > 0$, and both bounds tend to $0$.'
+        constraints: "a factor bounded between -1 and 1 times a factor tending to 0; answer is always 0"
+      - id: kp3
+        name: Know when squeezing is needed (and when nothing works)
+        key_prerequisites: [limit-laws, trig-graphs-basic]
+        exemplars:
+          - problem: 'Evaluate $\lim_{x \to 0} \sin\left(\frac{1}{x}\right)$, or answer DNE if it does not exist.'
+            answer: "DNE"
+            solution_sketch: 'Without a vanishing factor there is no squeeze: the values keep hitting $\pm 1$ arbitrarily close to $0$.'
+          - problem: 'Evaluate $\lim_{x \to 0} x^4 \cos\left(\frac{2}{x}\right)$.'
+            answer: "0"
+        constraints: "contrast a bare oscillation (DNE) with a squeezed product (0)"
+    diagnostic_exemplar:
+      problem: 'Evaluate $\lim_{x \to 0} x^2 \sin\left(\frac{3}{x}\right)$.'
+      answer: "0"
+      solution_sketch: '$|\sin(3/x)| \leq 1$, so $-x^2 \leq x^2\sin(3/x) \leq x^2$; both bounds tend to $0$, and the squeeze theorem forces the limit to $0$.'
+    anki_seeds:
+      - front: "Squeeze theorem: if g ≤ f ≤ h near a and lim g = lim h = L, then..."
+        back: "lim_{x→a} f(x) = L"
+        type: basic
+      - front: "lim_{x→0} x²·sin(1/x) = 0 because..."
+        back: "sin is bounded by ±1, so the product is squeezed between -x² and x²"
+        type: basic
+
+  - id: special-trig-limits
+    name: Special Trigonometric Limits
+    core: true
+    difficulty: 0.62
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 150
+    prerequisites:
+      - id: squeeze-theorem
+        weight: 0.6
+        key: true
+      - id: limit-laws
+        weight: 0.5
+        key: true
+      - id: radians-degrees
+        weight: 0.4
+      - id: pythagorean-identity
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: The two fundamental limits
+        key_prerequisites: [squeeze-theorem, limit-laws]
+        exemplars:
+          - problem: 'Evaluate $\lim_{x \to 0} \frac{\sin x}{x}$ (with $x$ in radians).'
+            answer: "1"
+          - problem: 'Evaluate $\lim_{x \to 0} \frac{1 - \cos x}{x}$.'
+            answer: "0"
+            solution_sketch: 'Multiply by $\frac{1 + \cos x}{1 + \cos x}$: $\frac{\sin^2 x}{x(1 + \cos x)} = \frac{\sin x}{x} \cdot \frac{\sin x}{1 + \cos x} \to 1 \cdot \frac{0}{2} = 0$.'
+          - problem: 'Evaluate $\lim_{x \to 0} \frac{x}{\sin x}$.'
+            answer: "1"
+        constraints: "radians only; the two memorized limits and their reciprocals"
+      - id: kp2
+        name: Rescale the argument
+        key_prerequisites: [limit-laws, squeeze-theorem]
+        exemplars:
+          - problem: 'Evaluate $\lim_{x \to 0} \frac{\sin(3x)}{x}$.'
+            answer: "3"
+            solution_sketch: 'Write $\frac{\sin(3x)}{x} = 3 \cdot \frac{\sin(3x)}{3x} \to 3 \cdot 1$.'
+          - problem: 'Evaluate $\lim_{x \to 0} \frac{\sin(4x)}{7x}$.'
+            answer: "4/7"
+          - problem: 'Evaluate $\lim_{x \to 0} \frac{\sin(5x)}{\sin(2x)}$.'
+            answer: "5/2"
+            solution_sketch: '$\frac{\sin(5x)}{5x} \cdot \frac{2x}{\sin(2x)} \cdot \frac{5}{2} \to 1 \cdot 1 \cdot \frac{5}{2}$.'
+        constraints: "arguments ax with small integer a; answers are ratios of the coefficients"
+      - id: kp3
+        name: Combine with algebra and identities
+        key_prerequisites: [limit-laws, pythagorean-identity]
+        exemplars:
+          - problem: 'Evaluate $\lim_{x \to 0} \frac{\tan x}{x}$.'
+            answer: "1"
+            solution_sketch: '$\frac{\tan x}{x} = \frac{\sin x}{x} \cdot \frac{1}{\cos x} \to 1 \cdot 1$.'
+          - problem: 'Evaluate $\lim_{x \to 0} \frac{\sin x}{x^2 + x}$.'
+            answer: "1"
+            solution_sketch: 'Factor: $\frac{\sin x}{x(x + 1)} = \frac{\sin x}{x} \cdot \frac{1}{x + 1} \to 1 \cdot 1$.'
+          - problem: 'Evaluate $\lim_{x \to 0} \frac{1 - \cos x}{x^2}$.'
+            answer: "1/2"
+            solution_sketch: 'Conjugate trick: $\frac{\sin^2 x}{x^2(1 + \cos x)} = \left(\frac{\sin x}{x}\right)^2 \frac{1}{1 + \cos x} \to \frac{1}{2}$.'
+        constraints: "reduce to the fundamental limits via factoring, tan = sin/cos, or the conjugate of 1 - cos"
+    diagnostic_exemplar:
+      problem: 'Evaluate $\lim_{x \to 0} \frac{\tan(3x)}{x}$.'
+      answer: "3"
+      solution_sketch: 'Split off the special limit: $\frac{\tan(3x)}{x} = 3 \cdot \frac{\sin(3x)}{3x} \cdot \frac{1}{\cos(3x)} \to 3 \cdot 1 \cdot 1$.'
+    anki_seeds:
+      - front: "lim_{x→0} (sin x)/x = ? and lim_{x→0} (1 - cos x)/x = ? (radians)"
+        back: "1 and 0"
+        type: basic
+      - front: "lim_{x→0} sin(ax)/(bx) = ?"
+        back: "a/b"
+        type: basic
+      - front: "lim_{x→0} (1 - cos x)/x² = ?"
+        back: "1/2"
+        type: basic
+
+  - id: limits-of-composite-functions
+    name: Limits of Composite Functions
+    core: true
+    difficulty: 0.55
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 120
+    prerequisites:
+      - id: function-composition
+        weight: 0.6
+        key: true
+      - id: limit-laws
+        weight: 0.6
+        key: true
+      - id: one-sided-limits
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: Pass the limit through a continuous outer function
+        key_prerequisites: [function-composition, limit-laws]
+        exemplars:
+          - problem: 'Evaluate $\lim_{x \to 2} \sqrt{x^2 + 5}$.'
+            answer: "3"
+            solution_sketch: 'The inner limit is $9$ and $\sqrt{\cdot}$ is continuous there, so the answer is $\sqrt{9} = 3$.'
+          - problem: 'Given $\lim_{x \to a} g(x) = 4$ and $f$ continuous with $f(4) = 7$, find $\lim_{x \to a} f(g(x))$.'
+            answer: "7"
+        constraints: "outer function continuous at the inner limit; small integer values"
+      - id: kp2
+        name: Composite limits from tables and graphs
+        key_prerequisites: [function-composition, limit-laws]
+        exemplars:
+          - problem: 'Suppose $\lim_{x \to 2} g(x) = 3$ (but $g(2) = 5$), and $f$ is continuous with $f(3) = 8$ and $f(5) = 1$. Find $\lim_{x \to 2} f(g(x))$.'
+            answer: "8"
+            solution_sketch: 'Only the inner LIMIT matters: $g(x) \to 3$, and $f$ is continuous at $3$, so the composite tends to $f(3) = 8$.'
+          - problem: 'A table shows $g(x) \to -1$ as $x \to 0$, and $f$ is continuous with $f(-1) = 6$. Find $\lim_{x \to 0} f(g(x))$.'
+            answer: "6"
+        constraints: "the value g(a) is a decoy differing from the inner limit; f continuous at the inner limit"
+      - id: kp3
+        name: One-sided care when the outer function jumps
+        key_prerequisites: [one-sided-limits, function-composition]
+        exemplars:
+          - problem: 'Suppose $\lim_{u \to 2^-} f(u) = 1$ and $\lim_{u \to 2^+} f(u) = 6$. If $g(x) = 2 + (x - 3)^2$, find $\lim_{x \to 3} f(g(x))$.'
+            answer: "6"
+            solution_sketch: '$g(x) \to 2$ from ABOVE (the square is positive), so the composite follows the right-hand limit of $f$: $6$.'
+          - problem: 'With the same $f$, let $h(x) = 2 - x^2$. Find $\lim_{x \to 0} f(h(x))$.'
+            answer: "1"
+            solution_sketch: '$h(x) \to 2$ from below, so the composite follows the left-hand limit of $f$: $1$.'
+        constraints: "inner function approaches its limit from one definite side; outer function has a jump there"
+    diagnostic_exemplar:
+      problem: 'Suppose $\lim_{u \to 4^-} f(u) = 2$ and $\lim_{u \to 4^+} f(u) = 7$, and let $g(x) = 4 + (x - 1)^2$. Find $\lim_{x \to 1} f(g(x))$.'
+      answer: '7'
+      solution_sketch: 'For $x$ near $1$ but $x \neq 1$ we have $g(x) > 4$, so $g(x)$ approaches $4$ from above and only the right-hand limit of $f$ at $4$ matters: the answer is $7$.'
+    anki_seeds:
+      - front: "If lim_{x→a} g(x) = L and f is continuous at L, then lim_{x→a} f(g(x)) = ?"
+        back: "f(L) — the limit passes inside a continuous outer function"
+        type: basic
+      - front: "In a composite limit, the inner function's VALUE g(a) matters..."
+        back: "not at all — only the inner limit L (and possibly the side from which g approaches L)"
+        type: basic
+
+  - id: continuity-at-a-point
+    name: Continuity at a Point
+    core: true
+    difficulty: 0.55
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 120
+    prerequisites:
+      - id: limits-piecewise-functions
+        weight: 0.7
+        key: true
+      - id: limit-laws
+        weight: 0.5
+        key: true
+      - id: domain-range
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: Check the three conditions
+        key_prerequisites: [limits-piecewise-functions, limit-laws]
+        exemplars:
+          - problem: 'Let $f(x) = \frac{x^2 - 1}{x - 1}$ for $x \neq 1$ and $f(1) = 2$. Is $f$ continuous at $x = 1$? (yes/no, with the limit)'
+            answer: "yes; the limit is 2 and equals f(1)"
+            solution_sketch: '$\lim_{x \to 1} f(x) = \lim_{x \to 1} (x + 1) = 2 = f(1)$: all three conditions hold.'
+          - problem: 'Let $g(x) = x^2$ for $x \leq 2$ and $g(x) = 3x - 2$ for $x > 2$. Is $g$ continuous at $x = 2$? (yes/no)'
+            answer: "yes"
+            solution_sketch: 'Left limit $4$, right limit $3 \cdot 2 - 2 = 4$, and $g(2) = 4$: continuous.'
+          - problem: 'Let $f(x) = \frac{x^2 - 4}{x - 2}$ for $x \neq 2$ and $f(2) = 3$. Is $f$ continuous at $x = 2$?'
+            answer: "no — the limit is 4 but f(2) = 3"
+        constraints: "verify f(a) defined, limit exists, limit = f(a); values are small integers; include one failing case"
+      - id: kp2
+        name: Identify which condition fails
+        key_prerequisites: [limits-piecewise-functions, limit-laws]
+        exemplars:
+          - problem: 'For $f(x) = \frac{1}{x - 3}$ at $x = 3$, which continuity condition fails first?'
+            answer: "f(3) is undefined (and the limit does not exist either)"
+          - problem: 'For $f(x) = \frac{|x|}{x}$ at $x = 0$, which continuity condition fails?'
+            answer: "the limit does not exist (left -1, right 1)"
+          - problem: 'The graph of $g$ is a curve approaching height $2$ from both sides of $x = 1$, with a filled dot at $(1, 5)$. Which condition fails?'
+            answer: "the limit (2) does not equal g(1) = 5"
+        constraints: "one failing condition per problem; the student names it"
+      - id: kp3
+        name: Where standard functions are continuous
+        key_prerequisites: [limit-laws, domain-range]
+        exemplars:
+          - problem: 'At which points is $f(x) = \frac{x + 1}{x^2 - 9}$ continuous?'
+            answer: "all real x except x = 3 and x = -3"
+          - problem: 'On what interval is $f(x) = \sqrt{x - 2}$ continuous?'
+            answer: "[2, ∞)"
+          - problem: 'At which points is the polynomial $p(x) = x^3 - 4x + 1$ continuous?'
+            answer: "everywhere (all polynomials are continuous on ℝ)"
+        constraints: "polynomials, rational functions, and square roots; answer with the set where continuity holds"
+    diagnostic_exemplar:
+      problem: 'Let $f(x) = \frac{x^2 - 9}{x - 3}$ for $x \neq 3$ and $f(3) = 5$. Is $f$ continuous at $x = 3$? If not, name the condition that fails.'
+      answer: 'no — f(3) = 5 is defined and the limit exists, but the third condition fails: the limit is 6, not f(3) = 5'
+      solution_sketch: 'Cancel: $\frac{(x-3)(x+3)}{x-3} \to 6$ as $x \to 3$, while $f(3) = 5$.'
+    anki_seeds:
+      - front: "f is continuous at a exactly when three conditions hold:"
+        back: "f(a) is defined; lim_{x→a} f(x) exists; and the limit equals f(a)"
+        type: basic
+      - front: "A rational function is continuous at every point where..."
+        back: "its denominator is nonzero"
+        type: basic
+
+  - id: continuity
+    name: Continuity
+    core: true
+    difficulty: 0.62
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 150
+    prerequisites:
+      - id: continuity-at-a-point
+        weight: 0.8
+        key: true
+      - id: one-sided-infinite-limits
+        weight: 0.5
+        key: true
+      - id: limit-laws
+        weight: 0.4
+      - id: interval-notation
+        weight: 0.2            # notation support: kp3 demands interval answers in interval notation (re-audit R-01)
+    knowledge_points:
+      - id: kp1
+        name: Classify discontinuities
+        key_prerequisites: [continuity-at-a-point, one-sided-infinite-limits]
+        exemplars:
+          - problem: 'Classify the discontinuity of $f(x) = \frac{x^2 - 9}{x - 3}$ at $x = 3$ (removable / jump / infinite).'
+            answer: "removable"
+            solution_sketch: 'The limit exists ($= 6$) but $f(3)$ is undefined; redefining $f(3) = 6$ removes the hole.'
+          - problem: 'Classify the discontinuity of $f(x) = \frac{|x|}{x}$ at $x = 0$.'
+            answer: "jump"
+          - problem: 'Classify the discontinuity of $f(x) = \frac{1}{(x - 2)^2}$ at $x = 2$.'
+            answer: "infinite"
+        constraints: "one discontinuity per problem; answer names the type"
+      - id: kp2
+        name: Choose a constant to make a function continuous
+        key_prerequisites: [continuity-at-a-point]
+        exemplars:
+          - problem: 'Find $c$ so that $f(x) = x + c$ for $x < 2$ and $f(x) = 3x - 1$ for $x \geq 2$ is continuous at $x = 2$.'
+            answer: "3"
+            solution_sketch: 'Match the one-sided limits: $2 + c = 3 \cdot 2 - 1 = 5$, so $c = 3$.'
+          - problem: 'Find $k$ so that $f(x) = kx^2$ for $x \leq 1$ and $f(x) = x + 1$ for $x > 1$ is continuous at $x = 1$.'
+            answer: "2"
+          - problem: 'Find $c$ so that $f(x) = \frac{x^2 - 25}{x - 5}$ for $x \neq 5$ and $f(5) = c$ is continuous at $x = 5$.'
+            answer: "10"
+            solution_sketch: 'The limit at $5$ is $\lim (x + 5) = 10$; set $f(5)$ equal to it.'
+        constraints: "one unknown constant; matching one-sided limits (or filling a removable hole) yields an integer"
+      - id: kp3
+        name: Continuity on intervals and of combinations
+        key_prerequisites: [continuity-at-a-point, one-sided-infinite-limits]
+        exemplars:
+          - problem: 'The function $f(x) = \frac{\sqrt{x - 2}}{x - 5}$ is continuous at every point of its domain, which is $x \geq 2$ with a single value removed. Which value is removed?'
+            answer: "5"
+            solution_sketch: 'The root needs $x \geq 2$ and the denominator vanishes at $x = 5$, so $f$ is continuous exactly on $[2, 5)$ and $(5, \infty)$.'
+          - problem: 'On which interval is $f(x) = \sqrt{9 - x^2}$ continuous?'
+            answer: "[-3, 3]"
+          - problem: 'If $f$ and $g$ are continuous everywhere, must $f \circ g$ be continuous everywhere?'
+            answer: "yes — compositions of continuous functions are continuous"
+        constraints: "domains determined by roots and denominators; interval answers in interval notation"
+    diagnostic_exemplar:
+      problem: 'Find $c$ so that $f(x) = x + c$ for $x < 1$ and $f(x) = 4x$ for $x \geq 1$ is continuous at $x = 1$.'
+      answer: "3"
+      solution_sketch: 'Continuity at $x = 1$ forces the two branches to agree there: $1 + c = 4(1)$, so $c = 3$.'
+    anki_seeds:
+      - front: "A removable discontinuity is one where..."
+        back: "the limit exists but differs from f(a) (or f(a) is undefined) — redefining one point fixes it"
+        type: basic
+      - front: "A jump discontinuity is one where..."
+        back: "both one-sided limits exist but are unequal"
+        type: basic
+      - front: "Sums, products, quotients (nonzero denominator), and compositions of continuous functions are..."
+        back: "continuous"
+        type: basic
+
+  - id: intermediate-value-theorem
+    name: The Intermediate Value Theorem
+    core: false                # stated existence theorem; nothing builds on it (MAW p.391)
+    difficulty: 0.62
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 150
+    prerequisites:
+      - id: continuity
+        weight: 0.8
+        key: true
+      - id: evaluating-functions
+        weight: 0.4
+      - id: evaluating-polynomials
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Verify the hypotheses and conclude a root exists
+        key_prerequisites: [continuity, evaluating-functions]
+        exemplars:
+          - problem: 'Show that $f(x) = x^3 + x - 3$ has a root in $(1, 2)$.'
+            answer: "f is continuous, f(1) = -1 < 0 and f(2) = 7 > 0, so the IVT gives a root in (1, 2)"
+            solution_sketch: 'Polynomials are continuous; the sign change plus the IVT forces $f(c) = 0$ for some $c$ in $(1, 2)$.'
+          - problem: 'Does $f(x) = x^2 - 2$ have a root in $(0, 2)$? Justify with the IVT.'
+            answer: "yes — f(0) = -2 < 0 < f(2) = 2 and f is continuous"
+        constraints: "cubic or quadratic with integer endpoint values of opposite sign; cite continuity + sign change"
+      - id: kp2
+        name: Locate a root interval from values
+        key_prerequisites: [continuity, evaluating-functions]
+        exemplars:
+          - problem: 'A continuous function has $f(1) = -2$, $f(2) = 1$, $f(3) = 4$. Which interval must contain a root?'
+            answer: "(1, 2)"
+          - problem: 'A continuous $f$ has $f(0) = 3$ and $f(4) = -5$. What does the IVT guarantee?'
+            answer: "some c in (0, 4) with f(c) = 0"
+        constraints: "table of integer values with exactly one sign change; identify the bracketing interval"
+      - id: kp3
+        name: Intermediate values other than zero, and why continuity is essential
+        key_prerequisites: [continuity]
+        exemplars:
+          - problem: '$f$ is continuous on $[1, 3]$ with $f(1) = 4$ and $f(3) = 10$. Must $f$ take the value $7$ somewhere in $(1, 3)$?'
+            answer: "yes — 7 lies between 4 and 10, so the IVT applies"
+          - problem: '$g(x) = \frac{1}{x}$ satisfies $g(-1) = -1 < 0 < g(1) = 1$ yet has no root in $(-1, 1)$. Why does this not contradict the IVT?'
+            answer: "g is not continuous on [-1, 1] (it is undefined at 0), so the IVT does not apply"
+        constraints: "one intermediate-value application with N ≠ 0 and one broken-hypothesis example"
+    diagnostic_exemplar:
+      problem: 'Use the Intermediate Value Theorem to show that $f(x) = x^3 + x$ takes the value $5$ somewhere in $(1, 2)$.'
+      answer: 'f is a polynomial, hence continuous on [1, 2], and f(1) = 2 < 5 < 10 = f(2), so the IVT gives some c in (1, 2) with f(c) = 5'
+      solution_sketch: 'Apply the IVT with the intermediate value $N = 5$ lying between $f(1) = 2$ and $f(2) = 10$.'
+    anki_seeds:
+      - front: "IVT: if f is continuous on [a, b] and N is between f(a) and f(b), then..."
+        back: "f(c) = N for some c in (a, b)"
+        type: basic
+      - front: "The IVT's two hypotheses are..."
+        back: "f continuous on the closed interval [a, b], and the target value N strictly between f(a) and f(b)"
+        type: basic

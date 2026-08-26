@@ -1,0 +1,631 @@
+unit: power-taylor-series
+course: calculus-2
+module: "Power & Taylor Series"
+topics:
+  - id: radius-of-convergence
+    name: Radius of Convergence
+    core: true
+    difficulty: 0.68
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 180
+    prerequisites:
+      - id: ratio-root-tests
+        weight: 0.8
+        key: true
+      - id: sequences-convergence
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Radius via the ratio test
+        key_prerequisites: [ratio-root-tests]
+        exemplars:
+          - problem: 'Find the radius of convergence of $\sum_{n=1}^{\infty} \frac{x^n}{n}$.'
+            answer: '$R = 1$'
+            solution_sketch: '$\left|\frac{a_{n+1}}{a_n}\right| = |x| \cdot \frac{n}{n+1} \to |x|$; converges for $|x| < 1$.'
+          - problem: 'Find the radius of convergence of $\sum_{n=0}^{\infty} n! \, x^n$.'
+            answer: '$R = 0$'
+            solution_sketch: 'The ratio is $(n+1)|x| \to \infty$ for any $x \ne 0$; only $x = 0$ works.'
+          - problem: 'Find the radius of convergence of $\sum_{n=0}^{\infty} \frac{x^n}{n!}$.'
+            answer: '$R = \infty$'
+            solution_sketch: 'The ratio is $\frac{|x|}{n+1} \to 0 < 1$ for every $x$.'
+        constraints: "coefficients built from n, n!, c^n; include the degenerate R = 0 and R = infinity cases"
+      - id: kp2
+        name: Radius via the root test
+        key_prerequisites: [ratio-root-tests]
+        exemplars:
+          - problem: 'Use the root test to find the radius of convergence of $\sum_{n=1}^{\infty} \frac{x^n}{n^n}$.'
+            answer: '$R = \infty$'
+            solution_sketch: '$\sqrt[n]{|a_n|} = \frac{|x|}{n} \to 0$ for every $x$.'
+          - problem: 'Find the radius of convergence of $\sum_{n=0}^{\infty} 2^n x^n$.'
+            answer: '$R = \frac{1}{2}$'
+            solution_sketch: '$\sqrt[n]{|a_n|} = 2|x| < 1$ iff $|x| < \frac{1}{2}$.'
+        constraints: "coefficients are explicit nth powers so the root test is immediate"
+      - id: kp3
+        name: Series centered away from zero
+        key_prerequisites: [ratio-root-tests]
+        exemplars:
+          - problem: 'Find the center and radius of convergence of $\sum_{n=1}^{\infty} \frac{(x - 2)^n}{n \, 3^n}$.'
+            answer: 'center $2$, $R = 3$'
+            solution_sketch: 'The ratio test gives $\frac{|x - 2|}{3} < 1$.'
+          - problem: 'Find the center and radius of convergence of $\sum_{n=1}^{\infty} \frac{n (x + 1)^n}{2^n}$.'
+            answer: 'center $-1$, $R = 2$'
+            solution_sketch: '$\left|\frac{a_{n+1}}{a_n}\right| = \frac{n+1}{n} \cdot \frac{|x+1|}{2} \to \frac{|x+1|}{2} < 1$.'
+        constraints: "centers are small integers; coefficient bases are small integers"
+    diagnostic_exemplar:
+      problem: 'Find the center and radius of convergence of $\sum_{n=1}^{\infty} \frac{n(x - 3)^n}{4^n}$.'
+      answer: 'center $3$, $R = 4$'
+      solution_sketch: 'The ratio test gives $\lim \frac{n+1}{n}\cdot\frac{|x-3|}{4} = \frac{|x-3|}{4} < 1$.'
+    anki_seeds:
+      - front: "To find the radius of convergence of a power series, apply..."
+        back: "the ratio (or root) test to the terms and solve L < 1 for |x - a|"
+        type: basic
+      - front: "The three possible shapes of the set where a power series converges?"
+        back: "a single point (R = 0), a finite interval around the center (0 < R < infinity), or the whole line (R = infinity)"
+        type: basic
+
+  - id: geometric-power-series
+    name: Geometric Power Series Representations
+    core: true
+    difficulty: 0.66
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 150
+    prerequisites:
+      - id: geometric-series-convergence
+        weight: 0.7
+        key: true
+      - id: rational-expressions
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Direct substitution into the geometric series
+        key_prerequisites: [geometric-series-convergence]
+        exemplars:
+          - problem: 'Write $\frac{1}{1 - 2x}$ as a power series about $0$ and give its radius of convergence.'
+            answer: '$\sum_{n=0}^{\infty} 2^n x^n$, $R = \frac{1}{2}$'
+            solution_sketch: 'Geometric series with ratio $2x$; requires $|2x| < 1$.'
+          - problem: 'Write $\frac{1}{1 + x^2}$ as a power series about $0$.'
+            answer: '$\sum_{n=0}^{\infty} (-1)^n x^{2n}$ (for $|x| < 1$)'
+            solution_sketch: 'Substitute $-x^2$ for the ratio in $\frac{1}{1 - r} = \sum r^n$.'
+        constraints: "ratios of the form ax, -ax, x^2, -x^2; always state where the representation is valid"
+      - id: kp2
+        name: Multiplying by powers of x
+        key_prerequisites: [geometric-series-convergence]
+        exemplars:
+          - problem: 'Write $\frac{x}{1 - x}$ as a power series about $0$.'
+            answer: '$\sum_{n=1}^{\infty} x^n$ (for $|x| < 1$)'
+            solution_sketch: 'Multiply $\sum_{n=0}^{\infty} x^n$ by $x$, shifting the index.'
+          - problem: 'Write $\frac{x^2}{1 + x}$ as a power series about $0$.'
+            answer: '$\sum_{n=0}^{\infty} (-1)^n x^{n+2}$ (for $|x| < 1$)'
+            solution_sketch: '$\frac{1}{1+x} = \sum (-1)^n x^n$; multiply through by $x^2$.'
+        constraints: "multiplication by x^k only; track the resulting starting index"
+      - id: kp3
+        name: Rewriting to reach geometric form
+        key_prerequisites: [geometric-series-convergence, rational-expressions]
+        exemplars:
+          - problem: 'Write $\frac{1}{2 - x}$ as a power series about $0$ and give its radius of convergence.'
+            answer: '$\sum_{n=0}^{\infty} \frac{x^n}{2^{n+1}}$, $R = 2$'
+            solution_sketch: '$\frac{1}{2 - x} = \frac{1}{2} \cdot \frac{1}{1 - x/2}$; ratio $\frac{x}{2}$, valid for $|x| < 2$.'
+          - problem: 'Write $\frac{1}{3 + x}$ as a power series about $0$ and give its radius of convergence.'
+            answer: '$\sum_{n=0}^{\infty} \frac{(-1)^n x^n}{3^{n+1}}$, $R = 3$'
+            solution_sketch: 'Factor out $3$: $\frac{1}{3} \cdot \frac{1}{1 + x/3}$ with ratio $-\frac{x}{3}$.'
+        constraints: "denominators c ± x with small integer c; answers state R"
+    diagnostic_exemplar:
+      problem: 'Write $\frac{x}{2 + x}$ as a power series about $0$ and give its radius of convergence.'
+      answer: '$\sum_{n=0}^{\infty} \frac{(-1)^n x^{n+1}}{2^{n+1}}$, $R = 2$'
+      solution_sketch: '$\frac{1}{2+x} = \frac{1}{2}\cdot\frac{1}{1 - (-x/2)} = \sum \frac{(-1)^nx^n}{2^{n+1}}$ for $|x| < 2$; multiplying by $x$ shifts every exponent up by one.'
+    anki_seeds:
+      - front: 'Power series for $\frac{1}{1-x}$ (with validity)?'
+        back: '$\sum_{n=0}^{\infty} x^n$ for $|x| < 1$'
+        type: basic
+      - front: 'To expand $\frac{1}{c - x}$ as a power series about $0$, first...'
+        back: 'factor out $c$: $\frac{1}{c}\cdot\frac{1}{1 - x/c}$, giving ratio $x/c$ and $R = |c|$'
+        type: basic
+
+  - id: power-series
+    name: Power Series and Interval of Convergence
+    core: true
+    difficulty: 0.72
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 240
+    prerequisites:
+      - id: radius-of-convergence
+        weight: 0.8
+        key: true
+      - id: alternating-series
+        weight: 0.5
+        key: true
+      - id: geometric-power-series
+        weight: 0.4
+      - id: interval-notation
+        weight: 0.3            # notation support: interval-of-convergence answers are written in interval notation (re-audit R-01)
+    knowledge_points:
+      - id: kp1
+        name: Endpoint checks
+        key_prerequisites: [radius-of-convergence, alternating-series]
+        exemplars:
+          - problem: 'Find the interval of convergence of $\sum_{n=1}^{\infty} \frac{x^n}{n}$.'
+            answer: '$[-1, 1)$'
+            solution_sketch: '$R = 1$; at $x = 1$ the harmonic series diverges, at $x = -1$ the alternating harmonic series converges.'
+          - problem: 'Find the interval of convergence of $\sum_{n=1}^{\infty} \frac{x^n}{n^2}$.'
+            answer: '$[-1, 1]$'
+            solution_sketch: '$R = 1$; both endpoints give (absolutely) convergent $p$-series behavior.'
+        constraints: "endpoint series must reduce to p-series, alternating p-series, or geometric"
+      - id: kp2
+        name: Intervals for centered series
+        key_prerequisites: [radius-of-convergence, alternating-series]
+        exemplars:
+          - problem: 'Find the interval of convergence of $\sum_{n=1}^{\infty} \frac{(x - 2)^n}{n \, 3^n}$.'
+            answer: '$[-1, 5)$'
+            solution_sketch: 'Ratio test gives $\frac{|x-2|}{3} < 1$, so $R = 3$ about center $2$. At $x = 5$: $\sum \frac{1}{n}$ diverges; at $x = -1$: $\sum \frac{(-1)^n}{n}$ converges.'
+          - problem: 'Find the interval of convergence of $\sum_{n=1}^{\infty} \frac{(x + 1)^n}{\sqrt{n} \, 2^n}$.'
+            answer: '$[-3, 1)$'
+            solution_sketch: '$R = 2$ about center $-1$. At $x = 1$: $\sum \frac{1}{\sqrt{n}}$ diverges; at $x = -3$: $\sum \frac{(-1)^n}{\sqrt{n}}$ converges by the AST.'
+        constraints: "centers are small integers; endpoint series must reduce to p-series, alternating p-series, or geometric"
+      - id: kp3
+        name: Degenerate and open cases
+        key_prerequisites: [radius-of-convergence]
+        exemplars:
+          - problem: 'Find the interval of convergence of $\sum_{n=0}^{\infty} n! \, (x - 1)^n$.'
+            answer: 'the single point $x = 1$'
+            solution_sketch: '$R = 0$: the ratio $(n+1)|x-1|$ blows up for any $x \ne 1$.'
+          - problem: 'Find the interval of convergence of $\sum_{n=0}^{\infty} \frac{x^n}{n!}$.'
+            answer: '$(-\infty, \infty)$'
+            solution_sketch: '$R = \infty$.'
+          - problem: 'Find the interval of convergence of $\sum_{n=1}^{\infty} n x^n$.'
+            answer: '$(-1, 1)$'
+            solution_sketch: '$R = 1$; at $x = \pm 1$ the terms $\pm n$ do not tend to $0$, so both endpoints fail the term test.'
+        constraints: "include R = 0, R = infinity, and both-endpoints-diverge cases"
+    diagnostic_exemplar:
+      problem: 'Find the interval of convergence of $\sum_{n=1}^{\infty} \frac{x^n}{n \, 2^n}$.'
+      answer: '$[-2, 2)$'
+      solution_sketch: '$R = 2$; at $x = 2$ the harmonic series diverges, at $x = -2$ the alternating harmonic series converges.'
+    anki_seeds:
+      - front: "A power series converges how, relative to its center and radius R?"
+        back: "absolutely for |x - a| < R, diverges for |x - a| > R; endpoints must be checked individually"
+        type: basic
+      - front: "After computing R for a power series, the remaining work is always..."
+        back: "testing each endpoint x = a - R and x = a + R as its own numerical series"
+        type: basic
+
+  - id: differentiating-integrating-power-series
+    name: Differentiating and Integrating Power Series
+    core: true
+    difficulty: 0.72
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 240
+    prerequisites:
+      - id: power-series
+        weight: 0.8
+        key: true
+      - id: geometric-power-series
+        weight: 0.5
+      - id: definite-integrals-ftc
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Term-by-term differentiation
+        key_prerequisites: [power-series, geometric-power-series]
+        exemplars:
+          - problem: 'Differentiate the geometric series to find a power series for $\frac{1}{(1 - x)^2}$.'
+            answer: '$\sum_{n=1}^{\infty} n x^{n-1}$ (for $|x| < 1$)'
+            solution_sketch: '$\frac{d}{dx} \sum x^n = \sum n x^{n-1}$, and $\frac{d}{dx}\frac{1}{1-x} = \frac{1}{(1-x)^2}$.'
+          - problem: 'Using $\sum_{n=1}^{\infty} n x^n = \frac{x}{(1-x)^2}$, evaluate $\sum_{n=1}^{\infty} \frac{n}{2^n}$.'
+            answer: "2"
+            solution_sketch: 'Set $x = \frac{1}{2}$: $\frac{1/2}{(1/2)^2} = 2$.'
+        constraints: "differentiate the geometric series or a close variant; one numerical evaluation per set"
+      - id: kp2
+        name: Term-by-term integration
+        key_prerequisites: [power-series, geometric-power-series, definite-integrals-ftc]
+        exemplars:
+          - problem: 'Integrate the geometric series for $\frac{1}{1 + x}$ to derive the Maclaurin series of $\ln(1 + x)$.'
+            answer: '$\sum_{n=1}^{\infty} \frac{(-1)^{n+1} x^n}{n}$ (for $-1 < x \le 1$)'
+            solution_sketch: '$\frac{1}{1+x} = \sum (-1)^n x^n$; integrate term by term, constant $0$ from $\ln 1 = 0$.'
+          - problem: 'Derive the Maclaurin series of $\arctan x$.'
+            answer: '$\sum_{n=0}^{\infty} \frac{(-1)^n x^{2n+1}}{2n+1}$ (for $|x| \le 1$)'
+            solution_sketch: 'Integrate $\frac{1}{1+x^2} = \sum (-1)^n x^{2n}$ term by term.'
+        constraints: "integrate geometric-type series; fix the constant of integration by evaluating at 0"
+      - id: kp3
+        name: What happens to the interval
+        key_prerequisites: [power-series]
+        exemplars:
+          - problem: 'How do the radius and the endpoints of the interval of convergence behave under term-by-term differentiation or integration?'
+            answer: 'the radius is unchanged; behavior at the endpoints may change'
+            solution_sketch: 'Standard theorem: $R$ is preserved, endpoint convergence must be rechecked.'
+          - problem: '$\sum_{n=1}^{\infty} \frac{x^n}{n^2}$ has interval $[-1, 1]$. Find the interval of its term-by-term derivative $\sum_{n=1}^{\infty} \frac{x^{n-1}}{n}$.'
+            answer: '$[-1, 1)$'
+            solution_sketch: 'Same $R = 1$; at $x = 1$ the harmonic series now diverges, at $x = -1$ the alternating harmonic series converges.'
+          - problem: 'Evaluate the series for $\ln(1 + x)$ at $x = 1$; which famous sum results?'
+            answer: '$1 - \frac{1}{2} + \frac{1}{3} - \cdots = \ln 2$'
+            solution_sketch: 'The alternating harmonic series converges at the endpoint and sums to $\ln 2$.'
+        constraints: "conceptual endpoint questions paired with one concrete recheck"
+    diagnostic_exemplar:
+      problem: 'Integrate the geometric series for $\frac{1}{1 + x^2}$ to find the Maclaurin series of $\arctan x$, and give the interval on which it is valid.'
+      answer: '$\sum_{n=0}^{\infty} \frac{(-1)^n x^{2n+1}}{2n+1}$, valid on $[-1, 1]$'
+      solution_sketch: 'Integrating $\sum(-1)^nx^{2n}$ term by term keeps the radius $1$; both endpoints now converge by the alternating series test.'
+    anki_seeds:
+      - front: "Term-by-term differentiation/integration of a power series preserves..., but may change..."
+        back: "the radius of convergence; the behavior at the endpoints"
+        type: basic
+      - front: '$1 - \frac{1}{2} + \frac{1}{3} - \frac{1}{4} + \cdots = $ ?'
+        back: '$\ln 2$'
+        type: basic
+
+  - id: standard-maclaurin-series
+    name: Maclaurin Series from the Definition
+    core: true
+    difficulty: 0.72
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 240
+    prerequisites:
+      - id: power-series
+        weight: 0.7
+        key: true
+      - id: derivatives-exp-log
+        weight: 0.4
+      - id: derivatives-trig
+        weight: 0.4
+      - id: higher-order-derivatives
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: The coefficient formula
+        key_prerequisites: [power-series, derivatives-exp-log, higher-order-derivatives]
+        exemplars:
+          - problem: 'Derive the Maclaurin series of $e^x$ from the definition $c_n = \frac{f^{(n)}(0)}{n!}$.'
+            answer: '$\sum_{n=0}^{\infty} \frac{x^n}{n!}$'
+            solution_sketch: 'Every derivative of $e^x$ is $e^x$, so $f^{(n)}(0) = 1$ for all $n$.'
+          - problem: 'Find the Maclaurin series of $e^{2x}$ through the $x^3$ term.'
+            answer: '$1 + 2x + 2x^2 + \frac{4}{3}x^3$'
+            solution_sketch: '$f^{(n)}(0) = 2^n$: coefficients $\frac{2^n}{n!}$ give $1, 2, 2, \frac{8}{6} = \frac{4}{3}$.'
+        constraints: "functions with a clean derivative pattern (e^{ax}); at most 4 terms when truncated"
+      - id: kp2
+        name: Sine and cosine from the derivative cycle
+        key_prerequisites: [power-series, derivatives-trig, higher-order-derivatives]
+        exemplars:
+          - problem: 'Derive the Maclaurin series of $\sin x$ from the definition.'
+            answer: '$\sum_{n=0}^{\infty} \frac{(-1)^n x^{2n+1}}{(2n+1)!}$'
+            solution_sketch: 'The derivatives cycle $\sin, \cos, -\sin, -\cos$; at $0$ they give $0, 1, 0, -1$, so only odd powers survive with alternating signs.'
+          - problem: 'Find the Maclaurin series of $\cos x$ through the $x^4$ term.'
+            answer: '$1 - \frac{x^2}{2} + \frac{x^4}{24}$'
+            solution_sketch: 'Even derivatives at $0$ alternate $1, -1, 1$; divide by $(2n)!$.'
+        constraints: "use the four-step derivative cycle; state which coefficients vanish and why"
+      - id: kp3
+        name: Taylor series at other centers
+        key_prerequisites: [power-series, derivatives-exp-log]
+        exemplars:
+          - problem: 'Find the Taylor series of $f(x) = \frac{1}{x}$ centered at $a = 1$.'
+            answer: '$\sum_{n=0}^{\infty} (-1)^n (x - 1)^n$ (for $|x - 1| < 1$)'
+            solution_sketch: '$f^{(n)}(x) = \frac{(-1)^n n!}{x^{n+1}}$, so $\frac{f^{(n)}(1)}{n!} = (-1)^n$; equivalently a geometric series in $-(x-1)$.'
+          - problem: 'Find the Taylor series of $\ln x$ centered at $a = 1$.'
+            answer: '$\sum_{n=1}^{\infty} \frac{(-1)^{n+1} (x - 1)^n}{n}$ (for $0 < x \le 2$)'
+            solution_sketch: '$f^{(n)}(x) = \frac{(-1)^{n+1}(n-1)!}{x^n}$ for $n \ge 1$, so $c_n = \frac{(-1)^{n+1}}{n}$; $c_0 = \ln 1 = 0$.'
+        constraints: "centers where f and all derivatives evaluate to clean rationals (1/x, ln x at a = 1)"
+    diagnostic_exemplar:
+      problem: 'Find the Taylor series of $f(x) = \cos x$ centered at $a = \frac{\pi}{2}$.'
+      answer: '$\sum_{n=0}^{\infty} \frac{(-1)^{n+1}(x - \pi/2)^{2n+1}}{(2n+1)!}$ (equivalently $-\sin(x - \pi/2)$)'
+      solution_sketch: 'The derivative cycle $\cos, -\sin, -\cos, \sin$ evaluated at $\pi/2$ gives $0, -1, 0, 1, \ldots$, so only odd powers survive, with alternating signs starting negative.'
+    anki_seeds:
+      - front: "Taylor series coefficient formula about x = a?"
+        back: '$c_n = \frac{f^{(n)}(a)}{n!}$'
+        type: basic
+      - front: 'Maclaurin series of $\sin x$ and $\cos x$?'
+        back: '$\sin x = \sum \frac{(-1)^n x^{2n+1}}{(2n+1)!}$, $\cos x = \sum \frac{(-1)^n x^{2n}}{(2n)!}$'
+        type: basic
+      - front: 'Maclaurin series of $e^x$?'
+        back: '$\sum_{n=0}^{\infty} \frac{x^n}{n!}$, valid for all $x$'
+        type: basic
+
+  - id: taylor-maclaurin-series
+    name: Taylor and Maclaurin Series
+    core: true
+    difficulty: 0.75
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 240
+    prerequisites:
+      - id: standard-maclaurin-series
+        weight: 0.8
+        key: true
+      - id: differentiating-integrating-power-series
+        weight: 0.6
+        key: true
+      - id: double-half-angle-identities
+        weight: 0.2
+    knowledge_points:
+      - id: kp1
+        name: New series by substitution and multiplication
+        key_prerequisites: [standard-maclaurin-series]
+        exemplars:
+          - problem: 'Find the Maclaurin series of $x^2 e^x$.'
+            answer: '$\sum_{n=0}^{\infty} \frac{x^{n+2}}{n!}$'
+            solution_sketch: 'Multiply the $e^x$ series by $x^2$.'
+          - problem: 'Find the Maclaurin series of $\sin(x^2)$.'
+            answer: '$\sum_{n=0}^{\infty} \frac{(-1)^n x^{4n+2}}{(2n+1)!}$'
+            solution_sketch: 'Substitute $x^2$ into $\sin t = \sum \frac{(-1)^n t^{2n+1}}{(2n+1)!}$.'
+          - problem: 'Find the Maclaurin series of $e^{-x^2}$ through the $x^4$ term.'
+            answer: '$1 - x^2 + \frac{x^4}{2}$'
+            solution_sketch: 'Substitute $-x^2$ into $e^t = 1 + t + \frac{t^2}{2} + \cdots$.'
+        constraints: "start from the memorized e^x, sin, cos, 1/(1-x) series; substitutions are ±x^2 or ax; multiplication by x^k only"
+      - id: kp2
+        name: Combining series
+        key_prerequisites: [standard-maclaurin-series, differentiating-integrating-power-series]
+        exemplars:
+          - problem: 'Find the Maclaurin series of $\cos^2 x$ through the $x^4$ term.'
+            answer: '$1 - x^2 + \frac{x^4}{3}$'
+            solution_sketch: '$\cos^2 x = \frac{1 + \cos 2x}{2}$; substitute $2x$ into the cosine series: $\frac{1}{2}\left(2 - \frac{4x^2}{2} + \frac{16x^4}{24}\right)$.'
+          - problem: 'Find the first three nonzero terms of the Maclaurin series of $e^x \sin x$.'
+            answer: '$x + x^2 + \frac{x^3}{3}$'
+            solution_sketch: 'Multiply $\left(1 + x + \frac{x^2}{2} + \frac{x^3}{6}\right)\left(x - \frac{x^3}{6}\right)$ and collect through $x^3$: the cubic coefficient is $\frac{1}{2} - \frac{1}{6} = \frac{1}{3}$.'
+        constraints: "identities or products of two standard series; collect terms through degree at most 4"
+      - id: kp3
+        name: Series for limits and numerical sums
+        key_prerequisites: [standard-maclaurin-series]
+        exemplars:
+          - problem: 'Use Maclaurin series to evaluate $\lim_{x \to 0} \frac{1 - \cos x}{x^2}$.'
+            answer: '$1/2$'
+            solution_sketch: '$1 - \cos x = \frac{x^2}{2} - \frac{x^4}{24} + \cdots$; divide by $x^2$ and let $x \to 0$.'
+          - problem: 'Use Maclaurin series to evaluate $\lim_{x \to 0} \frac{x - \sin x}{x^3}$.'
+            answer: '$1/6$'
+            solution_sketch: '$x - \sin x = \frac{x^3}{6} - \frac{x^5}{120} + \cdots$.'
+          - problem: 'Evaluate $\sum_{n=0}^{\infty} \frac{2^n}{n!}$ by recognizing a standard series.'
+            answer: '$e^2$'
+            solution_sketch: 'This is the $e^x$ series at $x = 2$.'
+        constraints: "term-by-term operations on the standard series; limits requiring at most two nonzero terms"
+    diagnostic_exemplar:
+      problem: 'Use Maclaurin series to evaluate $\lim_{x \to 0} \frac{e^x \sin x - x}{x^2}$.'
+      answer: '1'
+      solution_sketch: '$e^x\sin x = x + x^2 + \frac{x^3}{3} + \cdots$, so the numerator is $x^2 + \frac{x^3}{3} + \cdots$ and the quotient tends to $1$.'
+    anki_seeds:
+      - front: 'Maclaurin series of $\ln(1 + x)$ (with validity)?'
+        back: '$\sum_{n=1}^{\infty} \frac{(-1)^{n+1} x^n}{n}$ for $-1 < x \le 1$'
+        type: basic
+      - front: 'To find the Maclaurin series of $f(x^2)$ or $f(ax)$, you...'
+        back: "substitute into the known series for f rather than differentiating from scratch"
+        type: basic
+
+  - id: binomial-series
+    name: The Binomial Series
+    core: false                # named special series subsumed by Taylor series
+    difficulty: 0.77
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 240
+    prerequisites:
+      - id: taylor-maclaurin-series
+        weight: 0.8
+        key: true
+      - id: binomial-expansion
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: The binomial series formula
+        key_prerequisites: [taylor-maclaurin-series, binomial-expansion]
+        exemplars:
+          - problem: 'Find the Maclaurin series of $(1 + x)^{1/2}$ through the $x^2$ term.'
+            answer: '$1 + \frac{x}{2} - \frac{x^2}{8}$'
+            solution_sketch: '$\binom{1/2}{1} = \frac{1}{2}$, $\binom{1/2}{2} = \frac{(1/2)(-1/2)}{2} = -\frac{1}{8}$.'
+          - problem: 'Show that $(1 + x)^{-2} = \sum_{n=0}^{\infty} (-1)^n (n + 1) x^n$ for $|x| < 1$.'
+            answer: '$\binom{-2}{n} = (-1)^n (n+1)$'
+            solution_sketch: '$\binom{-2}{n} = \frac{(-2)(-3)\cdots(-2-n+1)}{n!} = (-1)^n \frac{(n+1)!}{n!} = (-1)^n (n+1)$.'
+        constraints: "exponents k in {1/2, -1/2, 1/3, -2}; truncate at degree 2 unless the pattern is closed-form"
+      - id: kp2
+        name: Substitution into the binomial series
+        key_prerequisites: [taylor-maclaurin-series]
+        exemplars:
+          - problem: 'Find the Maclaurin series of $\frac{1}{\sqrt{1 - x^2}}$ through the $x^4$ term.'
+            answer: '$1 + \frac{x^2}{2} + \frac{3x^4}{8}$'
+            solution_sketch: 'Substitute $-x^2$ into $(1 + t)^{-1/2} = 1 - \frac{t}{2} + \frac{3t^2}{8} - \cdots$.'
+          - problem: 'Find the Maclaurin series of $\sqrt[3]{1 + x}$ through the $x^2$ term.'
+            answer: '$1 + \frac{x}{3} - \frac{x^2}{9}$'
+            solution_sketch: '$\binom{1/3}{2} = \frac{(1/3)(-2/3)}{2} = -\frac{1}{9}$.'
+        constraints: "substitutions are ±x^2 or ax into a binomial series with fractional exponent"
+      - id: kp3
+        name: Applications of the binomial series
+        key_prerequisites: [taylor-maclaurin-series]
+        exemplars:
+          - problem: 'Use the series $1 + \frac{x}{2} - \frac{x^2}{8}$ to approximate $\sqrt{1.1}$.'
+            answer: '$\frac{839}{800} = 1.04875$'
+            solution_sketch: 'Set $x = 0.1$: $1 + 0.05 - 0.00125 = 1.04875$; the true value is $1.0488\ldots$.'
+          - problem: 'Integrate the series for $\frac{1}{\sqrt{1 - x^2}}$ to find the Maclaurin series of $\arcsin x$ through the $x^5$ term.'
+            answer: '$x + \frac{x^3}{6} + \frac{3x^5}{40}$'
+            solution_sketch: 'Integrate $1 + \frac{x^2}{2} + \frac{3x^4}{8}$ term by term; the constant is $\arcsin 0 = 0$.'
+        constraints: "numerical approximations at |x| <= 0.2 with exact fractional answers stated"
+    diagnostic_exemplar:
+      problem: 'Find the Maclaurin series of $\sqrt{1 + x^2}$ through the $x^4$ term, then use it to approximate $\sqrt{1.04}$ as an exact fraction.'
+      answer: '$1 + \frac{x^2}{2} - \frac{x^4}{8}$; $\sqrt{1.04} \approx \frac{5099}{5000}$'
+      solution_sketch: 'The binomial series for $(1+u)^{1/2}$ is $1 + \frac{u}{2} - \frac{u^2}{8} + \cdots$ with $u = x^2$; at $x = 0.2$ this gives $1 + \frac{1}{50} - \frac{1}{5000}$.'
+    anki_seeds:
+      - front: 'Binomial series: $(1 + x)^k = $ ? (validity)'
+        back: '$\sum_{n=0}^{\infty} \binom{k}{n} x^n$ for $|x| < 1$, where $\binom{k}{n} = \frac{k(k-1)\cdots(k-n+1)}{n!}$'
+        type: basic
+      - front: 'First three terms of $(1+x)^{1/2}$?'
+        back: '$1 + \frac{x}{2} - \frac{x^2}{8}$'
+        type: basic
+
+  - id: taylor-polynomials
+    name: Taylor Polynomials
+    core: true
+    difficulty: 0.73
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 240
+    prerequisites:
+      - id: standard-maclaurin-series
+        weight: 0.8
+        key: true
+      - id: higher-order-derivatives
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Maclaurin polynomials
+        key_prerequisites: [standard-maclaurin-series]
+        exemplars:
+          - problem: 'Find $T_3(x)$ for $f(x) = \sin x$ at $a = 0$.'
+            answer: '$T_3(x) = x - \frac{x^3}{6}$'
+            solution_sketch: 'Truncate the Maclaurin series of $\sin x$ after the cubic term.'
+          - problem: 'Find $T_2(x)$ for $f(x) = e^x$ at $a = 0$.'
+            answer: '$T_2(x) = 1 + x + \frac{x^2}{2}$'
+            solution_sketch: 'Truncate the exponential series at degree $2$.'
+        constraints: "degree <= 3; obtained by truncating a memorized series"
+      - id: kp2
+        name: Taylor polynomials at general centers
+        key_prerequisites: [standard-maclaurin-series, higher-order-derivatives]
+        exemplars:
+          - problem: 'Find the second-degree Taylor polynomial of $f(x) = \sqrt{x}$ at $a = 4$.'
+            answer: '$T_2(x) = 2 + \frac{x - 4}{4} - \frac{(x - 4)^2}{64}$'
+            solution_sketch: '$f(4) = 2$, $f''(4) = \frac{1}{4}$, $f''''(4) = -\frac{1}{32}$; divide the second derivative by $2!$.'
+          - problem: 'Find $T_2(x)$ for $f(x) = \ln x$ at $a = 1$.'
+            answer: '$T_2(x) = (x - 1) - \frac{(x - 1)^2}{2}$'
+            solution_sketch: '$f(1) = 0$, $f''(1) = 1$, $f''''(1) = -1$.'
+        constraints: "degree <= 3; centers where f and derivatives evaluate to clean rationals"
+      - id: kp3
+        name: Approximating values with Taylor polynomials
+        key_prerequisites: [standard-maclaurin-series]
+        exemplars:
+          - problem: 'Use $T_2$ for $\sqrt{x}$ at $a = 4$ to approximate $\sqrt{4.2}$. Give an exact fraction.'
+            answer: '$\frac{3279}{1600} = 2.049375$'
+            solution_sketch: '$2 + \frac{0.2}{4} - \frac{0.04}{64} = 2 + \frac{1}{20} - \frac{1}{1600}$.'
+          - problem: 'Use $T_2$ for $\ln x$ at $a = 1$ to approximate $\ln 1.2$. Give an exact fraction.'
+            answer: '$\frac{9}{50} = 0.18$'
+            solution_sketch: '$0.2 - \frac{(0.2)^2}{2} = 0.2 - 0.02$.'
+        constraints: "evaluation points within 0.2 of the center; answers as exact fractions"
+    diagnostic_exemplar:
+      problem: 'Find $T_2(x)$ for $f(x) = \sqrt{x}$ at $a = 9$, and use it to approximate $\sqrt{9.6}$ as an exact fraction.'
+      answer: '$T_2(x) = 3 + \frac{x - 9}{6} - \frac{(x - 9)^2}{216}$; $\sqrt{9.6} \approx \frac{1859}{600}$'
+      solution_sketch: 'The derivatives at $9$ are $3$, $\frac16$, and $-\frac{1}{108}$; at $x = 9.6$ the polynomial gives $3 + \frac{1}{10} - \frac{1}{600}$.'
+    anki_seeds:
+      - front: 'The degree-n Taylor polynomial of f at a is $T_n(x) = $ ?'
+        back: '$\sum_{k=0}^{n} \frac{f^{(k)}(a)}{k!}(x - a)^k$'
+        type: basic
+      - front: "T_n is the unique degree-<=n polynomial matching f in what way at a?"
+        back: "same value and same first n derivatives at a"
+        type: basic
+
+  - id: taylor-polynomials-error
+    name: Taylor Polynomials and Error Bounds
+    core: false                # error-bound destination; taylor-polynomials stays core
+    difficulty: 0.8
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 300
+    prerequisites:
+      - id: taylor-polynomials
+        weight: 0.8
+        key: true
+      - id: alternating-series-estimation
+        weight: 0.5
+        key: true
+      - id: taylor-maclaurin-series
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: The Lagrange remainder
+        key_prerequisites: [taylor-polynomials]
+        exemplars:
+          - problem: '$\sin x$ is approximated by $T_3(x) = x - \frac{x^3}{6}$ on $|x| \le \frac{1}{2}$. Bound the error with the Lagrange remainder.'
+            answer: '$|R_3| \le \frac{(1/2)^4}{4!} = \frac{1}{384}$'
+            solution_sketch: '$|f^{(4)}| = |\sin x| \le 1$, so $|R_3(x)| \le \frac{|x|^4}{4!}$.'
+          - problem: '$e^x$ is approximated by $T_2(x)$ on $|x| \le 1$. Bound the error with the Lagrange remainder, using $M = 3$.'
+            answer: '$|R_2| \le \frac{3 \cdot 1^3}{3!} = \frac{1}{2}$'
+            solution_sketch: '$|f^{(3)}(x)| = e^x \le e < 3$ on $[-1, 1]$; apply $|R_2| \le \frac{M |x|^3}{3!}$.'
+        constraints: "Lagrange bounds use M = 1 for sin/cos and M = 3 for e^x on [-1, 1]"
+      - id: kp2
+        name: The alternating error bound for series values
+        key_prerequisites: [alternating-series-estimation, taylor-maclaurin-series]
+        exemplars:
+          - problem: '$\cos 1$ is approximated by $1 - \frac{1}{2} + \frac{1}{24}$. Bound the error using the alternating series bound.'
+            answer: 'error $\le \frac{1}{720}$'
+            solution_sketch: 'The series $\sum \frac{(-1)^n}{(2n)!}$ alternates with decreasing terms; the first omitted term is $\frac{1}{6!} = \frac{1}{720}$.'
+          - problem: 'How far must the series $\frac{1}{e} = \sum_{n=0}^{\infty} \frac{(-1)^n}{n!}$ be summed to guarantee an error below $\frac{1}{1000}$?'
+            answer: 'through $n = 6$ (first omitted term $\frac{1}{7!} = \frac{1}{5040} < \frac{1}{1000}$)'
+            solution_sketch: 'Need $\frac{1}{(n+1)!} < 10^{-3}$: $7! = 5040$ is the first factorial past $1000$.'
+        constraints: "alternating bounds cite the first omitted term; thresholds are powers of 10"
+      - id: kp3
+        name: Choosing the degree for a target accuracy
+        key_prerequisites: [taylor-polynomials, alternating-series-estimation]
+        exemplars:
+          - problem: 'What degree $n$ guarantees $|\sin x - T_n(x)| \le \frac{1}{5040}$ for all $|x| \le 1$ (using $M = 1$)?'
+            answer: '$n = 6$ ($|R_n| \le \frac{1}{(n+1)!}$ and $7! = 5040$)'
+            solution_sketch: 'Need $\frac{1}{(n+1)!} \le \frac{1}{5040}$, i.e. $(n+1)! \ge 5040 = 7!$.'
+          - problem: 'What degree $n$ guarantees $|e^x - T_n(x)| \le \frac{1}{100}$ for all $|x| \le 1$, using $M = 3$?'
+            answer: '$n = 5$ ($\frac{3}{6!} = \frac{1}{240} \le \frac{1}{100}$, while $\frac{3}{5!} = \frac{1}{40}$ is too big)'
+            solution_sketch: 'Need $\frac{3}{(n+1)!} \le \frac{1}{100}$, i.e. $(n+1)! \ge 300$: first satisfied by $6! = 720$.'
+        constraints: "factorial thresholds solvable by listing factorials; state the deciding inequality"
+    diagnostic_exemplar:
+      problem: 'What degree $n$ guarantees $|\cos x - T_n(x)| \le \frac{1}{1000}$ for all $|x| \le 1$ (using $M = 1$)?'
+      answer: '$n = 6$'
+      solution_sketch: 'The Lagrange remainder gives $|R_n| \le \frac{1}{(n+1)!}$; $7! = 5040 \ge 1000$ while $6! = 720$ is too small.'
+    anki_seeds:
+      - front: "Lagrange remainder bound for T_n at center a?"
+        back: '$|R_n(x)| \le \frac{M |x - a|^{n+1}}{(n+1)!}$ where $M$ bounds $|f^{(n+1)}|$ between $a$ and $x$'
+        type: basic
+      - front: "For sin and cos, the safe Lagrange constant M is always..."
+        back: "1 (every derivative is ± sin or ± cos)"
+        type: basic
+
+  - id: approximating-integrals-with-series
+    name: Approximating Integrals with Series
+    core: false                # application of Taylor series; terminal
+    difficulty: 0.8
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 300
+    prerequisites:
+      - id: taylor-polynomials-error
+        weight: 0.7
+        key: true
+      - id: differentiating-integrating-power-series
+        weight: 0.5
+        key: true
+      - id: taylor-maclaurin-series
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: Expressing integrals as numerical series
+        key_prerequisites: [taylor-maclaurin-series, differentiating-integrating-power-series]
+        exemplars:
+          - problem: 'Express $\int_0^1 \frac{\sin x}{x} \, dx$ as a numerical series.'
+            answer: '$\sum_{n=0}^{\infty} \frac{(-1)^n}{(2n+1)(2n+1)!} = 1 - \frac{1}{18} + \frac{1}{600} - \cdots$'
+            solution_sketch: '$\frac{\sin x}{x} = \sum \frac{(-1)^n x^{2n}}{(2n+1)!}$; integrate term by term over $[0, 1]$.'
+          - problem: 'Express $\int_0^1 e^{-x^2} \, dx$ as a numerical series.'
+            answer: '$\sum_{n=0}^{\infty} \frac{(-1)^n}{(2n+1) \, n!} = 1 - \frac{1}{3} + \frac{1}{10} - \cdots$'
+            solution_sketch: '$e^{-x^2} = \sum \frac{(-1)^n x^{2n}}{n!}$; each term integrates to $\frac{1}{(2n+1) n!}$.'
+        constraints: "integrands are sin/cos/exp of x or x^2 with no elementary antiderivative"
+      - id: kp2
+        name: Estimating to a target accuracy
+        key_prerequisites: [taylor-polynomials-error, differentiating-integrating-power-series]
+        exemplars:
+          - problem: 'Estimate $\int_0^1 \cos(x^2) \, dx$ with error less than $\frac{1}{100}$.'
+            answer: '$\frac{9}{10}$ (two terms: $1 - \frac{1}{10}$; the next term $\frac{1}{216}$ bounds the error)'
+            solution_sketch: '$\int_0^1 \cos(x^2)\,dx = \sum \frac{(-1)^n}{(4n+1)(2n)!} = 1 - \frac{1}{10} + \frac{1}{216} - \cdots$; alternating bound.'
+          - problem: 'Estimate $\int_0^{1/2} \frac{dx}{1 + x^4}$ with error less than $\frac{1}{1000}$.'
+            answer: '$\frac{79}{160}$ (two terms: $\frac{1}{2} - \frac{1}{160}$; the next term $\frac{1}{4608}$ bounds the error)'
+            solution_sketch: '$\frac{1}{1+x^4} = \sum (-1)^n x^{4n}$; integrating gives $\sum \frac{(-1)^n (1/2)^{4n+1}}{4n+1} = \frac{1}{2} - \frac{1}{160} + \frac{1}{4608} - \cdots$.'
+        constraints: "the target accuracy reached within three terms; error justified by the first omitted term"
+      - id: kp3
+        name: Recognizing famous numerical series
+        key_prerequisites: [differentiating-integrating-power-series]
+        exemplars:
+          - problem: 'Evaluate $\sum_{n=0}^{\infty} \frac{(-1)^n}{2n+1}$ by recognizing a standard series at an endpoint.'
+            answer: '$\pi/4$'
+            solution_sketch: 'The $\arctan$ series at $x = 1$.'
+          - problem: 'Evaluate $\sum_{n=1}^{\infty} \frac{(-1)^{n+1}}{n}$ by recognizing a standard series at an endpoint.'
+            answer: '$\ln 2$'
+            solution_sketch: 'The $\ln(1+x)$ series at $x = 1$.'
+        constraints: "sums matching arctan, ln(1+x), or e^x at simple arguments"
+    diagnostic_exemplar:
+      problem: 'Estimate $\int_0^1 \sin(x^2)\,dx$ with error less than $\frac{1}{100}$, giving the estimate as an exact fraction.'
+      answer: '$\frac{13}{42}$'
+      solution_sketch: 'Termwise integration gives $\frac13 - \frac{1}{42} + \frac{1}{1320} - \cdots$; two terms suffice since the next term $\frac{1}{1320} < \frac{1}{100}$ bounds the error.'
+    anki_seeds:
+      - front: "To integrate a function with no elementary antiderivative (like e^{-x^2}), the series method is..."
+        back: "expand the integrand as a power series and integrate term by term inside the interval of convergence"
+        type: basic
+      - front: '$\sum_{n=0}^{\infty} \frac{(-1)^n}{2n+1} = $ ?'
+        back: '$\pi/4$ (the arctangent series at $x = 1$)'
+        type: basic

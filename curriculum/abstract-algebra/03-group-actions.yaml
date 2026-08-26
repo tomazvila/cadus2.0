@@ -1,0 +1,318 @@
+unit: actions
+course: abstract-algebra
+module: "Group Actions"
+topics:
+  - id: group-actions
+    name: "Group Actions"
+    core: true
+    difficulty: 0.72
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 180
+    prerequisites:
+      - id: permutations-cycle-notation
+        weight: 0.8
+        key: true
+      - id: elementary-group-properties
+        weight: 0.5
+        key: false
+      - id: dihedral-groups
+        weight: 0.5
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: "Definition and verifying the axioms"
+        key_prerequisites: [elementary-group-properties, permutations-cycle-notation]
+        exemplars:
+          - problem: 'State the two axioms for a (left) action of a group $G$ on a set $X$.'
+            answer: '$e \cdot x = x$ for all $x$, and $g \cdot (h \cdot x) = (gh) \cdot x$ for all $g, h \in G$, $x \in X$.'
+            solution_sketch: 'Identity acts trivially; acting by $h$ then $g$ matches acting by the product $gh$.'
+          - problem: 'Verify that $g \cdot x = x + g$ defines an action of $(\mathbb{Z}, +)$ on $\mathbb{R}$.'
+            answer: '$0 + x = x$ and $(x + h) + g = x + (g + h)$; both axioms hold.'
+            solution_sketch: 'Translation by integers: identity is translation by 0, and translations compose additively.'
+        constraints: "verify or refute proposed actions; include one failing example (e.g. g.x = xg^{-1} variants with wrong order)"
+      - id: kp2
+        name: "Standard examples: rotation, permutation, conjugation, left multiplication"
+        key_prerequisites: [permutations-cycle-notation, dihedral-groups]
+        exemplars:
+          - problem: '$D_4$ acts on the $4$ vertices of a square. Describe how the counterclockwise rotation $r$ (by $90^\circ$) acts, as a permutation in cycle notation (vertices labeled $1,2,3,4$ counterclockwise).'
+            answer: '$(1\,2\,3\,4)$'
+            solution_sketch: 'A quarter-turn sends each vertex to the next one counterclockwise.'
+          - problem: 'A group $G$ acts on itself by conjugation: $g \cdot x = gxg^{-1}$. What are the orbits called?'
+            answer: 'Conjugacy classes.'
+            solution_sketch: 'Two elements are in the same orbit iff they are conjugate.'
+        constraints: "the four canonical actions; concrete cycle-notation answers where applicable"
+      - id: kp3
+        name: "Actions as homomorphisms to symmetric groups"
+        key_prerequisites: [permutations-cycle-notation]
+        exemplars:
+          - problem: 'Explain how an action of $G$ on a finite set $X$ is the same as a homomorphism $G \to S_X$.'
+            answer: 'Each $g$ gives a map $\sigma_g(x) = g \cdot x$, a bijection with inverse $\sigma_{g^{-1}}$; the axiom $g\cdot(h\cdot x) = (gh)\cdot x$ says $\sigma_g \sigma_h = \sigma_{gh}$, i.e. $g \mapsto \sigma_g$ is a homomorphism.'
+            solution_sketch: 'Bijectivity comes from invertibility of $g$; the composition law is exactly the homomorphism property.'
+          - problem: 'An action of $G$ on $X$ is called faithful when the homomorphism $G \to S_X$ is injective. Is the action of $D_4$ on the vertices of the square faithful?'
+            answer: 'Yes — distinct symmetries move the vertices differently, so only $e$ acts trivially.'
+            solution_sketch: 'A symmetry of the square fixing all four vertices must be the identity.'
+        constraints: "translate actions to permutation representations; faithfulness checks on small examples"
+    diagnostic_exemplar:
+      problem: 'Does $g \cdot x = x g$ (right multiplication used as a left action) define an action of a non-abelian $G$ on itself? Check the composition axiom.'
+      answer: 'No: $g \cdot (h \cdot x) = xhg$ but $(gh) \cdot x = xgh$, and $xhg \neq xgh$ in general.'
+      solution_sketch: 'The order of factors comes out reversed; the fix is $g \cdot x = xg^{-1}$, which does satisfy the axioms.'
+    anki_seeds:
+      - front: "Two axioms of a group action?"
+        back: "$e \\cdot x = x$ and $g \\cdot (h \\cdot x) = (gh) \\cdot x$."
+        type: basic
+      - front: "A group action of $G$ on $X$ is equivalently a homomorphism into..."
+        back: "$S_X$, the symmetric group on $X$ ($g \\mapsto (x \\mapsto g \\cdot x)$)."
+        type: basic
+      - front: "Orbits of the conjugation action of $G$ on itself?"
+        back: "Conjugacy classes."
+        type: basic
+
+  - id: orbits-stabilizers
+    name: "Orbits and Stabilizers"
+    core: true
+    difficulty: 0.74
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 180
+    prerequisites:
+      - id: group-actions
+        weight: 0.9
+        key: true
+      - id: equivalence-classes-partitions
+        weight: 0.5
+        key: false
+      - id: subgroups-subgroup-tests
+        weight: 0.5
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Computing orbits"
+        key_prerequisites: [group-actions, equivalence-classes-partitions]
+        exemplars:
+          - problem: 'The cyclic group $\langle (1\,2)(3\,4) \rangle \le S_4$ acts on $\{1,2,3,4\}$. List the orbits.'
+            answer: '$\{1,2\}$, $\{3,4\}$'
+            solution_sketch: 'The generator swaps $1\leftrightarrow2$ and $3\leftrightarrow4$; applying it repeatedly never mixes the pairs.'
+          - problem: 'Prove that the orbits of an action partition $X$.'
+            answer: '$x \sim y \iff y = g\cdot x$ for some $g$ is an equivalence relation (reflexive via $e$, symmetric via $g^{-1}$, transitive via products); orbits are its classes.'
+            solution_sketch: 'The action axioms provide exactly what reflexivity, symmetry, and transitivity need.'
+        constraints: "subgroups of S_n (n <= 6) acting on points; orbits as explicit sets"
+      - id: kp2
+        name: "Computing stabilizers"
+        key_prerequisites: [group-actions, subgroups-subgroup-tests]
+        exemplars:
+          - problem: '$S_3$ acts on $\{1,2,3\}$. Find the stabilizer of $1$.'
+            answer: '$\{e, (2\,3)\}$'
+            solution_sketch: 'The permutations fixing $1$ may only permute $\{2,3\}$.'
+          - problem: 'Prove the stabilizer $\mathrm{Stab}(x) = \{g : g \cdot x = x\}$ is a subgroup.'
+            answer: '$e \in \mathrm{Stab}(x)$; if $g, h$ fix $x$ then $gh^{-1}\cdot x = g \cdot (h^{-1} \cdot x) = g \cdot x = x$.'
+            solution_sketch: 'Note $h^{-1}$ fixes $x$ whenever $h$ does (apply $h^{-1}$ to $h \cdot x = x$), then use the one-step test.'
+        constraints: "stabilizers in S_n and D_n actions; always subgroups"
+      - id: kp3
+        name: "Fixed points and transitive actions"
+        key_prerequisites: [group-actions]
+        exemplars:
+          - problem: 'An action is transitive when there is exactly one orbit. Is the action of $D_4$ on the $4$ vertices of the square transitive?'
+            answer: 'Yes: rotations alone carry any vertex to any other.'
+            solution_sketch: 'The rotation subgroup already acts transitively on vertices.'
+          - problem: 'For the conjugation action of $S_3$ on itself, what are the fixed points ($x$ with $g x g^{-1} = x$ for all $g$)?'
+            answer: 'Only $e$ — the center of $S_3$ is trivial.'
+            solution_sketch: 'A global fixed point of conjugation is exactly a central element.'
+        constraints: "transitivity verdicts; fixed points of conjugation = center"
+    diagnostic_exemplar:
+      problem: '$D_4$ acts on the four vertices $1, 2, 3, 4$ of a square (labelled counterclockwise). Find the orbit and the stabilizer of vertex $1$, and say whether the action is transitive.'
+      answer: 'The rotation $r$ acts as the $4$-cycle $(1\,2\,3\,4)$, so the orbit of $1$ is all of $\{1,2,3,4\}$ and the action is transitive (a single orbit). The stabilizer is $\mathrm{Stab}(1) = \{e, d\}$, where $d$ is the reflection in the diagonal through vertices $1$ and $3$ — the only nonidentity symmetry fixing vertex $1$. Note $|D_4| = 8 = 4 \cdot 2 = |\mathrm{Orb}(1)| \cdot |\mathrm{Stab}(1)|$.'
+      solution_sketch: 'Rotations carry vertex $1$ to every vertex, so there is one orbit; only the identity and the diagonal reflection through vertex $1$ fix it.'
+    anki_seeds:
+      - front: "Definition of the orbit of $x$ under an action of $G$?"
+        back: "$\\mathrm{Orb}(x) = \\{g \\cdot x : g \\in G\\}$; orbits partition the set."
+        type: basic
+      - front: "The stabilizer of a point is always a..."
+        back: "Subgroup of $G$ (not necessarily normal)."
+        type: basic
+
+  - id: orbit-stabilizer-theorem
+    name: "The Orbit-Stabilizer Theorem"
+    # W8 made this supplemental as "stated theorem whose only use here is Burnside
+    # counting". That rationale dissolved in Phase C: the class equation (and through
+    # it Cauchy's and Sylow's theorems) now builds directly on it. Flipped back to core.
+    core: true
+    difficulty: 0.76
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 180
+    prerequisites:
+      - id: orbits-stabilizers
+        weight: 0.9
+        key: true
+      - id: lagranges-theorem
+        weight: 0.7
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: "Statement and the coset bijection"
+        key_prerequisites: [orbits-stabilizers, lagranges-theorem]
+        exemplars:
+          - problem: 'State the orbit-stabilizer theorem for a finite group $G$ acting on $X$.'
+            answer: '$|G| = |\mathrm{Orb}(x)| \cdot |\mathrm{Stab}(x)|$ for every $x \in X$.'
+            solution_sketch: 'Cosets $g\,\mathrm{Stab}(x)$ biject with orbit points $g \cdot x$: same coset iff same image point.'
+          - problem: 'In the bijection between $G/\mathrm{Stab}(x)$ and $\mathrm{Orb}(x)$, why do $g$ and $gh$ ($h \in \mathrm{Stab}(x)$) hit the same point?'
+            answer: '$(gh)\cdot x = g \cdot (h \cdot x) = g \cdot x$.'
+            solution_sketch: 'Stabilizer elements act trivially on $x$ before $g$ is applied.'
+        constraints: "statement plus one step of the bijection proof"
+      - id: kp2
+        name: "Numerical applications"
+        key_prerequisites: [orbits-stabilizers, lagranges-theorem]
+        exemplars:
+          - problem: '$D_4$ (order $8$) acts transitively on the $4$ vertices of a square. What is the order of the stabilizer of a vertex?'
+            answer: "2"
+            solution_sketch: '$|\mathrm{Stab}| = |G|/|\mathrm{Orb}| = 8/4 = 2$: the identity and the diagonal reflection through that vertex.'
+          - problem: 'The rotation group of the cube acts transitively on its $6$ faces, and the stabilizer of a face has order $4$. Find the order of the rotation group.'
+            answer: "24"
+            solution_sketch: '$|G| = 6 \cdot 4 = 24$.'
+        constraints: "solve for the missing one of |G|, orbit size, stabilizer size; geometric actions (polygons, cube)"
+      - id: kp3
+        name: "Conjugacy classes and centralizers"
+        key_prerequisites: [orbits-stabilizers]
+        exemplars:
+          - problem: 'Under conjugation, the orbit of $x$ is its conjugacy class and the stabilizer is the centralizer $C(x)$. In $S_3$, the conjugacy class of $(1\,2)$ has size $3$. Find $|C((1\,2))|$.'
+            answer: "2"
+            solution_sketch: '$|S_3| = 6 = 3 \cdot |C((1\,2))|$, so the centralizer is $\{e, (1\,2)\}$.'
+          - problem: 'Verify the class equation for $S_3$: list the conjugacy class sizes and check they sum to $6$.'
+            answer: '$1 + 3 + 2 = 6$: $\{e\}$, the three transpositions, the two 3-cycles.'
+            solution_sketch: 'Conjugacy in $S_n$ preserves cycle type; sizes are $1, 3, 2$.'
+        constraints: "class sizes and centralizer orders in S_3, S_4, D_4"
+    diagnostic_exemplar:
+      problem: 'In $S_4$ the conjugacy class of $(1\,2)$ has $6$ elements. Using the orbit-stabilizer theorem for the conjugation action of $S_4$ on itself, find $|C((1\,2))|$ and list the elements of that centralizer.'
+      answer: 'Under conjugation the orbit of $(1\,2)$ is its conjugacy class and the stabilizer is the centralizer, so $|S_4| = |\mathrm{class}| \cdot |C((1\,2))|$ gives $|C((1\,2))| = 24/6 = 4$. The four elements are $e$, $(1\,2)$, $(3\,4)$ and $(1\,2)(3\,4)$.'
+      solution_sketch: 'Apply orbit-stabilizer to the conjugation action: class size times centralizer order is $|G|$. Then identify the permutations commuting with $(1\,2)$ — those preserving $\{1,2\}$ and $\{3,4\}$ setwise.'
+    anki_seeds:
+      - front: "Orbit-stabilizer theorem?"
+        back: "$|G| = |\\mathrm{Orb}(x)| \\cdot |\\mathrm{Stab}(x)|$ (finite $G$)."
+        type: basic
+      - front: "Under conjugation, orbit and stabilizer of $x$ are called..."
+        back: "The conjugacy class of $x$ and the centralizer $C(x)$."
+        type: basic
+
+  - id: burnside-counting
+    name: "Burnside Counting"
+    core: false                # enumeration curiosity; terminal
+    difficulty: 0.80
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 240
+    prerequisites:
+      - id: orbit-stabilizer-theorem
+        weight: 0.9
+        key: true
+      - id: permutations-cycle-notation
+        weight: 0.6
+        key: false
+      - id: multiplication-principle
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Burnside's lemma and fixed-point counts"
+        key_prerequisites: [orbit-stabilizer-theorem]
+        exemplars:
+          - problem: 'A group $G$ of order $8$ acts on a set of colorings, and the fixed-point counts $|\mathrm{Fix}(g)|$ over its eight elements sum to $56$. How many orbits are there?'
+            answer: "7"
+            solution_sketch: 'Burnside''s lemma: the number of orbits is the average number of fixed points, $\frac{1}{|G|}\sum_{g \in G}|\mathrm{Fix}(g)| = 56/8 = 7$.'
+          - problem: 'A rotation by $90^\circ$ acts on $2$-colorings of the $4$ beads of a necklace. How many colorings does it fix?'
+            answer: "2"
+            solution_sketch: 'A fixed coloring must be constant on the single 4-cycle of beads: $2$ choices.'
+        constraints: "fixed colorings of a single group element: 2 or 3 colors, k^(number of cycles)"
+      - id: kp2
+        name: "Necklaces under rotation"
+        key_prerequisites: [orbit-stabilizer-theorem, permutations-cycle-notation]
+        exemplars:
+          - problem: 'Count the distinct necklaces of $4$ beads in $2$ colors, up to rotation only.'
+            answer: "6"
+            solution_sketch: 'Fix counts for rotations by $0^\circ, 90^\circ, 180^\circ, 270^\circ$: $16, 2, 4, 2$. Average: $24/4 = 6$.'
+          - problem: 'Count necklaces of $3$ beads in $3$ colors, up to rotation.'
+            answer: "11"
+            solution_sketch: '$(3^3 + 3 + 3)/3 = 33/3 = 11$.'
+        constraints: "n beads (n <= 6), k colors (k <= 3), cyclic group only; fixed colorings = k^{gcd(r, n)}"
+      - id: kp3
+        name: "Adding reflections: dihedral symmetry"
+        key_prerequisites: [orbit-stabilizer-theorem, permutations-cycle-notation]
+        exemplars:
+          - problem: 'Count the colorings of the $4$ corners of a square with $3$ colors, up to all $8$ symmetries of the square.'
+            answer: "21"
+            solution_sketch: 'Fix counts: identity $81$; rotations $90^\circ/270^\circ$: $3$ each; $180^\circ$: $9$; two diagonal reflections: $27$ each; two edge reflections: $9$ each. Total $168/8 = 21$.'
+          - problem: 'Count $2$-colorings of the square''s corners up to $D_4$.'
+            answer: "6"
+            solution_sketch: '$(16 + 2 + 4 + 2 + 8 + 8 + 4 + 4)/8 = 48/8 = 6$.'
+        constraints: "square or triangle only; enumerate cycle structures of all group elements"
+    diagnostic_exemplar:
+      problem: 'How many distinct necklaces of $5$ beads in $2$ colours are there, counting two as the same when one is a rotation or a reflection of the other?'
+      answer: '8'
+      solution_sketch: 'Burnside over $D_5$ (order $10$): the identity fixes $2^{5} = 32$ colourings; each of the four nontrivial rotations fixes only the $2$ monochrome ones; each of the five reflections has one fixed bead and two swapped pairs, fixing $2^{3} = 8$. Total $32 + 4 \cdot 2 + 5 \cdot 8 = 80$, and $80/10 = 8$ orbits.'
+    anki_seeds:
+      - front: "Burnside's lemma?"
+        back: "Number of orbits $= \\frac{1}{|G|} \\sum_{g} |\\mathrm{Fix}(g)|$ — the average number of fixed points."
+        type: basic
+      - front: "How many colorings (k colors) does a permutation with $c$ cycles on the positions fix?"
+        back: "$k^c$ — the coloring must be constant on each cycle."
+        type: basic
+
+  - id: cayleys-theorem
+    name: "Cayley's Theorem"
+    core: false                # stated embedding theorem; nothing builds on it
+    difficulty: 0.75
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 240
+    prerequisites:
+      - id: group-actions
+        weight: 0.8
+        key: true
+      - id: group-isomorphisms
+        weight: 0.7
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: "Left multiplication is a permutation"
+        key_prerequisites: [group-actions]
+        exemplars:
+          - problem: 'For fixed $g \in G$, prove that $\lambda_g : G \to G$, $\lambda_g(x) = gx$, is a bijection.'
+            answer: '$\lambda_{g^{-1}}$ is a two-sided inverse: $\lambda_{g^{-1}}(\lambda_g(x)) = g^{-1}gx = x$.'
+            solution_sketch: 'Left multiplication by $g^{-1}$ undoes left multiplication by $g$.'
+          - problem: 'For $g \neq e$, show $\lambda_g$ has no fixed points.'
+            answer: '$gx = x$ would give $g = e$ by cancellation.'
+            solution_sketch: 'Cancel $x$ on the right.'
+        constraints: "properties of the left-regular maps lambda_g"
+      - id: kp2
+        name: "The theorem and its proof"
+        key_prerequisites: [group-actions, group-isomorphisms]
+        exemplars:
+          - problem: 'State and prove Cayley''s theorem.'
+            answer: 'Every group $G$ embeds in a symmetric group: $g \mapsto \lambda_g$ is a homomorphism $G \to S_G$ ($\lambda_g\lambda_h = \lambda_{gh}$), injective since $\lambda_g = \mathrm{id} \implies g = ge = e$.'
+            solution_sketch: 'The left-regular action gives a homomorphism into $S_G$; its kernel is trivial, so $G \cong$ its image.'
+          - problem: 'What does Cayley''s theorem say about a group of order $n$?'
+            answer: 'It is isomorphic to a subgroup of $S_n$.'
+            solution_sketch: 'Identify $G$ with $\{1, \dots, n\}$ as the set acted on.'
+        constraints: "full proof or key steps; the kernel-triviality argument is required"
+      - id: kp3
+        name: "Computing regular representations"
+        key_prerequisites: [group-actions]
+        exemplars:
+          - problem: 'Write the image of $1 \in \mathbb{Z}_3$ under the left-regular representation as a permutation of $\{0, 1, 2\}$ in cycle notation.'
+            answer: '$(0\,1\,2)$'
+            solution_sketch: 'Adding $1$ sends $0\to1\to2\to0$.'
+          - problem: 'In the left-regular representation of $\mathbb{Z}_4$, what is the cycle structure of the image of $2$?'
+            answer: 'Two 2-cycles: $(0\,2)(1\,3)$.'
+            solution_sketch: 'Adding $2$ swaps $0\leftrightarrow2$ and $1\leftrightarrow3$.'
+        constraints: "regular representations of Z_n (n <= 6) and the Klein group; cycle-notation answers"
+    diagnostic_exemplar:
+      problem: 'Cayley''s theorem embeds $(\mathbb{Z}_6, +)$ into a symmetric group $S_n$. Give $n$, write the permutation representing the element $3$ in cycle notation, and explain why the embedding is injective.'
+      answer: '$n = 6$: the group acts on its own six elements by left translation. The element $3$ gives $\lambda_3(x) = x + 3$, i.e. $0 \mapsto 3,\ 1 \mapsto 4,\ 2 \mapsto 5,\ 3 \mapsto 0,\ 4 \mapsto 1,\ 5 \mapsto 2$, which in cycle notation is $(0\,3)(1\,4)(2\,5)$. The map $g \mapsto \lambda_g$ is injective because $\lambda_g = \mathrm{id}$ forces $g = \lambda_g(0) = 0$.'
+      solution_sketch: 'The regular representation sends $g$ to translation by $g$ on the group itself; translation by $3$ in $\mathbb{Z}_6$ is an involution with three $2$-cycles. Injectivity follows by evaluating at the identity.'
+    anki_seeds:
+      - front: "Cayley's theorem?"
+        back: "Every group is isomorphic to a group of permutations; a group of order $n$ embeds in $S_n$."
+        type: basic
+      - front: "The embedding in Cayley's theorem sends $g$ to..."
+        back: "Left multiplication $\\lambda_g(x) = gx$, a permutation of $G$."
+        type: basic

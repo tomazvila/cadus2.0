@@ -1,0 +1,347 @@
+unit: further-distributions
+course: probability-statistics
+module: "Further Probability Distributions"
+topics:
+  - id: poisson-distribution
+    name: "Poisson Distributions"
+    core: false                # terminal named-distribution destination, like binomial/geometric/uniform
+    difficulty: 0.55
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 150
+    prerequisites:
+      - {id: natural-exponential-function, weight: 0, key: false}    # conceptual: e^-lambda is supplied, never computed
+      - id: binomial-probability
+        weight: 0.6
+        key: true
+      - id: discrete-random-variables
+        weight: 0.5
+        key: true
+      - id: common-natural-logarithms
+        weight: 0.3
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "The Poisson probability formula"
+        key_prerequisites: [discrete-random-variables, natural-exponential-function]   # L1: no logarithm appears in this topic; e^-lambda is the real dependency
+        exemplars:
+          - problem: 'A call centre receives on average $\lambda = 2$ calls per minute, and the number of calls in a minute is Poisson. Using $e^{-2} \approx 0.1353$, find $P(X = 3)$ to four decimal places.'
+            answer: "0.1804"
+            solution_sketch: '$P(X = 3) = e^{-2} \dfrac{2^3}{3!} = 0.1353 \cdot \dfrac{8}{6} \approx 0.1804$.'
+          - problem: '$X$ is Poisson with mean $2$. Using $e^{-2} \approx 0.1353$, find $P(X = 1)$ to four decimal places.'
+            answer: "0.2706"
+            solution_sketch: '$P(X = 1) = e^{-2} \dfrac{2^1}{1!} = 2 \cdot 0.1353 = 0.2706$.'
+        constraints: "lambda in {1, 2, 3, 4}; k <= 4; the needed value of e^{-lambda} is always supplied in the problem to 4 decimal places; products chosen so the answer terminates at 4 decimal places"
+      - id: kp2
+        name: "Mean and variance are both lambda"
+        key_prerequisites: [discrete-random-variables]
+        exemplars:
+          - problem: '$X$ is Poisson with mean $4$. Find $\operatorname{Var}(X)$.'
+            answer: "4"
+            solution_sketch: 'For a Poisson variable the mean and the variance are both $\lambda$, so $\operatorname{Var}(X) = 4$.'
+          - problem: 'A Poisson variable has variance $25$. Find its standard deviation.'
+            answer: "5"
+            solution_sketch: '$\operatorname{SD} = \sqrt{\operatorname{Var}} = \sqrt{25} = 5$ (and the mean is also $25$).'
+        constraints: "lambda a perfect square whenever the standard deviation is asked for; answers integers"
+      - id: kp3
+        name: "Complements and changing the window"
+        key_prerequisites: [natural-exponential-function]                              # L1: kp3 is window-rescaling/complements — nothing binomial, no logs
+        exemplars:
+          - problem: 'Typos in a manuscript occur as a Poisson process with mean $0.5$ per page. For a $4$-page chapter, using $e^{-2} \approx 0.1353$, find the probability of no typos, to four decimal places.'
+            answer: "0.1353"
+            solution_sketch: 'Over $4$ pages the mean is $4 \cdot 0.5 = 2$, so $P(X = 0) = e^{-2} \approx 0.1353$.'
+          - problem: '$X$ is Poisson with mean $1$. Using $e^{-1} \approx 0.3679$, find $P(X \ge 1)$ to four decimal places.'
+            answer: "0.6321"
+            solution_sketch: '$P(X \ge 1) = 1 - P(X = 0) = 1 - e^{-1} \approx 1 - 0.3679 = 0.6321$.'
+        constraints: "window rescaling multiplies lambda by an integer factor; at-least-one questions go through the complement of P(X = 0); e^{-lambda} supplied"
+    diagnostic_exemplar:
+      problem: 'Typos in a manuscript occur as a Poisson process with mean $0.75$ per page. For a $4$-page chapter, using $e^{-3} \approx 0.0498$, find the probability of at least one typo, to four decimal places.'
+      answer: '0.9502'
+      solution_sketch: '$\lambda = 4 \cdot 0.75 = 3$; $P(X \ge 1) = 1 - e^{-3} \approx 1 - 0.0498 = 0.9502$.'
+    anki_seeds:
+      - front: 'Poisson probability formula?'
+        back: '$P(X = k) = e^{-\lambda} \dfrac{\lambda^k}{k!}$.'
+        type: basic
+      - front: 'Mean and variance of a Poisson($\lambda$) variable?'
+        back: 'Both equal $\lambda$.'
+        type: basic
+      - front: 'When is a count well modelled as Poisson?'
+        back: 'Rare, independent events occurring at a constant average rate over a fixed window.'
+        type: basic
+
+  - id: continuous-random-variables
+    name: "Continuous Random Variables & Density"
+    core: false                # sits on the supplemental uniform-distribution branch; consumed only by the (supplemental) exponential topic — kept supplemental rather than flipping uniform-distribution back to core (R-2)
+    difficulty: 0.5
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 150
+    prerequisites:
+      - id: uniform-distribution
+        weight: 0.7
+        key: true
+      - id: geometric-probability-models
+        weight: 0.4
+        key: false
+      - id: area-triangles-quadrilaterals
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Probability as area under a density"
+        key_prerequisites: [uniform-distribution]
+        exemplars:
+          - problem: '$X$ has constant density $f(x) = \frac{1}{8}$ on $[0, 8]$ and $0$ elsewhere. Find $P(3 \le X \le 7)$ as a fraction.'
+            answer: "1/2"
+            solution_sketch: 'The probability is the rectangle area $\text{width} \times \text{height} = 4 \cdot \frac{1}{8} = \frac{1}{2}$.'
+          - problem: 'A density is constant on $[0, 4]$ and $0$ elsewhere. What must its height be, so the total area is $1$?'
+            answer: "1/4"
+            solution_sketch: 'Total area $= 4 \cdot h = 1$ forces $h = \frac{1}{4}$.'
+          - problem: '$X$ is a continuous random variable, uniform on $[0, 8]$. Find $P(X = 5)$ exactly.'
+            answer: "0"
+            solution_sketch: 'A single point has zero width, hence zero area: $P(X = c) = 0$ for any continuous variable.'
+        constraints: "constant densities on integer intervals; total-area-1 and single-point items; answers exact fractions or 0"
+      - id: kp2
+        name: "Triangular densities"
+        key_prerequisites: [area-triangles-quadrilaterals, geometric-probability-models]
+        exemplars:
+          - problem: '$X$ has density $f(x) = \frac{x}{8}$ on $[0, 4]$ and $0$ elsewhere. Find $P(X \le 2)$ as a fraction.'
+            answer: "1/4"
+            solution_sketch: 'The region is a triangle with base $2$ and height $f(2) = \frac{1}{4}$: area $= \frac{1}{2} \cdot 2 \cdot \frac{1}{4} = \frac{1}{4}$.'
+          - problem: '$X$ has density $f(x) = \frac{x}{2}$ on $[0, 2]$ and $0$ elsewhere. Find $P(X \ge 1)$ as a fraction.'
+            answer: "3/4"
+            solution_sketch: '$P(X \le 1) = \frac{1}{2} \cdot 1 \cdot \frac{1}{2} = \frac{1}{4}$, so $P(X \ge 1) = 1 - \frac{1}{4} = \frac{3}{4}$.'
+        constraints: "linear densities f(x) = x/c on [0, b] with c = b^2/2 so the total area is 1; probabilities are triangle or complement areas; exact fractions"
+      - id: kp3
+        name: "The cumulative distribution function"
+        key_prerequisites: [uniform-distribution]
+        exemplars:
+          - problem: '$X$ is uniform on $[0, 10]$ with cdf $F(x) = \frac{x}{10}$ for $0 \le x \le 10$. Find $F(4)$ as a fraction.'
+            answer: "2/5"
+            solution_sketch: '$F(4) = P(X \le 4) = \frac{4}{10} = \frac{2}{5}$.'
+          - problem: 'Same $X$. Find the median: the value $c$ with $F(c) = \frac{1}{2}$.'
+            answer: "5"
+            solution_sketch: '$\frac{c}{10} = \frac{1}{2}$ gives $c = 5$.'
+          - problem: 'A continuous variable has $F(2) = 0.3$ and $F(5) = 0.8$. Find $P(2 < X \le 5)$.'
+            answer: "0.5"
+            solution_sketch: '$P(2 < X \le 5) = F(5) - F(2) = 0.8 - 0.3 = 0.5$.'
+        constraints: "cdf given explicitly or by two table values; probabilities as F-differences; medians and percent points from F(c) = target with integer solutions"
+    diagnostic_exemplar:
+      problem: '$X$ has density $f(x) = \frac{x}{8}$ on $[0, 4]$ and $0$ elsewhere, with cumulative distribution function $F(x) = \frac{x^2}{16}$ on $[0, 4]$. Use the cdf to find $P(1 < X \le 3)$ as a fraction.'
+      answer: '1/2'
+      solution_sketch: '$F(3) - F(1) = \frac{9}{16} - \frac{1}{16} = \frac{8}{16} = \frac{1}{2}$ (the same as the area of the density strip between $1$ and $3$).'
+    anki_seeds:
+      - front: 'For a continuous random variable, $P(a \le X \le b)$ equals...'
+        back: 'The area under the density curve between $a$ and $b$ (total area $= 1$).'
+        type: basic
+      - front: '$P(X = c)$ for a continuous random variable?'
+        back: '$0$ — a single point carries no area.'
+        type: basic
+      - front: 'The cumulative distribution function $F(x)$ is defined as...'
+        back: '$F(x) = P(X \le x)$.'
+        type: basic
+
+  - id: exponential-distribution
+    name: "The Exponential Distribution"
+    core: false                # terminal named-distribution destination
+    difficulty: 0.6
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 150
+    prerequisites:
+      - {id: natural-exponential-function, weight: 0.3, key: false}  # reasons about e^(-lambda t) as a function of t
+      - id: continuous-random-variables
+        weight: 0.7
+        key: true
+      - id: common-natural-logarithms
+        weight: 0.4
+        key: false
+      - id: poisson-distribution
+        weight: 0.3
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Survival probabilities and the cdf"
+        key_prerequisites: [continuous-random-variables, common-natural-logarithms]
+        exemplars:
+          - problem: 'The lifetime $X$ (in hours) of a component is exponential with rate $\lambda = 0.5$ per hour. Using $e^{-1} \approx 0.3679$, find $P(X > 2)$ to four decimal places.'
+            answer: "0.3679"
+            solution_sketch: '$P(X > t) = e^{-\lambda t} = e^{-0.5 \cdot 2} = e^{-1} \approx 0.3679$.'
+          - problem: 'Same $X$. Find $P(X \le 2)$ to four decimal places.'
+            answer: "0.6321"
+            solution_sketch: '$F(2) = 1 - e^{-1} \approx 1 - 0.3679 = 0.6321$.'
+        constraints: "lambda t comes out to a value whose e^{-lambda t} is supplied in the problem; answers to 4 decimal places"
+      - id: kp2
+        name: "Mean and median"
+        key_prerequisites: [continuous-random-variables, common-natural-logarithms]
+        exemplars:
+          - problem: '$X$ is exponential with rate $\lambda = 0.25$ per minute. Find $E[X]$ in minutes.'
+            answer: "4"
+            solution_sketch: 'The mean of an exponential variable is $\frac{1}{\lambda} = \frac{1}{0.25} = 4$ minutes.'
+          - problem: 'An exponential variable has mean $10$. Find its rate $\lambda$.'
+            answer: "0.1"
+            solution_sketch: '$\lambda = \frac{1}{\text{mean}} = \frac{1}{10} = 0.1$.'
+          - problem: '$X$ is exponential with rate $\lambda = 0.5$. Using $\ln 2 \approx 0.6931$, find the median of $X$ to four decimal places.'
+            answer: "1.3862"
+            solution_sketch: 'Solve $e^{-\lambda m} = \frac{1}{2}$: $m = \frac{\ln 2}{\lambda} = \frac{0.6931}{0.5} = 1.3862$.'
+        constraints: "rates are reciprocals of integers or nice decimals; median items supply ln 2 to 4 decimal places"
+      - id: kp3
+        name: "Memorylessness and the Poisson connection"
+        key_prerequisites: [continuous-random-variables, poisson-distribution]
+        exemplars:
+          - problem: 'A component''s lifetime is exponential with rate $0.5$ per hour, and it has already survived $5$ hours. Using $e^{-1.5} \approx 0.2231$, find the probability it survives at least $3$ more hours, to four decimal places.'
+            answer: "0.2231"
+            solution_sketch: 'By memorylessness the past $5$ hours are irrelevant: $P(X > 3) = e^{-0.5 \cdot 3} = e^{-1.5} \approx 0.2231$.'
+          - problem: 'Buses arrive as a Poisson process at rate $3$ per hour, so the waiting time between buses is exponential. Find its mean, in minutes.'
+            answer: "20"
+            solution_sketch: 'Mean waiting time $= \frac{1}{\lambda} = \frac{1}{3}$ hour $= 20$ minutes.'
+        constraints: "memoryless items state the past survival explicitly and expect it to be discarded; Poisson-connection items convert a rate per hour to a mean wait in minutes"
+    diagnostic_exemplar:
+      problem: 'A component''s lifetime is exponential with rate $\lambda = 0.25$ per hour, and it has already survived $6$ hours. Using $e^{-1} \approx 0.3679$, find the probability it survives at least $4$ more hours, to four decimal places.'
+      answer: '0.3679'
+      solution_sketch: 'Memorylessness discards the $6$ hours: $P = e^{-0.25 \cdot 4} = e^{-1} \approx 0.3679$.'
+    anki_seeds:
+      - front: 'Exponential survival probability?'
+        back: '$P(X > t) = e^{-\lambda t}$.'
+        type: basic
+      - front: 'Mean of an exponential variable with rate $\lambda$?'
+        back: '$\dfrac{1}{\lambda}$.'
+        type: basic
+      - front: 'Memoryless property of the exponential distribution?'
+        back: '$P(X > s + t \mid X > s) = P(X > t)$ — past survival does not change the future.'
+        type: basic
+
+  - id: joint-distributions
+    name: "Joint Distributions & Marginals"
+    core: false                # feeds only the supplemental covariance topic; joint/covariance is a terminal enrichment branch here
+    difficulty: 0.5
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 150
+    prerequisites:
+      - id: discrete-random-variables
+        weight: 0.6
+        key: true
+      - id: two-way-frequency-tables
+        weight: 0.5
+        key: true
+      - id: independent-events
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Reading a joint probability table"
+        key_prerequisites: [discrete-random-variables, two-way-frequency-tables]
+        exemplars:
+          - problem: '$X$ and $Y$ each take values $0, 1$ with joint probabilities $P(0,0) = 0.2$, $P(0,1) = 0.3$, $P(1,0) = 0.1$, $P(1,1) = c$. Find $c$.'
+            answer: "0.4"
+            solution_sketch: 'All cells sum to $1$: $c = 1 - (0.2 + 0.3 + 0.1) = 0.4$.'
+          - problem: 'With the completed table ($P(0,0) = 0.2$, $P(0,1) = 0.3$, $P(1,0) = 0.1$, $P(1,1) = 0.4$), find $P(X = Y)$.'
+            answer: "0.6"
+            solution_sketch: '$P(X = Y) = P(0,0) + P(1,1) = 0.2 + 0.4 = 0.6$.'
+        constraints: "2x2 or 2x3 tables; entries in hundredths summing to 1; one missing-entry item per set; events described as unions of cells"
+      - id: kp2
+        name: "Marginal distributions"
+        key_prerequisites: [discrete-random-variables, two-way-frequency-tables]
+        exemplars:
+          - problem: 'Joint table: $P(0,0) = 0.2$, $P(0,1) = 0.3$, $P(1,0) = 0.1$, $P(1,1) = 0.4$. Find the marginal probability $P(X = 0)$.'
+            answer: "0.5"
+            solution_sketch: 'Sum the $X = 0$ row over all $Y$: $0.2 + 0.3 = 0.5$.'
+          - problem: 'Same table, where $Y$ takes values $0$ and $1$. Find $E[Y]$.'
+            answer: "0.7"
+            solution_sketch: 'Marginal: $P(Y = 1) = 0.3 + 0.4 = 0.7$, so $E[Y] = 0 \cdot 0.3 + 1 \cdot 0.7 = 0.7$.'
+        constraints: "marginals are row or column sums; expected values from marginals with values 0..3; answers exact decimals"
+      - id: kp3
+        name: "Independence and conditionals in joint form"
+        key_prerequisites: [independent-events, two-way-frequency-tables]
+        exemplars:
+          - problem: '$X$ and $Y$ are independent with $P(X = 1) = 0.3$ and $P(Y = 2) = 0.5$. Find $P(X = 1, Y = 2)$.'
+            answer: "0.15"
+            solution_sketch: 'Independence means every joint cell is the product of its marginals: $0.3 \cdot 0.5 = 0.15$.'
+          - problem: 'Joint table: $P(0,0) = 0.2$, $P(0,1) = 0.3$, $P(1,0) = 0.1$, $P(1,1) = 0.4$. Find $P(Y = 1 \mid X = 0)$ as a fraction.'
+            answer: "3/5"
+            solution_sketch: '$P(Y = 1 \mid X = 0) = \dfrac{P(X = 0, Y = 1)}{P(X = 0)} = \dfrac{0.3}{0.5} = \dfrac{3}{5}$.'
+          - problem: 'Same table. To check independence at the cell $(1,1)$: compute the product $P(X = 1) \cdot P(Y = 1)$.'
+            answer: "0.35"
+            solution_sketch: '$P(X = 1) = 0.5$, $P(Y = 1) = 0.7$; product $= 0.35 \ne P(1,1) = 0.4$, so $X$ and $Y$ are not independent.'
+        constraints: "independence used to build joint cells or checked cellwise via the product of marginals; conditionals as joint over marginal; exact decimals or fractions"
+    diagnostic_exemplar:
+      problem: 'Joint table: $P(0,0) = 0.1$, $P(0,1) = 0.3$, $P(1,0) = 0.2$, $P(1,1) = 0.4$. Give $(P(X = 0),\ P(Y = 1 \mid X = 0))$ as an ordered pair of fractions.'
+      answer: '$(2/5, 3/4)$'
+      solution_sketch: '$P(X = 0) = 0.1 + 0.3 = 0.4 = \frac{2}{5}$; $P(Y = 1 \mid X = 0) = \frac{0.3}{0.4} = \frac{3}{4}$.'
+    anki_seeds:
+      - front: 'Marginal probability from a joint table?'
+        back: 'Sum the row (or column): $P(X = x) = \sum_y P(X = x, Y = y)$.'
+        type: basic
+      - front: 'Independence in terms of a joint distribution?'
+        back: '$P(X = x, Y = y) = P(X = x)\,P(Y = y)$ for every cell.'
+        type: basic
+
+  - id: covariance-random-variables
+    name: "Covariance & Correlation of Random Variables"
+    core: false                # terminal enrichment; nothing downstream consumes it
+    difficulty: 0.6
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 180
+    prerequisites:
+      - id: joint-distributions
+        weight: 0.7
+        key: true
+      - id: variance-random-variables
+        weight: 0.6
+        key: true
+      - id: sums-of-random-variables
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "The covariance identity"
+        key_prerequisites: [variance-random-variables]
+        exemplars:
+          - problem: 'Given $E[XY] = 7$, $E[X] = 2$, $E[Y] = 3$, find $\operatorname{Cov}(X, Y)$.'
+            answer: "1"
+            solution_sketch: '$\operatorname{Cov}(X, Y) = E[XY] - E[X]E[Y] = 7 - 6 = 1$.'
+          - problem: '$\operatorname{Var}(X) = 9$. Find $\operatorname{Cov}(X, X)$.'
+            answer: "9"
+            solution_sketch: '$\operatorname{Cov}(X, X) = E[X^2] - E[X]^2 = \operatorname{Var}(X) = 9$.'
+        constraints: "moments given directly; integer or tenth answers; one Cov(X, X) = Var(X) item per set"
+      - id: kp2
+        name: "Covariance from a joint table"
+        key_prerequisites: [joint-distributions, variance-random-variables]
+        exemplars:
+          - problem: '$X, Y$ take values $0, 1$ with $P(0,0) = 0.4$, $P(0,1) = 0.1$, $P(1,0) = 0.1$, $P(1,1) = 0.4$. Find $\operatorname{Cov}(X, Y)$.'
+            answer: "0.15"
+            solution_sketch: '$E[X] = 0.5$, $E[Y] = 0.5$, $E[XY] = 1 \cdot 1 \cdot P(1,1) = 0.4$; $\operatorname{Cov} = 0.4 - 0.25 = 0.15$.'
+          - problem: '$X$ and $Y$ are independent with $E[X] = 2$ and $E[Y] = 3$, so $E[XY] = 6$. Find $\operatorname{Cov}(X, Y)$.'
+            answer: "0"
+            solution_sketch: 'For independent variables $E[XY] = E[X]E[Y]$, so the covariance is $6 - 6 = 0$.'
+        constraints: "values 0/1 or 0..2 so E[XY] is a one- or two-term sum; covariances in hundredths; include one independent-hence-zero case"
+      - id: kp3
+        name: "Variance of a sum and correlation"
+        key_prerequisites: [variance-random-variables, joint-distributions]
+        exemplars:
+          - problem: '$\operatorname{Var}(X) = 4$, $\operatorname{Var}(Y) = 9$, $\operatorname{Cov}(X, Y) = 3$. Find $\operatorname{Var}(X + Y)$.'
+            answer: "19"
+            solution_sketch: '$\operatorname{Var}(X + Y) = 4 + 9 + 2 \cdot 3 = 19$ — the independent-case rule plus the covariance correction.'
+          - problem: '$\operatorname{Var}(X) = 9$, $\operatorname{Var}(Y) = 4$, $\operatorname{Cov}(X, Y) = -2$. Find $\operatorname{Var}(X + Y)$.'
+            answer: "9"
+            solution_sketch: '$9 + 4 + 2 \cdot (-2) = 9$ — negative covariance makes the sum steadier than independence would.'
+          - problem: '$\operatorname{Var}(X) = 4$, $\operatorname{Var}(Y) = 9$, $\operatorname{Cov}(X, Y) = 3$. Find the correlation $\rho = \dfrac{\operatorname{Cov}(X, Y)}{\sigma_X \sigma_Y}$ as a fraction.'
+            answer: "1/2"
+            solution_sketch: '$\sigma_X = 2$, $\sigma_Y = 3$; $\rho = \frac{3}{6} = \frac{1}{2}$.'
+        constraints: "variances perfect squares; correlation denominators divide evenly; include one negative-covariance case"
+    diagnostic_exemplar:
+      problem: '$X$ and $Y$ each take the values $0$ and $1$, with $P(0,0) = 0.4$, $P(0,1) = 0.1$, $P(1,0) = 0.1$, $P(1,1) = 0.4$, and $\operatorname{Var}(X) = \operatorname{Var}(Y) = 0.25$. Give $(\operatorname{Cov}(X, Y),\ \operatorname{Var}(X + Y))$ as an ordered pair.'
+      answer: '$(0.15, 0.8)$'
+      solution_sketch: '$E[XY] = 0.4$ and $E[X] = E[Y] = 0.5$, so $\operatorname{Cov} = 0.4 - 0.25 = 0.15$; then $\operatorname{Var}(X+Y) = 0.25 + 0.25 + 2(0.15) = 0.8$.'
+    anki_seeds:
+      - front: 'Covariance formula?'
+        back: '$\operatorname{Cov}(X, Y) = E[XY] - E[X]E[Y]$.'
+        type: basic
+      - front: '$\operatorname{Var}(X + Y)$ in general?'
+        back: '$\operatorname{Var}(X) + \operatorname{Var}(Y) + 2\operatorname{Cov}(X, Y)$.'
+        type: basic
+      - front: 'Independent $\Rightarrow \operatorname{Cov} = 0$. Converse?'
+        back: 'False — zero covariance does not imply independence.'
+        type: basic

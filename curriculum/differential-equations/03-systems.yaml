@@ -1,0 +1,680 @@
+unit: systems
+course: differential-equations
+module: "Systems of Differential Equations"
+topics:
+  - id: systems-matrix-form
+    name: Systems in Matrix Form
+    core: true
+    difficulty: 0.72
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 150
+    prerequisites:
+      - id: matrix-operations
+        weight: 0.6
+        key: true
+      - id: homogeneous-constant-coefficients
+        weight: 0.3
+        key: false
+      - id: ode-classification-verification
+        weight: 0.2
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: Writing systems in matrix form
+        key_prerequisites: [matrix-operations]
+        exemplars:
+          - problem: 'Write the system $x'' = 3x + 4y$, $y'' = 2x + y$ in matrix form.'
+            answer: '$\mathbf{X}'' = \begin{pmatrix} 3 & 4 \\ 2 & 1 \end{pmatrix}\mathbf{X}$ with $\mathbf{X} = \binom{x}{y}$'
+          - problem: 'Write the system $x'' = -y$, $y'' = x + 2y$ in matrix form.'
+            answer: '$\mathbf{X}'' = \begin{pmatrix} 0 & -1 \\ 1 & 2 \end{pmatrix}\mathbf{X}$'
+          - problem: 'Write the system $x'' = x - 3y$, $y'' = 4y$ in matrix form.'
+            answer: '$\mathbf{X}'' = \begin{pmatrix} 1 & -3 \\ 0 & 4 \end{pmatrix}\mathbf{X}$'
+            solution_sketch: 'A missing variable in an equation means a zero entry in that row.'
+        constraints: "2x2 homogeneous systems with integer coefficients; zero entries appear when a variable is absent"
+      - id: kp2
+        name: Verifying vector solutions
+        key_prerequisites: [matrix-operations]
+        exemplars:
+          - problem: 'Verify that $\mathbf{X} = e^{5t}\binom{2}{1}$ solves $\mathbf{X}'' = \begin{pmatrix} 3 & 4 \\ 2 & 1 \end{pmatrix}\mathbf{X}$.'
+            answer: 'Yes: $A\binom{2}{1} = \binom{10}{5} = 5\binom{2}{1}$, so $A\mathbf{X} = 5\mathbf{X} = \mathbf{X}''$.'
+            solution_sketch: '$\mathbf{X}'' = 5e^{5t}\binom{2}{1}$, and multiplying out $A\binom{2}{1}$ gives $\binom{6+4}{4+1} = 5\binom{2}{1}$: $\binom{2}{1}$ is an eigenvector with eigenvalue $5$.'
+          - problem: 'Verify that $\mathbf{X} = e^{-t}\binom{1}{-1}$ solves $\mathbf{X}'' = \begin{pmatrix} 1 & 2 \\ 2 & 1 \end{pmatrix}\mathbf{X}$.'
+            answer: 'Yes: $A\binom{1}{-1} = \binom{-1}{1} = -\binom{1}{-1}$, so $A\mathbf{X} = -\mathbf{X} = \mathbf{X}''$.'
+          - problem: 'Show that $\mathbf{X} = e^{2t}\binom{1}{1}$ does NOT solve $\mathbf{X}'' = \begin{pmatrix} 3 & 4 \\ 2 & 1 \end{pmatrix}\mathbf{X}$.'
+            answer: '$A\binom{1}{1} = \binom{7}{3}$, which is not $2\binom{1}{1}$, so $A\mathbf{X} \neq \mathbf{X}''$.'
+            solution_sketch: 'The candidate works only if $\binom{1}{1}$ is an eigenvector with eigenvalue $2$; it is not.'
+        constraints: "2x2 integer matrices; verification reduces to one matrix-vector product"
+    diagnostic_exemplar:
+      problem: 'Write the system $x'' = 2x + y$, $y'' = 4x + 2y$ in matrix form, and verify that $\mathbf{X} = e^{4t}\binom{1}{2}$ is a solution.'
+      answer: '$\mathbf{X}'' = \begin{pmatrix} 2 & 1 \\ 4 & 2 \end{pmatrix}\mathbf{X}$; and since $A\binom{1}{2} = \binom{4}{8} = 4\binom{1}{2}$, we get $A\mathbf{X} = 4\mathbf{X} = \mathbf{X}''$, so it is a solution.'
+      solution_sketch: 'The coefficient matrix has rows $(2, 1)$ and $(4, 2)$; the vector $\binom{1}{2}$ is an eigenvector with eigenvalue $4$, which matches the exponential rate.'
+    anki_seeds:
+      - front: 'Matrix form of a linear system of ODEs?'
+        back: '$\mathbf{X}'' = A\mathbf{X}$, where $\mathbf{X}$ stacks the unknown functions and $A$ holds the coefficients.'
+        type: basic
+      - front: 'To verify $\mathbf{X}(t) = e^{\lambda t}\mathbf{v}$ solves $\mathbf{X}'' = A\mathbf{X}$, check...'
+        back: '$A\mathbf{v} = \lambda\mathbf{v}$ (one matrix-vector product).'
+        type: basic
+
+  - id: systems-elimination-method
+    name: Solving Systems by Elimination
+    core: false                # alternative solution method; terminal
+    difficulty: 0.74
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 240
+    prerequisites:
+      - id: homogeneous-constant-coefficients
+        weight: 0.6
+        key: true
+      - id: systems-matrix-form
+        weight: 0.3
+        key: false
+      - id: systems-substitution
+        weight: 0.2
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: Reducing to one second-order equation
+        key_prerequisites: [homogeneous-constant-coefficients]
+        exemplars:
+          - problem: 'Eliminate $y$ from $x'' = y$, $y'' = -2x - 3y$ to get a second-order equation for $x$.'
+            answer: '$x'''' + 3x'' + 2x = 0$'
+            solution_sketch: '$y = x''$, so $x'''' = y'' = -2x - 3x''$.'
+          - problem: 'Eliminate $y$ from $x'' = 3x + 4y$, $y'' = 2x + y$ to get a second-order equation for $x$.'
+            answer: '$x'''' - 4x'' - 5x = 0$'
+            solution_sketch: '$y = \frac{x'' - 3x}{4}$; then $\frac{x'''' - 3x''}{4} = 2x + \frac{x'' - 3x}{4}$, which clears to $x'''' - 4x'' - 5x = 0$.'
+        constraints: "2x2 constant-coefficient systems; the reduced equation has integer characteristic roots"
+      - id: kp2
+        name: Completing the solution
+        key_prerequisites: [homogeneous-constant-coefficients]
+        exemplars:
+          - problem: 'Solve the system $x'' = y$, $y'' = 6x - y$ by elimination.'
+            answer: '$x = c_1 e^{2t} + c_2 e^{-3t}$, $y = 2c_1 e^{2t} - 3c_2 e^{-3t}$'
+            solution_sketch: '$x'''' = y'' = 6x - x''$ gives $x'''' + x'' - 6x = 0$ with roots $2, -3$; then $y = x''$.'
+          - problem: 'Solve the system $x'' = x + y$, $y'' = 4x + y$ by elimination.'
+            answer: '$x = c_1 e^{3t} + c_2 e^{-t}$, $y = 2c_1 e^{3t} - 2c_2 e^{-t}$'
+            solution_sketch: '$y = x'' - x$ leads to $x'''' - 2x'' - 3x = 0$ with roots $3, -1$; back-substitute into $y = x'' - x$.'
+          - problem: 'Solve $x'' = y$, $y'' = 4x$ with $x(0) = 1$, $y(0) = 0$ by elimination.'
+            answer: '$x = \dfrac{1}{2}e^{2t} + \dfrac{1}{2}e^{-2t}$, $y = e^{2t} - e^{-2t}$'
+            solution_sketch: '$x'''' = 4x$ gives $x = c_1 e^{2t} + c_2 e^{-2t}$; $y = x''$, and the initial conditions force $c_1 = c_2 = \frac{1}{2}$.'
+        constraints: "back-substitution recovers the second variable exactly; integer characteristic roots"
+    diagnostic_exemplar:
+      problem: 'Solve the system $x'' = y$, $y'' = 2x + y$ by elimination, giving both $x(t)$ and $y(t)$.'
+      answer: '$x = c_1 e^{2t} + c_2 e^{-t}$, $\;y = 2c_1 e^{2t} - c_2 e^{-t}$'
+      solution_sketch: 'Differentiating the first equation, $x'''' = y'' = 2x + x''$, so $x'''' - x'' - 2x = 0$ with roots $2$ and $-1$. Then $y = x''$.'
+    anki_seeds:
+      - front: 'Elimination method for a 2x2 linear system of ODEs?'
+        back: 'Differentiate one equation, substitute the other to get a single second-order ODE in one variable; recover the second variable by back-substitution.'
+        type: basic
+      - front: "Elimination on a 2x2 first-order system produces what?"
+        back: "A single second-order ODE in one unknown; solve it, then back-substitute to recover the other unknown."
+        type: basic
+
+  - id: systems-superposition-wronskian
+    name: Fundamental Sets and the Wronskian
+    core: true
+    difficulty: 0.76
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 180
+    prerequisites:
+      - id: systems-matrix-form
+        weight: 0.6
+        key: true
+      - id: determinants
+        weight: 0.4
+        key: true
+      - id: homogeneous-constant-coefficients
+        weight: 0.2
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: Superposition
+        key_prerequisites: [systems-matrix-form]
+        exemplars:
+          - problem: '$\mathbf{X}_1 = e^{3t}\binom{1}{1}$ and $\mathbf{X}_2 = e^{-t}\binom{1}{-1}$ solve $\mathbf{X}'' = \begin{pmatrix} 1 & 2 \\ 2 & 1 \end{pmatrix}\mathbf{X}$. Is $2\mathbf{X}_1 - \mathbf{X}_2$ also a solution?'
+            answer: 'Yes: any linear combination of solutions of $\mathbf{X}'' = A\mathbf{X}$ is a solution (superposition).'
+            solution_sketch: '$(2\mathbf{X}_1 - \mathbf{X}_2)'' = 2A\mathbf{X}_1 - A\mathbf{X}_2 = A(2\mathbf{X}_1 - \mathbf{X}_2)$.'
+          - problem: 'Does superposition hold for the nonhomogeneous system $\mathbf{X}'' = A\mathbf{X} + \mathbf{b}$ with $\mathbf{b} \neq \mathbf{0}$?'
+            answer: 'No: if $\mathbf{X}_1, \mathbf{X}_2$ are solutions, $(\mathbf{X}_1 + \mathbf{X}_2)'' = A(\mathbf{X}_1 + \mathbf{X}_2) + 2\mathbf{b}$, not $+\,\mathbf{b}$.'
+            solution_sketch: 'The forcing term doubles; only the homogeneous system has a vector space of solutions.'
+        constraints: "verification by substituting the combination into X' = AX; 2x2 systems"
+      - id: kp2
+        name: The Wronskian and fundamental sets
+        key_prerequisites: [systems-matrix-form, determinants]
+        exemplars:
+          - problem: 'Compute the Wronskian of $\mathbf{X}_1 = e^{3t}\binom{1}{1}$ and $\mathbf{X}_2 = e^{-t}\binom{1}{-1}$, and decide whether they form a fundamental set.'
+            answer: '$W = \det\begin{pmatrix} e^{3t} & e^{-t} \\ e^{3t} & -e^{-t} \end{pmatrix} = -2e^{2t} \neq 0$: yes, a fundamental set.'
+            solution_sketch: '$W = -e^{2t} - e^{2t} = -2e^{2t}$, never zero.'
+          - problem: 'Are $\mathbf{X}_1 = e^{2t}\binom{1}{2}$ and $\mathbf{X}_2 = e^{2t}\binom{2}{4}$ a fundamental set for a 2x2 system?'
+            answer: 'No: $\mathbf{X}_2 = 2\mathbf{X}_1$, so $W = 0$ and they are linearly dependent.'
+          - problem: 'Two solutions satisfy $\mathbf{X}_1(0) = \binom{1}{0}$ and $\mathbf{X}_2(0) = \binom{1}{1}$. Compute $W(0)$ and conclude.'
+            answer: '$W(0) = \det\begin{pmatrix} 1 & 1 \\ 0 & 1 \end{pmatrix} = 1 \neq 0$: they form a fundamental set.'
+            solution_sketch: 'The Wronskian of solutions is either identically zero or never zero, so one point decides.'
+        constraints: "Wronskian = determinant of the matrix whose columns are the solutions; 2x2 only"
+    diagnostic_exemplar:
+      problem: 'Compute the Wronskian of $\mathbf{X}_1 = e^{t}\binom{1}{0}$ and $\mathbf{X}_2 = e^{2t}\binom{1}{1}$. Fundamental set?'
+      answer: '$W = \det\begin{pmatrix} e^{t} & e^{2t} \\ 0 & e^{2t} \end{pmatrix} = e^{3t} \neq 0$: yes.'
+      solution_sketch: 'For vector solutions the Wronskian is the determinant of the matrix whose columns are the solutions; here the first has zero second entry, so the matrix is triangular and $W = e^{t}\cdot e^{2t}$. Nonvanishing $W$ is exactly the fundamental-set criterion.'
+    anki_seeds:
+      - front: 'General solution of a 2x2 system $\mathbf{X}'' = A\mathbf{X}$ from a fundamental set $\mathbf{X}_1, \mathbf{X}_2$?'
+        back: '$\mathbf{X} = c_1\mathbf{X}_1 + c_2\mathbf{X}_2$'
+        type: basic
+      - front: 'Wronskian of vector solutions $\mathbf{X}_1, \mathbf{X}_2$?'
+        back: 'The determinant of the matrix with $\mathbf{X}_1, \mathbf{X}_2$ as columns; it is either identically zero or never zero.'
+        type: basic
+
+  - id: higher-order-to-systems
+    name: Converting Higher-Order Equations to Systems
+    core: false                # conversion technique; terminal
+    difficulty: 0.76
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 150
+    prerequisites:
+      - id: systems-matrix-form
+        weight: 0.6
+        key: true
+      - id: homogeneous-constant-coefficients
+        weight: 0.4
+        key: true
+      - id: eigenvalues-eigenvectors
+        weight: 0.3
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: The companion construction
+        key_prerequisites: [systems-matrix-form, homogeneous-constant-coefficients]
+        exemplars:
+          - problem: 'Convert $y'''' + 3y'' + 2y = 0$ into a first-order system using $x_1 = y$, $x_2 = y''$.'
+            answer: '$x_1'' = x_2$, $x_2'' = -2x_1 - 3x_2$; in matrix form $\mathbf{X}'' = \begin{pmatrix} 0 & 1 \\ -2 & -3 \end{pmatrix}\mathbf{X}$.'
+          - problem: 'Convert $y'''' - 5y = 0$ into a first-order system.'
+            answer: '$\mathbf{X}'' = \begin{pmatrix} 0 & 1 \\ 5 & 0 \end{pmatrix}\mathbf{X}$ with $x_1 = y$, $x_2 = y''$.'
+            solution_sketch: '$x_2'' = y'''' = 5y = 5x_1$.'
+          - problem: 'Convert $y'''''' + 2y'''' - y'' + 4y = 0$ into a first-order system using $x_1 = y$, $x_2 = y''$, $x_3 = y''''$.'
+            answer: '$\mathbf{X}'' = \begin{pmatrix} 0 & 1 & 0 \\ 0 & 0 & 1 \\ -4 & 1 & -2 \end{pmatrix}\mathbf{X}$'
+            solution_sketch: '$x_3'' = y'''''' = -4y + y'' - 2y'''' = -4x_1 + x_2 - 2x_3$.'
+        constraints: "constant-coefficient equations of order 2 or 3; companion matrix rows shift, last row holds negated coefficients"
+      - id: kp2
+        name: Eigenvalues are the characteristic roots
+        key_prerequisites: [homogeneous-constant-coefficients, eigenvalues-eigenvectors]
+        exemplars:
+          - problem: 'Find the eigenvalues of the companion matrix $\begin{pmatrix} 0 & 1 \\ -2 & -3 \end{pmatrix}$ and compare with the characteristic roots of $y'''' + 3y'' + 2y = 0$.'
+            answer: '$\lambda = -1, -2$: the same as the characteristic roots of the scalar equation.'
+            solution_sketch: '$\det(A - \lambda I) = \lambda^2 + 3\lambda + 2 = (\lambda+1)(\lambda+2)$, exactly the characteristic polynomial.'
+          - problem: 'Write the companion matrix of $y'''' - y'' - 6y = 0$ and find its eigenvalues.'
+            answer: '$\begin{pmatrix} 0 & 1 \\ 6 & 1 \end{pmatrix}$ with $\lambda = 3, -2$.'
+            solution_sketch: '$\det(A - \lambda I) = \lambda^2 - \lambda - 6 = (\lambda - 3)(\lambda + 2)$.'
+        constraints: "second-order constant-coefficient equations with integer roots; companion matrix always [[0,1],[-c,-b]]"
+    diagnostic_exemplar:
+      problem: 'Convert $y'''' + 4y'' - 5y = 0$ into a first-order system in matrix form, and find the eigenvalues of its companion matrix.'
+      answer: '$\mathbf{X}'' = \begin{pmatrix} 0 & 1 \\ 5 & -4 \end{pmatrix}\mathbf{X}$ with $x_1 = y$, $x_2 = y''$; eigenvalues $\lambda = 1$ and $\lambda = -5$ — exactly the characteristic roots of the scalar equation.'
+      solution_sketch: '$x_1'' = x_2$ and $x_2'' = y'''' = 5y - 4y'' = 5x_1 - 4x_2$. Then $\det(A - \lambda I) = \lambda^2 + 4\lambda - 5 = (\lambda - 1)(\lambda + 5)$.'
+    anki_seeds:
+      - front: "Converting y'' + by' + cy = 0 to a system: with x_1 = y, x_2 = y', the matrix is..."
+        back: "[[0, 1], [-c, -b]] (the companion matrix; its eigenvalues are the characteristic roots)."
+        type: basic
+      - front: "Converting $y'' + py' + qy = 0$ to a first-order system: what are the state variables?"
+        back: "$x_1 = y$ and $x_2 = y'$, giving $x_1' = x_2$ and $x_2' = -qx_1 - px_2$."
+        type: basic
+
+  - id: linear-systems-eigenvalues
+    name: Linear Systems via Eigenvalues
+    core: true
+    difficulty: 0.80
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 300
+    prerequisites:
+      - id: eigenvalues-eigenvectors
+        weight: 0.7
+        key: true
+      - id: systems-matrix-form
+        weight: 0.5
+        key: true
+      - id: systems-superposition-wronskian
+        weight: 0.3
+        key: false
+      - id: homogeneous-constant-coefficients
+        weight: 0.3
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: Eigenpairs give solutions
+        key_prerequisites: [eigenvalues-eigenvectors, systems-matrix-form]
+        exemplars:
+          - problem: 'Given that $\lambda = 5$ with eigenvector $\binom{2}{1}$ is an eigenpair of $A = \begin{pmatrix} 3 & 4 \\ 2 & 1 \end{pmatrix}$, write one solution of $\mathbf{X}'' = A\mathbf{X}$.'
+            answer: '$\mathbf{X} = e^{5t}\binom{2}{1}$'
+            solution_sketch: 'For any eigenpair $(\lambda, \mathbf{v})$, $\mathbf{X} = e^{\lambda t}\mathbf{v}$ satisfies $\mathbf{X}'' = \lambda\mathbf{X} = A\mathbf{X}$.'
+          - problem: 'Find the eigenvalues and eigenvectors of $\begin{pmatrix} 1 & 2 \\ 2 & 1 \end{pmatrix}$.'
+            answer: '$\lambda = 3$ with $\binom{1}{1}$; $\lambda = -1$ with $\binom{1}{-1}$'
+            solution_sketch: '$\det(A - \lambda I) = \lambda^2 - 2\lambda - 3 = (\lambda - 3)(\lambda + 1)$; solve $(A - \lambda I)\mathbf{v} = 0$ for each root.'
+        constraints: "2x2 matrices with integer eigenvalues and integer eigenvectors"
+      - id: kp2
+        name: General solutions with distinct real eigenvalues
+        key_prerequisites: [eigenvalues-eigenvectors, systems-matrix-form]
+        exemplars:
+          - problem: 'Find the general solution of $\mathbf{X}'' = \begin{pmatrix} 1 & 2 \\ 2 & 1 \end{pmatrix}\mathbf{X}$.'
+            answer: '$\mathbf{X} = c_1 e^{3t}\binom{1}{1} + c_2 e^{-t}\binom{1}{-1}$'
+            solution_sketch: '$\det(A - \lambda I) = \lambda^2 - 2\lambda - 3 = (\lambda - 3)(\lambda + 1)$; eigenvectors $\binom{1}{1}$ for $3$ and $\binom{1}{-1}$ for $-1$.'
+          - problem: 'Find the general solution of $\mathbf{X}'' = \begin{pmatrix} 2 & 1 \\ 0 & 3 \end{pmatrix}\mathbf{X}$.'
+            answer: '$\mathbf{X} = c_1 e^{2t}\binom{1}{0} + c_2 e^{3t}\binom{1}{1}$'
+            solution_sketch: 'Triangular, so $\lambda = 2, 3$. For $\lambda = 3$: $(A - 3I)\mathbf{v} = 0$ gives $-v_1 + v_2 = 0$, so $\mathbf{v} = \binom{1}{1}$.'
+        constraints: "2x2 matrices with integer eigenvalues and integer eigenvectors; general solutions carry c_1, c_2"
+      - id: kp3
+        name: Initial value problems
+        key_prerequisites: [eigenvalues-eigenvectors, systems-matrix-form]
+        exemplars:
+          - problem: 'Solve $\mathbf{X}'' = \begin{pmatrix} 1 & 2 \\ 2 & 1 \end{pmatrix}\mathbf{X}$ with $\mathbf{X}(0) = \binom{3}{1}$.'
+            answer: '$\mathbf{X} = 2e^{3t}\binom{1}{1} + e^{-t}\binom{1}{-1}$'
+            solution_sketch: 'Solve $c_1 + c_2 = 3$, $c_1 - c_2 = 1$: $c_1 = 2$, $c_2 = 1$.'
+          - problem: 'Solve $\mathbf{X}'' = \begin{pmatrix} 4 & 2 \\ 1 & 3 \end{pmatrix}\mathbf{X}$ with $\mathbf{X}(0) = \binom{1}{2}$.'
+            answer: '$\mathbf{X} = e^{5t}\binom{2}{1} - e^{2t}\binom{1}{-1}$'
+            solution_sketch: 'Eigenpairs $(5, \binom{2}{1})$ and $(2, \binom{1}{-1})$; $2c_1 + c_2 = 1$, $c_1 - c_2 = 2$ give $c_1 = 1$, $c_2 = -1$.'
+        constraints: "initial conditions solvable by a 2x2 linear system with integer solutions"
+    diagnostic_exemplar:
+      problem: 'Solve $\mathbf{X}'' = \begin{pmatrix} 4 & 2 \\ 1 & 3 \end{pmatrix}\mathbf{X}$ with $\mathbf{X}(0) = \binom{4}{-1}$.'
+      answer: '$\mathbf{X} = e^{5t}\binom{2}{1} + 2e^{2t}\binom{1}{-1}$'
+      solution_sketch: 'The eigenpairs are $\lambda = 5$ with $\binom{2}{1}$ and $\lambda = 2$ with $\binom{1}{-1}$. Then $c_1\binom{2}{1} + c_2\binom{1}{-1} = \binom{4}{-1}$ gives $c_1 = 1$, $c_2 = 2$.'
+    anki_seeds:
+      - front: 'Solution of $\mathbf{X}'' = A\mathbf{X}$ built from an eigenpair $(\lambda, \mathbf{v})$?'
+        back: '$\mathbf{X} = e^{\lambda t}\mathbf{v}$'
+        type: basic
+      - front: 'Eigenvalue method for $\mathbf{X}'' = A\mathbf{X}$ (distinct real case): the steps?'
+        back: 'Find eigenvalues from $\det(A - \lambda I) = 0$, an eigenvector for each, then combine: $\mathbf{X} = c_1 e^{\lambda_1 t}\mathbf{v}_1 + c_2 e^{\lambda_2 t}\mathbf{v}_2$.'
+        type: basic
+
+  - id: equilibrium-classification-eigenvalues
+    name: Classifying Equilibria from Eigenvalues
+    core: false                # qualitative-analysis branch; terminal
+    difficulty: 0.79
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 180
+    prerequisites:
+      - id: linear-systems-eigenvalues
+        weight: 0.7
+        key: true
+      - id: slope-fields-equilibria
+        weight: 0.3
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: Equilibria of linear systems
+        key_prerequisites: [linear-systems-eigenvalues]
+        exemplars:
+          - problem: 'Why is $\mathbf{X}(t) \equiv \mathbf{0}$ always an equilibrium solution of $\mathbf{X}'' = A\mathbf{X}$?'
+            answer: 'Because $A\mathbf{0} = \mathbf{0}$: the constant zero function has zero derivative and satisfies the system.'
+          - problem: 'Show that the origin is the only equilibrium of $\mathbf{X}'' = \begin{pmatrix} 1 & 2 \\ 2 & 1 \end{pmatrix}\mathbf{X}$.'
+            answer: '$\det A = 1 - 4 = -3 \neq 0$, so $A\mathbf{X} = \mathbf{0}$ has only the solution $\mathbf{X} = \mathbf{0}$.'
+            solution_sketch: 'Equilibria are the solutions of $A\mathbf{X} = \mathbf{0}$; an invertible $A$ admits only the origin.'
+        constraints: "equilibria found by solving AX = 0; det A nonzero in all exemplars"
+      - id: kp2
+        name: Classification from eigenvalues
+        key_prerequisites: [linear-systems-eigenvalues]
+        exemplars:
+          - problem: 'A $2\times 2$ linear system has eigenvalues $\lambda = -2$ and $\lambda = -5$. Classify the origin.'
+            answer: 'Stable node (sink): both eigenvalues real and negative; asymptotically stable.'
+          - problem: 'Classify the origin when $\lambda = 3$ and $\lambda = -1$.'
+            answer: 'Saddle point: real eigenvalues of opposite sign; unstable.'
+          - problem: 'Classify the origin when $\lambda = -1 \pm 3i$.'
+            answer: 'Stable spiral: complex eigenvalues with negative real part; trajectories spiral inward.'
+        constraints: "cover node/saddle/spiral; always state both the type and the stability verdict"
+      - id: kp3
+        name: The remaining cases
+        key_prerequisites: [linear-systems-eigenvalues]
+        exemplars:
+          - problem: 'Classify the origin when $\lambda = 2$ and $\lambda = 5$.'
+            answer: 'Unstable node (source): both eigenvalues real and positive; all trajectories leave the origin.'
+          - problem: 'Classify the origin when $\lambda = \pm 4i$.'
+            answer: 'Center: purely imaginary eigenvalues; closed orbits, stable but not asymptotically stable.'
+          - problem: 'Classify the origin when $\lambda = 2 \pm i$.'
+            answer: 'Unstable spiral: complex eigenvalues with positive real part; trajectories spiral outward.'
+        constraints: "cover source/center/unstable spiral; stability verdict required each time"
+    diagnostic_exemplar:
+      problem: 'A $2 \times 2$ linear system $\mathbf{X}'' = A\mathbf{X}$ has eigenvalues $\lambda = 2 \pm 3i$. Classify the origin, state its stability, and explain why it is the only equilibrium.'
+      answer: 'Unstable spiral: the eigenvalues are complex with positive real part, so trajectories spiral outward and the origin is unstable. Since neither eigenvalue is $0$, $\det A \neq 0$, so $A\mathbf{X} = \mathbf{0}$ has only the solution $\mathbf{X} = \mathbf{0}$ — the origin is the only equilibrium.'
+      solution_sketch: '$\det A$ is the product of the eigenvalues, $(2+3i)(2-3i) = 13 \neq 0$.'
+    anki_seeds:
+      - front: 'Phase portrait when both eigenvalues are real and negative?'
+        back: 'Stable node (sink): all trajectories approach the origin.'
+        type: basic
+      - front: 'Phase portrait for real eigenvalues of opposite sign?'
+        back: 'Saddle: unstable, with one attracting and one repelling eigendirection.'
+        type: basic
+      - front: 'Stability for complex eigenvalues $\alpha \pm \beta i$?'
+        back: 'Spiral in if $\alpha < 0$, spiral out if $\alpha > 0$, center if $\alpha = 0$.'
+        type: basic
+
+  - id: phase-plane-stability
+    name: Phase Plane and Stability
+    core: false                # qualitative-analysis branch; terminal
+    difficulty: 0.83
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 240
+    prerequisites:
+      - id: equilibrium-classification-eigenvalues
+        weight: 0.7
+        key: true
+      - id: linear-systems-eigenvalues
+        weight: 0.4
+        key: false
+      - id: slope-fields-equilibria
+        weight: 0.3
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: Classification from the matrix
+        key_prerequisites: [equilibrium-classification-eigenvalues]
+        exemplars:
+          - problem: 'Classify the origin of $\mathbf{X}'' = \begin{pmatrix} 0 & 1 \\ -2 & -3 \end{pmatrix}\mathbf{X}$.'
+            answer: 'Stable node: $\lambda = -1, -2$.'
+            solution_sketch: '$\lambda^2 + 3\lambda + 2 = (\lambda + 1)(\lambda + 2)$: both roots negative.'
+          - problem: 'Classify the origin of $\mathbf{X}'' = \begin{pmatrix} 2 & 3 \\ 3 & 2 \end{pmatrix}\mathbf{X}$.'
+            answer: 'Saddle (unstable): $\lambda = 5$ and $\lambda = -1$.'
+            solution_sketch: 'Trace $4$, determinant $4 - 9 = -5 < 0$: a negative determinant always means a saddle.'
+          - problem: 'Classify the origin of $\mathbf{X}'' = \begin{pmatrix} 0 & 2 \\ -2 & 0 \end{pmatrix}\mathbf{X}$.'
+            answer: 'Center: $\lambda = \pm 2i$, purely imaginary; stable but not asymptotically stable.'
+            solution_sketch: '$\lambda^2 + 4 = 0$; trajectories are closed orbits around the origin.'
+        constraints: "2x2 integer matrices; eigenvalues computable from trace/determinant; det < 0 shortcut for saddles allowed"
+      - id: kp2
+        name: The trace-determinant shortcut
+        key_prerequisites: [equilibrium-classification-eigenvalues]
+        exemplars:
+          - problem: 'A $2\times 2$ system has $\operatorname{tr} A = -4$ and $\det A = 5$. Classify the origin without finding the eigenvalues.'
+            answer: 'Stable spiral: $T^2 - 4D = 16 - 20 < 0$ gives complex eigenvalues, and $\operatorname{tr} A < 0$ makes their real part negative.'
+            solution_sketch: 'Eigenvalues satisfy $\lambda^2 - T\lambda + D = 0$; here $\lambda = -2 \pm i$.'
+          - problem: 'Classify the origin when $\operatorname{tr} A = 2$ and $\det A = -8$.'
+            answer: 'Saddle (unstable): $\det A < 0$ forces real eigenvalues of opposite sign, regardless of the trace.'
+          - problem: 'Classify the origin when $\operatorname{tr} A = 5$ and $\det A = 6$.'
+            answer: 'Unstable node: $T^2 - 4D = 1 > 0$ with $D > 0$, $T > 0$ gives two positive real eigenvalues ($\lambda = 2, 3$).'
+            solution_sketch: '$\lambda^2 - 5\lambda + 6 = (\lambda - 2)(\lambda - 3)$.'
+        constraints: "give only trace and determinant; classification must cite T^2 - 4D and the signs of T, D"
+      - id: kp3
+        name: Trajectory behavior
+        key_prerequisites: [equilibrium-classification-eigenvalues]
+        exemplars:
+          - problem: 'A saddle has $\lambda_1 = 2$ with $\mathbf{v}_1 = \binom{1}{1}$ and $\lambda_2 = -3$ with $\mathbf{v}_2 = \binom{1}{-1}$. What does a generic trajectory do as $t \to \infty$?'
+            answer: 'The $\mathbf{v}_2$ component decays, so the trajectory becomes parallel to the line spanned by $\binom{1}{1}$ and runs off to infinity along it.'
+            solution_sketch: '$\mathbf{X} = c_1 e^{2t}\mathbf{v}_1 + c_2 e^{-3t}\mathbf{v}_2$: for $c_1 \neq 0$ the growing term dominates.'
+          - problem: 'For $\mathbf{X}'' = \begin{pmatrix} 0 & 1 \\ -1 & 0 \end{pmatrix}\mathbf{X}$, determine the direction of rotation of the closed orbits.'
+            answer: 'Clockwise: at $(1, 0)$ the velocity is $\binom{0}{-1}$, pointing straight down.'
+            solution_sketch: 'Evaluate $A\binom{1}{0} = \binom{0}{-1}$: from the positive $x$-axis the flow moves down, hence clockwise.'
+        constraints: "read dominance from the largest eigenvalue; rotation direction by evaluating AX at (1,0)"
+    diagnostic_exemplar:
+      problem: 'For $\mathbf{X}'' = \begin{pmatrix} -3 & 2 \\ -2 & -3 \end{pmatrix}\mathbf{X}$, use the trace and determinant to classify the origin, and say what a generic trajectory does as $t \to \infty$.'
+      answer: 'Stable spiral: $T = -6$, $D = 13$, and $T^2 - 4D = -16 < 0$ gives complex eigenvalues with negative real part; every trajectory spirals inward and tends to the origin.'
+      solution_sketch: '$T^2 - 4D < 0$ means complex eigenvalues (spiralling), and $T < 0$ makes their real part negative (inward).'
+    anki_seeds:
+      - front: 'What does $\det A < 0$ tell you about the origin of $\mathbf{X}'' = A\mathbf{X}$?'
+        back: 'It is a saddle (real eigenvalues of opposite sign), always unstable.'
+        type: basic
+      - front: 'Trace-determinant classification when $\det A > 0$?'
+        back: '$T^2 - 4D > 0$: node; $T^2 - 4D < 0$: spiral ($T = 0$: center). *Asymptotically* stable iff $\operatorname{tr} A < 0$; $\operatorname{tr} A = 0$ with $D > 0$ is a center — stable but not asymptotically stable.'
+        type: basic
+
+  - id: complex-eigenvalue-systems
+    name: Systems with Complex Eigenvalues
+    core: false                # special case; feeds only the defective-eigenvalue leaf
+    difficulty: 0.83
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 300
+    prerequisites:
+      - id: linear-systems-eigenvalues
+        weight: 0.7
+        key: true
+      - id: complex-numbers
+        weight: 0.3
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: Complex eigenpairs
+        key_prerequisites: [linear-systems-eigenvalues, complex-numbers]
+        exemplars:
+          - problem: 'Find the eigenvalues of $\begin{pmatrix} 0 & 1 \\ -1 & 0 \end{pmatrix}$ and an eigenvector for the eigenvalue with positive imaginary part.'
+            answer: '$\lambda = \pm i$; for $\lambda = i$ an eigenvector is $\binom{1}{i}$.'
+            solution_sketch: '$\lambda^2 + 1 = 0$; $(A - iI)\mathbf{v} = 0$ gives $-iv_1 + v_2 = 0$, so $\mathbf{v} = \binom{1}{i}$.'
+          - problem: 'Find the eigenvalues of $\begin{pmatrix} 1 & -2 \\ 2 & 1 \end{pmatrix}$.'
+            answer: '$\lambda = 1 \pm 2i$'
+            solution_sketch: '$\det(A - \lambda I) = (1 - \lambda)^2 + 4 = 0$.'
+        constraints: "2x2 integer matrices with eigenvalues alpha +/- beta i, alpha and beta integers"
+      - id: kp2
+        name: Real solutions via Euler's formula
+        key_prerequisites: [linear-systems-eigenvalues, complex-numbers]
+        exemplars:
+          - problem: 'Find the general (real) solution of $\mathbf{X}'' = \begin{pmatrix} 0 & 1 \\ -1 & 0 \end{pmatrix}\mathbf{X}$.'
+            answer: '$\mathbf{X} = c_1\binom{\cos t}{-\sin t} + c_2\binom{\sin t}{\cos t}$'
+            solution_sketch: '$\lambda = \pm i$ with eigenvector $\binom{1}{i}$ for $i$; the real and imaginary parts of $e^{it}\binom{1}{i}$ give two independent real solutions.'
+          - problem: 'Find the general (real) solution of $\mathbf{X}'' = \begin{pmatrix} 1 & -2 \\ 2 & 1 \end{pmatrix}\mathbf{X}$.'
+            answer: '$\mathbf{X} = c_1 e^{t}\binom{\cos 2t}{\sin 2t} + c_2 e^{t}\binom{\sin 2t}{-\cos 2t}$'
+            solution_sketch: '$\lambda = 1 \pm 2i$ with eigenvector $\binom{1}{-i}$ for $1 + 2i$; split $e^{(1+2i)t}\binom{1}{-i}$ into real and imaginary parts.'
+        constraints: "eigenvalues alpha +/- beta i with integer alpha, beta; answers written with real cos/sin vectors, no i remaining"
+      - id: kp3
+        name: IVPs and spiral behavior
+        key_prerequisites: [linear-systems-eigenvalues]
+        exemplars:
+          - problem: 'Solve $\mathbf{X}'' = \begin{pmatrix} 0 & 2 \\ -2 & 0 \end{pmatrix}\mathbf{X}$ with $\mathbf{X}(0) = \binom{1}{0}$.'
+            answer: '$\mathbf{X} = \binom{\cos 2t}{-\sin 2t}$'
+            solution_sketch: 'Check directly: the derivative is $\binom{-2\sin 2t}{-2\cos 2t}$, which equals $A\mathbf{X}$; the initial condition matches.'
+          - problem: 'For $\mathbf{X}'' = \begin{pmatrix} 1 & -2 \\ 2 & 1 \end{pmatrix}\mathbf{X}$, do trajectories spiral toward or away from the origin?'
+            answer: 'Away: the eigenvalues $1 \pm 2i$ have positive real part, so the origin is an unstable spiral.'
+        constraints: "initial conditions align with a single real solution; stability read from the real part alpha"
+    diagnostic_exemplar:
+      problem: 'Solve $\mathbf{X}'' = \begin{pmatrix} 0 & 2 \\ -2 & 0 \end{pmatrix}\mathbf{X}$ with $\mathbf{X}(0) = \binom{3}{0}$, and say whether the trajectories spiral inward, spiral outward, or close up.'
+      answer: '$\mathbf{X} = \binom{3\cos 2t}{-3\sin 2t}$; the eigenvalues $\pm 2i$ are purely imaginary, so the trajectories are closed orbits (circles) — neither inward nor outward.'
+      solution_sketch: 'The general real solution is $c_1\binom{\cos 2t}{-\sin 2t} + c_2\binom{\sin 2t}{\cos 2t}$; the initial condition gives $c_1 = 3$, $c_2 = 0$.'
+    anki_seeds:
+      - front: 'Real solutions from a complex eigenpair $\lambda = \alpha + \beta i$, eigenvector $\mathbf{v}$?'
+        back: 'The real and imaginary parts of $e^{\lambda t}\mathbf{v}$ (via Euler''s formula $e^{i\beta t} = \cos\beta t + i\sin\beta t$).'
+        type: basic
+      - front: 'For real $A$, complex eigenvalues and eigenvectors come in...'
+        back: 'conjugate pairs: one pair $(\lambda, \mathbf{v})$ already yields both independent real solutions.'
+        type: basic
+
+  - id: complex-repeated-eigenvalues
+    name: Repeated and Defective Eigenvalues
+    core: false                # special case at the tip of the systems branch
+    difficulty: 0.85
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 300
+    prerequisites:
+      - id: complex-eigenvalue-systems
+        weight: 0.6
+        key: true
+      - id: linear-systems-eigenvalues
+        weight: 0.5
+        key: true
+      - id: phase-plane-stability
+        weight: 0.3
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: Detecting defective matrices
+        key_prerequisites: [linear-systems-eigenvalues]
+        exemplars:
+          - problem: 'Find the eigenvalues and eigenvectors of $\begin{pmatrix} 1 & 1 \\ 0 & 1 \end{pmatrix}$. Is the matrix defective?'
+            answer: '$\lambda = 1$ (double) with eigenvectors spanned by $\binom{1}{0}$ only: defective.'
+            solution_sketch: '$(A - I)\mathbf{v} = 0$ reads $v_2 = 0$: a single independent eigenvector for a double eigenvalue.'
+          - problem: 'The matrix $\begin{pmatrix} 3 & 0 \\ 0 & 3 \end{pmatrix}$ has double eigenvalue $3$. Is it defective?'
+            answer: 'No: $A = 3I$, so every nonzero vector is an eigenvector and two independent ones exist.'
+        constraints: "2x2 matrices with an integer double eigenvalue; decide defective vs diagonal"
+      - id: kp2
+        name: Generalized eigenvectors and the second solution
+        key_prerequisites: [linear-systems-eigenvalues]
+        exemplars:
+          - problem: 'Find the general solution of $\mathbf{X}'' = \begin{pmatrix} 1 & 1 \\ 0 & 1 \end{pmatrix}\mathbf{X}$.'
+            answer: '$\mathbf{X} = c_1 e^{t}\binom{1}{0} + c_2 e^{t}\left[t\binom{1}{0} + \binom{0}{1}\right]$'
+            solution_sketch: '$\lambda = 1$ (double) with the single eigenvector $\binom{1}{0}$; solve $(A - I)\mathbf{w} = \binom{1}{0}$ to get $\mathbf{w} = \binom{0}{1}$.'
+          - problem: 'Find the general solution of $\mathbf{X}'' = \begin{pmatrix} 3 & 1 \\ -1 & 1 \end{pmatrix}\mathbf{X}$.'
+            answer: '$\mathbf{X} = c_1 e^{2t}\binom{1}{-1} + c_2 e^{2t}\left[t\binom{1}{-1} + \binom{1}{0}\right]$'
+            solution_sketch: '$\lambda^2 - 4\lambda + 4 = (\lambda - 2)^2$; eigenvector $\binom{1}{-1}$, and $(A - 2I)\mathbf{w} = \binom{1}{-1}$ gives $w_1 + w_2 = 1$, e.g. $\mathbf{w} = \binom{1}{0}$.'
+        constraints: "2x2 defective matrices with an integer double eigenvalue; second solution e^{lt}(t v + w) with (A - lI)w = v"
+      - id: kp3
+        name: IVPs and long-run behavior
+        key_prerequisites: [linear-systems-eigenvalues, complex-eigenvalue-systems]
+        exemplars:
+          - problem: 'Solve $\mathbf{X}'' = \begin{pmatrix} 1 & 1 \\ 0 & 1 \end{pmatrix}\mathbf{X}$ with $\mathbf{X}(0) = \binom{2}{3}$.'
+            answer: '$\mathbf{X} = e^{t}\binom{2 + 3t}{3}$'
+            solution_sketch: 'General solution $c_1 e^t\binom{1}{0} + c_2 e^t[t\binom{1}{0} + \binom{0}{1}]$; $\mathbf{X}(0) = \binom{c_1}{c_2}$ forces $c_1 = 2$, $c_2 = 3$.'
+          - problem: 'For $\mathbf{X}'' = \begin{pmatrix} 3 & 1 \\ -1 & 1 \end{pmatrix}\mathbf{X}$, do trajectories approach the origin as $t \to \infty$?'
+            answer: 'No: the double eigenvalue $2$ is positive, so $e^{2t}$ (and $te^{2t}$) grow and the origin is an unstable degenerate node.'
+        constraints: "initial conditions with integer c_1, c_2; stability read from the sign of the double eigenvalue"
+    diagnostic_exemplar:
+      problem: 'Solve $\mathbf{X}'' = \begin{pmatrix} 2 & 1 \\ 0 & 2 \end{pmatrix}\mathbf{X}$ with $\mathbf{X}(0) = \binom{1}{3}$, and say whether the trajectory approaches the origin as $t \to \infty$.'
+      answer: '$\mathbf{X} = e^{2t}\binom{1 + 3t}{3}$; no — the double eigenvalue $2$ is positive, so the trajectory runs away from the origin (an unstable degenerate node).'
+      solution_sketch: 'The matrix is defective (only $\binom{1}{0}$ is an eigenvector), so the general solution is $c_1 e^{2t}\binom{1}{0} + c_2 e^{2t}\left[t\binom{1}{0} + \binom{0}{1}\right]$; the initial condition gives $c_1 = 1$, $c_2 = 3$.'
+    anki_seeds:
+      - front: 'Second solution for a defective double eigenvalue $\lambda$ with eigenvector $\mathbf{v}$?'
+        back: '$e^{\lambda t}(t\mathbf{v} + \mathbf{w})$, where $(A - \lambda I)\mathbf{w} = \mathbf{v}$.'
+        type: basic
+      - front: 'When does a double eigenvalue $\lambda$ of a $2\times 2$ matrix $A$ need a generalized eigenvector?'
+        back: 'When $A \neq \lambda I$: then only one independent eigenvector exists (the matrix is defective).'
+        type: basic
+
+  - id: nonhomogeneous-systems-glimpse
+    name: Nonhomogeneous Systems
+    core: false                # terminal glimpse topic
+    difficulty: 0.85
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 300
+    prerequisites:
+      - id: linear-systems-eigenvalues
+        weight: 0.7
+        key: true
+      - id: undetermined-coefficients
+        weight: 0.4
+        key: true
+      - id: matrix-inverses
+        weight: 0.3
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: Structure of solutions
+        key_prerequisites: [linear-systems-eigenvalues]
+        exemplars:
+          - problem: 'If $\mathbf{X}_h$ is the general solution of $\mathbf{X}'' = A\mathbf{X}$ and $\mathbf{X}_p$ one particular solution of $\mathbf{X}'' = A\mathbf{X} + \mathbf{b}$, what is the general solution of the nonhomogeneous system?'
+            answer: '$\mathbf{X} = \mathbf{X}_h + \mathbf{X}_p$'
+            solution_sketch: 'The difference of two nonhomogeneous solutions solves the homogeneous system, exactly as for scalar equations.'
+          - problem: 'Verify that the constant vector $\mathbf{X}_p = \binom{2}{-1}$ is a particular solution of $\mathbf{X}'' = \begin{pmatrix} 1 & 2 \\ 2 & 1 \end{pmatrix}\mathbf{X} + \binom{0}{-3}$.'
+            answer: '$\mathbf{X}_p'' = \mathbf{0}$ and $A\binom{2}{-1} + \binom{0}{-3} = \binom{0}{3} + \binom{0}{-3} = \mathbf{0}$: it checks.'
+            solution_sketch: '$A\binom{2}{-1} = \binom{2 - 2}{4 - 1} = \binom{0}{3}$.'
+        constraints: "verification by one matrix-vector product; constant forcing vectors"
+      - id: kp2
+        name: Constant forcing
+        key_prerequisites: [linear-systems-eigenvalues]
+        exemplars:
+          - problem: 'Find a constant particular solution of $\mathbf{X}'' = \begin{pmatrix} 1 & 2 \\ 2 & 1 \end{pmatrix}\mathbf{X} + \binom{0}{-3}$.'
+            answer: '$\mathbf{X}_p = \binom{2}{-1}$'
+            solution_sketch: 'Set $\mathbf{X}_p'' = \mathbf{0}$: solve $A\mathbf{X}_p = -\mathbf{b}$, i.e. $x + 2y = 0$, $2x + y = 3$, giving $(2, -1)$.'
+          - problem: 'Write the general solution of $\mathbf{X}'' = \begin{pmatrix} 1 & 2 \\ 2 & 1 \end{pmatrix}\mathbf{X} + \binom{0}{-3}$.'
+            answer: '$\mathbf{X} = c_1 e^{3t}\binom{1}{1} + c_2 e^{-t}\binom{1}{-1} + \binom{2}{-1}$'
+            solution_sketch: 'Homogeneous general solution (eigenpairs $3, -1$) plus the equilibrium particular solution.'
+        constraints: "det A nonzero so X_p = -A^{-1}b exists; integer particular solutions"
+      - id: kp3
+        name: Exponential forcing glimpse
+        key_prerequisites: [linear-systems-eigenvalues, undetermined-coefficients]
+        exemplars:
+          - problem: 'For $\mathbf{X}'' = \begin{pmatrix} 1 & 2 \\ 2 & 1 \end{pmatrix}\mathbf{X} + \binom{1}{0}e^{2t}$, find a particular solution of the form $\mathbf{X}_p = \mathbf{a}e^{2t}$.'
+            answer: '$\mathbf{X}_p = \binom{-1/3}{-2/3}e^{2t}$'
+            solution_sketch: 'Substituting gives $(A - 2I)\mathbf{a} = -\binom{1}{0}$: $-a_1 + 2a_2 = -1$, $2a_1 - a_2 = 0$, so $\mathbf{a} = (-\frac{1}{3}, -\frac{2}{3})$.'
+          - problem: 'Why does the guess $\mathbf{X}_p = \mathbf{a}e^{3t}$ fail for $\mathbf{X}'' = \begin{pmatrix} 1 & 2 \\ 2 & 1 \end{pmatrix}\mathbf{X} + \mathbf{v}e^{3t}$?'
+            answer: '$3$ is an eigenvalue of $A$, so $A - 3I$ is singular and $(A - 3I)\mathbf{a} = -\mathbf{v}$ generally has no solution; resonance requires $te^{3t}$ terms.'
+        constraints: "exponent alpha not an eigenvalue except in the resonance discussion; solve (A - alpha I)a = -v"
+    diagnostic_exemplar:
+      problem: 'For $\mathbf{X}'' = \begin{pmatrix} 1 & 2 \\ 2 & 1 \end{pmatrix}\mathbf{X} + \binom{1}{1}e^{2t}$, find a particular solution of the form $\mathbf{X}_p = \mathbf{a}e^{2t}$.'
+      answer: '$\mathbf{X}_p = \binom{-1}{-1}e^{2t}$'
+      solution_sketch: 'Substituting gives $2\mathbf{a} = A\mathbf{a} + \binom{1}{1}$, i.e. $(A - 2I)\mathbf{a} = -\binom{1}{1}$. Solving $\begin{pmatrix} -1 & 2 \\ 2 & -1 \end{pmatrix}\mathbf{a} = \binom{-1}{-1}$ gives $\mathbf{a} = \binom{-1}{-1}$ (legitimate because $2$ is not an eigenvalue of $A$).'
+    anki_seeds:
+      - front: 'General solution of $\mathbf{X}'' = A\mathbf{X} + \mathbf{b}$?'
+        back: 'Homogeneous general solution plus any one particular solution: $\mathbf{X} = \mathbf{X}_h + \mathbf{X}_p$.'
+        type: basic
+      - front: 'Constant particular solution of $\mathbf{X}'' = A\mathbf{X} + \mathbf{b}$ when $\det A \neq 0$?'
+        back: '$\mathbf{X}_p = -A^{-1}\mathbf{b}$ (the equilibrium of the forced system).'
+        type: basic
+
+  - id: nonlinear-systems-linearization
+    name: Nonlinear Systems and Linearization
+    core: false                # terminal payoff of the qualitative branch: the trace-det/
+                               # eigenvalue machinery is cashed in here and nothing in the
+                               # tree builds on the verdicts (p. 391 destination criterion;
+                               # rule 1 concurs — both DE anchors are supplemental)
+    difficulty: 0.86
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 300
+    prerequisites:
+      - id: phase-plane-stability
+        weight: 0.7
+        key: true
+      - id: first-order-partial-derivatives
+        weight: 0.5
+        key: true
+      - id: equilibrium-classification-eigenvalues
+        weight: 0.3
+        key: false
+      - id: slope-fields-equilibria
+        weight: 0.2
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: Equilibria of nonlinear systems
+        key_prerequisites: [slope-fields-equilibria]
+        exemplars:
+          - problem: 'Find all equilibrium points of the system $x'' = y - x^2$, $y'' = x - y$.'
+            answer: '$(0, 0)$ and $(1, 1)$'
+            solution_sketch: 'Set both right-hand sides to zero: $y = x^2$ and $y = x$, so $x^2 = x$ gives $x = 0$ or $x = 1$.'
+          - problem: 'Find all equilibrium points of $x'' = x(2 - y)$, $y'' = y(x - 3)$.'
+            answer: '$(0, 0)$ and $(3, 2)$'
+            solution_sketch: 'The first equation forces $x = 0$ or $y = 2$; the second forces $y = 0$ or $x = 3$. The consistent combinations are $(0,0)$ and $(3,2)$.'
+          - problem: 'Find all equilibrium points of $x'' = x - y$, $y'' = x^2 - 4$.'
+            answer: '$(2, 2)$ and $(-2, -2)$'
+            solution_sketch: '$x^2 = 4$ gives $x = \pm 2$, and $y = x$ pairs each with itself.'
+        constraints: "polynomial right-hand sides solvable by factoring or substitution; integer equilibrium coordinates; ALL equilibria must be reported, including the origin when present"
+      - id: kp2
+        name: The Jacobian and classification at an equilibrium
+        key_prerequisites: [phase-plane-stability, first-order-partial-derivatives]
+        exemplars:
+          - problem: 'For $x'' = y - x^2$, $y'' = x - y$, compute the Jacobian matrix and classify the equilibrium at $(0, 0)$.'
+            answer: '$J(x, y) = \begin{pmatrix} -2x & 1 \\ 1 & -1 \end{pmatrix}$; $J(0,0) = \begin{pmatrix} 0 & 1 \\ 1 & -1 \end{pmatrix}$ has $\det J = -1 < 0$: saddle, unstable.'
+            solution_sketch: 'The Jacobian collects the first partials of the right-hand sides; a negative determinant always means a saddle.'
+          - problem: 'Classify the equilibrium $(1, 1)$ of the system $x'' = y - x^2$, $y'' = x - y$.'
+            answer: 'Stable node: $J(1,1) = \begin{pmatrix} -2 & 1 \\ 1 & -1 \end{pmatrix}$ has $T = -3$, $D = 1$, $T^2 - 4D = 5 > 0$, so both eigenvalues are real and negative.'
+            solution_sketch: 'Evaluate the Jacobian at the equilibrium, then apply the trace-determinant test exactly as for a linear system.'
+          - problem: 'The Jacobian of a nonlinear system at an equilibrium has eigenvalues $\pm 3i$. What can you conclude about the nonlinear system there?'
+            answer: 'Nothing definitive: a center is a borderline case, and the neglected nonlinear terms can turn it into a slow spiral in or out. Only verdicts with $\operatorname{Re}\lambda \neq 0$ (saddle, node, spiral) transfer to the nonlinear system.'
+            solution_sketch: 'Linearization is trustworthy when no eigenvalue has zero real part; centers and zero eigenvalues are exactly the inconclusive cases.'
+        constraints: "2x2 Jacobians of polynomial systems with integer entries at the equilibrium; classification cites trace/determinant or eigenvalues and states both type and stability; center or zero-eigenvalue verdicts must be flagged as inconclusive for the nonlinear system"
+      - id: kp3
+        name: Predator-prey and competing species
+        key_prerequisites: [phase-plane-stability, equilibrium-classification-eigenvalues]
+        exemplars:
+          - problem: 'For the predator-prey system $x'' = x(2 - y)$, $y'' = y(x - 3)$ (prey $x$, predators $y$), linearize at both equilibria and interpret.'
+            answer: 'At $(0,0)$: $J = \begin{pmatrix} 2 & 0 \\ 0 & -3 \end{pmatrix}$, eigenvalues $2, -3$: saddle — the extinction state is unstable. At $(3,2)$: $J = \begin{pmatrix} 0 & -3 \\ 2 & 0 \end{pmatrix}$, $T = 0$, $D = 6$: linear center ($\lambda = \pm i\sqrt{6}$) — the linearization predicts populations cycling around coexistence (and for Lotka-Volterra the true orbits are indeed closed).'
+            solution_sketch: '$J(x,y) = \begin{pmatrix} 2 - y & -x \\ y & x - 3 \end{pmatrix}$; evaluate at each equilibrium and read off the trace-determinant verdict.'
+          - problem: 'For the competing-species system $x'' = x(3 - x - 2y)$, $y'' = y(2 - x - y)$, find all four equilibria and classify the coexistence equilibrium.'
+            answer: 'Equilibria: $(0,0)$, $(3,0)$, $(0,2)$, $(1,1)$. At $(1,1)$: $J = \begin{pmatrix} -1 & -2 \\ -1 & -1 \end{pmatrix}$ with $\det J = -1 < 0$: saddle — coexistence is unstable (competitive exclusion).'
+            solution_sketch: 'Each factor gives $x = 0$ or $3 - x - 2y = 0$ and $y = 0$ or $2 - x - y = 0$; the interior pair solves to $(1,1)$. $J(x,y) = \begin{pmatrix} 3 - 2x - 2y & -2x \\ -y & 2 - x - 2y \end{pmatrix}$.'
+          - problem: 'In the same competing-species system, classify the equilibrium $(3, 0)$ and interpret it.'
+            answer: 'Stable node: $J(3,0) = \begin{pmatrix} -3 & -6 \\ 0 & -1 \end{pmatrix}$ has eigenvalues $-3, -1$. Species $x$ wins: nearby populations tend to $x = 3$, $y = 0$.'
+            solution_sketch: 'The Jacobian is triangular, so the eigenvalues are the diagonal entries; both negative means an attracting state.'
+        constraints: "Lotka-Volterra and competing-species models with integer parameters and integer equilibrium coordinates; every classification carries a one-line population interpretation; the Lotka-Volterra interior center is stated as the linearization's verdict"
+    diagnostic_exemplar:
+      problem: 'For the predator-prey system $x'' = x(4 - y)$, $y'' = y(x - 2)$ (prey $x$, predators $y$), find the coexistence equilibrium and classify it by linearization.'
+      answer: 'Coexistence equilibrium $(2, 4)$. There $J = \begin{pmatrix} 0 & -2 \\ 4 & 0 \end{pmatrix}$ with $T = 0$ and $D = 8$, so $\lambda = \pm i\sqrt{8}$: a linear centre, predicting the populations cycling around coexistence. (A centre is the borderline case, so linearization alone does not settle the nonlinear behaviour.)'
+      solution_sketch: 'Equilibria come from $x(4-y) = 0$ and $y(x-2) = 0$: the origin and $(2,4)$. The Jacobian is $\begin{pmatrix} 4 - y & -x \\ y & x - 2 \end{pmatrix}$.'
+    anki_seeds:
+      - front: 'Jacobian matrix of the system $x'' = f(x, y)$, $y'' = g(x, y)$?'
+        back: '$J = \begin{pmatrix} f_x & f_y \\ g_x & g_y \end{pmatrix}$, evaluated at the equilibrium of interest.'
+        type: basic
+      - front: 'How do you classify an equilibrium of a nonlinear 2D system?'
+        back: 'Evaluate the Jacobian there and classify $\mathbf{X}'' = J\mathbf{X}$ with the trace-determinant/eigenvalue machinery; the verdict transfers when no eigenvalue has zero real part.'
+        type: basic
+      - front: 'When is Jacobian linearization inconclusive?'
+        back: 'Borderline cases: purely imaginary eigenvalues (linear center) or a zero eigenvalue — nonlinear terms can then change the picture.'
+        type: basic

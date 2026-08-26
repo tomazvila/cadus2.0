@@ -1,0 +1,1687 @@
+unit: fractions-decimals
+course: foundations
+module: "Fractions & Decimals"
+topics:
+  # --------------------------------------------------------------------- #
+  # Fraction concepts
+  # --------------------------------------------------------------------- #
+  - id: fraction-basics
+    name: Understanding Fractions
+    core: true
+    difficulty: 0.2
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 45
+    prerequisites:
+      - id: long-division-one-digit
+        weight: 0.5
+        key: true
+      - id: place-value
+        weight: 0.0            # conceptual-only: part-whole idea, no place-value practice
+    knowledge_points:
+      - id: kp1
+        name: A fraction as part of a whole
+        key_prerequisites: [long-division-one-digit]
+        exemplars:
+          - problem: 'If $3$ of $8$ equal parts are shaded, what fraction is shaded?'
+            answer: "3/8"
+          - problem: "Express 'two out of five' as a fraction."
+            answer: "2/5"
+        constraints: "denominators 2-12"
+      - id: kp2
+        name: Fractions of a set
+        key_prerequisites: [long-division-one-digit]
+        exemplars:
+          - problem: 'What fraction of a dozen is $5$?'
+            answer: "5/12"
+          - problem: 'In a class of $20$, $9$ are boys. What fraction of the class are boys?'
+            answer: "9/20"
+        constraints: "whole numbers up to 30; do not require simplifying"
+      - id: kp3
+        name: Comparing simple fractions and the whole
+        key_prerequisites: [long-division-one-digit]
+        exemplars:
+          - problem: 'Which is larger, $\frac{1}{2}$ or $\frac{1}{3}$?'
+            answer: "1/2"
+            solution_sketch: "With the same numerator, the smaller denominator is the larger fraction."
+          - problem: 'Write $1$ whole as a fraction with denominator $4$.'
+            answer: "4/4"
+        constraints: "unit fractions or the whole; denominators 2-10"
+    diagnostic_exemplar:
+      problem: 'If $7$ of $10$ equal squares are shaded, what fraction is shaded?'
+      answer: "7/10"
+      solution_sketch: 'Shaded parts over total parts: $\frac{7}{10}$.'
+    anki_seeds:
+      - front: "In the fraction a/b, the top number a is the {{c1::numerator}} and the bottom number b is the {{c2::denominator}}."
+        back: "numerator; denominator"
+        type: cloze
+
+  - id: fractions-on-number-line
+    name: Fractions on the Number Line
+    core: true
+    difficulty: 0.22
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 50
+    prerequisites:
+      - id: fraction-basics
+        weight: 0.9
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: Reading fractions between 0 and 1
+        key_prerequisites: [fraction-basics]
+        exemplars:
+          - problem: 'A number line from $0$ to $1$ is divided into $4$ equal parts. What fraction sits at the third tick mark after $0$?'
+            answer: "3/4"
+          - problem: 'A number line from $0$ to $1$ is divided into $6$ equal parts. What fraction sits at the fifth tick mark after $0$?'
+            answer: "5/6"
+        constraints: "denominators 2-10, fractions between 0 and 1"
+      - id: kp2
+        name: Locating fractions greater than one
+        key_prerequisites: [fraction-basics]
+        exemplars:
+          - problem: '$\frac{7}{4}$ lies between two consecutive whole numbers. What is the smaller one?'
+            answer: "1"
+            solution_sketch: '$\frac{4}{4} = 1$ and $\frac{8}{4} = 2$; $\frac{7}{4}$ is between them, so the smaller is $1$.'
+          - problem: '$\frac{11}{3}$ lies between two consecutive whole numbers. What is the smaller one?'
+            answer: "3"
+            solution_sketch: '$\frac{9}{3} = 3$ and $\frac{12}{3} = 4$; the smaller is $3$.'
+        constraints: "improper fractions with denominators 2-6"
+      - id: kp3
+        name: Whole numbers as fractions
+        key_prerequisites: [fraction-basics]
+        exemplars:
+          - problem: 'What fraction with denominator $3$ lands exactly on $2$?'
+            answer: "6/3"
+          - problem: 'Is $\frac{9}{9}$ less than, equal to, or greater than $1$?'
+            answer: "equal"
+        constraints: "denominators 2-10"
+    diagnostic_exemplar:
+      problem: 'A number line from $0$ to $3$ is divided into thirds. What fraction sits at the seventh tick mark after $0$?'
+      answer: '7/3'
+      solution_sketch: 'Each tick is $\frac{1}{3}$, so the seventh is $\frac{7}{3}$, which lies between $2$ and $3$.'
+    anki_seeds:
+      - front: "On the number line, the fraction a/b means..."
+        back: "a steps of size 1/b starting from 0"
+        type: basic
+
+  - id: equivalent-fractions
+    name: Equivalent Fractions
+    core: true
+    difficulty: 0.25
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 55
+    prerequisites:
+      - id: fraction-basics
+        weight: 0.8
+        key: true
+      - id: multiplication-tables
+        weight: 0.6
+        key: true
+      - id: greatest-common-factor
+        weight: 0.5
+    knowledge_points:
+      - id: kp1
+        name: Scaling up
+        key_prerequisites: [multiplication-tables]
+        exemplars:
+          - problem: 'Write $\frac{2}{3}$ as an equivalent fraction with denominator 9.'
+            answer: "6/9"
+            solution_sketch: 'Multiply numerator and denominator by $3$.'
+          - problem: 'Rewrite $\frac{1}{2}$ with denominator 8.'
+            answer: "4/8"
+        constraints: "target denominator is a small multiple of the original"
+      - id: kp2
+        name: Simplifying to lowest terms
+        key_prerequisites: [greatest-common-factor]
+        exemplars:
+          - problem: 'Simplify $\frac{6}{9}$.'
+            answer: "2/3"
+          - problem: 'Simplify $\frac{10}{25}$.'
+            answer: "2/5"
+            solution_sketch: '$\text{GCF}(10, 25) = 5$; divide both by $5$.'
+        constraints: "numerator and denominator up to 30"
+      - id: kp3
+        name: Larger GCFs and comparing
+        key_prerequisites: [greatest-common-factor]
+        exemplars:
+          - problem: 'Simplify $\frac{24}{36}$.'
+            answer: "2/3"
+            solution_sketch: '$\text{GCF}(24, 36) = 12$; $\frac{24}{36} = \frac{2}{3}$.'
+          - problem: 'Are $\frac{4}{6}$ and $\frac{6}{9}$ equivalent? (yes/no)'
+            answer: "yes"
+        constraints: "values up to 60"
+    diagnostic_exemplar:
+      problem: 'Write $\frac{36}{54}$ as an equivalent fraction with denominator $9$.'
+      answer: '6/9'
+      solution_sketch: '$\frac{36}{54} = \frac{2}{3}$ (divide by $18$), and $\frac{2}{3} = \frac{6}{9}$.'
+    anki_seeds:
+      - front: "To make an equivalent fraction, multiply or divide the numerator and denominator by..."
+        back: "the same nonzero number"
+        type: basic
+      - front: "A fraction is in lowest terms when the GCF of its numerator and denominator is..."
+        back: "1"
+        type: basic
+
+  - id: comparing-ordering-fractions
+    name: Comparing and Ordering Fractions
+    core: false                # comparison destination; the fraction machinery stays core
+    difficulty: 0.3
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 70
+    prerequisites:
+      - id: equivalent-fractions
+        weight: 0.9
+        key: true
+      - id: least-common-multiple
+        weight: 0.6
+        key: true
+      - id: fractions-on-number-line
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: Same denominator or same numerator
+        key_prerequisites: [fractions-on-number-line]
+        exemplars:
+          - problem: 'Which is larger, $\frac{3}{8}$ or $\frac{5}{8}$?'
+            answer: "5/8"
+          - problem: 'Which is larger, $\frac{2}{5}$ or $\frac{2}{7}$?'
+            answer: "2/5"
+            solution_sketch: 'Same numerator: the smaller denominator means larger pieces.'
+        constraints: "denominators up to 12"
+      - id: kp2
+        name: Comparing with common denominators
+        key_prerequisites: [least-common-multiple]
+        exemplars:
+          - problem: 'Which is larger, $\frac{2}{3}$ or $\frac{3}{5}$?'
+            answer: "2/3"
+            solution_sketch: '$\frac{2}{3} = \frac{10}{15}$ and $\frac{3}{5} = \frac{9}{15}$.'
+          - problem: 'Which is larger, $\frac{5}{6}$ or $\frac{7}{9}$?'
+            answer: "5/6"
+            solution_sketch: '$\frac{5}{6} = \frac{15}{18}$ and $\frac{7}{9} = \frac{14}{18}$.'
+        constraints: "unlike denominators up to 12"
+      - id: kp3
+        name: Ordering and benchmark comparisons
+        key_prerequisites: [equivalent-fractions]
+        exemplars:
+          - problem: 'Order from least to greatest: $\frac{1}{2}$, $\frac{3}{8}$, $\frac{5}{8}$.'
+            answer: "3/8, 1/2, 5/8"
+            solution_sketch: 'Over $8$: $\frac{3}{8} < \frac{4}{8} < \frac{5}{8}$.'
+          - problem: 'Is $\frac{5}{9}$ more or less than $\frac{1}{2}$?'
+            answer: "more"
+            solution_sketch: '$2 \times 5 = 10 > 9$, so $\frac{5}{9} > \frac{1}{2}$.'
+        constraints: "3 fractions or a benchmark of 1/2 or 1"
+    diagnostic_exemplar:
+      problem: 'Order from least to greatest: $\frac{2}{3}$, $\frac{5}{8}$, $\frac{3}{4}$.'
+      answer: '5/8, 2/3, 3/4'
+      solution_sketch: 'Over $24$: $\frac{16}{24}$, $\frac{15}{24}$, $\frac{18}{24}$.'
+    anki_seeds:
+      - front: "With the same numerator, the fraction with the smaller denominator is..."
+        back: "larger (fewer pieces means bigger pieces)"
+        type: basic
+      - front: "Benchmark test: a/b is greater than 1/2 exactly when..."
+        back: "2a > b"
+        type: basic
+
+  # --------------------------------------------------------------------- #
+  # Fraction arithmetic
+  # --------------------------------------------------------------------- #
+  - id: adding-subtracting-like-fractions
+    name: Adding and Subtracting Like Fractions
+    core: true
+    difficulty: 0.25
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 55
+    prerequisites:
+      - id: fraction-basics
+        weight: 0.9
+        key: true
+      - id: equivalent-fractions
+        weight: 0.5
+      - id: subtraction-facts
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: Adding with like denominators
+        key_prerequisites: [fraction-basics]
+        exemplars:
+          - problem: 'Compute $\frac{1}{5} + \frac{2}{5}$.'
+            answer: "3/5"
+          - problem: 'Compute $\frac{2}{7} + \frac{3}{7}$.'
+            answer: "5/7"
+        constraints: "same denominator up to 12; sum less than 1, no simplifying needed"
+      - id: kp2
+        name: Subtracting with like denominators
+        key_prerequisites: [subtraction-facts]
+        exemplars:
+          - problem: 'Compute $\frac{5}{8} - \frac{1}{8}$.'
+            answer: "1/2"
+            solution_sketch: '$\frac{5}{8} - \frac{1}{8} = \frac{4}{8} = \frac{1}{2}$.'
+          - problem: 'Compute $\frac{7}{10} - \frac{3}{10}$.'
+            answer: "2/5"
+        constraints: "same denominator up to 12; simplify the result"
+      - id: kp3
+        name: Sums past one and simplifying
+        key_prerequisites: [equivalent-fractions]
+        exemplars:
+          - problem: 'Compute $\frac{5}{6} + \frac{5}{6}$.'
+            answer: "5/3"
+            solution_sketch: '$\frac{10}{6} = \frac{5}{3}$.'
+          - problem: 'Compute $\frac{3}{4} + \frac{3}{4}$.'
+            answer: "3/2"
+        constraints: "same denominator; results may exceed 1, give lowest terms"
+    diagnostic_exemplar:
+      problem: 'Compute $\frac{7}{10} + \frac{9}{10}$.'
+      answer: "8/5"
+      solution_sketch: 'Like denominators add straight across: $\frac{16}{10} = \frac{8}{5}$.'
+    anki_seeds:
+      - front: "To add fractions with the same denominator, add the numerators and..."
+        back: "keep the denominator"
+        type: basic
+
+  - id: adding-subtracting-fractions
+    name: Adding and Subtracting Fractions
+    core: true
+    difficulty: 0.3
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 85
+    prerequisites:
+      - id: adding-subtracting-like-fractions
+        weight: 0.9
+        key: true
+      - id: equivalent-fractions
+        weight: 0.8
+        key: true
+      - id: least-common-multiple
+        weight: 0.6
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: One denominator divides the other
+        key_prerequisites: [adding-subtracting-like-fractions]
+        exemplars:
+          - problem: 'Compute $\frac{1}{2} + \frac{3}{8}$.'
+            answer: "7/8"
+            solution_sketch: '$\frac{1}{2} = \frac{4}{8}$; $\frac{4}{8} + \frac{3}{8} = \frac{7}{8}$.'
+          - problem: 'Compute $\frac{5}{6} - \frac{1}{3}$.'
+            answer: "1/2"
+            solution_sketch: '$\frac{5}{6} - \frac{2}{6} = \frac{3}{6} = \frac{1}{2}$.'
+        constraints: "one denominator a multiple of the other, up to 12"
+      - id: kp2
+        name: Unlike denominators via the LCM
+        key_prerequisites: [least-common-multiple]
+        exemplars:
+          - problem: 'Compute $\frac{1}{4} + \frac{1}{6}$.'
+            answer: "5/12"
+            solution_sketch: '$\text{LCM}(4, 6) = 12$; $\frac{3}{12} + \frac{2}{12} = \frac{5}{12}$.'
+          - problem: 'Compute $\frac{1}{2} + \frac{1}{3}$.'
+            answer: "5/6"
+          - problem: 'Compute $\frac{3}{4} - \frac{1}{6}$.'
+            answer: "7/12"
+            solution_sketch: '$\frac{9}{12} - \frac{2}{12} = \frac{7}{12}$.'
+        constraints: "denominators up to 12, unlike"
+      - id: kp3
+        name: Sums greater than one and three fractions
+        key_prerequisites: [equivalent-fractions]
+        exemplars:
+          - problem: 'Compute $\frac{3}{4} + \frac{5}{6}$.'
+            answer: "19/12"
+          - problem: 'Compute $\frac{1}{2} + \frac{2}{3} + \frac{1}{6}$.'
+            answer: "4/3"
+            solution_sketch: '$\frac{3}{6} + \frac{4}{6} + \frac{1}{6} = \frac{8}{6} = \frac{4}{3}$.'
+        constraints: "denominators up to 12; results may exceed 1"
+    diagnostic_exemplar:
+      problem: 'Compute $\frac{1}{2} + \frac{3}{4} + \frac{1}{6}$.'
+      answer: '17/12'
+      solution_sketch: 'LCD $12$: $\frac{6}{12} + \frac{9}{12} + \frac{2}{12} = \frac{17}{12}$.'
+    anki_seeds:
+      - front: "To add or subtract fractions with unlike denominators, first..."
+        back: "rewrite each fraction over the LCM of the denominators"
+        type: basic
+
+  - id: fraction-of-a-number
+    name: Fraction of a Number
+    core: true
+    difficulty: 0.26
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 55
+    prerequisites:
+      - id: fraction-basics
+        weight: 0.8
+        key: true
+      - id: division-facts
+        weight: 0.8
+        key: true
+      - id: multiplication-tables
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: Unit fraction of a number
+        key_prerequisites: [division-facts]
+        exemplars:
+          - problem: 'What is $\frac{1}{3}$ of $12$?'
+            answer: "4"
+            solution_sketch: 'Divide by the denominator: $12 \div 3 = 4$.'
+          - problem: 'What is $\frac{1}{5}$ of $40$?'
+            answer: "8"
+        constraints: "denominator divides the whole number evenly"
+      - id: kp2
+        name: General fraction of a number
+        key_prerequisites: [multiplication-tables]
+        exemplars:
+          - problem: 'What is $\frac{2}{3}$ of $12$?'
+            answer: "8"
+            solution_sketch: '$12 \div 3 = 4$, then $4 \times 2 = 8$.'
+          - problem: 'What is $\frac{3}{4}$ of $20$?'
+            answer: "15"
+        constraints: "denominator divides the whole number; numerator 2-9"
+      - id: kp3
+        name: Fraction of a quantity in context
+        key_prerequisites: [division-facts]
+        exemplars:
+          - problem: '$\frac{3}{5}$ of the $25$ students in a class walk to school. How many walk?'
+            answer: "15"
+          - problem: 'It rained on $\frac{2}{7}$ of the $28$ days of February. On how many days did it rain?'
+            answer: "8"
+        constraints: "whole-number answers; quantities up to 60"
+    diagnostic_exemplar:
+      problem: '$\frac{3}{8}$ of the $32$ pupils in a class cycle to school. How many cycle?'
+      answer: '12'
+      solution_sketch: '$32 \div 8 = 4$, then $3 \times 4 = 12$.'
+    anki_seeds:
+      - front: "To find a/b of a number n, divide n by b and then..."
+        back: "multiply the result by a"
+        type: basic
+
+  - id: multiplying-fractions
+    name: Multiplying Fractions
+    core: true
+    difficulty: 0.3
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 70
+    prerequisites:
+      - id: fraction-of-a-number
+        weight: 0.6
+        key: true
+      - id: multiplication-tables
+        weight: 0.7
+        key: true
+      - id: equivalent-fractions
+        weight: 0.5
+    knowledge_points:
+      - id: kp1
+        name: Multiply numerators and denominators
+        key_prerequisites: [multiplication-tables]
+        exemplars:
+          - problem: 'Compute $\frac{2}{3} \times \frac{4}{5}$.'
+            answer: "8/15"
+          - problem: 'Compute $\frac{1}{2} \times \frac{3}{7}$.'
+            answer: "3/14"
+        constraints: "numerators and denominators up to 9; result already in lowest terms"
+      - id: kp2
+        name: Simplifying the result
+        key_prerequisites: [equivalent-fractions]
+        exemplars:
+          - problem: 'Compute $\frac{2}{3} \times \frac{3}{4}$.'
+            answer: "1/2"
+            solution_sketch: '$\frac{6}{12} = \frac{1}{2}$.'
+          - problem: 'Compute $\frac{4}{9} \times \frac{3}{8}$.'
+            answer: "1/6"
+            solution_sketch: '$\frac{12}{72} = \frac{1}{6}$.'
+        constraints: "result reducible; values up to 12"
+      - id: kp3
+        name: Cross-cancelling and whole-number factors
+        key_prerequisites: [fraction-of-a-number]
+        exemplars:
+          - problem: 'Compute $\frac{5}{6} \times \frac{9}{10}$.'
+            answer: "3/4"
+            solution_sketch: 'Cancel first: $\frac{5}{10} = \frac{1}{2}$ and $\frac{9}{6} = \frac{3}{2}$, so $\frac{1 \times 3}{2 \times 2} = \frac{3}{4}$.'
+          - problem: 'Compute $3 \times \frac{2}{5}$.'
+            answer: "6/5"
+        constraints: "cancel common factors before multiplying; values up to 12"
+    diagnostic_exemplar:
+      problem: 'Compute $\frac{3}{4} \times \frac{2}{9}$.'
+      answer: "1/6"
+      solution_sketch: 'Cross-cancel first: $\frac{3}{9} = \frac{1}{3}$ and $\frac{2}{4} = \frac{1}{2}$, leaving $\frac{1}{6}$.'
+    anki_seeds:
+      - front: "To multiply two fractions, multiply the numerators together and multiply the..."
+        back: "denominators together"
+        type: basic
+
+  - id: dividing-fractions
+    name: Dividing Fractions
+    core: true
+    difficulty: 0.35
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 75
+    prerequisites:
+      - id: multiplying-fractions
+        weight: 0.8
+        key: true
+      - id: fraction-basics
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: Reciprocals
+        key_prerequisites: [fraction-basics]
+        exemplars:
+          - problem: 'What is the reciprocal of $\frac{3}{5}$?'
+            answer: "5/3"
+          - problem: 'What is the reciprocal of $4$?'
+            answer: "1/4"
+        constraints: "simple fractions and whole numbers"
+      - id: kp2
+        name: Divide by multiplying by the reciprocal
+        key_prerequisites: [multiplying-fractions]
+        exemplars:
+          - problem: 'Compute $\frac{1}{2} \div \frac{1}{4}$.'
+            answer: "2"
+            solution_sketch: '$\frac{1}{2} \times \frac{4}{1} = \frac{4}{2} = 2$.'
+          - problem: 'Compute $\frac{2}{3} \div \frac{4}{9}$.'
+            answer: "3/2"
+            solution_sketch: '$\frac{2}{3} \times \frac{9}{4} = \frac{18}{12} = \frac{3}{2}$.'
+        constraints: "denominators up to 12"
+      - id: kp3
+        name: Dividing with whole numbers
+        key_prerequisites: [multiplying-fractions]
+        exemplars:
+          - problem: 'Compute $\frac{3}{4} \div 2$.'
+            answer: "3/8"
+          - problem: 'Compute $5 \div \frac{1}{3}$.'
+            answer: "15"
+        constraints: "one operand is a whole number"
+    diagnostic_exemplar:
+      problem: 'Compute $\frac{3}{5} \div 6$.'
+      answer: '1/10'
+      solution_sketch: 'The reciprocal of $6$ is $\frac{1}{6}$: $\frac{3}{5} \times \frac{1}{6} = \frac{3}{30} = \frac{1}{10}$.'
+    anki_seeds:
+      - front: "To divide by a fraction, multiply by its..."
+        back: "reciprocal (flip the second fraction)"
+        type: basic
+
+  # --------------------------------------------------------------------- #
+  # Mixed numbers
+  # --------------------------------------------------------------------- #
+  - id: improper-fractions-mixed-numbers
+    name: Improper Fractions and Mixed Number Conversions
+    core: true
+    difficulty: 0.28
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 60
+    prerequisites:
+      - id: fraction-basics
+        weight: 0.8
+        key: true
+      - id: division-with-remainders
+        weight: 0.8
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: Improper fraction to mixed number
+        key_prerequisites: [division-with-remainders]
+        exemplars:
+          - problem: 'Write $\frac{7}{2}$ as a mixed number.'
+            answer: "3 1/2"
+            solution_sketch: '$7 \div 2 = 3$ R$1$, so $3\frac{1}{2}$.'
+          - problem: 'Write $\frac{17}{5}$ as a mixed number.'
+            answer: "3 2/5"
+        constraints: "single-digit whole parts; denominators up to 8"
+      - id: kp2
+        name: Mixed number to improper fraction
+        key_prerequisites: [fraction-basics]
+        exemplars:
+          - problem: 'Write $2\frac{3}{4}$ as an improper fraction.'
+            answer: "11/4"
+            solution_sketch: '$2 \times 4 + 3 = 11$, over $4$.'
+          - problem: 'Write $4\frac{1}{3}$ as an improper fraction.'
+            answer: "13/3"
+        constraints: "whole parts 1-9; denominators up to 8"
+      - id: kp3
+        name: Comparing and locating mixed numbers
+        key_prerequisites: [fraction-basics]
+        exemplars:
+          - problem: 'Are $\frac{9}{4}$ and $2\frac{1}{4}$ equal? (yes/no)'
+            answer: "yes"
+            solution_sketch: '$2\frac{1}{4} = \frac{2 \times 4 + 1}{4} = \frac{9}{4}$.'
+          - problem: '$3\frac{2}{5}$ lies between two consecutive whole numbers. What is the smaller one?'
+            answer: "3"
+            solution_sketch: 'The whole part is $3$, and $\frac{2}{5} < 1$, so it sits between $3$ and $4$.'
+        constraints: "denominators up to 8"
+    diagnostic_exemplar:
+      problem: 'Which is larger, $\frac{15}{4}$ or $3\frac{1}{2}$? Give your answer as an improper fraction.'
+      answer: '15/4'
+      solution_sketch: '$3\frac{1}{2} = \frac{7}{2} = \frac{14}{4}$, which is less than $\frac{15}{4}$.'
+    anki_seeds:
+      - front: "To convert the mixed number a b/c to an improper fraction, compute..."
+        back: "(a x c + b) / c"
+        type: basic
+
+  - id: mixed-numbers
+    name: Mixed Numbers and Improper Fractions
+    core: true
+    difficulty: 0.35
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 85
+    prerequisites:
+      - id: improper-fractions-mixed-numbers
+        weight: 0.9
+        key: true
+      - id: adding-subtracting-fractions
+        weight: 0.8
+        key: true
+      - id: multiplying-fractions
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: Add mixed numbers
+        key_prerequisites: [adding-subtracting-fractions]
+        exemplars:
+          - problem: 'Compute $1\frac{1}{2} + 2\frac{1}{4}$.'
+            answer: "3 3/4"
+            solution_sketch: '$\frac{6}{4} + \frac{9}{4} = \frac{15}{4} = 3\frac{3}{4}$.'
+          - problem: 'Compute $2\frac{2}{3} + 1\frac{1}{2}$.'
+            answer: "4 1/6"
+            solution_sketch: '$\frac{8}{3} + \frac{3}{2} = \frac{16}{6} + \frac{9}{6} = \frac{25}{6} = 4\frac{1}{6}$.'
+        constraints: "denominators up to 6"
+      - id: kp2
+        name: Subtract mixed numbers, with regrouping
+        key_prerequisites: [improper-fractions-mixed-numbers]
+        exemplars:
+          - problem: 'Compute $3\frac{1}{3} - 1\frac{2}{3}$.'
+            answer: "1 2/3"
+            solution_sketch: '$\frac{10}{3} - \frac{5}{3} = \frac{5}{3} = 1\frac{2}{3}$.'
+          - problem: 'Compute $5\frac{1}{4} - 2\frac{3}{4}$.'
+            answer: "2 1/2"
+            solution_sketch: '$\frac{21}{4} - \frac{11}{4} = \frac{10}{4} = 2\frac{1}{2}$.'
+        constraints: "fraction part of the subtrahend may exceed the minuend's"
+      - id: kp3
+        name: Multiply mixed numbers
+        key_prerequisites: [multiplying-fractions]
+        exemplars:
+          - problem: 'Compute $1\frac{1}{2} \times \frac{2}{3}$.'
+            answer: "1"
+            solution_sketch: '$\frac{3}{2} \times \frac{2}{3} = \frac{6}{6} = 1$.'
+          - problem: 'Compute $2\frac{1}{4} \times 2$.'
+            answer: "4 1/2"
+        constraints: "convert to improper fractions first"
+    diagnostic_exemplar:
+      problem: 'Compute $4\frac{1}{4} - 1\frac{2}{3}$.'
+      answer: "2 7/12"
+      solution_sketch: '$\frac{17}{4} - \frac{5}{3} = \frac{51}{12} - \frac{20}{12} = \frac{31}{12}$.'
+    anki_seeds:
+      - front: "To add or subtract mixed numbers reliably, first convert each to..."
+        back: "an improper fraction (then convert the result back)"
+        type: basic
+
+  - id: dividing-mixed-numbers
+    name: Dividing Mixed Numbers
+    core: false                # mixed-number format leaf; dividing-fractions stays core
+    difficulty: 0.4
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 90
+    prerequisites:
+      - id: mixed-numbers
+        weight: 0.8
+        key: true
+      - id: dividing-fractions
+        weight: 0.9
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: Mixed number divided by a fraction
+        key_prerequisites: [dividing-fractions]
+        exemplars:
+          - problem: 'Compute $2\frac{1}{2} \div \frac{1}{2}$.'
+            answer: "5"
+            solution_sketch: '$\frac{5}{2} \times \frac{2}{1} = 5$.'
+          - problem: 'Compute $1\frac{1}{3} \div \frac{2}{3}$.'
+            answer: "2"
+        constraints: "denominators up to 6"
+      - id: kp2
+        name: Mixed number divided by a mixed number
+        key_prerequisites: [mixed-numbers]
+        exemplars:
+          - problem: 'Compute $3\frac{1}{2} \div 1\frac{3}{4}$.'
+            answer: "2"
+            solution_sketch: '$\frac{7}{2} \div \frac{7}{4} = \frac{7}{2} \times \frac{4}{7} = 2$.'
+          - problem: 'Compute $2\frac{1}{4} \div 1\frac{1}{2}$.'
+            answer: "3/2"
+            solution_sketch: '$\frac{9}{4} \times \frac{2}{3} = \frac{18}{12} = \frac{3}{2}$.'
+        constraints: "denominators up to 6; give the answer in lowest terms"
+      - id: kp3
+        name: Division in context
+        key_prerequisites: [dividing-fractions]
+        exemplars:
+          - problem: 'How many $\frac{3}{4}$-cup servings are in $4\frac{1}{2}$ cups of rice?'
+            answer: "6"
+            solution_sketch: '$\frac{9}{2} \div \frac{3}{4} = \frac{9}{2} \times \frac{4}{3} = 6$.'
+          - problem: 'A ribbon $5\frac{1}{4}$ m long is cut into $\frac{3}{4}$ m pieces. How many pieces?'
+            answer: "7"
+        constraints: "whole-number answers in context"
+    diagnostic_exemplar:
+      problem: 'A ribbon $5\frac{1}{4}$ m long is cut into $1\frac{3}{4}$ m pieces. How many pieces?'
+      answer: '3'
+      solution_sketch: '$\frac{21}{4} \div \frac{7}{4} = \frac{21}{4} \times \frac{4}{7} = 3$.'
+    anki_seeds:
+      - front: "Before dividing mixed numbers, always convert them to..."
+        back: "improper fractions, then multiply by the reciprocal"
+        type: basic
+
+  - id: fraction-word-problems
+    name: Fraction Word Problems
+    # over-coverage: contextual dressing on adding-subtracting-fractions,
+    # multiplying-fractions and dividing-fractions; no new technique
+    core: false
+    difficulty: 0.4
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 120
+    prerequisites:
+      - id: adding-subtracting-fractions
+        weight: 0.8
+        key: true
+      - id: multiplying-fractions
+        weight: 0.7
+        key: true
+      - id: dividing-fractions
+        weight: 0.5
+    knowledge_points:
+      - id: kp1
+        name: Adding and subtracting in context
+        key_prerequisites: [adding-subtracting-fractions]
+        exemplars:
+          - problem: 'Lena ran $\frac{3}{4}$ km, rested, then ran $\frac{2}{3}$ km. How far did she run in total (as a fraction of a kilometre)?'
+            answer: "17/12"
+            solution_sketch: '$\frac{9}{12} + \frac{8}{12} = \frac{17}{12}$.'
+          - problem: 'A recipe needs $\frac{2}{3}$ cup of milk; you have measured $\frac{1}{2}$ cup. How much more is needed?'
+            answer: "1/6"
+        constraints: "denominators up to 12; exact fraction answers"
+      - id: kp2
+        name: Fraction-of-a-quantity in context
+        key_prerequisites: [multiplying-fractions]
+        exemplars:
+          - problem: 'Of $24$ students, $\frac{3}{8}$ play football. How many students do NOT play football?'
+            answer: "15"
+            solution_sketch: '$\frac{3}{8} \times 24 = 9$ play; $24 - 9 = 15$ do not.'
+          - problem: 'Maria has read $\frac{3}{5}$ of a $20$-page booklet. How many pages remain?'
+            answer: "8"
+        constraints: "two steps; whole-number answers"
+      - id: kp3
+        name: Division and multi-step problems
+        key_prerequisites: [dividing-fractions]
+        exemplars:
+          - problem: 'How many $\frac{2}{3}$-cup servings can be poured from $4$ cups of juice?'
+            answer: "6"
+            solution_sketch: '$4 \div \frac{2}{3} = 4 \times \frac{3}{2} = 6$.'
+          - problem: 'Each muffin uses $\frac{1}{4}$ cup of sugar. How many muffins can be made with $3$ cups?'
+            answer: "12"
+        constraints: "division by a fraction; whole-number answers"
+    diagnostic_exemplar:
+      problem: 'How many $\frac{3}{4}$-litre bottles can be filled from $6$ litres of juice?'
+      answer: "8"
+      solution_sketch: 'This is a division: $6 \div \frac{3}{4} = 6 \times \frac{4}{3} = 8$.'
+    anki_seeds:
+      - front: "A word problem asking 'how many pieces of size a/b fit into c' is solved by computing..."
+        back: "c divided by a/b (multiply c by the reciprocal)"
+        type: basic
+
+  # --------------------------------------------------------------------- #
+  # Decimals
+  # --------------------------------------------------------------------- #
+  - id: decimal-place-value
+    name: Decimal Place Value
+    core: true
+    difficulty: 0.2
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 40
+    prerequisites:
+      - id: place-value
+        weight: 0.8
+        key: true
+      - id: fraction-basics
+        weight: 0.6
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: Tenths and hundredths
+        key_prerequisites: [place-value]
+        exemplars:
+          - problem: 'Which digit is in the tenths place of $3.47$?'
+            answer: "4"
+          - problem: 'What is the value of the $6$ in $0.65$?'
+            answer: "0.6"
+            solution_sketch: 'The $6$ sits in the tenths place: $6$ tenths $= 0.6$.'
+        constraints: "numbers with 1-2 decimal places"
+      - id: kp2
+        name: Decimals as fractions over 10 and 100
+        key_prerequisites: [fraction-basics]
+        exemplars:
+          - problem: 'Write $0.7$ as a fraction.'
+            answer: "7/10"
+          - problem: 'Write $0.29$ as a fraction.'
+            answer: "29/100"
+          - problem: 'Write $\frac{3}{10}$ as a decimal.'
+            answer: "0.3"
+        constraints: "denominators 10 or 100; no simplifying required"
+      - id: kp3
+        name: Thousandths
+        key_prerequisites: [place-value]
+        exemplars:
+          - problem: 'What is the value of the $5$ in $2.359$?'
+            answer: "0.05"
+          - problem: 'Which digit is in the thousandths place of $0.408$?'
+            answer: "8"
+        constraints: "numbers with 3 decimal places"
+    diagnostic_exemplar:
+      problem: 'Write $0.037$ as a fraction.'
+      answer: '37/1000'
+      solution_sketch: 'Three decimal places means thousandths.'
+    anki_seeds:
+      - front: "In 0.47, the 4 is in the {{c1::tenths}} place and the 7 is in the {{c2::hundredths}} place."
+        back: "tenths; hundredths"
+        type: cloze
+
+  - id: comparing-ordering-decimals
+    name: Comparing and Ordering Decimals
+    core: true
+    difficulty: 0.22
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 45
+    prerequisites:
+      - id: decimal-place-value
+        weight: 0.9
+        key: true
+      - id: comparing-ordering-whole-numbers
+        weight: 0.5
+    knowledge_points:
+      - id: kp1
+        name: Comparing two decimals
+        key_prerequisites: [decimal-place-value]
+        exemplars:
+          - problem: 'Which is larger, $0.7$ or $0.65$?'
+            answer: "0.7"
+            solution_sketch: 'Compare tenths: $7 > 6$, so $0.7 > 0.65$.'
+          - problem: 'Which is larger, $2.09$ or $2.4$?'
+            answer: "2.4"
+        constraints: "1-2 decimal places; traps where more digits does not mean larger"
+      - id: kp2
+        name: Trailing zeros
+        key_prerequisites: [decimal-place-value]
+        exemplars:
+          - problem: 'Are $0.5$ and $0.50$ equal? (yes/no)'
+            answer: "yes"
+          - problem: 'Compare $0.080$ and $0.08$: is the first larger, smaller, or equal?'
+            answer: "equal"
+            solution_sketch: 'Trailing zeros after the decimal point do not change the value.'
+        constraints: "pairs differing only by trailing zeros"
+      - id: kp3
+        name: Ordering lists of decimals
+        key_prerequisites: [decimal-place-value]
+        exemplars:
+          - problem: 'Order from least to greatest: $0.3$, $0.28$, $0.302$.'
+            answer: "0.28, 0.3, 0.302"
+            solution_sketch: 'Pad to thousandths: $0.300$, $0.280$, $0.302$.'
+          - problem: 'Which is greatest: $1.45$, $1.5$, or $1.405$?'
+            answer: "1.5"
+        constraints: "3 decimals with different numbers of places"
+    diagnostic_exemplar:
+      problem: 'Order from least to greatest: $0.4$, $0.38$, $0.409$.'
+      answer: '0.38, 0.4, 0.409'
+      solution_sketch: 'Pad to three places: $0.400$, $0.380$, $0.409$.'
+    anki_seeds:
+      - front: "To compare decimals, line up the decimal points and compare digits..."
+        back: "place by place from left to right (pad with trailing zeros if needed)"
+        type: basic
+
+  - id: rounding-decimals
+    name: Rounding Decimals
+    core: false                # estimation leaf; rounding-whole-numbers stays core
+    difficulty: 0.24
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 45
+    prerequisites:
+      - id: decimal-place-value
+        weight: 0.8
+        key: true
+      - id: rounding-whole-numbers
+        weight: 0.8
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: Round to the nearest whole number
+        key_prerequisites: [rounding-whole-numbers]
+        exemplars:
+          - problem: 'Round $3.6$ to the nearest whole number.'
+            answer: "4"
+          - problem: 'Round $12.38$ to the nearest whole number.'
+            answer: "12"
+        constraints: "1-2 decimal places"
+      - id: kp2
+        name: Round to the nearest tenth or hundredth
+        key_prerequisites: [decimal-place-value]
+        exemplars:
+          - problem: 'Round $0.847$ to the nearest tenth.'
+            answer: "0.8"
+            solution_sketch: 'The hundredths digit is $4 (< 5)$, so keep the $8$.'
+          - problem: 'Round $2.463$ to the nearest hundredth.'
+            answer: "2.46"
+        constraints: "2-3 decimal places"
+      - id: kp3
+        name: Money and carrying the round
+        key_prerequisites: [rounding-whole-numbers]
+        exemplars:
+          - problem: 'A total comes to €7.483. Round to the nearest cent.'
+            answer: "7.48"
+          - problem: 'Round $9.96$ to the nearest tenth.'
+            answer: "10.0"
+            solution_sketch: 'The hundredths digit $6$ rounds the $9$ up, carrying into the ones: $10.0$.'
+        constraints: "include cases where rounding carries across places"
+    diagnostic_exemplar:
+      problem: 'Round $6.97$ to the nearest tenth.'
+      answer: "7.0"
+      solution_sketch: 'The hundredths digit $7$ rounds the $9$ up, and the carry makes it $7.0$.'
+    anki_seeds:
+      - front: "Rounding decimals uses the same rule as whole numbers: look at the digit..."
+        back: "one place to the right of the target place (5 or more rounds up)"
+        type: basic
+
+  - id: decimal-multiplication-powers-of-ten
+    name: Decimals Times Powers of Ten
+    core: true
+    difficulty: 0.22
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 40
+    prerequisites:
+      - id: decimal-place-value
+        weight: 0.9
+        key: true
+      - id: multiplying-by-powers-of-ten
+        weight: 0.6
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: Multiply by 10 and 100
+        key_prerequisites: [multiplying-by-powers-of-ten]
+        exemplars:
+          - problem: 'Compute $0.47 \times 10$.'
+            answer: "4.7"
+            solution_sketch: 'Move the decimal point one place right.'
+          - problem: 'Compute $3.6 \times 100$.'
+            answer: "360"
+        constraints: "1-2 decimal places"
+      - id: kp2
+        name: Divide by 10 and 100
+        key_prerequisites: [decimal-place-value]
+        exemplars:
+          - problem: 'Compute $25 \div 100$.'
+            answer: "0.25"
+          - problem: 'Compute $4.2 \div 10$.'
+            answer: "0.42"
+        constraints: "results have at most 3 decimal places"
+      - id: kp3
+        name: Thousands and combined moves
+        key_prerequisites: [multiplying-by-powers-of-ten]
+        exemplars:
+          - problem: 'Compute $0.05 \times 1000$.'
+            answer: "50"
+          - problem: 'Compute $7.5 \div 1000$.'
+            answer: "0.0075"
+        constraints: "shifts of 3 places, may need padding zeros"
+    diagnostic_exemplar:
+      problem: 'Compute $6.3 \div 1000$.'
+      answer: "0.0063"
+      solution_sketch: 'Dividing by $1000$ moves the point three places left: $0.0063$.'
+    anki_seeds:
+      - front: "Multiplying a decimal by 10 moves the decimal point..."
+        back: "one place to the right (dividing by 10 moves it one place left)"
+        type: basic
+
+  - id: decimal-addition-subtraction
+    name: Adding and Subtracting Decimals
+    core: true
+    difficulty: 0.25
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 50
+    prerequisites:
+      - id: decimal-place-value
+        weight: 0.8
+        key: true
+      - id: multi-digit-addition-subtraction
+        weight: 0.8
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: Adding decimals
+        key_prerequisites: [multi-digit-addition-subtraction]
+        exemplars:
+          - problem: 'Compute $2.5 + 1.3$.'
+            answer: "3.8"
+          - problem: 'Compute $3.4 + 2.15$.'
+            answer: "5.55"
+            solution_sketch: 'Align the decimal points: $3.40 + 2.15 = 5.55$.'
+        constraints: "1-2 decimal places; align the decimal points"
+      - id: kp2
+        name: Subtracting decimals
+        key_prerequisites: [decimal-place-value]
+        exemplars:
+          - problem: 'Compute $4.7 - 2.9$.'
+            answer: "1.8"
+          - problem: 'Compute $6 - 2.35$.'
+            answer: "3.65"
+            solution_sketch: 'Write $6$ as $6.00$, then subtract: $6.00 - 2.35 = 3.65$.'
+        constraints: "operands may have different numbers of decimal places"
+      - id: kp3
+        name: Money computations
+        key_prerequisites: [multi-digit-addition-subtraction]
+        exemplars:
+          - problem: 'Compute €12.50 + €3.75.'
+            answer: "16.25"
+          - problem: 'You pay for a €13.45 item with a €20 note. How much change do you get?'
+            answer: "6.55"
+        constraints: "euro amounts to the cent"
+    diagnostic_exemplar:
+      problem: 'Compute $7 - 3.65$.'
+      answer: "3.35"
+      solution_sketch: 'Write $7$ as $7.00$ and line up the points: $7.00 - 3.65 = 3.35$.'
+    anki_seeds:
+      - front: "Before adding or subtracting decimals in columns, you must line up..."
+        back: "the decimal points (pad with trailing zeros as needed)"
+        type: basic
+
+  - id: decimal-operations
+    name: Decimal Operations
+    core: true
+    difficulty: 0.3
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 60
+    prerequisites:
+      - id: decimal-addition-subtraction
+        weight: 0.8
+        key: true
+      - id: multi-digit-multiplication
+        weight: 0.6
+        key: true
+      - id: long-division-one-digit
+        weight: 0.5
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: Multiply decimals
+        key_prerequisites: [multi-digit-multiplication]
+        exemplars:
+          - problem: 'Compute $0.6 \times 0.4$.'
+            answer: "0.24"
+            solution_sketch: '$6 \times 4 = 24$; $1 + 1 = 2$ decimal places $\to 0.24$.'
+          - problem: 'Compute $1.2 \times 5$.'
+            answer: "6"
+          - problem: 'Compute $2.5 \times 0.3$.'
+            answer: "0.75"
+        constraints: "at most 1 decimal place per factor"
+      - id: kp2
+        name: Divide by a whole number
+        key_prerequisites: [long-division-one-digit]
+        exemplars:
+          - problem: 'Compute $3.6 \div 4$.'
+            answer: "0.9"
+          - problem: 'Compute $7.2 \div 6$.'
+            answer: "1.2"
+        constraints: "1-digit divisor; quotients terminate within 2 decimal places"
+      - id: kp3
+        name: Divide by a decimal
+        key_prerequisites: [long-division-one-digit]
+        exemplars:
+          - problem: 'Compute $4.5 \div 0.5$.'
+            answer: "9"
+            solution_sketch: 'Scale both by $10$: $45 \div 5 = 9$.'
+          - problem: 'Compute $0.84 \div 0.07$.'
+            answer: "12"
+            solution_sketch: 'Scale both by $100$: $84 \div 7 = 12$.'
+        constraints: "shift both numbers until the divisor is whole"
+    diagnostic_exemplar:
+      problem: 'Compute $5.6 \div 0.7$.'
+      answer: "8"
+      solution_sketch: 'Scale both by $10$ to clear the divisor: $56 \div 7 = 8$.'
+    anki_seeds:
+      - front: "When multiplying decimals, the number of decimal places in the product equals..."
+        back: "the total number of decimal places in the two factors"
+        type: basic
+      - front: "To divide by a decimal (e.g. 4.5 / 0.5), first..."
+        back: "multiply both numbers by the same power of ten to make the divisor whole"
+        type: basic
+
+  - id: fraction-decimal-conversion
+    name: Converting Between Fractions and Decimals
+    core: true
+    difficulty: 0.3
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 65
+    prerequisites:
+      - id: long-division
+        weight: 0.6
+        key: true
+      - id: decimal-place-value
+        weight: 0.5
+      - id: equivalent-fractions
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: Fraction to decimal
+        key_prerequisites: [long-division]
+        exemplars:
+          - problem: 'Write $\frac{3}{4}$ as a decimal.'
+            answer: "0.75"
+            solution_sketch: '$3 \div 4 = 0.75$.'
+          - problem: 'Write $\frac{1}{5}$ as a decimal.'
+            answer: "0.2"
+        constraints: "terminating decimals; denominators 2, 4, 5, 8, 10"
+      - id: kp2
+        name: Decimal to fraction
+        key_prerequisites: [equivalent-fractions]
+        exemplars:
+          - problem: 'Write $0.6$ as a fraction in lowest terms.'
+            answer: "3/5"
+            solution_sketch: '$0.6 = \frac{6}{10} = \frac{3}{5}$.'
+          - problem: 'Write $0.25$ as a fraction in lowest terms.'
+            answer: "1/4"
+        constraints: "1-2 decimal places"
+      - id: kp3
+        name: Longer divisions and repeating decimals
+        key_prerequisites: [long-division]
+        exemplars:
+          - problem: 'Write $\frac{7}{8}$ as a decimal.'
+            answer: "0.875"
+          - problem: 'Write $\frac{1}{3}$ as a decimal, rounded to three decimal places.'
+            answer: "0.333"
+            solution_sketch: '$1 \div 3 = 0.333\ldots$ repeats forever; to three places it is $0.333$.'
+        constraints: "may include a simple repeating decimal"
+    diagnostic_exemplar:
+      problem: 'Write $\frac{5}{8}$ as a decimal.'
+      answer: "0.625"
+      solution_sketch: 'Divide $5$ by $8$, or scale to $\frac{625}{1000} = 0.625$.'
+    anki_seeds:
+      - front: "To convert a fraction to a decimal, you..."
+        back: "divide the numerator by the denominator"
+        type: basic
+
+  # --------------------------------------------------------------------- #
+  # Percentages
+  # --------------------------------------------------------------------- #
+  - id: percent-conversions
+    name: Percent, Decimal, and Fraction Conversions
+    core: true
+    difficulty: 0.26
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 50
+    prerequisites:
+      - id: fraction-decimal-conversion
+        weight: 0.8
+        key: true
+      - id: decimal-multiplication-powers-of-ten
+        weight: 0.5
+    knowledge_points:
+      - id: kp1
+        name: Percent and decimal
+        key_prerequisites: [decimal-multiplication-powers-of-ten]
+        exemplars:
+          - problem: 'Write $45\%$ as a decimal.'
+            answer: "0.45"
+          - problem: 'Write $0.07$ as a percent. Give just the number.'
+            answer: "7"
+        constraints: "whole-number percents"
+      - id: kp2
+        name: Percent and fraction
+        key_prerequisites: [fraction-decimal-conversion]
+        exemplars:
+          - problem: 'Write $25\%$ as a fraction in lowest terms.'
+            answer: "1/4"
+          - problem: 'Write $\frac{3}{4}$ as a percent. Give just the number.'
+            answer: "75"
+          - problem: 'Write $60\%$ as a fraction in lowest terms.'
+            answer: "3/5"
+        constraints: "percents that simplify to small fractions"
+      - id: kp3
+        name: Benchmarks and percents beyond 100
+        key_prerequisites: [fraction-decimal-conversion]
+        exemplars:
+          - problem: 'Write $\frac{1}{5}$ as a percent. Give just the number.'
+            answer: "20"
+          - problem: 'Write $125\%$ as a decimal.'
+            answer: "1.25"
+        constraints: "benchmark fractions (halves, quarters, fifths, tenths); percents up to 200"
+    diagnostic_exemplar:
+      problem: 'Write $\frac{7}{4}$ as a percent. Give just the number.'
+      answer: '175'
+      solution_sketch: '$\frac{7}{4} = 1.75$, and $1.75 \times 100 = 175$.'
+    anki_seeds:
+      - front: "The word 'percent' means..."
+        back: "per hundred (out of 100)"
+        type: basic
+      - front: "To convert a decimal to a percent, multiply by..."
+        back: "100 (move the decimal point two places right)"
+        type: basic
+
+  - id: percent-of-a-number
+    name: Percent of a Number
+    core: true
+    difficulty: 0.28
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 60
+    prerequisites:
+      - id: percent-conversions
+        weight: 0.9
+        key: true
+      - id: decimal-operations
+        weight: 0.6
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: Percent of a number via decimals
+        key_prerequisites: [decimal-operations]
+        exemplars:
+          - problem: 'What is $20\%$ of $60$?'
+            answer: "12"
+            solution_sketch: '$0.20 \times 60 = 12$.'
+          - problem: 'What is $15\%$ of $80$?'
+            answer: "12"
+        constraints: "results are whole numbers"
+      - id: kp2
+        name: Mental benchmarks
+        key_prerequisites: [percent-conversions]
+        exemplars:
+          - problem: 'What is $10\%$ of $350$?'
+            answer: "35"
+            solution_sketch: '$10\%$ is one tenth: move the decimal point.'
+          - problem: 'What is $25\%$ of $200$?'
+            answer: "50"
+        constraints: "10%, 25%, 50% of clean numbers, done mentally"
+      - id: kp3
+        name: Larger and smaller percents
+        key_prerequisites: [percent-conversions]
+        exemplars:
+          - problem: 'What is $150\%$ of $40$?'
+            answer: "60"
+            solution_sketch: '$1.5 \times 40 = 60$.'
+          - problem: 'What is $4\%$ of $250$?'
+            answer: "10"
+        constraints: "percents from 1% to 200%; whole-number answers"
+    diagnostic_exemplar:
+      problem: 'What is $120\%$ of $45$?'
+      answer: '54'
+      solution_sketch: '$1.2 \times 45 = 54$.'
+    anki_seeds:
+      - front: "To find x% of a number, multiply the number by..."
+        back: "x/100 (i.e. the decimal form of the percent)"
+        type: basic
+
+  - id: percentages
+    name: Percentages
+    core: true
+    difficulty: 0.3
+    drill: false
+    # Most answers here are percents ("25%") or comparisons ("25% of 80"), which the
+    # SymPy override cannot parse or adjudicate; multi-step hands grading to the tutor.
+    answer_kind: multi-step
+    expected_time_secs: 70
+    prerequisites:
+      - id: percent-conversions
+        weight: 0.8
+        key: true
+      - id: percent-of-a-number
+        weight: 0.9
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: Finding what percent one number is of another
+        key_prerequisites: [percent-conversions]
+        exemplars:
+          - problem: '$12$ is what percent of $48$?'
+            answer: "25%"
+            solution_sketch: '$\frac{12}{48} = 0.25 = 25\%$.'
+          - problem: '$18$ is what percent of $24$?'
+            answer: "75%"
+        constraints: "part/whole gives a benchmark percent"
+      - id: kp2
+        name: One-step percents in context
+        key_prerequisites: [percent-of-a-number]
+        exemplars:
+          - problem: 'A €40 item is $10\%$ off. How many euros is the discount?'
+            answer: "4"
+            solution_sketch: '$0.10 \times 40 = 4$.'
+          - problem: 'You answered $45$ of $50$ questions correctly. What percent is that?'
+            answer: "90%"
+        constraints: "single-step; whole-number answers"
+      - id: kp3
+        name: Choosing the right computation
+        key_prerequisites: [percent-of-a-number]
+        exemplars:
+          - problem: 'Which is larger: $25\%$ of $80$ or $30\%$ of $60$?'
+            answer: "25% of 80"
+            solution_sketch: '$0.25 \times 80 = 20$ versus $0.30 \times 60 = 18$.'
+          - problem: 'To pass a $30$-question quiz you need $80\%$ correct. How many questions is that?'
+            answer: "24"
+        constraints: "mix of find-the-part and find-the-percent forms"
+    diagnostic_exemplar:
+      problem: 'To pass a $40$-question test you need $85\%$ correct. How many questions must you answer correctly?'
+      answer: "34"
+      solution_sketch: '$0.85 \times 40 = 34$.'
+    anki_seeds:
+      - front: "To find what percent a part is of a whole, compute..."
+        back: "part / whole, then multiply by 100"
+        type: basic
+
+  - id: percent-finding-the-whole
+    name: Finding the Whole from a Percent
+    core: false                # feeds only percent-applications; percentages stays core
+    difficulty: 0.35
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 80
+    prerequisites:
+      - id: percentages
+        weight: 0.9
+        key: true
+      - id: decimal-operations
+        weight: 0.5
+    knowledge_points:
+      - id: kp1
+        name: Find the whole given the part and percent
+        key_prerequisites: [percentages]
+        exemplars:
+          - problem: '$15$ is $30\%$ of what number?'
+            answer: "50"
+            solution_sketch: '$15 \div 0.30 = 50$.'
+          - problem: '$24$ is $40\%$ of what number?'
+            answer: "60"
+        constraints: "benchmark percents; whole-number answers"
+      - id: kp2
+        name: Harder percents
+        key_prerequisites: [decimal-operations]
+        exemplars:
+          - problem: '$36$ is $45\%$ of what number?'
+            answer: "80"
+            solution_sketch: '$36 \div 0.45 = 80$.'
+          - problem: '$8$ is $5\%$ of what number?'
+            answer: "160"
+        constraints: "percents that are not simple benchmarks"
+      - id: kp3
+        name: Finding the whole in context
+        key_prerequisites: [percentages]
+        exemplars:
+          - problem: 'A deposit of €30 is $20\%$ of the price of a bike. What is the price?'
+            answer: "150"
+            solution_sketch: '$30 \div 0.20 = 150$.'
+          - problem: '$12$ students are absent today, which is $15\%$ of the class. How many students are in the class?'
+            answer: "80"
+        constraints: "one unknown whole; whole-number answers"
+    diagnostic_exemplar:
+      problem: 'A deposit of €27 is $15\%$ of the price of a laptop. What is the price in euros?'
+      answer: "180"
+      solution_sketch: '$0.15p = 27$, so $p = \frac{27}{0.15} = 180$.'
+    anki_seeds:
+      - front: "If a part and its percent are known, the whole equals..."
+        back: "part divided by the percent written as a decimal"
+        type: basic
+
+  # --------------------------------------------------------------------- #
+  # Ratios, rates, and proportions
+  # --------------------------------------------------------------------- #
+  - id: understanding-ratios
+    name: Understanding Ratios
+    core: true
+    difficulty: 0.28
+    drill: false
+    # Ratio answers ("2:3") are not SymPy expressions; the tutor grades them.
+    answer_kind: multi-step
+    expected_time_secs: 60
+    prerequisites:
+      - id: equivalent-fractions
+        weight: 0.8
+        key: true
+      - id: division-facts
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: Writing ratios
+        key_prerequisites: [equivalent-fractions]
+        exemplars:
+          - problem: 'There are $6$ apples and $9$ oranges. Write the ratio of apples to oranges in simplest form.'
+            answer: "2:3"
+          - problem: 'A bag has $3$ red and $5$ blue marbles. Write the ratio of red marbles to ALL marbles.'
+            answer: "3:8"
+        constraints: "part:part and part:whole forms; parts up to 20"
+      - id: kp2
+        name: Simplifying ratios
+        key_prerequisites: [division-facts]
+        exemplars:
+          - problem: 'Simplify the ratio $8:12$.'
+            answer: "2:3"
+            solution_sketch: 'Divide both parts by GCF $4$.'
+          - problem: 'Simplify the ratio $15:25$.'
+            answer: "3:5"
+          - problem: 'Simplify the ratio $12:30$.'
+            answer: "2:5"
+        constraints: "parts up to 40"
+      - id: kp3
+        name: Equivalent ratios
+        key_prerequisites: [equivalent-fractions]
+        exemplars:
+          - problem: 'Fill in: $2:3 = 8:\square$.'
+            answer: "12"
+            solution_sketch: 'Both parts were multiplied by $4$.'
+          - problem: 'Are $4:6$ and $10:15$ equivalent? (yes/no)'
+            answer: "yes"
+            solution_sketch: 'Both simplify to $2:3$.'
+        constraints: "scale factors 2-5"
+    diagnostic_exemplar:
+      problem: 'In a class of $30$ pupils there are $12$ boys. Write the ratio of boys to girls in simplest form.'
+      answer: '2:3'
+      solution_sketch: 'There are $30 - 12 = 18$ girls, and $12:18$ simplifies to $2:3$.'
+    anki_seeds:
+      - front: "A part-to-part ratio compares two groups; a part-to-whole ratio compares one group to..."
+        back: "the total of all groups"
+        type: basic
+
+  - id: ratio-tables-equivalent-ratios
+    name: Ratio Tables
+    core: false                # scaffold representation leaf; ratios-proportions stays core
+    difficulty: 0.3
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 70
+    prerequisites:
+      - id: understanding-ratios
+        weight: 0.9
+        key: true
+      - id: multiplication-tables
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: Completing a ratio table
+        key_prerequisites: [understanding-ratios]
+        exemplars:
+          - problem: 'A recipe uses $2$ eggs for every $3$ cups of flour. How many cups of flour go with $4$ eggs?'
+            answer: "6"
+            solution_sketch: 'Double both parts of $2:3$ to get $4:6$.'
+          - problem: 'A table shows the ratio $3:12$. What number pairs with $5$ in the same table?'
+            answer: "20"
+            solution_sketch: '$3:12$ is $1:4$, so $5$ pairs with $20$.'
+        constraints: "whole-number scale factors"
+      - id: kp2
+        name: Scaling ratios up and down
+        key_prerequisites: [understanding-ratios]
+        exemplars:
+          - problem: 'Punch mixes $3$ parts juice with $2$ parts soda. With $9$ cups of juice, how many cups of soda?'
+            answer: "6"
+          - problem: 'A map uses $1$ cm for every $4$ km. How many km does $7$ cm represent?'
+            answer: "28"
+        constraints: "scale factors 2-8; whole-number answers"
+      - id: kp3
+        name: Comparing ratios
+        key_prerequisites: [understanding-ratios]
+        exemplars:
+          - problem: 'Class A has $12$ girls and $18$ boys; Class B has $10$ girls and $15$ boys. Do the classes have the same girl-to-boy ratio? (yes/no)'
+            answer: "yes"
+            solution_sketch: 'Both simplify to $2:3$.'
+          - problem: 'Which mix is stronger: $2$ scoops of cocoa per $3$ cups of milk, or $3$ scoops per $5$ cups?'
+            answer: "2 scoops per 3 cups"
+            solution_sketch: 'Compare $\frac{2}{3} = \frac{10}{15}$ with $\frac{3}{5} = \frac{9}{15}$.'
+        constraints: "compare after rewriting with a common part"
+    diagnostic_exemplar:
+      problem: 'Which mix is stronger: $3$ scoops of cocoa per $4$ cups of milk, or $4$ scoops per $6$ cups?'
+      answer: '3 scoops per 4 cups'
+      solution_sketch: '$\frac{3}{4} = 0.75$ against $\frac{4}{6} \approx 0.67$.'
+    anki_seeds:
+      - front: "Two ratios are equivalent when both parts of one are obtained from the other by..."
+        back: "multiplying (or dividing) by the same number"
+        type: basic
+
+  - id: unit-rates
+    name: Unit Rates
+    core: true
+    difficulty: 0.32
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 75
+    prerequisites:
+      - id: understanding-ratios
+        weight: 0.8
+        key: true
+      - id: decimal-operations
+        weight: 0.6
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: Computing a unit rate
+        key_prerequisites: [understanding-ratios]
+        exemplars:
+          - problem: 'A car travels $240$ km in $4$ hours. What is its speed in km per hour?'
+            answer: "60"
+          - problem: 'A car travels $180$ km on $12$ litres of fuel. How many km per litre?'
+            answer: "15"
+          - problem: 'A printer prints $180$ pages in $4$ minutes. How many pages per minute?'
+            answer: "45"
+        constraints: "divide to a whole-number rate"
+      - id: kp2
+        name: Unit prices and better buys
+        key_prerequisites: [decimal-operations]
+        exemplars:
+          - problem: 'A $300$ g jar costs €3.60 and a $400$ g jar costs €4.00. Which is the better buy (lower cost per $100$ g)?'
+            answer: "the 400 g jar"
+            solution_sketch: '$3.60 \div 3 = 1.20$ per $100$ g versus $4.00 \div 4 = 1.00$ per $100$ g.'
+          - problem: 'Six eggs cost €2.40. What is the cost per egg in cents?'
+            answer: "40"
+        constraints: "money per unit; 2-decimal answers or cents"
+      - id: kp3
+        name: Using a rate to scale up
+        key_prerequisites: [understanding-ratios]
+        exemplars:
+          - problem: 'At $55$ km per hour, how far do you travel in $3$ hours?'
+            answer: "165"
+          - problem: 'Ria types $38$ words per minute. How many words in $5$ minutes?'
+            answer: "190"
+        constraints: "rate times whole-number quantity"
+    diagnostic_exemplar:
+      problem: 'A $500$ g pack of muesli costs €4.00 and a $750$ g pack costs €5.25. Which is the better buy (lower cost per $100$ g)?'
+      answer: "the 750 g pack"
+      solution_sketch: 'Cost per $100$ g: $\frac{4.00}{5} = 0.80$ against $\frac{5.25}{7.5} = 0.70$.'
+    anki_seeds:
+      - front: "A unit rate is a ratio whose second quantity is..."
+        back: "1 (e.g. km per 1 hour, euros per 1 item)"
+        type: basic
+
+  - id: ratios-proportions
+    name: Ratios and Proportions
+    core: true
+    difficulty: 0.35
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 90
+    prerequisites:
+      - id: understanding-ratios
+        weight: 0.8
+        key: true
+      - id: unit-rates
+        weight: 0.6
+        key: true
+      - id: multiplying-fractions
+        weight: 0.5
+    knowledge_points:
+      - id: kp1
+        name: Solving a proportion
+        key_prerequisites: [multiplying-fractions]
+        exemplars:
+          - problem: 'Solve for $x$: $\frac{3}{4} = \frac{x}{12}$.'
+            answer: "9"
+            solution_sketch: 'Cross-multiply: $4x = 36$, so $x = 9$.'
+          - problem: 'Solve for $x$: $\frac{2}{5} = \frac{6}{x}$.'
+            answer: "15"
+        constraints: "one unknown; whole-number solution"
+      - id: kp2
+        name: Proportion word problems
+        key_prerequisites: [unit-rates]
+        exemplars:
+          - problem: 'If $3$ pens cost €6, how much do $5$ pens cost?'
+            answer: "10"
+            solution_sketch: 'Unit rate €2 per pen; $5 \times 2 = 10$.'
+          - problem: 'A recipe for $4$ people uses $3$ cups of rice. How many cups for $12$ people?'
+            answer: "9"
+        constraints: "whole-number rates and answers"
+      - id: kp3
+        name: Scale and indirect measurement
+        key_prerequisites: [understanding-ratios]
+        exemplars:
+          - problem: 'A model car is built at a $1:24$ scale. The model is $7$ cm long. How long is the real car in cm?'
+            answer: "168"
+          - problem: 'A $1.6$ m person casts a $2.4$ m shadow while a tree casts a $24$ m shadow. How tall is the tree in metres?'
+            answer: "16"
+            solution_sketch: '$\frac{1.6}{2.4} = \frac{h}{24}$, so $h = 24 \times \frac{1.6}{2.4} = 16$.'
+        constraints: "same-units proportions; whole-number answers"
+    diagnostic_exemplar:
+      problem: 'A model boat is built at a $1:36$ scale. The model is $9$ cm long. How long is the real boat in cm?'
+      answer: "324"
+      solution_sketch: 'The real boat is $36$ times the model: $9 \times 36 = 324$.'
+    anki_seeds:
+      - front: "In a proportion a/b = c/d, cross-multiplication gives the equation..."
+        back: "a x d = b x c"
+        type: basic
+
+  - id: percent-applications
+    name: Percent Applications
+    core: false                # enrichment / applications leaf topic
+    difficulty: 0.4
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 120
+    prerequisites:
+      - id: percentages
+        weight: 0.7
+        key: true
+      - id: percent-finding-the-whole
+        weight: 0.6
+        key: true
+      - id: decimal-operations
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: Percent increase and decrease
+        key_prerequisites: [percentages]
+        exemplars:
+          - problem: 'A shirt costs €50 and is marked up $20\%$. What is the new price in euros?'
+            answer: "60"
+            solution_sketch: '$50 \times 1.20 = 60$.'
+          - problem: 'An €80 jacket is $25\%$ off. What is the sale price in euros?'
+            answer: "60"
+            solution_sketch: '$80 \times 0.75 = 60$.'
+        constraints: "single percent change; whole-euro answers"
+      - id: kp2
+        name: Reversing a percent change
+        key_prerequisites: [percent-finding-the-whole]
+        exemplars:
+          - problem: 'After a $30\%$ discount, a coat sells for €42. What was the original price in euros?'
+            answer: "60"
+            solution_sketch: '$42$ is $70\%$ of the original: $42 \div 0.70 = 60$.'
+          - problem: 'A price rose $10\%$ to €88. What was the price before the increase?'
+            answer: "80"
+            solution_sketch: '$88 \div 1.10 = 80$.'
+        constraints: "divide by (1 +/- p/100); whole-euro answers"
+      - id: kp3
+        name: Multi-step percent problems
+        key_prerequisites: [percentages]
+        exemplars:
+          - problem: 'A €40 meal has an $8\%$ service charge and a $15\%$ tip, each computed on the €40. What is the total in euros?'
+            answer: "49.20"
+            solution_sketch: 'Tax $3.20$ + tip $6.00 + 40 = 49.20$.'
+          - problem: 'A population of $200$ grows $10\%$, then grows $10\%$ again. What is the final population?'
+            answer: "242"
+            solution_sketch: '$200 \times 1.1 = 220$, then $220 \times 1.1 = 242$.'
+        constraints: "two-step; answers to the cent or whole number"
+    diagnostic_exemplar:
+      problem: 'After a $20\%$ discount, a rucksack sells for €48. What was the original price in euros?'
+      answer: "60"
+      solution_sketch: 'The sale price is $80\%$ of the original, so $p = \frac{48}{0.8} = 60$.'
+    anki_seeds:
+      - front: "The new amount after a p% increase equals the original times..."
+        back: "(1 + p/100)"
+        type: basic
+      - front: "The new amount after a p% decrease equals the original times..."
+        back: "(1 - p/100)"
+        type: basic
+
+  - id: simple-interest
+    name: Simple Interest
+    # over-coverage: I = Prt is a percent application, same class as the already
+    # supplemental percent-applications; not a university prerequisite
+    core: false
+    difficulty: 0.45
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 100
+    prerequisites:
+      - id: percent-of-a-number
+        weight: 0.9
+        key: true
+      - id: decimal-operations
+        weight: 0.5
+    knowledge_points:
+      - id: kp1
+        name: Interest for one year
+        key_prerequisites: [percent-of-a-number]
+        exemplars:
+          - problem: '€500 is deposited at $4\%$ simple interest per year. How much interest is earned in one year?'
+            answer: "20"
+            solution_sketch: '$500 \times 0.04 = 20$.'
+          - problem: '€1 200 is borrowed at $3\%$ simple interest per year. How much interest accrues in one year?'
+            answer: "36"
+        constraints: "one year; whole-euro answers"
+      - id: kp2
+        name: The formula I = Prt
+        key_prerequisites: [percent-of-a-number]
+        exemplars:
+          - problem: '€800 earns $5\%$ simple interest per year for $3$ years. How much interest in total?'
+            answer: "120"
+            solution_sketch: '$I = 800 \times 0.05 \times 3 = 120$.'
+          - problem: '€2 000 earns $2.5\%$ simple interest per year for $4$ years. How much interest in total?'
+            answer: "200"
+        constraints: "whole-number years; whole-euro answers"
+      - id: kp3
+        name: Totals and finding the rate
+        key_prerequisites: [decimal-operations]
+        exemplars:
+          - problem: '€600 is deposited at $5\%$ simple interest per year. What is the account balance after $2$ years?'
+            answer: "660"
+            solution_sketch: 'Interest $600 \times 0.05 \times 2 = 60$; balance $600 + 60 = 660$.'
+          - problem: 'A €400 deposit earned €60 of simple interest over $3$ years. The annual rate is $r\%$. Find $r$.'
+            answer: "5"
+            solution_sketch: '$r = \frac{60}{400 \times 3} = 0.05 = 5\%$.'
+        constraints: "balance = principal + interest; clean rates"
+    diagnostic_exemplar:
+      problem: '€500 is deposited at $4\%$ simple interest per year. What is the account balance after $3$ years?'
+      answer: "560"
+      solution_sketch: '$I = Prt = 500 \times 0.04 \times 3 = 60$; the balance is $500 + 60$.'
+    anki_seeds:
+      - front: "Simple interest formula: I equals..."
+        back: "P x r x t (principal x annual rate as a decimal x years)"
+        type: basic
+      - front: "With simple interest, the final balance equals..."
+        back: "principal + interest, i.e. P(1 + rt)"
+        type: basic

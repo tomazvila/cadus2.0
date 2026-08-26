@@ -1,0 +1,1383 @@
+unit: functions-relations
+course: proofs
+module: "Functions & Relations"
+topics:
+  - id: functions-formal-definition
+    name: "Functions: Formal Definition"
+    core: true
+    difficulty: 0.55
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 200
+    prerequisites:
+      - id: cartesian-products
+        weight: 0.5
+        key: true
+      - id: set-notation
+        weight: 0.3
+      - id: quantifiers
+        weight: 0.3
+      - id: function-notation
+        weight: 0.0
+    knowledge_points:
+      - id: kp1
+        name: "Function as a special relation"
+        key_prerequisites: [cartesian-products]
+        exemplars:
+          - problem: 'Explain why $R = \{(1, a), (2, b), (1, c)\}$ is not a function from $\{1, 2\}$ to $\{a, b, c\}$.'
+            answer: 'The input $1$ is paired with both $a$ and $c$, violating uniqueness.'
+            solution_sketch: 'A function assigns each domain element exactly one output. Here $(1, a)$ and $(1, c)$ give $1$ two images, so the uniqueness requirement fails. $\square$'
+          - problem: 'Is $R = \{(1, a), (2, a), (3, b)\}$ a function from $\{1, 2, 3\}$ to $\{a, b\}$?'
+            answer: 'Yes; each input has exactly one output (outputs may repeat).'
+            solution_sketch: 'Each of $1, 2, 3$ appears as a first coordinate exactly once, so existence and uniqueness hold. Distinct inputs sharing an output ($1, 2 \mapsto a$) is allowed. $\square$'
+        constraints: "check the existence-and-uniqueness condition on a listed relation"
+      - id: kp2
+        name: "Well-defined functions"
+        key_prerequisites: [quantifiers]
+        exemplars:
+          - problem: 'Prove that the rule $f : \mathbb{Z} \to \mathbb{Z}$, $f(n) = 2n + 1$, is a well-defined function.'
+            answer: 'Each input yields exactly one integer output.'
+            solution_sketch: 'For each $n \in \mathbb{Z}$, the value $2n + 1$ is a uniquely determined integer, so every input has exactly one output in the codomain. Hence $f$ is a well-defined function. $\square$'
+          - problem: 'Explain why $g(x) = 1/x$ is not a well-defined function $\mathbb{R} \to \mathbb{R}$.'
+            answer: 'It has no value at $x = 0$, so not every input has an output.'
+            solution_sketch: 'A function $\mathbb{R} \to \mathbb{R}$ must assign an output to every real, but $g(0) = 1/0$ is undefined; so $g$ is not a function on all of $\mathbb{R}$ (it is on $\mathbb{R} \setminus \{0\}$). $\square$'
+        constraints: "verify each input has exactly one output in the stated codomain"
+      - id: kp3
+        name: "Equality of functions"
+        key_prerequisites: [quantifiers]
+        exemplars:
+          - problem: 'Let $f, g : \mathbb{R} \to \mathbb{R}$ with $f(x) = (x + 1)^2$ and $g(x) = x^2 + 2x + 1$. Prove $f = g$.'
+            answer: 'Same domain and codomain, and $f(x) = g(x)$ for all $x$.'
+            solution_sketch: 'They share domain and codomain $\mathbb{R}$. For every $x$, $(x + 1)^2 = x^2 + 2x + 1 = g(x)$. Since they agree on every input, $f = g$. $\square$'
+          - problem: 'Do $f(x) = x$ on $\mathbb{R}$ and $g(x) = x$ on $\mathbb{Z}$ define the same function?'
+            answer: 'No; they have different domains.'
+            solution_sketch: 'Function equality requires the same domain. Here the domains $\mathbb{R}$ and $\mathbb{Z}$ differ, so $f \ne g$ even though the rule matches. $\square$'
+        constraints: "compare domain, codomain, and outputs pointwise"
+    diagnostic_exemplar:
+      problem: 'Is $\{(x, y) \in \mathbb{R}^2 : y^2 = x\}$ a function $\mathbb{R} \to \mathbb{R}$? And do $f(x) = x^2$ on $\mathbb{R}$ and $g(x) = x^2$ on $[0, \infty)$ define the same function? Justify both answers.'
+      answer: 'The relation is not a function $\mathbb{R} \to \mathbb{R}$, on two counts: uniqueness fails, since $x = 4$ is paired with both $y = 2$ and $y = -2$; and totality fails, since no real $y$ has $y^2 = -1$, so $x = -1$ gets no image. And $f \ne g$: two functions are equal only when they have the same domain, the same codomain and the same values, and here the domains differ ($\mathbb{R}$ versus $[0,\infty)$) even though the rule is identical.'
+      solution_sketch: 'A function assigns exactly one output to every input of its domain; then recall that a function is its domain, codomain and rule taken together.'
+    anki_seeds:
+      - front: 'Formal definition of a function $f : A \to B$?'
+        back: 'A subset $f \subseteq A \times B$ such that each $a \in A$ is the first coordinate of exactly one pair $(a, b) \in f$.'
+        type: basic
+      - front: 'When are two functions equal?'
+        back: 'Same domain, same codomain, and $f(x) = g(x)$ for every $x$ in the domain.'
+        type: basic
+
+  - id: floor-ceiling-functions
+    name: "Floor and Ceiling Functions"
+    core: true
+    difficulty: 0.50
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 100
+    prerequisites:
+      - id: functions-formal-definition
+        weight: 0.5
+        key: true
+      - id: function-notation
+        weight: 0.2
+    knowledge_points:
+      - id: kp1
+        name: "Evaluating floor and ceiling"
+        key_prerequisites: [function-notation]
+        exemplars:
+          - problem: 'Compute $\lfloor 3.7 \rfloor$, $\lceil 3.2 \rceil$, $\lfloor -1.5 \rfloor$, and $\lceil -2.3 \rceil$.'
+            answer: '$3$, $4$, $-2$, $-2$.'
+            solution_sketch: 'Floor rounds down, ceiling rounds up: $\lfloor -1.5 \rfloor = -2$ since $-2 \le -1.5 < -1$, and $\lceil -2.3 \rceil = -2$ since $-3 < -2.3 \le -2$.'
+          - problem: 'Compute $\lfloor 5 \rfloor$, $\lceil 5 \rceil$, and $\lfloor -0.5 \rfloor$.'
+            answer: '$5$, $5$, $-1$.'
+            solution_sketch: 'On integers, floor and ceiling both return the integer itself; $-1 \le -0.5 < 0$ gives floor $-1$.'
+        constraints: "evaluate at positives, negatives, and integers; negatives are the trap"
+      - id: kp2
+        name: "Basic identities"
+        key_prerequisites: [functions-formal-definition]
+        exemplars:
+          - problem: 'Verify $\lceil x \rceil = -\lfloor -x \rfloor$ at $x = 2.4$.'
+            answer: 'Both sides equal $3$.'
+            solution_sketch: '$\lceil 2.4 \rceil = 3$; and $-\lfloor -2.4 \rfloor = -(-3) = 3$.'
+          - problem: 'Verify $\lfloor x + n \rfloor = \lfloor x \rfloor + n$ for $x = 1.5$, $n = 3$.'
+            answer: 'Both sides equal $4$.'
+            solution_sketch: '$\lfloor 4.5 \rfloor = 4$ and $\lfloor 1.5 \rfloor + 3 = 1 + 3 = 4$; integer shifts pass through the floor.'
+        constraints: "verify a floor/ceiling identity at a concrete value"
+      - id: kp3
+        name: "Solving with floors and ceilings"
+        key_prerequisites: [functions-formal-definition]
+        exemplars:
+          - problem: 'Describe all real $x$ with $\lfloor x \rfloor = 4$.'
+            answer: '$4 \le x < 5$, i.e. $x \in [4, 5)$.'
+            solution_sketch: 'Floor equals $4$ exactly when $x$ lies in the half-open interval from $4$ up to but not including $5$.'
+          - problem: 'Describe all real $x$ with $\lceil x \rceil = -1$.'
+            answer: '$-2 < x \le -1$, i.e. $x \in (-2, -1]$.'
+            solution_sketch: 'Ceiling equals $-1$ exactly when $x$ is at most $-1$ but greater than $-2$.'
+        constraints: "solution sets of $\\lfloor x \\rfloor = n$ or $\\lceil x \\rceil = n$ as intervals"
+    diagnostic_exemplar:
+      problem: 'Compute $\lfloor -2.4 \rfloor + \lceil 1.2 \rceil$, and describe all real $x$ with $\lceil x \rceil = 3$.'
+      answer: '$\lfloor -2.4 \rfloor = -3$ (the greatest integer not exceeding $-2.4$) and $\lceil 1.2 \rceil = 2$, so the sum is $-1$. And $\lceil x \rceil = 3$ exactly when $2 < x \le 3$, i.e. $x \in (2, 3]$: the least integer at or above $x$ equals $3$ precisely for those $x$.'
+      solution_sketch: 'Round down for the floor (careful with negatives) and up for the ceiling; then read the ceiling condition as a half-open interval.'
+    anki_seeds:
+      - front: 'Definition of $\lfloor x \rfloor$?'
+        back: 'The greatest integer $\le x$ (so $\lfloor x \rfloor \le x < \lfloor x \rfloor + 1$).'
+        type: basic
+      - front: 'Definition of $\lceil x \rceil$?'
+        back: 'The least integer $\ge x$.'
+        type: basic
+
+  - id: computing-compositions
+    name: "Computing Compositions"
+    core: true
+    difficulty: 0.55
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 110
+    prerequisites:
+      - id: functions-formal-definition
+        weight: 0.5
+        key: true
+      - id: function-composition
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: "Composing formulas"
+        key_prerequisites: [function-composition]
+        exemplars:
+          - problem: 'For $f(x) = x^2 + 1$ and $g(x) = 3x$ on $\mathbb{R}$, find $(f \circ g)(x)$ and $(g \circ f)(x)$.'
+            answer: '$(f \circ g)(x) = 9x^2 + 1$ and $(g \circ f)(x) = 3x^2 + 3$.'
+            solution_sketch: '$f(g(x)) = (3x)^2 + 1 = 9x^2 + 1$; $g(f(x)) = 3(x^2 + 1) = 3x^2 + 3$.'
+          - problem: 'For $f(x) = 2x - 1$ and $g(x) = x + 4$, compute $(f \circ g)(2)$ and $(g \circ f)(2)$.'
+            answer: '$11$ and $7$.'
+            solution_sketch: '$f(g(2)) = f(6) = 11$; $g(f(2)) = g(3) = 7$.'
+        constraints: "compose two given formulas in both orders; symbolic or at a point"
+      - id: kp2
+        name: "Composing on finite sets"
+        key_prerequisites: [functions-formal-definition]
+        exemplars:
+          - problem: 'On $A = \{1, 2, 3\}$ let $f : 1 \mapsto 2, 2 \mapsto 3, 3 \mapsto 1$ and $g : 1 \mapsto 1, 2 \mapsto 3, 3 \mapsto 2$. Tabulate $g \circ f$.'
+            answer: '$1 \mapsto 3$, $2 \mapsto 2$, $3 \mapsto 1$.'
+            solution_sketch: 'Apply $f$ first: $(g \circ f)(1) = g(2) = 3$, $(g \circ f)(2) = g(3) = 2$, $(g \circ f)(3) = g(1) = 1$.'
+          - problem: 'With $f$ as above ($1 \mapsto 2, 2 \mapsto 3, 3 \mapsto 1$), tabulate $f \circ f$.'
+            answer: '$1 \mapsto 3$, $2 \mapsto 1$, $3 \mapsto 2$.'
+            solution_sketch: 'Follow each element two steps around the cycle.'
+        constraints: "functions given by tables or arrow diagrams on a 3-4 element set"
+      - id: kp3
+        name: "Domains and order of composition"
+        key_prerequisites: [functions-formal-definition]
+        exemplars:
+          - problem: 'For $f(x) = \sqrt{x}$ (domain $[0, \infty)$) and $g(x) = x - 2$ on $\mathbb{R}$, what is the natural domain of $f \circ g$?'
+            answer: '$[2, \infty)$'
+            solution_sketch: '$f(g(x)) = \sqrt{x - 2}$ needs $g(x) = x - 2 \ge 0$, i.e. $x \ge 2$.'
+          - problem: 'Show by evaluation that $f \circ g \ne g \circ f$ for $f(x) = x^2$ and $g(x) = x + 1$.'
+            answer: '$(f \circ g)(1) = 4$ but $(g \circ f)(1) = 2$.'
+            solution_sketch: '$f(g(1)) = f(2) = 4$ while $g(f(1)) = g(1) = 2$; one differing input suffices.'
+        constraints: "track the domain of the composite; show noncommutativity by one evaluation"
+    diagnostic_exemplar:
+      problem: 'For $f(x) = x + 3$ and $g(x) = x^2$, compute $(g \circ f)(1)$ and $(f \circ g)(1)$.'
+      answer: '$16$ and $4$.'
+      solution_sketch: '$g(f(1)) = g(4) = 16$; $f(g(1)) = f(1) = 4$.'
+    anki_seeds:
+      - front: 'Is function composition commutative?'
+        back: 'No in general: $f \circ g \ne g \circ f$ (e.g. $x^2$ and $x + 1$).'
+        type: basic
+      - front: 'Natural domain of $g \circ f$?'
+        back: 'All $x$ in the domain of $f$ with $f(x)$ in the domain of $g$.'
+        type: basic
+
+  - id: proving-injectivity
+    name: "Proving Injectivity"
+    core: true
+    difficulty: 0.57
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 170
+    prerequisites:
+      - id: functions-formal-definition
+        weight: 0.6
+        key: true
+      - id: direct-proof
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: "The injectivity template"
+        key_prerequisites: [functions-formal-definition]
+        exemplars:
+          - problem: 'Prove $f : \mathbb{R} \to \mathbb{R}$, $f(x) = 5x - 7$, is injective.'
+            answer: 'Assume $f(a) = f(b)$; solve to get $a = b$.'
+            solution_sketch: 'Suppose $f(a) = f(b)$: $5a - 7 = 5b - 7$, so $5a = 5b$ and $a = b$. Hence $f$ is injective. $\square$'
+          - problem: 'Prove $f : \mathbb{Z} \to \mathbb{Z}$, $f(n) = n + 3$, is injective.'
+            answer: '$a + 3 = b + 3 \Rightarrow a = b$.'
+            solution_sketch: 'Suppose $f(a) = f(b)$: $a + 3 = b + 3$; subtracting $3$ gives $a = b$. $\square$'
+        constraints: "affine maps; the standard assume-$f(a)=f(b)$-derive-$a=b$ template"
+      - id: kp2
+        name: "Nonlinear examples"
+        key_prerequisites: [direct-proof]
+        exemplars:
+          - problem: 'Prove $f : \mathbb{R} \to \mathbb{R}$, $f(x) = x^3 + 2$, is injective.'
+            answer: '$a^3 + 2 = b^3 + 2 \Rightarrow a^3 = b^3 \Rightarrow a = b$.'
+            solution_sketch: 'Suppose $f(a) = f(b)$: $a^3 = b^3$. Real cube roots are unique, so $a = b$. $\square$'
+          - problem: 'Prove $f : \mathbb{R} \setminus \{0\} \to \mathbb{R}$, $f(x) = 1/x$, is injective.'
+            answer: '$1/a = 1/b \Rightarrow a = b$ by cross-multiplying.'
+            solution_sketch: 'Suppose $1/a = 1/b$ with $a, b \ne 0$. Multiplying both sides by $ab$ gives $b = a$. $\square$'
+        constraints: "one algebraic step beyond affine: cubes, reciprocals, or a ratio"
+      - id: kp3
+        name: "The domain matters"
+        key_prerequisites: [functions-formal-definition]
+        exemplars:
+          - problem: 'Prove $f : [0, \infty) \to \mathbb{R}$, $f(x) = x^2$, is injective.'
+            answer: '$a^2 = b^2$ with $a, b \ge 0$ forces $a = b$.'
+            solution_sketch: 'Suppose $a^2 = b^2$: then $(a-b)(a+b) = 0$. If $a + b = 0$ with $a, b \ge 0$ then $a = b = 0$; otherwise $a = b$. Either way $a = b$. $\square$'
+          - problem: 'Prove $f : (-1, \infty) \to \mathbb{R}$, $f(x) = \dfrac{x}{x+1}$, is injective.'
+            answer: 'Cross-multiply $a(b+1) = b(a+1)$ to get $a = b$.'
+            solution_sketch: 'Suppose $\tfrac{a}{a+1} = \tfrac{b}{b+1}$ (denominators nonzero on the domain). Cross-multiplying: $ab + a = ab + b$, so $a = b$. $\square$'
+        constraints: "restricted domains where injectivity holds though it fails on all of $\\mathbb{R}$"
+    diagnostic_exemplar:
+      problem: 'Prove that $f : [0, \infty) \to \mathbb{R}$, $f(x) = x^2 + 3$, is injective, and explain why the same rule on $\mathbb{R}$ is not.'
+      answer: 'Suppose $f(a) = f(b)$ with $a, b \ge 0$. Then $a^2 + 3 = b^2 + 3$, so $a^2 = b^2$ and $(a-b)(a+b) = 0$. Either $a = b$, or $a + b = 0$ which with $a, b \ge 0$ forces $a = b = 0$; in both cases $a = b$, so $f$ is injective. On $\mathbb{R}$ the same rule is not injective: $f(-1) = 4 = f(1)$ while $-1 \ne 1$. The domain, not the formula, decides.'
+      solution_sketch: 'Assume equal outputs, factor $a^2 - b^2$, and use nonnegativity to kill the $a + b$ branch; then give the counterexample the larger domain allows.'
+    anki_seeds:
+      - front: 'Contrapositive form of injectivity?'
+        back: '$a \ne b \Rightarrow f(a) \ne f(b)$ — distinct inputs give distinct outputs.'
+        type: basic
+      - front: 'Why are strictly increasing functions injective?'
+        back: '$a < b \Rightarrow f(a) < f(b)$, so distinct inputs give distinct outputs.'
+        type: basic
+
+  - id: proving-surjectivity
+    name: "Proving Surjectivity"
+    core: true
+    difficulty: 0.58
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 170
+    prerequisites:
+      - id: functions-formal-definition
+        weight: 0.6
+        key: true
+      - id: quantifiers
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: "The preimage-finding template"
+        key_prerequisites: [functions-formal-definition]
+        exemplars:
+          - problem: 'Prove $f : \mathbb{R} \to \mathbb{R}$, $f(x) = 5x - 7$, is surjective.'
+            answer: 'Given $y$, take $x = (y + 7)/5$; then $f(x) = y$.'
+            solution_sketch: 'Let $y \in \mathbb{R}$ and set $x = (y+7)/5 \in \mathbb{R}$. Then $f(x) = 5 \cdot \tfrac{y+7}{5} - 7 = y$. $\square$'
+          - problem: 'Prove $f : \mathbb{Z} \to \mathbb{Z}$, $f(n) = n + 3$, is surjective.'
+            answer: 'Given $m$, take $n = m - 3$.'
+            solution_sketch: 'Let $m \in \mathbb{Z}$; then $n = m - 3 \in \mathbb{Z}$ and $f(n) = (m - 3) + 3 = m$. $\square$'
+        constraints: "affine maps; solve $f(x) = y$ for $x$ and verify"
+      - id: kp2
+        name: "Nonlinear examples"
+        key_prerequisites: [functions-formal-definition]
+        exemplars:
+          - problem: 'Prove $f : \mathbb{R} \to \mathbb{R}$, $f(x) = x^3 + 2$, is surjective.'
+            answer: 'Given $y$, take $x = \sqrt[3]{y - 2}$.'
+            solution_sketch: 'Let $y \in \mathbb{R}$ and set $x = \sqrt[3]{y - 2} \in \mathbb{R}$. Then $f(x) = (y - 2) + 2 = y$. $\square$'
+          - problem: 'Prove $f : \mathbb{R} \setminus \{0\} \to \mathbb{R} \setminus \{0\}$, $f(x) = 1/x$, is surjective.'
+            answer: 'Given $y \ne 0$, take $x = 1/y$.'
+            solution_sketch: 'Let $y \ne 0$; then $x = 1/y$ is defined, nonzero, and $f(x) = 1/(1/y) = y$. $\square$'
+        constraints: "invert one nonlinear step; check the preimage lands in the domain"
+      - id: kp3
+        name: "The codomain matters"
+        key_prerequisites: [quantifiers]
+        exemplars:
+          - problem: 'Prove $f : \mathbb{R} \to [0, \infty)$, $f(x) = x^2$, is surjective.'
+            answer: 'Given $y \ge 0$, take $x = \sqrt{y}$.'
+            solution_sketch: 'Let $y \ge 0$; then $x = \sqrt{y} \in \mathbb{R}$ and $f(x) = y$. (Onto $\mathbb{R}$ it would fail: $-1$ has no preimage.) $\square$'
+          - problem: 'Prove $f : \mathbb{R} \to (0, \infty)$, $f(x) = e^{x}$, is surjective.'
+            answer: 'Given $y > 0$, take $x = \ln y$.'
+            solution_sketch: 'Let $y > 0$; then $x = \ln y$ is a real number and $f(x) = e^{\ln y} = y$. $\square$'
+        constraints: "maps surjective onto a stated codomain but not onto all of $\\mathbb{R}$"
+    diagnostic_exemplar:
+      problem: 'Prove that $f : \mathbb{R} \to [1, \infty)$, $f(x) = x^2 + 1$, is surjective, and explain why the same rule as a map $\mathbb{R} \to \mathbb{R}$ is not.'
+      answer: 'Let $y \in [1, \infty)$. Then $y - 1 \ge 0$, so $x = \sqrt{y-1}$ is a real number, and $f(x) = (\sqrt{y-1})^2 + 1 = y$. Every element of the codomain has a preimage, so $f$ is surjective. As a map into $\mathbb{R}$ it is not: $x^2 + 1 \ge 1$ for every real $x$, so nothing maps to $0$. Surjectivity depends on the codomain, not only on the rule.'
+      solution_sketch: 'Given a target $y$, solve $f(x) = y$ and check the solution lies in the domain; then point to codomain elements that are unreachable.'
+    anki_seeds:
+      - front: 'To prove $f : A \to B$ surjective, you...'
+        back: 'take an arbitrary $b \in B$ and exhibit $a \in A$ with $f(a) = b$.'
+        type: basic
+      - front: 'Which part of a function''s specification does surjectivity depend on?'
+        back: 'The codomain — the same rule can be surjective onto a smaller codomain and not onto a larger one.'
+        type: basic
+
+  - id: functions-injective-surjective
+    name: "Injective and Surjective Functions"
+    core: true
+    difficulty: 0.60
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 220
+    prerequisites:
+      - id: proving-injectivity
+        weight: 0.5
+        key: true
+      - id: proving-surjectivity
+        weight: 0.5
+        key: true
+      - id: negating-statements
+        weight: 0.4
+        key: true
+      - id: functions-formal-definition
+        weight: 0.3
+      - id: quantifiers
+        weight: 0.3
+      - id: logical-equivalence
+        weight: 0.0
+    knowledge_points:
+      - id: kp1
+        name: "Proving bijectivity"
+        key_prerequisites: [proving-injectivity, proving-surjectivity]
+        exemplars:
+          - problem: 'Prove $f : \mathbb{R} \to \mathbb{R}$, $f(x) = 3x - 5$, is a bijection.'
+            answer: 'Injective: $3a - 5 = 3b - 5 \Rightarrow a = b$. Surjective: $x = (y+5)/3$ works.'
+            solution_sketch: 'Injective: $f(a) = f(b)$ gives $3a = 3b$, so $a = b$. Surjective: for $y \in \mathbb{R}$, $x = (y+5)/3$ satisfies $f(x) = y$. Both hold, so $f$ is bijective. $\square$'
+          - problem: 'Prove $f : \mathbb{R} \to \mathbb{R}$, $f(x) = x^3$, is a bijection.'
+            answer: 'Injective since cube roots are unique; surjective via $x = \sqrt[3]{y}$.'
+            solution_sketch: 'Injective: $a^3 = b^3 \Rightarrow a = b$ (real cube roots are unique). Surjective: for $y \in \mathbb{R}$, $x = \sqrt[3]{y}$ gives $f(x) = y$. $\square$'
+        constraints: "run both templates in one proof; affine or odd-power maps"
+      - id: kp2
+        name: "Disproving with counterexamples"
+        key_prerequisites: [negating-statements]
+        exemplars:
+          - problem: 'Show $f : \mathbb{R} \to \mathbb{R}$, $f(x) = x^2$, is neither injective nor surjective.'
+            answer: '$f(-1) = f(1)$ (not injective); no $x$ with $f(x) = -1$ (not surjective).'
+            solution_sketch: 'Injectivity fails since $f(1) = f(-1) = 1$ but $1 \ne -1$. Surjectivity fails since $-1 < 0$ has no real preimage ($x^2 \ge 0$). $\square$'
+          - problem: 'Show $f : \mathbb{Z} \to \mathbb{Z}$, $f(n) = n^2$, is not injective.'
+            answer: '$f(2) = f(-2) = 4$ but $2 \ne -2$.'
+            solution_sketch: 'Injectivity requires $f(a) = f(b) \Rightarrow a = b$; but $f(2) = f(-2) = 4$ with $2 \ne -2$, a counterexample. $\square$'
+        constraints: "disprove by exhibiting an explicit counterexample"
+      - id: kp3
+        name: "Classifying: one property without the other"
+        key_prerequisites: [proving-injectivity, proving-surjectivity]
+        exemplars:
+          - problem: 'Show $f : \mathbb{N} \to \mathbb{N}$, $f(n) = n + 1$, is injective but not surjective (here $0 \in \mathbb{N}$).'
+            answer: '$a + 1 = b + 1 \Rightarrow a = b$; but no $n \in \mathbb{N}$ has $f(n) = 0$.'
+            solution_sketch: 'Injective: cancel the $+1$. Not surjective: $f(n) = 0$ would need $n = -1 \notin \mathbb{N}$. $\square$'
+          - problem: 'Show $f : \mathbb{Z} \to \mathbb{N}$, $f(n) = |n|$, is surjective but not injective.'
+            answer: 'Every $m \in \mathbb{N}$ is $|m|$; but $f(3) = f(-3)$.'
+            solution_sketch: 'Surjective: for $m \in \mathbb{N}$, $f(m) = m$. Not injective: $f(3) = f(-3) = 3$ with $3 \ne -3$. $\square$'
+        constraints: "prove one property and refute the other for the same map"
+    diagnostic_exemplar:
+      problem: 'Prove $f : \mathbb{Z} \to \mathbb{Z}$, $f(n) = 2n$, is injective but not surjective.'
+      answer: '$2a = 2b \Rightarrow a = b$; but $1$ has no integer preimage.'
+      solution_sketch: 'If $f(a) = f(b)$ then $2a = 2b$, so $a = b$ (injective). But $f(n) = 1$ has no integer solution ($n = 1/2 \notin \mathbb{Z}$), so $f$ is not surjective. $\square$'
+    anki_seeds:
+      - front: 'Definition: $f$ injective (one-to-one)?'
+        back: '$f(a) = f(b) \Rightarrow a = b$ for all $a, b$ (equivalently $a \ne b \Rightarrow f(a) \ne f(b)$).'
+        type: basic
+      - front: 'Definition: $f : A \to B$ surjective (onto)?'
+        back: 'For every $b \in B$ there exists $a \in A$ with $f(a) = b$.'
+        type: basic
+      - front: 'To prove $f$ injective, start by assuming...'
+        back: '$f(a) = f(b)$, then derive $a = b$.'
+        type: basic
+
+  - id: function-composition-inverse
+    name: "Composition and Inverses"
+    core: true
+    difficulty: 0.62
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 230
+    prerequisites:
+      - id: functions-injective-surjective
+        weight: 0.5
+        key: true
+      - id: functions-formal-definition
+        weight: 0.4
+        key: true
+      - id: computing-compositions
+        weight: 0.3
+      - id: function-composition
+        weight: 0.0
+    knowledge_points:
+      - id: kp1
+        name: "Composition preserves injectivity"
+        key_prerequisites: [functions-injective-surjective]
+        exemplars:
+          - problem: 'Prove: if $f : A \to B$ and $g : B \to C$ are both injective, then $g \circ f$ is injective.'
+            answer: '$g(f(a_1)) = g(f(a_2)) \Rightarrow f(a_1) = f(a_2) \Rightarrow a_1 = a_2$.'
+            solution_sketch: 'Assume $(g \circ f)(a_1) = (g \circ f)(a_2)$, i.e. $g(f(a_1)) = g(f(a_2))$. Injectivity of $g$ gives $f(a_1) = f(a_2)$; injectivity of $f$ gives $a_1 = a_2$. So $g \circ f$ is injective. $\square$'
+          - problem: 'Prove: if $g \circ f$ is injective, then $f$ is injective.'
+            answer: '$f(a_1) = f(a_2) \Rightarrow g(f(a_1)) = g(f(a_2)) \Rightarrow a_1 = a_2$.'
+            solution_sketch: 'Suppose $f(a_1) = f(a_2)$. Applying $g$ gives $(g \circ f)(a_1) = (g \circ f)(a_2)$, and injectivity of $g \circ f$ forces $a_1 = a_2$. (Note $g$ itself need not be injective.) $\square$'
+        constraints: "peel off $g$ then $f$ using each map''s injectivity"
+      - id: kp2
+        name: "Inverses and bijections"
+        key_prerequisites: [functions-injective-surjective]
+        exemplars:
+          - problem: 'Prove: if $f : A \to B$ is bijective then it has a two-sided inverse $f^{-1} : B \to A$.'
+            answer: 'Define $f^{-1}(b)$ as the unique preimage; check both compositions are identities.'
+            solution_sketch: 'Surjectivity gives, for each $b$, some $a$ with $f(a) = b$; injectivity makes it unique, so $f^{-1}(b) = a$ is well-defined. Then $f(f^{-1}(b)) = b$ and $f^{-1}(f(a)) = a$, so $f^{-1}$ is a two-sided inverse. $\square$'
+          - problem: 'Find the inverse of $f : \mathbb{R} \to \mathbb{R}$, $f(x) = 2x + 3$, and verify it.'
+            answer: '$f^{-1}(y) = (y - 3)/2$.'
+            solution_sketch: 'Solve $y = 2x + 3$ for $x$: $x = (y - 3)/2$, so $f^{-1}(y) = (y-3)/2$. Check $f(f^{-1}(y)) = 2 \cdot \frac{y-3}{2} + 3 = y$ and $f^{-1}(f(x)) = x$. $\square$'
+        constraints: "use surjectivity for existence and injectivity for uniqueness of the inverse"
+      - id: kp3
+        name: "Inverse of a composition"
+        key_prerequisites: [functions-formal-definition]
+        exemplars:
+          - problem: 'For bijections $f : A \to B$ and $g : B \to C$, prove $(g \circ f)^{-1} = f^{-1} \circ g^{-1}$.'
+            answer: 'Composition with $g \circ f$ gives the identities.'
+            solution_sketch: '$(f^{-1} \circ g^{-1}) \circ (g \circ f) = f^{-1} \circ (g^{-1} \circ g) \circ f = f^{-1} \circ f = \mathrm{id}_A$, and similarly the other order gives $\mathrm{id}_C$. By uniqueness of inverses, $(g \circ f)^{-1} = f^{-1} \circ g^{-1}$. $\square$'
+          - problem: 'For bijections $f, g$ on a set, prove $(f \circ g) \circ (g^{-1} \circ f^{-1}) = \mathrm{id}$.'
+            answer: 'Cancel the inner inverses step by step.'
+            solution_sketch: '$(f \circ g) \circ (g^{-1} \circ f^{-1}) = f \circ (g \circ g^{-1}) \circ f^{-1} = f \circ \mathrm{id} \circ f^{-1} = f \circ f^{-1} = \mathrm{id}$. $\square$'
+        constraints: "verify a candidate inverse by composing both ways"
+    diagnostic_exemplar:
+      problem: 'For bijections $f : A \to B$ and $g : B \to C$, prove that $(g \circ f)^{-1} = f^{-1} \circ g^{-1}$.'
+      answer: 'First, $g \circ f$ is a bijection: it is injective, since $g(f(a_1)) = g(f(a_2))$ gives $f(a_1) = f(a_2)$ by injectivity of $g$ and then $a_1 = a_2$ by injectivity of $f$; and surjective, since for $c \in C$ we may pick $b$ with $g(b) = c$ and then $a$ with $f(a) = b$. So it has a two-sided inverse. Now $(f^{-1} \circ g^{-1}) \circ (g \circ f) = f^{-1} \circ (g^{-1} \circ g) \circ f = f^{-1} \circ \mathrm{id}_B \circ f = \mathrm{id}_A$, and likewise $(g \circ f) \circ (f^{-1} \circ g^{-1}) = g \circ (f \circ f^{-1}) \circ g^{-1} = \mathrm{id}_C$. A two-sided inverse is unique, so $(g \circ f)^{-1} = f^{-1} \circ g^{-1}$.'
+      solution_sketch: 'Check that $g \circ f$ is a bijection, then verify $f^{-1} \circ g^{-1}$ composes with it to the identity on both sides and appeal to uniqueness of inverses.'
+    anki_seeds:
+      - front: 'Definition of the composition $(g \circ f)(x)$?'
+        back: '$g(f(x))$: apply $f$ first, then $g$ (requires codomain of $f$ = domain of $g$).'
+        type: basic
+      - front: 'A function is invertible if and only if it is...'
+        back: 'bijective (both injective and surjective).'
+        type: basic
+
+  - id: counting-functions
+    name: "Counting Functions Between Finite Sets"
+    core: false                # terminal counting result
+    difficulty: 0.58
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 140
+    prerequisites:
+      - id: functions-formal-definition
+        weight: 0.5
+        key: true
+      - id: cartesian-products
+        weight: 0.4
+        key: true
+      - id: functions-injective-surjective
+        weight: 0.4
+        key: true
+      - id: multiplication-principle
+        weight: 0.6
+        key: true
+      - id: factorial-notation
+        weight: 0.3
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Counting all functions"
+        key_prerequisites: [functions-formal-definition, cartesian-products, multiplication-principle]
+        exemplars:
+          - problem: 'How many functions are there from $\{1, 2, 3\}$ to $\{a, b\}$?'
+            answer: '$8$'
+            solution_sketch: 'A function is fixed by choosing $f(1)$, then $f(2)$, then $f(3)$. Choosing $f(1)$ splits the functions into $2$ equal families; inside each, choosing $f(2)$ splits again into $2$; inside each of those, choosing $f(3)$ splits into $2$. So the count doubles once per input: $2 \cdot 2 \cdot 2 = 2^3 = 8$.'
+          - problem: 'If $|A| = 4$ and $|B| = 3$, how many functions $A \to B$ are there?'
+            answer: '$81$'
+            solution_sketch: 'Fix the images of the $4$ inputs one at a time. Each choice is free and has $3$ options, and each earlier choice leaves a separate family to be split $3$ ways again, so the counts multiply: $3 \cdot 3 \cdot 3 \cdot 3 = 3^4 = 81$, i.e. $|B|^{|A|}$.'
+        constraints: "apply $|B|^{|A|}$, justifying it by the multiplication principle — splitting the count one input at a time; sets of size at most 5"
+      - id: kp2
+        name: "Counting injections"
+        key_prerequisites: [functions-injective-surjective, multiplication-principle]
+        exemplars:
+          - problem: 'How many injective functions are there from $\{1, 2\}$ to $\{a, b, c\}$?'
+            answer: '$6$'
+            solution_sketch: 'There are $3$ choices for $f(1)$; each of them leaves $2$ unused outputs for $f(2)$, so the $3$ families of size $2$ give $3 \cdot 2 = 6$.'
+          - problem: 'How many injections are there from a $3$-element set to a $5$-element set?'
+            answer: '$60$'
+            solution_sketch: 'Falling product: $5$ choices for the first input, $4$ for the second, $3$ for the third, so $5 \cdot 4 \cdot 3 = 60$.'
+          - problem: 'How many injections are there from a $4$-element set to a $3$-element set?'
+            answer: '$0$'
+            solution_sketch: 'None exist when the domain outnumbers the codomain: a fourth input would have to repeat one of the $3$ outputs, so the count is $0$.'
+        constraints: "falling products $|B|(|B|-1)\\cdots$; include one impossible case"
+      - id: kp3
+        name: "Counting bijections"
+        key_prerequisites: [functions-injective-surjective]
+        exemplars:
+          - problem: 'How many bijections are there from $\{1, 2, 3\}$ to itself?'
+            answer: '$6$'
+            solution_sketch: '$3! = 3 \cdot 2 \cdot 1 = 6$ ways to match inputs to distinct outputs.'
+          - problem: 'How many bijections are there from $\{1, 2, 3, 4\}$ to $\{a, b, c, d\}$?'
+            answer: '$24$'
+            solution_sketch: '$4! = 24$; equal sizes are required for any bijection to exist.'
+        constraints: "factorials for equal-size sets; note bijections need $|A| = |B|$"
+    diagnostic_exemplar:
+      problem: 'How many of the functions from $\{1, 2\}$ to $\{x, y, z\}$ fail to be injective?'
+      answer: '$3$'
+      solution_sketch: 'Total functions: $3^2 = 9$. Injections: $3 \cdot 2 = 6$. So $9 - 6 = 3$ are non-injective — exactly the three constant functions.'
+    anki_seeds:
+      - front: 'Number of functions $A \to B$ (finite sets)?'
+        back: '$|B|^{|A|}$.'
+        type: basic
+      - front: 'Number of bijections on an $n$-element set?'
+        back: '$n!$.'
+        type: basic
+
+  - id: computing-images-preimages
+    name: "Computing Images and Preimages"
+    core: false                # supplemental, with images-preimages: terminal branch
+    difficulty: 0.56
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 130
+    prerequisites:
+      - id: functions-formal-definition
+        weight: 0.5
+        key: true
+      - id: set-operations
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: "Images of finite sets"
+        key_prerequisites: [functions-formal-definition]
+        exemplars:
+          - problem: 'For $f : \mathbb{Z} \to \mathbb{Z}$, $f(n) = n^2$, compute $f(\{-2, -1, 0, 1, 2\})$.'
+            answer: '$\{0, 1, 4\}$'
+            solution_sketch: 'Apply $f$ to each input: $4, 1, 0, 1, 4$; as a set, $\{0, 1, 4\}$ — repeats collapse.'
+          - problem: 'For $f : \{a, b, c\} \to \{x, y\}$ with $f(a) = x$, $f(b) = y$, $f(c) = x$, compute $f(\{a, c\})$.'
+            answer: '$\{x\}$'
+            solution_sketch: 'Both $a$ and $c$ map to $x$, so the image of $\{a, c\}$ is the single output $x$.'
+        constraints: "apply $f(S) = \\{f(x) : x \\in S\\}$; collapsing repeats is the point"
+      - id: kp2
+        name: "Computing preimages"
+        key_prerequisites: [functions-formal-definition]
+        exemplars:
+          - problem: 'For $f : \mathbb{Z} \to \mathbb{Z}$, $f(n) = n^2$, compute $f^{-1}(\{1, 4\})$ and $f^{-1}(\{3\})$.'
+            answer: '$\{-2, -1, 1, 2\}$ and $\varnothing$.'
+            solution_sketch: 'Solve $n^2 \in \{1, 4\}$: $n = \pm 1, \pm 2$. No integer squares to $3$, so that preimage is empty.'
+          - problem: 'For $f : \mathbb{R} \to \mathbb{R}$, $f(x) = 2x + 1$, compute $f^{-1}(\{1, 3, 5\})$.'
+            answer: '$\{0, 1, 2\}$'
+            solution_sketch: 'Solve $2x + 1 = 1, 3, 5$ in turn: $x = 0, 1, 2$.'
+        constraints: "solve $f(x) \\in T$; include an empty preimage"
+      - id: kp3
+        name: "Real functions on intervals"
+        key_prerequisites: [set-operations]
+        exemplars:
+          - problem: 'For $f : \mathbb{R} \to \mathbb{R}$, $f(x) = x^2$, find the image $f([-1, 2])$.'
+            answer: '$[0, 4]$'
+            solution_sketch: 'On $[-1, 2]$ the square attains its minimum $0$ at $x = 0$ and maximum $4$ at $x = 2$; every value between is hit.'
+          - problem: 'For $f : \mathbb{R} \to \mathbb{R}$, $f(x) = x^2$, find the preimage $f^{-1}([1, 4])$.'
+            answer: '$[-2, -1] \cup [1, 2]$'
+            solution_sketch: '$1 \le x^2 \le 4$ iff $1 \le |x| \le 2$, which splits into the two symmetric intervals.'
+        constraints: "images/preimages of intervals under $x^2$ or affine maps; answers as intervals or unions"
+    diagnostic_exemplar:
+      problem: 'For $f : \mathbb{R} \to \mathbb{R}$, $f(x) = x^2$, find the image $f([-1, 3])$ and the preimage $f^{-1}([4, 9])$.'
+      answer: '$f([-1,3]) = [0, 9]$: on $[-1,3]$ the square attains its least value $0$ at $x = 0$ and its greatest value $9$ at $x = 3$, and every value in between is attained. $f^{-1}([4,9]) = [-3,-2] \cup [2,3]$: the condition $4 \le x^2 \le 9$ says $2 \le |x| \le 3$, which allows both signs.'
+      solution_sketch: 'For the image, track the minimum and maximum of $x^2$ over the interval; for the preimage, solve the inequality in $|x|$ and keep both signs.'
+    anki_seeds:
+      - front: 'Does $f^{-1}(T)$ require $f$ to be invertible?'
+        back: 'No — the preimage $\{x : f(x) \in T\}$ is defined for every function.'
+        type: basic
+      - front: '$f^{-1}(\{b\}) = \varnothing$ means...'
+        back: 'no input maps to $b$ ($b$ is not in the image of $f$).'
+        type: basic
+
+  - id: images-preimages
+    name: "Images and Preimages"
+    core: false                # supplemental: stated preservation properties; terminal
+    difficulty: 0.62
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 220
+    prerequisites:
+      - id: computing-images-preimages
+        weight: 0.5
+        key: true
+      - id: functions-formal-definition
+        weight: 0.4
+        key: true
+      - id: set-operations
+        weight: 0.4
+        key: true
+      - id: set-identities-proofs
+        weight: 0.3
+      - id: quantifiers
+        weight: 0.0
+    knowledge_points:
+      - id: kp1
+        name: "Monotonicity of image and preimage"
+        key_prerequisites: [computing-images-preimages]
+        exemplars:
+          - problem: 'Prove: if $S \subseteq T$ (subsets of the domain), then $f(S) \subseteq f(T)$.'
+            answer: '$y = f(x)$ with $x \in S \subseteq T$ gives $y \in f(T)$.'
+            solution_sketch: 'Let $y \in f(S)$; then $y = f(x)$ for some $x \in S$. Since $S \subseteq T$, $x \in T$, so $y = f(x) \in f(T)$. $\square$'
+          - problem: 'Prove: if $C \subseteq D$ (subsets of the codomain), then $f^{-1}(C) \subseteq f^{-1}(D)$.'
+            answer: '$f(x) \in C \subseteq D$ gives $x \in f^{-1}(D)$.'
+            solution_sketch: 'Let $x \in f^{-1}(C)$; then $f(x) \in C \subseteq D$, so $f(x) \in D$, i.e. $x \in f^{-1}(D)$. $\square$'
+        constraints: "one-line inclusion proofs straight from the definitions of image and preimage"
+      - id: kp2
+        name: "Images and unions"
+        key_prerequisites: [set-operations]
+        exemplars:
+          - problem: 'Prove: $f(S \cup T) = f(S) \cup f(T)$ for any function $f$ and subsets $S, T$ of the domain.'
+            answer: 'Double inclusion via the definition of image.'
+            solution_sketch: '$y \in f(S \cup T)$ iff $y = f(x)$ for some $x \in S \cup T$ iff $y = f(x)$ with $x \in S$ or $x \in T$ iff $y \in f(S)$ or $y \in f(T)$ iff $y \in f(S) \cup f(T)$. $\square$'
+          - problem: 'Give a function and sets for which $f(S \cap T) \ne f(S) \cap f(T)$.'
+            answer: 'e.g. $f(x) = x^2$, $S = \{1\}$, $T = \{-1\}$: $\varnothing \ne \{1\}$.'
+            solution_sketch: 'With $f(x) = x^2$, $S = \{1\}$, $T = \{-1\}$: $S \cap T = \varnothing$ so $f(S \cap T) = \varnothing$, but $f(S) = f(T) = \{1\}$, so $f(S) \cap f(T) = \{1\}$. The inclusion $f(S \cap T) \subseteq f(S) \cap f(T)$ is strict here. $\square$'
+        constraints: "chase an element through the image of a union; note images need not preserve $\\cap$"
+      - id: kp3
+        name: "Preimages preserve unions and intersections"
+        key_prerequisites: [set-identities-proofs]
+        exemplars:
+          - problem: 'Prove: $f^{-1}(C \cap D) = f^{-1}(C) \cap f^{-1}(D)$.'
+            answer: 'Element chase using $x \in f^{-1}(C)$ iff $f(x) \in C$.'
+            solution_sketch: '$x \in f^{-1}(C \cap D)$ iff $f(x) \in C \cap D$ iff $f(x) \in C$ and $f(x) \in D$ iff $x \in f^{-1}(C)$ and $x \in f^{-1}(D)$ iff $x \in f^{-1}(C) \cap f^{-1}(D)$. $\square$'
+          - problem: 'Prove: $f^{-1}(C \cup D) = f^{-1}(C) \cup f^{-1}(D)$.'
+            answer: 'Element chase using $x \in f^{-1}(C)$ iff $f(x) \in C$.'
+            solution_sketch: '$x \in f^{-1}(C \cup D)$ iff $f(x) \in C \cup D$ iff $f(x) \in C$ or $f(x) \in D$ iff $x \in f^{-1}(C)$ or $x \in f^{-1}(D)$ iff $x \in f^{-1}(C) \cup f^{-1}(D)$. $\square$'
+        constraints: "use that preimage membership is defined by a condition on $f(x)$"
+    diagnostic_exemplar:
+      problem: 'Prove that $f(S \cap T) \subseteq f(S) \cap f(T)$ for any function $f$ and subsets $S, T$ of its domain, give an example where the inclusion is strict, and decide whether $f^{-1}(C \cap D) = f^{-1}(C) \cap f^{-1}(D)$ holds in general.'
+      answer: 'Inclusion: let $y \in f(S \cap T)$, say $y = f(x)$ with $x \in S \cap T$. Then $x \in S$ gives $y \in f(S)$, and $x \in T$ gives $y \in f(T)$, so $y \in f(S) \cap f(T)$. Strictness: take $f(x) = x^2$, $S = \{1\}$, $T = \{-1\}$; then $S \cap T = \varnothing$, so $f(S \cap T) = \varnothing$, while $f(S) \cap f(T) = \{1\}$. For preimages equality always holds: $x \in f^{-1}(C \cap D)$ iff $f(x) \in C$ and $f(x) \in D$, iff $x \in f^{-1}(C)$ and $x \in f^{-1}(D)$.'
+      solution_sketch: 'Chase an element for the inclusion; equality fails when two different inputs share an output. Preimages behave better because membership is tested after applying $f$.'
+    anki_seeds:
+      - front: 'Definitions of the image $f(S)$ and preimage $f^{-1}(T)$?'
+        back: '$f(S) = \{f(x) : x \in S\}$; $f^{-1}(T) = \{x : f(x) \in T\}$.'
+        type: basic
+      - front: 'Which is better behaved with respect to $\cap$ and complements, image or preimage?'
+        back: 'The preimage: it preserves unions, intersections, and complements; the image only gives $f(S \cap T) \subseteq f(S) \cap f(T)$.'
+        type: basic
+
+  - id: relations-digraphs-matrices
+    name: "Representing Relations"
+    core: true
+    difficulty: 0.52
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 120
+    prerequisites:
+      - id: cartesian-products
+        weight: 0.5
+        key: true
+      - id: set-notation
+        weight: 0.2
+    knowledge_points:
+      - id: kp1
+        name: "Relations as sets of pairs"
+        key_prerequisites: [cartesian-products]
+        exemplars:
+          - problem: 'On $A = \{1, 2, 3, 4\}$, list the pairs of the relation $R = \{(a, b) : a \mid b\}$.'
+            answer: '$\{(1,1),(1,2),(1,3),(1,4),(2,2),(2,4),(3,3),(4,4)\}$'
+            solution_sketch: 'For each $a$, list the multiples of $a$ inside $A$: $1$ divides everything, $2$ divides $2, 4$, and each element divides itself.'
+          - problem: 'On $A = \{1, 2, 3\}$, list the pairs of $R = \{(a, b) : a + b \text{ is even}\}$.'
+            answer: '$\{(1,1),(1,3),(3,1),(3,3),(2,2)\}$'
+            solution_sketch: '$a + b$ is even iff $a, b$ have the same parity: pair the odds $1, 3$ with each other and $2$ with itself.'
+        constraints: "enumerate a rule-defined relation on a set of size at most 4"
+      - id: kp2
+        name: "Digraphs of relations"
+        key_prerequisites: [cartesian-products]
+        exemplars:
+          - problem: 'Describe the digraph of $R = \{(1,2), (2,3), (3,1)\}$ on $\{1, 2, 3\}$. Which vertices have loops?'
+            answer: 'A directed $3$-cycle $1 \to 2 \to 3 \to 1$; no loops.'
+            solution_sketch: 'Each pair $(a, b)$ is an arrow $a \to b$; loops are the pairs $(a, a)$, of which there are none.'
+          - problem: 'For the divisibility relation on $\{1, 2, 3, 4\}$, which vertices of its digraph carry loops, and why?'
+            answer: 'All of them — $a \mid a$ for every $a$.'
+            solution_sketch: 'A loop at $a$ means $(a, a) \in R$; divisibility is reflexive, so every vertex has one.'
+        constraints: "translate between pair sets and arrows/loops on a small vertex set"
+      - id: kp3
+        name: "Zero-one matrices and counting relations"
+        key_prerequisites: [cartesian-products]
+        exemplars:
+          - problem: 'Write the $3 \times 3$ zero-one matrix of $R = \{(1,1), (1,2), (2,3)\}$ on $\{1, 2, 3\}$ (rows = first coordinate).'
+            answer: 'Rows: $(1, 1, 0)$, $(0, 0, 1)$, $(0, 0, 0)$.'
+            solution_sketch: 'Entry $(i, j)$ is $1$ iff $(i, j) \in R$: row $1$ has ones in columns $1, 2$; row $2$ in column $3$.'
+          - problem: 'How many relations are there on a $2$-element set?'
+            answer: '$16$'
+            solution_sketch: 'A relation is any subset of $A \times A$, which has $2^2 = 4$ pairs; $2^4 = 16$ subsets.'
+        constraints: "matrix encoding on sets of size at most 3; count relations as $2^{n^2}$"
+    diagnostic_exemplar:
+      problem: 'On $A = \{1, 2, 3\}$ let $R = \{(a,b) : a \le b\}$. List the pairs of $R$, write its $3 \times 3$ zero-one matrix (rows indexed by the first coordinate), and say which vertices of its digraph carry loops.'
+      answer: 'Pairs: $(1,1), (1,2), (1,3), (2,2), (2,3), (3,3)$. Matrix rows: $(1,1,1)$, $(0,1,1)$, $(0,0,1)$ — the entry in row $i$, column $j$ is $1$ exactly when $i \le j$. Every vertex carries a loop, since $a \le a$ for each $a$; loops are the diagonal $1$s.'
+      solution_sketch: 'List the pairs whose first coordinate is at most the second, transcribe them into the matrix, and note that loops correspond to diagonal entries.'
+    anki_seeds:
+      - front: 'A relation on a set $A$ is...'
+        back: 'any subset of $A \times A$ (pairs $(a, b)$ with $a$ related to $b$).'
+        type: basic
+      - front: 'Number of relations on an $n$-element set?'
+        back: '$2^{n^2}$ — subsets of the $n^2$ pairs in $A \times A$.'
+        type: basic
+
+  - id: relations-properties
+    name: "Relations and Their Properties"
+    core: true
+    difficulty: 0.55
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 190
+    prerequisites:
+      - id: cartesian-products
+        weight: 0.5
+        key: true
+      - id: relations-digraphs-matrices
+        weight: 0.4
+        key: true
+      - id: set-notation
+        weight: 0.3
+      - id: quantifiers
+        weight: 0.3
+      - id: propositional-logic
+        weight: 0.0
+    knowledge_points:
+      - id: kp1
+        name: "Relations and the four properties"
+        key_prerequisites: [cartesian-products]
+        exemplars:
+          - problem: 'On $\{1, 2, 3\}$, is $R = \{(1,1),(2,2),(3,3),(1,2),(2,1)\}$ reflexive? symmetric? transitive?'
+            answer: 'Reflexive: yes. Symmetric: yes. Transitive: yes.'
+            solution_sketch: 'All pairs $(i,i)$ are present (reflexive); $(1,2)$ and $(2,1)$ both appear (symmetric); every chain stays inside, e.g. $(1,2),(2,1) \Rightarrow (1,1) \in R$ (transitive).'
+          - problem: 'On $\{1, 2, 3\}$, is $R = \{(1, 2), (2, 3)\}$ transitive?'
+            answer: 'No; $(1,2), (2,3) \in R$ but $(1,3) \notin R$.'
+            solution_sketch: 'Transitivity requires $(1,2), (2,3) \in R \Rightarrow (1,3) \in R$, but $(1,3) \notin R$, so $R$ is not transitive. $\square$'
+        constraints: "check reflexive/symmetric/transitive on a listed relation over a small set"
+      - id: kp2
+        name: "Antisymmetry"
+        key_prerequisites: [set-notation]
+        exemplars:
+          - problem: 'Is $\le$ on $\mathbb{Z}$ antisymmetric? Is it symmetric?'
+            answer: 'Antisymmetric: yes. Symmetric: no.'
+            solution_sketch: 'If $a \le b$ and $b \le a$ then $a = b$ (antisymmetric). But $1 \le 2$ while $2 \not\le 1$, so it is not symmetric.'
+          - problem: 'Is the relation $=$ on $\mathbb{Z}$ antisymmetric?'
+            answer: 'Yes (trivially).'
+            solution_sketch: 'If $a = b$ and $b = a$ then $a = b$, so the antisymmetry condition holds. (Equality is also symmetric — both can hold at once.) $\square$'
+        constraints: "distinguish antisymmetry from symmetry"
+      - id: kp3
+        name: "Proving a property holds"
+        key_prerequisites: [quantifiers]
+        exemplars:
+          - problem: 'Prove that $a \sim b \iff a - b \in \mathbb{Z}$ on $\mathbb{R}$ is transitive.'
+            answer: '$a - b, b - c \in \mathbb{Z} \Rightarrow a - c \in \mathbb{Z}$.'
+            solution_sketch: 'Assume $a \sim b$ and $b \sim c$: $a - b \in \mathbb{Z}$ and $b - c \in \mathbb{Z}$. Then $a - c = (a - b) + (b - c) \in \mathbb{Z}$, so $a \sim c$. $\square$'
+          - problem: 'Prove that $a \sim b \iff a + b$ is even, on $\mathbb{Z}$, is symmetric.'
+            answer: '$a + b$ even iff $b + a$ even.'
+            solution_sketch: 'Assume $a \sim b$, so $a + b$ is even. Since $b + a = a + b$, $b + a$ is even, so $b \sim a$. Hence $\sim$ is symmetric. $\square$'
+        constraints: "prove a named property from its definition"
+    diagnostic_exemplar:
+      problem: 'Show that the relation "$a \mid b$" on $\mathbb{Z}^{+}$ is reflexive, antisymmetric and transitive, but not symmetric.'
+      answer: 'Reflexive: $a = a \cdot 1$, so $a \mid a$. Antisymmetric: if $a \mid b$ and $b \mid a$ with $a, b > 0$, write $b = ak$ and $a = bm$; then $a = akm$, so $km = 1$ with $k, m$ positive integers, forcing $k = m = 1$ and $a = b$. Transitive: $b = ak$ and $c = bm$ give $c = a(km)$, so $a \mid c$. Not symmetric: $2 \mid 4$ but $4 \nmid 2$.'
+      solution_sketch: 'Verify each property from the definition $a \mid b \iff b = ak$; positivity is what makes antisymmetry work, and one counterexample refutes symmetry.'
+    anki_seeds:
+      - front: 'When is a relation $R$ on $A$ reflexive?'
+        back: '$\forall a,\ aRa$.'
+        type: basic
+      - front: 'When is a relation $R$ symmetric?'
+        back: '$aRb \Rightarrow bRa$.'
+        type: basic
+      - front: 'When is a relation $R$ transitive?'
+        back: '$aRb \land bRc \Rightarrow aRc$.'
+        type: basic
+      - front: 'When is a relation $R$ antisymmetric?'
+        back: '$aRb \land bRa \Rightarrow a = b$.'
+        type: basic
+
+  - id: verifying-equivalence-properties
+    name: "Verifying the Three Properties"
+    core: true
+    difficulty: 0.56
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 150
+    prerequisites:
+      - id: relations-properties
+        weight: 0.6
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: "Checks on listed relations"
+        key_prerequisites: [relations-properties]
+        exemplars:
+          - problem: 'On $\{1, 2, 3\}$, is $R = \{(1,1),(2,2),(3,3),(1,3),(3,1)\}$ reflexive, symmetric, and transitive?'
+            answer: 'Yes to all three — it is an equivalence relation.'
+            solution_sketch: 'All loops present; $(1,3)$ pairs with $(3,1)$; chains like $(1,3),(3,1)$ land on $(1,1) \in R$ and $(3,1),(1,3)$ on $(3,3) \in R$.'
+          - problem: 'On $\{1, 2, 3\}$, which properties fail for $R = \{(1,1),(2,2),(1,2),(2,1),(2,3)\}$?'
+            answer: 'Reflexivity ($(3,3)$ missing) and symmetry ($(2,3)$ without $(3,2)$); transitivity also fails ($(1,2),(2,3)$ but $(1,3) \notin R$).'
+            solution_sketch: 'Check each property against the list; a single missing pair witnesses each failure.'
+        constraints: "systematic three-property checks on relations listed over a 3-element set"
+      - id: kp2
+        name: "Rule-defined relations with a failing property"
+        key_prerequisites: [relations-properties]
+        exemplars:
+          - problem: 'On $\mathbb{Z}$, define $a \sim b \iff |a - b| \le 1$. Which of the three properties hold?'
+            answer: 'Reflexive and symmetric, but not transitive.'
+            solution_sketch: '$|a - a| = 0 \le 1$; $|a-b| = |b-a|$; but $0 \sim 1$ and $1 \sim 2$ while $|0 - 2| = 2 > 1$.'
+          - problem: 'On $\mathbb{Z}$, define $a \sim b \iff ab \ge 0$. Show $\sim$ is not transitive.'
+            answer: '$1 \sim 0$ and $0 \sim -1$, but $1 \cdot (-1) < 0$.'
+            solution_sketch: '$1 \cdot 0 = 0 \ge 0$ and $0 \cdot (-1) = 0 \ge 0$, yet $1 \not\sim -1$; zero bridges the two signs.'
+        constraints: "identify the failing property and give a concrete counterexample triple"
+      - id: kp3
+        name: "Full verdicts"
+        key_prerequisites: [relations-properties]
+        exemplars:
+          - problem: 'On $\mathbb{Z}^{+}$, is $a \sim b \iff a \equiv b \pmod{10}$ (same last digit) an equivalence relation?'
+            answer: 'Yes.'
+            solution_sketch: 'Same-last-digit is reflexive, symmetric (equality of digits is symmetric), and transitive (if $a, b$ share a digit and $b, c$ share it, so do $a, c$).'
+          - problem: 'On $\mathbb{Z}$, is $a \sim b \iff a < b$ an equivalence relation?'
+            answer: 'No — it is neither reflexive nor symmetric.'
+            solution_sketch: '$a < a$ never holds, and $a < b$ excludes $b < a$; either failure alone disqualifies it.'
+        constraints: "deliver a verdict with a reason for each property; one positive and one negative case"
+    diagnostic_exemplar:
+      problem: 'On $\mathbb{Z}$, define $a \sim b \iff 4 \mid (a - b)$. Check each of the three properties and give a verdict.'
+      answer: 'Reflexive, symmetric, transitive — an equivalence relation.'
+      solution_sketch: '$4 \mid 0$; $4 \mid (a-b) \Rightarrow 4 \mid (b-a)$; and $4 \mid (a-b), 4 \mid (b-c) \Rightarrow 4 \mid (a-c)$ by adding.'
+    anki_seeds:
+      - front: 'To show a relation is NOT an equivalence relation...'
+        back: 'exhibit one property that fails, with a concrete counterexample.'
+        type: basic
+      - front: 'Reflexivity fails for $R$ on $A$ when...'
+        back: 'some $a \in A$ has $(a, a) \notin R$.'
+        type: basic
+
+  - id: relations-equivalence
+    name: "Equivalence Relations"
+    core: true
+    difficulty: 0.60
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 210
+    prerequisites:
+      - id: relations-properties
+        weight: 0.6
+        key: true
+      - id: verifying-equivalence-properties
+        weight: 0.5
+        key: true
+      - id: cartesian-products
+        weight: 0.2
+      - id: quantifiers
+        weight: 0.0
+    knowledge_points:
+      - id: kp1
+        name: "Definition and quick checks"
+        key_prerequisites: [relations-properties]
+        exemplars:
+          - problem: 'Verify that equality $=$ on any set is an equivalence relation.'
+            answer: 'Reflexive, symmetric, and transitive all hold immediately.'
+            solution_sketch: '$a = a$ (reflexive); $a = b \Rightarrow b = a$ (symmetric); $a = b \land b = c \Rightarrow a = c$ (transitive). So $=$ is an equivalence relation. $\square$'
+          - problem: 'Is "$a \sim b \iff a \le b$" on $\mathbb{Z}$ an equivalence relation?'
+            answer: 'No; it is not symmetric.'
+            solution_sketch: '$\le$ is reflexive and transitive, but $1 \le 2$ while $2 \not\le 1$, so it is not symmetric; hence not an equivalence relation. $\square$'
+        constraints: "confirm all three defining properties"
+      - id: kp2
+        name: "Proving a relation is an equivalence relation"
+        key_prerequisites: [relations-properties]
+        exemplars:
+          - problem: 'Prove $a \sim b \iff a - b \in \mathbb{Z}$ is an equivalence relation on $\mathbb{R}$.'
+            answer: 'Reflexive ($0 \in \mathbb{Z}$), symmetric (negation), transitive (sum).'
+            solution_sketch: 'Reflexive: $a - a = 0 \in \mathbb{Z}$. Symmetric: $a - b \in \mathbb{Z} \Rightarrow b - a = -(a - b) \in \mathbb{Z}$. Transitive: $a - b, b - c \in \mathbb{Z} \Rightarrow a - c \in \mathbb{Z}$. $\square$'
+          - problem: 'Prove "$x \sim y \iff x - y \in 2\mathbb{Z}$" (same parity) on $\mathbb{Z}$ is an equivalence relation.'
+            answer: 'Reflexive, symmetric, transitive via even differences.'
+            solution_sketch: 'Reflexive: $x - x = 0 \in 2\mathbb{Z}$. Symmetric: $x - y \in 2\mathbb{Z} \Rightarrow y - x = -(x - y) \in 2\mathbb{Z}$. Transitive: $x - y, y - z \in 2\mathbb{Z} \Rightarrow x - z \in 2\mathbb{Z}$. $\square$'
+        constraints: "prove reflexivity, symmetry, transitivity in turn"
+      - id: kp3
+        name: "Congruence modulo n"
+        key_prerequisites: [relations-properties]
+        exemplars:
+          - problem: 'Prove congruence mod $5$ ($a \equiv b \iff 5 \mid (a - b)$) is an equivalence relation on $\mathbb{Z}$.'
+            answer: 'Reflexive, symmetric, transitive via divisibility of differences.'
+            solution_sketch: 'Reflexive: $5 \mid 0 = a - a$. Symmetric: $5 \mid (a - b) \Rightarrow 5 \mid (b - a)$. Transitive: $5 \mid (a - b)$ and $5 \mid (b - c)$ give $5 \mid [(a - b) + (b - c)] = a - c$. $\square$'
+          - problem: 'Prove "$f \sim g \iff f(0) = g(0)$" on functions $\mathbb{R} \to \mathbb{R}$ is an equivalence relation.'
+            answer: 'Reflexive, symmetric, transitive from equality of $f(0)$.'
+            solution_sketch: 'Reflexive: $f(0) = f(0)$. Symmetric: $f(0) = g(0) \Rightarrow g(0) = f(0)$. Transitive: $f(0) = g(0)$ and $g(0) = h(0) \Rightarrow f(0) = h(0)$. $\square$'
+        constraints: "use an equality or divisibility fact about a derived quantity"
+    diagnostic_exemplar:
+      problem: 'On $\mathbb{Z}$, define $a \sim b \iff a^2 = b^2$. Prove $\sim$ is an equivalence relation.'
+      answer: 'Reflexive, symmetric, transitive from equality of $a^2$.'
+      solution_sketch: 'Reflexive: $a^2 = a^2$. Symmetric: $a^2 = b^2 \Rightarrow b^2 = a^2$. Transitive: $a^2 = b^2$ and $b^2 = c^2 \Rightarrow a^2 = c^2$. So $\sim$ is an equivalence relation (classes $\{a, -a\}$). $\square$'
+    anki_seeds:
+      - front: 'An equivalence relation is a relation that is...'
+        back: 'reflexive, symmetric, and transitive.'
+        type: basic
+      - front: 'Congruence modulo $n$ as a relation?'
+        back: '$a \equiv b \pmod{n}$ iff $n \mid (a - b)$; it is an equivalence relation on $\mathbb{Z}$.'
+        type: basic
+
+  - id: computing-equivalence-classes
+    name: "Computing Equivalence Classes"
+    core: true
+    difficulty: 0.60
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 140
+    prerequisites:
+      - id: relations-equivalence
+        weight: 0.6
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: "Classes modulo n"
+        key_prerequisites: [relations-equivalence]
+        exemplars:
+          - problem: 'For congruence mod $4$ on $\mathbb{Z}$, describe $[2]$ and state how many distinct classes there are.'
+            answer: '$[2] = \{\dots, -6, -2, 2, 6, 10, \dots\} = \{2 + 4k : k \in \mathbb{Z}\}$; four classes in all.'
+            solution_sketch: 'The class of $2$ collects everything congruent to $2$ mod $4$; the classes are $[0], [1], [2], [3]$, one per remainder.'
+          - problem: 'For congruence mod $5$, find the smallest nonnegative representative of $[-3]$, and decide whether $[7] = [2]$.'
+            answer: '$2$; yes.'
+            solution_sketch: '$-3 + 5 = 2$, so $[-3] = [2]$. And $7 - 2 = 5$ is divisible by $5$, so $[7] = [2]$.'
+        constraints: "residue classes mod $n \\le 10$; representatives and class equality"
+      - id: kp2
+        name: "Classes on finite sets"
+        key_prerequisites: [relations-equivalence]
+        exemplars:
+          - problem: 'On $\{1, 2, 3, 4, 5\}$ with $a \sim b \iff a, b$ have the same parity, list the equivalence classes.'
+            answer: '$\{1, 3, 5\}$ and $\{2, 4\}$.'
+            solution_sketch: 'The odds form one class and the evens another; each element lies in exactly one.'
+          - problem: 'On $\{1, 2, \dots, 9\}$ with $a \sim b \iff a \equiv b \pmod 3$, list the equivalence classes.'
+            answer: '$\{3, 6, 9\}$, $\{1, 4, 7\}$, $\{2, 5, 8\}$.'
+            solution_sketch: 'Group by remainder mod $3$: remainders $0$, $1$, $2$ respectively.'
+        constraints: "list all classes of a concrete relation on a set of size at most 9"
+      - id: kp3
+        name: "Classes for rule-defined relations"
+        key_prerequisites: [relations-equivalence]
+        exemplars:
+          - problem: 'On $\mathbb{Z}$ with $a \sim b \iff |a| = |b|$, describe $[5]$ and $[0]$.'
+            answer: '$[5] = \{5, -5\}$ and $[0] = \{0\}$.'
+            solution_sketch: '$|n| = 5$ has two solutions; $|n| = 0$ only one.'
+          - problem: 'On $\mathbb{R}$ with $x \sim y \iff x - y \in \mathbb{Z}$, describe the class $\left[\tfrac{1}{2}\right]$.'
+            answer: '$\left\{\tfrac{1}{2} + k : k \in \mathbb{Z}\right\}$'
+            solution_sketch: 'Everything differing from $\tfrac12$ by an integer: $\dots, -\tfrac12, \tfrac12, \tfrac32, \dots$'
+        constraints: "describe $[a] = \\{x : x \\sim a\\}$ for a rule-defined relation"
+    diagnostic_exemplar:
+      problem: 'On $\mathbb{Z}$ with $a \sim b \iff a - b$ even, describe $[7]$.'
+      answer: 'The odd integers.'
+      solution_sketch: '$n \sim 7$ iff $n - 7$ is even iff $n$ is odd.'
+    anki_seeds:
+      - front: '$[a]$ for congruence mod $n$?'
+        back: '$\{a + kn : k \in \mathbb{Z}\}$.'
+        type: basic
+      - front: 'How many equivalence classes does congruence mod $n$ have?'
+        back: '$n$ — one per remainder $0, 1, \dots, n-1$.'
+        type: basic
+
+  - id: equivalence-classes-partitions
+    name: "Equivalence Classes and Partitions"
+    core: true
+    difficulty: 0.65
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 230
+    prerequisites:
+      - id: relations-equivalence
+        weight: 0.5
+        key: true
+      - id: computing-equivalence-classes
+        weight: 0.5
+        key: true
+      - id: disjoint-sets-partitions
+        weight: 0.3
+      - id: set-operations
+        weight: 0.3
+      - id: subsets-power-sets
+        weight: 0.3
+      - id: quantifiers
+        weight: 0.0
+    knowledge_points:
+      - id: kp1
+        name: "The quotient set"
+        key_prerequisites: [computing-equivalence-classes]
+        exemplars:
+          - problem: 'Prove that the classes $[0], [1], [2], [3]$ of congruence mod $4$ are pairwise distinct, so the quotient set $\mathbb{Z}/\!\equiv_4$ has exactly $4$ elements.'
+            answer: 'If $[i] = [j]$ with $0 \le i, j \le 3$ then $4 \mid (i - j)$, forcing $i = j$.'
+            solution_sketch: 'If $[i] = [j]$ then $i \equiv j \pmod 4$, so $4 \mid (i - j)$. But $|i - j| \le 3$, so $i - j = 0$. Every integer is congruent to its remainder, so these four classes are all of them. $\square$'
+          - problem: 'On $\mathbb{R}$ with $x \sim y \iff x - y \in \mathbb{Z}$, prove every equivalence class contains exactly one element of $[0, 1)$.'
+            answer: 'Existence: $x - \lfloor x \rfloor \in [0,1)$. Uniqueness: two such representatives differ by an integer in $(-1, 1)$, hence $0$.'
+            solution_sketch: 'For $x$, the number $x - \lfloor x \rfloor$ lies in $[0,1)$ and is $\sim x$. If $r, s \in [0,1)$ are both in the class, $r - s \in \mathbb{Z}$ and $-1 < r - s < 1$, so $r = s$. $\square$'
+        constraints: "prove distinctness/uniqueness statements about the set of classes"
+      - id: kp2
+        name: "a ~ b iff [a] = [b]"
+        key_prerequisites: [relations-equivalence]
+        exemplars:
+          - problem: 'Prove: for an equivalence relation, $a \sim b$ if and only if $[a] = [b]$.'
+            answer: 'Both directions using reflexivity, symmetry, transitivity.'
+            solution_sketch: 'If $a \sim b$: for $x \in [a]$, $x \sim a \sim b$ so $x \in [b]$, giving $[a] \subseteq [b]$; symmetrically $[b] \subseteq [a]$, so $[a] = [b]$. Conversely if $[a] = [b]$, then $a \in [a] = [b]$ means $a \sim b$. $\square$'
+          - problem: 'Prove: for an equivalence relation, if $a \not\sim b$ then $[a] \cap [b] = \varnothing$.'
+            answer: 'A common element would force $a \sim b$.'
+            solution_sketch: 'Suppose $x \in [a] \cap [b]$. Then $a \sim x$ and $b \sim x$, so $a \sim x \sim b$ gives $a \sim b$, contradicting $a \not\sim b$. Hence $[a] \cap [b] = \varnothing$. $\square$'
+        constraints: "relate equivalence to equality (or disjointness) of classes"
+      - id: kp3
+        name: "Classes partition the set"
+        key_prerequisites: [set-operations]
+        exemplars:
+          - problem: 'Prove: distinct equivalence classes are disjoint, so the classes partition the set.'
+            answer: 'If two classes meet, they are equal.'
+            solution_sketch: 'Each $a$ lies in $[a]$ (reflexivity), so classes cover the set. If $x \in [a] \cap [b]$, then $a \sim x \sim b$, so $a \sim b$ and $[a] = [b]$. Hence two classes are equal or disjoint: a partition. $\square$'
+          - problem: 'Prove: a partition $\mathcal{Q}$ of $A$ induces an equivalence relation whose classes are the blocks of $\mathcal{Q}$.'
+            answer: 'Define $a \sim b$ iff same block; check the three properties.'
+            solution_sketch: 'Define $a \sim b$ iff $a, b$ lie in the same block. Every $a$ is in some block (reflexive); same-block is symmetric; if $a, b$ share a block and $b, c$ share a block, that block is common (blocks are disjoint), so $a, c$ share it (transitive). The class of $a$ is its block. $\square$'
+        constraints: "show covering plus pairwise disjointness; and the converse direction"
+    diagnostic_exemplar:
+      problem: 'Let $\sim$ be an equivalence relation on a set $A$. Prove that $[a] = [b]$ if and only if $a \sim b$, and deduce that two distinct equivalence classes are disjoint.'
+      answer: '($\Leftarrow$) Suppose $a \sim b$. For $x \in [a]$ we have $x \sim a$ and $a \sim b$, so $x \sim b$ by transitivity, giving $[a] \subseteq [b]$; using $b \sim a$ (symmetry) the same argument gives $[b] \subseteq [a]$, so $[a] = [b]$. ($\Rightarrow$) If $[a] = [b]$, then $a \in [a]$ by reflexivity, so $a \in [b]$, i.e. $a \sim b$. Deduction: if $[a] \cap [b] \ne \varnothing$, pick $x$ in both; then $x \sim a$ and $x \sim b$, so $a \sim x$ and $x \sim b$ give $a \sim b$, hence $[a] = [b]$. Contrapositively, distinct classes have empty intersection — so the classes partition $A$.'
+      solution_sketch: 'Use all three properties: transitivity for the inclusions, reflexivity for the converse, symmetry plus transitivity to turn a shared element into $a \sim b$.'
+    anki_seeds:
+      - front: 'Equivalence class $[a]$ of an element $a$?'
+        back: '$[a] = \{x : x \sim a\}$, the set of all elements equivalent to $a$.'
+        type: basic
+      - front: 'Fundamental correspondence between equivalence relations and partitions?'
+        back: 'The equivalence classes of a relation on $A$ form a partition of $A$; conversely every partition arises from a unique equivalence relation.'
+        type: basic
+
+  - id: composition-of-relations
+    name: "Composition of Relations"
+    core: true
+    difficulty: 0.60
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 160
+    prerequisites:
+      - id: relations-properties
+        weight: 0.5
+        key: true
+      - id: relations-digraphs-matrices
+        weight: 0.4
+        key: true
+      - id: computing-compositions
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: "Computing S o R"
+        key_prerequisites: [relations-digraphs-matrices]
+        exemplars:
+          - problem: 'On $\{1, 2, 3\}$ let $R = \{(1,2), (2,3)\}$ and $S = \{(2,1), (3,3)\}$. Compute $S \circ R = \{(a, c) : \exists b,\ (a,b) \in R \text{ and } (b,c) \in S\}$.'
+            answer: '$\{(1,1), (2,3)\}$'
+            solution_sketch: '$(1,2) \in R$ chains with $(2,1) \in S$ to give $(1,1)$; $(2,3) \in R$ chains with $(3,3) \in S$ to give $(2,3)$.'
+          - problem: 'On $\{1, 2, 3\}$ let $R = \{(1,1), (1,2), (2,3)\}$ and $S = \{(1,3), (2,2), (3,1)\}$. Compute $S \circ R$.'
+            answer: '$\{(1,3), (1,2), (2,1)\}$'
+            solution_sketch: '$(1,1)$ chains with $(1,3)$; $(1,2)$ with $(2,2)$; $(2,3)$ with $(3,1)$.'
+        constraints: "chain pairs through a middle element on a 3-element set"
+      - id: kp2
+        name: "Powers of a relation"
+        key_prerequisites: [relations-digraphs-matrices]
+        exemplars:
+          - problem: 'For $R = \{(1,2), (2,3), (3,1)\}$ on $\{1, 2, 3\}$, compute $R^2 = R \circ R$ and $R^3$.'
+            answer: '$R^2 = \{(1,3), (2,1), (3,2)\}$ and $R^3 = \{(1,1), (2,2), (3,3)\}$.'
+            solution_sketch: 'Follow the cycle two steps, then three: three steps around a $3$-cycle returns each element to itself.'
+          - problem: 'For $R$ = "$a < b$" on $\{1, 2, 3\}$, compute $R^2$.'
+            answer: '$\{(1, 3)\}$'
+            solution_sketch: '$R = \{(1,2),(1,3),(2,3)\}$; the only two-step chain is $1 < 2 < 3$.'
+        constraints: "compute $R^2$ (and occasionally $R^3$) on a small relation"
+      - id: kp3
+        name: "Transitivity via composition"
+        key_prerequisites: [relations-properties]
+        exemplars:
+          - problem: 'Using the criterion "$R$ is transitive iff $R \circ R \subseteq R$", decide whether $R = \{(1,2), (2,3), (1,3)\}$ on $\{1,2,3\}$ is transitive.'
+            answer: 'Yes: $R \circ R = \{(1,3)\} \subseteq R$.'
+            solution_sketch: 'The only chain is $(1,2)$ then $(2,3)$, giving $(1,3)$, which is in $R$; so $R \circ R \subseteq R$.'
+          - problem: 'Using the same criterion, show $R = \{(1,2), (2,1)\}$ on $\{1, 2\}$ is not transitive.'
+            answer: '$R \circ R = \{(1,1), (2,2)\} \not\subseteq R$.'
+            solution_sketch: '$(1,2)$ chains with $(2,1)$ to $(1,1) \notin R$; the criterion fails, matching the direct check.'
+        constraints: "decide transitivity by computing $R \\circ R$ and testing containment"
+    diagnostic_exemplar:
+      problem: 'On $\{1, 2, 3\}$ let $R = \{(1,2), (2,2), (2,3)\}$. Compute $R \circ R$, and use the criterion "$R$ is transitive iff $R \circ R \subseteq R$" to decide whether $R$ is transitive.'
+      answer: '$R \circ R = \{(a,c) : \exists b,\ (a,b) \in R \text{ and } (b,c) \in R\}$. Following $(1,2)$ by $(2,2)$ and by $(2,3)$ gives $(1,2)$ and $(1,3)$; following $(2,2)$ by $(2,2)$ and $(2,3)$ gives $(2,2)$ and $(2,3)$. So $R \circ R = \{(1,2), (1,3), (2,2), (2,3)\}$. Since $(1,3) \notin R$, we have $R \circ R \not\subseteq R$, so $R$ is not transitive.'
+      solution_sketch: 'Match every pair whose second coordinate starts another pair, then test the composed relation for containment in $R$.'
+    anki_seeds:
+      - front: 'Definition of the composition $S \circ R$ of relations?'
+        back: '$\{(a, c) : \exists b,\ (a, b) \in R \text{ and } (b, c) \in S\}$ — apply $R$ first.'
+        type: basic
+      - front: 'Composition criterion for transitivity?'
+        back: '$R$ is transitive iff $R \circ R \subseteq R$.'
+        type: basic
+
+  - id: relation-closures
+    name: "Closures of Relations"
+    core: true
+    difficulty: 0.60
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 150
+    prerequisites:
+      - id: relations-properties
+        weight: 0.5
+        key: true
+      - id: composition-of-relations
+        weight: 0.4
+        key: true
+      - id: set-operations
+        weight: 0.2
+    knowledge_points:
+      - id: kp1
+        name: "Reflexive closure"
+        key_prerequisites: [relations-properties]
+        exemplars:
+          - problem: 'Find the reflexive closure of $R = \{(1,2), (2,3)\}$ on $\{1, 2, 3\}$.'
+            answer: '$\{(1,1), (2,2), (3,3), (1,2), (2,3)\}$'
+            solution_sketch: 'Add every loop $(a, a)$: the reflexive closure is $R \cup \Delta$ where $\Delta = \{(a,a) : a \in A\}$.'
+          - problem: 'How many pairs must be added to $R = \{(1,1), (1,2)\}$ on $\{1, 2, 3\}$ to make it reflexive?'
+            answer: '$2$ — the loops $(2,2)$ and $(3,3)$.'
+            solution_sketch: '$(1,1)$ is already present; the closure adds only the missing diagonal pairs.'
+        constraints: "add the missing diagonal pairs on a set of size at most 4"
+      - id: kp2
+        name: "Symmetric closure"
+        key_prerequisites: [relations-properties]
+        exemplars:
+          - problem: 'Find the symmetric closure of $R = \{(1,2), (3,2)\}$ on $\{1, 2, 3\}$.'
+            answer: '$\{(1,2), (2,1), (3,2), (2,3)\}$'
+            solution_sketch: 'Add the reverse of every pair: the symmetric closure is $R \cup R^{-1}$ where $R^{-1} = \{(b,a) : (a,b) \in R\}$.'
+          - problem: 'Compute the inverse relation $R^{-1}$ for $R = \{(1,1), (1,3), (2,3)\}$.'
+            answer: '$\{(1,1), (3,1), (3,2)\}$'
+            solution_sketch: 'Reverse each pair; $(1,1)$ is its own reverse.'
+        constraints: "form $R^{-1}$ and $R \\cup R^{-1}$ on small listed relations"
+      - id: kp3
+        name: "Transitive closure"
+        key_prerequisites: [composition-of-relations]
+        exemplars:
+          - problem: 'Find the transitive closure of $R = \{(1,2), (2,3)\}$ on $\{1, 2, 3\}$.'
+            answer: '$\{(1,2), (2,3), (1,3)\}$'
+            solution_sketch: 'The chain $1 \to 2 \to 3$ forces $(1,3)$; no further chains appear, so one added pair suffices.'
+          - problem: 'Find the transitive closure of $R = \{(1,2), (2,1)\}$ on $\{1, 2\}$.'
+            answer: '$\{(1,2), (2,1), (1,1), (2,2)\}$'
+            solution_sketch: 'Chains $1 \to 2 \to 1$ and $2 \to 1 \to 2$ force both loops; the result is now transitive.'
+        constraints: "close small relations under chaining; add pairs until no chain escapes"
+    diagnostic_exemplar:
+      problem: 'On $\{a, b, c\}$ let $R = \{(a,b), (b,c)\}$. Give the pairs added by the reflexive closure, by the symmetric closure, and by the transitive closure.'
+      answer: 'Reflexive closure adds the missing loops $(a,a)$, $(b,b)$, $(c,c)$. Symmetric closure adds the reversals $(b,a)$ and $(c,b)$. Transitive closure adds $(a,c)$, forced by the chain $(a,b), (b,c)$; no further pairs are then required.'
+      solution_sketch: 'Each closure adds exactly the pairs the property demands and nothing more: loops, reversals, and composites along chains.'
+    anki_seeds:
+      - front: 'Reflexive closure of $R$ on $A$?'
+        back: '$R \cup \{(a,a) : a \in A\}$ — the smallest reflexive relation containing $R$.'
+        type: basic
+      - front: 'Symmetric closure of $R$?'
+        back: '$R \cup R^{-1}$, where $R^{-1}$ reverses every pair.'
+        type: basic
+
+  - id: partial-orders
+    name: "Partial Orders"
+    core: true
+    difficulty: 0.62
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 210
+    prerequisites:
+      - id: relations-properties
+        weight: 0.6
+        key: true
+      - id: quantifiers
+        weight: 0.2
+      - id: set-notation
+        weight: 0.0
+    knowledge_points:
+      - id: kp1
+        name: "The partial-order axioms"
+        key_prerequisites: [relations-properties]
+        exemplars:
+          - problem: 'Show that $\subseteq$ on $\mathcal{P}(X)$ is a partial order.'
+            answer: 'Reflexive, antisymmetric (double inclusion), transitive.'
+            solution_sketch: '$A \subseteq A$ (reflexive); $A \subseteq B \land B \subseteq A \Rightarrow A = B$ (antisymmetric); $A \subseteq B \land B \subseteq C \Rightarrow A \subseteq C$ (transitive). So $(\mathcal{P}(X), \subseteq)$ is a poset. $\square$'
+          - problem: 'Show that $\le$ on $\mathbb{N}$ is a partial order.'
+            answer: 'Reflexive, antisymmetric, transitive.'
+            solution_sketch: '$n \le n$; $m \le n \land n \le m \Rightarrow m = n$; $m \le n \land n \le p \Rightarrow m \le p$. So $(\mathbb{N}, \le)$ is a partial order (in fact total). $\square$'
+        constraints: "verify reflexivity, antisymmetry, transitivity"
+      - id: kp2
+        name: "Proving a relation is a partial order"
+        key_prerequisites: [relations-properties]
+        exemplars:
+          - problem: 'Prove divisibility $\mid$ is a partial order on $\mathbb{Z}^{+}$.'
+            answer: 'Reflexive, antisymmetric on positives, transitive.'
+            solution_sketch: '$a \mid a$; if $a \mid b$ and $b \mid a$ with $a, b > 0$ then $a = b$; if $a \mid b$ and $b \mid c$ then $a \mid c$. So $\mid$ is a partial order on $\mathbb{Z}^{+}$. $\square$'
+          - problem: 'Prove the relation $(a, b) \preceq (c, d) \iff a \le c \text{ and } b \le d$ on $\mathbb{Z} \times \mathbb{Z}$ is a partial order.'
+            answer: 'Componentwise reflexive, antisymmetric, transitive.'
+            solution_sketch: 'Reflexive: $a \le a$, $b \le b$. Antisymmetric: $(a,b) \preceq (c,d)$ and $(c,d) \preceq (a,b)$ give $a = c$, $b = d$. Transitive: chain each coordinate. So it is a partial order (the product order). $\square$'
+        constraints: "confirm all three axioms, noting positivity for antisymmetry"
+      - id: kp3
+        name: "Total vs. partial; comparability"
+        key_prerequisites: [quantifiers]
+        exemplars:
+          - problem: 'Is divisibility on $\mathbb{Z}^{+}$ a total order? Justify.'
+            answer: 'No: $2$ and $3$ are incomparable.'
+            solution_sketch: 'A total order requires any two elements to be comparable. But $2 \nmid 3$ and $3 \nmid 2$, so $2$ and $3$ are incomparable; $\mid$ is partial, not total. $\square$'
+          - problem: 'Is the product order on $\mathbb{Z} \times \mathbb{Z}$ total? Justify.'
+            answer: 'No: $(1, 0)$ and $(0, 1)$ are incomparable.'
+            solution_sketch: 'Neither $(1,0) \preceq (0,1)$ (as $1 \not\le 0$) nor $(0,1) \preceq (1,0)$ (as $1 \not\le 0$), so the two are incomparable; the order is partial, not total. $\square$'
+        constraints: "test comparability of all pairs to decide totality"
+    diagnostic_exemplar:
+      problem: 'Prove that $\subseteq$ is a partial order on $\mathcal{P}(\{1,2,3\})$, and decide whether it is a total order.'
+      answer: 'Reflexive: $X \subseteq X$ for every set $X$. Antisymmetric: if $X \subseteq Y$ and $Y \subseteq X$ then $X = Y$, by double inclusion. Transitive: if $X \subseteq Y$ and $Y \subseteq Z$, then $x \in X$ gives $x \in Y$ and hence $x \in Z$, so $X \subseteq Z$. So $\subseteq$ is a partial order. It is not total: $\{1\}$ and $\{2\}$ are incomparable, since neither is contained in the other.'
+      solution_sketch: 'Check the three axioms for $\subseteq$, then exhibit two incomparable subsets to rule out totality.'
+    anki_seeds:
+      - front: 'A partial order is a relation that is...'
+        back: 'reflexive, antisymmetric, and transitive.'
+        type: basic
+      - front: 'Difference between a partial order and a total (linear) order?'
+        back: 'In a total order every two elements are comparable; a partial order may have incomparable elements.'
+        type: basic
+
+  - id: hasse-diagrams
+    name: "Hasse Diagrams"
+    core: true
+    difficulty: 0.64
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 160
+    prerequisites:
+      - id: partial-orders
+        weight: 0.6
+        key: true
+      - id: relations-digraphs-matrices
+        weight: 0.2
+    knowledge_points:
+      - id: kp1
+        name: "Drawing Hasse diagrams"
+        key_prerequisites: [partial-orders]
+        exemplars:
+          - problem: 'For the divisors of $12$, $\{1, 2, 3, 4, 6, 12\}$, ordered by divisibility, list the covering edges of the Hasse diagram.'
+            answer: '$1\!-\!2$, $1\!-\!3$, $2\!-\!4$, $2\!-\!6$, $3\!-\!6$, $4\!-\!12$, $6\!-\!12$.'
+            solution_sketch: 'Draw $a$ below $b$ when $a \mid b$ with no divisor strictly between: e.g. $1\!-\!4$ is omitted because $1 \mid 2 \mid 4$.'
+          - problem: 'Describe the Hasse diagram of $\mathcal{P}(\{a, b\})$ under $\subseteq$.'
+            answer: 'A diamond: $\varnothing$ at the bottom, $\{a\}$ and $\{b\}$ in the middle, $\{a, b\}$ on top.'
+            solution_sketch: 'Each covering step adds one element; $\{a\}$ and $\{b\}$ are incomparable, side by side.'
+        constraints: "posets with at most 8 elements: divisor lattices or small power sets"
+      - id: kp2
+        name: "Reading a Hasse diagram"
+        key_prerequisites: [partial-orders]
+        exemplars:
+          - problem: 'In the Hasse diagram of the divisors of $12$ under $\mid$, is $2 \preceq 12$? Is $4 \preceq 6$?'
+            answer: 'Yes ($2 \mid 12$, via the path $2\!-\!4\!-\!12$ or $2\!-\!6\!-\!12$); no ($4 \nmid 6$).'
+            solution_sketch: '$a \preceq b$ iff there is an upward path from $a$ to $b$; there is none from $4$ to $6$.'
+          - problem: 'In the divisors-of-$12$ poset, which elements cover $1$?'
+            answer: '$2$ and $3$.'
+            solution_sketch: '$b$ covers $1$ when $1 \mid b$ with nothing strictly between — exactly the prime divisors.'
+        constraints: "recover order relations and covers from upward paths"
+      - id: kp3
+        name: "Chains and comparability"
+        key_prerequisites: [partial-orders]
+        exemplars:
+          - problem: 'Find a longest chain in the divisors of $12$ under divisibility.'
+            answer: '$1 \mid 2 \mid 4 \mid 12$ ($4$ elements; $1 \mid 2 \mid 6 \mid 12$ and $1 \mid 3 \mid 6 \mid 12$ also work).'
+            solution_sketch: 'A chain climbs one cover at a time; four elements is the maximum since each step multiplies in one more prime factor and $12 = 2^2 \cdot 3$ has three.'
+          - problem: 'List the incomparable pairs in $\mathcal{P}(\{a, b\})$ under $\subseteq$.'
+            answer: 'Only $\{a\}$ and $\{b\}$.'
+            solution_sketch: 'Neither singleton contains the other; every other pair is nested.'
+        constraints: "identify chains and incomparable pairs in the drawn poset"
+    diagnostic_exemplar:
+      problem: 'For the divisors of $18$ ordered by divisibility, list the covering edges of the Hasse diagram, give a longest chain, and name an incomparable pair.'
+      answer: 'The divisors are $1, 2, 3, 6, 9, 18$. Covering edges (steps with nothing strictly between): $1\!-\!2$, $1\!-\!3$, $2\!-\!6$, $3\!-\!6$, $3\!-\!9$, $6\!-\!18$, $9\!-\!18$. A longest chain has four elements, for example $1 \mid 3 \mid 9 \mid 18$ (also $1 \mid 2 \mid 6 \mid 18$ or $1 \mid 3 \mid 6 \mid 18$). An incomparable pair: $2$ and $3$, since neither divides the other ($2$ and $9$ also work).'
+      solution_sketch: 'Draw only the covering relations, omitting edges implied by transitivity, then read a longest chain and an incomparable pair off the diagram.'
+    anki_seeds:
+      - front: 'Which edges does a Hasse diagram draw?'
+        back: 'Only covering relations — loops and transitively-implied edges are omitted; smaller elements sit lower.'
+        type: basic
+      - front: '"$b$ covers $a$" in a poset means...'
+        back: '$a \prec b$ with no element strictly between.'
+        type: basic
+
+  - id: minimal-maximal-elements
+    name: "Minimal, Maximal, and Bounds"
+    core: false                # supplemental: order-theory destination above partial-orders
+    difficulty: 0.66
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 170
+    prerequisites:
+      - id: partial-orders
+        weight: 0.5
+        key: true
+      - id: hasse-diagrams
+        weight: 0.4
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: "Minimal/maximal vs minimum/maximum"
+        key_prerequisites: [hasse-diagrams]
+        exemplars:
+          - problem: 'In the divisors of $12$ under divisibility, find the minimum and maximum elements.'
+            answer: 'Minimum $1$, maximum $12$.'
+            solution_sketch: '$1$ divides every divisor and every divisor divides $12$, so both extremes are comparable to everything.'
+          - problem: 'In the poset $\{2, 3, 6, 12\}$ under divisibility, find all minimal elements. Is there a minimum?'
+            answer: 'Minimal: $2$ and $3$; no minimum.'
+            solution_sketch: 'Nothing in the set divides $2$ or $3$ (other than themselves), so both are minimal; a minimum would have to divide both, and no single element does.'
+        constraints: "small divisibility posets; distinguish minimal (nothing below) from minimum (below everything)"
+      - id: kp2
+        name: "Upper and lower bounds"
+        key_prerequisites: [partial-orders]
+        exemplars:
+          - problem: 'In $\mathcal{P}(\{a, b, c\})$ under $\subseteq$, find all upper bounds of $\{\{a\}, \{b\}\}$ and the least upper bound.'
+            answer: 'Upper bounds $\{a, b\}$ and $\{a, b, c\}$; least upper bound $\{a, b\}$.'
+            solution_sketch: 'An upper bound must contain both singletons, hence both $a$ and $b$; the smallest such set is $\{a, b\}$ (the union).'
+          - problem: 'In the divisors of $12$ under divisibility, find all lower bounds of $\{4, 6\}$ and the greatest lower bound.'
+            answer: 'Lower bounds $1$ and $2$; greatest lower bound $2$.'
+            solution_sketch: 'A lower bound divides both $4$ and $6$: the common divisors $1, 2$. The greatest is $\gcd(4, 6) = 2$.'
+        constraints: "bounds of two-element subsets; lub/glb are union/intersection or lcm/gcd"
+      - id: kp3
+        name: "Uniqueness of extremes"
+        key_prerequisites: [partial-orders]
+        exemplars:
+          - problem: 'Prove: a poset has at most one maximum element.'
+            answer: 'Two maxima $m, m''$ satisfy $m \preceq m''$ and $m'' \preceq m$, so $m = m''$ by antisymmetry.'
+            solution_sketch: 'If $m$ and $m''$ are both maxima, each is $\succeq$ everything, so $m \preceq m''$ and $m'' \preceq m$; antisymmetry gives $m = m''$. $\square$'
+          - problem: 'Prove: in a finite poset, every element lies below some maximal element.'
+            answer: 'Climb strictly upward; finiteness forces the climb to stop at a maximal element.'
+            solution_sketch: 'Start at $a$. If the current element is not maximal, move strictly up. Antisymmetry means no element repeats, so in a finite poset the climb halts — at an element with nothing above it, i.e. a maximal element above $a$. $\square$'
+        constraints: "short proofs from antisymmetry and finiteness"
+    diagnostic_exemplar:
+      problem: 'In the poset $\{2, 3, 4, 6, 12\}$ under divisibility: find all minimal and all maximal elements, say whether a minimum exists, and find all lower bounds of $\{4, 6\}$ together with their greatest lower bound.'
+      answer: 'Minimal elements: $2$ and $3$ — no other element of the set divides either. Maximal element: $12$ alone, and since every element divides $12$ it is in fact a maximum. There is no minimum: a minimum would have to divide both $2$ and $3$, and neither of them divides the other. Lower bounds of $\{4, 6\}$: the elements dividing both $4$ and $6$, i.e. just $2$; so the greatest lower bound is $2$.'
+      solution_sketch: 'Minimal means nothing lies strictly below it, while a minimum must lie below everything. For the bounds, list the elements dividing both $4$ and $6$ and take the largest.'
+    anki_seeds:
+      - front: 'Maximal vs maximum in a poset?'
+        back: 'Maximal: nothing strictly above it. Maximum: above (or equal to) every element; a maximum is unique.'
+        type: basic
+      - front: 'In $(\mathbb{Z}^{+}, \mid)$, the glb and lub of $\{a, b\}$?'
+        back: '$\gcd(a, b)$ and $\mathrm{lcm}(a, b)$.'
+        type: basic
+
+  - id: pigeonhole-principle
+    name: "The Pigeonhole Principle"
+    core: false                # terminal counting result
+    difficulty: 0.60
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 210
+    prerequisites:
+      - id: functions-injective-surjective
+        weight: 0.5
+        key: true
+      - id: counting-functions
+        weight: 0.3
+      - id: floor-ceiling-functions
+        weight: 0.2
+        key: false
+      - id: quantifiers
+        weight: 0.2
+      - id: cartesian-products
+        weight: 0.0
+    knowledge_points:
+      - id: kp1
+        name: "The principle via functions"
+        key_prerequisites: [functions-injective-surjective]
+        exemplars:
+          - problem: 'Prove: if $f : A \to B$ with $|A| > |B|$ (finite sets), then $f$ is not injective.'
+            answer: 'An injection would force $|A| \le |B|$.'
+            solution_sketch: 'If $f$ were injective it would biject $A$ onto $f(A) \subseteq B$, giving $|A| = |f(A)| \le |B|$, contradicting $|A| > |B|$. So two elements of $A$ share an image. $\square$'
+          - problem: 'Prove: if $f : A \to B$ is injective with $A, B$ finite, then $|A| \le |B|$.'
+            answer: 'An injection bijects $A$ onto $f(A) \subseteq B$.'
+            solution_sketch: 'An injective $f$ gives a bijection $A \to f(A)$, so $|A| = |f(A)|$; and $f(A) \subseteq B$ gives $|f(A)| \le |B|$. Hence $|A| \le |B|$. $\square$'
+        constraints: "connect (non-)injectivity to the counting inequality"
+      - id: kp2
+        name: "Basic applications"
+        key_prerequisites: [functions-injective-surjective]
+        exemplars:
+          - problem: 'Prove: among any $13$ people, two share a birth month.'
+            answer: '$13$ pigeons, $12$ holes.'
+            solution_sketch: 'Map each person to their birth month, $f : \{13 \text{ people}\} \to \{12 \text{ months}\}$. Since $13 > 12$, $f$ is not injective, so two people map to the same month. $\square$'
+          - problem: 'Prove: among any $8$ integers, two leave the same remainder on division by $7$.'
+            answer: '$8$ integers, $7$ remainders.'
+            solution_sketch: 'Map each integer to its remainder mod $7$, in $\{0, \dots, 6\}$ ($7$ holes). With $8$ integers and $7$ remainders, two share a remainder. $\square$'
+        constraints: "identify pigeons and holes, then apply the principle"
+      - id: kp3
+        name: "Generalized pigeonhole"
+        key_prerequisites: [functions-injective-surjective]
+        exemplars:
+          - problem: 'Prove: among any $n + 1$ integers, two leave the same remainder on division by $n$.'
+            answer: '$n + 1$ integers, $n$ possible remainders.'
+            solution_sketch: 'Map each integer to its remainder mod $n$, landing in $\{0, 1, \dots, n - 1\}$ ($n$ values). With $n + 1$ integers and $n$ remainders, two share a remainder; their difference is then divisible by $n$. $\square$'
+          - problem: 'Prove: if $25$ balls are placed in $6$ boxes, some box has at least $5$ balls.'
+            answer: '$\lceil 25/6 \rceil = 5$.'
+            solution_sketch: 'If every box held at most $4$ balls, the total would be at most $6 \cdot 4 = 24 < 25$. So some box has at least $\lceil 25/6 \rceil = 5$ balls. $\square$'
+        constraints: "use residues/boxes as the holes; generalized form $\\lceil n/k \\rceil$"
+    diagnostic_exemplar:
+      problem: 'Prove: if $5$ points are placed in a $2 \times 2$ square, two of them are within distance $\sqrt{2}$.'
+      answer: 'Split into four unit cells; two points share a cell of diameter $\sqrt 2$.'
+      solution_sketch: 'Partition the square into four $1 \times 1$ cells. With $5$ points and $4$ cells, two points lie in the same unit cell; the largest distance within a unit square is its diagonal $\sqrt 2$, so those two are within $\sqrt 2$. $\square$'
+    anki_seeds:
+      - front: 'Pigeonhole principle (function form)?'
+        back: 'If $f : A \to B$ with $|A| > |B|$ (finite), then $f$ is not injective: some value is taken at least twice.'
+        type: basic
+      - front: 'Generalized pigeonhole: $n$ objects in $k$ boxes?'
+        back: 'Some box contains at least $\lceil n/k \rceil$ objects.'
+        type: basic

@@ -1,0 +1,619 @@
+unit: gradient-optimization
+course: multivariable-calculus
+module: "Gradients & Optimization"
+topics:
+  - id: computing-the-gradient
+    name: "Computing the Gradient"
+    core: true
+    difficulty: 0.66
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 90
+    prerequisites:
+      - id: partial-derivatives
+        weight: 0.8
+        key: true
+      - id: vectors-in-rn
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Gradients of two-variable functions"
+        key_prerequisites: [partial-derivatives]
+        exemplars:
+          - problem: 'Let $f(x, y) = 3x^2 + 2y^3$. Find $\nabla f$ and evaluate $\nabla f(1, 2)$.'
+            answer: '$\nabla f = \langle 6x, 6y^2 \rangle$; $\;\nabla f(1, 2) = \langle 6, 24 \rangle$'
+          - problem: 'Let $f(x, y) = x^2 y^3$. Find $\nabla f$ and evaluate $\nabla f(2, 1)$.'
+            answer: '$\nabla f = \langle 2xy^3, 3x^2 y^2 \rangle$; $\;\nabla f(2, 1) = \langle 4, 12 \rangle$'
+        constraints: "polynomial integrands; evaluation points give small integer components"
+      - id: kp2
+        name: "Gradients requiring the product, quotient, or chain rule"
+        key_prerequisites: [partial-derivatives]
+        exemplars:
+          - problem: 'Let $f(x, y) = \ln(x^2 + y^2)$. Find $\nabla f$.'
+            answer: '$\left\langle \dfrac{2x}{x^2 + y^2}, \dfrac{2y}{x^2 + y^2} \right\rangle$'
+          - problem: 'Let $f(x, y) = x e^{xy}$. Find $\nabla f$.'
+            answer: '$\langle (1 + xy)e^{xy}, x^2 e^{xy} \rangle$'
+            solution_sketch: '$f_x = e^{xy} + x \cdot y e^{xy}$ by the product rule; $f_y = x \cdot x e^{xy}$.'
+        constraints: "one composite or product structure per function (e^{xy}, ln(x^2+y^2), sqrt); results factor cleanly"
+      - id: kp3
+        name: "Gradients in three variables"
+        key_prerequisites: [partial-derivatives, vectors-in-rn]
+        exemplars:
+          - problem: 'Let $f(x, y, z) = xyz$. Evaluate $\nabla f(1, 2, 3)$.'
+            answer: '$\langle 6, 3, 2 \rangle$'
+            solution_sketch: '$\nabla f = \langle yz, xz, xy \rangle = \langle 2 \cdot 3, 1 \cdot 3, 1 \cdot 2 \rangle$.'
+          - problem: 'Let $f(x, y, z) = x^2 + y^2 + z^2$. Evaluate $\nabla f(1, -2, 2)$.'
+            answer: '$\langle 2, -4, 4 \rangle$'
+        constraints: "three-variable polynomials of degree at most 3; integer evaluation points"
+    diagnostic_exemplar:
+      problem: 'Let $f(x, y, z) = x^2 y e^{z}$. Evaluate $\nabla f(1, 2, 0)$.'
+      answer: '$\langle 4, 1, 2 \rangle$'
+      solution_sketch: '$\nabla f = \langle 2xy e^z,\; x^2 e^z,\; x^2 y e^z \rangle$; at $(1, 2, 0)$ this is $\langle 4, 1, 2 \rangle$.'
+    anki_seeds:
+      - front: 'Definition of the gradient $\nabla f$ for $f(x, y)$?'
+        back: '$\nabla f = \langle f_x, f_y \rangle$ — the vector of partial derivatives.'
+        type: basic
+      - front: 'Gradient of $f(x, y, z)$?'
+        back: '$\nabla f = \langle f_x, f_y, f_z \rangle$'
+        type: basic
+
+  - id: gradient-directional-derivatives
+    name: "Directional Derivatives and Steepest Ascent"
+    core: true
+    difficulty: 0.75
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 180
+    prerequisites:
+      - id: computing-the-gradient
+        weight: 0.8
+        key: true
+      - id: dot-product
+        weight: 0.6
+        key: true
+      - id: tangent-planes-linear-approximation
+        weight: 0.3
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Directional derivatives"
+        key_prerequisites: [computing-the-gradient, dot-product]
+        exemplars:
+          - problem: 'Find the directional derivative of $f(x, y) = x^2 + y^2$ at $(1, 2)$ in the direction of $\mathbf{v} = \langle 3, 4 \rangle$.'
+            answer: '$\frac{22}{5}$'
+            solution_sketch: '$\nabla f(1,2) = \langle 2, 4 \rangle$; unit vector $\mathbf{u} = \langle \frac{3}{5}, \frac{4}{5} \rangle$; $D_{\mathbf{u}} f = \frac{6}{5} + \frac{16}{5} = \frac{22}{5}$.'
+          - problem: 'Find the directional derivative of $f(x, y) = xy$ at $(2, -1)$ in the direction $\mathbf{u} = \langle \frac{1}{\sqrt{2}}, \frac{1}{\sqrt{2}} \rangle$.'
+            answer: '$\frac{1}{\sqrt{2}}$ (i.e. $\frac{\sqrt{2}}{2}$)'
+            solution_sketch: '$\nabla f(2, -1) = \langle -1, 2 \rangle$; $D_{\mathbf{u}} f = \frac{-1 + 2}{\sqrt{2}}$.'
+        constraints: "direction vectors are Pythagorean-triple multiples or unit diagonals; ALWAYS require normalization when |v| != 1"
+      - id: kp2
+        name: "Steepest ascent and descent"
+        key_prerequisites: [computing-the-gradient, dot-product]
+        exemplars:
+          - problem: 'In which direction does $f(x, y) = x^2 y$ increase fastest at $(2, 3)$, and what is that maximal rate?'
+            answer: 'Direction $\frac{1}{\sqrt{10}}\langle 3, 1 \rangle$; maximal rate $4\sqrt{10}$.'
+            solution_sketch: '$\nabla f(2,3) = \langle 12, 4 \rangle$; the max rate is $|\nabla f| = \sqrt{160} = 4\sqrt{10}$, in the direction of $\nabla f$, which normalizes to $\langle 3, 1 \rangle / \sqrt{10}$.'
+          - problem: 'In which direction does $f(x, y) = x^2 + 3y^2$ decrease fastest at $(2, 1)$, and what is the directional derivative in that direction?'
+            answer: 'Direction $-\frac{1}{\sqrt{13}}\langle 2, 3 \rangle$; directional derivative $-2\sqrt{13}$.'
+            solution_sketch: '$\nabla f(2,1) = \langle 4, 6 \rangle$; steepest descent is $-\nabla f$ normalized, and the rate there is $-|\nabla f| = -\sqrt{52} = -2\sqrt{13}$.'
+        constraints: "gradient magnitudes simplify to k*sqrt(m) with small squarefree m; ask for ascent or descent explicitly"
+      - id: kp3
+        name: "Extreme and zero values of the directional derivative"
+        key_prerequisites: [computing-the-gradient, dot-product]
+        exemplars:
+          - problem: 'Find the unit vectors $\mathbf{u}$ for which $D_{\mathbf{u}} f = 0$ at $(1, 2)$, where $f(x, y) = x^2 y$.'
+            answer: '$\pm\frac{1}{\sqrt{17}}\langle 1, -4 \rangle$'
+            solution_sketch: '$\nabla f(1,2) = \langle 4, 1 \rangle$; zero change happens perpendicular to the gradient, and $\langle 1, -4 \rangle \cdot \langle 4, 1 \rangle = 0$.'
+          - problem: 'If $|\nabla f(P)| = 6$, what are the largest and smallest possible values of $D_{\mathbf{u}} f(P)$ over all unit vectors $\mathbf{u}$?'
+            answer: '$6$ and $-6$'
+            solution_sketch: '$D_{\mathbf{u}} f = |\nabla f| \cos\theta$ ranges over $[-|\nabla f|, |\nabla f|]$.'
+        constraints: "gradients with small integer components; zero-change directions have integer components before normalizing"
+    diagnostic_exemplar:
+      problem: 'In which direction does $f(x, y) = x^2 y$ increase fastest at $(1, 2)$, and what is that maximal rate of increase?'
+      answer: 'Direction $\frac{1}{\sqrt{17}}\langle 4, 1 \rangle$; maximal rate $\sqrt{17}$.'
+      solution_sketch: '$\nabla f = \langle 2xy, x^2 \rangle$, so $\nabla f(1,2) = \langle 4, 1 \rangle$. The steepest ascent is along $\nabla f$, and the maximal directional derivative is $|\nabla f| = \sqrt{17}$.'
+    anki_seeds:
+      - front: 'Directional derivative of $f$ in the direction of unit vector $\mathbf{u}$?'
+        back: '$D_{\mathbf{u}} f = \nabla f \cdot \mathbf{u}$ ($\mathbf{u}$ must be a unit vector).'
+        type: basic
+      - front: 'In which direction does $f$ increase fastest, and at what rate?'
+        back: 'In the direction of $\nabla f$, at rate $|\nabla f|$.'
+        type: basic
+      - front: 'In which directions is the directional derivative zero?'
+        back: 'Perpendicular to $\nabla f$ — along the level curve through the point.'
+        type: basic
+
+  - id: gradients-and-level-curves
+    name: "Gradients and Level Curves"
+    core: false                # geometric interpretation; feeds only tangent planes to level surfaces
+    difficulty: 0.72
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 150
+    prerequisites:
+      - id: computing-the-gradient
+        weight: 0.7
+        key: true
+      - id: gradient-directional-derivatives
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Normal and tangent vectors to level curves"
+        key_prerequisites: [computing-the-gradient]
+        exemplars:
+          - problem: 'Find a vector normal to the curve $x^2 + y^2 = 25$ at the point $(3, 4)$.'
+            answer: '$\langle 6, 8 \rangle$ (any nonzero multiple, e.g. $\langle 3, 4 \rangle$ or $\langle -3, -4 \rangle$)'
+            solution_sketch: 'The curve is a level curve of $f = x^2 + y^2$, and $\nabla f(3,4) = \langle 6, 8 \rangle$ is normal to it.'
+          - problem: 'Find a vector tangent to the level curve of $f(x, y) = xy$ through $(2, 3)$.'
+            answer: '$\langle 2, -3 \rangle$ (any nonzero multiple)'
+            solution_sketch: '$\nabla f(2,3) = \langle 3, 2 \rangle$ is normal, so any vector perpendicular to it, such as $\langle 2, -3 \rangle$, is tangent.'
+        constraints: "level curves are circles, hyperbolas xy = c, or parabolas; points have integer coordinates on the curve"
+      - id: kp2
+        name: "Tangent lines to level curves"
+        key_prerequisites: [computing-the-gradient]
+        exemplars:
+          - problem: 'Find the tangent line to the circle $x^2 + y^2 = 25$ at $(3, 4)$ using the gradient.'
+            answer: '$3x + 4y = 25$'
+            solution_sketch: '$\nabla f(3,4) = \langle 6, 8 \rangle$ is normal: $6(x-3) + 8(y-4) = 0$ simplifies to $3x + 4y = 25$.'
+          - problem: 'Find the tangent line to the level curve of $f(x, y) = x^2 - y$ through $(2, 4)$.'
+            answer: '$4x - y = 4$'
+            solution_sketch: '$\nabla f(2,4) = \langle 4, -1 \rangle$; $4(x-2) - (y-4) = 0$. (This is the tangent to $y = x^2$ at $x = 2$.)'
+        constraints: "normal vectors have small integer components; tangent lines simplify to integer-coefficient equations"
+      - id: kp3
+        name: "Reading contour maps"
+        key_prerequisites: [computing-the-gradient, gradient-directional-derivatives]
+        exemplars:
+          - problem: 'On a contour map of $f$, the contour lines near $P$ are very close together. What does that say about $|\nabla f(P)|$?'
+            answer: '$|\nabla f(P)|$ is large — $f$ changes quickly there.'
+          - problem: 'Near $P$ the contours of $f$ run east-west and $f$ increases toward the north. In which direction does $\nabla f(P)$ point?'
+            answer: 'North — perpendicular to the contours, toward increasing $f$.'
+        constraints: "qualitative contour-map reasoning; answers are directions or comparative statements, no computation"
+    diagnostic_exemplar:
+      problem: 'Use the gradient to find the tangent line to the level curve of $f(x, y) = x^2 - xy$ through the point $(3, 1)$.'
+      answer: '$5x - 3y = 12$'
+      solution_sketch: '$\nabla f = \langle 2x - y, -x \rangle$, so $\nabla f(3,1) = \langle 5, -3 \rangle$ is normal to the level curve $f = 6$ there. The tangent line is $5(x - 3) - 3(y - 1) = 0$, i.e. $5x - 3y = 12$.'
+    anki_seeds:
+      - front: 'Geometric relation between $\nabla f$ and the level curve of $f$ through a point?'
+        back: '$\nabla f$ is perpendicular (normal) to the level curve, pointing toward increasing $f$.'
+        type: basic
+      - front: 'What do closely spaced contour lines indicate about $|\nabla f|$?'
+        back: 'A large $|\nabla f|$ — the function changes rapidly there.'
+        type: basic
+
+  - id: tangent-planes-level-surfaces
+    name: "Tangent Planes to Level Surfaces"
+    core: false                # geometric application of the gradient; terminal
+    difficulty: 0.78
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 180
+    prerequisites:
+      - id: gradients-and-level-curves
+        weight: 0.7
+        key: true
+      - id: computing-the-gradient
+        weight: 0.5
+        key: true
+      - id: lines-planes-space
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Normal vectors to surfaces via the gradient"
+        key_prerequisites: [computing-the-gradient, gradients-and-level-curves]
+        exemplars:
+          - problem: 'Find a normal vector to the surface $x^2 + y^2 + z^2 = 14$ at $(1, 2, 3)$.'
+            answer: '$\langle 2, 4, 6 \rangle$ (any nonzero multiple)'
+            solution_sketch: 'For $F = x^2 + y^2 + z^2$, $\nabla F(1,2,3) = \langle 2, 4, 6 \rangle$ is normal to the level surface.'
+          - problem: 'Write the surface $z = x^2 + y^2$ as a level surface and find a normal vector at $(1, 1, 2)$.'
+            answer: '$F(x,y,z) = x^2 + y^2 - z = 0$; normal $\langle 2, 2, -1 \rangle$.'
+            solution_sketch: '$\nabla F = \langle 2x, 2y, -1 \rangle$, evaluated at $(1, 1, 2)$.'
+        constraints: "quadric surfaces with integer points; graphs z = f(x,y) rewritten as F = f - z = 0"
+      - id: kp2
+        name: "Tangent planes to level surfaces"
+        key_prerequisites: [computing-the-gradient, gradients-and-level-curves, lines-planes-space]
+        exemplars:
+          - problem: 'Find the tangent plane to the level surface $x^2 + y^2 + z^2 = 14$ at $(1, 2, 3)$.'
+            answer: '$x + 2y + 3z = 14$'
+            solution_sketch: '$\nabla F(1,2,3) = \langle 2, 4, 6 \rangle$ is normal to the surface; $2(x-1) + 4(y-2) + 6(z-3) = 0$ simplifies by dividing by 2.'
+          - problem: 'Find the tangent plane to the surface $x^2 - y^2 + z^2 = 4$ at $(2, 1, 1)$.'
+            answer: '$2x - y + z = 4$'
+            solution_sketch: '$\nabla F(2,1,1) = \langle 4, -2, 2 \rangle$; $4(x-2) - 2(y-1) + 2(z-1) = 0$ divided by 2 gives $2x - y + z = 4$.'
+        constraints: "spheres and quadrics through integer points; plane equations simplify to integer coefficients"
+      - id: kp3
+        name: "Normal lines"
+        key_prerequisites: [computing-the-gradient, lines-planes-space]
+        exemplars:
+          - problem: 'Find parametric equations for the normal line to $x^2 + y^2 + z^2 = 14$ at $(1, 2, 3)$.'
+            answer: '$\mathbf{r}(t) = \langle 1 + 2t,\; 2 + 4t,\; 3 + 6t \rangle$ (direction $\langle 1, 2, 3 \rangle$ also acceptable)'
+            solution_sketch: 'The line passes through the point with direction $\nabla F(1,2,3) = \langle 2, 4, 6 \rangle$.'
+          - problem: 'Where does the normal line to the sphere $x^2 + y^2 + z^2 = 9$ at $(0, 0, 3)$ meet the $xy$-plane?'
+            answer: 'At the origin $(0, 0, 0)$ — every normal line of a sphere passes through its center.'
+            solution_sketch: 'The line is $\langle 0, 0, 3 + 6t \rangle$; $z = 0$ at $t = -\frac{1}{2}$, giving $(0, 0, 0)$.'
+        constraints: "direction vectors are gradients with integer components; intersection questions solve linearly in t"
+    diagnostic_exemplar:
+      problem: 'Find parametric equations for the normal line to the surface $x^2 + y^2 + z^2 = 9$ at $(2, 2, 1)$.'
+      answer: '$x = 2 + 2t,\; y = 2 + 2t,\; z = 1 + t$'
+      solution_sketch: '$\nabla F = \langle 2x, 2y, 2z \rangle$ gives $\langle 4, 4, 2 \rangle \parallel \langle 2, 2, 1 \rangle$ at the point; the normal line runs through $(2,2,1)$ in that direction.'
+    anki_seeds:
+      - front: 'Tangent plane to the level surface $F(x,y,z) = c$ at point $P$?'
+        back: '$\nabla F(P) \cdot (\mathbf{r} - P) = 0$ — the plane through $P$ with normal $\nabla F(P)$.'
+        type: basic
+      - front: 'How do you treat the graph $z = f(x, y)$ as a level surface?'
+        back: 'Set $F(x,y,z) = f(x,y) - z$; the graph is the level surface $F = 0$ with normal $\langle f_x, f_y, -1 \rangle$.'
+        type: basic
+
+  - id: multivariable-critical-points
+    name: "Critical Points of Multivariable Functions"
+    core: true
+    difficulty: 0.72
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 150
+    prerequisites:
+      - id: computing-the-gradient
+        weight: 0.7
+        key: true
+      - id: systems-substitution
+        weight: 0.4
+        key: false
+      - id: partial-derivatives
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "The definition and simple critical points"
+        key_prerequisites: [computing-the-gradient]
+        exemplars:
+          - problem: 'Find the critical point of $f(x, y) = xy - x$.'
+            answer: '$(0, 1)$'
+            solution_sketch: '$f_x = y - 1 = 0$ and $f_y = x = 0$.'
+          - problem: 'Find the critical point of $f(x, y) = x^2 + y^2$.'
+            answer: '$(0, 0)$'
+        constraints: "grad f = 0 solves immediately, one equation per variable; single critical point"
+      - id: kp2
+        name: "Critical points of quadratic functions"
+        key_prerequisites: [computing-the-gradient, systems-substitution]
+        exemplars:
+          - problem: 'Find the critical point of $f(x, y) = x^2 + y^2 - 2x - 6y + 14$ and the value of $f$ there.'
+            answer: 'Critical point $(1, 3)$; $f(1, 3) = 4$.'
+            solution_sketch: '$f_x = 2x - 2 = 0$ and $f_y = 2y - 6 = 0$ give $(1, 3)$; $f(1,3) = 1 + 9 - 2 - 18 + 14 = 4$.'
+          - problem: 'Find the critical point of $f(x, y) = x^2 + 2y^2 - 4x + 4y$ and the value of $f$ there.'
+            answer: 'Critical point $(2, -1)$; $f(2, -1) = -6$.'
+            solution_sketch: '$f_x = 2x - 4 = 0$, $f_y = 4y + 4 = 0$; $f(2,-1) = 4 + 2 - 8 - 4 = -6$.'
+        constraints: "quadratics with linear terms; the two equations decouple and give integer solutions"
+      - id: kp3
+        name: "Systems requiring factoring or substitution"
+        key_prerequisites: [computing-the-gradient, systems-substitution]
+        exemplars:
+          - problem: 'Find all critical points of $f(x, y) = x^3 - 3x + y^2$.'
+            answer: '$(1, 0)$ and $(-1, 0)$'
+            solution_sketch: '$f_x = 3x^2 - 3 = 0 \Rightarrow x = \pm 1$; $f_y = 2y = 0 \Rightarrow y = 0$.'
+          - problem: 'Find all critical points of $f(x, y) = x^3 + y^3 - 3xy$.'
+            answer: '$(0, 0)$ and $(1, 1)$'
+            solution_sketch: '$f_x = 3x^2 - 3y = 0$ gives $y = x^2$; substituting into $f_y = 3y^2 - 3x = 0$ gives $x^4 = x$, so $x = 0$ or $x = 1$.'
+        constraints: "the system grad f = 0 solves by substitution/factoring with integer solutions; at most 3 real critical points"
+    diagnostic_exemplar:
+      problem: 'Find all critical points of $f(x, y) = x^3 - 12x + y^2 - 4y$.'
+      answer: '$(2, 2)$ and $(-2, 2)$'
+      solution_sketch: '$f_x = 3x^2 - 12 = 0$ gives $x = \pm 2$; $f_y = 2y - 4 = 0$ gives $y = 2$.'
+    anki_seeds:
+      - front: 'Definition of a critical point of $f(x, y)$?'
+        back: 'A point where $\nabla f = \mathbf{0}$ (both partials vanish) or where a partial derivative fails to exist.'
+        type: basic
+      - front: 'Where can a local extremum of a differentiable $f(x, y)$ occur?'
+        back: 'Only at a critical point — where $\nabla f = \mathbf{0}$.'
+        type: basic
+
+  - id: multivariable-local-extrema
+    name: "Local Extrema and the Second-Derivative Test"
+    core: true
+    difficulty: 0.78
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 240
+    prerequisites:
+      - id: multivariable-critical-points
+        weight: 0.8
+        key: true
+      - id: partial-derivatives
+        weight: 0.6
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: "Computing the discriminant D"
+        key_prerequisites: [multivariable-critical-points, partial-derivatives]
+        exemplars:
+          - problem: 'Compute $D = f_{xx} f_{yy} - f_{xy}^2$ for $f(x, y) = x^3 - 3x + y^2$.'
+            answer: '$D = 12x$'
+            solution_sketch: '$f_{xx} = 6x$, $f_{yy} = 2$, $f_{xy} = 0$, so $D = (6x)(2) - 0 = 12x$.'
+          - problem: 'Compute $D$ for $f(x, y) = x^2 + xy + y^2$.'
+            answer: '$D = 3$'
+            solution_sketch: '$f_{xx} = 2$, $f_{yy} = 2$, $f_{xy} = 1$: $D = 4 - 1 = 3$.'
+        constraints: "second partials are constants or monomials; D is a constant or single monomial"
+      - id: kp2
+        name: "The second-derivative test"
+        key_prerequisites: [multivariable-critical-points, partial-derivatives]
+        exemplars:
+          - problem: 'Classify the critical points of $f(x, y) = x^3 - 3x + y^2$.'
+            answer: '$(1, 0)$ is a local minimum; $(-1, 0)$ is a saddle point.'
+            solution_sketch: '$D = f_{xx} f_{yy} - f_{xy}^2 = (6x)(2) - 0 = 12x$. At $(1,0)$: $D = 12 > 0$, $f_{xx} = 6 > 0 \Rightarrow$ min. At $(-1,0)$: $D = -12 < 0 \Rightarrow$ saddle.'
+          - problem: 'Classify the critical point of $f(x, y) = x^2 + xy + y^2$ at the origin.'
+            answer: 'Local (indeed global) minimum.'
+            solution_sketch: '$D = (2)(2) - 1^2 = 3 > 0$ and $f_{xx} = 2 > 0$.'
+          - problem: 'Classify the critical point of $f(x, y) = xy$ at the origin.'
+            answer: 'Saddle point.'
+            solution_sketch: '$D = (0)(0) - 1^2 = -1 < 0$.'
+        constraints: "D = f_xx f_yy - f_xy^2 evaluates to a nonzero integer at each critical point (test never inconclusive)"
+      - id: kp3
+        name: "Complete find-and-classify problems"
+        key_prerequisites: [multivariable-critical-points, partial-derivatives]
+        exemplars:
+          - problem: 'Find and classify all critical points of $f(x, y) = x^3 + y^3 - 3xy$.'
+            answer: '$(0, 0)$ is a saddle point; $(1, 1)$ is a local minimum with $f(1, 1) = -1$.'
+            solution_sketch: '$y = x^2$ from $f_x = 0$, then $x^4 = x$ gives $(0,0)$ and $(1,1)$. $D = 36xy - 9$: at $(0,0)$, $D = -9 < 0$; at $(1,1)$, $D = 27 > 0$ with $f_{xx} = 6 > 0$.'
+          - problem: 'Find and classify all critical points of $f(x, y) = x^4 + y^4 - 4xy$.'
+            answer: '$(0, 0)$ is a saddle point; $(1, 1)$ and $(-1, -1)$ are local minima with $f = -2$.'
+            solution_sketch: '$y = x^3$ and $x = y^3$ force $x^9 = x$, so $x = 0, \pm 1$. $D = 144x^2y^2 - 16$: negative at the origin, $128 > 0$ with $f_{xx} = 12 > 0$ at $(\pm 1, \pm 1)$.'
+        constraints: "2-3 critical points found by substitution; every classification decisive; report function values at extrema"
+    diagnostic_exemplar:
+      problem: 'Find and classify all critical points of $f(x, y) = x^3 - 6xy + 3y^2$.'
+      answer: '$(0, 0)$ is a saddle point; $(2, 2)$ is a local minimum with $f(2,2) = -4$.'
+      solution_sketch: '$f_y = -6x + 6y = 0$ gives $y = x$, and $f_x = 3x^2 - 6y = 0$ then gives $3x^2 - 6x = 0$, so $x = 0$ or $x = 2$. With $f_{xx} = 6x$, $f_{yy} = 6$, $f_{xy} = -6$: $D = 36x - 36$, which is $-36 < 0$ at $(0,0)$ (saddle) and $36 > 0$ with $f_{xx} = 12 > 0$ at $(2,2)$ (local minimum).'
+    anki_seeds:
+      - front: 'Second-derivative test discriminant for $f(x, y)$?'
+        back: '$D = f_{xx} f_{yy} - f_{xy}^2$, evaluated at the critical point.'
+        type: basic
+      - front: 'Second-derivative test outcomes: $D < 0$; $D > 0, f_{xx} > 0$; $D > 0, f_{xx} < 0$; $D = 0$?'
+        back: 'Saddle; local min; local max; inconclusive.'
+        type: basic
+
+  - id: absolute-extrema-closed-regions
+    name: "Absolute Extrema on Closed Regions"
+    core: false                # optimisation application; terminal
+    difficulty: 0.80
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 300
+    prerequisites:
+      - id: multivariable-local-extrema
+        weight: 0.7
+        key: true
+      - id: closed-interval-method
+        weight: 0.5
+        key: true
+      - id: multivariable-critical-points
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Linear objectives: extrema on the boundary"
+        key_prerequisites: [multivariable-critical-points, closed-interval-method]
+        exemplars:
+          - problem: 'Find the absolute extrema of $f(x, y) = 4 - x - y$ on the triangle with vertices $(0,0)$, $(2,0)$, $(0,2)$.'
+            answer: 'Maximum $4$ at $(0, 0)$; minimum $2$ at every point of the edge from $(2,0)$ to $(0,2)$.'
+            solution_sketch: '$f$ is linear (no interior critical points), so extremes occur on the boundary; on the hypotenuse $x + y = 2$, $f \equiv 2$.'
+          - problem: 'Find the absolute extrema of $f(x, y) = 2x + 3y$ on the square $[0,1] \times [0,1]$.'
+            answer: 'Maximum $5$ at $(1, 1)$; minimum $0$ at $(0, 0)$.'
+            solution_sketch: 'A linear function on a polygon attains its extremes at vertices; compare $f$ at the four corners.'
+        constraints: "linear objectives on triangles or squares; extremes at vertices or constant along one edge"
+      - id: kp2
+        name: "Disks: parametrized boundaries"
+        key_prerequisites: [multivariable-local-extrema, closed-interval-method]
+        exemplars:
+          - problem: 'Find the absolute maximum and minimum of $f(x, y) = x^2 - 2x + y^2$ on the disk $x^2 + y^2 \le 4$.'
+            answer: 'Absolute minimum $-1$ at $(1, 0)$; absolute maximum $8$ at $(-2, 0)$.'
+            solution_sketch: 'Interior: $\nabla f = 0$ at $(1, 0)$, $f = -1$. Boundary: on $x^2 + y^2 = 4$, $f = 4 - 2x$ with $x \in [-2, 2]$, so extremes $f = 0$ at $(2,0)$ and $f = 8$ at $(-2,0)$. Compare all candidates.'
+          - problem: 'Find the absolute extrema of $f(x, y) = x^2 + y^2$ on the disk $x^2 + y^2 \le 9$.'
+            answer: 'Minimum $0$ at the origin; maximum $9$ on the whole boundary circle.'
+            solution_sketch: 'The only interior critical point is $(0,0)$; on the boundary $f \equiv 9$.'
+        constraints: "on the boundary circle the objective reduces to one variable via x^2 + y^2 = r^2; candidates at integer points"
+      - id: kp3
+        name: "Interior critical points versus boundary candidates"
+        key_prerequisites: [multivariable-local-extrema, closed-interval-method]
+        exemplars:
+          - problem: 'Find the absolute extrema of $f(x, y) = x^2 + y^2 - 2x - 2y$ on the square $[0,2] \times [0,2]$.'
+            answer: 'Absolute minimum $-2$ at $(1, 1)$; absolute maximum $0$ at the four corners.'
+            solution_sketch: 'Interior critical point $(1,1)$ with $f = -2$. On each edge $f$ reduces to a one-variable quadratic; edge minima are $-1$, and all four corners give $f = 0$.'
+          - problem: 'Find the absolute extrema of $f(x, y) = xy - x - y + 3$ on the triangle with vertices $(0,0)$, $(2,0)$, $(0,4)$.'
+            answer: 'Absolute maximum $3$ at $(0, 0)$; absolute minimum $-1$ at $(0, 4)$.'
+            solution_sketch: 'Interior critical point $(1,1)$ with $f = 2$. Edges: on $x = 0$, $f = 3 - y \in [-1, 3]$; on $y = 0$, $f = 3 - x \in [1, 3]$; on $y = 4 - 2x$, $f = -2x^2 + 5x - 1$ with max $\frac{17}{8}$ at $x = \frac{5}{4}$. Comparing all candidates: max $3$, min $-1$.'
+        constraints: "regions are disks, rectangles, or triangles; boundary restriction reduces to one variable with exact endpoints; require comparing interior and boundary candidates"
+    diagnostic_exemplar:
+      problem: 'Find the absolute extrema of $f(x, y) = x^2 + y^2 - 2y$ on the disk $x^2 + y^2 \le 4$.'
+      answer: 'Absolute minimum $-1$ at $(0, 1)$; absolute maximum $8$ at $(0, -2)$.'
+      solution_sketch: 'Interior: $\nabla f = 0$ at $(0, 1)$, $f = -1$. Boundary: $f = 4 - 2y$, $y \in [-2, 2]$, giving $8$ at $(0,-2)$ and $0$ at $(0,2)$.'
+    anki_seeds:
+      - front: 'Why must $f$ attain absolute extrema on a closed bounded region?'
+        back: 'The Extreme Value Theorem: a continuous function on a closed, bounded region attains its max and min.'
+        type: basic
+      - front: 'Procedure for absolute extrema of $f$ on a closed region $D$?'
+        back: '1) Find interior critical points; 2) find extremes of $f$ restricted to the boundary; 3) compare all candidate values.'
+        type: basic
+
+  - id: applied-multivariable-optimization
+    name: "Applied Optimization in Several Variables"
+    core: false                # applied optimisation genre; terminal
+    difficulty: 0.81
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 300
+    prerequisites:
+      - id: multivariable-local-extrema
+        weight: 0.8
+        key: true
+      - id: basic-optimization
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Distance problems"
+        key_prerequisites: [multivariable-local-extrema]
+        exemplars:
+          - problem: 'Find the point on the plane $x + y + z = 3$ closest to the origin, and the minimum distance.'
+            answer: '$(1, 1, 1)$; distance $\sqrt{3}$.'
+            solution_sketch: 'Minimize $d^2 = x^2 + y^2 + (3 - x - y)^2$: setting both partials to zero gives $x = y = 3 - x - y$, so $x = y = z = 1$.'
+          - problem: 'Find the point on the plane $2x + y + z = 4$ closest to the origin, and the minimum distance.'
+            answer: '$\left(\frac{4}{3}, \frac{2}{3}, \frac{2}{3}\right)$; distance $\frac{2\sqrt{6}}{3}$.'
+            solution_sketch: 'Minimize $x^2 + y^2 + (4 - 2x - y)^2$; the critical point gives $x = \frac{4}{3}$, $y = z = \frac{2}{3}$, and $d^2 = \frac{8}{3}$.'
+        constraints: "minimize SQUARED distance; substitute the plane equation to get two free variables; answers integers or simple fractions/radicals"
+      - id: kp2
+        name: "Product and box problems"
+        key_prerequisites: [multivariable-local-extrema]
+        exemplars:
+          - problem: 'Three positive numbers sum to $30$. Maximize their product.'
+            answer: '$1000$, at $x = y = z = 10$.'
+            solution_sketch: 'Maximize $P = xy(30 - x - y)$: $P_x = P_y = 0$ gives $x = y = 10$, $z = 10$.'
+          - problem: 'An open-top rectangular box must have volume $32\,\text{m}^3$. Find the dimensions minimizing the material (base plus four sides).'
+            answer: '$4 \times 4 \times 2$ m (base $4 \times 4$, height $2$), using $48\,\text{m}^2$.'
+            solution_sketch: 'With base $x \times y$ and height $z = \frac{32}{xy}$, minimize $S = xy + \frac{64}{x} + \frac{64}{y}$: $S_x = y - \frac{64}{x^2} = 0$, $S_y = x - \frac{64}{y^2} = 0$ give $x = y = 4$, $z = 2$.'
+        constraints: "eliminate one variable with the given constraint, then solve grad = 0; dimensions come out as small integers"
+      - id: kp3
+        name: "Confirming the nature of the optimum"
+        key_prerequisites: [multivariable-local-extrema]
+        exemplars:
+          - problem: 'For $g(x, y) = x^2 + y^2 + (3 - x - y)^2$ (squared distance to the plane $x + y + z = 3$), use the second-derivative test to confirm the critical point $(1, 1)$ is a minimum.'
+            answer: '$g_{xx} = 4$, $g_{yy} = 4$, $g_{xy} = 2$, so $D = 16 - 4 = 12 > 0$ and $g_{xx} > 0$: a local (and global) minimum.'
+          - problem: 'For $P(x, y) = xy(30 - x - y)$, confirm that $(10, 10)$ gives a maximum.'
+            answer: 'At $(10, 10)$: $P_{xx} = -20$, $P_{yy} = -20$, $P_{xy} = -10$, so $D = 400 - 100 = 300 > 0$ with $P_{xx} < 0$: a local maximum.'
+            solution_sketch: '$P_{xx} = -2y$, $P_{yy} = -2x$, $P_{xy} = 30 - 2x - 2y$, evaluated at $(10,10)$.'
+        constraints: "second partials evaluate to integers; D nonzero so the test is decisive"
+    diagnostic_exemplar:
+      problem: 'An open-top rectangular box must have volume $108$ m$^3$. Find the dimensions that minimize the material used (base plus four sides).'
+      answer: 'Base $6 \times 6$ m with height $3$ m, using $108$ m$^2$ of material.'
+      solution_sketch: 'With base $x \times y$ and height $z = \frac{108}{xy}$, the material is $S = xy + 2xz + 2yz = xy + \frac{216}{y} + \frac{216}{x}$. Then $S_x = y - \frac{216}{x^2} = 0$ and $S_y = x - \frac{216}{y^2} = 0$ force $x = y$ and $x^3 = 216$, so $x = y = 6$ and $z = 3$; $S = 36 + 36 + 36 = 108$.'
+    anki_seeds:
+      - front: 'When optimizing distance, what should you minimize instead of the distance itself?'
+        back: 'The squared distance $d^2$ — it has the same minimizer and avoids square roots in the derivatives.'
+        type: basic
+      - front: 'Strategy for optimizing $f(x, y, z)$ with one equation constraint (without Lagrange)?'
+        back: 'Solve the constraint for one variable, substitute, and find critical points of the resulting two-variable function.'
+        type: basic
+
+  - id: lagrange-multipliers-single-constraint
+    name: "Lagrange Multipliers: One Constraint"
+    core: true
+    difficulty: 0.78
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 240
+    prerequisites:
+      - id: gradient-directional-derivatives
+        weight: 0.7
+        key: true
+      - id: multivariable-critical-points
+        weight: 0.5
+        key: true
+      - id: systems-substitution
+        weight: 0.3
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "The Lagrange condition"
+        key_prerequisites: [gradient-directional-derivatives, multivariable-critical-points]
+        exemplars:
+          - problem: 'Write down (do not solve) the Lagrange system for extremizing $f(x, y) = x^2 y$ subject to $x^2 + y^2 = 1$.'
+            answer: '$2xy = 2\lambda x$, $\;x^2 = 2\lambda y$, $\;x^2 + y^2 = 1$'
+            solution_sketch: '$\nabla f = \lambda \nabla g$ componentwise, plus the constraint itself.'
+          - problem: 'Find the extreme values of $f(x, y) = x + y$ on the circle $x^2 + y^2 = 2$.'
+            answer: 'Maximum $2$ at $(1, 1)$; minimum $-2$ at $(-1, -1)$.'
+            solution_sketch: '$1 = 2\lambda x$ and $1 = 2\lambda y$ force $x = y$; the constraint gives $x = \pm 1$.'
+        constraints: "systems written from grad f = lambda grad g; when solving, symmetry gives x = y and integer points"
+      - id: kp2
+        name: "Linear constraints"
+        key_prerequisites: [gradient-directional-derivatives, systems-substitution]
+        exemplars:
+          - problem: 'Use Lagrange multipliers to maximize $f(x, y) = xy$ subject to $x + y = 10$ ($x, y > 0$).'
+            answer: 'Maximum $25$ at $(5, 5)$.'
+            solution_sketch: '$\nabla f = \lambda \nabla g$: $y = \lambda$, $x = \lambda$, so $x = y$; the constraint gives $x = y = 5$.'
+          - problem: 'Use Lagrange multipliers to minimize $f(x, y) = x^2 + y^2$ subject to $x + 2y = 5$.'
+            answer: 'Minimum $5$ at $(1, 2)$.'
+            solution_sketch: '$2x = \lambda$, $2y = 2\lambda$ give $y = 2x$; then $x + 4x = 5$, so $(1, 2)$ and $f = 5$.'
+        constraints: "linear constraint, quadratic or product objective; solutions are integer points"
+      - id: kp3
+        name: "Circle constraints"
+        key_prerequisites: [gradient-directional-derivatives, multivariable-critical-points]
+        exemplars:
+          - problem: 'Find the extreme values of $f(x, y) = xy$ on the circle $x^2 + y^2 = 2$.'
+            answer: 'Maximum $1$ at $(1, 1)$ and $(-1, -1)$; minimum $-1$ at $(1, -1)$ and $(-1, 1)$.'
+            solution_sketch: '$y = 2\lambda x$, $x = 2\lambda y$ force $x^2 = y^2$; with $x^2 + y^2 = 2$, the four points $(\pm 1, \pm 1)$ result.'
+          - problem: 'Find the extreme values of $f(x, y) = 3x + 4y$ on the circle $x^2 + y^2 = 25$.'
+            answer: 'Maximum $25$ at $(3, 4)$; minimum $-25$ at $(-3, -4)$.'
+            solution_sketch: '$3 = 2\lambda x$, $4 = 2\lambda y$ give $\frac{x}{3} = \frac{y}{4}$; substituting into the constraint yields $\lambda = \pm\frac{1}{2}$ and the points $\pm(3, 4)$.'
+        constraints: "circle radius chosen so critical points are integer or half-integer; report BOTH max and min with locations"
+    diagnostic_exemplar:
+      problem: 'Use Lagrange multipliers to find the maximum value of $f(x, y) = x + 2y$ on the circle $x^2 + y^2 = 20$.'
+      answer: 'Maximum $10$, at $(2, 4)$.'
+      solution_sketch: '$\nabla f = \lambda \nabla g$ gives $1 = 2\lambda x$ and $2 = 2\lambda y$, so $y = 2x$. Substituting into $x^2 + y^2 = 20$ gives $5x^2 = 20$, $x = \pm 2$; $f(2,4) = 10$ and $f(-2,-4) = -10$.'
+    anki_seeds:
+      - front: 'Lagrange multiplier condition for extremizing $f$ subject to $g = c$?'
+        back: '$\nabla f = \lambda \nabla g$ together with the constraint $g = c$.'
+        type: basic
+      - front: 'Geometric picture behind Lagrange multipliers?'
+        back: 'At a constrained extremum the level curve of $f$ is tangent to the constraint curve, so the two gradients are parallel.'
+        type: basic
+
+  - id: lagrange-multipliers
+    name: "Lagrange Multipliers: Harder Problems and Two Constraints"
+    core: false                # harder-problem extension of the single-constraint method; terminal
+    difficulty: 0.84
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 300
+    prerequisites:
+      - id: lagrange-multipliers-single-constraint
+        weight: 0.8
+        key: true
+      - id: multivariable-local-extrema
+        weight: 0.5
+        key: true
+      - id: systems-elimination
+        weight: 0.3
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Three variables and applied problems"
+        key_prerequisites: [lagrange-multipliers-single-constraint, multivariable-local-extrema]
+        exemplars:
+          - problem: 'Maximize $V = xyz$ subject to $x + y + z = 12$ with $x, y, z > 0$.'
+            answer: 'Maximum $64$ at $x = y = z = 4$.'
+            solution_sketch: '$yz = \lambda$, $xz = \lambda$, $xy = \lambda$ force $x = y = z$ (all positive); constraint gives $4$ each.'
+          - problem: 'Use Lagrange multipliers to find the minimum distance from the origin to the plane $x + 2y + 2z = 9$.'
+            answer: '$3$ (attained at $(1, 2, 2)$)'
+            solution_sketch: 'Minimize $x^2 + y^2 + z^2$: $2x = \lambda$, $2y = 2\lambda$, $2z = 2\lambda$ give $y = z = 2x$; then $9x = 9$, point $(1, 2, 2)$, distance $\sqrt{1 + 4 + 4} = 3$.'
+        constraints: "symmetric objectives so the multiplier system solves by ratios; distances come out as integers or simple radicals"
+      - id: kp2
+        name: "Harder constraints and exceptional cases"
+        key_prerequisites: [lagrange-multipliers-single-constraint, multivariable-local-extrema]
+        exemplars:
+          - problem: 'Find the extreme values of $f(x, y) = xy$ on the ellipse $\frac{x^2}{8} + \frac{y^2}{2} = 1$.'
+            answer: 'Maximum $2$ at $(2, 1)$ and $(-2, -1)$; minimum $-2$ at $(2, -1)$ and $(-2, 1)$.'
+            solution_sketch: '$y = \lambda \frac{x}{4}$, $x = \lambda y$ give $\lambda = \pm 2$ and $x = \pm 2y$; substituting into the ellipse yields $y = \pm 1$, $x = \pm 2$.'
+          - problem: 'Find the extreme values of $f(x, y) = x^2 y$ on the circle $x^2 + y^2 = 3$.'
+            answer: 'Maximum $2$ at $(\pm\sqrt{2}, 1)$; minimum $-2$ at $(\pm\sqrt{2}, -1)$. (The points $(0, \pm\sqrt{3})$ give the intermediate value $0$.)'
+            solution_sketch: '$2xy = 2\lambda x$: either $x = 0$ (value $0$) or $y = \lambda$; then $x^2 = 2\lambda y = 2y^2$, and $3y^2 = 3$ gives $y = \pm 1$, $x^2 = 2$. Do not drop the $x = 0$ branch.'
+        constraints: "ellipse or circle constraints; the multiplier system branches (x = 0 case must be checked); answers exact with small radicals"
+      - id: kp3
+        name: "Two constraints"
+        key_prerequisites: [lagrange-multipliers-single-constraint, multivariable-local-extrema]
+        exemplars:
+          - problem: 'Find the extreme values of $f(x, y, z) = x + y + z$ on the circle where the sphere $x^2 + y^2 + z^2 = 4$ meets the plane $z = 1$.'
+            answer: 'Maximum $1 + \sqrt{6}$ at $\left(\frac{\sqrt{6}}{2}, \frac{\sqrt{6}}{2}, 1\right)$; minimum $1 - \sqrt{6}$ at $\left(-\frac{\sqrt{6}}{2}, -\frac{\sqrt{6}}{2}, 1\right)$.'
+            solution_sketch: '$\nabla f = \lambda \nabla g + \mu \nabla h$: $1 = 2\lambda x$, $1 = 2\lambda y$ force $x = y$; with $z = 1$, $2x^2 = 3$ gives $x = \pm\frac{\sqrt{6}}{2}$ and $f = 2x + 1$.'
+          - problem: 'Use Lagrange multipliers to minimize $x^2 + y^2 + z^2$ subject to $x + y + z = 6$ and $x - y = 0$.'
+            answer: 'Minimum $12$ at $(2, 2, 2)$ (distance $2\sqrt{3}$ from the origin).'
+            solution_sketch: '$2x = \lambda + \mu$, $2y = \lambda - \mu$, $2z = \lambda$; adding the first two gives $x + y = \lambda = 2z$, and with $x = y$ the constraints force $x = y = z = 2$.'
+        constraints: "constraints are a plane plus a sphere/plane; the system stays linear after symmetry reductions; answers integers or single radicals"
+    diagnostic_exemplar:
+      problem: 'Minimize $f(x, y, z) = x^2 + y^2 + z^2$ subject to $x + y + z = 3$ and $x - y = 0$.'
+      answer: 'Minimum $3$ at $(1, 1, 1)$.'
+      solution_sketch: '$2x = \lambda + \mu$, $2y = \lambda - \mu$, $2z = \lambda$ with $x = y$ give $x = y = z$; the plane constraint forces $(1,1,1)$.'
+    anki_seeds:
+      - front: 'Lagrange condition for extremizing $f$ subject to TWO constraints $g = c$, $h = d$?'
+        back: '$\nabla f = \lambda \nabla g + \mu \nabla h$ together with both constraints.'
+        type: basic
+      - front: 'Common pitfall when solving $\nabla f = \lambda \nabla g$ by dividing equations?'
+        back: 'Losing solutions where a variable (or $\nabla g$) is zero — check the excluded branches separately.'
+        type: basic

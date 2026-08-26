@@ -1,0 +1,676 @@
+unit: rings
+course: abstract-algebra
+module: "Rings"
+topics:
+  - id: ring-axioms-examples
+    name: "Ring Axioms and Examples"
+    core: true
+    difficulty: 0.62
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 180
+    prerequisites:
+      - id: elementary-group-properties
+        weight: 0.7
+        key: true
+      - id: modular-arithmetic
+        weight: 0.6
+        key: true
+      - id: distributive-property
+        weight: 0.3
+        key: false
+      # Phase C: the ring axioms cite "abelian group under +" as a definition; the
+      # concept is taught in proofs/abelian-groups.
+      - id: abelian-groups
+        weight: 0.3
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "The axioms; rings vs non-rings"
+        key_prerequisites: [elementary-group-properties, distributive-property]
+        exemplars:
+          - problem: 'List the ring axioms: what structure do $(R, +)$ and $(R, \cdot)$ carry, and what links them?'
+            answer: '$(R,+)$ is an abelian group, multiplication is associative, and the two distributive laws $a(b+c) = ab+ac$, $(a+b)c = ac+bc$ hold.'
+            solution_sketch: 'Commutative multiplication and unity are extra properties, not part of the bare definition.'
+          - problem: 'Is the set of odd integers a ring under the usual operations?'
+            answer: 'No: it is not closed under addition ($1 + 1 = 2$ is even), so $(R,+)$ is not a group.'
+            solution_sketch: 'Check additive closure first.'
+        constraints: "verify/refute ring structure for subsets of Z, Q, Z_n; identify which axiom fails"
+      - id: kp2
+        name: "The standard examples: Z, Z_n, 2Z, Z[x], Z[sqrt(2)]"
+        key_prerequisites: [modular-arithmetic]
+        exemplars:
+          - problem: 'Does the ring $2\mathbb{Z}$ of even integers have a multiplicative identity?'
+            answer: 'No: $2n \cdot u = 2n$ for all $n$ would force $u = 1 \notin 2\mathbb{Z}$.'
+            solution_sketch: 'A ring need not have unity; $2\mathbb{Z}$ is the standard example.'
+          - problem: 'In $\mathbb{Z}[\sqrt{2}] = \{a + b\sqrt{2} : a, b \in \mathbb{Z}\}$, compute $(1 + 2\sqrt{2})(3 - \sqrt{2})$.'
+            answer: '$-1 + 5\sqrt{2}$'
+            solution_sketch: 'Expand: $3 - \sqrt2 + 6\sqrt2 - 2\cdot 2 = (3 - 4) + 5\sqrt2$.'
+        constraints: "arithmetic in Z_n, 2Z, Z[sqrt(2)]; note which have unity and which are commutative"
+      - id: kp3
+        name: "Basic consequences: 0-multiplication, negatives"
+        key_prerequisites: [elementary-group-properties, distributive-property]
+        exemplars:
+          - problem: 'Prove that $a \cdot 0 = 0$ in any ring.'
+            answer: '$a\cdot 0 = a(0+0) = a\cdot 0 + a\cdot 0$; subtract $a \cdot 0$ from both sides.'
+            solution_sketch: 'Distribute over $0 = 0 + 0$ and cancel in the additive group.'
+          - problem: 'Prove that $(-a)b = -(ab)$.'
+            answer: '$ab + (-a)b = (a + (-a))b = 0\cdot b = 0$, so $(-a)b$ is the additive inverse of $ab$.'
+            solution_sketch: 'Distribute $(a + (-a))b$ and use uniqueness of additive inverses.'
+        constraints: "two-line consequences of distributivity; cite each axiom used"
+    diagnostic_exemplar:
+      problem: 'Prove that $(-a)b = -(ab)$ in any ring $R$, naming the axioms you use, and illustrate the identity in $\mathbb{Z}_{10}$ with $a = 3$, $b = 7$.'
+      answer: 'By distributivity, $ab + (-a)b = (a + (-a))b = 0 \cdot b$, and $0 \cdot b = 0$ (from $0b = (0+0)b = 0b + 0b$ and cancellation in the abelian group $(R,+)$). So $(-a)b$ is an additive inverse of $ab$, and additive inverses are unique, hence $(-a)b = -(ab)$. In $\mathbb{Z}_{10}$: $-3 = 7$, so $(-3) \cdot 7 = 49 \equiv 9$, while $3 \cdot 7 = 21 \equiv 1$ and $-1 = 9$ — both sides equal $9$.'
+      solution_sketch: 'Use distributivity to show $ab + (-a)b = 0$, together with $0 \cdot b = 0$ and uniqueness of additive inverses; then check both sides numerically mod $10$.'
+    anki_seeds:
+      - front: "Ring axioms in one line?"
+        back: "Abelian group under $+$, associative multiplication, and both distributive laws."
+        type: basic
+      - front: "Standard example of a ring without unity?"
+        back: "$2\\mathbb{Z}$, the even integers."
+        type: basic
+      - front: "In any ring, $a \\cdot 0 = $ ?"
+        back: "$0$ (proved from distributivity over $0 = 0 + 0$)."
+        type: basic
+
+  - id: integral-domains-zero-divisors
+    name: "Integral Domains and Zero Divisors"
+    core: true
+    difficulty: 0.66
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 150
+    prerequisites:
+      - id: ring-axioms-examples
+        weight: 0.9
+        key: true
+      - id: prime-factorization
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Finding zero divisors and units in Z_n"
+        key_prerequisites: [ring-axioms-examples]
+        exemplars:
+          - problem: 'List the zero divisors of $\mathbb{Z}_6$.'
+            answer: '$2, 3, 4$'
+            solution_sketch: '$2\cdot3 = 0$, $3\cdot4 = 12 = 0$; the elements sharing a factor with $6$ are the zero divisors.'
+          - problem: 'List the units of $\mathbb{Z}_6$.'
+            answer: '$1, 5$'
+            solution_sketch: 'Units are the residues coprime to $6$; every nonzero element of $\mathbb{Z}_n$ is a unit or a zero divisor.'
+        constraints: "Z_n for n <= 20; zero divisor iff gcd(a, n) > 1 (a nonzero)"
+      - id: kp2
+        name: "Integral domains and cancellation"
+        key_prerequisites: [ring-axioms-examples]
+        exemplars:
+          - problem: 'For which $n > 1$ is $\mathbb{Z}_n$ an integral domain?'
+            answer: 'Exactly the primes.'
+            solution_sketch: 'Composite $n = ab$ gives zero divisors $a, b$; prime $p$ has none since $p \mid ab \implies p \mid a$ or $p \mid b$.'
+          - problem: 'Prove that cancellation holds in an integral domain: $ab = ac, a \neq 0 \implies b = c$.'
+            answer: '$a(b - c) = 0$ and $a \neq 0$ force $b - c = 0$.'
+            solution_sketch: 'Factor and use the no-zero-divisors property.'
+        constraints: "domain verdicts for Z_n, Z, Z[x], products like Z x Z; cancellation proofs"
+      - id: kp3
+        name: "Solving equations in the presence of zero divisors"
+        key_prerequisites: [ring-axioms-examples]
+        exemplars:
+          - problem: 'Find all solutions of $2x = 0$ in $\mathbb{Z}_6$.'
+            answer: '$x = 0$ and $x = 3$'
+            solution_sketch: 'Zero divisors break the "only trivial solution" rule: $2 \cdot 3 = 6 = 0$.'
+          - problem: 'Find all idempotents of $\mathbb{Z}_6$ (elements with $x^2 = x$).'
+            answer: '$0, 1, 3, 4$'
+            solution_sketch: 'Test all six: $3^2 = 9 = 3$, $4^2 = 16 = 4$; the others fail.'
+        constraints: "equations x^2 = x, ax = 0, x^2 = 1 in Z_n, n <= 12; expect multiple roots"
+    diagnostic_exemplar:
+      problem: 'Find all solutions of $x^2 = x$ in $\mathbb{Z}_{12}$, and use one of them to decide whether $\mathbb{Z}_{12}$ is an integral domain.'
+      answer: '$x^2 = x$ means $x(x-1) \equiv 0 \pmod{12}$; checking the residues gives $x = 0, 1, 4, 9$ (indeed $4^2 = 16 \equiv 4$ and $9^2 = 81 \equiv 9$). The solution $x = 4$ exhibits zero divisors: $4 \cdot 3 = 12 \equiv 0$ with $4 \ne 0$ and $3 \ne 0$. So $\mathbb{Z}_{12}$ is not an integral domain.'
+      solution_sketch: 'Solve $x(x-1) \equiv 0 \pmod{12}$ over the residues; the nontrivial idempotents $4$ and $9$ exist precisely because $12$ splits into coprime factors, and each one hands you a zero divisor.'
+    anki_seeds:
+      - front: "$\\mathbb{Z}_n$ is an integral domain iff..."
+        back: "$n$ is prime."
+        type: basic
+      - front: "In $\\mathbb{Z}_n$, every nonzero element is either a ______ or a ______."
+        back: "Unit (if coprime to $n$) or zero divisor (if not)."
+        type: basic
+
+  - id: units-in-modular-rings
+    name: "Units, Euler's Phi, and Modular Inverses"
+    core: true
+    difficulty: 0.66
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 150
+    prerequisites:
+      - id: integral-domains-zero-divisors
+        weight: 0.7
+        key: true
+      - id: euclidean-algorithm
+        weight: 0.8
+        key: true
+      - id: prime-factorization
+        weight: 0.4
+        key: false
+      - id: fermat-euler-theorems
+        weight: 0.6
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: "Counting units: Euler's phi function"
+        key_prerequisites: [integral-domains-zero-divisors, prime-factorization]
+        exemplars:
+          - problem: 'Compute $\varphi(20)$, the number of units of $\mathbb{Z}_{20}$.'
+            answer: "8"
+            solution_sketch: '$\varphi(20) = \varphi(4)\varphi(5) = 2 \cdot 4 = 8$.'
+          - problem: 'Compute $\varphi(36)$.'
+            answer: "12"
+            solution_sketch: '$\varphi(36) = 36(1 - 1/2)(1 - 1/3) = 36 \cdot \tfrac12 \cdot \tfrac23 = 12$.'
+        constraints: "n <= 100 with 2-3 prime factors; product formula expected"
+      - id: kp2
+        name: "Inverses via the extended Euclidean algorithm"
+        key_prerequisites: [euclidean-algorithm]
+        exemplars:
+          - problem: 'Find the inverse of $7$ in $\mathbb{Z}_{26}$.'
+            answer: "15"
+            solution_sketch: 'Extended Euclid on $(26, 7)$: $26 = 3\cdot7 + 5$, $7 = 5 + 2$, $5 = 2\cdot2 + 1$; back-substitute to get $1 = 15\cdot7 - 4\cdot26$, so $7^{-1} \equiv 15$.'
+          - problem: 'Find the inverse of $4$ in $\mathbb{Z}_7$.'
+            answer: "2"
+            solution_sketch: '$4 \cdot 2 = 8 \equiv 1 \pmod 7$.'
+        constraints: "moduli <= 40; gcd(a, n) = 1 guaranteed; answer as least positive residue"
+      - id: kp3
+        name: "The unit group U(n) and Euler's theorem"
+        key_prerequisites: [integral-domains-zero-divisors, euclidean-algorithm, fermat-euler-theorems]
+        exemplars:
+          - problem: 'Use Euler''s theorem to compute $3^8 \bmod 20$.'
+            answer: "1"
+            solution_sketch: '$\varphi(20) = 8$ and $\gcd(3,20) = 1$, so $3^{\varphi(20)} \equiv 1$.'
+          - problem: 'The group $U(9)$ is cyclic. Name a generator.'
+            answer: "2"
+            solution_sketch: '$|U(9)| = \varphi(9) = 6$, and the powers of $2$ mod $9$ are $2, 4, 8, 7, 5, 1$ — order $6$, so $2$ generates.'
+        constraints: "Euler reductions with n <= 40; cyclicity checks of U(n) for n <= 12"
+    diagnostic_exemplar:
+      problem: 'Compute $\varphi(15)$, then use Euler''s theorem in the form $a^{-1} = a^{\varphi(n)-1}$ to find the inverse of $7$ in $\mathbb{Z}_{15}$.'
+      answer: '13'
+      solution_sketch: '$\varphi(15) = \varphi(3)\varphi(5) = 2 \cdot 4 = 8$, so $7^{-1} = 7^{7} \bmod 15$. From $7^2 = 49 \equiv 4$ and $7^4 \equiv 4^2 = 16 \equiv 1$, we get $7^{7} = 7^{4} \cdot 7^{2} \cdot 7 \equiv 1 \cdot 4 \cdot 7 = 28 \equiv 13$. Check: $7 \cdot 13 = 91 = 6 \cdot 15 + 1$.'
+    anki_seeds:
+      - front: "$a$ is a unit of $\\mathbb{Z}_n$ iff..."
+        back: "$\\gcd(a, n) = 1$; there are $\\varphi(n)$ units."
+        type: basic
+      - front: "Euler's theorem?"
+        back: "If $\\gcd(a, n) = 1$ then $a^{\\varphi(n)} \\equiv 1 \\pmod n$."
+        type: basic
+      - front: "Tool for computing $a^{-1} \\bmod n$?"
+        back: "Extended Euclidean algorithm: write $1 = ax + ny$; then $a^{-1} \\equiv x$."
+        type: basic
+
+  - id: ring-homomorphisms-ideals
+    name: "Ring Homomorphisms and Ideals"
+    core: true
+    difficulty: 0.72
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 240
+    prerequisites:
+      - id: ring-axioms-examples
+        weight: 0.8
+        key: true
+      - id: kernels-images
+        weight: 0.7
+        key: true
+      # the principal-ideal exemplars invoke Bezout by name; inherited gcd gives
+      # the gcd but not the representation ax + by = gcd.
+      - id: euclidean-algorithm
+        weight: 0.3
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Ring homomorphisms and their kernels"
+        key_prerequisites: [ring-axioms-examples, kernels-images]
+        exemplars:
+          - problem: 'Verify that reduction mod $n$, $\varphi : \mathbb{Z} \to \mathbb{Z}_n$, is a ring homomorphism, and find its kernel.'
+            answer: 'It preserves $+$ and $\cdot$ by the rules of modular arithmetic; $\ker \varphi = n\mathbb{Z}$.'
+            solution_sketch: '$(a + b) \bmod n = (a \bmod n + b \bmod n) \bmod n$ and similarly for products; the kernel is the multiples of $n$.'
+          - problem: 'Is $\varphi : \mathbb{Z} \to \mathbb{Z}$, $\varphi(x) = 2x$, a ring homomorphism?'
+            answer: 'No: $\varphi(1 \cdot 1) = 2$ but $\varphi(1)\varphi(1) = 4$.'
+            solution_sketch: 'Additivity holds but multiplicativity fails.'
+        constraints: "verify both operations; evaluation and reduction maps; one failing example per set"
+      - id: kp2
+        name: "Ideals and the absorption property"
+        key_prerequisites: [ring-axioms-examples]
+        exemplars:
+          - problem: 'Prove that $n\mathbb{Z}$ is an ideal of $\mathbb{Z}$.'
+            answer: 'It is an additive subgroup, and $r \cdot nk = n(rk) \in n\mathbb{Z}$ for any $r \in \mathbb{Z}$ — absorption holds.'
+            solution_sketch: 'Subgroup test plus the absorption check $rI \subseteq I$.'
+          - problem: 'Is $\mathbb{Z}$ an ideal of $\mathbb{Q}$?'
+            answer: 'No: $\tfrac12 \cdot 1 = \tfrac12 \notin \mathbb{Z}$, so absorption fails (it is only a subring).'
+            solution_sketch: 'Ideals must absorb multiplication by every ring element, including fractions.'
+        constraints: "subring vs ideal distinctions; absorption checks in Z, Q, Z[x]"
+      - id: kp3
+        name: "Principal and generated ideals"
+        key_prerequisites: [ring-axioms-examples]
+        exemplars:
+          - problem: 'In $\mathbb{Z}$, identify the ideal generated by $4$ and $6$.'
+            answer: '$\langle 4, 6 \rangle = 2\mathbb{Z}$'
+            solution_sketch: 'Integer combinations $4x + 6y$ are exactly the multiples of $\gcd(4,6) = 2$ (Bezout).'
+          - problem: 'Every ideal of $\mathbb{Z}$ is principal. Sketch the proof.'
+            answer: 'A nonzero ideal contains a least positive element $d$; division with remainder shows every element is a multiple of $d$, so $I = d\mathbb{Z}$.'
+            solution_sketch: 'Well-ordering gives $d$; if $a \in I$ then $a = qd + r$ with $0 \le r < d$ and $r = a - qd \in I$ forces $r = 0$.'
+        constraints: "ideals of Z via gcd; the division-algorithm argument"
+    diagnostic_exemplar:
+      problem: 'Let $\varphi : \mathbb{Z}[x] \to \mathbb{Z}_3$ send $p$ to $p(0) \bmod 3$. Show that $\varphi$ is a ring homomorphism and identify $\ker \varphi$ as an ideal generated by two elements.'
+      answer: '$\varphi$ is the composite of evaluation at $0$ (which preserves sums and products, since $(p+q)(0) = p(0)+q(0)$ and $(pq)(0) = p(0)q(0)$) with reduction mod $3$, itself a ring homomorphism; so $\varphi$ preserves $+$ and $\cdot$. Its kernel is $\{p : 3 \mid p(0)\}$. Writing $p(x) = p(0) + x\,q(x)$, any such $p$ is $3k + x q(x) \in \langle 3, x\rangle$; conversely every element of $\langle 3, x \rangle$ has constant term divisible by $3$. Hence $\ker \varphi = \langle 3, x \rangle$, an ideal by absorption.'
+      solution_sketch: 'Composite of two ring homomorphisms. For the kernel, split $p$ into its constant term and a multiple of $x$, then prove both inclusions.'
+    anki_seeds:
+      - front: "Extra condition an ideal satisfies beyond being a subring?"
+        back: "Absorption: $ra \\in I$ for every $r$ in the ring and $a \\in I$."
+        type: basic
+      - front: "Every ideal of $\\mathbb{Z}$ has the form..."
+        back: "$n\\mathbb{Z}$ for some $n \\ge 0$ ($\\mathbb{Z}$ is a principal ideal ring)."
+        type: basic
+      - front: "Kernel of a ring homomorphism is always a(n)..."
+        back: "Ideal of the domain."
+        type: basic
+
+  - id: quotient-rings
+    name: "Quotient Rings"
+    core: true
+    difficulty: 0.76
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 210
+    prerequisites:
+      - id: ring-homomorphisms-ideals
+        weight: 0.9
+        key: true
+      - id: quotient-groups
+        weight: 0.7
+        key: true
+      - id: polynomial-rings
+        weight: 0.7
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: "The construction R/I"
+        key_prerequisites: [ring-homomorphisms-ideals, quotient-groups]
+        exemplars:
+          - problem: 'Describe the elements and operations of $\mathbb{Z}/6\mathbb{Z}$ and identify the ring.'
+            answer: 'Cosets $k + 6\mathbb{Z}$ for $k = 0,\dots,5$, added and multiplied via representatives; it is $\mathbb{Z}_6$.'
+            solution_sketch: 'The ideal $6\mathbb{Z}$ collapses multiples of $6$ to zero; coset arithmetic is mod-$6$ arithmetic.'
+          - problem: 'Why must $I$ be an ideal (not just a subring) for multiplication on $R/I$ to be well defined?'
+            answer: 'Changing representatives $a \to a + i$ changes $ab$ by $ib$, which must lie in $I$ — that is absorption.'
+            solution_sketch: '$(a+i)(b+j) = ab + (ib + aj + ij)$; the bracket lies in $I$ exactly when $I$ absorbs products.'
+        constraints: "construction-level reasoning; Z/nZ examples"
+      - id: kp2
+        name: "Computing in Z_p[x]/(f): small quotient rings"
+        key_prerequisites: [ring-homomorphisms-ideals, polynomial-rings]
+        exemplars:
+          - problem: 'How many elements does $\mathbb{Z}_2[x]/\langle x^2 + x + 1 \rangle$ have? List them.'
+            answer: '$4$: the cosets of $0, 1, x, x+1$.'
+            solution_sketch: 'Every polynomial reduces mod $x^2+x+1$ to a remainder of degree $< 2$ with coefficients in $\mathbb{Z}_2$: $2^2 = 4$ remainders.'
+          - problem: 'In $\mathbb{Z}_2[x]/\langle x^2+x+1 \rangle$, writing $\alpha$ for the coset of $x$, compute $\alpha^2$.'
+            answer: '$\alpha + 1$'
+            solution_sketch: '$x^2 \equiv -(x + 1) = x + 1$ in characteristic $2$.'
+        constraints: "Z_2 or Z_3 coefficients, quotient by degree-2 polynomials; count = p^deg"
+      - id: kp3
+        name: "Reduction computations in Z[x]/(f)"
+        key_prerequisites: [ring-homomorphisms-ideals, polynomial-rings]
+        exemplars:
+          - problem: 'In $\mathbb{Z}[x]/\langle x^2 + 1 \rangle$, compute $(1 + x)(2 + x)$ in reduced form.'
+            answer: '$1 + 3x$'
+            solution_sketch: '$(1+x)(2+x) = 2 + 3x + x^2 \equiv 2 + 3x - 1 = 1 + 3x$ using $x^2 \equiv -1$.'
+          - problem: 'Identify the ring $\mathbb{Z}[x]/\langle x \rangle$.'
+            answer: '$\mathbb{Z}$'
+            solution_sketch: 'Evaluation at $0$ is onto $\mathbb{Z}$ with kernel $\langle x \rangle$; apply the first isomorphism theorem for rings.'
+        constraints: "reduce products/powers modulo x^2 + c; identify quotients via evaluation maps"
+    diagnostic_exemplar:
+      problem: 'In $\mathbb{Z}_2[x]/\langle x^2 + x + 1 \rangle$ with $\alpha$ the coset of $x$, compute $(\alpha + 1)^2$ in reduced form.'
+      answer: '$\alpha$'
+      solution_sketch: '$(\alpha+1)^2 = \alpha^2 + 1$ (char $2$) $= (\alpha + 1) + 1 = \alpha$.'
+    anki_seeds:
+      - front: "Number of elements of $\\mathbb{Z}_p[x]/\\langle f \\rangle$, $\\deg f = d$?"
+        back: "$p^d$ — one coset per remainder of degree $< d$."
+        type: basic
+      - front: "Why must $I$ be an ideal for $R/I$ to be a ring?"
+        back: "Absorption makes coset multiplication well defined: representative changes shift $ab$ by elements of $I$."
+        type: basic
+
+  - id: polynomial-rings
+    name: "Polynomial Rings"
+    core: true
+    difficulty: 0.70
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 180
+    prerequisites:
+      - id: ring-axioms-examples
+        weight: 0.7
+        key: true
+      - id: integral-domains-zero-divisors
+        weight: 0.6
+        key: true
+      - id: polynomial-division
+        weight: 0.6
+        key: true
+      - id: remainder-factor-theorems
+        weight: 0.5
+        key: true
+      - id: synthetic-division
+        weight: 0.2
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Degrees and coefficient arithmetic over Z_n"
+        key_prerequisites: [ring-axioms-examples, integral-domains-zero-divisors]
+        exemplars:
+          - problem: 'In $\mathbb{Z}_6[x]$, compute $(2x + 1)(3x + 4)$ and note the degree.'
+            answer: '$6x^2 + 11x + 4 = 5x + 4$ — degree $1$, not $2$.'
+            solution_sketch: '$6 \equiv 0$ and $11 \equiv 5$ mod $6$: zero divisors in the coefficients can kill the leading term.'
+          - problem: 'If $D$ is an integral domain and $f, g \neq 0$ in $D[x]$, what is $\deg(fg)$?'
+            answer: '$\deg f + \deg g$'
+            solution_sketch: 'Leading coefficients multiply to something nonzero in a domain.'
+        constraints: "products in Z_n[x] (n <= 8, degrees <= 2); the degree formula and when it fails"
+      - id: kp2
+        name: "The division algorithm for polynomials"
+        key_prerequisites: [polynomial-division]
+        exemplars:
+          - problem: 'In $\mathbb{Z}_3[x]$, divide $x^3 + 2x + 1$ by $x + 1$: give quotient and remainder.'
+            answer: 'Quotient $x^2 + 2x$, remainder $1$.'
+            solution_sketch: 'Long division mod 3: $x^3 + 2x + 1 = (x+1)(x^2 + 2x) + 1$; check: $(x+1)(x^2+2x) = x^3 + 3x^2 + 2x = x^3 + 2x$.'
+          - problem: 'Divide $x^4 + 3x^3 + x + 2$ by $x^2 + 1$ in $\mathbb{Q}[x]$.'
+            answer: 'Quotient $x^2 + 3x - 1$, remainder $-2x + 3$.'
+            solution_sketch: 'Standard long division; verify $(x^2+1)(x^2+3x-1) + (-2x+3) = x^4+3x^3+x+2$.'
+        constraints: "divisors monic of degree <= 2; coefficients in Q, Z_3, or Z_5; verify by multiplying back"
+      - id: kp3
+        name: "Roots, factors, and the remainder theorem"
+        key_prerequisites: [polynomial-division, integral-domains-zero-divisors, remainder-factor-theorems]
+        exemplars:
+          - problem: 'State the factor theorem for a commutative ring with unity, and use it: is $x - 2$ a factor of $f(x) = x^3 - 3x + 2$ in $\mathbb{Q}[x]$?'
+            answer: '$x - a$ divides $f$ iff $f(a) = 0$; here $f(2) = 8 - 6 + 2 = 4 \neq 0$, so no.'
+            solution_sketch: 'Divide with remainder $f(x) = (x-a)q(x) + f(a)$; evaluate at $2$.'
+          - problem: 'How many roots does $x^2 - 1$ have in $\mathbb{Z}_8$?'
+            answer: '$4$: $x = 1, 3, 5, 7$.'
+            solution_sketch: 'Test the odd residues: each squares to $1$ mod $8$. Over a non-domain, a degree-$n$ polynomial can exceed $n$ roots.'
+        constraints: "root counting in Z_n vs fields; remainder theorem evaluations"
+    diagnostic_exemplar:
+      problem: 'In $\mathbb{Z}_5[x]$, divide $x^3 + 4x^2 + 2$ by $x + 2$ and give quotient and remainder.'
+      answer: 'Quotient $x^2 + 2x + 1$, remainder $0$ — so $x + 2$ divides it.'
+      solution_sketch: 'Synthetic division at $x = -2 \equiv 3$: coefficients $1, 4, 0, 2$ reduce to quotient $1, 2, 1$ with remainder $0$. Check: $(x+2)(x^2+2x+1) = x^3 + 4x^2 + 5x + 2 \equiv x^3 + 4x^2 + 2$ in $\mathbb{Z}_5$.'
+    anki_seeds:
+      - front: "Degree formula $\\deg(fg) = \\deg f + \\deg g$ requires the coefficient ring to be..."
+        back: "An integral domain (no zero divisors)."
+        type: basic
+      - front: "Factor theorem?"
+        back: "$x - a$ divides $f(x)$ iff $f(a) = 0$."
+        type: basic
+      - front: "Over a field, a nonzero polynomial of degree $n$ has at most ______ roots."
+        back: "$n$ (can fail over rings with zero divisors, e.g. $x^2-1$ has 4 roots in $\\mathbb{Z}_8$)."
+        type: basic
+
+  - id: irreducibility-factorization
+    name: "Irreducibility and Factorization"
+    core: true
+    difficulty: 0.78
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 240
+    prerequisites:
+      - id: polynomial-rings
+        weight: 0.9
+        key: true
+      - id: factoring-trinomials
+        weight: 0.4
+        key: false
+      - id: prime-factorization
+        weight: 0.4
+        key: false
+      - id: rational-root-theorem
+        weight: 0.6
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: "Root tests for degrees 2 and 3"
+        key_prerequisites: [polynomial-rings]
+        exemplars:
+          - problem: 'Is $x^2 + x + 1$ irreducible over $\mathbb{Z}_2$?'
+            answer: 'Yes: $f(0) = 1, f(1) = 1$ — no roots, and degree $\le 3$ without roots means irreducible.'
+            solution_sketch: 'For degree 2 or 3, reducibility forces a linear factor, hence a root.'
+          - problem: 'Factor $x^2 + 1$ over $\mathbb{Z}_5$.'
+            answer: '$(x + 2)(x + 3)$ — equivalently $(x-2)(x-3)$.'
+            solution_sketch: '$2^2 = 4 \equiv -1$ and $3^2 = 9 \equiv -1$, so $\pm 2$ are roots; check $(x+2)(x+3) = x^2 + 5x + 6 = x^2 + 1$.'
+        constraints: "degree 2-3 over Z_2, Z_3, Z_5; the no-root criterion applies only up to degree 3"
+      - id: kp2
+        name: "Rational root theorem and factoring over Q"
+        key_prerequisites: [polynomial-rings, factoring-trinomials, rational-root-theorem]
+        exemplars:
+          - problem: 'Using the rational root theorem, factor $2x^3 + x^2 - 7x - 6$ over $\mathbb{Q}$ completely.'
+            answer: '$(x - 2)(x + 1)(2x + 3)$'
+            solution_sketch: 'Candidates $\pm1, \pm2, \pm3, \pm6, \pm\tfrac12, \pm\tfrac32$; $x = 2$ works, divide to get $2x^2 + 5x + 3 = (x+1)(2x+3)$.'
+          - problem: 'Show $x^3 - x + 1$ is irreducible over $\mathbb{Q}$.'
+            answer: 'Possible rational roots $\pm 1$ give $1$ and $1$; no roots and degree 3 means irreducible.'
+            solution_sketch: 'Rational roots must be $\pm 1$ (divisors of constant over divisors of leading); both fail.'
+        constraints: "cubics with integer coefficients, |coefficients| <= 10; complete factorizations verified by expansion"
+      - id: kp3
+        name: "Eisenstein's criterion and mod-p reduction"
+        key_prerequisites: [polynomial-rings, prime-factorization]
+        exemplars:
+          - problem: 'Prove $x^5 + 6x + 3$ is irreducible over $\mathbb{Q}$.'
+            answer: 'Eisenstein at $p = 3$: $3 \mid 6, 3$; $3 \nmid 1$; $9 \nmid 3$.'
+            solution_sketch: 'Check the three Eisenstein conditions on $p = 3$.'
+          - problem: 'Show $x^3 + x + 1$ is irreducible over $\mathbb{Q}$ by reducing mod $2$.'
+            answer: 'Mod $2$ it has no roots ($f(0)=f(1)=1$), so it is irreducible in $\mathbb{Z}_2[x]$; irreducibility mod a prime (degree preserved) lifts to $\mathbb{Q}$.'
+            solution_sketch: 'The mod-$p$ test: if the reduction (same degree) is irreducible over $\mathbb{Z}_p$, the original is irreducible over $\mathbb{Q}$.'
+        constraints: "Eisenstein with p in {2, 3, 5}; mod-p test with p = 2, 3; degree <= 5"
+    diagnostic_exemplar:
+      problem: 'Decide whether each is irreducible over $\mathbb{Q}$: (a) $x^4 + 10x + 5$, (b) $x^2 - 9$.'
+      answer: '(a) Irreducible by Eisenstein at $p = 5$ ($5 \mid 10, 5$; $5 \nmid 1$; $25 \nmid 5$). (b) Reducible: $(x-3)(x+3)$.'
+      solution_sketch: 'Eisenstein handles (a); (b) is a difference of squares.'
+    anki_seeds:
+      - front: "Eisenstein's criterion at prime $p$?"
+        back: "$p$ divides every coefficient except the leading one, and $p^2$ does not divide the constant term $\\Rightarrow$ irreducible over $\\mathbb{Q}$."
+        type: basic
+      - front: "When does 'no roots' prove irreducibility over a field?"
+        back: "Only for degree 2 or 3 (higher degrees can factor into two quadratics)."
+        type: basic
+
+  - id: prime-maximal-ideals
+    name: "Prime and Maximal Ideals"
+    core: false                # terminal ideal classification; the curriculum stops here
+    difficulty: 0.80
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 300
+    prerequisites:
+      - id: quotient-rings
+        weight: 0.9
+        key: true
+      - id: integral-domains-zero-divisors
+        weight: 0.7
+        key: true
+      - id: irreducibility-factorization
+        weight: 0.5
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Definitions and the quotient characterizations"
+        key_prerequisites: [quotient-rings, integral-domains-zero-divisors]
+        exemplars:
+          - problem: 'State the quotient characterizations of prime and maximal ideals in a commutative ring with unity.'
+            answer: '$P$ prime $\iff R/P$ is an integral domain; $M$ maximal $\iff R/M$ is a field.'
+            solution_sketch: '$ab \in P \Rightarrow a \in P$ or $b \in P$ translates to no zero divisors in $R/P$; maximality translates to no proper nonzero ideals in $R/M$, i.e. every nonzero coset invertible.'
+          - problem: 'Every maximal ideal is prime. Why?'
+            answer: 'Fields are integral domains, so $R/M$ a field forces $R/M$ a domain.'
+            solution_sketch: 'Chain the two characterizations.'
+        constraints: "statements and one-line derivations; commutative rings with unity"
+      - id: kp2
+        name: "Classifying prime/maximal ideals of Z and Z_n"
+        key_prerequisites: [quotient-rings, integral-domains-zero-divisors]
+        exemplars:
+          - problem: 'Which ideals $n\mathbb{Z}$ of $\mathbb{Z}$ are prime? Which are maximal?'
+            answer: 'Prime: $\{0\}$ and $p\mathbb{Z}$ for $p$ prime. Maximal: exactly $p\mathbb{Z}$, $p$ prime.'
+            solution_sketch: '$\mathbb{Z}/n\mathbb{Z}$ is a domain iff $n = 0$ or $n$ prime, and a field iff $n$ prime.'
+          - problem: 'Find all maximal ideals of $\mathbb{Z}_{12}$.'
+            answer: '$\langle 2 \rangle = \{0,2,4,6,8,10\}$ and $\langle 3 \rangle = \{0,3,6,9\}$.'
+            solution_sketch: 'Ideals of $\mathbb{Z}_{12}$ are $\langle d \rangle$ for $d \mid 12$; quotients $\mathbb{Z}_{12}/\langle d \rangle \cong \mathbb{Z}_d$ are fields exactly for $d = 2, 3$.'
+        constraints: "Z and Z_n (n <= 24); justify via the quotient"
+      - id: kp3
+        name: "Prime but not maximal; polynomial examples"
+        key_prerequisites: [quotient-rings]
+        exemplars:
+          - problem: 'Show that $\langle x \rangle$ is prime but not maximal in $\mathbb{Z}[x]$.'
+            answer: '$\mathbb{Z}[x]/\langle x \rangle \cong \mathbb{Z}$: an integral domain but not a field.'
+            solution_sketch: 'Evaluation at 0 identifies the quotient with $\mathbb{Z}$; conclude via the characterizations.'
+          - problem: 'Is $\langle x^2 + x + 1 \rangle$ maximal in $\mathbb{Z}_2[x]$?'
+            answer: 'Yes: the quotient is a field with $4$ elements (the polynomial is irreducible over $\mathbb{Z}_2$).'
+            solution_sketch: 'For $F[x]$ with $F$ a field, $\langle f \rangle$ is maximal iff $f$ is irreducible.'
+        constraints: "quotient identifications in Z[x] and F[x]; irreducible <-> maximal in F[x]"
+    diagnostic_exemplar:
+      problem: 'Decide whether $\langle 5 \rangle$ is a prime ideal of $\mathbb{Z}[x]$, and whether it is maximal. Justify both answers by identifying the quotient.'
+      answer: 'Reducing coefficients mod $5$ gives $\mathbb{Z}[x]/\langle 5 \rangle \cong \mathbb{Z}_5[x]$. Since $\mathbb{Z}_5$ is a field, $\mathbb{Z}_5[x]$ is an integral domain, so $\langle 5 \rangle$ is prime. It is not maximal: $\mathbb{Z}_5[x]$ is not a field, because $x$ has no inverse (degrees add under multiplication). Equivalently $\langle 5 \rangle \subsetneq \langle 5, x \rangle \subsetneq \mathbb{Z}[x]$, so $\langle 5 \rangle$ is prime but not maximal.'
+      solution_sketch: 'Use the quotient characterisations — prime iff the quotient is a domain, maximal iff it is a field — after identifying the quotient as $\mathbb{Z}_5[x]$.'
+    anki_seeds:
+      - front: "$P$ prime iff $R/P$ is a(n) ______; $M$ maximal iff $R/M$ is a(n) ______."
+        back: "Integral domain; field."
+        type: basic
+      - front: "In $F[x]$ ($F$ a field), $\\langle f \\rangle$ is maximal iff..."
+        back: "$f$ is irreducible over $F$."
+        type: basic
+      - front: "Example of a prime ideal that is not maximal?"
+        back: "$\\langle x \\rangle$ in $\\mathbb{Z}[x]$ (quotient $\\mathbb{Z}$: domain, not field); also $\\{0\\}$ in $\\mathbb{Z}$."
+        type: basic
+
+  - id: euclidean-domains-pids
+    name: "Euclidean Domains and Principal Ideal Domains"
+    core: false                # terminal factorization-theory branch; nothing downstream consumes it (splitting fields rest on irreducibility-factorization, not PID theory)
+    difficulty: 0.78
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 240
+    prerequisites:
+      - id: ring-homomorphisms-ideals
+        weight: 0.8
+        key: true
+      - id: polynomial-rings
+        weight: 0.6
+        key: true
+      - id: integral-domains-zero-divisors
+        weight: 0.5
+        key: false
+      - id: euclidean-algorithm
+        weight: 0.4
+        key: false
+      - id: complex-numbers
+        weight: 0.3
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Euclidean norms; division in Z[i]"
+        key_prerequisites: [integral-domains-zero-divisors, complex-numbers]
+        exemplars:
+          - problem: 'A Euclidean domain carries a norm allowing division with smaller remainder. In the Gaussian integers $\mathbb{Z}[i]$ with $N(a + bi) = a^2 + b^2$, compute $N(3 + 2i)$.'
+            answer: "13"
+            solution_sketch: '$N(3 + 2i) = 3^2 + 2^2 = 13$. ($N$ is multiplicative: $N(zw) = N(z)N(w)$.)'
+          - problem: 'Divide $7 + 2i$ by $2 - i$ in $\mathbb{Z}[i]$: find $q, r$ with $7 + 2i = (2 - i)q + r$ and $N(r) < N(2 - i)$.'
+            answer: '$q = 2 + 2i$, $r = 1$'
+            solution_sketch: 'Exact quotient: $\frac{7+2i}{2-i} = \frac{(7+2i)(2+i)}{5} = \frac{12 + 11i}{5} = 2.4 + 2.2i$; round to the nearest Gaussian integer $q = 2 + 2i$. Then $r = 7 + 2i - (2-i)(2+2i) = 7 + 2i - (6 + 2i) = 1$, and $N(1) = 1 < 5 = N(2 - i)$.'
+        constraints: "norms and one-step divisions in Z[i] with parts |a|, |b| <= 8; the degree norm on F[x] cited from polynomial-rings; Z with absolute value as the base example"
+      - id: kp2
+        name: "Every Euclidean domain is a PID"
+        key_prerequisites: [ring-homomorphisms-ideals, euclidean-algorithm]
+        exemplars:
+          - problem: 'Prove that every Euclidean domain is a principal ideal domain.'
+            answer: 'In a nonzero ideal $I$, pick $d \neq 0$ of minimal norm. For any $a \in I$, write $a = qd + r$ with $r = 0$ or $N(r) < N(d)$; since $r = a - qd \in I$, minimality forces $r = 0$. So $I = \langle d \rangle$.'
+            solution_sketch: 'Well-ordering supplies a minimal-norm element; division with remainder shows it generates — the same argument that made every ideal of $\mathbb{Z}$ principal.'
+          - problem: 'Find a single generator of the ideal $\langle x^2 - 1,\ x^2 - 3x + 2 \rangle$ in $\mathbb{Q}[x]$.'
+            answer: '$x - 1$'
+            solution_sketch: '$x^2 - 1 = (x-1)(x+1)$ and $x^2 - 3x + 2 = (x-1)(x-2)$; the ideal is generated by their gcd $x - 1$ (obtained by the Euclidean algorithm in $\mathbb{Q}[x]$).'
+        constraints: "the minimal-norm proof; generators of two-element ideals in Q[x] via polynomial gcd, degrees <= 3"
+      - id: kp3
+        name: "PIDs vs non-PIDs: the ideal <2, x>"
+        key_prerequisites: [ring-homomorphisms-ideals, polynomial-rings]
+        exemplars:
+          - problem: 'Show that $\langle 2, x \rangle$ is not principal in $\mathbb{Z}[x]$, so $\mathbb{Z}[x]$ is not a PID.'
+            answer: 'A generator $f$ would divide $2$, so $f = \pm 1$ or $\pm 2$. But $\pm 2 \nmid x$ in $\mathbb{Z}[x]$, and $f = \pm 1$ would make the ideal all of $\mathbb{Z}[x]$ — yet $\langle 2, x \rangle$ is exactly the polynomials with even constant term, a proper ideal. Contradiction.'
+            solution_sketch: 'Constrain the candidate generator through divisibility of $2$, then rule each candidate out.'
+          - problem: 'Which of these rings are PIDs: $\mathbb{Z}$, $\ \mathbb{Q}[x]$, $\ \mathbb{Z}[x]$?'
+            answer: '$\mathbb{Z}$ and $\mathbb{Q}[x]$ are PIDs (both Euclidean); $\mathbb{Z}[x]$ is not (witness $\langle 2, x \rangle$).'
+            solution_sketch: 'Euclidean $\implies$ PID covers the first two; the previous exemplar refutes the third.'
+        constraints: "classify Z, F[x], Z[x], fields; the <2, x> argument reproduced, not just quoted"
+    diagnostic_exemplar:
+      problem: 'Show that the ideal $\langle 3, x \rangle$ of $\mathbb{Z}[x]$ is not principal, and explain why no ideal of $\mathbb{Q}[x]$ can fail in this way.'
+      answer: 'First, $\langle 3, x \rangle = \{p \in \mathbb{Z}[x] : 3 \mid p(0)\}$, a proper ideal since $1 \notin$ it. Suppose $\langle 3, x\rangle = \langle f \rangle$. Then $f \mid 3$, so $f$ is a constant $\pm 1$ or $\pm 3$. If $f = \pm 1$ the ideal would be all of $\mathbb{Z}[x]$, contradicting properness; if $f = \pm 3$ then $f \nmid x$ (that would need $3$ to divide the coefficient $1$), contradicting $x \in \langle f \rangle$. So no single generator exists. In $\mathbb{Q}[x]$ this cannot happen: division with remainder by degree makes $\mathbb{Q}[x]$ a Euclidean domain, and in a Euclidean domain a nonzero element of least norm in an ideal generates it — every Euclidean domain is a PID.'
+      solution_sketch: 'Describe the ideal concretely, then rule out both candidate generators. The contrast: $\mathbb{Q}[x]$ has a degree norm with division, so a least-degree element of any ideal generates it.'
+    anki_seeds:
+      - front: "Euclidean domain?"
+        back: "An integral domain with a norm allowing division with remainder: $a = qb + r$ with $r = 0$ or $N(r) < N(b)$."
+        type: basic
+      - front: "Euclidean domain $\\Rightarrow$ PID — proof idea?"
+        back: "A minimal-norm element of an ideal generates it (division leaves a smaller remainder inside the ideal, which must be 0)."
+        type: basic
+      - front: "Standard example of a non-principal ideal?"
+        back: "$\\langle 2, x \\rangle$ in $\\mathbb{Z}[x]$ — the polynomials with even constant term."
+        type: basic
+
+  - id: unique-factorization-domains
+    name: "Unique Factorization Domains"
+    core: false                # terminal factorization-theory branch; nothing downstream consumes it
+    difficulty: 0.80
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 240
+    prerequisites:
+      - id: euclidean-domains-pids
+        weight: 0.8
+        key: true
+      - id: irreducibility-factorization
+        weight: 0.6
+        key: true
+      - id: prime-factorization
+        weight: 0.3
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Irreducible vs prime elements"
+        key_prerequisites: [irreducibility-factorization, euclidean-domains-pids]
+        exemplars:
+          - problem: 'Define irreducible and prime elements of an integral domain, and prove that every prime element is irreducible.'
+            answer: '$p$ (nonzero, non-unit) is prime if $p \mid ab \implies p \mid a$ or $p \mid b$; irreducible if $p = ab \implies a$ or $b$ is a unit. If $p = ab$, then $p \mid ab$, say $p \mid a$: $a = pc$ gives $p = pcb$, so $cb = 1$ (cancellation) and $b$ is a unit.'
+            solution_sketch: 'Apply the prime property to the factorization itself, then cancel $p$ in the domain.'
+          - problem: 'In $\mathbb{Z}[\sqrt{-5}]$ with $N(a + b\sqrt{-5}) = a^2 + 5b^2$, show that $2$ is irreducible.'
+            answer: 'If $2 = xy$ with $x, y$ non-units, then $N(x)N(y) = N(2) = 4$ with $N(x) = N(y) = 2$; but $a^2 + 5b^2 = 2$ has no integer solutions. So no such factorization exists.'
+            solution_sketch: 'Norms are multiplicative and units have norm $1$; rule out the middle norm value.'
+        constraints: "norm arguments in Z[sqrt(-5)] and Z[i], norms <= 30; the prime => irreducible proof with cancellation cited"
+      - id: kp2
+        name: "UFDs and factoring in Z[i]"
+        key_prerequisites: [euclidean-domains-pids, prime-factorization]
+        exemplars:
+          - problem: 'State the UFD property and the chain of implications relating Euclidean domains, PIDs, and UFDs.'
+            answer: 'A UFD is a domain where every nonzero non-unit factors into irreducibles, uniquely up to order and unit factors. Euclidean $\Rightarrow$ PID $\Rightarrow$ UFD (each implication strict).'
+            solution_sketch: 'The chain may be quoted; $\mathbb{Z}$, $F[x]$, $\mathbb{Z}[i]$ are the working examples, $\mathbb{Z}[x]$ a UFD that is not a PID.'
+          - problem: 'Factor $5$ into irreducibles in $\mathbb{Z}[i]$.'
+            answer: '$5 = (2 + i)(2 - i)$'
+            solution_sketch: 'Both factors have norm $5$, and a norm-$5$ element is irreducible (a proper factor would need norm $\sqrt5$-impossible: norms multiply and $5$ is prime in $\mathbb{Z}$).'
+        constraints: "factorizations in Z[i] with norms <= 25; irreducibility certified by prime norms; the implication chain quoted, not proved"
+      - id: kp3
+        name: "Failure of unique factorization: Z[sqrt(-5)]"
+        key_prerequisites: [irreducibility-factorization, euclidean-domains-pids]
+        exemplars:
+          - problem: 'Show that $6 = 2 \cdot 3 = (1 + \sqrt{-5})(1 - \sqrt{-5})$ gives two essentially different factorizations into irreducibles in $\mathbb{Z}[\sqrt{-5}]$.'
+            answer: 'Norms: $N(2) = 4$, $N(3) = 9$, $N(1 \pm \sqrt{-5}) = 6$. Each factor is irreducible: a proper splitting would need a factor of norm $2$ or $3$, and $a^2 + 5b^2$ never equals $2$ or $3$. The units are $\pm 1$ (norm $1$), and no factor of one factorization is a unit multiple of a factor of the other (their norms differ). So factorization is not unique.'
+            solution_sketch: 'Certify all four factors irreducible by ruling out norms 2 and 3; compare norms to rule out associates.'
+          - problem: 'Deduce that $2$ is not prime in $\mathbb{Z}[\sqrt{-5}]$, and explain why this proves $\mathbb{Z}[\sqrt{-5}]$ is not a UFD.'
+            answer: '$2 \mid (1+\sqrt{-5})(1-\sqrt{-5}) = 6$, but $2$ divides neither factor ($N(2) = 4 \nmid 6$). So $2$ is irreducible but not prime — impossible in a UFD, where irreducible and prime coincide.'
+            solution_sketch: 'Use the norm to refute both divisibilities; in a UFD every irreducible is prime.'
+        constraints: "the classic Z[sqrt(-5)] computation; every irreducibility claim justified by a norm argument"
+    diagnostic_exemplar:
+      problem: 'In $\mathbb{Z}[\sqrt{-5}]$ with norm $N(a + b\sqrt{-5}) = a^2 + 5b^2$, show that $3$ is irreducible but not prime, and state what this proves about $\mathbb{Z}[\sqrt{-5}]$.'
+      answer: 'Irreducible: if $3 = xy$ with $x, y$ non-units then $N(x)N(y) = N(3) = 9$ with $N(x) = N(y) = 3$ (the units are exactly the elements of norm $1$); but $a^2 + 5b^2 = 3$ has no integer solution, since $b = 0$ would force $a^2 = 3$ and $|b| \ge 1$ makes the norm at least $5$. Not prime: $3 \mid 6 = (1 + \sqrt{-5})(1 - \sqrt{-5})$, yet $3$ divides neither factor, because $N(3) = 9$ does not divide $N(1 \pm \sqrt{-5}) = 6$. In a UFD irreducible and prime elements coincide, so $\mathbb{Z}[\sqrt{-5}]$ is not a UFD.'
+      solution_sketch: 'Norms are multiplicative and units are exactly the norm-$1$ elements. Rule out a factor of norm $3$, then exhibit a product that $3$ divides without dividing either factor.'
+    anki_seeds:
+      - front: "Chain: Euclidean, PID, UFD?"
+        back: "Euclidean $\\Rightarrow$ PID $\\Rightarrow$ UFD; both implications are strict ($\\mathbb{Z}[x]$: UFD, not PID)."
+        type: basic
+      - front: "Prime vs irreducible in a general domain?"
+        back: "Prime $\\Rightarrow$ irreducible always; the converse holds in UFDs but fails in e.g. $\\mathbb{Z}[\\sqrt{-5}]$."
+        type: basic
+      - front: "Classic witness that $\\mathbb{Z}[\\sqrt{-5}]$ is not a UFD?"
+        back: "$6 = 2 \\cdot 3 = (1+\\sqrt{-5})(1-\\sqrt{-5})$, all factors irreducible, none associate."
+        type: basic

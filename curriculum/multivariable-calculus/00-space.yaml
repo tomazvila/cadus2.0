@@ -1,0 +1,825 @@
+unit: space
+course: multivariable-calculus
+module: "Vectors & Space Curves"
+topics:
+  - id: three-dimensional-coordinates
+    name: "The Three-Dimensional Coordinate System"
+    core: true
+    difficulty: 0.55
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 90
+    prerequisites:
+      - id: pythagorean-theorem
+        weight: 0.6
+        key: true
+      - id: distance-midpoint-formulas
+        weight: 0.5
+        key: true
+      - id: coordinate-plane
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Points, axes, and coordinate planes"
+        key_prerequisites: [coordinate-plane]
+        exemplars:
+          - problem: 'Which coordinate plane contains the point $(3, 0, -2)$? Name it by its two axes, e.g. answer $xy$ for the $xy$-plane.'
+            answer: '$xz$'
+            solution_sketch: 'The $y$-coordinate is $0$, so the point lies in the plane $y = 0$ — the $xz$-plane.'
+          - problem: 'How far is the point $(2, -3, 5)$ from the $xy$-plane?'
+            answer: "5"
+            solution_sketch: 'The distance to the $xy$-plane is $|z| = |5| = 5$.'
+          - problem: 'Find the projection of the point $(4, -1, 7)$ onto the $xy$-plane.'
+            answer: '$(4, -1, 0)$'
+        constraints: "integer coordinates with absolute value at most 9; ask about one coordinate plane or axis at a time"
+      - id: kp2
+        name: "Distance in space"
+        key_prerequisites: [pythagorean-theorem, distance-midpoint-formulas]
+        exemplars:
+          - problem: 'Find the distance between the points $(1, 2, 2)$ and $(4, 6, 14)$.'
+            answer: "13"
+            solution_sketch: 'Differences are $(3, 4, 12)$, so $d = \sqrt{9 + 16 + 144} = \sqrt{169} = 13$.'
+          - problem: 'Find the distance from the origin to the point $(2, 3, 6)$.'
+            answer: "7"
+            solution_sketch: '$d = \sqrt{4 + 9 + 36} = \sqrt{49} = 7$.'
+          - problem: 'Which point is closer to the origin: $P(1, 1, 1)$ or $Q(2, 0, 2)$? Answer $P$ or $Q$.'
+            answer: '$P$'
+            solution_sketch: '$|OP| = \sqrt{3}$ and $|OQ| = \sqrt{8}$, and $\sqrt{3} < \sqrt{8}$.'
+        constraints: "coordinate differences form Pythagorean quadruples (e.g. 1-2-2-3, 2-3-6-7, 3-4-12-13) so distances are integers or clean radicals"
+      - id: kp3
+        name: "Midpoints in space"
+        key_prerequisites: [distance-midpoint-formulas]
+        exemplars:
+          - problem: 'Find the midpoint of the segment from $(2, 4, -1)$ to $(6, 0, 5)$.'
+            answer: '$(4, 2, 2)$'
+            solution_sketch: 'Average each coordinate: $\left(\frac{2+6}{2}, \frac{4+0}{2}, \frac{-1+5}{2}\right)$.'
+          - problem: 'The midpoint of $\overline{AB}$ is $M(3, 1, 2)$ and $A = (1, -1, 0)$. Find $B$.'
+            answer: '$(5, 3, 4)$'
+            solution_sketch: '$B = 2M - A = (6-1, 2+1, 4-0)$.'
+        constraints: "even coordinate sums so midpoints have integer coordinates"
+    diagnostic_exemplar:
+      problem: 'The midpoint of the segment $\overline{AB}$ is $M(3, 1, 5)$ and $A = (2, -1, 3)$. Find the distance from $A$ to $B$.'
+      answer: '6'
+      solution_sketch: '$B = 2M - A = (4, 3, 7)$; $\overrightarrow{AB} = \langle 2, 4, 4 \rangle$ and $|\overrightarrow{AB}| = \sqrt{4 + 16 + 16} = 6$.'
+    anki_seeds:
+      - front: 'Distance formula in $\mathbb{R}^3$ between $(x_1,y_1,z_1)$ and $(x_2,y_2,z_2)$?'
+        back: '$\sqrt{(x_2-x_1)^2 + (y_2-y_1)^2 + (z_2-z_1)^2}$'
+        type: basic
+      - front: 'The distance from a point $(a, b, c)$ to the $xy$-plane is {{c1::$|c|$}}.'
+        back: '$|c|$'
+        type: cloze
+
+  - id: spheres-in-space
+    name: "Equations of Spheres"
+    core: true
+    difficulty: 0.58
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 120
+    prerequisites:
+      - id: three-dimensional-coordinates
+        weight: 0.7
+        key: true
+      - id: completing-the-square
+        weight: 0.6
+        key: true
+      - id: equations-of-circles
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Standard form of a sphere"
+        key_prerequisites: [three-dimensional-coordinates, equations-of-circles]
+        exemplars:
+          - problem: 'Write an equation of the sphere with center $(2, -1, 0)$ and radius $5$.'
+            answer: '$(x-2)^2 + (y+1)^2 + z^2 = 25$'
+          - problem: 'Write an equation of the sphere with center $(0, 3, -4)$ and radius $\sqrt{7}$.'
+            answer: '$x^2 + (y-3)^2 + (z+4)^2 = 7$'
+          - problem: 'Does the point $(3, 1, 2)$ lie on the sphere $x^2 + y^2 + z^2 = 14$?'
+            answer: 'Yes: $9 + 1 + 4 = 14$.'
+        constraints: "integer centers; radius an integer or the square root of an integer under 30"
+      - id: kp2
+        name: "Completing the square"
+        key_prerequisites: [completing-the-square]
+        exemplars:
+          - problem: 'Find the center and radius of the sphere $x^2 + y^2 + z^2 - 2x + 4y - 6z + 5 = 0$.'
+            answer: 'Center $(1, -2, 3)$, radius $3$.'
+            solution_sketch: 'Complete the square in each variable: $(x-1)^2 + (y+2)^2 + (z-3)^2 = 1 + 4 + 9 - 5 = 9$.'
+          - problem: 'Find the center and radius of the sphere $x^2 + y^2 + z^2 + 6x - 8z = 0$.'
+            answer: 'Center $(-3, 0, 4)$, radius $5$.'
+            solution_sketch: '$(x+3)^2 + y^2 + (z-4)^2 = 9 + 16 = 25$.'
+        constraints: "even linear coefficients; completed squares yield integer radii"
+      - id: kp3
+        name: "Spheres from geometric data"
+        key_prerequisites: [three-dimensional-coordinates]
+        exemplars:
+          - problem: 'Find an equation of the sphere with diameter endpoints $(1, 2, 3)$ and $(3, 6, 5)$.'
+            answer: '$(x-2)^2 + (y-4)^2 + (z-4)^2 = 6$'
+            solution_sketch: 'Center is the midpoint $(2, 4, 4)$; the diameter has length $\sqrt{4 + 16 + 4} = 2\sqrt{6}$, so $r^2 = 6$.'
+          - problem: 'Find an equation of the sphere centered at $(1, 2, 2)$ that passes through the origin.'
+            answer: '$(x-1)^2 + (y-2)^2 + (z-2)^2 = 9$'
+            solution_sketch: '$r^2 = 1 + 4 + 4 = 9$.'
+        constraints: "midpoints and squared radii are integers; pass-through points use Pythagorean quadruples"
+    diagnostic_exemplar:
+      problem: 'Find an equation of the sphere that is concentric with $x^2 + y^2 + z^2 - 2x + 4y - 4z = 3$ and passes through the origin.'
+      answer: '$(x-1)^2 + (y+2)^2 + (z-2)^2 = 9$'
+      solution_sketch: 'Completing the square gives centre $(1, -2, 2)$. Its distance to the origin is $\sqrt{1 + 4 + 4} = 3$, so the radius is $3$.'
+    anki_seeds:
+      - front: 'Equation of the sphere with center $(a, b, c)$ and radius $r$?'
+        back: '$(x-a)^2 + (y-b)^2 + (z-c)^2 = r^2$'
+        type: basic
+      - front: 'How do you find the center and radius of $x^2+y^2+z^2+Dx+Ey+Fz+G=0$?'
+        back: 'Complete the square in each of $x$, $y$, $z$ separately.'
+        type: basic
+
+  - id: cylinders-and-traces
+    name: "Cylinders and Traces"
+    core: true
+    difficulty: 0.60
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 120
+    prerequisites:
+      - id: three-dimensional-coordinates
+        weight: 0.6
+        key: true
+      - id: quadratic-graphs-vertex
+        weight: 0.4
+        key: false
+      - id: ellipses
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Cylinders: equations missing a variable"
+        key_prerequisites: [three-dimensional-coordinates, quadratic-graphs-vertex]
+        exemplars:
+          - problem: 'Describe the surface $y = x^2$ in $\mathbb{R}^3$.'
+            answer: 'A parabolic cylinder: the parabola $y = x^2$ extended parallel to the $z$-axis.'
+            solution_sketch: 'The equation omits $z$, so every cross-section $z = c$ is the same parabola.'
+          - problem: 'Describe the surface $x^2 + z^2 = 4$ in $\mathbb{R}^3$.'
+            answer: 'A circular cylinder of radius $2$ whose axis is the $y$-axis.'
+            solution_sketch: 'The equation omits $y$: circles of radius $2$ in every plane $y = c$.'
+          - problem: 'Describe the surface $\frac{x^2}{4} + y^2 = 1$ in $\mathbb{R}^3$.'
+            answer: 'An elliptical cylinder parallel to the $z$-axis (ellipse with semi-axes $2$ and $1$).'
+        constraints: "exactly one variable missing; the plane curve is a line, circle, ellipse, or parabola with integer parameters"
+      - id: kp2
+        name: "Traces of surfaces"
+        key_prerequisites: [three-dimensional-coordinates, ellipses]
+        exemplars:
+          - problem: 'Find the trace of the surface $z = x^2 - y^2$ in the plane $y = 0$.'
+            answer: 'The parabola $z = x^2$ (in the $xz$-plane).'
+          - problem: 'Find the trace of $x^2 + \frac{y^2}{4} + \frac{z^2}{9} = 1$ in the plane $z = 0$.'
+            answer: 'The ellipse $x^2 + \frac{y^2}{4} = 1$ (semi-axes $1$ and $2$) in the $xy$-plane.'
+          - problem: 'Find the trace of the surface $z = x^2 + y^2$ in the plane $z = 4$.'
+            answer: 'The circle $x^2 + y^2 = 4$ of radius $2$ at height $z = 4$.'
+            solution_sketch: 'Set $z = 4$: $x^2 + y^2 = 4$.'
+        constraints: "traces in coordinate planes or planes parallel to them; resulting conics have integer or simple radical parameters"
+    diagnostic_exemplar:
+      problem: 'Find the trace of the surface $x^2 + z^2 = 9$ in the plane $y = 4$, and say what that trace tells you about the whole surface.'
+      answer: 'The circle $x^2 + z^2 = 9$ of radius $3$, lying in the plane $y = 4$ and centred on the $y$-axis. Since $y$ does not appear in the equation, the same circle is the trace in every plane $y = c$, so the surface is a circular cylinder of radius $3$ with axis the $y$-axis.'
+      solution_sketch: 'Setting $y = 4$ leaves the equation unchanged, so the trace is $x^2 + z^2 = 9$ at $y = 4$; independence of $y$ makes the surface a cylinder.'
+    anki_seeds:
+      - front: 'In $\mathbb{R}^3$, an equation missing one variable describes a...'
+        back: 'Cylinder: the plane curve extended parallel to the axis of the missing variable.'
+        type: basic
+      - front: 'What is a trace of a surface?'
+        back: 'The curve of intersection of the surface with a plane (usually a coordinate plane or a plane parallel to one).'
+        type: basic
+
+  - id: coordinates-surfaces-3d
+    name: "Quadric Surfaces"
+    core: true
+    difficulty: 0.63
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 150
+    prerequisites:
+      - id: spheres-in-space
+        weight: 0.6
+        key: true
+      - id: cylinders-and-traces
+        weight: 0.6
+        key: true
+      - id: hyperbolas
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Ellipsoids and paraboloids"
+        key_prerequisites: [spheres-in-space, cylinders-and-traces]
+        exemplars:
+          - problem: 'Identify the surface $z = x^2 + y^2$.'
+            answer: 'A circular (elliptic) paraboloid opening upward along the $z$-axis.'
+            solution_sketch: 'Horizontal traces $z = k > 0$ are circles $x^2 + y^2 = k$; vertical traces are parabolas.'
+          - problem: 'Identify the surface $x^2 + \frac{y^2}{4} + \frac{z^2}{9} = 1$.'
+            answer: 'An ellipsoid with semi-axes $1$, $2$, $3$.'
+          - problem: 'Identify the surface $z = x^2 - y^2$.'
+            answer: 'A hyperbolic paraboloid (saddle).'
+            solution_sketch: 'Traces $z = k$ are hyperbolas; traces $x = k$ and $y = k$ are parabolas opening opposite ways.'
+        constraints: "standard-position quadrics with integer denominators; one degree-1 variable for paraboloids"
+      - id: kp2
+        name: "Hyperboloids and cones"
+        key_prerequisites: [cylinders-and-traces, hyperbolas]
+        exemplars:
+          - problem: 'Identify the surface $x^2 + y^2 - z^2 = 1$.'
+            answer: 'A hyperboloid of one sheet with axis the $z$-axis.'
+            solution_sketch: 'One negative sign and $= 1$: one sheet. Traces $z = k$ are circles $x^2 + y^2 = 1 + k^2$, never empty.'
+          - problem: 'Identify the surface $z^2 - x^2 - y^2 = 1$.'
+            answer: 'A hyperboloid of two sheets with axis the $z$-axis.'
+            solution_sketch: 'Two negative signs: $z^2 = 1 + x^2 + y^2 \ge 1$ forces $|z| \ge 1$, so the surface splits into two sheets.'
+          - problem: 'Identify the surface $z^2 = x^2 + y^2$.'
+            answer: 'A (double) circular cone with axis the $z$-axis.'
+        constraints: "signature determines the type: one minus sign with =1 gives one sheet, two minus signs give two sheets, =0 gives a cone"
+      - id: kp3
+        name: "Axis and orientation from the equation"
+        key_prerequisites: [spheres-in-space, cylinders-and-traces]
+        exemplars:
+          - problem: 'Identify the surface $y = x^2 + z^2$ and state its axis.'
+            answer: 'A circular paraboloid opening along the positive $y$-axis.'
+            solution_sketch: 'The degree-1 variable is $y$, so the paraboloid opens along the $y$-axis.'
+          - problem: 'Identify the surface $\frac{x^2}{9} - y^2 - z^2 = 1$ and state its axis.'
+            answer: 'A hyperboloid of two sheets with axis the $x$-axis.'
+            solution_sketch: 'Two minus signs; $\frac{x^2}{9} \ge 1$ forces $|x| \ge 3$, so the sheets open along the $x$-axis.'
+        constraints: "axis is the odd variable out: the degree-1 variable (paraboloid) or the positive term (hyperboloids/cones)"
+    diagnostic_exemplar:
+      problem: 'Identify the surface $4x^2 - y^2 - 4z^2 = 4$ and state its axis.'
+      answer: 'A hyperboloid of two sheets with axis the $x$-axis (standard form $x^2 - \frac{y^2}{4} - z^2 = 1$).'
+      solution_sketch: 'Divide by $4$: $x^2 - \frac{y^2}{4} - z^2 = 1$. Two minus signs (a single positive term) means two sheets, and the axis is that of the positive term, the $x$-axis.'
+    anki_seeds:
+      - front: 'For $\pm x^2 \pm y^2 \pm z^2 = 1$: one minus sign gives a hyperboloid of {{c1::one sheet}}; two minus signs give {{c2::two sheets}}.'
+        back: 'one sheet / two sheets'
+        type: cloze
+      - front: 'Elliptic vs hyperbolic paraboloid: $z = x^2 + y^2$ is {{c1::elliptic (a bowl)}}; $z = x^2 - y^2$ is {{c2::hyperbolic (a saddle)}}.'
+        back: 'elliptic (bowl) / hyperbolic (saddle)'
+        type: cloze
+
+  - id: lines-in-space
+    name: "Lines in Space"
+    core: true
+    difficulty: 0.62
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 120
+    prerequisites:
+      - id: vectors-in-rn
+        weight: 0.7
+        key: true
+      - id: three-dimensional-coordinates
+        weight: 0.5
+        key: false
+      - id: parametric-equations
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Parametric equations of lines"
+        key_prerequisites: [vectors-in-rn]
+        exemplars:
+          - problem: 'Write parametric equations for the line through $(1, 0, 2)$ with direction vector $\langle 3, -1, 4 \rangle$.'
+            answer: '$x = 1 + 3t,\; y = -t,\; z = 2 + 4t$'
+          - problem: 'Write parametric equations for the line through $P(1, 2, 3)$ and $Q(4, 0, 5)$.'
+            answer: '$x = 1 + 3t,\; y = 2 - 2t,\; z = 3 + 2t$'
+            solution_sketch: 'Direction $\vec{PQ} = \langle 3, -2, 2 \rangle$; base point $P$.'
+        constraints: "integer points and direction vectors; accept any valid parametrization"
+      - id: kp2
+        name: "Symmetric equations and points on a line"
+        key_prerequisites: [vectors-in-rn, three-dimensional-coordinates]
+        exemplars:
+          - problem: 'Write symmetric equations for the line through $(2, 1, 3)$ with direction $\langle 4, 5, -2 \rangle$.'
+            answer: '$\dfrac{x-2}{4} = \dfrac{y-1}{5} = \dfrac{z-3}{-2}$'
+          - problem: 'Does the point $(7, -2, 10)$ lie on the line $x = 1 + 3t$, $y = -t$, $z = 2 + 4t$?'
+            answer: 'Yes: $t = 2$ gives $(7, -2, 10)$ in all three equations.'
+            solution_sketch: 'Solve $1 + 3t = 7$ for $t = 2$, then check $y$ and $z$.'
+        constraints: "all direction components nonzero for symmetric form; membership checks resolve with one integer t"
+      - id: kp3
+        name: "Parallel, intersecting, and skew lines"
+        key_prerequisites: [vectors-in-rn]
+        exemplars:
+          - problem: 'Are the lines with direction vectors $\langle 2, -4, 6 \rangle$ and $\langle -1, 2, -3 \rangle$ parallel?'
+            answer: 'Yes: $\langle 2, -4, 6 \rangle = -2\langle -1, 2, -3 \rangle$.'
+          - problem: 'Show that $L_1$: $x = 1 + t$, $y = t$, $z = 0$ and $L_2$: $x = 0$, $y = 1 + s$, $z = s$ are skew.'
+            answer: 'Directions $\langle 1,1,0 \rangle$ and $\langle 0,1,1 \rangle$ are not parallel; equating coordinates gives $t = -1$, $s = 0$ from $x$ and $z$, but then $y$: $-1 \ne 1$. No intersection, so the lines are skew.'
+            solution_sketch: 'Not parallel and no common solution of the three coordinate equations.'
+        constraints: "systems resolve with small integer parameters; skew examples must fail exactly one coordinate equation"
+    diagnostic_exemplar:
+      problem: 'The line $L_1$ has parametric equations $x = 1 + 2t$, $y = 3 - t$, $z = 2 + t$, and $L_2$ passes through $(3, 2, 4)$ with direction vector $\langle 1, 1, 0 \rangle$. Are $L_1$ and $L_2$ parallel, intersecting, or skew?'
+      answer: 'Skew.'
+      solution_sketch: 'The directions $\langle 2, -1, 1 \rangle$ and $\langle 1, 1, 0 \rangle$ are not multiples, so the lines are not parallel. Writing $L_2$ as $x = 3 + s$, $y = 2 + s$, $z = 4$: the $z$-equation forces $t = 2$, giving the point $(5, 1, 4)$ on $L_1$, and then $x$ forces $s = 2$, giving $(5, 4, 4)$ on $L_2$. The $y$-coordinates disagree, so the lines never meet: skew.'
+    anki_seeds:
+      - front: 'Vector equation of the line through point $\mathbf{r}_0$ with direction $\mathbf{v}$?'
+        back: '$\mathbf{r}(t) = \mathbf{r}_0 + t\mathbf{v}$'
+        type: basic
+      - front: 'Skew lines are lines that...'
+        back: 'do not intersect and are not parallel (impossible in the plane, common in space).'
+        type: basic
+
+  - id: planes-in-space
+    name: "Equations of Planes"
+    core: true
+    difficulty: 0.65
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 150
+    prerequisites:
+      - id: dot-product
+        weight: 0.6
+        key: true
+      - id: cross-product
+        weight: 0.6
+        key: true
+      - id: lines-in-space
+        weight: 0.5
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Point-normal form"
+        key_prerequisites: [dot-product]
+        exemplars:
+          - problem: 'Find an equation of the plane through $(1, 2, 3)$ with normal vector $\langle 2, -1, 4 \rangle$.'
+            answer: '$2x - y + 4z = 12$'
+            solution_sketch: '$2(x-1) - (y-2) + 4(z-3) = 0$, i.e. $2x - y + 4z = 2 - 2 + 12 = 12$.'
+          - problem: 'Find an equation of the plane through the origin perpendicular to $\langle 3, 1, -2 \rangle$.'
+            answer: '$3x + y - 2z = 0$'
+        constraints: "integer normals and points; right-hand sides are small integers"
+      - id: kp2
+        name: "Plane through three points"
+        key_prerequisites: [cross-product]
+        exemplars:
+          - problem: 'Find an equation of the plane through $A(1,0,0)$, $B(0,2,0)$, $C(0,0,3)$.'
+            answer: '$6x + 3y + 2z = 6$'
+            solution_sketch: '$\vec{AB} = \langle -1, 2, 0 \rangle$, $\vec{AC} = \langle -1, 0, 3 \rangle$; normal $\vec{AB} \times \vec{AC} = \langle 6, 3, 2 \rangle$. Point $A$ gives $6x + 3y + 2z = 6$; check $B$ and $C$ satisfy it.'
+          - problem: 'Find a normal vector to the plane through $P(0,0,0)$, $Q(1,1,0)$, $R(0,1,1)$.'
+            answer: '$\langle 1, -1, 1 \rangle$'
+            solution_sketch: '$\vec{PQ} \times \vec{PR} = \langle 1,1,0 \rangle \times \langle 0,1,1 \rangle = \langle 1, -1, 1 \rangle$.'
+        constraints: "integer points with small integer cross products; always verify all three points satisfy the final equation"
+      - id: kp3
+        name: "Parallel and perpendicular planes"
+        key_prerequisites: [dot-product]
+        exemplars:
+          - problem: 'Find an equation of the plane through $(1, 1, 1)$ parallel to the plane $3x - y + 2z = 5$.'
+            answer: '$3x - y + 2z = 4$'
+            solution_sketch: 'Parallel planes share the normal $\langle 3, -1, 2 \rangle$; evaluate at $(1,1,1)$: $3 - 1 + 2 = 4$.'
+          - problem: 'Are the planes $x + 2y - z = 3$ and $2x + y + 4z = 1$ perpendicular?'
+            answer: 'Yes: the normals satisfy $\langle 1,2,-1 \rangle \cdot \langle 2,1,4 \rangle = 2 + 2 - 4 = 0$.'
+        constraints: "parallel/perpendicular tests reduce to scalar-multiple or zero-dot-product checks on integer normals"
+    diagnostic_exemplar:
+      problem: 'Find an equation of the plane through $(1, 2, 3)$ that is perpendicular to both of the planes $x + y - z = 1$ and $2x - y + z = 4$.'
+      answer: '$y + z = 5$'
+      solution_sketch: 'Such a plane has a normal orthogonal to both given normals, so take $\langle 1, 1, -1 \rangle \times \langle 2, -1, 1 \rangle = \langle 0, -3, -3 \rangle \parallel \langle 0, 1, 1 \rangle$. Point-normal form: $(y - 2) + (z - 3) = 0$, i.e. $y + z = 5$.'
+    anki_seeds:
+      - front: 'How do you get a normal vector to the plane through three points $A$, $B$, $C$?'
+        back: '$\vec{AB} \times \vec{AC}$'
+        type: basic
+      - front: 'Two planes are parallel exactly when their {{c1::normal vectors}} are parallel.'
+        back: 'normal vectors'
+        type: cloze
+
+  - id: lines-planes-space
+    name: "Intersections and Distances in Space"
+    core: false                # intersection / distance problem genre; terminal
+    difficulty: 0.68
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 180
+    prerequisites:
+      - id: lines-in-space
+        weight: 0.7
+        key: true
+      - id: planes-in-space
+        weight: 0.7
+        key: true
+      - id: vector-projections
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Line-plane intersections"
+        key_prerequisites: [lines-in-space, planes-in-space]
+        exemplars:
+          - problem: 'Find the point where the line $x = 1 + t$, $y = 2t$, $z = 3 - t$ meets the plane $x + y + z = 6$.'
+            answer: '$(2, 2, 2)$'
+            solution_sketch: 'Substitute: $(1+t) + 2t + (3-t) = 6$ gives $2t = 2$, $t = 1$; the point is $(2, 2, 2)$.'
+          - problem: 'Find the point where the line $x = 1 + 2t$, $y = -t$, $z = t$ meets the plane $2x + y + z = 10$.'
+            answer: '$(5, -2, 2)$'
+            solution_sketch: '$2(1+2t) - t + t = 2 + 4t = 10$, so $t = 2$.'
+          - problem: 'Show that the line $x = t$, $y = 1 - t$, $z = 2$ does not meet the plane $x + y + z = 5$.'
+            answer: 'Substituting gives $t + (1 - t) + 2 = 3 \ne 5$ for every $t$: the line is parallel to the plane and off it.'
+            solution_sketch: 'The direction $\langle 1, -1, 0 \rangle$ is orthogonal to the normal $\langle 1,1,1 \rangle$, and one point check fails.'
+        constraints: "substitution yields a linear equation with integer solution t, or a contradiction in the parallel case"
+      - id: kp2
+        name: "Distances to planes and lines"
+        key_prerequisites: [planes-in-space, vector-projections]
+        exemplars:
+          - problem: 'Find the distance from the point $(1, 1, 1)$ to the plane $2x - y + 2z = 10$.'
+            answer: '$\frac{7}{3}$'
+            solution_sketch: '$d = \frac{|2 - 1 + 2 - 10|}{\sqrt{4 + 1 + 4}} = \frac{7}{3}$.'
+          - problem: 'Find the distance between the parallel planes $x + 2y + 2z = 1$ and $x + 2y + 2z = 10$.'
+            answer: "3"
+            solution_sketch: 'Pick a point on the first plane, e.g. $(1, 0, 0)$: $d = \frac{|1 - 10|}{\sqrt{1+4+4}} = \frac{9}{3} = 3$.'
+          - problem: 'Find the distance from the point $Q(1, 2, 3)$ to the line through $P(1, 0, 1)$ with direction $\mathbf{v} = \langle 0, 1, 0 \rangle$.'
+            answer: "2"
+            solution_sketch: '$\vec{PQ} = \langle 0, 2, 2 \rangle$; $d = \frac{|\vec{PQ} \times \mathbf{v}|}{|\mathbf{v}|} = \frac{|\langle -2, 0, 0 \rangle|}{1} = 2$.'
+        constraints: "normal magnitudes are integers (e.g. components 1-2-2, 2-1-2); answers are integers or simple fractions"
+      - id: kp3
+        name: "Line of intersection of two planes"
+        key_prerequisites: [planes-in-space, lines-in-space]
+        exemplars:
+          - problem: 'Find parametric equations for the line of intersection of the planes $x + y + z = 2$ and $x - y + z = 0$.'
+            answer: '$x = 1 + t,\; y = 1,\; z = -t$'
+            solution_sketch: 'Direction $\langle 1,1,1 \rangle \times \langle 1,-1,1 \rangle = \langle 2, 0, -2 \rangle \parallel \langle 1, 0, -1 \rangle$. Setting $z = 0$: $x + y = 2$, $x - y = 0$ gives the point $(1, 1, 0)$.'
+          - problem: 'Find parametric equations for the line of intersection of the planes $x + y = 3$ and $y + z = 5$.'
+            answer: '$x = 3 + t,\; y = -t,\; z = 5 + t$'
+            solution_sketch: 'Direction $\langle 1,1,0 \rangle \times \langle 0,1,1 \rangle = \langle 1, -1, 1 \rangle$; with $y = 0$ the point is $(3, 0, 5)$.'
+        constraints: "cross products of the normals have integer components; a coordinate can be set to 0 to solve for an integer point"
+    diagnostic_exemplar:
+      problem: 'Find parametric equations for the line of intersection of the planes $x + y + z = 6$ and $2x - y + z = 3$.'
+      answer: '$x = -3 + 2t,\; y = t,\; z = 9 - 3t$'
+      solution_sketch: 'Subtracting gives $-x + 2y = 3$, so $x = 2y - 3$, and then $z = 6 - x - y = 9 - 3y$. Setting $y = t$ gives the parametrization; its direction $\langle 2, 1, -3 \rangle$ is (up to sign) $\langle 1, 1, 1 \rangle \times \langle 2, -1, 1 \rangle$.'
+    anki_seeds:
+      - front: 'Distance from point $(x_0,y_0,z_0)$ to plane $ax + by + cz = d$?'
+        back: '$\dfrac{|ax_0 + by_0 + cz_0 - d|}{\sqrt{a^2 + b^2 + c^2}}$'
+        type: basic
+      - front: 'Direction vector of the line of intersection of two planes with normals $\mathbf{n}_1$, $\mathbf{n}_2$?'
+        back: '$\mathbf{n}_1 \times \mathbf{n}_2$'
+        type: basic
+
+  - id: vector-functions-basics
+    name: "Vector Functions and Space Curves"
+    core: true
+    difficulty: 0.60
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 100
+    prerequisites:
+      - id: parametric-equations
+        weight: 0.6
+        key: true
+      - id: vectors-in-rn
+        weight: 0.5
+        key: true
+      - id: domain-range
+        weight: 0.3
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Evaluation and domains"
+        key_prerequisites: [vectors-in-rn, domain-range]
+        exemplars:
+          - problem: 'Let $\mathbf{r}(t) = \langle t^2, t - 1, 1/t \rangle$. Compute $\mathbf{r}(2)$.'
+            answer: '$\langle 4, 1, \tfrac{1}{2} \rangle$'
+          - problem: 'Find the domain of $\mathbf{r}(t) = \langle \sqrt{t - 1}, \ln(4 - t), 1/t \rangle$.'
+            answer: '$[1, 4)$'
+            solution_sketch: 'Need $t \ge 1$, $t < 4$, and $t \ne 0$; the intersection is $[1, 4)$.'
+        constraints: "components use one root, log, or reciprocal each; domains are single intervals or a union of two"
+      - id: kp2
+        name: "Limits of vector functions"
+        key_prerequisites: [parametric-equations]
+        exemplars:
+          - problem: 'Compute $\lim_{t \to 0} \left\langle \dfrac{\sin t}{t},\; t^2 + 1,\; e^t \right\rangle$.'
+            answer: '$\langle 1, 1, 1 \rangle$'
+            solution_sketch: 'Take the limit componentwise; $\frac{\sin t}{t} \to 1$.'
+          - problem: 'Compute $\lim_{t \to 1} \left\langle \dfrac{t^2 - 1}{t - 1},\; t^3,\; 2 \right\rangle$.'
+            answer: '$\langle 2, 1, 2 \rangle$'
+            solution_sketch: 'Factor: $\frac{t^2-1}{t-1} = t + 1 \to 2$.'
+        constraints: "componentwise limits solvable by standard single-variable techniques (factoring, sin t / t)"
+      - id: kp3
+        name: "Identifying space curves"
+        key_prerequisites: [parametric-equations, vectors-in-rn]
+        exemplars:
+          - problem: 'Describe the curve $\mathbf{r}(t) = \langle 1 + 2t, 3t, 4 - t \rangle$.'
+            answer: 'A line through $(1, 0, 4)$ with direction $\langle 2, 3, -1 \rangle$.'
+          - problem: 'Describe the curve $\mathbf{r}(t) = \langle \cos t, \sin t, 2 \rangle$.'
+            answer: 'A circle of radius $1$ in the plane $z = 2$, centered on the $z$-axis.'
+          - problem: 'Show that the curve $\mathbf{r}(t) = \langle t \cos t, t \sin t, t \rangle$ lies on the cone $z^2 = x^2 + y^2$.'
+            answer: '$x^2 + y^2 = t^2 \cos^2 t + t^2 \sin^2 t = t^2 = z^2$.'
+        constraints: "curves are lines, circles, helices, or curves lying on a named quadric verified by substitution"
+    diagnostic_exemplar:
+      problem: 'Describe the curve $\mathbf{r}(t) = \langle 2\cos t,\; 2\sin t,\; \ln t \rangle$, including its domain.'
+      answer: 'Domain $t > 0$. The curve lies on the cylinder $x^2 + y^2 = 4$: it winds counterclockwise around the $z$-axis at radius $2$ while its height $z = \ln t$ increases without bound, dropping to $-\infty$ as $t \to 0^+$.'
+      solution_sketch: '$\ln t$ forces $t > 0$; and $x^2 + y^2 = 4\cos^2 t + 4\sin^2 t = 4$, so every point lies on the cylinder of radius $2$.'
+    anki_seeds:
+      - front: 'How do you take the limit of a vector function $\mathbf{r}(t)$?'
+        back: 'Componentwise: the limit of each coordinate function separately.'
+        type: basic
+      - front: 'The curve $\langle \cos t, \sin t, t \rangle$ is a {{c1::helix}} winding around the $z$-axis.'
+        back: 'helix'
+        type: cloze
+
+  - id: vector-valued-functions
+    name: "Calculus of Vector Functions"
+    core: true
+    difficulty: 0.65
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 150
+    prerequisites:
+      - id: vector-functions-basics
+        weight: 0.7
+        key: true
+      - id: derivatives-trig
+        weight: 0.5
+        key: true
+      - id: derivatives-exp-log
+        weight: 0.4
+        key: false
+      - id: definite-integrals-ftc
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Derivatives of vector functions"
+        key_prerequisites: [vector-functions-basics, derivatives-trig]
+        exemplars:
+          - problem: 'Let $\mathbf{r}(t) = \langle \cos t, \sin t, t \rangle$. Find $\mathbf{r}''(t)$.'
+            answer: '$\langle -\sin t, \cos t, 1 \rangle$'
+          - problem: 'Let $\mathbf{r}(t) = \langle t^2, e^{2t}, \ln t \rangle$. Find $\mathbf{r}''(t)$.'
+            answer: '$\langle 2t, 2e^{2t}, \frac{1}{t} \rangle$'
+            solution_sketch: 'Differentiate componentwise; each component is a single-variable derivative.'
+        constraints: "components drawn from polynomials, sin/cos, e^{kt}, ln t; differentiate componentwise only"
+      - id: kp2
+        name: "Tangent vectors and tangent lines"
+        key_prerequisites: [vector-functions-basics]
+        exemplars:
+          - problem: 'Find parametric equations for the tangent line to $\mathbf{r}(t) = \langle t^2, t^3, t \rangle$ at $t = 1$.'
+            answer: '$x = 1 + 2s,\; y = 1 + 3s,\; z = 1 + s$'
+            solution_sketch: 'Point $\mathbf{r}(1) = (1, 1, 1)$; direction $\mathbf{r}''(1) = \langle 2, 3, 1 \rangle$.'
+          - problem: 'Find parametric equations for the tangent line to $\mathbf{r}(t) = \langle \cos t, \sin t, t \rangle$ at $t = 0$.'
+            answer: '$x = 1,\; y = s,\; z = s$'
+            solution_sketch: 'Point $(1, 0, 0)$; direction $\mathbf{r}''(0) = \langle 0, 1, 1 \rangle$.'
+        constraints: "tangent-line base points and directions are integer vectors after evaluation"
+      - id: kp3
+        name: "Integrals of vector functions"
+        key_prerequisites: [vector-functions-basics, definite-integrals-ftc]
+        exemplars:
+          - problem: 'Compute $\int_0^1 \langle 2t, 3t^2, 4t^3 \rangle \, dt$.'
+            answer: '$\langle 1, 1, 1 \rangle$'
+          - problem: 'Find $\mathbf{r}(t)$ given $\mathbf{r}''(t) = \langle 3t^2, 2, 4t^3 \rangle$ and $\mathbf{r}(0) = \langle 0, 5, 1 \rangle$.'
+            answer: '$\langle t^3, 2t + 5, t^4 + 1 \rangle$'
+            solution_sketch: 'Antidifferentiate componentwise to get $\langle t^3, 2t, t^4 \rangle + \mathbf{C}$; setting $t = 0$ forces $\mathbf{C} = \langle 0, 5, 1 \rangle$.'
+        constraints: "polynomial components; initial conditions with small integers"
+    diagnostic_exemplar:
+      problem: 'Given $\mathbf{r}''(t) = \langle 2t,\; 1,\; 3t^2 \rangle$ and $\mathbf{r}(0) = \langle 0, 1, 0 \rangle$, find parametric equations for the tangent line to the curve $\mathbf{r}$ at $t = 1$.'
+      answer: '$x = 1 + 2s,\; y = 2 + s,\; z = 1 + 3s$'
+      solution_sketch: 'Integrating componentwise and fitting $\mathbf{r}(0)$ gives $\mathbf{r}(t) = \langle t^2, t + 1, t^3 \rangle$. Then $\mathbf{r}(1) = \langle 1, 2, 1 \rangle$ is the base point and $\mathbf{r}''(1) = \langle 2, 1, 3 \rangle$ the direction.'
+    anki_seeds:
+      - front: 'How do you differentiate a vector-valued function $\mathbf{r}(t)$?'
+        back: 'Componentwise: differentiate each coordinate function separately.'
+        type: basic
+      - front: 'How do you integrate a vector-valued function?'
+        back: 'Componentwise; a vector constant of integration is fixed by an initial condition.'
+        type: basic
+
+  - id: motion-in-space
+    name: "Motion in Space: Velocity and Acceleration"
+    core: false                # kinematics application; terminal
+    difficulty: 0.66
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 150
+    prerequisites:
+      - id: vector-valued-functions
+        weight: 0.8
+        key: true
+      - id: definite-integrals-ftc
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Velocity, speed, and acceleration"
+        key_prerequisites: [vector-valued-functions]
+        exemplars:
+          - problem: 'A particle has position $\mathbf{r}(t) = \langle \cos 2t, \sin 2t, t \rangle$. Find its velocity, speed, and acceleration.'
+            answer: '$\mathbf{v} = \langle -2\sin 2t, 2\cos 2t, 1 \rangle$; speed $\sqrt{5}$; $\mathbf{a} = \langle -4\cos 2t, -4\sin 2t, 0 \rangle$'
+            solution_sketch: '$|\mathbf{v}| = \sqrt{4\sin^2 2t + 4\cos^2 2t + 1} = \sqrt{5}$, constant.'
+          - problem: 'For $\mathbf{r}(t) = \langle t^2, 2t, \ln t \rangle$, find the speed at $t = 1$.'
+            answer: "3"
+            solution_sketch: '$\mathbf{v} = \langle 2t, 2, 1/t \rangle$; at $t = 1$, $|\mathbf{v}| = \sqrt{4 + 4 + 1} = 3$.'
+        constraints: "speeds at the requested instant are integers or single clean radicals"
+      - id: kp2
+        name: "Recovering velocity and position"
+        key_prerequisites: [vector-valued-functions, definite-integrals-ftc]
+        exemplars:
+          - problem: 'A particle has velocity $\mathbf{v}(t) = \langle 2t, 3t^2, 1 \rangle$ and initial position $\mathbf{r}(0) = \langle 1, 0, 2 \rangle$. Find $\mathbf{r}(t)$.'
+            answer: '$\langle t^2 + 1, t^3, t + 2 \rangle$'
+            solution_sketch: 'Antidifferentiate componentwise and fix constants with $\mathbf{r}(0)$.'
+          - problem: 'A particle has acceleration $\mathbf{a}(t) = \langle 0, 2, 6t \rangle$, $\mathbf{v}(0) = \langle 1, 0, 0 \rangle$, and $\mathbf{r}(0) = \langle 0, 0, 0 \rangle$. Find $\mathbf{r}(t)$.'
+            answer: '$\langle t, t^2, t^3 \rangle$'
+            solution_sketch: 'Integrate twice: $\mathbf{v}(t) = \langle 1, 2t, 3t^2 \rangle$, then $\mathbf{r}(t) = \langle t, t^2, t^3 \rangle$.'
+        constraints: "polynomial accelerations; integer initial conditions so all constants are clean"
+      - id: kp3
+        name: "Projectile motion"
+        key_prerequisites: [vector-valued-functions, definite-integrals-ftc]
+        exemplars:
+          - problem: 'A projectile is fired from the origin with initial velocity $\langle 30, 0, 40 \rangle$ m/s under acceleration $\langle 0, 0, -10 \rangle$ m/s$^2$. When does it land ($z = 0$), and how far has it traveled horizontally?'
+            answer: 'Lands at $t = 8$ s, after $240$ m horizontally.'
+            solution_sketch: '$z(t) = 40t - 5t^2 = 5t(8 - t) = 0$ at $t = 8$; $x(8) = 30 \cdot 8 = 240$.'
+          - problem: 'For the same projectile ($z(t) = 40t - 5t^2$), find the maximum height.'
+            answer: '$80$ m'
+            solution_sketch: '$z''(t) = 40 - 10t = 0$ at $t = 4$; $z(4) = 160 - 80 = 80$.'
+        constraints: "use g = 10 m/s^2; launch speeds chosen so landing times and heights are integers"
+    diagnostic_exemplar:
+      problem: 'A projectile leaves the origin with initial velocity $\langle 20, 0, 30 \rangle$ m/s and has constant acceleration $\langle 0, 0, -10 \rangle$ m/s$^2$. How far does it travel horizontally before returning to $z = 0$?'
+      answer: '$120$ m (it lands at $t = 6$ s).'
+      solution_sketch: 'Integrating twice: $\mathbf{v}(t) = \langle 20, 0, 30 - 10t \rangle$, $\mathbf{r}(t) = \langle 20t, 0, 30t - 5t^2 \rangle$. Then $z = 0$ again at $t = 6$, where $x = 120$.'
+    anki_seeds:
+      - front: 'For position $\mathbf{r}(t)$: velocity, speed, and acceleration are...'
+        back: '$\mathbf{v} = \mathbf{r}''$, speed $= |\mathbf{v}|$, $\mathbf{a} = \mathbf{r}''''$.'
+        type: basic
+      - front: 'To recover position from acceleration you integrate {{c1::twice}}, using {{c2::$\mathbf{v}(0)$ and $\mathbf{r}(0)$}} to fix the constants.'
+        back: 'twice / the initial velocity and position'
+        type: cloze
+
+  - id: arc-length-space-curves
+    name: "Arc Length of Space Curves"
+    core: true
+    difficulty: 0.68
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 180
+    prerequisites:
+      - id: vector-valued-functions
+        weight: 0.8
+        key: true
+      - id: definite-integrals-ftc
+        weight: 0.6
+        key: true
+      - id: arc-length
+        weight: 0.4
+        key: false
+      - id: integration-substitution
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Arc length via constant or simple speed"
+        key_prerequisites: [vector-valued-functions, definite-integrals-ftc]
+        exemplars:
+          - problem: 'Find the length of the helix $\mathbf{r}(t) = \langle \cos t, \sin t, t \rangle$ for $0 \le t \le 2\pi$.'
+            answer: '$2\pi\sqrt{2}$'
+            solution_sketch: '$|\mathbf{r}''(t)| = \sqrt{\sin^2 t + \cos^2 t + 1} = \sqrt{2}$ is constant, so $L = \sqrt{2} \cdot 2\pi$.'
+          - problem: 'Find the length of $\mathbf{r}(t) = \langle 3t, 4t, 5 \rangle$ for $0 \le t \le 2$.'
+            answer: "10"
+            solution_sketch: '$\mathbf{r}''(t) = \langle 3, 4, 0 \rangle$, speed $5$; $L = 5 \cdot 2 = 10$.'
+        constraints: "speed is constant (helices, lines): |r'| a clean radical or integer"
+      - id: kp2
+        name: "Arc length with perfect-square speeds"
+        key_prerequisites: [vector-valued-functions, definite-integrals-ftc]
+        exemplars:
+          - problem: 'Find the length of $\mathbf{r}(t) = \langle 2t, t^2, \ln t \rangle$ for $1 \le t \le 2$.'
+            answer: '$3 + \ln 2$'
+            solution_sketch: '$|\mathbf{r}''(t)|^2 = 4 + 4t^2 + \frac{1}{t^2} = \left(2t + \frac{1}{t}\right)^2$, so $L = \int_1^2 \left(2t + \frac{1}{t}\right) dt = \left[t^2 + \ln t\right]_1^2 = 3 + \ln 2$.'
+          - problem: 'Find the length of $\mathbf{r}(t) = \langle e^t \cos t, e^t \sin t, e^t \rangle$ for $0 \le t \le 1$.'
+            answer: '$\sqrt{3}\,(e - 1)$'
+            solution_sketch: 'Each derivative carries a factor $e^t$; $|\mathbf{r}''(t)|^2 = e^{2t}\left[(\cos t - \sin t)^2 + (\sin t + \cos t)^2 + 1\right] = 3e^{2t}$. So $L = \sqrt{3}\int_0^1 e^t\,dt = \sqrt{3}(e-1)$.'
+        constraints: "the squared speed must factor as a perfect square or a constant times e^{2t}; exact answers with ln and e"
+      - id: kp3
+        name: "Speed and arc length parametrization"
+        key_prerequisites: [vector-valued-functions]
+        exemplars:
+          - problem: 'For $\mathbf{r}(t) = \langle \cos t, \sin t, t \rangle$, find the arc length function $s(t)$ measured from $t = 0$.'
+            answer: '$s(t) = \sqrt{2}\, t$'
+            solution_sketch: '$s(t) = \int_0^t |\mathbf{r}''(u)|\, du = \int_0^t \sqrt{2}\, du$.'
+          - problem: 'Reparametrize the helix $\mathbf{r}(t) = \langle \cos t, \sin t, t \rangle$ by arc length from $t = 0$.'
+            answer: '$\mathbf{r}(s) = \langle \cos(s/\sqrt{2}), \sin(s/\sqrt{2}), s/\sqrt{2} \rangle$'
+            solution_sketch: 'From $s = \sqrt{2}\,t$, solve $t = s/\sqrt{2}$ and substitute.'
+        constraints: "constant-speed curves only, so s(t) is linear in t"
+    diagnostic_exemplar:
+      problem: 'Find the length of $\mathbf{r}(t) = \left\langle \tfrac{1}{3}t^3,\; t^2,\; 2t \right\rangle$ for $0 \le t \le 3$.'
+      answer: '15'
+      solution_sketch: '$\mathbf{r}''(t) = \langle t^2, 2t, 2 \rangle$ and $|\mathbf{r}''|^2 = t^4 + 4t^2 + 4 = (t^2 + 2)^2$, so the speed is $t^2 + 2$. Then $L = \int_0^3 (t^2 + 2)\,dt = 9 + 6 = 15$.'
+    anki_seeds:
+      - front: 'Arc length of $\mathbf{r}(t)$ for $a \le t \le b$?'
+        back: '$L = \int_a^b |\mathbf{r}''(t)|\, dt$'
+        type: basic
+      - front: 'The speed of a particle with position $\mathbf{r}(t)$ is...'
+        back: '$|\mathbf{r}''(t)|$, the magnitude of the velocity vector; also $ds/dt$.'
+        type: basic
+
+  - id: unit-tangent-normal-vectors
+    name: "Unit Tangent and Normal Vectors"
+    core: false                # feeds only curvature; terminal branch
+    difficulty: 0.70
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 150
+    prerequisites:
+      - id: vector-valued-functions
+        weight: 0.7
+        key: true
+      - id: arc-length-space-curves
+        weight: 0.4
+        key: false
+      - id: derivatives-trig
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "The unit tangent vector"
+        key_prerequisites: [vector-valued-functions]
+        exemplars:
+          - problem: 'Find the unit tangent vector $\mathbf{T}(t)$ for $\mathbf{r}(t) = \langle \cos t, \sin t, t \rangle$.'
+            answer: '$\frac{1}{\sqrt{2}}\langle -\sin t, \cos t, 1 \rangle$'
+            solution_sketch: '$\mathbf{r}''(t) = \langle -\sin t, \cos t, 1 \rangle$ has constant length $\sqrt{\sin^2 t + \cos^2 t + 1} = \sqrt{2}$.'
+          - problem: 'Find $\mathbf{T}(t)$ for the line $\mathbf{r}(t) = \langle t, 2t, 2t \rangle$.'
+            answer: '$\frac{1}{3}\langle 1, 2, 2 \rangle$'
+            solution_sketch: '$\mathbf{r}'' = \langle 1, 2, 2 \rangle$ has length $\sqrt{1+4+4} = 3$.'
+        constraints: "speeds are constants or clean radicals so T has an exact closed form"
+      - id: kp2
+        name: "The principal unit normal vector"
+        key_prerequisites: [vector-valued-functions, derivatives-trig]
+        exemplars:
+          - problem: 'Find $\mathbf{N}(t)$ for the circle $\mathbf{r}(t) = \langle 2\cos t, 2\sin t, 0 \rangle$.'
+            answer: '$\langle -\cos t, -\sin t, 0 \rangle$'
+            solution_sketch: '$\mathbf{T} = \langle -\sin t, \cos t, 0 \rangle$; $\mathbf{T}'' = \langle -\cos t, -\sin t, 0 \rangle$ already has length $1$. $\mathbf{N}$ points toward the center.'
+          - problem: 'Find $\mathbf{N}(t)$ for the helix $\mathbf{r}(t) = \langle \cos t, \sin t, t \rangle$.'
+            answer: '$\langle -\cos t, -\sin t, 0 \rangle$'
+            solution_sketch: '$\mathbf{T} = \frac{1}{\sqrt{2}}\langle -\sin t, \cos t, 1 \rangle$, so $\mathbf{T}'' = \frac{1}{\sqrt{2}}\langle -\cos t, -\sin t, 0 \rangle$ with $|\mathbf{T}''| = \frac{1}{\sqrt{2}}$.'
+        constraints: "circles and helices (constant speed) so |T'| is constant and N is exact"
+      - id: kp3
+        name: "Evaluating T, N, and the binormal at a point"
+        key_prerequisites: [vector-valued-functions]
+        exemplars:
+          - problem: 'For the helix $\mathbf{r}(t) = \langle \cos t, \sin t, t \rangle$, evaluate $\mathbf{T}$ and $\mathbf{N}$ at $t = \pi/2$.'
+            answer: '$\mathbf{T}(\pi/2) = \frac{1}{\sqrt{2}}\langle -1, 0, 1 \rangle$, $\;\mathbf{N}(\pi/2) = \langle 0, -1, 0 \rangle$'
+          - problem: 'For the same helix, compute the binormal $\mathbf{B} = \mathbf{T} \times \mathbf{N}$ at $t = 0$.'
+            answer: '$\frac{1}{\sqrt{2}}\langle 0, -1, 1 \rangle$'
+            solution_sketch: '$\mathbf{T}(0) = \frac{1}{\sqrt{2}}\langle 0, 1, 1 \rangle$, $\mathbf{N}(0) = \langle -1, 0, 0 \rangle$; $\langle 0,1,1 \rangle \times \langle -1,0,0 \rangle = \langle 0, -1, 1 \rangle$.'
+        constraints: "evaluate at multiples of pi/2 so sines and cosines are 0 or +-1"
+    diagnostic_exemplar:
+      problem: 'For $\mathbf{r}(t) = \langle \cos t, \sin t, t \rangle$, find $\mathbf{T}(0)$ and $\mathbf{N}(0)$.'
+      answer: '$\mathbf{T}(0) = \frac{1}{\sqrt{2}}\langle 0, 1, 1 \rangle$, $\;\mathbf{N}(0) = \langle -1, 0, 0 \rangle$'
+      solution_sketch: '$\mathbf{r}''(t) = \langle -\sin t, \cos t, 1\rangle$ has constant length $\sqrt{2}$, so $\mathbf{T} = \frac{1}{\sqrt{2}}\langle -\sin t, \cos t, 1\rangle$; then $\mathbf{T}''$ has length $\frac{1}{\sqrt{2}}$ and $\mathbf{N} = \mathbf{T}''/|\mathbf{T}''| = \langle -\cos t, -\sin t, 0\rangle$. Evaluate both at $t = 0$.'
+    anki_seeds:
+      - front: 'Formula for the unit tangent vector $\mathbf{T}(t)$?'
+        back: '$\mathbf{T}(t) = \mathbf{r}''(t) / |\mathbf{r}''(t)|$'
+        type: basic
+      - front: 'Formula for the principal unit normal $\mathbf{N}(t)$?'
+        back: '$\mathbf{N}(t) = \mathbf{T}''(t) / |\mathbf{T}''(t)|$'
+        type: basic
+      - front: 'The binormal vector is $\mathbf{B} = $ {{c1::$\mathbf{T} \times \mathbf{N}$}}.'
+        back: '$\mathbf{T} \times \mathbf{N}$'
+        type: cloze
+
+  - id: curvature
+    name: "Curvature"
+    core: false                # terminal geometric quantity; nothing here uses it
+    difficulty: 0.74
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 180
+    prerequisites:
+      - id: unit-tangent-normal-vectors
+        weight: 0.7
+        key: true
+      - id: cross-product
+        weight: 0.5
+        key: true
+      - id: arc-length-space-curves
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Curvature from the unit tangent"
+        key_prerequisites: [unit-tangent-normal-vectors, arc-length-space-curves]
+        exemplars:
+          - problem: 'Use $\kappa = |\mathbf{T}''(t)| / |\mathbf{r}''(t)|$ to find the curvature of the circle $\mathbf{r}(t) = \langle 2\cos t, 2\sin t, 0 \rangle$.'
+            answer: '$\frac{1}{2}$'
+            solution_sketch: '$|\mathbf{r}''| = 2$ and $\mathbf{T}'' = \langle -\cos t, -\sin t, 0 \rangle$ has length $1$, so $\kappa = 1/2$. (A circle of radius $a$ has $\kappa = 1/a$.)'
+          - problem: 'Find the curvature of the helix $\mathbf{r}(t) = \langle \cos t, \sin t, t \rangle$.'
+            answer: '$\frac{1}{2}$'
+            solution_sketch: '$|\mathbf{T}''| = \frac{1}{\sqrt{2}}$ and $|\mathbf{r}''| = \sqrt{2}$, so $\kappa = \frac{1/\sqrt{2}}{\sqrt{2}} = \frac{1}{2}$.'
+        constraints: "constant-speed curves (circles, helices) so kappa is a constant rational"
+      - id: kp2
+        name: "The cross-product formula"
+        key_prerequisites: [unit-tangent-normal-vectors, cross-product]
+        exemplars:
+          - problem: 'Use $\kappa = \dfrac{|\mathbf{r}'' \times \mathbf{r}''''|}{|\mathbf{r}''|^3}$ to find the curvature of the twisted cubic $\mathbf{r}(t) = \langle t, t^2, t^3 \rangle$ at $t = 0$.'
+            answer: "2"
+            solution_sketch: 'At $t=0$: $\mathbf{r}'' = \langle 1, 0, 0 \rangle$, $\mathbf{r}'''' = \langle 0, 2, 0 \rangle$; cross product $\langle 0, 0, 2 \rangle$, so $\kappa = 2/1 = 2$.'
+          - problem: 'Find the curvature of $y = x^2$ at the point $(1, 1)$.'
+            answer: '$\dfrac{2}{5\sqrt{5}} = \dfrac{2\sqrt{5}}{25}$'
+            solution_sketch: 'Plane-curve formula $\kappa = \frac{|y''''|}{(1 + y''^2)^{3/2}}$ with $y'' = 2$, $y'''' = 2$: $\kappa = \frac{2}{5^{3/2}}$.'
+        constraints: "evaluate at a specific t so cross products have small integer components; plane curves use the |y''| formula"
+      - id: kp3
+        name: "Interpreting curvature"
+        key_prerequisites: [unit-tangent-normal-vectors]
+        exemplars:
+          - problem: 'What is the curvature of a straight line?'
+            answer: '$0$ (the unit tangent never turns).'
+          - problem: 'Where is the curvature of the parabola $y = x^2$ largest, and what is its radius of curvature there?'
+            answer: 'At the vertex $(0,0)$, where $\kappa = 2$; the radius of curvature is $1/\kappa = \frac{1}{2}$.'
+            solution_sketch: '$\kappa(x) = \frac{2}{(1+4x^2)^{3/2}}$ is maximized at $x = 0$.'
+        constraints: "conceptual: lines, circles, and locating maximum curvature of a parabola"
+    diagnostic_exemplar:
+      problem: 'Find the curvature of $\mathbf{r}(t) = \langle 2t,\; t^2,\; t^3 \rangle$ at $t = 0$, and state the radius of curvature there.'
+      answer: '$\kappa = \frac{1}{2}$; radius of curvature $2$.'
+      solution_sketch: '$\mathbf{r}''(0) = \langle 2, 0, 0 \rangle$ and $\mathbf{r}''''(0) = \langle 0, 2, 0 \rangle$, so $\mathbf{r}'' \times \mathbf{r}'''' = \langle 0, 0, 4 \rangle$ and $\kappa = \frac{4}{2^3} = \frac{1}{2}$; the radius of curvature is $1/\kappa = 2$.'
+    anki_seeds:
+      - front: 'Two formulas for curvature $\kappa$ of $\mathbf{r}(t)$?'
+        back: '$\kappa = \dfrac{|\mathbf{T}''(t)|}{|\mathbf{r}''(t)|} = \dfrac{|\mathbf{r}''(t) \times \mathbf{r}''''(t)|}{|\mathbf{r}''(t)|^3}$'
+        type: basic
+      - front: 'Curvature of a circle of radius $a$?'
+        back: '$\kappa = 1/a$ (and the radius of curvature is $1/\kappa$).'
+        type: basic

@@ -1,0 +1,736 @@
+unit: vectors
+course: linear-algebra
+module: "Vectors"
+topics:
+  - id: component-form-of-vectors
+    name: Component Form of Vectors
+    core: true
+    difficulty: 0.45
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 90
+    prerequisites:
+      - id: coordinate-plane
+        weight: 0.7
+        key: true
+      - id: plotting-points
+        weight: 0.4
+      - id: integer-addition-subtraction
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Vector between two points
+        key_prerequisites: [coordinate-plane]
+        exemplars:
+          - problem: 'Find the component form of the vector from $P(1, 2)$ to $Q(4, 6)$.'
+            answer: "(3, 4)"
+            solution_sketch: 'Terminal minus initial: $(4 - 1, 6 - 2)$.'
+          - problem: 'Find the component form of the vector from $P(-2, 5)$ to $Q(3, 1)$.'
+            answer: "(5, -4)"
+          - problem: 'Find the component form of the vector from $P(2, -1, 3)$ to $Q(0, 2, 5)$.'
+            answer: "(-2, 3, 2)"
+        constraints: "integer coordinates in -9..9; dimensions 2 or 3"
+      - id: kp2
+        name: Equal vectors and endpoints
+        key_prerequisites: [coordinate-plane]
+        exemplars:
+          - problem: 'The vector $(3, -2)$ starts at $P(1, 4)$. Where does it end?'
+            answer: "(4, 2)"
+            solution_sketch: 'Add the vector to the initial point: $(1 + 3, 4 + (-2))$.'
+          - problem: 'Is the vector from $P(0, 0)$ to $Q(2, 3)$ equal to the vector from $R(5, 1)$ to $S(7, 4)$?'
+            answer: "Yes"
+            solution_sketch: 'Both have component form $(2, 3)$; vectors are equal when their components agree.'
+          - problem: 'The vector $(-1, 5)$ ends at $Q(2, 3)$. Where does it start?'
+            answer: "(3, -2)"
+            solution_sketch: 'Initial point is terminal minus vector: $(2 - (-1), 3 - 5)$.'
+        constraints: "integer coordinates in -9..9; dimension 2"
+      - id: kp3
+        name: Standard basis notation
+        key_prerequisites: [coordinate-plane]
+        exemplars:
+          - problem: 'Write $(3, -2)$ in $\mathbf{i}, \mathbf{j}$ notation.'
+            answer: '$3i - 2j$'
+          - problem: 'Write $4\mathbf{i} - \mathbf{j} + 2\mathbf{k}$ in component form.'
+            answer: "(4, -1, 2)"
+          - problem: 'Write the vector from $P(1, 1)$ to $Q(4, 0)$ in $\mathbf{i}, \mathbf{j}$ notation.'
+            answer: '$3i - j$'
+            solution_sketch: 'Component form is $(3, -1)$, so $3i - j$.'
+        constraints: "integer components in -9..9; dimensions 2 or 3"
+    diagnostic_exemplar:
+      problem: 'The vector from $P(-1, 3)$ to $Q(2, -2)$ is redrawn so that it starts at $R(1, 0)$. Write the vector from the origin to its new endpoint in $\mathbf{i}, \mathbf{j}$ notation.'
+      answer: '$4i - 5j$'
+      solution_sketch: 'The vector is $(2 - (-1), -2 - 3) = (3, -5)$; from $R(1, 0)$ it ends at $(1 + 3, 0 - 5) = (4, -5)$, i.e. $4i - 5j$.'
+    anki_seeds:
+      - front: 'Component form of the vector from point $P$ to point $Q$?'
+        back: '$Q - P$ (terminal point minus initial point, componentwise).'
+        type: basic
+      - front: 'What are $\mathbf{i}, \mathbf{j}, \mathbf{k}$?'
+        back: 'The standard unit vectors along the $x$-, $y$-, and $z$-axes.'
+        type: basic
+
+  - id: vector-arithmetic
+    name: Vector Addition and Scalar Multiplication
+    core: true
+    difficulty: 0.45
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 90
+    prerequisites:
+      - id: component-form-of-vectors
+        weight: 0.7
+        key: true
+      - id: integer-addition-subtraction
+        weight: 0.4
+      - id: integer-multiplication-division
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Vector addition and subtraction
+        key_prerequisites: [component-form-of-vectors]
+        exemplars:
+          - problem: 'Let $\mathbf{u} = (3, 1)$ and $\mathbf{v} = (-1, 4)$. Compute $\mathbf{u} + \mathbf{v}$.'
+            answer: "(2, 5)"
+            solution_sketch: 'Add componentwise: $(3 + (-1), 1 + 4)$.'
+          - problem: 'Compute $(2, -3, 1) + (4, 0, -5)$.'
+            answer: "(6, -3, -4)"
+          - problem: 'Let $\mathbf{u} = (5, 2)$ and $\mathbf{v} = (3, 7)$. Compute $\mathbf{u} - \mathbf{v}$.'
+            answer: "(2, -5)"
+        constraints: "components are integers in -9..9; dimensions 2 or 3"
+      - id: kp2
+        name: Scalar multiplication
+        key_prerequisites: [component-form-of-vectors]
+        exemplars:
+          - problem: 'Compute $3(2, -1)$.'
+            answer: "(6, -3)"
+          - problem: 'Compute $-2(3, 0, -1)$.'
+            answer: "(-6, 0, 2)"
+          - problem: 'Compute $\frac{1}{2}(6, -4)$.'
+            answer: "(3, -2)"
+        constraints: "integer scalars in -3..3 or halves that keep components integer; integer components"
+      - id: kp3
+        name: Parallel vectors as scalar multiples
+        key_prerequisites: [component-form-of-vectors]
+        exemplars:
+          - problem: 'Is $(6, -4)$ parallel to $(-3, 2)$?'
+            answer: "Yes"
+            solution_sketch: '$(6, -4) = -2(-3, 2)$, a scalar multiple.'
+          - problem: 'Find $k$ so that $(6, k)$ is parallel to $(2, 3)$.'
+            answer: "9"
+            solution_sketch: '$(6, k) = 3(2, 3)$ forces $k = 9$.'
+          - problem: 'Is $(4, 6)$ parallel to $(2, 5)$?'
+            answer: "No"
+            solution_sketch: '$4 = 2c$ gives $c = 2$, but $6 \neq 2 \cdot 5$.'
+        constraints: "scalar multiples with integer ratio; solve-for-k problems must have integer k"
+    diagnostic_exemplar:
+      problem: 'Compute $(5, -1) + 2(-1, 3)$, then find $k$ so that the result is parallel to $(6, k)$.'
+      answer: '10'
+      solution_sketch: '$(5, -1) + (-2, 6) = (3, 5)$; $(6, k) = 2(3, 5)$ forces $k = 10$.'
+    anki_seeds:
+      - front: 'How do vectors add?'
+        back: 'Componentwise: $(u_1 + v_1, \dots, u_n + v_n)$.'
+        type: basic
+      - front: 'Nonzero vectors $\mathbf{u}$ and $\mathbf{v}$ are parallel exactly when...'
+        back: '$\mathbf{u} = c\mathbf{v}$ for some nonzero scalar $c$.'
+        type: basic
+
+  - id: linear-combinations-of-vectors
+    name: Linear Combinations of Vectors
+    core: true
+    difficulty: 0.5
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 120
+    prerequisites:
+      - id: vector-arithmetic
+        weight: 0.8
+        key: true
+      - id: systems-elimination
+        weight: 0.3
+      - id: order-of-operations
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Evaluating linear combinations
+        key_prerequisites: [vector-arithmetic]
+        exemplars:
+          - problem: 'Let $\mathbf{u} = (1, 2)$ and $\mathbf{v} = (2, -1)$. Compute $2\mathbf{u} - 3\mathbf{v}$.'
+            answer: "(-4, 7)"
+            solution_sketch: '$2\mathbf{u} = (2, 4)$, $3\mathbf{v} = (6, -3)$; subtract componentwise: $(2-6, 4-(-3))$.'
+          - problem: 'Let $\mathbf{u} = (0, 3)$ and $\mathbf{v} = (4, 1)$. Compute $\mathbf{u} + 2\mathbf{v}$.'
+            answer: "(8, 5)"
+          - problem: 'Compute $3(1, 0, 2) - (2, 2, 1)$.'
+            answer: "(1, -2, 5)"
+        constraints: "integer scalars in -3..3; integer components in -9..9; at most two terms"
+      - id: kp2
+        name: Combinations of three vectors
+        key_prerequisites: [vector-arithmetic]
+        exemplars:
+          - problem: 'Let $\mathbf{u} = (1, 1)$, $\mathbf{v} = (0, 2)$, $\mathbf{w} = (2, 0)$. Compute $\mathbf{u} - 2\mathbf{v} + 3\mathbf{w}$.'
+            answer: "(7, -3)"
+            solution_sketch: '$(1, 1) - (0, 4) + (6, 0) = (7, -3)$.'
+          - problem: 'Compute the linear combination $2(1, 0, 1) - (2, 1, 0)$.'
+            answer: "(0, -1, 2)"
+          - problem: 'Compute $\frac{1}{2}(\mathbf{u} + \mathbf{v})$ for $\mathbf{u} = (2, 4)$ and $\mathbf{v} = (6, 0)$.'
+            answer: "(4, 2)"
+            solution_sketch: '$\mathbf{u} + \mathbf{v} = (8, 4)$; halve each component.'
+        constraints: "up to three terms; integer results; scalars in -3..3 plus the scalar 1/2"
+      - id: kp3
+        name: Solving for combination coefficients
+        key_prerequisites: [vector-arithmetic, systems-elimination]
+        exemplars:
+          - problem: 'Find scalars $a, b$ with $a(1, 0) + b(0, 1) = (4, -7)$; state the pair $(a, b)$.'
+            answer: "(4, -7)"
+            solution_sketch: 'The standard basis picks off the components directly.'
+          - problem: 'Find $c$ so that $c(2, 3) + (1, 1) = (5, 7)$.'
+            answer: "2"
+            solution_sketch: 'First components: $2c + 1 = 5$, so $c = 2$; check $3 \cdot 2 + 1 = 7$.'
+          - problem: 'Find scalars $a, b$ with $a(1, 1) + b(1, -1) = (4, 2)$; state the pair $(a, b)$.'
+            answer: "(3, 1)"
+            solution_sketch: '$a + b = 4$ and $a - b = 2$; adding gives $2a = 6$.'
+        constraints: "coefficients are small integers in -9..9; systems solvable by inspection or one elimination"
+    diagnostic_exemplar:
+      problem: 'Find scalars $a, b$ with $a(1, 2) + b(3, -1) = (5, 3)$; state the pair $(a, b)$.'
+      answer: '(2, 1)'
+      solution_sketch: '$a + 3b = 5$ and $2a - b = 3$ give $a = 2$, $b = 1$; check $2(1, 2) + (3, -1) = (5, 3)$.'
+    anki_seeds:
+      - front: 'A linear combination of vectors $\mathbf{v}_1, \dots, \mathbf{v}_k$ is...'
+        back: '$c_1\mathbf{v}_1 + \cdots + c_k\mathbf{v}_k$ for scalars $c_1, \dots, c_k$.'
+        type: basic
+
+  - id: vector-norms-unit-vectors
+    name: Vector Norms and Unit Vectors
+    core: true
+    difficulty: 0.5
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 120
+    prerequisites:
+      - id: vector-arithmetic
+        weight: 0.6
+        key: true
+      - id: pythagorean-theorem
+        weight: 0.7
+        key: true
+      - id: square-roots
+        weight: 0.5
+    knowledge_points:
+      - id: kp1
+        name: Computing norms
+        key_prerequisites: [pythagorean-theorem, square-roots]
+        exemplars:
+          - problem: 'Compute $\|(3, 4)\|$.'
+            answer: "5"
+            solution_sketch: '$\sqrt{3^2 + 4^2} = \sqrt{25} = 5$.'
+          - problem: 'Compute $\|(1, 2, 2)\|$.'
+            answer: "3"
+            solution_sketch: '$\sqrt{1 + 4 + 4} = \sqrt{9} = 3$.'
+          - problem: 'Compute $\|(-5, 12)\|$.'
+            answer: "13"
+        constraints: "prefer Pythagorean-friendly components (3-4-5, 5-12-13, 1-2-2, 2-3-6 families)"
+      - id: kp2
+        name: Norms with radicals and scaling
+        key_prerequisites: [square-roots, vector-arithmetic]
+        exemplars:
+          - problem: 'Compute $\|(1, 1)\|$.'
+            answer: '$\sqrt 2$'
+          - problem: 'Compute $\|(2, -1)\|$.'
+            answer: '$\sqrt 5$'
+          - problem: 'If $\|\mathbf{v}\| = 4$, what is $\|-2\mathbf{v}\|$?'
+            answer: "8"
+            solution_sketch: '$\|c\mathbf{v}\| = |c|\,\|\mathbf{v}\| = 2 \cdot 4$.'
+        constraints: "exact radical answers; scaling questions use integer scalars in -3..3"
+      - id: kp3
+        name: Unit vectors and prescribed lengths
+        key_prerequisites: [vector-arithmetic, square-roots]
+        exemplars:
+          - problem: 'Find the unit vector in the direction of $(6, 8)$.'
+            answer: "(3/5, 4/5)"
+            solution_sketch: '$\|(6, 8)\| = 10$; divide each component by $10$.'
+          - problem: 'Find the unit vector in the direction of $(2, 3, 6)$.'
+            answer: "(2/7, 3/7, 6/7)"
+            solution_sketch: '$\sqrt{4 + 9 + 36} = 7$; divide by $7$.'
+          - problem: 'Find the vector of length $10$ in the direction of $(3, -4)$.'
+            answer: "(6, -8)"
+            solution_sketch: '$\|(3, -4)\| = 5$; scale the unit vector by $10$, i.e. multiply the vector by $2$.'
+        constraints: "vectors with integer norms (3-4-5, 5-12-13, 2-3-6 families); prescribed lengths are integer multiples of the norm"
+    diagnostic_exemplar:
+      problem: 'Find the unit vector in the direction of $(5, 12)$.'
+      answer: "(5/13, 12/13)"
+      solution_sketch: '$\|(5, 12)\| = 13$; divide each component by $13$.'
+    anki_seeds:
+      - front: 'Formula for the norm of $\mathbf{v} = (v_1, \dots, v_n)$?'
+        back: '$\|\mathbf{v}\| = \sqrt{v_1^2 + \cdots + v_n^2}$.'
+        type: basic
+      - front: 'How do you turn a nonzero vector $\mathbf{v}$ into a unit vector?'
+        back: 'Divide by its norm: $\mathbf{v} / \|\mathbf{v}\|$.'
+        type: basic
+      - front: '$\|c\mathbf{v}\| = $ ?'
+        back: '$|c|\,\|\mathbf{v}\|$.'
+        type: basic
+
+  - id: vector-distance
+    name: Distance Between Points via Vectors
+    core: true
+    difficulty: 0.5
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 90
+    prerequisites:
+      - id: vector-norms-unit-vectors
+        weight: 0.7
+        key: true
+      - id: component-form-of-vectors
+        weight: 0.5
+        key: true
+      - id: distance-midpoint-formulas
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: Distance in the plane
+        key_prerequisites: [component-form-of-vectors, vector-norms-unit-vectors]
+        exemplars:
+          - problem: 'Find the distance between $P(1, 2)$ and $Q(4, 6)$.'
+            answer: "5"
+            solution_sketch: 'The vector $Q - P = (3, 4)$ has norm $5$.'
+          - problem: 'Find the distance between $P(-2, 1)$ and $Q(3, 13)$.'
+            answer: "13"
+            solution_sketch: '$Q - P = (5, 12)$; $\|(5, 12)\| = 13$.'
+          - problem: 'Find the distance between $P(0, 0)$ and $Q(1, 2)$.'
+            answer: '$\sqrt 5$'
+            solution_sketch: '$Q - P = (1, 2)$; $\|(1, 2)\| = \sqrt{1 + 4}$.'
+        constraints: "mostly Pythagorean-friendly differences; occasionally an exact radical answer"
+      - id: kp2
+        name: Distance in space
+        key_prerequisites: [component-form-of-vectors, vector-norms-unit-vectors]
+        exemplars:
+          - problem: 'Find the distance between $P(1, 0, 2)$ and $Q(2, 2, 4)$.'
+            answer: "3"
+            solution_sketch: '$Q - P = (1, 2, 2)$; $\sqrt{1 + 4 + 4} = 3$.'
+          - problem: 'Find the distance between $P(3, -1, 2)$ and $Q(5, 2, 8)$.'
+            answer: "7"
+            solution_sketch: '$Q - P = (2, 3, 6)$; $\sqrt{4 + 9 + 36} = 7$.'
+        constraints: "differences from the 1-2-2 or 2-3-6 families for integer answers"
+      - id: kp3
+        name: Comparing distances
+        key_prerequisites: [component-form-of-vectors, vector-norms-unit-vectors]
+        exemplars:
+          - problem: 'For the triangle $A(0, 0)$, $B(3, 4)$, $C(6, 0)$, show that $|AB| = |CB|$.'
+            answer: "Both equal 5"
+            solution_sketch: '$B - A = (3, 4)$ and $B - C = (-3, 4)$; both have norm $5$.'
+          - problem: 'Which of $Q(4, 5)$ and $R(5, 1)$ is closer to $P(1, 1)$?'
+            answer: "R"
+            solution_sketch: '$|PQ| = \|(3, 4)\| = 5$; $|PR| = \|(4, 0)\| = 4 < 5$.'
+        constraints: "distances chosen to be integers so comparisons are clean"
+    diagnostic_exemplar:
+      problem: 'Which of $Q(4, 2, 4)$ and $R(-1, 0, 2)$ is farther from $P(1, 2, 0)$? Give that distance.'
+      answer: '5'
+      solution_sketch: '$|PQ| = \|(3, 0, 4)\| = 5$ and $|PR| = \|(-2, -2, 2)\| = 2\sqrt3 \approx 3.46$, so $Q$ is farther, at distance $5$.'
+    anki_seeds:
+      - front: 'Distance between points $P$ and $Q$ in terms of vectors?'
+        back: '$\|Q - P\|$, the norm of the vector from $P$ to $Q$.'
+        type: basic
+
+  - id: vectors-in-rn
+    name: Vectors in R^n
+    core: true
+    difficulty: 0.5
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 120
+    prerequisites:
+      - id: vector-arithmetic
+        weight: 0.7
+        key: true
+      - id: vector-norms-unit-vectors
+        weight: 0.7
+        key: true
+      - id: linear-combinations-of-vectors
+        weight: 0.5
+      - id: vector-distance
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: Norms of linear combinations
+        key_prerequisites: [vector-arithmetic, vector-norms-unit-vectors]
+        exemplars:
+          - problem: 'Let $\mathbf{u} = (2, 1)$ and $\mathbf{v} = (1, -2)$. Compute $\|2\mathbf{u} - \mathbf{v}\|$.'
+            answer: "5"
+            solution_sketch: '$2\mathbf{u} - \mathbf{v} = (4 - 1, 2 + 2) = (3, 4)$; $\|(3, 4)\| = 5$.'
+          - problem: 'Let $\mathbf{u} = (1, 0, 2)$ and $\mathbf{v} = (0, 2, 0)$. Compute $\|\mathbf{u} + \mathbf{v}\|$.'
+            answer: "3"
+            solution_sketch: '$\mathbf{u} + \mathbf{v} = (1, 2, 2)$; norm $3$.'
+          - problem: 'Let $\mathbf{u} = (1, 2, 2)$. Compute $\|3\mathbf{u}\|$.'
+            answer: "9"
+            solution_sketch: '$\|3\mathbf{u}\| = 3\|\mathbf{u}\| = 3 \cdot 3$.'
+        constraints: "combinations designed to land on Pythagorean-friendly vectors; scalars in -3..3"
+      - id: kp2
+        name: Geometric reasoning with vectors
+        key_prerequisites: [vector-arithmetic, vector-distance]
+        exemplars:
+          - problem: 'Find the midpoint of $P(2, 3)$ and $Q(6, 7)$ using $\frac{1}{2}(P + Q)$.'
+            answer: "(4, 5)"
+          - problem: 'Starting at $P(1, 1)$, you translate by $2(2, -1)$. Where do you end?'
+            answer: "(5, -1)"
+            solution_sketch: '$P + (4, -2) = (5, -1)$.'
+          - problem: 'Show that $A(1, 1)$, $B(3, 4)$, $C(5, 7)$ are collinear by computing $B - A$ and $C - B$; state the common difference vector.'
+            answer: "(2, 3)"
+            solution_sketch: '$B - A = (2, 3)$ and $C - B = (2, 3)$ are parallel and share the point $B$.'
+        constraints: "integer coordinates; collinearity via equal or proportional difference vectors"
+      - id: kp3
+        name: Norm identities and comparisons
+        key_prerequisites: [vector-norms-unit-vectors]
+        exemplars:
+          - problem: 'Verify the triangle inequality $\|\mathbf{u} + \mathbf{v}\| \leq \|\mathbf{u}\| + \|\mathbf{v}\|$ for $\mathbf{u} = (3, 0)$, $\mathbf{v} = (0, 4)$.'
+            answer: "5 <= 7, so it holds"
+            solution_sketch: '$\|\mathbf{u} + \mathbf{v}\| = \|(3, 4)\| = 5$ and $3 + 4 = 7$.'
+          - problem: 'If $\|\mathbf{v}\| = 5$, what is $\|\mathbf{v}/5\|$?'
+            answer: "1"
+          - problem: 'Find all $k$ with $\|(k, 0)\| = 3$; give the answer as a set.'
+            answer: '$\{-3, 3\}$'
+            solution_sketch: '$\|(k, 0)\| = |k|$.'
+        constraints: "clean integer norms; answers exact"
+    diagnostic_exemplar:
+      problem: 'Let $\mathbf{u} = (1, 1)$ and $\mathbf{v} = (5, 7)$. Using $\|c\mathbf{w}\| = |c|\,\|\mathbf{w}\|$, compute $\|\frac{1}{2}(\mathbf{u} + \mathbf{v})\|$, the distance from the origin to the midpoint of $\mathbf{u}$ and $\mathbf{v}$.'
+      answer: '5'
+      solution_sketch: '$\mathbf{u} + \mathbf{v} = (6, 8)$ has norm $10$, so half of it has norm $5$ (the midpoint is $(3, 4)$).'
+    anki_seeds:
+      - front: 'Triangle inequality for vectors?'
+        back: '$\|\mathbf{u} + \mathbf{v}\| \leq \|\mathbf{u}\| + \|\mathbf{v}\|$.'
+        type: basic
+      - front: 'Midpoint of points $P$ and $Q$ via vectors?'
+        back: '$\frac{1}{2}(P + Q)$.'
+        type: basic
+
+  - id: computing-dot-products
+    name: Computing Dot Products
+    core: true
+    difficulty: 0.5
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 90
+    prerequisites:
+      - id: vector-arithmetic
+        weight: 0.7
+        key: true
+      - id: integer-multiplication-division
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Dot product of a vector with itself
+        key_prerequisites: [vector-arithmetic]
+        exemplars:
+          - problem: 'Let $\mathbf{u} = (3, 4)$. Compute $\mathbf{u} \cdot \mathbf{u}$, then check that it equals $\|\mathbf{u}\|^2$.'
+            answer: "25"
+            solution_sketch: '$9 + 16 = 25 = 5^2$; in general $\mathbf{u} \cdot \mathbf{u} = \|\mathbf{u}\|^2$.'
+          - problem: 'If $\mathbf{u} \cdot \mathbf{u} = 49$, what is $\|\mathbf{u}\|$?'
+            answer: "7"
+          - problem: 'Compute $(1, 2, 2) \cdot (1, 2, 2)$.'
+            answer: "9"
+        constraints: "perfect-square self-products"
+      - id: kp2
+        name: Dot products in the plane
+        key_prerequisites: [vector-arithmetic]
+        exemplars:
+          - problem: 'Compute $(2, 3) \cdot (4, -1)$.'
+            answer: "5"
+            solution_sketch: '$2 \cdot 4 + 3 \cdot (-1) = 8 - 3$.'
+          - problem: 'Compute $(3, 4) \cdot (2, 5)$.'
+            answer: "26"
+          - problem: 'Compute $(-1, 6) \cdot (2, 1)$.'
+            answer: "4"
+        constraints: "integer components in -9..9"
+      - id: kp3
+        name: Dot products in space
+        key_prerequisites: [vector-arithmetic]
+        exemplars:
+          - problem: 'Compute $(1, -2, 3) \cdot (2, 0, 1)$.'
+            answer: "5"
+          - problem: 'Compute $(2, 1, -1) \cdot (3, -2, 4)$.'
+            answer: "0"
+            solution_sketch: '$6 - 2 - 4 = 0$.'
+          - problem: 'Compute $(1, 1, 1) \cdot (4, -2, 5)$.'
+            answer: "7"
+        constraints: "integer components in -9..9; dimension 3"
+    diagnostic_exemplar:
+      problem: 'Compute $\mathbf{u} \cdot \mathbf{u}$ for $\mathbf{u} = (2, -3, 6)$.'
+      answer: '49'
+      solution_sketch: '$4 + 9 + 36 = 49$, which is $\|\mathbf{u}\|^2$ with $\|\mathbf{u}\| = 7$.'
+    anki_seeds:
+      - front: 'Formula for $\mathbf{u} \cdot \mathbf{v}$ in components?'
+        back: '$u_1 v_1 + u_2 v_2 + \cdots + u_n v_n$.'
+        type: basic
+      - front: '$\mathbf{u} \cdot \mathbf{u} = $ ?'
+        back: '$\|\mathbf{u}\|^2$.'
+        type: basic
+
+  - id: dot-product
+    name: Dot Product, Angles, and Orthogonality
+    core: true
+    difficulty: 0.55
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 120
+    prerequisites:
+      - id: computing-dot-products
+        weight: 0.8
+        key: true
+      - id: vectors-in-rn
+        weight: 0.6
+        key: true
+      - id: right-triangle-trig
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: Orthogonality
+        key_prerequisites: [computing-dot-products]
+        exemplars:
+          - problem: 'Are $(4, -2)$ and $(1, 2)$ orthogonal?'
+            answer: "Yes"
+            solution_sketch: '$(4)(1) + (-2)(2) = 4 - 4 = 0$; zero dot product means orthogonal.'
+          - problem: 'Find $k$ so that $(2, k)$ is orthogonal to $(3, -6)$.'
+            answer: "k = 1"
+            solution_sketch: '$6 - 6k = 0$ forces $k = 1$.'
+          - problem: 'Are $(1, 2, 3)$ and $(2, 1, -1)$ orthogonal?'
+            answer: "No"
+            solution_sketch: '$2 + 2 - 3 = 1 \neq 0$.'
+        constraints: "integer components; solve-for-k problems must have integer k"
+      - id: kp2
+        name: Acute, right, or obtuse from the sign
+        key_prerequisites: [computing-dot-products, right-triangle-trig]
+        exemplars:
+          - problem: 'Is the angle between $(2, 1)$ and $(1, -3)$ acute, right, or obtuse?'
+            answer: "Obtuse"
+            solution_sketch: 'Dot product $2 - 3 = -1 < 0$, so the angle exceeds $90^\circ$.'
+          - problem: 'Is the angle between $(3, 1)$ and $(1, 2)$ acute, right, or obtuse?'
+            answer: "Acute"
+            solution_sketch: 'Dot product $3 + 2 = 5 > 0$.'
+          - problem: 'Find all $k$ so that the angle between $(1, 0)$ and $(1, k)$ is $60^\circ$.'
+            answer: '$k = \sqrt{3}$ or $k = -\sqrt{3}$'
+            solution_sketch: '$\cos 60^\circ = \frac{1}{\sqrt{1 + k^2}} = \frac{1}{2}$ gives $k^2 = 3$.'
+        constraints: "sign questions use small integers; exact-angle questions target 30/45/60 degrees"
+      - id: kp3
+        name: Angle between vectors
+        key_prerequisites: [computing-dot-products, right-triangle-trig]
+        exemplars:
+          - problem: 'Find the angle between $(1, 0)$ and $(1, 1)$.'
+            answer: "45 degrees"
+            solution_sketch: '$\cos\theta = \frac{1}{1 \cdot \sqrt{2}} = \frac{1}{\sqrt{2}}$, so $\theta = 45^\circ$.'
+          - problem: 'Find the angle between $(2, 2)$ and $(0, 3)$.'
+            answer: "45 degrees"
+            solution_sketch: '$\cos\theta = \frac{6}{2\sqrt{2} \cdot 3} = \frac{1}{\sqrt{2}}$.'
+          - problem: 'Find $\cos\theta$ for the angle $\theta$ between $(1, 2)$ and $(2, 1)$.'
+            answer: "4/5"
+            solution_sketch: '$\cos\theta = \frac{2 + 2}{\sqrt{5}\sqrt{5}} = \frac{4}{5}$.'
+        constraints: "rig the numbers so cos(theta) is one of 0, +-1/2, +-1/sqrt(2), +-sqrt(3)/2, +-1, or a clean rational; angles in degrees"
+    diagnostic_exemplar:
+      problem: 'Find the angle between $\mathbf{u} = (3, 3)$ and $\mathbf{v} = (0, -5)$.'
+      answer: '135 degrees'
+      solution_sketch: '$\mathbf{u} \cdot \mathbf{v} = -15 < 0$ (obtuse); $\cos\theta = -15/(3\sqrt2 \cdot 5) = -1/\sqrt2$, so $\theta = 135^\circ$.'
+    anki_seeds:
+      - front: 'Angle formula linking the dot product and the norms of $\mathbf{u}, \mathbf{v}$?'
+        back: '$\cos\theta = \dfrac{\mathbf{u} \cdot \mathbf{v}}{\|\mathbf{u}\|\,\|\mathbf{v}\|}$.'
+        type: basic
+      - front: 'Two nonzero vectors are orthogonal exactly when their dot product is...'
+        back: 'zero'
+        type: basic
+
+  - id: dot-product-properties
+    name: Algebraic Properties of the Dot Product
+    core: true
+    difficulty: 0.6
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 150
+    prerequisites:
+      - id: dot-product
+        weight: 0.7
+        key: true
+      - id: computing-dot-products
+        weight: 0.5
+    knowledge_points:
+      - id: kp1
+        name: Symmetry, distributivity, and scalars
+        key_prerequisites: [computing-dot-products]
+        exemplars:
+          - problem: 'If $\mathbf{u} \cdot \mathbf{v} = 3$, what is $\mathbf{v} \cdot \mathbf{u}$?'
+            answer: "3"
+            solution_sketch: 'The dot product is symmetric.'
+          - problem: 'Given $\mathbf{u} \cdot \mathbf{v} = 2$ and $\mathbf{u} \cdot \mathbf{w} = -5$, compute $\mathbf{u} \cdot (\mathbf{v} + \mathbf{w})$.'
+            answer: "-3"
+            solution_sketch: 'Distributivity: $2 + (-5)$.'
+          - problem: 'Given $\mathbf{u} \cdot \mathbf{v} = 4$, compute $(2\mathbf{u}) \cdot \mathbf{v}$.'
+            answer: "8"
+            solution_sketch: 'Scalars pull out: $2(\mathbf{u} \cdot \mathbf{v})$.'
+        constraints: "symbolic data with small integer dot products"
+      - id: kp2
+        name: Expanding norms of sums
+        key_prerequisites: [dot-product]
+        exemplars:
+          - problem: 'Given $\|\mathbf{u}\| = 3$, $\|\mathbf{v}\| = 4$, and $\mathbf{u} \cdot \mathbf{v} = 0$, find $\|\mathbf{u} + \mathbf{v}\|$.'
+            answer: "5"
+            solution_sketch: '$\|\mathbf{u} + \mathbf{v}\|^2 = 9 + 0 + 16 = 25$.'
+          - problem: 'Given $\|\mathbf{u}\| = 2$, $\|\mathbf{v}\| = 1$, and $\mathbf{u} \cdot \mathbf{v} = 1$, compute $\|\mathbf{u} + \mathbf{v}\|^2$.'
+            answer: "7"
+            solution_sketch: '$4 + 2 \cdot 1 + 1 = 7$.'
+          - problem: 'If $\|\mathbf{u}\| = \|\mathbf{v}\|$, show that $(\mathbf{u} + \mathbf{v}) \cdot (\mathbf{u} - \mathbf{v}) = 0$.'
+            answer: "It expands to ||u||^2 - ||v||^2 = 0"
+            solution_sketch: 'Expand: $\mathbf{u} \cdot \mathbf{u} - \mathbf{u} \cdot \mathbf{v} + \mathbf{v} \cdot \mathbf{u} - \mathbf{v} \cdot \mathbf{v} = \|\mathbf{u}\|^2 - \|\mathbf{v}\|^2$.'
+        constraints: "use the identity ||u+v||^2 = ||u||^2 + 2 u.v + ||v||^2 with small integer data"
+      - id: kp3
+        name: Verifying identities numerically
+        key_prerequisites: [computing-dot-products, dot-product]
+        exemplars:
+          - problem: 'Verify $\mathbf{u} \cdot (\mathbf{v} + \mathbf{w}) = \mathbf{u} \cdot \mathbf{v} + \mathbf{u} \cdot \mathbf{w}$ for $\mathbf{u} = (1, 2)$, $\mathbf{v} = (3, -1)$, $\mathbf{w} = (0, 4)$.'
+            answer: "Both sides equal 9"
+            solution_sketch: 'Left: $(1, 2) \cdot (3, 3) = 9$. Right: $1 + 8 = 9$.'
+          - problem: 'Verify $\|\mathbf{u} + \mathbf{v}\|^2 = \|\mathbf{u}\|^2 + 2\,\mathbf{u} \cdot \mathbf{v} + \|\mathbf{v}\|^2$ for $\mathbf{u} = (3, 0)$, $\mathbf{v} = (0, 4)$.'
+            answer: "Both sides equal 25"
+            solution_sketch: '$\|(3, 4)\|^2 = 25$ and $9 + 0 + 16 = 25$.'
+          - problem: 'Check the Cauchy-Schwarz inequality $|\mathbf{u} \cdot \mathbf{v}| \leq \|\mathbf{u}\|\,\|\mathbf{v}\|$ for $\mathbf{u} = (1, 2)$, $\mathbf{v} = (2, 1)$.'
+            answer: "4 <= 5, so it holds"
+            solution_sketch: '$|\mathbf{u} \cdot \mathbf{v}| = 4$; $\|\mathbf{u}\|\,\|\mathbf{v}\| = \sqrt{5}\sqrt{5} = 5$.'
+        constraints: "small integer vectors; both sides must evaluate to the same clean number"
+    diagnostic_exemplar:
+      problem: 'Given $\|\mathbf{u}\| = 5$, $\|\mathbf{v}\| = 2$, and $\mathbf{u} \cdot \mathbf{v} = 3$, compute $\|\mathbf{u} + \mathbf{v}\|^2$.'
+      answer: "35"
+      solution_sketch: '$25 + 2 \cdot 3 + 4 = 35$.'
+    anki_seeds:
+      - front: '$\|\mathbf{u} + \mathbf{v}\|^2$ expanded via dot products?'
+        back: '$\|\mathbf{u}\|^2 + 2\,\mathbf{u} \cdot \mathbf{v} + \|\mathbf{v}\|^2$.'
+        type: basic
+      - front: 'Cauchy-Schwarz inequality?'
+        back: '$|\mathbf{u} \cdot \mathbf{v}| \leq \|\mathbf{u}\|\,\|\mathbf{v}\|$.'
+        type: basic
+
+  - id: cross-product
+    name: Cross Product
+    core: true
+    difficulty: 0.6
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 150
+    prerequisites:
+      - id: vectors-in-rn
+        weight: 0.7
+        key: true
+      - id: dot-product
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: Computing cross products
+        key_prerequisites: [vectors-in-rn]
+        exemplars:
+          - problem: 'Compute $(1, 0, 0) \times (0, 1, 0)$.'
+            answer: "(0, 0, 1)"
+            solution_sketch: 'Standard basis: $\mathbf{i} \times \mathbf{j} = \mathbf{k}$.'
+          - problem: 'Compute $(1, 2, 3) \times (4, 5, 6)$.'
+            answer: "(-3, 6, -3)"
+            solution_sketch: 'Components: $(2 \cdot 6 - 3 \cdot 5,\; 3 \cdot 4 - 1 \cdot 6,\; 1 \cdot 5 - 2 \cdot 4)$.'
+          - problem: 'Compute $(2, 1, -1) \times (0, 3, 2)$.'
+            answer: "(5, -4, 6)"
+            solution_sketch: '$(1 \cdot 2 - (-1) \cdot 3,\; (-1) \cdot 0 - 2 \cdot 2,\; 2 \cdot 3 - 1 \cdot 0)$.'
+        constraints: "integer components in -6..6; only 3-dimensional vectors"
+      - id: kp2
+        name: Algebraic properties
+        key_prerequisites: [vectors-in-rn, dot-product]
+        exemplars:
+          - problem: 'If $\mathbf{u} \times \mathbf{v} = (5, -4, 6)$, what is $\mathbf{v} \times \mathbf{u}$?'
+            answer: "(-5, 4, -6)"
+            solution_sketch: 'The cross product is anticommutative: $\mathbf{v} \times \mathbf{u} = -(\mathbf{u} \times \mathbf{v})$.'
+          - problem: 'Compute $(3, -2, 7) \times (3, -2, 7)$.'
+            answer: "(0, 0, 0)"
+            solution_sketch: '$\mathbf{u} \times \mathbf{u} = \mathbf{0}$ for every vector.'
+          - problem: 'Verify that $(1, 2, 3) \times (4, 5, 6) = (-3, 6, -3)$ is orthogonal to $(1, 2, 3)$: compute $(-3, 6, -3) \cdot (1, 2, 3)$.'
+            answer: "0"
+            solution_sketch: '$-3 + 12 - 9 = 0$, so the cross product is orthogonal to the first factor.'
+        constraints: "test anticommutativity, u x u = 0, and orthogonality of the result to both factors"
+      - id: kp3
+        name: Areas via cross products
+        key_prerequisites: [vectors-in-rn]
+        exemplars:
+          - problem: 'Find the area of the parallelogram spanned by $(3, 0, 0)$ and $(0, 4, 0)$.'
+            answer: "12"
+            solution_sketch: 'Cross product is $(0, 0, 12)$; its norm is the area.'
+          - problem: 'Find the area of the parallelogram spanned by $(1, 2, 2)$ and $(2, 1, -2)$.'
+            answer: "9"
+            solution_sketch: 'Cross product $(-6, 6, -3)$; $\sqrt{36 + 36 + 9} = \sqrt{81} = 9$.'
+          - problem: 'Find the area of the triangle with edge vectors $(2, 1, 0)$ and $(1, 3, 0)$.'
+            answer: "5/2"
+            solution_sketch: 'Cross product $(0, 0, 5)$; triangle area is half the parallelogram: $\frac{5}{2}$.'
+        constraints: "choose vectors so the cross product has a clean integer norm (e.g. norm-9 or norm-5 patterns); halve for triangles"
+    diagnostic_exemplar:
+      problem: 'Find the area of the parallelogram spanned by $(3, 0, 4)$ and $(0, 5, 0)$.'
+      answer: '25'
+      solution_sketch: 'The cross product is $(0\cdot0 - 4\cdot5,\ 4\cdot0 - 3\cdot0,\ 3\cdot5 - 0\cdot0) = (-20, 0, 15)$, whose norm is $25$.'
+    anki_seeds:
+      - front: 'Direction of $\mathbf{u} \times \mathbf{v}$ relative to $\mathbf{u}$ and $\mathbf{v}$?'
+        back: 'Orthogonal to both, oriented by the right-hand rule.'
+        type: basic
+      - front: 'Geometric meaning of $\|\mathbf{u} \times \mathbf{v}\|$?'
+        back: 'The area of the parallelogram spanned by $\mathbf{u}$ and $\mathbf{v}$.'
+        type: basic
+      - front: '$\mathbf{v} \times \mathbf{u} = $ {{c1::$-(\mathbf{u} \times \mathbf{v})$}} (anticommutativity).'
+        back: '$-(\mathbf{u} \times \mathbf{v})$'
+        type: cloze
+
+  - id: vector-projections
+    name: Vector Projections
+    core: true
+    difficulty: 0.6
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 150
+    prerequisites:
+      - id: dot-product
+        weight: 0.8
+        key: true
+      - id: vectors-in-rn
+        weight: 0.6
+    knowledge_points:
+      - id: kp1
+        name: Scalar projection (component along a vector)
+        key_prerequisites: [dot-product]
+        exemplars:
+          - problem: 'Find the scalar projection of $\mathbf{u} = (3, 4)$ onto $\mathbf{v} = (1, 0)$.'
+            answer: "3"
+            solution_sketch: '$\mathrm{comp}_{\mathbf{v}}\mathbf{u} = \frac{\mathbf{u} \cdot \mathbf{v}}{\|\mathbf{v}\|} = \frac{3}{1}$.'
+          - problem: 'Find the scalar projection of $\mathbf{u} = (4, 2)$ onto $\mathbf{v} = (3, 4)$.'
+            answer: "4"
+            solution_sketch: '$\mathbf{u} \cdot \mathbf{v} = 12 + 8 = 20$; $\|\mathbf{v}\| = 5$; $20/5 = 4$.'
+        constraints: "pick v with integer norm (multiples of (3,4), (1,0), (0,1), (1,2,2)); integer or simple fraction answers"
+      - id: kp2
+        name: Vector projection
+        key_prerequisites: [dot-product, vectors-in-rn]
+        exemplars:
+          - problem: 'Compute $\mathrm{proj}_{\mathbf{v}}\mathbf{u}$ for $\mathbf{u} = (3, 1)$, $\mathbf{v} = (2, 0)$.'
+            answer: "(3, 0)"
+            solution_sketch: '$\frac{\mathbf{u} \cdot \mathbf{v}}{\mathbf{v} \cdot \mathbf{v}}\mathbf{v} = \frac{6}{4}(2, 0)$.'
+          - problem: 'Compute $\mathrm{proj}_{\mathbf{v}}\mathbf{u}$ for $\mathbf{u} = (2, 6)$, $\mathbf{v} = (1, 1)$.'
+            answer: "(4, 4)"
+            solution_sketch: '$\frac{2 + 6}{1 + 1}(1, 1) = 4(1, 1)$.'
+          - problem: 'Compute $\mathrm{proj}_{\mathbf{v}}\mathbf{u}$ for $\mathbf{u} = (3, 4)$, $\mathbf{v} = (2, 1)$.'
+            answer: "(4, 2)"
+            solution_sketch: '$\frac{6 + 4}{4 + 1}(2, 1) = 2(2, 1)$.'
+        constraints: "rig u . v / v . v to be an integer or half-integer; never let u be a multiple of v"
+      - id: kp3
+        name: Orthogonal decomposition
+        key_prerequisites: [dot-product, vectors-in-rn]
+        exemplars:
+          - problem: 'Write $\mathbf{u} = (3, 1)$ as $\mathbf{u} = \mathbf{p} + \mathbf{w}$ with $\mathbf{p}$ parallel to $\mathbf{v} = (1, 1)$ and $\mathbf{w}$ orthogonal to $\mathbf{v}$; state the pair $(\mathbf{p}, \mathbf{w})$.'
+            answer: "((2, 2), (1, -1))"
+            solution_sketch: '$\mathbf{p} = \frac{4}{2}(1,1) = (2,2)$; $\mathbf{w} = \mathbf{u} - \mathbf{p} = (1, -1)$; check $\mathbf{w} \cdot \mathbf{v} = 0$.'
+          - problem: 'Decompose $\mathbf{u} = (5, 0)$ into components parallel and orthogonal to $\mathbf{v} = (1, 2)$; state the pair $(\mathbf{p}, \mathbf{w})$.'
+            answer: "((1, 2), (4, -2))"
+            solution_sketch: '$\frac{5}{5}(1, 2) = (1, 2)$; remainder $(4, -2)$ satisfies $(4)(1) + (-2)(2) = 0$.'
+        constraints: "choose data so both components have integer entries; always verify w . v = 0"
+    diagnostic_exemplar:
+      problem: 'Write $\mathbf{u} = (4, 8)$ as $\mathbf{u} = \mathbf{p} + \mathbf{w}$ with $\mathbf{p}$ parallel to $\mathbf{v} = (1, 1)$ and $\mathbf{w}$ orthogonal to $\mathbf{v}$; state the pair $(\mathbf{p}, \mathbf{w})$.'
+      answer: '((6, 6), (-2, 2))'
+      solution_sketch: '$\mathbf{p} = \frac{(4 + 8)}{2}(1, 1) = (6, 6)$ and $\mathbf{w} = (4, 8) - (6, 6) = (-2, 2)$, which satisfies $\mathbf{w} \cdot \mathbf{v} = 0$.'
+    anki_seeds:
+      - front: 'Formula for the vector projection of $\mathbf{u}$ onto $\mathbf{v}$?'
+        back: '$\mathrm{proj}_{\mathbf{v}}\mathbf{u} = \dfrac{\mathbf{u} \cdot \mathbf{v}}{\mathbf{v} \cdot \mathbf{v}}\,\mathbf{v}$.'
+        type: basic
+      - front: 'In the decomposition $\mathbf{u} = \mathrm{proj}_{\mathbf{v}}\mathbf{u} + \mathbf{w}$, the vector $\mathbf{w}$ is...'
+        back: 'orthogonal to $\mathbf{v}$'
+        type: basic

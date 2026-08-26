@@ -1,0 +1,331 @@
+unit: recurrences
+course: discrete-mathematics
+module: "Recurrences & Generating Functions"
+topics:
+  - id: recurrence-relations
+    name: "Recurrence Relations & Modeling"
+    core: true
+    difficulty: 0.55
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 150
+    prerequisites:
+      - id: function-notation
+        weight: 0.6
+        key: true
+      - id: mathematical-induction
+        weight: 0.5
+        key: true
+      - id: multiplication-principle
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Computing terms from a recurrence"
+        key_prerequisites: [function-notation]
+        exemplars:
+          - problem: 'Let $a_1 = 1$ and $a_n = 2a_{n-1} + 1$ for $n \ge 2$. Give $(a_2, a_3, a_4)$ as an ordered triple.'
+            answer: '$(3, 7, 15)$'
+            solution_sketch: 'Iterate: $2 \cdot 1 + 1 = 3$; $2 \cdot 3 + 1 = 7$; $2 \cdot 7 + 1 = 15$.'
+          - problem: 'The Fibonacci numbers satisfy $F_1 = F_2 = 1$, $F_n = F_{n-1} + F_{n-2}$. Compute $F_8$.'
+            answer: "21"
+            solution_sketch: '$1, 1, 2, 3, 5, 8, 13, 21$.'
+        constraints: "first- or second-order recurrences with integer coefficients; compute 3-5 terms"
+      - id: kp2
+        name: "Modeling counting problems with recurrences"
+        key_prerequisites: [function-notation, multiplication-principle]
+        exemplars:
+          - problem: 'You climb a staircase taking $1$ or $2$ steps at a time. Let $c_n$ count the ways to climb $n$ stairs. Give a recurrence for $c_n$, then compute $c_5$.'
+            answer: "8"
+            solution_sketch: 'Condition on the first move ($1$ or $2$ steps): $c_n = c_{n-1} + c_{n-2}$ with $c_1 = 1$, $c_2 = 2$. Then $c_3 = 3$, $c_4 = 5$, $c_5 = 8$.'
+          - problem: 'The Tower of Hanoi with $n$ disks takes $H_n$ moves, where $H_1 = 1$. Explain why $H_n = 2H_{n-1} + 1$ and compute $H_4$.'
+            answer: "15"
+            solution_sketch: 'Move $n-1$ disks aside, move the largest, move $n-1$ back, so $H_n = 2H_{n-1} + 1$: $H_2 = 3$, $H_3 = 7$, $H_4 = 15$.'
+        constraints: "condition-on-the-first-choice arguments; verify small cases by direct enumeration"
+      - id: kp3
+        name: "Recurrences for strings with forbidden patterns"
+        key_prerequisites: [function-notation, multiplication-principle]
+        exemplars:
+          - problem: 'Let $b_n$ count bit strings of length $n$ with no two consecutive $0$s. State a recurrence for $b_n$, and give $(b_1, b_2)$ as an ordered pair.'
+            answer: '$(2, 3)$'
+            solution_sketch: 'A valid string ends in $1$ (preceded by any valid string of length $n-1$) or in $10$ (any valid string of length $n-2$), so $b_n = b_{n-1} + b_{n-2}$; directly, $b_1 = 2$ and $b_2 = 3$.'
+          - problem: 'With $b_n$ as above, compute $b_4$.'
+            answer: "8"
+            solution_sketch: '$b_3 = b_2 + b_1 = 5$, $b_4 = b_3 + b_2 = 8$. Direct check: of the $16$ strings of length $4$, exactly $8$ avoid $00$.'
+        constraints: "binary strings, forbidden block of length 2; classify by the last character(s)"
+    diagnostic_exemplar:
+      problem: 'Let $b_n$ count bit strings of length $n$ with no two consecutive $1$s (classify by the last character to find a recurrence). Compute $b_5$.'
+      answer: '13'
+      solution_sketch: '$b_n = b_{n-1} + b_{n-2}$ with $b_1 = 2$, $b_2 = 3$: then $5, 8, 13$.'
+    anki_seeds:
+      - front: "A recurrence relation defines $a_n$ in terms of..."
+        back: "earlier terms of the sequence, together with enough initial conditions to start it."
+        type: basic
+      - front: "Standard move for modeling with a recurrence"
+        back: "Condition on the first (or last) choice, and express the rest as a smaller instance of the same problem."
+        type: basic
+
+  - id: iteration-telescoping
+    name: "Solving by Iteration & Telescoping"
+    core: true
+    difficulty: 0.55
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 150
+    prerequisites:
+      - id: recurrence-relations
+        weight: 0.8
+        key: true
+      - id: summation-notation
+        weight: 0.6
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: "Unrolling arithmetic- and geometric-type recurrences"
+        key_prerequisites: [recurrence-relations]
+        exemplars:
+          - problem: 'Solve $a_n = a_{n-1} + 3$ with $a_0 = 2$: give a closed formula for $a_n$.'
+            answer: '$a_n = 3n + 2$'
+            solution_sketch: 'Each step adds $3$, so after $n$ steps $a_n = 2 + 3n$. Verify: $a_0 = 2$, and $3n + 2 = (3(n-1) + 2) + 3$.'
+          - problem: 'Solve $a_n = 2a_{n-1}$ with $a_0 = 5$.'
+            answer: '$a_n = 5 \cdot 2^n$'
+            solution_sketch: 'Each step doubles: $a_n = 5 \cdot 2^n$; check $a_1 = 10$, $a_2 = 20$.'
+        constraints: "a_n = a_{n-1} + d or a_n = r a_{n-1}; integer parameters; always verify by substitution"
+      - id: kp2
+        name: "Telescoping variable-step recurrences"
+        key_prerequisites: [recurrence-relations, summation-notation]
+        exemplars:
+          - problem: 'Solve $a_n = a_{n-1} + n$ with $a_0 = 0$.'
+            answer: '$a_n = \dfrac{n(n+1)}{2}$'
+            solution_sketch: 'Telescoping: $a_n = \sum_{k=1}^{n} k = n(n+1)/2$. Check $a_3 = 6$.'
+          - problem: 'Solve $a_n = a_{n-1} + (2n - 1)$ with $a_0 = 0$.'
+            answer: '$a_n = n^2$'
+            solution_sketch: 'The sum of the first $n$ odd numbers is $n^2$; check $a_1 = 1$, $a_2 = 4$, $a_3 = 9$.'
+        constraints: "step depends linearly on n; solution is a known sum (triangular, odd numbers, geometric)"
+    diagnostic_exemplar:
+      problem: 'Solve $a_n = a_{n-1} + n$ with $a_0 = 1$: give a closed formula and check it at $n = 4$.'
+      answer: '$a_n = \dfrac{n(n+1)}{2} + 1$; $a_4 = 11$'
+      solution_sketch: 'Telescoping adds $1 + 2 + \cdots + n$ to $a_0$; check: $1, 2, 4, 7, 11$.'
+    anki_seeds:
+      - front: "Closed form of $a_n = a_{n-1} + d$, $a_0 = c$"
+        back: '$a_n = c + dn$.'
+        type: basic
+      - front: "Closed form of $a_n = r a_{n-1}$, $a_0 = c$"
+        back: '$a_n = c \cdot r^n$.'
+        type: basic
+      - front: '$\sum_{k=1}^{n} k = ?$'
+        back: '$\dfrac{n(n+1)}{2}$.'
+        type: basic
+
+  - id: linear-homogeneous-recurrences
+    name: "Linear Homogeneous Recurrences"
+    core: true
+    difficulty: 0.65
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 240
+    prerequisites:
+      - id: recurrence-relations
+        weight: 0.8
+        key: true
+      - id: quadratic-equations-factoring
+        weight: 0.6
+        key: true
+      - id: perfect-square-trinomials
+        weight: 0.4
+        key: true
+      - id: multi-step-equations
+        weight: 0.3
+        key: false
+      - id: iteration-telescoping
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Distinct characteristic roots"
+        key_prerequisites: [recurrence-relations, quadratic-equations-factoring]
+        exemplars:
+          - problem: 'Solve $a_n = a_{n-1} + 2a_{n-2}$ with $a_0 = 2$, $a_1 = 7$.'
+            answer: '$a_n = 3 \cdot 2^n - (-1)^n$'
+            solution_sketch: 'Characteristic equation $r^2 = r + 2$, i.e. $(r-2)(r+1) = 0$: roots $2, -1$. Then $A + B = 2$ and $2A - B = 7$ give $A = 3$, $B = -1$. Check $a_2 = 7 + 4 = 11 = 3 \cdot 4 - 1$.'
+          - problem: 'Solve $a_n = 5a_{n-1} - 6a_{n-2}$ with $a_0 = 1$, $a_1 = 0$.'
+            answer: '$a_n = 3 \cdot 2^n - 2 \cdot 3^n$'
+            solution_sketch: '$r^2 - 5r + 6 = (r-2)(r-3)$: roots $2, 3$. $A + B = 1$, $2A + 3B = 0$ give $A = 3$, $B = -2$. Check $a_2 = -6 = 12 - 18$.'
+        constraints: "characteristic quadratic factors over the integers; initial conditions give small integer coefficients; require a verification of one later term"
+      - id: kp2
+        name: "Repeated roots"
+        key_prerequisites: [recurrence-relations, perfect-square-trinomials]
+        exemplars:
+          - problem: 'Solve $a_n = 4a_{n-1} - 4a_{n-2}$ with $a_0 = 1$, $a_1 = 4$.'
+            answer: '$a_n = (1 + n) \, 2^n$'
+            solution_sketch: '$r^2 - 4r + 4 = (r - 2)^2$: double root $2$, so $a_n = (A + Bn)2^n$. $A = 1$; $(1 + B) \cdot 2 = 4$ gives $B = 1$. Check $a_2 = 16 - 4 = 12 = 3 \cdot 4$.'
+          - problem: 'Solve $a_n = 6a_{n-1} - 9a_{n-2}$ with $a_0 = 2$, $a_1 = 3$.'
+            answer: '$a_n = (2 - n) \, 3^n$'
+            solution_sketch: '$(r - 3)^2 = 0$: $a_n = (A + Bn)3^n$ with $A = 2$ and $(2 + B) \cdot 3 = 3$, so $B = -1$. Check $a_2 = 18 - 18 = 0 = (2-2) \cdot 9$.'
+        constraints: "perfect-square characteristic polynomial; general solution (A + Bn) r^n"
+    diagnostic_exemplar:
+      problem: 'Solve $a_n = 4a_{n-1} - 4a_{n-2}$ with $a_0 = 1$, $a_1 = 6$.'
+      answer: '$a_n = (1 + 2n) \, 2^n$'
+      solution_sketch: 'Repeated root $2$: $a_n = (A + Bn)2^n$; $A = 1$ and $2(1 + B) = 6$ give $B = 2$. Check: $a_2 = 4 \cdot 6 - 4 \cdot 1 = 20 = (1 + 4) \cdot 4$.'
+    anki_seeds:
+      - front: "Characteristic equation of $a_n = c_1 a_{n-1} + c_2 a_{n-2}$"
+        back: '$r^2 = c_1 r + c_2$.'
+        type: basic
+      - front: "General solution when the characteristic roots $r_1 \\ne r_2$ are distinct"
+        back: '$a_n = A r_1^n + B r_2^n$.'
+        type: basic
+      - front: "General solution when the characteristic root $r$ is repeated"
+        back: '$a_n = (A + Bn) r^n$.'
+        type: basic
+
+  - id: nonhomogeneous-recurrences
+    name: "Nonhomogeneous Recurrences"
+    core: false                # terminal extension of the characteristic-root method
+    difficulty: 0.7
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 300
+    prerequisites:
+      - id: linear-homogeneous-recurrences
+        weight: 0.85
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: "Constant forcing terms"
+        key_prerequisites: [linear-homogeneous-recurrences]
+        exemplars:
+          - problem: 'Solve $a_n = 2a_{n-1} + 1$ with $a_0 = 0$ (the Tower of Hanoi recurrence).'
+            answer: '$a_n = 2^n - 1$'
+            solution_sketch: 'Particular constant solution: $p = 2p + 1$ gives $p = -1$. General: $A \cdot 2^n - 1$; $a_0 = 0$ forces $A = 1$. Check: $1, 3, 7, 15$.'
+          - problem: 'Solve $a_n = 2a_{n-1} + 3$ with $a_0 = 2$.'
+            answer: '$a_n = 5 \cdot 2^n - 3$'
+            solution_sketch: '$p = 2p + 3$ gives $p = -3$; $A - 3 = 2$ so $A = 5$. Check $a_1 = 7 = 10 - 3$, $a_2 = 17 = 20 - 3$.'
+        constraints: "a_n = r a_{n-1} + c with r != 1; particular solution c/(1-r) must be an integer"
+      - id: kp2
+        name: "Linear forcing terms"
+        key_prerequisites: [linear-homogeneous-recurrences]
+        exemplars:
+          - problem: 'Solve $a_n = 2a_{n-1} + n$ with $a_0 = 1$.'
+            answer: '$a_n = 3 \cdot 2^n - n - 2$'
+            solution_sketch: 'Try $p_n = an + b$: $an + b = 2(a(n-1) + b) + n$ forces $a = -1$, $b = -2$. General: $A \cdot 2^n - n - 2$; $a_0 = 1$ gives $A = 3$. Check $a_1 = 3 = 6 - 3$, $a_2 = 8 = 12 - 4$.'
+          - problem: 'Find a particular solution of $a_n = 3a_{n-1} + 4n$ (no initial condition needed).'
+            answer: '$p_n = -2n - 3$'
+            solution_sketch: '$an + b = 3(a(n-1) + b) + 4n$ gives $a = 3a + 4$ so $a = -2$, and $b = 3b - 3a$ so $2b = 3a = -6$, $b = -3$. Check at $n = 1$: $-5 = 3(-3) + 4$.'
+        constraints: "forcing an + b with integer particular solutions; method of undetermined coefficients; verify by substitution"
+    diagnostic_exemplar:
+      problem: 'Solve $a_n = 2a_{n-1} + n$ with $a_0 = 2$.'
+      answer: '$a_n = 2^{n+2} - n - 2$'
+      solution_sketch: 'Particular solution $p_n = -n - 2$; general $A \cdot 2^n - n - 2$ with $A - 2 = 2$, so $A = 4$. Check: $a_1 = 2 \cdot 2 + 1 = 5 = 8 - 3$.'
+    anki_seeds:
+      - front: "Solution structure for a nonhomogeneous linear recurrence"
+        back: "general homogeneous solution + one particular solution."
+        type: basic
+      - front: "Particular solution guess for a constant forcing term $c$ (when $r \\ne 1$)"
+        back: 'A constant $p$ with $p = rp + c$, i.e. $p = c/(1-r)$.'
+        type: basic
+
+  - id: generating-functions-intro
+    name: "Generating Functions"
+    core: false                # head of the terminal generating-function branch
+    difficulty: 0.7
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 240
+    prerequisites:
+      - id: recurrence-relations
+        weight: 0.6
+        key: true
+      - id: geometric-series-finite-infinite
+        weight: 0.6
+        key: true
+      - id: polynomial-multiplication
+        weight: 0.5
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: "From sequence to generating function"
+        key_prerequisites: [geometric-series-finite-infinite]
+        exemplars:
+          - problem: 'What is the generating function of the constant sequence $1, 1, 1, \dots$?'
+            answer: '$1/(1 - x)$'
+            solution_sketch: 'The geometric series $\sum_{n \ge 0} x^n = 1/(1-x)$ as a formal power series.'
+          - problem: 'What is the generating function of $a_n = 2^n$, i.e. $1, 2, 4, 8, \dots$?'
+            answer: '$1/(1 - 2x)$'
+            solution_sketch: '$\sum_{n \ge 0} (2x)^n = 1/(1 - 2x)$.'
+          - problem: 'What is the generating function of the finite sequence $1, 1, 1$ (and $0$ afterwards)?'
+            answer: '$1 + x + x^2$'
+        constraints: "geometric sequences a^n and finite 0/1 sequences; formal power series, no convergence discussion"
+      - id: kp2
+        name: "Products of generating functions count selections"
+        key_prerequisites: [polynomial-multiplication, recurrence-relations]
+        exemplars:
+          - problem: 'The coefficient of $x^4$ in $(1 + x + x^2 + x^3 + x^4)^2$ counts the ways to write $4 = a + b$ with $0 \le a, b \le 4$. What is that coefficient?'
+            answer: "5"
+            solution_sketch: 'Each factor contributes an exponent $0$-$4$; the pairs are $(0,4), (1,3), (2,2), (3,1), (4,0)$.'
+          - problem: 'You may buy $0$-$2$ apples and $0$-$1$ bananas. Form the generating function whose $x^k$ coefficient counts fruit selections of size $k$, and give it fully expanded.'
+            answer: '$1 + 2x + 2x^2 + x^3$'
+            solution_sketch: 'The generating function is $(1 + x + x^2)(1 + x)$; multiplying out gives $1 + 2x + 2x^2 + x^3$ — e.g. selections of size $2$ are (2 apples) or (1 apple, 1 banana), coefficient $2$.'
+        constraints: "2-3 factors, all polynomial (finite choices); interpret one coefficient combinatorially"
+    diagnostic_exemplar:
+      problem: 'You may buy $0$-$3$ apples and $0$-$2$ bananas. Form the generating function whose $x^k$ coefficient counts fruit selections of size $k$, and give it fully expanded.'
+      answer: '$1 + 2x + 3x^2 + 3x^3 + 2x^4 + x^5$'
+      solution_sketch: '$(1 + x + x^2 + x^3)(1 + x + x^2)$, expanded.'
+    anki_seeds:
+      - front: "Generating function of a sequence $a_0, a_1, a_2, \\dots$"
+        back: 'The formal power series $G(x) = \sum_{n \ge 0} a_n x^n$.'
+        type: basic
+      - front: "Generating function of $a_n = c^n$"
+        back: '$\dfrac{1}{1 - cx}$.'
+        type: basic
+      - front: "What does multiplying two generating functions do to the coefficient of $x^n$?"
+        back: 'It convolves: $[x^n] F G = \sum_{k} f_k \, g_{n-k}$ — total selections of size $n$ split between the two factors.'
+        type: basic                # was `cloze` with no {{c1::…}} deletion, which breaks on Anki import
+
+  - id: extracting-coefficients
+    name: "Extracting Coefficients"
+    core: false                # supplemental, like its generating-function prerequisite
+    difficulty: 0.75
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 240
+    prerequisites:
+      - id: generating-functions-intro
+        weight: 0.85
+        key: true
+      - id: combinations
+        weight: 0.5
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Geometric series and shifts"
+        key_prerequisites: [generating-functions-intro]
+        exemplars:
+          - problem: 'Find the coefficient of $x^4$ in $\dfrac{1}{1 - 2x}$.'
+            answer: "16"
+            solution_sketch: '$1/(1 - 2x) = \sum 2^n x^n$, so $[x^4] = 2^4 = 16$.'
+          - problem: 'Find the coefficient of $x^5$ in $\dfrac{x^2}{1 - x}$.'
+            answer: "1"
+            solution_sketch: '$x^2/(1-x) = x^2 + x^3 + x^4 + \dots$; every coefficient from $x^2$ on is $1$.'
+        constraints: "1/(1-ax) with |a| <= 3, multiplied by a monomial shift x^k, k <= 3"
+      - id: kp2
+        name: "Negative binomial series 1/(1-x)^k"
+        key_prerequisites: [generating-functions-intro]
+        exemplars:
+          - problem: 'Find the coefficient of $x^3$ in $\dfrac{1}{(1 - x)^2}$.'
+            answer: "4"
+            solution_sketch: '$1/(1-x)^2 = \sum_{n \ge 0} (n + 1) x^n$, so $[x^3] = 4$.'
+          - problem: 'Find the coefficient of $x^5$ in $\dfrac{1}{(1 - x)^3}$.'
+            answer: "21"
+            solution_sketch: '$[x^n] (1-x)^{-k} = \binom{n + k - 1}{n}$: here $\binom{7}{5} = 21$. (This matches stars and bars: solutions of $a + b + c = 5$.)'
+        constraints: "k = 2 or 3, n <= 8; formula C(n+k-1, n); connect to stars and bars"
+    diagnostic_exemplar:
+      problem: 'Find the coefficient of $x^4$ in $\dfrac{1}{(1 - x)^2}$.'
+      answer: "5"
+      solution_sketch: '$[x^n](1-x)^{-2} = n + 1 = 5$.'
+    anki_seeds:
+      - front: '$[x^n] \dfrac{1}{(1-x)^k} = ?$'
+        back: '$\binom{n + k - 1}{n}$ — the stars-and-bars count.'
+        type: basic
+      - front: '$[x^n] \dfrac{1}{1 - ax} = ?$'
+        back: '$a^n$.'
+        type: basic

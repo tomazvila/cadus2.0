@@ -1,0 +1,273 @@
+unit: function-analysis
+course: precalculus
+module: "Function Analysis & Transformations"
+topics:
+  - id: function-transformations-shifts
+    name: Vertical and Horizontal Shifts
+    core: true
+    difficulty: 0.6
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 90
+    prerequisites:
+      - id: function-notation
+        weight: 0.7
+        key: true
+      - id: quadratic-graphs-vertex
+        weight: 0.5
+        key: true
+      - id: domain-range
+        weight: 0.3
+      - id: coordinate-plane
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Vertical shifts
+        key_prerequisites: [function-notation]
+        constraints: "parent functions x^2, x^3, sqrt(x); integer shifts 1-9; ask for the right-hand side alone, written as a bare expression in x"
+        exemplars:
+          - problem: 'The graph of $y = x^2$ is shifted up $3$ units. Give the right-hand side of the new equation $y = \ldots$'
+            answer: "x^2 + 3"
+          - problem: 'The graph of $y = x^3$ is shifted down $4$ units. Give the right-hand side of the new equation $y = \ldots$'
+            answer: "x^3 - 4"
+      - id: kp2
+        name: Horizontal shifts
+        key_prerequisites: [function-notation, quadratic-graphs-vertex]
+        constraints: "emphasize the sign flip: f(x - h) moves right h; ask for the right-hand side alone, with radicals written as sqrt(...)"
+        exemplars:
+          - problem: 'The graph of $y = x^2$ is shifted right $2$ units. Give the right-hand side of the new equation $y = \ldots$'
+            answer: "(x - 2)^2"
+            solution_sketch: 'Right $h$ means replace $x$ with $x - h$.'
+          - problem: 'The graph of $y = \sqrt{x}$ is shifted left $5$ units. Give the right-hand side of the new equation $y = \ldots$'
+            answer: "sqrt(x + 5)"
+      - id: kp3
+        name: Combined shifts and locating the new vertex
+        key_prerequisites: [quadratic-graphs-vertex]
+        constraints: "combine one horizontal and one vertical shift of x^2, x^3, or sqrt(x); integer shifts 1-9; vertex questions read (h, k) off vertex form and answer as an ordered pair"
+        exemplars:
+          - problem: 'The graph of $y = x^2$ is shifted left $1$ and up $4$. Give the right-hand side of the new equation $y = \ldots$'
+            answer: "(x + 1)^2 + 4"
+          - problem: 'State the vertex of $y = (x - 3)^2 + 2$.'
+            answer: "(3, 2)"
+            solution_sketch: 'The parent vertex $(0,0)$ moves right $3$, up $2$.'
+    diagnostic_exemplar:
+      problem: 'The graph of $y = x^2$ is shifted right $4$ and down $1$. Give the right-hand side of the new equation $y = \ldots$'
+      answer: "(x - 4)^2 - 1"
+      solution_sketch: 'A horizontal shift acts inside with the opposite sign — right $4$ replaces $x$ by $x - 4$ — while a vertical shift acts outside with its own sign.'
+    anki_seeds:
+      - front: "The graph of f(x - h) moves the graph of f in which direction?"
+        back: "Right by h (subtracting inside shifts right)."
+        type: basic
+
+  - id: function-stretches-reflections
+    name: Stretches, Compressions, and Reflections
+    core: true
+    difficulty: 0.6
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 90
+    prerequisites:
+      - id: function-transformations-shifts
+        weight: 0.7
+        key: true
+      - id: function-notation
+        weight: 0.4
+        key: true
+      - id: quadratic-graphs-vertex
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Vertical stretches and compressions
+        key_prerequisites: [function-notation]
+        constraints: "stretch factors 2-5 or 1/2, 1/3; track a labeled point; ask for the right-hand side alone, written as a bare expression in x"
+        exemplars:
+          - problem: 'The graph of $y = x^2$ is stretched vertically by a factor of $3$. Give the right-hand side of the new equation $y = \ldots$'
+            answer: "3x^2"
+          - problem: 'The point $(2, 4)$ lies on $y = f(x)$. What point lies on $y = 3f(x)$?'
+            answer: "(2, 12)"
+      - id: kp2
+        name: Reflections across the axes
+        key_prerequisites: [function-notation]
+        constraints: "-f(x) reflects across the x-axis; f(-x) across the y-axis; ask for the right-hand side alone, with radicals written as sqrt(...)"
+        exemplars:
+          - problem: 'The graph of $y = \sqrt{x}$ is reflected across the $y$-axis. Give the right-hand side of the new equation $y = \ldots$'
+            answer: "sqrt(-x)"
+            solution_sketch: 'Reflecting across the $y$-axis replaces $x$ with $-x$.'
+          - problem: 'The graph of $y = x^3 - x$ is reflected across the $x$-axis. Give the right-hand side of the new equation $y = \ldots$'
+            answer: "-x^3 + x"
+      - id: kp3
+        name: Combining stretch, reflection, and shift
+        key_prerequisites: [function-transformations-shifts]
+        constraints: "compose a stretch (factor 2-5), at most one reflection, and one shift; either track a labeled point with integer coordinates or ask for the right-hand side with radicals as sqrt(...)"
+        exemplars:
+          - problem: 'The point $(4, 2)$ lies on $y = f(x)$. What point lies on $y = -2f(x) + 3$?'
+            answer: "(4, -1)"
+            solution_sketch: '$-2 \cdot 2 + 3 = -1$; the $x$-coordinate is unchanged.'
+          - problem: 'Describe $y = -2(x - 1)^2$ as transformations of $y = x^2$.'
+            answer: "shift right 1, stretch vertically by 2, reflect across the x-axis"
+    diagnostic_exemplar:
+      problem: 'The point $(3, 5)$ lies on $y = f(x)$. What point lies on $y = -2f(x) + 1$?'
+      answer: "(3, -9)"
+      solution_sketch: 'Stretch by $2$ and reflect: $-2 \cdot 5 = -10$; then shift up $1$: $-9$. The $x$-coordinate is unchanged.'
+    anki_seeds:
+      - front: "y = f(-x) reflects the graph of f across which axis?"
+        back: "The y-axis."
+        type: basic
+
+  - id: even-odd-functions
+    name: Even and Odd Functions
+    core: true
+    difficulty: 0.5
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 90
+    prerequisites:
+      - id: function-notation
+        weight: 0.6
+        key: true
+      - id: function-stretches-reflections
+        weight: 0.5
+        key: true
+      - id: evaluating-expressions
+        weight: 0.4
+      - id: polynomial-addition-subtraction
+        weight: 0.2
+    knowledge_points:
+      - id: kp1
+        name: Test algebraically with f(-x)
+        key_prerequisites: [function-notation, evaluating-expressions]
+        constraints: "polynomials only; include a 'neither' case"
+        exemplars:
+          - problem: 'Is $f(x) = x^2 + 3$ even, odd, or neither?'
+            answer: "even"
+            solution_sketch: '$f(-x) = (-x)^2 + 3 = x^2 + 3 = f(x)$.'
+          - problem: 'Is $f(x) = x^3 - x$ even, odd, or neither?'
+            answer: "odd"
+            solution_sketch: '$f(-x) = -x^3 + x = -(x^3 - x) = -f(x)$.'
+          - problem: 'Is $f(x) = x^2 + x$ even, odd, or neither?'
+            answer: "neither"
+      - id: kp2
+        name: Symmetry and using known values
+        key_prerequisites: [function-stretches-reflections]
+        constraints: "symmetry named as y-axis (even) or origin (odd); known-value questions give f(a) for a small integer a and ask for f(-a)"
+        exemplars:
+          - problem: 'A function is even. Its graph is symmetric about what?'
+            answer: "the y-axis"
+          - problem: 'If $f$ is odd and $f(2) = 7$, find $f(-2)$.'
+            answer: "-7"
+            solution_sketch: 'Odd means $f(-x) = -f(x)$.'
+    diagnostic_exemplar:
+      problem: 'Is $f(x) = x^3 - 4x$ even, odd, or neither? Name the symmetry of its graph, and use that symmetry to find $f(-3)$ given that $f(3) = 15$.'
+      answer: 'odd; its graph is symmetric about the origin; f(-3) = -15'
+      solution_sketch: '$f(-x) = -x^3 + 4x = -f(x)$, so $f$ is odd — origin symmetry — and $f(-3) = -f(3) = -15$.'
+    anki_seeds:
+      - front: "Algebraic tests: f is even iff f(-x) = ...; f is odd iff f(-x) = ..."
+        back: "even: f(-x) = f(x); odd: f(-x) = -f(x)"
+        type: basic
+
+  - id: piecewise-absolute-value-graphs
+    name: Piecewise and Absolute-Value Functions
+    core: true
+    difficulty: 0.45
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 120
+    prerequisites:
+      - id: function-notation
+        weight: 0.6
+        key: true
+      - id: graphing-linear-equations
+        weight: 0.5
+        key: true
+      - id: absolute-value
+        weight: 0.5
+      - id: domain-range
+        weight: 0.4
+      - id: function-transformations-shifts
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: Evaluate a piecewise function
+        key_prerequisites: [function-notation]
+        constraints: "two or three linear/quadratic pieces; test inputs on both sides of each breakpoint"
+        exemplars:
+          - problem: 'Let $f(x) = x + 2$ for $x < 0$ and $f(x) = x^2$ for $x \ge 0$. Find $f(-3)$ and $f(2)$.'
+            answer: "f(-3) = -1, f(2) = 4"
+          - problem: 'Let $f(x) = 2x$ for $x < 1$ and $f(x) = 5$ for $x \ge 1$. Find $f(1)$.'
+            answer: "5"
+            solution_sketch: '$x = 1$ satisfies $x \ge 1$, so use the second piece.'
+      - id: kp2
+        name: Absolute value as a piecewise rule
+        key_prerequisites: [absolute-value, function-transformations-shifts]
+        constraints: "|x - a| with integer a; piecewise rewrites state both branches with the breakpoint; vertex questions on y = |x - a| + b with integer a, b"
+        exemplars:
+          - problem: 'Write $|x - 3|$ as a piecewise rule.'
+            answer: "x - 3 for x ≥ 3; 3 - x for x < 3"
+          - problem: 'State the vertex of $y = |x - 2| - 5$.'
+            answer: "(2, -5)"
+      - id: kp3
+        name: Where the pieces meet
+        key_prerequisites: [graphing-linear-equations]
+        constraints: "two linear (or one linear, one quadratic) pieces with integer coefficients; breakpoint |x| <= 3; ask whether the pieces meet or for the size of the jump"
+        exemplars:
+          - problem: 'Let $f(x) = x + 1$ for $x < 2$ and $f(x) = 3x - 3$ for $x \ge 2$. Do the two pieces meet at $x = 2$?'
+            answer: "yes; both give 3"
+            solution_sketch: '$2 + 1 = 3$ and $3(2) - 3 = 3$.'
+          - problem: 'Let $f(x) = 2x$ for $x < 1$ and $f(x) = x + 3$ for $x \ge 1$. Find the gap between the pieces at $x = 1$.'
+            answer: "2"
+            solution_sketch: 'Left piece approaches $2$; right piece gives $4$; gap $= 4 - 2 = 2$.'
+    diagnostic_exemplar:
+      problem: 'Let $f(x) = |x - 1|$ for $x < 3$ and $f(x) = 6 - x$ for $x \ge 3$. Find the gap between the two pieces at $x = 3$.'
+      answer: '1'
+      solution_sketch: 'For $x$ just below $3$ the first piece is $x - 1$, approaching $2$; the second piece gives $6 - 3 = 3$; the gap is $3 - 2 = 1$.'
+    anki_seeds:
+      - front: "|x| written as a piecewise rule is..."
+        back: "x for x ≥ 0; -x for x < 0"
+        type: basic
+
+  - id: average-rate-of-change
+    name: Average Rate of Change
+    core: true
+    difficulty: 0.4
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 90
+    prerequisites:
+      - id: slope
+        weight: 0.7
+        key: true
+      - id: function-notation
+        weight: 0.6
+        key: true
+      - id: evaluating-expressions
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: Average rate of change on an interval
+        key_prerequisites: [slope, function-notation]
+        constraints: "(f(b) - f(a))/(b - a); polynomial functions, small integer endpoints"
+        exemplars:
+          - problem: 'Find the average rate of change of $f(x) = x^2$ on $[1, 3]$.'
+            answer: "4"
+            solution_sketch: '$\frac{f(3) - f(1)}{3 - 1} = \frac{9 - 1}{2} = 4$.'
+          - problem: 'Find the average rate of change of $f(x) = x^3$ on $[0, 2]$.'
+            answer: "4"
+      - id: kp2
+        name: Non-polynomial functions and fractional answers
+        key_prerequisites: [slope]
+        constraints: "sqrt(x) or 1/x with endpoints chosen so f(a), f(b) are exact; answers as exact fractions"
+        exemplars:
+          - problem: 'Find the average rate of change of $f(x) = \sqrt{x}$ on $[1, 9]$.'
+            answer: "1/4"
+            solution_sketch: '$\frac{3 - 1}{9 - 1} = \frac{2}{8} = \frac{1}{4}$.'
+          - problem: 'Find the average rate of change of $f(x) = \frac{1}{x}$ on $[1, 4]$.'
+            answer: "-1/4"
+            solution_sketch: '$\frac{1/4 - 1}{4 - 1} = \frac{-3/4}{3} = -\frac{1}{4}$.'
+    diagnostic_exemplar:
+      problem: 'Find the average rate of change of $f(x) = \sqrt{x}$ on $[4, 16]$.'
+      answer: "1/6"
+      solution_sketch: '$\frac{f(16) - f(4)}{16 - 4} = \frac{4 - 2}{12} = \frac{1}{6}$.'
+    anki_seeds:
+      - front: "Average rate of change of f on [a, b] = ?"
+        back: "(f(b) - f(a)) / (b - a) — the slope of the secant line."
+        type: basic

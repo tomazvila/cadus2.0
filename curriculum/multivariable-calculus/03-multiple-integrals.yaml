@@ -1,0 +1,705 @@
+unit: multiple-integrals
+course: multivariable-calculus
+module: "Multiple Integrals"
+topics:
+  - id: iterated-integrals-rectangles
+    name: "Iterated Integrals over Rectangles"
+    core: true
+    difficulty: 0.66
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 150
+    prerequisites:
+      - id: definite-integrals-ftc
+        weight: 0.8
+        key: true
+      - id: functions-several-variables
+        weight: 0.5
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: "Partial (inner) integration"
+        key_prerequisites: [definite-integrals-ftc]
+        exemplars:
+          - problem: 'Evaluate the inner integral $\int_0^1 x y^2 \, dy$ (treat $x$ as a constant).'
+            answer: '$\frac{x}{3}$'
+            solution_sketch: '$x \int_0^1 y^2\, dy = x \cdot \frac{1}{3}$.'
+          - problem: 'Evaluate $\int_0^2 (2x + y) \, dx$ (treat $y$ as a constant).'
+            answer: '$4 + 2y$'
+            solution_sketch: '$\left[x^2 + xy\right]_0^2 = 4 + 2y$.'
+        constraints: "polynomial integrands; the non-integrated variable survives as a parameter in the answer"
+      - id: kp2
+        name: "Iterated integrals over rectangles"
+        key_prerequisites: [definite-integrals-ftc, functions-several-variables]
+        exemplars:
+          - problem: 'Evaluate $\int_0^2 \int_0^1 x y^2 \, dy \, dx$.'
+            answer: '$\frac{2}{3}$'
+            solution_sketch: 'Inner: $\int_0^1 y^2\, dy = \frac{1}{3}$, leaving $\int_0^2 \frac{x}{3}\, dx = \frac{1}{3}\cdot 2 = \frac{2}{3}$.'
+          - problem: 'Evaluate $\int_0^1 \int_0^2 (x + 2y) \, dy \, dx$.'
+            answer: "5"
+            solution_sketch: 'Inner: $\left[xy + y^2\right]_0^2 = 2x + 4$; then $\int_0^1 (2x + 4)\, dx = 1 + 4 = 5$.'
+        constraints: "polynomial integrands; rectangle bounds are small integers; answers exact rationals"
+      - id: kp3
+        name: "Fubini's theorem and separable products"
+        key_prerequisites: [definite-integrals-ftc, functions-several-variables]
+        exemplars:
+          - problem: 'Evaluate $\iint_R 6x^2 y \, dA$ where $R = [0,1] \times [0,2]$.'
+            answer: "4"
+            solution_sketch: 'Separable: $\left(\int_0^1 6x^2\, dx\right)\left(\int_0^2 y\, dy\right) = 2 \cdot 2 = 4$.'
+          - problem: 'Evaluate $\iint_R x \sin y \, dA$ where $R = [0,1] \times [0,\pi]$.'
+            answer: "1"
+            solution_sketch: '$\left(\int_0^1 x\, dx\right)\left(\int_0^\pi \sin y\, dy\right) = \frac{1}{2} \cdot 2 = 1$.'
+        constraints: "integrands are products g(x)h(y); factor into two single-variable integrals"
+    diagnostic_exemplar:
+      problem: 'Evaluate $\int_0^1 \int_0^2 4xy \, dy \, dx$.'
+      answer: "4"
+      solution_sketch: 'Inner: $\int_0^2 4xy\, dy = 8x$; then $\int_0^1 8x\, dx = 4$.'
+    anki_seeds:
+      - front: 'Fubini''s theorem (informal) for continuous $f$ on a rectangle?'
+        back: 'The double integral equals the iterated integral in either order: $\int\!\!\int f\, dy\, dx = \int\!\!\int f\, dx\, dy$.'
+        type: basic
+      - front: 'How do you evaluate an iterated integral $\int_a^b \int_c^d f\, dy\, dx$?'
+        back: 'Inside out: integrate in $y$ treating $x$ as constant, then integrate the result in $x$.'
+        type: basic
+
+  - id: describing-planar-regions
+    name: "Describing Regions of Integration"
+    core: true
+    difficulty: 0.68
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 150
+    prerequisites:
+      - id: area-between-curves
+        weight: 0.6
+        key: true
+      - id: graphing-linear-equations
+        weight: 0.3
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Type I descriptions (vertical slices)"
+        key_prerequisites: [area-between-curves]
+        exemplars:
+          - problem: 'Describe the region bounded by $y = x^2$ and $y = x$ as a type I region.'
+            answer: '$0 \le x \le 1$, $\;x^2 \le y \le x$'
+            solution_sketch: 'The curves meet at $(0,0)$ and $(1,1)$, and $x \ge x^2$ on $[0,1]$.'
+          - problem: 'Describe the triangle with vertices $(0,0)$, $(1,0)$, $(1,1)$ as a type I region.'
+            answer: '$0 \le x \le 1$, $\;0 \le y \le x$'
+        constraints: "regions bounded by lines and one parabola; intersection points at integer coordinates"
+      - id: kp2
+        name: "Type II descriptions (horizontal slices)"
+        key_prerequisites: [area-between-curves]
+        exemplars:
+          - problem: 'Describe the region bounded by $y = x^2$ and $y = x$ as a type II region.'
+            answer: '$0 \le y \le 1$, $\;y \le x \le \sqrt{y}$'
+            solution_sketch: 'Solve each boundary for $x$: the line $y = x$ gives $x = y$ (left edge), the parabola $y = x^2$ gives $x = \sqrt{y}$ (right edge); on $[0, 1]$, $y \le \sqrt{y}$.'
+          - problem: 'Describe the triangle with vertices $(0,0)$, $(1,0)$, $(1,1)$ as a type II region.'
+            answer: '$0 \le y \le 1$, $\;y \le x \le 1$'
+        constraints: "same regions as kp1 re-sliced horizontally; boundaries solved for x in terms of y"
+      - id: kp3
+        name: "Reading the region from an iterated integral"
+        key_prerequisites: [area-between-curves]
+        exemplars:
+          - problem: 'Sketch/describe the region of $\int_0^1 \int_y^1 f(x,y) \, dx \, dy$ and rewrite the integral with the order reversed.'
+            answer: 'The triangle $0 \le y \le x \le 1$; reversed: $\int_0^1 \int_0^x f(x,y)\, dy\, dx$.'
+          - problem: 'The first-quadrant region under $y = 4 - x^2$ is $0 \le x \le 2$, $0 \le y \le 4 - x^2$. Describe it as a type II region.'
+            answer: '$0 \le y \le 4$, $\;0 \le x \le \sqrt{4 - y}$'
+        constraints: "regions are triangles or parabola-bounded; both orders must be written with exact bounds"
+    diagnostic_exemplar:
+      problem: 'Describe the region of $\int_0^2 \int_x^2 f(x, y)\,dy\,dx$, and rewrite the integral with the order of integration reversed.'
+      answer: 'The triangle $0 \le x \le y \le 2$ (vertices $(0,0)$, $(0,2)$, $(2,2)$); reversed, $\int_0^2 \int_0^y f(x, y)\,dx\,dy$.'
+      solution_sketch: 'The given limits are the type I description $0 \le x \le 2$, $x \le y \le 2$. Slicing horizontally instead: $y$ runs over $[0, 2]$ and, for each $y$, $x$ runs from $0$ to $y$.'
+    anki_seeds:
+      - front: 'Type I vs type II region?'
+        back: 'Type I: $a \le x \le b$, $g_1(x) \le y \le g_2(x)$. Type II: $c \le y \le d$, $h_1(y) \le x \le h_2(y)$.'
+        type: basic
+      - front: 'First step when reversing the order of an iterated integral?'
+        back: 'Sketch the region from the given bounds, then re-slice it in the other direction.'
+        type: basic
+
+  - id: double-integrals
+    name: "Double Integrals over General Regions"
+    core: true
+    difficulty: 0.72
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 240
+    prerequisites:
+      - id: iterated-integrals-rectangles
+        weight: 0.8
+        key: true
+      - id: describing-planar-regions
+        weight: 0.7
+        key: true
+      - id: integration-substitution
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "General regions (type I and type II)"
+        key_prerequisites: [iterated-integrals-rectangles, describing-planar-regions]
+        exemplars:
+          - problem: 'Evaluate $\iint_D x \, dA$ where $D$ is bounded by $y = x^2$ and $y = x$.'
+            answer: '$\frac{1}{12}$'
+            solution_sketch: 'On $[0,1]$, $x \ge x^2$: $\int_0^1 \int_{x^2}^{x} x \, dy\, dx = \int_0^1 x(x - x^2)\, dx = \frac{1}{3} - \frac{1}{4} = \frac{1}{12}$.'
+          - problem: 'Evaluate $\iint_D xy \, dA$ where $D$ is the triangle with vertices $(0,0)$, $(1,0)$, $(1,1)$.'
+            answer: '$\frac{1}{8}$'
+            solution_sketch: 'Type I: $0 \le x \le 1$, $0 \le y \le x$: $\int_0^1 x \cdot \frac{x^2}{2}\, dx = \frac{1}{2}\cdot\frac{1}{4} = \frac{1}{8}$.'
+        constraints: "regions bounded by lines and one parabola; intersection points at integer coordinates"
+      - id: kp2
+        name: "Volumes and harder regions"
+        key_prerequisites: [iterated-integrals-rectangles, describing-planar-regions]
+        exemplars:
+          - problem: 'Find the volume under the plane $z = x + y$ and above the triangle $x \ge 0$, $y \ge 0$, $x + y \le 1$.'
+            answer: '$\frac{1}{3}$'
+            solution_sketch: '$\int_0^1 \int_0^{1-x} (x+y)\, dy\, dx = \int_0^1 \left(x(1-x) + \frac{(1-x)^2}{2}\right) dx = \frac{1}{6} + \frac{1}{6} = \frac{1}{3}$.'
+          - problem: 'Evaluate $\iint_D (2x + y) \, dA$ where $D$ is bounded by $y = x^2$ and $y = 4$.'
+            answer: '$\frac{128}{5}$'
+            solution_sketch: '$\int_{-2}^2 \int_{x^2}^4 (2x + y)\, dy\, dx$: the $2x$ part integrates to zero by symmetry, leaving $\int_{-2}^2 \frac{16 - x^4}{2}\, dx = 32 - \frac{32}{5} = \frac{128}{5}$.'
+        constraints: "volume interpretation z = f(x,y) >= 0; symmetric regions where odd terms vanish; answers exact rationals"
+      - id: kp3
+        name: "Reversing the order of integration"
+        key_prerequisites: [iterated-integrals-rectangles, describing-planar-regions, integration-substitution]
+        exemplars:
+          - problem: 'Evaluate $\int_0^1 \int_y^1 e^{x^2} \, dx \, dy$ by reversing the order of integration.'
+            answer: '$\frac{e - 1}{2}$'
+            solution_sketch: 'The region is $0 \le y \le x \le 1$; reversed: $\int_0^1 \int_0^x e^{x^2}\, dy\, dx = \int_0^1 x e^{x^2}\, dx = \frac{e-1}{2}$.'
+          - problem: 'Evaluate $\int_0^1 \int_x^1 \sin(y^2) \, dy \, dx$ by reversing the order of integration.'
+            answer: '$\frac{1 - \cos 1}{2}$'
+            solution_sketch: 'Region $0 \le x \le y \le 1$; reversed: $\int_0^1 y \sin(y^2)\, dy = \left[-\frac{\cos(y^2)}{2}\right]_0^1$.'
+        constraints: "inner integrand has no elementary antiderivative in the given order (e^{x^2}, sin(y^2)); reversal makes it a u-substitution"
+    diagnostic_exemplar:
+      problem: 'Evaluate $\int_0^1 \int_{3y}^{3} e^{x^2}\,dx\,dy$ by reversing the order of integration.'
+      answer: '$\dfrac{e^9 - 1}{6}$'
+      solution_sketch: 'The region $0 \le y \le 1$, $3y \le x \le 3$ is the triangle $0 \le x \le 3$, $0 \le y \le x/3$. Reversed: $\int_0^3 \int_0^{x/3} e^{x^2}\,dy\,dx = \int_0^3 \frac{x}{3}e^{x^2}\,dx = \frac{1}{6}\left[e^{x^2}\right]_0^3 = \frac{e^9 - 1}{6}$.'
+    anki_seeds:
+      - front: 'When must you reverse the order of integration in a double integral?'
+        back: 'When the inner integrand has no elementary antiderivative in the given order (e.g. $e^{x^2}$, $\sin(y^2)$).'
+        type: basic
+      - front: 'Geometric meaning of $\iint_D f\, dA$ for $f \ge 0$?'
+        back: 'The volume under the surface $z = f(x, y)$ above the region $D$.'
+        type: basic
+
+  - id: multivariable-average-value
+    name: "Average Value over a Region"
+    core: false                # head of the terminal mass/moments application branch
+    difficulty: 0.72
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 150
+    prerequisites:
+      - id: double-integrals
+        weight: 0.7
+        key: true
+      - id: average-value-function
+        weight: 0.5
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: "Average value over rectangles"
+        key_prerequisites: [double-integrals, average-value-function]
+        exemplars:
+          - problem: 'Find the average value of $f(x, y) = xy$ over $R = [0,2] \times [0,4]$.'
+            answer: "2"
+            solution_sketch: '$\bar{f} = \frac{1}{8}\iint_R xy\, dA = \frac{1}{8} \cdot 2 \cdot 8 = 2$.'
+          - problem: 'Find the average value of $f(x, y) = x^2$ over $R = [0,3] \times [0,1]$.'
+            answer: "3"
+            solution_sketch: '$\frac{1}{3}\int_0^3 x^2\, dx \cdot \int_0^1 dy = \frac{1}{3} \cdot 9 = 3$.'
+        constraints: "separable integrands over small-integer rectangles; averages are integers or simple fractions"
+      - id: kp2
+        name: "Average value over general regions"
+        key_prerequisites: [double-integrals, average-value-function]
+        exemplars:
+          - problem: 'Find the average value of $f(x, y) = x$ over the triangle with vertices $(0,0)$, $(2,0)$, $(2,2)$.'
+            answer: '$\frac{4}{3}$'
+            solution_sketch: 'Area $= 2$; $\iint x\, dA = \int_0^2 \int_0^x x\, dy\, dx = \int_0^2 x^2\, dx = \frac{8}{3}$; average $= \frac{8/3}{2} = \frac{4}{3}$.'
+          - problem: 'Find the average value of $f(x, y) = y$ over the triangle with vertices $(0,0)$, $(1,0)$, $(0,1)$.'
+            answer: '$\frac{1}{3}$'
+            solution_sketch: 'Area $= \frac{1}{2}$; $\iint y\, dA = \int_0^1 \frac{(1-x)^2}{2}\, dx = \frac{1}{6}$; average $= \frac{1/6}{1/2} = \frac{1}{3}$.'
+        constraints: "triangular regions with integer vertices; remember to divide by the AREA, not by a side length"
+    diagnostic_exemplar:
+      problem: 'Find the average value of $f(x, y) = x + y$ over the triangle with vertices $(0,0)$, $(2,0)$, $(0,2)$.'
+      answer: '$\dfrac{4}{3}$'
+      solution_sketch: 'The triangle has area $2$. By symmetry $\iint (x+y)\,dA = 2\iint x\,dA = 2\int_0^2 x(2 - x)\,dx = 2\left(4 - \tfrac{8}{3}\right) = \tfrac{8}{3}$, so the average is $\tfrac{8}{3} \div 2 = \tfrac{4}{3}$.'
+    anki_seeds:
+      - front: 'Average value of $f$ over a plane region $D$?'
+        back: '$\bar{f} = \dfrac{1}{\operatorname{Area}(D)} \iint_D f \, dA$'
+        type: basic
+      - front: 'When averaging $f$ over a region $D$, what exactly do you divide the integral by?'
+        back: 'By $\operatorname{Area}(D) = \iint_D 1\, dA$ — never by a side length, a radius, or the length of an interval.'
+        type: basic
+
+  - id: double-integral-applications
+    name: "Mass, Moments, and Centroids"
+    core: false                # mass, moments and centroids application; terminal
+    difficulty: 0.76
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 240
+    prerequisites:
+      - id: double-integrals
+        weight: 0.8
+        key: true
+      - id: multivariable-average-value
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Mass of a lamina"
+        key_prerequisites: [double-integrals]
+        exemplars:
+          - problem: 'Find the mass of the lamina occupying $[0,1] \times [0,1]$ with density $\rho(x, y) = x + y$.'
+            answer: "1"
+            solution_sketch: '$m = \iint (x + y)\, dA = \frac{1}{2} + \frac{1}{2} = 1$.'
+          - problem: 'Find the mass of the triangular lamina with vertices $(0,0)$, $(1,0)$, $(1,1)$ and density $\rho(x, y) = 2xy$.'
+            answer: '$\frac{1}{4}$'
+            solution_sketch: '$m = \int_0^1 \int_0^x 2xy\, dy\, dx = \int_0^1 x \cdot x^2\, dx = \frac{1}{4}$.'
+        constraints: "density polynomial of degree at most 2; rectangles or triangles with integer vertices; masses exact rationals"
+      - id: kp2
+        name: "Moments about the axes"
+        key_prerequisites: [double-integrals]
+        exemplars:
+          - problem: 'For the uniform lamina ($\rho = 1$) on $[0,2] \times [0,1]$, compute the moments $M_y = \iint x\, dA$ and $M_x = \iint y\, dA$.'
+            answer: '$M_y = 2$; $M_x = 1$.'
+            solution_sketch: '$M_y = \int_0^2 x\, dx \cdot 1 = 2$; $M_x = 2 \cdot \int_0^1 y\, dy = 1$.'
+          - problem: 'For the lamina on $[0,1]^2$ with density $\rho = y$, compute the moment $M_x = \iint y \rho \, dA$.'
+            answer: '$\frac{1}{3}$'
+            solution_sketch: '$M_x = \iint y^2\, dA = \int_0^1 y^2\, dy = \frac{1}{3}$.'
+        constraints: "M_y integrates x*rho, M_x integrates y*rho; rectangles only; answers exact rationals"
+      - id: kp3
+        name: "Center of mass and centroids"
+        key_prerequisites: [double-integrals]
+        exemplars:
+          - problem: 'Find the centroid of the triangle with vertices $(0,0)$, $(1,0)$, $(1,1)$.'
+            answer: '$\left(\frac{2}{3}, \frac{1}{3}\right)$'
+            solution_sketch: 'Area $\frac{1}{2}$; $\bar{x} = 2\int_0^1 x \cdot x\, dx = \frac{2}{3}$, $\bar{y} = 2\int_0^1 \frac{x^2}{2}\, dx = \frac{1}{3}$ (the average of the vertices).'
+          - problem: 'Find the centroid of the region under $y = 4 - x^2$ and above the $x$-axis.'
+            answer: '$\left(0, \frac{8}{5}\right)$'
+            solution_sketch: 'By symmetry $\bar{x} = 0$. Area $= \frac{32}{3}$; $\iint y\, dA = \int_{-2}^2 \frac{(4-x^2)^2}{2}\, dx = \frac{256}{15}$, so $\bar{y} = \frac{256/15}{32/3} = \frac{8}{5}$.'
+          - problem: 'Find the center of mass of the lamina on $[0,1]^2$ with density $\rho(x, y) = y$.'
+            answer: '$\left(\frac{1}{2}, \frac{2}{3}\right)$'
+            solution_sketch: '$m = \frac{1}{2}$; $\bar{x} = \frac{1}{m}\iint x y\, dA = 2 \cdot \frac{1}{4} = \frac{1}{2}$; $\bar{y} = \frac{1}{m}\iint y^2\, dA = 2 \cdot \frac{1}{3} = \frac{2}{3}$.'
+        constraints: "use symmetry when available; centroids/centers have small rational coordinates"
+    diagnostic_exemplar:
+      problem: 'Find the centre of mass of the lamina occupying $[0, 2] \times [0, 1]$ with density $\rho(x, y) = x$.'
+      answer: '$\left(\dfrac{4}{3},\; \dfrac{1}{2}\right)$'
+      solution_sketch: '$m = \int_0^2\!\int_0^1 x\,dy\,dx = 2$; $M_y = \int_0^2\!\int_0^1 x^2\,dy\,dx = \tfrac{8}{3}$; $M_x = \int_0^2\!\int_0^1 xy\,dy\,dx = 1$. Hence $\bar x = \tfrac{8}{3}/2 = \tfrac{4}{3}$ and $\bar y = 1/2$.'
+    anki_seeds:
+      - front: 'Center of mass formulas for a lamina with density $\rho$?'
+        back: '$\bar{x} = \frac{M_y}{m} = \frac{1}{m}\iint x\rho\, dA$, $\;\bar{y} = \frac{M_x}{m} = \frac{1}{m}\iint y\rho\, dA$.'
+        type: basic
+      - front: 'What is the centroid of a region?'
+        back: 'The center of mass with constant density — the geometric center $\left(\frac{1}{A}\iint x\, dA, \frac{1}{A}\iint y\, dA\right)$.'
+        type: basic
+
+  - id: double-integrals-polar
+    name: "Double Integrals in Polar Coordinates"
+    core: true
+    difficulty: 0.75
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 180
+    prerequisites:
+      - id: double-integrals
+        weight: 0.8
+        key: true
+      - id: polar-coordinates
+        weight: 0.6
+        key: true
+      - id: polar-area
+        weight: 0.5
+        key: true
+      - id: unit-circle
+        weight: 0.3
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Converting and evaluating over disks"
+        key_prerequisites: [double-integrals, polar-coordinates]
+        exemplars:
+          - problem: 'Evaluate $\iint_D (x^2 + y^2)\, dA$ where $D$ is the disk $x^2 + y^2 \le 4$.'
+            answer: '$8\pi$'
+            solution_sketch: '$\int_0^{2\pi} \int_0^2 r^2 \cdot r \, dr\, d\theta = 2\pi \left[\frac{r^4}{4}\right]_0^2 = 2\pi \cdot 4 = 8\pi$.'
+          - problem: 'Evaluate $\iint_D e^{-x^2 - y^2}\, dA$ where $D$ is the unit disk.'
+            answer: '$\pi\left(1 - \frac{1}{e}\right)$'
+            solution_sketch: '$\int_0^{2\pi} \int_0^1 e^{-r^2} r \, dr\, d\theta = 2\pi \cdot \frac{1 - e^{-1}}{2}$; the extra $r$ makes the substitution $u = r^2$ work.'
+        constraints: "integrands are functions of x^2+y^2; disks or annuli centered at the origin; radii small integers"
+      - id: kp2
+        name: "Areas and volumes via polar"
+        key_prerequisites: [double-integrals, polar-coordinates, polar-area]
+        exemplars:
+          - problem: 'Find the area enclosed by the cardioid $r = 2 + 2\sin\theta$.'
+            answer: '$6\pi$'
+            solution_sketch: '$A = \frac{1}{2}\int_0^{2\pi} (2 + 2\sin\theta)^2\, d\theta = \frac{1}{2}\int_0^{2\pi} \left(4 + 8\sin\theta + 4\sin^2\theta\right) d\theta = \frac{1}{2}\left(8\pi + 0 + 4\pi\right) = 6\pi$, using $\int_0^{2\pi} \sin^2\theta\, d\theta = \pi$.'
+          - problem: 'Find the volume of the solid under $z = 4 - x^2 - y^2$ and above the $xy$-plane.'
+            answer: '$8\pi$'
+            solution_sketch: 'The paraboloid meets $z = 0$ at $r = 2$: $\int_0^{2\pi} \int_0^2 (4 - r^2) r \, dr\, d\theta = 2\pi\left[2r^2 - \frac{r^4}{4}\right]_0^2 = 2\pi(8 - 4) = 8\pi$.'
+        constraints: "cardioids/circles for area; paraboloid caps for volume; answers exact multiples of pi"
+    diagnostic_exemplar:
+      problem: 'Find the volume of the solid lying under the paraboloid $z = 16 - x^2 - y^2$ and above the $xy$-plane.'
+      answer: '$128\pi$'
+      solution_sketch: 'The paraboloid meets $z = 0$ on the circle $r = 4$, so $V = \int_0^{2\pi}\!\int_0^4 (16 - r^2)\,r\,dr\,d\theta = 2\pi\left[8r^2 - \tfrac{r^4}{4}\right]_0^4 = 2\pi(128 - 64) = 128\pi$.'
+    anki_seeds:
+      - front: 'Area element in polar coordinates?'
+        back: '$dA = r \, dr \, d\theta$ — never forget the extra factor $r$.'
+        type: basic
+      - front: 'When should a double integral be converted to polar?'
+        back: 'When the region is a disk/annulus/sector or the integrand involves $x^2 + y^2$.'
+        type: basic
+
+  - id: surface-area-double-integrals
+    name: "Surface Area via Double Integrals"
+    core: true
+    difficulty: 0.80
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 240
+    prerequisites:
+      - id: double-integrals
+        weight: 0.7
+        key: true
+      - id: partial-derivatives
+        weight: 0.5
+        key: true
+      - id: double-integrals-polar
+        weight: 0.5
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: "The surface-area formula and planes"
+        key_prerequisites: [double-integrals, partial-derivatives]
+        exemplars:
+          - problem: 'Find the area of the part of the plane $z = 2x + 2y$ lying over the square $[0,1] \times [0,1]$.'
+            answer: "3"
+            solution_sketch: '$dS = \sqrt{1 + f_x^2 + f_y^2}\, dA = \sqrt{1 + 4 + 4}\, dA = 3\, dA$; the base area is $1$.'
+          - problem: 'Find the area of the part of the plane $z = 3 - x - y$ over the triangle $x, y \ge 0$, $x + y \le 1$.'
+            answer: '$\frac{\sqrt{3}}{2}$'
+            solution_sketch: '$\sqrt{1 + 1 + 1} = \sqrt{3}$ times the base area $\frac{1}{2}$.'
+        constraints: "planes with integer coefficients so sqrt(1+fx^2+fy^2) is constant; base regions with simple areas"
+      - id: kp2
+        name: "Curved surfaces via polar coordinates"
+        key_prerequisites: [double-integrals, partial-derivatives, double-integrals-polar]
+        exemplars:
+          - problem: 'Find the area of the part of the paraboloid $z = x^2 + y^2$ below the plane $z = 1$.'
+            answer: '$\frac{\pi}{6}\left(5\sqrt{5} - 1\right)$'
+            solution_sketch: '$\sqrt{1 + 4x^2 + 4y^2} = \sqrt{1 + 4r^2}$: $\int_0^{2\pi}\int_0^1 \sqrt{1 + 4r^2}\, r\, dr\, d\theta = 2\pi \cdot \frac{1}{12}\left(5^{3/2} - 1\right)$.'
+          - problem: 'Find the area of the part of the cone $z = \sqrt{x^2 + y^2}$ with $0 \le z \le 2$.'
+            answer: '$4\sqrt{2}\,\pi$'
+            solution_sketch: 'For the cone $\sqrt{1 + f_x^2 + f_y^2} = \sqrt{2}$ at every point off the axis, so the area is $\sqrt{2}$ times the area of the disk $r \le 2$, i.e. $\sqrt{2} \cdot 4\pi$. (Note: $f_x, f_y$ are undefined at the apex $(0,0)$, so this is technically an improper integral; the integrand is the constant $\sqrt{2}$ on the punctured disk and the single missing point has measure zero, so the integral converges to the stated value.)'
+        constraints: "radially symmetric surfaces; the substitution u = 1 + 4r^2 (or a constant factor) finishes the integral; answers exact"
+    diagnostic_exemplar:
+      problem: 'Find the area of the part of the paraboloid $z = x^2 + y^2$ lying below the plane $z = 4$.'
+      answer: '$\dfrac{\pi}{6}\left(17\sqrt{17} - 1\right)$'
+      solution_sketch: '$dS = \sqrt{1 + 4x^2 + 4y^2}\,dA$, and the shadow is the disk $r \le 2$, so $A = \int_0^{2\pi}\!\int_0^2 \sqrt{1 + 4r^2}\,r\,dr\,d\theta = 2\pi \cdot \tfrac{1}{12}\left[(1 + 4r^2)^{3/2}\right]_0^2 = \tfrac{\pi}{6}\left(17\sqrt{17} - 1\right)$.'
+    anki_seeds:
+      - front: 'Surface area of the graph $z = f(x, y)$ over a region $D$?'
+        back: '$\iint_D \sqrt{1 + f_x^2 + f_y^2} \, dA$'
+        type: basic
+      - front: 'Why does the surface-area integrand carry the factor $\sqrt{1 + f_x^2 + f_y^2}$?'
+        back: 'It is $\left|\langle 1, 0, f_x \rangle \times \langle 0, 1, f_y \rangle\right|$ — the area of the tangent parallelogram, i.e. the tilt factor by which a patch $dA$ of the region stretches on the graph. A flat graph ($f_x = f_y = 0$) gives factor $1$.'
+        type: basic
+
+  - id: triple-integrals
+    name: "Triple Integrals"
+    core: true
+    difficulty: 0.78
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 240
+    prerequisites:
+      - id: double-integrals
+        weight: 0.8
+        key: true
+      - id: coordinates-surfaces-3d
+        weight: 0.3
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Triple integrals over boxes"
+        key_prerequisites: [double-integrals]
+        exemplars:
+          - problem: 'Evaluate $\int_0^1 \int_0^2 \int_0^3 xyz \, dz \, dy \, dx$.'
+            answer: '$\frac{9}{2}$'
+            solution_sketch: 'Separable: $\left(\int_0^1 x\,dx\right)\left(\int_0^2 y\,dy\right)\left(\int_0^3 z\,dz\right) = \frac{1}{2} \cdot 2 \cdot \frac{9}{2} = \frac{9}{2}$.'
+          - problem: 'Evaluate $\iiint_B (x + z) \, dV$ where $B = [0,1]^3$ is the unit cube.'
+            answer: "1"
+            solution_sketch: 'By symmetry each of $\iiint x\, dV$ and $\iiint z\, dV$ equals $\frac{1}{2}$ (mean of $x$ on $[0,1]$ times volume $1$).'
+        constraints: "integrands separable or a sum of single variables; box edges at small integers"
+      - id: kp2
+        name: "General solids: tetrahedra and volume"
+        key_prerequisites: [double-integrals]
+        exemplars:
+          - problem: 'Use a triple integral to find the volume of the tetrahedron bounded by the coordinate planes and $x + y + z = 1$.'
+            answer: '$\frac{1}{6}$'
+            solution_sketch: '$\int_0^1 \int_0^{1-x} \int_0^{1-x-y} dz\, dy\, dx = \int_0^1 \int_0^{1-x} (1-x-y)\, dy\, dx = \int_0^1 \frac{(1-x)^2}{2}\, dx = \frac{1}{6}$.'
+          - problem: 'Evaluate $\iiint_E z \, dV$ where $E$ is the tetrahedron bounded by the coordinate planes and $x + y + z = 1$.'
+            answer: '$\frac{1}{24}$'
+            solution_sketch: 'Inner: $\int_0^{1-x-y} z\, dz = \frac{(1-x-y)^2}{2}$; then $\int_0^{1-x} \frac{(1-x-y)^2}{2} dy = \frac{(1-x)^3}{6}$; finally $\int_0^1 \frac{(1-x)^3}{6} dx = \frac{1}{24}$.'
+        constraints: "solids bounded by coordinate planes and one slanted plane; powers of (1-x) integrate exactly"
+      - id: kp3
+        name: "Solids bounded by curved surfaces"
+        key_prerequisites: [double-integrals]
+        exemplars:
+          - problem: 'Find the volume of the solid bounded below by $z = 0$, above by $z = y$, over the region $0 \le y \le 1 - x^2$.'
+            answer: '$\frac{8}{15}$'
+            solution_sketch: '$V = \int_{-1}^1 \int_0^{1-x^2} \int_0^y dz\, dy\, dx = \int_{-1}^1 \frac{(1-x^2)^2}{2}\, dx = \frac{8}{15}$.'
+          - problem: 'Evaluate $\iiint_E z \, dV$ where $E = \{(x,y,z) : 0 \le x \le 1,\; 0 \le y \le 1,\; 0 \le z \le x + y\}$.'
+            answer: '$\frac{7}{12}$'
+            solution_sketch: 'Inner: $\int_0^{x+y} z\, dz = \frac{(x+y)^2}{2}$; then $\frac{1}{2}\iint (x^2 + 2xy + y^2)\, dA = \frac{1}{2}\left(\frac{1}{3} + \frac{1}{2} + \frac{1}{3}\right) = \frac{7}{12}$.'
+        constraints: "z-bounds are polynomial surfaces; after the inner integral the problem reduces to an earlier double integral"
+    diagnostic_exemplar:
+      problem: 'Evaluate $\iiint_E x\,dV$ where $E$ is the tetrahedron bounded by the coordinate planes and the plane $x + 2y + z = 2$.'
+      answer: '$\dfrac{1}{3}$'
+      solution_sketch: 'Bounds: $0 \le x \le 2$, $0 \le y \le \frac{2-x}{2}$, $0 \le z \le 2 - x - 2y$. Integrating in $z$ then $y$ gives $\int_0^{(2-x)/2}(2 - x - 2y)\,dy = \frac{(2-x)^2}{4}$, so the integral is $\int_0^2 \frac{x(2-x)^2}{4}\,dx = \frac{1}{4}\left(12 - \frac{32}{3}\right) = \frac{1}{3}$.'
+    anki_seeds:
+      - front: 'How do you compute a volume with a triple integral?'
+        back: '$V = \iiint_E 1 \, dV$ — integrate the constant $1$ over the solid.'
+        type: basic
+      - front: 'Volume of the tetrahedron cut off by $x + y + z = 1$ and the coordinate planes?'
+        back: '$\frac{1}{6}$'
+        type: basic
+
+  - id: triple-integral-applications
+    name: "Mass and Average Value in Three Dimensions"
+    core: false                # mass / average-value application; terminal
+    difficulty: 0.80
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 240
+    prerequisites:
+      - id: triple-integrals
+        weight: 0.8
+        key: true
+      - id: double-integral-applications
+        weight: 0.5
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: "Mass with variable density"
+        key_prerequisites: [triple-integrals, double-integral-applications]
+        exemplars:
+          - problem: 'Find the mass of the box $[0,1] \times [0,2] \times [0,3]$ with density $\rho(x,y,z) = 2z$.'
+            answer: "18"
+            solution_sketch: '$m = \iiint 2z\, dV = (1)(2)\int_0^3 2z\, dz = 2 \cdot 9 = 18$.'
+          - problem: 'Find the mass of the unit cube $[0,1]^3$ with density $\rho(x,y,z) = x + y + z$.'
+            answer: '$\frac{3}{2}$'
+            solution_sketch: 'Each term contributes $\frac{1}{2}$: $m = 3 \cdot \frac{1}{2} = \frac{3}{2}$.'
+        constraints: "density linear in one or more variables; boxes only; masses exact rationals"
+      - id: kp2
+        name: "Center of mass and average value"
+        key_prerequisites: [triple-integrals, double-integral-applications]
+        exemplars:
+          - problem: 'The box $[0,1] \times [0,1] \times [0,2]$ has density $\rho = z$. Find $\bar{z}$, the $z$-coordinate of its center of mass.'
+            answer: '$\frac{4}{3}$'
+            solution_sketch: '$m = \int_0^2 z\, dz = 2$; $M_{xy} = \iiint z^2\, dV = \int_0^2 z^2\, dz = \frac{8}{3}$; $\bar{z} = \frac{8/3}{2} = \frac{4}{3}$.'
+          - problem: 'Find the average value of $f(x,y,z) = xyz$ over the cube $[0,2]^3$.'
+            answer: "1"
+            solution_sketch: '$\iiint xyz\, dV = 2 \cdot 2 \cdot 2 = 8$; volume $8$; average $1$.'
+          - problem: 'Find $\bar{z}$ for the uniform tetrahedron bounded by the coordinate planes and $x + y + z = 1$.'
+            answer: '$\frac{1}{4}$'
+            solution_sketch: '$\iiint z\, dV = \frac{1}{24}$ and $V = \frac{1}{6}$, so $\bar{z} = \frac{1/24}{1/6} = \frac{1}{4}$.'
+        constraints: "reuse standard solids (boxes, unit tetrahedron); coordinates and averages are small rationals"
+    diagnostic_exemplar:
+      problem: 'The box $[0,2] \times [0,1] \times [0,3]$ has density $\rho(x, y, z) = z$. Find $\bar z$, the $z$-coordinate of its centre of mass.'
+      answer: '$2$'
+      solution_sketch: '$m = 2\int_0^3 z\,dz = 9$ and $M_{xy} = 2\int_0^3 z^2\,dz = 18$, so $\bar z = 18/9 = 2$.'
+    anki_seeds:
+      - front: 'Average value of $f$ over a solid $E$?'
+        back: '$\bar{f} = \dfrac{1}{V(E)} \iiint_E f \, dV$'
+        type: basic
+      - front: '$\bar{z}$ for a solid with density $\rho$?'
+        back: '$\bar{z} = \dfrac{M_{xy}}{m} = \dfrac{1}{m}\iiint z\rho \, dV$'
+        type: basic
+
+  - id: triple-integrals-cylindrical
+    name: "Triple Integrals in Cylindrical Coordinates"
+    core: true
+    difficulty: 0.79
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 200
+    prerequisites:
+      - id: triple-integrals
+        weight: 0.8
+        key: true
+      - id: double-integrals-polar
+        weight: 0.7
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: "Setting up cylindrical integrals"
+        key_prerequisites: [triple-integrals, double-integrals-polar]
+        exemplars:
+          - problem: 'Describe the solid cylinder $x^2 + y^2 \le 4$, $0 \le z \le 3$ in cylindrical coordinates.'
+            answer: '$0 \le r \le 2$, $\;0 \le \theta \le 2\pi$, $\;0 \le z \le 3$'
+          - problem: 'Rewrite $\iiint_E z \, dV$ over the cylinder $x^2 + y^2 \le 1$, $0 \le z \le 2$ as an iterated integral in cylindrical coordinates (do not evaluate).'
+            answer: '$\int_0^{2\pi} \int_0^1 \int_0^2 z\, r \, dz\, dr\, d\theta$'
+            solution_sketch: 'The region is a product in $(r, \theta, z)$; the volume element contributes the factor $r$.'
+        constraints: "solids are coordinate cylinders/cones; the answer is the description or set-up, always including the factor r"
+      - id: kp2
+        name: "Evaluating cylindrical integrals"
+        key_prerequisites: [triple-integrals, double-integrals-polar]
+        exemplars:
+          - problem: 'Use cylindrical coordinates to evaluate $\iiint_E z \, dV$ where $E$ is the cylinder $x^2 + y^2 \le 1$, $0 \le z \le 2$.'
+            answer: '$2\pi$'
+            solution_sketch: '$\int_0^{2\pi}\int_0^1\int_0^2 z\, r\, dz\, dr\, d\theta = 2\pi \cdot \frac{1}{2} \cdot 2 = 2\pi$ (with $\int_0^2 z\,dz = 2$ and $\int_0^1 r\,dr = \frac{1}{2}$).'
+          - problem: 'Find the volume of the solid above the cone $z = \sqrt{x^2 + y^2}$ and below the plane $z = 2$.'
+            answer: '$\frac{8\pi}{3}$'
+            solution_sketch: 'For $0 \le r \le 2$, $z$ runs from $r$ to $2$: $\int_0^{2\pi}\int_0^2 (2 - r) r\, dr\, d\theta = 2\pi\left(4 - \frac{8}{3}\right) = \frac{8\pi}{3}$.'
+        constraints: "solids with rotational symmetry about the z-axis (cylinders, cones, paraboloids); dV = r dz dr dtheta"
+      - id: kp3
+        name: "Volumes of rotationally symmetric solids"
+        key_prerequisites: [triple-integrals, double-integrals-polar]
+        exemplars:
+          - problem: 'Find the volume of the solid under the paraboloid $z = 9 - x^2 - y^2$ and above the $xy$-plane.'
+            answer: '$\frac{81\pi}{2}$'
+            solution_sketch: '$\int_0^{2\pi}\int_0^3 (9 - r^2) r\, dr\, d\theta = 2\pi\left(\frac{81}{2} - \frac{81}{4}\right) = \frac{81\pi}{2}$.'
+          - problem: 'Evaluate $\iiint_E (x^2 + y^2) \, dV$ where $E$ is the cylinder $x^2 + y^2 \le 4$, $0 \le z \le 1$.'
+            answer: '$8\pi$'
+            solution_sketch: '$\int_0^{2\pi}\int_0^2\int_0^1 r^2 \cdot r\, dz\, dr\, d\theta = 2\pi \cdot \frac{16}{4} = 8\pi$.'
+        constraints: "paraboloids and cylinders with small integer radii; answers exact multiples of pi"
+    diagnostic_exemplar:
+      problem: 'Use cylindrical coordinates to find the volume of the solid bounded above by the paraboloid $z = 12 - x^2 - y^2$ and below by the cone $z = \sqrt{x^2 + y^2}$.'
+      answer: '$\dfrac{99\pi}{2}$'
+      solution_sketch: 'The surfaces meet where $12 - r^2 = r$, i.e. $r = 3$. Then $V = \int_0^{2\pi}\!\int_0^3 \left[(12 - r^2) - r\right] r\,dr\,d\theta = 2\pi\left[6r^2 - \tfrac{r^4}{4} - \tfrac{r^3}{3}\right]_0^3 = 2\pi\left(54 - \tfrac{81}{4} - 9\right) = \tfrac{99\pi}{2}$.'
+    anki_seeds:
+      - front: 'Volume element in cylindrical coordinates?'
+        back: '$dV = r \, dz \, dr \, d\theta$'
+        type: basic
+      - front: 'When are cylindrical coordinates the right choice for a triple integral?'
+        back: 'When the solid or integrand is symmetric about the $z$-axis (cylinders, cones, paraboloids, $x^2 + y^2$ terms).'
+        type: basic
+
+  - id: cylindrical-spherical-coordinates
+    name: "Spherical Coordinates and Choosing a System"
+    core: true
+    difficulty: 0.82
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 240
+    prerequisites:
+      - id: triple-integrals-cylindrical
+        weight: 0.8
+        key: true
+      - id: triple-integrals
+        weight: 0.4
+        key: false
+      - id: partial-derivatives-trig-exp
+        weight: 0.5
+        key: true
+      - id: determinants-2x2
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Spherical coordinates: conversion and set-up"
+        key_prerequisites: [triple-integrals-cylindrical]
+        exemplars:
+          - problem: 'Convert the spherical point $(\rho, \varphi, \theta) = \left(2, \frac{\pi}{3}, 0\right)$ to rectangular coordinates.'
+            answer: '$(\sqrt{3}, 0, 1)$'
+            solution_sketch: '$x = 2\sin\frac{\pi}{3}\cos 0 = \sqrt{3}$, $y = 2\sin\frac{\pi}{3}\sin 0 = 0$, $z = 2\cos\frac{\pi}{3} = 1$.'
+          - problem: 'Describe the upper half of the unit ball in spherical coordinates.'
+            answer: '$0 \le \rho \le 1$, $\;0 \le \varphi \le \frac{\pi}{2}$, $\;0 \le \theta \le 2\pi$'
+        constraints: "angles at standard unit-circle values; balls, half-balls, and cones as regions"
+      - id: kp2
+        name: "Evaluating spherical integrals"
+        key_prerequisites: [triple-integrals-cylindrical]
+        exemplars:
+          - problem: 'Use spherical coordinates to verify the volume of the ball of radius $3$.'
+            answer: '$36\pi$'
+            solution_sketch: '$\int_0^{2\pi}\int_0^{\pi}\int_0^3 \rho^2 \sin\varphi \, d\rho\, d\varphi\, d\theta = 2\pi \cdot 2 \cdot 9 = 36\pi$ (with $\int_0^3 \rho^2 d\rho = 9$, $\int_0^\pi \sin\varphi\, d\varphi = 2$).'
+          - problem: 'Evaluate $\iiint_E z \, dV$ where $E$ is the upper half of the unit ball.'
+            answer: '$\frac{\pi}{4}$'
+            solution_sketch: '$z = \rho\cos\varphi$: $\int_0^{2\pi}\int_0^{\pi/2}\int_0^1 \rho^3 \cos\varphi \sin\varphi\, d\rho\, d\varphi\, d\theta = 2\pi \cdot \frac{1}{4} \cdot \frac{1}{2} = \frac{\pi}{4}$.'
+          - problem: 'Evaluate $\iiint_B e^{(x^2+y^2+z^2)^{3/2}} dV$ over the unit ball.'
+            answer: '$\frac{4\pi(e - 1)}{3}$'
+            solution_sketch: 'The integrand is $e^{\rho^3}$; $\int_0^1 e^{\rho^3}\rho^2\, d\rho = \frac{e-1}{3}$ (substitute $u = \rho^3$), times $\int\sin\varphi = 2$ and $2\pi$.'
+        constraints: "balls and half-balls centered at the origin; integrands are functions of rho alone or a single factor of cos(phi) (e.g. z = rho cos phi); dV = rho^2 sin(phi) d rho d phi d theta; the triple integral separates into a product of three one-variable integrals"
+      - id: kp3
+        name: "Jacobians and choosing a coordinate system"
+        key_prerequisites: [triple-integrals-cylindrical, partial-derivatives-trig-exp, determinants-2x2]
+        exemplars:
+          - problem: 'Compute the Jacobian $\frac{\partial(x, y)}{\partial(r, \theta)}$ for the polar map $x = r\cos\theta$, $y = r\sin\theta$.'
+            answer: '$r$'
+            solution_sketch: '$\det\begin{pmatrix} \cos\theta & -r\sin\theta \\ \sin\theta & r\cos\theta \end{pmatrix} = r\cos^2\theta + r\sin^2\theta = r$ — this determinant is why $dA = r\,dr\,d\theta$.'
+          - problem: 'Find the volume of the "ice-cream cone" region inside the cone $\varphi \le \frac{\pi}{3}$ and the sphere $\rho \le 1$.'
+            answer: '$\frac{\pi}{3}$'
+            solution_sketch: '$\int_0^{2\pi}\int_0^{\pi/3}\int_0^1 \rho^2\sin\varphi\, d\rho\, d\varphi\, d\theta = 2\pi \cdot \frac{1}{3}\left(1 - \cos\frac{\pi}{3}\right) = \frac{2\pi}{3} \cdot \frac{1}{2} = \frac{\pi}{3}$.'
+        constraints: "2x2 Jacobians only; cone half-angles at standard unit-circle values"
+    diagnostic_exemplar:
+      problem: 'Use spherical coordinates to find the volume of the region inside the sphere $\rho \le 2$ and above the cone $\varphi \le \frac{\pi}{3}$.'
+      answer: '$\dfrac{8\pi}{3}$'
+      solution_sketch: '$V = \int_0^{2\pi}\!\int_0^{\pi/3}\!\int_0^2 \rho^2 \sin\varphi \,d\rho\,d\varphi\,d\theta = 2\pi \cdot \tfrac{8}{3} \cdot \left[-\cos\varphi\right]_0^{\pi/3} = 2\pi \cdot \tfrac{8}{3} \cdot \tfrac{1}{2} = \tfrac{8\pi}{3}$.'
+    anki_seeds:
+      - front: 'Volume element in spherical coordinates?'
+        back: '$dV = \rho^2 \sin\varphi \, d\rho \, d\varphi \, d\theta$'
+        type: basic
+      - front: 'Spherical-to-rectangular conversion formulas?'
+        back: '$x = \rho\sin\varphi\cos\theta$, $y = \rho\sin\varphi\sin\theta$, $z = \rho\cos\varphi$.'
+        type: basic
+
+  - id: change-of-variables-jacobians
+    name: "Change of Variables and Jacobians"
+    core: false                # terminal capstone of the multiple-integral module
+    difficulty: 0.84
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 300
+    prerequisites:
+      - id: double-integrals
+        weight: 0.7
+        key: true
+      - id: partial-derivatives-trig-exp
+        weight: 0.6
+        key: true
+      - id: determinants-2x2
+        weight: 0.6
+        key: true
+      - id: cylindrical-spherical-coordinates
+        weight: 0.3
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Computing Jacobians of transformations"
+        key_prerequisites: [double-integrals, partial-derivatives-trig-exp, determinants-2x2]
+        exemplars:
+          - problem: 'Compute the Jacobian $\frac{\partial(x, y)}{\partial(u, v)}$ for $x = 2u + v$, $y = u + 2v$.'
+            answer: "3"
+            solution_sketch: '$\det\begin{pmatrix} 2 & 1 \\ 1 & 2 \end{pmatrix} = 4 - 1 = 3$.'
+          - problem: 'Compute the Jacobian for $x = u^2 - v^2$, $y = 2uv$.'
+            answer: '$4u^2 + 4v^2$'
+            solution_sketch: '$\det\begin{pmatrix} 2u & -2v \\ 2v & 2u \end{pmatrix} = 4u^2 + 4v^2$.'
+        constraints: "linear or classic quadratic maps; Jacobians are integers or clean polynomials in u, v"
+      - id: kp2
+        name: "Transforming double integrals"
+        key_prerequisites: [double-integrals, determinants-2x2]
+        exemplars:
+          - problem: 'Evaluate $\iint_R (x + y)\, dA$ where $R$ is the parallelogram with vertices $(0,0)$, $(2,1)$, $(3,3)$, $(1,2)$, using $x = 2u + v$, $y = u + 2v$.'
+            answer: "9"
+            solution_sketch: 'The map sends $[0,1]^2$ to $R$ with Jacobian $3$; $x + y = 3u + 3v$, so the integral is $\int_0^1\int_0^1 3(u+v) \cdot 3\, du\, dv = 9$.'
+          - problem: 'Evaluate $\iint_R e^{(x-y)/(x+y)}\, dA$ where $R$ is the triangle bounded by $x = 0$, $y = 0$, $x + y = 1$, using $u = x - y$, $v = x + y$.'
+            answer: '$\frac{1}{4}\left(e - \frac{1}{e}\right)$'
+            solution_sketch: '$x = \frac{u+v}{2}$, $y = \frac{v-u}{2}$ has Jacobian $\frac{1}{2}$; the region becomes $0 \le v \le 1$, $-v \le u \le v$: $\frac{1}{2}\int_0^1 \int_{-v}^{v} e^{u/v}\, du\, dv = \frac{1}{2}\int_0^1 v\left(e - e^{-1}\right) dv$.'
+        constraints: "the substitution is given; regions map to squares/triangles in the uv-plane; remember |J| and the direction of the map"
+      - id: kp3
+        name: "Choosing a transformation"
+        key_prerequisites: [double-integrals, partial-derivatives-trig-exp, determinants-2x2]
+        exemplars:
+          - problem: 'Find the area of the region in the first quadrant bounded by $xy = 1$, $xy = 4$, $y = x$, and $y = 4x$, using $u = xy$, $v = y/x$.'
+            answer: '$3\ln 2$'
+            solution_sketch: '$x = \sqrt{u/v}$, $y = \sqrt{uv}$ has Jacobian $\frac{1}{2v}$; area $= \int_1^4 \int_1^4 \frac{1}{2v}\, dv\, du = 3 \cdot \frac{\ln 4}{2} = 3\ln 2$.'
+          - problem: 'Which substitution turns the region bounded by $y = x$, $y = x + 2$, $y = -x$, $y = -x + 4$ into a rectangle?'
+            answer: '$u = y - x$, $v = y + x$ (the region becomes $0 \le u \le 2$, $0 \le v \le 4$).'
+        constraints: "boundary curves become u = const, v = const; final answers involve at most one logarithm"
+    diagnostic_exemplar:
+      problem: 'Evaluate $\iint_R (x + y)\,dA$, where $R$ is the parallelogram with vertices $(0,0)$, $(3,1)$, $(4,3)$, $(1,2)$, using the change of variables $x = 3u + v$, $y = u + 2v$.'
+      answer: '$\dfrac{35}{2}$'
+      solution_sketch: 'The map sends the unit square $0 \le u, v \le 1$ onto $R$, and its Jacobian is $3 \cdot 2 - 1 \cdot 1 = 5$. Since $x + y = 4u + 3v$, the integral is $\int_0^1\!\int_0^1 (4u + 3v)\cdot 5\,du\,dv = 5\left(2 + \tfrac{3}{2}\right) = \tfrac{35}{2}$.'
+    anki_seeds:
+      - front: 'Change-of-variables formula for double integrals?'
+        back: '$\iint_R f(x,y)\, dA = \iint_S f(x(u,v), y(u,v)) \left|\frac{\partial(x,y)}{\partial(u,v)}\right| du\, dv$'
+        type: basic
+      - front: 'How does polar coordinates fit the change-of-variables theorem?'
+        back: 'It is the special case $x = r\cos\theta$, $y = r\sin\theta$ with Jacobian $r$ — hence $dA = r\,dr\,d\theta$.'
+        type: basic

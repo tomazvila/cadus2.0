@@ -1,0 +1,493 @@
+unit: fields
+course: abstract-algebra
+module: "Fields"
+topics:
+  - id: fields-characteristic
+    name: "Fields and Characteristic"
+    core: true
+    difficulty: 0.74
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 180
+    prerequisites:
+      - id: integral-domains-zero-divisors
+        weight: 0.9
+        key: true
+      - id: units-in-modular-rings
+        weight: 0.6
+        key: true
+      - id: binomial-expansion
+        weight: 0.3
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Field axioms; fields vs domains"
+        key_prerequisites: [integral-domains-zero-divisors, units-in-modular-rings]
+        exemplars:
+          - problem: 'What must be added to the axioms of a commutative ring with unity ($1 \neq 0$) to get a field?'
+            answer: 'Every nonzero element has a multiplicative inverse.'
+            solution_sketch: 'Fields are commutative division rings; units are everything nonzero.'
+          - problem: 'Every field is an integral domain. Prove it.'
+            answer: 'If $ab = 0$ and $a \neq 0$, multiply by $a^{-1}$: $b = a^{-1}ab = a^{-1}0 = 0$.'
+            solution_sketch: 'Invertibility kills zero divisors.'
+        constraints: "axiom-level questions; classify Q, R, Z, Z_n, Z[x] as field / domain / neither"
+      - id: kp2
+        name: "Characteristic of a ring"
+        key_prerequisites: [units-in-modular-rings]
+        exemplars:
+          - problem: 'Find the characteristic of $\mathbb{Z}_{12}$, of $\mathbb{Q}$, and of $\mathbb{Z}_7$.'
+            answer: '$12$; $0$; $7$'
+            solution_sketch: 'The characteristic is the additive order of $1$ (or $0$ if infinite).'
+          - problem: 'Prove that the characteristic of a field is $0$ or prime.'
+            answer: 'If $\mathrm{char} = mn$ with $1 < m, n < mn$, then $(m\cdot 1)(n \cdot 1) = mn \cdot 1 = 0$ gives zero divisors — impossible in a field.'
+            solution_sketch: 'A composite characteristic factors into two nonzero elements multiplying to zero.'
+        constraints: "characteristics of Z_n, Q, products; the primality proof"
+      - id: kp3
+        name: "The Frobenius endomorphism in characteristic p"
+        key_prerequisites: [units-in-modular-rings]
+        exemplars:
+          - problem: 'In a commutative ring of characteristic $3$, expand $(a + b)^3$.'
+            answer: '$a^3 + b^3$'
+            solution_sketch: 'Binomial coefficients $\binom{3}{1} = \binom{3}{2} = 3 \equiv 0$; only the end terms survive.'
+          - problem: 'In $\mathbb{Z}_5$, compute $(2 + 3)^5$ and $2^5 + 3^5$, and compare.'
+            answer: 'Both are $0$: $(5)^5 \equiv 0$ and $32 + 243 = 275 \equiv 0 \pmod 5$.'
+            solution_sketch: 'The Frobenius identity $(a+b)^p = a^p + b^p$ holds in characteristic $p$.'
+        constraints: "p in {2, 3, 5}; expansions verified with small numbers"
+    diagnostic_exemplar:
+      problem: 'In a commutative ring of characteristic $5$, expand $(a + b)^5$ in simplest form and justify which terms vanish. Then give the characteristic of a field with $25$ elements.'
+      answer: '$(a+b)^5 = a^5 + b^5$: by the binomial theorem the middle coefficients are $\binom{5}{1} = 5$, $\binom{5}{2} = 10$, $\binom{5}{3} = 10$, $\binom{5}{4} = 5$, each divisible by $5$, so those terms are $0$ in characteristic $5$. A field with $25 = 5^2$ elements has characteristic $5$: its prime subfield is $\mathbb{Z}_5$, and a finite field of order $p^{n}$ has characteristic the prime $p$.'
+      solution_sketch: 'Only the two end terms of the binomial expansion survive — this is the Frobenius map $x \mapsto x^{p}$. A finite field has prime-power order and characteristic that prime.'
+    anki_seeds:
+      - front: "Characteristic of a ring with unity?"
+        back: "The additive order of $1$ (or $0$ if $1$ has infinite order)."
+        type: basic
+      - front: "The characteristic of a field is always..."
+        back: "$0$ or a prime $p$."
+        type: basic
+      - front: "Frobenius endomorphism: in characteristic $p$, $(a+b)^p = $ ?"
+        back: "$a^p + b^p$ (interior binomial coefficients vanish mod $p$)."
+        type: basic
+
+  - id: field-of-fractions
+    name: "The Field of Fractions"
+    core: false                # terminal construction with no in-tree consumer (re-audit: zero references to fraction fields anywhere downstream)
+    difficulty: 0.78
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 240
+    prerequisites:
+      - id: integral-domains-zero-divisors
+        weight: 0.9
+        key: true
+      - id: fields-characteristic
+        weight: 0.7
+        key: true
+      - id: equivalence-classes-partitions
+        weight: 0.5
+        key: true
+      - id: polynomial-rings
+        weight: 0.4
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: "The construction: fractions as equivalence classes"
+        key_prerequisites: [integral-domains-zero-divisors, equivalence-classes-partitions]
+        exemplars:
+          - problem: 'Let $D$ be an integral domain. On $D \times (D \setminus \{0\})$ define $(a, b) \sim (c, d) \iff ad = bc$. Prove that $\sim$ is transitive, and point out where you use that $D$ is a domain.'
+            answer: 'Suppose $(a,b) \sim (c,d)$ and $(c,d) \sim (e,f)$: $ad = bc$ and $cf = de$. Then $adf = bcf = bde$, so $d(af - be) = 0$. Since $d \neq 0$ and $D$ has no zero divisors, $af = be$, i.e. $(a,b) \sim (e,f)$. The cancellation of $d$ is exactly where the domain property is used.'
+            solution_sketch: 'Multiply the two defining equations to a common expression and cancel $d$ — legal only without zero divisors.'
+          - problem: 'Fractions are added by $\frac{a}{b} + \frac{c}{d} = \frac{ad + bc}{bd}$. Why does the denominator $bd$ stay legal, and where does that fail in a ring with zero divisors?'
+            answer: 'Denominators must be nonzero: $b, d \neq 0$ gives $bd \neq 0$ precisely because a domain has no zero divisors. In $\mathbb{Z}_6$, $b = 2$ and $d = 3$ are nonzero yet $bd = 0$, so the sum would have a zero denominator — the construction breaks.'
+            solution_sketch: 'Closure of $D \setminus \{0\}$ under multiplication is equivalent to having no zero divisors.'
+        constraints: "the transitivity and denominator-closure arguments, each localizing exactly where the domain hypothesis is used; well-definedness of + or x checked on one representative change"
+      - id: kp2
+        name: "Recognizing fields of fractions: Q, F(x), Q(√2)"
+        key_prerequisites: [integral-domains-zero-divisors, polynomial-rings, fields-characteristic]
+        exemplars:
+          - problem: 'Identify the field of fractions of $\mathbb{Z}$ and of $\mathbb{Q}[x]$.'
+            answer: '$\mathrm{Frac}(\mathbb{Z}) = \mathbb{Q}$; $\mathrm{Frac}(\mathbb{Q}[x]) = \mathbb{Q}(x)$, the field of rational functions $p/q$ with $p, q \in \mathbb{Q}[x]$, $q \neq 0$.'
+            solution_sketch: 'The construction applied to $\mathbb{Z}$ produces exactly the rationals; applied to a polynomial ring over a field it produces the rational-function field.'
+          - problem: 'What is the field of fractions of a field $F$? Justify.'
+            answer: '$F$ itself (up to isomorphism): every fraction $a/b$ equals $ab^{-1}/1$, since $b$ is already invertible in $F$, so the embedding $a \mapsto a/1$ is onto.'
+            solution_sketch: 'Invertible denominators collapse every fraction to an element of $F$.'
+        constraints: "identifications for Z, F[x] (F in {Q, Z_p}), Z[sqrt(2)] (giving Q(sqrt(2)) = {a + b sqrt(2), a, b rational}), and fields; each identification says what the elements look like"
+      - id: kp3
+        name: "The embedding: every domain sits inside its smallest field"
+        key_prerequisites: [integral-domains-zero-divisors, fields-characteristic]
+        exemplars:
+          - problem: 'Prove that $\iota : D \to \mathrm{Frac}(D)$, $\iota(a) = \frac{a}{1}$, is an injective ring homomorphism.'
+            answer: '$\iota(a + b) = \frac{a+b}{1} = \frac{a}{1} + \frac{b}{1}$ and $\iota(ab) = \frac{ab}{1} = \frac{a}{1} \cdot \frac{b}{1}$ by the fraction operations with denominator $1$. Injective: $\frac{a}{1} = \frac{b}{1}$ means $a \cdot 1 = 1 \cdot b$, i.e. $a = b$.'
+            solution_sketch: 'Denominator-1 fractions add and multiply like $D$ itself; equality of such fractions unwinds to equality in $D$.'
+          - problem: 'Show that any field $K$ containing an integral domain $D$ (as a subring) contains a subfield isomorphic to $\mathrm{Frac}(D)$. What does this say about $\mathbb{Q}$ and $\mathbb{Z}$?'
+            answer: 'Map $\frac{a}{b} \mapsto ab^{-1} \in K$ (defined since $b \neq 0$ is invertible in $K$); it is well defined ($ad = bc \implies ab^{-1} = cd^{-1}$), a ring homomorphism, and injective since a nonzero fraction maps to a nonzero element — its image is a subfield isomorphic to $\mathrm{Frac}(D)$. Hence $\mathbb{Q}$ is (up to isomorphism) the smallest field containing $\mathbb{Z}$.'
+            solution_sketch: 'The universal property, lite: fractions have nowhere to go but $ab^{-1}$, so $\mathrm{Frac}(D)$ embeds in every field around $D$.'
+        constraints: "the embedding and minimality proofs in guided steps; conclude 'every integral domain embeds in a field' explicitly once per set"
+    diagnostic_exemplar:
+      problem: 'Identify the field of fractions of the integral domain $\mathbb{Z}[\sqrt{2}] = \{a + b\sqrt{2} : a, b \in \mathbb{Z}\}$ as an explicit subfield of $\mathbb{R}$, and justify your answer.'
+      answer: 'It is $\mathbb{Q}(\sqrt{2}) = \{p + q\sqrt{2} : p, q \in \mathbb{Q}\}$. Every quotient of elements of $\mathbb{Z}[\sqrt2]$ lies there: for $c + d\sqrt2 \ne 0$, $\frac{a+b\sqrt2}{c+d\sqrt2} = \frac{(a+b\sqrt2)(c-d\sqrt2)}{c^2 - 2d^2}$, and $c^2 - 2d^2 \ne 0$ because $\sqrt2$ is irrational; the result has the form $p + q\sqrt2$ with $p, q \in \mathbb{Q}$. Conversely $\mathbb{Q}(\sqrt2)$ is a field containing $\mathbb{Z}[\sqrt2]$, and any field containing a domain $D$ contains a copy of $\mathrm{Frac}(D)$ via $a/b \mapsto ab^{-1}$; since each $p + q\sqrt2$ is such a quotient, $\mathrm{Frac}(\mathbb{Z}[\sqrt2]) = \mathbb{Q}(\sqrt2)$.'
+      solution_sketch: 'Rationalise the denominator with the conjugate; the norm $c^2 - 2d^2$ is nonzero by irrationality of $\sqrt2$. Then use that $\mathrm{Frac}(D)$ embeds in every field containing $D$, so it is the smallest such field.'
+    anki_seeds:
+      - front: "Field of fractions of an integral domain $D$?"
+        back: "Classes of pairs $\\frac{a}{b}$ ($b \\neq 0$) with $\\frac{a}{b} = \\frac{c}{d} \\iff ad = bc$; the smallest field containing $D$ (via $a \\mapsto \\frac{a}{1}$)."
+        type: basic
+      - front: "$\\mathrm{Frac}(F[x]) = $ ? ($F$ a field)"
+        back: "$F(x)$ — the field of rational functions $p/q$, $q \\neq 0$."
+        type: basic
+      - front: "Every integral domain embeds in a ______."
+        back: "Field — its field of fractions, which embeds in every field containing the domain."
+        type: basic
+
+  - id: finite-fields-zp
+    name: "ℤₚ and Finite Fields"                 # Unicode: names are plain text, so `Z_p` showed a literal underscore
+    core: false                # terminal construction; the curriculum stops here
+    difficulty: 0.75
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 180
+    prerequisites:
+      - id: fields-characteristic
+        weight: 0.9
+        key: true
+      - id: quotient-rings
+        weight: 0.6
+        key: false
+      - id: euclidean-algorithm
+        weight: 0.5
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Arithmetic in Z_p: inverses and linear equations"
+        key_prerequisites: [fields-characteristic, euclidean-algorithm]
+        exemplars:
+          - problem: 'Solve $3x + 5 = 1$ in $\mathbb{Z}_7$.'
+            answer: '$x = 1$'
+            solution_sketch: '$3x = -4 = 3$, and multiplying by $3^{-1} = 5$ gives $x = 15 = 1$. Check: $3 + 5 = 8 \equiv 1$.'
+          - problem: 'Find all solutions of $x^2 = 2$ in $\mathbb{Z}_7$.'
+            answer: '$x = 3$ and $x = 4$'
+            solution_sketch: '$3^2 = 9 \equiv 2$ and $4^2 = 16 \equiv 2$; a quadratic over a field has at most two roots.'
+        constraints: "p <= 13; linear and quadratic equations solved by field arithmetic"
+      - id: kp2
+        name: "Why Z_p is a field; Fermat inverses"
+        key_prerequisites: [fields-characteristic, euclidean-algorithm]
+        exemplars:
+          - problem: 'Prove that $\mathbb{Z}_p$ ($p$ prime) is a field.'
+            answer: 'For $a \neq 0$, $\gcd(a, p) = 1$, so Bezout gives $ax + py = 1$, i.e. $ax \equiv 1$: every nonzero element is invertible.'
+            solution_sketch: 'Primality makes every nonzero residue coprime to $p$; extended Euclid produces the inverse.'
+          - problem: 'Use Fermat''s little theorem to express $a^{-1}$ in $\mathbb{Z}_p$, and compute $4^{-1}$ in $\mathbb{Z}_7$ this way.'
+            answer: '$a^{-1} = a^{p-2}$; $4^5 = 1024 = 146\cdot7 + 2$, so $4^{-1} = 2$.'
+            solution_sketch: '$a \cdot a^{p-2} = a^{p-1} = 1$. And indeed $4 \cdot 2 = 8 \equiv 1 \pmod 7$.'
+        constraints: "the Bezout proof; Fermat-inverse computations with p <= 11"
+      - id: kp3
+        name: "Finite fields beyond Z_p: order p^n"
+        key_prerequisites: [fields-characteristic]
+        exemplars:
+          - problem: 'Is there a field with exactly $6$ elements?'
+            answer: 'No: every finite field has prime-power order, and $6 = 2 \cdot 3$ is not a prime power.'
+            solution_sketch: 'A finite field is a vector space over its prime subfield $\mathbb{Z}_p$, so its size is $p^n$.'
+          - problem: 'Describe a field with $4$ elements.'
+            answer: '$\mathbb{Z}_2[x]/\langle x^2 + x + 1 \rangle = \{0, 1, \alpha, \alpha + 1\}$ with $\alpha^2 = \alpha + 1$.'
+            solution_sketch: 'Quotient by an irreducible quadratic over $\mathbb{Z}_2$; the four remainders form a field.'
+        constraints: "existence/size questions for orders <= 27; construction via irreducible polynomials may be quoted"
+    diagnostic_exemplar:
+      problem: 'Describe a field with exactly $9$ elements, justifying that it is a field, and compute the inverse of $\alpha$, the root of the polynomial you adjoin.'
+      answer: 'Take $F = \mathbb{Z}_3[x]/\langle x^2 + 1\rangle$. The polynomial $x^2 + 1$ has no root in $\mathbb{Z}_3$ ($0, 1, 2$ give $1, 2, 2$), so being of degree $2$ it is irreducible; hence $\langle x^2+1\rangle$ is maximal and the quotient is a field. Its elements are $a + b\alpha$ with $a, b \in \mathbb{Z}_3$ and $\alpha$ the class of $x$, so $|F| = 3^2 = 9$. Since $\alpha^2 = -1 = 2$, we get $\alpha \cdot 2\alpha = 2\alpha^2 = 2 \cdot 2 = 4 = 1$, so $\alpha^{-1} = 2\alpha$.'
+      solution_sketch: 'Adjoin a root of an irreducible quadratic over $\mathbb{Z}_3$ (Kronecker) to get $3^2$ elements, then invert $\alpha$ using $\alpha^2 = 2$.'
+    anki_seeds:
+      - front: "$\\mathbb{Z}_n$ is a field iff..."
+        back: "$n$ is prime."
+        type: basic
+      - front: "Possible orders of finite fields?"
+        back: "Exactly the prime powers $p^n$ (one field of each order, up to isomorphism)."
+        type: basic
+      - front: "Fermat inverse formula in $\\mathbb{Z}_p$?"
+        back: "$a^{-1} = a^{p-2}$ for $a \\not\\equiv 0$."
+        type: basic
+
+  - id: minimal-polynomials
+    name: "Algebraic Numbers and Minimal Polynomials"
+    core: true
+    difficulty: 0.80
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 210
+    prerequisites:
+      - id: irreducibility-factorization
+        weight: 0.8
+        key: true
+      - id: fields-characteristic
+        weight: 0.4
+        key: false
+      - id: simplifying-radicals
+        weight: 0.5
+        key: true
+      # kp2 and the diagnostic solve (x-1)^2 = 2; the quadratic-formula retarget
+      # removed this technique from the closure. Restored directly.
+      - id: square-root-property
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Algebraic vs transcendental"
+        key_prerequisites: [irreducibility-factorization, simplifying-radicals]
+        exemplars:
+          - problem: 'An element $\alpha \in \mathbb{R}$ is algebraic over $\mathbb{Q}$ when some nonzero $f \in \mathbb{Q}[x]$ has $f(\alpha) = 0$. Give such an $f$ for $\alpha = \sqrt{3} + 2$.'
+            answer: '$x^2 - 4x + 1$'
+            solution_sketch: 'Isolate the radical and square: $(x - 2)^2 = 3$, i.e. $x^2 - 4x + 1 = 0$, a nonzero rational polynomial killing $\sqrt3 + 2$.'
+          - problem: 'Name a transcendental number.'
+            answer: '$\pi$'
+            solution_sketch: 'Lindemann proved $\pi$ transcendental (transcendence may be quoted, not proved): no nonzero polynomial with rational coefficients kills it. $e$ is another valid answer.'
+        constraints: "find explicit annihilating polynomials by isolating radicals and squaring"
+      - id: kp2
+        name: "Finding minimal polynomials"
+        key_prerequisites: [irreducibility-factorization]
+        exemplars:
+          - problem: 'Find the minimal polynomial of $\sqrt[3]{2}$ over $\mathbb{Q}$.'
+            answer: '$x^3 - 2$'
+            solution_sketch: 'It annihilates $\sqrt[3]2$ and is irreducible by Eisenstein at $p = 2$; minimal polynomials are the monic irreducible annihilators.'
+          - problem: 'Find the minimal polynomial of $1 + \sqrt{2}$ over $\mathbb{Q}$.'
+            answer: '$x^2 - 2x - 1$'
+            solution_sketch: '$(x - 1)^2 = 2$ gives the quadratic; it is irreducible since its roots $1 \pm \sqrt2$ are irrational.'
+        constraints: "elements of the form a + b sqrt(d), cube roots; verify irreducibility explicitly"
+      - id: kp3
+        name: "Degree of an algebraic element"
+        key_prerequisites: [irreducibility-factorization]
+        exemplars:
+          - problem: 'What is the degree of $\sqrt{5}$ over $\mathbb{Q}$?'
+            answer: "2"
+            solution_sketch: 'The degree is that of the minimal polynomial $x^2 - 5$, so $2$. (Over $\mathbb{R}$ it would drop to $1$, with min poly $x - \sqrt5$: degree depends on the base field.)'
+          - problem: 'Find the degree of $\sqrt[3]{7}$ over $\mathbb{Q}$.'
+            answer: "3"
+            solution_sketch: '$x^3 - 7$ is irreducible by Eisenstein at $7$.'
+        constraints: "degrees 1-4; base field always stated"
+    diagnostic_exemplar:
+      problem: 'Find the minimal polynomial of $\sqrt{3} - 1$ over $\mathbb{Q}$.'
+      answer: '$x^2 + 2x - 2$'
+      solution_sketch: '$(x + 1)^2 = 3$ expands to $x^2 + 2x - 2 = 0$; it is irreducible (its roots $-1 \pm \sqrt3$ are irrational), so it is the minimal polynomial, of degree $2$.'
+    anki_seeds:
+      - front: "Minimal polynomial of an algebraic element $\\alpha$ over $F$?"
+        back: "The monic polynomial of least degree in $F[x]$ with root $\\alpha$; it is irreducible and divides every annihilator."
+        type: basic
+      - front: "Degree of $\\alpha$ over $F$ means..."
+        back: "The degree of its minimal polynomial over $F$."
+        type: basic
+
+  - id: field-extensions-degree
+    name: "Field Extensions and Degree"
+    core: true
+    difficulty: 0.82
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 240
+    prerequisites:
+      - id: minimal-polynomials
+        weight: 0.9
+        key: true
+      - id: quotient-rings
+        weight: 0.5
+        key: false
+      - id: rationalizing-denominators
+        weight: 0.5
+        key: true
+      - id: basis-dimension
+        weight: 0.4
+        key: false
+      # Phase C (critical gap C-4): kp1/kp2 are exactly bases and dimension over Q
+      # (and C over R) — now taught in linear-algebra's basis-dimension-general-field,
+      # which works Q(sqrt 2) with basis {1, sqrt 2} and dim_R C = 2.
+      - id: basis-dimension-general-field
+        weight: 0.5
+        key: true
+      # kp2 works in C = R(i); conceptual familiarity with i suffices here.
+      - id: complex-numbers
+        weight: 0.2
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Extensions F(alpha) and basis representations"
+        key_prerequisites: [minimal-polynomials, rationalizing-denominators]
+        exemplars:
+          - problem: 'Every element of $\mathbb{Q}(\sqrt{2})$ can be written uniquely as $a + b\sqrt2$ with $a, b \in \mathbb{Q}$. Express $\frac{1}{1 + \sqrt{2}}$ in this form.'
+            answer: '$-1 + \sqrt{2}$'
+            solution_sketch: 'Rationalize: $\frac{1}{1+\sqrt2}\cdot\frac{\sqrt2 - 1}{\sqrt2 - 1} = \frac{\sqrt2 - 1}{2 - 1} = \sqrt2 - 1$.'
+          - problem: 'In $\mathbb{Q}(\sqrt[3]{2})$, which powers of $\alpha = \sqrt[3]{2}$ form the standard basis over $\mathbb{Q}$?'
+            answer: '$1, \alpha, \alpha^2$'
+            solution_sketch: 'The degree is $3$, so $\{1, \alpha, \alpha^2\}$ spans; higher powers reduce via $\alpha^3 = 2$.'
+        constraints: "quadratic and cubic extensions of Q; rationalize denominators, reduce powers"
+      - id: kp2
+        name: "Degree of an extension; [F(alpha):F] = deg of min poly"
+        key_prerequisites: [minimal-polynomials]
+        exemplars:
+          - problem: 'Compute $[\mathbb{Q}(\sqrt{2}) : \mathbb{Q}]$ and $[\mathbb{Q}(\sqrt[3]{2}) : \mathbb{Q}]$.'
+            answer: '$2$ and $3$'
+            solution_sketch: 'The degree of a simple algebraic extension equals the degree of the generator''s minimal polynomial ($x^2 - 2$ and $x^3 - 2$).'
+          - problem: 'What is $[\mathbb{C} : \mathbb{R}]$?'
+            answer: "2"
+            solution_sketch: '$\mathbb{C} = \mathbb{R}(i)$ and the minimal polynomial of $i$ over $\mathbb{R}$ is $x^2 + 1$.'
+        constraints: "simple extensions; degrees 2-4"
+      - id: kp3
+        name: "The tower law"
+        key_prerequisites: [minimal-polynomials]
+        exemplars:
+          - problem: 'State the tower law and use it: given $[\mathbb{Q}(\sqrt2, \sqrt3) : \mathbb{Q}(\sqrt2)] = 2$, compute $[\mathbb{Q}(\sqrt2, \sqrt3) : \mathbb{Q}]$.'
+            answer: '$[K : F] = [K : E][E : F]$ for $F \subseteq E \subseteq K$; here $2 \cdot 2 = 4$.'
+            solution_sketch: 'Multiply the degrees down the tower through $E = \mathbb{Q}(\sqrt2)$.'
+          - problem: 'Can $\mathbb{Q}(\sqrt[3]{2})$ contain $\sqrt{2}$?'
+            answer: 'No: that would put $\mathbb{Q}(\sqrt2)$, of degree $2$, inside a degree-$3$ extension, but $2 \nmid 3$ (tower law).'
+            solution_sketch: 'Degrees of intermediate fields divide the total degree.'
+        constraints: "towers of height 2; divisibility arguments from the tower law"
+    diagnostic_exemplar:
+      problem: 'Compute $[\mathbb{Q}(\sqrt[3]{2}, \sqrt{5}) : \mathbb{Q}]$, given that $\sqrt5 \notin \mathbb{Q}(\sqrt[3]2)$.'
+      answer: "6"
+      solution_sketch: 'Tower through $\mathbb{Q}(\sqrt[3]2)$: degree $3$, then adjoining $\sqrt5$ gives degree $2$ more; $3 \cdot 2 = 6$.'
+    anki_seeds:
+      - front: "$[F(\\alpha) : F]$ equals..."
+        back: "The degree of the minimal polynomial of $\\alpha$ over $F$."
+        type: basic
+      - front: "Tower law?"
+        back: "$[K : F] = [K : E]\\,[E : F]$ for fields $F \\subseteq E \\subseteq K$."
+        type: basic
+      - front: "Standard basis of $\\mathbb{Q}(\\sqrt2)$ over $\\mathbb{Q}$?"
+        back: "$\\{1, \\sqrt2\\}$: every element is uniquely $a + b\\sqrt2$."
+        type: basic
+
+  - id: straightedge-compass-impossibility
+    name: "Straightedge-Compass Impossibility"
+    core: false                # supplemental applications capstone
+    difficulty: 0.85
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 300
+    prerequisites:
+      - id: field-extensions-degree
+        weight: 0.9
+        key: true
+      - id: proof-by-contradiction
+        weight: 0.4
+        key: false
+      - id: trig-ratios-definition
+        weight: 0.2
+        key: false
+      # Phase C: the learner proving doubling-the-cube impossible has now actually
+      # performed constructions (geometry's straightedge-compass-constructions).
+      - id: straightedge-compass-constructions
+        weight: 0.3
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Constructible numbers form a field of degree-2^k elements"
+        key_prerequisites: [field-extensions-degree]
+        exemplars:
+          - problem: 'State the key criterion: if a length $\alpha$ is constructible by straightedge and compass, what does that force about $[\mathbb{Q}(\alpha) : \mathbb{Q}]$?'
+            answer: 'It must be a power of $2$.'
+            solution_sketch: 'Each construction step (line-line, line-circle, circle-circle intersection) solves at worst a quadratic, so constructible numbers sit atop a tower of degree-2 extensions; by the tower law the total degree is $2^k$.'
+          - problem: 'Is $\sqrt[4]{2}$ constructible?'
+            answer: 'Yes: $[\mathbb{Q}(\sqrt[4]2) : \mathbb{Q}] = 4 = 2^2$, and it is reachable by two successive square roots.'
+            solution_sketch: 'Two square-root constructions: $\sqrt2$, then $\sqrt{\sqrt2}$; the criterion is necessary, and explicit square-root towers are sufficient.'
+        constraints: "the criterion as a usable tool; degree-2 tower intuition, no analytic geometry details"
+      - id: kp2
+        name: "Doubling the cube and trisecting the angle"
+        key_prerequisites: [field-extensions-degree]
+        exemplars:
+          - problem: 'Prove that doubling the cube is impossible: no straightedge-compass construction produces $\sqrt[3]{2}$.'
+            answer: '$[\mathbb{Q}(\sqrt[3]2) : \mathbb{Q}] = 3$ (minimal polynomial $x^3 - 2$, Eisenstein at $2$), and $3$ is not a power of $2$.'
+            solution_sketch: 'Constructibility forces degree $2^k$; $3$ is not.'
+          - problem: 'Trisecting $60^\circ$ requires constructing $\cos 20^\circ$, a root of $8x^3 - 6x - 1$. Given that this cubic is irreducible over $\mathbb{Q}$, finish the impossibility proof.'
+            answer: '$[\mathbb{Q}(\cos 20^\circ) : \mathbb{Q}] = 3 \neq 2^k$, so $\cos 20^\circ$ is not constructible; hence the general angle cannot be trisected.'
+            solution_sketch: 'The triple-angle identity $\cos 3\theta = 4\cos^3\theta - 3\cos\theta$ at $\theta = 20^\circ$ yields the cubic; irreducibility gives degree $3$.'
+        constraints: "cite the criterion plus one irreducibility fact; the cubic 8x^3 - 6x - 1 may be given as irreducible"
+      - id: kp3
+        name: "Squaring the circle; what remains constructible"
+        key_prerequisites: [field-extensions-degree]
+        exemplars:
+          - problem: 'Why is squaring the circle impossible?'
+            answer: 'It requires constructing $\sqrt{\pi}$; but $\pi$ is transcendental (Lindemann), so $\sqrt\pi$ is not even algebraic, let alone of degree $2^k$.'
+            solution_sketch: 'Constructible numbers are algebraic; transcendence of $\pi$ (quoted) ends the argument.'
+          - problem: 'The regular pentagon is constructible. What degree fact makes this consistent with the criterion?'
+            answer: '$\cos 72^\circ = \frac{\sqrt5 - 1}{4}$ has degree $2$ over $\mathbb{Q}$ — a power of $2$.'
+            solution_sketch: 'The pentagon needs only square roots; its cosine lies in a quadratic extension.'
+        constraints: "quotable transcendence of pi; positive examples (pentagon, 15-gon) vs impossible ones (heptagon: degree 3)"
+    diagnostic_exemplar:
+      problem: 'Using the constructibility criterion, decide which are constructible: (a) $\sqrt[3]{5}$, (b) $\sqrt{7}$, (c) a $60^\circ$ angle trisector (i.e. $\cos 20^\circ$).'
+      answer: '(a) No — degree $3$. (b) Yes — degree $2$. (c) No — degree $3$.'
+      solution_sketch: 'Minimal polynomials: $x^3 - 5$ (Eisenstein at 5), $x^2 - 7$, and $8x^3 - 6x - 1$; only powers of $2$ pass.'
+    anki_seeds:
+      - front: "Necessary condition for a number to be straightedge-compass constructible?"
+        back: "It is algebraic and $[\\mathbb{Q}(\\alpha) : \\mathbb{Q}]$ is a power of $2$."
+        type: basic
+      - front: "Why is doubling the cube impossible?"
+        back: "It needs $\\sqrt[3]{2}$, of degree $3$ over $\\mathbb{Q}$ — not a power of $2$."
+        type: basic
+      - front: "Why is squaring the circle impossible?"
+        back: "It needs $\\sqrt{\\pi}$, and $\\pi$ is transcendental (Lindemann), so not even algebraic."
+        type: basic
+
+  - id: splitting-fields
+    name: "Splitting Fields"
+    core: false                # terminal field-theory destination; its consumer (Galois theory) is not in the tree
+    difficulty: 0.84
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 270
+    prerequisites:
+      - {id: prime-maximal-ideals, weight: 0.5, key: false}        # L1: kp1's Kronecker step is 'irreducible => maximal => quotient is a field'
+      - {id: complex-polar-form-de-moivre, weight: 0.3, key: false} # L1: kp2/kp3/diagnostic need roots of unity (omega) to list all roots
+      - id: field-extensions-degree
+        weight: 0.9
+        key: true
+      - id: irreducibility-factorization
+        weight: 0.5
+        key: true
+      - id: quotient-rings
+        weight: 0.4
+        key: false
+      - id: complex-numbers
+        weight: 0.3
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Adjoining a root: Kronecker's construction"
+        key_prerequisites: [quotient-rings, irreducibility-factorization]
+        exemplars:
+          - problem: 'Show that $\mathbb{Z}_3[x]/\langle x^2 + 1 \rangle$ is a field with $9$ elements containing a root of $x^2 + 1$.'
+            answer: '$x^2 + 1$ has no root in $\mathbb{Z}_3$ ($0, 1, 2$ give $1, 2, 2$), so it is irreducible (degree $2$) and the quotient by the maximal ideal $\langle x^2+1 \rangle$ is a field with $3^2 = 9$ elements. The coset $\alpha = x + \langle x^2 + 1 \rangle$ satisfies $\alpha^2 + 1 = 0$.'
+            solution_sketch: 'Irreducible $\implies$ maximal ideal $\implies$ field quotient; the residue of $x$ is a root by construction.'
+          - problem: 'For $f$ irreducible over $F$, what is the degree $[F[x]/\langle f \rangle : F]$?'
+            answer: '$\deg f$'
+            solution_sketch: 'The cosets of $1, x, \dots, x^{\deg f - 1}$ form a basis — reduction mod $f$ leaves remainders of degree $< \deg f$.'
+        constraints: "Kronecker constructions over Z_2, Z_3, Q with degree-2 or degree-3 polynomials; irreducibility checked by root tests"
+      - id: kp2
+        name: "Splitting fields over Q"
+        key_prerequisites: [field-extensions-degree, complex-numbers]
+        exemplars:
+          - problem: 'Find the splitting field of $x^4 - 1$ over $\mathbb{Q}$ and its degree over $\mathbb{Q}$.'
+            answer: '$\mathbb{Q}(i)$, of degree $2$.'
+            solution_sketch: 'The roots are $\pm 1, \pm i$; adjoining $i$ captures all four, and $[\mathbb{Q}(i) : \mathbb{Q}] = 2$ via the minimal polynomial $x^2 + 1$.'
+          - problem: 'Explain why $\mathbb{Q}(\sqrt[3]{2})$ is NOT the splitting field of $x^3 - 2$ over $\mathbb{Q}$, then give the splitting field and its degree.'
+            answer: '$\mathbb{Q}(\sqrt[3]2) \subseteq \mathbb{R}$ contains only the real root; the roots $\sqrt[3]2\,\omega$ and $\sqrt[3]2\,\omega^2$ ($\omega$ a primitive cube root of unity) are non-real. The splitting field is $\mathbb{Q}(\sqrt[3]2, \omega)$, of degree $3 \cdot 2 = 6$.'
+            solution_sketch: 'A splitting field must contain ALL roots. Tower: degree $3$ for $\sqrt[3]2$, then degree $2$ for $\omega$ (root of $x^2 + x + 1$, which stays irreducible over the real field $\mathbb{Q}(\sqrt[3]2)$).'
+        constraints: "polynomials of degree <= 4 over Q with radical or root-of-unity roots; every problem exhibits the full root list"
+      - id: kp3
+        name: "Degrees of splitting fields"
+        key_prerequisites: [field-extensions-degree, irreducibility-factorization]
+        exemplars:
+          - problem: 'Find the degree over $\mathbb{Q}$ of the splitting field of $(x^2 - 2)(x^2 - 3)$.'
+            answer: "4"
+            solution_sketch: 'The splitting field is $\mathbb{Q}(\sqrt2, \sqrt3)$. Tower: $[\mathbb{Q}(\sqrt2) : \mathbb{Q}] = 2$, and $\sqrt3 \notin \mathbb{Q}(\sqrt2)$ keeps $x^2 - 3$ irreducible there, so another factor of $2$: total $4$.'
+          - problem: 'What is the largest possible degree of the splitting field of a cubic over $\mathbb{Q}$, and give a cubic achieving it.'
+            answer: '$3! = 6$; e.g. $x^3 - 2$.'
+            solution_sketch: 'In general the splitting field of a degree-$n$ polynomial has degree dividing $n!$ (may be quoted); $x^3 - 2$ attains $6$.'
+        constraints: "tower-law computations of height <= 2; the n! bound may be quoted; non-membership facts like sqrt(3) not in Q(sqrt(2)) may be given"
+    diagnostic_exemplar:
+      problem: 'Find the degree over $\mathbb{Q}$ of the splitting field of $x^3 - 5$.'
+      answer: "6"
+      solution_sketch: 'Roots $\sqrt[3]5, \sqrt[3]5\,\omega, \sqrt[3]5\,\omega^2$: the splitting field is $\mathbb{Q}(\sqrt[3]5, \omega)$, and the tower gives $3 \cdot 2 = 6$.'
+    anki_seeds:
+      - front: "Splitting field of $f$ over $F$?"
+        back: "The smallest extension of $F$ in which $f$ factors completely into linear factors (contains ALL roots of $f$)."
+        type: basic
+      - front: "Kronecker's construction of a root of irreducible $f \\in F[x]$?"
+        back: "$F[x]/\\langle f \\rangle$ — a field of degree $\\deg f$ over $F$ in which the coset of $x$ is a root."
+        type: basic
+      - front: "Splitting field of $x^3 - 2$ over $\\mathbb{Q}$, and its degree?"
+        back: "$\\mathbb{Q}(\\sqrt[3]{2}, \\omega)$, degree $6$ (not $\\mathbb{Q}(\\sqrt[3]{2})$, which misses the complex roots)."
+        type: basic

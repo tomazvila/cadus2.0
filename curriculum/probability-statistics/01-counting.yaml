@@ -1,0 +1,752 @@
+unit: counting
+course: probability-statistics
+module: "Counting & Combinatorics"
+topics:
+  - id: tree-diagrams
+    name: "Tree Diagrams and Systematic Listing"
+    core: true
+    difficulty: 0.25
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 90
+    prerequisites:
+      - id: multiplication-tables
+        weight: 0.5
+        key: true
+      - id: single-digit-addition
+        weight: 0.3
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Listing outcomes systematically"
+        key_prerequisites: [single-digit-addition]
+        exemplars:
+          - problem: 'A coin is flipped twice. List the outcomes systematically, then state how many there are.'
+            answer: "4"
+            solution_sketch: 'Fix the first flip, run through the second: $HH, HT$, then $TH, TT$ — $4$ outcomes.'
+          - problem: 'A spinner shows $1, 2, 3$ and then a coin is flipped. How many outcomes are in the list $1H, 1T, 2H, \ldots$?'
+            answer: "6"
+            solution_sketch: 'Each of the $3$ spins pairs with $H$ or $T$: $3 \cdot 2 = 6$ outcomes.'
+        constraints: "2 stages with at most 4 options each so the full list stays under 12 outcomes"
+      - id: kp2
+        name: "Counting leaves of a tree diagram"
+        key_prerequisites: [multiplication-tables]
+        exemplars:
+          - problem: 'A tree diagram for building a sandwich has $3$ bread branches, each splitting into $2$ filling branches. How many leaves does the tree have?'
+            answer: "6"
+            solution_sketch: 'Each bread branch carries $2$ filling branches: $3 \cdot 2 = 6$ leaves.'
+          - problem: 'A tree diagram has $2$ first-level branches, each splitting into $3$ branches, each of those splitting into $2$. How many leaves?'
+            answer: "12"
+            solution_sketch: '$2 \cdot 3 \cdot 2 = 12$.'
+        constraints: "2-3 levels; branch counts 2-4; leaves at most 24"
+      - id: kp3
+        name: "Outcomes of two dice"
+        key_prerequisites: [multiplication-tables, single-digit-addition]
+        exemplars:
+          - problem: 'Two dice are rolled (order matters). How many outcomes are there in total?'
+            answer: "36"
+            solution_sketch: '$6$ options for each die: $6 \cdot 6 = 36$.'
+          - problem: 'Two dice are rolled. How many outcomes have the numbers summing to $4$?'
+            answer: "3"
+            solution_sketch: 'List them: $(1,3), (2,2), (3,1)$.'
+        constraints: "standard six-sided dice; target sums between 3 and 7 so listing stays short"
+    diagnostic_exemplar:
+      problem: 'Two dice are rolled (order matters). How many outcomes have the numbers summing to $6$?'
+      answer: '5'
+      solution_sketch: 'Systematic list: $(1,5), (2,4), (3,3), (4,2), (5,1)$.'
+    anki_seeds:
+      - front: 'In a tree diagram, each complete outcome corresponds to...'
+        back: 'One path from the root to a leaf.'
+        type: basic
+      - front: 'Rolling two dice (order matters) gives how many outcomes?'
+        back: '$36 = 6 \cdot 6$.'
+        type: basic
+
+  - id: multiplication-principle
+    name: "The Multiplication Principle"
+    core: true
+    difficulty: 0.3
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 90
+    prerequisites:
+      - id: multi-digit-multiplication
+        weight: 0.6
+        key: true
+      - id: tree-diagrams
+        weight: 0.5
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Two-stage choices"
+        key_prerequisites: [multi-digit-multiplication, tree-diagrams]
+        exemplars:
+          - problem: 'You have $4$ shirts and $3$ pairs of pants. How many outfits (one shirt, one pair of pants) can you make?'
+            answer: "12"
+            solution_sketch: 'Independent choices multiply: $4 \times 3 = 12$.'
+          - problem: 'A menu offers $5$ appetizers and $6$ mains. How many appetizer-main pairs are there?'
+            answer: "30"
+        constraints: "two independent stages with 2-9 options each"
+      - id: kp2
+        name: "Multi-stage choices and codes"
+        key_prerequisites: [multi-digit-multiplication]
+        exemplars:
+          - problem: 'How many $4$-digit PINs are possible if each digit can be $0$-$9$?'
+            answer: "10000"
+            solution_sketch: '$10 \cdot 10 \cdot 10 \cdot 10 = 10^4 = 10000$.'
+          - problem: 'How many $3$-digit numbers ($100$-$999$) have no repeated digit?'
+            answer: "648"
+            solution_sketch: 'First digit: $9$ choices ($1$-$9$); second: $9$ (anything but the first); third: $8$. $9 \cdot 9 \cdot 8 = 648$.'
+        constraints: "3-4 stages; answers below 20000; repetition allowed or forbidden stated explicitly"
+      - id: kp3
+        name: "Counting with restrictions"
+        key_prerequisites: [multi-digit-multiplication]
+        exemplars:
+          - problem: 'How many $4$-character passwords use the letters A, B, C, D, E with no letter repeated?'
+            answer: "120"
+            solution_sketch: '$5 \cdot 4 \cdot 3 \cdot 2 = 120$; each slot loses one option.'
+          - problem: 'How many $2$-digit even numbers ($10$-$98$) are there?'
+            answer: "45"
+            solution_sketch: 'Tens digit: $9$ choices ($1$-$9$); units digit: $5$ choices ($0, 2, 4, 6, 8$). $9 \cdot 5 = 45$.'
+        constraints: "one restriction (no repeats, or a fixed parity/position); count the restricted slot first"
+    diagnostic_exemplar:
+      problem: 'How many $3$-letter codes use the letters A-F with no letter repeated?'
+      answer: '120'
+      solution_sketch: '$6 \cdot 5 \cdot 4 = 120$.'
+    anki_seeds:
+      - front: 'Multiplication principle: a task done in stages with $m$ then $n$ options has ... total outcomes.'
+        back: '$m \cdot n$ (options multiply across independent stages).'
+        type: basic
+      - front: 'When counting arrangements with a restriction, fill the {{c1::most restricted}} slot first.'
+        back: 'most restricted'
+        type: cloze
+
+  - id: addition-principle
+    name: "The Addition Principle"
+    core: true
+    difficulty: 0.3
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 90
+    prerequisites:
+      - id: multiplication-principle
+        weight: 0.7
+        key: true
+      - id: tree-diagrams
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Adding disjoint cases"
+        key_prerequisites: [tree-diagrams]
+        exemplars:
+          - problem: 'A shelf holds $5$ fiction and $7$ nonfiction books. How many ways can you choose one book?'
+            answer: "12"
+            solution_sketch: 'The cases are disjoint, so options add: $5 + 7 = 12$.'
+          - problem: 'A code is a single letter (A-Z) or a single digit ($0$-$9$). How many codes are there?'
+            answer: "36"
+            solution_sketch: '$26 + 10 = 36$.'
+        constraints: "two or three clearly disjoint categories; single-selection questions"
+      - id: kp2
+        name: "Combining the addition and multiplication principles"
+        key_prerequisites: [multiplication-principle]
+        exemplars:
+          - problem: 'From A to B you can take one of $2$ trains or one of $3$ buses; from B to C, one of $2$ ferries. How many trips from A to C?'
+            answer: "10"
+            solution_sketch: 'A to B: $2 + 3 = 5$ options; then multiply by the $2$ ferries: $5 \cdot 2 = 10$.'
+          - problem: 'A dessert is one of $3$ cakes (each in $2$ sizes) or one of $4$ pies. How many dessert choices?'
+            answer: "10"
+            solution_sketch: 'Cakes: $3 \cdot 2 = 6$; pies: $4$; total $6 + 4 = 10$.'
+        constraints: "one addition step and one multiplication step per problem; answers below 100"
+      - id: kp3
+        name: "Splitting a count into cases"
+        key_prerequisites: [multiplication-principle]
+        exemplars:
+          - problem: 'A code is a letter followed by a digit, or a digit followed by a letter. How many codes are there?'
+            answer: "520"
+            solution_sketch: 'Case 1: $26 \cdot 10 = 260$; case 2: $10 \cdot 26 = 260$; disjoint, so $260 + 260 = 520$.'
+          - problem: 'How many integers from $1$ to $20$ are multiples of $3$ or multiples of $7$?'
+            answer: "8"
+            solution_sketch: 'Multiples of $3$: $3,6,9,12,15,18$ ($6$ of them); of $7$: $7, 14$ ($2$). No overlap below $21$, so $6 + 2 = 8$.'
+        constraints: "cases must be genuinely disjoint (no inclusion-exclusion); 2-3 cases per problem"
+    diagnostic_exemplar:
+      problem: 'A meal is one of $2$ soups (each offered with a choice of $3$ breads) or one of $5$ salads. How many meal choices are there?'
+      answer: '11'
+      solution_sketch: 'Soups: $2 \cdot 3 = 6$; disjoint from the $5$ salads: $6 + 5 = 11$.'
+    anki_seeds:
+      - front: 'Addition principle: disjoint cases with $m$ and $n$ options give ... choices total.'
+        back: '$m + n$ (add across mutually exclusive cases).'
+        type: basic
+      - front: 'Options {{c1::add}} across disjoint cases and {{c2::multiply}} across successive stages.'
+        back: 'add; multiply'
+        type: cloze
+
+  - id: factorial-notation
+    name: "Factorial Notation"
+    core: true
+    difficulty: 0.3
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 90
+    prerequisites:
+      - id: multiplication-principle
+        weight: 0.6
+        key: true
+      - id: order-of-operations
+        weight: 0.3
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Evaluating factorials"
+        key_prerequisites: [multiplication-principle]
+        exemplars:
+          - problem: 'Compute $5!$.'
+            answer: "120"
+            solution_sketch: '$5 \cdot 4 \cdot 3 \cdot 2 \cdot 1 = 120$.'
+          - problem: 'Compute $3!$.'
+            answer: "6"
+          - problem: 'What is $0!$?'
+            answer: "1"
+        constraints: "factorials up to 8!; 0! and 1! appear regularly"
+      - id: kp2
+        name: "Factorial quotients"
+        key_prerequisites: [multiplication-principle]
+        exemplars:
+          - problem: 'Compute $\frac{6!}{4!}$.'
+            answer: "30"
+            solution_sketch: 'Cancel: $\frac{6 \cdot 5 \cdot 4!}{4!} = 6 \cdot 5 = 30$.'
+          - problem: 'Compute $\frac{8!}{6!}$.'
+            answer: "56"
+            solution_sketch: '$8 \cdot 7 = 56$.'
+          - problem: 'Compute $\frac{7!}{5! \, 2!}$.'
+            answer: "21"
+            solution_sketch: '$\frac{7 \cdot 6}{2} = 21$.'
+        constraints: "cancel before multiplying; the surviving product has at most 3 factors"
+      - id: kp3
+        name: "Algebra with factorials"
+        key_prerequisites: [multiplication-principle]
+        exemplars:
+          - problem: 'Simplify $\frac{n!}{(n-1)!}$.'
+            answer: '$n$'
+            solution_sketch: '$n! = n \cdot (n-1)!$, so the quotient is $n$.'
+          - problem: 'Simplify $\frac{(n+1)!}{n!}$.'
+            answer: '$n + 1$'
+          - problem: 'Solve $n! = 24$.'
+            answer: "4"
+            solution_sketch: '$4! = 24$.'
+        constraints: "single cancellation step; n! = k solvable with k in {2, 6, 24, 120, 720}"
+    diagnostic_exemplar:
+      problem: 'Solve $\dfrac{n!}{(n-2)!} = 20$ for the positive integer $n$.'
+      answer: '5'
+      solution_sketch: 'Cancelling gives $n(n-1) = 20$, so $n^2 - n - 20 = 0$ and $n = 5$ (the root $-4$ is rejected).'
+    anki_seeds:
+      - front: '$0! =$ ?'
+        back: '$1$.'
+        type: basic
+      - front: 'Recursive identity for factorials?'
+        back: '$n! = n \cdot (n-1)!$.'
+        type: basic
+
+  - id: permutations
+    name: "Permutations"
+    core: true
+    difficulty: 0.35
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 120
+    prerequisites:
+      - id: factorial-notation
+        weight: 0.7
+        key: true
+      - id: multiplication-principle
+        weight: 0.6
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: "Arranging n distinct objects"
+        key_prerequisites: [multiplication-principle, factorial-notation]
+        exemplars:
+          - problem: 'In how many orders can $4$ books be placed on a shelf?'
+            answer: "24"
+            solution_sketch: '$4! = 24$.'
+          - problem: 'In how many orders can $5$ runners finish a race (no ties)?'
+            answer: "120"
+            solution_sketch: '$5! = 120$.'
+          - problem: 'How many arrangements are there of the letters of MATH?'
+            answer: "24"
+            solution_sketch: 'Four distinct letters: $4! = 24$.'
+        constraints: "n between 3 and 6; all objects distinct"
+      - id: kp2
+        name: "Permutations of n objects taken k at a time"
+        key_prerequisites: [multiplication-principle, factorial-notation]
+        exemplars:
+          - problem: 'Compute $P(7, 2)$, the number of ways to arrange $2$ objects chosen from $7$.'
+            answer: "42"
+            solution_sketch: '$P(7,2) = 7 \cdot 6 = 42$.'
+          - problem: 'Compute $P(10, 3)$.'
+            answer: "720"
+            solution_sketch: '$10 \cdot 9 \cdot 8 = 720$.'
+          - problem: 'A club of $6$ members elects a president, then a secretary, then a treasurer. How many outcomes?'
+            answer: "120"
+            solution_sketch: 'Order matters: $P(6,3) = 6 \cdot 5 \cdot 4 = 120$.'
+        constraints: "n <= 12, k <= 4; answers below 2000"
+      - id: kp3
+        name: "The factorial formula for P(n, k)"
+        key_prerequisites: [factorial-notation]
+        exemplars:
+          - problem: 'Use the formula $P(n,k) = \frac{n!}{(n-k)!}$ to compute $P(6, 6)$.'
+            answer: "720"
+            solution_sketch: '$\frac{6!}{0!} = 720/1 = 720$.'
+          - problem: 'How many $5$-letter arrangements use $5$ of the $7$ letters A-G with no repeats?'
+            answer: "2520"
+            solution_sketch: '$P(7,5) = 7 \cdot 6 \cdot 5 \cdot 4 \cdot 3 = 2520$.'
+        constraints: "n <= 8; emphasize the n!/(n-k)! form and the k = n edge case"
+    diagnostic_exemplar:
+      problem: 'Gold and silver medals are awarded among $8$ sprinters. In how many ways?'
+      answer: "56"
+      solution_sketch: 'Order matters: $P(8,2) = 8 \cdot 7 = 56$.'
+    anki_seeds:
+      - front: '$P(n, k) =$ ?'
+        back: '$\frac{n!}{(n-k)!} = n(n-1)\cdots(n-k+1)$ — ordered selections of $k$ from $n$.'
+        type: basic
+      - front: 'The number of orderings of $n$ distinct objects is...'
+        back: '$n!$.'
+        type: basic
+
+  - id: arrangements-with-restrictions
+    name: "Arrangements with Restrictions"
+    core: false                # counting problem genre; terminal
+    difficulty: 0.45
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 180
+    prerequisites:
+      - id: permutations
+        weight: 0.8
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: "Fixed positions"
+        key_prerequisites: [permutations]
+        exemplars:
+          - problem: 'In how many ways can $5$ books be arranged on a shelf if one particular book must be leftmost?'
+            answer: "24"
+            solution_sketch: 'Fix that book; arrange the remaining $4$: $4! = 24$.'
+          - problem: 'In how many ways can A, B, C, D stand in a line with A last?'
+            answer: "6"
+            solution_sketch: 'A is fixed; $3! = 6$ orders for the rest.'
+        constraints: "n between 4 and 6; exactly one object pinned to one position"
+      - id: kp2
+        name: "Items that must be together (block method)"
+        key_prerequisites: [permutations]
+        exemplars:
+          - problem: 'In how many ways can $4$ people stand in a line if two particular people must be adjacent?'
+            answer: "12"
+            solution_sketch: 'Glue the pair into a block: $3! = 6$ orders, times $2!$ orders inside the block: $6 \cdot 2 = 12$.'
+          - problem: 'Five books are shelved; two specific books must sit next to each other. How many arrangements?'
+            answer: "48"
+            solution_sketch: 'Block plus $3$ others: $4! = 24$; the block orders internally in $2!$ ways: $24 \cdot 2 = 48$.'
+        constraints: "one block of exactly 2 items; total items 4-6"
+      - id: kp3
+        name: "Items that must be apart, and alternating arrangements"
+        key_prerequisites: [permutations]
+        exemplars:
+          - problem: 'In how many ways can $4$ people stand in a line if two particular people must NOT be adjacent?'
+            answer: "12"
+            solution_sketch: 'Total $4! = 24$ minus the $12$ arrangements where they are together: $24 - 12 = 12$.'
+          - problem: 'In how many ways can $3$ boys and $3$ girls stand in a line, alternating boy-girl?'
+            answer: "72"
+            solution_sketch: 'Two patterns (BGBGBG or GBGBGB); each fills in $3! \cdot 3!= 36$ ways: $2 \cdot 36 = 72$.'
+        constraints: "\"apart\" solved as total minus together; alternating uses equal group sizes of 3"
+    diagnostic_exemplar:
+      problem: 'In how many ways can $5$ people stand in a line if two particular people must NOT be adjacent?'
+      answer: '72'
+      solution_sketch: 'Total $5! = 120$; together (block method) $4! \cdot 2 = 48$; apart $= 120 - 48 = 72$.'
+    anki_seeds:
+      - front: 'Counting arrangements where two items must be together: method?'
+        back: 'Glue them into one block, arrange the blocks, then multiply by the orders inside the block.'
+        type: basic
+      - front: 'Counting arrangements where two items must be apart: method?'
+        back: 'Total arrangements minus the arrangements where they are together.'
+        type: basic
+
+  - id: circular-permutations
+    name: "Circular Permutations"
+    core: false                # counting problem genre; terminal
+    difficulty: 0.45
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 120
+    prerequisites:
+      - id: permutations
+        weight: 0.8
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: "Seating around a circle: (n-1)!"
+        key_prerequisites: [permutations]
+        exemplars:
+          - problem: 'In how many ways can $4$ people sit around a round table (rotations count as the same seating)?'
+            answer: "6"
+            solution_sketch: 'Fix one person to kill the rotations; arrange the other $3$: $3! = 6$.'
+          - problem: 'In how many ways can $6$ people sit around a round table (rotations identical)?'
+            answer: "120"
+            solution_sketch: '$(6-1)! = 5! = 120$.'
+        constraints: "n between 3 and 7; rotations equivalent, reflections distinct (state this)"
+      - id: kp2
+        name: "Row versus circle"
+        key_prerequisites: [permutations]
+        exemplars:
+          - problem: '$5$ charms are arranged in a row, or around a circular bracelet where only rotations are considered the same. Give (row count, circle count) as an ordered pair.'
+            answer: '$(120, 24)$'
+            solution_sketch: 'Row: $5! = 120$. Circle: each circular arrangement corresponds to $5$ rows, so $120/5 = 4! = 24$.'
+          - problem: 'For $6$ objects, how many times larger is the row count $6!$ than the circular count $(6-1)!$?'
+            answer: "6"
+            solution_sketch: 'Each circular arrangement can be rotated into $6$ different rows that all represent the same circle, so the row count is $6$ times the circular count.'
+        constraints: "always state that rotations (only) are identified; n between 4 and 6"
+      - id: kp3
+        name: "Circular arrangements with a restriction"
+        key_prerequisites: [permutations]
+        exemplars:
+          - problem: '$5$ people sit around a round table; two particular people must sit together. How many seatings (rotations identical)?'
+            answer: "12"
+            solution_sketch: 'Glue the pair: $4$ units in a circle give $(4-1)! = 6$; the pair orders in $2!$ ways: $6 \cdot 2 = 12$.'
+          - problem: '$6$ people sit around a round table, and Alice is fixed in a particular seat. In how many ways can the remaining people be seated?'
+            answer: "120"
+            solution_sketch: 'With one seat pinned, the remaining $5$ people arrange freely: $5! = 120$.'
+        constraints: "one restriction: a glued pair or one pinned person; n between 4 and 6"
+    diagnostic_exemplar:
+      problem: '$6$ people sit around a round table (rotations identical); two particular people insist on sitting together. How many seatings are there?'
+      answer: '48'
+      solution_sketch: 'Glue the pair: $(5-1)! = 24$ circular arrangements, times $2$ for the pair''s internal order: $48$.'
+    anki_seeds:
+      - front: 'Number of circular arrangements of $n$ distinct objects (rotations identical)?'
+        back: '$(n-1)!$ — fix one object to remove the $n$ rotations.'
+        type: basic
+      - front: 'Row arrangements vs circular arrangements of $n$ objects?'
+        back: '$n!$ in a row; $(n-1)!$ in a circle (divide by the $n$ rotations).'
+        type: basic
+
+  - id: combinations
+    name: "Combinations"
+    core: true
+    difficulty: 0.4
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 120
+    prerequisites:
+      - id: permutations
+        weight: 0.8
+        key: true
+      - id: factorial-notation
+        weight: 0.5
+        key: false
+      - id: dividing-fractions
+        weight: 0.3
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Computing C(n, k)"
+        key_prerequisites: [permutations, factorial-notation]
+        exemplars:
+          - problem: 'Compute $\binom{5}{2}$.'
+            answer: "10"
+            solution_sketch: '$\binom{5}{2} = \frac{5 \cdot 4}{2!} = \frac{20}{2} = 10$.'
+          - problem: 'Compute $\binom{6}{3}$.'
+            answer: "20"
+            solution_sketch: '$\frac{6 \cdot 5 \cdot 4}{3!} = \frac{120}{6} = 20$.'
+          - problem: 'Compute $\binom{10}{3}$.'
+            answer: "120"
+            solution_sketch: '$\frac{10 \cdot 9 \cdot 8}{6} = \frac{720}{6} = 120$.'
+        constraints: "n <= 12, k <= 4; division cancels cleanly"
+      - id: kp2
+        name: "Combination vs permutation in context"
+        key_prerequisites: [permutations]
+        exemplars:
+          - problem: 'How many committees of $2$ can be chosen from $7$ people?'
+            answer: "21"
+            solution_sketch: 'Order does not matter: $\binom{7}{2} = \frac{7 \cdot 6}{2} = 21$.'
+          - problem: 'How many ways can you pick $4$ pizza toppings from $9$ available?'
+            answer: "126"
+            solution_sketch: '$\binom{9}{4} = \frac{9 \cdot 8 \cdot 7 \cdot 6}{24} = \frac{3024}{24} = 126$.'
+        constraints: "contexts where order clearly does not matter (committees, hands, toppings); answers below 300"
+      - id: kp3
+        name: "Symmetry and multi-group selections"
+        key_prerequisites: [permutations]
+        exemplars:
+          - problem: 'Use symmetry to compute $\binom{10}{7}$.'
+            answer: "120"
+            solution_sketch: '$\binom{10}{7} = \binom{10}{3} = 120$; choosing $7$ to include is choosing $3$ to leave out.'
+          - problem: 'A team needs $2$ of $5$ women and $2$ of $4$ men. How many teams?'
+            answer: "60"
+            solution_sketch: '$\binom{5}{2} \cdot \binom{4}{2} = 10 \cdot 6 = 60$; independent choices multiply.'
+        constraints: "two independent groups at most; each binomial coefficient at most C(10,3)"
+    diagnostic_exemplar:
+      problem: 'A committee needs $2$ of $6$ teachers and $2$ of $5$ students. How many committees are possible?'
+      answer: '150'
+      solution_sketch: '$\binom{6}{2}\binom{5}{2} = 15 \cdot 10 = 150$.'
+    anki_seeds:
+      - front: '$\binom{n}{k} =$ ?'
+        back: '$\frac{n!}{k!(n-k)!}$ — unordered selections of $k$ from $n$.'
+        type: basic
+      - front: 'Symmetry identity for binomial coefficients?'
+        back: '$\binom{n}{k} = \binom{n}{n-k}$.'
+        type: basic
+      - front: 'Order matters $\to$ {{c1::permutation}}; order does not matter $\to$ {{c2::combination}}.'
+        back: 'permutation; combination'
+        type: cloze
+
+  - id: combinations-vs-permutations
+    name: "Choosing Between Combinations and Permutations"
+    core: false                # counting problem genre; terminal
+    difficulty: 0.45
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 150
+    prerequisites:
+      - id: combinations
+        weight: 0.8
+        key: true
+      - id: permutations
+        weight: 0.6
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: "Deciding whether order matters"
+        key_prerequisites: [combinations, permutations]
+        exemplars:
+          - problem: 'From $8$ people, choose a president, vice-president, and treasurer. How many ways?'
+            answer: "336"
+            solution_sketch: 'Distinct roles make order matter: $P(8,3) = 8 \cdot 7 \cdot 6 = 336$.'
+          - problem: 'From $8$ people, choose a $3$-person committee (no roles). How many ways?'
+            answer: "56"
+            solution_sketch: 'No roles, so order is irrelevant: $\binom{8}{3} = 56$.'
+        constraints: "paired contexts (roles vs plain committee, ranked finish vs chosen set); ask which tool applies and for the count"
+      - id: kp2
+        name: "Mixed multi-part counts"
+        key_prerequisites: [combinations, permutations]
+        exemplars:
+          - problem: 'From $10$ people, choose a president and then a $2$-person advisory committee from the remaining $9$. How many ways?'
+            answer: "360"
+            solution_sketch: '$10 \cdot \binom{9}{2} = 10 \cdot 36 = 360$.'
+          - problem: 'A playlist takes $2$ of $6$ rock songs (unordered) and then arranges $3$ of $4$ jazz songs in order. How many playlists?'
+            answer: "360"
+            solution_sketch: '$\binom{6}{2} \cdot P(4,3) = 15 \cdot 24 = 360$.'
+        constraints: "exactly one ordered stage and one unordered stage; multiply stage counts; answers below 1000"
+      - id: kp3
+        name: "The relationship P(n,k) = C(n,k) * k!"
+        key_prerequisites: [combinations, permutations]
+        exemplars:
+          - problem: 'Given $\binom{9}{2} = 36$, compute $P(9, 2)$.'
+            answer: "72"
+            solution_sketch: '$P(9,2) = \binom{9}{2} \cdot 2! = 36 \cdot 2 = 72$.'
+          - problem: 'Given $P(8, 3) = 336$, compute $\binom{8}{3}$.'
+            answer: "56"
+            solution_sketch: '$\binom{8}{3} = P(8,3)/3! = 336/6 = 56$.'
+        constraints: "give one of P or C and ask for the other; k <= 4"
+    diagnostic_exemplar:
+      problem: 'From $9$ people, choose a chairperson and then a $2$-person committee from the remaining $8$. In how many ways?'
+      answer: '252'
+      solution_sketch: 'One ordered stage ($9$ choices) and one unordered stage ($\binom{8}{2} = 28$): $9 \cdot 28 = 252$.'
+    anki_seeds:
+      - front: 'How do $P(n,k)$ and $\binom{n}{k}$ relate?'
+        back: '$P(n,k) = \binom{n}{k} \cdot k!$ — choose the set, then order it.'
+        type: basic
+      - front: 'Distinct roles or positions in a selection problem signal a {{c1::permutation}}.'
+        back: 'permutation'
+        type: cloze
+
+  - id: complementary-counting
+    name: "Complementary Counting"
+    core: false                # counting problem genre; terminal
+    difficulty: 0.45
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 150
+    prerequisites:
+      - id: multiplication-principle
+        weight: 0.7
+        key: true
+      - id: addition-principle
+        weight: 0.5
+        key: false
+      - id: combinations
+        weight: 0.5
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Total minus unwanted"
+        key_prerequisites: [multiplication-principle, addition-principle]
+        exemplars:
+          - problem: 'How many $3$-digit numbers ($100$-$999$) contain at least one digit $7$?'
+            answer: "252"
+            solution_sketch: 'Total: $900$. No sevens: $8 \cdot 9 \cdot 9 = 648$. At least one: $900 - 648 = 252$.'
+          - problem: 'How many $2$-letter codes from A-Z (repeats allowed) are NOT double letters like AA?'
+            answer: "650"
+            solution_sketch: 'Total $26^2 = 676$; doubles $26$; $676 - 26 = 650$.'
+        constraints: "the complement must be strictly easier to count than the direct set; totals below 10^4"
+      - id: kp2
+        name: "At least one, via the complement"
+        key_prerequisites: [multiplication-principle]
+        exemplars:
+          - problem: 'A coin is flipped $4$ times. How many outcome sequences contain at least one head?'
+            answer: "15"
+            solution_sketch: 'Total $2^4 = 16$; only $TTTT$ has no head: $16 - 1 = 15$.'
+          - problem: 'A die is rolled $3$ times. How many outcome sequences contain at least one six?'
+            answer: "91"
+            solution_sketch: 'Total $6^3 = 216$; no sixes: $5^3 = 125$; $216 - 125 = 91$.'
+        constraints: "2-4 repetitions of a coin, die, or digit; \"at least one\" phrasing only"
+      - id: kp3
+        name: "Complements with combinations"
+        key_prerequisites: [combinations]
+        exemplars:
+          - problem: 'A committee of $3$ is chosen from $5$ men and $4$ women. How many committees include at least one woman?'
+            answer: "74"
+            solution_sketch: 'All committees: $\binom{9}{3} = 84$. All-male: $\binom{5}{3} = 10$. $84 - 10 = 74$.'
+          - problem: 'Choose $2$ books from $4$ novels and $3$ biographies. How many selections include at least one biography?'
+            answer: "15"
+            solution_sketch: 'Total $\binom{7}{2} = 21$; all-novel $\binom{4}{2} = 6$; $21 - 6 = 15$.'
+        constraints: "two groups; committee size 2-4; the complement is a single all-one-group count"
+    diagnostic_exemplar:
+      problem: 'Choose $3$ books from $5$ novels and $3$ biographies. How many selections include at least one biography?'
+      answer: '46'
+      solution_sketch: 'All $\binom{8}{3} = 56$ minus all-novel $\binom{5}{3} = 10$: $46$.'
+    anki_seeds:
+      - front: 'Complementary counting computes a count as...'
+        back: '(total outcomes) $-$ (outcomes to exclude).'
+        type: basic
+      - front: 'The phrase "at least one" suggests counting the complement: the outcomes with {{c1::none}}.'
+        back: 'none'
+        type: cloze
+
+  - id: pascals-triangle
+    name: "Pascal's Triangle"
+    core: true
+    difficulty: 0.4
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 120
+    prerequisites:
+      - id: combinations
+        weight: 0.7
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: "Building rows by addition"
+        key_prerequisites: [combinations]
+        exemplars:
+          - problem: 'Write row $4$ of Pascal''s triangle (the row starting $1, 4, \ldots$).'
+            answer: '$1, 4, 6, 4, 1$'
+            solution_sketch: 'Each entry is the sum of the two above it; row $4$ lists $\binom{4}{0}$ through $\binom{4}{4}$.'
+          - problem: 'Row $5$ of Pascal''s triangle is?'
+            answer: '$1, 5, 10, 10, 5, 1$'
+            solution_sketch: 'Add adjacent entries of row $4$: $1, 1+4, 4+6, 6+4, 4+1, 1$.'
+        constraints: "rows 0 through 7 only"
+      - id: kp2
+        name: "Entries as binomial coefficients"
+        key_prerequisites: [combinations]
+        exemplars:
+          - problem: 'Using Pascal''s triangle, what is the third entry of row $6$ (i.e. $\binom{6}{2}$)?'
+            answer: "15"
+            solution_sketch: 'Row $6$: $1, 6, 15, 20, 15, 6, 1$; the entry after $1, 6$ is $15$.'
+          - problem: 'Entry $k$ of row $n$ of Pascal''s triangle is $\binom{n}{k}$. What is the value of the entry in row $7$, position $3$ (positions numbered from $0$)?'
+            answer: "35"
+            solution_sketch: 'Entry $k$ of row $n$ is $\binom{n}{k}$; $\binom{7}{3} = \frac{7 \cdot 6 \cdot 5}{6} = 35$.'
+        constraints: "rows 0-8; identify entry k of row n as C(n,k)"
+      - id: kp3
+        name: "Row sums and symmetry"
+        key_prerequisites: [combinations]
+        exemplars:
+          - problem: 'What is the sum of the entries in row $5$ of Pascal''s triangle?'
+            answer: "32"
+            solution_sketch: 'Row $n$ sums to $2^n$; $2^5 = 32$.'
+          - problem: 'Row $6$ reads $1, 6, 15, 20, 15, 6, 1$ — a palindrome. Use the symmetry $\binom{n}{k} = \binom{n}{n-k}$ to give $\binom{6}{4}$.'
+            answer: "15"
+            solution_sketch: '$\binom{6}{4} = \binom{6}{2} = 15$ — the third entry of the row, read from either end.'
+        constraints: "row sums for rows 3-8; symmetry applied via the C(n,k) = C(n,n-k) identity"
+    diagnostic_exemplar:
+      problem: 'Give (the entry of Pascal''s triangle in row $7$, position $2$, positions numbered from $0$; the sum of all entries in row $7$) as an ordered pair.'
+      answer: '$(21, 128)$'
+      solution_sketch: 'Entry $= \binom{7}{2} = 21$; row sum $= 2^7 = 128$.'
+    anki_seeds:
+      - front: 'Entry $k$ of row $n$ in Pascal''s triangle equals...'
+        back: '$\binom{n}{k}$ (both numbered from $0$).'
+        type: basic
+      - front: 'The entries of row $n$ of Pascal''s triangle sum to...'
+        back: '$2^n$.'
+        type: basic
+      - front: 'Each interior entry of Pascal''s triangle is the {{c1::sum of the two entries above it}}.'
+        back: 'sum of the two entries above it'
+        type: cloze
+
+  - id: binomial-expansion
+    name: "Binomial Expansion"
+    core: true
+    difficulty: 0.5
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 180
+    prerequisites:
+      - id: combinations
+        weight: 0.8
+        key: true
+      - id: pascals-triangle
+        weight: 0.6
+        key: true
+      - id: polynomial-multiplication
+        weight: 0.5
+        key: false
+      - id: exponent-product-quotient-rules
+        weight: 0.3
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Expanding small powers of a binomial"
+        key_prerequisites: [combinations, pascals-triangle]
+        exemplars:
+          - problem: 'Expand $(x + 2)^3$.'
+            answer: '$x^3 + 6x^2 + 12x + 8$'
+            solution_sketch: 'Coefficients $1, 3, 3, 1$ with powers of $2$: $x^3 + 3x^2(2) + 3x(4) + 8$.'
+          - problem: 'Expand $(a + b)^4$.'
+            answer: '$a^4 + 4a^3 b + 6a^2 b^2 + 4ab^3 + b^4$'
+            solution_sketch: 'Row $4$ coefficients $1, 4, 6, 4, 1$; powers of $a$ descend as powers of $b$ ascend.'
+        constraints: "exponent 3 or 4; second term a variable or an integer of absolute value <= 3"
+      - id: kp2
+        name: "Finding a single term or coefficient"
+        key_prerequisites: [combinations]
+        exemplars:
+          - problem: 'Find the coefficient of $x^2$ in $(x + 3)^4$.'
+            answer: "54"
+            solution_sketch: 'Term: $\binom{4}{2} x^2 \cdot 3^2 = 6 \cdot 9 \cdot x^2 = 54x^2$.'
+          - problem: 'Find the coefficient of $x^3 y^2$ in $(x + y)^5$.'
+            answer: "10"
+            solution_sketch: '$\binom{5}{2} = 10$ (choose which $2$ factors contribute $y$).'
+          - problem: 'Find the coefficient of $x^5$ in $(2x + 1)^6$.'
+            answer: "192"
+            solution_sketch: 'Term: $\binom{6}{5}(2x)^5(1)^1 = 6 \cdot 32 x^5 = 192x^5$.'
+        constraints: "exponent <= 6; coefficients stay under 1000; general term C(n,k) a^{n-k} b^k"
+      - id: kp3
+        name: "Expansions with negative and coefficient terms"
+        key_prerequisites: [combinations, pascals-triangle]
+        exemplars:
+          - problem: 'Expand $(x - 1)^3$.'
+            answer: '$x^3 - 3x^2 + 3x - 1$'
+            solution_sketch: 'Treat it as $(x + (-1))^3$; odd powers of $-1$ flip signs.'
+          - problem: 'Expand $(2x - 3)^3$.'
+            answer: '$8x^3 - 36x^2 + 54x - 27$'
+            solution_sketch: '$\binom{3}{k}(2x)^{3-k}(-3)^k$: $8x^3 - 3 \cdot 4x^2 \cdot 3 + 3 \cdot 2x \cdot 9 - 27$.'
+          - problem: 'Find the coefficient of $x^2$ in $(x - 2)^5$.'
+            answer: "-80"
+            solution_sketch: 'Term: $\binom{5}{3} x^2 (-2)^3 = 10 \cdot (-8) x^2 = -80x^2$.'
+        constraints: "exponent <= 5; inner coefficients of absolute value <= 3; signs alternate correctly"
+    diagnostic_exemplar:
+      problem: 'Find the coefficient of $x^2$ in $(2x - 1)^4$.'
+      answer: '24'
+      solution_sketch: 'Term: $\binom{4}{2}(2x)^2(-1)^2 = 6 \cdot 4x^2 = 24x^2$.'
+    anki_seeds:
+      - front: 'Binomial theorem: $(a + b)^n = $ ?'
+        back: '$\sum_{k=0}^{n} \binom{n}{k} a^{n-k} b^k$.'
+        type: basic
+      - front: 'In $(a - b)^n$, the sign of the term containing $b^k$ is...'
+        back: '$(-1)^k$ — signs alternate starting positive.'
+        type: basic

@@ -1,0 +1,725 @@
+unit: universal-properties
+course: category-theory
+module: "Universal Properties & (Co)Limits"
+topics:
+  - id: universal-properties
+    name: Universal Properties
+    core: true
+    difficulty: 0.7
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 210
+    prerequisites:
+      - id: initial-terminal-objects
+        weight: 0.5
+        key: true
+      - id: commutative-diagrams
+        weight: 0.4
+        key: true
+      - id: slice-categories
+        weight: 0.2
+      - id: duality-opposite-categories
+        weight: 0.0
+      # Phase C reconciliation: kp1's second exemplar exhibits the free group $F(S)$
+      # as the initial object of $(S \downarrow U)$ — the universal property taught by
+      # free-groups-presentations kp2 ("generators map freely"). First CT consumer;
+      # puts the free group in the closure of everything downstream of this topic.
+      - id: free-groups-presentations
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: A universal property is an initial or terminal object
+        key_prerequisites: [initial-terminal-objects, free-groups-presentations]
+        constraints: "Name the auxiliary category (objects and morphisms) explicitly before locating the universal object; instances limited to terminal objects and the free group $F(S)$."
+        exemplars:
+          - problem: "Explain the slogan 'a universal property = an initial or terminal object of an auxiliary category', using the terminal object as the base case."
+            answer: "The universal object is initial/terminal among candidate structures, hence unique up to unique iso."
+            solution_sketch: "To define an object by a universal property, form an auxiliary category whose objects are all candidate structures and whose morphisms are the structure-preserving comparison maps; the universal object is the initial (or dually terminal) object there. Because initial/terminal objects are unique up to a unique isomorphism, any object defined by a universal property is determined up to unique isomorphism. The plain terminal object of $\\mathcal C$ is the degenerate case where the auxiliary category is $\\mathcal C$ itself."
+          - problem: "Illustrate the slogan with the free group $F(S)$: exhibit it as the initial object of an auxiliary category."
+            answer: "$F(S)$ is initial among pairs $(G,f\\colon S\\to U(G))$; the unique comparison map is the induced homomorphism $\\bar f$."
+            solution_sketch: "Form the category whose objects are pairs $(G,f\\colon S\\to U(G))$ of a group with a set-map from $S$ to its underlying set, and whose morphisms $(G,f)\\to(H,g)$ are homomorphisms $h$ with $U(h)\\circ f=g$. The free group $(F(S),\\eta)$ is the INITIAL object: for every $(G,f)$ there EXISTS a unique homomorphism $\\bar f\\colon F(S)\\to G$ with $U(\\bar f)\\circ\\eta=f$. Initiality (unique map out) is dual to the terminal base case (unique map in), and forces $F(S)$ to be unique up to unique isomorphism."
+      - id: kp2
+        name: The existence-and-uniqueness template
+        key_prerequisites: [commutative-diagrams]
+        constraints: "Separate the EXISTS and UNIQUE clauses explicitly and say which clause each proof step uses; concrete instances use only the terminal object."
+        exemplars:
+          - problem: "State the general 'existence and uniqueness' form of a universal property and identify the role of each clause."
+            answer: "For every candidate $X$ there EXISTS a comparison morphism, UNIQUE among those making the defining diagram commute."
+            solution_sketch: "A universal property of $U$ (with universal datum $u$) asserts: for every object $X$ with comparable data there exists a morphism $X\\to U$ (or $U\\to X$), and it is the unique morphism making the defining diagram commute. The existence clause gives the mapping-in/out description of $U$; the uniqueness clause drives the standard proof that two maps into/out of $U$ coincide, and yields uniqueness up to isomorphism."
+          - problem: "Using only the existence-and-uniqueness template for the terminal object $1$, prove that any two morphisms $f,g\\colon X\\to 1$ are equal."
+            answer: "Both are comparison maps $X\\to 1$ with no condition to check, so the uniqueness clause forces $f=g$."
+            solution_sketch: "The universal property of $1$ asserts: for every $X$ there EXISTS a morphism $X\\to 1$, UNIQUE among all morphisms (the defining diagram is empty, so nothing has to commute). Given $f,g\\colon X\\to 1$, both qualify as the comparison map, so the uniqueness clause gives $f=g$, the unique arrow $!_X\\colon X\\to 1$. This is the prototype of every uniqueness argument: two mediating maps satisfying the defining equations must coincide."
+      - id: kp3
+        name: Universal properties as represented functors
+        key_prerequisites: [initial-terminal-objects]
+        constraints: "Exhibit the bijection $\\mathrm{Hom}(X,U)\\cong S(X)$ with the candidate-structure functor $S$ named; instances limited to terminal objects and binary products."
+        exemplars:
+          - problem: "Show a universal property presents $U$ through a bijection $\\mathrm{Hom}(X,U)\\cong S(X)$ natural in $X$; illustrate with the terminal object."
+            answer: "$U$ represents the functor $X\\mapsto S(X)$ of candidate structures; for terminal $S(X)=\\{*\\}$."
+            solution_sketch: "A universal property typically yields a bijection $\\mathrm{Hom}(X,U)\\cong S(X)$ natural in $X$, where $S(X)$ is the set of candidate structures on $X$. For the terminal object $U=1$, there is exactly one comparison map, so $S(X)=\\{*\\}$ and $\\mathrm{Hom}(X,1)\\cong\\{*\\}$ naturally. This 'representing a functor' viewpoint is exactly what representability and the Yoneda lemma formalize."
+          - problem: "Exhibit the product $A\\times B$ as a representing object: name the functor it represents and the natural bijection."
+            answer: "$A\\times B$ represents $X\\mapsto\\mathrm{Hom}(X,A)\\times\\mathrm{Hom}(X,B)$ via $u\\mapsto(\\pi_1 u,\\pi_2 u)$."
+            solution_sketch: "Let $S(X)=\\mathrm{Hom}(X,A)\\times\\mathrm{Hom}(X,B)$, the candidate pairs of maps out of $X$. The product's universal property says every pair $(f,g)\\in S(X)$ equals $(\\pi_1 u,\\pi_2 u)$ for a UNIQUE $u\\colon X\\to A\\times B$, i.e. $\\mathrm{Hom}(X,A\\times B)\\cong S(X)$ by $u\\mapsto(\\pi_1 u,\\pi_2 u)$. This bijection is natural in $X$ (precomposition on both sides), so $A\\times B$ represents $S$ — the represented-functor form of the product's universal property."
+    diagnostic_exemplar:
+      problem: "State the universal property of the product $A\\times B$ and use it to prove that $u\\mapsto(\\pi_1\\circ u,\\,\\pi_2\\circ u)$ is a bijection $\\mathrm{Hom}(X,A\\times B)\\cong\\mathrm{Hom}(X,A)\\times\\mathrm{Hom}(X,B)$."
+      answer: "The universal property: for every pair $f\\colon X\\to A$, $g\\colon X\\to B$ there EXISTS a morphism $u\\colon X\\to A\\times B$ with $\\pi_1 u=f$, $\\pi_2 u=g$, and it is UNIQUE. Surjectivity of the map $u\\mapsto(\\pi_1 u,\\pi_2 u)$ is exactly the existence clause: every pair $(f,g)$ arises. Injectivity is exactly the uniqueness clause: two maps with the same components mediate the same pair, hence are equal. So the map is a bijection — $A\\times B$ represents $X\\mapsto\\mathrm{Hom}(X,A)\\times\\mathrm{Hom}(X,B)$."
+      solution_sketch: "Split the universal property into its two clauses and match them to the two halves of being a bijection: existence of the mediating $u$ is surjectivity, uniqueness of $u$ is injectivity. Beyond that dictionary there is nothing to compute."
+    anki_seeds:
+      - front: "A universal property characterizes an object as..."
+        back: "the initial (or terminal) object of an auxiliary category of candidate structures."
+        type: basic
+      - front: "A universal property has two clauses: {{c1::existence}} of a comparison morphism and {{c2::uniqueness}} among the diagram-commuting morphisms."
+        back: "existence; uniqueness"
+        type: cloze
+
+  - id: products-coproducts
+    name: Products and Coproducts
+    core: true
+    difficulty: 0.65
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 210
+    prerequisites:
+      - id: universal-properties
+        weight: 0.5
+        key: true
+      - id: duality-opposite-categories
+        weight: 0.4
+        key: true
+      - id: initial-terminal-objects
+        weight: 0.2
+      - id: commutative-diagrams
+        weight: 0.2
+      - id: direct-products
+        weight: 0.2
+    knowledge_points:
+      - id: kp1
+        name: The product universal property in Set
+        key_prerequisites: [universal-properties]
+        constraints: "Verify the universal property in $\\mathbf{Set}$ elementwise, or identify products in a poset category as meets; the pairing map must be shown unique."
+        exemplars:
+          - problem: "State the universal property of a product $A\\times B$ and verify the cartesian product in $\\mathbf{Set}$ satisfies it."
+            answer: "Projections $\\pi_1,\\pi_2$ with unique pairing $\\langle f,g\\rangle$; in Set $\\langle f,g\\rangle(x)=(f(x),g(x))$."
+            solution_sketch: "A product of $A,B$ is $P$ with $\\pi_1\\colon P\\to A$, $\\pi_2\\colon P\\to B$ such that for every $X$ with $f\\colon X\\to A$, $g\\colon X\\to B$ there is a unique $\\langle f,g\\rangle\\colon X\\to P$ with $\\pi_1\\langle f,g\\rangle=f$, $\\pi_2\\langle f,g\\rangle=g$. In $\\mathbf{Set}$ take $P=A\\times B$, coordinate projections, and $\\langle f,g\\rangle(x)=(f(x),g(x))$, which is the unique map with those components."
+          - problem: "In a poset $(P,\\le)$ regarded as a category, identify the product of two objects and justify it via the universal property."
+            answer: "The product is the meet $a\\wedge b$ (greatest lower bound), when it exists."
+            solution_sketch: "In a poset category there is at most one morphism $x\\to y$, present exactly when $x\\le y$. A product of $a,b$ is an object $p$ with $p\\le a$ and $p\\le b$ such that every $x$ with $x\\le a$ and $x\\le b$ satisfies $x\\le p$; that is precisely the greatest lower bound $p=a\\wedge b$. The mediating map is automatically unique since hom-sets have at most one element, so the universal property collapses to the defining property of the meet."
+      - id: kp2
+        name: The coproduct by duality
+        key_prerequisites: [duality-opposite-categories]
+        constraints: "Obtain the coproduct by dualizing the product; concrete verifications in $\\mathbf{Set}$ (disjoint union) or $\\mathbf{Ab}$ (direct sum), with the copairing shown to be the unique mediating homomorphism."
+        exemplars:
+          - problem: "State the universal property of the coproduct $A+B$ and identify it in $\\mathbf{Set}$."
+            answer: "Injections $\\iota_1,\\iota_2$ with unique copairing $[f,g]$; in Set the disjoint union."
+            solution_sketch: "The coproduct is the dual of the product: $A+B$ with $\\iota_1\\colon A\\to A+B$, $\\iota_2\\colon B\\to A+B$ such that any $f\\colon A\\to X$, $g\\colon B\\to X$ factor through a unique $[f,g]\\colon A+B\\to X$ with $[f,g]\\iota_1=f$, $[f,g]\\iota_2=g$. In $\\mathbf{Set}$ this is the disjoint union $A\\sqcup B$ with the inclusions and case-split map."
+          - problem: "Verify that the direct sum $A\\oplus B$ is the coproduct in $\\mathbf{Ab}$, exhibiting the copairing."
+            answer: "Inclusions $\\iota_1(a)=(a,0)$, $\\iota_2(b)=(0,b)$; the copairing $[f,g](a,b)=f(a)+g(b)$ is the unique homomorphism."
+            solution_sketch: "Take $A\\oplus B$ with $\\iota_1(a)=(a,0)$ and $\\iota_2(b)=(0,b)$. Given homomorphisms $f\\colon A\\to X$, $g\\colon B\\to X$, define $[f,g]\\colon A\\oplus B\\to X$ by $[f,g](a,b)=f(a)+g(b)$; it is a homomorphism with $[f,g]\\iota_1=f$ and $[f,g]\\iota_2=g$. Any homomorphism $h$ with those equations satisfies $h(a,b)=h(a,0)+h(0,b)=f(a)+g(b)$, so $[f,g]$ is unique. Hence $A\\oplus B$ is the coproduct — here it coincides with the product, a biproduct, unlike the disjoint union in $\\mathbf{Set}$."
+      - id: kp3
+        name: Uniqueness; coproducts need not be disjoint unions
+        key_prerequisites: [universal-properties]
+        constraints: "Uniqueness proofs follow the cross-map pattern with both mediating maps named; the category-dependence of coproducts is illustrated only by $\\mathbf{Grp}$ (free product) versus $\\mathbf{Ab}$ (direct sum)."
+        exemplars:
+          - problem: "Prove any two products of $A,B$ are uniquely isomorphic, and state the coproduct in $\\mathbf{Grp}$ versus $\\mathbf{Ab}$."
+            answer: "Universal property forces a unique iso; free product in $\\mathbf{Grp}$, direct sum in $\\mathbf{Ab}$."
+            solution_sketch: "If $P,P'$ are products, each universal property gives unique $u\\colon P\\to P'$, $v\\colon P'\\to P$ commuting with projections. Then $vu$ and $1_P$ both commute with $P$'s projections, so uniqueness gives $vu=1_P$; likewise $uv=1_{P'}$: a unique isomorphism. Products in $\\mathbf{Grp}$/$\\mathbf{Ab}$ are direct products, but the coproduct is the free product $G*H$ in $\\mathbf{Grp}$ and the direct sum $G\\oplus H$ in $\\mathbf{Ab}$ — coproducts are category-dependent."
+          - problem: "Prove any two coproducts of $A,B$ are uniquely isomorphic, and contrast $\\mathbf{Grp}$'s coproduct with the direct product."
+            answer: "Duality gives a unique iso commuting with the injections; $\\mathbb Z*\\mathbb Z$ is free on two generators, not $\\mathbb Z\\times\\mathbb Z$."
+            solution_sketch: "If $Q,Q'$ are coproducts of $A,B$, each universal property gives unique $u\\colon Q\\to Q'$ and $v\\colon Q'\\to Q$ commuting with the injections. Then $vu$ and $1_Q$ both commute with $Q$'s injections, so uniqueness forces $vu=1_Q$; likewise $uv=1_{Q'}$: a unique compatible isomorphism. Concretely in $\\mathbf{Grp}$ the coproduct is the free product $\\mathbb Z*\\mathbb Z$, the nonabelian free group on two generators, wholly different from the direct product $\\mathbb Z\\times\\mathbb Z$ — coproducts are not disjoint-union-like in general."
+    diagnostic_exemplar:
+      problem: "Prove that any two products of $A$ and $B$ are isomorphic by a unique isomorphism compatible with the projections."
+      answer: "Let $(P,\\pi_1,\\pi_2)$ and $(P',\\pi_1',\\pi_2')$ both be products. The universal property of $P'$ applied to the cone $(\\pi_1,\\pi_2)$ gives a unique $u\\colon P\\to P'$ with $\\pi_i'u=\\pi_i$; that of $P$ gives a unique $v\\colon P'\\to P$ with $\\pi_iv=\\pi_i'$. Then $\\pi_i(vu)=\\pi_i'u=\\pi_i$, so $vu$ and $1_P$ both mediate the cone $(\\pi_1,\\pi_2)$ into $P$; uniqueness forces $vu=1_P$, and symmetrically $uv=1_{P'}$. Hence $u$ is an isomorphism, unique among maps commuting with the projections."
+      solution_sketch: "Mediate each product through the other to get $u$ and $v$, then notice that $v\\circ u$ and the identity both mediate the same cone into $P$; the uniqueness clause collapses them. This is the standard argument that universal objects are unique up to a unique isomorphism."
+    anki_seeds:
+      - front: "Universal property of a product?"
+        back: "$\\pi_1,\\pi_2$ with: every pair $f\\colon X\\to A$, $g\\colon X\\to B$ factors as a unique $\\langle f,g\\rangle\\colon X\\to A\\times B$."
+        type: basic
+      - front: "Coproduct is the {{c1::dual}} of the product; in $\\mathbf{Set}$ it is the {{c2::disjoint union}}."
+        back: "dual; disjoint union"
+        type: cloze
+
+  - id: equalizers-coequalizers
+    name: Equalizers and Coequalizers
+    core: true
+    difficulty: 0.7
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 210
+    prerequisites:
+      - id: universal-properties
+        weight: 0.5
+        key: true
+      - id: commutative-diagrams
+        weight: 0.3
+        key: true
+      - id: mono-epi-iso
+        weight: 0.3
+      - id: duality-opposite-categories
+        weight: 0.2
+      - id: first-isomorphism-theorem
+        weight: 0.2
+      - id: relation-closures
+        weight: 0.2
+    knowledge_points:
+      - id: kp1
+        name: Equalizers, concretely in Set
+        key_prerequisites: [universal-properties]
+        constraints: "State the fork condition and the universal factorization; concrete descriptions in $\\mathbf{Set}$ (equal-locus subset) or $\\mathbf{Ab}$ (kernel of the difference)."
+        exemplars:
+          - problem: "Define the equalizer of $f,g\\colon A\\to B$ and describe it in $\\mathbf{Set}$."
+            answer: "$e\\colon E\\to A$ with $fe=ge$, universal; in Set $E=\\{a: f(a)=g(a)\\}$."
+            solution_sketch: "An equalizer of $f,g$ is $e\\colon E\\to A$ with $fe=ge$ that is universal: any $m\\colon X\\to A$ with $fm=gm$ factors as $m=eu$ for a unique $u\\colon X\\to E$. In $\\mathbf{Set}$, $E=\\{a\\in A: f(a)=g(a)\\}$ with $e$ the inclusion; a map $m$ landing in the equal-locus factors uniquely through $E$."
+          - problem: "In $\\mathbf{Ab}$, identify the equalizer of homomorphisms $f,g\\colon A\\to B$ and relate it to a kernel."
+            answer: "$E=\\{a: f(a)=g(a)\\}=\\ker(f-g)$, with the inclusion $e\\colon E\\hookrightarrow A$."
+            solution_sketch: "In $\\mathbf{Ab}$ the equalizer of $f,g$ is the subgroup $E=\\{a\\in A: f(a)=g(a)\\}$ with inclusion $e$; the condition $fe=ge$ and the universal factorization are checked as in $\\mathbf{Set}$, and $E$ is a subgroup because $f,g$ are homomorphisms. Since $f(a)=g(a)\\iff(f-g)(a)=0$, we get $E=\\ker(f-g)$. Thus equalizers in $\\mathbf{Ab}$ are exactly kernels of differences, the additive analogue of the Set description."
+      - id: kp2
+        name: Equalizers are monomorphisms
+        key_prerequisites: [commutative-diagrams]
+        constraints: "Abstract proofs from the universal property alone; each use of the existence or uniqueness clause must be flagged, and no elements may be used."
+        exemplars:
+          - problem: "Prove every equalizer $e\\colon E\\to A$ is a monomorphism."
+            answer: "Universal uniqueness gives left-cancellation."
+            solution_sketch: "Suppose $eu=ev$ for $u,v\\colon X\\to E$, and set $m=eu=ev\\colon X\\to A$. Then $fm=f(eu)=(fe)u=(ge)u=g(eu)=gm$, so $m$ satisfies the equalizing condition and therefore factors through $e$ via a unique map $X\\to E$. Both $u$ and $v$ are such factorizations, since $eu=m=ev$; uniqueness forces $u=v$. Hence $e$ is a monomorphism."
+          - problem: "Prove that an equalizer $e\\colon E\\to A$ of $f,g$ that is also an epimorphism is an isomorphism."
+            answer: "Epi forces $f=g$, whose equalizer is $1_A$; so $e$ is iso."
+            solution_sketch: "Since $e$ equalizes, $fe=ge$; as $e$ is epi (right-cancellable) this gives $f=g$. But when $f=g$ every $m\\colon X\\to A$ satisfies $fm=gm$, so $1_A$ is an equalizer of $f,g$. Equalizers of a fixed pair are unique up to unique isomorphism, hence $e$ is isomorphic to $1_A$, i.e. $e$ is an isomorphism. So a regular mono (equalizer) that is epi must be iso — unlike general monos, which can be epi without being iso."
+      - id: kp3
+        name: Coequalizers by duality
+        key_prerequisites: [duality-opposite-categories]
+        constraints: "Dualize the equalizer; concrete descriptions in $\\mathbf{Set}$ (quotient by the generated equivalence relation) or $\\mathbf{Ab}$ (cokernel of the difference)."
+        exemplars:
+          - problem: "Define the coequalizer of $f,g\\colon A\\to B$ and describe it in $\\mathbf{Set}$."
+            answer: "$q\\colon B\\to Q$ with $qf=qg$, universal; in Set $Q=B/\\!\\sim$, $\\sim$ generated by $f(a)\\sim g(a)$."
+            solution_sketch: "Dually, a coequalizer is $q\\colon B\\to Q$ with $qf=qg$ universal among maps out of $B$ killing the difference: any $n$ with $nf=ng$ factors as $n=w q$ for a unique $w$. In $\\mathbf{Set}$, $Q=B/\\!\\sim$ for the smallest equivalence relation with $f(a)\\sim g(a)$, and $q$ is the quotient map. Dual to 'equalizers are monos', coequalizers are epis."
+          - problem: "In $\\mathbf{Ab}$, identify the coequalizer of $f,g\\colon A\\to B$ and relate it to a cokernel."
+            answer: "$Q=B/\\mathrm{im}(f-g)=\\mathrm{coker}(f-g)$, with the quotient map $q$."
+            solution_sketch: "Dually to the equalizer-as-kernel, the coequalizer of $f,g$ in $\\mathbf{Ab}$ is $q\\colon B\\to B/\\mathrm{im}(f-g)$, the quotient by the subgroup generated by all $f(a)-g(a)$. Then $qf=qg$ since each $f(a)-g(a)\\mapsto 0$, and any $n$ with $nf=ng$ kills $\\mathrm{im}(f-g)$ and so factors uniquely through the quotient. As $f(a)=g(a)$ becomes $(f-g)(a)=0$ in the target, $Q=\\mathrm{coker}(f-g)$; being a quotient map, $q$ is an epimorphism."
+    diagnostic_exemplar:
+      problem: "Prove that every equalizer $e\\colon E\\to A$ of $f,g\\colon A\\to B$ is a monomorphism."
+      answer: "Suppose $eu=ev$ for $u,v\\colon X\\to E$, and set $m=eu=ev$. Then $fm=(fe)u=(ge)u=gm$, so $m$ equalizes $f,g$ and therefore factors through $e$ via a UNIQUE map $X\\to E$. Both $u$ and $v$ are such factorizations ($eu=m=ev$), so uniqueness gives $u=v$. Hence $e$ is left-cancellable, i.e. a monomorphism."
+      solution_sketch: "From $e\\circ u=e\\circ v$, show the common composite equalizes $f$ and $g$, so it factors through $e$ by a unique map — and $u$, $v$ are both such factorizations. Left-cancellation comes from the uniqueness clause, not from any element chase."
+    anki_seeds:
+      - front: "Equalizer of $f,g\\colon A\\to B$?"
+        back: "the universal $e\\colon E\\to A$ with $fe=ge$; in $\\mathbf{Set}$, $E=\\{a: f(a)=g(a)\\}$."
+        type: basic
+      - front: "Every equalizer $e\\colon E\\to A$ is what kind of morphism?"
+        back: "a monomorphism."
+        type: basic
+      - front: "Coequalizers are always {{c1::epimorphisms}} (dual to equalizers being monos)."
+        back: "epimorphisms"
+        type: cloze
+
+  - id: pullbacks-pushouts
+    name: Pullbacks and Pushouts
+    core: true
+    difficulty: 0.72
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 240
+    prerequisites:
+      - id: products-coproducts
+        weight: 0.5
+        key: true
+      - id: equalizers-coequalizers
+        weight: 0.4
+        key: true
+      - id: universal-properties
+        weight: 0.3
+      - id: commutative-diagrams
+        weight: 0.2
+      - id: duality-opposite-categories
+        weight: 0.2
+    knowledge_points:
+      - id: kp1
+        name: Pullbacks as fibered products in Set
+        key_prerequisites: [universal-properties]
+        constraints: "State the commuting-square and universal clauses; $\\mathbf{Set}$ descriptions as fibered products, with subset inclusions specializing to intersections/preimages."
+        exemplars:
+          - problem: "Define the pullback of $f\\colon A\\to C$, $g\\colon B\\to C$ and describe it in $\\mathbf{Set}$."
+            answer: "$P=A\\times_C B$ with $p_1,p_2$, $fp_1=gp_2$, universal; in Set $\\{(a,b): f(a)=g(b)\\}$."
+            solution_sketch: "The pullback is $P$ with $p_1\\colon P\\to A$, $p_2\\colon P\\to B$ satisfying $fp_1=gp_2$ and universal: any $X$ with $x_1\\colon X\\to A$, $x_2\\colon X\\to B$, $fx_1=gx_2$ factors through a unique $u\\colon X\\to P$ with $p_i u=x_i$. In $\\mathbf{Set}$, $P=\\{(a,b)\\in A\\times B: f(a)=g(b)\\}$ with the coordinate projections."
+          - problem: "Describe the pullback in $\\mathbf{Set}$ of two subset inclusions $A\\hookrightarrow C\\hookleftarrow B$."
+            answer: "The intersection $A\\cap B$, with its inclusions into $A$ and $B$."
+            solution_sketch: "For inclusions $f\\colon A\\hookrightarrow C$, $g\\colon B\\hookrightarrow C$ the fibered product is $\\{(a,b)\\in A\\times B: f(a)=g(b)\\}$; since $f,g$ are inclusions the condition is $a=b$, holding only for elements of $A\\cap B$, and $(x,x)\\mapsto x$ identifies this set with $A\\cap B\\subseteq C$. The projections are the inclusions $A\\cap B\\hookrightarrow A$ and $A\\cap B\\hookrightarrow B$, so pulling back two subobjects computes their intersection. More generally, pulling $g\\colon B\\hookrightarrow C$ back along any $f\\colon A\\to C$ gives the preimage $f^{-1}(B)$."
+      - id: kp2
+        name: Building pullbacks from products and equalizers
+        key_prerequisites: [products-coproducts]
+        constraints: "Either the product-plus-equalizer construction (identify the two maps being equalized) or elementless stability proofs (mono stable under pullback) using only the universal property."
+        exemplars:
+          - problem: "Construct the pullback of $f,g$ from the product $A\\times B$ and an equalizer."
+            answer: "Equalize $f\\pi_1,\\,g\\pi_2\\colon A\\times B\\to C$."
+            solution_sketch: "Form $A\\times B$ with projections $\\pi_1,\\pi_2$, then take the equalizer $e\\colon P\\to A\\times B$ of $f\\pi_1$ and $g\\pi_2$. Setting $p_i=\\pi_i e$ gives $fp_1=gp_2$, and a cone $(x_1,x_2)$ over the cospan is exactly a map into $A\\times B$ equalizing $f\\pi_1,g\\pi_2$, so it factors uniquely through $P$. Thus products $+$ equalizers $\\Rightarrow$ all pullbacks."
+          - problem: "Prove that in any category the pullback of a monomorphism is a monomorphism."
+            answer: "If $g$ is mono, its pullback $p_1\\colon P\\to A$ along $f$ is mono."
+            solution_sketch: "Let $P=A\\times_C B$ with projections $p_1,p_2$, and suppose $g\\colon B\\to C$ is mono. Take $u,v\\colon X\\to P$ with $p_1 u=p_1 v$. Then $g p_2 u=f p_1 u=f p_1 v=g p_2 v$, and $g$ mono gives $p_2 u=p_2 v$. So $u,v$ agree after both projections; each is the mediating map for the cone $(p_1 u,p_2 u)$ over the cospan, which is unique, so $u=v$. Hence $p_1$ is mono, i.e. monos are stable under pullback."
+      - id: kp3
+        name: Pushouts by duality
+        key_prerequisites: [duality-opposite-categories]
+        constraints: "Dualize the pullback; concrete descriptions in $\\mathbf{Set}$ (gluing along $C$) or $\\mathbf{Ab}$ (quotient of the direct sum), realized as coproduct followed by coequalizer."
+        exemplars:
+          - problem: "Define the pushout of $f\\colon C\\to A$, $g\\colon C\\to B$ and describe it in $\\mathbf{Set}$."
+            answer: "$Q=A+_C B$ with $q_1,q_2$, $q_1f=q_2g$, universal; in Set glue $A\\sqcup B$ along $C$."
+            solution_sketch: "The pushout is dual to the pullback: $Q$ with $q_1\\colon A\\to Q$, $q_2\\colon B\\to Q$, $q_1f=q_2g$, universal among such cocones. In $\\mathbf{Set}$, $Q=(A\\sqcup B)/\\sim$ where $\\iota_1 f(c)\\sim\\iota_2 g(c)$ for all $c$ — the two sets glued along the image of $C$. Dually, pushouts arise from coproducts and coequalizers."
+          - problem: "Describe the pushout in $\\mathbf{Ab}$ of $f\\colon C\\to A$, $g\\colon C\\to B$."
+            answer: "$Q=(A\\oplus B)/\\{(f(c),-g(c)):c\\in C\\}$, with $q_1(a)=[a,0]$, $q_2(b)=[0,b]$."
+            solution_sketch: "Form the coproduct $A\\oplus B$ and coequalize the two maps $C\\rightrightarrows A\\oplus B$, $c\\mapsto(f(c),0)$ and $c\\mapsto(0,g(c))$. Their coequalizer is the quotient of $A\\oplus B$ by the subgroup $\\{(f(c),-g(c)):c\\in C\\}$. Writing $q_1(a)=[a,0]$, $q_2(b)=[0,b]$ gives $q_1 f=q_2 g$ (since $[f(c),0]=[0,g(c)]$), and this square is universal among cocones. It realizes the pushout as coproduct followed by coequalizer, dual to the product-plus-equalizer pullback."
+    diagnostic_exemplar:
+      problem: "Prove that monomorphisms are stable under pullback: if $g\\colon B\\to C$ is mono and $(P,p_1,p_2)$ is the pullback of $f\\colon A\\to C$ along $g$, then $p_1\\colon P\\to A$ is mono."
+      answer: "Take $u,v\\colon X\\to P$ with $p_1u=p_1v$. Then $g(p_2u)=f(p_1u)=f(p_1v)=g(p_2v)$ using the pullback square, and $g$ mono gives $p_2u=p_2v$. So $u$ and $v$ mediate the same cone $(p_1u,p_2u)$ over the cospan; the pullback's uniqueness clause forces $u=v$. Hence $p_1$ is a monomorphism."
+      solution_sketch: "Push $p_1u=p_1v$ across the square to get $g\\circ p_2u=g\\circ p_2v$, cancel the mono $g$ so the second components agree too, then apply the pullback uniqueness clause to the single cone that both $u$ and $v$ mediate."
+    anki_seeds:
+      - front: "Pullback of $f\\colon A\\to C$, $g\\colon B\\to C$ in $\\mathbf{Set}$?"
+        back: "$A\\times_C B=\\{(a,b): f(a)=g(b)\\}$; universal square with $fp_1=gp_2$."
+        type: basic
+      - front: "Pullbacks come from {{c1::products and equalizers}}; pushouts from coproducts and coequalizers."
+        back: "products and equalizers"
+        type: cloze
+
+  - id: cones-and-cocones
+    name: Diagrams, Cones, and Cocones
+    core: true
+    difficulty: 0.68
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 180
+    prerequisites:
+      - id: natural-transformations
+        weight: 0.5
+        key: true
+      - id: functors
+        weight: 0.3
+      - id: products-coproducts
+        weight: 0.2
+      - id: commutative-diagrams
+        weight: 0.2
+    knowledge_points:
+      - id: kp1
+        name: A cone is a natural transformation from a constant functor
+        key_prerequisites: [natural-transformations]
+        constraints: "Define cones as transformations $\\Delta_X\\Rightarrow D$ and unpack the leg equations; concrete shapes limited to parallel pairs, spans, and cospans."
+        exemplars:
+          - problem: "Given a diagram $D\\colon\\mathcal J\\to\\mathcal C$, define a cone over $D$ with apex $X$."
+            answer: "Maps $\\lambda_j\\colon X\\to Dj$ with $Df\\circ\\lambda_j=\\lambda_{j'}$ for all $f\\colon j\\to j'$; i.e. a natural transformation $\\Delta_X\\Rightarrow D$."
+            solution_sketch: "A cone over $D$ with apex $X$ is a natural transformation $\\lambda\\colon\\Delta_X\\Rightarrow D$ from the constant functor $\\Delta_X$ (value $X$, all maps $1_X$) to $D$. Its components $\\lambda_j\\colon X\\to Dj$ satisfy, for each $f\\colon j\\to j'$, the triangle $Df\\circ\\lambda_j=\\lambda_{j'}$. A cocone is dual: a natural transformation $D\\Rightarrow\\Delta_X$."
+          - problem: "For the parallel-pair diagram $D=(A\\rightrightarrows B)$ with maps $f,g$, describe explicitly a cone with apex $X$."
+            answer: "A single map $\\lambda_0\\colon X\\to A$ with $f\\lambda_0=g\\lambda_0$ (the $B$-leg is $\\lambda_1=f\\lambda_0=g\\lambda_0$)."
+            solution_sketch: "The shape $\\mathcal J$ has objects $0,1$ and two parallel arrows $0\\rightrightarrows 1$ sent by $D$ to $f,g\\colon A\\to B$. A cone $\\Delta_X\\Rightarrow D$ has legs $\\lambda_0\\colon X\\to A$ and $\\lambda_1\\colon X\\to B$, with naturality forcing $f\\circ\\lambda_0=\\lambda_1$ and $g\\circ\\lambda_0=\\lambda_1$. Hence $\\lambda_1$ is determined and the data reduce to a single $\\lambda_0$ satisfying $f\\lambda_0=g\\lambda_0$ — a fork over the pair, whose universal instance is the equalizer."
+      - id: kp2
+        name: The category of cones
+        key_prerequisites: [products-coproducts]
+        constraints: "Give the leg-commuting condition for cone/cocone morphisms and name which extremal object (terminal/initial) yields the (co)limit."
+        exemplars:
+          - problem: "Describe morphisms of cones over $D$ and hence the category $\\mathrm{Cone}(D)$."
+            answer: "$h\\colon X\\to Y$ with $\\mu_j\\circ h=\\lambda_j$ for all $j$."
+            solution_sketch: "A morphism of cones from $(X,\\lambda)$ to $(Y,\\mu)$ is a map $h\\colon X\\to Y$ commuting with the legs: $\\mu_j\\circ h=\\lambda_j$ for every $j$. Identities and composites come from $\\mathcal C$, giving the category $\\mathrm{Cone}(D)$. Limits are then the terminal object of this category; dually cocones form a category whose initial object is the colimit."
+          - problem: "Describe a morphism of cocones under $D$ and the category $\\mathrm{Cocone}(D)$, and say which object is the colimit."
+            answer: "$h\\colon X\\to Y$ with $h\\circ\\gamma_j=\\delta_j$ for all $j$; the colimit is the initial object."
+            solution_sketch: "A cocone under $D$ with nadir $X$ is a natural transformation $\\gamma\\colon D\\Rightarrow\\Delta_X$, with legs $\\gamma_j\\colon Dj\\to X$ satisfying $\\gamma_{j'}\\circ Df=\\gamma_j$. A morphism of cocones $(X,\\gamma)\\to(Y,\\delta)$ is a map $h\\colon X\\to Y$ with $h\\circ\\gamma_j=\\delta_j$ for every $j$; identities and composites come from $\\mathcal C$, giving $\\mathrm{Cocone}(D)$. Dually to $\\mathrm{Cone}(D)$, whose terminal object is the limit, the initial object of $\\mathrm{Cocone}(D)$ is the colimit of $D$."
+    diagnostic_exemplar:
+      problem: "For the parallel-pair diagram $D=(f,g\\colon A\\to B)$, show that a cone over $D$ with apex $X$ amounts to a single morphism $\\lambda_0\\colon X\\to A$ satisfying $f\\lambda_0=g\\lambda_0$."
+      answer: "A cone is a natural transformation $\\Delta_X\\Rightarrow D$ with legs $\\lambda_0\\colon X\\to A$ and $\\lambda_1\\colon X\\to B$. Naturality at the two parallel arrows forces $f\\circ\\lambda_0=\\lambda_1$ and $g\\circ\\lambda_0=\\lambda_1$. So $\\lambda_1$ is determined by $\\lambda_0$, and the two conditions collapse to $f\\lambda_0=g\\lambda_0$: the cone data is exactly a fork $\\lambda_0$ over the pair."
+      solution_sketch: "Write out the naturality condition at each of the two parallel arrows: each one forces $\\lambda_1$ to equal one of $f\\lambda_0$, $g\\lambda_0$. So $\\lambda_1$ is redundant and the two conditions fuse into the single fork equation."
+    anki_seeds:
+      - front: "A cone over a diagram $D$ with apex $X$ is..."
+        back: "a natural transformation $\\Delta_X\\Rightarrow D$: legs $\\lambda_j\\colon X\\to Dj$ with $Df\\circ\\lambda_j=\\lambda_{j'}$."
+        type: basic
+      - front: "A morphism of cones $(X,\\lambda)\\to(Y,\\mu)$ is..."
+        back: "a map $h\\colon X\\to Y$ with $\\mu_j\\circ h=\\lambda_j$ for all $j$."
+        type: basic
+
+  - id: limits-as-cones
+    name: Limits as Universal Cones
+    core: true
+    difficulty: 0.72
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 210
+    prerequisites:
+      - id: cones-and-cocones
+        weight: 0.6
+        key: true
+      - id: universal-properties
+        weight: 0.4
+        key: true
+      - id: products-coproducts
+        weight: 0.3
+      - id: initial-terminal-objects
+        weight: 0.2
+      - id: discrete-indiscrete-categories
+        weight: 0.2
+    knowledge_points:
+      - id: kp1
+        name: Computing a limit cone in Set
+        key_prerequisites: [universal-properties]
+        constraints: "Finite sets of size at most 5; list the elements of the limit and state each leg explicitly."
+        exemplars:
+          - problem: "Let $A=\\{1,2,3\\}$, $B=\\{a,b\\}$, $f(1)=a$, $f(2)=a$, $f(3)=b$ and $g(1)=a$, $g(2)=b$, $g(3)=b$. Compute the limit of the parallel-pair diagram $f,g\\colon A\\to B$ in $\\mathbf{Set}$."
+            answer: "$L=\\{1,3\\}$ with $\\lambda_0$ the inclusion into $A$ (and $\\lambda_1$ the induced map to $B$)."
+            solution_sketch: "The limit is the equalizer $\\{x\\in A: f(x)=g(x)\\}$. Check each element: $f(1)=a=g(1)$, so $1$ is in; $f(2)=a$ but $g(2)=b$, so $2$ is out; $f(3)=b=g(3)$, so $3$ is in. Hence $L=\\{1,3\\}$ with $\\lambda_0\\colon L\\hookrightarrow A$, and $\\lambda_1=f\\lambda_0=g\\lambda_0$ sends $1\\mapsto a$, $3\\mapsto b$."
+          - problem: "With $f\\colon\\{1,2,3\\}\\to\\{a,b\\}$ as above and $g'\\colon\\{x,y\\}\\to\\{a,b\\}$ given by $g'(x)=a$, $g'(y)=b$, compute the limit of the cospan $f,g'$ in $\\mathbf{Set}$."
+            answer: "$L=\\{(1,x),(2,x),(3,y)\\}$, with the two coordinate projections as legs."
+            solution_sketch: "The limit over a cospan is the pullback $\\{(u,v): f(u)=g'(v)\\}$. Test all six pairs: $f(1)=a=g'(x)$ so $(1,x)$ qualifies; $f(2)=a=g'(x)$ so $(2,x)$ qualifies; $f(3)=b=g'(y)$ so $(3,y)$ qualifies; $(1,y),(2,y)$ fail since $a\\neq b$, and $(3,x)$ fails since $b\\neq a$. So $L$ has three elements, with legs $\\lambda_1(u,v)=u$ and $\\lambda_2(u,v)=v$."
+      - id: kp2
+        name: Recovering the special cases from the shape
+        key_prerequisites: [products-coproducts]
+        constraints: "Name the shape category, then read off the legs and the commuting conditions it forces."
+        exemplars:
+          - problem: "Say which shape $\\mathcal{J}$ makes the limit of $D$ a product, an equalizer, a pullback, and a terminal object."
+            answer: "Discrete two-object shape $\\Rightarrow$ product; parallel pair $\\Rightarrow$ equalizer; cospan $\\Rightarrow$ pullback; empty shape $\\Rightarrow$ terminal object."
+            solution_sketch: "For $\\mathcal{J}$ discrete on two objects a cone is just a pair of maps $X\\to D0$, $X\\to D1$ with no commuting condition, so the universal cone is the product with its projections. For $\\mathcal{J}=(\\bullet\\rightrightarrows\\bullet)$ a cone reduces to one map $\\lambda_0$ with $f\\lambda_0=g\\lambda_0$, so the universal cone is the equalizer. For $\\mathcal{J}=(\\bullet\\to\\bullet\\leftarrow\\bullet)$ a cone is a pair $x_1,x_2$ with $fx_1=gx_2$, so the universal cone is the pullback. For $\\mathcal{J}=\\varnothing$ a cone carries no data, so the universal cone is a terminal object."
+          - problem: "For the parallel-pair shape, check in detail that a universal cone over $D=(f,g\\colon A\\to B)$ is exactly an equalizer of $f$ and $g$."
+            answer: "The $B$-leg is determined, so the data is $\\lambda_0\\colon L\\to A$ with $f\\lambda_0=g\\lambda_0$, universal — the equalizer."
+            solution_sketch: "A cone with apex $X$ has legs $\\mu_0\\colon X\\to A$ and $\\mu_1\\colon X\\to B$ with $f\\mu_0=\\mu_1$ and $g\\mu_0=\\mu_1$; so $\\mu_1$ is redundant and the data reduces to $\\mu_0$ with $f\\mu_0=g\\mu_0$. A universal such cone is an object $L$ with $\\lambda_0\\colon L\\to A$, $f\\lambda_0=g\\lambda_0$, through which every such $\\mu_0$ factors uniquely. That is precisely the definition of the equalizer of $f$ and $g$."
+      - id: kp3
+        name: The universal property of a limit cone
+        key_prerequisites: [cones-and-cocones]
+        constraints: "State existence and uniqueness of the mediating map separately, and require it to commute with every leg."
+        exemplars:
+          - problem: "Define a limit of $D\\colon\\mathcal{J}\\to\\mathcal{C}$ as a universal cone, and restate the definition using the category of cones."
+            answer: "A cone $(L,\\lambda)$ such that every cone $(X,\\mu)$ has a unique $u\\colon X\\to L$ with $\\lambda_j\\circ u=\\mu_j$ for all $j$; equivalently a terminal object of $\\mathrm{Cone}(D)$."
+            solution_sketch: "A limit of $D$ is a cone $(L,\\lambda)$ with the universal property: for every cone $(X,\\mu)$ over $D$ there EXISTS a morphism $u\\colon X\\to L$ with $\\lambda_j\\circ u=\\mu_j$ for every object $j$ of $\\mathcal{J}$, and $u$ is the UNIQUE such morphism. Since a morphism of cones $(X,\\mu)\\to(L,\\lambda)$ is precisely a map $u$ satisfying those equations, the condition says exactly that $(L,\\lambda)$ is a terminal object of the category $\\mathrm{Cone}(D)$."
+          - problem: "Write $\\mathrm{Cone}(X,D)$ for the set of cones over $D$ with apex $X$. Prove that a cone $(L,\\lambda)$ is a limit iff for every $X$ the map $\\Theta_X\\colon\\mathrm{Hom}(X,L)\\to\\mathrm{Cone}(X,D)$, $u\\mapsto(\\lambda_j\\circ u)_j$, is a bijection."
+            answer: "Surjectivity of $\\Theta_X$ is existence of the mediating map, injectivity is its uniqueness."
+            solution_sketch: "$\\Theta_X$ is well defined: for $u\\colon X\\to L$ the family $(\\lambda_j u)_j$ is a cone, since $Df\\circ\\lambda_j\\circ u=\\lambda_{j'}\\circ u$ follows from the cone condition on $\\lambda$. Surjectivity of $\\Theta_X$ says every cone $(X,\\mu)$ is $(\\lambda_j u)_j$ for some $u$, i.e. a mediating map EXISTS and commutes with every leg. Injectivity says two maps inducing the same cone are equal, i.e. the mediating map is UNIQUE. So all $\\Theta_X$ bijective is precisely the universal property, and conversely. The bijection is automatically natural in $X$ (both sides act by precomposition), which says $L$ represents the functor $X\\mapsto\\mathrm{Cone}(X,D)$."
+    diagnostic_exemplar:
+      problem: "Write $\\mathrm{Cone}(X,D)$ for the set of cones over $D$ with apex $X$. Prove that a cone $(L,\\lambda)$ is a limit of $D$ iff for every object $X$ the map $\\Theta_X\\colon\\mathrm{Hom}(X,L)\\to\\mathrm{Cone}(X,D)$, $u\\mapsto(\\lambda_j\\circ u)_j$, is a bijection."
+      answer: "$\\Theta_X$ is well defined: $(\\lambda_ju)_j$ is a cone since $Df\\circ\\lambda_j\\circ u=\\lambda_{j'}\\circ u$ follows from the cone condition on $\\lambda$. Surjectivity of $\\Theta_X$ for all $X$ says every cone $(X,\\mu)$ equals $(\\lambda_ju)_j$ for some $u$ — the EXISTENCE of a mediating map commuting with every leg. Injectivity says two maps inducing the same cone coincide — its UNIQUENESS. Together these are precisely the universal property of a limit cone, and conversely a limit cone makes every $\\Theta_X$ a bijection."
+      solution_sketch: "Check first that $\\Theta_X$ really lands in cones, then match clause to clause: surjectivity for every $X$ is the existence of a mediating map, injectivity is its uniqueness. That dictionary runs in both directions, which is what makes the statement an iff."
+    anki_seeds:
+      - front: "A limit of $D$ is..."
+        back: "a universal (terminal) cone over $D$: every cone factors uniquely through it."
+        type: basic
+      - front: "The limit over a discrete shape is a {{c1::product}}; over a parallel pair, an {{c2::equalizer}}; over a cospan, a {{c3::pullback}}."
+        back: "product; equalizer; pullback"
+        type: cloze
+      - front: "The limit over the empty shape is..."
+        back: "a terminal object."
+        type: basic
+
+  - id: initial-terminal-as-limits
+    name: Initial and Terminal Objects as (Co)Limits
+    core: false                # re-characterisation result; feeds only complete-categories
+    difficulty: 0.7
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 180
+    prerequisites:
+      - id: limits-as-cones
+        weight: 0.5
+        key: true
+      - id: initial-terminal-objects
+        weight: 0.4
+        key: true
+      - id: cones-and-cocones
+        weight: 0.3
+      - id: duality-opposite-categories
+        weight: 0.2
+      - id: equalizers-coequalizers
+        weight: 0.2
+    knowledge_points:
+      - id: kp1
+        name: The empty diagram
+        key_prerequisites: [limits-as-cones]
+        constraints: "Say explicitly what data a cone over the empty diagram carries (none) before concluding."
+        exemplars:
+          - problem: "Let $D\\colon\\mathbf{0}\\to\\mathcal{C}$ be the empty diagram. Describe the cones over $D$ and prove that a limit of $D$ is exactly a terminal object of $\\mathcal{C}$."
+            answer: "A cone is just an apex, with no legs and no conditions; the universal one is a terminal object."
+            solution_sketch: "The shape $\\mathbf{0}$ has no objects and no morphisms, so a cone over $D$ with apex $X$ consists of no legs and satisfies no commuting conditions: a cone is simply an object $X$. A morphism of cones $X\\to Y$ is any morphism of $\\mathcal{C}$, since there are no legs to commute with. So $\\mathrm{Cone}(D)\\cong\\mathcal{C}$, and the limit — the terminal object of $\\mathrm{Cone}(D)$ — is precisely a terminal object of $\\mathcal{C}$."
+          - problem: "State and justify the dual statement for the empty colimit, and identify both in $\\mathbf{Set}$."
+            answer: "The colimit of the empty diagram is an initial object; in $\\mathbf{Set}$ the empty limit is a singleton and the empty colimit is $\\varnothing$."
+            solution_sketch: "Dually, a cocone under the empty diagram is just an object and $\\mathrm{Cocone}(D)\\cong\\mathcal{C}$, so the colimit (its initial object) is an initial object of $\\mathcal{C}$; equivalently, apply the limit statement in $\\mathcal{C}^{op}$. In $\\mathbf{Set}$ the terminal objects are the one-element sets, so $\\lim_{\\mathbf{0}}=\\{*\\}$, while the initial object is $\\varnothing$, so $\\mathrm{colim}_{\\mathbf{0}}=\\varnothing$. Note the empty limit is not the empty set — a common slip."
+      - id: kp2
+        name: Why finite completeness needs a terminal object
+        key_prerequisites: [equalizers-coequalizers]
+        constraints: "Any counterexample must be checked on all three requirements: binary products, equalizers, terminal object."
+        exemplars:
+          - problem: "State the criterion for finite completeness in terms of terminal object, binary products, and equalizers, and say where the terminal object comes from."
+            answer: "$\\mathcal{C}$ has all finite limits iff it has a terminal object, all binary products, and all equalizers; the terminal object is the limit of the empty diagram."
+            solution_sketch: "A finite diagram has a limit as soon as one can form the product of its objects and equalize the maps forced by its arrows; the general products-and-equalizers construction then produces the limit. The empty diagram is the one case the product-and-equalizer step cannot supply, and its limit is exactly a terminal object. So the three conditions are needed, and conversely they suffice — with $\\mathcal{J}$ finite, the products involved are finite."
+          - problem: "Show that the poset $(\\mathbb{N},\\le)$, viewed as a category, has all binary products and all equalizers but is not finitely complete."
+            answer: "Binary products are minima and equalizers are identities, but there is no greatest element, so there is no terminal object."
+            solution_sketch: "In a poset category there is at most one arrow between objects. The product of $m,n$ is their greatest lower bound $\\min(m,n)$, which always exists in $(\\mathbb{N},\\le)$. Any parallel pair of arrows is a single arrow repeated, so every equalizer exists and is an identity. But a terminal object would be a greatest natural number, and $\\mathbb{N}$ has none. Since the empty diagram has no limit, $(\\mathbb{N},\\le)$ is not finitely complete — binary products and equalizers alone are not enough."
+    diagnostic_exemplar:
+      problem: "Show that the poset $(\\mathbb{N},\\le)$, viewed as a category, has all binary products and all equalizers, yet is not finitely complete."
+      answer: "Binary products are greatest lower bounds, and $\\min(m,n)$ always exists. Any parallel pair of arrows in a poset category is a single arrow repeated (hom-sets have at most one element), so its equalizer exists trivially (the identity on the source). But the limit of the EMPTY diagram is a terminal object, i.e. a greatest element of $(\\mathbb{N},\\le)$, which does not exist. So one finite diagram has no limit and the category is not finitely complete."
+      solution_sketch: "Binary products are meets, and $\\min(m,n)$ always exists; equalizers are trivial because a thin category has at most one arrow per hom-set. The failure is the empty diagram, whose limit is a terminal object — a greatest natural number, which does not exist."
+    anki_seeds:
+      - front: "The limit of the empty diagram is..."
+        back: "a terminal object (dually, the colimit of the empty diagram is an initial object)."
+        type: basic
+      - front: "In $\\mathbf{Set}$, the limit of the empty diagram is {{c1::a one-element set}}, not the empty set."
+        back: "a one-element set"
+        type: cloze
+      - front: "Finite completeness requires which three things?"
+        back: "a terminal object, all binary products, and all equalizers."
+        type: basic
+
+  - id: limits-colimits
+    name: Limits and Colimits
+    core: true
+    difficulty: 0.75
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 240
+    prerequisites:
+      - id: limits-as-cones
+        weight: 0.5
+        key: true
+      - id: cones-and-cocones
+        weight: 0.4
+        key: true
+      - id: universal-properties
+        weight: 0.4
+        key: true
+      - id: products-coproducts
+        weight: 0.3
+      - id: pullbacks-pushouts
+        weight: 0.3
+      - id: initial-terminal-objects
+        weight: 0.2
+      - id: duality-opposite-categories
+        weight: 0.2
+    knowledge_points:
+      - id: kp1
+        name: The explicit construction of limits in Set
+        key_prerequisites: [limits-as-cones]
+        constraints: "The compatible-families formula, proved universal or evaluated on diagrams of finite sets with at most 4 elements per set."
+        exemplars:
+          - problem: "In $\\mathbf{Set}$, give the explicit formula for the limit of a small diagram $D\\colon\\mathcal J\\to\\mathbf{Set}$ and prove it is a universal cone."
+            answer: "$\\lim D=\\{(x_j)\\in\\prod_j Dj : Df(x_j)=x_{j'}\\text{ for all }f\\colon j\\to j'\\}$, with $\\lambda_j$ the projection."
+            solution_sketch: "In $\\mathbf{Set}$ the limit is the set of compatible families $\\lim D=\\{(x_j)_j\\in\\prod_j Dj : Df(x_j)=x_{j'}\\text{ for every }f\\colon j\\to j'\\}$, with leg $\\lambda_j\\colon(x_j)\\mapsto x_j$; the compatibility condition is exactly the cone condition, so $(\\lim D,\\lambda)$ is a cone. Given any cone $(X,\\mu)$, the map $u(x)=(\\mu_j(x))_j$ lands in $\\lim D$ (again by the cone condition) and satisfies $\\lambda_j u=\\mu_j$; conversely those equations determine every coordinate of $u(x)$, so $u$ is unique. Hence the construction is the universal cone."
+          - problem: "Use the $\\mathbf{Set}$ formula to compute $\\lim D$ when $\\mathcal{J}$ is the cospan shape and $D$ is $\\{1,2\\}\\xrightarrow{f}\\{a\\}\\xleftarrow{g}\\{x,y\\}$ (the only possible $f,g$)."
+            answer: "A four-element set, $\\{(1,x),(1,y),(2,x),(2,y)\\}$ — the full product."
+            solution_sketch: "A compatible family assigns $u\\in\\{1,2\\}$, $v\\in\\{x,y\\}$ and an element of $\\{a\\}$, subject to $f(u)=g(v)$. Since the middle set is a singleton, $f(u)=a=g(v)$ always holds, so every pair $(u,v)$ is compatible and the third coordinate is forced. Thus $\\lim D\\cong\\{1,2\\}\\times\\{x,y\\}$ has $4$ elements: pulling back over a terminal object gives the ordinary product."
+      - id: kp2
+        name: Uniqueness of limits
+        key_prerequisites: [universal-properties]
+        constraints: "Elementless arguments from the universal property: uniqueness up to unique cone isomorphism, and joint monicity of the legs; every mediating map must be justified."
+        exemplars:
+          - problem: "Prove a limit of $D$, if it exists, is unique up to a unique isomorphism of cones."
+            answer: "It is a terminal object of $\\mathrm{Cone}(D)$."
+            solution_sketch: "By definition a limit is a terminal object in the category $\\mathrm{Cone}(D)$. Terminal objects are unique up to a unique isomorphism, and here that isomorphism is a cone morphism, hence commutes with all legs $\\lambda_j$. Therefore limits are unique up to unique compatible isomorphism."
+          - problem: "Prove the legs $(\\lambda_j)$ of a limit cone $(L,\\lambda)$ over $D$ are jointly monic: if $\\lambda_j u=\\lambda_j v$ for all $j$, then $u=v$."
+            answer: "Both $u,v$ are the unique mediating map for the same cone $(\\lambda_j u)_j$, so $u=v$."
+            solution_sketch: "Let $u,v\\colon X\\to L$ satisfy $\\lambda_j u=\\lambda_j v=:\\mu_j$ for every $j$. The family $(\\mu_j)$ is a cone with apex $X$, inheriting naturality from $\\lambda$, so the limit's universal property provides a UNIQUE cone map $X\\to L$ with legs $\\mu_j$. Both $u$ and $v$ are such maps, hence $u=v$. This joint monicity of the legs is exactly the uniqueness clause of the limit and drives the proof that limits are unique up to unique isomorphism."
+      - id: kp3
+        name: Colimits by duality
+        key_prerequisites: [duality-opposite-categories]
+        constraints: "Everything obtained by dualizing the limit story; the $\\mathbf{Set}$ colimit formula is the quotient of the disjoint union by the generated equivalence relation."
+        exemplars:
+          - problem: "Define a colimit of $D$ and identify colimits over discrete, parallel-pair, and span shapes."
+            answer: "An initial cocone; coproduct, coequalizer, pushout respectively."
+            solution_sketch: "A colimit of $D$ is an initial cocone $(C,\\gamma\\colon D\\Rightarrow\\Delta_C)$: every cocone factors through a unique map $C\\to X$. Dually to limits, the colimit over a discrete shape is the coproduct, over the parallel pair the coequalizer, over a span $\\bullet\\leftarrow\\bullet\\to\\bullet$ the pushout, and over the empty diagram the initial object. A colimit in $\\mathcal C$ is a limit in $\\mathcal C^{op}$."
+          - problem: "In $\\mathbf{Set}$, give the explicit formula for the colimit of a small diagram $D\\colon\\mathcal J\\to\\mathbf{Set}$."
+            answer: "$\\mathrm{colim}\\,D=\\big(\\coprod_j Dj\\big)/\\!\\sim$, where $x\\sim Df(x)$ for $x\\in Dj$, $f\\colon j\\to j'$."
+            solution_sketch: "Dually to the limit formula, the colimit in $\\mathbf{Set}$ is a quotient of the disjoint union: $\\mathrm{colim}\\,D=\\big(\\coprod_j Dj\\big)/\\!\\sim$, with $\\sim$ the smallest equivalence relation satisfying $x\\sim Df(x)$ for every $x\\in Dj$, $f\\colon j\\to j'$. The leg $\\gamma_j\\colon Dj\\to\\mathrm{colim}\\,D$ sends $x$ to its class, giving the initial (universal) cocone. Specializing $\\mathcal J$ recovers coproducts, coequalizers, and pushouts in $\\mathbf{Set}$."
+    diagnostic_exemplar:
+      problem: "Prove that the legs $(\\lambda_j)$ of a limit cone $(L,\\lambda)$ over $D$ are jointly monic: if $u,v\\colon X\\to L$ satisfy $\\lambda_j u=\\lambda_j v$ for every $j$, then $u=v$."
+      answer: "Set $\\mu_j=\\lambda_ju=\\lambda_jv$. The family $(\\mu_j)$ is a cone with apex $X$: for $f\\colon j\\to j'$, $Df\\circ\\mu_j=Df\\circ\\lambda_j\\circ u=\\lambda_{j'}\\circ u=\\mu_{j'}$, inheriting the cone condition from $\\lambda$. The limit's universal property supplies a UNIQUE morphism $X\\to L$ whose legs are $(\\mu_j)$; both $u$ and $v$ are such morphisms, so $u=v$."
+      solution_sketch: "Show the common family $(\\lambda_j u)$ is itself a cone over $D$, inheriting the condition from $\\lambda$; then $u$ and $v$ are two mediating maps for one cone, and the uniqueness half of the limit property finishes it."
+    anki_seeds:
+      - front: "Formula for $\\lim D$ in $\\mathbf{Set}$?"
+        back: "the set of compatible families $(x_j)$ with $Df(x_j)=x_{j'}$ for every $f\\colon j\\to j'$."
+        type: basic
+      - front: "Formula for $\\mathrm{colim}\\,D$ in $\\mathbf{Set}$?"
+        back: "$\\big(\\coprod_j Dj\\big)/\\!\\sim$, where $x\\sim Df(x)$ for $x\\in Dj$, $f\\colon j\\to j'$."
+        type: basic
+      - front: "A colimit in $\\mathcal C$ is a limit in..."
+        back: "$\\mathcal C^{op}$ (colimits are dual to limits)."
+        type: basic
+
+  - id: exponential-objects
+    name: Exponential Objects
+    core: true  # ancestor of core adjunction-examples/monad-examples (PEDAGOGY §1 invariant)
+    difficulty: 0.75
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 210
+    prerequisites:
+      - id: products-coproducts
+        weight: 0.4
+        key: true
+      - id: universal-properties
+        weight: 0.4
+        key: true
+      - id: hom-functors
+        weight: 0.3
+      - id: commutative-diagrams
+        weight: 0.2
+    knowledge_points:
+      - id: kp1
+        name: Exponentials via currying in Set
+        key_prerequisites: [universal-properties]
+        constraints: "State the evaluation-plus-unique-curry universal property; identifications only in $\\mathbf{Set}$ (function sets) or posets with finite meets (Heyting implication)."
+        exemplars:
+          - problem: "Define the exponential object $B^A$ by its universal property and identify it in $\\mathbf{Set}$."
+            answer: "$B^A$ with $\\mathrm{ev}\\colon B^A\\times A\\to B$ universal; in Set the set of functions $A\\to B$."
+            solution_sketch: "An exponential $B^A$ carries $\\mathrm{ev}\\colon B^A\\times A\\to B$ such that for every $g\\colon X\\times A\\to B$ there is a unique $\\hat g\\colon X\\to B^A$ (its curry) with $\\mathrm{ev}\\circ(\\hat g\\times 1_A)=g$. In $\\mathbf{Set}$, $B^A=\\{$functions $A\\to B\\}$, $\\mathrm{ev}(f,a)=f(a)$, and $\\hat g(x)=(a\\mapsto g(x,a))$ is the unique such map."
+          - problem: "In a poset (as a category) with finite meets, identify the exponential object $b^a$."
+            answer: "The relative pseudocomplement $a\\Rightarrow b=\\bigvee\\{x : x\\wedge a\\le b\\}$, when it exists (Heyting implication)."
+            solution_sketch: "In a poset, the product $x\\times a$ is the meet $x\\wedge a$, so the currying bijection $\\mathrm{Hom}(X\\times A,B)\\cong\\mathrm{Hom}(X,B^A)$ becomes the equivalence $x\\wedge a\\le b\\iff x\\le b^a$ (hom-sets have at most one element). Thus $b^a$ is the largest element whose meet with $a$ lies below $b$, i.e. the relative pseudocomplement $a\\Rightarrow b=\\bigvee\\{x:x\\wedge a\\le b\\}$, and evaluation is the counit $(a\\Rightarrow b)\\wedge a\\le b$. A poset with finite meets, a top and all such exponentials is cartesian closed; it is a Heyting algebra only if it is moreover a bounded lattice, since a Heyting algebra is by definition a bounded lattice with implication. Cartesian closure supplies neither joins nor a bottom: $(\\mathbb Z\\cup\\{+\\infty\\},\\le)$ has all meets, the top $+\\infty$, and exponentials ($b^a=+\\infty$ when $a\\le b$ and $b^a=b$ otherwise), yet it has no least element."
+      - id: kp2
+        name: The curry/uncurry bijection is natural
+        key_prerequisites: [hom-functors]
+        constraints: "Derive the bijection and its naturality from the universal property alone; every identification of two maps must go through the uniqueness of currying."
+        exemplars:
+          - problem: "Deduce the natural bijection $\\mathrm{Hom}(X\\times A,B)\\cong\\mathrm{Hom}(X,B^A)$ from the universal property of $B^A$."
+            answer: "Currying $g\\mapsto\\hat g$ and uncurrying are mutually inverse, natural in $X$."
+            solution_sketch: "The universal property gives, for each $g\\colon X\\times A\\to B$, a unique curry $\\hat g\\colon X\\to B^A$; conversely each $h\\colon X\\to B^A$ uncurries to $\\mathrm{ev}\\circ(h\\times 1_A)$, and these operations are mutually inverse. Hence $\\mathrm{Hom}(X\\times A,B)\\cong\\mathrm{Hom}(X,B^A)$; naturality in $X$ holds because precomposing $g$ by $k\\times 1_A$ corresponds to precomposing $\\hat g$ by $k$. This is precisely the adjunction $(-\\times A)\\dashv(-)^A$."
+          - problem: "Prove that currying is also natural in the target: for $k\\colon B\\to B'$ and $g\\colon X\\times A\\to B$, show $\\widehat{k\\circ g}=k^A\\circ\\hat g$, where $k^A\\colon B^A\\to B'^A$ is the unique map with $\\mathrm{ev}\\circ(k^A\\times 1_A)=k\\circ\\mathrm{ev}$."
+            answer: "$k^A\\circ\\hat g$ satisfies the defining equation of the curry of $k\\circ g$, so uniqueness identifies the two."
+            solution_sketch: "First, $k^A$ is well defined: it is the curry of $k\\circ\\mathrm{ev}\\colon B^A\\times A\\to B'$, so $\\mathrm{ev}\\circ(k^A\\times 1_A)=k\\circ\\mathrm{ev}$. Now uncurry $k^A\\circ\\hat g$, using $(u\\circ v)\\times 1_A=(u\\times 1_A)\\circ(v\\times 1_A)$: $\\mathrm{ev}\\circ((k^A\\circ\\hat g)\\times 1_A)=\\mathrm{ev}\\circ(k^A\\times 1_A)\\circ(\\hat g\\times 1_A)=k\\circ\\mathrm{ev}\\circ(\\hat g\\times 1_A)=k\\circ g$. So $k^A\\circ\\hat g$ is a curry of $k\\circ g$, and the universal property says there is exactly one, whence $\\widehat{k\\circ g}=k^A\\circ\\hat g$. Together with naturality in $X$ this makes $\\mathrm{Hom}(X\\times A,B)\\cong\\mathrm{Hom}(X,B^A)$ natural in both variables, and it is what makes $(-)^A$ a functor."
+    diagnostic_exemplar:
+      problem: "From the universal property of the exponential $B^A$ (evaluation $\\mathrm{ev}\\colon B^A\\times A\\to B$ with unique currying), deduce the bijection $\\mathrm{Hom}(X\\times A,B)\\cong\\mathrm{Hom}(X,B^A)$."
+      answer: "Currying sends $g\\colon X\\times A\\to B$ to the unique $\\hat g\\colon X\\to B^A$ with $\\mathrm{ev}\\circ(\\hat g\\times 1_A)=g$; uncurrying sends $h\\colon X\\to B^A$ to $\\mathrm{ev}\\circ(h\\times 1_A)$. Uncurrying after currying returns $g$ by the defining equation. Currying after uncurrying returns $h$: $h$ satisfies the defining equation of the curry of $\\mathrm{ev}\\circ(h\\times 1_A)$, and the universal property says there is exactly one such map. So the two operations are mutually inverse, giving the bijection."
+      solution_sketch: "Define currying and uncurrying from the universal property and check the two round trips. One direction is just the defining equation of $\\mathrm{ev}$; the other needs the uniqueness clause, which says no other map satisfies that equation."
+    anki_seeds:
+      - front: "Universal property of the exponential $B^A$?"
+        back: "$\\mathrm{ev}\\colon B^A\\times A\\to B$ with: every $g\\colon X\\times A\\to B$ has a unique curry $\\hat g\\colon X\\to B^A$, $\\mathrm{ev}\\circ(\\hat g\\times 1_A)=g$."
+        type: basic
+      - front: "Exponentials give the natural bijection..."
+        back: "$\\mathrm{Hom}(X\\times A,B)\\cong\\mathrm{Hom}(X,B^A)$ (currying), i.e. $(-\\times A)\\dashv(-)^A$."
+        type: basic
+
+  - id: preservation-reflection-of-limits
+    name: Preserving and Reflecting Limits
+    core: true
+    difficulty: 0.78
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 270
+    prerequisites:
+      - id: limits-colimits
+        weight: 0.5
+        key: true
+      - id: full-faithful-functors
+        weight: 0.4
+        key: true
+      - id: limits-as-cones
+        weight: 0.3
+      - id: functor-composition-identity
+        weight: 0.2
+      - id: functors
+        weight: 0.2
+      # Phase C reconciliation: kp2 proves the free-group functor $F$ fails to preserve
+      # binary products, computing $F(\{*\}) = \mathbb{Z}$ and refuting
+      # $\mathbb{Z} \cong \mathbb{Z}\times\mathbb{Z}$ — free-groups-presentations kp1.
+      - id: free-groups-presentations
+        weight: 0.2
+    knowledge_points:
+      - id: kp1
+        name: The definitions
+        key_prerequisites: [limits-colimits]
+        constraints: "Distinguish carefully between a hypothesis on $D$ and a hypothesis on $FD$; never assume limits exist."
+        exemplars:
+          - problem: "Define what it means for a functor $F\\colon\\mathcal{C}\\to\\mathcal{D}$ to preserve, and to reflect, limits of a diagram $D\\colon\\mathcal{J}\\to\\mathcal{C}$."
+            answer: "Preserves: $F$ carries every limit cone over $D$ to a limit cone over $FD$. Reflects: if $(L,\\lambda)$ is a cone over $D$ whose image $(FL,F\\lambda)$ is a limit cone over $FD$, then $(L,\\lambda)$ is already a limit cone."
+            solution_sketch: "A functor $F$ sends a cone $(L,\\lambda)$ over $D$ to the cone $(FL,F\\lambda)$ over $FD$, since applying $F$ to the leg equations $Df\\circ\\lambda_j=\\lambda_{j'}$ gives $FDf\\circ F\\lambda_j=F\\lambda_{j'}$. $F$ preserves limits of $D$ if it turns limit cones into limit cones. $F$ reflects limits of $D$ if the converse implication holds for cones over $D$: whenever the image cone is universal, the original was. The two conditions are independent — neither implies the other."
+          - problem: "Suppose $F$ preserves limits and both $\\lim D$ and $\\lim FD$ exist. What does preservation say about the canonical comparison morphism $F(\\lim D)\\to\\lim(FD)$?"
+            answer: "It is an isomorphism."
+            solution_sketch: "The image cone $(F\\lim D,F\\lambda)$ is a cone over $FD$, so the universal property of $\\lim FD$ gives a canonical comparison $c\\colon F(\\lim D)\\to\\lim(FD)$ commuting with the legs. If $F$ preserves the limit, then $(F\\lim D,F\\lambda)$ is itself a limit cone over $FD$; two limit cones over the same diagram are uniquely isomorphic by a cone map, and that map is exactly $c$. So preservation is precisely the statement that the canonical comparison is an isomorphism."
+      - id: kp2
+        name: Examples and non-examples
+        key_prerequisites: [functors, free-groups-presentations]
+        constraints: "A failure of preservation must be shown with a concrete diagram and a proof that the two objects are non-isomorphic."
+        exemplars:
+          - problem: "Show the forgetful functor $U\\colon\\mathbf{Grp}\\to\\mathbf{Set}$ preserves binary products and equalizers."
+            answer: "$U(G\\times H)=UG\\times UH$ and the equalizer subgroup has the equalizer of the underlying maps as its underlying set."
+            solution_sketch: "The product in $\\mathbf{Grp}$ is the direct product $G\\times H$ with componentwise operation and the coordinate projections; its underlying set with the underlying projections is exactly the cartesian product cone in $\\mathbf{Set}$, which is a limit cone. The equalizer of $f,g\\colon G\\to H$ in $\\mathbf{Grp}$ is the subgroup $E=\\{x\\in G: f(x)=g(x)\\}$ with the inclusion; its underlying set is $\\{x\\in UG: Uf(x)=Ug(x)\\}$ with the inclusion, which is the equalizer cone in $\\mathbf{Set}$. So $U$ carries these limit cones to limit cones."
+          - problem: "Show the free-group functor $F\\colon\\mathbf{Set}\\to\\mathbf{Grp}$ does not preserve binary products."
+            answer: "With $X=Y=\\{*\\}$: $F(X\\times Y)=\\mathbb{Z}$ but $FX\\times FY=\\mathbb{Z}\\times\\mathbb{Z}$, and $\\mathbb{Z}\\not\\cong\\mathbb{Z}\\times\\mathbb{Z}$."
+            solution_sketch: "The free group on a one-element set is $\\mathbb{Z}$. Take $X=Y=\\{*\\}$; then $X\\times Y$ is again a one-element set, so $F(X\\times Y)\\cong\\mathbb{Z}$, while $FX\\times FY\\cong\\mathbb{Z}\\times\\mathbb{Z}$. These are not isomorphic: $\\mathbb{Z}$ is cyclic, but if $(a,b)$ generated $\\mathbb{Z}\\times\\mathbb{Z}$ then $(1,0)=n(a,b)$ forces $na=1$ and $nb=0$, so $a=n=\\pm1$ and $b=0$; then every multiple of $(a,0)$ has second coordinate $0$ and $(0,1)$ is not reached. So the comparison map cannot be an isomorphism and $F$ does not preserve binary products — consistent with $F$ being a left adjoint, which preserves colimits rather than limits."
+      - id: kp3
+        name: Fully faithful functors reflect limits
+        key_prerequisites: [full-faithful-functors]
+        constraints: "Use fullness to lift a mediating morphism and faithfulness to prove the equations and uniqueness."
+        exemplars:
+          - problem: "Prove that a fully faithful functor $F$ reflects limits."
+            answer: "Lift the mediating map through fullness; faithfulness gives the leg equations and uniqueness."
+            solution_sketch: "Let $(L,\\lambda)$ be a cone over $D$ with $(FL,F\\lambda)$ a limit cone over $FD$, and let $(X,\\mu)$ be any cone over $D$. Then $(FX,F\\mu)$ is a cone over $FD$, so there is a unique $u\\colon FX\\to FL$ with $F\\lambda_j\\circ u=F\\mu_j$ for all $j$. By fullness $u=Fv$ for some $v\\colon X\\to L$, and then $F(\\lambda_j\\circ v)=F\\mu_j$, so faithfulness gives $\\lambda_j\\circ v=\\mu_j$: $v$ is a cone map. If $v'$ is another, then $Fv'$ satisfies the same equations as $u$, so $Fv'=u=Fv$ and faithfulness gives $v'=v$. Hence $(L,\\lambda)$ is a limit cone."
+          - problem: "Show that $U\\colon\\mathbf{Top}\\to\\mathbf{Set}$ does not reflect limits."
+            answer: "Give $\\mathbb{R}\\times\\mathbb{R}$ the discrete topology with the two projections: the underlying cone of sets is a limit, but the cone in $\\mathbf{Top}$ is not."
+            solution_sketch: "Let $P$ be the set $\\mathbb{R}\\times\\mathbb{R}$ with the discrete topology and let $p_1,p_2$ be the coordinate projections, which are continuous because $P$ is discrete. Applying $U$ gives the cartesian product cone in $\\mathbf{Set}$, a limit cone. But $(P,p_1,p_2)$ is not a product in $\\mathbf{Top}$: take $Z=\\mathbb{R}^2$ with the Euclidean topology and the continuous maps $\\pi_1,\\pi_2$; a mediating map $Z\\to P$ would have to be the identity function, which is not continuous from the Euclidean to the discrete topology. So no mediating map exists, the cone is not universal, and $U$ fails to reflect limits."
+    diagnostic_exemplar:
+      problem: "Prove that a fully faithful functor $F\\colon\\mathcal{C}\\to\\mathcal{D}$ reflects limits."
+      answer: "Let $(L,\\lambda)$ be a cone over $D$ whose image $(FL,F\\lambda)$ is a limit cone over $FD$, and let $(X,\\mu)$ be any cone over $D$. Then $(FX,F\\mu)$ is a cone over $FD$, so there is a unique $u\\colon FX\\to FL$ with $F\\lambda_j\\circ u=F\\mu_j$ for all $j$. By fullness $u=Fv$ for some $v\\colon X\\to L$; then $F(\\lambda_j\\circ v)=F\\mu_j$ and faithfulness gives $\\lambda_j\\circ v=\\mu_j$, so $v$ is a cone morphism. If $v'$ is another, $Fv'$ satisfies the equations characterizing $u$, so $Fv'=u=Fv$ and faithfulness gives $v'=v$. Hence $(L,\\lambda)$ is a limit cone."
+      solution_sketch: "Transport an arbitrary cone over $D$ down into $\\mathcal D$ and mediate there, then lift the mediating map back with fullness and verify its leg equations with faithfulness. Uniqueness downstairs comes from uniqueness upstairs plus faithfulness once more."
+    anki_seeds:
+      - front: "A functor preserves limits when..."
+        back: "it sends limit cones to limit cones (the canonical comparison is an isomorphism)."
+        type: basic
+      - front: "A functor reflects limits when..."
+        back: "a cone whose image is a limit cone must already have been a limit cone."
+        type: basic
+      - front: "Fully faithful functors {{c1::reflect}} limits."
+        back: "reflect"
+        type: cloze
+
+  - id: complete-categories
+    name: Complete and Cocomplete Categories
+    core: false                # terminal classification of categories by limit existence
+    difficulty: 0.75
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 240
+    prerequisites:
+      - id: limits-colimits
+        weight: 0.5
+        key: true
+      - id: equalizers-coequalizers
+        weight: 0.4
+        key: true
+      - id: initial-terminal-as-limits
+        weight: 0.3
+      - id: products-coproducts
+        weight: 0.3
+      - id: pullbacks-pushouts
+        weight: 0.2
+    knowledge_points:
+      - id: kp1
+        name: Definitions
+        key_prerequisites: [limits-colimits]
+        constraints: "Definitions plus the poset case: completeness of a poset category is equated with being a complete lattice via limits-as-infima."
+        exemplars:
+          - problem: "Define a complete category and a cocomplete category."
+            answer: "Complete: has all small limits; cocomplete: has all small colimits."
+            solution_sketch: "A category $\\mathcal C$ is complete if every diagram $D\\colon\\mathcal J\\to\\mathcal C$ with $\\mathcal J$ small has a limit in $\\mathcal C$, and cocomplete if every small diagram has a colimit. For example $\\mathbf{Set}$, $\\mathbf{Grp}$, and $\\mathbf{Top}$ are both complete and cocomplete."
+          - problem: "Show that a poset $P$, viewed as a category, is complete iff it is a complete lattice."
+            answer: "Limits in $P$ are infima; all small limits exist iff every subset has an infimum, i.e. $P$ is a complete lattice."
+            solution_sketch: "In a poset category a diagram $D\\colon\\mathcal J\\to P$ is just a subset $S=\\{Dj\\}$ (arrows carry no extra data), and a limit of $D$ is its greatest lower bound $\\bigwedge S$. Hence $P$ is complete iff every small subset has an infimum, which is exactly the definition of a complete lattice. Such $P$ also has all suprema via $\\bigvee S=\\bigwedge\\{u : u\\ge S\\}$, so it is automatically cocomplete: for posets, complete $\\iff$ complete lattice $\\iff$ cocomplete."
+      - id: kp2
+        name: Completeness from products and equalizers
+        key_prerequisites: [equalizers-coequalizers]
+        constraints: "The two-products-and-an-equalizer construction, with the two parallel maps written out componentwise; applications limited to $\\mathbf{Grp}$ or $\\mathbf{Set}$."
+        exemplars:
+          - problem: "Prove that a category with all small products and all equalizers is complete."
+            answer: "Realize each limit as an equalizer of two maps between products."
+            solution_sketch: "For $D\\colon\\mathcal J\\to\\mathcal C$ ($\\mathcal J$ small), form $\\prod_{j}Dj$ and $\\prod_{(f\\colon j\\to j')}Dj'$. Two maps $\\prod_j Dj\\rightrightarrows\\prod_f Dj'$ are given by $u=(\\,\\pi_{j'})_f$ and $v=(\\,Df\\circ\\pi_j)_f$. Their equalizer $L$ consists exactly of the tuples $(x_j)$ with $Df(x_j)=x_{j'}$ for all $f$, i.e. the cones over $D$; so $L$ with projections is the limit. Hence small products + equalizers $\\Rightarrow$ complete (dually, coproducts + coequalizers $\\Rightarrow$ cocomplete)."
+          - problem: "Use the products-and-equalizers criterion to prove $\\mathbf{Grp}$ is complete."
+            answer: "$\\mathbf{Grp}$ has all small products (direct products) and all equalizers (equalizer subgroups), hence all small limits."
+            solution_sketch: "The direct product $\\prod_i G_i$ with componentwise operations is the product in $\\mathbf{Grp}$, so all small products exist. The equalizer of $f,g\\colon G\\to H$ is the subgroup $\\{x\\in G: f(x)=g(x)\\}$ with inclusion, so all equalizers exist. By the theorem 'small products $+$ equalizers $\\Rightarrow$ complete', every small diagram of groups has a limit — concretely the subgroup of $\\prod_j G_j$ of compatible families. Hence $\\mathbf{Grp}$ is complete."
+      - id: kp3
+        name: Finite completeness from a terminal object and pullbacks
+        key_prerequisites: [pullbacks-pushouts]
+        constraints: "Reduce each finite (co)limit to the given primitives, exhibiting binary (co)products and (co)equalizers as specific pullbacks/pushouts; the dual statement is obtained by working in $\\mathcal C^{op}$."
+        exemplars:
+          - problem: "Show a category with a terminal object and all pullbacks has all finite limits."
+            answer: "Terminal = empty limit; binary products and equalizers are pullbacks."
+            solution_sketch: "The terminal object is the empty limit. Binary products are pullbacks over the terminal object: $A\\times B=A\\times_1 B$. Equalizers of $f,g\\colon A\\to B$ are obtained as the pullback of $(1_A,f),(1_A,g)\\colon A\\to A\\times B$ (equivalently, of the diagonal $B\\to B\\times B$ along $(f,g)$). With finite products and equalizers present, the product-and-equalizer construction yields all finite limits. So terminal + pullbacks $\\Rightarrow$ finitely complete."
+          - problem: "Show, dually, that a category with an initial object and all pushouts has all finite colimits."
+            answer: "Initial = empty colimit; binary coproducts and coequalizers are pushouts."
+            solution_sketch: "Dualize the terminal-plus-pullbacks argument (work in $\\mathcal C^{op}$). The initial object is the empty colimit. Binary coproducts are pushouts over the initial object: $A+B=A+_0 B$. The coequalizer of $f,g\\colon A\\to B$ is the pushout of the codiagonal $\\nabla_A=[1_A,1_A]\\colon A+A\\to A$ along $[f,g]\\colon A+A\\to B$, dual to realizing an equalizer as a pullback of the diagonal. With finite coproducts and coequalizers present, the coproduct-and-coequalizer construction yields all finite colimits. Hence initial object $+$ pushouts $\\Rightarrow$ finitely cocomplete."
+    diagnostic_exemplar:
+      problem: "Prove the dual of the products-and-equalizers criterion: a category $\\mathcal C$ with all small coproducts and all coequalizers is cocomplete. Construct the colimit of an arbitrary small diagram $D\\colon\\mathcal J\\to\\mathcal C$ as a coequalizer of two maps between coproducts, and verify its universal property."
+      answer: "Form $\\coprod_j Dj$ (over the objects of $\\mathcal J$) and $\\coprod_{f\\colon j\\to j'}Dj$ (over the morphisms), and let $u,v\\colon\\coprod_f Dj\\rightrightarrows\\coprod_j Dj$ be the maps whose components on the summand indexed by $f\\colon j\\to j'$ are $\\iota_j$ and $\\iota_{j'}\\circ Df$ respectively. Let $q\\colon\\coprod_j Dj\\to Q$ be their coequalizer and set $\\gamma_j=q\\circ\\iota_j$. Then $q u=q v$ says precisely $\\gamma_j=\\gamma_{j'}\\circ Df$ for every $f\\colon j\\to j'$, so $(Q,\\gamma)$ is a cocone under $D$. Given any cocone $(X,\\delta)$, the coproduct's universal property gives $[\\delta_j]\\colon\\coprod_j Dj\\to X$, and the cocone condition $\\delta_j=\\delta_{j'}\\circ Df$ says exactly $[\\delta_j]u=[\\delta_j]v$; the coequalizer's universal property therefore factors $[\\delta_j]$ through $q$ by a unique $w\\colon Q\\to X$, and $w\\gamma_j=w q\\iota_j=[\\delta_j]\\iota_j=\\delta_j$. Any other cocone map $w'$ satisfies $w'q\\iota_j=\\delta_j$ for all $j$, hence $w'q=[\\delta_j]$, hence $w'=w$ by uniqueness of the factorisation. So $(Q,\\gamma)$ is $\\mathrm{colim}\\,D$, and every small colimit exists: $\\mathcal C$ is cocomplete."
+      solution_sketch: "Build the colimit as a coequalizer of two maps $\\coprod_{f}Dj\\rightrightarrows\\coprod_j Dj$ — one component $\\iota_j$, the other $\\iota_{j'}\\circ Df$ — chosen so that the equation $qu=qv$ says exactly that the legs form a cocone. Any cocone $(X,\\delta)$ then yields $[\\delta_j]$ by the coproduct property and factors uniquely through $q$ by the coequalizer property."
+    anki_seeds:
+      - front: "A category is complete when..."
+        back: "it has all small limits."
+        type: basic
+      - front: "A category is cocomplete when..."
+        back: "it has all small colimits."
+        type: basic
+      - front: "A category is complete iff it has all small {{c1::products}} and all {{c2::equalizers}}."
+        back: "products; equalizers"
+        type: cloze

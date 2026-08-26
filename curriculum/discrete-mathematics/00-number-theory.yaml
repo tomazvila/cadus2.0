@@ -1,0 +1,401 @@
+unit: number-theory
+course: discrete-mathematics
+module: "Number Theory"
+topics:
+  - id: division-algorithm
+    name: "Divisibility & the Division Algorithm"
+    core: true
+    difficulty: 0.45
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 90
+    prerequisites:
+      - id: long-division
+        weight: 0.7
+        key: true
+      - id: divisibility-rules
+        weight: 0.5
+        key: false
+      - id: divisibility-parity-proofs
+        weight: 0.4
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: "Quotient and remainder, including negative dividends"
+        key_prerequisites: [long-division]
+        exemplars:
+          - problem: 'Find the quotient $q$ and remainder $r$ with $0 \le r < 13$ when $100$ is divided by $13$.'
+            answer: '$q = 7$, $r = 9$'
+            solution_sketch: '$13 \cdot 7 = 91 \le 100 < 104 = 13 \cdot 8$, so $q = 7$ and $r = 100 - 91 = 9$.'
+          - problem: 'Find $q$ and $r$ with $0 \le r < 6$ so that $-27 = 6q + r$.'
+            answer: '$q = -5$, $r = 3$'
+            solution_sketch: 'The remainder must be nonnegative: $6 \cdot (-5) = -30 \le -27$, so $r = -27 - (-30) = 3$. Note $q = -4$ would give $r = -3 < 0$, which is not allowed.'
+        constraints: "divisors 2-15; include at least one negative dividend; remainder must satisfy 0 <= r < d"
+      - id: kp2
+        name: "Residue classes as a case tool"
+        key_prerequisites: [divisibility-parity-proofs]
+        exemplars:
+          - problem: 'Every integer has the form $3k$, $3k+1$, or $3k+2$. Which of these forms can a perfect square take? Equivalently: what are the possible remainders of $n^2$ on division by $3$?'
+            answer: '$0$ or $1$ (never $2$)'
+            solution_sketch: '$(3k)^2 = 3(3k^2)$ leaves $0$; $(3k+1)^2 = 3(3k^2+2k)+1$ leaves $1$; $(3k+2)^2 = 3(3k^2+4k+1)+1$ leaves $1$.'
+          - problem: 'What are the possible remainders of a perfect square on division by $4$?'
+            answer: '$0$ or $1$'
+            solution_sketch: 'Even squares $(2k)^2 = 4k^2$ leave $0$; odd squares $(2k+1)^2 = 4(k^2+k)+1$ leave $1$.'
+        constraints: "moduli 3, 4, or 8; verify claims by checking each residue class"
+    diagnostic_exemplar:
+      problem: 'Using the residue classes mod $8$, find all possible remainders of a perfect square on division by $8$.'
+      answer: '$0$, $1$, or $4$'
+      solution_sketch: 'Check $r = 0, \dots, 7$: $r^2 \bmod 8$ gives $0, 1, 4, 1, 0, 1, 4, 1$.'
+    anki_seeds:
+      - front: "Division algorithm: for integers $a$ and $d > 0$ there exist unique $q, r$ with..."
+        back: '$a = dq + r$ and $0 \le r < d$.'
+        type: basic
+      - front: "Possible remainders of a perfect square mod 4?"
+        back: "0 or 1 (never 2 or 3)."
+        type: basic
+
+  - id: euclidean-algorithm
+    name: "Euclidean Algorithm & Bezout's Identity"
+    core: true
+    difficulty: 0.5
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 150
+    prerequisites:
+      - id: division-algorithm
+        weight: 0.8
+        key: true
+      - id: gcf-lcm
+        weight: 0.6
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: "Computing gcd by repeated division"
+        key_prerequisites: [division-algorithm, gcf-lcm]
+        exemplars:
+          - problem: 'Use the Euclidean algorithm to compute $\gcd(252, 198)$.'
+            answer: "18"
+            solution_sketch: '$252 = 1 \cdot 198 + 54$; $198 = 3 \cdot 54 + 36$; $54 = 1 \cdot 36 + 18$; $36 = 2 \cdot 18 + 0$. Last nonzero remainder: $18$.'
+          - problem: 'Use the Euclidean algorithm to compute $\gcd(1071, 462)$.'
+            answer: "21"
+            solution_sketch: '$1071 = 2 \cdot 462 + 147$; $462 = 3 \cdot 147 + 21$; $147 = 7 \cdot 21 + 0$.'
+        constraints: "operands 40-2000 requiring 3-5 division steps; answers > 1 preferred"
+      - id: kp2
+        name: "gcd-lcm relationship"
+        key_prerequisites: [gcf-lcm]
+        exemplars:
+          - problem: 'Given $\gcd(252, 198) = 18$, compute $\mathrm{lcm}(252, 198)$.'
+            answer: "2772"
+            solution_sketch: '$\mathrm{lcm}(a,b) = ab/\gcd(a,b) = 252 \cdot 198 / 18 = 252 \cdot 11 = 2772$.'
+          - problem: 'Two positive integers have product $864$ and gcd $6$. What is their lcm?'
+            answer: "144"
+            solution_sketch: '$\mathrm{lcm} = 864 / 6 = 144$.'
+        constraints: "use gcd(a,b) * lcm(a,b) = ab; numbers chosen so the division is exact"
+      - id: kp3
+        name: "Back-substitution: gcd as an integer combination"
+        key_prerequisites: [division-algorithm]
+        exemplars:
+          - problem: 'Find integers $x, y$ with $20x + 7y = 1$.'
+            answer: '$x = -1$, $y = 3$ (one valid pair; check $-20 + 21 = 1$)'
+            solution_sketch: '$20 = 2 \cdot 7 + 6$; $7 = 1 \cdot 6 + 1$. Back-substitute: $1 = 7 - 6 = 7 - (20 - 2 \cdot 7) = 3 \cdot 7 - 20$.'
+          - problem: 'Express $\gcd(42, 30) = 6$ in the form $42x + 30y$.'
+            answer: '$6 = 42 \cdot 3 + 30 \cdot (-4)$ (one valid pair)'
+            solution_sketch: '$42 = 1 \cdot 30 + 12$; $30 = 2 \cdot 12 + 6$. Back-substitute: $6 = 30 - 2 \cdot 12 = 30 - 2(42 - 30) = 3 \cdot 30 - 2 \cdot 42$; equivalently $42 \cdot 3 + 30 \cdot (-4) = 126 - 120 = 6$. Any pair satisfying the equation is correct.'
+        constraints: "operands small enough for 2-3 back-substitution steps; accept any valid Bezout pair, require a verification check"
+    diagnostic_exemplar:
+      problem: 'Run the Euclidean algorithm on $25$ and $7$, then back-substitute to find integers $x, y$ with $25x + 7y = 1$.'
+      answer: '$x = 2$, $y = -7$ (one valid pair; check $50 - 49 = 1$)'
+      solution_sketch: '$25 = 3 \cdot 7 + 4$, $7 = 1 \cdot 4 + 3$, $4 = 1 \cdot 3 + 1$; back: $1 = 4 - 3 = 2 \cdot 4 - 7 = 2 \cdot 25 - 7 \cdot 7$.'
+    anki_seeds:
+      - front: "Euclidean algorithm key step: $\\gcd(a, b) = \\gcd(b, \\; ?)$ for $a = bq + r$"
+        back: '$\gcd(b, r)$ — replace the pair with the divisor and the remainder.'
+        type: basic
+      - front: "Bezout's identity"
+        back: 'For any integers $a, b$ (not both zero) there exist integers $x, y$ with $ax + by = \gcd(a,b)$.'
+        type: basic
+      - front: "Relation between gcd and lcm of $a, b > 0$"
+        back: '$\gcd(a,b) \cdot \mathrm{lcm}(a,b) = ab$.'
+        type: basic
+
+  - id: modular-arithmetic
+    name: "Modular Arithmetic"
+    core: true
+    difficulty: 0.5
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 90
+    prerequisites:
+      - id: division-algorithm
+        weight: 0.8
+        key: true
+      - id: integer-exponents-intro
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Reducing mod m, including negatives"
+        key_prerequisites: [division-algorithm]
+        exemplars:
+          - problem: 'Compute $17 \bmod 5$.'
+            answer: "2"
+          - problem: 'Compute $-13 \bmod 7$ (answer in $\{0, 1, \dots, 6\}$).'
+            answer: "1"
+            solution_sketch: '$-13 = 7 \cdot (-2) + 1$, so the least nonnegative residue is $1$.'
+        constraints: "moduli 2-26; include negative arguments; answers are least nonnegative residues"
+      - id: kp2
+        name: "Adding and multiplying residues"
+        key_prerequisites: [division-algorithm]
+        exemplars:
+          - problem: 'Compute $(37 \cdot 43) \bmod 10$ without multiplying the full numbers.'
+            answer: "1"
+            solution_sketch: 'Reduce first: $37 \equiv 7$ and $43 \equiv 3 \pmod{10}$, so the product is $\equiv 21 \equiv 1$.'
+          - problem: 'Compute $(6 + 9) \bmod 11$.'
+            answer: "4"
+            solution_sketch: '$15 = 11 + 4$.'
+        constraints: "force reduce-first strategy: operands 2-3 digits, moduli <= 26"
+      - id: kp3
+        name: "Modular exponentiation by repeated squaring"
+        key_prerequisites: [division-algorithm, integer-exponents-intro]
+        exemplars:
+          - problem: 'Compute $2^{10} \bmod 7$.'
+            answer: "2"
+            solution_sketch: '$2^3 = 8 \equiv 1 \pmod 7$, so $2^{10} = (2^3)^3 \cdot 2 \equiv 1 \cdot 2 = 2$.'
+          - problem: 'Compute $3^4 \bmod 5$.'
+            answer: "1"
+            solution_sketch: '$3^2 = 9 \equiv 4 \equiv -1$, so $3^4 \equiv (-1)^2 = 1 \pmod 5$.'
+        constraints: "exponents 3-20, moduli <= 15; solvable by spotting a small power congruent to 1 or -1"
+    diagnostic_exemplar:
+      problem: 'Compute $2^{20} \bmod 9$.'
+      answer: '4'
+      solution_sketch: '$2^6 = 64 \equiv 1 \pmod 9$, so $2^{18} \equiv 1$ and $2^{20} \equiv 2^2 = 4$.'
+    anki_seeds:
+      - front: 'Definition: $a \equiv b \pmod m$ means...'
+        back: '$m \mid (a - b)$ — equivalently $a$ and $b$ leave the same remainder on division by $m$.'
+        type: basic
+      - front: "Key computational rule of modular arithmetic"
+        back: "You may reduce mod $m$ before or after adding/multiplying — the result is the same."
+        type: basic
+
+  - id: linear-congruences
+    name: "Linear Congruences & Modular Inverses"
+    core: true
+    difficulty: 0.6
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 180
+    prerequisites:
+      - id: modular-arithmetic
+        weight: 0.9
+        key: true
+      - id: euclidean-algorithm
+        weight: 0.7
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: "When is ax = b (mod m) solvable?"
+        key_prerequisites: [euclidean-algorithm, modular-arithmetic]
+        exemplars:
+          - problem: 'Give the set of all solutions mod $6$ of $4x \equiv 2 \pmod 6$.'
+            answer: '$\{2, 5\}$'
+            solution_sketch: '$d = \gcd(4,6) = 2$ divides $2$, so there are $d = 2$ solutions. Divide through: $2x \equiv 1 \pmod 3$, so $x \equiv 2 \pmod 3$, giving $x \in \{2, 5\}$ mod $6$.'
+          - problem: 'How many solutions mod $6$ does $4x \equiv 3 \pmod 6$ have?'
+            answer: "0"
+            solution_sketch: '$\gcd(4,6) = 2$ does not divide $3$, so the congruence is unsolvable.'
+        constraints: "moduli <= 30; include both solvable and unsolvable cases; solution count = gcd(a,m) when it divides b, else 0"
+      - id: kp2
+        name: "Modular inverses via the extended Euclidean algorithm"
+        key_prerequisites: [euclidean-algorithm]
+        exemplars:
+          - problem: 'Find the inverse of $7$ modulo $26$.'
+            answer: "15"
+            solution_sketch: '$26 = 3 \cdot 7 + 5$; $7 = 1 \cdot 5 + 2$; $5 = 2 \cdot 2 + 1$. Back-substitute: $1 = 5 - 2 \cdot 2 = 5 - 2(7 - 5) = 3 \cdot 5 - 2 \cdot 7 = 3 \cdot 26 - 11 \cdot 7$, so $-11 \equiv 15$ works. Check: $7 \cdot 15 = 105 = 4 \cdot 26 + 1$.'
+          - problem: 'Find the inverse of $5$ modulo $12$.'
+            answer: "5"
+            solution_sketch: '$5 \cdot 5 = 25 = 2 \cdot 12 + 1$, so $5$ is its own inverse mod $12$.'
+        constraints: "gcd(a,m) = 1 always; moduli 7-40; answer as least positive residue; require the verification product"
+      - id: kp3
+        name: "Solving by multiplying by the inverse"
+        key_prerequisites: [euclidean-algorithm, modular-arithmetic]
+        exemplars:
+          - problem: 'Solve $7x \equiv 3 \pmod{26}$; give $x$ as the least nonnegative residue.'
+            answer: "19"
+            solution_sketch: '$7^{-1} \equiv 15 \pmod{26}$, so $x \equiv 15 \cdot 3 = 45 \equiv 19$. Check: $7 \cdot 19 = 133 = 5 \cdot 26 + 3$.'
+          - problem: 'Solve $5x \equiv 7 \pmod{12}$; give $x$ as the least nonnegative residue.'
+            answer: "11"
+            solution_sketch: '$5^{-1} \equiv 5$, so $x \equiv 5 \cdot 7 = 35 \equiv 11 \pmod{12}$. Check: $55 = 4 \cdot 12 + 7$.'
+        constraints: "coefficient invertible mod m; unique answer as least nonnegative residue with a check"
+    diagnostic_exemplar:
+      problem: 'Solve $3x \equiv 4 \pmod 7$; give $x$ as the least nonnegative residue.'
+      answer: "6"
+      solution_sketch: '$3 \cdot 5 = 15 \equiv 1$, so $3^{-1} \equiv 5$ and $x \equiv 5 \cdot 4 = 20 \equiv 6$. Check: $3 \cdot 6 = 18 \equiv 4 \pmod 7$.'
+    anki_seeds:
+      - front: '$ax \equiv b \pmod m$ is solvable iff...'
+        back: '$\gcd(a, m) \mid b$; when solvable it has exactly $\gcd(a,m)$ solutions mod $m$.'
+        type: basic
+      - front: '$a$ has an inverse mod $m$ iff...'
+        back: '$\gcd(a, m) = 1$.'
+        type: basic
+
+  - id: chinese-remainder-theorem
+    name: "Chinese Remainder Theorem"
+    core: false                # terminal number-theory result; nothing here builds on it
+    difficulty: 0.65
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 240
+    prerequisites:
+      - id: linear-congruences
+        weight: 0.85
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: "Two congruences with coprime moduli"
+        key_prerequisites: [linear-congruences]
+        exemplars:
+          - problem: 'Find all $x$ with $x \equiv 2 \pmod 3$ and $x \equiv 3 \pmod 5$.'
+            answer: '$x \equiv 8 \pmod{15}$'
+            solution_sketch: 'Write $x = 5k + 3$; then $5k + 3 \equiv 2 \pmod 3$ gives $2k \equiv 2$, so $k \equiv 1 \pmod 3$. Thus $x = 5(3j + 1) + 3 = 15j + 8$. Check: $8 \bmod 3 = 2$, $8 \bmod 5 = 3$.'
+          - problem: 'Find the smallest positive $x$ with $x \equiv 0 \pmod 7$ and $x \equiv 1 \pmod 4$.'
+            answer: "21"
+            solution_sketch: 'Check multiples of $7$ mod $4$: $7 \equiv 3$, $14 \equiv 2$, $21 \equiv 1$. So $x \equiv 21 \pmod{28}$.'
+        constraints: "pairwise coprime moduli, each <= 13; answer as the unique residue mod the product plus a verification"
+      - id: kp2
+        name: "Systems of congruences; uniqueness mod the product"
+        key_prerequisites: [linear-congruences]
+        exemplars:
+          - problem: 'Solve the system $x \equiv 1 \pmod 2$, $x \equiv 2 \pmod 3$, $x \equiv 3 \pmod 5$.'
+            answer: '$x \equiv 23 \pmod{30}$'
+            solution_sketch: 'From the last two: $x \equiv 8 \pmod{15}$ (i.e. $x \in \{8, 23\}$ mod $30$). Oddness picks $23$. Check: $23 = 11 \cdot 2 + 1 = 7 \cdot 3 + 2 = 4 \cdot 5 + 3$.'
+          - problem: 'A number of soldiers leaves remainder $3$ when lined up in rows of $4$ and remainder $1$ in rows of $5$. What is the smallest possible positive count?'
+            answer: "11"
+            solution_sketch: '$x \equiv 3 \pmod 4$ and $x \equiv 1 \pmod 5$: candidates $1, 6, 11, \dots$; $11 \equiv 3 \pmod 4$. So $x \equiv 11 \pmod{20}$, smallest positive is $11$.'
+        constraints: "2-3 congruences, moduli pairwise coprime with product <= 120; solve iteratively (substitution), always verify"
+    diagnostic_exemplar:
+      problem: 'Solve the system $x \equiv 1 \pmod 3$, $x \equiv 2 \pmod 5$, $x \equiv 0 \pmod 4$: give the smallest positive solution.'
+      answer: '52'
+      solution_sketch: '$x \equiv 0 \pmod 4$ with $x \equiv 2 \pmod 5$ gives $x \equiv 12 \pmod{20}$; of $12, 32, 52$, only $52 \equiv 1 \pmod 3$. Unique mod $60$.'
+    anki_seeds:
+      - front: "Chinese Remainder Theorem (two moduli)"
+        back: 'If $\gcd(m, n) = 1$, the system $x \equiv a \pmod m$, $x \equiv b \pmod n$ has a unique solution mod $mn$.'
+        type: basic
+      - front: "CRT hypothesis that must be checked before solving"
+        back: "The moduli are pairwise coprime."
+        type: basic
+
+  - id: fermat-euler-theorems
+    name: "Fermat's Little Theorem & Euler's Theorem"
+    core: true
+    difficulty: 0.65
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 180
+    prerequisites:
+      - id: modular-arithmetic
+        weight: 0.85
+        key: true
+      - id: prime-factorization
+        weight: 0.6
+        key: true
+      - id: linear-congruences
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Fermat's little theorem: reducing huge exponents mod p"
+        key_prerequisites: [modular-arithmetic, prime-factorization]
+        exemplars:
+          - problem: 'Compute $2^{100} \bmod 7$.'
+            answer: "2"
+            solution_sketch: 'By Fermat, $2^6 \equiv 1 \pmod 7$. $100 = 6 \cdot 16 + 4$, so $2^{100} \equiv 2^4 = 16 \equiv 2$.'
+          - problem: 'Compute $3^{53} \bmod 11$.'
+            answer: "5"
+            solution_sketch: 'By Fermat, $3^{10} \equiv 1 \pmod{11}$, and $53 = 10 \cdot 5 + 3$, so $3^{53} \equiv 3^3 = 27 = 2 \cdot 11 + 5 \equiv 5$.'
+        constraints: "prime moduli <= 23, base not divisible by p, exponents 50-1000; reduce the exponent mod p-1"
+      - id: kp2
+        name: "Euler's phi function"
+        key_prerequisites: [prime-factorization]
+        exemplars:
+          - problem: 'Compute $\varphi(10)$.'
+            answer: "4"
+            solution_sketch: 'The units mod $10$ are $1, 3, 7, 9$. Or $\varphi(10) = 10(1 - \tfrac12)(1 - \tfrac15) = 4$.'
+          - problem: 'Compute $\varphi(45)$.'
+            answer: "24"
+            solution_sketch: '$45 = 3^2 \cdot 5$, so $\varphi(45) = 45(1 - \tfrac13)(1 - \tfrac15) = 45 \cdot \tfrac23 \cdot \tfrac45 = 24$.'
+          - problem: 'Compute $\varphi(100)$.'
+            answer: "40"
+            solution_sketch: '$100 = 2^2 \cdot 5^2$: $\varphi(100) = 100 \cdot \tfrac12 \cdot \tfrac45 = 40$.'
+        constraints: "n <= 200 with at most two distinct prime factors; use the product formula"
+      - id: kp3
+        name: "Euler's theorem for composite moduli"
+        key_prerequisites: [modular-arithmetic, prime-factorization]
+        exemplars:
+          - problem: 'Compute $3^{42} \bmod 100$ (the last two digits of $3^{42}$).'
+            answer: "9"
+            solution_sketch: '$\gcd(3, 100) = 1$ and $\varphi(100) = 40$, so $3^{40} \equiv 1 \pmod{100}$ and $3^{42} \equiv 3^2 = 9$ — last two digits $09$.'
+          - problem: 'Find the last two digits of $7^{42}$.'
+            answer: "49"
+            solution_sketch: '$7^{40} \equiv 1 \pmod{100}$, so $7^{42} \equiv 7^2 = 49$.'
+        constraints: "modulus 10 or 100; base coprime to the modulus; exponent within 5 of a multiple of phi"
+    diagnostic_exemplar:
+      problem: 'Find the last two digits of $3^{43}$.'
+      answer: '27'
+      solution_sketch: '$\varphi(100) = 40$ and $\gcd(3, 100) = 1$, so $3^{40} \equiv 1 \pmod{100}$; $3^{43} \equiv 3^3 = 27$.'
+    anki_seeds:
+      - front: "Fermat's little theorem"
+        back: 'If $p$ is prime and $p \nmid a$, then $a^{p-1} \equiv 1 \pmod p$.'
+        type: basic
+      - front: "Euler's theorem"
+        back: 'If $\gcd(a, n) = 1$, then $a^{\varphi(n)} \equiv 1 \pmod n$.'
+        type: basic
+      - front: '$\varphi(p^k)$ for prime $p$'
+        back: '$p^k - p^{k-1} = p^k(1 - 1/p)$.'
+        type: basic
+
+  - id: rsa-cryptography
+    name: "RSA: Number Theory in Action"
+    core: false                # applications capstone for the number-theory spine
+    difficulty: 0.7
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 300
+    prerequisites:
+      - id: fermat-euler-theorems
+        weight: 0.8
+        key: true
+      - id: linear-congruences
+        weight: 0.7
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: "Key generation: n, phi(n), and the private exponent"
+        key_prerequisites: [fermat-euler-theorems, linear-congruences]
+        exemplars:
+          - problem: 'RSA with $p = 3$, $q = 11$, $e = 3$. Compute $n$, $\varphi(n)$, and the private exponent $d$.'
+            answer: '$n = 33$, $\varphi(n) = 20$, $d = 7$'
+            solution_sketch: '$n = pq = 33$; $\varphi(n) = (p-1)(q-1) = 2 \cdot 10 = 20$; $d = e^{-1} \bmod 20$: $3 \cdot 7 = 21 \equiv 1 \pmod{20}$, so $d = 7$.'
+          - problem: 'RSA with $p = 5$, $q = 11$, $e = 3$. Find $d$.'
+            answer: '$d = 27$'
+            solution_sketch: '$\varphi(55) = 4 \cdot 10 = 40$ and $3 \cdot 27 = 81 = 2 \cdot 40 + 1$, so $d = 27$.'
+        constraints: "primes from {3,5,7,11,13}; e coprime to phi; d found via extended Euclid, stated as least positive residue"
+      - id: kp2
+        name: "Encrypting and decrypting small messages"
+        key_prerequisites: [fermat-euler-theorems, modular-arithmetic]
+        exemplars:
+          - problem: 'With public key $n = 33$, $e = 3$, encrypt the message $m = 4$.'
+            answer: "31"
+            solution_sketch: '$c = m^e \bmod n = 4^3 = 64 = 33 + 31 \equiv 31 \pmod{33}$.'
+          - problem: 'With $n = 33$, $d = 7$, decrypt the ciphertext $c = 8$.'
+            answer: "2"
+            solution_sketch: '$m = c^d \bmod n = 8^7 \bmod 33$. $8^2 = 64 \equiv 31 \equiv -2$; $8^4 \equiv 4$; $8^7 = 8^4 \cdot 8^2 \cdot 8 \equiv 4 \cdot (-2) \cdot 8 = -64 \equiv 2 \pmod{33}$. (Check: $2^3 = 8$.)'
+        constraints: "n <= 60, messages 2-20 coprime to n; exponentiation by repeated squaring; verify round-trip when feasible"
+    diagnostic_exemplar:
+      problem: 'RSA with $p = 3$, $q = 11$, $e = 3$: encrypt $m = 2$, then state the private exponent $d$.'
+      answer: '$c = 8$; $d = 7$'
+      solution_sketch: '$c = 2^3 = 8 \bmod 33$; $d = 3^{-1} \bmod 20 = 7$ since $21 \equiv 1 \pmod{20}$.'
+    anki_seeds:
+      - front: "RSA key relation between $e$ and $d$"
+        back: '$ed \equiv 1 \pmod{\varphi(n)}$ where $n = pq$ and $\varphi(n) = (p-1)(q-1)$.'
+        type: basic
+      - front: "Why is RSA hard to break but easy to use?"
+        back: 'Encrypting needs only $n$ and $e$; finding $d$ requires $\varphi(n)$, which in practice requires factoring $n$.'
+        type: basic

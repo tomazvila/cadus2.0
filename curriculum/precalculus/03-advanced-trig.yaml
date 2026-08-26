@@ -1,0 +1,530 @@
+unit: advanced-trig
+course: precalculus
+module: "Advanced Trigonometry"
+topics:
+  - id: inverse-trig-functions
+    name: Inverse Trigonometric Functions
+    core: true
+    difficulty: 0.55
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 150
+    prerequisites:
+      - id: unit-circle
+        weight: 0.7
+        key: true
+      - id: inverse-functions
+        weight: 0.6
+        key: true
+      - id: domain-range
+        weight: 0.4
+      - id: trig-graphs-basic
+        weight: 0.3
+      - id: trig-identities-basic
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Evaluate at standard values
+        key_prerequisites: [unit-circle]
+        constraints: "inputs drawn from unit-circle values; answers in radians"
+        exemplars:
+          - problem: 'Evaluate $\arcsin\left(\frac{1}{2}\right)$.'
+            answer: "π/6"
+          - problem: 'Evaluate $\arctan(1)$.'
+            answer: "π/4"
+          - problem: 'Evaluate $\arccos\left(-\frac{1}{2}\right)$.'
+            answer: "2π/3"
+            solution_sketch: 'Arccos returns angles in $[0, \pi]$; $\cos(2\pi/3) = -\frac{1}{2}$.'
+      - id: kp2
+        name: Principal ranges
+        key_prerequisites: [inverse-functions, unit-circle]
+        constraints: "arcsin: [-π/2, π/2]; arccos: [0, π]; arctan: (-π/2, π/2)"
+        exemplars:
+          - problem: 'Evaluate $\arcsin\left(\sin\frac{5\pi}{6}\right)$.'
+            answer: "π/6"
+            solution_sketch: '$\sin(5\pi/6) = \frac{1}{2}$, and arcsin returns the angle in $[-\pi/2, \pi/2]$.'
+          - problem: 'Evaluate $\arccos(-1)$.'
+            answer: "π"
+      - id: kp3
+        name: Compose trig with inverse trig
+        key_prerequisites: [unit-circle, trig-identities-basic]
+        constraints: "use a right triangle or the Pythagorean identity; first-quadrant inputs"
+        exemplars:
+          - problem: 'Evaluate $\cos\left(\arcsin\frac{3}{5}\right)$.'
+            answer: "4/5"
+            solution_sketch: 'A right triangle with opposite $3$, hypotenuse $5$ has adjacent $4$.'
+          - problem: 'Evaluate $\tan\left(\arccos\frac{5}{13}\right)$.'
+            answer: "12/5"
+    diagnostic_exemplar:
+      problem: 'Evaluate $\tan\left(\arcsin\frac{5}{13}\right)$.'
+      answer: "5/12"
+      solution_sketch: 'A right triangle with opposite $5$, hypotenuse $13$ has adjacent $12$; arcsin returns a first-quadrant angle here, so $\tan = \frac{5}{12}$.'
+    anki_seeds:
+      - front: "Principal ranges of arcsin, arccos, arctan?"
+        back: "arcsin: [-π/2, π/2]; arccos: [0, π]; arctan: (-π/2, π/2)"
+        type: basic
+
+  - id: sum-difference-identities
+    name: Sum and Difference Identities
+    core: true
+    difficulty: 0.55
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 180
+    prerequisites:
+      - id: unit-circle
+        weight: 0.7
+        key: true
+      - id: trig-identities-basic
+        weight: 0.6
+        key: true
+      - id: simplifying-radicals
+        weight: 0.4
+      - id: multiplying-fractions
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Exact values at non-special angles
+        key_prerequisites: [unit-circle, simplifying-radicals]
+        constraints: "targets like 15°, 75°, 105° built from 30/45/60"
+        exemplars:
+          - problem: 'Use $\cos(45^\circ - 30^\circ)$ to find the exact value of $\cos 15^\circ$.'
+            answer: "(√6 + √2)/4"
+            solution_sketch: '$\cos 45 \cos 30 + \sin 45 \sin 30 = \frac{\sqrt{2}}{2}\cdot\frac{\sqrt{3}}{2} + \frac{\sqrt{2}}{2}\cdot\frac{1}{2} = \frac{\sqrt{6} + \sqrt{2}}{4}$.'
+          - problem: 'Find the exact value of $\sin 15^\circ$.'
+            answer: "(√6 - √2)/4"
+            solution_sketch: '$\sin(45^\circ - 30^\circ) = \sin 45 \cos 30 - \cos 45 \sin 30$.'
+      - id: kp2
+        name: Collapse an expression into a single sine or cosine
+        key_prerequisites: [trig-identities-basic]
+        constraints: "expressions matching a sum/difference expansion exactly; numeric angle pairs collapse to a unit-circle angle"
+        exemplars:
+          - problem: 'Write $\sin x \cos y + \cos x \sin y$ as a single trig function.'
+            answer: "sin(x + y)"
+          - problem: 'Evaluate $\cos 80^\circ \cos 20^\circ + \sin 80^\circ \sin 20^\circ$ exactly.'
+            answer: "1/2"
+            solution_sketch: 'This is $\cos(80^\circ - 20^\circ) = \cos 60^\circ$.'
+      - id: kp3
+        name: Sum formulas from given sine and cosine values
+        key_prerequisites: [trig-identities-basic, unit-circle]
+        constraints: "use Pythagorean-triple values; state the quadrant"
+        exemplars:
+          - problem: 'Given $\sin\alpha = \frac{3}{5}$ and $\cos\beta = \frac{5}{13}$ with $\alpha, \beta$ in Quadrant I, find $\sin(\alpha + \beta)$.'
+            answer: "63/65"
+            solution_sketch: '$\cos\alpha = \frac{4}{5}$, $\sin\beta = \frac{12}{13}$; $\frac{3}{5}\cdot\frac{5}{13} + \frac{4}{5}\cdot\frac{12}{13} = \frac{15 + 48}{65}$.'
+          - problem: 'With the same values, find $\cos(\alpha + \beta)$.'
+            answer: "-16/65"
+            solution_sketch: '$\frac{4}{5}\cdot\frac{5}{13} - \frac{3}{5}\cdot\frac{12}{13} = \frac{20 - 36}{65}$.'
+    diagnostic_exemplar:
+      problem: 'Given $\sin\alpha = \frac{4}{5}$ and $\sin\beta = \frac{12}{13}$ with $\alpha, \beta$ in Quadrant I, find $\sin(\alpha + \beta)$.'
+      answer: "56/65"
+      solution_sketch: '$\cos\alpha = \frac{3}{5}$, $\cos\beta = \frac{5}{13}$; $\sin(\alpha+\beta) = \frac{4}{5}\cdot\frac{5}{13} + \frac{3}{5}\cdot\frac{12}{13} = \frac{20 + 36}{65}$.'
+    anki_seeds:
+      - front: "sin(A + B) = ?"
+        back: "sin A cos B + cos A sin B"
+        type: basic
+      - front: "cos(A + B) = ?"
+        back: "cos A cos B - sin A sin B"
+        type: basic
+
+  - id: double-half-angle-identities
+    name: Double- and Half-Angle Identities
+    core: true
+    difficulty: 0.6
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 180
+    prerequisites:
+      - id: sum-difference-identities
+        weight: 0.7
+        key: true
+      - id: trig-identities-basic
+        weight: 0.5
+        key: true
+      - id: simplifying-radicals
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: Double-angle values from a known ratio
+        key_prerequisites: [trig-identities-basic]
+        constraints: "Pythagorean-triple values; quadrant given"
+        exemplars:
+          - problem: 'If $\sin\theta = \frac{3}{5}$ with $\theta$ in Quadrant I, find $\sin 2\theta$.'
+            answer: "24/25"
+            solution_sketch: '$\cos\theta = \frac{4}{5}$; $\sin 2\theta = 2 \cdot \frac{3}{5} \cdot \frac{4}{5}$.'
+          - problem: 'With the same $\theta$, find $\cos 2\theta$.'
+            answer: "7/25"
+            solution_sketch: '$\cos 2\theta = 1 - 2\sin^2\theta = 1 - \frac{18}{25}$.'
+      - id: kp2
+        name: The three forms of cos 2θ
+        key_prerequisites: [sum-difference-identities]
+        constraints: "pick the cos 2θ form matching the given ratio (no quadrant needed); rewriting tasks match one form exactly"
+        exemplars:
+          - problem: 'If $\cos\theta = \frac{1}{3}$, find $\cos 2\theta$.'
+            answer: "-7/9"
+            solution_sketch: '$\cos 2\theta = 2\cos^2\theta - 1 = \frac{2}{9} - 1$. No quadrant needed.'
+          - problem: 'Write $1 - 2\sin^2 x$ as a single trig function.'
+            answer: "cos 2x"
+      - id: kp3
+        name: Half-angle values
+        key_prerequisites: [sum-difference-identities, simplifying-radicals]
+        constraints: "half-angle of 30°, 45°, 60°, 90°; choose the sign from the quadrant"
+        exemplars:
+          - problem: 'Use a half-angle identity to find the exact value of $\cos 15^\circ$ as a nested radical.'
+            answer: "√(2 + √3)/2"
+            solution_sketch: '$\cos 15^\circ = \sqrt{\frac{1 + \cos 30^\circ}{2}} = \sqrt{\frac{2 + \sqrt{3}}{4}}$.'
+          - problem: 'Find $\sin 22.5^\circ$ exactly.'
+            answer: "√(2 - √2)/2"
+            solution_sketch: '$\sin 22.5^\circ = \sqrt{\frac{1 - \cos 45^\circ}{2}} = \sqrt{\frac{2 - \sqrt{2}}{4}}$.'
+    diagnostic_exemplar:
+      problem: 'Use a half-angle identity to find the exact value of $\sin 15^\circ$ as a nested radical.'
+      answer: "√(2 - √3)/2"
+      solution_sketch: '$\sin 15^\circ = \sqrt{\frac{1 - \cos 30^\circ}{2}} = \sqrt{\frac{2 - \sqrt{3}}{4}}$; positive since $15^\circ$ is in Quadrant I.'
+    anki_seeds:
+      - front: "sin 2θ = ?"
+        back: "2 sin θ cos θ"
+        type: basic
+      - front: "The three forms of cos 2θ?"
+        back: "cos²θ - sin²θ = 2cos²θ - 1 = 1 - 2sin²θ"
+        type: basic
+      - front: "Half-angle: sin(θ/2) = ?"
+        back: "±√((1 - cos θ)/2), sign chosen by the quadrant of θ/2"
+        type: basic
+
+  - id: product-to-sum-identities
+    name: Product-to-Sum and Sum-to-Product Identities
+    core: true                 # machinery: calculus-2 trigonometric-integrals (core) integrates sin(mx)cos(nx) via these
+    difficulty: 0.6
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 180
+    prerequisites:
+      - id: sum-difference-identities
+        weight: 0.8
+        key: true
+      - id: trig-identities-basic
+        weight: 0.4
+      - id: unit-circle
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Rewrite a product as a sum
+        key_prerequisites: [sum-difference-identities]
+        constraints: "arguments mx, nx with m, n small positive integers, m != n; derive from adding/subtracting two sum-difference expansions when asked"
+        exemplars:
+          - problem: 'Write $\sin 3x \cos x$ as a sum of trig functions.'
+            answer: "(sin(4x) + sin(2x))/2"
+            solution_sketch: 'Add the expansions of $\sin(3x + x)$ and $\sin(3x - x)$: the $\cos 3x \sin x$ terms cancel, leaving $\sin 4x + \sin 2x = 2\sin 3x\cos x$.'
+          - problem: 'Write $\cos 5x \cos 2x$ as a sum.'
+            answer: "(cos(3x) + cos(7x))/2"
+            solution_sketch: '$\cos A\cos B = \frac{1}{2}[\cos(A - B) + \cos(A + B)]$ with $A = 5x$, $B = 2x$.'
+          - problem: 'Write $\sin 4x \sin x$ as a sum.'
+            answer: "(cos(3x) - cos(5x))/2"
+            solution_sketch: '$\sin A\sin B = \frac{1}{2}[\cos(A - B) - \cos(A + B)]$: subtracting the two cosine expansions isolates the $\sin A \sin B$ terms.'
+      - id: kp2
+        name: Exact values via product-to-sum
+        key_prerequisites: [sum-difference-identities, unit-circle]
+        constraints: "angle pairs whose sum and difference are unit-circle angles (e.g. 75° and 15°, 105° and 15°)"
+        exemplars:
+          - problem: 'Evaluate $\sin 75^\circ \sin 15^\circ$ exactly using a product-to-sum identity.'
+            answer: "1/4"
+            solution_sketch: '$\frac{1}{2}[\cos(75^\circ - 15^\circ) - \cos(75^\circ + 15^\circ)] = \frac{1}{2}[\cos 60^\circ - \cos 90^\circ] = \frac{1}{2}\left[\frac{1}{2} - 0\right]$.'
+          - problem: 'Evaluate $\sin 75^\circ \cos 15^\circ$ exactly.'
+            answer: "(2 + √3)/4"
+            solution_sketch: '$\frac{1}{2}[\sin 90^\circ + \sin 60^\circ] = \frac{1}{2}\left[1 + \frac{\sqrt{3}}{2}\right] = \frac{2 + \sqrt{3}}{4}$.'
+      - id: kp3
+        name: Sum-to-product (the reverse direction)
+        key_prerequisites: [sum-difference-identities]
+        constraints: "sums/differences of sines or cosines with arguments mx, nx of the same parity, so half-sum and half-difference are integer multiples of x"
+        exemplars:
+          - problem: 'Write $\sin 5x + \sin 3x$ as a product.'
+            answer: "2 sin(4x) cos(x)"
+            solution_sketch: '$\sin A + \sin B = 2\sin\frac{A + B}{2}\cos\frac{A - B}{2}$ with half-sum $4x$ and half-difference $x$.'
+          - problem: 'Evaluate $\cos 75^\circ + \cos 15^\circ$ exactly by writing it as a product.'
+            answer: "√6/2"
+            solution_sketch: '$2\cos 45^\circ \cos 30^\circ = 2 \cdot \frac{\sqrt{2}}{2} \cdot \frac{\sqrt{3}}{2} = \frac{\sqrt{6}}{2}$.'
+    diagnostic_exemplar:
+      problem: 'Evaluate $\sin 105^\circ + \sin 15^\circ$ exactly by writing it as a product.'
+      answer: "√6/2"
+      solution_sketch: '$2\sin\frac{105^\circ + 15^\circ}{2}\cos\frac{105^\circ - 15^\circ}{2} = 2\sin 60^\circ\cos 45^\circ = 2 \cdot \frac{\sqrt{3}}{2} \cdot \frac{\sqrt{2}}{2} = \frac{\sqrt{6}}{2}$.'
+    anki_seeds:
+      - front: "sin A cos B = ?"
+        back: "½[sin(A + B) + sin(A − B)]"
+        type: basic
+      - front: "cos A cos B = ? and sin A sin B = ?"
+        back: "½[cos(A − B) + cos(A + B)] and ½[cos(A − B) − cos(A + B)]"
+        type: basic
+      - front: "sin A + sin B as a product?"
+        back: "2 sin((A + B)/2) cos((A − B)/2)"
+        type: basic
+
+  - id: sinusoid-phase-shift
+    name: Sinusoids with Phase Shift and Modeling
+    # supplemental: rule 1 — key ancestor trig-graphs-midline is core: false; the
+    # only in-tree consumer (differential-equations:free-undamped-oscillations,
+    # ledger edge) is supplemental too (re-audit R-05 + R-21 as kp3).
+    core: false
+    difficulty: 0.7
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 200
+    prerequisites:
+      - id: trig-graphs-midline
+        weight: 0.8
+        key: true
+      - id: function-transformations-shifts
+        weight: 0.5
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: Read all four parameters
+        key_prerequisites: [trig-graphs-midline, function-transformations-shifts]
+        constraints: "B in {1, 2, 3, 1/2}; C a multiple of π/6 or π/4; include one unfactored argument Bx - φ that must be factored before reading the shift"
+        exemplars:
+          - problem: 'State the amplitude, period, phase shift, and midline of $y = 3\sin\left(2\left(x - \frac{\pi}{4}\right)\right) + 1$.'
+            answer: "amplitude 3, period π, phase shift π/4 right, midline y = 1"
+            solution_sketch: 'Amplitude $|A| = 3$; period $2\pi/B = \pi$; the argument $2(x - \pi/4)$ shifts right $\pi/4$; midline $y = D = 1$.'
+          - problem: 'State the phase shift of $y = \cos\left(x + \frac{\pi}{6}\right)$.'
+            answer: "π/6 left"
+            solution_sketch: '$x + \frac{\pi}{6} = x - \left(-\frac{\pi}{6}\right)$, so $C = -\frac{\pi}{6}$: a shift left.'
+          - problem: 'State the period and phase shift of $y = \sin\left(2x - \frac{\pi}{3}\right)$.'
+            answer: "period π, phase shift π/6 right"
+            solution_sketch: 'Factor first: $\sin\left(2\left(x - \frac{\pi}{6}\right)\right)$. The shift is $\frac{\pi}{3} \div 2$, not $\frac{\pi}{3}$.'
+      - id: kp2
+        name: Write the equation from features or a graph
+        key_prerequisites: [trig-graphs-midline, function-transformations-shifts]
+        constraints: "integer amplitudes and midlines; periods 2π, π, or 4π; features given as max/min values and locations at multiples of π/6 or π/4"
+        exemplars:
+          - problem: 'Write a sine function with amplitude $2$, period $\pi$, phase shift $\frac{\pi}{4}$ right, and midline $y = 3$. Give the right-hand side of $y = \ldots$'
+            answer: "2 sin(2(x - π/4)) + 3"
+            solution_sketch: '$B = \frac{2\pi}{\text{period}} = 2$; assemble $A\sin(B(x - C)) + D$.'
+          - problem: 'A sinusoid with period $2\pi$ has a maximum of $5$ at $x = \frac{\pi}{2}$ and a minimum of $-1$. Write it as a cosine function.'
+            answer: "y = 3 cos(x - π/2) + 2"
+            solution_sketch: 'Amplitude $\frac{5 - (-1)}{2} = 3$, midline $y = 2$; a cosine peaks at its phase shift, so shift right $\frac{\pi}{2}$.'
+          - problem: 'The graph of $y = \sin x$ has a maximum at $\left(\frac{\pi}{2}, 1\right)$. Where is the corresponding maximum of $y = \sin\left(x - \frac{\pi}{3}\right) + 2$?'
+            answer: "(5π/6, 3)"
+            solution_sketch: 'Every point moves right $\frac{\pi}{3}$ and up $2$.'
+      - id: kp3
+        name: Sinusoidal modeling
+        key_prerequisites: [trig-graphs-midline]
+        constraints: "metric units and 24-hour times; periods giving B as a simple π-fraction; the phase pinned by a stated maximum, minimum, or start position"
+        exemplars:
+          - problem: 'A Ferris wheel of radius $10$ m has its centre $12$ m above the ground and turns once every $60$ s. A cabin starts at the lowest point at $t = 0$. Write its height $h(t)$ in metres as a cosine function.'
+            answer: "h(t) = 12 - 10 cos(πt/30)"
+            solution_sketch: 'Midline $12$, amplitude $10$, $B = \frac{2\pi}{60} = \frac{\pi}{30}$; starting at the minimum means a reflected cosine.'
+          - problem: 'At a harbour the high tide of $6$ m occurs at 03:00 and the next low tide of $2$ m at 09:00. Model the depth $d(t)$ with a cosine, $t$ in hours after midnight.'
+            answer: "d(t) = 2 cos(π(t - 3)/6) + 4"
+            solution_sketch: 'Midline $\frac{6+2}{2} = 4$, amplitude $2$; high-to-low is half a period, so the period is $12$ h and $B = \frac{\pi}{6}$; the cosine peaks at $t = 3$.'
+          - problem: 'Using $h(t) = 12 - 10\cos\left(\frac{\pi t}{30}\right)$, find the cabin height at $t = 15$ s.'
+            answer: "12 m"
+            solution_sketch: '$\cos\left(\frac{\pi}{2}\right) = 0$, so $h = 12$: the cabin is level with the centre.'
+    diagnostic_exemplar:
+      problem: 'A Ferris wheel of radius $8$ m has its centre $10$ m above the ground and turns once every $40$ s. A cabin starts at the lowest point at $t = 0$. Write its height $h(t)$ in metres as a cosine function.'
+      answer: "h(t) = 10 - 8 cos(πt/20)"
+      solution_sketch: 'Midline $10$, amplitude $8$, $B = \frac{2\pi}{40} = \frac{\pi}{20}$; starting at the minimum means a reflected cosine.'
+    anki_seeds:
+      - front: "For y = A sin(B(x − C)) + D, the phase shift is..."
+        back: "C: right if C > 0, left if C < 0 (read only after factoring B out of the argument)."
+        type: basic
+      - front: "To read the phase shift of y = sin(Bx − φ), first..."
+        back: "Factor: sin(B(x − φ/B)). The shift is φ/B, not φ."
+        type: basic
+      - front: "A sinusoid starting at its minimum at t = 0 is most simply modeled by..."
+        back: "y = D − A cos(Bt) (a reflected cosine)."
+        type: basic
+
+  - id: tangent-reciprocal-graphs
+    name: Graphs of Tangent and the Reciprocal Functions
+    # supplemental: terminal graph-reading topic; nothing downstream consumes it —
+    # calculus handles tan/sec analytically (re-audit R-06, §2: ships consumer-less).
+    core: false
+    difficulty: 0.65
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 180
+    prerequisites:
+      - id: unit-circle-special-angles
+        weight: 0.6
+        key: true
+      - id: reciprocal-trig-functions
+        weight: 0.6
+        key: true
+      - id: sine-cosine-parent-graphs
+        weight: 0.4
+      # vertical-asymptote language (x = a lines the graph approaches) is taught here
+      - id: vertical-horizontal-asymptotes
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: The tangent graph
+        key_prerequisites: [unit-circle-special-angles, vertical-horizontal-asymptotes]
+        constraints: "asymptotes written x = π/2 + πk with k an integer; zeros at integer multiples of π"
+        exemplars:
+          - problem: 'State the period of $y = \tan x$ and the equations of its vertical asymptotes.'
+            answer: "period π; asymptotes x = π/2 + πk for integer k"
+            solution_sketch: 'Tangent repeats every $\pi$ and blows up where $\cos x = 0$.'
+          - problem: 'On $\left(-\frac{\pi}{2}, \frac{\pi}{2}\right)$, is $y = \tan x$ increasing or decreasing, and where does it cross the $x$-axis?'
+            answer: "increasing; crosses at x = 0"
+          - problem: 'State the domain of $y = \tan x$.'
+            answer: "all real x except x = π/2 + πk (k an integer)"
+      - id: kp2
+        name: Secant and cosecant from their reciprocals
+        key_prerequisites: [reciprocal-trig-functions, sine-cosine-parent-graphs]
+        constraints: "derive every feature from the sine or cosine graph: asymptotes at its zeros, branches anchored at its max/min"
+        exemplars:
+          - problem: 'State the vertical asymptotes of $y = \sec x$ on $[0, 2\pi]$.'
+            answer: "x = π/2 and x = 3π/2"
+            solution_sketch: 'Secant blows up exactly where $\cos x = 0$.'
+          - problem: 'State the range of $y = \csc x$.'
+            answer: "y ≤ -1 or y ≥ 1"
+            solution_sketch: 'Reciprocals of $\sin x \in [-1, 1] \setminus \{0\}$ never land in $(-1, 1)$.'
+          - problem: 'The graph of $y = \cos x$ has a maximum at $(0, 1)$. What feature does $y = \sec x$ have there?'
+            answer: "a local minimum at (0, 1)"
+            solution_sketch: 'Where the base graph peaks at $1$, its reciprocal bottoms out at $1$.'
+      - id: kp3
+        name: Cotangent and transformed graphs
+        key_prerequisites: [reciprocal-trig-functions, unit-circle-special-angles]
+        constraints: "cot as the reflected/shifted tangent shape; transformed arguments limited to 2x and x/2"
+        exemplars:
+          - problem: 'State the period of $y = \cot x$ and the equations of its vertical asymptotes.'
+            answer: "period π; asymptotes x = πk for integer k"
+            solution_sketch: 'Cotangent blows up where $\sin x = 0$.'
+          - problem: 'Find the period of $y = \tan(2x)$ and its vertical asymptote in $\left(0, \frac{\pi}{2}\right)$.'
+            answer: "period π/2; asymptote x = π/4"
+            solution_sketch: 'Period $\pi/2$; asymptotes where $2x = \frac{\pi}{2} + \pi k$.'
+          - problem: 'Is $y = \cot x$ increasing or decreasing on $(0, \pi)$?'
+            answer: "decreasing"
+    diagnostic_exemplar:
+      problem: 'Find the period of $y = \tan\frac{x}{2}$ and the equation of its vertical asymptote in $(0, 2\pi)$.'
+      answer: "period 2π; asymptote x = π"
+      solution_sketch: 'Period $\pi \div \frac{1}{2} = 2\pi$; asymptotes where $\frac{x}{2} = \frac{\pi}{2} + \pi k$, so $x = \pi$ inside $(0, 2\pi)$.'
+    anki_seeds:
+      - front: "Period of tan and cot?"
+        back: "π (not 2π)."
+        type: basic
+      - front: "Vertical asymptotes of sec x occur where..."
+        back: "cos x = 0, i.e. x = π/2 + πk."
+        type: basic
+      - front: "Range of sec and csc?"
+        back: "y ≤ −1 or y ≥ 1 — the band (−1, 1) is never reached."
+        type: basic
+
+  - id: basic-trig-equations
+    name: Basic Trigonometric Equations
+    core: false                # supplemental, with trig-equations-identities: terminal branch
+    difficulty: 0.55
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 180
+    prerequisites:
+      - id: unit-circle
+        weight: 0.7
+        key: true
+      - id: inverse-trig-functions
+        weight: 0.5
+        key: true
+      - id: radians-degrees
+        weight: 0.4
+      - id: two-step-equations
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Solve directly on [0, 2π)
+        key_prerequisites: [unit-circle]
+        constraints: "unit-circle values only; always ask for all solutions in [0, 2π)"
+        exemplars:
+          - problem: 'Solve $\sin x = \frac{1}{2}$ on $[0, 2\pi)$.'
+            answer: "x = π/6, 5π/6"
+          - problem: 'Solve $\cos x = -\frac{\sqrt{2}}{2}$ on $[0, 2\pi)$.'
+            answer: "x = 3π/4, 5π/4"
+      - id: kp2
+        name: Isolate the trig function first
+        key_prerequisites: [two-step-equations, unit-circle]
+        constraints: "one or two algebraic steps (add/divide) isolating sin, cos, or tan to a unit-circle value; solutions on [0, 2π)"
+        exemplars:
+          - problem: 'Solve $2\cos x - 1 = 0$ on $[0, 2\pi)$.'
+            answer: "x = π/3, 5π/3"
+            solution_sketch: '$\cos x = \frac{1}{2}$.'
+          - problem: 'Solve $\sqrt{3}\tan x = 1$ on $[0, 2\pi)$.'
+            answer: "x = π/6, 7π/6"
+            solution_sketch: '$\tan x = \frac{\sqrt{3}}{3}$; tangent is positive in Quadrants I and III.'
+      - id: kp3
+        name: Multiple-angle equations
+        key_prerequisites: [unit-circle, radians-degrees]
+        constraints: "arguments 2x or x/2; expand the solution window before dividing"
+        exemplars:
+          - problem: 'Solve $\sin 2x = 1$ on $[0, 2\pi)$.'
+            answer: "x = π/4, 5π/4"
+            solution_sketch: '$2x = \frac{\pi}{2} + 2\pi k$ with $2x \in [0, 4\pi)$: $2x = \frac{\pi}{2}, \frac{5\pi}{2}$.'
+          - problem: 'Solve $\cos\frac{x}{2} = \frac{\sqrt{3}}{2}$ on $[0, 2\pi)$.'
+            answer: "x = π/3"
+            solution_sketch: '$\frac{x}{2} \in [0, \pi)$, so only $\frac{x}{2} = \frac{\pi}{6}$ lands in range.'
+    diagnostic_exemplar:
+      problem: 'Solve $\cos 2x = \frac{1}{2}$ on $[0, 2\pi)$.'
+      answer: "x = π/6, 5π/6, 7π/6, 11π/6"
+      solution_sketch: '$2x \in [0, 4\pi)$: $2x = \frac{\pi}{3}, \frac{5\pi}{3}, \frac{7\pi}{3}, \frac{11\pi}{3}$; divide by $2$.'
+    anki_seeds:
+      - front: "sin x = sin θ has which two solution families?"
+        back: "x = θ + 2πk and x = (π - θ) + 2πk"
+        type: basic
+
+  - id: trig-equations-identities
+    name: Trig Equations via Identities
+    core: false                # supplemental: terminal trig-equation practice genre
+    difficulty: 0.65
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 240
+    prerequisites:
+      - id: basic-trig-equations
+        weight: 0.7
+        key: true
+      - id: double-half-angle-identities
+        weight: 0.6
+        key: true
+      - id: quadratic-equations-factoring
+        weight: 0.5
+      - id: trig-identities-basic
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: Quadratic in one trig function
+        key_prerequisites: [quadratic-equations-factoring, basic-trig-equations]
+        constraints: "factorable quadratics in sin x or cos x whose roots are unit-circle values; solutions on [0, 2π)"
+        exemplars:
+          - problem: 'Solve $2\sin^2 x - \sin x - 1 = 0$ on $[0, 2\pi)$.'
+            answer: "x = π/2, 7π/6, 11π/6"
+            solution_sketch: '$(2\sin x + 1)(\sin x - 1) = 0$: $\sin x = 1$ or $\sin x = -\frac{1}{2}$.'
+          - problem: 'Solve $2\cos^2 x - \cos x = 0$ on $[0, 2\pi)$.'
+            answer: "x = π/2, 3π/2, π/3, 5π/3"
+            solution_sketch: '$\cos x (2\cos x - 1) = 0$.'
+      - id: kp2
+        name: Convert with the Pythagorean identity
+        key_prerequisites: [trig-identities-basic, quadratic-equations-factoring]
+        constraints: "substitute sin² = 1 - cos² (or vice versa) to reach one function"
+        exemplars:
+          - problem: 'Solve $2\sin^2 x = 2 + \cos x$ on $[0, 2\pi)$.'
+            answer: "x = π/2, 3π/2, 2π/3, 4π/3"
+            solution_sketch: '$2(1 - \cos^2 x) = 2 + \cos x$ gives $\cos x(2\cos x + 1) = 0$.'
+          - problem: 'Solve $\sin^2 x - \cos^2 x = 0$ on $[0, \pi)$.'
+            answer: "x = π/4, 3π/4"
+            solution_sketch: '$\cos 2x = 0$, so $2x = \frac{\pi}{2}, \frac{3\pi}{2}$.'
+      - id: kp3
+        name: Use a double-angle identity
+        key_prerequisites: [double-half-angle-identities, basic-trig-equations]
+        constraints: "never divide by a trig factor — factor it out instead"
+        exemplars:
+          - problem: 'Solve $\sin 2x = \sin x$ on $[0, 2\pi)$.'
+            answer: "x = 0, π, π/3, 5π/3"
+            solution_sketch: '$2\sin x\cos x - \sin x = \sin x(2\cos x - 1) = 0$.'
+          - problem: 'Solve $\cos 2x + \sin x = 0$ on $[0, 2\pi)$.'
+            answer: "x = π/2, 7π/6, 11π/6"
+            solution_sketch: '$1 - 2\sin^2 x + \sin x = 0$, i.e. $2\sin^2 x - \sin x - 1 = 0$; factor as $(2\sin x + 1)(\sin x - 1) = 0$.'
+    diagnostic_exemplar:
+      problem: 'Solve $\cos 2x = \cos x$ on $[0, 2\pi)$.'
+      answer: "x = 0, 2π/3, 4π/3"
+      solution_sketch: '$2\cos^2 x - 1 = \cos x$, i.e. $(2\cos x + 1)(\cos x - 1) = 0$: $\cos x = 1$ gives $x = 0$, and $\cos x = -\frac{1}{2}$ gives $x = \frac{2\pi}{3}, \frac{4\pi}{3}$.'
+    anki_seeds:
+      - front: "Why must you factor sin x out of sin x cos x = sin x instead of dividing by sin x?"
+        back: "Dividing discards the solutions where sin x = 0."
+        type: basic

@@ -1,0 +1,540 @@
+unit: natural-transformations
+course: category-theory
+module: "Natural Transformations"
+topics:
+  - id: naturality-square
+    name: The Naturality Square
+    core: true
+    difficulty: 0.62
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 180
+    prerequisites:
+      - id: functors
+        weight: 0.5
+        key: true
+      - id: commutative-diagrams
+        weight: 0.5
+        key: true
+      - id: functor-composition-identity
+        weight: 0.2
+      - id: diagram-chasing
+        weight: 0.2
+      - id: category-definition
+        weight: 0.0
+    knowledge_points:
+      - id: kp1
+        name: Components and their types
+        key_prerequisites: [functors]
+        constraints: "Both functors must be parallel ($\\mathcal{C}\\to\\mathcal{D}$, same variance); always type each component before writing an equation."
+        exemplars:
+          - problem: "Given parallel functors $F,G\\colon\\mathcal{C}\\to\\mathcal{D}$, state what data a natural transformation $\\alpha\\colon F\\Rightarrow G$ carries and the type of each component."
+            answer: "One morphism $\\alpha_A\\colon FA\\to GA$ of $\\mathcal{D}$ for each object $A$ of $\\mathcal{C}$."
+            solution_sketch: "The data is a family indexed by the objects of $\\mathcal{C}$: for each object $A$, a morphism $\\alpha_A\\colon FA\\to GA$ in $\\mathcal{D}$, called the component of $\\alpha$ at $A$. The source is the $F$-image and the target the $G$-image of the same object, which is why $F$ and $G$ must be parallel functors with the same domain, codomain, and variance. The naturality condition is then an extra requirement on this family, one equation per morphism of $\\mathcal{C}$."
+          - problem: "Let $F,G\\colon\\mathcal{C}\\to P$ be parallel functors whose codomain is a poset $P$ viewed as a category. Type the components of a transformation $\\alpha\\colon F\\Rightarrow G$ and determine how many such $\\alpha$ there can be."
+            answer: "Each component must be a morphism $FA\\to GA$ in $P$, which exists iff $FA\\le GA$ and is then unique; so there is exactly one $\\alpha$ if $FA\\le GA$ for all $A$, and none otherwise."
+            solution_sketch: "The component at $A$ must be typed $\\alpha_A\\colon FA\\to GA$ in $P$. In a poset category $\\mathrm{Hom}(x,y)$ has one element if $x\\le y$ and is empty otherwise, so $\\alpha_A$ exists exactly when $FA\\le GA$, and when it exists there is no choice about it. Hence $\\mathrm{Nat}(F,G)$ has at most one element: it is a singleton when $FA\\le GA$ for every object $A$, and empty as soon as one object fails that. Naturality imposes nothing extra, since both legs of any square are morphisms $FA\\to GB$ in a thin category and are therefore equal. So functors into a poset are themselves ordered pointwise."
+      - id: kp2
+        name: Writing and reading the square
+        key_prerequisites: [commutative-diagrams]
+        constraints: "Label the four sides of the square with $\\alpha_A$, $Ff$, $Gf$, $\\alpha_B$ before writing the equation."
+        exemplars:
+          - problem: "For $\\alpha\\colon F\\Rightarrow G$ and $f\\colon A\\to B$, draw the naturality square and write the equation it asserts."
+            answer: "The square with sides $\\alpha_A\\colon FA\\to GA$, $Ff\\colon FA\\to FB$, $Gf\\colon GA\\to GB$, $\\alpha_B\\colon FB\\to GB$ commutes: $Gf\\circ\\alpha_A=\\alpha_B\\circ Ff$."
+            solution_sketch: "Place $FA$ top-left, $GA$ top-right, $FB$ bottom-left, $GB$ bottom-right. The top edge is $\\alpha_A\\colon FA\\to GA$, the left edge $Ff\\colon FA\\to FB$, the right edge $Gf\\colon GA\\to GB$, the bottom edge $\\alpha_B\\colon FB\\to GB$. The two directed paths $FA\\to GB$ are $Gf\\circ\\alpha_A$ (across then down) and $\\alpha_B\\circ Ff$ (down then across); naturality says they are equal: $Gf\\circ\\alpha_A=\\alpha_B\\circ Ff$."
+          - problem: "A family $(\\alpha_A)$ satisfies $Gf\\circ\\alpha_A=\\alpha_B\\circ Ff$ for every $f$. Write the resulting equation for a composite $g\\circ f$ with $f\\colon A\\to B$, $g\\colon B\\to C$, and show it follows from the squares at $f$ and at $g$."
+            answer: "$G(g\\circ f)\\circ\\alpha_A=\\alpha_C\\circ F(g\\circ f)$, obtained by pasting the two squares."
+            solution_sketch: "Using functoriality, $G(g\\circ f)\\circ\\alpha_A=Gg\\circ Gf\\circ\\alpha_A=Gg\\circ\\alpha_B\\circ Ff$ (square at $f$) $=\\alpha_C\\circ Fg\\circ Ff$ (square at $g$) $=\\alpha_C\\circ F(g\\circ f)$. So the square at a composite is the horizontal pasting of the squares at the factors; in particular naturality only has to be checked on a generating set of morphisms."
+      - id: kp3
+        name: Checking a square elementwise in Set
+        key_prerequisites: [diagram-chasing]
+        constraints: "Compute both legs on a general element and compare; do not appeal to a picture."
+        exemplars:
+          - problem: "Let $\\Delta_X\\colon X\\to X\\times X$ be $x\\mapsto(x,x)$. Verify $\\Delta$ is a natural transformation from $1_{\\mathbf{Set}}$ to the functor $X\\mapsto X\\times X$, $f\\mapsto f\\times f$."
+            answer: "Both legs send $x\\mapsto(f(x),f(x))$."
+            solution_sketch: "For $f\\colon X\\to Y$ the square asks $(f\\times f)\\circ\\Delta_X=\\Delta_Y\\circ f$. On an element $x\\in X$: the left leg gives $(f\\times f)(x,x)=(f(x),f(x))$; the right leg gives $\\Delta_Y(f(x))=(f(x),f(x))$. They agree for every $x$, so the two functions are equal and the square commutes for every $f$: $\\Delta$ is natural."
+          - problem: "Let $L$ be the list functor ($LX=X^*$, $Lf=f^*$ applied letterwise) and let $\\Delta_{\\mathbb N}$ be the constant functor at $\\mathbb N$ (every morphism goes to $1_{\\mathbb N}$). Verify that length, $\\ell_X(x_1\\cdots x_n)=n$, is natural $L\\Rightarrow\\Delta_{\\mathbb N}$."
+            answer: "Both legs send a word of length $n$ to $n$, because mapping letterwise does not change length."
+            solution_sketch: "The square at $f\\colon X\\to Y$ asks $\\Delta_{\\mathbb N}(f)\\circ\\ell_X=\\ell_Y\\circ L(f)$. On a word $w=x_1\\cdots x_n$: the left leg gives $1_{\\mathbb N}(\\ell_X(w))=n$; the right leg gives $\\ell_Y(f(x_1)\\cdots f(x_n))=n$, since $f^*$ replaces each letter by one letter. They agree for every $w$, so the square commutes for every $f$ and $\\ell$ is natural. A transformation into a constant functor is exactly a family of maps that is invariant under the functor's action — here, 'length does not care what the letters are'."
+    diagnostic_exemplar:
+      problem: "Let $S\\colon\\mathbf{Set}\\to\\mathbf{Set}$ be the functor $X\\mapsto X\\sqcup X$, $f\\mapsto f\\sqcup f$, and let $\\iota_X\\colon X\\to X\\sqcup X$ be the left inclusion. Write the naturality square for $\\iota$ at $f\\colon X\\to Y$ and verify it elementwise."
+      answer: "The square asks $(f\\sqcup f)\\circ\\iota_X=\\iota_Y\\circ f$. On $x\\in X$: the left leg puts $x$ in the left copy and applies $f$ there, giving the left-copy element $f(x)$; the right leg applies $f$ and then includes into the left copy, also giving left-copy $f(x)$. The two legs agree at every $x$, so the square commutes for every $f$ and $\\iota\\colon 1_{\\mathbf{Set}}\\Rightarrow S$ is natural."
+      solution_sketch: "Write the square with legs $Sf=f\\sqcup f$ and $\\iota$, then chase a single $x\\in X$ both ways round; each route produces $f(x)$ in the left copy. That the copy-label matches is the entire content of naturality here."
+    anki_seeds:
+      - front: "The component of $\\alpha\\colon F\\Rightarrow G$ at an object $A$ has what type?"
+        back: "$\\alpha_A\\colon FA\\to GA$ (a morphism of the target category)."
+        type: basic
+      - front: "The naturality square for $\\alpha$ at $f\\colon A\\to B$ commutes: {{c1::$Gf\\circ\\alpha_A=\\alpha_B\\circ Ff$}}."
+        back: "$Gf\\circ\\alpha_A=\\alpha_B\\circ Ff$"
+        type: cloze
+      - front: "Why must $F$ and $G$ be parallel functors for $\\alpha\\colon F\\Rightarrow G$ to make sense?"
+        back: "so each component $\\alpha_A\\colon FA\\to GA$ is typable and $Ff$, $Gf$ point the same way."
+        type: basic
+
+  - id: natural-transformations
+    name: Natural Transformations
+    core: true
+    difficulty: 0.65
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 210
+    prerequisites:
+      - id: naturality-square
+        weight: 0.6
+        key: true
+      - id: functors
+        weight: 0.4
+        key: true
+      - id: commutative-diagrams
+        weight: 0.3
+      - id: hom-functors
+        weight: 0.3
+        key: true
+      - id: discrete-indiscrete-categories
+        weight: 0.2
+      - id: category-definition
+        weight: 0.0
+    knowledge_points:
+      - id: kp1
+        name: First examples in Set
+        key_prerequisites: [naturality-square]
+        constraints: "Concrete transformations on $\\mathbf{Set}$ endofunctors (power set, lists, products); verify the square elementwise on a general element, never by picture."
+        exemplars:
+          - problem: "Let $1_{\\mathbf{Set}}$ be the identity functor and $P$ the covariant power-set functor. Show $\\eta_A\\colon A\\to PA$, $a\\mapsto\\{a\\}$, is a natural transformation $1\\Rightarrow P$."
+            answer: "For $f\\colon A\\to B$, both legs send $a\\mapsto\\{f(a)\\}$."
+            solution_sketch: "With $\\eta_A(a)=\\{a\\}$ and $P(f)(S)=f[S]$: $P(f)(\\eta_A(a))=f[\\{a\\}]=\\{f(a)\\}$ and $\\eta_B(f(a))=\\{f(a)\\}$. These agree for all $a$, so $P(f)\\circ\\eta_A=\\eta_B\\circ f$; the naturality square commutes and $\\eta$ is natural."
+          - problem: "Show list-reversal $\\rho_X\\colon X^*\\to X^*$ is a natural transformation from the list functor $L$ to itself."
+            answer: "Mapping then reversing equals reversing then mapping."
+            solution_sketch: "$L(f)=f^*$ acts letterwise. For a word $w=x_1\\cdots x_n$: $f^*(\\rho_X(w))=f^*(x_n\\cdots x_1)=f(x_n)\\cdots f(x_1)=\\rho_Y(f(x_1)\\cdots f(x_n))=\\rho_Y(f^*(w))$. So $L(f)\\circ\\rho_X=\\rho_Y\\circ L(f)$, and $\\rho$ is natural."
+      - id: kp2
+        name: Natural transformations between hom-functors
+        key_prerequisites: [hom-functors]
+        constraints: "Use associativity of composition as the only ingredient; state which variable is fixed."
+        exemplars:
+          - problem: "Fix $f\\colon A\\to B$ in $\\mathcal{C}$. Prove that pre-composition $f^*$ with components $(f^*)_X\\colon\\mathrm{Hom}(B,X)\\to\\mathrm{Hom}(A,X)$, $g\\mapsto g\\circ f$, is a natural transformation $\\mathrm{Hom}(B,-)\\Rightarrow\\mathrm{Hom}(A,-)$."
+            answer: "Naturality at $k\\colon X\\to Y$ is associativity: $k\\circ(g\\circ f)=(k\\circ g)\\circ f$."
+            solution_sketch: "Both $\\mathrm{Hom}(B,-)$ and $\\mathrm{Hom}(A,-)$ are covariant functors to $\\mathbf{Set}$ acting on a morphism $k\\colon X\\to Y$ by post-composition $k_*$. Naturality at $k$ asks $\\mathrm{Hom}(A,k)\\circ(f^*)_X=(f^*)_Y\\circ\\mathrm{Hom}(B,k)$. On $g\\in\\mathrm{Hom}(B,X)$: the left side gives $k\\circ(g\\circ f)$ and the right side $(k\\circ g)\\circ f$. These agree by associativity, so $f^*$ is natural."
+          - problem: "Fix $f\\colon A\\to B$. Prove that post-composition $f_*$ with components $(f_*)_X\\colon\\mathrm{Hom}(X,A)\\to\\mathrm{Hom}(X,B)$, $h\\mapsto f\\circ h$, is a natural transformation $\\mathrm{Hom}(-,A)\\Rightarrow\\mathrm{Hom}(-,B)$ of presheaves."
+            answer: "Naturality at $u\\colon W\\to X$ is again associativity: $(f\\circ h)\\circ u=f\\circ(h\\circ u)$."
+            solution_sketch: "Both $\\mathrm{Hom}(-,A)$ and $\\mathrm{Hom}(-,B)$ are contravariant, acting on $u\\colon W\\to X$ by pre-composition $u^*$. Naturality asks $(f_*)_W\\circ\\mathrm{Hom}(u,A)=\\mathrm{Hom}(u,B)\\circ(f_*)_X$. On $h\\in\\mathrm{Hom}(X,A)$: the left side gives $f\\circ(h\\circ u)$ and the right side $(f\\circ h)\\circ u$, equal by associativity. So $f_*$ is a natural transformation of presheaves — this is the assignment used by the Yoneda embedding."
+      - id: kp3
+        name: Identities and degenerate cases
+        key_prerequisites: [discrete-indiscrete-categories]
+        constraints: "Say precisely which naturality squares have to be checked, and why they hold."
+        exemplars:
+          - problem: "Show that the family $(1_{FA})_A$ is a natural transformation $F\\Rightarrow F$, the identity transformation $1_F$."
+            answer: "Both legs of every square equal $Ff$."
+            solution_sketch: "Take $\\alpha_A=1_{FA}$. For $f\\colon A\\to B$ the square asks $Ff\\circ 1_{FA}=1_{FB}\\circ Ff$; by the unit laws both sides equal $Ff$. So the family is natural, giving the identity transformation $1_F\\colon F\\Rightarrow F$ — the identity morphism on $F$ in the functor category."
+          - problem: "Show that if $\\mathcal{C}$ is a discrete category then a natural transformation $\\alpha\\colon F\\Rightarrow G$ between any $F,G\\colon\\mathcal{C}\\to\\mathcal{D}$ is just an arbitrary family of morphisms $\\alpha_A\\colon FA\\to GA$."
+            answer: "The only morphisms are identities, so the naturality square is automatic."
+            solution_sketch: "In a discrete category the only morphisms are the identities $1_A$. The naturality square at $1_A$ reads $G(1_A)\\circ\\alpha_A=\\alpha_A\\circ F(1_A)$, i.e. $1_{GA}\\circ\\alpha_A=\\alpha_A\\circ 1_{FA}$, which holds for any choice of $\\alpha_A$. So naturality imposes no condition, and $\\alpha$ is exactly a family $(\\alpha_A\\colon FA\\to GA)_A$ with no constraints — which is why discrete shapes index families rather than diagrams."
+    diagnostic_exemplar:
+      problem: "Fix $f\\colon A\\to B$ in $\\mathcal{C}$. Prove that pre-composition, with components $(f^*)_X\\colon\\mathrm{Hom}(B,X)\\to\\mathrm{Hom}(A,X)$, $g\\mapsto g\\circ f$, is a natural transformation $\\mathrm{Hom}(B,-)\\Rightarrow\\mathrm{Hom}(A,-)$."
+      answer: "Both hom-functors act on $k\\colon X\\to Y$ by post-composition $k_*$. Naturality at $k$ asks $k_*\\circ(f^*)_X=(f^*)_Y\\circ k_*$. On $g\\in\\mathrm{Hom}(B,X)$: the left side gives $k\\circ(g\\circ f)$ and the right side $(k\\circ g)\\circ f$, equal by associativity. So every naturality square commutes and $f^*$ is natural."
+      solution_sketch: "Both hom-functors act by post-composition, so chasing an element $g$ through the naturality square at $k$ compares $k\\circ(g\\circ f)$ with $(k\\circ g)\\circ f$ — associativity is the whole proof."
+    anki_seeds:
+      - front: "A natural transformation $\\alpha\\colon F\\Rightarrow G$ is..."
+        back: "a family of components $\\alpha_A\\colon FA\\to GA$ such that $Gf\\circ\\alpha_A=\\alpha_B\\circ Ff$ for every $f\\colon A\\to B$."
+        type: basic
+      - front: "For $f\\colon A\\to B$, what are the two natural transformations built from $f$ by composition?"
+        back: "$f^*\\colon\\mathrm{Hom}(B,-)\\Rightarrow\\mathrm{Hom}(A,-)$ (pre-composition) and $f_*\\colon\\mathrm{Hom}(-,A)\\Rightarrow\\mathrm{Hom}(-,B)$ (post-composition)."
+        type: basic
+      - front: "The identity natural transformation $1_F$ has components {{c1::$1_{FA}$}}."
+        back: "$1_{FA}$"
+        type: cloze
+
+  - id: naturality-proofs
+    name: Proving Naturality
+    core: true
+    difficulty: 0.7
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 240
+    prerequisites:
+      - id: natural-transformations
+        weight: 0.5
+        key: true
+      - id: functors
+        weight: 0.6
+      - id: diagram-chasing
+        weight: 0.4
+        key: true
+      - id: commutative-diagrams
+        weight: 0.3
+      - id: direct-proof
+        weight: 0.0
+      - id: first-isomorphism-theorem
+        weight: 0.0
+      # Phase C reconciliation: kp1's constraints generate "quotient constructions such
+      # as abelianization" and its third exemplar proves $\eta_G : G \to G/[G,G]$ natural,
+      # leaning on descent of homomorphisms to the quotient — commutator-subgroup kp3.
+      - id: commutator-subgroup
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Verifying a naturality square in algebra
+        key_prerequisites: [natural-transformations, commutator-subgroup]
+        constraints: "Algebraic instances built from monoid or group homomorphisms, including quotient constructions such as abelianization: name the two functors and their common source and target, then chase a single element around the square, citing which homomorphism law (or well-definedness on cosets) makes each leg agree."
+        exemplars:
+          - problem: "Let $U\\colon\\mathbf{Mon}\\to\\mathbf{Set}$ be the forgetful functor. Prove that the squaring maps $s_M\\colon UM\\to UM$, $x\\mapsto x^2$, form a natural transformation $s\\colon U\\Rightarrow U$."
+            answer: "For every monoid homomorphism $f$, $Uf\\circ s_M=s_N\\circ Uf$, because $f(x^2)=f(x)^2$."
+            solution_sketch: "Both $U$ and $U$ go $\\mathbf{Mon}\\to\\mathbf{Set}$, so a transformation between them is well typed, and each component $s_M$ is only required to be a function. Fix a homomorphism $f\\colon M\\to N$; $Uf$ is its underlying function. Chase $x\\in UM$ both ways: one leg gives $Uf(s_M(x))=f(x\\cdot x)$, the other gives $s_N(Uf(x))=f(x)\\cdot f(x)$. Since $f$ preserves the operation, $f(x\\cdot x)=f(x)f(x)$, so the legs agree at every $x$ and the square commutes; $s$ is natural. Note $s_M$ is generally *not* a homomorphism — naturality only asks the components to be morphisms of the target category, here $\\mathbf{Set}$. The same chase with $x\\mapsto x^n$ works for every $n\\ge 1$, since homomorphisms preserve powers."
+          - problem: "Let $(-)^\\times\\colon\\mathbf{Mon}\\to\\mathbf{Set}$ send a monoid $M$ to its set of invertible elements $M^\\times$ and a homomorphism $f$ to its restriction $f^\\times$, and let $U\\colon\\mathbf{Mon}\\to\\mathbf{Set}$ be the forgetful functor. Check $(-)^\\times$ is well defined and prove the inclusions $\\iota_M\\colon M^\\times\\to UM$ form a natural transformation $(-)^\\times\\Rightarrow U$."
+            answer: "$f(u^{-1})$ inverts $f(u)$, so $f^\\times$ is well defined; then $Uf\\circ\\iota_M=\\iota_N\\circ f^\\times$, both sending $u\\mapsto f(u)$."
+            solution_sketch: "First, well-definedness: if $u\\in M^\\times$ has inverse $u^{-1}$ then $f(u)f(u^{-1})=f(uu^{-1})=f(e_M)=e_N$ and symmetrically, using that a monoid homomorphism preserves the operation and the identity; so $f(u)\\in N^\\times$ and $f^\\times(u):=f(u)$ makes sense. Identities and composites restrict to identities and composites, so $(-)^\\times$ is a functor. Now naturality at $f\\colon M\\to N$: chase $u\\in M^\\times$. One leg gives $Uf(\\iota_M(u))=f(u)$; the other gives $\\iota_N(f^\\times(u))=f(u)$. The legs agree, so the square commutes and $\\iota$ is natural — the units of a monoid sit inside it naturally, with no choice made anywhere."
+          - problem: "Let $\\mathrm{ab}\\colon\\mathbf{Grp}\\to\\mathbf{Grp}$ send $G$ to its abelianization $G^{\\mathrm{ab}}=G/[G,G]$, where $[G,G]$ is the (normal) subgroup generated by all commutators $xyx^{-1}y^{-1}$. Prove the quotient maps $\\eta_G\\colon G\\to G^{\\mathrm{ab}}$ form a natural transformation $1_{\\mathbf{Grp}}\\Rightarrow\\mathrm{ab}$."
+            answer: "For $f\\colon G\\to H$, $\\mathrm{ab}(f)\\circ\\eta_G=\\eta_H\\circ f$, both sending $g\\mapsto f(g)[H,H]$."
+            solution_sketch: "A homomorphism $f\\colon G\\to H$ sends commutators to commutators, so it descends to $\\mathrm{ab}(f)=f^{\\mathrm{ab}}\\colon G^{\\mathrm{ab}}\\to H^{\\mathrm{ab}}$, $g[G,G]\\mapsto f(g)[H,H]$. Then $f^{\\mathrm{ab}}(\\eta_G(g))=f^{\\mathrm{ab}}(g[G,G])=f(g)[H,H]=\\eta_H(f(g))$. So $\\mathrm{ab}(f)\\circ\\eta_G=\\eta_H\\circ f$; the naturality square commutes and $\\eta$ is natural."
+      - id: kp2
+        name: Naturality is closed under composition
+        key_prerequisites: [diagram-chasing]
+        constraints: "Prove closure by pasting the two naturality squares, citing naturality of each factor once; concrete confirmations use the list functor."
+        exemplars:
+          - problem: "If $\\alpha\\colon F\\Rightarrow G$ and $\\beta\\colon G\\Rightarrow H$ are natural, prove the componentwise composite $(\\beta\\alpha)_A:=\\beta_A\\circ\\alpha_A$ is natural."
+            answer: "Paste the two naturality squares."
+            solution_sketch: "For $f\\colon A\\to B$: $Hf\\circ(\\beta_A\\circ\\alpha_A)=(Hf\\circ\\beta_A)\\circ\\alpha_A=(\\beta_B\\circ Gf)\\circ\\alpha_A=\\beta_B\\circ(Gf\\circ\\alpha_A)=\\beta_B\\circ(\\alpha_B\\circ Ff)=(\\beta_B\\circ\\alpha_B)\\circ Ff$, using naturality of $\\beta$, then of $\\alpha$, and associativity. So $\\beta\\alpha$ is natural."
+          - problem: "In $\\mathbf{Set}$, let $L$ be the list functor, $\\eta\\colon 1_{\\mathbf{Set}}\\Rightarrow L$ the singleton transformation $a\\mapsto[a]$, and $\\rho\\colon L\\Rightarrow L$ list reversal. Confirm the closure result in this instance: check elementwise that the vertical composite $\\rho\\cdot\\eta$ is natural, and identify it."
+            answer: "$\\rho\\cdot\\eta=\\eta$: reversing a one-letter list changes nothing, and its square is the square of $\\eta$."
+            solution_sketch: "The composite has components $(\\rho\\cdot\\eta)_X=\\rho_X\\circ\\eta_X\\colon X\\to X^*$, $x\\mapsto\\rho_X([x])=[x]$, since a one-letter list is its own reversal. So $\\rho\\cdot\\eta=\\eta$. Checking its square at $f\\colon X\\to Y$ elementwise: the left leg gives $L(f)([x])=[f(x)]$ and the right leg gives $(\\rho\\cdot\\eta)_Y(f(x))=[f(x)]$, so it commutes. This agrees with the general result: $\\eta$ and $\\rho$ are natural, so their vertical composite must be, and here the pasted square collapses back to the square of $\\eta$."
+      - id: kp3
+        name: Recognizing when a family is NOT natural
+        key_prerequisites: [natural-transformations]
+        constraints: "Refute naturality either by a variance mismatch (the two functors are not parallel) or by testing squares at element-selecting maps $1\\to A$; the dual-space/double-dual contrast is the canonical instance."
+        exemplars:
+          - problem: "Explain the precise sense in which $V\\cong V^*$ is 'unnatural' while the double-dual map $V\\to V^{**}$ is natural."
+            answer: "$(-)^*$ is contravariant, so $1\\Rightarrow(-)^*$ is not even well-typed; $(-)^{**}$ is covariant and $v\\mapsto\\mathrm{ev}_v$ is natural."
+            solution_sketch: "A natural transformation runs between two functors of the same variance. The dual $(-)^*$ is contravariant, not parallel to the identity endofunctor, so no natural transformation $1\\Rightarrow(-)^*$ can be formed — that is the exact sense in which a basis-dependent $V\\cong V^*$ is unnatural. By contrast $(-)^{**}$ is covariant, and $\\eta_V(v)=\\mathrm{ev}_v$ (with $\\mathrm{ev}_v(\\phi)=\\phi(v)$) satisfies $f^{**}\\circ\\eta_V=\\eta_W\\circ f$ (both send $v\\mapsto(\\phi\\mapsto\\phi(f(v)))$), so $\\eta\\colon 1\\Rightarrow(-)^{**}$ is natural."
+          - problem: "Prove that the identity is the only natural transformation $1_{\\mathbf{Set}}\\Rightarrow 1_{\\mathbf{Set}}$; conclude that a family with some $\\alpha_A\\ne 1_A$ cannot be natural."
+            answer: "Testing against element-selecting maps $1\\to A$ forces $\\alpha_A=1_A$."
+            solution_sketch: "Let $1=\\{*\\}$ and for $a\\in A$ write $\\lceil a\\rceil\\colon 1\\to A$ for the map $*\\mapsto a$. Naturality at $\\lceil a\\rceil$ gives $\\alpha_A\\circ\\lceil a\\rceil=\\lceil a\\rceil\\circ\\alpha_1$. But $\\alpha_1\\colon 1\\to 1$ is the identity, so the right side is $\\lceil a\\rceil$, whence $\\alpha_A(a)=a$. Thus $\\alpha_A=1_A$ for every $A$. Any family with $\\alpha_A\\ne 1_A$ therefore violates the naturality square at some $\\lceil a\\rceil$ and is not natural."
+    diagnostic_exemplar:
+      problem: "Let $U\\colon\\mathbf{Grp}\\to\\mathbf{Set}$ be the forgetful functor. Prove that the inversion maps $i_G\\colon UG\\to UG$, $x\\mapsto x^{-1}$, form a natural transformation $i\\colon U\\Rightarrow U$."
+      answer: "Fix a homomorphism $f\\colon G\\to H$; the square asks $Uf\\circ i_G=i_H\\circ Uf$. Chase $x\\in UG$: one leg gives $f(x^{-1})$, the other $f(x)^{-1}$. A group homomorphism preserves inverses ($f(x)f(x^{-1})=f(xx^{-1})=f(e)=e$ and symmetrically), so $f(x^{-1})=f(x)^{-1}$; the legs agree at every $x$, the square commutes for every $f$, and $i$ is natural. (Each $i_G$ is only a function, not a homomorphism — naturality asks no more.)"
+      solution_sketch: "Chase $x\\in UG$ around the square: one leg gives $f(x^{-1})$, the other $f(x)^{-1}$. The crux is that a homomorphism preserves inverses; note the components need only be functions, since the square lives in $\\mathbf{Set}$."
+    anki_seeds:
+      - front: "Standard way to prove a componentwise composite of natural transformations is natural?"
+        back: "Paste (stack) the two naturality squares and use associativity."
+        type: basic
+      - front: "Why is there no natural isomorphism $1\\Rightarrow(-)^*$ on $\\mathbf{Vect}$?"
+        back: "$(-)^*$ is contravariant, so $1\\Rightarrow(-)^*$ is not even well-typed."
+        type: basic
+      - front: "Why is the double-dual map $V\\to V^{**}$ natural?"
+        back: "$(-)^{**}$ is covariant and $v\\mapsto\\mathrm{ev}_v$ satisfies the naturality square."
+        type: basic
+
+  - id: natural-isomorphisms
+    name: Natural Isomorphisms
+    core: true
+    difficulty: 0.65
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 210
+    prerequisites:
+      - id: natural-transformations
+        weight: 0.5
+        key: true
+      - id: isomorphism-vs-equality
+        weight: 0.4
+        key: true
+      - id: naturality-proofs
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Componentwise iso implies natural inverse
+        key_prerequisites: [natural-transformations]
+        constraints: "Abstract proofs manipulating the naturality square with componentwise inverses; each pre-/post-composition step must be written out."
+        exemplars:
+          - problem: "Define a natural isomorphism, then prove that if each component $\\alpha_A$ is an isomorphism the inverses $\\alpha_A^{-1}$ form a natural transformation $G\\Rightarrow F$."
+            answer: "$\\alpha$ with every $\\alpha_A$ iso; the componentwise inverses are natural."
+            solution_sketch: "$\\alpha\\colon F\\Rightarrow G$ is a natural isomorphism if each $\\alpha_A$ is an isomorphism. Put $\\beta_A=\\alpha_A^{-1}$. From $Gf\\circ\\alpha_A=\\alpha_B\\circ Ff$, precompose with $\\alpha_A^{-1}$ and postcompose with $\\alpha_B^{-1}$: $\\alpha_B^{-1}\\circ Gf=Ff\\circ\\alpha_A^{-1}$, i.e. $Ff\\circ\\beta_A=\\beta_B\\circ Gf$. That is naturality of $\\beta\\colon G\\Rightarrow F$."
+          - problem: "Prove that the vertical composite of two natural isomorphisms is again a natural isomorphism, so that $\\cong$ is transitive on functors."
+            answer: "Componentwise: a composite of isos is iso, and a composite of naturals is natural."
+            solution_sketch: "Let $\\alpha\\colon F\\xRightarrow{\\cong}G$ and $\\beta\\colon G\\xRightarrow{\\cong}H$ be natural isomorphisms. The vertical composite has components $(\\beta\\alpha)_A=\\beta_A\\circ\\alpha_A$, which is natural as a composite of natural transformations. Each $\\beta_A\\circ\\alpha_A$ is a composite of isomorphisms in $\\mathcal D$, hence an isomorphism with inverse $\\alpha_A^{-1}\\circ\\beta_A^{-1}$. Every component is iso, so $\\beta\\alpha$ is a natural isomorphism, giving transitivity of $F\\cong G$."
+      - id: kp2
+        name: Natural isomorphisms in practice
+        key_prerequisites: [naturality-proofs]
+        constraints: "Concrete $\\mathbf{Set}$ instances (swap maps, $\\mathrm{Hom}(1,-)\\cong 1_{\\mathbf{Set}}$); exhibit the inverse component and verify one naturality square elementwise."
+        exemplars:
+          - problem: "Show the swap maps $s_{A,B}(a,b)=(b,a)$ form a natural isomorphism between the bifunctors $(A,B)\\mapsto A\\times B$ and $(A,B)\\mapsto B\\times A$ on $\\mathbf{Set}$."
+            answer: "Each $s_{A,B}$ is a bijection and natural in $(A,B)$."
+            solution_sketch: "$s_{A,B}$ is a bijection with inverse $s_{B,A}$. For $(f,g)\\colon(A,B)\\to(A',B')$, $(g\\times f)\\circ s_{A,B}=s_{A',B'}\\circ(f\\times g)$ since both send $(a,b)\\mapsto(g(b),f(a))$. So $s$ is natural and each component is iso, hence a natural isomorphism."
+          - problem: "In $\\mathbf{Set}$, let $1=\\{*\\}$. Show $\\theta_X\\colon\\mathrm{Hom}(1,X)\\to X$, $f\\mapsto f(*)$, is a natural isomorphism $\\mathrm{Hom}(1,-)\\xRightarrow{\\cong}1_{\\mathbf{Set}}$."
+            answer: "Each $\\theta_X$ is a bijection, and $g(f(*))=(g\\circ f)(*)$ gives naturality."
+            solution_sketch: "Each $\\theta_X$ is a bijection: its inverse sends $x\\in X$ to the map $*\\mapsto x$. For $g\\colon X\\to Y$ the functor acts by postcomposition, $\\mathrm{Hom}(1,g)(f)=g\\circ f$. Then $\\theta_Y(\\mathrm{Hom}(1,g)(f))=(g\\circ f)(*)=g(f(*))=g(\\theta_X(f))$, so $g\\circ\\theta_X=\\theta_Y\\circ\\mathrm{Hom}(1,g)$. Naturality holds and each component is iso, hence a natural isomorphism."
+    diagnostic_exemplar:
+      problem: "Let $\\alpha\\colon F\\Rightarrow G$ be a natural transformation in which every component $\\alpha_A$ is an isomorphism. Prove that the inverses $\\beta_A=\\alpha_A^{-1}$ form a natural transformation $\\beta\\colon G\\Rightarrow F$."
+      answer: "For $f\\colon A\\to B$, start from naturality of $\\alpha$: $Gf\\circ\\alpha_A=\\alpha_B\\circ Ff$. Pre-compose with $\\alpha_A^{-1}$ and post-compose with $\\alpha_B^{-1}$: $\\alpha_B^{-1}\\circ Gf=\\alpha_B^{-1}\\circ Gf\\circ\\alpha_A\\circ\\alpha_A^{-1}=\\alpha_B^{-1}\\circ\\alpha_B\\circ Ff\\circ\\alpha_A^{-1}=Ff\\circ\\alpha_A^{-1}$. That is $Ff\\circ\\beta_A=\\beta_B\\circ Gf$ — exactly naturality of $\\beta\\colon G\\Rightarrow F$."
+      solution_sketch: "Conjugate the naturality square of $\\alpha$: pre-compose with $\\alpha_A^{-1}$ and post-compose with $\\alpha_B^{-1}$. The matched pairs cancel and what is left standing is precisely the naturality square for $\\beta$, with $F$ and $G$ exchanged."
+    anki_seeds:
+      - front: "A natural isomorphism is a natural transformation whose..."
+        back: "every component is an isomorphism (equivalently, an iso in the functor category)."
+        type: basic
+      - front: "If $\\alpha$ is a natural iso, are the inverse components $\\alpha_A^{-1}$ natural?"
+        back: "Yes — invert the naturality square."
+        type: basic
+
+  - id: whiskering
+    name: Whiskering Natural Transformations
+    core: true  # ancestor of core vertical-horizontal-composition (PEDAGOGY §1 invariant)
+    difficulty: 0.72
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 210
+    prerequisites:
+      - id: natural-transformations
+        weight: 0.5
+        key: true
+      - id: naturality-proofs
+        weight: 0.5
+        key: true
+      - id: functor-composition-identity
+        weight: 0.3
+      - id: functors
+        weight: 0.2
+    knowledge_points:
+      - id: kp1
+        name: Whiskering on the left by a functor
+        key_prerequisites: [naturality-proofs]
+        constraints: "State the domain and codomain of the whiskered transformation before proving naturality."
+        exemplars:
+          - problem: "Given $\\alpha\\colon F\\Rightarrow G$ with $F,G\\colon\\mathcal{C}\\to\\mathcal{D}$ and a functor $H\\colon\\mathcal{D}\\to\\mathcal{E}$, define the whiskering $H\\alpha\\colon HF\\Rightarrow HG$ and check it is natural."
+            answer: "$(H\\alpha)_A=H(\\alpha_A)$; apply $H$ to the naturality square."
+            solution_sketch: "Set $(H\\alpha)_A=H(\\alpha_A)\\colon HFA\\to HGA$, which has the right type since $\\alpha_A\\colon FA\\to GA$. Applying $H$ to the naturality square $Gf\\circ\\alpha_A=\\alpha_B\\circ Ff$ and using that $H$ preserves composition gives $HGf\\circ H\\alpha_A=H\\alpha_B\\circ HFf$, which is exactly naturality of $H\\alpha$ at $f$. So $H\\alpha\\colon HF\\Rightarrow HG$ is a natural transformation."
+          - problem: "For $\\alpha\\colon F\\Rightarrow G$, $\\beta\\colon G\\Rightarrow K$ (all $\\mathcal{C}\\to\\mathcal{D}$) and $H\\colon\\mathcal{D}\\to\\mathcal{E}$, prove $H(\\beta\\cdot\\alpha)=(H\\beta)\\cdot(H\\alpha)$ and $H(1_F)=1_{HF}$."
+            answer: "Both follow componentwise from the two functor laws for $H$."
+            solution_sketch: "Compare components at $A$. Left: $(H(\\beta\\cdot\\alpha))_A=H((\\beta\\cdot\\alpha)_A)=H(\\beta_A\\circ\\alpha_A)$. Right: $((H\\beta)\\cdot(H\\alpha))_A=H(\\beta_A)\\circ H(\\alpha_A)$. These agree because $H$ preserves composition. For identities, $(H1_F)_A=H(1_{FA})=1_{HFA}=(1_{HF})_A$ by the identity law. So whiskering on the left is functorial in the transformation."
+      - id: kp2
+        name: Whiskering on the right by a functor
+        key_prerequisites: [natural-transformations]
+        constraints: "Right whiskering re-indexes components; never apply a functor to $\\alpha_A$ here."
+        exemplars:
+          - problem: "Given $\\alpha\\colon F\\Rightarrow G$ with $F,G\\colon\\mathcal{C}\\to\\mathcal{D}$ and $K\\colon\\mathcal{B}\\to\\mathcal{C}$, define $\\alpha K\\colon FK\\Rightarrow GK$ and prove it is natural."
+            answer: "$(\\alpha K)_B=\\alpha_{KB}$; naturality at $g$ is naturality of $\\alpha$ at $Kg$."
+            solution_sketch: "Set $(\\alpha K)_B=\\alpha_{KB}\\colon FKB\\to GKB$ — no functor is applied, the component is simply re-indexed. For $g\\colon B\\to B'$ in $\\mathcal{B}$, apply naturality of $\\alpha$ to the morphism $Kg\\colon KB\\to KB'$: $G(Kg)\\circ\\alpha_{KB}=\\alpha_{KB'}\\circ F(Kg)$. Since $(GK)g=G(Kg)$ and $(FK)g=F(Kg)$, this is exactly $(GK)g\\circ(\\alpha K)_B=(\\alpha K)_{B'}\\circ(FK)g$. So $\\alpha K$ is natural."
+          - problem: "Prove $(\\beta\\cdot\\alpha)K=(\\beta K)\\cdot(\\alpha K)$ and $1_FK=1_{FK}$."
+            answer: "Both are immediate from the definition $(\\alpha K)_B=\\alpha_{KB}$."
+            solution_sketch: "At an object $B$: $((\\beta\\cdot\\alpha)K)_B=(\\beta\\cdot\\alpha)_{KB}=\\beta_{KB}\\circ\\alpha_{KB}=(\\beta K)_B\\circ(\\alpha K)_B=((\\beta K)\\cdot(\\alpha K))_B$. Similarly $(1_FK)_B=(1_F)_{KB}=1_{FKB}=(1_{FK})_B$. So right whiskering also preserves vertical composition and identities; unlike left whiskering, it needs no functor law, only re-indexing."
+      - id: kp3
+        name: Compatibility of the two whiskerings
+        key_prerequisites: [functor-composition-identity]
+        constraints: "Evaluate both sides at an object and simplify; never reorder $H$ and the index."
+        exemplars:
+          - problem: "For $K\\colon\\mathcal{B}\\to\\mathcal{C}$, $\\alpha\\colon F\\Rightarrow G$ ($\\mathcal{C}\\to\\mathcal{D}$) and $H\\colon\\mathcal{D}\\to\\mathcal{E}$, prove $(H\\alpha)K=H(\\alpha K)$."
+            answer: "Both have component $H(\\alpha_{KB})$ at $B$."
+            solution_sketch: "Evaluate at an object $B$ of $\\mathcal{B}$. Left: $((H\\alpha)K)_B=(H\\alpha)_{KB}=H(\\alpha_{KB})$. Right: $(H(\\alpha K))_B=H((\\alpha K)_B)=H(\\alpha_{KB})$. The components agree for every $B$, so the two transformations $HFK\\Rightarrow HGK$ are equal, and the unambiguous notation $H\\alpha K$ is justified."
+          - problem: "Let $L$ be the list functor and $\\eta\\colon 1_{\\mathbf{Set}}\\Rightarrow L$ the singleton transformation $a\\mapsto[a]$. Describe the components of $L\\eta$ and $\\eta L$ and show they differ."
+            answer: "$(L\\eta)_X([a_1,\\dots,a_n])=[[a_1],\\dots,[a_n]]$ while $(\\eta L)_X(w)=[w]$; e.g. at $w=[a,b]$ they give $[[a],[b]]$ and $[[a,b]]$."
+            solution_sketch: "Both are transformations $L\\Rightarrow L^2$. Left whiskering applies $L$ to the component: $(L\\eta)_X=L(\\eta_X)$ maps a list letterwise through $\\eta_X$, so $[a_1,\\dots,a_n]\\mapsto[[a_1],\\dots,[a_n]]$. Right whiskering re-indexes: $(\\eta L)_X=\\eta_{LX}$, which wraps the whole list, so $w\\mapsto[w]$. On $w=[a,b]$ they give $[[a],[b]]$ and $[[a,b]]$ respectively, which are different elements of $L^2X$. So $L\\eta\\neq\\eta L$ in general — the two whiskerings are genuinely different operations."
+    diagnostic_exemplar:
+      problem: "Let $L$ be the list functor and $\\eta\\colon 1_{\\mathbf{Set}}\\Rightarrow L$ the singleton transformation $a\\mapsto[a]$; both $L\\eta$ and $\\eta L$ are transformations $L\\Rightarrow L^2$. Compute $(L\\eta)_X(w)$ and $(\\eta L)_X(w)$ for the word $w=[a,b,c]$, and decide whether $L\\eta=\\eta L$."
+      answer: "Left whiskering applies $L$ to the component, so $(L\\eta)_X=L(\\eta_X)$ maps letterwise: $(L\\eta)_X([a,b,c])=[[a],[b],[c]]$. Right whiskering re-indexes, so $(\\eta L)_X=\\eta_{LX}$ wraps the whole word: $(\\eta L)_X([a,b,c])=[[a,b,c]]$. These are different elements of $L^2X$, so $L\\eta\\ne\\eta L$."
+      solution_sketch: "The two whiskerings differ in where the singleton is taken: $L\\eta$ applies $\\eta$ inside the list, letterwise, while $\\eta L$ applies $\\eta$ to the whole list. Compute both at $[a,b,c]$ and compare the resulting elements of $L^2X$."
+    anki_seeds:
+      - front: "Left whiskering: component of $H\\alpha$ at $A$?"
+        back: "$(H\\alpha)_A=H(\\alpha_A)$ — apply the functor to the component."
+        type: basic
+      - front: "Right whiskering: component of $\\alpha K$ at $B$?"
+        back: "$(\\alpha K)_B=\\alpha_{KB}$ — re-index the component."
+        type: basic
+      - front: "Does whiskering preserve vertical composition?"
+        back: "Yes: $H(\\beta\\cdot\\alpha)=(H\\beta)\\cdot(H\\alpha)$ and $(\\beta\\cdot\\alpha)K=(\\beta K)\\cdot(\\alpha K)$."
+        type: basic
+
+  - id: vertical-horizontal-composition
+    name: Vertical and Horizontal Composition
+    core: true  # ancestor of core functor-categories/triangle-identities (PEDAGOGY §1 invariant)
+    difficulty: 0.75
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 240
+    prerequisites:
+      - id: whiskering
+        weight: 0.5
+        key: true
+      - id: natural-transformations
+        weight: 0.4
+        key: true
+      - id: naturality-proofs
+        weight: 0.4
+        key: true
+      - id: functors
+        weight: 0.2
+    knowledge_points:
+      - id: kp1
+        name: Vertical composition
+        key_prerequisites: [naturality-proofs]
+        constraints: "Vertical composition requires the middle functor to match; verify componentwise in the target category."
+        exemplars:
+          - problem: "Define the vertical composite $\\beta\\cdot\\alpha$ of $\\alpha\\colon F\\Rightarrow G$ and $\\beta\\colon G\\Rightarrow H$, and prove it is associative with $1_F$ as a two-sided unit."
+            answer: "$(\\beta\\cdot\\alpha)_A=\\beta_A\\circ\\alpha_A$; associativity and the unit laws hold componentwise in $\\mathcal{D}$."
+            solution_sketch: "Define $(\\beta\\cdot\\alpha)_A=\\beta_A\\circ\\alpha_A\\colon FA\\to HA$; this family is natural (stack the two naturality squares). For associativity, at each $A$: $((\\gamma\\cdot\\beta)\\cdot\\alpha)_A=(\\gamma_A\\circ\\beta_A)\\circ\\alpha_A=\\gamma_A\\circ(\\beta_A\\circ\\alpha_A)=(\\gamma\\cdot(\\beta\\cdot\\alpha))_A$, using associativity in $\\mathcal{D}$. For units, $(\\alpha\\cdot 1_F)_A=\\alpha_A\\circ 1_{FA}=\\alpha_A$ and $(1_G\\cdot\\alpha)_A=1_{GA}\\circ\\alpha_A=\\alpha_A$. So vertical composition makes parallel functors and their transformations into a category."
+          - problem: "Let $L$ be the list functor and $\\rho\\colon L\\Rightarrow L$ list reversal. Compute the vertical composite $\\rho\\cdot\\rho$."
+            answer: "$\\rho\\cdot\\rho=1_L$."
+            solution_sketch: "At a set $X$, $(\\rho\\cdot\\rho)_X=\\rho_X\\circ\\rho_X$. Reversing the word $x_1\\cdots x_n$ gives $x_n\\cdots x_1$, and reversing again returns $x_1\\cdots x_n$. So $\\rho_X\\circ\\rho_X=1_{X^*}$ for every $X$, i.e. $\\rho\\cdot\\rho=1_L$. In particular $\\rho$ is a natural isomorphism equal to its own inverse."
+      - id: kp2
+        name: Horizontal composition
+        key_prerequisites: [whiskering]
+        constraints: "Always exhibit both formulas for the component and say which naturality square identifies them."
+        exemplars:
+          - problem: "For $\\alpha\\colon F\\Rightarrow F'$ ($\\mathcal{C}\\to\\mathcal{D}$) and $\\beta\\colon G\\Rightarrow G'$ ($\\mathcal{D}\\to\\mathcal{E}$), give the component of the horizontal composite $\\beta*\\alpha\\colon GF\\Rightarrow G'F'$ and show the two formulas agree."
+            answer: "$(\\beta*\\alpha)_A=G'\\alpha_A\\circ\\beta_{FA}=\\beta_{F'A}\\circ G\\alpha_A$."
+            solution_sketch: "The naturality square of $\\beta$ at the morphism $\\alpha_A\\colon FA\\to F'A$ reads $G'(\\alpha_A)\\circ\\beta_{FA}=\\beta_{F'A}\\circ G(\\alpha_A)$; call this common value $(\\beta*\\alpha)_A\\colon GFA\\to G'F'A$. It is natural in $A$, giving a transformation $GF\\Rightarrow G'F'$."
+          - problem: "Express the horizontal composite $\\beta*\\alpha$ as a vertical composite of two whiskerings, in both of the available ways."
+            answer: "$\\beta*\\alpha=(\\beta F')\\cdot(G\\alpha)=(G'\\alpha)\\cdot(\\beta F)$."
+            solution_sketch: "Here $G\\alpha\\colon GF\\Rightarrow GF'$ and $\\beta F'\\colon GF'\\Rightarrow G'F'$ are composable vertically, with component at $A$ equal to $(\\beta F')_A\\circ(G\\alpha)_A=\\beta_{F'A}\\circ G(\\alpha_A)$ — the second formula for $(\\beta*\\alpha)_A$. Dually $\\beta F\\colon GF\\Rightarrow G'F$ and $G'\\alpha\\colon G'F\\Rightarrow G'F'$ compose to give $G'(\\alpha_A)\\circ\\beta_{FA}$ — the first formula. The two agree by naturality of $\\beta$ at $\\alpha_A$, so both descriptions define $\\beta*\\alpha$."
+      - id: kp3
+        name: The interchange law
+        key_prerequisites: [naturality-proofs]
+        constraints: "Reduce interchange to one naturality square; identify at which morphism it is applied."
+        exemplars:
+          - problem: "State the interchange (Godement) law relating vertical ($\\cdot$) and horizontal ($*$) composition."
+            answer: "$(\\beta'\\cdot\\beta)*(\\alpha'\\cdot\\alpha)=(\\beta'*\\alpha')\\cdot(\\beta*\\alpha)$."
+            solution_sketch: "For vertically composable $\\alpha\\colon F\\Rightarrow F'$, $\\alpha'\\colon F'\\Rightarrow F''$ and $\\beta\\colon G\\Rightarrow G'$, $\\beta'\\colon G'\\Rightarrow G''$, both sides are transformations $GF\\Rightarrow G''F''$ and the law asserts they coincide. It expresses that $\\mathbf{Cat}$ is a 2-category (objects = categories, 1-cells = functors, 2-cells = natural transformations), so a pasted rectangle of 2-cells may be composed in either order."
+          - problem: "Prove the interchange law by expanding both sides at an object $A$ and identifying the one naturality square that is used."
+            answer: "Both sides reduce to $\\beta'_{F''A}\\circ\\beta_{F''A}\\circ G(\\alpha'_A)\\circ G(\\alpha_A)$ once naturality of $\\beta$ at $\\alpha'_A$ is applied."
+            solution_sketch: "Using $(\\beta*\\alpha)_A=\\beta_{F'A}\\circ G(\\alpha_A)$: the left side is $((\\beta'\\cdot\\beta)*(\\alpha'\\cdot\\alpha))_A=(\\beta'\\cdot\\beta)_{F''A}\\circ G(\\alpha'_A\\circ\\alpha_A)=\\beta'_{F''A}\\circ\\beta_{F''A}\\circ G(\\alpha'_A)\\circ G(\\alpha_A)$. The right side is $(\\beta'*\\alpha')_A\\circ(\\beta*\\alpha)_A=\\big(\\beta'_{F''A}\\circ G'(\\alpha'_A)\\big)\\circ\\big(\\beta_{F'A}\\circ G(\\alpha_A)\\big)$. The two agree precisely when $\\beta_{F''A}\\circ G(\\alpha'_A)=G'(\\alpha'_A)\\circ\\beta_{F'A}$, which is the naturality square of $\\beta\\colon G\\Rightarrow G'$ at the morphism $\\alpha'_A\\colon F'A\\to F''A$. Hence interchange holds."
+    diagnostic_exemplar:
+      problem: "For $\\alpha\\colon F\\Rightarrow F'$ ($\\mathcal{C}\\to\\mathcal{D}$) and $\\beta\\colon G\\Rightarrow G'$ ($\\mathcal{D}\\to\\mathcal{E}$), the horizontal composite $\\beta*\\alpha\\colon GF\\Rightarrow G'F'$ has component at $A$ given by either $G'(\\alpha_A)\\circ\\beta_{FA}$ or $\\beta_{F'A}\\circ G(\\alpha_A)$. Prove the two formulas agree."
+      answer: "Apply the naturality of $\\beta\\colon G\\Rightarrow G'$ at the morphism $\\alpha_A\\colon FA\\to F'A$ of $\\mathcal{D}$: the naturality square reads $G'(\\alpha_A)\\circ\\beta_{FA}=\\beta_{F'A}\\circ G(\\alpha_A)$, which is exactly the claimed equality. Hence the two candidate components coincide and $\\beta*\\alpha$ is well defined."
+      solution_sketch: "The two candidate formulas are the two legs of a single naturality square — that of $\\beta$ taken at the component $\\alpha_A$, regarded as a morphism of $\\mathcal D$. Identifying that square is the whole proof."
+    anki_seeds:
+      - front: "Vertical composite $\\beta\\cdot\\alpha$ of natural transformations — component at $A$?"
+        back: "$(\\beta\\cdot\\alpha)_A=\\beta_A\\circ\\alpha_A$ (same functors stacked)."
+        type: basic
+      - front: "Horizontal composite $\\beta*\\alpha$ (of $\\alpha\\colon F\\Rightarrow F'$, $\\beta\\colon G\\Rightarrow G'$) — its type?"
+        back: "$\\beta*\\alpha\\colon GF\\Rightarrow G'F'$ (across composable functors)."
+        type: basic
+      - front: "The interchange law states..."
+        back: "$(\\beta'\\cdot\\beta)*(\\alpha'\\cdot\\alpha)=(\\beta'*\\alpha')\\cdot(\\beta*\\alpha)$."
+        type: basic
+
+  - id: functor-categories
+    name: Functor Categories
+    core: true
+    difficulty: 0.7
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 210
+    prerequisites:
+      - id: natural-transformations
+        weight: 0.5
+        key: true
+      - id: vertical-horizontal-composition
+        weight: 0.4
+        key: true
+      - id: naturality-proofs
+        weight: 0.3
+      - id: category-definition
+        weight: 0.0
+    knowledge_points:
+      - id: kp1
+        name: The category of functors and natural transformations
+        key_prerequisites: [vertical-horizontal-composition]
+        constraints: "Verify the category axioms componentwise in $\\mathcal D$; structural transfer results (e.g. groupoid target gives groupoid functor category) must construct the inverse transformation explicitly."
+        exemplars:
+          - problem: "Define the functor category $[\\mathcal C,\\mathcal D]$ and verify it is a category."
+            answer: "Objects: functors $\\mathcal C\\to\\mathcal D$; morphisms: natural transformations; composition vertical; identity $(1_F)_A=1_{FA}$."
+            solution_sketch: "Objects are functors $F\\colon\\mathcal C\\to\\mathcal D$; a morphism $F\\to G$ is a natural transformation $\\alpha\\colon F\\Rightarrow G$; composition is vertical composition $(\\beta\\alpha)_A=\\beta_A\\circ\\alpha_A$, which is natural; the identity on $F$ has components $1_{FA}$. Associativity and the unit laws hold componentwise because they hold in $\\mathcal D$, so $[\\mathcal C,\\mathcal D]$ is a category."
+          - problem: "Prove that if $\\mathcal D$ is a groupoid then the functor category $[\\mathcal C,\\mathcal D]$ is also a groupoid."
+            answer: "Every component is iso, so every natural transformation is invertible."
+            solution_sketch: "Let $\\alpha\\colon F\\Rightarrow G$ be any morphism of $[\\mathcal C,\\mathcal D]$. Each component $\\alpha_A\\colon FA\\to GA$ is a morphism of the groupoid $\\mathcal D$, hence an isomorphism. Since every component is iso, the componentwise inverses $\\alpha_A^{-1}$ assemble into a natural transformation $G\\Rightarrow F$ that is a two-sided inverse of $\\alpha$ in $[\\mathcal C,\\mathcal D]$. Thus every morphism is invertible, i.e. $[\\mathcal C,\\mathcal D]$ is a groupoid."
+      - id: kp2
+        name: Isomorphisms in a functor category
+        key_prerequisites: [natural-transformations]
+        constraints: "Both directions of 'iso in $[\\mathcal C,\\mathcal D]$ = natural iso'; uniqueness of inverses argued abstractly, components read off by evaluating at an object."
+        exemplars:
+          - problem: "Prove that an isomorphism in $[\\mathcal C,\\mathcal D]$ is exactly a natural isomorphism."
+            answer: "A two-sided inverse exists iff every component is an isomorphism."
+            solution_sketch: "If $\\alpha$ has inverse $\\beta$ in $[\\mathcal C,\\mathcal D]$, then $\\beta_A\\circ\\alpha_A=1_{FA}$ and $\\alpha_A\\circ\\beta_A=1_{GA}$ for all $A$, so each $\\alpha_A$ is iso. Conversely, if each $\\alpha_A$ is iso then the componentwise inverses are natural, providing a two-sided inverse. So isos in the functor category are precisely natural isomorphisms."
+          - problem: "Show that if $\\alpha$ is an isomorphism in $[\\mathcal C,\\mathcal D]$ its inverse is unique, with components $(\\alpha^{-1})_A=(\\alpha_A)^{-1}$."
+            answer: "Inverses in any category are unique; read off the components."
+            solution_sketch: "Suppose $\\beta,\\beta'\\colon G\\Rightarrow F$ are both inverse to $\\alpha$. Then $\\beta=\\beta\\cdot 1_G=\\beta\\cdot(\\alpha\\cdot\\beta')=(\\beta\\cdot\\alpha)\\cdot\\beta'=1_F\\cdot\\beta'=\\beta'$, so the inverse is unique. Evaluating $\\beta\\alpha=1_F$ and $\\alpha\\beta=1_G$ at $A$ gives $\\beta_A\\alpha_A=1_{FA}$ and $\\alpha_A\\beta_A=1_{GA}$, so $(\\alpha^{-1})_A=\\beta_A=(\\alpha_A)^{-1}$."
+      - id: kp3
+        name: Diagram categories
+        key_prerequisites: [category-definition]
+        constraints: "Identify $[\\mathcal J,\\mathcal C]$ for small shapes: $\\mathbf 2$ (arrow category) and $\\mathbf B G$ ($G$-sets); unpack both the functors and the natural transformations concretely."
+        exemplars:
+          - problem: "With $\\mathbf 2=(0\\to 1)$, identify a functor $\\mathbf 2\\to\\mathcal C$ and the category $[\\mathbf 2,\\mathcal C]$."
+            answer: "A functor $\\mathbf 2\\to\\mathcal C$ is an arrow of $\\mathcal C$; $[\\mathbf 2,\\mathcal C]$ is the arrow category."
+            solution_sketch: "A functor $\\mathbf 2\\to\\mathcal C$ chooses objects $F0,F1$ and a morphism $F0\\to F1$, i.e. an arrow of $\\mathcal C$. A natural transformation between two such functors is a commuting square, so $[\\mathbf 2,\\mathcal C]$ is the arrow category $\\mathcal C^{\\to}$. More generally $[\\mathcal J,\\mathcal C]$ is the category of $\\mathcal J$-shaped diagrams in $\\mathcal C$."
+          - problem: "Let $\\mathbf B G$ be the one-object category whose morphisms are the elements of a group $G$. Identify functors $\\mathbf B G\\to\\mathbf{Set}$ and the functor category $[\\mathbf B G,\\mathbf{Set}]$."
+            answer: "Functors are $G$-sets; $[\\mathbf B G,\\mathbf{Set}]$ is the category of $G$-sets and equivariant maps."
+            solution_sketch: "A functor $X\\colon\\mathbf B G\\to\\mathbf{Set}$ picks a set $X\\ast$ and, for each $g\\in G$, a map $X(g)\\colon X\\ast\\to X\\ast$ with $X(gh)=X(g)X(h)$ and $X(e)=\\mathrm{id}$: exactly a left $G$-action. A natural transformation $\\alpha\\colon X\\Rightarrow Y$ is one map $\\alpha_\\ast$ with $Y(g)\\circ\\alpha_\\ast=\\alpha_\\ast\\circ X(g)$ for all $g$, i.e. $\\alpha_\\ast(g\\cdot x)=g\\cdot\\alpha_\\ast(x)$: an equivariant map. Hence $[\\mathbf B G,\\mathbf{Set}]$ is the category of $G$-sets."
+    diagnostic_exemplar:
+      problem: "Let $\\mathbf BG$ be the one-object category of a group $G$, so that functors $\\mathbf BG\\to\\mathbf{Set}$ are $G$-sets. Describe the natural transformations between two such functors, and prove that a transformation $\\alpha\\colon F\\Rightarrow F'$ is an isomorphism of the functor category $[\\mathbf BG,\\mathbf{Set}]$ if and only if its single component is a bijection."
+      answer: "A functor $F\\colon\\mathbf BG\\to\\mathbf{Set}$ is a set $X=F(*)$ together with the maps $g\\cdot x:=F(g)(x)$; the functor laws say $1\\cdot x=x$ and $(gh)\\cdot x=g\\cdot(h\\cdot x)$, i.e. a $G$-action. A natural transformation $\\alpha\\colon F\\Rightarrow F'$ has a single component $\\alpha_*\\colon X\\to X'$, and the naturality square at $g\\in G$ reads $\\alpha_*(g\\cdot x)=g\\cdot\\alpha_*(x)$: natural transformations are exactly the $G$-equivariant maps. ($\\Rightarrow$) If $\\alpha$ is invertible in $[\\mathbf BG,\\mathbf{Set}]$ there is $\\beta$ with $\\beta\\cdot\\alpha=1_F$ and $\\alpha\\cdot\\beta=1_{F'}$; vertical composition and identities are componentwise, so $\\beta_*$ is a two-sided inverse of $\\alpha_*$ and $\\alpha_*$ is a bijection. ($\\Leftarrow$) If $\\alpha_*$ is a bijection, put $y=\\alpha_*(x)$ in $\\alpha_*(g\\cdot x)=g\\cdot\\alpha_*(x)$ and apply $\\alpha_*^{-1}$: $\\alpha_*^{-1}(g\\cdot y)=g\\cdot\\alpha_*^{-1}(y)$, so $\\alpha_*^{-1}$ is equivariant and therefore a natural transformation $F'\\Rightarrow F$; componentwise it is a two-sided inverse of $\\alpha$. Hence the isomorphisms of $[\\mathbf BG,\\mathbf{Set}]$ are exactly the equivariant bijections."
+      solution_sketch: "First translate: a functor $\\mathbf BG\\to\\mathbf{Set}$ is a $G$-set, and the single naturality square reads $\\alpha_*(g\\cdot x)=g\\cdot\\alpha_*(x)$, so transformations are exactly the equivariant maps. Then use that composition in a functor category is componentwise, and check that the set-theoretic inverse of an equivariant bijection is again equivariant."
+    anki_seeds:
+      - front: "The functor category $[\\mathcal C,\\mathcal D]$ has objects ___ and morphisms ___."
+        back: "functors $\\mathcal C\\to\\mathcal D$; natural transformations."
+        type: basic
+      - front: "An isomorphism in a functor category is exactly a {{c1::natural isomorphism}}."
+        back: "natural isomorphism"
+        type: cloze
+
+  - id: equivalence-of-categories
+    name: Equivalence of Categories
+    core: false                # terminal; nothing in this curriculum builds on it
+    difficulty: 0.75
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 240
+    prerequisites:
+      - id: functor-categories
+        weight: 0.4
+        key: true
+      - id: full-faithful-functors
+        weight: 0.4
+        key: true
+      - id: natural-isomorphisms
+        weight: 0.4
+      - id: isomorphism-vs-equality
+        weight: 0.2
+    knowledge_points:
+      - id: kp1
+        name: Definition via natural isomorphisms
+        key_prerequisites: [natural-isomorphisms]
+        constraints: "State all four pieces $(F,G,\\eta,\\varepsilon)$ with the direction of each natural iso; symmetry/closure proofs may only invert or compose natural isomorphisms."
+        exemplars:
+          - problem: "Define an equivalence of categories $\\mathcal C\\simeq\\mathcal D$ and contrast it with an isomorphism of categories."
+            answer: "Functors $F,G$ with $GF\\cong 1_{\\mathcal C}$ and $FG\\cong 1_{\\mathcal D}$ (natural isos), not equalities."
+            solution_sketch: "An equivalence is a pair $F\\colon\\mathcal C\\to\\mathcal D$, $G\\colon\\mathcal D\\to\\mathcal C$ with natural isomorphisms $\\eta\\colon 1_{\\mathcal C}\\xRightarrow{\\cong}GF$ and $\\varepsilon\\colon FG\\xRightarrow{\\cong}1_{\\mathcal D}$. An isomorphism of categories would demand $GF=1_{\\mathcal C}$ and $FG=1_{\\mathcal D}$ on the nose; equivalence relaxes this to hold only up to natural isomorphism, which is the appropriate notion of sameness for categories."
+          - problem: "Prove that equivalence of categories is symmetric: if $\\mathcal C\\simeq\\mathcal D$ then $\\mathcal D\\simeq\\mathcal C$."
+            answer: "The quasi-inverse together with the inverse natural isos witnesses the reverse equivalence."
+            solution_sketch: "An equivalence gives $F\\colon\\mathcal C\\to\\mathcal D$, $G\\colon\\mathcal D\\to\\mathcal C$ and natural isomorphisms $\\eta\\colon 1_{\\mathcal C}\\xRightarrow{\\cong}GF$, $\\varepsilon\\colon FG\\xRightarrow{\\cong}1_{\\mathcal D}$. To exhibit $\\mathcal D\\simeq\\mathcal C$ use the pair $(G,F)$: since inverses of natural isomorphisms are natural isomorphisms, $\\varepsilon^{-1}\\colon 1_{\\mathcal D}\\xRightarrow{\\cong}FG$ and $\\eta^{-1}\\colon GF\\xRightarrow{\\cong}1_{\\mathcal C}$ are the required natural isos. Hence $(G,F,\\varepsilon^{-1},\\eta^{-1})$ is an equivalence and $\\mathcal D\\simeq\\mathcal C$."
+      - id: kp2
+        name: The fully faithful + essentially surjective test
+        key_prerequisites: [full-faithful-functors]
+        constraints: "Only the easy direction is proved in full ($\\varepsilon_D$ gives essential surjectivity; $f=\\eta_B^{-1}\\circ GFf\\circ\\eta_A$ gives faithfulness); the converse is stated with its choice-based construction sketched."
+        exemplars:
+          - problem: "State the characterization of when a functor $F$ is part of an equivalence, and define its essential-surjectivity clause."
+            answer: "$F$ is an equivalence iff it is fully faithful and essentially surjective (every $D\\cong FC$ for some $C$)."
+            solution_sketch: "$F$ is essentially surjective if every object $D$ of $\\mathcal D$ is isomorphic to $FC$ for some object $C$. Theorem: $F$ extends to an equivalence iff $F$ is fully faithful and essentially surjective. Given these, choose for each $D$ an object $GD$ with iso $FGD\\cong D$; full faithfulness transports morphisms uniquely to make $G$ a functor and the chosen isos natural."
+          - problem: "Prove the easy direction: if $(F,G,\\eta,\\varepsilon)$ is an equivalence then $F$ is faithful and essentially surjective."
+            answer: "$\\varepsilon_D\\colon FGD\\cong D$ gives ess. surjectivity; naturality of $\\eta$ recovers $f$ from $GFf$."
+            solution_sketch: "Essential surjectivity: for any object $D$, the component $\\varepsilon_D\\colon FGD\\xrightarrow{\\cong}D$ shows $D\\cong F(GD)$. Faithfulness: naturality of $\\eta\\colon 1_{\\mathcal C}\\xRightarrow{\\cong}GF$ gives $GF(f)\\circ\\eta_A=\\eta_B\\circ f$, so $f=\\eta_B^{-1}\\circ GF(f)\\circ\\eta_A$; hence $f$ is recovered from $GF(f)$. If $Ff=Fg$ then applying $G$ gives $GFf=GFg$, so $f=g$. Thus $F$ is faithful and essentially surjective."
+      - id: kp3
+        name: An equivalence that is not an isomorphism
+        key_prerequisites: [full-faithful-functors]
+        constraints: "Instances limited to $\\mathbf{FinVect}_k\\simeq\\mathbf{Mat}_k$ and the two-object indiscrete groupoid $\\simeq\\mathbf 1$; the non-isomorphism claim is always settled by counting objects."
+        exemplars:
+          - problem: "Show $\\mathbf{FinVect}_k\\simeq\\mathbf{Mat}_k$, where $\\mathbf{Mat}_k$ has objects $n\\in\\mathbb N$ and morphisms $m\\to n$ the $n\\times m$ matrices."
+            answer: "$F(n)=k^n$ is fully faithful and essentially surjective."
+            solution_sketch: "Define $F\\colon\\mathbf{Mat}_k\\to\\mathbf{FinVect}_k$, $F(n)=k^n$, $F(M)=$ the linear map with matrix $M$. Linear maps $k^m\\to k^n$ correspond bijectively to $n\\times m$ matrices, so $F$ is fully faithful; every finite-dimensional space has a basis, hence is isomorphic to some $k^n$, so $F$ is essentially surjective. By the characterization $F$ is an equivalence. It is not an isomorphism of categories (the two have different numbers of objects), showing equivalence is strictly weaker."
+          - problem: "Let $\\mathbf I$ be the groupoid with two objects $0,1$ and exactly one morphism between each ordered pair of objects. Show $\\mathbf I\\simeq\\mathbf 1$ (the terminal category) but $\\mathbf I\\not\\cong\\mathbf 1$."
+            answer: "The unique functor $\\mathbf I\\to\\mathbf 1$ is an equivalence; the object counts differ, so it is not an isomorphism."
+            solution_sketch: "Let $F\\colon\\mathbf I\\to\\mathbf 1$ be the only functor and $G\\colon\\mathbf 1\\to\\mathbf I$ pick the object $0$; then $FG=1_{\\mathbf 1}$ on the nose. For $GF$ (which sends everything to $0$) define $\\eta_X\\colon X\\to 0$ to be the unique morphism: each is an isomorphism, and naturality is automatic since $\\mathbf I$ has exactly one morphism between any two objects. So $\\eta\\colon 1_{\\mathbf I}\\xRightarrow{\\cong}GF$ and $\\mathbf I\\simeq\\mathbf 1$. They are not isomorphic as categories, since $\\mathbf I$ has two objects and $\\mathbf 1$ has one."
+    diagnostic_exemplar:
+      problem: "Let $(F,G,\\eta,\\varepsilon)$ be an equivalence of categories, with natural isomorphisms $\\eta\\colon 1_{\\mathcal C}\\xRightarrow{\\cong}GF$ and $\\varepsilon\\colon FG\\xRightarrow{\\cong}1_{\\mathcal D}$. Prove that $F$ is faithful and essentially surjective."
+      answer: "Essential surjectivity: for any object $D$ of $\\mathcal D$, the component $\\varepsilon_D\\colon FGD\\xrightarrow{\\cong}D$ shows $D\\cong F(GD)$. Faithfulness: naturality of $\\eta$ at $f\\colon A\\to B$ gives $GF(f)\\circ\\eta_A=\\eta_B\\circ f$, so $f=\\eta_B^{-1}\\circ GF(f)\\circ\\eta_A$ — $f$ is recovered from $GF(f)$. If $Ff=Fg$ then $GFf=GFg$, hence $f=g$."
+      solution_sketch: "Essential surjectivity is read straight off the components of $\\varepsilon$. For faithfulness, use naturality of $\\eta$ to solve for $f$ in terms of $GF(f)$, namely $f=\\eta_B^{-1}\\circ GF(f)\\circ\\eta_A$, so $Ff=Fg$ forces $f=g$."
+    anki_seeds:
+      - front: "Equivalence of categories: definition?"
+        back: "Functors $F,G$ with natural isomorphisms $GF\\cong 1$ and $FG\\cong 1$ (not equalities)."
+        type: basic
+      - front: "A functor is an equivalence iff it is {{c1::fully faithful}} and {{c2::essentially surjective}}."
+        back: "fully faithful; essentially surjective"
+        type: cloze
+      - front: "A functor $F$ is essentially surjective when..."
+        back: "every object of the target is isomorphic to some $FC$ in the image of $F$."
+        type: basic

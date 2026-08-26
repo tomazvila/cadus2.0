@@ -1,0 +1,292 @@
+unit: orthogonality-spectral
+course: linear-algebra
+module: "Orthogonal Matrices & Spectral Theory"
+topics:
+  - id: orthogonal-matrices
+    name: Orthogonal Matrices
+    core: false                # spectral branch sits below the supplemental orthogonality run (orthogonal-orthonormal-sets); nothing in a higher-ordered course consumes it, so the branch deliberately stays supplemental (R-2)
+    difficulty: 0.7
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 210
+    prerequisites:
+      - id: orthogonal-orthonormal-sets
+        weight: 0.7
+        key: true
+      - id: transpose-symmetric-matrices
+        weight: 0.6
+        key: true
+      - id: matrix-inverses
+        weight: 0.4
+      - id: linear-transformations
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Recognizing orthogonal matrices
+        key_prerequisites: [orthogonal-orthonormal-sets, transpose-symmetric-matrices]
+        exemplars:
+          - problem: 'Is $Q = \frac{1}{5}\begin{pmatrix}3&-4\\4&3\end{pmatrix}$ an orthogonal matrix?'
+            answer: "Yes: its columns (3/5, 4/5) and (-4/5, 3/5) are orthonormal, so Q^T Q = I"
+            solution_sketch: 'Each column has norm $\frac{1}{5}\sqrt{9 + 16} = 1$ and their dot product is $\frac{1}{25}(-12 + 12) = 0$.'
+          - problem: 'Is $A = \begin{pmatrix}1&1\\0&1\end{pmatrix}$ orthogonal?'
+            answer: "No"
+            solution_sketch: 'The columns are not orthonormal: $(1, 0) \cdot (1, 1) = 1 \neq 0$ (and the second column has norm $\sqrt{2}$).'
+          - problem: 'Is the rotation matrix $\begin{pmatrix}0&-1\\1&0\end{pmatrix}$ orthogonal?'
+            answer: "Yes"
+            solution_sketch: 'Columns $(0, 1)$ and $(-1, 0)$ are unit vectors with dot product $0$; equivalently $Q^TQ = I$.'
+        constraints: "2x2 candidates; orthogonal cases built from 3-4-5 columns, rotations by multiples of 90 degrees, or 1/sqrt(2) entries"
+      - id: kp2
+        name: The inverse is the transpose
+        key_prerequisites: [transpose-symmetric-matrices, matrix-inverses]
+        exemplars:
+          - problem: '$Q = \frac{1}{5}\begin{pmatrix}3&-4\\4&3\end{pmatrix}$ is orthogonal. Find $Q^{-1}$ without row reduction.'
+            answer: '$Q^{-1} = Q^T = \frac{1}{5}\begin{pmatrix}3&4\\-4&3\end{pmatrix}$'
+            solution_sketch: 'For orthogonal matrices $Q^TQ = I$, so the inverse is simply the transpose.'
+          - problem: 'Solve $Q\mathbf{x} = \mathbf{b}$ for $Q = \frac{1}{5}\begin{pmatrix}3&-4\\4&3\end{pmatrix}$ and $\mathbf{b} = (3, 4)$, using the transpose.'
+            answer: "x = Q^T b = (5, 0)"
+            solution_sketch: '$\mathbf{x} = Q^T\mathbf{b} = \frac{1}{5}(9 + 16, -12 + 12) = (5, 0)$. Check: $Q(5, 0) = (3, 4)$.'
+        constraints: "orthogonal Q with 3-4-5 or 90-degree-rotation columns; right-hand sides chosen so Q^T b has integer entries"
+      - id: kp3
+        name: Orthogonal matrices preserve geometry
+        key_prerequisites: [orthogonal-orthonormal-sets, linear-transformations]
+        exemplars:
+          - problem: '$Q$ is orthogonal. How does $\|Q\mathbf{x}\|$ compare to $\|\mathbf{x}\|$?'
+            answer: "They are equal: orthogonal matrices preserve norms"
+            solution_sketch: '$\|Q\mathbf{x}\|^2 = (Q\mathbf{x}) \cdot (Q\mathbf{x}) = \mathbf{x}^TQ^TQ\mathbf{x} = \mathbf{x} \cdot \mathbf{x}$.'
+          - problem: 'Verify that $Q = \begin{pmatrix}0&-1\\1&0\end{pmatrix}$ preserves dot products for $\mathbf{x} = (1, 2)$ and $\mathbf{y} = (3, 1)$.'
+            answer: "Qx = (-2, 1), Qy = (-1, 3); both dot products equal 5"
+            solution_sketch: '$\mathbf{x} \cdot \mathbf{y} = 3 + 2 = 5$ and $Q\mathbf{x} \cdot Q\mathbf{y} = 2 + 3 = 5$.'
+          - problem: 'What values can $\det Q$ take when $Q$ is orthogonal?'
+            answer: "Only 1 or -1"
+            solution_sketch: '$Q^TQ = I$ gives $(\det Q)^2 = 1$; rotations have $\det = 1$, reflections $\det = -1$.'
+        constraints: "verifications on 2x2 rotations/reflections with integer test vectors in -3..3"
+    diagnostic_exemplar:
+      problem: 'For $Q = \frac{1}{\sqrt{2}}\begin{pmatrix}1&-1\\1&1\end{pmatrix}$, verify that $Q$ is orthogonal, give $Q^{-1}$, and compute $\|Q\mathbf{x}\|$ for $\mathbf{x} = (3, 4)$.'
+      answer: '$Q$ is orthogonal (its columns are orthonormal, so $Q^TQ = I$); $Q^{-1} = Q^T = \frac{1}{\sqrt{2}}\begin{pmatrix}1&1\\-1&1\end{pmatrix}$; $\|Q\mathbf{x}\| = \|\mathbf{x}\| = 5$'
+      solution_sketch: 'Each column has norm $1$ and their dot product is $(1)(-1) + (1)(1) = 0$ before scaling; orthogonal matrices preserve norms, so $\|Q\mathbf{x}\| = \|(3,4)\| = 5$.'
+    anki_seeds:
+      - front: 'A square matrix $Q$ is orthogonal when $Q^TQ = $ ?'
+        back: '$I$ — equivalently, its columns form an orthonormal set.'
+        type: basic
+      - front: 'The inverse of an orthogonal matrix is...'
+        back: 'its transpose: $Q^{-1} = Q^T$.'
+        type: basic
+      - front: 'Orthogonal matrices preserve which two geometric quantities?'
+        back: 'Norms and dot products (hence lengths and angles); $\det Q = \pm 1$.'
+        type: basic
+
+  - id: spectral-theorem-symmetric-matrices
+    name: The Spectral Theorem for Symmetric Matrices
+    core: false                # terminal theorem topic on the supplemental spectral branch; no higher-ordered course builds on it (R-2: kept supplemental rather than flipping the W8 orthogonality flags)
+    difficulty: 0.8
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 300
+    prerequisites:
+      # L1 flagged this edge as superfluous (constraints rig eigenvectors so
+      # Gram-Schmidt never runs), but dropping it removed orthogonality-gram-schmidt
+      # from the closure ENTIRELY — orthonormalising an eigenbasis is the theorem's
+      # own construction, so the edge is kept deliberately.
+      - id: orthogonality-gram-schmidt
+        weight: 0.3
+        key: false
+      - id: orthogonal-matrices
+        weight: 0.7
+        key: true
+      - id: diagonalization
+        weight: 0.7
+        key: true
+      - id: eigenvalues-eigenvectors
+        weight: 0.5
+    knowledge_points:
+      - id: kp1
+        name: What the spectral theorem says
+        key_prerequisites: [eigenvalues-eigenvectors, orthogonal-matrices]
+        exemplars:
+          - problem: 'State what the spectral theorem guarantees about the eigenvalues and eigenvectors of a real symmetric matrix.'
+            answer: "All eigenvalues are real, eigenvectors from different eigenvalues are orthogonal, and the matrix is orthogonally diagonalizable: A = QDQ^T"
+            solution_sketch: 'Symmetric matrices are exactly the matrices admitting an orthonormal basis of eigenvectors.'
+          - problem: 'Find the eigenvalues of $A = \begin{pmatrix}2&1\\1&2\end{pmatrix}$ and verify that its eigenvectors are orthogonal.'
+            answer: "Eigenvalues 1 and 3, with eigenvectors (1, -1) and (1, 1); (1, -1) . (1, 1) = 0"
+            solution_sketch: '$\det(A - \lambda I) = (2 - \lambda)^2 - 1 = 0$ gives $\lambda = 1, 3$; solve $(A - \lambda I)\mathbf{v} = \mathbf{0}$ for each and take the dot product.'
+          - problem: 'Which matrices are orthogonally diagonalizable?'
+            answer: "Exactly the symmetric matrices"
+            solution_sketch: 'If $A = QDQ^T$ then $A^T = QD^TQ^T = A$; the spectral theorem gives the converse.'
+        constraints: "2x2 symmetric matrices with integer eigenvalues; orthogonality verified by an explicit dot product"
+      - id: kp2
+        name: Orthogonal diagonalization of a 2x2 symmetric matrix
+        key_prerequisites: [diagonalization, orthogonal-matrices]
+        exemplars:
+          - problem: 'Orthogonally diagonalize $A = \begin{pmatrix}2&1\\1&2\end{pmatrix}$: find an orthogonal $Q$ and diagonal $D$ with $A = QDQ^T$.'
+            answer: '$Q = \frac{1}{\sqrt{2}}\begin{pmatrix}1&1\\-1&1\end{pmatrix}$, $D = \begin{pmatrix}1&0\\0&3\end{pmatrix}$'
+            solution_sketch: 'Eigenpairs $\lambda = 1, \mathbf{v} = (1, -1)$ and $\lambda = 3, \mathbf{v} = (1, 1)$; normalize each eigenvector by $\sqrt{2}$ and place them as the columns of $Q$ in the order of $D$.'
+          - problem: 'Orthogonally diagonalize $A = \begin{pmatrix}5&3\\3&5\end{pmatrix}$.'
+            answer: '$Q = \frac{1}{\sqrt{2}}\begin{pmatrix}1&1\\-1&1\end{pmatrix}$, $D = \begin{pmatrix}2&0\\0&8\end{pmatrix}$'
+            solution_sketch: '$\lambda = 2$ with $(1, -1)$ and $\lambda = 8$ with $(1, 1)$; the normalized eigenvectors are orthonormal because $A$ is symmetric.'
+        constraints: "2x2 symmetric matrices of the form [[a, b], [b, a]] so eigenvectors are (1, 1) and (1, -1); eigenvalues integers"
+      - id: kp3
+        name: Using the factorization A = QDQ^T
+        key_prerequisites: [diagonalization, orthogonal-matrices]
+        exemplars:
+          - problem: '$A = QDQ^T$ with $D = \begin{pmatrix}1&0\\0&9\end{pmatrix}$. Find $\det A$ and the eigenvalues of $A^2$.'
+            answer: "det A = 9; eigenvalues of A^2 are 1 and 81"
+            solution_sketch: '$\det A = \det D$ since $\det Q \det Q^T = 1$; $A^2 = QD^2Q^T$ squares the eigenvalues.'
+          - problem: 'Express $A^3$ in terms of $Q$ and $D$ when $A = QDQ^T$ with $D = \begin{pmatrix}1&0\\0&2\end{pmatrix}$.'
+            answer: 'A^3 = Q D^3 Q^T with D^3 = diag(1, 8)'
+            solution_sketch: '$A^3 = QDQ^TQDQ^TQDQ^T = QD^3Q^T$: the inner $Q^TQ$ factors cancel to $I$.'
+        constraints: "D diagonal with small integer entries; answers obtained without multiplying out Q"
+    diagnostic_exemplar:
+      problem: 'Orthogonally diagonalize $A = \begin{pmatrix}3&1\\1&3\end{pmatrix}$ as $A = QDQ^T$, then use the factorization to give $\det A$ and the eigenvalues of $A^2$.'
+      answer: '$Q = \frac{1}{\sqrt{2}}\begin{pmatrix}1&1\\-1&1\end{pmatrix}$, $D = \begin{pmatrix}2&0\\0&4\end{pmatrix}$; $\det A = 8$; $A^2$ has eigenvalues $4$ and $16$'
+      solution_sketch: 'The eigenpairs are $2$ with $(1, -1)$ and $4$ with $(1, 1)$; normalizing gives the columns of $Q$, and $\det A = \det D = 8$ while $A^2 = QD^2Q^T$.'
+    anki_seeds:
+      - front: 'Spectral theorem: every real symmetric matrix can be written as...'
+        back: '$A = QDQ^T$ with $Q$ orthogonal and $D$ diagonal (real eigenvalues on the diagonal).'
+        type: basic
+      - front: 'For a symmetric matrix, eigenvectors belonging to different eigenvalues are...'
+        back: 'orthogonal.'
+        type: basic
+      - front: 'The matrices that are orthogonally diagonalizable are exactly...'
+        back: 'the symmetric matrices.'
+        type: basic
+
+  - id: quadratic-forms
+    name: Quadratic Forms and Principal Axes
+    core: false                # terminal application of the spectral theorem; requirements list quadratic forms beyond this application as cut-first, so it stays one supplemental capstone
+    difficulty: 0.8
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 300
+    prerequisites:
+      - id: spectral-theorem-symmetric-matrices
+        weight: 0.7
+        key: true
+      - id: transpose-symmetric-matrices
+        weight: 0.4
+      - id: classifying-conics-completing-square
+        weight: 0
+    knowledge_points:
+      - id: kp1
+        name: The matrix of a quadratic form
+        key_prerequisites: [transpose-symmetric-matrices]
+        exemplars:
+          - problem: 'Write $q(x, y) = 2x^2 + 6xy + 5y^2$ as $\mathbf{x}^TA\mathbf{x}$ with $A$ symmetric.'
+            answer: '$A = \begin{pmatrix}2&3\\3&5\end{pmatrix}$'
+            solution_sketch: 'Diagonal entries are the coefficients of $x^2$ and $y^2$; the $xy$ coefficient is split in half across the two off-diagonal entries.'
+          - problem: 'Evaluate the quadratic form of $A = \begin{pmatrix}1&2\\2&3\end{pmatrix}$ at $\mathbf{x} = (1, 1)$.'
+            answer: "8"
+            solution_sketch: '$q(1, 1) = 1 + 2(2) + 3 = 8$ (the form is $x^2 + 4xy + 3y^2$).'
+          - problem: 'What quadratic form corresponds to $A = \begin{pmatrix}3&0\\0&-2\end{pmatrix}$?'
+            answer: "q(x, y) = 3x^2 - 2y^2"
+            solution_sketch: 'A diagonal matrix gives a form with no cross term.'
+        constraints: "2 variables; integer coefficients with the xy coefficient even so A has integer entries"
+      - id: kp2
+        name: Classifying definiteness by eigenvalues
+        key_prerequisites: [spectral-theorem-symmetric-matrices]
+        exemplars:
+          - problem: '$A = \begin{pmatrix}2&1\\1&2\end{pmatrix}$ has eigenvalues $1$ and $3$. Classify its quadratic form.'
+            answer: "Positive definite: both eigenvalues are positive, so q(x) > 0 for all nonzero x"
+            solution_sketch: 'In principal-axis coordinates $q = 1u^2 + 3v^2$, a sum of positive multiples of squares.'
+          - problem: '$A = \begin{pmatrix}1&2\\2&1\end{pmatrix}$ has eigenvalues $3$ and $-1$. Classify its quadratic form.'
+            answer: "Indefinite: eigenvalues of both signs, so q takes both positive and negative values"
+            solution_sketch: 'Along the $\lambda = 3$ eigenvector $q > 0$; along the $\lambda = -1$ eigenvector $q < 0$.'
+          - problem: 'Classify the quadratic form of $A = \begin{pmatrix}-1&0\\0&-4\end{pmatrix}$.'
+            answer: "Negative definite"
+            solution_sketch: 'Both eigenvalues $-1, -4$ are negative: $q(x, y) = -x^2 - 4y^2 < 0$ for nonzero inputs.'
+        constraints: "2x2 symmetric matrices with integer eigenvalues given or easily computed; classes limited to positive definite, negative definite, indefinite"
+      - id: kp3
+        name: Principal axes remove the cross term
+        key_prerequisites: [spectral-theorem-symmetric-matrices]
+        exemplars:
+          - problem: 'Use the eigenvalues of $A = \begin{pmatrix}2&1\\1&2\end{pmatrix}$ to write $q(x, y) = 2x^2 + 2xy + 2y^2$ without a cross term.'
+            answer: "q = u^2 + 3v^2 in coordinates u, v along the unit eigenvectors of A"
+            solution_sketch: 'Substituting $\mathbf{x} = Q\mathbf{u}$ with $A = QDQ^T$ gives $q = \mathbf{u}^TD\mathbf{u} = \lambda_1 u^2 + \lambda_2 v^2$ with $\lambda = 1, 3$.'
+          - problem: 'What kind of curve is $x^2 + xy + y^2 = 1$?'
+            answer: "An ellipse"
+            solution_sketch: 'The form has matrix $\begin{pmatrix}1&1/2\\1/2&1\end{pmatrix}$ with eigenvalues $\frac{1}{2}$ and $\frac{3}{2}$, both positive: in principal axes the equation is $\frac{1}{2}u^2 + \frac{3}{2}v^2 = 1$.'
+        constraints: "2x2 forms whose eigenvalues are integers or halves; conclusions stated in principal-axis coordinates, no explicit angle computations"
+    diagnostic_exemplar:
+      problem: 'Write $q(x, y) = x^2 + 4xy + y^2$ as $\mathbf{x}^TA\mathbf{x}$ with $A$ symmetric, classify its definiteness, and give its cross-term-free form in principal-axis coordinates.'
+      answer: '$A = \begin{pmatrix}1&2\\2&1\end{pmatrix}$; eigenvalues $3$ and $-1$, so $q$ is indefinite; in principal-axis coordinates $q = 3u^2 - v^2$'
+      solution_sketch: 'Split the $4xy$ evenly off the diagonal; the eigenvalues of $A$ are $1 \pm 2$, and the principal-axis form has those eigenvalues as coefficients.'
+    anki_seeds:
+      - front: 'In the symmetric matrix of a quadratic form, the coefficient of $xy$ is...'
+        back: 'split in half across the two off-diagonal entries.'
+        type: basic
+      - front: 'A quadratic form is positive definite iff the eigenvalues of its matrix are...'
+        back: 'all positive (negative definite: all negative; indefinite: both signs).'
+        type: basic
+      - front: 'The principal-axes theorem: substituting $\mathbf{x} = Q\mathbf{u}$ turns $\mathbf{x}^TA\mathbf{x}$ into...'
+        back: '$\lambda_1 u_1^2 + \cdots + \lambda_n u_n^2$ — the cross terms disappear along the eigenvector axes.'
+        type: basic
+
+  - id: singular-value-decomposition
+    name: The Singular Value Decomposition
+    core: false                # re-audit R-40: terminal capstone of the supplemental spectral branch; nothing in the tree builds on it
+    difficulty: 0.85
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 300
+    prerequisites:
+      - id: spectral-theorem-symmetric-matrices
+        weight: 0.7
+        key: true
+      - id: transpose-symmetric-matrices
+        weight: 0.5
+        key: true
+      - id: null-column-space-rank
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Singular values from A^T A
+        key_prerequisites: [transpose-symmetric-matrices, spectral-theorem-symmetric-matrices]
+        exemplars:
+          - problem: 'Find the singular values of $A = \begin{pmatrix}0&2\\1&0\end{pmatrix}$.'
+            answer: "sigma_1 = 2, sigma_2 = 1"
+            solution_sketch: '$A^TA = \begin{pmatrix}1&0\\0&4\end{pmatrix}$ has eigenvalues $4$ and $1$ (it is symmetric, so they are real and nonnegative here); the singular values are their square roots, listed in decreasing order.'
+          - problem: 'Find the singular values of $A = \begin{pmatrix}1&1\\1&1\end{pmatrix}$.'
+            answer: "sigma_1 = 2, sigma_2 = 0"
+            solution_sketch: '$A^TA = \begin{pmatrix}2&2\\2&2\end{pmatrix}$ has eigenvalues $4$ and $0$: $\sigma_1 = 2$, $\sigma_2 = 0$. A zero singular value signals a rank-deficient matrix.'
+          - problem: 'Find the singular values of the $3 \times 2$ matrix $A = \begin{pmatrix}1&0\\1&1\\0&1\end{pmatrix}$.'
+            answer: '$\sigma_1 = \sqrt{3}$, $\sigma_2 = 1$'
+            solution_sketch: '$A^TA = \begin{pmatrix}2&1\\1&2\end{pmatrix}$ has eigenvalues $3$ and $1$; singular values are defined for any rectangular matrix via the square $A^TA$.'
+        constraints: "A is 2x2 or 3x2 rigged so A^T A is diagonal or of the form [[a,b],[b,a]] with integer eigenvalues; singular values are integers or single square roots"
+      - id: kp2
+        name: Assembling A = U Sigma V^T
+        key_prerequisites: [spectral-theorem-symmetric-matrices]
+        exemplars:
+          - problem: 'Compute an SVD $A = U\Sigma V^T$ of $A = \begin{pmatrix}0&2\\1&0\end{pmatrix}$.'
+            answer: '$U = \begin{pmatrix}1&0\\0&1\end{pmatrix}$, $\Sigma = \begin{pmatrix}2&0\\0&1\end{pmatrix}$, $V = \begin{pmatrix}0&1\\1&0\end{pmatrix}$'
+            solution_sketch: '$A^TA = \mathrm{diag}(1, 4)$: eigenpairs $\lambda_1 = 4$, $\mathbf{v}_1 = (0, 1)$ and $\lambda_2 = 1$, $\mathbf{v}_2 = (1, 0)$, so $\sigma_1 = 2$, $\sigma_2 = 1$. Then $\mathbf{u}_i = A\mathbf{v}_i/\sigma_i$: $\mathbf{u}_1 = (1, 0)$, $\mathbf{u}_2 = (0, 1)$. Check: $U\Sigma V^T = A$.'
+          - problem: 'Compute an SVD of $A = \begin{pmatrix}1&1\\-1&1\end{pmatrix}$.'
+            answer: '$U = \frac{1}{\sqrt{2}}\begin{pmatrix}1&1\\-1&1\end{pmatrix}$, $\Sigma = \begin{pmatrix}\sqrt{2}&0\\0&\sqrt{2}\end{pmatrix}$, $V = \begin{pmatrix}1&0\\0&1\end{pmatrix}$'
+            solution_sketch: '$A^TA = 2I$, so both singular values are $\sqrt{2}$ and $V = I$ works; $\mathbf{u}_i = A\mathbf{v}_i/\sqrt{2}$ gives the columns of $U$. Check: $U\Sigma V^T = \frac{\sqrt{2}}{\sqrt{2}}A = A$.'
+        constraints: "2x2 matrices rigged so A^T A is diagonal or 2I; eigenvector normalizations limited to 1/sqrt(2); always verify U Sigma V^T = A"
+      - id: kp3
+        name: Reading rank and best rank-1 approximation off the SVD
+        key_prerequisites: [null-column-space-rank, spectral-theorem-symmetric-matrices]
+        exemplars:
+          - problem: 'A $3 \times 3$ matrix has singular values $3, 1, 0$. What is its rank?'
+            answer: "2"
+            solution_sketch: 'The rank equals the number of nonzero singular values.'
+          - problem: '$A = \begin{pmatrix}0&3\\1&0\end{pmatrix}$ has the SVD $U = I$, $\Sigma = \mathrm{diag}(3, 1)$, $V^T = \begin{pmatrix}0&1\\1&0\end{pmatrix}$. Find the best rank-1 approximation $A_1 = \sigma_1\mathbf{u}_1\mathbf{v}_1^T$.'
+            answer: '$A_1 = \begin{pmatrix}0&3\\0&0\end{pmatrix}$'
+            solution_sketch: '$\mathbf{u}_1 = (1, 0)$, $\mathbf{v}_1 = (0, 1)$: $A_1 = 3\begin{pmatrix}1\\0\end{pmatrix}(0\ \ 1) = \begin{pmatrix}0&3\\0&0\end{pmatrix}$. The discarded part $A - A_1$ has size $\sigma_2 = 1$: keeping the top singular pieces is the best low-rank compression.'
+          - problem: '$A = \begin{pmatrix}1&1\\1&1\end{pmatrix}$ has $\sigma_1 = 2$ with $\mathbf{u}_1 = \mathbf{v}_1 = \frac{1}{\sqrt{2}}(1, 1)$, and $\sigma_2 = 0$. Verify that $\sigma_1\mathbf{u}_1\mathbf{v}_1^T$ reproduces $A$ exactly.'
+            answer: "sigma_1 u_1 v_1^T = 2 * (1/2) [[1,1],[1,1]] = A: a rank-1 matrix equals its own rank-1 approximation"
+            solution_sketch: '$\mathbf{u}_1\mathbf{v}_1^T = \frac{1}{2}\begin{pmatrix}1&1\\1&1\end{pmatrix}$; multiplying by $\sigma_1 = 2$ gives $A$. With $\sigma_2 = 0$ there is nothing left to discard.'
+        constraints: "SVD data given or carried over from kp2-scale computations; rank read off the sigma list; rank-1 term computed as an explicit outer product with entries in -3..3"
+    diagnostic_exemplar:
+      problem: 'For $A = \begin{pmatrix}0&4\\2&0\end{pmatrix}$, find the singular values, an SVD $A = U\Sigma V^T$, and the rank of $A$.'
+      answer: '$\sigma_1 = 4$, $\sigma_2 = 2$; $U = I_2$, $\Sigma = \begin{pmatrix}4&0\\0&2\end{pmatrix}$, $V^T = \begin{pmatrix}0&1\\1&0\end{pmatrix}$; rank $2$'
+      solution_sketch: '$A^TA = \mathrm{diag}(4, 16)$, so the singular values are $4$ and $2$ with $\mathbf{v}_1 = (0,1)$, $\mathbf{v}_2 = (1,0)$; then $\mathbf{u}_i = A\mathbf{v}_i/\sigma_i$ gives $U = I$, and both singular values are nonzero.'
+    anki_seeds:
+      - front: 'The singular values of $A$ are...'
+        back: 'the square roots of the eigenvalues of $A^TA$, listed in decreasing order.'
+        type: basic
+      - front: 'In $A = U\Sigma V^T$: the columns of $V$ are..., and $\mathbf{u}_i = $ ?'
+        back: 'unit eigenvectors of $A^TA$; $\mathbf{u}_i = A\mathbf{v}_i/\sigma_i$ (for $\sigma_i \neq 0$).'
+        type: basic
+      - front: 'From the SVD: $\mathrm{rank}\,A = $ ? Best rank-1 approximation $= $ ?'
+        back: 'The number of nonzero singular values; $\sigma_1\mathbf{u}_1\mathbf{v}_1^T$.'
+        type: basic

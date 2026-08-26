@@ -1,0 +1,1062 @@
+unit: vector-spaces
+course: linear-algebra
+module: "Vector Spaces & Transformations"
+topics:
+  - id: span-linear-combinations
+    name: Linear Combinations and Span
+    core: true
+    difficulty: 0.55
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 120
+    prerequisites:
+      - id: vectors-in-rn
+        weight: 0.7
+        key: true
+      - id: matrix-vector-equations
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Computing linear combinations
+        key_prerequisites: [vectors-in-rn]
+        exemplars:
+          - problem: 'Compute $2(1, 3) + 3(2, -1)$.'
+            answer: "(8, 3)"
+            solution_sketch: '$(2 + 6, 6 - 3)$.'
+          - problem: 'Compute $-(2, 0, 1) + 2(1, 1, 1)$.'
+            answer: "(0, 2, 1)"
+        constraints: "2-3 vectors in R^2 or R^3; coefficients in -3..3"
+      - id: kp2
+        name: Membership in simple spans
+        key_prerequisites: [vectors-in-rn, matrix-vector-equations]
+        exemplars:
+          - problem: 'Is $(6, -2)$ in $\mathrm{span}\{(3, -1)\}$?'
+            answer: "Yes: (6, -2) = 2(3, -1)"
+          - problem: 'Is $(2, 3)$ in $\mathrm{span}\{(1, 1)\}$?'
+            answer: "No"
+            solution_sketch: 'A multiple of $(1, 1)$ has equal components, but $2 \neq 3$.'
+          - problem: 'Write $(5, 4)$ as a combination of $(1, 2)$ and $(3, 0)$.'
+            answer: "(5, 4) = 2(1, 2) + 1(3, 0)"
+            solution_sketch: 'Second components force $2c_1 = 4$, so $c_1 = 2$; then $3c_2 = 5 - 2 = 3$.'
+        constraints: "single-vector spans decided by proportionality; two-vector cases have one coefficient forced immediately"
+      - id: kp3
+        name: Span as a geometric object
+        key_prerequisites: [vectors-in-rn]
+        exemplars:
+          - problem: 'Describe $\mathrm{span}\{(2, 4)\}$ geometrically.'
+            answer: "The line y = 2x through the origin"
+            solution_sketch: 'All multiples $t(2, 4)$ trace the line with direction $(2, 4)$, i.e. slope $2$.'
+          - problem: 'What is $\mathrm{span}\{(1, 0), (0, 1)\}$?'
+            answer: "All of R^2"
+            solution_sketch: 'Every $(x, y)$ equals $x(1,0) + y(0,1)$.'
+        constraints: "spans of 1-2 vectors in R^2; answers are geometric descriptions"
+    diagnostic_exemplar:
+      problem: 'Write $(4, 7)$ as a combination of $(1, 1)$ and $(1, 2)$.'
+      answer: "(4, 7) = 1(1, 1) + 3(1, 2)"
+      solution_sketch: '$c_1 + c_2 = 4$, $c_1 + 2c_2 = 7$: subtract to get $c_2 = 3$, then $c_1 = 1$.'
+    anki_seeds:
+      - front: '$\mathrm{span}\{\mathbf{v}_1, \dots, \mathbf{v}_k\}$ is the set of all...'
+        back: 'linear combinations $c_1\mathbf{v}_1 + \cdots + c_k\mathbf{v}_k$.'
+        type: basic
+      - front: 'Geometrically, the span of one nonzero vector is...'
+        back: 'the line through the origin in that direction.'
+        type: basic
+
+  - id: subspace-test
+    name: The Subspace Test
+    core: true
+    difficulty: 0.6
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 150
+    prerequisites:
+      - id: vectors-in-rn
+        weight: 0.7
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: The zero-vector check
+        key_prerequisites: [vectors-in-rn]
+        exemplars:
+          - problem: 'Is $\{(x, y) : x + y = 1\}$ a subspace of $\mathbb{R}^2$?'
+            answer: "No"
+            solution_sketch: 'It does not contain the zero vector: $0 + 0 \neq 1$.'
+          - problem: 'Does the set $\{(x, y) : y = 3x\}$ pass the zero-vector check?'
+            answer: "Yes, since 0 = 3(0)"
+        constraints: "sets defined by one linear condition; the zero check settles or begins the argument"
+      - id: kp2
+        name: Closure checks and counterexamples
+        key_prerequisites: [vectors-in-rn]
+        exemplars:
+          - problem: 'Is $\{(x, y) : x + y = 0\}$ a subspace of $\mathbb{R}^2$?'
+            answer: "Yes"
+            solution_sketch: 'Contains $(0,0)$; if $u_1 + u_2 = 0$ and $v_1 + v_2 = 0$ then $(u+v)$ and $cu$ also satisfy the equation.'
+          - problem: 'Is $\{(x, y) : xy \geq 0\}$ a subspace of $\mathbb{R}^2$?'
+            answer: "No"
+            solution_sketch: 'Not closed under addition: $(1, 0)$ and $(0, -1)$ are both in the set, but their sum $(1, -1)$ has $xy = -1 < 0$.'
+          - problem: 'Is $\{(x, y) : x \geq 0\}$ a subspace of $\mathbb{R}^2$?'
+            answer: "No"
+            solution_sketch: 'Not closed under scalar multiplication: $(1, 0)$ is in the set but $-1 \cdot (1, 0) = (-1, 0)$ is not.'
+        constraints: "one linear or mildly nonlinear condition; failures shown by an explicit counterexample"
+      - id: kp3
+        name: Lines and planes through the origin
+        key_prerequisites: [vectors-in-rn]
+        exemplars:
+          - problem: 'Is the line $y = x + 1$ a subspace of $\mathbb{R}^2$?'
+            answer: "No"
+            solution_sketch: 'It misses the origin.'
+          - problem: 'Is the plane $x + y + z = 0$ a subspace of $\mathbb{R}^3$?'
+            answer: "Yes"
+            solution_sketch: 'Contains $\mathbf{0}$, and sums and scalar multiples of solutions of a homogeneous equation are solutions.'
+        constraints: "lines/planes; subspace iff the equation is homogeneous (passes through the origin)"
+    diagnostic_exemplar:
+      problem: 'Is $W = \{(x, y) : x \ge 0\}$ a subspace of $\mathbb{R}^2$? Name the property that fails and give a counterexample.'
+      answer: 'No: closure under scalar multiplication fails, since (1, 0) is in W but (-1)(1, 0) = (-1, 0) is not'
+      solution_sketch: '$W$ contains $\mathbf{0}$ and is closed under addition, but a negative scalar pushes a point out of the half-plane.'
+    anki_seeds:
+      - front: 'The three conditions of the subspace test?'
+        back: 'Contains $\mathbf{0}$; closed under addition; closed under scalar multiplication.'
+        type: basic
+      - front: 'Quickest way to show a set is NOT a subspace?'
+        back: 'Exhibit one failure: the zero vector missing, or one sum/scalar multiple that leaves the set.'
+        type: basic
+
+  - id: subspaces-span
+    name: Subspaces and Span
+    core: true
+    difficulty: 0.65
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 180
+    prerequisites:
+      - id: span-linear-combinations
+        weight: 0.7
+        key: true
+      - id: subspace-test
+        weight: 0.6
+        key: true
+      - id: matrix-vector-equations
+        weight: 0.4
+      - id: solution-sets-free-variables
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Spans are subspaces
+        key_prerequisites: [span-linear-combinations, subspace-test]
+        exemplars:
+          - problem: 'Explain why $\mathrm{span}\{(1, 2), (0, 1)\}$ is a subspace of $\mathbb{R}^2$.'
+            answer: "It contains 0 (the zero combination), and sums and scalar multiples of combinations are again combinations"
+            solution_sketch: '$0\mathbf{v}_1 + 0\mathbf{v}_2 = \mathbf{0}$; adding two combinations adds coefficients; scaling scales them.'
+          - problem: 'Is the set of all scalar multiples of $(3, -1)$ a subspace of $\mathbb{R}^2$?'
+            answer: "Yes"
+            solution_sketch: 'It is $\mathrm{span}\{(3, -1)\}$, and every span is a subspace.'
+        constraints: "1-2 spanning vectors; justify via the subspace test or the span-is-a-subspace theorem"
+      - id: kp2
+        name: Membership in a span
+        key_prerequisites: [matrix-vector-equations, solution-sets-free-variables]
+        exemplars:
+          - problem: 'Is $(3, 5)$ in $\mathrm{span}\{(1, 1), (1, 2)\}$?'
+            answer: "Yes: (3,5) = 1(1,1) + 2(1,2)"
+            solution_sketch: 'Solve $c_1 + c_2 = 3$, $c_1 + 2c_2 = 5$: $c_2 = 2$, $c_1 = 1$.'
+          - problem: 'Is $(1, 3, 1)$ in $\mathrm{span}\{(1, 1, 0), (0, 1, 1)\}$?'
+            answer: "No"
+            solution_sketch: 'The first and third components force $c_1 = 1$ and $c_2 = 1$, but then the middle component is $c_1 + c_2 = 2 \neq 3$.'
+        constraints: "2 spanning vectors; membership decided by a 2x2 solve plus one check"
+      - id: kp3
+        name: Geometry of spans
+        key_prerequisites: [span-linear-combinations]
+        exemplars:
+          - problem: 'Describe $\mathrm{span}\{(2, 3)\}$ geometrically.'
+            answer: "The line through the origin with direction (2, 3)"
+          - problem: 'Describe $\mathrm{span}\{(1, 0, 0), (0, 1, 0)\}$ geometrically.'
+            answer: "The xy-plane in R^3 (all vectors with third component 0)"
+          - problem: 'Do $(1, 2)$ and $(2, 1)$ span all of $\mathbb{R}^2$?'
+            answer: "Yes"
+            solution_sketch: 'They are not multiples of each other, so their span is $2$-dimensional: all of $\mathbb{R}^2$.'
+        constraints: "spans of 1-2 vectors in R^2 or R^3; answers are geometric descriptions"
+    diagnostic_exemplar:
+      problem: 'Is $(1, 3, 1)$ in $\mathrm{span}\{(1, 1, 0), (0, 1, 1)\}$? Describe that span geometrically.'
+      answer: 'No: matching components forces a = 1 and b = 1, but then the middle entry is 2, not 3; the span itself is a plane through the origin in R^3'
+      solution_sketch: '$a(1,1,0) + b(0,1,1) = (a, a + b, b)$, so $a = 1$, $b = 1$ and $a + b = 2 \ne 3$. Two independent vectors span a plane through the origin.'
+    anki_seeds:
+      - front: 'Why is every span automatically a subspace?'
+        back: 'It contains the zero combination, and sums/scalar multiples of linear combinations are linear combinations.'
+        type: basic
+      - front: 'Two non-proportional vectors in $\mathbb{R}^2$ span...'
+        back: 'all of $\mathbb{R}^2$.'
+        type: basic
+
+  - id: linear-independence
+    name: Linear Independence
+    core: true
+    difficulty: 0.65
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 180
+    prerequisites:
+      - id: subspaces-span
+        weight: 0.6
+        key: true
+      - id: row-reduction-echelon-forms
+        weight: 0.5
+        key: true
+      - id: solution-sets-free-variables
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: Independence of two vectors
+        key_prerequisites: [subspaces-span]
+        exemplars:
+          - problem: 'Are $(2, 4)$ and $(3, 6)$ linearly independent?'
+            answer: "No"
+            solution_sketch: '$(3, 6) = \frac{3}{2}(2, 4)$; two vectors are dependent iff one is a multiple of the other.'
+          - problem: 'Are $(1, 2)$ and $(2, 1)$ linearly independent?'
+            answer: "Yes"
+            solution_sketch: 'Neither is a scalar multiple of the other.'
+        constraints: "pairs in R^2 or R^3 with small integer entries"
+      - id: kp2
+        name: Independence via row reduction
+        key_prerequisites: [row-reduction-echelon-forms, solution-sets-free-variables]
+        exemplars:
+          - problem: 'Is $\{(1, 2, 3), (2, 1, 0), (3, 3, 3)\}$ linearly independent?'
+            answer: "No"
+            solution_sketch: '$(1,2,3) + (2,1,0) = (3,3,3)$, a nontrivial relation; row reduction leaves only two pivots.'
+          - problem: 'Is $\{(1, 0, 1), (0, 1, 1), (1, 1, 0)\}$ linearly independent?'
+            answer: "Yes"
+            solution_sketch: 'Row reducing the matrix with these columns yields three pivots (its determinant is $-2 \neq 0$).'
+        constraints: "3 vectors in R^3; dependent cases have an easily spotted relation like v3 = v1 + v2"
+      - id: kp3
+        name: Dependence relations and parameters
+        key_prerequisites: [subspaces-span, solution-sets-free-variables]
+        exemplars:
+          - problem: 'For which $h$ is $\{(1, 2), (h, 4)\}$ linearly dependent?'
+            answer: "h = 2"
+            solution_sketch: 'Dependent iff $(h, 4)$ is a multiple of $(1, 2)$: the multiplier must be $2$, so $h = 2$.'
+          - problem: 'Find a nontrivial dependence relation for $\{(1, 2, 3), (2, 1, 0), (3, 3, 3)\}$.'
+            answer: "v1 + v2 - v3 = 0"
+            solution_sketch: 'From $(1,2,3) + (2,1,0) = (3,3,3)$.'
+        constraints: "solve-for-h with integer h; relations with coefficients in -2..2"
+    diagnostic_exemplar:
+      problem: 'Is $\{(1, 1, 2), (2, 0, 1), (3, 1, 3)\}$ linearly independent? If not, give a nontrivial dependence relation.'
+      answer: 'No: v1 + v2 - v3 = 0'
+      solution_sketch: 'Row reduction produces a zero row; concretely $(1,1,2) + (2,0,1) = (3,1,3)$, so the third vector is a combination of the first two.'
+    anki_seeds:
+      - front: 'Definition: $\{\mathbf{v}_1, \dots, \mathbf{v}_k\}$ is linearly independent when $c_1\mathbf{v}_1 + \cdots + c_k\mathbf{v}_k = \mathbf{0}$ implies...'
+        back: '$c_1 = \cdots = c_k = 0$ (only the trivial combination).'
+        type: basic
+      - front: 'Quick test for two vectors to be linearly dependent?'
+        back: 'One is a scalar multiple of the other.'
+        type: basic
+
+  - id: basis-dimension
+    name: Basis and Dimension
+    core: true
+    difficulty: 0.7
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 210
+    prerequisites:
+      - id: linear-independence
+        weight: 0.7
+        key: true
+      - id: subspaces-span
+        weight: 0.6
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: Verifying a basis
+        key_prerequisites: [linear-independence, subspaces-span]
+        exemplars:
+          - problem: 'Is $\{(1, 1), (1, -1)\}$ a basis of $\mathbb{R}^2$?'
+            answer: "Yes"
+            solution_sketch: 'Two independent vectors (not multiples) in a $2$-dimensional space span it, so they form a basis.'
+          - problem: 'Is $\{(1, 2), (2, 4)\}$ a basis of $\mathbb{R}^2$?'
+            answer: "No"
+            solution_sketch: 'The vectors are dependent, so they span only a line.'
+        constraints: "2 candidate vectors for R^2, 3 for R^3; small integer entries"
+      - id: kp2
+        name: Coordinates relative to a basis
+        key_prerequisites: [linear-independence, subspaces-span]
+        exemplars:
+          - problem: 'Find the coordinates of $\mathbf{x} = (3, 1)$ in the basis $B = \{(1, 1), (1, -1)\}$.'
+            answer: "(2, 1)"
+            solution_sketch: 'Solve $c_1 + c_2 = 3$, $c_1 - c_2 = 1$: adding gives $c_1 = 2$, so $c_2 = 1$.'
+          - problem: 'Find the coordinates of $\mathbf{x} = (5, 4)$ in the basis $B = \{(1, 0), (1, 2)\}$.'
+            answer: "(3, 2)"
+            solution_sketch: 'Second component forces $c_2 = 2$; then $c_1 = 5 - 2 = 3$.'
+        constraints: "2x2 solves with integer coordinates in -4..4"
+      - id: kp3
+        name: Dimension of subspaces
+        key_prerequisites: [linear-independence, subspaces-span]
+        exemplars:
+          - problem: 'Find a basis for, and the dimension of, the solution set of $x + y + z = 0$ in $\mathbb{R}^3$.'
+            answer: "Basis {(-1, 1, 0), (-1, 0, 1)} (any valid basis); dimension 2"
+            solution_sketch: 'Free variables $y = s$, $z = t$ give $(x, y, z) = s(-1, 1, 0) + t(-1, 0, 1)$.'
+          - problem: 'What is $\dim\ \mathrm{span}\{(1, 0, 1), (2, 0, 2), (0, 1, 0)\}$?'
+            answer: "2"
+            solution_sketch: 'The second vector is twice the first; the remaining two are independent.'
+        constraints: "dimensions 1-3; redundant vectors are obvious multiples or sums"
+    diagnostic_exemplar:
+      problem: 'Find a basis for the subspace $W = \{(x, y, z) : x + 2y - z = 0\}$ of $\mathbb{R}^3$, give $\dim W$, and give the coordinates of $(0, 1, 2)$ relative to your basis.'
+      answer: 'Basis {(-2, 1, 0), (1, 0, 1)} (any valid basis); dim W = 2; coordinates of (0, 1, 2) are (1, 2)'
+      solution_sketch: 'Solving $x = -2y + z$ with $y = s$, $z = t$ gives $(-2, 1, 0)s + (1, 0, 1)t$; and $(0, 1, 2) = 1(-2, 1, 0) + 2(1, 0, 1)$.'
+    anki_seeds:
+      - front: 'A basis of a vector space is a set that is both...'
+        back: 'linearly independent and spanning.'
+        type: basic
+      - front: 'The dimension of a vector space is the number of vectors in...'
+        back: 'any basis (all bases have the same size).'
+        type: basic
+
+  - id: coordinates-relative-basis
+    name: Coordinates Relative to a Basis
+    core: true
+    difficulty: 0.7
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 210
+    prerequisites:
+      - id: basis-dimension
+        weight: 0.7
+        key: true
+      - id: row-reduction-echelon-forms
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: From coordinates back to the vector
+        key_prerequisites: [basis-dimension]
+        exemplars:
+          - problem: '$[\mathbf{x}]_B = (2, 3)$ in the basis $B = \{(1, 1), (1, -1)\}$. Find $\mathbf{x}$.'
+            answer: "(5, -1)"
+            solution_sketch: '$2(1, 1) + 3(1, -1) = (5, -1)$.'
+          - problem: '$[\mathbf{x}]_B = (1, -2)$ in the basis $B = \{(2, 0), (1, 3)\}$. Find $\mathbf{x}$.'
+            answer: "(0, -6)"
+            solution_sketch: '$(2, 0) - 2(1, 3) = (0, -6)$.'
+        constraints: "direct evaluation of the combination; entries in -6..6"
+      - id: kp2
+        name: Coordinates in R^2 bases
+        key_prerequisites: [basis-dimension]
+        exemplars:
+          - problem: 'Find $[\mathbf{x}]_B$ for $\mathbf{x} = (1, 5)$ and $B = \{(1, 1), (1, -1)\}$.'
+            answer: "(3, -2)"
+            solution_sketch: '$c_1 + c_2 = 1$, $c_1 - c_2 = 5$: adding gives $c_1 = 3$, so $c_2 = -2$. Check: $3(1,1) - 2(1,-1) = (1, 5)$.'
+          - problem: 'Find $[\mathbf{x}]_B$ for $\mathbf{x} = (7, 4)$ and $B = \{(2, 1), (1, 1)\}$.'
+            answer: "(3, 1)"
+            solution_sketch: '$2c_1 + c_2 = 7$, $c_1 + c_2 = 4$: subtract to get $c_1 = 3$, then $c_2 = 1$.'
+        constraints: "2x2 solves; coordinates are integers in -4..4, including negative coordinates"
+      - id: kp3
+        name: Coordinates in R^3 bases
+        key_prerequisites: [basis-dimension, row-reduction-echelon-forms]
+        exemplars:
+          - problem: 'Find $[\mathbf{x}]_B$ for $\mathbf{x} = (3, 1, 4)$ and $B = \{(1, 0, 0), (1, 1, 0), (1, 1, 1)\}$.'
+            answer: "(2, -3, 4)"
+            solution_sketch: 'Back-substitute from the last component: $c_3 = 4$; then $c_2 + c_3 = 1$ gives $c_2 = -3$; then $c_1 = 3 - c_2 - c_3 = 2$. Check: $2(1,0,0) - 3(1,1,0) + 4(1,1,1) = (3, 1, 4)$.'
+          - problem: 'Find $[\mathbf{x}]_B$ for $\mathbf{x} = (2, 3, 6)$ and $B = \{(1, 0, 1), (0, 1, 0), (0, 0, 2)\}$.'
+            answer: "(2, 3, 2)"
+            solution_sketch: '$c_1 = 2$ and $c_2 = 3$ are forced; the third component gives $c_1 + 2c_3 = 6$, so $c_3 = 2$.'
+        constraints: "triangular-friendly bases so back-substitution works; integer coordinates"
+    diagnostic_exemplar:
+      problem: 'Find $[\mathbf{x}]_B$ for $\mathbf{x} = (4, 3, 5)$ and $B = \{(1, 0, 0), (1, 1, 0), (1, 1, 1)\}$.'
+      answer: '(1, -2, 5)'
+      solution_sketch: 'Reading from the last coordinate up: $c_3 = 5$, then $c_2 + c_3 = 3$ gives $c_2 = -2$, then $c_1 - 2 + 5 = 4$ gives $c_1 = 1$.'
+    anki_seeds:
+      - front: '$[\mathbf{x}]_B = (c_1, \dots, c_n)$ means...'
+        back: '$\mathbf{x} = c_1\mathbf{b}_1 + \cdots + c_n\mathbf{b}_n$ for the basis vectors $\mathbf{b}_i$.'
+        type: basic
+      - front: 'Why are coordinates relative to a basis unique?'
+        back: 'The basis is linearly independent, so two different coefficient lists cannot produce the same vector.'
+        type: basic
+
+  - id: change-of-basis
+    name: Change of Basis
+    core: true                 # re-audit R-38: the W8 "terminal technique" rationale dissolved — matrix-representation-in-basis (core, and through it similar-matrices) now builds on P_B / P_C^{-1}P_B
+    difficulty: 0.75
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 240
+    prerequisites:
+      - id: coordinates-relative-basis
+        weight: 0.7
+        key: true
+      - id: matrix-inverses
+        weight: 0.6
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: The basis-to-standard matrix
+        key_prerequisites: [coordinates-relative-basis]
+        exemplars:
+          - problem: 'For $B = \{(1, 1), (1, -1)\}$, write the matrix $P_B$ with $\mathbf{x} = P_B[\mathbf{x}]_B$, and use it for $[\mathbf{x}]_B = (2, 1)$.'
+            answer: '$P_B = \begin{pmatrix}1&1\\1&-1\end{pmatrix}$; $\mathbf{x} = (3, 1)$'
+            solution_sketch: '$P_B$ has the basis vectors as columns; $P_B(2, 1) = (2 + 1, 2 - 1)$.'
+          - problem: 'For $B = \{(2, 1), (1, 1)\}$, find $\mathbf{x}$ when $[\mathbf{x}]_B = (1, 1)$.'
+            answer: "(3, 2)"
+            solution_sketch: '$\begin{pmatrix}2&1\\1&1\end{pmatrix}\begin{pmatrix}1\\1\end{pmatrix} = (3, 2)$.'
+        constraints: "columns of P_B are the basis vectors; one matrix-vector product"
+      - id: kp2
+        name: Standard-to-basis via the inverse
+        key_prerequisites: [coordinates-relative-basis, matrix-inverses]
+        exemplars:
+          - problem: 'For $B = \{(1, 0), (1, 2)\}$, use $[\mathbf{x}]_B = P_B^{-1}\mathbf{x}$ to find the coordinates of $\mathbf{x} = (5, 4)$.'
+            answer: "(3, 2)"
+            solution_sketch: '$P_B = \begin{pmatrix}1&1\\0&2\end{pmatrix}$, $P_B^{-1} = \begin{pmatrix}1&-1/2\\0&1/2\end{pmatrix}$; $P_B^{-1}(5, 4) = (5 - 2, 2) = (3, 2)$.'
+          - problem: 'Why is $P_B$ always invertible?'
+            answer: "Its columns are a basis, hence linearly independent"
+            solution_sketch: 'A square matrix with independent columns is invertible.'
+        constraints: "2x2 bases with determinant +-1 or +-2 so the inverse is clean"
+      - id: kp3
+        name: Converting between two bases
+        key_prerequisites: [coordinates-relative-basis, matrix-inverses]
+        exemplars:
+          - problem: '$B = \{(1, 1), (1, -1)\}$ and $C = \{(1, 0), (1, 1)\}$. If $[\mathbf{x}]_B = (1, 2)$, find $[\mathbf{x}]_C$.'
+            answer: "(4, -1)"
+            solution_sketch: 'First $\mathbf{x} = 1(1,1) + 2(1,-1) = (3, -1)$; then in $C$: $c_2 = -1$ (second component) and $c_1 = 3 - (-1) = 4$. Check: $4(1,0) - (1,1) = (3, -1)$.'
+          - problem: 'In general, the matrix converting $[\mathbf{x}]_B$ to $[\mathbf{x}]_C$ is...'
+            answer: '$P_C^{-1}P_B$'
+            solution_sketch: 'Go through standard coordinates: $\mathbf{x} = P_B[\mathbf{x}]_B$, then $[\mathbf{x}]_C = P_C^{-1}\mathbf{x}$.'
+        constraints: "route through standard coordinates; all coordinates small integers"
+    diagnostic_exemplar:
+      problem: '$B = \{(1, 1), (1, -1)\}$ and $C = \{(1, 0), (1, 1)\}$. If $[\mathbf{x}]_B = (3, 1)$, find $[\mathbf{x}]_C$.'
+      answer: '(2, 2)'
+      solution_sketch: '$\mathbf{x} = P_B(3, 1) = 3(1,1) + (1,-1) = (4, 2)$; then $[\mathbf{x}]_C = P_C^{-1}\mathbf{x}$ solves $a(1,0) + b(1,1) = (4,2)$, giving $b = 2$, $a = 2$.'
+    anki_seeds:
+      - front: 'The change-of-coordinates matrix $P_B$ (basis $B$ to standard) has which columns?'
+        back: 'The basis vectors of $B$ themselves.'
+        type: basic
+      - front: 'To convert coordinates from basis $B$ to basis $C$, multiply by...'
+        back: '$P_C^{-1}P_B$ (through standard coordinates).'
+        type: basic
+
+  - id: null-column-space-rank
+    name: Null Space, Column Space, and Rank
+    core: true
+    difficulty: 0.7
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 240
+    prerequisites:
+      - id: basis-dimension
+        weight: 0.6
+        key: true
+      - id: solution-sets-free-variables
+        weight: 0.6
+        key: true
+      - id: matrix-vector-equations
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: Null space
+        key_prerequisites: [solution-sets-free-variables]
+        exemplars:
+          - problem: 'Find a basis for the null space of $A = \begin{pmatrix}1&2\\2&4\end{pmatrix}$.'
+            answer: "{(-2, 1)}"
+            solution_sketch: 'Row reduce to $x + 2y = 0$; with $y = t$, solutions are $t(-2, 1)$.'
+          - problem: 'Is $(1, 1)$ in the null space of $A = \begin{pmatrix}1&-1\\2&-2\end{pmatrix}$?'
+            answer: "Yes"
+            solution_sketch: '$A(1,1) = (1 - 1, 2 - 2) = (0, 0)$.'
+        constraints: "matrices 2x2 or 2x3 with 1-dimensional null spaces; integer basis vectors"
+      - id: kp2
+        name: Column space and pivot columns
+        key_prerequisites: [basis-dimension, matrix-vector-equations]
+        exemplars:
+          - problem: 'Find a basis for the column space of $A = \begin{pmatrix}1&2&3\\2&4&8\end{pmatrix}$.'
+            answer: "{(1, 2), (3, 8)}"
+            solution_sketch: '$R_2 - 2R_1$ gives $(0, 0, 2)$: pivots in columns 1 and 3, so those original columns form a basis.'
+          - problem: 'What is the rank of $A = \begin{pmatrix}1&2\\2&4\end{pmatrix}$?'
+            answer: "1"
+            solution_sketch: 'One pivot after row reduction; rank = dimension of the column space.'
+        constraints: "use original columns (not reduced ones) for the basis; rank at most 2"
+      - id: kp3
+        name: The rank-nullity theorem
+        key_prerequisites: [basis-dimension, solution-sets-free-variables]
+        exemplars:
+          - problem: '$A$ is $3 \times 5$ with rank $2$. What is the dimension of its null space?'
+            answer: "3"
+            solution_sketch: 'Rank-nullity: $\mathrm{rank} + \mathrm{nullity} = 5$ (the number of columns).'
+          - problem: '$A$ is $4 \times 4$ and $A\mathbf{x} = \mathbf{0}$ has only the trivial solution. What is the rank of $A$?'
+            answer: "4"
+            solution_sketch: 'Nullity $0$, so rank $= 4 - 0 = 4$.'
+        constraints: "sizes up to 5 columns; ask for rank or nullity, given the other"
+    diagnostic_exemplar:
+      problem: 'For $A = \begin{pmatrix}1&2&3\\2&4&8\end{pmatrix}$, find the rank, a basis for the null space, and check the rank-nullity theorem.'
+      answer: 'Rank 2; null space basis {(-2, 1, 0)}; rank + nullity = 2 + 1 = 3, the number of columns'
+      solution_sketch: 'Row reduction gives pivots in columns $1$ and $3$, so the rank is $2$ and $x_2$ is free with $x_3 = 0$ and $x_1 = -2x_2$.'
+    anki_seeds:
+      - front: 'Rank-nullity theorem for an $m \times n$ matrix $A$?'
+        back: '$\mathrm{rank}(A) + \dim \mathrm{Nul}(A) = n$ (the number of columns).'
+        type: basic
+      - front: 'A basis for $\mathrm{Col}(A)$ is given by which columns?'
+        back: 'The pivot columns of the ORIGINAL matrix $A$.'
+        type: basic
+
+  - id: rank-nullity-applications
+    name: Applying Rank and Nullity
+    core: false                # applications leaf topic
+    difficulty: 0.7
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 180
+    prerequisites:
+      - id: null-column-space-rank
+        weight: 0.8
+        key: true
+      - id: determinants-2x2
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Reading rank and nullity from pivots
+        key_prerequisites: [null-column-space-rank]
+        exemplars:
+          - problem: '$A$ is $3 \times 4$ and its echelon form has $2$ pivots. Find the rank and nullity of $A$.'
+            answer: "Rank 2, nullity 2"
+            solution_sketch: 'Rank = pivot count; nullity $= 4 - 2$.'
+          - problem: '$A$ is $5 \times 3$ with linearly independent columns. Find its rank and nullity.'
+            answer: "Rank 3, nullity 0"
+            solution_sketch: 'Independent columns mean a pivot in every column.'
+        constraints: "sizes up to 5x5; one of rank/nullity/pivot count given"
+      - id: kp2
+        name: What the shape forces
+        key_prerequisites: [null-column-space-rank]
+        exemplars:
+          - problem: '$A$ is $2 \times 4$. Can $A\mathbf{x} = \mathbf{0}$ have only the trivial solution?'
+            answer: "No"
+            solution_sketch: 'Rank $\leq 2 < 4$ columns, so the nullity is at least $2$: free variables always exist.'
+          - problem: '$A$ is $4 \times 3$. Can the columns of $A$ span $\mathbb{R}^4$?'
+            answer: "No"
+            solution_sketch: 'The column space has dimension $\leq 3 < 4$.'
+        constraints: "wide vs tall matrices; conclusions forced by rank <= min(m, n)"
+      - id: kp3
+        name: Rank and invertibility
+        key_prerequisites: [null-column-space-rank]
+        exemplars:
+          - problem: '$A$ is $3 \times 3$ with rank $3$. Is $A$ invertible, and what is $\mathrm{Nul}(A)$?'
+            answer: "Invertible; Nul(A) = {0}"
+            solution_sketch: 'Full rank means a pivot in every row and column: invertible, nullity $0$.'
+          - problem: '$A$ is $3 \times 3$ with rank $2$. What is $\det A$?'
+            answer: "0"
+            solution_sketch: 'Rank below $n$ means $A$ is singular, and singular matrices have determinant $0$.'
+        constraints: "square matrices; connect rank n to invertible/det nonzero/trivial null space"
+    diagnostic_exemplar:
+      problem: '$A$ is $3 \times 3$ and its echelon form has $2$ pivots. Give the rank and nullity of $A$, say whether $A$ is invertible, and give $\det A$.'
+      answer: 'Rank 2, nullity 1; not invertible; det A = 0'
+      solution_sketch: 'Rank equals the pivot count and nullity is $3 - 2 = 1$; a nontrivial null space rules out invertibility, which forces $\det A = 0$.'
+    anki_seeds:
+      - front: 'For an $m \times n$ matrix, the rank is at most...'
+        back: '$\min(m, n)$.'
+        type: basic
+      - front: 'A square $n \times n$ matrix is invertible iff its rank is...'
+        back: '$n$ (equivalently, nullity $0$, determinant nonzero).'
+        type: basic
+
+  - id: linear-transformations
+    name: Linear Transformations
+    core: true
+    difficulty: 0.7
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 210
+    prerequisites:
+      - id: matrix-operations
+        weight: 0.6
+        key: true
+      - id: matrix-vector-equations
+        weight: 0.6
+        key: true
+      - id: vectors-in-rn
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: Evaluating and recognizing linear maps
+        key_prerequisites: [matrix-vector-equations]
+        exemplars:
+          - problem: 'Let $T(\mathbf{x}) = A\mathbf{x}$ with $A = \begin{pmatrix}1&-1\\2&0\end{pmatrix}$. Compute $T(3, 1)$.'
+            answer: "(2, 6)"
+            solution_sketch: '$(3 - 1, 6 + 0)$.'
+          - problem: 'Is $T(x, y) = (x + 1, y)$ linear?'
+            answer: "No"
+            solution_sketch: '$T(0, 0) = (1, 0) \neq (0, 0)$; linear maps fix the origin.'
+          - problem: 'If $T$ is linear with $T(\mathbf{u}) = (1, 2)$ and $T(\mathbf{v}) = (3, 0)$, compute $T(2\mathbf{u} + \mathbf{v})$.'
+            answer: "(5, 4)"
+            solution_sketch: '$2T(\mathbf{u}) + T(\mathbf{v}) = (2, 4) + (3, 0)$.'
+        constraints: "2x2 matrices; linearity checks via T(0) or additivity"
+      - id: kp2
+        name: The standard matrix
+        key_prerequisites: [matrix-vector-equations, vectors-in-rn]
+        exemplars:
+          - problem: '$T$ is linear with $T(\mathbf{e}_1) = (2, 1)$ and $T(\mathbf{e}_2) = (-1, 3)$. Find the standard matrix of $T$.'
+            answer: '$\begin{pmatrix}2&-1\\1&3\end{pmatrix}$'
+            solution_sketch: 'The columns are the images of the standard basis vectors.'
+          - problem: 'Find the standard matrix of the rotation of $\mathbb{R}^2$ by $90^\circ$ counterclockwise.'
+            answer: '$\begin{pmatrix}0&-1\\1&0\end{pmatrix}$'
+            solution_sketch: '$\mathbf{e}_1 \mapsto (0, 1)$ and $\mathbf{e}_2 \mapsto (-1, 0)$.'
+          - problem: 'Find the standard matrix of the reflection of $\mathbb{R}^2$ across the $x$-axis.'
+            answer: '$\begin{pmatrix}1&0\\0&-1\end{pmatrix}$'
+        constraints: "images of e1, e2 given, or standard geometric maps (rotations by multiples of 90 degrees, axis reflections, scalings)"
+      - id: kp3
+        name: Composition as matrix multiplication
+        key_prerequisites: [matrix-operations, matrix-vector-equations]
+        exemplars:
+          - problem: '$S$ has matrix $\begin{pmatrix}1&0\\0&-1\end{pmatrix}$ (reflect across the $x$-axis) and $T$ has matrix $\begin{pmatrix}0&-1\\1&0\end{pmatrix}$ (rotate $90^\circ$). Find the matrix of $S \circ T$.'
+            answer: '$\begin{pmatrix}0&-1\\-1&0\end{pmatrix}$'
+            solution_sketch: 'Matrix of $S \circ T$ is (matrix of $S$)(matrix of $T$): $\begin{pmatrix}1&0\\0&-1\end{pmatrix}\begin{pmatrix}0&-1\\1&0\end{pmatrix}$.'
+          - problem: 'What single matrix performs "rotate by $90^\circ$" twice?'
+            answer: '$\begin{pmatrix}-1&0\\0&-1\end{pmatrix}$'
+            solution_sketch: '$\begin{pmatrix}0&-1\\1&0\end{pmatrix}^2 = -I$: rotation by $180^\circ$.'
+        constraints: "compose two of: 90-degree rotations, axis reflections, integer scalings"
+    diagnostic_exemplar:
+      problem: '$S$ reflects $\mathbb{R}^2$ across the $x$-axis and $T$ rotates it by $90^\circ$ counterclockwise. Find the standard matrix of $S \circ T$ and compute $(S \circ T)(1, 2)$.'
+      answer: '$\begin{pmatrix}0&-1\\-1&0\end{pmatrix}$; $(S \circ T)(1, 2) = (-2, -1)$'
+      solution_sketch: '$S = \begin{pmatrix}1&0\\0&-1\end{pmatrix}$ and $T = \begin{pmatrix}0&-1\\1&0\end{pmatrix}$, so the composition has matrix $ST$; applying it to $(1,2)$ gives $(-2, -1)$.'
+    anki_seeds:
+      - front: 'The two defining properties of a linear transformation?'
+        back: '$T(\mathbf{u} + \mathbf{v}) = T(\mathbf{u}) + T(\mathbf{v})$ and $T(c\mathbf{u}) = cT(\mathbf{u})$.'
+        type: basic
+      - front: 'Column $j$ of the standard matrix of a linear map $T$ is...'
+        back: '$T(\mathbf{e}_j)$, the image of the $j$-th standard basis vector.'
+        type: basic
+      - front: 'Standard matrix of a $90^\circ$ counterclockwise rotation of $\mathbb{R}^2$?'
+        back: '$\begin{pmatrix}0&-1\\1&0\end{pmatrix}$'
+        type: basic
+
+  - id: kernel-image-linear-maps
+    name: Kernel and Image of a Linear Map
+    core: true
+    difficulty: 0.7
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 210
+    prerequisites:
+      - id: linear-transformations
+        weight: 0.7
+        key: true
+      - id: null-column-space-rank
+        weight: 0.6
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: Computing kernels
+        key_prerequisites: [linear-transformations, null-column-space-rank]
+        exemplars:
+          - problem: 'Find the kernel of $T(\mathbf{x}) = A\mathbf{x}$ with $A = \begin{pmatrix}1&2\\2&4\end{pmatrix}$.'
+            answer: "span{(-2, 1)}"
+            solution_sketch: 'The kernel is $\mathrm{Nul}(A)$: solve $x + 2y = 0$. Check: $A(-2, 1) = (0, 0)$.'
+          - problem: 'Find the kernel of $T(x, y) = (x - y, 2x - 2y)$.'
+            answer: "span{(1, 1)}"
+            solution_sketch: 'Both components vanish exactly when $x = y$.'
+        constraints: "2x2 matrices with 1-dimensional kernels; integer kernel generators"
+      - id: kp2
+        name: Computing images
+        key_prerequisites: [linear-transformations, null-column-space-rank]
+        exemplars:
+          - problem: 'Describe the image of $T(\mathbf{x}) = A\mathbf{x}$ with $A = \begin{pmatrix}1&2\\2&4\end{pmatrix}$.'
+            answer: "The line span{(1, 2)}"
+            solution_sketch: 'The image is $\mathrm{Col}(A)$; both columns are multiples of $(1, 2)$.'
+          - problem: 'Is $(3, 6)$ in the image of the same $T$?'
+            answer: "Yes"
+            solution_sketch: '$(3, 6) = 3(1, 2)$, e.g. $T(3, 0) = (3, 6)$.'
+        constraints: "images are lines or all of R^2; membership by proportionality"
+      - id: kp3
+        name: Rank-nullity for maps
+        key_prerequisites: [null-column-space-rank]
+        exemplars:
+          - problem: '$T: \mathbb{R}^5 \to \mathbb{R}^3$ is linear with $\dim \ker T = 3$. Find $\dim \mathrm{im}\, T$.'
+            answer: "2"
+            solution_sketch: '$\dim \ker + \dim \mathrm{im} = 5$ (the domain dimension).'
+          - problem: '$T: \mathbb{R}^4 \to \mathbb{R}^4$ has image all of $\mathbb{R}^4$. Find $\ker T$.'
+            answer: "{0}"
+            solution_sketch: '$\dim \ker = 4 - 4 = 0$.'
+        constraints: "domain dimension up to 5; ask for kernel or image dimension, given the other"
+    diagnostic_exemplar:
+      problem: 'For $T(\mathbf{x}) = A\mathbf{x}$ with $A = \begin{pmatrix}1&3\\2&6\end{pmatrix}$, find $\ker T$, describe $\mathrm{im}\,T$, and check that the two dimensions add to $2$.'
+      answer: 'ker T = span{(-3, 1)}; im T = span{(1, 2)}, the line through the origin with direction (1, 2); 1 + 1 = 2'
+      solution_sketch: '$x + 3y = 0$ gives the kernel; both columns are multiples of $(1, 2)$, so the image is that line; rank $1$ plus nullity $1$ equals the $2$ columns.'
+    anki_seeds:
+      - front: 'For $T(\mathbf{x}) = A\mathbf{x}$: kernel and image in matrix language?'
+        back: '$\ker T = \mathrm{Nul}(A)$; $\mathrm{im}\, T = \mathrm{Col}(A)$.'
+        type: basic
+      - front: 'Rank-nullity for a linear map $T: \mathbb{R}^n \to \mathbb{R}^m$?'
+        back: '$\dim \ker T + \dim \mathrm{im}\, T = n$ (the domain dimension).'
+        type: basic
+
+  - id: one-to-one-onto-linear-transformations
+    name: One-to-One and Onto Linear Maps
+    core: false                # classification of linear maps; terminal
+    difficulty: 0.7
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 180
+    prerequisites:
+      - id: kernel-image-linear-maps
+        weight: 0.7
+        key: true
+      - id: row-reduction-echelon-forms
+        weight: 0.4
+      - id: determinants-2x2
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: One-to-one means trivial kernel
+        key_prerequisites: [kernel-image-linear-maps]
+        exemplars:
+          - problem: 'Is $T(\mathbf{x}) = A\mathbf{x}$ with $A = \begin{pmatrix}1&2\\2&4\end{pmatrix}$ one-to-one?'
+            answer: "No"
+            solution_sketch: 'The kernel contains $(-2, 1) \neq \mathbf{0}$, so two different inputs share an output.'
+          - problem: '$A = \begin{pmatrix}1&0\\0&2\\3&1\end{pmatrix}$ defines $T: \mathbb{R}^2 \to \mathbb{R}^3$. Is $T$ one-to-one?'
+            answer: "Yes"
+            solution_sketch: 'The columns are independent (a pivot in every column), so the kernel is trivial.'
+        constraints: "decide via kernel or pivot-in-every-column; sizes up to 3x3"
+      - id: kp2
+        name: Onto means full column space
+        key_prerequisites: [kernel-image-linear-maps, row-reduction-echelon-forms]
+        exemplars:
+          - problem: '$A = \begin{pmatrix}1&2&0\\0&0&3\end{pmatrix}$ defines $T: \mathbb{R}^3 \to \mathbb{R}^2$. Is $T$ onto? Is it one-to-one?'
+            answer: "Onto yes; one-to-one no"
+            solution_sketch: 'Rank $2$ equals the number of rows, so a pivot in every row: onto. But $3$ columns with rank $2$ leaves a free variable: not one-to-one.'
+          - problem: 'Can a linear map $T: \mathbb{R}^2 \to \mathbb{R}^3$ be onto?'
+            answer: "No"
+            solution_sketch: 'The image has dimension at most $2 < 3$.'
+        constraints: "wide vs tall matrices; onto iff pivot in every row"
+      - id: kp3
+        name: The square case
+        key_prerequisites: [kernel-image-linear-maps, determinants-2x2]
+        exemplars:
+          - problem: '$A = \begin{pmatrix}2&1\\1&1\end{pmatrix}$. Is $T(\mathbf{x}) = A\mathbf{x}$ one-to-one? Onto?'
+            answer: "Both"
+            solution_sketch: '$\det A = 1 \neq 0$: for square matrices, invertible $\iff$ one-to-one $\iff$ onto.'
+          - problem: '$A = \begin{pmatrix}1&2\\2&4\end{pmatrix}$. Is $T$ one-to-one or onto?'
+            answer: "Neither"
+            solution_sketch: '$\det A = 0$: singular square matrices fail both at once.'
+        constraints: "square 2x2 decided by the determinant; emphasize both-or-neither"
+    diagnostic_exemplar:
+      problem: '$A = \begin{pmatrix}2&4&1\\0&0&3\end{pmatrix}$ defines $T : \mathbb{R}^3 \to \mathbb{R}^2$. Is $T$ one-to-one? Is it onto? Justify from the pivots.'
+      answer: 'Not one-to-one (3 columns but only 2 pivots, so the kernel is nontrivial); onto (2 pivots = the number of rows, so the columns span R^2)'
+      solution_sketch: 'Pivots sit in columns $1$ and $3$; the free variable $x_2$ gives a nonzero kernel vector, while a pivot in every row makes the column space all of $\mathbb{R}^2$.'
+    anki_seeds:
+      - front: 'A linear map is one-to-one iff its kernel is...'
+        back: '$\{\mathbf{0}\}$ (equivalently, a pivot in every column).'
+        type: basic
+      - front: '$T(\mathbf{x}) = A\mathbf{x}$ is onto $\mathbb{R}^m$ iff $A$ has...'
+        back: 'a pivot in every row ($\mathrm{Col}(A) = \mathbb{R}^m$).'
+        type: basic
+      - front: 'For a SQUARE matrix, one-to-one and onto are...'
+        back: 'equivalent (both hold iff the matrix is invertible).'
+        type: basic
+
+  - id: orthogonal-orthonormal-sets
+    name: Orthogonal and Orthonormal Sets
+    core: false                # head of the terminal orthogonality -> least-squares branch
+    difficulty: 0.65
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 180
+    prerequisites:
+      - id: dot-product
+        weight: 0.7
+        key: true
+      - id: basis-dimension
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: Checking orthogonality and normalizing
+        key_prerequisites: [dot-product]
+        exemplars:
+          - problem: 'Is $\{(1, 1), (1, -1)\}$ an orthogonal set? Is it orthonormal?'
+            answer: "Orthogonal yes (dot product 0); orthonormal no (each has norm sqrt(2))"
+          - problem: 'Normalize the orthogonal set $\{(3, 4), (-4, 3)\}$ into an orthonormal set.'
+            answer: "{(3/5, 4/5), (-4/5, 3/5)}"
+            solution_sketch: 'Both vectors have norm $5$; divide each by $5$.'
+          - problem: 'Is $\{(1, 2), (2, 1)\}$ orthogonal?'
+            answer: "No"
+            solution_sketch: '$(1, 2) \cdot (2, 1) = 2 + 2 = 4 \neq 0$.'
+        constraints: "pairs with dot product 0 for yes-cases; norms 5, sqrt(2), or 3 for clean normalization"
+      - id: kp2
+        name: Orthogonal sets in R^3 and independence
+        key_prerequisites: [dot-product, basis-dimension]
+        exemplars:
+          - problem: 'Verify that $\{(1, 0, 1), (1, 0, -1), (0, 1, 0)\}$ is an orthogonal set.'
+            answer: "All three pairwise dot products are 0"
+            solution_sketch: '$(1,0,1)\cdot(1,0,-1) = 1 - 1 = 0$; the third vector meets both in the zero middle components.'
+          - problem: 'An orthogonal set of $3$ nonzero vectors in $\mathbb{R}^3$ — is it a basis?'
+            answer: "Yes"
+            solution_sketch: 'Orthogonal nonzero vectors are linearly independent, and $3$ independent vectors in $\mathbb{R}^3$ form a basis.'
+        constraints: "3 vectors in R^3 with all pairwise dot products checkable mentally"
+      - id: kp3
+        name: Coordinates in an orthogonal basis
+        key_prerequisites: [dot-product, basis-dimension]
+        exemplars:
+          - problem: 'Write $\mathbf{x} = (4, 2)$ in the orthogonal basis $\{(1, 1), (1, -1)\}$ using dot products.'
+            answer: "x = 3(1, 1) + 1(1, -1)"
+            solution_sketch: '$c_i = \frac{\mathbf{x} \cdot \mathbf{v}_i}{\mathbf{v}_i \cdot \mathbf{v}_i}$: $c_1 = \frac{6}{2} = 3$, $c_2 = \frac{2}{2} = 1$.'
+          - problem: 'Find the coefficient of $(1, 0, 1)$ when $\mathbf{x} = (3, 5, 1)$ is expanded in an orthogonal basis containing it.'
+            answer: "2"
+            solution_sketch: '$c = \frac{(3,5,1)\cdot(1,0,1)}{(1,0,1)\cdot(1,0,1)} = \frac{4}{2} = 2$.'
+        constraints: "orthogonal bases only; coefficients are integers"
+    diagnostic_exemplar:
+      problem: 'Verify that $B = \{(2, 1), (-1, 2)\}$ is an orthogonal basis of $\mathbb{R}^2$, then use dot products to write $\mathbf{x} = (3, 4)$ in that basis.'
+      answer: 'Orthogonal (dot product -2 + 2 = 0), hence a basis of R^2; x = 2(2, 1) + 1(-1, 2)'
+      solution_sketch: 'Each coefficient is $\mathbf{x}\cdot\mathbf{b}_i / \|\mathbf{b}_i\|^2$: $10/5 = 2$ and $5/5 = 1$.'
+    anki_seeds:
+      - front: 'An orthonormal set is an orthogonal set whose vectors all have...'
+        back: 'norm $1$.'
+        type: basic
+      - front: 'Coefficient of $\mathbf{v}_i$ when expanding $\mathbf{x}$ in an ORTHOGONAL basis?'
+        back: '$c_i = \dfrac{\mathbf{x} \cdot \mathbf{v}_i}{\mathbf{v}_i \cdot \mathbf{v}_i}$ — no system solving needed.'
+        type: basic
+      - front: 'Orthogonal sets of nonzero vectors are automatically...'
+        back: 'linearly independent.'
+        type: basic
+
+  - id: orthogonal-complements
+    name: Orthogonal Complements
+    core: false                # orthogonality branch; feeds only orthogonal projection
+    difficulty: 0.7
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 180
+    prerequisites:
+      - id: orthogonal-orthonormal-sets
+        weight: 0.6
+        key: true
+      - id: null-column-space-rank
+        weight: 0.5
+    knowledge_points:
+      - id: kp1
+        name: Complements of lines
+        key_prerequisites: [orthogonal-orthonormal-sets]
+        exemplars:
+          - problem: 'Find a basis for the orthogonal complement of $\mathrm{span}\{(1, 2)\}$ in $\mathbb{R}^2$.'
+            answer: "{(-2, 1)} (any nonzero multiple)"
+            solution_sketch: 'Need $(x, y) \cdot (1, 2) = x + 2y = 0$: the line spanned by $(-2, 1)$.'
+          - problem: 'Find a basis for $(\mathrm{span}\{(1, 0, 1)\})^\perp$ in $\mathbb{R}^3$.'
+            answer: "{(-1, 0, 1), (0, 1, 0)} (any valid basis)"
+            solution_sketch: 'The condition $x + z = 0$ has free variables $y, z$: solutions $z(-1, 0, 1) + y(0, 1, 0)$.'
+        constraints: "lines with small integer directions; complements described by one homogeneous equation"
+      - id: kp2
+        name: Complements of planes and dimensions
+        key_prerequisites: [orthogonal-orthonormal-sets, null-column-space-rank]
+        exemplars:
+          - problem: 'Find the orthogonal complement of the plane $x + y + z = 0$ in $\mathbb{R}^3$.'
+            answer: "span{(1, 1, 1)}"
+            solution_sketch: 'The plane is exactly the vectors orthogonal to $(1, 1, 1)$, so its complement is the normal line.'
+          - problem: '$W$ is a $2$-dimensional subspace of $\mathbb{R}^3$. What is $\dim W^\perp$?'
+            answer: "1"
+            solution_sketch: '$\dim W + \dim W^\perp = 3$.'
+        constraints: "planes given by one equation; dimension questions via dim W + dim W-perp = n"
+      - id: kp3
+        name: Null space and row space are perpendicular
+        key_prerequisites: [null-column-space-rank, orthogonal-orthonormal-sets]
+        exemplars:
+          - problem: 'For $A = \begin{pmatrix}1&2\end{pmatrix}$, verify that $\mathrm{Nul}(A)$ is orthogonal to the row of $A$.'
+            answer: "Nul(A) = span{(-2, 1)} and (-2, 1) . (1, 2) = 0"
+            solution_sketch: '$A\mathbf{x} = 0$ says exactly that $\mathbf{x}$ is orthogonal to every row.'
+          - problem: 'State the relationship: $(\mathrm{Row}\, A)^\perp = $ ?'
+            answer: "Nul(A)"
+        constraints: "1x2 or 2x3 matrices; verification by one or two dot products"
+    diagnostic_exemplar:
+      problem: 'Find a basis for the orthogonal complement of the plane $x + 2y - z = 0$ in $\mathbb{R}^3$, give its dimension, and say how it is related to $A = \begin{pmatrix}1&2&-1\end{pmatrix}$.'
+      answer: 'Basis {(1, 2, -1)} (any nonzero multiple); dimension 1; the plane is Nul(A) and its complement is Row(A)'
+      solution_sketch: 'A plane through the origin is the null space of its coefficient row, and $(\mathrm{Nul}\,A)^\perp = \mathrm{Row}\,A$; the dimensions $2$ and $1$ sum to $3$.'
+    anki_seeds:
+      - front: '$W^\perp$ is defined as the set of vectors that are...'
+        back: 'orthogonal to every vector of $W$.'
+        type: basic
+      - front: 'For a subspace $W \subseteq \mathbb{R}^n$: $\dim W + \dim W^\perp = $ ?'
+        back: '$n$.'
+        type: basic
+      - front: '$(\mathrm{Row}\, A)^\perp = $ ?'
+        back: '$\mathrm{Nul}(A)$.'
+        type: basic
+
+  - id: orthogonal-projection-subspace
+    name: Orthogonal Projection onto a Subspace
+    core: false                # orthogonality branch; feeds only least squares
+    difficulty: 0.75
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 240
+    prerequisites:
+      - id: orthogonal-orthonormal-sets
+        weight: 0.7
+        key: true
+      - id: vector-projections
+        weight: 0.6
+        key: true
+      - id: orthogonal-complements
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: Projecting with an orthogonal basis
+        key_prerequisites: [orthogonal-orthonormal-sets, vector-projections]
+        exemplars:
+          - problem: 'Project $\mathbf{x} = (1, 2, 3)$ onto $W = \mathrm{span}\{(1, 0, 0), (0, 1, 0)\}$.'
+            answer: "(1, 2, 0)"
+            solution_sketch: 'Sum the projections onto each orthogonal basis vector: $1(1,0,0) + 2(0,1,0)$.'
+          - problem: 'Project $\mathbf{x} = (3, 1, 2)$ onto $W = \mathrm{span}\{(1, 1, 0), (0, 0, 1)\}$.'
+            answer: "(2, 2, 2)"
+            solution_sketch: '$c_1 = \frac{4}{2} = 2$, $c_2 = \frac{2}{1} = 2$: $\hat{\mathbf{x}} = 2(1,1,0) + 2(0,0,1)$. Check: $\mathbf{x} - \hat{\mathbf{x}} = (1, -1, 0)$ is orthogonal to both basis vectors.'
+        constraints: "orthogonal bases with 2 vectors in R^3; projection coefficients are integers; always check the residual"
+      - id: kp2
+        name: The orthogonal decomposition
+        key_prerequisites: [orthogonal-orthonormal-sets, vector-projections, orthogonal-complements]
+        exemplars:
+          - problem: 'Write $\mathbf{x} = (4, 7)$ as $\hat{\mathbf{x}} + \mathbf{z}$ with $\hat{\mathbf{x}} \in W = \mathrm{span}\{(2, 1)\}$ and $\mathbf{z} \perp W$.'
+            answer: "x-hat = (6, 3), z = (-2, 4)"
+            solution_sketch: '$\hat{\mathbf{x}} = \frac{15}{5}(2, 1) = (6, 3)$; $\mathbf{z} = \mathbf{x} - \hat{\mathbf{x}} = (-2, 4)$ and $(-2, 4) \cdot (2, 1) = -4 + 4 = 0$.'
+          - problem: 'Decompose $\mathbf{x} = (6, 0, 0)$ relative to $W = \mathrm{span}\{(1, 1, 1)\}$.'
+            answer: "x-hat = (2, 2, 2), z = (4, -2, -2)"
+            solution_sketch: '$\hat{\mathbf{x}} = \frac{6}{3}(1,1,1)$; check $\mathbf{z} \cdot (1,1,1) = 4 - 2 - 2 = 0$.'
+        constraints: "W is a line with an integer direction; both parts have integer entries; verify z is orthogonal"
+      - id: kp3
+        name: Distance to a subspace
+        key_prerequisites: [orthogonal-orthonormal-sets, vector-projections]
+        exemplars:
+          - problem: 'Find the distance from $(3, 1)$ to the line $\mathrm{span}\{(1, 1)\}$.'
+            answer: '$\sqrt{2}$'
+            solution_sketch: 'The distance is $\|\mathbf{x} - \hat{\mathbf{x}}\| = \|(1, -1)\| = \sqrt{2}$.'
+          - problem: 'Find the distance from $(1, 2, 2)$ to the plane $\mathrm{span}\{(1, 0, 0), (0, 1, 0)\}$.'
+            answer: "2"
+            solution_sketch: 'The projection is $(1, 2, 0)$; the residual $(0, 0, 2)$ has norm $2$.'
+        constraints: "distances are integers or single square roots"
+    diagnostic_exemplar:
+      problem: 'Write $\mathbf{x} = (5, 1)$ as $\hat{\mathbf{x}} + \mathbf{z}$ with $\hat{\mathbf{x}}$ in $W = \mathrm{span}\{(1, 1)\}$ and $\mathbf{z} \perp W$, and give the distance from $\mathbf{x}$ to $W$.'
+      answer: '$\hat{\mathbf{x}} = (3, 3)$, $\mathbf{z} = (2, -2)$; the distance is $2\sqrt{2}$'
+      solution_sketch: '$\hat{\mathbf{x}} = \frac{5 + 1}{2}(1, 1) = (3, 3)$, so $\mathbf{z} = (2, -2)$ and the distance is $\|\mathbf{z}\| = 2\sqrt2$.'
+    anki_seeds:
+      - front: 'Projection of $\mathbf{x}$ onto a subspace with ORTHOGONAL basis $\{\mathbf{v}_1, \dots, \mathbf{v}_k\}$?'
+        back: '$\hat{\mathbf{x}} = \sum_i \dfrac{\mathbf{x} \cdot \mathbf{v}_i}{\mathbf{v}_i \cdot \mathbf{v}_i}\mathbf{v}_i$.'
+        type: basic
+      - front: 'In the orthogonal decomposition $\mathbf{x} = \hat{\mathbf{x}} + \mathbf{z}$, the two parts satisfy...'
+        back: '$\hat{\mathbf{x}} \in W$ and $\mathbf{z} \in W^\perp$; $\hat{\mathbf{x}}$ is the closest point of $W$ to $\mathbf{x}$.'
+        type: basic
+      - front: 'Distance from $\mathbf{x}$ to a subspace $W$?'
+        back: '$\|\mathbf{x} - \hat{\mathbf{x}}\|$, the norm of the residual after projecting onto $W$.'
+        type: basic
+
+  - id: orthogonality-gram-schmidt
+    name: Orthogonality and Gram-Schmidt
+    core: false                # orthogonality branch; terminal
+    difficulty: 0.75
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 300
+    prerequisites:
+      - id: orthogonal-orthonormal-sets
+        weight: 0.7
+        key: true
+      - id: vector-projections
+        weight: 0.7
+        key: true
+      - id: basis-dimension
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: The Gram-Schmidt step
+        key_prerequisites: [vector-projections, orthogonal-orthonormal-sets]
+        exemplars:
+          - problem: 'Apply Gram-Schmidt to $\mathbf{x}_1 = (1, 1)$, $\mathbf{x}_2 = (0, 2)$.'
+            answer: "v1 = (1, 1), v2 = (-1, 1)"
+            solution_sketch: '$\mathbf{v}_2 = \mathbf{x}_2 - \frac{\mathbf{x}_2 \cdot \mathbf{v}_1}{\mathbf{v}_1 \cdot \mathbf{v}_1}\mathbf{v}_1 = (0,2) - \frac{2}{2}(1,1) = (-1, 1)$; check $\mathbf{v}_1 \cdot \mathbf{v}_2 = 0$.'
+          - problem: 'Apply Gram-Schmidt to $\mathbf{x}_1 = (1, 0, 1)$, $\mathbf{x}_2 = (1, 1, 0)$.'
+            answer: "v1 = (1, 0, 1), v2 = (1/2, 1, -1/2)"
+            solution_sketch: '$\mathbf{v}_2 = (1,1,0) - \frac{1}{2}(1,0,1) = (\frac{1}{2}, 1, -\frac{1}{2})$; verify $\mathbf{v}_1 \cdot \mathbf{v}_2 = \frac{1}{2} - \frac{1}{2} = 0$.'
+        constraints: "two input vectors; rig x2 . v1 / v1 . v1 to be an integer or 1/2; always verify orthogonality"
+      - id: kp2
+        name: Gram-Schmidt with three vectors
+        key_prerequisites: [vector-projections, orthogonal-orthonormal-sets, basis-dimension]
+        exemplars:
+          - problem: 'Apply Gram-Schmidt to $\mathbf{x}_1 = (1, 0, 0)$, $\mathbf{x}_2 = (1, 1, 0)$, $\mathbf{x}_3 = (1, 1, 1)$.'
+            answer: "v1 = (1, 0, 0), v2 = (0, 1, 0), v3 = (0, 0, 1)"
+            solution_sketch: '$\mathbf{v}_2 = \mathbf{x}_2 - 1\cdot\mathbf{v}_1$; $\mathbf{v}_3 = \mathbf{x}_3 - 1\cdot\mathbf{v}_1 - 1\cdot\mathbf{v}_2$. Each subtraction strips the components already covered.'
+          - problem: 'Apply Gram-Schmidt to $\mathbf{x}_1 = (1, 1, 0)$, $\mathbf{x}_2 = (1, 0, 1)$, $\mathbf{x}_3 = (0, 1, 1)$.'
+            answer: "v1 = (1, 1, 0), v2 = (1/2, -1/2, 1), v3 = (-2/3, 2/3, 2/3)"
+            solution_sketch: '$\mathbf{v}_2 = \mathbf{x}_2 - \frac{1}{2}\mathbf{v}_1$; then $\mathbf{x}_3 \cdot \mathbf{v}_1 = 1$, $\mathbf{x}_3 \cdot \mathbf{v}_2 = \frac{1}{2}$, $\mathbf{v}_2 \cdot \mathbf{v}_2 = \frac{3}{2}$, so $\mathbf{v}_3 = \mathbf{x}_3 - \frac{1}{2}\mathbf{v}_1 - \frac{1}{3}\mathbf{v}_2 = (-\frac{2}{3}, \frac{2}{3}, \frac{2}{3})$. Check: $\mathbf{v}_3 \cdot \mathbf{v}_1 = \mathbf{v}_3 \cdot \mathbf{v}_2 = 0$.'
+        constraints: "three vectors in R^3 with 0/1 entries; fractions limited to halves and thirds; verify all pairwise dot products"
+      - id: kp3
+        name: Producing an orthonormal basis
+        key_prerequisites: [orthogonal-orthonormal-sets, vector-projections]
+        exemplars:
+          - problem: 'Apply Gram-Schmidt to $\mathbf{x}_1 = (3, 4)$, $\mathbf{x}_2 = (1, 0)$, then normalize to an orthonormal basis.'
+            answer: "{(3/5, 4/5), (4/5, -3/5)}"
+            solution_sketch: '$\mathbf{v}_2 = (1, 0) - \frac{3}{25}(3, 4) = (\frac{16}{25}, -\frac{12}{25})$, proportional to $(4, -3)$; normalize $(3,4)$ and $(4,-3)$ by their norm $5$.'
+          - problem: 'Normalize the Gram-Schmidt output $\{(1, 1), (-1, 1)\}$.'
+            answer: '$\{(1/\sqrt{2}, 1/\sqrt{2}), (-1/\sqrt{2}, 1/\sqrt{2})\}$'
+            solution_sketch: 'Both vectors have norm $\sqrt{2}$.'
+        constraints: "norms are 5 or sqrt(2); rescale fraction vectors to integer directions before normalizing"
+    diagnostic_exemplar:
+      problem: 'Apply Gram-Schmidt to $\mathbf{x}_1 = (3, 4)$, $\mathbf{x}_2 = (1, 2)$, then normalize to an orthonormal basis of $\mathbb{R}^2$.'
+      answer: '{(3/5, 4/5), (-4/5, 3/5)}'
+      solution_sketch: '$\mathbf{v}_1 = (3,4)$ and $\mathbf{v}_2 = (1,2) - \frac{11}{25}(3,4) = \frac{2}{25}(-4, 3)$; dividing each by its norm gives the orthonormal pair.'
+    anki_seeds:
+      - front: 'Gram-Schmidt step: $\mathbf{v}_2 = \mathbf{x}_2 - {}$?'
+        back: '$\dfrac{\mathbf{x}_2 \cdot \mathbf{v}_1}{\mathbf{v}_1 \cdot \mathbf{v}_1}\,\mathbf{v}_1$ (subtract the projection onto what is already built).'
+        type: basic
+      - front: 'General Gram-Schmidt step for $\mathbf{v}_k$?'
+        back: '$\mathbf{x}_k$ minus its projections onto ALL previously built $\mathbf{v}_1, \dots, \mathbf{v}_{k-1}$.'
+        type: basic
+      - front: 'Gram-Schmidt turns any basis of a subspace into...'
+        back: 'an orthogonal basis of the same subspace (orthonormal after normalizing).'
+        type: basic
+
+  - id: least-squares-approximation
+    name: Least-Squares Approximation
+    core: false                # applications capstone of the orthogonality branch
+    difficulty: 0.75
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 300
+    prerequisites:
+      - id: orthogonal-projection-subspace
+        weight: 0.7
+        key: true
+      - id: transpose-symmetric-matrices
+        weight: 0.5
+        key: true
+      - id: matrix-inverses
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: The normal equations
+        key_prerequisites: [orthogonal-projection-subspace, transpose-symmetric-matrices]
+        exemplars:
+          - problem: '$A = \begin{pmatrix}1&0\\0&1\\1&1\end{pmatrix}$, $\mathbf{b} = (0, 0, 3)$. Solve the normal equations $A^TA\hat{\mathbf{x}} = A^T\mathbf{b}$.'
+            answer: "x-hat = (1, 1)"
+            solution_sketch: '$A^TA = \begin{pmatrix}2&1\\1&2\end{pmatrix}$, $A^T\mathbf{b} = (3, 3)$; solving gives $\hat{\mathbf{x}} = (1, 1)$.'
+          - problem: 'Why solve $A^TA\hat{\mathbf{x}} = A^T\mathbf{b}$ instead of $A\mathbf{x} = \mathbf{b}$?'
+            answer: "Ax = b is inconsistent; the normal equations find the x making Ax closest to b"
+            solution_sketch: '$A\hat{\mathbf{x}}$ is the orthogonal projection of $\mathbf{b}$ onto $\mathrm{Col}(A)$, so the residual is orthogonal to the columns: $A^T(\mathbf{b} - A\hat{\mathbf{x}}) = \mathbf{0}$.'
+        constraints: "3x2 matrices with 0/1 entries; A^T A is 2x2 with integer solution"
+      - id: kp2
+        name: Least-squares lines
+        key_prerequisites: [orthogonal-projection-subspace, transpose-symmetric-matrices]
+        exemplars:
+          - problem: 'Find the least-squares line $y = a + bx$ through $(-1, 0)$, $(0, 4)$, $(1, 2)$.'
+            answer: "y = 2 + x"
+            solution_sketch: 'With $x$-values symmetric about $0$, $A^TA = \mathrm{diag}(3, 2)$: $a = \frac{0 + 4 + 2}{3} = 2$, $b = \frac{(-1)(0) + (0)(4) + (1)(2)}{2} = 1$.'
+          - problem: 'Find the least-squares line $y = a + bx$ through $(-1, 2)$, $(0, 0)$, $(1, 4)$.'
+            answer: "y = 2 + x"
+            solution_sketch: '$a = \frac{2 + 0 + 4}{3} = 2$; $b = \frac{-2 + 0 + 4}{2} = 1$. Residuals $(1, -2, 1)$ are orthogonal to both columns of $A$.'
+        constraints: "3 points with x-values -1, 0, 1 so the normal equations decouple; a and b integers or halves"
+      - id: kp3
+        name: The residual and its size
+        key_prerequisites: [orthogonal-projection-subspace, matrix-inverses]
+        exemplars:
+          - problem: 'For $A = \begin{pmatrix}1&0\\0&1\\1&1\end{pmatrix}$, $\mathbf{b} = (0, 0, 3)$, $\hat{\mathbf{x}} = (1, 1)$: find the residual $\mathbf{b} - A\hat{\mathbf{x}}$ and the least-squares error.'
+            answer: 'Residual $(-1, -1, 1)$; error $\sqrt{3}$'
+            solution_sketch: '$A\hat{\mathbf{x}} = (1, 1, 2)$; the residual has norm $\sqrt{1 + 1 + 1}$. Check: $A^T$ times the residual is $\mathbf{0}$.'
+          - problem: 'Geometrically, the least-squares error $\|\mathbf{b} - A\hat{\mathbf{x}}\|$ equals the distance from $\mathbf{b}$ to...'
+            answer: "Col(A), the column space of A"
+        constraints: "residual entries small integers; error a single square root"
+    diagnostic_exemplar:
+      problem: 'Find the least-squares line $y = a + bx$ through $(-1, 0)$, $(0, 2)$, $(1, 1)$, and the least-squares error $\|\mathbf{b} - A\hat{\mathbf{x}}\|$.'
+      answer: '$y = 1 + \frac{x}{2}$; the residual is $(-\frac{1}{2}, 1, -\frac{1}{2})$ and the error is $\frac{\sqrt{6}}{2}$'
+      solution_sketch: 'The normal equations give $a = \bar y = 1$ and $b = \sum x_iy_i / \sum x_i^2 = 1/2$; the residuals $-\frac12, 1, -\frac12$ have norm $\sqrt{3/2} = \sqrt6/2$.'
+    anki_seeds:
+      - front: 'The least-squares solution of $A\mathbf{x} = \mathbf{b}$ solves which system?'
+        back: 'The normal equations $A^TA\hat{\mathbf{x}} = A^T\mathbf{b}$.'
+        type: basic
+      - front: 'Geometric meaning of the least-squares solution: $A\hat{\mathbf{x}}$ is...'
+        back: 'the orthogonal projection of $\mathbf{b}$ onto $\mathrm{Col}(A)$.'
+        type: basic
+      - front: 'The least-squares residual $\mathbf{b} - A\hat{\mathbf{x}}$ is orthogonal to...'
+        back: 'every column of $A$ (it lies in $\mathrm{Col}(A)^\perp$).'
+        type: basic

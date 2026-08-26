@@ -1,0 +1,1458 @@
+unit: expressions-equations
+course: foundations
+module: "Expressions & Equations"
+topics:
+  - id: parts-of-an-expression
+    name: "Parts of an Algebraic Expression"
+    core: true
+    difficulty: 0.20
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 45
+    prerequisites:
+      - id: order-of-operations
+        weight: 0.5
+        key: true
+      - id: integer-addition-subtraction
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: "Terms, coefficients, and constants"
+        key_prerequisites: [order-of-operations]
+        exemplars:
+          - problem: 'How many terms does $4x + 7 - 2y$ have?'
+            answer: "3"
+            solution_sketch: 'Terms are separated by $+$ and $-$: $4x$, $7$, $-2y$.'
+          - problem: 'What is the coefficient of $y$ in $3x - 5y + 2$?'
+            answer: "-5"
+            solution_sketch: 'The term is $-5y$; the sign belongs to the coefficient.'
+          - problem: 'What is the constant term of $2x^2 + 3x - 8$?'
+            answer: "-8"
+        constraints: "two to four terms; integer coefficients from -9 to 9"
+      - id: kp2
+        name: "Identify like terms"
+        key_prerequisites: [order-of-operations]
+        exemplars:
+          - problem: 'In $5x + 3y - 2x + 7$, one other term is a like term of $5x$. Which term is it?'
+            answer: "-2x"
+            solution_sketch: 'Like terms have the same variable part; $5x$ and $-2x$ both have $x$.'
+          - problem: 'Are $4a^2$ and $4a$ like terms? Answer yes or no.'
+            answer: "no"
+            solution_sketch: 'The variable parts $a^2$ and $a$ differ.'
+        constraints: "at most two variables; exponents <= 2"
+    diagnostic_exemplar:
+      problem: 'In $6a - 4b + 2 - 9a$, which term is a like term of $6a$?'
+      answer: '-9a'
+      solution_sketch: 'Like terms have the same variable to the same power.'
+    anki_seeds:
+      - front: "The coefficient of a term is..."
+        back: "its numerical factor, including the sign (in -5y the coefficient is -5)"
+        type: basic
+      - front: "Like terms are terms with..."
+        back: "exactly the same variable part (same variables to the same powers)"
+        type: basic
+
+  - id: substituting-values
+    name: "Substituting Values into Expressions"
+    core: true
+    difficulty: 0.22
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 45
+    prerequisites:
+      - id: order-of-operations
+        weight: 0.7
+        key: true
+      - id: multiplication-tables
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: "Substitute one value into a linear expression"
+        key_prerequisites: [order-of-operations]
+        exemplars:
+          - problem: 'Evaluate $3x + 5$ when $x = 4$.'
+            answer: "17"
+            solution_sketch: '$3(4) + 5 = 12 + 5 = 17$.'
+          - problem: 'Evaluate $2a - 7$ when $a = 10$.'
+            answer: "13"
+          - problem: 'Evaluate $10 - 2m$ when $m = 3$.'
+            answer: "4"
+        constraints: "one variable; positive integer inputs; coefficients <= 9"
+      - id: kp2
+        name: "Two variables with whole-number inputs"
+        key_prerequisites: [order-of-operations, multiplication-tables]
+        exemplars:
+          - problem: 'Evaluate $2ab$ when $a = 5$ and $b = 3$.'
+            answer: "30"
+            solution_sketch: '$2 \times 5 \times 3 = 30$.'
+          - problem: 'Evaluate $x + 3y$ when $x = 2$ and $y = 4$.'
+            answer: "14"
+        constraints: "two variables; positive integer inputs <= 10"
+    diagnostic_exemplar:
+      problem: 'Evaluate $2x + 3y$ when $x = 4$ and $y = 5$.'
+      answer: '23'
+      solution_sketch: '$8 + 15 = 23$.'
+    anki_seeds:
+      - front: "A coefficient written next to a variable, as in 3x, means..."
+        back: "multiplication: 3x = 3 times x"
+        type: basic
+
+  - id: evaluating-expressions
+    name: "Evaluating Algebraic Expressions"
+    core: true
+    difficulty: 0.28
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 50
+    prerequisites:
+      - id: substituting-values
+        weight: 0.8
+        key: true
+      - id: integer-multiplication-division
+        weight: 0.6
+      - id: integer-addition-subtraction
+        weight: 0.6
+      - id: integer-exponents-intro
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: "Expressions with exponents"
+        key_prerequisites: [substituting-values, integer-exponents-intro]
+        exemplars:
+          - problem: 'Evaluate $x^2 + y$ when $x = 3$ and $y = 4$.'
+            answer: "13"
+            solution_sketch: '$3^2 + 4 = 9 + 4 = 13$.'
+          - problem: 'Evaluate $2a^2$ when $a = 3$.'
+            answer: "18"
+            solution_sketch: 'Exponent first: $2 \times 9 = 18$.'
+        constraints: "exponents <= 2; positive inputs"
+      - id: kp2
+        name: "Negative inputs with order of operations"
+        key_prerequisites: [integer-addition-subtraction, integer-multiplication-division]
+        exemplars:
+          - problem: 'Evaluate $x^2 - 3x$ when $x = -2$.'
+            answer: "10"
+            solution_sketch: '$(-2)^2 - 3(-2) = 4 + 6 = 10$.'
+          - problem: 'Evaluate $\frac{a - b}{2}$ when $a = -3$ and $b = 9$.'
+            answer: "-6"
+            solution_sketch: '$\frac{-3 - 9}{2} = -\frac{12}{2} = -6$.'
+        constraints: "inputs in -9..9; watch sign of squared negatives"
+      - id: kp3
+        name: "Multi-term expressions with negatives and exponents"
+        key_prerequisites: [substituting-values, integer-exponents-intro]
+        exemplars:
+          - problem: 'Evaluate $-x^2 + 5x$ when $x = -1$.'
+            answer: "-6"
+            solution_sketch: '$-(-1)^2 + 5(-1) = -1 - 5 = -6$.'
+          - problem: 'Evaluate $2x^2 - x + 1$ when $x = -3$.'
+            answer: "22"
+            solution_sketch: '$2(9) - (-3) + 1 = 18 + 3 + 1 = 22$.'
+        constraints: "three terms; inputs in -9..9; distinguish -x^2 from (-x)^2"
+    diagnostic_exemplar:
+      problem: 'Evaluate $3x^2 - 2x$ when $x = -2$.'
+      answer: "16"
+      solution_sketch: '$3(4) - 2(-2) = 12 + 4 = 16$.'
+    anki_seeds:
+      - front: "To evaluate an algebraic expression, first ... then ..."
+        back: "substitute the given value(s), then simplify following the order of operations (PEMDAS)"
+        type: basic
+
+  - id: translating-phrases-to-expressions
+    name: "Translating Phrases into Expressions"
+    core: true
+    difficulty: 0.24
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 60
+    prerequisites:
+      - id: parts-of-an-expression
+        weight: 0.6
+        key: true
+      - id: integer-addition-subtraction
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: "Sum and difference phrases"
+        key_prerequisites: [parts-of-an-expression]
+        exemplars:
+          - problem: 'Write an expression: $7$ more than a number $n$.'
+            answer: "n + 7"
+          - problem: 'Write an expression: the difference of a number $x$ and $4$.'
+            answer: "x - 4"
+        constraints: "one operation; single variable"
+      - id: kp2
+        name: "Product and quotient phrases"
+        key_prerequisites: [parts-of-an-expression]
+        exemplars:
+          - problem: 'Write an expression: the product of $6$ and $w$.'
+            answer: "6w"
+          - problem: 'Write an expression: the quotient of $y$ and $5$.'
+            answer: "y/5"
+        constraints: "one operation; single variable"
+      - id: kp3
+        name: "Two-operation phrases"
+        key_prerequisites: [parts-of-an-expression]
+        exemplars:
+          - problem: 'Write an expression: $3$ less than twice a number $n$.'
+            answer: "2n - 3"
+            solution_sketch: '"$3$ less than" reverses the order: start with $2n$, subtract $3$.'
+          - problem: 'Write an expression: $5$ more than the product of $4$ and $t$.'
+            answer: "4t + 5"
+        constraints: "two operations; watch order-reversing phrases (less than, fewer than)"
+    diagnostic_exemplar:
+      problem: 'Write an expression: $8$ less than three times a number $x$.'
+      answer: "3x - 8"
+      solution_sketch: '"Three times a number" is $3x$; "$8$ less than" subtracts from it, so the $8$ comes second.'
+    anki_seeds:
+      - front: "The phrase 'a less than b' translates to..."
+        back: "b - a (the order reverses)"
+        type: basic
+
+  - id: writing-expressions-from-patterns
+    name: "Writing Expressions from Patterns"
+    core: false                # translation leaf; translating-phrases stays core
+    difficulty: 0.32
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 90
+    prerequisites:
+      - id: translating-phrases-to-expressions
+        weight: 0.6
+        key: true
+      - id: evaluating-expressions
+        weight: 0.5
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: "Expression from a table of values"
+        key_prerequisites: [evaluating-expressions]
+        exemplars:
+          - problem: 'A table pairs $n = 1, 2, 3$ with $5, 8, 11$. Write an expression for the value at position $n$.'
+            answer: "3n + 2"
+            solution_sketch: 'Values climb by $3$ each step, so $3n + c$; at $n = 1$, $3 + c = 5$ gives $c = 2$.'
+          - problem: 'A table pairs $n = 1, 2, 3$ with $6, 10, 14$. Write an expression for the value at position $n$.'
+            answer: "4n + 2"
+            solution_sketch: 'Common step $4$; $4(1) + 2 = 6$ checks.'
+        constraints: "linear patterns with positive integer step; check against the first entry"
+      - id: kp2
+        name: "Expression from a real-world rule"
+        key_prerequisites: [translating-phrases-to-expressions]
+        exemplars:
+          - problem: 'A gym charges €20 to join plus €8 per month. Write an expression for the total cost after $m$ months.'
+            answer: "8m + 20"
+          - problem: 'A toothpick pattern uses $3$ toothpicks for $1$ triangle, $5$ for $2$, $7$ for $3$, adding $2$ per triangle. Write an expression for the toothpicks in $n$ triangles.'
+            answer: "2n + 1"
+            solution_sketch: 'Step $2$ per square; $2(1) + 1 = 3$ checks.'
+        constraints: "start value plus constant rate; single variable"
+    diagnostic_exemplar:
+      problem: 'A table pairs $n = 1, 2, 3$ with $7$, $11$, $15$. Write an expression for the value at position $n$.'
+      answer: '4n + 3'
+      solution_sketch: 'The step is $4$, and at $n = 1$ the value is $7 = 4 + 3$.'
+    anki_seeds:
+      - front: "In a linear pattern, the number added each step becomes the ... of the expression."
+        back: "coefficient of the variable (the constant rate)"
+        type: basic
+
+  - id: evaluating-formulas
+    name: "Evaluating Formulas"
+    core: true
+    difficulty: 0.30
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 75
+    prerequisites:
+      - id: evaluating-expressions
+        weight: 0.7
+        key: true
+      - id: multiplying-fractions
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: "Geometry formulas"
+        key_prerequisites: [evaluating-expressions]
+        exemplars:
+          - problem: 'Use $A = lw$ to find the area when $l = 8$ and $w = 5$.'
+            answer: "40"
+          - problem: 'Use $P = 2l + 2w$ to find the perimeter when $l = 7$ and $w = 3$.'
+            answer: "20"
+            solution_sketch: '$2(7) + 2(3) = 14 + 6 = 20$.'
+          - problem: 'Use $A = \frac{1}{2}bh$ to find the area when $b = 10$ and $h = 7$.'
+            answer: "35"
+        constraints: "whole-number inputs; area/perimeter formulas"
+      - id: kp2
+        name: "Rate and science formulas"
+        key_prerequisites: [evaluating-expressions]
+        exemplars:
+          - problem: 'Use $d = rt$ to find the distance when $r = 55$ and $t = 3$.'
+            answer: "165"
+          - problem: 'Use $E = \frac{1}{2}mv^2$ to find the kinetic energy in joules when $m = 6$ and $v = 4$.'
+            answer: "48"
+            solution_sketch: '$\frac{1}{2}(6) = 3$; $3 \times 4^2 = 3 \times 16 = 48$.'
+        constraints: "inputs chosen so fraction coefficients produce whole numbers"
+    diagnostic_exemplar:
+      problem: 'Use $E = \frac{1}{2}mv^2$ to find the kinetic energy in joules when $m = 4$ and $v = 5$.'
+      answer: '50'
+      solution_sketch: '$E = \frac{1}{2}(4)(5^2) = 2 \times 25 = 50$.'
+    anki_seeds:
+      - front: "A formula is an equation that..."
+        back: "states a relationship between quantities; evaluate it by substituting known values"
+        type: basic
+
+  - id: combining-like-terms
+    name: "Combining Like Terms"
+    core: true
+    difficulty: 0.30
+    drill: true
+    answer_kind: expression
+    expected_time_secs: 45
+    prerequisites:
+      - id: integer-addition-subtraction
+        weight: 0.7
+        key: true
+      - id: parts-of-an-expression
+        weight: 0.5
+        key: true
+      - id: evaluating-expressions
+        weight: 0.0
+    knowledge_points:
+      - id: kp1
+        name: "Combine like terms with positive coefficients"
+        key_prerequisites: [parts-of-an-expression]
+        exemplars:
+          - problem: 'Simplify $3x + 5x$.'
+            answer: "8x"
+          - problem: 'Simplify $7a + 2a + a$.'
+            answer: "10a"
+        constraints: "single variable; positive coefficients <= 9"
+      - id: kp2
+        name: "Negative coefficients and subtraction"
+        key_prerequisites: [integer-addition-subtraction]
+        exemplars:
+          - problem: 'Simplify $8y - 3y$.'
+            answer: "5y"
+          - problem: 'Simplify $4x - 9x$.'
+            answer: "-5x"
+            solution_sketch: '$4 - 9 = -5$, so $-5x$.'
+        constraints: "results may be negative; single variable"
+      - id: kp3
+        name: "Multiple variable types and constants"
+        key_prerequisites: [integer-addition-subtraction, parts-of-an-expression]
+        exemplars:
+          - problem: 'Simplify $3x + 2 + 5x - 7$.'
+            answer: "8x - 5"
+            solution_sketch: '$(3x + 5x) + (2 - 7) = 8x - 5$.'
+          - problem: 'Simplify $6a + 4b - 2a + b$.'
+            answer: "4a + 5b"
+        constraints: "two variable types plus constants; keep unlike terms separate"
+    diagnostic_exemplar:
+      problem: 'Simplify $5x + 3 - 2x + 8$.'
+      answer: "3x + 11"
+      solution_sketch: '$(5x - 2x) + (3 + 8) = 3x + 11$.'
+    anki_seeds:
+      - front: "Like terms are terms that ..."
+        back: "have the same variable(s) raised to the same power; combine them by adding/subtracting their coefficients"
+        type: basic
+
+  - id: distributive-property
+    name: "The Distributive Property"
+    core: true
+    difficulty: 0.32
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 55
+    prerequisites:
+      - id: integer-multiplication-division
+        weight: 0.7
+        key: true
+      - id: combining-like-terms
+        weight: 0.5
+        key: true
+      - id: integer-addition-subtraction
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: "Distribute a positive factor over a sum"
+        key_prerequisites: [integer-multiplication-division]
+        exemplars:
+          - problem: 'Expand $3(x + 4)$.'
+            answer: "3x + 12"
+          - problem: 'Expand $5(2a + 1)$.'
+            answer: "10a + 5"
+        constraints: "positive factor; two-term binomial"
+      - id: kp2
+        name: "Negative multipliers and subtraction"
+        key_prerequisites: [integer-multiplication-division]
+        exemplars:
+          - problem: 'Expand $-2(x - 5)$.'
+            answer: "-2x + 10"
+            solution_sketch: '$-2 \cdot x = -2x$; $-2 \cdot (-5) = +10$.'
+          - problem: 'Expand $-(3y + 7)$.'
+            answer: "-3y - 7"
+            solution_sketch: 'Distributing $-1$: $-3y - 7$.'
+        constraints: "negative factor or leading minus; watch both signs"
+      - id: kp3
+        name: "Distribute then combine like terms"
+        key_prerequisites: [combining-like-terms]
+        exemplars:
+          - problem: 'Expand and simplify $2(x + 3) + 4x$.'
+            answer: "6x + 6"
+            solution_sketch: '$2x + 6 + 4x = 6x + 6$.'
+          - problem: 'Expand and simplify $3(a - 2) - (a + 1)$.'
+            answer: "2a - 7"
+            solution_sketch: '$3a - 6 - a - 1 = 2a - 7$.'
+        constraints: "combine after distributing; single variable"
+    diagnostic_exemplar:
+      problem: 'Expand and simplify $5 - 3(x - 2)$.'
+      answer: '-3x + 11'
+      solution_sketch: '$5 - 3x + 6 = -3x + 11$.'
+    anki_seeds:
+      - front: "Distributive property: a(b + c) = ?"
+        back: "ab + ac"
+        type: basic
+
+  - id: factoring-linear-expressions
+    name: "Factoring Linear Expressions"
+    core: false                # early GCF drill; factoring-gcf stays core
+    difficulty: 0.34
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 70
+    prerequisites:
+      - id: distributive-property
+        weight: 0.7
+        key: true
+      - id: gcf-lcm
+        weight: 0.5
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: "Factor out the GCF"
+        key_prerequisites: [distributive-property, gcf-lcm]
+        exemplars:
+          - problem: 'Factor $6x + 9$.'
+            answer: "3(2x + 3)"
+            solution_sketch: 'GCF of $6$ and $9$ is $3$: $6x + 9 = 3(2x + 3)$.'
+          - problem: 'Factor $10a - 15$.'
+            answer: "5(2a - 3)"
+        constraints: "two terms; GCF between 2 and 9; verify by expanding"
+      - id: kp2
+        name: "Factor with negatives and two variables"
+        key_prerequisites: [distributive-property, gcf-lcm]
+        exemplars:
+          - problem: 'Factor $-4x - 8$ by pulling out $-4$.'
+            answer: "-4(x + 2)"
+            solution_sketch: '$-4 \cdot x = -4x$ and $-4 \cdot 2 = -8$.'
+          - problem: 'Factor $12x + 18y$.'
+            answer: "6(2x + 3y)"
+        constraints: "GCF may be negative; expand to check both signs"
+    diagnostic_exemplar:
+      problem: 'Factor $9x + 15y$.'
+      answer: "3(3x + 5y)"
+      solution_sketch: 'The GCF of $9$ and $15$ is $3$: $3(3x + 5y)$.'
+    anki_seeds:
+      - front: "Factoring a linear expression is the reverse of..."
+        back: "distributing: pull the GCF out front and divide each term by it"
+        type: basic
+
+  - id: equivalent-expressions
+    name: "Identifying Equivalent Expressions"
+    core: false                # recognition leaf; distributive/like-terms stay core
+    difficulty: 0.34
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 75
+    prerequisites:
+      - id: distributive-property
+        weight: 0.6
+        key: true
+      - id: combining-like-terms
+        weight: 0.5
+        key: true
+      - id: substituting-values
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: "Decide equivalence by simplifying"
+        key_prerequisites: [distributive-property, combining-like-terms]
+        exemplars:
+          - problem: 'Are $2(x + 3)$ and $2x + 6$ equivalent? Answer yes or no.'
+            answer: "yes"
+            solution_sketch: 'Expanding $2(x + 3)$ gives exactly $2x + 6$.'
+          - problem: 'Are $3x + 4x$ and $7x^2$ equivalent? Answer yes or no.'
+            answer: "no"
+            solution_sketch: '$3x + 4x = 7x$, not $7x^2$.'
+        constraints: "one expression simplifies (or fails to) into the other; single variable"
+      - id: kp2
+        name: "Simplify to a standard equivalent form"
+        key_prerequisites: [distributive-property, combining-like-terms]
+        exemplars:
+          - problem: 'Write $4(2x - 1) + 3$ in the form $ax + b$.'
+            answer: "8x - 1"
+            solution_sketch: '$8x - 4 + 3 = 8x - 1$.'
+          - problem: 'Write $5(x + 2) - 3(x - 1)$ in the form $ax + b$.'
+            answer: "2x + 13"
+            solution_sketch: '$5x + 10 - 3x + 3 = 2x + 13$.'
+        constraints: "distribute and combine; integer coefficients"
+    diagnostic_exemplar:
+      problem: 'Write $3(2x + 1) - 2(x - 4)$ in the form $ax + b$.'
+      answer: "4x + 11"
+      solution_sketch: '$6x + 3 - 2x + 8$; note $-2(-4) = +8$.'
+    anki_seeds:
+      - front: "Two expressions are equivalent when..."
+        back: "they take the same value for every value of the variable (simplifying one yields the other)"
+        type: basic
+      - front: "A quick way to show two expressions are NOT equivalent:"
+        back: "find one value of the variable where they evaluate differently"
+        type: basic
+
+  - id: checking-a-solution
+    name: "Checking a Solution to an Equation"
+    core: true
+    difficulty: 0.26
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 60
+    prerequisites:
+      - id: substituting-values
+        weight: 0.7
+        key: true
+      - id: integer-addition-subtraction
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: "Verify a value by substitution"
+        key_prerequisites: [substituting-values]
+        exemplars:
+          - problem: 'Is $x = 4$ a solution of $3x - 5 = 7$? Answer yes or no.'
+            answer: "yes"
+            solution_sketch: '$3(4) - 5 = 7$; both sides equal $7$.'
+          - problem: 'Is $x = 3$ a solution of $x + 8 = 12$? Answer yes or no.'
+            answer: "no"
+            solution_sketch: '$3 + 8 = 11 \ne 12$.'
+          - problem: 'Is $m = -2$ a solution of $2m + 9 = 5$? Answer yes or no.'
+            answer: "yes"
+            solution_sketch: '$2(-2) + 9 = 5$.'
+        constraints: "one- or two-step equations; integer candidates in -9..9"
+      - id: kp2
+        name: "Pick the solution from candidates"
+        key_prerequisites: [substituting-values]
+        exemplars:
+          - problem: 'Which of $x = 2$, $x = 3$, $x = 4$ solves $5x - 6 = 9$?'
+            answer: "3"
+            solution_sketch: '$5(3) - 6 = 9$.'
+          - problem: 'Which of $y = -1$, $y = 0$, $y = 1$ solves $4y + 3 = -1$?'
+            answer: "-1"
+            solution_sketch: '$4(-1) + 3 = -1$.'
+        constraints: "three candidates; exactly one works"
+    diagnostic_exemplar:
+      problem: 'Which of $x = -2$, $x = 1$, $x = 3$ solves $4x - 5 = -1$?'
+      answer: '1'
+      solution_sketch: '$4(1) - 5 = -1$; the other candidates give $-13$ and $7$.'
+    anki_seeds:
+      - front: "A value is a solution of an equation when..."
+        back: "substituting it makes both sides equal"
+        type: basic
+
+  - id: addition-subtraction-equations
+    name: "Addition and Subtraction Equations"
+    core: true
+    difficulty: 0.24
+    drill: true
+    answer_kind: numeric
+    expected_time_secs: 45
+    prerequisites:
+      - id: integer-addition-subtraction
+        weight: 0.7
+        key: true
+      - id: checking-a-solution
+        weight: 0.4
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: "Solve x + a = b"
+        key_prerequisites: [integer-addition-subtraction]
+        exemplars:
+          - problem: 'Solve $x + 7 = 12$.'
+            answer: "5"
+            solution_sketch: 'Subtract $7$: $x = 5$.'
+          - problem: 'Solve $m + 15 = 8$.'
+            answer: "-7"
+            solution_sketch: 'Subtract $15$: $m = -7$.'
+        constraints: "subtract to undo addition; integer solutions"
+      - id: kp2
+        name: "Solve x - a = b"
+        key_prerequisites: [integer-addition-subtraction]
+        exemplars:
+          - problem: 'Solve $x - 6 = 10$.'
+            answer: "16"
+            solution_sketch: 'Add $6$: $x = 16$.'
+          - problem: 'Solve $y - 4 = -9$.'
+            answer: "-5"
+            solution_sketch: 'Add $4$: $y = -5$.'
+        constraints: "add to undo subtraction; integer solutions"
+    diagnostic_exemplar:
+      problem: 'Solve $x + 9 = 2$.'
+      answer: "-7"
+      solution_sketch: 'Subtract $9$: $x = -7$.'
+    anki_seeds:
+      - front: "To undo adding a number to the variable, ..."
+        back: "subtract that number from both sides (and vice versa)"
+        type: basic
+
+  - id: one-step-equations
+    name: "One-Step Equations"
+    core: true
+    difficulty: 0.28
+    drill: true
+    answer_kind: numeric
+    expected_time_secs: 45
+    prerequisites:
+      - id: addition-subtraction-equations
+        weight: 0.7
+        key: true
+      - id: integer-multiplication-division
+        weight: 0.7
+        key: true
+      - id: checking-a-solution
+        weight: 0.3
+      - id: evaluating-expressions
+        weight: 0.0
+    knowledge_points:
+      - id: kp1
+        name: "Solve by dividing"
+        key_prerequisites: [integer-multiplication-division]
+        exemplars:
+          - problem: 'Solve $3x = 21$.'
+            answer: "7"
+            solution_sketch: 'Divide by $3$: $x = 7$.'
+          - problem: 'Solve $5t = -35$.'
+            answer: "-7"
+            solution_sketch: 'Divide by $5$: $t = -7$.'
+        constraints: "exact integer solutions; coefficients <= 9"
+      - id: kp2
+        name: "Solve division forms by multiplying"
+        key_prerequisites: [integer-multiplication-division]
+        exemplars:
+          - problem: 'Solve $\frac{x}{5} = 4$.'
+            answer: "20"
+            solution_sketch: 'Multiply by $5$: $x = 20$.'
+          - problem: 'Solve $\frac{x}{-3} = 6$.'
+            answer: "-18"
+            solution_sketch: 'Multiply by $-3$: $x = -18$.'
+        constraints: "divisors from -9 to 9; integer solutions"
+      - id: kp3
+        name: "Mixed one-step equations, negative coefficients"
+        key_prerequisites: [integer-multiplication-division, addition-subtraction-equations]
+        exemplars:
+          - problem: 'Solve $-4x = -24$.'
+            answer: "6"
+            solution_sketch: 'Divide by $-4$: $x = 6$.'
+          - problem: 'Solve $x + 11 = 3$.'
+            answer: "-8"
+            solution_sketch: 'Subtract $11$: $x = -8$.'
+        constraints: "choose the correct inverse operation; integer solutions"
+    diagnostic_exemplar:
+      problem: 'Solve $-6x = 42$.'
+      answer: "-7"
+      solution_sketch: 'Divide by $-6$: $x = -7$.'
+    anki_seeds:
+      - front: "To solve a one-step equation, apply the ... to both sides."
+        back: "inverse operation (undo what is done to the variable)"
+        type: basic
+
+  - id: two-step-equations
+    name: "Two-Step Equations"
+    core: true
+    difficulty: 0.38
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 60
+    prerequisites:
+      - id: one-step-equations
+        weight: 0.8
+        key: true
+      - id: integer-multiplication-division
+        weight: 0.6
+        key: true
+      - id: integer-addition-subtraction
+        weight: 0.6
+      - id: order-of-operations
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: "Solve ax + b = c"
+        key_prerequisites: [one-step-equations]
+        exemplars:
+          - problem: 'Solve $2x + 3 = 11$.'
+            answer: "4"
+            solution_sketch: '$2x = 8$; $x = 4$.'
+          - problem: 'Solve $3x + 4 = -8$.'
+            answer: "-4"
+            solution_sketch: '$3x = -12$; $x = -4$.'
+        constraints: "integer solutions; undo addition before multiplication"
+      - id: kp2
+        name: "Division form and negative coefficients"
+        key_prerequisites: [integer-multiplication-division]
+        exemplars:
+          - problem: 'Solve $\frac{x}{3} + 2 = 6$.'
+            answer: "12"
+            solution_sketch: '$\frac{x}{3} = 4$; $x = 12$.'
+          - problem: 'Solve $-2x + 5 = 13$.'
+            answer: "-4"
+            solution_sketch: '$-2x = 8$; $x = -4$.'
+        constraints: "integer solutions; watch sign when dividing by a negative"
+    diagnostic_exemplar:
+      problem: 'Solve $-3x + 7 = 19$.'
+      answer: '-4'
+      solution_sketch: '$-3x = 12$; $x = -4$.'
+    anki_seeds:
+      - front: "Order of operations to SOLVE a two-step equation ax + b = c:"
+        back: "undo addition/subtraction first, then undo multiplication/division"
+        type: basic
+
+  - id: variables-both-sides
+    name: "Equations with Variables on Both Sides"
+    core: true
+    difficulty: 0.42
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 75
+    prerequisites:
+      - id: two-step-equations
+        weight: 0.8
+        key: true
+      - id: combining-like-terms
+        weight: 0.5
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: "Collect the variable on one side"
+        key_prerequisites: [two-step-equations, combining-like-terms]
+        exemplars:
+          - problem: 'Solve $5x + 3 = 2x + 18$.'
+            answer: "5"
+            solution_sketch: 'Subtract $2x$: $3x + 3 = 18$; $3x = 15$; $x = 5$.'
+          - problem: 'Solve $4x - 7 = x + 5$.'
+            answer: "4"
+            solution_sketch: '$3x = 12$; $x = 4$.'
+        constraints: "variable on both sides; integer solutions"
+      - id: kp2
+        name: "Negative coefficients and constants on both sides"
+        key_prerequisites: [two-step-equations, combining-like-terms]
+        exemplars:
+          - problem: 'Solve $3x + 10 = 7x - 2$.'
+            answer: "3"
+            solution_sketch: 'Subtract $3x$: $10 = 4x - 2$; $12 = 4x$; $x = 3$.'
+          - problem: 'Solve $2 - 5x = 2x + 16$.'
+            answer: "-2"
+            solution_sketch: 'Add $5x$: $2 = 7x + 16$; $-14 = 7x$; $x = -2$.'
+        constraints: "move the smaller variable term to avoid negative coefficients; integer solutions"
+    diagnostic_exemplar:
+      problem: 'Solve $5 - 2x = 3x - 10$.'
+      answer: '3'
+      solution_sketch: '$5 + 10 = 3x + 2x$; $15 = 5x$; $x = 3$.'
+    anki_seeds:
+      - front: "First move when an equation has the variable on both sides:"
+        back: "add or subtract a variable term to collect all variable terms on one side"
+        type: basic
+
+  - id: distribute-then-solve
+    name: "Solving Equations with Parentheses"
+    core: true
+    difficulty: 0.42
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 75
+    prerequisites:
+      - id: distributive-property
+        weight: 0.7
+        key: true
+      - id: two-step-equations
+        weight: 0.7
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: "Distribute, then solve the two-step equation"
+        key_prerequisites: [distributive-property, two-step-equations]
+        exemplars:
+          - problem: 'Solve $2(x + 3) = 16$.'
+            answer: "5"
+            solution_sketch: '$2x + 6 = 16$; $2x = 10$; $x = 5$.'
+          - problem: 'Solve $3(2x - 1) = 15$.'
+            answer: "3"
+            solution_sketch: '$6x - 3 = 15$; $6x = 18$; $x = 3$.'
+        constraints: "one set of parentheses; positive multiplier; integer solutions"
+      - id: kp2
+        name: "Negative multipliers and extra constant terms"
+        key_prerequisites: [distributive-property, two-step-equations]
+        exemplars:
+          - problem: 'Solve $-2(x - 4) = 10$.'
+            answer: "-1"
+            solution_sketch: '$-2x + 8 = 10$; $-2x = 2$; $x = -1$.'
+          - problem: 'Solve $4(x + 2) - 3 = 17$.'
+            answer: "3"
+            solution_sketch: '$4x + 8 - 3 = 17$; $4x = 12$; $x = 3$.'
+        constraints: "watch signs when distributing a negative; integer solutions"
+    diagnostic_exemplar:
+      problem: 'Solve $-3(x - 2) = 18$.'
+      answer: '-4'
+      solution_sketch: '$-3x + 6 = 18$; $-3x = 12$; $x = -4$.'
+    anki_seeds:
+      - front: "When an equation contains parentheses, the usual first step is to..."
+        back: "distribute to remove the parentheses, then solve as a multi-step equation"
+        type: basic
+
+  - id: multi-step-equations
+    name: "Multi-Step Equations"
+    core: true
+    difficulty: 0.45
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 90
+    prerequisites:
+      - id: variables-both-sides
+        weight: 0.7
+        key: true
+      - id: distribute-then-solve
+        weight: 0.7
+        key: true
+      - id: combining-like-terms
+        weight: 0.5
+    knowledge_points:
+      - id: kp1
+        name: "Combine like terms before solving"
+        key_prerequisites: [combining-like-terms]
+        exemplars:
+          - problem: 'Solve $3x + 2x + 4 = 24$.'
+            answer: "4"
+            solution_sketch: '$5x + 4 = 24$; $5x = 20$; $x = 4$.'
+          - problem: 'Solve $7x - 3x - 5 = 11$.'
+            answer: "4"
+            solution_sketch: '$4x - 5 = 11$; $4x = 16$; $x = 4$.'
+        constraints: "combine on one side; integer solutions"
+      - id: kp2
+        name: "Distribute and collect across both sides"
+        key_prerequisites: [distribute-then-solve, variables-both-sides]
+        exemplars:
+          - problem: 'Solve $3(2x - 1) = 4x + 9$.'
+            answer: "6"
+            solution_sketch: '$6x - 3 = 4x + 9$; $2x = 12$; $x = 6$.'
+          - problem: 'Solve $5(x - 2) = 2(x + 4)$.'
+            answer: "6"
+            solution_sketch: '$5x - 10 = 2x + 8$; $3x = 18$; $x = 6$.'
+        constraints: "parentheses on one or both sides; integer solutions"
+      - id: kp3
+        name: "Full pipeline: distribute, combine, collect, solve"
+        key_prerequisites: [distribute-then-solve, variables-both-sides]
+        exemplars:
+          - problem: 'Solve $4x + 6 - x = 2(x + 5)$.'
+            answer: "4"
+            solution_sketch: '$3x + 6 = 2x + 10$; $x = 4$.'
+          - problem: 'Solve $7 - 2(x - 3) = 3x - 2$.'
+            answer: "3"
+            solution_sketch: '$7 - 2x + 6 = 3x - 2$; $13 - 2x = 3x - 2$; $15 = 5x$; $x = 3$.'
+        constraints: "requires all three simplification moves; integer solutions"
+    diagnostic_exemplar:
+      problem: 'Solve $5x - 2(x - 3) = 2x + 11$.'
+      answer: '5'
+      solution_sketch: '$5x - 2x + 6 = 2x + 11$; $3x + 6 = 2x + 11$; $x = 5$.'
+    anki_seeds:
+      - front: "General strategy for a multi-step linear equation:"
+        back: "distribute, combine like terms, collect the variable on one side, then solve the resulting two-step equation"
+        type: basic
+
+  - id: equations-special-cases
+    name: "Equations with No Solution or Infinitely Many"
+    core: false                # classification leaf; the equation-solving rules stay core
+    difficulty: 0.48
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 90
+    prerequisites:
+      - id: multi-step-equations
+        weight: 0.7
+        key: true
+      - id: variables-both-sides
+        weight: 0.5
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: "Recognize no-solution equations"
+        key_prerequisites: [variables-both-sides]
+        exemplars:
+          - problem: 'Solve $3x + 5 = 3x - 2$.'
+            answer: "no solution"
+            solution_sketch: 'Subtracting $3x$ leaves $5 = -2$, which is false.'
+          - problem: 'Solve $2(x + 4) = 2x + 5$.'
+            answer: "no solution"
+            solution_sketch: '$2x + 8 = 2x + 5$ gives $8 = 5$, false.'
+        constraints: "variable terms cancel leaving a false statement"
+      - id: kp2
+        name: "Recognize identities"
+        key_prerequisites: [multi-step-equations]
+        exemplars:
+          - problem: 'Solve $2(3x + 4) = 6x + 8$.'
+            answer: "all real numbers"
+            solution_sketch: 'Both sides expand to $6x + 8$; every value works.'
+          - problem: 'Solve $4x - 2x + 7 = 2x + 7$.'
+            answer: "all real numbers"
+            solution_sketch: 'The left side simplifies to $2x + 7$, identical to the right.'
+        constraints: "variable terms cancel leaving a true statement"
+      - id: kp3
+        name: "Classify: one solution, none, or infinitely many"
+        key_prerequisites: [multi-step-equations, variables-both-sides]
+        exemplars:
+          - problem: 'Solve $3(x - 1) = 3x - 3$.'
+            answer: "all real numbers"
+            solution_sketch: '$3x - 3 = 3x - 3$ is an identity.'
+          - problem: 'Solve $2x + 3 = x + 3$.'
+            answer: "0"
+            solution_sketch: 'Subtract $x$ and $3$: $x = 0$ — one solution (zero is a valid solution!).'
+        constraints: "mix all three outcomes; do not confuse x = 0 with no solution"
+    diagnostic_exemplar:
+      problem: 'Solve $3(2x - 1) = 6x + 5$.'
+      answer: 'no solution'
+      solution_sketch: '$6x - 3 = 6x + 5$ leaves $-3 = 5$, which is false.'
+    anki_seeds:
+      - front: "If solving an equation ends in a false statement like 8 = 5, the equation has..."
+        back: "no solution"
+        type: basic
+      - front: "If solving an equation ends in a true statement like 7 = 7, the equation has..."
+        back: "infinitely many solutions (every real number; it is an identity)"
+        type: basic
+
+  - id: equations-with-decimals
+    name: "Equations with Decimals"
+    core: false                # format-specific drill; multi-step-equations stays core
+    difficulty: 0.48
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 100
+    prerequisites:
+      - id: multi-step-equations
+        weight: 0.6
+        key: true
+      - id: decimal-operations
+        weight: 0.5
+        key: true
+      - id: signed-decimal-operations
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: "Solve directly with decimal arithmetic"
+        key_prerequisites: [decimal-operations, multi-step-equations]
+        exemplars:
+          - problem: 'Solve $0.5x + 1.2 = 3.2$.'
+            answer: "4"
+            solution_sketch: '$0.5x = 2$; $x = 4$.'
+          - problem: 'Solve $2.4x = -7.2$.'
+            answer: "-3"
+            solution_sketch: 'Divide by $2.4$: $x = -3$.'
+        constraints: "one decimal place; integer solutions"
+      - id: kp2
+        name: "Clear decimals by multiplying by a power of 10"
+        key_prerequisites: [decimal-operations, multi-step-equations]
+        exemplars:
+          - problem: 'Solve $0.3x - 1.5 = 0.6$.'
+            answer: "7"
+            solution_sketch: 'Multiply by $10$: $3x - 15 = 6$; $3x = 21$; $x = 7$.'
+          - problem: 'Solve $0.25x + 0.5 = 1.75$.'
+            answer: "5"
+            solution_sketch: 'Multiply by $100$: $25x + 50 = 175$; $25x = 125$; $x = 5$.'
+        constraints: "multiply EVERY term by 10 or 100; integer solutions"
+    diagnostic_exemplar:
+      problem: 'Solve $0.25x - 0.75 = 1.5$.'
+      answer: '9'
+      solution_sketch: 'Multiply every term by $100$: $25x - 75 = 150$; $25x = 225$; $x = 9$.'
+    anki_seeds:
+      - front: "To clear decimals from an equation, multiply every term by..."
+        back: "the power of 10 that makes all coefficients whole numbers"
+        type: basic
+
+  - id: equations-with-fractions
+    name: "Equations with Fractions"
+    core: true
+    difficulty: 0.52
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 120
+    prerequisites:
+      - id: multi-step-equations
+        weight: 0.7
+        key: true
+      - id: adding-subtracting-fractions
+        weight: 0.7
+        key: true
+      - id: multiplying-fractions
+        weight: 0.6
+      - id: dividing-fractions
+        weight: 0.4
+      - id: gcf-lcm
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: "Isolate a single fractional term"
+        key_prerequisites: [multiplying-fractions]
+        exemplars:
+          - problem: 'Solve $\frac{x}{2} + 3 = 7$.'
+            answer: "8"
+            solution_sketch: '$\frac{x}{2} = 4$; $x = 8$.'
+          - problem: 'Solve $\frac{2}{3}x = 8$.'
+            answer: "12"
+            solution_sketch: 'Multiply by $\frac{3}{2}$: $x = 12$.'
+        constraints: "one fractional term; integer solution"
+      - id: kp2
+        name: "Clear denominators with the LCD"
+        key_prerequisites: [adding-subtracting-fractions]
+        exemplars:
+          - problem: 'Solve $\frac{x}{3} + \frac{x}{6} = 5$.'
+            answer: "10"
+            solution_sketch: 'Multiply by $6$: $2x + x = 30$; $3x = 30$; $x = 10$.'
+          - problem: 'Solve $\frac{x + 1}{2} = \frac{x - 1}{3}$.'
+            answer: "-5"
+            solution_sketch: '$3(x + 1) = 2(x - 1)$; $3x + 3 = 2x - 2$; $x = -5$.'
+        constraints: "multiply EVERY term by the LCD; integer solution"
+      - id: kp3
+        name: "Fractions combined with distribution"
+        key_prerequisites: [multi-step-equations]
+        exemplars:
+          - problem: 'Solve $\frac{2}{3}(x - 6) = 4$.'
+            answer: "12"
+            solution_sketch: '$x - 6 = 6$; $x = 12$.'
+          - problem: 'Solve $\frac{1}{2}x + \frac{1}{3}x = 10$.'
+            answer: "12"
+            solution_sketch: 'LCD $6$: $3x + 2x = 60$; $5x = 60$; $x = 12$.'
+        constraints: "integer solutions; check by substituting back"
+    diagnostic_exemplar:
+      problem: 'Solve $\frac{2}{3}(x - 3) = \frac{x}{2}$.'
+      answer: '12'
+      solution_sketch: 'Multiply by the LCD $6$: $4(x - 3) = 3x$; $4x - 12 = 3x$; $x = 12$.'
+    anki_seeds:
+      - front: "First step to solve an equation containing fractions:"
+        back: "multiply every term on both sides by the least common denominator (LCD) to clear the fractions"
+        type: basic
+
+  - id: rearranging-formulas
+    name: "Rearranging Simple Formulas"
+    core: true
+    difficulty: 0.44
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 90
+    prerequisites:
+      - id: two-step-equations
+        weight: 0.7
+        key: true
+      - id: evaluating-formulas
+        weight: 0.4
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: "One-step rearrangements"
+        key_prerequisites: [two-step-equations, evaluating-formulas]
+        exemplars:
+          - problem: 'Solve $y = x + b$ for $x$.'
+            answer: "x = y - b"
+          - problem: 'Solve $d = rt$ for $t$.'
+            answer: "t = d/r"
+            solution_sketch: 'Divide both sides by $r$.'
+        constraints: "one inverse operation; target variable appears once"
+      - id: kp2
+        name: "Two-step rearrangements"
+        key_prerequisites: [two-step-equations, evaluating-formulas]
+        exemplars:
+          - problem: 'Solve $C = 2 \cdot \pi \cdot r$ for $r$.'
+            answer: "r = C/(2*pi)"
+            solution_sketch: 'Divide both sides by $2\pi$.'
+          - problem: 'Solve $P = 2l + 2w$ for $l$.'
+            answer: "l = (P - 2w)/2"
+            solution_sketch: 'Subtract $2w$, then divide by $2$.'
+        constraints: "two inverse operations; target variable appears once"
+    diagnostic_exemplar:
+      problem: 'Solve $v = u + at$ for $t$.'
+      answer: "t = (v - u)/a"
+      solution_sketch: 'Subtract $u$, then divide by $a$.'
+    anki_seeds:
+      - front: "Rearranging a formula uses the same moves as solving an equation, except..."
+        back: "the other quantities stay as letters; apply inverse operations to isolate the target variable"
+        type: basic
+
+  - id: literal-equations
+    name: "Literal Equations and Formulas"
+    core: true
+    difficulty: 0.50
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 110
+    prerequisites:
+      - id: rearranging-formulas
+        weight: 0.7
+        key: true
+      - id: multi-step-equations
+        weight: 0.6
+        key: true
+      - id: distributive-property
+        weight: 0.3
+      - id: dividing-fractions
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: "Multi-term formulas"
+        key_prerequisites: [multi-step-equations, rearranging-formulas]
+        exemplars:
+          - problem: 'Solve $ax + b = c$ for $x$.'
+            answer: "x = (c - b)/a"
+            solution_sketch: 'Subtract $b$, then divide by $a$.'
+          - problem: 'Solve $A = \frac{1}{2}bh$ for $h$.'
+            answer: "h = 2A/b"
+            solution_sketch: 'Multiply by $2$, divide by $b$.'
+        constraints: "target variable appears once; keep other letters symbolic"
+      - id: kp2
+        name: "Target variable in more than one term"
+        key_prerequisites: [distributive-property]
+        exemplars:
+          - problem: 'Solve $ax + bx = c$ for $x$.'
+            answer: "x = c/(a + b)"
+            solution_sketch: 'Factor: $x(a + b) = c$; divide by $(a + b)$.'
+          - problem: 'Solve $x = \frac{y - 3}{2}$ for $y$.'
+            answer: "y = 2x + 3"
+            solution_sketch: '$2x = y - 3$; $y = 2x + 3$.'
+        constraints: "may require factoring out the target variable"
+      - id: kp3
+        name: "Formulas requiring distribution or clearing a fraction"
+        key_prerequisites: [distributive-property, rearranging-formulas]
+        exemplars:
+          - problem: 'Solve $S = 2(l + w)$ for $w$.'
+            answer: "w = S/2 - l"
+            solution_sketch: 'Divide by $2$: $\frac{S}{2} = l + w$; subtract $l$.'
+          - problem: 'Solve $A = \frac{1}{2}h(a + b)$ for $a$.'
+            answer: "a = 2A/h - b"
+            solution_sketch: 'Multiply by $2$: $2A = h(a + b)$; divide by $h$; subtract $b$.'
+        constraints: "undo an outer factor before reaching the target variable"
+    diagnostic_exemplar:
+      problem: 'Solve $ax - bx = c$ for $x$.'
+      answer: 'x = c/(a - b)'
+      solution_sketch: 'Factor the left side: $x(a - b) = c$, then divide by $a - b$.'
+    anki_seeds:
+      - front: "To solve a literal equation for a variable that appears in two terms, first ..."
+        back: "factor that variable out of both terms, then divide"
+        type: basic
+
+  - id: basic-absolute-value-equations
+    name: "Basic Absolute Value Equations"
+    core: false                # head of the terminal absolute-value solving branch
+    difficulty: 0.42
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 75
+    prerequisites:
+      - id: absolute-value
+        weight: 0.7
+        key: true
+      - id: one-step-equations
+        weight: 0.6
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: "Solve |x| = a"
+        key_prerequisites: [absolute-value]
+        exemplars:
+          - problem: 'Solve $|x| = 7$.'
+            answer: "x = 7 or x = -7"
+            solution_sketch: 'Two numbers sit $7$ units from $0$.'
+          - problem: 'Solve $|x| = 12$.'
+            answer: "x = 12 or x = -12"
+        constraints: "right side positive; two solutions"
+      - id: kp2
+        name: "Solve |x + b| = c with a one-step inside"
+        key_prerequisites: [one-step-equations, absolute-value]
+        exemplars:
+          - problem: 'Solve $|x - 3| = 5$.'
+            answer: "x = 8 or x = -2"
+            solution_sketch: '$x - 3 = 5$ or $x - 3 = -5$.'
+          - problem: 'Solve $|x + 4| = 2$.'
+            answer: "x = -2 or x = -6"
+            solution_sketch: '$x + 4 = 2 \to x = -2$; $x + 4 = -2 \to x = -6$.'
+        constraints: "split into two one-step equations; integer solutions"
+    diagnostic_exemplar:
+      problem: 'Solve $|x - 4| = 6$.'
+      answer: "x = 10 or x = -2"
+      solution_sketch: '$x - 4 = 6 \to x = 10$; $x - 4 = -6 \to x = -2$.'
+    anki_seeds:
+      - front: "If |X| = a with a > 0, then X = ?"
+        back: "X = a or X = -a"
+        type: basic
+
+  - id: absolute-value-equations
+    name: "Absolute Value Equations"
+    core: false                # terminal absolute-value solving branch
+    difficulty: 0.48
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 100
+    prerequisites:
+      - id: basic-absolute-value-equations
+        weight: 0.7
+        key: true
+      - id: two-step-equations
+        weight: 0.6
+        key: true
+      - id: integer-addition-subtraction
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: "Absolute value of a linear expression"
+        key_prerequisites: [two-step-equations, basic-absolute-value-equations]
+        exemplars:
+          - problem: 'Solve $|2x + 1| = 9$.'
+            answer: "x = 4 or x = -5"
+            solution_sketch: '$2x + 1 = 9 \to x = 4$; $2x + 1 = -9 \to x = -5$.'
+          - problem: 'Solve $|3x - 6| = 12$.'
+            answer: "x = 6 or x = -2"
+            solution_sketch: '$3x - 6 = 12 \to x = 6$; $3x - 6 = -12 \to x = -2$.'
+        constraints: "split into two linear equations; integer solutions"
+      - id: kp2
+        name: "Isolate the absolute value first"
+        key_prerequisites: [two-step-equations, basic-absolute-value-equations]
+        exemplars:
+          - problem: 'Solve $|x + 2| - 3 = 4$.'
+            answer: "x = 5 or x = -9"
+            solution_sketch: '$|x + 2| = 7$; $x + 2 = 7$ or $x + 2 = -7$.'
+          - problem: 'Solve $2|x| = 10$.'
+            answer: "x = 5 or x = -5"
+            solution_sketch: '$|x| = 5$.'
+        constraints: "isolate |..| before splitting into cases"
+      - id: kp3
+        name: "Recognize no-solution cases"
+        key_prerequisites: [basic-absolute-value-equations]
+        exemplars:
+          - problem: 'Solve $|x - 5| = -3$.'
+            answer: "no solution"
+            solution_sketch: 'An absolute value is never negative.'
+          - problem: 'Solve $|2x| + 7 = 3$.'
+            answer: "no solution"
+            solution_sketch: 'Isolating gives $|2x| = -4$, impossible.'
+        constraints: "isolated absolute value equals a negative number"
+    diagnostic_exemplar:
+      problem: 'Solve $|3x - 1| - 2 = 6$.'
+      answer: 'x = 3 or x = -7/3'
+      solution_sketch: '$|3x - 1| = 8$; $3x - 1 = 8 \to x = 3$; $3x - 1 = -8 \to x = -\frac{7}{3}$.'
+    anki_seeds:
+      - front: "If |X| = a with a > 0, then X = ? "
+        back: "X = a or X = -a (isolate the absolute value first)"
+        type: basic
+      - front: "If |X| = a and a < 0, the equation has ..."
+        back: "no solution (absolute value is never negative)"
+        type: basic
+
+  - id: translating-sentences-to-equations
+    name: "Translating Sentences into Equations"
+    core: true
+    difficulty: 0.40
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 90
+    prerequisites:
+      - id: translating-phrases-to-expressions
+        weight: 0.7
+        key: true
+      - id: two-step-equations
+        weight: 0.6
+        key: true
+      - id: one-step-equations
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: "Translate and solve one- and two-step sentences"
+        key_prerequisites: [two-step-equations, translating-phrases-to-expressions]
+        exemplars:
+          - problem: 'A number increased by $7$ is $22$. Find the number.'
+            answer: "15"
+            solution_sketch: '$x + 7 = 22$; $x = 15$.'
+          - problem: 'Twice a number minus $5$ is $9$. Find the number.'
+            answer: "7"
+            solution_sketch: '$2x - 5 = 9$; $2x = 14$; $x = 7$.'
+        constraints: "define one variable; integer answer"
+      - id: kp2
+        name: "Write the equation without solving"
+        key_prerequisites: [translating-phrases-to-expressions]
+        exemplars:
+          - problem: 'Write an equation: five more than three times a number $n$ is $26$.'
+            answer: "3n + 5 = 26"
+          - problem: 'Write an equation: the quotient of a number $y$ and $4$ is $12$.'
+            answer: "y/4 = 12"
+        constraints: '"is" marks the equals sign; do not solve'
+    diagnostic_exemplar:
+      problem: 'Seven less than twice a number is $11$. Find the number.'
+      answer: "9"
+      solution_sketch: '$2x - 7 = 11$; $2x = 18$; $x = 9$.'
+    anki_seeds:
+      - front: "In a word sentence, the word 'is' usually translates to..."
+        back: "the equals sign"
+        type: basic
+
+  - id: consecutive-integer-problems
+    name: "Number and Consecutive Integer Problems"
+    # over-coverage: consecutive-integer context schema over
+    # translating-sentences-to-equations + multi-step-equations
+    core: false
+    difficulty: 0.48
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 120
+    prerequisites:
+      - id: translating-sentences-to-equations
+        weight: 0.7
+        key: true
+      - id: multi-step-equations
+        weight: 0.5
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: "Multi-step number problems"
+        key_prerequisites: [translating-sentences-to-equations, multi-step-equations]
+        exemplars:
+          - problem: 'The sum of a number and twice the number is $24$. Find the number.'
+            answer: "8"
+            solution_sketch: '$x + 2x = 24$; $3x = 24$; $x = 8$.'
+          - problem: 'Seven less than three times a number is $20$. Find the number.'
+            answer: "9"
+            solution_sketch: '$3x - 7 = 20$; $3x = 27$; $x = 9$.'
+        constraints: "one unknown; combine like terms or two steps; integer answer"
+      - id: kp2
+        name: "Consecutive integers and totals"
+        key_prerequisites: [multi-step-equations]
+        exemplars:
+          - problem: 'Two consecutive integers sum to $27$. Find them.'
+            answer: "13 and 14"
+            solution_sketch: '$x + (x + 1) = 27$; $2x + 1 = 27$; $x = 13$.'
+          - problem: 'The sum of three consecutive integers is $42$. Find them.'
+            answer: "13, 14, and 15"
+            solution_sketch: '$3x + 3 = 42$; $x = 13$.'
+          - problem: 'Two consecutive even integers sum to $46$. Find them.'
+            answer: "22 and 24"
+            solution_sketch: '$x + (x + 2) = 46$; $2x = 44$; $x = 22$.'
+        constraints: "represent related quantities in terms of one variable"
+    diagnostic_exemplar:
+      problem: 'Three consecutive even integers sum to $48$. Find them.'
+      answer: '14, 16, and 18'
+      solution_sketch: '$x + (x + 2) + (x + 4) = 48$; $3x + 6 = 48$; $x = 14$.'
+    anki_seeds:
+      - front: "Consecutive integers starting at x are written..."
+        back: "x, x + 1, x + 2, ... (consecutive even or odd integers step by 2: x, x + 2, ...)"
+        type: basic
+
+  - id: money-geometry-problems
+    name: "Money and Geometry Equation Problems"
+    # over-coverage: ticket-price and perimeter context schema over the same
+    # translating-sentences-to-equations + multi-step-equations pair
+    core: false
+    difficulty: 0.50
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 150
+    prerequisites:
+      - id: translating-sentences-to-equations
+        weight: 0.7
+        key: true
+      - id: multi-step-equations
+        weight: 0.5
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: "Money and cost setups"
+        key_prerequisites: [translating-sentences-to-equations]
+        exemplars:
+          - problem: 'Tickets cost €8 each and you spent €56. How many tickets did you buy?'
+            answer: "7"
+            solution_sketch: '$8x = 56$; $x = 7$.'
+          - problem: 'A taxi charges a €3 base fare plus €2 per kilometre. The fare was €17. How many kilometres was the ride?'
+            answer: "7"
+            solution_sketch: '$2k + 3 = 17$; $2k = 14$; $k = 7$.'
+        constraints: "unit price times quantity, possibly plus a fixed fee; whole-number answers"
+      - id: kp2
+        name: "Perimeter and side-length setups"
+        key_prerequisites: [multi-step-equations, translating-sentences-to-equations]
+        exemplars:
+          - problem: 'A rectangle''s length is $3$ more than its width and the perimeter is $26$. Find the width.'
+            answer: "5"
+            solution_sketch: '$2w + 2(w + 3) = 26$; $4w + 6 = 26$; $w = 5$.'
+          - problem: 'A triangle has sides $x$, $x + 2$, and $x + 4$, and its perimeter is $30$. Find the shortest side.'
+            answer: "8"
+            solution_sketch: '$3x + 6 = 30$; $3x = 24$; $x = 8$.'
+        constraints: "express each side in terms of one variable; check units"
+    diagnostic_exemplar:
+      problem: 'The length of a rectangle is $5$ more than its width and the perimeter is $38$. Find the width.'
+      answer: '7'
+      solution_sketch: '$2(w + 5) + 2w = 38$; $4w + 10 = 38$; $w = 7$.'
+    anki_seeds:
+      - front: "The perimeter of a rectangle in terms of width w and length l:"
+        back: "P = 2w + 2l"
+        type: basic
+
+  - id: equation-word-problems
+    name: "Writing and Solving Equations from Words"
+    core: false                # word-problem genre; cone now supplemental
+    difficulty: 0.55
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 150
+    prerequisites:
+      # the technique the two demoted context schemas were supplying: every KP
+      # below defines a variable and writes an equation from a sentence
+      - id: translating-sentences-to-equations
+        weight: 0.7
+        key: true
+      - id: multi-step-equations
+        weight: 0.5
+        key: true
+      - id: evaluating-expressions
+        weight: 0.0
+    knowledge_points:
+      - id: kp1
+        name: "Two quantities sharing a total"
+        key_prerequisites: [translating-sentences-to-equations, multi-step-equations]
+        exemplars:
+          - problem: 'Maya and Liam sold $51$ raffle tickets in all; Maya sold twice as many as Liam. How many did Maya sell?'
+            answer: "34"
+            solution_sketch: 'Liam $x$, Maya $2x$: $3x = 51$; $x = 17$; Maya sold $34$.'
+          - problem: 'A $36$ cm ribbon is cut into two pieces; one piece is $8$ cm longer than the other. How long is the shorter piece?'
+            answer: "14"
+            solution_sketch: '$x + (x + 8) = 36$; $2x = 28$; $x = 14$.'
+        constraints: "express both quantities with one variable; answer the question asked"
+      - id: kp2
+        name: "Break-even setups with the variable on both sides"
+        key_prerequisites: [variables-both-sides, multi-step-equations]
+        exemplars:
+          - problem: 'Plan A costs €20 plus €5 per class; Plan B costs €10 plus €7 per class. For how many classes do the plans cost the same?'
+            answer: "5"
+            solution_sketch: '$20 + 5c = 10 + 7c$; $10 = 2c$; $c = 5$.'
+          - problem: 'Tank A holds $300$ L and drains at $15$ L/min; tank B holds $180$ L and drains at $5$ L/min. After how many minutes do they hold the same amount?'
+            answer: "12"
+            solution_sketch: '$300 - 15t = 180 - 5t$; $120 = 10t$; $t = 12$.'
+        constraints: "two linear models set equal; positive integer answers"
+      - id: kp3
+        name: "Age and comparison problems"
+        key_prerequisites: [translating-sentences-to-equations, multi-step-equations]
+        exemplars:
+          - problem: 'Ana is $4$ years older than Ben, and the sum of their ages is $30$. How old is Ana?'
+            answer: "17"
+            solution_sketch: 'Ben $x$, Ana $x + 4$: $2x + 4 = 30$; $x = 13$; Ana is $17$.'
+          - problem: 'A father is $3$ times as old as his son. In $12$ years he will be twice as old as his son. How old is the son now?'
+            answer: "12"
+            solution_sketch: '$3s + 12 = 2(s + 12)$; $3s + 12 = 2s + 24$; $s = 12$.'
+        constraints: "relate ages now and after a time shift; integer answers"
+    diagnostic_exemplar:
+      problem: 'A mother is $4$ times as old as her daughter. In $6$ years she will be $3$ times as old as her daughter. How old is the daughter now?'
+      answer: '12'
+      solution_sketch: '$4d + 6 = 3(d + 6)$; $4d + 6 = 3d + 18$; $d = 12$.'
+    anki_seeds:
+      - front: "Setup when two quantities share a total and one is k times the other:"
+        back: "let the smaller be x and the other kx; then x + kx = total"
+        type: basic
+      - front: "Break-even setup for two linear plans:"
+        back: "set cost A = cost B and solve for the shared variable"
+        type: basic
+      - front: "Age problems: 'in t years' means each person's age becomes..."
+        back: "current age + t (add t to every age before comparing)"
+        type: basic

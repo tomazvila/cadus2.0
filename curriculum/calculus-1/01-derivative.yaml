@@ -1,0 +1,763 @@
+unit: the-derivative
+course: calculus-1
+module: "The Derivative"
+topics:
+  - id: average-instantaneous-rate
+    name: Average and Instantaneous Rates of Change
+    core: true
+    difficulty: 0.5
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 120
+    prerequisites:
+      - id: average-rate-of-change
+        weight: 0.7
+        key: true
+      - id: slope
+        weight: 0.5
+        key: true
+      - id: limits-graphical-numerical
+        weight: 0.5
+        key: true
+      - id: function-notation
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: Average rate of change over an interval
+        key_prerequisites: [average-rate-of-change, function-notation]
+        exemplars:
+          - problem: 'Find the average rate of change of $f(x) = x^2 + 1$ on $[2, 6]$.'
+            answer: "8"
+            solution_sketch: '$\frac{f(6) - f(2)}{6 - 2} = \frac{37 - 5}{4} = 8$.'
+          - problem: 'A ball''s height is $s(t) = t^2 + 1$ meters at time $t$ seconds. Find its average velocity on $[1, 4]$.'
+            answer: "5 m/s"
+            solution_sketch: '$\frac{s(4) - s(1)}{4 - 1} = \frac{17 - 2}{3} = 5$.'
+          - problem: 'Find the average rate of change of $f(x) = x^3$ on $[1, 3]$.'
+            answer: "13"
+            solution_sketch: '$\frac{f(3) - f(1)}{3 - 1} = \frac{27 - 1}{2} = 13$.'
+        constraints: "polynomial functions with integer coefficients; interval endpoints and answers are small integers"
+      - id: kp2
+        name: Secant slopes and units in context
+        key_prerequisites: [slope, average-rate-of-change]
+        exemplars:
+          - problem: 'For $f(x) = x^2$, find the slope of the secant line through $(1, f(1))$ and $(3, f(3))$.'
+            answer: "4"
+            solution_sketch: 'The secant slope IS the average rate of change: $\frac{9 - 1}{2} = 4$.'
+          - problem: 'A tank holds $V(t) = t^2$ litres after $t$ minutes. Compute the average rate of change of $V$ on $[2, 5]$ and give its units.'
+            answer: "7 L/min"
+            solution_sketch: '$\frac{25 - 4}{3} = 7$; volume per time gives L/min.'
+          - problem: 'A particle at position $s(t) = 2t^2$ meters: find its average velocity on $[0, 3]$.'
+            answer: "6 m/s"
+        constraints: "applied contexts (height, volume, position); the answer states the number with correct units"
+      - id: kp3
+        name: Instantaneous rate as a limit of average rates
+        key_prerequisites: [limits-graphical-numerical, slope]
+        exemplars:
+          - problem: 'For $s(t) = t^2$, the average velocities on $[3, 3.1]$, $[3, 3.01]$, $[3, 3.001]$ are $6.1$, $6.01$, $6.001$. What is the instantaneous velocity at $t = 3$?'
+            answer: "6"
+            solution_sketch: 'The average rates approach $6$ as the interval shrinks, so the instantaneous rate is $6$.'
+          - problem: 'For $f(x) = x^2$, evaluate $\lim_{h \to 0} \frac{f(2 + h) - f(2)}{h}$ using the simplified quotient $4 + h$.'
+            answer: "4"
+        constraints: "shrinking-interval tables or a pre-simplified difference quotient; integer limits"
+    diagnostic_exemplar:
+      problem: 'For $f(x) = x^2$, evaluate $\lim_{h \to 0} \frac{f(3 + h) - f(3)}{h}$ by first simplifying the quotient.'
+      answer: "6"
+      solution_sketch: 'Expand and cancel the $h$ before taking the limit: $\frac{(3+h)^2 - 9}{h} = \frac{6h + h^2}{h} = 6 + h \to 6$.'
+    anki_seeds:
+      - front: "The average rate of change of f on [a, b] equals..."
+        back: "(f(b) - f(a)) / (b - a) — the slope of the secant line"
+        type: basic
+      - front: "Geometrically, average rate of change is the slope of the ___ line; instantaneous rate is the slope of the ___ line."
+        back: "secant; tangent"
+        type: basic
+
+  - id: difference-quotients
+    name: Difference Quotients
+    core: true
+    difficulty: 0.52
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 120
+    prerequisites:
+      - id: function-notation
+        weight: 0.6
+        key: true
+      - id: polynomial-multiplication
+        weight: 0.5
+        key: true
+      - id: average-instantaneous-rate
+        weight: 0.5
+      - id: rational-expressions
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Evaluate f(a + h)
+        key_prerequisites: [function-notation, polynomial-multiplication]
+        exemplars:
+          - problem: 'For $f(x) = x^2 + 1$, expand and simplify $f(2 + h)$.'
+            answer: "h^2 + 4h + 5"
+            solution_sketch: '$(2 + h)^2 + 1 = 4 + 4h + h^2 + 1$.'
+          - problem: 'For $f(x) = 3x - 2$, simplify $f(x + h)$.'
+            answer: "3x + 3h - 2"
+        constraints: "linear or quadratic f; substitute a + h or x + h and expand fully"
+      - id: kp2
+        name: Simplify polynomial difference quotients
+        key_prerequisites: [polynomial-multiplication, function-notation]
+        exemplars:
+          - problem: 'For $f(x) = x^2$, simplify $\frac{f(x + h) - f(x)}{h}$.'
+            answer: "2x + h"
+            solution_sketch: '$\frac{(x+h)^2 - x^2}{h} = \frac{2xh + h^2}{h} = 2x + h$.'
+          - problem: 'For $f(x) = 3x + 1$, simplify $\frac{f(x + h) - f(x)}{h}$.'
+            answer: "3"
+          - problem: 'For $f(x) = x^2 - 4x$, simplify $\frac{f(x + h) - f(x)}{h}$.'
+            answer: "2x + h - 4"
+            solution_sketch: '$\frac{(x+h)^2 - 4(x+h) - x^2 + 4x}{h} = \frac{2xh + h^2 - 4h}{h} = 2x + h - 4$.'
+        constraints: "linear or quadratic f; the h in the denominator must cancel completely"
+      - id: kp3
+        name: Difference quotients of rational functions
+        key_prerequisites: [rational-expressions, function-notation]
+        exemplars:
+          - problem: 'For $f(x) = \frac{1}{x}$, simplify $\frac{f(x + h) - f(x)}{h}$.'
+            answer: "-1/(x(x + h))"
+            solution_sketch: '$\frac{\frac{1}{x+h} - \frac{1}{x}}{h} = \frac{x - (x+h)}{h \, x(x+h)} = \frac{-1}{x(x+h)}$.'
+          - problem: 'For $f(x) = \frac{2}{x}$, simplify $\frac{f(x + h) - f(x)}{h}$.'
+            answer: "-2/(x(x + h))"
+        constraints: "f = c/x with small integer c; combine over a common denominator before canceling h"
+    diagnostic_exemplar:
+      problem: 'For $f(x) = \frac{3}{x}$, simplify $\frac{f(x + h) - f(x)}{h}$.'
+      answer: "-3/(x(x + h))"
+      solution_sketch: 'Combine the numerator over a common denominator: $\frac{3}{x+h} - \frac{3}{x} = \frac{-3h}{x(x+h)}$; dividing by $h$ cancels it, leaving $-\frac{3}{x(x+h)}$.'
+    anki_seeds:
+      - front: "The difference quotient of f is..."
+        back: "(f(x + h) - f(x)) / h — the average rate of change over [x, x + h]"
+        type: basic
+      - front: "A correctly simplified difference quotient never has ___ in the denominator."
+        back: "a bare h (the h must cancel so h → 0 can later be taken)"
+        type: basic
+
+  - id: derivative-at-a-point
+    name: The Derivative at a Point
+    core: true
+    difficulty: 0.55
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 150
+    prerequisites:
+      - id: difference-quotients
+        weight: 0.7
+        key: true
+      - id: average-instantaneous-rate
+        weight: 0.6
+        key: true
+      - id: factoring-limits
+        weight: 0.5
+    knowledge_points:
+      - id: kp1
+        name: Compute f'(a) from the h → 0 definition
+        key_prerequisites: [difference-quotients, average-instantaneous-rate]
+        exemplars:
+          - problem: 'Use the definition $f''(a) = \lim_{h \to 0} \frac{f(a+h) - f(a)}{h}$ to find $f''(3)$ for $f(x) = x^2$.'
+            answer: "6"
+            solution_sketch: '$\frac{(3+h)^2 - 9}{h} = \frac{6h + h^2}{h} = 6 + h \to 6$.'
+          - problem: 'Use the definition to find $f''(1)$ for $f(x) = 3x^2$.'
+            answer: "6"
+            solution_sketch: '$\frac{3(1+h)^2 - 3}{h} = \frac{6h + 3h^2}{h} = 6 + 3h \to 6$.'
+          - problem: 'Use the definition to find $f''(2)$ for $f(x) = x^2 - 5x$.'
+            answer: "-1"
+            solution_sketch: '$\frac{(2+h)^2 - 5(2+h) - (-6)}{h} = \frac{-h + h^2}{h} = -1 + h \to -1$.'
+        constraints: "quadratic f with small integer coefficients; the difference quotient must cancel cleanly"
+      - id: kp2
+        name: The alternative form lim_{x → a}
+        key_prerequisites: [factoring-limits, difference-quotients]
+        exemplars:
+          - problem: 'Use $f''(a) = \lim_{x \to a} \frac{f(x) - f(a)}{x - a}$ to find $f''(4)$ for $f(x) = x^2$.'
+            answer: "8"
+            solution_sketch: '$\frac{x^2 - 16}{x - 4} = x + 4 \to 8$.'
+          - problem: 'Use the alternative form to find $f''(1)$ for $f(x) = x^3$.'
+            answer: "3"
+            solution_sketch: '$\frac{x^3 - 1}{x - 1} = x^2 + x + 1 \to 3$.'
+        constraints: "factorable numerators (difference of squares/cubes); integer answers"
+      - id: kp3
+        name: Interpret f'(a)
+        key_prerequisites: [average-instantaneous-rate]
+        exemplars:
+          - problem: 'The limit $\lim_{h \to 0} \frac{f(4 + h) - f(4)}{h} = 12$. What is the slope of the tangent line to $y = f(x)$ at $x = 4$?'
+            answer: "12"
+          - problem: 'A particle''s position is $s(t) = t^2$ meters after $t$ seconds, and $s''(3) = 6$. What is the particle''s instantaneous velocity at $t = 3$? Give the value with units.'
+            answer: "6 m/s"
+        constraints: "tie the derivative value to tangent slope or instantaneous rate with units"
+    diagnostic_exemplar:
+      problem: 'A particle''s position is $s(t) = t^2 - 5t$ metres at time $t$ seconds. Use the limit definition of the derivative to find its instantaneous velocity at $t = 4$, in m/s.'
+      answer: '3'
+      solution_sketch: '$\frac{s(4+h) - s(4)}{h} = \frac{(h^2 + 3h - 4) - (-4)}{h} = h + 3 \to 3$, so the velocity at $t = 4$ is $3$ m/s.'
+    anki_seeds:
+      - front: "The derivative at a point: f'(a) = ? (two equivalent limit forms)"
+        back: "lim_{h→0} (f(a+h) - f(a))/h = lim_{x→a} (f(x) - f(a))/(x - a)"
+        type: basic
+      - front: "f'(a) is simultaneously the slope of ___ and the instantaneous ___."
+        back: "the tangent line at x = a; rate of change of f at a"
+        type: basic
+
+  - id: derivative-definition
+    name: The Limit Definition of the Derivative
+    core: true
+    difficulty: 0.6
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 210
+    prerequisites:
+      - id: derivative-at-a-point
+        weight: 0.8
+        key: true
+      - id: limits-algebraic
+        weight: 0.7
+        key: true
+      - id: limit-laws
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: Derive f'(x) for polynomials
+        key_prerequisites: [derivative-at-a-point, limits-algebraic]
+        exemplars:
+          - problem: 'Use the definition to find $f''(x)$ for $f(x) = x^2$.'
+            answer: "2x"
+            solution_sketch: '$\frac{(x+h)^2 - x^2}{h} = \frac{2xh + h^2}{h} = 2x + h \to 2x$.'
+          - problem: 'Use the definition to find $f''(x)$ for $f(x) = x^3$.'
+            answer: "3x^2"
+            solution_sketch: '$\frac{(x+h)^3 - x^3}{h} = 3x^2 + 3xh + h^2 \to 3x^2$.'
+          - problem: 'Use the definition to find $f''(x)$ for $f(x) = 2x^2 - 3x$.'
+            answer: "4x - 3"
+            solution_sketch: '$\frac{2(x+h)^2 - 3(x+h) - 2x^2 + 3x}{h} = \frac{4xh + 2h^2 - 3h}{h} = 4x + 2h - 3 \to 4x - 3$.'
+        constraints: "degree ≤ 3 with small integer coefficients; require the full limit computation, not a rule"
+      - id: kp2
+        name: Derive f'(x) for rational and radical functions
+        key_prerequisites: [limits-algebraic]
+        exemplars:
+          - problem: 'Use the definition to find $f''(x)$ for $f(x) = \frac{1}{x}$.'
+            answer: "-1/x^2"
+            solution_sketch: '$\frac{\frac{1}{x+h} - \frac{1}{x}}{h} = \frac{-h}{h \, x(x+h)} = \frac{-1}{x(x+h)} \to -\frac{1}{x^2}$.'
+          - problem: 'Use the definition to find $f''(x)$ for $f(x) = \sqrt{x}$.'
+            answer: "1/(2√x)"
+            solution_sketch: 'Rationalize: $\frac{\sqrt{x+h} - \sqrt{x}}{h} = \frac{1}{\sqrt{x+h} + \sqrt{x}} \to \frac{1}{2\sqrt{x}}$.'
+          - problem: 'Use the definition to find $f''(x)$ for $f(x) = \frac{1}{x + 1}$.'
+            answer: "-1/(x + 1)^2"
+            solution_sketch: 'Combine: $\frac{\frac{1}{x+h+1} - \frac{1}{x+1}}{h} = \frac{-1}{(x+h+1)(x+1)} \to -\frac{1}{(x+1)^2}$.'
+        constraints: "f is 1/x, 1/(x + c), or √x; combine fractions or rationalize before letting h → 0"
+      - id: kp3
+        name: Use the derived derivative function
+        key_prerequisites: [derivative-at-a-point]
+        exemplars:
+          - problem: 'For $f(x) = x^2$ (so $f''(x) = 2x$), find the slope of the tangent line at $x = -3$.'
+            answer: "-6"
+          - problem: 'For $f(x) = x^2 - 6x$ (so $f''(x) = 2x - 6$), at which $x$ is the tangent line horizontal?'
+            answer: "3"
+            solution_sketch: 'Set $f''(x) = 0$: $2x - 6 = 0$.'
+        constraints: "evaluate or solve with a derivative already derived in this lesson; integer answers"
+    diagnostic_exemplar:
+      problem: 'Use the limit definition to find $f''(x)$ for $f(x) = \frac{1}{x + 2}$.'
+      answer: "-1/(x + 2)^2"
+      solution_sketch: '$\frac{1}{h}\left(\frac{1}{x+h+2} - \frac{1}{x+2}\right) = \frac{-h}{h(x+h+2)(x+2)} \to -\frac{1}{(x+2)^2}$.'
+    anki_seeds:
+      - front: "The limit definition of the derivative: f'(x) = ?"
+        back: "lim_{h→0} (f(x + h) - f(x)) / h"
+        type: basic
+      - front: "Differentiable at a implies continuous at a. Is the converse true?"
+        back: "No — e.g. f(x) = |x| is continuous at 0 but not differentiable there (corner)"
+        type: basic
+
+  - id: estimating-derivatives
+    name: Estimating Derivatives from Tables and Graphs
+    core: false                # terminal numerical-estimation genre
+    difficulty: 0.52
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 90
+    prerequisites:
+      - id: derivative-at-a-point
+        weight: 0.7
+        key: true
+      - id: slope-from-a-graph
+        weight: 0.5
+        key: true
+      - id: average-instantaneous-rate
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: Symmetric difference estimates from a table
+        key_prerequisites: [derivative-at-a-point, average-instantaneous-rate]
+        exemplars:
+          - problem: 'A table gives $f(1.9) = 3.61$, $f(2) = 4$, $f(2.1) = 4.41$. Estimate $f''(2)$ using the values at $1.9$ and $2.1$.'
+            answer: "4"
+            solution_sketch: '$\frac{4.41 - 3.61}{2.1 - 1.9} = \frac{0.8}{0.2} = 4$.'
+          - problem: 'A table gives $f(2.9) = 8.41$ and $f(3.1) = 9.61$. Estimate $f''(3)$.'
+            answer: "6"
+        constraints: "symmetric points a ± 0.1; the difference quotient comes out to a small integer"
+      - id: kp2
+        name: Estimate the derivative from a graph
+        key_prerequisites: [slope-from-a-graph, derivative-at-a-point]
+        exemplars:
+          - problem: 'The tangent line to $y = f(x)$ at $x = 2$ appears to pass through $(1, 2)$ and $(3, 8)$. Estimate $f''(2)$.'
+            answer: "3"
+            solution_sketch: 'The tangent''s slope is $\frac{8 - 2}{3 - 1} = 3$.'
+          - problem: 'At a point where the graph of $f$ has a horizontal tangent, what is $f''$ there?'
+            answer: "0"
+        constraints: "tangent line through two lattice points, or a horizontal tangent; integer slopes"
+      - id: kp3
+        name: Sign and units of the derivative
+        key_prerequisites: [derivative-at-a-point, average-instantaneous-rate]
+        exemplars:
+          - problem: '$f$ is decreasing near $x = 5$. What is the sign of $f''(5)$?'
+            answer: "negative"
+          - problem: '$s(t)$ gives a car''s position in kilometres after $t$ hours, and $s''(2) = 60$. What is the car''s speed at $t = 2$? Give the value with units.'
+            answer: "60 km/h"
+        constraints: "connect increasing/decreasing to derivative sign; units of f' are (output units)/(input units)"
+    diagnostic_exemplar:
+      problem: 'A car''s position is $s(t)$ kilometres after $t$ hours, with $s(1.9) = 95.2$ and $s(2.1) = 105.6$. Estimate the car''s speed at $t = 2$, in km/h.'
+      answer: '52'
+      solution_sketch: 'Symmetric difference quotient: $\frac{105.6 - 95.2}{2.1 - 1.9} = \frac{10.4}{0.2} = 52$, in km/h because $s$ is in km and $t$ in hours.'
+    anki_seeds:
+      - front: "Best table-based estimate of f'(a): use points on ___ of a."
+        back: "both sides — the symmetric difference (f(a+h) - f(a-h)) / (2h)"
+        type: basic
+      - front: "The units of f'(x) are always..."
+        back: "(units of f) per (unit of x)"
+        type: basic
+
+  - id: tangent-line-equation
+    name: Equations of Tangent Lines
+    core: true
+    difficulty: 0.58
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 150
+    prerequisites:
+      - id: derivative-definition
+        weight: 0.7
+        key: true
+      - id: point-slope-form
+        weight: 0.5
+        key: true
+      - id: derivative-at-a-point
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: Tangent line from a given derivative
+        key_prerequisites: [point-slope-form, derivative-at-a-point]
+        exemplars:
+          - problem: 'Find the tangent line to $y = x^2$ at $x = 1$ (its derivative is $2x$). Give the expression for $y$.'
+            answer: "2x - 1"
+            solution_sketch: 'Slope $2 \cdot 1 = 2$ through $(1, 1)$: $y - 1 = 2(x - 1)$, i.e. $y = 2x - 1$.'
+          - problem: 'Find the tangent line to $f(x) = x^2 - 3x$ at $x = 2$, given $f''(x) = 2x - 3$. Give the expression for $y$.'
+            answer: "x - 4"
+            solution_sketch: 'Slope $f''(2) = 1$ through $(2, -2)$: $y + 2 = x - 2$, i.e. $y = x - 4$.'
+        constraints: "quadratics with integer coefficients; tangent point and slope are integers; the answer is the slope-intercept expression for y"
+      - id: kp2
+        name: Compute the derivative, then the tangent line
+        key_prerequisites: [derivative-definition, point-slope-form]
+        exemplars:
+          - problem: 'Find the tangent line to $f(x) = x^2$ at $x = 3$. Give the expression for $y$.'
+            answer: "6x - 9"
+            solution_sketch: '$f''(x) = 2x$ gives slope $6$ through $(3, 9)$: $y - 9 = 6(x - 3)$, i.e. $y = 6x - 9$.'
+          - problem: 'Find the tangent line to $f(x) = \frac{1}{x}$ at $x = 1$ (use $f''(x) = -1/x^2$). Give the expression for $y$.'
+            answer: "-x + 2"
+            solution_sketch: 'Slope $-1$ through $(1, 1)$: $y - 1 = -(x - 1)$, i.e. $y = -x + 2$.'
+        constraints: "derivatives derivable by the limit definition covered earlier; clean integer slopes and intercepts; the answer is the slope-intercept expression for y"
+      - id: kp3
+        name: Normal lines and horizontal tangents
+        key_prerequisites: [point-slope-form, derivative-definition]
+        exemplars:
+          - problem: 'Find the normal line to $y = x^2$ at $(1, 1)$. Give the expression for $y$.'
+            answer: "-x/2 + 3/2"
+            solution_sketch: 'Tangent slope $2$, so the normal slope is $-\frac{1}{2}$: $y - 1 = -\frac{1}{2}(x - 1)$.'
+          - problem: 'At which point does $y = x^2 - 4x$ have a horizontal tangent line?'
+            answer: "(2, -4)"
+            solution_sketch: '$y'' = 2x - 4 = 0$ at $x = 2$; the point is $(2, -4)$.'
+        constraints: "normal slope is the negative reciprocal; horizontal tangents where the derivative vanishes"
+    diagnostic_exemplar:
+      problem: 'Find the normal line to $y = x^2$ at $x = 2$. Give the expression for $y$.'
+      answer: '-x/4 + 9/2'
+      solution_sketch: 'The tangent slope is $f''(2) = 4$, so the normal slope is $-\frac{1}{4}$; through $(2, 4)$: $y = 4 - \frac{1}{4}(x - 2) = -\frac{x}{4} + \frac{9}{2}$.'
+    anki_seeds:
+      - front: "Tangent line to y = f(x) at x = a:"
+        back: "y = f(a) + f'(a)(x - a)"
+        type: basic
+      - front: "The normal line at a point has slope..."
+        back: "-1/f'(a) — the negative reciprocal of the tangent slope"
+        type: basic
+
+  - id: differentiability
+    name: Differentiability and the Derivative as a Function
+    core: true
+    difficulty: 0.62
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 150
+    prerequisites:
+      - id: derivative-definition
+        weight: 0.7
+        key: true
+      - id: continuity
+        weight: 0.6
+        key: true
+      - id: one-sided-limits
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: Differentiable implies continuous (converse fails)
+        key_prerequisites: [derivative-definition, continuity]
+        exemplars:
+          - problem: 'Is $f(x) = |x|$ differentiable at $x = 0$? Explain using one-sided difference quotients.'
+            answer: "no — the left quotient gives -1, the right gives 1 (a corner)"
+            solution_sketch: '$\frac{|h|}{h}$ is $-1$ for $h < 0$ and $1$ for $h > 0$; the defining limit does not exist.'
+          - problem: 'If $f$ is differentiable at $a$, must $f$ be continuous at $a$? If $f$ is continuous at $a$, must it be differentiable there?'
+            answer: "yes; no (|x| at 0 is the standard counterexample)"
+        constraints: "corner examples built from |x - a|; cite the implication and its failed converse"
+      - id: kp2
+        name: Spot non-differentiable points
+        key_prerequisites: [derivative-definition, one-sided-limits]
+        exemplars:
+          - problem: '$f(x) = x^{1/3}$ has a vertical tangent at $x = 0$. Is $f$ differentiable there?'
+            answer: "no — the difference quotient tends to +∞ (vertical tangent)"
+          - problem: 'List the three standard graph features where a continuous function fails to be differentiable.'
+            answer: "corners, cusps, and vertical tangents"
+          - problem: 'Can a function be differentiable at a jump discontinuity?'
+            answer: "no — differentiability requires continuity"
+        constraints: "classify by feature (corner / cusp / vertical tangent / discontinuity); no computation beyond sign checks"
+      - id: kp3
+        name: Piecewise differentiability checks
+        key_prerequisites: [derivative-definition, continuity, one-sided-limits]
+        exemplars:
+          - problem: 'Let $f(x) = x^2$ for $x \leq 1$ and $f(x) = 2x - 1$ for $x > 1$. Is $f$ differentiable at $x = 1$?'
+            answer: "yes — f is continuous there (both branches give 1) and both one-sided slopes equal 2"
+            solution_sketch: 'Values: $1 = 1$. Slopes: $2x |_{x=1} = 2$ and $2$. Both match, so $f''(1) = 2$.'
+          - problem: 'Let $g(x) = x^2$ for $x \leq 1$ and $g(x) = 3x - 2$ for $x > 1$. Is $g$ differentiable at $x = 1$?'
+            answer: "no — g is continuous (1 = 1) but the one-sided slopes are 2 and 3"
+        constraints: "two-branch polynomials; check value match first, then one-sided slopes"
+    diagnostic_exemplar:
+      problem: 'Let $f(x) = x^2$ for $x \leq 2$ and $f(x) = 4x - 4$ for $x > 2$. Is $f$ differentiable at $x = 2$?'
+      answer: "yes — f is continuous at 2 (both branches give 4) and both one-sided slopes equal 4, so f'(2) = 4"
+      solution_sketch: 'Differentiability needs continuity plus matching one-sided slopes: the branches agree at $2$ ($2^2 = 4 = 4(2) - 4$), and $2x|_{x=2} = 4$ matches the slope $4$ of the linear branch.'
+    anki_seeds:
+      - front: "Differentiable ⇒ continuous. Continuous ⇒ differentiable?"
+        back: "No — corners, cusps, and vertical tangents are continuous but not differentiable"
+        type: basic
+      - front: "A piecewise function is differentiable at its seam iff..."
+        back: "the branch values match there (continuity) AND the one-sided derivatives match"
+        type: basic
+
+  - id: derivatives-of-polynomials
+    name: Derivatives of Polynomials
+    core: true
+    difficulty: 0.5
+    drill: true
+    answer_kind: expression
+    expected_time_secs: 60
+    prerequisites:
+      - id: derivative-definition
+        weight: 0.7
+        key: true
+      - id: evaluating-polynomials
+        weight: 0.4
+      - id: combining-like-terms
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Power rule for whole-number exponents
+        key_prerequisites: [derivative-definition]
+        exemplars:
+          - problem: 'Differentiate $f(x) = x^5$.'
+            answer: "5x^4"
+          - problem: 'Differentiate $f(x) = x^7$.'
+            answer: "7x^6"
+        constraints: "single power terms with exponents 2-8"
+      - id: kp2
+        name: Sums, constant multiples, and constants
+        key_prerequisites: [derivative-definition, combining-like-terms]
+        exemplars:
+          - problem: 'Differentiate $f(x) = 3x^4 - 2x^2 + 7$.'
+            answer: "12x^3 - 4x"
+          - problem: 'Differentiate $f(x) = 2x^3 - 5x + 4$.'
+            answer: "6x^2 - 5"
+          - problem: 'Differentiate $f(x) = 9$.'
+            answer: "0"
+        constraints: "integer coefficients and exponents 1-6; constants differentiate to 0"
+      - id: kp3
+        name: Evaluate polynomial derivatives at a point
+        key_prerequisites: [derivative-definition, evaluating-polynomials]
+        exemplars:
+          - problem: 'For $f(x) = x^3 - 4x$, find $f''(2)$.'
+            answer: "8"
+            solution_sketch: '$f''(x) = 3x^2 - 4$, so $f''(2) = 12 - 4 = 8$.'
+          - problem: 'For $p(x) = 5x^2 - 3x$, find $p''(-1)$.'
+            answer: "-13"
+            solution_sketch: '$p''(x) = 10x - 3$, so $p''(-1) = -13$.'
+        constraints: "evaluation points are small integers; answers are integers"
+    diagnostic_exemplar:
+      problem: 'For $f(x) = x^4 - 3x^2 + 2x$, find $f\''(2)$.'
+      answer: '22'
+      solution_sketch: '$f''(x) = 4x^3 - 6x + 2$, so $f''(2) = 32 - 12 + 2 = 22$.'
+    anki_seeds:
+      - front: "Power rule (whole-number case): d/dx x^n = ?"
+        back: "n·x^(n-1)"
+        type: basic
+      - front: "d/dx of a constant = ? and d/dx [c·f(x)] = ?"
+        back: "0; c·f'(x)"
+        type: basic
+
+  - id: derivative-power-rule
+    name: The Power Rule
+    core: true
+    difficulty: 0.55
+    drill: true
+    answer_kind: expression
+    expected_time_secs: 60
+    prerequisites:
+      - id: derivatives-of-polynomials
+        weight: 0.8
+        key: true
+      - id: negative-zero-exponents
+        weight: 0.5
+        key: true
+      - id: rational-exponents
+        weight: 0.5
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: Negative exponents
+        key_prerequisites: [negative-zero-exponents, derivatives-of-polynomials]
+        exemplars:
+          - problem: 'Differentiate $f(x) = \frac{1}{x^2}$.'
+            answer: "-2/x^3"
+            solution_sketch: '$x^{-2} \mapsto -2x^{-3}$.'
+          - problem: 'Differentiate $f(x) = x^{-3}$.'
+            answer: "-3x^(-4)"
+          - problem: 'Differentiate $f(x) = \frac{5}{x}$.'
+            answer: "-5/x^2"
+        constraints: "rewrite reciprocals as negative powers first; exponents -1 to -3"
+      - id: kp2
+        name: Fractional exponents and radicals
+        key_prerequisites: [rational-exponents, derivatives-of-polynomials]
+        exemplars:
+          - problem: 'Differentiate $f(x) = \sqrt{x}$.'
+            answer: "1/(2√x)"
+            solution_sketch: '$x^{1/2} \mapsto \frac{1}{2}x^{-1/2}$.'
+          - problem: 'Differentiate $f(x) = x^{2/3}$.'
+            answer: "(2/3)x^(-1/3)"
+          - problem: 'Differentiate $f(x) = \sqrt[3]{x}$.'
+            answer: "(1/3)x^(-2/3)"
+        constraints: "rewrite radicals as fractional powers first; exponents like 1/2, 1/3, 2/3"
+      - id: kp3
+        name: Rewrite before differentiating
+        key_prerequisites: [negative-zero-exponents, rational-exponents]
+        exemplars:
+          - problem: 'Differentiate $f(x) = \frac{x^2 + 1}{x}$ by rewriting it first.'
+            answer: "1 - 1/x^2"
+            solution_sketch: '$f(x) = x + x^{-1}$, so $f''(x) = 1 - x^{-2}$.'
+          - problem: 'Differentiate $f(x) = \frac{3}{\sqrt{x}}$ by rewriting it first.'
+            answer: "-(3/2)x^(-3/2)"
+            solution_sketch: '$f(x) = 3x^{-1/2}$, so $f''(x) = -\frac{3}{2}x^{-3/2}$.'
+          - problem: 'Differentiate $f(x) = x^2\sqrt{x}$ by rewriting it first.'
+            answer: "(5/2)x^(3/2)"
+            solution_sketch: '$f(x) = x^{5/2}$, so $f''(x) = \frac{5}{2}x^{3/2}$.'
+        constraints: "quotients and products that collapse into single powers or sums of powers; no quotient rule"
+    diagnostic_exemplar:
+      problem: 'Differentiate $f(x) = \frac{x^2 - 3}{\sqrt{x}}$ by rewriting it first.'
+      answer: '(3/2)x^(1/2) + (3/2)x^(-3/2)'
+      solution_sketch: 'Rewrite as $f(x) = x^{3/2} - 3x^{-1/2}$; then $f''(x) = \frac{3}{2}x^{1/2} + \frac{3}{2}x^{-3/2}$.'
+    anki_seeds:
+      - front: "Power rule: d/dx x^n = ?"
+        back: "n·x^(n-1), for any real exponent n"
+        type: basic
+      - front: "d/dx √x = ?"
+        back: "1/(2√x)"
+        type: basic
+      - front: "d/dx (1/x) = ?"
+        back: "-1/x^2"
+        type: basic
+
+  - id: product-rule
+    name: The Product Rule
+    core: true
+    difficulty: 0.58
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 120
+    prerequisites:
+      - id: derivative-power-rule
+        weight: 0.8
+        key: true
+      - id: polynomial-multiplication
+        weight: 0.4
+      - id: derivatives-of-polynomials
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: Apply the product rule
+        key_prerequisites: [derivative-power-rule]
+        exemplars:
+          - problem: 'Use the product rule to differentiate $f(x) = x^2(x^3 + 1)$.'
+            answer: "5x^4 + 2x"
+            solution_sketch: '$2x(x^3 + 1) + x^2 \cdot 3x^2 = 2x^4 + 2x + 3x^4 = 5x^4 + 2x$.'
+          - problem: 'Differentiate $f(x) = (x^2 + 1)(x^3 - 2x)$.'
+            answer: "5x^4 - 3x^2 - 2"
+            solution_sketch: '$2x(x^3 - 2x) + (x^2 + 1)(3x^2 - 2)$; collect terms.'
+        constraints: "two polynomial factors of degree ≤ 3; answers expandable for checking"
+      - id: kp2
+        name: Verify against expansion
+        key_prerequisites: [derivative-power-rule, polynomial-multiplication]
+        exemplars:
+          - problem: 'Differentiate $f(x) = (x + 1)(x - 3)$ two ways: by the product rule and by expanding first. Confirm they agree.'
+            answer: "2x - 2 (both ways)"
+            solution_sketch: 'Product rule: $(x - 3) + (x + 1) = 2x - 2$; expansion $x^2 - 2x - 3$ differentiates to the same.'
+          - problem: 'Differentiate $x^3 \cdot x^2$ by the product rule and confirm it matches $\frac{d}{dx} x^5$.'
+            answer: "5x^4"
+            solution_sketch: '$3x^2 \cdot x^2 + x^3 \cdot 2x = 5x^4 = \frac{d}{dx}x^5$.'
+        constraints: "products that expand easily; the point is that both routes agree"
+      - id: kp3
+        name: Product rule with table values
+        key_prerequisites: [derivative-power-rule]
+        exemplars:
+          - problem: 'Given $f(2) = 3$, $f''(2) = -1$, $g(2) = 5$, $g''(2) = 4$, find $(fg)''(2)$.'
+            answer: "7"
+            solution_sketch: '$f''g + fg'' = (-1)(5) + (3)(4) = 7$.'
+          - problem: 'Given $f(1) = 2$, $f''(1) = 3$, $g(1) = -4$, $g''(1) = 1$, find $(fg)''(1)$.'
+            answer: "-10"
+        constraints: "single-digit table values; one application of f'g + fg'"
+    diagnostic_exemplar:
+      problem: 'Differentiate $f(x) = x^3(x^2 + 1)$.'
+      answer: "5x^4 + 3x^2"
+      solution_sketch: 'Product rule: $3x^2(x^2 + 1) + x^3(2x) = 3x^4 + 3x^2 + 2x^4$.'
+    anki_seeds:
+      - front: "Product rule: (fg)' = ?"
+        back: "f'g + fg'"
+        type: basic
+      - front: "(fg)' equals f'g' — true or false?"
+        back: "False — the product rule is f'g + fg'"
+        type: basic
+
+  - id: quotient-rule
+    name: The Quotient Rule
+    core: true
+    difficulty: 0.6
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 150
+    prerequisites:
+      - id: product-rule
+        weight: 0.6
+        key: true
+      - id: derivative-power-rule
+        weight: 0.6
+        key: true
+      - id: rational-expressions
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Apply the quotient rule
+        key_prerequisites: [derivative-power-rule, product-rule]
+        exemplars:
+          - problem: 'Differentiate $f(x) = \frac{x}{x + 1}$.'
+            answer: "1/(x + 1)^2"
+            solution_sketch: '$\frac{(x+1) \cdot 1 - x \cdot 1}{(x+1)^2} = \frac{1}{(x+1)^2}$.'
+          - problem: 'Differentiate $f(x) = \frac{2x + 1}{x - 3}$.'
+            answer: "-7/(x - 3)^2"
+            solution_sketch: '$\frac{2(x-3) - (2x+1)}{(x-3)^2} = \frac{-7}{(x-3)^2}$.'
+          - problem: 'Differentiate $f(x) = \frac{x^2}{x^2 + 1}$.'
+            answer: "2x/(x^2 + 1)^2"
+            solution_sketch: '$\frac{2x(x^2+1) - x^2 \cdot 2x}{(x^2+1)^2} = \frac{2x}{(x^2+1)^2}$.'
+        constraints: "low-degree numerator and denominator; numerator of the result simplifies to one or two terms"
+      - id: kp2
+        name: Rewrite instead when the quotient rule is overkill
+        key_prerequisites: [derivative-power-rule]
+        exemplars:
+          - problem: 'Differentiate $f(x) = \frac{5}{x^2}$ the efficient way.'
+            answer: "-10/x^3"
+            solution_sketch: 'Rewrite as $5x^{-2}$ — no quotient rule needed.'
+          - problem: 'Differentiate $f(x) = \frac{x^2 + 3x}{x}$ the efficient way.'
+            answer: "1"
+            solution_sketch: 'Simplify first: $f(x) = x + 3$ (for $x \neq 0$), so $f''(x) = 1$.'
+        constraints: "constant numerators or cancellable quotients; the student picks the shortcut"
+      - id: kp3
+        name: Quotient rule with table values
+        key_prerequisites: [product-rule, derivative-power-rule]
+        exemplars:
+          - problem: 'Given $f(3) = 2$, $f''(3) = 4$, $g(3) = -1$, $g''(3) = 5$, find $\left(\frac{f}{g}\right)''(3)$.'
+            answer: "-14"
+            solution_sketch: '$\frac{f''g - fg''}{g^2} = \frac{4(-1) - 2 \cdot 5}{(-1)^2} = -14$.'
+          - problem: 'Given $f(0) = 6$, $f''(0) = 2$, $g(0) = 3$, $g''(0) = 1$, find $\left(\frac{f}{g}\right)''(0)$.'
+            answer: "0"
+            solution_sketch: '$\frac{2 \cdot 3 - 6 \cdot 1}{9} = 0$.'
+        constraints: "single-digit table values; g at the point is nonzero"
+    diagnostic_exemplar:
+      problem: 'Differentiate $f(x) = \frac{x}{x + 3}$.'
+      answer: "3/(x + 3)^2"
+      solution_sketch: 'Quotient rule: $\frac{1 \cdot (x+3) - x \cdot 1}{(x+3)^2} = \frac{3}{(x+3)^2}$.'
+    anki_seeds:
+      - front: "Quotient rule: (f/g)' = ?"
+        back: "(f'g - fg') / g^2 — the minus term is the numerator's, in that order"
+        type: basic
+      - front: "Before reaching for the quotient rule on c/x^n, instead..."
+        back: "rewrite as c·x^(-n) and use the power rule"
+        type: basic
+
+  - id: product-quotient-rules
+    name: Product and Quotient Rules
+    core: true
+    difficulty: 0.62
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 150
+    prerequisites:
+      - id: product-rule
+        weight: 0.7
+        key: true
+      - id: quotient-rule
+        weight: 0.7
+        key: true
+      - id: tangent-line-equation
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: Evaluate a derivative at a point
+        key_prerequisites: [product-rule, quotient-rule]
+        exemplars:
+          - problem: 'For $g(x) = x^3(x - 4)$, find $g''(2)$.'
+            answer: "-16"
+            solution_sketch: '$g''(x) = 3x^2(x-4) + x^3 = 4x^3 - 12x^2$; $g''(2) = 32 - 48 = -16$.'
+          - problem: 'For $f(x) = \frac{x^2 - 1}{x + 2}$, find $f''(1)$.'
+            answer: "2/3"
+            solution_sketch: '$f''(x) = \frac{2x(x+2) - (x^2-1)}{(x+2)^2} = \frac{x^2 + 4x + 1}{(x+2)^2}$; $f''(1) = \frac{6}{9} = \frac{2}{3}$.'
+        constraints: "evaluation point keeps arithmetic small; answers are integers or simple fractions"
+      - id: kp2
+        name: Combine product and quotient structures
+        key_prerequisites: [product-rule, quotient-rule]
+        exemplars:
+          - problem: 'Differentiate $f(x) = \frac{x(x + 2)}{x + 1}$.'
+            answer: "(x^2 + 2x + 2)/(x + 1)^2"
+            solution_sketch: 'Numerator $x^2 + 2x$ has derivative $2x + 2$; quotient rule gives $\frac{(2x+2)(x+1) - (x^2+2x)}{(x+1)^2} = \frac{x^2 + 2x + 2}{(x+1)^2}$.'
+          - problem: 'Differentiate $g(x) = (x^3 - 1)(2x + 5)$ and simplify.'
+            answer: "8x^3 + 15x^2 - 2"
+            solution_sketch: '$3x^2(2x+5) + 2(x^3-1) = 6x^3 + 15x^2 + 2x^3 - 2$.'
+        constraints: "one product-inside-quotient and one simplify-after-product problem; integer coefficients"
+      - id: kp3
+        name: Tangent lines to product and quotient curves
+        key_prerequisites: [product-rule, quotient-rule, tangent-line-equation]
+        exemplars:
+          - problem: 'Find the tangent line to $y = \frac{x}{x + 1}$ at $x = 1$. Give the expression for $y$.'
+            answer: "x/4 + 1/4"
+            solution_sketch: '$y'' = \frac{1}{(x+1)^2}$ gives slope $\frac{1}{4}$ at $(1, \frac{1}{2})$: $y - \frac{1}{2} = \frac{1}{4}(x - 1)$.'
+          - problem: 'Find the tangent line to $y = x^2(x - 3)$ at $x = 1$. Give the expression for $y$.'
+            answer: "-3x + 1"
+            solution_sketch: '$y = x^3 - 3x^2$, $y'' = 3x^2 - 6x$; slope $-3$ at $(1, -2)$: $y + 2 = -3(x - 1)$.'
+        constraints: "tangent point coordinates and slopes are integers or simple fractions; the answer is the slope-intercept expression for y"
+    diagnostic_exemplar:
+      problem: 'Find the tangent line to $y = \frac{x(x + 2)}{x + 1}$ at $x = 1$. Give the expression for $y$.'
+      answer: '5x/4 + 1/4'
+      solution_sketch: 'With numerator $x^2 + 2x$: $y'' = \frac{(2x+2)(x+1) - (x^2+2x)}{(x+1)^2} = \frac{x^2 + 2x + 2}{(x+1)^2}$, so the slope at $x = 1$ is $\frac{5}{4}$ and $y(1) = \frac{3}{2}$; the tangent is $y = \frac{5}{4}(x-1) + \frac{3}{2}$.'
+    anki_seeds:
+      - front: "Product rule: (fg)' = ?"
+        back: "f'g + fg'"
+        type: basic
+      - front: "Quotient rule: (f/g)' = ?"
+        back: "(f'g - fg') / g^2 — the minus term is the numerator's, in that order"
+        type: basic

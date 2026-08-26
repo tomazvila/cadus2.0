@@ -1,0 +1,421 @@
+unit: finite-group-structure
+course: abstract-algebra
+module: "Finite Group Structure"
+topics:
+  - id: class-equation
+    name: "The Class Equation"
+    core: true                 # Cauchy's and Sylow's theorems build directly on it — the cash-in of the group-actions machinery
+    difficulty: 0.78
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 210
+    prerequisites:
+      - id: orbit-stabilizer-theorem
+        weight: 0.9
+        key: true
+      - id: subgroups-subgroup-tests
+        weight: 0.4
+        key: false
+      - id: lagranges-theorem
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Conjugacy class sizes via centralizers"
+        key_prerequisites: [orbit-stabilizer-theorem, subgroups-subgroup-tests]
+        exemplars:
+          - problem: 'In $S_4$, how many conjugates does the 3-cycle $(1\,2\,3)$ have?'
+            answer: "8"
+            solution_sketch: 'Conjugacy in $S_n$ preserves cycle type and realizes every permutation of the same type, so the class is all 3-cycles: $\frac{4 \cdot 3 \cdot 2}{3} = 8$ of them.'
+          - problem: 'Using the previous count, find the order of the centralizer $C((1\,2\,3))$ in $S_4$.'
+            answer: "3"
+            solution_sketch: 'The conjugacy class is the orbit of the conjugation action and the centralizer is the stabilizer, so $|\mathrm{class}| = [G : C(x)]$: $|C| = 24/8 = 3$, which is exactly $\langle (1\,2\,3) \rangle$.'
+        constraints: "class sizes and centralizer orders in S_3, S_4, D_4, D_5 via |class| = [G : C(x)]; emphasize class sizes divide |G|"
+      - id: kp2
+        name: "Writing and verifying the class equation"
+        key_prerequisites: [orbit-stabilizer-theorem, lagranges-theorem]
+        exemplars:
+          - problem: 'The conjugacy classes of $D_4$ are $\{e\}$, $\{r^2\}$, $\{r, r^3\}$, $\{s, r^2s\}$, $\{rs, r^3s\}$. Write the class equation of $D_4$ and read off $|Z(D_4)|$.'
+            answer: '$8 = 1 + 1 + 2 + 2 + 2$; $|Z(D_4)| = 2$ (the size-1 classes are $e$ and $r^2$).'
+            solution_sketch: 'The center consists exactly of the elements whose conjugacy class is a singleton; two singleton classes give $|Z| = 2$.'
+          - problem: 'List the conjugacy class sizes of $S_4$ by cycle type and verify the class equation.'
+            answer: '$24 = 1 + 6 + 3 + 8 + 6$: identity, transpositions, double transpositions, 3-cycles, 4-cycles.'
+            solution_sketch: 'Count each cycle type: $1$, $\binom{4}{2} = 6$, $3$, $8$, $3! = 6$; they sum to $|S_4| = 24$.'
+        constraints: "verify |G| = |Z(G)| + sum of nontrivial class sizes for groups of order <= 24; one problem per set solves for a missing class size"
+      - id: kp3
+        name: "p-groups have nontrivial center"
+        key_prerequisites: [orbit-stabilizer-theorem, lagranges-theorem]
+        exemplars:
+          - problem: 'Let $|G| = p^n$ with $p$ prime and $n \ge 1$. Use the class equation to prove $Z(G) \neq \{e\}$.'
+            answer: '$|G| = |Z(G)| + \sum [G : C(x_i)]$ over nontrivial classes; each index divides $p^n$ and exceeds $1$, so $p$ divides every summand and $|G|$, hence $p \mid |Z(G)|$.'
+            solution_sketch: 'Nontrivial class sizes are proper indices in a $p$-group, so they are positive powers of $p$; reduce the class equation mod $p$.'
+          - problem: 'Prove that every group of order $p^2$ is abelian.'
+            answer: '$|Z| \in \{p, p^2\}$ by the previous result. If $|Z| = p$, then $G/Z$ is cyclic of order $p$, say $G/Z = \langle gZ \rangle$; then every element is $g^i z$ with $z$ central, and any two such commute — so $G$ is abelian, contradicting $|Z| = p$. Hence $|Z| = p^2$.'
+            solution_sketch: 'Nontrivial center plus the "$G/Z(G)$ cyclic $\implies$ $G$ abelian" argument: elements $g^iz_1$ and $g^jz_2$ commute because powers of $g$ commute and $z_1, z_2$ are central.'
+        constraints: "p in {2, 3, 5}; the G/Z(G)-cyclic lemma is proved once, then may be cited"
+    diagnostic_exemplar:
+      problem: 'A group $G$ of order $8$ has conjugacy class sizes $1, 1, 2, 2, 2$. Find $|Z(G)|$, and explain why no group of order $8$ can have a trivial center.'
+      answer: '$|Z(G)| = 2$ (two singleton classes). A group of order $8 = 2^3$ is a $2$-group, and the class equation forces $2 \mid |Z(G)|$, so $|Z(G)| \ge 2$.'
+      solution_sketch: 'Central elements are exactly the singleton classes; the $p$-group center argument rules out $|Z| = 1$.'
+    anki_seeds:
+      - front: "The class equation?"
+        back: "$|G| = |Z(G)| + \\sum_i [G : C(x_i)]$, summing over representatives of the nontrivial conjugacy classes."
+        type: basic
+      - front: "Size of the conjugacy class of $x$?"
+        back: "$[G : C(x)]$ — the index of the centralizer (orbit-stabilizer for the conjugation action)."
+        type: basic
+      - front: "Center of a finite $p$-group?"
+        back: "Nontrivial: $p$ divides $|Z(G)|$ (class equation mod $p$)."
+        type: basic
+
+  - id: cauchys-theorem
+    name: "Cauchy's Theorem"
+    core: true                 # Sylow's theorem and order-pq structure arguments build on it; canonical machinery
+    difficulty: 0.80
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 210
+    prerequisites:
+      - id: class-equation
+        weight: 0.8
+        key: true
+      - id: order-of-an-element
+        weight: 0.5
+        key: true
+      - id: lagranges-theorem
+        weight: 0.5
+        key: false
+      - id: group-actions
+        weight: 0.3
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Statement and scope"
+        key_prerequisites: [order-of-an-element, lagranges-theorem]
+        exemplars:
+          - problem: 'State Cauchy''s theorem, and explain what it adds to Lagrange''s theorem.'
+            answer: 'If a prime $p$ divides $|G|$, then $G$ has an element of order $p$. Lagrange gives necessity (element orders divide $|G|$); Cauchy is the partial converse: every prime divisor is realized as an element order.'
+            solution_sketch: 'Contrast directions: Lagrange restricts possible orders; Cauchy guarantees them — for primes only.'
+          - problem: 'A group has order $30$. Which element orders does Cauchy''s theorem guarantee?'
+            answer: '$2, 3, 5$'
+            solution_sketch: '$30 = 2 \cdot 3 \cdot 5$; Cauchy applies to each prime divisor. (Order $30$ itself is not guaranteed — the theorem covers primes only.)'
+        constraints: "statement and guaranteed-order questions, |G| <= 100; contrast with the failure of the full Lagrange converse (Klein group and order 4)"
+      - id: kp2
+        name: "First applications"
+        key_prerequisites: [class-equation, order-of-an-element]
+        exemplars:
+          - problem: 'Prove: if a prime $p$ divides $|G|$, then $G$ has a subgroup of order $p$.'
+            answer: 'Cauchy gives $g$ with $|g| = p$; then $\langle g \rangle$ is a subgroup of order $p$.'
+            solution_sketch: 'The cyclic subgroup generated by an order-$p$ element has exactly $p$ elements.'
+          - problem: 'An abelian group $G$ has order $15$. Prove $G$ is cyclic.'
+            answer: 'Cauchy gives $a$ of order $3$ and $b$ of order $5$. Since $G$ is abelian and $\gcd(3, 5) = 1$, the element $ab$ has order $15$, so $G = \langle ab \rangle$.'
+            solution_sketch: 'In an abelian group, commuting elements of coprime orders multiply to an element whose order is the product.'
+        constraints: "subgroup-existence deductions and coprime-order arguments; |G| <= 60 with 2-3 prime factors"
+      - id: kp3
+        name: "The counting proof (McKay's argument)"
+        key_prerequisites: [class-equation, group-actions]
+        exemplars:
+          - problem: 'McKay''s proof considers $X = \{(x_1, \dots, x_p) : x_i \in G,\ x_1 x_2 \cdots x_p = e\}$. Show that $|X| = |G|^{p-1}$.'
+            answer: 'Choose $x_1, \dots, x_{p-1}$ freely ($|G|^{p-1}$ ways); then $x_p = (x_1 \cdots x_{p-1})^{-1}$ is uniquely determined.'
+            solution_sketch: 'The product condition fixes the last coordinate; the rest are free.'
+          - problem: '$\mathbb{Z}_p$ acts on $X$ by cyclic rotation, and the fixed tuples are the constant ones $(x, \dots, x)$ with $x^p = e$. Finish the proof of Cauchy''s theorem.'
+            answer: 'Orbits have size $1$ or $p$, so $|X| \equiv \#\{\text{fixed tuples}\} \pmod p$. Since $p \mid |G|$, $p$ divides $|X| = |G|^{p-1}$, so $p$ divides the number of solutions of $x^p = e$. One solution is $x = e$, so there are at least $p$ solutions; any solution $x \neq e$ has order exactly $p$.'
+            solution_sketch: 'Orbit sizes divide $|\mathbb{Z}_p| = p$; count mod $p$ and use that $p$ is prime to pin the order of a non-identity solution.'
+        constraints: "the tuple-counting argument in guided steps; rotation-invariance of the product-e condition may be quoted"
+    diagnostic_exemplar:
+      problem: 'Let $G$ be an abelian group with $|G| = 21$. Use Cauchy''s theorem to prove that $G$ is cyclic.'
+      answer: 'Since $21 = 3 \cdot 7$, Cauchy gives $a$ with $|a| = 3$ and $b$ with $|b| = 7$. As $G$ is abelian, $(ab)^{n} = a^{n}b^{n}$, so $(ab)^{21} = e$ and $|ab|$ divides $21$. If $|ab| = 3$ then $e = (ab)^3 = a^3b^3 = b^3$, forcing $7 \mid 3$ — impossible; if $|ab| = 7$ then $e = a^7b^7 = a^7 = a$, contradicting $|a| = 3$; and $|ab| = 1$ would give $a = b^{-1}$, whose order is both $3$ and $7$. Hence $|ab| = 21$ and $G = \langle ab \rangle$ is cyclic.'
+      solution_sketch: 'Cauchy supplies elements of order $3$ and $7$; in an abelian group elements of coprime orders multiply to an element of order the product, which here exhausts $G$.'
+    anki_seeds:
+      - front: "Cauchy's theorem?"
+        back: "If a prime $p$ divides $|G|$, then $G$ has an element (hence a subgroup) of order $p$."
+        type: basic
+      - front: "Size of McKay's tuple set $X = \\{(x_1, \\dots, x_p) : x_1 \\cdots x_p = e\\}$?"
+        back: "$|G|^{p-1}$ — the first $p-1$ entries are free, the last is forced."
+        type: basic
+      - front: "Cauchy vs Lagrange in one line?"
+        back: "Lagrange: element orders divide $|G|$. Cauchy: every prime divisor of $|G|$ occurs as an element order."
+        type: basic
+
+  - id: simple-groups
+    name: "Simple Groups"
+    core: false                # supplier only to the supplemental Sylow run: its sole consumer (sylow-theorems) is supplemental and nothing core builds on the notion
+    difficulty: 0.74
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 240
+    prerequisites:
+      - id: normal-subgroups
+        weight: 0.9
+        key: true
+      - id: lagranges-theorem
+        weight: 0.6
+        key: true
+      - id: consequences-of-lagrange
+        weight: 0.5
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: "Definition and first examples"
+        key_prerequisites: [normal-subgroups, lagranges-theorem]
+        exemplars:
+          - problem: 'Define a simple group, and prove that $\mathbb{Z}_p$ is simple for every prime $p$.'
+            answer: 'A group $G$ is simple if $G \neq \{e\}$ and its only normal subgroups are $\{e\}$ and $G$. By Lagrange, a subgroup of $\mathbb{Z}_p$ has order dividing $p$, i.e. $1$ or $p$ — so $\mathbb{Z}_p$ has no proper nontrivial subgroups at all, let alone normal ones.'
+            solution_sketch: 'State the definition; Lagrange leaves no room for intermediate subgroup orders when $|G|$ is prime.'
+          - problem: 'Is $\mathbb{Z}_6$ simple? Prove your answer.'
+            answer: 'No: $\langle 2 \rangle = \{0, 2, 4\}$ is a subgroup with $1 < 3 < 6$, and it is normal because $\mathbb{Z}_6$ is abelian.'
+            solution_sketch: 'Exhibit any proper nontrivial subgroup; in an abelian group every subgroup is normal.'
+        constraints: "definition unwinding and verdicts for Z_n (n <= 20); a verdict always names an explicit normal subgroup or rules all sizes out via Lagrange"
+      - id: kp2
+        name: "The abelian simple groups are exactly Z_p"
+        key_prerequisites: [normal-subgroups, consequences-of-lagrange]
+        exemplars:
+          - problem: 'Prove: a finite abelian group is simple if and only if it is isomorphic to $\mathbb{Z}_p$ for some prime $p$.'
+            answer: '$\mathbb{Z}_p$ is simple by Lagrange. Conversely, in an abelian group every subgroup is normal, so a simple abelian $G$ has no proper nontrivial subgroups. Pick $g \neq e$: then $\langle g \rangle = G$, so $G$ is cyclic of order $|g|$. If $|G|$ had a divisor $1 < d < |G|$, then $\langle g^{|G|/d} \rangle$ would be a proper nontrivial subgroup — so $|G|$ is prime and $G \cong \mathbb{Z}_p$.'
+            solution_sketch: 'Abelian collapses "normal subgroup" to "subgroup"; a nontrivial cyclic group of composite order has a proper nontrivial cyclic subgroup.'
+          - problem: 'Is $S_3$ simple?'
+            answer: 'No: $A_3 = \{e, (1\,2\,3), (1\,3\,2)\}$ has index $2$, hence is normal, and $1 < 3 < 6$.'
+            solution_sketch: 'The alternating subgroup is the standard proper nontrivial normal subgroup of $S_n$.'
+        constraints: "the abelian classification proof in guided steps; non-abelian verdicts limited to S_3 and D_n via named normal subgroups"
+      - id: kp3
+        name: "Refuting simplicity by exhibiting a normal subgroup"
+        key_prerequisites: [normal-subgroups, lagranges-theorem]
+        exemplars:
+          - problem: 'Prove that $D_4$ is not simple.'
+            answer: 'The rotation subgroup $\langle r \rangle$ has order $4$ in $|D_4| = 8$, so its index is $2$; a subgroup of index $2$ is normal, and $1 < 4 < 8$.'
+            solution_sketch: 'Index-$2$ subgroups are always normal — the quickest simplicity refutation available.'
+          - problem: 'Let $G$ be a group with $|G| > 2$ that has a subgroup $H$ of index $2$. Prove that $G$ is not simple.'
+            answer: '$[G : H] = 2$ forces $H \trianglelefteq G$, and $|H| = |G|/2$ satisfies $1 < |H| < |G|$ since $|G| > 2$. So $H$ is a proper nontrivial normal subgroup.'
+            solution_sketch: 'Combine the index-2 lemma with the size bounds that make $H$ proper and nontrivial.'
+        constraints: "refutations via index-2 subgroups, abelian subgroups, or named normal subgroups (A_n, rotation subgroup, center); groups of order <= 12; no Sylow counting (taught later)"
+    diagnostic_exemplar:
+      problem: 'Decide, with proof, whether each of $\mathbb{Z}_{11}$ and $D_6$ (the symmetries of a regular hexagon, order $12$) is simple.'
+      answer: '$\mathbb{Z}_{11}$ is simple: it is nontrivial, and by Lagrange every subgroup has order dividing the prime $11$, so the only subgroups at all are $\{0\}$ and $\mathbb{Z}_{11}$. $D_6$ is not simple: the rotation subgroup $\langle r \rangle$ has order $6$, so its index is $12/6 = 2$; a subgroup of index $2$ is always normal, and $1 < 6 < 12$, so it is a proper nontrivial normal subgroup.'
+      solution_sketch: 'For prime order, Lagrange leaves no room for proper nontrivial subgroups. For $D_6$, exhibit a normal subgroup — index $2$ forces normality.'
+    anki_seeds:
+      - front: "Simple group?"
+        back: "A nontrivial group whose only normal subgroups are $\\{e\\}$ and the whole group."
+        type: basic
+      - front: "The abelian simple groups are exactly..."
+        back: "$\\mathbb{Z}_p$, $p$ prime (every subgroup of an abelian group is normal)."
+        type: basic
+      - front: "Fastest way to show a group is NOT simple?"
+        back: "Exhibit one proper nontrivial normal subgroup — e.g. any subgroup of index $2$, or any proper nontrivial subgroup of an abelian group."
+        type: basic
+
+  - id: sylow-theorems
+    name: "The Sylow Theorems"
+    core: false                # terminal structure-theorem application; nothing downstream consumes it (requirements list Sylow beyond one topic as cut-first)
+    difficulty: 0.84
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 300
+    prerequisites:
+      - id: cauchys-theorem
+        weight: 0.8
+        key: true
+      - id: normal-subgroups
+        weight: 0.5
+        key: true
+      - id: lagranges-theorem
+        weight: 0.5
+        key: false
+      # Re-audit R-02: kp3's exemplar "show that no group of order 20 is simple" used
+      # "simple" untaught; the definition + pre-Sylow refutation technique now sit below.
+      - id: simple-groups
+        weight: 0.6
+        key: false
+      # Re-audit R-51: kp3's order-35 exemplar finishes via the internal-direct-product
+      # recognition step its constraints admit is quoted; the step is now taught below.
+      - id: internal-direct-products
+        weight: 0.5
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Sylow p-subgroups and existence"
+        key_prerequisites: [cauchys-theorem, lagranges-theorem]
+        exemplars:
+          - problem: 'State Sylow''s existence theorem, and give the orders of a Sylow $2$-subgroup and a Sylow $3$-subgroup of a group of order $48$.'
+            answer: 'If $|G| = p^n m$ with $p \nmid m$, then $G$ has a subgroup of order $p^n$ (a Sylow $p$-subgroup). For $48 = 2^4 \cdot 3$: orders $16$ and $3$.'
+            solution_sketch: 'A Sylow $p$-subgroup has order the full power of $p$ in $|G|$; factor $48$.'
+          - problem: 'How does Sylow''s existence theorem strengthen Cauchy''s theorem?'
+            answer: 'Cauchy gives a subgroup of order $p$; Sylow gives one of order $p^n$, the largest $p$-power dividing $|G|$.'
+            solution_sketch: 'Cauchy is the $n = 1$ case of Sylow existence.'
+        constraints: "read Sylow subgroup orders off factorizations, |G| <= 200; statement-level existence questions"
+      - id: kp2
+        name: "Counting Sylow subgroups: n_p | m and n_p = 1 mod p"
+        key_prerequisites: [cauchys-theorem, lagranges-theorem]
+        exemplars:
+          - problem: 'Let $|G| = 12$. Using $n_3 \mid 4$ and $n_3 \equiv 1 \pmod 3$, list the possible values of $n_3$.'
+            answer: '$1$ or $4$'
+            solution_sketch: 'Divisors of $4$ are $1, 2, 4$; of these, only $1$ and $4$ are $\equiv 1 \pmod 3$.'
+          - problem: 'Let $|G| = 45$. Show that the Sylow $3$-subgroup is unique, hence normal.'
+            answer: '$45 = 3^2 \cdot 5$: $n_3 \mid 5$ and $n_3 \equiv 1 \pmod 3$; of $1, 5$ only $1$ qualifies. A unique Sylow $p$-subgroup is normal, since conjugation permutes Sylow $p$-subgroups.'
+            solution_sketch: 'Run both conditions; conjugates of a Sylow subgroup are Sylow subgroups, so uniqueness forces invariance under conjugation.'
+        constraints: "apply n_p | m and n_p = 1 mod p for |G| <= 100; conclude normality whenever n_p = 1"
+      - id: kp3
+        name: "Structural conclusions from Sylow counting"
+        key_prerequisites: [cauchys-theorem, normal-subgroups]
+        exemplars:
+          - problem: 'Prove that every group of order $35$ is cyclic.'
+            answer: '$n_5 \mid 7$, $n_5 \equiv 1 \pmod 5$ forces $n_5 = 1$; $n_7 \mid 5$, $n_7 \equiv 1 \pmod 7$ forces $n_7 = 1$. The unique Sylow subgroups $P, Q$ are normal, intersect trivially ($\gcd(5,7)=1$), and $|PQ| = 35$, so $G \cong P \times Q \cong \mathbb{Z}_5 \times \mathbb{Z}_7 \cong \mathbb{Z}_{35}$.'
+            solution_sketch: 'Both Sylow counts collapse to $1$; the internal-direct-product recognition and $\mathbb{Z}_5 \times \mathbb{Z}_7 \cong \mathbb{Z}_{35}$ (coprime orders) finish it.'
+          - problem: 'Show that no group of order $20$ is simple.'
+            answer: '$n_5 \mid 4$ and $n_5 \equiv 1 \pmod 5$ force $n_5 = 1$, so the Sylow $5$-subgroup is a normal subgroup with $1 < 5 < 20$.'
+            solution_sketch: 'A forced unique Sylow subgroup is a proper nontrivial normal subgroup.'
+        constraints: "orders pq or p^2 q with p, q <= 11; the internal-direct-product recognition step may be quoted after one worked instance"
+    diagnostic_exemplar:
+      problem: 'Let $|G| = 20$. Give the order of a Sylow $5$-subgroup, determine $n_5$, and deduce that $G$ has a normal subgroup of order $5$.'
+      answer: 'Sylow $5$-subgroups have order $5$; $n_5 \mid 4$ and $n_5 \equiv 1 \pmod 5$ force $n_5 = 1$; the unique Sylow $5$-subgroup is normal.'
+      solution_sketch: 'Factor $20 = 2^2 \cdot 5$, run the two counting conditions, and use uniqueness $\implies$ normality.'
+    anki_seeds:
+      - front: "Constraints on $n_p$, the number of Sylow $p$-subgroups (with $|G| = p^n m$, $p \\nmid m$)?"
+        back: "$n_p \\mid m$ and $n_p \\equiv 1 \\pmod p$."
+        type: basic
+      - front: "$n_p = 1$ tells you..."
+        back: "The Sylow $p$-subgroup is unique, hence normal in $G$."
+        type: basic
+      - front: "Sylow existence theorem?"
+        back: "If $|G| = p^n m$ with $p \\nmid m$, then $G$ has a subgroup of order $p^n$."
+        type: basic
+
+  - id: finite-abelian-groups-classification
+    name: "The Fundamental Theorem of Finite Abelian Groups"
+    core: false                # terminal classification destination; nothing downstream consumes it
+    difficulty: 0.78
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 240
+    prerequisites:
+      - id: direct-products
+        weight: 0.8
+        key: true
+      - id: isomorphism-invariants
+        weight: 0.5
+        key: true
+      - id: abelian-groups
+        weight: 0.5
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: "Statement; listing the abelian groups of a given order"
+        key_prerequisites: [direct-products, abelian-groups]
+        exemplars:
+          - problem: 'List all abelian groups of order $8$ up to isomorphism.'
+            answer: '$\mathbb{Z}_8$, $\ \mathbb{Z}_4 \times \mathbb{Z}_2$, $\ \mathbb{Z}_2 \times \mathbb{Z}_2 \times \mathbb{Z}_2$'
+            solution_sketch: 'Every finite abelian group is a direct product of cyclic groups of prime-power order; for $8 = 2^3$ the choices are the partitions of $3$: $(3), (2,1), (1,1,1)$.'
+          - problem: 'How many abelian groups of order $36$ are there up to isomorphism?'
+            answer: "4"
+            solution_sketch: '$36 = 2^2 \cdot 3^2$; independent partition choices for each prime give $p(2) \cdot p(2) = 2 \cdot 2 = 4$.'
+        constraints: "orders with prime exponents <= 4; the count is the product of partition numbers of the exponents"
+      - id: kp2
+        name: "Elementary divisors and invariant factors"
+        key_prerequisites: [direct-products]
+        exemplars:
+          - problem: 'Write $\mathbb{Z}_6 \times \mathbb{Z}_4$ in invariant-factor form $\mathbb{Z}_{d_1} \times \mathbb{Z}_{d_2}$ with $d_2 \mid d_1$.'
+            answer: '$\mathbb{Z}_{12} \times \mathbb{Z}_2$'
+            solution_sketch: 'Elementary divisors: $2, 3$ (from $6$) and $4$. Largest invariant factor takes the top power of each prime: $4 \cdot 3 = 12$; the remaining $2$ is next. Check $2 \mid 12$.'
+          - problem: 'Decide: is $\mathbb{Z}_{10} \times \mathbb{Z}_{15} \cong \mathbb{Z}_{150}$?'
+            answer: 'No: its invariant-factor form is $\mathbb{Z}_{30} \times \mathbb{Z}_5$, so the maximal element order is $30$, not $150$.'
+            solution_sketch: 'Elementary divisors $2, 5, 3, 5$; invariant factors $2 \cdot 3 \cdot 5 = 30$ and $5$. A cyclic group of order $150$ would need an element of order $150$.'
+        constraints: "two or three cyclic factors with moduli <= 20; convert in both directions between elementary-divisor and invariant-factor form"
+      - id: kp3
+        name: "Identifying an abelian group by its element orders"
+        key_prerequisites: [direct-products, isomorphism-invariants]
+        exemplars:
+          - problem: 'Which abelian group of order $8$ has exactly $3$ elements of order $2$?'
+            answer: '$\mathbb{Z}_4 \times \mathbb{Z}_2$'
+            solution_sketch: '$\mathbb{Z}_8$ has one element of order $2$; $\mathbb{Z}_2^3$ has seven; $\mathbb{Z}_4 \times \mathbb{Z}_2$ has $(2,0), (0,1), (2,1)$ — exactly three.'
+          - problem: 'An abelian group of order $16$ has every non-identity element of order $2$. Identify it up to isomorphism.'
+            answer: '$\mathbb{Z}_2 \times \mathbb{Z}_2 \times \mathbb{Z}_2 \times \mathbb{Z}_2$'
+            solution_sketch: 'Any factor $\mathbb{Z}_{2^k}$ with $k \ge 2$ would contribute an element of order $4$; so all factors are $\mathbb{Z}_2$.'
+        constraints: "orders <= 16; distinguish candidate decompositions by counts of elements of a given order"
+    diagnostic_exemplar:
+      problem: 'An abelian group $G$ of order $36$ has exactly one element of order $2$ and exactly two elements of order $3$. Identify $G$ up to isomorphism and give its invariant-factor form.'
+      answer: 'By the classification, $G$ is the product of its $2$-primary and $3$-primary parts, of orders $4$ and $9$. The order-$4$ part is $\mathbb{Z}_4$ or $\mathbb{Z}_2 \times \mathbb{Z}_2$; the latter has three elements of order $2$, so it must be $\mathbb{Z}_4$. The order-$9$ part is $\mathbb{Z}_9$ or $\mathbb{Z}_3 \times \mathbb{Z}_3$; the latter has eight elements of order $3$, so it must be $\mathbb{Z}_9$. Hence $G \cong \mathbb{Z}_4 \times \mathbb{Z}_9 \cong \mathbb{Z}_{36}$, and the invariant-factor form is the single factor $\mathbb{Z}_{36}$ (since $\gcd(4,9) = 1$).'
+      solution_sketch: 'Split into $p$-primary parts, then use the counts of elements of order $p$ to pick the right partition; coprime orders merge into one invariant factor.'
+    anki_seeds:
+      - front: "Fundamental theorem of finite abelian groups?"
+        back: "Every finite abelian group is a direct product of cyclic groups of prime-power order, uniquely up to reordering."
+        type: basic
+      - front: "Number of abelian groups of order $p_1^{a_1} \\cdots p_k^{a_k}$ up to isomorphism?"
+        back: "$p(a_1) \\cdots p(a_k)$ — a product of partition numbers."
+        type: basic
+      - front: "Invariant-factor form of a finite abelian group?"
+        back: "$\\mathbb{Z}_{d_1} \\times \\cdots \\times \\mathbb{Z}_{d_r}$ with $d_r \\mid d_{r-1} \\mid \\cdots \\mid d_1$."
+        type: basic
+
+  - id: automorphism-groups
+    name: "Automorphism Groups"
+    core: false                # terminal destination: its natural consumer (Galois theory) is deliberately out of the tree; nothing downstream builds on Aut/Inn
+    difficulty: 0.80
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 240
+    prerequisites:
+      - {id: direct-products, weight: 0.4, key: false}             # L1: diagnostic identifies Inn(D_4)/Aut(Z_8) as the Klein group Z_2 x Z_2
+      - {id: classifying-small-groups, weight: 0.3, key: false}    # L1: the order-4 classification the diagnostic's answer relies on
+      - id: group-isomorphisms
+        weight: 0.8
+        key: true
+      - id: units-in-modular-rings
+        weight: 0.6
+        key: true
+      - id: first-isomorphism-theorem
+        weight: 0.6
+        key: true
+      - id: quotient-groups
+        weight: 0.4
+        key: false
+      # conceptual familiarity with the center Z(G) and reading it off small groups
+      - id: class-equation
+        weight: 0.2
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Aut(G) is a group under composition"
+        key_prerequisites: [group-isomorphisms]
+        exemplars:
+          - problem: 'Let $\mathrm{Aut}(G)$ be the set of automorphisms of $G$. Prove that $\mathrm{Aut}(G)$ is a group under composition.'
+            answer: 'Composition of isomorphisms $G \to G$ is an isomorphism $G \to G$ (closure), composition of functions is associative, $\mathrm{id}_G$ is an automorphism (identity), and the inverse of an isomorphism is an isomorphism (inverses).'
+            solution_sketch: 'Each axiom reduces to a known closure property of isomorphisms; only the domain-equals-codomain bookkeeping is new.'
+          - problem: 'Determine $\mathrm{Aut}(\mathbb{Z})$ up to isomorphism.'
+            answer: 'An automorphism sends the generator $1$ to a generator of $\mathbb{Z}$, so $\varphi(1) = \pm 1$: $\mathrm{Aut}(\mathbb{Z}) = \{\mathrm{id}, x \mapsto -x\} \cong \mathbb{Z}_2$.'
+            solution_sketch: 'A homomorphism out of $\mathbb{Z}$ is determined by $\varphi(1)$; surjectivity forces $\varphi(1)$ to generate.'
+        constraints: "group-axiom verification for Aut(G); generator-image arguments for Aut of cyclic groups; groups of order <= 12"
+      - id: kp2
+        name: "Aut(Z_n) ≅ U(n); the primitive-root theorem for U(p)"
+        key_prerequisites: [group-isomorphisms, units-in-modular-rings]
+        exemplars:
+          - problem: 'Prove that $\mathrm{Aut}(\mathbb{Z}_n) \cong U(n)$.'
+            answer: 'Every endomorphism of $\mathbb{Z}_n$ is $\varphi_a(x) = ax$ for $a = \varphi(1)$, and $\varphi_a$ is an automorphism iff $a$ generates $\mathbb{Z}_n$, i.e. $\gcd(a, n) = 1$. The map $a \mapsto \varphi_a$ sends multiplication to composition: $\varphi_a \circ \varphi_b = \varphi_{ab}$. So $U(n) \cong \mathrm{Aut}(\mathbb{Z}_n)$.'
+            solution_sketch: 'Determination by $\varphi(1)$, the unit condition for bijectivity, and $\varphi_a \circ \varphi_b(x) = abx$.'
+          - problem: 'The primitive-root theorem states that $U(p)$ is cyclic for every prime $p$ (it may be quoted). Deduce the isomorphism type of $\mathrm{Aut}(\mathbb{Z}_7)$ and exhibit a generator of $U(7)$.'
+            answer: '$\mathrm{Aut}(\mathbb{Z}_7) \cong U(7)$, which is cyclic of order $6$: $\mathrm{Aut}(\mathbb{Z}_7) \cong \mathbb{Z}_6$. Generator: $3$, since $3, 2, 6, 4, 5, 1$ are its successive powers mod $7$.'
+            solution_sketch: 'Combine $\mathrm{Aut}(\mathbb{Z}_n) \cong U(n)$ with $U(p)$ cyclic of order $p - 1$; verify a candidate generator by listing powers.'
+        constraints: "the Aut(Z_n) = U(n) proof once, then identifications of Aut(Z_n) for n <= 16 by order and element orders; U(p) cyclic quoted as the primitive-root theorem, generators verified by listing powers, p <= 13"
+      - id: kp3
+        name: "Inner automorphisms and G/Z(G) ≅ Inn(G)"
+        key_prerequisites: [first-isomorphism-theorem, quotient-groups, class-equation]
+        exemplars:
+          - problem: 'For $g \in G$ let $c_g(x) = gxg^{-1}$. Show each $c_g$ is an automorphism of $G$, and that $\Phi : G \to \mathrm{Aut}(G)$, $\Phi(g) = c_g$, is a homomorphism with $\ker \Phi = Z(G)$. Conclude $G/Z(G) \cong \mathrm{Inn}(G)$.'
+            answer: '$c_g(xy) = gxyg^{-1} = (gxg^{-1})(gyg^{-1})$, and $c_{g^{-1}}$ inverts $c_g$, so $c_g \in \mathrm{Aut}(G)$. $\Phi(gh) = c_{gh} = c_g \circ c_h$ since $ghx(gh)^{-1} = g(hxh^{-1})g^{-1}$. $c_g = \mathrm{id}$ iff $gx = xg$ for all $x$, i.e. $g \in Z(G)$. The first isomorphism theorem gives $G/Z(G) \cong \mathrm{im}\,\Phi = \mathrm{Inn}(G)$.'
+            solution_sketch: 'Three routine checks (homomorphism, composition law, kernel), then one application of the first isomorphism theorem.'
+          - problem: 'Identify $\mathrm{Inn}(S_3)$ and $\mathrm{Inn}(D_4)$ up to isomorphism.'
+            answer: '$Z(S_3) = \{e\}$, so $\mathrm{Inn}(S_3) \cong S_3/\{e\} \cong S_3$. $Z(D_4) = \{e, r^2\}$, so $\mathrm{Inn}(D_4) \cong D_4/\{e, r^2\}$, a group of order $4$ in which every non-identity element squares into the center — the Klein group $\mathbb{Z}_2 \times \mathbb{Z}_2$.'
+            solution_sketch: 'Compute the center, then the quotient order; classify the order-4 quotient by element orders ($\bar r^2 = \overline{r^2} = \bar e$).'
+        constraints: "the G/Z(G) = Inn(G) derivation reproduced, not quoted; Inn computations for S_3, D_4, abelian groups (Inn trivial); centers may be quoted from class-equation work"
+    diagnostic_exemplar:
+      problem: 'Identify $\mathrm{Aut}(\mathbb{Z}_9)$ up to isomorphism, and compute $|\mathrm{Inn}(\mathbb{Z}_9)|$.'
+      answer: 'Every endomorphism of $\mathbb{Z}_n$ is multiplication by $a = \varphi(1)$, and it is an automorphism exactly when $\gcd(a,n) = 1$, so $\mathrm{Aut}(\mathbb{Z}_9) \cong U(9) = \{1,2,4,5,7,8\}$, of order $\varphi(9) = 6$. That group is cyclic, generated by $2$ (powers $2, 4, 8, 7, 5, 1$), so $\mathrm{Aut}(\mathbb{Z}_9) \cong \mathbb{Z}_6$. Since $\mathrm{Inn}(G) \cong G/Z(G)$ and $\mathbb{Z}_9$ is abelian ($Z(G) = G$), $\mathrm{Inn}(\mathbb{Z}_9)$ is trivial: $|\mathrm{Inn}(\mathbb{Z}_9)| = 1$.'
+      solution_sketch: 'Use $\mathrm{Aut}(\mathbb{Z}_n) \cong U(n)$ and exhibit a primitive root mod $9$; then apply $\mathrm{Inn}(G) \cong G/Z(G)$ to an abelian group.'
+    anki_seeds:
+      - front: "$\\mathrm{Aut}(\\mathbb{Z}_n) \\cong $ ?"
+        back: "$U(n)$ — the automorphism $x \\mapsto ax$ corresponds to the unit $a$."
+        type: basic
+      - front: "$\\mathrm{Inn}(G) \\cong $ ? (and via what map)"
+        back: "$G/Z(G)$, via $g \\mapsto c_g$ (conjugation by $g$); the kernel of $g \\mapsto c_g$ is the center."
+        type: basic
+      - front: "Primitive-root theorem?"
+        back: "$U(p)$ is cyclic of order $p-1$ for every prime $p$; hence $\\mathrm{Aut}(\\mathbb{Z}_p) \\cong \\mathbb{Z}_{p-1}$."
+        type: basic

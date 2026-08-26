@@ -1,0 +1,989 @@
+unit: descriptive-statistics
+course: probability-statistics
+module: "Descriptive Statistics"
+topics:
+  - id: summation-notation
+    name: "Summation Notation"
+    core: true
+    difficulty: 0.25
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 90
+    prerequisites:
+      - id: evaluating-expressions
+        weight: 0.8
+        key: true
+      - id: order-of-operations
+        weight: 0.5
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Evaluating sigma notation"
+        key_prerequisites: [evaluating-expressions]
+        exemplars:
+          - problem: 'Compute $\sum_{k=1}^{4} k$.'
+            answer: "10"
+            solution_sketch: 'Expand: $1 + 2 + 3 + 4 = 10$.'
+          - problem: 'Compute $\sum_{i=1}^{3} 2i$.'
+            answer: "12"
+            solution_sketch: '$2 + 4 + 6 = 12$.'
+          - problem: 'Compute $\sum_{k=2}^{5} (k+1)$.'
+            answer: "18"
+            solution_sketch: 'Terms for $k = 2, 3, 4, 5$: $3 + 4 + 5 + 6 = 18$.'
+        constraints: "index runs over at most 6 integers; summand linear in the index; start index may be > 1"
+      - id: kp2
+        name: "Sums over data lists"
+        key_prerequisites: [evaluating-expressions]
+        exemplars:
+          - problem: 'For the data $x_1 = 2$, $x_2 = 5$, $x_3 = 7$, $x_4 = 10$, compute $\sum_{i=1}^{4} x_i$.'
+            answer: "24"
+          - problem: 'For the data $x_1 = 1$, $x_2 = 3$, $x_3 = 4$, compute $\sum_{i=1}^{3} x_i^2$.'
+            answer: "26"
+            solution_sketch: '$1 + 9 + 16 = 26$; square each value first, then add.'
+        constraints: "3-5 data values, all small integers; sums of x_i or x_i^2 only"
+      - id: kp3
+        name: "Linearity of sums"
+        key_prerequisites: [evaluating-expressions]
+        exemplars:
+          - problem: 'Given $\sum_{i=1}^{5} x_i = 20$, compute $\sum_{i=1}^{5} 2x_i$.'
+            answer: "40"
+            solution_sketch: 'Constants factor out: $\sum 2x_i = 2 \sum x_i = 2 \cdot 20 = 40$.'
+          - problem: 'Given $\sum_{i=1}^{5} x_i = 20$, compute $\sum_{i=1}^{5} (x_i + 3)$.'
+            answer: "35"
+            solution_sketch: 'Adding $3$ to each of the $5$ terms adds $15$: $20 + 15 = 35$.'
+        constraints: "given sum is a small integer; n between 4 and 10; one operation (scale or shift) per problem"
+    diagnostic_exemplar:
+      problem: 'Given $\sum_{i=1}^{4} x_i = 10$, compute $\sum_{i=1}^{4} (2x_i + 3)$.'
+      answer: '32'
+      solution_sketch: 'Linearity: $2 \cdot 10 + 3 \cdot 4 = 20 + 12 = 32$.'
+    anki_seeds:
+      - front: '$\sum_{i=1}^{n} x_i$ means...'
+        back: '$x_1 + x_2 + \cdots + x_n$ — add the terms as the index $i$ runs from $1$ to $n$.'
+        type: basic
+      - front: 'What is $\sum_{i=1}^{n} c$ for a constant $c$?'
+        back: '$nc$ — the constant is added $n$ times.'
+        type: basic
+
+  - id: frequency-tables-histograms
+    name: "Frequency Tables and Histograms"
+    core: true
+    difficulty: 0.2
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 90
+    prerequisites:
+      - id: comparing-ordering-whole-numbers
+        weight: 0.6
+        key: true
+      - id: multi-digit-addition-subtraction
+        weight: 0.4
+        key: false
+      - id: percentages
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Tallying a frequency table"
+        key_prerequisites: [comparing-ordering-whole-numbers]
+        exemplars:
+          - problem: 'The data $2, 3, 3, 5, 3, 2, 5, 3$ is tallied into a frequency table. What is the frequency of the value $3$?'
+            answer: "4"
+            solution_sketch: 'Count the occurrences of $3$ in the list: it appears $4$ times.'
+          - problem: 'A frequency table lists values $1, 2, 3$ with frequencies $4, 7, 9$. How many data values are there in total?'
+            answer: "20"
+            solution_sketch: 'The total count is the sum of the frequencies: $4 + 7 + 9 = 20$.'
+        constraints: "raw lists of 6-12 small integers, or tables with 3-5 rows; frequencies are single digits"
+      - id: kp2
+        name: "Relative frequency"
+        key_prerequisites: [percentages]
+        exemplars:
+          - problem: 'A frequency table has frequencies $6, 9, 5$ for three categories. What is the relative frequency of the second category, as a fraction?'
+            answer: "9/20"
+            solution_sketch: 'Total $= 6 + 9 + 5 = 20$; relative frequency $= 9/20$.'
+          - problem: 'In a class of $25$ students, $10$ walk to school. What is the relative frequency of walking, as a decimal?'
+            answer: "0.4"
+            solution_sketch: '$10/25 = 2/5 = 0.4$, i.e. $40\%$.'
+        constraints: "totals of 20, 25, or 50 so fractions and percents come out clean"
+      - id: kp3
+        name: "Reading histograms"
+        key_prerequisites: [comparing-ordering-whole-numbers]
+        exemplars:
+          - problem: 'A histogram has bars over the intervals $0$-$9$, $10$-$19$, $20$-$29$ with heights $5$, $8$, $3$. How many data values are at least $10$?'
+            answer: "11"
+            solution_sketch: 'Add the heights of the bars from $10$ up: $8 + 3 = 11$.'
+          - problem: 'The same histogram has bar heights $5$, $8$, $3$. How many data values are there in total?'
+            answer: "16"
+            solution_sketch: '$5 + 8 + 3 = 16$.'
+        constraints: "3-5 equal-width intervals; bar heights are single-digit integers; describe the histogram in words"
+    diagnostic_exemplar:
+      problem: 'For the data $4, 1, 4, 2, 4, 1, 2, 4$: give (frequency of $4$, relative frequency of $4$) as an ordered pair, with the relative frequency as a fraction.'
+      answer: '$(4, 1/2)$'
+      solution_sketch: 'The value $4$ appears $4$ times out of $8$ data values: $4/8 = 1/2$.'
+    anki_seeds:
+      - front: 'The frequency of a value is...'
+        back: 'The number of times it occurs in the data set.'
+        type: basic
+      - front: 'Relative frequency $=$ ?'
+        back: 'frequency $\div$ total number of data values.'
+        type: basic
+
+  - id: dot-plots-stem-leaf
+    name: "Dot Plots and Stem-and-Leaf Plots"
+    core: false                # data-display branch; terminal
+    difficulty: 0.2
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 90
+    prerequisites:
+      - id: place-value
+        weight: 0.6
+        key: true
+      - id: comparing-ordering-whole-numbers
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Reading dot plots"
+        key_prerequisites: [comparing-ordering-whole-numbers]
+        exemplars:
+          - problem: 'A dot plot over the values $1, 2, 3, 4, 5$ has $2, 4, 3, 0, 1$ dots respectively. How many data values are there?'
+            answer: "10"
+            solution_sketch: 'Each dot is one data value: $2 + 4 + 3 + 0 + 1 = 10$.'
+          - problem: 'In the same dot plot ($2, 4, 3, 0, 1$ dots over $1$-$5$), how many data values are greater than $2$?'
+            answer: "4"
+            solution_sketch: 'Count dots over $3, 4, 5$: $3 + 0 + 1 = 4$.'
+        constraints: "5-7 positions with 0-5 dots each; describe the plot in words"
+      - id: kp2
+        name: "Reading stem-and-leaf plots"
+        key_prerequisites: [place-value]
+        exemplars:
+          - problem: 'In a stem-and-leaf plot with stems in tens, the row $4 \mid 0\ 2\ 2\ 8$ represents which data values?'
+            answer: '$40, 42, 42, 48$'
+            solution_sketch: 'Each leaf attaches to the stem: $40, 42, 42, 48$.'
+          - problem: 'A stem-and-leaf plot has rows $1 \mid 5\ 8$, $2 \mid 0\ 3\ 3\ 9$, $3 \mid 1$. What is the largest data value?'
+            answer: "31"
+            solution_sketch: 'The last leaf of the last stem: stem $3$, leaf $1$, so $31$.'
+        constraints: "stems are tens digits; 2-4 rows with 1-5 leaves each; leaves listed in increasing order"
+      - id: kp3
+        name: "Extracting features from a plot"
+        key_prerequisites: [place-value]
+        exemplars:
+          - problem: 'A stem-and-leaf plot has rows $1 \mid 5\ 8$, $2 \mid 0\ 3\ 3\ 9$, $3 \mid 1$. What is the mode of the data?'
+            answer: "23"
+            solution_sketch: 'The repeated leaf $3$ on stem $2$ gives $23$ twice; every other value appears once.'
+          - problem: 'In the same plot, how many data values lie between $20$ and $29$ inclusive?'
+            answer: "4"
+            solution_sketch: 'That is the number of leaves on stem $2$: $0, 3, 3, 9$ — four leaves.'
+        constraints: "questions ask for a count, the min/max, or the most frequent value; exactly one value repeats when the mode is asked"
+    diagnostic_exemplar:
+      problem: 'A stem-and-leaf plot (stems in tens) has rows $2 \mid 1\ 4$, $3 \mid 0\ 0\ 7$. List the data values in increasing order.'
+      answer: '$21, 24, 30, 30, 37$'
+      solution_sketch: 'Attach each leaf to its stem; the final leaf of the bottom row gives the largest value, $37$.'
+    anki_seeds:
+      - front: 'In a stem-and-leaf plot with stems in tens, the row $5 \mid 2\ 6$ means...'
+        back: 'The data values $52$ and $56$.'
+        type: basic
+      - front: 'In a dot plot, each dot represents...'
+        back: 'One data value at that position.'
+        type: basic
+
+  - id: reading-statistical-graphs
+    name: "Reading and Critiquing Statistical Graphs"
+    core: false                # data-display branch; terminal
+    difficulty: 0.3
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 120
+    prerequisites:
+      - id: frequency-tables-histograms
+        weight: 0.7
+        key: true
+      - id: dot-plots-stem-leaf
+        weight: 0.4
+        key: false
+      - id: percentages
+        weight: 0.3
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Comparisons from bar graphs"
+        key_prerequisites: [frequency-tables-histograms]
+        exemplars:
+          - problem: 'A bar graph shows club membership: Art $12$, Band $18$, Chess $6$. How many more students are in Band than in Chess?'
+            answer: "12"
+            solution_sketch: '$18 - 6 = 12$.'
+          - problem: 'With bars Art $12$, Band $18$, Chess $6$, what fraction of all members are in Art?'
+            answer: '$\frac{1}{3}$'
+            solution_sketch: 'Total $= 36$; $12/36 = 1/3$.'
+        constraints: "3-4 categories, single- or double-digit bar heights; totals divide cleanly for fraction questions"
+      - id: kp2
+        name: "Shape of a distribution"
+        key_prerequisites: [frequency-tables-histograms]
+        exemplars:
+          - problem: 'A histogram has a tall peak on the left and a long tail stretching to the right. How is the distribution skewed?'
+            answer: 'Right-skewed (positively skewed).'
+            solution_sketch: 'Skew direction follows the long tail, not the peak.'
+          - problem: 'A histogram of bar heights $2, 5, 8, 5, 2$ over equal intervals has what shape?'
+            answer: 'Symmetric (single peak in the middle).'
+        constraints: "shapes limited to symmetric, uniform, left-skewed, right-skewed; describe histograms in words"
+      - id: kp3
+        name: "Spotting misleading graphs"
+        key_prerequisites: [frequency-tables-histograms]
+        exemplars:
+          - problem: 'A bar chart''s vertical axis starts at $50$ instead of $0$. What effect does this have on the bars?'
+            answer: 'It exaggerates the differences between the bars.'
+            solution_sketch: 'Truncating the axis removes the common base, so small differences look large.'
+          - problem: 'Bars of heights $60$ and $63$ are drawn on an axis starting at $58$. Roughly how many times taller does the second bar look, and what is the true ratio?'
+            answer: 'It looks about $2.5$ times as tall; the true ratio is $63/60 = 1.05$.'
+            solution_sketch: 'Drawn heights are $2$ and $5$ units above the cut axis, but the actual values differ by only $5\%$.'
+        constraints: "flaws limited to truncated axes, unequal intervals, or missing labels; one flaw per problem"
+    diagnostic_exemplar:
+      problem: 'A histogram of commute times has bar heights $9, 6, 3, 1$ over $0$-$14$, $15$-$29$, $30$-$44$, $45$-$59$ minutes. How many commutes are $30$ minutes or longer, and what is the shape of the distribution?'
+      answer: '$4$ commutes; right-skewed.'
+      solution_sketch: '$3 + 1 = 4$; frequencies fall off in a long right tail.'
+    anki_seeds:
+      - front: 'A distribution with a long tail to the right is called...'
+        back: 'Right-skewed (positively skewed) — the skew names the tail side.'
+        type: basic
+      - front: 'A bar chart whose vertical axis does not start at 0...'
+        back: 'Exaggerates the differences between bars (a truncated axis).'
+        type: basic
+
+  - id: mean-of-a-data-set
+    name: "The Mean of a Data Set"
+    core: true
+    difficulty: 0.2
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 90
+    prerequisites:
+      - id: decimal-operations
+        weight: 0.6
+        key: true
+      - id: long-division
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Computing the mean"
+        key_prerequisites: [decimal-operations, long-division]
+        exemplars:
+          - problem: 'Find the mean of $4, 7, 9, 12$.'
+            answer: "8"
+            solution_sketch: 'Sum $= 32$; mean $= 32/4 = 8$.'
+          - problem: 'Find the mean of $3, 5, 5, 8, 9$.'
+            answer: "6"
+            solution_sketch: 'Sum $= 30$; mean $= 30/5 = 6$.'
+        constraints: "4-6 small positive integers; sum divides evenly by n"
+      - id: kp2
+        name: "Means with decimal results"
+        key_prerequisites: [decimal-operations]
+        exemplars:
+          - problem: 'Find the mean of $3, 4, 6, 8$.'
+            answer: "5.25"
+            solution_sketch: 'Sum $= 21$; mean $= 21/4 = 5.25$.'
+          - problem: 'Find the mean of $1, 2, 2, 5$.'
+            answer: "2.5"
+            solution_sketch: 'Sum $= 10$; mean $= 10/4 = 2.5$.'
+        constraints: "4 or 5 values; mean terminates after at most two decimal places"
+      - id: kp3
+        name: "Using the mean to find a total or missing value"
+        key_prerequisites: [decimal-operations]
+        exemplars:
+          - problem: 'The mean of $5$ numbers is $12$. What is their sum?'
+            answer: "60"
+            solution_sketch: 'sum $=$ mean $\times$ count $= 12 \cdot 5 = 60$.'
+          - problem: 'Four test marks (out of $10$) have mean $7$. Three of them are $6, 9, 5$. Find the fourth mark.'
+            answer: "8"
+            solution_sketch: 'Total needed $= 4 \cdot 7 = 28$; known marks sum to $20$; fourth $= 28 - 20 = 8$.'
+        constraints: "counts of 4-6; all totals and missing values are whole numbers"
+    diagnostic_exemplar:
+      problem: 'Four test marks (out of $10$) have mean $8$. Three of them are $9, 6, 10$. Find the fourth mark.'
+      answer: '7'
+      solution_sketch: 'Total $= 4 \cdot 8 = 32$; $32 - (9 + 6 + 10) = 7$.'
+    anki_seeds:
+      - front: 'Mean of a data set $=$ ?'
+        back: '$\frac{\text{sum of the values}}{\text{number of values}}$.'
+        type: basic
+      - front: 'If a data set of $n$ values has mean $\bar{x}$, its sum is...'
+        back: '$n \bar{x}$ — mean times count.'
+        type: basic
+
+  - id: median-and-mode
+    name: "Median and Mode"
+    core: true
+    difficulty: 0.2
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 90
+    prerequisites:
+      - id: comparing-ordering-whole-numbers
+        weight: 0.6
+        key: true
+      - id: decimal-operations
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Median of an odd-count list"
+        key_prerequisites: [comparing-ordering-whole-numbers]
+        exemplars:
+          - problem: 'Find the median of $12, 3, 7, 9, 5$.'
+            answer: "7"
+            solution_sketch: 'Sort: $3, 5, 7, 9, 12$; the middle value is $7$.'
+          - problem: 'Find the median of $8, 1, 4$.'
+            answer: "4"
+            solution_sketch: 'Sorted: $1, 4, 8$; the middle value is $4$.'
+        constraints: "3-7 values given unsorted, odd count"
+      - id: kp2
+        name: "Median of an even-count list"
+        key_prerequisites: [comparing-ordering-whole-numbers, decimal-operations]
+        exemplars:
+          - problem: 'Find the median of $4, 6, 8, 10$.'
+            answer: "7"
+            solution_sketch: 'Even count: average the two middle values, $(6 + 8)/2 = 7$.'
+          - problem: 'Find the median of $3, 9, 5, 7, 2, 8$.'
+            answer: "6"
+            solution_sketch: 'Sorted: $2, 3, 5, 7, 8, 9$; median $= (5 + 7)/2 = 6$.'
+        constraints: "4-8 values given unsorted, even count; the two middle values average to an integer or a .5 value"
+      - id: kp3
+        name: "Mode (including no mode and two modes)"
+        key_prerequisites: [comparing-ordering-whole-numbers]
+        exemplars:
+          - problem: 'Find the mode of $2, 4, 4, 7, 9$.'
+            answer: "4"
+          - problem: 'Find the mode(s) of $1, 2, 2, 5, 5, 9$, and give them as a set.'
+            answer: '$\{2, 5\}$'
+            solution_sketch: 'Both $2$ and $5$ appear twice, more than any other value — the data is bimodal.'
+          - problem: 'How many modes does the data $3, 6, 8, 11$ have?'
+            answer: "0"
+            solution_sketch: 'No value repeats, so there is no mode.'
+        constraints: "5-8 values; at most two modes; modes given as a set, or a count of 0 when nothing repeats"
+    diagnostic_exemplar:
+      problem: 'For the data $8, 3, 5, 3, 9, 2$: give (median, mode) as an ordered pair.'
+      answer: '$(4, 3)$'
+      solution_sketch: 'Sorted: $2, 3, 3, 5, 8, 9$; even count, so the median is $(3+5)/2 = 4$; the only repeated value is $3$.'
+    anki_seeds:
+      - front: 'For an even number of sorted values, the median is...'
+        back: 'The average of the two middle values.'
+        type: basic
+      - front: 'The mode of a data set is...'
+        back: 'The most frequent value (there may be several modes, or none if nothing repeats).'
+        type: basic
+
+  - id: weighted-averages
+    name: "Weighted Averages"
+    core: true
+    difficulty: 0.3
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 120
+    prerequisites:
+      - id: mean-of-a-data-set
+        weight: 0.8
+        key: true
+      - id: decimal-operations
+        weight: 0.4
+        key: false
+      - id: percentages
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Weighted mean with counts"
+        key_prerequisites: [mean-of-a-data-set]
+        exemplars:
+          - problem: 'Three tests score $9$ each (out of $10$) and two tests score $4$ each. What is the mean of the five marks?'
+            answer: "7"
+            solution_sketch: '$(3 \cdot 9 + 2 \cdot 4)/5 = (27 + 8)/5 = 35/5 = 7$.'
+          - problem: 'A class of $10$ students averages $6$ (out of $10$) and a class of $20$ students averages $9$. What is the combined mean?'
+            answer: "8"
+            solution_sketch: 'Total $= 10 \cdot 6 + 20 \cdot 9 = 60 + 180 = 240$; mean $= 240/30 = 8$.'
+        constraints: "2-3 groups; group sizes and means are integers; the combined mean is an integer; marks on the 0-10 scale"
+      - id: kp2
+        name: "Weighted mean with percent weights"
+        key_prerequisites: [mean-of-a-data-set, percentages]
+        exemplars:
+          - problem: 'Homework counts $20\%$ and the exam counts $80\%$. With homework $10$ and exam $7.5$ (out of $10$), what is the course mark?'
+            answer: "8"
+            solution_sketch: '$0.2 \cdot 10 + 0.8 \cdot 7.5 = 2 + 6 = 8$.'
+          - problem: 'Marks $7, 9, 4$ (out of $10$) carry weights $0.5, 0.3, 0.2$. Compute the weighted average.'
+            answer: "7"
+            solution_sketch: '$0.5 \cdot 7 + 0.3 \cdot 9 + 0.2 \cdot 4 = 3.5 + 2.7 + 0.8 = 7$.'
+        constraints: "2-3 weights summing to 1 (or 100%); weights in steps of 0.1; marks on the 0-10 scale; results integers or ending in .5"
+      - id: kp3
+        name: "Solving for an unknown score"
+        key_prerequisites: [mean-of-a-data-set]
+        exemplars:
+          - problem: 'The final exam counts $40\%$ and the current average of $7$ (out of $10$) counts $60\%$. What final-exam mark gives an overall mark of $7.8$?'
+            answer: "9"
+            solution_sketch: '$0.6 \cdot 7 + 0.4x = 7.8$, so $0.4x = 7.8 - 4.2 = 3.6$ and $x = 9$.'
+          - problem: 'Two quizzes weighted equally with a project that counts double: quiz marks are $6$ and $8$ (out of $10$). What project mark makes the weighted average (weights $1, 1, 2$) equal to $8$?'
+            answer: "9"
+            solution_sketch: '$(6 + 8 + 2p)/4 = 8$, so $14 + 2p = 32$ and $p = 9$.'
+        constraints: "one unknown; weights given as percents or small integer multiples; marks on the 0-10 scale; unknown comes out a whole number <= 10"
+    diagnostic_exemplar:
+      problem: 'A course mark is $20\%$ homework and $80\%$ exam. The homework average is $9$ (out of $10$). What exam mark gives an overall mark of $8.2$?'
+      answer: '8'
+      solution_sketch: '$0.2 \cdot 9 = 1.8$; $(8.2 - 1.8)/0.8 = 8$.'
+    anki_seeds:
+      - front: 'Weighted average formula (weights $w_i$ summing to 1)?'
+        back: '$\sum w_i x_i$ — multiply each value by its weight and add.'
+        type: basic
+      - front: 'Combined mean of groups of sizes $m$ and $n$ with means $\bar{x}$ and $\bar{y}$?'
+        back: '$\frac{m\bar{x} + n\bar{y}}{m + n}$ — total of all values over total count (NOT the average of the two means unless $m = n$).'
+        type: basic
+
+  - id: mean-from-frequency-table
+    name: "The Mean from a Frequency Table"
+    core: false                # data-display branch; terminal
+    difficulty: 0.3
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 120
+    prerequisites:
+      - id: mean-of-a-data-set
+        weight: 0.7
+        key: true
+      - id: frequency-tables-histograms
+        weight: 0.6
+        key: true
+      - id: summation-notation
+        weight: 0.3
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Totals from a frequency table"
+        key_prerequisites: [frequency-tables-histograms, mean-of-a-data-set]
+        exemplars:
+          - problem: 'A frequency table lists values $1, 2, 3$ with frequencies $2, 3, 5$. What is the sum of all the data values?'
+            answer: "23"
+            solution_sketch: '$1 \cdot 2 + 2 \cdot 3 + 3 \cdot 5 = 2 + 6 + 15 = 23$.'
+          - problem: 'Values $0, 1, 2$ occur with frequencies $4, 9, 7$. Give (number of data values, their sum) as an ordered pair.'
+            answer: '$(20, 23)$'
+            solution_sketch: 'Count $= 4 + 9 + 7 = 20$; sum $= 0 \cdot 4 + 1 \cdot 9 + 2 \cdot 7 = 23$.'
+        constraints: "3-4 rows; values 0-9, frequencies 1-9"
+      - id: kp2
+        name: "Mean from a frequency table"
+        key_prerequisites: [mean-of-a-data-set, frequency-tables-histograms]
+        exemplars:
+          - problem: 'Values $2, 4, 6$ occur with frequencies $3, 5, 2$. Find the mean.'
+            answer: "3.8"
+            solution_sketch: 'Sum $= 6 + 20 + 12 = 38$; count $= 10$; mean $= 38/10 = 3.8$.'
+          - problem: 'Values $1, 2, 3, 4$ occur with frequencies $4, 3, 2, 1$. Find the mean.'
+            answer: "2"
+            solution_sketch: 'Sum $= 4 + 6 + 6 + 4 = 20$; count $= 10$; mean $= 20/10 = 2$.'
+        constraints: "total frequency 10, 20, or 25 so the mean has at most one decimal place"
+      - id: kp3
+        name: "Missing frequency from a given mean"
+        key_prerequisites: [mean-of-a-data-set, frequency-tables-histograms]
+        exemplars:
+          - problem: 'The value $5$ occurs $6$ times and the value $10$ occurs $f$ times. The mean is $7$. Find $f$.'
+            answer: "4"
+            solution_sketch: '$(30 + 10f)/(6 + f) = 7 \Rightarrow 30 + 10f = 42 + 7f \Rightarrow 3f = 12 \Rightarrow f = 4$.'
+          - problem: 'The value $2$ occurs $9$ times and the value $8$ occurs $f$ times. The mean is $3.5$. Find $f$.'
+            answer: "3"
+            solution_sketch: '$(18 + 8f)/(9 + f) = 3.5 \Rightarrow 18 + 8f = 31.5 + 3.5f \Rightarrow 4.5f = 13.5 \Rightarrow f = 3$.'
+        constraints: "two rows, one unknown frequency; choose numbers so the unknown frequency is a whole number"
+    diagnostic_exemplar:
+      problem: 'The value $3$ occurs $6$ times and the value $8$ occurs $f$ times. The mean is $5$. Find $f$.'
+      answer: '4'
+      solution_sketch: '$18 + 8f = 5(6 + f)$ gives $3f = 12$, so $f = 4$.'
+    anki_seeds:
+      - front: 'Mean from a frequency table $=$ ?'
+        back: '$\frac{\sum f_i x_i}{\sum f_i}$ — each value times its frequency, over the total frequency.'
+        type: basic
+      - front: 'In a frequency table, the number of data values equals...'
+        back: 'The sum of the frequencies.'
+        type: basic
+
+  - id: mean-median-mode
+    name: "Mean, Median, and Mode"
+    core: true
+    difficulty: 0.3
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 120
+    prerequisites:
+      - id: mean-of-a-data-set
+        weight: 0.8
+        key: true
+      - id: median-and-mode
+        weight: 0.8
+        key: true
+      - id: weighted-averages
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "All three measures for one data set"
+        key_prerequisites: [mean-of-a-data-set, median-and-mode]
+        exemplars:
+          - problem: 'For the data $1, 3, 3, 7, 6$: find the mean, the median, and the mode.'
+            answer: 'Mean $4$, median $3$, mode $3$.'
+            solution_sketch: 'Sum $= 20$, mean $= 20/5 = 4$. Sorted: $1, 3, 3, 6, 7$; median $= 3$; mode $= 3$.'
+          - problem: 'For the data $5, 9, 2, 9, 5, 9$: find the mean, the median, and the mode.'
+            answer: 'Mean $6.5$, median $7$, mode $9$.'
+            solution_sketch: 'Sum $= 39$, so mean $= 39/6 = 6.5$. Sorted: $2, 5, 5, 9, 9, 9$; median $= (5+9)/2 = 7$. The value $9$ appears most often.'
+        constraints: "5-7 values with exactly one mode; mean an integer or ending in .5"
+      - id: kp2
+        name: "Comparing mean and median"
+        key_prerequisites: [mean-of-a-data-set, median-and-mode]
+        exemplars:
+          - problem: 'The data $20, 22, 23, 25, 90$ contains one outlier. Which is larger, the mean or the median?'
+            answer: 'The mean.'
+            solution_sketch: 'The outlier $90$ pulls the mean up (mean $= 36$) while the median stays at $23$.'
+          - problem: 'Salaries at a shop are $30, 32, 35, 38, 200$ (thousands). Which measure better represents a typical salary, and what is it?'
+            answer: 'The median, $35$ thousand.'
+            solution_sketch: 'The $200$ inflates the mean to $67$ thousand; the median ignores the extreme value.'
+        constraints: "one extreme value in a set of 5-6; the direction of the pull must be computable by inspection"
+      - id: kp3
+        name: "Updating the mean"
+        key_prerequisites: [mean-of-a-data-set, weighted-averages]
+        exemplars:
+          - problem: 'The data $4, 6, 8, 10$ has mean $7$. A fifth value $12$ is added. What is the new mean?'
+            answer: "8"
+            solution_sketch: 'New sum $= 28 + 12 = 40$; new mean $= 40/5 = 8$.'
+          - problem: 'After $4$ quizzes a student averages $6.5$ (out of $10$). She scores $9$ on the fifth quiz. What is her new average?'
+            answer: "7"
+            solution_sketch: 'Total $= 4 \cdot 6.5 + 9 = 35$; new mean $= 35/5 = 7$.'
+        constraints: "start from a stated mean over 3-6 values; one value added or removed; new mean is an integer"
+    diagnostic_exemplar:
+      problem: 'For the data $4, 8, 3, 8, 7$: find the mean, the median, and the mode. A sixth value $12$ is then added — find the new mean.'
+      answer: 'Mean $6$, median $7$, mode $8$; new mean $7$.'
+      solution_sketch: 'Sum $30/5 = 6$; sorted $3, 4, 7, 8, 8$ gives median $7$ and mode $8$; new total $42/6 = 7$.'
+    anki_seeds:
+      - front: 'Which measure of center resists outliers: mean or median?'
+        back: 'The median.'
+        type: basic
+
+  - id: outliers-effect-on-center
+    name: "Outliers and Their Effect on Center"
+    core: false                # descriptive-summary branch; terminal
+    difficulty: 0.35
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 150
+    prerequisites:
+      - id: mean-median-mode
+        weight: 0.8
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: "Direction of an outlier's pull"
+        key_prerequisites: [mean-median-mode]
+        exemplars:
+          - problem: 'A large value is added to a data set. Which changes more, the mean or the median?'
+            answer: 'The mean; the median moves at most to a neighboring value.'
+          - problem: 'The data $10, 11, 12, 13$ gains the value $2$. Does the mean increase or decrease, and what about the median?'
+            answer: 'The mean decreases; the median decreases only slightly (from $11.5$ to $11$).'
+            solution_sketch: 'A low outlier drags the mean down; the sorted middle barely shifts.'
+        constraints: "one outlier added to 4-6 clustered values; ask for direction, not exact size, unless values are given"
+      - id: kp2
+        name: "Mean and median with and without the outlier"
+        key_prerequisites: [mean-median-mode]
+        exemplars:
+          - problem: 'For the data $5, 6, 7, 8, 34$: compute the mean with and without the outlier $34$.'
+            answer: 'With: $12$; without: $6.5$.'
+            solution_sketch: 'With: $60/5 = 12$. Without: $26/4 = 6.5$.'
+          - problem: 'For the same data $5, 6, 7, 8, 34$: compute the median with and without $34$.'
+            answer: 'With: $7$; without: $6.5$.'
+            solution_sketch: 'Sorted with outlier the middle is $7$; without, median $= (6+7)/2 = 6.5$. The median barely moves.'
+        constraints: "4-6 clustered values plus one outlier; both means come out as integers or .5 values"
+      - id: kp3
+        name: "Recomputing a mean after removing a value"
+        key_prerequisites: [mean-median-mode]
+        exemplars:
+          - problem: 'The mean of $6$ values is $10$. The value $40$ is removed. What is the new mean?'
+            answer: "4"
+            solution_sketch: 'Sum $= 60$; new sum $= 60 - 40 = 20$; new mean $= 20/5 = 4$.'
+          - problem: 'The mean of $5$ values is $20$. The value $60$ is removed. What is the new mean?'
+            answer: "10"
+            solution_sketch: 'Sum $= 100$; new sum $= 40$; new mean $= 40/4 = 10$.'
+        constraints: "work from the stated mean and count, not a full list; new mean is a whole number"
+    diagnostic_exemplar:
+      problem: 'The mean of $6$ marks is $9$. The outlier $24$ is removed. Find the new mean of the remaining marks, and state whether the outlier had inflated or deflated the original mean.'
+      answer: 'New mean $6$; the outlier had inflated the mean.'
+      solution_sketch: 'Total $6 \cdot 9 = 54$; $(54 - 24)/5 = 6 < 9$, so $24$ was pulling the mean up.'
+    anki_seeds:
+      - front: 'Adding one extreme high value to a data set does what to the mean and median?'
+        back: 'Pulls the mean up substantially; the median moves little or not at all.'
+        type: basic
+      - front: 'The mean is {{c1::sensitive}} to outliers; the median is {{c2::resistant}}.'
+        back: 'sensitive; resistant'
+        type: cloze
+
+  - id: percentiles
+    name: "Percentiles"
+    # core despite zero descendants: `normal-distribution` (core) computes percentiles in
+    # kp2 "Combining regions and percentiles" without an edge declaring it. Undrawn
+    # dependence, so the descendant count understates the leverage (W8 review, AC-12).
+    core: true
+    difficulty: 0.35
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 120
+    prerequisites:
+      - id: median-and-mode
+        weight: 0.6
+        key: true
+      - id: percentages
+        weight: 0.5
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Percentile rank of a value"
+        key_prerequisites: [median-and-mode, percentages]
+        exemplars:
+          - problem: 'In a group of $20$ scores, $13$ are below Ana''s score. What is her percentile rank?'
+            answer: '65th percentile'
+            solution_sketch: '$13/20 = 65\%$ of the scores lie below hers.'
+          - problem: 'On a standardized test taken by $400$ students, $340$ scored below Leo. What is his percentile rank?'
+            answer: '85th percentile'
+            solution_sketch: '$340/400 = 85\%$ of the scores lie below his.'
+        constraints: "totals of 20, 25, 40, or 50; number below is a clean percent of the total"
+      - id: kp2
+        name: "Interpreting a percentile"
+        key_prerequisites: [percentages]
+        exemplars:
+          - problem: 'A test mark is at the 90th percentile. Does that mean (a) the student answered $90\%$ of the questions correctly, or (b) the mark is higher than $90\%$ of all marks?'
+            answer: '(b)'
+            solution_sketch: 'A percentile ranks the mark against other marks; it says nothing about percent correct.'
+          - problem: 'A baby''s weight is at the 30th percentile. What fraction of babies weigh less? Give a fraction in lowest terms.'
+            answer: "3/10"
+            solution_sketch: '$30\%$ of babies weigh less, i.e. $\frac{3}{10}$.'
+        constraints: "interpretation only; contrast percentile with percent-correct explicitly; answers are an option label or an exact fraction"
+      - id: kp3
+        name: "Quartiles as percentiles"
+        key_prerequisites: [median-and-mode]
+        exemplars:
+          - problem: 'The median is which percentile?'
+            answer: '50th'
+          - problem: 'Give the percentile numbers of $Q_1$ and $Q_3$ as the ordered pair $(Q_1, Q_3)$.'
+            answer: '$(25, 75)$'
+          - problem: 'A value at the 75th percentile of $80$ data values exceeds about how many of them?'
+            answer: "60"
+            solution_sketch: '$0.75 \cdot 80 = 60$.'
+        constraints: "counts divisible by 4; stick to the 25/50/75 anchors"
+    diagnostic_exemplar:
+      problem: 'In a class of $40$ students, Maya\''s mark sits exactly at the third quartile $Q_3$. How many of the $40$ students scored below her?'
+      answer: '30'
+      solution_sketch: '$Q_3$ is the 75th percentile, so $75\%$ of the marks lie below hers: $0.75 \cdot 40 = 30$.'
+    anki_seeds:
+      - front: 'A value at the $p$th percentile...'
+        back: 'Exceeds about $p\%$ of the data values (it is NOT a score of $p\%$).'
+        type: basic
+      - front: 'Median, $Q_1$, $Q_3$ as percentiles?'
+        back: '50th, 25th, and 75th percentiles.'
+        type: basic
+
+  - id: range-iqr-boxplots
+    name: "Range, IQR, and Boxplots"
+    core: false                # descriptive-summary branch; terminal
+    difficulty: 0.3
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 150
+    prerequisites:
+      - id: mean-median-mode
+        weight: 0.7
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: "Range"
+        key_prerequisites: [mean-median-mode]
+        exemplars:
+          - problem: 'Find the range of $3, 8, 12, 5$.'
+            answer: "9"
+            solution_sketch: 'Range $=$ max $-$ min $= 12 - 3 = 9$.'
+          - problem: 'Find the range of $15, 9, 21, 14, 11$.'
+            answer: "12"
+        constraints: "4-6 small positive integers, unsorted"
+      - id: kp2
+        name: "Quartiles and IQR"
+        key_prerequisites: [mean-median-mode]
+        exemplars:
+          - problem: 'For the sorted data $2, 4, 5, 7, 9, 10, 12$, give $(Q_1, Q_3, \text{IQR})$ as an ordered triple (exclude the median from each half).'
+            answer: '$(4, 10, 6)$'
+            solution_sketch: 'Median $= 7$. Lower half $2, 4, 5$ gives $Q_1 = 4$; upper half $9, 10, 12$ gives $Q_3 = 10$; IQR $= 10 - 4 = 6$.'
+          - problem: 'For the sorted data $1, 3, 5, 7, 9, 11, 13, 15$, find the IQR.'
+            answer: "8"
+            solution_sketch: 'Lower half $1, 3, 5, 7$: $Q_1 = 4$. Upper half $9, 11, 13, 15$: $Q_3 = 12$. IQR $= 8$.'
+        constraints: "7-9 sorted values; use the median-exclusion convention for quartiles; quartiles land on values or clean halves"
+      - id: kp3
+        name: "Five-number summary and the 1.5-IQR outlier fence"
+        key_prerequisites: [mean-median-mode]
+        exemplars:
+          - problem: 'A boxplot has $Q_1 = 10$ and $Q_3 = 18$. Compute the upper outlier fence $Q_3 + 1.5 \cdot \text{IQR}$.'
+            answer: "30"
+            solution_sketch: 'IQR $= 8$; fence $= 18 + 1.5 \cdot 8 = 18 + 12 = 30$.'
+          - problem: 'With $Q_1 = 10$, $Q_3 = 18$, is the data value $32$ an outlier by the $1.5 \cdot \text{IQR}$ rule: (a) yes; (b) no?'
+            answer: '(a)'
+            solution_sketch: 'The upper fence is $18 + 1.5 \cdot 8 = 30$, and $32 > 30$.'
+          - problem: 'For the sorted data $3, 5, 8, 9, 12, 15, 20$, give the five-number summary as the ordered quintuple (minimum, $Q_1$, median, $Q_3$, maximum), excluding the median from each half.'
+            answer: '$(3, 5, 9, 15, 20)$'
+            solution_sketch: 'Median $= 9$; lower half $3, 5, 8$ gives $Q_1 = 5$; upper half $12, 15, 20$ gives $Q_3 = 15$.'
+        constraints: "IQR a small even integer so 1.5*IQR is an integer; fences and candidate outliers are integers; five-number summaries given as an ordered quintuple"
+    diagnostic_exemplar:
+      problem: 'For the sorted data $2, 4, 6, 10, 12, 14, 18$ (exclude the median from each half), compute the upper outlier fence $Q_3 + 1.5 \cdot \text{IQR}$.'
+      answer: '29'
+      solution_sketch: '$Q_1 = 4$, $Q_3 = 14$, IQR $= 10$; fence $= 14 + 15 = 29$.'
+    anki_seeds:
+      - front: 'IQR $=$ ?'
+        back: '$Q_3 - Q_1$, the spread of the middle 50% of the data.'
+        type: basic
+      - front: 'The 1.5-IQR outlier fences are...'
+        back: '$Q_1 - 1.5 \cdot \text{IQR}$ and $Q_3 + 1.5 \cdot \text{IQR}$; values outside them are flagged as outliers.'
+        type: basic
+
+  - id: deviations-and-variance
+    name: "Deviations and Variance"
+    core: true
+    difficulty: 0.35
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 150
+    prerequisites:
+      - id: mean-of-a-data-set
+        weight: 0.7
+        key: true
+      - id: summation-notation
+        weight: 0.5
+        key: true
+      - id: integer-multiplication-division
+        weight: 0.3
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Deviations from the mean"
+        key_prerequisites: [mean-of-a-data-set]
+        exemplars:
+          - problem: 'The data $2, 4, 9$ has mean $5$. List the deviations $x_i - \bar{x}$.'
+            answer: '$-3, -1, 4$'
+            solution_sketch: '$2-5 = -3$, $4-5 = -1$, $9-5 = 4$.'
+          - problem: 'What do the deviations from the mean always sum to?'
+            answer: "0"
+            solution_sketch: '$\sum (x_i - \bar{x}) = \sum x_i - n\bar{x} = 0$ by the definition of the mean.'
+        constraints: "3-5 values with an integer mean; deviations are single-digit integers"
+      - id: kp2
+        name: "Squared deviations"
+        key_prerequisites: [mean-of-a-data-set, summation-notation]
+        exemplars:
+          - problem: 'The data $2, 4, 9$ has mean $5$. Compute the sum of squared deviations $\sum (x_i - \bar{x})^2$.'
+            answer: "26"
+            solution_sketch: '$(-3)^2 + (-1)^2 + 4^2 = 9 + 1 + 16 = 26$.'
+          - problem: 'The data $1, 3, 5, 7$ has mean $4$. Compute $\sum (x_i - \bar{x})^2$.'
+            answer: "20"
+            solution_sketch: '$9 + 1 + 1 + 9 = 20$.'
+        constraints: "3-5 values, integer mean; squared deviations sum below 100"
+      - id: kp3
+        name: "Population variance"
+        key_prerequisites: [mean-of-a-data-set, summation-notation]
+        exemplars:
+          - problem: 'Find the population variance $\sigma^2$ of $1, 2, 3, 4, 5$.'
+            answer: "2"
+            solution_sketch: 'Mean $= 3$; squared deviations $4, 1, 0, 1, 4$ sum to $10$; $\sigma^2 = 10/5 = 2$.'
+          - problem: 'Find the population variance $\sigma^2$ of $2, 4, 6, 8$.'
+            answer: "5"
+            solution_sketch: 'Mean $= 5$; squared deviations $9, 1, 1, 9$ sum to $20$; $\sigma^2 = 20/4 = 5$.'
+        constraints: "4-5 values with an integer mean; squared deviations sum to a multiple of n"
+    diagnostic_exemplar:
+      problem: 'Find the population variance $\sigma^2$ of $1, 3, 5, 7$.'
+      answer: "5"
+      solution_sketch: 'Mean $= 4$; squared deviations $9, 1, 1, 9$ sum to $20$; $\sigma^2 = 20/4 = 5$.'
+    anki_seeds:
+      - front: 'The deviations $x_i - \bar{x}$ always sum to...'
+        back: '$0$ — that is why we square them before averaging.'
+        type: basic
+      - front: 'Population variance formula?'
+        back: '$\sigma^2 = \frac{1}{n} \sum (x_i - \mu)^2$ — the mean squared deviation from the mean.'
+        type: basic
+
+  - id: variance-standard-deviation
+    name: "Variance and Standard Deviation"
+    core: true
+    difficulty: 0.4
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 180
+    prerequisites:
+      - id: deviations-and-variance
+        weight: 0.8
+        key: true
+      - id: square-roots
+        weight: 0.5
+        key: true
+      - id: simplifying-radicals
+        weight: 0.3
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Population standard deviation"
+        key_prerequisites: [deviations-and-variance, square-roots]
+        exemplars:
+          - problem: 'Find the population standard deviation $\sigma$ of $5, 5, 9, 9$.'
+            answer: "2"
+            solution_sketch: 'Mean $= 7$; each deviation is $\pm 2$, so $\sigma^2 = 16/4 = 4$ and $\sigma = 2$.'
+          - problem: 'Find the population standard deviation $\sigma$ of $1, 3, 5, 7, 9$.'
+            answer: "2*sqrt(2)"
+            solution_sketch: 'Mean $= 5$; squared deviations $16, 4, 0, 4, 16$ sum to $40$; $\sigma^2 = 8$, so $\sigma = \sqrt{8} = 2\sqrt{2}$.'
+        constraints: "variance a perfect square or of the form k^2 * m with small m; answer exact, radicals written as sqrt(...)"
+      - id: kp2
+        name: "Sample variance and standard deviation (divide by n-1)"
+        key_prerequisites: [deviations-and-variance, square-roots]
+        exemplars:
+          - problem: 'Find the sample variance $s^2$ of $6, 8, 10, 12, 14$.'
+            answer: "10"
+            solution_sketch: 'Mean $= 10$; squared deviations $16, 4, 0, 4, 16$ sum to $40$; $s^2 = 40/(5-1) = 10$.'
+          - problem: 'A sample of $4$ values has squared deviations summing to $27$. Find $s^2$.'
+            answer: "9"
+            solution_sketch: '$s^2 = 27/(4-1) = 9$.'
+          - problem: 'Find the sample standard deviation $s$ of $6, 8, 10, 12, 14$.'
+            answer: "sqrt(10)"
+            solution_sketch: '$s^2 = 40/4 = 10$, so $s = \sqrt{10}$.'
+        constraints: "sum of squared deviations divisible by n-1; always say sample vs population explicitly"
+      - id: kp3
+        name: "Interpreting and transforming the standard deviation"
+        key_prerequisites: [deviations-and-variance]
+        exemplars:
+          - problem: 'What is the standard deviation of the data $10, 10, 10, 10$?'
+            answer: "0"
+            solution_sketch: 'No value deviates from the mean, so the spread is $0$.'
+          - problem: 'A data set has $\sigma = 4$. Every value is increased by $10$. What is the new $\sigma$?'
+            answer: "4"
+            solution_sketch: 'Shifting all values shifts the mean equally, so deviations — and $\sigma$ — are unchanged.'
+          - problem: 'A data set has $\sigma = 3$. Every value is doubled. What is the new $\sigma$?'
+            answer: "6"
+            solution_sketch: 'Scaling by $c$ scales deviations by $c$: $\sigma \to |c| \sigma = 2 \cdot 3 = 6$.'
+        constraints: "one transformation per problem (shift by a constant or scale by a positive integer); original sigma given or trivially 0"
+    diagnostic_exemplar:
+      problem: 'Find the sample standard deviation $s$ of $5, 7, 9, 11, 13$.'
+      answer: 'sqrt(10)'
+      solution_sketch: 'Mean $9$; squared deviations sum to $16 + 4 + 0 + 4 + 16 = 40$; $s^2 = 40/4 = 10$, so $s = \sqrt{10}$.'
+    anki_seeds:
+      - front: 'Sample variance divides the sum of squared deviations by...'
+        back: '$n - 1$ (not $n$).'
+        type: basic
+      - front: 'Standard deviation is the {{c1::square root}} of the variance.'
+        back: 'square root'
+        type: cloze
+      - front: 'Adding a constant to every data value changes the SD how? Multiplying by $c$?'
+        back: 'Adding a constant: SD unchanged. Multiplying by $c$: SD multiplied by $|c|$.'
+        type: basic
+
+  - id: choosing-summary-statistics
+    name: "Choosing an Appropriate Summary Statistic"
+    core: false                # descriptive-summary branch; terminal
+    difficulty: 0.4
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 120
+    prerequisites:
+      - id: outliers-effect-on-center
+        weight: 0.7
+        key: true
+      - id: range-iqr-boxplots
+        weight: 0.5
+        key: false
+      - id: variance-standard-deviation
+        weight: 0.5
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Choosing a measure of center"
+        key_prerequisites: [outliers-effect-on-center]
+        exemplars:
+          - problem: 'House prices on a street are mostly near €300,000, with one €3,000,000 mansion. Which measure of center should a report use?'
+            answer: 'The median; the outlier inflates the mean.'
+          - problem: 'A survey records each student''s favorite color. Which measure of center applies?'
+            answer: 'The mode; categorical data has no mean or median.'
+        constraints: "one clear driver per problem: outlier/skew -> median, symmetric numeric -> mean, categorical -> mode"
+      - id: kp2
+        name: "Choosing a measure of spread"
+        key_prerequisites: [outliers-effect-on-center, range-iqr-boxplots]
+        exemplars:
+          - problem: 'A data set is reported with its median. Which measure of spread pairs with it, and why?'
+            answer: 'The IQR; like the median, it resists outliers.'
+          - problem: 'A symmetric, outlier-free data set is summarized by its mean. Which spread measure pairs naturally with the mean?'
+            answer: 'The standard deviation.'
+        constraints: "pairings only: median with IQR, mean with SD; ask for a one-line justification"
+      - id: kp3
+        name: "Inferring shape from mean vs median"
+        key_prerequisites: [outliers-effect-on-center]
+        exemplars:
+          - problem: 'A distribution has mean $58$ and median $45$. Is it more likely skewed left or right?'
+            answer: 'Right; a long right tail pulls the mean above the median.'
+          - problem: 'For a roughly symmetric distribution, how do the mean and median compare?'
+            answer: 'They are approximately equal.'
+        constraints: "give mean and median (or a shape description); ask for the skew direction or the comparison"
+    diagnostic_exemplar:
+      problem: 'Household incomes in a city include a small number of extremely high earners. Which center-and-spread pair should a summary report, and why?'
+      answer: 'Median and IQR; both resist the extreme high incomes that would inflate the mean and standard deviation.'
+      solution_sketch: 'Ask which summaries are resistant: the mean and standard deviation are dragged upward by the few extreme incomes, while the median and IQR depend only on position in the ordered data.'
+    anki_seeds:
+      - front: 'Skewed data or outliers: report which center-spread pair?'
+        back: 'Median with IQR (both are resistant).'
+        type: basic
+      - front: 'Right-skewed distribution: mean vs median?'
+        back: 'Mean $>$ median (the tail pulls the mean).'
+        type: basic
+
+  - id: z-scores
+    name: "Z-Scores"
+    core: true
+    difficulty: 0.4
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 90
+    prerequisites:
+      - id: variance-standard-deviation
+        weight: 0.8
+        key: true
+      - id: decimal-operations
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Computing a z-score"
+        key_prerequisites: [variance-standard-deviation]
+        exemplars:
+          - problem: 'A mark of $8.5$ (out of $10$) comes from a distribution with mean $7$ and standard deviation $0.5$. Find its z-score.'
+            answer: "3"
+            solution_sketch: '$z = (8.5 - 7)/0.5 = 1.5/0.5 = 3$.'
+          - problem: 'Find the z-score of $62$ if the mean is $70$ and the standard deviation is $4$.'
+            answer: "-2"
+            solution_sketch: '$z = (62 - 70)/4 = -8/4 = -2$.'
+        constraints: "x - mu divisible by sigma or ending in .5; include negative z-scores"
+      - id: kp2
+        name: "Solving for x, mu, or sigma"
+        key_prerequisites: [variance-standard-deviation]
+        exemplars:
+          - problem: 'A value has $z = 1.5$ in a distribution with mean $100$ and standard deviation $10$. Find the value.'
+            answer: "115"
+            solution_sketch: '$x = \mu + z\sigma = 100 + 1.5 \cdot 10 = 115$.'
+          - problem: 'A value of $40$ has $z = -2$ with standard deviation $5$. Find the mean.'
+            answer: "50"
+            solution_sketch: '$-2 = (40 - \mu)/5$, so $40 - \mu = -10$ and $\mu = 50$.'
+        constraints: "one unknown among x, mu, sigma; all quantities integers or ending in .5"
+      - id: kp3
+        name: "Comparing values across distributions"
+        key_prerequisites: [variance-standard-deviation]
+        exemplars:
+          - problem: 'Test A (marked out of $10$) has mean $6$, SD $1$; test B has mean $7$, SD $1.5$. Which is relatively better: an $8$ on test A or an $8.5$ on test B? Give the z-score of the better one.'
+            answer: "2"
+            solution_sketch: 'Test A: $z = (8-6)/1 = 2$. Test B: $z = (8.5-7)/1.5 = 1$. Higher z-score means further above its own mean.'
+          - problem: 'Which is more unusual: $z = -2.5$ or $z = 1.8$? Give that z-score.'
+            answer: "-2.5"
+            solution_sketch: 'Unusualness is measured by $|z|$, and $|-2.5| > |1.8|$.'
+        constraints: "two distributions with different means and SDs; z-scores come out to clean values like 1, 1.5, 2"
+    diagnostic_exemplar:
+      problem: 'A mark of $84$ comes from a distribution with mean $72$ and standard deviation $6$; a mark of $55$ comes from a distribution with mean $40$ and standard deviation $10$. Which is relatively better? Give the z-score of the better one.'
+      answer: '2'
+      solution_sketch: '$z_1 = (84 - 72)/6 = 2$ and $z_2 = (55 - 40)/10 = 1.5$; the first mark stands further above its own mean, so its z-score $2$ is the answer.'
+    anki_seeds:
+      - front: 'Z-score formula?'
+        back: '$z = \frac{x - \mu}{\sigma}$ — how many standard deviations $x$ lies from the mean.'
+        type: basic
+      - front: 'A negative z-score means the value is...'
+        back: 'Below the mean.'
+        type: basic

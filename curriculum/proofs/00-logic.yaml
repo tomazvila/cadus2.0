@@ -1,0 +1,1084 @@
+unit: logic
+course: proofs
+module: "Logic"
+topics:
+  - id: propositions-and-truth-values
+    name: "Propositions and Truth Values"
+    core: true
+    difficulty: 0.40
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 90
+    prerequisites:
+      - id: evaluating-expressions
+        weight: 0.2
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: "Propositions vs. non-propositions"
+        key_prerequisites: []
+        exemplars:
+          - problem: 'Which of the following are propositions? (a) "$7$ is prime." (b) "Close the door." (c) "$x > 3$." (d) "$2 + 2 = 5$."'
+            answer: '(a) and (d); (b) is a command, (c) is an open sentence.'
+            solution_sketch: 'A proposition is a declarative statement with a definite truth value. (a) is true and (d) is false; (b) is imperative (no truth value); (c) depends on $x$, so it is a predicate, not a proposition.'
+          - problem: 'Is "This sentence is false." a proposition?'
+            answer: 'No; it has no consistent truth value (a paradox).'
+            solution_sketch: 'Assuming it is true makes it false and vice versa, so it cannot be assigned a definite truth value; it is not a proposition.'
+        constraints: "classify statements as proposition / open sentence / command / paradox"
+      - id: kp2
+        name: "Truth values of concrete statements"
+        key_prerequisites: []
+        exemplars:
+          - problem: 'State the truth value of each proposition: (a) "$17$ is prime." (b) "$3 + 4 = 8$."'
+            answer: '(a) true; (b) false.'
+            solution_sketch: '$17$ has no divisors other than $1$ and $17$, so (a) is true; $3 + 4 = 7 \ne 8$, so (b) is false.'
+          - problem: 'True or false: "$\sqrt{2} > 1.5$".'
+            answer: 'False.'
+            solution_sketch: '$1.5^2 = 2.25 > 2$, so $\sqrt{2} < 1.5$; the proposition is false (but it is still a proposition).'
+        constraints: "concrete arithmetic statements; the learner must compute the truth value"
+      - id: kp3
+        name: "Open sentences become propositions by substitution"
+        key_prerequisites: [evaluating-expressions]
+        exemplars:
+          - problem: 'The open sentence "$x > 3$" is not a proposition. What proposition results from substituting $x = 5$, and what is its truth value?'
+            answer: '"$5 > 3$", which is true.'
+            solution_sketch: 'Substituting a value for the variable turns an open sentence into a proposition; $5 > 3$ is true.'
+          - problem: 'Substitute $x = -3$ into "$x^2 = 9$" and give the truth value.'
+            answer: '"$(-3)^2 = 9$", which is true.'
+            solution_sketch: '$(-3)^2 = 9$, so the resulting proposition is true even though $x = -3$ is negative.'
+        constraints: "one-variable open sentences; substitute a specific value and evaluate"
+    diagnostic_exemplar:
+      problem: 'Classify each as a proposition (with truth value), open sentence, or neither: (a) "$5 < 7$" (b) "$x + 2 = 9$" (c) "Study hard." (d) "$91$ is prime."'
+      answer: '(a) proposition, true; (b) open sentence; (c) neither (a command); (d) proposition, false ($91 = 7 \cdot 13$).'
+      solution_sketch: '(a) and (d) are declaratives with definite truth values; (b) depends on $x$; (c) is imperative. $91 = 7 \cdot 13$ makes (d) false.'
+    anki_seeds:
+      - front: 'What is a proposition?'
+        back: 'A declarative statement that is either true or false, but not both.'
+        type: basic
+      - front: 'How does an open sentence like "$x > 3$" become a proposition?'
+        back: 'By substituting a specific value for the variable (or by quantifying it).'
+        type: basic
+
+  - id: logical-connectives
+    name: "Logical Connectives"
+    core: true
+    difficulty: 0.42
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 90
+    prerequisites:
+      - id: propositions-and-truth-values
+        weight: 0.6
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: "Negation"
+        key_prerequisites: [propositions-and-truth-values]
+        exemplars:
+          - problem: 'Write the negation of "$n$ is even".'
+            answer: '"$n$ is not even" (equivalently, "$n$ is odd" for integers $n$).'
+            solution_sketch: 'The negation $\neg P$ is true exactly when $P$ is false; for integers, "not even" is the same as "odd".'
+          - problem: 'Write the negation of "$x = 3$" symbolically.'
+            answer: '$x \ne 3$'
+            solution_sketch: 'Negating an equality gives the corresponding inequality $x \ne 3$.'
+        constraints: "single-proposition negations; no quantifiers"
+      - id: kp2
+        name: "Conjunction and disjunction"
+        key_prerequisites: [propositions-and-truth-values]
+        exemplars:
+          - problem: 'Let $P$: "it is raining", $Q$: "it is cold". Translate $\neg P \land Q$ into English.'
+            answer: 'It is not raining and it is cold.'
+            solution_sketch: '$\neg P$ negates $P$ and $\land$ is conjunction, giving "it is not raining, and it is cold."'
+          - problem: 'Write "either $5$ is even or $5$ is odd" symbolically using $E$ and $O$.'
+            answer: '$E \lor O$'
+            solution_sketch: '"either ... or ..." is inclusive disjunction $\lor$, so $E \lor O$ (true here since $O$ holds).'
+        constraints: "connectives limited to negation, conjunction, disjunction; two atomic propositions"
+      - id: kp3
+        name: "Mathematical or is inclusive"
+        key_prerequisites: [propositions-and-truth-values]
+        exemplars:
+          - problem: 'Is the proposition "$6$ is even or $6$ is divisible by $3$" true?'
+            answer: 'Yes; both disjuncts are true, and mathematical "or" is inclusive.'
+            solution_sketch: '$P \lor Q$ is true when at least one disjunct holds — including when both do. Here both hold, so the disjunction is true.'
+          - problem: 'For $x = 0$, is "$x \ge 0$ or $x \le 0$" true?'
+            answer: 'Yes; at $x = 0$ both parts are true, and inclusive or allows that.'
+            solution_sketch: 'Both $0 \ge 0$ and $0 \le 0$ hold; an inclusive disjunction with both sides true is true.'
+        constraints: "emphasize that both disjuncts true still makes the disjunction true"
+    diagnostic_exemplar:
+      problem: 'Let $P$: "$6$ is even", $Q$: "$6$ is divisible by $3$", $R$: "$6$ is prime". Give the truth values of $P \land Q$, $P \lor Q$ and $\neg R$, and say whether the truth of $P \lor Q$ depends on reading "or" inclusively.'
+      answer: '$P$ and $Q$ are true and $R$ is false, so $P \land Q$ is true, $P \lor Q$ is true and $\neg R$ is true. Both disjuncts of $P \lor Q$ happen to be true, and mathematical "or" is inclusive, so the disjunction counts as true; an exclusive reading of "or" would call it false.'
+      solution_sketch: 'Evaluate the three statements about $6$, then note that a disjunction with both parts true is still true because mathematical "or" is inclusive.'
+    anki_seeds:
+      - front: 'Symbols for negation, conjunction, disjunction?'
+        back: '$\neg$ (not), $\land$ (and), $\lor$ (or).'
+        type: basic
+      - front: 'Is mathematical "or" inclusive or exclusive?'
+        back: 'Inclusive: $P \lor Q$ is true when at least one of $P, Q$ is true, including when both are.'
+        type: basic
+
+  - id: propositional-logic
+    name: "Propositional Logic"
+    core: true
+    difficulty: 0.45
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 120
+    prerequisites:
+      - id: logical-connectives
+        weight: 0.6
+        key: true
+      - id: propositions-and-truth-values
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: "Conditional and biconditional"
+        key_prerequisites: [logical-connectives]
+        exemplars:
+          - problem: 'Translate "if $n$ is divisible by $4$ then $n$ is even" using $D$ and $V$.'
+            answer: '$D \to V$'
+            solution_sketch: '"if ... then ..." is the conditional $\to$ with hypothesis $D$ and conclusion $V$: $D \to V$.'
+          - problem: 'Translate "$n$ is even if and only if $n$ is divisible by $2$" using $E$ and $T$.'
+            answer: '$E \leftrightarrow T$'
+            solution_sketch: '"if and only if" is the biconditional $\leftrightarrow$, giving $E \leftrightarrow T$.'
+        constraints: "identify hypothesis and conclusion; distinguish $\\to$ from $\\leftrightarrow$"
+      - id: kp2
+        name: "Translating compound sentences into symbols"
+        key_prerequisites: [logical-connectives]
+        exemplars:
+          - problem: 'With $R$: "it rains", $U$: "I have an umbrella", $W$: "I get wet", symbolize "if it rains and I have no umbrella, then I get wet".'
+            answer: '$(R \land \neg U) \to W$'
+            solution_sketch: 'The hypothesis is the conjunction $R \land \neg U$; the whole sentence is a conditional into $W$.'
+          - problem: 'With $E$: "$n$ is even", $O$: "$n$ is odd", symbolize "$n$ is even or odd, but not both".'
+            answer: '$(E \lor O) \land \neg(E \land O)$'
+            solution_sketch: '"or" gives $E \lor O$; "but not both" adds the conjunct $\neg(E \land O)$ (an exclusive or built from the basic connectives).'
+        constraints: "three atomic propositions max; mixed connectives with one level of grouping"
+      - id: kp3
+        name: "Reading symbolic formulas back into English"
+        key_prerequisites: [logical-connectives]
+        exemplars:
+          - problem: 'With $P$: "it is sunny", $Q$: "it is windy", translate $\neg(P \land Q)$ into English.'
+            answer: 'It is not the case that it is both sunny and windy.'
+            solution_sketch: 'The negation applies to the whole conjunction, not to either part alone.'
+          - problem: 'With $P$: "$n$ is prime", $Q$: "$n$ is odd", $R$: "$n > 2$", translate $(P \land R) \to Q$ into English.'
+            answer: 'If $n$ is prime and $n > 2$, then $n$ is odd.'
+            solution_sketch: 'The conditional has the conjunction $P \land R$ as hypothesis and $Q$ as conclusion.'
+        constraints: "respect grouping; the English rendering must show what the negation or conditional applies to"
+    diagnostic_exemplar:
+      problem: 'With $S$: "it snows", $C$: "the road is closed", $L$: "I am late": symbolise "if it snows and the road is closed, then I am late", and translate $L \leftrightarrow (S \lor C)$ back into English.'
+      answer: 'The first is $(S \land C) \to L$. The second reads: "I am late if and only if it snows or the road is closed."'
+      solution_sketch: 'Put the conjunction in the antecedent of the conditional; then read $\leftrightarrow$ as "if and only if", keeping the disjunction intact.'
+    anki_seeds:
+      - front: 'Symbols for the conditional and the biconditional?'
+        back: '$\to$ (if...then) and $\leftrightarrow$ (if and only if).'
+        type: basic
+      - front: 'In $P \to Q$, what are $P$ and $Q$ called?'
+        back: '$P$ is the hypothesis (antecedent); $Q$ is the conclusion (consequent).'
+        type: basic
+
+  - id: truth-tables-basic-connectives
+    name: "Truth Tables for Basic Connectives"
+    core: true
+    difficulty: 0.43
+    drill: false               # L4 audit: multi-row evaluation, not a 6s recall skill
+    answer_kind: multi-step
+    expected_time_secs: 60
+    prerequisites:
+      - id: logical-connectives
+        weight: 0.6
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: "Negation and conjunction tables"
+        key_prerequisites: [logical-connectives]
+        exemplars:
+          - problem: 'Give the truth table of $\neg P$.'
+            answer: 'T->F, F->T.'
+            solution_sketch: 'Negation flips the truth value.'
+          - problem: 'Give the truth values of $P \land Q$.'
+            answer: 'TT->T, TF->F, FT->F, FF->F.'
+            solution_sketch: 'A conjunction is true only when both conjuncts are true.'
+        constraints: "single connective; enumerate every row"
+      - id: kp2
+        name: "Disjunction table"
+        key_prerequisites: [logical-connectives]
+        exemplars:
+          - problem: 'Give the truth values of $P \lor Q$ for all four combinations of $P, Q$.'
+            answer: 'TT->T, TF->T, FT->T, FF->F.'
+            solution_sketch: 'A disjunction is false only when both disjuncts are false, and true otherwise.'
+          - problem: 'In which single row is $P \lor Q$ false?'
+            answer: 'Only when $P$ and $Q$ are both false.'
+            solution_sketch: 'Inclusive or fails only with two false disjuncts.'
+        constraints: "single connective; emphasize the one false row of $\\lor$"
+      - id: kp3
+        name: "Reading off individual rows"
+        key_prerequisites: [logical-connectives]
+        exemplars:
+          - problem: 'For $P$ false and $Q$ true, give the values of $P \land Q$ and $P \lor Q$.'
+            answer: '$P \land Q$ is F; $P \lor Q$ is T.'
+            solution_sketch: 'Conjunction needs both true (fails); disjunction needs at least one true (holds).'
+          - problem: 'In which rows do $P \land Q$ and $P \lor Q$ differ?'
+            answer: 'Exactly the rows where one of $P, Q$ is true and the other false (TF and FT).'
+            solution_sketch: 'They agree at TT (both T) and FF (both F); with exactly one true, $\land$ gives F while $\lor$ gives T.'
+        constraints: "evaluate specific rows without writing the whole table"
+    diagnostic_exemplar:
+      problem: 'For $P$ true and $Q$ false, give the values of $P \land Q$, $P \lor Q$, and $\neg P$.'
+      answer: '$P \land Q$ is F, $P \lor Q$ is T, $\neg P$ is F.'
+      solution_sketch: 'One false conjunct kills the conjunction; one true disjunct saves the disjunction; negation flips T to F.'
+    anki_seeds:
+      - front: 'When is $P \land Q$ true?'
+        back: 'Only when both $P$ and $Q$ are true.'
+        type: basic
+      - front: 'When is $P \lor Q$ false?'
+        back: 'Only when both $P$ and $Q$ are false.'
+        type: basic
+
+  - id: evaluating-compound-propositions
+    name: "Evaluating Compound Propositions"
+    core: true
+    difficulty: 0.44
+    drill: false               # L4 audit: multi-step evaluation, not a 6s recall skill
+    answer_kind: multi-step
+    expected_time_secs: 90
+    prerequisites:
+      - id: truth-tables-basic-connectives
+        weight: 0.5
+        key: true
+      - id: logical-connectives
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: "Operator precedence"
+        key_prerequisites: [logical-connectives]
+        exemplars:
+          - problem: 'Insert parentheses to show how $\neg P \lor Q \land R$ is grouped by the standard precedence ($\neg$, then $\land$, then $\lor$).'
+            answer: '$(\neg P) \lor (Q \land R)$'
+            solution_sketch: '$\neg$ binds tightest and applies only to $P$; $\land$ binds tighter than $\lor$, so $Q \land R$ groups before the disjunction.'
+          - problem: 'In $\neg P \lor Q \land R$, which connective is applied last?'
+            answer: '$\lor$.'
+            solution_sketch: 'After grouping, the formula is a disjunction of $\neg P$ and $Q \land R$, so $\lor$ is the main connective.'
+        constraints: "precedence order $\\neg$, $\\land$, $\\lor$; identify the main connective"
+      - id: kp2
+        name: "Evaluating at given truth values"
+        key_prerequisites: [truth-tables-basic-connectives]
+        exemplars:
+          - problem: 'Evaluate $\neg P \lor Q \land R$ at $P$ = T, $Q$ = F, $R$ = T.'
+            answer: 'F.'
+            solution_sketch: 'Group as $(\neg P) \lor (Q \land R)$. $\neg P$ = F and $Q \land R$ = F $\land$ T = F, so F $\lor$ F = F.'
+          - problem: 'Evaluate $\neg P \land Q$ at $P$ = F, $Q$ = T.'
+            answer: 'T.'
+            solution_sketch: '$\neg P$ = T, so $\neg P \land Q$ = T $\land$ T = T.'
+        constraints: "connectives limited to $\\neg, \\land, \\lor$; up to 3 variables; single assignment of truth values"
+      - id: kp3
+        name: "Parentheses change the value"
+        key_prerequisites: [truth-tables-basic-connectives]
+        exemplars:
+          - problem: 'At $P$ = F, $Q$ = T, evaluate both $\neg(P \lor Q)$ and $\neg P \lor Q$. Do they agree?'
+            answer: '$\neg(P \lor Q)$ = F but $\neg P \lor Q$ = T; they differ.'
+            solution_sketch: '$P \lor Q$ = T so its negation is F; but $\neg P$ = T already makes $\neg P \lor Q$ true. Parentheses determine what the negation applies to.'
+          - problem: 'At $P$ = T, $Q$ = F, $R$ = F, evaluate $P \land (\neg Q \lor R)$.'
+            answer: 'T.'
+            solution_sketch: '$\neg Q$ = T, so $\neg Q \lor R$ = T; then T $\land$ T = T.'
+        constraints: "contrast a parenthesized and unparenthesized version at a distinguishing assignment"
+    diagnostic_exemplar:
+      problem: 'Evaluate $P \land \neg Q \lor R$ and $P \land (\neg Q \lor R)$ at $P$ = F, $Q$ = T, $R$ = T, and state whether the parentheses change the value.'
+      answer: 'By the standard precedence ($\neg$, then $\land$, then $\lor$) the first formula is $(P \land \neg Q) \lor R = (\mathrm{F} \land \mathrm{F}) \lor \mathrm{T} = \mathrm{T}$. The second is $P \land (\neg Q \lor R) = \mathrm{F} \land (\mathrm{F} \lor \mathrm{T}) = \mathrm{F} \land \mathrm{T} = \mathrm{F}$. The values differ, so the parentheses do change the meaning.'
+      solution_sketch: 'Group the unparenthesised formula by precedence before evaluating, then compare with the parenthesised version at the same assignment.'
+    anki_seeds:
+      - front: 'Standard precedence of $\neg$, $\land$, $\lor$?'
+        back: '$\neg$ binds tightest, then $\land$, then $\lor$.'
+        type: basic
+
+  - id: truth-tables
+    name: "Truth Tables"
+    core: true
+    difficulty: 0.46
+    drill: false               # L4 audit: 3-8 row tables cannot fit the 6s drill countdown
+    answer_kind: multi-step
+    expected_time_secs: 120
+    prerequisites:
+      - id: truth-tables-basic-connectives
+        weight: 0.5
+        key: true
+      - id: evaluating-compound-propositions
+        weight: 0.4
+      - id: propositional-logic
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: "Conditional and biconditional tables"
+        key_prerequisites: [propositional-logic]
+        exemplars:
+          - problem: 'Give the truth values of $P \to Q$.'
+            answer: 'TT->T, TF->F, FT->T, FF->T.'
+            solution_sketch: 'A conditional is false only when the hypothesis is true and the conclusion false; a false hypothesis makes it vacuously true.'
+          - problem: 'Give the truth values of $P \leftrightarrow Q$.'
+            answer: 'T when $P$ and $Q$ agree (TT, FF); F otherwise.'
+            solution_sketch: 'The biconditional is true exactly when both sides have the same truth value.'
+        constraints: "emphasize the two easily-forgotten rows: $T\\to F$ is false, $F\\to$ anything is true"
+      - id: kp2
+        name: "Tables for compound formulas"
+        key_prerequisites: [evaluating-compound-propositions]
+        exemplars:
+          - problem: 'Build the truth table for $\neg P \lor Q$ and state when it is false.'
+            answer: 'False only when $P$ is T and $Q$ is F; note this matches $P \to Q$.'
+            solution_sketch: '$\neg P$ is true when $P$ is false, so the disjunction fails only when $\neg P$ is false ($P$ true) and $Q$ is false. Same column as $P \to Q$.'
+          - problem: 'Build the truth table for $(P \lor Q) \land \neg P$ and state when it is true.'
+            answer: 'True only when $P$ is F and $Q$ is T.'
+            solution_sketch: '$\neg P$ requires $P$ false; then $P \lor Q$ requires $Q$ true. The only true row is FT.'
+        constraints: "two variables; build intermediate columns before the final column"
+      - id: kp3
+        name: "Three-variable tables and tautology spotting"
+        key_prerequisites: [evaluating-compound-propositions]
+        exemplars:
+          - problem: 'How many rows does the truth table of a formula with $3$ distinct variables have?'
+            answer: '$2^3 = 8$'
+            solution_sketch: 'Each variable is independently true or false, so $n$ variables give $2^n$ rows.'
+          - problem: 'Build the truth table for $(P \land Q) \to P$ and state whether its column is all T.'
+            answer: 'Yes; all four rows are T (a tautology).'
+            solution_sketch: 'Whenever $P \land Q$ is true, $P$ is true; when the hypothesis is false the conditional is vacuously true. Every row is T.'
+        constraints: "up to 3 variables; identify all-T (tautology) and all-F (contradiction) columns"
+    diagnostic_exemplar:
+      problem: 'Construct the truth table for $(P \land Q) \to P$ and state whether it is a tautology.'
+      answer: 'All four rows are T, so it is a tautology.'
+      solution_sketch: 'Whenever $P \land Q$ is true, $P$ is true, so the conditional is true; when the hypothesis is false it is vacuously true. Every row is T.'
+    anki_seeds:
+      - front: 'When is a conditional $P \to Q$ false?'
+        back: 'Only when $P$ is true and $Q$ is false.'
+        type: basic
+      - front: 'How many rows does a truth table with $n$ variables have?'
+        back: '$2^n$.'
+        type: basic
+
+  - id: tautologies-and-contradictions
+    name: "Tautologies and Contradictions"
+    core: false                # supplemental: classification exercise; truth-tables is the machinery
+    difficulty: 0.50
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 130
+    prerequisites:
+      - id: truth-tables
+        weight: 0.6
+        key: true
+      - id: evaluating-compound-propositions
+        weight: 0.2
+    knowledge_points:
+      - id: kp1
+        name: "Classifying formulas"
+        key_prerequisites: [truth-tables]
+        exemplars:
+          - problem: 'Classify each as tautology, contradiction, or contingency: (a) $P \lor \neg P$ (b) $P \land \neg P$ (c) $P \to \neg P$.'
+            answer: '(a) tautology; (b) contradiction; (c) contingency.'
+            solution_sketch: '(a) is true in both rows (excluded middle); (b) is false in both rows; (c) is false at $P$ = T but true at $P$ = F, so it is contingent.'
+          - problem: 'Is $(P \land Q) \to (P \lor Q)$ a tautology?'
+            answer: 'Yes.'
+            solution_sketch: 'If $P \land Q$ holds, then certainly $P \lor Q$ holds; when the hypothesis fails the conditional is vacuously true. All rows T.'
+        constraints: "classify via a full truth table; tautology = all T, contradiction = all F, contingency = mixed"
+      - id: kp2
+        name: "Famous implication tautologies"
+        key_prerequisites: [truth-tables]
+        exemplars:
+          - problem: 'Show that $((P \to Q) \land P) \to Q$ is a tautology.'
+            answer: 'All four rows are T; this is the modus ponens tautology.'
+            solution_sketch: 'The hypothesis $(P \to Q) \land P$ is true only in the row $P$ = T, $Q$ = T, where $Q$ holds; every other row is vacuously true.'
+          - problem: 'Verify that $(P \to Q) \lor (Q \to P)$ is a tautology.'
+            answer: 'All rows are T.'
+            solution_sketch: 'The only way $P \to Q$ fails is $P$ = T, $Q$ = F — and in that row $Q \to P$ is true. So the disjunction never fails.'
+        constraints: "verify tautologyhood of classic conditional forms by table"
+      - id: kp3
+        name: "Contradictions and satisfiability"
+        key_prerequisites: [truth-tables]
+        exemplars:
+          - problem: 'Show that $(P \lor Q) \land \neg P \land \neg Q$ is a contradiction.'
+            answer: 'No row makes it true.'
+            solution_sketch: '$\neg P \land \neg Q$ forces the row FF, where $P \lor Q$ is false. So the conjunction is false in every row.'
+          - problem: 'Is there an assignment making $P \to Q$, $P$, and $\neg Q$ all true simultaneously?'
+            answer: 'No; the three are jointly unsatisfiable.'
+            solution_sketch: '$P$ true and $\neg Q$ true give the row TF, where $P \to Q$ is false. No row satisfies all three.'
+        constraints: "show a formula (or set of formulas) has no satisfying row"
+    diagnostic_exemplar:
+      problem: 'Classify each as a tautology, a contradiction, or a contingency: (a) $((P \to Q) \land P) \land \neg Q$, (b) $P \to (P \lor Q)$.'
+      answer: '(a) Contradiction: for it to be true we would need $P$ true and $P \to Q$ true, forcing $Q$ true, while $\neg Q$ demands $Q$ false — no row of the truth table makes it true. (b) Tautology: the only row that could falsify a conditional has a true antecedent and false consequent, but $P$ true makes $P \lor Q$ true; all four rows are T.'
+      solution_sketch: '(a) asserts the premises of modus ponens together with the negated conclusion, so it is unsatisfiable; for (b) check the only dangerous row, $P$ true.'
+    anki_seeds:
+      - front: 'Definitions: tautology, contradiction, contingency?'
+        back: 'Tautology: true in every row. Contradiction: false in every row. Contingency: true in some rows, false in others.'
+        type: basic
+      - front: 'A classic tautology expressing modus ponens?'
+        back: '$((P \to Q) \land P) \to Q$.'
+        type: basic
+
+  - id: conditional-statements
+    name: "Conditional Statements"
+    core: true
+    difficulty: 0.50
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 130
+    prerequisites:
+      - id: propositional-logic
+        weight: 0.4
+        key: true
+      - id: truth-tables
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: "Converse, inverse, contrapositive"
+        key_prerequisites: [propositional-logic]
+        exemplars:
+          - problem: 'For "if $n$ is prime and $n > 2$ then $n$ is odd", state the converse.'
+            answer: 'If $n$ is odd then $n$ is prime and $n > 2$.'
+            solution_sketch: 'The converse of $P \to Q$ is $Q \to P$: swap hypothesis and conclusion.'
+          - problem: 'State the contrapositive of "if $x > 0$ then $x^2 > 0$".'
+            answer: 'If $x^2 \le 0$ then $x \le 0$.'
+            solution_sketch: 'The contrapositive of $P \to Q$ is $\neg Q \to \neg P$: negate both parts and swap.'
+        constraints: "form converse $Q\\to P$, inverse $\\neg P\\to\\neg Q$, contrapositive $\\neg Q\\to\\neg P$"
+      - id: kp2
+        name: "Which forms are equivalent"
+        key_prerequisites: [truth-tables]
+        exemplars:
+          - problem: 'Is the contrapositive of "if $x$ is a multiple of $6$ then $x$ is even" equivalent to it? What about the converse?'
+            answer: 'The contrapositive is equivalent; the converse is not.'
+            solution_sketch: '$P \to Q \equiv \neg Q \to \neg P$ (same truth table). The converse $Q \to P$ has a different truth table, so it is not equivalent.'
+          - problem: 'For "if $x = 2$ then $x^2 = 4$", is the converse true?'
+            answer: 'No; the converse "if $x^2 = 4$ then $x = 2$" fails at $x = -2$.'
+            solution_sketch: 'The converse is $x^2 = 4 \to x = 2$; but $x = -2$ gives $x^2 = 4$ with $x \ne 2$, so it is false even though the original is true. A statement and its converse are independent.'
+        constraints: "justify equivalence or non-equivalence via truth tables"
+      - id: kp3
+        name: "Biconditionals as two conditionals"
+        key_prerequisites: [propositional-logic]
+        exemplars:
+          - problem: 'Write $P \leftrightarrow Q$ as a conjunction of two conditionals.'
+            answer: '$(P \to Q) \land (Q \to P)$'
+            solution_sketch: 'A biconditional asserts both the conditional and its converse.'
+          - problem: 'Is the biconditional "$x = 1 \leftrightarrow x^2 = 1$" true for all real $x$?'
+            answer: 'No; at $x = -1$ the direction $x^2 = 1 \to x = 1$ fails.'
+            solution_sketch: 'The forward direction $x = 1 \to x^2 = 1$ always holds, but $x = -1$ satisfies $x^2 = 1$ with $x \ne 1$, so the converse direction fails and the biconditional is false there.'
+        constraints: "split $\\leftrightarrow$ into a conditional and its converse; test both directions"
+    diagnostic_exemplar:
+      problem: 'For "if $x = 3$ then $x^2 = 9$" (real $x$): state the converse and the contrapositive, say which of the two is equivalent to the original, and decide whether the biconditional "$x = 3 \leftrightarrow x^2 = 9$" holds for every real $x$.'
+      answer: 'Converse: "if $x^2 = 9$ then $x = 3$". Contrapositive: "if $x^2 \ne 9$ then $x \ne 3$". The contrapositive is equivalent to the original; the converse is not, since it fails at $x = -3$. The biconditional is the conjunction of the statement with its converse, so it also fails at $x = -3$: it does not hold for every real $x$.'
+      solution_sketch: 'Swap for the converse; negate and swap for the contrapositive. Testing the converse at $x = -3$ settles both the equivalence question and the biconditional.'
+    anki_seeds:
+      - front: 'Converse, inverse, and contrapositive of $P \to Q$?'
+        back: 'Converse $Q \to P$; inverse $\neg P \to \neg Q$; contrapositive $\neg Q \to \neg P$.'
+        type: basic
+      - front: 'Which of converse / inverse / contrapositive is equivalent to $P \to Q$?'
+        back: 'The contrapositive $\neg Q \to \neg P$ (the inverse is equivalent to the converse).'
+        type: basic
+      - front: '$P \leftrightarrow Q$ written as two conditionals?'
+        back: '$(P \to Q) \land (Q \to P)$.'
+        type: basic
+
+  - id: necessary-sufficient-conditions
+    name: "Necessary and Sufficient Conditions"
+    core: false                # supplemental: terminology gloss on conditional-statements
+    difficulty: 0.52
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 130
+    prerequisites:
+      - id: conditional-statements
+        weight: 0.6
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: "Sufficient conditions"
+        key_prerequisites: [conditional-statements]
+        exemplars:
+          - problem: 'Rewrite "$n$ divisible by $6$ is sufficient for $n$ even" as a conditional.'
+            answer: 'If $n$ is divisible by $6$ then $n$ is even.'
+            solution_sketch: '"$A$ is sufficient for $B$" means $A \to B$; here $A$ is "divisible by 6" and $B$ is "even".'
+          - problem: 'Is "$x > 2$" a sufficient condition for "$x^2 > 4$" (real $x$)?'
+            answer: 'Yes; $x > 2$ guarantees $x^2 > 4$.'
+            solution_sketch: 'Sufficiency asks whether the conditional $x > 2 \to x^2 > 4$ holds, which it does (though not conversely, e.g. $x = -3$).'
+        constraints: "translate sufficient-condition phrasing into $A \\to B$ and judge its truth"
+      - id: kp2
+        name: "Necessary conditions and only if"
+        key_prerequisites: [conditional-statements]
+        exemplars:
+          - problem: 'Rewrite "$n$ even is necessary for $n$ divisible by $4$" as a conditional.'
+            answer: 'If $n$ is divisible by $4$ then $n$ is even.'
+            solution_sketch: '"$B$ is necessary for $A$" means $A \to B$. Here $A$ is "divisible by 4" and $B$ is "even".'
+          - problem: 'Rewrite "$n$ is prime only if $n \ge 2$" as a conditional.'
+            answer: 'If $n$ is prime then $n \ge 2$.'
+            solution_sketch: '"$P$ only if $Q$" means $P \to Q$: primality can occur only when $n \ge 2$.'
+        constraints: "necessary and only-if phrasing both translate to $A \\to B$ with the guaranteed part as conclusion"
+      - id: kp3
+        name: "Unless, and necessary-and-sufficient"
+        key_prerequisites: [conditional-statements]
+        exemplars:
+          - problem: 'Rewrite "$n^2$ is odd unless $n$ is even" as a conditional.'
+            answer: 'If $n$ is not even then $n^2$ is odd.'
+            solution_sketch: '"$P$ unless $Q$" translates as $\neg Q \to P$: in the absence of the exception $Q$, $P$ holds.'
+          - problem: 'Express "divisibility by $6$ is necessary and sufficient for divisibility by both $2$ and $3$" symbolically.'
+            answer: '$6 \mid n \leftrightarrow (2 \mid n \land 3 \mid n)$'
+            solution_sketch: 'Necessary and sufficient together assert both directions, i.e. a biconditional.'
+        constraints: "translate unless as $\\neg Q \\to P$; necessary-and-sufficient as $\\leftrightarrow$"
+    diagnostic_exemplar:
+      problem: 'Express "divisibility by $10$ is necessary and sufficient for divisibility by both $2$ and $5$" as a symbolic biconditional, and rewrite "$n^2$ is odd unless $n$ is even" as a conditional.'
+      answer: '$10 \mid n \leftrightarrow (2 \mid n \land 5 \mid n)$: "necessary" gives $(2 \mid n \land 5 \mid n) \to 10 \mid n$ read one way and "sufficient" the other, so the two conditionals combine into a biconditional. And "$A$ unless $B$" means "if not $B$ then $A$": "if $n$ is not even, then $n^2$ is odd".'
+      solution_sketch: 'Necessary-and-sufficient means both directions, i.e. a biconditional; "unless" puts the negated condition in the antecedent.'
+    anki_seeds:
+      - front: '"$Q$ is necessary for $P$" and "$Q$ is sufficient for $P$" as conditionals?'
+        back: 'Necessary: $P \to Q$. Sufficient: $Q \to P$.'
+        type: basic
+      - front: '"$P$ only if $Q$" as a conditional?'
+        back: '$P \to Q$.'
+        type: basic
+      - front: '"$P$ unless $Q$" as a conditional?'
+        back: '$\neg Q \to P$.'
+        type: basic
+
+  - id: de-morgan-double-negation
+    name: "De Morgan's Laws and Double Negation"
+    core: true
+    difficulty: 0.50
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 100
+    prerequisites:
+      - id: truth-tables
+        weight: 0.5
+        key: true
+      - id: logical-connectives
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: "Double negation"
+        key_prerequisites: [truth-tables]
+        exemplars:
+          - problem: 'Simplify $\neg(\neg P)$.'
+            answer: '$P$'
+            solution_sketch: 'Negating twice returns the original truth value in both rows.'
+          - problem: 'Simplify $\neg\neg(P \lor Q)$.'
+            answer: '$P \lor Q$'
+            solution_sketch: 'Double negation cancels, leaving the disjunction unchanged.'
+        constraints: "cancel paired negations"
+      - id: kp2
+        name: "De Morgan's laws"
+        key_prerequisites: [truth-tables]
+        exemplars:
+          - problem: 'Use De Morgan to rewrite $\neg(P \land Q)$.'
+            answer: '$\neg P \lor \neg Q$'
+            solution_sketch: 'De Morgan: the negation of a conjunction is the disjunction of the negations.'
+          - problem: 'Simplify $\neg(\neg P \lor Q)$.'
+            answer: '$P \land \neg Q$'
+            solution_sketch: 'De Morgan gives $\neg\neg P \land \neg Q$; double negation $\neg\neg P \equiv P$, so $P \land \neg Q$.'
+        constraints: "apply De Morgan and double negation to simplify"
+      - id: kp3
+        name: "Nested applications"
+        key_prerequisites: [truth-tables]
+        exemplars:
+          - problem: 'Push the negation inward: $\neg(P \land (Q \lor R))$.'
+            answer: '$\neg P \lor (\neg Q \land \neg R)$'
+            solution_sketch: 'De Morgan on the conjunction gives $\neg P \lor \neg(Q \lor R)$; De Morgan again on the inner disjunction gives $\neg Q \land \neg R$.'
+          - problem: 'Push the negation inward: $\neg((P \lor Q) \land \neg R)$.'
+            answer: '$(\neg P \land \neg Q) \lor R$'
+            solution_sketch: 'De Morgan gives $\neg(P \lor Q) \lor \neg\neg R$; the first part becomes $\neg P \land \neg Q$ and double negation gives $R$.'
+        constraints: "two nested De Morgan steps; all negations end on atomic variables"
+    diagnostic_exemplar:
+      problem: 'Push the negation all the way inward and simplify: $\neg(\neg P \land (Q \lor \neg R))$.'
+      answer: '$P \lor (\neg Q \land R)$. Step by step: De Morgan on the outer conjunction gives $\neg\neg P \lor \neg(Q \lor \neg R)$; double negation gives $P \lor \neg(Q \lor \neg R)$; De Morgan on the disjunction gives $P \lor (\neg Q \land \neg\neg R)$; a final double negation gives $P \lor (\neg Q \land R)$.'
+      solution_sketch: 'Apply De Morgan to the outer conjunction, then to the inner disjunction, cancelling double negations as they appear.'
+    anki_seeds:
+      - front: 'De Morgan''s laws for logic?'
+        back: '$\neg(P \land Q) \equiv \neg P \lor \neg Q$ and $\neg(P \lor Q) \equiv \neg P \land \neg Q$.'
+        type: basic
+      - front: 'Double negation law?'
+        back: '$\neg(\neg P) \equiv P$.'
+        type: basic
+
+  - id: logical-equivalence
+    name: "Logical Equivalence"
+    core: true
+    difficulty: 0.55
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 150
+    prerequisites:
+      - id: truth-tables
+        weight: 0.5
+        key: true
+      - id: de-morgan-double-negation
+        weight: 0.4
+        key: true
+      - id: conditional-statements
+        weight: 0.0
+    knowledge_points:
+      - id: kp1
+        name: "Verifying equivalence with truth tables"
+        key_prerequisites: [truth-tables]
+        exemplars:
+          - problem: 'Show that $P \to Q$ and $\neg P \lor Q$ are logically equivalent.'
+            answer: 'Equivalent; both are false only in the row $P$ true, $Q$ false.'
+            solution_sketch: 'Build both tables: $P \to Q$ is false only at $(T,F)$; $\neg P \lor Q$ is false only when $\neg P$ is false and $Q$ is false, i.e. $(T,F)$. Columns match, so they are equivalent.'
+          - problem: 'Are $P \land (P \lor Q)$ and $P$ logically equivalent?'
+            answer: 'Yes (absorption).'
+            solution_sketch: 'When $P$ is true, $P \lor Q$ is true so the conjunction is true; when $P$ is false the conjunction is false. The column equals that of $P$, so they are equivalent.'
+        constraints: "prove equivalence by matching full truth-table columns"
+      - id: kp2
+        name: "Rewriting implications"
+        key_prerequisites: [conditional-statements]
+        exemplars:
+          - problem: 'Rewrite the negation of $P \to Q$ without a conditional.'
+            answer: '$P \land \neg Q$'
+            solution_sketch: '$P \to Q \equiv \neg P \lor Q$; negating and applying De Morgan gives $\neg(\neg P \lor Q) \equiv P \land \neg Q$.'
+          - problem: 'Simplify $\neg(P \to Q) \lor Q$.'
+            answer: '$P \lor Q$'
+            solution_sketch: '$\neg(P \to Q) \equiv P \land \neg Q$, so the expression is $(P \land \neg Q) \lor Q \equiv (P \lor Q) \land (\neg Q \lor Q) \equiv (P \lor Q) \land T \equiv P \lor Q$.'
+        constraints: "use $P\\to Q \\equiv \\neg P \\lor Q$; negate implications"
+      - id: kp3
+        name: "Simplification chains with the laws"
+        key_prerequisites: [de-morgan-double-negation]
+        exemplars:
+          - problem: 'Simplify $(P \land Q) \lor (P \land \neg Q)$ using the distributive law.'
+            answer: '$P$'
+            solution_sketch: 'Distribute: $(P \land Q) \lor (P \land \neg Q) \equiv P \land (Q \lor \neg Q) \equiv P \land T \equiv P$.'
+          - problem: 'Simplify $(P \lor Q) \land (P \lor \neg Q)$.'
+            answer: '$P$'
+            solution_sketch: 'Distribute: $(P \lor Q) \land (P \lor \neg Q) \equiv P \lor (Q \land \neg Q) \equiv P \lor F \equiv P$.'
+        constraints: "multi-step law chains: distributive, negation, identity laws; cite each law used"
+    diagnostic_exemplar:
+      problem: 'Simplify $\neg(P \to Q) \lor (P \land Q)$ to a formula in a single variable, naming the law used at each step.'
+      answer: 'The result is $P$. Steps: $\neg(P \to Q) \equiv P \land \neg Q$ (negation of a conditional), so the formula is $(P \land \neg Q) \lor (P \land Q)$; the distributive law factors this as $P \land (\neg Q \lor Q)$; $\neg Q \lor Q$ is a tautology (excluded middle); and $P \land \mathrm{T} \equiv P$ (identity law).'
+      solution_sketch: 'Rewrite the negated conditional first, then factor $P$ out with distributivity and collapse the tautology.'
+    anki_seeds:
+      - front: 'Rewrite $P \to Q$ using only $\lor$ and $\neg$.'
+        back: '$\neg P \lor Q$.'
+        type: basic
+      - front: 'Negation of $P \to Q$?'
+        back: '$P \land \neg Q$.'
+        type: basic
+      - front: 'Distributive laws of $\land$ over $\lor$ and $\lor$ over $\land$?'
+        back: '$P \land (Q \lor R) \equiv (P \land Q) \lor (P \land R)$ and $P \lor (Q \land R) \equiv (P \lor Q) \land (P \lor R)$.'
+        type: basic
+
+  - id: predicates-and-domains
+    name: "Predicates and Domains"
+    core: true
+    difficulty: 0.48
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 100
+    prerequisites:
+      - id: propositional-logic
+        weight: 0.5
+        key: true
+      - id: evaluating-expressions
+        weight: 0.2
+    knowledge_points:
+      - id: kp1
+        name: "Predicates and substitution"
+        key_prerequisites: [propositional-logic]
+        exemplars:
+          - problem: 'Let $P(x)$: "$x^2 \le 9$" over $\mathbb{Z}$. Find the truth values of $P(2)$ and $P(5)$.'
+            answer: '$P(2)$ is true; $P(5)$ is false.'
+            solution_sketch: 'Substitute: $2^2 = 4 \le 9$ (true); $5^2 = 25 > 9$ (false). A predicate becomes a proposition once a domain element is plugged in.'
+          - problem: 'Let $Q(n)$: "$n$ is prime". Find the truth values of $Q(7)$ and $Q(9)$.'
+            answer: '$Q(7)$ is true; $Q(9)$ is false ($9 = 3 \cdot 3$).'
+            solution_sketch: '$7$ has no nontrivial divisors; $9$ factors as $3^2$.'
+        constraints: "one-variable predicates; substitute specific domain elements"
+      - id: kp2
+        name: "Truth sets"
+        key_prerequisites: [propositional-logic]
+        exemplars:
+          - problem: 'Find the truth set of $P(x)$: "$x^2 \le 9$" over the domain $\mathbb{Z}$.'
+            answer: '$\{-3, -2, -1, 0, 1, 2, 3\}$'
+            solution_sketch: '$x^2 \le 9$ holds exactly for integers with $|x| \le 3$.'
+          - problem: 'Find the truth set of $Q(n)$: "$n$ is odd and $n < 10$" over the positive integers.'
+            answer: '$\{1, 3, 5, 7, 9\}$'
+            solution_sketch: 'List the positive odd integers below $10$.'
+        constraints: "finite truth sets the learner can list; the domain must be stated"
+      - id: kp3
+        name: "Predicates with several variables"
+        key_prerequisites: [propositional-logic]
+        exemplars:
+          - problem: 'Let $R(x, y)$: "$x + y = 5$" over $\mathbb{Z}$. Find the truth values of $R(2, 3)$ and $R(4, 4)$.'
+            answer: '$R(2, 3)$ is true; $R(4, 4)$ is false.'
+            solution_sketch: '$2 + 3 = 5$ but $4 + 4 = 8 \ne 5$. A two-place predicate needs both arguments filled to become a proposition.'
+          - problem: 'Let $S(m, n)$: "$m \mid n$". Find the truth values of $S(3, 12)$ and $S(5, 12)$.'
+            answer: '$S(3, 12)$ is true; $S(5, 12)$ is false.'
+            solution_sketch: '$12 = 3 \cdot 4$, so $3 \mid 12$; but $12/5$ is not an integer.'
+        constraints: "two-variable predicates; evaluate at specific pairs"
+    diagnostic_exemplar:
+      problem: 'Let $P(x)$: "$x^2 - 5x + 6 = 0$" over $\mathbb{Z}$. Find the truth set of $P$.'
+      answer: '$\{2, 3\}$'
+      solution_sketch: 'Factor: $x^2 - 5x + 6 = (x - 2)(x - 3)$, which vanishes exactly at $x = 2$ and $x = 3$.'
+    anki_seeds:
+      - front: 'What is a predicate?'
+        back: 'A statement containing variables that becomes a proposition when each variable is given a value from its domain.'
+        type: basic
+      - front: 'Truth set of a predicate $P(x)$ over a domain $D$?'
+        back: 'The set of all $x \in D$ for which $P(x)$ is true.'
+        type: basic
+
+  - id: universal-existential-statements
+    name: "Universal and Existential Statements"
+    core: true
+    difficulty: 0.50
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 120
+    prerequisites:
+      - id: predicates-and-domains
+        weight: 0.6
+        key: true
+      - id: propositional-logic
+        weight: 0.2
+    knowledge_points:
+      - id: kp1
+        name: "Universal statements"
+        key_prerequisites: [predicates-and-domains]
+        exemplars:
+          - problem: 'Is $\forall x \in \mathbb{R},\ x^2 > 0$ true?'
+            answer: 'No; $x = 0$ gives $x^2 = 0$, not $> 0$.'
+            solution_sketch: 'The single value $x = 0$ has $x^2 = 0$, so the universal statement fails; one counterexample suffices to refute a $\forall$.'
+          - problem: 'Is $\forall n \in \{1, 2, 3\},\ n^2 \le 9$ true?'
+            answer: 'Yes; check all three: $1, 4, 9 \le 9$.'
+            solution_sketch: 'Over a finite domain a universal statement is verified by checking every element.'
+        constraints: "one quantifier; stated domain; finite domains checked exhaustively"
+      - id: kp2
+        name: "Existential statements"
+        key_prerequisites: [predicates-and-domains]
+        exemplars:
+          - problem: 'Is $\forall x \in \mathbb{Z},\ x^2 \ge 0$ true? Is $\exists x \in \mathbb{Z},\ x^2 = 2$ true?'
+            answer: 'The first is true; the second is false.'
+            solution_sketch: 'Every integer squared is $\ge 0$, so the universal holds. No integer squares to $2$ ($1^2 = 1$, $2^2 = 4$), so the existential fails.'
+          - problem: 'Is $\exists n \in \{1, 2, 3\},\ n^2 = 5$ true?'
+            answer: 'No; the squares are $1, 4, 9$.'
+            solution_sketch: 'An existential over a finite domain fails only when every element fails; none of $1, 4, 9$ equals $5$.'
+        constraints: "determine the truth value of a singly-quantified statement over a stated domain"
+      - id: kp3
+        name: "Translating single-quantifier English"
+        key_prerequisites: [predicates-and-domains]
+        exemplars:
+          - problem: 'Translate "every multiple of $4$ is even" using quantifiers.'
+            answer: '$\forall n \in \mathbb{Z},\ (4 \mid n \to 2 \mid n)$'
+            solution_sketch: 'A universal claim about multiples of $4$ becomes a $\forall$ guarded by the conditional "if $4 \mid n$ then ...".'
+          - problem: 'Translate "some prime is even" using quantifiers, and give its truth value.'
+            answer: '$\exists p\,(p \text{ prime} \land p \text{ even})$; true, witnessed by $p = 2$.'
+            solution_sketch: 'Existence claims pair $\exists$ with a conjunction; $2$ is an even prime, so the statement is true.'
+        constraints: "universal claims use $\\to$; existential claims use $\\land$"
+    diagnostic_exemplar:
+      problem: 'Translate "some perfect square is odd" using quantifiers and give its truth value; then decide whether "for every $n \in \{2, 4, 6\}$, $n^2 + 1$ is prime" is true.'
+      answer: '$\exists n \in \mathbb{Z},\ (n \text{ is a perfect square} \land n \text{ is odd})$ — true, witnessed by $n = 9 = 3^2$. The universal statement is also true: $2^2 + 1 = 5$, $4^2 + 1 = 17$ and $6^2 + 1 = 37$ are all prime, and those are the only three cases.'
+      solution_sketch: 'An existential statement needs a single witness; a universal statement over a finite domain needs every case checked.'
+    anki_seeds:
+      - front: 'Meaning of $\forall x\, P(x)$ and $\exists x\, P(x)$?'
+        back: '$\forall$: $P(x)$ holds for every $x$ in the domain. $\exists$: $P(x)$ holds for at least one $x$.'
+        type: basic
+      - front: 'Translating "every $A$ is $B$" vs. "some $A$ is $B$"?'
+        back: 'Every: $\forall x\,(A(x) \to B(x))$. Some: $\exists x\,(A(x) \land B(x))$.'
+        type: basic
+
+  - id: quantifiers
+    name: "Quantifiers"
+    core: true
+    difficulty: 0.55
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 150
+    prerequisites:
+      - id: universal-existential-statements
+        weight: 0.6
+        key: true
+      - id: predicates-and-domains
+        weight: 0.3
+      - id: conditional-statements
+        weight: 0.2
+    knowledge_points:
+      - id: kp1
+        name: "Nested quantifiers and order"
+        key_prerequisites: [universal-existential-statements]
+        exemplars:
+          - problem: 'Is $\forall x \in \mathbb{R}\ \exists y \in \mathbb{R},\ y > x$ true? Does swapping to $\exists y\ \forall x,\ y > x$ change its truth?'
+            answer: 'The first is true; the swapped statement is false.'
+            solution_sketch: 'For each $x$ take $y = x + 1$, so the first holds. But no single $y$ exceeds every $x$, so $\exists y\, \forall x$ is false. Quantifier order matters.'
+          - problem: 'Is $\forall x \in \mathbb{Z}\ \exists y \in \mathbb{Z},\ x + y = 0$ true?'
+            answer: 'Yes; take $y = -x$.'
+            solution_sketch: 'For each integer $x$, choosing $y = -x$ gives $x + y = 0$, so the statement holds for every $x$.'
+        constraints: "two nested quantifiers; show that order changes meaning"
+      - id: kp2
+        name: "Translating mathematical statements"
+        key_prerequisites: [conditional-statements]
+        exemplars:
+          - problem: 'Translate "every even integer greater than $2$ is a sum of two primes" using quantifiers.'
+            answer: '$\forall n\, ((n \text{ even} \land n > 2) \to \exists p, q \text{ prime},\ n = p + q)$.'
+            solution_sketch: 'A universal over $n$ guarded by a conditional, then an existential over primes $p, q$.'
+          - problem: 'Translate "every real number has an additive inverse" using quantifiers.'
+            answer: '$\forall x \in \mathbb{R}\ \exists y \in \mathbb{R},\ x + y = 0$.'
+            solution_sketch: 'A universal over $x$ followed by an existential asserting a $y$ that sums to $0$ with $x$.'
+        constraints: "combine quantifiers with a guarding conditional"
+      - id: kp3
+        name: "Evaluating nested statements over given domains"
+        key_prerequisites: [universal-existential-statements]
+        exemplars:
+          - problem: 'Over the domain $\{1, 2\}$ for both variables, is $\forall x\ \exists y,\ x + y = 3$ true? Is $\exists y\ \forall x,\ x + y = 3$ true?'
+            answer: 'The first is true ($y = 3 - x$ works: $1 + 2 = 3$, $2 + 1 = 3$); the second is false.'
+            solution_sketch: 'For each $x$ the other element works. But a single $y$ would need $1 + y = 3$ and $2 + y = 3$ simultaneously, forcing $y = 2$ and $y = 1$ — impossible.'
+          - problem: 'Is $\forall x \in \mathbb{R}\ \exists y \in \mathbb{R},\ y^3 = x$ true? What about $\forall x \in \mathbb{R}\ \exists y \in \mathbb{R},\ y^2 = x$?'
+            answer: 'The first is true (real cube roots always exist); the second is false ($x = -1$ has no real square root).'
+            solution_sketch: 'Cubing is onto $\mathbb{R}$, so $y = \sqrt[3]{x}$ always works. Squares are never negative, so $x = -1$ is a counterexample to the second.'
+        constraints: "nested quantifiers over small finite domains or $\\mathbb{R}$/$\\mathbb{Z}$; require a witness or counterexample"
+    diagnostic_exemplar:
+      problem: 'Is $\exists x \in \mathbb{N},\ \forall y \in \mathbb{N},\ x \le y$ true? Identify such an $x$ if so.'
+      answer: 'True; the least natural number works ($0$, or $1$ under the convention $\mathbb{N} = \{1, 2, \dots\}$).'
+      solution_sketch: '$\mathbb{N}$ has a least element $x$ with $x \le y$ for every $y$, so the statement holds.'
+    anki_seeds:
+      - front: 'Does the order of $\forall$ and $\exists$ matter?'
+        back: 'Yes. $\forall x\, \exists y$ can be true while $\exists y\, \forall x$ is false.'
+        type: basic
+      - front: 'In $\forall x\, \exists y\, P(x, y)$, what may $y$ depend on?'
+        back: 'On $x$: a different witness $y$ may be chosen for each $x$.'
+        type: basic
+
+  - id: negating-statements
+    name: "Negating Statements"
+    core: true
+    difficulty: 0.60
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 150
+    prerequisites:
+      - id: quantifiers
+        weight: 0.5
+        key: true
+      - id: logical-equivalence
+        weight: 0.4
+        key: true
+      - id: conditional-statements
+        weight: 0.0
+    knowledge_points:
+      - id: kp1
+        name: "Negating quantified statements"
+        key_prerequisites: [quantifiers]
+        exemplars:
+          - problem: 'Negate $\forall x \in \mathbb{R},\ x^2 \ge 0$.'
+            answer: '$\exists x \in \mathbb{R},\ x^2 < 0$.'
+            solution_sketch: '$\neg\forall x\, P(x) \equiv \exists x\, \neg P(x)$; the negation of $x^2 \ge 0$ is $x^2 < 0$.'
+          - problem: 'Negate $\exists n \in \mathbb{N},\ n^2 = 3$.'
+            answer: '$\forall n \in \mathbb{N},\ n^2 \ne 3$.'
+            solution_sketch: '$\neg\exists n\, P(n) \equiv \forall n\, \neg P(n)$; negate $n^2 = 3$ to $n^2 \ne 3$.'
+        constraints: "push the negation inside a single quantifier and negate the predicate"
+      - id: kp2
+        name: "Negating conditionals and compounds"
+        key_prerequisites: [logical-equivalence]
+        exemplars:
+          - problem: 'Negate "if $n$ is prime then $n$ is odd".'
+            answer: '$n$ is prime and $n$ is not odd (there is an even prime).'
+            solution_sketch: 'The negation of $P \to Q$ is $P \land \neg Q$.'
+          - problem: 'Negate "$x > 0$ and $x < 1$".'
+            answer: '$x \le 0$ or $x \ge 1$.'
+            solution_sketch: 'By De Morgan, $\neg(P \land Q) \equiv \neg P \lor \neg Q$: negate each part and switch $\land$ to $\lor$.'
+        constraints: "negate implications via $P \\land \\neg Q$; negate $\\land$ / $\\lor$ via De Morgan"
+      - id: kp3
+        name: "Negating nested quantifier statements"
+        key_prerequisites: [quantifiers]
+        exemplars:
+          - problem: 'Negate $\forall \epsilon > 0\ \exists \delta > 0,\ (|x - a| < \delta \to |f(x) - L| < \epsilon)$.'
+            answer: '$\exists \epsilon > 0\ \forall \delta > 0,\ (|x - a| < \delta \land |f(x) - L| \ge \epsilon)$.'
+            solution_sketch: 'Flip each quantifier ($\forall \leftrightarrow \exists$) and negate the inner conditional $P \to Q$ to $P \land \neg Q$.'
+          - problem: 'Negate "$\forall x \in \mathbb{R}\ \exists n \in \mathbb{N},\ n > x$" (the Archimedean property).'
+            answer: '$\exists x \in \mathbb{R}\ \forall n \in \mathbb{N},\ n \le x$.'
+            solution_sketch: 'Flip $\forall$ to $\exists$ and $\exists$ to $\forall$, and negate $n > x$ to $n \le x$.'
+        constraints: "epsilon-delta style; flip every quantifier and negate the matrix"
+    diagnostic_exemplar:
+      problem: 'Negate, pushing the negation all the way in: "$\forall \epsilon > 0\ \exists n \in \mathbb{N}$, if $n > 10$ then $1/n < \epsilon$".'
+      answer: '$\exists \epsilon > 0\ \forall n \in \mathbb{N},\ (n > 10 \ \land\ 1/n \ge \epsilon)$. Each quantifier flips as the negation passes it ($\forall$ to $\exists$, then $\exists$ to $\forall$), and the negation of the conditional "$n > 10 \to 1/n < \epsilon$" is the conjunction "$n > 10$ and $1/n \ge \epsilon$".'
+      solution_sketch: 'Flip the quantifiers in order, then negate the conditional as antecedent-and-not-consequent.'
+    anki_seeds:
+      - front: 'Negation of $\forall x\, P(x)$ and of $\exists x\, P(x)$?'
+        back: '$\neg\forall x\, P(x) \equiv \exists x\, \neg P(x)$ and $\neg\exists x\, P(x) \equiv \forall x\, \neg P(x)$.'
+        type: basic
+      - front: 'To negate a nested-quantifier statement with a conditional matrix...'
+        back: 'Switch every $\forall \leftrightarrow \exists$ and replace the conditional $P \to Q$ by $P \land \neg Q$.'
+        type: basic
+
+  - id: counterexamples-and-disproof
+    name: "Counterexamples and Disproof"
+    core: true
+    difficulty: 0.58
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 150
+    prerequisites:
+      - id: quantifiers
+        weight: 0.5
+        key: true
+      - id: negating-statements
+        weight: 0.4
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: "Refuting universal statements"
+        key_prerequisites: [quantifiers]
+        exemplars:
+          - problem: 'Disprove: "every prime is odd".'
+            answer: 'Counterexample: $2$ is prime and even.'
+            solution_sketch: 'A universal statement is refuted by a single counterexample; $2$ is prime but not odd.'
+          - problem: 'Disprove: "$\forall x \in \mathbb{R},\ x \le x^2$".'
+            answer: 'Counterexample: $x = \tfrac{1}{2}$, since $\tfrac{1}{2} > \tfrac{1}{4}$.'
+            solution_sketch: 'Any $x$ strictly between $0$ and $1$ has $x^2 < x$; exhibiting one such value refutes the claim.'
+        constraints: "one explicit counterexample with verification that it violates the claim"
+      - id: kp2
+        name: "Testing conjectures"
+        key_prerequisites: [quantifiers]
+        exemplars:
+          - problem: 'Disprove: "$n^2 + n + 41$ is prime for every natural number $n$".'
+            answer: 'Counterexample: $n = 40$ gives $40^2 + 40 + 41 = 1681 = 41^2$.'
+            solution_sketch: 'The polynomial is prime for $n = 0, \dots, 39$, but at $n = 40$ it equals $41^2$ — checking many cases is not a proof.'
+          - problem: 'Disprove: "$2^p - 1$ is prime for every prime $p$".'
+            answer: 'Counterexample: $p = 11$ gives $2^{11} - 1 = 2047 = 23 \cdot 89$.'
+            solution_sketch: 'The claim survives $p = 2, 3, 5, 7$ but fails at $p = 11$; a promising pattern still needs proof.'
+        constraints: "conjectures that hold for small cases; the counterexample must be verified by factoring or computation"
+      - id: kp3
+        name: "What disproves what"
+        key_prerequisites: [negating-statements]
+        exemplars:
+          - problem: 'Disprove: "if $n$ is divisible by $3$ then $n$ is divisible by $6$".'
+            answer: 'Counterexample: $n = 9$, divisible by $3$ but not by $6$.'
+            solution_sketch: 'To refute $P \to Q$, exhibit a case with $P$ true and $Q$ false: $3 \mid 9$ but $6 \nmid 9$.'
+          - problem: 'What would it take to disprove an existential statement like "$\exists n \in \mathbb{N},\ n^2 = 3$"?'
+            answer: 'A proof that every $n$ fails, since the negation is the universal $\forall n,\ n^2 \ne 3$.'
+            solution_sketch: 'Negating $\exists$ gives $\forall$; a single failed example is not enough — disproving an existential requires a (short) universal proof.'
+        constraints: "match the disproof obligation to the negated form of the statement"
+    diagnostic_exemplar:
+      problem: 'Disprove: "for every positive integer $n$, $n^2 + n + 1$ is prime." Then state what would be needed to disprove the existential claim "$\exists n \in \mathbb{N},\ n^2 = 2$".'
+      answer: 'Counterexample: $n = 4$ gives $16 + 4 + 1 = 21 = 3 \cdot 7$, which is composite, so the universal claim is false (it does hold for $n = 1, 2, 3$, which is exactly why checking a few cases proves nothing). To disprove the existential claim one must prove its negation, the universal "$\forall n \in \mathbb{N},\ n^2 \ne 2$": no single example helps, but $1^2 = 1 < 2 < 4 = 2^2$ and squaring is increasing on $\mathbb{N}$, so no natural number squares to $2$.'
+      solution_sketch: 'A universal claim falls to one counterexample, found by testing small cases; an existential claim falls only to a proof of the corresponding universal.'
+    anki_seeds:
+      - front: 'What disproves a universal statement $\forall x\, P(x)$?'
+        back: 'A single counterexample: one $x$ in the domain with $P(x)$ false.'
+        type: basic
+      - front: 'What disproves an existential statement $\exists x\, P(x)$?'
+        back: 'A proof of the universal negation $\forall x\, \neg P(x)$ — one failed example is not enough.'
+        type: basic
+      - front: 'What disproves a conditional claim $P \to Q$?'
+        back: 'An instance where $P$ is true and $Q$ is false.'
+        type: basic
+
+  - id: rules-of-inference
+    name: "Rules of Inference"
+    core: true
+    difficulty: 0.60
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 150
+    prerequisites:
+      - id: logical-equivalence
+        weight: 0.4
+        key: true
+      - id: conditional-statements
+        weight: 0.4
+        key: true
+      - id: truth-tables
+        weight: 0.0
+    knowledge_points:
+      - id: kp1
+        name: "Modus ponens and modus tollens"
+        key_prerequisites: [conditional-statements]
+        exemplars:
+          - problem: 'From $P \to Q$ and $P$, what can you conclude?'
+            answer: '$Q$ (modus ponens).'
+            solution_sketch: 'Modus ponens: $P \to Q,\ P \vdash Q$.'
+          - problem: 'From $P \to Q$ and $\neg Q$, what follows?'
+            answer: '$\neg P$ (modus tollens).'
+            solution_sketch: 'Modus tollens: $P \to Q,\ \neg Q \vdash \neg P$ (contrapositive reasoning).'
+        constraints: "apply modus ponens and modus tollens"
+      - id: kp2
+        name: "Valid vs. invalid argument forms"
+        key_prerequisites: [truth-tables]
+        exemplars:
+          - problem: 'From $P \to Q$ and $Q$, can you conclude $P$?'
+            answer: 'No; that is the fallacy of affirming the consequent.'
+            solution_sketch: '$P \to Q$ and $Q$ do not force $P$: the row $(F, T)$ has both premises true but $P$ false.'
+          - problem: 'From $P \to Q$ and $\neg P$, can you conclude $\neg Q$?'
+            answer: 'No; that is the fallacy of denying the antecedent.'
+            solution_sketch: 'A false hypothesis says nothing about $Q$: the row $(F, T)$ has $P \to Q$ and $\neg P$ true but $Q$ true, so $\neg Q$ need not follow.'
+        constraints: "identify affirming-the-consequent and denying-the-antecedent fallacies"
+      - id: kp3
+        name: "Chaining inferences"
+        key_prerequisites: [logical-equivalence]
+        exemplars:
+          - problem: 'Given $P \to Q$, $Q \to R$, and $P$, derive $R$.'
+            answer: '$R$.'
+            solution_sketch: 'Hypothetical syllogism gives $P \to R$; modus ponens with $P$ yields $R$.'
+          - problem: 'Given $P \lor Q$ and $\neg P$, derive $Q$.'
+            answer: '$Q$ (disjunctive syllogism).'
+            solution_sketch: 'Disjunctive syllogism: from $P \lor Q$ and $\neg P$, the remaining disjunct $Q$ must hold.'
+        constraints: "combine hypothetical/disjunctive syllogism with modus ponens/tollens"
+    diagnostic_exemplar:
+      problem: 'From $A \to B$, $B \to C$ and $\neg C$, what can you conclude about $A$? And from $A \to B$ together with $B$, may you conclude $A$?'
+      answer: 'From $A \to B$ and $B \to C$, hypothetical syllogism gives $A \to C$; combined with $\neg C$, modus tollens gives $\neg A$. From $A \to B$ and $B$, however, nothing about $A$ follows — that is the fallacy of affirming the consequent (take $A$: "$n = 2$", $B$: "$n$ is even", and $n = 4$).'
+      solution_sketch: 'Chain the two conditionals and apply modus tollens; the second pattern is the classic invalid form.'
+    anki_seeds:
+      - front: 'Modus ponens?'
+        back: 'From $P \to Q$ and $P$, conclude $Q$.'
+        type: basic
+      - front: 'Modus tollens?'
+        back: 'From $P \to Q$ and $\neg Q$, conclude $\neg P$.'
+        type: basic
+      - front: 'Fallacy of affirming the consequent?'
+        back: 'Invalidly concluding $P$ from $P \to Q$ and $Q$.'
+        type: basic
+
+  - id: arguments-with-quantifiers
+    name: "Arguments with Quantifiers"
+    core: false                # supplemental: validity-checking layer over rules-of-inference
+    difficulty: 0.62
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 150
+    prerequisites:
+      - id: rules-of-inference
+        weight: 0.6
+        key: true
+      - id: quantifiers
+        weight: 0.4
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: "Universal instantiation and universal modus ponens"
+        key_prerequisites: [rules-of-inference]
+        exemplars:
+          - problem: 'Premises: "every multiple of $4$ is even" and "$12$ is a multiple of $4$". What follows?'
+            answer: '$12$ is even (universal instantiation, then modus ponens).'
+            solution_sketch: 'Instantiate the universal at $n = 12$ to get "$12$ multiple of $4$ $\to$ $12$ even", then apply modus ponens.'
+          - problem: 'Premises: "all humans are mortal" and "Socrates is human". Conclusion?'
+            answer: 'Socrates is mortal.'
+            solution_sketch: 'The classic universal-modus-ponens syllogism: instantiate the universal at Socrates, then detach.'
+        constraints: "instantiate a universal premise at a named element, then apply a propositional rule"
+      - id: kp2
+        name: "Generalization rules"
+        key_prerequisites: [quantifiers]
+        exemplars:
+          - problem: 'From the fact "$10$ is even and $10$ is composite", what existential statement follows?'
+            answer: '$\exists n\,(n \text{ even} \land n \text{ composite})$.'
+            solution_sketch: 'Existential generalization: a concrete witness justifies the $\exists$ claim.'
+          - problem: 'To prove $\forall x \in \mathbb{R},\ (x + 1)^2 = x^2 + 2x + 1$, why is it enough to expand $(x + 1)^2$ for an arbitrary real $x$?'
+            answer: 'Universal generalization: a proof for an arbitrary, unspecified $x$ establishes the claim for all $x$.'
+            solution_sketch: 'Since the argument used no special property of $x$, the conclusion holds for every real number.'
+        constraints: "existential generalization from a witness; universal generalization from an arbitrary element"
+      - id: kp3
+        name: "Valid and invalid quantified arguments"
+        key_prerequisites: [rules-of-inference]
+        exemplars:
+          - problem: 'Premises: "every square is nonnegative" and "$5$ is nonnegative". Does it follow that $5$ is a perfect square?'
+            answer: 'No; this is affirming the consequent applied to an instantiated universal.'
+            solution_sketch: 'Instantiating gives "$5$ square $\to$ $5 \ge 0$"; knowing the conclusion $5 \ge 0$ does not give the hypothesis.'
+          - problem: 'Premises: "every integer divisible by $6$ is divisible by $3$" and "$14$ is not divisible by $3$". What follows about $14$?'
+            answer: '$14$ is not divisible by $6$ (universal modus tollens).'
+            solution_sketch: 'Instantiate at $14$, then modus tollens: the conclusion fails, so the hypothesis fails.'
+        constraints: "mix valid universal modus ponens/tollens with quantified versions of the classic fallacies"
+    diagnostic_exemplar:
+      problem: 'Premises: "every integer divisible by $6$ is even" and "$15$ is not even". What follows about $15$? And do the premises "every integer divisible by $6$ is even" and "$10$ is even" let you conclude that $10$ is divisible by $6$?'
+      answer: 'Instantiating the universal at $15$ gives "if $6 \mid 15$ then $15$ is even"; with "$15$ is not even", modus tollens yields $6 \nmid 15$ (universal modus tollens). The second inference is invalid: it affirms the consequent of the instantiated conditional — and indeed $10$ is even while $6 \nmid 10$.'
+      solution_sketch: 'Instantiate the universal at the named integer, then apply modus tollens; the second pattern affirms the consequent, and a counterexample refutes it.'
+    anki_seeds:
+      - front: 'Universal instantiation?'
+        back: 'From $\forall x\, P(x)$, conclude $P(c)$ for any particular $c$ in the domain.'
+        type: basic
+      - front: 'Existential generalization?'
+        back: 'From $P(c)$ for some particular $c$, conclude $\exists x\, P(x)$.'
+        type: basic

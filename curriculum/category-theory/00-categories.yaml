@@ -1,0 +1,991 @@
+unit: categories
+course: category-theory
+module: "Categories"
+topics:
+  - id: composition-associativity-identity
+    name: Composition, Associativity, and Identities
+    core: true
+    difficulty: 0.52
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 120
+    prerequisites:
+      - id: function-composition-inverse
+        weight: 0.5
+        key: true
+      - id: computing-compositions
+        weight: 0.3
+      - id: function-composition
+        weight: 0.3
+      - id: binary-operations
+        weight: 0.2
+    knowledge_points:
+      - id: kp1
+        name: When composites are defined; computing them
+        key_prerequisites: [computing-compositions]
+        constraints: "One exemplar is abstract — state the composability condition $B=C$ and the resulting domain/codomain; concrete instances use affine or quadratic integer functions whose composites stay hand-computable."
+        exemplars:
+          - problem: "For $f\\colon A\\to B$ and $g\\colon C\\to D$, exactly when is the composite $g\\circ f$ defined, and what are its domain and codomain?"
+            answer: "Defined iff $B=C$; then $g\\circ f\\colon A\\to D$."
+            solution_sketch: "Composition feeds outputs of $f$ into $g$, so the codomain of $f$ must equal the domain of $g$. When $B=C$, the composite $g\\circ f$ sends $A$ into $D$: first apply $f$, then $g$."
+          - problem: "Let $f(x)=2x+1$ and $g(x)=x^2$ on $\\mathbb Z$. Compute $(g\\circ f)(x)$ and $(f\\circ g)(x)$, and decide whether they are equal."
+            answer: "$(g\\circ f)(x)=4x^2+4x+1$ and $(f\\circ g)(x)=2x^2+1$; not equal."
+            solution_sketch: "$(g\\circ f)(x)=g(2x+1)=(2x+1)^2=4x^2+4x+1$, while $(f\\circ g)(x)=f(x^2)=2x^2+1$. At $x=1$ they give $9$ and $3$, so composition is not commutative."
+      - id: kp2
+        name: Associativity of composition
+        key_prerequisites: [function-composition]
+        constraints: "Either prove associativity abstractly by evaluating both bracketings at an arbitrary point, or check it on linear integer functions with small coefficients; always compare both bracketings."
+        exemplars:
+          - problem: "Prove that composition of functions is associative: $(h\\circ g)\\circ f=h\\circ(g\\circ f)$."
+            answer: "Both sides send $x\\mapsto h(g(f(x)))$."
+            solution_sketch: "Evaluate at an arbitrary $x$: $((h\\circ g)\\circ f)(x)=(h\\circ g)(f(x))=h(g(f(x)))$, and $(h\\circ(g\\circ f))(x)=h((g\\circ f)(x))=h(g(f(x)))$. The two functions agree pointwise, hence are equal."
+          - problem: "For $f(x)=x+1$, $g(x)=3x$, $h(x)=x-2$ on $\\mathbb Z$, compute $(h\\circ g)\\circ f$ and $h\\circ(g\\circ f)$ explicitly."
+            answer: "Both equal $x\\mapsto 3x+1$."
+            solution_sketch: "$(g\\circ f)(x)=3(x+1)=3x+3$, so $h\\circ(g\\circ f)$ gives $3x+3-2=3x+1$. Also $(h\\circ g)(x)=3x-2$, so $(h\\circ g)\\circ f$ gives $3(x+1)-2=3x+1$. The bracketings agree, as associativity predicts."
+      - id: kp3
+        name: Identities as two-sided units
+        key_prerequisites: [function-composition-inverse]
+        constraints: "State which unit law is applied at each step."
+        exemplars:
+          - problem: "Prove that the identity function is a two-sided unit: for $f\\colon A\\to B$, $1_B\\circ f=f=f\\circ 1_A$."
+            answer: "All three functions send $x\\mapsto f(x)$."
+            solution_sketch: "$(1_B\\circ f)(x)=1_B(f(x))=f(x)$ and $(f\\circ 1_A)(x)=f(1_A(x))=f(x)$ for every $x\\in A$, so both composites equal $f$ pointwise."
+          - problem: "Suppose $e,e'\\colon A\\to A$ are both two-sided units for composition (i.e. $e\\circ u=u$ and $v\\circ e=v$ for all composable $u,v$, and likewise for $e'$). Prove $e=e'$."
+            answer: "$e=e\\circ e'=e'$."
+            solution_sketch: "Use $e'$ as a right unit with $v=e$: $e\\circ e'=e$. Use $e$ as a left unit with $u=e'$: $e\\circ e'=e'$. Hence $e=e\\circ e'=e'$: a two-sided unit is unique."
+    diagnostic_exemplar:
+      problem: "For $f(x)=x+2$, $g(x)=3x$, and $h(x)=x-1$ on $\\mathbb Z$, compute $(h\\circ g)\\circ f$ and $h\\circ(g\\circ f)$ explicitly, and state which axiom guarantees the results agree."
+      answer: "$(g\\circ f)(x)=3x+6$, so $h\\circ(g\\circ f)$ sends $x\\mapsto 3x+5$; $(h\\circ g)(x)=3x-1$, so $(h\\circ g)\\circ f$ sends $x\\mapsto 3(x+2)-1=3x+5$. Both bracketings give $x\\mapsto 3x+5$, as the associativity axiom guarantees."
+      solution_sketch: "Build the two inner composites $g\\circ f$ and $h\\circ g$ first, then bracket each way; both routes land on $x\\mapsto 3x+5$. Associativity is the axiom that makes the agreement automatic rather than a coincidence of these three particular formulas."
+    anki_seeds:
+      - front: "State the associativity axiom for composition in a category."
+        back: "$(h\\circ g)\\circ f = h\\circ(g\\circ f)$."
+        type: basic
+      - front: "State the unit law for composition with identities (for $f\\colon A\\to B$)."
+        back: "$1_B\\circ f = f = f\\circ 1_A$."
+        type: basic
+      - front: "When is the composite $g\\circ f$ of $f\\colon A\\to B$, $g\\colon C\\to D$ defined?"
+        back: "exactly when $B=C$; then $g\\circ f\\colon A\\to D$."
+        type: basic
+
+  - id: category-definition
+    name: The Definition of a Category
+    core: true
+    difficulty: 0.55
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 180
+    prerequisites:
+      - id: composition-associativity-identity
+        weight: 0.5
+        key: true
+      - id: function-composition-inverse
+        weight: 0.3
+        key: true
+      - id: monoids
+        weight: 0.3
+      - id: relations-equivalence
+        weight: 0.2
+      - id: function-composition
+        weight: 0.2
+      - id: partial-orders
+        weight: 0.2
+      - id: binary-operations
+        weight: 0.0
+      - id: divisibility-rules
+        weight: 0.0
+      - id: set-notation
+        weight: 0.0
+    knowledge_points:
+      - id: kp1
+        name: The data and axioms, read off in Set
+        key_prerequisites: [composition-associativity-identity]
+        constraints: "Stay in $\\mathbf{Set}$: state the four pieces of data and the two axioms, then instantiate each piece concretely; no verification beyond citing associativity and unit laws of function composition."
+        exemplars:
+          - problem: "State the data required to specify a category, and identify each piece for $\\mathbf{Set}$."
+            answer: "Objects, hom-sets with identities, and a composition satisfying unit and associativity laws; in $\\mathbf{Set}$ objects are sets and morphisms are functions."
+            solution_sketch: "A category $\\mathcal{C}$ has: a collection of objects; for each pair $A,B$ a set $\\mathrm{Hom}(A,B)$ of morphisms; an identity $1_A\\in\\mathrm{Hom}(A,A)$; and composition $\\circ\\colon \\mathrm{Hom}(B,C)\\times\\mathrm{Hom}(A,B)\\to\\mathrm{Hom}(A,C)$, satisfying associativity $h\\circ(g\\circ f)=(h\\circ g)\\circ f$ and unit $1_B\\circ f=f=f\\circ 1_A$. In $\\mathbf{Set}$: objects are sets, $\\mathrm{Hom}(A,B)$ is the set of functions $A\\to B$, $1_A$ is the identity function, and $\\circ$ is function composition; all axioms hold."
+          - problem: "In $\\mathbf{Set}$, describe the identity morphism on a set $A$ and the composite of $f\\colon A\\to B$ and $g\\colon B\\to C$."
+            answer: "$1_A$ is the map $x\\mapsto x$; the composite is $g\\circ f\\colon A\\to C,\\ x\\mapsto g(f(x))$."
+            solution_sketch: "Function composition is associative and the identity function is a two-sided unit, so these choices satisfy the category axioms."
+      - id: kp2
+        name: A monoid as a one-object category
+        key_prerequisites: [monoids]
+        constraints: "An abstract monoid $M$ (or a named concrete one); construct $BM$ and check each category axiom by matching it against the corresponding monoid axiom."
+        exemplars:
+          - problem: "Let $M$ be a monoid. Show that $M$ determines a category $BM$ with a single object."
+            answer: "One object $*$, $\\mathrm{Hom}(*,*)=M$, composition $=$ the monoid product, identity $=$ the unit $e$."
+            solution_sketch: "Take one object $*$ and set $\\mathrm{Hom}(*,*)=M$. Define composition of $m,n$ to be the monoid product $mn$; it is associative because $M$ is associative. Let $1_*=e$, the unit; then $e\\,m=m=m\\,e$ is exactly the unit axiom. All category axioms hold, so $BM$ is a category with one object."
+          - problem: "Verify the associativity axiom for composition in the one-object category $BM$ built from a monoid $M$."
+            answer: "It is precisely the associativity of the monoid operation."
+            solution_sketch: "Morphisms are elements of $M$ and composition is the product; $(mn)p=m(np)$ in $M$ is the associativity axiom, which is what category associativity requires."
+      - id: kp3
+        name: Recognizing non-examples (composition must be total)
+        key_prerequisites: [relations-equivalence]
+        constraints: "Non-example must fail exactly one axiom; name which axiom fails."
+        exemplars:
+          - problem: "Objects are points of the plane, with a single arrow $p\\to q$ whenever $d(p,q)\\le 1$. Is this a category? Justify."
+            answer: "No: composites need not exist, so composition is not total."
+            solution_sketch: "Identities exist since $d(p,p)=0\\le 1$. But composition requires: if $p\\to q$ and $q\\to r$ then $p\\to r$. Take $p=(0,0),q=(1,0),r=(2,0)$: $d(p,q)=d(q,r)=1$ yet $d(p,r)=2>1$, so the composite arrow is missing. The relation is not transitive, composition is undefined, and the axioms fail."
+          - problem: "Do sets with morphisms taken to be only the surjective functions (plus identities) form a category?"
+            answer: "Yes."
+            solution_sketch: "Identity functions are surjective, and a composite of two surjections is a surjection, so composition is total and lands among the chosen morphisms; associativity and unit laws are inherited from $\\mathbf{Set}$. This is a (non-full) subcategory of $\\mathbf{Set}$."
+      - id: kp4
+        name: A preorder as a thin category
+        key_prerequisites: [partial-orders]
+        constraints: "Preorders/posets only; abstract proofs must invoke at-most-one-arrow hom-sets for automatic commutativity; concrete instances use divisibility or subset order on sets of at most 6 elements."
+        exemplars:
+          - problem: "Regard a preorder $(P,\\le)$ as the category with an arrow $x\\to y$ exactly when $x\\le y$. Show that its associativity and unit axioms hold automatically, and that every diagram in such a thin category commutes."
+            answer: "Each hom-set has at most one element, so any two parallel composites are equal."
+            solution_sketch: "Composites exist because $\\le$ is transitive ($x\\le y\\le z\\Rightarrow x\\le z$) and identities because it is reflexive ($x\\le x$). Now note that any two morphisms $x\\to y$ of this category lie in $\\mathrm{Hom}(x,y)$, which has at most one element, so they are equal. Applying that to the parallel pair $(h\\circ g)\\circ f$ and $h\\circ(g\\circ f)$ gives associativity, and to $1_y\\circ f$, $f$, $f\\circ 1_x$ gives the unit laws — no computation is needed. The same argument shows that in any thin category every diagram commutes, since parallel paths are automatically equal."
+          - problem: "In the divisibility poset $(\\mathbb{N},\\mid)$ viewed as a category, is there a morphism $3\\to 12$? A morphism $12\\to 3$?"
+            answer: "$3\\to 12$ yes ($3\\mid 12$); $12\\to 3$ no ($12\\nmid 3$)."
+            solution_sketch: "Arrows $x\\to y$ exist exactly when $x\\mid y$. Here $3\\mid 12$ but $12\\nmid 3$."
+    diagnostic_exemplar:
+      problem: "Take as objects all integers, with a single arrow $m\\to n$ whenever $|n-m|\\le 1$ (and no other arrows). Is this a category? Check the axioms and name the one that fails, if any."
+      answer: "Not a category. Identities exist since $|m-m|=0\\le 1$, but composition is not total: there are arrows $0\\to 1$ and $1\\to 2$, yet no arrow $0\\to 2$ since $|2-0|=2>1$, so the composite of two arrows need not exist."
+      solution_sketch: "Identities are fine, since $|m-m|=0\\le 1$, so hunt for an axiom that can fail: look for a composable pair whose composite arrow is missing. The pair $0\\to 1$ and $1\\to 2$ with no arrow $0\\to 2$ breaks totality of composition."
+    anki_seeds:
+      - front: "In a category, each ordered pair of objects $(A,B)$ has a set of what?"
+        back: "morphisms (arrows) $A\\to B$."
+        type: basic
+      - front: "In a category, what distinguished morphism does every object $A$ carry?"
+        back: "an identity $1_A\\colon A\\to A$."
+        type: basic
+      - front: "What operation combines $f\\colon A\\to B$ and $g\\colon B\\to C$ into a morphism $A\\to C$?"
+        back: "composition, giving $g\\circ f$."
+        type: basic
+      - front: "State the associativity axiom for composition in a category."
+        back: "$(h\\circ g)\\circ f = h\\circ(g\\circ f)$."
+        type: basic
+      - front: "State the unit law for composition with identities (for $f\\colon A\\to B$)."
+        back: "$1_B\\circ f = f = f\\circ 1_A$."
+        type: basic
+      - front: "A monoid is exactly a category with {{c1::one object}}."
+        back: "one object"
+        type: cloze
+
+  - id: poset-monoid-categories
+    name: Categories from Posets and Monoids
+    core: true
+    difficulty: 0.58
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 180
+    prerequisites:
+      - id: category-definition
+        weight: 0.6
+        key: true
+      - id: partial-orders
+        weight: 0.4
+        key: true
+      - id: monoids
+        weight: 0.3
+      - id: groups-intro
+        weight: 0.2
+      - id: hasse-diagrams
+        weight: 0.0
+    knowledge_points:
+      - id: kp1
+        name: Reading off and counting in concrete examples
+        key_prerequisites: [partial-orders]
+        constraints: "Concrete instances only: either a divisibility or subset poset on at most 6 elements whose arrows are counted (identities included), or an explicitly given monoid whose one-object category is described."
+        exemplars:
+          - problem: "View the divisor poset $(\\{1,2,3,6\\},\\mid)$ as a category. How many morphisms does it have in total?"
+            answer: "$9$."
+            solution_sketch: "There is exactly one arrow $x\\to y$ for each pair with $x\\mid y$. From $1$: $1\\mid 1,2,3,6$ gives $4$ arrows. From $2$: $2\\mid 2$ and $2\\mid 6$ gives $2$. From $3$: $3\\mid 3$ and $3\\mid 6$ gives $2$. From $6$: only $6\\mid 6$, giving $1$. Total $4+2+2+1=9$ morphisms (the four identities are among them)."
+          - problem: "Describe the one-object category $B\\mathbb{N}$ built from the monoid $(\\mathbb{N},+,0)$, and determine its isomorphisms."
+            answer: "One object, $\\mathrm{Hom}(*,*)=\\mathbb{N}$ with composition $m\\circ n=m+n$ and $1_*=0$; the only isomorphism is $0$."
+            solution_sketch: "Objects: a single $*$. Morphisms: the natural numbers, composed by addition, with identity the number $0$. A morphism $m$ is an isomorphism iff it is a unit of $(\\mathbb{N},+)$, i.e. iff there is $n$ with $m+n=0$; since naturals are non-negative this forces $m=n=0$. So $0=1_*$ is the only isomorphism, and $B\\mathbb{N}$ is very far from a groupoid."
+      - id: kp2
+        name: Isomorphisms in these categories
+        key_prerequisites: [category-definition]
+        constraints: "Always name which category the morphism lives in before deciding invertibility."
+        exemplars:
+          - problem: "In the one-object category $BM$ of a monoid $M$, characterize the isomorphisms, and say when $BM$ is a groupoid."
+            answer: "The isomorphisms are exactly the units (invertible elements) of $M$; $BM$ is a groupoid iff $M$ is a group."
+            solution_sketch: "A morphism of $BM$ is an element $m\\in M$, and an inverse for it in the categorical sense is $n$ with $nm=e=mn$ — precisely a two-sided inverse in $M$. So the isomorphisms of $BM$ are the units of $M$. Every morphism is invertible exactly when every element of $M$ is a unit, i.e. when $M$ is a group; then $BM$ is a one-object groupoid."
+          - problem: "Let $(P,\\le)$ be a preorder viewed as a thin category. Characterize the isomorphisms, and specialize to a poset."
+            answer: "$x\\cong y$ iff $x\\le y$ and $y\\le x$; if $\\le$ is antisymmetric (a poset) this forces $x=y$."
+            solution_sketch: "An isomorphism $x\\to y$ needs arrows both ways, i.e. $x\\le y$ and $y\\le x$; conversely if both hold, the two arrows compose to arrows $x\\to x$ and $y\\to y$, which must be $1_x$ and $1_y$ since hom-sets have at most one element. So $x\\cong y\\iff x\\le y\\le x$. In a poset antisymmetry turns this into $x=y$: a poset category has no isomorphisms other than identities."
+      - id: kp3
+        name: The two dictionaries, read in both directions
+        key_prerequisites: [category-definition]
+        constraints: "Both exemplars are abstract equivalence proofs: give both directions of the translation and match every category axiom against the corresponding monoid or order axiom; no numerical instances."
+        exemplars:
+          - problem: "Prove that a category with exactly one object is the same thing as a monoid, in both directions."
+            answer: "$\\mathcal{C}\\mapsto\\mathrm{Hom}(*,*)$ and $M\\mapsto BM$ are mutually inverse translations."
+            solution_sketch: "Let $\\mathcal{C}$ have one object $*$ and put $M=\\mathrm{Hom}(*,*)$. Every pair of morphisms is composable, so composition is a binary operation on $M$; it is associative by the category axiom and $1_*$ is a two-sided unit by the unit axiom, so $(M,\\circ,1_*)$ is a monoid. Conversely, given a monoid $M$, let $BM$ have one object $*$, $\\mathrm{Hom}(*,*)=M$, composition the monoid product and $1_*=e$; the category axioms are exactly the monoid axioms. The two constructions undo each other, so one-object categories and monoids are the same data."
+          - problem: "Prove that a category in which every hom-set has at most one element (a thin category) is the same thing as a preorder on its objects."
+            answer: "Define $x\\le y$ iff $\\mathrm{Hom}(x,y)\\neq\\varnothing$; reflexivity is identities and transitivity is composition."
+            solution_sketch: "Given a thin category, set $x\\le y$ iff there is a (necessarily unique) arrow $x\\to y$. Reflexivity holds because $1_x$ exists; transitivity holds because $x\\to y$ and $y\\to z$ compose to $x\\to z$. So $\\le$ is a preorder. Conversely, from a preorder $(P,\\le)$ build the category with $\\mathrm{Hom}(x,y)=\\{*\\}$ when $x\\le y$ and $\\varnothing$ otherwise; composition exists by transitivity, identities by reflexivity, and associativity and the unit laws are automatic because each hom-set has at most one element. The two constructions are mutually inverse."
+    diagnostic_exemplar:
+      problem: "Let $M$ be a monoid, viewed as the one-object category $BM$. Prove that the isomorphisms of $BM$ are exactly the units of $M$, and deduce that $BM$ is a groupoid iff $M$ is a group."
+      answer: "A morphism of $BM$ is an element $m\\in M$ with composition the monoid product, so a two-sided categorical inverse for $m$ is exactly $n$ with $nm=e=mn$ — a two-sided inverse in $M$. Hence the isomorphisms are the units of $M$; every morphism is invertible iff every element of $M$ is a unit, i.e. iff $M$ is a group, which is exactly when $BM$ is a groupoid."
+      solution_sketch: "Unwind the dictionary rather than proving anything new: a morphism of $BM$ is an element of $M$ and composition is the monoid product, so a two-sided categorical inverse and a two-sided inverse in $M$ are literally the same condition. The groupoid claim then reads off as: every element is a unit."
+    anki_seeds:
+      - front: "A category with exactly one object is the same thing as..."
+        back: "a monoid (its morphisms under composition, with $1_*$ the unit)."
+        type: basic
+      - front: "A category with at most one morphism between any two objects (thin) is the same thing as..."
+        back: "a preorder on its objects ($x\\le y$ iff there is an arrow $x\\to y$)."
+        type: basic
+      - front: "In $BM$ (a monoid as a one-object category), which morphisms are isomorphisms?"
+        back: "exactly the units (invertible elements) of $M$."
+        type: basic
+
+  - id: discrete-indiscrete-categories
+    name: Discrete, Indiscrete, and Shape Categories
+    core: true
+    difficulty: 0.6
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 180
+    prerequisites:
+      - id: category-definition
+        weight: 0.5
+        key: true
+      - id: poset-monoid-categories
+        weight: 0.4
+        key: true
+      - id: commutative-diagrams
+        weight: 0.2
+      - id: indexed-families
+        weight: 0.2
+      - id: set-notation
+        weight: 0.0
+    knowledge_points:
+      - id: kp1
+        name: The discrete category on a set
+        key_prerequisites: [category-definition]
+        constraints: "Work with an arbitrary set $S$ and give morphism counts as a formula in $|S|$ (identities included); any concrete instance uses a set of size at most 4."
+        exemplars:
+          - problem: "Define the discrete category $\\mathrm{disc}(S)$ on a set $S$, verify it is a category, and count its morphisms."
+            answer: "Objects $S$, morphisms only the identities; it has exactly $|S|$ morphisms."
+            solution_sketch: "Take the objects to be the elements of $S$, with $\\mathrm{Hom}(x,x)=\\{1_x\\}$ and $\\mathrm{Hom}(x,y)=\\varnothing$ for $x\\neq y$. The only composable pairs are $1_x\\circ 1_x=1_x$, so composition is total, associative and unital: $\\mathrm{disc}(S)$ is a category. Its morphisms are exactly the $|S|$ identities. As a preorder it is the equality relation, and every morphism is invertible, so it is also a groupoid."
+          - problem: "Show that a functor $\\mathrm{disc}(S)\\to\\mathcal{C}$ is the same thing as an $S$-indexed family of objects of $\\mathcal{C}$."
+            answer: "The object part is an arbitrary family $(C_x)_{x\\in S}$; the morphism part is forced to send $1_x\\mapsto 1_{C_x}$."
+            solution_sketch: "A functor $D$ assigns an object $Dx$ to each $x\\in S$, and to each morphism a morphism. The only morphisms of $\\mathrm{disc}(S)$ are the identities, and functoriality forces $D(1_x)=1_{Dx}$, so the morphism part carries no information and the functor laws impose no condition. Hence functors $\\mathrm{disc}(S)\\to\\mathcal{C}$ correspond bijectively to families $(Dx)_{x\\in S}$ of objects — this is why a diagram of discrete shape is just a family of objects."
+      - id: kp2
+        name: The indiscrete category
+        key_prerequisites: [poset-monoid-categories]
+        constraints: "Work with an arbitrary set $S$, giving counts as a formula in $|S|$; justify uniqueness of each arrow before composing, and any concrete instance uses a set of size at most 4."
+        exemplars:
+          - problem: "Define the indiscrete category $\\mathrm{indisc}(S)$ (exactly one morphism between each ordered pair of objects), verify it is a category, and count its morphisms."
+            answer: "Objects $S$, one arrow for each ordered pair; it has $|S|^2$ morphisms."
+            solution_sketch: "Set $\\mathrm{Hom}(x,y)=\\{*\\}$ for all $x,y\\in S$. Composition is forced (there is only one candidate arrow $x\\to z$), and associativity and the unit laws hold automatically because each hom-set has one element; the unique arrow $x\\to x$ must be $1_x$. So $\\mathrm{indisc}(S)$ is a category with one morphism per ordered pair, i.e. $|S|^2$ morphisms in total."
+          - problem: "Prove that $\\mathrm{indisc}(S)$ is a groupoid, and identify the preorder it corresponds to."
+            answer: "Every arrow is invertible; the preorder is the total relation $x\\le y$ for all $x,y$."
+            solution_sketch: "Let $u\\colon x\\to y$ and $v\\colon y\\to x$ be the unique arrows. Then $v\\circ u\\colon x\\to x$ and $u\\circ v\\colon y\\to y$ are the unique arrows there, namely $1_x$ and $1_y$. So $u$ is an isomorphism and $\\mathrm{indisc}(S)$ is a groupoid. It is thin, and its associated preorder has $x\\le y$ for every pair — the total preorder, in which all objects are isomorphic."
+      - id: kp3
+        name: Shape categories for diagrams
+        key_prerequisites: [commutative-diagrams]
+        constraints: "Shape categories with at most three objects; state the functor's data explicitly."
+        exemplars:
+          - problem: "Describe what a functor $\\mathcal{J}\\to\\mathcal{C}$ is for each shape $\\mathcal{J}=\\mathbf{0}$ (empty), $\\mathbf{1}$ (one object), and $\\mathbf{2}=(0\\to 1)$."
+            answer: "No data at all; a single object; a single morphism of $\\mathcal{C}$."
+            solution_sketch: "For $\\mathbf{0}$ there are no objects or morphisms to send anywhere, so there is exactly one functor $\\mathbf{0}\\to\\mathcal{C}$ and it carries no data — the empty diagram. For $\\mathbf{1}$ (one object and its identity) a functor is determined by the image object, since the identity must go to an identity. For $\\mathbf{2}$, a functor picks objects $F0,F1$ and a morphism $F0\\to F1$, with identities forced; so a functor $\\mathbf{2}\\to\\mathcal{C}$ is exactly an arrow of $\\mathcal{C}$."
+          - problem: "Describe a functor out of the parallel-pair shape ($\\bullet\\rightrightarrows\\bullet$) and out of the cospan shape ($\\bullet\\to\\bullet\\leftarrow\\bullet$)."
+            answer: "A parallel pair $f,g\\colon A\\to B$ in $\\mathcal{C}$; a pair of morphisms $A\\to C\\leftarrow B$ with common codomain."
+            solution_sketch: "The parallel-pair shape has objects $0,1$ and two distinct non-identity arrows $0\\rightrightarrows 1$ (there are no other composites to specify), so a functor to $\\mathcal{C}$ chooses objects $A=F0$, $B=F1$ and two morphisms $f,g\\colon A\\to B$. The cospan shape has three objects $0,2,1$ with arrows $0\\to 2\\leftarrow 1$, so a functor chooses $A\\to C\\leftarrow B$. These are exactly the shapes whose universal cones are the equalizer and the pullback."
+    diagnostic_exemplar:
+      problem: "In the indiscrete category $\\mathrm{indisc}(S)$ (exactly one arrow between each ordered pair of objects of $S$), prove that every morphism is an isomorphism."
+      answer: "Let $u\\colon x\\to y$ be the unique arrow and $v\\colon y\\to x$ the unique arrow back. Then $v\\circ u$ is an arrow $x\\to x$; since $\\mathrm{Hom}(x,x)$ has exactly one element, which must be $1_x$, we get $v\\circ u=1_x$. Likewise $u\\circ v=1_y$. So $u$ has a two-sided inverse and is an isomorphism."
+      solution_sketch: "The whole argument is a counting step: $\\mathrm{Hom}(x,x)$ has exactly one element and $1_x$ lies in it, so any arrow $x\\to x$ — in particular each round trip $v\\circ u$ and $u\\circ v$ — must be an identity."
+    anki_seeds:
+      - front: "The discrete category on a set $S$ has which morphisms?"
+        back: "only the identities $1_x$ — one for each $x\\in S$."
+        type: basic
+      - front: "The indiscrete category on $S$ has how many morphisms $x\\to y$?"
+        back: "exactly one for every ordered pair (so $|S|^2$ in total); it is a groupoid."
+        type: basic
+      - front: "A functor $\\mathbf{2}=(0\\to 1)\\to\\mathcal{C}$ is the same thing as {{c1::a morphism of $\\mathcal{C}$}}."
+        back: "a morphism of $\\mathcal{C}$"
+        type: cloze
+
+  - id: examples-of-categories
+    name: A Menagerie of Categories
+    core: true
+    difficulty: 0.6
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 210
+    prerequisites:
+      - id: category-definition
+        weight: 0.6
+        key: true
+      - id: poset-monoid-categories
+        weight: 0.3
+      - id: monoids
+        weight: 0.2
+      - id: groups-intro
+        weight: 0.2
+      - id: partial-orders
+        weight: 0.2
+      - id: homomorphisms-intro
+        weight: 0.0
+    knowledge_points:
+      - id: kp1
+        name: Concrete categories of structured sets
+        key_prerequisites: [category-definition]
+        constraints: "Categories of structured sets only ($\\mathbf{Mon}$, $\\mathbf{Grp}$, $\\mathbf{Poset}$, $\\mathbf{Top}$); verification means checking identity maps qualify and composites preserve the structure; no size/foundational issues raised."
+        exemplars:
+          - problem: "Describe the objects and morphisms of $\\mathbf{Mon}$ (monoids) and check identities and composites are legal."
+            answer: "Objects are monoids, morphisms are monoid homomorphisms; identity maps and composites of homomorphisms are homomorphisms."
+            solution_sketch: "Objects are monoids $(M,\\cdot,e)$; a morphism $M\\to N$ is a function $f$ with $f(xy)=f(x)f(y)$ and $f(e_M)=e_N$. The identity function is a homomorphism, and if $f,g$ are homomorphisms so is $g\\circ f$: $g(f(xy))=g(f(x)f(y))=g(f(x))g(f(y))$ and $g(f(e))=e$. Associativity and units are inherited from $\\mathbf{Set}$, so $\\mathbf{Mon}$ is a category."
+          - problem: "State what the objects and morphisms are in $\\mathbf{Grp}$ and in $\\mathbf{Poset}$."
+            answer: "$\\mathbf{Grp}$: groups and group homomorphisms; $\\mathbf{Poset}$: posets and monotone (order-preserving) maps."
+            solution_sketch: "In each case identity maps qualify and composites of structure-preserving maps preserve the structure, so the category axioms hold as in $\\mathbf{Set}$."
+      - id: kp2
+        name: Small categories from data (monoids, groups, posets)
+        key_prerequisites: [groups-intro]
+        constraints: "Small categories presented by explicit data: a group or monoid as a one-object category, or a poset with at most 3 objects; every claim is checked directly against the category axioms."
+        exemplars:
+          - problem: "A group $G$ gives a one-object category $BG$. What special property do all its morphisms have?"
+            answer: "Every morphism is an isomorphism (invertible)."
+            solution_sketch: "$BG$ has one object $*$ with $\\mathrm{Hom}(*,*)=G$ and composition the group product. Each $g\\in G$ has a two-sided inverse $g^{-1}$, so $g$ is an isomorphism in $BG$. Thus $BG$ is a category in which every arrow is invertible, i.e. a groupoid with one object."
+          - problem: "Give the category $\\mathbf{2}$ with two objects $0,1$ and exactly one non-identity arrow $0\\to 1$. Why is it a category?"
+            answer: "It is the poset $0\\le 1$ viewed as a category; composition is forced and associative."
+            solution_sketch: "Objects $0,1$; morphisms $1_0,1_1$, and $u\\colon 0\\to 1$. The only composites involve an identity, so composition is determined and trivially associative. This is the preorder $0\\le 1$ as a thin category."
+      - id: kp3
+        name: Categories built from other categories
+        key_prerequisites: [category-definition]
+        constraints: "Constructions limited to the arrow category $\\mathcal{C}^{\\to}$ and the binary product $\\mathcal{C}\\times\\mathcal{D}$; state objects, morphisms, composition, and identities explicitly; verification via componentwise or square-pasting arguments."
+        exemplars:
+          - problem: "Describe the arrow category $\\mathcal{C}^{\\to}$: what is an object and what is a morphism?"
+            answer: "Objects are morphisms $f\\colon A\\to B$ of $\\mathcal{C}$; a morphism $f\\to f'$ is a commuting square."
+            solution_sketch: "An object is an arrow $f\\colon A\\to B$ in $\\mathcal{C}$. A morphism from $f\\colon A\\to B$ to $f'\\colon A'\\to B'$ is a pair $(a\\colon A\\to A',\\, b\\colon B\\to B')$ with $f'\\circ a = b\\circ f$ (the square commutes). Componentwise identities and composition inherit the category axioms from $\\mathcal{C}$, and pasting commuting squares gives a commuting square, so $\\mathcal{C}^{\\to}$ is a category."
+          - problem: "Given categories $\\mathcal{C},\\mathcal{D}$, describe the product category $\\mathcal{C}\\times\\mathcal{D}$."
+            answer: "Objects are pairs $(C,D)$; morphisms are pairs $(f,g)$; composition and identities are componentwise."
+            solution_sketch: "$\\mathrm{Hom}((C,D),(C',D'))=\\mathrm{Hom}(C,C')\\times\\mathrm{Hom}(D,D')$ with $(f',g')\\circ(f,g)=(f'\\circ f, g'\\circ g)$ and $1_{(C,D)}=(1_C,1_D)$; the axioms hold in each coordinate."
+    diagnostic_exemplar:
+      problem: "In the arrow category $\\mathcal{C}^{\\to}$, a morphism from $f\\colon A\\to B$ to $f'\\colon A'\\to B'$ is a pair $(a\\colon A\\to A',\\,b\\colon B\\to B')$ with $f'\\circ a=b\\circ f$. Prove that the componentwise composite of two such morphisms is again a morphism of $\\mathcal{C}^{\\to}$."
+      answer: "Given $(a,b)\\colon f\\to f'$ and $(a',b')\\colon f'\\to f''$, compute $f''\\circ(a'\\circ a)=(f''\\circ a')\\circ a=(b'\\circ f')\\circ a=b'\\circ(f'\\circ a)=b'\\circ(b\\circ f)=(b'\\circ b)\\circ f$, using associativity and the two given squares. So $(a'\\circ a,\\,b'\\circ b)$ makes the outer square commute and is a morphism $f\\to f''$."
+      solution_sketch: "Paste the two commuting squares: start from $f''\\circ(a'\\circ a)$ and push $f''$ across the second square, then across the first, until it emerges as $(b'\\circ b)\\circ f$. Only associativity and the two given squares are used."
+    anki_seeds:
+      - front: "$\\mathbf{Set}$: objects and morphisms?"
+        back: "sets; functions."
+        type: basic
+      - front: "$\\mathbf{Mon}$: objects and morphisms?"
+        back: "monoids; monoid homomorphisms."
+        type: basic
+      - front: "$\\mathbf{Grp}$: objects and morphisms?"
+        back: "groups; group homomorphisms."
+        type: basic
+      - front: "$\\mathbf{Top}$: objects and morphisms?"
+        back: "topological spaces; continuous maps."
+        type: basic
+      - front: "A group $G$ as a one-object category is a category in which..."
+        back: "every morphism is invertible (a one-object groupoid)."
+        type: basic
+
+  - id: isomorphism-vs-equality
+    name: Isomorphism versus Equality
+    core: true
+    difficulty: 0.6
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 180
+    prerequisites:
+      - id: category-definition
+        weight: 0.5
+        key: true
+      - id: function-composition-inverse
+        weight: 0.3
+      - id: relations-equivalence
+        weight: 0.2
+      - id: functions-injective-surjective
+        weight: 0.0
+    knowledge_points:
+      - id: kp1
+        name: Definition of isomorphism via a two-sided inverse
+        key_prerequisites: [category-definition]
+        constraints: "Proofs use only the two inverse equations plus associativity, citing each; $\\mathbf{Set}$ arguments must address both directions (bijection implies iso and iso implies bijection)."
+        exemplars:
+          - problem: "Define what it means for $f\\colon A\\to B$ to be an isomorphism in a category, and prove the inverse is unique."
+            answer: "There is $g\\colon B\\to A$ with $g\\circ f=1_A$ and $f\\circ g=1_B$; such $g$ is unique."
+            solution_sketch: "$f$ is an isomorphism if some $g$ satisfies $g\\circ f=1_A$ and $f\\circ g=1_B$. If $g'$ also works, then $g' = g'\\circ 1_B = g'\\circ(f\\circ g) = (g'\\circ f)\\circ g = 1_A\\circ g = g$, using associativity and both inverse equations. Hence the inverse is unique and we write $g=f^{-1}$."
+          - problem: "Show that in $\\mathbf{Set}$ the isomorphisms are exactly the bijections."
+            answer: "A function has a two-sided inverse iff it is a bijection."
+            solution_sketch: "If $f$ is a bijection it has a set-theoretic inverse $g$ with $g\\circ f=1_A$, $f\\circ g=1_B$, so it is an iso. Conversely a two-sided inverse forces $f$ injective (from $g\\circ f=1_A$) and surjective (from $f\\circ g=1_B$), hence bijective."
+      - id: kp2
+        name: Isomorphism is coarser than equality
+        key_prerequisites: [relations-equivalence]
+        constraints: "Short equational proofs from two-sided inverses (equivalence-relation properties, inverse of a composite); concrete examples use sets of at most 3 elements."
+        exemplars:
+          - problem: "Explain why $\\{0,1\\}$ and $\\{a,b\\}$ are isomorphic in $\\mathbf{Set}$ but not equal, and why 'isomorphic' is an equivalence relation on objects."
+            answer: "Any bijection witnesses iso; the objects differ as sets; iso is reflexive, symmetric, transitive."
+            solution_sketch: "The bijection $0\\mapsto a,1\\mapsto b$ is an isomorphism, yet $\\{0,1\\}\\ne\\{a,b\\}$ as sets. Isomorphism is reflexive ($1_A$), symmetric (invert $f$), and transitive (compose isos: if $g,f$ are isos then $g\\circ f$ has inverse $f^{-1}\\circ g^{-1}$). So it is an equivalence relation coarser than equality."
+          - problem: "Prove that if $f$ and $g$ are composable isomorphisms then $g\\circ f$ is an isomorphism with $(g\\circ f)^{-1}=f^{-1}\\circ g^{-1}$."
+            answer: "$f^{-1}\\circ g^{-1}$ is a two-sided inverse of $g\\circ f$."
+            solution_sketch: "$(f^{-1}\\circ g^{-1})\\circ(g\\circ f)=f^{-1}\\circ(g^{-1}\\circ g)\\circ f=f^{-1}\\circ 1\\circ f=1_A$, and symmetrically $(g\\circ f)\\circ(f^{-1}\\circ g^{-1})=1_C$. So $g\\circ f$ is an isomorphism with the stated inverse (note the reversed order)."
+      - id: kp3
+        name: Universal properties determine objects up to unique isomorphism
+        key_prerequisites: [category-definition]
+        constraints: "Conceptual contrast questions; any example uses two-element sets or terminal objects, and the phrase 'unique isomorphism' must be justified by counting the connecting arrows, not merely asserted."
+        exemplars:
+          - problem: "State the sense in which category theory speaks of objects 'up to isomorphism' rather than up to equality, and why this is the natural notion."
+            answer: "Categorical constructions are defined by universal properties, which pin objects down only up to a unique isomorphism."
+            solution_sketch: "Morphisms cannot detect the internal identity of an object, only how it maps to and from others. Anything characterized by a universal property (products, terminal objects, etc.) is determined uniquely up to a unique isomorphism compatible with the property; asking for equality of such objects is not invariant under isomorphism of categories and is the wrong question."
+          - problem: "The two-element sets $\\{0,1\\}$ and $\\{a,b\\}$ admit two different isomorphisms in $\\mathbf{Set}$. Contrast this with a terminal object, where any two are related by a unique isomorphism, and explain the difference."
+            answer: "Between generic isomorphic objects there may be many isomorphisms; a universal property forces a unique one, so universally-defined objects are determined up to unique iso."
+            solution_sketch: "There are two bijections $\\{0,1\\}\\to\\{a,b\\}$, namely $0\\mapsto a,1\\mapsto b$ and the swap $0\\mapsto b,1\\mapsto a$, so these sets are isomorphic in more than one way. By contrast, if $1$ and $1'$ are terminal there is exactly one arrow $1\\to 1'$ and exactly one $1'\\to 1$, and these compose to identities, so the comparison isomorphism is unique. A universal property therefore yields not merely an iso but a canonical one, which is the content of 'up to unique isomorphism'."
+    diagnostic_exemplar:
+      problem: "Let $f\\colon A\\to B$ and $g\\colon B\\to C$ be isomorphisms in a category. Prove that $g\\circ f$ is an isomorphism and identify its inverse."
+      answer: "$(f^{-1}\\circ g^{-1})\\circ(g\\circ f)=f^{-1}\\circ(g^{-1}\\circ g)\\circ f=f^{-1}\\circ 1_B\\circ f=1_A$, and $(g\\circ f)\\circ(f^{-1}\\circ g^{-1})=g\\circ(f\\circ f^{-1})\\circ g^{-1}=g\\circ 1_B\\circ g^{-1}=1_C$. So $g\\circ f$ has the two-sided inverse $f^{-1}\\circ g^{-1}$ (note the reversed order) and is an isomorphism."
+      solution_sketch: "Guess the inverse in reversed order, $f^{-1}\\circ g^{-1}$, then verify both composites by cancelling the inner pair with the identity law. The reversal is forced by the typing, not chosen."
+    anki_seeds:
+      - front: "An isomorphism in a category is a morphism $f$ such that..."
+        back: "there exists $g$ with $g\\circ f=1_A$ and $f\\circ g=1_B$ (a two-sided inverse)."
+        type: basic
+      - front: "$(g\\circ f)^{-1} = $ ?"
+        back: "$f^{-1}\\circ g^{-1}$ (order reverses)."
+        type: basic
+
+  - id: commutative-diagrams
+    name: Commutative Diagrams
+    core: true
+    difficulty: 0.55
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 150
+    prerequisites:
+      - id: category-definition
+        weight: 0.5
+        key: true
+      - id: function-composition
+        weight: 0.3
+      - id: propositional-logic
+        weight: 0.0
+    knowledge_points:
+      - id: kp1
+        name: Reading a commuting triangle or square
+        key_prerequisites: [category-definition]
+        constraints: "Triangles and squares only, with all arrows named in the stem; the answer is a single composition equation in the given labels."
+        exemplars:
+          - problem: "A triangle has arrows $f\\colon A\\to B$, $g\\colon B\\to C$, $h\\colon A\\to C$. What equation does 'the triangle commutes' assert?"
+            answer: "$g\\circ f = h$."
+            solution_sketch: "Commutativity means every directed path with the same source and target composes to the same morphism. The two paths $A\\to C$ are $h$ (direct) and $g\\circ f$ (via $B$), so the triangle commutes iff $g\\circ f=h$."
+          - problem: "A square has $f\\colon A\\to B$, $g\\colon A\\to C$, $h\\colon B\\to D$, $k\\colon C\\to D$. Write the commutativity condition."
+            answer: "$h\\circ f = k\\circ g$."
+            solution_sketch: "The two paths $A\\to D$ are $h\\circ f$ (top-right) and $k\\circ g$ (left-bottom); commutativity equates them."
+      - id: kp2
+        name: Pasting diagrams
+        key_prerequisites: [function-composition]
+        constraints: "At most two cells pasted; every step of the derivation cites either associativity or one cell's commuting equation."
+        exemplars:
+          - problem: "If two squares share an edge and each commutes, show the outer rectangle commutes."
+            answer: "Compose the two square equations."
+            solution_sketch: "Place the two squares side by side sharing the middle edge $h$, so the left square gives $h\\circ f=k\\circ g$ and the right square gives $\\ell\\circ p=q\\circ h$. Then the outer rectangle's two paths satisfy $\\ell\\circ(p\\circ f)=(\\ell\\circ p)\\circ f=(q\\circ h)\\circ f=q\\circ(h\\circ f)=q\\circ(k\\circ g)$, using associativity and the two commuting squares; so the rectangle commutes."
+          - problem: "In a commuting diagram, why can any two directed paths with equal endpoints be equated?"
+            answer: "Because each elementary cell commutes and composites paste."
+            solution_sketch: "Any path equals another obtained by replacing one cell's boundary using that cell's commuting equation; a finite sequence of such replacements (each valid by associativity) turns one path into the other, so all paths with the same endpoints are equal."
+    diagnostic_exemplar:
+      problem: "A triangle $f\\colon A\\to B$, $g\\colon B\\to C$, $h\\colon A\\to C$ commutes, and $k\\colon C\\to D$ is a further arrow. Write the equation saying the two routes $A\\to D$ agree, and justify it."
+      answer: "$k\\circ g\\circ f = k\\circ h$, by post-composing the triangle's equation $g\\circ f = h$ with $k$."
+      solution_sketch: "The triangle gives $g\\circ f = h$; post-composing with $k$ preserves equality, and associativity lets the composite be written unbracketed, so $k\\circ(g\\circ f) = k\\circ h$."
+    anki_seeds:
+      - front: "A diagram 'commutes' means..."
+        back: "any two directed paths with the same source and target compose to the same morphism."
+        type: basic
+      - front: "Commuting square $A\\to B\\to D$ and $A\\to C\\to D$ gives which equation?"
+        back: "$h\\circ f = k\\circ g$."
+        type: basic
+
+  - id: diagram-chasing
+    name: Diagram Chasing
+    core: true
+    difficulty: 0.65
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 210
+    prerequisites:
+      - id: commutative-diagrams
+        weight: 0.6
+        key: true
+      - id: category-definition
+        weight: 0.3
+      - id: direct-proof
+        weight: 0.0
+    knowledge_points:
+      - id: kp1
+        name: Proving equalities by chasing composites
+        key_prerequisites: [commutative-diagrams]
+        constraints: "Chases of at most three composable steps; each rewrite cites a hypothesis equation or mono/epi cancellation, and the typing of every composite must stay valid."
+        exemplars:
+          - problem: "Let $f,p\\colon A\\to B$, $q,g\\colon B\\to D$ and $r,h\\colon D\\to E$ be morphisms satisfying $q\\circ f=g\\circ p$ and $r\\circ g=h\\circ q$. Chase these hypotheses to simplify $r\\circ g\\circ f$."
+            answer: "$r\\circ g\\circ f = h\\circ g\\circ p$."
+            solution_sketch: "The typing makes every composite below a morphism $A\\to E$. Compose the second hypothesis $r\\circ g=h\\circ q$ on the right with $f\\colon A\\to B$: $r\\circ g\\circ f=h\\circ q\\circ f$. Now substitute the first hypothesis inside: $h\\circ(q\\circ f)=h\\circ(g\\circ p)$. Dropping brackets by associativity gives $r\\circ g\\circ f=h\\circ g\\circ p$. Each step only replaces a composite by an equal one, which is all a diagram chase ever does."
+          - problem: "If $g\\circ f = g\\circ f'$ and $g$ is a monomorphism, chase the diagram to conclude $f=f'$."
+            answer: "$f = f'$ by left-cancelling $g$."
+            solution_sketch: "A monomorphism $g$ satisfies: $g\\circ f=g\\circ f'\\Rightarrow f=f'$. That hypothesis is exactly given, so cancel $g$ on the left to get $f=f'$."
+      - id: kp2
+        name: Uniqueness arguments via commuting constraints
+        key_prerequisites: [commutative-diagrams]
+        constraints: "Uniqueness arguments only: conclude two candidate morphisms are equal, either from a universal property's uniqueness clause or by cancelling a monomorphism; name which mechanism is used."
+        exemplars:
+          - problem: "Two morphisms $u,v\\colon X\\to P$ both make the same diagram into $P$ commute, and $P$'s defining property forces at most one such map. Conclude and name the technique."
+            answer: "$u=v$; this is a uniqueness-from-a-universal-property argument."
+            solution_sketch: "The defining (universal) property of $P$ says: for the given cone/data there is at most one morphism $X\\to P$ making all triangles commute. Since $u$ and $v$ both do, uniqueness forces $u=v$. This pattern — 'exhibit a map, then use uniqueness to identify two candidates' — recurs throughout limit and adjunction proofs."
+          - problem: "Let $m\\colon P\\to A$ be a monomorphism. Prove that any morphism $f\\colon X\\to A$ factors through $m$ in at most one way: there is at most one $u\\colon X\\to P$ with $m\\circ u=f$."
+            answer: "At most one such $u$; two candidates agree by cancelling the mono $m$."
+            solution_sketch: "Suppose $m\\circ u=f=m\\circ u'$ for $u,u'\\colon X\\to P$. Then $m\\circ u=m\\circ u'$, and since $m$ is a monomorphism (left-cancellable) we get $u=u'$. Hence a factorization through a mono, when it exists, is unique; here the uniqueness comes from the cancellation property rather than from a universal property."
+    diagnostic_exemplar:
+      problem: "Let $m\\colon P\\to A$ be a monomorphism and $f\\colon X\\to A$ any morphism. Prove that $f$ factors through $m$ in at most one way: there is at most one $u\\colon X\\to P$ with $m\\circ u=f$."
+      answer: "Suppose $m\\circ u=f=m\\circ u'$ for $u,u'\\colon X\\to P$. Then $m\\circ u=m\\circ u'$, and since $m$ is a monomorphism (left-cancellable) this forces $u=u'$. Hence a factorization through $m$, if it exists, is unique."
+      solution_sketch: "Uniqueness of a factorization is left-cancellation in disguise: two factorizations give $m\\circ u=m\\circ u'$, and $m$ mono forces $u=u'$. Nothing more is needed, since the claim is only at most one, so existence is not at issue."
+    anki_seeds:
+      - front: "To prove two maps into a universally-defined object are equal, use..."
+        back: "the uniqueness clause of the object's universal property."
+        type: basic
+      - front: "$g$ mono and $g\\circ f = g\\circ f'$ implies..."
+        back: "$f = f'$."
+        type: basic
+
+  - id: mono-epi-iso
+    name: Monomorphisms, Epimorphisms, Isomorphisms
+    core: true
+    difficulty: 0.65
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 210
+    prerequisites:
+      - id: category-definition
+        weight: 0.5
+        key: true
+      - id: isomorphism-vs-equality
+        weight: 0.4
+        key: true
+      - id: functions-injective-surjective
+        weight: 0.2
+    knowledge_points:
+      - id: kp1
+        name: Monomorphisms as left-cancellable maps
+        key_prerequisites: [category-definition]
+        constraints: "State the left-cancellation definition, then either a $\\mathbf{Set}$ proof (monos = injections, both directions, using maps from a singleton) or a composite/cancellation argument of at most three lines."
+        exemplars:
+          - problem: "Define a monomorphism and prove that in $\\mathbf{Set}$ monos are exactly the injections."
+            answer: "$m$ is mono if $m\\circ f=m\\circ g\\Rightarrow f=g$; in $\\mathbf{Set}$ this is injectivity."
+            solution_sketch: "Definition: $m\\colon A\\to B$ is mono if it is left-cancellable. ($\\Leftarrow$) If $m$ is injective and $m\\circ f=m\\circ g$ then $m(f(x))=m(g(x))$ gives $f(x)=g(x)$ for all $x$, so $f=g$. ($\\Rightarrow$) If $m(a)=m(a')$ apply the definition to the two maps $\\{*\\}\\to A$ picking $a,a'$; left-cancelling gives $a=a'$. Hence mono $\\Leftrightarrow$ injective in $\\mathbf{Set}$."
+          - problem: "Prove that a composite of two monomorphisms is a monomorphism."
+            answer: "Left-cancel the outer then the inner mono."
+            solution_sketch: "Let $m,n$ be mono and suppose $(n\\circ m)\\circ f=(n\\circ m)\\circ g$, i.e. $n\\circ(m\\circ f)=n\\circ(m\\circ g)$. Cancel $n$ (mono) to get $m\\circ f=m\\circ g$, then cancel $m$ (mono) to get $f=g$. So $n\\circ m$ is mono."
+      - id: kp2
+        name: Epimorphisms as right-cancellable maps
+        key_prerequisites: [functions-injective-surjective]
+        constraints: "Work in $\\mathbf{Set}$ or $\\mathbf{Ring}$ only; a non-surjective epi must be the inclusion $\\mathbb{Z}\\hookrightarrow\\mathbb{Q}$ (or an analogous determination argument), justified by showing maps out of the larger object are determined on the smaller."
+        exemplars:
+          - problem: "Define an epimorphism and show surjections in $\\mathbf{Set}$ are epi."
+            answer: "$e$ is epi if $f\\circ e=g\\circ e\\Rightarrow f=g$; surjections satisfy this."
+            solution_sketch: "Definition: $e$ is right-cancellable. If $e$ is surjective and $f\\circ e=g\\circ e$, then for any $b$ pick $a$ with $e(a)=b$; $f(b)=f(e(a))=g(e(a))=g(b)$, so $f=g$. Thus surjections are epi. (In $\\mathbf{Set}$ the converse also holds.)"
+          - problem: "Show that the inclusion $\\mathbb{Z}\\hookrightarrow\\mathbb{Q}$ is an epimorphism in $\\mathbf{Ring}$ though it is not surjective."
+            answer: "A ring map out of $\\mathbb{Q}$ is determined by its values on $\\mathbb{Z}$, so the inclusion is epi but not onto."
+            solution_sketch: "If $f,g\\colon\\mathbb{Q}\\to R$ agree on $\\mathbb{Z}$, then for $m/n$ we have $f(m/n)=f(m)f(n)^{-1}=g(m)g(n)^{-1}=g(m/n)$ since ring maps preserve inverses of units; so $f=g$, i.e. the inclusion is epi. It is not surjective. This shows epi $\\ne$ surjective in general."
+      - id: kp3
+        name: Iso implies mono and epi; the converse can fail
+        key_prerequisites: [isomorphism-vs-equality]
+        constraints: "The positive direction is a two-line cancellation with the two-sided inverse; the counterexample is $\\mathbb{Z}\\hookrightarrow\\mathbb{Q}$ in $\\mathbf{Ring}$ or a non-identity arrow of a poset category — always name the ambient category."
+        exemplars:
+          - problem: "Prove every isomorphism is both a monomorphism and an epimorphism."
+            answer: "Cancel using the two-sided inverse."
+            solution_sketch: "Let $f$ be iso with inverse $f^{-1}$. If $f\\circ a=f\\circ b$, apply $f^{-1}$ on the left: $a=b$, so $f$ is mono. If $c\\circ f=d\\circ f$, apply $f^{-1}$ on the right: $c=d$, so $f$ is epi."
+          - problem: "Give an example of a morphism that is both mono and epi but not an isomorphism."
+            answer: "The inclusion $\\mathbb{Z}\\hookrightarrow\\mathbb{Q}$ in $\\mathbf{Ring}$."
+            solution_sketch: "It is mono (injective ring map) and epi (shown above), but has no inverse ring map $\\mathbb{Q}\\to\\mathbb{Z}$ since $1/2\\notin\\mathbb{Z}$. Hence mono $+$ epi does not imply iso outside special categories like $\\mathbf{Set}$."
+    diagnostic_exemplar:
+      problem: "In $\\mathbf{Set}$, show that the inclusion $m\\colon\\{1,2\\}\\hookrightarrow\\{1,2,3\\}$ is a monomorphism but not an epimorphism."
+      answer: "Mono: if $m\\circ f=m\\circ g$ for $f,g\\colon X\\to\\{1,2\\}$, then $f(x)=m(f(x))=m(g(x))=g(x)$ for every $x$, so $f=g$. Not epi: define $f,g\\colon\\{1,2,3\\}\\to\\{0,1\\}$ by $f\\equiv 0$ and $g(1)=g(2)=0$, $g(3)=1$; then $f\\circ m=g\\circ m$ (both vanish on $1,2$) but $f\\ne g$, so $m$ is not right-cancellable."
+      solution_sketch: "Mono is injectivity of $m$ applied pointwise to $f$ and $g$. Failure of epi has to be produced: exhibit two maps out of $\\{1,2,3\\}$ that agree on $\\{1,2\\}$ but differ at $3$ — all the freedom lives at the element $m$ misses."
+    anki_seeds:
+      - front: "Define a monomorphism (mono)."
+        back: "a map $m$ with $m\\circ f=m\\circ g\\Rightarrow f=g$ (left-cancellable)."
+        type: basic
+      - front: "Define an epimorphism (epi)."
+        back: "a map $e$ with $f\\circ e=g\\circ e\\Rightarrow f=g$ (right-cancellable)."
+        type: basic
+      - front: "In $\\mathbf{Set}$: monos are {{c1::injections}}, epis are {{c2::surjections}}."
+        back: "injections; surjections"
+        type: cloze
+      - front: "Does mono + epi imply iso?"
+        back: "Not in general (e.g. $\\mathbb{Z}\\hookrightarrow\\mathbb{Q}$ in $\\mathbf{Ring}$); yes in $\\mathbf{Set}$."
+        type: basic
+
+  - id: groupoids
+    name: Groupoids
+    core: false                # example class; terminal
+    difficulty: 0.63
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 180
+    prerequisites:
+      - id: isomorphism-vs-equality
+        weight: 0.5
+        key: true
+      - id: poset-monoid-categories
+        weight: 0.4
+        key: true
+      - id: discrete-indiscrete-categories
+        weight: 0.3
+      - id: examples-of-categories
+        weight: 0.2
+      - id: relations-equivalence
+        weight: 0.2
+    knowledge_points:
+      - id: kp1
+        name: Definition and first examples
+        key_prerequisites: [isomorphism-vs-equality]
+        constraints: "Examples must be checked against the definition: exhibit a two-sided inverse for each morphism."
+        exemplars:
+          - problem: "Define a groupoid and verify that $BG$ (a group $G$ as a one-object category), $\\mathrm{disc}(S)$, and $\\mathrm{indisc}(S)$ are all groupoids."
+            answer: "A category in which every morphism is an isomorphism; each of the three has two-sided inverses for all arrows."
+            solution_sketch: "A groupoid is a category in which every morphism has a two-sided inverse. In $BG$ the morphisms are the elements of $G$ and $g^{-1}$ is a two-sided inverse of $g$. In $\\mathrm{disc}(S)$ the only morphisms are identities, and $1_x$ is its own inverse. In $\\mathrm{indisc}(S)$, the unique arrows $u\\colon x\\to y$ and $v\\colon y\\to x$ satisfy $v\\circ u=1_x$ and $u\\circ v=1_y$ because those are the unique arrows $x\\to x$ and $y\\to y$. So all three are groupoids."
+          - problem: "Define the core of a category $\\mathcal{C}$ and prove it is a groupoid."
+            answer: "The subcategory with all objects of $\\mathcal{C}$ and only its isomorphisms; it is closed under composition and inverses."
+            solution_sketch: "Let $\\mathrm{core}(\\mathcal{C})$ have the objects of $\\mathcal{C}$ and, as morphisms, exactly the isomorphisms of $\\mathcal{C}$. Each $1_A$ is an isomorphism, and a composite of isomorphisms $g\\circ f$ is an isomorphism with inverse $f^{-1}\\circ g^{-1}$, so this is a subcategory. Every one of its morphisms is invertible, and the inverse is again an isomorphism of $\\mathcal{C}$, hence lies in the subcategory. So $\\mathrm{core}(\\mathcal{C})$ is a groupoid; for $\\mathcal{C}=\\mathbf{Set}$ it is the category of sets and bijections."
+      - id: kp2
+        name: Automorphism groups and hom-set sizes
+        key_prerequisites: [poset-monoid-categories]
+        constraints: "Work with a fixed object and a fixed chosen isomorphism; state the bijection explicitly."
+        exemplars:
+          - problem: "For an object $x$ of a groupoid, prove $\\mathrm{Aut}(x)=\\mathrm{Hom}(x,x)$ is a group."
+            answer: "Composition is associative with unit $1_x$, and every element is invertible by the groupoid axiom."
+            solution_sketch: "All arrows $x\\to x$ are composable, so composition is a binary operation on $\\mathrm{Hom}(x,x)$; it is associative and has $1_x$ as a two-sided unit by the category axioms, making $\\mathrm{Hom}(x,x)$ a monoid. In a groupoid every morphism has a two-sided inverse, and the inverse of an arrow $x\\to x$ is again an arrow $x\\to x$. So every element is invertible and $\\mathrm{Aut}(x)$ is a group — the vertex (isotropy) group at $x$."
+          - problem: "Let $x,y$ be objects of a groupoid with $\\mathrm{Hom}(x,y)\\neq\\varnothing$. Prove $\\mathrm{Hom}(x,y)$ is in bijection with $\\mathrm{Aut}(x)$."
+            answer: "Fix $u\\colon x\\to y$; then $h\\mapsto u^{-1}\\circ h$ is a bijection $\\mathrm{Hom}(x,y)\\to\\mathrm{Aut}(x)$."
+            solution_sketch: "Choose an isomorphism $u\\colon x\\to y$ (possible since the hom-set is nonempty and we are in a groupoid). Define $\\Phi(h)=u^{-1}\\circ h$ for $h\\colon x\\to y$; then $\\Phi(h)\\colon x\\to x$. Its inverse is $\\Psi(a)=u\\circ a$ for $a\\colon x\\to x$, since $\\Psi(\\Phi(h))=u\\circ u^{-1}\\circ h=h$ and $\\Phi(\\Psi(a))=u^{-1}\\circ u\\circ a=a$. Hence $\\mathrm{Hom}(x,y)\\cong\\mathrm{Aut}(x)$ as sets: in a groupoid all nonempty hom-sets between isomorphic objects have the same size."
+      - id: kp3
+        name: Thin groupoids are equivalence relations
+        key_prerequisites: [relations-equivalence]
+        constraints: "Two shapes: (i) the dictionary proof relating each of reflexivity, symmetry, transitivity to a specific category axiom (identities, inverses, composition); (ii) partition arguments showing isomorphism classes (connected components) partition the objects of a groupoid."
+        exemplars:
+          - problem: "Prove that a groupoid in which every hom-set has at most one element is the same thing as an equivalence relation on its objects."
+            answer: "Identities give reflexivity, inverses give symmetry, composition gives transitivity — and conversely."
+            solution_sketch: "Set $x\\sim y$ iff there is an arrow $x\\to y$. Reflexivity: $1_x$ exists. Transitivity: composition of $x\\to y$ and $y\\to z$. Symmetry: in a groupoid every arrow $x\\to y$ has an inverse $y\\to x$. So $\\sim$ is an equivalence relation. Conversely, from an equivalence relation build the thin category with one arrow $x\\to y$ exactly when $x\\sim y$; symmetry supplies the inverses, so it is a groupoid. The two constructions are mutually inverse — a thin groupoid is precisely an equivalence relation."
+          - problem: "Call a groupoid connected if any two objects are isomorphic. Show that the connected components of an arbitrary groupoid partition its objects."
+            answer: "'Isomorphic' is an equivalence relation on objects, so its classes partition them."
+            solution_sketch: "On the objects of a groupoid define $x\\approx y$ iff $\\mathrm{Hom}(x,y)\\neq\\varnothing$. This is reflexive ($1_x$), symmetric (invert the arrow — every arrow of a groupoid is invertible), and transitive (compose). Being an equivalence relation, its classes partition the objects; each class, with all arrows between its members, is a connected full subgroupoid. Hence every groupoid is a disjoint union of connected groupoids."
+    diagnostic_exemplar:
+      problem: "Let $x$ be an object of a groupoid $\\mathcal G$. Prove that $\\mathrm{Aut}(x)=\\mathrm{Hom}(x,x)$ is a group under composition."
+      answer: "Any two arrows $x\\to x$ are composable, so composition is a binary operation on $\\mathrm{Hom}(x,x)$; it is associative and has $1_x$ as a two-sided unit by the category axioms. By the groupoid axiom every $a\\colon x\\to x$ has a two-sided inverse $a^{-1}$, which is again an arrow $x\\to x$. Hence every element is invertible and $\\mathrm{Aut}(x)$ is a group."
+      solution_sketch: "Check the group axioms one at a time against the category axioms: closure because any two arrows $x\\to x$ are composable, associativity and the unit $1_x$ from the category axioms, and inverses from the groupoid hypothesis."
+    anki_seeds:
+      - front: "Define a groupoid."
+        back: "a category in which every morphism is an isomorphism."
+        type: basic
+      - front: "A one-object groupoid is the same thing as a {{c1::group}}."
+        back: "group"
+        type: cloze
+      - front: "What is the core of a category $\\mathcal C$?"
+        back: "the subgroupoid with all objects of $\\mathcal C$ and only its isomorphisms."
+        type: basic
+
+  - id: sections-retractions
+    name: Sections and Retractions
+    core: false
+    difficulty: 0.65
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 180
+    prerequisites:
+      - id: mono-epi-iso
+        weight: 0.5
+        key: true
+      - id: isomorphism-vs-equality
+        weight: 0.3
+      - id: category-definition
+        weight: 0.2
+    knowledge_points:
+      - id: kp1
+        name: Split monos and split epis
+        key_prerequisites: [mono-epi-iso]
+        constraints: "State the defining equation ($r\\circ s=1$) before cancelling with it; $\\mathbf{Set}$ constructions may invoke choice for sections and a basepoint for retractions; concrete sets of size at most 4."
+        exemplars:
+          - problem: "Define a section (right inverse) and a retraction (left inverse), and prove a map with a section is epi."
+            answer: "$s$ is a section of $r$ if $r\\circ s=1$; a map with a right inverse is a split epi, hence epi."
+            solution_sketch: "If $e\\circ s=1_B$ then for $f\\circ e=g\\circ e$ we get $f=f\\circ e\\circ s=g\\circ e\\circ s=g$, so $e$ is epi (a split epi). Dually, a map $m$ with $r\\circ m=1$ (a retraction $r$) is left-cancellable: $m\\circ f=m\\circ g\\Rightarrow f=r\\circ m\\circ f=r\\circ m\\circ g=g$, so a split mono is mono."
+          - problem: "Show that in $\\mathbf{Set}$ every surjection has a section, and every injection with nonempty domain has a retraction."
+            answer: "Choose a preimage for each point (surjection); send non-image points to a fixed element (injection)."
+            solution_sketch: "If $e\\colon A\\to B$ is surjective, choose for each $b\\in B$ some $s(b)\\in e^{-1}(b)$ (axiom of choice); then $e\\circ s=1_B$, so $e$ is a split epi. If $m\\colon A\\to B$ is injective and $a_0\\in A$, define $r(b)$ = the unique $a$ with $m(a)=b$ when $b\\in\\mathrm{im}(m)$, and $r(b)=a_0$ otherwise; then $r\\circ m=1_A$, so $m$ is a split mono. Thus in $\\mathbf{Set}$ (with choice) epis are split, unlike in most categories."
+      - id: kp2
+        name: When splitting plus cancellation gives an isomorphism
+        key_prerequisites: [isomorphism-vs-equality]
+        constraints: "Purely equational proofs from $r\\circ m=1$ and/or $m\\circ s=1$ plus at most one mono/epi cancellation; each step cites the hypothesis or axiom used."
+        exemplars:
+          - problem: "Prove that if $f$ is both a split mono and a split epi then $f$ is an isomorphism."
+            answer: "Its left and right inverses coincide, giving a two-sided inverse."
+            solution_sketch: "Say $r\\circ f=1$ and $f\\circ s=1$. Then $r=r\\circ 1=r\\circ(f\\circ s)=(r\\circ f)\\circ s=1\\circ s=s$. So $s=r$ is a two-sided inverse and $f$ is an isomorphism."
+          - problem: "Prove that a split monomorphism that is also an epimorphism is an isomorphism."
+            answer: "Right-cancel $m$ in $m\\circ r\\circ m=m$ to get $m\\circ r=1$; with $r\\circ m=1$, $m$ is iso."
+            solution_sketch: "Let $r\\circ m=1_A$ with $m\\colon A\\to B$ epi. Then $(m\\circ r)\\circ m=m\\circ(r\\circ m)=m\\circ 1_A=m=1_B\\circ m$. Since $m$ is epi (right-cancellable), $m\\circ r=1_B$. Together with $r\\circ m=1_A$, $r$ is a two-sided inverse, so $m$ is an isomorphism. Dually, a split epi that is mono is an isomorphism."
+    diagnostic_exemplar:
+      problem: "Let $m\\colon A\\to B$ be a split monomorphism (some $r\\colon B\\to A$ satisfies $r\\circ m=1_A$) which is also an epimorphism. Prove that $m$ is an isomorphism."
+      answer: "$(m\\circ r)\\circ m=m\\circ(r\\circ m)=m\\circ 1_A=m=1_B\\circ m$. Since $m$ is an epimorphism, right-cancel it to get $m\\circ r=1_B$. Together with $r\\circ m=1_A$, $r$ is a two-sided inverse, so $m$ is an isomorphism."
+      solution_sketch: "You have $r\\circ m=1_A$ and want $m\\circ r=1_B$. Manufacture an equation with $m$ on the right — $(m\\circ r)\\circ m=m=1_B\\circ m$ — and then right-cancel $m$ using the epi hypothesis."
+    anki_seeds:
+      - front: "If $r\\circ s=1$: which map is the section, which the retraction?"
+        back: "$s$ is the section (right inverse); $r$ is the retraction (left inverse)."
+        type: basic
+      - front: "A morphism with a section (right inverse) is called a...?"
+        back: "a split epimorphism."
+        type: basic
+      - front: "A morphism with a retraction (left inverse) is called a...?"
+        back: "a split monomorphism."
+        type: basic
+      - front: "Split mono $+$ split epi $\\Rightarrow$ ?"
+        back: "isomorphism (the one-sided inverses coincide)."
+        type: basic
+
+  - id: epi-mono-factorizations
+    name: Image Factorizations and Subobjects
+    core: false                # terminal enrichment on mono/epi
+    difficulty: 0.68
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 210
+    prerequisites:
+      - id: mono-epi-iso
+        weight: 0.6
+        key: true
+      - id: isomorphism-vs-equality
+        weight: 0.3
+        key: true
+      - id: commutative-diagrams
+        weight: 0.2
+      - id: diagram-chasing
+        weight: 0.2
+      - id: functions-injective-surjective
+        weight: 0.0
+    knowledge_points:
+      - id: kp1
+        name: The image factorization in Set
+        key_prerequisites: [mono-epi-iso]
+        constraints: "Finite sets of size at most 5 for concrete instances; always name the image explicitly."
+        exemplars:
+          - problem: "Show every function $f\\colon A\\to B$ factors as a surjection followed by an injection, and prove the factorization is unique up to a unique isomorphism."
+            answer: "$f=m\\circ e$ with $e\\colon A\\twoheadrightarrow f[A]$ and $m\\colon f[A]\\hookrightarrow B$; any other such factorization differs by a unique bijection."
+            solution_sketch: "Let $I=f[A]$, let $e(a)=f(a)$ (surjective onto $I$) and let $m$ be the inclusion $I\\hookrightarrow B$; then $m\\circ e=f$. Suppose also $f=m'\\circ e'$ with $e'\\colon A\\twoheadrightarrow I'$ surjective and $m'\\colon I'\\hookrightarrow B$ injective. Then $m'[I']=m'[e'[A]]=f[A]=I$, so $m'$ corestricts to a bijection $\\varphi\\colon I'\\to I$ with $m\\circ\\varphi=m'$. Also $m\\circ\\varphi\\circ e'=m'\\circ e'=f=m\\circ e$, and $m$ is injective, so $\\varphi\\circ e'=e$. Finally $\\varphi$ is unique: any $\\psi$ with $m\\circ\\psi=m'$ satisfies $\\psi=\\varphi$ because $m$ is monic."
+          - problem: "Compute the image factorization of $f\\colon\\{1,2,3,4\\}\\to\\{a,b,c\\}$ given by $f(1)=a$, $f(2)=a$, $f(3)=c$, $f(4)=c$."
+            answer: "$A\\twoheadrightarrow\\{a,c\\}\\hookrightarrow\\{a,b,c\\}$; the image is $\\{a,c\\}$ and $b$ is not hit."
+            solution_sketch: "The image is $f[A]=\\{a,c\\}$. The surjective part $e\\colon\\{1,2,3,4\\}\\to\\{a,c\\}$ sends $1,2\\mapsto a$ and $3,4\\mapsto c$; the injective part is the inclusion $\\{a,c\\}\\hookrightarrow\\{a,b,c\\}$. Their composite is $f$, and $e$ is surjective while the inclusion is injective, as required."
+      - id: kp2
+        name: The diagonal fill-in
+        key_prerequisites: [diagram-chasing]
+        constraints: "State which of 'epi' and 'mono' is used at each step; uniqueness must come from the mono."
+        exemplars:
+          - problem: "Suppose $v\\circ e=m\\circ u$ with $e\\colon A\\to X$ epi and $m\\colon Y\\to B$ mono. Prove that a diagonal $d\\colon X\\to Y$ with $d\\circ e=u$ and $m\\circ d=v$ is unique if it exists."
+            answer: "Two candidates agree because $m$ is left-cancellable."
+            solution_sketch: "Let $d,d'$ both satisfy the two equations. From $m\\circ d=v=m\\circ d'$ and $m$ monic (left-cancellable) we get $d=d'$. (The epi $e$ is not needed for uniqueness; it is what makes existence plausible, since $d$ is forced on the image of $e$.) Unique diagonal fill-in is only one of the axioms: a pair $(\\mathcal{E},\\mathcal{M})$ of classes of morphisms is a factorization system when (i) every morphism factors as $m\\circ e$ with $e\\in\\mathcal{E}$ and $m\\in\\mathcal{M}$, (ii) each class contains all isomorphisms and is closed under composition with them, and (iii) every commuting square $v\\circ e=m\\circ u$ with $e\\in\\mathcal{E}$, $m\\in\\mathcal{M}$ has a unique diagonal fill-in. Axiom (iii) alone would be satisfied vacuously by empty classes."
+          - problem: "Prove that in $\\mathbf{Set}$ the diagonal fill-in always exists: given $v\\circ e=m\\circ u$ with $e$ surjective and $m$ injective, construct $d$."
+            answer: "$d(x)=u(a)$ for any $a$ with $e(a)=x$; this is well defined and satisfies both equations."
+            solution_sketch: "Given $x\\in X$, pick $a\\in A$ with $e(a)=x$ (possible as $e$ is surjective) and set $d(x)=u(a)$. Well defined: if $e(a)=e(a')=x$ then $m(u(a))=v(e(a))=v(x)=v(e(a'))=m(u(a'))$, and $m$ injective gives $u(a)=u(a')$. By construction $d\\circ e=u$, and $m(d(x))=m(u(a))=v(e(a))=v(x)$, so $m\\circ d=v$. Uniqueness was shown above, so $(\\text{surjections},\\text{injections})$ is a factorization system on $\\mathbf{Set}$."
+      - id: kp3
+        name: Subobjects as isomorphism classes of monomorphisms
+        key_prerequisites: [isomorphism-vs-equality]
+        constraints: "Order monos by factorization; every comparison map must be justified as unique."
+        exemplars:
+          - problem: "For monomorphisms $m\\colon S\\to B$ and $m'\\colon S'\\to B$, define $m\\le m'$ to mean $m=m'\\circ t$ for some $t$. Prove $\\le$ is a preorder and that $m\\le m'\\le m$ forces $t$ to be an isomorphism."
+            answer: "Reflexive via $1$, transitive by composing the comparison maps; mutual factorization gives mutually inverse $t,t'$."
+            solution_sketch: "Reflexivity: $m=m\\circ 1_S$. Transitivity: if $m=m'\\circ t$ and $m'=m''\\circ s$ then $m=m''\\circ(s\\circ t)$. The factoring map is unique, since $m'\\circ t=m'\\circ \\tilde t$ and $m'$ monic give $t=\\tilde t$. Now suppose $m=m'\\circ t$ and $m'=m\\circ t'$. Then $m=m\\circ t'\\circ t$, and $m$ monic gives $t'\\circ t=1_S$; symmetrically $t\\circ t'=1_{S'}$. So $t$ is an isomorphism, and it is the unique one commuting with $m,m'$."
+          - problem: "Define a subobject of $B$ and identify the subobjects of a set $B$ in $\\mathbf{Set}$."
+            answer: "An equivalence class of monos into $B$ under the above isomorphism; in $\\mathbf{Set}$, $\\mathrm{Sub}(B)\\cong\\mathcal{P}(B)$ as posets."
+            solution_sketch: "A subobject of $B$ is an isomorphism class of monomorphisms into $B$, where $m\\sim m'$ iff $m\\le m'$ and $m'\\le m$; the preorder $\\le$ descends to a partial order $\\mathrm{Sub}(B)$ on the classes. In $\\mathbf{Set}$ a mono is an injection $m\\colon S\\to B$, and $m\\sim m'$ exactly when they have the same image, so each class is determined by the subset $m[S]\\subseteq B$. The order $\\le$ becomes inclusion, so $\\mathrm{Sub}(B)\\cong(\\mathcal{P}(B),\\subseteq)$."
+    diagnostic_exemplar:
+      problem: "In $\\mathbf{Set}$, suppose $v\\circ e=m\\circ u$ with $e\\colon A\\to X$ surjective and $m\\colon Y\\to B$ injective. Construct a diagonal $d\\colon X\\to Y$ with $d\\circ e=u$ and $m\\circ d=v$, and prove it is the only one."
+      answer: "For $x\\in X$ pick $a\\in A$ with $e(a)=x$ (possible: $e$ is surjective) and set $d(x)=u(a)$. Well defined: if $e(a)=e(a')$ then $m(u(a))=v(e(a))=v(e(a'))=m(u(a'))$, and $m$ injective gives $u(a)=u(a')$. By construction $d\\circ e=u$, and $m(d(x))=m(u(a))=v(e(a))=v(x)$, so $m\\circ d=v$. Uniqueness: if $m\\circ d=v=m\\circ d'$ then injectivity of $m$ forces $d=d'$."
+      solution_sketch: "Define $d$ by choosing a preimage under the surjection $e$; the real work is showing the choice does not matter, and that is where injectivity of $m$ is spent. Uniqueness of $d$ then follows from injectivity of $m$ again."
+    anki_seeds:
+      - front: "Every function factors as which two kinds of map, in which order?"
+        back: "a surjection onto its image, followed by an injection into the codomain."
+        type: basic
+      - front: "Why is a diagonal fill-in $d$ (with $d\\circ e=u$, $m\\circ d=v$) unique when it exists?"
+        back: "because $m$ is a monomorphism, so $m\\circ d=m\\circ d'$ forces $d=d'$."
+        type: basic
+      - front: "A subobject of $B$ is..."
+        back: "an isomorphism class of monomorphisms into $B$; in $\\mathbf{Set}$ these are the subsets of $B$."
+        type: basic
+
+  - id: initial-terminal-objects
+    name: Initial and Terminal Objects
+    core: true
+    difficulty: 0.6
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 180
+    prerequisites:
+      - id: category-definition
+        weight: 0.5
+        key: true
+      - id: isomorphism-vs-equality
+        weight: 0.4
+        key: true
+      - id: examples-of-categories
+        weight: 0.2
+    knowledge_points:
+      - id: kp1
+        name: Definitions and first examples
+        key_prerequisites: [category-definition]
+        constraints: "Definitions plus identification in $\\mathbf{Set}$ or in a poset category; uniqueness of the connecting arrow must be argued, not assumed; poset instances may lack the extremum."
+        exemplars:
+          - problem: "Define initial and terminal objects and identify them in $\\mathbf{Set}$."
+            answer: "Initial: unique arrow out to every object ($\\varnothing$); terminal: unique arrow in from every object (any singleton)."
+            solution_sketch: "An object $0$ is initial if for every $X$ there is exactly one morphism $0\\to X$; an object $1$ is terminal if for every $X$ there is exactly one morphism $X\\to 1$. In $\\mathbf{Set}$: $\\varnothing$ is initial (the empty function is the unique map $\\varnothing\\to X$), and every one-element set is terminal (a map $X\\to\\{*\\}$ is forced to be constant, hence unique)."
+          - problem: "Identify the initial and terminal objects of a poset $(P,\\le)$ viewed as a category."
+            answer: "Initial $=$ least element; terminal $=$ greatest element (if they exist)."
+            solution_sketch: "A unique arrow $x\\to y$ exists iff $x\\le y$. An initial object must satisfy $0\\le y$ for all $y$: a least element. A terminal object must satisfy $y\\le 1$ for all $y$: a greatest element. Either may fail to exist."
+      - id: kp2
+        name: Uniqueness up to unique isomorphism
+        key_prerequisites: [isomorphism-vs-equality]
+        constraints: "The two-object cross-map argument; every arrow used must be justified as the unique one supplied by initiality/terminality, and the dual statement obtained by reversing arrows."
+        exemplars:
+          - problem: "Prove any two initial objects are uniquely isomorphic."
+            answer: "The unique cross-maps compose to identities."
+            solution_sketch: "Let $I,I'$ be initial. Initiality of $I$ gives a unique $u\\colon I\\to I'$; initiality of $I'$ gives a unique $v\\colon I'\\to I$. Then $v\\circ u\\colon I\\to I$ and $1_I$ are both morphisms $I\\to I$; by initiality of $I$ (unique arrow out) they are equal, so $v\\circ u=1_I$. Symmetrically $u\\circ v=1_{I'}$. Thus $u$ is an isomorphism, and it is the unique one, since any iso $I\\to I'$ is the unique arrow $I\\to I'$."
+          - problem: "State the dual statement for terminal objects and how its proof differs."
+            answer: "Any two terminal objects are uniquely isomorphic; the proof is the same with arrows reversed."
+            solution_sketch: "Terminal is the dual of initial (arrows reversed). Replacing 'unique arrow out' by 'unique arrow in' throughout gives the same argument, so terminal objects are unique up to unique isomorphism."
+      - id: kp3
+        name: Zero objects
+        key_prerequisites: [isomorphism-vs-equality]
+        constraints: "Zero objects in $\\mathbf{Grp}$ (or note the failure in $\\mathbf{Set}$); zero-morphism computations use only uniqueness of arrows into/out of $0$."
+        exemplars:
+          - problem: "Define a zero object and give one in $\\mathbf{Grp}$."
+            answer: "An object that is both initial and terminal; the trivial group $\\{e\\}$."
+            solution_sketch: "A zero object is simultaneously initial and terminal. In $\\mathbf{Grp}$ the trivial group $\\{e\\}$ is terminal (only the trivial map into it) and initial (the map sending everything to $e$ is the unique homomorphism out), hence a zero object. ($\\mathbf{Set}$ has no zero object since $\\varnothing\\ne\\{*\\}$.)"
+          - problem: "In a category with a zero object $0$, define the zero morphism $0_{A,B}\\colon A\\to B$ and prove that composing it with any $g\\colon B\\to C$ again gives a zero morphism."
+            answer: "$0_{A,B}$ is the composite $A\\to 0\\to B$; then $g\\circ 0_{A,B}=0_{A,C}$."
+            solution_sketch: "Since $0$ is terminal there is a unique arrow $A\\to 0$, and since $0$ is initial a unique arrow $0\\to B$; define $0_{A,B}\\colon A\\to B$ to be their composite $A\\to 0\\to B$. Given $g\\colon B\\to C$, the arrow $g\\circ(0\\to B)\\colon 0\\to C$ is a morphism out of the initial object $0$, hence equals the unique such arrow $0\\to C$. Therefore $g\\circ 0_{A,B}=(0\\to C)\\circ(A\\to 0)=0_{A,C}$."
+    diagnostic_exemplar:
+      problem: "Prove that any two terminal objects of a category are isomorphic by a unique isomorphism."
+      answer: "Let $1,1'$ be terminal. Terminality of $1'$ gives a unique $u\\colon 1\\to 1'$, and terminality of $1$ a unique $v\\colon 1'\\to 1$. Both $v\\circ u$ and $1_1$ are arrows $1\\to 1$, and terminality of $1$ says there is only one, so $v\\circ u=1_1$; symmetrically $u\\circ v=1_{1'}$. Hence $u$ is an isomorphism, and it is the unique morphism $1\\to 1'$ at all, so the isomorphism is unique."
+      solution_sketch: "Terminality gives an arrow each way; then note that each round trip is an arrow from a terminal object to itself, competing with the identity, and terminality says there is only one such arrow. Uniqueness of the isomorphism is free, since the hom-set between the two terminal objects is already a singleton."
+    anki_seeds:
+      - front: "Define an initial object of a category."
+        back: "an object with exactly one morphism to every object."
+        type: basic
+      - front: "Define a terminal object of a category."
+        back: "an object with exactly one morphism from every object."
+        type: basic
+      - front: "Initial/terminal objects are unique up to..."
+        back: "a unique isomorphism."
+        type: basic
+      - front: "In $\\mathbf{Set}$ the initial object is {{c1::$\\varnothing$}} and a terminal object is {{c2::any singleton}}."
+        back: "$\\varnothing$; any singleton"
+        type: cloze
+
+  - id: duality-opposite-categories
+    name: Duality and Opposite Categories
+    core: true
+    difficulty: 0.6
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 180
+    prerequisites:
+      - id: category-definition
+        weight: 0.5
+        key: true
+      - id: mono-epi-iso
+        weight: 0.3
+      - id: initial-terminal-objects
+        weight: 0.2
+      - id: propositional-logic
+        weight: 0.0
+    knowledge_points:
+      - id: kp1
+        name: The opposite category
+        key_prerequisites: [category-definition]
+        constraints: "Define $\\mathcal{C}^{op}$ precisely (hom-sets, reversed composition, identities) and verify the axioms; concrete readings only in $\\mathbf{Set}$."
+        exemplars:
+          - problem: "Given a category $\\mathcal{C}$, define $\\mathcal{C}^{op}$ and verify it is a category."
+            answer: "Same objects; $\\mathrm{Hom}_{\\mathcal{C}^{op}}(A,B)=\\mathrm{Hom}_{\\mathcal{C}}(B,A)$; composition reversed."
+            solution_sketch: "$\\mathcal{C}^{op}$ has the same objects, and a morphism $A\\to B$ in $\\mathcal{C}^{op}$ is a morphism $B\\to A$ in $\\mathcal{C}$. Define $g\\circ^{op} f := f\\circ g$. Identities are unchanged. Associativity in $\\mathcal{C}^{op}$ is associativity in $\\mathcal{C}$ read backwards, and the unit laws are preserved, so $\\mathcal{C}^{op}$ is a category, and $(\\mathcal{C}^{op})^{op}=\\mathcal{C}$."
+          - problem: "What is $\\mathbf{Set}^{op}$-morphism $A\\to B$ concretely?"
+            answer: "A function $B\\to A$ in $\\mathbf{Set}$."
+            solution_sketch: "By definition arrows reverse, so a morphism $A\\to B$ in $\\mathbf{Set}^{op}$ is exactly a function $B\\to A$."
+      - id: kp2
+        name: The duality principle
+        key_prerequisites: [category-definition]
+        constraints: "Produce the dual of a given notion by systematically reversing arrows and justify the translation; dual pairs limited to mono/epi, initial/terminal, product/coproduct, section/retraction."
+        exemplars:
+          - problem: "Explain the duality principle and use it to derive the notion dual to a monomorphism."
+            answer: "Any theorem yields its dual by reversing arrows; the dual of mono is epi."
+            solution_sketch: "A statement holds in all categories iff its arrow-reversed statement holds in all categories (apply the original to $\\mathcal{C}^{op}$). A monomorphism in $\\mathcal{C}$ is a morphism that is left-cancellable; reversing all arrows turns left-cancellation into right-cancellation, i.e. an epimorphism. So 'epi' is dual to 'mono', and every theorem about monos has a mirror theorem about epis obtained by reversing arrows."
+          - problem: "What is the dual notion of an initial object, and why?"
+            answer: "A terminal object."
+            solution_sketch: "Initial means 'unique arrow out to every object'; reversing arrows gives 'unique arrow in from every object', which is terminal. Thus terminal is dual to initial, so any theorem about initial objects dualizes to one about terminal objects (e.g. uniqueness up to unique iso)."
+      - id: kp3
+        name: Using duality to halve the work
+        key_prerequisites: [initial-terminal-objects]
+        constraints: "The proof must consist of applying a known theorem in $\\mathcal{C}^{op}$ and translating back — no fresh diagram chase or cancellation argument allowed."
+        exemplars:
+          - problem: "You proved initial objects are unique up to unique iso. Explain, using duality, why no separate proof is needed for terminal objects."
+            answer: "Terminal in $\\mathcal{C}$ = initial in $\\mathcal{C}^{op}$, so the theorem transfers."
+            solution_sketch: "A terminal object of $\\mathcal{C}$ is precisely an initial object of $\\mathcal{C}^{op}$. The statement 'initial objects are unique up to unique isomorphism' holds in every category, in particular in $\\mathcal{C}^{op}$; translating back, terminal objects of $\\mathcal{C}$ are unique up to unique isomorphism. Duality gives the theorem for free."
+          - problem: "Earlier you proved that a composite of two monomorphisms is a monomorphism. Use duality to obtain the corresponding fact for epimorphisms with no new computation."
+            answer: "Applying the mono result in $\\mathcal{C}^{op}$ gives: a composite of two epimorphisms is an epimorphism."
+            solution_sketch: "Epimorphisms in $\\mathcal{C}$ are exactly monomorphisms in $\\mathcal{C}^{op}$, and a composite $g\\circ f$ in $\\mathcal{C}$ is the composite $f\\circ^{op} g$ in $\\mathcal{C}^{op}$. The theorem 'a composite of two monos is a mono' holds in every category, in particular $\\mathcal{C}^{op}$; read back in $\\mathcal{C}$ it says a composite of two epis is an epi. No fresh cancellation argument is needed."
+    diagnostic_exemplar:
+      problem: "You know that a composite of two monomorphisms is a monomorphism. Using duality — not a fresh cancellation argument — prove that a composite of two epimorphisms is an epimorphism."
+      answer: "A morphism is epi in $\\mathcal C$ iff it is mono in $\\mathcal C^{op}$ (reversing arrows turns right-cancellation into left-cancellation), and the composite $g\\circ f$ in $\\mathcal C$ is the composite $f\\circ^{op}g$ in $\\mathcal C^{op}$. Let $f,g$ be epis in $\\mathcal C$; they are monos in $\\mathcal C^{op}$, and the mono theorem, valid in every category, applies to $\\mathcal C^{op}$: their composite is mono there. Translating back, $g\\circ f$ is epi in $\\mathcal C$."
+      solution_sketch: "Do not re-run the cancellation argument. Translate instead: epi in $\\mathcal C$ is mono in $\\mathcal C^{op}$ and composition order reverses, so apply the mono theorem inside $\\mathcal C^{op}$, where it holds because it holds in every category, and translate the conclusion back."
+    anki_seeds:
+      - front: "The opposite category $\\mathcal{C}^{op}$ has..."
+        back: "the same objects, morphisms $A\\to B$ = $\\mathcal{C}$-morphisms $B\\to A$, and reversed composition."
+        type: basic
+      - front: "By duality: the dual of a monomorphism is an {{c1::epimorphism}}, of an initial object a {{c2::terminal object}}, of a product a {{c3::coproduct}}."
+        back: "epimorphism; terminal object; coproduct"
+        type: cloze
+
+  - id: slice-categories
+    name: Slice and Coslice Categories
+    core: true  # ancestor of core universal-properties (PEDAGOGY §1 invariant)
+    difficulty: 0.7
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 210
+    prerequisites:
+      - id: category-definition
+        weight: 0.5
+        key: true
+      - id: commutative-diagrams
+        weight: 0.3
+      - id: initial-terminal-objects
+        weight: 0.3
+      - id: duality-opposite-categories
+        weight: 0.0
+    knowledge_points:
+      - id: kp1
+        name: Objects and morphisms of a slice
+        key_prerequisites: [commutative-diagrams]
+        constraints: "Define $\\mathcal{C}/C$ and verify closure of composition via pasted commuting triangles; concrete slices only in $\\mathbf{Set}$ over a set of at most 2 elements."
+        exemplars:
+          - problem: "Fix an object $C$ of $\\mathcal{C}$. Define the slice category $\\mathcal{C}/C$ and verify composition is well defined."
+            answer: "Objects: arrows $f\\colon X\\to C$; morphisms $f\\to g$: maps $h\\colon X\\to Y$ with $g\\circ h=f$."
+            solution_sketch: "An object of $\\mathcal{C}/C$ is a morphism $f\\colon X\\to C$. A morphism from $f\\colon X\\to C$ to $g\\colon Y\\to C$ is $h\\colon X\\to Y$ with $g\\circ h=f$ (the triangle over $C$ commutes). If also $k\\colon Y\\to Z$ satisfies $p\\circ k=g$ (where $p\\colon Z\\to C$), then $p\\circ(k\\circ h)=(p\\circ k)\\circ h=g\\circ h=f$, so $k\\circ h$ is again a morphism over $C$; identities are the underlying identities. Hence $\\mathcal{C}/C$ is a category."
+          - problem: "Describe the slice category $\\mathbf{Set}/\\{0,1\\}$ concretely: what is an object and what is a morphism?"
+            answer: "An object is a set split into two fibers; a morphism is a fiber-preserving function."
+            solution_sketch: "An object is a function $f\\colon X\\to\\{0,1\\}$, equivalently a set $X$ partitioned into the fibers $f^{-1}(0)$ and $f^{-1}(1)$. A morphism from $f\\colon X\\to\\{0,1\\}$ to $g\\colon Y\\to\\{0,1\\}$ is a function $h\\colon X\\to Y$ with $g\\circ h=f$, i.e. $h$ carries $f^{-1}(0)$ into $g^{-1}(0)$ and $f^{-1}(1)$ into $g^{-1}(1)$. Thus $\\mathbf{Set}/\\{0,1\\}$ is the category of $\\{0,1\\}$-indexed pairs of sets and fiberwise maps."
+      - id: kp2
+        name: Terminal objects in slices; coslices by duality
+        key_prerequisites: [initial-terminal-objects]
+        constraints: "Identify the terminal object of a slice (or, dually, the initial object of a coslice); the forcing argument '$h=f$ is the only candidate' must be given explicitly."
+        exemplars:
+          - problem: "Identify the terminal object of $\\mathcal{C}/C$."
+            answer: "The identity $1_C\\colon C\\to C$."
+            solution_sketch: "For any object $f\\colon X\\to C$, a morphism to $1_C$ is $h\\colon X\\to C$ with $1_C\\circ h=f$, i.e. $h=f$; so there is exactly one, namely $f$ itself. Hence $1_C$ is terminal in $\\mathcal{C}/C$."
+          - problem: "Define the coslice category $C/\\mathcal{C}$ as a dual and give its initial object."
+            answer: "$C/\\mathcal{C}=(\\mathcal{C}^{op}/C)^{op}$; objects are maps $C\\to X$; initial object is $1_C$."
+            solution_sketch: "Objects of $C/\\mathcal{C}$ are arrows $C\\to X$, morphisms $(C\\to X)\\to(C\\to Y)$ are $h\\colon X\\to Y$ commuting under $C$. Dually to the slice, $1_C\\colon C\\to C$ is the initial object. It arises from $\\mathcal{C}/C$ by reversing arrows, i.e. working in $\\mathcal{C}^{op}$."
+    diagnostic_exemplar:
+      problem: "Prove that the identity $1_C\\colon C\\to C$ is a terminal object of the slice category $\\mathcal{C}/C$."
+      answer: "Let $f\\colon X\\to C$ be any object of $\\mathcal{C}/C$. A morphism $f\\to 1_C$ is a map $h\\colon X\\to C$ with $1_C\\circ h=f$, i.e. $h=f$. So exactly one morphism $f\\to 1_C$ exists (namely $f$ itself), which is the definition of $1_C$ being terminal."
+      solution_sketch: "Unfold what a morphism $f\\to 1_C$ in $\\mathcal C/C$ is: a map $h$ with $1_C\\circ h=f$, i.e. $h=f$. The triangle condition pins $h$ down completely, so that hom-set is a singleton for every object $f$."
+    anki_seeds:
+      - front: "Objects of the slice category $\\mathcal{C}/C$?"
+        back: "the morphisms $f\\colon X\\to C$ (arrows into $C$)."
+        type: basic
+      - front: "A morphism $f\\to g$ in the slice $\\mathcal{C}/C$ is..."
+        back: "a map $h$ with $g\\circ h=f$ (the triangle over $C$ commutes)."
+        type: basic
+      - front: "Terminal object of $\\mathcal{C}/C$?"
+        back: "$1_C\\colon C\\to C$."
+        type: basic

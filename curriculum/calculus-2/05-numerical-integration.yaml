@@ -1,0 +1,155 @@
+unit: numerical-integration
+course: calculus-2
+module: "Numerical Integration"
+topics:
+  # Phase C (gap I-2): Simpson's rule and numerical-integration error bounds had
+  # 0 hits tree-wide, while the series side already teaches error bounds
+  # (taylor-polynomials-error, alternating-series-estimation) — this closes the
+  # asymmetry. Midpoint/trapezoid sums themselves are already taught in
+  # calculus-1 (midpoint-trapezoid-sums) and are NOT re-taught here.
+  # R-2 note: midpoint-trapezoid-sums is supplemental after W8 ("numerical
+  # rules; feed only the estimation topic"). Both new topics stay core: false
+  # rather than flipping that anchor: nothing downstream builds on numerical
+  # integration, so the whole branch remains a terminal destination and the W8
+  # rationale stands.
+
+  - id: simpsons-rule
+    name: Simpson's Rule
+    core: false                # terminal numerical-methods branch (rule 1: sits on supplemental midpoint-trapezoid-sums)
+    difficulty: 0.65
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 210
+    prerequisites:
+      - id: midpoint-trapezoid-sums
+        weight: 0.8
+        key: true
+      - id: definite-integrals-ftc
+        weight: 0.4
+      - id: estimating-integrals-from-tables
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: The basic parabolic estimate (n = 2)
+        key_prerequisites: [midpoint-trapezoid-sums]
+        exemplars:
+          - problem: 'Approximate $\int_0^2 x^2\,dx$ with Simpson''s rule, $n = 2$: $\frac{\Delta x}{3}\left(f_0 + 4f_1 + f_2\right)$. Give the result as a fraction.'
+            answer: "8/3"
+            solution_sketch: '$\Delta x = 1$: $\frac{1}{3}(0 + 4 \cdot 1 + 4) = \frac{8}{3}$ — exactly the true value, because Simpson''s rule fits a parabola and the integrand IS a parabola.'
+          - problem: 'Approximate $\int_1^3 \frac{1}{x}\,dx$ with Simpson''s rule, $n = 2$. Give the result as a fraction.'
+            answer: "10/9"
+            solution_sketch: '$\Delta x = 1$: $\frac{1}{3}\left(1 + 4 \cdot \frac{1}{2} + \frac{1}{3}\right) = \frac{10}{9} \approx 1.111$, against the true $\ln 3 \approx 1.099$.'
+          - problem: 'Approximate $\int_0^2 x^3\,dx$ with Simpson''s rule, $n = 2$.'
+            answer: "4"
+            solution_sketch: '$\frac{1}{3}(0 + 4 \cdot 1 + 8) = 4 = \int_0^2 x^3\,dx$ exactly — a preview of Simpson''s exactness through degree 3.'
+        constraints: "n = 2 only; nodes give exact function values (integer powers or 1/x at integer nodes); answers as fractions or terminating decimals; always print the Δx/3 (f0 + 4f1 + f2) template in the stem until mastered"
+      - id: kp2
+        name: The 1-4-2-4-1 pattern (n = 4 and tables)
+        key_prerequisites: [midpoint-trapezoid-sums, estimating-integrals-from-tables]
+        exemplars:
+          - problem: 'Approximate $\int_0^4 x^3\,dx$ with Simpson''s rule, $n = 4$, using the coefficient pattern $1, 4, 2, 4, 1$.'
+            answer: "64"
+            solution_sketch: '$\Delta x = 1$: $\frac{1}{3}(0 + 4 \cdot 1 + 2 \cdot 8 + 4 \cdot 27 + 64) = \frac{192}{3} = 64$, again exact.'
+          - problem: 'A table gives $f(0) = 2$, $f(1) = 5$, $f(2) = 4$, $f(3) = 7$, $f(4) = 2$. Estimate $\int_0^4 f(x)\,dx$ with Simpson''s rule.'
+            answer: "20"
+            solution_sketch: '$\frac{1}{3}(2 + 4 \cdot 5 + 2 \cdot 4 + 4 \cdot 7 + 2) = \frac{60}{3} = 20$.'
+          - problem: 'Simpson''s rule requires the number of subintervals $n$ to have what parity: even or odd?'
+            answer: "even"
+            solution_sketch: 'Each parabola spans a PAIR of subintervals, so the subintervals must pair up: $n$ must be even.'
+        constraints: "n = 4 with evenly spaced nodes; table values small integers; coefficient pattern 1,4,2,...,2,4,1 recalled, not supplied, once kp1 is mastered"
+      - id: kp3
+        name: Why Simpson beats the trapezoid
+        key_prerequisites: [definite-integrals-ftc, midpoint-trapezoid-sums]
+        exemplars:
+          - problem: 'For $\int_0^2 x^2\,dx = \frac{8}{3}$, the $n = 4$ trapezoid estimate is $2.75$. Compute its error $\left|2.75 - \frac{8}{3}\right|$ as a fraction.'
+            answer: "1/12"
+            solution_sketch: '$\frac{11}{4} - \frac{8}{3} = \frac{33 - 32}{12} = \frac{1}{12}$; Simpson with only $n = 2$ already gives $\frac{8}{3}$ exactly.'
+          - problem: 'Simpson''s rule integrates every polynomial exactly up to what degree?'
+            answer: "3"
+            solution_sketch: 'The parabola matching makes degrees 0-2 exact, and the symmetric placement of the nodes makes the cubic error cancel too — degree 3 for free.'
+        constraints: "errors as exact fractions against an FTC-computed true value; degree/parity facts asked as plain numerics"
+    diagnostic_exemplar:
+      problem: 'A table gives $f(0) = 3$, $f(1) = 6$, $f(2) = 5$, $f(3) = 8$, $f(4) = 3$. Estimate $\int_0^4 f(x)\,dx$ with Simpson''s rule.'
+      answer: '24'
+      solution_sketch: 'With $\Delta x = 1$ and the pattern $1, 4, 2, 4, 1$: $\frac{1}{3}(3 + 24 + 10 + 32 + 3) = 24$.'
+    anki_seeds:
+      - front: "Simpson's rule (n even): ∫ ≈ ?"
+        back: "(Δx/3)(f₀ + 4f₁ + 2f₂ + 4f₃ + … + 4fₙ₋₁ + fₙ)"
+        type: basic
+      - front: "Simpson's rule coefficient pattern and parity requirement?"
+        back: "1, 4, 2, 4, …, 2, 4, 1 — n must be even"
+        type: basic
+      - front: "Simpson's rule is exact for polynomials up to degree..."
+        back: "3 (cubics), because the cubic error cancels by symmetry"
+        type: basic
+
+  - id: numerical-integration-error-bounds
+    name: Numerical Integration Error Bounds
+    core: false                # terminal: quantifies a supplemental branch; nothing downstream consumes it
+    difficulty: 0.7
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 240
+    prerequisites:
+      - id: simpsons-rule
+        weight: 0.7
+        key: true
+      - id: midpoint-trapezoid-sums
+        weight: 0.6
+        key: true
+      - id: higher-order-derivatives
+        weight: 0.5
+    knowledge_points:
+      - id: kp1
+        name: Trapezoid and midpoint error bounds
+        key_prerequisites: [midpoint-trapezoid-sums, second-derivatives]
+        exemplars:
+          - problem: 'For $\int_0^2 x^3\,dx$ we have $f''''(x) = 6x$, so $K = \max_{[0,2]}|f''''| = 12$. Compute the trapezoid error bound $\frac{K(b-a)^3}{12n^2}$ for $n = 4$.'
+            answer: "1/2"
+            solution_sketch: '$\frac{12 \cdot 8}{12 \cdot 16} = \frac{1}{2}$ — the true error is smaller; the bound is a guarantee, not a prediction.'
+          - problem: 'Same integral, same $K = 12$: compute the midpoint error bound $\frac{K(b-a)^3}{24n^2}$ for $n = 4$.'
+            answer: "1/4"
+            solution_sketch: '$\frac{12 \cdot 8}{24 \cdot 16} = \frac{1}{4}$ — half the trapezoid bound, matching the concavity picture from midpoint-trapezoid-sums.'
+          - problem: 'Doubling $n$ divides the trapezoid error bound by what factor?'
+            answer: "4"
+            solution_sketch: 'The bound scales as $\frac{1}{n^2}$, so doubling $n$ divides it by $2^2 = 4$.'
+        constraints: "K supplied, or f'' monotone so its max sits at an endpoint; (b - a) and n chosen so bounds are simple fractions; formulas printed in the stem until the anki cards stick"
+      - id: kp2
+        name: The Simpson error bound
+        key_prerequisites: [simpsons-rule, higher-order-derivatives]
+        exemplars:
+          - problem: 'For $\int_1^2 \frac{1}{x}\,dx$, $f^{(4)}(x) = \frac{24}{x^5}$ has maximum $K = 24$ at $x = 1$. Compute the Simpson error bound $\frac{K(b-a)^5}{180n^4}$ for $n = 4$.'
+            answer: "1/1920"
+            solution_sketch: '$\frac{24 \cdot 1}{180 \cdot 256} = \frac{24}{46080} = \frac{1}{1920}$ — with only 4 subintervals the estimate is already good to three decimals.'
+          - problem: 'For $f(x) = x^3$, compute $K = \max |f^{(4)}(x)|$, the constant in the Simpson error bound.'
+            answer: "0"
+            solution_sketch: '$f^{(4)} = 0$ for any cubic — the bound is $0$, which is exactly the exactness-through-degree-3 fact.'
+          - problem: 'The Simpson bound scales as $\frac{1}{n^4}$, the trapezoid bound as $\frac{1}{n^2}$. Doubling $n$ divides the Simpson bound by what factor?'
+            answer: "16"
+            solution_sketch: '$2^4 = 16$ — fourth-order convergence is why Simpson wins at the same cost in function evaluations.'
+        constraints: "f^(4) supplied or trivially maximized (monotone, max at an endpoint); n = 2 or 4 so 180n^4 stays a hand-sized denominator; answers exact fractions"
+      - id: kp3
+        name: Choosing n for a target accuracy
+        key_prerequisites: [simpsons-rule, midpoint-trapezoid-sums]
+        exemplars:
+          - problem: 'For an integral on $[0, 1]$ with $K = \max|f''''| = 2$, find the smallest integer $n$ so the trapezoid bound $\frac{K(b-a)^3}{12n^2} = \frac{1}{6n^2}$ is at most $0.01$.'
+            answer: "5"
+            solution_sketch: '$\frac{1}{6n^2} \le \frac{1}{100} \iff n^2 \ge \frac{100}{6} \approx 16.7$, so $n = 5$ (since $4^2 = 16$ falls short).'
+          - problem: 'For an integral on $[0, 1]$ with $K = \max|f^{(4)}| = 24$, find the smallest EVEN $n$ so the Simpson bound $\frac{24}{180n^4}$ is at most $0.001$.'
+            answer: "4"
+            solution_sketch: '$n^4 \ge \frac{24}{0.18} \approx 133$; $3^4 = 81$ fails, $4^4 = 256$ works — and $n$ must be even anyway.'
+        constraints: "targets 10^-2 or 10^-3; K and (b - a) chosen so the threshold lands between consecutive (even, for Simpson) values of n; answer is the single integer n"
+    diagnostic_exemplar:
+      problem: 'For an integral over $[0, 2]$ with $K = \max|f^{(2)}| = 6$, find the smallest integer $n$ for which the trapezoid error bound $\frac{K(b-a)^3}{12n^2}$ is at most $0.01$.'
+      answer: '20'
+      solution_sketch: 'The bound is $\frac{6 \cdot 8}{12n^2} = \frac{4}{n^2}$; requiring $\frac{4}{n^2} \le 0.01$ gives $n^2 \ge 400$, so $n = 20$.'
+    anki_seeds:
+      - front: "Trapezoid rule error bound?"
+        back: "|E_T| ≤ K(b−a)³/(12n²), where K ≥ max|f″| on [a, b] (midpoint: 24n² in the denominator)"
+        type: basic
+      - front: "Simpson's rule error bound?"
+        back: "|E_S| ≤ K(b−a)⁵/(180n⁴), where K ≥ max|f⁽⁴⁾| on [a, b]"
+        type: basic
+      - front: "Doubling n divides the trapezoid bound by ___ and the Simpson bound by ___"
+        back: "4 and 16 (1/n² vs 1/n⁴ convergence)"
+        type: basic

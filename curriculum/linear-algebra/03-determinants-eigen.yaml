@@ -1,0 +1,830 @@
+unit: determinants-eigen
+course: linear-algebra
+module: "Determinants & Eigentheory"
+topics:
+  - id: determinants-2x2
+    name: 2x2 Determinants
+    core: true
+    difficulty: 0.5
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 90
+    prerequisites:
+      - id: matrix-operations
+        weight: 0.7
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: The ad - bc formula
+        key_prerequisites: [matrix-operations]
+        exemplars:
+          - problem: 'Compute $\det\begin{pmatrix}5&3\\2&4\end{pmatrix}$.'
+            answer: "14"
+            solution_sketch: '$ad - bc = 20 - 6$.'
+          - problem: 'Compute $\det\begin{pmatrix}7&2\\9&3\end{pmatrix}$.'
+            answer: "3"
+            solution_sketch: '$21 - 18 = 3$.'
+          - problem: 'Compute $\det\begin{pmatrix}-2&5\\3&1\end{pmatrix}$.'
+            answer: "-17"
+            solution_sketch: '$(-2)(1) - (5)(3) = -2 - 15$.'
+        constraints: "integer entries in -9..9; answers in -30..30; include some negative entries"
+      - id: kp2
+        name: Zero determinants and invertibility
+        key_prerequisites: [matrix-operations]
+        exemplars:
+          - problem: 'Compute $\det\begin{pmatrix}2&6\\1&3\end{pmatrix}$, and note how the rows are related.'
+            answer: "0"
+            solution_sketch: '$6 - 6 = 0$: row 1 is twice row 2.'
+          - problem: 'Compute $\det\begin{pmatrix}4&-2\\-6&3\end{pmatrix}$.'
+            answer: "0"
+            solution_sketch: '$12 - 12 = 0$; row 2 is $-\frac{3}{2}$ times row 1.'
+          - problem: 'Is $\begin{pmatrix}3&1\\5&2\end{pmatrix}$ invertible?'
+            answer: "Yes"
+            solution_sketch: '$\det = 6 - 5 = 1 \neq 0$, and a $2 \times 2$ matrix is invertible iff its determinant is nonzero.'
+        constraints: "singular cases have proportional rows with small ratios; invertibility questions decided purely by the determinant"
+      - id: kp3
+        name: Solving for an unknown entry
+        key_prerequisites: [matrix-operations]
+        exemplars:
+          - problem: 'Find $x$ so that $\det\begin{pmatrix}x&2\\3&4\end{pmatrix} = 6$.'
+            answer: "3"
+            solution_sketch: '$4x - 6 = 6$, so $x = 3$.'
+          - problem: 'Find $k$ so that $\begin{pmatrix}2&k\\4&10\end{pmatrix}$ is NOT invertible.'
+            answer: "5"
+            solution_sketch: 'Set $\det = 20 - 4k = 0$.'
+        constraints: "resulting linear equation has an integer solution in -6..6"
+    diagnostic_exemplar:
+      problem: 'Find $k$ so that $\det\begin{pmatrix}6&2\\7&k\end{pmatrix} = 4$.'
+      answer: '3'
+      solution_sketch: '$6k - 14 = 4$ gives $k = 3$.'
+    anki_seeds:
+      - front: '$\det\begin{pmatrix}a&b\\c&d\end{pmatrix} = $ ?'
+        back: '$ad - bc$.'
+        type: basic
+      - front: 'A square matrix is invertible iff its determinant is...'
+        back: 'nonzero.'
+        type: basic
+
+  - id: determinants
+    name: Determinants
+    core: true
+    difficulty: 0.6
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 150
+    prerequisites:
+      - id: determinants-2x2
+        weight: 0.8
+        key: true
+      - id: matrix-operations
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: Minors and cofactors
+        key_prerequisites: [determinants-2x2]
+        exemplars:
+          - problem: 'For $A = \begin{pmatrix}1&2&0\\3&1&2\\0&4&1\end{pmatrix}$, compute the minor $M_{11}$ and the cofactor $C_{11}$; state the pair $(M_{11}, C_{11})$.'
+            answer: "(-7, -7)"
+            solution_sketch: 'Delete row 1 and column 1: $\det\begin{pmatrix}1&2\\4&1\end{pmatrix} = 1 - 8 = -7$; the sign is $(-1)^{1+1} = +$.'
+          - problem: 'For $A = \begin{pmatrix}2&0&1\\1&3&0\\0&1&4\end{pmatrix}$, compute the cofactor $C_{12}$.'
+            answer: "-4"
+            solution_sketch: 'Minor: $\det\begin{pmatrix}1&0\\0&4\end{pmatrix} = 4$; sign $(-1)^{1+2} = -$, so $C_{12} = -4$.'
+        constraints: "3x3 matrices with entries in -4..4; ask for one minor and/or cofactor at a time"
+      - id: kp2
+        name: Triangular matrices and smart expansion
+        key_prerequisites: [determinants-2x2]
+        exemplars:
+          - problem: 'Compute $\det\begin{pmatrix}3&0&0\\5&2&0\\1&4&6\end{pmatrix}$.'
+            answer: "36"
+            solution_sketch: 'Triangular: the determinant is the product of the diagonal, $3 \cdot 2 \cdot 6$.'
+          - problem: 'Compute $\det\begin{pmatrix}1&5&2\\0&3&0\\2&1&4\end{pmatrix}$ by expanding along the row or column with the most zeros.'
+            answer: "0"
+            solution_sketch: 'Expand along row 2: $3 \cdot \det\begin{pmatrix}1&2\\2&4\end{pmatrix} = 3(4 - 4) = 0$.'
+        constraints: "one triangular matrix and one matrix with a zero-rich row/column per problem set"
+      - id: kp3
+        name: 3x3 determinants by cofactor expansion
+        key_prerequisites: [determinants-2x2]
+        exemplars:
+          - problem: 'Compute $\det\begin{pmatrix}1&2&0\\3&1&2\\0&4&1\end{pmatrix}$ by expanding along the first row.'
+            answer: "-13"
+            solution_sketch: '$1(1 - 8) - 2(3 - 0) + 0 = -7 - 6 = -13$.'
+          - problem: 'Compute $\det\begin{pmatrix}2&0&1\\1&3&0\\0&1&4\end{pmatrix}$.'
+            answer: "25"
+            solution_sketch: 'Expand along row 1: $2(12 - 0) - 0 + 1(1 - 0) = 24 + 1$.'
+        constraints: "entries in -4..4 with at least one zero per matrix; determinant in -30..30"
+    diagnostic_exemplar:
+      problem: 'Compute $\det\begin{pmatrix}1&0&2\\2&1&3\\0&1&1\end{pmatrix}$.'
+      answer: "2"
+      solution_sketch: 'Expand along row 1: $1(1 - 3) - 0 + 2(2 - 0) = -2 + 4 = 2$.'
+    anki_seeds:
+      - front: 'Determinant of a triangular matrix?'
+        back: 'The product of the diagonal entries.'
+        type: basic
+      - front: 'In cofactor expansion, the sign attached to entry $(i, j)$ is...'
+        back: '$(-1)^{i+j}$ (checkerboard pattern).'
+        type: basic
+      - front: 'The cofactor $C_{ij}$ equals the minor $M_{ij}$ times...'
+        back: '$(-1)^{i+j}$.'
+        type: basic
+
+  - id: determinant-properties-cramers-rule
+    name: Determinant Properties and Cramer's Rule
+    core: true
+    difficulty: 0.65
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 180
+    prerequisites:
+      - id: determinants
+        weight: 0.8
+        key: true
+      - id: matrix-inverses
+        weight: 0.4
+      - id: row-reduction-echelon-forms
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Multiplicativity and scaling
+        key_prerequisites: [determinants]
+        exemplars:
+          - problem: 'If $A$ and $B$ are $2 \times 2$ with $\det A = 3$ and $\det B = 2$, find $\det(AB)$.'
+            answer: "6"
+            solution_sketch: '$\det(AB) = \det A \cdot \det B$.'
+          - problem: 'If $A$ is $2 \times 2$ with $\det A = 3$, find $\det(2A)$.'
+            answer: "12"
+            solution_sketch: '$\det(kA) = k^n \det A$ for $n \times n$; here $2^2 \cdot 3$.'
+          - problem: 'If $\det A = 3$, find $\det(A^{-1})$.'
+            answer: "1/3"
+            solution_sketch: '$\det(A)\det(A^{-1}) = \det I = 1$.'
+        constraints: "given determinants are small integers; sizes 2x2 or 3x3 (state the size)"
+      - id: kp2
+        name: Row operations and zero determinants
+        key_prerequisites: [determinants]
+        exemplars:
+          - problem: 'Matrix $B$ is obtained from $A$ by swapping two rows, and $\det A = 5$. Find $\det B$.'
+            answer: "-5"
+            solution_sketch: 'A row swap flips the sign of the determinant.'
+          - problem: 'Without expanding, explain why $\det\begin{pmatrix}1&2&3\\4&5&6\\1&2&3\end{pmatrix} = 0$.'
+            answer: "Rows 1 and 3 are equal, so the determinant is 0"
+          - problem: '$B$ is obtained from $A$ by $R_2 \to R_2 + 4R_1$, and $\det A = 7$. Find $\det B$.'
+            answer: "7"
+            solution_sketch: 'Adding a multiple of one row to another leaves the determinant unchanged.'
+        constraints: "one row operation per problem; determinants stay small integers"
+      - id: kp3
+        name: "Cramer's rule for 2x2 systems"
+        key_prerequisites: [determinants, row-reduction-echelon-forms]
+        exemplars:
+          - problem: 'Solve by Cramer''s rule: $2x + y = 7$, $x + 3y = 6$.'
+            answer: "x = 3, y = 1"
+            solution_sketch: '$D = 6 - 1 = 5$; $D_x = 21 - 6 = 15$; $D_y = 12 - 7 = 5$; $x = 15/5$, $y = 5/5$.'
+          - problem: 'Solve by Cramer''s rule: $x + 2y = 4$, $3x + y = 7$.'
+            answer: "x = 2, y = 1"
+            solution_sketch: '$D = 1 - 6 = -5$; $D_x = 4 - 14 = -10$; $D_y = 7 - 12 = -5$.'
+        constraints: "D must be nonzero; integer solutions in -4..4"
+    diagnostic_exemplar:
+      problem: 'Solve by Cramer''s rule: $3x + y = 9$, $x + 2y = 8$; then state $\det(2A)$ for the coefficient matrix $A$.'
+      answer: 'x = 2, y = 3; det(2A) = 20'
+      solution_sketch: '$\det A = 5$, $\det A_1 = 18 - 8 = 10$, $\det A_2 = 24 - 9 = 15$, so $x = 2$, $y = 3$; and $\det(2A) = 2^2\det A = 20$.'
+    anki_seeds:
+      - front: '$\det(AB) = $ ?'
+        back: '$\det A \cdot \det B$.'
+        type: basic
+      - front: 'For an $n \times n$ matrix, $\det(kA) = $ ?'
+        back: '$k^n \det A$.'
+        type: basic
+      - front: 'Effect of the three row operations on the determinant?'
+        back: 'Swap: sign flips; scale a row by $k$: determinant scales by $k$; add a multiple of another row: unchanged.'
+        type: basic
+
+  - id: determinants-row-reduction
+    name: Determinants via Row Reduction
+    core: false                # alternative computation of an already-taught determinant; terminal
+    difficulty: 0.65
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 180
+    prerequisites:
+      - id: determinant-properties-cramers-rule
+        weight: 0.7
+        key: true
+      - id: row-reduction-echelon-forms
+        weight: 0.5
+    knowledge_points:
+      - id: kp1
+        name: Tracking row operations
+        key_prerequisites: [determinant-properties-cramers-rule]
+        exemplars:
+          - problem: '$B$ is obtained from $A$ by $R_1 \to 3R_1$, and $\det A = 2$. Find $\det B$.'
+            answer: "6"
+            solution_sketch: 'Scaling a row by $3$ scales the determinant by $3$.'
+          - problem: '$B$ is obtained from $A$ by one row swap followed by $R_3 \to R_3 - 2R_1$, and $\det A = 4$. Find $\det B$.'
+            answer: "-4"
+            solution_sketch: 'The swap flips the sign; the replacement changes nothing.'
+        constraints: "at most two operations per problem; starting determinants are small integers"
+      - id: kp2
+        name: Computing determinants by elimination
+        key_prerequisites: [determinant-properties-cramers-rule, row-reduction-echelon-forms]
+        exemplars:
+          - problem: 'Compute $\det\begin{pmatrix}1&2&1\\2&5&3\\1&3&4\end{pmatrix}$ by row reduction.'
+            answer: "2"
+            solution_sketch: '$R_2 - 2R_1$ and $R_3 - R_1$ give rows $(0,1,1)$ and $(0,1,3)$; then $R_3 - R_2$ gives $(0,0,2)$. Replacements do not change the determinant, so it is $1 \cdot 1 \cdot 2 = 2$.'
+          - problem: 'Compute $\det\begin{pmatrix}1&1&1\\1&2&2\\1&2&3\end{pmatrix}$ by row reduction.'
+            answer: "1"
+            solution_sketch: 'Subtracting $R_1$ from the others, then $R_2$ from $R_3$, leaves a triangular matrix with diagonal $1, 1, 1$.'
+        constraints: "3x3 with a 1 in the top-left; elimination uses only replacements so the determinant is the diagonal product"
+      - id: kp3
+        name: Factoring out common row factors
+        key_prerequisites: [determinant-properties-cramers-rule]
+        exemplars:
+          - problem: 'Compute $\det\begin{pmatrix}2&4\\1&3\end{pmatrix}$ by first factoring $2$ out of row 1.'
+            answer: "2"
+            solution_sketch: '$2 \det\begin{pmatrix}1&2\\1&3\end{pmatrix} = 2(3 - 2) = 2$.'
+          - problem: 'Row 1 of $\begin{pmatrix}3&6&9\\1&0&2\\2&1&1\end{pmatrix}$ has a common factor. Factoring it out writes the determinant as $c\det M$ with $M$ integer-entried and first row $(1, 2, 3)$; state $c$.'
+            answer: "3"
+            solution_sketch: 'Row 1 is $3(1, 2, 3)$; pulling the $3$ out of that row scales the determinant by $3$, so $c = 3$ and $M = \begin{pmatrix}1&2&3\\1&0&2\\2&1&1\end{pmatrix}$.'
+        constraints: "one row with an obvious common factor of 2 or 3"
+    diagnostic_exemplar:
+      problem: 'Compute $\det\begin{pmatrix}2&4&6\\1&3&2\\0&1&4\end{pmatrix}$ by first factoring $2$ out of row $1$ and then eliminating.'
+      answer: '10'
+      solution_sketch: 'Factoring gives $2\det\begin{pmatrix}1&2&3\\1&3&2\\0&1&4\end{pmatrix}$; $R_2 \to R_2 - R_1$ makes it triangular-ish with determinant $5$, so the answer is $10$.'
+    anki_seeds:
+      - front: 'Row-reduction recipe for determinants: reduce to triangular form, then the determinant equals...'
+        back: 'the diagonal product, corrected by $(-1)$ per swap and by any factors pulled out of rows.'
+        type: basic
+      - front: 'Which row operation leaves the determinant unchanged?'
+        back: 'Adding a multiple of one row to another (replacement).'
+        type: basic
+
+  - id: determinants-area-volume
+    name: Determinants as Area and Volume
+    core: false                # geometric interpretation leaf; terminal
+    difficulty: 0.6
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 150
+    prerequisites:
+      - id: determinants-2x2
+        weight: 0.7
+        key: true
+      - id: determinants
+        weight: 0.5
+    knowledge_points:
+      - id: kp1
+        name: Area of a parallelogram
+        key_prerequisites: [determinants-2x2]
+        exemplars:
+          - problem: 'Find the area of the parallelogram spanned by $(3, 1)$ and $(1, 2)$.'
+            answer: "5"
+            solution_sketch: '$|\det| = |6 - 1| = 5$.'
+          - problem: 'Find the area of the parallelogram spanned by $(2, 0)$ and $(1, 3)$.'
+            answer: "6"
+            solution_sketch: '$|6 - 0| = 6$.'
+          - problem: 'Find the area of the triangle with vertices $(0,0)$, $(4,1)$, $(2,3)$.'
+            answer: "5"
+            solution_sketch: 'Half the parallelogram area: $\frac{1}{2}|\det\begin{pmatrix}4&1\\2&3\end{pmatrix}| = \frac{1}{2}|12 - 2| = 5$.'
+        constraints: "integer vectors with entries in -5..5; areas are integers or half-integers"
+      - id: kp2
+        name: Volume of a parallelepiped
+        key_prerequisites: [determinants]
+        exemplars:
+          - problem: 'Find the volume of the parallelepiped spanned by $(1, 0, 1)$, $(0, 2, 0)$, $(1, 1, 3)$.'
+            answer: "4"
+            solution_sketch: '$\det\begin{pmatrix}1&0&1\\0&2&0\\1&1&3\end{pmatrix} = 1(6 - 0) + 1(0 - 2) = 4$; the volume is $|4| = 4$.'
+          - problem: 'Find the volume of the box spanned by $(2, 0, 0)$, $(0, 3, 0)$, $(0, 0, 4)$.'
+            answer: "24"
+            solution_sketch: 'Diagonal matrix: $|2 \cdot 3 \cdot 4| = 24$.'
+        constraints: "3x3 with entries in -3..4 and several zeros; volumes in 1..30"
+      - id: kp3
+        name: How linear maps scale area
+        key_prerequisites: [determinants-2x2]
+        exemplars:
+          - problem: '$T$ has matrix $\begin{pmatrix}2&1\\0&3\end{pmatrix}$. A region has area $5$; what is the area of its image under $T$?'
+            answer: "30"
+            solution_sketch: 'Areas scale by $|\det| = |6| = 6$, so $6 \cdot 5 = 30$.'
+          - problem: '$T$ has matrix $\begin{pmatrix}0&1\\1&0\end{pmatrix}$. Compute $\det T$, then say whether $T$ preserves area and whether it preserves orientation.'
+            answer: "-1"
+            solution_sketch: '$\det = -1$: the area scale factor is $|-1| = 1$, so area is preserved, but the negative sign means orientation is reversed.'
+        constraints: "matrices with small integer determinants; ask for image area or orientation"
+    diagnostic_exemplar:
+      problem: 'A parallelepiped is spanned by $(2, 0, 1)$, $(1, 3, 0)$, and $(0, 1, 2)$. Find the volume of its image under the linear map with matrix $\begin{pmatrix}2&0&0\\0&1&0\\0&0&3\end{pmatrix}$.'
+      answer: '78'
+      solution_sketch: 'The parallelepiped has volume $|\det| = 13$; the map multiplies volumes by $|\det| = 6$, giving $13 \cdot 6 = 78$.'
+    anki_seeds:
+      - front: 'Geometric meaning of $|\det|$ for a $2 \times 2$ matrix?'
+        back: 'The area of the parallelogram spanned by its columns (and the factor by which the map scales areas).'
+        type: basic
+      - front: 'What does a negative determinant mean geometrically?'
+        back: 'The map reverses orientation.'
+        type: basic
+
+  - id: characteristic-polynomial
+    name: The Characteristic Polynomial
+    core: true
+    difficulty: 0.65
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 180
+    prerequisites:
+      - id: determinants-2x2
+        weight: 0.7
+        key: true
+      - id: quadratic-formula
+        weight: 0.5
+        key: true
+      - id: polynomial-multiplication
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Setting up det(A - lambda I)
+        key_prerequisites: [determinants-2x2, polynomial-multiplication]
+        exemplars:
+          - problem: 'Find the characteristic polynomial of $A = \begin{pmatrix}3&2\\1&4\end{pmatrix}$.'
+            answer: '$\lambda^2 - 7\lambda + 10$'
+            solution_sketch: '$\det(A - \lambda I) = (3-\lambda)(4-\lambda) - 2 = \lambda^2 - 7\lambda + 10$.'
+          - problem: 'Find the characteristic polynomial of $A = \begin{pmatrix}1&3\\2&2\end{pmatrix}$.'
+            answer: '$\lambda^2 - 3\lambda - 4$'
+            solution_sketch: '$(1-\lambda)(2-\lambda) - 6 = \lambda^2 - 3\lambda - 4$.'
+        constraints: "2x2 integer matrices; polynomial coefficients in -12..12"
+      - id: kp2
+        name: Eigenvalues as roots
+        key_prerequisites: [determinants-2x2, quadratic-formula]
+        exemplars:
+          - problem: 'Find the eigenvalues of $A = \begin{pmatrix}3&2\\1&4\end{pmatrix}$.'
+            answer: "2 and 5"
+            solution_sketch: '$\lambda^2 - 7\lambda + 10 = (\lambda - 2)(\lambda - 5)$.'
+          - problem: 'Find the eigenvalues of $A = \begin{pmatrix}1&3\\2&2\end{pmatrix}$.'
+            answer: "4 and -1"
+            solution_sketch: '$\lambda^2 - 3\lambda - 4 = (\lambda - 4)(\lambda + 1)$.'
+          - problem: 'Find the eigenvalues of $A = \begin{pmatrix}2&3\\4&1\end{pmatrix}$.'
+            answer: "5 and -2"
+            solution_sketch: '$\lambda^2 - 3\lambda - 10 = (\lambda - 5)(\lambda + 2)$.'
+        constraints: "2x2 with integer spectra in -4..6; characteristic polynomial factors over the integers"
+      - id: kp3
+        name: Trace, determinant, and triangular shortcuts
+        key_prerequisites: [determinants-2x2]
+        exemplars:
+          - problem: 'Find the eigenvalues of the triangular matrix $\begin{pmatrix}4&7\\0&-2\end{pmatrix}$.'
+            answer: "4 and -2"
+            solution_sketch: 'For a triangular matrix, the eigenvalues are the diagonal entries.'
+          - problem: 'For a $2 \times 2$ matrix, the characteristic polynomial is $\lambda^2 - (\mathrm{tr}\,A)\lambda + \det A$. Use this to find the eigenvalues of $A = \begin{pmatrix}6&2\\2&3\end{pmatrix}$.'
+            answer: "2 and 7"
+            solution_sketch: 'Trace $9$, determinant $18 - 4 = 14$: $\lambda^2 - 9\lambda + 14 = (\lambda - 2)(\lambda - 7)$.'
+        constraints: "triangular matrices or trace/det setups; integer eigenvalues"
+    diagnostic_exemplar:
+      problem: 'Find the eigenvalues of $A = \begin{pmatrix}5&4\\2&3\end{pmatrix}$.'
+      answer: "1 and 7"
+      solution_sketch: 'Trace $8$, determinant $15 - 8 = 7$: $\lambda^2 - 8\lambda + 7 = (\lambda - 1)(\lambda - 7)$.'
+    anki_seeds:
+      - front: 'The eigenvalues of $A$ are the roots of which equation?'
+        back: 'The characteristic equation $\det(A - \lambda I) = 0$.'
+        type: basic
+      - front: 'For a $2 \times 2$ matrix, the characteristic polynomial is $\lambda^2 - (\mathrm{tr}\,A)\lambda + {{c1::\det A}}$.'
+        back: '$\det A$'
+        type: cloze
+      - front: 'Eigenvalues of a triangular matrix?'
+        back: 'Its diagonal entries.'
+        type: basic
+
+  - id: finding-eigenvectors
+    name: Finding Eigenvectors
+    core: true
+    difficulty: 0.65
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 180
+    prerequisites:
+      - id: characteristic-polynomial
+        weight: 0.7
+        key: true
+      - id: solution-sets-free-variables
+        weight: 0.6
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: Verifying eigenvectors
+        key_prerequisites: [characteristic-polynomial]
+        exemplars:
+          - problem: 'Verify that $\mathbf{v} = (1, 2)$ is an eigenvector of $A = \begin{pmatrix}1&2\\4&3\end{pmatrix}$ and find its eigenvalue.'
+            answer: "Eigenvalue 5, since Av = (5, 10) = 5v"
+            solution_sketch: '$A\mathbf{v} = (1 + 4, 4 + 6) = (5, 10) = 5(1, 2)$.'
+          - problem: 'Verify that $\mathbf{v} = (1, 1)$ is an eigenvector of $A = \begin{pmatrix}2&3\\1&4\end{pmatrix}$ and find its eigenvalue.'
+            answer: "Eigenvalue 5, since Av = (5, 5) = 5v"
+          - problem: 'Is $(1, 0)$ an eigenvector of $\begin{pmatrix}2&1\\1&2\end{pmatrix}$?'
+            answer: "No"
+            solution_sketch: '$A(1,0) = (2, 1)$, which is not a scalar multiple of $(1, 0)$.'
+        constraints: "2x2 integer matrices; eigenvalues are integers in -3..5"
+      - id: kp2
+        name: Solving (A - lambda I)v = 0
+        key_prerequisites: [characteristic-polynomial, solution-sets-free-variables]
+        exemplars:
+          - problem: '$\lambda = 2$ is an eigenvalue of $A = \begin{pmatrix}3&2\\1&4\end{pmatrix}$. Find an eigenvector.'
+            answer: "(-2, 1) (any nonzero multiple)"
+            solution_sketch: '$A - 2I = \begin{pmatrix}1&2\\1&2\end{pmatrix}$; solve $x + 2y = 0$. Check: $A(-2,1) = (-4, 2) = 2(-2,1)$.'
+          - problem: '$\lambda = 4$ is an eigenvalue of $A = \begin{pmatrix}1&3\\2&2\end{pmatrix}$. Find an eigenvector.'
+            answer: "(1, 1) (any nonzero multiple)"
+            solution_sketch: '$A - 4I = \begin{pmatrix}-3&3\\2&-2\end{pmatrix}$; solve $x = y$. Check: $A(1,1) = (4, 4)$.'
+        constraints: "eigenvector entries small integers; always verify by computing Av"
+      - id: kp3
+        name: Eigenpairs one eigenvalue at a time
+        key_prerequisites: [characteristic-polynomial, solution-sets-free-variables]
+        exemplars:
+          - problem: '$A = \begin{pmatrix}5&-2\\1&2\end{pmatrix}$ has eigenvalues $3$ and $4$. Find an eigenvector for each.'
+            answer: "lambda = 3: (1, 1); lambda = 4: (2, 1) (each any nonzero multiple)"
+            solution_sketch: '$A - 3I$ gives $2x - 2y = 0$, so $(1,1)$; $A - 4I$ gives $x - 2y = 0$, so $(2,1)$. Check: $A(1,1) = (3,3)$, $A(2,1) = (8,4)$.'
+          - problem: '$\lambda = 3$ is an eigenvalue of $A = \begin{pmatrix}2&1\\1&2\end{pmatrix}$. Find an eigenvector, and verify with $A\mathbf{v} = 3\mathbf{v}$.'
+            answer: "(1, 1) (any nonzero multiple); Av = (3, 3) = 3v"
+            solution_sketch: '$A - 3I = \begin{pmatrix}-1&1\\1&-1\end{pmatrix}$; solve $x = y$.'
+        constraints: "eigenvalues given or trivially found; eigenvector entries in -3..3"
+    diagnostic_exemplar:
+      problem: '$A = \begin{pmatrix}4&2\\1&3\end{pmatrix}$ has eigenvalues $2$ and $5$. Find an eigenvector for each, and verify one of them with $A\mathbf{v} = \lambda\mathbf{v}$.'
+      answer: 'lambda = 2: (1, -1); lambda = 5: (2, 1) (each any nonzero multiple); check A(1, -1) = (2, -2) = 2(1, -1)'
+      solution_sketch: '$(A - 2I)\mathbf{v} = \mathbf{0}$ gives $2x + 2y = 0$, so $(1, -1)$; $(A - 5I)\mathbf{v} = \mathbf{0}$ gives $-x + 2y = 0$, so $(2, 1)$.'
+    anki_seeds:
+      - front: 'Defining equation of an eigenvalue/eigenvector pair?'
+        back: '$A\mathbf{v} = \lambda\mathbf{v}$ with $\mathbf{v} \neq \mathbf{0}$.'
+        type: basic
+      - front: 'To find the eigenvectors for a known eigenvalue $\lambda$, solve...'
+        back: '$(A - \lambda I)\mathbf{v} = \mathbf{0}$.'
+        type: basic
+
+  - id: eigenvalues-eigenvectors
+    name: Eigenvalues and Eigenvectors
+    core: true
+    difficulty: 0.7
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 240
+    prerequisites:
+      - id: characteristic-polynomial
+        weight: 0.7
+        key: true
+      - id: finding-eigenvectors
+        weight: 0.7
+        key: true
+      - id: determinants
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: Complete 2x2 eigenanalysis
+        key_prerequisites: [characteristic-polynomial, finding-eigenvectors]
+        exemplars:
+          - problem: 'Find all eigenvalues and matching eigenvectors of $A = \begin{pmatrix}2&1\\1&2\end{pmatrix}$.'
+            answer: "lambda = 1 with (1, -1); lambda = 3 with (1, 1) (each eigenvector: any nonzero multiple)"
+            solution_sketch: '$\lambda^2 - 4\lambda + 3 = (\lambda - 1)(\lambda - 3)$; then solve $(A - \lambda I)\mathbf{v} = 0$ for each. Check: $A(1,-1) = (1,-1)$, $A(1,1) = (3,3)$.'
+          - problem: 'Find all eigenvalues and matching eigenvectors of $A = \begin{pmatrix}4&-2\\1&1\end{pmatrix}$.'
+            answer: "lambda = 2 with (1, 1); lambda = 3 with (2, 1) (each eigenvector: any nonzero multiple)"
+            solution_sketch: '$\lambda^2 - 5\lambda + 6 = (\lambda - 2)(\lambda - 3)$; $A - 2I$ gives $2x - 2y = 0$, $A - 3I$ gives $x - 2y = 0$. Check: $A(1,1) = (2,2)$, $A(2,1) = (6,3)$.'
+        constraints: "2x2 with two distinct integer eigenvalues in -3..5; eigenvector entries in -2..2"
+      - id: kp2
+        name: Eigenanalysis of easy 3x3 matrices
+        key_prerequisites: [characteristic-polynomial, finding-eigenvectors, determinants]
+        exemplars:
+          - problem: 'Find the eigenvalues of $A = \begin{pmatrix}2&1&0\\0&3&4\\0&0&5\end{pmatrix}$.'
+            answer: "2, 3, and 5"
+            solution_sketch: 'Triangular, so the eigenvalues are the diagonal entries.'
+          - problem: '$A = \begin{pmatrix}2&1&0\\1&2&0\\0&0&4\end{pmatrix}$. Find its eigenvalues, and an eigenvector for the largest one.'
+            answer: "Eigenvalues 1, 3, 4; for lambda = 4: (0, 0, 1) (any nonzero multiple)"
+            solution_sketch: 'Block structure: the $2 \times 2$ block $\begin{pmatrix}2&1\\1&2\end{pmatrix}$ contributes $1$ and $3$; the diagonal entry $4$ contributes itself, with eigenvector $\mathbf{e}_3$ since $(A - 4I)\mathbf{v} = 0$ forces $x = y = 0$.'
+        constraints: "3x3 triangular or block-diagonal so no cubic solving is needed; integer spectra"
+      - id: kp3
+        name: Checking spectra with trace and determinant
+        key_prerequisites: [characteristic-polynomial, determinants]
+        exemplars:
+          - problem: 'A $2 \times 2$ matrix has trace $6$ and determinant $8$. Find its eigenvalues.'
+            answer: "2 and 4"
+            solution_sketch: 'Need $\lambda_1 + \lambda_2 = 6$ and $\lambda_1\lambda_2 = 8$: the pair $2, 4$.'
+          - problem: 'A student claims the eigenvalues of $A = \begin{pmatrix}3&2\\2&3\end{pmatrix}$ are $1$ and $5$. Check the claim using trace and determinant.'
+            answer: "Correct: 1 + 5 = 6 = trace, 1 * 5 = 5 = det"
+            solution_sketch: 'Sum of eigenvalues $=$ trace, product $=$ determinant; both match, and indeed $\lambda^2 - 6\lambda + 5 = (\lambda - 1)(\lambda - 5)$.'
+        constraints: "integer trace/det pairs with integer eigenvalue solutions"
+    diagnostic_exemplar:
+      problem: 'Find the eigenvalues of $A = \begin{pmatrix}3&1&0\\0&2&0\\0&4&5\end{pmatrix}$, and an eigenvector for $\lambda = 5$.'
+      answer: 'Eigenvalues 2, 3, and 5; for lambda = 5: (0, 0, 1) (any nonzero multiple)'
+      solution_sketch: 'Expanding along the third column gives $(5 - \lambda)(3 - \lambda)(2 - \lambda)$. For $\lambda = 5$, the rows force $y = 0$ and then $x = 0$, leaving $(0, 0, 1)$.'
+    anki_seeds:
+      - front: 'Sum and product of the eigenvalues of a matrix?'
+        back: 'Sum $=$ trace; product $=$ determinant.'
+        type: basic
+      - front: '$0$ is an eigenvalue of $A$ iff...'
+        back: '$A$ is not invertible ($\det A = 0$).'
+        type: basic
+
+  - id: eigenspaces-multiplicities
+    name: Eigenspaces and Multiplicities
+    core: true
+    difficulty: 0.7
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 210
+    prerequisites:
+      - id: eigenvalues-eigenvectors
+        weight: 0.8
+        key: true
+      - id: null-column-space-rank
+        weight: 0.6
+        key: true
+      - id: basis-dimension
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: Eigenspaces as null spaces
+        key_prerequisites: [eigenvalues-eigenvectors, basis-dimension, null-column-space-rank]
+        exemplars:
+          - problem: 'Find a basis for the eigenspace of $A = \begin{pmatrix}4&1\\2&3\end{pmatrix}$ for $\lambda = 2$.'
+            answer: "{(1, -2)} (any valid basis)"
+            solution_sketch: 'The eigenspace is $\mathrm{Nul}(A - 2I)$: solving $2x + y = 0$ gives the line spanned by $(1, -2)$. Check: $A(1,-2) = (2, -4) = 2(1,-2)$.'
+          - problem: 'Find the eigenspace of $A = \begin{pmatrix}3&0\\0&3\end{pmatrix}$ for $\lambda = 3$.'
+            answer: "All of R^2 (basis {(1,0), (0,1)}, or any valid basis)"
+            solution_sketch: '$A - 3I = 0$, so every nonzero vector is an eigenvector.'
+        constraints: "2x2 matrices; eigenspaces of dimension 1 or 2 with integer basis vectors"
+      - id: kp2
+        name: Algebraic vs geometric multiplicity
+        key_prerequisites: [eigenvalues-eigenvectors]
+        exemplars:
+          - problem: 'For $A = \begin{pmatrix}2&1\\0&2\end{pmatrix}$, find the algebraic and geometric multiplicity of $\lambda = 2$.'
+            answer: "Algebraic 2, geometric 1"
+            solution_sketch: 'Characteristic polynomial $(\lambda - 2)^2$: algebraic multiplicity $2$. But $A - 2I = \begin{pmatrix}0&1\\0&0\end{pmatrix}$ has a $1$-dimensional null space, spanned by $(1, 0)$.'
+          - problem: 'For $A = \begin{pmatrix}5&0\\0&5\end{pmatrix}$, find both multiplicities of $\lambda = 5$.'
+            answer: "Algebraic 2, geometric 2"
+            solution_sketch: '$(\lambda - 5)^2$ gives algebraic $2$; $A - 5I = 0$ gives a $2$-dimensional eigenspace.'
+        constraints: "repeated-eigenvalue 2x2 examples: shear-type (geo < alg) vs scalar matrices (geo = alg)"
+      - id: kp3
+        name: Multiplicities in 3x3 matrices
+        key_prerequisites: [eigenvalues-eigenvectors, basis-dimension, null-column-space-rank]
+        exemplars:
+          - problem: '$A = \begin{pmatrix}2&0&0\\0&2&1\\0&0&3\end{pmatrix}$. Find the eigenvalues with their algebraic multiplicities, and the geometric multiplicity of $\lambda = 2$.'
+            answer: "lambda = 2 (algebraic 2), lambda = 3 (algebraic 1); geometric multiplicity of 2 is 2"
+            solution_sketch: 'Triangular: diagonal $2, 2, 3$. $A - 2I$ has one pivot (its only nonzero rows force $z = 0$), so its null space $\{(x, y, 0)\}$ is $2$-dimensional.'
+          - problem: 'For the same $A$, find an eigenvector for $\lambda = 3$.'
+            answer: "(0, 1, 1) (any nonzero multiple)"
+            solution_sketch: '$A - 3I$ forces $x = 0$ and $y = z$; check $A(0,1,1) = (0, 3, 3)$.'
+        constraints: "3x3 triangular with one repeated diagonal entry; geometric multiplicity computed by rank"
+    diagnostic_exemplar:
+      problem: 'For $A = \begin{pmatrix}3&0&0\\0&3&1\\0&0&5\end{pmatrix}$, find the eigenvalues with their algebraic multiplicities, and a basis for the eigenspace of $\lambda = 3$.'
+      answer: 'lambda = 3 (algebraic 2) and lambda = 5 (algebraic 1); eigenspace basis {(1, 0, 0), (0, 1, 0)} (any valid basis), so the geometric multiplicity of 3 is 2'
+      solution_sketch: 'The matrix is triangular, so the eigenvalues are its diagonal entries. $A - 3I$ has rows $(0,0,0)$, $(0,0,1)$, $(0,0,2)$, forcing $z = 0$ with $x, y$ free.'
+    anki_seeds:
+      - front: 'The eigenspace of $A$ for $\lambda$ is which null space?'
+        back: '$\mathrm{Nul}(A - \lambda I)$.'
+        type: basic
+      - front: 'Geometric multiplicity of $\lambda$ compared to its algebraic multiplicity?'
+        back: '$1 \leq \text{geometric} \leq \text{algebraic}$.'
+        type: basic
+
+  - id: complex-eigenvalues-2x2
+    name: Complex Eigenvalues of 2x2 Matrices
+    core: false                # special case at the tip of the eigen branch
+    difficulty: 0.75
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 210
+    prerequisites:
+      - id: characteristic-polynomial
+        weight: 0.7
+        key: true
+      - id: complex-numbers
+        weight: 0.6
+        key: true
+      - id: complex-plane-modulus-conjugate
+        weight: 0.5
+      - id: eigenvalues-eigenvectors
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: Conjugate eigenvalue pairs
+        key_prerequisites: [characteristic-polynomial, complex-numbers]
+        exemplars:
+          - problem: 'Find the eigenvalues of the rotation matrix $A = \begin{pmatrix}0&-1\\1&0\end{pmatrix}$.'
+            answer: '$i$ and $-i$'
+            solution_sketch: '$\lambda^2 + 1 = 0$: no real roots; the eigenvalues are $\pm i$.'
+          - problem: 'Find the eigenvalues of $A = \begin{pmatrix}1&-2\\1&3\end{pmatrix}$.'
+            answer: '$2 + i$ and $2 - i$'
+            solution_sketch: '$\lambda^2 - 4\lambda + 5 = 0$; $\lambda = \frac{4 \pm \sqrt{-4}}{2} = 2 \pm i$.'
+          - problem: 'Find the eigenvalues of $A = \begin{pmatrix}3&-5\\1&-1\end{pmatrix}$.'
+            answer: '$1 + i$ and $1 - i$'
+            solution_sketch: 'Trace $2$, determinant $-3 + 5 = 2$: $\lambda^2 - 2\lambda + 2 = 0$, so $\lambda = 1 \pm i$.'
+        constraints: "real 2x2 matrices with negative discriminant; eigenvalues a +- bi with integer a, b"
+      - id: kp2
+        name: Rotation-scaling interpretation
+        key_prerequisites: [characteristic-polynomial, complex-numbers, complex-plane-modulus-conjugate]
+        exemplars:
+          - problem: 'The rotation-scaling matrix $A = \begin{pmatrix}1&-1\\1&1\end{pmatrix}$ has eigenvalues $1 \pm i$. By what factor does $A$ scale lengths?'
+            answer: '$\sqrt{2}$'
+            solution_sketch: '$A$ has the form $\begin{pmatrix}a&-b\\b&a\end{pmatrix}$, so it is exactly a rotation by $45^\circ$ followed by scaling by $|\lambda| = \sqrt{1^2 + 1^2} = \sqrt{2}$.'
+          - problem: 'A real $2 \times 2$ matrix has eigenvalue $3 + 4i$. What is the other eigenvalue, and what is $|\lambda|$?'
+            answer: '$3 - 4i$; $|\lambda| = 5$'
+            solution_sketch: 'Complex eigenvalues of real matrices come in conjugate pairs; $|3 + 4i| = \sqrt{9 + 16} = 5$.'
+        constraints: "scaling-factor questions ONLY for matrices literally of the form [[a,-b],[b,a]] (a general real matrix with eigenvalues a +- bi is merely SIMILAR to that map, so it need not scale lengths by |lambda|); moduli are clean: sqrt(2), 2, 5, sqrt(5); always note the conjugate pair"
+      - id: kp3
+        name: Complex eigenvectors
+        key_prerequisites: [characteristic-polynomial, complex-numbers]
+        exemplars:
+          - problem: 'Find an eigenvector of $A = \begin{pmatrix}0&-1\\1&0\end{pmatrix}$ for $\lambda = i$.'
+            answer: '$(1, -i)$ (any nonzero multiple)'
+            solution_sketch: '$(A - iI)\mathbf{v} = 0$ gives $-ix - y = 0$, so $y = -ix$: take $(1, -i)$. Check: $A(1, -i) = (i, 1) = i(1, -i)$.'
+          - problem: 'If $\mathbf{v} = (1, -i)$ is an eigenvector of a real matrix $A$ for $\lambda = i$, give an eigenvector for $\lambda = -i$.'
+            answer: '$(1, i)$ (any nonzero multiple)'
+            solution_sketch: 'Conjugating $A\mathbf{v} = \lambda\mathbf{v}$ shows $\bar{\mathbf{v}}$ is an eigenvector for $\bar{\lambda}$.'
+        constraints: "entries among 1, i, -i, 1 +- i; verify by multiplying out"
+    diagnostic_exemplar:
+      problem: 'Find the eigenvalues of $A = \begin{pmatrix}2&-1\\1&2\end{pmatrix}$, an eigenvector for the eigenvalue with positive imaginary part, and the factor by which $A$ scales lengths.'
+      answer: '$2 + i$ and $2 - i$; eigenvector $(1, -i)$ for $2 + i$ (any nonzero multiple); lengths scale by $|\lambda| = \sqrt{5}$'
+      solution_sketch: '$\lambda^2 - 4\lambda + 5 = 0$ gives $2 \pm i$. For $2 + i$, the first row reads $-ix - y = 0$, so $(1, -i)$. The scaling factor is $|2 + i| = \sqrt5$.'
+    anki_seeds:
+      - front: 'Complex eigenvalues of a REAL matrix always come in...'
+        back: 'conjugate pairs $a \pm bi$.'
+        type: basic
+      - front: 'A real $2 \times 2$ matrix with eigenvalues $a \pm bi$ ($b \neq 0$) is similar to...'
+        back: 'a rotation combined with scaling by $|\lambda| = \sqrt{a^2 + b^2}$ — i.e. in a suitable basis it acts that way (in the standard basis it generally does not scale lengths by $|\lambda|$).'
+        type: basic
+
+  - id: similar-matrices
+    name: Similar Matrices
+    core: true
+    difficulty: 0.7
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 180
+    prerequisites:
+      - id: matrix-inverses
+        weight: 0.6
+        key: true
+      - id: eigenvalues-eigenvectors
+        weight: 0.5
+      - id: determinant-properties-cramers-rule
+        weight: 0.3
+      - id: matrix-representation-in-basis   # re-audit R-38: similarity is "the same map in two bases" — the representation fact now taught below
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: The similarity relation
+        key_prerequisites: [matrix-inverses]
+        exemplars:
+          - problem: 'With $P = \begin{pmatrix}1&1\\0&1\end{pmatrix}$ and $A = \begin{pmatrix}2&1\\0&3\end{pmatrix}$, compute $P^{-1}AP$.'
+            answer: '$\begin{pmatrix}2&0\\0&3\end{pmatrix}$'
+            solution_sketch: '$P^{-1} = \begin{pmatrix}1&-1\\0&1\end{pmatrix}$; $AP = \begin{pmatrix}2&3\\0&3\end{pmatrix}$, then $P^{-1}(AP) = \begin{pmatrix}2&0\\0&3\end{pmatrix}$. So $A$ is similar to a diagonal matrix.'
+          - problem: 'State what it means for $B$ to be similar to $A$.'
+            answer: "B = P^{-1}AP for some invertible P"
+        constraints: "2x2 with P triangular with determinant 1 so the inverse is immediate"
+      - id: kp2
+        name: Similarity invariants
+        key_prerequisites: [eigenvalues-eigenvectors, determinant-properties-cramers-rule]
+        exemplars:
+          - problem: '$B$ is similar to $A$, with $\det A = 6$ and $\mathrm{tr}\,A = 5$. Find $\det B$ and $\mathrm{tr}\,B$.'
+            answer: "det B = 6, tr B = 5"
+            solution_sketch: 'Similar matrices share determinant, trace, characteristic polynomial, and eigenvalues.'
+          - problem: '$B$ is similar to $A$, and $2$ is an eigenvalue of $A$. Is $2$ an eigenvalue of $B$?'
+            answer: "Yes"
+            solution_sketch: 'If $A\mathbf{v} = 2\mathbf{v}$ and $B = P^{-1}AP$, then $B(P^{-1}\mathbf{v}) = 2(P^{-1}\mathbf{v})$.'
+        constraints: "given data are small integers; ask which quantities transfer"
+      - id: kp3
+        name: Ruling out similarity
+        key_prerequisites: [eigenvalues-eigenvectors, determinant-properties-cramers-rule]
+        exemplars:
+          - problem: 'Can $\begin{pmatrix}2&0\\0&3\end{pmatrix}$ be similar to $\begin{pmatrix}1&0\\0&6\end{pmatrix}$?'
+            answer: "No"
+            solution_sketch: 'Both have determinant $6$, but the traces differ ($5$ vs $7$), and trace is a similarity invariant.'
+          - problem: 'Two matrices have the same trace $4$ but determinants $3$ and $4$. Can they be similar?'
+            answer: "No"
+            solution_sketch: 'Similar matrices must agree on the determinant.'
+        constraints: "decide via a mismatched invariant (trace, determinant, or eigenvalues)"
+    diagnostic_exemplar:
+      problem: 'With $P = \begin{pmatrix}1&1\\0&1\end{pmatrix}$ and $A = \begin{pmatrix}3&1\\0&5\end{pmatrix}$, compute $B = P^{-1}AP$. Can $B$ be similar to $\begin{pmatrix}2&0\\0&6\end{pmatrix}$?'
+      answer: '$B = \begin{pmatrix}3&-1\\0&5\end{pmatrix}$; no, since $\det B = 15$ while the other matrix has determinant $12$, and similar matrices share trace and determinant'
+      solution_sketch: '$P^{-1} = \begin{pmatrix}1&-1\\0&1\end{pmatrix}$ and $AP = \begin{pmatrix}3&4\\0&5\end{pmatrix}$, so $B = \begin{pmatrix}3&-1\\0&5\end{pmatrix}$; both matrices have trace $8$, but the determinants $15$ and $12$ differ.'
+    anki_seeds:
+      - front: '$B$ is similar to $A$ means...'
+        back: '$B = P^{-1}AP$ for some invertible $P$.'
+        type: basic
+      - front: 'Four quantities shared by similar matrices?'
+        back: 'Determinant, trace, characteristic polynomial, eigenvalues.'
+        type: basic
+
+  - id: diagonalizability-check
+    name: Checking Diagonalizability
+    core: true
+    difficulty: 0.7
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 180
+    prerequisites:
+      - id: eigenspaces-multiplicities
+        weight: 0.7
+        key: true
+      - id: eigenvalues-eigenvectors
+        weight: 0.5
+    knowledge_points:
+      - id: kp1
+        name: The distinct-eigenvalue guarantee
+        key_prerequisites: [eigenvalues-eigenvectors]
+        exemplars:
+          - problem: 'A $2 \times 2$ matrix has eigenvalues $2$ and $5$. Is it diagonalizable?'
+            answer: "Yes"
+            solution_sketch: 'Eigenvectors for distinct eigenvalues are independent, so $n$ distinct eigenvalues guarantee diagonalizability.'
+          - problem: 'Is $A = \begin{pmatrix}1&4\\0&3\end{pmatrix}$ diagonalizable?'
+            answer: "Yes"
+            solution_sketch: 'Triangular with distinct diagonal entries $1$ and $3$: two distinct eigenvalues.'
+        constraints: "distinct integer spectra read off from triangular matrices or given directly"
+      - id: kp2
+        name: Repeated eigenvalues need enough eigenvectors
+        key_prerequisites: [eigenspaces-multiplicities]
+        exemplars:
+          - problem: 'Is $A = \begin{pmatrix}5&2\\0&5\end{pmatrix}$ diagonalizable?'
+            answer: "No"
+            solution_sketch: '$\lambda = 5$ has algebraic multiplicity $2$, but $A - 5I = \begin{pmatrix}0&2\\0&0\end{pmatrix}$ has a $1$-dimensional null space, spanned by $(1, 0)$: one independent eigenvector, not two.'
+          - problem: 'Is $A = \begin{pmatrix}3&0\\0&3\end{pmatrix}$ diagonalizable?'
+            answer: "Yes (it is already diagonal)"
+            solution_sketch: 'The eigenspace of $\lambda = 3$ is all of $\mathbb{R}^2$: geometric multiplicity equals algebraic multiplicity.'
+        constraints: "repeated-eigenvalue 2x2 cases; decide by comparing geometric and algebraic multiplicity"
+      - id: kp3
+        name: Counting eigenvectors in 3x3 matrices
+        key_prerequisites: [eigenspaces-multiplicities]
+        exemplars:
+          - problem: 'Is $A = \begin{pmatrix}2&0&0\\0&2&1\\0&0&3\end{pmatrix}$ diagonalizable?'
+            answer: "Yes"
+            solution_sketch: '$\lambda = 2$ has geometric multiplicity $2$ (null space of $A - 2I$ is $\{(x, y, 0)\}$) and $\lambda = 3$ contributes one more: $2 + 1 = 3$ independent eigenvectors.'
+          - problem: 'Is $A = \begin{pmatrix}2&1&0\\0&2&0\\0&0&3\end{pmatrix}$ diagonalizable?'
+            answer: "No"
+            solution_sketch: '$\lambda = 2$ has algebraic multiplicity $2$ but $A - 2I$ has rank $2$, so its eigenspace is $1$-dimensional: only $1 + 1 = 2$ independent eigenvectors in $\mathbb{R}^3$.'
+        constraints: "3x3 triangular with one repeated eigenvalue; the answer hinges on one geometric multiplicity"
+    diagnostic_exemplar:
+      problem: 'Is $A = \begin{pmatrix}4&1&0\\0&4&0\\0&0&7\end{pmatrix}$ diagonalizable? Justify by counting independent eigenvectors.'
+      answer: 'No: lambda = 4 has algebraic multiplicity 2 but only a one-dimensional eigenspace, so A has just 2 independent eigenvectors instead of 3'
+      solution_sketch: 'The eigenvalues are $4, 4, 7$. $A - 4I$ has rows $(0,1,0)$, $(0,0,0)$, $(0,0,3)$, forcing $y = z = 0$, so the $\lambda = 4$ eigenspace is only $\mathrm{span}\{(1,0,0)\}$.'
+    anki_seeds:
+      - front: 'An $n \times n$ matrix with $n$ distinct eigenvalues is...'
+        back: 'always diagonalizable.'
+        type: basic
+      - front: 'An $n \times n$ matrix is diagonalizable iff its geometric multiplicities...'
+        back: 'sum to $n$ (each equals its algebraic multiplicity).'
+        type: basic
+
+  - id: diagonalization
+    name: Diagonalization
+    core: true
+    difficulty: 0.75
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 300
+    prerequisites:
+      - id: diagonalizability-check
+        weight: 0.6
+        key: true
+      - id: finding-eigenvectors
+        weight: 0.6
+        key: true
+      - id: matrix-inverses
+        weight: 0.5
+        key: true
+      - id: matrix-powers
+        weight: 0.3
+      - id: similar-matrices
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Building P and D
+        key_prerequisites: [finding-eigenvectors, matrix-inverses]
+        exemplars:
+          - problem: 'Diagonalize $A = \begin{pmatrix}1&2\\2&1\end{pmatrix}$: give $P$ and $D$ with $A = PDP^{-1}$.'
+            answer: '$P = \begin{pmatrix}1&1\\1&-1\end{pmatrix}$, $D = \begin{pmatrix}3&0\\0&-1\end{pmatrix}$ (columns of $P$ may be scaled; their order must match $D$)'
+            solution_sketch: 'Eigenpairs: $\lambda = 3$ with $(1,1)$ and $\lambda = -1$ with $(1,-1)$; columns of $P$ are the eigenvectors, in the same order as the diagonal of $D$.'
+          - problem: 'Diagonalize $A = \begin{pmatrix}1&1\\0&2\end{pmatrix}$.'
+            answer: '$P = \begin{pmatrix}1&1\\0&1\end{pmatrix}$, $D = \begin{pmatrix}1&0\\0&2\end{pmatrix}$ (columns of $P$ may be scaled; their order must match $D$)'
+            solution_sketch: '$\lambda = 1$: solve $(A - I)\mathbf{v} = 0$, giving $(1, 0)$; $\lambda = 2$: $(1, 1)$.'
+        constraints: "2x2 with two distinct integer eigenvalues; eigenvector entries in -2..2"
+      - id: kp2
+        name: Verifying by reassembly
+        key_prerequisites: [matrix-inverses, similar-matrices]
+        exemplars:
+          - problem: 'Check the diagonalization $P = \begin{pmatrix}1&1\\1&-1\end{pmatrix}$, $D = \begin{pmatrix}3&0\\0&1\end{pmatrix}$ by computing $PDP^{-1}$.'
+            answer: '$\begin{pmatrix}2&1\\1&2\end{pmatrix}$'
+            solution_sketch: '$P^{-1} = \frac{1}{2}\begin{pmatrix}1&1\\1&-1\end{pmatrix}$; $PD = \begin{pmatrix}3&1\\3&-1\end{pmatrix}$, and $PDP^{-1} = \begin{pmatrix}2&1\\1&2\end{pmatrix}$.'
+          - problem: 'A cheaper check of $A = PDP^{-1}$ avoids computing $P^{-1}$. Which identity do you verify instead, and what else must you confirm?'
+            answer: "AP = PD, and P is invertible"
+            solution_sketch: 'Multiply on the right by $P$: column by column this says $A\mathbf{v}_i = \lambda_i\mathbf{v}_i$. On its own $AP = PD$ is not enough — $P = 0$ satisfies it — so you also need $P$ invertible (independent eigenvector columns).'
+        constraints: "2x2 with det P = +-2 or +-1 so P^{-1} is quick; always land back on A exactly"
+      - id: kp3
+        name: Powers via diagonalization
+        key_prerequisites: [matrix-inverses, diagonalizability-check, matrix-powers]
+        exemplars:
+          - problem: 'Using $A = PDP^{-1}$ with $P = \begin{pmatrix}1&1\\0&1\end{pmatrix}$, $D = \begin{pmatrix}1&0\\0&2\end{pmatrix}$, compute $A^3$.'
+            answer: '$\begin{pmatrix}1&7\\0&8\end{pmatrix}$'
+            solution_sketch: '$A^3 = PD^3P^{-1}$ with $D^3 = \mathrm{diag}(1, 8)$ and $P^{-1} = \begin{pmatrix}1&-1\\0&1\end{pmatrix}$; multiply out.'
+          - problem: 'If $A = PDP^{-1}$ with $D = \mathrm{diag}(2, 3)$, what is $D^4$?'
+            answer: '$\mathrm{diag}(16, 81)$'
+            solution_sketch: 'Powers of a diagonal matrix are entrywise powers.'
+        constraints: "exponents 3-5; diagonal entries in -2..3 so powers stay small"
+    diagnostic_exemplar:
+      problem: 'Diagonalize $A = \begin{pmatrix}2&1\\1&2\end{pmatrix}$ as $A = PDP^{-1}$, then use the factorization to compute $A^3$.'
+      answer: '$P = \begin{pmatrix}1&1\\1&-1\end{pmatrix}$, $D = \begin{pmatrix}3&0\\0&1\end{pmatrix}$ (columns of $P$ may be scaled; their order must match $D$); $A^3 = PD^3P^{-1} = \begin{pmatrix}14&13\\13&14\end{pmatrix}$'
+      solution_sketch: 'The eigenpairs are $3$ with $(1, 1)$ and $1$ with $(1, -1)$; $D^3 = \mathrm{diag}(27, 1)$, and reassembling gives $\begin{pmatrix}14&13\\13&14\end{pmatrix}$.'
+    anki_seeds:
+      - front: 'In $A = PDP^{-1}$, what are the columns of $P$ and the entries of $D$?'
+        back: 'Columns of $P$: independent eigenvectors; diagonal of $D$: the matching eigenvalues, in the same order.'
+        type: basic
+      - front: 'Cheap check of a diagonalization without inverting $P$?'
+        back: 'Verify $AP = PD$ and that $P$ is invertible ($AP = PD$ alone is not enough — $P = 0$ satisfies it).'
+        type: basic
+      - front: 'Why diagonalize to compute powers? Because $A^k = $ ...'
+        back: '$PD^kP^{-1}$, and $D^k$ is just entrywise powers.'
+        type: basic

@@ -1,0 +1,310 @@
+unit: polynomial-theory
+course: precalculus
+module: "Polynomial Theory"
+topics:
+  - id: remainder-factor-theorems
+    name: Remainder and Factor Theorems
+    core: true
+    difficulty: 0.55
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 120
+    prerequisites:
+      - id: polynomial-division
+        weight: 0.7
+        key: true
+      - id: evaluating-expressions
+        weight: 0.5
+        key: true
+      - id: factoring-trinomials
+        weight: 0.4
+      - id: function-notation
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Remainder theorem
+        key_prerequisites: [polynomial-division, evaluating-expressions]
+        constraints: "cubic or lower, integer coefficients; divisor x - c with |c| <= 3"
+        exemplars:
+          - problem: 'Find the remainder when $p(x) = x^2 + 3x + 5$ is divided by $x - 2$.'
+            answer: "15"
+            solution_sketch: 'Remainder $= p(2) = 4 + 6 + 5 = 15$.'
+          - problem: 'Find the remainder when $p(x) = x^3 - 4x + 1$ is divided by $x + 1$.'
+            answer: "4"
+            solution_sketch: '$p(-1) = -1 + 4 + 1 = 4$.'
+      - id: kp2
+        name: Factor theorem
+        key_prerequisites: [polynomial-division]
+        constraints: "yes/no factor checks on cubics with integer coefficients; divisor x - c with |c| <= 3; decided by evaluating p(c), never by long division"
+        exemplars:
+          - problem: 'Is $x - 3$ a factor of $x^3 - 2x^2 - 9$?'
+            answer: "yes"
+            solution_sketch: '$p(3) = 27 - 18 - 9 = 0$, so $x - 3$ is a factor.'
+          - problem: 'Is $x + 2$ a factor of $x^3 + 8$?'
+            answer: "yes"
+            solution_sketch: '$p(-2) = -8 + 8 = 0$.'
+      - id: kp3
+        name: Solve for an unknown coefficient
+        key_prerequisites: [evaluating-expressions]
+        constraints: "one unknown coefficient k or c in a quadratic or cubic; set p(c) = 0 and solve a linear equation; integer answers"
+        exemplars:
+          - problem: 'Find $k$ so that $x - 1$ is a factor of $x^3 + kx - 4$.'
+            answer: "3"
+            solution_sketch: '$p(1) = 1 + k - 4 = 0$, so $k = 3$.'
+          - problem: 'Find $c$ so that $x + 2$ is a factor of $x^2 + 5x + c$.'
+            answer: "6"
+            solution_sketch: '$p(-2) = 4 - 10 + c = 0$.'
+    diagnostic_exemplar:
+      problem: 'Find $k$ so that $x - 2$ is a factor of $x^3 + kx - 10$.'
+      answer: "1"
+      solution_sketch: 'Factor theorem: $p(2) = 8 + 2k - 10 = 0$, so $k = 1$.'
+    anki_seeds:
+      - front: "Remainder theorem: dividing p(x) by x - c leaves remainder..."
+        back: "p(c)"
+        type: basic
+      - front: "Factor theorem: x - c is a factor of p(x) iff..."
+        back: "p(c) = 0"
+        type: basic
+
+  - id: rational-root-theorem
+    name: Rational Root Theorem
+    core: true
+    difficulty: 0.5
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 180
+    prerequisites:
+      - id: remainder-factor-theorems
+        weight: 0.7
+        key: true
+      - id: quadratic-equations-factoring
+        weight: 0.5
+        key: true
+      - id: polynomial-division
+        weight: 0.5
+      - id: divisibility-rules
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: List the possible rational roots
+        key_prerequisites: [divisibility-rules]
+        constraints: "candidates ±(factor of constant)/(factor of leading coefficient); keep lists under 12 entries"
+        exemplars:
+          - problem: 'List all possible rational roots of $x^3 - 3x + 2$.'
+            answer: "±1, ±2"
+          - problem: 'List all possible rational roots of $2x^3 - x^2 + 2x - 1$.'
+            answer: "±1, ±1/2"
+      - id: kp2
+        name: Test candidates to find a root
+        key_prerequisites: [remainder-factor-theorems]
+        constraints: "cubics with integer coefficients and at least one root among ±1, ±2, ±3, ±1/2; test by evaluating p at candidates"
+        exemplars:
+          - problem: 'Find one rational root of $x^3 - 6x^2 + 11x - 6$.'
+            answer: "x = 1 (also 2 and 3 work)"
+            solution_sketch: '$p(1) = 1 - 6 + 11 - 6 = 0$.'
+          - problem: 'Find the rational root of $2x^3 - x^2 + 2x - 1$.'
+            answer: "x = 1/2"
+            solution_sketch: '$p(1/2) = \frac{1}{4} - \frac{1}{4} + 1 - 1 = 0$.'
+      - id: kp3
+        name: Factor completely after finding a root
+        key_prerequisites: [polynomial-division, quadratic-equations-factoring]
+        constraints: "monic cubics with three distinct integer roots, |root| <= 5; divide out the found root, then factor the quadratic"
+        exemplars:
+          - problem: 'Solve $x^3 - 2x^2 - 5x + 6 = 0$.'
+            answer: "x = 1, x = 3, x = -2"
+            solution_sketch: '$p(1) = 0$; dividing gives $x^2 - x - 6 = (x - 3)(x + 2)$.'
+          - problem: 'Solve $x^3 - 6x^2 + 11x - 6 = 0$.'
+            answer: "x = 1, x = 2, x = 3"
+    diagnostic_exemplar:
+      problem: 'Solve $x^3 - 4x^2 + x + 6 = 0$.'
+      answer: "x = -1, x = 2, x = 3"
+      solution_sketch: 'Candidates $\pm 1, \pm 2, \pm 3, \pm 6$; $p(-1) = -1 - 4 - 1 + 6 = 0$, and dividing by $x + 1$ leaves $x^2 - 5x + 6 = (x - 2)(x - 3)$.'
+    anki_seeds:
+      - front: "Rational root theorem: every rational root of a polynomial with integer coefficients has the form..."
+        back: "±p/q where p divides the constant term and q divides the leading coefficient."
+        type: basic
+
+  - id: fundamental-theorem-algebra-multiplicity
+    name: Fundamental Theorem of Algebra and Multiplicity
+    core: true
+    difficulty: 0.5
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 150
+    prerequisites:
+      - id: remainder-factor-theorems
+        weight: 0.5
+        key: true
+      - id: polynomial-multiplication
+        weight: 0.5
+        key: true
+      - id: quadratic-equations-factoring
+        weight: 0.4
+      - id: rational-root-theorem
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: Count roots with multiplicity
+        key_prerequisites: [remainder-factor-theorems]
+        constraints: "factored polynomials of degree 3-5"
+        exemplars:
+          - problem: 'State the roots of $p(x) = (x - 2)^3 (x + 1)^2$ with their multiplicities, and the degree of $p$.'
+            answer: "x = 2 (multiplicity 3), x = -1 (multiplicity 2); degree 5"
+          - problem: 'Counting multiplicity, how many roots does a degree-$7$ polynomial have (over the complex numbers)?'
+            answer: "7"
+      - id: kp2
+        name: Crossing versus touching at a repeated root
+        key_prerequisites: [quadratic-equations-factoring]
+        constraints: "odd multiplicity crosses the x-axis; even multiplicity touches and turns"
+        exemplars:
+          - problem: 'For $p(x) = (x - 1)^2 (x + 3)$, at which zero does the graph touch without crossing?'
+            answer: "x = 1"
+            solution_sketch: 'Even multiplicity touches; odd multiplicity crosses.'
+          - problem: 'Does the graph of $p(x) = (x + 2)^3$ cross or touch the $x$-axis at $x = -2$?'
+            answer: "crosses"
+      - id: kp3
+        name: Build a polynomial from given roots
+        key_prerequisites: [polynomial-multiplication]
+        constraints: "degree 3-4, leading coefficient 1, integer roots with at most one double root; expand only when the problem says to"
+        exemplars:
+          - problem: 'Write a degree-$3$ polynomial with leading coefficient $1$, a double root at $x = 2$, and a root at $x = -5$. Expand it.'
+            answer: "x^3 + x^2 - 16x + 20"
+            solution_sketch: '$(x-2)^2(x+5) = (x^2 - 4x + 4)(x + 5) = x^3 + x^2 - 16x + 20$.'
+          - problem: 'Write, in factored form, a degree-$4$ polynomial with roots $0$, $3$ (double), and $-1$, leading coefficient $1$.'
+            answer: "x(x - 3)^2 (x + 1)"
+    diagnostic_exemplar:
+      problem: 'Write the degree-$3$ polynomial with leading coefficient $1$ having a double root at $x = 1$ and a root at $x = -3$, expand it, and state at which zero its graph touches the $x$-axis without crossing.'
+      answer: 'x^3 + x^2 - 5x + 3; the graph touches without crossing at x = 1 (even multiplicity)'
+      solution_sketch: '$(x-1)^2(x+3) = (x^2 - 2x + 1)(x + 3) = x^3 + x^2 - 5x + 3$; the double root at $x = 1$ has even multiplicity, so the graph touches and turns there, while it crosses at $x = -3$.'
+    anki_seeds:
+      - front: "Fundamental theorem of algebra: a degree-n polynomial has how many complex roots (with multiplicity)?"
+        back: "Exactly n."
+        type: basic
+      - front: "At a zero of even multiplicity the graph ... the x-axis; at odd multiplicity it ..."
+        back: "touches (and turns around); crosses"
+        type: basic
+
+  - id: polynomial-end-behavior-graphing
+    name: End Behavior and Graphing Polynomials
+    core: true
+    difficulty: 0.6
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 150
+    prerequisites:
+      - id: fundamental-theorem-algebra-multiplicity
+        weight: 0.6
+        key: true
+      - id: quadratic-graphs-vertex
+        weight: 0.4
+        key: true
+      - id: function-transformations-shifts
+        weight: 0.3
+      - id: polynomial-multiplication
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: End behavior from the leading term
+        key_prerequisites: [quadratic-graphs-vertex]
+        constraints: "classify by degree parity and leading-coefficient sign"
+        exemplars:
+          - problem: 'Describe the end behavior of $p(x) = -2x^3 + x - 7$.'
+            answer: "as x → -∞, p(x) → +∞; as x → +∞, p(x) → -∞"
+            solution_sketch: 'Odd degree, negative leading coefficient.'
+          - problem: 'Describe the end behavior of $p(x) = x^4 - 5x^2$.'
+            answer: "p(x) → +∞ on both ends"
+      - id: kp2
+        name: Sign of the polynomial between zeros
+        key_prerequisites: [fundamental-theorem-algebra-multiplicity]
+        constraints: "factored cubics with integer zeros, at most one repeated factor; answer positive or negative, decided by one test point"
+        exemplars:
+          - problem: 'For $p(x) = x(x - 2)(x + 1)$, is $p$ positive or negative on the interval $(0, 2)$?'
+            answer: "negative"
+            solution_sketch: 'Test $x = 1$: $(1)(-1)(2) = -2 < 0$.'
+          - problem: 'For $p(x) = (x - 1)^2 (x + 2)$, is $p$ positive or negative on $(-2, 1)$?'
+            answer: "positive"
+            solution_sketch: 'Test $x = 0$: $(1)(2) = 2 > 0$.'
+      - id: kp3
+        name: Key graph features
+        key_prerequisites: [fundamental-theorem-algebra-multiplicity]
+        constraints: "y-intercepts of factored polynomials (evaluate at 0); turning-point counts from the degree (at most n - 1)"
+        exemplars:
+          - problem: 'Find the $y$-intercept of $p(x) = (x - 1)^2 (x + 2)$.'
+            answer: "(0, 2)"
+            solution_sketch: '$p(0) = (-1)^2 (2) = 2$.'
+          - problem: 'What is the maximum number of turning points of a degree-$5$ polynomial?'
+            answer: "4"
+    diagnostic_exemplar:
+      problem: 'For $p(x) = x(x + 3)(x - 1)$, describe the end behavior, and state whether $p$ is positive or negative on the interval $(-3, 0)$.'
+      answer: 'as x → -∞, p(x) → -∞; as x → +∞, p(x) → +∞; p is positive on (-3, 0)'
+      solution_sketch: 'Expanded, the leading term is $x^3$ (odd degree, positive coefficient), so the ends go down-left and up-right; testing $x = -1$ gives $(-1)(2)(-2) = 4 > 0$.'
+    anki_seeds:
+      - front: "End behavior of a polynomial is decided entirely by..."
+        back: "The leading term (its degree parity and the sign of its coefficient)."
+        type: basic
+
+  - id: polynomial-inequalities
+    name: Polynomial Inequalities
+    core: true
+    difficulty: 0.55
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 180
+    prerequisites:
+      - id: polynomial-end-behavior-graphing
+        weight: 0.5
+        key: true
+      - id: quadratic-equations-factoring
+        weight: 0.6
+        key: true
+      - id: linear-inequalities
+        weight: 0.5
+      - id: compound-inequalities
+        weight: 0.4
+      - id: factoring-trinomials
+        weight: 0.4
+      # kp3's exemplars demand answers "in interval notation" ([-3, 3],
+      # (-∞, 0) ∪ (2, ∞)) — taught in foundations:interval-notation (re-audit R-01).
+      - id: interval-notation
+        weight: 0.5
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: Quadratic inequalities
+        key_prerequisites: [quadratic-equations-factoring, linear-inequalities]
+        constraints: "factorable quadratics with integer roots"
+        exemplars:
+          - problem: 'Solve $x^2 - 4 > 0$.'
+            answer: "x < -2 or x > 2"
+            solution_sketch: 'Zeros $\pm 2$; the parabola opens up, so it is positive outside the roots.'
+          - problem: 'Solve $x^2 - 5x + 6 \le 0$.'
+            answer: "2 ≤ x ≤ 3"
+      - id: kp2
+        name: Sign charts for factored cubics
+        key_prerequisites: [polynomial-end-behavior-graphing]
+        constraints: "factored cubics with integer zeros, |zero| <= 4, at most one squared factor; solutions as inequality chains"
+        exemplars:
+          - problem: 'Solve $x(x - 3)(x + 2) < 0$.'
+            answer: "x < -2 or 0 < x < 3"
+            solution_sketch: 'Sign chart over zeros $-2, 0, 3$: negative on $(-\infty, -2)$ and $(0, 3)$.'
+          - problem: 'Solve $(x - 1)^2 (x + 4) \ge 0$.'
+            answer: "x ≥ -4"
+            solution_sketch: 'The square factor never goes negative; sign follows $x + 4$, with equality allowed.'
+      - id: kp3
+        name: Strict versus inclusive boundaries
+        key_prerequisites: [compound-inequalities]
+        constraints: "factorable quadratics; always ask for interval notation, mixing strict and inclusive cases; unions written with ∪"
+        exemplars:
+          - problem: 'Solve $x^2 \le 9$. Express the answer as an interval.'
+            answer: "[-3, 3]"
+          - problem: 'Solve $x^2 - 2x > 0$ in interval notation.'
+            answer: "(-∞, 0) ∪ (2, ∞)"
+            solution_sketch: '$x(x - 2) > 0$: positive outside the roots; endpoints excluded.'
+    diagnostic_exemplar:
+      problem: 'Solve $x(x - 2)(x + 3) \ge 0$ in interval notation.'
+      answer: "[-3, 0] ∪ [2, ∞)"
+      solution_sketch: 'Zeros $-3, 0, 2$; sign chart gives $+$ on $(-3, 0)$ and $(2, \infty)$; $\ge$ includes all three zeros.'
+    anki_seeds:
+      - front: "To solve a polynomial inequality, find the zeros, then..."
+        back: "Test the sign on each interval between consecutive zeros (sign chart)."
+        type: basic

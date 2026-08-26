@@ -1,0 +1,839 @@
+unit: probability
+course: probability-statistics
+module: "Probability"
+topics:
+  - id: listing-sample-spaces
+    name: "Listing Sample Spaces"
+    core: true
+    difficulty: 0.25
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 90
+    prerequisites:
+      - id: multiplication-principle
+        weight: 0.6
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: "Outcomes of one-stage experiments"
+        key_prerequisites: []
+        exemplars:
+          - problem: 'List the sample space for rolling one six-sided die.'
+            answer: '$\{1, 2, 3, 4, 5, 6\}$'
+          - problem: 'A spinner has three equal sectors labeled A, B, C. List the sample space for one spin.'
+            answer: '$\{A, B, C\}$'
+        constraints: "one-stage experiments with <= 8 outcomes (die, coin, spinner, labeled cards)"
+      - id: kp2
+        name: "Outcomes of two-stage experiments"
+        key_prerequisites: [multiplication-principle]
+        exemplars:
+          - problem: 'List the sample space for flipping a coin twice.'
+            answer: '$\{HH, HT, TH, TT\}$'
+            solution_sketch: 'Each flip has $2$ outcomes; list all ordered pairs.'
+          - problem: 'A coin is flipped and then a three-sector spinner (A, B, C) is spun. List the sample space.'
+            answer: '$\{HA, HB, HC, TA, TB, TC\}$'
+            solution_sketch: 'Pair each coin result with each spinner result: $2 \cdot 3 = 6$ ordered outcomes.'
+        constraints: "two stages; total outcomes <= 12; outcomes written as ordered pairs or strings"
+      - id: kp3
+        name: "Counting outcomes without listing"
+        key_prerequisites: [multiplication-principle]
+        exemplars:
+          - problem: 'How many outcomes are in the sample space of flipping a coin $3$ times?'
+            answer: "8"
+            solution_sketch: '$2 \cdot 2 \cdot 2 = 8$.'
+          - problem: 'How many outcomes are in the sample space of rolling two six-sided dice?'
+            answer: "36"
+            solution_sketch: '$6 \cdot 6 = 36$ ordered pairs.'
+        constraints: "2-3 stages; counts <= 216; require the multiplication principle, not listing"
+    diagnostic_exemplar:
+      problem: 'A coin is flipped and a four-sided die is rolled. List the sample space.'
+      answer: '$\{H1, H2, H3, H4, T1, T2, T3, T4\}$'
+      solution_sketch: 'Pair each coin result with each die result: $2 \cdot 4 = 8$ ordered outcomes.'
+    anki_seeds:
+      - front: 'The sample space of an experiment is...'
+        back: 'The set of all possible outcomes.'
+        type: basic
+      - front: 'A two-stage experiment with $m$ outcomes then $n$ outcomes has how many outcomes total?'
+        back: '$m \cdot n$ (multiplication principle).'
+        type: basic
+
+  - id: basic-probability
+    name: "Basic Probability"
+    core: true
+    difficulty: 0.3
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 90
+    prerequisites:
+      - id: listing-sample-spaces
+        weight: 0.6
+        key: true
+      - id: equivalent-fractions
+        weight: 0.6
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: "Probability as favorable over total"
+        key_prerequisites: [equivalent-fractions]
+        exemplars:
+          - problem: 'A fair die is rolled. Find $P(\text{even})$ as a fraction in lowest terms.'
+            answer: "1/2"
+            solution_sketch: 'Favorable: $\{2, 4, 6\}$, so $P = 3/6 = 1/2$.'
+          - problem: 'One card is drawn from a standard $52$-card deck. Find $P(\text{heart})$.'
+            answer: "1/4"
+            solution_sketch: '$13$ hearts out of $52$: $13/52 = 1/4$.'
+          - problem: 'A bag holds $3$ red and $5$ blue marbles. Find $P(\text{red})$.'
+            answer: "3/8"
+        constraints: "answers are exact fractions in lowest terms; totals <= 60"
+      - id: kp2
+        name: "Probability via counting the sample space"
+        key_prerequisites: [equivalent-fractions, listing-sample-spaces]
+        exemplars:
+          - problem: 'Two fair coins are flipped. Find $P(\text{both heads})$.'
+            answer: "1/4"
+            solution_sketch: 'One favorable outcome ($HH$) of $4$ equally likely: $1/4$.'
+          - problem: 'Two fair dice are rolled. Find $P(\text{sum} = 7)$.'
+            answer: "1/6"
+            solution_sketch: 'Favorable pairs: $(1,6), (2,5), (3,4), (4,3), (5,2), (6,1)$ — $6$ of $36$, so $1/6$.'
+        constraints: "sample space of at most 36 equally likely outcomes; require explicit counting of favorable outcomes"
+      - id: kp3
+        name: "Events described by conditions"
+        key_prerequisites: [listing-sample-spaces]
+        exemplars:
+          - problem: 'One card is drawn from a standard deck. Find $P(\text{face card})$ (jack, queen, or king).'
+            answer: "3/13"
+            solution_sketch: '$12$ face cards out of $52$: $12/52 = 3/13$.'
+          - problem: 'Two fair dice are rolled. Find $P(\text{sum} \ge 10)$.'
+            answer: "1/6"
+            solution_sketch: 'Favorable: $(4,6), (5,5), (5,6), (6,4), (6,5), (6,6)$ — $6$ of $36$.'
+          - problem: 'A fair die is rolled. Find $P(\text{prime})$.'
+            answer: "1/2"
+            solution_sketch: 'Primes on a die: $\{2, 3, 5\}$, so $3/6 = 1/2$.'
+        constraints: "event given as a verbal condition the solver must translate into outcomes; answers exact fractions"
+    diagnostic_exemplar:
+      problem: 'Two fair dice are rolled. Find $P(\text{sum} \ge 9)$ as a fraction in lowest terms.'
+      answer: '5/18'
+      solution_sketch: 'Sums $9, 10, 11, 12$ have $4 + 3 + 2 + 1 = 10$ of $36$ outcomes: $10/36 = 5/18$.'
+    anki_seeds:
+      - front: 'For equally likely outcomes, $P(A) =$ ?'
+        back: '$\frac{\text{favorable outcomes}}{\text{total outcomes}}$.'
+        type: basic
+      - front: 'Every probability lies between... (inclusive)'
+        back: '$0$ and $1$.'
+        type: basic
+
+  - id: experimental-theoretical-probability
+    name: "Experimental vs Theoretical Probability"
+    core: true
+    difficulty: 0.3
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 90
+    prerequisites:
+      - id: basic-probability
+        weight: 0.7
+        key: true
+      - id: fraction-decimal-conversion
+        weight: 0.3
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Theoretical vs experimental"
+        key_prerequisites: [basic-probability]
+        exemplars:
+          - problem: 'State the theoretical probability of rolling a $4$ with a fair six-sided die.'
+            answer: "1/6"
+            solution_sketch: 'From the equally-likely model, not from data: $1/6$.'
+          - problem: 'A coin is flipped $50$ times and lands heads $23$ times. Find the experimental probability of heads.'
+            answer: "23/50"
+            solution_sketch: 'Experimental probability $=$ observed frequency over trials: $23/50$.'
+        constraints: "one item names the model, the other uses trial data; label which kind of probability is asked"
+      - id: kp2
+        name: "Relative frequency from data"
+        key_prerequisites: [basic-probability, fraction-decimal-conversion]
+        exemplars:
+          - problem: 'A spinner is spun $40$ times: A comes up $14$ times, B comes up $26$ times. Find the experimental probability of A, in lowest terms.'
+            answer: "7/20"
+            solution_sketch: '$14/40 = 7/20$.'
+          - problem: 'A player makes $19$ of $25$ free throws. Write the experimental probability of a make as a decimal.'
+            answer: "0.76"
+            solution_sketch: '$19/25 = 76/100 = 0.76$.'
+        constraints: "trial counts <= 100; fractions reduce cleanly or convert to exact decimals"
+      - id: kp3
+        name: "Expected counts"
+        key_prerequisites: [basic-probability]
+        exemplars:
+          - problem: 'A fair die is rolled $120$ times. About how many $6$s should be expected?'
+            answer: "20"
+            solution_sketch: '$120 \cdot \frac{1}{6} = 20$.'
+          - problem: 'A machine produces defective parts with probability $3/50$. In a batch of $200$ parts, how many defectives are expected?'
+            answer: "12"
+            solution_sketch: '$200 \cdot \frac{3}{50} = 12$.'
+        constraints: "n times p is a whole number; n <= 1000"
+    diagnostic_exemplar:
+      problem: 'A spinner lands on red $18$ times in $45$ spins. Based on this experimental probability, about how many reds should be expected in $200$ further spins?'
+      answer: '80'
+      solution_sketch: '$18/45 = 2/5$; $200 \cdot 2/5 = 80$.'
+    anki_seeds:
+      - front: 'Experimental probability of an event $=$ ?'
+        back: '$\frac{\text{times the event occurred}}{\text{number of trials}}$.'
+        type: basic
+      - front: 'Expected count of an event in $n$ trials?'
+        back: '$n \cdot P(\text{event})$.'
+        type: basic
+
+  - id: simulating-probability
+    name: "Simulating Probability"
+    core: false                # applications leaf topic
+    difficulty: 0.35
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 120
+    prerequisites:
+      - id: experimental-theoretical-probability
+        weight: 0.7
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: "Designing digit assignments"
+        key_prerequisites: [experimental-theoretical-probability]
+        exemplars:
+          - problem: 'Rain falls on a given day with probability $3/10$. Explain how to simulate one day using a single random digit $0$-$9$.'
+            answer: 'Let $3$ of the $10$ digits (e.g. $\{0, 1, 2\}$) mean rain and the other $7$ mean no rain.'
+            solution_sketch: '$3/10$ of the equally likely digits must represent the event.'
+          - problem: 'A free throw succeeds with probability $2/5$. Give a digit assignment (digits $0$-$9$) that simulates one shot.'
+            answer: 'Since $2/5 = 4/10$, let $4$ digits (e.g. $\{0, 1, 2, 3\}$) mean a make and $\{4, \dots, 9\}$ mean a miss.'
+        constraints: "probabilities with denominator dividing 10 (or 100 for digit pairs); assignment must match the probability exactly"
+      - id: kp2
+        name: "Reading simulation results"
+        key_prerequisites: [experimental-theoretical-probability]
+        exemplars:
+          - problem: 'Digits $0$-$2$ represent rain ($P = 3/10$). The digits $5\ 8\ 1\ 0\ 7\ 4\ 2\ 9\ 3\ 1$ simulate $10$ days. Estimate the probability of rain from this simulation.'
+            answer: "2/5"
+            solution_sketch: 'Rain digits: $1, 0, 2, 1$ — that is $4$ of $10$ trials, so $4/10 = 2/5$.'
+          - problem: 'A simulation of $20$ trials produced the target event $7$ times. Give the estimated probability.'
+            answer: "7/20"
+        constraints: "10-25 listed trials; estimates as exact fractions in lowest terms"
+      - id: kp3
+        name: "Reliability of estimates"
+        key_prerequisites: [experimental-theoretical-probability]
+        exemplars:
+          - problem: 'Two simulations estimate the same probability: one uses $50$ trials, the other $5000$. Which estimate is more reliable, and why?'
+            answer: 'The $5000$-trial estimate; more trials make the relative frequency settle closer to the true probability.'
+          - problem: 'A simulation of $100$ trials estimates a probability as $0.27$ when the true value is $1/4$. Is this discrepancy surprising?'
+            answer: 'No; experimental estimates vary around the true value, and $0.27$ is close to $0.25$.'
+        constraints: "conceptual items; answers must cite trial count or natural variability"
+    diagnostic_exemplar:
+      problem: 'A free throw succeeds with probability $3/10$. Give a digit assignment (digits $0$-$9$) that simulates one shot, then use it with the simulated digits $7\ 2\ 9\ 0\ 5\ 3\ 8\ 1\ 6\ 4$ to estimate the success probability.'
+      answer: 'E.g. let $\{0, 1, 2\}$ mean a make ($3$ of $10$ digits); the list contains each digit once, so $3$ of the $10$ trials succeed: estimate $3/10$.'
+      solution_sketch: 'The ten simulated digits are a permutation of $0$-$9$, so any valid $3$-digit assignment yields exactly $3$ hits.'
+    anki_seeds:
+      - front: 'In a digit simulation, the fraction of digits assigned to the event must equal...'
+        back: 'The event''s probability.'
+        type: basic
+      - front: 'More simulation trials make the estimated probability...'
+        back: 'Closer (on average) to the true probability.'
+        type: basic
+
+  - id: geometric-probability-models
+    name: "Geometric Probability Models"
+    core: false                # terminal probability-model branch
+    difficulty: 0.35
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 120
+    prerequisites:
+      - id: basic-probability
+        weight: 0.7
+        key: true
+      - id: area-triangles-quadrilaterals
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Length models"
+        key_prerequisites: [basic-probability]
+        exemplars:
+          - problem: 'A point is chosen at random on a segment of length $12$. A marked piece has length $4$. Find the probability the point lands in the marked piece.'
+            answer: "1/3"
+            solution_sketch: '$4/12 = 1/3$.'
+          - problem: 'A point is chosen at random on the interval from $0$ to $10$. Find $P(\text{point lies in } [0, 3])$.'
+            answer: "3/10"
+        constraints: "segment lengths <= 20; answers exact fractions in lowest terms"
+      - id: kp2
+        name: "Area models"
+        key_prerequisites: [basic-probability, area-triangles-quadrilaterals]
+        exemplars:
+          - problem: 'A $10 \times 8$ rectangle contains a shaded $4 \times 5$ rectangle. A point is chosen at random in the large rectangle. Find $P(\text{shaded})$.'
+            answer: "1/4"
+            solution_sketch: '$\frac{4 \cdot 5}{10 \cdot 8} = \frac{20}{80} = \frac{1}{4}$.'
+          - problem: 'A square dartboard has side $6$; its square bullseye has side $2$. Find the probability a random dart in the board hits the bullseye.'
+            answer: "1/9"
+            solution_sketch: '$\frac{2^2}{6^2} = \frac{4}{36} = \frac{1}{9}$.'
+        constraints: "rectangles, triangles, or squares with integer dimensions; area ratios reduce to clean fractions"
+      - id: kp3
+        name: "Spinners and circular targets"
+        key_prerequisites: [basic-probability]
+        exemplars:
+          - problem: 'A spinner sector has central angle $90^\circ$. Find the probability the spinner lands in that sector.'
+            answer: "1/4"
+            solution_sketch: '$90/360 = 1/4$.'
+          - problem: 'A circular target has radius $6$; its inner circle has radius $2$. Find the probability a random point in the target lies in the inner circle.'
+            answer: "1/9"
+            solution_sketch: '$\frac{\pi \cdot 2^2}{\pi \cdot 6^2} = \frac{4}{36} = \frac{1}{9}$ — the $\pi$ cancels.'
+        constraints: "angles divide 360 evenly; radii chosen so the ratio of squares reduces cleanly"
+    diagnostic_exemplar:
+      problem: 'A $12 \times 5$ rectangle contains a right triangle with legs $6$ and $5$. A point is chosen at random in the rectangle. Find the probability it lies in the triangle.'
+      answer: "1/4"
+      solution_sketch: 'Triangle area $\frac{1}{2} \cdot 6 \cdot 5 = 15$; rectangle area $60$; $15/60 = 1/4$.'
+    anki_seeds:
+      - front: 'Geometric probability $=$ ?'
+        back: '$\frac{\text{size of favorable region}}{\text{size of total region}}$ (length, area, or angle).'
+        type: basic
+      - front: 'Probability a spinner lands in a sector with central angle $\theta$?'
+        back: '$\frac{\theta}{360^\circ}$.'
+        type: basic
+
+  - id: complement-rule
+    name: "The Complement Rule"
+    core: true
+    difficulty: 0.3
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 60
+    prerequisites:
+      - id: basic-probability
+        weight: 0.7
+        key: true
+      - id: adding-subtracting-fractions
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Complement from a given probability"
+        key_prerequisites: [adding-subtracting-fractions]
+        exemplars:
+          - problem: 'If $P(A) = 3/7$, find $P(\text{not } A)$.'
+            answer: "4/7"
+            solution_sketch: '$P(A^c) = 1 - 3/7 = 4/7$.'
+          - problem: 'The chance of rain is $0.3$. Find the chance of no rain.'
+            answer: "0.7"
+        constraints: "P(A) given as a fraction with denominator <= 12 or a one-decimal value"
+      - id: kp2
+        name: "Complement by counting"
+        key_prerequisites: [basic-probability]
+        exemplars:
+          - problem: 'A fair die is rolled. Find $P(\text{not a } 6)$.'
+            answer: "5/6"
+            solution_sketch: '$1 - 1/6 = 5/6$, or count the five non-$6$ faces.'
+          - problem: 'One card is drawn from a standard deck. Find $P(\text{not a heart})$.'
+            answer: "3/4"
+            solution_sketch: '$1 - 13/52 = 39/52 = 3/4$.'
+        constraints: "dice, cards, marbles; answers exact fractions in lowest terms"
+      - id: kp3
+        name: "Choosing the complement route"
+        key_prerequisites: [basic-probability, adding-subtracting-fractions]
+        exemplars:
+          - problem: 'Two fair dice are rolled. Find $P(\text{sum} \neq 12)$.'
+            answer: "35/36"
+            solution_sketch: 'Only $(6,6)$ gives sum $12$: $1 - 1/36 = 35/36$.'
+          - problem: 'A raffle has $10$ tickets and $3$ winners. You hold one ticket. Find $P(\text{you do not win})$.'
+            answer: "7/10"
+        constraints: "the complement event must be much easier to count than the event itself"
+    diagnostic_exemplar:
+      problem: 'Two fair dice are rolled. Find $P(\text{sum} \neq 10)$.'
+      answer: '11/12'
+      solution_sketch: 'The sum is $10$ in $3$ of $36$ outcomes; $1 - 3/36 = 11/12$.'
+    anki_seeds:
+      - front: 'Complement rule?'
+        back: '$P(A^c) = 1 - P(A)$.'
+        type: basic
+      - front: 'An event and its complement together have probability...'
+        back: '$1$ — exactly one of them occurs.'
+        type: basic
+
+  - id: mutually-exclusive-events
+    name: "Mutually Exclusive Events"
+    core: true
+    difficulty: 0.3
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 90
+    prerequisites:
+      - id: basic-probability
+        weight: 0.7
+        key: true
+      - id: adding-subtracting-fractions
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Identifying mutually exclusive events"
+        key_prerequisites: [basic-probability]
+        exemplars:
+          - problem: 'One card is drawn. Events $A$ and $B$ are mutually exclusive exactly when $P(A \cap B) = 0$. Find $P(\text{heart and spade})$.'
+            answer: "0"
+            solution_sketch: 'No card is both a heart and a spade, so the events are mutually exclusive.'
+          - problem: 'A fair die is rolled. Find $P(\text{even and greater than } 3)$ — the events are mutually exclusive exactly when this is $0$.'
+            answer: "1/3"
+            solution_sketch: 'Both $4$ and $6$ are even and greater than $3$: $2/6 = 1/3 \neq 0$, so the events are not mutually exclusive.'
+        constraints: "one clearly disjoint pair and one overlapping pair per set; decide via P(A and B), identifying the shared outcomes"
+      - id: kp2
+        name: "Adding probabilities of disjoint events"
+        key_prerequisites: [basic-probability, adding-subtracting-fractions]
+        exemplars:
+          - problem: 'A fair die is rolled. Find $P(1 \text{ or } 6)$.'
+            answer: "1/3"
+            solution_sketch: 'Disjoint events: $1/6 + 1/6 = 2/6 = 1/3$.'
+          - problem: 'A spinner gives A with probability $2/5$ and B with probability $1/5$; A and B cannot both occur. Find $P(A \text{ or } B)$.'
+            answer: "3/5"
+            solution_sketch: '$2/5 + 1/5 = 3/5$.'
+        constraints: "events visibly disjoint; answers in lowest terms"
+      - id: kp3
+        name: "Disjoint events and the total of 1"
+        key_prerequisites: [basic-probability, adding-subtracting-fractions]
+        exemplars:
+          - problem: '$A$ and $B$ are mutually exclusive with $P(A) = 1/2$ and $P(B) = 1/3$. Find $P(\text{neither } A \text{ nor } B)$.'
+            answer: "1/6"
+            solution_sketch: '$P(A \cup B) = 1/2 + 1/3 = 5/6$; the rest is $1 - 5/6 = 1/6$.'
+          - problem: 'If $A$ and $B$ were mutually exclusive with $P(A) = 3/5$ and $P(B) = 1/2$, what would $P(A \cup B)$ be? (A value above $1$ shows such events cannot exist.)'
+            answer: "11/10"
+            solution_sketch: '$3/5 + 1/2 = 6/10 + 5/10 = 11/10 > 1$, which is impossible — so no such pair of mutually exclusive events exists.'
+        constraints: "two or three disjoint events; sums stay within [0, 1] except in the impossibility check"
+    diagnostic_exemplar:
+      problem: '$A$ and $B$ are mutually exclusive with $P(A) = 2/5$ and $P(B) = 1/4$. Find $P(\text{neither } A \text{ nor } B)$.'
+      answer: '7/20'
+      solution_sketch: '$P(A \cup B) = 2/5 + 1/4 = 13/20$; $1 - 13/20 = 7/20$.'
+    anki_seeds:
+      - front: 'Two events are mutually exclusive when...'
+        back: 'They cannot both occur: $P(A \cap B) = 0$.'
+        type: basic
+      - front: 'Addition rule for mutually exclusive events?'
+        back: '$P(A \cup B) = P(A) + P(B)$.'
+        type: basic
+
+  - id: addition-rule-complements
+    name: "The General Addition Rule"
+    core: true
+    difficulty: 0.35
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 120
+    prerequisites:
+      - id: mutually-exclusive-events
+        weight: 0.7
+        key: true
+      - id: complement-rule
+        weight: 0.6
+        key: true
+      - id: adding-subtracting-fractions
+        weight: 0.3
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "General addition rule from counts"
+        key_prerequisites: [mutually-exclusive-events]
+        exemplars:
+          - problem: 'One card is drawn. Find $P(\text{heart or king})$.'
+            answer: "4/13"
+            solution_sketch: '$P = 13/52 + 4/52 - 1/52 = 16/52 = 4/13$ (subtract the king of hearts, counted twice).'
+          - problem: 'A fair die is rolled. Find $P(\text{even or greater than } 4)$.'
+            answer: "2/3"
+            solution_sketch: 'Evens $\{2,4,6\}$, greater than $4$: $\{5,6\}$; overlap $\{6\}$. $3/6 + 2/6 - 1/6 = 4/6 = 2/3$.'
+        constraints: "overlap must be nonempty and computable by listing; all probabilities exact fractions"
+      - id: kp2
+        name: "General addition rule from given probabilities"
+        key_prerequisites: [mutually-exclusive-events, adding-subtracting-fractions]
+        exemplars:
+          - problem: 'Given $P(A) = 2/5$, $P(B) = 1/2$, and $P(A \cap B) = 1/5$, find $P(A \cup B)$.'
+            answer: "7/10"
+            solution_sketch: '$4/10 + 5/10 - 2/10 = 7/10$.'
+          - problem: 'Given $P(A) = 1/3$, $P(B) = 1/2$, and $P(A \cup B) = 2/3$, find $P(A \cap B)$.'
+            answer: "1/6"
+            solution_sketch: 'Rearrange the rule: $P(A \cap B) = 1/3 + 1/2 - 2/3 = 1/6$.'
+        constraints: "solve for the union or for the intersection; all four probabilities consistent and in [0, 1]"
+      - id: kp3
+        name: "Unions with complements"
+        key_prerequisites: [complement-rule, mutually-exclusive-events]
+        exemplars:
+          - problem: 'Given $P(A \cup B) = 5/6$, find $P(\text{neither } A \text{ nor } B)$.'
+            answer: "1/6"
+            solution_sketch: '$P(\text{neither}) = 1 - P(A \cup B) = 1/6$.'
+          - problem: 'Given $P(A) = 1/2$, $P(B) = 2/5$, $P(A \cap B) = 1/5$, find $P(\text{neither } A \text{ nor } B)$.'
+            answer: "3/10"
+            solution_sketch: '$P(A \cup B) = 1/2 + 2/5 - 1/5 = 7/10$, so $P(\text{neither}) = 3/10$.'
+        constraints: "combine the general addition rule with the complement rule; answers exact fractions"
+    diagnostic_exemplar:
+      problem: 'Given $P(A) = 2/5$, $P(B) = 1/4$, and $P(A \cap B) = 1/10$, find $P(\text{neither } A \text{ nor } B)$.'
+      answer: '9/20'
+      solution_sketch: '$P(A \cup B) = 8/20 + 5/20 - 2/20 = 11/20$; complement $= 9/20$.'
+    anki_seeds:
+      - front: 'General addition rule?'
+        back: '$P(A \cup B) = P(A) + P(B) - P(A \cap B)$.'
+        type: basic
+      - front: '$P(\text{neither } A \text{ nor } B) =$ ?'
+        back: '$1 - P(A \cup B)$.'
+        type: basic
+
+  - id: two-way-frequency-tables
+    name: "Two-Way Frequency Tables"
+    core: true
+    difficulty: 0.3
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 120
+    prerequisites:
+      - id: basic-probability
+        weight: 0.5
+        key: true
+      - id: percentages
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Completing a table from totals"
+        key_prerequisites: []
+        exemplars:
+          - problem: 'Of $30$ students, $12$ are girls and $7$ of the girls walk to school; $9$ of the $18$ boys walk. How many students walk to school?'
+            answer: "16"
+            solution_sketch: '$7 + 9 = 16$.'
+          - problem: 'Of $40$ students, $25$ play a sport; $18$ of the players are in their final year, and $10$ of the non-players are in their final year. How many students are neither final-year students nor players?'
+            answer: "5"
+            solution_sketch: 'Non-players: $40 - 25 = 15$; of those, $10$ are final-year students, leaving $5$.'
+        constraints: "totals <= 100; exactly one cell requires two subtraction steps"
+      - id: kp2
+        name: "Joint and marginal relative frequencies"
+        key_prerequisites: [basic-probability]
+        exemplars:
+          - problem: 'A class of $50$: $30$ year 9 students ($12$ play an instrument) and $20$ year 10 students ($6$ play). A student is chosen at random. Find $P(\text{year 9 student who plays})$.'
+            answer: "6/25"
+            solution_sketch: 'Joint relative frequency: $12/50 = 6/25$.'
+          - problem: 'Same class. Find the marginal relative frequency of playing an instrument.'
+            answer: "9/25"
+            solution_sketch: '$12 + 6 = 18$ players of $50$: $18/50 = 9/25$.'
+        constraints: "divide a cell or a margin by the grand total; fractions in lowest terms"
+      - id: kp3
+        name: "Row and column relative frequencies"
+        key_prerequisites: [basic-probability, percentages]
+        exemplars:
+          - problem: 'Same class ($20$ year 10 students, $6$ of whom play an instrument). What proportion of the year 10 students play? Give a decimal.'
+            answer: "0.3"
+            solution_sketch: '$6/20 = 3/10 = 0.3$, i.e. $30\%$.'
+          - problem: 'Same class ($18$ players, $12$ of whom are year 9 students). What fraction of the players are year 9 students?'
+            answer: "2/3"
+            solution_sketch: '$12/18 = 2/3$.'
+        constraints: "divide a cell by its row or column total, not the grand total; state which total is used"
+    diagnostic_exemplar:
+      problem: 'Of $60$ customers, $24$ bought coffee, and $15$ of the coffee buyers also bought food. Give ($P(\text{a random customer bought coffee and food})$, the fraction of coffee buyers who bought food) as an ordered pair of fractions in lowest terms.'
+      answer: '$(1/4, 5/8)$'
+      solution_sketch: 'Joint uses the grand total: $15/60 = 1/4$; the row-relative frequency uses the coffee total: $15/24 = 5/8$.'
+    anki_seeds:
+      - front: 'Joint relative frequency $=$ ?'
+        back: 'A table cell divided by the grand total.'
+        type: basic
+      - front: 'Marginal relative frequency $=$ ?'
+        back: 'A row or column total divided by the grand total.'
+        type: basic
+
+  - id: conditional-probability-from-tables
+    name: "Conditional Probability from Tables"
+    core: true
+    difficulty: 0.4
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 120
+    prerequisites:
+      - id: two-way-frequency-tables
+        weight: 0.7
+        key: true
+      - id: basic-probability
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Conditioning restricts to a row or column"
+        key_prerequisites: [two-way-frequency-tables]
+        exemplars:
+          - problem: 'Of $30$ students, $18$ study French, and $12$ of those also study Spanish. Find $P(\text{Spanish} \mid \text{French})$.'
+            answer: "2/3"
+            solution_sketch: 'Restrict to the $18$ French students: $12/18 = 2/3$.'
+          - problem: 'A class of $50$: $30$ year 9 students, $12$ of whom play an instrument. Find $P(\text{plays} \mid \text{year 9})$.'
+            answer: "2/5"
+            solution_sketch: 'Restrict to the $30$ year 9 students: $12/30 = 2/5$.'
+        constraints: "two-way counts <= 100; the conditioning group is a row or column total"
+      - id: kp2
+        name: "P(A given B) versus P(B given A)"
+        key_prerequisites: [two-way-frequency-tables]
+        exemplars:
+          - problem: 'Same class ($18$ players, $12$ of them year 9 students; $30$ year 9 students total). Give $(P(\text{year 9} \mid \text{plays}), P(\text{plays} \mid \text{year 9}))$ as an ordered pair of fractions in lowest terms.'
+            answer: '$(2/3, 2/5)$'
+            solution_sketch: '$12/18 = 2/3$ restricts to players; $12/30 = 2/5$ restricts to year 9 students — different denominators, so the two are not equal.'
+          - problem: 'Of $40$ pets, $25$ are dogs and $10$ of the dogs are trained; $16$ pets are trained in all. Give $(P(\text{trained} \mid \text{dog}), P(\text{dog} \mid \text{trained}))$ as an ordered pair of fractions in lowest terms.'
+            answer: '$(2/5, 5/8)$'
+            solution_sketch: '$10/25 = 2/5$ and $10/16 = 5/8$.'
+        constraints: "always ask for both directions as an ordered pair; numbers chosen so the two answers differ"
+      - id: kp3
+        name: "Comparing conditional proportions"
+        key_prerequisites: [two-way-frequency-tables]
+        exemplars:
+          - problem: 'Year 9: $12$ of $30$ students play an instrument. Year 10: $6$ of $20$ play. Give the higher of the two rates as a fraction in lowest terms.'
+            answer: "2/5"
+            solution_sketch: 'Compare $12/30 = 2/5 = 4/10$ with $6/20 = 3/10$: year 9 is higher.'
+          - problem: 'Treatment A: $18$ of $24$ patients improved. Treatment B: $21$ of $30$ improved. Give the higher of the two improvement rates as a fraction in lowest terms.'
+            answer: "3/4"
+            solution_sketch: '$18/24 = 3/4 = 15/20$ and $21/30 = 7/10 = 14/20$, so A is higher.'
+        constraints: "rates reduce to fractions with a common comparison denominator <= 40; the answer is the larger rate"
+    diagnostic_exemplar:
+      problem: 'Of $40$ pet owners, $25$ own dogs and $16$ own cats; $10$ owners own both. Give $(P(\text{cat} \mid \text{dog}), P(\text{dog} \mid \text{cat}))$ as an ordered pair of fractions in lowest terms.'
+      answer: '$(2/5, 5/8)$'
+      solution_sketch: 'Condition on the dog owners: $10/25 = 2/5$; on the cat owners: $10/16 = 5/8$.'
+    anki_seeds:
+      - front: 'To find $P(A \mid B)$ from a two-way table...'
+        back: 'Divide the $A$-and-$B$ cell by the total for $B$ (restrict to $B$''s row or column).'
+        type: basic
+      - front: 'Is $P(A \mid B)$ the same as $P(B \mid A)$?'
+        back: 'No — they condition on different groups (different denominators).'
+        type: basic
+
+  - id: conditional-probability
+    name: "Conditional Probability & the Multiplication Rule"
+    core: true
+    difficulty: 0.45
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 150
+    prerequisites:
+      - id: conditional-probability-from-tables
+        weight: 0.7
+        key: true
+      - id: multiplying-fractions
+        weight: 0.5
+        key: false
+      - id: addition-rule-complements
+        weight: 0.3
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Conditional probability from the definition"
+        key_prerequisites: [conditional-probability-from-tables]
+        exemplars:
+          - problem: 'A fair die is rolled. Find $P(\text{roll is } 2 \mid \text{roll is even})$.'
+            answer: "1/3"
+            solution_sketch: 'Restrict to $\{2, 4, 6\}$; one of the three is a $2$, so $1/3$. Or $(1/6)/(1/2) = 1/3$.'
+          - problem: 'Given $P(A \cap B) = 3/10$ and $P(B) = 3/5$, find $P(A \mid B)$.'
+            answer: "1/2"
+            solution_sketch: '$P(A \mid B) = \frac{P(A \cap B)}{P(B)} = \frac{3/10}{3/5} = \frac{1}{2}$.'
+        constraints: "small restricted sample spaces or given fraction pairs; exact fractions that divide cleanly"
+      - id: kp2
+        name: "The multiplication rule"
+        key_prerequisites: [multiplying-fractions, conditional-probability-from-tables]
+        exemplars:
+          - problem: 'Given $P(A) = 1/2$ and $P(B \mid A) = 1/3$, find $P(A \cap B)$.'
+            answer: "1/6"
+            solution_sketch: '$P(A \cap B) = P(A) \cdot P(B \mid A) = \frac{1}{2} \cdot \frac{1}{3} = \frac{1}{6}$.'
+          - problem: 'A student passes quiz 1 with probability $4/5$; given a pass, she passes quiz 2 with probability $3/4$. Find $P(\text{passes both})$.'
+            answer: "3/5"
+            solution_sketch: '$\frac{4}{5} \cdot \frac{3}{4} = \frac{12}{20} = \frac{3}{5}$.'
+        constraints: "two events; given probabilities are simple fractions; products reduce cleanly"
+      - id: kp3
+        name: "Multiplication rule without replacement"
+        key_prerequisites: [multiplying-fractions]
+        exemplars:
+          - problem: 'Two cards are drawn without replacement. Find $P(\text{both hearts})$.'
+            answer: "1/17"
+            solution_sketch: '$\frac{13}{52} \cdot \frac{12}{51} = \frac{1}{4} \cdot \frac{12}{51} = \frac{12}{204} = \frac{1}{17}$.'
+          - problem: 'A bag holds $3$ red and $2$ blue marbles. Two are drawn without replacement. Find $P(\text{both red})$.'
+            answer: "3/10"
+            solution_sketch: '$\frac{3}{5} \cdot \frac{2}{4} = \frac{6}{20} = \frac{3}{10}$.'
+        constraints: "at most 2 draws; bag sizes <= 10; fractions reduce cleanly"
+    diagnostic_exemplar:
+      problem: 'A bag holds $4$ red and $2$ blue marbles. Two are drawn without replacement. Find $P(\text{both red})$.'
+      answer: '2/5'
+      solution_sketch: '$\frac{4}{6} \cdot \frac{3}{5} = \frac{12}{30} = \frac{2}{5}$.'
+    anki_seeds:
+      - front: 'Definition of conditional probability?'
+        back: '$P(A \mid B) = \frac{P(A \cap B)}{P(B)}$, for $P(B) > 0$.'
+        type: basic
+      - front: 'Multiplication rule?'
+        back: '$P(A \cap B) = P(A) \cdot P(B \mid A)$.'
+        type: basic
+
+  - id: independent-events
+    name: "Independence"
+    core: true
+    difficulty: 0.45
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 120
+    prerequisites:
+      - id: conditional-probability
+        weight: 0.8
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: "Testing for independence"
+        key_prerequisites: [conditional-probability]
+        exemplars:
+          - problem: 'Given $P(A) = 1/3$, $P(B) = 1/4$, $P(A \cap B) = 1/12$: compute $P(A)P(B)$ — independence holds exactly when it equals $P(A \cap B)$.'
+            answer: "1/12"
+            solution_sketch: '$\frac{1}{3} \cdot \frac{1}{4} = \frac{1}{12}$, which matches $P(A \cap B)$, so $A$ and $B$ are independent.'
+          - problem: 'Given $P(A) = 1/2$, $P(B) = 1/3$, $P(A \cap B) = 1/4$: compute $P(A)P(B)$ — independence holds exactly when it equals $P(A \cap B)$.'
+            answer: "1/6"
+            solution_sketch: '$\frac{1}{2} \cdot \frac{1}{3} = \frac{1}{6} \neq \frac{1}{4}$, so $A$ and $B$ are not independent.'
+        constraints: "all three probabilities given as fractions; the product either matches P(A and B) or clearly fails"
+      - id: kp2
+        name: "Computing with independent events"
+        key_prerequisites: [conditional-probability]
+        exemplars:
+          - problem: 'A fair coin is flipped and a fair die is rolled. Find $P(\text{heads and a } 6)$.'
+            answer: "1/12"
+            solution_sketch: 'Independent: $\frac{1}{2} \cdot \frac{1}{6} = \frac{1}{12}$.'
+          - problem: 'A player makes each free throw with probability $3/5$, independently. Find $P(\text{makes both of two})$.'
+            answer: "9/25"
+            solution_sketch: '$\left(\frac{3}{5}\right)^2 = \frac{9}{25}$.'
+        constraints: "2-3 independent events; success probabilities are simple fractions"
+      - id: kp3
+        name: "At least one: complement of none"
+        key_prerequisites: [conditional-probability]
+        exemplars:
+          - problem: 'Two fair dice are rolled. Find $P(\text{at least one } 6)$.'
+            answer: "11/36"
+            solution_sketch: '$P(\text{no } 6) = \left(\frac{5}{6}\right)^2 = \frac{25}{36}$, so $P = 1 - \frac{25}{36} = \frac{11}{36}$.'
+          - problem: 'A spinner lands on red with probability $1/4$ on each spin, independently. Find $P(\text{at least one red in } 3 \text{ spins})$.'
+            answer: "37/64"
+            solution_sketch: '$P(\text{no red}) = \left(\frac{3}{4}\right)^3 = \frac{27}{64}$, so $P = 1 - \frac{27}{64} = \frac{37}{64}$.'
+        constraints: "2-4 independent trials; force the complement route (direct enumeration would be tedious)"
+    diagnostic_exemplar:
+      problem: 'A spinner lands on red with probability $1/3$ on each spin, independently. Find $P(\text{at least one red in } 3 \text{ spins})$.'
+      answer: '19/27'
+      solution_sketch: 'Complement of no reds: $1 - (2/3)^3 = 1 - 8/27 = 19/27$.'
+    anki_seeds:
+      - front: '$A$ and $B$ are independent exactly when...'
+        back: '$P(A \cap B) = P(A) \cdot P(B)$ (equivalently $P(A \mid B) = P(A)$).'
+        type: basic
+      - front: '"At least one" trick?'
+        back: '$P(\text{at least one}) = 1 - P(\text{none})$.'
+        type: basic
+
+  - id: probability-tree-diagrams
+    name: "Probability Tree Diagrams"
+    core: false                # terminal; feeds only Bayes' theorem
+    difficulty: 0.5
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 180
+    prerequisites:
+      - id: conditional-probability
+        weight: 0.8
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: "Multiplying along branches"
+        key_prerequisites: [conditional-probability]
+        exemplars:
+          - problem: 'A bag holds $3$ red and $2$ blue marbles. Two are drawn without replacement. Find $P(\text{first red, then blue})$.'
+            answer: "3/10"
+            solution_sketch: '$\frac{3}{5} \cdot \frac{2}{4} = \frac{3}{10}$; the second branch conditions on the first draw.'
+          - problem: 'A spinner lands on A with probability $1/3$. It is spun twice. Find $P(\text{A both times})$.'
+            answer: "1/9"
+            solution_sketch: 'Independent spins: $\frac{1}{3} \cdot \frac{1}{3} = \frac{1}{9}$.'
+        constraints: "two-stage experiments; state whether the second stage conditions on the first"
+      - id: kp2
+        name: "Adding across branches"
+        key_prerequisites: [conditional-probability]
+        exemplars:
+          - problem: 'A bag holds $3$ red and $2$ blue marbles. Two are drawn without replacement. Find $P(\text{exactly one red})$.'
+            answer: "3/5"
+            solution_sketch: 'Paths RB and BR: $\frac{3}{5} \cdot \frac{2}{4} + \frac{2}{5} \cdot \frac{3}{4} = \frac{3}{10} + \frac{3}{10} = \frac{3}{5}$.'
+          - problem: 'Rain falls with probability $1/3$. If it rains, the bus is late with probability $1/2$; otherwise late with probability $1/4$. Find $P(\text{late})$.'
+            answer: "1/3"
+            solution_sketch: '$\frac{1}{3} \cdot \frac{1}{2} + \frac{2}{3} \cdot \frac{1}{4} = \frac{1}{6} + \frac{1}{6} = \frac{1}{3}$.'
+        constraints: "exactly two disjoint paths to the target event; branch probabilities simple fractions"
+      - id: kp3
+        name: "Whole-tree reasoning"
+        key_prerequisites: [conditional-probability]
+        exemplars:
+          - problem: 'A bag holds $4$ red and $2$ blue marbles. Two are drawn without replacement. Find $P(\text{at least one blue})$.'
+            answer: "3/5"
+            solution_sketch: '$P(\text{no blue}) = \frac{4}{6} \cdot \frac{3}{5} = \frac{2}{5}$, so $1 - \frac{2}{5} = \frac{3}{5}$.'
+          - problem: 'A bag holds $3$ red and $2$ blue marbles. Two are drawn without replacement. Find $P(\text{second draw is red})$.'
+            answer: "3/5"
+            solution_sketch: 'Paths RR and BR: $\frac{3}{5} \cdot \frac{2}{4} + \frac{2}{5} \cdot \frac{3}{4} = \frac{6}{20} + \frac{6}{20} = \frac{3}{5}$ — the same as $P(\text{first red})$.'
+        constraints: "combine complements or sum 2-3 paths over a full two-stage tree; bag sizes <= 8"
+    diagnostic_exemplar:
+      problem: 'A bag holds $2$ red and $3$ blue marbles. Two are drawn without replacement. Find $P(\text{the second marble drawn is red})$.'
+      answer: '2/5'
+      solution_sketch: 'Sum the two paths that end in red: $\frac{2}{5}\cdot\frac{1}{4} + \frac{3}{5}\cdot\frac{2}{4} = \frac{2}{20} + \frac{6}{20} = \frac{2}{5}$.'
+    anki_seeds:
+      - front: 'In a tree diagram, the probability of one complete path is found by...'
+        back: 'Multiplying the probabilities along its branches.'
+        type: basic
+      - front: 'In a tree diagram, the probability of an event covered by several paths is found by...'
+        back: 'Adding the (disjoint) path probabilities.'
+        type: basic
+
+  - id: bayes-theorem
+    name: "Bayes' Theorem"
+    core: false                # terminal; the rules it uses stay core
+    difficulty: 0.55
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 240
+    prerequisites:
+      - id: conditional-probability
+        weight: 0.8
+        key: true
+      - id: addition-rule-complements
+        weight: 0.4
+        key: false
+      - id: probability-tree-diagrams
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Law of total probability"
+        key_prerequisites: [conditional-probability, addition-rule-complements]
+        exemplars:
+          - problem: 'Urn 1 holds $2$ red, $3$ blue; urn 2 holds $4$ red, $1$ blue. An urn is chosen by fair coin, then one marble is drawn. Find $P(\text{red})$.'
+            answer: "3/5"
+            solution_sketch: '$P(R) = \frac{1}{2} \cdot \frac{2}{5} + \frac{1}{2} \cdot \frac{4}{5} = \frac{1}{5} + \frac{2}{5} = \frac{3}{5}$.'
+          - problem: 'Machine A makes $1/4$ of the parts with defect rate $1/10$; machine B makes $3/4$ with defect rate $1/20$. Find $P(\text{defective})$.'
+            answer: "1/16"
+            solution_sketch: '$\frac{1}{4} \cdot \frac{1}{10} + \frac{3}{4} \cdot \frac{1}{20} = \frac{1}{40} + \frac{3}{80} = \frac{2}{80} + \frac{3}{80} = \frac{5}{80} = \frac{1}{16}$.'
+        constraints: "exactly two branches; all inputs simple fractions; answer reduces cleanly"
+      - id: kp2
+        name: "Bayes with two hypotheses"
+        key_prerequisites: [conditional-probability, addition-rule-complements]
+        exemplars:
+          - problem: 'Urn 1 holds $2$ red, $3$ blue; urn 2 holds $4$ red, $1$ blue. An urn is chosen by fair coin and a red marble is drawn. Find $P(\text{urn 1} \mid \text{red})$.'
+            answer: "1/3"
+            solution_sketch: '$P(U_1 \mid R) = \frac{\frac{1}{2} \cdot \frac{2}{5}}{\frac{3}{5}} = \frac{1/5}{3/5} = \frac{1}{3}$.'
+          - problem: 'Bag X holds $3$ red, $1$ blue; bag Y holds $1$ red, $3$ blue. A bag is chosen by fair coin and a red marble is drawn. Find $P(\text{bag X} \mid \text{red})$.'
+            answer: "3/4"
+            solution_sketch: 'Numerator $\frac{1}{2} \cdot \frac{3}{4} = \frac{3}{8}$; denominator $\frac{3}{8} + \frac{1}{8} = \frac{1}{2}$; quotient $= \frac{3}{4}$.'
+        constraints: "two hypotheses chosen by fair coin or simple prior; denominator computed via total probability"
+      - id: kp3
+        name: "Base rates: test-and-condition problems"
+        key_prerequisites: [conditional-probability, addition-rule-complements]
+        exemplars:
+          - problem: 'A disease affects $1/100$ of a population. A test detects it with probability $9/10$ and gives a false positive with probability $1/10$. Find $P(\text{disease} \mid \text{positive})$.'
+            answer: "1/12"
+            solution_sketch: 'Numerator: $\frac{1}{100} \cdot \frac{9}{10} = \frac{9}{1000}$. Denominator: $\frac{9}{1000} + \frac{99}{100} \cdot \frac{1}{10} = \frac{9}{1000} + \frac{99}{1000} = \frac{108}{1000}$. Quotient: $\frac{9}{108} = \frac{1}{12}$.'
+          - problem: 'A disease affects $1/100$ of a population. A test detects it with probability $9/10$ and gives a false positive with probability $1/10$. Find $P(\text{no disease} \mid \text{positive})$.'
+            answer: "11/12"
+            solution_sketch: 'Complement of the posterior: $1 - \frac{1}{12} = \frac{11}{12}$.'
+        constraints: "prevalence 1/50 to 1/1000; sensitivity and false-positive rate are tenths; posterior reduces to a clean fraction"
+    diagnostic_exemplar:
+      problem: 'A disease affects $1/50$ of a population. A test detects it with probability $9/10$ and gives a false positive with probability $1/10$. Find $P(\text{disease} \mid \text{positive})$.'
+      answer: '9/58'
+      solution_sketch: 'Total probability: $\frac{1}{50}\cdot\frac{9}{10} + \frac{49}{50}\cdot\frac{1}{10} = \frac{9 + 49}{500}$; posterior $= \frac{9/500}{58/500} = 9/58$.'
+    anki_seeds:
+      - front: 'Bayes'' theorem (two hypotheses)?'
+        back: '$P(H \mid E) = \frac{P(H) P(E \mid H)}{P(H) P(E \mid H) + P(H^c) P(E \mid H^c)}$.'
+        type: basic
+      - front: 'Law of total probability (two cases)?'
+        back: '$P(E) = P(H)P(E \mid H) + P(H^c)P(E \mid H^c)$.'
+        type: basic
+      - front: 'Why can a positive result from an accurate test still mean the condition is unlikely?'
+        back: 'A low base rate: the many false positives from the large healthy group can outnumber the true positives.'
+        type: basic

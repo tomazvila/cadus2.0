@@ -1,0 +1,646 @@
+unit: laplace
+course: differential-equations
+module: "Laplace Transforms"
+topics:
+  - id: laplace-transform-definition
+    name: Transforms from the Definition
+    core: true
+    difficulty: 0.64
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 180
+    prerequisites:
+      - id: improper-integrals
+        weight: 0.6
+        key: true
+      - id: integration-by-parts
+        weight: 0.4
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: The definition and convergence
+        key_prerequisites: [improper-integrals]
+        exemplars:
+          - problem: 'Compute $\mathcal{L}\{1\}$ directly from the definition $\int_0^{\infty} e^{-st}\,dt$.'
+            answer: '$\dfrac{1}{s}$ for $s > 0$'
+            solution_sketch: '$\int_0^{\infty} e^{-st}dt = \lim_{b\to\infty}\left[-\frac{e^{-st}}{s}\right]_0^b = \frac{1}{s}$ when $s > 0$.'
+          - problem: 'Compute $\mathcal{L}\{e^{at}\}$ from the definition.'
+            answer: '$\dfrac{1}{s - a}$ for $s > a$'
+            solution_sketch: '$\int_0^{\infty} e^{(a-s)t}dt$ converges to $\frac{1}{s-a}$ exactly when $s > a$.'
+          - problem: 'For which values of $s$ does the integral $\int_0^{\infty} e^{-st} e^{3t}\,dt$ converge?'
+            answer: '$s > 3$'
+            solution_sketch: 'The integrand is $e^{(3-s)t}$; the improper integral converges exactly when the exponent $3 - s$ is negative.'
+        constraints: "integrands 1 and e^{at} with integer a; always state the domain of convergence"
+      - id: kp2
+        name: Transforms needing integration by parts
+        key_prerequisites: [improper-integrals, integration-by-parts]
+        exemplars:
+          - problem: 'Compute $\mathcal{L}\{t\}$ from the definition.'
+            answer: '$\dfrac{1}{s^2}$ for $s > 0$'
+            solution_sketch: 'Integrate $\int_0^{\infty} te^{-st}dt$ by parts: the boundary terms vanish and $\frac{1}{s}\int_0^\infty e^{-st}dt = \frac{1}{s^2}$.'
+          - problem: 'Compute $\mathcal{L}\{te^{2t}\}$ from the definition.'
+            answer: '$\dfrac{1}{(s - 2)^2}$ for $s > 2$'
+            solution_sketch: '$\int_0^{\infty} te^{(2-s)t}dt$ by parts with $u = t$: for $s > 2$ the boundary terms vanish, leaving $\frac{1}{(s-2)^2}$.'
+          - problem: 'Compute $\mathcal{L}\{t^2\}$ from the definition.'
+            answer: '$\dfrac{2}{s^3}$ for $s > 0$'
+            solution_sketch: 'Two integrations by parts: $\int_0^\infty t^2 e^{-st}dt = \frac{2}{s}\int_0^\infty t e^{-st}dt = \frac{2}{s}\cdot\frac{1}{s^2}$.'
+        constraints: "integrands t, t^2, t e^{at}; one or two integrations by parts; state the domain of convergence"
+    diagnostic_exemplar:
+      problem: 'Compute $\mathcal{L}\{te^{-2t}\}$ directly from the definition, stating where it converges.'
+      answer: '$\dfrac{1}{(s + 2)^2}$ for $s > -2$'
+      solution_sketch: '$\int_0^{\infty} t e^{-(s+2)t}\,dt$; integrating by parts with $u = t$ gives $\frac{1}{(s+2)^2}$, and the boundary terms vanish exactly when $s + 2 > 0$.'
+    anki_seeds:
+      - front: 'Definition of the Laplace transform?'
+        back: '$\mathcal{L}\{f(t)\} = \int_0^{\infty} e^{-st} f(t)\,dt$'
+        type: basic
+      - front: 'Why does $\mathcal{L}\{e^{at}\}$ require $s > a$?'
+        back: 'The integrand is $e^{(a-s)t}$; the improper integral converges only when the exponent $a - s < 0$.'
+        type: basic
+
+  - id: laplace-table-linearity
+    name: The Transform Table and Linearity
+    core: true
+    difficulty: 0.66
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 120
+    prerequisites:
+      - id: laplace-transform-definition
+        weight: 0.7
+        key: true
+      - id: improper-integrals
+        weight: 0.3
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: The standard table
+        key_prerequisites: [laplace-transform-definition]
+        exemplars:
+          - problem: 'Compute $\mathcal{L}\{t^3\}$.'
+            answer: '$6/s^4$'
+            solution_sketch: '$\mathcal{L}\{t^n\} = \dfrac{n!}{s^{n+1}}$ with $n = 3$.'
+          - problem: 'Compute $\mathcal{L}\{\sin 5t\}$.'
+            answer: '$5/(s^2 + 25)$'
+            solution_sketch: 'Table entry $\mathcal{L}\{\sin bt\} = \frac{b}{s^2+b^2}$ with $b = 5$.'
+          - problem: 'Compute $\mathcal{L}\{\cos 2t\}$.'
+            answer: '$s/(s^2 + 4)$'
+        constraints: "single table entries: t^n (n <= 3), e^{at}, sin bt, cos bt with integer parameters"
+      - id: kp2
+        name: Linearity
+        key_prerequisites: [laplace-transform-definition]
+        exemplars:
+          - problem: 'Compute $\mathcal{L}\{3t^2 - 2\sin 4t\}$.'
+            answer: '$6/s^3 - 8/(s^2 + 16)$'
+            solution_sketch: '$\mathcal{L}\{t^2\} = \frac{2}{s^3}$ and $\mathcal{L}\{\sin 4t\} = \frac{4}{s^2+16}$; apply linearity.'
+          - problem: 'Compute $\mathcal{L}\{\cos 3t + e^{-2t}\}$.'
+            answer: '$s/(s^2 + 9) + 1/(s + 2)$'
+          - problem: 'Compute $\mathcal{L}\{4 - 5t + 2e^{3t}\}$.'
+            answer: '$4/s - 5/s^2 + 2/(s - 3)$'
+            solution_sketch: 'Transform each term from the table and combine by linearity.'
+        constraints: "linear combinations of t^n (n <= 3), e^{at}, sin bt, cos bt with integer parameters"
+    diagnostic_exemplar:
+      problem: 'Compute $\mathcal{L}\{2t^2 + 3\cos 5t\}$.'
+      answer: '$4/s^3 + 3s/(s^2 + 25)$'
+      solution_sketch: '$2\cdot\frac{2}{s^3} + 3\cdot\frac{s}{s^2+25}$ by linearity.'
+    anki_seeds:
+      - front: 'Laplace transforms of $t^n$, $e^{at}$, $\sin bt$, $\cos bt$?'
+        back: '$\dfrac{n!}{s^{n+1}}$, $\dfrac{1}{s-a}$, $\dfrac{b}{s^2+b^2}$, $\dfrac{s}{s^2+b^2}$'
+        type: basic
+      - front: 'Is the Laplace transform linear?'
+        back: 'Yes: $\mathcal{L}\{af + bg\} = a\mathcal{L}\{f\} + b\mathcal{L}\{g\}$, because the integral is linear.'
+        type: basic
+
+  - id: laplace-transform-basics
+    name: The First Shifting Theorem
+    core: true
+    difficulty: 0.72
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 150
+    prerequisites:
+      - id: laplace-table-linearity
+        weight: 0.7
+        key: true
+      - id: laplace-transform-definition
+        weight: 0.4
+        key: false
+      - id: derivatives-exp-log
+        weight: 0.3
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: The first shifting theorem
+        key_prerequisites: [laplace-table-linearity]
+        exemplars:
+          - problem: 'Compute $\mathcal{L}\{e^{2t}\sin 3t\}$.'
+            answer: '$3/((s-2)^2 + 9)$'
+            solution_sketch: 'Shift $\mathcal{L}\{\sin 3t\} = \frac{3}{s^2+9}$ by replacing $s$ with $s - 2$.'
+          - problem: 'Compute $\mathcal{L}\{t^2 e^{-t}\}$.'
+            answer: '$2/(s+1)^3$'
+            solution_sketch: 'Shift $\mathcal{L}\{t^2\} = \frac{2}{s^3}$ by $s \mapsto s + 1$.'
+          - problem: 'Compute $\mathcal{L}\{e^{3t}\cos t\}$.'
+            answer: '$(s - 3)/((s-3)^2 + 1)$'
+        constraints: "products e^{at} f(t) with f from the basic table; the shift replaces s by s - a everywhere"
+      - id: kp2
+        name: Mixed transform fluency
+        key_prerequisites: [laplace-table-linearity]
+        exemplars:
+          - problem: 'Compute $\mathcal{L}\{5e^{2t} - 3\cos 4t\}$.'
+            answer: '$5/(s - 2) - 3s/(s^2 + 16)$'
+            solution_sketch: 'Table entries $\frac{1}{s-2}$ and $\frac{s}{s^2+16}$ combined by linearity.'
+          - problem: 'Compute $\mathcal{L}\{e^{-t}(t + \cos 2t)\}$.'
+            answer: '$1/(s+1)^2 + (s + 1)/((s+1)^2 + 4)$'
+            solution_sketch: 'Transform $t + \cos 2t$ from the table, then shift the whole result by $s \mapsto s + 1$.'
+          - problem: 'Compute $\mathcal{L}\{2t^3 e^{4t}\}$.'
+            answer: '$12/(s-4)^4$'
+            solution_sketch: '$\mathcal{L}\{2t^3\} = \frac{12}{s^4}$, shifted by $s \mapsto s - 4$.'
+        constraints: "linearity and the s-shift combined; integer parameters; at most three terms"
+    diagnostic_exemplar:
+      problem: 'Compute $\mathcal{L}\{e^{-t}(t^2 + \cos 3t)\}$.'
+      answer: '$2/(s+1)^3 + (s + 1)/((s+1)^2 + 9)$'
+      solution_sketch: 'By linearity and the first shifting theorem: $\mathcal{L}\{t^2\} = 2/s^3$ and $\mathcal{L}\{\cos 3t\} = s/(s^2+9)$, each with $s$ replaced by $s + 1$.'
+    anki_seeds:
+      - front: 'First shifting theorem?'
+        back: '$\mathcal{L}\{e^{at}f(t)\} = F(s - a)$: multiplying by $e^{at}$ shifts $s$ by $a$.'
+        type: basic
+      - front: 'Laplace transform of $t^n e^{at}$?'
+        back: '$\dfrac{n!}{(s-a)^{n+1}}$ (shift the $t^n$ entry by $s \mapsto s - a$).'
+        type: basic
+
+  - id: inverse-laplace-table
+    name: Inverse Transforms from the Table
+    core: true
+    difficulty: 0.70
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 120
+    prerequisites:
+      - id: laplace-table-linearity
+        weight: 0.7
+        key: true
+      - id: laplace-transform-definition
+        weight: 0.2
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: Direct table inversions
+        key_prerequisites: [laplace-table-linearity]
+        exemplars:
+          - problem: 'Compute $\mathcal{L}^{-1}\left\{\dfrac{1}{s - 5}\right\}$.'
+            answer: '$\exp(5t)$'
+          - problem: 'Compute $\mathcal{L}^{-1}\left\{\dfrac{2}{s^3}\right\}$.'
+            answer: '$t^2$'
+            solution_sketch: 'Matches $\mathcal{L}\{t^2\} = \frac{2}{s^3}$ exactly.'
+          - problem: 'Compute $\mathcal{L}^{-1}\left\{\dfrac{s}{s^2 + 4}\right\}$.'
+            answer: '$\cos 2t$'
+        constraints: "single table entries matched exactly; integer parameters"
+      - id: kp2
+        name: Fixing constants and splitting terms
+        key_prerequisites: [laplace-table-linearity]
+        exemplars:
+          - problem: 'Compute $\mathcal{L}^{-1}\left\{\dfrac{4}{s^2 + 9}\right\}$.'
+            answer: '$(4/3)\sin 3t$'
+            solution_sketch: 'The sine entry needs numerator $3$: write $\frac{4}{3}\cdot\frac{3}{s^2+9}$.'
+          - problem: 'Compute $\mathcal{L}^{-1}\left\{\dfrac{2s + 5}{s^2 + 4}\right\}$.'
+            answer: '$2\cos 2t + (5/2)\sin 2t$'
+            solution_sketch: 'Split into $\frac{2s}{s^2+4} + \frac{5}{s^2+4}$ and fix the sine constant.'
+          - problem: 'Compute $\mathcal{L}^{-1}\left\{\dfrac{3}{s^4}\right\}$.'
+            answer: '$t^3/2$'
+            solution_sketch: '$\mathcal{L}\{t^3\} = \frac{6}{s^4}$, so $\frac{3}{s^4} = \frac{1}{2}\cdot\frac{6}{s^4}$.'
+        constraints: "numerators need a constant factor fixed or a two-term split; no factoring of denominators"
+    diagnostic_exemplar:
+      problem: 'Compute $\mathcal{L}^{-1}\left\{\dfrac{s + 6}{s^2 + 9}\right\}$.'
+      answer: '$\cos 3t + 2\sin 3t$'
+      solution_sketch: 'Split into $\frac{s}{s^2+9} + 2\cdot\frac{3}{s^2+9}$ and invert each term.'
+    anki_seeds:
+      - front: 'Inverse transforms of $\dfrac{b}{s^2+b^2}$ and $\dfrac{s}{s^2+b^2}$?'
+        back: '$\sin bt$ and $\cos bt$'
+        type: basic
+      - front: 'Before inverting $\dfrac{c}{s^{n+1}}$, first...'
+        back: 'rescale to match $\mathcal{L}\{t^n\} = \dfrac{n!}{s^{n+1}}$: the answer is $\dfrac{c}{n!}\,t^n$.'
+        type: basic
+
+  - id: inverse-laplace-partial-fractions
+    name: Inverse Transforms via Partial Fractions
+    core: true
+    difficulty: 0.76
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 240
+    prerequisites:
+      - id: inverse-laplace-table
+        weight: 0.6
+        key: true
+      - id: partial-fractions-integration
+        weight: 0.5
+        key: true
+      - id: laplace-transform-basics
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: Distinct linear factors
+        key_prerequisites: [inverse-laplace-table, partial-fractions-integration]
+        exemplars:
+          - problem: 'Compute $\mathcal{L}^{-1}\left\{\dfrac{1}{s(s + 1)}\right\}$.'
+            answer: '$1 - e^{-t}$'
+            solution_sketch: '$\frac{1}{s(s+1)} = \frac{1}{s} - \frac{1}{s+1}$; invert term by term.'
+          - problem: 'Compute $\mathcal{L}^{-1}\left\{\dfrac{s + 3}{(s - 1)(s + 2)}\right\}$.'
+            answer: '$\dfrac{4}{3}e^{t} - \dfrac{1}{3}e^{-2t}$'
+            solution_sketch: 'Cover-up: $A = \frac{1+3}{1+2} = \frac{4}{3}$ at $s = 1$; $B = \frac{-2+3}{-2-1} = -\frac{1}{3}$ at $s = -2$.'
+          - problem: 'Compute $\mathcal{L}^{-1}\left\{\dfrac{2}{s^2 - 4}\right\}$.'
+            answer: '$\dfrac{1}{2}e^{2t} - \dfrac{1}{2}e^{-2t}$'
+            solution_sketch: '$\frac{2}{(s-2)(s+2)} = \frac{1/2}{s-2} - \frac{1/2}{s+2}$ by cover-up.'
+        constraints: "denominators factor over the integers into 2 distinct linear factors; coefficients clean fractions"
+      - id: kp2
+        name: Completing the square and repeated factors
+        key_prerequisites: [laplace-transform-basics, partial-fractions-integration]
+        exemplars:
+          - problem: 'Compute $\mathcal{L}^{-1}\left\{\dfrac{1}{s^2 + 2s + 5}\right\}$.'
+            answer: '$\dfrac{1}{2}e^{-t}\sin 2t$'
+            solution_sketch: '$s^2 + 2s + 5 = (s+1)^2 + 4$; write $\frac{1}{2}\cdot\frac{2}{(s+1)^2+4}$ and unshift.'
+          - problem: 'Compute $\mathcal{L}^{-1}\left\{\dfrac{s + 1}{s^2 + 2s + 5}\right\}$.'
+            answer: '$e^{-t}\cos 2t$'
+            solution_sketch: 'The numerator is exactly the shifted $s$: $\frac{s+1}{(s+1)^2 + 4}$.'
+          - problem: 'Compute $\mathcal{L}^{-1}\left\{\dfrac{1}{(s - 2)^2}\right\}$.'
+            answer: '$te^{2t}$'
+            solution_sketch: 'Shift of $\mathcal{L}\{t\} = \frac{1}{s^2}$ by $s \mapsto s - 2$.'
+        constraints: "irreducible quadratics complete to (s+a)^2 + b^2 with integer a, b; repeated linear factors to power 2 only"
+    diagnostic_exemplar:
+      problem: 'Compute $\mathcal{L}^{-1}\left\{\dfrac{s + 5}{s^2 + 4s + 13}\right\}$.'
+      answer: '$e^{-2t}\cos 3t + e^{-2t}\sin 3t$'
+      solution_sketch: '$s^2 + 4s + 13 = (s+2)^2 + 9$ and $s + 5 = (s + 2) + 3$, so the transform splits as $\frac{s+2}{(s+2)^2+9} + \frac{3}{(s+2)^2+9}$.'
+    anki_seeds:
+      - front: 'Inverse transform of $\dfrac{1}{(s-a)^2}$?'
+        back: '$te^{at}$'
+        type: basic
+      - front: 'To invert $\dfrac{1}{s^2 + 2as + c}$ with an irreducible denominator, first...'
+        back: 'complete the square to $(s+a)^2 + b^2$, then match the shifted sine/cosine entries.'
+        type: basic
+
+  - id: laplace-of-derivatives
+    name: Transforms of Derivatives
+    core: true
+    difficulty: 0.74
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 120
+    prerequisites:
+      - id: laplace-transform-basics
+        weight: 0.6
+        key: true
+      - id: laplace-table-linearity
+        weight: 0.3
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: The derivative formulas
+        key_prerequisites: [laplace-transform-basics]
+        exemplars:
+          - problem: 'Express $\mathcal{L}\{y''\}$ in terms of $Y(s) = \mathcal{L}\{y\}$ and $y(0)$.'
+            answer: '$sY(s) - y(0)$'
+          - problem: 'Express $\mathcal{L}\{y''''\}$ in terms of $Y(s) = \mathcal{L}\{y\}$, writing $y(0) = a$ and $y''(0) = b$.'
+            answer: '$s^2 Y(s) - s a - b$'
+          - problem: 'Given $y(0) = 2$ and $y''(0) = -1$, write $\mathcal{L}\{y''''\}$ in terms of $Y(s)$.'
+            answer: '$s^2 Y(s) - 2s + 1$'
+            solution_sketch: 'Substitute into $s^2Y - s\,y(0) - y''(0) = s^2Y - 2s - (-1)$.'
+        constraints: "first and second derivatives only; initial conditions given at t = 0"
+      - id: kp2
+        name: From ODE to algebra
+        key_prerequisites: [laplace-transform-basics]
+        exemplars:
+          - problem: 'Transform the IVP $y'' + 2y = 0$, $y(0) = 3$, and solve for $Y(s)$.'
+            answer: '$3/(s + 2)$'
+            solution_sketch: '$\mathcal{L}\{y''\} = sY - y(0)$, so $sY - 3 + 2Y = 0$; isolate $Y$ to get $3/(s+2)$.'
+          - problem: 'Transform $y'''' + 4y = 0$, $y(0) = 1$, $y''(0) = 0$, and solve for $Y(s)$.'
+            answer: '$s/(s^2 + 4)$'
+            solution_sketch: '$(s^2 + 4)Y = s\,y(0) + y''(0) = s$.'
+          - problem: 'Transform $y'' - 5y = e^{2t}$, $y(0) = 0$, and solve for $Y(s)$.'
+            answer: '$1/((s - 2)(s - 5))$'
+            solution_sketch: '$(s - 5)Y = \frac{1}{s-2}$; divide. No inversion asked.'
+        constraints: "solve for Y(s) only, no inversion; forcing 0 or e^{at}; initial conditions integers"
+    diagnostic_exemplar:
+      problem: 'Transform the initial value problem $y'''' + 4y'' + 3y = 0$, $y(0) = 2$, $y''(0) = -1$, and solve for $Y(s)$.'
+      answer: '$(2s + 7)/(s^2 + 4s + 3)$'
+      solution_sketch: '$\mathcal{L}\{y''''\} = s^2Y - 2s + 1$ and $\mathcal{L}\{y''\} = sY - 2$, so $(s^2 + 4s + 3)Y = 2s - 1 + 8 = 2s + 7$.'
+    anki_seeds:
+      - front: 'Laplace transform of $y''$ in terms of $Y(s)$?'
+        back: '$sY(s) - y(0)$'
+        type: basic
+      - front: 'Laplace transform of $y''''$ in terms of $Y(s)$?'
+        back: '$s^2 Y(s) - s\,y(0) - y''(0)$'
+        type: basic
+
+  - id: laplace-first-order-ivp
+    name: First-Order IVPs via Laplace
+    core: true
+    difficulty: 0.76
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 210
+    prerequisites:
+      - id: laplace-of-derivatives
+        weight: 0.6
+        key: true
+      - id: inverse-laplace-partial-fractions
+        weight: 0.5
+        key: true
+      - id: linear-first-order-integrating-factor
+        weight: 0.2
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: Homogeneous first-order IVPs
+        key_prerequisites: [laplace-of-derivatives]
+        exemplars:
+          - problem: 'Solve $y'' + 3y = 0$, $y(0) = 2$ using the Laplace transform.'
+            answer: '$y = 2e^{-3t}$'
+            solution_sketch: '$(s + 3)Y = 2$ gives $Y = \frac{2}{s+3}$; invert.'
+          - problem: 'Solve $y'' - 4y = 0$, $y(0) = -1$ using the Laplace transform.'
+            answer: '$y = -e^{4t}$'
+            solution_sketch: '$(s - 4)Y = -1$ gives $Y = \frac{-1}{s-4}$; invert.'
+        constraints: "y' + ay = 0 with integer a; integer initial values"
+      - id: kp2
+        name: First-order IVPs with forcing
+        key_prerequisites: [laplace-of-derivatives, inverse-laplace-partial-fractions]
+        exemplars:
+          - problem: 'Solve $y'' - y = e^{2t}$, $y(0) = 0$ using the Laplace transform.'
+            answer: '$y = e^{2t} - e^{t}$'
+            solution_sketch: '$(s-1)Y = \frac{1}{s-2}$, so $Y = \frac{1}{(s-1)(s-2)} = \frac{-1}{s-1} + \frac{1}{s-2}$; invert.'
+          - problem: 'Solve $y'' + 2y = 4$, $y(0) = 1$ using the Laplace transform.'
+            answer: '$y = 2 - e^{-2t}$'
+            solution_sketch: '$(s+2)Y = 1 + \frac{4}{s}$, so $Y = \frac{s+4}{s(s+2)} = \frac{2}{s} - \frac{1}{s+2}$; invert.'
+          - problem: 'Solve $y'' + y = e^{-t}$, $y(0) = 0$ using the Laplace transform.'
+            answer: '$y = te^{-t}$'
+            solution_sketch: '$(s+1)Y = \frac{1}{s+1}$ gives $Y = \frac{1}{(s+1)^2}$; invert with the shift.'
+        constraints: "forcing constant or e^{at}; partial fractions with two distinct linear factors at most; a repeated factor only via the shift"
+    diagnostic_exemplar:
+      problem: 'Solve $y'' + 2y = 6$, $y(0) = 4$, using the Laplace transform.'
+      answer: '$y = 3 + e^{-2t}$'
+      solution_sketch: '$(s+2)Y = 4 + \frac{6}{s}$, so $Y = \frac{4s + 6}{s(s+2)} = \frac{3}{s} + \frac{1}{s+2}$.'
+    anki_seeds:
+      - front: 'The three steps of the Laplace method for an IVP?'
+        back: 'Transform the ODE (initial conditions enter immediately), solve algebraically for $Y(s)$, invert.'
+        type: basic
+      - front: "Why transform a first-order IVP instead of using an integrating factor?"
+        back: "Laplace turns the ODE plus its initial condition into one algebraic equation in $Y(s)$ — no arbitrary constant to fit afterwards."
+        type: basic
+
+  - id: laplace-ivp
+    name: Solving Second-Order IVPs with Laplace
+    core: true
+    difficulty: 0.80
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 300
+    prerequisites:
+      - id: laplace-first-order-ivp
+        weight: 0.6
+        key: true
+      - id: inverse-laplace-partial-fractions
+        weight: 0.5
+        key: true
+      - id: homogeneous-constant-coefficients
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: Second-order IVPs with real roots
+        key_prerequisites: [laplace-first-order-ivp, inverse-laplace-partial-fractions]
+        exemplars:
+          - problem: 'Solve $y'''' - y'' - 2y = 0$, $y(0) = 1$, $y''(0) = 0$ using the Laplace transform.'
+            answer: '$y = \dfrac{1}{3}e^{2t} + \dfrac{2}{3}e^{-t}$'
+            solution_sketch: '$(s^2 - s - 2)Y = s - 1$, so $Y = \frac{s-1}{(s-2)(s+1)}$; cover-up gives $\frac{1/3}{s-2} + \frac{2/3}{s+1}$.'
+          - problem: 'Solve $y'''' - 3y'' + 2y = 0$, $y(0) = 0$, $y''(0) = 1$ using the Laplace transform.'
+            answer: '$y = e^{2t} - e^{t}$'
+            solution_sketch: '$(s^2 - 3s + 2)Y = 1$, so $Y = \frac{1}{(s-1)(s-2)} = \frac{1}{s-2} - \frac{1}{s-1}$; invert.'
+        constraints: "characteristic roots distinct integers; homogeneous; verify y(0), y'(0) at the end"
+      - id: kp2
+        name: Second-order IVPs with complex roots
+        key_prerequisites: [laplace-first-order-ivp]
+        exemplars:
+          - problem: 'Solve $y'''' + y = 0$, $y(0) = 0$, $y''(0) = 1$ using the Laplace transform.'
+            answer: '$y = \sin t$'
+            solution_sketch: '$(s^2 + 1)Y = 1$ gives $Y = \frac{1}{s^2+1}$; invert.'
+          - problem: 'Solve $y'''' + 2y'' + 5y = 0$, $y(0) = 1$, $y''(0) = -1$ using the Laplace transform.'
+            answer: '$y = e^{-t}\cos 2t$'
+            solution_sketch: '$(s^2 + 2s + 5)Y = s + 1$, so $Y = \frac{s+1}{(s+1)^2 + 4}$; invert with the shift.'
+        constraints: "roots +/- bi or -a +/- bi with integer a, b; the completed square appears after transforming"
+      - id: kp3
+        name: Constant forcing
+        key_prerequisites: [laplace-first-order-ivp, inverse-laplace-partial-fractions]
+        exemplars:
+          - problem: 'Solve $y'''' + 4y = 8$, $y(0) = 0$, $y''(0) = 0$ using the Laplace transform.'
+            answer: '$y = 2 - 2\cos 2t$'
+            solution_sketch: '$(s^2+4)Y = \frac{8}{s}$, so $Y = \frac{8}{s(s^2+4)} = \frac{2}{s} - \frac{2s}{s^2+4}$; invert.'
+          - problem: 'Solve $y'''' + 3y'' + 2y = 6$, $y(0) = 0$, $y''(0) = 0$ using the Laplace transform.'
+            answer: '$y = 3 - 6e^{-t} + 3e^{-2t}$'
+            solution_sketch: '$Y = \frac{6}{s(s+1)(s+2)}$; cover-up gives $\frac{3}{s} - \frac{6}{s+1} + \frac{3}{s+2}$.'
+        constraints: "forcing a constant; characteristic roots integer or +/- bi; three-term partial fractions at most"
+    diagnostic_exemplar:
+      problem: 'Solve $y'''' + 2y'' + 5y = 5$, $y(0) = 0$, $y''(0) = 0$, using the Laplace transform.'
+      answer: '$y = 1 - e^{-t}\cos 2t - \tfrac{1}{2}e^{-t}\sin 2t$'
+      solution_sketch: '$(s^2 + 2s + 5)Y = \frac{5}{s}$, so $Y = \frac{5}{s(s^2+2s+5)} = \frac{1}{s} - \frac{s + 2}{(s+1)^2 + 4}$. Writing $s + 2 = (s+1) + 1$ inverts term by term.'
+    anki_seeds:
+      - front: "Why does the Laplace method suit IVPs?"
+        back: "The initial conditions enter the algebra immediately: no general solution or constant-fitting step."
+        type: basic
+      - front: 'After transforming $ay'''' + by'' + cy = f(t)$, the denominator of $Y(s)$ is...'
+        back: 'the characteristic polynomial $as^2 + bs + c$ (times any denominator from $F(s)$).'
+        type: basic
+
+  - id: unit-step-piecewise-forcing
+    name: Unit Step Functions and Piecewise Rewriting
+    core: false                # Laplace extension; terminal
+    difficulty: 0.80
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 240
+    prerequisites:
+      - id: laplace-transform-basics
+        weight: 0.6
+        key: true
+      - id: inverse-laplace-table
+        weight: 0.4
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: Rewriting piecewise functions with unit steps
+        key_prerequisites: [laplace-transform-basics]
+        exemplars:
+          - problem: 'Write $f(t) = 0$ for $t < 3$, $f(t) = 5$ for $t \ge 3$ using the unit step $u_c(t) = u(t - c)$.'
+            answer: '$f(t) = 5u_3(t)$'
+          - problem: 'Write $f(t) = 2$ for $0 \le t < 1$, $f(t) = 0$ for $t \ge 1$ using unit steps.'
+            answer: '$f(t) = 2 - 2u_1(t)$'
+            solution_sketch: 'Start at $2$ and switch off at $t = 1$ by subtracting $2u_1(t)$.'
+          - problem: 'Write $f(t) = 0$ for $t < 2$, $f(t) = t - 2$ for $t \ge 2$ using unit steps.'
+            answer: '$f(t) = (t - 2)u_2(t)$'
+        constraints: "at most two pieces with integer breakpoints; pieces constant or linear"
+      - id: kp2
+        name: The second shifting theorem
+        key_prerequisites: [laplace-transform-basics]
+        exemplars:
+          - problem: 'Compute $\mathcal{L}\{u_2(t)\}$.'
+            answer: '$\dfrac{e^{-2s}}{s}$'
+            solution_sketch: '$\mathcal{L}\{u_c(t)f(t-c)\} = e^{-cs}F(s)$ with $f = 1$.'
+          - problem: 'Compute $\mathcal{L}\{(t - 3)u_3(t)\}$.'
+            answer: '$\dfrac{e^{-3s}}{s^2}$'
+            solution_sketch: 'The function is $f(t-3)$ with $f(t) = t$, so the transform is $e^{-3s}\cdot\frac{1}{s^2}$.'
+          - problem: 'Compute $\mathcal{L}\{u_{\pi}(t)\sin(t - \pi)\}$.'
+            answer: '$\dfrac{e^{-\pi s}}{s^2 + 1}$'
+        constraints: "arguments already in the form f(t - c); c a positive integer or pi"
+      - id: kp3
+        name: Inverting exponentials
+        key_prerequisites: [inverse-laplace-table]
+        exemplars:
+          - problem: 'Compute $\mathcal{L}^{-1}\left\{\dfrac{e^{-2s}}{s}\right\}$.'
+            answer: '$u_2(t)$'
+          - problem: 'Compute $\mathcal{L}^{-1}\left\{\dfrac{e^{-s}}{s + 3}\right\}$.'
+            answer: '$u_1(t)\,e^{-3(t-1)}$'
+            solution_sketch: '$F(s) = \frac{1}{s+3}$ inverts to $e^{-3t}$; the factor $e^{-s}$ delays it: $u_1(t)e^{-3(t-1)}$.'
+          - problem: 'Compute $\mathcal{L}^{-1}\left\{\dfrac{e^{-4s}}{s^2}\right\}$.'
+            answer: '$(t - 4)u_4(t)$'
+        constraints: "e^{-cs} times a single table entry; write the answer with u_c(t) and argument t - c"
+    diagnostic_exemplar:
+      problem: 'Let $f(t) = 0$ for $t < 2$ and $f(t) = t$ for $t \ge 2$. Write $f$ using a unit step and compute $\mathcal{L}\{f\}$.'
+      answer: '$f(t) = t\,u_2(t)$ and $\mathcal{L}\{f\} = e^{-2s}\left(\dfrac{1}{s^2} + \dfrac{2}{s}\right)$.'
+      solution_sketch: 'Write $t = (t - 2) + 2$, so $f = \left[(t-2) + 2\right]u_2(t)$; the second shifting theorem then gives $e^{-2s}\mathcal{L}\{t + 2\} = e^{-2s}\left(\frac{1}{s^2} + \frac{2}{s}\right)$.'
+    anki_seeds:
+      - front: 'Definition of the unit step $u_c(t)$?'
+        back: '$u_c(t) = 0$ for $t < c$ and $1$ for $t \ge c$ (a switch that turns on at $t = c$).'
+        type: basic
+      - front: 'Second shifting theorem?'
+        back: '$\mathcal{L}\{u_c(t)f(t - c)\} = e^{-cs}F(s)$: a time delay multiplies the transform by $e^{-cs}$.'
+        type: basic
+
+  - id: laplace-convolution
+    name: Convolution and the Convolution Theorem
+    core: false                # terminal capstone of the Laplace module
+    difficulty: 0.82
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 240
+    prerequisites:
+      - id: inverse-laplace-partial-fractions
+        weight: 0.6
+        key: true
+      - id: definite-integrals-ftc
+        weight: 0.3
+        key: false
+      - id: laplace-ivp
+        weight: 0.3
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: Computing convolutions
+        key_prerequisites: [definite-integrals-ftc]
+        exemplars:
+          - problem: 'Compute the convolution $(1 * t)(t) = \int_0^t 1\cdot(t - \tau)\,d\tau$.'
+            answer: '$\dfrac{t^2}{2}$'
+            solution_sketch: 'Using $\int_0^t f(\tau)g(t-\tau)\,d\tau$ with $f = 1$, $g(t) = t$: $\int_0^t (t - \tau)\,d\tau = t^2 - \frac{t^2}{2} = \frac{t^2}{2}$.'
+          - problem: 'Compute $(t * t)(t) = \int_0^t \tau(t - \tau)\,d\tau$.'
+            answer: '$\dfrac{t^3}{6}$'
+            solution_sketch: '$t\cdot\frac{t^2}{2} - \frac{t^3}{3} = \frac{t^3}{6}$.'
+          - problem: 'Compute $(1 * e^{2t})(t) = \int_0^t e^{2\tau}\,d\tau$.'
+            answer: '$\dfrac{e^{2t} - 1}{2}$'
+        constraints: "f, g among 1, t, e^{at}, sin bt; the integral must be elementary"
+      - id: kp2
+        name: The convolution theorem
+        key_prerequisites: [inverse-laplace-partial-fractions]
+        exemplars:
+          - problem: 'Use the convolution theorem to compute $\mathcal{L}\{1 * t\}$ without integrating.'
+            answer: '$\dfrac{1}{s^3}$'
+            solution_sketch: '$\mathcal{L}\{f * g\} = F(s)G(s) = \frac{1}{s}\cdot\frac{1}{s^2}$, consistent with $\mathcal{L}\{t^2/2\}$.'
+          - problem: 'Compute $\mathcal{L}^{-1}\left\{\dfrac{1}{s^2(s + 1)}\right\}$ as the convolution $t * e^{-t}$.'
+            answer: '$t - 1 + e^{-t}$'
+            solution_sketch: '$\int_0^t (t - \tau)e^{-\tau}d\tau = t(1 - e^{-t}) - \left[1 - (t+1)e^{-t}\right] = t - 1 + e^{-t}$.'
+          - problem: 'Write the solution of $y'''' + y = g(t)$, $y(0) = y''(0) = 0$, as a convolution integral.'
+            answer: '$y = \int_0^t \sin(t - \tau)\,g(\tau)\,d\tau$'
+            solution_sketch: '$Y = \frac{G(s)}{s^2+1}$; invert with the convolution theorem, since $\frac{1}{s^2+1}$ inverts to $\sin t$.'
+        constraints: "products of two table entries; convolution integrals stay elementary"
+    diagnostic_exemplar:
+      problem: 'Use the convolution theorem to compute $\mathcal{L}^{-1}\left\{\dfrac{1}{s^2(s+2)}\right\}$.'
+      answer: '$\dfrac{t}{2} - \dfrac{1}{4} + \dfrac{1}{4}e^{-2t}$'
+      solution_sketch: 'The transform is the product of $1/s^2$ and $1/(s+2)$, so the inverse is $t * e^{-2t} = \int_0^t \tau e^{-2(t-\tau)}\,d\tau = e^{-2t}\left[\frac{\tau}{2}e^{2\tau} - \frac{1}{4}e^{2\tau}\right]_0^t = \frac{t}{2} - \frac{1}{4} + \frac{1}{4}e^{-2t}$.'
+    anki_seeds:
+      - front: 'Definition of the convolution $(f * g)(t)$?'
+        back: '$\int_0^t f(\tau)\,g(t - \tau)\,d\tau$'
+        type: basic
+      - front: 'Convolution theorem?'
+        back: '$\mathcal{L}\{f * g\} = F(s)\,G(s)$: convolution in $t$ becomes multiplication in $s$.'
+        type: basic
+
+  - id: dirac-delta-impulse
+    name: The Dirac Delta and Impulse Response
+    core: false                # terminal extension of the Laplace unit, alongside the
+                               # supplemental unit-step and convolution topics it builds on
+    difficulty: 0.84
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 240
+    prerequisites:
+      - id: unit-step-piecewise-forcing
+        weight: 0.5
+        key: true
+      - id: laplace-ivp
+        weight: 0.5
+        key: true
+      - id: laplace-convolution
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: The delta function and the sifting property
+        key_prerequisites: [unit-step-piecewise-forcing]
+        exemplars:
+          - problem: 'Using the sifting property $\int_0^{\infty} \delta(t - c)f(t)\,dt = f(c)$, compute $\int_0^{\infty} \delta(t - 2)\,e^{-3t}\,dt$.'
+            answer: '$e^{-6}$'
+            solution_sketch: 'The delta picks out the integrand value at $t = 2$.'
+          - problem: 'Compute $\int_0^5 \delta(t - 3)(t^2 + 1)\,dt$.'
+            answer: "10"
+            solution_sketch: 'The impulse at $t = 3$ lies inside $(0, 5)$, so the integral is $3^2 + 1$.'
+          - problem: 'Compute $\mathcal{L}\{\delta(t - c)\}$ for $c \ge 0$, and specialize to $c = 0$.'
+            answer: '$\mathcal{L}\{\delta(t - c)\} = e^{-cs}$; in particular $\mathcal{L}\{\delta(t)\} = 1$.'
+            solution_sketch: 'Sift the definition integral $\int_0^{\infty} e^{-st}\delta(t - c)\,dt = e^{-cs}$.'
+        constraints: "impulse located at integer times inside the integration interval; integrands from the Laplace table (polynomials, e^{at}, sin bt)"
+      - id: kp2
+        name: Impulse-forced initial value problems
+        key_prerequisites: [laplace-ivp, unit-step-piecewise-forcing]
+        exemplars:
+          - problem: "Solve $y' + 2y = \\delta(t - 1)$, $y(0) = 0$."
+            answer: '$y = u_1(t)\,e^{-2(t-1)}$'
+            solution_sketch: '$(s + 2)Y = e^{-s}$, so $Y = \frac{e^{-s}}{s+2}$; invert with the second shifting theorem.'
+          - problem: "Solve $y'' + y = \\delta(t - \\pi)$, $y(0) = y'(0) = 0$."
+            answer: '$y = u_{\pi}(t)\,\sin(t - \pi)$'
+            solution_sketch: '$Y = \frac{e^{-\pi s}}{s^2 + 1}$; the delayed inverse of $\frac{1}{s^2+1}$ is $u_{\pi}(t)\sin(t - \pi)$.'
+          - problem: "A resting system obeys $y'' + 4y = \\delta(t)$, $y(0) = y'(0) = 0$. Find the response."
+            answer: '$y = \dfrac{1}{2}\sin 2t$'
+            solution_sketch: '$Y = \frac{1}{s^2 + 4}$ inverts straight from the table.'
+        constraints: "a single impulse at t = 0, a positive integer, or pi; characteristic roots distinct integers or +-ni so inversion is one table line after the shift"
+      - id: kp3
+        name: Impulse response and the transfer function
+        key_prerequisites: [laplace-ivp, laplace-convolution]
+        exemplars:
+          - problem: "Find the impulse response $h(t)$ of $y'' + 3y' + 2y = f(t)$: solve with $f = \\delta(t)$ and rest initial conditions."
+            answer: '$h(t) = e^{-t} - e^{-2t}$'
+            solution_sketch: '$H(s) = \frac{1}{s^2 + 3s + 2} = \frac{1}{s+1} - \frac{1}{s+2}$ by partial fractions.'
+          - problem: "State the transfer function $H(s)$ of $ay'' + by' + cy = f(t)$ and its relation to the impulse response."
+            answer: '$H(s) = \dfrac{1}{as^2 + bs + c}$; the impulse response is $h = \mathcal{L}^{-1}\{H\}$.'
+          - problem: "Using the impulse response $h(t) = \\sin t$ of $y'' + y = f(t)$, write the rest solution for a general forcing $g(t)$."
+            answer: '$y = \int_0^t \sin(t - \tau)\,g(\tau)\,d\tau$'
+            solution_sketch: '$Y = H(s)G(s)$, and a product of transforms inverts to the convolution $h * g$.'
+        constraints: "constant-coefficient second-order with distinct real integer roots or +-ni; the convolution form is stated, not evaluated, unless g is 1 or e^{at}"
+    diagnostic_exemplar:
+      problem: 'Find the impulse response $h(t)$ of $y'''' + 4y'' + 3y = f(t)$: solve with $f = \delta(t)$ and rest initial conditions.'
+      answer: '$h(t) = \tfrac{1}{2}\left(e^{-t} - e^{-3t}\right)$'
+      solution_sketch: '$\mathcal{L}\{\delta(t)\} = 1$, so $H(s) = \frac{1}{s^2 + 4s + 3} = \frac{1}{(s+1)(s+3)} = \frac{1}{2}\left(\frac{1}{s+1} - \frac{1}{s+3}\right)$.'
+    anki_seeds:
+      - front: 'Sifting property of the Dirac delta?'
+        back: '$\int \delta(t - c)f(t)\,dt = f(c)$ whenever the interval contains $c$.'
+        type: basic
+      - front: 'Laplace transform of $\delta(t - c)$?'
+        back: '$e^{-cs}$ (so $\mathcal{L}\{\delta(t)\} = 1$).'
+        type: basic
+      - front: "The impulse response h(t) of a linear system determines every rest solution because..."
+        back: 'the response to forcing $g$ is the convolution $y = h * g$.'
+        type: basic

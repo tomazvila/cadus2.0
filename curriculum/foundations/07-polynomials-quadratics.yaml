@@ -1,0 +1,2049 @@
+unit: polynomials-quadratics
+course: foundations
+module: "Polynomials & Quadratics"
+topics:
+  - id: polynomial-basics
+    name: Polynomial Vocabulary and Standard Form
+    core: true
+    difficulty: 0.32
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 60
+    prerequisites:
+      - id: integer-exponents-intro
+        weight: 0.5
+        key: true
+      - id: combining-like-terms
+        weight: 0.5
+        key: true
+      - id: evaluating-expressions
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Degree and leading coefficient
+        key_prerequisites: [integer-exponents-intro]
+        exemplars:
+          - problem: 'State the degree and leading coefficient of $4x^3 - x + 7$.'
+            answer: "degree 3, leading coefficient 4"
+          - problem: 'State the degree of $5x^2 - 2x^4 + 1$.'
+            answer: "4"
+            solution_sketch: 'The highest power present is $x^4$.'
+        constraints: "degree <= 5; integer coefficients"
+      - id: kp2
+        name: Classify by number of terms
+        key_prerequisites: []
+        exemplars:
+          - problem: 'Classify $3x^2 - 5x$ as a monomial, binomial, or trinomial.'
+            answer: "binomial"
+          - problem: 'Classify $x^2 + 2x + 1$ as a monomial, binomial, or trinomial.'
+            answer: "trinomial"
+        constraints: "one to three terms"
+      - id: kp3
+        name: Write polynomials in standard form
+        key_prerequisites: [combining-like-terms]
+        exemplars:
+          - problem: 'Write $3 - x^2 + 5x$ in standard form.'
+            answer: "-x^2 + 5x + 3"
+          - problem: 'Simplify and write in standard form: $2x + x^3 + 4x - 1$.'
+            answer: "x^3 + 6x - 1"
+            solution_sketch: 'Combine $2x + 4x$; order by descending degree.'
+        constraints: "descending powers; combine like terms first"
+    diagnostic_exemplar:
+      problem: 'State the degree and leading coefficient of $7 + 2x - 5x^3$.'
+      answer: "degree 3, leading coefficient -5"
+      solution_sketch: 'Standard form is $-5x^3 + 2x + 7$.'
+    anki_seeds:
+      - front: "The degree of a polynomial in one variable is ..."
+        back: "the largest exponent that appears on the variable"
+        type: basic
+      - front: "Monomial, binomial, trinomial = polynomials with ___ terms"
+        back: "1, 2, 3"
+        type: basic
+
+  - id: evaluating-polynomials
+    name: Evaluating Polynomials
+    core: true
+    difficulty: 0.35
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 60
+    prerequisites:
+      - id: evaluating-expressions
+        weight: 0.8
+        key: true
+      - id: polynomial-basics
+        weight: 0.4
+        key: true
+      - id: integer-multiplication-division
+        weight: 0.5
+    knowledge_points:
+      - id: kp1
+        name: Evaluate at positive integers
+        key_prerequisites: [evaluating-expressions]
+        exemplars:
+          - problem: 'Evaluate $x^2 + 3x - 2$ at $x = 2$.'
+            answer: "8"
+            solution_sketch: '$4 + 6 - 2 = 8$.'
+          - problem: 'Evaluate $2x^3 - x$ at $x = 3$.'
+            answer: "51"
+            solution_sketch: '$54 - 3 = 51$.'
+        constraints: "degree <= 3; small positive inputs"
+      - id: kp2
+        name: Evaluate at negative inputs
+        key_prerequisites: [evaluating-expressions, integer-multiplication-division]
+        exemplars:
+          - problem: 'Evaluate $x^2 - 4x + 1$ at $x = -2$.'
+            answer: "13"
+            solution_sketch: '$(-2)^2 = 4$; $4 + 8 + 1 = 13$.'
+          - problem: 'Evaluate $-x^2 + 5$ at $x = -3$.'
+            answer: "-4"
+            solution_sketch: '$-(9) + 5 = -4$.'
+        constraints: "watch (-a)^2 vs -a^2"
+      - id: kp3
+        name: Evaluate formula-style polynomials
+        key_prerequisites: [evaluating-expressions]
+        exemplars:
+          - problem: 'The height of a ball in metres is $h = -5t^2 + 20t$. Find $h$ at $t = 1$.'
+            answer: "15"
+            solution_sketch: '$-5 + 20 = 15$.'
+          - problem: 'For $P = n^2 + 3n$, find $P$ at $n = 5$.'
+            answer: "40"
+        constraints: "single substitution; clean integer outputs"
+    diagnostic_exemplar:
+      problem: 'Evaluate $x^2 - 2x + 3$ at $x = -1$.'
+      answer: "6"
+      solution_sketch: '$1 + 2 + 3 = 6$.'
+    anki_seeds:
+      - front: "At x = -2, x^2 evaluates to ___ but -x^2 evaluates to ___"
+        back: "4; -4 (the square applies before the leading minus)"
+        type: basic
+
+  - id: adding-polynomials
+    name: Adding Polynomials
+    core: true
+    difficulty: 0.35
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 60
+    prerequisites:
+      - id: combining-like-terms
+        weight: 0.9
+        key: true
+      - id: polynomial-basics
+        weight: 0.4
+        key: true
+      - id: integer-addition-subtraction
+        weight: 0.5
+    knowledge_points:
+      - id: kp1
+        name: Add linear polynomials
+        key_prerequisites: [combining-like-terms]
+        exemplars:
+          - problem: 'Add $(2x + 9) + (5x - 3)$.'
+            answer: "7x + 6"
+          - problem: 'Add $(4x - 7) + (x + 2)$.'
+            answer: "5x - 5"
+        constraints: "degree 1; integer coefficients"
+      - id: kp2
+        name: Add quadratics term by term
+        key_prerequisites: [combining-like-terms]
+        exemplars:
+          - problem: 'Add $(3x^2 + 2x - 5) + (x^2 - 4x + 7)$.'
+            answer: "4x^2 - 2x + 2"
+            solution_sketch: '$3x^2 + x^2 = 4x^2$; $2x - 4x = -2x$; $-5 + 7 = 2$.'
+          - problem: 'Add $(x^2 - 3x) + (2x^2 + x - 4)$.'
+            answer: "3x^2 - 2x - 4"
+        constraints: "degree 2; line up like terms"
+      - id: kp3
+        name: Add with missing terms
+        key_prerequisites: [combining-like-terms, polynomial-basics]
+        exemplars:
+          - problem: 'Add $(x^3 + 2x - 1) + (x^2 - 2x + 4)$.'
+            answer: "x^3 + x^2 + 3"
+            solution_sketch: '$2x - 2x = 0$; no other like terms overlap.'
+          - problem: 'Add $(2x^3 - x) + (x^3 + 5)$.'
+            answer: "3x^3 - x + 5"
+        constraints: "some powers absent; keep standard form"
+    diagnostic_exemplar:
+      problem: 'Add $(2x^3 + x - 5) + (x^2 - 3x + 2)$.'
+      answer: '2x^3 + x^2 - 2x - 3'
+      solution_sketch: 'Only the $x$ terms and the constants pair up: $x - 3x = -2x$ and $-5 + 2 = -3$.'
+    anki_seeds:
+      - front: "Like terms in polynomials have the same ..."
+        back: "variable raised to the same power (only coefficients differ)"
+        type: basic
+
+  - id: polynomial-addition-subtraction
+    name: Adding and Subtracting Polynomials
+    core: true
+    difficulty: 0.4
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 90
+    prerequisites:
+      - id: adding-polynomials
+        weight: 0.8
+        key: true
+      - id: distributive-property
+        weight: 0.6
+        key: true
+      - id: integer-addition-subtraction
+        weight: 0.5
+      - id: evaluating-expressions
+        weight: 0.0            # conceptual-familiarity only (no implicit reps)
+    knowledge_points:
+      - id: kp1
+        name: Subtract polynomials by distributing the negative
+        key_prerequisites: [distributive-property]
+        constraints: "subtraction distributes over every term of the second polynomial"
+        exemplars:
+          - problem: 'Subtract $(5x^2 - 3x + 4) - (2x^2 + x - 6)$.'
+            answer: "3x^2 - 4x + 10"
+            solution_sketch: 'Distribute the minus: $5x^2 - 2x^2 = 3x^2$; $-3x - x = -4x$; $4 - (-6) = 10$.'
+          - problem: 'Subtract $(7x - 2) - (3x - 8)$.'
+            answer: "4x + 6"
+      - id: kp2
+        name: Subtract with missing terms and cancellation
+        key_prerequisites: [adding-polynomials, distributive-property]
+        exemplars:
+          - problem: 'Simplify $(x^3 + 2x - 1) - (x^3 - x^2 + 2x - 4)$.'
+            answer: "x^2 + 3"
+            solution_sketch: '$x^3$ cancels; $+x^2$; $2x - 2x = 0$; $-1 + 4 = 3$.'
+          - problem: 'Simplify $(2x^2 + 5) - (x^2 + 3x)$.'
+            answer: "x^2 - 3x + 5"
+        constraints: 'some powers absent from one polynomial; terms may cancel completely; degree <= 3'
+      - id: kp3
+        name: Combine three polynomials
+        key_prerequisites: [adding-polynomials]
+        exemplars:
+          - problem: 'Simplify $(4x^2 - 1) + (x^2 + 6x) - (2x^2 - 3)$.'
+            answer: "3x^2 + 6x + 2"
+          - problem: 'Simplify $(x^2 + 2x) + (3x^2 - x) - (2x^2 + 4)$.'
+            answer: "2x^2 + x - 4"
+        constraints: 'three polynomials, at least one subtracted; degree <= 2; answer in standard form'
+    diagnostic_exemplar:
+      problem: 'Simplify $(3x^2 + 5) + (x^2 - 2x) - (2x^2 + 3)$.'
+      answer: '2x^2 - 2x + 2'
+      solution_sketch: 'Distribute the minus: $3x^2 + 5 + x^2 - 2x - 2x^2 - 3$.'
+    anki_seeds:
+      - front: "When subtracting polynomials, the minus sign..."
+        back: "distributes to every term of the polynomial being subtracted."
+        type: basic
+      - front: "When adding or subtracting polynomials, you may only combine..."
+        back: "like terms (same variable and same exponent)."
+        type: basic
+
+  - id: multiplying-monomials-polynomials
+    name: Multiplying a Monomial by a Polynomial
+    core: true
+    difficulty: 0.42
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 60
+    prerequisites:
+      - id: distributive-property
+        weight: 0.9
+        key: true
+      - id: exponent-product-quotient-rules
+        weight: 0.6
+        key: true
+      - id: integer-multiplication-division
+        weight: 0.5
+    knowledge_points:
+      - id: kp1
+        name: Monomial times a monomial
+        key_prerequisites: [exponent-product-quotient-rules]
+        exemplars:
+          - problem: 'Multiply $(3x^2)(5x^4)$.'
+            answer: "15x^6"
+            solution_sketch: '$3 \cdot 5 = 15$; $2 + 4 = 6$.'
+          - problem: 'Multiply $(-2x)(4x^3)$.'
+            answer: "-8x^4"
+        constraints: "single-variable monomials; integer coefficients"
+      - id: kp2
+        name: Monomial times a binomial or trinomial
+        key_prerequisites: [distributive-property, exponent-product-quotient-rules]
+        exemplars:
+          - problem: 'Expand $3x(2x^2 - 4x + 5)$.'
+            answer: "6x^3 - 12x^2 + 15x"
+            solution_sketch: 'Distribute $3x$ to each term.'
+          - problem: 'Expand $2x(x + 7)$.'
+            answer: "2x^2 + 14x"
+        constraints: "positive monomial in front"
+      - id: kp3
+        name: Negative monomials
+        key_prerequisites: [distributive-property, integer-multiplication-division]
+        exemplars:
+          - problem: 'Expand $-2x^2(x - 3)$.'
+            answer: "-2x^3 + 6x^2"
+            solution_sketch: 'Both products flip sign: $-2x^3$, $+6x^2$.'
+          - problem: 'Expand $-4x(x^2 - 2x - 1)$.'
+            answer: "-4x^3 + 8x^2 + 4x"
+        constraints: "leading negative; track every sign"
+    diagnostic_exemplar:
+      problem: 'Expand $-3x(x^2 - 2x + 4)$.'
+      answer: '-3x^3 + 6x^2 - 12x'
+      solution_sketch: 'Distribute $-3x$ to each term, tracking every sign.'
+    anki_seeds:
+      - front: "Multiplying monomials: (ax^m)(bx^n) = ?"
+        back: "(a*b) x^(m+n)"
+        type: basic
+
+  - id: multiplying-binomials
+    name: Multiplying Binomials (FOIL)
+    core: true
+    difficulty: 0.48
+    drill: true                # fluency / automaticity-drill topic
+    answer_kind: expression
+    expected_time_secs: 60
+    prerequisites:
+      - id: multiplying-monomials-polynomials
+        weight: 0.8
+        key: true
+      - id: combining-like-terms
+        weight: 0.5
+        key: true
+      - id: integer-addition-subtraction
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: Monic binomials (x + a)(x + b)
+        key_prerequisites: [combining-like-terms]
+        exemplars:
+          - problem: 'Expand $(x + 3)(x + 5)$.'
+            answer: "x^2 + 8x + 15"
+            solution_sketch: '$x^2 + 5x + 3x + 15 = x^2 + 8x + 15$.'
+          - problem: 'Expand $(x - 4)(x + 6)$.'
+            answer: "x^2 + 2x - 24"
+        constraints: "leading coefficient 1; integer constants"
+      - id: kp2
+        name: One leading coefficient
+        key_prerequisites: [multiplying-monomials-polynomials]
+        exemplars:
+          - problem: 'Expand $(2x - 1)(x + 4)$.'
+            answer: "2x^2 + 7x - 4"
+            solution_sketch: '$2x^2 + 8x - x - 4$.'
+          - problem: 'Expand $(3x + 2)(x - 5)$.'
+            answer: "3x^2 - 13x - 10"
+        constraints: "one binomial has coefficient > 1"
+      - id: kp3
+        name: Both leading coefficients greater than 1
+        key_prerequisites: [multiplying-monomials-polynomials, combining-like-terms]
+        exemplars:
+          - problem: 'Expand $(3x - 2)(2x + 5)$.'
+            answer: "6x^2 + 11x - 10"
+            solution_sketch: '$6x^2 + 15x - 4x - 10$.'
+          - problem: 'Expand $(2x - 3)(2x - 1)$.'
+            answer: "4x^2 - 8x + 3"
+        constraints: "small coefficients; all four sign patterns"
+    diagnostic_exemplar:
+      problem: 'Expand $(2x + 3)(3x - 4)$.'
+      answer: '6x^2 + x - 12'
+      solution_sketch: '$6x^2 - 8x + 9x - 12$.'
+    anki_seeds:
+      - front: "What does FOIL stand for when multiplying two binomials?"
+        back: "First, Outer, Inner, Last — the four products of (a+b)(c+d)."
+        type: basic
+
+  - id: polynomial-multiplication
+    name: Multiplying Polynomials
+    core: true
+    difficulty: 0.5
+    drill: false               # L4 audit: expansion is multi-step, not a 6s recall skill
+    answer_kind: expression
+    expected_time_secs: 120
+    prerequisites:
+      - id: multiplying-binomials
+        weight: 0.8
+        key: true
+      - id: multiplying-monomials-polynomials
+        weight: 0.6
+        key: true
+      - id: combining-like-terms
+        weight: 0.5
+      - id: polynomial-addition-subtraction
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: Binomial times a trinomial
+        key_prerequisites: [multiplying-binomials, multiplying-monomials-polynomials]
+        exemplars:
+          - problem: 'Expand $(x + 2)(x^2 - 3x + 1)$.'
+            answer: "x^3 - x^2 - 5x + 2"
+            solution_sketch: '$x(x^2 - 3x + 1) + 2(x^2 - 3x + 1)$, then combine.'
+          - problem: 'Expand $(2x - 1)(x^2 + x - 3)$.'
+            answer: "2x^3 + x^2 - 7x + 3"
+        constraints: "six products, then combine like terms"
+      - id: kp2
+        name: Products of three factors
+        key_prerequisites: [multiplying-binomials]
+        exemplars:
+          - problem: 'Expand $(x + 1)(x + 2)(x + 3)$.'
+            answer: "x^3 + 6x^2 + 11x + 6"
+            solution_sketch: '$(x+1)(x+2) = x^2 + 3x + 2$; multiply by $(x+3)$.'
+          - problem: 'Expand $x(x - 2)(x + 5)$.'
+            answer: "x^3 + 3x^2 - 10x"
+            solution_sketch: '$(x-2)(x+5) = x^2 + 3x - 10$; distribute $x$.'
+        constraints: "multiply two factors first, then the third"
+      - id: kp3
+        name: Larger products with many like terms
+        key_prerequisites: [multiplying-binomials, combining-like-terms]
+        exemplars:
+          - problem: 'Expand $(x^2 + 2x - 1)(x^2 - x + 3)$.'
+            answer: "x^4 + x^3 + 7x - 3"
+            solution_sketch: 'Nine products; the $x^2$ terms cancel: $3 - 2 - 1 = 0$.'
+          - problem: 'Expand $(x^2 + x + 1)(x^2 - x + 1)$.'
+            answer: "x^4 + x^2 + 1"
+        constraints: "trinomial times trinomial; watch cancellation"
+    diagnostic_exemplar:
+      problem: 'Expand $(x + 3)(x^2 - 2x + 4)$.'
+      answer: "x^3 + x^2 - 2x + 12"
+      solution_sketch: '$x^3 - 2x^2 + 4x + 3x^2 - 6x + 12$.'
+    anki_seeds:
+      - front: "Multiplying a binomial by a trinomial produces how many products before combining?"
+        back: "6 (each of 2 terms times each of 3 terms)"
+        type: basic
+
+  - id: special-products
+    name: Special Products of Binomials
+    core: true
+    difficulty: 0.52
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 80
+    prerequisites:
+      - id: multiplying-binomials
+        weight: 0.8
+        key: true
+      - id: combining-like-terms
+        weight: 0.4
+      - id: integer-exponents-intro
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Square of a sum and of a difference
+        key_prerequisites: [multiplying-binomials]
+        exemplars:
+          - problem: 'Expand $(x + 5)^2$.'
+            answer: "x^2 + 10x + 25"
+            solution_sketch: '$a^2 + 2ab + b^2$ with $a = x$, $b = 5$.'
+          - problem: 'Expand $(x - 4)^2$.'
+            answer: "x^2 - 8x + 16"
+        constraints: "(a ± b)^2 = a^2 ± 2ab + b^2; never just a^2 + b^2"
+      - id: kp2
+        name: Product of conjugates
+        key_prerequisites: [multiplying-binomials]
+        exemplars:
+          - problem: 'Expand $(x + 7)(x - 7)$.'
+            answer: "x^2 - 49"
+            solution_sketch: 'Middle terms cancel: $a^2 - b^2$.'
+          - problem: 'Expand $(2x + 3)(2x - 3)$.'
+            answer: "4x^2 - 9"
+        constraints: "(a + b)(a - b) = a^2 - b^2"
+      - id: kp3
+        name: Special products with coefficients
+        key_prerequisites: [multiplying-binomials]
+        exemplars:
+          - problem: 'Expand $(3x - 4)^2$.'
+            answer: "9x^2 - 24x + 16"
+            solution_sketch: '$(3x)^2 - 2(3x)(4) + 4^2$.'
+          - problem: 'Expand $(2x + 5)^2$.'
+            answer: "4x^2 + 20x + 25"
+        constraints: "a = coefficient times x; compute 2ab carefully"
+    diagnostic_exemplar:
+      problem: 'Expand $(2x - 5)^2$.'
+      answer: '4x^2 - 20x + 25'
+      solution_sketch: '$(2x)^2 - 2(2x)(5) + 5^2$.'
+    anki_seeds:
+      - front: "(a + b)^2 = ?"
+        back: "a^2 + 2ab + b^2"
+        type: basic
+      - front: "(a + b)(a - b) = ?"
+        back: "a^2 - b^2"
+        type: basic
+
+  - id: binomial-cubes
+    name: Cubing a Binomial
+    core: false                # special-product extension, terminal
+    difficulty: 0.60
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 120
+    prerequisites:
+      - id: special-products
+        weight: 0.7
+        key: true
+      - id: polynomial-multiplication
+        weight: 0.6
+        key: true
+      - id: integer-exponents-intro
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Expand (a + b)^3 by repeated multiplication
+        key_prerequisites: [special-products, polynomial-multiplication]
+        exemplars:
+          - problem: 'Expand $(x + 5)^3$.'
+            answer: "x^3 + 15x^2 + 75x + 125"
+            solution_sketch: '$(x+5)^2 = x^2 + 10x + 25$; multiply by $(x+5)$.'
+          - problem: 'Expand $(x + 1)^3$.'
+            answer: "x^3 + 3x^2 + 3x + 1"
+        constraints: "square first, then multiply by the remaining factor"
+      - id: kp2
+        name: Cubes of differences
+        key_prerequisites: [special-products, polynomial-multiplication]
+        exemplars:
+          - problem: 'Expand $(x - 3)^3$.'
+            answer: "x^3 - 9x^2 + 27x - 27"
+            solution_sketch: 'Signs alternate: $+, -, +, -$.'
+          - problem: 'Expand $(x - 2)^3$.'
+            answer: "x^3 - 6x^2 + 12x - 8"
+            solution_sketch: '$(x-2)^2 = x^2 - 4x + 4$; multiply by $(x-2)$.'
+        constraints: "alternating signs in the expansion"
+      - id: kp3
+        name: Use the formula a^3 ± 3a^2b + 3ab^2 ± b^3
+        key_prerequisites: [special-products]
+        exemplars:
+          - problem: 'Expand $(2x + 1)^3$ using the binomial-cube pattern.'
+            answer: "8x^3 + 12x^2 + 6x + 1"
+            solution_sketch: '$a = 2x$, $b = 1$: $8x^3 + 3(4x^2) + 3(2x) + 1$.'
+          - problem: 'Expand $(x + 4)^3$ using the binomial-cube pattern.'
+            answer: "x^3 + 12x^2 + 48x + 64"
+        constraints: "coefficients 1-3-3-1 with powers stepping down"
+    diagnostic_exemplar:
+      problem: 'Expand $(2x - 1)^3$.'
+      answer: '8x^3 - 12x^2 + 6x - 1'
+      solution_sketch: 'Coefficients $1, 3, 3, 1$ with $a = 2x$ and $b = -1$.'
+    anki_seeds:
+      - front: "(a + b)^3 = ?"
+        back: "a^3 + 3a^2 b + 3ab^2 + b^3"
+        type: basic
+
+  - id: dividing-polynomials-by-monomials
+    name: Dividing a Polynomial by a Monomial
+    core: true
+    difficulty: 0.55
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 80
+    prerequisites:
+      - id: exponent-product-quotient-rules
+        weight: 0.7
+        key: true
+      - id: multiplying-monomials-polynomials
+        weight: 0.5
+        key: true
+      - id: integer-multiplication-division
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: Divide each term by the monomial
+        key_prerequisites: [exponent-product-quotient-rules]
+        exemplars:
+          - problem: 'Divide $\frac{6x^3 - 9x^2 + 3x}{3x}$.'
+            answer: "2x^2 - 3x + 1"
+            solution_sketch: 'Divide each term by $3x$.'
+          - problem: 'Divide $\frac{8x^4 + 4x^2}{4x^2}$.'
+            answer: "2x^2 + 1"
+        constraints: "every term divisible; positive coefficients on the divisor"
+      - id: kp2
+        name: Negative coefficients and signs
+        key_prerequisites: [exponent-product-quotient-rules, integer-multiplication-division]
+        exemplars:
+          - problem: 'Divide $\frac{-10x^3 + 5x^2}{5x}$.'
+            answer: "-2x^2 + x"
+            solution_sketch: '$-10/5 = -2$; $5/5 = 1$.'
+          - problem: 'Divide $\frac{12x^5 - 8x^3}{-4x^2}$.'
+            answer: "-3x^3 + 2x"
+        constraints: "track the sign of each quotient term"
+      - id: kp3
+        name: Two variables
+        key_prerequisites: [exponent-product-quotient-rules]
+        exemplars:
+          - problem: 'Divide $\frac{9x^2y^3 + 6xy^2}{3xy}$.'
+            answer: "3xy^2 + 2y"
+            solution_sketch: 'Divide coefficients and subtract exponents per variable.'
+          - problem: 'Divide $\frac{4a^3b - 2a^2b^2}{2a^2b}$.'
+            answer: "2a - b"
+        constraints: "each variable handled separately"
+    diagnostic_exemplar:
+      problem: 'Divide $\frac{9x^3y^2 - 6x^2y}{-3x^2y}$.'
+      answer: '-3xy + 2'
+      solution_sketch: '$\frac{9x^3y^2}{-3x^2y} = -3xy$ and $\frac{-6x^2y}{-3x^2y} = 2$.'
+    anki_seeds:
+      - front: "To divide a polynomial by a monomial ..."
+        back: "divide every term of the polynomial by the monomial"
+        type: basic
+
+  - id: polynomial-division
+    name: Dividing Polynomials
+    core: true                 # promoted: prerequisite of calculus-2 core topics (partial fractions)
+    difficulty: 0.65
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 180
+    prerequisites:
+      - id: dividing-polynomials-by-monomials
+        weight: 0.6
+        key: true
+      - id: polynomial-multiplication
+        weight: 0.6
+        key: true
+      - id: polynomial-addition-subtraction
+        weight: 0.6
+        key: true
+      - id: distributive-property
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: Long division with no remainder
+        key_prerequisites: [polynomial-multiplication]
+        exemplars:
+          - problem: 'Divide $\frac{x^2 + 5x + 6}{x + 2}$.'
+            answer: "x + 3"
+            solution_sketch: '$(x+2)(x+3) = x^2 + 5x + 6$.'
+          - problem: 'Divide $\frac{x^2 - 7x + 12}{x - 3}$.'
+            answer: "x - 4"
+        constraints: "quadratic over linear; exact division"
+      - id: kp2
+        name: Long division with a remainder
+        key_prerequisites: [polynomial-multiplication, polynomial-addition-subtraction]
+        exemplars:
+          - problem: 'Divide $\frac{x^2 + 3x + 5}{x + 1}$. Give quotient and remainder.'
+            answer: "x + 2 remainder 3"
+            solution_sketch: '$(x+1)(x+2) = x^2 + 3x + 2$; $5 - 2 = 3$ remainder.'
+          - problem: 'Divide $\frac{2x^2 - x - 1}{x - 2}$.'
+            answer: "2x + 3 remainder 5"
+        constraints: "state quotient and remainder separately"
+      - id: kp3
+        name: Missing terms in the dividend
+        key_prerequisites: [polynomial-multiplication, polynomial-addition-subtraction]
+        exemplars:
+          - problem: 'Divide $\frac{x^3 - 8}{x - 2}$.'
+            answer: "x^2 + 2x + 4"
+            solution_sketch: 'Insert $0x^2 + 0x$ placeholders before dividing.'
+          - problem: 'Divide $\frac{x^3 + 1}{x + 1}$.'
+            answer: "x^2 - x + 1"
+        constraints: "write 0-coefficient placeholders for absent powers"
+    diagnostic_exemplar:
+      problem: 'Divide $\frac{x^3 + 5}{x - 1}$. Give quotient and remainder.'
+      answer: "x^2 + x + 1 remainder 6"
+      solution_sketch: 'Restore the missing terms as $x^3 + 0x^2 + 0x + 5$; synthetic division by $c = 1$ gives the row $1, 1, 1$ with remainder $6$.'
+    anki_seeds:
+      - front: "Before polynomial long division, rewrite the dividend with..."
+        back: "0-coefficient placeholders for any missing powers."
+        type: basic
+      - front: "Check for polynomial division: dividend = ?"
+        back: "divisor × quotient + remainder"
+        type: basic
+
+  - id: synthetic-division
+    name: Synthetic Division
+    core: true
+    difficulty: 0.68
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 150
+    prerequisites:
+      - id: polynomial-division
+        weight: 0.8
+        key: true
+      - id: evaluating-polynomials
+        weight: 0.4
+        key: true
+      - id: integer-multiplication-division
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Synthetic division by x - c
+        key_prerequisites: [polynomial-division]
+        exemplars:
+          - problem: 'Use synthetic division to divide $x^2 + 5x + 6$ by $x + 2$.'
+            answer: "x + 3"
+            solution_sketch: '$c = -2$; row $1, 5, 6$ gives $1, 3, 0$.'
+          - problem: 'Use synthetic division to divide $x^3 - 6x^2 + 11x - 6$ by $x - 1$.'
+            answer: "x^2 - 5x + 6"
+            solution_sketch: '$c = 1$; $1, -5, 6, 0$.'
+        constraints: "linear divisor with leading coefficient 1; remainder 0"
+      - id: kp2
+        name: Read off the remainder
+        key_prerequisites: [polynomial-division]
+        exemplars:
+          - problem: 'Use synthetic division to divide $x^2 + 3x + 5$ by $x + 1$. Give quotient and remainder.'
+            answer: "x + 2 remainder 3"
+            solution_sketch: '$c = -1$; $1, 2, 3$.'
+          - problem: 'Use synthetic division to divide $2x^3 - 3x + 1$ by $x - 2$. Give quotient and remainder.'
+            answer: "2x^2 + 4x + 5 remainder 11"
+            solution_sketch: 'Insert $0$ for the missing $x^2$: $2, 4, 5, 11$.'
+        constraints: "include 0 placeholders for missing powers"
+      - id: kp3
+        name: The remainder theorem
+        key_prerequisites: [evaluating-polynomials, polynomial-division]
+        exemplars:
+          - problem: 'Without dividing, find the remainder when $x^2 - 4x + 7$ is divided by $x - 3$.'
+            answer: "4"
+            solution_sketch: '$p(3) = 9 - 12 + 7 = 4$.'
+          - problem: 'Without dividing, find the remainder when $x^3 - 2x^2 + x - 5$ is divided by $x - 2$.'
+            answer: "-3"
+            solution_sketch: '$p(2) = 8 - 8 + 2 - 5 = -3$.'
+        constraints: "remainder on division by x - c equals p(c)"
+    diagnostic_exemplar:
+      problem: 'Use synthetic division to divide $x^3 - 4x + 6$ by $x + 2$. Give quotient and remainder.'
+      answer: 'x^2 - 2x remainder 6'
+      solution_sketch: '$c = -2$; the row $1, 0, -4, 6$ gives $1, -2, 0$ with remainder $6$.'
+    anki_seeds:
+      - front: "Remainder theorem: dividing p(x) by (x - c) leaves remainder ..."
+        back: "p(c)"
+        type: basic
+      - front: "Synthetic division works only when the divisor has the form ..."
+        back: "x - c (linear, leading coefficient 1)"
+        type: basic
+
+  - id: gcf-of-monomials
+    name: GCF of Monomials
+    core: true
+    difficulty: 0.42
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 60
+    prerequisites:
+      - id: gcf-lcm
+        weight: 0.8
+        key: true
+      - id: exponent-product-quotient-rules
+        weight: 0.5
+        key: true
+      - id: prime-factorization
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: GCF of coefficients
+        key_prerequisites: [gcf-lcm]
+        exemplars:
+          - problem: 'Find the GCF of $28$ and $42$.'
+            answer: "14"
+            solution_sketch: '$28 = 2^2 \cdot 7$, $42 = 2 \cdot 3 \cdot 7$; take $2 \cdot 7$.'
+          - problem: 'Find the GCF of $18$ and $45$.'
+            answer: "9"
+        constraints: "two-digit integers"
+      - id: kp2
+        name: GCF of one-variable monomials
+        key_prerequisites: [gcf-lcm, exponent-product-quotient-rules]
+        exemplars:
+          - problem: 'Find the GCF of $12x^3$ and $18x^2$.'
+            answer: "6x^2"
+            solution_sketch: '$\text{GCF}(12, 18) = 6$; lowest power of $x$ is $x^2$.'
+          - problem: 'Find the GCF of $8x^2$ and $20x$.'
+            answer: "4x"
+        constraints: "take the lowest power of the shared variable"
+      - id: kp3
+        name: GCF with two variables or three monomials
+        key_prerequisites: [gcf-lcm, exponent-product-quotient-rules]
+        exemplars:
+          - problem: 'Find the GCF of $12x^2y^3$ and $18xy^4$.'
+            answer: "6xy^3"
+            solution_sketch: 'Coefficient GCF $6$; lowest powers $x$ and $y^3$.'
+          - problem: 'Find the GCF of $6x^3$, $9x^2$, and $12x$.'
+            answer: "3x"
+        constraints: "lowest power of each shared variable"
+    diagnostic_exemplar:
+      problem: 'Find the GCF of $12x^3y^2$ and $18x^2y^4$.'
+      answer: '6x^2 y^2'
+      solution_sketch: 'GCF$(12, 18) = 6$; take the lowest power of each variable, $x^2$ and $y^2$.'
+    anki_seeds:
+      - front: "The GCF of two monomials takes the ___ power of each shared variable."
+        back: "lowest"
+        type: basic
+
+  - id: factoring-gcf
+    name: Factoring Out the Greatest Common Factor
+    core: true
+    difficulty: 0.5
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 90
+    prerequisites:
+      - id: gcf-of-monomials
+        weight: 0.8
+        key: true
+      - id: distributive-property
+        weight: 1.0
+        key: true
+      - id: polynomial-multiplication
+        weight: 0.3
+      - id: integer-multiplication-division
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: Factor the GCF out of a polynomial
+        key_prerequisites: [distributive-property, gcf-of-monomials]
+        exemplars:
+          - problem: 'Factor $6x^2 + 9x$.'
+            answer: "3x(2x + 3)"
+            solution_sketch: 'GCF is $3x$; $\frac{6x^2}{3x} = 2x$, $\frac{9x}{3x} = 3$.'
+          - problem: 'Factor $10x^3 - 15x^2 + 5x$.'
+            answer: "5x(2x^2 - 3x + 1)"
+        constraints: "verify by redistributing"
+      - id: kp2
+        name: Factor out a negative or higher-power GCF
+        key_prerequisites: [integer-multiplication-division, gcf-of-monomials]
+        exemplars:
+          - problem: 'Factor $-4x^2 - 8x$.'
+            answer: "-4x(x + 2)"
+            solution_sketch: 'Factor out $-4x$ so the leading sign is positive inside.'
+          - problem: 'Factor $14x^4 + 21x^3 - 7x^2$.'
+            answer: "7x^2(2x^2 + 3x - 1)"
+        constraints: "watch the leftover 1 when a term equals the GCF"
+      - id: kp3
+        name: Factor out a common binomial
+        key_prerequisites: [distributive-property]
+        exemplars:
+          - problem: 'Factor $3x(x + 2) + 5(x + 2)$.'
+            answer: "(x + 2)(3x + 5)"
+            solution_sketch: 'The binomial $(x + 2)$ is the common factor.'
+          - problem: 'Factor $x(x - 4) + 3(x - 4)$.'
+            answer: "(x - 4)(x + 3)"
+        constraints: "common factor is a binomial; sets up factoring by grouping"
+    diagnostic_exemplar:
+      problem: 'Factor completely: $4x(x + 1) - 8(x + 1)$.'
+      answer: '4(x + 1)(x - 2)'
+      solution_sketch: 'Pull out $(x + 1)$: $(x + 1)(4x - 8)$, then factor $4$ from the second bracket.'
+    anki_seeds:
+      - front: "The first step of any factoring problem:"
+        back: "factor out the greatest common factor (GCF); verify by redistributing."
+        type: basic
+      - front: "If a polynomial's leading term is negative, factor out..."
+        back: "a negative GCF, so the leading term inside the parentheses is positive."
+        type: basic
+      - front: "When a term equals the GCF itself, the factored form keeps..."
+        back: "a 1 in its place (e.g. 5x² + 5x = 5x(x + 1))."
+        type: basic
+
+  - id: factoring-by-grouping
+    name: Factoring by Grouping
+    core: true
+    difficulty: 0.6
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 120
+    prerequisites:
+      - id: factoring-gcf
+        weight: 0.8
+        key: true
+      - id: distributive-property
+        weight: 0.6
+        key: true
+      - id: polynomial-multiplication
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: Group four-term polynomials
+        key_prerequisites: [factoring-gcf]
+        exemplars:
+          - problem: 'Factor $x^3 + 2x^2 + 3x + 6$.'
+            answer: "(x + 2)(x^2 + 3)"
+            solution_sketch: '$x^2(x+2) + 3(x+2) = (x+2)(x^2+3)$.'
+          - problem: 'Factor $x^3 - 4x^2 + 2x - 8$.'
+            answer: "(x - 4)(x^2 + 2)"
+        constraints: 'four terms with leading coefficient 1; group the first two and the last two; integer coefficients'
+      - id: kp2
+        name: Grouping with a common binomial factor
+        key_prerequisites: [factoring-gcf, distributive-property]
+        exemplars:
+          - problem: 'Factor $6x^2 + 3x + 4x + 2$.'
+            answer: "(2x + 1)(3x + 2)"
+            solution_sketch: '$3x(2x+1) + 2(2x+1) = (2x+1)(3x+2)$.'
+          - problem: 'Factor $2x^3 - x^2 - 6x + 3$.'
+            answer: "(2x - 1)(x^2 - 3)"
+        constraints: 'leading coefficient may exceed 1; both groups must leave the same binomial factor'
+    diagnostic_exemplar:
+      problem: 'Factor $2x^3 + 3x^2 - 10x - 15$.'
+      answer: '(2x + 3)(x^2 - 5)'
+      solution_sketch: '$x^2(2x + 3) - 5(2x + 3)$.'
+    anki_seeds:
+      - front: "To factor a four-term polynomial by grouping..."
+        back: "factor a GCF from each pair of terms, then factor out the common binomial."
+        type: basic
+      - front: "Grouping has worked when..."
+        back: "both groups leave the same binomial factor; if not, regroup or factor out a negative."
+        type: basic
+
+  - id: factoring-monic-trinomials
+    name: Factoring Monic Trinomials
+    core: true
+    difficulty: 0.55
+    drill: false               # L4 audit: multi-step factoring cannot fit the 6s drill countdown
+    answer_kind: expression
+    expected_time_secs: 90
+    prerequisites:
+      - id: multiplying-binomials
+        weight: 0.7
+        key: true
+      - id: integer-addition-subtraction
+        weight: 0.5
+        key: true
+      - id: integer-multiplication-division
+        weight: 0.5
+        key: true
+      - id: factoring-gcf
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Positive b and c
+        key_prerequisites: [integer-multiplication-division, integer-addition-subtraction]
+        constraints: "two integers that multiply to c and add to b; both positive"
+        exemplars:
+          - problem: 'Factor $x^2 + 7x + 12$.'
+            answer: "(x + 3)(x + 4)"
+            solution_sketch: '$3 \cdot 4 = 12$ and $3 + 4 = 7$.'
+          - problem: 'Factor $x^2 + 9x + 20$.'
+            answer: "(x + 4)(x + 5)"
+      - id: kp2
+        name: Negative constant term
+        key_prerequisites: [integer-multiplication-division, integer-addition-subtraction]
+        constraints: "c < 0: the factor pair has opposite signs"
+        exemplars:
+          - problem: 'Factor $x^2 + 2x - 15$.'
+            answer: "(x + 5)(x - 3)"
+            solution_sketch: '$5 \cdot (-3) = -15$ and $5 - 3 = 2$.'
+          - problem: 'Factor $x^2 - 3x - 10$.'
+            answer: "(x - 5)(x + 2)"
+      - id: kp3
+        name: Negative middle term, positive constant
+        key_prerequisites: [integer-multiplication-division, integer-addition-subtraction]
+        constraints: "b < 0, c > 0: both factors negative"
+        exemplars:
+          - problem: 'Factor $x^2 - 5x + 6$.'
+            answer: "(x - 2)(x - 3)"
+            solution_sketch: '$(-2)(-3) = 6$ and $-2 - 3 = -5$.'
+          - problem: 'Factor $x^2 - 9x + 14$.'
+            answer: "(x - 2)(x - 7)"
+    diagnostic_exemplar:
+      problem: 'Factor $x^2 - 2x - 24$.'
+      answer: '(x - 6)(x + 4)'
+      solution_sketch: '$-6 \times 4 = -24$ and $-6 + 4 = -2$.'
+    anki_seeds:
+      - front: "To factor x^2 + bx + c, find two numbers that..."
+        back: "multiply to c and add to b."
+        type: basic
+
+  - id: factoring-trinomials
+    name: Factoring Trinomials
+    core: true
+    difficulty: 0.65
+    drill: false               # L4 audit: multi-step factoring cannot fit the 6s drill countdown
+    answer_kind: expression
+    expected_time_secs: 120
+    prerequisites:
+      - id: factoring-monic-trinomials
+        weight: 0.8
+        key: true
+      - id: factoring-by-grouping
+        weight: 0.6
+        key: true
+      - id: polynomial-multiplication
+        weight: 0.5
+      - id: factoring-gcf
+        weight: 0.5
+      - id: integer-multiplication-division
+        weight: 0.4
+    encompassings_extra:
+      # sibling factoring pattern: practising trinomials implicitly rehearses
+      # recognising a difference of squares (not an ancestor of this topic).
+      - id: difference-of-squares
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Leading coefficient not equal to 1 (ac-method)
+        key_prerequisites: [factoring-monic-trinomials, factoring-by-grouping]
+        constraints: "split bx using two integers that multiply to ac and add to b"
+        exemplars:
+          - problem: 'Factor $2x^2 + 7x + 3$.'
+            answer: "(2x + 1)(x + 3)"
+            solution_sketch: '$ac = 6$; split $7x$ as $6x + x$; group.'
+          - problem: 'Factor $3x^2 - 10x + 8$.'
+            answer: "(3x - 4)(x - 2)"
+      - id: kp2
+        name: Non-monic trinomials with negative constants
+        key_prerequisites: [factoring-monic-trinomials, factoring-by-grouping]
+        exemplars:
+          - problem: 'Factor $6x^2 + x - 2$.'
+            answer: "(3x + 2)(2x - 1)"
+            solution_sketch: '$ac = -12$; split $x$ as $4x - 3x$; group.'
+          - problem: 'Factor $4x^2 - 4x - 3$.'
+            answer: "(2x - 3)(2x + 1)"
+        constraints: 'leading coefficient > 1 and negative constant term; the split pair has opposite signs'
+      - id: kp3
+        name: Factor out a GCF first, then the trinomial
+        key_prerequisites: [factoring-gcf, factoring-monic-trinomials]
+        exemplars:
+          - problem: 'Factor $2x^2 + 10x + 12$.'
+            answer: "2(x + 2)(x + 3)"
+            solution_sketch: '$2(x^2 + 5x + 6) = 2(x+2)(x+3)$.'
+          - problem: 'Factor $6x^2 - 15x - 9$.'
+            answer: "3(2x + 1)(x - 3)"
+            solution_sketch: '$3(2x^2 - 5x - 3)$; then the ac-method.'
+        constraints: 'integer GCF 2-3 common to all three terms; factor it out before the ac-method'
+    diagnostic_exemplar:
+      problem: 'Factor $6x^2 + 9x - 6$.'
+      answer: '3(2x - 1)(x + 2)'
+      solution_sketch: 'GCF $3$ first: $3(2x^2 + 3x - 2)$; then $ac = -4$, so split $3x$ as $4x - x$.'
+    anki_seeds:
+      - front: "ac-method for ax^2 + bx + c: find two numbers that multiply to ___ and add to ___"
+        back: "ac; b (then split the middle term and factor by grouping)"
+        type: basic
+
+  - id: difference-of-squares
+    name: Factoring a Difference of Squares
+    core: true
+    difficulty: 0.5
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 90
+    prerequisites:
+      - id: polynomial-multiplication
+        weight: 0.5
+        key: true
+      - id: square-roots
+        weight: 0.5
+        key: true
+      - id: factoring-gcf
+        weight: 0.4
+      - id: simplifying-radicals
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Recognize and factor a^2 - b^2
+        key_prerequisites: [polynomial-multiplication, square-roots]
+        exemplars:
+          - problem: 'Factor $x^2 - 9$.'
+            answer: "(x + 3)(x - 3)"
+          - problem: 'Factor $x^2 - 49$.'
+            answer: "(x + 7)(x - 7)"
+        constraints: 'monic square minus a perfect-square constant up to 100; no GCF to remove'
+      - id: kp2
+        name: Coefficients and higher even powers
+        key_prerequisites: [square-roots]
+        exemplars:
+          - problem: 'Factor $4x^2 - 25$.'
+            answer: "(2x + 5)(2x - 5)"
+            solution_sketch: '$(2x)^2 - 5^2$.'
+          - problem: 'Factor $9x^4 - 16$.'
+            answer: "(3x^2 + 4)(3x^2 - 4)"
+        constraints: 'perfect-square coefficients; even powers up to 4'
+      - id: kp3
+        name: Factor a GCF first, or factor repeatedly
+        key_prerequisites: [factoring-gcf]
+        exemplars:
+          - problem: 'Factor $2x^2 - 18$.'
+            answer: "2(x + 3)(x - 3)"
+            solution_sketch: '$2(x^2 - 9)$.'
+          - problem: 'Factor $x^4 - 16$.'
+            answer: "(x^2 + 4)(x + 2)(x - 2)"
+        constraints: 'an integer GCF or a factor that is itself a difference of squares; factor completely'
+    diagnostic_exemplar:
+      problem: 'Factor completely: $x^4 - 1$.'
+      answer: '(x^2 + 1)(x + 1)(x - 1)'
+      solution_sketch: '$x^4 - 1 = (x^2 + 1)(x^2 - 1)$, and $x^2 - 1$ splits again.'
+    anki_seeds:
+      - front: "a^2 - b^2 factors as..."
+        back: "(a + b)(a - b)"
+        type: basic
+
+  - id: perfect-square-trinomials
+    name: Factoring Perfect Square Trinomials
+    core: true
+    difficulty: 0.55
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 90
+    prerequisites:
+      - id: special-products
+        weight: 0.7
+        key: true
+      - id: factoring-monic-trinomials
+        weight: 0.5
+        key: true
+      - id: square-roots
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: Recognize the pattern a^2 ± 2ab + b^2
+        key_prerequisites: [special-products, square-roots]
+        exemplars:
+          - problem: 'The trinomial $x^2 + 6x + 9$ is a perfect square. Factor it.'
+            answer: "(x + 3)^2"
+            solution_sketch: '$9 = 3^2$ and $6x = 2 \cdot 3 \cdot x$, so it is $(x + 3)^2$.'
+          - problem: 'Is $x^2 + 5x + 25$ a perfect square trinomial?'
+            answer: "no"
+            solution_sketch: 'The middle term would need to be $2 \cdot 5x = 10x$.'
+        constraints: "check the middle term against 2ab"
+      - id: kp2
+        name: Factor monic perfect squares
+        key_prerequisites: [factoring-monic-trinomials, special-products]
+        exemplars:
+          - problem: 'Factor $x^2 + 10x + 25$.'
+            answer: "(x + 5)^2"
+          - problem: 'Factor $x^2 - 12x + 36$.'
+            answer: "(x - 6)^2"
+            solution_sketch: 'Minus middle term means $(x - b)^2$.'
+        constraints: "constant is a perfect square; sign follows the middle term"
+      - id: kp3
+        name: Perfect squares with leading coefficients
+        key_prerequisites: [special-products, square-roots]
+        exemplars:
+          - problem: 'Factor $4x^2 - 12x + 9$.'
+            answer: "(2x - 3)^2"
+            solution_sketch: '$(2x)^2$, $3^2$, and $12x = 2 \cdot 2x \cdot 3$.'
+          - problem: 'Factor $9x^2 + 30x + 25$.'
+            answer: "(3x + 5)^2"
+        constraints: "both end terms perfect squares; verify 2ab"
+    diagnostic_exemplar:
+      problem: 'Factor $9x^2 - 24x + 16$.'
+      answer: '(3x - 4)^2'
+      solution_sketch: '$9x^2 = (3x)^2$, $16 = 4^2$, and $2(3x)(4) = 24x$.'
+    anki_seeds:
+      - front: "a^2 + 2ab + b^2 factors as..."
+        back: "(a + b)^2"
+        type: basic
+
+  - id: sum-difference-of-cubes
+    name: Factoring Sums and Differences of Cubes
+    core: true
+    difficulty: 0.62
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 120
+    prerequisites:
+      - id: difference-of-squares
+        weight: 0.5
+        key: true
+      - id: polynomial-multiplication
+        weight: 0.6
+        key: true
+      - id: cube-roots
+        weight: 0.5
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: Difference of cubes a^3 - b^3
+        key_prerequisites: [cube-roots, polynomial-multiplication]
+        exemplars:
+          - problem: 'Factor $x^3 - 8$.'
+            answer: "(x - 2)(x^2 + 2x + 4)"
+            solution_sketch: '$a = x$, $b = 2$: $(a - b)(a^2 + ab + b^2)$.'
+          - problem: 'Factor $x^3 - 27$.'
+            answer: "(x - 3)(x^2 + 3x + 9)"
+        constraints: "b is a small perfect cube root"
+      - id: kp2
+        name: Sum of cubes a^3 + b^3
+        key_prerequisites: [cube-roots, polynomial-multiplication]
+        exemplars:
+          - problem: 'Factor $x^3 + 1$.'
+            answer: "(x + 1)(x^2 - x + 1)"
+            solution_sketch: '$(a + b)(a^2 - ab + b^2)$ with $b = 1$.'
+          - problem: 'Factor $x^3 + 64$.'
+            answer: "(x + 4)(x^2 - 4x + 16)"
+        constraints: "middle sign of the trinomial is opposite the binomial sign"
+      - id: kp3
+        name: Cubes with coefficients
+        key_prerequisites: [cube-roots, polynomial-multiplication]
+        exemplars:
+          - problem: 'Factor $8x^3 - 27$.'
+            answer: "(2x - 3)(4x^2 + 6x + 9)"
+            solution_sketch: '$a = 2x$, $b = 3$.'
+          - problem: 'Factor $27x^3 + 1$.'
+            answer: "(3x + 1)(9x^2 - 3x + 1)"
+        constraints: "a = (coefficient root) x; trinomial never factors further over the integers"
+    diagnostic_exemplar:
+      problem: 'Factor $27x^3 - 8$.'
+      answer: '(3x - 2)(9x^2 + 6x + 4)'
+      solution_sketch: '$(a - b)(a^2 + ab + b^2)$ with $a = 3x$ and $b = 2$.'
+    anki_seeds:
+      - front: "a^3 - b^3 factors as..."
+        back: "(a - b)(a^2 + ab + b^2)"
+        type: basic
+      - front: "a^3 + b^3 factors as..."
+        back: "(a + b)(a^2 - ab + b^2)"
+        type: basic
+
+  - id: quadratics-in-form
+    name: Factoring Expressions in Quadratic Form
+    core: false                # special-case factoring technique, terminal
+    difficulty: 0.68
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 120
+    prerequisites:
+      - id: factoring-trinomials
+        weight: 0.7
+        key: true
+      - id: difference-of-squares
+        weight: 0.5
+        key: true
+      - id: power-rule-exponents
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Substitute u for the middle power
+        key_prerequisites: [factoring-trinomials]
+        exemplars:
+          - problem: 'Factor $x^4 + 5x^2 + 6$.'
+            answer: "(x^2 + 2)(x^2 + 3)"
+            solution_sketch: 'Let $u = x^2$: $u^2 + 5u + 6 = (u+2)(u+3)$.'
+          - problem: 'Factor $x^4 - 7x^2 + 10$.'
+            answer: "(x^2 - 2)(x^2 - 5)"
+        constraints: "trinomials in x^2; factors do not split further over the integers"
+      - id: kp2
+        name: Factor completely when the pieces split further
+        key_prerequisites: [factoring-trinomials, difference-of-squares]
+        exemplars:
+          - problem: 'Factor $x^4 - 5x^2 + 4$ completely.'
+            answer: "(x - 1)(x + 1)(x - 2)(x + 2)"
+            solution_sketch: '$(x^2 - 1)(x^2 - 4)$; each is a difference of squares.'
+          - problem: 'Factor $x^4 - 13x^2 + 36$ completely.'
+            answer: "(x - 2)(x + 2)(x - 3)(x + 3)"
+        constraints: "check every factor for a further difference of squares"
+      - id: kp3
+        name: Sixth powers and non-monic quadratic form
+        key_prerequisites: [factoring-trinomials]
+        exemplars:
+          - problem: 'Factor $x^6 + 5x^3 + 6$.'
+            answer: "(x^3 + 2)(x^3 + 3)"
+            solution_sketch: 'Let $u = x^3$: $u^2 + 5u + 6 = (u+2)(u+3)$; both cubic factors are irreducible over the integers.'
+          - problem: 'Factor $2x^4 + 5x^2 + 2$.'
+            answer: "(2x^2 + 1)(x^2 + 2)"
+        constraints: "u-substitution with u = x^3 or non-monic in u"
+    diagnostic_exemplar:
+      problem: 'Factor $x^4 - 10x^2 + 9$ completely.'
+      answer: '(x - 1)(x + 1)(x - 3)(x + 3)'
+      solution_sketch: 'With $u = x^2$: $u^2 - 10u + 9 = (u - 1)(u - 9)$; both factors split again.'
+    anki_seeds:
+      - front: "An expression like x^4 + bx^2 + c is 'in quadratic form' because ..."
+        back: "substituting u = x^2 turns it into the quadratic u^2 + bu + c"
+        type: basic
+
+  - id: choosing-factoring-strategy
+    name: Choosing a Factoring Strategy
+    core: false                # mixed-practice capstone; the techniques it selects among
+                               # stay core. Matches its four siblings tree-wide
+                               # (choosing-integration-technique, strategy-for-testing-series,
+                               # choosing-summary-statistics, combinations-vs-permutations).
+    difficulty: 0.68
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 150
+    prerequisites:
+      - id: factoring-trinomials
+        weight: 0.7
+        key: true
+      - id: difference-of-squares
+        weight: 0.6
+        key: true
+      - id: factoring-gcf
+        weight: 0.6
+        key: true
+      - id: factoring-by-grouping
+        weight: 0.5
+      - id: perfect-square-trinomials
+        weight: 0.4
+      - id: sum-difference-of-cubes
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: Identify the right first move
+        key_prerequisites: [factoring-gcf, difference-of-squares, factoring-trinomials]
+        exemplars:
+          - problem: 'Which strategy applies first to $5x^2 - 45$: GCF, difference of squares, or trinomial factoring?'
+            answer: "GCF (factor out 5 first)"
+            solution_sketch: 'Always check for a GCF before pattern-matching.'
+          - problem: 'Identify the pattern in $x^2 - 16x + 64$ and factor it.'
+            answer: "(x - 8)^2"
+            solution_sketch: 'Perfect square trinomial: $64 = 8^2$ and $16x = 2 \cdot 8 \cdot x$.'
+        constraints: "GCF first, then count terms, then match a pattern"
+      - id: kp2
+        name: Factor completely in two steps
+        key_prerequisites: [factoring-gcf, difference-of-squares, factoring-trinomials]
+        exemplars:
+          - problem: 'Factor $2x^3 - 8x$ completely.'
+            answer: "2x(x + 2)(x - 2)"
+            solution_sketch: '$2x(x^2 - 4)$; then difference of squares.'
+          - problem: 'Factor $3x^2 + 12x + 12$ completely.'
+            answer: "3(x + 2)^2"
+            solution_sketch: '$3(x^2 + 4x + 4)$; perfect square inside.'
+        constraints: "GCF plus one pattern"
+      - id: kp3
+        name: Mixed multi-step factoring
+        key_prerequisites: [difference-of-squares, factoring-trinomials, factoring-by-grouping]
+        exemplars:
+          - problem: 'Factor $x^4 - 81$ completely.'
+            answer: "(x^2 + 9)(x + 3)(x - 3)"
+            solution_sketch: 'Difference of squares twice; $x^2 + 9$ stays prime.'
+          - problem: 'Factor $x^3 + 3x^2 - 4x - 12$ completely.'
+            answer: "(x + 3)(x + 2)(x - 2)"
+            solution_sketch: 'Group: $x^2(x+3) - 4(x+3)$; then difference of squares.'
+        constraints: "up to three steps; state prime factors as-is"
+    diagnostic_exemplar:
+      problem: 'Factor $2x^4 - 32$ completely.'
+      answer: '2(x^2 + 4)(x + 2)(x - 2)'
+      solution_sketch: 'GCF $2$ first: $2(x^4 - 16)$; then two rounds of difference of squares.'
+    anki_seeds:
+      - front: "The first step in ANY factoring problem is ..."
+        back: "factor out the GCF"
+        type: basic
+      - front: "After factoring, how do you check the result?"
+        back: "multiply the factors back out"
+        type: basic
+
+  - id: zero-product-property
+    name: The Zero Product Property
+    core: true
+    difficulty: 0.5
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 60
+    prerequisites:
+      - id: one-step-equations
+        weight: 0.6
+        key: true
+      - id: two-step-equations
+        weight: 0.4
+        key: true
+      - id: integer-multiplication-division
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Solve pre-factored monic equations
+        key_prerequisites: [one-step-equations]
+        exemplars:
+          - problem: 'Solve $(x - 3)(x + 5) = 0$.'
+            answer: "x = 3 or x = -5"
+            solution_sketch: 'Each factor equals zero.'
+          - problem: 'Solve $x(x - 4) = 0$.'
+            answer: "x = 0 or x = 4"
+        constraints: "already factored; integer roots"
+      - id: kp2
+        name: Factors with coefficients
+        key_prerequisites: [two-step-equations]
+        exemplars:
+          - problem: 'Solve $(2x - 1)(3x + 4) = 0$.'
+            answer: "x = 1/2 or x = -4/3"
+            solution_sketch: '$2x = 1$ or $3x = -4$.'
+          - problem: 'Solve $(5x + 2)(x - 6) = 0$.'
+            answer: "x = -2/5 or x = 6"
+        constraints: "linear factors with small coefficients; fractional roots allowed"
+      - id: kp3
+        name: Three factors
+        key_prerequisites: [one-step-equations, two-step-equations]
+        exemplars:
+          - problem: 'Solve $x(x - 2)(x + 7) = 0$.'
+            answer: "x = 0, x = 2, or x = -7"
+          - problem: 'Solve $2x(x + 1)(x - 5) = 0$.'
+            answer: "x = 0, x = -1, or x = 5"
+            solution_sketch: 'The constant 2 is never zero; three variable factors.'
+        constraints: "one root per variable factor"
+    diagnostic_exemplar:
+      problem: 'Solve $x(2x - 5)(x + 3) = 0$.'
+      answer: 'x = 0, x = 5/2, or x = -3'
+      solution_sketch: 'Set each of the three factors equal to zero.'
+    anki_seeds:
+      - front: "Zero Product Property: if a*b = 0 then..."
+        back: "a = 0 or b = 0"
+        type: basic
+
+  - id: quadratic-equations-factoring
+    name: Solving Quadratic Equations by Factoring
+    core: true
+    difficulty: 0.6
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 120
+    prerequisites:
+      - id: zero-product-property
+        weight: 0.8
+        key: true
+      - id: factoring-trinomials
+        weight: 0.8
+        key: true
+      - id: factoring-gcf
+        weight: 0.5
+      - id: difference-of-squares
+        weight: 0.5
+      - id: two-step-equations
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Factor a monic quadratic, then solve
+        key_prerequisites: [factoring-trinomials, zero-product-property]
+        exemplars:
+          - problem: 'Solve $x^2 + 7x + 12 = 0$.'
+            answer: "x = -3 or x = -4"
+            solution_sketch: '$(x+3)(x+4) = 0$.'
+          - problem: 'Solve $x^2 - 5x - 14 = 0$.'
+            answer: "x = 7 or x = -2"
+        constraints: 'monic trinomial already equal to 0; integer roots'
+      - id: kp2
+        name: Rearrange to standard form first
+        key_prerequisites: [factoring-trinomials, two-step-equations]
+        exemplars:
+          - problem: 'Solve $x^2 + 6x = -8$.'
+            answer: "x = -2 or x = -4"
+            solution_sketch: '$x^2 + 6x + 8 = 0$; $(x+2)(x+4) = 0$.'
+          - problem: 'Solve $3x^2 = 12x$.'
+            answer: "x = 0 or x = 4"
+            solution_sketch: '$3x^2 - 12x = 0$; $3x(x - 4) = 0$. Never divide by $x$.'
+        constraints: 'terms on both sides; collect into standard form before factoring; integer roots'
+      - id: kp3
+        name: Non-monic quadratics and special patterns
+        key_prerequisites: [factoring-trinomials, zero-product-property]
+        exemplars:
+          - problem: 'Solve $2x^2 - 5x - 3 = 0$.'
+            answer: "x = 3 or x = -1/2"
+            solution_sketch: '$(2x + 1)(x - 3) = 0$.'
+          - problem: 'Solve $x^2 - 25 = 0$.'
+            answer: "x = 5 or x = -5"
+            solution_sketch: 'Difference of squares: $(x+5)(x-5) = 0$.'
+        constraints: 'leading coefficient > 1 or a difference-of-squares pattern; roots may be fractions'
+    diagnostic_exemplar:
+      problem: 'Solve $2x^2 + 7x = -3$.'
+      answer: "x = -1/2 or x = -3"
+      solution_sketch: 'Standard form $2x^2 + 7x + 3 = 0$ factors as $(2x + 1)(x + 3)$.'
+    anki_seeds:
+      - front: "Why is dividing both sides of 3x^2 = 12x by x a mistake?"
+        back: "It silently discards the root x = 0; move everything to one side and factor instead."
+        type: basic
+
+  - id: square-root-property
+    name: Solving Quadratics with the Square Root Property
+    core: true
+    difficulty: 0.55
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 90
+    prerequisites:
+      - id: square-roots
+        weight: 0.6
+        key: true
+      - id: simplifying-radicals
+        weight: 0.5
+        key: true
+      - id: two-step-equations
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: Solve x^2 = k
+        key_prerequisites: [square-roots]
+        exemplars:
+          - problem: 'Solve $x^2 = 49$.'
+            answer: "x = 7 or x = -7"
+            solution_sketch: 'Both square roots: $x = \pm 7$.'
+          - problem: 'Solve $x^2 = 100$.'
+            answer: "x = 10 or x = -10"
+        constraints: "perfect-square k; always two roots"
+      - id: kp2
+        name: Isolate the square first
+        key_prerequisites: [two-step-equations, square-roots]
+        exemplars:
+          - problem: 'Solve $3x^2 - 27 = 0$.'
+            answer: "x = 3 or x = -3"
+            solution_sketch: '$x^2 = 9$; $x = \pm 3$.'
+          - problem: 'Solve $(x - 3)^2 = 16$.'
+            answer: "x = 7 or x = -1"
+            solution_sketch: '$x - 3 = \pm 4$.'
+        constraints: "shifted squares (x - h)^2 = k with perfect-square k"
+      - id: kp3
+        name: Irrational solutions
+        key_prerequisites: [simplifying-radicals]
+        exemplars:
+          - problem: 'Solve $x^2 = 12$. Give exact answers.'
+            answer: "x = 2*sqrt(3) or x = -2*sqrt(3)"
+            solution_sketch: '$\pm\sqrt{12} = \pm 2\sqrt{3}$.'
+          - problem: 'Solve $(x + 1)^2 = 5$. Give exact answers.'
+            answer: "x = -1 + sqrt(5) or x = -1 - sqrt(5)"
+        constraints: "simplify the radical; exact form, no decimals"
+    diagnostic_exemplar:
+      problem: 'Solve $(x + 3)^2 = 7$. Give exact answers.'
+      answer: 'x = -3 + sqrt(7) or x = -3 - sqrt(7)'
+      solution_sketch: 'Take roots: $x + 3 = \pm\sqrt{7}$.'
+    anki_seeds:
+      - front: "Square root property: if x^2 = k (k > 0) then x = ?"
+        back: "x = +sqrt(k) or x = -sqrt(k) — always both signs"
+        type: basic
+
+  - id: writing-quadratics-from-roots
+    name: Writing a Quadratic from Its Roots
+    core: false                # reverse-construction leaf, terminal
+    difficulty: 0.6
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 90
+    prerequisites:
+      - id: zero-product-property
+        weight: 0.6
+        key: true
+      - id: multiplying-binomials
+        weight: 0.7
+        key: true
+      - id: quadratic-equations-factoring
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: Integer roots
+        key_prerequisites: [zero-product-property, multiplying-binomials]
+        exemplars:
+          - problem: 'Write a monic quadratic equation with roots $3$ and $-5$.'
+            answer: "x^2 + 2x - 15 = 0"
+            solution_sketch: '$(x - 3)(x + 5) = 0$; expand.'
+          - problem: 'Write a monic quadratic equation with roots $2$ and $4$.'
+            answer: "x^2 - 6x + 8 = 0"
+        constraints: "monic; reverse the factoring"
+      - id: kp2
+        name: Repeated and zero roots
+        key_prerequisites: [multiplying-binomials, zero-product-property]
+        exemplars:
+          - problem: 'Write a monic quadratic equation whose only root is $x = 4$.'
+            answer: "x^2 - 8x + 16 = 0"
+            solution_sketch: '$(x - 4)^2 = 0$.'
+          - problem: 'Write a monic quadratic equation with roots $0$ and $-6$.'
+            answer: "x^2 + 6x = 0"
+            solution_sketch: '$x(x + 6) = 0$.'
+        constraints: "double root -> perfect square; root 0 -> factor x"
+      - id: kp3
+        name: Fractional roots with integer coefficients
+        key_prerequisites: [multiplying-binomials, zero-product-property]
+        exemplars:
+          - problem: 'Write a quadratic equation with integer coefficients whose roots are $\frac{1}{2}$ and $-3$.'
+            answer: "2x^2 + 5x - 3 = 0"
+            solution_sketch: '$(2x - 1)(x + 3) = 0$; expand.'
+          - problem: 'Write a quadratic equation with integer coefficients whose roots are $\frac{2}{3}$ and $1$.'
+            answer: "3x^2 - 5x + 2 = 0"
+            solution_sketch: '$(3x - 2)(x - 1) = 0$.'
+        constraints: "clear the fraction into the leading coefficient"
+    diagnostic_exemplar:
+      problem: 'Write a quadratic equation with integer coefficients whose roots are $\frac{1}{3}$ and $-2$.'
+      answer: '3x^2 + 5x - 2 = 0'
+      solution_sketch: '$(3x - 1)(x + 2) = 0$; expand.'
+    anki_seeds:
+      - front: "A monic quadratic with roots r and s expands to ..."
+        back: "x^2 - (r + s)x + rs"
+        type: basic
+
+  - id: completing-the-square
+    name: Completing the Square
+    core: true
+    difficulty: 0.7
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 180
+    prerequisites:
+      - id: square-root-property
+        weight: 0.7
+        key: true
+      - id: perfect-square-trinomials
+        weight: 0.6
+        key: true
+      - id: quadratic-equations-factoring
+        weight: 0.5
+        key: true
+      - id: simplifying-radicals
+        weight: 0.5
+      - id: equations-with-fractions
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Complete the square on x^2 + bx
+        key_prerequisites: [perfect-square-trinomials]
+        constraints: "add (b/2)^2 to form a perfect-square trinomial"
+        exemplars:
+          - problem: 'What constant completes the square for $x^2 + 8x$? Write it as a perfect square.'
+            answer: "x^2 + 8x + 16 = (x + 4)^2"
+            solution_sketch: '$(8/2)^2 = 16$.'
+          - problem: 'Complete the square for $x^2 - 6x$.'
+            answer: "9, giving (x - 3)^2"
+      - id: kp2
+        name: Solve a quadratic by completing the square (rational roots)
+        key_prerequisites: [square-root-property]
+        exemplars:
+          - problem: 'Solve $x^2 + 6x + 5 = 0$ by completing the square.'
+            answer: "x = -1 or x = -5"
+            solution_sketch: '$x^2 + 6x = -5$; add $9$: $(x+3)^2 = 4$; $x + 3 = \pm 2$.'
+          - problem: 'Solve $x^2 - 4x - 12 = 0$ by completing the square.'
+            answer: "x = 6 or x = -2"
+        constraints: 'monic with even b; the completed square leaves a perfect square, so roots are rational'
+      - id: kp3
+        name: Irrational roots requiring a radical
+        key_prerequisites: [simplifying-radicals, square-root-property]
+        exemplars:
+          - problem: 'Solve $x^2 + 2x - 4 = 0$ by completing the square.'
+            answer: "x = -1 + √5 or x = -1 - √5"
+            solution_sketch: '$(x+1)^2 = 5$; $x = -1 \pm \sqrt{5}$.'
+          - problem: 'Solve $x^2 - 8x + 5 = 0$ by completing the square.'
+            answer: "x = 4 + √11 or x = 4 - √11"
+        constraints: 'monic with even b; the completed square leaves a non-square, so answers keep an exact radical'
+    diagnostic_exemplar:
+      problem: 'Solve $x^2 - 6x + 2 = 0$ by completing the square.'
+      answer: "x = 3 + √7 or x = 3 - √7"
+      solution_sketch: '$(x - 3)^2 - 9 + 2 = 0$, so $(x - 3)^2 = 7$.'
+    anki_seeds:
+      - front: "To complete the square on x^2 + bx, add..."
+        back: "(b/2)^2"
+        type: basic
+
+  - id: completing-square-leading-coefficient
+    name: Completing the Square with a Leading Coefficient
+    core: true
+    difficulty: 0.7
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 200
+    prerequisites:
+      - id: completing-the-square
+        weight: 0.8
+        key: true
+      - id: equations-with-fractions
+        weight: 0.5
+        key: true
+      - id: simplifying-radicals
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: Divide through by a first
+        key_prerequisites: [completing-the-square, equations-with-fractions]
+        exemplars:
+          - problem: 'Solve $2x^2 + 8x - 10 = 0$ by completing the square.'
+            answer: "x = 1 or x = -5"
+            solution_sketch: 'Divide by 2: $x^2 + 4x - 5 = 0$; $(x+2)^2 = 9$.'
+          - problem: 'Solve $3x^2 - 6x - 9 = 0$ by completing the square.'
+            answer: "x = 3 or x = -1"
+            solution_sketch: 'Divide by 3: $x^2 - 2x - 3 = 0$; $(x-1)^2 = 4$.'
+        constraints: "a divides every coefficient; rational roots"
+      - id: kp2
+        name: Fractions appear after dividing
+        key_prerequisites: [completing-the-square, equations-with-fractions]
+        exemplars:
+          - problem: 'Solve $2x^2 - 4x - 3 = 0$ by completing the square.'
+            answer: "x = (2 + √10)/2 or x = (2 - √10)/2"
+            solution_sketch: '$x^2 - 2x = \frac{3}{2}$; $(x-1)^2 = \frac{5}{2}$; $x = 1 \pm \frac{\sqrt{10}}{2}$.'
+          - problem: 'Solve $2x^2 + 6x + 1 = 0$ by completing the square.'
+            answer: "x = (-3 + √7)/2 or x = (-3 - √7)/2"
+            solution_sketch: 'Divide by 2: $x^2 + 3x = -\frac{1}{2}$; $(x + \frac{3}{2})^2 = \frac{7}{4}$.'
+        constraints: "odd b or non-dividing constants; exact radical answers"
+      - id: kp3
+        name: Odd middle coefficients
+        key_prerequisites: [completing-the-square, simplifying-radicals]
+        exemplars:
+          - problem: 'Solve $x^2 + 5x + 3 = 0$ by completing the square.'
+            answer: "x = (-5 + √13)/2 or x = (-5 - √13)/2"
+            solution_sketch: '$(x + \frac{5}{2})^2 = \frac{25}{4} - 3 = \frac{13}{4}$.'
+          - problem: 'Solve $x^2 - x - 1 = 0$ by completing the square.'
+            answer: "x = (1 + √5)/2 or x = (1 - √5)/2"
+            solution_sketch: '$(x - \frac{1}{2})^2 = \frac{5}{4}$.'
+        constraints: "half of odd b is a fraction; keep exact arithmetic"
+    diagnostic_exemplar:
+      problem: 'Solve $2x^2 - 8x + 1 = 0$ by completing the square.'
+      answer: 'x = (4 + √14)/2 or x = (4 - √14)/2'
+      solution_sketch: 'Divide by $2$: $x^2 - 4x + \frac{1}{2} = 0$; $(x - 2)^2 = \frac{7}{2}$.'
+    anki_seeds:
+      - front: "First step of completing the square when a != 1:"
+        back: "divide the whole equation by a"
+        type: basic
+
+  - id: applying-the-quadratic-formula
+    name: Applying the Quadratic Formula
+    core: true
+    difficulty: 0.6
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 120
+    prerequisites:
+      - id: square-roots
+        weight: 0.5
+        key: true
+      - id: evaluating-expressions
+        weight: 0.5
+        key: true
+      - id: quadratic-equations-factoring
+        weight: 0.4
+      - id: integer-multiplication-division
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: Identify a, b, c
+        key_prerequisites: [evaluating-expressions]
+        exemplars:
+          - problem: 'For $3x^2 - 5x + 2 = 0$, state $a$, $b$, and $c$.'
+            answer: "a = 3, b = -5, c = 2"
+          - problem: 'Rewrite $x^2 = 4x - 3$ in standard form and state $a$, $b$, $c$.'
+            answer: "x^2 - 4x + 3 = 0; a = 1, b = -4, c = 3"
+        constraints: "include rearrangement into standard form; signs matter"
+      - id: kp2
+        name: Rational roots from the formula
+        key_prerequisites: [evaluating-expressions, square-roots]
+        exemplars:
+          - problem: 'Solve $x^2 + 5x + 6 = 0$ using the quadratic formula.'
+            answer: "x = -2 or x = -3"
+            solution_sketch: '$a = 1$, $b = 5$, $c = 6$; disc $= 1$; $x = \frac{-5 \pm 1}{2}$.'
+          - problem: 'Solve $2x^2 - 7x + 3 = 0$ using the quadratic formula.'
+            answer: "x = 3 or x = 1/2"
+            solution_sketch: 'disc $= 25$; $x = \frac{7 \pm 5}{4}$.'
+        constraints: "perfect-square discriminant"
+      - id: kp3
+        name: Perfect-square discriminants with a > 1
+        key_prerequisites: [evaluating-expressions, square-roots]
+        exemplars:
+          - problem: 'Solve $6x^2 + x - 2 = 0$ using the quadratic formula.'
+            answer: "x = 1/2 or x = -2/3"
+            solution_sketch: 'disc $= 1 + 48 = 49$; $x = \frac{-1 \pm 7}{12}$.'
+          - problem: 'Solve $4x^2 - 4x - 3 = 0$ using the quadratic formula.'
+            answer: "x = 3/2 or x = -1/2"
+            solution_sketch: 'disc $= 16 + 48 = 64$; $x = \frac{4 \pm 8}{8}$.'
+        constraints: "fractional roots reduce to lowest terms"
+    diagnostic_exemplar:
+      problem: 'Solve $3x^2 + 7x + 2 = 0$ using the quadratic formula.'
+      answer: 'x = -1/3 or x = -2'
+      solution_sketch: 'disc $= 49 - 24 = 25$; $x = \frac{-7 \pm 5}{6}$.'
+    anki_seeds:
+      - front: "State the quadratic formula for ax^2 + bx + c = 0."
+        back: "x = (-b ± √(b^2 - 4ac)) / (2a)"
+        type: basic
+
+  - id: quadratic-formula
+    name: The Quadratic Formula
+    core: true
+    difficulty: 0.65
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 180
+    prerequisites:
+      - id: applying-the-quadratic-formula
+        weight: 0.8
+        key: true
+      - id: simplifying-radicals
+        weight: 0.6
+        key: true
+      - id: completing-the-square
+        weight: 0.4
+        key: true
+      - id: square-roots
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: Irrational roots that need a simplified radical
+        key_prerequisites: [simplifying-radicals, applying-the-quadratic-formula]
+        exemplars:
+          - problem: 'Solve $x^2 - 4x + 1 = 0$ using the quadratic formula.'
+            answer: "x = 2 + √3 or x = 2 - √3"
+            solution_sketch: 'disc $= 12$; $\sqrt{12} = 2\sqrt{3}$; $x = \frac{4 \pm 2\sqrt{3}}{2} = 2 \pm \sqrt{3}$.'
+          - problem: 'Solve $x^2 + 6x + 4 = 0$ using the quadratic formula.'
+            answer: "x = -3 + √5 or x = -3 - √5"
+        constraints: "discriminant has a perfect-square factor; fraction reduces fully"
+      - id: kp2
+        name: Radical results over a denominator
+        key_prerequisites: [simplifying-radicals, applying-the-quadratic-formula]
+        exemplars:
+          - problem: 'Solve $2x^2 + 4x - 3 = 0$ using the quadratic formula.'
+            answer: "x = (-2 + √10)/2 or x = (-2 - √10)/2"
+            solution_sketch: 'disc $= 40$; $\frac{-4 \pm 2\sqrt{10}}{4} = \frac{-2 \pm \sqrt{10}}{2}$.'
+          - problem: 'Solve $3x^2 - 2x - 2 = 0$ using the quadratic formula.'
+            answer: "x = (1 + √7)/3 or x = (1 - √7)/3"
+            solution_sketch: 'disc $= 28$; $\frac{2 \pm 2\sqrt{7}}{6} = \frac{1 \pm \sqrt{7}}{3}$.'
+        constraints: "cancel the common factor between numerator and denominator"
+      - id: kp3
+        name: Reduce fully and spot no-real-solution cases
+        key_prerequisites: [simplifying-radicals, applying-the-quadratic-formula]
+        exemplars:
+          - problem: 'Solve $2x^2 + 6x + 3 = 0$ using the quadratic formula.'
+            answer: "x = (-3 + √3)/2 or x = (-3 - √3)/2"
+            solution_sketch: 'disc $= 12$; $\frac{-6 \pm 2\sqrt{3}}{4} = \frac{-3 \pm \sqrt{3}}{2}$.'
+          - problem: 'How many real solutions does $x^2 + 2x + 5 = 0$ have?'
+            answer: "0 (no real solutions)"
+            solution_sketch: 'disc $= 4 - 20 = -16 < 0$.'
+        constraints: "negative discriminant means no real roots; state it, do not invent decimals"
+    diagnostic_exemplar:
+      problem: 'Solve $2x^2 - 6x + 1 = 0$ using the quadratic formula.'
+      answer: 'x = (3 + √7)/2 or x = (3 - √7)/2'
+      solution_sketch: 'disc $= 36 - 8 = 28$; $x = \frac{6 \pm 2\sqrt{7}}{4} = \frac{3 \pm \sqrt{7}}{2}$.'
+    anki_seeds:
+      - front: "For ax^2 + bx + c = 0, x = (-b ± √({{c1::b^2 - 4ac}})) / (2a)."
+        back: "b^2 - 4ac"
+        type: cloze
+
+  - id: discriminant
+    name: The Discriminant
+    core: true
+    difficulty: 0.55
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 90
+    prerequisites:
+      - id: quadratic-formula
+        weight: 0.6
+        key: true
+      - id: evaluating-expressions
+        weight: 0.5
+      - id: integer-multiplication-division
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: Compute the discriminant b^2 - 4ac
+        key_prerequisites: [evaluating-expressions]
+        exemplars:
+          - problem: 'Find the discriminant of $x^2 + 3x + 2$.'
+            answer: "1"
+            solution_sketch: '$3^2 - 4(1)(2) = 9 - 8 = 1$.'
+          - problem: 'Find the discriminant of $2x^2 - 4x + 5$.'
+            answer: "-24"
+        constraints: 'integer a, b, c with coefficients at most 6 in size; answer is the signed value of b^2 - 4ac'
+      - id: kp2
+        name: Determine the number and nature of real roots
+        key_prerequisites: [quadratic-formula]
+        exemplars:
+          - problem: 'How many real solutions does $x^2 - 6x + 9 = 0$ have? Use the discriminant.'
+            answer: "1"
+            solution_sketch: 'disc $= 36 - 36 = 0$: exactly one repeated real root.'
+          - problem: 'How many real solutions does $x^2 + x + 1 = 0$ have?'
+            answer: "0"
+            solution_sketch: 'disc $= 1 - 4 = -3 < 0$: no real roots.'
+          - problem: 'How many real solutions does $x^2 - 5x + 2 = 0$ have?'
+            answer: "2"
+            solution_sketch: 'disc $= 25 - 8 = 17 > 0$: two distinct real roots.'
+        constraints: 'answer is the count 0, 1, or 2; cover all three cases across problems'
+    diagnostic_exemplar:
+      problem: 'How many real solutions does $2x^2 + 3x + 4 = 0$ have? Use the discriminant.'
+      answer: '0'
+      solution_sketch: '$3^2 - 4(2)(4) = 9 - 32 = -23 < 0$, so there are no real solutions.'
+    anki_seeds:
+      - front: "What does the discriminant b^2 - 4ac tell you about the roots?"
+        back: ">0 two real roots, =0 one repeated root, <0 no real roots."
+        type: basic
+
+  - id: parabola-vertex-form
+    name: Parabolas in Vertex Form
+    core: true
+    difficulty: 0.55
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 120
+    prerequisites:
+      - id: coordinate-plane
+        weight: 0.5
+        key: true
+      - id: evaluating-polynomials
+        weight: 0.5
+        key: true
+      - id: graphing-linear-equations
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Read the vertex from vertex form
+        key_prerequisites: [coordinate-plane]
+        exemplars:
+          - problem: 'Give the vertex of $y = (x - 3)^2 + 4$.'
+            answer: "(3, 4)"
+          - problem: 'Give the vertex of $y = (x + 2)^2 - 5$.'
+            answer: "(-2, -5)"
+            solution_sketch: '$x + 2 = x - (-2)$, so $h = -2$.'
+        constraints: "y = a(x - h)^2 + k; watch the sign of h"
+      - id: kp2
+        name: Opening direction and max/min value
+        key_prerequisites: [coordinate-plane]
+        exemplars:
+          - problem: 'Does $y = -2(x - 1)^2 + 3$ open upward or downward, and what is its maximum or minimum value?'
+            answer: "downward; maximum 3"
+            solution_sketch: '$a = -2 < 0$; the vertex $y$-value is the max.'
+          - problem: 'Does $y = (x + 4)^2 - 1$ open upward or downward, and what is its maximum or minimum value?'
+            answer: "upward; minimum -1"
+        constraints: "sign of a decides direction; k is the extreme value"
+      - id: kp3
+        name: Axis of symmetry and points on the graph
+        key_prerequisites: [evaluating-polynomials, coordinate-plane]
+        exemplars:
+          - problem: 'For $y = (x - 2)^2 - 1$, give the axis of symmetry and the $y$-value at $x = 0$.'
+            answer: "x = 2; y = 3"
+            solution_sketch: 'Axis through the vertex; $(0-2)^2 - 1 = 3$.'
+          - problem: 'For $y = -(x + 1)^2 + 4$, find $y$ at $x = 1$.'
+            answer: "0"
+            solution_sketch: '$-(2)^2 + 4 = 0$.'
+        constraints: "evaluate one or two points besides the vertex"
+    diagnostic_exemplar:
+      problem: 'Does $y = -3(x + 2)^2 + 5$ open upward or downward, and what is its maximum or minimum value?'
+      answer: "downward; maximum 5"
+      solution_sketch: '$a = -3 < 0$, so it opens downward and the vertex value $5$ is the maximum.'
+    anki_seeds:
+      - front: "Vertex form y = a(x - h)^2 + k has vertex ..."
+        back: "(h, k)"
+        type: basic
+      - front: "In y = a(x - h)^2 + k, the parabola opens upward when ..."
+        back: "a > 0 (downward when a < 0)"
+        type: basic
+
+  - id: quadratic-graphs-vertex
+    name: Graphing Quadratics and the Vertex
+    core: true
+    difficulty: 0.7
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 180
+    prerequisites:
+      - id: parabola-vertex-form
+        weight: 0.7
+        key: true
+      - id: completing-the-square
+        weight: 0.5
+        key: true
+      - id: quadratic-equations-factoring
+        weight: 0.4
+        key: true
+      - id: graphing-linear-equations
+        weight: 0.3
+      - id: evaluating-expressions
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: Vertex from standard form via x = -b/(2a)
+        key_prerequisites: [evaluating-expressions, parabola-vertex-form]
+        exemplars:
+          - problem: 'Find the vertex of $y = x^2 - 6x + 5$.'
+            answer: "(3, -4)"
+            solution_sketch: '$x = \frac{6}{2} = 3$; $y = 9 - 18 + 5 = -4$.'
+          - problem: 'Find the vertex of $y = x^2 + 4x + 1$.'
+            answer: "(-2, -3)"
+        constraints: 'monic standard form with even b; vertex has integer coordinates'
+      - id: kp2
+        name: Intercepts together with the vertex
+        key_prerequisites: [quadratic-equations-factoring]
+        exemplars:
+          - problem: 'Find the $x$-intercepts and vertex of $y = x^2 - 4x + 3$.'
+            answer: "x-intercepts (1, 0) and (3, 0); vertex (2, -1)"
+            solution_sketch: '$(x-1)(x-3)$; axis $x = 2$, $y = -1$.'
+          - problem: 'Find the vertex and $y$-intercept of $y = x^2 + 2x - 8$.'
+            answer: "vertex (-1, -9); y-intercept (0, -8)"
+        constraints: 'monic and factorable over the integers; give intercepts as points'
+      - id: kp3
+        name: All the features for a full sketch
+        key_prerequisites: [quadratic-equations-factoring, parabola-vertex-form]
+        exemplars:
+          - problem: 'For $y = x^2 - 2x - 3$, give the direction of opening, vertex, $x$-intercepts, and $y$-intercept.'
+            answer: "opens upward; vertex (1, -4); x-intercepts (-1, 0) and (3, 0); y-intercept (0, -3)"
+            solution_sketch: '$(x+1)(x-3)$; axis $x = 1$; $y(1) = -4$.'
+          - problem: 'For $y = -x^2 + 4x$, give the direction of opening, vertex, and $x$-intercepts.'
+            answer: "opens downward; vertex (2, 4); x-intercepts (0, 0) and (4, 0)"
+            solution_sketch: '$-x(x - 4)$; axis $x = 2$; $y(2) = 4$.'
+        constraints: 'leading coefficient 1 or -1; ask for opening direction, vertex and intercepts together'
+    diagnostic_exemplar:
+      problem: 'Find the vertex and $x$-intercepts of $y = x^2 - 2x - 8$.'
+      answer: "vertex (1, -9); x-intercepts (-2, 0) and (4, 0)"
+      solution_sketch: '$x = \frac{-b}{2a} = 1$ gives $y = -9$; factoring $x^2 - 2x - 8 = (x - 4)(x + 2)$ gives the intercepts.'
+    anki_seeds:
+      - front: "For y = ax^2 + bx + c, the axis of symmetry (vertex x-coordinate) is..."
+        back: "x = -b / (2a)"
+        type: basic
+
+  - id: converting-to-vertex-form
+    name: Converting Quadratics to Vertex Form
+    core: true
+    difficulty: 0.7
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 180
+    prerequisites:
+      - id: completing-the-square
+        weight: 0.8
+        key: true
+      - id: parabola-vertex-form
+        weight: 0.6
+        key: true
+      - id: polynomial-multiplication
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Monic standard form to vertex form
+        key_prerequisites: [completing-the-square, parabola-vertex-form]
+        exemplars:
+          - problem: 'Write $y = x^2 + 6x + 5$ in vertex form.'
+            answer: "y = (x + 3)^2 - 4"
+            solution_sketch: 'Add and subtract $9$: $(x^2 + 6x + 9) - 9 + 5$.'
+          - problem: 'Write $y = x^2 - 4x + 7$ in vertex form.'
+            answer: "y = (x - 2)^2 + 3"
+        constraints: "monic; even middle coefficient"
+      - id: kp2
+        name: Factor out a leading coefficient first
+        key_prerequisites: [completing-the-square]
+        exemplars:
+          - problem: 'Write $y = 2x^2 - 8x + 3$ in vertex form.'
+            answer: "y = 2(x - 2)^2 - 5"
+            solution_sketch: '$2(x^2 - 4x) + 3 = 2((x-2)^2 - 4) + 3$.'
+          - problem: 'Write $y = -x^2 + 2x + 3$ in vertex form.'
+            answer: "y = -(x - 1)^2 + 4"
+            solution_sketch: '$-(x^2 - 2x) + 3 = -((x-1)^2 - 1) + 3$.'
+        constraints: "factor a out of the x-terms only"
+      - id: kp3
+        name: Read the vertex and extreme value from the result
+        key_prerequisites: [parabola-vertex-form, completing-the-square]
+        exemplars:
+          - problem: 'Convert $y = x^2 + 10x + 30$ to vertex form and give the minimum value of $y$.'
+            answer: "y = (x + 5)^2 + 5; minimum 5"
+            solution_sketch: 'Vertex $(-5, 5)$; opens upward.'
+          - problem: 'Convert $y = 3x^2 + 6x + 1$ to vertex form and give the vertex.'
+            answer: "y = 3(x + 1)^2 - 2; vertex (-1, -2)"
+            solution_sketch: '$3(x^2 + 2x) + 1 = 3((x+1)^2 - 1) + 1$.'
+        constraints: "conversion plus one interpretive question"
+    diagnostic_exemplar:
+      problem: 'Write $y = 2x^2 + 8x + 3$ in vertex form.'
+      answer: 'y = 2(x + 2)^2 - 5'
+      solution_sketch: '$2(x^2 + 4x) + 3 = 2((x + 2)^2 - 4) + 3$.'
+    anki_seeds:
+      - front: "To convert y = x^2 + bx + c to vertex form, ..."
+        back: "complete the square: y = (x + b/2)^2 + (c - (b/2)^2)"
+        type: basic
+
+  - id: quadratic-applications
+    name: Quadratic Word Problems
+    core: false                # supplemental applications capstone
+    difficulty: 0.75
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 240
+    prerequisites:
+      - id: quadratic-equations-factoring
+        weight: 0.6
+        key: true
+      - id: quadratic-formula
+        weight: 0.5
+        key: true
+      - id: quadratic-graphs-vertex
+        weight: 0.4
+      - id: multi-step-equations
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Area and consecutive-integer models
+        key_prerequisites: [quadratic-equations-factoring]
+        exemplars:
+          - problem: 'A rectangle''s length is $3$ more than its width and its area is $40$. Find the width.'
+            answer: "5"
+            solution_sketch: '$w(w+3) = 40$; $w^2 + 3w - 40 = 0$; $(w+8)(w-5) = 0$; $w = 5$.'
+          - problem: 'The product of two consecutive positive integers is $56$. Find them.'
+            answer: "7 and 8"
+        constraints: 'area or consecutive-integer setups; the quadratic factors over the integers; discard the negative root'
+      - id: kp2
+        name: Projectile height and maximum-value problems
+        key_prerequisites: [quadratic-graphs-vertex]
+        exemplars:
+          - problem: 'A ball''s height in metres is $h = -5t^2 + 10t$. At what time $t > 0$ does it hit the ground ($h = 0$)?'
+            answer: "2 seconds"
+            solution_sketch: '$-5t(t-2) = 0$; $t = 2$.'
+          - problem: 'For $h = -5t^2 + 30t$ (metres), find the maximum height.'
+            answer: "45 m"
+        constraints: 'height models h = -5t^2 + bt with b a multiple of 5; answer the landing time or the maximum height, with units'
+    diagnostic_exemplar:
+      problem: 'A ball''s height in metres is $h = -5t^2 + 20t$. What is the maximum height it reaches?'
+      answer: "20 m"
+      solution_sketch: 'The maximum sits at the vertex $t = \frac{-b}{2a} = 2$, where $h = -20 + 40$.'
+    anki_seeds:
+      - front: "Rectangle-area setup when the length is k more than the width w:"
+        back: "w(w + k) = area; solve the quadratic and reject the negative root"
+        type: basic
+      - front: "For a projectile height model h(t): hitting the ground means ___, and the maximum height is at ___"
+        back: "h = 0; the vertex, t = −b/(2a)"
+        type: basic

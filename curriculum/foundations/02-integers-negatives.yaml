@@ -1,0 +1,1008 @@
+unit: integers-negatives
+course: foundations
+module: "Integers"
+topics:
+  - id: plotting-integers
+    name: Plotting and Reading Integers
+    core: true
+    difficulty: 0.1
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 45
+    prerequisites:
+      - id: place-value
+        weight: 0.5
+        key: true
+      - id: single-digit-addition
+        weight: 0.2
+    knowledge_points:
+      - id: kp1
+        name: Signed numbers describe direction from zero
+        key_prerequisites: [place-value]
+        exemplars:
+          - problem: 'The temperature is $5$ degrees below zero. What integer represents this temperature?'
+            answer: "-5"
+          - problem: 'A gain of $3$ metres is written $+3$. What integer represents a loss of $8$ metres?'
+            answer: "-8"
+        constraints: "real-world contexts (temperature, elevation, money); values from -20 to 20"
+      - id: kp2
+        name: Locate integers on the number line
+        key_prerequisites: [place-value]
+        exemplars:
+          - problem: 'What integer is $4$ units to the left of $0$ on the number line?'
+            answer: "-4"
+            solution_sketch: 'Left of $0$ is negative; $4$ units left is $-4$.'
+          - problem: 'Start at $0$ and move $6$ units to the right. What integer do you land on?'
+            answer: "6"
+        constraints: "integers from -10 to 10; moves start at 0"
+    diagnostic_exemplar:
+      problem: 'What integer is $7$ units to the left of $0$?'
+      answer: "-7"
+      solution_sketch: 'Left of zero is negative, so seven units left is $-7$.'
+    anki_seeds:
+      - front: "On a horizontal number line, negative integers lie to the ___ of zero."
+        back: "left"
+        type: basic
+
+  - id: opposites-of-integers
+    name: Opposites of Integers
+    core: true
+    difficulty: 0.12
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 45
+    prerequisites:
+      - id: plotting-integers
+        weight: 0.7
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: Opposite of an integer
+        key_prerequisites: [plotting-integers]
+        exemplars:
+          - problem: 'What is the opposite of $-7$?'
+            answer: "7"
+            solution_sketch: 'The opposite is the mirror image across $0$: same distance, other side.'
+          - problem: 'What is the opposite of $12$?'
+            answer: "-12"
+          - problem: 'What is the opposite of $0$?'
+            answer: "0"
+        constraints: "integers from -20 to 20; include 0 occasionally"
+      - id: kp2
+        name: Opposite of an opposite
+        key_prerequisites: [plotting-integers]
+        exemplars:
+          - problem: 'Compute $-(-4)$.'
+            answer: "4"
+            solution_sketch: 'The opposite of $-4$ is $4$.'
+          - problem: 'Compute $-(-(-9))$.'
+            answer: "-9"
+            solution_sketch: 'Each minus flips the sign: $-(-(-9)) = -(9) = -9$.'
+        constraints: "up to three nested opposites; integers from -12 to 12"
+    diagnostic_exemplar:
+      problem: 'Compute $-(-11)$.'
+      answer: "11"
+      solution_sketch: 'The opposite of the opposite is the number itself: $11$.'
+    anki_seeds:
+      - front: "The opposite of a number is the number ..."
+        back: "the same distance from 0 on the other side of the number line; -(-a) = a"
+        type: basic
+
+  - id: number-line-integers
+    name: Integers on the Number Line
+    core: true
+    difficulty: 0.15
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 40
+    prerequisites:
+      - id: plotting-integers
+        weight: 0.7
+        key: true
+      - id: opposites-of-integers
+        weight: 0.4
+      - id: place-value
+        weight: 0.3
+      - id: single-digit-addition
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Order and compare integers
+        key_prerequisites: [plotting-integers]
+        exemplars:
+          - problem: 'Which is greater, $-3$ or $-5$?'
+            answer: "-3"
+            solution_sketch: '$-3$ is to the right of $-5$ on the number line.'
+          - problem: 'Order from least to greatest: $2$, $-4$, $0$, $-1$.'
+            answer: "-4, -1, 0, 2"
+        constraints: "integers from -10 to 10"
+      - id: kp2
+        name: Distance between integers
+        key_prerequisites: [single-digit-addition]
+        exemplars:
+          - problem: 'How many units apart are $-2$ and $3$ on the number line?'
+            answer: "5"
+            solution_sketch: 'From $-2$ to $0$ is $2$, from $0$ to $3$ is $3$; total $5$.'
+          - problem: 'How many units apart are $-6$ and $-1$ on the number line?'
+            answer: "5"
+            solution_sketch: 'Count from $-6$ up to $-1$: $5$ units.'
+        constraints: "integers from -10 to 10"
+    diagnostic_exemplar:
+      problem: 'How many units apart are $-4$ and $3$ on the number line?'
+      answer: "7"
+      solution_sketch: '$4$ units up to $0$, then $3$ more: $7$.'
+    anki_seeds:
+      - front: "On a number line, a number to the right is always ___ than a number to its left."
+        back: "greater"
+        type: basic
+
+  - id: comparing-integers
+    name: Comparing Integers with Inequality Symbols
+    core: false                # comparison destination; number-line-integers stays core
+    difficulty: 0.18
+    drill: false
+    # Answers are bare relation symbols, true/false, and inequality chains — none of
+    # which the SymPy override can adjudicate; the tutor grades them.
+    answer_kind: multi-step
+    expected_time_secs: 45
+    prerequisites:
+      - id: number-line-integers
+        weight: 0.8
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: Write < or > between two integers
+        key_prerequisites: [number-line-integers]
+        exemplars:
+          - problem: 'Fill in $<$ or $>$: $-5 \;\square\; -2$.'
+            answer: "<"
+            solution_sketch: '$-5$ is left of $-2$, so $-5 < -2$.'
+          - problem: 'Fill in $<$ or $>$: $3 \;\square\; -7$.'
+            answer: ">"
+        constraints: "integers from -12 to 12; include negative-negative pairs"
+      - id: kp2
+        name: Judge and write inequality statements
+        key_prerequisites: [number-line-integers]
+        exemplars:
+          - problem: 'True or false: $-7 < -9$.'
+            answer: "false"
+            solution_sketch: '$-7$ is right of $-9$, so $-7 > -9$.'
+          - problem: 'Write $3$, $-1$, $-4$ as a chain from least to greatest using $<$.'
+            answer: "-4 < -1 < 3"
+        constraints: "true/false judgments and chains of up to three integers"
+    diagnostic_exemplar:
+      problem: 'Write $5$, $-2$, $-9$ as a chain from least to greatest using $<$.'
+      answer: '-9 < -2 < 5'
+      solution_sketch: 'On the number line $-9$ is furthest left and $5$ furthest right.'
+    anki_seeds:
+      - front: "The inequality symbol always opens toward the ___ number."
+        back: "greater"
+        type: basic
+
+  - id: absolute-value
+    name: Absolute Value
+    core: true
+    difficulty: 0.15
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 35
+    prerequisites:
+      - id: number-line-integers
+        weight: 0.7
+        key: true
+      - id: opposites-of-integers
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: Absolute value of an integer
+        key_prerequisites: [number-line-integers]
+        exemplars:
+          - problem: 'Compute $|-6|$.'
+            answer: "6"
+          - problem: 'Compute $|9|$.'
+            answer: "9"
+        constraints: "integers from -20 to 20"
+      - id: kp2
+        name: Absolute value in expressions
+        key_prerequisites: [number-line-integers]
+        exemplars:
+          - problem: 'Compute $|-4| + |3|$.'
+            answer: "7"
+          - problem: 'Compute $|-10| - |-4|$.'
+            answer: "6"
+        constraints: "sum or difference of two absolute values"
+    diagnostic_exemplar:
+      problem: 'Compute $|-9| - |5|$.'
+      answer: "4"
+      solution_sketch: 'Take each absolute value first: $9 - 5 = 4$.'
+    anki_seeds:
+      - front: "The absolute value of a number is..."
+        back: "its distance from 0 on the number line (always 0 or positive)"
+        type: basic
+
+  - id: adding-integers
+    name: Adding Integers
+    core: true
+    difficulty: 0.18
+    drill: true
+    answer_kind: numeric
+    expected_time_secs: 45
+    prerequisites:
+      - id: number-line-integers
+        weight: 0.6
+        key: true
+      - id: absolute-value
+        weight: 0.5
+        key: true
+      - id: multi-digit-addition-subtraction
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Adding integers with the same sign
+        key_prerequisites: [absolute-value]
+        exemplars:
+          - problem: 'Compute $-3 + (-5)$.'
+            answer: "-8"
+            solution_sketch: "Same signs: add absolute values, keep the sign."
+          - problem: 'Compute $-7 + (-2)$.'
+            answer: "-9"
+        constraints: "integers from -12 to 12; both addends negative or both positive"
+      - id: kp2
+        name: Adding integers with different signs
+        key_prerequisites: [absolute-value]
+        exemplars:
+          - problem: 'Compute $-7 + 4$.'
+            answer: "-3"
+            solution_sketch: 'Different signs: $7 - 4 = 3$, keep sign of the larger absolute value (-).'
+          - problem: 'Compute $9 + (-4)$.'
+            answer: "5"
+        constraints: "integers from -12 to 12; one positive, one negative addend"
+      - id: kp3
+        name: Additive inverses and zero sums
+        key_prerequisites: [number-line-integers]
+        exemplars:
+          - problem: 'Compute $-6 + 6$.'
+            answer: "0"
+            solution_sketch: 'Opposites sum to $0$.'
+          - problem: 'Compute $-8 + 3 + 5$.'
+            answer: "0"
+            solution_sketch: '$-8 + 3 = -5$; $-5 + 5 = 0$.'
+        constraints: "sums that cancel to 0; up to three addends from -12 to 12"
+    diagnostic_exemplar:
+      problem: 'Compute $-6 + (-5) + 8$.'
+      answer: '-3'
+      solution_sketch: '$-6 + (-5) = -11$; then $-11 + 8 = -3$.'
+    anki_seeds:
+      - front: "To add two numbers with different signs, subtract the smaller absolute value from the larger and..."
+        back: "keep the sign of the number with the larger absolute value"
+        type: basic
+      - front: "The sum of a number and its opposite is..."
+        back: "0"
+        type: basic
+
+  - id: subtracting-integers
+    name: Subtracting Integers
+    core: true
+    difficulty: 0.22
+    drill: true
+    answer_kind: numeric
+    expected_time_secs: 45
+    prerequisites:
+      - id: adding-integers
+        weight: 0.8
+        key: true
+      - id: opposites-of-integers
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: Rewrite subtraction as adding the opposite
+        key_prerequisites: [adding-integers]
+        exemplars:
+          - problem: 'Compute $3 - 8$.'
+            answer: "-5"
+            solution_sketch: '$3 + (-8) = -5$.'
+          - problem: 'Compute $-2 - 6$.'
+            answer: "-8"
+            solution_sketch: '$-2 + (-6) = -8$.'
+        constraints: "integers from -12 to 12; subtrahend positive"
+      - id: kp2
+        name: Subtracting a negative
+        key_prerequisites: [opposites-of-integers]
+        exemplars:
+          - problem: 'Compute $5 - (-3)$.'
+            answer: "8"
+            solution_sketch: 'Subtracting $-3$ is the same as adding $3$.'
+          - problem: 'Compute $-4 - (-9)$.'
+            answer: "5"
+            solution_sketch: '$-4 + 9 = 5$.'
+        constraints: "integers from -12 to 12; subtrahend negative"
+    diagnostic_exemplar:
+      problem: 'Compute $-6 - (-2)$.'
+      answer: "-4"
+      solution_sketch: '$-6 + 2 = -4$.'
+    anki_seeds:
+      - front: "Subtracting a negative number is the same as..."
+        back: "adding its positive: a - (-b) = a + b"
+        type: basic
+
+  - id: integer-addition-subtraction
+    name: Adding and Subtracting Integers
+    core: true
+    difficulty: 0.25
+    drill: true
+    answer_kind: numeric
+    expected_time_secs: 40
+    prerequisites:
+      - id: adding-integers
+        weight: 0.8
+        key: true
+      - id: subtracting-integers
+        weight: 0.8
+        key: true
+      - id: multi-digit-addition-subtraction
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: Mixed two-term sums and differences
+        key_prerequisites: [adding-integers, subtracting-integers]
+        exemplars:
+          - problem: 'Compute $4 - 9$.'
+            answer: "-5"
+          - problem: 'Compute $-3 - (-7)$.'
+            answer: "4"
+            solution_sketch: '$-3 + 7 = 4$.'
+        constraints: "integers from -12 to 12; mix all four sign cases"
+      - id: kp2
+        name: Chains of three or more terms
+        key_prerequisites: [adding-integers, subtracting-integers]
+        exemplars:
+          - problem: 'Compute $-2 + 5 - (-4) - 7$.'
+            answer: "0"
+            solution_sketch: '$-2 + 5 = 3$; $3 + 4 = 7$; $7 - 7 = 0$.'
+          - problem: 'Compute $10 - 15 + (-3)$.'
+            answer: "-8"
+        constraints: "three or four terms; integers from -15 to 15"
+      - id: kp3
+        name: Missing terms in signed sums
+        key_prerequisites: [adding-integers, subtracting-integers]
+        exemplars:
+          - problem: 'What number makes $\square + (-4) = 3$ true?'
+            answer: "7"
+            solution_sketch: 'Need $4$ more than $3$ after losing $4$: $7 + (-4) = 3$.'
+          - problem: 'What number makes $-5 - \square = -9$ true?'
+            answer: "4"
+            solution_sketch: '$-5 - 4 = -9$.'
+        constraints: "one missing term; integers from -12 to 12"
+    diagnostic_exemplar:
+      problem: 'What number makes $-5 + \square - (-3) = 4$ true?'
+      answer: '6'
+      solution_sketch: 'The left side is $\square - 2$, so $\square = 6$.'
+    anki_seeds:
+      - front: "To simplify a long chain of integer additions and subtractions, first rewrite every subtraction as..."
+        back: "addition of the opposite, then add left to right"
+        type: basic
+
+  - id: multiplying-integers
+    name: Multiplying Integers
+    core: true
+    difficulty: 0.2
+    drill: true
+    answer_kind: numeric
+    expected_time_secs: 45
+    prerequisites:
+      - id: multiplication-tables
+        weight: 0.6
+        key: true
+      - id: adding-integers
+        weight: 0.4
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: Products with one negative factor
+        key_prerequisites: [multiplication-tables, adding-integers]
+        exemplars:
+          - problem: 'Compute $-4 \times 3$.'
+            answer: "-12"
+            solution_sketch: 'Three groups of $-4$: $-4 + (-4) + (-4) = -12$.'
+          - problem: 'Compute $7 \times (-6)$.'
+            answer: "-42"
+        constraints: "factors from -12 to 12; exactly one negative factor"
+      - id: kp2
+        name: Products with two negative factors
+        key_prerequisites: [multiplication-tables]
+        exemplars:
+          - problem: 'Compute $-6 \times (-5)$.'
+            answer: "30"
+            solution_sketch: "Two negatives make a positive."
+          - problem: 'Compute $(-8)(-4)$.'
+            answer: "32"
+        constraints: "factors from -12 to 12; both factors negative"
+    diagnostic_exemplar:
+      problem: 'Compute $-6 \times (-8)$.'
+      answer: "48"
+      solution_sketch: 'Two negative factors give a positive product: $6 \times 8 = 48$.'
+    anki_seeds:
+      - front: "The product of two negative numbers is..."
+        back: "positive"
+        type: basic
+      - front: "The product of a negative and a positive number is..."
+        back: "negative"
+        type: basic
+
+  - id: dividing-integers
+    name: Dividing Integers
+    core: true
+    difficulty: 0.22
+    drill: true
+    answer_kind: numeric
+    expected_time_secs: 45
+    prerequisites:
+      - id: multiplying-integers
+        weight: 0.7
+        key: true
+      - id: long-division
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: Quotients with one negative
+        key_prerequisites: [multiplying-integers]
+        exemplars:
+          - problem: 'Compute $-20 \div 4$.'
+            answer: "-5"
+            solution_sketch: 'Since $-5 \times 4 = -20$, the quotient is $-5$.'
+          - problem: 'Compute $35 \div (-7)$.'
+            answer: "-5"
+        constraints: "divides evenly; values from -60 to 60; exactly one negative"
+      - id: kp2
+        name: Quotients with two negatives
+        key_prerequisites: [multiplying-integers]
+        exemplars:
+          - problem: 'Compute $-18 \div (-3)$.'
+            answer: "6"
+          - problem: 'Compute $-48 \div (-6)$.'
+            answer: "8"
+        constraints: "divides evenly; values from -60 to 60; both negative"
+    diagnostic_exemplar:
+      problem: 'Compute $-54 \div (-9)$.'
+      answer: "6"
+      solution_sketch: 'Two negatives give a positive quotient: $54 \div 9 = 6$.'
+    anki_seeds:
+      - front: "Division follows the same sign rules as..."
+        back: "multiplication (same signs give positive, different signs give negative)"
+        type: basic
+
+  - id: integer-multiplication-division
+    name: Multiplying and Dividing Integers
+    core: true
+    difficulty: 0.25
+    drill: true                # L4 audit: single-fact sign arithmetic, same class as its drill siblings
+    answer_kind: numeric
+    expected_time_secs: 45
+    prerequisites:
+      - id: multiplying-integers
+        weight: 0.8
+        key: true
+      - id: dividing-integers
+        weight: 0.8
+        key: true
+      - id: integer-addition-subtraction
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Products of several signed factors
+        key_prerequisites: [multiplying-integers]
+        exemplars:
+          - problem: 'Compute $-2 \times 3 \times -4$.'
+            answer: "24"
+            solution_sketch: '$-2 \times 3 = -6$, then $-6 \times -4 = 24$.'
+          - problem: 'Compute $(-1)(-2)(-3)$.'
+            answer: "-6"
+            solution_sketch: 'Three negative factors: the product is negative.'
+        constraints: "three factors; values from -12 to 12"
+      - id: kp2
+        name: Mixed multiplication and division chains
+        key_prerequisites: [multiplying-integers, dividing-integers]
+        exemplars:
+          - problem: 'Compute $-36 \div -6 \times 2$.'
+            answer: "12"
+            solution_sketch: '$-36 \div -6 = 6$; $6 \times 2 = 12$.'
+          - problem: 'Compute $54 \div (-9) \times (-2)$.'
+            answer: "12"
+            solution_sketch: '$54 \div (-9) = -6$; $-6 \times (-2) = 12$.'
+        constraints: "left-to-right chains of two operations; exact quotients"
+      - id: kp3
+        name: Sign from the count of negative factors
+        key_prerequisites: [multiplying-integers]
+        exemplars:
+          - problem: 'Is the product of five negative numbers positive or negative?'
+            answer: "negative"
+            solution_sketch: 'An odd count of negative factors gives a negative product.'
+          - problem: 'Compute $(-2)(-2)(-2)(-2)$.'
+            answer: "16"
+            solution_sketch: 'Four negative factors: positive; $2^4 = 16$.'
+        constraints: "three to five factors; reason from parity of negatives"
+    diagnostic_exemplar:
+      problem: 'Compute $(-2)(-3)(-4) \div 6$.'
+      answer: '-4'
+      solution_sketch: 'Three negative factors give a negative product, $-24$; then $-24 \div 6 = -4$.'
+    anki_seeds:
+      - front: "A product is negative exactly when it has ..."
+        back: "an odd number of negative factors"
+        type: basic
+
+  - id: integer-order-of-operations
+    name: Order of Operations with Integers
+    core: true
+    difficulty: 0.28
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 60
+    prerequisites:
+      - id: integer-addition-subtraction
+        weight: 0.6
+        key: true
+      - id: integer-multiplication-division
+        weight: 0.6
+        key: true
+      - id: order-of-operations
+        weight: 0.6
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: Mixed operations without parentheses
+        key_prerequisites: [order-of-operations, integer-multiplication-division]
+        exemplars:
+          - problem: 'Compute $-3 + 4 \times (-2)$.'
+            answer: "-11"
+            solution_sketch: 'Multiply first: $-3 + (-8) = -11$.'
+          - problem: 'Compute $10 - 12 \div (-4)$.'
+            answer: "13"
+            solution_sketch: '$12 \div (-4) = -3$; $10 - (-3) = 13$.'
+        constraints: "one multiplication or division plus one addition or subtraction; values from -12 to 12"
+      - id: kp2
+        name: Parentheses with signed numbers
+        key_prerequisites: [order-of-operations, integer-addition-subtraction]
+        exemplars:
+          - problem: 'Compute $(-3 + 7) \times (-2)$.'
+            answer: "-8"
+            solution_sketch: 'Inside first: $4 \times (-2) = -8$.'
+          - problem: 'Compute $-2(5 - 9)$.'
+            answer: "8"
+            solution_sketch: '$5 - 9 = -4$; $-2 \times (-4) = 8$.'
+        constraints: "one set of parentheses; values from -12 to 12"
+      - id: kp3
+        name: Absolute value bars as grouping
+        key_prerequisites: [integer-addition-subtraction, integer-multiplication-division]
+        exemplars:
+          - problem: 'Compute $3|-4| - 10$.'
+            answer: "2"
+            solution_sketch: '$|-4| = 4$; $3 \times 4 - 10 = 2$.'
+          - problem: 'Compute $|2 - 9| + (-3)$.'
+            answer: "4"
+            solution_sketch: '$|{-7}| = 7$; $7 + (-3) = 4$.'
+        constraints: "absolute value evaluated before outside operations"
+    diagnostic_exemplar:
+      problem: 'Compute $2|3 - 8| - 12$.'
+      answer: '-2'
+      solution_sketch: '$|3 - 8| = 5$; $2 \times 5 = 10$; $10 - 12 = -2$.'
+    anki_seeds:
+      - front: "Absolute value bars act like ___ in the order of operations."
+        back: "parentheses (evaluate inside them first)"
+        type: basic
+
+  - id: ordering-rational-numbers
+    name: Ordering Negative Fractions and Decimals
+    core: false                # comparison destination; the number line stays core
+    difficulty: 0.3
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 75
+    prerequisites:
+      - id: comparing-integers
+        weight: 0.6
+        key: true
+      - id: fraction-decimal-conversion
+        weight: 0.6
+        key: true
+      - id: number-line-integers
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Compare two negative rationals
+        key_prerequisites: [comparing-integers, fraction-decimal-conversion]
+        exemplars:
+          - problem: 'Which is greater, $-0.4$ or $-0.6$?'
+            answer: "-0.4"
+            solution_sketch: '$-0.4$ is to the right of $-0.6$ on the number line.'
+          - problem: 'Which is greater, $-\frac{1}{2}$ or $-\frac{1}{3}$?'
+            answer: "-1/3"
+            solution_sketch: '$-\frac{1}{3} \approx -0.33$ is to the right of $-0.5$.'
+        constraints: "denominators up to 10; one decimal place; both values negative"
+      - id: kp2
+        name: Order a mixed list of rationals
+        key_prerequisites: [comparing-integers, fraction-decimal-conversion]
+        exemplars:
+          - problem: 'Order from least to greatest: $-1.5$, $-\frac{3}{4}$, $0.2$, $-2$.'
+            answer: "-2, -1.5, -3/4, 0.2"
+            solution_sketch: 'Convert to decimals: $-2 < -1.5 < -0.75 < 0.2$.'
+          - problem: 'Order from least to greatest: $\frac{1}{2}$, $-\frac{1}{4}$, $-0.3$.'
+            answer: "-0.3, -1/4, 1/2"
+            solution_sketch: '$-0.3 < -0.25 < 0.5$.'
+        constraints: "three or four values mixing fractions and decimals; denominators up to 10"
+    diagnostic_exemplar:
+      problem: 'Order from least to greatest: $-0.5$, $-\frac{2}{3}$, $0.25$.'
+      answer: '-2/3, -0.5, 0.25'
+      solution_sketch: '$-\frac{2}{3} \approx -0.67$, which is less than $-0.5$.'
+    anki_seeds:
+      - front: "To compare a negative fraction and a negative decimal, first..."
+        back: "convert them to the same form (usually both to decimals), then the one farther right on the number line is greater"
+        type: basic
+
+  - id: signed-decimal-operations
+    name: Operations with Signed Decimals
+    core: true
+    difficulty: 0.3
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 70
+    prerequisites:
+      - id: integer-addition-subtraction
+        weight: 0.6
+        key: true
+      - id: integer-multiplication-division
+        weight: 0.5
+        key: true
+      - id: decimal-operations
+        weight: 0.6
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: Adding and subtracting signed decimals
+        key_prerequisites: [integer-addition-subtraction, decimal-operations]
+        exemplars:
+          - problem: 'Compute $-2.5 + 1.5$.'
+            answer: "-1"
+          - problem: 'Compute $-3.2 - 1.8$.'
+            answer: "-5"
+            solution_sketch: 'Same signs: $-(3.2 + 1.8) = -5$.'
+          - problem: 'Compute $4.3 - 7.5$.'
+            answer: "-3.2"
+        constraints: "1 decimal place; values from -10 to 10"
+      - id: kp2
+        name: Multiplying and dividing signed decimals
+        key_prerequisites: [integer-multiplication-division, decimal-operations]
+        exemplars:
+          - problem: 'Compute $-0.5 \times 6$.'
+            answer: "-3"
+          - problem: 'Compute $-4.2 \div (-0.7)$.'
+            answer: "6"
+            solution_sketch: 'Same signs give positive; $4.2 \div 0.7 = 6$.'
+        constraints: "1 decimal place; exact quotients; values from -10 to 10"
+    diagnostic_exemplar:
+      problem: 'Compute $-3.6 \div (-0.9)$.'
+      answer: "4"
+      solution_sketch: 'The signs cancel; scale both by $10$: $36 \div 9 = 4$.'
+    anki_seeds:
+      - front: "Integer sign rules apply to decimal arithmetic..."
+        back: "unchanged; only the place-value bookkeeping differs"
+        type: basic
+
+  - id: adding-subtracting-negative-fractions
+    name: Adding and Subtracting Negative Fractions
+    core: true
+    difficulty: 0.32
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 80
+    prerequisites:
+      - id: adding-subtracting-fractions
+        weight: 0.7
+        key: true
+      - id: integer-addition-subtraction
+        weight: 0.6
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: Signed fractions where one denominator divides the other
+        key_prerequisites: [adding-subtracting-fractions, integer-addition-subtraction]
+        exemplars:
+          - problem: 'Compute $-\frac{1}{2} + \frac{1}{4}$.'
+            answer: "-1/4"
+            solution_sketch: '$-\frac{2}{4} + \frac{1}{4} = -\frac{1}{4}$.'
+          - problem: 'Compute $-\frac{2}{3} - \frac{1}{6}$.'
+            answer: "-5/6"
+            solution_sketch: '$-\frac{4}{6} - \frac{1}{6} = -\frac{5}{6}$.'
+        constraints: "one denominator divides the other; denominators up to 12"
+      - id: kp2
+        name: Signed fractions needing an LCD
+        key_prerequisites: [adding-subtracting-fractions, integer-addition-subtraction]
+        exemplars:
+          - problem: 'Compute $\frac{5}{6} - \frac{4}{3}$.'
+            answer: "-1/2"
+            solution_sketch: '$\frac{5}{6} - \frac{8}{6} = -\frac{3}{6} = -\frac{1}{2}$.'
+          - problem: 'Compute $-\frac{3}{4} + \frac{1}{6}$.'
+            answer: "-7/12"
+            solution_sketch: '$-\frac{9}{12} + \frac{2}{12} = -\frac{7}{12}$.'
+        constraints: "denominators up to 12; answers in lowest terms"
+    diagnostic_exemplar:
+      problem: 'Compute $-\frac{2}{3} + \frac{1}{4}$.'
+      answer: "-5/12"
+      solution_sketch: 'LCD $12$: $-\frac{8}{12} + \frac{3}{12} = -\frac{5}{12}$.'
+    anki_seeds:
+      - front: "The sign rules for adding fractions are..."
+        back: "the same as for integers; the fraction work only changes how you find the absolute values"
+        type: basic
+
+  - id: negative-fractions-decimals
+    name: Negative Fractions and Decimals
+    core: true
+    difficulty: 0.35
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 85
+    prerequisites:
+      - id: adding-subtracting-negative-fractions
+        weight: 0.7
+        key: true
+      - id: signed-decimal-operations
+        weight: 0.6
+        key: true
+      - id: multiplying-fractions
+        weight: 0.4
+      - id: dividing-fractions
+        weight: 0.3
+      - id: mixed-numbers
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Multiplying and dividing negative fractions
+        key_prerequisites: [multiplying-fractions, dividing-fractions]
+        exemplars:
+          - problem: 'Compute $-\frac{2}{3} \times \frac{3}{4}$.'
+            answer: "-1/2"
+            solution_sketch: 'Negative $\times$ positive is negative; $\frac{6}{12} = \frac{1}{2}$.'
+          - problem: 'Compute $-\frac{1}{2} \div \frac{1}{4}$.'
+            answer: "-2"
+          - problem: 'Compute $-\frac{5}{6} \times \left(-\frac{3}{10}\right)$.'
+            answer: "1/4"
+            solution_sketch: 'Two negatives: positive; $\frac{15}{60} = \frac{1}{4}$.'
+        constraints: "denominators up to 12; answers in lowest terms"
+      - id: kp2
+        name: Mixed fraction-decimal expressions
+        key_prerequisites: [adding-subtracting-negative-fractions, signed-decimal-operations]
+        exemplars:
+          - problem: 'Compute $-0.5 + \left(-\frac{1}{4}\right)$. Give the answer as a fraction.'
+            answer: "-3/4"
+            solution_sketch: '$-\frac{1}{2} - \frac{1}{4} = -\frac{3}{4}$.'
+          - problem: 'Compute $-\frac{3}{5} \times 0.5$. Give the answer as a fraction.'
+            answer: "-3/10"
+            solution_sketch: '$0.5 = \frac{1}{2}$; $-\frac{3}{5} \times \frac{1}{2} = -\frac{3}{10}$.'
+        constraints: "convert to one form first; denominators up to 10"
+      - id: kp3
+        name: Signed mixed numbers
+        key_prerequisites: [mixed-numbers, adding-subtracting-negative-fractions]
+        exemplars:
+          - problem: 'Compute $-1\frac{1}{2} + 2\frac{1}{4}$.'
+            answer: "3/4"
+            solution_sketch: '$-\frac{6}{4} + \frac{9}{4} = \frac{3}{4}$.'
+          - problem: 'Compute $-2\frac{1}{3} - 1\frac{1}{6}$.'
+            answer: "-7/2"
+            solution_sketch: '$-\frac{14}{6} - \frac{7}{6} = -\frac{21}{6} = -\frac{7}{2}$.'
+        constraints: "convert to improper fractions first; denominators up to 12"
+    diagnostic_exemplar:
+      problem: 'Compute $-1\frac{1}{2} \times 0.4$. Give the answer as a fraction.'
+      answer: '-3/5'
+      solution_sketch: '$-\frac{3}{2} \times \frac{2}{5} = -\frac{6}{10} = -\frac{3}{5}$.'
+    anki_seeds:
+      - front: "The sign rules for multiplication and division apply to fractions and decimals..."
+        back: "exactly as they do to integers"
+        type: basic
+
+  - id: exponent-notation
+    name: Exponent Notation
+    core: true
+    difficulty: 0.22
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 50
+    prerequisites:
+      - id: multiplication-tables
+        weight: 0.7
+        key: true
+      - id: multi-digit-multiplication
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Read and write powers
+        key_prerequisites: [multiplication-tables]
+        exemplars:
+          - problem: 'Write $4 \times 4 \times 4$ in exponent form.'
+            answer: "4^3"
+          - problem: 'Compute $2^3$.'
+            answer: "8"
+            solution_sketch: '$2 \times 2 \times 2 = 8$.'
+        constraints: "base 2-6, exponent 2-4"
+      - id: kp2
+        name: Evaluate small powers
+        key_prerequisites: [multiplication-tables]
+        exemplars:
+          - problem: 'Compute $5^2$.'
+            answer: "25"
+          - problem: 'Compute $3^3$.'
+            answer: "27"
+          - problem: 'Compute $10^4$.'
+            answer: "10000"
+            solution_sketch: 'Each factor of $10$ appends a zero: $10{,}000$.'
+        constraints: "base 2-10, exponent 2-4; products at most 10000"
+    diagnostic_exemplar:
+      problem: 'Compute $6^2$.'
+      answer: "36"
+      solution_sketch: '$6^2$ means $6 \times 6 = 36$ — not $6 \times 2$.'
+    anki_seeds:
+      - front: "The expression a^n means..."
+        back: "the product of n factors of a"
+        type: basic
+
+  - id: integer-exponents-intro
+    name: Introduction to Integer Exponents
+    core: true
+    difficulty: 0.3
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 55
+    prerequisites:
+      - id: exponent-notation
+        weight: 0.7
+        key: true
+      - id: integer-multiplication-division
+        weight: 0.7
+        key: true
+      - id: order-of-operations
+        weight: 0.4
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: Negative bases
+        key_prerequisites: [integer-multiplication-division, exponent-notation]
+        exemplars:
+          - problem: 'Compute $(-3)^2$.'
+            answer: "9"
+            solution_sketch: '$(-3) \times (-3) = 9$.'
+          - problem: 'Compute $(-2)^3$.'
+            answer: "-8"
+            solution_sketch: '$(-2) \times (-2) \times (-2) = -8$; an odd number of negatives is negative.'
+        constraints: "base -4 to -2, exponent 2-4; base in parentheses"
+      - id: kp2
+        name: Distinguish -a^n from (-a)^n
+        key_prerequisites: [order-of-operations, integer-multiplication-division]
+        exemplars:
+          - problem: 'Compute $-2^4$.'
+            answer: "-16"
+            solution_sketch: 'Without parentheses the exponent binds first: $-(2^4) = -16$.'
+          - problem: 'Compute $(-2)^4$.'
+            answer: "16"
+            solution_sketch: 'The parentheses put the minus inside: four negative factors give a positive.'
+        constraints: "pair -a^n with (-a)^n; base 2-4, exponent 2-4"
+      - id: kp3
+        name: Exponents in the order of operations
+        key_prerequisites: [order-of-operations, exponent-notation]
+        exemplars:
+          - problem: 'Compute $2^3 + 3^2$.'
+            answer: "17"
+            solution_sketch: '$8 + 9 = 17$.'
+          - problem: 'Compute $(5 - 8)^2$.'
+            answer: "9"
+            solution_sketch: 'Inside first: $(-3)^2 = 9$.'
+          - problem: 'Compute $2 \times (-3)^2$.'
+            answer: "18"
+            solution_sketch: 'Exponent before multiplication: $2 \times 9 = 18$.'
+        constraints: "exponents mixed with one or two other operations"
+    diagnostic_exemplar:
+      problem: 'Compute $(-2)^4 + (-2^3)$.'
+      answer: '8'
+      solution_sketch: '$(-2)^4 = 16$ and $-2^3 = -8$, so $16 - 8 = 8$.'
+    anki_seeds:
+      - front: "Difference between (-a)^2 and -a^2:"
+        back: "(-a)^2 is positive (the minus is inside); -a^2 is negative (the exponent applies before the minus sign)"
+        type: basic
+
+  - id: temperature-elevation-problems
+    name: Temperature and Elevation Problems
+    # over-coverage: thermometer/elevation dressing on adding-integers +
+    # subtracting-integers; its only dependent is already supplemental
+    core: false
+    difficulty: 0.3
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 90
+    prerequisites:
+      - id: adding-integers
+        weight: 0.6
+        key: true
+      - id: subtracting-integers
+        weight: 0.6
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: Apply a single signed change
+        key_prerequisites: [adding-integers]
+        exemplars:
+          - problem: 'The temperature was $-4\text{ C}$ and rose $9\text{ C}$. What is the new temperature in C?'
+            answer: "5"
+            solution_sketch: '$-4 + 9 = 5$.'
+          - problem: 'A diver at $-30\text{ m}$ descends another $15\text{ m}$. What is the new depth in meters?'
+            answer: "-45"
+            solution_sketch: '$-30 - 15 = -45$.'
+        constraints: "single-step signed addition/subtraction; values from -60 to 60"
+      - id: kp2
+        name: Find the change or gap between two levels
+        key_prerequisites: [subtracting-integers]
+        exemplars:
+          - problem: 'The temperature rose from $-8\text{ C}$ to $6\text{ C}$. By how many degrees did it rise?'
+            answer: "14"
+            solution_sketch: '$6 - (-8) = 14$.'
+          - problem: 'A plane flies at $2400\text{ m}$ while a submarine sits at $-60\text{ m}$. What is the vertical distance between them in meters?'
+            answer: "2460"
+            solution_sketch: '$2400 - (-60) = 2460$.'
+        constraints: "difference of two signed levels; subtract end minus start"
+    diagnostic_exemplar:
+      problem: 'A hiker stands at $350$ m while a cave explorer is at $-40$ m. What is the vertical distance between them in metres?'
+      answer: '390'
+      solution_sketch: '$350 - (-40) = 390$.'
+    anki_seeds:
+      - front: "To find how much a quantity changed, compute..."
+        back: "final value minus initial value (works even when either is negative)"
+        type: basic
+
+  - id: integer-word-problems
+    name: Integer Word Problems
+    core: false                # enrichment / applications leaf topic
+    difficulty: 0.35
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 120
+    prerequisites:
+      - id: temperature-elevation-problems
+        weight: 0.6
+        key: true
+      - id: integer-addition-subtraction
+        weight: 0.6
+        key: true
+      - id: integer-multiplication-division
+        weight: 0.5
+      - id: absolute-value
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Net change over multiple steps
+        key_prerequisites: [integer-addition-subtraction]
+        exemplars:
+          - problem: 'An account has €50, then an €80 withdrawal is made. What is the balance in euros?'
+            answer: "-30"
+            solution_sketch: '$50 - 80 = -30$.'
+          - problem: 'A team gains $7$ metres, loses $12$, then gains $5$. What is the net gain in metres?'
+            answer: "0"
+            solution_sketch: '$7 - 12 + 5 = 0$.'
+        constraints: "two or three signed steps"
+      - id: kp2
+        name: Repeated signed changes
+        key_prerequisites: [integer-multiplication-division, integer-addition-subtraction]
+        exemplars:
+          - problem: 'A player starts with $10$ points and loses $4$ points on each of $3$ turns. What is the final score?'
+            answer: "-2"
+            solution_sketch: '$10 + 3 \times (-4) = 10 - 12 = -2$.'
+          - problem: 'Starting at $4\text{ C}$, the temperature drops $3\text{ C}$ every hour for $5$ hours. What is the final temperature in C?'
+            answer: "-11"
+            solution_sketch: '$4 + 5 \times (-3) = 4 - 15 = -11$.'
+        constraints: "one multiplication of a signed rate by a count, plus a start value"
+    diagnostic_exemplar:
+      problem: 'Starting at $6\text{ C}$, the temperature drops $4\text{ C}$ every hour for $3$ hours. What is the final temperature in C?'
+      answer: '-6'
+      solution_sketch: '$6 + 3 \times (-4) = 6 - 12 = -6$.'
+    anki_seeds:
+      - front: "Setup for a start value with n repeated signed changes of size r:"
+        back: "final = start + n × r (r is negative for losses or drops)"
+        type: basic
+      - front: "In a signed word problem, gains/deposits/rises translate to ___ and losses/withdrawals/drops to ___"
+        back: "adding a positive number; adding a negative number (subtracting)"
+        type: basic

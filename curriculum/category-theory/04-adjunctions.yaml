@@ -1,0 +1,596 @@
+unit: adjunctions
+course: category-theory
+module: "Adjunctions"
+topics:
+  - id: hom-set-adjunction-definition
+    name: The Hom-Set Definition of an Adjunction
+    core: true
+    difficulty: 0.74
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 210
+    prerequisites:
+      - id: hom-functors
+        weight: 0.6
+        key: true
+      - id: natural-isomorphisms
+        weight: 0.4
+        key: true
+      - id: universal-properties
+        weight: 0.3
+      - id: functors
+        weight: 0.2
+      - id: product-categories
+        weight: 0.0
+    knowledge_points:
+      - id: kp1
+        name: Computing transposes
+        key_prerequisites: [universal-properties]
+        constraints: "Give the transpose in the standard $\\mathrm{Hom}(FC,D)\\cong\\mathrm{Hom}(C,GD)$ direction; either evaluate it on a stated element of a small explicit alphabet or monoid, or read it off from the relevant universal property."
+        exemplars:
+          - problem: "For $(-)^*\\dashv U$ with $M=(\\mathbb{N},+,0)$, let $f\\colon\\{x,y\\}\\to U M$ be $f(x)=2$, $f(y)=3$. Compute the adjunct homomorphism $\\bar f\\colon\\{x,y\\}^*\\to M$ on the words $xyx$ and $\\varepsilon$."
+            answer: "$\\bar f(xyx)=7$ and $\\bar f(\\varepsilon)=0$."
+            solution_sketch: "The inverse transpose sends $f$ to the unique homomorphism extending it on letters: $\\bar f(z_1\\cdots z_n)=f(z_1)+\\cdots+f(z_n)$, with the empty word going to the unit. So $\\bar f(xyx)=f(x)+f(y)+f(x)=2+3+2=7$ and $\\bar f(\\varepsilon)=0$. Transposing back restricts $\\bar f$ to one-letter words, recovering $f(x)=2$ and $f(y)=3$."
+          - problem: "For the adjunction $\\Delta\\dashv\\times$ between $\\mathcal{C}$ and $\\mathcal{C}\\times\\mathcal{C}$, compute the transpose of a morphism $(f,g)\\colon\\Delta X\\to(A,B)$."
+            answer: "$\\Phi(f,g)=\\langle f,g\\rangle\\colon X\\to A\\times B$."
+            solution_sketch: "A morphism $\\Delta X=(X,X)\\to(A,B)$ in $\\mathcal{C}\\times\\mathcal{C}$ is a pair $(f\\colon X\\to A,\\ g\\colon X\\to B)$. The product's universal property says such a pair corresponds to a unique morphism $\\langle f,g\\rangle\\colon X\\to A\\times B$ with $\\pi_1\\langle f,g\\rangle=f$ and $\\pi_2\\langle f,g\\rangle=g$. This correspondence is the hom-set bijection $\\mathrm{Hom}(\\Delta X,(A,B))\\cong\\mathrm{Hom}(X,A\\times B)$, so $\\Phi(f,g)=\\langle f,g\\rangle$ and $\\Phi^{-1}(u)=(\\pi_1 u,\\pi_2 u)$."
+      - id: kp2
+        name: Recognizing an adjunction from a familiar bijection
+        key_prerequisites: [natural-isomorphisms]
+        constraints: "Identify which functor is left and which is right, and state the bijection in the standard $\\mathrm{Hom}(FC,D)\\cong\\mathrm{Hom}(C,GD)$ form."
+        exemplars:
+          - problem: "Let $U\\colon\\mathbf{Preord}\\to\\mathbf{Set}$ forget the order, $D$ send a set to its discrete preorder ($x\\le y$ only when $x=y$) and $I$ send it to the indiscrete preorder ($x\\le y$ always). Read off two adjunctions from familiar bijections."
+            answer: "$\\mathrm{Hom}_{\\mathbf{Preord}}(DS,P)\\cong\\mathrm{Hom}_{\\mathbf{Set}}(S,UP)$ and $\\mathrm{Hom}_{\\mathbf{Set}}(UP,S)\\cong\\mathrm{Hom}_{\\mathbf{Preord}}(P,IS)$, i.e. $D\\dashv U\\dashv I$."
+            solution_sketch: "Every function out of a discrete preorder is monotone, since the only relation to preserve is $x\\le x$; so the underlying-function map $\\mathrm{Hom}_{\\mathbf{Preord}}(DS,P)\\to\\mathrm{Hom}_{\\mathbf{Set}}(S,UP)$ is a bijection, natural in $S$ and $P$. Matching it against $\\mathrm{Hom}_{\\mathcal D}(FC,D)\\cong\\mathrm{Hom}_{\\mathcal C}(C,GD)$ identifies $F=D$ as the left adjoint and $G=U$ as the right adjoint: $D\\dashv U$. Dually, every function into an indiscrete preorder is monotone, since $x\\le y$ holds unconditionally in $IS$; so $\\mathrm{Hom}_{\\mathbf{Preord}}(P,IS)\\cong\\mathrm{Hom}_{\\mathbf{Set}}(UP,S)$, which is the standard form with $F=U$ and $G=I$, giving $U\\dashv I$. Together $D\\dashv U\\dashv I$: forgetting structure sits between the freest and the coarsest way of adding it back."
+          - problem: "Let $i\\colon(\\mathbb{Z},\\le)\\to(\\mathbb{R},\\le)$ be the inclusion of posets. Show $i\\dashv\\lfloor-\\rfloor$ and $\\lceil-\\rceil\\dashv i$."
+            answer: "$i(n)\\le x\\iff n\\le\\lfloor x\\rfloor$ and $\\lceil x\\rceil\\le n\\iff x\\le i(n)$; naturality is automatic in posets."
+            solution_sketch: "In poset categories a hom-set has at most one element, so a hom-set bijection is exactly a biconditional and naturality is automatic. For $n\\in\\mathbb{Z}$ and $x\\in\\mathbb{R}$: $n\\le x$ iff $n\\le\\lfloor x\\rfloor$, because $\\lfloor x\\rfloor$ is the greatest integer $\\le x$. Matching $\\mathrm{Hom}(FC,D)\\cong\\mathrm{Hom}(C,GD)$ with $F=i$, $G=\\lfloor-\\rfloor$ gives $i\\dashv\\lfloor-\\rfloor$. Dually $\\lceil x\\rceil\\le n$ iff $x\\le n$, because $\\lceil x\\rceil$ is the least integer $\\ge x$, so $\\lceil-\\rceil\\dashv i$. Together: $\\lceil-\\rceil\\dashv i\\dashv\\lfloor-\\rfloor$."
+      - id: kp3
+        name: The data and the two naturality conditions
+        key_prerequisites: [hom-functors]
+        constraints: "Always give the direction of the bijection and check naturality in each variable separately."
+        exemplars:
+          - problem: "State the hom-set definition of an adjunction $F\\dashv G$ and the naturality it requires."
+            answer: "Functors $F\\colon\\mathcal C\\to\\mathcal D$, $G\\colon\\mathcal D\\to\\mathcal C$ with $\\mathrm{Hom}_{\\mathcal D}(FC,D)\\cong\\mathrm{Hom}_{\\mathcal C}(C,GD)$ natural in $C$ and $D$."
+            solution_sketch: "$F\\dashv G$ ($F$ left adjoint to $G$) consists of $F\\colon\\mathcal C\\to\\mathcal D$, $G\\colon\\mathcal D\\to\\mathcal C$ and bijections $\\Phi_{C,D}\\colon\\mathrm{Hom}_{\\mathcal D}(FC,D)\\xrightarrow{\\cong}\\mathrm{Hom}_{\\mathcal C}(C,GD)$ natural in both variables: for $c\\colon C'\\to C$, $d\\colon D\\to D'$, $\\Phi(d\\circ h\\circ Fc)=Gd\\circ\\Phi(h)\\circ c$. Equivalently $\\Phi$ is a natural isomorphism of the two bifunctors $\\mathcal C^{op}\\times\\mathcal D\\to\\mathbf{Set}$."
+          - problem: "Spell out what naturality of $\\Phi$ in the variable $C$ asserts, and verify it for the free-monoid adjunction $(-)^*\\dashv U$."
+            answer: "$\\Phi(h\\circ Fc)=\\Phi(h)\\circ c$; for free monoids both sides restrict $h$ to letters after relabelling by $c$."
+            solution_sketch: "Naturality in $C$ says that for $c\\colon C'\\to C$ and $h\\colon FC\\to D$ we have $\\Phi_{C',D}(h\\circ Fc)=\\Phi_{C,D}(h)\\circ c$. For $F=(-)^*$, $G=U$ and $\\Phi(h)=Uh\\circ\\eta$ (restriction of a homomorphism to one-letter words), take a letter $x'\\in C'$. The left side gives $(h\\circ c^*)(x')=h(c(x'))$, since $c^*$ acts letterwise. The right side gives $\\Phi(h)(c(x'))=h(c(x'))$. They agree on every letter, hence as functions $C'\\to UD$, so $\\Phi$ is natural in $C$."
+    diagnostic_exemplar:
+      problem: "Let $i\\colon(\\mathbb{Z},\\le)\\to(\\mathbb{R},\\le)$ be the inclusion of posets. Prove that $i\\dashv\\lfloor-\\rfloor$, stating the bijection in the standard $\\mathrm{Hom}(FC,D)\\cong\\mathrm{Hom}(C,GD)$ form and saying why naturality is automatic."
+      answer: "For $n\\in\\mathbb{Z}$ and $x\\in\\mathbb{R}$: $i(n)\\le x\\iff n\\le\\lfloor x\\rfloor$, because $\\lfloor x\\rfloor$ is the greatest integer $\\le x$ (if $n\\le x$ then $n\\le\\lfloor x\\rfloor$; conversely $n\\le\\lfloor x\\rfloor\\le x$). In poset categories hom-sets have at most one element, so this biconditional IS the hom-set bijection $\\mathrm{Hom}_{\\mathbb R}(i(n),x)\\cong\\mathrm{Hom}_{\\mathbb Z}(n,\\lfloor x\\rfloor)$, matching the standard form with $F=i$ (left adjoint) and $G=\\lfloor-\\rfloor$ (right adjoint); naturality is automatic since parallel maps of thin categories are equal."
+      solution_sketch: "Prove the biconditional $n\\le x\\iff n\\le\\lfloor x\\rfloor$ from the defining property of the floor as the greatest integer below $x$. In a thin category a biconditional is the hom-set bijection, and naturality is vacuous because parallel arrows in a poset are equal."
+    anki_seeds:
+      - front: "An adjunction $F\\dashv G$ is..."
+        back: "a natural isomorphism $\\mathrm{Hom}_{\\mathcal D}(FC,D)\\cong\\mathrm{Hom}_{\\mathcal C}(C,GD)$ in $C,D$; $F$ is the left adjoint, $G$ the right."
+        type: basic
+      - front: "In $F\\dashv G$, which side of the bijection does the left adjoint act on?"
+        back: "the source: $\\mathrm{Hom}(FC,D)$ — the left adjoint is applied to the left-hand object."
+        type: basic
+      - front: "Naturality of $\\Phi$ in both variables, in one equation?"
+        back: "$\\Phi(d\\circ h\\circ Fc)=Gd\\circ\\Phi(h)\\circ c$."
+        type: basic
+
+  - id: adjunctions
+    name: Adjunctions
+    core: true
+    difficulty: 0.78
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 240
+    prerequisites:
+      - id: hom-set-adjunction-definition
+        weight: 0.6
+        key: true
+      - id: hom-functors
+        weight: 0.4
+        key: true
+      - id: natural-isomorphisms
+        weight: 0.4
+        key: true
+      - id: functors
+        weight: 0.2
+      - id: universal-properties
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Transposes and the unit
+        key_prerequisites: [natural-isomorphisms]
+        constraints: "Work from the bijection $\\Phi$ alone; the unit must be produced as $\\Phi(1_{FC})$ and every naturality step must say which variable it uses."
+        exemplars:
+          - problem: "Given $F\\dashv G$, define the transpose of a morphism and compute the transpose of $1_{FC}$."
+            answer: "$h\\colon FC\\to D$ transposes to $\\Phi(h)\\colon C\\to GD$; $\\Phi(1_{FC})=\\eta_C\\colon C\\to GFC$, the unit."
+            solution_sketch: "Each $h\\colon FC\\to D$ has transpose $\\Phi_{C,D}(h)\\colon C\\to GD$, and each $k\\colon C\\to GD$ an adjunct $\\Phi^{-1}(k)\\colon FC\\to D$, mutually inverse. Taking $h=1_{FC}$ gives $\\eta_C:=\\Phi_{C,FC}(1_{FC})\\colon C\\to GFC$; naturality of $\\Phi$ makes $\\eta\\colon 1_{\\mathcal C}\\Rightarrow GF$ a natural transformation, the unit."
+          - problem: "Prove the unit $\\eta_C=\\Phi(1_{FC})$ is natural: for $c\\colon C\\to C'$, $GFc\\circ\\eta_C=\\eta_{C'}\\circ c$."
+            answer: "Both sides equal $\\Phi_{C,FC'}(Fc)$, by naturality of $\\Phi$ in each variable."
+            solution_sketch: "Naturality of $\\Phi$ in the first variable gives $\\eta_{C'}\\circ c=\\Phi_{C',FC'}(1_{FC'})\\circ c=\\Phi_{C,FC'}(1_{FC'}\\circ Fc)=\\Phi_{C,FC'}(Fc)$. Naturality in the second variable, with $d=Fc\\colon FC\\to FC'$, gives $GFc\\circ\\eta_C=GFc\\circ\\Phi_{C,FC}(1_{FC})=\\Phi_{C,FC'}(Fc\\circ 1_{FC})=\\Phi_{C,FC'}(Fc)$. The two agree, so $\\eta\\colon 1_{\\mathcal C}\\Rightarrow GF$ is a natural transformation."
+      - id: kp2
+        name: The universal-arrow formulation
+        key_prerequisites: [universal-properties]
+        constraints: "State the factorization (existence + uniqueness) explicitly and identify how it recovers the hom-set bijection; the counit version is obtained by dualizing."
+        exemplars:
+          - problem: "Restate '$F$ left adjoint to $G$' as: for each $C$, $\\eta_C\\colon C\\to GFC$ is universal from $C$ to $G$."
+            answer: "Every $k\\colon C\\to GD$ factors as $k=Gh\\circ\\eta_C$ for a unique $h\\colon FC\\to D$."
+            solution_sketch: "$F\\dashv G$ iff for each $C$ there is $FC$ and a universal arrow $\\eta_C\\colon C\\to GFC$: every $k\\colon C\\to GD$ factors uniquely as $Gh\\circ\\eta_C$ with $h\\colon FC\\to D$. Here $h=\\Phi^{-1}(k)$ recovers the hom-set bijection, and $\\eta_C$ is universal because factorization exists and is unique."
+          - problem: "Dually, restate '$G$ right adjoint to $F$' via the counit: for each $D$, $\\varepsilon_D\\colon FGD\\to D$ is couniversal from $F$ to $D$."
+            answer: "Every $h\\colon FC\\to D$ factors as $h=\\varepsilon_D\\circ Fk$ for a unique $k\\colon C\\to GD$."
+            solution_sketch: "$F\\dashv G$ iff for each $D$ there is $GD$ and a couniversal arrow $\\varepsilon_D\\colon FGD\\to D$: every $h\\colon FC\\to D$ factors uniquely as $\\varepsilon_D\\circ Fk$ with $k\\colon C\\to GD$. Here $k=\\Phi(h)$ recovers the hom-set bijection, dual to the unit formulation; $\\varepsilon_D$ is couniversal because the factorization exists and is unique."
+      - id: kp3
+        name: Uniqueness and composition of adjoints
+        key_prerequisites: [hom-set-adjunction-definition]
+        constraints: "Chain hom-set bijections and track naturality in the free variable at every step."
+        exemplars:
+          - problem: "Prove that left adjoints are unique up to natural isomorphism: if $F\\dashv G$ and $F'\\dashv G$ then $F\\cong F'$."
+            answer: "$\\mathrm{Hom}(FC,-)\\cong\\mathrm{Hom}(C,G-)\\cong\\mathrm{Hom}(F'C,-)$, so $FC\\cong F'C$ by Yoneda, naturally in $C$."
+            solution_sketch: "For each $C$ the two adjunctions give natural isomorphisms $\\mathrm{Hom}_{\\mathcal D}(FC,-)\\cong\\mathrm{Hom}_{\\mathcal C}(C,G-)\\cong\\mathrm{Hom}_{\\mathcal D}(F'C,-)$ of functors $\\mathcal D\\to\\mathbf{Set}$. By the Yoneda lemma (the Yoneda embedding is fully faithful) this forces $FC\\cong F'C$, and the isomorphism is natural in $C$ since all the bijections are. Hence $F\\cong F'$; dually right adjoints are unique up to isomorphism."
+          - problem: "Prove that adjunctions compose: if $F\\dashv G$ between $\\mathcal C$ and $\\mathcal D$, and $F'\\dashv G'$ between $\\mathcal D$ and $\\mathcal E$, then $F'F\\dashv GG'$."
+            answer: "Chain the two bijections: $\\mathrm{Hom}_{\\mathcal E}(F'FC,E)\\cong\\mathrm{Hom}_{\\mathcal D}(FC,G'E)\\cong\\mathrm{Hom}_{\\mathcal C}(C,GG'E)$."
+            solution_sketch: "Apply the second adjunction with the object $FC$ of $\\mathcal D$: $\\mathrm{Hom}_{\\mathcal E}(F'(FC),E)\\cong\\mathrm{Hom}_{\\mathcal D}(FC,G'E)$, natural in $FC$ and $E$. Then apply the first adjunction with the object $G'E$ of $\\mathcal D$: $\\mathrm{Hom}_{\\mathcal D}(FC,G'E)\\cong\\mathrm{Hom}_{\\mathcal C}(C,G(G'E))$, natural in $C$ and $G'E$. Composing two natural bijections gives a bijection $\\mathrm{Hom}_{\\mathcal E}((F'F)C,E)\\cong\\mathrm{Hom}_{\\mathcal C}(C,(GG')E)$ natural in $C$ and $E$, since each step is natural and $F$, $G'$ are functors. Hence $F'F\\dashv GG'$: adjunctions compose, left adjoints with left adjoints and right with right."
+    diagnostic_exemplar:
+      problem: "Let $F\\dashv G$ be an adjunction with counit $\\varepsilon$. Prove that $G$ is faithful if and only if every component $\\varepsilon_D$ is an epimorphism."
+      answer: "Write $\\Phi\\colon\\mathrm{Hom}_{\\mathcal D}(FC,D')\\cong\\mathrm{Hom}_{\\mathcal C}(C,GD')$ for the adjunction bijection, so $\\Phi^{-1}(k)=\\varepsilon_{D'}\\circ Fk$. Fix $h\\colon D\\to D'$ and apply this at $C=GD$, $k=Gh$: $\\Phi^{-1}(Gh)=\\varepsilon_{D'}\\circ FG(h)=h\\circ\\varepsilon_D$, the last step being naturality of $\\varepsilon\\colon FG\\Rightarrow 1_{\\mathcal D}$ at $h$. Since $\\Phi^{-1}\\colon\\mathrm{Hom}_{\\mathcal C}(GD,GD')\\to\\mathrm{Hom}_{\\mathcal D}(FGD,D')$ is a bijection, for $h,h'\\colon D\\to D'$ we get $Gh=Gh'\\iff h\\circ\\varepsilon_D=h'\\circ\\varepsilon_D$. If $G$ is faithful, then $h\\circ\\varepsilon_D=h'\\circ\\varepsilon_D$ gives $Gh=Gh'$ and hence $h=h'$, so $\\varepsilon_D$ is right-cancellable, i.e. an epimorphism, for every $D$. Conversely if every $\\varepsilon_D$ is epi and $Gh=Gh'$, then $h\\circ\\varepsilon_D=h'\\circ\\varepsilon_D$ and cancelling $\\varepsilon_D$ gives $h=h'$, so $G$ is faithful."
+      solution_sketch: "Compute $\\Phi^{-1}(Gh)$ two ways: the formula $\\varepsilon\\circ F(-)$ together with naturality of $\\varepsilon$ at $h$ turns it into $h\\circ\\varepsilon_D$. Since $\\Phi^{-1}$ is a bijection, $Gh=Gk$ is equivalent to $h\\circ\\varepsilon_D=k\\circ\\varepsilon_D$, and that equivalence is exactly the statement that $G$ is faithful iff $\\varepsilon_D$ is right-cancellable."
+    anki_seeds:
+      - front: "The unit of $F\\dashv G$ is the transpose of {{c1::$1_{FC}$}}, giving $\\eta_C\\colon C\\to GFC$."
+        back: "$1_{FC}$"
+        type: cloze
+      - front: "$F$ is left adjoint to $G$ iff each $\\eta_C$ is what kind of arrow?"
+        back: "a universal arrow from $C$ to $G$: every $k\\colon C\\to GD$ is $Gh\\circ\\eta_C$ for a unique $h$."
+        type: basic
+      - front: "If $F\\dashv G$ and $F'\\dashv G'$ are composable, what is the composite adjunction?"
+        back: "$F'F\\dashv GG'$."
+        type: basic
+
+  - id: adjunction-examples
+    name: Examples of Adjunctions
+    core: true
+    difficulty: 0.75
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 240
+    prerequisites:
+      - id: adjunctions
+        weight: 0.6
+        key: true
+      - id: products-coproducts
+        weight: 0.3
+        key: true
+      - id: exponential-objects
+        weight: 0.3
+      - id: hom-functors
+        weight: 0.2
+    knowledge_points:
+      - id: kp1
+        name: Product, diagonal, coproduct adjoints
+        key_prerequisites: [products-coproducts]
+        constraints: "Derive each adjunction by matching a (co)product universal property against the standard hom-set form; unit/counit computations must come out as transposes of identities."
+        exemplars:
+          - problem: "Show the diagonal $\\Delta\\colon\\mathcal C\\to\\mathcal C\\times\\mathcal C$ has right adjoint the product and left adjoint the coproduct."
+            answer: "$\\mathrm{Hom}(\\Delta X,(A,B))\\cong\\mathrm{Hom}(X,A\\times B)$ and $\\mathrm{Hom}((A,B),\\Delta X)\\cong\\mathrm{Hom}(A+B,X)$."
+            solution_sketch: "A map $\\Delta X=(X,X)\\to(A,B)$ is a pair $(X\\to A, X\\to B)$, which by the product universal property is a single map $X\\to A\\times B$, naturally; so $\\Delta\\dashv(\\times)$. Dually a map $(A,B)\\to\\Delta X$ is a pair $(A\\to X,B\\to X)$, i.e. one map $A+B\\to X$; so $(+)\\dashv\\Delta$. Hence $(+)\\dashv\\Delta\\dashv(\\times)$."
+          - problem: "Compute the unit and counit of the adjunction $\\Delta\\dashv(\\times)$."
+            answer: "Unit $\\eta_X=\\langle 1_X,1_X\\rangle\\colon X\\to X\\times X$ (the diagonal); counit $\\varepsilon_{(A,B)}=(\\pi_A,\\pi_B)$ (the projections)."
+            solution_sketch: "Here $\\Delta$ is the left adjoint and $\\times$ the right adjoint. The unit $\\eta_X=\\Phi(1_{(X,X)})\\colon X\\to X\\times X$ is the transpose of $1_{\\Delta X}=(1_X,1_X)$, namely the diagonal $\\langle 1_X,1_X\\rangle$. The counit $\\varepsilon_{(A,B)}=\\Phi^{-1}(1_{A\\times B})\\colon(A\\times B,A\\times B)\\to(A,B)$ is the pair of projections $(\\pi_A,\\pi_B)$. The triangle identity $\\varepsilon\\Delta\\circ\\Delta\\eta=1_\\Delta$ then reads $(\\pi_A\\circ\\langle 1,1\\rangle,\\pi_B\\circ\\langle 1,1\\rangle)=(1,1)$."
+      - id: kp2
+        name: The currying adjunction
+        key_prerequisites: [products-coproducts]
+        constraints: "The adjunction is $(-\\times A)\\dashv(-)^A$ with $A$ fixed; isomorphism-of-objects conclusions must pass through a natural bijection of hom-sets and cite Yoneda/representability."
+        exemplars:
+          - problem: "Exhibit the adjunction $(-\\times A)\\dashv(-)^A$ and name its unit and counit."
+            answer: "$\\mathrm{Hom}(X\\times A,B)\\cong\\mathrm{Hom}(X,B^A)$; unit is $\\lambda$-abstraction, counit is evaluation."
+            solution_sketch: "Fix $A$. Currying gives a bijection $\\mathrm{Hom}(X\\times A,B)\\cong\\mathrm{Hom}(X,B^A)$ natural in $X$ and $B$, so $(-\\times A)\\dashv(-)^A$. The counit is $\\mathrm{ev}\\colon B^A\\times A\\to B$, and the unit is the map $X\\to(X\\times A)^A$ sending $x\\mapsto(a\\mapsto(x,a))$."
+          - problem: "Use the currying adjunction to prove the exponential law $C^{A\\times B}\\cong(C^B)^A$ in a cartesian closed category."
+            answer: "Iterate $(-\\times A)\\dashv(-)^A$ with associativity of $\\times$, then apply Yoneda."
+            solution_sketch: "For all $X$: $\\mathrm{Hom}(X,C^{A\\times B})\\cong\\mathrm{Hom}(X\\times(A\\times B),C)\\cong\\mathrm{Hom}((X\\times A)\\times B,C)\\cong\\mathrm{Hom}(X\\times A,C^B)\\cong\\mathrm{Hom}(X,(C^B)^A)$, naturally in $X$, using currying twice and associativity of the product. By the Yoneda lemma the representing objects agree: $C^{A\\times B}\\cong(C^B)^A$."
+      - id: kp3
+        name: A free-forgetful example
+        key_prerequisites: [adjunctions]
+        constraints: "Free monoids or free groups only; the bijection argument must show both that restriction to generators is well defined and that extension from generators is unique."
+        exemplars:
+          - problem: "Show the free-monoid functor is left adjoint to the forgetful $U\\colon\\mathbf{Mon}\\to\\mathbf{Set}$."
+            answer: "$\\mathrm{Hom}_{\\mathbf{Mon}}(X^*,M)\\cong\\mathrm{Hom}_{\\mathbf{Set}}(X,UM)$: a homomorphism out of $X^*$ is fixed by where letters go."
+            solution_sketch: "A monoid homomorphism $X^*\\to M$ is determined by its values on single letters (a function $X\\to UM$), and any function $f\\colon X\\to UM$ extends uniquely by $x_1\\cdots x_n\\mapsto f(x_1)\\cdots f(x_n)$. This bijection is natural, so $(-)^*\\dashv U$; the unit $\\eta_X\\colon X\\to U(X^*)$ is the insertion of letters."
+          - problem: "Show the free-group functor $F$ is left adjoint to the forgetful $U\\colon\\mathbf{Grp}\\to\\mathbf{Set}$."
+            answer: "$\\mathrm{Hom}_{\\mathbf{Grp}}(FX,G)\\cong\\mathrm{Hom}_{\\mathbf{Set}}(X,UG)$: a homomorphism out of $FX$ is fixed by where the generators go."
+            solution_sketch: "$FX$ is the group of reduced words in $X\\sqcup X^{-1}$. A homomorphism $FX\\to G$ is determined by the images of the generators $x\\in X$ (arbitrary elements of $UG$), and any function $f\\colon X\\to UG$ extends uniquely to a homomorphism sending each word to the corresponding product. This bijection is natural in $X$ and $G$, so $F\\dashv U$; the unit $\\eta_X\\colon X\\to U(FX)$ inserts the generators."
+    diagnostic_exemplar:
+      problem: "Using the currying adjunction $(-\\times A)\\dashv(-)^A$ and associativity of the product, prove the exponential law $C^{A\\times B}\\cong(C^B)^A$ in a cartesian closed category."
+      answer: "For every $X$: $\\mathrm{Hom}(X,C^{A\\times B})\\cong\\mathrm{Hom}(X\\times(A\\times B),C)\\cong\\mathrm{Hom}((X\\times A)\\times B,C)\\cong\\mathrm{Hom}(X\\times A,C^B)\\cong\\mathrm{Hom}(X,(C^B)^A)$ — uncurry, reassociate, curry twice — each step natural in $X$. Two objects representing the same functor are isomorphic (Yoneda), so $C^{A\\times B}\\cong(C^B)^A$."
+      solution_sketch: "Do not construct a map between the two objects directly. Chain hom-set bijections at an arbitrary $X$ — uncurry, reassociate the product, curry twice — checking each step is natural in $X$; Yoneda then upgrades the isomorphism of representables to an isomorphism of the objects themselves."
+    anki_seeds:
+      - front: "The chain of adjoints around the diagonal functor?"
+        back: "$(+)\\dashv\\Delta\\dashv(\\times)$: coproduct is left adjoint, product is right adjoint to $\\Delta$."
+        type: basic
+      - front: "Currying is the adjunction {{c1::$(-\\times A)\\dashv(-)^A$}} with counit evaluation."
+        back: "$(-\\times A)\\dashv(-)^A$"
+        type: cloze
+
+  - id: unit-counit
+    name: Unit and Counit
+    core: true
+    difficulty: 0.78
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 240
+    prerequisites:
+      - id: adjunctions
+        weight: 0.6
+        key: true
+      - id: natural-transformations
+        weight: 0.3
+        key: true
+      - id: adjunction-examples
+        weight: 0.2
+    knowledge_points:
+      - id: kp1
+        name: Defining unit and counit
+        key_prerequisites: [adjunctions]
+        constraints: "Define $\\eta,\\varepsilon$ as transposes of identities; concrete computations only for the free-monoid adjunction, evaluated on explicit letters/words."
+        exemplars:
+          - problem: "Define the unit $\\eta$ and counit $\\varepsilon$ of $F\\dashv G$ from the hom-set bijection $\\Phi$."
+            answer: "$\\eta_C=\\Phi(1_{FC})\\colon C\\to GFC$; $\\varepsilon_D=\\Phi^{-1}(1_{GD})\\colon FGD\\to D$."
+            solution_sketch: "With $\\Phi\\colon\\mathrm{Hom}(FC,D)\\cong\\mathrm{Hom}(C,GD)$, set $\\eta_C=\\Phi_{C,FC}(1_{FC})\\colon C\\to GFC$ and $\\varepsilon_D=\\Phi^{-1}_{GD,D}(1_{GD})\\colon FGD\\to D$. Naturality of $\\Phi$ makes $\\eta\\colon 1_{\\mathcal C}\\Rightarrow GF$ and $\\varepsilon\\colon FG\\Rightarrow 1_{\\mathcal D}$ natural transformations."
+          - problem: "Compute the unit and counit of the free-monoid adjunction $(-)^*\\dashv U$, $U\\colon\\mathbf{Mon}\\to\\mathbf{Set}$."
+            answer: "Unit $\\eta_X\\colon X\\to U(X^*)$ inserts a letter as a length-one word; counit $\\varepsilon_M\\colon (UM)^*\\to M$ multiplies a word out."
+            solution_sketch: "The unit $\\eta_X=\\Phi(1_{X^*})\\colon X\\to U(X^*)$ sends a letter $x$ to the one-letter word $x$. The counit $\\varepsilon_M=\\Phi^{-1}(1_{UM})\\colon (UM)^*\\to M$ sends a word $m_1\\cdots m_n$ of elements of $M$ to the product $m_1\\cdots m_n$ (and the empty word to the unit $e$). It is the homomorphism evaluating formal words in $M$, exhibiting $M$ as a quotient of the free monoid on its own elements."
+      - id: kp2
+        name: Recovering the bijection from unit and counit
+        key_prerequisites: [natural-transformations]
+        constraints: "Derive $\\Phi(h)=Gh\\circ\\eta$ and $\\Phi^{-1}(k)=\\varepsilon\\circ Fk$ from naturality, citing the variable used; mutual-inverse checks cite one naturality square and one triangle identity per direction."
+        exemplars:
+          - problem: "Express the transpose $\\Phi(h)$ and its inverse $\\Phi^{-1}(k)$ in terms of $\\eta$ and $\\varepsilon$."
+            answer: "$\\Phi(h)=Gh\\circ\\eta_C$ and $\\Phi^{-1}(k)=\\varepsilon_D\\circ Fk$."
+            solution_sketch: "Naturality of $\\Phi$ in the second variable applied to $h\\colon FC\\to D$ gives $\\Phi(h)=\\Phi(h\\circ 1_{FC})=Gh\\circ\\Phi(1_{FC})=Gh\\circ\\eta_C$. Dually, naturality in the first variable gives $\\Phi^{-1}(k)=\\varepsilon_D\\circ Fk$. So $\\eta$ and $\\varepsilon$ encode the entire adjunction bijection."
+          - problem: "Verify that $\\Phi(h)=Gh\\circ\\eta_C$ and $\\Psi(k)=\\varepsilon_D\\circ Fk$ are mutually inverse, using naturality and the triangle identities."
+            answer: "$\\Psi(\\Phi(h))=h$ via naturality of $\\varepsilon$ and $\\varepsilon F\\circ F\\eta=1_F$; dually $\\Phi(\\Psi(k))=k$."
+            solution_sketch: "$\\Psi(\\Phi(h))=\\varepsilon_D\\circ F(Gh\\circ\\eta_C)=\\varepsilon_D\\circ FGh\\circ F\\eta_C=h\\circ\\varepsilon_{FC}\\circ F\\eta_C=h$, using naturality of $\\varepsilon$ ($\\varepsilon_D\\circ FGh=h\\circ\\varepsilon_{FC}$) and the triangle identity $\\varepsilon_{FC}\\circ F\\eta_C=1_{FC}$. Dually $\\Phi(\\Psi(k))=G\\varepsilon_D\\circ GFk\\circ\\eta_C=G\\varepsilon_D\\circ\\eta_{GD}\\circ k=k$, using naturality of $\\eta$ ($GFk\\circ\\eta_C=\\eta_{GD}\\circ k$) and $G\\varepsilon_D\\circ\\eta_{GD}=1_{GD}$. Hence $\\Phi,\\Psi$ are mutually inverse."
+    diagnostic_exemplar:
+      problem: "For an adjunction $F\\dashv G$ with hom-set bijection $\\Phi$, unit $\\eta_C=\\Phi(1_{FC})$ and counit $\\varepsilon_D=\\Phi^{-1}(1_{GD})$, derive the formulas $\\Phi(h)=Gh\\circ\\eta_C$ and $\\Phi^{-1}(k)=\\varepsilon_D\\circ Fk$ from the naturality of $\\Phi$."
+      answer: "Naturality of $\\Phi$ in the second variable, applied to $h\\colon FC\\to D$, gives $\\Phi(h)=\\Phi(h\\circ 1_{FC})=Gh\\circ\\Phi(1_{FC})=Gh\\circ\\eta_C$. Dually, naturality of $\\Phi^{-1}$ in the first variable, applied to $k\\colon C\\to GD$, gives $\\Phi^{-1}(k)=\\Phi^{-1}(1_{GD}\\circ k)=\\Phi^{-1}(1_{GD})\\circ Fk=\\varepsilon_D\\circ Fk$. So the unit and counit encode the whole bijection."
+      solution_sketch: "Feed an identity into naturality of $\\Phi$: write $h=h\\circ 1_{FC}$ and move $h$ out through the naturality square, leaving $Gh\\circ\\Phi(1_{FC})$. The dual move on $\\Phi^{-1}$, writing $k=1_{GD}\\circ k$, gives the counit formula."
+    anki_seeds:
+      - front: "Unit of $F\\dashv G$ (type and transpose)?"
+        back: "$\\eta\\colon 1\\Rightarrow GF$, with $\\eta_C=\\Phi(1_{FC})$."
+        type: basic
+      - front: "Counit of $F\\dashv G$ (type and transpose)?"
+        back: "$\\varepsilon\\colon FG\\Rightarrow 1$, with $\\varepsilon_D=\\Phi^{-1}(1_{GD})$."
+        type: basic
+      - front: "Adjunction transpose of $h\\colon FC\\to D$ in terms of $\\eta$?"
+        back: "$\\Phi(h)=Gh\\circ\\eta_C$."
+        type: basic
+      - front: "Adjunction inverse-transpose of $k\\colon C\\to GD$ in terms of $\\varepsilon$?"
+        back: "$\\Phi^{-1}(k)=\\varepsilon_D\\circ Fk$."
+        type: basic
+
+  - id: triangle-identities
+    name: The Triangle Identities
+    core: true
+    difficulty: 0.8
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 240
+    prerequisites:
+      - id: unit-counit
+        weight: 0.6
+        key: true
+      - id: natural-transformations
+        weight: 0.3
+        key: true
+      - id: vertical-horizontal-composition
+        weight: 0.2
+    knowledge_points:
+      - id: kp1
+        name: Statement of the zig-zag identities
+        key_prerequisites: [unit-counit]
+        constraints: "State both identities with whiskering made explicit; concrete verifications only for the free-monoid adjunction, chased on a general element."
+        exemplars:
+          - problem: "State the two triangle identities for the unit $\\eta$ and counit $\\varepsilon$ of $F\\dashv G$."
+            answer: "$\\varepsilon F\\circ F\\eta=1_F$ and $G\\varepsilon\\circ\\eta G=1_G$."
+            solution_sketch: "The triangle (zig-zag) identities are $\\varepsilon_{FC}\\circ F\\eta_C=1_{FC}$ for all $C$ (i.e. $\\varepsilon F\\circ F\\eta=1_F$) and $G\\varepsilon_D\\circ\\eta_{GD}=1_{GD}$ for all $D$ (i.e. $G\\varepsilon\\circ\\eta G=1_G$). They say $F\\xRightarrow{F\\eta}FGF\\xRightarrow{\\varepsilon F}F$ and $G\\xRightarrow{\\eta G}GFG\\xRightarrow{G\\varepsilon}G$ are identities."
+          - problem: "Verify the triangle identity $G\\varepsilon\\circ\\eta G=1_G$ for the free-monoid adjunction $(-)^*\\dashv U$ (so $G=U$)."
+            answer: "At a monoid $M$: insert each element as a one-letter word, then multiply out, recovering the element."
+            solution_sketch: "Here $\\eta_X\\colon X\\to U(X^*)$ inserts letters and $\\varepsilon_M\\colon (UM)^*\\to M$ multiplies words out. The identity $U\\varepsilon\\circ\\eta U=1_U$ at $M$ is $U\\varepsilon_M\\circ\\eta_{UM}\\colon UM\\to UM$: $\\eta_{UM}$ sends $m$ to the one-letter word $(m)$, and $U\\varepsilon_M$ sends $(m)$ to its product $m$. The composite is $m\\mapsto(m)\\mapsto m=1_{UM}$, confirming the identity."
+      - id: kp2
+        name: Deriving a triangle identity from the transposes
+        key_prerequisites: [unit-counit]
+        constraints: "Each derivation applies $\\Phi$ or $\\Phi^{-1}$ to a defining equation of $\\eta$ or $\\varepsilon$ exactly once, then evaluates the transpose formula; no diagram chase."
+        exemplars:
+          - problem: "Prove $\\varepsilon_{FC}\\circ F\\eta_C=1_{FC}$ using $\\Phi^{-1}(k)=\\varepsilon_D\\circ Fk$ and $\\eta_C=\\Phi(1_{FC})$."
+            answer: "Apply $\\Phi^{-1}$ to $\\eta_C$."
+            solution_sketch: "Since $\\eta_C=\\Phi(1_{FC})$, applying $\\Phi^{-1}$ gives $1_{FC}=\\Phi^{-1}(\\eta_C)$. With $\\Phi^{-1}(k)=\\varepsilon_D\\circ Fk$ for $k=\\eta_C\\colon C\\to GFC$ and $D=FC$, this is $1_{FC}=\\varepsilon_{FC}\\circ F\\eta_C$ — the first triangle identity. The second follows dually from $\\varepsilon_D=\\Phi^{-1}(1_{GD})$."
+          - problem: "Prove the second triangle identity $G\\varepsilon_D\\circ\\eta_{GD}=1_{GD}$ using $\\Phi(h)=Gh\\circ\\eta_C$ and $\\varepsilon_D=\\Phi^{-1}(1_{GD})$."
+            answer: "Apply $\\Phi$ to $\\varepsilon_D$."
+            solution_sketch: "Since $\\varepsilon_D=\\Phi^{-1}(1_{GD})$, applying $\\Phi$ gives $1_{GD}=\\Phi(\\varepsilon_D)$. With $\\Phi(h)=Gh\\circ\\eta_C$ for $h=\\varepsilon_D\\colon FGD\\to D$ and $C=GD$, this reads $1_{GD}=G\\varepsilon_D\\circ\\eta_{GD}$ — the second triangle identity. It is the exact dual of deriving $\\varepsilon_{FC}\\circ F\\eta_C=1_{FC}$ by applying $\\Phi^{-1}$ to $\\eta_C$."
+      - id: kp3
+        name: Triangle identities as an equivalent definition
+        key_prerequisites: [natural-transformations]
+        constraints: "Equivalence arguments compare $(F,G,\\eta,\\varepsilon)$ data with the hom-set definition; the 2-categorical reading may use only 1-cells, 2-cells, whiskering, and the two equations."
+        exemplars:
+          - problem: "State why $(F,G,\\eta,\\varepsilon)$ satisfying the triangle identities is the same data as an adjunction."
+            answer: "$\\Phi(h)=Gh\\circ\\eta$ and $\\Psi(k)=\\varepsilon\\circ Fk$ are mutually inverse exactly when the triangles hold."
+            solution_sketch: "Given natural $\\eta\\colon 1\\Rightarrow GF$, $\\varepsilon\\colon FG\\Rightarrow 1$, define $\\Phi(h)=Gh\\circ\\eta_C$ and $\\Psi(k)=\\varepsilon_D\\circ Fk$. Computing $\\Psi\\Phi$ and $\\Phi\\Psi$ and simplifying with naturality shows they are mutually inverse precisely when $\\varepsilon F\\circ F\\eta=1_F$ and $G\\varepsilon\\circ\\eta G=1_G$. So the unit-counit-with-triangles data is equivalent to the hom-set adjunction."
+          - problem: "Explain how the triangle-identity definition lets 'adjunction' be defined internally in any $2$-category."
+            answer: "It uses only $1$-cells, $2$-cells, whiskering, and the triangle equations — no hom-sets or elements."
+            solution_sketch: "The unit-counit definition mentions only the objects $\\mathcal C,\\mathcal D$, the functors $F,G$, the natural transformations $\\eta\\colon 1\\Rightarrow GF$ and $\\varepsilon\\colon FG\\Rightarrow 1$, their whiskerings, and the equations $\\varepsilon F\\circ F\\eta=1_F$, $G\\varepsilon\\circ\\eta G=1_G$ — all expressible with $1$-cells, $2$-cells and horizontal/vertical composition. Hence in any $2$-category an adjunction $f\\dashv g$ is $\\eta\\colon 1\\Rightarrow gf$, $\\varepsilon\\colon fg\\Rightarrow 1$ satisfying $\\varepsilon f\\circ f\\eta=1_f$ and $g\\varepsilon\\circ\\eta g=1_g$. In $\\mathbf{Cat}$ this recovers ordinary adjunctions."
+    diagnostic_exemplar:
+      problem: "Using $\\eta_C=\\Phi(1_{FC})$ and $\\Phi^{-1}(k)=\\varepsilon_D\\circ Fk$, prove the first triangle identity $\\varepsilon_{FC}\\circ F\\eta_C=1_{FC}$."
+      answer: "Apply $\\Phi^{-1}$ to both sides of $\\eta_C=\\Phi(1_{FC})$: $\\Phi^{-1}(\\eta_C)=1_{FC}$. Now evaluate $\\Phi^{-1}$ on $k=\\eta_C\\colon C\\to GFC$ (so $D=FC$) with the formula: $\\Phi^{-1}(\\eta_C)=\\varepsilon_{FC}\\circ F\\eta_C$. Equating the two expressions gives $\\varepsilon_{FC}\\circ F\\eta_C=1_{FC}$, which holding for all $C$ is $\\varepsilon F\\circ F\\eta=1_F$."
+      solution_sketch: "Apply $\\Phi^{-1}$ to the definition $\\eta_C=\\Phi(1_{FC})$ to get $\\Phi^{-1}(\\eta_C)=1_{FC}$, then evaluate that same $\\Phi^{-1}(\\eta_C)$ using the formula $\\varepsilon\\circ F(-)$. Equating the two readings of one value is the identity."
+    anki_seeds:
+      - front: "First triangle (zig-zag) identity, involving $F\\eta$?"
+        back: "$\\varepsilon F\\circ F\\eta=1_F$."
+        type: basic
+      - front: "Second triangle (zig-zag) identity, involving $\\eta G$?"
+        back: "$G\\varepsilon\\circ\\eta G=1_G$."
+        type: basic
+      - front: "An adjunction can be defined as functors $F,G$ plus $\\eta,\\varepsilon$ satisfying the {{c1::triangle identities}}."
+        back: "triangle identities"
+        type: cloze
+
+  - id: free-forgetful-adjunctions
+    name: Free-Forgetful Adjunctions
+    core: false                # examples leaf topic
+    difficulty: 0.72
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 240
+    prerequisites:
+      - id: adjunctions
+        weight: 0.5
+        key: true
+      - id: functor-examples
+        weight: 0.4
+        key: true
+      - id: adjunction-examples
+        weight: 0.3
+      - id: monoids
+        weight: 0.2
+      - id: basis-dimension
+        weight: 0.2
+      - id: linear-transformations
+        weight: 0.2
+      - id: groups-intro
+        weight: 0.0
+    knowledge_points:
+      - id: kp1
+        name: The general pattern
+        key_prerequisites: [adjunctions]
+        constraints: "Stay at the level of the general pattern: name the free functor, the forgetful functor and the direction of the adjunction, then describe the unit as the universal insertion of generators $\\eta_X\\colon X\\to U(FX)$ or the counit as the evaluation $\\varepsilon_A\\colon F(UA)\\to A$ of formal expressions; no concrete algebra is computed."
+        exemplars:
+          - problem: "State the general free-forgetful adjunction pattern and describe its unit."
+            answer: "Free $\\dashv$ Forgetful; unit $\\eta_X\\colon X\\to U(FX)$ inserts generators and is universal."
+            solution_sketch: "For an algebraic category $\\mathcal A$ with forgetful $U\\colon\\mathcal A\\to\\mathbf{Set}$, the free functor $F$ satisfies $\\mathrm{Hom}_{\\mathcal A}(FX,A)\\cong\\mathrm{Hom}_{\\mathbf{Set}}(X,UA)$, so $F\\dashv U$. The unit $\\eta_X\\colon X\\to U(FX)$ inserts generators and is universal: every function $X\\to UA$ extends uniquely to a homomorphism $FX\\to A$."
+          - problem: "Describe the counit of a free-forgetful adjunction $F\\dashv U$ and say what it expresses."
+            answer: "$\\varepsilon_A\\colon F(UA)\\to A$ evaluates formal expressions, exhibiting $A$ as a quotient of the free algebra on its own elements."
+            solution_sketch: "The counit $\\varepsilon_A=\\Phi^{-1}(1_{UA})\\colon F(UA)\\to A$ is the unique homomorphism extending the identity $UA\\to UA$: it sends each formal generator $[a]$ (for $a\\in UA$) to $a$ and thereby evaluates formal expressions in $A$. It is surjective, so $A$ is a quotient of the free algebra $F(UA)$ on its underlying set — the canonical presentation by generators. The triangle identity $U\\varepsilon\\circ\\eta U=1_U$ says evaluating an inserted generator returns it."
+      - id: kp2
+        name: Free vector spaces
+        key_prerequisites: [functor-examples]
+        constraints: "Free vector spaces $k^{(X)}$ on a set $X$ only; describe the free functor by its basis and every linear map out of it by its values on basis elements; a counit description must give the formula $\\sum_v\\lambda_v e_v\\mapsto\\sum_v\\lambda_v v$ and say what presentation of $V$ it exhibits."
+        exemplars:
+          - problem: "Instantiate free-forgetful for $U\\colon\\mathbf{Vect}_k\\to\\mathbf{Set}$ and describe the free functor."
+            answer: "Free$(X)=k^{(X)}$, the space with basis $X$; linear maps out are free choices on the basis."
+            solution_sketch: "$U$ forgets a vector space to its underlying set. The free functor sends $X$ to $k^{(X)}$, the finitely-supported functions $X\\to k$ (formal linear combinations of $X$). A linear map $k^{(X)}\\to V$ is freely determined by its values on the basis $X$, giving $\\mathrm{Hom}_{\\mathbf{Vect}}(k^{(X)},V)\\cong\\mathrm{Hom}_{\\mathbf{Set}}(X,UV)$. So Free $\\dashv U$; the unit sends $x$ to the basis vector $e_x$."
+          - problem: "Describe the counit of the free-forgetful adjunction for $\\mathbf{Vect}_k$ at a space $V$ and interpret it."
+            answer: "$\\varepsilon_V\\colon k^{(UV)}\\to V$, $\\sum_v\\lambda_v e_v\\mapsto\\sum_v\\lambda_v v$; surjective, presenting $V\\cong k^{(UV)}/\\ker\\varepsilon_V$."
+            solution_sketch: "The counit $\\varepsilon_V=\\Phi^{-1}(1_{UV})\\colon k^{(UV)}\\to V$ sends the basis vector $e_v$ (for $v\\in UV$) to $v$, extending linearly: $\\sum_v\\lambda_v e_v\\mapsto\\sum_v\\lambda_v v$. It is surjective since every vector is a linear combination of vectors, and its kernel is the subspace of all linear relations holding in $V$. Thus $V\\cong k^{(UV)}/\\ker\\varepsilon_V$ presents $V$ by generators (its elements) and relations."
+      - id: kp3
+        name: A forgetful functor with adjoints on both sides
+        key_prerequisites: [adjunctions]
+        constraints: "Forgetful functors carrying adjoints on both sides, limited to $U\\colon\\mathbf{Top}\\to\\mathbf{Set}$ and $\\mathrm{Ob}\\colon\\mathbf{Cat}\\to\\mathbf{Set}$; the discrete construction must be identified as the LEFT adjoint and the indiscrete one as the RIGHT adjoint, each justified by saying which maps are automatically legal."
+        exemplars:
+          - problem: "Explain why $U\\colon\\mathbf{Top}\\to\\mathbf{Set}$ has both a left adjoint (discrete) and a right adjoint (indiscrete)."
+            answer: "Discrete topology is left adjoint, indiscrete is right adjoint to $U$."
+            solution_sketch: "A continuous map from the discrete space $X_{\\mathrm{disc}}$ to $Y$ is just any function $X\\to UY$, so $\\mathrm{Hom}_{\\mathbf{Top}}(X_{\\mathrm{disc}},Y)\\cong\\mathrm{Hom}_{\\mathbf{Set}}(X,UY)$: discrete $\\dashv U$. Dually, a continuous map into the indiscrete space $Y_{\\mathrm{ind}}$ is any function, so $\\mathrm{Hom}_{\\mathbf{Top}}(X,Y_{\\mathrm{ind}})\\cong\\mathrm{Hom}_{\\mathbf{Set}}(UX,Y)$: $U\\dashv$ indiscrete. So $U$ has adjoints on both sides."
+          - problem: "Show the object-set functor $\\mathrm{Ob}\\colon\\mathbf{Cat}\\to\\mathbf{Set}$ has both a left adjoint (discrete category) and a right adjoint (indiscrete category)."
+            answer: "$\\mathrm{disc}\\dashv\\mathrm{Ob}\\dashv\\mathrm{indisc}$."
+            solution_sketch: "A functor from the discrete category $\\mathrm{disc}(S)$ (only identity arrows) to $\\mathcal C$ is just a function $S\\to\\mathrm{Ob}(\\mathcal C)$, so $\\mathrm{Hom}_{\\mathbf{Cat}}(\\mathrm{disc}\\,S,\\mathcal C)\\cong\\mathrm{Hom}_{\\mathbf{Set}}(S,\\mathrm{Ob}\\,\\mathcal C)$: $\\mathrm{disc}\\dashv\\mathrm{Ob}$. A functor into the indiscrete category $\\mathrm{indisc}(S)$ (exactly one arrow between any two objects) is freely determined by its action on objects, so $\\mathrm{Hom}_{\\mathbf{Cat}}(\\mathcal C,\\mathrm{indisc}\\,S)\\cong\\mathrm{Hom}_{\\mathbf{Set}}(\\mathrm{Ob}\\,\\mathcal C,S)$: $\\mathrm{Ob}\\dashv\\mathrm{indisc}$. Hence $\\mathrm{Ob}$ has adjoints on both sides."
+    diagnostic_exemplar:
+      problem: "Show that the forgetful functor $U\\colon\\mathbf{Top}\\to\\mathbf{Set}$ has both a left adjoint and a right adjoint, exhibiting the two hom-set bijections."
+      answer: "Left adjoint: the discrete-space functor. Every function from a discrete space is continuous (all subsets are open in the source), so $\\mathrm{Hom}_{\\mathbf{Top}}(X_{\\mathrm{disc}},Y)\\cong\\mathrm{Hom}_{\\mathbf{Set}}(X,UY)$, natural in both variables: $\\mathrm{disc}\\dashv U$. Right adjoint: the indiscrete-space functor. Every function into an indiscrete space is continuous (only $\\varnothing$ and the whole set are open in the target), so $\\mathrm{Hom}_{\\mathbf{Top}}(X,Y_{\\mathrm{ind}})\\cong\\mathrm{Hom}_{\\mathbf{Set}}(UX,Y)$: $U\\dashv\\mathrm{ind}$."
+      solution_sketch: "Ask on which side continuity comes for free. Every map out of a discrete space is continuous, giving $\\mathrm{disc}\\dashv U$; every map into an indiscrete space is continuous, giving $U\\dashv\\mathrm{ind}$. Each observation is itself the hom-set bijection."
+    anki_seeds:
+      - front: "Free-forgetful adjunction pattern?"
+        back: "Free $\\dashv$ Forgetful: $\\mathrm{Hom}_{\\mathcal A}(FX,A)\\cong\\mathrm{Hom}_{\\mathbf{Set}}(X,UA)$; unit inserts generators."
+        type: basic
+      - front: "The free vector space on a set $X$ is {{c1::$k^{(X)}$, with basis $X$}}."
+        back: "$k^{(X)}$, with basis $X$"
+        type: cloze
+
+  - id: galois-connections
+    name: Galois Connections
+    core: false
+    difficulty: 0.7
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 210
+    prerequisites:
+      - id: adjunctions
+        weight: 0.5
+        key: true
+      - id: partial-orders
+        weight: 0.4
+        key: true
+      - id: unit-counit
+        weight: 0.2
+    knowledge_points:
+      - id: kp1
+        name: A Galois connection is an adjunction of posets
+        key_prerequisites: [partial-orders]
+        constraints: "Monotone Galois connections between posets, always stated as the biconditional $f(p)\\le q\\iff p\\le g(q)$ with the left adjoint named; instances limited to abstract posets and the image/preimage pair on powersets ordered by inclusion. Naturality never has to be checked, since hom-sets of a poset category have at most one element."
+        exemplars:
+          - problem: "Define a monotone Galois connection between posets and show it is exactly an adjunction of the poset categories."
+            answer: "Monotone $f\\colon P\\to Q$, $g\\colon Q\\to P$ with $f(p)\\le q\\iff p\\le g(q)$; this is $f\\dashv g$."
+            solution_sketch: "A monotone Galois connection is order-preserving maps $f\\colon P\\to Q$, $g\\colon Q\\to P$ with $f(p)\\le q\\iff p\\le g(q)$ for all $p,q$. Viewing $P,Q$ as thin categories (one arrow $x\\to y$ iff $x\\le y$), the biconditional is precisely the hom-set bijection $\\mathrm{Hom}(fp,q)\\cong\\mathrm{Hom}(p,gq)$, i.e. $f\\dashv g$; naturality is automatic since each hom-set has at most one element."
+          - problem: "For a function $h\\colon X\\to Y$, show that on powersets ordered by inclusion the image map is left adjoint to the preimage: $\\exists_h\\dashv h^{-1}$."
+            answer: "$\\exists_h(S)\\subseteq T\\iff S\\subseteq h^{-1}(T)$, a monotone Galois connection (with a further right adjoint $\\forall_h$)."
+            solution_sketch: "Let $\\exists_h(S)=\\{h(s):s\\in S\\}$ and $h^{-1}(T)=\\{x:h(x)\\in T\\}$, both monotone for inclusion. Then $\\exists_h(S)\\subseteq T\\iff(\\forall s\\in S)\\,h(s)\\in T\\iff S\\subseteq h^{-1}(T)$, which is exactly the Galois connection $\\exists_h\\dashv h^{-1}$ between $(\\mathcal P X,\\subseteq)$ and $(\\mathcal P Y,\\subseteq)$. Preimage also has a right adjoint $\\forall_h(S)=\\{y:h^{-1}(\\{y\\})\\subseteq S\\}$, giving the chain $\\exists_h\\dashv h^{-1}\\dashv\\forall_h$."
+      - id: kp2
+        name: Closure operators from the round trip
+        key_prerequisites: [adjunctions]
+        constraints: "Argue only from the unit $p\\le gf(p)$ and the counit $fg(q)\\le q$ plus monotonicity; every equality of elements must be obtained by antisymmetry, and 'closure operator' means monotone, inflationary and idempotent, verified in that order."
+        exemplars:
+          - problem: "Identify the unit and counit of $f\\dashv g$ in the poset case, and show $g\\circ f$ is a closure operator."
+            answer: "Unit $p\\le g f(p)$, counit $f g(q)\\le q$; $gf$ is monotone, inflationary, idempotent."
+            solution_sketch: "In a poset the unit is the inequality $p\\le gf(p)$ and the counit is $fg(q)\\le q$. Let $c=gf$: monotone (composite of monotone maps); inflationary by the unit $p\\le c(p)$; idempotent because $c(p)\\le c(c(p))$ (unit) and $c(c(p))\\le c(p)$ (apply the monotone $g$ to the counit $fg(fp)\\le fp$, giving $gfg fp\\le gfp$). Hence $c$ is a closure operator; dually $fg$ is an interior operator."
+          - problem: "Show that $f\\dashv g$ between posets restricts to inverse order-isomorphisms between the closed elements $\\mathrm{im}(g)$ and the open elements $\\mathrm{im}(f)$."
+            answer: "$f,g$ restrict to mutually inverse monotone bijections $\\mathrm{im}(g)\\cong\\mathrm{im}(f)$, the Galois correspondence."
+            solution_sketch: "The poset triangle identities give $fgf=f$ and $gfg=g$ (from $p\\le gf(p)$, $fg(q)\\le q$ and antisymmetry). The closed elements are $P_c=\\{p:gf(p)=p\\}=\\mathrm{im}(g)$ and the open elements $Q_k=\\{q:fg(q)=q\\}=\\mathrm{im}(f)$. For $p\\in P_c$, $fg(f(p))=f(p)$ so $f(p)\\in Q_k$, and $g(f(p))=p$; symmetrically $g$ maps $Q_k$ into $P_c$ with $f(g(q))=q$. Hence $f,g$ are mutually inverse order-isomorphisms $P_c\\cong Q_k$."
+    diagnostic_exemplar:
+      problem: "Let $f\\dashv g$ be a monotone Galois connection between posets ($f(p)\\le q\\iff p\\le g(q)$). Prove that $c=g\\circ f$ is a closure operator: monotone, inflationary, and idempotent."
+      answer: "Monotone: composite of monotone maps. Inflationary: from $f(p)\\le f(p)$ the biconditional gives $p\\le gf(p)=c(p)$ (the unit). Idempotent: $c(p)\\le c(c(p))$ by the unit; for the reverse, the counit $fg(q)\\le q$ at $q=f(p)$ gives $fgf(p)\\le f(p)$, and applying the monotone $g$ yields $c(c(p))=gfgf(p)\\le gf(p)=c(p)$. By antisymmetry $c(c(p))=c(p)$."
+      solution_sketch: "Monotonicity is inherited from the two maps. Inflationary is the unit, obtained by feeding $f(p)\\le f(p)$ into the biconditional; for idempotence use the counit $fg(q)\\le q$ at $q=f(p)$, apply the monotone $g$, and close with antisymmetry."
+    anki_seeds:
+      - front: "A Galois connection is an adjunction between..."
+        back: "posets (thin categories): monotone $f,g$ with $f(p)\\le q\\iff p\\le g(q)$."
+        type: basic
+      - front: "For a Galois connection $f\\dashv g$, the composite $g\\circ f$ is a {{c1::closure operator}}."
+        back: "closure operator"
+        type: cloze
+
+  - id: reflective-subcategories
+    name: Reflective Subcategories
+    core: false                # terminal adjunction application
+    difficulty: 0.8
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 270
+    prerequisites:
+      - id: adjunctions
+        weight: 0.5
+        key: true
+      - id: unit-counit
+        weight: 0.4
+        key: true
+      - id: full-faithful-functors
+        weight: 0.4
+        key: true
+      - id: triangle-identities
+        weight: 0.3
+      - id: subcategories
+        weight: 0.2
+      - id: first-isomorphism-theorem
+        weight: 0.2
+      # Phase C reconciliation: kp3 proves Ab reflective in Grp with reflector
+      # $G \mapsto G/[G,G]$ — "$f$ kills commutators" and the unique factorisation
+      # through the quotient are commutator-subgroup kp3 (the UMP of abelianization).
+      - id: commutator-subgroup
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Definition and the universal property of the reflection
+        key_prerequisites: [adjunctions]
+        constraints: "The subcategory must be full; state which functor is the left adjoint."
+        exemplars:
+          - problem: "Define a reflective subcategory and write the universal property satisfied by the unit."
+            answer: "A full subcategory whose inclusion $i\\colon\\mathcal{D}\\to\\mathcal{C}$ has a left adjoint $L$; $\\eta_C\\colon C\\to iLC$ is universal from $C$ to $i$."
+            solution_sketch: "A full subcategory $\\mathcal{D}\\subseteq\\mathcal{C}$ is reflective if the inclusion $i$ has a left adjoint $L\\colon\\mathcal{C}\\to\\mathcal{D}$, called the reflector, so $\\mathrm{Hom}_{\\mathcal{D}}(LC,D)\\cong\\mathrm{Hom}_{\\mathcal{C}}(C,iD)$ naturally. Equivalently, the unit $\\eta_C\\colon C\\to iLC$ is a universal arrow from $C$ to $i$: every morphism $f\\colon C\\to iD$ with $D$ in $\\mathcal{D}$ factors as $f=i(g)\\circ\\eta_C$ for a unique $g\\colon LC\\to D$. So $LC$ is the best approximation of $C$ from inside $\\mathcal{D}$."
+          - problem: "Show that if $C$ already lies in $\\mathcal{D}$ then the reflection map $\\eta_C$ is an isomorphism, given that $\\varepsilon$ is a natural isomorphism."
+            answer: "For $C=iD$, the second triangle identity $i\\varepsilon_D\\circ\\eta_{iD}=1_{iD}$ plus invertibility of $\\varepsilon_D$ makes $\\eta_{iD}$ invertible."
+            solution_sketch: "Take $C=iD$ with $D$ in $\\mathcal{D}$. For the adjunction $L\\dashv i$ the second triangle identity $G\\varepsilon\\circ\\eta G=1_G$ (here $G=i$) gives $i(\\varepsilon_D)\\circ\\eta_{iD}=1_{iD}$. If $\\varepsilon_D$ is an isomorphism then so is $i(\\varepsilon_D)$ (functors preserve isomorphisms), and composing the displayed identity with $i(\\varepsilon_D)^{-1}$ on the left yields $\\eta_{iD}=i(\\varepsilon_D)^{-1}$, an isomorphism. So objects already in $\\mathcal{D}$ are their own reflections: reflecting is idempotent on the nose up to isomorphism."
+      - id: kp2
+        name: The counit of a reflection is an isomorphism
+        key_prerequisites: [triangle-identities]
+        constraints: "Use fullness to produce the comparison map, faithfulness for one equation, and naturality plus the first triangle identity for the other."
+        exemplars:
+          - problem: "Let $L\\dashv i$ with $i\\colon\\mathcal{D}\\to\\mathcal{C}$ fully faithful. Prove the counit $\\varepsilon\\colon Li\\Rightarrow 1_{\\mathcal{D}}$ is a natural isomorphism."
+            answer: "Take $k\\colon D\\to LiD$ with $i(k)=\\eta_{iD}$; then $\\varepsilon_D\\circ k=1_D$ and $k\\circ\\varepsilon_D=1_{LiD}$."
+            solution_sketch: "Since $i$ is full and faithful, the morphism $\\eta_{iD}\\colon iD\\to iLiD$ is $i(k)$ for a unique $k\\colon D\\to LiD$. The second triangle identity $G\\varepsilon\\circ\\eta G=1_G$ for $L\\dashv i$ (so $G=i$) reads $i(\\varepsilon_D)\\circ\\eta_{iD}=1_{iD}$, i.e. $i(\\varepsilon_D\\circ k)=i(1_D)$, so faithfulness gives $\\varepsilon_D\\circ k=1_D$. For the other composite, naturality of $\\varepsilon$ at $k\\colon D\\to LiD$ gives $k\\circ\\varepsilon_D=\\varepsilon_{LiD}\\circ Li(k)$. But $Li(k)=L(\\eta_{iD})$, and the first triangle identity $\\varepsilon F\\circ F\\eta=1_F$ (so $F=L$) at the object $iD$ says $\\varepsilon_{L(iD)}\\circ L(\\eta_{iD})=1_{L iD}$. Hence $k\\circ\\varepsilon_D=1_{LiD}$, so $\\varepsilon_D$ is an isomorphism with inverse $k$; naturality is inherited from $\\varepsilon$."
+          - problem: "Deduce that a reflective subcategory $\\mathcal{D}\\subseteq\\mathcal{C}$ consists, up to isomorphism, exactly of the objects $C$ for which $\\eta_C$ is an isomorphism."
+            answer: "If $\\eta_C$ is iso then $C\\cong iLC$ lies in $\\mathcal{D}$; conversely $\\eta_{iD}$ is an isomorphism for every $D$ in $\\mathcal{D}$."
+            solution_sketch: "If $\\eta_C\\colon C\\to iLC$ is an isomorphism, then $C$ is isomorphic to an object of the form $iLC$, hence lies in $\\mathcal{D}$ up to isomorphism (and genuinely so if $\\mathcal{D}$ is closed under isomorphism). Conversely, for $C=iD$ we showed $\\eta_{iD}=i(\\varepsilon_D)^{-1}$ is an isomorphism, using that $\\varepsilon$ is a natural isomorphism. So the reflective subcategory is characterized inside $\\mathcal{C}$ by the condition '$\\eta_C$ is invertible' — the local objects of the reflection."
+      - id: kp3
+        name: Examples and the induced idempotent monad
+        key_prerequisites: [full-faithful-functors, commutator-subgroup]
+        constraints: "Check fullness of the subcategory and the universal property of the reflector in each example."
+        exemplars:
+          - problem: "Show that $\\mathbf{Ab}$ is a reflective subcategory of $\\mathbf{Grp}$ and identify the reflector."
+            answer: "$\\mathbf{Ab}\\subseteq\\mathbf{Grp}$ is full, and abelianization $G\\mapsto G/[G,G]$ is left adjoint to the inclusion."
+            solution_sketch: "$\\mathbf{Ab}$ contains all abelian groups and every group homomorphism between them, so it is a full subcategory. For an abelian target $A$, any homomorphism $f\\colon G\\to A$ kills commutators, since $f(xyx^{-1}y^{-1})=f(x)f(y)f(x)^{-1}f(y)^{-1}=e$; hence $f$ factors uniquely through the quotient $G^{\\mathrm{ab}}=G/[G,G]$. This gives a natural bijection $\\mathrm{Hom}_{\\mathbf{Ab}}(G^{\\mathrm{ab}},A)\\cong\\mathrm{Hom}_{\\mathbf{Grp}}(G,A)$, so abelianization is left adjoint to the inclusion; the unit is the quotient map $\\eta_G\\colon G\\to G^{\\mathrm{ab}}$ and the counit at an abelian $A$ is the isomorphism $A^{\\mathrm{ab}}=A/\\{e\\}\\cong A$."
+          - problem: "Show that posets form a reflective subcategory of preorders, and describe the idempotent monad a reflection induces."
+            answer: "Reflector $P\\mapsto P/\\!\\sim$ with $x\\sim y$ iff $x\\le y\\le x$; the induced monad $T=iL$ has invertible multiplication, so $T^2\\cong T$."
+            solution_sketch: "Posets form a full subcategory of preorders (all monotone maps are kept). Given a preorder $P$, put $x\\sim y$ iff $x\\le y$ and $y\\le x$; this is an equivalence relation and $[x]\\le[y]$ iff $x\\le y$ is well defined and antisymmetric, so $P/\\!\\sim$ is a poset. If $Q$ is a poset and $f\\colon P\\to Q$ is monotone, then $x\\sim y$ gives $f(x)\\le f(y)\\le f(x)$, hence $f(x)=f(y)$; so $f$ factors uniquely through $P/\\!\\sim$, proving the adjunction. In general a reflection induces the monad $T=iL$ with unit $\\eta$ and multiplication $\\mu=i\\varepsilon L$; since $\\varepsilon$ is a natural isomorphism, $\\mu$ is an isomorphism and $T^2\\cong T$ — the monad is idempotent."
+    diagnostic_exemplar:
+      problem: "Show that $\\mathbf{Ab}$ is a reflective subcategory of $\\mathbf{Grp}$, identifying the reflector and its unit."
+      answer: "$\\mathbf{Ab}$ is full in $\\mathbf{Grp}$: every homomorphism between abelian groups is kept. The reflector is abelianization $G\\mapsto G^{\\mathrm{ab}}=G/[G,G]$: for abelian $A$, any homomorphism $f\\colon G\\to A$ kills commutators ($f(xyx^{-1}y^{-1})=f(x)f(y)f(x)^{-1}f(y)^{-1}=e$ since $A$ is abelian), so $f$ factors uniquely through the quotient map $\\eta_G\\colon G\\to G^{\\mathrm{ab}}$. This gives a natural bijection $\\mathrm{Hom}_{\\mathbf{Ab}}(G^{\\mathrm{ab}},A)\\cong\\mathrm{Hom}_{\\mathbf{Grp}}(G,A)$, i.e. abelianization is left adjoint to the inclusion, with unit $\\eta_G$."
+      solution_sketch: "The reflector must kill exactly what obstructs a map into an abelian group, namely the commutators. Show any $f\\colon G\\to A$ with $A$ abelian vanishes on commutators, hence factors uniquely through $G/[G,G]$; that unique factorization is the adjunction bijection, with the quotient map as unit."
+    anki_seeds:
+      - front: "A reflective subcategory is..."
+        back: "a full subcategory whose inclusion has a left adjoint (the reflector)."
+        type: basic
+      - front: "For an adjunction $L\\dashv i$ with $i$ fully faithful, the counit $\\varepsilon$ is..."
+        back: "a natural isomorphism."
+        type: basic
+      - front: "The reflector of $\\mathbf{Ab}\\subseteq\\mathbf{Grp}$ is {{c1::abelianization $G\\mapsto G/[G,G]$}}."
+        back: "abelianization $G\\mapsto G/[G,G]$"
+        type: cloze
+
+  - id: adjoints-preserve-limits
+    name: Adjoints Preserve (Co)Limits
+    core: false                # stated theorem (RAPL); terminal
+    difficulty: 0.82
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 300
+    prerequisites:
+      - id: adjunctions
+        weight: 0.5
+        key: true
+      - id: limits-colimits
+        weight: 0.5
+        key: true
+      - id: preservation-reflection-of-limits
+        weight: 0.4
+        key: true
+      - id: unit-counit
+        weight: 0.2
+      - id: hom-functors
+        weight: 0.2
+    knowledge_points:
+      - id: kp1
+        name: Hom-functors preserve limits
+        key_prerequisites: [limits-colimits]
+        constraints: "Hom-functors only: $\\mathrm{Hom}(A,-)$ covariant and $\\mathrm{Hom}(-,A)$ contravariant. State RAPL before applying it, and treat the contravariant case as the covariant one on $\\mathcal C^{op}$; concrete instances limited to binary (co)products, written as a hom-set isomorphism."
+        exemplars:
+          - problem: "State RAPL and explain why each $\\mathrm{Hom}(A,-)$ preserves limits."
+            answer: "Right adjoints preserve limits; $\\mathrm{Hom}(A,-)$ sends a limit cone to a limit cone of sets."
+            solution_sketch: "RAPL: a right adjoint preserves all limits that exist (dually a left adjoint preserves colimits). In particular $\\mathrm{Hom}(A,-)\\colon\\mathcal C\\to\\mathbf{Set}$ preserves limits: a cone with apex $L$ over $D$ is a limit iff $\\mathrm{Hom}(A,L)\\cong\\lim_j\\mathrm{Hom}(A,Dj)$ naturally in $A$, i.e. maps into $L$ correspond to compatible families of maps into the $Dj$."
+          - problem: "Show the contravariant hom-functor $\\mathrm{Hom}(-,A)$ sends colimits to limits, e.g. $\\mathrm{Hom}(X+Y,A)\\cong\\mathrm{Hom}(X,A)\\times\\mathrm{Hom}(Y,A)$."
+            answer: "$\\mathrm{Hom}(-,A)\\colon\\mathcal C^{op}\\to\\mathbf{Set}$ is a covariant hom-functor on $\\mathcal C^{op}$, so it preserves limits, i.e. carries colimits of $\\mathcal C$ to limits."
+            solution_sketch: "Regard $\\mathrm{Hom}(-,A)$ as the covariant hom-functor $\\mathrm{Hom}_{\\mathcal C^{op}}(A,-)$ on $\\mathcal C^{op}$, which preserves limits. A colimit in $\\mathcal C$ is a limit in $\\mathcal C^{op}$, so $\\mathrm{Hom}(\\mathrm{colim}_j D_j,A)\\cong\\lim_j\\mathrm{Hom}(D_j,A)$. For a coproduct this is $\\mathrm{Hom}(X+Y,A)\\cong\\mathrm{Hom}(X,A)\\times\\mathrm{Hom}(Y,A)$ (a map out of $X+Y$ is a pair of maps), and for a coequalizer it is an equalizer of hom-sets."
+      - id: kp2
+        name: The proof via the adjunction isomorphism
+        key_prerequisites: [adjunctions]
+        constraints: "The proof must run through the adjunction bijection $\\mathrm{Hom}(FC,-)\\cong\\mathrm{Hom}(C,G-)$ and then Yoneda, never through elements; applications limited to forgetful functors out of $\\mathbf{Grp}$, and any failure of colimit preservation must name the colimit involved."
+        exemplars:
+          - problem: "Prove that a right adjoint $G$ preserves limits, using $\\mathrm{Hom}(FC,-)\\cong\\mathrm{Hom}(C,G-)$."
+            answer: "Chain the hom-iso with limit-preservation of $\\mathrm{Hom}(FC,-)$, then apply Yoneda."
+            solution_sketch: "Let $D\\colon\\mathcal J\\to\\mathcal D$ have limit $\\lim D$ and $F\\dashv G$. For each $C$: $\\mathrm{Hom}(C,G\\lim D)\\cong\\mathrm{Hom}(FC,\\lim D)\\cong\\lim_j\\mathrm{Hom}(FC,Dj)\\cong\\lim_j\\mathrm{Hom}(C,GDj)\\cong\\mathrm{Hom}(C,\\lim_j GDj)$, naturally in $C$ (adjunction iso; $\\mathrm{Hom}(FC,-)$ preserves the limit of sets; adjunction iso; limits commute with $\\mathrm{Hom}(C,-)$). By Yoneda the represented objects are isomorphic: $G(\\lim D)\\cong\\lim(GD)$, via the canonical comparison. So $G$ preserves limits."
+          - problem: "Deduce that the forgetful functor $U\\colon\\mathbf{Grp}\\to\\mathbf{Set}$ preserves all limits, and note why it need not preserve coproducts."
+            answer: "$U$ is a right adjoint ($F\\dashv U$), so RAPL gives limit preservation; coproducts (free products) are colimits, which right adjoints need not preserve."
+            solution_sketch: "The free-group functor is left adjoint to $U$, so $U$ is a right adjoint and by RAPL preserves every limit: the underlying set of a product $\\prod_i G_i$ is $\\prod_i UG_i$, of an equalizer is the equalizer of underlying maps, and of the terminal group is a singleton. Colimits are exempt: the underlying set of the coproduct (free product) $G*H$ is not $UG\\sqcup UH$, consistent with $U$ being a right, not left, adjoint."
+      - id: kp3
+        name: Left adjoints preserve colimits
+        key_prerequisites: [limits-colimits]
+        constraints: "Obtain the dual statement by applying RAPL in the opposite categories rather than reproving it; instantiations limited to the free-monoid and free-vector-space functors, always naming the preserved colimit (initial object or binary coproduct)."
+        exemplars:
+          - problem: "Deduce that a left adjoint preserves colimits, and conclude the free-monoid functor preserves coproducts."
+            answer: "Apply RAPL in opposite categories; $(X\\sqcup Y)^*\\cong X^*+Y^*$ in $\\mathbf{Mon}$."
+            solution_sketch: "A left adjoint $F\\colon\\mathcal C\\to\\mathcal D$ is a right adjoint $\\mathcal C^{op}\\to\\mathcal D^{op}$, and colimits in $\\mathcal C$ are limits in $\\mathcal C^{op}$; RAPL there gives that $F$ preserves colimits. Since $(-)^*$ is a left adjoint (to the forgetful functor), it preserves coproducts: $(X\\sqcup Y)^*\\cong X^*+Y^*$, the coproduct (free product) in $\\mathbf{Mon}$. Thus free constructions commute with disjoint unions."
+          - problem: "Use LAPC to show a left adjoint preserves initial objects and coproducts; instantiate for the free vector space functor."
+            answer: "$F(\\text{initial})$ is initial and $F(X\\sqcup Y)\\cong FX+FY$; e.g. $k^{(\\emptyset)}=0$ and $k^{(X\\sqcup Y)}\\cong k^{(X)}\\oplus k^{(Y)}$."
+            solution_sketch: "A left adjoint $F$ preserves all colimits, in particular the initial object (the colimit of the empty diagram) and coproducts. For the free vector space functor $X\\mapsto k^{(X)}$: the empty set gives $k^{(\\emptyset)}=0$, the zero space (initial in $\\mathbf{Vect}$), and $k^{(X\\sqcup Y)}\\cong k^{(X)}+k^{(Y)}=k^{(X)}\\oplus k^{(Y)}$, since finite coproducts in $\\mathbf{Vect}$ are direct sums. So free constructions turn disjoint unions of generators into direct sums."
+    diagnostic_exemplar:
+      problem: "Prove RAPL: a right adjoint $G\\colon\\mathcal D\\to\\mathcal C$ (with $F\\dashv G$) preserves every limit that exists in $\\mathcal D$."
+      answer: "Let $\\lim D$ exist for $D\\colon\\mathcal J\\to\\mathcal D$. For every $C$: $\\mathrm{Hom}(C,G\\lim D)\\cong\\mathrm{Hom}(FC,\\lim D)\\cong\\lim_j\\mathrm{Hom}(FC,Dj)\\cong\\lim_j\\mathrm{Hom}(C,GDj)$ — adjunction, then hom-functors preserve limits, then adjunction again — each step natural in $C$. The last set is exactly the set of cones from $C$ over $GD$, so $G(\\lim D)$ equipped with the legs $G\\lambda_j$ has the universal property of $\\lim(GD)$: maps into it correspond bijectively to cones. Hence the canonical comparison $G(\\lim D)\\to\\lim(GD)$ is an isomorphism and $G$ preserves the limit."
+      solution_sketch: "Never touch the cones directly. Chain natural bijections $\\mathrm{Hom}(C,G\\lim D)\\cong\\mathrm{Hom}(FC,\\lim D)\\cong\\lim_j\\mathrm{Hom}(FC,Dj)\\cong\\lim_j\\mathrm{Hom}(C,GDj)$ — adjunction, hom preserves limits, adjunction again — and read the last set as the cones from $C$ over $GD$."
+    anki_seeds:
+      - front: "What does RAPL state about adjoints?"
+        back: "Right Adjoints Preserve Limits."
+        type: basic
+      - front: "What does LAPC state about adjoints?"
+        back: "Left Adjoints Preserve Colimits."
+        type: basic
+      - front: "Key step in proving $G$ preserves limits?"
+        back: "Use $\\mathrm{Hom}(C,G-)\\cong\\mathrm{Hom}(FC,-)$, that hom-functors preserve limits, then Yoneda."
+        type: basic

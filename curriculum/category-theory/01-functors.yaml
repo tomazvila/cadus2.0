@@ -1,0 +1,672 @@
+unit: functors
+course: category-theory
+module: "Functors"
+topics:
+  - id: functor-definition-laws
+    name: Functors — Definition and Laws
+    core: true
+    difficulty: 0.57
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 180
+    prerequisites:
+      - id: category-definition
+        weight: 0.6
+        key: true
+      - id: examples-of-categories
+        weight: 0.4
+        key: true
+      - id: composition-associativity-identity
+        weight: 0.3
+      - id: commutative-diagrams
+        weight: 0.2
+      - id: homomorphisms-intro
+        weight: 0.0
+      # Phase C reconciliation: kp3's center non-functoriality argument reasons with
+      # commutativity ($Z(\mathbb{Z}/2)=\mathbb{Z}/2$ because abelian; $Z(S_3)$ trivial
+      # via a non-commuting pair) — the exact skills of abelian-groups kp1/kp2.
+      - id: abelian-groups
+        weight: 0.2
+    knowledge_points:
+      - id: kp1
+        name: The data and the typing discipline
+        key_prerequisites: [category-definition]
+        constraints: "Always write the domain and codomain of $Ff$ before checking any law."
+        exemplars:
+          - problem: "State the data required to specify a functor $F\\colon\\mathcal{C}\\to\\mathcal{D}$, including the types of the morphism part."
+            answer: "An object $FA$ for each object $A$, and a morphism $Ff\\colon FA\\to FB$ for each $f\\colon A\\to B$."
+            solution_sketch: "A functor consists of two assignments. On objects: each object $A$ of $\\mathcal{C}$ gets an object $FA$ of $\\mathcal{D}$. On morphisms: each $f\\colon A\\to B$ gets a morphism $Ff\\colon FA\\to FB$ — the domain and codomain must be the images of the domain and codomain of $f$. This typing rule is what makes $Fg\\circ Ff$ meaningful whenever $g\\circ f$ is, and it must be checked before either functor law."
+          - problem: "For a functor $F$ and morphisms $f\\colon A\\to B$, $g\\colon B\\to C$, explain why $Fg\\circ Ff$ is always defined and give its domain and codomain."
+            answer: "$Ff\\colon FA\\to FB$ and $Fg\\colon FB\\to FC$, so the composite is defined and runs $FA\\to FC$."
+            solution_sketch: "By the typing rule $Ff\\colon FA\\to FB$ and $Fg\\colon FB\\to FC$. Composition is defined when the codomain of the first equals the domain of the second, which holds here (both are $FB$), so $Fg\\circ Ff\\colon FA\\to FC$. This is also the type of $F(g\\circ f)$, so the composition law $F(g\\circ f)=Fg\\circ Ff$ is an equation between two morphisms of the same type."
+      - id: kp2
+        name: The two laws and how to verify them
+        key_prerequisites: [composition-associativity-identity]
+        constraints: "Verify both laws separately; underlying-map arguments must say why the underlying map of a composite is the composite."
+        exemplars:
+          - problem: "State the two functor laws and verify them for the forgetful functor $U\\colon\\mathbf{Mon}\\to\\mathbf{Set}$."
+            answer: "$F(1_A)=1_{FA}$ and $F(g\\circ f)=Fg\\circ Ff$; $U$ satisfies both because it returns underlying maps."
+            solution_sketch: "The laws are $F(1_A)=1_{FA}$ (identities to identities) and $F(g\\circ f)=Fg\\circ Ff$ (composites to composites). Let $U$ send a monoid $(M,\\cdot,e)$ to the set $M$ and a homomorphism to its underlying function. The underlying function of $1_M$ is the identity function on $M$, so $U(1_M)=1_{UM}$. The underlying function of $g\\circ f$ is the composite of the underlying functions, so $U(g\\circ f)=Ug\\circ Uf$. Both laws hold, so $U$ is a functor."
+          - problem: "Show the direct-image power-set assignment $P\\colon\\mathbf{Set}\\to\\mathbf{Set}$, $P(A)=\\mathcal{P}(A)$ and $P(f)(S)=f[S]$, is a functor."
+            answer: "Direct image preserves identities and composition."
+            solution_sketch: "Types first: $P(f)\\colon\\mathcal{P}(A)\\to\\mathcal{P}(B)$ for $f\\colon A\\to B$, since $f[S]\\subseteq B$. Identity law: $P(1_A)(S)=1_A[S]=S$, so $P(1_A)=1_{\\mathcal{P}(A)}$. Composition law: $P(g\\circ f)(S)=(g\\circ f)[S]=\\{g(f(x)):x\\in S\\}=g[f[S]]=P(g)(P(f)(S))$. Both laws hold, so $P$ is a covariant functor."
+      - id: kp3
+        name: Recognizing assignments that are not functors
+        key_prerequisites: [examples-of-categories, abelian-groups]
+        constraints: "A non-example must be refuted by an explicit failure: wrong typing, or a concrete pair of morphisms."
+        exemplars:
+          - problem: "Is the preimage power-set assignment $A\\mapsto\\mathcal{P}(A)$, $f\\mapsto f^{-1}[-]$, a functor $\\mathbf{Set}\\to\\mathbf{Set}$? Justify."
+            answer: "No — it fails the typing rule: for $f\\colon A\\to B$ the assigned map goes $\\mathcal{P}(B)\\to\\mathcal{P}(A)$, the wrong way."
+            solution_sketch: "For $f\\colon A\\to B$, preimage gives $f^{-1}[-]\\colon\\mathcal{P}(B)\\to\\mathcal{P}(A)$, whereas a functor must supply a map $\\mathcal{P}(A)\\to\\mathcal{P}(B)$. So the assignment is not a functor $\\mathbf{Set}\\to\\mathbf{Set}$. It does satisfy the reversed composition rule $(g\\circ f)^{-1}[T]=f^{-1}[g^{-1}[T]]$, so it is a functor on the opposite category — a contravariant functor."
+          - problem: "Show that $G\\mapsto Z(G)$ (the center) does not extend to a functor $\\mathbf{Grp}\\to\\mathbf{Grp}$ by restricting homomorphisms."
+            answer: "No — a homomorphism need not carry the center into the center: $\\mathbb{Z}/2\\to S_3$, $1\\mapsto(1\\,2)$, has $Z(\\mathbb{Z}/2)=\\mathbb{Z}/2$ but $Z(S_3)=\\{e\\}$."
+            solution_sketch: "For 'restrict $\\phi$ to the center' to define a morphism part we would need $\\phi[Z(G)]\\subseteq Z(H)$ for every homomorphism $\\phi\\colon G\\to H$. Take $G=\\mathbb{Z}/2$, which is abelian, so $Z(G)=G$, and $H=S_3$, whose center is trivial because $(1\\,2)$ and $(1\\,3)$ do not commute. The homomorphism $\\phi$ sending the generator to the transposition $(1\\,2)$ has $\\phi[Z(G)]=\\{e,(1\\,2)\\}\\not\\subseteq\\{e\\}=Z(H)$. So the morphism part is not even well defined, and the center is not functorial on $\\mathbf{Grp}$."
+    diagnostic_exemplar:
+      problem: "Define $F\\colon\\mathbf{Set}\\to\\mathbf{Set}$ by $F(A)=A\\times\\{0,1\\}$ and $F(f)=f\\times 1_{\\{0,1\\}}$. Give the domain and codomain of $F(f)$ for $f\\colon A\\to B$, and verify both functor laws."
+      answer: "$F(f)\\colon A\\times\\{0,1\\}\\to B\\times\\{0,1\\}$, $(a,i)\\mapsto(f(a),i)$. Identity law: $F(1_A)(a,i)=(a,i)$, so $F(1_A)=1_{FA}$. Composition law: $F(g\\circ f)(a,i)=(g(f(a)),i)=F(g)(f(a),i)=F(g)(F(f)(a,i))$, so $F(g\\circ f)=Fg\\circ Ff$. Both laws hold, so $F$ is a functor."
+      solution_sketch: "Type $F(f)$ first — it must run $A\\times\\{0,1\\}\\to B\\times\\{0,1\\}$ — then check both laws elementwise on a pair $(a,i)$. The tag $i$ is carried untouched, so each law collapses to the corresponding fact about $f$ alone."
+    anki_seeds:
+      - front: "On morphisms, a functor $F$ sends each $f\\colon A\\to B$ to..."
+        back: "a morphism $Ff\\colon FA\\to FB$."
+        type: basic
+      - front: "How does a functor act on an identity: $F(1_A)=$?"
+        back: "$F(1_A)=1_{FA}$."
+        type: basic
+      - front: "How does a functor act on a composite: $F(g\\circ f)=$?"
+        back: "$F(g\\circ f)=Fg\\circ Ff$."
+        type: basic
+
+  - id: functors
+    name: Functors
+    core: true
+    difficulty: 0.6
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 210
+    prerequisites:
+      - id: functor-definition-laws
+        weight: 0.6
+        key: true
+      - id: category-definition
+        weight: 0.4
+        key: true
+      - id: examples-of-categories
+        weight: 0.3
+      - id: poset-monoid-categories
+        weight: 0.3
+      - id: function-composition-inverse
+        weight: 0.2
+      - id: monoids
+        weight: 0.2
+      - id: homomorphisms-intro
+        weight: 0.0
+    knowledge_points:
+      - id: kp1
+        name: Functors between one-object categories
+        key_prerequisites: [monoids]
+        constraints: "Both directions of the dictionary: unpack the functor laws into homomorphism axioms and conversely; monoids or groups only, no concrete computations needed."
+        exemplars:
+          - problem: "Show that a functor $BM\\to BN$ between one-object categories is exactly a monoid homomorphism $M\\to N$."
+            answer: "On the object it is forced; on morphisms it is a monoid homomorphism."
+            solution_sketch: "Both categories have a single object, so $F$ acts trivially on objects. On morphisms $F$ is a function $M\\to N$ with $F(1_*)=1_*$ (i.e. $F(e_M)=e_N$) and $F(mn)=F(m)F(n)$ (preservation of composition). These are precisely the monoid-homomorphism axioms, and conversely any homomorphism yields such a functor."
+          - problem: "For groups $G,H$ as one-object categories, what is a functor $BG\\to BH$?"
+            answer: "A group homomorphism $G\\to H$."
+            solution_sketch: "As with monoids, $F$ is a function $G\\to H$ preserving the unit and products; homomorphisms of groups automatically preserve inverses, so functors $BG\\to BH$ are exactly group homomorphisms."
+      - id: kp2
+        name: Functoriality of parametrized constructions
+        key_prerequisites: [function-composition-inverse]
+        constraints: "Endofunctors of $\\mathbf{Set}$ built from products with a fixed set or squaring; verification is elementwise, checking both laws on an arbitrary element."
+        exemplars:
+          - problem: "Fix a set $A$. Show $(-)\\times A\\colon\\mathbf{Set}\\to\\mathbf{Set}$, $f\\mapsto f\\times 1_A$, is a functor."
+            answer: "It preserves identities and composition componentwise."
+            solution_sketch: "On objects $X\\mapsto X\\times A$; on $f\\colon X\\to Y$, $(f\\times 1_A)(x,a)=(f(x),a)$. Then $1_X\\times 1_A=1_{X\\times A}$ and $(g\\circ f)\\times 1_A$ sends $(x,a)\\mapsto(g(f(x)),a)=(g\\times 1_A)\\big((f\\times 1_A)(x,a)\\big)$, so composition is preserved. Hence $(-)\\times A$ is a functor."
+          - problem: "Is $X\\mapsto X\\times X$, $f\\mapsto f\\times f$, a functor $\\mathbf{Set}\\to\\mathbf{Set}$?"
+            answer: "Yes."
+            solution_sketch: "$(f\\times f)(x,y)=(f(x),f(y))$ preserves identities and, coordinatewise, composition: $(g\\circ f)\\times(g\\circ f)=(g\\times g)\\circ(f\\times f)$. So it is a functor."
+      - id: kp3
+        name: Functors preserve isomorphisms and commuting diagrams
+        key_prerequisites: [functor-definition-laws]
+        constraints: "Every step must cite one of the two functor laws; never assume $F$ is injective on morphisms."
+        exemplars:
+          - problem: "Prove that a functor $F$ carries isomorphisms to isomorphisms, with $(Ff)^{-1}=F(f^{-1})$."
+            answer: "$F(f^{-1})$ is a two-sided inverse of $Ff$."
+            solution_sketch: "Let $f\\colon A\\to B$ be an isomorphism with inverse $f^{-1}$. Applying $F$ to $f^{-1}\\circ f=1_A$ and using both functor laws gives $F(f^{-1})\\circ Ff=F(f^{-1}\\circ f)=F(1_A)=1_{FA}$. Symmetrically $Ff\\circ F(f^{-1})=F(1_B)=1_{FB}$. So $Ff$ is an isomorphism and, inverses being unique, $(Ff)^{-1}=F(f^{-1})$. Consequently $A\\cong B$ implies $FA\\cong FB$: no functor can distinguish isomorphic objects."
+          - problem: "Prove that a functor sends commuting diagrams to commuting diagrams, and use this to show $A\\cong B$ implies $FA\\cong FB$ for every functor $F$."
+            answer: "Any equation of composites is preserved by $F$; applying this to the two inverse equations transports the isomorphism."
+            solution_sketch: "A diagram commutes exactly when certain composites are equal. If $h=g\\circ f$ in $\\mathcal{C}$, then $Fh=F(g\\circ f)=Fg\\circ Ff$, so the image diagram commutes; the same argument applies to any equation between composites, since $F$ turns each composite into the composite of the images. Now if $A\\cong B$ via $f$ with inverse $g$, the two commuting triangles $g\\circ f=1_A$ and $f\\circ g=1_B$ are carried to $Fg\\circ Ff=1_{FA}$ and $Ff\\circ Fg=1_{FB}$, exhibiting $FA\\cong FB$."
+    diagnostic_exemplar:
+      problem: "Prove that every functor $F$ carries isomorphisms to isomorphisms, and that $(Ff)^{-1}=F(f^{-1})$."
+      answer: "Let $f\\colon A\\to B$ have inverse $f^{-1}$. Applying $F$ to $f^{-1}\\circ f=1_A$ and using both functor laws: $F(f^{-1})\\circ Ff=F(f^{-1}\\circ f)=F(1_A)=1_{FA}$. Symmetrically, applying $F$ to $f\\circ f^{-1}=1_B$ gives $Ff\\circ F(f^{-1})=1_{FB}$. So $F(f^{-1})$ is a two-sided inverse of $Ff$; hence $Ff$ is an isomorphism and, inverses being unique, $(Ff)^{-1}=F(f^{-1})$."
+      solution_sketch: "Apply $F$ to the two equations defining $f^{-1}$ and push $F$ through each composite with the composition law; $F(1)=1$ turns both into identities, exhibiting $F(f^{-1})$ as a two-sided inverse of $Ff$. Uniqueness of inverses then gives the naming claim."
+    anki_seeds:
+      - front: "A functor between one-object categories $BM\\to BN$ is exactly a {{c1::monoid homomorphism}}."
+        back: "monoid homomorphism"
+        type: cloze
+      - front: "If $f$ is an isomorphism and $F$ a functor, what is $(Ff)^{-1}$?"
+        back: "$F(f^{-1})$; functors preserve isomorphisms."
+        type: basic
+      - front: "Does a functor send commuting diagrams to commuting diagrams?"
+        back: "Yes — $F$ turns every composite into the composite of the images, so equations of composites are preserved."
+        type: basic
+
+  - id: functor-composition-identity
+    name: Composing Functors and the Category Cat
+    core: true
+    difficulty: 0.62
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 180
+    prerequisites:
+      - id: functors
+        weight: 0.6
+        key: true
+      - id: functor-definition-laws
+        weight: 0.4
+        key: true
+      - id: category-definition
+        weight: 0.3
+      - id: composition-associativity-identity
+        weight: 0.2
+      - id: examples-of-categories
+        weight: 0.0
+    knowledge_points:
+      - id: kp1
+        name: Composites and identity functors
+        key_prerequisites: [functors]
+        constraints: "Check the object part, the morphism part, and both laws separately."
+        exemplars:
+          - problem: "Given functors $F\\colon\\mathcal{B}\\to\\mathcal{C}$ and $G\\colon\\mathcal{C}\\to\\mathcal{D}$, prove that $GF$ (defined by $(GF)A=G(FA)$ and $(GF)f=G(Ff)$) is a functor."
+            answer: "Both laws follow by applying the laws for $F$ and then for $G$."
+            solution_sketch: "Types: for $f\\colon A\\to B$ in $\\mathcal{B}$, $Ff\\colon FA\\to FB$ and so $G(Ff)\\colon GFA\\to GFB$, as required. Identities: $(GF)(1_A)=G(F1_A)=G(1_{FA})=1_{GFA}$. Composites: $(GF)(g\\circ f)=G(F(g\\circ f))=G(Fg\\circ Ff)=G(Fg)\\circ G(Ff)=(GF)g\\circ(GF)f$. Both laws hold, so $GF\\colon\\mathcal{B}\\to\\mathcal{D}$ is a functor."
+          - problem: "Define the identity functor $1_{\\mathcal{C}}$ and prove $1_{\\mathcal{D}}\\circ F=F=F\\circ 1_{\\mathcal{C}}$ for every $F\\colon\\mathcal{C}\\to\\mathcal{D}$."
+            answer: "$1_{\\mathcal{C}}$ fixes objects and morphisms; the two composites agree with $F$ on all data."
+            solution_sketch: "Define $1_{\\mathcal{C}}(A)=A$ and $1_{\\mathcal{C}}(f)=f$; the functor laws are immediate. For $F\\colon\\mathcal{C}\\to\\mathcal{D}$: $(1_{\\mathcal{D}}\\circ F)(A)=1_{\\mathcal{D}}(FA)=FA$ and $(1_{\\mathcal{D}}\\circ F)(f)=Ff$, so $1_{\\mathcal{D}}\\circ F=F$. Likewise $(F\\circ 1_{\\mathcal{C}})(A)=F(A)$ and $(F\\circ 1_{\\mathcal{C}})(f)=Ff$, so $F\\circ 1_{\\mathcal{C}}=F$. Two functors are equal exactly when their object and morphism parts agree, which is what we checked."
+      - id: kp2
+        name: The category Cat and isomorphisms of categories
+        key_prerequisites: [category-definition]
+        constraints: "Verify associativity and unit laws for functor composition before naming the category."
+        exemplars:
+          - problem: "Show that small categories and functors form a category $\\mathbf{Cat}$."
+            answer: "Composition of functors is associative with the identity functors as two-sided units, so the axioms hold."
+            solution_sketch: "Objects: small categories. Morphisms $\\mathcal{C}\\to\\mathcal{D}$: functors, which compose to functors by the previous knowledge point. Associativity: $((HG)F)$ and $(H(GF))$ agree on objects, since both send $A\\mapsto H(G(FA))$, and on morphisms, since both send $f\\mapsto H(G(Ff))$; hence they are equal. Units: $1_{\\mathcal{D}}\\circ F=F=F\\circ 1_{\\mathcal{C}}$, shown above. All category axioms hold, so $\\mathbf{Cat}$ is a category."
+          - problem: "Define an isomorphism of categories and explain why it is a strong requirement."
+            answer: "Functors $F,G$ with $GF=1_{\\mathcal{C}}$ and $FG=1_{\\mathcal{D}}$ on the nose — equality of functors, not merely a natural isomorphism."
+            solution_sketch: "An isomorphism in $\\mathbf{Cat}$ is a functor $F\\colon\\mathcal{C}\\to\\mathcal{D}$ with a two-sided inverse $G$, i.e. $GF=1_{\\mathcal{C}}$ and $FG=1_{\\mathcal{D}}$ as functors. This forces a bijection on objects and on each hom-set. It is a strong condition: for instance the categories of finite-dimensional vector spaces and of matrices behave the same way mathematically but have different object collections, so they are not isomorphic. The weaker and more useful notion, obtained by relaxing the two equalities to natural isomorphisms, is equivalence of categories."
+      - id: kp3
+        name: Endofunctors and their iterates
+        key_prerequisites: [composition-associativity-identity]
+        constraints: "Keep to endofunctors of a fixed category; write $T^n$ only for composites of $T$ with itself."
+        exemplars:
+          - problem: "Define an endofunctor and the powers $T^n$, and explain why the endofunctors of $\\mathcal{C}$ form a monoid under composition."
+            answer: "$T\\colon\\mathcal{C}\\to\\mathcal{C}$; $T^0=1_{\\mathcal{C}}$, $T^{n+1}=T\\circ T^n$; composition is associative with unit $1_{\\mathcal{C}}$."
+            solution_sketch: "An endofunctor is a functor from $\\mathcal{C}$ to itself. Any two endofunctors compose (both are $\\mathcal{C}\\to\\mathcal{C}$), and the composite is again an endofunctor. Composition of functors is associative and $1_{\\mathcal{C}}$ is a two-sided unit, so the endofunctors of $\\mathcal{C}$ form a monoid, equivalently a one-object category. Powers are defined by $T^0=1_{\\mathcal{C}}$ and $T^{n+1}=T\\circ T^n$; associativity makes $T^m\\circ T^n=T^{m+n}$ unambiguous. This monoid is the setting in which monads will later be defined."
+          - problem: "For the power-set endofunctor $P$ on $\\mathbf{Set}$, describe $P^2$ on objects and on a morphism $f\\colon A\\to B$."
+            answer: "$P^2A=\\mathcal{P}(\\mathcal{P}(A))$ and $P^2(f)(\\mathcal{S})=\\{f[S]:S\\in\\mathcal{S}\\}$."
+            solution_sketch: "By definition $P^2=P\\circ P$, so on objects $P^2A=P(PA)=\\mathcal{P}(\\mathcal{P}(A))$, the set of families of subsets of $A$. On a morphism, $P^2(f)=P(P(f))$, and $P(f)$ is direct image, so for a family $\\mathcal{S}\\subseteq\\mathcal{P}(A)$ we get $P^2(f)(\\mathcal{S})=P(f)[\\mathcal{S}]=\\{f[S]:S\\in\\mathcal{S}\\}$. The functor laws for $P^2$ hold automatically, being the composite of a functor with itself."
+    diagnostic_exemplar:
+      problem: "Given functors $F\\colon\\mathcal{B}\\to\\mathcal{C}$ and $G\\colon\\mathcal{C}\\to\\mathcal{D}$, define $GF$ by $(GF)A=G(FA)$ and $(GF)f=G(Ff)$, and prove that $GF$ satisfies both functor laws."
+      answer: "Typing: for $f\\colon A\\to B$, $Ff\\colon FA\\to FB$, so $G(Ff)\\colon GFA\\to GFB$. Identities: $(GF)(1_A)=G(F1_A)=G(1_{FA})=1_{GFA}$, using the identity law of $F$ then of $G$. Composites: $(GF)(g\\circ f)=G(F(g\\circ f))=G(Fg\\circ Ff)=G(Fg)\\circ G(Ff)=(GF)g\\circ(GF)f$, using the composition law of $F$ then of $G$. Hence $GF$ is a functor."
+      solution_sketch: "Check the typing of $G(Ff)$, then apply each law twice, inner functor first: $G(F1_A)=G(1_{FA})=1_{GFA}$, and $G(F(g\\circ f))$ splits by the law for $F$ and then by the law for $G$."
+    anki_seeds:
+      - front: "How is the composite functor $GF$ defined?"
+        back: "$(GF)A=G(FA)$ on objects and $(GF)f=G(Ff)$ on morphisms."
+        type: basic
+      - front: "What are the objects and morphisms of $\\mathbf{Cat}$?"
+        back: "small categories; functors between them."
+        type: basic
+      - front: "An isomorphism of categories requires $GF$ and $FG$ to be {{c1::equal to the identity functors}} (not merely naturally isomorphic)."
+        back: "equal to the identity functors"
+        type: cloze
+
+  - id: functor-examples
+    name: Examples of Functors
+    core: true
+    difficulty: 0.6
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 210
+    prerequisites:
+      - id: functors
+        weight: 0.6
+        key: true
+      - id: examples-of-categories
+        weight: 0.2
+      - id: monoids
+        weight: 0.2
+      - id: groups-intro
+        weight: 0.0
+      - id: basis-dimension
+        weight: 0.0
+      - id: linear-transformations
+        weight: 0.0
+    knowledge_points:
+      - id: kp1
+        name: Forgetful functors
+        key_prerequisites: [functors]
+        constraints: "Forgetful functors out of $\\mathbf{Grp}$, $\\mathbf{Mon}$, or $\\mathbf{Top}$; the verification must reduce both laws to 'the underlying map of a composite is the composite'."
+        exemplars:
+          - problem: "Describe the forgetful functors $\\mathbf{Grp}\\to\\mathbf{Set}$ and $\\mathbf{Grp}\\to\\mathbf{Mon}$ and confirm functoriality."
+            answer: "They forget some/all structure; the assigned morphism is the underlying map, so the laws hold automatically."
+            solution_sketch: "$U\\colon\\mathbf{Grp}\\to\\mathbf{Set}$ sends a group to its underlying set and a homomorphism to its underlying function; $V\\colon\\mathbf{Grp}\\to\\mathbf{Mon}$ forgets only inverses. In each case $F(1)=1$ and $F(g\\circ f)=Fg\\circ Ff$ because the underlying map of a composite is the composite of the underlying maps."
+          - problem: "Verify the forgetful functor $U\\colon\\mathbf{Top}\\to\\mathbf{Set}$ (forget the topology) is a functor."
+            answer: "It returns underlying point-sets and underlying functions, so the laws hold automatically."
+            solution_sketch: "$U$ sends a topological space $(X,\\tau)$ to the set $X$ and a continuous map $f\\colon X\\to Y$ to the same underlying function. The underlying function of $1_X$ is $1_X$ and of $g\\circ f$ is $g\\circ f$, so $U(1_X)=1_{UX}$ and $U(g\\circ f)=Ug\\circ Uf$. Hence $U$ is a functor."
+      - id: kp2
+        name: Free functors
+        key_prerequisites: [monoids]
+        constraints: "Free constructions on a set: words $X^*$, pointed sets $X_+$, or the free vector space $k^{(X)}$; show the morphism part preserves the structure, then check both functor laws on generators/letters."
+        exemplars:
+          - problem: "Show the free-monoid construction $X\\mapsto X^*$ (finite words under concatenation) extends to a functor $\\mathbf{Set}\\to\\mathbf{Mon}$."
+            answer: "$f^*$ applies $f$ letterwise; it is a homomorphism, and the assignment is functorial."
+            solution_sketch: "$X^*$ is the monoid of finite words with concatenation and empty word $\\varepsilon$. For $f\\colon X\\to Y$ set $f^*(x_1\\cdots x_n)=f(x_1)\\cdots f(x_n)$ and $f^*(\\varepsilon)=\\varepsilon$; this preserves concatenation, so $f^*$ is a monoid homomorphism. Since $1_X^*=1_{X^*}$ and $(g\\circ f)^*=g^*\\circ f^*$ (letterwise), $(-)^*$ is a functor."
+          - problem: "A pointed set is a pair $(A,a_0)$ with $a_0\\in A$, and a morphism $(A,a_0)\\to(B,b_0)$ is a function $g$ with $g(a_0)=b_0$; these form $\\mathbf{Set}_*$. Show the free pointed set $X\\mapsto X_+:=X\\sqcup\\{*\\}$ (adjoin one new element) extends to a functor $\\mathbf{Set}\\to\\mathbf{Set}_*$."
+            answer: "$f_+$ acts as $f$ on $X$ and fixes $*$; it preserves the basepoint, and the assignment is functorial."
+            solution_sketch: "Give $X_+=X\\sqcup\\{*\\}$ the basepoint $*$. For $f\\colon X\\to Y$ define $f_+(x)=f(x)$ for $x\\in X$ and $f_+(*)=*$; since $f_+$ sends the basepoint to the basepoint it is a morphism of pointed sets. Then $(1_X)_+=1_{X_+}$, and $(g\\circ f)_+$ and $g_+\\circ f_+$ agree everywhere (both are $g\\circ f$ on $X$ and fix $*$), so $(-)_+$ is a functor. It is free in the same sense as $X\\mapsto X^*$: it adds exactly the missing structure — one basepoint — and imposes no relations, so a function $X\\to B$ extends uniquely to a basepoint-preserving map $X_+\\to(B,b_0)$."
+          - problem: "Show the free vector space construction $X\\mapsto k^{(X)}$ (formal finite $k$-linear combinations of elements of $X$) extends to a functor $\\mathbf{Set}\\to\\mathbf{Vect}_k$."
+            answer: "Extend a function linearly on basis elements; the assignment preserves identities and composition."
+            solution_sketch: "$k^{(X)}$ is the vector space with basis $X$. For $f\\colon X\\to Y$ let $F(f)\\colon k^{(X)}\\to k^{(Y)}$ be the linear map sending each basis vector $x$ to $f(x)$. A linear map is determined by its values on a basis, so $F(1_X)=1_{k^{(X)}}$, and $F(g\\circ f)$ and $F(g)\\circ F(f)$ agree on every basis vector ($x\\mapsto g(f(x))$), hence are equal. Thus $F$ is a functor."
+      - id: kp3
+        name: Constant and diagonal functors
+        key_prerequisites: [functors]
+        constraints: "Only $\\Delta_D$ (constant at an object) and $\\Delta\\colon\\mathcal C\\to\\mathcal C\\times\\mathcal C$; verification is a one-line check of each law."
+        exemplars:
+          - problem: "Define the constant functor $\\Delta_D\\colon\\mathcal{C}\\to\\mathcal{D}$ at an object $D$ and verify functoriality."
+            answer: "Send every object to $D$ and every morphism to $1_D$."
+            solution_sketch: "$\\Delta_D(C)=D$ and $\\Delta_D(f)=1_D$ for all $C,f$. Then $\\Delta_D(1_C)=1_D$ and $\\Delta_D(g\\circ f)=1_D=1_D\\circ 1_D=\\Delta_D(g)\\circ\\Delta_D(f)$, so $\\Delta_D$ is a functor."
+          - problem: "Describe the diagonal functor $\\Delta\\colon\\mathcal C\\to\\mathcal C\\times\\mathcal C$."
+            answer: "$C\\mapsto(C,C)$ and $f\\mapsto(f,f)$."
+            solution_sketch: "Sending objects and morphisms to their diagonal pairs preserves identities and composition in each coordinate, so $\\Delta$ is a functor."
+    diagnostic_exemplar:
+      problem: "For a function $f\\colon X\\to Y$ define $f^*\\colon X^*\\to Y^*$ on the free monoids of finite words by $f^*(x_1\\cdots x_n)=f(x_1)\\cdots f(x_n)$ and $f^*(\\varepsilon)=\\varepsilon$. Show that $f^*$ is a monoid homomorphism and that $(-)^*$ is a functor $\\mathbf{Set}\\to\\mathbf{Mon}$."
+      answer: "Homomorphism: $f^*$ sends the unit $\\varepsilon$ to $\\varepsilon$ and preserves concatenation, since applying $f$ letterwise to $uv$ gives $f^*(u)f^*(v)$. Functor laws: $1_X^*$ applies $1_X$ letterwise, so $1_X^*=1_{X^*}$; and $(g\\circ f)^*$ applies $g\\circ f$ letterwise, which is the same as applying $f$ letterwise then $g$ letterwise, so $(g\\circ f)^*=g^*\\circ f^*$. Hence $(-)^*$ is a functor."
+      solution_sketch: "Everything reduces to the phrase: apply $f$ letterwise. That description makes $f^*$ fix $\\varepsilon$ and respect concatenation, and it makes applying $g\\circ f$ letterwise visibly the same as applying $f$ letterwise and then $g$ letterwise."
+    anki_seeds:
+      - front: "What does a forgetful functor do?"
+        back: "drops structure, e.g. $\\mathbf{Grp}\\to\\mathbf{Set}$."
+        type: basic
+      - front: "What does a free functor do?"
+        back: "builds the free structure on a set, e.g. $X\\mapsto X^*$ ($\\mathbf{Set}\\to\\mathbf{Mon}$)."
+        type: basic
+      - front: "The constant functor $\\Delta_D$ sends every morphism to..."
+        back: "the identity $1_D$."
+        type: basic
+
+  - id: covariant-contravariant-functors
+    name: Covariant and Contravariant Functors
+    core: true
+    difficulty: 0.65
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 210
+    prerequisites:
+      - id: functors
+        weight: 0.5
+        key: true
+      - id: duality-opposite-categories
+        weight: 0.4
+        key: true
+      - id: functor-examples
+        weight: 0.2
+    knowledge_points:
+      - id: kp1
+        name: Contravariant = functor on the opposite category
+        key_prerequisites: [duality-opposite-categories]
+        constraints: "State the reversed composition law $F(g\\circ f)=Ff\\circ Fg$ explicitly; instances are the preimage power-set or order-reversing poset maps."
+        exemplars:
+          - problem: "Define a contravariant functor and verify the preimage power-set $P^{-1}\\colon\\mathbf{Set}^{op}\\to\\mathbf{Set}$, $P^{-1}(f)(T)=f^{-1}[T]$, is one."
+            answer: "A functor $\\mathcal C^{op}\\to\\mathcal D$; preimage reverses composition."
+            solution_sketch: "A contravariant functor on $\\mathcal C$ is a functor $\\mathcal C^{op}\\to\\mathcal D$: it sends $f\\colon A\\to B$ to $Ff\\colon FB\\to FA$ with $F(g\\circ f)=Ff\\circ Fg$ and $F(1)=1$. For preimage, $(g\\circ f)^{-1}[T]=f^{-1}[g^{-1}[T]]$, i.e. $P^{-1}(g\\circ f)=P^{-1}(f)\\circ P^{-1}(g)$, and $P^{-1}(1)=1$. So $P^{-1}$ is contravariant."
+          - problem: "Let $P,Q$ be posets viewed as categories. Show an order-reversing map $\\phi\\colon P\\to Q$ (i.e. $x\\le y$ implies $\\phi(y)\\le\\phi(x)$) is exactly a contravariant functor $P\\to Q$."
+            answer: "It is a functor $P^{op}\\to Q$; the order-reversal is the contravariance."
+            solution_sketch: "In a poset category there is a unique arrow $x\\to y$ iff $x\\le y$. An order-reversing $\\phi$ turns $x\\le y$ into $\\phi(y)\\le\\phi(x)$, so it sends the arrow $x\\to y$ to an arrow $\\phi(y)\\to\\phi(x)$, reversing direction. Hom-sets have at most one element, so the functor laws hold automatically. Thus $\\phi$ is a functor $P^{op}\\to Q$, i.e. a contravariant functor $P\\to Q$."
+      - id: kp2
+        name: Composing variances
+        key_prerequisites: [functors]
+        constraints: "Prove the variance of a composite by expanding the composition law symbolically — the two orders of reversal must be tracked step by step, never asserted."
+        exemplars:
+          - problem: "Show that the composite of two contravariant functors is covariant."
+            answer: "Two order reversals cancel."
+            solution_sketch: "Let $F,G$ be contravariant, so $G(g\\circ f)=Gf\\circ Gg$ and $F$ reverses order too. Then $FG(g\\circ f)=F(Gf\\circ Gg)=F(Gg)\\circ F(Gf)=FG(g)\\circ FG(f)$, which is the covariant composition law; identities are preserved, so $F\\circ G$ is covariant."
+          - problem: "If $F$ is covariant and $G$ contravariant, what is the variance of $F\\circ G$?"
+            answer: "Contravariant."
+            solution_sketch: "$FG(g\\circ f)=F(Gf\\circ Gg)=F(Gf)\\circ F(Gg)=FG(f)\\circ FG(g)$, reversing order — contravariant. Covariant $\\circ$ contravariant $=$ contravariant."
+      - id: kp3
+        name: Reading off variance in examples
+        key_prerequisites: [functors]
+        constraints: "Decide variance from the direction of the morphism part AND the composition law; examples limited to duals of vector spaces, group inversion, preimage, and hom-functors."
+        exemplars:
+          - problem: "Is the dual-space functor $V\\mapsto V^*$, $f\\mapsto f^*$ (precompose), covariant or contravariant on $\\mathbf{Vect}$? Justify."
+            answer: "Contravariant."
+            solution_sketch: "For $f\\colon V\\to W$ the dual $f^*\\colon W^*\\to V^*$ sends $\\phi\\mapsto\\phi\\circ f$, reversing direction. And $(g\\circ f)^*(\\phi)=\\phi\\circ g\\circ f=f^*(g^*(\\phi))$, so $(g\\circ f)^*=f^*\\circ g^*$. Hence $(-)^*$ is contravariant."
+          - problem: "For a group $G$ as a one-object category $BG$, is inversion $g\\mapsto g^{-1}$ a covariant or contravariant functor $BG\\to BG$? Justify."
+            answer: "Contravariant."
+            solution_sketch: "On the single object the action is forced. On morphisms, inversion fixes the identity ($e^{-1}=e$) but satisfies $(gh)^{-1}=h^{-1}g^{-1}$, reversing the order of composition. That is the contravariant law $F(gh)=F(h)\\circ F(g)$, so inversion is a contravariant functor $BG\\to BG$; equivalently it is the group isomorphism $G\\cong G^{op}$."
+    diagnostic_exemplar:
+      problem: "Prove that the composite of two contravariant functors is covariant."
+      answer: "Let $G\\colon\\mathcal C^{op}\\to\\mathcal D$ and $F\\colon\\mathcal D^{op}\\to\\mathcal E$ be contravariant, so $G(g\\circ f)=Gf\\circ Gg$ and $F$ likewise reverses order. Then $FG(g\\circ f)=F(Gf\\circ Gg)=F(Gg)\\circ F(Gf)=FG(g)\\circ FG(f)$ — the two reversals cancel, restoring the covariant composition law. Identities are preserved by both, so $F\\circ G$ is a covariant functor."
+      solution_sketch: "Track the order of a composite through both functors: each contravariant step reverses it, and two reversals restore the original order. Identities survive both steps, so the composite obeys the covariant laws."
+    anki_seeds:
+      - front: "Contravariant functor composition law?"
+        back: "$F(g\\circ f)=Ff\\circ Fg$ (order reversed); equivalently a functor $\\mathcal C^{op}\\to\\mathcal D$."
+        type: basic
+      - front: "contravariant $\\circ$ contravariant $=$ {{c1::covariant}}."
+        back: "covariant"
+        type: cloze
+
+  - id: full-faithful-functors
+    name: Full and Faithful Functors
+    core: true
+    difficulty: 0.7
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 240
+    prerequisites:
+      - id: functors
+        weight: 0.5
+        key: true
+      - id: functions-injective-surjective
+        weight: 0.3
+        key: true
+      - id: functor-examples
+        weight: 0.2
+      - id: isomorphism-vs-equality
+        weight: 0.0
+    knowledge_points:
+      - id: kp1
+        name: Definitions via the action on hom-sets
+        key_prerequisites: [functors]
+        constraints: "Phrase everything through the hom-set maps $F_{A,B}$; closure proofs (composites of faithful/full functors) factor $(GF)_{A,B}$ through the two hom-set maps."
+        exemplars:
+          - problem: "Define faithful, full, and fully faithful in terms of the maps $F_{A,B}\\colon\\mathrm{Hom}(A,B)\\to\\mathrm{Hom}(FA,FB)$."
+            answer: "Faithful: each $F_{A,B}$ injective; full: surjective; fully faithful: bijective."
+            solution_sketch: "A functor $F$ induces, for each pair $A,B$, a function $F_{A,B}\\colon\\mathrm{Hom}_{\\mathcal C}(A,B)\\to\\mathrm{Hom}_{\\mathcal D}(FA,FB)$, $f\\mapsto Ff$. $F$ is faithful if every $F_{A,B}$ is injective, full if every $F_{A,B}$ is surjective, and fully faithful if every $F_{A,B}$ is a bijection. These conditions are about morphisms only; a faithful functor may still identify distinct objects."
+          - problem: "Using the hom-set formulation, prove that a composite of faithful functors is faithful."
+            answer: "A composite of injective hom-set maps is injective."
+            solution_sketch: "Let $F\\colon\\mathcal C\\to\\mathcal D$ and $G\\colon\\mathcal D\\to\\mathcal E$ be faithful. For objects $A,B$ the map $(GF)_{A,B}\\colon\\mathrm{Hom}(A,B)\\to\\mathrm{Hom}(GFA,GFB)$ factors as $G_{FA,FB}\\circ F_{A,B}$. Each factor is injective by faithfulness of $F$ and of $G$, and a composite of injections is injective, so $(GF)_{A,B}$ is injective for all $A,B$. Hence $G\\circ F$ is faithful."
+      - id: kp2
+        name: Examples that separate the notions
+        key_prerequisites: [functions-injective-surjective]
+        constraints: "Each judgment needs a witness: a non-homomorphism function for 'not full', a collapsed pair of morphisms for 'not faithful'; standard sources are forgetful functors and functors into $\\mathbf 1$."
+        exemplars:
+          - problem: "Show the forgetful functor $U\\colon\\mathbf{Grp}\\to\\mathbf{Set}$ is faithful but not full."
+            answer: "Distinct homomorphisms have distinct underlying functions; not every function is a homomorphism."
+            solution_sketch: "Faithful: if $U\\phi=U\\psi$ as functions then $\\phi=\\psi$ as homomorphisms, so $U_{G,H}$ is injective. Not full: take $G=H=\\mathbb Z$; the set function $n\\mapsto n+1$ lies in $\\mathrm{Hom}_{\\mathbf{Set}}(\\mathbb Z,\\mathbb Z)$ but is not a group homomorphism (it does not fix $0$), so $U_{G,H}$ is not surjective."
+          - problem: "Give a functor that is full but not faithful, and explain why the unique functor $\\mathcal C\\to\\mathbf 1$ is not full for every $\\mathcal C$."
+            answer: "Take $F\\colon BM\\to\\mathbf 1$ for a monoid $M$ with $|M|\\ge 2$ (say $M=\\mathbb Z/2$); in general $\\mathcal C\\to\\mathbf 1$ is full only when no hom-set of $\\mathcal C$ is empty."
+            solution_sketch: "Let $\\mathbf 1$ have one object $*$ and only its identity, and let $F\\colon\\mathcal C\\to\\mathbf 1$ be the unique functor. Fullness asks each $F_{A,B}\\colon\\mathrm{Hom}_{\\mathcal C}(A,B)\\to\\mathrm{Hom}_{\\mathbf 1}(*,*)=\\{1_*\\}$ to be surjective, which holds exactly when $\\mathrm{Hom}_{\\mathcal C}(A,B)\\neq\\varnothing$ — so $F$ fails to be full whenever some hom-set of $\\mathcal C$ is empty (e.g. a discrete category on two objects). Choose instead $\\mathcal C=BM$, the one-object category of a monoid $M$ with $|M|\\ge 2$, such as $M=\\mathbb Z/2$. It has a single object, so its only hom-set is $\\mathrm{Hom}(*,*)=M\\neq\\varnothing$ and $F_{*,*}$ is surjective: $F$ is full. But $|M|\\ge 2$ gives distinct parallel morphisms $m\\neq n$ in $\\mathrm{Hom}(*,*)$ with $Fm=1_*=Fn$, so $F_{*,*}$ is not injective and $F$ is not faithful."
+      - id: kp3
+        name: Fully faithful functors reflect isomorphisms
+        key_prerequisites: [functors]
+        constraints: "The proof pattern is fixed: lift via fullness, verify via faithfulness; each application of fullness or faithfulness must be named where used."
+        exemplars:
+          - problem: "Prove that a fully faithful functor $F$ reflects isomorphisms: if $Ff$ is an isomorphism, so is $f$."
+            answer: "Pull the inverse of $Ff$ back through fullness, then apply faithfulness."
+            solution_sketch: "Suppose $Ff\\colon FA\\to FB$ has inverse $g\\colon FB\\to FA$. By fullness $g=Fh$ for some $h\\colon B\\to A$. Then $F(h\\circ f)=Fh\\circ Ff=g\\circ Ff=1_{FA}=F(1_A)$; faithfulness gives $h\\circ f=1_A$. Symmetrically $F(f\\circ h)=Ff\\circ Fh=1_{FB}=F(1_B)$ gives $f\\circ h=1_B$. So $f$ is an isomorphism with inverse $h$."
+          - problem: "Prove that if $F$ is fully faithful and $FA\\cong FB$, then $A\\cong B$."
+            answer: "Lift the iso and its inverse through fullness; faithfulness makes them mutually inverse."
+            solution_sketch: "Let $\\alpha\\colon FA\\to FB$ be an isomorphism with inverse $\\beta\\colon FB\\to FA$. By fullness $\\alpha=Ff$ and $\\beta=Fg$ for some $f\\colon A\\to B$ and $g\\colon B\\to A$. Then $F(g\\circ f)=Fg\\circ Ff=\\beta\\circ\\alpha=1_{FA}=F(1_A)$, and faithfulness gives $g\\circ f=1_A$; symmetrically $f\\circ g=1_B$. So $f$ is an isomorphism $A\\cong B$."
+    diagnostic_exemplar:
+      problem: "Prove that a fully faithful functor $F$ reflects isomorphisms: if $Ff$ is an isomorphism, then $f$ is an isomorphism."
+      answer: "Let $Ff\\colon FA\\to FB$ have inverse $g\\colon FB\\to FA$. By fullness $g=Fh$ for some $h\\colon B\\to A$. Then $F(h\\circ f)=Fh\\circ Ff=g\\circ Ff=1_{FA}=F(1_A)$, so faithfulness gives $h\\circ f=1_A$. Symmetrically $F(f\\circ h)=Ff\\circ Fh=1_{FB}=F(1_B)$ gives $f\\circ h=1_B$. Hence $h$ is a two-sided inverse and $f$ is an isomorphism."
+      solution_sketch: "Fullness supplies the candidate and faithfulness proves it works: lift the inverse of $Ff$ to some $h\\colon B\\to A$, then descend the two identity equations from $\\mathcal D$ to $\\mathcal C$ by cancelling $F$."
+    anki_seeds:
+      - front: "A functor is faithful when each hom-set map $\\mathrm{Hom}(A,B)\\to\\mathrm{Hom}(FA,FB)$ is..."
+        back: "injective."
+        type: basic
+      - front: "A functor is full when each hom-set map $\\mathrm{Hom}(A,B)\\to\\mathrm{Hom}(FA,FB)$ is..."
+        back: "surjective."
+        type: basic
+      - front: "A fully faithful functor {{c1::reflects isomorphisms}} (if $Ff$ is iso then $f$ is iso)."
+        back: "reflects isomorphisms"
+        type: cloze
+
+  - id: subcategories
+    name: Subcategories
+    core: true
+    difficulty: 0.6
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 180
+    prerequisites:
+      - id: category-definition
+        weight: 0.4
+        key: true
+      - id: full-faithful-functors
+        weight: 0.4
+        key: true
+      - id: functors
+        weight: 0.2
+    knowledge_points:
+      - id: kp1
+        name: Subcategories and full subcategories
+        key_prerequisites: [category-definition]
+        constraints: "Verify closure under identities and composition explicitly; fullness judged by comparing hom-sets; instances drawn from $\\mathbf{Set}$ and its structured-set relatives."
+        exemplars:
+          - problem: "Define a subcategory of $\\mathcal C$ and a full subcategory, and say what the inclusion functor is."
+            answer: "A subcollection of objects/morphisms closed under identities and composition; full if it keeps all $\\mathcal C$-morphisms between chosen objects; the inclusion is a functor."
+            solution_sketch: "A subcategory $\\mathcal D\\subseteq\\mathcal C$ chooses a subcollection of objects and, for each pair, a subset of morphisms, containing the needed identities and closed under composition. It is full if $\\mathrm{Hom}_{\\mathcal D}(A,B)=\\mathrm{Hom}_{\\mathcal C}(A,B)$ for all objects of $\\mathcal D$. The inclusion $\\mathcal D\\hookrightarrow\\mathcal C$ is always a faithful functor."
+          - problem: "Show that finite sets with all functions between them form a subcategory of $\\mathbf{Set}$, and determine whether it is full."
+            answer: "It is closed under identities and composition, and it is full."
+            solution_sketch: "Let $\\mathbf{FinSet}$ have finite sets as objects and all functions between them as morphisms. Each identity of a finite set is such a function, and a composite of functions between finite sets is again one, so $\\mathbf{FinSet}$ is a subcategory of $\\mathbf{Set}$. It contains every $\\mathbf{Set}$-morphism between two finite sets, so $\\mathrm{Hom}_{\\mathbf{FinSet}}(A,B)=\\mathrm{Hom}_{\\mathbf{Set}}(A,B)$; hence it is a full subcategory."
+      - id: kp2
+        name: Full versus non-full examples
+        key_prerequisites: [full-faithful-functors]
+        constraints: "Fullness judgments among $\\mathbf{Ab}\\subseteq\\mathbf{Grp}$, $\\mathbf{Grp}\\subseteq\\mathbf{Mon}$, and morphism-restricted subcategories of $\\mathbf{Set}$; a 'full' verdict needs a preservation argument, a 'not full' verdict an omitted morphism."
+        exemplars:
+          - problem: "Is $\\mathbf{Ab}\\subseteq\\mathbf{Grp}$ a full subcategory? Is the subcategory of $\\mathbf{Set}$ with only injective functions full?"
+            answer: "$\\mathbf{Ab}$ is full; the injections subcategory is not."
+            solution_sketch: "$\\mathbf{Ab}$ contains all abelian groups and every group homomorphism between them, so its hom-sets equal those of $\\mathbf{Grp}$: it is full. The subcategory of sets with only injective functions omits non-injective maps between its objects, so its hom-sets are proper subsets: it is not full."
+          - problem: "Is $\\mathbf{Grp}$ a full subcategory of $\\mathbf{Mon}$? Is the subcategory of $\\mathbf{Set}$ with all sets but only bijections full?"
+            answer: "$\\mathbf{Grp}\\subseteq\\mathbf{Mon}$ is full; the bijections subcategory is not."
+            solution_sketch: "A group is a monoid, and any monoid homomorphism between two groups automatically preserves inverses (from $\\phi(g)\\phi(g^{-1})=\\phi(e)=e$), so it is already a group homomorphism. Thus $\\mathrm{Hom}_{\\mathbf{Mon}}(G,H)=\\mathrm{Hom}_{\\mathbf{Grp}}(G,H)$ and $\\mathbf{Grp}\\subseteq\\mathbf{Mon}$ is full. The subcategory of $\\mathbf{Set}$ with all sets but only bijections omits non-invertible functions, so its hom-sets are proper subsets: not full."
+      - id: kp3
+        name: A full subcategory is determined by its objects
+        key_prerequisites: [full-faithful-functors]
+        constraints: "One direction is the fullness argument; the converse needs two explicit subcategories of $\\mathbf{Set}$ with the same objects but different hom-sets."
+        exemplars:
+          - problem: "Explain why specifying a full subcategory amounts to choosing a class of objects."
+            answer: "Fullness forces all morphisms between chosen objects to be included."
+            solution_sketch: "In a full subcategory each hom-set is copied wholesale from $\\mathcal C$, so once the objects are fixed the morphisms, identities, and composition are all determined. Hence full subcategories of $\\mathcal C$ correspond exactly to classes of objects of $\\mathcal C$."
+          - problem: "Show that a general subcategory is not determined by its objects, by exhibiting two distinct subcategories of $\\mathbf{Set}$ with the same objects."
+            answer: "Same objects, different morphisms: all functions vs only bijections."
+            solution_sketch: "Consider two subcategories of $\\mathbf{Set}$ that both have every set as an object: one keeps all functions (this is $\\mathbf{Set}$ itself), the other keeps only bijections. They share the same object class but have different hom-sets, hence are distinct subcategories. So objects alone do not determine a subcategory; only full subcategories are determined by their objects, since fullness fixes each hom-set to that of $\\mathbf{Set}$."
+    diagnostic_exemplar:
+      problem: "Is $\\mathbf{Grp}$ a full subcategory of $\\mathbf{Mon}$? Prove your answer."
+      answer: "Yes. Every group is a monoid, and every monoid homomorphism $\\phi\\colon G\\to H$ between groups automatically preserves inverses: from $\\phi(g)\\phi(g^{-1})=\\phi(gg^{-1})=\\phi(e)=e$ and likewise $\\phi(g^{-1})\\phi(g)=e$, the element $\\phi(g^{-1})$ is a two-sided inverse of $\\phi(g)$, so $\\phi(g^{-1})=\\phi(g)^{-1}$ and $\\phi$ is a group homomorphism. Hence $\\mathrm{Hom}_{\\mathbf{Mon}}(G,H)=\\mathrm{Hom}_{\\mathbf{Grp}}(G,H)$ for all groups $G,H$: the subcategory is full."
+      solution_sketch: "Fullness asks whether the two hom-sets coincide, so the real question is whether a monoid homomorphism between groups automatically preserves inverses. Show $\\phi(g^{-1})$ is a two-sided inverse of $\\phi(g)$ and invoke uniqueness of inverses."
+    anki_seeds:
+      - front: "Full subcategory definition?"
+        back: "A subcategory containing all $\\mathcal C$-morphisms between its chosen objects; equivalently, determined by a class of objects."
+        type: basic
+      - front: "The inclusion of a subcategory is always {{c1::faithful}}."
+        back: "faithful"
+        type: cloze
+
+  - id: product-categories
+    name: Product Categories and Bifunctors
+    core: true
+    difficulty: 0.65
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 180
+    prerequisites:
+      - id: category-definition
+        weight: 0.4
+        key: true
+      - id: functors
+        weight: 0.4
+        key: true
+      - id: examples-of-categories
+        weight: 0.2
+    knowledge_points:
+      - id: kp1
+        name: The product category and its projections
+        key_prerequisites: [category-definition]
+        constraints: "Componentwise definitions with coordinatewise verification; the pairing functor's uniqueness must be forced by the two projection equations."
+        exemplars:
+          - problem: "Define $\\mathcal C\\times\\mathcal D$ and its two projection functors, and check they are functors."
+            answer: "Objects/morphisms are componentwise pairs; $\\pi_1,\\pi_2$ keep one coordinate."
+            solution_sketch: "$\\mathcal C\\times\\mathcal D$ has objects $(C,D)$, morphisms $(f,g)$ with $(f',g')\\circ(f,g)=(f'\\circ f,\\,g'\\circ g)$ and identities $(1_C,1_D)$; the axioms hold coordinatewise. $\\pi_1(C,D)=C$, $\\pi_1(f,g)=f$ preserves identities and composition (first coordinate), so it is a functor; likewise $\\pi_2$."
+          - problem: "Given functors $F\\colon\\mathcal E\\to\\mathcal C$ and $G\\colon\\mathcal E\\to\\mathcal D$, show there is a unique functor $\\langle F,G\\rangle\\colon\\mathcal E\\to\\mathcal C\\times\\mathcal D$ with $\\pi_1\\circ\\langle F,G\\rangle=F$ and $\\pi_2\\circ\\langle F,G\\rangle=G$."
+            answer: "$\\langle F,G\\rangle(X)=(FX,GX)$, $\\langle F,G\\rangle(u)=(Fu,Gu)$; the projection equations force it."
+            solution_sketch: "Define $\\langle F,G\\rangle$ by $X\\mapsto(FX,GX)$ on objects and $u\\mapsto(Fu,Gu)$ on morphisms; functoriality holds coordinatewise since $F,G$ are functors. The equations $\\pi_1\\circ\\langle F,G\\rangle=F$ and $\\pi_2\\circ\\langle F,G\\rangle=G$ force the first coordinate of the output to be $F$ and the second to be $G$, so any functor satisfying them equals $\\langle F,G\\rangle$; hence it is unique. This is the universal property of the product category."
+      - id: kp2
+        name: Functors out of a product are bifunctors
+        key_prerequisites: [functors]
+        constraints: "State the interchange law $F(f,g)=F(f,1)\\circ F(1,g)=F(1,g)\\circ F(f,1)$; the concrete instance is the cartesian product on $\\mathbf{Set}$, verified elementwise."
+        exemplars:
+          - problem: "State what it means for $F\\colon\\mathcal C\\times\\mathcal D\\to\\mathcal E$ to be a bifunctor and the interchange condition it satisfies."
+            answer: "Separately functorial in each variable, with $F(f,g)=F(f,1)\\circ F(1,g)=F(1,g)\\circ F(f,1)$."
+            solution_sketch: "Any morphism factors as $(f,g)=(f,1)\\circ(1,g)=(1,g)\\circ(f,1)$ in $\\mathcal C\\times\\mathcal D$. Applying $F$ gives $F(f,g)=F(f,1)\\circ F(1,g)=F(1,g)\\circ F(f,1)$: $F$ is functorial in each variable separately and the two partial actions commute (interchange). Conversely, separate functoriality plus interchange assembles a genuine functor on the product."
+          - problem: "Verify that cartesian product $\\times\\colon\\mathbf{Set}\\times\\mathbf{Set}\\to\\mathbf{Set}$, $(X,Y)\\mapsto X\\times Y$ and $(f,g)\\mapsto f\\times g$, is a bifunctor."
+            answer: "It preserves identities and composition componentwise, giving a functor on the product."
+            solution_sketch: "On a morphism $(f,g)$ of $\\mathbf{Set}\\times\\mathbf{Set}$, $(f\\times g)(x,y)=(f(x),g(y))$. Then $1_X\\times 1_Y=1_{X\\times Y}$, and $(f'\\times g')\\circ(f\\times g)=(f'\\circ f)\\times(g'\\circ g)$ because composition acts in each coordinate. So $\\times$ preserves identities and composites of $\\mathbf{Set}\\times\\mathbf{Set}$ and is a functor out of the product, i.e. a bifunctor; interchange is the special case $f\\times g=(f\\times 1)\\circ(1\\times g)$."
+    diagnostic_exemplar:
+      problem: "Show that disjoint union $\\sqcup\\colon\\mathbf{Set}\\times\\mathbf{Set}\\to\\mathbf{Set}$, $(X,Y)\\mapsto X\\sqcup Y$ and $(f,g)\\mapsto f\\sqcup g$, is a functor on the product category, and verify the interchange identity $f\\sqcup g=(f\\sqcup 1_{Y'})\\circ(1_X\\sqcup g)=(1_{X'}\\sqcup g)\\circ(f\\sqcup 1_Y)$ for $f\\colon X\\to X'$ and $g\\colon Y\\to Y'$."
+      answer: "Identities and composition in $\\mathbf{Set}\\times\\mathbf{Set}$ are componentwise. Identity law: $1_X\\sqcup 1_Y$ is the identity on each summand, so it equals $1_{X\\sqcup Y}$. Composition law: for $(f,g)\\colon(X,Y)\\to(X',Y')$ and $(f',g')\\colon(X',Y')\\to(X'',Y'')$, the map $(f'\\circ f)\\sqcup(g'\\circ g)$ applies $f'\\circ f$ on the left summand and $g'\\circ g$ on the right, which is exactly $(f'\\sqcup g')\\circ(f\\sqcup g)$. So $\\sqcup$ is a functor on the product category, i.e. a bifunctor. Interchange: in $\\mathbf{Set}\\times\\mathbf{Set}$ the componentwise factorisations $(f,g)=(f,1_{Y'})\\circ(1_X,g)=(1_{X'},g)\\circ(f,1_Y)$ hold, and applying the functor gives the stated identity. Elementwise, all three routes send a left-summand element $x$ to the left-summand element $f(x)$ and a right-summand element $y$ to the right-summand element $g(y)$."
+      solution_sketch: "Composition and identities in a product category are componentwise, so both functor laws reduce to the fact that $\\sqcup$ acts on each summand separately. For interchange, factor $(f,g)$ in $\\mathbf{Set}\\times\\mathbf{Set}$ the two available ways and apply the functor; elementwise every route sends $x$ to $f(x)$ and $y$ to $g(y)$."
+    anki_seeds:
+      - front: "Composition in $\\mathcal C\\times\\mathcal D$?"
+        back: "$(f',g')\\circ(f,g)=(f'\\circ f,\\ g'\\circ g)$, componentwise."
+        type: basic
+      - front: "A bifunctor is a functor whose domain is a {{c1::product category}}."
+        back: "product category"
+        type: cloze
+
+  - id: hom-functors
+    name: Hom-Functors
+    core: true
+    difficulty: 0.7
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 240
+    prerequisites:
+      - id: functors
+        weight: 0.5
+        key: true
+      - id: covariant-contravariant-functors
+        weight: 0.4
+        key: true
+      - id: product-categories
+        weight: 0.3
+      - id: examples-of-categories
+        weight: 0.2
+    knowledge_points:
+      - id: kp1
+        name: The covariant hom-functor
+        key_prerequisites: [functors]
+        constraints: "Post-composition action $f_*=f\\circ(-)$; the law checks reduce to associativity and unit laws; concrete readings only in $\\mathbf{Set}$ with $A$ a singleton."
+        exemplars:
+          - problem: "Fix $A$ in a locally small category $\\mathcal C$. Show $\\mathrm{Hom}(A,-)\\colon\\mathcal C\\to\\mathbf{Set}$ is a functor."
+            answer: "Post-composition $f_*=f\\circ(-)$; it preserves identities and composition."
+            solution_sketch: "$\\mathrm{Hom}(A,-)$ sends $X$ to the set $\\mathrm{Hom}(A,X)$ and $f\\colon X\\to Y$ to $f_*\\colon\\mathrm{Hom}(A,X)\\to\\mathrm{Hom}(A,Y)$, $h\\mapsto f\\circ h$. Then $(1_X)_*(h)=h$ and $(g\\circ f)_*(h)=(g\\circ f)\\circ h=g\\circ(f\\circ h)=g_*(f_*(h))$ by associativity, so it is a covariant functor."
+          - problem: "In $\\mathbf{Set}$, identify the covariant hom-functor $\\mathrm{Hom}(\\{*\\},-)$ and show it acts as the identity on functions under $\\mathrm{Hom}(\\{*\\},X)\\cong X$."
+            answer: "$\\mathrm{Hom}(\\{*\\},X)\\cong X$ and $f_*$ corresponds to $f$."
+            solution_sketch: "A function $\\{*\\}\\to X$ is determined by the image of $*$, giving a bijection $\\mathrm{Hom}(\\{*\\},X)\\cong X$, $h\\mapsto h(*)$. For $f\\colon X\\to Y$, $f_*(h)=f\\circ h$ satisfies $(f\\circ h)(*)=f(h(*))$, so under the bijection $f_*$ becomes $f$ itself. Thus post-composition makes $\\mathrm{Hom}(\\{*\\},-)$ behave as the identity functor on $\\mathbf{Set}$, confirming it is a covariant functor."
+      - id: kp2
+        name: The contravariant hom-functor
+        key_prerequisites: [covariant-contravariant-functors]
+        constraints: "Pre-composition action $f^*=(-)\\circ f$ with the reversed law derived, not asserted; the concrete reading is $\\mathrm{Hom}(-,\\{0,1\\})\\cong\\mathcal P$ via characteristic functions."
+        exemplars:
+          - problem: "Show $\\mathrm{Hom}(-,B)\\colon\\mathcal C^{op}\\to\\mathbf{Set}$ is a (contravariant) functor."
+            answer: "Pre-composition $f^*=(-)\\circ f$ reverses arrows."
+            solution_sketch: "$\\mathrm{Hom}(-,B)$ sends $X$ to $\\mathrm{Hom}(X,B)$ and $f\\colon X\\to Y$ to $f^*\\colon\\mathrm{Hom}(Y,B)\\to\\mathrm{Hom}(X,B)$, $h\\mapsto h\\circ f$. Then $(1_X)^*=\\mathrm{id}$ and $(g\\circ f)^*(h)=h\\circ(g\\circ f)=(h\\circ g)\\circ f=f^*(g^*(h))$, so $(g\\circ f)^*=f^*\\circ g^*$: contravariant."
+          - problem: "In $\\mathbf{Set}$, show the contravariant hom-functor $\\mathrm{Hom}(-,\\{0,1\\})$ corresponds to the power-set functor: $\\mathrm{Hom}(X,\\{0,1\\})\\cong\\mathcal P(X)$ and $f^*$ becomes preimage."
+            answer: "Characteristic functions give $\\mathrm{Hom}(X,\\{0,1\\})\\cong\\mathcal P(X)$; pre-composition $f^*$ is $S\\mapsto f^{-1}[S]$."
+            solution_sketch: "Send $\\chi\\colon X\\to\\{0,1\\}$ to $\\chi^{-1}(1)\\subseteq X$; this is a bijection $\\mathrm{Hom}(X,\\{0,1\\})\\cong\\mathcal P(X)$. For $f\\colon X\\to Y$ and $\\chi\\colon Y\\to\\{0,1\\}$, $f^*(\\chi)=\\chi\\circ f$ has $(\\chi\\circ f)^{-1}(1)=f^{-1}[\\chi^{-1}(1)]$, so under the bijection $f^*$ is the preimage map $S\\mapsto f^{-1}[S]$. This reverses arrows, matching the contravariance of $\\mathrm{Hom}(-,B)$."
+      - id: kp3
+        name: The two-variable hom-bifunctor
+        key_prerequisites: [product-categories]
+        constraints: "The action is $h\\mapsto g\\circ h\\circ f$; state domain $\\mathcal C^{op}\\times\\mathcal C$ and the variance of each slot, and recover the one-variable hom-functors by fixing an argument."
+        exemplars:
+          - problem: "Describe the bifunctor $\\mathrm{Hom}(-,-)\\colon\\mathcal C^{op}\\times\\mathcal C\\to\\mathbf{Set}$ on a morphism $(f,g)$."
+            answer: "$(f\\colon A'\\to A,\\ g\\colon B\\to B')\\mapsto\\big(h\\mapsto g\\circ h\\circ f\\big)$."
+            solution_sketch: "On objects $(A,B)\\mapsto\\mathrm{Hom}(A,B)$. A morphism $(f,g)$ of $\\mathcal C^{op}\\times\\mathcal C$ has $f\\colon A'\\to A$ in $\\mathcal C$ and $g\\colon B\\to B'$; it acts by $h\\mapsto g\\circ h\\circ f\\colon A'\\to B'$. Identities act trivially, and interchange holds because pre- and post-composition commute by associativity, so this is a well-defined bifunctor (contravariant in the first slot, covariant in the second)."
+          - problem: "Show that fixing one argument of $\\mathrm{Hom}(-,-)\\colon\\mathcal C^{op}\\times\\mathcal C\\to\\mathbf{Set}$ recovers the one-variable hom-functors, and state the variance in each slot."
+            answer: "$\\mathrm{Hom}(A,-)$ is covariant, $\\mathrm{Hom}(-,B)$ contravariant: contravariant in slot 1, covariant in slot 2."
+            solution_sketch: "Restricting to morphisms $(1_A,g)$ gives $\\mathrm{Hom}(A,-)$ acting by $g_*\\colon h\\mapsto g\\circ h$ (post-composition, covariant). Restricting to $(f,1_B)$ gives $\\mathrm{Hom}(-,B)$ acting by $f^*\\colon h\\mapsto h\\circ f$ (pre-composition, contravariant). Since the full action is $h\\mapsto g\\circ h\\circ f$, the bifunctor is contravariant in the first variable and covariant in the second, and these partial functors are exactly the two one-variable hom-functors."
+    diagnostic_exemplar:
+      problem: "For morphisms $f\\colon A'\\to A$ and $g\\colon B\\to B'$ of a locally small $\\mathcal C$, show that $h\\mapsto g\\circ h\\circ f$ defines a map $\\mathrm{Hom}(A,B)\\to\\mathrm{Hom}(A',B')$, and verify the composition law making $\\mathrm{Hom}(-,-)$ a functor $\\mathcal C^{op}\\times\\mathcal C\\to\\mathbf{Set}$."
+      answer: "Typing: for $h\\colon A\\to B$, $g\\circ h\\circ f\\colon A'\\to B'$, as required. Identities: $(1_A,1_B)$ acts by $h\\mapsto 1_B\\circ h\\circ 1_A=h$. Composition: for $(f,g)\\colon(A,B)\\to(A',B')$ and $(f',g')\\colon(A',B')\\to(A'',B'')$ in $\\mathcal C^{op}\\times\\mathcal C$ (so $f\\colon A'\\to A$, $f'\\colon A''\\to A'$ in $\\mathcal C$), the composite acts by $h\\mapsto(g'\\circ g)\\circ h\\circ(f\\circ f')=g'\\circ\\big(g\\circ h\\circ f\\big)\\circ f'$, which is the action of $(f',g')$ after the action of $(f,g)$ — associativity makes the two agree. So $\\mathrm{Hom}(-,-)$ is a functor, contravariant in the first slot and covariant in the second."
+      solution_sketch: "Type the assignment first, then observe that the composition law is pure associativity: one long string $g'\\circ g\\circ h\\circ f\\circ f'$ re-bracketed as the outer action applied after the inner one. Contravariance in the first slot is exactly what makes the pre-composed factors accumulate in the reversed order."
+    anki_seeds:
+      - front: "$\\mathrm{Hom}(A,-)$: variance and action on a morphism $f$?"
+        back: "covariant; post-composition $f_*=f\\circ(-)$."
+        type: basic
+      - front: "$\\mathrm{Hom}(-,B)$: variance and action on a morphism $f$?"
+        back: "contravariant; pre-composition $f^*=(-)\\circ f$."
+        type: basic
+      - front: "The two-variable hom-functor has domain..."
+        back: "$\\mathcal C^{op}\\times\\mathcal C$ (contravariant in the source, covariant in the target)."
+        type: basic
+
+  - id: comma-categories
+    name: Comma Categories
+    core: false                # construction feeding only the terminal category-of-elements
+    difficulty: 0.7
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 240
+    prerequisites:
+      - id: slice-categories
+        weight: 0.5
+        key: true
+      - id: functors
+        weight: 0.5
+        key: true
+      - id: functor-composition-identity
+        weight: 0.3
+      - id: product-categories
+        weight: 0.2
+      - id: commutative-diagrams
+        weight: 0.2
+      - id: initial-terminal-objects
+        weight: 0.2
+    knowledge_points:
+      - id: kp1
+        name: The construction and its composition law
+        key_prerequisites: [functors]
+        constraints: "Always name the two functors and the common target category before writing an object."
+        exemplars:
+          - problem: "Given functors $F\\colon\\mathcal{A}\\to\\mathcal{C}$ and $G\\colon\\mathcal{B}\\to\\mathcal{C}$, define the comma category $(F\\downarrow G)$ and verify that composition is well defined."
+            answer: "Objects $(A,B,h\\colon FA\\to GB)$; morphisms $(a,b)$ with $Gb\\circ h=h'\\circ Fa$; composition is componentwise."
+            solution_sketch: "An object is a triple $(A,B,h)$ with $A$ in $\\mathcal{A}$, $B$ in $\\mathcal{B}$ and $h\\colon FA\\to GB$ in $\\mathcal{C}$. A morphism $(A,B,h)\\to(A',B',h')$ is a pair $a\\colon A\\to A'$, $b\\colon B\\to B'$ with $Gb\\circ h=h'\\circ Fa$. Given a further $(a',b')\\colon(A',B',h')\\to(A'',B'',h'')$, compute $h''\\circ F(a'\\circ a)=h''\\circ Fa'\\circ Fa=Gb'\\circ h'\\circ Fa=Gb'\\circ Gb\\circ h=G(b'\\circ b)\\circ h$, using functoriality of $F$ and $G$ and the two square conditions. So $(a',b')\\circ(a,b)=(a'\\circ a,b'\\circ b)$ is again a morphism; identities are $(1_A,1_B)$, and associativity and unit laws hold componentwise."
+          - problem: "Describe the projection functors $(F\\downarrow G)\\to\\mathcal{A}$ and $(F\\downarrow G)\\to\\mathcal{B}$ and check they are functors."
+            answer: "$(A,B,h)\\mapsto A$, $(a,b)\\mapsto a$, and likewise on the second coordinate."
+            solution_sketch: "Define $\\pi_{\\mathcal{A}}(A,B,h)=A$ and $\\pi_{\\mathcal{A}}(a,b)=a$. Identities go to identities since $1_{(A,B,h)}=(1_A,1_B)$, and composition is componentwise, so $\\pi_{\\mathcal{A}}((a',b')\\circ(a,b))=a'\\circ a=\\pi_{\\mathcal{A}}(a',b')\\circ\\pi_{\\mathcal{A}}(a,b)$. Hence $\\pi_{\\mathcal{A}}$ is a functor, and symmetrically so is $\\pi_{\\mathcal{B}}$."
+      - id: kp2
+        name: Slices, coslices, and arrow categories as comma categories
+        key_prerequisites: [slice-categories]
+        constraints: "Identify the two functors explicitly, including which is a constant functor out of $\\mathbf{1}$."
+        exemplars:
+          - problem: "Realize the slice $\\mathcal{C}/C$ and the coslice $C/\\mathcal{C}$ as comma categories."
+            answer: "$\\mathcal{C}/C=(1_{\\mathcal{C}}\\downarrow C)$ and $C/\\mathcal{C}=(C\\downarrow 1_{\\mathcal{C}})$, where $C$ denotes the functor $\\mathbf{1}\\to\\mathcal{C}$ picking $C$."
+            solution_sketch: "Write $C$ also for the functor $\\mathbf{1}\\to\\mathcal{C}$ from the terminal category selecting the object $C$. An object of $(1_{\\mathcal{C}}\\downarrow C)$ is a triple $(X,*,h\\colon X\\to C)$, i.e. an arrow into $C$; a morphism is $(a,1_*)$ with $1_C\\circ h=h'\\circ a$, i.e. $h=h'\\circ a$ — exactly a morphism of the slice $\\mathcal{C}/C$. Dually, an object of $(C\\downarrow 1_{\\mathcal{C}})$ is an arrow $C\\to X$ and a morphism is $b$ with $b\\circ h=h'$, exactly the coslice $C/\\mathcal{C}$."
+          - problem: "Show the arrow category $\\mathcal{C}^{\\to}$ is the comma category $(1_{\\mathcal{C}}\\downarrow 1_{\\mathcal{C}})$."
+            answer: "Objects are arrows of $\\mathcal{C}$ and morphisms are commuting squares — the comma condition with $F=G=1_{\\mathcal{C}}$."
+            solution_sketch: "Taking $F=G=1_{\\mathcal{C}}$, an object of $(1_{\\mathcal{C}}\\downarrow 1_{\\mathcal{C}})$ is a triple $(A,B,h\\colon A\\to B)$, i.e. an arrow of $\\mathcal{C}$. A morphism $(A,B,h)\\to(A',B',h')$ is a pair $(a,b)$ with $1(b)\\circ h=h'\\circ 1(a)$, i.e. $b\\circ h=h'\\circ a$: a commuting square. That is precisely the arrow category $\\mathcal{C}^{\\to}$."
+      - id: kp3
+        name: Universal arrows as initial objects of a comma category
+        key_prerequisites: [initial-terminal-objects]
+        constraints: "State the existence and uniqueness clauses separately and match them to initiality."
+        exemplars:
+          - problem: "For an object $C$ of $\\mathcal{C}$ and a functor $G\\colon\\mathcal{D}\\to\\mathcal{C}$, describe $(C\\downarrow G)$ and prove that an initial object of it is exactly a universal arrow from $C$ to $G$."
+            answer: "Objects are pairs $(D,f\\colon C\\to GD)$; an initial $(D_0,f_0)$ means every $f$ factors as $Gd\\circ f_0$ for a unique $d$."
+            solution_sketch: "Here $C$ denotes the functor $\\mathbf{1}\\to\\mathcal{C}$ at $C$, so an object of $(C\\downarrow G)$ is a pair $(D,f\\colon C\\to GD)$ and a morphism $(D,f)\\to(D',f')$ is $d\\colon D\\to D'$ with $Gd\\circ f=f'$. An object $(D_0,f_0)$ is initial iff for every $(D,f)$ there is exactly one $d\\colon D_0\\to D$ with $Gd\\circ f_0=f$ — the existence and uniqueness clauses of a universal arrow from $C$ to $G$. So universal arrows are exactly initial objects of $(C\\downarrow G)$, and are therefore unique up to a unique isomorphism."
+          - problem: "Identify the initial object of $(X\\downarrow U)$ for the forgetful functor $U\\colon\\mathbf{Mon}\\to\\mathbf{Set}$ and a set $X$."
+            answer: "$(X^*,\\eta_X)$, the free monoid on $X$ with the insertion of letters."
+            solution_sketch: "An object of $(X\\downarrow U)$ is a monoid $M$ together with a function $f\\colon X\\to UM$. Take $D_0=X^*$, the monoid of finite words, and $\\eta_X\\colon X\\to U(X^*)$ sending a letter to the one-letter word. Given any $(M,f)$, a monoid homomorphism $\\bar f\\colon X^*\\to M$ with $U\\bar f\\circ\\eta_X=f$ must satisfy $\\bar f(x_1\\cdots x_n)=f(x_1)\\cdots f(x_n)$ and $\\bar f(\\varepsilon)=e$, so it exists and is unique. Hence $(X^*,\\eta_X)$ is initial: the free monoid is the universal arrow from $X$ to $U$."
+    diagnostic_exemplar:
+      problem: "In the comma category $(F\\downarrow G)$, a morphism $(A,B,h)\\to(A',B',h')$ is a pair $(a,b)$ with $Gb\\circ h=h'\\circ Fa$. Prove that the componentwise composite of two such morphisms is again a morphism of $(F\\downarrow G)$."
+      answer: "Let $(a,b)\\colon(A,B,h)\\to(A',B',h')$ and $(a',b')\\colon(A',B',h')\\to(A'',B'',h'')$. Then $G(b'\\circ b)\\circ h=Gb'\\circ Gb\\circ h=Gb'\\circ h'\\circ Fa=h''\\circ Fa'\\circ Fa=h''\\circ F(a'\\circ a)$, using functoriality of $G$ and $F$ and the two given squares in turn. So $(a'\\circ a,\\,b'\\circ b)$ satisfies the comma square condition and is a morphism $(A,B,h)\\to(A'',B'',h'')$."
+      solution_sketch: "The same paste-two-squares move as for the arrow category: expand $G(b'\\circ b)$ by functoriality of $G$, push it across the two comma squares in turn, and reassemble the right-hand side with functoriality of $F$."
+    anki_seeds:
+      - front: "An object of the comma category $(F\\downarrow G)$ is..."
+        back: "a triple $(A,B,h\\colon FA\\to GB)$."
+        type: basic
+      - front: "A morphism $(A,B,h)\\to(A',B',h')$ in $(F\\downarrow G)$ is a pair $(a,b)$ satisfying..."
+        back: "$Gb\\circ h=h'\\circ Fa$ (the square commutes)."
+        type: basic
+      - front: "A universal arrow from $C$ to $G$ is the same as an {{c1::initial object}} of the comma category $(C\\downarrow G)$."
+        back: "initial object"
+        type: cloze

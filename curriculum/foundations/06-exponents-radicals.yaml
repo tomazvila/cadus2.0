@@ -1,0 +1,1522 @@
+unit: exponents-radicals
+course: foundations
+module: "Exponents & Radicals"
+topics:
+  - id: exponent-product-rule
+    name: "The Product Rule for Exponents"
+    core: true
+    difficulty: 0.30
+    drill: true
+    answer_kind: expression
+    expected_time_secs: 45
+    prerequisites:
+      - id: integer-exponents-intro
+        weight: 0.7
+        key: true
+      - id: integer-addition-subtraction
+        weight: 0.5
+        key: true
+      - id: evaluating-expressions
+        weight: 0.0
+    knowledge_points:
+      - id: kp1
+        name: "Multiply powers of the same base"
+        key_prerequisites: [integer-addition-subtraction]
+        exemplars:
+          - problem: 'Simplify $x^3 \cdot x^4$.'
+            answer: "x^7"
+            solution_sketch: 'Add exponents: $3 + 4 = 7$.'
+          - problem: 'Simplify $a^5 \cdot a^2$.'
+            answer: "a^7"
+        constraints: "same base; positive integer exponents; add exponents"
+      - id: kp2
+        name: "Numeric bases left in exponent form"
+        key_prerequisites: [integer-exponents-intro]
+        exemplars:
+          - problem: 'Write $2^3 \cdot 2^4$ as a single power of $2$.'
+            answer: "2^7"
+          - problem: 'Write $5^2 \cdot 5^3$ as a single power of $5$.'
+            answer: "5^5"
+        constraints: "answer stays as a single power, not evaluated"
+      - id: kp3
+        name: "Three or more factors, including bare bases"
+        key_prerequisites: [integer-addition-subtraction]
+        exemplars:
+          - problem: 'Simplify $x \cdot x^3 \cdot x^2$.'
+            answer: "x^6"
+            solution_sketch: 'A bare $x$ is $x^1$; $1 + 3 + 2 = 6$.'
+          - problem: 'Simplify $y^2 \cdot y \cdot y^4$.'
+            answer: "y^7"
+        constraints: "treat a bare base as exponent 1"
+    diagnostic_exemplar:
+      problem: 'Simplify $x \cdot x^3 \cdot x^5$.'
+      answer: 'x^9'
+      solution_sketch: 'A bare base counts as exponent $1$: $1 + 3 + 5 = 9$.'
+    anki_seeds:
+      - front: "Product rule: a^m * a^n = ?"
+        back: "a^(m+n)"
+        type: basic
+
+  - id: exponent-quotient-rule
+    name: "The Quotient Rule for Exponents"
+    core: true
+    difficulty: 0.32
+    drill: true
+    answer_kind: expression
+    expected_time_secs: 45
+    prerequisites:
+      - id: integer-exponents-intro
+        weight: 0.7
+        key: true
+      - id: integer-addition-subtraction
+        weight: 0.5
+        key: true
+      - id: exponent-product-rule
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: "Divide powers of the same base"
+        key_prerequisites: [integer-addition-subtraction]
+        exemplars:
+          - problem: 'Simplify $\frac{x^8}{x^3}$.'
+            answer: "x^5"
+            solution_sketch: 'Subtract exponents: $8 - 3 = 5$.'
+          - problem: 'Simplify $\frac{y^6}{y^2}$.'
+            answer: "y^4"
+        constraints: "same base; larger exponent on top; subtract exponents"
+      - id: kp2
+        name: "Numeric bases left in exponent form"
+        key_prerequisites: [integer-exponents-intro]
+        exemplars:
+          - problem: 'Write $\frac{3^5}{3^2}$ as a single power of $3$.'
+            answer: "3^3"
+          - problem: 'Write $\frac{7^6}{7^5}$ as a single power of $7$.'
+            answer: "7^1"
+        constraints: "answer stays as a single power, not evaluated"
+      - id: kp3
+        name: "Quotients that leave exponent 1, and bare bases"
+        key_prerequisites: [integer-addition-subtraction]
+        exemplars:
+          - problem: 'Simplify $\frac{y^5}{y^4}$.'
+            answer: "y"
+            solution_sketch: '$y^{5-4} = y^1 = y$.'
+          - problem: 'Simplify $\frac{x^6}{x}$.'
+            answer: "x^5"
+            solution_sketch: 'A bare $x$ is $x^1$; $6 - 1 = 5$.'
+        constraints: "treat a bare base as exponent 1; keep results with positive exponents"
+    diagnostic_exemplar:
+      problem: 'Simplify $\frac{x^7}{x}$.'
+      answer: 'x^6'
+      solution_sketch: 'The bare $x$ counts as exponent $1$: $7 - 1 = 6$.'
+    anki_seeds:
+      - front: "Quotient rule: a^m / a^n = ?"
+        back: "a^(m-n)"
+        type: basic
+
+  - id: exponent-product-quotient-rules
+    name: "Product and Quotient Rules for Exponents"
+    core: true
+    difficulty: 0.35
+    drill: true
+    answer_kind: expression
+    expected_time_secs: 45
+    prerequisites:
+      - id: exponent-product-rule
+        weight: 0.8
+        key: true
+      - id: exponent-quotient-rule
+        weight: 0.8
+        key: true
+      - id: integer-multiplication-division
+        weight: 0.5
+      - id: evaluating-expressions
+        weight: 0.0
+    knowledge_points:
+      - id: kp1
+        name: "Product and quotient rules together"
+        key_prerequisites: [exponent-product-rule, exponent-quotient-rule]
+        exemplars:
+          - problem: 'Simplify $\frac{x^5 \cdot x^2}{x^3}$.'
+            answer: "x^4"
+            solution_sketch: '$5 + 2 - 3 = 4$.'
+          - problem: 'Simplify $\frac{a^4 \cdot a^4}{a^6}$.'
+            answer: "a^2"
+        constraints: "one product and one quotient step per problem"
+      - id: kp2
+        name: "Coefficients with product/quotient rules"
+        key_prerequisites: [integer-multiplication-division]
+        exemplars:
+          - problem: 'Simplify $(3x^2)(4x^5)$.'
+            answer: "12x^7"
+            solution_sketch: '$3 \cdot 4 = 12$; add exponents $2 + 5 = 7$.'
+          - problem: 'Simplify $\frac{15a^7}{5a^4}$.'
+            answer: "3a^3"
+            solution_sketch: '$\frac{15}{5} = 3$; subtract exponents $7 - 4 = 3$.'
+        constraints: "multiply/divide coefficients; apply exponent rule to variables"
+      - id: kp3
+        name: "Two variables at once"
+        key_prerequisites: [exponent-product-rule, exponent-quotient-rule]
+        exemplars:
+          - problem: 'Simplify $(x^2 y^3)(x^4 y)$.'
+            answer: "x^6 y^4"
+            solution_sketch: 'Handle each base separately: $x^{2+4}$, $y^{3+1}$.'
+          - problem: 'Simplify $\frac{a^5 b^3}{a^2 b}$.'
+            answer: "a^3 b^2"
+        constraints: "apply the rules base by base"
+    diagnostic_exemplar:
+      problem: 'Simplify $\frac{(2x^3y)(6xy^2)}{4x^2y}$.'
+      answer: '3x^2 y^2'
+      solution_sketch: '$\frac{12x^4y^3}{4x^2y} = 3x^2y^2$.'
+    anki_seeds:
+      - front: "Simplifying (3x^2)(4x^5): the coefficients are ___ and the exponents are ___"
+        back: "multiplied (3*4 = 12); added (2 + 5 = 7)"
+        type: basic
+
+  - id: power-of-a-power-rule
+    name: "Power of a Power"
+    core: true
+    difficulty: 0.36
+    drill: true
+    answer_kind: expression
+    expected_time_secs: 45
+    prerequisites:
+      - id: exponent-product-quotient-rules
+        weight: 0.6
+        key: true
+      - id: integer-multiplication-division
+        weight: 0.5
+        key: true
+      - id: integer-exponents-intro
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: "Multiply the exponents"
+        key_prerequisites: [integer-multiplication-division]
+        exemplars:
+          - problem: 'Simplify $(x^3)^4$.'
+            answer: "x^12"
+            solution_sketch: 'Multiply exponents: $3 \cdot 4 = 12$.'
+          - problem: 'Simplify $(a^5)^2$.'
+            answer: "a^10"
+        constraints: "single variable base; multiply the exponents"
+      - id: kp2
+        name: "Numeric bases left in exponent form"
+        key_prerequisites: [integer-exponents-intro]
+        exemplars:
+          - problem: 'Write $(2^2)^3$ as a single power of $2$.'
+            answer: "2^6"
+            solution_sketch: '$2 \cdot 3 = 6$.'
+          - problem: 'Write $(10^3)^2$ as a single power of $10$.'
+            answer: "10^6"
+        constraints: "answer stays as a single power, not evaluated"
+      - id: kp3
+        name: "Combine with product and quotient rules"
+        key_prerequisites: [exponent-product-quotient-rules]
+        exemplars:
+          - problem: 'Simplify $(x^2)^3 \cdot x^4$.'
+            answer: "x^10"
+            solution_sketch: '$x^6 \cdot x^4 = x^{10}$.'
+          - problem: 'Simplify $\frac{(y^3)^3}{y^4}$.'
+            answer: "y^5"
+            solution_sketch: '$y^9 / y^4 = y^5$.'
+        constraints: "power of a power first, then product/quotient rule"
+    diagnostic_exemplar:
+      problem: 'Simplify $\frac{(x^4)^2}{x^3}$.'
+      answer: 'x^5'
+      solution_sketch: '$(x^4)^2 = x^8$, then $8 - 3 = 5$.'
+    anki_seeds:
+      - front: "Power of a power: (a^m)^n = ?"
+        back: "a^(m*n)"
+        type: basic
+
+  - id: power-rule-exponents
+    name: "Power Rules for Exponents"
+    core: true
+    difficulty: 0.40
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 55
+    prerequisites:
+      - id: power-of-a-power-rule
+        weight: 0.7
+        key: true
+      - id: exponent-product-quotient-rules
+        weight: 0.6
+        key: true
+      - id: integer-multiplication-division
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: "Power of a product"
+        key_prerequisites: [power-of-a-power-rule]
+        exemplars:
+          - problem: 'Simplify $(2x)^3$.'
+            answer: "8x^3"
+            solution_sketch: '$2^3 = 8$; $x^3$.'
+          - problem: 'Simplify $(3a^2)^2$.'
+            answer: "9a^4"
+            solution_sketch: '$3^2 = 9$; $(a^2)^2 = a^4$.'
+        constraints: "raise each factor to the power"
+      - id: kp2
+        name: "Power of a quotient"
+        key_prerequisites: [power-of-a-power-rule]
+        exemplars:
+          - problem: 'Simplify $(x^2 / y)^3$.'
+            answer: "x^6 / y^3"
+          - problem: 'Simplify $(2 / x^3)^2$.'
+            answer: "4 / x^6"
+            solution_sketch: '$2^2 = 4$; $(x^3)^2 = x^6$.'
+        constraints: "raise numerator and denominator to the power"
+      - id: kp3
+        name: "Combinations of power rules"
+        key_prerequisites: [exponent-product-quotient-rules, power-of-a-power-rule]
+        exemplars:
+          - problem: 'Simplify $(2x^3)^2 \cdot x$.'
+            answer: "4x^7"
+            solution_sketch: '$(2x^3)^2 = 4x^6$; times $x = 4x^7$.'
+          - problem: 'Simplify $(3x^2)^2 (2x)$.'
+            answer: "18x^5"
+            solution_sketch: '$9x^4 \cdot 2x = 18x^5$.'
+        constraints: "power rules first, then product rule; small coefficients"
+    diagnostic_exemplar:
+      problem: 'Simplify $(2x^2)^3 \cdot x^2$.'
+      answer: '8x^8'
+      solution_sketch: '$(2x^2)^3 = 8x^6$, then $8x^6 \cdot x^2 = 8x^8$.'
+    anki_seeds:
+      - front: "Power of a product: (a*b)^n = ?"
+        back: "a^n * b^n"
+        type: basic
+      - front: "Power of a quotient: (a/b)^n = ?"
+        back: "a^n / b^n"
+        type: basic
+
+  - id: zero-exponent-rule
+    name: "The Zero Exponent"
+    core: true
+    difficulty: 0.36
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 45
+    prerequisites:
+      - id: exponent-product-quotient-rules
+        weight: 0.6
+        key: true
+      - id: integer-exponents-intro
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: "Evaluate a nonzero base to the zero power"
+        key_prerequisites: [integer-exponents-intro]
+        exemplars:
+          - problem: 'Simplify $5^0$.'
+            answer: "1"
+          - problem: 'Simplify $(-4)^0$.'
+            answer: "1"
+        constraints: "any nonzero base to the 0 power is 1"
+      - id: kp2
+        name: "Zero exponents inside expressions"
+        key_prerequisites: [exponent-product-quotient-rules]
+        exemplars:
+          - problem: 'Simplify $(3x)^0$ for $x \ne 0$.'
+            answer: "1"
+          - problem: 'Simplify $3x^0$ for $x \ne 0$.'
+            answer: "3"
+            solution_sketch: 'Only $x$ carries the exponent: $3 \cdot 1 = 3$.'
+        constraints: "contrast (ax)^0 with a*x^0"
+      - id: kp3
+        name: "Why it works: the quotient rule"
+        key_prerequisites: [exponent-product-quotient-rules]
+        exemplars:
+          - problem: 'Use the quotient rule to write $\frac{x^5}{x^5}$ as a single power of $x$. What is that power worth for $x \ne 0$?'
+            answer: "1"
+            solution_sketch: '$x^{5-5} = x^0$; but any nonzero number divided by itself is $1$, so $x^0 = 1$.'
+          - problem: 'Compute $2^0 + 3^0$.'
+            answer: "2"
+        constraints: "connect a^0 = 1 to a^n / a^n"
+    diagnostic_exemplar:
+      problem: 'Evaluate $5x^0 + (3x)^0$ for $x \ne 0$.'
+      answer: '6'
+      solution_sketch: '$5x^0 = 5$ but $(3x)^0 = 1$, so $5 + 1 = 6$.'
+    anki_seeds:
+      - front: "Any nonzero base to the zero power equals ..."
+        back: "1"
+        type: basic
+
+  - id: negative-zero-exponents
+    name: "Negative and Zero Exponents"
+    core: true
+    difficulty: 0.42
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 60
+    prerequisites:
+      - id: zero-exponent-rule
+        weight: 0.6
+        key: true
+      - id: exponent-product-quotient-rules
+        weight: 0.6
+        key: true
+      - id: power-rule-exponents
+        weight: 0.3
+      - id: dividing-fractions
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: "Negative exponent as a reciprocal"
+        key_prerequisites: [dividing-fractions]
+        exemplars:
+          - problem: 'Write $2^{-3}$ as a fraction.'
+            answer: "1/8"
+            solution_sketch: '$\frac{1}{2^3} = \frac{1}{8}$.'
+          - problem: 'Rewrite $x^{-2}$ with a positive exponent.'
+            answer: "1/x^2"
+        constraints: "a^-n = 1/a^n"
+      - id: kp2
+        name: "Negative exponents in denominators"
+        key_prerequisites: [dividing-fractions]
+        exemplars:
+          - problem: 'Rewrite $\frac{1}{x^{-3}}$ with a positive exponent.'
+            answer: "x^3"
+            solution_sketch: 'Dividing by $\frac{1}{x^3}$ multiplies by $x^3$.'
+          - problem: 'Write $\left(\frac{2}{3}\right)^{-1}$ as a fraction.'
+            answer: "3/2"
+        constraints: "a^-n in a denominator moves up as a^n; (a/b)^-1 = b/a"
+      - id: kp3
+        name: "Combine with exponent rules"
+        key_prerequisites: [exponent-product-quotient-rules]
+        exemplars:
+          - problem: 'Simplify $x^3 \cdot x^{-5}$ and write with a positive exponent.'
+            answer: "1/x^2"
+            solution_sketch: '$x^{3-5} = x^{-2} = \frac{1}{x^2}$.'
+          - problem: 'Simplify $3x^{-2} \cdot x^5$.'
+            answer: "3x^3"
+            solution_sketch: '$3 \cdot x^{-2+5} = 3x^3$.'
+        constraints: "combine exponents first, then rewrite negatives as reciprocals"
+    diagnostic_exemplar:
+      problem: 'Simplify $x^2 \cdot x^{-5}$ and write with a positive exponent.'
+      answer: "1/x^3"
+      solution_sketch: '$x^{2-5} = x^{-3} = \frac{1}{x^3}$.'
+    anki_seeds:
+      - front: "Negative exponent rule: a^-n = ?"
+        back: "1/a^n (the reciprocal)"
+        type: basic
+      - front: "1 / a^-n = ?"
+        back: "a^n"
+        type: basic
+
+  - id: simplifying-negative-exponent-expressions
+    name: "Simplifying Expressions with Negative Exponents"
+    core: false                # multi-rule drill; the exponent rules stay core
+    difficulty: 0.50
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 90
+    prerequisites:
+      - id: negative-zero-exponents
+        weight: 0.8
+        key: true
+      - id: power-rule-exponents
+        weight: 0.5
+        key: true
+      - id: dividing-fractions
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: "Quotients with negative exponents"
+        key_prerequisites: [negative-zero-exponents]
+        exemplars:
+          - problem: 'Simplify $\frac{x^2}{x^{-3}}$ and write with a positive exponent.'
+            answer: "x^5"
+            solution_sketch: '$x^{2-(-3)} = x^5$.'
+          - problem: 'Simplify $\frac{y^{-4}}{y^{-1}}$ and write with a positive exponent.'
+            answer: "1/y^3"
+            solution_sketch: '$y^{-4-(-1)} = y^{-3} = \frac{1}{y^3}$.'
+        constraints: "subtract exponents carefully with signs; final answer uses positive exponents"
+      - id: kp2
+        name: "Powers of terms with negative exponents"
+        key_prerequisites: [power-rule-exponents, negative-zero-exponents]
+        exemplars:
+          - problem: 'Simplify $(x^{-2})^3$ and write with a positive exponent.'
+            answer: "1/x^6"
+            solution_sketch: '$x^{-6} = \frac{1}{x^6}$.'
+          - problem: 'Simplify $(2x^{-1})^2$ and write with positive exponents.'
+            answer: "4/x^2"
+            solution_sketch: '$2^2 x^{-2} = \frac{4}{x^2}$.'
+        constraints: "multiply exponents, keep track of the sign"
+      - id: kp3
+        name: "Full expressions with coefficients and two variables"
+        key_prerequisites: [negative-zero-exponents, power-rule-exponents]
+        exemplars:
+          - problem: 'Simplify $\frac{6x^{-2}y}{3xy^{-3}}$ and write with positive exponents.'
+            answer: "2y^4 / x^3"
+            solution_sketch: '$\frac{6}{3} = 2$; $x^{-2-1} = x^{-3}$; $y^{1-(-3)} = y^4$.'
+          - problem: 'Simplify $(3x^2)^{-1}$ and write with positive exponents.'
+            answer: "1/(3x^2)"
+        constraints: "coefficients reduce; each variable handled separately"
+    diagnostic_exemplar:
+      problem: 'Simplify $\frac{8x^{-1}y^2}{4x^2y^{-1}}$ and write with positive exponents.'
+      answer: '2y^3 / x^3'
+      solution_sketch: '$\frac{8}{4} = 2$; $x^{-1-2} = x^{-3}$; $y^{2-(-1)} = y^3$.'
+    anki_seeds:
+      - front: "A factor x^-m in a denominator moves to the numerator as ..."
+        back: "x^m"
+        type: basic
+
+  - id: scientific-notation-conversion
+    name: "Converting To and From Scientific Notation"
+    core: true
+    difficulty: 0.38
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 60
+    prerequisites:
+      - id: place-value
+        weight: 0.5
+        key: true
+      - id: decimal-operations
+        weight: 0.5
+        key: true
+      - id: negative-zero-exponents
+        weight: 0.5
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: "Convert large numbers to and from scientific notation"
+        key_prerequisites: [place-value]
+        exemplars:
+          - problem: 'Write $45000$ in scientific notation.'
+            answer: "4.5 x 10^4"
+          - problem: 'Write $3.2 \times 10^3$ as a standard number.'
+            answer: "3200"
+        constraints: "coefficient a satisfies 1 <= a < 10"
+      - id: kp2
+        name: "Small numbers with negative exponents"
+        key_prerequisites: [negative-zero-exponents]
+        exemplars:
+          - problem: 'Write $0.00072$ in scientific notation.'
+            answer: "7.2 x 10^-4"
+          - problem: 'Write $6 \times 10^{-3}$ as a decimal.'
+            answer: "0.006"
+        constraints: "negative exponent for numbers less than 1"
+      - id: kp3
+        name: "Valid form and comparing magnitudes"
+        key_prerequisites: [place-value, negative-zero-exponents]
+        exemplars:
+          - problem: 'Rewrite $12 \times 10^3$ in proper scientific notation.'
+            answer: "1.2 x 10^4"
+            solution_sketch: '$12 = 1.2 \times 10$; add one to the exponent.'
+          - problem: 'Which is larger: $3 \times 10^5$ or $9 \times 10^4$?'
+            answer: "3 x 10^5"
+            solution_sketch: 'Compare exponents first: $10^5 > 10^4$.'
+        constraints: "renormalize the coefficient into [1, 10); compare exponents before coefficients"
+    diagnostic_exemplar:
+      problem: 'Rewrite $340 \times 10^{-6}$ in proper scientific notation.'
+      answer: '3.4 x 10^-4'
+      solution_sketch: '$340 = 3.4 \times 10^2$, so the value is $3.4 \times 10^{2-6} = 3.4 \times 10^{-4}$.'
+    anki_seeds:
+      - front: "Scientific notation has the form a x 10^n with what restriction on a?"
+        back: "1 <= a < 10 (positive n for large numbers, negative n for small numbers)"
+        type: basic
+
+  - id: scientific-notation
+    name: "Scientific Notation"
+    core: true
+    difficulty: 0.42
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 80
+    prerequisites:
+      - id: scientific-notation-conversion
+        weight: 0.8
+        key: true
+      - id: exponent-product-quotient-rules
+        weight: 0.5
+        key: true
+      - id: decimal-operations
+        weight: 0.4
+      - id: integer-multiplication-division
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: "Multiply in scientific notation"
+        key_prerequisites: [exponent-product-quotient-rules]
+        exemplars:
+          - problem: 'Compute $(2 \times 10^3)(3 \times 10^4)$.'
+            answer: "6 x 10^7"
+            solution_sketch: '$2 \cdot 3 = 6$; $10^{3+4} = 10^7$.'
+          - problem: 'Compute $(3 \times 10^{-2})(2 \times 10^5)$.'
+            answer: "6 x 10^3"
+            solution_sketch: '$3 \cdot 2 = 6$; $10^{-2+5} = 10^3$.'
+        constraints: "multiply coefficients, add exponents"
+      - id: kp2
+        name: "Divide in scientific notation"
+        key_prerequisites: [exponent-product-quotient-rules]
+        exemplars:
+          - problem: 'Compute $\frac{8 \times 10^5}{2 \times 10^2}$.'
+            answer: "4 x 10^3"
+            solution_sketch: '$\frac{8}{2} = 4$; $10^{5-2} = 10^3$.'
+          - problem: 'Compute $\frac{9 \times 10^3}{3 \times 10^5}$.'
+            answer: "3 x 10^-2"
+            solution_sketch: '$\frac{9}{3} = 3$; $10^{3-5} = 10^{-2}$.'
+        constraints: "divide coefficients, subtract exponents"
+      - id: kp3
+        name: "Renormalize the result"
+        key_prerequisites: [scientific-notation-conversion]
+        exemplars:
+          - problem: 'Compute $(4 \times 10^3)(5 \times 10^4)$ in proper scientific notation.'
+            answer: "2 x 10^8"
+            solution_sketch: '$20 \times 10^7 = 2 \times 10^8$.'
+          - problem: 'Compute $\frac{2 \times 10^2}{8 \times 10^5}$ in proper scientific notation.'
+            answer: "2.5 x 10^-4"
+            solution_sketch: '$0.25 \times 10^{-3} = 2.5 \times 10^{-4}$.'
+        constraints: "coefficient must land back in [1, 10)"
+    diagnostic_exemplar:
+      problem: 'Compute $(4 \times 10^2)(5 \times 10^5)$ in proper scientific notation.'
+      answer: '2 x 10^8'
+      solution_sketch: '$4 \times 5 = 20$ and $10^{2+5} = 10^7$; renormalize: $20 \times 10^7 = 2 \times 10^8$.'
+    anki_seeds:
+      - front: "Multiplying in scientific notation: coefficients are ___ and powers of 10 are ___"
+        back: "multiplied; added (renormalize if the coefficient leaves [1, 10))"
+        type: basic
+
+  - id: scientific-notation-addition-subtraction
+    name: "Adding and Subtracting in Scientific Notation"
+    core: false                # format-specific arithmetic drill; the notation stays core
+    difficulty: 0.48
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 90
+    prerequisites:
+      - id: scientific-notation
+        weight: 0.7
+        key: true
+      - id: decimal-operations
+        weight: 0.5
+        key: true
+      - id: place-value
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: "Same power of 10"
+        key_prerequisites: [decimal-operations]
+        exemplars:
+          - problem: 'Compute $3.2 \times 10^4 + 4.5 \times 10^4$.'
+            answer: "7.7 x 10^4"
+            solution_sketch: 'Same power: add coefficients $3.2 + 4.5$.'
+          - problem: 'Compute $8 \times 10^3 - 2 \times 10^3$.'
+            answer: "6 x 10^3"
+        constraints: "matching exponents; add or subtract coefficients only"
+      - id: kp2
+        name: "Different powers: match exponents first"
+        key_prerequisites: [scientific-notation]
+        exemplars:
+          - problem: 'Compute $5 \times 10^4 + 3 \times 10^3$ in scientific notation.'
+            answer: "5.3 x 10^4"
+            solution_sketch: '$3 \times 10^3 = 0.3 \times 10^4$; $5 + 0.3 = 5.3$.'
+          - problem: 'Compute $6.2 \times 10^5 - 4 \times 10^4$ in scientific notation.'
+            answer: "5.8 x 10^5"
+            solution_sketch: '$4 \times 10^4 = 0.4 \times 10^5$; $6.2 - 0.4 = 5.8$.'
+        constraints: "rewrite the smaller-exponent term to match the larger exponent"
+      - id: kp3
+        name: "Renormalize after adding"
+        key_prerequisites: [scientific-notation, decimal-operations]
+        exemplars:
+          - problem: 'Compute $9 \times 10^3 + 8 \times 10^3$ in proper scientific notation.'
+            answer: "1.7 x 10^4"
+            solution_sketch: '$17 \times 10^3 = 1.7 \times 10^4$.'
+          - problem: 'Compute $1.05 \times 10^6 - 9.5 \times 10^5$ in proper scientific notation.'
+            answer: "1 x 10^5"
+            solution_sketch: '$10.5 \times 10^5 - 9.5 \times 10^5 = 1.0 \times 10^5$.'
+        constraints: "coefficient must land back in [1, 10)"
+    diagnostic_exemplar:
+      problem: 'Compute $9.5 \times 10^4 + 8 \times 10^3$ in proper scientific notation.'
+      answer: '1.03 x 10^5'
+      solution_sketch: '$95{,}000 + 8{,}000 = 103{,}000 = 1.03 \times 10^5$.'
+    anki_seeds:
+      - front: "Before adding numbers in scientific notation you must ..."
+        back: "rewrite them with the same power of 10"
+        type: basic
+
+  - id: perfect-square-roots
+    name: "Perfect Squares and Their Roots"
+    core: true
+    difficulty: 0.28
+    drill: true
+    answer_kind: numeric
+    expected_time_secs: 40
+    prerequisites:
+      - id: multiplication-tables
+        weight: 0.8
+        key: true
+      - id: integer-exponents-intro
+        weight: 0.4
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: "Squares of 1 through 15"
+        key_prerequisites: [multiplication-tables]
+        exemplars:
+          - problem: 'Compute $13^2$.'
+            answer: "169"
+          - problem: 'Compute $15^2$.'
+            answer: "225"
+        constraints: "bases 1-15"
+      - id: kp2
+        name: "Roots of perfect squares up to 144"
+        key_prerequisites: [multiplication-tables]
+        exemplars:
+          - problem: 'Compute $\sqrt{49}$.'
+            answer: "7"
+          - problem: 'Compute $\sqrt{121}$.'
+            answer: "11"
+        constraints: "perfect squares up to 144"
+      - id: kp3
+        name: "Larger perfect squares and multiples of ten"
+        key_prerequisites: [multiplication-tables, integer-exponents-intro]
+        exemplars:
+          - problem: 'Compute $\sqrt{400}$.'
+            answer: "20"
+            solution_sketch: '$20^2 = 400$.'
+          - problem: 'Compute $\sqrt{225}$.'
+            answer: "15"
+        constraints: "perfect squares up to 400"
+    diagnostic_exemplar:
+      problem: 'Compute $\sqrt{196}$.'
+      answer: '14'
+      solution_sketch: '$14^2 = 196$.'
+    anki_seeds:
+      - front: "13^2 = ?"
+        back: "169"
+        type: basic
+      - front: "14^2 = ?"
+        back: "196"
+        type: basic
+
+  - id: square-roots
+    name: "Square Roots"
+    core: true
+    difficulty: 0.35
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 45
+    prerequisites:
+      - id: perfect-square-roots
+        weight: 0.8
+        key: true
+      - id: multiplication-tables
+        weight: 0.4
+      - id: fraction-basics
+        weight: 0.3
+      - id: integer-multiplication-division
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: "Roots inside arithmetic expressions"
+        key_prerequisites: [perfect-square-roots]
+        exemplars:
+          - problem: 'Compute $\sqrt{36} + \sqrt{64}$.'
+            answer: "14"
+            solution_sketch: '$6 + 8 = 14$.'
+          - problem: 'Compute $2\sqrt{81}$.'
+            answer: "18"
+            solution_sketch: '$2 \cdot 9 = 18$.'
+        constraints: "perfect-square radicands only"
+      - id: kp2
+        name: "Roots of fractions"
+        key_prerequisites: [fraction-basics, perfect-square-roots]
+        exemplars:
+          - problem: 'Compute $\sqrt{\frac{9}{16}}$.'
+            answer: "3/4"
+            solution_sketch: '$\frac{\sqrt{9}}{\sqrt{16}} = \frac{3}{4}$.'
+          - problem: 'Compute $\sqrt{\frac{49}{100}}$.'
+            answer: "7/10"
+        constraints: "root of a fraction = root of top over root of bottom"
+      - id: kp3
+        name: "Products of roots"
+        key_prerequisites: [perfect-square-roots]
+        exemplars:
+          - problem: 'Compute $\sqrt{100} \cdot \sqrt{4}$.'
+            answer: "20"
+            solution_sketch: '$10 \cdot 2 = 20$.'
+          - problem: 'Compute $\sqrt{4 \cdot 9}$.'
+            answer: "6"
+            solution_sketch: '$\sqrt{36} = 6$, or $2 \cdot 3$.'
+        constraints: "products of perfect squares"
+    diagnostic_exemplar:
+      problem: 'Compute $\sqrt{\frac{16}{25}} \cdot \sqrt{100}$.'
+      answer: '8'
+      solution_sketch: '$\frac{4}{5} \times 10 = 8$.'
+    anki_seeds:
+      - front: "The square root of a (a >= 0) is defined as ..."
+        back: "the nonnegative number whose square is a (the inverse of squaring)"
+        type: basic
+
+  - id: estimating-square-roots
+    name: "Estimating Square Roots"
+    core: false                # estimation leaf topic
+    difficulty: 0.38
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 60
+    prerequisites:
+      - id: square-roots
+        weight: 0.7
+        key: true
+      - id: rounding-estimation
+        weight: 0.4
+      - id: number-line-integers
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: "Bracket a root between consecutive integers"
+        key_prerequisites: [square-roots]
+        exemplars:
+          - problem: '$\sqrt{20}$ lies between two consecutive integers. What is the smaller one?'
+            answer: "4"
+            solution_sketch: '$16 < 20 < 25$, so $4 < \sqrt{20} < 5$.'
+          - problem: '$\sqrt{55}$ lies between two consecutive integers. What is the smaller one?'
+            answer: "7"
+            solution_sketch: '$49 < 55 < 64$, so $7 < \sqrt{55} < 8$.'
+        constraints: "non-perfect-square radicands under 200"
+      - id: kp2
+        name: "Round a root to the nearest integer"
+        key_prerequisites: [square-roots, rounding-estimation]
+        exemplars:
+          - problem: 'Estimate $\sqrt{50}$ to the nearest integer.'
+            answer: "7"
+            solution_sketch: '$49$ is much closer than $64$.'
+          - problem: 'Estimate $\sqrt{8}$ to the nearest integer.'
+            answer: "3"
+            solution_sketch: '$8$ is closer to $9$ than to $4$.'
+        constraints: "compare distances to the two nearest perfect squares"
+      - id: kp3
+        name: "Order values involving roots"
+        key_prerequisites: [square-roots, number-line-integers]
+        exemplars:
+          - problem: 'Order from least to greatest: $5$, $\sqrt{30}$, $6$.'
+            answer: "5, sqrt(30), 6"
+            solution_sketch: '$25 < 30 < 36$.'
+          - problem: 'Which is larger: $\sqrt{60}$ or $8$?'
+            answer: "8"
+            solution_sketch: '$8 = \sqrt{64} > \sqrt{60}$.'
+        constraints: "compare by squaring"
+    diagnostic_exemplar:
+      problem: 'Estimate $\sqrt{75}$ to the nearest integer.'
+      answer: '9'
+      solution_sketch: '$64 < 75 < 81$, and $75$ is closer to $81$ than to $64$.'
+    anki_seeds:
+      - front: "To locate sqrt(n) between consecutive integers, bracket n by ..."
+        back: "the nearest perfect squares below and above n"
+        type: basic
+
+  - id: cube-roots
+    name: "Cube Roots and Higher Roots"
+    core: true
+    difficulty: 0.40
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 60
+    prerequisites:
+      - id: square-roots
+        weight: 0.6
+        key: true
+      - id: integer-exponents-intro
+        weight: 0.5
+        key: true
+      - id: integer-multiplication-division
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: "Cube roots of perfect cubes"
+        key_prerequisites: [integer-exponents-intro]
+        exemplars:
+          - problem: 'Compute $\sqrt[3]{27}$.'
+            answer: "3"
+            solution_sketch: '$3^3 = 27$.'
+          - problem: 'Compute $\sqrt[3]{64}$.'
+            answer: "4"
+        constraints: "perfect cubes up to 1000"
+      - id: kp2
+        name: "Cube roots of negative numbers"
+        key_prerequisites: [integer-multiplication-division]
+        exemplars:
+          - problem: 'Compute $\sqrt[3]{-8}$.'
+            answer: "-2"
+            solution_sketch: '$(-2)^3 = -8$; odd roots keep the sign.'
+          - problem: 'Compute $\sqrt[3]{-125}$.'
+            answer: "-5"
+        constraints: "negative perfect-cube radicands"
+      - id: kp3
+        name: "Fourth and fifth roots"
+        key_prerequisites: [integer-exponents-intro]
+        exemplars:
+          - problem: 'Compute $\sqrt[4]{16}$.'
+            answer: "2"
+            solution_sketch: '$2^4 = 16$.'
+          - problem: 'Compute $\sqrt[5]{32}$.'
+            answer: "2"
+        constraints: "small perfect powers only"
+    diagnostic_exemplar:
+      problem: 'Compute $\sqrt[5]{-32}$.'
+      answer: '-2'
+      solution_sketch: '$(-2)^5 = -32$.'
+    anki_seeds:
+      - front: "The cube root of a negative number is ..."
+        back: "negative (odd-index roots preserve the sign)"
+        type: basic
+      - front: "4^3 = ?"
+        back: "64"
+        type: basic
+
+  - id: simplifying-radicals
+    name: "Simplifying Radicals"
+    core: true
+    difficulty: 0.50
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 80
+    prerequisites:
+      - id: square-roots
+        weight: 0.7
+        key: true
+      - id: prime-factorization
+        weight: 0.6
+        key: true
+      - id: multiplication-tables
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: "Factor out a perfect square"
+        key_prerequisites: [prime-factorization]
+        exemplars:
+          - problem: 'Simplify $\sqrt{12}$.'
+            answer: "2*sqrt(3)"
+            solution_sketch: '$12 = 4 \cdot 3$; $\sqrt{4} = 2$.'
+          - problem: 'Simplify $\sqrt{50}$.'
+            answer: "5*sqrt(2)"
+            solution_sketch: '$50 = 25 \cdot 2$.'
+        constraints: "pull out the largest perfect-square factor"
+      - id: kp2
+        name: "Larger radicands and coefficients"
+        key_prerequisites: [square-roots]
+        exemplars:
+          - problem: 'Simplify $\sqrt{72}$.'
+            answer: "6*sqrt(2)"
+            solution_sketch: '$72 = 36 \cdot 2$.'
+          - problem: 'Simplify $3\sqrt{8}$.'
+            answer: "6*sqrt(2)"
+            solution_sketch: '$3 \cdot 2\sqrt{2} = 6\sqrt{2}$.'
+        constraints: "multiply any outside coefficient after simplifying"
+      - id: kp3
+        name: "Prime factorization for large radicands"
+        key_prerequisites: [prime-factorization]
+        exemplars:
+          - problem: 'Simplify $\sqrt{180}$.'
+            answer: "6*sqrt(5)"
+            solution_sketch: '$180 = 2^2 \cdot 3^2 \cdot 5$; $2 \cdot 3 = 6$ comes out.'
+          - problem: 'Simplify $\sqrt{126}$.'
+            answer: "3*sqrt(14)"
+            solution_sketch: '$126 = 2 \cdot 3^2 \cdot 7$; $3$ comes out.'
+        constraints: "radicands 100-300; pair up prime factors"
+    diagnostic_exemplar:
+      problem: 'Simplify $\sqrt{162}$.'
+      answer: '9*sqrt(2)'
+      solution_sketch: '$162 = 81 \times 2$.'
+    anki_seeds:
+      - front: "To simplify a radical, factor out the largest ___ factor: sqrt(a^2 * b) = ?"
+        back: "perfect-square factor; a*sqrt(b)"
+        type: basic
+
+  - id: simplifying-radicals-variables
+    name: "Simplifying Radicals with Variables"
+    core: true
+    difficulty: 0.55
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 80
+    prerequisites:
+      - id: simplifying-radicals
+        weight: 0.8
+        key: true
+      - id: exponent-product-quotient-rules
+        weight: 0.4
+        key: true
+      - id: power-rule-exponents
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: "Even powers come out whole"
+        key_prerequisites: [exponent-product-quotient-rules]
+        exemplars:
+          - problem: 'Simplify $\sqrt{x^4}$ ($x \ge 0$).'
+            answer: "x^2"
+            solution_sketch: '$(x^2)^2 = x^4$.'
+          - problem: 'Simplify $\sqrt{x^{10}}$ ($x \ge 0$).'
+            answer: "x^5"
+        constraints: "even exponents; assume variables nonnegative"
+      - id: kp2
+        name: "Odd powers leave one factor inside"
+        key_prerequisites: [exponent-product-quotient-rules, simplifying-radicals]
+        exemplars:
+          - problem: 'Simplify $\sqrt{x^5}$ ($x \ge 0$).'
+            answer: "x^2*sqrt(x)"
+            solution_sketch: '$x^5 = x^4 \cdot x$; $\sqrt{x^4} = x^2$.'
+          - problem: 'Simplify $\sqrt{x^7}$ ($x \ge 0$).'
+            answer: "x^3*sqrt(x)"
+        constraints: "split off the largest even power"
+      - id: kp3
+        name: "Coefficients and variables together"
+        key_prerequisites: [simplifying-radicals]
+        exemplars:
+          - problem: 'Simplify $\sqrt{50x^2}$ ($x \ge 0$).'
+            answer: "5x*sqrt(2)"
+            solution_sketch: '$\sqrt{25 \cdot 2 \cdot x^2} = 5x\sqrt{2}$.'
+          - problem: 'Simplify $\sqrt{72x^3}$ ($x \ge 0$).'
+            answer: "6x*sqrt(2x)"
+            solution_sketch: '$72x^3 = 36 \cdot 2 \cdot x^2 \cdot x$; $6x$ comes out.'
+        constraints: "simplify the number and each variable separately"
+    diagnostic_exemplar:
+      problem: 'Simplify $\sqrt{18x^3}$ ($x \ge 0$).'
+      answer: '3x*sqrt(2x)'
+      solution_sketch: '$\sqrt{9 \cdot 2 \cdot x^2 \cdot x} = 3x\sqrt{2x}$.'
+    anki_seeds:
+      - front: "For x >= 0, sqrt(x^(2k)) = ?"
+        back: "x^k"
+        type: basic
+
+  - id: adding-subtracting-radicals
+    name: "Adding and Subtracting Radicals"
+    core: true
+    difficulty: 0.50
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 80
+    prerequisites:
+      - id: simplifying-radicals
+        weight: 0.7
+        key: true
+      - id: combining-like-terms
+        weight: 0.5
+        key: true
+      - id: square-roots
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: "Add and subtract like radicals"
+        key_prerequisites: [combining-like-terms]
+        exemplars:
+          - problem: 'Simplify $3\sqrt{2} + 5\sqrt{2}$.'
+            answer: "8*sqrt(2)"
+          - problem: 'Simplify $7\sqrt{5} - 2\sqrt{5}$.'
+            answer: "5*sqrt(5)"
+        constraints: "only like radicals (same radicand) combine"
+      - id: kp2
+        name: "Simplify first, then combine"
+        key_prerequisites: [simplifying-radicals]
+        exemplars:
+          - problem: 'Simplify $\sqrt{8} + \sqrt{18}$.'
+            answer: "5*sqrt(2)"
+            solution_sketch: '$2\sqrt{2} + 3\sqrt{2} = 5\sqrt{2}$.'
+          - problem: 'Simplify $\sqrt{27} - \sqrt{12}$.'
+            answer: "sqrt(3)"
+            solution_sketch: '$3\sqrt{3} - 2\sqrt{3} = \sqrt{3}$.'
+        constraints: "reduce each radical before combining"
+      - id: kp3
+        name: "Three terms and coefficients"
+        key_prerequisites: [simplifying-radicals, combining-like-terms]
+        exemplars:
+          - problem: 'Simplify $\sqrt{12} + \sqrt{27} - \sqrt{3}$.'
+            answer: "4*sqrt(3)"
+            solution_sketch: '$2\sqrt{3} + 3\sqrt{3} - \sqrt{3} = 4\sqrt{3}$.'
+          - problem: 'Simplify $2\sqrt{45} - \sqrt{20}$.'
+            answer: "4*sqrt(5)"
+            solution_sketch: '$6\sqrt{5} - 2\sqrt{5} = 4\sqrt{5}$.'
+        constraints: "at most three terms; all reduce to one common radicand"
+    diagnostic_exemplar:
+      problem: 'Simplify $\sqrt{50} + \sqrt{18} - \sqrt{2}$.'
+      answer: '7*sqrt(2)'
+      solution_sketch: '$5\sqrt{2} + 3\sqrt{2} - \sqrt{2} = 7\sqrt{2}$.'
+    anki_seeds:
+      - front: "You may add or subtract two radicals only when ..."
+        back: "they are like radicals (identical radicands): a*sqrt(c) + b*sqrt(c) = (a+b)*sqrt(c)"
+        type: basic
+
+  - id: radical-operations
+    name: "Operations with Radicals"
+    core: true
+    difficulty: 0.55
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 100
+    prerequisites:
+      - id: adding-subtracting-radicals
+        weight: 0.7
+        key: true
+      - id: simplifying-radicals
+        weight: 0.6
+        key: true
+      - id: distributive-property
+        weight: 0.4
+      - id: multiplying-fractions
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: "Multiply radicals"
+        key_prerequisites: [simplifying-radicals]
+        exemplars:
+          - problem: 'Simplify $\sqrt{3} \cdot \sqrt{12}$.'
+            answer: "6"
+            solution_sketch: '$\sqrt{36} = 6$.'
+          - problem: 'Simplify $2\sqrt{5} \cdot 3\sqrt{2}$.'
+            answer: "6*sqrt(10)"
+            solution_sketch: '$2 \cdot 3 = 6$; $\sqrt{5 \cdot 2} = \sqrt{10}$.'
+        constraints: "sqrt(a)*sqrt(b) = sqrt(ab); multiply coefficients separately"
+      - id: kp2
+        name: "Distribute a radical over a sum"
+        key_prerequisites: [distributive-property, simplifying-radicals]
+        exemplars:
+          - problem: 'Expand and simplify $\sqrt{2}(\sqrt{6} + \sqrt{3})$.'
+            answer: "2*sqrt(3) + sqrt(6)"
+            solution_sketch: '$\sqrt{12} + \sqrt{6} = 2\sqrt{3} + \sqrt{6}$.'
+          - problem: 'Expand and simplify $\sqrt{3}(2\sqrt{3} - 5)$.'
+            answer: "6 - 5*sqrt(3)"
+            solution_sketch: '$2 \cdot 3 - 5\sqrt{3}$.'
+        constraints: "distribute, then simplify each product"
+      - id: kp3
+        name: "Binomial products and conjugates"
+        key_prerequisites: [adding-subtracting-radicals, distributive-property]
+        exemplars:
+          - problem: 'Expand and simplify $(1 + \sqrt{2})(3 - \sqrt{2})$.'
+            answer: "1 + 2*sqrt(2)"
+            solution_sketch: '$3 - \sqrt{2} + 3\sqrt{2} - 2 = 1 + 2\sqrt{2}$.'
+          - problem: 'Expand and simplify $(2 + \sqrt{3})(2 - \sqrt{3})$.'
+            answer: "1"
+            solution_sketch: '$4 - 3 = 1$ (conjugate pair).'
+        constraints: "FOIL-style products; conjugate pairs give integers"
+    diagnostic_exemplar:
+      problem: 'Expand and simplify $(2 + \sqrt{3})(1 + \sqrt{3})$.'
+      answer: '5 + 3*sqrt(3)'
+      solution_sketch: '$2 + 2\sqrt{3} + \sqrt{3} + 3 = 5 + 3\sqrt{3}$.'
+    anki_seeds:
+      - front: "Product rule for radicals: sqrt(a) * sqrt(b) = ?"
+        back: "sqrt(a*b)"
+        type: basic
+      - front: "(a + sqrt(b))(a - sqrt(b)) = ?"
+        back: "a^2 - b"
+        type: basic
+
+  - id: dividing-radicals
+    name: "Dividing Radicals"
+    core: true
+    difficulty: 0.52
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 80
+    prerequisites:
+      - id: simplifying-radicals
+        weight: 0.7
+        key: true
+      - id: dividing-fractions
+        weight: 0.4
+        key: true
+      - id: square-roots
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: "Quotient rule for radicals"
+        key_prerequisites: [square-roots]
+        exemplars:
+          - problem: 'Simplify $\frac{\sqrt{50}}{\sqrt{2}}$.'
+            answer: "5"
+            solution_sketch: '$\sqrt{50/2} = \sqrt{25} = 5$.'
+          - problem: 'Simplify $\frac{\sqrt{48}}{\sqrt{3}}$.'
+            answer: "4"
+            solution_sketch: '$\sqrt{16} = 4$.'
+        constraints: "quotient of radicands is a perfect square"
+      - id: kp2
+        name: "Roots of fractions with simplification"
+        key_prerequisites: [dividing-fractions, simplifying-radicals]
+        exemplars:
+          - problem: 'Simplify $\sqrt{\frac{18}{49}}$.'
+            answer: "3*sqrt(2)/7"
+            solution_sketch: '$\frac{\sqrt{18}}{\sqrt{49}} = \frac{3\sqrt{2}}{7}$.'
+          - problem: 'Simplify $\sqrt{\frac{75}{16}}$.'
+            answer: "5*sqrt(3)/4"
+            solution_sketch: '$\frac{\sqrt{75}}{4} = \frac{5\sqrt{3}}{4}$.'
+        constraints: "perfect-square denominators; numerator may need simplifying"
+      - id: kp3
+        name: "Quotients with coefficients"
+        key_prerequisites: [simplifying-radicals, dividing-fractions]
+        exemplars:
+          - problem: 'Simplify $\frac{6\sqrt{20}}{3\sqrt{5}}$.'
+            answer: "4"
+            solution_sketch: '$\frac{6}{3}\sqrt{\frac{20}{5}} = 2\sqrt{4} = 4$.'
+          - problem: 'Simplify $\frac{10\sqrt{27}}{5\sqrt{3}}$.'
+            answer: "6"
+            solution_sketch: '$2\sqrt{9} = 6$.'
+        constraints: "divide coefficients and radicands separately"
+    diagnostic_exemplar:
+      problem: 'Simplify $\sqrt{\frac{50}{9}}$.'
+      answer: '5*sqrt(2)/3'
+      solution_sketch: '$\frac{\sqrt{50}}{\sqrt{9}} = \frac{5\sqrt{2}}{3}$.'
+    anki_seeds:
+      - front: "Quotient rule for radicals: sqrt(a) / sqrt(b) = ?"
+        back: "sqrt(a/b)"
+        type: basic
+
+  - id: rationalizing-denominators
+    name: "Rationalizing Denominators"
+    core: true
+    difficulty: 0.58
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 100
+    prerequisites:
+      - id: dividing-radicals
+        weight: 0.7
+        key: true
+      - id: radical-operations
+        weight: 0.5
+        key: true
+      - id: equivalent-fractions
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: "Single-radical denominators"
+        key_prerequisites: [dividing-radicals]
+        exemplars:
+          - problem: 'Rationalize $\frac{1}{\sqrt{2}}$.'
+            answer: "sqrt(2)/2"
+            solution_sketch: 'Multiply by $\frac{\sqrt{2}}{\sqrt{2}}$.'
+          - problem: 'Rationalize $\frac{5}{\sqrt{3}}$.'
+            answer: "5*sqrt(3)/3"
+        constraints: "multiply top and bottom by the radical"
+      - id: kp2
+        name: "Simplify before or after rationalizing"
+        key_prerequisites: [dividing-radicals]
+        exemplars:
+          - problem: 'Rationalize and simplify $\frac{6}{\sqrt{12}}$.'
+            answer: "sqrt(3)"
+            solution_sketch: '$\frac{6}{2\sqrt{3}} = \frac{3}{\sqrt{3}} = \sqrt{3}$.'
+          - problem: 'Rationalize and simplify $\frac{4}{\sqrt{8}}$.'
+            answer: "sqrt(2)"
+            solution_sketch: '$\frac{4}{2\sqrt{2}} = \frac{2}{\sqrt{2}} = \sqrt{2}$.'
+        constraints: "reduce the radical first to keep numbers small"
+      - id: kp3
+        name: "Conjugate denominators"
+        key_prerequisites: [radical-operations]
+        exemplars:
+          - problem: 'Rationalize $\frac{2}{1 + \sqrt{3}}$.'
+            answer: "sqrt(3) - 1"
+            solution_sketch: 'Multiply by $\frac{1 - \sqrt{3}}{1 - \sqrt{3}}$: $\frac{2(1 - \sqrt{3})}{1 - 3} = \sqrt{3} - 1$.'
+          - problem: 'Rationalize $\frac{1}{\sqrt{5} - 2}$.'
+            answer: "sqrt(5) + 2"
+            solution_sketch: '$\frac{\sqrt{5} + 2}{5 - 4} = \sqrt{5} + 2$.'
+        constraints: "multiply by the conjugate; denominator becomes an integer"
+    diagnostic_exemplar:
+      problem: 'Rationalize $\frac{2}{\sqrt{3} + 1}$.'
+      answer: 'sqrt(3) - 1'
+      solution_sketch: 'Multiply by $\frac{\sqrt{3} - 1}{\sqrt{3} - 1}$: $\frac{2(\sqrt{3} - 1)}{2} = \sqrt{3} - 1$.'
+    anki_seeds:
+      - front: "To rationalize 1/sqrt(a), multiply by ..."
+        back: "sqrt(a)/sqrt(a), giving sqrt(a)/a"
+        type: basic
+      - front: "To rationalize a denominator of the form a + sqrt(b), multiply by ..."
+        back: "the conjugate a - sqrt(b)"
+        type: basic
+
+  - id: radical-exponent-conversion
+    name: "Converting Between Radical and Exponent Form"
+    core: true
+    difficulty: 0.48
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 60
+    prerequisites:
+      - id: square-roots
+        weight: 0.6
+        key: true
+      - id: cube-roots
+        weight: 0.5
+        key: true
+      - id: integer-exponents-intro
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: "Unit fractions: a^(1/n) is an nth root"
+        key_prerequisites: [square-roots, cube-roots]
+        exemplars:
+          - problem: 'Write $\sqrt{x}$ as a power of $x$.'
+            answer: "x^(1/2)"
+          - problem: 'In radical form $x^{1/3}$ is the $n$th root of $x$. What is $n$?'
+            answer: "3"
+            solution_sketch: 'The denominator of the fractional exponent is the root index.'
+        constraints: "a^(1/n) is the nth root of a"
+      - id: kp2
+        name: "General m/n form"
+        key_prerequisites: [cube-roots]
+        exemplars:
+          - problem: 'Write $\sqrt[3]{x^2}$ as a power of $x$.'
+            answer: "x^(2/3)"
+          - problem: 'In radical form $x^{3/4} = \sqrt[4]{x^m}$. What is $m$?'
+            answer: "3"
+            solution_sketch: 'The numerator of the fractional exponent is the power inside the radical.'
+        constraints: "numerator is the power, denominator is the root index"
+      - id: kp3
+        name: "Evaluate unit fractional exponents"
+        key_prerequisites: [square-roots, cube-roots]
+        exemplars:
+          - problem: 'Compute $25^{1/2}$.'
+            answer: "5"
+            solution_sketch: '$\sqrt{25} = 5$.'
+          - problem: 'Compute $8^{1/3}$.'
+            answer: "2"
+            solution_sketch: '$\sqrt[3]{8} = 2$.'
+        constraints: "perfect powers; positive base"
+    diagnostic_exemplar:
+      problem: 'Write $\sqrt{x^3}$ as a power of $x$.'
+      answer: "x^(3/2)"
+      solution_sketch: 'Power $3$, root index $2$.'
+    anki_seeds:
+      - front: "a^(1/n) = ?"
+        back: "the nth root of a"
+        type: basic
+
+  - id: rational-exponents
+    name: "Rational Exponents"
+    core: true
+    difficulty: 0.55
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 90
+    prerequisites:
+      - id: radical-exponent-conversion
+        weight: 0.8
+        key: true
+      - id: negative-zero-exponents
+        weight: 0.5
+        key: true
+      - id: power-rule-exponents
+        weight: 0.5
+      - id: simplifying-radicals
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: "Evaluate a^(m/n)"
+        key_prerequisites: [radical-exponent-conversion]
+        exemplars:
+          - problem: 'Compute $8^{2/3}$.'
+            answer: "4"
+            solution_sketch: '$(8^{1/3})^2 = 2^2 = 4$.'
+          - problem: 'Compute $16^{3/4}$.'
+            answer: "8"
+            solution_sketch: '$(16^{1/4})^3 = 2^3 = 8$.'
+        constraints: "take the root first, then the power; perfect powers only"
+      - id: kp2
+        name: "Negative rational exponents"
+        key_prerequisites: [negative-zero-exponents, radical-exponent-conversion]
+        exemplars:
+          - problem: 'Compute $4^{-1/2}$.'
+            answer: "1/2"
+            solution_sketch: '$\frac{1}{\sqrt{4}} = \frac{1}{2}$.'
+          - problem: 'Compute $27^{-2/3}$.'
+            answer: "1/9"
+            solution_sketch: '$\frac{1}{(27^{1/3})^2} = \frac{1}{9}$.'
+        constraints: "negative exponent -> reciprocal, then evaluate"
+      - id: kp3
+        name: "Exponent laws with rational exponents"
+        key_prerequisites: [power-rule-exponents, radical-exponent-conversion]
+        exemplars:
+          - problem: 'Simplify $x^{1/2} \cdot x^{1/3}$.'
+            answer: "x^(5/6)"
+            solution_sketch: '$\frac{1}{2} + \frac{1}{3} = \frac{5}{6}$.'
+          - problem: 'Simplify $(x^{2/3})^3$.'
+            answer: "x^2"
+            solution_sketch: '$\frac{2}{3} \cdot 3 = 2$.'
+        constraints: "same product/quotient/power rules, fractional arithmetic"
+    diagnostic_exemplar:
+      problem: 'Compute $27^{2/3} \cdot 27^{-1/3}$.'
+      answer: '3'
+      solution_sketch: 'Add the exponents: $27^{1/3} = 3$.'
+    anki_seeds:
+      - front: "Meaning of a^(m/n):"
+        back: "the nth root of a, raised to the m power: (a^(1/n))^m"
+        type: basic
+
+  - id: pythagorean-theorem
+    name: "The Pythagorean Theorem"
+    core: true                 # promoted: prerequisite of geometry/linear-algebra/calculus core topics
+    difficulty: 0.50
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 100
+    prerequisites:
+      - id: square-roots
+        weight: 0.6
+        key: true
+      - id: simplifying-radicals
+        weight: 0.4
+      - id: evaluating-expressions
+        weight: 0.3
+        key: true
+      - id: integer-multiplication-division
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: "Find the hypotenuse"
+        key_prerequisites: [evaluating-expressions]
+        exemplars:
+          - problem: 'A right triangle has legs $3$ and $4$. Find the hypotenuse.'
+            answer: "5"
+            solution_sketch: '$\sqrt{9 + 16} = \sqrt{25} = 5$.'
+          - problem: 'A right triangle has legs $6$ and $8$. Find the hypotenuse.'
+            answer: "10"
+            solution_sketch: '$\sqrt{36 + 64} = \sqrt{100} = 10$.'
+        constraints: "c = sqrt(a^2 + b^2); perfect-square results"
+      - id: kp2
+        name: "Find a missing leg"
+        key_prerequisites: [square-roots]
+        exemplars:
+          - problem: 'A right triangle has hypotenuse $13$ and one leg $5$. Find the other leg.'
+            answer: "12"
+            solution_sketch: '$\sqrt{169 - 25} = \sqrt{144} = 12$.'
+          - problem: 'A right triangle has hypotenuse $10$ and one leg $6$. Find the other leg.'
+            answer: "8"
+            solution_sketch: '$\sqrt{100 - 36} = \sqrt{64} = 8$.'
+        constraints: "leg = sqrt(c^2 - a^2)"
+      - id: kp3
+        name: "Non-perfect-square answers"
+        key_prerequisites: [simplifying-radicals]
+        exemplars:
+          - problem: 'A right triangle has legs $2$ and $3$. Find the hypotenuse.'
+            answer: "sqrt(13)"
+            solution_sketch: '$\sqrt{4 + 9} = \sqrt{13}$.'
+          - problem: 'A right triangle has legs $4$ and $4$. Find the hypotenuse.'
+            answer: "4*sqrt(2)"
+            solution_sketch: '$\sqrt{16 + 16} = \sqrt{32} = 4\sqrt{2}$.'
+        constraints: "leave the answer as a simplified radical"
+    diagnostic_exemplar:
+      problem: 'A right triangle has hypotenuse $7$ and one leg $5$. Find the other leg.'
+      answer: '2*sqrt(6)'
+      solution_sketch: '$\sqrt{7^2 - 5^2} = \sqrt{24} = 2\sqrt{6}$.'
+    anki_seeds:
+      - front: "Pythagorean theorem for a right triangle with legs a, b and hypotenuse c:"
+        back: "a^2 + b^2 = c^2"
+        type: basic
+
+  - id: pythagorean-converse
+    name: "The Converse of the Pythagorean Theorem"
+    core: false                # converse / classification leaf; the theorem stays core
+    difficulty: 0.55
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 100
+    prerequisites:
+      - id: pythagorean-theorem
+        weight: 0.8
+        key: true
+      - id: integer-multiplication-division
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: "Verify a right triangle"
+        key_prerequisites: [pythagorean-theorem]
+        exemplars:
+          - problem: 'Is a triangle with sides $5$, $12$, $13$ a right triangle?'
+            answer: "yes"
+            solution_sketch: '$25 + 144 = 169 = 13^2$.'
+          - problem: 'Is a triangle with sides $8$, $15$, $17$ a right triangle?'
+            answer: "yes"
+            solution_sketch: '$64 + 225 = 289 = 17^2$.'
+        constraints: "test a^2 + b^2 against c^2 with c the longest side"
+      - id: kp2
+        name: "Recognize non-right triangles"
+        key_prerequisites: [pythagorean-theorem]
+        exemplars:
+          - problem: 'Is a triangle with sides $4$, $5$, $6$ a right triangle?'
+            answer: "no"
+            solution_sketch: '$16 + 25 = 41 \ne 36$.'
+          - problem: 'Is a triangle with sides $2$, $3$, $4$ a right triangle?'
+            answer: "no"
+            solution_sketch: '$4 + 9 = 13 \ne 16$.'
+        constraints: "always compare against the square of the longest side"
+      - id: kp3
+        name: "Pythagorean triples and acute/obtuse classification"
+        key_prerequisites: [pythagorean-theorem]
+        exemplars:
+          - problem: 'Scale the triple $(3, 4, 5)$ by $3$. Is the resulting triangle right?'
+            answer: "yes: (9, 12, 15)"
+            solution_sketch: '$81 + 144 = 225 = 15^2$; multiples of triples stay right.'
+          - problem: 'A triangle has sides $4$, $5$, $6$. Is it acute, right, or obtuse?'
+            answer: "acute"
+            solution_sketch: '$16 + 25 = 41 > 36$, so the largest angle is less than $90°$.'
+        constraints: "a^2 + b^2 > c^2 means acute, < c^2 means obtuse"
+    diagnostic_exemplar:
+      problem: 'A triangle has sides $5$, $6$, $8$. Is it acute, right, or obtuse?'
+      answer: 'obtuse'
+      solution_sketch: '$5^2 + 6^2 = 61 < 64 = 8^2$, so the triangle is obtuse.'
+    anki_seeds:
+      - front: "Converse of the Pythagorean theorem: if a^2 + b^2 = c^2 (c the longest side), then ..."
+        back: "the triangle is a right triangle"
+        type: basic
+      - front: "For sides a <= b <= c: a^2 + b^2 < c^2 means the triangle is ..."
+        back: "obtuse (and acute if a^2 + b^2 > c^2)"
+        type: basic
+
+  - id: radical-equations-basic
+    name: "Radical Equations"
+    core: false                # terminal solve genre; the radical rules stay core
+    difficulty: 0.62
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 120
+    prerequisites:
+      - id: square-roots
+        weight: 0.6
+        key: true
+      - id: two-step-equations
+        weight: 0.5
+        key: true
+      - id: simplifying-radicals
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: "Square both sides of sqrt(x) = k"
+        key_prerequisites: [square-roots]
+        exemplars:
+          - problem: 'Solve $\sqrt{x} = 5$.'
+            answer: "x = 25"
+            solution_sketch: 'Square both sides.'
+          - problem: 'Solve $\sqrt{x} = 3$.'
+            answer: "x = 9"
+        constraints: "radical already isolated; nonnegative right side"
+      - id: kp2
+        name: "Isolate the radical first"
+        key_prerequisites: [two-step-equations, square-roots]
+        exemplars:
+          - problem: 'Solve $\sqrt{x + 3} = 4$.'
+            answer: "x = 13"
+            solution_sketch: '$x + 3 = 16$.'
+          - problem: 'Solve $2\sqrt{x} - 1 = 5$.'
+            answer: "x = 9"
+            solution_sketch: '$\sqrt{x} = 3$; $x = 9$.'
+        constraints: "one radical; linear inside; isolate before squaring"
+      - id: kp3
+        name: "Check solutions and spot no-solution cases"
+        key_prerequisites: [square-roots, two-step-equations]
+        exemplars:
+          - problem: 'Solve $\sqrt{x} = -2$.'
+            answer: "no solution"
+            solution_sketch: 'A square root is never negative.'
+          - problem: 'Solve $\sqrt{3x + 1} = 4$ and check.'
+            answer: "x = 5"
+            solution_sketch: '$3x + 1 = 16$; check: $\sqrt{16} = 4$.'
+        constraints: "always substitute back; sqrt(...) = negative has no solution"
+    diagnostic_exemplar:
+      problem: 'Solve $3\sqrt{x} + 2 = 14$.'
+      answer: 'x = 16'
+      solution_sketch: '$3\sqrt{x} = 12$; $\sqrt{x} = 4$; $x = 16$.'
+    anki_seeds:
+      - front: "sqrt(x) = k has a solution only when ..."
+        back: "k >= 0 (then x = k^2); always check for extraneous roots after squaring"
+        type: basic

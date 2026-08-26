@@ -1,0 +1,320 @@
+unit: advanced-counting
+course: discrete-mathematics
+module: "Advanced Counting"
+topics:
+  - id: inclusion-exclusion
+    name: "Inclusion-Exclusion"
+    core: true
+    difficulty: 0.55
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 150
+    prerequisites:
+      - id: set-operations
+        weight: 0.7
+        key: true
+      - id: multiplication-principle
+        weight: 0.6
+        key: true
+      - id: divisibility-rules
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Two sets: |A u B| = |A| + |B| - |A n B|"
+        key_prerequisites: [set-operations]
+        exemplars:
+          - problem: 'In a class, $25$ students take math, $18$ take physics, and $10$ take both. How many take at least one of the two?'
+            answer: "33"
+            solution_sketch: '$|M \cup P| = 25 + 18 - 10 = 33$.'
+          - problem: 'How many integers in $\{1, \dots, 100\}$ are divisible by $2$ or by $5$?'
+            answer: "60"
+            solution_sketch: '$\lfloor 100/2 \rfloor + \lfloor 100/5 \rfloor - \lfloor 100/10 \rfloor = 50 + 20 - 10 = 60$.'
+        constraints: "two sets; counts <= 200; divisibility counts use floor(N/d)"
+      - id: kp2
+        name: "Three sets"
+        key_prerequisites: [set-operations, multiplication-principle]
+        exemplars:
+          - problem: 'How many integers in $\{1, \dots, 1000\}$ are divisible by $2$, $3$, or $5$?'
+            answer: "734"
+            solution_sketch: '$500 + 333 + 200 - 166 - 100 - 66 + 33 = 734$ (floors of $1000/d$ for $d = 2,3,5,6,10,15,30$).'
+          - problem: 'Among $100$ students: $40$ like tea, $35$ like coffee, $30$ like juice, $15$ tea and coffee, $10$ tea and juice, $12$ coffee and juice, $5$ all three. How many like at least one drink?'
+            answer: "73"
+            solution_sketch: '$40 + 35 + 30 - 15 - 10 - 12 + 5 = 73$.'
+        constraints: "three sets; alternate signs by intersection size; totals <= 1000"
+      - id: kp3
+        name: "Counting the complement"
+        key_prerequisites: [set-operations]
+        exemplars:
+          - problem: 'How many integers in $\{1, \dots, 100\}$ are divisible by neither $2$ nor $3$?'
+            answer: "33"
+            solution_sketch: 'Divisible by $2$ or $3$: $50 + 33 - 16 = 67$. Complement: $100 - 67 = 33$.'
+          - problem: 'How many integers in $\{1, \dots, 60\}$ are coprime to $60$? (Hint: $60 = 2^2 \cdot 3 \cdot 5$; count numbers divisible by none of $2, 3, 5$.)'
+            answer: "16"
+            solution_sketch: 'By inclusion-exclusion, $60 - (30 + 20 + 12) + (10 + 6 + 4) - 2 = 16$; this equals $\varphi(60)$.'
+        constraints: "phrase as 'neither...nor'; require the subtract-from-total step"
+    diagnostic_exemplar:
+      problem: 'How many integers in $\{1, \dots, 100\}$ are divisible by none of $2$, $3$, or $5$?'
+      answer: '26'
+      solution_sketch: 'Union: $50 + 33 + 20 - 16 - 10 - 6 + 3 = 74$; complement $100 - 74 = 26$.'
+    anki_seeds:
+      - front: "Inclusion-exclusion for two sets"
+        back: '$|A \cup B| = |A| + |B| - |A \cap B|$.'
+        type: basic
+      - front: "Sign pattern in inclusion-exclusion for three sets"
+        back: "Add single sets, subtract pairwise intersections, add the triple intersection."
+        type: basic
+
+  - id: stars-and-bars
+    name: "Stars and Bars"
+    core: false                # counting genre; nothing downstream
+    difficulty: 0.6
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 150
+    prerequisites:
+      - id: combinations
+        weight: 0.8
+        key: true
+      - id: multiplication-principle
+        weight: 0.5
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Nonnegative integer solutions"
+        key_prerequisites: [combinations]
+        exemplars:
+          - problem: 'How many solutions in nonnegative integers does $x_1 + x_2 + x_3 = 10$ have?'
+            answer: "66"
+            solution_sketch: 'Place $10$ stars and $2$ bars: $\binom{10 + 2}{2} = \binom{12}{2} = 66$.'
+          - problem: 'How many ways can $8$ identical candies be distributed among $3$ children (a child may get none)?'
+            answer: "45"
+            solution_sketch: '$\binom{8 + 2}{2} = \binom{10}{2} = 45$.'
+        constraints: "n <= 20 objects, k <= 5 variables; formula C(n+k-1, k-1)"
+      - id: kp2
+        name: "Positive solutions and lower bounds via substitution"
+        key_prerequisites: [combinations]
+        exemplars:
+          - problem: 'How many solutions in positive integers does $x_1 + x_2 + x_3 + x_4 = 10$ have?'
+            answer: "84"
+            solution_sketch: 'Set $y_i = x_i - 1 \ge 0$: $y_1 + \dots + y_4 = 6$, giving $\binom{6 + 3}{3} = \binom{9}{3} = 84$.'
+          - problem: 'How many solutions in integers with each $x_i \ge 2$ does $x_1 + x_2 + x_3 = 15$ have?'
+            answer: "55"
+            solution_sketch: '$y_i = x_i - 2$: $y_1 + y_2 + y_3 = 9$, so $\binom{9 + 2}{2} = \binom{11}{2} = 55$.'
+        constraints: "lower bounds 1-3 per variable; require the substitution step; remaining total >= 0"
+    diagnostic_exemplar:
+      problem: 'How many ways can $12$ identical pencils be shared among $4$ students if every student must get at least one?'
+      answer: "165"
+      solution_sketch: 'Give each student one pencil, then distribute $8$ freely: $\binom{8 + 3}{3} = \binom{11}{3} = 165$.'
+    anki_seeds:
+      - front: "Stars and bars: number of nonnegative solutions of $x_1 + \\dots + x_k = n$"
+        back: '$\binom{n + k - 1}{k - 1}$.'
+        type: basic
+      - front: "Handling a bound $x_i \\ge c$ in stars and bars"
+        back: 'Substitute $y_i = x_i - c$ to reduce to the nonnegative case.'
+        type: basic
+
+  - id: permutations-of-multisets
+    name: "Permutations of Multisets"
+    core: false                # counting genre; nothing downstream
+    difficulty: 0.55
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 120
+    prerequisites:
+      - id: permutations
+        weight: 0.8
+        key: true
+      - id: combinations
+        weight: 0.6
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: "Arrangements of words with repeated letters"
+        key_prerequisites: [permutations]
+        exemplars:
+          - problem: 'How many distinct arrangements does the word LEVEL have?'
+            answer: "30"
+            solution_sketch: '$5$ letters with two L''s and two E''s: $5!/(2! \, 2!) = 120/4 = 30$.'
+          - problem: 'How many distinct arrangements does the word MISSISSIPPI have?'
+            answer: "34650"
+            solution_sketch: '$11!/(4! \, 4! \, 2!) = 39916800/1152 = 34650$ (four I''s, four S''s, two P''s).'
+        constraints: "words of length 5-11 with 2-3 repeated letter groups"
+      - id: kp2
+        name: "Lattice paths as multiset arrangements"
+        key_prerequisites: [combinations]
+        exemplars:
+          - problem: 'How many lattice paths run from $(0,0)$ to $(4,3)$ using only unit steps right and up?'
+            answer: "35"
+            solution_sketch: 'Each path is an arrangement of $4$ R''s and $3$ U''s: $\binom{7}{3} = 35$.'
+          - problem: 'How many lattice paths run from $(0,0)$ to $(5,5)$ using only right and up steps?'
+            answer: "252"
+            solution_sketch: '$\binom{10}{5} = 252$.'
+        constraints: "grid dimensions <= 8 x 8; answer C(m+n, n)"
+    diagnostic_exemplar:
+      problem: 'How many lattice paths run from $(0,0)$ to $(5,3)$ using only unit steps right and up?'
+      answer: '56'
+      solution_sketch: 'A path is an arrangement of the multiset $\{R,R,R,R,R,U,U,U\}$: $\frac{8!}{5!\,3!} = \binom{8}{3} = 56$.'
+    anki_seeds:
+      - front: "Arrangements of $n$ objects with repetition counts $n_1, n_2, \\dots$"
+        back: '$\dfrac{n!}{n_1! \, n_2! \cdots n_k!}$ (the multinomial coefficient).'
+        type: basic
+      - front: "Lattice paths from $(0,0)$ to $(m,n)$ with unit right/up steps"
+        back: '$\binom{m+n}{n}$ — choose which steps are ups.'
+        type: basic
+
+  - id: derangements
+    name: "Derangements"
+    core: false                # enumeration curiosity; terminal
+    difficulty: 0.65
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 180
+    prerequisites:
+      - id: inclusion-exclusion
+        weight: 0.8
+        key: true
+      - id: permutations
+        weight: 0.6
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: "Small derangement numbers"
+        key_prerequisites: [inclusion-exclusion, permutations]
+        exemplars:
+          - problem: 'Compute $D_3$, the number of derangements of $3$ objects.'
+            answer: "2"
+            solution_sketch: 'Of the $6$ permutations of $\{1,2,3\}$, only $231$ and $312$ move every element. Or $D_3 = 3!(1 - 1 + \tfrac12 - \tfrac16) = 2$.'
+          - problem: 'Compute $D_4$.'
+            answer: "9"
+            solution_sketch: '$D_4 = 4!\left(1 - 1 + \tfrac12 - \tfrac16 + \tfrac1{24}\right) = 24 \cdot \tfrac{9}{24} = 9$.'
+          - problem: 'Compute $D_5$.'
+            answer: "44"
+            solution_sketch: '$D_5 = 5 \cdot D_4 - 1 = 44$ via $D_n = n D_{n-1} + (-1)^n$, or the alternating-sum formula.'
+        constraints: "n <= 6; use the inclusion-exclusion formula or the recurrence"
+      - id: kp2
+        name: "Derangement applications and probability"
+        key_prerequisites: [inclusion-exclusion, permutations]
+        exemplars:
+          - problem: 'Four letters are stuffed randomly into four addressed envelopes, one per envelope. In how many ways does no letter reach its own envelope?'
+            answer: "9"
+            solution_sketch: 'This is $D_4 = 9$.'
+          - problem: 'With the four letters above, what is the probability that no letter reaches its own envelope? Give a fraction.'
+            answer: '$3/8$'
+            solution_sketch: '$D_4 / 4! = 9/24 = 3/8$.'
+        constraints: "hat-check / letters framing; n = 3-5; probabilities as reduced fractions"
+    diagnostic_exemplar:
+      problem: 'Five letters are stuffed randomly into five addressed envelopes, one per envelope. What is the probability that no letter reaches its own envelope? Give a fraction in lowest terms.'
+      answer: '11/30'
+      solution_sketch: '$D_5 = 44$ of $5! = 120$ arrangements: $44/120 = 11/30$.'
+    anki_seeds:
+      - front: "Derangement formula"
+        back: '$D_n = n! \sum_{k=0}^{n} \frac{(-1)^k}{k!}$.'
+        type: basic
+      - front: "First few derangement numbers $D_1, \\dots, D_5$"
+        back: '$0, 1, 2, 9, 44$.'
+        type: basic
+      - front: "As $n \\to \\infty$, the fraction of permutations that are derangements approaches..."
+        back: '$1/e \approx 0.368$.'
+        type: basic
+
+  - id: pigeonhole-applications
+    name: "Pigeonhole Applications"
+    core: false                # enrichment / applications leaf topic
+    difficulty: 0.6
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 180
+    prerequisites:
+      - id: pigeonhole-principle
+        weight: 0.85
+        key: true
+      - id: multiplication-principle
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Guarantee thresholds (generalized pigeonhole)"
+        key_prerequisites: [pigeonhole-principle]
+        exemplars:
+          - problem: 'A drawer holds $10$ red and $10$ blue socks. How many socks must you pull out (in the dark) to guarantee a matching pair?'
+            answer: "3"
+            solution_sketch: 'Two colors are the pigeonholes; $3$ socks force two of the same color.'
+          - problem: 'How many people are needed to guarantee that at least $3$ of them share a birth month?'
+            answer: "25"
+            solution_sketch: 'With $12$ months, $2 \cdot 12 = 24$ people could pair off evenly; $25$ forces $\lceil 25/12 \rceil = 3$ in some month.'
+        constraints: "answer is n(k-1)+1 to guarantee k objects in one of n holes; everyday framings (socks, months, cards)"
+      - id: kp2
+        name: "Choosing the right pigeonholes"
+        key_prerequisites: [pigeonhole-principle]
+        exemplars:
+          - problem: 'Show that among any $5$ integers chosen from $\{1, 2, \dots, 8\}$, two of them sum to $9$.'
+            answer: 'Partition into pairs $\{1,8\}, \{2,7\}, \{3,6\}, \{4,5\}$: $5$ numbers in $4$ pairs force two in one pair, which sum to $9$.'
+            solution_sketch: 'The four pairs are the pigeonholes; choosing $5$ numbers (pigeons) forces a completed pair by pigeonhole.'
+          - problem: 'Show that among any $13$ people, two were born in the same month, and explain why $12$ people are not enough.'
+            answer: '$13$ pigeons in $12$ month-holes force a repeat; with $12$ people each month can be hit exactly once.'
+            solution_sketch: 'Pigeonhole with $n = 12$ holes: $n + 1$ pigeons guarantee a collision; $n$ pigeons admit an injection.'
+        constraints: "the solver must name the pigeonholes explicitly; sets of size <= 20"
+    diagnostic_exemplar:
+      problem: 'Show that among any $6$ integers chosen from $\{1, 2, \dots, 10\}$, two of them sum to $11$.'
+      answer: 'Partition $\{1, \dots, 10\}$ into the pairs $\{1,10\}, \{2,9\}, \{3,8\}, \{4,7\}, \{5,6\}$: $6$ numbers in $5$ pairs force two into one pair, and each pair sums to $11$.'
+      solution_sketch: 'Pigeonhole with the five sum-$11$ pairs as holes.'
+    anki_seeds:
+      - front: "Generalized pigeonhole: to guarantee $k$ objects in one of $n$ boxes, you need..."
+        back: '$n(k-1) + 1$ objects.'
+        type: basic
+      - front: "The art of a pigeonhole proof lies in choosing..."
+        back: "the pigeonholes — a partition of the possibilities into fewer classes than objects."
+        type: basic
+
+  - id: combinatorial-proofs
+    name: "Combinatorial Proofs"
+    core: false                # terminal proof genre; the counting machinery stays core
+    difficulty: 0.7
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 300
+    prerequisites:
+      - id: combinations
+        weight: 0.8
+        key: true
+      - id: binomial-expansion
+        weight: 0.6
+        key: true
+      - id: direct-proof
+        weight: 0.5
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Counting one set two ways: symmetry and Pascal"
+        key_prerequisites: [combinations]
+        exemplars:
+          - problem: 'Give a combinatorial proof that $\binom{n}{k} = \binom{n}{n-k}$.'
+            answer: 'Choosing which $k$ elements to include is the same as choosing which $n-k$ to exclude; both sides count $k$-subsets of an $n$-set.'
+            solution_sketch: 'Exhibit the bijection $S \mapsto S^c$ between $k$-subsets and $(n-k)$-subsets.'
+          - problem: 'Give a combinatorial proof of Pascal''s identity $\binom{n}{k} = \binom{n-1}{k-1} + \binom{n-1}{k}$.'
+            answer: 'Fix an element $x$: the $k$-subsets containing $x$ number $\binom{n-1}{k-1}$, those avoiding $x$ number $\binom{n-1}{k}$; together they count all $\binom{n}{k}$.'
+            solution_sketch: 'Split the $k$-subsets of an $n$-set by whether they contain a distinguished element; the two cases are disjoint and exhaustive.'
+        constraints: "proofs must identify one set counted two ways or an explicit bijection; no algebraic manipulation of factorials"
+      - id: kp2
+        name: "Committee-chair and subset-sum identities"
+        key_prerequisites: [combinations, binomial-expansion]
+        exemplars:
+          - problem: 'Give a combinatorial proof that $\sum_{k=0}^{n} \binom{n}{k} = 2^n$.'
+            answer: 'Both sides count subsets of an $n$-set: the right side by deciding in/out for each element, the left by grouping subsets by size $k$.'
+            solution_sketch: 'Each element contributes an independent binary choice ($2^n$); partitioning subsets by cardinality gives the sum of binomial coefficients.'
+          - problem: 'Give a combinatorial proof that $k\binom{n}{k} = n\binom{n-1}{k-1}$.'
+            answer: 'Both sides count committees of $k$ people with a chair, from $n$ people: choose the committee then its chair ($\binom{n}{k} \cdot k$), or choose the chair first then the other $k-1$ members ($n \cdot \binom{n-1}{k-1}$).'
+            solution_sketch: 'One set — (committee, chair) pairs — counted in two orders.'
+        constraints: "identities provable by committee/chair or in-out arguments; n symbolic, no induction"
+    diagnostic_exemplar:
+      problem: 'Give a combinatorial proof that $\binom{2n}{2} = 2\binom{n}{2} + n^2$.'
+      answer: 'Split $2n$ people into two rooms of $n$. A pair from the $2n$ is either within room one, within room two ($\binom{n}{2}$ each), or split across rooms ($n \cdot n$). Total: $2\binom{n}{2} + n^2 = \binom{2n}{2}$.'
+      solution_sketch: 'Count unordered pairs from $2n$ objects by cases on how the pair meets a fixed half-half split; verify: $\binom{2n}{2} = 2n^2 - n = 2 \cdot \tfrac{n(n-1)}{2} + n^2$.'
+    anki_seeds:
+      - front: "Structure of a combinatorial proof"
+        back: "Pose one counting question and answer it two ways; the two expressions must be equal."
+        type: basic
+      - front: "Combinatorial meaning of $\\sum_k \\binom{n}{k} = 2^n$"
+        back: "Both sides count all subsets of an $n$-set: by size vs. by n independent in/out choices."
+        type: basic

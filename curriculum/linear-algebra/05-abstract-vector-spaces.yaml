@@ -1,0 +1,455 @@
+unit: abstract-vector-spaces
+course: linear-algebra
+module: "Abstract Vector Spaces"
+topics:
+  - id: vector-space-axioms
+    name: Vector Spaces and Their Axioms
+    core: true                 # the abstract-example and basis-over-a-field topics build on it, and abstract-algebra (field extensions) assumes it
+    difficulty: 0.65
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 210
+    prerequisites:
+      - id: subspace-test
+        weight: 0.6
+        key: true
+      - id: vectors-in-rn
+        weight: 0.5
+        key: true
+      - id: exponent-product-quotient-rules
+        weight: 0.3
+      - id: complex-numbers
+        weight: 0
+    knowledge_points:
+      - id: kp1
+        name: Scalar fields and the axiom list
+        key_prerequisites: [vectors-in-rn]
+        exemplars:
+          - problem: 'The scalars of a vector space must form a field. What operations must always work in a field, and name three fields commonly used as scalars.'
+            answer: "Addition, subtraction, multiplication, and division by nonzero elements; examples Q, R, C"
+            solution_sketch: 'A field is a number system closed under $+, -, \times$ and division by nonzero elements: $\mathbb{Q}$, $\mathbb{R}$, $\mathbb{C}$ all qualify.'
+          - problem: 'Is the set of integers $\mathbb{Z}$ a field?'
+            answer: "No"
+            solution_sketch: '$2$ has no multiplicative inverse in $\mathbb{Z}$: $\frac{1}{2} \notin \mathbb{Z}$, so division fails.'
+          - problem: 'Verify the axiom $c(\mathbf{u} + \mathbf{v}) = c\mathbf{u} + c\mathbf{v}$ in $\mathbb{R}^2$ for $c = 2$, $\mathbf{u} = (1, 3)$, $\mathbf{v} = (2, -1)$.'
+            answer: "Both sides equal (6, 4)"
+            solution_sketch: 'Left: $2(3, 2) = (6, 4)$. Right: $(2, 6) + (4, -2) = (6, 4)$.'
+        constraints: "field membership decided by one failing operation; axiom checks in R^2 with integer entries in -3..3"
+      - id: kp2
+        name: Verifying and refuting the axioms in unfamiliar sets
+        key_prerequisites: [subspace-test]
+        exemplars:
+          - problem: 'Let $V = \mathbb{R}^2$ with the usual addition but scalar multiplication $c \odot (x, y) = (cx, 0)$. Which vector-space axiom fails?'
+            answer: "The identity axiom 1v = v: 1 (x, y) = (x, 0), which differs from (x, y) whenever y is nonzero"
+            solution_sketch: 'Test the axioms one by one; $1 \odot (x, y) = (x, 0) \neq (x, y)$ for $y \neq 0$.'
+          - problem: 'In $V = \mathbb{R}^{>0}$ (the positive reals) with $x \oplus y = xy$ and $c \odot x = x^c$, verify the axiom $c \odot (x \oplus y) = (c \odot x) \oplus (c \odot y)$.'
+            answer: "Both sides equal (xy)^c: left is (xy)^c, right is x^c y^c, and (xy)^c = x^c y^c"
+            solution_sketch: 'Left: $c \odot (xy) = (xy)^c$. Right: $x^c \oplus y^c = x^c y^c$. They agree by the exponent product rule.'
+          - problem: 'In the same space $V = \mathbb{R}^{>0}$ with $x \oplus y = xy$, which element plays the role of the zero vector?'
+            answer: "1"
+            solution_sketch: 'Need $x \oplus \mathbf{0} = x$ for all $x$: $x \cdot 1 = x$, so the number $1$ is the zero vector of $V$.'
+        constraints: "modified operations on R^2 or R^>0 only; each failure pinned to one named axiom with a concrete counterexample"
+      - id: kp3
+        name: First consequences of the axioms
+        key_prerequisites: [subspace-test]
+        exemplars:
+          - problem: 'Using only the axioms, show that $0\mathbf{v} = \mathbf{0}$ in any vector space.'
+            answer: "0v = (0 + 0)v = 0v + 0v; adding the inverse of 0v to both sides gives 0 = 0v"
+            solution_sketch: 'Write $0 = 0 + 0$, distribute, then cancel one copy of $0\mathbf{v}$ using its additive inverse.'
+          - problem: 'Using only the axioms (and $0\mathbf{v} = \mathbf{0}$), show that $(-1)\mathbf{v}$ is the additive inverse of $\mathbf{v}$.'
+            answer: "v + (-1)v = (1 + (-1))v = 0v = 0, so (-1)v is the inverse of v"
+            solution_sketch: 'Combine the identity axiom $1\mathbf{v} = \mathbf{v}$ with distributivity over scalar addition.'
+        constraints: "two- or three-line axiom manipulations; each step must cite the axiom used"
+    diagnostic_exemplar:
+      problem: 'Let $V = \mathbb{R}^{>0}$ with $x \oplus y = xy$ and $c \odot x = x^c$. Identify the zero vector and the additive inverse of $x$, then verify the axiom $(c + d) \odot x = (c \odot x) \oplus (d \odot x)$.'
+      answer: 'Zero vector $1$; the additive inverse of $x$ is $1/x$; and $(c + d) \odot x = x^{c+d} = x^c x^d = (c \odot x) \oplus (d \odot x)$'
+      solution_sketch: 'The identity for $\oplus$ is $1$ since $x \cdot 1 = x$, and $x \oplus (1/x) = 1$; the axiom is exactly the exponent law $x^{c+d} = x^cx^d$.'
+    anki_seeds:
+      - front: 'The scalars of a vector space must come from a...'
+        back: 'field: a number system where $+, -, \times$, and division by nonzero elements all work (e.g. $\mathbb{Q}$, $\mathbb{R}$, $\mathbb{C}$).'
+        type: basic
+      - front: 'Quickest axiom to test when a strange scalar multiplication is proposed?'
+        back: 'The identity axiom $1\mathbf{v} = \mathbf{v}$ — it fails for most artificial definitions.'
+        type: basic
+      - front: 'In any vector space, $0\mathbf{v} = $ ?'
+        back: '$\mathbf{0}$ (provable from the axioms: $0\mathbf{v} = (0+0)\mathbf{v}$, then cancel).'
+        type: basic
+
+  - id: polynomial-matrix-function-spaces
+    name: Polynomial, Matrix, and Function Spaces
+    core: true                 # supplies the worked non-R^n spaces that basis/dimension over a field computes in
+    difficulty: 0.65
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 210
+    prerequisites:
+      - {id: transpose-symmetric-matrices, weight: 0.4, key: false} # L1: kp2 ex3 asks whether symmetric matrices form a subspace; uses (A+B)^T
+      - id: vector-space-axioms
+        weight: 0.7
+        key: true
+      - id: matrix-addition-scalar-multiplication
+        weight: 0.5
+        key: true
+      - id: polynomial-addition-subtraction
+        weight: 0.4
+      - id: evaluating-functions
+        weight: 0.2
+    knowledge_points:
+      - id: kp1
+        name: Vector arithmetic in P_n, matrix spaces, and function spaces
+        key_prerequisites: [polynomial-addition-subtraction, matrix-addition-scalar-multiplication]
+        exemplars:
+          - problem: 'In the polynomial space $P_2$, compute $2(x^2 + 3x) - 3(x - 1)$.'
+            answer: "2x^2 + 3x + 3"
+            solution_sketch: '$2x^2 + 6x - 3x + 3$: polynomials add and scale coefficient-wise, exactly like vectors.'
+          - problem: 'In the matrix space $M_{2 \times 2}$, compute $2\begin{pmatrix}1&0\\2&1\end{pmatrix} - \begin{pmatrix}0&1\\1&0\end{pmatrix}$.'
+            answer: '$\begin{pmatrix}2&-1\\3&2\end{pmatrix}$'
+            solution_sketch: 'Entrywise: $(2 - 0, 0 - 1; 4 - 1, 2 - 0)$.'
+          - problem: 'What is the zero vector of $P_3$? Of $M_{2 \times 2}$?'
+            answer: "The zero polynomial 0; the 2x2 zero matrix"
+            solution_sketch: 'Adding either changes nothing, which is exactly the defining property of the zero vector.'
+        constraints: "P_n with n <= 3 and 2x2 matrices; integer coefficients in -4..4"
+      - id: kp2
+        name: The subspace test in abstract spaces
+        key_prerequisites: [vector-space-axioms]
+        exemplars:
+          - problem: 'Is $\{p \in P_2 : p(1) = 0\}$ a subspace of $P_2$?'
+            answer: "Yes"
+            solution_sketch: 'The zero polynomial vanishes at $1$; if $p(1) = q(1) = 0$ then $(p + q)(1) = 0$ and $(cp)(1) = c \cdot 0 = 0$.'
+          - problem: 'Is the set of polynomials of degree exactly $2$ a subspace of $P_2$?'
+            answer: "No"
+            solution_sketch: 'It misses the zero polynomial, and closure fails: $x^2 + (-x^2 + x) = x$ has degree $1$.'
+          - problem: 'Is the set of symmetric matrices a subspace of $M_{2 \times 2}$?'
+            answer: "Yes"
+            solution_sketch: 'The zero matrix is symmetric, and $(A + B)^T = A^T + B^T = A + B$, $(cA)^T = cA$ for symmetric $A, B$.'
+        constraints: "conditions on P_2 or 2x2 matrices; failures exhibited by one concrete counterexample"
+      - id: kp3
+        name: Linear combinations and span in abstract spaces
+        key_prerequisites: [polynomial-addition-subtraction, vector-space-axioms]
+        exemplars:
+          - problem: 'Write $x^2 + 2x + 3$ as a linear combination of $p_1 = x^2 + 1$ and $p_2 = x + 1$.'
+            answer: "p1 + 2 p2"
+            solution_sketch: 'Match the $x^2$ coefficient: $c_1 = 1$; then the $x$ coefficient forces $c_2 = 2$; the constant checks out: $1 + 2 = 3$.'
+          - problem: 'Is $\begin{pmatrix}1&2\\2&1\end{pmatrix}$ in the span of $I = \begin{pmatrix}1&0\\0&1\end{pmatrix}$ and $S = \begin{pmatrix}0&1\\1&0\end{pmatrix}$?'
+            answer: "Yes: it equals I + 2S"
+            solution_sketch: 'Diagonal entries force the coefficient of $I$ to be $1$; off-diagonal entries force the coefficient of $S$ to be $2$.'
+          - problem: 'Do $1, x, x^2$ span $P_2$?'
+            answer: "Yes"
+            solution_sketch: 'Every $ax^2 + bx + c$ is literally the combination $a \cdot x^2 + b \cdot x + c \cdot 1$.'
+        constraints: "2 spanning objects; coefficients found by matching one coefficient/entry at a time, all integers in -3..3"
+    diagnostic_exemplar:
+      problem: 'Show that $W = \{p \in P_2 : p(1) = 0\}$ is a subspace of $P_2$, and write $x^2 + x - 2$ as a linear combination of $p_1 = x - 1$ and $p_2 = x^2 - 1$, both of which lie in $W$.'
+      answer: 'W is a subspace (the zero polynomial satisfies p(1) = 0, and if p(1) = q(1) = 0 then (p + cq)(1) = 0); and x^2 + x - 2 = p_1 + p_2'
+      solution_sketch: 'Evaluation at $1$ is linear, so its kernel is a subspace; matching coefficients in $a(x - 1) + b(x^2 - 1) = bx^2 + ax - (a + b)$ gives $a = b = 1$.'
+    anki_seeds:
+      - front: '$P_n$ denotes the vector space of...'
+        back: 'polynomials of degree at most $n$ (with the zero polynomial).'
+        type: basic
+      - front: 'The subspace test transfers unchanged to polynomial/matrix/function spaces: check...'
+        back: 'contains the zero vector; closed under addition; closed under scalar multiplication.'
+        type: basic
+      - front: 'The zero vector of a function space is...'
+        back: 'the zero function (identically $0$), not the number $0$.'
+        type: basic
+
+  - id: basis-dimension-general-field
+    name: Bases and Dimension over a Field
+    core: true                 # the C-4 payload: field-extensions-degree (abstract-algebra) teaches bases over Q and will be wired here
+    difficulty: 0.7
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 240
+    prerequisites:
+      - id: polynomial-matrix-function-spaces
+        weight: 0.7
+        key: true
+      - id: basis-dimension
+        weight: 0.7
+        key: true
+      - id: linear-independence
+        weight: 0.4
+      - id: simplifying-radicals
+        weight: 0.3
+      - id: complex-numbers
+        weight: 0.2
+      - id: proof-by-contradiction
+        weight: 0
+    knowledge_points:
+      - id: kp1
+        name: Standard bases of polynomial and matrix spaces
+        key_prerequisites: [polynomial-matrix-function-spaces, basis-dimension]
+        exemplars:
+          - problem: 'Give the standard basis of $P_3$ and its dimension.'
+            answer: "{1, x, x^2, x^3}; dimension 4"
+            solution_sketch: 'The monomials span (coefficients are the coordinates) and are independent (a zero polynomial has all coefficients $0$).'
+          - problem: 'Find the coordinates of $2x^2 - x + 5$ relative to the basis $\{1, x, x^2\}$ of $P_2$.'
+            answer: "(5, -1, 2)"
+            solution_sketch: 'Read off the coefficients in basis order: constant $5$, then $-1$, then $2$.'
+          - problem: 'What is the dimension of $M_{2 \times 3}$?'
+            answer: "6"
+            solution_sketch: 'The six matrices with a single entry $1$ form a basis; dimension $= 2 \cdot 3$.'
+        constraints: "P_n with n <= 3, matrix spaces up to 2x3; coordinates are the coefficients, integers in -5..5"
+      - id: kp2
+        name: Nonstandard bases and independence in P_n
+        key_prerequisites: [basis-dimension, polynomial-matrix-function-spaces]
+        exemplars:
+          - problem: 'Is $\{1 + x, 1 - x\}$ a basis of $P_1$?'
+            answer: "Yes"
+            solution_sketch: 'Neither is a multiple of the other, so they are independent; $2$ independent vectors in the $2$-dimensional $P_1$ form a basis.'
+          - problem: 'Find the coordinates of $3 + x$ relative to the basis $B = \{1 + x, 1 - x\}$ of $P_1$.'
+            answer: "(2, 1)"
+            solution_sketch: '$a(1 + x) + b(1 - x) = (a + b) + (a - b)x$: solve $a + b = 3$, $a - b = 1$ to get $a = 2$, $b = 1$.'
+          - problem: 'Is $\{x^2 + 1, x^2 - 1, x\}$ a basis of $P_2$?'
+            answer: "Yes"
+            solution_sketch: '$a(x^2+1) + b(x^2-1) + cx = 0$ forces $a + b = 0$, $c = 0$, $a - b = 0$, so $a = b = c = 0$: three independent polynomials in the $3$-dimensional $P_2$.'
+        constraints: "candidate sets of 2-3 polynomials in P_1 or P_2; coefficient matching yields a 2x2 or 3x3 linear system with integer solutions"
+      - id: kp3
+        name: The base field matters
+        key_prerequisites: [basis-dimension, simplifying-radicals]
+        exemplars:
+          - problem: 'Show that $\mathbb{Q}(\sqrt{2}) = \{a + b\sqrt{2} : a, b \in \mathbb{Q}\}$ is spanned by $\{1, \sqrt{2}\}$ as a vector space over $\mathbb{Q}$, and find its dimension.'
+            answer: "Every element is a(1) + b(sqrt(2)) with rational a, b, and 1, sqrt(2) are independent over Q since sqrt(2) is irrational; dimension 2"
+            solution_sketch: 'Spanning is the definition of the set; if $a + b\sqrt{2} = 0$ with $b \neq 0$ then $\sqrt{2} = -a/b$ would be rational.'
+          - problem: 'Find the coordinates of $4 - 3\sqrt{2}$ in the basis $\{1, \sqrt{2}\}$ of $\mathbb{Q}(\sqrt{2})$ over $\mathbb{Q}$.'
+            answer: "(4, -3)"
+            solution_sketch: '$4 - 3\sqrt{2} = 4 \cdot 1 + (-3)\sqrt{2}$: read off the rational coefficients.'
+          - problem: 'What is the dimension of $\mathbb{C}$ as a vector space over $\mathbb{R}$? And as a vector space over $\mathbb{C}$?'
+            answer: "2 over R (basis {1, i}); 1 over C (basis {1})"
+            solution_sketch: 'Over $\mathbb{R}$, every $a + bi$ needs the two basis vectors $1, i$; over $\mathbb{C}$, every number is a $\mathbb{C}$-multiple of $1$.'
+        constraints: "fields limited to Q, Q(sqrt(d)) for d in {2, 3, 5}, R, C; independence arguments reduce to irrationality of sqrt(d) or to i not being real"
+    diagnostic_exemplar:
+      problem: 'Show that $\{1 + \sqrt{2},\ 1 - \sqrt{2}\}$ is a basis of $\mathbb{Q}(\sqrt{2})$ as a vector space over $\mathbb{Q}$, and find the coordinates of $4 - 3\sqrt{2}$ relative to it.'
+      answer: 'It is a basis (the space has dimension 2 over Q, and coefficient matching a + b = 0, a - b = 0 forces a = b = 0, so the two are independent over Q); coordinates (1/2, 7/2)'
+      solution_sketch: '$a(1 + \sqrt2) + b(1 - \sqrt2) = (a + b) + (a - b)\sqrt2$; matching rational and irrational parts gives $a + b = 4$, $a - b = -3$, so $a = 1/2$, $b = 7/2$.'
+    anki_seeds:
+      - front: '$\dim P_n = $ ?'
+        back: '$n + 1$ (standard basis $\{1, x, \dots, x^n\}$).'
+        type: basic
+      - front: 'The dimension of a vector space is always relative to...'
+        back: 'the base field: $\mathbb{C}$ has dimension $2$ over $\mathbb{R}$ but dimension $1$ over $\mathbb{C}$.'
+        type: basic
+      - front: 'Basis and dimension of $\mathbb{Q}(\sqrt{2})$ over $\mathbb{Q}$?'
+        back: 'Basis $\{1, \sqrt{2}\}$; dimension $2$.'
+        type: basic
+
+  - id: dual-spaces
+    name: Dual Spaces and Linear Functionals
+    core: false                # enrichment: nothing downstream consumes duals yet (requirements: keep supplemental until category-theory asks for it)
+    difficulty: 0.75
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 270
+    prerequisites:
+      - id: linear-transformations
+        weight: 0.6
+        key: true
+      - id: vector-space-axioms
+        weight: 0.5
+        key: true
+      - id: basis-dimension
+        weight: 0.5
+      - id: polynomial-matrix-function-spaces
+        weight: 0.3
+      - id: coordinates-relative-basis
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Linear functionals
+        key_prerequisites: [linear-transformations]
+        exemplars:
+          - problem: 'Is $f(x, y) = 2x - 3y$ a linear functional on $\mathbb{R}^2$? Compute $f(4, 1)$.'
+            answer: "Yes; f(4, 1) = 5"
+            solution_sketch: 'It is a linear map into the scalars: $f$ respects sums and scalar multiples. $f(4, 1) = 8 - 3 = 5$.'
+          - problem: 'Is $g(x, y) = xy$ a linear functional on $\mathbb{R}^2$?'
+            answer: "No"
+            solution_sketch: '$g(2(1, 1)) = g(2, 2) = 4$ but $2g(1, 1) = 2$: scaling fails.'
+          - problem: 'On $P_2$, define the evaluation map $E_2(p) = p(2)$. Is $E_2$ a linear functional? Compute $E_2(x^2 + 1)$.'
+            answer: "Yes; E_2(x^2 + 1) = 5"
+            solution_sketch: '$(p + q)(2) = p(2) + q(2)$ and $(cp)(2) = c\,p(2)$, so evaluation is linear; $2^2 + 1 = 5$.'
+        constraints: "functionals on R^2, R^3, or P_2; nonlinear counterexamples fail on one concrete scaling or sum"
+      - id: kp2
+        name: The dual basis
+        key_prerequisites: [coordinates-relative-basis, linear-transformations]
+        exemplars:
+          - problem: 'For the standard basis of $\mathbb{R}^2$, what does the dual basis vector $e_1^*$ do to $(x, y)$?'
+            answer: "e_1^*(x, y) = x"
+            solution_sketch: 'The dual basis is defined by $e_i^*(e_j) = 1$ if $i = j$ and $0$ otherwise, so $e_1^*$ extracts the first coordinate.'
+          - problem: 'Find the dual basis $\{f_1, f_2\}$ of $B = \{(1, 1), (1, -1)\}$ in $\mathbb{R}^2$.'
+            answer: "f_1(x, y) = (x + y)/2, f_2(x, y) = (x - y)/2"
+            solution_sketch: 'Write $f_1(x, y) = ax + by$ and solve $f_1(1, 1) = 1$, $f_1(1, -1) = 0$: $a = b = \frac{1}{2}$; similarly for $f_2$. Check: $f_2(1, -1) = 1$.'
+        constraints: "bases of R^2 with entries in -2..2; each dual vector found by a 2x2 solve with integer or half-integer coefficients"
+      - id: kp3
+        name: Dimension of the dual and coordinates of functionals
+        key_prerequisites: [basis-dimension, linear-transformations]
+        exemplars:
+          - problem: 'What is $\dim (\mathbb{R}^3)^*$?'
+            answer: "3"
+            solution_sketch: 'The dual basis of any basis of $V$ is a basis of $V^*$, so $\dim V^* = \dim V$.'
+          - problem: 'Write $f(x, y) = 3x + 5y$ as a combination of the standard dual basis vectors $e_1^*, e_2^*$.'
+            answer: "f = 3 e_1^* + 5 e_2^*"
+            solution_sketch: 'The coefficients are $f(e_1) = 3$ and $f(e_2) = 5$.'
+          - problem: 'What is the dimension of $P_2^*$, the dual space of $P_2$?'
+            answer: "3"
+            solution_sketch: '$\dim P_2^* = \dim P_2 = 3$.'
+        constraints: "dimensions <= 4; functional coordinates read off as values on the basis vectors"
+    diagnostic_exemplar:
+      problem: 'Find the dual basis $\{f_1, f_2\}$ of $B = \{(1, 2), (1, 1)\}$ in $\mathbb{R}^2$, and write $f(x, y) = 3x + 5y$ in terms of it.'
+      answer: 'f_1(x, y) = -x + y, f_2(x, y) = 2x - y; and f = 13 f_1 + 8 f_2'
+      solution_sketch: '$f_i$ is the functional with $f_i(\mathbf{b}_j) = \delta_{ij}$; expanding a functional in the dual basis uses the coefficients $f(\mathbf{b}_1) = 13$ and $f(\mathbf{b}_2) = 8$.'
+    anki_seeds:
+      - front: 'The dual space $V^*$ is the space of all...'
+        back: 'linear functionals on $V$: linear maps $V \to$ scalars.'
+        type: basic
+      - front: 'Defining property of the dual basis $\{v_1^*, \dots, v_n^*\}$?'
+        back: '$v_i^*(v_j) = 1$ if $i = j$, else $0$ — each $v_i^*$ extracts the $i$-th coordinate.'
+        type: basic
+      - front: 'For finite-dimensional $V$: $\dim V^* = $ ?'
+        back: '$\dim V$.'
+        type: basic
+
+  - id: matrix-representation-in-basis
+    name: The Matrix of a Linear Map in a Basis
+    core: true                 # re-audit R-38: representation machinery that similar-matrices (core) now builds on — the bridge between maps and matrices, not a destination
+    difficulty: 0.75
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 270
+    prerequisites:
+      - id: linear-transformations
+        weight: 0.7
+        key: true
+      - id: change-of-basis
+        weight: 0.7
+        key: true
+      - id: polynomial-matrix-function-spaces   # P_n arithmetic + coefficient-matching combinations for the polynomial-map KP (deliberately NOT basis-dimension-general-field: its w0 proof-by-contradiction edge would conscript the proofs logic run into similar-matrices' closure)
+        weight: 0.5
+      - id: coordinates-relative-basis
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: Computing the B-matrix of a map
+        key_prerequisites: [linear-transformations, coordinates-relative-basis]
+        exemplars:
+          - problem: 'Let $T(x, y) = (y, x)$ and $B = \{(1, 1), (1, -1)\}$. Find $[T]_B$, the matrix of $T$ relative to $B$.'
+            answer: '$[T]_B = \begin{pmatrix}1&0\\0&-1\end{pmatrix}$'
+            solution_sketch: 'Column $j$ is $[T(\mathbf{b}_j)]_B$: $T(1, 1) = (1, 1) = 1\mathbf{b}_1$ gives column $(1, 0)$; $T(1, -1) = (-1, 1) = -\mathbf{b}_2$ gives column $(0, -1)$.'
+          - problem: '$T$ has standard matrix $A = \begin{pmatrix}2&1\\1&2\end{pmatrix}$. Find $[T]_B$ for $B = \{(1, 1), (1, -1)\}$.'
+            answer: '$[T]_B = \begin{pmatrix}3&0\\0&1\end{pmatrix}$'
+            solution_sketch: '$T(1, 1) = (3, 3) = 3\mathbf{b}_1 \Rightarrow$ column $(3, 0)$; $T(1, -1) = (1, -1) = 1\mathbf{b}_2 \Rightarrow$ column $(0, 1)$. In the right basis this map is diagonal.'
+          - problem: 'In general, what is column $j$ of $[T]_B$?'
+            answer: "The B-coordinate vector of T(b_j), the image of the j-th basis vector"
+            solution_sketch: 'Exactly as the standard matrix uses $T(\mathbf{e}_j)$ — but images are re-expressed in $B$-coordinates.'
+        constraints: "maps on R^2; bases {(1,1),(1,-1)} or with 0/1 entries; each T(b_j) has integer B-coordinates found by inspection or a 2x2 solve"
+      - id: kp2
+        name: Two bases give similar matrices
+        key_prerequisites: [change-of-basis, linear-transformations]
+        exemplars:
+          - problem: '$T$ has standard matrix $A = \begin{pmatrix}2&1\\1&2\end{pmatrix}$ and $B = \{(1, 1), (1, -1)\}$. Compute $[T]_B = P_B^{-1}AP_B$ and confirm it matches the column-by-column computation.'
+            answer: '$[T]_B = \begin{pmatrix}3&0\\0&1\end{pmatrix}$'
+            solution_sketch: '$P_B = \begin{pmatrix}1&1\\1&-1\end{pmatrix}$, $P_B^{-1} = \begin{pmatrix}1/2&1/2\\1/2&-1/2\end{pmatrix}$; $AP_B = \begin{pmatrix}3&1\\3&-1\end{pmatrix}$, then $P_B^{-1}(AP_B) = \begin{pmatrix}3&0\\0&1\end{pmatrix}$.'
+          - problem: 'The same map $T$ is represented by $M$ in basis $B$ and by $M''$ in basis $C$. How are $M$ and $M''$ related?'
+            answer: "M' = P^{-1} M P where P = P_B^{-1} P_C converts C-coordinates to B-coordinates: the two matrices are similar"
+            solution_sketch: 'Route through standard coordinates: $[T]_C = P_C^{-1}AP_C = (P_B^{-1}P_C)^{-1}(P_B^{-1}AP_B)(P_B^{-1}P_C)$. Similar matrices are the same map seen in different bases.'
+        constraints: "2x2 with basis vectors from {(1,1),(1,-1),(1,0),(0,1),(1,2)}; P_B inverse has half-integer entries at worst; conjugation done as two matrix products"
+      - id: kp3
+        name: Matrices of maps on polynomial spaces
+        key_prerequisites: [polynomial-matrix-function-spaces, linear-transformations]
+        exemplars:
+          - problem: 'Let $T: P_1 \to P_1$ be the shift $T(p)(x) = p(x + 1)$. Find the matrix of $T$ relative to the basis $\{1, x\}$.'
+            answer: '$\begin{pmatrix}1&1\\0&1\end{pmatrix}$'
+            solution_sketch: '$T(1) = 1$ has coordinates $(1, 0)$; $T(x) = x + 1$ has coordinates $(1, 1)$. Place them as columns.'
+          - problem: 'Let $T: P_2 \to P_2$ be $T(p)(x) = p(2x)$. Find the matrix of $T$ relative to $\{1, x, x^2\}$.'
+            answer: '$\begin{pmatrix}1&0&0\\0&2&0\\0&0&4\end{pmatrix}$'
+            solution_sketch: '$T(1) = 1$, $T(x) = 2x$, $T(x^2) = 4x^2$: each basis vector is just scaled, so the matrix is diagonal.'
+          - problem: 'The shift map $T(p)(x) = p(x + 1)$ on $P_1$ has matrix $\begin{pmatrix}1&1\\0&1\end{pmatrix}$ in the basis $\{1, x\}$. Use the matrix to compute $T(3 + 2x)$.'
+            answer: "5 + 2x"
+            solution_sketch: 'Coordinates $(3, 2)$ map to $\begin{pmatrix}1&1\\0&1\end{pmatrix}(3, 2) = (5, 2)$, i.e. $5 + 2x$. Check directly: $3 + 2(x + 1) = 5 + 2x$. The coordinate isomorphism $P_1 \cong \mathbb{R}^2$ turns the map into matrix arithmetic.'
+        constraints: "maps on P_1 or P_2 built from shifts p(x+c), scalings p(cx), or coefficient formulas with c in -2..2; no calculus; images expressed in the monomial basis"
+    diagnostic_exemplar:
+      problem: 'Let $T : P_1 \to P_1$ be the shift $T(p)(x) = p(x + 2)$. Find the matrix of $T$ relative to the basis $\{1, x\}$, and use the matrix to compute $T(3 + 2x)$.'
+      answer: '$\begin{pmatrix}1&2\\0&1\end{pmatrix}$; $T(3 + 2x) = 7 + 2x$'
+      solution_sketch: '$T(1) = 1$ and $T(x) = x + 2$ give the columns $(1, 0)$ and $(2, 1)$; applying the matrix to the coordinate vector $(3, 2)$ gives $(7, 2)$.'
+    anki_seeds:
+      - front: 'Column $j$ of $[T]_B$, the matrix of $T$ relative to basis $B$?'
+        back: '$[T(\mathbf{b}_j)]_B$ — the image of the $j$-th basis vector, written in $B$-coordinates.'
+        type: basic
+      - front: 'Two matrices represent the same linear map in different bases exactly when they are...'
+        back: 'similar: $[T]_C = P^{-1}[T]_B P$ with $P$ the change-of-coordinates matrix.'
+        type: basic
+      - front: 'To compute with a linear map on $P_n$ using matrices, replace each polynomial by...'
+        back: 'its coordinate vector relative to $\{1, x, \dots, x^n\}$ — the coordinate isomorphism $P_n \cong \mathbb{R}^{n+1}$.'
+        type: basic
+
+  - id: inner-product-spaces
+    name: Inner Product Spaces
+    core: false                # re-audit R-39: terminal destination — nothing in the tree consumes it, and it sits atop the supplemental orthogonality run (orthogonality-gram-schmidt), which stays supplemental
+    difficulty: 0.8
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 300
+    prerequisites:
+      - id: orthogonality-gram-schmidt
+        weight: 0.7
+        key: true
+      - id: polynomial-matrix-function-spaces
+        weight: 0.6
+        key: true
+      - id: definite-integrals-ftc
+        weight: 0.5
+        key: true
+      - id: dot-product-properties
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: The inner-product axioms and non-dot examples
+        key_prerequisites: [dot-product-properties, definite-integrals-ftc]
+        exemplars:
+          - problem: 'Show that $\langle \mathbf{u}, \mathbf{v} \rangle = 2u_1v_1 + 3u_2v_2$ is an inner product on $\mathbb{R}^2$.'
+            answer: "Symmetry and linearity hold termwise since the weights 2, 3 are fixed; positivity holds because <u, u> = 2u_1^2 + 3u_2^2 > 0 for u != 0"
+            solution_sketch: 'Check the three axioms: symmetry (swap $u, v$), linearity in the first argument (expand), and positive-definiteness (a sum of positive multiples of squares vanishes only at $\mathbf{0}$).'
+          - problem: 'Is $\langle \mathbf{u}, \mathbf{v} \rangle = u_1v_1 - u_2v_2$ an inner product on $\mathbb{R}^2$?'
+            answer: "No: positivity fails, e.g. <(0, 1), (0, 1)> = -1 < 0"
+            solution_sketch: 'Symmetry and linearity hold, but $\langle \mathbf{v}, \mathbf{v} \rangle$ must be positive for $\mathbf{v} \neq \mathbf{0}$; one counterexample vector suffices.'
+          - problem: 'On $P_2$ with $\langle f, g \rangle = \int_0^1 f(x)g(x)\,dx$, compute $\langle x, 2x + 1 \rangle$.'
+            answer: "7/6"
+            solution_sketch: '$\int_0^1 (2x^2 + x)\,dx = \frac{2}{3} + \frac{1}{2} = \frac{7}{6}$.'
+        constraints: "weighted inner products on R^2 with positive integer weights <= 4; failures pinned to one axiom with a concrete counterexample; integral inner products of polynomials of degree <= 2 over [0,1] or [-1,1]"
+      - id: kp2
+        name: Norms, orthogonality, and Cauchy-Schwarz abstractly
+        key_prerequisites: [definite-integrals-ftc, dot-product-properties]
+        exemplars:
+          - problem: 'With $\langle f, g \rangle = \int_0^1 f(x)g(x)\,dx$, compute $\|x\|$.'
+            answer: '$1/\sqrt{3}$'
+            solution_sketch: '$\|f\| = \sqrt{\langle f, f \rangle}$; $\int_0^1 x^2\,dx = \frac{1}{3}$, so $\|x\| = \frac{1}{\sqrt{3}}$.'
+          - problem: 'Are $f = 1$ and $g = x$ orthogonal under $\langle f, g \rangle = \int_{-1}^1 f(x)g(x)\,dx$?'
+            answer: "Yes: the integral of x over [-1, 1] is 0"
+            solution_sketch: 'Orthogonal means $\langle f, g \rangle = 0$: $\int_{-1}^1 x\,dx = \frac{1}{2} - \frac{1}{2} = 0$.'
+          - problem: 'Verify the Cauchy-Schwarz inequality $|\langle f, g \rangle| \leq \|f\|\,\|g\|$ for $f = 1$, $g = x$ with $\langle f, g \rangle = \int_0^1 f(x)g(x)\,dx$.'
+            answer: "|<f, g>| = 1/2 and ||f|| ||g|| = 1/sqrt(3) which is about 0.577, so the inequality holds"
+            solution_sketch: '$\langle 1, x \rangle = \frac{1}{2}$, $\|1\| = 1$, $\|x\| = \frac{1}{\sqrt{3}}$; Cauchy-Schwarz holds in every inner-product space, with the same proof as for the dot product.'
+        constraints: "polynomials of degree <= 2 over [0,1] or [-1,1]; norms are single square roots of small fractions; orthogonality decided by one integral"
+      - id: kp3
+        name: Gram-Schmidt with a general inner product
+        key_prerequisites: [orthogonality-gram-schmidt, definite-integrals-ftc]
+        exemplars:
+          - problem: 'Apply Gram-Schmidt to $\{1, x\}$ in $P_1$ with $\langle f, g \rangle = \int_0^1 f(x)g(x)\,dx$.'
+            answer: "v1 = 1, v2 = x - 1/2"
+            solution_sketch: '$v_2 = x - \frac{\langle x, 1 \rangle}{\langle 1, 1 \rangle} \cdot 1 = x - \frac{1/2}{1}$; check $\int_0^1 (x - \frac{1}{2})\,dx = 0$.'
+          - problem: 'Apply Gram-Schmidt to $\{1, x, x^2\}$ in $P_2$ with $\langle f, g \rangle = \int_{-1}^1 f(x)g(x)\,dx$.'
+            answer: "v1 = 1, v2 = x, v3 = x^2 - 1/3"
+            solution_sketch: '$\langle x, 1 \rangle = 0$ leaves $v_2 = x$; then $v_3 = x^2 - \frac{\langle x^2, 1 \rangle}{\langle 1, 1 \rangle} \cdot 1 - \frac{\langle x^2, x \rangle}{\langle x, x \rangle} x = x^2 - \frac{2/3}{2} - 0$. These are the first Legendre polynomials.'
+        constraints: "the sets {1, x} or {1, x, x^2}; intervals [0,1] or [-1,1]; projection coefficients are small fractions; verify orthogonality of the output by one integral"
+    diagnostic_exemplar:
+      problem: 'With $\langle f, g \rangle = \int_0^1 f(x)g(x)\,dx$ on $P_1$, apply Gram-Schmidt to $\{1, x\}$ and give the norm of the second vector you obtain.'
+      answer: '$v_1 = 1$, $v_2 = x - \frac{1}{2}$; $\|v_2\| = \frac{1}{2\sqrt{3}}$'
+      solution_sketch: '$\langle x, 1\rangle = 1/2$ and $\langle 1, 1\rangle = 1$, so $v_2 = x - 1/2$; then $\|v_2\|^2 = \int_0^1 (x - 1/2)^2dx = 1/12$.'
+    anki_seeds:
+      - front: 'The three inner-product axioms?'
+        back: 'Symmetry $\langle u, v \rangle = \langle v, u \rangle$; linearity in each argument; positivity $\langle v, v \rangle > 0$ for $v \neq \mathbf{0}$.'
+        type: basic
+      - front: 'The standard inner product on a function or polynomial space over $[a, b]$?'
+        back: '$\langle f, g \rangle = \int_a^b f(x)g(x)\,dx$.'
+        type: basic
+      - front: 'Gram-Schmidt (and Cauchy-Schwarz) in a general inner-product space: replace every dot product by...'
+        back: '$\langle \cdot, \cdot \rangle$ — the formulas and proofs carry over unchanged.'
+        type: basic

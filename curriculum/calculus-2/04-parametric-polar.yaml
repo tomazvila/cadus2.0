@@ -1,0 +1,639 @@
+unit: parametric-polar
+course: calculus-2
+module: "Parametric & Polar Calculus"
+topics:
+  - id: parametric-curves-basics
+    name: Parametric Curves and Eliminating the Parameter
+    core: true
+    difficulty: 0.55
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 120
+    prerequisites:
+      - id: function-notation
+        weight: 0.6
+        key: true
+      - id: pythagorean-identity
+        weight: 0.6
+        key: true
+      # kp3 asks the learner to NAME the eliminated curve ("an ellipse"), which
+      # needs the standard form. Conceptual familiarity only - the topic never
+      # works with foci or eccentricity - so weight 0 per Math Academy Way p.368.
+      - id: ellipses
+        weight: 0.0
+        key: false
+      - id: unit-circle
+        weight: 0.5
+      - id: coordinate-plane
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Evaluating and plotting parametric points
+        key_prerequisites: [function-notation, coordinate-plane]
+        exemplars:
+          - problem: 'For $x = t^2 - 1$, $y = t^3$, find the point at $t = 2$.'
+            answer: '$(3, 8)$'
+            solution_sketch: 'Plug in: $x = 4 - 1$, $y = 8$.'
+          - problem: 'For $x = 2t$, $y = t^2 - 1$, list the points at $t = -1, 0, 1, 2$.'
+            answer: '$(-2, 0), (0, -1), (2, 0), (4, 3)$'
+            solution_sketch: 'Substitute each $t$ into both coordinates.'
+        constraints: "t-values are small integers; polynomial coordinate functions of degree <= 3"
+      - id: kp2
+        name: Eliminating the parameter
+        key_prerequisites: [function-notation]
+        exemplars:
+          - problem: 'Eliminate the parameter: $x = t + 1$, $y = t^2$.'
+            answer: '$y = (x - 1)^2$'
+            solution_sketch: '$t = x - 1$; substitute into $y = t^2$.'
+          - problem: 'Eliminate the parameter: $x = \sqrt{t}$, $y = t - 1$ (for $t \ge 0$), noting any restriction.'
+            answer: '$y = x^2 - 1$ with $x \ge 0$'
+            solution_sketch: '$t = x^2$; the square root forces $x \ge 0$, so only half the parabola is traced.'
+          - problem: 'Eliminate the parameter: $x = t - 2$, $y = 3t + 1$.'
+            answer: '$y = 3x + 7$'
+            solution_sketch: '$t = x + 2$; substitute: $y = 3(x + 2) + 1$.'
+        constraints: "parameter eliminable by a direct solve; note domain restrictions from radicals"
+      - id: kp3
+        name: Trigonometric parametrizations
+        key_prerequisites: [unit-circle, pythagorean-identity]
+        exemplars:
+          - problem: 'Eliminate the parameter: $x = 2\cos t$, $y = 2\sin t$, $0 \le t \le 2\pi$. What curve is it?'
+            answer: '$x^2 + y^2 = 4$; a circle of radius $2$'
+            solution_sketch: '$\cos^2 t + \sin^2 t = 1$ gives $\frac{x^2}{4} + \frac{y^2}{4} = 1$.'
+          - problem: 'Eliminate the parameter: $x = 3\cos t$, $y = 2\sin t$. What curve is it?'
+            answer: '$\frac{x^2}{9} + \frac{y^2}{4} = 1$; an ellipse'
+            solution_sketch: 'Divide before squaring: $\left(\frac{x}{3}\right)^2 + \left(\frac{y}{2}\right)^2 = 1$.'
+        constraints: "use the Pythagorean identity; radii and semi-axes are small integers"
+    diagnostic_exemplar:
+      problem: 'Eliminate the parameter: $x = 4\cos t$, $y = 3\sin t$. What curve is it, and what point corresponds to $t = \frac{\pi}{2}$?'
+      answer: '$\frac{x^2}{16} + \frac{y^2}{9} = 1$, an ellipse; at $t = \frac{\pi}{2}$ the point is $(0, 3)$'
+      solution_sketch: 'Use $\cos^2t + \sin^2t = 1$ with $\cos t = x/4$ and $\sin t = y/3$.'
+    anki_seeds:
+      - front: "Standard parametrization of a circle of radius a centered at the origin?"
+        back: '$x = a\cos t$, $y = a\sin t$, $0 \le t \le 2\pi$'
+        type: basic
+      - front: "When eliminating a parameter with a square root (x = sqrt t), the resulting equation needs..."
+        back: "a domain restriction (only part of the curve is traced)"
+        type: basic
+
+  - id: parametric-derivatives
+    name: Derivatives of Parametric Curves
+    core: true
+    difficulty: 0.6
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 180
+    prerequisites:
+      - id: parametric-curves-basics
+        weight: 0.7
+        key: true
+      - id: chain-rule
+        weight: 0.6
+        key: true
+      - id: derivatives-trig
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: Slopes of parametric curves
+        key_prerequisites: [parametric-curves-basics, chain-rule, derivatives-trig]
+        exemplars:
+          - problem: 'For $x = t^2$, $y = t^3$, find $\frac{dy}{dx}$ at $t = 1$.'
+            answer: '$3/2$'
+            solution_sketch: '$\frac{dy}{dx} = \frac{dy/dt}{dx/dt} = \frac{3t^2}{2t} = \frac{3t}{2}$; at $t = 1$: $\frac{3}{2}$.'
+          - problem: 'For $x = \cos t$, $y = \sin t$, find $\frac{dy}{dx}$ at $t = \frac{\pi}{4}$.'
+            answer: '$-1$'
+            solution_sketch: '$\frac{dy}{dx} = \frac{\cos t}{-\sin t} = -\cot t$; at $t = \frac{\pi}{4}$: $-1$.'
+        constraints: "dy/dt and dx/dt polynomial or single trig; evaluation points are small integers or special angles"
+      - id: kp2
+        name: Tangent lines and horizontal tangents
+        key_prerequisites: [parametric-curves-basics, chain-rule]
+        exemplars:
+          - problem: 'Find the equation of the tangent line to $x = t^2$, $y = t^3$ at $t = 1$.'
+            answer: '$y = \frac{3}{2}(x - 1) + 1$, i.e. $y = \frac{3x - 1}{2}$'
+            solution_sketch: 'Point $(1, 1)$, slope $\frac{3t}{2}\big|_{t=1} = \frac{3}{2}$.'
+          - problem: 'Find all points where $x = t^2$, $y = t^3 - 3t$ has a horizontal tangent.'
+            answer: '$(1, -2)$ and $(1, 2)$'
+            solution_sketch: '$\frac{dy}{dt} = 3t^2 - 3 = 0$ at $t = \pm 1$ (and $\frac{dx}{dt} = 2t \ne 0$ there); evaluate the points.'
+        constraints: "horizontal tangents where dy/dt = 0 with dx/dt != 0; answers as points and line equations"
+      - id: kp3
+        name: Second derivatives and concavity
+        key_prerequisites: [chain-rule]
+        exemplars:
+          - problem: 'For $x = t^2$, $y = t^3$, find $\frac{d^2y}{dx^2}$ as a function of $t$.'
+            answer: '$\frac{3}{4t}$'
+            solution_sketch: '$\frac{dy}{dx} = \frac{3t}{2}$; then $\frac{d^2y}{dx^2} = \frac{d(dy/dx)/dt}{dx/dt} = \frac{3/2}{2t} = \frac{3}{4t}$.'
+          - problem: 'For $x = t^2$, $y = t^3$, on which $t$-interval is the curve concave up?'
+            answer: '$t > 0$'
+            solution_sketch: '$\frac{d^2y}{dx^2} = \frac{3}{4t} > 0$ exactly when $t > 0$.'
+        constraints: "second derivative via d(dy/dx)/dt divided by dx/dt; polynomial parametrizations only"
+    diagnostic_exemplar:
+      problem: 'For $x = t^2$, $y = t^3 - 3t$, find $\frac{d^2y}{dx^2}$ as a function of $t$, and say whether the curve is concave up at $t = 2$.'
+      answer: '$\frac{d^2y}{dx^2} = \frac{3t^2 + 3}{4t^3}$, which is $\frac{15}{32}$ at $t = 2$; positive, so the curve is concave up there'
+      solution_sketch: '$\frac{dy}{dx} = \frac{3t^2 - 3}{2t}$; differentiate that in $t$ and divide by $\frac{dx}{dt} = 2t$.'
+    anki_seeds:
+      - front: "Slope of a parametric curve (x(t), y(t))?"
+        back: '$\frac{dy}{dx} = \frac{dy/dt}{dx/dt}$ (where $dx/dt \neq 0$)'
+        type: basic
+      - front: "Second derivative of a parametric curve?"
+        back: '$\frac{d^2y}{dx^2} = \frac{\frac{d}{dt}\left(\frac{dy}{dx}\right)}{dx/dt}$'
+        type: basic
+
+  - id: parametric-equations
+    name: Parametric Equations and Their Calculus
+    core: true
+    difficulty: 0.63
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 240
+    prerequisites:
+      - id: parametric-derivatives
+        weight: 0.8
+        key: true
+      - id: arc-length
+        weight: 0.6
+        key: true
+      - id: definite-integrals-ftc
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: Parametric arc length
+        key_prerequisites: [parametric-derivatives, arc-length]
+        exemplars:
+          - problem: 'Find the length of the curve $x = 3t^2$, $y = 2t^3$ for $0 \le t \le 1$.'
+            answer: '$4\sqrt{2} - 2$'
+            solution_sketch: '$\sqrt{(6t)^2 + (6t^2)^2} = 6t\sqrt{1 + t^2}$; $\int_0^1 6t\sqrt{1+t^2}\,dt = 2\left[(1+t^2)^{3/2}\right]_0^1 = 2(2\sqrt{2} - 1)$.'
+          - problem: 'Verify by the parametric arc length formula that $x = \cos t$, $y = \sin t$, $0 \le t \le 2\pi$, has length $2\pi$.'
+            answer: '$2\pi$'
+            solution_sketch: '$\sqrt{\sin^2 t + \cos^2 t} = 1$; $\int_0^{2\pi} 1\,dt = 2\pi$.'
+        constraints: "speed sqrt((dx/dt)^2 + (dy/dt)^2) must simplify to a perfect square or fall to one u-substitution"
+      - id: kp2
+        name: Speed along a curve
+        key_prerequisites: [parametric-derivatives]
+        exemplars:
+          - problem: 'A particle moves along $x = 3t$, $y = 4t$. Find its speed and the distance traveled for $0 \le t \le 2$.'
+            answer: 'speed $5$; distance $10$'
+            solution_sketch: 'Speed $= \sqrt{3^2 + 4^2} = 5$, constant; distance $= 5 \cdot 2$.'
+          - problem: 'Find the speed of $x = t^2$, $y = t^3$ at $t = 1$.'
+            answer: '$\sqrt{13}$'
+            solution_sketch: '$\sqrt{(2t)^2 + (3t^2)^2}\big|_{t=1} = \sqrt{4 + 9}$.'
+        constraints: "speed at a point or constant-speed distance; radicands are clean integers"
+      - id: kp3
+        name: "Capstone: length and area for parametric curves"
+        key_prerequisites: [parametric-derivatives, arc-length, definite-integrals-ftc]
+        exemplars:
+          - problem: 'Find the length of $x = e^t \cos t$, $y = e^t \sin t$ for $0 \le t \le \ln 2$.'
+            answer: '$\sqrt{2}$'
+            solution_sketch: '$\left(\frac{dx}{dt}\right)^2 + \left(\frac{dy}{dt}\right)^2 = 2e^{2t}$, so the speed is $\sqrt{2}\,e^t$; $\int_0^{\ln 2} \sqrt{2}\,e^t\,dt = \sqrt{2}(2 - 1) = \sqrt{2}$.'
+          - problem: 'Find the area under the curve $x = t^2$, $y = t$ for $0 \le t \le 2$ (i.e. $\int y\,dx$).'
+            answer: '$16/3$'
+            solution_sketch: '$\int y\,dx = \int_0^2 t \cdot 2t\,dt = \frac{2 \cdot 8}{3}$.'
+        constraints: "exponential-trig spirals with perfect-square speed; area via int y(t) x'(t) dt with polynomial integrand"
+    diagnostic_exemplar:
+      problem: 'Find the length of the curve $x = 3t^2$, $y = 2t^3$ for $0 \le t \le 2$, and the speed at $t = 2$.'
+      answer: 'length $2(5\sqrt{5} - 1)$; speed at $t = 2$ is $12\sqrt{5}$'
+      solution_sketch: 'The speed is $\sqrt{36t^2 + 36t^4} = 6t\sqrt{1+t^2}$, so the length is $\left[2(1+t^2)^{3/2}\right]_0^2 = 2(5\sqrt5 - 1)$.'
+    anki_seeds:
+      - front: "Parametric arc length formula on [a, b]?"
+        back: '$L = \int_a^b \sqrt{\left(\frac{dx}{dt}\right)^2 + \left(\frac{dy}{dt}\right)^2} \, dt$'
+        type: basic
+      - front: "Speed of a particle on (x(t), y(t))?"
+        back: '$\sqrt{\left(\frac{dx}{dt}\right)^2 + \left(\frac{dy}{dt}\right)^2}$ (the integrand of arc length)'
+        type: basic
+
+  - id: parametric-motion
+    name: Parametric Motion
+    core: false                # application of the parametric representation
+    difficulty: 0.66
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 240
+    prerequisites:
+      - id: parametric-equations
+        weight: 0.7
+        key: true
+      - id: motion-along-a-line
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: Velocity components and speed
+        key_prerequisites: [parametric-equations, motion-along-a-line]
+        exemplars:
+          - problem: 'A particle moves along $x = t^2 - 4t$, $y = t^3 - 3t$. Find its velocity components and speed at $t = 1$.'
+            answer: 'velocity $\langle -2, 0 \rangle$; speed $2$'
+            solution_sketch: '$x''(t) = 2t - 4$, $y''(t) = 3t^2 - 3$; at $t = 1$: $\langle -2, 0 \rangle$, speed $\sqrt{4 + 0} = 2$.'
+          - problem: 'For the same particle, is there a time when it is at rest?'
+            answer: 'no; $x''(t) = 0$ only at $t = 2$, $y''(t) = 0$ only at $t = \pm 1$, never simultaneously'
+            solution_sketch: 'At rest requires both components zero at the same time.'
+        constraints: "polynomial components of degree <= 3; rest requires both derivatives to vanish together"
+      - id: kp2
+        name: Direction of motion
+        key_prerequisites: [parametric-equations]
+        exemplars:
+          - problem: 'For $x = t^2 - 4t$, $y = t^3 - 3t$, when is the particle moving left?'
+            answer: '$t < 2$'
+            solution_sketch: 'Moving left means $x''(t) = 2t - 4 < 0$.'
+          - problem: 'For the same particle, when is it moving up?'
+            answer: '$t < -1$ or $t > 1$'
+            solution_sketch: 'Moving up means $y''(t) = 3t^2 - 3 > 0$, i.e. $|t| > 1$.'
+        constraints: "sign analysis of x'(t) and y'(t); answers as t-intervals"
+      - id: kp3
+        name: Distance traveled vs. displacement
+        key_prerequisites: [parametric-equations]
+        exemplars:
+          - problem: 'A particle traces $x = \cos t$, $y = \sin t$ for $0 \le t \le \pi$. Find the distance traveled and the magnitude of the displacement.'
+            answer: 'distance $\pi$; displacement $2$'
+            solution_sketch: 'Half the unit circle has length $\pi$; the endpoints $(1, 0)$ and $(-1, 0)$ are $2$ apart.'
+          - problem: 'Find the distance traveled along $x = t^2$, $y = \frac{2}{3}t^3$ for $0 \le t \le 1$.'
+            answer: '$\frac{2}{3}(2\sqrt{2} - 1)$'
+            solution_sketch: 'Speed $= \sqrt{4t^2 + 4t^4} = 2t\sqrt{1 + t^2}$; $\int_0^1 2t\sqrt{1+t^2}\,dt = \frac{2}{3}\left[(1+t^2)^{3/2}\right]_0^1$.'
+        constraints: "distance via the speed integral; displacement via endpoints; integrals fall to one u-substitution"
+    diagnostic_exemplar:
+      problem: 'A particle traces $x = t^2 - 4t$, $y = t^2$ for $0 \le t \le 4$. When is it moving left, and what is the magnitude of its displacement over the interval?'
+      answer: 'It moves left for $t < 2$ (where $dx/dt = 2t - 4 < 0$); the displacement is $(0, 16)$, of magnitude $16$'
+      solution_sketch: 'Horizontal motion is governed by the sign of $\frac{dx}{dt} = 2t - 4$; displacement compares only the endpoints $(0, 0)$ and $(0, 16)$.'
+    anki_seeds:
+      - front: "A parametric particle is at rest when..."
+        back: "both dx/dt = 0 and dy/dt = 0 at the same time"
+        type: basic
+      - front: "Distance traveled vs. displacement for parametric motion?"
+        back: "distance = integral of speed; displacement = straight-line distance between start and end points"
+        type: basic
+
+  - id: plotting-polar-points
+    name: Polar Points and Coordinate Conversions
+    core: true
+    difficulty: 0.55
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 120
+    prerequisites:
+      - id: unit-circle
+        weight: 0.7
+        key: true
+      - id: pythagorean-theorem
+        weight: 0.4
+      - id: right-triangle-trig
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: Plotting and multiple representations
+        key_prerequisites: [unit-circle]
+        exemplars:
+          - problem: 'In which quadrant does the polar point $\left(2, \frac{2\pi}{3}\right)$ lie?'
+            answer: 'quadrant II'
+            solution_sketch: 'The ray $\theta = \frac{2\pi}{3}$ points into quadrant II and $r > 0$.'
+          - problem: 'Give a representation of the polar point $\left(2, \frac{\pi}{4}\right)$ with $r < 0$.'
+            answer: '$(-2, 5\pi/4)$'
+            solution_sketch: 'Negative $r$ points the opposite way: add $\pi$ to the angle and negate $r$.'
+        constraints: "angles on the unit-circle special angles; include one negative-r representation"
+      - id: kp2
+        name: Polar to rectangular
+        key_prerequisites: [unit-circle, right-triangle-trig]
+        exemplars:
+          - problem: 'Convert $(r, \theta) = \left(2, \frac{\pi}{3}\right)$ to rectangular coordinates.'
+            answer: '$(1, \sqrt 3)$'
+            solution_sketch: '$x = 2\cos\frac{\pi}{3} = 1$, $y = 2\sin\frac{\pi}{3} = \sqrt{3}$.'
+          - problem: 'Convert $(r, \theta) = \left(4, \frac{3\pi}{2}\right)$ to rectangular coordinates.'
+            answer: '$(0, -4)$'
+            solution_sketch: '$\cos\frac{3\pi}{2} = 0$, $\sin\frac{3\pi}{2} = -1$.'
+        constraints: "theta on the unit-circle special angles; exact radical answers"
+      - id: kp3
+        name: Rectangular to polar
+        key_prerequisites: [unit-circle, pythagorean-theorem]
+        exemplars:
+          - problem: 'Convert $(1, 1)$ to polar coordinates with $r > 0$ and $0 \le \theta < 2\pi$.'
+            answer: '$(\sqrt 2, \pi/4)$'
+            solution_sketch: '$r = \sqrt{1 + 1}$, $\tan\theta = 1$ in quadrant I.'
+          - problem: 'Convert $(-1, \sqrt{3})$ to polar coordinates with $r > 0$ and $0 \le \theta < 2\pi$.'
+            answer: '$(2, 2\pi/3)$'
+            solution_sketch: '$r = \sqrt{1 + 3} = 2$; the point is in quadrant II with reference angle $\frac{\pi}{3}$.'
+          - problem: 'Convert $(-3, 0)$ to polar coordinates with $r > 0$ and $0 \le \theta < 2\pi$.'
+            answer: '$(3, \pi)$'
+            solution_sketch: 'The point lies on the negative $x$-axis at distance $3$.'
+        constraints: "points landing on special angles; mind the quadrant when reading arctan"
+    diagnostic_exemplar:
+      problem: 'Convert $(-3, 3\sqrt{3})$ to polar coordinates with $r > 0$ and $0 \le \theta < 2\pi$.'
+      answer: '$(6, 2\pi/3)$'
+      solution_sketch: '$r = \sqrt{9 + 27} = 6$; the point is in quadrant II with reference angle $\frac{\pi}{3}$, so $\theta = \frac{2\pi}{3}$.'
+    anki_seeds:
+      - front: "Polar-to-rectangular conversion formulas?"
+        back: '$x = r\cos\theta$, $y = r\sin\theta$'
+        type: basic
+      - front: "Rectangular-to-polar conversion formulas?"
+        back: '$r^2 = x^2 + y^2$, $\tan\theta = y/x$ (choose $\theta$ by quadrant)'
+        type: basic
+
+  - id: polar-coordinates
+    name: Polar Coordinates
+    core: true
+    difficulty: 0.6
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 150
+    prerequisites:
+      - id: plotting-polar-points
+        weight: 0.8
+        key: true
+      - id: completing-the-square
+        weight: 0.4
+      - id: trig-identities-basic
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Polar equations to rectangular equations
+        key_prerequisites: [plotting-polar-points, completing-the-square]
+        exemplars:
+          - problem: 'Convert $r = 4\cos\theta$ to a rectangular equation and identify the curve.'
+            answer: '$x^2 + y^2 = 4x$, i.e. $(x - 2)^2 + y^2 = 4$: a circle of radius $2$ centered at $(2, 0)$'
+            solution_sketch: 'Multiply by $r$: $r^2 = 4r\cos\theta$, so $x^2 + y^2 = 4x$; complete the square.'
+          - problem: 'Convert $r = 6\cos\theta$ to a rectangular equation and identify the curve.'
+            answer: '$(x - 3)^2 + y^2 = 9$: a circle of radius $3$ centered at $(3, 0)$'
+            solution_sketch: '$r^2 = 6r\cos\theta$ gives $x^2 + y^2 = 6x$; complete the square.'
+          - problem: 'Convert $\theta = \frac{\pi}{4}$ to a rectangular equation.'
+            answer: '$y = x$ (a line through the origin)'
+            solution_sketch: 'Constant $\theta$ is the line of slope $\tan\frac{\pi}{4} = 1$.'
+        constraints: "multiply through by r when needed; complete the square to identify circles"
+      - id: kp2
+        name: Rectangular equations to polar equations
+        key_prerequisites: [plotting-polar-points]
+        exemplars:
+          - problem: 'Convert the line $x = 3$ to a polar equation.'
+            answer: '$r = 3\sec\theta$'
+            solution_sketch: '$r\cos\theta = 3$.'
+          - problem: 'Convert the circle $x^2 + y^2 = 25$ to a polar equation.'
+            answer: '$r = 5$'
+            solution_sketch: '$r^2 = 25$ with $r > 0$.'
+          - problem: 'Convert the parabola $y = x^2$ to a polar equation.'
+            answer: '$r = \tan\theta \sec\theta$'
+            solution_sketch: '$r\sin\theta = r^2\cos^2\theta$; divide by $r\cos^2\theta$.'
+        constraints: "use r^2 = x^2 + y^2, x = r cos theta, y = r sin theta; simplify to r = f(theta)"
+      - id: kp3
+        name: Identifying curves from polar equations
+        key_prerequisites: [plotting-polar-points, completing-the-square]
+        exemplars:
+          - problem: 'Convert $r = 2$ and $\theta = \frac{\pi}{4}$ to rectangular equations.'
+            answer: '$x^2 + y^2 = 4$; $y = x$ (a ray/line through the origin)'
+            solution_sketch: '$r = 2$ is a circle of radius $2$; constant $\theta$ is the line of slope $\tan\frac{\pi}{4} = 1$.'
+          - problem: 'Identify the curve $r = -4\sin\theta$.'
+            answer: '$x^2 + (y + 2)^2 = 4$: a circle of radius $2$ centered at $(0, -2)$'
+            solution_sketch: '$r^2 = -4r\sin\theta$ gives $x^2 + y^2 = -4y$; complete the square.'
+        constraints: "circles through the origin (r = 2a cos theta or 2a sin theta), constant-r circles, and lines only"
+    diagnostic_exemplar:
+      problem: 'Convert the circle $x^2 + y^2 = 6y$ to a polar equation, and identify the curve.'
+      answer: '$r = 6\sin\theta$: a circle of radius $3$ centered at $(0, 3)$'
+      solution_sketch: 'Substitute $x^2 + y^2 = r^2$ and $y = r\sin\theta$, then divide by $r$; completing the square gives $x^2 + (y-3)^2 = 9$.'
+    anki_seeds:
+      - front: 'The polar equation $r = 2a\cos\theta$ is always a...'
+        back: 'circle of radius $|a|$ centered at $(a, 0)$ (through the origin)'
+        type: basic
+      - front: "The standard trick for converting r = a cos(theta) or r = a sin(theta) to rectangular form?"
+        back: 'multiply both sides by $r$, then use $r^2 = x^2 + y^2$, $r\cos\theta = x$, $r\sin\theta = y$'
+        type: basic
+
+  - id: graphing-polar-curves
+    name: Graphing Polar Curves
+    core: true
+    difficulty: 0.64
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 150
+    prerequisites:
+      - id: polar-coordinates
+        weight: 0.8
+        key: true
+      - id: trig-graphs-basic
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: Circles, cardioids, and limacons
+        key_prerequisites: [polar-coordinates, trig-graphs-basic]
+        exemplars:
+          - problem: 'Identify the graph of $r = 1 + \cos\theta$.'
+            answer: 'a cardioid (heart-shaped limaçon, cusp at the origin, symmetric about the polar axis)'
+            solution_sketch: '$r = a + a\cos\theta$ with equal coefficients is the cardioid family.'
+          - problem: 'Identify the graph of $r = 3$.'
+            answer: 'a circle of radius $3$ centered at the origin'
+            solution_sketch: 'All points at distance $3$ from the pole.'
+          - problem: 'Does the limaçon $r = 1 + 2\cos\theta$ have an inner loop? Why?'
+            answer: 'yes; $r$ becomes negative (for $\frac{2\pi}{3} < \theta < \frac{4\pi}{3}$), which traces an inner loop'
+            solution_sketch: 'In $r = a + b\cos\theta$, an inner loop appears exactly when $|b| > |a|$.'
+        constraints: "families limited to circles, cardioids, and limacons; classify by comparing |a| and |b|"
+      - id: kp2
+        name: Rose curves and petal counts
+        key_prerequisites: [polar-coordinates, trig-graphs-basic]
+        exemplars:
+          - problem: 'How many petals does $r = 2\sin 3\theta$ have? And $r = \cos 2\theta$?'
+            answer: '$3$ petals; $4$ petals'
+            solution_sketch: '$r = a\sin(n\theta)$ or $a\cos(n\theta)$ gives $n$ petals for odd $n$ and $2n$ petals for even $n$.'
+          - problem: 'At which angles $\theta$ in $[0, 2\pi)$ do the petal tips of $r = 2\sin 3\theta$ occur?'
+            answer: '$\theta = \frac{\pi}{6}, \frac{5\pi}{6}, \frac{3\pi}{2}$'
+            solution_sketch: 'Tips where $\sin 3\theta = 1$: $3\theta = \frac{\pi}{2} + 2\pi k$.'
+        constraints: "n in {2, 3, 4, 5}; ask for petal counts and tip angles"
+      - id: kp3
+        name: Symmetry and zeros of r
+        key_prerequisites: [polar-coordinates]
+        exemplars:
+          - problem: 'About which line is $r = 1 + \cos\theta$ symmetric, and where does it touch the pole?'
+            answer: 'symmetric about the polar axis ($x$-axis); touches the pole at $\theta = \pi$'
+            solution_sketch: '$\cos\theta$ is even, giving polar-axis symmetry; $r = 0$ when $\cos\theta = -1$.'
+          - problem: 'Find all $\theta$ in $[0, 2\pi)$ with $r = 0$ for the rose $r = \sin 2\theta$.'
+            answer: '$\theta = 0, \frac{\pi}{2}, \pi, \frac{3\pi}{2}$'
+            solution_sketch: '$\sin 2\theta = 0$ at multiples of $\frac{\pi}{2}$; these angles bound the petals.'
+        constraints: "symmetry via even/odd trig; zeros of r locate petal boundaries and cusps"
+    diagnostic_exemplar:
+      problem: 'For $r = 4\cos 3\theta$, how many petals does the graph have, and at which $\theta$ in $[0, \pi)$ does the curve pass through the pole?'
+      answer: '$3$ petals; it reaches the pole at $\theta = \frac{\pi}{6}, \frac{\pi}{2}, \frac{5\pi}{6}$'
+      solution_sketch: 'For $r = a\cos(n\theta)$ with $n$ odd there are $n$ petals; $r = 0$ when $\cos 3\theta = 0$, i.e. $3\theta = \frac{\pi}{2} + k\pi$.'
+    anki_seeds:
+      - front: 'Petal count of $r = a\cos(n\theta)$?'
+        back: '$n$ petals if $n$ is odd, $2n$ petals if $n$ is even'
+        type: basic
+      - front: 'The limaçon $r = a + b\cos\theta$ has an inner loop exactly when...'
+        back: '$|b| > |a|$ (r takes negative values)'
+        type: basic
+
+  - id: polar-tangent-lines
+    name: Tangents to Polar Curves
+    core: false                # terminal polar application
+    difficulty: 0.68
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 240
+    prerequisites:
+      - id: polar-coordinates
+        weight: 0.6
+        key: true
+      - id: parametric-derivatives
+        weight: 0.6
+        key: true
+      - id: double-half-angle-identities
+        weight: 0.5
+      - id: derivatives-trig
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Slopes via the parametric form
+        key_prerequisites: [polar-coordinates, parametric-derivatives, derivatives-trig]
+        exemplars:
+          - problem: 'Find the slope of the cardioid $r = 1 + \cos\theta$ at $\theta = \frac{\pi}{2}$.'
+            answer: "1"
+            solution_sketch: 'With $x = r\cos\theta$, $y = r\sin\theta$: $\frac{dy}{d\theta} = \cos\theta + \cos 2\theta = -1$ and $\frac{dx}{d\theta} = -\sin\theta - \sin 2\theta = -1$ at $\frac{\pi}{2}$; slope $= 1$.'
+          - problem: 'Find the slope of the spiral $r = \theta$ at $\theta = \frac{\pi}{2}$.'
+            answer: '$-\frac{2}{\pi}$'
+            solution_sketch: '$x = \theta\cos\theta$, $y = \theta\sin\theta$: at $\frac{\pi}{2}$, $\frac{dy}{d\theta} = 1$ and $\frac{dx}{d\theta} = -\frac{\pi}{2}$.'
+        constraints: "treat theta as the parameter in x = r cos theta, y = r sin theta; evaluation at special angles"
+      - id: kp2
+        name: Horizontal and vertical tangents
+        key_prerequisites: [parametric-derivatives, derivatives-trig]
+        exemplars:
+          - problem: 'Find the points where the circle $r = 2\cos\theta$ has a horizontal tangent.'
+            answer: '$(1, 1)$ and $(1, -1)$ (rectangular), at $\theta = \pm\frac{\pi}{4}$'
+            solution_sketch: '$y = 2\cos\theta\sin\theta = \sin 2\theta$; $\frac{dy}{d\theta} = 2\cos 2\theta = 0$ at $\theta = \pm\frac{\pi}{4}$.'
+          - problem: 'Find the points where the circle $r = 2\cos\theta$ has a vertical tangent.'
+            answer: '$(2, 0)$ and the pole $(0, 0)$, at $\theta = 0$ and $\theta = \frac{\pi}{2}$'
+            solution_sketch: '$x = 1 + \cos 2\theta$; $\frac{dx}{d\theta} = -2\sin 2\theta = 0$ at $\theta = 0, \frac{\pi}{2}$.'
+        constraints: "dy/d theta = 0 for horizontal, dx/d theta = 0 for vertical; report rectangular points"
+      - id: kp3
+        name: Tangent lines at the pole
+        key_prerequisites: [polar-coordinates]
+        exemplars:
+          - problem: 'Find the tangent lines to $r = \sin 2\theta$ at the pole (for $0 \le \theta < \pi$).'
+            answer: 'the lines $\theta = 0$ and $\theta = \frac{\pi}{2}$'
+            solution_sketch: 'At the pole, the tangent lines are the rays where $r = 0$: $\sin 2\theta = 0$.'
+          - problem: 'Find the tangent line to the cardioid $r = 1 + \cos\theta$ at the pole.'
+            answer: 'the line $\theta = \pi$ (the negative $x$-axis)'
+            solution_sketch: '$r = 0$ only at $\theta = \pi$.'
+        constraints: "pole tangents read off from the zeros of r"
+    diagnostic_exemplar:
+      problem: 'Find the points where the circle $r = 2\sin\theta$ has a horizontal tangent, and give the tangent line to the curve at the pole.'
+      answer: 'Horizontal tangents at the pole ($\theta = 0$) and at $(0, 2)$ ($\theta = \frac{\pi}{2}$); the tangent line at the pole is $\theta = 0$, the $x$-axis'
+      solution_sketch: 'With $x = \sin 2\theta$ and $y = 1 - \cos 2\theta$, $\frac{dy}{d\theta} = 2\sin 2\theta$ vanishes at $\theta = 0, \frac{\pi}{2}$ while $\frac{dx}{d\theta} \ne 0$ there; the pole is reached at $\theta = 0$, which gives the tangent line there.'
+    anki_seeds:
+      - front: "Slope of a polar curve r = f(theta)?"
+        back: '$\frac{dy}{dx} = \frac{\frac{dr}{d\theta}\sin\theta + r\cos\theta}{\frac{dr}{d\theta}\cos\theta - r\sin\theta}$ (parametrize $x = r\cos\theta$, $y = r\sin\theta$)'
+        type: basic
+      - front: "Tangent lines to a polar curve at the pole?"
+        back: 'the rays $\theta = \theta_0$ at the angles where $r(\theta_0) = 0$'
+        type: basic
+
+  - id: polar-area
+    name: Area in Polar Coordinates
+    core: true
+    difficulty: 0.68
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 240
+    prerequisites:
+      - id: graphing-polar-curves
+        weight: 0.6
+        key: true
+      - id: trigonometric-integrals
+        weight: 0.6
+        key: true
+      - id: definite-integrals-ftc
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: The polar area formula
+        key_prerequisites: [graphing-polar-curves, definite-integrals-ftc]
+        exemplars:
+          - problem: 'Use the polar area formula to find the area enclosed by $r = 3$.'
+            answer: '$9\pi$'
+            solution_sketch: '$\frac{1}{2}\int_0^{2\pi} 9\,d\theta = 9\pi$, matching $\pi r^2$.'
+          - problem: 'Find the area of the sector of $r = 2$ with $0 \le \theta \le \frac{\pi}{3}$.'
+            answer: '$\frac{2\pi}{3}$'
+            solution_sketch: '$\frac{1}{2}\int_0^{\pi/3} 4\,d\theta = \frac{1}{2} \cdot 4 \cdot \frac{\pi}{3}$.'
+        constraints: "constant r; results checkable against circle/sector formulas"
+      - id: kp2
+        name: Area inside cardioids and circles
+        key_prerequisites: [trigonometric-integrals, definite-integrals-ftc]
+        exemplars:
+          - problem: 'Find the area enclosed by the circle $r = 2\cos\theta$.'
+            answer: '$\pi$'
+            solution_sketch: 'Traced for $-\frac{\pi}{2} \le \theta \le \frac{\pi}{2}$: $\frac{1}{2}\int_{-\pi/2}^{\pi/2} 4\cos^2\theta\,d\theta = \pi$ — a circle of radius $1$.'
+          - problem: 'Find the area enclosed by the cardioid $r = 1 + \cos\theta$.'
+            answer: '$3\pi/2$'
+            solution_sketch: '$\frac{1}{2}\int_0^{2\pi} (1 + \cos\theta)^2\,d\theta = \frac{1}{2}\left(2\pi + 0 + \pi\right) = \frac{3\pi}{2}$ using $\int_0^{2\pi}\cos^2 = \pi$.'
+        constraints: "integrands expand to constants, cos theta, and cos^2 theta terms handled by half-angle identities; mind the tracing interval"
+      - id: kp3
+        name: Petal areas
+        key_prerequisites: [graphing-polar-curves, trigonometric-integrals]
+        exemplars:
+          - problem: 'Find the area of one petal of $r = \sin 2\theta$.'
+            answer: '$\pi/8$'
+            solution_sketch: 'One petal spans $0 \le \theta \le \frac{\pi}{2}$: $\frac{1}{2}\int_0^{\pi/2} \sin^2 2\theta\,d\theta = \frac{1}{2} \cdot \frac{\pi}{4} = \frac{\pi}{8}$.'
+          - problem: 'Find the area of one petal of $r = 3\cos 3\theta$.'
+            answer: '$3\pi/4$'
+            solution_sketch: 'One petal spans $-\frac{\pi}{6} \le \theta \le \frac{\pi}{6}$: $\frac{1}{2}\int_{-\pi/6}^{\pi/6} 9\cos^2 3\theta\,d\theta = \frac{9}{2} \cdot \frac{\pi}{6} = \frac{3\pi}{4}$.'
+        constraints: "petal limits from consecutive zeros of r; half-angle identity does the integral"
+    diagnostic_exemplar:
+      problem: 'Find the area of one petal of $r = 2\cos 2\theta$.'
+      answer: '$\pi/2$'
+      solution_sketch: 'One petal spans $-\frac{\pi}{4} \le \theta \le \frac{\pi}{4}$: $\frac{1}{2}\int_{-\pi/4}^{\pi/4} 4\cos^2 2\theta\,d\theta = 2 \cdot \frac{\pi}{4} = \frac{\pi}{2}$.'
+    anki_seeds:
+      - front: "Area formula in polar coordinates?"
+        back: '$A = \frac{1}{2}\int_{\alpha}^{\beta} r^2 \, d\theta$'
+        type: basic
+      - front: "To find the theta-limits for one petal of a rose, use..."
+        back: "two consecutive zeros of r"
+        type: basic
+
+  - id: polar-graphs-area
+    name: Polar Graphs and Area
+    core: false                # decorative/terminal polar application
+    difficulty: 0.7
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 240
+    prerequisites:
+      - id: polar-area
+        weight: 0.8
+        key: true
+      - id: graphing-polar-curves
+        weight: 0.4
+      - id: trigonometric-integrals
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: Intersections of polar curves
+        key_prerequisites: [graphing-polar-curves, polar-area]
+        exemplars:
+          - problem: 'Find the intersection points of $r = 1$ and $r = 2\cos\theta$ for $0 \le \theta < 2\pi$.'
+            answer: '$\left(1, \frac{\pi}{3}\right)$ and $\left(1, -\frac{\pi}{3}\right)$ (i.e. $\frac{5\pi}{3}$)'
+            solution_sketch: '$2\cos\theta = 1$ gives $\cos\theta = \frac{1}{2}$.'
+          - problem: 'Find all intersections of $r = \sin\theta$ and $r = \cos\theta$, including the pole.'
+            answer: '$\left(\frac{\sqrt{2}}{2}, \frac{\pi}{4}\right)$ and the pole'
+            solution_sketch: '$\tan\theta = 1$ gives $\theta = \frac{\pi}{4}$; both circles also pass through the origin (at different $\theta$), so the pole is an intersection too.'
+        constraints: "intersections at special angles; always check the pole separately"
+      - id: kp2
+        name: Area between polar curves
+        key_prerequisites: [polar-area, trigonometric-integrals]
+        exemplars:
+          - problem: 'Find the area inside the cardioid $r = 1 + \cos\theta$ and outside the circle $r = 1$.'
+            answer: '$2 + \frac{\pi}{4}$'
+            solution_sketch: 'Curves meet at $\theta = \pm\frac{\pi}{2}$: $\frac{1}{2}\int_{-\pi/2}^{\pi/2}\left[(1+\cos\theta)^2 - 1\right]d\theta = \frac{1}{2}\int_{-\pi/2}^{\pi/2}(2\cos\theta + \cos^2\theta)\,d\theta = \frac{1}{2}\left(4 + \frac{\pi}{2}\right) = 2 + \frac{\pi}{4}$.'
+          - problem: 'Find the area inside the circle $r = 2\cos\theta$ and outside the circle $r = 1$.'
+            answer: '$\frac{\pi}{3} + \frac{\sqrt{3}}{2}$'
+            solution_sketch: 'Curves meet at $\theta = \pm\frac{\pi}{3}$: $\frac{1}{2}\int_{-\pi/3}^{\pi/3}\left(4\cos^2\theta - 1\right)d\theta = \frac{1}{2}\left[\theta + \sin 2\theta\right]_{-\pi/3}^{\pi/3}$.'
+        constraints: "area differences of the form (outer)^2 - (inner)^2 over a symmetric interval; intersections at special angles"
+      - id: kp3
+        name: Composite regions
+        key_prerequisites: [polar-area, trigonometric-integrals]
+        exemplars:
+          - problem: 'Find the area inside $r = 3\sin\theta$ and outside the cardioid $r = 1 + \sin\theta$.'
+            answer: '$\pi$'
+            solution_sketch: 'Curves meet where $\sin\theta = \frac{1}{2}$, i.e. $\theta = \frac{\pi}{6}, \frac{5\pi}{6}$: $\frac{1}{2}\int_{\pi/6}^{5\pi/6}\left[9\sin^2\theta - (1+\sin\theta)^2\right]d\theta = \pi$.'
+          - problem: 'Find the area of the inner loop of the limaçon $r = 1 + 2\cos\theta$.'
+            answer: '$\pi - \frac{3\sqrt{3}}{2}$'
+            solution_sketch: 'The inner loop runs between the zeros $\theta = \frac{2\pi}{3}$ and $\frac{4\pi}{3}$: $\frac{1}{2}\int_{2\pi/3}^{4\pi/3}(1 + 2\cos\theta)^2\,d\theta = \pi - \frac{3\sqrt{3}}{2}$.'
+        constraints: "limits from intersections or zeros of r; integrands expand to constants, cos, and cos^2 terms"
+    diagnostic_exemplar:
+      problem: 'Find the area inside both $r = 1$ and $r = 2\sin\theta$.'
+      answer: '$\frac{2\pi}{3} - \frac{\sqrt{3}}{2}$'
+      solution_sketch: 'Curves meet at $\theta = \frac{\pi}{6}, \frac{5\pi}{6}$; use $r = 2\sin\theta$ on $[0, \frac{\pi}{6}] \cup [\frac{5\pi}{6}, \pi]$ and $r = 1$ between: $2 \cdot \frac{1}{2}\int_0^{\pi/6} 4\sin^2\theta\,d\theta + \frac{1}{2}\cdot\frac{2\pi}{3} = \frac{2\pi}{3} - \frac{\sqrt{3}}{2}$.'
+    anki_seeds:
+      - front: "Why can polar intersections be missed by just solving f(theta) = g(theta)?"
+        back: "curves can meet at the pole (r = 0) at different theta values, and points have multiple representations — check the pole separately"
+        type: basic
+      - front: "Area between two polar curves over [alpha, beta]?"
+        back: '$\frac{1}{2}\int_{\alpha}^{\beta}\left(r_{\text{outer}}^2 - r_{\text{inner}}^2\right) d\theta$'
+        type: basic

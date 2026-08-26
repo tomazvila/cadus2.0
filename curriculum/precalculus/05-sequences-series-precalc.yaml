@@ -1,0 +1,310 @@
+unit: sequences-series-precalc
+course: precalculus
+module: "Sequences & Series (Precalculus)"
+topics:
+  - id: arithmetic-sequences
+    name: Arithmetic Sequences
+    core: true
+    difficulty: 0.35
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 90
+    prerequisites:
+      - id: evaluating-expressions
+        weight: 0.6
+        key: true
+      - id: function-notation
+        weight: 0.4
+        key: true
+      - id: integer-addition-subtraction
+        weight: 0.4
+      - id: slope
+        weight: 0.0            # conceptual only: common difference as constant rate
+    knowledge_points:
+      - id: kp1
+        name: Common difference and next terms
+        key_prerequisites: [integer-addition-subtraction]
+        constraints: "integer first terms and differences, |d| <= 9, include a decreasing sequence; two-part answers requested as an ordered pair"
+        exemplars:
+          - problem: 'For the sequence $5, 9, 13, \ldots$, give the ordered pair (common difference, next term).'
+            answer: "(4, 17)"
+          - problem: 'For the sequence $20, 14, 8, \ldots$, give the ordered pair (common difference, next term).'
+            answer: "(-6, 2)"
+      - id: kp2
+        name: The explicit formula
+        key_prerequisites: [evaluating-expressions, function-notation]
+        constraints: "a_n = a_1 + (n-1)d; n up to 30"
+        exemplars:
+          - problem: 'Find the 10th term of $3, 7, 11, \ldots$'
+            answer: "39"
+            solution_sketch: '$a_{10} = 3 + 9 \cdot 4 = 39$.'
+          - problem: 'The arithmetic sequence with $a_1 = 2$ and $d = 5$ has explicit formula $a_n = \ldots$. Give the expression in $n$.'
+            answer: "5n - 3"
+            solution_sketch: '$a_n = 2 + (n - 1) \cdot 5 = 5n - 3$ (so $a_{20} = 97$).'
+      - id: kp3
+        name: Recover d or n from given terms
+        key_prerequisites: [evaluating-expressions]
+        constraints: "give a_1 and one later term (or a target value); the unknown d or n is a small positive integer via a_n = a_1 + (n-1)d"
+        exemplars:
+          - problem: 'An arithmetic sequence has $a_1 = 4$ and $a_7 = 22$. Find $d$.'
+            answer: "3"
+            solution_sketch: '$22 = 4 + 6d$, so $d = 3$.'
+          - problem: 'The sequence $1, 5, 9, \ldots$ has $a_n = 41$. Find $n$.'
+            answer: "11"
+            solution_sketch: '$1 + 4(n - 1) = 41$ gives $n = 11$.'
+    diagnostic_exemplar:
+      problem: 'An arithmetic sequence has $a_1 = 5$ and $a_9 = 37$. Find $d$.'
+      answer: "4"
+      solution_sketch: '$37 = 5 + 8d$, so $d = 4$.'
+    anki_seeds:
+      - front: "Explicit formula for an arithmetic sequence?"
+        back: "a_n = a_1 + (n - 1)d"
+        type: basic
+
+  - id: arithmetic-series
+    name: Arithmetic Series
+    core: true
+    difficulty: 0.45
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 120
+    prerequisites:
+      - id: arithmetic-sequences
+        weight: 0.8
+        key: true
+      - id: summation-notation
+        weight: 0.5
+        key: true
+      - id: multi-digit-multiplication
+        weight: 0.2
+    knowledge_points:
+      - id: kp1
+        name: Sum with first and last term
+        key_prerequisites: [arithmetic-sequences]
+        constraints: "S_n = n(a_1 + a_n)/2; n <= 100"
+        exemplars:
+          - problem: 'Compute $1 + 2 + 3 + \cdots + 100$.'
+            answer: "5050"
+            solution_sketch: '$S = \frac{100(1 + 100)}{2}$.'
+          - problem: 'Compute $3 + 7 + 11 + \cdots + 39$.'
+            answer: "210"
+            solution_sketch: 'There are $10$ terms; $S = \frac{10(3 + 39)}{2}$.'
+      - id: kp2
+        name: Sum without the last term
+        key_prerequisites: [arithmetic-sequences]
+        constraints: "S_n = n(2a_1 + (n-1)d)/2"
+        exemplars:
+          - problem: 'Find the sum of the first $20$ terms of $5, 8, 11, \ldots$'
+            answer: "670"
+            solution_sketch: '$S = \frac{20}{2}(2 \cdot 5 + 19 \cdot 3) = 10 \cdot 67$.'
+          - problem: 'Find the sum of the first $15$ terms of $2, 4, 6, \ldots$'
+            answer: "240"
+            solution_sketch: '$S = \frac{15}{2}(4 + 14 \cdot 2) = \frac{15 \cdot 32}{2}$.'
+      - id: kp3
+        name: Sums in sigma notation
+        key_prerequisites: [summation-notation, arithmetic-sequences]
+        constraints: "sums of (ak + b) with small integer a, b; index from 1 to n <= 20; evaluated exactly"
+        exemplars:
+          - problem: 'Evaluate $\sum_{k=1}^{15} (2k + 1)$.'
+            answer: "255"
+            solution_sketch: '$2 \cdot \frac{15 \cdot 16}{2} + 15 = 240 + 15$.'
+          - problem: 'Evaluate $\sum_{k=1}^{10} (3k - 2)$.'
+            answer: "145"
+            solution_sketch: '$3 \cdot 55 - 20 = 145$.'
+    diagnostic_exemplar:
+      problem: 'Evaluate $\sum_{k=1}^{12} (4k + 1)$.'
+      answer: "324"
+      solution_sketch: '$4 \cdot \frac{12 \cdot 13}{2} + 12 = 312 + 12 = 324$.'
+    anki_seeds:
+      - front: "Sum of an arithmetic series with n terms?"
+        back: "S_n = n(a_1 + a_n)/2"
+        type: basic
+
+  - id: geometric-sequences
+    name: Geometric Sequences
+    core: true
+    difficulty: 0.4
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 90
+    prerequisites:
+      - id: arithmetic-sequences
+        weight: 0.5
+        key: true
+      - id: exponent-product-quotient-rules
+        weight: 0.5
+        key: true
+      - id: multiplying-fractions
+        weight: 0.4
+      - id: negative-zero-exponents
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Common ratio and next terms
+        key_prerequisites: [multiplying-fractions]
+        constraints: "integer or simple fractional ratios; include a negative ratio"
+        exemplars:
+          - problem: 'For the sequence $3, 6, 12, \ldots$, give the ordered pair (common ratio, next term).'
+            answer: "(2, 24)"
+          - problem: 'For the sequence $81, 27, 9, \ldots$, give the ordered pair (common ratio, next term).'
+            answer: "(1/3, 3)"
+          - problem: 'For the sequence $2, -6, 18, \ldots$, give the ordered pair (common ratio, next term).'
+            answer: "(-3, -54)"
+      - id: kp2
+        name: The explicit formula
+        key_prerequisites: [exponent-product-quotient-rules]
+        constraints: "a_n = a_1 · r^(n-1); keep values under 1000"
+        exemplars:
+          - problem: 'Find the 6th term of the geometric sequence with $a_1 = 5$ and $r = 2$.'
+            answer: "160"
+            solution_sketch: '$a_6 = 5 \cdot 2^5 = 5 \cdot 32$.'
+          - problem: 'Find the 5th term of $4, 12, 36, \ldots$'
+            answer: "324"
+            solution_sketch: '$a_5 = 4 \cdot 3^4$.'
+      - id: kp3
+        name: Recover the ratio from two terms
+        key_prerequisites: [exponent-product-quotient-rules]
+        constraints: "two given terms at most three positions apart; r a small integer or ±2, ±3; remind both signs when the gap is even"
+        exemplars:
+          - problem: 'A geometric sequence has $a_1 = 2$ and $a_4 = 54$. Find $r$.'
+            answer: "3"
+            solution_sketch: '$r^3 = 27$, so $r = 3$.'
+          - problem: 'A geometric sequence has $a_3 = 20$ and $a_5 = 80$. Give the two possible values of $r$ as the ordered pair (positive, negative).'
+            answer: "(2, -2)"
+            solution_sketch: '$r^2 = 4$ — remember both signs.'
+    diagnostic_exemplar:
+      problem: 'A geometric sequence has $a_1 = 3$ and $a_4 = 81$. Find $r$.'
+      answer: "3"
+      solution_sketch: '$81 = 3r^3$, so $r^3 = 27$ and $r = 3$.'
+    anki_seeds:
+      - front: "Explicit formula for a geometric sequence?"
+        back: "a_n = a_1 · r^(n-1)"
+        type: basic
+
+  - id: geometric-series-finite-infinite
+    name: Finite and Infinite Geometric Series
+    core: true
+    difficulty: 0.5
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 150
+    prerequisites:
+      - id: geometric-sequences
+        weight: 0.8
+        key: true
+      - id: summation-notation
+        weight: 0.4
+        key: true
+      - id: adding-subtracting-fractions
+        weight: 0.3
+      - id: fraction-decimal-conversion
+        weight: 0.2
+    knowledge_points:
+      - id: kp1
+        name: Finite geometric sums
+        key_prerequisites: [geometric-sequences]
+        constraints: "S_n = a_1(1 - r^n)/(1 - r); n <= 8"
+        exemplars:
+          - problem: 'Compute $2 + 6 + 18 + 54 + 162$.'
+            answer: "242"
+            solution_sketch: '$S_5 = \frac{2(3^5 - 1)}{3 - 1} = \frac{2 \cdot 242}{2}$.'
+          - problem: 'Find the sum of the first $6$ terms of $1, 2, 4, \ldots$'
+            answer: "63"
+            solution_sketch: '$2^6 - 1$.'
+      - id: kp2
+        name: Infinite geometric sums
+        key_prerequisites: [geometric-sequences, adding-subtracting-fractions]
+        constraints: "|r| < 1 only; ask when the sum exists"
+        exemplars:
+          - problem: 'Compute $8 + 4 + 2 + 1 + \cdots$'
+            answer: "16"
+            solution_sketch: '$S = \frac{8}{1 - 1/2}$.'
+          - problem: 'Compute $9 - 3 + 1 - \frac{1}{3} + \cdots$'
+            answer: "27/4"
+            solution_sketch: '$r = -\frac{1}{3}$; $S = \frac{9}{1 + 1/3} = \frac{9}{4/3}$.'
+          - problem: 'Does $1 + 2 + 4 + 8 + \cdots$ have a finite sum? Answer yes or no.'
+            answer: "no"
+            solution_sketch: 'Here $|r| = 2 \ge 1$, so the series diverges.'
+      - id: kp3
+        name: Repeating decimals as geometric series
+        key_prerequisites: [geometric-sequences]
+        constraints: "one- or two-digit repeating blocks; first term block/10 or block/100 with r = 1/10 or 1/100; answers in lowest terms"
+        exemplars:
+          - problem: 'Write $0.\overline{7}$ as a fraction using a geometric series.'
+            answer: "7/9"
+            solution_sketch: '$\frac{7}{10} + \frac{7}{100} + \cdots = \frac{7/10}{1 - 1/10}$.'
+          - problem: 'Write $0.\overline{36}$ as a fraction in lowest terms.'
+            answer: "4/11"
+            solution_sketch: '$\frac{36/100}{1 - 1/100} = \frac{36}{99}$.'
+    diagnostic_exemplar:
+      problem: 'Write $0.\overline{45}$ as a fraction in lowest terms using a geometric series.'
+      answer: "5/11"
+      solution_sketch: '$\frac{45}{100} + \frac{45}{10000} + \cdots = \frac{45/100}{1 - 1/100} = \frac{45}{99} = \frac{5}{11}$.'
+    anki_seeds:
+      - front: "Sum of an infinite geometric series (when |r| < 1)?"
+        back: "S = a_1 / (1 - r)"
+        type: basic
+      - front: "An infinite geometric series converges exactly when..."
+        back: "|r| < 1"
+        type: basic
+
+  - id: recursive-sequences
+    name: Recursive Sequences
+    core: true
+    difficulty: 0.45
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 120
+    prerequisites:
+      - id: arithmetic-sequences
+        weight: 0.6
+        key: true
+      - id: geometric-sequences
+        weight: 0.5
+        key: true
+      - id: function-notation
+        weight: 0.4
+      - id: evaluating-expressions
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Generate terms from a recursion
+        key_prerequisites: [evaluating-expressions]
+        constraints: "one-term recursions, 3-5 steps, integer arithmetic"
+        exemplars:
+          - problem: 'Let $a_1 = 2$ and $a_n = a_{n-1} + 3$. Find $a_4$.'
+            answer: "11"
+            solution_sketch: '$2, 5, 8, 11$.'
+          - problem: 'Let $a_1 = 1$ and $a_n = 2a_{n-1} + 1$. Find $a_4$.'
+            answer: "15"
+            solution_sketch: '$1, 3, 7, 15$.'
+      - id: kp2
+        name: Two-term recursions
+        key_prerequisites: [evaluating-expressions]
+        constraints: "recursions a_n = ±a_{n-1} ± a_{n-2} with small integer seeds; ask for a term within 6 steps"
+        exemplars:
+          - problem: 'Let $a_1 = 1$, $a_2 = 1$, and $a_n = a_{n-1} + a_{n-2}$. Find $a_6$.'
+            answer: "8"
+            solution_sketch: '$1, 1, 2, 3, 5, 8$.'
+          - problem: 'Let $a_1 = 3$, $a_2 = 1$, and $a_n = a_{n-1} - a_{n-2}$. Find $a_5$.'
+            answer: "-1"
+            solution_sketch: '$a_3 = 1 - 3 = -2$, $a_4 = -2 - 1 = -3$, $a_5 = -3 - (-2) = -1$.'
+      - id: kp3
+        name: Translate between recursive and explicit forms
+        key_prerequisites: [arithmetic-sequences, geometric-sequences]
+        constraints: "arithmetic or geometric sequences only; recursive parameters requested as an ordered pair, explicit formulas as an expression in n"
+        exemplars:
+          - problem: 'The sequence $5, 8, 11, 14, \ldots$ has a recursive definition of the form $a_1 = p$, $a_n = a_{n-1} + q$. Give the ordered pair $(p, q)$.'
+            answer: "(5, 3)"
+            solution_sketch: 'The first term is $5$ and each term adds $3$.'
+          - problem: 'The sequence defined by $a_1 = 3$ and $a_n = 2a_{n-1}$ has explicit formula $a_n = \ldots$. Give the expression in $n$.'
+            answer: "3*2^(n-1)"
+            solution_sketch: 'Each step doubles: $a_n = 3 \cdot 2^{n-1}$.'
+    diagnostic_exemplar:
+      problem: 'Let $a_1 = 2$, $a_2 = 3$, and $a_n = a_{n-1} + a_{n-2}$. Find $a_6$.'
+      answer: "21"
+      solution_sketch: '$2, 3, 5, 8, 13, 21$.'
+    anki_seeds:
+      - front: "A recursive definition of a sequence needs which two ingredients?"
+        back: "Initial term(s) and a rule giving a_n from earlier terms."
+        type: basic

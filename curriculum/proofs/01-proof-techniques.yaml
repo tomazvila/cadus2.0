@@ -1,0 +1,1234 @@
+unit: proof-techniques
+course: proofs
+module: "Proof Techniques"
+topics:
+  - id: direct-proof
+    name: "Direct Proof"
+    core: true
+    difficulty: 0.50
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 200
+    prerequisites:
+      - id: quantifiers
+        weight: 0.5
+        key: true
+      - id: conditional-statements
+        weight: 0.4
+        key: true
+      - id: rules-of-inference
+        weight: 0.3
+      - id: evaluating-expressions
+        weight: 0.0
+    knowledge_points:
+      - id: kp1
+        name: "The direct-proof template on parity"
+        key_prerequisites: [conditional-statements]
+        exemplars:
+          - problem: 'Prove: for all integers $m, n$, if $m$ and $n$ are even then $m + n$ is even.'
+            answer: 'Direct: write $m = 2a$, $n = 2b$; then $m + n = 2(a + b)$, even.'
+            solution_sketch: 'Assume $m, n$ are even, so $m = 2a$ and $n = 2b$ for integers $a, b$. Then $m + n = 2a + 2b = 2(a + b)$, and $a + b \in \mathbb{Z}$, so $m + n$ is even. $\square$'
+          - problem: 'Prove: the product of two odd integers is odd.'
+            answer: 'Write $m = 2a+1$, $n = 2b+1$; then $mn = 2(2ab + a + b) + 1$, odd.'
+            solution_sketch: 'Let $m = 2a + 1$ and $n = 2b + 1$. Then $mn = 4ab + 2a + 2b + 1 = 2(2ab + a + b) + 1$, and $2ab + a + b \in \mathbb{Z}$, so $mn$ is odd. $\square$'
+        constraints: "assume the hypothesis and derive the conclusion; use even = $2k$, odd = $2k+1$"
+      - id: kp2
+        name: "Direct proofs with algebra and inequalities"
+        key_prerequisites: [evaluating-expressions]
+        exemplars:
+          - problem: 'Prove: for every integer $n$, $n^2 + n$ is even.'
+            answer: '$n^2 + n = n(n+1)$ is a product of consecutive integers, one of which is even.'
+            solution_sketch: '$n^2 + n = n(n + 1)$. Of two consecutive integers $n$ and $n + 1$, one is even, so the product is even. $\square$'
+          - problem: 'Prove: for real numbers, if $a \le b$ and $c \ge 0$ then $ac \le bc$.'
+            answer: 'From $b - a \ge 0$ and $c \ge 0$, $(b - a)c \ge 0$, so $ac \le bc$.'
+            solution_sketch: 'Assume $a \le b$, so $b - a \ge 0$. With $c \ge 0$, the product $(b - a)c \ge 0$, i.e. $bc - ac \ge 0$, hence $ac \le bc$. $\square$'
+        constraints: "algebraic manipulation; keep each step reversible-justified"
+      - id: kp3
+        name: "Direct proofs about divisibility"
+        key_prerequisites: [quantifiers]
+        exemplars:
+          - problem: 'Prove: for all integers $a, b, c$, if $a \mid b$ and $b \mid c$ then $a \mid c$.'
+            answer: '$b = ak$, $c = bm$ give $c = a(km)$, so $a \mid c$.'
+            solution_sketch: 'Assume $a \mid b$ and $b \mid c$, so $b = ak$ and $c = bm$ for integers $k, m$. Then $c = (ak)m = a(km)$ with $km \in \mathbb{Z}$, so $a \mid c$. $\square$'
+          - problem: 'Prove: for all integers $n$, if $5 \mid n$ then $5 \mid n^2$.'
+            answer: '$n = 5k$ gives $n^2 = 5(5k^2)$.'
+            solution_sketch: 'Assume $5 \mid n$, so $n = 5k$. Then $n^2 = 25k^2 = 5(5k^2)$ with $5k^2 \in \mathbb{Z}$, so $5 \mid n^2$. $\square$'
+        constraints: "use the definition $a \\mid b$ means $b = ak$ for some integer $k$"
+    diagnostic_exemplar:
+      problem: 'Prove: for all integers $a, b$, if $a \mid b$ then $a \mid (3b^2 + b)$.'
+      answer: 'Suppose $a \mid b$, so $b = ak$ for some integer $k$. Then $3b^2 + b = 3(ak)^2 + ak = a(3ak^2 + k)$, and $3ak^2 + k$ is an integer, so $a \mid (3b^2 + b)$ by the definition of divisibility.'
+      solution_sketch: 'Unfold the divisibility hypothesis as $b = ak$, substitute, and factor $a$ out of the result.'
+    anki_seeds:
+      - front: 'Structure of a direct proof of $\forall x\, (P(x) \to Q(x))$?'
+        back: 'Take an arbitrary $x$ for which $P(x)$ is true, then derive $Q(x)$ using definitions and known facts.'
+        type: basic
+      - front: 'Definitions of even and odd integers?'
+        back: 'Even: $n = 2k$ for some integer $k$. Odd: $n = 2k + 1$ for some integer $k$.'
+        type: basic
+
+  - id: vacuous-trivial-proofs
+    name: "Vacuous and Trivial Proofs"
+    core: false                # supplemental: edge-case enrichment on the conditional
+    difficulty: 0.52
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 150
+    prerequisites:
+      - id: direct-proof
+        weight: 0.5
+        key: true
+      - id: truth-tables
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: "Vacuous proofs"
+        key_prerequisites: [truth-tables]
+        exemplars:
+          - problem: 'Prove: every real solution of $x^2 + 1 = 0$ is greater than $10$.'
+            answer: 'Vacuously true: $x^2 + 1 \ge 1 > 0$, so there are no real solutions.'
+            solution_sketch: 'The claim is $\forall x\,(x^2 + 1 = 0 \to x > 10)$. For every real $x$, $x^2 + 1 \ge 1$, so the hypothesis is never true and the conditional holds vacuously. $\square$'
+          - problem: 'Prove: if $n$ is an even prime greater than $5$, then $n^2 < 0$.'
+            answer: 'Vacuously true: the only even prime is $2$, so no even prime exceeds $5$.'
+            solution_sketch: 'Any even integer greater than $2$ is divisible by $2$ and hence composite, so the hypothesis is never satisfied; a conditional with an unsatisfiable hypothesis is vacuously true. $\square$'
+        constraints: "the hypothesis must be shown unsatisfiable; conclusion may be absurd"
+      - id: kp2
+        name: "Trivial proofs"
+        key_prerequisites: [direct-proof]
+        exemplars:
+          - problem: 'Prove: for every real $x$, if $x > 3$ then $x^2 \ge 0$.'
+            answer: 'Trivially true: $x^2 \ge 0$ for every real $x$, regardless of the hypothesis.'
+            solution_sketch: 'The conclusion holds for all real $x$ (a square is nonnegative), so the conditional is true without using the hypothesis — a trivial proof. $\square$'
+          - problem: 'Prove: for every integer $n$, if $n$ is prime then $n \cdot 0 = 0$.'
+            answer: 'Trivially true: $n \cdot 0 = 0$ holds for every integer $n$.'
+            solution_sketch: 'The conclusion is a universal identity, so the conditional holds whatever the hypothesis says. $\square$'
+        constraints: "prove the conclusion outright without touching the hypothesis"
+      - id: kp3
+        name: "Recognizing which template applies"
+        key_prerequisites: [truth-tables]
+        exemplars:
+          - problem: 'Classify the proof strategy: "if $2 + 2 = 5$, then $7$ is prime". Vacuous, trivial, or both available?'
+            answer: 'Both: the hypothesis is false (vacuous route) and the conclusion is true (trivial route).'
+            solution_sketch: '$2 + 2 = 5$ is false, so the conditional is vacuously true; independently, $7$ is prime, so it is also trivially true. Either observation is a complete proof.'
+          - problem: 'For the claim "every negative real number that is a perfect square is prime", which template applies?'
+            answer: 'Vacuous: no negative real is the square of a real number, so the hypothesis is unsatisfiable.'
+            solution_sketch: 'Squares of reals are $\ge 0$, so nothing satisfies the hypothesis; the universal conditional is vacuously true.'
+        constraints: "decide vacuous vs trivial by checking hypothesis-unsatisfiable vs conclusion-always-true"
+    diagnostic_exemplar:
+      problem: 'Prove each, naming the template used (vacuous or trivial): (a) for every real $x$, if $x^2 < 0$ then $x = 7$; (b) for every integer $n$, if $n$ is prime then $n^2 \ge 0$.'
+      answer: '(a) Vacuous: no real $x$ satisfies $x^2 < 0$, since squares of reals are nonnegative; the antecedent is never true, so the conditional holds for every $x$ with nothing further to check. (b) Trivial: $n^2 \ge 0$ holds for every integer $n$, so the consequent is always true and the conditional holds whether or not $n$ is prime.'
+      solution_sketch: 'Decide in each case whether the hypothesis is unsatisfiable (vacuous proof) or the conclusion is always true (trivial proof), and say which.'
+    anki_seeds:
+      - front: 'Vacuous proof of $P \to Q$?'
+        back: 'Show $P$ is never true; a conditional with a false hypothesis is automatically true.'
+        type: basic
+      - front: 'Trivial proof of $P \to Q$?'
+        back: 'Show $Q$ is true outright, without using $P$.'
+        type: basic
+
+  - id: rational-number-proofs
+    name: "Proofs About Rational Numbers"
+    core: true
+    difficulty: 0.56
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 200
+    prerequisites:
+      - id: direct-proof
+        weight: 0.6
+        key: true
+      - id: adding-subtracting-fractions
+        weight: 0.0
+    knowledge_points:
+      - id: kp1
+        name: "Sums and products of rationals"
+        key_prerequisites: [direct-proof]
+        exemplars:
+          - problem: 'Prove: the sum of two rational numbers is rational.'
+            answer: '$\frac{a}{b} + \frac{c}{d} = \frac{ad + bc}{bd}$ with integer numerator and nonzero integer denominator.'
+            solution_sketch: 'Let $r = a/b$ and $s = c/d$ with $a, b, c, d \in \mathbb{Z}$, $b, d \ne 0$. Then $r + s = (ad + bc)/(bd)$, a quotient of integers with $bd \ne 0$, hence rational. $\square$'
+          - problem: 'Prove: the product of two rational numbers is rational.'
+            answer: '$\frac{a}{b} \cdot \frac{c}{d} = \frac{ac}{bd}$, a ratio of integers with nonzero denominator.'
+            solution_sketch: 'With $r = a/b$, $s = c/d$ as above, $rs = ac/bd$; $ac, bd \in \mathbb{Z}$ and $bd \ne 0$, so $rs$ is rational. $\square$'
+        constraints: "use the definition rational = integer/nonzero-integer; verify the denominator is nonzero"
+      - id: kp2
+        name: "Differences and quotients"
+        key_prerequisites: [direct-proof]
+        exemplars:
+          - problem: 'Prove: if $r$ and $r + s$ are rational, then $s$ is rational.'
+            answer: '$s = (r + s) - r$ is a difference of rationals, hence rational.'
+            solution_sketch: 'Write $r = a/b$ and $r + s = c/d$. Then $s = (r+s) - r = c/d - a/b = (cb - ad)/(db)$, a ratio of integers with $db \ne 0$. $\square$'
+          - problem: 'Prove: if $r$ is rational and $s$ is a nonzero rational, then $r/s$ is rational.'
+            answer: '$\frac{a/b}{c/d} = \frac{ad}{bc}$ with $bc \ne 0$.'
+            solution_sketch: 'With $r = a/b$, $s = c/d$ and $s \ne 0$ (so $c \ne 0$), $r/s = ad/(bc)$; $ad, bc$ are integers and $bc \ne 0$, so $r/s$ is rational. $\square$'
+        constraints: "closure under subtraction and division by nonzero; track which quantities are nonzero"
+      - id: kp3
+        name: "Averages and density"
+        key_prerequisites: [direct-proof]
+        exemplars:
+          - problem: 'Prove: the average of two rationals is rational.'
+            answer: '$(r + s)/2$ is a rational divided by the nonzero rational $2$, hence rational.'
+            solution_sketch: '$r + s$ is rational (closure under addition) and dividing by the nonzero rational $2$ keeps it rational. $\square$'
+          - problem: 'Prove: between any two distinct rationals $r < s$ there is another rational.'
+            answer: 'The midpoint $(r + s)/2$ is rational and satisfies $r < (r+s)/2 < s$.'
+            solution_sketch: 'The midpoint is rational by closure. From $r < s$: adding $r$ or $s$ to both sides of $r < s$ and halving gives $r < (r+s)/2 < s$. $\square$'
+        constraints: "combine closure facts already proved; justify the ordering inequalities"
+    diagnostic_exemplar:
+      problem: 'Prove: if $r$ is rational and $r < 5$, then there is a rational number $t$ with $r < t < 5$.'
+      answer: 'Take $t = \frac{r+5}{2}$. Writing $r = p/q$ with $p, q$ integers and $q \ne 0$ gives $t = \frac{p + 5q}{2q}$, a ratio of integers with nonzero denominator, so $t$ is rational. From $r < 5$: adding $r$ to both sides gives $2r < r + 5$, hence $r < t$; adding $5$ to both sides gives $r + 5 < 10$, hence $t < 5$. So $r < t < 5$.'
+      solution_sketch: 'Use the midpoint: show it is rational by writing it as a single fraction, then obtain both inequalities from $r < 5$.'
+    anki_seeds:
+      - front: 'Definition of a rational number?'
+        back: 'A real number expressible as $p/q$ with $p, q$ integers and $q \ne 0$.'
+        type: basic
+      - front: 'Which operations is $\mathbb{Q}$ closed under?'
+        back: 'Addition, subtraction, multiplication, and division by a nonzero rational.'
+        type: basic
+
+  - id: divisibility-parity-proofs
+    name: "Divisibility and Parity Proofs"
+    core: true
+    difficulty: 0.55
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 210
+    prerequisites:
+      - id: direct-proof
+        weight: 0.5
+        key: true
+      - id: quantifiers
+        weight: 0.2
+      - id: divisibility-rules
+        weight: 0.0
+    knowledge_points:
+      - id: kp1
+        name: "Divisibility and linear combinations"
+        key_prerequisites: [direct-proof]
+        exemplars:
+          - problem: 'Prove: for all integers $a, b, c, x, y$, if $a \mid b$ and $a \mid c$ then $a \mid (bx + cy)$.'
+            answer: '$b = ak$, $c = al$ give $bx + cy = a(kx + ly)$.'
+            solution_sketch: 'Write $b = ak$ and $c = al$. Then $bx + cy = akx + aly = a(kx + ly)$ with $kx + ly \in \mathbb{Z}$, so $a \mid (bx + cy)$; taking $x = y = 1$ gives $a \mid (b + c)$. $\square$'
+          - problem: 'Prove: for all integers $a, b$, if $a \mid b$ then $a \mid b^2$.'
+            answer: '$b = ak$ gives $b^2 = a(ak^2)$.'
+            solution_sketch: 'Write $b = ak$. Then $b^2 = a^2 k^2 = a(a k^2)$ with $a k^2 \in \mathbb{Z}$, so $a \mid b^2$. $\square$'
+        constraints: "prove divisibility of linear combinations from the definition of divides"
+      - id: kp2
+        name: "Parity arguments"
+        key_prerequisites: [direct-proof]
+        exemplars:
+          - problem: 'Prove: for every integer $n$, exactly one of $n$ and $n + 1$ is even.'
+            answer: 'If $n = 2k$ then $n + 1$ is odd; if $n = 2k + 1$ then $n + 1$ is even.'
+            solution_sketch: 'If $n = 2k$ (even) then $n + 1 = 2k + 1$ is odd; if $n = 2k + 1$ (odd) then $n + 1 = 2(k + 1)$ is even. In each situation exactly one is even. $\square$'
+          - problem: 'Prove: the sum of an even integer and an odd integer is odd.'
+            answer: '$2a + (2b + 1) = 2(a + b) + 1$.'
+            solution_sketch: 'Let the even integer be $2a$ and the odd one $2b + 1$. Their sum is $2a + 2b + 1 = 2(a + b) + 1$, which is odd. $\square$'
+        constraints: "argue from the two parity forms of an integer"
+      - id: kp3
+        name: "Parity of squares and products"
+        key_prerequisites: [direct-proof]
+        exemplars:
+          - problem: 'Prove: for every integer $n$, $n^2$ is even if and only if $n$ is even.'
+            answer: '$n$ even gives $n^2$ even; contrapositive gives the converse.'
+            solution_sketch: 'If $n = 2k$ then $n^2 = 2(2k^2)$ is even. Conversely, if $n$ is odd, $n = 2k + 1$ gives $n^2 = 2(2k^2 + 2k) + 1$, odd; contrapositively, $n^2$ even forces $n$ even. $\square$'
+          - problem: 'Prove: for every integer $n$, $n^2$ is odd if and only if $n$ is odd.'
+            answer: '$n$ odd gives $n^2$ odd; contrapositive gives the converse.'
+            solution_sketch: 'If $n = 2k + 1$ then $n^2 = 2(2k^2 + 2k) + 1$ is odd. Conversely, if $n$ is even, $n = 2k$ gives $n^2 = 2(2k^2)$ even; contrapositively, $n^2$ odd forces $n$ odd. $\square$'
+        constraints: "iff proof; handle both directions"
+    diagnostic_exemplar:
+      problem: 'Prove: for all integers $m, n$, if $m$ and $n$ are both odd then $4 \mid (m^2 + n^2 - 2)$.'
+      answer: 'Write $m = 2a + 1$ and $n = 2b + 1$ with $a, b$ integers. Then $m^2 + n^2 - 2 = (4a^2 + 4a + 1) + (4b^2 + 4b + 1) - 2 = 4(a^2 + a + b^2 + b)$. Since $a^2 + a + b^2 + b$ is an integer, $4 \mid (m^2 + n^2 - 2)$.'
+      solution_sketch: 'Substitute the odd forms, expand both squares, and factor $4$ out of what remains.'
+    anki_seeds:
+      - front: 'Definition: $a \mid b$ ("$a$ divides $b$")?'
+        back: 'There is an integer $k$ with $b = ak$ (with $a \ne 0$).'
+        type: basic
+      - front: 'To prove $a \mid (bx + cy)$ from $a \mid b$ and $a \mid c$...'
+        back: 'Write $b = ak$, $c = al$, then factor: $bx + cy = a(kx + ly)$.'
+        type: basic
+
+  - id: proof-by-cases
+    name: "Proof by Cases"
+    core: true
+    difficulty: 0.55
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 200
+    prerequisites:
+      - id: direct-proof
+        weight: 0.5
+        key: true
+      - id: divisibility-parity-proofs
+        weight: 0.3
+      - id: logical-equivalence
+        weight: 0.2
+      - id: quantifiers
+        weight: 0.0
+    knowledge_points:
+      - id: kp1
+        name: "Exhaustive cases on parity"
+        key_prerequisites: [direct-proof]
+        exemplars:
+          - problem: 'Prove: for every integer $n$, $n^2 + n$ is even, using cases on the parity of $n$.'
+            answer: 'Even and odd cases both yield an even value.'
+            solution_sketch: 'If $n = 2k$, then $n^2 + n = 2k(2k + 1)$ is even. If $n = 2k + 1$, then $n^2 + n = (2k+1)(2k+2) = 2(2k+1)(k+1)$ is even. Both exhaustive cases give even. $\square$'
+          - problem: 'Prove: for every integer $n$, $3n^2 + n$ is even, using cases on the parity of $n$.'
+            answer: 'Even and odd cases both give an even value.'
+            solution_sketch: 'If $n = 2k$, $3n^2 + n = 12k^2 + 2k = 2(6k^2 + k)$, even. If $n = 2k + 1$, $3n^2 + n = 12k^2 + 14k + 4 = 2(6k^2 + 7k + 2)$, even. $\square$'
+        constraints: "cases must be exhaustive; conclude in each case"
+      - id: kp2
+        name: "Cases from sign or absolute value"
+        key_prerequisites: [direct-proof]
+        exemplars:
+          - problem: 'Prove: for all real $x$, $|x| \ge x$.'
+            answer: 'Case $x \ge 0$: $|x| = x$; case $x < 0$: $|x| = -x > x$.'
+            solution_sketch: 'If $x \ge 0$, then $|x| = x \ge x$. If $x < 0$, then $|x| = -x > 0 > x$. In both cases $|x| \ge x$. $\square$'
+          - problem: 'Prove: for all real $x$, $x \le |x|$.'
+            answer: 'Case $x \ge 0$: $x = |x|$; case $x < 0$: $x < 0 \le |x|$.'
+            solution_sketch: 'If $x \ge 0$, then $|x| = x$, so $x \le |x|$. If $x < 0$, then $x < 0 \le |x|$. In both cases $x \le |x|$. $\square$'
+        constraints: "split on the sign; cover $x \\ge 0$ and $x < 0$"
+      - id: kp3
+        name: "Cases modulo n"
+        key_prerequisites: [divisibility-parity-proofs]
+        exemplars:
+          - problem: 'Prove: for every integer $n$, $n^2 \equiv 0$ or $1 \pmod 4$.'
+            answer: 'Even $n$: $n^2 \equiv 0$; odd $n$: $n^2 \equiv 1 \pmod 4$.'
+            solution_sketch: 'If $n = 2k$, $n^2 = 4k^2 \equiv 0 \pmod 4$. If $n = 2k + 1$, $n^2 = 4k^2 + 4k + 1 = 4(k^2 + k) + 1 \equiv 1 \pmod 4$. So $n^2 \equiv 0$ or $1 \pmod 4$. $\square$'
+          - problem: 'Prove: for every integer $n$, $n^2 + n + 1$ is odd, by cases on parity.'
+            answer: 'Both parity cases give an odd value.'
+            solution_sketch: 'If $n = 2k$, $n^2 + n + 1 = 4k^2 + 2k + 1 = 2(2k^2 + k) + 1$, odd. If $n = 2k + 1$, $n^2 + n + 1 = 4k^2 + 6k + 3 = 2(2k^2 + 3k + 1) + 1$, odd. $\square$'
+        constraints: "cases determined by residue; combine into the claim"
+    diagnostic_exemplar:
+      problem: 'Prove by cases on the remainder of $n$ modulo $3$: for every integer $n$, $n^2 \equiv 0$ or $1 \pmod 3$.'
+      answer: 'Every integer has the form $3k$, $3k+1$ or $3k+2$. If $n = 3k$ then $n^2 = 9k^2 = 3(3k^2) \equiv 0$. If $n = 3k+1$ then $n^2 = 9k^2 + 6k + 1 = 3(3k^2 + 2k) + 1 \equiv 1$. If $n = 3k+2$ then $n^2 = 9k^2 + 12k + 4 = 3(3k^2 + 4k + 1) + 1 \equiv 1$. The three cases are exhaustive, so $n^2 \equiv 0$ or $1 \pmod 3$ for every integer $n$.'
+      solution_sketch: 'Split on the three possible remainders, square each form, and read off the remainder; note that the cases cover every integer.'
+    anki_seeds:
+      - front: 'When is a proof by cases valid?'
+        back: 'When the cases are exhaustive (cover every possibility) and each case yields the conclusion.'
+        type: basic
+
+  - id: proof-by-exhaustion-wlog
+    name: "Proof by Exhaustion and WLOG"
+    core: false                # supplemental: refinement of proof-by-cases; terminal
+    difficulty: 0.57
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 200
+    prerequisites:
+      - id: proof-by-cases
+        weight: 0.6
+        key: true
+      - id: direct-proof
+        weight: 0.2
+    knowledge_points:
+      - id: kp1
+        name: "Exhaustion over a finite set"
+        key_prerequisites: [proof-by-cases]
+        exemplars:
+          - problem: 'Prove: no perfect square has last digit $2$, $3$, $7$, or $8$.'
+            answer: 'Check $n \equiv 0, \dots, 9 \pmod{10}$: squares end only in $0, 1, 4, 5, 6, 9$.'
+            solution_sketch: 'The last digit of $n^2$ depends only on the last digit of $n$. Squaring $0$ through $9$ gives last digits $0, 1, 4, 9, 6, 5, 6, 9, 4, 1$ — the set $\{0, 1, 4, 5, 6, 9\}$, which excludes $2, 3, 7, 8$. $\square$'
+          - problem: 'Prove by exhaustion: for every $n \in \{1, 2, 3, 4\}$, $2^n \ge n + 1$.'
+            answer: 'Check: $2 \ge 2$, $4 \ge 3$, $8 \ge 4$, $16 \ge 5$.'
+            solution_sketch: 'The domain is finite, so verifying each element is a complete proof: $2^1 = 2 \ge 2$, $2^2 = 4 \ge 3$, $2^3 = 8 \ge 4$, $2^4 = 16 \ge 5$. $\square$'
+        constraints: "finite (or finitely-reducible) domain; every case checked explicitly"
+      - id: kp2
+        name: "Without loss of generality"
+        key_prerequisites: [proof-by-cases]
+        exemplars:
+          - problem: 'Prove: for all reals $x, y$, $\min(x, y) + \max(x, y) = x + y$. Use WLOG.'
+            answer: 'WLOG $x \le y$ (the claim is symmetric in $x, y$); then $\min = x$, $\max = y$, and the sum is $x + y$.'
+            solution_sketch: 'The statement is unchanged under swapping $x$ and $y$, so assume WLOG $x \le y$. Then $\min(x,y) = x$ and $\max(x,y) = y$, so their sum is $x + y$. $\square$'
+          - problem: 'Prove: if integers $m$ and $n$ have different parities, then $m + n$ is odd. Use WLOG.'
+            answer: 'WLOG $m$ is even and $n$ is odd; then $m + n = 2a + 2b + 1$ is odd.'
+            solution_sketch: 'The claim is symmetric in $m, n$, so WLOG $m = 2a$ and $n = 2b + 1$. Then $m + n = 2(a + b) + 1$, odd. $\square$'
+        constraints: "justify the symmetry that licenses the WLOG assumption before using it"
+      - id: kp3
+        name: "When WLOG is legitimate"
+        key_prerequisites: [proof-by-cases]
+        exemplars:
+          - problem: 'In proving "for all reals $x, y$: $x^2 + y^2 \ge 2xy$", why is it legitimate to assume WLOG $x \ge y$?'
+            answer: 'Swapping $x$ and $y$ changes neither side, so any proof under $x \ge y$ covers the other case by relabeling.'
+            solution_sketch: 'Both $x^2 + y^2$ and $2xy$ are symmetric under the swap $x \leftrightarrow y$; the case $x < y$ follows by applying the proved case to $(y, x)$.'
+          - problem: 'Why can you NOT say "WLOG $m$ is even" when proving "if $m$ is even and $n$ is odd then $m + n$ is odd"?'
+            answer: 'The hypothesis already fixes the roles of $m$ and $n$ asymmetrically; there is no symmetry to exploit and nothing to relabel.'
+            solution_sketch: 'WLOG is only valid when the statement is invariant under the relabeling; here $m$ and $n$ play different roles, so "WLOG" would be assuming the hypothesis, not reducing cases.'
+        constraints: "one valid and one invalid WLOG usage; the learner must articulate the symmetry criterion"
+    diagnostic_exemplar:
+      problem: 'Prove: for all integers $m, n$, if $m$ and $n$ have different parities then $mn$ is even. Use "without loss of generality", and justify in one sentence why the WLOG step is legitimate here.'
+      answer: 'Both the hypothesis ("different parities") and the conclusion ($mn$ even) are unchanged when $m$ and $n$ are swapped, so a proof of one case covers the other by relabelling: WLOG $m$ is even and $n$ is odd. Then $m = 2a$ for an integer $a$, so $mn = 2(an)$ with $an$ an integer, i.e. $mn$ is even.'
+      solution_sketch: 'State the symmetry that licenses WLOG, take the even factor to be $m$, and factor $2$ out of the product.'
+    anki_seeds:
+      - front: 'What justifies a "without loss of generality" assumption?'
+        back: 'A symmetry of the statement: relabeling the variables maps the remaining cases onto the assumed one.'
+        type: basic
+      - front: 'What is a proof by exhaustion?'
+        back: 'Checking every element of a finite set of cases individually; valid only when the cases provably cover everything.'
+        type: basic
+
+  - id: proof-by-contrapositive
+    name: "Proof by Contrapositive"
+    core: true
+    difficulty: 0.60
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 210
+    prerequisites:
+      - id: conditional-statements
+        weight: 0.5
+        key: true
+      - id: direct-proof
+        weight: 0.5
+        key: true
+      - id: negating-statements
+        weight: 0.4
+      - id: logical-equivalence
+        weight: 0.0
+    knowledge_points:
+      - id: kp1
+        name: "When the contrapositive is easier"
+        key_prerequisites: [conditional-statements]
+        exemplars:
+          - problem: 'Prove: for all integers $n$, if $n^2$ is even then $n$ is even.'
+            answer: 'Prove the contrapositive: $n$ odd implies $n^2$ odd.'
+            solution_sketch: 'The contrapositive is "$n$ odd $\to$ $n^2$ odd". If $n = 2k + 1$, then $n^2 = 2(2k^2 + 2k) + 1$ is odd. Since the contrapositive holds, so does the original. $\square$'
+          - problem: 'Prove: for all integers $n$, if $n^2$ is odd then $n$ is odd.'
+            answer: 'Contrapositive: $n$ even implies $n^2$ even.'
+            solution_sketch: 'Contrapositive: if $n = 2k$ then $n^2 = 2(2k^2)$ is even. So $n^2$ odd implies $n$ odd. $\square$'
+        constraints: "state the contrapositive $\\neg Q \\to \\neg P$, then prove it directly"
+      - id: kp2
+        name: "Contrapositive proofs about integers"
+        key_prerequisites: [direct-proof]
+        exemplars:
+          - problem: 'Prove: for integers $a, b$, if $ab$ is odd then both $a$ and $b$ are odd.'
+            answer: 'Contrapositive: if $a$ or $b$ is even, $ab$ is even.'
+            solution_sketch: 'Contrapositive: if $a$ or $b$ is even, say $a = 2k$, then $ab = 2(kb)$ is even. Hence if $ab$ is odd, both $a$ and $b$ are odd. $\square$'
+          - problem: 'Prove: for integers $n$, if $n^2 - 6n + 5$ is even then $n$ is odd.'
+            answer: 'Contrapositive: $n$ even implies $n^2 - 6n + 5$ odd.'
+            solution_sketch: 'Contrapositive: if $n = 2k$, then $n^2 - 6n + 5 = 4k^2 - 12k + 5 = 2(2k^2 - 6k + 2) + 1$, odd. So if $n^2 - 6n + 5$ is even, $n$ is odd. $\square$'
+        constraints: "negate a conjunction conclusion; handle the resulting disjunction"
+      - id: kp3
+        name: "Contrapositive with real numbers"
+        key_prerequisites: [negating-statements]
+        exemplars:
+          - problem: 'Prove: for real $x$, if $x^2$ is irrational then $x$ is irrational.'
+            answer: 'Contrapositive: $x$ rational implies $x^2$ rational.'
+            solution_sketch: 'Contrapositive: if $x$ is rational, $x = p/q$, then $x^2 = p^2/q^2$ is rational. Hence $x^2$ irrational implies $x$ irrational. $\square$'
+          - problem: 'Prove: for real $x$, if $x^3 + 1$ is irrational then $x$ is irrational.'
+            answer: 'Contrapositive: $x$ rational implies $x^3 + 1$ rational.'
+            solution_sketch: 'Contrapositive: if $x$ is rational, then $x^3 + 1$ is a sum and product of rationals, hence rational. So $x^3 + 1$ irrational implies $x$ irrational. $\square$'
+        constraints: "identify and prove the contrapositive; use the definition of rational"
+    diagnostic_exemplar:
+      problem: 'Prove: for every real $x$, if $x^2 + 2x$ is irrational then $x$ is irrational.'
+      answer: 'Prove the contrapositive: if $x$ is rational then $x^2 + 2x$ is rational. Let $x = p/q$ with $p, q$ integers and $q \ne 0$. Then $x^2 + 2x = \frac{p^2}{q^2} + \frac{2p}{q} = \frac{p^2 + 2pq}{q^2}$, a ratio of integers with nonzero denominator, hence rational. The contrapositive is logically equivalent to the original statement, so the claim follows.'
+      solution_sketch: 'The direct statement is awkward; its contrapositive needs only closure of the rationals under products and sums.'
+    anki_seeds:
+      - front: 'To prove $P \to Q$ by contrapositive, you instead prove...'
+        back: 'The logically equivalent contrapositive $\neg Q \to \neg P$.'
+        type: basic
+
+  - id: biconditional-proofs
+    name: "Biconditional Proofs"
+    core: true
+    difficulty: 0.58
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 220
+    prerequisites:
+      - id: direct-proof
+        weight: 0.5
+        key: true
+      - id: conditional-statements
+        weight: 0.4
+        key: true
+      - id: proof-by-contrapositive
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: "The two-direction template"
+        key_prerequisites: [conditional-statements]
+        exemplars:
+          - problem: 'Prove: an integer $n$ is even if and only if $3n$ is even.'
+            answer: '($\Rightarrow$) $n = 2k$ gives $3n = 2(3k)$. ($\Leftarrow$) contrapositive: $n$ odd gives $3n = 2(3k + 1) + 1$, odd.'
+            solution_sketch: 'Forward: if $n = 2k$ then $3n = 6k = 2(3k)$, even. Backward (contrapositive): if $n = 2k + 1$ then $3n = 6k + 3 = 2(3k + 1) + 1$, odd, so $3n$ even forces $n$ even. Both directions proved. $\square$'
+          - problem: 'Prove: an integer $n$ is even if and only if $n + 1$ is odd.'
+            answer: '($\Rightarrow$) $n = 2k$ gives $n + 1 = 2k + 1$. ($\Leftarrow$) $n + 1 = 2m + 1$ gives $n = 2m$.'
+            solution_sketch: 'Forward: $n = 2k$ makes $n + 1 = 2k + 1$ odd. Backward: if $n + 1 = 2m + 1$ then $n = 2m$, even. $\square$'
+        constraints: "prove $P \\to Q$ and $Q \\to P$ separately and say which is which"
+      - id: kp2
+        name: "Contrapositive in one direction"
+        key_prerequisites: [proof-by-contrapositive]
+        exemplars:
+          - problem: 'Prove: an integer $n$ is odd if and only if $n^2 + 1$ is even.'
+            answer: '($\Rightarrow$) $n$ odd makes $n^2$ odd, so $n^2 + 1$ even. ($\Leftarrow$) contrapositive: $n$ even makes $n^2 + 1$ odd.'
+            solution_sketch: 'Forward: $n$ odd gives $n^2$ odd, so $n^2 + 1$ is even. Backward via contrapositive: $n = 2k$ gives $n^2 + 1 = 4k^2 + 1$, odd. $\square$'
+          - problem: 'Prove: an integer $n$ is even if and only if $n^3$ is even.'
+            answer: '($\Rightarrow$) $n = 2k$ gives $n^3 = 2(4k^3)$. ($\Leftarrow$) contrapositive: $n$ odd gives $n^3$ odd.'
+            solution_sketch: 'Forward: $n^3 = 8k^3 = 2(4k^3)$. Backward: if $n = 2k + 1$, then $n^3$ is a product of odd integers, hence odd (or expand: $n^3 = 2(4k^3 + 6k^2 + 3k) + 1$). $\square$'
+        constraints: "choose direct or contrapositive per direction; justify the choice"
+      - id: kp3
+        name: "Equivalence chains"
+        key_prerequisites: [direct-proof]
+        exemplars:
+          - problem: 'Prove: for real $x$, $x^2 = 1$ if and only if $x = 1$ or $x = -1$.'
+            answer: '$x^2 = 1 \Leftrightarrow x^2 - 1 = 0 \Leftrightarrow (x-1)(x+1) = 0 \Leftrightarrow x = 1$ or $x = -1$.'
+            solution_sketch: 'Chain of equivalences: subtracting $1$ and factoring are reversible, and a product of reals is zero iff a factor is zero. Each link is an iff, so the ends are equivalent. $\square$'
+          - problem: 'Prove: integers $a$ and $b$ have the same parity if and only if $a - b$ is even.'
+            answer: 'Same parity $\Leftrightarrow a - b$ is a difference of two evens or two odds $\Leftrightarrow a - b$ even; conversely $a - b = 2k$ forces equal parities.'
+            solution_sketch: 'If both even, $a - b = 2(j - k)$; if both odd, $a - b = 2(j - k)$. Conversely if $a - b = 2k$ and $b$ is even then $a = 2k + b$ is even, and if $b$ is odd then $a$ is odd — parities agree. $\square$'
+        constraints: "each chain link must be a genuine equivalence, not just an implication"
+    diagnostic_exemplar:
+      problem: 'Prove: an integer $n$ is odd if and only if $n^2 + 2n$ is odd.'
+      answer: '($\Rightarrow$) $n$ odd: $n^2$ odd and $2n$ even, so the sum is odd. ($\Leftarrow$) contrapositive: $n$ even makes $n^2 + 2n = n(n+2)$ even.'
+      solution_sketch: 'Forward: odd plus even is odd. Backward via contrapositive: $n = 2k$ gives $n^2 + 2n = 4k^2 + 4k = 2(2k^2 + 2k)$, even. $\square$'
+    anki_seeds:
+      - front: 'To prove "$P$ if and only if $Q$"?'
+        back: 'Prove both directions: $P \to Q$ and $Q \to P$ (each may be direct or contrapositive).'
+        type: basic
+      - front: 'When is a chain of $\Leftrightarrow$ steps a valid iff proof?'
+        back: 'When every single step is itself an equivalence (reversible), not just a one-way implication.'
+        type: basic
+
+  - id: contradiction-template
+    name: "The Contradiction Template"
+    core: true
+    difficulty: 0.58
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 200
+    prerequisites:
+      - id: negating-statements
+        weight: 0.5
+        key: true
+      - id: direct-proof
+        weight: 0.4
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: "Setting up the assumption"
+        key_prerequisites: [negating-statements]
+        exemplars:
+          - problem: 'To prove "there is no largest integer" by contradiction, what exactly do you assume?'
+            answer: 'The negation: there exists a largest integer $N$ (i.e. $\exists N\ \forall n,\ n \le N$).'
+            solution_sketch: 'A contradiction proof of $S$ starts from $\neg S$; negating "no largest integer exists" yields the existence of a largest one, which the proof must then demolish.'
+          - problem: 'To prove "for all integers $n$, if $n^2$ is even then $n$ is even" by contradiction, what do you assume?'
+            answer: 'That some integer $n$ has $n^2$ even and $n$ odd.'
+            solution_sketch: 'The negation of $\forall n\,(P \to Q)$ is $\exists n\,(P \land \neg Q)$: an $n$ with $n^2$ even yet $n$ odd.'
+        constraints: "produce the correctly negated assumption before any deduction"
+      - id: kp2
+        name: "No-largest and no-smallest arguments"
+        key_prerequisites: [direct-proof]
+        exemplars:
+          - problem: 'Prove: there is no largest integer.'
+            answer: 'Assume a largest integer $N$; then $N + 1 > N$ contradicts maximality.'
+            solution_sketch: 'Suppose, for contradiction, there is a largest integer $N$. Then $N + 1$ is an integer with $N + 1 > N$, contradicting that $N$ is largest. So no largest integer exists. $\square$'
+          - problem: 'Prove: there is no smallest positive real number.'
+            answer: 'Assume a smallest $r > 0$; then $r/2$ is smaller and positive.'
+            solution_sketch: 'Suppose $r$ is the smallest positive real. Then $r/2$ satisfies $0 < r/2 < r$, a smaller positive real, contradicting minimality. So none exists. $\square$'
+        constraints: "assume the negation and construct a witness that beats the assumed extremum"
+      - id: kp3
+        name: "Simple impossibility arguments"
+        key_prerequisites: [direct-proof]
+        exemplars:
+          - problem: 'Prove: the sum of a rational number and an irrational number is irrational.'
+            answer: 'Assume $r + s = t$ rational with $r$ rational; then $s = t - r$ is rational, a contradiction.'
+            solution_sketch: 'Let $r$ be rational, $s$ irrational, and suppose $r + s$ is rational. Then $s = (r + s) - r$ is a difference of rationals, hence rational — contradicting irrationality of $s$. $\square$'
+          - problem: 'Prove: there are no integers $m, n$ with $2m + 4n = 7$.'
+            answer: 'The left side is even and $7$ is odd — contradiction.'
+            solution_sketch: 'Suppose such $m, n$ exist. Then $7 = 2(m + 2n)$ is even, contradicting that $7$ is odd. $\square$'
+        constraints: "reach an explicit contradiction (odd = even, rational = irrational, etc.) and say what it contradicts"
+    diagnostic_exemplar:
+      problem: 'Prove by contradiction: there is no smallest integer.'
+      answer: 'Assume a smallest integer $m$; then $m - 1 < m$ is a smaller integer, a contradiction.'
+      solution_sketch: 'Suppose $m$ were the smallest integer. Then $m - 1$ is an integer smaller than $m$, contradicting minimality. Hence no smallest integer exists. $\square$'
+    anki_seeds:
+      - front: 'Structure of a proof by contradiction of a statement $S$?'
+        back: 'Assume $\neg S$, derive a contradiction (a false statement), and conclude that $S$ must hold.'
+        type: basic
+      - front: 'First step of a contradiction proof of $\forall x\,(P(x) \to Q(x))$?'
+        back: 'Assume the negation: some $x$ has $P(x)$ true and $Q(x)$ false.'
+        type: basic
+
+  - id: proof-by-contradiction
+    name: "Proof by Contradiction"
+    core: true
+    difficulty: 0.62
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 220
+    prerequisites:
+      - id: contradiction-template
+        weight: 0.6
+        key: true
+      - id: rational-number-proofs
+        weight: 0.3
+      - id: proof-by-contrapositive
+        weight: 0.3
+      - id: negating-statements
+        weight: 0.2
+      - id: prime-composite-numbers
+        weight: 0.2
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Parity and divisibility contradictions"
+        key_prerequisites: [contradiction-template]
+        exemplars:
+          - problem: 'Prove: there are no integers $a, b$ with $a^2 - 4b = 2$.'
+            answer: 'Assume such $a, b$; then $a^2 \equiv 2 \pmod 4$, but squares are $\equiv 0$ or $1 \pmod 4$.'
+            solution_sketch: 'Suppose $a^2 - 4b = 2$. Then $a^2 = 4b + 2 \equiv 2 \pmod 4$. But every square is $0$ or $1 \pmod 4$ (cases on parity of $a$) — contradiction. $\square$'
+          - problem: 'Prove: the equation $6a + 9b = 104$ has no integer solutions.'
+            answer: 'Assume a solution; $3 \mid (6a + 9b)$ but $104 = 3 \cdot 34 + 2$, contradiction.'
+            solution_sketch: 'Suppose integers $a, b$ satisfy the equation. The left side is $3(2a + 3b)$, divisible by $3$; but $104$ leaves remainder $2$ on division by $3$ — contradiction. $\square$'
+        constraints: "derive a divisibility or residue clash from the assumed solution"
+      - id: kp2
+        name: "Irrationality proofs"
+        key_prerequisites: [rational-number-proofs]
+        exemplars:
+          - problem: 'Prove: $\sqrt{2}$ is irrational.'
+            answer: 'Assume $\sqrt 2 = p/q$ in lowest terms; deduce $p$ and $q$ both even, a contradiction.'
+            solution_sketch: 'Suppose $\sqrt 2 = p/q$ with $\gcd(p, q) = 1$. Then $p^2 = 2q^2$, so $p^2$ is even and hence $p = 2k$ is even. Then $4k^2 = 2q^2$, so $q^2 = 2k^2$ is even and $q$ is even. But then $2 \mid \gcd(p, q)$, contradicting $\gcd(p, q) = 1$. $\square$'
+          - problem: 'Prove: $\sqrt{3}$ is irrational.'
+            answer: 'Assume $\sqrt 3 = p/q$ in lowest terms; deduce $3 \mid p$ and $3 \mid q$, a contradiction.'
+            solution_sketch: 'Suppose $\sqrt 3 = p/q$ with $\gcd(p, q) = 1$. Then $p^2 = 3q^2$, so $3 \mid p^2$ and (as $3$ is prime) $3 \mid p$; write $p = 3k$, giving $9k^2 = 3q^2$, so $q^2 = 3k^2$ and $3 \mid q$. Then $3 \mid \gcd(p, q)$, a contradiction. $\square$'
+        constraints: "use a lowest-terms assumption to force a contradiction"
+      - id: kp3
+        name: "Nonexistence and infinitude arguments"
+        key_prerequisites: [negating-statements]
+        exemplars:
+          - problem: 'Prove: there are infinitely many primes.'
+            answer: 'Assume finitely many; $N = p_1 \cdots p_k + 1$ has a prime factor outside the list.'
+            solution_sketch: 'Suppose the primes are exactly $p_1, \dots, p_k$. Let $N = p_1 p_2 \cdots p_k + 1 > 1$, which has some prime divisor $p$. Each $p_i$ divides $N - 1$, so $p_i \nmid N$; thus $p \ne p_i$ for all $i$ — a new prime, contradiction. $\square$'
+          - problem: 'Prove: $\log_2 3$ is irrational.'
+            answer: 'Assume $\log_2 3 = p/q$; then $2^p = 3^q$, impossible by parity.'
+            solution_sketch: 'Suppose $\log_2 3 = p/q$ with positive integers $p, q$. Then $2^p = 3^q$. The left side is even and the right side (a power of $3$) is odd, so they cannot be equal — a contradiction. Hence $\log_2 3$ is irrational. $\square$'
+        constraints: "construct an object that contradicts the finiteness/nonexistence assumption"
+    diagnostic_exemplar:
+      problem: 'Prove by contradiction that $\sqrt{6}$ is irrational.'
+      answer: 'Suppose $\sqrt6$ were rational, say $\sqrt6 = p/q$ with $p, q$ integers, $q \ne 0$, and the fraction in lowest terms, so $\gcd(p, q) = 1$. Squaring gives $p^2 = 6q^2$, so $p^2$ is even; an odd $p$ would have odd square, so $p$ is even, say $p = 2k$. Substituting, $4k^2 = 6q^2$, i.e. $2k^2 = 3q^2$. The left side is even, so $3q^2$ is even, and since $3$ is odd this forces $q^2$ even and hence $q$ even. But then $2$ divides both $p$ and $q$, contradicting $\gcd(p,q) = 1$. Therefore $\sqrt6$ is irrational.'
+      solution_sketch: 'Assume a lowest-terms representation, square it, and derive that numerator and denominator are both even — the contradiction with lowest terms.'
+    anki_seeds:
+      - front: 'Key idea in proving $\sqrt{2}$ irrational by contradiction?'
+        back: 'Assume $\sqrt 2 = p/q$ in lowest terms; derive that $p$ and $q$ are both even, contradicting lowest terms.'
+        type: basic
+      - front: 'Key idea in Euclid''s proof that there are infinitely many primes?'
+        back: 'If $p_1, \dots, p_k$ were all the primes, $p_1 \cdots p_k + 1$ would need a prime factor not in the list.'
+        type: basic
+
+  - id: existence-proofs
+    name: "Existence Proofs"
+    core: true
+    difficulty: 0.60
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 200
+    prerequisites:
+      - id: direct-proof
+        weight: 0.4
+        key: true
+      - id: proof-by-contradiction
+        weight: 0.4
+        key: true
+      - id: quantifiers
+        weight: 0.2
+      - id: factorial-notation
+        weight: 0.2
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Constructive proofs by exhibiting a witness"
+        key_prerequisites: [direct-proof]
+        exemplars:
+          - problem: 'Prove: there exist integers $x, y$ with $3x + 5y = 1$.'
+            answer: 'Witness: $x = 2$, $y = -1$, since $6 - 5 = 1$.'
+            solution_sketch: 'An existence claim is proved by a single verified witness: $3(2) + 5(-1) = 1$. $\square$'
+          - problem: 'Prove: some perfect square is the sum of two other perfect squares.'
+            answer: 'Witness: $25 = 9 + 16$.'
+            solution_sketch: '$5^2 = 3^2 + 4^2$; exhibiting and checking the witness completes the proof. $\square$'
+        constraints: "name an explicit witness and verify it satisfies the property"
+      - id: kp2
+        name: "Constructive families"
+        key_prerequisites: [direct-proof]
+        exemplars:
+          - problem: 'Prove: there exist three consecutive composite numbers.'
+            answer: 'Witness: $8, 9, 10$.'
+            solution_sketch: '$8 = 2^3$, $9 = 3^2$, $10 = 2 \cdot 5$ are all composite and consecutive. $\square$'
+          - problem: 'Prove: for every $n \ge 1$ there exist $n$ consecutive composite numbers.'
+            answer: 'Take $(n+1)! + 2,\ (n+1)! + 3,\ \dots,\ (n+1)! + (n+1)$.'
+            solution_sketch: 'For $2 \le k \le n + 1$, $k$ is one of the factors of $(n+1)!$, so $k \mid (n+1)!$ and hence $k \mid (n+1)! + k$; since $(n+1)! + k > k$, that number is composite. That is $n$ consecutive composites. $\square$'
+        constraints: "the construction must come with a verification that it works for every parameter value"
+      - id: kp3
+        name: "Nonconstructive existence"
+        key_prerequisites: [proof-by-contradiction]
+        exemplars:
+          - problem: 'Prove: there exist irrational numbers $a, b$ such that $a^b$ is rational.'
+            answer: 'Consider $\sqrt{2}^{\sqrt{2}}$: if rational, take $a = b = \sqrt 2$; if irrational, take $a = \sqrt{2}^{\sqrt{2}}$, $b = \sqrt 2$, giving $a^b = 2$.'
+            solution_sketch: 'Case 1: $\sqrt 2^{\sqrt 2}$ rational — done with $a = b = \sqrt 2$ (irrational). Case 2: it is irrational — then $a = \sqrt 2^{\sqrt 2}$, $b = \sqrt 2$ gives $a^b = \sqrt 2^{2} = 2$, rational. Either way suitable $a, b$ exist, though we have not determined which. $\square$'
+          - problem: 'Prove: among any three integers there exist two whose sum is even.'
+            answer: 'Two of the three share a parity; their sum is even.'
+            solution_sketch: 'Each integer is even or odd; with three integers and two parity classes, some two share a class (cases: at least two even, or at least two odd). Same-parity integers sum to an even number. The proof names no specific pair. $\square$'
+        constraints: "the argument may not identify the witness; make the case split or counting explicit"
+    diagnostic_exemplar:
+      problem: 'Prove: among any five integers, there are two whose difference is divisible by $4$.'
+      answer: 'Every integer leaves one of the four remainders $0, 1, 2, 3$ on division by $4$. Given five integers, two of them must leave the same remainder, since there are only four remainders available. If $a = 4s + r$ and $b = 4t + r$ share the remainder $r$, then $a - b = 4(s - t)$, so $4 \mid (a - b)$. This proves existence without exhibiting the pair — a nonconstructive existence proof.'
+      solution_sketch: 'Classify the integers by remainder mod $4$; with five integers and four classes two must share a class, and equal remainders make the difference a multiple of $4$.'
+    anki_seeds:
+      - front: 'Constructive vs. nonconstructive existence proof?'
+        back: 'Constructive: exhibit and verify an explicit witness. Nonconstructive: show a witness must exist without identifying it.'
+        type: basic
+      - front: 'What suffices to prove $\exists x\, P(x)$?'
+        back: 'One witness $c$ together with a verification that $P(c)$ holds.'
+        type: basic
+
+  - id: uniqueness-proofs
+    name: "Uniqueness Proofs"
+    core: true
+    difficulty: 0.62
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 220
+    prerequisites:
+      - id: existence-proofs
+        weight: 0.5
+        key: true
+      - id: contradiction-template
+        weight: 0.3
+      - id: direct-proof
+        weight: 0.2
+    knowledge_points:
+      - id: kp1
+        name: "The two-solutions template"
+        key_prerequisites: [direct-proof]
+        exemplars:
+          - problem: 'Prove: the equation $5x + 3 = 18$ has a unique real solution.'
+            answer: 'Existence: $x = 3$ works. Uniqueness: any solution satisfies $5x = 15$, forcing $x = 3$.'
+            solution_sketch: 'Existence: $5(3) + 3 = 18$. Uniqueness: if $5y + 3 = 18$ then $5y = 15$, so $y = 3$; any two solutions both equal $3$. $\square$'
+          - problem: 'Prove: there is a unique positive real number whose square is $9$.'
+            answer: 'Existence: $3^2 = 9$. Uniqueness: $x^2 = y^2$ with $x, y > 0$ gives $(x-y)(x+y) = 0$ and $x + y > 0$, so $x = y$.'
+            solution_sketch: 'Existence: $3$ works. Uniqueness: if $x, y > 0$ both square to $9$, then $x^2 - y^2 = 0$, so $(x - y)(x + y) = 0$; since $x + y > 0$, $x = y$. $\square$'
+        constraints: "prove existence, then assume two solutions and show they are equal"
+      - id: kp2
+        name: "Uniqueness in the division algorithm"
+        key_prerequisites: [existence-proofs]
+        exemplars:
+          - problem: 'Prove the uniqueness part of the division algorithm: if $a = bq + r = bq'' + r''$ with $0 \le r, r'' < b$, then $q = q''$ and $r = r''$.'
+            answer: '$r - r'' = b(q'' - q)$ is a multiple of $b$ with $|r - r''| < b$, so it is $0$.'
+            solution_sketch: 'Subtracting gives $r - r'' = b(q'' - q)$, a multiple of $b$. But $0 \le r, r'' < b$ forces $|r - r''| < b$, and the only multiple of $b$ with absolute value below $b$ is $0$. Hence $r = r''$ and then $q = q''$ (as $b \ne 0$). $\square$'
+          - problem: 'Prove: every integer $n$ has a unique parity (it cannot be both even and odd).'
+            answer: 'If $n = 2a = 2b + 1$ then $2(a - b) = 1$, so $2 \mid 1$ — contradiction.'
+            solution_sketch: 'Suppose $n$ were both even and odd: $n = 2a$ and $n = 2b + 1$. Subtracting, $2(a - b) = 1$, making $1$ even — a contradiction. $\square$'
+        constraints: "bound a difference to force it to zero, or derive a contradiction from two representations"
+      - id: kp3
+        name: "Existence and uniqueness together"
+        key_prerequisites: [existence-proofs]
+        exemplars:
+          - problem: 'Prove: there is exactly one real number $x$ with $x^3 = 8$.'
+            answer: 'Existence: $x = 2$. Uniqueness: $x^3 = y^3$ gives $(x - y)(x^2 + xy + y^2) = 0$, and the quadratic factor is positive unless $x = y = 0$.'
+            solution_sketch: 'Existence: $2^3 = 8$. Uniqueness: if $x^3 = y^3 = 8$ then $x^3 - y^3 = (x - y)(x^2 + xy + y^2) = 0$. For $x, y$ not both $0$, $x^2 + xy + y^2 = (x + \tfrac{y}{2})^2 + \tfrac{3y^2}{4} > 0$, so $x = y$. $\square$'
+          - problem: 'Prove: there is a unique real number $x$ such that $x + a = a$ for every real $a$.'
+            answer: 'Existence: $x = 0$. Uniqueness: if $x$ and $x''$ both work, $x = x + x'' = x''$.'
+            solution_sketch: 'Existence: $0 + a = a$ always. Uniqueness: suppose $x$ and $x''$ both satisfy the property. Then $x'' = x'' + x$ (using the property of $x$ at $a = x''$) and $x = x + x'' = x''$ by commutativity and the property of $x''$ at $a = x$. Hence $x = x''$. $\square$'
+        constraints: "state the $\\exists!$ claim as existence plus uniqueness and prove both parts"
+    diagnostic_exemplar:
+      problem: 'Prove that there is exactly one real number $x$ with $x^3 + x = 10$.'
+      answer: 'Existence: $x = 2$ gives $8 + 2 = 10$. Uniqueness: suppose $a^3 + a = b^3 + b$. Then $(a^3 - b^3) + (a - b) = 0$, i.e. $(a-b)(a^2 + ab + b^2 + 1) = 0$. The second factor is positive for all real $a, b$, since $a^2 + ab + b^2 = \left(a + \tfrac{b}{2}\right)^2 + \tfrac{3b^2}{4} \ge 0$, making the factor at least $1$. Hence $a - b = 0$, so $a = b$. Therefore $x = 2$ is the unique solution.'
+      solution_sketch: 'Exhibit a solution, then show any two solutions coincide: factor $a^3 + a - (b^3 + b)$ and check that the quadratic factor never vanishes.'
+    anki_seeds:
+      - front: 'Standard template for proving uniqueness?'
+        back: 'Assume $x$ and $y$ both satisfy the property, then show $x = y$.'
+        type: basic
+      - front: 'What does $\exists!\, x\, P(x)$ require you to prove?'
+        back: 'Existence (some $x$ satisfies $P$) and uniqueness (any two satisfying $P$ are equal).'
+        type: basic
+
+  - id: common-proof-errors
+    name: "Common Proof Errors"
+    core: false                # supplemental: proof-hygiene commentary leaf topic
+    difficulty: 0.60
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 150
+    prerequisites:
+      - id: rules-of-inference
+        weight: 0.5
+        key: true
+      - id: direct-proof
+        weight: 0.4
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: "Proof by example"
+        key_prerequisites: [direct-proof]
+        exemplars:
+          - problem: 'Criticize this "proof" that $n^2 - n + 11$ is prime for all positive integers $n$: "it holds for $n = 1, 2, 3, 4, 5$."'
+            answer: 'Checking examples never proves a universal claim; indeed $n = 11$ gives $121 = 11^2$, composite.'
+            solution_sketch: 'A universal statement needs an argument for arbitrary $n$; finitely many verified cases prove nothing beyond themselves, and here the pattern actually fails at $n = 11$.'
+          - problem: 'A student proves "the sum of two even integers is even" by computing $4 + 6 = 10$. What is missing?'
+            answer: 'The argument must take arbitrary even integers $2a, 2b$ and show $2a + 2b = 2(a+b)$; one instance is not a proof.'
+            solution_sketch: 'The claim quantifies over all pairs; the proof must use arbitrary representatives, not specific numbers.'
+        constraints: "the flawed argument verifies instances; the fix is an arbitrary-element proof or a counterexample"
+      - id: kp2
+        name: "Circular reasoning and converse errors"
+        key_prerequisites: [rules-of-inference]
+        exemplars:
+          - problem: 'Find the flaw: "To prove that if $n$ is even then $n^2$ is even, note that $n^2$ even implies $n$ even, so the statement holds."'
+            answer: 'The argument proves (asserts) the converse instead of the claim — a converse error.'
+            solution_sketch: '$Q \to P$ is not $P \to Q$; citing the converse establishes nothing about the original conditional.'
+          - problem: 'Find the flaw: a "proof" of $\tfrac{a+b}{2} \ge \sqrt{ab}$ (for $a, b \ge 0$) that starts from $\tfrac{a+b}{2} \ge \sqrt{ab}$, squares both sides, and ends at $(a - b)^2 \ge 0$, concluding "true".'
+            answer: 'It assumes what is to be proved and derives a truth from it; the logic must run from $(a-b)^2 \ge 0$ back to the claim, with each step reversible.'
+            solution_sketch: 'Deriving a true statement from $S$ does not prove $S$ ($F \to T$ is true). The repair: start from $(a - b)^2 \ge 0$ and reverse the (reversible, nonnegativity-respecting) steps to reach the claim.'
+        constraints: "flag arguing-from-the-conclusion; require reversibility or a rewritten forward proof"
+      - id: kp3
+        name: "Illegal algebraic steps"
+        key_prerequisites: [direct-proof]
+        exemplars:
+          - problem: 'Find the error: "$a = b \Rightarrow a^2 = ab \Rightarrow a^2 - b^2 = ab - b^2 \Rightarrow (a+b)(a-b) = b(a-b) \Rightarrow a + b = b \Rightarrow 2 = 1$ (at $a = b = 1$)."'
+            answer: 'The cancellation of $(a - b)$ divides by zero, since $a = b$.'
+            solution_sketch: 'Every step is valid except cancelling $a - b$, which is $0$ by hypothesis; division by zero manufactures the absurdity.'
+          - problem: 'Find the error: "$(-3)^2 = 3^2$, so taking square roots, $-3 = 3$."'
+            answer: '$\sqrt{x^2} = |x|$, not $x$; the correct conclusion is $|-3| = |3|$.'
+            solution_sketch: 'Square-rooting both sides of an equation yields absolute values; dropping them silently is invalid for negative quantities.'
+        constraints: "hidden division by zero or invalid root extraction; the learner names the exact illegal step"
+    diagnostic_exemplar:
+      problem: 'Identify the error in each argument: (a) "The sum of two even integers is even — indeed $4 + 6 = 10$." (b) "If $a = b$ then $a^2 = ab$, so $a^2 - b^2 = ab - b^2$, so $(a+b)(a-b) = b(a-b)$, hence $a + b = b$; taking $a = b = 1$ gives $2 = 1$."'
+      answer: '(a) Proof by example: one instance cannot establish a universal claim. A proof must start from arbitrary even integers $2a$ and $2b$ and show $2a + 2b = 2(a+b)$. (b) An illegal cancellation: passing from $(a+b)(a-b) = b(a-b)$ to $a + b = b$ divides by $a - b$, which is $0$ because $a = b$. Division by zero is not a valid step, so the conclusion does not follow.'
+      solution_sketch: 'Ask what each step actually licenses: one instance never proves "for all", and cancelling a factor requires it to be nonzero.'
+    anki_seeds:
+      - front: 'Why does deriving a true statement from a claim not prove the claim?'
+        back: 'A false statement can imply a true one ($F \to T$ is true); the steps must be reversible or run forward from known truths.'
+        type: basic
+      - front: 'The "converse error" in a proof?'
+        back: 'Proving $Q \to P$ (or assuming $Q$) when the goal is $P \to Q$.'
+        type: basic
+      - front: 'Classic hidden error in the "$2 = 1$" algebra fallacy?'
+        back: 'Dividing by $a - b$, which is zero when $a = b$.'
+        type: basic
+
+  - id: induction-template
+    name: "The Induction Template"
+    core: true
+    difficulty: 0.55
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 200
+    prerequisites:
+      - id: direct-proof
+        weight: 0.5
+        key: true
+      - id: quantifiers
+        weight: 0.2
+      - id: factorial-notation
+        weight: 0.2
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "The principle and its two parts"
+        key_prerequisites: [quantifiers]
+        exemplars:
+          - problem: 'For the claim "for all $n \ge 1$, $1 + 2 + \cdots + n = \tfrac{n(n+1)}{2}$", state the base case to verify and the inductive hypothesis.'
+            answer: 'Base: $n = 1$, i.e. $1 = \tfrac{1 \cdot 2}{2}$. Hypothesis: assume $1 + \cdots + n = \tfrac{n(n+1)}{2}$ for some $n \ge 1$; then show the formula at $n + 1$.'
+            solution_sketch: 'Induction on a claim $P(n)$ for $n \ge n_0$ requires verifying $P(n_0)$ and proving $P(n) \to P(n+1)$; the assumption $P(n)$ is the inductive hypothesis.'
+          - problem: 'Why do the base case $P(1)$ and the step $P(n) \to P(n+1)$ together prove $P(n)$ for every $n \ge 1$?'
+            answer: 'The step transmits truth from each $n$ to $n + 1$; starting the chain at $P(1)$ reaches every positive integer, like a row of falling dominoes.'
+            solution_sketch: '$P(1)$ holds; the step gives $P(2)$, then $P(3)$, and so on — every $n$ is reached after finitely many applications of the step.'
+        constraints: "setup only: identify base case, hypothesis, and goal of the step; no full proof required"
+      - id: kp2
+        name: "Choosing and checking the base case"
+        key_prerequisites: [direct-proof]
+        exemplars:
+          - problem: 'For the claim "$2^n > 6n$", find the smallest positive integer base case at which an induction could start.'
+            answer: '$n = 5$: $32 > 30$, while $n = 4$ fails ($16 < 24$).'
+            solution_sketch: 'Test values: $n = 4$ gives $16 < 24$ (false), $n = 5$ gives $32 > 30$ (true); the induction can start at $n = 5$, the first positive integer from which the claim holds and the step stays valid.'
+          - problem: 'Verify the base case $n = 1$ for the claim "$n! \ge 2^{n-1}$".'
+            answer: '$1! = 1 \ge 2^0 = 1$. Base case holds.'
+            solution_sketch: 'Substitute $n = 1$: $1! = 1$ and $2^{1-1} = 2^0 = 1$, and $1 \ge 1$. $\square$'
+        constraints: "numeric base-case verification; find the first index where the claim holds"
+      - id: kp3
+        name: "A complete first induction"
+        key_prerequisites: [direct-proof]
+        exemplars:
+          - problem: 'Prove by induction: for all $n \ge 1$, $1 + 3 + 5 + \cdots + (2n - 1) = n^2$.'
+            answer: 'Base $n = 1$: $1 = 1$. Step: add $2n + 1$ to $n^2$ to get $(n + 1)^2$.'
+            solution_sketch: 'Base: $n = 1$, $1 = 1^2$. Step: assume the sum of the first $n$ odd numbers is $n^2$. Adding the next odd number $2(n+1) - 1 = 2n + 1$ gives $n^2 + 2n + 1 = (n + 1)^2$. $\square$'
+          - problem: 'Prove by induction: for all $n \ge 1$, $2 + 4 + 6 + \cdots + 2n = n(n + 1)$.'
+            answer: 'Base $n = 1$: $2 = 2$. Step: $n(n+1) + 2(n+1) = (n+1)(n+2)$.'
+            solution_sketch: 'Base: $n = 1$ gives $2 = 1 \cdot 2$. Step: assume the sum to $2n$ is $n(n+1)$; adding $2(n+1)$ gives $n(n+1) + 2(n+1) = (n+1)(n+2)$, the formula at $n + 1$. $\square$'
+        constraints: "single-step sums with linear terms; write base, hypothesis, and step explicitly"
+    diagnostic_exemplar:
+      problem: 'Prove by induction: for all $n \ge 1$, $3 + 7 + 11 + \cdots + (4n - 1) = n(2n + 1)$.'
+      answer: 'Base $n = 1$: $3 = 3$. Step: $n(2n+1) + (4n + 3) = 2n^2 + 5n + 3 = (n+1)(2n+3)$.'
+      solution_sketch: 'Base: $n = 1$ gives $3 = 1 \cdot 3$. Step: assume the sum is $n(2n+1)$; adding the next term $4(n+1) - 1 = 4n + 3$ gives $2n^2 + 5n + 3 = (n + 1)(2(n+1) + 1)$. $\square$'
+    anki_seeds:
+      - front: 'The two parts of a proof by induction?'
+        back: 'Base case (verify $P(n_0)$) and inductive step (assume $P(n)$, prove $P(n + 1)$).'
+        type: basic
+      - front: 'What is the inductive hypothesis?'
+        back: 'The assumption that $P(n)$ holds, used to prove $P(n + 1)$.'
+        type: basic
+
+  - id: induction-summation-proofs
+    name: "Summation Formulas by Induction"
+    core: true
+    difficulty: 0.58
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 220
+    prerequisites:
+      - id: induction-template
+        weight: 0.6
+        key: true
+      - id: summation-notation
+        weight: 0.3
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Linear sums"
+        key_prerequisites: [induction-template]
+        exemplars:
+          - problem: 'Prove: for all $n \ge 1$, $1 + 2 + \cdots + n = \dfrac{n(n+1)}{2}$.'
+            answer: 'Base $n = 1$: $1 = 1$. Step: add $(n + 1)$ to both sides.'
+            solution_sketch: 'Base: $n = 1$ gives $1 = \frac{1 \cdot 2}{2}$. Step: assume $\sum_{i=1}^{n} i = \frac{n(n+1)}{2}$. Then $\sum_{i=1}^{n+1} i = \frac{n(n+1)}{2} + (n + 1) = \frac{(n+1)(n+2)}{2}$, the formula at $n + 1$. $\square$'
+          - problem: 'Prove: for all $n \ge 1$, $\displaystyle\sum_{i=1}^{n} (3i - 2) = \frac{n(3n - 1)}{2}$.'
+            answer: 'Base $n = 1$: $1 = 1$. Step: $\frac{n(3n-1)}{2} + (3n + 1) = \frac{3n^2 + 5n + 2}{2} = \frac{(n+1)(3n+2)}{2}$.'
+            solution_sketch: 'Base: $n = 1$ gives $1 = \frac{1 \cdot 2}{2}$. Step: add the next term $3(n+1) - 2 = 3n + 1$ to the hypothesis and factor: $\frac{3n^2 - n + 6n + 2}{2} = \frac{(n+1)(3(n+1) - 1)}{2}$. $\square$'
+        constraints: "arithmetic-progression sums; the step adds one term and refactors"
+      - id: kp2
+        name: "Square and cube sums"
+        key_prerequisites: [induction-template]
+        exemplars:
+          - problem: 'Prove: for all $n \ge 1$, $1^2 + 2^2 + \cdots + n^2 = \dfrac{n(n+1)(2n+1)}{6}$.'
+            answer: 'Base $n = 1$: $1 = 1$. Step: add $(n+1)^2$ and factor.'
+            solution_sketch: 'Base: $n = 1$ gives $1 = \frac{1 \cdot 2 \cdot 3}{6}$. Step: assume the formula at $n$; adding $(n+1)^2$ yields $\frac{n(n+1)(2n+1)}{6} + (n+1)^2 = \frac{(n+1)(n+2)(2n+3)}{6}$, the formula at $n + 1$. $\square$'
+          - problem: 'Prove: for all $n \ge 1$, $1^3 + 2^3 + \cdots + n^3 = \left(\dfrac{n(n+1)}{2}\right)^2$.'
+            answer: 'Base $n = 1$: $1 = 1$. Step: $\left(\frac{n(n+1)}{2}\right)^2 + (n+1)^3 = \left(\frac{(n+1)(n+2)}{2}\right)^2$.'
+            solution_sketch: 'Step: factor $(n+1)^2$ from $\frac{n^2(n+1)^2}{4} + (n+1)^3 = (n+1)^2\left(\frac{n^2}{4} + n + 1\right) = (n+1)^2 \cdot \frac{(n+2)^2}{4}$. $\square$'
+        constraints: "power sums; the algebraic factoring in the step is the heart of the proof"
+      - id: kp3
+        name: "Geometric-type sums"
+        key_prerequisites: [induction-template]
+        exemplars:
+          - problem: 'Prove: for all $n \ge 0$, $1 + 2 + 4 + \cdots + 2^n = 2^{n+1} - 1$.'
+            answer: 'Base $n = 0$: $1 = 1$. Step: $(2^{n+1} - 1) + 2^{n+1} = 2^{n+2} - 1$.'
+            solution_sketch: 'Base: $n = 0$ gives $1 = 2 - 1$. Step: assume the sum to $2^n$ is $2^{n+1} - 1$; adding $2^{n+1}$ gives $2 \cdot 2^{n+1} - 1 = 2^{n+2} - 1$. $\square$'
+          - problem: 'Prove: for all $n \ge 0$, $1 + 3 + 9 + \cdots + 3^n = \dfrac{3^{n+1} - 1}{2}$.'
+            answer: 'Base $n = 0$: $1 = 1$. Step: $\frac{3^{n+1} - 1}{2} + 3^{n+1} = \frac{3 \cdot 3^{n+1} - 1}{2} = \frac{3^{n+2} - 1}{2}$.'
+            solution_sketch: 'Base: $n = 0$ gives $1 = \frac{3 - 1}{2}$. Step: add the next power $3^{n+1}$ to the hypothesis and combine over the common denominator. $\square$'
+        constraints: "geometric sums with integer ratio; combine over a common denominator in the step"
+    diagnostic_exemplar:
+      problem: 'Prove: for all $n \ge 1$, $\displaystyle\sum_{i=1}^{n} \frac{1}{i(i+1)} = \frac{n}{n+1}$.'
+      answer: 'Base $n = 1$: $\tfrac{1}{2} = \tfrac{1}{2}$. Step: $\frac{n}{n+1} + \frac{1}{(n+1)(n+2)} = \frac{n(n+2) + 1}{(n+1)(n+2)} = \frac{n+1}{n+2}$.'
+      solution_sketch: 'Base: $\frac{1}{1 \cdot 2} = \frac{1}{2}$. Step: $\frac{n(n+2) + 1}{(n+1)(n+2)} = \frac{(n+1)^2}{(n+1)(n+2)} = \frac{n+1}{n+2}$, the formula at $n + 1$. $\square$'
+    anki_seeds:
+      - front: 'The inductive step for a summation formula $\sum_{i=1}^n a_i = F(n)$?'
+        back: 'Add the next term: show $F(n) + a_{n+1} = F(n+1)$.'
+        type: basic
+      - front: 'Formulas: $\sum_{i=1}^n i$, $\sum_{i=1}^n i^2$, $\sum_{i=1}^n i^3$?'
+        back: '$\frac{n(n+1)}{2}$, $\frac{n(n+1)(2n+1)}{6}$, $\left(\frac{n(n+1)}{2}\right)^2$.'
+        type: basic
+
+  - id: induction-divisibility-proofs
+    name: "Divisibility by Induction"
+    core: true
+    difficulty: 0.58
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 220
+    prerequisites:
+      - id: induction-template
+        weight: 0.6
+        key: true
+      - id: divisibility-parity-proofs
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: "Polynomial divisibility"
+        key_prerequisites: [induction-template]
+        exemplars:
+          - problem: 'Prove: for all $n \ge 0$, $3 \mid (n^3 + 2n)$.'
+            answer: 'Base $n = 0$: $0$. Step: $(n+1)^3 + 2(n+1) = (n^3 + 2n) + 3(n^2 + n + 1)$.'
+            solution_sketch: 'Base: $n = 0$, and $0$ is divisible by $3$. Step: assume $3 \mid (n^3 + 2n)$. Then $(n+1)^3 + 2(n+1) = n^3 + 2n + 3n^2 + 3n + 3 = (n^3 + 2n) + 3(n^2 + n + 1)$; both terms are divisible by $3$, so the sum is. $\square$'
+          - problem: 'Prove: for all $n \ge 1$, $2 \mid (n^2 + n)$.'
+            answer: 'Base $n = 1$: $2$. Step: $(n+1)^2 + (n+1) = (n^2 + n) + 2(n + 1)$.'
+            solution_sketch: 'Base: $n = 1$, $n^2 + n = 2$, divisible by $2$. Step: assume $2 \mid (n^2 + n)$. Then $(n+1)^2 + (n+1) = n^2 + n + 2n + 2 = (n^2 + n) + 2(n + 1)$; both terms even, so the sum is. $\square$'
+        constraints: "isolate the previous case plus a visibly-divisible remainder"
+      - id: kp2
+        name: "Exponential divisibility"
+        key_prerequisites: [induction-template]
+        exemplars:
+          - problem: 'Prove: for all $n \ge 0$, $6 \mid (7^n - 1)$.'
+            answer: 'Base $n = 0$: $0$. Step: $7^{n+1} - 1 = 7(7^n - 1) + 6$.'
+            solution_sketch: 'Base: $7^0 - 1 = 0$, divisible by $6$. Step: assume $6 \mid (7^n - 1)$. Then $7^{n+1} - 1 = 7 \cdot 7^n - 1 = 7(7^n - 1) + 6$; both terms are divisible by $6$. $\square$'
+          - problem: 'Prove: for all $n \ge 0$, $4 \mid (5^n - 1)$.'
+            answer: 'Base $n = 0$: $0$. Step: $5^{n+1} - 1 = 5(5^n - 1) + 4$.'
+            solution_sketch: 'Base: $5^0 - 1 = 0$. Step: $5^{n+1} - 1 = 5(5^n - 1) + 4$; the first term is divisible by $4$ by hypothesis and so is $4$. $\square$'
+        constraints: "rewrite $a^{n+1} - 1$ as $a(a^n - 1) + (a - 1)$; both pieces visibly divisible"
+      - id: kp3
+        name: "Mixed exponential-linear divisibility"
+        key_prerequisites: [induction-template]
+        exemplars:
+          - problem: 'Prove: for all $n \ge 0$, $3 \mid (4^n + 5)$.'
+            answer: 'Base $n = 0$: $6$. Step: $4^{n+1} + 5 = 4(4^n + 5) - 15$.'
+            solution_sketch: 'Base: $4^0 + 5 = 6 = 3 \cdot 2$. Step: assume $3 \mid (4^n + 5)$. Then $4^{n+1} + 5 = 4(4^n + 5) - 15$; both $4(4^n + 5)$ and $15$ are divisible by $3$. $\square$'
+          - problem: 'Prove: for all $n \ge 0$, $9 \mid (4^n + 6n - 1)$.'
+            answer: 'Base $n = 0$: $0$. Step: $4^{n+1} + 6(n+1) - 1 = 4(4^n + 6n - 1) - 9(2n - 1)$.'
+            solution_sketch: 'Base: $4^0 + 0 - 1 = 0$. Step: $4(4^n + 6n - 1) = 4^{n+1} + 24n - 4$, so $4^{n+1} + 6(n+1) - 1 = 4(4^n + 6n - 1) - 18n + 9 = 4(4^n + 6n - 1) - 9(2n - 1)$; both terms divisible by $9$. $\square$'
+        constraints: "express the next case as (multiple of the hypothesis) plus a visible multiple of the divisor"
+    diagnostic_exemplar:
+      problem: 'Prove by induction: for all $n \ge 0$, $9 \mid (10^{n} - 9n - 1)$.'
+      answer: 'Base $n = 0$: $10^0 - 0 - 1 = 0$, which is divisible by $9$. Step: assume $9 \mid (10^{n} - 9n - 1)$. Then $10^{n+1} - 9(n+1) - 1 = 10(10^{n} - 9n - 1) + (90n + 10 - 9n - 10) = 10(10^{n} - 9n - 1) + 81n$. The first term is divisible by $9$ by the inductive hypothesis and the second because $81n = 9 \cdot 9n$, so the sum is divisible by $9$. By induction the claim holds for all $n \ge 0$.'
+      solution_sketch: 'Peel one factor of $10$ off the exponential and repair the linear part; the correction term $81n$ is a multiple of $9$.'
+    anki_seeds:
+      - front: 'Key rewrite for proving $d \mid (a^n - 1)$ by induction (where $d = a - 1$)?'
+        back: '$a^{n+1} - 1 = a(a^n - 1) + (a - 1)$.'
+        type: basic
+      - front: 'Shape of the inductive step in a divisibility proof?'
+        back: 'Write the $(n+1)$-case as a combination of the $n$-case and an explicit multiple of the divisor.'
+        type: basic
+
+  - id: induction-inequality-proofs
+    name: "Inequalities by Induction"
+    core: true
+    difficulty: 0.60
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 240
+    prerequisites:
+      - id: induction-template
+        weight: 0.6
+        key: true
+      - id: summation-notation
+        weight: 0.2
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Linear vs. exponential growth"
+        key_prerequisites: [induction-template]
+        exemplars:
+          - problem: 'Prove: for all $n \ge 1$, $n < 2^n$.'
+            answer: 'Base $n = 1$: $1 < 2$. Step: $n + 1 \le 2n < 2 \cdot 2^n = 2^{n+1}$.'
+            solution_sketch: 'Base: $n = 1$, $1 < 2$. Step: assume $n < 2^n$. Since $n \ge 1$, $n + 1 \le n + n = 2n < 2 \cdot 2^n = 2^{n+1}$. Hence $n + 1 < 2^{n+1}$. $\square$'
+          - problem: 'Prove: for all $n \ge 3$, $2n + 1 \le 2^n$.'
+            answer: 'Base $n = 3$: $7 \le 8$. Step: $2(n+1) + 1 = (2n + 1) + 2 \le 2^n + 2 \le 2^n + 2^n = 2^{n+1}$.'
+            solution_sketch: 'Base: $n = 3$ gives $7 \le 8$. Step: add $2$ to the hypothesis and use $2 \le 2^n$ (true for $n \ge 1$) to absorb it: $2^n + 2 \le 2 \cdot 2^n$. $\square$'
+        constraints: "bound the added amount by a copy of the exponential term"
+      - id: kp2
+        name: "Polynomial vs. exponential and factorial"
+        key_prerequisites: [induction-template]
+        exemplars:
+          - problem: 'Prove: for all $n \ge 5$, $2^n > n^2$.'
+            answer: 'Base $n = 5$: $32 > 25$. Step: $2^{n+1} = 2 \cdot 2^n > 2n^2 \ge (n+1)^2$ for $n \ge 5$.'
+            solution_sketch: 'Base: $n = 5$, $32 > 25$. Step: assume $2^n > n^2$ for some $n \ge 5$. Then $2^{n+1} = 2 \cdot 2^n > 2n^2$. Since $n \ge 5$, $n^2 - 2n - 1 \ge 0$, so $2n^2 \ge n^2 + 2n + 1 = (n+1)^2$. Hence $2^{n+1} > (n+1)^2$. $\square$'
+          - problem: 'Prove: for all $n \ge 1$, $n! \ge 2^{n-1}$.'
+            answer: 'Base $n = 1$: $1 \ge 1$. Step: $(n+1)! = (n+1) \cdot n! \ge 2 \cdot 2^{n-1} = 2^n$ since $n + 1 \ge 2$.'
+            solution_sketch: 'Base: $1! = 1 = 2^0$. Step: assume $n! \ge 2^{n-1}$; multiply by $n + 1 \ge 2$ to get $(n+1)! \ge 2 \cdot 2^{n-1} = 2^n$. $\square$'
+        constraints: "verify the base is large enough; bound the step algebraically"
+      - id: kp3
+        name: "Bernoulli and harmonic bounds"
+        key_prerequisites: [induction-template]
+        exemplars:
+          - problem: 'Prove Bernoulli''s inequality: for every real $x \ge -1$ and every integer $n \ge 1$, $(1 + x)^n \ge 1 + nx$.'
+            answer: 'Base $n = 1$: equality. Step: $(1+x)^{n+1} \ge (1 + nx)(1 + x) = 1 + (n+1)x + nx^2 \ge 1 + (n+1)x$.'
+            solution_sketch: 'Base: $(1+x)^1 = 1 + x$. Step: multiply the hypothesis by $1 + x \ge 0$: $(1+x)^{n+1} \ge (1 + nx)(1 + x) = 1 + (n+1)x + nx^2$, and $nx^2 \ge 0$. $\square$'
+          - problem: 'Prove: for all $n \ge 0$, $\displaystyle\sum_{i=1}^{2^n} \frac{1}{i} \ge 1 + \frac{n}{2}$.'
+            answer: 'Base $n = 0$: $1 \ge 1$. Step: the $2^n$ new terms are each at least $\frac{1}{2^{n+1}}$, contributing at least $\frac{1}{2}$.'
+            solution_sketch: 'Base: $n = 0$ gives $1 \ge 1$. Step: from $2^n + 1$ to $2^{n+1}$ there are $2^n$ terms, each $\ge \frac{1}{2^{n+1}}$, so the sum grows by at least $2^n \cdot \frac{1}{2^{n+1}} = \frac{1}{2}$, giving $1 + \frac{n}{2} + \frac{1}{2} = 1 + \frac{n+1}{2}$. $\square$'
+        constraints: "multiplying inequalities requires a nonnegative factor; block-bounding for harmonic sums"
+    diagnostic_exemplar:
+      problem: 'Prove by induction: for all $n \ge 1$, $\displaystyle\sum_{i=1}^{n} \frac{1}{i^2} \le 2 - \frac{1}{n}$.'
+      answer: 'Base $n = 1$: the sum is $1$ and $2 - \tfrac11 = 1$, so the inequality holds (with equality). Step: assume $\sum_{i=1}^{n} \frac{1}{i^2} \le 2 - \frac{1}{n}$. Then $\sum_{i=1}^{n+1} \frac{1}{i^2} \le 2 - \frac{1}{n} + \frac{1}{(n+1)^2}$, so it suffices that $\frac{1}{(n+1)^2} \le \frac{1}{n} - \frac{1}{n+1} = \frac{1}{n(n+1)}$ — true because $(n+1)^2 > n(n+1)$ for $n \ge 1$. Hence $\sum_{i=1}^{n+1} \frac{1}{i^2} \le 2 - \frac{1}{n+1}$, and the claim follows by induction.'
+      solution_sketch: 'Add the new term to the inductive bound and check it fits inside the gap $\frac1n - \frac{1}{n+1}$.'
+    anki_seeds:
+      - front: 'Bernoulli''s inequality?'
+        back: '$(1 + x)^n \ge 1 + nx$ for every real $x \ge -1$ and integer $n \ge 1$.'
+        type: basic
+      - front: 'Common trick in the step of an exponential inequality induction?'
+        back: 'Write $2^{n+1} = 2 \cdot 2^n$ and absorb the added amount into the extra factor.'
+        type: basic
+
+  - id: mathematical-induction
+    name: "Mathematical Induction"
+    core: true
+    difficulty: 0.62
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 240
+    prerequisites:
+      - id: induction-summation-proofs
+        weight: 0.5
+        key: true
+      - id: induction-inequality-proofs
+        weight: 0.4
+        key: true
+      - id: induction-divisibility-proofs
+        weight: 0.4
+      - id: quantifiers
+        weight: 0.2
+    knowledge_points:
+      - id: kp1
+        name: "Products and factorials"
+        key_prerequisites: [induction-summation-proofs]
+        exemplars:
+          - problem: 'Prove: for all $n \ge 1$, $\displaystyle\sum_{i=1}^{n} i \cdot i! = (n+1)! - 1$.'
+            answer: 'Base $n = 1$: $1 = 2! - 1$. Step: $(n+1)! - 1 + (n+1)(n+1)! = (n+2)! - 1$.'
+            solution_sketch: 'Base: $1 \cdot 1! = 1 = 2 - 1$. Step: add $(n+1)(n+1)!$ to the hypothesis: $(n+1)! - 1 + (n+1)(n+1)! = (n+1)!(1 + n + 1) - 1 = (n+2)! - 1$. $\square$'
+          - problem: 'Prove: for all $n \ge 2$, $\displaystyle\prod_{k=2}^{n} \left(1 - \frac{1}{k}\right) = \frac{1}{n}$.'
+            answer: 'Base $n = 2$: $\tfrac{1}{2}$. Step: $\frac{1}{n} \cdot \left(1 - \frac{1}{n+1}\right) = \frac{1}{n} \cdot \frac{n}{n+1} = \frac{1}{n+1}$.'
+            solution_sketch: 'Base: $1 - \frac{1}{2} = \frac{1}{2}$. Step: multiply the hypothesis by the next factor $\frac{n}{n+1}$ and cancel. $\square$'
+        constraints: "factorial and telescoping-product identities; factor the common piece in the step"
+      - id: kp2
+        name: "Induction on counting and geometry"
+        key_prerequisites: [induction-summation-proofs]
+        exemplars:
+          - problem: 'Prove: a set with $n$ elements has exactly $2^n$ subsets.'
+            answer: 'Base $n = 0$: $\varnothing$ has one subset. Step: adding a new element pairs each old subset with itself-plus-the-new-element, doubling the count.'
+            solution_sketch: 'Base: the empty set has exactly one subset. Step: let $|S| = n + 1$ and fix $x \in S$. Subsets of $S$ split into those avoiding $x$ (subsets of $S \setminus \{x\}$: $2^n$ of them) and those containing $x$ (each is one of the former plus $x$: another $2^n$). Total $2 \cdot 2^n = 2^{n+1}$. $\square$'
+          - problem: 'Prove: $n$ lines in the plane in general position (no two parallel, no three concurrent) divide it into $\dfrac{n^2 + n + 2}{2}$ regions.'
+            answer: 'Base $n = 0$: $1$ region. Step: the $(n+1)$-st line meets $n$ lines in $n$ points, crossing $n + 1$ regions and adding $n + 1$.'
+            solution_sketch: 'Base: no lines, one region, and $\frac{0 + 0 + 2}{2} = 1$. Step: a new line meets the $n$ existing lines in $n$ distinct points, splitting the new line into $n + 1$ pieces, each cutting one region in two. So $R(n+1) = \frac{n^2 + n + 2}{2} + (n + 1) = \frac{(n+1)^2 + (n+1) + 2}{2}$. $\square$'
+        constraints: "the step must argue combinatorially or geometrically, not just algebraically"
+      - id: kp3
+        name: "Pitfalls and thresholds"
+        key_prerequisites: [induction-inequality-proofs]
+        exemplars:
+          - problem: 'Find the flaw in the classic "all horses are the same color" induction.'
+            answer: 'The step "overlap the two $n$-horse groups" fails at $n = 1$: two horses split into singleton groups with empty overlap.'
+            solution_sketch: 'The inductive step assumes the two size-$n$ subsets of a size-$(n+1)$ set overlap, which is true only for $n \ge 2$. Since the step from $P(1)$ to $P(2)$ fails, the chain never starts, and the "theorem" is false. $\square$'
+          - problem: 'Find the least $n_0$ with $n! > 3^n$ for all $n \ge n_0$, and prove it by induction.'
+            answer: '$n_0 = 7$: $5040 > 2187$ ($n = 6$ fails: $720 < 729$). Step: $(n+1)! = (n+1) \cdot n! > 3 \cdot 3^n$ since $n + 1 \ge 8 > 3$.'
+            solution_sketch: 'Check $n = 6$: $720 < 729$ fails; $n = 7$: $5040 > 2187$ holds. Step for $n \ge 7$: $(n+1)! = (n+1)n! > (n+1)3^n \ge 3 \cdot 3^n = 3^{n+1}$. $\square$'
+        constraints: "diagnose a broken step or find the correct starting threshold before proving"
+    diagnostic_exemplar:
+      problem: 'Find the least integer $n_0$ such that $2^{n} > n^{3}$ holds for all $n \ge n_0$, and prove it by induction.'
+      answer: '$n_0 = 10$: the inequality fails at $n = 9$ ($512 < 729$) and holds at $n = 10$ ($1024 > 1000$), which serves as the base case. Step: assume $2^{n} > n^{3}$ for some $n \ge 10$. Then $2^{n+1} = 2 \cdot 2^{n} > 2n^{3}$, and $2n^{3} \ge (n+1)^{3}$ because $(n+1)^{3} = n^{3}\left(1 + \tfrac1n\right)^{3} \le n^{3}(1.1)^{3} = 1.331\,n^{3} < 2n^{3}$ for $n \ge 10$. Hence $2^{n+1} > (n+1)^{3}$, and by induction the inequality holds for every $n \ge 10$.'
+      solution_sketch: 'Test small values to locate the threshold (it fails at $9$, holds at $10$), then induct, bounding $(1 + 1/n)^3$ below $2$ for $n \ge 10$.'
+    anki_seeds:
+      - front: 'The two parts of a proof by induction?'
+        back: 'Base case (verify $P(n_0)$) and inductive step (assume $P(n)$, prove $P(n + 1)$).'
+        type: basic
+      - front: 'The flaw in the "all horses are the same color" induction?'
+        back: 'The inductive step needs the two overlapping groups to intersect, which fails going from $n = 1$ to $n = 2$.'
+        type: basic
+
+  - id: strong-induction
+    name: "Strong Induction"
+    core: true
+    difficulty: 0.65
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 240
+    prerequisites:
+      - id: mathematical-induction
+        weight: 0.7
+        key: true
+      - id: quantifiers
+        weight: 0.2
+      - id: prime-composite-numbers
+        weight: 0.2
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Recurrences needing earlier cases"
+        key_prerequisites: [mathematical-induction]
+        exemplars:
+          - problem: 'Let $a_1 = 1$, $a_2 = 5$, and $a_n = 5a_{n-1} - 6a_{n-2}$ for $n \ge 3$. Prove $a_n = 3^n - 2^n$ for all $n \ge 1$.'
+            answer: 'Two base cases $n = 1, 2$; step uses both $a_{n-1}$ and $a_{n-2}$.'
+            solution_sketch: 'Base: $a_1 = 3 - 2 = 1$ and $a_2 = 9 - 4 = 5$. Step: for $n \ge 3$, assume the formula for all $k < n$. Then $a_n = 5(3^{n-1} - 2^{n-1}) - 6(3^{n-2} - 2^{n-2}) = 3^{n-2}(15 - 6) - 2^{n-2}(10 - 6) = 3^n - 2^n$. $\square$'
+          - problem: 'Let $a_1 = 2$, $a_2 = 4$, and $a_n = 2a_{n-1} - a_{n-2}$ for $n \ge 3$. Prove $a_n = 2n$ for all $n \ge 1$.'
+            answer: 'Two base cases; step uses $a_{n-1}, a_{n-2}$.'
+            solution_sketch: 'Base: $a_1 = 2$, $a_2 = 4$. Step: for $n \ge 3$, assume $a_k = 2k$ for $k < n$. Then $a_n = 2a_{n-1} - a_{n-2} = 2 \cdot 2(n-1) - 2(n-2) = 4n - 4 - 2n + 4 = 2n$. $\square$'
+        constraints: "use two base cases; invoke the hypothesis at $n-1$ and $n-2$"
+      - id: kp2
+        name: "Existence of prime factorizations"
+        key_prerequisites: [mathematical-induction]
+        exemplars:
+          - problem: 'Prove: every integer $n \ge 2$ is a product of one or more primes.'
+            answer: 'If $n$ is prime, done; else $n = ab$ with $2 \le a, b < n$, apply the hypothesis to $a, b$.'
+            solution_sketch: 'Base: $2$ is prime. Step: assume every integer in $[2, n)$ is a product of primes. If $n$ is prime, done. Otherwise $n = ab$ with $2 \le a, b < n$; by the strong hypothesis $a$ and $b$ are products of primes, so $n = ab$ is too. $\square$'
+          - problem: 'Prove: every integer $n \ge 2$ has a prime divisor.'
+            answer: 'If $n$ is prime, itself; else a proper factor $a < n$ has a prime divisor by the hypothesis.'
+            solution_sketch: 'Base: $2$ is prime and divides itself. Step: assume every integer in $[2, n)$ has a prime divisor. If $n$ is prime, done. Otherwise $n = ab$ with $2 \le a < n$; by hypothesis $a$ has a prime divisor $p$, and $p \mid a \mid n$. $\square$'
+        constraints: "split the number and apply the hypothesis to both smaller factors"
+      - id: kp3
+        name: "Bounding recursive sequences"
+        key_prerequisites: [mathematical-induction]
+        exemplars:
+          - problem: 'Let $f_1 = f_2 = 1$ and $f_n = f_{n-1} + f_{n-2}$. Prove $f_n < 2^n$ for all $n \ge 1$.'
+            answer: 'Base $n = 1, 2$; step: $f_n = f_{n-1} + f_{n-2} < 2^{n-1} + 2^{n-2} < 2^n$.'
+            solution_sketch: 'Base: $f_1 = 1 < 2$ and $f_2 = 1 < 4$. Step: for $n \ge 3$ assume $f_k < 2^k$ for all $k < n$. Then $f_n = f_{n-1} + f_{n-2} < 2^{n-1} + 2^{n-2} = 3 \cdot 2^{n-2} < 4 \cdot 2^{n-2} = 2^n$. $\square$'
+          - problem: 'A sequence has $b_1 = 3$, $b_2 = 5$, and $b_n = 3b_{n-1} - 2b_{n-2}$ for $n \ge 3$. Prove $b_n = 2^n + 1$ for all $n \ge 1$.'
+            answer: 'Two base cases; step uses the recurrence.'
+            solution_sketch: 'Base: $b_1 = 3 = 2^1 + 1$, $b_2 = 5 = 2^2 + 1$. Step: for $n \ge 3$ assume the formula for all $k < n$. Then $b_n = 3(2^{n-1} + 1) - 2(2^{n-2} + 1) = 3 \cdot 2^{n-1} - 2^{n-1} + 1 = 2^n + 1$. $\square$'
+        constraints: "bound each recursive term using the strong hypothesis"
+    diagnostic_exemplar:
+      problem: 'Prove: every postage amount of $n \ge 12$ cents can be made using only $4$-cent and $5$-cent stamps.'
+      answer: 'Base cases $12, 13, 14, 15$; step reduces $n$ to $n - 4 \ge 12$ plus one $4$-cent stamp.'
+      solution_sketch: 'Base: $12 = 4+4+4$, $13 = 4+4+5$, $14 = 4+5+5$, $15 = 5+5+5$. Step: for $n \ge 16$, assume every value in $[12, n)$ is makeable; since $n - 4 \ge 12$ is makeable, add one $4$-cent stamp to form $n$. $\square$'
+    anki_seeds:
+      - front: 'Strong induction hypothesis vs. ordinary induction?'
+        back: 'Strong induction assumes $P(k)$ for every $k$ from the base up to $n$, not just $P(n)$.'
+        type: basic
+      - front: 'When should you use strong induction?'
+        back: 'When the next case depends on earlier cases beyond the immediate predecessor (recurrences, prime factorization).'
+        type: basic
+
+  - id: wop
+    name: "The Well-Ordering Principle"
+    core: false                # supplemental: alternative formulation of induction; nothing builds on it
+    difficulty: 0.68
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 240
+    prerequisites:
+      - id: strong-induction
+        weight: 0.4
+        key: true
+      - id: proof-by-contradiction
+        weight: 0.4
+        key: true
+      - id: mathematical-induction
+        weight: 0.3
+      - id: quantifiers
+        weight: 0.0
+    knowledge_points:
+      - id: kp1
+        name: "The minimal-counterexample method"
+        key_prerequisites: [proof-by-contradiction]
+        exemplars:
+          - problem: 'Using the well-ordering principle, prove every integer $n \ge 2$ has a prime divisor.'
+            answer: 'The least element of the set of divisors $\ge 2$ is prime.'
+            solution_sketch: 'Let $S = \{d \in \mathbb{Z} : d \ge 2 \text{ and } d \mid n\}$. It is nonempty ($n \in S$), so by well-ordering it has a least element $p$. If $p$ were composite, a divisor $d$ with $2 \le d < p$ would divide $n$, contradicting minimality. So $p$ is prime. $\square$'
+          - problem: 'Using well-ordering, prove that $1 + 2 + \cdots + n = \tfrac{n(n+1)}{2}$ for every $n \ge 1$ (minimal-counterexample form).'
+            answer: 'A least counterexample $m$ would force the formula to hold at $m$ too.'
+            solution_sketch: 'Suppose the formula fails somewhere; let $m$ be the least such $n$ (well-ordering). Since it holds at $n = 1$, $m \ge 2$, so it holds at $m - 1$: $1 + \cdots + (m-1) = \frac{(m-1)m}{2}$. Adding $m$ gives $\frac{(m-1)m}{2} + m = \frac{m(m+1)}{2}$, so it holds at $m$ — contradiction. $\square$'
+        constraints: "form a nonempty set of naturals and use its least element"
+      - id: kp2
+        name: "Existence via least elements"
+        key_prerequisites: [proof-by-contradiction]
+        exemplars:
+          - problem: 'Prove the existence part of the division algorithm: for integers $a$ and $b > 0$, there are $q, r$ with $a = bq + r$ and $0 \le r < b$.'
+            answer: 'The least nonnegative $r = a - bq$ satisfies $0 \le r < b$.'
+            solution_sketch: 'Let $S = \{a - bq : q \in \mathbb{Z},\ a - bq \ge 0\}$, a nonempty subset of $\mathbb{N}$. By well-ordering it has a least element $r = a - bq$. If $r \ge b$, then $r - b = a - b(q + 1) \ge 0$ lies in $S$ and is smaller, a contradiction. So $0 \le r < b$. $\square$'
+          - problem: 'Prove: every integer $n \ge 2$ is a product of primes, using the minimal-counterexample method.'
+            answer: 'A least non-factorable $m$ splits as $ab$ with $a, b < m$ both factorable.'
+            solution_sketch: 'Suppose some integer $\ge 2$ is not a product of primes; let $m$ be the least (well-ordering). $m$ is not prime (else it is its own product), so $m = ab$ with $2 \le a, b < m$; by minimality $a$ and $b$ are products of primes, so $m = ab$ is too — contradiction. $\square$'
+        constraints: "choose the set so its least element gives the desired object"
+      - id: kp3
+        name: "Well-ordering and induction"
+        key_prerequisites: [mathematical-induction]
+        exemplars:
+          - problem: 'Prove that the well-ordering principle implies mathematical induction.'
+            answer: 'A least counterexample would contradict the base case or the inductive step.'
+            solution_sketch: 'Assume $P(1)$ and $P(n) \to P(n+1)$ but $P$ fails somewhere. Let $C = \{n \ge 1 : \neg P(n)\}$, nonempty, so it has a least element $m$ by well-ordering. Since $P(1)$ holds, $m > 1$, so $P(m - 1)$ holds by minimality; the step gives $P(m)$, a contradiction. Hence $P(n)$ holds for all $n$. $\square$'
+          - problem: 'Prove that mathematical induction implies the well-ordering principle: any nonempty $S \subseteq \mathbb{N}$ has a least element.'
+            answer: 'If $S$ had no least element, induction shows its complement is all of $\mathbb{N}$.'
+            solution_sketch: 'Suppose $S \subseteq \mathbb{N}$ has no least element. Let $P(n)$ be "no $k \le n$ lies in $S$". $P(0)$ holds (else $0$ is least in $S$). If $P(n)$ holds and $n + 1 \in S$, then $n+1$ would be least, contradiction; so $P(n+1)$ holds. By induction $P(n)$ for all $n$, so $S = \varnothing$. Contrapositively, a nonempty $S$ has a least element. $\square$'
+        constraints: "connect the two principles via a least failure point"
+    diagnostic_exemplar:
+      problem: 'Use the well-ordering principle to prove that every nonempty set $S$ of integers that is bounded above has a greatest element.'
+      answer: 'Let $M$ be an upper bound for $S$, so $s \le M$ for every $s \in S$, and put $T = \{M - s : s \in S\}$. Every element of $T$ is a nonnegative integer, and $T$ is nonempty because $S$ is, so by the well-ordering principle $T$ has a least element, say $M - s_0$ with $s_0 \in S$. Then for every $s \in S$ we have $M - s_0 \le M - s$, i.e. $s \le s_0$. Hence $s_0$ is an element of $S$ greater than or equal to every element of $S$ — a greatest element.'
+      solution_sketch: 'Reflect the set about the upper bound to land inside the nonnegative integers, apply well-ordering there, and translate the least element back.'
+    anki_seeds:
+      - front: 'The well-ordering principle?'
+        back: 'Every nonempty set of natural numbers (or of integers bounded below) has a least element.'
+        type: basic
+      - front: 'The minimal-counterexample method?'
+        back: 'Take the least $n$ for which the claim fails (well-ordering), then derive a contradiction from a smaller failure.'
+        type: basic

@@ -1,0 +1,1204 @@
+unit: applications-differentiation
+course: calculus-1
+module: "Applications of Differentiation"
+topics:
+  - id: motion-along-a-line
+    name: Motion Along a Line
+    core: false                # cone {net-change-total-distance, parametric-motion} now supplemental
+    difficulty: 0.6
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 180
+    prerequisites:
+      - id: derivative-power-rule
+        weight: 0.7
+        key: true
+      - id: higher-order-derivatives
+        weight: 0.6
+        key: true
+      - id: average-instantaneous-rate
+        weight: 0.4
+      - id: quadratic-equations-factoring
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: Velocity and acceleration from position
+        key_prerequisites: [derivative-power-rule, higher-order-derivatives]
+        exemplars:
+          - problem: 'A particle has position $s(t) = t^3 - 6t^2 + 9t$ (meters, seconds). Find the velocity $v(t)$ and acceleration $a(t)$.'
+            answer: "v(t) = 3t^2 - 12t + 9; a(t) = 6t - 12"
+            solution_sketch: '$v = s''$, $a = v'' = s''''$.'
+          - problem: 'For $s(t) = t^2 - 4t + 3$, find $v(2)$.'
+            answer: "0"
+            solution_sketch: '$v(t) = 2t - 4$; $v(2) = 0$.'
+        constraints: "polynomial position functions with integer coefficients"
+      - id: kp2
+        name: At rest and direction of motion
+        key_prerequisites: [derivative-power-rule, quadratic-equations-factoring]
+        exemplars:
+          - problem: 'For $s(t) = t^3 - 6t^2 + 9t$, when is the particle at rest?'
+            answer: "t = 1 and t = 3"
+            solution_sketch: '$v(t) = 3t^2 - 12t + 9 = 3(t-1)(t-3) = 0$.'
+          - problem: 'For $s(t) = t^3 - 6t^2 + 9t$, on what interval (for $t > 0$) is the particle moving left?'
+            answer: "(1, 3)"
+            solution_sketch: '$v = 3(t-1)(t-3) < 0$ exactly between the roots.'
+        constraints: "v(t) factors over the integers; at-rest times are positive integers"
+      - id: kp3
+        name: Speeding up or slowing down
+        key_prerequisites: [higher-order-derivatives, derivative-power-rule]
+        exemplars:
+          - problem: 'For $s(t) = t^3 - 6t^2 + 9t$, is the particle speeding up or slowing down at $t = 4$?'
+            answer: "speeding up (v(4) = 9 > 0 and a(4) = 12 > 0 have the same sign)"
+            solution_sketch: '$v(4) = 48 - 48 + 9 = 9$, $a(4) = 24 - 12 = 12$; same sign means speeding up.'
+          - problem: 'For $s(t) = t^3 - 6t^2 + 9t$, is the particle speeding up or slowing down at $t = 0$?'
+            answer: "slowing down (v(0) = 9 > 0 but a(0) = -12 < 0)"
+        constraints: "test times where neither v nor a is zero"
+    diagnostic_exemplar:
+      problem: 'A particle has position $s(t) = t^3 - 9t^2 + 24t$ (meters, seconds). Is it speeding up or slowing down at $t = 1$?'
+      answer: "slowing down — v(1) = 9 > 0 but a(1) = -12 < 0 (opposite signs)"
+      solution_sketch: '$v(t) = 3t^2 - 18t + 24$, $v(1) = 9$; $a(t) = 6t - 18$, $a(1) = -12$.'
+    anki_seeds:
+      - front: "Position s(t): velocity = ? and acceleration = ?"
+        back: "v(t) = s'(t); a(t) = v'(t) = s''(t)"
+        type: basic
+      - front: "A particle speeds up when v and a have ___ signs and slows down when they have ___ signs."
+        back: "the same; opposite"
+        type: basic
+      - front: "Speed is related to velocity by..."
+        back: "speed = |v(t)| — always nonnegative"
+        type: basic
+
+  - id: related-rates-setup
+    name: Related Rates - Circles, Spheres, and Tanks
+    core: false                # feeds only related-rates; same applications branch
+    difficulty: 0.6
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 210
+    prerequisites:
+      - id: implicit-differentiation
+        weight: 0.8
+        key: true
+      - id: chain-rule
+        weight: 0.5
+        key: true
+      - id: circle-area-circumference
+        weight: 0.4
+        key: true
+      - id: volume-prisms-cylinders
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Growing circles
+        key_prerequisites: [implicit-differentiation, circle-area-circumference]
+        exemplars:
+          - problem: 'The radius of a circle grows at $2$ cm/s. How fast is the area $A = \pi r^2$ growing when $r = 5$ cm?'
+            answer: "20π cm²/s"
+            solution_sketch: '$\frac{dA}{dt} = 2\pi r \frac{dr}{dt} = 2\pi \cdot 5 \cdot 2 = 20\pi$.'
+          - problem: 'The radius of a circle grows at $3$ cm/s. How fast is the circumference $C = 2\pi r$ growing?'
+            answer: "6π cm/s"
+            solution_sketch: '$\frac{dC}{dt} = 2\pi \frac{dr}{dt} = 6\pi$ — independent of $r$.'
+        constraints: "give the geometric formula in the problem; integer rates and radii; answers as exact multiples of π with units"
+      - id: kp2
+        name: Growing spheres
+        key_prerequisites: [implicit-differentiation, chain-rule]
+        exemplars:
+          - problem: 'A spherical balloon''s radius grows at $1$ cm/s. Using $V = \frac{4}{3}\pi r^3$, how fast is the volume growing when $r = 3$ cm?'
+            answer: "36π cm³/s"
+            solution_sketch: '$\frac{dV}{dt} = 4\pi r^2 \frac{dr}{dt} = 4\pi \cdot 9 \cdot 1 = 36\pi$.'
+          - problem: 'A sphere''s radius grows at $2$ cm/s. Using the surface area $S = 4\pi r^2$, how fast is $S$ growing when $r = 5$ cm?'
+            answer: "80π cm²/s"
+            solution_sketch: '$\frac{dS}{dt} = 8\pi r \frac{dr}{dt} = 8\pi \cdot 5 \cdot 2 = 80\pi$.'
+        constraints: "state the volume/surface formula; differentiate before substituting values"
+      - id: kp3
+        name: Filling tanks with constant cross-section
+        key_prerequisites: [implicit-differentiation, volume-prisms-cylinders]
+        exemplars:
+          - problem: 'Water pours into a cylindrical tank of radius $3$ m at $18$ m³/min. Using $V = \pi r^2 h$, how fast is the water level rising?'
+            answer: "2/π m/min"
+            solution_sketch: '$V = 9\pi h$, so $\frac{dV}{dt} = 9\pi \frac{dh}{dt}$ and $\frac{dh}{dt} = \frac{18}{9\pi} = \frac{2}{\pi}$.'
+          - problem: 'A rectangular pool with base $4$ m by $5$ m fills at $10$ m³/h. How fast does the depth rise?'
+            answer: "1/2 m/h"
+            solution_sketch: '$V = 20h$, so $\frac{dh}{dt} = \frac{10}{20} = \frac{1}{2}$.'
+        constraints: "constant cross-section (cylinder or prism) so dV/dt = (base area)·dh/dt; exact answers"
+    diagnostic_exemplar:
+      problem: 'Water pours into a cylindrical tank of radius $2$ m at $12$ m³/min. Using $V = \pi r^2 h$, how fast is the water level rising?'
+      answer: "3/π m/min"
+      solution_sketch: '$V = 4\pi h$, so $\frac{dV}{dt} = 4\pi \frac{dh}{dt} = 12$ gives $\frac{dh}{dt} = \frac{3}{\pi}$.'
+    anki_seeds:
+      - front: "Related-rates procedure in four steps:"
+        back: "write an equation relating the quantities; differentiate both sides in t; substitute known values and rates; solve for the unknown rate"
+        type: basic
+      - front: "In related rates, when do you substitute the specific values (like r = 5)?"
+        back: "Only AFTER differentiating — substituting first kills the variable's rate"
+        type: basic
+
+  - id: related-rates
+    name: Related Rates
+    core: false                # applied word-problem genre
+    difficulty: 0.7
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 270
+    prerequisites:
+      - id: related-rates-setup
+        weight: 0.8
+        key: true
+      - id: pythagorean-theorem
+        weight: 0.5
+        key: true
+      - id: similar-triangles
+        weight: 0.4
+        key: true
+      - id: implicit-differentiation
+        weight: 0.5
+      - id: product-quotient-rules
+        weight: 0.3
+      - id: volume-pyramids-cones-spheres
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Sliding ladders and separating travelers (Pythagorean setups)
+        key_prerequisites: [related-rates-setup, pythagorean-theorem]
+        exemplars:
+          - problem: 'A $5$ m ladder leans against a wall. Its base slides away at $2$ m/s. How fast is the top sliding down when the base is $3$ m from the wall?'
+            answer: "3/2 m/s downward (dy/dt = -3/2)"
+            solution_sketch: '$x^2 + y^2 = 25$ with $y = 4$; $2x\frac{dx}{dt} + 2y\frac{dy}{dt} = 0$ gives $\frac{dy}{dt} = -\frac{3 \cdot 2}{4} = -\frac{3}{2}$.'
+          - problem: 'One car drives north at $60$ km/h, another east at $80$ km/h, both from the same point. How fast is the distance between them growing when the northbound car is $30$ km and the eastbound car $40$ km from the start?'
+            answer: "100 km/h"
+            solution_sketch: '$s^2 = x^2 + y^2$ with $s = 50$; $s\frac{ds}{dt} = x\frac{dx}{dt} + y\frac{dy}{dt} = 40 \cdot 80 + 30 \cdot 60 = 5000$, so $\frac{ds}{dt} = 100$.'
+        constraints: "Pythagorean triples so all distances are integers; rates are integers or simple fractions"
+      - id: kp2
+        name: Conical tanks (similar-triangle substitution)
+        key_prerequisites: [related-rates-setup, similar-triangles, volume-pyramids-cones-spheres]
+        exemplars:
+          - problem: 'Water pours at $2$ m³/min into an inverted cone of height $10$ m and top radius $5$ m (so $r = h/2$ at depth $h$). How fast is the depth rising when $h = 4$ m?'
+            answer: "1/(2π) m/min"
+            solution_sketch: '$V = \frac{\pi}{3}\left(\frac{h}{2}\right)^2 h = \frac{\pi h^3}{12}$; $\frac{dV}{dt} = \frac{\pi h^2}{4}\frac{dh}{dt}$, so $\frac{dh}{dt} = \frac{2}{4\pi} = \frac{1}{2\pi}$.'
+          - problem: 'An inverted conical tank has height $6$ m and top radius $3$ m. Water enters at $9$ m³/min. How fast is the depth rising when $h = 2$ m?'
+            answer: "9/π m/min"
+            solution_sketch: '$r = h/2$ gives $V = \frac{\pi h^3}{12}$; $\frac{dV}{dt} = \frac{\pi h^2}{4}\frac{dh}{dt} = \pi \frac{dh}{dt}$ at $h = 2$.'
+        constraints: "cone dimensions give a simple ratio r = kh; eliminate r via similar triangles before differentiating"
+      - id: kp3
+        name: Shadows and multi-quantity setups
+        key_prerequisites: [related-rates-setup, similar-triangles, product-quotient-rules]
+        exemplars:
+          - problem: 'A $2$ m person walks away from a $5$ m lamppost at $2$ m/s. How fast is the tip of the shadow moving?'
+            answer: "10/3 m/s"
+            solution_sketch: 'Similar triangles: $\frac{s}{2} = \frac{x + s}{5}$ gives $s = \frac{2}{3}x$; tip $= x + s = \frac{5}{3}x$, so tip speed $= \frac{5}{3} \cdot 2 = \frac{10}{3}$.'
+          - problem: 'A rectangle''s length grows at $3$ cm/s while its width shrinks at $2$ cm/s. How fast is the area changing when the length is $10$ cm and the width $6$ cm?'
+            answer: "-2 cm²/s (shrinking at 2 cm²/s)"
+            solution_sketch: 'Product rule: $\frac{dA}{dt} = \frac{dl}{dt}w + l\frac{dw}{dt} = 3 \cdot 6 + 10 \cdot (-2) = -2$.'
+        constraints: "two changing quantities; similar-triangle or product-rule relationships; integer data"
+    diagnostic_exemplar:
+      problem: 'Water pours at $3$ m³/min into an inverted cone of height $8$ m and top radius $4$ m (so $r = h/2$ at depth $h$). How fast is the depth rising when $h = 4$ m?'
+      answer: "3/(4π) m/min"
+      solution_sketch: '$V = \frac{1}{3}\pi (h/2)^2 h = \frac{\pi h^3}{12}$; $\frac{dV}{dt} = \frac{\pi h^2}{4}\frac{dh}{dt}$; at $h = 4$: $3 = 4\pi \frac{dh}{dt}$.'
+    anki_seeds:
+      - front: "In a conical-tank problem, how do you get V in terms of h alone?"
+        back: "use similar triangles (r = kh from the tank's dimensions) to eliminate r before differentiating"
+        type: basic
+      - front: "Ladder problem: relate x (base) and y (top) by..."
+        back: "x² + y² = L² (L the ladder length, a constant)"
+        type: basic
+
+  - id: linearization
+    name: Linearization and Differentials
+    core: true
+    difficulty: 0.6
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 150
+    prerequisites:
+      - id: derivative-power-rule
+        weight: 0.7
+        key: true
+      - id: point-slope-standard-form
+        weight: 0.5
+        key: true
+      - id: derivative-definition
+        weight: 0.4
+      - id: chain-rule
+        weight: 0.3
+      - id: derivatives-trig
+        weight: 0.3
+      - id: derivatives-exp-log
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Build the linearization L(x) at a point
+        key_prerequisites: [derivative-power-rule, point-slope-standard-form]
+        exemplars:
+          - problem: 'Find the linearization of $f(x) = \sqrt{x}$ at $a = 4$. Give the expression for $L(x)$.'
+            answer: "2 + (x - 4)/4"
+            solution_sketch: '$f(4) = 2$, $f''(x) = \frac{1}{2\sqrt{x}}$ so $f''(4) = \frac{1}{4}$; $L(x) = 2 + \frac{1}{4}(x - 4)$.'
+          - problem: 'Find the linearization of $f(x) = x^2$ at $a = 3$. Give the expression for $L(x)$.'
+            answer: "9 + 6(x - 3)"
+            solution_sketch: '$f(3) = 9$ and $f''(3) = 6$, so $L(x) = 9 + 6(x - 3)$, i.e. $6x - 9$.'
+        constraints: "base point where f and f' are exact and simple (perfect squares/cubes); the answer is the expression for L(x)"
+      - id: kp2
+        name: Approximate values with the linearization
+        key_prerequisites: [derivative-power-rule]
+        exemplars:
+          - problem: 'Use the linearization of $\sqrt{x}$ at $4$ to approximate $\sqrt{4.1}$.'
+            answer: "2.025"
+            solution_sketch: '$L(4.1) = 2 + \frac{0.1}{4} = 2.025$.'
+          - problem: 'Use the linearization of $x^5$ at $1$ to approximate $(1.02)^5$.'
+            answer: "1.1"
+            solution_sketch: '$L(x) = 1 + 5(x - 1)$, so $L(1.02) = 1 + 5(0.02) = 1.1$.'
+          - problem: 'Use the linearization of $\sqrt[3]{x}$ at $8$ to approximate $\sqrt[3]{8.12}$.'
+            answer: "2.01"
+            solution_sketch: '$f''(x) = \frac{1}{3}x^{-2/3}$, $f''(8) = \frac{1}{12}$; $2 + \frac{0.12}{12} = 2.01$.'
+        constraints: "input a small offset from the base point; the decimal answer terminates"
+      - id: kp3
+        name: Standard small-input approximations
+        key_prerequisites: [derivatives-trig, derivatives-exp-log]
+        exemplars:
+          - problem: 'Find the linearization of $\sin x$ at $a = 0$ and use it to approximate $\sin(0.1)$. (Give the approximation.)'
+            answer: "0.1"
+            solution_sketch: '$\sin 0 = 0$, $\cos 0 = 1$, so $L(x) = x$ and $L(0.1) = 0.1$.'
+          - problem: 'Find the linearization of $\ln x$ at $a = 1$ and use it to approximate $\ln(1.05)$. (Give the approximation.)'
+            answer: "0.05"
+            solution_sketch: '$\ln 1 = 0$ and $\frac{1}{x}$ at $1$ is $1$, so $L(x) = x - 1$ and $L(1.05) = 0.05$.'
+          - problem: 'Find the linearization of $e^x$ at $a = 0$ and use it to approximate $e^{0.03}$. (Give the approximation.)'
+            answer: "1.03"
+            solution_sketch: '$e^0 = 1$ and the derivative at $0$ is $1$, so $L(x) = 1 + x$ and $L(0.03) = 1.03$.'
+        constraints: "base points 0 or 1 where the function and derivative are exact; the answer is the numeric approximation"
+    diagnostic_exemplar:
+      problem: 'Find the linearization of $f(x) = \sqrt[3]{x}$ at $a = 8$ and use it to approximate $\sqrt[3]{8.24}$. (Give the approximation.)'
+      answer: '2.02'
+      solution_sketch: '$f(8) = 2$ and $f''(x) = \frac{1}{3}x^{-2/3}$ gives $f''(8) = \frac{1}{12}$, so $L(x) = 2 + \frac{x-8}{12}$ and $L(8.24) = 2 + \frac{0.24}{12} = 2.02$.'
+    anki_seeds:
+      - front: "The linearization of f at a: L(x) = ?"
+        back: "f(a) + f'(a)(x - a) — the tangent line used as an approximation"
+        type: basic
+      - front: "Near 0: sin x ≈ ?, e^x ≈ ?, ln(1 + x) ≈ ?"
+        back: "x; 1 + x; x"
+        type: basic
+
+  - id: differentials-error-propagation
+    name: Differentials and Error Propagation
+    core: false                # terminal application of the differential
+    difficulty: 0.6
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 150
+    prerequisites:
+      - id: linearization
+        weight: 0.8
+        key: true
+      - id: derivative-power-rule
+        weight: 0.5
+        key: true
+      - id: circle-area-circumference
+        weight: 0.3
+      - id: percentages
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Compute differentials
+        key_prerequisites: [linearization, derivative-power-rule]
+        exemplars:
+          - problem: 'For $y = x^3$, write $dy$ in terms of $x$ and $dx$ (give the expression that $dy$ equals).'
+            answer: "3x^2 dx"
+          - problem: 'For $y = x^3$, compute $dy$ when $x = 2$ and $dx = 0.1$.'
+            answer: "1.2"
+            solution_sketch: '$dy = 3 \cdot 4 \cdot 0.1 = 1.2$.'
+        constraints: "polynomial or power functions; dx one decimal place"
+      - id: kp2
+        name: Estimate propagated error
+        key_prerequisites: [linearization, circle-area-circumference]
+        exemplars:
+          - problem: 'A circle''s radius is measured as $10$ cm with possible error $dr = 0.1$ cm. Use differentials to estimate the possible error in the area $A = \pi r^2$.'
+            answer: "2π cm^2"
+            solution_sketch: '$dA = 2\pi r\,dr = 2\pi \cdot 10 \cdot 0.1 = 2\pi$.'
+          - problem: 'A cube''s side is measured as $3$ m with possible error $0.02$ m. Estimate the possible error in the volume $V = x^3$.'
+            answer: "0.54 m^3"
+            solution_sketch: '$dV = 3x^2\,dx = 27 \cdot 0.02 = 0.54$.'
+        constraints: "state the geometric formula; measurement error at most a few percent"
+      - id: kp3
+        name: Relative and percentage error
+        key_prerequisites: [linearization, percentages]
+        exemplars:
+          - problem: 'A sphere''s radius is measured with a $1\%$ error. Using $V = \frac{4}{3}\pi r^3$, estimate the resulting percentage error in the volume. Give just the number.'
+            answer: "3"
+            solution_sketch: '$\frac{dV}{V} = \frac{4\pi r^2\,dr}{\frac{4}{3}\pi r^3} = 3\frac{dr}{r}$, so $3 \cdot 1\% = 3\%$.'
+          - problem: 'A square''s side is measured with a $0.5\%$ error. Estimate the percentage error in its area. Give just the number.'
+            answer: "1"
+            solution_sketch: '$\frac{dA}{A} = 2\frac{dx}{x}$.'
+        constraints: "power functions so relative error scales by the exponent; answers are the bare percent number"
+    diagnostic_exemplar:
+      problem: 'A sphere''s radius is measured with a $2\%$ error. Using $V = \frac{4}{3}\pi r^3$, estimate the resulting percentage error in the volume. Give just the number.'
+      answer: "6"
+      solution_sketch: '$\frac{dV}{V} = 3\frac{dr}{r} = 3 \cdot 2\% = 6\%$.'
+    anki_seeds:
+      - front: "The differential of y = f(x) is dy = ?"
+        back: "f'(x) dx"
+        type: basic
+      - front: "For y = x^n, the relative error dy/y equals ___ times dx/x."
+        back: "n — a power magnifies percentage error by its exponent"
+        type: basic
+
+  - id: newtons-method
+    name: 'Newton''s Method'
+    core: false                # named algorithm the curriculum arrives at and never reuses
+    difficulty: 0.65
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 180
+    prerequisites:
+      - id: linearization
+        weight: 0.7
+        key: true
+      - id: derivative-power-rule
+        weight: 0.5
+        key: true
+      - id: evaluating-functions
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: One Newton iteration
+        key_prerequisites: [linearization, derivative-power-rule]
+        exemplars:
+          - problem: 'Apply one step of Newton''s method to $f(x) = x^2 - 5$ starting at $x_0 = 2$.'
+            answer: "x₁ = 9/4 = 2.25"
+            solution_sketch: '$x_1 = x_0 - \frac{f(x_0)}{f''(x_0)} = 2 - \frac{-1}{4} = \frac{9}{4}$.'
+          - problem: 'Apply one step of Newton''s method to $f(x) = x^3 - 2x - 5$ starting at $x_0 = 2$.'
+            answer: "x₁ = 2.1"
+            solution_sketch: '$f(2) = -1$, $f''(2) = 10$; $x_1 = 2 + \frac{1}{10} = 2.1$.'
+        constraints: "f(x₀) and f'(x₀) are small integers; x₁ is a simple fraction or decimal"
+      - id: kp2
+        name: Iterate twice
+        key_prerequisites: [linearization, evaluating-functions]
+        exemplars:
+          - problem: 'Apply two steps of Newton''s method to $f(x) = x^2 - 2$ starting at $x_0 = 1$. Give $x_1$ and $x_2$ exactly.'
+            answer: "x₁ = 3/2; x₂ = 17/12"
+            solution_sketch: '$x_1 = 1 - \frac{-1}{2} = \frac{3}{2}$; $x_2 = \frac{3}{2} - \frac{1/4}{3} = \frac{3}{2} - \frac{1}{12} = \frac{17}{12}$.'
+          - problem: 'For $f(x) = x^2 - 5$ with $x_1 = 9/4$, is $x_1$ closer to $\sqrt{5}$ than $x_0 = 2$ was? ($\sqrt{5} \approx 2.2361$)'
+            answer: "yes — |2.25 - 2.2361| ≈ 0.014 vs |2 - 2.2361| ≈ 0.236"
+        constraints: "keep arithmetic exact (fractions); two iterations at most"
+      - id: kp3
+        name: Geometric meaning and failure modes
+        key_prerequisites: [linearization]
+        exemplars:
+          - problem: 'Geometrically, Newton''s method replaces the curve $y = f(x)$ at $x_n$ by what, and takes $x_{n+1}$ to be what?'
+            answer: "the tangent line at (xₙ, f(xₙ)); its x-intercept"
+          - problem: 'Why does Newton''s method fail for $f(x) = x^2 - 5$ if you start at $x_0 = 0$?'
+            answer: "f'(0) = 0 — the tangent is horizontal and never crosses the x-axis"
+        constraints: "conceptual questions; failure cases where f'(xₙ) = 0"
+    diagnostic_exemplar:
+      problem: 'Apply two steps of Newton''s method to $f(x) = x^2 - 3$ starting at $x_0 = 2$. Give $x_1$ and $x_2$ exactly.'
+      answer: 'x₁ = 7/4; x₂ = 97/56'
+      solution_sketch: '$x_1 = 2 - \frac{1}{4} = \frac{7}{4}$; then $f(7/4) = \frac{1}{16}$ and $f''(7/4) = \frac{7}{2}$, so $x_2 = \frac{7}{4} - \frac{1/16}{7/2} = \frac{7}{4} - \frac{1}{56} = \frac{97}{56}$.'
+    anki_seeds:
+      - front: "Newton's method iteration: x_{n+1} = ?"
+        back: "xₙ - f(xₙ)/f'(xₙ)"
+        type: basic
+      - front: "Newton's method breaks down at xₙ when..."
+        back: "f'(xₙ) = 0 (horizontal tangent — no x-intercept)"
+        type: basic
+
+  - id: critical-points-extrema
+    name: Critical Points and Extrema
+    core: true
+    difficulty: 0.6
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 180
+    prerequisites:
+      - id: derivative-power-rule
+        weight: 0.8
+        key: true
+      - id: quadratic-equations-factoring
+        weight: 0.5
+        key: true
+      - id: continuity
+        weight: 0.3
+      - id: domain-range
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Find critical points where f' = 0
+        key_prerequisites: [derivative-power-rule, quadratic-equations-factoring]
+        exemplars:
+          - problem: 'Find the critical points of $f(x) = x^3 - 3x$.'
+            answer: "x = -1 and x = 1"
+            solution_sketch: '$f''(x) = 3x^2 - 3 = 3(x-1)(x+1) = 0$.'
+          - problem: 'Find the critical points of $f(x) = x^3 - 6x^2 + 9x$.'
+            answer: "x = 1 and x = 3"
+            solution_sketch: '$f''(x) = 3x^2 - 12x + 9 = 3(x-1)(x-3)$.'
+          - problem: 'Find the critical point of $f(x) = x^2 - 4x + 1$.'
+            answer: "x = 2"
+        constraints: "cubics or quadratics whose derivative factors over the integers"
+      - id: kp2
+        name: Critical points where f' is undefined; domain care
+        key_prerequisites: [derivative-power-rule, domain-range]
+        exemplars:
+          - problem: 'Find the critical point of $f(x) = x^{2/3}$.'
+            answer: "x = 0 (f' does not exist there)"
+            solution_sketch: '$f''(x) = \frac{2}{3}x^{-1/3}$ is never $0$ but is undefined at $x = 0$, which is in the domain of $f$.'
+          - problem: 'Find the critical points of $f(x) = x + \frac{4}{x}$.'
+            answer: "x = -2 and x = 2 (x = 0 is NOT a critical point — it is not in the domain)"
+            solution_sketch: '$f''(x) = 1 - \frac{4}{x^2} = 0$ at $x = \pm 2$; $0$ is excluded from the domain of $f$.'
+        constraints: "include one f'-undefined case and one domain trap; answers are small integers"
+      - id: kp3
+        name: Classify local extrema with a sign chart
+        key_prerequisites: [derivative-power-rule]
+        exemplars:
+          - problem: 'For $f(x) = x^3 - 3x$, classify each critical point as a local max or local min and give the function value there.'
+            answer: "local max f(-1) = 2; local min f(1) = -2"
+            solution_sketch: '$f''$ is $+, -, +$ on the three intervals, so $x = -1$ is a max and $x = 1$ a min; $f(-1) = 2$, $f(1) = -2$.'
+          - problem: 'For $f(x) = x^2 - 4x + 1$, is the critical point $x = 2$ a local max or min?'
+            answer: "local min (f' changes - to +)"
+        constraints: "derivative sign changes cleanly at each critical point; function values are integers"
+    diagnostic_exemplar:
+      problem: 'For $f(x) = x + \frac{9}{x}$, find the critical points and classify each as a local maximum or minimum.'
+      answer: "x = -3 is a local max (f(-3) = -6) and x = 3 is a local min (f(3) = 6); x = 0 is not a critical point (not in the domain)"
+      solution_sketch: '$f''(x) = 1 - \frac{9}{x^2} = 0$ at $x = \pm 3$; $f''''(x) = \frac{18}{x^3}$ is negative at $-3$, positive at $3$.'
+    anki_seeds:
+      - front: "A critical point of f is a point in the domain where..."
+        back: "f'(x) = 0 or f'(x) does not exist"
+        type: basic
+      - front: "Is x = 0 a critical point of f(x) = 1/x?"
+        back: "No — 0 is not in the domain of f, so it cannot be a critical point"
+        type: basic
+
+  - id: rolles-theorem
+    name: 'Rolle''s Theorem'
+    core: false                # feeds only the MVT; terminal theorem branch
+    difficulty: 0.55
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 150
+    prerequisites:
+      - id: critical-points-extrema
+        weight: 0.6
+        key: true
+      - id: continuity
+        weight: 0.5
+        key: true
+      - id: quadratic-equations-factoring
+        weight: 0.4
+      - id: derivatives-sin-cos
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Verify the hypotheses and find c
+        key_prerequisites: [continuity, critical-points-extrema]
+        exemplars:
+          - problem: 'Verify that $f(x) = x^2 - 4x + 3$ satisfies Rolle''s theorem on $[1, 3]$ and find the $c$ with $f''(c) = 0$.'
+            answer: "f(1) = f(3) = 0; c = 2"
+            solution_sketch: 'Both endpoint values are $0$; $f''(x) = 2x - 4 = 0$ at $c = 2$.'
+          - problem: 'Find the $c$ in $(0, \pi)$ where $f''(c) = 0$ for $f(x) = \sin x$ (note $\sin 0 = \sin \pi = 0$).'
+            answer: "c = π/2"
+        constraints: "equal endpoint values; unique interior zero of f'"
+      - id: kp2
+        name: Find c for cubics
+        key_prerequisites: [critical-points-extrema, quadratic-equations-factoring]
+        exemplars:
+          - problem: 'Verify that $f(x) = x^3 - 4x$ satisfies Rolle''s theorem on $[0, 2]$ and find the $c$ in $(0, 2)$ with $f''(c) = 0$.'
+            answer: "f(0) = f(2) = 0; c = 2/√3 = 2√3/3"
+            solution_sketch: '$f''(x) = 3x^2 - 4 = 0$ gives $c = \pm\frac{2}{\sqrt{3}}$; only the positive root lies in $(0, 2)$.'
+          - problem: 'Verify that $f(x) = x^3 - x$ satisfies Rolle''s theorem on $[-1, 1]$ and find all $c$ in $(-1, 1)$ with $f''(c) = 0$.'
+            answer: "f(-1) = f(1) = 0; c = ±1/√3 = ±√3/3"
+        constraints: "endpoint values equal (usually both 0); c is an exact radical inside the interval"
+      - id: kp3
+        name: When the hypotheses fail and what Rolle guarantees
+        key_prerequisites: [continuity]
+        exemplars:
+          - problem: '$f(x) = |x|$ satisfies $f(-1) = f(1)$ but has no $c$ in $(-1, 1)$ with $f''(c) = 0$. Which hypothesis of Rolle''s theorem fails?'
+            answer: "differentiability — f is not differentiable at x = 0"
+          - problem: 'A differentiable function has $f(2) = f(7) = 4$. What does Rolle''s theorem guarantee?'
+            answer: "some c in (2, 7) with f'(c) = 0"
+        constraints: "one hypothesis-failure example, one conceptual guarantee question"
+    diagnostic_exemplar:
+      problem: 'Verify that $f(x) = x^3 - 9x$ satisfies the hypotheses of Rolle''s theorem on $[0, 3]$ and find the $c$ in $(0, 3)$ with $f''(c) = 0$.'
+      answer: 'f is a polynomial (continuous and differentiable) with f(0) = f(3) = 0; c = √3'
+      solution_sketch: '$f(0) = 0$ and $f(3) = 27 - 27 = 0$; $f''(x) = 3x^2 - 9 = 0$ gives $x = \sqrt{3} \approx 1.73$, which lies in $(0, 3)$.'
+    anki_seeds:
+      - front: "Rolle's theorem: if f is continuous on [a,b], differentiable on (a,b), and f(a) = f(b), then..."
+        back: "some c in (a,b) has f'(c) = 0"
+        type: basic
+      - front: "Rolle's theorem needs THREE hypotheses:"
+        back: "continuity on [a,b]; differentiability on (a,b); equal endpoint values f(a) = f(b)"
+        type: basic
+
+  - id: mean-value-theorem
+    name: The Mean Value Theorem
+    core: false                # terminal existence theorem, like the IVT
+    difficulty: 0.6
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 180
+    prerequisites:
+      - id: rolles-theorem
+        weight: 0.7
+        key: true
+      - id: average-instantaneous-rate
+        weight: 0.5
+        key: true
+      - id: continuity
+        weight: 0.4
+      - id: derivative-definition
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: Find the c guaranteed by the MVT
+        key_prerequisites: [average-instantaneous-rate, derivative-definition]
+        exemplars:
+          - problem: 'Find the $c$ in $(1, 3)$ guaranteed by the Mean Value Theorem for $f(x) = x^2$ on $[1, 3]$.'
+            answer: "c = 2"
+            solution_sketch: 'Average slope $\frac{9 - 1}{2} = 4$; solve $f''(c) = 2c = 4$.'
+          - problem: 'Find the $c$ in $(0, 3)$ guaranteed by the MVT for $f(x) = x^3$ on $[0, 3]$.'
+            answer: "c = √3"
+            solution_sketch: 'Average slope $\frac{27}{3} = 9$; $3c^2 = 9$ gives $c = \sqrt{3}$ (the positive root lies in the interval).'
+        constraints: "polynomials; f'(c) = (f(b)-f(a))/(b-a) solvable exactly with c inside the open interval"
+      - id: kp2
+        name: Check whether the MVT applies
+        key_prerequisites: [continuity, rolles-theorem]
+        exemplars:
+          - problem: 'Does the MVT apply to $f(x) = |x|$ on $[-1, 2]$? Why or why not?'
+            answer: "no — f is not differentiable at x = 0, which is inside (-1, 2)"
+          - problem: 'Does the MVT apply to $f(x) = \frac{1}{x}$ on $[-1, 1]$? Why or why not?'
+            answer: "no — f is not continuous on [-1, 1] (undefined at x = 0)"
+        constraints: "corner or discontinuity inside the interval; name the failed hypothesis"
+      - id: kp3
+        name: Consequences of the MVT
+        key_prerequisites: [continuity, rolles-theorem]
+        exemplars:
+          - problem: 'Suppose $f(1) = 3$ and $f''(x) \leq 2$ for all $x$. What is the largest possible value of $f(5)$?'
+            answer: "11"
+            solution_sketch: 'By the MVT, $f(5) - f(1) = f''(c) \cdot 4 \leq 8$, so $f(5) \leq 11$.'
+          - problem: 'If $f''(x) = 0$ for every $x$ in an interval, what does the MVT imply about $f$ on that interval?'
+            answer: "f is constant on the interval"
+        constraints: "bounded-derivative estimates with integer data; conceptual consequence questions"
+    diagnostic_exemplar:
+      problem: 'Suppose $f$ is differentiable with $f(2) = 5$ and $f''(x) \leq 3$ for all $x$. Using the Mean Value Theorem, what is the largest possible value of $f(6)$?'
+      answer: "17"
+      solution_sketch: '$\frac{f(6) - f(2)}{6 - 2} = f''(c) \leq 3$, so $f(6) \leq 5 + 3 \cdot 4 = 17$.'
+    anki_seeds:
+      - front: "Mean Value Theorem: if f is continuous on [a,b] and differentiable on (a,b), then some c in (a,b) satisfies..."
+        back: "f'(c) = (f(b) - f(a)) / (b - a)"
+        type: basic
+      - front: "Rolle's theorem is the MVT special case where..."
+        back: "f(a) = f(b), so some c in (a,b) has f'(c) = 0"
+        type: basic
+
+  - id: closed-interval-method
+    name: Absolute Extrema and the Closed-Interval Method
+    core: true
+    difficulty: 0.6
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 180
+    prerequisites:
+      - id: critical-points-extrema
+        weight: 0.8
+        key: true
+      - id: continuity
+        weight: 0.5
+        key: true
+      - id: evaluating-functions
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Absolute vs local extrema and the Extreme Value Theorem
+        key_prerequisites: [continuity, critical-points-extrema]
+        exemplars:
+          - problem: 'What does the Extreme Value Theorem guarantee for a continuous function $f$ on a closed interval $[a, b]$?'
+            answer: "f attains an absolute maximum and an absolute minimum on [a, b]"
+          - problem: 'Does $f(x) = \frac{1}{x}$ attain an absolute maximum on the open interval $(0, 1)$?'
+            answer: "no — f is unbounded as x → 0⁺ (the EVT needs a closed interval and continuity)"
+        constraints: "one guarantee question, one counterexample on an open interval or with a discontinuity"
+      - id: kp2
+        name: The closed-interval method
+        key_prerequisites: [critical-points-extrema, evaluating-functions]
+        exemplars:
+          - problem: 'Find the absolute maximum and minimum of $f(x) = x^3 - 3x$ on $[0, 2]$.'
+            answer: "absolute max 2 at x = 2; absolute min -2 at x = 1"
+            solution_sketch: 'Candidates: critical point $x = 1$ (value $-2$) and endpoints $f(0) = 0$, $f(2) = 2$.'
+          - problem: 'Find the absolute maximum and minimum of $f(x) = x^2 - 2x$ on $[0, 3]$.'
+            answer: "absolute max 3 at x = 3; absolute min -1 at x = 1"
+        constraints: "compare f at interior critical points and both endpoints; all values integers"
+      - id: kp3
+        name: Closed-interval method with several critical points
+        key_prerequisites: [critical-points-extrema, evaluating-functions]
+        exemplars:
+          - problem: 'Find the absolute maximum and minimum of $f(x) = x^4 - 2x^2$ on $[-2, 1]$.'
+            answer: "absolute max 8 at x = -2; absolute min -1 at x = -1 and x = 1"
+            solution_sketch: '$f''(x) = 4x^3 - 4x = 4x(x-1)(x+1)$; compare $f(-2) = 8$, $f(-1) = -1$, $f(0) = 0$, $f(1) = -1$.'
+          - problem: 'Find the absolute maximum of $f(x) = x^3 - 12x$ on $[-3, 3]$.'
+            answer: "16 at x = -2"
+            solution_sketch: 'Critical points $\pm 2$; compare $f(-3) = 9$, $f(-2) = 16$, $f(2) = -16$, $f(3) = -9$.'
+        constraints: "two or three interior critical points; ties allowed; integer values"
+    diagnostic_exemplar:
+      problem: 'Find the absolute maximum and minimum of $f(x) = x^4 - 8x^2$ on $[-1, 3]$.'
+      answer: 'absolute max 9 at x = 3; absolute min -16 at x = 2'
+      solution_sketch: '$f''(x) = 4x(x^2 - 4)$ gives interior critical points $x = 0$ and $x = 2$ (note $x = -2$ is outside the interval); compare $f(-1) = -7$, $f(0) = 0$, $f(2) = -16$, $f(3) = 9$.'
+    anki_seeds:
+      - front: "To find absolute extrema of a continuous f on [a, b], compare f at..."
+        back: "all interior critical points and the two endpoints"
+        type: basic
+      - front: "Extreme Value Theorem: a continuous function on a CLOSED interval..."
+        back: "attains both an absolute max and an absolute min there"
+        type: basic
+
+  - id: increasing-decreasing-intervals
+    name: Increasing/Decreasing Intervals and the First Derivative Test
+    core: true
+    difficulty: 0.6
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 180
+    prerequisites:
+      - id: critical-points-extrema
+        weight: 0.8
+        key: true
+      - id: polynomial-inequalities
+        weight: 0.5
+      - id: derivative-power-rule
+        weight: 0.4
+      - id: product-quotient-rules
+        weight: 0.4
+      - id: derivatives-exp-log
+        weight: 0.3
+      - id: interval-notation
+        weight: 0.3            # notation support: monotonicity answers throughout are open intervals in interval notation (re-audit R-01)
+    knowledge_points:
+      - id: kp1
+        name: Intervals of increase and decrease
+        key_prerequisites: [critical-points-extrema, derivative-power-rule]
+        exemplars:
+          - problem: 'Find the intervals where $f(x) = x^3 - 3x$ is increasing and where it is decreasing.'
+            answer: "increasing on (-∞, -1) and (1, ∞); decreasing on (-1, 1)"
+            solution_sketch: '$f''(x) = 3(x-1)(x+1)$: positive outside $[-1, 1]$, negative inside.'
+          - problem: 'Find where $f(x) = x^2 - 6x$ is decreasing.'
+            answer: "(-∞, 3)"
+        constraints: "derivative factors over the integers; report open intervals"
+      - id: kp2
+        name: The first derivative test
+        key_prerequisites: [critical-points-extrema]
+        exemplars:
+          - problem: 'Use the first derivative test to classify the critical points of $f(x) = x^3 - 6x^2 + 9x$ and give the function values there.'
+            answer: "local max f(1) = 4; local min f(3) = 0"
+            solution_sketch: '$f'' = 3(x-1)(x-3)$ is $+, -, +$, so max at $1$ and min at $3$; $f(1) = 4$, $f(3) = 0$.'
+          - problem: '$f''(x) = x^2(x - 2)$. Does $f$ have a local extremum at $x = 0$?'
+            answer: "no — f' does not change sign at 0 (negative on both sides)"
+        constraints: "include one no-sign-change trap; function values are integers"
+      - id: kp3
+        name: Monotonicity with products and exponentials
+        key_prerequisites: [product-quotient-rules, derivatives-exp-log]
+        exemplars:
+          - problem: 'Find the intervals of increase and decrease of $f(x) = x e^{-x}$.'
+            answer: "increasing on (-∞, 1); decreasing on (1, ∞)"
+            solution_sketch: '$f''(x) = e^{-x}(1 - x)$; $e^{-x} > 0$ always, so the sign is the sign of $1 - x$.'
+          - problem: 'Where does $f(x) = x e^{-x}$ attain its local maximum, and what is the value?'
+            answer: "x = 1; f(1) = 1/e"
+        constraints: "the exponential factor is always positive — sign comes from the polynomial factor"
+    diagnostic_exemplar:
+      problem: 'Find the intervals of increase and decrease of $f(x) = x^2 e^{-x}$.'
+      answer: "increasing on (0, 2); decreasing on (-∞, 0) and (2, ∞)"
+      solution_sketch: '$f''(x) = e^{-x}(2x - x^2) = e^{-x} x(2 - x)$, positive exactly for $0 < x < 2$.'
+    anki_seeds:
+      - front: "f' > 0 on an interval means f is ___ there; f' < 0 means f is ___."
+        back: "increasing; decreasing"
+        type: basic
+      - front: "First derivative test: f' changes + to - at c means ___; - to + means ___; no sign change means ___."
+        back: "local max; local min; no extremum"
+        type: basic
+
+  - id: concavity-inflection-points
+    name: Concavity and Inflection Points
+    core: true
+    difficulty: 0.6
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 180
+    prerequisites:
+      - id: higher-order-derivatives
+        weight: 0.7
+        key: true
+      - id: increasing-decreasing-intervals
+        weight: 0.4
+      - id: critical-points-extrema
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: Intervals of concavity
+        key_prerequisites: [higher-order-derivatives]
+        exemplars:
+          - problem: 'Find the intervals of concavity of $f(x) = x^3 - 3x$.'
+            answer: "concave down on (-∞, 0); concave up on (0, ∞)"
+            solution_sketch: '$f''''(x) = 6x$: negative for $x < 0$, positive for $x > 0$.'
+          - problem: 'Where is $f(x) = x^3 + 3x^2$ concave up?'
+            answer: "(-1, ∞)"
+            solution_sketch: '$f''''(x) = 6x + 6 > 0$ when $x > -1$.'
+        constraints: "second derivative factors cleanly; report open intervals"
+      - id: kp2
+        name: Find inflection points (verify the sign change)
+        key_prerequisites: [higher-order-derivatives]
+        exemplars:
+          - problem: 'Find the inflection points of $f(x) = x^4 - 6x^2$.'
+            answer: "x = -1 and x = 1"
+            solution_sketch: '$f''''(x) = 12x^2 - 12 = 12(x-1)(x+1)$ changes sign at both roots.'
+          - problem: 'Does $f(x) = x^4$ have an inflection point at $x = 0$?'
+            answer: "no — f''(x) = 12x² is ≥ 0 on both sides (no sign change)"
+        constraints: "include one f'' = 0 without sign change trap"
+      - id: kp3
+        name: Concavity and the graph
+        key_prerequisites: [higher-order-derivatives, increasing-decreasing-intervals]
+        exemplars:
+          - problem: 'A function has $f''(x) > 0$ and $f''''(x) < 0$ on an interval. Describe the shape of its graph there.'
+            answer: "increasing but bending downward (rising at a decreasing rate)"
+          - problem: 'For $f(x) = x^3 - 3x$, give the inflection point as an ordered pair.'
+            answer: "(0, 0)"
+            solution_sketch: '$f''''$ changes sign at $x = 0$ and $f(0) = 0$.'
+        constraints: "combine first- and second-derivative sign information verbally or as ordered pairs"
+    diagnostic_exemplar:
+      problem: 'Find the intervals of concavity of $f(x) = x^3 - 6x^2$ and give its inflection point as an ordered pair.'
+      answer: 'concave down on (-∞, 2), concave up on (2, ∞); inflection point (2, -16)'
+      solution_sketch: '$f''''(x) = 6x - 12$ is negative for $x < 2$ and positive for $x > 2$; $f(2) = 8 - 24 = -16$.'
+    anki_seeds:
+      - front: "f'' > 0 on an interval means the graph of f is ___ there."
+        back: "concave up (bending upward, f' increasing)"
+        type: basic
+      - front: "An inflection point is where..."
+        back: "the concavity changes sign (f'' changes sign), not merely where f'' = 0"
+        type: basic
+
+  - id: second-derivative-test
+    name: The Second Derivative Test
+    core: true
+    difficulty: 0.65
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 150
+    prerequisites:
+      - id: concavity-inflection-points
+        weight: 0.7
+        key: true
+      - id: critical-points-extrema
+        weight: 0.6
+        key: true
+      - id: increasing-decreasing-intervals
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: Apply the second derivative test
+        key_prerequisites: [critical-points-extrema, concavity-inflection-points]
+        exemplars:
+          - problem: 'Use the second derivative test to classify the critical points $x = 1$ and $x = 3$ of $f(x) = x^3 - 6x^2 + 9x$.'
+            answer: "local max at x = 1 (f''(1) = -6 < 0); local min at x = 3 (f''(3) = 6 > 0)"
+            solution_sketch: '$f''''(x) = 6x - 12$; negative at $1$, positive at $3$.'
+          - problem: 'Use the second derivative test on the critical point $x = 0$ of $f(x) = x^2 + 1$.'
+            answer: "local min (f''(0) = 2 > 0)"
+        constraints: "f'' nonzero at each tested critical point (test is conclusive)"
+      - id: kp2
+        name: When the test is inconclusive
+        key_prerequisites: [concavity-inflection-points, increasing-decreasing-intervals]
+        exemplars:
+          - problem: '$f(x) = x^4$ has a critical point at $x = 0$ with $f''''(0) = 0$. What does the second derivative test say, and how do you classify the point?'
+            answer: "the test is inconclusive; the first derivative test (f' = 4x³ changes - to +) shows a local min"
+          - problem: '$f(x) = x^3$ has a critical point at $x = 0$ with $f''''(0) = 0$. Classify it.'
+            answer: "neither a max nor a min — f' = 3x² does not change sign"
+        constraints: "f''(c) = 0 cases; fall back to the first derivative test"
+      - id: kp3
+        name: Choose the right test
+        key_prerequisites: [critical-points-extrema, concavity-inflection-points]
+        exemplars:
+          - problem: 'Classify the critical points of $f(x) = x^4 - 4x^3$ (use whichever test works at each point).'
+            answer: "x = 3 is a local min (f''(3) = 36 > 0); x = 0 is not an extremum (f' = 4x²(x-3) keeps the same sign around 0)"
+            solution_sketch: '$f''(x) = 4x^3 - 12x^2 = 4x^2(x - 3)$; $f''''(x) = 12x^2 - 24x$, $f''''(0) = 0$ forces the sign-chart fallback at $0$.'
+          - problem: 'For a critical point $c$ with $f''''(c) < 0$, what can you conclude?'
+            answer: "f has a local maximum at c"
+        constraints: "one mixed problem needing both tests; conclusions stated with the justifying sign"
+    diagnostic_exemplar:
+      problem: 'The function $f(x) = x^4 + 4x^3$ has critical points $x = 0$ and $x = -3$. Classify each (use whichever test works at each point).'
+      answer: "x = -3 is a local min (f''(-3) = 36 > 0); x = 0 is not an extremum (f''(0) = 0 and f' = 4x²(x + 3) does not change sign at 0)"
+      solution_sketch: '$f''''(x) = 12x^2 + 24x$ is $36 > 0$ at $x = -3$, a local min. At $x = 0$ it is $0$, so the test is inconclusive and the first derivative decides: the $4x^2$ factor of $f''(x) = 4x^2(x+3)$ keeps the sign positive on both sides of $0$.'
+    anki_seeds:
+      - front: "Second derivative test: at a critical point c with f'(c) = 0, f''(c) > 0 means ___ and f''(c) < 0 means ___."
+        back: "local minimum; local maximum (f''(c) = 0 is inconclusive)"
+        type: basic
+      - front: "When the second derivative test is inconclusive (f''(c) = 0), classify the point by..."
+        back: "the first derivative test (sign chart of f' around c)"
+        type: basic
+
+  - id: curve-analysis-derivatives
+    name: First and Second Derivative Analysis
+    core: false                # curve-sketching synthesis capstone
+    difficulty: 0.65
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 240
+    prerequisites:
+      - id: increasing-decreasing-intervals
+        weight: 0.7
+        key: true
+      - id: concavity-inflection-points
+        weight: 0.7
+        key: true
+      - id: second-derivative-test
+        weight: 0.5
+      - id: critical-points-extrema
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: Full feature analysis of a cubic
+        key_prerequisites: [increasing-decreasing-intervals, concavity-inflection-points]
+        exemplars:
+          - problem: 'For $f(x) = x^3 - 3x$, find all intervals of increase/decrease, local extrema, intervals of concavity, and inflection points.'
+            answer: "increasing on (-∞, -1) and (1, ∞), decreasing on (-1, 1); local max f(-1) = 2, local min f(1) = -2; concave down on (-∞, 0), concave up on (0, ∞); inflection at (0, 0)"
+            solution_sketch: '$f'' = 3(x-1)(x+1)$ and $f'''' = 6x$; assemble the sign charts.'
+          - problem: 'For $f(x) = x^3 - 6x^2$, find the local extrema and the inflection point.'
+            answer: "local max f(0) = 0; local min f(4) = -32; inflection at (2, -16)"
+            solution_sketch: '$f'' = 3x(x - 4)$, $f'''' = 6x - 12$.'
+        constraints: "cubics with integer critical points and inflection points; report every feature"
+      - id: kp2
+        name: Full feature analysis of a quartic
+        key_prerequisites: [increasing-decreasing-intervals, concavity-inflection-points, second-derivative-test]
+        exemplars:
+          - problem: 'For $f(x) = x^4 - 6x^2$, find the local extrema and inflection points.'
+            answer: "local min f(±√3) = -9 at x = ±√3; local max f(0) = 0; inflection points at x = ±1 (value -5)"
+            solution_sketch: '$f'' = 4x(x^2 - 3)$, $f'''' = 12x^2 - 12$; the sign of $f''$ is $-, +, -, +$.'
+          - problem: 'For $f(x) = x^4 - 2x^2$, how many local extrema and how many inflection points does it have?'
+            answer: "3 local extrema (min at ±1, max at 0); 2 inflection points (x = ±1/√3)"
+        constraints: "even quartics with symmetric features; radical critical points allowed"
+      - id: kp3
+        name: Reconstruct features from f'
+        key_prerequisites: [increasing-decreasing-intervals, second-derivative-test]
+        exemplars:
+          - problem: 'Suppose $f''(x) = (x-1)^2(x-3)$. Find where $f$ has local extrema.'
+            answer: "local min at x = 3 only (f' does not change sign at x = 1)"
+            solution_sketch: '$(x-1)^2 \geq 0$, so the sign of $f''$ is the sign of $x - 3$: no change at $1$, $-$ to $+$ at $3$.'
+          - problem: 'Suppose $f''(x) = x(x - 2)$. On what interval is $f$ decreasing, and where are its inflection points?'
+            answer: "decreasing on (0, 2); inflection of f at x = 1 (where f'' = 2x - 2 changes sign)"
+        constraints: "give f' in factored form; ask for features of f, not of f'"
+    diagnostic_exemplar:
+      problem: 'For $f(x) = x^3 - 12x$, give the local extrema and the inflection point.'
+      answer: "local max f(-2) = 16; local min f(2) = -16; inflection at (0, 0)"
+      solution_sketch: '$f'' = 3(x-2)(x+2)$, $f'''' = 6x$.'
+    anki_seeds:
+      - front: "Complete curve-analysis checklist (from f' and f''):"
+        back: "critical points; increase/decrease intervals; local extrema; concavity intervals; inflection points"
+        type: basic
+      - front: "A repeated (even-power) factor in f' at x = c means..."
+        back: "f' does not change sign at c — no local extremum there"
+        type: basic
+
+  - id: basic-optimization
+    name: Basic Optimization
+    core: true
+    difficulty: 0.65
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 240
+    prerequisites:
+      - id: closed-interval-method
+        weight: 0.6
+        key: true
+      - id: critical-points-extrema
+        weight: 0.7
+        key: true
+      - id: area-triangles-quadrilaterals
+        weight: 0.4
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: Optimize over two numbers with a constraint
+        key_prerequisites: [critical-points-extrema]
+        exemplars:
+          - problem: 'Two positive numbers sum to $20$. Find the pair with the largest product.'
+            answer: "10 and 10 (product 100)"
+            solution_sketch: 'Maximize $P(x) = x(20 - x)$: $P''(x) = 20 - 2x = 0$ at $x = 10$.'
+          - problem: 'Two positive numbers have product $100$. Find the pair with the smallest sum.'
+            answer: "10 and 10 (sum 20)"
+            solution_sketch: 'Minimize $S(x) = x + \frac{100}{x}$: $S''(x) = 1 - \frac{100}{x^2} = 0$ at $x = 10$.'
+        constraints: "constraint eliminates one variable; optimum at integer values"
+      - id: kp2
+        name: Fencing and area problems
+        key_prerequisites: [critical-points-extrema, area-triangles-quadrilaterals]
+        exemplars:
+          - problem: 'A farmer has $400$ m of fence for a rectangular field. What dimensions maximize the area, and what is that area?'
+            answer: "100 m × 100 m; area 10000 m²"
+            solution_sketch: '$A(x) = x(200 - x)$; $A''(x) = 200 - 2x = 0$ at $x = 100$.'
+          - problem: 'A rectangular pen uses a barn as one side, with $120$ m of fence for the other three sides. What dimensions maximize the area?'
+            answer: "30 m (each side perpendicular to the barn) × 60 m (parallel side); area 1800 m²"
+            solution_sketch: '$A(x) = x(120 - 2x)$; $A''(x) = 120 - 4x = 0$ at $x = 30$, so the parallel side is $60$.'
+        constraints: "perimeter-style constraint linear in the dimensions; integer optimum"
+      - id: kp3
+        name: Confirm the optimum
+        key_prerequisites: [closed-interval-method, critical-points-extrema]
+        exemplars:
+          - problem: 'In the sum-20 problem, $P(x) = x(20 - x)$ on $[0, 20]$ has critical point $x = 10$. Confirm $x = 10$ gives the absolute maximum.'
+            answer: "P(0) = P(20) = 0 while P(10) = 100 (or: P''(x) = -2 < 0 everywhere)"
+            solution_sketch: 'Closed-interval check or the second derivative — both confirm the interior critical point is the max.'
+          - problem: 'For $S(x) = x + \frac{100}{x}$ on $(0, \infty)$, confirm that $x = 10$ gives the absolute minimum.'
+            answer: "S''(x) = 200/x³ > 0 for all x > 0, so S is concave up and x = 10 is the global min"
+        constraints: "justify via endpoint comparison or second-derivative sign; no unjustified answers"
+    diagnostic_exemplar:
+      problem: 'A rectangular pen uses a wall as one side, with $60$ m of fence for the other three sides. What dimensions maximize the area, and what is that area?'
+      answer: "15 m (each side perpendicular to the wall) × 30 m (parallel side); area 450 m²"
+      solution_sketch: '$2x + y = 60$; $A = x(60 - 2x)$; $A'' = 60 - 4x = 0$ at $x = 15$, $y = 30$.'
+    anki_seeds:
+      - front: "Optimization procedure in four steps:"
+        back: "name the variables and constraint; write the objective in one variable; find critical points; check them (and endpoints) for the true optimum"
+        type: basic
+      - front: "A rectangle of fixed perimeter has maximum area when it is..."
+        back: "a square"
+        type: basic
+
+  - id: optimization
+    name: Optimization
+    core: false                # applied word-problem genre; basic-optimization stays core
+    difficulty: 0.7
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 300
+    prerequisites:
+      - id: basic-optimization
+        weight: 0.8
+        key: true
+      - id: volume-prisms-cylinders
+        weight: 0.4
+        key: true
+      - id: second-derivative-test
+        weight: 0.4
+      - id: distance-midpoint-formulas
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Volume and surface-area problems
+        key_prerequisites: [basic-optimization, volume-prisms-cylinders]
+        exemplars:
+          - problem: 'An open-top box is made from a $12 \times 12$ cm sheet by cutting equal squares of side $x$ from the corners and folding. Find the $x$ that maximizes the volume, and the volume.'
+            answer: "x = 2 cm; volume 128 cm³"
+            solution_sketch: '$V = x(12 - 2x)^2$; $V'' = (12-2x)(12-6x) = 0$ at $x = 2$ or $x = 6$ (degenerate); $V(2) = 2 \cdot 64 = 128$.'
+          - problem: 'An open-top box has a square base and volume $32$ m³. Find the dimensions minimizing the material $S = x^2 + 4xh$.'
+            answer: "base 4 m × 4 m, height 2 m"
+            solution_sketch: '$h = \frac{32}{x^2}$, so $S = x^2 + \frac{128}{x}$; $S'' = 2x - \frac{128}{x^2} = 0$ at $x^3 = 64$.'
+        constraints: "state the volume/surface formulas in the problem; optimum at small integers"
+      - id: kp2
+        name: Cost and material problems
+        key_prerequisites: [basic-optimization, volume-prisms-cylinders]
+        exemplars:
+          - problem: 'A rectangular field of area $800$ m² borders a straight river, so only three sides need fencing. Find the dimensions minimizing the total fence, and the minimum length.'
+            answer: "20 m (each side perpendicular to the river) × 40 m (parallel side); 80 m of fence"
+            solution_sketch: '$F = 2x + \frac{800}{x}$; $F'' = 2 - \frac{800}{x^2} = 0$ at $x = 20$, parallel side $\frac{800}{20} = 40$.'
+          - problem: 'A closed cylindrical can must hold $250\pi$ cm³. Using $S = 2\pi r^2 + 2\pi r h$, find the radius and height minimizing the surface area.'
+            answer: "r = 5 cm, h = 10 cm"
+            solution_sketch: '$h = \frac{250}{r^2}$, so $S = 2\pi r^2 + \frac{500\pi}{r}$; $S'' = 4\pi r - \frac{500\pi}{r^2} = 0$ at $r^3 = 125$.'
+        constraints: "area/volume constraint plus linear-or-quadratic objective; integer optimum"
+      - id: kp3
+        name: Distance problems
+        key_prerequisites: [basic-optimization, distance-midpoint-formulas]
+        exemplars:
+          - problem: 'Find the point on the curve $y = \sqrt{x}$ closest to $(3, 0)$.'
+            answer: "(5/2, √(5/2)) = (5/2, √10/2)"
+            solution_sketch: 'Minimize $d^2 = (x - 3)^2 + x$; derivative $2(x - 3) + 1 = 0$ gives $x = \frac{5}{2}$.'
+          - problem: 'For the previous problem, what is the minimum distance itself?'
+            answer: "√11/2"
+            solution_sketch: '$d^2 = \left(-\frac{1}{2}\right)^2 + \frac{5}{2} = \frac{11}{4}$.'
+        constraints: "minimize d² instead of d; squared distance is a polynomial in one variable"
+    diagnostic_exemplar:
+      problem: 'Find the point on the curve $y = \sqrt{x}$ closest to $(4, 0)$.'
+      answer: '(7/2, √14/2)'
+      solution_sketch: 'Minimize the squared distance $d^2 = (x-4)^2 + x = x^2 - 7x + 16$: $2x - 7 = 0$ gives $x = \frac{7}{2}$, and $y = \sqrt{7/2} = \frac{\sqrt{14}}{2}$.'
+    anki_seeds:
+      - front: "In distance-minimization problems, minimize ___ instead of the distance itself."
+        back: "the squared distance d² — same minimizer, no square roots to differentiate"
+        type: basic
+      - front: "Constrained optimization: the constraint's job is to..."
+        back: "eliminate one variable so the objective becomes a one-variable function"
+        type: basic
+
+  - id: marginal-analysis
+    name: Marginal Cost and Revenue
+    core: false                # named economics application of the derivative
+    difficulty: 0.55
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 150
+    prerequisites:
+      - id: derivative-power-rule
+        weight: 0.7
+        key: true
+      - id: average-instantaneous-rate
+        weight: 0.5
+        key: true
+      - id: evaluating-polynomials
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Marginal cost and revenue as derivatives
+        key_prerequisites: [derivative-power-rule]
+        exemplars:
+          - problem: 'The cost of producing $x$ items is $C(x) = \frac{x^2}{10} + 40x + 1000$ euros. Find the marginal cost at $x = 50$.'
+            answer: "€50 per item"
+            solution_sketch: '$C''(x) = \frac{x}{5} + 40$; $C''(50) = 10 + 40 = 50$.'
+          - problem: 'Revenue is $R(x) = 500x - \frac{x^2}{2}$. Find the marginal revenue at $x = 200$.'
+            answer: "€300 per item"
+            solution_sketch: '$R''(x) = 500 - x$; $R''(200) = 300$.'
+        constraints: "quadratic cost/revenue with integer marginal values; state units"
+      - id: kp2
+        name: Marginal value vs actual change
+        key_prerequisites: [derivative-power-rule, average-instantaneous-rate]
+        exemplars:
+          - problem: 'For $C(x) = \frac{x^2}{10} + 40x + 1000$, compare the marginal cost $C''(50)$ with the actual cost of the 51st item, $C(51) - C(50)$.'
+            answer: "C'(50) = 50; C(51) - C(50) = 50.1 — the marginal cost approximates the next item's cost"
+            solution_sketch: '$C(51) - C(50) = \frac{2601 - 2500}{10} + 40 = 10.1 + 40 = 50.1$.'
+          - problem: 'Why is $C''(x)$ a good estimate of the cost of item $x + 1$?'
+            answer: "it is the linearization estimate: C(x+1) - C(x) ≈ C'(x)·1"
+        constraints: "actual and marginal values differ by a small terminating decimal"
+      - id: kp3
+        name: Maximize profit with marginals
+        key_prerequisites: [derivative-power-rule, evaluating-polynomials]
+        exemplars:
+          - problem: 'Revenue is $R(x) = 200x$ and cost is $C(x) = x^2 + 40x + 1000$, both in euros. How many items maximize the profit $P = R - C$, and what is the maximum profit?'
+            answer: "x = 80 items; profit €5400"
+            solution_sketch: '$P(x) = -x^2 + 160x - 1000$; $P''(x) = -2x + 160 = 0$ at $x = 80$; $P(80) = 5400$.'
+          - problem: 'At the profit-maximizing quantity, how are marginal revenue and marginal cost related?'
+            answer: "they are equal: R'(x) = C'(x)"
+        constraints: "quadratic profit with integer vertex; P'' < 0 so the critical point is the max"
+    diagnostic_exemplar:
+      problem: 'Revenue is $R(x) = 120x$ and cost is $C(x) = x^2 + 20x + 800$, both in euros. How many items maximize the profit $P = R - C$, and what is the maximum profit?'
+      answer: "x = 50 items; maximum profit €1700"
+      solution_sketch: '$P(x) = -x^2 + 100x - 800$; $P''(x) = -2x + 100 = 0$ at $x = 50$; $P(50) = 1700$.'
+    anki_seeds:
+      - front: "Marginal cost is defined as..."
+        back: "C'(x) — the derivative of cost, approximating the cost of the next item"
+        type: basic
+      - front: "Profit is maximized (interior optimum) when marginal revenue ___ marginal cost."
+        back: "equals — P' = R' - C' = 0"
+        type: basic
+
+  - id: lhopitals-rule
+    name: 'L''Hôpital''s Rule'
+    core: true
+    difficulty: 0.65
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 150
+    prerequisites:
+      - id: derivatives-exp-log
+        weight: 0.6
+        key: true
+      - id: derivatives-trig
+        weight: 0.5
+        key: true
+      - id: one-sided-infinite-limits
+        weight: 0.5
+        key: true
+      - id: limits-algebraic
+        weight: 0.4
+      - id: graphs-of-logarithmic-functions
+        weight: 0.0            # conceptual only: ln x → -∞ as x → 0+ and ln x → ∞ underlie the ∞/∞ and 0·∞ forms; untaught elsewhere in this closure (re-audit R-04)
+    knowledge_points:
+      - id: kp1
+        name: 0/0 forms
+        key_prerequisites: [derivatives-trig, derivatives-exp-log]
+        exemplars:
+          - problem: 'Evaluate $\lim_{x \to 0} \frac{\sin x}{x}$ using L''Hôpital''s rule.'
+            answer: "1"
+            solution_sketch: '$\frac{0}{0}$ form; differentiate: $\frac{\cos x}{1} \to \cos 0 = 1$.'
+          - problem: 'Evaluate $\lim_{x \to 0} \frac{e^x - 1}{x}$.'
+            answer: "1"
+          - problem: 'Evaluate $\lim_{x \to 0} \frac{e^x - 1 - x}{x^2}$.'
+            answer: "1/2"
+            solution_sketch: '$\frac{0}{0}$ form; apply twice: $\frac{e^x - 1}{2x} \to \frac{e^x}{2} \to \frac{1}{2}$.'
+        constraints: "verify the 0/0 form before differentiating; at most two applications"
+      - id: kp2
+        name: ∞/∞ forms
+        key_prerequisites: [one-sided-infinite-limits, derivatives-exp-log]
+        exemplars:
+          - problem: 'Evaluate $\lim_{x \to \infty} \frac{\ln x}{x}$.'
+            answer: "0"
+            solution_sketch: '$\frac{\infty}{\infty}$ form; $\frac{1/x}{1} \to 0$.'
+          - problem: 'Evaluate $\lim_{x \to \infty} \frac{x^2}{e^x}$.'
+            answer: "0"
+            solution_sketch: 'Apply twice: $\frac{2x}{e^x} \to \frac{2}{e^x} \to 0$.'
+        constraints: "growth-hierarchy results (log ≪ polynomial ≪ exponential); limits are 0 or ∞"
+      - id: kp3
+        name: Check the form first; rewrite 0·∞
+        key_prerequisites: [one-sided-infinite-limits, limits-algebraic]
+        exemplars:
+          - problem: 'Evaluate $\lim_{x \to 0} \frac{x + 1}{x + 2}$ (first check whether L''Hôpital''s rule even applies).'
+            answer: "1/2"
+            solution_sketch: 'Substitution gives $\frac{1}{2}$ — not an indeterminate form, so L''Hôpital does NOT apply; applying it anyway would wrongly give $1$.'
+          - problem: 'Evaluate $\lim_{x \to 0^+} x \ln x$.'
+            answer: "0"
+            solution_sketch: 'Rewrite the $0 \cdot (-\infty)$ form as $\frac{\ln x}{1/x}$; L''Hôpital gives $\frac{1/x}{-1/x^2} = -x \to 0$.'
+        constraints: "one trap problem (non-indeterminate form) and one 0·∞ rewrite"
+    diagnostic_exemplar:
+      problem: 'Evaluate $\lim_{x \to 0^+} x^2 \ln x$.'
+      answer: "0"
+      solution_sketch: 'Rewrite $0 \cdot \infty$ as $\frac{\ln x}{x^{-2}}$; L''Hôpital gives $\frac{1/x}{-2x^{-3}} = -\frac{x^2}{2} \to 0$.'
+    anki_seeds:
+      - front: "L'Hôpital's rule applies only to which indeterminate forms (directly)?"
+        back: "0/0 and ∞/∞ — always verify the form before differentiating"
+        type: basic
+      - front: "Growth hierarchy as x → ∞: ln x vs x^n vs e^x?"
+        back: "ln x ≪ x^n ≪ e^x (each is eventually negligible next to the one after)"
+        type: basic
+
+  - id: indeterminate-forms-powers
+    name: Indeterminate Differences and Powers
+    core: false                # special-case extension of l'Hopital's rule
+    difficulty: 0.7
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 240
+    prerequisites:
+      - id: lhopitals-rule
+        weight: 0.8
+        key: true
+      - id: derivatives-exp-log
+        weight: 0.5
+        key: true
+      - id: logarithm-properties
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: ∞ - ∞ and 0·∞ rewrites
+        key_prerequisites: [lhopitals-rule]
+        exemplars:
+          - problem: 'Evaluate $\lim_{x \to \infty} \left(\sqrt{x^2 + x} - x\right)$.'
+            answer: "1/2"
+            solution_sketch: 'Multiply by the conjugate: $\frac{x}{\sqrt{x^2 + x} + x} = \frac{1}{\sqrt{1 + 1/x} + 1} \to \frac{1}{2}$.'
+          - problem: 'Evaluate $\lim_{x \to \infty} x\left(e^{1/x} - 1\right)$.'
+            answer: "1"
+            solution_sketch: 'Rewrite as $\frac{e^{1/x} - 1}{1/x}$; with $t = 1/x \to 0^+$ this is $\frac{e^t - 1}{t} \to 1$.'
+        constraints: "rewrite to a quotient (conjugate or reciprocal) before any L'Hôpital step"
+      - id: kp2
+        name: 1^∞ forms via logarithms
+        key_prerequisites: [lhopitals-rule, logarithm-properties, derivatives-exp-log]
+        exemplars:
+          - problem: 'Evaluate $\lim_{x \to \infty} \left(1 + \frac{2}{x}\right)^x$.'
+            answer: "e^2"
+            solution_sketch: '$\ln y = x \ln\left(1 + \frac{2}{x}\right) = \frac{\ln(1 + 2/x)}{1/x}$; L''Hôpital gives $\to 2$, so $y \to e^2$.'
+          - problem: 'Evaluate $\lim_{x \to 0} (1 + x)^{1/x}$.'
+            answer: "e"
+            solution_sketch: '$\ln y = \frac{\ln(1 + x)}{x} \to 1$.'
+        constraints: "take ln, evaluate the resulting 0/0 or ∞/∞ limit, then exponentiate"
+      - id: kp3
+        name: 0^0 and ∞^0 forms
+        key_prerequisites: [lhopitals-rule, logarithm-properties]
+        exemplars:
+          - problem: 'Evaluate $\lim_{x \to 0^+} x^x$.'
+            answer: "1"
+            solution_sketch: '$\ln y = x \ln x \to 0$ (the standard $0 \cdot \infty$ limit), so $y \to e^0 = 1$.'
+          - problem: 'Evaluate $\lim_{x \to \infty} x^{1/x}$.'
+            answer: "1"
+            solution_sketch: '$\ln y = \frac{\ln x}{x} \to 0$, so $y \to 1$.'
+        constraints: "answers are e^L for a clean L (often 0, giving 1); always exponentiate at the end"
+    diagnostic_exemplar:
+      problem: 'Evaluate $\lim_{x \to \infty} \left(1 + \frac{3}{x}\right)^x$.'
+      answer: "e^3"
+      solution_sketch: '$\ln y = \frac{\ln(1 + 3/x)}{1/x} \to 3$ (L''Hôpital), so $y \to e^3$.'
+    anki_seeds:
+      - front: "To evaluate a 1^∞, 0^0, or ∞^0 limit, the standard move is..."
+        back: "take ln to get a 0·∞ form, rewrite as a quotient for L'Hôpital, then exponentiate the result"
+        type: basic
+      - front: "The three indeterminate POWER forms are..."
+        back: "1^∞, 0^0, ∞^0 (things like 0^∞ are NOT indeterminate — that one is 0)"
+        type: basic

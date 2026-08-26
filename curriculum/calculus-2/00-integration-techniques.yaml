@@ -1,0 +1,1000 @@
+unit: integration-techniques
+course: calculus-2
+module: "Techniques of Integration"
+topics:
+  - id: integration-by-parts-single
+    name: Integration by Parts (Single Application)
+    core: true
+    difficulty: 0.55
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 150
+    prerequisites:
+      - id: integration-substitution
+        weight: 0.7
+        key: true
+      - id: antiderivatives
+        weight: 0.6
+        key: true
+      - id: product-rule
+        weight: 0.5
+      - id: derivatives-exp-log
+        weight: 0.5
+    knowledge_points:
+      - id: kp1
+        name: Polynomial times exponential or trig
+        key_prerequisites: [antiderivatives, derivatives-exp-log]
+        exemplars:
+          - problem: 'Evaluate $\int x e^x \, dx$.'
+            answer: '$(x - 1)e^x + C$'
+            solution_sketch: 'Take $u = x$, $dv = e^x\,dx$: $xe^x - \int e^x\,dx = xe^x - e^x + C$. Check by differentiating: $e^x + (x-1)e^x = xe^x$.'
+          - problem: 'Evaluate $\int x \cos x \, dx$.'
+            answer: '$x \sin x + \cos x + C$'
+            solution_sketch: '$u = x$, $dv = \cos x\,dx$: $x\sin x - \int \sin x\,dx = x\sin x + \cos x + C$.'
+          - problem: 'Evaluate $\int x e^{2x} \, dx$.'
+            answer: '$\frac{(2x - 1)e^{2x}}{4} + C$'
+            solution_sketch: '$u = x$, $dv = e^{2x}\,dx$: $\frac{x e^{2x}}{2} - \frac{1}{2}\int e^{2x}\,dx = \frac{x e^{2x}}{2} - \frac{e^{2x}}{4} + C$.'
+        constraints: "integrand is (linear polynomial) x (e^{ax}, sin ax, or cos ax) with a in {1, 2, 3}; one application of parts suffices; small integer coefficients"
+      - id: kp2
+        name: Choosing u and dv (LIATE)
+        key_prerequisites: [antiderivatives, product-rule]
+        exemplars:
+          - problem: 'For $\int x \sin x \, dx$, state the choice of $u$ and $dv$, then evaluate.'
+            answer: '$u = x$, $dv = \sin x\,dx$; the integral is $-x \cos x + \sin x + C$'
+            solution_sketch: 'The algebraic factor differentiates to a constant: $u = x$, $dv = \sin x\,dx$ gives $-x\cos x + \int \cos x\,dx$.'
+          - problem: 'Evaluate $\int x e^{-x} \, dx$.'
+            answer: '$-(x + 1)e^{-x} + C$'
+            solution_sketch: '$u = x$, $dv = e^{-x}\,dx$: $-xe^{-x} + \int e^{-x}\,dx = -xe^{-x} - e^{-x} + C$.'
+          - problem: 'Evaluate $\int x \cos 2x \, dx$.'
+            answer: '$\frac{x \sin 2x}{2} + \frac{\cos 2x}{4} + C$'
+            solution_sketch: '$u = x$, $dv = \cos 2x\,dx$: $\frac{x\sin 2x}{2} - \frac{1}{2}\int \sin 2x\,dx = \frac{x\sin 2x}{2} + \frac{\cos 2x}{4} + C$.'
+        constraints: "LIATE ordering decides u; integrands limited to one algebraic factor times one exponential/trig factor"
+      - id: kp3
+        name: Logarithmic and inverse-trig integrands
+        key_prerequisites: [derivatives-exp-log, integration-substitution]
+        exemplars:
+          - problem: 'Evaluate $\int \ln x \, dx$.'
+            answer: '$x \ln x - x + C$'
+            solution_sketch: '$u = \ln x$, $dv = dx$: $x\ln x - \int x \cdot \frac{1}{x}\,dx = x\ln x - x + C$.'
+          - problem: 'Evaluate $\int x \ln x \, dx$.'
+            answer: '$\frac{x^2}{2}\ln x - \frac{x^2}{4} + C$'
+            solution_sketch: '$u = \ln x$, $dv = x\,dx$: $\frac{x^2}{2}\ln x - \int \frac{x}{2}\,dx$. Derivative check: $x\ln x + \frac{x}{2} - \frac{x}{2} = x\ln x$.'
+          - problem: 'Evaluate $\int \arctan x \, dx$.'
+            answer: '$x \arctan x - \frac{1}{2}\ln(1 + x^2) + C$'
+            solution_sketch: '$u = \arctan x$, $dv = dx$: $x\arctan x - \int \frac{x}{1+x^2}\,dx$; the remaining integral is a $u$-substitution giving $\frac{1}{2}\ln(1+x^2)$.'
+        constraints: "integrand involves ln x or an inverse trig function; choose u = the log/inverse function, dv = the rest"
+    diagnostic_exemplar:
+      problem: 'Evaluate $\int x^2 \ln x \, dx$.'
+      answer: '$\frac{x^3}{3}\ln x - \frac{x^3}{9} + C$'
+      solution_sketch: 'LIATE picks $u = \ln x$, $dv = x^2dx$: $\frac{x^3}{3}\ln x - \int \frac{x^2}{3}dx$.'
+    anki_seeds:
+      - front: "Integration by parts formula?"
+        back: '$\int u \, dv = uv - \int v \, du$'
+        type: basic
+      - front: "LIATE heuristic: pick u in this priority order..."
+        back: "Logarithmic, Inverse trig, Algebraic, Trigonometric, Exponential"
+        type: basic
+
+  - id: integration-by-parts
+    name: Integration by Parts
+    core: true
+    difficulty: 0.62
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 180
+    prerequisites:
+      - id: integration-by-parts-single
+        weight: 0.8
+        key: true
+      - id: integration-substitution
+        weight: 0.5
+        key: true
+      - id: definite-integrals-ftc
+        weight: 0.5
+      - id: derivatives-exp-log
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: Definite integrals by parts
+        key_prerequisites: [integration-by-parts-single, definite-integrals-ftc]
+        exemplars:
+          - problem: 'Evaluate $\int_0^{\pi} x \sin x \, dx$.'
+            answer: '$\pi$'
+            solution_sketch: '$[-x\cos x + \sin x]_0^{\pi} = (\pi + 0) - (0 + 0) = \pi$.'
+          - problem: 'Evaluate $\int_0^1 x e^x \, dx$.'
+            answer: "1"
+            solution_sketch: '$[(x - 1)e^x]_0^1 = 0 - (-1) = 1$.'
+          - problem: 'Evaluate $\int_1^2 \ln x \, dx$.'
+            answer: '$2\ln 2 - 1$'
+            solution_sketch: '$[x\ln x - x]_1^2 = (2\ln 2 - 2) - (0 - 1) = 2\ln 2 - 1$.'
+        constraints: "bounds are small integers or multiples of pi; the boundary evaluation must simplify cleanly"
+      - id: kp2
+        name: Repeated integration by parts
+        key_prerequisites: [integration-by-parts-single]
+        exemplars:
+          - problem: 'Evaluate $\int x^2 e^x \, dx$.'
+            answer: '$(x^2 - 2x + 2)e^x + C$'
+            solution_sketch: 'Parts twice: $x^2 e^x - 2\int x e^x\,dx = x^2 e^x - 2(x-1)e^x + C$. Derivative check: $(2x - 2)e^x + (x^2 - 2x + 2)e^x = x^2 e^x$.'
+          - problem: 'Evaluate $\int x^2 \sin x \, dx$.'
+            answer: '$-x^2 \cos x + 2x \sin x + 2\cos x + C$'
+            solution_sketch: '$u = x^2$ gives $-x^2\cos x + 2\int x\cos x\,dx$; a second application finishes it.'
+        constraints: "quadratic polynomial times e^{ax}, sin x, or cos x; exactly two applications of parts"
+      - id: kp3
+        name: Boomerang integrals (the integral reappears)
+        key_prerequisites: [integration-by-parts-single]
+        exemplars:
+          - problem: 'Evaluate $\int e^x \cos x \, dx$.'
+            answer: '$e^x(\sin x + \cos x)/2 + C$'
+            solution_sketch: 'Apply parts twice; the original integral reappears with a minus sign. Solve $I = e^x\sin x + e^x\cos x - I$ to get $I = e^x(\sin x + \cos x)/2 + C$.'
+          - problem: 'Evaluate $\int e^x \sin x \, dx$.'
+            answer: '$e^x(\sin x - \cos x)/2 + C$'
+            solution_sketch: 'Parts twice returns $I = -e^x\cos x + e^x\sin x - I$; solve for $I$.'
+          - problem: 'Evaluate $\int e^{2x} \sin x \, dx$.'
+            answer: '$\exp(2x)(2\sin x - \cos x)/5 + C$'
+            solution_sketch: 'Two applications give $I = -e^{2x}\cos x + 2e^{2x}\sin x - 4I$, so $5I = e^{2x}(2\sin x - \cos x)$.'
+        constraints: "boomerang type limited to e^{ax} sin bx / e^{ax} cos bx with a, b in {1, 2}"
+    diagnostic_exemplar:
+      problem: 'Evaluate $\int_0^{\pi} e^x \sin x \, dx$.'
+      answer: '$(e^{\pi} + 1)/2$'
+      solution_sketch: 'Two rounds of parts return the integral: $\int e^x\sin x\,dx = e^x(\sin x - \cos x)/2$; evaluating from $0$ to $\pi$ gives $e^{\pi}/2 + 1/2$.'
+    anki_seeds:
+      - front: "Boomerang integral (e.g. $\\int e^x \\cos x\\,dx$): what's the move?"
+        back: "Apply parts twice; the original integral I reappears — solve the resulting equation for I algebraically."
+        type: basic
+      - front: '$\int x^n e^x \, dx$ requires how many applications of parts?'
+        back: '$n$ (each application lowers the polynomial degree by one)'
+        type: basic
+
+  - id: tabular-integration-by-parts
+    name: Tabular Integration by Parts
+    core: false                # shortcut subsumed by integration by parts
+    difficulty: 0.65
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 180
+    prerequisites:
+      - id: integration-by-parts
+        weight: 0.8
+        key: true
+      - id: derivatives-of-polynomials
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: Tabular method for polynomial times exponential
+        key_prerequisites: [integration-by-parts]
+        exemplars:
+          - problem: 'Use the tabular method to evaluate $\int x^3 e^x \, dx$.'
+            answer: '$(x^3 - 3x^2 + 6x - 6)e^x + C$'
+            solution_sketch: 'Derivatives column: $x^3, 3x^2, 6x, 6, 0$; integrals column: $e^x$ repeated. Alternate signs: $x^3 e^x - 3x^2 e^x + 6x e^x - 6e^x + C$.'
+          - problem: 'Use the tabular method to evaluate $\int x^2 e^{-x} \, dx$.'
+            answer: '$-(x^2 + 2x + 2)/e^x + C$'
+            solution_sketch: 'Derivatives $x^2, 2x, 2, 0$ against integrals $-e^{-x}, e^{-x}, -e^{-x}$ with alternating signs gives $-x^2 e^{-x} - 2x e^{-x} - 2e^{-x} + C$, i.e. $-(x^2 + 2x + 2)/e^x + C$.'
+        constraints: "polynomial degree 2 or 3 times e^{ax} with a in {-1, 1, 2}; the derivative column must terminate at 0"
+      - id: kp2
+        name: Tabular method for polynomial times trig
+        key_prerequisites: [integration-by-parts]
+        exemplars:
+          - problem: 'Use the tabular method to evaluate $\int x^3 \cos x \, dx$.'
+            answer: '$x^3 \sin x + 3x^2 \cos x - 6x \sin x - 6\cos x + C$'
+            solution_sketch: 'Derivatives $x^3, 3x^2, 6x, 6, 0$; integrals $\sin x, -\cos x, -\sin x, \cos x$; combine with alternating signs.'
+          - problem: 'Use the tabular method to evaluate $\int x^2 \cos x \, dx$.'
+            answer: '$x^2 \sin x + 2x \cos x - 2\sin x + C$'
+            solution_sketch: 'Derivatives $x^2, 2x, 2, 0$; integrals $\sin x, -\cos x, -\sin x$; alternating signs give the sum. Derivative check recovers $x^2\cos x$.'
+        constraints: "polynomial degree 2 or 3 times sin x or cos x; coefficients stay small integers"
+    diagnostic_exemplar:
+      problem: 'Use the tabular method to evaluate $\int x^3 \sin x \, dx$.'
+      answer: '$-x^3 \cos x + 3x^2 \sin x + 6x \cos x - 6\sin x + C$'
+      solution_sketch: 'Derivatives $x^3, 3x^2, 6x, 6, 0$; integrals $-\cos x, -\sin x, \cos x, \sin x$; alternate signs and sum.'
+    anki_seeds:
+      - front: "Tabular integration by parts: what goes in the two columns?"
+        back: "Left: successive derivatives of the polynomial (down to 0). Right: successive antiderivatives of the other factor. Multiply diagonally with alternating signs +, -, +, ..."
+        type: basic
+      - front: "When does the tabular method terminate?"
+        back: "When the derivative column reaches 0 — so it needs a factor that differentiates to 0, i.e. a polynomial."
+        type: basic
+
+  - id: trig-integrals-odd-powers
+    name: Trig Integrals with Odd Powers
+    core: true
+    difficulty: 0.58
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 150
+    prerequisites:
+      - id: integration-substitution
+        weight: 0.7
+        key: true
+      - id: trig-identities-basic
+        weight: 0.6
+        key: true
+      - id: derivatives-trig
+        weight: 0.5
+    knowledge_points:
+      - id: kp1
+        name: One factor ready for substitution
+        key_prerequisites: [integration-substitution, derivatives-trig]
+        exemplars:
+          - problem: 'Evaluate $\int \sin^2 x \cos x \, dx$.'
+            answer: '$\frac{\sin^3 x}{3} + C$'
+            solution_sketch: '$u = \sin x$, $du = \cos x\,dx$: $\int u^2\,du = \frac{u^3}{3} + C$.'
+          - problem: 'Evaluate $\int \cos^4 x \sin x \, dx$.'
+            answer: '$-\frac{\cos^5 x}{5} + C$'
+            solution_sketch: '$u = \cos x$, $du = -\sin x\,dx$: $-\int u^4\,du = -\frac{u^5}{5} + C$.'
+        constraints: "integrand is sin^m x cos x or cos^n x sin x with m, n <= 4; single one-step u-substitution"
+      - id: kp2
+        name: Splitting off one factor from an odd power
+        key_prerequisites: [trig-identities-basic, integration-substitution]
+        exemplars:
+          - problem: 'Evaluate $\int \sin^3 x \, dx$.'
+            answer: '$-\cos x + \frac{\cos^3 x}{3} + C$'
+            solution_sketch: 'Write $\sin^3 x = (1 - \cos^2 x)\sin x$; substitute $u = \cos x$: $\int (u^2 - 1)\,du = \frac{u^3}{3} - u + C$.'
+          - problem: 'Evaluate $\int \cos^3 x \, dx$.'
+            answer: '$\sin x - \frac{\sin^3 x}{3} + C$'
+            solution_sketch: '$\cos^3 x = (1 - \sin^2 x)\cos x$; $u = \sin x$.'
+          - problem: 'Evaluate $\int \sin^3 x \cos^2 x \, dx$.'
+            answer: '$\frac{\cos^5 x}{5} - \frac{\cos^3 x}{3} + C$'
+            solution_sketch: '$\sin^3 x \cos^2 x = (1 - \cos^2 x)\cos^2 x \sin x$; $u = \cos x$ gives $\int (u^4 - u^2)\,du = \frac{u^5}{5} - \frac{u^3}{3} + C$.'
+        constraints: "sin^m x cos^n x with at least one of m, n odd and both <= 3; save one factor from the odd power, convert the rest via sin^2 + cos^2 = 1"
+    diagnostic_exemplar:
+      problem: 'Evaluate $\int \cos^3 x \sin^2 x \, dx$.'
+      answer: '$\frac{\sin^3 x}{3} - \frac{\sin^5 x}{5} + C$'
+      solution_sketch: '$\cos^3 x \sin^2 x = (1 - \sin^2 x)\sin^2 x \cos x$; $u = \sin x$ gives $\int (u^2 - u^4)\,du$.'
+    anki_seeds:
+      - front: "Odd power of sine in an integrand: what's the move?"
+        back: 'Save one factor of $\sin x$, convert the rest with $\sin^2 x = 1 - \cos^2 x$, substitute $u = \cos x$.'
+        type: basic
+      - front: "Odd power of cosine in an integrand: what's the move?"
+        back: 'Save one factor of $\cos x$, convert the rest with $\cos^2 x = 1 - \sin^2 x$, substitute $u = \sin x$.'
+        type: basic
+
+  - id: tangent-secant-integrals
+    name: Tangent and Secant Integrals
+    core: true
+    difficulty: 0.62
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 180
+    prerequisites:
+      - id: integration-substitution
+        weight: 0.7
+        key: true
+      - id: derivatives-trig
+        weight: 0.5
+        key: true
+      - id: reciprocal-trig-functions
+        weight: 0.4
+      - id: trig-integrals-odd-powers
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: The basic tan, cot, sec, and csc integrals
+        key_prerequisites: [integration-substitution, derivatives-trig]
+        exemplars:
+          - problem: 'Evaluate $\int \tan x \, dx$.'
+            answer: '$\ln|\sec x| + C$'
+            solution_sketch: '$\int \frac{\sin x}{\cos x}\,dx$ with $u = \cos x$ gives $-\ln|\cos x| + C = \ln|\sec x| + C$.'
+          - problem: 'Evaluate $\int \cot x \, dx$.'
+            answer: '$\ln|\sin x| + C$'
+            solution_sketch: '$\int \frac{\cos x}{\sin x}\,dx$ with $u = \sin x$.'
+          - problem: 'Evaluate $\int \sec x \, dx$.'
+            answer: '$\ln|\sec x + \tan x| + C$'
+            solution_sketch: 'Multiply by $\frac{\sec x + \tan x}{\sec x + \tan x}$; the numerator is the derivative of the denominator.'
+          - problem: 'Evaluate $\int \csc x \, dx$.'
+            answer: '$\ln|\csc x - \cot x| + C$'
+            solution_sketch: 'Multiply by $\frac{\csc x - \cot x}{\csc x - \cot x}$; the numerator $\csc x\cot x - \csc^2 x$ is the derivative of the denominator. Equivalently $-\ln|\csc x + \cot x| + C$.'
+        constraints: "the four basic quotient integrals (tan, cot, sec, csc); answers as logarithms with absolute values"
+      - id: kp2
+        name: Powers via sec^2 = 1 + tan^2
+        key_prerequisites: [trig-integrals-odd-powers, derivatives-trig]
+        exemplars:
+          - problem: 'Evaluate $\int \tan^2 x \, dx$.'
+            answer: '$\tan x - x + C$'
+            solution_sketch: '$\tan^2 x = \sec^2 x - 1$.'
+          - problem: 'Evaluate $\int \sec^4 x \, dx$.'
+            answer: '$\tan x + \frac{\tan^3 x}{3} + C$'
+            solution_sketch: '$\sec^4 x = (1 + \tan^2 x)\sec^2 x$; $u = \tan x$ gives $\int (1 + u^2)\,du$.'
+          - problem: 'Evaluate $\int \tan^3 x \, dx$.'
+            answer: '$\frac{\tan^2 x}{2} + \ln|\cos x| + C$'
+            solution_sketch: '$\tan^3 x = \tan x(\sec^2 x - 1)$; the first piece is $u = \tan x$, the second is $-\int \tan x\,dx$.'
+        constraints: "powers of tan <= 3, powers of sec <= 4; use sec^2 = 1 + tan^2 to peel off a sec^2 or convert tan^2"
+      - id: kp3
+        name: Products of tangents and secants
+        key_prerequisites: [integration-substitution, derivatives-trig]
+        exemplars:
+          - problem: 'Evaluate $\int \sec^2 x \tan x \, dx$.'
+            answer: '$\frac{\tan^2 x}{2} + C$'
+            solution_sketch: '$u = \tan x$, $du = \sec^2 x\,dx$: $\frac{u^2}{2} + C$. (Equivalently $\frac{\sec^2 x}{2} + C$; the answers differ by a constant.)'
+          - problem: 'Evaluate $\int \tan^2 x \sec^2 x \, dx$.'
+            answer: '$\frac{\tan^3 x}{3} + C$'
+            solution_sketch: '$u = \tan x$: $\int u^2\,du$.'
+          - problem: 'Evaluate $\int \tan^3 x \sec x \, dx$.'
+            answer: '$\frac{\sec^3 x}{3} - \sec x + C$'
+            solution_sketch: 'Save $\sec x \tan x$: $\tan^3 x \sec x = (\sec^2 x - 1)\sec x \tan x$; $u = \sec x$ gives $\int (u^2 - 1)\,du$.'
+        constraints: "even power of sec: save sec^2 and substitute u = tan x; odd power of tan: save sec x tan x and substitute u = sec x"
+    diagnostic_exemplar:
+      problem: 'Evaluate $\int \tan^3 x \sec^3 x \, dx$.'
+      answer: '$\frac{\sec^5 x}{5} - \frac{\sec^3 x}{3} + C$'
+      solution_sketch: 'Split off $\sec x\tan x\,dx$ and use $\tan^2 x = \sec^2 x - 1$: with $u = \sec x$ the integral is $\int (u^2 - 1)u^2\,du$.'
+    anki_seeds:
+      - front: '$\int \tan x \, dx = $ ?'
+        back: '$\ln|\sec x| + C$ (equivalently $-\ln|\cos x| + C$)'
+        type: basic
+      - front: '$\int \sec x \, dx = $ ?'
+        back: '$\ln|\sec x + \tan x| + C$'
+        type: basic
+      - front: "Product tan^m x sec^n x with n even: what's the substitution?"
+        back: 'Save a factor of $\sec^2 x$, convert the rest to tangents, substitute $u = \tan x$.'
+        type: basic
+
+  - id: trigonometric-integrals
+    name: Trigonometric Integrals
+    core: true
+    difficulty: 0.65
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 180
+    prerequisites:
+      - id: trig-integrals-odd-powers
+        weight: 0.7
+        key: true
+      - id: double-half-angle-identities
+        weight: 0.7
+        key: true
+      # Phase C (gap I-1, Wave-2 edge): the identities kp2 rests on are now taught
+      # in precalculus (product-to-sum-identities) instead of being handed to the
+      # learner in the problem stem. Key moved here from trig-identities-basic
+      # (which stays as background algebra) to hold the 3-key cap.
+      - id: product-to-sum-identities
+        weight: 0.6
+        key: true
+      - id: trig-identities-basic
+        weight: 0.6
+      - id: tangent-secant-integrals
+        weight: 0.5
+      - id: integration-substitution
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: Even powers via half-angle identities
+        key_prerequisites: [double-half-angle-identities, integration-substitution]
+        exemplars:
+          - problem: 'Evaluate $\int \sin^2 x \, dx$.'
+            answer: '$x/2 - \sin(2x)/4 + C$'
+            solution_sketch: '$\sin^2 x = \frac{1 - \cos 2x}{2}$, so the integral is $x/2 - \sin(2x)/4 + C$.'
+          - problem: 'Evaluate $\int_0^{\pi} \cos^2 x \, dx$.'
+            answer: '$\pi/2$'
+            solution_sketch: '$\cos^2 x = \frac{1 + \cos 2x}{2}$; $[\frac{x}{2} + \frac{\sin 2x}{4}]_0^{\pi} = \frac{\pi}{2}$.'
+          - problem: 'Evaluate $\int \sin^2 x \cos^2 x \, dx$.'
+            answer: '$x/8 - \sin(4x)/32 + C$'
+            solution_sketch: '$\sin^2 x\cos^2 x = \frac{\sin^2 2x}{4} = \frac{1 - \cos 4x}{8}$; integrate term by term.'
+        constraints: "powers 2 only (or sin^2 x cos^2 x via double half-angle); definite integrals over [0, pi] or [0, pi/2]"
+      - id: kp2
+        name: Products sin(mx) cos(nx) via product-to-sum
+        key_prerequisites: [product-to-sum-identities, sum-difference-identities, trig-identities-basic]
+        exemplars:
+          - problem: 'Evaluate $\int \sin 3x \cos x \, dx$.'
+            answer: '$-\cos(4x)/8 - \cos(2x)/4 + C$'
+            solution_sketch: '$\sin 3x\cos x = \frac{1}{2}[\sin 4x + \sin 2x]$; integrate each sine.'
+          - problem: 'Evaluate $\int \sin 2x \sin x \, dx$.'
+            answer: '$\sin(x)/2 - \sin(3x)/6 + C$'
+            solution_sketch: '$\sin 2x\sin x = \frac{1}{2}[\cos x - \cos 3x]$; integrate each cosine.'
+          - problem: 'Evaluate $\int \cos 3x \cos x \, dx$.'
+            answer: '$\sin(4x)/8 + \sin(2x)/4 + C$'
+            solution_sketch: '$\cos 3x\cos x = \frac{1}{2}[\cos 4x + \cos 2x]$.'
+        constraints: "m, n small positive integers with m != n; learner recalls the product-to-sum identities (taught in product-to-sum-identities); restating one in the stem remains acceptable"
+      - id: kp3
+        name: General strategy for sin^m x cos^n x
+        key_prerequisites: [trig-integrals-odd-powers, double-half-angle-identities, trig-identities-basic]
+        exemplars:
+          - problem: 'Evaluate $\int \sin^4 x \, dx$.'
+            answer: '$3x/8 - \sin(2x)/4 + \sin(4x)/32 + C$'
+            solution_sketch: '$\sin^4 x = \left(\frac{1 - \cos 2x}{2}\right)^2 = \frac{1}{4}(1 - 2\cos 2x + \frac{1 + \cos 4x}{2})$; integrate term by term.'
+          - problem: 'Evaluate $\int_0^{\pi/2} \cos^4 x \, dx$.'
+            answer: '$3\pi/16$'
+            solution_sketch: 'Half-angle twice: $\cos^4 x = \frac{3}{8} + \frac{\cos 2x}{2} + \frac{\cos 4x}{8}$; only the constant survives the integration over $[0, \pi/2]$.'
+          - problem: 'Evaluate $\int \sin^3 x \cos^3 x \, dx$.'
+            answer: '$\sin^4(x)/4 - \sin^6(x)/6 + C$'
+            solution_sketch: 'One power is odd: $\sin^3 x\cos^3 x = \sin^3 x(1 - \sin^2 x)\cos x$; $u = \sin x$ gives $\int (u^3 - u^5)\,du$.'
+        constraints: "m + n <= 6; odd power present -> substitution route, both even -> half-angle route; state which strategy applies"
+    diagnostic_exemplar:
+      problem: 'Evaluate $\int \cos^4 x \, dx$.'
+      answer: '$3x/8 + \sin(2x)/4 + \sin(4x)/32 + C$'
+      solution_sketch: 'Two half-angle reductions give $\cos^4 x = \frac{3}{8} + \frac{\cos 2x}{2} + \frac{\cos 4x}{8}$.'
+    anki_seeds:
+      - front: "Half-angle identity for sin^2 x?"
+        back: '$\sin^2 x = \frac{1 - \cos 2x}{2}$'
+        type: basic
+      - front: "Both powers even in sin^m x cos^n x: what's the strategy?"
+        back: "Half-angle identities to reduce the powers (no substitution works directly)."
+        type: basic
+      - front: 'Product-to-sum: $\sin A \cos B = $ ?'
+        back: '$\frac{1}{2}[\sin(A+B) + \sin(A-B)]$'
+        type: basic
+
+  - id: completing-the-square-integrands
+    name: Completing the Square in Integrands
+    core: true
+    difficulty: 0.62
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 180
+    prerequisites:
+      - id: completing-the-square
+        weight: 0.6
+        key: true
+      - id: integration-substitution
+        weight: 0.7
+        key: true
+      - id: derivatives-inverse-trig
+        weight: 0.5
+    knowledge_points:
+      - id: kp1
+        name: Arctangent forms
+        key_prerequisites: [completing-the-square, derivatives-inverse-trig]
+        exemplars:
+          - problem: 'Evaluate $\int \frac{dx}{x^2 + 2x + 5}$.'
+            answer: '$\frac{1}{2}\arctan\left(\frac{x + 1}{2}\right) + C$'
+            solution_sketch: 'Complete the square: $x^2 + 2x + 5 = (x+1)^2 + 4$; substitute $u = x + 1$ and use $\int \frac{du}{u^2 + a^2} = \frac{1}{a}\arctan\frac{u}{a}$.'
+          - problem: 'Evaluate $\int \frac{dx}{x^2 - 4x + 13}$.'
+            answer: '$\frac{1}{3}\arctan\left(\frac{x - 2}{3}\right) + C$'
+            solution_sketch: '$x^2 - 4x + 13 = (x-2)^2 + 9$; the $a = 3$ arctangent pattern.'
+          - problem: 'Evaluate $\int \frac{dx}{x^2 + 6x + 10}$.'
+            answer: '$\arctan(x + 3) + C$'
+            solution_sketch: '$x^2 + 6x + 10 = (x+3)^2 + 1$.'
+        constraints: "irreducible quadratic with integer center and radius; a in {1, 2, 3}"
+      - id: kp2
+        name: Arcsine forms
+        key_prerequisites: [completing-the-square, derivatives-inverse-trig]
+        exemplars:
+          - problem: 'Evaluate $\int \frac{dx}{\sqrt{3 - 2x - x^2}}$.'
+            answer: '$\arcsin\left(\frac{x + 1}{2}\right) + C$'
+            solution_sketch: '$3 - 2x - x^2 = 4 - (x+1)^2$; substitute $u = x + 1$ and use $\int \frac{du}{\sqrt{a^2 - u^2}} = \arcsin\frac{u}{a}$.'
+          - problem: 'Evaluate $\int \frac{dx}{\sqrt{8 - 2x - x^2}}$.'
+            answer: '$\arcsin\left(\frac{x + 1}{3}\right) + C$'
+            solution_sketch: '$8 - 2x - x^2 = 9 - (x+1)^2$; the $a = 3$ arcsine pattern.'
+        constraints: "negative-leading-coefficient quadratics under a square root; completed square has integer center and radius"
+      - id: kp3
+        name: Linear numerators (split into log + arctan)
+        key_prerequisites: [completing-the-square, integration-substitution]
+        exemplars:
+          - problem: 'Evaluate $\int \frac{2x + 3}{x^2 + 2x + 5} \, dx$.'
+            answer: '$\ln(x^2 + 2x + 5) + \frac{1}{2}\arctan\left(\frac{x + 1}{2}\right) + C$'
+            solution_sketch: 'Write $2x + 3 = (2x + 2) + 1$: the first part is $\int \frac{du}{u}$ with $u$ the denominator, the second is the arctangent pattern.'
+          - problem: 'Evaluate $\int \frac{2x + 2}{x^2 + 2x + 5} \, dx$.'
+            answer: '$\ln(x^2 + 2x + 5) + C$'
+            solution_sketch: 'The numerator is exactly the derivative of the denominator: $u = x^2 + 2x + 5$.'
+        constraints: "numerator degree 1; split as (multiple of the derivative of the denominator) + constant"
+    diagnostic_exemplar:
+      problem: 'Evaluate $\int \frac{2x + 6}{x^2 + 4x + 5} \, dx$.'
+      answer: '$\ln(x^2 + 4x + 5) + 2\arctan(x + 2) + C$'
+      solution_sketch: 'Write $2x + 6 = (2x + 4) + 2$: the first part is a logarithm, the second is $2\int \frac{dx}{(x+2)^2 + 1}$.'
+    anki_seeds:
+      - front: '$\int \frac{du}{u^2 + a^2} = $ ?'
+        back: '$\frac{1}{a}\arctan\left(\frac{u}{a}\right) + C$'
+        type: basic
+      - front: '$\int \frac{du}{\sqrt{a^2 - u^2}} = $ ?'
+        back: '$\arcsin\left(\frac{u}{a}\right) + C$'
+        type: basic
+
+  - id: trigonometric-substitution
+    name: Trigonometric Substitution
+    core: true
+    difficulty: 0.72
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 240
+    prerequisites:
+      - id: trigonometric-integrals
+        weight: 0.6
+        key: true
+      - id: integration-substitution
+        weight: 0.6
+        key: true
+      - id: completing-the-square-integrands
+        weight: 0.5
+      - id: right-triangle-trig
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: The pattern a^2 - x^2 (x = a sin theta)
+        key_prerequisites: [trigonometric-integrals, right-triangle-trig]
+        exemplars:
+          - problem: 'Evaluate $\int \frac{dx}{\sqrt{4 - x^2}}$.'
+            answer: '$\arcsin\left(\frac{x}{2}\right) + C$'
+            solution_sketch: '$x = 2\sin\theta$, $dx = 2\cos\theta\,d\theta$, $\sqrt{4 - x^2} = 2\cos\theta$: $\int d\theta = \theta + C$.'
+          - problem: 'Evaluate $\int \sqrt{1 - x^2} \, dx$.'
+            answer: '$\frac{1}{2}\left(\arcsin x + x\sqrt{1 - x^2}\right) + C$'
+            solution_sketch: '$x = \sin\theta$: $\int \cos^2\theta\,d\theta = \frac{\theta}{2} + \frac{\sin 2\theta}{4} = \frac{\theta + \sin\theta\cos\theta}{2}$; back-substitute.'
+          - problem: 'Evaluate $\int_0^2 \sqrt{4 - x^2} \, dx$.'
+            answer: '$\pi$'
+            solution_sketch: 'Quarter of the disk of radius $2$: $\frac{1}{4}\pi(2)^2 = \pi$; or $x = 2\sin\theta$ turns it into $4\int_0^{\pi/2}\cos^2\theta\,d\theta = \pi$.'
+        constraints: "a in {1, 2, 3}; results should back-substitute cleanly via a reference right triangle"
+      - id: kp2
+        name: The pattern a^2 + x^2 (x = a tan theta)
+        key_prerequisites: [trigonometric-integrals, integration-substitution]
+        exemplars:
+          - problem: 'Evaluate $\int \frac{dx}{x^2 + 9}$.'
+            answer: '$\frac{1}{3}\arctan\left(\frac{x}{3}\right) + C$'
+            solution_sketch: '$x = 3\tan\theta$: $\int \frac{3\sec^2\theta}{9\sec^2\theta}\,d\theta = \frac{\theta}{3} + C$.'
+          - problem: 'Evaluate $\int \frac{dx}{(1 + x^2)^{3/2}}$.'
+            answer: '$\frac{x}{\sqrt{1 + x^2}} + C$'
+            solution_sketch: '$x = \tan\theta$: $\int \frac{\sec^2\theta}{\sec^3\theta}\,d\theta = \int \cos\theta\,d\theta = \sin\theta = \frac{x}{\sqrt{1+x^2}}$. Derivative check: $(1 + x^2)^{-3/2}$.'
+        constraints: "a in {1, 2, 3}; exponent on (a^2 + x^2) is 1 or 3/2"
+      - id: kp3
+        name: The pattern x^2 - a^2 and completed squares
+        key_prerequisites: [trigonometric-integrals, completing-the-square-integrands]
+        exemplars:
+          - problem: 'Evaluate $\int \frac{dx}{\sqrt{x^2 - 4}}$ for $x > 2$.'
+            answer: '$\ln\left|x + \sqrt{x^2 - 4}\right| + C$'
+            solution_sketch: '$x = 2\sec\theta$: $\int \sec\theta\,d\theta = \ln|\sec\theta + \tan\theta|$; back-substituting gives $\ln|x + \sqrt{x^2-4}| + C$ (the $-\ln 2$ folds into $C$).'
+          - problem: 'Evaluate $\int \frac{dx}{(x^2 + 2x + 2)^{3/2}}$.'
+            answer: '$\frac{x + 1}{\sqrt{x^2 + 2x + 2}} + C$'
+            solution_sketch: 'Complete the square: $x^2 + 2x + 2 = (x+1)^2 + 1$; $u = x + 1$ then $u = \tan\theta$ gives $\int \cos\theta\,d\theta = \sin\theta = \frac{u}{\sqrt{u^2 + 1}}$.'
+        constraints: "secant substitutions stated on a domain where sqrt(x^2 - a^2) >= 0; completed squares have integer center and radius"
+    diagnostic_exemplar:
+      problem: 'Evaluate $\int \frac{dx}{(x^2 - 4x + 8)^{3/2}}$.'
+      answer: '$\frac{x - 2}{4\sqrt{x^2 - 4x + 8}} + C$'
+      solution_sketch: 'Complete the square to $(x-2)^2 + 4$ and set $x - 2 = 2\tan\theta$; the integral becomes $\frac{1}{4}\int\cos\theta\,d\theta = \frac{\sin\theta}{4}$.'
+    anki_seeds:
+      - front: 'For $\sqrt{a^2 - x^2}$, substitute...'
+        back: '$x = a\sin\theta$ (so the radical becomes $a\cos\theta$)'
+        type: basic
+      - front: 'For $\sqrt{a^2 + x^2}$ and $\sqrt{x^2 - a^2}$, substitute...'
+        back: '$x = a\tan\theta$ and $x = a\sec\theta$ respectively'
+        type: basic
+
+  - id: partial-fractions-linear-factors
+    name: Partial Fractions with Distinct Linear Factors
+    core: true
+    difficulty: 0.62
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 180
+    prerequisites:
+      - id: rational-expressions
+        weight: 0.6
+        key: true
+      - id: integration-substitution
+        weight: 0.6
+        key: true
+      - id: definite-integrals-ftc
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: Decomposing into partial fractions
+        key_prerequisites: [rational-expressions]
+        exemplars:
+          - problem: 'Decompose $\frac{3x + 5}{(x + 1)(x + 3)}$ into partial fractions.'
+            answer: '$\frac{1}{x + 1} + \frac{2}{x + 3}$'
+            solution_sketch: '$3x + 5 = A(x+3) + B(x+1)$; $x = -1$ gives $A = 1$, $x = -3$ gives $B = 2$.'
+          - problem: 'Decompose $\frac{1}{x(x + 1)}$ into partial fractions.'
+            answer: '$\frac{1}{x} - \frac{1}{x + 1}$'
+            solution_sketch: '$1 = A(x+1) + Bx$; $x = 0$ gives $A = 1$, $x = -1$ gives $B = -1$.'
+        constraints: "two distinct linear factors with integer roots; numerator degree <= 1; coefficients found by plugging in roots (cover-up)"
+      - id: kp2
+        name: Integrating distinct linear factors
+        key_prerequisites: [rational-expressions, integration-substitution]
+        exemplars:
+          - problem: 'Evaluate $\int \frac{dx}{x^2 - 1}$.'
+            answer: '$\frac{1}{2}\ln\left|\frac{x - 1}{x + 1}\right| + C$'
+            solution_sketch: '$\frac{1}{(x-1)(x+1)} = \frac{1/2}{x-1} - \frac{1/2}{x+1}$; integrate each term to logs.'
+          - problem: 'Evaluate $\int \frac{5x - 4}{(x - 2)(x + 1)} \, dx$.'
+            answer: '$2\ln|x - 2| + 3\ln|x + 1| + C$'
+            solution_sketch: '$5x - 4 = A(x+1) + B(x-2)$; $x = 2$ gives $A = 2$, $x = -1$ gives $B = 3$.'
+          - problem: 'Evaluate $\int \frac{dx}{x(x + 1)}$.'
+            answer: '$\ln\left|\frac{x}{x + 1}\right| + C$'
+            solution_sketch: '$\frac{1}{x(x+1)} = \frac{1}{x} - \frac{1}{x+1}$.'
+        constraints: "denominator = product of two distinct linear factors with integer roots; numerator degree <= 1"
+      - id: kp3
+        name: Definite integrals with partial fractions
+        key_prerequisites: [integration-substitution, definite-integrals-ftc]
+        exemplars:
+          - problem: 'Evaluate $\int_0^1 \frac{dx}{(x + 1)(x + 2)}$.'
+            answer: '$\ln\frac{4}{3}$'
+            solution_sketch: '$\frac{1}{(x+1)(x+2)} = \frac{1}{x+1} - \frac{1}{x+2}$; $[\ln\frac{x+1}{x+2}]_0^1 = \ln\frac{2}{3} - \ln\frac{1}{2} = \ln\frac{4}{3}$.'
+          - problem: 'Evaluate $\int_1^3 \frac{dx}{x(x + 1)}$.'
+            answer: '$\ln\frac{3}{2}$'
+            solution_sketch: '$[\ln\frac{x}{x+1}]_1^3 = \ln\frac{3}{4} - \ln\frac{1}{2} = \ln\frac{3}{2}$.'
+        constraints: "bounds avoid all roots of the denominator; combine logs into a single ln of a rational number"
+    diagnostic_exemplar:
+      problem: 'Evaluate $\int_2^3 \frac{dx}{x(x - 1)}$.'
+      answer: '$\ln\frac{4}{3}$'
+      solution_sketch: '$\frac{1}{x(x-1)} = \frac{1}{x-1} - \frac{1}{x}$; $[\ln|x-1| - \ln|x|]_2^3 = (\ln 2 - \ln 3) - (0 - \ln 2) = \ln\frac{4}{3}$.'
+    anki_seeds:
+      - front: "Cover-up method: to find A in A/(x - a) for distinct linear factors..."
+        back: "multiply through by (x - a), then set x = a in what remains"
+        type: basic
+      - front: '$\int \frac{dx}{x - a} = $ ?'
+        back: '$\ln|x - a| + C$'
+        type: basic
+
+  - id: partial-fractions-integration
+    name: Integration by Partial Fractions
+    core: true
+    difficulty: 0.7
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 240
+    prerequisites:
+      - id: partial-fractions-linear-factors
+        weight: 0.8
+        key: true
+      - id: polynomial-division
+        weight: 0.5
+        key: true
+      - id: integration-substitution
+        weight: 0.4
+      - id: derivatives-exp-log
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Repeated linear factors
+        key_prerequisites: [partial-fractions-linear-factors]
+        exemplars:
+          - problem: 'Evaluate $\int \frac{2x + 3}{(x + 1)^2} \, dx$.'
+            answer: '$2\ln|x + 1| - \frac{1}{x + 1} + C$'
+            solution_sketch: '$2x + 3 = 2(x+1) + 1$, so the integrand is $\frac{2}{x+1} + \frac{1}{(x+1)^2}$.'
+          - problem: 'Evaluate $\int \frac{dx}{x^2(x + 1)}$.'
+            answer: '$-\ln|x| - \frac{1}{x} + \ln|x + 1| + C$'
+            solution_sketch: '$\frac{1}{x^2(x+1)} = \frac{-1}{x} + \frac{1}{x^2} + \frac{1}{x+1}$ (from $1 = Ax(x+1) + B(x+1) + Cx^2$ with $B = 1$, $C = 1$, $A = -1$).'
+        constraints: "one repeated linear factor of multiplicity 2; total denominator degree <= 3"
+      - id: kp2
+        name: Improper fractions (divide first)
+        key_prerequisites: [polynomial-division, partial-fractions-linear-factors]
+        exemplars:
+          - problem: 'Evaluate $\int \frac{x^2}{x + 1} \, dx$.'
+            answer: '$\frac{x^2}{2} - x + \ln|x + 1| + C$'
+            solution_sketch: 'Divide first: $\frac{x^2}{x+1} = x - 1 + \frac{1}{x+1}$.'
+          - problem: 'Evaluate $\int \frac{x^2 + 1}{x^2 - 1} \, dx$.'
+            answer: '$x + \ln\left|\frac{x - 1}{x + 1}\right| + C$'
+            solution_sketch: '$\frac{x^2 + 1}{x^2 - 1} = 1 + \frac{2}{x^2 - 1}$; then $\frac{2}{(x-1)(x+1)} = \frac{1}{x-1} - \frac{1}{x+1}$.'
+        constraints: "numerator degree >= denominator degree; quotient is degree <= 1; remainder decomposes over distinct linear factors"
+      - id: kp3
+        name: Irreducible quadratic factors
+        key_prerequisites: [partial-fractions-linear-factors, integration-substitution]
+        exemplars:
+          - problem: 'Evaluate $\int \frac{dx}{x(x^2 + 1)}$.'
+            answer: '$\ln|x| - \frac{1}{2}\ln(x^2 + 1) + C$'
+            solution_sketch: '$\frac{1}{x(x^2+1)} = \frac{1}{x} - \frac{x}{x^2+1}$; the second term integrates by $u = x^2 + 1$.'
+          - problem: 'Evaluate $\int \frac{4}{x(x^2 + 4)} \, dx$.'
+            answer: '$\ln|x| - \frac{1}{2}\ln(x^2 + 4) + C$'
+            solution_sketch: '$\frac{4}{x(x^2+4)} = \frac{1}{x} - \frac{x}{x^2+4}$; check by recombining over the common denominator.'
+        constraints: "at most one irreducible quadratic factor (x^2 + 1 or x^2 + 4); Bx + C numerator handled by u = the quadratic"
+    diagnostic_exemplar:
+      problem: 'Evaluate $\int \frac{x^2 + 2}{x(x^2 + 1)} \, dx$.'
+      answer: '$2\ln|x| - \frac{1}{2}\ln(x^2 + 1) + C$'
+      solution_sketch: 'The irreducible quadratic needs $\frac{A}{x} + \frac{Bx + C}{x^2+1}$; matching coefficients gives $A = 2$, $B = -1$, $C = 0$.'
+    anki_seeds:
+      - front: "Partial fraction form for a repeated factor (x - a)^2?"
+        back: '$\frac{A}{x - a} + \frac{B}{(x - a)^2}$'
+        type: basic
+      - front: "Before decomposing a rational integrand, check that..."
+        back: "the numerator degree is less than the denominator degree — otherwise do polynomial long division first"
+        type: basic
+      - front: "Partial fraction numerator over an irreducible quadratic factor?"
+        back: '$\frac{Bx + C}{x^2 + bx + c}$ (a full linear numerator, not just a constant)'
+        type: basic
+
+  - id: weierstrass-substitution
+    name: Weierstrass Substitution
+    core: false                # special-case technique; nothing downstream
+    difficulty: 0.75
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 240
+    prerequisites:
+      - id: trigonometric-integrals
+        weight: 0.6
+        key: true
+      - id: partial-fractions-linear-factors
+        weight: 0.5
+        key: true
+      - id: integration-substitution
+        weight: 0.5
+      - id: trig-identities-basic
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: The substitution t = tan(x/2)
+        key_prerequisites: [trig-identities-basic, integration-substitution]
+        exemplars:
+          - problem: 'With $t = \tan(x/2)$, express $\sin x$, $\cos x$, and $dx$ in terms of $t$.'
+            answer: '$\sin x = \frac{2t}{1 + t^2}$, $\cos x = \frac{1 - t^2}{1 + t^2}$, $dx = \frac{2\,dt}{1 + t^2}$'
+            solution_sketch: 'Double-angle formulas with $\tan(x/2) = t$: $\sin x = 2\sin\frac{x}{2}\cos\frac{x}{2}$, $\cos x = \cos^2\frac{x}{2} - \sin^2\frac{x}{2}$; divide by $\cos^2\frac{x}{2} + \sin^2\frac{x}{2}$.'
+          - problem: 'Evaluate $\int \frac{dx}{1 + \sin x}$.'
+            answer: '$-\frac{2}{1 + \tan(x/2)} + C$'
+            solution_sketch: '$t = \tan(x/2)$: $\int \frac{2\,dt}{(1+t^2)(1 + \frac{2t}{1+t^2})} = \int \frac{2\,dt}{(1+t)^2} = -\frac{2}{1+t} + C$.'
+          - problem: 'Evaluate $\int_0^{\pi/2} \frac{dx}{1 + \sin x}$.'
+            answer: "1"
+            solution_sketch: '$t$ runs from $0$ to $1$: $[-\frac{2}{1+t}]_0^1 = -1 + 2 = 1$.'
+        constraints: "denominators of the form 1 + sin x or 1 + cos x; the t-integral must be a single power of a linear factor"
+      - id: kp2
+        name: Rational functions of sin and cos
+        key_prerequisites: [partial-fractions-linear-factors, trigonometric-integrals]
+        exemplars:
+          - problem: 'Evaluate $\int \frac{dx}{3 + 5\cos x}$.'
+            answer: '$\frac{1}{4}\ln\left|\frac{2 + \tan(x/2)}{2 - \tan(x/2)}\right| + C$'
+            solution_sketch: '$t = \tan(x/2)$: the integrand becomes $\frac{2}{8 - 2t^2} = \frac{1}{4 - t^2}$; partial fractions give $\frac{1}{4}\ln\left|\frac{2+t}{2-t}\right|$.'
+          - problem: 'Evaluate $\int \frac{dx}{5 + 4\cos x}$.'
+            answer: '$\frac{2}{3}\arctan\left(\frac{\tan(x/2)}{3}\right) + C$'
+            solution_sketch: '$t = \tan(x/2)$: $5 + 4\cos x = \frac{9 + t^2}{1 + t^2}$, so the integral is $\int \frac{2\,dt}{9 + t^2} = \frac{2}{3}\arctan\frac{t}{3}$.'
+          - problem: 'Evaluate $\int \csc x \, dx$ using $t = \tan(x/2)$.'
+            answer: '$\ln\left|\tan\frac{x}{2}\right| + C$'
+            solution_sketch: '$\csc x\,dx = \frac{1+t^2}{2t}\cdot\frac{2\,dt}{1+t^2} = \frac{dt}{t}$.'
+        constraints: "integrand rational in sin x and cos x with small integer coefficients; the t-integral is an arctan pattern or splits over distinct linear factors"
+    diagnostic_exemplar:
+      problem: 'Evaluate $\int \frac{dx}{2 + \cos x}$.'
+      answer: '$\frac{2}{\sqrt{3}}\arctan\left(\frac{\tan(x/2)}{\sqrt{3}}\right) + C$'
+      solution_sketch: 'With $t = \tan(x/2)$ the integrand becomes $\frac{2\,dt}{3 + t^2}$.'
+    anki_seeds:
+      - front: 'Weierstrass substitution $t = \tan(x/2)$: the three replacement formulas?'
+        back: '$\sin x = \frac{2t}{1+t^2}$, $\cos x = \frac{1-t^2}{1+t^2}$, $dx = \frac{2\,dt}{1+t^2}$'
+        type: basic
+      - front: "When is the Weierstrass substitution the right tool?"
+        back: "When the integrand is a rational function of sin x and cos x that no simpler identity or u-substitution handles."
+        type: basic
+
+  - id: improper-integrals-infinite-limits
+    name: Improper Integrals with Infinite Limits
+    core: true
+    difficulty: 0.6
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 150
+    prerequisites:
+      - id: definite-integrals-ftc
+        weight: 0.7
+        key: true
+      - id: limits-at-infinity-rational
+        weight: 0.6
+        key: true
+      - id: antiderivatives
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: One infinite endpoint as a limit
+        key_prerequisites: [definite-integrals-ftc, limits-at-infinity-rational]
+        exemplars:
+          - problem: 'Evaluate $\int_1^{\infty} \frac{dx}{x^2}$ or state that it diverges.'
+            answer: "1"
+            solution_sketch: '$\lim_{b\to\infty} [-\frac{1}{x}]_1^b = \lim_{b\to\infty} (1 - \frac{1}{b}) = 1$.'
+          - problem: 'Evaluate $\int_1^{\infty} \frac{dx}{x}$ or state that it diverges.'
+            answer: 'diverges'
+            solution_sketch: '$\lim_{b\to\infty} \ln b = \infty$.'
+        constraints: "one infinite endpoint; power-function integrands; always write the limit explicitly"
+      - id: kp2
+        name: Exponential and arctangent integrands
+        key_prerequisites: [definite-integrals-ftc, antiderivatives]
+        exemplars:
+          - problem: 'Evaluate $\int_0^{\infty} e^{-x} \, dx$.'
+            answer: "1"
+            solution_sketch: '$\lim_{b\to\infty} [-e^{-x}]_0^b = 0 - (-1) = 1$.'
+          - problem: 'Evaluate $\int_0^{\infty} e^{-2x} \, dx$.'
+            answer: '$1/2$'
+            solution_sketch: '$\lim_{b\to\infty} [-\frac{1}{2}e^{-2x}]_0^b = \frac{1}{2}$.'
+          - problem: 'Evaluate $\int_0^{\infty} \frac{dx}{1 + x^2}$.'
+            answer: '$\pi/2$'
+            solution_sketch: '$\lim_{b\to\infty} \arctan b - \arctan 0 = \frac{\pi}{2}$.'
+        constraints: "antiderivative is e^{-ax} or arctan; a in {1, 2, 3}"
+      - id: kp3
+        name: Doubly infinite intervals and divergence by oscillation
+        key_prerequisites: [definite-integrals-ftc, limits-at-infinity-rational]
+        exemplars:
+          - problem: 'Evaluate $\int_{-\infty}^{\infty} \frac{dx}{1 + x^2}$.'
+            answer: '$\pi$'
+            solution_sketch: 'Split at $0$: each half contributes $\frac{\pi}{2}$ (both limits must exist separately).'
+          - problem: 'Evaluate $\int_0^{\infty} \cos x \, dx$ or state that it diverges.'
+            answer: 'diverges'
+            solution_sketch: 'The limit of $[\sin x]_0^b = \sin b$ oscillates between $-1$ and $1$, so the improper integral diverges.'
+        constraints: "split doubly infinite integrals at 0; include one oscillating-divergence example"
+    diagnostic_exemplar:
+      problem: 'Evaluate $\int_{-\infty}^{\infty} \frac{dx}{4 + x^2}$ or state that it diverges.'
+      answer: '$\pi/2$'
+      solution_sketch: 'Split at $0$ and take limits: $\frac12\arctan(x/2)$ runs from $-\frac{\pi}{4}$ to $\frac{\pi}{4}$ on each side, giving $\frac{\pi}{4} + \frac{\pi}{4}$.'
+    anki_seeds:
+      - front: 'Definition: $\int_a^{\infty} f(x)\,dx = $ ?'
+        back: '$\lim_{b\to\infty} \int_a^b f(x)\,dx$ (convergent iff the limit is finite)'
+        type: basic
+      - front: '$\int_{-\infty}^{\infty} f(x)\,dx$ converges iff...'
+        back: "both halves (split at any finite point) converge separately"
+        type: basic
+
+  - id: improper-integrals-discontinuous
+    name: Improper Integrals with Discontinuous Integrands
+    core: true
+    difficulty: 0.62
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 180
+    prerequisites:
+      - id: definite-integrals-ftc
+        weight: 0.7
+        key: true
+      - id: one-sided-limits
+        weight: 0.6
+        key: true
+      - id: improper-integrals-infinite-limits
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: Vertical asymptote at an endpoint
+        key_prerequisites: [definite-integrals-ftc, one-sided-limits]
+        exemplars:
+          - problem: 'Evaluate $\int_0^1 \frac{dx}{\sqrt{x}}$ or state that it diverges.'
+            answer: "2"
+            solution_sketch: '$\lim_{a\to 0^+} [2\sqrt{x}]_a^1 = 2 - 0 = 2$.'
+          - problem: 'Evaluate $\int_0^1 \frac{dx}{x^2}$ or state that it diverges.'
+            answer: 'diverges'
+            solution_sketch: '$\lim_{a\to 0^+} [-\frac{1}{x}]_a^1 = \lim_{a\to 0^+} (\frac{1}{a} - 1) = \infty$.'
+          - problem: 'Evaluate $\int_0^4 \frac{dx}{\sqrt{x}}$.'
+            answer: "4"
+            solution_sketch: '$\lim_{a\to 0^+} [2\sqrt{x}]_a^4 = 4$.'
+        constraints: "single vertical asymptote at an endpoint of the interval; integrand of the form x^{-p}"
+      - id: kp2
+        name: Asymptotes at the upper endpoint
+        key_prerequisites: [definite-integrals-ftc, one-sided-limits]
+        exemplars:
+          - problem: 'Evaluate $\int_0^1 \frac{dx}{\sqrt[3]{1 - x}}$ or state that it diverges.'
+            answer: '$3/2$'
+            solution_sketch: '$\lim_{b\to 1^-} [-\frac{3}{2}(1-x)^{2/3}]_0^b = 0 + \frac{3}{2} = \frac{3}{2}$.'
+          - problem: 'Evaluate $\int_0^1 \frac{dx}{1 - x}$ or state that it diverges.'
+            answer: 'diverges'
+            solution_sketch: '$\lim_{b\to 1^-} [-\ln(1-x)]_0^b = \infty$.'
+        constraints: "asymptote at the upper endpoint; integrand (b - x)^{-p} with p in {1/3, 1/2, 1, 2}"
+      - id: kp3
+        name: Interior discontinuities (split the integral)
+        key_prerequisites: [definite-integrals-ftc, one-sided-limits]
+        exemplars:
+          - problem: 'Applying the FTC directly to $\int_{-1}^{1} \frac{dx}{x^2}$ gives $-2$, which cannot be right for a positive integrand. State the correct verdict: converges or diverges?'
+            answer: 'diverges'
+            solution_sketch: 'The FTC requires continuity on the whole interval, but the integrand blows up at $x = 0$ inside it. Split there: $\lim_{a\to 0^+}\int_a^1 \frac{dx}{x^2} = \infty$, so each half diverges and so does the whole. A negative value for a positive integrand is the tell-tale sign the FTC was misapplied.'
+          - problem: 'Evaluate $\int_0^3 \frac{dx}{(x - 1)^{2/3}}$ or state that it diverges.'
+            answer: '3 + 3*2^(1/3)'
+            solution_sketch: 'Split at $x = 1$: $[3(x-1)^{1/3}]$ gives $3$ on $[0,1]$ and $3\sqrt[3]{2}$ on $[1,3]$; both one-sided limits exist.'
+        constraints: "one interior discontinuity; always split there and evaluate each one-sided limit; include the classic false-FTC trap"
+    diagnostic_exemplar:
+      problem: 'Evaluate $\int_0^2 \frac{dx}{(x - 1)^{2/3}}$ or state that it diverges.'
+      answer: '6'
+      solution_sketch: 'The integrand blows up at the interior point $x = 1$, so split there: each piece is $[3(x-1)^{1/3}]$ and contributes $3$.'
+    anki_seeds:
+      - front: "An integrand with a vertical asymptote inside [a, b]: what must you do?"
+        back: "Split the integral at the discontinuity and require BOTH one-sided improper integrals to converge."
+        type: basic
+      - front: "Warning sign that you integrated across a hidden discontinuity?"
+        back: "e.g. a negative result for a positive integrand — the FTC does not apply across an asymptote"
+        type: basic
+
+  - id: improper-integrals
+    name: Improper Integrals
+    core: true
+    difficulty: 0.68
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 180
+    prerequisites:
+      - id: improper-integrals-infinite-limits
+        weight: 0.7
+        key: true
+      - id: improper-integrals-discontinuous
+        weight: 0.6
+        key: true
+      - id: integration-substitution
+        weight: 0.4
+      - id: partial-fractions-linear-factors
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: The p-test at infinity and at zero
+        key_prerequisites: [improper-integrals-infinite-limits, improper-integrals-discontinuous]
+        exemplars:
+          - problem: 'For which $p$ does $\int_1^{\infty} \frac{dx}{x^p}$ converge, and what is $\int_1^{\infty} \frac{dx}{x^{3/2}}$?'
+            answer: 'converges iff $p > 1$; the integral equals $2$'
+            solution_sketch: 'For $p \neq 1$ the antiderivative is $\frac{x^{1-p}}{1-p}$, finite at $\infty$ iff $p > 1$. With $p = 3/2$: $[-2x^{-1/2}]_1^{\infty} = 2$.'
+          - problem: 'For which $p$ does $\int_0^1 \frac{dx}{x^p}$ converge?'
+            answer: '$p < 1$'
+            solution_sketch: 'Near $0$ the antiderivative $\frac{x^{1-p}}{1-p}$ has a finite limit iff $1 - p > 0$; the two p-tests are mirror images.'
+        constraints: "p in {1/2, 1, 3/2, 2, 3}; contrast the two p-tests explicitly"
+      - id: kp2
+        name: Substitution and partial fractions in improper integrals
+        key_prerequisites: [integration-substitution, partial-fractions-linear-factors]
+        exemplars:
+          - problem: 'Evaluate $\int_0^{\infty} x e^{-x^2} \, dx$.'
+            answer: '$1/2$'
+            solution_sketch: '$u = x^2$: $\frac{1}{2}\int_0^{\infty} e^{-u}\,du = \frac{1}{2}$.'
+          - problem: 'Evaluate $\int_1^{\infty} \frac{dx}{x(x + 1)}$.'
+            answer: '$\ln 2$'
+            solution_sketch: 'Partial fractions: $[\ln\frac{x}{x+1}]_1^{\infty} = 0 - \ln\frac{1}{2} = \ln 2$.'
+        constraints: "substitutions limited to one step; partial-fraction cases with distinct linear factors; the limit at infinity of ln(x/(x+1)) must be justified"
+      - id: kp3
+        name: The direct comparison test
+        key_prerequisites: [improper-integrals-infinite-limits]
+        exemplars:
+          - problem: 'Does $\int_1^{\infty} \frac{dx}{x^3 + 1}$ converge?'
+            answer: 'yes — $0 \le \frac{1}{x^3 + 1} \le \frac{1}{x^3}$ and $\int_1^{\infty} x^{-3}\,dx$ converges'
+            solution_sketch: 'Compare with the convergent $p = 3$ integral; smaller positive integrand converges.'
+          - problem: 'Does $\int_1^{\infty} \frac{2 + \sin x}{x} \, dx$ converge?'
+            answer: 'no — $\frac{2 + \sin x}{x} \ge \frac{1}{x}$ and $\int_1^{\infty} \frac{dx}{x}$ diverges'
+            solution_sketch: '$2 + \sin x \ge 1$, so the integrand dominates the divergent $p = 1$ integral.'
+          - problem: 'Show that $\int_1^{\infty} e^{-x^2} \, dx$ converges.'
+            answer: 'for $x \ge 1$, $e^{-x^2} \le e^{-x}$, and $\int_1^{\infty} e^{-x}\,dx = e^{-1}$ converges'
+            solution_sketch: '$x^2 \ge x$ on $[1, \infty)$ makes $e^{-x^2} \le e^{-x}$; comparison with a convergent exponential.'
+        constraints: "comparisons against p-integrals or e^{-x}; the inequality must hold on the whole interval and be stated"
+    diagnostic_exemplar:
+      problem: 'Determine whether $\int_1^{\infty} \frac{dx}{\sqrt{x^6 + 1}}$ converges.'
+      answer: 'converges — $\frac{1}{\sqrt{x^6 + 1}} \le \frac{1}{x^3}$ and $\int_1^{\infty} x^{-3}\,dx$ converges'
+      solution_sketch: '$\sqrt{x^6 + 1} \ge x^3$, so the integrand is dominated by a convergent $p = 3$ integral.'
+    anki_seeds:
+      - front: '$\int_1^{\infty} x^{-p} \, dx$ converges exactly when...'
+        back: '$p > 1$'
+        type: basic
+      - front: '$\int_0^1 x^{-p} \, dx$ converges exactly when...'
+        back: '$p < 1$'
+        type: basic
+      - front: 'Comparison test for improper integrals: if $0 \le f \le g$ on $[a,\infty)$...'
+        back: '$\int g$ converges $\Rightarrow$ $\int f$ converges; $\int f$ diverges $\Rightarrow$ $\int g$ diverges'
+        type: basic
+
+  - id: choosing-integration-technique
+    name: Choosing an Integration Technique
+    core: false                # mixed-practice strategy capstone
+    difficulty: 0.75
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 240
+    prerequisites:
+      - id: integration-by-parts
+        weight: 0.6
+        key: true
+      - id: trigonometric-substitution
+        weight: 0.5
+        key: true
+      - id: partial-fractions-integration
+        weight: 0.6
+        key: true
+      - id: trigonometric-integrals
+        weight: 0.5
+    knowledge_points:
+      - id: kp1
+        name: Recognizing the right technique
+        key_prerequisites: [integration-by-parts, partial-fractions-integration, trigonometric-substitution]
+        exemplars:
+          - problem: 'Name the best technique for each: (a) $\int x e^{x^2}\,dx$, (b) $\int x \ln x\,dx$, (c) $\int \frac{dx}{x^2 - 9}$, (d) $\int \sqrt{4 - x^2}\,dx$.'
+            answer: '(a) u-substitution ($u = x^2$), (b) integration by parts, (c) partial fractions, (d) trigonometric substitution'
+            solution_sketch: '(a) the derivative of $x^2$ is present up to a constant; (b) algebraic times log; (c) $x^2 - 9 = (x-3)(x+3)$; (d) the $a^2 - x^2$ radical pattern.'
+          - problem: 'Evaluate $\int x e^{x^2} \, dx$.'
+            answer: '$\frac{e^{x^2}}{2} + C$'
+            solution_sketch: 'Substitution beats parts here: $u = x^2$, $du = 2x\,dx$.'
+        constraints: "classification lists mix substitution, parts, partial fractions, trig integrals, and trig substitution; every listed integral must be genuinely best solved by the named technique"
+      - id: kp2
+        name: Substitution before another technique
+        key_prerequisites: [integration-by-parts, trigonometric-substitution]
+        exemplars:
+          - problem: 'Evaluate $\int e^{\sqrt{x}} \, dx$.'
+            answer: '$2(\sqrt{x} - 1)e^{\sqrt{x}} + C$'
+            solution_sketch: '$t = \sqrt{x}$, $dx = 2t\,dt$: $2\int t e^t\,dt = 2(t - 1)e^t + C$; back-substitute.'
+          - problem: 'Evaluate $\int x^3 \sqrt{x^2 + 1} \, dx$.'
+            answer: '$\frac{(x^2 + 1)^{5/2}}{5} - \frac{(x^2 + 1)^{3/2}}{3} + C$'
+            solution_sketch: '$u = x^2 + 1$: $\frac{1}{2}\int (u - 1)\sqrt{u}\,du = \frac{u^{5/2}}{5} - \frac{u^{3/2}}{3} + C$ — no trig substitution needed.'
+        constraints: "a preliminary algebraic substitution converts the integral to a parts or power-rule form; two-stage solutions only"
+      - id: kp3
+        name: Combining parts with other techniques
+        key_prerequisites: [integration-by-parts, partial-fractions-integration]
+        exemplars:
+          - problem: 'Evaluate $\int x \arctan x \, dx$.'
+            answer: '$\frac{x^2 + 1}{2}\arctan x - \frac{x}{2} + C$'
+            solution_sketch: 'Parts with $u = \arctan x$: $\frac{x^2}{2}\arctan x - \frac{1}{2}\int \frac{x^2}{1+x^2}\,dx$; write $\frac{x^2}{1+x^2} = 1 - \frac{1}{1+x^2}$.'
+          - problem: 'Evaluate $\int \ln(x^2 + 1) \, dx$.'
+            answer: '$x\ln(x^2 + 1) - 2x + 2\arctan x + C$'
+            solution_sketch: 'Parts with $u = \ln(x^2+1)$, $dv = dx$: $x\ln(x^2+1) - \int \frac{2x^2}{x^2+1}\,dx$; the remainder splits as $2 - \frac{2}{x^2+1}$.'
+        constraints: "exactly two techniques chained; the follow-up integral must be an improper-fraction split or an arctan pattern"
+    diagnostic_exemplar:
+      problem: 'Evaluate $\int x \sec^2 x \, dx$.'
+      answer: '$x \tan x + \ln|\cos x| + C$'
+      solution_sketch: 'Parts with $u = x$, $dv = \sec^2 x\,dx$: $x\tan x - \int \tan x\,dx = x\tan x + \ln|\cos x| + C$.'
+    anki_seeds:
+      - front: "First question to ask before choosing an integration technique?"
+        back: "Is the derivative of an inner function present (up to a constant)? If so, u-substitution first."
+        type: basic
+      - front: "Rational function integrand: the decision procedure?"
+        back: "If the numerator degree >= denominator degree, divide; then factor the denominator and use partial fractions."
+        type: basic

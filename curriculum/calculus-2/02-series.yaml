@@ -1,0 +1,1043 @@
+unit: series
+course: calculus-2
+module: "Sequences & Series"
+topics:
+  - id: limits-of-sequences
+    name: Limits of Sequences
+    core: true
+    difficulty: 0.52
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 90
+    prerequisites:
+      - id: limit-laws
+        weight: 0.7
+        key: true
+      - id: limits-at-infinity-rational
+        weight: 0.5
+      - id: geometric-sequences
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Sequence notation and terms
+        key_prerequisites: [geometric-sequences]
+        exemplars:
+          - problem: 'Write the first four terms of $a_n = \frac{(-1)^n}{n}$, starting at $n = 1$.'
+            answer: '$-1, 1/2, -1/3, 1/4$'
+            solution_sketch: 'Alternate signs, denominators $1, 2, 3, 4$.'
+          - problem: 'Write the first four terms of $a_n = \frac{n}{n+1}$, starting at $n = 1$.'
+            answer: '$1/2, 2/3, 3/4, 4/5$'
+            solution_sketch: 'Substitute $n = 1, 2, 3, 4$.'
+          - problem: 'Give a formula for the general term $a_n$ of $\frac{1}{2}, \frac{1}{4}, \frac{1}{8}, \frac{1}{16}, \ldots$ starting at $n = 1$.'
+            answer: '$1/2^n$'
+            solution_sketch: 'Each term is half the previous one: a geometric sequence with ratio $\frac{1}{2}$.'
+        constraints: "explicit formulas with signs, powers, and linear/quadratic terms; n starts at 1"
+      - id: kp2
+        name: Limits of rational sequences
+        key_prerequisites: [limit-laws, limits-at-infinity-rational]
+        exemplars:
+          - problem: 'Find $\lim_{n\to\infty} \frac{3n + 1}{2n + 5}$.'
+            answer: '$3/2$'
+            solution_sketch: 'Divide numerator and denominator by $n$; lower-order terms vanish.'
+          - problem: 'Find $\lim_{n\to\infty} \frac{n}{n^2 + 1}$.'
+            answer: "0"
+            solution_sketch: 'Degree of the denominator exceeds the numerator, so the limit is $0$.'
+          - problem: 'Find $\lim_{n\to\infty} \frac{5n^2 - 3}{2n^2 + n}$.'
+            answer: '$5/2$'
+            solution_sketch: 'Equal degrees: the limit is the ratio of leading coefficients.'
+        constraints: "rational sequences with integer coefficients; degrees <= 2"
+      - id: kp3
+        name: Geometric and oscillating sequences
+        key_prerequisites: [limit-laws, geometric-sequences]
+        exemplars:
+          - problem: 'Find $\lim_{n\to\infty} (0.9)^n$.'
+            answer: "0"
+            solution_sketch: '$|r| < 1$ forces $r^n \to 0$.'
+          - problem: 'Does the sequence $a_n = (-1)^n$ converge? If so, give its limit; otherwise state that it diverges.'
+            answer: 'diverges'
+            solution_sketch: 'The subsequences of even and odd terms have different limits, so no single limit exists.'
+          - problem: 'Find $\lim_{n\to\infty} \frac{2^n}{3^n}$.'
+            answer: "0"
+            solution_sketch: '$\frac{2^n}{3^n} = \left(\frac{2}{3}\right)^n$ and $\left|\frac{2}{3}\right| < 1$.'
+          - problem: 'Does the sequence $a_n = \left(\frac{3}{2}\right)^n$ converge? If so, give its limit; otherwise state that it diverges.'
+            answer: 'diverges'
+            solution_sketch: '$r = \frac{3}{2} > 1$, so $r^n$ grows without bound.'
+        constraints: "r^n with |r| < 1, |r| = 1, |r| > 1; include one non-convergent oscillating case"
+    diagnostic_exemplar:
+      problem: 'Find $\lim_{n\to\infty} \frac{4n + 1}{2n + 3}$.'
+      answer: "2"
+      solution_sketch: 'Leading coefficients: $\frac{4}{2} = 2$.'
+    anki_seeds:
+      - front: 'For a constant $r$, the sequence $r^n$ converges exactly when...'
+        back: '$-1 < r \le 1$ (limit $0$ for $|r| < 1$, limit $1$ for $r = 1$)'
+        type: basic
+      - front: "For a rational sequence with equal top and bottom degrees, the limit is..."
+        back: "the ratio of the leading coefficients"
+        type: basic
+
+  - id: sequences-convergence
+    name: Sequences and Convergence
+    core: true
+    difficulty: 0.55
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 120
+    prerequisites:
+      - id: limits-of-sequences
+        weight: 0.8
+        key: true
+      - id: squeeze-theorem
+        weight: 0.5
+      - id: recursive-sequences
+        weight: 0.4
+      - id: exponential-functions
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Squeeze arguments for sequences
+        key_prerequisites: [limits-of-sequences, squeeze-theorem]
+        exemplars:
+          - problem: 'Find $\lim_{n\to\infty} \frac{\sin n}{n}$.'
+            answer: "0"
+            solution_sketch: 'Squeeze: $-\frac{1}{n} \le \frac{\sin n}{n} \le \frac{1}{n}$ and both bounds go to $0$.'
+          - problem: 'Find $\lim_{n\to\infty} \frac{\cos n}{n^2}$.'
+            answer: "0"
+            solution_sketch: '$-\frac{1}{n^2} \le \frac{\cos n}{n^2} \le \frac{1}{n^2}$; squeeze.'
+          - problem: 'Find $\lim_{n\to\infty} \frac{n!}{n^n}$.'
+            answer: "0"
+            solution_sketch: '$0 \le \frac{n!}{n^n} = \frac{1}{n} \cdot \frac{2}{n} \cdots \frac{n}{n} \le \frac{1}{n}$; squeeze against $\frac{1}{n} \to 0$.'
+        constraints: "squeeze arguments with sin or cos over a power of n, or factorial-vs-power bounds"
+      - id: kp2
+        name: Monotone bounded sequences
+        key_prerequisites: [limits-of-sequences]
+        exemplars:
+          - problem: 'Show that $a_n = \frac{n}{n+1}$ is increasing and bounded above by $1$, then state its limit.'
+            answer: "1"
+            solution_sketch: '$a_{n+1} - a_n = \frac{1}{(n+1)(n+2)} > 0$ and $a_n < 1$; the Monotone Convergence Theorem applies, and $\frac{n}{n+1} \to 1$.'
+          - problem: 'The sequence $a_1 = \sqrt{2}$, $a_{n+1} = \sqrt{2 a_n}$ is increasing and bounded above by $2$. Find its limit.'
+            answer: "2"
+            solution_sketch: 'The Monotone Convergence Theorem gives a limit $L$; passing to the limit in the recursion, $L = \sqrt{2L}$, so $L^2 = 2L$ and $L = 2$.'
+          - problem: 'Determine whether $a_n = 1 + \frac{1}{n}$ is increasing or decreasing and whether it is bounded, then state its limit.'
+            answer: "1"
+            solution_sketch: 'It is decreasing and bounded below by $1$: $\frac{1}{n}$ shrinks toward $0$, so the terms decrease toward the limit $1$.'
+        constraints: "monotonicity checkable by a difference or ratio; recursive examples solvable by passing to the limit"
+      - id: kp3
+        name: Growth rates and the e-limit
+        key_prerequisites: [limits-of-sequences, exponential-functions]
+        exemplars:
+          - problem: 'Find $\lim_{n\to\infty} \left(1 + \frac{1}{n}\right)^n$.'
+            answer: '$e$'
+            solution_sketch: 'The standard limit defining $e$.'
+          - problem: 'Find $\lim_{n\to\infty} \left(1 + \frac{2}{n}\right)^n$.'
+            answer: '$e^2$'
+            solution_sketch: 'Substitute $m = \frac{n}{2}$: the expression is $\left[\left(1 + \frac{1}{m}\right)^m\right]^2 \to e^2$.'
+          - problem: 'Find $\lim_{n\to\infty} \frac{2^n}{n!}$.'
+            answer: "0"
+            solution_sketch: 'For $n \ge 3$, $\frac{2^n}{n!} = \frac{2}{1}\cdot\frac{2}{2}\cdot\frac{2}{3}\cdots\frac{2}{n} \le 2\left(\frac{2}{3}\right)^{n-2} \to 0$; factorials beat exponentials.'
+        constraints: "e-limits of the form (1 + a/n)^n; growth-rate comparisons of c^n vs n!"
+    diagnostic_exemplar:
+      problem: 'Find $\lim_{n\to\infty} \left(1 + \frac{3}{n}\right)^n$.'
+      answer: '$e^3$'
+      solution_sketch: '$\left(1 + \frac{3}{n}\right)^n = \left[\left(1 + \frac{3}{n}\right)^{n/3}\right]^3 \to e^3$.'
+    anki_seeds:
+      - front: "Monotone Convergence Theorem for sequences?"
+        back: "Every monotone bounded sequence converges."
+        type: basic
+      - front: '$\lim_{n\to\infty} \left(1 + \frac{a}{n}\right)^n = $ ?'
+        back: '$e^a$'
+        type: basic
+
+  - id: series-partial-sums
+    name: Infinite Series and Partial Sums
+    core: true
+    difficulty: 0.55
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 120
+    prerequisites:
+      - id: sequences-convergence
+        weight: 0.7
+        key: true
+      - id: summation-notation
+        weight: 0.6
+        key: true
+      - id: geometric-series-finite-infinite
+        weight: 0.3
+      - id: arithmetic-series
+        weight: 0.2
+    knowledge_points:
+      - id: kp1
+        name: Sigma notation for series
+        key_prerequisites: [summation-notation]
+        exemplars:
+          - problem: 'Write $\frac{1}{2} + \frac{1}{4} + \frac{1}{8} + \frac{1}{16} + \cdots$ in sigma notation.'
+            answer: '$\sum_{n=1}^{\infty} \frac{1}{2^n}$'
+            solution_sketch: 'The $n$th term is $\frac{1}{2^n}$.'
+          - problem: 'Compute the partial sum $\sum_{k=1}^{4} \frac{1}{k}$.'
+            answer: '$25/12$'
+            solution_sketch: '$1 + \frac{1}{2} + \frac{1}{3} + \frac{1}{4} = \frac{12 + 6 + 4 + 3}{12} = \frac{25}{12}$.'
+          - problem: 'Write $1 - \frac{1}{3} + \frac{1}{9} - \frac{1}{27} + \cdots$ in sigma notation.'
+            answer: '$\sum_{n=0}^{\infty} \left(-\frac{1}{3}\right)^n$'
+            solution_sketch: 'Alternating signs with ratio $\frac{1}{3}$: powers of $-\frac{1}{3}$.'
+        constraints: "terms are simple fractions or powers; watch the starting index (n = 0 vs n = 1)"
+      - id: kp2
+        name: Partial sums and the definition of convergence
+        key_prerequisites: [sequences-convergence, summation-notation]
+        exemplars:
+          - problem: 'For $\sum_{n=1}^{\infty} \frac{1}{2^n}$, compute $S_1, S_2, S_3, S_4$ and conjecture the sum.'
+            answer: '$\frac{1}{2}, \frac{3}{4}, \frac{7}{8}, \frac{15}{16}$; the sum is $1$'
+            solution_sketch: '$S_N = 1 - \frac{1}{2^N} \to 1$.'
+          - problem: 'A series has partial sums $S_N = \frac{2N}{N+1}$. Find its sum.'
+            answer: "2"
+            solution_sketch: 'The sum is $\lim_{N\to\infty} S_N = 2$.'
+          - problem: 'A series has partial sums $S_N = \frac{2N}{N+1}$. Find $a_3$.'
+            answer: '$1/6$'
+            solution_sketch: '$a_3 = S_3 - S_2 = \frac{3}{2} - \frac{4}{3} = \frac{1}{6}$.'
+        constraints: "closed-form S_N given as a rational expression in N; recover terms via a_n = S_n - S_(n-1)"
+      - id: kp3
+        name: Divergence seen through partial sums
+        key_prerequisites: [sequences-convergence]
+        exemplars:
+          - problem: 'Does $\sum_{n=1}^{\infty} 1$ converge? Justify with partial sums.'
+            answer: 'no; $S_N = N \to \infty$'
+            solution_sketch: 'The partial sums grow without bound.'
+          - problem: 'Does $\sum_{n=1}^{\infty} (-1)^n$ converge? Justify with partial sums.'
+            answer: 'no; the partial sums oscillate between $-1$ and $0$'
+            solution_sketch: '$S_1 = -1, S_2 = 0, S_3 = -1, \ldots$: no single limit.'
+          - problem: 'Does $\sum_{n=1}^{\infty} n$ converge? Justify with partial sums.'
+            answer: 'no; $S_N = \frac{N(N+1)}{2} \to \infty$'
+            solution_sketch: 'The arithmetic partial-sum formula grows without bound.'
+        constraints: "divergence exhibited directly from a closed-form or oscillating partial-sum sequence"
+    diagnostic_exemplar:
+      problem: 'A series has partial sums $S_N = \frac{N}{N+1}$. Does it converge, and to what?'
+      answer: 'yes; the sum is $1$'
+      solution_sketch: 'By definition the sum is $\lim_{N\to\infty} S_N = 1$.'
+    anki_seeds:
+      - front: "A series converges means, precisely, that..."
+        back: "its sequence of partial sums converges"
+        type: basic
+      - front: 'How do you recover $a_n$ from the partial sums $S_n$?'
+        back: '$a_n = S_n - S_{n-1}$ (and $a_1 = S_1$)'
+        type: basic
+
+  - id: geometric-series-convergence
+    name: Geometric Series
+    core: true
+    difficulty: 0.57
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 120
+    prerequisites:
+      - id: series-partial-sums
+        weight: 0.7
+        key: true
+      - id: geometric-series-finite-infinite
+        weight: 0.4
+      - id: sequences-convergence
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Summing geometric series
+        key_prerequisites: [series-partial-sums, geometric-series-finite-infinite]
+        exemplars:
+          - problem: 'Evaluate $\sum_{n=0}^{\infty} \left(\frac{1}{3}\right)^n$.'
+            answer: '$3/2$'
+            solution_sketch: '$\frac{a}{1 - r} = \frac{1}{1 - 1/3} = \frac{3}{2}$.'
+          - problem: 'Evaluate $\sum_{n=1}^{\infty} 5\left(\frac{2}{3}\right)^n$.'
+            answer: "10"
+            solution_sketch: 'First term $a = 5 \cdot \frac{2}{3} = \frac{10}{3}$, ratio $\frac{2}{3}$: $\frac{10/3}{1/3} = 10$.'
+          - problem: 'Evaluate $\sum_{n=0}^{\infty} \left(-\frac{1}{2}\right)^n$.'
+            answer: '$2/3$'
+            solution_sketch: '$\frac{1}{1 - (-1/2)} = \frac{2}{3}$.'
+        constraints: "ratios are simple fractions with |r| < 1; watch the starting index (n = 0 vs n = 1)"
+      - id: kp2
+        name: The convergence condition
+        key_prerequisites: [sequences-convergence, series-partial-sums]
+        exemplars:
+          - problem: 'Does $\sum_{n=0}^{\infty} \left(\frac{3}{2}\right)^n$ converge? If so give its sum; otherwise state that it diverges.'
+            answer: 'diverges'
+            solution_sketch: 'A geometric series converges iff $|r| < 1$; here $|r| = \frac{3}{2} \ge 1$, so it diverges.'
+          - problem: 'Does $\sum_{n=0}^{\infty} (0.99)^n$ converge? If so, give its sum.'
+            answer: "100"
+            solution_sketch: '$\frac{1}{1 - 0.99} = 100$; convergence can be slow but $|r| < 1$ settles it.'
+          - problem: 'The series $\sum_{n=0}^{\infty} \left(\frac{x}{2}\right)^n$ converges exactly when $|x| < R$. Find $R$.'
+            answer: '2'
+            solution_sketch: 'Need $\left|\frac{x}{2}\right| < 1$.'
+        constraints: "divergence verdicts must cite |r| >= 1; include one parameter question solving |r| < 1"
+      - id: kp3
+        name: Repeating decimals and applications
+        key_prerequisites: [series-partial-sums]
+        exemplars:
+          - problem: 'Write $0.\overline{4}$ as a fraction using a geometric series.'
+            answer: '$4/9$'
+            solution_sketch: '$0.\overline{4} = \sum_{n=1}^{\infty} 4 \cdot 10^{-n} = \frac{4/10}{1 - 1/10} = \frac{4}{9}$.'
+          - problem: 'Write $0.\overline{21}$ as a fraction in lowest terms.'
+            answer: '$7/33$'
+            solution_sketch: '$0.\overline{21} = \frac{21/100}{1 - 1/100} = \frac{21}{99} = \frac{7}{33}$.'
+          - problem: 'Write $0.\overline{45}$ as a fraction in lowest terms.'
+            answer: '$5/11$'
+            solution_sketch: '$\frac{45}{99} = \frac{5}{11}$.'
+        constraints: "repeating blocks of 1-2 digits; answers in lowest terms"
+    diagnostic_exemplar:
+      problem: 'Write $0.\overline{36}$ as a fraction in lowest terms using a geometric series.'
+      answer: '$4/11$'
+      solution_sketch: 'It is $\sum_{n=1}^{\infty} 36 (10^{-2})^n = \frac{36/100}{1 - 1/100} = \frac{36}{99} = \frac{4}{11}$ (the ratio $1/100$ has modulus below $1$).'
+    anki_seeds:
+      - front: 'Sum of the geometric series $\sum_{n=0}^{\infty} ar^n$ (when $|r| < 1$)?'
+        back: '$\frac{a}{1 - r}$'
+        type: basic
+      - front: 'The geometric series $\sum r^n$ converges exactly when...'
+        back: '$|r| < 1$'
+        type: basic
+
+  - id: telescoping-series
+    name: Telescoping Series
+    core: true
+    difficulty: 0.58
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 150
+    prerequisites:
+      - id: series-partial-sums
+        weight: 0.7
+        key: true
+      - id: rational-expressions
+        weight: 0.4
+      - id: partial-fractions-linear-factors
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Splitting terms by partial fractions
+        key_prerequisites: [rational-expressions, partial-fractions-linear-factors]
+        exemplars:
+          - problem: 'Decompose $\frac{1}{n(n+1)}$ into partial fractions.'
+            answer: '$1/n - 1/(n+1)$'
+            solution_sketch: 'Solve $\frac{1}{n(n+1)} = \frac{A}{n} + \frac{B}{n+1}$: $A = 1$, $B = -1$.'
+          - problem: 'Decompose $\frac{2}{(2n-1)(2n+1)}$ into partial fractions.'
+            answer: '$1/(2n-1) - 1/(2n+1)$'
+            solution_sketch: 'The numerator $2$ is the difference of the factors: $(2n+1) - (2n-1)$.'
+        constraints: "two distinct linear factors; integer coefficients"
+      - id: kp2
+        name: Collapsing partial sums
+        key_prerequisites: [series-partial-sums]
+        exemplars:
+          - problem: 'Evaluate $\sum_{n=1}^{\infty} \frac{1}{n(n+1)}$.'
+            answer: "1"
+            solution_sketch: '$\frac{1}{n(n+1)} = \frac{1}{n} - \frac{1}{n+1}$; partial sums collapse to $1 - \frac{1}{N+1} \to 1$.'
+          - problem: 'Evaluate $\sum_{n=1}^{\infty} \frac{1}{(n+1)(n+2)}$.'
+            answer: '$1/2$'
+            solution_sketch: '$\frac{1}{n+1} - \frac{1}{n+2}$ telescopes to $\frac{1}{2} - \frac{1}{N+2} \to \frac{1}{2}$.'
+          - problem: 'Does $\sum_{n=1}^{\infty} \ln\left(\frac{n+1}{n}\right)$ converge? If so give its sum; otherwise state that it diverges.'
+            answer: 'diverges'
+            solution_sketch: '$\ln(n+1) - \ln n$ telescopes to $\ln(N+1)$, which diverges.'
+        constraints: "require writing the Nth partial sum before taking the limit; include one divergent telescope"
+      - id: kp3
+        name: Telescoping with gaps
+        key_prerequisites: [series-partial-sums, rational-expressions]
+        exemplars:
+          - problem: 'Evaluate $\sum_{n=1}^{\infty} \frac{1}{n(n+2)}$.'
+            answer: '$3/4$'
+            solution_sketch: '$\frac{1}{n(n+2)} = \frac{1}{2}\left(\frac{1}{n} - \frac{1}{n+2}\right)$; the surviving terms are $\frac{1}{2}\left(1 + \frac{1}{2}\right) = \frac{3}{4}$.'
+          - problem: 'Evaluate $\sum_{n=2}^{\infty} \frac{1}{n^2 - 1}$.'
+            answer: '$3/4$'
+            solution_sketch: '$\frac{1}{n^2-1} = \frac{1}{2}\left(\frac{1}{n-1} - \frac{1}{n+1}\right)$; from $n = 2$ the surviving terms give $\frac{1}{2}\left(1 + \frac{1}{2}\right) = \frac{3}{4}$.'
+        constraints: "gaps of 2 in the telescoping factors; two leading terms survive"
+    diagnostic_exemplar:
+      problem: 'Evaluate $\sum_{n=3}^{\infty} \frac{1}{n^2 - 4}$.'
+      answer: '$25/48$'
+      solution_sketch: '$\frac{1}{(n-2)(n+2)} = \frac14\left(\frac{1}{n-2} - \frac{1}{n+2}\right)$; the gap of $4$ leaves the first four terms $\frac14\left(1 + \frac12 + \frac13 + \frac14\right)$.'
+    anki_seeds:
+      - front: "To evaluate a telescoping series, you always compute..."
+        back: "the Nth partial sum in closed form, then take the limit as N goes to infinity"
+        type: basic
+      - front: 'Partial fraction split of $\frac{1}{n(n+1)}$?'
+        back: '$\frac{1}{n} - \frac{1}{n+1}$'
+        type: basic
+
+  - id: geometric-telescoping-series
+    name: Geometric and Telescoping Series
+    core: true
+    difficulty: 0.6
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 150
+    prerequisites:
+      - id: geometric-series-convergence
+        weight: 0.7
+        key: true
+      - id: telescoping-series
+        weight: 0.7
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: Index shifts and rewriting to standard form
+        key_prerequisites: [geometric-series-convergence]
+        exemplars:
+          - problem: 'Evaluate $\sum_{n=2}^{\infty} \left(\frac{1}{3}\right)^n$.'
+            answer: '$1/6$'
+            solution_sketch: 'First term $\frac{1}{9}$, ratio $\frac{1}{3}$: $\frac{1/9}{2/3} = \frac{1}{6}$.'
+          - problem: 'Evaluate $\sum_{n=1}^{\infty} \frac{3^{n-1}}{4^n}$.'
+            answer: "1"
+            solution_sketch: 'Rewrite as $\frac{1}{4}\sum_{n=1}^{\infty}\left(\frac{3}{4}\right)^{n-1} = \frac{1}{4} \cdot \frac{1}{1 - 3/4} = 1$.'
+          - problem: 'Evaluate $\sum_{n=0}^{\infty} \frac{2^n + 3^n}{6^n}$.'
+            answer: '$7/2$'
+            solution_sketch: 'Split: $\sum \left(\frac{1}{3}\right)^n + \sum \left(\frac{1}{2}\right)^n = \frac{3}{2} + 2 = \frac{7}{2}$.'
+        constraints: "shifted starting indices, split numerators, and mixed bases reducible to standard geometric form"
+      - id: kp2
+        name: Choosing and combining techniques
+        key_prerequisites: [geometric-series-convergence, telescoping-series]
+        exemplars:
+          - problem: 'Evaluate $\sum_{n=1}^{\infty} \left[\left(\frac{1}{2}\right)^n + \frac{1}{n(n+1)}\right]$.'
+            answer: "2"
+            solution_sketch: 'Geometric part sums to $1$; telescoping part sums to $1$.'
+          - problem: 'Evaluate $\sum_{n=1}^{\infty} \frac{2n+1}{n^2(n+1)^2}$.'
+            answer: "1"
+            solution_sketch: 'Recognize $\frac{2n+1}{n^2(n+1)^2} = \frac{1}{n^2} - \frac{1}{(n+1)^2}$; telescopes to $1 - \frac{1}{(N+1)^2} \to 1$.'
+        constraints: "each problem is a sum of a geometric and a telescoping piece, or a disguised telescope"
+      - id: kp3
+        name: Capstone applications
+        key_prerequisites: [geometric-series-convergence, telescoping-series]
+        exemplars:
+          - problem: 'A ball is dropped from $9$ m and rebounds to $\frac{2}{3}$ of its height on each bounce. Find the total distance traveled, in metres.'
+            answer: "45"
+            solution_sketch: 'Total $= 9 + 2\sum_{k=1}^{\infty} 9\left(\frac{2}{3}\right)^k = 9 + 2 \cdot \frac{6}{1 - 2/3} = 9 + 36 = 45$.'
+          - problem: 'Find $c > 0$ such that $\sum_{n=1}^{\infty} (1 + c)^{-n} = 2$.'
+            answer: '$1/2$'
+            solution_sketch: 'With $r = \frac{1}{1+c}$, the sum is $\frac{r}{1-r} = \frac{1}{c}$; set $\frac{1}{c} = 2$.'
+        constraints: "word problems reducible to one geometric series; parameter problems with clean rational answers"
+    diagnostic_exemplar:
+      problem: 'Evaluate $\sum_{n=1}^{\infty} \left[\left(\frac{2}{3}\right)^n - \frac{1}{n(n+1)}\right]$.'
+      answer: "1"
+      solution_sketch: 'Geometric part: $\frac{2/3}{1/3} = 2$; telescoping part: $1$. Total $2 - 1 = 1$.'
+    anki_seeds:
+      - front: 'Sum of the geometric tail $\sum_{n=k}^{\infty} ar^n$ (for $|r| < 1$)?'
+        back: '$\frac{ar^k}{1 - r}$ (first term over one minus the ratio)'
+        type: basic
+      - front: "Which two families of series can be summed exactly by elementary partial-sum manipulation (i.e. before power series)?"
+        back: 'Geometric series (closed-form partial sums) and telescoping series (cancelling partial sums). Other exact sums — e.g. $\sum \frac{n}{2^n} = 2$ or $\sum \frac{(-1)^{n+1}}{n} = \ln 2$ — need power-series machinery.'
+        type: basic
+
+  - id: nth-term-divergence-test
+    name: The nth-Term Divergence Test
+    core: true
+    difficulty: 0.56
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 90
+    prerequisites:
+      - id: series-partial-sums
+        weight: 0.7
+        key: true
+      - id: limits-of-sequences
+        weight: 0.5
+      - id: special-trig-limits
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Applying the divergence test
+        key_prerequisites: [series-partial-sums, limits-of-sequences]
+        exemplars:
+          - problem: 'Does $\sum_{n=1}^{\infty} \frac{n}{n+1}$ converge?'
+            answer: 'no; the terms tend to $1 \ne 0$'
+            solution_sketch: 'If $a_n \not\to 0$, the series diverges.'
+          - problem: 'Does $\sum_{n=1}^{\infty} (-1)^n \frac{n}{2n+1}$ converge?'
+            answer: 'no; the terms oscillate toward $\pm\frac{1}{2}$, so $a_n \not\to 0$'
+            solution_sketch: '$\frac{n}{2n+1} \to \frac{1}{2}$, and the signs alternate, so the terms have no limit at all.'
+          - problem: 'Does $\sum_{n=1}^{\infty} n \sin\left(\frac{1}{n}\right)$ converge?'
+            answer: 'no; $n\sin\left(\frac{1}{n}\right) \to 1 \ne 0$'
+            solution_sketch: '$\frac{\sin(1/n)}{1/n} \to 1$, so the terms tend to $1$.'
+        constraints: "term limits computable by rational-sequence rules or the standard sin(1/n) limit"
+      - id: kp2
+        name: What the test cannot conclude
+        key_prerequisites: [series-partial-sums]
+        exemplars:
+          - problem: 'The terms of the harmonic series $\sum \frac{1}{n}$ tend to $0$. Does the test conclude convergence?'
+            answer: 'no; the test is silent when $a_n \to 0$ (and in fact the harmonic series diverges)'
+            solution_sketch: 'The divergence test only ever proves divergence.'
+          - problem: 'True or false: if $a_n \to 0$, then $\sum a_n$ converges.'
+            answer: 'false (counterexample: the harmonic series)'
+            solution_sketch: '$\frac{1}{n} \to 0$, yet $\sum \frac{1}{n}$ diverges.'
+        constraints: "conceptual questions distinguishing the test from its false converse"
+    diagnostic_exemplar:
+      problem: 'Does $\sum_{n=1}^{\infty} \frac{2n}{3n + 5}$ converge? And does the divergence test settle $\sum_{n=1}^{\infty} \frac{1}{\sqrt{n}}$?'
+      answer: 'The first diverges (its terms tend to $\frac{2}{3} \ne 0$); the test says nothing about the second, whose terms do tend to $0$ (it in fact diverges, as a $p$-series with $p = \frac12$)'
+      solution_sketch: 'The divergence test can only prove divergence: $a_n \to 0$ is necessary but not sufficient for convergence.'
+    anki_seeds:
+      - front: 'The $n$th-term divergence test says:'
+        back: 'if $a_n \not\to 0$, then $\sum a_n$ diverges (it can NEVER prove convergence)'
+        type: basic
+      - front: 'Standard counterexample to "terms go to 0, so the series converges"?'
+        back: 'the harmonic series $\sum 1/n$'
+        type: basic
+
+  - id: integral-p-series-tests
+    name: The Integral Test and p-Series
+    core: true
+    difficulty: 0.65
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 180
+    prerequisites:
+      - id: improper-integrals
+        weight: 0.7
+        key: true
+      - id: geometric-telescoping-series
+        weight: 0.6
+        key: true
+      - id: nth-term-divergence-test
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: p-series verdicts
+        key_prerequisites: [improper-integrals, geometric-telescoping-series]
+        exemplars:
+          - problem: 'Does $\sum_{n=1}^{\infty} \frac{1}{n^2}$ converge or diverge?'
+            answer: 'converges ($p$-series, $p = 2 > 1$)'
+            solution_sketch: 'A $p$-series converges iff $p > 1$, mirroring $\int_1^{\infty} x^{-p}\,dx$.'
+          - problem: 'Does $\sum_{n=1}^{\infty} \frac{1}{\sqrt{n}}$ converge or diverge?'
+            answer: 'diverges ($p = \frac{1}{2} \le 1$)'
+            solution_sketch: '$p = \frac{1}{2} \le 1$.'
+          - problem: 'Does the harmonic series $\sum_{n=1}^{\infty} \frac{1}{n}$ converge or diverge?'
+            answer: 'diverges ($p = 1$)'
+            solution_sketch: '$\int_1^{\infty} \frac{dx}{x} = \infty$, so the series diverges by the integral test.'
+        constraints: "p in {1/3, 1/2, 1, 3/2, 2, 3}; verdicts must name the test and the value of p"
+      - id: kp2
+        name: Applying the integral test
+        key_prerequisites: [improper-integrals]
+        exemplars:
+          - problem: 'Use the integral test to decide whether $\sum_{n=2}^{\infty} \frac{1}{n \ln n}$ converges.'
+            answer: 'diverges ($\int_2^{\infty} \frac{dx}{x\ln x} = \lim_{b\to\infty} \ln(\ln b) - \ln(\ln 2) = \infty$)'
+            solution_sketch: '$u = \ln x$ turns the integral into $\int \frac{du}{u}$, which diverges.'
+          - problem: 'Use the integral test to decide whether $\sum_{n=1}^{\infty} n e^{-n^2}$ converges.'
+            answer: 'converges ($\int_1^{\infty} x e^{-x^2} dx = \frac{1}{2e}$, finite)'
+            solution_sketch: '$u = x^2$: the integral equals $\frac{1}{2}e^{-1}$; a finite integral means the series converges.'
+        constraints: "integrand must be positive, continuous, decreasing on the tail; integral solvable by one substitution"
+      - id: kp3
+        name: Hypotheses and remainder estimates
+        key_prerequisites: [improper-integrals, nth-term-divergence-test]
+        exemplars:
+          - problem: 'Why can the integral test not be applied directly to $\sum_{n=1}^{\infty} \frac{(-1)^n}{n}$?'
+            answer: 'the terms are not positive (the test requires positive, continuous, decreasing terms)'
+            solution_sketch: 'The integral test hypotheses are: $f$ positive, continuous, decreasing on $[N, \infty)$ with $a_n = f(n)$. Alternating terms violate positivity.'
+          - problem: 'Using the remainder estimate $R_N \le \int_N^{\infty} f(x)\,dx$, bound the error when $\sum_{n=1}^{\infty} \frac{1}{n^2}$ is approximated by its first $10$ terms.'
+            answer: '$R_{10} \le \frac{1}{10}$'
+            solution_sketch: '$\int_{10}^{\infty} \frac{dx}{x^2} = \frac{1}{10}$.'
+        constraints: "hypothesis questions list all three conditions; remainder bounds for p = 2 or p = 3 only"
+    diagnostic_exemplar:
+      problem: 'Use the integral test to decide whether $\sum_{n=1}^{\infty} \frac{n}{n^2 + 1}$ converges, stating the hypotheses you checked.'
+      answer: 'Diverges: $f(x) = \frac{x}{x^2+1}$ is positive, continuous and decreasing for $x \ge 1$, and $\int_1^{\infty} \frac{x\,dx}{x^2+1} = \lim_{b\to\infty}\frac12\ln(b^2+1) - \frac12\ln 2 = \infty$'
+      solution_sketch: 'The substitution $u = x^2 + 1$ turns the integral into $\frac12\ln u$, which is unbounded, so the series diverges with the integral.'
+    anki_seeds:
+      - front: 'The $p$-series $\sum 1/n^p$ converges exactly when...'
+        back: '$p > 1$'
+        type: basic
+      - front: "Integral test hypotheses on f?"
+        back: "positive, continuous, and decreasing on some tail, with a_n = f(n)"
+        type: basic
+
+  - id: direct-comparison-test
+    name: The Direct Comparison Test
+    core: true
+    difficulty: 0.67
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 150
+    prerequisites:
+      - id: integral-p-series-tests
+        weight: 0.7
+        key: true
+      - id: geometric-series-convergence
+        weight: 0.4
+      - id: nth-term-divergence-test
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Bounding above by a convergent series
+        key_prerequisites: [integral-p-series-tests, geometric-series-convergence]
+        exemplars:
+          - problem: 'Decide whether $\sum_{n=1}^{\infty} \frac{1}{n^2 + 3}$ converges, with justification.'
+            answer: 'converges (direct comparison: $\frac{1}{n^2+3} < \frac{1}{n^2}$, a convergent $p$-series)'
+            solution_sketch: 'Terms are positive and bounded above by a convergent series, so the partial sums are bounded.'
+          - problem: 'Decide whether $\sum_{n=1}^{\infty} \frac{1}{2^n + 1}$ converges.'
+            answer: 'converges (direct comparison with the geometric series $\sum \frac{1}{2^n}$)'
+            solution_sketch: '$\frac{1}{2^n + 1} < \frac{1}{2^n}$ and $\sum 2^{-n}$ converges.'
+          - problem: 'Decide whether $\sum_{n=1}^{\infty} \frac{\sin^2 n}{n^2}$ converges.'
+            answer: 'converges (direct comparison: $\frac{\sin^2 n}{n^2} \le \frac{1}{n^2}$)'
+            solution_sketch: '$0 \le \sin^2 n \le 1$ bounds the terms by a convergent $p$-series.'
+        constraints: "comparator is a p-series or geometric series; the bound must hold termwise"
+      - id: kp2
+        name: Bounding below by a divergent series
+        key_prerequisites: [integral-p-series-tests]
+        exemplars:
+          - problem: 'Decide whether $\sum_{n=1}^{\infty} \frac{n + 1}{n^2}$ converges.'
+            answer: 'diverges (direct comparison: $\frac{n+1}{n^2} > \frac{1}{n}$, the harmonic series)'
+            solution_sketch: '$\frac{n+1}{n^2} = \frac{1}{n} + \frac{1}{n^2} > \frac{1}{n}$.'
+          - problem: 'Decide whether $\sum_{n=3}^{\infty} \frac{\ln n}{n}$ converges.'
+            answer: 'diverges ($\frac{\ln n}{n} > \frac{1}{n}$ for $n \ge 3$, and the harmonic series diverges)'
+            solution_sketch: '$\ln n > 1$ once $n \ge 3$, so the terms dominate the harmonic terms.'
+        constraints: "the inequality must go the useful direction; divergent comparator is the harmonic series or a p-series with p <= 1"
+      - id: kp3
+        name: Fixing a comparison that goes the wrong way
+        key_prerequisites: [integral-p-series-tests, geometric-series-convergence]
+        exemplars:
+          - problem: 'The naive bound $\frac{1}{n^2 - 1} > \frac{1}{n^2}$ points the wrong way. Decide whether $\sum_{n=2}^{\infty} \frac{1}{n^2 - 1}$ converges anyway.'
+            answer: 'converges ($\frac{1}{n^2-1} \le \frac{2}{n^2}$ for $n \ge 2$, and $\sum \frac{2}{n^2}$ converges)'
+            solution_sketch: 'For $n \ge 2$, $n^2 - 1 \ge \frac{n^2}{2}$, so the terms are at most $\frac{2}{n^2}$.'
+          - problem: 'Decide whether $\sum_{n=1}^{\infty} \frac{1}{2^n - 1}$ converges, using a corrected comparison.'
+            answer: 'converges ($\frac{1}{2^n - 1} \le \frac{1}{2^{n-1}}$, a convergent geometric series)'
+            solution_sketch: '$2^n - 1 \ge 2^{n-1}$ for $n \ge 1$ repairs the direction of the bound.'
+        constraints: "denominators shrunk by a subtraction; repair with a constant multiple of the natural comparator"
+    diagnostic_exemplar:
+      problem: 'Decide whether $\sum_{n=2}^{\infty} \frac{1}{n^2 - n}$ converges. Note that the naive bound $\frac{1}{n^2 - n} > \frac{1}{n^2}$ points the wrong way.'
+      answer: 'Converges: for $n \ge 2$, $n^2 - n \ge \frac{n^2}{2}$, so $\frac{1}{n^2-n} \le \frac{2}{n^2}$, and $\sum \frac{2}{n^2}$ is a convergent $p$-series'
+      solution_sketch: 'A comparison that bounds the terms from below by a convergent series proves nothing; halving the denominator restores a usable upper bound.'
+    anki_seeds:
+      - front: "Direct comparison proves convergence when your positive terms are..."
+        back: "bounded above, termwise, by the terms of a convergent series"
+        type: basic
+      - front: "Direct comparison proves divergence when your positive terms are..."
+        back: "bounded below, termwise, by the terms of a divergent series"
+        type: basic
+
+  - id: comparison-tests
+    name: Comparison Tests
+    core: true
+    difficulty: 0.7
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 180
+    prerequisites:
+      - id: direct-comparison-test
+        weight: 0.8
+        key: true
+      - id: integral-p-series-tests
+        weight: 0.4
+      - id: sequences-convergence
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Limit comparison
+        key_prerequisites: [direct-comparison-test, sequences-convergence]
+        exemplars:
+          - problem: 'Use limit comparison to decide whether $\sum_{n=1}^{\infty} \frac{1}{2n + 1}$ converges.'
+            answer: 'diverges (limit comparison with $\sum \frac{1}{n}$: $L = \frac{1}{2}$)'
+            solution_sketch: '$\lim \frac{1/(2n+1)}{1/n} = \frac{1}{2} \in (0, \infty)$, so both series share the harmonic series'' fate.'
+          - problem: 'Use limit comparison to decide whether $\sum_{n=1}^{\infty} \frac{3n^2 + n}{n^4 + 2}$ converges.'
+            answer: 'converges (limit comparison with $\sum \frac{1}{n^2}$: $L = 3$)'
+            solution_sketch: 'Dominant behavior is $\frac{3n^2}{n^4} = \frac{3}{n^2}$; the limit of the ratio is $3$.'
+          - problem: 'Use limit comparison to decide whether $\sum_{n=1}^{\infty} \sin\left(\frac{1}{n}\right)$ converges.'
+            answer: 'diverges (limit comparison with $\sum \frac{1}{n}$: $L = 1$)'
+            solution_sketch: '$\frac{\sin(1/n)}{1/n} \to 1$, so the series behaves like the harmonic series.'
+        constraints: "L must land in (0, infinity); state L explicitly in the verdict"
+      - id: kp2
+        name: Choosing a comparator by dominant terms
+        key_prerequisites: [direct-comparison-test, integral-p-series-tests]
+        exemplars:
+          - problem: 'Decide whether $\sum_{n=1}^{\infty} \frac{\sqrt{n}}{n^2 + 1}$ converges.'
+            answer: 'converges (behaves like $\sum n^{-3/2}$; limit comparison gives $L = 1$)'
+            solution_sketch: 'Keep dominant powers: $\frac{n^{1/2}}{n^2} = n^{-3/2}$, a convergent $p$-series.'
+          - problem: 'Decide whether $\sum_{n=1}^{\infty} \frac{2^n}{3^n - n}$ converges.'
+            answer: 'converges (limit comparison with $\sum (2/3)^n$: $L = 1$)'
+            solution_sketch: 'The $n$ is negligible against $3^n$; $\frac{2^n/(3^n - n)}{(2/3)^n} = \frac{3^n}{3^n - n} \to 1$.'
+          - problem: 'Decide whether $\sum_{n=1}^{\infty} \frac{n + 3}{n^3 - n + 1}$ converges.'
+            answer: 'converges (limit comparison with $\sum \frac{1}{n^2}$: $L = 1$)'
+            solution_sketch: 'Dominant terms give $\frac{n}{n^3} = \frac{1}{n^2}$.'
+        constraints: "comparator read off from dominant numerator/denominator terms; mixed polynomial-exponential allowed"
+      - id: kp3
+        name: Direct vs. limit comparison strategy
+        key_prerequisites: [direct-comparison-test, sequences-convergence]
+        exemplars:
+          - problem: 'Decide whether $\sum_{n=1}^{\infty} \left(1 - \cos\frac{1}{n}\right)$ converges.'
+            answer: 'converges (limit comparison with $\sum \frac{1}{n^2}$: $L = \frac{1}{2}$)'
+            solution_sketch: '$1 - \cos t \approx \frac{t^2}{2}$ for small $t$, so the terms behave like $\frac{1}{2n^2}$.'
+          - problem: 'Decide whether $\sum_{n=1}^{\infty} \frac{1}{n \cdot 2^n}$ converges, choosing the simplest test.'
+            answer: 'converges (direct comparison: $\frac{1}{n \cdot 2^n} \le \frac{1}{2^n}$)'
+            solution_sketch: 'The extra factor of $n$ only helps; a direct geometric bound is immediate.'
+        constraints: "one problem where limit comparison is essential, one where a direct bound is quicker"
+    diagnostic_exemplar:
+      problem: 'Decide whether $\sum_{n=1}^{\infty} \frac{2n + 1}{n^3 + 4}$ converges. Name the test, comparator, and limit.'
+      answer: 'converges (limit comparison with $\sum \frac{1}{n^2}$: $L = 2$)'
+      solution_sketch: 'Dominant behavior $\frac{2n}{n^3} = \frac{2}{n^2}$; the ratio tends to $2 \in (0, \infty)$.'
+    anki_seeds:
+      - front: 'Limit comparison test: if $\lim a_n/b_n = L$ with $0 < L < \infty$, then...'
+        back: '$\sum a_n$ and $\sum b_n$ both converge or both diverge'
+        type: basic
+      - front: "To pick a comparator series, keep only the..."
+        back: "dominant term of the numerator and of the denominator"
+        type: basic
+
+  - id: ratio-test
+    name: The Ratio Test
+    core: true
+    difficulty: 0.64
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 150
+    prerequisites:
+      - id: geometric-series-convergence
+        weight: 0.6
+        key: true
+      - id: sequences-convergence
+        weight: 0.4
+      - id: factorial-notation
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Ratio test with factorials and exponentials
+        key_prerequisites: [geometric-series-convergence, factorial-notation]
+        exemplars:
+          - problem: 'Use the ratio test on $\sum_{n=1}^{\infty} \frac{2^n}{n!}$.'
+            answer: 'converges ($L = \lim \frac{2}{n+1} = 0 < 1$)'
+            solution_sketch: '$\frac{a_{n+1}}{a_n} = \frac{2^{n+1} n!}{(n+1)!\, 2^n} = \frac{2}{n+1} \to 0$.'
+          - problem: 'Use the ratio test on $\sum_{n=1}^{\infty} \frac{n!}{10^n}$.'
+            answer: 'diverges ($L = \lim \frac{n+1}{10} = \infty$)'
+            solution_sketch: 'Factorials beat exponentials; the ratio $\frac{n+1}{10}$ grows without bound.'
+          - problem: 'Use the ratio test on $\sum_{n=1}^{\infty} \frac{n}{2^n}$.'
+            answer: 'converges ($L = \frac{1}{2} < 1$)'
+            solution_sketch: '$\frac{a_{n+1}}{a_n} = \frac{n+1}{2n} \to \frac{1}{2}$.'
+        constraints: "terms built from n!, c^n, and powers of n; always state L and compare to 1"
+      - id: kp2
+        name: Simplifying the ratio
+        key_prerequisites: [factorial-notation, sequences-convergence]
+        exemplars:
+          - problem: 'Simplify $\frac{(n+1)!}{(n-1)!}$.'
+            answer: '$n(n+1)$'
+            solution_sketch: '$(n+1)! = (n+1) \cdot n \cdot (n-1)!$.'
+          - problem: 'Use the ratio test on $\sum_{n=1}^{\infty} \frac{3^n}{n \cdot 2^n}$.'
+            answer: 'diverges ($L = \lim \frac{3}{2} \cdot \frac{n}{n+1} = \frac{3}{2} > 1$)'
+            solution_sketch: '$\frac{a_{n+1}}{a_n} = \frac{3}{2}\cdot\frac{n}{n+1} \to \frac{3}{2}$.'
+          - problem: 'Use the ratio test on $\sum_{n=1}^{\infty} \frac{n!}{n^n}$.'
+            answer: 'converges ($L = \lim \left(\frac{n}{n+1}\right)^n = \frac{1}{e} < 1$)'
+            solution_sketch: '$\frac{a_{n+1}}{a_n} = \frac{(n+1)\, n^n}{(n+1)^{n+1}} = \left(\frac{n}{n+1}\right)^n \to e^{-1}$.'
+        constraints: "cancel factorials and exponentials fully before taking the limit; L may involve e"
+      - id: kp3
+        name: Mixed products
+        key_prerequisites: [geometric-series-convergence, sequences-convergence]
+        exemplars:
+          - problem: 'Use the ratio test on $\sum_{n=1}^{\infty} \frac{n^2}{2^n}$.'
+            answer: 'converges ($L = \lim \frac{1}{2}\left(\frac{n+1}{n}\right)^2 = \frac{1}{2} < 1$)'
+            solution_sketch: 'The polynomial factor contributes limit $1$; the geometric factor decides.'
+          - problem: 'Use the ratio test on $\sum_{n=1}^{\infty} \frac{(2n)!}{(n!)^2}$.'
+            answer: 'diverges ($L = \lim \frac{(2n+2)(2n+1)}{(n+1)^2} = 4 > 1$)'
+            solution_sketch: '$\frac{a_{n+1}}{a_n} = \frac{(2n+2)(2n+1)}{(n+1)^2} \to 4$.'
+        constraints: "products of polynomial, exponential, and factorial factors; state L exactly"
+    diagnostic_exemplar:
+      problem: 'Use the ratio test on $\sum_{n=1}^{\infty} \frac{n^2 3^n}{n!}$.'
+      answer: 'converges ($L = \lim \frac{3(n+1)}{n^2} = 0 < 1$)'
+      solution_sketch: 'The ratio is $\frac{(n+1)^2 3^{n+1} n!}{n^2 3^n (n+1)!} = \frac{3(n+1)}{n^2} \to 0$.'
+    anki_seeds:
+      - front: 'Ratio test: with $L = \lim |a_{n+1}/a_n|$, the series converges when..., diverges when..., and when $L = 1$...'
+        back: 'converges (absolutely) if $L < 1$; diverges if $L > 1$; inconclusive if $L = 1$'
+        type: basic
+      - front: "The ratio test shines on terms containing..."
+        back: "factorials and n-th powers (exponentials)"
+        type: basic
+
+  - id: ratio-root-tests
+    name: Ratio and Root Tests
+    core: true
+    difficulty: 0.65
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 180
+    prerequisites:
+      - id: ratio-test
+        weight: 0.8
+        key: true
+      - id: comparison-tests
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: Root test for nth-power terms
+        key_prerequisites: [ratio-test]
+        exemplars:
+          - problem: 'Use the root test on $\sum_{n=1}^{\infty} \left(\frac{n}{2n + 1}\right)^n$.'
+            answer: 'converges ($L = \lim \frac{n}{2n+1} = \frac{1}{2} < 1$)'
+            solution_sketch: '$\sqrt[n]{a_n} = \frac{n}{2n+1} \to \frac{1}{2}$.'
+          - problem: 'Use the root test on $\sum_{n=1}^{\infty} \left(\frac{3n + 1}{2n + 5}\right)^n$.'
+            answer: 'diverges ($L = \frac{3}{2} > 1$)'
+            solution_sketch: 'The $n$th root is $\frac{3n+1}{2n+5} \to \frac{3}{2}$.'
+          - problem: 'Use the root test on $\sum_{n=1}^{\infty} \left(1 + \frac{1}{n}\right)^{-n^2}$.'
+            answer: 'converges ($L = \lim \left(1 + \frac{1}{n}\right)^{-n} = \frac{1}{e} < 1$)'
+            solution_sketch: '$\sqrt[n]{a_n} = \left(1 + \frac{1}{n}\right)^{-n} \to e^{-1}$.'
+        constraints: "a_n is an explicit nth power; L may involve e"
+      - id: kp2
+        name: The inconclusive case L = 1
+        key_prerequisites: [ratio-test, comparison-tests]
+        exemplars:
+          - problem: 'Apply the ratio test to $\sum_{n=1}^{\infty} \frac{1}{n^2}$; what does it tell you, and does the series converge?'
+            answer: '$L = 1$, so the ratio test is inconclusive; the series converges anyway ($p$-series, $p = 2$)'
+            solution_sketch: '$\frac{n^2}{(n+1)^2} \to 1$. Fall back to the $p$-series fact.'
+          - problem: 'Use the ratio test on $\sum_{n=1}^{\infty} \frac{n^n}{n!}$.'
+            answer: 'diverges ($L = \lim \left(1 + \frac{1}{n}\right)^n = e > 1$)'
+            solution_sketch: '$\frac{a_{n+1}}{a_n} = \frac{(n+1)^{n+1} n!}{(n+1)!\, n^n} = \left(\frac{n+1}{n}\right)^n \to e$.'
+        constraints: "include at least one L = 1 case per set; resolution must invoke another test"
+      - id: kp3
+        name: Choosing between ratio and root
+        key_prerequisites: [ratio-test, comparison-tests]
+        exemplars:
+          - problem: 'Decide whether $\sum_{n=1}^{\infty} \frac{2^n}{n^n}$ converges, choosing the natural test.'
+            answer: 'converges (root test: $L = \lim \frac{2}{n} = 0 < 1$)'
+            solution_sketch: 'The $n$th power in the denominator makes the root test immediate.'
+          - problem: 'Decide whether $\sum_{n=1}^{\infty} \frac{n! \, 3^n}{n^n}$ converges.'
+            answer: 'diverges (ratio test: $L = \lim 3\left(\frac{n}{n+1}\right)^n = \frac{3}{e} > 1$)'
+            solution_sketch: '$\frac{a_{n+1}}{a_n} = 3\left(\frac{n}{n+1}\right)^n \to \frac{3}{e} \approx 1.10$.'
+        constraints: "root test when a_n is an nth power; ratio test when factorials appear; verdicts state L"
+    diagnostic_exemplar:
+      problem: 'Decide whether $\sum_{n=1}^{\infty} \frac{n! \, 2^n}{n^n}$ converges, choosing the more natural test.'
+      answer: 'converges (ratio test: $L = \lim 2\left(\frac{n}{n+1}\right)^n = \frac{2}{e} < 1$)'
+      solution_sketch: 'The factorial makes the ratio test natural; the ratio simplifies to $2/(1 + 1/n)^n \to 2/e \approx 0.74 < 1$.'
+    anki_seeds:
+      - front: 'Root test: with $L = \lim \sqrt[n]{|a_n|}$, the conclusions are...'
+        back: 'converges (absolutely) if $L < 1$; diverges if $L > 1$; inconclusive if $L = 1$'
+        type: basic
+      - front: "The root test is the natural choice when the terms are..."
+        back: "explicit nth powers"
+        type: basic
+
+  - id: alternating-series-test
+    name: The Alternating Series Test
+    core: true
+    difficulty: 0.63
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 120
+    prerequisites:
+      - id: nth-term-divergence-test
+        weight: 0.6
+        key: true
+      - id: sequences-convergence
+        weight: 0.5
+      - id: derivatives-natural-log
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: Applying the alternating series test
+        key_prerequisites: [nth-term-divergence-test, sequences-convergence]
+        exemplars:
+          - problem: 'Does $\sum_{n=1}^{\infty} \frac{(-1)^{n+1}}{n}$ converge?'
+            answer: 'yes (alternating series test: $\frac{1}{n}$ is decreasing with limit $0$)'
+            solution_sketch: '$b_n = \frac{1}{n}$ is positive, decreasing, and $\to 0$.'
+          - problem: 'Does $\sum_{n=1}^{\infty} \frac{(-1)^n}{\sqrt{n}}$ converge?'
+            answer: 'yes (AST: $\frac{1}{\sqrt{n}}$ decreases to $0$)'
+            solution_sketch: 'Both hypotheses of the alternating series test hold.'
+          - problem: 'Does $\sum_{n=1}^{\infty} \frac{(-1)^{n+1}}{2n + 1}$ converge?'
+            answer: 'yes (AST: $\frac{1}{2n+1}$ decreases to $0$)'
+            solution_sketch: 'Positive, decreasing, limit $0$.'
+        constraints: "b_n is a simple decreasing rational or radical expression; cite both hypotheses"
+      - id: kp2
+        name: Checking the hypotheses
+        key_prerequisites: [nth-term-divergence-test, sequences-convergence]
+        exemplars:
+          - problem: 'Does $\sum_{n=1}^{\infty} (-1)^n \frac{n}{n + 1}$ converge?'
+            answer: 'no (terms do not tend to $0$; divergence by the term test)'
+            solution_sketch: '$\frac{n}{n+1} \to 1 \ne 0$, so the series diverges regardless of the alternating signs.'
+          - problem: 'Verify that the AST applies to $\sum_{n=3}^{\infty} \frac{(-1)^n \ln n}{n}$ and give the verdict.'
+            answer: 'converges ($\frac{\ln n}{n}$ is decreasing for $n \ge 3$ and tends to $0$)'
+            solution_sketch: '$\frac{d}{dx}\frac{\ln x}{x} = \frac{1 - \ln x}{x^2} < 0$ for $x > e$; and $\frac{\ln n}{n} \to 0$.'
+        constraints: "check both AST hypotheses explicitly; include a term-test failure case"
+    diagnostic_exemplar:
+      problem: 'Does $\sum_{n=1}^{\infty} (-1)^n \frac{n}{2n + 1}$ converge? Name the test that decides it.'
+      answer: 'no: $|a_n| \to \frac12 \ne 0$, so the alternating series test does not apply and the series diverges by the term test'
+      solution_sketch: 'The AST needs terms decreasing to $0$; here they approach $\frac12$, so the hypothesis fails and divergence follows from the $n$-th term test.'
+    anki_seeds:
+      - front: "Alternating series test hypotheses on b_n?"
+        back: '$b_n > 0$, $b_n$ decreasing, and $b_n \to 0$'
+        type: basic
+      - front: "Before reaching for the AST on an alternating series, first check..."
+        back: "whether the terms even tend to 0 (if not, it diverges by the term test)"
+        type: basic
+
+  - id: alternating-series
+    name: Alternating Series and Conditional Convergence
+    core: true
+    difficulty: 0.7
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 180
+    prerequisites:
+      - id: alternating-series-test
+        weight: 0.8
+        key: true
+      - id: comparison-tests
+        weight: 0.5
+        key: true
+      - id: integral-p-series-tests
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Absolute convergence
+        key_prerequisites: [comparison-tests, integral-p-series-tests]
+        exemplars:
+          - problem: 'Classify $\sum_{n=1}^{\infty} \frac{(-1)^{n+1}}{n^2}$ as absolutely convergent, conditionally convergent, or divergent.'
+            answer: 'absolutely convergent ($\sum \frac{1}{n^2}$ converges)'
+            solution_sketch: 'The absolute series is a convergent $p$-series, $p = 2$.'
+          - problem: 'Does $\sum_{n=1}^{\infty} \frac{\cos n}{n^2}$ converge?'
+            answer: 'yes; it converges absolutely ($\left|\frac{\cos n}{n^2}\right| \le \frac{1}{n^2}$)'
+            solution_sketch: 'Absolute convergence (by direct comparison) implies convergence, even with irregular signs.'
+        constraints: "absolute series handled by a p-series or a direct comparison; use one non-alternating sign pattern"
+      - id: kp2
+        name: The three-way classification
+        key_prerequisites: [alternating-series-test, comparison-tests]
+        exemplars:
+          - problem: 'Classify $\sum_{n=1}^{\infty} \frac{(-1)^{n+1}}{n}$.'
+            answer: 'conditionally convergent (converges by AST, but $\sum \frac{1}{n}$ diverges)'
+            solution_sketch: 'The series converges while its absolute version, the harmonic series, does not.'
+          - problem: 'Classify $\sum_{n=1}^{\infty} \frac{(-1)^n}{\sqrt{n}}$.'
+            answer: 'conditionally convergent (AST applies; $\sum n^{-1/2}$ diverges, $p = \frac{1}{2}$)'
+            solution_sketch: '$\frac{1}{\sqrt{n}}$ decreases to $0$, but the absolute series is a divergent $p$-series.'
+          - problem: 'Classify $\sum_{n=1}^{\infty} (-1)^n \left(\frac{2}{3}\right)^n$.'
+            answer: 'absolutely convergent ($\sum (2/3)^n$ is a convergent geometric series)'
+            solution_sketch: 'The absolute series has ratio $\frac{2}{3} < 1$.'
+        constraints: "absolute series is always a p-series or geometric series; require the three-way classification"
+      - id: kp3
+        name: Harder classifications
+        key_prerequisites: [alternating-series-test, comparison-tests]
+        exemplars:
+          - problem: 'Classify $\sum_{n=1}^{\infty} \frac{(-1)^n n}{n^2 + 1}$.'
+            answer: 'conditionally convergent (AST applies; the absolute series behaves like $\sum \frac{1}{n}$, $L = 1$)'
+            solution_sketch: '$\frac{n}{n^2+1}$ decreases to $0$ for $n \ge 1$; limit comparison of the absolute series with the harmonic series gives $L = 1$.'
+          - problem: 'Classify $\sum_{n=1}^{\infty} \frac{(-1)^n (n + 1)}{n}$.'
+            answer: 'divergent (the terms do not tend to $0$)'
+            solution_sketch: '$\frac{n+1}{n} \to 1$; the term test settles it before any AST reasoning.'
+        constraints: "absolute series needs a limit comparison; include one term-test divergence disguised as an AST problem"
+    diagnostic_exemplar:
+      problem: 'Classify $\sum_{n=1}^{\infty} \frac{(-1)^n n}{n^2 + 4}$ as absolutely convergent, conditionally convergent, or divergent.'
+      answer: 'conditionally convergent (the AST applies since $\frac{n}{n^2+4}$ decreases to $0$, but the absolute series behaves like $\sum \frac{1}{n}$, which diverges)'
+      solution_sketch: 'Limit comparison of $\frac{n}{n^2+4}$ with $\frac1n$ gives $L = 1$, so the absolute series diverges while the alternating one converges.'
+    anki_seeds:
+      - front: "Conditionally convergent means..."
+        back: "the series converges but the series of absolute values diverges"
+        type: basic
+      - front: "Absolute convergence implies..."
+        back: "convergence (the converse is false: e.g. the alternating harmonic series)"
+        type: basic
+
+  - id: alternating-series-estimation
+    name: Alternating Series Error Bounds
+    core: false                # error-bound destination; the tests stay core
+    difficulty: 0.68
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 150
+    prerequisites:
+      - id: alternating-series-test
+        weight: 0.7
+        key: true
+      - id: alternating-series
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: The first-omitted-term bound
+        key_prerequisites: [alternating-series-test]
+        exemplars:
+          - problem: 'The alternating harmonic series is approximated by its first $4$ terms. Bound the error.'
+            answer: '$|R_4| \le b_5 = \frac{1}{5}$'
+            solution_sketch: 'For an alternating series meeting the AST hypotheses, the error is at most the first omitted term.'
+          - problem: '$\sum_{n=1}^{\infty} \frac{(-1)^{n+1}}{n^2}$ is approximated by its first $6$ terms. Bound the error.'
+            answer: '$|R_6| \le b_7 = \frac{1}{49}$'
+            solution_sketch: 'First omitted term: $\frac{1}{7^2}$.'
+        constraints: "error bounds use the first omitted term; b_n is 1/n, 1/n^2, or 1/n!"
+      - id: kp2
+        name: Terms needed for a target accuracy
+        key_prerequisites: [alternating-series-test, alternating-series]
+        exemplars:
+          - problem: 'How many terms of $\sum_{n=1}^{\infty} \frac{(-1)^{n+1}}{n^2}$ guarantee an error of at most $\frac{1}{100}$?'
+            answer: '$9$ terms ($b_{10} = \frac{1}{100}$)'
+            solution_sketch: '$|R_n| \le b_{n+1} = \frac{1}{(n+1)^2} \le \frac{1}{100}$ requires $n + 1 \ge 10$, i.e. $n \ge 9$.'
+          - problem: 'How many terms of $\sum_{n=1}^{\infty} \frac{(-1)^{n+1}}{n^3}$ guarantee an error of at most $\frac{1}{1000}$?'
+            answer: '$9$ terms ($b_{10} = \frac{1}{1000}$)'
+            solution_sketch: '$\frac{1}{(n+1)^3} \le 10^{-3}$ requires $n + 1 \ge 10$.'
+        constraints: "thresholds are powers of 10; answer with the count of terms, showing the b_(n+1) inequality"
+      - id: kp3
+        name: Estimating alternating sums
+        key_prerequisites: [alternating-series-test]
+        exemplars:
+          - problem: 'Approximate $\sum_{n=0}^{\infty} \frac{(-1)^n}{n!}$ using terms through $n = 4$, and bound the error.'
+            answer: '$\frac{3}{8}$, with error $\le \frac{1}{120}$'
+            solution_sketch: '$1 - 1 + \frac{1}{2} - \frac{1}{6} + \frac{1}{24} = \frac{9}{24} = \frac{3}{8}$; the first omitted term is $\frac{1}{5!}$.'
+          - problem: 'Approximate $\sum_{n=1}^{\infty} \frac{(-1)^{n+1}}{n^2}$ using its first $3$ terms, and bound the error.'
+            answer: '$\frac{31}{36}$, with error $\le \frac{1}{16}$'
+            solution_sketch: '$1 - \frac{1}{4} + \frac{1}{9} = \frac{31}{36}$; first omitted term $\frac{1}{4^2}$.'
+        constraints: "partial sums evaluate to clean fractions; always pair the estimate with its bound"
+    diagnostic_exemplar:
+      problem: 'Approximate $\sum_{n=1}^{\infty} \frac{(-1)^{n+1}}{n^2}$ by its first $4$ terms, giving the value as a fraction, and bound the error.'
+      answer: '$\frac{115}{144}$, with error at most $b_5 = \frac{1}{25}$'
+      solution_sketch: '$1 - \frac14 + \frac19 - \frac1{16} = \frac{115}{144}$; for an alternating series the error is at most the first omitted term.'
+    anki_seeds:
+      - front: "Alternating series error bound: the error after n terms is at most..."
+        back: '$b_{n+1}$, the first omitted term'
+        type: basic
+      - front: "Alternating series estimation bound vs Lagrange remainder: which applies when?"
+        back: "AST bound: any series meeting the AST hypotheses (alternating, terms decreasing to 0) — error <= first omitted term. Lagrange remainder: Taylor polynomials of a differentiable function, needing a bound on the (n+1)st derivative."
+        type: basic
+
+  - id: strategy-for-testing-series
+    name: Strategy for Testing Series
+    core: false                # mixed-practice strategy capstone
+    difficulty: 0.73
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 240
+    prerequisites:
+      - id: ratio-root-tests
+        weight: 0.6
+        key: true
+      - id: alternating-series
+        weight: 0.6
+        key: true
+      - id: comparison-tests
+        weight: 0.4
+      - id: integral-p-series-tests
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: Reading the form to pick a test
+        key_prerequisites: [ratio-root-tests, comparison-tests]
+        exemplars:
+          - problem: 'Which test fits $\sum_{n=1}^{\infty} \frac{n^2}{n^4 + 1}$, and what is the verdict?'
+            answer: 'limit comparison with $\sum \frac{1}{n^2}$; converges ($L = 1$)'
+            solution_sketch: 'Rational terms: compare with the dominant-power $p$-series.'
+          - problem: 'Which test fits $\sum_{n=1}^{\infty} \frac{n!}{100^n}$, and what is the verdict?'
+            answer: 'ratio test; diverges ($L = \lim \frac{n+1}{100} = \infty$)'
+            solution_sketch: 'A factorial signals the ratio test.'
+          - problem: 'Which test fits $\sum_{n=2}^{\infty} \frac{(-1)^n}{\ln n}$, and what is the verdict?'
+            answer: 'alternating series test; converges ($\frac{1}{\ln n}$ decreases to $0$)'
+            solution_sketch: 'Alternating signs with slowly decaying terms: AST.'
+        constraints: "one rational, one factorial/exponential, one alternating per set; verdicts name test and reason"
+      - id: kp2
+        name: Full verdicts on mixed forms
+        key_prerequisites: [ratio-root-tests, integral-p-series-tests]
+        exemplars:
+          - problem: 'Decide whether $\sum_{n=1}^{\infty} \left(\frac{n}{n+1}\right)^{n^2}$ converges.'
+            answer: 'converges (root test: $L = \lim \left(\frac{n}{n+1}\right)^n = \frac{1}{e} < 1$)'
+            solution_sketch: 'The $n$th root is $\left(\frac{n}{n+1}\right)^n \to e^{-1}$.'
+          - problem: 'Decide whether $\sum_{n=2}^{\infty} \frac{1}{n (\ln n)^2}$ converges.'
+            answer: 'converges (integral test: $\int_2^{\infty} \frac{dx}{x(\ln x)^2} = \frac{1}{\ln 2}$, finite)'
+            solution_sketch: '$u = \ln x$ gives $\int_{\ln 2}^{\infty} \frac{du}{u^2}$, which is finite.'
+          - problem: 'Decide whether $\sum_{n=1}^{\infty} \frac{3^n + n}{2^n + n^2}$ converges.'
+            answer: 'diverges (the terms behave like $\left(\frac{3}{2}\right)^n \to \infty$; term test)'
+            solution_sketch: 'Dominant terms give $\frac{3^n}{2^n}$, which grows without bound, so $a_n \not\to 0$.'
+        constraints: "each set mixes at least three different applicable tests; verdicts must be fully justified"
+      - id: kp3
+        name: Classification capstone
+        key_prerequisites: [alternating-series, comparison-tests]
+        exemplars:
+          - problem: 'Classify $\sum_{n=1}^{\infty} \frac{(-1)^n \sqrt{n}}{n + 4}$ as absolutely convergent, conditionally convergent, or divergent.'
+            answer: 'conditionally convergent (AST applies for $n \ge 4$; the absolute series behaves like $\sum n^{-1/2}$, which diverges)'
+            solution_sketch: '$\frac{\sqrt{n}}{n+4}$ decreases to $0$ for $n \ge 4$; limit comparison of the absolute series with $n^{-1/2}$ gives $L = 1$.'
+          - problem: 'Classify $\sum_{n=1}^{\infty} \frac{(-1)^n}{n^{3/2}}$.'
+            answer: 'absolutely convergent ($p$-series with $p = \frac{3}{2} > 1$)'
+            solution_sketch: 'The absolute series already converges; no AST needed.'
+        constraints: "require the three-way classification with the deciding test named at each step"
+    diagnostic_exemplar:
+      problem: 'Classify $\sum_{n=2}^{\infty} \frac{(-1)^n}{\sqrt{n} + 1}$ as absolutely convergent, conditionally convergent, or divergent, naming the tests you use.'
+      answer: 'conditionally convergent (AST: $\frac{1}{\sqrt n + 1}$ decreases to $0$; limit comparison of the absolute series with $\sum n^{-1/2}$ gives $L = 1$, and that $p$-series diverges)'
+      solution_sketch: 'Read the form: alternating with terms decreasing to zero, so it converges; the absolute series is a $p$-series comparison with $p = \frac12 \le 1$.'
+    anki_seeds:
+      - front: "Series strategy: factorials or c^n suggest ..., nth powers suggest ..., rational terms suggest ..."
+        back: "ratio test; root test; (limit) comparison with a p-series"
+        type: basic
+      - front: "The first question to ask of ANY series?"
+        back: "do the terms tend to 0? (if not, it diverges by the term test)"
+        type: basic

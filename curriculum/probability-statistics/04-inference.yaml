@@ -1,0 +1,822 @@
+unit: inference
+course: probability-statistics
+module: "Statistical Inference & Regression"
+topics:
+  - id: populations-samples
+    name: "Populations & Samples"
+    core: true
+    difficulty: 0.3
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 90
+    prerequisites:
+      - id: mean-median-mode
+        weight: 0.6
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: "Population versus sample"
+        key_prerequisites: []
+        exemplars:
+          - problem: 'A researcher surveys $200$ of a city''s $40{,}000$ residents. Identify the population and the sample.'
+            answer: 'Population: all $40{,}000$ residents; sample: the $200$ surveyed.'
+          - problem: 'What is the difference between a census and a sample?'
+            answer: 'A census measures every member of the population; a sample measures only part of it.'
+        constraints: "concrete scenarios; the answer names both groups explicitly"
+      - id: kp2
+        name: "Parameter versus statistic"
+        key_prerequisites: [mean-median-mode]
+        exemplars:
+          - problem: 'The mean height of the $200$ sampled residents is $171$ cm. Is this number a parameter or a statistic?'
+            answer: 'A statistic; it describes the sample, not the whole population.'
+          - problem: 'The symbols $\mu$ and $\sigma$ describe a ___, while $\bar{x}$ and $s$ describe a ___.'
+            answer: 'Population; sample.'
+        constraints: "one classification item and one notation item per set"
+      - id: kp3
+        name: "Why sample at all"
+        key_prerequisites: []
+        exemplars:
+          - problem: 'Give two reasons to survey a sample rather than take a census.'
+            answer: 'A sample is cheaper and faster; a census may be impractical or impossible.'
+          - problem: 'A factory wants the average lifetime of its lightbulbs. Why is a census a bad idea?'
+            answer: 'Lifetime testing destroys the bulb — a census would destroy every product.'
+        constraints: "scenarios where cost, time, or destructive testing forces sampling"
+    diagnostic_exemplar:
+      problem: 'An inspector tests $50$ of the $5000$ batteries produced in a day; the mean life of the $50$ is $21$ hours. Identify the population, the sample, and whether $21$ hours is a parameter or a statistic.'
+      answer: 'Population: all $5000$ batteries; sample: the $50$ tested; $21$ hours is a statistic.'
+      solution_sketch: 'The population is the whole group under study, the sample the part actually measured; a number computed from the sample is a statistic, one describing the population a parameter.'
+    anki_seeds:
+      - front: 'Parameter vs statistic?'
+        back: 'A parameter describes the population; a statistic describes a sample.'
+        type: basic
+      - front: 'Which symbols go with the population, and which with the sample?'
+        back: 'Population: $\mu, \sigma$. Sample: $\bar{x}, s$.'
+        type: basic
+
+  - id: sampling-methods-bias
+    name: "Sampling Methods & Bias"
+    core: false                # study-design branch; terminal
+    difficulty: 0.35
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 120
+    prerequisites:
+      - id: populations-samples
+        weight: 0.8
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: "Simple random samples"
+        key_prerequisites: [populations-samples]
+        exemplars:
+          - problem: 'What makes a sample of size $n$ a simple random sample?'
+            answer: 'Every group of $n$ members of the population is equally likely to be chosen.'
+          - problem: 'All $30$ class names go in a hat and $5$ are drawn. Is this an SRS?'
+            answer: 'Yes; every set of $5$ names is equally likely.'
+        constraints: "definitions and yes/no judgments with a stated reason"
+      - id: kp2
+        name: "Identifying sampling methods"
+        key_prerequisites: [populations-samples]
+        exemplars:
+          - problem: 'A store surveys every $20$th customer. Name the sampling method.'
+            answer: 'Systematic sampling.'
+          - problem: 'A school randomly selects $10$ students from each year group. Name the method.'
+            answer: 'Stratified sampling (the year groups are strata).'
+          - problem: 'A district randomly picks $3$ classrooms and surveys everyone in them. Name the method.'
+            answer: 'Cluster sampling.'
+        constraints: "one scenario per method; the scenario names the selection mechanism precisely"
+      - id: kp3
+        name: "Recognizing bias"
+        key_prerequisites: [populations-samples]
+        exemplars:
+          - problem: 'A website posts a poll that visitors choose to answer. What kind of bias does this invite?'
+            answer: 'Voluntary response bias; people with strong opinions are overrepresented.'
+          - problem: 'To estimate how much the city exercises, a researcher surveys people at a gym. What is wrong?'
+            answer: 'Convenience sampling that undercovers non-gym-goers; the estimate will be too high.'
+        constraints: "each scenario exhibits exactly one named bias; answer states the direction of the distortion when asked"
+    diagnostic_exemplar:
+      problem: 'A radio host asks listeners to call in and vote on a tax proposal. Will the results represent the city? Name the problem.'
+      answer: 'No; voluntary response bias — only listeners with strong opinions call in.'
+      solution_sketch: 'The sample selects itself: who chooses to call in is not a random draw from the city, and the people with strong views are the ones who bother — voluntary response bias.'
+    anki_seeds:
+      - front: 'Simple random sample (SRS) of size $n$?'
+        back: 'Every group of $n$ population members has the same chance of selection.'
+        type: basic
+      - front: 'Voluntary response and convenience samples are usually...'
+        back: 'Biased — they overrepresent strong opinions or easy-to-reach people.'
+        type: basic
+
+  - id: experimental-design-basics
+    name: "Experimental Design Basics"
+    core: false                # study-design branch; terminal
+    difficulty: 0.4
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 150
+    prerequisites:
+      - id: sampling-methods-bias
+        weight: 0.7
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: "Observational study versus experiment"
+        key_prerequisites: [sampling-methods-bias]
+        exemplars:
+          - problem: 'Researchers track the health of people who already chose their own diets. Observational study or experiment?'
+            answer: 'Observational study; no treatment is imposed.'
+          - problem: 'Researchers randomly assign volunteers to a supplement or a placebo. Observational study or experiment?'
+            answer: 'Experiment; the researchers impose the treatment.'
+        constraints: "the deciding question is always whether a treatment is imposed"
+      - id: kp2
+        name: "Treatments, control, and random assignment"
+        key_prerequisites: [sampling-methods-bias]
+        exemplars:
+          - problem: 'Sixty plants are randomly split: half get a new fertilizer, half get none. Identify the treatment group and the control group.'
+            answer: 'Treatment: the fertilized half; control: the unfertilized half.'
+          - problem: 'What is the purpose of giving the control group a placebo?'
+            answer: 'To keep the groups'' expectations equal, so any difference is due to the treatment itself.'
+        constraints: "two-group designs; identify roles or justify a design element"
+      - id: kp3
+        name: "Confounding and causation"
+        key_prerequisites: [sampling-methods-bias]
+        exemplars:
+          - problem: 'Ice cream sales and drownings rise together. Name a plausible confounding variable.'
+            answer: 'Summer weather — heat increases both swimming and ice cream sales.'
+          - problem: 'Which design can support a cause-and-effect conclusion: a randomized experiment or an observational study?'
+            answer: 'A randomized experiment; random assignment balances lurking variables.'
+        constraints: "confounders must plausibly drive both variables; causation claims only from randomized experiments"
+    diagnostic_exemplar:
+      problem: 'To test a study app, $100$ volunteers are randomly split: $50$ use the app, $50$ do not, and exam scores are compared. Identify the treatment and control groups, and state why random assignment matters.'
+      answer: 'Treatment: the $50$ app users; control: the $50$ non-users; random assignment balances lurking variables so score differences can be attributed to the app.'
+      solution_sketch: 'The treatment group receives the intervention and the control group supplies the comparison; randomising the split is what balances the lurking variables, which is what licenses reading the difference as caused by the app.'
+    anki_seeds:
+      - front: 'Only which study design supports cause-and-effect conclusions?'
+        back: 'A randomized experiment.'
+        type: basic
+      - front: 'A confounding variable is...'
+        back: 'A third variable that influences both the explanatory and response variables, mixing up their apparent relationship.'
+        type: basic
+
+  - id: empirical-rule
+    name: "The Empirical Rule"
+    core: true
+    difficulty: 0.45
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 90
+    prerequisites:
+      - id: z-scores
+        weight: 0.7
+        key: true
+      - id: percentages
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "The 68-95-99.7 percentages"
+        key_prerequisites: [z-scores, percentages]
+        exemplars:
+          - problem: 'Heights are normal with mean $170$ cm and SD $6$ cm. What proportion of heights lie between $164$ and $176$ cm? Give a decimal.'
+            answer: "0.68"
+            solution_sketch: 'That interval is $\mu \pm 1\sigma$, which holds about $68\%$ — a proportion of $0.68$.'
+          - problem: 'For a normal distribution, what proportion of values lie within $2$ standard deviations of the mean? Give a decimal.'
+            answer: "0.95"
+            solution_sketch: 'The empirical rule gives about $95\%$, i.e. $0.95$.'
+        constraints: "intervals land exactly on mu +/- 1, 2, or 3 sigma; area answers are decimal proportions"
+      - id: kp2
+        name: "Translating to raw intervals"
+        key_prerequisites: [z-scores]
+        exemplars:
+          - problem: 'Marks (out of $10$) are normal with mean $6$ and SD $1$. Give the interval that holds the middle $95\%$ of marks.'
+            answer: '$(4, 8)$'
+            solution_sketch: '$\mu \pm 2\sigma = 6 \pm 2$.'
+          - problem: 'Times are normal with mean $60$ and SD $5$. Give the interval that holds the middle $99.7\%$.'
+            answer: '$(45, 75)$'
+            solution_sketch: '$\mu \pm 3\sigma = 60 \pm 15$.'
+        constraints: "mean and SD are whole numbers; endpoints come out to integers"
+      - id: kp3
+        name: "Percent outside an interval"
+        key_prerequisites: [z-scores, percentages]
+        exemplars:
+          - problem: 'For a normal distribution, what proportion of values lie more than $2$ standard deviations from the mean? Give a decimal.'
+            answer: "0.05"
+            solution_sketch: '$1 - 0.95 = 0.05$, split between the two tails.'
+          - problem: 'Heights are normal with mean $170$ and SD $6$. What proportion of heights lie outside $(158, 182)$? Give a decimal.'
+            answer: "0.05"
+            solution_sketch: '$158$ and $182$ are $\mu \pm 2\sigma$; the area outside is $1 - 0.95 = 0.05$.'
+        constraints: "complements of the 68/95/99.7 intervals only; no tail-splitting yet; area answers are decimal proportions"
+    diagnostic_exemplar:
+      problem: 'Times are normal with mean $60$ and SD $5$. What proportion of times lie outside the interval $(50, 70)$? Give a decimal.'
+      answer: '0.05'
+      solution_sketch: '$(50, 70) = \mu \pm 2\sigma$ holds $95\%$; outside: $1 - 0.95 = 0.05$.'
+    anki_seeds:
+      - front: 'Empirical rule percentages for $\pm 1\sigma$, $\pm 2\sigma$, $\pm 3\sigma$?'
+        back: 'About $68\%$, $95\%$, and $99.7\%$.'
+        type: basic
+      - front: 'Percent of a normal distribution more than $2\sigma$ from the mean?'
+        back: 'About $5\%$ ($2.5\%$ in each tail).'
+        type: basic
+
+  - id: normal-distribution
+    name: "Normal Distribution Reasoning"
+    core: true
+    difficulty: 0.5
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 150
+    prerequisites:
+      - id: empirical-rule
+        weight: 0.8
+        key: true
+      - id: z-scores
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "One-sided areas from symmetry"
+        key_prerequisites: [empirical-rule]
+        exemplars:
+          - problem: 'Marks (out of $10$) are normal with mean $6.5$ and SD $1$. What proportion of marks exceed $8.5$? Give a decimal.'
+            answer: "0.025"
+            solution_sketch: '$8.5 = \mu + 2\sigma$; the area outside $\pm 2\sigma$ is $0.05$, split evenly, so $0.025$ above.'
+          - problem: 'Marks (out of $10$) are normal with mean $6.5$ and SD $1$. What proportion fall below $5.5$? Give a decimal.'
+            answer: "0.16"
+            solution_sketch: '$5.5 = \mu - 1\sigma$; the area outside $\pm 1\sigma$ is $0.32$, so $0.16$ in the lower tail.'
+        constraints: "cut points at whole-sigma marks; use symmetry to halve tail areas; area answers are decimal proportions"
+      - id: kp2
+        name: "Combining regions and percentiles"
+        key_prerequisites: [empirical-rule]
+        exemplars:
+          - problem: 'For a normal distribution, what proportion of values lie between $\mu - 2\sigma$ and $\mu + \sigma$? Give a decimal.'
+            answer: "0.815"
+            solution_sketch: 'Half of $0.95$ below the mean plus half of $0.68$ above it: $0.475 + 0.34 = 0.815$.'
+          - problem: 'Approximately what percentile is a value at $\mu + \sigma$? Give the percentile number.'
+            answer: "84"
+            solution_sketch: '$50\%$ below the mean plus $34\%$ between $\mu$ and $\mu + \sigma$ gives $84\%$ below.'
+        constraints: "asymmetric intervals with whole-sigma endpoints; answers from 68/95/99.7 arithmetic only, as a decimal proportion or a percentile number"
+      - id: kp3
+        name: "Comparing values across distributions"
+        key_prerequisites: [z-scores, empirical-rule]
+        exemplars:
+          - problem: 'Test A (out of $10$) is normal with mean $7$, SD $0.5$; test B with mean $6$, SD $1$. Which is relatively better: $8$ on A or $7.5$ on B? Give the z-score of the better one.'
+            answer: "2"
+            solution_sketch: '$z_A = \frac{8-7}{0.5} = 2$, $z_B = \frac{7.5-6}{1} = 1.5$; the higher $z$ is more exceptional.'
+          - problem: 'A value sits at $\mu + 2\sigma$ in a normal distribution. Approximately what percentile is it? Give the percentile number.'
+            answer: "97.5"
+            solution_sketch: '$50\% + 47.5\% = 97.5\%$ of values lie below $\mu + 2\sigma$.'
+        constraints: "z-scores are halves or whole numbers; comparisons decided by the larger |z|"
+    diagnostic_exemplar:
+      problem: 'Marks (out of $10$) are normal with mean $6.5$ and SD $1$. What proportion of marks fall between $4.5$ and $7.5$? Give a decimal.'
+      answer: '0.815'
+      solution_sketch: '$\mu - 2\sigma$ to $\mu + \sigma$: $0.95/2 + 0.68/2 = 0.475 + 0.34 = 0.815$.'
+    anki_seeds:
+      - front: 'What fraction of a normal distribution lies above $\mu + 2\sigma$?'
+        back: 'About $2.5\%$.'
+        type: basic
+      - front: 'A value at $\mu + \sigma$ sits at approximately which percentile?'
+        back: 'The 84th ($50\% + 34\%$ below it).'
+        type: basic
+
+  - id: standard-error
+    name: "Standard Error of the Sample Mean"
+    core: true
+    difficulty: 0.5
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 120
+    prerequisites:
+      - id: variance-standard-deviation
+        weight: 0.7
+        key: true
+      - id: square-roots
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Computing SE = sigma over root n"
+        key_prerequisites: [variance-standard-deviation, square-roots]
+        exemplars:
+          - problem: 'A population has $\sigma = 12$. For samples of size $n = 9$, find the standard error of the sample mean.'
+            answer: "4"
+            solution_sketch: '$\operatorname{SE} = \sigma/\sqrt{n} = 12/3 = 4$.'
+          - problem: 'A population has $\mu = 40$, $\sigma = 10$. For $n = 25$, give (mean of $\bar{x}$, SE of $\bar{x}$) as an ordered pair.'
+            answer: '$(40, 2)$'
+            solution_sketch: '$E[\bar{x}] = \mu = 40$; $\operatorname{SE} = 10/\sqrt{25} = 2$.'
+        constraints: "n a perfect square (4, 9, 16, 25, 36, 100); sigma divisible by sqrt(n)"
+      - id: kp2
+        name: "Averages vary less than individuals"
+        key_prerequisites: [variance-standard-deviation]
+        exemplars:
+          - problem: 'A population has $\sigma = 18$. Give (SD of a single observation, SE of the mean of $36$ observations) as an ordered pair.'
+            answer: '$(18, 3)$'
+            solution_sketch: '$18/\sqrt{36} = 3$ — averages cluster far more tightly than single values.'
+          - problem: 'One die roll has SD $\sigma$. By what factor is the SD of the average of $100$ rolls smaller?'
+            answer: "10"
+            solution_sketch: 'Averaging $n$ values shrinks the spread by $\sqrt{n}$: $\sqrt{100} = 10$, so a single roll varies far more.'
+        constraints: "one computation and one shrink-factor item; n a perfect square"
+      - id: kp3
+        name: "How sample size changes the SE"
+        key_prerequisites: [variance-standard-deviation, square-roots]
+        exemplars:
+          - problem: 'The standard error of $\bar{x}$ at sample size $n$ is $6$. What is it at sample size $4n$?'
+            answer: "3"
+            solution_sketch: '$\operatorname{SE} \propto 1/\sqrt{n}$; quadrupling $n$ halves the SE.'
+          - problem: 'A population has $\sigma = 20$. What sample size makes the standard error equal to $5$?'
+            answer: "16"
+            solution_sketch: '$20/\sqrt{n} = 5$ gives $\sqrt{n} = 4$, so $n = 16$.'
+        constraints: "n and target SE chosen so sqrt(n) is a whole number"
+    diagnostic_exemplar:
+      problem: 'A population has $\sigma = 18$. What sample size makes the standard error of the sample mean equal to $3$?'
+      answer: '36'
+      solution_sketch: '$18/\sqrt{n} = 3$ gives $\sqrt{n} = 6$, so $n = 36$.'
+    anki_seeds:
+      - front: 'Standard error of the sample mean?'
+        back: '$\operatorname{SE} = \dfrac{\sigma}{\sqrt{n}}$.'
+        type: basic
+      - front: 'To cut the standard error in half, multiply the sample size by {{c1::4}}.'
+        back: '4'
+        type: cloze
+
+  - id: sampling-distributions
+    name: "Sampling Distributions & the CLT"
+    core: true
+    difficulty: 0.55
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 180
+    prerequisites:
+      - id: standard-error
+        weight: 0.7
+        key: true
+      - id: normal-distribution
+        weight: 0.7
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: "The Central Limit Theorem"
+        key_prerequisites: [normal-distribution]
+        exemplars:
+          - problem: 'A population is skewed. What does the CLT say about the shape of the distribution of $\bar{x}$ for large $n$?'
+            answer: 'It is approximately normal.'
+          - problem: 'When can the distribution of $\bar{x}$ be treated as normal?'
+            answer: 'When the population itself is normal, or when $n$ is large (roughly $n \ge 30$).'
+        constraints: "conceptual items; answers name the shape and the conditions"
+      - id: kp2
+        name: "Probabilities for the sample mean"
+        key_prerequisites: [normal-distribution, standard-error]
+        exemplars:
+          - problem: 'A population has $\mu = 50$, $\sigma = 8$. For $n = 16$, find $P(48 \le \bar{x} \le 52)$ using the empirical rule.'
+            answer: "68%"
+            solution_sketch: '$\operatorname{SE} = 8/4 = 2$, so $48$ to $52$ is $\mu \pm 1$ SE: about $68\%$.'
+          - problem: 'Same population, $n = 16$. Find $P(\bar{x} > 54)$.'
+            answer: "2.5%"
+            solution_sketch: '$54 = \mu + 2 \cdot \operatorname{SE}$; the area above $+2$ SE is about $2.5\%$.'
+        constraints: "cut points at whole multiples of the SE; empirical-rule answers only"
+      - id: kp3
+        name: "Is a sample mean surprising?"
+        key_prerequisites: [normal-distribution, standard-error]
+        exemplars:
+          - problem: 'A population has $\mu = 50$, $\sigma = 8$; $n = 16$, so $\operatorname{SE} = 2$. A sample gives $\bar{x} = 57$. Is this surprising?'
+            answer: 'Yes; $\bar{x}$ is $3.5$ SEs above $\mu$, beyond the $99.7\%$ range.'
+            solution_sketch: '$(57 - 50)/2 = 3.5$; values beyond $3$ SEs occur less than $0.3\%$ of the time.'
+          - problem: 'Same setup, but $\bar{x} = 51$. Surprising?'
+            answer: 'No; $0.5$ SE above the mean is entirely ordinary.'
+        constraints: "judgments quoted in SEs from the mean; thresholds at 2 and 3 SEs"
+    diagnostic_exemplar:
+      problem: 'A population has $\mu = 80$, $\sigma = 12$. A sample of $n = 9$ gives $\bar{x} = 89$. Compute the SE, state how many SEs above $\mu$ this is, and say whether the result is surprising.'
+      answer: '$\operatorname{SE} = 4$; $\bar{x}$ is $2.25$ SEs above $\mu$ — surprising: beyond $2$ SEs, outside the middle $95\%$.'
+      solution_sketch: '$\operatorname{SE} = 12/\sqrt{9} = 4$; $(89 - 80)/4 = 2.25 > 2$.'
+    anki_seeds:
+      - front: 'Central Limit Theorem (informal)?'
+        back: 'For large $n$, the sampling distribution of $\bar{x}$ is approximately normal, whatever the population''s shape.'
+        type: basic
+      - front: 'A sample mean more than $2$ SEs from $\mu$ happens about how often?'
+        back: 'About $5\%$ of the time — conventionally "surprising".'
+        type: basic
+
+  - id: sample-proportions
+    name: "Sampling Distribution of a Proportion"
+    core: false                # feeds only the supplemental one-proportion-z-test (re-audit R-24); no core material builds on it
+    difficulty: 0.55
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 150
+    prerequisites:
+      - id: sampling-distributions
+        weight: 0.7
+        key: true
+      - id: binomial-distribution
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "The sample proportion and its mean"
+        key_prerequisites: [sampling-distributions]
+        exemplars:
+          - problem: 'In a poll of $90$ voters, $54$ support a measure. Compute the sample proportion $\hat{p}$.'
+            answer: "3/5"
+            solution_sketch: '$\hat{p} = 54/90 = 3/5$.'
+          - problem: 'If the true support level is $p = 3/5$, what is the mean of the sampling distribution of $\hat{p}$?'
+            answer: "3/5"
+            solution_sketch: '$E[\hat{p}] = p$ — the sample proportion is unbiased.'
+        constraints: "counts divide evenly; p a simple fraction"
+      - id: kp2
+        name: "Standard error of p-hat"
+        key_prerequisites: [sampling-distributions]
+        exemplars:
+          - problem: 'With $p = 1/2$ and $n = 25$, find the standard error of $\hat{p}$.'
+            answer: "1/10"
+            solution_sketch: '$\operatorname{SE} = \sqrt{\frac{p(1-p)}{n}} = \sqrt{\frac{1/4}{25}} = \sqrt{\frac{1}{100}} = \frac{1}{10}$.'
+          - problem: 'With $p = 1/5$ and $n = 100$, find the standard error of $\hat{p}$.'
+            answer: "1/25"
+            solution_sketch: '$\sqrt{\frac{(1/5)(4/5)}{100}} = \sqrt{\frac{4/25}{100}} = \frac{2/5}{10} = \frac{1}{25}$.'
+        constraints: "p(1-p)/n is a perfect square of a fraction; answers exact fractions"
+      - id: kp3
+        name: "Empirical rule for p-hat"
+        key_prerequisites: [sampling-distributions]
+        exemplars:
+          - problem: 'With $p = 1/2$ and $n = 100$, $\operatorname{SE} = 1/20$. Find $P(0.45 \le \hat{p} \le 0.55)$ as a decimal.'
+            answer: "0.68"
+            solution_sketch: 'That interval is $p \pm 1$ SE, so about $0.68$.'
+          - problem: 'With $p = 1/2$ and $n = 25$, $\operatorname{SE} = 1/10$: how many SEs above $p$ is $\hat{p} = 0.8$?'
+            answer: "3"
+            solution_sketch: '$(0.8 - 0.5)/0.1 = 3$ — beyond the $99.7\%$ range, so $\hat{p} = 0.8$ would be surprising.'
+        constraints: "cut points at whole multiples of the SE; answers are decimal proportions or a count of SEs"
+    diagnostic_exemplar:
+      problem: 'With $p = 1/2$ and $n = 100$, use the empirical rule to find $P(0.40 \le \hat{p} \le 0.60)$ as a decimal.'
+      answer: '0.95'
+      solution_sketch: '$\operatorname{SE} = \sqrt{(1/4)/100} = 1/20$; $0.40$-$0.60$ is $p \pm 2$ SEs: $0.95$.'
+    anki_seeds:
+      - front: 'Standard error of a sample proportion?'
+        back: '$\operatorname{SE}(\hat{p}) = \sqrt{\dfrac{p(1-p)}{n}}$.'
+        type: basic
+      - front: 'Mean of the sampling distribution of $\hat{p}$?'
+        back: '$p$ — the sample proportion is an unbiased estimator.'
+        type: basic
+
+  - id: margin-of-error
+    name: "Margin of Error"
+    core: false                # terminal inference destination
+    difficulty: 0.5
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 120
+    prerequisites:
+      - id: standard-error
+        weight: 0.7
+        key: true
+      - id: empirical-rule
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Estimate plus-or-minus ME as an interval"
+        key_prerequisites: [standard-error]
+        exemplars:
+          - problem: 'An interval is reported as $\bar{x} \pm \text{ME}$ with $\bar{x} = 62$ and ME $= 5$. State the interval.'
+            answer: '$(57, 67)$'
+          - problem: 'A poll reports $46\%$ support with a margin of error of $3$ percentage points. State the interval as an ordered pair of percentage-point values.'
+            answer: '$(43, 49)$'
+        constraints: "integer estimates and MEs; interval endpoints computed exactly"
+      - id: kp2
+        name: "ME = 2 SE for 95% confidence"
+        key_prerequisites: [standard-error, empirical-rule]
+        exemplars:
+          - problem: 'A population has $\sigma = 10$; a sample of $n = 25$ is taken. Using $z^* = 2$, find the margin of error for estimating $\mu$.'
+            answer: "4"
+            solution_sketch: '$\operatorname{SE} = 10/5 = 2$; $\text{ME} = 2 \cdot 2 = 4$.'
+          - problem: 'A population has $\sigma = 12$; $n = 16$. Using $z^* = 2$, find the margin of error.'
+            answer: "6"
+            solution_sketch: '$\operatorname{SE} = 12/4 = 3$; $\text{ME} = 2 \cdot 3 = 6$.'
+        constraints: "use z* = 2 (empirical-rule value); n a perfect square; ME an integer"
+      - id: kp3
+        name: "What the ME does and does not cover"
+        key_prerequisites: [standard-error]
+        exemplars:
+          - problem: 'A poll of $n = 400$ reports a margin of error of $3$ percentage points, but the sample was voluntary-response. By how many percentage points does the reported ME correct for that bias?'
+            answer: "0"
+            solution_sketch: 'The ME covers sampling variability only; a biased sample stays biased no matter how large $n$ is.'
+          - problem: 'A margin of error is $6$ at sample size $n$. What is it at sample size $9n$ (same $\sigma$ and $z^*$)?'
+            answer: "2"
+            solution_sketch: 'ME $\propto 1/\sqrt{n}$; multiplying $n$ by $9$ divides the ME by $3$.'
+        constraints: "quantitative items: the ME's zero correction for bias, and its 1/sqrt(n) scaling"
+    diagnostic_exemplar:
+      problem: 'A population has $\sigma = 10$; use $z^* = 2$. Give (the margin of error at $n = 25$, the margin of error at $n = 100$) as an ordered pair.'
+      answer: '$(4, 2)$'
+      solution_sketch: '$2 \cdot 10/5 = 4$; quadrupling $n$ halves the ME: $2 \cdot 10/10 = 2$.'
+    anki_seeds:
+      - front: 'Margin of error (for a mean, known $\sigma$)?'
+        back: '$\text{ME} = z^* \cdot \dfrac{\sigma}{\sqrt{n}}$.'
+        type: basic
+      - front: 'The margin of error accounts for sampling variability but not...'
+        back: 'Bias in how the sample was collected.'
+        type: basic
+
+  - id: confidence-intervals
+    name: "Confidence Interval Basics"
+    core: false                # terminal inference destination
+    difficulty: 0.6
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 240
+    prerequisites:
+      - id: margin-of-error
+        weight: 0.7
+        key: true
+      - id: sampling-distributions
+        weight: 0.6
+        key: true
+      - id: z-scores
+        weight: 0.3
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Building a 95% interval"
+        key_prerequisites: [margin-of-error, sampling-distributions]
+        exemplars:
+          - problem: 'A sample of $n = 25$ has $\bar{x} = 50$; the population has $\sigma = 10$. Using $z^* = 2$, give the 95% confidence interval for $\mu$.'
+            answer: '$(46, 54)$'
+            solution_sketch: '$\operatorname{SE} = 10/5 = 2$; margin $= 2 \cdot 2 = 4$; interval $50 \pm 4$.'
+          - problem: 'A sample of $n = 16$ has $\bar{x} = 80$; $\sigma = 12$. Using $z^* = 2$, give the 95% confidence interval.'
+            answer: '$(74, 86)$'
+            solution_sketch: '$\operatorname{SE} = 12/4 = 3$; margin $= 6$; interval $80 \pm 6$.'
+        constraints: "use z* = 2 for 95% (empirical-rule value); n a perfect square; endpoints integers"
+      - id: kp2
+        name: "Interpreting the confidence level"
+        key_prerequisites: [sampling-distributions]
+        exemplars:
+          - problem: 'Which is the correct reading of a 95% confidence interval $(46, 54)$ for $\mu$: (a) $95\%$ of the data lie in $(46, 54)$; (b) the method captures $\mu$ in about $95\%$ of samples?'
+            answer: '(b)'
+            solution_sketch: 'The confidence level describes the long-run capture rate of the method, not where individual data values fall.'
+          - problem: 'A 95% confidence interval for $\mu$ is $(12, 18)$. Which changes from sample to sample: (a) $\mu$; (b) the interval?'
+            answer: '(b)'
+            solution_sketch: '$\mu$ is a fixed parameter; different samples produce different intervals.'
+        constraints: "interpretation items; distractors misread the level as a data proportion or treat mu as random"
+      - id: kp3
+        name: "Choosing the sample size"
+        key_prerequisites: [margin-of-error, sampling-distributions]
+        exemplars:
+          - problem: 'With $\sigma = 12$ and $z^* = 2$, what sample size gives a margin of error of $4$?'
+            answer: "36"
+            solution_sketch: '$n = \left(\frac{z^* \sigma}{\text{ME}}\right)^2 = \left(\frac{2 \cdot 12}{4}\right)^2 = 6^2 = 36$.'
+          - problem: 'To cut a margin of error from $8$ to $4$ (same $\sigma$ and $z^*$), multiply the sample size by what factor?'
+            answer: "4"
+            solution_sketch: 'ME $\propto 1/\sqrt{n}$; halving the ME requires $4$ times the sample size.'
+        constraints: "z* sigma / ME a whole number so n is a perfect square"
+    diagnostic_exemplar:
+      problem: 'With $\sigma = 15$ and $z^* = 2$, what sample size is needed for a 95% confidence interval with margin of error $3$?'
+      answer: '100'
+      solution_sketch: '$2 \cdot 15/\sqrt{n} = 3$ gives $\sqrt{n} = 10$, so $n = 100$.'
+    anki_seeds:
+      - front: 'Confidence interval for $\mu$ (known $\sigma$)?'
+        back: '$\bar{x} \pm z^* \dfrac{\sigma}{\sqrt{n}}$.'
+        type: basic
+      - front: 'Exact $z^*$ for a 95% confidence interval?'
+        back: '$1.96$ (the empirical rule rounds it to $2$).'
+        type: basic
+      - front: '"95% confident" refers to the {{c1::method''s long-run capture rate}}, not to any one interval.'
+        back: 'method''s long-run capture rate'
+        type: cloze
+
+  - id: scatterplots-correlation
+    name: "Scatterplots & Correlation"
+    core: false                # terminal regression branch
+    difficulty: 0.4
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 120
+    prerequisites:
+      - id: plotting-points
+        weight: 0.6
+        key: true
+      - id: mean-median-mode
+        weight: 0.3
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Describing scatterplots"
+        key_prerequisites: [plotting-points]
+        exemplars:
+          - problem: 'In a scatterplot, $y$ decreases roughly linearly as $x$ increases. Describe the direction and form of the relationship.'
+            answer: 'Negative direction, linear form.'
+          - problem: 'Two scatterplots show the same downward trend; in one the points hug a line, in the other they form a loose cloud. Which shows the stronger relationship?'
+            answer: 'The one hugging the line; tighter clustering means a stronger relationship.'
+        constraints: "verbal descriptions covering direction, form, and strength"
+      - id: kp2
+        name: "Interpreting the correlation coefficient"
+        key_prerequisites: [plotting-points]
+        exemplars:
+          - problem: 'Which indicates a stronger linear relationship: $r = 0.4$ or $r = -0.7$?'
+            answer: '$r = -0.7$; strength is $|r|$.'
+            solution_sketch: 'Sign gives direction, magnitude gives strength: $0.7 > 0.4$.'
+          - problem: 'What are the possible values of the correlation coefficient $r$?'
+            answer: '$-1 \le r \le 1$'
+          - problem: 'Describe the relationship when $r = -0.9$.'
+            answer: 'A strong negative linear relationship.'
+        constraints: "r values given to one decimal; comparisons hinge on |r| vs sign"
+      - id: kp3
+        name: "Facts and cautions about r"
+        key_prerequisites: [plotting-points]
+        exemplars:
+          - problem: 'Does swapping the roles of $x$ and $y$ change the value of $r$?'
+            answer: 'No; $r$ is symmetric in $x$ and $y$ (and has no units).'
+          - problem: 'A scatterplot shows a perfect parabola opening upward. Must $|r|$ be close to $1$?'
+            answer: 'No; $r$ measures only linear association, and a symmetric curve can give $r$ near $0$.'
+        constraints: "conceptual items on unitlessness, symmetry, and linearity-only"
+    diagnostic_exemplar:
+      problem: 'A scatterplot of $y$ against $x$ shows points lying exactly on a symmetric parabola opening upward. Is $r$ close to $-1$, $0$, or $+1$ — and why?'
+      answer: 'Close to $0$; $r$ measures only linear association, and the two symmetric halves cancel.'
+      solution_sketch: 'Perfect curved association can still give $r \approx 0$ — $r$ is blind to nonlinear form.'
+    anki_seeds:
+      - front: 'In the correlation coefficient $r$, what do the sign and the magnitude tell you?'
+        back: 'Sign: direction of the linear relationship; magnitude $|r|$: its strength.'
+        type: basic
+      - front: '$r$ always lies in the interval...'
+        back: '$[-1, 1]$.'
+        type: basic
+
+  - id: least-squares-line
+    name: "The Least-Squares Line"
+    core: false                # terminal regression branch
+    difficulty: 0.5
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 180
+    prerequisites:
+      - id: scatterplots-correlation
+        weight: 0.6
+        key: true
+      - id: slope-intercept-form
+        weight: 0.6
+        key: true
+      - id: variance-standard-deviation
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Slope from summary statistics"
+        key_prerequisites: [scatterplots-correlation, slope-intercept-form]
+        exemplars:
+          - problem: 'Given $r = 0.8$, $s_x = 2$, $s_y = 5$, find the least-squares slope $b = r \, s_y / s_x$.'
+            answer: "2"
+            solution_sketch: '$b = 0.8 \cdot \frac{5}{2} = 0.8 \cdot 2.5 = 2$.'
+          - problem: 'Given $r = 0.5$, $s_x = 4$, $s_y = 8$, find the least-squares slope.'
+            answer: "1"
+            solution_sketch: '$b = 0.5 \cdot \frac{8}{4} = 1$.'
+        constraints: "r, s_x, s_y chosen so b is an integer or half-integer"
+      - id: kp2
+        name: "Intercept and the point (x-bar, y-bar)"
+        key_prerequisites: [slope-intercept-form]
+        exemplars:
+          - problem: 'With slope $b = 2$, $\bar{x} = 4$, $\bar{y} = 10$, find the intercept $a$ and write the regression line; give $\hat{y}$ as an expression in $x$.'
+            answer: '$2 + 2x$'
+            solution_sketch: 'The line passes through $(\bar{x}, \bar{y})$: $a = \bar{y} - b\bar{x} = 10 - 8 = 2$.'
+          - problem: 'With slope $b = 3$, $\bar{x} = 2$, $\bar{y} = 10$, find the intercept.'
+            answer: "4"
+            solution_sketch: '$a = 10 - 3 \cdot 2 = 4$.'
+        constraints: "means small integers; a comes out to an integer"
+      - id: kp3
+        name: "Assembling the full equation"
+        key_prerequisites: [scatterplots-correlation, slope-intercept-form]
+        exemplars:
+          - problem: 'Given $\bar{x} = 4$, $\bar{y} = 11$, $s_x = 3$, $s_y = 6$, $r = 1/2$, find the least-squares line; give $\hat{y}$ as an expression in $x$.'
+            answer: '$7 + x$'
+            solution_sketch: '$b = \frac{1}{2} \cdot \frac{6}{3} = 1$; $a = 11 - 1 \cdot 4 = 7$.'
+          - problem: 'Given $\bar{x} = 5$, $\bar{y} = 20$, $s_x = 3$, $s_y = 10$, $r = -0.6$, find the least-squares line; give $\hat{y}$ as an expression in $x$.'
+            answer: '$30 - 2x$'
+            solution_sketch: '$b = -0.6 \cdot \frac{10}{3} = -2$; $a = 20 - (-2) \cdot 5 = 30$.'
+        constraints: "slopes integers or halves; include at least one negative-r case"
+    diagnostic_exemplar:
+      problem: 'Given $r = 0.9$, $s_x = 3$, $s_y = 6$, $\bar{x} = 10$, $\bar{y} = 25$, find the least-squares line; give $\hat{y}$ as an expression in $x$.'
+      answer: '$7 + 1.8x$'
+      solution_sketch: '$b = 0.9 \cdot \frac{6}{3} = 1.8$; $a = 25 - 1.8 \cdot 10 = 7$.'
+    anki_seeds:
+      - front: 'Least-squares slope from summary statistics?'
+        back: '$b = r \dfrac{s_y}{s_x}$.'
+        type: basic
+      - front: 'The least-squares line always passes through the point...'
+        back: '$(\bar{x}, \bar{y})$.'
+        type: basic
+
+  - id: regression-predictions
+    name: "Predictions & Residuals"
+    core: false                # terminal regression branch
+    difficulty: 0.5
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 120
+    prerequisites:
+      - id: least-squares-line
+        weight: 0.8
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: "Predicting with the line"
+        key_prerequisites: [least-squares-line]
+        exemplars:
+          - problem: 'The regression line is $\hat{y} = 3 + 2x$. Predict $y$ at $x = 5$.'
+            answer: "13"
+            solution_sketch: '$\hat{y} = 3 + 2 \cdot 5 = 13$.'
+          - problem: 'The regression line is $\hat{y} = 30 - 2x$. Predict $y$ at $x = 8$.'
+            answer: "14"
+            solution_sketch: '$30 - 16 = 14$.'
+        constraints: "integer coefficients and x-values; predictions integers"
+      - id: kp2
+        name: "Residuals"
+        key_prerequisites: [least-squares-line]
+        exemplars:
+          - problem: 'At $x = 5$ the observed value is $y = 11$ and the line $\hat{y} = 3 + 2x$ predicts $13$. Find the residual.'
+            answer: "-2"
+            solution_sketch: 'Residual $= y - \hat{y} = 11 - 13 = -2$.'
+          - problem: 'A point has observed $y = 25$ and predicted $\hat{y} = 22$. Find the residual.'
+            answer: "3"
+            solution_sketch: 'Residual $= 25 - 22 = 3 > 0$, so the point sits above the line.'
+        constraints: "residual = observed minus predicted; a positive residual means the point lies above the line"
+      - id: kp3
+        name: "Extrapolation caution"
+        key_prerequisites: [least-squares-line]
+        exemplars:
+          - problem: 'A line was fit to data with $x$ between $2$ and $10$. Predicting at $x = 40$ is an example of what? Answer with one word.'
+            answer: 'Extrapolation'
+            solution_sketch: '$x = 40$ lies far outside the observed range $[2, 10]$, so the prediction is unreliable.'
+          - problem: 'A line was fit to data with $x$ between $2$ and $10$. Predicting at $x = 6$ is an example of what? Answer with one word.'
+            answer: 'Interpolation'
+            solution_sketch: '$x = 6$ lies inside the observed range $[2, 10]$, where the fitted pattern is supported by data.'
+        constraints: "x-ranges stated explicitly; ask for the one-word classification (interpolation or extrapolation)"
+    diagnostic_exemplar:
+      problem: 'The regression line is $\hat{y} = 5 + 3x$; at $x = 4$ the observed value is $y = 15$. Give (predicted value, residual) as an ordered pair.'
+      answer: '$(17, -2)$'
+      solution_sketch: '$5 + 12 = 17$; $15 - 17 = -2$.'
+    anki_seeds:
+      - front: 'Residual $=$ ?'
+        back: 'Observed $-$ predicted: $y - \hat{y}$.'
+        type: basic
+      - front: 'Why distrust regression predictions far outside the observed $x$-range?'
+        back: 'Extrapolation — the linear pattern may not continue beyond the data.'
+        type: basic
+
+  - id: correlation-regression
+    name: "Interpreting Regression Models"
+    core: false                # terminal regression branch
+    difficulty: 0.55
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 240
+    prerequisites:
+      - id: least-squares-line
+        weight: 0.7
+        key: true
+      - id: regression-predictions
+        weight: 0.6
+        key: true
+      - id: scatterplots-correlation
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Interpreting slope and intercept in context"
+        key_prerequisites: [least-squares-line]
+        exemplars:
+          - problem: 'For plant height $\hat{y} = 12 + 3x$ ($y$ in cm, $x$ in weeks), by how many cm does each additional week raise the predicted height?'
+            answer: "3"
+            solution_sketch: 'The slope is the predicted change in $y$ per one-unit change in $x$ — an association, not a cause.'
+          - problem: 'Same model. What height, in cm, does it predict at $x = 0$ weeks?'
+            answer: "12"
+            solution_sketch: 'The intercept is the predicted $y$ at $x = 0$.'
+        constraints: "contexts with stated units; ask for the per-unit change or the value at x = 0; the reasoning must say predicted/associated, not caused"
+      - id: kp2
+        name: "r-squared and causation cautions"
+        key_prerequisites: [scatterplots-correlation]
+        exemplars:
+          - problem: 'A regression has $r = 0.8$. What fraction of the variation in $y$ is explained by the line?'
+            answer: "16/25"
+            solution_sketch: '$r^2 = 0.64 = 16/25$.'
+          - problem: 'A fit has $r^2 = 0.49$ and a negative slope. Find $r$.'
+            answer: "-0.7"
+            solution_sketch: '$\sqrt{0.49} = 0.7$; the sign matches the slope.'
+          - problem: 'Children''s shoe size and reading level correlate strongly. Which explains this: (a) a bigger shoe size causes better reading; (b) age is a lurking variable driving both?'
+            answer: '(b)'
+            solution_sketch: 'Older children have both a bigger shoe size and stronger reading; correlation does not establish causation.'
+        constraints: "r values with exact squares; one causation-caution item per set"
+      - id: kp3
+        name: "From summary statistics to prediction"
+        key_prerequisites: [least-squares-line, regression-predictions]
+        exemplars:
+          - problem: 'Given $\bar{x} = 5$, $\bar{y} = 30$, $s_x = 2$, $s_y = 10$, $r = 0.8$: find the least-squares line, then give the prediction at $x = 8$.'
+            answer: "42"
+            solution_sketch: '$b = 0.8 \cdot 5 = 4$; $a = 30 - 20 = 10$; $\hat{y}(8) = 42$.'
+          - problem: 'Continuing: the observed value at $x = 8$ is $y = 40$. Find the residual.'
+            answer: "-2"
+            solution_sketch: '$40 - 42 = -2$.'
+        constraints: "summary stats give integer slopes and intercepts; finish with a prediction or residual"
+    diagnostic_exemplar:
+      problem: 'Summary statistics: $\bar{x} = 6$, $\bar{y} = 20$, $s_x = 2$, $s_y = 8$, $r = 0.5$. Give (the least-squares prediction at $x = 10$, the fraction of the variation in $y$ explained by the line) as an ordered pair.'
+      answer: '$(28, 1/4)$'
+      solution_sketch: '$b = r s_y/s_x = 0.5 \cdot 4 = 2$ and $a = 20 - 2 \cdot 6 = 8$, so $\hat{y} = 8 + 2(10) = 28$; the explained fraction is $r^2 = 0.25 = \frac{1}{4}$.'
+    anki_seeds:
+      - front: '$r^2$ measures...'
+        back: 'The fraction of the variation in $y$ explained by the least-squares line.'
+        type: basic
+      - front: 'Does a strong correlation establish causation?'
+        back: 'No — lurking variables or coincidence can produce strong correlation without cause.'
+        type: basic

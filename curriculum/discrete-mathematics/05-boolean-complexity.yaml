@@ -1,0 +1,393 @@
+unit: boolean-complexity
+course: discrete-mathematics
+module: "Boolean Algebra & Algorithm Analysis"
+topics:
+  - id: boolean-algebra-basics
+    name: "Boolean Algebra"
+    core: true
+    difficulty: 0.55
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 150
+    prerequisites:
+      - id: evaluating-expressions
+        weight: 0.2
+        key: false
+      - id: truth-tables
+        weight: 0.7
+        key: true
+      - id: logical-equivalence
+        weight: 0.7
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: "Boolean operations and evaluation"
+        key_prerequisites: [truth-tables]
+        exemplars:
+          - problem: 'In Boolean algebra ($+$ is OR, juxtaposition is AND, $\bar{x}$ is NOT), evaluate $x\bar{y} + \bar{x}z$ at $x = 1$, $y = 0$, $z = 0$.'
+            answer: "1"
+            solution_sketch: '$x\bar{y} = 1 \cdot 1 = 1$; the sum is $1$ regardless of the second term.'
+          - problem: 'De Morgan''s laws say $\overline{x + y} = \bar{x}\,\bar{y}$ and $\overline{xy} = \bar{x} + \bar{y}$. Evaluate $\overline{x + y}$ at $x = 0$, $y = 0$.'
+            answer: "1"
+            solution_sketch: '$x + y = 0$, so $\overline{x + y} = 1$; De Morgan agrees, since $\bar{x}\,\bar{y} = 1 \cdot 1 = 1$.'
+        constraints: "2-3 variables; 0/1 evaluation, including a De Morgan check; notation: + for OR, product for AND, bar for NOT"
+      - id: kp2
+        name: "Simplifying with identities"
+        key_prerequisites: [truth-tables, logical-equivalence]
+        exemplars:
+          - problem: 'Simplify $x + xy$.'
+            answer: '$x$'
+            solution_sketch: 'Absorption: $x + xy = x(1 + y) = x \cdot 1 = x$. Confirm on the four input rows.'
+          - problem: 'Simplify $xy + x\bar{y}$.'
+            answer: '$x$'
+            solution_sketch: 'Factor: $x(y + \bar{y}) = x \cdot 1 = x$.'
+          - problem: 'Simplify $(x + y)(x + \bar{y})$.'
+            answer: '$x$'
+            solution_sketch: 'Expand: $xx + x\bar{y} + xy + y\bar{y} = x + x(\bar{y} + y) + 0 = x$.'
+        constraints: "target is a single literal or two-term expression; laws: absorption, complement, distributive; verifiable by 4-row truth table"
+    diagnostic_exemplar:
+      problem: 'Use De Morgan\''s laws and the Boolean identities to simplify $\overline{\bar{x} + \bar{y}} + xy$.'
+      answer: '$xy$'
+      solution_sketch: 'De Morgan: $\overline{\bar{x} + \bar{y}} = xy$; then $xy + xy = xy$ by idempotence.'
+    anki_seeds:
+      - front: "Boolean absorption laws"
+        back: '$x + xy = x$ and $x(x + y) = x$.'
+        type: basic
+      - front: "Boolean complement laws"
+        back: '$x + \bar{x} = 1$ and $x\bar{x} = 0$.'
+        type: basic
+      - front: "De Morgan (Boolean form)"
+        back: '$\overline{x+y} = \bar{x}\bar{y}$; $\overline{xy} = \bar{x} + \bar{y}$.'
+        type: basic
+
+  - id: normal-forms-dnf-cnf
+    name: "Disjunctive & Conjunctive Normal Forms"
+    core: false                # terminal normal-form technique; truth-tables stays core
+    difficulty: 0.6
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 180
+    prerequisites:
+      - id: boolean-algebra-basics
+        weight: 0.85
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: "Reading a DNF off a truth table"
+        key_prerequisites: [boolean-algebra-basics]
+        exemplars:
+          - problem: 'A function satisfies $f(x, y) = 1$ exactly when $x \ne y$. Write $f$ in disjunctive normal form.'
+            answer: '$x\bar{y} + \bar{x}y$'
+            solution_sketch: 'One minterm per true row: $(x,y) = (1,0)$ gives $x\bar{y}$; $(0,1)$ gives $\bar{x}y$. (This is XOR.)'
+          - problem: 'Write the DNF of the majority function on $x, y, z$ (value $1$ when at least two inputs are $1$).'
+            answer: '$xyz + xy\bar{z} + x\bar{y}z + \bar{x}yz$'
+            solution_sketch: 'The four true rows are $(1,1,1), (1,1,0), (1,0,1), (0,1,1)$; each becomes a minterm.'
+        constraints: "2-3 variables; one minterm per satisfying row; count of minterms = count of 1-rows"
+      - id: kp2
+        name: "Minterms, maxterms, and CNF"
+        key_prerequisites: [boolean-algebra-basics]
+        exemplars:
+          - problem: 'How many minterms does the full DNF of a Boolean function on $3$ variables with exactly $5$ true rows contain?'
+            answer: "5"
+            solution_sketch: 'One minterm per row where the function is $1$.'
+          - problem: 'Write $f(x,y) = 1$ exactly when $x = y = 1$ in CNF (product of clauses).'
+            answer: '$x \cdot y$ — equivalently the clauses $(x)(y)$'
+            solution_sketch: 'AND of the two single-literal clauses forces both variables true; here CNF and the function coincide.'
+        constraints: "2-3 variables; translate between truth table, DNF, and simple CNF"
+    diagnostic_exemplar:
+      problem: 'A function on $x, y, z$ equals $1$ exactly when exactly one of the inputs is $1$. Give its disjunctive normal form, and state how many clauses its full conjunctive normal form has.'
+      answer: 'DNF: $x\bar{y}\bar{z} + \bar{x}y\bar{z} + \bar{x}\bar{y}z$; the full CNF has 5 clauses'
+      solution_sketch: 'One minterm per $1$-row — the rows $(1,0,0)$, $(0,1,0)$, $(0,0,1)$ — and one maxterm per $0$-row, of which there are $8 - 3 = 5$.'
+    anki_seeds:
+      - front: "Minterm for the row $x=1, y=0, z=1$"
+        back: '$x\bar{y}z$ — complement exactly the variables that are 0 in the row.'
+        type: basic
+      - front: "DNF vs. CNF shape"
+        back: "DNF: OR of AND-terms (minterms). CNF: AND of OR-clauses."
+        type: basic
+
+  - id: logic-circuits
+    name: "Logic Circuits"
+    core: false                # enrichment / applications leaf topic
+    difficulty: 0.55
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 150
+    prerequisites:
+      - id: boolean-algebra-basics
+        weight: 0.8
+        key: true
+      - id: propositional-logic
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Gate behavior"
+        key_prerequisites: [boolean-algebra-basics]
+        exemplars:
+          - problem: 'What is the output of a NAND gate on inputs $1, 1$?'
+            answer: "0"
+            solution_sketch: 'NAND negates AND: $\overline{1 \cdot 1} = \bar{1} = 0$; on any other input pair it outputs $1$.'
+          - problem: 'What is the output of an XOR gate on inputs $1, 0$, and on inputs $1, 1$?'
+            answer: '$1$ and $0$'
+            solution_sketch: 'XOR is $1$ exactly when the inputs differ.'
+        constraints: "gates AND, OR, NOT, NAND, NOR, XOR; single-gate evaluations"
+      - id: kp2
+        name: "Circuits as expressions"
+        key_prerequisites: [boolean-algebra-basics]
+        exemplars:
+          - problem: 'A circuit computes (($x$ AND $y$) OR (NOT $z$)). What is its output at $x = 1$, $y = 0$, $z = 0$?'
+            answer: "1"
+            solution_sketch: '$xy = 0$, $\bar{z} = 1$, and $0 + 1 = 1$.'
+          - problem: 'Using only AND, OR, NOT gates, give an expression that computes XOR of $x$ and $y$. How many of these gates does your expression use?'
+            answer: '$x\bar{y} + \bar{x}y$: $5$ gates ($2$ NOT, $2$ AND, $1$ OR)'
+            solution_sketch: 'Two inverters feed two AND gates whose outputs meet in one OR gate.'
+        constraints: "circuits of 2-5 gates on 2-3 inputs; evaluate at given inputs or translate circuit <-> expression"
+    diagnostic_exemplar:
+      problem: 'Using only AND, OR, NOT gates, give an expression that computes XNOR of $x$ and $y$ (output $1$ exactly when $x = y$), and evaluate it at $x = 0$, $y = 0$.'
+      answer: '$xy + \bar{x}\bar{y}$; output $1$ at $x = y = 0$.'
+      solution_sketch: 'Equal inputs satisfy one of the two terms; at $(0,0)$ the term $\bar{x}\bar{y}$ is $1$.'
+    anki_seeds:
+      - front: "NAND gate output is 0 exactly when..."
+        back: "both inputs are 1."
+        type: basic
+      - front: "XOR as an AND/OR/NOT expression"
+        back: '$x\bar{y} + \bar{x}y$.'
+        type: basic
+
+  - id: big-o-notation
+    name: "Big-O Notation"
+    core: true
+    difficulty: 0.6
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 180
+    prerequisites:
+      - id: function-notation
+        weight: 0.6
+        key: true
+      - id: exponential-functions
+        weight: 0.5
+        key: false
+      - id: logarithm-basics
+        weight: 0.5
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: "Witness-based verification"
+        key_prerequisites: [function-notation]
+        exemplars:
+          - problem: 'Show that $3n + 7$ is $O(n)$ by exhibiting constants $C$ and $n_0$.'
+            answer: 'E.g. $C = 10$, $n_0 = 1$: for $n \ge 1$, $3n + 7 \le 3n + 7n = 10n$.'
+            solution_sketch: 'Bound the constant term by a multiple of $n$ once $n \ge 1$; any valid $(C, n_0)$ pair is accepted.'
+          - problem: 'Is $n^2$ ever $O(n)$? Why not?'
+            answer: 'No: for any $C$, $n^2 > Cn$ once $n > C$.'
+            solution_sketch: 'The ratio $n^2/n = n$ is unbounded, so no constant $C$ works.'
+        constraints: "polynomials of degree <= 2 plus log terms; require explicit (C, n0) witnesses or an unboundedness argument"
+      - id: kp2
+        name: "Classifying by dominant term"
+        key_prerequisites: [function-notation, logarithm-basics]
+        exemplars:
+          - problem: 'Give the tightest simple big-O class of $5n^3 + 2n + 1$.'
+            answer: '$O(n^3)$'
+            solution_sketch: 'The cubic term dominates; constants are dropped.'
+          - problem: 'Which grows faster: $n \log n$ or $n^2$?'
+            answer: '$n^2$'
+            solution_sketch: '$n^2 / (n \log n) = n / \log n \to \infty$.'
+        constraints: "sums of at most 3 terms drawn from constants, log n, n, n log n, n^2, n^3, 2^n"
+    diagnostic_exemplar:
+      problem: 'Show that $5n + 9$ is $O(n)$ by exhibiting constants $C$ and $n_0$, and verify the inequality.'
+      answer: 'E.g. $C = 14$, $n_0 = 1$: for $n \ge 1$, $5n + 9 \le 5n + 9n = 14n$.'
+      solution_sketch: 'Any $C \ge 14$ with $n_0 = 1$ works (or e.g. $C = 6$ with $n_0 = 9$).'
+    anki_seeds:
+      - front: "Definition: $f(n)$ is $O(g(n))$ means..."
+        back: 'There exist constants $C > 0$ and $n_0$ with $|f(n)| \le C \, g(n)$ for all $n \ge n_0$.'
+        type: basic
+      - front: "Two simplifications big-O always allows"
+        back: "Drop constant factors; keep only the dominant term."
+        type: basic
+
+  - id: growth-of-functions
+    name: "Growth of Functions: Omega, Theta & the Hierarchy"
+    core: false                # terminal extension of Big-O notation
+    difficulty: 0.65
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 180
+    prerequisites:
+      - id: big-o-notation
+        weight: 0.85
+        key: true
+      - id: logarithm-properties
+        weight: 0.5
+        key: true
+      - id: exponential-functions
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Omega, Theta, and the standard hierarchy"
+        key_prerequisites: [big-o-notation]
+        exemplars:
+          - problem: 'Is $n^2 + n$ in $\Theta(n^2)$? Justify with both bounds.'
+            answer: 'Yes: $n^2 \le n^2 + n \le 2n^2$ for $n \ge 1$, so it is both $\Omega(n^2)$ and $O(n^2)$.'
+            solution_sketch: 'Sandwich between $1 \cdot n^2$ and $2 \cdot n^2$.'
+          - problem: 'Order by growth rate: $n \log n$, $2^n$, $n^2$, $\log n$, $n$.'
+            answer: '$\log n \prec n \prec n\log n \prec n^2 \prec 2^n$'
+            solution_sketch: 'Logs below polynomials below exponentials; $n \log n$ sits between $n$ and $n^2$.'
+        constraints: "order 3-5 functions from {log n, sqrt(n), n, n log n, n^2, n^3, 2^n, n!}; Theta claims need both O and Omega"
+      - id: kp2
+        name: "Logarithm bases and exponential gaps"
+        key_prerequisites: [big-o-notation, logarithm-properties]
+        exemplars:
+          - problem: 'Are $\log_2 n$ and $\log_{10} n$ the same up to $\Theta$? Why?'
+            answer: 'Yes: $\log_2 n = \dfrac{\log_{10} n}{\log_{10} 2}$, a constant multiple.'
+            solution_sketch: 'Change-of-base is multiplication by a constant, which Theta ignores.'
+          - problem: 'Is $2^{n+1}$ in $O(2^n)$? Is $2^{2n}$?'
+            answer: '$2^{n+1} = 2 \cdot 2^n$: yes. $2^{2n} = 4^n$: no — the ratio $2^n$ is unbounded.'
+            solution_sketch: 'A constant factor stays inside the class; an exponential factor does not.'
+        constraints: "additive vs multiplicative changes in exponents; change-of-base arguments"
+    diagnostic_exemplar:
+      problem: 'Is $2^{n+2}$ in $O(2^n)$? Is $4^n$? Justify both.'
+      answer: '$2^{n+2} = 4 \cdot 2^n$: yes, a constant multiple. $4^n = 2^n \cdot 2^n$: no — the ratio $2^n$ is unbounded.'
+      solution_sketch: 'Additive shifts in the exponent scale by a constant; doubling the exponent does not.'
+    anki_seeds:
+      - front: '$f$ is $\Theta(g)$ means...'
+        back: '$f$ is both $O(g)$ and $\Omega(g)$ — the same growth rate up to constant factors.'
+        type: basic
+      - front: "Standard growth hierarchy (slowest to fastest)"
+        back: '$1 \prec \log n \prec \sqrt{n} \prec n \prec n\log n \prec n^2 \prec 2^n \prec n!$'
+        type: basic
+      - front: "Why all logarithm bases give the same Theta class"
+        back: 'Change of base multiplies by the constant $1/\log_b a$.'
+        type: basic
+
+  - id: master-theorem
+    name: "Divide-and-Conquer Recurrences & the Master Theorem"
+    core: false                # supplemental: CS-flavoured terminal analysis tool, nothing downstream consumes it (Phase C §7); also frees it to build on growth-of-functions (supplemental)
+    difficulty: 0.7
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 240
+    prerequisites:
+      - id: growth-of-functions
+        weight: 0.6
+        key: true
+      - id: recurrence-relations
+        weight: 0.5
+        key: true
+      - id: iteration-telescoping
+        weight: 0.4
+      - id: logarithm-properties
+        weight: 0.4
+      - id: exponent-product-quotient-rules
+        weight: 0.0
+    knowledge_points:
+      - id: kp1
+        name: "Divide-and-conquer recurrences"
+        key_prerequisites: [recurrence-relations]
+        exemplars:
+          - problem: 'Merge sort satisfies $T(n) = 2T(n/2) + n$ with $T(1) = 0$: solving two half-size instances plus $n$ steps of merging. Compute $T(8)$.'
+            answer: '$T(8) = 24$'
+            solution_sketch: '$T(2) = 2 \cdot 0 + 2 = 2$; $T(4) = 2 \cdot 2 + 4 = 8$; $T(8) = 2 \cdot 8 + 8 = 24$. Each of the $\log_2 8 = 3$ levels of the recursion does $8$ units of work.'
+          - problem: 'Binary search satisfies $T(n) = T(n/2) + 1$ with $T(1) = 1$. Identify $a$, $b$, and $f(n)$ in the pattern $T(n) = a\,T(n/b) + f(n)$, and compute $T(16)$.'
+            answer: '$a = 1$, $b = 2$, $f(n) = 1$; $T(16) = 5$'
+            solution_sketch: 'One recursive call ($a = 1$) on half the input ($b = 2$) plus one comparison ($f(n) = 1$). Iterating: $T(2) = 2$, $T(4) = 3$, $T(8) = 4$, $T(16) = 5$ — one step per halving.'
+        constraints: "n a power of b; identify a, b, f(n) from a verbal description and iterate 3-4 levels by hand"
+      - id: kp2
+        name: "The critical exponent and the three cases"
+        key_prerequisites: [growth-of-functions, logarithm-properties]
+        exemplars:
+          - problem: 'For $T(n) = 9T(n/3) + n$, compute the critical exponent $\log_b a$, compare $f(n)$ with $n^{\log_b a}$, and give the growth order of $T(n)$.'
+            answer: '$\log_3 9 = 2$; $f(n) = n$ grows strictly slower than $n^2$, so $T(n) = \Theta(n^2)$ (leaves dominate, case 1).'
+            solution_sketch: '$n^{\log_3 9} = n^2$. Since $f(n) = n \prec n^2$, the work at the leaves dominates: $T(n) = \Theta(n^{\log_b a}) = \Theta(n^2)$.'
+          - problem: 'Classify $T(n) = 2T(n/2) + n$.'
+            answer: '$\log_2 2 = 1$ and $f(n) = n$ matches $n^1$, so $T(n) = \Theta(n \log n)$ (balanced, case 2).'
+            solution_sketch: 'When $f(n) = \Theta(n^{\log_b a})$, every one of the $\log_b n$ levels does the same order of work, so a $\log$ factor appears: $T(n) = \Theta(n \log n)$ — merge sort.'
+          - problem: 'Classify $T(n) = 2T(n/2) + n^{2}$.'
+            answer: '$f(n) = n^2$ grows strictly faster than $n^{\log_2 2} = n$, so $T(n) = \Theta(n^2)$ (root dominates, case 3).'
+            solution_sketch: 'The top level already does $n^2$ work and the levels below shrink geometrically ($2 \cdot (n/2)^2 = n^2/2$), so the root dominates: $T(n) = \Theta(f(n)) = \Theta(n^2)$.'
+        constraints: "a, b small positive integers; f(n) a monomial so case comparison is by exponent and the case-3 regularity condition holds automatically; answers name the case and the Θ class"
+      - id: kp3
+        name: "Classifying classic algorithms"
+        key_prerequisites: [growth-of-functions, logarithm-properties]
+        exemplars:
+          - problem: 'Karatsuba multiplication satisfies $T(n) = 3T(n/2) + n$. Give the growth order of $T(n)$, leaving the exponent as a logarithm.'
+            answer: '$\Theta(n^{\log_2 3}) \approx \Theta(n^{1.585})$: the critical exponent $\log_2 3$ exceeds $1$, so the leaves dominate (case 1).'
+            solution_sketch: '$n^{\log_2 3}$ with $\log_2 3 \approx 1.585 > 1 = \deg f$, so case 1 gives $T(n) = \Theta(n^{\log_2 3})$ — asymptotically faster than the schoolbook $\Theta(n^2)$.'
+          - problem: 'Binary search satisfies $T(n) = T(n/2) + 1$. Use the Master Theorem to find its growth order.'
+            answer: '$\log_2 1 = 0$, and $f(n) = 1$ matches $n^0$, so $T(n) = \Theta(\log n)$ (case 2).'
+            solution_sketch: 'Critical exponent $\log_2 1 = 0$; $f(n) = 1 = \Theta(n^0)$, so case 2 applies with $n^0 \log n = \log n$: $T(n) = \Theta(\log n)$.'
+        constraints: "named algorithms with their recurrences stated in the problem; irrational critical exponents stay as log_b a"
+    diagnostic_exemplar:
+      problem: 'Use the Master Theorem: what is the growth order of $T(n) = 4T(n/2) + n$?'
+      answer: '$\Theta(n^2)$: the critical exponent is $\log_2 4 = 2$ and $f(n) = n$ grows strictly slower than $n^2$, so the leaves dominate (case 1).'
+      solution_sketch: '$n^{\log_2 4} = n^2 \succ f(n) = n$: case 1, $T(n) = \Theta(n^{\log_b a}) = \Theta(n^2)$.'
+    anki_seeds:
+      - front: 'Master Theorem setup $T(n) = a\,T(n/b) + f(n)$: the critical exponent to compare $f$ against?'
+        back: '$\log_b a$ — compare $f(n)$ with $n^{\log_b a}$ (the total work at the leaves).'
+        type: basic
+      - front: 'The three Master Theorem cases (f vs. $n^{\log_b a}$)?'
+        back: '$f$ smaller: $\Theta(n^{\log_b a})$; same order: $\Theta(n^{\log_b a} \log n)$; $f$ larger (and regular): $\Theta(f(n))$.'
+        type: basic
+      - front: 'Merge sort''s recurrence and growth order?'
+        back: '$T(n) = 2T(n/2) + n$, giving $\Theta(n \log n)$ (balanced case).'
+        type: basic
+
+  - id: algorithm-counting
+    name: "Counting Algorithm Operations"
+    core: false                # enrichment / applications leaf topic
+    difficulty: 0.7
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 240
+    prerequisites:
+      - id: big-o-notation
+        weight: 0.8
+        key: true
+      - id: summation-notation
+        weight: 0.6
+        key: true
+      - id: arithmetic-series
+        weight: 0.4
+        key: true
+      - id: combinations
+        weight: 0.4
+        key: false
+      - id: floor-ceiling-functions
+        weight: 0.2
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Counting loop iterations exactly"
+        key_prerequisites: [big-o-notation, summation-notation, arithmetic-series]
+        exemplars:
+          - problem: 'A double loop runs $i = 1..n$ and, inside, $j = i..n$, doing one comparison per pass. Exactly how many comparisons does it make for $n = 10$?'
+            answer: "55"
+            solution_sketch: '$\sum_{i=1}^{n}(n - i + 1) = \sum_{k=1}^{n} k = n(n+1)/2 = 55$ at $n = 10$; the count is $O(n^2)$.'
+          - problem: 'A triple of nested loops each runs $1..n$ with one operation innermost. Exact count for $n = 5$?'
+            answer: "125"
+            solution_sketch: '$n^3 = 125$ operations.'
+        constraints: "1-3 nested loops with bounds n or i..n; exact count via sum formulas, naming the big-O class in the reasoning"
+      - id: kp2
+        name: "Halving: binary search and logarithmic counts"
+        key_prerequisites: [big-o-notation]
+        exemplars:
+          - problem: 'Starting from $1024$, how many halvings reach $1$?'
+            answer: "10"
+            solution_sketch: '$1024 = 2^{10}$, and each halving removes one factor of $2$.'
+          - problem: 'Binary search on a sorted array of $10^6$ elements: at most how many comparisons (one per probe)?'
+            answer: "20"
+            solution_sketch: '$\lceil \log_2 10^6 \rceil = 20$ since $2^{19} = 524288 < 10^6 \le 2^{20} = 1048576$ — each probe halves the range, so the answer is the smallest integer $k$ with $2^{k} \ge 10^{6}$, which is exactly $\lceil \log_2 10^6 \rceil$.'
+        constraints: "powers of 2 up to 2^20; answers are ceil(log2 N) — the smallest integer k with 2^k >= N; contrast with linear search N"
+    diagnostic_exemplar:
+      problem: 'Give (the exact number of comparisons when every pair among $10$ items is compared once, the number of halvings needed to get from $4096$ down to $1$) as an ordered pair.'
+      answer: '$(45, 12)$'
+      solution_sketch: '$\binom{10}{2} = 45$; $4096 = 2^{12}$ needs $12$ halvings.'
+    anki_seeds:
+      - front: "Comparisons made by all-pairs checking on $n$ items"
+        back: '$\binom{n}{2} = n(n-1)/2$, which is $\Theta(n^2)$.'
+        type: basic
+      - front: "Worst-case probes of binary search on $N$ sorted items"
+        back: '$\lceil \log_2 N \rceil$ — one probe per halving (about 20 for a million items).'
+        type: basic

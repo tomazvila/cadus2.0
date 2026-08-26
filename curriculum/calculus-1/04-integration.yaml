@@ -1,0 +1,900 @@
+unit: intro-integration
+course: calculus-1
+module: "Introduction to Integration"
+topics:
+  - id: reverse-power-rule
+    name: The Reverse Power Rule
+    core: true
+    difficulty: 0.5
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 90
+    prerequisites:
+      - id: derivative-power-rule
+        weight: 0.8
+        key: true
+      - id: rational-exponents
+        weight: 0.4
+        key: true
+      - id: negative-zero-exponents
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Antidifferentiate single powers
+        key_prerequisites: [derivative-power-rule]
+        exemplars:
+          - problem: 'Find $\int x^3 \, dx$.'
+            answer: "x^4/4 + C"
+          - problem: 'Find $\int x^5 \, dx$.'
+            answer: "x^6/6 + C"
+            solution_sketch: 'Raise the exponent by one and divide by the new exponent; check by differentiating.'
+        constraints: "positive integer exponents; always include + C"
+      - id: kp2
+        name: Antidifferentiate polynomials term by term
+        key_prerequisites: [derivative-power-rule]
+        exemplars:
+          - problem: 'Find $\int (6x^2 - 4x + 1) \, dx$.'
+            answer: "2x^3 - 2x^2 + x + C"
+            solution_sketch: 'Antidifferentiate term by term; check by differentiating.'
+          - problem: 'Find $\int (3x^2 + 2x) \, dx$.'
+            answer: "x^3 + x^2 + C"
+        constraints: "integer coefficients; results have integer coefficients"
+      - id: kp3
+        name: Rewrite radicals and negative powers first
+        key_prerequisites: [derivative-power-rule, rational-exponents]
+        exemplars:
+          - problem: 'Find $\int \sqrt{x} \, dx$.'
+            answer: "(2/3)x^(3/2) + C"
+            solution_sketch: '$\sqrt{x} = x^{1/2}$; raise to $x^{3/2}$ and divide by $\frac{3}{2}$.'
+          - problem: 'Find $\int \frac{1}{x^2} \, dx$.'
+            answer: "-1/x + C"
+            solution_sketch: '$x^{-2}$ antidifferentiates to $\frac{x^{-1}}{-1} = -\frac{1}{x}$.'
+          - problem: 'Find $\int x(x + 2) \, dx$.'
+            answer: "x^3/3 + x^2 + C"
+            solution_sketch: 'Expand first: $\int (x^2 + 2x)\,dx$.'
+        constraints: "rewrite as powers before integrating; exponents ≠ -1"
+    diagnostic_exemplar:
+      problem: 'Find $\int \left(\sqrt{x} + \frac{3}{x^2}\right) dx$.'
+      answer: "(2/3)x^(3/2) - 3/x + C"
+      solution_sketch: 'Rewrite as $x^{1/2} + 3x^{-2}$, then raise each exponent by one and divide: $\frac{2}{3}x^{3/2} + \frac{3x^{-1}}{-1} + C$.'
+    anki_seeds:
+      - front: "Reverse power rule: ∫ x^n dx = ? (n ≠ -1)"
+        back: "x^(n+1)/(n+1) + C"
+        type: basic
+      - front: "Before applying the reverse power rule to √x or 1/x², first..."
+        back: "rewrite as a power: x^(1/2), x^(-2)"
+        type: basic
+
+  - id: antiderivatives
+    name: Antiderivatives
+    core: true
+    difficulty: 0.55
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 120
+    prerequisites:
+      - id: reverse-power-rule
+        weight: 0.8
+        key: true
+      - id: derivatives-trig
+        weight: 0.5
+        key: true
+      - id: derivatives-exp-log
+        weight: 0.5
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: Antiderivatives of trig, exponential, and 1/x
+        key_prerequisites: [derivatives-trig, derivatives-exp-log]
+        exemplars:
+          - problem: 'Find $\int \cos x \, dx$.'
+            answer: "sin x + C"
+          - problem: 'Find $\int \left(e^x + \frac{1}{x}\right) dx$ for $x > 0$.'
+            answer: "e^x + ln x + C"
+          - problem: 'Find $\int \sec^2 x \, dx$.'
+            answer: "tan x + C"
+        constraints: "the basic table: sin, cos, sec^2, e^x, 1/x"
+      - id: kp2
+        name: Rewrite, then antidifferentiate
+        key_prerequisites: [reverse-power-rule, derivatives-trig]
+        exemplars:
+          - problem: 'Find $\int \frac{x^3 + 2x}{x} \, dx$.'
+            answer: "x^3/3 + 2x + C"
+            solution_sketch: 'Divide first: $\int (x^2 + 2)\,dx$.'
+          - problem: 'Find $\int \sqrt{x}\,(x + 1) \, dx$.'
+            answer: "(2/5)x^(5/2) + (2/3)x^(3/2) + C"
+            solution_sketch: 'Expand: $\int (x^{3/2} + x^{1/2})\,dx$.'
+          - problem: 'Find $\int (2\sin x - 3e^x) \, dx$.'
+            answer: "-2cos x - 3e^x + C"
+        constraints: "algebraic rewriting (divide, expand) before integrating; mixed table entries"
+      - id: kp3
+        name: Determine C from an initial condition
+        key_prerequisites: [reverse-power-rule, derivatives-trig]
+        exemplars:
+          - problem: 'Find $f(x)$ given $f''(x) = 2x$ and $f(1) = 5$.'
+            answer: "x^2 + 4"
+            solution_sketch: '$f(x) = x^2 + C$; $1 + C = 5$ gives $C = 4$.'
+          - problem: 'Find $f(x)$ given $f''(x) = 3x^2 - 2$ and $f(0) = 1$.'
+            answer: "x^3 - 2x + 1"
+          - problem: 'Find $f(x)$ given $f''(x) = \cos x$ and $f(0) = 2$.'
+            answer: "sin x + 2"
+        constraints: "one initial condition; C is a small integer"
+    diagnostic_exemplar:
+      problem: 'Find $f(x)$ given $f''(x) = 4x + \cos x$ and $f(0) = 3$.'
+      answer: "2x^2 + sin x + 3"
+      solution_sketch: 'Antidifferentiate to $f(x) = 2x^2 + \sin x + C$; the initial condition $f(0) = C = 3$ pins the constant.'
+    anki_seeds:
+      - front: "∫ 1/x dx = ?"
+        back: "ln|x| + C"
+        type: basic
+      - front: "∫ sin x dx = ? and ∫ cos x dx = ?"
+        back: "-cos x + C; sin x + C (mind the sign on the first)"
+        type: basic
+      - front: "Two antiderivatives of the same function differ by..."
+        back: "a constant — hence the + C"
+        type: basic
+
+  - id: left-right-riemann-sums
+    name: Left and Right Riemann Sums
+    core: true
+    difficulty: 0.5
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 150
+    prerequisites:
+      - id: function-notation
+        weight: 0.5
+        key: true
+      - id: area-triangles-quadrilaterals
+        weight: 0.4
+        key: true
+      - id: summation-notation
+        weight: 0.4
+      - id: decimal-operations
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Right Riemann sums
+        key_prerequisites: [function-notation, area-triangles-quadrilaterals]
+        exemplars:
+          - problem: 'Approximate $\int_0^2 x^2 \, dx$ with a right Riemann sum using $n = 4$ equal subintervals.'
+            answer: "3.75"
+            solution_sketch: '$\Delta x = 0.5$; sum $= 0.5(0.25 + 1 + 2.25 + 4) = 3.75$.'
+          - problem: 'Approximate $\int_0^4 x \, dx$ with a right Riemann sum using $n = 4$.'
+            answer: "10"
+            solution_sketch: '$\Delta x = 1$; $1 + 2 + 3 + 4 = 10$.'
+        constraints: "n ≤ 5 equal subintervals; sample values give terminating decimals"
+      - id: kp2
+        name: Left Riemann sums
+        key_prerequisites: [function-notation, area-triangles-quadrilaterals]
+        exemplars:
+          - problem: 'Approximate $\int_0^2 x^2 \, dx$ with a left Riemann sum using $n = 4$.'
+            answer: "1.75"
+            solution_sketch: '$0.5(0 + 0.25 + 1 + 2.25) = 1.75$.'
+          - problem: 'Approximate $\int_0^4 x \, dx$ with a left Riemann sum using $n = 4$.'
+            answer: "6"
+            solution_sketch: '$0 + 1 + 2 + 3 = 6$.'
+        constraints: "same setups as right sums so the two can be compared"
+      - id: kp3
+        name: Overestimate or underestimate?
+        key_prerequisites: [function-notation]
+        exemplars:
+          - problem: 'If $f$ is increasing on $[a, b]$, does a right Riemann sum overestimate or underestimate $\int_a^b f(x)\,dx$?'
+            answer: "overestimate"
+            solution_sketch: 'On each subinterval the right endpoint gives the largest value, so every rectangle is too tall.'
+          - problem: 'For $\int_0^2 x^2\,dx$ (exact value $8/3$), the left sum with $n = 4$ gave $1.75$ and the right sum $3.75$. Which one is the underestimate?'
+            answer: "the left sum"
+            solution_sketch: '$x^2$ is increasing on $[0, 2]$, so left endpoints give the smallest heights: $1.75 < \frac{8}{3} < 3.75$.'
+        constraints: "monotonic integrands only; ask for the direction of the error"
+    diagnostic_exemplar:
+      problem: 'Approximate $\int_0^2 2x \, dx$ with a right Riemann sum using $n = 2$.'
+      answer: "6"
+      solution_sketch: '$\Delta x = 1$; $f(1) + f(2) = 2 + 4 = 6$.'
+    anki_seeds:
+      - front: "In a Riemann sum with n equal subintervals on [a, b], Δx = ?"
+        back: "(b - a)/n"
+        type: basic
+      - front: "For an INCREASING function, the left Riemann sum ___ and the right sum ___ the integral."
+        back: "underestimates; overestimates (reversed for decreasing functions)"
+        type: basic
+
+  - id: definite-integrals-as-area
+    name: Definite Integrals as Geometric Area
+    core: true
+    difficulty: 0.55
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 150
+    prerequisites:
+      - id: left-right-riemann-sums
+        weight: 0.6
+        key: true
+      - id: area-triangles-quadrilaterals
+        weight: 0.5
+        key: true
+      - id: circle-area-circumference
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: Triangles, rectangles, and trapezoids
+        key_prerequisites: [area-triangles-quadrilaterals, left-right-riemann-sums]
+        exemplars:
+          - problem: 'Evaluate $\int_0^4 x \, dx$ by interpreting it as an area.'
+            answer: "8"
+            solution_sketch: 'Triangle with base $4$ and height $4$: $\frac{1}{2} \cdot 4 \cdot 4 = 8$.'
+          - problem: 'Evaluate $\int_0^3 (2x + 1) \, dx$ using a trapezoid.'
+            answer: "12"
+            solution_sketch: 'Parallel sides $1$ and $7$, width $3$: $\frac{1 + 7}{2} \cdot 3 = 12$.'
+        constraints: "linear integrands; the region is a triangle, rectangle, or trapezoid; exact answers"
+      - id: kp2
+        name: Circular regions
+        key_prerequisites: [circle-area-circumference, area-triangles-quadrilaterals]
+        exemplars:
+          - problem: 'Evaluate $\int_{-2}^{2} \sqrt{4 - x^2} \, dx$ by recognizing the region.'
+            answer: "2π"
+            solution_sketch: 'Upper semicircle of radius $2$: $\frac{1}{2}\pi \cdot 2^2 = 2\pi$.'
+          - problem: 'Evaluate $\int_0^3 \sqrt{9 - x^2} \, dx$ by recognizing the region.'
+            answer: "9π/4"
+            solution_sketch: 'Quarter circle of radius $3$: $\frac{1}{4}\pi \cdot 3^2$.'
+        constraints: "semicircles or quarter circles of integer radius; answers as exact multiples of π"
+      - id: kp3
+        name: Signed area
+        key_prerequisites: [area-triangles-quadrilaterals, left-right-riemann-sums]
+        exemplars:
+          - problem: 'Evaluate $\int_0^3 (-2) \, dx$.'
+            answer: "-6"
+            solution_sketch: 'A rectangle of height $-2$ contributes signed area $-2 \cdot 3 = -6$.'
+          - problem: 'Evaluate $\int_0^2 (x - 2) \, dx$ by interpreting it as a signed area.'
+            answer: "-2"
+            solution_sketch: 'A triangle of area $2$ lying entirely below the axis.'
+          - problem: 'Evaluate $\int_0^4 (x - 2) \, dx$ by interpreting it as signed area.'
+            answer: "0"
+            solution_sketch: 'The triangle below the axis on $[0, 2]$ and the one above on $[2, 4]$ each have area $2$; they cancel.'
+        constraints: "regions split cleanly at axis crossings; integer signed areas"
+    diagnostic_exemplar:
+      problem: 'Evaluate $\int_{-2}^{2} \left(\sqrt{4 - x^2} - 2\right) dx$ by interpreting it as area.'
+      answer: '2π - 8'
+      solution_sketch: '$\int_{-2}^{2}\sqrt{4-x^2}\,dx$ is the upper half of the circle of radius $2$, area $2\pi$; $\int_{-2}^{2}(-2)\,dx$ is a rectangle below the axis, $-8$.'
+    anki_seeds:
+      - front: "The definite integral of f from a to b measures..."
+        back: "signed area between the graph and the x-axis (area below the axis counts negative)"
+        type: basic
+      - front: "∫ √(r² - x²) dx from -r to r = ? (by geometry)"
+        back: "πr²/2 — the upper semicircle of radius r"
+        type: basic
+
+  - id: riemann-sums-definite-integral
+    name: Riemann Sums and the Definite Integral
+    core: true
+    difficulty: 0.6
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 180
+    prerequisites:
+      - id: left-right-riemann-sums
+        weight: 0.7
+        key: true
+      - id: definite-integrals-as-area
+        weight: 0.7
+        key: true
+      - id: limits-graphical-numerical
+        weight: 0.4
+      - id: even-odd-functions
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: The definite integral as a limit of Riemann sums
+        key_prerequisites: [left-right-riemann-sums, definite-integrals-as-area, limits-graphical-numerical]
+        exemplars:
+          - problem: 'For $\int_0^4 x \, dx$, the right Riemann sums are $10$ ($n = 4$) and $9$ ($n = 8$). What value do the sums approach as $n \to \infty$?'
+            answer: "8"
+            solution_sketch: 'As $n \to \infty$ the rectangle error vanishes; the limit is the definite integral, here the triangle area $\frac{1}{2} \cdot 4 \cdot 4$.'
+          - problem: 'What does $\lim_{n \to \infty} \sum_{i=1}^{n} f(x_i)\,\Delta x$ define (for sample points $x_i$ in the $i$-th subinterval of $[a, b]$)?'
+            answer: "the definite integral ∫_a^b f(x) dx"
+        constraints: "conceptual limit questions anchored to a computable geometric area"
+      - id: kp2
+        name: Additivity, reversal, and linearity
+        key_prerequisites: [definite-integrals-as-area]
+        exemplars:
+          - problem: 'Given $\int_0^5 f(x)\,dx = 7$ and $\int_5^8 f(x)\,dx = 3$, find $\int_0^8 f(x)\,dx$.'
+            answer: "10"
+          - problem: 'Given $\int_1^4 f(x)\,dx = 6$, find $\int_4^1 f(x)\,dx$.'
+            answer: "-6"
+          - problem: 'Given $\int_1^4 f(x)\,dx = 6$ and $\int_1^4 g(x)\,dx = 2$, find $\int_1^4 (3f(x) - g(x))\,dx$.'
+            answer: "16"
+            solution_sketch: '$3 \cdot 6 - 2 = 16$ by linearity.'
+        constraints: "additivity, reversal of limits, constant multiples and sums; integer data"
+      - id: kp3
+        name: Comparison, bounds, and symmetry
+        key_prerequisites: [definite-integrals-as-area, left-right-riemann-sums]
+        exemplars:
+          - problem: 'If $2 \leq f(x) \leq 5$ for all $x$ in $[1, 4]$, what bounds does this give on $\int_1^4 f(x)\,dx$?'
+            answer: "6 ≤ ∫ ≤ 15"
+            solution_sketch: '$m(b - a) \leq \int \leq M(b - a)$ with $b - a = 3$.'
+          - problem: 'Evaluate $\int_{-3}^{3} x^3 \, dx$ using symmetry.'
+            answer: "0"
+            solution_sketch: '$x^3$ is odd: the signed areas on $[-3, 0]$ and $[0, 3]$ cancel.'
+        constraints: "max-min bounds with integer data; odd-function symmetry on symmetric intervals"
+    diagnostic_exemplar:
+      problem: 'Evaluate $\int_{-2}^{2} (x^3 + 3)\,dx$ using symmetry and linearity.'
+      answer: '12'
+      solution_sketch: '$x^3$ is odd and the interval is symmetric, so $\int_{-2}^{2}x^3\,dx = 0$; $\int_{-2}^{2}3\,dx = 12$.'
+    anki_seeds:
+      - front: "Swapping the limits of integration does what to the integral's value?"
+        back: "flips its sign: ∫_b^a f = -∫_a^b f"
+        type: basic
+      - front: "If m ≤ f(x) ≤ M on [a, b], then ∫_a^b f(x) dx is between..."
+        back: "m(b - a) and M(b - a)"
+        type: basic
+      - front: "For an odd function f, ∫_{-a}^{a} f(x) dx = ?"
+        back: "0 — the signed areas cancel by symmetry"
+        type: basic
+
+  - id: midpoint-trapezoid-sums
+    name: Midpoint and Trapezoid Sums
+    core: false                # numerical rules; feed only the estimation topic
+    difficulty: 0.6
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 180
+    prerequisites:
+      - id: left-right-riemann-sums
+        weight: 0.8
+        key: true
+      - id: riemann-sums-definite-integral
+        weight: 0.4
+      - id: concavity-inflection-points
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Midpoint sums
+        key_prerequisites: [left-right-riemann-sums]
+        exemplars:
+          - problem: 'Approximate $\int_0^2 x^2 \, dx$ with a midpoint sum using $n = 2$.'
+            answer: "2.5"
+            solution_sketch: '$\Delta x = 1$; midpoints $0.5, 1.5$: $0.25 + 2.25 = 2.5$.'
+          - problem: 'Approximate $\int_0^2 x^2 \, dx$ with a midpoint sum using $n = 4$.'
+            answer: "2.625"
+            solution_sketch: '$\Delta x = 0.5$; midpoints $0.25, 0.75, 1.25, 1.75$: $0.5(0.0625 + 0.5625 + 1.5625 + 3.0625) = 2.625$.'
+        constraints: "n ≤ 4; midpoint values give terminating decimals"
+      - id: kp2
+        name: Trapezoid sums
+        key_prerequisites: [left-right-riemann-sums]
+        exemplars:
+          - problem: 'Approximate $\int_0^2 x^2 \, dx$ with the trapezoid rule using $n = 4$.'
+            answer: "2.75"
+            solution_sketch: '$\frac{\Delta x}{2}(f_0 + 2f_1 + 2f_2 + 2f_3 + f_4) = 0.25(0 + 0.5 + 2 + 4.5 + 4) = 2.75$.'
+          - problem: 'The left and right sums for $\int_0^2 x^2\,dx$ with $n = 4$ are $1.75$ and $3.75$. Use them to get the trapezoid estimate.'
+            answer: "2.75"
+            solution_sketch: 'Trapezoid $= \frac{L + R}{2} = \frac{1.75 + 3.75}{2}$.'
+        constraints: "trapezoid = average of left and right sums; terminating decimals"
+      - id: kp3
+        name: Error direction from concavity
+        key_prerequisites: [left-right-riemann-sums, concavity-inflection-points]
+        exemplars:
+          - problem: '$\int_0^2 x^2\,dx = \frac{8}{3} \approx 2.667$, and the $n = 4$ trapezoid estimate is $2.75$. Since $x^2$ is concave up, does the trapezoid rule over- or underestimate here?'
+            answer: "overestimate"
+            solution_sketch: 'Chords lie above a concave-up curve, so the trapezoid rule overestimates (and the midpoint rule, using tangent-trapezoids below the curve, underestimates: $2.625$).'
+          - problem: 'If $f$ is concave down on $[a, b]$, does the trapezoid rule over- or underestimate $\int_a^b f\,dx$?'
+            answer: "underestimate — chords lie below a concave-down curve"
+        constraints: "integrand with fixed concavity on the interval; ask only for the direction"
+    diagnostic_exemplar:
+      problem: 'Approximate $\int_0^4 x^2\,dx$ with the trapezoid rule using $n = 2$, then report the difference (your estimate minus the exact value $\frac{64}{3}$).'
+      answer: '8/3'
+      solution_sketch: '$T = \frac{\Delta x}{2}\left[f(0) + 2f(2) + f(4)\right] = 1\,(0 + 8 + 16) = 24$; since $x^2$ is concave up the trapezoid rule overestimates, and $24 - \frac{64}{3} = \frac{8}{3} > 0$.'
+    anki_seeds:
+      - front: "The trapezoid estimate equals the average of..."
+        back: "the left and right Riemann sums"
+        type: basic
+      - front: "Concave up on [a,b]: trapezoid rule ___ and midpoint rule ___ the integral."
+        back: "overestimates; underestimates (both reversed when concave down)"
+        type: basic
+
+  - id: estimating-integrals-from-tables
+    name: Estimating Integrals from Tables
+    core: false                # terminal numerical-estimation genre
+    difficulty: 0.6
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 180
+    prerequisites:
+      - id: midpoint-trapezoid-sums
+        weight: 0.6
+        key: true
+      - id: left-right-riemann-sums
+        weight: 0.6
+        key: true
+      - id: riemann-sums-definite-integral
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: Left and right sums from a table
+        key_prerequisites: [left-right-riemann-sums]
+        exemplars:
+          - problem: 'A table gives $v(0) = 5$, $v(2) = 7$, $v(4) = 10$, $v(6) = 12$. Estimate $\int_0^6 v(t)\,dt$ with a left Riemann sum.'
+            answer: "44"
+            solution_sketch: '$2(5 + 7 + 10) = 44$.'
+          - problem: 'Using the same table, estimate $\int_0^6 v(t)\,dt$ with a right Riemann sum.'
+            answer: "58"
+            solution_sketch: '$2(7 + 10 + 12) = 58$.'
+        constraints: "evenly spaced table; 3-4 subintervals; integer values"
+      - id: kp2
+        name: Trapezoid sums from a table (uneven spacing allowed)
+        key_prerequisites: [midpoint-trapezoid-sums]
+        exemplars:
+          - problem: 'A table gives $f(0) = 4$, $f(1) = 6$, $f(3) = 10$. Estimate $\int_0^3 f(x)\,dx$ with trapezoids.'
+            answer: "21"
+            solution_sketch: '$\frac{4 + 6}{2} \cdot 1 + \frac{6 + 10}{2} \cdot 2 = 5 + 16 = 21$.'
+          - problem: 'Using the table $v(0) = 5$, $v(2) = 7$, $v(4) = 10$, $v(6) = 12$, estimate $\int_0^6 v(t)\,dt$ with the trapezoid rule.'
+            answer: "51"
+            solution_sketch: 'Average of the left sum $44$ and right sum $58$.'
+        constraints: "handle each subinterval separately when spacing is uneven; integer answers"
+      - id: kp3
+        name: Interpret the estimate with units
+        key_prerequisites: [left-right-riemann-sums, riemann-sums-definite-integral]
+        exemplars:
+          - problem: 'If $v(t)$ is a velocity in m/s and $t$ is in seconds, what does $\int_0^6 v(t)\,dt \approx 51$ mean, with units?'
+            answer: "the object traveled approximately 51 meters during the first 6 seconds"
+          - problem: 'If $r(t)$ is a pumping rate in liters/minute, then $\int_0^{10} r(t)\,dt$ is the total volume pumped in the first $10$ minutes. In what units?'
+            answer: "liters"
+        constraints: "the integral of a rate carries the units (rate units) × (input units)"
+    diagnostic_exemplar:
+      problem: 'A table gives $v(0) = 3$, $v(1) = 5$, $v(4) = 11$, with $v$ in m/s and $t$ in seconds. Estimate $\int_0^4 v(t)\,dt$ with the trapezoid rule.'
+      answer: '28'
+      solution_sketch: 'The spacing is uneven, so treat each subinterval separately: $\frac{3+5}{2}(1) + \frac{5+11}{2}(3) = 4 + 24 = 28$ (metres travelled).'
+    anki_seeds:
+      - front: "The integral of a rate function r(t) over [a, b] measures..."
+        back: "the total accumulated amount from t = a to t = b, in (rate units) × (time units)"
+        type: basic
+      - front: "Trapezoid estimate on one subinterval [x₀, x₁]:"
+        back: "(f(x₀) + f(x₁))/2 · (x₁ - x₀)"
+        type: basic
+
+  - id: definite-integrals-ftc
+    name: The Fundamental Theorem of Calculus
+    core: true
+    difficulty: 0.65
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 180
+    prerequisites:
+      - id: antiderivatives
+        weight: 0.8
+        key: true
+      - id: riemann-sums-definite-integral
+        weight: 0.6
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: Evaluate definite integrals (FTC part 2)
+        key_prerequisites: [antiderivatives, riemann-sums-definite-integral]
+        exemplars:
+          - problem: 'Evaluate $\int_1^3 2x \, dx$.'
+            answer: "8"
+            solution_sketch: '$[x^2]_1^3 = 9 - 1 = 8$.'
+          - problem: 'Evaluate $\int_0^2 (3x^2 + 1) \, dx$.'
+            answer: "10"
+            solution_sketch: '$[x^3 + x]_0^2 = 8 + 2 = 10$.'
+          - problem: 'Evaluate $\int_0^{\pi} \sin x \, dx$.'
+            answer: "2"
+            solution_sketch: '$[-\cos x]_0^{\pi} = -(-1) - (-1) = 2$.'
+        constraints: "antiderivative from the basic table; integer or simple exact answers"
+      - id: kp2
+        name: Differentiate an accumulation function (FTC part 1)
+        key_prerequisites: [antiderivatives]
+        exemplars:
+          - problem: 'Find $g''(x)$ for $g(x) = \int_0^x \sqrt{1 + t^2} \, dt$.'
+            answer: "√(1 + x^2)"
+            solution_sketch: 'FTC part 1: the derivative of the accumulation function is the integrand at $x$.'
+          - problem: 'Find $\frac{d}{dx} \int_1^x (t^3 + 1) \, dt$.'
+            answer: "x^3 + 1"
+          - problem: 'Find $\frac{d}{dx} \int_2^x \cos(t^2) \, dt$.'
+            answer: "cos(x^2)"
+        constraints: "variable upper limit x (no composite limits); answer is the integrand evaluated at x"
+      - id: kp3
+        name: Net change from a rate
+        key_prerequisites: [antiderivatives, riemann-sums-definite-integral]
+        exemplars:
+          - problem: 'A particle moves with velocity $v(t) = 6t^2$ m/s. Find its displacement over $[0, 2]$.'
+            answer: "16 m"
+            solution_sketch: '$\int_0^2 6t^2\,dt = [2t^3]_0^2 = 16$.'
+          - problem: 'Water flows into a tank at $r(t) = 2t$ liters per minute. How much water enters during the first $5$ minutes?'
+            answer: "25 L"
+            solution_sketch: '$\int_0^5 2t\,dt = [t^2]_0^5 = 25$.'
+        constraints: "polynomial rates; state units in the answer"
+    diagnostic_exemplar:
+      problem: 'Water flows into a tank at the rate $r(t) = 3t^2 + 2$ litres per minute. How many litres enter during the first $3$ minutes?'
+      answer: '33'
+      solution_sketch: 'Net change $= \int_0^3 (3t^2 + 2)\,dt = \left[t^3 + 2t\right]_0^3 = 27 + 6 = 33$ litres.'
+    anki_seeds:
+      - front: "FTC part 2: ∫_a^b f(x) dx = ? (F any antiderivative of f)"
+        back: "F(b) - F(a)"
+        type: basic
+      - front: "FTC part 1: d/dx ∫_a^x f(t) dt = ?"
+        back: "f(x)"
+        type: basic
+      - front: "The integral of velocity over [a, b] gives..."
+        back: "displacement (net change in position) — a special case of the net change theorem"
+        type: basic
+
+  - id: accumulation-functions
+    name: Accumulation Functions
+    core: true
+    difficulty: 0.7
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 210
+    prerequisites:
+      - id: definite-integrals-ftc
+        weight: 0.8
+        key: true
+      - id: chain-rule
+        weight: 0.6
+        key: true
+      - id: increasing-decreasing-intervals
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: FTC part 1 with composite limits
+        key_prerequisites: [definite-integrals-ftc, chain-rule]
+        exemplars:
+          - problem: 'Find $\frac{d}{dx} \int_0^{x^2} \cos t \, dt$.'
+            answer: "2x cos(x^2)"
+            solution_sketch: 'FTC 1 plus the chain rule: integrand at $x^2$ times $\frac{d}{dx}(x^2)$.'
+          - problem: 'Find $\frac{d}{dx} \int_1^{x^3} \sqrt{1 + t} \, dt$.'
+            answer: "3x^2 √(1 + x^3)"
+        constraints: "upper limit is a power of x; answer = integrand(limit) × limit'"
+      - id: kp2
+        name: Variable lower limit
+        key_prerequisites: [definite-integrals-ftc]
+        exemplars:
+          - problem: 'Find $\frac{d}{dx} \int_x^5 t^2 \, dt$.'
+            answer: "-x^2"
+            solution_sketch: 'Reverse the limits: $-\int_5^x t^2\,dt$ differentiates to $-x^2$.'
+          - problem: 'Find $\frac{d}{dx} \int_{x}^{2} \sin(t^2) \, dt$.'
+            answer: "-sin(x^2)"
+        constraints: "single variable lower limit; the sign flip is the point"
+      - id: kp3
+        name: Analyze an accumulation function
+        key_prerequisites: [definite-integrals-ftc, increasing-decreasing-intervals]
+        exemplars:
+          - problem: 'Let $g(x) = \int_0^x (t^2 - 4)\,dt$. At which $x$ does $g$ have a local minimum?'
+            answer: "2"
+            solution_sketch: '$g''(x) = x^2 - 4$ changes $-$ to $+$ at $x = 2$ (and $+$ to $-$ at $-2$, a local max).'
+          - problem: 'For the same $g$, compute $g(3)$.'
+            answer: "-3"
+            solution_sketch: '$\left[\frac{t^3}{3} - 4t\right]_0^3 = 9 - 12 = -3$.'
+        constraints: "g' is the integrand; extrema of g come from sign changes of the integrand"
+    diagnostic_exemplar:
+      problem: 'Find $\frac{d}{dx} \int_{x^2}^{5} \cos t \, dt$.'
+      answer: '-2x cos(x^2)'
+      solution_sketch: 'Flip the limits first: $-\frac{d}{dx}\int_{5}^{x^2}\cos t\,dt = -\cos(x^2)\cdot 2x$.'
+    anki_seeds:
+      - front: "d/dx ∫_a^{u(x)} f(t) dt = ?"
+        back: "f(u(x)) · u'(x) — FTC part 1 composed with the chain rule"
+        type: basic
+      - front: "For g(x) = ∫_a^x f(t) dt, the critical points of g occur where..."
+        back: "f(x) = 0 (since g' = f); g has a local min where f changes - to +"
+        type: basic
+
+  - id: average-value-function
+    name: Average Value of a Function
+    core: true
+    difficulty: 0.65
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 150
+    prerequisites:
+      - id: definite-integrals-ftc
+        weight: 0.8
+        key: true
+      - id: continuity
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Compute the average value
+        key_prerequisites: [definite-integrals-ftc]
+        exemplars:
+          - problem: 'Find the average value of $f(x) = x^2$ on $[0, 3]$.'
+            answer: "3"
+            solution_sketch: '$\frac{1}{3}\int_0^3 x^2\,dx = \frac{1}{3} \cdot 9 = 3$.'
+          - problem: 'Find the average value of $f(x) = \cos x$ on $[0, \pi/6]$.'
+            answer: "3/π"
+            solution_sketch: '$\frac{6}{\pi}\int_0^{\pi/6} \cos x\,dx = \frac{6}{\pi}\cdot\frac{1}{2} = \frac{3}{\pi}$.'
+        constraints: "table-integrable functions; exact answers (fractions, multiples of 1/π)"
+      - id: kp2
+        name: The Mean Value Theorem for integrals
+        key_prerequisites: [definite-integrals-ftc, continuity]
+        exemplars:
+          - problem: 'The average value of $f(x) = x^2$ on $[0, 3]$ is $3$. Find the $c$ in $[0, 3]$ with $f(c)$ equal to this average.'
+            answer: "sqrt(3)"
+            solution_sketch: '$c^2 = 3$; the positive root $c = \sqrt{3}$ lies in the interval.'
+          - problem: 'For $f(x) = 4x$ on $[1, 3]$, find the $c$ guaranteed by the Mean Value Theorem for integrals (the $c$ with $f(c)$ equal to the average value).'
+            answer: "2"
+            solution_sketch: 'Average value $= \frac{1}{2}\int_1^3 4x\,dx = \frac{16}{2} = 8$; solve $4c = 8$ to get $c = 2$, which lies in $[1, 3]$.'
+        constraints: "f continuous; c solvable exactly and inside the interval"
+      - id: kp3
+        name: Applied average values
+        key_prerequisites: [definite-integrals-ftc]
+        exemplars:
+          - problem: 'The temperature is $T(t) = 12 + 2t$ degrees Celsius, $t$ in hours. Find the average temperature over $[0, 6]$.'
+            answer: "18 degrees Celsius"
+            solution_sketch: '$\frac{1}{6}\int_0^6 (12 + 2t)\,dt = \frac{1}{6}(72 + 36) = 18$.'
+          - problem: 'A car''s velocity is $v(t) = 3t^2$ m/s. Find its average velocity over $[0, 2]$.'
+            answer: "4 m/s"
+            solution_sketch: '$\frac{1}{2}\int_0^2 3t^2\,dt = \frac{8}{2} = 4$.'
+        constraints: "linear or quadratic rates; integer average with units"
+    diagnostic_exemplar:
+      problem: 'For $f(x) = 3x^2$ on $[0, 2]$, find the $c$ guaranteed by the Mean Value Theorem for integrals (the $c$ in $[0, 2]$ with $f(c)$ equal to the average value of $f$).'
+      answer: "2√3/3"
+      solution_sketch: 'Average value $\frac{1}{2}\int_0^2 3x^2\,dx = 4$; solve $3c^2 = 4$: $c = \frac{2}{\sqrt 3} = \frac{2\sqrt 3}{3}$.'
+    anki_seeds:
+      - front: "Average value of f on [a, b] = ?"
+        back: "(1/(b - a)) ∫_a^b f(x) dx"
+        type: basic
+      - front: "MVT for integrals: a continuous f on [a,b] attains its average value..."
+        back: "at some c in [a, b]: f(c) = (1/(b-a)) ∫_a^b f"
+        type: basic
+
+  - id: area-under-a-curve
+    name: Area Between a Curve and the x-Axis
+    core: true
+    difficulty: 0.65
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 210
+    prerequisites:
+      - id: definite-integrals-ftc
+        weight: 0.8
+        key: true
+      - id: definite-integrals-as-area
+        weight: 0.5
+        key: true
+      - id: quadratic-equations-factoring
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Area when f ≥ 0
+        key_prerequisites: [definite-integrals-ftc, definite-integrals-as-area]
+        exemplars:
+          - problem: 'Find the area under $y = x^2$ from $x = 0$ to $x = 3$.'
+            answer: "9"
+            solution_sketch: '$f \geq 0$ here, so area $= \int_0^3 x^2\,dx = 9$.'
+          - problem: 'Find the area enclosed by $y = 4 - x^2$ and the x-axis.'
+            answer: "32/3"
+            solution_sketch: 'Roots $\pm 2$: $\int_{-2}^2 (4 - x^2)\,dx = 16 - \frac{16}{3} = \frac{32}{3}$.'
+        constraints: "nonnegative integrand on the interval; find the roots when the region is enclosed"
+      - id: kp2
+        name: Total area when f changes sign
+        key_prerequisites: [definite-integrals-ftc, quadratic-equations-factoring]
+        exemplars:
+          - problem: 'Find the total area between $y = x^2 - 1$ and the x-axis over $[0, 2]$.'
+            answer: "2"
+            solution_sketch: 'Split at the root $x = 1$: $\left|\int_0^1\right| + \int_1^2 = \frac{2}{3} + \frac{4}{3} = 2$.'
+          - problem: 'For $y = x^2 - 1$ on $[0, 2]$, compare the net signed area with the total area.'
+            answer: "net = 2/3; total = 2"
+            solution_sketch: '$\int_0^2 (x^2 - 1)\,dx = \frac{8}{3} - 2 = \frac{2}{3}$, but the areas add to $2$.'
+        constraints: "one interior sign change at an integer or simple root; report both net and total when asked"
+      - id: kp3
+        name: Symmetry and the odd-function trap
+        key_prerequisites: [definite-integrals-ftc, definite-integrals-as-area]
+        exemplars:
+          - problem: 'Compute $\int_{-2}^{2} x^3\,dx$ and the total area between $y = x^3$ and the x-axis over $[-2, 2]$. Why do they differ?'
+            answer: "integral = 0; total area = 8 — the signed halves cancel in the integral but areas add"
+            solution_sketch: 'By oddness the integral vanishes; area $= 2\int_0^2 x^3\,dx = 2 \cdot 4 = 8$.'
+          - problem: 'True or false: if $\int_a^b f(x)\,dx = 0$ then the region between $f$ and the axis on $[a, b]$ has zero area.'
+            answer: "false — equal areas above and below the axis cancel in the integral"
+        constraints: "odd functions on symmetric intervals; contrast signed integral with geometric area"
+    diagnostic_exemplar:
+      problem: 'Find the total area between $y = x$ and the x-axis over $[-1, 2]$.'
+      answer: "5/2"
+      solution_sketch: 'Two triangles: $\frac{1}{2} + 2 = \frac{5}{2}$ (the integral itself is $\frac{3}{2}$).'
+    anki_seeds:
+      - front: "To find TOTAL area between f and the x-axis, you must..."
+        back: "split the interval at the roots of f and add the absolute values of the pieces"
+        type: basic
+      - front: "Net signed area vs total area: when do they agree?"
+        back: "when f does not change sign on the interval"
+        type: basic
+
+  - id: net-change-total-distance
+    name: Net Change and Total Distance
+    core: false                # interpretation/application of the definite integral
+    difficulty: 0.65
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 240
+    prerequisites:
+      - id: definite-integrals-ftc
+        weight: 0.8
+        key: true
+      - id: motion-along-a-line
+        weight: 0.6
+        key: true
+      - id: area-under-a-curve
+        weight: 0.4
+      - id: antiderivatives
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: Displacement vs total distance
+        key_prerequisites: [definite-integrals-ftc, motion-along-a-line, area-under-a-curve]
+        exemplars:
+          - problem: 'A particle has velocity $v(t) = t^2 - 4$ m/s on $[0, 3]$. Find its displacement.'
+            answer: "-3 m"
+            solution_sketch: '$\int_0^3 (t^2 - 4)\,dt = 9 - 12 = -3$.'
+          - problem: 'For the same particle, find the total distance traveled on $[0, 3]$.'
+            answer: "23/3 m"
+            solution_sketch: '$v$ changes sign at $t = 2$: $\left|-\frac{16}{3}\right| + \frac{7}{3} = \frac{23}{3}$.'
+        constraints: "v changes sign once at an integer time; displacement and distance both asked"
+      - id: kp2
+        name: Recover position from velocity
+        key_prerequisites: [antiderivatives, motion-along-a-line]
+        exemplars:
+          - problem: 'A particle has velocity $v(t) = 2t + 1$ and initial position $s(0) = 3$. Find $s(2)$.'
+            answer: "9"
+            solution_sketch: '$s(t) = t^2 + t + 3$; $s(2) = 4 + 2 + 3 = 9$.'
+          - problem: 'Given $v(t) = 3t^2 - 2$ and $s(1) = 0$, find $s(t)$.'
+            answer: "s(t) = t^3 - 2t + 1"
+            solution_sketch: '$s(t) = t^3 - 2t + C$; $1 - 2 + C = 0$ gives $C = 1$.'
+        constraints: "polynomial velocity; initial condition pins down C"
+      - id: kp3
+        name: Recover velocity from acceleration
+        key_prerequisites: [antiderivatives, motion-along-a-line]
+        exemplars:
+          - problem: 'A particle has acceleration $a(t) = 6t$ and initial velocity $v(0) = -2$. Find $v(2)$.'
+            answer: "10"
+            solution_sketch: '$v(t) = 3t^2 - 2$; $v(2) = 12 - 2 = 10$.'
+          - problem: 'An object falls with $a(t) = -10$ m/s² and $v(0) = 20$ m/s. When is its velocity zero?'
+            answer: "t = 2 s"
+            solution_sketch: '$v(t) = 20 - 10t = 0$ at $t = 2$.'
+        constraints: "constant or linear acceleration; integer answers with units"
+    diagnostic_exemplar:
+      problem: 'A particle has velocity $v(t) = 2t - 4$ on $[0, 3]$. Find the total distance traveled.'
+      answer: "5"
+      solution_sketch: '$v$ changes sign at $t = 2$: $|{-4}| + 1 = 5$.'
+    anki_seeds:
+      - front: "Displacement over [a,b] = ∫ v dt. Total distance = ?"
+        back: "∫ |v(t)| dt — split at the times where v changes sign"
+        type: basic
+      - front: "From acceleration to position requires..."
+        back: "two antidifferentiations, each fixed by an initial condition (v₀, then s₀)"
+        type: basic
+
+  - id: u-substitution-basics
+    name: Basic u-Substitution
+    core: true
+    difficulty: 0.65
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 180
+    prerequisites:
+      - id: antiderivatives
+        weight: 0.8
+        key: true
+      - id: chain-rule
+        weight: 0.7
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: Recognize u and du directly
+        key_prerequisites: [antiderivatives, chain-rule]
+        exemplars:
+          - problem: 'Find $\int 2x(x^2 + 1)^4 \, dx$.'
+            answer: "(x^2 + 1)^5/5 + C"
+            solution_sketch: '$u = x^2 + 1$, $du = 2x\,dx$: $\int u^4\,du = \frac{u^5}{5} + C$.'
+          - problem: 'Find $\int (2x + 1)^3 \, dx$.'
+            answer: "(2x + 1)^4/8 + C"
+            solution_sketch: '$u = 2x + 1$: $\frac{1}{2} \cdot \frac{u^4}{4} + C$; check: $\frac{4(2x+1)^3 \cdot 2}{8} = (2x+1)^3$.'
+        constraints: "du present up to a constant factor; verify every answer by differentiating"
+      - id: kp2
+        name: Adjust constant factors
+        key_prerequisites: [antiderivatives, chain-rule]
+        exemplars:
+          - problem: 'Find $\int x e^{x^2} \, dx$.'
+            answer: "e^(x^2)/2 + C"
+            solution_sketch: '$u = x^2$, $du = 2x\,dx$, so $x\,dx = \frac{du}{2}$: $\frac{1}{2}e^{x^2} + C$.'
+          - problem: 'Find $\int x^2 \sqrt{x^3 + 1} \, dx$.'
+            answer: "(2/9)(x^3 + 1)^(3/2) + C"
+            solution_sketch: '$u = x^3 + 1$, $du = 3x^2\,dx$: $\frac{1}{3} \cdot \frac{2}{3}u^{3/2} + C$.'
+          - problem: 'Find $\int \frac{x}{x^2 + 4} \, dx$.'
+            answer: "(1/2)ln(x^2 + 4) + C"
+            solution_sketch: '$u = x^2 + 4$: $\frac{1}{2}\int \frac{du}{u} = \frac{1}{2}\ln|u| + C$ ($u > 0$ here).'
+        constraints: "missing constant multiplier only — never a missing variable factor"
+      - id: kp3
+        name: Linear inside functions
+        key_prerequisites: [antiderivatives, chain-rule]
+        exemplars:
+          - problem: 'Find $\int \cos(3x) \, dx$.'
+            answer: "sin(3x)/3 + C"
+            solution_sketch: '$u = 3x$, $du = 3\,dx$: $\frac{1}{3}\int \cos u\,du$.'
+          - problem: 'Find $\int e^{5x} \, dx$.'
+            answer: "e^(5x)/5 + C"
+          - problem: 'Find $\int \frac{1}{3x + 2} \, dx$ for $x > -\frac{2}{3}$.'
+            answer: "(1/3)ln(3x + 2) + C"
+            solution_sketch: '$u = 3x + 2 > 0$ on this domain: $\frac{1}{3}\ln u + C$.'
+        constraints: "u = ax + b; divide by the inner slope a"
+    diagnostic_exemplar:
+      problem: 'Find $\int x \sin(x^2) \, dx$.'
+      answer: "-cos(x^2)/2 + C"
+      solution_sketch: '$u = x^2$, $du = 2x\,dx$, so $x\,dx = \frac{du}{2}$: $\frac{1}{2}\int \sin u\,du = -\frac{\cos u}{2} + C$.'
+    anki_seeds:
+      - front: "Substitution reverses which differentiation rule?"
+        back: "the chain rule"
+        type: basic
+      - front: "∫ f(ax + b) dx (F an antiderivative of f) = ?"
+        back: "F(ax + b)/a + C — divide by the inner slope"
+        type: basic
+
+  - id: integration-substitution
+    name: Integration by Substitution
+    core: true
+    difficulty: 0.7
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 240
+    prerequisites:
+      - id: u-substitution-basics
+        weight: 0.8
+        key: true
+      - id: definite-integrals-ftc
+        weight: 0.6
+        key: true
+      - id: chain-rule
+        weight: 0.5
+      - id: derivatives-exp-log
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Harder composite integrands
+        key_prerequisites: [u-substitution-basics, derivatives-exp-log]
+        exemplars:
+          - problem: 'Find $\int \tan x \, dx$ for $0 < x < \frac{\pi}{2}$.'
+            answer: "-ln(cos x) + C"
+            solution_sketch: 'Write $\tan x = \frac{\sin x}{\cos x}$; $u = \cos x > 0$ here, $du = -\sin x\,dx$: $-\ln u + C$.'
+          - problem: 'Find $\int \frac{(\ln x)^2}{x} \, dx$.'
+            answer: "(ln x)^3/3 + C"
+            solution_sketch: '$u = \ln x$, $du = \frac{dx}{x}$: $\int u^2\,du$.'
+          - problem: 'Find $\int \frac{e^x}{1 + e^x} \, dx$.'
+            answer: "ln(1 + e^x) + C"
+            solution_sketch: '$u = 1 + e^x$, $du = e^x\,dx$: $\ln|u| + C$ ($u > 0$).'
+        constraints: "u is a trig, log, or exponential expression; the du appears as a factor"
+      - id: kp2
+        name: Definite integrals with substitution
+        key_prerequisites: [definite-integrals-ftc, u-substitution-basics]
+        exemplars:
+          - problem: 'Evaluate $\int_0^1 2x(x^2 + 1)^3 \, dx$.'
+            answer: "15/4"
+            solution_sketch: '$u = x^2 + 1$ runs from $1$ to $2$: $\left[\frac{u^4}{4}\right]_1^2 = \frac{16 - 1}{4} = \frac{15}{4}$.'
+          - problem: 'Evaluate $\int_0^{\pi/2} \sin x \cos x \, dx$.'
+            answer: "1/2"
+            solution_sketch: '$u = \sin x$ runs from $0$ to $1$: $\left[\frac{u^2}{2}\right]_0^1 = \frac{1}{2}$.'
+          - problem: 'Evaluate $\int_1^e \frac{\ln x}{x} \, dx$.'
+            answer: "1/2"
+            solution_sketch: '$u = \ln x$ runs from $0$ to $1$: $\left[\frac{u^2}{2}\right]_0^1$.'
+        constraints: "change the limits along with the variable; exact fraction answers"
+      - id: kp3
+        name: Back-substitution when du is incomplete
+        key_prerequisites: [u-substitution-basics, definite-integrals-ftc]
+        exemplars:
+          - problem: 'Find $\int x\sqrt{x + 1} \, dx$.'
+            answer: "(2/5)(x + 1)^(5/2) - (2/3)(x + 1)^(3/2) + C"
+            solution_sketch: '$u = x + 1$, $x = u - 1$: $\int (u - 1)u^{1/2}\,du = \frac{2}{5}u^{5/2} - \frac{2}{3}u^{3/2} + C$.'
+          - problem: 'Evaluate $\int_0^3 x\sqrt{x + 1} \, dx$.'
+            answer: "116/15"
+            solution_sketch: '$u$ runs $1$ to $4$: $\left[\frac{2}{5}u^{5/2} - \frac{2}{3}u^{3/2}\right]_1^4 = \left(\frac{64}{5} - \frac{16}{3}\right) - \left(\frac{2}{5} - \frac{2}{3}\right) = \frac{116}{15}$.'
+        constraints: "u linear so x = u - b is exact; express leftover x in terms of u"
+    diagnostic_exemplar:
+      problem: 'Evaluate $\int_0^5 \frac{x}{\sqrt{x + 4}} \, dx$.'
+      answer: "14/3"
+      solution_sketch: '$u = x + 4$ runs from $4$ to $9$; $\int_4^9 (u^{1/2} - 4u^{-1/2})\,du = \left[\tfrac{2}{3}u^{3/2} - 8u^{1/2}\right]_4^9 = -6 + \tfrac{32}{3} = \tfrac{14}{3}$.'
+    anki_seeds:
+      - front: "When you substitute u = g(x) in a DEFINITE integral, the limits become..."
+        back: "u-values: g(a) and g(b) — never keep the old x-limits with the new variable"
+        type: basic
+      - front: "∫ tan x dx = ?"
+        back: "-ln|cos x| + C (= ln|sec x| + C)"
+        type: basic
+      - front: "In ∫ x√(x+1) dx with u = x + 1, the leftover x becomes..."
+        back: "u - 1 — solve the substitution for x and back-substitute"
+        type: basic

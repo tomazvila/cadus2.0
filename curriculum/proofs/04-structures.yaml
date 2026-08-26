@@ -1,0 +1,1084 @@
+unit: structures
+course: proofs
+module: "Algebraic Structures"
+topics:
+  - id: checking-closure
+    name: "Checking Closure"
+    core: true
+    difficulty: 0.50
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 110
+    prerequisites:
+      - id: functions-formal-definition
+        weight: 0.5
+        key: true
+      - id: set-notation
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: "Closure in number systems"
+        key_prerequisites: [functions-formal-definition]
+        exemplars:
+          - problem: 'Is $\mathbb{N} = \{0, 1, 2, \dots\}$ closed under subtraction? Is $\mathbb{Z}$?'
+            answer: 'No ($1 - 2 = -1 \notin \mathbb{N}$); yes.'
+            solution_sketch: 'Closure asks whether every output stays in the set: one escaping example refutes it, and differences of integers are always integers.'
+          - problem: 'Is $\mathbb{R}$ closed under division? Is $\mathbb{R} \setminus \{0\}$?'
+            answer: 'Division is not even defined at $0$ on $\mathbb{R}$; on $\mathbb{R} \setminus \{0\}$, yes.'
+            solution_sketch: '$x / 0$ is undefined, so division is not an operation on all of $\mathbb{R}$. A quotient of nonzero reals is a nonzero real, so the punctured set works.'
+        constraints: "test whether a familiar operation keeps its outputs inside a number system"
+      - id: kp2
+        name: "Closure of finite sets"
+        key_prerequisites: [set-notation]
+        exemplars:
+          - problem: 'Is $\{-1, 0, 1\}$ closed under multiplication? Under addition?'
+            answer: 'Yes under multiplication; no under addition ($1 + 1 = 2$).'
+            solution_sketch: 'All nine products land in $\{-1, 0, 1\}$; but one sum escapes, which is enough to refute closure.'
+          - problem: 'Is $\{0, 1\}$ closed under multiplication?'
+            answer: 'Yes.'
+            solution_sketch: '$0 \cdot 0 = 0$, $0 \cdot 1 = 0$, $1 \cdot 1 = 1$ — every product stays in the set.'
+        constraints: "exhaustively check a set of size at most 3, or exhibit one escaping pair"
+      - id: kp3
+        name: "Closure of described sets"
+        key_prerequisites: [set-notation]
+        exemplars:
+          - problem: 'Are the odd integers closed under multiplication? Under addition?'
+            answer: 'Yes under multiplication; no under addition ($1 + 1 = 2$).'
+            solution_sketch: '$(2j+1)(2k+1) = 2(2jk + j + k) + 1$ is odd; but the sum of two odds is even.'
+          - problem: 'Is the set $\{2^k : k \in \mathbb{N}\}$ of powers of $2$ closed under multiplication?'
+            answer: 'Yes: $2^a \cdot 2^b = 2^{a+b}$.'
+            solution_sketch: 'The exponents add, and a sum of naturals is natural.'
+        constraints: "closure arguments via a parametric form ($2k$, $2k+1$, $2^k$, $5k$)"
+    diagnostic_exemplar:
+      problem: 'Is the set $\{3k : k \in \mathbb{Z}\}$ of multiples of $3$ closed under addition? Under multiplication? And is $\mathbb{N} = \{0, 1, 2, \dots\}$ closed under subtraction?'
+      answer: 'Multiples of $3$ are closed under addition: $3a + 3b = 3(a+b)$, again of that form. They are closed under multiplication too: $(3a)(3b) = 3(3ab)$. But $\mathbb{N}$ is not closed under subtraction: $1 - 2 = -1 \notin \mathbb{N}$.'
+      solution_sketch: 'For a described set, substitute the general form and check the result still has that form; for a number system, a single counterexample settles failure.'
+    anki_seeds:
+      - front: 'To show $S$ is NOT closed under an operation...'
+        back: 'exhibit $a, b \in S$ with $a * b \notin S$.'
+        type: basic
+      - front: 'Are the odd integers closed under $+$? Under $\cdot$?'
+        back: 'Not under $+$ (odd + odd = even); closed under $\cdot$.'
+        type: basic
+
+  - id: operation-tables
+    name: "Operation Tables"
+    core: true
+    difficulty: 0.52
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 120
+    prerequisites:
+      - id: checking-closure
+        weight: 0.5
+        key: true
+      - id: cartesian-products
+        weight: 0.2
+    knowledge_points:
+      - id: kp1
+        name: "Filling in a table"
+        key_prerequisites: [checking-closure]
+        exemplars:
+          - problem: 'In the addition-mod-$4$ table on $\{0, 1, 2, 3\}$, what are the entries for $2 + 3$ and $3 + 3$?'
+            answer: '$1$ and $2$.'
+            solution_sketch: '$2 + 3 = 5 \equiv 1$ and $3 + 3 = 6 \equiv 2 \pmod 4$.'
+          - problem: 'In the multiplication-mod-$5$ table on $\{1, 2, 3, 4\}$, what are the entries for $2 \cdot 4$ and $3 \cdot 3$?'
+            answer: '$3$ and $4$.'
+            solution_sketch: '$8 \equiv 3$ and $9 \equiv 4 \pmod 5$.'
+        constraints: "entries of mod-$n$ addition or multiplication tables, $n \\le 7$"
+      - id: kp2
+        name: "Reading properties from a table"
+        key_prerequisites: [checking-closure]
+        exemplars:
+          - problem: 'How do you see from an operation table that the operation is commutative? Is addition mod $4$ commutative?'
+            answer: 'The table is symmetric across its main diagonal; yes.'
+            solution_sketch: 'Symmetry means the $(a, b)$ entry equals the $(b, a)$ entry — exactly commutativity. Mod-$n$ addition inherits commutativity from $\mathbb{Z}$.'
+          - problem: 'Find the identity element in the addition-mod-$4$ table, and in the multiplication-mod-$5$ table on $\{1, 2, 3, 4\}$.'
+            answer: '$0$; $1$.'
+            solution_sketch: 'The identity''s row and column repeat the headers unchanged: row $0$ reads $0, 1, 2, 3$; row $1$ of the multiplication table reads $1, 2, 3, 4$.'
+        constraints: "diagonal symmetry for commutativity; header-copy rows for identity"
+      - id: kp3
+        name: "Inverses from a table"
+        key_prerequisites: [checking-closure]
+        exemplars:
+          - problem: 'In addition mod $4$, find the inverse of $3$.'
+            answer: '$1$'
+            solution_sketch: 'Scan row $3$ for the identity $0$: $3 + 1 = 4 \equiv 0$, so $1$ is the inverse.'
+          - problem: 'In multiplication mod $5$ on $\{1, 2, 3, 4\}$, find the inverses of $2$ and $4$.'
+            answer: '$3$ and $4$.'
+            solution_sketch: '$2 \cdot 3 = 6 \equiv 1$ and $4 \cdot 4 = 16 \equiv 1 \pmod 5$; $4$ is its own inverse.'
+        constraints: "locate the identity in each row; mod-$n$ tables only"
+    diagnostic_exemplar:
+      problem: 'In the addition-mod-$6$ table on $\{0, 1, \dots, 5\}$: give the entry for $4 + 5$, the identity element and the inverse of $2$, and say how the table shows the operation is commutative.'
+      answer: 'The entry for $4 + 5$ is $9 \bmod 6 = 3$. The identity is $0$, since its row and column simply repeat the headings. The inverse of $2$ is $4$, because $2 + 4 = 6 \equiv 0$, the identity. Commutativity appears as symmetry of the table across its main diagonal: the entry in row $i$, column $j$ equals the entry in row $j$, column $i$.'
+      solution_sketch: 'Reduce mod $6$ for the entry; find the identity as the row repeating the headings, the inverse as the entry giving $0$, and read commutativity off the diagonal symmetry.'
+    anki_seeds:
+      - front: 'Commutativity in an operation table looks like...'
+        back: 'symmetry across the main diagonal.'
+        type: basic
+      - front: 'The identity element''s row and column in a table...'
+        back: 'repeat the row/column headers unchanged.'
+        type: basic
+
+  - id: binary-operations
+    name: "Binary Operations"
+    core: true
+    difficulty: 0.55
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 200
+    prerequisites:
+      - id: checking-closure
+        weight: 0.5
+        key: true
+      - id: functions-formal-definition
+        weight: 0.5
+        key: true
+      - id: cartesian-products
+        weight: 0.4
+        key: true
+      - id: operation-tables
+        weight: 0.3
+      - id: set-operations
+        weight: 0.0
+    knowledge_points:
+      - id: kp1
+        name: "Associativity and commutativity"
+        key_prerequisites: [functions-formal-definition]
+        exemplars:
+          - problem: 'On $\mathbb{Z}$ define $a * b = a + b - 1$. Prove $*$ is associative and commutative.'
+            answer: 'Both associativity sides equal $a + b + c - 2$; commutativity is symmetric.'
+            solution_sketch: 'Commutative: $a * b = a + b - 1 = b + a - 1 = b * a$. Associative: $(a * b) * c = (a + b - 1) + c - 1 = a + b + c - 2$ and $a * (b * c) = a + (b + c - 1) - 1 = a + b + c - 2$; equal. $\square$'
+          - problem: 'On $\mathbb{Z}$ define $a * b = a + 2b$. Is $*$ commutative? Associative?'
+            answer: 'Neither.'
+            solution_sketch: 'Commutativity: $a * b = a + 2b$ vs $b * a = b + 2a$; unequal, e.g. $1 * 2 = 5 \ne 4 = 2 * 1$. Associativity: $(a * b) * c = a + 2b + 2c$ vs $a * (b * c) = a + 2b + 4c$; unequal. So neither holds. $\square$'
+        constraints: "verify or refute the identities symbolically"
+      - id: kp2
+        name: "Identity elements"
+        key_prerequisites: [operation-tables]
+        exemplars:
+          - problem: 'For $a * b = a + b - 1$ on $\mathbb{Z}$, find the identity element.'
+            answer: '$e = 1$.'
+            solution_sketch: 'Need $a * e = a$: $a + e - 1 = a \Rightarrow e = 1$. Check $1 * a = 1 + a - 1 = a$, so $e = 1$ is a two-sided identity. $\square$'
+          - problem: 'Does the operation $a * b = a - b$ on $\mathbb{Z}$ have a two-sided identity?'
+            answer: 'No.'
+            solution_sketch: 'A right identity needs $a * e = a$: $a - e = a \Rightarrow e = 0$. But $e * a = 0 - a = -a \ne a$ in general, so $0$ is not a left identity. No two-sided identity exists. $\square$'
+        constraints: "solve $a * e = a$ and verify the two-sided condition"
+      - id: kp3
+        name: "Hunting for inverses"
+        key_prerequisites: [operation-tables]
+        exemplars:
+          - problem: 'For $a * b = a + b - 1$ on $\mathbb{Z}$ (identity $e = 1$), find the inverse of each element $a$.'
+            answer: '$2 - a$.'
+            solution_sketch: 'Solve $a * x = 1$: $a + x - 1 = 1 \Rightarrow x = 2 - a$; check $(2-a) * a = 2 - a + a - 1 = 1$. Every integer is invertible. $\square$'
+          - problem: 'For $a * b = a + b + ab$ on $\mathbb{R}$ (identity $e = 0$), which elements have inverses?'
+            answer: 'All $a \ne -1$, with inverse $-a/(1+a)$.'
+            solution_sketch: 'Solve $a + x + ax = 0$: $x(1 + a) = -a$, so $x = -a/(1+a)$ when $a \ne -1$. For $a = -1$: $-1 + x - x = -1 \ne 0$ for every $x$, so $-1$ has no inverse. $\square$'
+        constraints: "solve $a * x = e$ for $x$; identify any non-invertible elements"
+    diagnostic_exemplar:
+      problem: 'On $\mathbb{R}$ define $a * b = a + b + ab$. Show that $*$ is commutative, find its identity element, and determine exactly which elements have inverses.'
+      answer: 'Commutative: $a * b = a + b + ab = b + a + ba = b * a$. Identity: $a * e = a + e + ae = a$ forces $e(1 + a) = 0$ for every $a$, so $e = 0$; and indeed $a * 0 = a = 0 * a$. Inverses: $a * x = 0$ means $a + x + ax = 0$, i.e. $x(1 + a) = -a$. If $a \ne -1$ this has the unique real solution $x = \dfrac{-a}{1 + a}$, so $a$ is invertible; if $a = -1$ the equation becomes $0 = 1$, so $-1$ has no inverse. Exactly the elements $a \ne -1$ are invertible.'
+      solution_sketch: 'Symmetry of the formula gives commutativity; solve $a * e = a$ for the identity and $a * x = 0$ for inverses, watching the case $1 + a = 0$.'
+    anki_seeds:
+      - front: 'A binary operation on a set $S$ is...'
+        back: 'a function $* : S \times S \to S$ (so $S$ is closed under $*$).'
+        type: basic
+      - front: 'Identity element $e$ for an operation $*$ on $S$?'
+        back: 'An element with $a * e = e * a = a$ for every $a \in S$.'
+        type: basic
+
+  - id: semigroup-examples
+    name: "Semigroups and Associativity Checks"
+    core: true
+    difficulty: 0.57
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 170
+    prerequisites:
+      - id: binary-operations
+        weight: 0.6
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: "Verifying associativity"
+        key_prerequisites: [binary-operations]
+        exemplars:
+          - problem: 'Prove that $a * b = \max(a, b)$ on $\mathbb{Z}$ is associative.'
+            answer: 'Both $(a*b)*c$ and $a*(b*c)$ equal $\max(a, b, c)$.'
+            solution_sketch: '$\max(\max(a,b), c)$ and $\max(a, \max(b,c))$ each pick the largest of the three values, so they agree. $\square$'
+          - problem: 'Prove that $a * b = a + b + ab$ on $\mathbb{R}$ is associative.'
+            answer: 'Both sides expand to $a + b + c + ab + ac + bc + abc$.'
+            solution_sketch: '$(a*b)*c = (a+b+ab) + c + (a+b+ab)c = a+b+c+ab+ac+bc+abc$; the same expansion works for $a*(b*c)$. $\square$'
+        constraints: "expand both sides symbolically or argue from the meaning of the operation"
+      - id: kp2
+        name: "Refuting associativity"
+        key_prerequisites: [binary-operations]
+        exemplars:
+          - problem: 'Show that division on $\mathbb{R}^{>0}$ is not associative.'
+            answer: '$(8 / 4) / 2 = 1$ but $8 / (4 / 2) = 4$.'
+            solution_sketch: 'One concrete triple with unequal groupings refutes associativity.'
+          - problem: 'Show that the averaging operation $a * b = \tfrac{a + b}{2}$ on $\mathbb{Q}$ is not associative.'
+            answer: '$(0 * 0) * 1 = \tfrac{1}{2}$ but $0 * (0 * 1) = \tfrac{1}{4}$.'
+            solution_sketch: '$(0*0)*1 = 0*1 = \tfrac12$, while $0*(0*1) = 0*\tfrac12 = \tfrac14$. $\square$'
+        constraints: "one explicit counterexample triple, both groupings evaluated"
+      - id: kp3
+        name: "Semigroups without an identity"
+        key_prerequisites: [binary-operations]
+        exemplars:
+          - problem: 'Show that the even integers under multiplication form a semigroup but not a monoid.'
+            answer: 'Closed and associative, but the only candidate identity $1$ is odd.'
+            solution_sketch: 'Products of evens are even (closure) and multiplication is associative. An identity $e$ would need $e \cdot 2 = 2$, so $e = 1 \notin 2\mathbb{Z}$. $\square$'
+          - problem: 'Show that $((0, 1), \cdot)$ is a semigroup but not a monoid.'
+            answer: 'Products stay in $(0,1)$; an identity would have to be $1 \notin (0, 1)$.'
+            solution_sketch: 'For $0 < a, b < 1$, $0 < ab < 1$ (closure); associativity is inherited from $\mathbb{R}$. $e \cdot a = a$ forces $e = 1$, which is excluded. $\square$'
+        constraints: "verify closure and associativity, then show the forced identity lies outside the set"
+    diagnostic_exemplar:
+      problem: 'Is $a * b = \min(a, b)$ on $\mathbb{Z}$ associative? Commutative? Does it have an identity?'
+      answer: 'Associative and commutative; no identity.'
+      solution_sketch: 'Both groupings give the smallest of the three; symmetry gives commutativity. An identity would need $\min(a, e) = a$ for all $a$, i.e. $e$ above every integer — impossible. $\square$'
+    anki_seeds:
+      - front: 'Standard way to refute associativity?'
+        back: 'One concrete triple where $(a * b) * c \ne a * (b * c)$.'
+        type: basic
+      - front: 'Is $(2\mathbb{Z}, \cdot)$ a monoid?'
+        back: 'No — it is a semigroup; the would-be identity $1$ is not even.'
+        type: basic
+
+  - id: monoids
+    name: "Monoids"
+    core: true
+    difficulty: 0.60
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 210
+    prerequisites:
+      - id: binary-operations
+        weight: 0.6
+        key: true
+      - id: semigroup-examples
+        weight: 0.4
+        key: true
+      - id: functions-formal-definition
+        weight: 0.0
+    knowledge_points:
+      - id: kp1
+        name: "Semigroups and monoids"
+        key_prerequisites: [binary-operations]
+        exemplars:
+          - problem: 'Show $(\mathbb{N}, +, 0)$ is a monoid.'
+            answer: 'Closed, associative, identity $0$.'
+            solution_sketch: 'Addition on $\mathbb{N}$ is closed and associative, and $n + 0 = 0 + n = n$, so $0$ is an identity. Hence $(\mathbb{N}, +, 0)$ is a monoid. $\square$'
+          - problem: 'Show $(\mathbb{Z}, \cdot, 1)$ is a monoid.'
+            answer: 'Closed, associative, identity $1$.'
+            solution_sketch: 'Integer multiplication is closed and associative, and $n \cdot 1 = 1 \cdot n = n$, so $1$ is an identity. Hence $(\mathbb{Z}, \cdot, 1)$ is a monoid. $\square$'
+        constraints: "verify closure, associativity, and a two-sided identity"
+      - id: kp2
+        name: "Uniqueness of the identity"
+        key_prerequisites: [binary-operations]
+        exemplars:
+          - problem: 'Prove: a monoid has a unique identity element.'
+            answer: 'If $e_1, e_2$ are both identities, $e_1 = e_1 * e_2 = e_2$.'
+            solution_sketch: 'Suppose $e_1$ and $e_2$ are both identities. Then $e_1 = e_1 * e_2$ (since $e_2$ is an identity) and $e_1 * e_2 = e_2$ (since $e_1$ is an identity). Hence $e_1 = e_2$. $\square$'
+          - problem: 'Is the set of positive integers under addition a monoid?'
+            answer: 'No; there is no identity element ($0$ is excluded).'
+            solution_sketch: 'Addition on $\mathbb{Z}^{+}$ is closed and associative, but an identity $e$ would need $n + e = n$, i.e. $e = 0 \notin \mathbb{Z}^{+}$. With no identity it is a semigroup but not a monoid. $\square$'
+        constraints: "play the two identities against each other"
+      - id: kp3
+        name: "Recognizing monoids and non-examples"
+        key_prerequisites: [binary-operations]
+        exemplars:
+          - problem: 'Is $(\mathbb{Z}, -, 0)$ (integers under subtraction) a monoid? Justify.'
+            answer: 'No; subtraction is not associative.'
+            solution_sketch: '$(a - b) - c = a - b - c$ but $a - (b - c) = a - b + c$; e.g. $(1 - 1) - 1 = -1 \ne 1 = 1 - (1 - 1)$. Associativity fails, so it is not a monoid. $\square$'
+          - problem: 'Is the set of $2 \times 2$ real matrices under multiplication, with the identity matrix, a monoid?'
+            answer: 'Yes.'
+            solution_sketch: 'Multiplication of $2 \times 2$ real matrices is closed and associative, and the identity matrix $I$ satisfies $AI = IA = A$. So it is a monoid (noncommutative). $\square$'
+        constraints: "check the axioms; a single failure rules out a monoid"
+    diagnostic_exemplar:
+      problem: 'Show that the set of functions $X \to X$ under composition, with $\mathrm{id}_X$, is a monoid, and prove that the identity element of any monoid is unique.'
+      answer: 'Closure: the composite of two functions $X \to X$ is again a function $X \to X$. Associativity: for every $x$, $((f \circ g) \circ h)(x) = f(g(h(x))) = (f \circ (g \circ h))(x)$, so the two composites agree. Identity: $(\mathrm{id}_X \circ f)(x) = f(x) = (f \circ \mathrm{id}_X)(x)$ for all $x$, so $\mathrm{id}_X$ is a two-sided identity. Hence this is a monoid. Uniqueness in general: if $e_1$ and $e_2$ are both identities of a monoid, then $e_1 = e_1 * e_2 = e_2$ — the first equality because $e_2$ is an identity, the second because $e_1$ is.'
+      solution_sketch: 'Check closure, associativity and neutrality for composition; the uniqueness argument multiplies the two candidate identities together.'
+    anki_seeds:
+      - front: 'Definition of a monoid?'
+        back: 'A set with an associative binary operation and a two-sided identity element.'
+        type: basic
+      - front: 'Semigroup vs. monoid?'
+        back: 'A semigroup has an associative operation; a monoid additionally has an identity element.'
+        type: basic
+
+  - id: powers-in-monoids
+    name: "Powers and Exponent Laws"
+    core: true
+    difficulty: 0.62
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 180
+    prerequisites:
+      - id: monoids
+        weight: 0.5
+        key: true
+      - id: mathematical-induction
+        weight: 0.5
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: "Defining and computing powers"
+        key_prerequisites: [monoids]
+        exemplars:
+          - problem: 'In the monoid of functions $\mathbb{R} \to \mathbb{R}$ under composition, let $f(x) = x + 2$. Compute $f^{3}$.'
+            answer: '$f^{3}(x) = x + 6$'
+            solution_sketch: 'Each application adds $2$; three applications add $6$.'
+          - problem: 'In the multiplication-mod-$10$ monoid on $\{0, 1, \dots, 9\}$, compute $3^{4}$ and $7^{2}$.'
+            answer: '$1$ and $9$.'
+            solution_sketch: '$3^4 = 81 \equiv 1$ and $7^2 = 49 \equiv 9 \pmod{10}$.'
+        constraints: "iterate a concrete monoid element; recursive definition $a^{n+1} = a^{n} a$, $a^{0} = e$"
+      - id: kp2
+        name: "The law $a^{m} a^{n} = a^{m+n}$"
+        key_prerequisites: [mathematical-induction]
+        exemplars:
+          - problem: 'In any monoid, prove $a^{m} a^{n} = a^{m+n}$ for all $m, n \ge 0$ by induction on $n$.'
+            answer: 'Base $n = 0$ uses $a^{0} = e$; the step peels one factor via $a^{n+1} = a^{n} a$.'
+            solution_sketch: 'Fix $m$. For $n = 0$: $a^m e = a^m = a^{m+0}$. Assuming $a^m a^n = a^{m+n}$: $a^m a^{n+1} = a^m (a^n a) = (a^m a^n) a = a^{m+n} a = a^{m+n+1}$, using associativity. $\square$'
+          - problem: 'Verify $a^{2} a^{3} = a^{5}$ concretely for $a = 2$ in $(\mathbb{Z}, \cdot)$.'
+            answer: '$4 \cdot 8 = 32 = 2^{5}$.'
+            solution_sketch: 'A sanity check of the general law on a concrete element.'
+        constraints: "induction on one exponent with the other fixed; cite associativity where used"
+      - id: kp3
+        name: "The law $(a^{m})^{n} = a^{mn}$"
+        key_prerequisites: [mathematical-induction]
+        exemplars:
+          - problem: 'In any monoid, prove $(a^{m})^{n} = a^{mn}$ for all $m, n \ge 0$ by induction on $n$.'
+            answer: 'Base $n = 0$: both sides are $e$; the step uses $a^{mn} a^{m} = a^{mn + m}$.'
+            solution_sketch: 'For $n = 0$: $(a^m)^0 = e = a^0$. Assuming $(a^m)^n = a^{mn}$: $(a^m)^{n+1} = (a^m)^n a^m = a^{mn} a^m = a^{mn+m} = a^{m(n+1)}$, using the addition law. $\square$'
+          - problem: 'In a monoid where $a b = b a$, prove $(ab)^{n} = a^{n} b^{n}$ for all $n \ge 0$ by induction.'
+            answer: 'The step commutes $b^{n}$ past $a$.'
+            solution_sketch: 'Base: $(ab)^0 = e = e e$. Step: $(ab)^{n+1} = (ab)^n (ab) = a^n b^n a b = a^n a b^n b = a^{n+1} b^{n+1}$, using $b^n a = a b^n$ (which follows from $ab = ba$ by an inner induction or repeated swaps). $\square$'
+        constraints: "induction proofs stacked on the previous law; note where commutativity is needed"
+    diagnostic_exemplar:
+      problem: 'In an arbitrary monoid, prove by induction on $n$ that $a^{m}a^{n} = a^{m+n}$ for all integers $m, n \ge 0$, and use it to show $(a^{2})^{3} = a^{6}$.'
+      answer: 'Powers are defined by $a^{0} = e$ and $a^{k+1} = a^{k}a$. Fix $m \ge 0$ and induct on $n$. Base $n = 0$: $a^{m}a^{0} = a^{m}e = a^{m} = a^{m+0}$. Step: assume $a^{m}a^{n} = a^{m+n}$; then $a^{m}a^{n+1} = a^{m}(a^{n}a) = (a^{m}a^{n})a = a^{m+n}a = a^{m+n+1}$, using associativity and the definition. So the law holds for all $n \ge 0$, and $m$ was arbitrary. Consequently $(a^{2})^{3} = a^{2}a^{2}a^{2} = a^{4}a^{2} = a^{6}$.'
+      solution_sketch: 'Induct on the second exponent, peeling one factor with $a^{n+1} = a^{n}a$ and re-associating; then apply the law twice.'
+    anki_seeds:
+      - front: '$a^{0}$ in a monoid?'
+        back: 'The identity $e$ (by convention/recursive definition).'
+        type: basic
+      - front: 'When does $(ab)^{n} = a^{n} b^{n}$ hold in a monoid?'
+        back: 'When $a$ and $b$ commute ($ab = ba$); not in general.'
+        type: basic
+
+  - id: inverse-elements
+    name: "Invertible Elements"
+    core: true
+    difficulty: 0.62
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 170
+    prerequisites:
+      - id: monoids
+        weight: 0.6
+        key: true
+      - id: function-composition-inverse
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: "Invertibility in number monoids"
+        key_prerequisites: [monoids]
+        exemplars:
+          - problem: 'Which elements of the monoid $(\mathbb{Z}, \cdot, 1)$ are invertible?'
+            answer: 'Only $1$ and $-1$.'
+            solution_sketch: '$ax = 1$ with $a, x \in \mathbb{Z}$ forces $|a| = |x| = 1$; e.g. $2$ has no integer inverse since $2x = 1$ has no integer solution. $\square$'
+          - problem: 'Which elements are invertible in $(\mathbb{Q}, \cdot, 1)$? In $(\mathbb{Z}, +, 0)$?'
+            answer: 'All nonzero rationals; every integer.'
+            solution_sketch: '$p/q \ne 0$ has inverse $q/p$; and $n$ has additive inverse $-n$. Only $0$ fails in the multiplicative case ($0 \cdot x = 0 \ne 1$). $\square$'
+        constraints: "classify the invertible elements and justify why the rest fail"
+      - id: kp2
+        name: "Invertibility in the function monoid"
+        key_prerequisites: [function-composition-inverse]
+        exemplars:
+          - problem: 'In the monoid of functions $\mathbb{R} \to \mathbb{R}$ under composition, is $f(x) = x^3$ invertible? Is $g(x) = x^2$?'
+            answer: '$f$ yes (inverse $\sqrt[3]{x}$); $g$ no.'
+            solution_sketch: 'An element of this monoid is invertible iff it is a bijection. $x^3$ is bijective with inverse $x^{1/3}$; $x^2$ is not injective ($g(1) = g(-1)$), so no two-sided inverse exists. $\square$'
+          - problem: 'In the same monoid, find the inverse of $h(x) = 2x + 3$ and verify one composition.'
+            answer: '$h^{-1}(x) = (x - 3)/2$; $h(h^{-1}(x)) = x$.'
+            solution_sketch: 'Solve $y = 2x + 3$: $x = (y-3)/2$. Then $h((x-3)/2) = 2 \cdot \tfrac{x-3}{2} + 3 = x$. $\square$'
+        constraints: "invertible iff bijective; verify by composing"
+      - id: kp3
+        name: "Solving equations with inverses"
+        key_prerequisites: [monoids]
+        exemplars:
+          - problem: 'Prove: if $a$ is invertible in a monoid, the equation $a * x = b$ has the unique solution $x = a^{-1} * b$.'
+            answer: 'Substitute for existence; left-multiply by $a^{-1}$ for uniqueness.'
+            solution_sketch: 'Existence: $a * (a^{-1} * b) = (a * a^{-1}) * b = e * b = b$. Uniqueness: from $a * x = b$, left-multiplying by $a^{-1}$ gives $x = a^{-1} * b$. $\square$'
+          - problem: 'In multiplication mod $7$, solve $3x \equiv 5 \pmod 7$ using an inverse.'
+            answer: '$x \equiv 4 \pmod 7$.'
+            solution_sketch: '$3 \cdot 5 = 15 \equiv 1$, so $3^{-1} = 5$. Then $x \equiv 5 \cdot 5 = 25 \equiv 4$; check $3 \cdot 4 = 12 \equiv 5$. $\square$'
+        constraints: "use associativity and the inverse; one abstract proof, one concrete solve"
+    diagnostic_exemplar:
+      problem: 'Prove that if $a$ is invertible in a monoid $(M, *, e)$ then $a * x = b$ has the unique solution $x = a^{-1} * b$, and use this to solve $3x \equiv 5 \pmod 7$.'
+      answer: 'Existence: $a * (a^{-1} * b) = (a * a^{-1}) * b = e * b = b$, so $x = a^{-1} * b$ solves the equation. Uniqueness: if $a * x = b$, multiply on the left by $a^{-1}$ and use associativity: $x = e * x = (a^{-1} * a) * x = a^{-1} * (a * x) = a^{-1} * b$. For $3x \equiv 5 \pmod 7$: in multiplication mod $7$ the element $3$ is invertible with $3^{-1} = 5$, since $3 \cdot 5 = 15 \equiv 1$; hence $x \equiv 5 \cdot 5 = 25 \equiv 4 \pmod 7$, and indeed $3 \cdot 4 = 12 \equiv 5$.'
+      solution_sketch: 'Substitute for existence and left-multiply by the inverse for uniqueness; then find the inverse of $3$ mod $7$ and apply the formula.'
+    anki_seeds:
+      - front: 'Invertible elements of $(\mathbb{Z}, \cdot)$?'
+        back: 'Only $\pm 1$.'
+        type: basic
+      - front: 'In the monoid of functions $X \to X$ under composition, $f$ is invertible iff...'
+        back: '$f$ is a bijection.'
+        type: basic
+
+  - id: groups-intro
+    name: "Introduction to Groups"
+    core: true
+    difficulty: 0.65
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 230
+    prerequisites:
+      - id: monoids
+        weight: 0.5
+        key: true
+      - id: binary-operations
+        weight: 0.4
+        key: true
+      - id: inverse-elements
+        weight: 0.4
+        key: true
+      - id: set-notation
+        weight: 0.0
+    knowledge_points:
+      - id: kp1
+        name: "Group axioms and examples"
+        key_prerequisites: [monoids]
+        exemplars:
+          - problem: 'Show $(\mathbb{Z}, +)$ is a group but $(\mathbb{Z}, \cdot)$ is not.'
+            answer: 'Under $+$ every $n$ has inverse $-n$; under $\cdot$, $2$ has no integer inverse.'
+            solution_sketch: 'Under $+$: associative, identity $0$, and inverse $-n$ of $n$ — a group. Under $\cdot$: identity $1$, but $2$ has no integer $x$ with $2x = 1$, so inverses fail; not a group. $\square$'
+          - problem: 'Is $(\mathbb{Q} \setminus \{0\}, \cdot)$ a group? Justify.'
+            answer: 'Yes; every nonzero rational has a rational inverse.'
+            solution_sketch: 'Closed and associative under multiplication, identity $1$, and each $p/q \ne 0$ has inverse $q/p \in \mathbb{Q} \setminus \{0\}$. So it is a group (abelian). $\square$'
+        constraints: "check closure, associativity, identity, and inverses"
+      - id: kp2
+        name: "Uniqueness of inverses"
+        key_prerequisites: [monoids]
+        exemplars:
+          - problem: 'Prove: in a group, each element has a unique inverse.'
+            answer: 'If $b, c$ both invert $a$, then $b = b(ac) = (ba)c = c$.'
+            solution_sketch: 'Let $b, c$ be inverses of $a$, so $ab = ba = e$ and $ac = ca = e$. Then $b = be = b(ac) = (ba)c = ec = c$. $\square$'
+          - problem: 'Prove: in a group, $(a^{-1})^{-1} = a$.'
+            answer: 'Since $a a^{-1} = a^{-1} a = e$, $a$ inverts $a^{-1}$.'
+            solution_sketch: 'We have $a^{-1} a = a a^{-1} = e$, which says $a$ is a two-sided inverse of $a^{-1}$. By uniqueness of inverses, $(a^{-1})^{-1} = a$. $\square$'
+        constraints: "use associativity and the identity to collapse candidates"
+      - id: kp3
+        name: "Cancellation"
+        key_prerequisites: [binary-operations]
+        exemplars:
+          - problem: 'Prove the left cancellation law: in a group, $ab = ac \Rightarrow b = c$.'
+            answer: 'Multiply on the left by $a^{-1}$.'
+            solution_sketch: 'From $ab = ac$, multiply on the left by $a^{-1}$: $a^{-1}(ab) = a^{-1}(ac)$, so $(a^{-1}a)b = (a^{-1}a)c$, i.e. $eb = ec$, giving $b = c$. $\square$'
+          - problem: 'Prove the right cancellation law: in a group, $ba = ca \Rightarrow b = c$.'
+            answer: 'Multiply on the right by $a^{-1}$.'
+            solution_sketch: 'From $ba = ca$, multiply on the right by $a^{-1}$: $(ba)a^{-1} = (ca)a^{-1}$, so $b(aa^{-1}) = c(aa^{-1})$, i.e. $be = ce$, giving $b = c$. $\square$'
+        constraints: "apply an inverse to both sides"
+    diagnostic_exemplar:
+      problem: 'Prove that in any group, $(ab)^{-1} = b^{-1}a^{-1}$.'
+      answer: 'Check $(ab)(b^{-1}a^{-1}) = e$.'
+      solution_sketch: '$(ab)(b^{-1}a^{-1}) = a(bb^{-1})a^{-1} = aea^{-1} = aa^{-1} = e$, and similarly $(b^{-1}a^{-1})(ab) = e$. By uniqueness of inverses, $(ab)^{-1} = b^{-1}a^{-1}$. $\square$'
+    anki_seeds:
+      - front: 'The four group axioms?'
+        back: 'Closure, associativity, an identity element, and an inverse for every element.'
+        type: basic
+      - front: 'Inverse of a product $(ab)^{-1}$ in a group?'
+        back: '$b^{-1}a^{-1}$ (the order reverses).'
+        type: basic
+
+  - id: abelian-groups
+    name: "Commutativity and Abelian Groups"
+    core: true                 # machinery: "abelian" is used across proofs, abstract-algebra, and category-theory (31+ uses) and was defined nowhere before this topic
+    difficulty: 0.66
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 200
+    prerequisites:
+      - id: groups-intro
+        weight: 0.6
+        key: true
+      - id: binary-operations
+        weight: 0.4
+        key: true
+      - id: function-composition-inverse
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: "The definition, and verifying abelian groups"
+        key_prerequisites: [groups-intro, binary-operations]
+        exemplars:
+          - problem: 'Define what it means for a group to be abelian, and show that $(\mathbb{Z}, +)$ and $(\mathbb{Q} \setminus \{0\}, \cdot)$ are abelian groups.'
+            answer: 'A group is abelian when $ab = ba$ for all elements; both operations inherit commutativity from arithmetic.'
+            solution_sketch: 'A group $G$ is abelian (commutative) when $a * b = b * a$ for all $a, b \in G$. Both are groups (shown previously), and $m + n = n + m$, $\tfrac{p}{q} \cdot \tfrac{r}{s} = \tfrac{r}{s} \cdot \tfrac{p}{q}$ hold for all numbers, so both groups are abelian. $\square$'
+          - problem: 'The set $\mathbb{Z}$ with $a * b = a + b - 1$ is a group with identity $1$. Prove it is abelian.'
+            answer: '$a * b = a + b - 1 = b + a - 1 = b * a$.'
+            solution_sketch: 'For all $a, b \in \mathbb{Z}$: $a * b = a + b - 1 = b + a - 1 = b * a$, by commutativity of ordinary addition. So the group is abelian. $\square$'
+        constraints: "verify $a * b = b * a$ symbolically for a group already known to be a group; state the definition when asked"
+      - id: kp2
+        name: "Nonabelian groups"
+        key_prerequisites: [function-composition-inverse]
+        exemplars:
+          - problem: 'Let $f, g : \mathbb{R} \to \mathbb{R}$ be the bijections $f(x) = x + 1$ and $g(x) = 2x$. Show that the group of bijections $\mathbb{R} \to \mathbb{R}$ under composition is not abelian.'
+            answer: '$(f \circ g)(x) = 2x + 1$ but $(g \circ f)(x) = 2x + 2$.'
+            solution_sketch: '$(f \circ g)(x) = f(2x) = 2x + 1$ and $(g \circ f)(x) = g(x + 1) = 2x + 2$; these differ (e.g. at $x = 0$), so composition does not commute. One non-commuting pair refutes abelianness. $\square$'
+          - problem: 'Let $f$ swap $1 \leftrightarrow 2$ and fix $3$, and let $g$ swap $2 \leftrightarrow 3$ and fix $1$, as bijections of $\{1, 2, 3\}$. Show $f \circ g \ne g \circ f$.'
+            answer: '$(f \circ g)(1) = 2$ but $(g \circ f)(1) = 3$.'
+            solution_sketch: 'Evaluate pointwise at $1$: $(f \circ g)(1) = f(g(1)) = f(1) = 2$, while $(g \circ f)(1) = g(f(1)) = g(2) = 3$. They disagree at one input, so the functions differ. $\square$'
+        constraints: "one explicit non-commuting pair, both orders evaluated pointwise; composition examples only"
+      - id: kp3
+        name: "Reasoning inside abelian groups"
+        key_prerequisites: [groups-intro]
+        exemplars:
+          - problem: 'Prove: in an abelian group, $(ab)^{-1} = a^{-1} b^{-1}$.'
+            answer: 'In general $(ab)^{-1} = b^{-1} a^{-1}$; commutativity swaps the factors.'
+            solution_sketch: 'In any group $(ab)^{-1} = b^{-1} a^{-1}$. If the group is abelian, $b^{-1} a^{-1} = a^{-1} b^{-1}$. (Directly: $(ab)(a^{-1}b^{-1}) = a a^{-1} b b^{-1} = e$ after commuting $b$ past $a^{-1}$.) $\square$'
+          - problem: 'Prove: if every element of a group $G$ satisfies $a^{2} = e$, then $G$ is abelian.'
+            answer: '$ab = (ab)^{-1} = b^{-1} a^{-1} = ba$.'
+            solution_sketch: '$x^{2} = e$ says every element is its own inverse: $x = x^{-1}$. Apply this three times: $ab = (ab)^{-1} = b^{-1} a^{-1} = ba$, using the general reversal rule $(ab)^{-1} = b^{-1}a^{-1}$ in the middle. $\square$'
+        constraints: "short axiom-pushing proofs; each step cites a group axiom, the abelian hypothesis, or a previously proven fact"
+    diagnostic_exemplar:
+      problem: 'Prove that a group $G$ is abelian if and only if $(ab)^{-1} = a^{-1}b^{-1}$ for all $a, b \in G$.'
+      answer: 'In any group $(ab)^{-1} = b^{-1}a^{-1}$, since $(ab)(b^{-1}a^{-1}) = a(bb^{-1})a^{-1} = aa^{-1} = e$ and inverses are unique. ($\Rightarrow$) If $G$ is abelian then $b^{-1}a^{-1} = a^{-1}b^{-1}$, so $(ab)^{-1} = a^{-1}b^{-1}$. ($\Leftarrow$) Suppose $(ab)^{-1} = a^{-1}b^{-1}$ for all $a, b$. Comparing with the general formula gives $b^{-1}a^{-1} = a^{-1}b^{-1}$ for all $a, b$. Given arbitrary $x, y \in G$, apply this with $a = x^{-1}$ and $b = y^{-1}$ (every element is the inverse of its own inverse): $yx = xy$. Hence $G$ is abelian.'
+      solution_sketch: 'Start from the socks-shoes formula $(ab)^{-1} = b^{-1}a^{-1}$; the hypothesis then says inverses commute, and every element of a group is an inverse.'
+    anki_seeds:
+      - front: 'A group is abelian when...'
+        back: '$ab = ba$ for all elements $a, b$ (the operation is commutative; named after Niels Henrik Abel).'
+        type: basic
+      - front: 'A standard example of a nonabelian group?'
+        back: 'Bijections of a set with $\ge 3$ elements under composition (e.g. two overlapping swaps of $\{1,2,3\}$ do not commute).'
+        type: basic
+      - front: 'In an abelian group, $(ab)^{-1} = ?$'
+        back: '$a^{-1}b^{-1}$ — the general rule $b^{-1}a^{-1}$, but the order no longer matters.'
+        type: basic
+
+  - id: checking-homomorphisms
+    name: "Checking the Homomorphism Condition"
+    core: true
+    difficulty: 0.64
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 160
+    prerequisites:
+      - id: groups-intro
+        weight: 0.5
+        key: true
+      - id: functions-formal-definition
+        weight: 0.2
+      - id: exponential-functions
+        weight: 0.2
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Verifying the condition"
+        key_prerequisites: [groups-intro]
+        exemplars:
+          - problem: 'Is $\varphi : (\mathbb{Z}, +) \to (\mathbb{Z}, +)$, $\varphi(n) = 3n$, a homomorphism?'
+            answer: 'Yes: $3(m + n) = 3m + 3n$.'
+            solution_sketch: '$\varphi(m + n) = 3(m+n)$ and $\varphi(m) + \varphi(n) = 3m + 3n$ — equal for all $m, n$.'
+          - problem: 'Is $\varphi : (\mathbb{R}, +) \to (\mathbb{R}^{>0}, \cdot)$, $\varphi(x) = 2^{x}$, a homomorphism?'
+            answer: 'Yes: $2^{x+y} = 2^{x} \cdot 2^{y}$.'
+            solution_sketch: 'The operation on the left is addition, on the right multiplication; the exponent law matches them exactly.'
+        constraints: "check $\\varphi(x * y) = \\varphi(x) \\cdot \\varphi(y)$ symbolically; note which operation lives on each side"
+      - id: kp2
+        name: "Refuting with a counterexample"
+        key_prerequisites: [groups-intro]
+        exemplars:
+          - problem: 'Is $\varphi : (\mathbb{Z}, +) \to (\mathbb{Z}, +)$, $\varphi(n) = n + 1$, a homomorphism?'
+            answer: 'No.'
+            solution_sketch: '$\varphi(m + n) = m + n + 1$ but $\varphi(m) + \varphi(n) = m + n + 2$. (Quick tell: $\varphi(0) = 1 \ne 0$.)'
+          - problem: 'Is $\varphi : (\mathbb{Z}, +) \to (\mathbb{Z}, +)$, $\varphi(n) = n^2$, a homomorphism?'
+            answer: 'No: $\varphi(1 + 1) = 4$ but $\varphi(1) + \varphi(1) = 2$.'
+            solution_sketch: '$(m+n)^2 = m^2 + 2mn + n^2$ differs from $m^2 + n^2$ whenever $mn \ne 0$; one concrete pair refutes it.'
+        constraints: "one concrete pair where the two sides differ; the identity check is a fast filter"
+      - id: kp3
+        name: "Between different structures"
+        key_prerequisites: [groups-intro]
+        exemplars:
+          - problem: 'Is $\varphi(x) = |x|$ a homomorphism $(\mathbb{R} \setminus \{0\}, \cdot) \to (\mathbb{R}^{>0}, \cdot)$?'
+            answer: 'Yes: $|xy| = |x| \cdot |y|$.'
+            solution_sketch: 'Absolute value is multiplicative, and outputs are positive as required.'
+          - problem: 'Is the parity map $\varphi(n) = n \bmod 2$, from $(\mathbb{Z}, +)$ to $(\{0, 1\}, \oplus_2)$ (addition mod $2$), a homomorphism?'
+            answer: 'Yes: $(m + n) \bmod 2 = (m \bmod 2) \oplus_2 (n \bmod 2)$.'
+            solution_sketch: 'The parity of a sum depends only on the parities of the summands — the mod-$2$ addition table.'
+        constraints: "the two operations differ; make explicit which is used where"
+    diagnostic_exemplar:
+      problem: 'Decide, with justification: (a) is $\varphi(n) = n \bmod 3$ a homomorphism $(\mathbb{Z}, +) \to (\mathbb{Z}_3, +)$? (b) is $\psi(x) = x^2$ a homomorphism $(\mathbb{R}, +) \to (\mathbb{R}, +)$?'
+      answer: '(a) Yes: reduction mod $3$ satisfies $(m + n) \bmod 3 = (m \bmod 3) + (n \bmod 3)$ in $\mathbb{Z}_3$, which is exactly the homomorphism condition — note the operation is ordinary addition on the left and addition mod $3$ on the right. (b) No: the condition would read $(x + y)^2 = x^2 + y^2$, which fails at $x = y = 1$ ($4 \ne 2$); the cross term $2xy$ spoils it.'
+      solution_sketch: 'Test $\varphi(x \ast y) = \varphi(x) \ast \varphi(y)$ with the correct operation on each side; one numerical counterexample refutes.'
+    anki_seeds:
+      - front: 'Fast first check when testing whether $\varphi$ is a group homomorphism?'
+        back: 'Whether $\varphi(e_G) = e_H$ — if not, it cannot be a homomorphism.'
+        type: basic
+      - front: 'Is $x \mapsto x + c$ ($c \ne 0$) a homomorphism of $(\mathbb{R}, +)$?'
+        back: 'No — it sends $0$ to $c \ne 0$.'
+        type: basic
+
+  - id: homomorphisms-intro
+    name: "Introduction to Homomorphisms"
+    core: true
+    difficulty: 0.68
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 240
+    prerequisites:
+      - id: groups-intro
+        weight: 0.5
+        key: true
+      - id: functions-injective-surjective
+        weight: 0.4
+        key: true
+      - id: checking-homomorphisms
+        weight: 0.4
+        key: true
+      - id: function-composition-inverse
+        weight: 0.3
+      - id: powers-in-monoids
+        weight: 0.2
+      - id: log-product-quotient-rules
+        weight: 0.3
+        key: false
+      - id: common-natural-logarithms
+        weight: 0.2
+        key: false
+      - id: monoids
+        weight: 0.0
+    knowledge_points:
+      - id: kp1
+        name: "The homomorphism condition"
+        key_prerequisites: [groups-intro]
+        exemplars:
+          - problem: 'Prove $\exp : (\mathbb{R}, +) \to (\mathbb{R}^{>0}, \cdot)$, $x \mapsto e^{x}$, is a homomorphism.'
+            answer: '$e^{x + y} = e^{x} e^{y}$.'
+            solution_sketch: 'For all $x, y$, $\exp(x + y) = e^{x+y} = e^{x} e^{y} = \exp(x)\exp(y)$ — the exponent product rule $a^{m}a^{n} = a^{m+n}$, applied to the exponential function with base $e$. So $\exp$ preserves the operation and is a group homomorphism. $\square$'
+          - problem: 'Prove $\ln : (\mathbb{R}^{>0}, \cdot) \to (\mathbb{R}, +)$ is a homomorphism.'
+            answer: '$\ln(xy) = \ln x + \ln y$.'
+            solution_sketch: 'For all $x, y > 0$, $\ln(xy) = \ln x + \ln y$ (the logarithm law), so $\ln$ carries the product to the sum — a group homomorphism (indeed the inverse of $\exp$). $\square$'
+        constraints: "prove $\\varphi(x * y) = \\varphi(x) \\cdot \\varphi(y)$ for a map between different operations"
+      - id: kp2
+        name: "Homomorphisms preserve identity"
+        key_prerequisites: [groups-intro]
+        exemplars:
+          - problem: 'Prove: a group homomorphism $\varphi : G \to H$ satisfies $\varphi(e_G) = e_H$.'
+            answer: '$\varphi(e_G) = \varphi(e_G)^2$; cancel.'
+            solution_sketch: '$\varphi(e_G) = \varphi(e_G e_G) = \varphi(e_G)\varphi(e_G)$. Multiplying by $\varphi(e_G)^{-1}$ in $H$ gives $e_H = \varphi(e_G)$. $\square$'
+          - problem: 'Prove: for a group homomorphism $\varphi$, $\varphi(e_G)$ is idempotent: $\varphi(e_G)\varphi(e_G) = \varphi(e_G)$.'
+            answer: '$\varphi(e_G e_G) = \varphi(e_G)$.'
+            solution_sketch: '$\varphi(e_G)\varphi(e_G) = \varphi(e_G e_G) = \varphi(e_G)$, using $e_G e_G = e_G$ and that $\varphi$ preserves products. (Cancelling then gives $\varphi(e_G) = e_H$.) $\square$'
+        constraints: "use $e_G e_G = e_G$ and cancellation in $H$"
+      - id: kp3
+        name: "Homomorphisms preserve inverses and powers"
+        key_prerequisites: [function-composition-inverse]
+        exemplars:
+          - problem: 'Prove: for a group homomorphism $\varphi$, $\varphi(x^{-1}) = \varphi(x)^{-1}$.'
+            answer: '$\varphi(x)\varphi(x^{-1}) = \varphi(e_G) = e_H$.'
+            solution_sketch: '$\varphi(x)\varphi(x^{-1}) = \varphi(xx^{-1}) = \varphi(e_G) = e_H$, and likewise on the other side, so $\varphi(x^{-1})$ is the inverse of $\varphi(x)$. $\square$'
+          - problem: 'For a group homomorphism $\varphi$ and integer $n \ge 1$, prove $\varphi(x^{n}) = \varphi(x)^{n}$.'
+            answer: 'Induction using $\varphi(x^{n}) = \varphi(x^{n-1})\varphi(x)$.'
+            solution_sketch: 'Base $n = 1$: $\varphi(x) = \varphi(x)$. Step: $\varphi(x^{n+1}) = \varphi(x^{n} x) = \varphi(x^{n})\varphi(x) = \varphi(x)^{n}\varphi(x) = \varphi(x)^{n+1}$. $\square$'
+        constraints: "reduce to identity-preservation; use induction for powers"
+    diagnostic_exemplar:
+      problem: 'Let $\varphi : (\mathbb{Z}, +) \to (\mathbb{Z}, +)$ be a homomorphism with $\varphi(1) = 3$. Prove $\varphi(n) = 3n$ for all $n \in \mathbb{Z}$.'
+      answer: 'Additivity forces $\varphi(n) = n\varphi(1) = 3n$.'
+      solution_sketch: 'For $n \ge 0$, $\varphi(n) = \varphi(1 + \cdots + 1) = n\varphi(1) = 3n$ by induction; $\varphi(0) = 0$ and $\varphi(-n) = -\varphi(n) = -3n$. So $\varphi(n) = 3n$ for all $n$. $\square$'
+    anki_seeds:
+      - front: 'Definition of a group homomorphism?'
+        back: 'A map $\varphi : G \to H$ with $\varphi(xy) = \varphi(x)\varphi(y)$ for all $x, y \in G$.'
+        type: basic
+      - front: 'What do homomorphisms do to identity and inverses?'
+        back: '$\varphi(e_G) = e_H$ and $\varphi(x^{-1}) = \varphi(x)^{-1}$.'
+        type: basic
+      - front: 'An isomorphism is...'
+        back: 'a bijective homomorphism (its inverse map is then also a homomorphism).'
+        type: basic
+
+  - id: finite-cardinality-bijections
+    name: "Finite Cardinality via Bijections"
+    core: false                # supplemental: head of the terminal cardinality branch
+    difficulty: 0.62
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 190
+    prerequisites:
+      - id: functions-injective-surjective
+        weight: 0.5
+        key: true
+      - id: pigeonhole-principle
+        weight: 0.4
+        key: true
+      - id: counting-functions
+        weight: 0.2
+    knowledge_points:
+      - id: kp1
+        name: "Size as a bijection with {1, ..., n}"
+        key_prerequisites: [functions-injective-surjective]
+        exemplars:
+          - problem: 'Prove that $\{2, 4, 6, \dots, 2n\}$ has exactly $n$ elements by exhibiting a bijection with $\{1, 2, \dots, n\}$.'
+            answer: '$k \mapsto 2k$ is a bijection.'
+            solution_sketch: 'The map $k \mapsto 2k$ is injective ($2a = 2b \Rightarrow a = b$) and surjective (every listed even number is $2k$ for some $1 \le k \le n$). $\square$'
+          - problem: 'Prove that $\{5, 6, 7, \dots, 17\}$ has $13$ elements.'
+            answer: '$k \mapsto k + 4$ bijects $\{1, \dots, 13\}$ onto it.'
+            solution_sketch: 'The shift $k \mapsto k + 4$ is injective, and its outputs for $k = 1, \dots, 13$ are exactly $5, \dots, 17$. $\square$'
+        constraints: "exhibit an explicit bijection from $\\{1, \\dots, n\\}$ and verify both properties"
+      - id: kp2
+        name: "Bijections and matching sizes"
+        key_prerequisites: [pigeonhole-principle]
+        exemplars:
+          - problem: 'Prove: for finite sets, if there is a bijection $A \to B$ then $|A| = |B|$; and there is no bijection $\{1,2,3\} \to \{a, b\}$.'
+            answer: 'Compose bijections with the counting bijections; $3 > 2$ kills injectivity.'
+            solution_sketch: 'Composing $\{1, \dots, m\} \to A \to B \to \{1, \dots, n\}$ gives a bijection between counting sets, forcing $m = n$. And any map $\{1,2,3\} \to \{a,b\}$ repeats a value by pigeonhole, so no bijection exists. $\square$'
+          - problem: 'Prove: for finite sets, an injection $A \to B$ exists if and only if $|A| \le |B|$.'
+            answer: 'Pigeonhole rules out $|A| > |B|$; listing elements builds the injection otherwise.'
+            solution_sketch: 'If $f : A \to B$ is injective then $|A| = |f(A)| \le |B|$. Conversely if $|A| \le |B|$, send the $i$-th element of $A$ to the $i$-th element of $B$ — injective since the elements are distinct. $\square$'
+        constraints: "connect bijections/injections to size comparisons via pigeonhole"
+      - id: kp3
+        name: "Cardinality arithmetic"
+        key_prerequisites: [functions-injective-surjective]
+        exemplars:
+          - problem: 'Prove: if $A$ and $B$ are finite and disjoint, then $|A \cup B| = |A| + |B|$.'
+            answer: 'Concatenate the two counting bijections.'
+            solution_sketch: 'Given bijections $\{1, \dots, m\} \to A$ and $\{1, \dots, n\} \to B$, map $i \le m$ into $A$ and $m + j$ (for $1 \le j \le n$) into $B$. Disjointness makes this well-defined and bijective onto $A \cup B$. $\square$'
+          - problem: 'Prove: if $A$ is finite and $a \notin A$, then $|A \cup \{a\}| = |A| + 1$.'
+            answer: 'Extend a counting bijection by sending $n + 1 \mapsto a$.'
+            solution_sketch: 'Take a bijection $f : \{1, \dots, n\} \to A$ and define $g = f$ on $\{1, \dots, n\}$ with $g(n+1) = a$. Since $a \notin A$, $g$ is injective, and it is onto $A \cup \{a\}$. $\square$'
+        constraints: "build the new bijection explicitly from the given ones"
+    diagnostic_exemplar:
+      problem: 'Let $A = \{10, 11, \dots, 99\}$ and $B = \{200, 201, \dots, 209\}$. Prove that $|A| = 90$ and that $|A \cup B| = 100$.'
+      answer: 'The map $k \mapsto k + 9$ sends $\{1, \dots, 90\}$ into $A$; it is injective (adding $9$ is) and onto ($a \in A$ equals $(a-9) + 9$ with $1 \le a - 9 \le 90$), so it is a bijection and $|A| = 90$. Likewise $k \mapsto k + 199$ is a bijection $\{1, \dots, 10\} \to B$, so $|B| = 10$. The sets are disjoint, since every element of $A$ is at most $99$ and every element of $B$ is at least $200$. Concatenating the two counting bijections gives $h : \{1, \dots, 100\} \to A \cup B$ with $h(j) = j + 9$ for $1 \le j \le 90$ and $h(j) = j + 109$ for $91 \le j \le 100$ (so $h(91) = 200$ and $h(100) = 209$); $h$ is a bijection, hence $|A \cup B| = 100 = |A| + |B|$.'
+      solution_sketch: 'Exhibit a shift bijection from an initial segment for each set, then glue the two bijections — legitimate because the sets are disjoint.'
+    anki_seeds:
+      - front: '"$A$ has $n$ elements" formally means...'
+        back: 'there is a bijection $\{1, 2, \dots, n\} \to A$.'
+        type: basic
+      - front: 'For finite sets, an injection $A \to B$ exists iff...'
+        back: '$|A| \le |B|$.'
+        type: basic
+
+  - id: infinite-sets
+    name: "Infinite Sets"
+    core: false                # supplemental: cardinality branch
+    difficulty: 0.66
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 210
+    prerequisites:
+      - id: finite-cardinality-bijections
+        weight: 0.5
+        key: true
+      - id: proof-by-contradiction
+        weight: 0.4
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: "Finite vs infinite; subsets and supersets"
+        key_prerequisites: [finite-cardinality-bijections]
+        exemplars:
+          - problem: 'Using the fact that subsets of finite sets are finite, prove: if $A$ is infinite and $A \subseteq B$, then $B$ is infinite.'
+            answer: 'Contrapositive: $B$ finite would make its subset $A$ finite.'
+            solution_sketch: 'Suppose $B$ were finite. Then its subset $A$ would be finite, contradicting the hypothesis. So $B$ is infinite. $\square$'
+          - problem: 'Prove that $\mathbb{Z}$ and $\mathbb{Q}$ are infinite, given that $\mathbb{N}$ is.'
+            answer: '$\mathbb{N} \subseteq \mathbb{Z} \subseteq \mathbb{Q}$; supersets of infinite sets are infinite.'
+            solution_sketch: 'Each contains $\mathbb{N}$, so each is infinite by the superset principle. $\square$'
+        constraints: "superset/contrapositive arguments; the subset-of-finite fact may be cited"
+      - id: kp2
+        name: "N is infinite"
+        key_prerequisites: [proof-by-contradiction]
+        exemplars:
+          - problem: 'Prove that $\mathbb{N}$ is infinite: no bijection $\{1, \dots, n\} \to \mathbb{N}$ exists for any $n$.'
+            answer: 'The image of any such map misses $\max(f(1), \dots, f(n)) + 1$.'
+            solution_sketch: 'Suppose $f : \{1, \dots, n\} \to \mathbb{N}$ were a bijection. Let $M = \max(f(1), \dots, f(n))$. Then $M + 1 \in \mathbb{N}$ is not in the image, so $f$ is not surjective — contradiction. $\square$'
+          - problem: 'Prove that the set $\{2^k : k \in \mathbb{N}\}$ of powers of $2$ is infinite.'
+            answer: '$k \mapsto 2^k$ injects the infinite set $\mathbb{N}$ into it; or repeat the max-plus-one argument.'
+            solution_sketch: 'Any finite list of powers of $2$ has a largest element $2^M$; then $2^{M+1}$ is a power of $2$ not on the list. So no finite enumeration captures the set. $\square$'
+        constraints: "contradiction via a maximum-plus-one escape element"
+      - id: kp3
+        name: "Pairing an infinite set with a proper subset"
+        key_prerequisites: [finite-cardinality-bijections]
+        exemplars:
+          - problem: 'Exhibit a bijection between $\mathbb{N} = \{0, 1, 2, \dots\}$ and its proper subset $\mathbb{Z}^{+} = \{1, 2, 3, \dots\}$.'
+            answer: '$n \mapsto n + 1$.'
+            solution_sketch: 'Injective: $a + 1 = b + 1 \Rightarrow a = b$. Surjective: $m \ge 1$ is the image of $m - 1 \ge 0$. A whole element is absorbed — impossible for finite sets. $\square$'
+          - problem: 'Exhibit a bijection between $(0, 1)$ and its proper subset $(0, \tfrac{1}{2})$.'
+            answer: '$x \mapsto x/2$.'
+            solution_sketch: 'Halving is injective, and every $y \in (0, \tfrac12)$ is $x/2$ for $x = 2y \in (0, 1)$. $\square$'
+        constraints: "explicit bijection with a proper subset; verify both directions"
+    diagnostic_exemplar:
+      problem: 'Prove that the set $E = \{2k : k \in \mathbb{Z}\}$ of even integers is infinite, and exhibit a bijection from $E$ onto its proper subset $\{4k : k \in \mathbb{Z}\}$.'
+      answer: 'The map $k \mapsto 2k$ is a bijection $\mathbb{Z} \to E$ (injective since $2k = 2l$ forces $k = l$, onto by definition of $E$). Now $\mathbb{Z}$ is infinite: it contains $\mathbb{N}$, which is infinite, and subsets of finite sets are finite. If $E$ were finite, composing the bijection with a counting bijection would make $\mathbb{Z}$ finite too — so $E$ is infinite. For the second part, $f : E \to \{4k : k \in \mathbb{Z}\}$, $f(x) = 2x$, is injective ($2x = 2y \Rightarrow x = y$) and onto (any $4k$ is $2 \cdot 2k$ with $2k \in E$), and the containment is proper since $2 \in E$ but $2 \notin \{4k\}$.'
+      solution_sketch: 'Transport infiniteness along a bijection with $\mathbb{Z}$, then double every even integer — pairing a set with a proper subset is the hallmark of infinity.'
+    anki_seeds:
+      - front: 'A set is infinite when...'
+        back: 'it is not finite: no bijection with $\{1, \dots, n\}$ for any $n$.'
+        type: basic
+      - front: 'Hallmark of infinite sets impossible for finite ones?'
+        back: 'A bijection with a proper subset of itself (e.g. $n \mapsto n + 1$ on $\mathbb{N}$).'
+        type: basic
+
+  - id: cardinality-countability
+    name: "Cardinality and Countability"
+    core: false                # supplemental: cardinality branch
+    difficulty: 0.68
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 250
+    prerequisites:
+      - id: functions-injective-surjective
+        weight: 0.5
+        key: true
+      - id: function-composition-inverse
+        weight: 0.4
+        key: true
+      - id: finite-cardinality-bijections
+        weight: 0.4
+        key: true
+      - id: infinite-sets
+        weight: 0.3
+      - id: pigeonhole-principle
+        weight: 0.0
+    knowledge_points:
+      - id: kp1
+        name: "Equinumerosity via bijection"
+        key_prerequisites: [functions-injective-surjective]
+        exemplars:
+          - problem: 'Prove $|\mathbb{N}| = |E|$, where $E$ is the set of even natural numbers.'
+            answer: 'The map $n \mapsto 2n$ is a bijection.'
+            solution_sketch: 'Define $f : \mathbb{N} \to E$ by $f(n) = 2n$. It is injective ($2a = 2b \Rightarrow a = b$) and surjective (every even natural is $2n$). A bijection exists, so $|\mathbb{N}| = |E|$. $\square$'
+          - problem: 'Prove $|\mathbb{N}| = |\mathbb{N} \cup \{-1\}|$.'
+            answer: 'The shift map $n \mapsto n - 1$ is a bijection.'
+            solution_sketch: 'Define $f : \mathbb{N} \to \mathbb{N} \cup \{-1\}$ by $f(n) = n - 1$. It is injective and surjective onto $\{-1, 0, 1, 2, \dots\}$, so the two sets have the same cardinality. Adding one element to an infinite set does not change its cardinality. $\square$'
+        constraints: "exhibit an explicit bijection and verify both directions"
+      - id: kp2
+        name: "Countable sets"
+        key_prerequisites: [functions-injective-surjective]
+        exemplars:
+          - problem: 'Prove $\mathbb{Z}$ is countable.'
+            answer: 'The listing $0, -1, 1, -2, 2, \dots$ is a bijection $\mathbb{N} \to \mathbb{Z}$.'
+            solution_sketch: 'Define $f : \mathbb{N} \to \mathbb{Z}$ by $f(n) = n/2$ if $n$ is even and $f(n) = -(n + 1)/2$ if $n$ is odd. This enumerates $0, -1, 1, -2, 2, \dots$, hitting each integer exactly once, so $\mathbb{Z}$ is countable. $\square$'
+          - problem: 'Prove the set of odd positive integers is countable.'
+            answer: 'The bijection $n \mapsto 2n - 1$ from $\mathbb{Z}^{+}$.'
+            solution_sketch: 'Define $f : \mathbb{Z}^{+} \to \{\text{odd positives}\}$ by $f(n) = 2n - 1$. It is injective and hits every odd positive integer, so the set is countable. $\square$'
+        constraints: "give an explicit enumeration or bijection with $\\mathbb{N}$"
+      - id: kp3
+        name: "Countability of products and rationals"
+        key_prerequisites: [function-composition-inverse]
+        exemplars:
+          - problem: 'Prove $\mathbb{Q}$ is countable.'
+            answer: 'A diagonal enumeration of $p/q$, skipping repeats, surjects from $\mathbb{N}$.'
+            solution_sketch: 'Each rational is $p/q$ with $q \ge 1$. Arrange fractions in a grid indexed by numerator and denominator and traverse it diagonally, skipping non-reduced or repeated entries; this gives a surjection from $\mathbb{N}$ onto the infinite set $\mathbb{Q}$, so $\mathbb{Q}$ is countable. $\square$'
+          - problem: 'Prove that a countable union of countable sets is countable.'
+            answer: 'Arrange the sets in rows and enumerate along diagonals.'
+            solution_sketch: 'Let $A_1, A_2, \dots$ be countable, with $A_i = \{a_{i1}, a_{i2}, \dots\}$. Place $a_{ij}$ in row $i$, column $j$, and enumerate along finite diagonals ($i + j$ constant), skipping repeats. This lists $\bigcup_i A_i$ as a sequence, so it is countable. $\square$'
+        constraints: "use a grid / diagonal enumeration for a product-like set"
+    diagnostic_exemplar:
+      problem: 'Prove $\mathbb{N} \times \mathbb{N}$ is countable.'
+      answer: 'The map $(m, n) \mapsto 2^{m} 3^{n}$ is injective into $\mathbb{N}$.'
+      solution_sketch: 'The map $(m, n) \mapsto 2^{m} 3^{n}$ is injective by unique factorization, so $\mathbb{N} \times \mathbb{N}$ injects into $\mathbb{N}$; being infinite, it is countable. $\square$'
+    anki_seeds:
+      - front: 'When do two sets have the same cardinality?'
+        back: 'When there is a bijection between them.'
+        type: basic
+      - front: 'Definition: a set is countable?'
+        back: 'It is finite, or there is a bijection with $\mathbb{N}$ (equivalently, its elements can be listed as a sequence).'
+        type: basic
+
+  - id: interval-bijections
+    name: "Bijections Between Intervals"
+    core: false                # supplemental: cardinality branch
+    difficulty: 0.68
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 200
+    prerequisites:
+      - id: function-composition-inverse
+        weight: 0.5
+        key: true
+      - id: cardinality-countability
+        weight: 0.4
+        key: true
+      - id: infinite-sets
+        weight: 0.2
+    knowledge_points:
+      - id: kp1
+        name: "Linear bijections between bounded intervals"
+        key_prerequisites: [function-composition-inverse]
+        exemplars:
+          - problem: 'Exhibit a bijection $(0, 1) \to (2, 5)$ and verify it.'
+            answer: '$f(x) = 2 + 3x$, with inverse $f^{-1}(y) = (y - 2)/3$.'
+            solution_sketch: '$f$ is strictly increasing (hence injective), $f(0^+) = 2$ and $f(1^-) = 5$ so the image is $(2, 5)$, and the explicit inverse confirms bijectivity. $\square$'
+          - problem: 'For $a < b$, give a bijection $[0, 1] \to [a, b]$.'
+            answer: '$f(x) = a + (b - a)x$.'
+            solution_sketch: 'Strictly increasing with $f(0) = a$, $f(1) = b$; inverse $f^{-1}(y) = (y - a)/(b - a)$. So any two closed bounded intervals have the same cardinality. $\square$'
+        constraints: "affine maps between stated intervals; verify with the explicit inverse"
+      - id: kp2
+        name: "Reaching unbounded intervals"
+        key_prerequisites: [function-composition-inverse]
+        exemplars:
+          - problem: 'Show $f(x) = 1/x$ is a bijection $(0, 1) \to (1, \infty)$.'
+            answer: 'Strictly decreasing there, with inverse $y \mapsto 1/y$.'
+            solution_sketch: 'For $0 < x < 1$, $1/x > 1$; injective since $1/a = 1/b \Rightarrow a = b$; and every $y > 1$ is $f(1/y)$ with $0 < 1/y < 1$. $\square$'
+          - problem: 'Show $x \mapsto e^{x}$ is a bijection $\mathbb{R} \to (0, \infty)$.'
+            answer: 'Strictly increasing with inverse $\ln$.'
+            solution_sketch: '$e^x$ is injective (strictly increasing) and every $y > 0$ equals $e^{\ln y}$; the two compositions with $\ln$ are identities. $\square$'
+        constraints: "one reciprocal or exponential map; identify the inverse explicitly"
+      - id: kp3
+        name: "Composing bijections to reach R"
+        key_prerequisites: [cardinality-countability]
+        exemplars:
+          - problem: 'Show $x \mapsto \tan\left(\pi\left(x - \tfrac{1}{2}\right)\right)$ is a bijection $(0, 1) \to \mathbb{R}$.'
+            answer: 'The inner map hits $(-\tfrac{\pi}{2}, \tfrac{\pi}{2})$, where $\tan$ is a bijection onto $\mathbb{R}$.'
+            solution_sketch: '$x \mapsto \pi(x - \tfrac12)$ bijects $(0,1)$ onto $(-\tfrac{\pi}{2}, \tfrac{\pi}{2})$, and $\tan$ is strictly increasing there with range $\mathbb{R}$; a composition of bijections is a bijection. $\square$'
+          - problem: 'Prove $|(a, b)| = |\mathbb{R}|$ for any $a < b$.'
+            answer: 'Compose an affine bijection $(a, b) \to (0, 1)$ with the tangent bijection $(0, 1) \to \mathbb{R}$.'
+            solution_sketch: '$x \mapsto (x - a)/(b - a)$ bijects $(a,b)$ onto $(0,1)$; follow with $x \mapsto \tan(\pi(x - \tfrac12))$. Compositions of bijections are bijections, so the cardinalities agree. $\square$'
+        constraints: "chain two verified bijections; cite that compositions of bijections are bijections"
+    diagnostic_exemplar:
+      problem: 'Give a bijection $(0, 1) \to (3, \infty)$, prove that it is one, and state its inverse.'
+      answer: 'Take $f(x) = \dfrac{1}{x} + 2$. For $x \in (0,1)$ we have $1/x \in (1, \infty)$, so $f(x) \in (3, \infty)$: the map lands in the target. Injective: $\dfrac1a + 2 = \dfrac1b + 2$ gives $\dfrac1a = \dfrac1b$, hence $a = b$. Surjective: given $y > 3$, set $x = \dfrac{1}{y - 2}$; since $y - 2 > 1$ we get $x \in (0,1)$, and $f(x) = (y-2) + 2 = y$. So $f$ is a bijection, with inverse $f^{-1}(y) = \dfrac{1}{y - 2}$.'
+      solution_sketch: 'Compose the reciprocal bijection $(0,1) \to (1,\infty)$ with a shift by $2$; check the image, injectivity, and a formula for the preimage.'
+    anki_seeds:
+      - front: 'Why is "same cardinality" transitive?'
+        back: 'Compositions of bijections are bijections.'
+        type: basic
+      - front: 'A standard bijection $(0, 1) \to \mathbb{R}$?'
+        back: '$x \mapsto \tan\left(\pi\left(x - \tfrac{1}{2}\right)\right)$.'
+        type: basic
+
+  - id: uncountability-diagonalization
+    name: "Uncountability and Diagonalization"
+    core: false                # supplemental: terminal capstone of the cardinality branch
+    difficulty: 0.70
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 260
+    prerequisites:
+      - id: cardinality-countability
+        weight: 0.6
+        key: true
+      - id: interval-bijections
+        weight: 0.3
+      - id: negating-statements
+        weight: 0.2
+      - id: functions-injective-surjective
+        weight: 0.0
+    knowledge_points:
+      - id: kp1
+        name: "The reals are uncountable"
+        key_prerequisites: [cardinality-countability]
+        exemplars:
+          - problem: 'Prove the interval $(0, 1)$ is uncountable using Cantor''s diagonal argument.'
+            answer: 'Any list of reals misses a number built to differ on the diagonal.'
+            solution_sketch: 'Suppose $(0, 1)$ were countable, listed as $x_1, x_2, \dots$ with decimals $x_i = 0.d_{i1}d_{i2}\dots$. Define $y = 0.e_1e_2\dots$ with $e_n = 5$ if $d_{nn} \ne 5$ and $e_n = 4$ otherwise. Then $y \in (0, 1)$ differs from every $x_n$ at digit $n$, so it is not in the list — a contradiction. Hence $(0, 1)$ is uncountable. $\square$'
+          - problem: 'Prove the set of infinite binary sequences is uncountable.'
+            answer: 'Diagonalize: flip the $n$th bit of the $n$th sequence.'
+            solution_sketch: 'Suppose the sequences were listed as $s_1, s_2, \dots$ with $s_i = (s_{i1}, s_{i2}, \dots)$. Define $t$ by $t_n = 1 - s_{nn}$. Then $t$ differs from every $s_n$ at position $n$, so it is not in the list — a contradiction. The set is uncountable. $\square$'
+        constraints: "construct the diagonal object differing from each listed entry"
+      - id: kp2
+        name: "Power sets and Cantor''s theorem"
+        key_prerequisites: [cardinality-countability]
+        exemplars:
+          - problem: 'Prove $\mathcal{P}(\mathbb{N})$ is uncountable.'
+            answer: 'No surjection $\mathbb{N} \to \mathcal{P}(\mathbb{N})$, via the diagonal set.'
+            solution_sketch: 'Suppose $f : \mathbb{N} \to \mathcal{P}(\mathbb{N})$ is a surjection. Let $D = \{n \in \mathbb{N} : n \notin f(n)\}$. If $D = f(m)$, then $m \in D \iff m \notin f(m) = D$, a contradiction. So no surjection exists and $\mathcal{P}(\mathbb{N})$ is uncountable. $\square$'
+          - problem: 'Prove there is no surjection $\mathbb{N} \to \{0, 1\}^{\mathbb{N}}$ (infinite binary sequences).'
+            answer: 'A diagonal sequence differs from every image.'
+            solution_sketch: 'Given $f : \mathbb{N} \to \{0,1\}^{\mathbb{N}}$, define $t$ by $t_n = 1 - f(n)_n$. Then $t \ne f(n)$ for every $n$ (they differ at position $n$), so $t$ is not in the image; $f$ is not surjective. $\square$'
+        constraints: "build the diagonal set $D = \\{a : a \\notin f(a)\\}$"
+      - id: kp3
+        name: "Cantor''s theorem in general"
+        key_prerequisites: [negating-statements]
+        exemplars:
+          - problem: 'Prove Cantor''s theorem: for any set $A$, there is no surjection $A \to \mathcal{P}(A)$.'
+            answer: 'The diagonal set $D = \{a : a \notin f(a)\}$ is not in the image.'
+            solution_sketch: 'Given $f : A \to \mathcal{P}(A)$, let $D = \{a \in A : a \notin f(a)\}$. If $D = f(x)$ for some $x$, then $x \in D \iff x \notin f(x) = D$, impossible. So $D$ is not in the image; $f$ is not surjective, hence $|A| < |\mathcal{P}(A)|$. $\square$'
+          - problem: 'Prove: for any set $A$, $|A| \ne |\mathcal{P}(A)|$.'
+            answer: 'No bijection exists since no surjection does (Cantor).'
+            solution_sketch: 'A bijection would in particular be a surjection $A \to \mathcal{P}(A)$; but the diagonal set $D = \{a : a \notin f(a)\}$ is never in the image of any $f : A \to \mathcal{P}(A)$, so no surjection — hence no bijection — exists. Thus $|A| \ne |\mathcal{P}(A)|$. $\square$'
+        constraints: "generalize the diagonal argument to an arbitrary set"
+    diagnostic_exemplar:
+      problem: 'Prove by a diagonal argument that the set $\{0,1\}^{\mathbb{N}}$ of infinite binary sequences is uncountable.'
+      answer: 'Let $f : \mathbb{N} \to \{0,1\}^{\mathbb{N}}$ be any map, and write $f(n) = (f(n)_0, f(n)_1, f(n)_2, \dots)$. Define a sequence $s$ by $s_n = 1 - f(n)_n$; each $s_n$ is $0$ or $1$, so $s \in \{0,1\}^{\mathbb{N}}$. For every $n$, $s$ differs from $f(n)$ in position $n$, so $s \ne f(n)$; hence $s$ is not in the image and $f$ is not surjective. Since no map $\mathbb{N} \to \{0,1\}^{\mathbb{N}}$ is surjective, none is a bijection, so the set is uncountable.'
+      solution_sketch: 'Take an arbitrary indexing, flip the $n$-th bit of the $n$-th sequence, and observe that the new sequence is missed by every index.'
+    anki_seeds:
+      - front: 'What does Cantor''s diagonal argument show?'
+        back: 'That $(0, 1)$ (hence $\mathbb{R}$) is uncountable: any proposed list of reals misses a number built to differ on the diagonal.'
+        type: basic
+      - front: 'Cantor''s theorem?'
+        back: 'For every set $A$, $|A| < |\mathcal{P}(A)|$; there is no surjection $A \to \mathcal{P}(A)$.'
+        type: basic
+
+  - id: schroder-bernstein
+    name: "The Schröder–Bernstein Theorem"
+    core: false                # supplemental: cardinality branch (all supplemental); consumed by nothing downstream — Phase C §7
+    difficulty: 0.72
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 260
+    prerequisites:
+      - {id: prime-factorization, weight: 0.3, key: false}          # L1 #10: kp1's injectivity of (m,n)->2^m 3^n rests on unique factorization
+      - id: cardinality-countability
+        weight: 0.6
+        key: true
+      - id: functions-injective-surjective
+        weight: 0.5
+        key: true
+      - id: interval-bijections
+        weight: 0.3
+      # L1 audit: was weight 0.0 (conceptual-only), but kp3 PROVES |P(N)| = |R| and
+      # this is the only topic in closure that teaches power sets — the content is
+      # exercised, not merely referenced.
+      - id: uncountability-diagonalization
+        weight: 0.5
+    knowledge_points:
+      - id: kp1
+        name: "Comparing cardinalities with injections"
+        key_prerequisites: [functions-injective-surjective]
+        exemplars:
+          - problem: 'Define $|A| \le |B|$, state the Schröder–Bernstein theorem, and use it to prove $|\mathbb{N} \times \mathbb{N}| = |\mathbb{N}|$.'
+            answer: 'Injections both ways: $n \mapsto (n, 0)$ and $(m, n) \mapsto 2^{m} 3^{n}$; Schröder–Bernstein upgrades them to a bijection.'
+            solution_sketch: '$|A| \le |B|$ means an injection $A \to B$ exists. Schröder–Bernstein: if $|A| \le |B|$ and $|B| \le |A|$, then $|A| = |B|$ (a bijection exists). Here $n \mapsto (n, 0)$ is injective, and $(m, n) \mapsto 2^{m}3^{n}$ is injective by unique factorization, so the theorem gives $|\mathbb{N} \times \mathbb{N}| = |\mathbb{N}|$ — no explicit pairing function needed. $\square$'
+          - problem: 'Prove: if $A \subseteq B$, then $|A| \le |B|$. Conclude that if also some injection $B \to A$ exists, then $|A| = |B|$.'
+            answer: 'The inclusion map $a \mapsto a$ is injective; Schröder–Bernstein finishes.'
+            solution_sketch: 'The inclusion $\iota : A \to B$, $\iota(a) = a$, is injective, so $|A| \le |B|$. With an injection $B \to A$ we also have $|B| \le |A|$, and Schröder–Bernstein gives $|A| = |B|$. $\square$'
+        constraints: "state the theorem precisely; injections must be exhibited and their injectivity justified"
+      - id: kp2
+        name: "Interval sandwiches"
+        key_prerequisites: [interval-bijections]
+        exemplars:
+          - problem: 'Prove $|[0, 1]| = |(0, 1)|$ using the Schröder–Bernstein theorem.'
+            answer: 'Inclusion $(0,1) \to [0,1]$ one way; $x \mapsto \tfrac{x}{2} + \tfrac{1}{4}$ the other; the theorem yields a bijection.'
+            solution_sketch: 'The inclusion $(0, 1) \to [0, 1]$ is injective. The affine map $x \mapsto \tfrac{x}{2} + \tfrac{1}{4}$ is injective and sends $[0, 1]$ into $[\tfrac14, \tfrac34] \subseteq (0, 1)$. Two injections, so Schröder–Bernstein gives a bijection — no explicit bijection dodging the endpoints is ever constructed. $\square$'
+          - problem: 'Prove $|[0, 1)| = |\mathbb{R}|$.'
+            answer: 'Inclusion into $\mathbb{R}$ one way; the inverse of a known bijection $(0, 1) \to \mathbb{R}$ the other.'
+            solution_sketch: 'The inclusion $[0, 1) \to \mathbb{R}$ is injective. For the reverse, the bijection $g : (0, 1) \to \mathbb{R}$, $g(x) = \tan(\pi(x - \tfrac12))$, has an injective inverse $g^{-1} : \mathbb{R} \to (0, 1) \subseteq [0, 1)$. Schröder–Bernstein concludes $|[0, 1)| = |\mathbb{R}|$. $\square$'
+        constraints: "one direction an inclusion; the other affine or the inverse of a previously proven bijection, cited explicitly"
+      - id: kp3
+        name: "Binary sequences, power sets, and the reals"
+        # L1 audit: kp3 proves |P(N)| = |R|; power sets are taught by
+        # uncountability-diagonalization (Cantor), so that is the honest peel-back
+        # target for a learner who fails this KP twice.
+        key_prerequisites: [uncountability-diagonalization, cardinality-countability]
+        exemplars:
+          - problem: 'Prove $|\{0, 1\}^{\mathbb{N}}| = |(0, 1)|$ (infinite binary sequences vs. the open unit interval).'
+            answer: 'Code bits as decimal digits $4/5$ one way; take a chosen binary expansion the other; Schröder–Bernstein finishes.'
+            solution_sketch: 'Injection $\{0,1\}^{\mathbb{N}} \to (0, 1)$: send $(b_1, b_2, \dots)$ to the decimal $0.d_1 d_2 \dots$ with $d_n = 4$ if $b_n = 0$ and $d_n = 5$ if $b_n = 1$; using only digits $4, 5$ avoids the dual-representation problem ($0.4999\dots = 0.5$ never arises), so distinct sequences give distinct reals. Injection $(0, 1) \to \{0,1\}^{\mathbb{N}}$: send $x$ to its binary expansion, always choosing the non-terminating one when there are two. Both maps are injective, so Schröder–Bernstein gives a bijection. $\square$'
+          - problem: 'Prove $|\mathcal{P}(\mathbb{N})| = |\mathbb{R}|$, citing previously established equalities.'
+            answer: 'Chain $\mathcal{P}(\mathbb{N}) \leftrightarrow \{0,1\}^{\mathbb{N}} \leftrightarrow (0, 1) \leftrightarrow \mathbb{R}$ and compose.'
+            solution_sketch: 'Indicator functions give a bijection $\mathcal{P}(\mathbb{N}) \to \{0,1\}^{\mathbb{N}}$ ($S \mapsto$ its characteristic sequence). By the previous exemplar $|\{0,1\}^{\mathbb{N}}| = |(0, 1)|$, and $|(0, 1)| = |\mathbb{R}|$ via the tangent bijection. Compositions of bijections are bijections, so $|\mathcal{P}(\mathbb{N})| = |\mathbb{R}|$. $\square$'
+        constraints: "digit-coding injections must address dual decimal/binary representations explicitly; chains cite each link"
+    diagnostic_exemplar:
+      problem: 'Using injections in both directions and the Schröder–Bernstein theorem, prove $|(0, 1)| = |[0, 1]|$.'
+      answer: 'Inclusion $(0,1) \to [0,1]$; $x \mapsto x/2 + 1/4$ from $[0,1]$ into $(0,1)$; the theorem gives a bijection.'
+      solution_sketch: 'Both maps are injective (inclusion trivially; the affine map is strictly increasing and lands in $[\tfrac14, \tfrac34]$). Schröder–Bernstein turns the two injections into a bijection. $\square$'
+    anki_seeds:
+      - front: 'The Schröder–Bernstein theorem?'
+        back: 'If injections $A \to B$ and $B \to A$ both exist, then a bijection $A \to B$ exists ($|A| \le |B|$ and $|B| \le |A|$ imply $|A| = |B|$).'
+        type: basic
+      - front: '$|A| \le |B|$ means...'
+        back: 'there is an injection $A \to B$.'
+        type: basic
+      - front: 'Why is Schröder–Bernstein so useful in practice?'
+        back: 'Two easy injections replace one hard explicit bijection (e.g. $|[0,1]| = |(0,1)|$ with no endpoint juggling).'
+        type: basic

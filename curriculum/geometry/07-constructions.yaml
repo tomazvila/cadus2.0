@@ -1,0 +1,127 @@
+unit: constructions
+course: geometry
+module: "Constructions"
+topics:
+  - id: straightedge-compass-constructions
+    name: Basic Straightedge and Compass Constructions
+    core: false                # terminal construction craft; only prospective consumer is the supplemental abstract-algebra impossibility capstone
+    difficulty: 0.42
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 150
+    prerequisites:
+      - id: triangle-congruence-criteria
+        weight: 0.6
+        key: true
+      - id: perpendicular-bisectors
+        weight: 0.5
+        key: false
+      - id: angle-bisectors
+        weight: 0.4
+        key: false
+      - id: postulates-theorems-justifications
+        weight: 0.3
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: Copy a segment and copy an angle
+        key_prerequisites: [triangle-congruence-criteria]
+        exemplars:
+          - problem: 'List the straightedge-and-compass steps that copy a segment $\overline{AB}$ onto a ray with endpoint $P$.'
+            answer: 'Set the compass to radius $AB$ (point on $A$, pencil on $B$); with center $P$, draw an arc crossing the ray at a point $Q$. Then $\overline{PQ} \cong \overline{AB}$, since both are radii of equal circles.'
+          - problem: 'In the copy-an-angle construction, an arc through both sides of $\angle A$ is copied at $P$, and the arc-to-arc distance is transferred. The two arc triangles then have three pairs of congruent sides. Which congruence criterion proves the copied angle is congruent to $\angle A$?'
+            answer: 'SSS; the corresponding angles of the congruent triangles are then congruent, so the copied angle equals $\angle A$.'
+            solution_sketch: 'Equal compass radii give two pairs of congruent sides; the transferred arc-to-arc distance gives the third. SSS plus corresponding parts.'
+        constraints: "steps must use only straightedge (line through two points) and compass (circle with chosen center and radius); every step names its center and radius; justification questions name a congruence criterion"
+      - id: kp2
+        name: Bisect a segment (perpendicular bisector)
+        key_prerequisites: [perpendicular-bisectors, triangle-congruence-criteria]
+        exemplars:
+          - problem: 'List the steps that construct the perpendicular bisector of $\overline{AB}$, and state which points of the figure are used to draw the final line.'
+            answer: 'With center $A$ and any radius greater than half of $AB$, draw arcs above and below the segment; with center $B$ and the same radius, draw arcs crossing them at points $X$ and $Y$. Draw line $XY$; it is the perpendicular bisector of $\overline{AB}$.'
+          - problem: 'In the perpendicular-bisector construction, the crossing points $X$ and $Y$ satisfy $XA = XB$ and $YA = YB$. Why does line $XY$ pass through the midpoint of $\overline{AB}$ at right angles?'
+            answer: 'Every point equidistant from $A$ and $B$ lies on the perpendicular bisector of $\overline{AB}$; since $X$ and $Y$ are both equidistant from $A$ and $B$, the line through them is that perpendicular bisector.'
+            solution_sketch: 'Both arc radii were equal, so $X$ and $Y$ are equidistant from the endpoints; the equidistance characterization identifies line $XY$.'
+        constraints: "equal radii from both endpoints, radius exceeding half the segment; justification cites the equidistance characterization of the perpendicular bisector"
+      - id: kp3
+        name: Bisect an angle; recognize invalid constructions
+        key_prerequisites: [angle-bisectors, triangle-congruence-criteria]
+        exemplars:
+          - problem: 'List the steps that bisect $\angle A$, and name the congruence criterion that proves the two resulting angles congruent.'
+            answer: 'With center $A$, draw an arc crossing both sides at $B$ and $C$; with equal radii and centers $B$ and $C$, draw arcs meeting at an interior point $D$; draw ray $\overrightarrow{AD}$. Triangles $ABD$ and $ACD$ have $AB = AC$, $BD = CD$, and shared $\overline{AD}$, so they are congruent by SSS, making $\angle BAD \cong \angle CAD$.'
+            solution_sketch: 'Two equal-radius arc pairs plus the shared ray segment give SSS; corresponding angles are the two halves.'
+          - problem: 'A student "bisects" $\angle A$ by marking with a ruler the point $2\,\text{cm}$ along each side and joining the midpoint of those marks to $A$. Why is this not a straightedge-and-compass construction?'
+            answer: 'It uses the ruler''s markings to measure lengths; a straightedge may only draw lines through existing points, and lengths may only be transferred with the compass.'
+        constraints: "invalid-construction items involve measuring with a marked ruler or judging by eye; the fix must restate the allowed straightedge and compass moves"
+    diagnostic_exemplar:
+      problem: 'Describe the straightedge-and-compass steps that bisect a given angle $\angle A$, and name the congruence criterion that proves the two resulting angles are congruent.'
+      answer: 'Arc from center $A$ crossing both sides at $B$ and $C$; equal arcs from centers $B$ and $C$ meeting at $D$; draw $\overrightarrow{AD}$. By SSS ($AB = AC$, $BD = CD$, $AD$ shared), $\triangle ABD \cong \triangle ACD$, so $\angle BAD \cong \angle CAD$.'
+      solution_sketch: 'One arc centred at the vertex cuts equal distances along both sides; two equal arcs from those points meet at a fourth. Those equal compass radii supply the three side pairs SSS needs, and CPCTC reads off the congruent halves.'
+    anki_seeds:
+      - front: "The two allowed construction moves are: straightedge draws ...; compass draws ..."
+        back: "the line through two existing points; a circle with a chosen center through a chosen point"
+        type: basic
+      - front: "The copy-an-angle and angle-bisector constructions are justified by the congruence criterion..."
+        back: "SSS"
+        type: basic
+
+  - id: perpendicular-parallel-constructions
+    name: Perpendicular, Parallel, and Polygon Constructions
+    core: false                # terminal construction craft; nothing downstream builds on it
+    difficulty: 0.48
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 180
+    prerequisites:
+      - {id: isosceles-equilateral-triangles, weight: 0.3, key: false} # L1 #11: kp3's hexagon-side justification uses the isosceles base-angle theorem
+      - id: straightedge-compass-constructions
+        weight: 0.8
+        key: true
+      - id: proving-lines-parallel
+        weight: 0.4
+        key: false
+      - id: central-angles-arcs
+        weight: 0.3
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: Perpendicular through a point
+        key_prerequisites: [straightedge-compass-constructions]
+        exemplars:
+          - problem: 'List the steps that construct the perpendicular to a line $\ell$ through a point $P$ not on $\ell$.'
+            answer: 'With center $P$, draw an arc crossing $\ell$ at two points $A$ and $B$; then construct the perpendicular bisector of $\overline{AB}$ (equal arcs from $A$ and $B$ meeting at $Q$ on the far side); line $PQ$ is perpendicular to $\ell$.'
+            solution_sketch: '$P$ and $Q$ are each equidistant from $A$ and $B$, so line $PQ$ is the perpendicular bisector of $\overline{AB}$.'
+          - problem: 'In the perpendicular-through-$P$ construction, $PA = PB$ and $QA = QB$. Which characterization proves line $PQ \perp \ell$?'
+            answer: 'The equidistance characterization of the perpendicular bisector: points equidistant from $A$ and $B$ lie on the perpendicular bisector of $\overline{AB}$, so line $PQ$ is it.'
+        constraints: "both cases: point on the line and point off the line; every step names center and radius; justification cites the perpendicular-bisector characterization"
+      - id: kp2
+        name: Parallel through a point by copying an angle
+        key_prerequisites: [straightedge-compass-constructions, proving-lines-parallel]
+        exemplars:
+          - problem: 'List the steps that construct the line through $P$ parallel to a line $\ell$ (with $P$ not on $\ell$).'
+            answer: 'Draw any transversal through $P$ crossing $\ell$ at $Q$; at $P$, copy the angle the transversal makes with $\ell$ at $Q$, in corresponding position; the new side through $P$ is the required parallel.'
+          - problem: 'The parallel construction copies at $P$ the angle formed at $Q$, in corresponding position. Which theorem proves the constructed line is parallel to $\ell$?'
+            answer: 'The converse of the corresponding angles postulate: congruent corresponding angles force the lines parallel.'
+            solution_sketch: 'The copied angle equals the original (SSS on the copy construction), so corresponding angles are congruent and the converse applies.'
+        constraints: "the justification must name the converse used (corresponding angles, or alternate interior angles if the copy is placed in alternate position)"
+      - id: kp3
+        name: Equilateral triangle and regular hexagon
+        key_prerequisites: [straightedge-compass-constructions, central-angles-arcs]
+        exemplars:
+          - problem: 'List the steps that construct an equilateral triangle on a given segment $\overline{AB}$, and justify why all three sides are congruent.'
+            answer: 'With centers $A$ and $B$ and radius $AB$, draw arcs meeting at $C$; draw $\overline{AC}$ and $\overline{BC}$. Then $AC = AB$ and $BC = AB$ as radii of the two equal circles, so all three sides equal $AB$.'
+          - problem: 'A regular hexagon is constructed by stepping the compass, set to the circle''s radius $r$, around the circle six times. Why does the side of the inscribed hexagon equal $r$?'
+            answer: 'Each side subtends a central angle of $360^\circ/6 = 60^\circ$; the triangle formed by two radii and one side is isosceles with a $60^\circ$ apex, hence equilateral, so the side equals $r$.'
+            solution_sketch: 'Two radii and the chord form an isosceles triangle whose apex angle is $60^\circ$; base angles are then $60^\circ$ each, so it is equilateral.'
+        constraints: "figures limited to equilateral triangle, inscribed regular hexagon, and inscribed square via perpendicular diameters; justification uses radii equality and central angles"
+    diagnostic_exemplar:
+      problem: 'List the straightedge-and-compass steps that construct the line through $P$ parallel to a line $\ell$ (with $P$ not on $\ell$), and name the theorem that proves the constructed line is parallel.'
+      answer: 'Draw a transversal through $P$ meeting $\ell$ at $Q$; copy the angle the transversal makes at $Q$ to $P$ in corresponding position (the copy is congruent by SSS); the new side through $P$ is the parallel, by the converse of the corresponding angles postulate.'
+      solution_sketch: 'The construction is really an angle copy: a transversal makes an angle at $\ell$, and copying it at $P$ in corresponding position makes a congruent corresponding pair — the converse of the corresponding angles postulate then forces the lines parallel.'
+    anki_seeds:
+      - front: "The side of a regular hexagon inscribed in a circle of radius r has length..."
+        back: "r"
+        type: basic
+      - front: "The parallel-through-a-point construction is proved by the converse of the ... postulate"
+        back: "corresponding angles"
+        type: basic

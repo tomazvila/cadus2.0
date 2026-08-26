@@ -1,0 +1,724 @@
+unit: polygons-quadrilaterals
+course: geometry
+module: "Polygons & Quadrilaterals"
+topics:
+  - id: interior-angles-polygons
+    name: Interior Angles of Polygons
+    core: true
+    difficulty: 0.26
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 60
+    prerequisites:
+      - id: triangle-angle-sum
+        weight: 0.7
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: Interior angle sum via triangulation
+        key_prerequisites: [triangle-angle-sum]
+        exemplars:
+          - problem: 'Find the sum of the interior angles of a hexagon, in degrees.'
+            answer: "720"
+            solution_sketch: 'A hexagon splits into $6 - 2 = 4$ triangles: $4 \cdot 180 = 720$.'
+          - problem: 'Find the sum of the interior angles of a heptagon, in degrees.'
+            answer: "900"
+            solution_sketch: '$(7 - 2) \cdot 180 = 900$.'
+          - problem: 'Find the sum of the interior angles of a quadrilateral, in degrees.'
+            answer: "360"
+        constraints: "n from 3 to 12; answer is (n-2)*180"
+      - id: kp2
+        name: Each interior angle of a regular polygon
+        key_prerequisites: [triangle-angle-sum]
+        exemplars:
+          - problem: 'Find each interior angle of a regular pentagon, in degrees.'
+            answer: "108"
+            solution_sketch: '$(5 - 2) \cdot 180 / 5 = 540 / 5 = 108$.'
+          - problem: 'Find each interior angle of a regular decagon, in degrees.'
+            answer: "144"
+            solution_sketch: '$(10 - 2) \cdot 180 / 10 = 1440 / 10 = 144$.'
+        constraints: "regular polygons only; n chosen so each angle is a whole number of degrees"
+      - id: kp3
+        name: Find a missing interior angle
+        key_prerequisites: [triangle-angle-sum]
+        exemplars:
+          - problem: 'Three angles of a quadrilateral measure $100^\circ$, $85^\circ$, and $95^\circ$. Find the fourth, in degrees.'
+            answer: "80"
+            solution_sketch: '$360 - (100 + 85 + 95) = 80$.'
+          - problem: 'Four angles of a pentagon measure $100^\circ$, $110^\circ$, $120^\circ$, and $130^\circ$. Find the fifth, in degrees.'
+            answer: "80"
+            solution_sketch: 'Pentagon sum $= 540$; $540 - 460 = 80$.'
+        constraints: "given angles sum below the polygon total; whole-degree answers"
+    diagnostic_exemplar:
+      problem: 'Find each interior angle of a regular dodecagon, in degrees.'
+      answer: "150"
+      solution_sketch: '$(12 - 2) \cdot 180 / 12 = 1800 / 12 = 150$.'
+    anki_seeds:
+      - front: "Interior angle sum of an n-gon:"
+        back: "(n - 2) x 180 degrees"
+        type: basic
+      - front: "An n-gon triangulates (from one vertex) into ... triangles."
+        back: "n - 2"
+        type: basic
+
+  - id: exterior-angles-polygons
+    name: Exterior Angles of Polygons
+    core: true
+    difficulty: 0.28
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 60
+    prerequisites:
+      - id: interior-angles-polygons
+        weight: 0.6
+        key: true
+      - id: angle-relationships
+        weight: 0.5
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: Exterior angles sum to 360
+        key_prerequisites: [interior-angles-polygons]
+        exemplars:
+          - problem: 'Find each exterior angle of a regular octagon, in degrees.'
+            answer: "45"
+            solution_sketch: '$360 / 8 = 45$.'
+          - problem: 'Find each exterior angle of a regular hexagon, in degrees.'
+            answer: "60"
+            solution_sketch: '$360 / 6 = 60$.'
+        constraints: "regular polygons; 360/n a whole number"
+      - id: kp2
+        name: Interior and exterior angles are supplementary
+        key_prerequisites: [angle-relationships]
+        exemplars:
+          - problem: 'An interior angle of a polygon measures $165^\circ$. Find the exterior angle at that vertex, in degrees.'
+            answer: "15"
+            solution_sketch: 'Interior and exterior angles form a linear pair: $180 - 165 = 15$.'
+          - problem: 'Each exterior angle of a regular pentagon is $72^\circ$. Find each interior angle, in degrees.'
+            answer: "108"
+            solution_sketch: '$180 - 72 = 108$.'
+        constraints: "linear-pair relationship; whole degrees"
+      - id: kp3
+        name: Count sides from an exterior angle
+        key_prerequisites: [interior-angles-polygons]
+        exemplars:
+          - problem: 'Each exterior angle of a regular polygon measures $24^\circ$. How many sides does it have?'
+            answer: "15"
+            solution_sketch: '$n = 360 / 24 = 15$.'
+          - problem: 'Each exterior angle of a regular polygon measures $40^\circ$. How many sides does it have?'
+            answer: "9"
+            solution_sketch: '$n = 360 / 40 = 9$.'
+        constraints: "exterior angle divides 360 evenly"
+    diagnostic_exemplar:
+      problem: 'Each exterior angle of a regular polygon measures $20^\circ$. How many sides does the polygon have?'
+      answer: "18"
+      solution_sketch: '$n = 360 / 20 = 18$.'
+    anki_seeds:
+      - front: "The exterior angles of any convex polygon (one per vertex) sum to..."
+        back: "360 degrees"
+        type: basic
+      - front: "At each vertex of a polygon, interior angle + exterior angle ="
+        back: "180 degrees"
+        type: basic
+
+  - id: polygon-angle-sums
+    name: Polygon Angle Sums
+    core: true
+    difficulty: 0.32
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 90
+    prerequisites:
+      - id: interior-angles-polygons
+        weight: 0.8
+        key: true
+      - id: exterior-angles-polygons
+        weight: 0.7
+        key: true
+      - id: multi-step-equations
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: Solve for unknown angles algebraically
+        key_prerequisites: [interior-angles-polygons, multi-step-equations]
+        exemplars:
+          - problem: 'The angles of a quadrilateral measure $x^\circ$, $(2x)^\circ$, $(3x)^\circ$, and $(4x)^\circ$. Find the largest, in degrees.'
+            answer: "144"
+            solution_sketch: '$10x = 360 \Rightarrow x = 36$; largest $= 4x = 144^\circ$.'
+          - problem: 'The angles of a pentagon measure $x^\circ$, $(x+10)^\circ$, $(x+20)^\circ$, $(x+30)^\circ$, and $(x+40)^\circ$. Find the largest, in degrees.'
+            answer: "128"
+            solution_sketch: '$5x + 100 = 540 \Rightarrow x = 88$; largest $= 128^\circ$.'
+        constraints: "linear angle expressions; integer solutions"
+      - id: kp2
+        name: Count sides from an interior angle
+        key_prerequisites: [exterior-angles-polygons]
+        exemplars:
+          - problem: 'Each interior angle of a regular polygon measures $144^\circ$. How many sides does it have?'
+            answer: "10"
+            solution_sketch: 'Exterior angle $= 180 - 144 = 36$; $n = 360/36 = 10$.'
+          - problem: 'Each interior angle of a regular polygon measures $156^\circ$. How many sides does it have?'
+            answer: "15"
+            solution_sketch: 'Exterior angle $= 24$; $n = 360/24 = 15$.'
+        constraints: "go through the exterior angle; integer side counts"
+      - id: kp3
+        name: Combined interior-exterior reasoning
+        key_prerequisites: [interior-angles-polygons, exterior-angles-polygons]
+        exemplars:
+          - problem: 'The interior angles of a polygon sum to $1440^\circ$. How many sides does it have?'
+            answer: "10"
+            solution_sketch: '$(n-2) \cdot 180 = 1440 \Rightarrow n - 2 = 8 \Rightarrow n = 10$.'
+          - problem: 'In a regular polygon each interior angle is four times each exterior angle. How many sides does it have?'
+            answer: "10"
+            solution_sketch: '$4e + e = 180 \Rightarrow e = 36$; $n = 360/36 = 10$.'
+        constraints: "sums that are multiples of 180; ratio setups with whole-degree exterior angles"
+    diagnostic_exemplar:
+      problem: 'In a regular polygon each interior angle is five times each exterior angle. How many sides does the polygon have?'
+      answer: '12'
+      solution_sketch: 'Interior and exterior angles are supplementary: $5e + e = 180$ gives $e = 30^\circ$, so $n = 360/30 = 12$.'
+    anki_seeds:
+      - front: "Fastest route from a regular polygon's interior angle to its side count:"
+        back: "n = 360 / (180 - interior angle)"
+        type: basic
+      - front: "Interior angle sum S gives side count n ="
+        back: "S/180 + 2"
+        type: basic
+
+  - id: parallelogram-sides-angles
+    name: Parallelogram Sides and Angles
+    core: true
+    difficulty: 0.32
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 90
+    prerequisites:
+      - id: parallel-lines-transversals
+        weight: 0.6
+        key: true
+      - id: polygon-angle-sums
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: Opposite sides are congruent
+        key_prerequisites: [parallel-lines-transversals]
+        exemplars:
+          - problem: 'In parallelogram $ABCD$, $AB = 13$ and $BC = 9$. Find the perimeter.'
+            answer: "44"
+            solution_sketch: 'Opposite sides congruent: $2(13 + 9) = 44$.'
+          - problem: 'A parallelogram has perimeter $50$ and one side of length $15$. Find the length of an adjacent side.'
+            answer: "10"
+            solution_sketch: '$2(15 + s) = 50 \Rightarrow s = 10$.'
+        constraints: "whole-number side lengths; perimeter setups"
+      - id: kp2
+        name: Opposite angles are congruent
+        key_prerequisites: [parallel-lines-transversals]
+        exemplars:
+          - problem: 'In parallelogram $ABCD$, $m\angle A = 75^\circ$. Find $m\angle C$, in degrees.'
+            answer: "75"
+            solution_sketch: 'Opposite angles of a parallelogram are congruent.'
+          - problem: 'In parallelogram $PQRS$, $m\angle R = 118^\circ$. Find $m\angle P$, in degrees.'
+            answer: "118"
+        constraints: "opposite vertex pairs; whole degrees"
+      - id: kp3
+        name: Consecutive angles are supplementary
+        key_prerequisites: [parallel-lines-transversals]
+        exemplars:
+          - problem: 'In parallelogram $ABCD$, $m\angle A = 68^\circ$. Find $m\angle B$, in degrees.'
+            answer: "112"
+            solution_sketch: 'Consecutive angles are supplementary: $180 - 68 = 112$.'
+          - problem: 'In parallelogram $ABCD$, $m\angle D = 41^\circ$. Find $m\angle C$, in degrees.'
+            answer: "139"
+            solution_sketch: '$180 - 41 = 139$.'
+        constraints: "consecutive vertex pairs; whole degrees"
+    diagnostic_exemplar:
+      problem: 'In parallelogram $ABCD$, $m\angle A = 104^\circ$. Find $m\angle D$, in degrees.'
+      answer: "76"
+      solution_sketch: '$A$ and $D$ are consecutive: $180 - 104 = 76$.'
+    anki_seeds:
+      - front: "In a parallelogram, opposite sides and opposite angles are..."
+        back: "congruent"
+        type: basic
+      - front: "In a parallelogram, consecutive angles are..."
+        back: "supplementary"
+        type: basic
+
+  - id: parallelogram-diagonals
+    name: Parallelogram Diagonals
+    core: true
+    difficulty: 0.34
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 90
+    prerequisites:
+      - id: parallelogram-sides-angles
+        weight: 0.7
+        key: true
+      - id: triangle-congruence-criteria
+        weight: 0.3
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: Diagonals bisect each other
+        key_prerequisites: [parallelogram-sides-angles]
+        exemplars:
+          - problem: 'In parallelogram $PQRS$ the diagonals meet at $T$, with $QT = 11$. Find $QS$.'
+            answer: "22"
+            solution_sketch: 'The intersection is the midpoint of each diagonal: $QS = 2 \cdot 11 = 22$.'
+          - problem: 'In parallelogram $ABCD$ the diagonals meet at $E$, with $AC = 30$. Find $AE$.'
+            answer: "15"
+        constraints: "halving or doubling a diagonal; whole numbers"
+      - id: kp2
+        name: Algebraic half-diagonal setups
+        key_prerequisites: [parallelogram-sides-angles]
+        exemplars:
+          - problem: 'In parallelogram $ABCD$ the diagonals meet at $E$, with $AE = 3x - 4$ and $EC = x + 8$. Find $AC$.'
+            answer: "28"
+            solution_sketch: 'Diagonals bisect each other: $3x - 4 = x + 8 \Rightarrow x = 6$; $AE = 14$, so $AC = 28$.'
+          - problem: 'In parallelogram $ABCD$ the diagonals meet at $E$, with $BE = 2x + 1$ and $ED = 3x - 7$. Find $BD$.'
+            answer: "34"
+            solution_sketch: '$2x + 1 = 3x - 7 \Rightarrow x = 8$; $BE = 17$, so $BD = 34$.'
+        constraints: "half-diagonal expressions linear with integer solutions"
+      - id: kp3
+        name: Why the diagonals bisect each other
+        key_prerequisites: [triangle-congruence-criteria]
+        exemplars:
+          - problem: 'In parallelogram $ABCD$ the diagonals meet at $E$. Which congruence criterion shows $\triangle ABE \cong \triangle CDE$ (using alternate interior angles at $A$ and $C$, $AB = CD$, and the angles at $B$ and $D$)?'
+            answer: 'ASA'
+            solution_sketch: 'Two pairs of alternate interior angles plus the included congruent sides $AB = CD$ give ASA.'
+          - problem: 'The congruence $\triangle ABE \cong \triangle CDE$ gives $AE = CE$ and $BE = DE$. Complete the property it proves, in one word: the diagonals ___ each other.'
+            answer: 'bisect'
+            solution_sketch: 'Each diagonal is cut into two congruent pieces at $E$, so the diagonals bisect each other.'
+        constraints: "conceptual justification questions; name the criterion or complete the property in one word"
+    diagnostic_exemplar:
+      problem: 'In parallelogram $PQRS$ the diagonals meet at $T$, with $PT = 4x - 6$ and $TR = 2x + 8$. Find $PR$.'
+      answer: "44"
+      solution_sketch: 'Diagonals bisect each other: $4x - 6 = 2x + 8 \Rightarrow x = 7$; $PT = 22$, so $PR = 44$.'
+    anki_seeds:
+      - front: "The diagonals of a parallelogram..."
+        back: "bisect each other"
+        type: basic
+
+  - id: parallelogram-properties
+    name: Parallelogram Properties
+    core: true
+    difficulty: 0.38
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 120
+    prerequisites:
+      - id: parallelogram-sides-angles
+        weight: 0.8
+        key: true
+      - id: parallelogram-diagonals
+        weight: 0.7
+        key: true
+      - id: multi-step-equations
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: Angle equations in parallelograms
+        key_prerequisites: [parallelogram-sides-angles, multi-step-equations]
+        exemplars:
+          - problem: 'Consecutive angles of a parallelogram measure $(3x + 20)^\circ$ and $(x + 40)^\circ$. Find the larger angle, in degrees.'
+            answer: "110"
+            solution_sketch: '$4x + 60 = 180 \Rightarrow x = 30$; the angles are $110^\circ$ and $70^\circ$.'
+          - problem: 'Opposite angles of a parallelogram measure $(5x - 12)^\circ$ and $(3x + 24)^\circ$. Find each, in degrees.'
+            answer: "78"
+            solution_sketch: 'Opposite angles are equal: $5x - 12 = 3x + 24 \Rightarrow x = 18$; each is $78^\circ$.'
+        constraints: "state whether the pair is opposite (equal) or consecutive (supplementary); integer solutions"
+      - id: kp2
+        name: Side and diagonal equations
+        key_prerequisites: [parallelogram-sides-angles, parallelogram-diagonals, multi-step-equations]
+        exemplars:
+          - problem: 'In parallelogram $ABCD$, $AB = 4x - 9$, $CD = 2x + 11$, and $BC = 3x$. Find the perimeter.'
+            answer: "122"
+            solution_sketch: '$AB = CD$: $4x - 9 = 2x + 11 \Rightarrow x = 10$; sides $31$ and $30$, perimeter $2(31 + 30) = 122$.'
+          - problem: 'In parallelogram $ABCD$ the diagonals meet at $E$, with $AE = 5x - 3$ and $EC = 2x + 9$. Find $AC$.'
+            answer: "34"
+            solution_sketch: '$5x - 3 = 2x + 9 \Rightarrow x = 4$; $AE = 17$, so $AC = 34$.'
+        constraints: "linear expressions with integer solutions; ask for a full side, perimeter, or diagonal"
+      - id: kp3
+        name: Recognizing parallelograms
+        key_prerequisites: [parallelogram-diagonals]
+        exemplars:
+          - problem: 'The diagonals of a quadrilateral bisect each other. Must it be a parallelogram? Answer yes or no.'
+            answer: 'yes'
+            solution_sketch: 'Diagonal bisection is a sufficient test for a parallelogram.'
+          - problem: 'A quadrilateral has one pair of congruent opposite sides and the other pair of opposite sides parallel. Must it be a parallelogram? Answer yes or no.'
+            answer: 'no'
+            solution_sketch: 'An isosceles trapezoid satisfies this without being a parallelogram; the pair must be both parallel and congruent.'
+        constraints: "tests: both pairs of opposite sides parallel or congruent, one pair both parallel and congruent, diagonals bisecting each other"
+    diagnostic_exemplar:
+      problem: 'In parallelogram $ABCD$, $m\angle A = (2x + 30)^\circ$ and $m\angle C = (3x + 10)^\circ$, with $AB = x + 15$ and $BC = x - 5$. Find the perimeter of $ABCD$.'
+      answer: '100'
+      solution_sketch: 'Opposite angles are congruent: $2x + 30 = 3x + 10$ gives $x = 20$; then $AB = 35$ and $BC = 15$, and opposite sides are congruent, so the perimeter is $2(35 + 15) = 100$.'
+    anki_seeds:
+      - front: "If the diagonals of a quadrilateral bisect each other, it is a..."
+        back: "parallelogram"
+        type: basic
+      - front: "One pair of opposite sides both parallel AND congruent makes a quadrilateral a..."
+        back: "parallelogram"
+        type: basic
+
+  - id: rectangle-properties
+    name: Rectangle Properties
+    core: false                # special-quadrilateral classification branch; terminal
+    difficulty: 0.38
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 120
+    prerequisites:
+      - id: parallelogram-properties
+        weight: 0.7
+        key: true
+      - id: pythagorean-theorem
+        weight: 0.5
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: Diagonals are congruent and bisect each other
+        key_prerequisites: [parallelogram-properties]
+        exemplars:
+          - problem: 'In a rectangle the diagonals measure $3x + 5$ and $5x - 9$. Find the length of a diagonal.'
+            answer: "26"
+            solution_sketch: 'Rectangle diagonals are congruent: $3x + 5 = 5x - 9 \Rightarrow x = 7$; diagonal $= 26$.'
+          - problem: 'In rectangle $ABCD$ the diagonals meet at $E$, with $AE = 7$. Find $BD$.'
+            answer: "14"
+            solution_sketch: 'Diagonals are congruent and bisect each other: $BD = AC = 2 \cdot 7 = 14$.'
+        constraints: "linear expressions for the congruence setups; half-diagonal equals half of either diagonal"
+      - id: kp2
+        name: Diagonal length via the Pythagorean theorem
+        key_prerequisites: [pythagorean-theorem]
+        exemplars:
+          - problem: 'A rectangle has sides $6$ and $8$. Find the length of a diagonal.'
+            answer: "10"
+            solution_sketch: '$\sqrt{6^2 + 8^2} = 10$.'
+          - problem: 'A rectangle has a width of $9$ and a diagonal of $15$. Find its length.'
+            answer: "12"
+            solution_sketch: '$\sqrt{15^2 - 9^2} = 12$.'
+        constraints: "Pythagorean triples for numeric diagonals"
+      - id: kp3
+        name: Angles formed by the diagonals
+        key_prerequisites: [parallelogram-properties]
+        exemplars:
+          - problem: 'In rectangle $ABCD$, diagonal $AC$ makes a $35^\circ$ angle with side $AB$. What angle does it make with side $AD$, in degrees?'
+            answer: "55"
+            solution_sketch: 'The sides meet at $90^\circ$: $90 - 35 = 55$.'
+          - problem: 'In rectangle $ABCD$, diagonal $BD$ makes a $28^\circ$ angle with side $AB$. Find the angle between diagonal $BD$ and side $BC$, in degrees.'
+            answer: "62"
+        constraints: "complementary splits of the right angle; whole degrees"
+    diagnostic_exemplar:
+      problem: 'A rectangle has sides $8$ and $15$. Find the length of a diagonal.'
+      answer: "17"
+      solution_sketch: '$\sqrt{8^2 + 15^2} = 17$.'
+    anki_seeds:
+      - front: "The diagonals of a rectangle are..."
+        back: "congruent (and bisect each other)"
+        type: basic
+
+  - id: rhombus-properties
+    name: Rhombus Properties
+    core: false                # special-quadrilateral classification branch; terminal
+    difficulty: 0.40
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 120
+    prerequisites:
+      - id: parallelogram-properties
+        weight: 0.7
+        key: true
+      - id: pythagorean-theorem
+        weight: 0.5
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: All four sides are congruent
+        key_prerequisites: [parallelogram-properties]
+        exemplars:
+          - problem: 'A rhombus has a side of length $7$. Find its perimeter.'
+            answer: "28"
+            solution_sketch: 'All sides congruent: $4 \cdot 7 = 28$.'
+          - problem: 'A rhombus has perimeter $52$. Find its side length.'
+            answer: "13"
+        constraints: "perimeter is 4 times a side; whole numbers"
+      - id: kp2
+        name: Diagonals are perpendicular bisectors
+        key_prerequisites: [pythagorean-theorem]
+        exemplars:
+          - problem: 'A rhombus has diagonals $12$ and $16$. Find its side length.'
+            answer: "10"
+            solution_sketch: 'Diagonals bisect at right angles: side $= \sqrt{6^2 + 8^2} = 10$.'
+          - problem: 'A rhombus has a side of length $17$ and one diagonal of length $16$. Find the other diagonal.'
+            answer: "30"
+            solution_sketch: 'Half-diagonals: $\sqrt{17^2 - 8^2} = 15$, so the other diagonal is $30$.'
+        constraints: "half-diagonals form a Pythagorean triple with the side"
+      - id: kp3
+        name: Diagonals bisect the vertex angles
+        key_prerequisites: [parallelogram-properties]
+        exemplars:
+          - problem: 'In a rhombus one interior angle measures $120^\circ$. A diagonal is drawn from that vertex, splitting the angle into two equal parts. Find the measure of each part, in degrees.'
+            answer: "60"
+            solution_sketch: 'A rhombus diagonal bisects its vertex angles: $120/2 = 60$.'
+          - problem: 'In rhombus $ABCD$, $m\angle A = 70^\circ$. Find the angle between diagonal $AC$ and side $AB$, in degrees.'
+            answer: "35"
+            solution_sketch: 'Diagonal $AC$ bisects $\angle A$: $70/2 = 35$.'
+        constraints: "even vertex angles so halves are whole degrees"
+    diagnostic_exemplar:
+      problem: 'A rhombus has diagonals of length $18$ and $24$. Find its side length.'
+      answer: "15"
+      solution_sketch: 'Side $= \sqrt{9^2 + 12^2} = 15$.'
+    anki_seeds:
+      - front: "The diagonals of a rhombus are..."
+        back: "perpendicular bisectors of each other and bisect the vertex angles"
+        type: basic
+      - front: "A parallelogram with all four sides congruent is a..."
+        back: "rhombus"
+        type: basic
+
+  - id: special-parallelograms
+    name: Rectangles, Rhombi, and Squares
+    core: false                # special-quadrilateral classification branch; terminal
+    difficulty: 0.44
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 150
+    prerequisites:
+      - id: rectangle-properties
+        weight: 0.7
+        key: true
+      - id: rhombus-properties
+        weight: 0.7
+        key: true
+      - id: simplifying-radicals
+        weight: 0.3
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: Squares and their diagonals
+        key_prerequisites: [rectangle-properties, rhombus-properties, simplifying-radicals]
+        exemplars:
+          - problem: 'A square has a diagonal of length $8$. Find its side length.'
+            answer: "4*sqrt(2)"
+            solution_sketch: '$s\sqrt{2} = 8 \Rightarrow s = \frac{8}{\sqrt{2}} = 4\sqrt{2}$.'
+          - problem: 'A square has a side of length $5$. Find the length of a diagonal.'
+            answer: "5*sqrt(2)"
+          - problem: 'A square has a diagonal of length $10$. Find its area.'
+            answer: "50"
+            solution_sketch: 'Area $= s^2 = \frac{d^2}{2} = \frac{100}{2} = 50$.'
+        constraints: "exact radical answers in simplest form, written as k*sqrt(n)"
+      - id: kp2
+        name: Classification by diagonal tests
+        key_prerequisites: [rectangle-properties, rhombus-properties]
+        exemplars:
+          - problem: 'A parallelogram has congruent diagonals that are also perpendicular. What is the most specific name for it?'
+            answer: 'square'
+            solution_sketch: 'Congruent diagonals give a rectangle; perpendicular diagonals give a rhombus; both give a square.'
+          - problem: 'A parallelogram has perpendicular diagonals that are not congruent. What is the most specific name for it?'
+            answer: 'rhombus'
+          - problem: 'A parallelogram has congruent diagonals that are not perpendicular. What is the most specific name for it?'
+            answer: 'rectangle'
+        constraints: "classification uses diagonal tests; most specific name required"
+      - id: kp3
+        name: Algebraic problems across special parallelograms
+        key_prerequisites: [rectangle-properties, rhombus-properties]
+        exemplars:
+          - problem: 'A rhombus has diagonals $3x$ and $4x$ and a side of length $10$. Give the two diagonal lengths as the ordered pair (shorter, longer).'
+            answer: "(12, 16)"
+            solution_sketch: 'Half-diagonals $1.5x$ and $2x$: $(1.5x)^2 + (2x)^2 = 100 \Rightarrow 6.25x^2 = 100 \Rightarrow x = 4$.'
+          - problem: 'A square has a diagonal of length $6\sqrt{2}$. Find its perimeter.'
+            answer: "24"
+            solution_sketch: '$s = 6$; perimeter $= 24$.'
+        constraints: "combine diagonal facts with the Pythagorean theorem; clean integer or radical answers; two-part answers requested as an ordered pair"
+    diagnostic_exemplar:
+      problem: 'A rhombus has diagonals $3x$ and $4x$ and a side of length $20$. Give the two diagonal lengths as the ordered pair (shorter, longer).'
+      answer: "(24, 32)"
+      solution_sketch: 'Half-diagonals $1.5x$ and $2x$: $(1.5x)^2 + (2x)^2 = 400 \Rightarrow 6.25x^2 = 400 \Rightarrow x = 8$; diagonals $24$ and $32$.'
+    anki_seeds:
+      - front: "A square's diagonal in terms of its side s:"
+        back: "s times sqrt(2)"
+        type: basic
+      - front: "A parallelogram whose diagonals are congruent and perpendicular is a..."
+        back: "square"
+        type: basic
+
+  - id: trapezoid-properties
+    name: Trapezoid Properties
+    core: false                # special-quadrilateral classification branch; terminal
+    difficulty: 0.36
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 90
+    prerequisites:
+      - id: parallel-lines-transversals
+        weight: 0.6
+        key: true
+      - id: triangle-midsegments
+        weight: 0.5
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: Isosceles trapezoid angles
+        key_prerequisites: [parallel-lines-transversals]
+        exemplars:
+          - problem: 'In an isosceles trapezoid a base angle measures $74^\circ$. Find the measure of an angle adjacent to it along a leg, in degrees.'
+            answer: "106"
+            solution_sketch: 'The leg is a transversal between parallel bases, so the angles are supplementary: $180 - 74 = 106$.'
+          - problem: 'In an isosceles trapezoid one base angle measures $63^\circ$. Find the other angle on the same base, in degrees.'
+            answer: "63"
+        constraints: "base angle pairs congruent; leg-adjacent pairs supplementary; whole degrees"
+      - id: kp2
+        name: Trapezoid midsegment
+        key_prerequisites: [triangle-midsegments]
+        exemplars:
+          - problem: 'A trapezoid has bases $8$ and $14$. Find the length of its midsegment.'
+            answer: "11"
+            solution_sketch: 'Midsegment $= \frac{8 + 14}{2} = 11$.'
+          - problem: 'A trapezoid''s midsegment measures $15$ and one base measures $9$. Find the other base.'
+            answer: "21"
+            solution_sketch: '$\frac{9 + b}{2} = 15 \Rightarrow b = 21$.'
+        constraints: "bases with even sum so the midsegment is whole"
+      - id: kp3
+        name: Isosceles trapezoid legs and diagonals
+        key_prerequisites: [parallel-lines-transversals]
+        exemplars:
+          - problem: 'In an isosceles trapezoid the diagonals measure $3x + 2$ and $5x - 8$. Find the length of a diagonal.'
+            answer: "17"
+            solution_sketch: 'Diagonals of an isosceles trapezoid are congruent: $3x + 2 = 5x - 8 \Rightarrow x = 5$; diagonal $= 17$.'
+          - problem: 'An isosceles trapezoid has legs $2x - 3$ and $x + 6$. Find the length of a leg.'
+            answer: "15"
+            solution_sketch: 'Legs are congruent: $2x - 3 = x + 6 \Rightarrow x = 9$; leg $= 15$.'
+        constraints: "linear expressions with integer solutions; congruent legs and congruent diagonals"
+    diagnostic_exemplar:
+      problem: 'In an isosceles trapezoid the diagonals measure $4x - 7$ and $2x + 9$, and the bases measure $x + 6$ and $3x - 4$. Find the length of the midsegment.'
+      answer: '17'
+      solution_sketch: 'Congruent diagonals give $4x - 7 = 2x + 9$, so $x = 8$; the bases are $14$ and $20$, and the midsegment is their average, $17$.'
+    anki_seeds:
+      - front: "The midsegment of a trapezoid equals..."
+        back: "the average of the two bases"
+        type: basic
+      - front: "The diagonals of an isosceles trapezoid are..."
+        back: "congruent"
+        type: basic
+
+  - id: kite-properties
+    name: Kite Properties
+    core: false                # special-quadrilateral classification branch; terminal
+    difficulty: 0.36
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 90
+    prerequisites:
+      - id: polygon-angle-sums
+        weight: 0.6
+        key: true
+      - id: pythagorean-theorem
+        weight: 0.5
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: Two pairs of consecutive congruent sides
+        key_prerequisites: [polygon-angle-sums]
+        exemplars:
+          - problem: 'A kite has sides of lengths $5$, $5$, $8$, and $8$. Find its perimeter.'
+            answer: "26"
+          - problem: 'A kite has perimeter $42$, and one pair of congruent sides measures $8$ each. Find the length of each side in the other pair.'
+            answer: "13"
+            solution_sketch: '$2(8) + 2s = 42 \Rightarrow s = 13$.'
+        constraints: "two distinct side lengths; whole numbers"
+      - id: kp2
+        name: Kite angles
+        key_prerequisites: [polygon-angle-sums]
+        exemplars:
+          - problem: 'A kite has vertex angles $40^\circ$ and $100^\circ$ (the angles between the unequal sides are congruent). Find each of the other two angles, in degrees.'
+            answer: "110"
+            solution_sketch: '$40 + 100 + 2x = 360 \Rightarrow x = 110$.'
+          - problem: 'A kite has non-vertex angles of $95^\circ$ each and one vertex angle of $60^\circ$. Find the other vertex angle, in degrees.'
+            answer: "110"
+            solution_sketch: '$60 + x + 2 \cdot 95 = 360 \Rightarrow x = 110$.'
+        constraints: "angle sums use 360; the congruent pair is the non-vertex pair"
+      - id: kp3
+        name: Perpendicular diagonals and side lengths
+        key_prerequisites: [pythagorean-theorem]
+        exemplars:
+          - problem: 'The diagonals of a kite intersect at what angle, in degrees?'
+            answer: "90"
+          - problem: 'In kite $ABCD$, the axis of symmetry $\overline{AC}$ meets $\overline{BD}$ at $E$, with $BE = ED = 8$, $AE = 6$, and $EC = 15$. Find $AB$.'
+            answer: "10"
+            solution_sketch: 'Right triangle $ABE$: $AB = \sqrt{6^2 + 8^2} = 10$.'
+          - problem: 'In kite $ABCD$, the axis of symmetry $\overline{AC}$ meets $\overline{BD}$ at $E$, with $BE = 8$ and $EC = 15$. Find $BC$.'
+            answer: "17"
+            solution_sketch: 'Right triangle $BEC$: $BC = \sqrt{8^2 + 15^2} = 17$.'
+        constraints: "diagonal pieces form Pythagorean triples; the axis diagonal bisects the cross diagonal"
+    diagnostic_exemplar:
+      problem: 'In kite $ABCD$, the axis of symmetry $\overline{AC}$ meets $\overline{BD}$ at $E$, with $BE = ED = 12$ and $AE = 5$. Find $AB$.'
+      answer: "13"
+      solution_sketch: 'The diagonals are perpendicular, so right triangle $ABE$ gives $AB = \sqrt{5^2 + 12^2} = 13$.'
+    anki_seeds:
+      - front: "The diagonals of a kite are..."
+        back: "perpendicular"
+        type: basic
+      - front: "In a kite, the non-vertex angles (between unequal sides) are..."
+        back: "congruent"
+        type: basic
+
+  - id: trapezoids-kites
+    name: Trapezoids and Kites
+    core: false                # special-quadrilateral classification leaf
+    difficulty: 0.44
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 120
+    prerequisites:
+      - id: trapezoid-properties
+        weight: 0.7
+        key: true
+      - id: kite-properties
+        weight: 0.7
+        key: true
+      - id: multi-step-equations
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: Midsegment equations
+        key_prerequisites: [trapezoid-properties, multi-step-equations]
+        exemplars:
+          - problem: 'A trapezoid has bases $2x + 3$ and $4x - 1$, and its midsegment measures $16$. Find the longer base.'
+            answer: "19"
+            solution_sketch: '$\frac{(2x+3) + (4x-1)}{2} = 3x + 1 = 16 \Rightarrow x = 5$; bases are $13$ and $19$.'
+          - problem: 'A trapezoid''s midsegment measures $2x + 1$ and its bases measure $10$ and $3x - 2$. Find $x$.'
+            answer: "6"
+            solution_sketch: '$2x + 1 = \frac{10 + (3x - 2)}{2} \Rightarrow 4x + 2 = 3x + 8 \Rightarrow x = 6$; midsegment $13$, bases $10$ and $16$.'
+        constraints: "linear expressions; integer solutions; midsegment is the average of the bases"
+      - id: kp2
+        name: Angle equations in isosceles trapezoids
+        key_prerequisites: [trapezoid-properties, multi-step-equations]
+        exemplars:
+          - problem: 'In an isosceles trapezoid a base angle measures $(3x + 15)^\circ$ and the angle adjacent to it along a leg measures $(2x + 5)^\circ$. Find the base angle, in degrees.'
+            answer: "111"
+            solution_sketch: 'Leg-adjacent angles are supplementary: $5x + 20 = 180 \Rightarrow x = 32$; base angle $= 111^\circ$.'
+          - problem: 'The two angles on one base of an isosceles trapezoid measure $(4x - 6)^\circ$ and $(2x + 38)^\circ$. Find each, in degrees.'
+            answer: "82"
+            solution_sketch: 'Base angles are congruent: $4x - 6 = 2x + 38 \Rightarrow x = 22$; each is $82^\circ$.'
+        constraints: "supplementary along a leg, congruent along a base; integer solutions with base angles strictly between 0 and 180 and not 90"
+      - id: kp3
+        name: Kite equations and diagonal computations
+        key_prerequisites: [kite-properties, multi-step-equations]
+        exemplars:
+          - problem: 'A kite has vertex angles $(3x)^\circ$ and $(2x + 20)^\circ$ and non-vertex angles of $105^\circ$ each. Find the larger vertex angle, in degrees.'
+            answer: "78"
+            solution_sketch: '$3x + 2x + 20 + 210 = 360 \Rightarrow x = 26$; vertex angles $78^\circ$ and $72^\circ$.'
+          - problem: 'In kite $ABCD$ the axis diagonal meets $\overline{BD}$ at $E$ with $BE = ED = 12$, and $AB = 13$, $BC = 20$. Find the length of the axis diagonal $\overline{AC}$.'
+            answer: "21"
+            solution_sketch: '$AE = \sqrt{13^2 - 12^2} = 5$; $EC = \sqrt{20^2 - 12^2} = 16$; $AC = 21$.'
+        constraints: "kite angle sums to 360 with algebraic vertex angles; diagonal pieces from Pythagorean triples"
+    diagnostic_exemplar:
+      problem: 'In kite $ABCD$ the axis diagonal meets $\overline{BD}$ at $E$ with $BE = ED = 15$, and $AB = 17$, $BC = 25$. Find the length of the axis diagonal $\overline{AC}$.'
+      answer: "28"
+      solution_sketch: '$AE = \sqrt{17^2 - 15^2} = 8$; $EC = \sqrt{25^2 - 15^2} = 20$; $AC = 28$.'
+    anki_seeds:
+      - front: "In a kite, the axis-of-symmetry diagonal ... the other diagonal."
+        back: "perpendicularly bisects"
+        type: basic

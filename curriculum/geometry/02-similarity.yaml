@@ -1,0 +1,719 @@
+unit: similarity
+course: geometry
+module: "Similarity"
+topics:
+  - id: scale-drawings
+    name: Scale Drawings and Models
+    core: true
+    difficulty: 0.26
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 75
+    prerequisites:
+      - id: ratios-proportions
+        weight: 0.7
+        key: true
+      - id: multiplying-fractions
+        weight: 0.3
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: Drawing to actual
+        key_prerequisites: [ratios-proportions]
+        exemplars:
+          - problem: 'A map uses the scale $1$ cm $: 5$ km. Two cities are $7$ cm apart on the map. Find the actual distance, in km.'
+            answer: "35"
+          - problem: 'A blueprint uses the scale $1$ cm $: 8$ m. A wall is $4.5$ cm long on the blueprint. Find its actual length, in meters.'
+            answer: "36"
+            solution_sketch: '$4.5 \cdot 8 = 36$ m.'
+        constraints: "simple unit scales (1 cm : n km, 1 cm : n m); products come out whole or half"
+      - id: kp2
+        name: Actual to drawing
+        key_prerequisites: [ratios-proportions]
+        exemplars:
+          - problem: 'A map uses the scale $1$ cm $: 20$ km. How long on the map is an actual distance of $120$ km, in cm?'
+            answer: "6"
+            solution_sketch: '$120 / 20 = 6$ cm.'
+          - problem: 'A blueprint uses the scale $1$ cm $: 6$ m. How long on the blueprint is a $15$ m beam, in cm?'
+            answer: "2.5"
+            solution_sketch: '$15 / 6 = 2.5$ cm.'
+        constraints: "divisions come out whole or to one decimal place"
+      - id: kp3
+        name: Find the scale
+        key_prerequisites: [ratios-proportions]
+        exemplars:
+          - problem: 'A model is $8$ cm tall; the actual object is $2$ m tall. The scale is $1 : n$. Find $n$.'
+            answer: "25"
+            solution_sketch: '$2$ m $= 200$ cm; $8 : 200 = 1 : 25$.'
+          - problem: 'A drawing shows a $12$ m wall as $3$ cm. The scale is $1$ cm $: n$ m. Find $n$.'
+            answer: "4"
+            solution_sketch: '$12 / 3 = 4$.'
+        constraints: "convert to common units before reducing; scales reduce to 1 : n, and the item asks for n alone"
+    diagnostic_exemplar:
+      problem: 'A model is $6$ cm tall; the actual tower is $3$ m tall. The scale is $1 : n$. Find $n$.'
+      answer: "50"
+      solution_sketch: '$3$ m $= 300$ cm; $6 : 300 = 1 : 50$.'
+    anki_seeds:
+      - front: "A scale of 1 : n means every length on the drawing corresponds to ... actual length"
+        back: "n times that"
+        type: basic
+
+  - id: dilations-scale-factors
+    name: Dilations and Scale Factors
+    core: true
+    difficulty: 0.32
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 90
+    prerequisites:
+      - id: scale-drawings
+        weight: 0.5
+        key: false
+      - id: ratios-proportions
+        weight: 0.7
+        key: true
+      - id: coordinate-plane
+        weight: 0.5
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: Scale lengths by a factor
+        key_prerequisites: [ratios-proportions, scale-drawings]
+        exemplars:
+          - problem: 'A $4 \times 6$ rectangle is enlarged by scale factor $\frac{3}{2}$. Give the new dimensions.'
+            answer: "6 by 9"
+            solution_sketch: 'Multiply each dimension by $\frac{3}{2}$.'
+          - problem: 'A segment of length $14$ is dilated with scale factor $\frac{1}{2}$. Find the image length.'
+            answer: "7"
+        constraints: "scale factors are simple fractions or small integers; lengths chosen so images are whole or half-integers"
+      - id: kp2
+        name: Dilate coordinates about the origin
+        key_prerequisites: [coordinate-plane]
+        exemplars:
+          - problem: 'A dilation centered at the origin has scale factor $3$. Find the image of $(2, -5)$.'
+            answer: "(6, -15)"
+          - problem: 'A dilation centered at the origin has scale factor $\frac{1}{2}$. Find the image of $(-4, 6)$.'
+            answer: "(-2, 3)"
+            solution_sketch: 'Multiply both coordinates by $\frac{1}{2}$.'
+        constraints: "center always the origin; integer image coordinates"
+      - id: kp3
+        name: Recover the scale factor; effect on perimeter
+        key_prerequisites: [ratios-proportions]
+        exemplars:
+          - problem: 'A dilation maps a segment of length $8$ to a segment of length $20$. Find the scale factor.'
+            answer: "5/2"
+            solution_sketch: '$k = \frac{\text{image}}{\text{preimage}} = \frac{20}{8} = \frac{5}{2}$.'
+          - problem: 'A triangle with perimeter $20$ is dilated by scale factor $\frac{3}{2}$. Find the perimeter of the image.'
+            answer: "30"
+            solution_sketch: 'Perimeter scales by the same factor $k$.'
+        constraints: "scale factor as a reduced fraction; distinguish enlargement (k > 1) from reduction (k < 1)"
+    diagnostic_exemplar:
+      problem: 'A dilation centered at the origin maps $(-6, 4)$ to $(-9, 6)$. Find its scale factor, and find the perimeter of the image of a triangle whose perimeter is $20$ under this dilation.'
+      answer: 'scale factor 3/2; image perimeter 30'
+      solution_sketch: '$-9 / -6 = 6/4 = \frac{3}{2}$, so $k = \frac{3}{2} > 1$ (an enlargement); perimeter scales by $k$: $20 \cdot \frac{3}{2} = 30$.'
+    anki_seeds:
+      - front: "A dilation with scale factor k multiplies every distance by..."
+        back: "k"
+        type: basic
+      - front: "Under a dilation with scale factor k, perimeter scales by k and area scales by..."
+        back: "k squared"
+        type: basic
+
+  - id: similarity-transformations
+    name: Similarity Transformations
+    core: false                # terminal coordinate-transformation branch
+    difficulty: 0.36
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 90
+    prerequisites:
+      - id: dilations-scale-factors
+        weight: 0.7
+        key: true
+      - id: rigid-motions-congruence
+        weight: 0.5
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: Similarity via dilation plus rigid motion
+        key_prerequisites: [dilations-scale-factors, rigid-motions-congruence]
+        exemplars:
+          - problem: 'A dilation followed by a rotation maps figure $A$ exactly onto figure $B$. Are $A$ and $B$ similar?'
+            answer: 'Yes; a composition of a dilation and rigid motions is a similarity transformation.'
+          - problem: 'In a composition of a dilation and a translation, which transformation changes the size of the figure?'
+            answer: 'The dilation.'
+            solution_sketch: 'Translations are rigid; only the dilation rescales.'
+        constraints: "compositions of one dilation with one rigid motion; conceptual identification"
+      - id: kp2
+        name: Apply compositions to coordinates
+        key_prerequisites: [dilations-scale-factors, rigid-motions-congruence]
+        exemplars:
+          - problem: 'Apply the dilation about the origin with $k = 2$, then the translation $(x, y) \mapsto (x + 1, y - 3)$, to the point $(3, 4)$. Give the final image.'
+            answer: "(7, 5)"
+            solution_sketch: '$(3,4) \mapsto (6,8) \mapsto (7,5)$.'
+          - problem: 'Apply the reflection across the $x$-axis, then the dilation about the origin with $k = \frac{1}{2}$, to the point $(4, -6)$. Give the final image.'
+            answer: "(2, 3)"
+            solution_sketch: '$(4,-6) \mapsto (4,6) \mapsto (2,3)$.'
+        constraints: "two-step compositions; origin-centered dilations, axis reflections, integer translations; integer images"
+      - id: kp3
+        name: Decide similarity and the scale factor from dimensions
+        key_prerequisites: [dilations-scale-factors]
+        exemplars:
+          - problem: 'Is a $4 \times 6$ rectangle similar to a $6 \times 9$ rectangle? If so, give the scale factor from the smaller to the larger.'
+            answer: 'Yes; $k = \frac{3}{2}$'
+            solution_sketch: '$\frac{6}{4} = \frac{9}{6} = \frac{3}{2}$: both dimension ratios match.'
+          - problem: 'Is a $4 \times 6$ rectangle similar to an $8 \times 10$ rectangle?'
+            answer: 'No; $\frac{8}{4} = 2$ but $\frac{10}{6} = \frac{5}{3}$.'
+        constraints: "rectangles or triangles with two dimensions; compare ratios as reduced fractions"
+    diagnostic_exemplar:
+      problem: 'Apply the dilation about the origin with $k = 3$, then the reflection across the $y$-axis, to the point $(2, -1)$. Give the final image.'
+      answer: "(-6, -3)"
+      solution_sketch: '$(2,-1) \mapsto (6,-3) \mapsto (-6,-3)$.'
+    anki_seeds:
+      - front: "Two figures are similar exactly when one maps onto the other by a composition of..."
+        back: "rigid motions and a dilation"
+        type: basic
+
+  - id: similar-polygons
+    name: Similar Polygons
+    core: true
+    difficulty: 0.36
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 120
+    prerequisites:
+      - id: dilations-scale-factors
+        weight: 0.7
+        key: true
+      - id: ratios-proportions
+        weight: 0.5
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: Corresponding parts of similar polygons
+        key_prerequisites: [dilations-scale-factors]
+        exemplars:
+          - problem: '$ABCD \sim EFGH$. Which angle of $EFGH$ corresponds to $\angle B$?'
+            answer: '$\angle F$'
+            solution_sketch: 'Similarity statements list corresponding vertices in order.'
+          - problem: '$ABCD \sim EFGH$ and $m\angle B = 75^\circ$. Find $m\angle F$, in degrees.'
+            answer: "75"
+            solution_sketch: 'Corresponding angles of similar polygons are congruent.'
+        constraints: "read correspondence from the similarity statement; whole-degree angles"
+      - id: kp2
+        name: Solve for sides
+        key_prerequisites: [dilations-scale-factors, ratios-proportions]
+        exemplars:
+          - problem: '$ABCD \sim EFGH$ with $AB = 6$, $EF = 9$, and $BC = 10$. Find $FG$.'
+            answer: "15"
+            solution_sketch: 'Scale factor $\frac{9}{6} = \frac{3}{2}$; $FG = 10 \cdot \frac{3}{2} = 15$.'
+          - problem: 'Pentagon $ABCDE \sim$ pentagon $FGHIJ$ with $AB = 4$, $FG = 10$, and $CD = 6$. Find $HI$.'
+            answer: "15"
+            solution_sketch: 'Scale factor $\frac{10}{4} = \frac{5}{2}$; $HI = 6 \cdot \frac{5}{2} = 15$.'
+        constraints: "one unknown side per problem; integer answers"
+      - id: kp3
+        name: Perimeter and area ratios
+        key_prerequisites: [dilations-scale-factors, ratios-proportions]
+        exemplars:
+          - problem: 'Two similar polygons have scale factor $2$ (small to large). The small one has perimeter $18$. Find the perimeter of the large one.'
+            answer: "36"
+            solution_sketch: 'Perimeters scale by $k$.'
+          - problem: 'Two similar polygons have scale factor $3$ (small to large). The small one has area $5$. Find the area of the large one.'
+            answer: "45"
+            solution_sketch: 'Areas scale by $k^2 = 9$.'
+        constraints: "perimeter ratio k, area ratio k^2; integer answers"
+    diagnostic_exemplar:
+      problem: '$ABCD \sim WXYZ$ with $AB = 8$ and $WX = 12$. The area of $ABCD$ is $32$. Find the area of $WXYZ$.'
+      answer: '72'
+      solution_sketch: 'The scale factor is $\frac{12}{8} = \frac{3}{2}$, so areas scale by $k^2 = \frac{9}{4}$: $32 \cdot \frac{9}{4} = 72$.'
+    anki_seeds:
+      - front: "In similar polygons, corresponding angles are ... and corresponding sides are ..."
+        back: "congruent; proportional"
+        type: basic
+      - front: "If similar figures have scale factor k, the ratio of their perimeters is..."
+        back: "k"
+        type: basic
+
+  - id: triangle-similarity-criteria
+    name: Triangle Similarity Criteria
+    core: true
+    difficulty: 0.38
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 120
+    prerequisites:
+      - id: similar-polygons
+        weight: 0.6
+        key: true
+      - id: triangle-angle-sum
+        weight: 0.6
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: AA similarity
+        key_prerequisites: [triangle-angle-sum]
+        exemplars:
+          - problem: 'Triangle 1 has angles $42^\circ$ and $67^\circ$; Triangle 2 has angles $42^\circ$ and $71^\circ$. Are the triangles similar?'
+            answer: 'Yes, by AA; both have angle set $42^\circ$, $67^\circ$, $71^\circ$.'
+            solution_sketch: 'Third angles: $180 - 42 - 67 = 71$ and $180 - 42 - 71 = 67$ — the same set.'
+          - problem: 'Two right triangles each have an acute angle of $35^\circ$. Are they similar, and by what criterion?'
+            answer: 'Yes, by AA (the right angle and the $35^\circ$ angle).'
+        constraints: "always resolvable via the third angle; whole-degree angles"
+      - id: kp2
+        name: SAS and SSS similarity
+        key_prerequisites: [similar-polygons]
+        exemplars:
+          - problem: 'Triangle 1 has sides $4$, $6$, $8$; Triangle 2 has sides $6$, $9$, $12$. Are they similar, and by what criterion?'
+            answer: 'Yes, by SSS similarity; all three ratios equal $\frac{3}{2}$.'
+            solution_sketch: '$\frac{6}{4} = \frac{9}{6} = \frac{12}{8} = \frac{3}{2}$.'
+          - problem: 'Triangle 1 has sides $5$ and $8$ with a $40^\circ$ included angle; Triangle 2 has sides $10$ and $16$ with a $40^\circ$ included angle. Are they similar, and by what criterion?'
+            answer: 'Yes, by SAS similarity; the flanking sides share ratio $2$ and the included angles are equal.'
+        constraints: "SSS: compare all three ratios; SAS: the equal angle must be included; ratios are simple fractions"
+      - id: kp3
+        name: Decide the criterion or rule out similarity
+        key_prerequisites: [similar-polygons, triangle-angle-sum]
+        exemplars:
+          - problem: 'Triangle 1 has sides $3$, $4$, $5$; Triangle 2 has sides $6$, $8$, $9$. Are they similar?'
+            answer: 'No; $\frac{6}{3} = \frac{8}{4} = 2$ but $\frac{9}{5} \ne 2$.'
+          - problem: 'Triangle 1 has angles $50^\circ$ and $60^\circ$; Triangle 2 has angles $60^\circ$ and $70^\circ$. Are they similar?'
+            answer: 'Yes, by AA; both have angle set $50^\circ$, $60^\circ$, $70^\circ$.'
+            solution_sketch: 'Third angles are $70^\circ$ and $50^\circ$ respectively, so the angle sets match.'
+        constraints: "mismatches live in exactly one ratio or resolve via the third angle"
+    diagnostic_exemplar:
+      problem: 'Triangle 1 has sides $6$, $9$, $12$; Triangle 2 has sides $10$, $15$, $20$. Are they similar? If so, state the criterion.'
+      answer: 'Yes, by SSS similarity; all three ratios equal $\frac{3}{5}$.'
+      solution_sketch: '$\frac{6}{10} = \frac{9}{15} = \frac{12}{20} = \frac{3}{5}$.'
+    anki_seeds:
+      - front: "AA similarity: two triangles are similar if..."
+        back: "two pairs of corresponding angles are congruent"
+        type: basic
+      - front: "SAS similarity requires two pairs of sides in proportion and..."
+        back: "congruent included angles"
+        type: basic
+
+  - id: similar-triangles
+    name: Similar Triangles
+    core: true
+    difficulty: 0.4
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 120
+    prerequisites:
+      - id: triangle-similarity-criteria
+        weight: 0.7
+        key: true
+      - id: dilations-scale-factors
+        weight: 0.5
+        key: false
+      - id: ratios-proportions
+        weight: 0.6
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: Solve for sides with the scale factor
+        key_prerequisites: [dilations-scale-factors, ratios-proportions]
+        exemplars:
+          - problem: '$\triangle ABC \sim \triangle DEF$ with $AB = 6$, $DE = 9$, and $BC = 8$. Find $EF$.'
+            answer: "12"
+            solution_sketch: 'Scale factor $\frac{9}{6} = \frac{3}{2}$; $EF = 8 \cdot \frac{3}{2} = 12$.'
+          - problem: '$\triangle PQR \sim \triangle XYZ$ with $PQ = 6$, $XY = 10$, and $QR = 9$. Find $YZ$.'
+            answer: "15"
+            solution_sketch: 'Scale factor $\frac{10}{6} = \frac{5}{3}$; $YZ = 9 \cdot \frac{5}{3} = 15$.'
+        constraints: "proportions with one unknown; answers whole numbers or one decimal place"
+      - id: kp2
+        name: Nested similar triangles
+        key_prerequisites: [triangle-similarity-criteria, ratios-proportions]
+        exemplars:
+          - problem: 'In $\triangle ABC$, $D$ on $\overline{AB}$ and $E$ on $\overline{AC}$ with $\overline{DE} \parallel \overline{BC}$. If $AD = 4$, $DB = 6$, and $DE = 6$, find $BC$.'
+            answer: "15"
+            solution_sketch: '$\triangle ADE \sim \triangle ABC$ with ratio $\frac{AD}{AB} = \frac{4}{10}$, so $BC = 6 \cdot \frac{10}{4} = 15$.'
+          - problem: '$\triangle ABC \sim \triangle AED$ share vertex $A$, with $AB = 12$, $AE = 4$, and $BC = 9$. Find $ED$.'
+            answer: "3"
+            solution_sketch: 'Ratio $\frac{AE}{AB} = \frac{1}{3}$, so $ED = 9 \cdot \frac{1}{3} = 3$.'
+        constraints: "ratio uses the whole side (AD + DB), the classic trap; clean integer answers"
+      - id: kp3
+        name: Perimeters of similar triangles
+        key_prerequisites: [ratios-proportions, dilations-scale-factors]
+        exemplars:
+          - problem: '$\triangle ABC \sim \triangle DEF$ with scale factor $\frac{5}{3}$ from $\triangle ABC$ to $\triangle DEF$. The perimeter of $\triangle ABC$ is $30$. Find the perimeter of $\triangle DEF$.'
+            answer: "50"
+            solution_sketch: 'Perimeters scale by the same factor: $30 \cdot \frac{5}{3} = 50$.'
+          - problem: 'Two similar triangles have perimeters in the ratio $3 : 4$. A side of the smaller measures $9$. Find the corresponding side of the larger.'
+            answer: "12"
+            solution_sketch: 'Sides share the perimeter ratio: $9 \cdot \frac{4}{3} = 12$.'
+        constraints: "perimeter ratio equals the side ratio; integer answers"
+    diagnostic_exemplar:
+      problem: 'In $\triangle ABC$, $D$ lies on $\overline{AB}$ and $E$ on $\overline{AC}$ with $\overline{DE} \parallel \overline{BC}$. If $AD = 6$, $DB = 9$, and $DE = 8$, find $BC$.'
+      answer: "20"
+      solution_sketch: '$\triangle ADE \sim \triangle ABC$ with ratio $\frac{AD}{AB} = \frac{6}{15}$; $BC = 8 \cdot \frac{15}{6} = 20$.'
+    anki_seeds:
+      - front: "In similar triangles, corresponding sides are..."
+        back: "proportional (all pairs share one scale factor)"
+        type: basic
+      - front: "If similar figures have scale factor k, the ratio of their areas is..."
+        back: "k squared"
+        type: basic
+      - front: "In the nested DE ∥ BC configuration, the similarity ratio uses AD over..."
+        back: "the whole side AB = AD + DB (not DB)"
+        type: basic
+
+  - id: proving-triangles-similar
+    name: Proving Triangles Similar
+    core: false                # proof-practice genre; terminal
+    difficulty: 0.46
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 240
+    prerequisites:
+      - id: triangle-similarity-criteria
+        weight: 0.6
+        key: true
+      - id: similar-triangles
+        weight: 0.6
+        key: true
+      - id: congruence-proofs-cpctc
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: AA proofs from parallel lines and vertical angles
+        key_prerequisites: [triangle-similarity-criteria]
+        exemplars:
+          - problem: 'In $\triangle ABC$, $D$ on $\overline{AB}$ and $E$ on $\overline{AC}$ with $\overline{DE} \parallel \overline{BC}$. Prove $\triangle ADE \sim \triangle ABC$.'
+            answer: '$\angle ADE \cong \angle ABC$ and $\angle AED \cong \angle ACB$ (corresponding angles along the parallels), so $\triangle ADE \sim \triangle ABC$ by AA.'
+            solution_sketch: 'The shared angle $\angle A$ plus one corresponding-angle pair also suffices.'
+          - problem: 'Segments $\overline{AC}$ and $\overline{BD}$ intersect at $E$, with $\overline{AB} \parallel \overline{CD}$. Prove $\triangle ABE \sim \triangle CDE$.'
+            answer: '$\angle BAE \cong \angle DCE$ and $\angle ABE \cong \angle CDE$ (alternate interior angles), so $\triangle ABE \sim \triangle CDE$ by AA.'
+            solution_sketch: 'Each transversal across the parallels supplies one angle pair; the vertical angles at $E$ also agree.'
+        constraints: "AA via corresponding, alternate interior, or vertical angles; two cited angle pairs with reasons"
+      - id: kp2
+        name: AA proofs with right triangles and shared angles
+        key_prerequisites: [triangle-similarity-criteria]
+        exemplars:
+          - problem: 'Right triangles $\triangle ABC$ and $\triangle ADE$ have right angles at $B$ and $D$ and share $\angle A$. Prove they are similar.'
+            answer: '$\angle B \cong \angle D$ (both right angles) and $\angle A$ is shared, so $\triangle ABC \sim \triangle ADE$ by AA.'
+          - problem: '$\triangle ABC$ and $\triangle DBE$ share $\angle B$, and $\angle BAC \cong \angle BDE$. Prove the triangles are similar.'
+            answer: 'The shared $\angle B$ and the given pair $\angle BAC \cong \angle BDE$ give $\triangle ABC \sim \triangle DBE$ by AA.'
+        constraints: "one shared or right-angle pair plus one given pair; AA only"
+      - id: kp3
+        name: SAS and SSS similarity proofs
+        key_prerequisites: [triangle-similarity-criteria, similar-triangles]
+        exemplars:
+          - problem: '$D$ lies on $\overline{AB}$ and $E$ on $\overline{AC}$ with $AD = 3$, $AB = 9$, $AE = 4$, $AC = 12$. Prove $\triangle ADE \sim \triangle ABC$.'
+            answer: '$\frac{AD}{AB} = \frac{AE}{AC} = \frac{1}{3}$ and $\angle A$ is shared, so $\triangle ADE \sim \triangle ABC$ by SAS similarity.'
+            solution_sketch: 'Two proportional side pairs flanking the common angle.'
+          - problem: 'Triangle 1 has sides $6$, $8$, $10$; Triangle 2 has sides $9$, $12$, $15$. Prove the triangles are similar.'
+            answer: '$\frac{9}{6} = \frac{12}{8} = \frac{15}{10} = \frac{3}{2}$, so the triangles are similar by SSS similarity.'
+        constraints: "compute every ratio explicitly; the included angle must be identified for SAS"
+    diagnostic_exemplar:
+      problem: 'In $\triangle ABC$, $D$ lies on $\overline{AB}$ and $E$ on $\overline{AC}$ with $AD = 4$, $AB = 10$, $AE = 6$, and $AC = 15$. Prove that $\triangle ADE \sim \triangle ABC$.'
+      answer: 'AD/AB = 4/10 = 2/5 and AE/AC = 6/15 = 2/5, and ∠A is shared and included between those sides, so △ADE ∼ △ABC by SAS similarity'
+      solution_sketch: 'Both ratios of the sides flanking $\angle A$ equal $\frac{2}{5}$, and the included angle is common to both triangles.'
+    anki_seeds:
+      - front: "The three triangle similarity criteria are..."
+        back: "AA, SAS similarity, SSS similarity"
+        type: basic
+      - front: "In a similarity proof with DE ∥ BC, the angle pairs come from ... angles"
+        back: "corresponding (or alternate interior) angles along the parallels"
+        type: basic
+
+  - id: indirect-measurement
+    name: Indirect Measurement
+    core: false                # applications leaf topic
+    difficulty: 0.42
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 120
+    prerequisites:
+      - id: similar-triangles
+        weight: 0.8
+        key: true
+      - id: ratios-proportions
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: Shadow problems
+        key_prerequisites: [similar-triangles, ratios-proportions]
+        exemplars:
+          - problem: 'A person $1.8$ m tall casts a $2.4$ m shadow while a tree casts a $10$ m shadow. Find the height of the tree, in meters.'
+            answer: "7.5"
+            solution_sketch: '$\frac{h}{10} = \frac{1.8}{2.4} = \frac{3}{4}$, so $h = 7.5$ m.'
+          - problem: 'A $1.5$ m tall person casts a $2.4$ m shadow; a flagpole casts a $32$ m shadow at the same time. Find the height of the flagpole, in meters.'
+            answer: "20"
+            solution_sketch: '$\frac{h}{32} = \frac{1.5}{2.4} = \frac{5}{8}$, so $h = 20$ m.'
+        constraints: "same-time shadows give similar right triangles; answers whole or one decimal place"
+      - id: kp2
+        name: Mirror method
+        key_prerequisites: [similar-triangles, ratios-proportions]
+        exemplars:
+          - problem: 'A mirror lies on the ground $3$ m from a person whose eyes are $1.5$ m high, and $12$ m from a tower. The person sees the tower''s top in the mirror. Find the tower''s height, in meters.'
+            answer: "6"
+            solution_sketch: 'Equal angles at the mirror give similar triangles: $\frac{h}{12} = \frac{1.5}{3}$, so $h = 6$ m.'
+          - problem: 'A mirror lies $2$ m from a person (eye height $1.6$ m) and $15$ m from a building. The person sees the building''s top in the mirror. Find the building''s height, in meters.'
+            answer: "12"
+            solution_sketch: '$\frac{h}{15} = \frac{1.6}{2}$, so $h = 12$ m.'
+        constraints: "angle of incidence equals angle of reflection; clean proportions"
+      - id: kp3
+        name: Inaccessible distances
+        key_prerequisites: [similar-triangles, ratios-proportions]
+        exemplars:
+          - problem: 'To find the width $AB$ of a river, surveyors mark $BC = 30$ m along the bank ($\angle ABC = 90^\circ$), extend to $D$ with $CD = 6$ m, and walk $DE = 8$ m perpendicular to the bank until $E$, $C$, $A$ are collinear. The right angles at $B$ and $D$ and the vertical angles at $C$ make $\triangle ABC \sim \triangle EDC$. Find $AB$, in meters.'
+            answer: "40"
+            solution_sketch: '$\frac{AB}{DE} = \frac{BC}{DC} \Rightarrow AB = 8 \cdot \frac{30}{6} = 40$ m.'
+          - problem: 'A $2$-m stick held $5$ m from an observer''s eye exactly covers a cliff $80$ m away. Find the height of the cliff, in meters.'
+            answer: "32"
+            solution_sketch: 'Similar triangles from the eye: $\frac{h}{80} = \frac{2}{5}$, so $h = 32$ m.'
+        constraints: "the similar-triangle setup is described in the problem; one proportion solves it"
+    diagnostic_exemplar:
+      problem: 'A $1.8$ m tall person casts a $2.7$ m shadow; a tree casts a $24$ m shadow at the same time. Find the height of the tree, in meters.'
+      answer: "16"
+      solution_sketch: '$\frac{h}{24} = \frac{1.8}{2.7} = \frac{2}{3}$, so $h = 16$ m.'
+    anki_seeds:
+      - front: "Same-time shadow problems work because the sun's rays create..."
+        back: "similar right triangles (equal sun angles)"
+        type: basic
+      - front: "In the mirror method, the triangles are similar because the angle of incidence equals..."
+        back: "the angle of reflection"
+        type: basic
+
+  - id: triangle-proportionality-theorem
+    name: Triangle Proportionality
+    core: false                # terminal; feeds only the angle-bisector theorem
+    difficulty: 0.45
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 150
+    prerequisites:
+      - id: similar-triangles
+        weight: 0.8
+        key: true
+      - id: equations-with-fractions
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: Side-splitter theorem
+        key_prerequisites: [similar-triangles]
+        exemplars:
+          - problem: 'In $\triangle ABC$, $\overline{DE} \parallel \overline{BC}$ with $D$ on $\overline{AB}$, $E$ on $\overline{AC}$. If $AD = 6$, $DB = 4$, and $AE = 9$, find $EC$.'
+            answer: "6"
+            solution_sketch: '$\frac{AD}{DB} = \frac{AE}{EC} \Rightarrow \frac{6}{4} = \frac{9}{EC} \Rightarrow EC = 6$.'
+          - problem: 'In $\triangle PQR$, $\overline{ST} \parallel \overline{QR}$ with $PS = 8$, $SQ = 12$, and $TR = 9$. Find $PT$.'
+            answer: "6"
+            solution_sketch: '$\frac{PS}{SQ} = \frac{PT}{TR} \Rightarrow \frac{8}{12} = \frac{PT}{9} \Rightarrow PT = 6$.'
+        constraints: "segment-to-segment ratios (not segment-to-whole); integer answers"
+      - id: kp2
+        name: Side-splitter with variables
+        key_prerequisites: [similar-triangles, equations-with-fractions]
+        exemplars:
+          - problem: '$\overline{DE} \parallel \overline{BC}$ splits the sides of $\triangle ABC$ so that $AD = x$, $DB = x - 2$, $AE = 10$, $EC = 8$. Find $x$.'
+            answer: "10"
+            solution_sketch: '$\frac{x}{x-2} = \frac{10}{8} \Rightarrow 8x = 10x - 20 \Rightarrow x = 10$.'
+          - problem: '$\overline{DE} \parallel \overline{BC}$ with $AD = 2x$, $DB = 6$, $AE = x + 4$, $EC = 4$. Find $AD$.'
+            answer: "24"
+            solution_sketch: '$\frac{2x}{6} = \frac{x+4}{4} \Rightarrow 8x = 6x + 24 \Rightarrow x = 12$, so $AD = 2x = 24$ (ratios $\frac{24}{6} = \frac{16}{4} = 4$).'
+        constraints: "cross-multiply to a linear equation; integer solutions"
+      - id: kp3
+        name: The converse and parallel-line transversal splits
+        key_prerequisites: [similar-triangles]
+        exemplars:
+          - problem: 'In $\triangle ABC$, $D$ on $\overline{AB}$ and $E$ on $\overline{AC}$ with $AD = 6$, $DB = 9$, $AE = 8$, $EC = 12$. Is $\overline{DE} \parallel \overline{BC}$? Answer yes or no.'
+            answer: 'yes'
+            solution_sketch: '$\frac{6}{9} = \frac{8}{12} = \frac{2}{3}$: equal ratios on both sides force the parallel, by the converse of the side-splitter theorem.'
+          - problem: 'Three parallel lines cut two transversals. One transversal is split into segments of $4$ and $6$; the other''s corresponding first segment is $6$. Find its second segment.'
+            answer: "9"
+            solution_sketch: 'Parallel lines split transversals proportionally: $\frac{4}{6} = \frac{6}{x} \Rightarrow x = 9$.'
+        constraints: "converse checks compare two ratios and are answered yes or no; three-parallel-lines items use one proportion"
+    diagnostic_exemplar:
+      problem: '$\overline{DE} \parallel \overline{BC}$ splits the sides of $\triangle ABC$ so that $AD = x$, $DB = x - 3$, $AE = 12$, and $EC = 9$. Find $AD$.'
+      answer: "12"
+      solution_sketch: '$\frac{x}{x-3} = \frac{12}{9} = \frac{4}{3} \Rightarrow 3x = 4x - 12 \Rightarrow x = 12$; check $\frac{12}{9} = \frac{4}{3}$.'
+    anki_seeds:
+      - front: "Side-splitter theorem: a line parallel to one side of a triangle divides the other two sides..."
+        back: "proportionally"
+        type: basic
+      - front: "Three parallel lines cut any two transversals into segments that are..."
+        back: "proportional"
+        type: basic
+
+  - id: angle-bisector-theorem
+    name: The Angle Bisector Theorem
+    core: false                # named terminal triangle theorem
+    difficulty: 0.48
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 150
+    prerequisites:
+      - id: triangle-proportionality-theorem
+        weight: 0.7
+        key: true
+      - id: angle-bisectors
+        weight: 0.5
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: The bisector splits the opposite side in the ratio of the adjacent sides
+        key_prerequisites: [triangle-proportionality-theorem]
+        exemplars:
+          - problem: 'In $\triangle ABC$, the bisector of $\angle A$ meets $\overline{BC}$ at $D$. If $AB = 8$, $AC = 12$, and $BC = 15$, find $BD$.'
+            answer: "6"
+            solution_sketch: '$\frac{BD}{DC} = \frac{AB}{AC} = \frac{2}{3}$, so $BD = 15 \cdot \frac{2}{5} = 6$.'
+          - problem: 'The bisector of $\angle P$ in $\triangle PQR$ meets $\overline{QR}$ at $S$ with $QS = 4$, $SR = 6$, and $PQ = 10$. Find $PR$.'
+            answer: "15"
+            solution_sketch: '$\frac{PQ}{PR} = \frac{QS}{SR} = \frac{2}{3} \Rightarrow PR = 15$.'
+        constraints: "bisector from one vertex; totals split into integer parts"
+      - id: kp2
+        name: Bisector splits with variables
+        key_prerequisites: [triangle-proportionality-theorem]
+        exemplars:
+          - problem: 'The bisector of $\angle A$ in $\triangle ABC$ meets $\overline{BC}$ at $D$ with $BD = x$, $DC = x + 3$, $AB = 8$, $AC = 12$. Find $BC$.'
+            answer: "15"
+            solution_sketch: '$\frac{x}{x+3} = \frac{8}{12} = \frac{2}{3} \Rightarrow 3x = 2x + 6 \Rightarrow x = 6$; $BC = 6 + 9 = 15$.'
+          - problem: 'The bisector of $\angle A$ meets $\overline{BC}$ at $D$ with $BD = 2x$, $DC = x + 3$, $AB = 20$, $AC = 15$. Find $BD$.'
+            answer: "12"
+            solution_sketch: '$\frac{2x}{x+3} = \frac{20}{15} = \frac{4}{3} \Rightarrow 6x = 4x + 12 \Rightarrow x = 6$; $BD = 12$ (and $DC = 9$).'
+        constraints: "cross-multiply to a linear equation; integer solutions; positive segment lengths"
+      - id: kp3
+        name: Recover a side or a split from the ratio
+        key_prerequisites: [triangle-proportionality-theorem]
+        exemplars:
+          - problem: 'In $\triangle ABC$, $AB = 9$, $AC = 6$, and $BC = 10$. The bisector of $\angle A$ meets $\overline{BC}$ at $D$. Give the ordered pair $(BD, DC)$.'
+            answer: "(6, 4)"
+            solution_sketch: '$BD : DC = 9 : 6 = 3 : 2$; split $10$ as $6 + 4$.'
+          - problem: 'The bisector of $\angle P$ in $\triangle PQR$ meets $\overline{QR}$ at $S$ with $QS = 9$, $SR = 15$, and $PR = 25$. Find $PQ$.'
+            answer: "15"
+            solution_sketch: '$\frac{PQ}{PR} = \frac{QS}{SR} = \frac{3}{5} \Rightarrow PQ = 25 \cdot \frac{3}{5} = 15$.'
+        constraints: "ratios reduce to small integers; splits are whole numbers; two-part answers requested as an ordered pair"
+    diagnostic_exemplar:
+      problem: 'In $\triangle ABC$, the bisector of $\angle A$ meets $\overline{BC}$ at $D$. If $AB = 9$, $AC = 15$, and $BC = 16$, find $DC$.'
+      answer: "10"
+      solution_sketch: '$BD : DC = 9 : 15 = 3 : 5$; $DC = 16 \cdot \frac{5}{8} = 10$.'
+    anki_seeds:
+      - front: "Angle bisector theorem: the bisector of an angle of a triangle divides the opposite side in the ratio of..."
+        back: "the adjacent sides"
+        type: basic
+
+  - id: triangle-midsegments
+    name: Triangle Midsegments
+    core: true
+    difficulty: 0.4
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 120
+    prerequisites:
+      - id: similar-triangles
+        weight: 0.6
+        key: true
+      - id: parallel-lines-transversals
+        weight: 0.3
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: Midsegment length
+        key_prerequisites: [similar-triangles]
+        exemplars:
+          - problem: 'A midsegment of a triangle is parallel to a side of length $14$. Find the midsegment''s length.'
+            answer: "7"
+          - problem: 'A midsegment of a triangle measures $9$. Find the length of the parallel side.'
+            answer: "18"
+            solution_sketch: 'The midsegment is half the parallel side, so the side is $2 \cdot 9$.'
+        constraints: "even side lengths so halves are whole numbers"
+      - id: kp2
+        name: Midsegments with variables
+        key_prerequisites: [similar-triangles]
+        exemplars:
+          - problem: 'Midsegment $\overline{MN}$ is parallel to side $\overline{BC}$, with $MN = 2x + 1$ and $BC = 5x - 4$. Find $MN$.'
+            answer: "13"
+            solution_sketch: '$2(2x + 1) = 5x - 4 \Rightarrow 4x + 2 = 5x - 4 \Rightarrow x = 6$; $MN = 13$ (and $BC = 26$).'
+          - problem: 'Midsegment $\overline{DE}$ is parallel to side $\overline{QR}$, with $DE = x + 3$ and $QR = 3x - 8$. Find $QR$.'
+            answer: "34"
+            solution_sketch: '$2(x + 3) = 3x - 8 \Rightarrow x = 14$; $QR = 3(14) - 8 = 34$.'
+        constraints: "the relation is 2(midsegment) = side; integer solutions"
+      - id: kp3
+        name: The midsegment triangle
+        key_prerequisites: [similar-triangles]
+        exemplars:
+          - problem: 'A triangle has sides $8$, $10$, and $12$. Find the perimeter of the triangle formed by its three midsegments.'
+            answer: "15"
+            solution_sketch: 'Each midsegment is half a side: $4 + 5 + 6 = 15$.'
+          - problem: 'The midsegment triangle of $\triangle ABC$ has perimeter $21$. Find the perimeter of $\triangle ABC$.'
+            answer: "42"
+        constraints: "even perimeters where needed; midsegment triangle has half the perimeter"
+    diagnostic_exemplar:
+      problem: 'In $\triangle ABC$, the midsegment $\overline{MN}$ is parallel to $\overline{BC}$ with $MN = 3x - 2$ and $BC = 4x + 8$, and the other two sides measure $AB = 18$ and $AC = 22$. Find the perimeter of the midsegment triangle of $\triangle ABC$.'
+      answer: '36'
+      solution_sketch: '$2(3x - 2) = 4x + 8$ gives $x = 6$, so $BC = 32$ and $\triangle ABC$ has perimeter $18 + 22 + 32 = 72$; the midsegment triangle has half that perimeter, $36$.'
+    anki_seeds:
+      - front: "A triangle midsegment is parallel to the third side and has length equal to..."
+        back: "half the third side"
+        type: basic
+      - front: "A midsegment connects..."
+        back: "the midpoints of two sides of a triangle"
+        type: basic
+
+  - id: geometric-mean-right-triangles
+    name: Geometric Mean in Right Triangles
+    core: false                # named terminal triangle theorem
+    difficulty: 0.5
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 180
+    prerequisites:
+      - id: similar-triangles
+        weight: 0.7
+        key: true
+      - id: simplifying-radicals
+        weight: 0.5
+        key: false
+      - id: pythagorean-theorem
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: Geometric mean of two numbers
+        key_prerequisites: [simplifying-radicals]
+        exemplars:
+          - problem: 'Find the geometric mean of $4$ and $9$.'
+            answer: "6"
+            solution_sketch: '$\sqrt{4 \cdot 9} = \sqrt{36} = 6$.'
+          - problem: 'Find the geometric mean of $2$ and $10$. Give an exact answer.'
+            answer: "2*sqrt(5)"
+            solution_sketch: '$\sqrt{20} = 2\sqrt{5}$.'
+        constraints: "products are perfect squares or simplify to a single radical written as k*sqrt(n)"
+      - id: kp2
+        name: The altitude rule
+        key_prerequisites: [similar-triangles, simplifying-radicals]
+        exemplars:
+          - problem: 'The altitude to the hypotenuse of a right triangle divides the hypotenuse into segments of $4$ and $9$. Find the altitude.'
+            answer: "6"
+            solution_sketch: 'The altitude is the geometric mean of the segments: $\sqrt{4 \cdot 9} = 6$. (The altitude splits the triangle into two triangles similar to the original.)'
+          - problem: 'The altitude to the hypotenuse measures $8$, and one hypotenuse segment measures $4$. Find the other segment.'
+            answer: "16"
+            solution_sketch: '$8^2 = 4 \cdot x \Rightarrow x = 16$.'
+        constraints: "altitude^2 = product of the hypotenuse segments; perfect-square products"
+      - id: kp3
+        name: The leg rule
+        key_prerequisites: [similar-triangles, pythagorean-theorem]
+        exemplars:
+          - problem: 'In a right triangle, the altitude to the hypotenuse splits it so the segment adjacent to one leg measures $9$, and the whole hypotenuse measures $25$. Find that leg.'
+            answer: "15"
+            solution_sketch: 'Leg$^2 = $ hypotenuse $\cdot$ adjacent segment $= 25 \cdot 9 = 225$; leg $= 15$.'
+          - problem: 'A leg of a right triangle measures $10$, and the hypotenuse segment adjacent to it measures $5$. Find the hypotenuse.'
+            answer: "20"
+            solution_sketch: '$10^2 = 5 \cdot c \Rightarrow c = 20$.'
+        constraints: "leg^2 = hypotenuse times adjacent segment; integer answers"
+    diagnostic_exemplar:
+      problem: 'The altitude to the hypotenuse of a right triangle divides the hypotenuse into segments of $9$ and $16$. Find the length of the leg adjacent to the segment of length $9$.'
+      answer: '15'
+      solution_sketch: 'Leg rule: $\text{leg}^2 = (\text{hypotenuse})(\text{adjacent segment}) = 25 \cdot 9 = 225$, so the leg is $15$.'
+    anki_seeds:
+      - front: "Altitude rule: the altitude to the hypotenuse is the geometric mean of..."
+        back: "the two segments of the hypotenuse"
+        type: basic
+      - front: "Leg rule: each leg is the geometric mean of the hypotenuse and..."
+        back: "the hypotenuse segment adjacent to that leg"
+        type: basic
+      - front: "The geometric mean of a and b is..."
+        back: "sqrt(ab)"
+        type: basic

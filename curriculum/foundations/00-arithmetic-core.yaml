@@ -1,0 +1,1571 @@
+unit: arithmetic-core
+course: foundations
+module: "Arithmetic"
+topics:
+  # --------------------------------------------------------------------- #
+  # Mastery-floor roots (kept minimal at 2 KPs each; no prerequisites).
+  # --------------------------------------------------------------------- #
+  - id: single-digit-addition
+    name: Single-Digit Addition
+    core: true
+    difficulty: 0.05
+    drill: true
+    answer_kind: numeric
+    expected_time_secs: 30
+    prerequisites: []          # mastery-floor root
+    knowledge_points:
+      - id: kp1
+        name: Sums within ten
+        exemplars:
+          - problem: 'Compute $3 + 4$.'
+            answer: "7"
+          - problem: 'Compute $6 + 2$.'
+            answer: "8"
+          - problem: 'Compute $5 + 4$.'
+            answer: "9"
+        constraints: "both addends 0-9, sum <= 10"
+      - id: kp2
+        name: Sums within twenty (bridging ten)
+        exemplars:
+          - problem: 'Compute $8 + 7$.'
+            answer: "15"
+            solution_sketch: 'Make ten: $8 + 2 = 10$, then + $5 = 15$.'
+          - problem: 'Compute $9 + 6$.'
+            answer: "15"
+          - problem: 'Compute $7 + 5$.'
+            answer: "12"
+        constraints: "both addends 0-9, sum 11-18"
+    diagnostic_exemplar:
+      problem: 'Compute $8 + 5$.'
+      answer: "13"
+      solution_sketch: 'Make ten: $8 + 2 = 10$, with $3$ of the $5$ left over, so $10 + 3 = 13$.'
+    anki_seeds:
+      - front: "Make-ten strategy: to add 8 + 5, first take 2 from the 5 to make 8 into..."
+        back: "10, leaving 3 more: 10 + 3 = 13"
+        type: basic
+
+  - id: subtraction-facts
+    name: Subtraction Facts
+    core: true
+    difficulty: 0.07
+    drill: true
+    answer_kind: numeric
+    expected_time_secs: 30
+    prerequisites:
+      - id: single-digit-addition
+        weight: 1.0
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: Differences within ten
+        key_prerequisites: [single-digit-addition]
+        exemplars:
+          - problem: 'Compute $9 - 4$.'
+            answer: "5"
+          - problem: 'Compute $7 - 3$.'
+            answer: "4"
+          - problem: 'Compute $10 - 6$.'
+            answer: "4"
+        constraints: "minuend 0-10, nonnegative difference"
+      - id: kp2
+        name: Differences from the teens (bridging ten)
+        key_prerequisites: [single-digit-addition]
+        exemplars:
+          - problem: 'Compute $15 - 8$.'
+            answer: "7"
+            solution_sketch: 'Back through ten: $15 - 5 = 10$, then $- 3$ more gives $7$.'
+          - problem: 'Compute $13 - 6$.'
+            answer: "7"
+          - problem: 'Compute $14 - 6$.'
+            answer: "8"
+        constraints: "minuend 11-18, subtrahend 2-9"
+    diagnostic_exemplar:
+      problem: 'Compute $13 - 7$.'
+      answer: "6"
+      solution_sketch: 'Bridge ten: $13 - 3 = 10$, then $10 - 4 = 6$.'
+    anki_seeds:
+      - front: "Every addition fact gives two subtraction facts: from 8 + 5 = 13 we get..."
+        back: "13 - 5 = 8 and 13 - 8 = 5"
+        type: basic
+
+  - id: multiplication-tables
+    name: Multiplication Tables
+    core: true
+    difficulty: 0.1
+    drill: true
+    answer_kind: numeric
+    expected_time_secs: 30
+    prerequisites: []          # mastery-floor root
+    knowledge_points:
+      - id: kp1
+        name: Facts through 10 x 10
+        exemplars:
+          - problem: 'Compute $6 \times 7$.'
+            answer: "42"
+          - problem: 'Compute $8 \times 4$.'
+            answer: "32"
+          - problem: 'Compute $9 \times 6$.'
+            answer: "54"
+        constraints: "both factors 0-10"
+      - id: kp2
+        name: Facts with 11 and 12
+        exemplars:
+          - problem: 'Compute $12 \times 7$.'
+            answer: "84"
+          - problem: 'Compute $11 \times 8$.'
+            answer: "88"
+        constraints: "one factor 11 or 12, the other 2-12"
+    diagnostic_exemplar:
+      problem: 'Compute $12 \times 6$.'
+      answer: "72"
+      solution_sketch: 'Split the $12$: $10 \times 6 + 2 \times 6 = 60 + 12 = 72$.'
+    anki_seeds:
+      - front: "Nines trick: for 9 x n, the two digits of the answer always sum to..."
+        back: "9 (e.g. 9 x 6 = 54, and 5 + 4 = 9)"
+        type: basic
+
+  - id: division-facts
+    name: Division Facts
+    core: true
+    difficulty: 0.12
+    drill: true
+    answer_kind: numeric
+    expected_time_secs: 30
+    prerequisites:
+      - id: multiplication-tables
+        weight: 1.0
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: Quotients from the tables
+        key_prerequisites: [multiplication-tables]
+        exemplars:
+          - problem: 'Compute $42 \div 6$.'
+            answer: "7"
+          - problem: 'Compute $63 \div 9$.'
+            answer: "7"
+          - problem: 'Compute $32 \div 8$.'
+            answer: "4"
+        constraints: "dividend is a product of two factors 2-10; divides evenly"
+      - id: kp2
+        name: Missing-factor form
+        key_prerequisites: [multiplication-tables]
+        exemplars:
+          - problem: 'Solve: $6 \times \square = 48$.'
+            answer: "8"
+            solution_sketch: 'Division undoes multiplication: $48 \div 6 = 8$.'
+          - problem: 'Compute $56 \div 7$.'
+            answer: "8"
+          - problem: 'Solve: $\square \times 9 = 54$.'
+            answer: "6"
+        constraints: "facts through 10 x 10, stated as division or missing factor"
+    diagnostic_exemplar:
+      problem: 'Solve: $8 \times \square = 56$.'
+      answer: '7'
+      solution_sketch: 'The missing factor is $56 \div 8 = 7$.'
+    anki_seeds:
+      - front: "The division 42 / 6 asks the multiplication question..."
+        back: "6 times what equals 42? (answer: 7)"
+        type: basic
+
+  - id: perfect-squares
+    name: Perfect Squares
+    core: true
+    difficulty: 0.15
+    drill: true
+    answer_kind: numeric
+    expected_time_secs: 30
+    prerequisites:
+      - id: multiplication-tables
+        weight: 0.9
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: Squares through twelve squared
+        key_prerequisites: [multiplication-tables]
+        exemplars:
+          - problem: 'Compute $7^2$.'
+            answer: "49"
+          - problem: 'Compute $9^2$.'
+            answer: "81"
+          - problem: 'Compute $12^2$.'
+            answer: "144"
+        constraints: "base 1-12"
+      - id: kp2
+        name: Recognizing perfect squares
+        key_prerequisites: [multiplication-tables]
+        exemplars:
+          - problem: 'Is $64$ a perfect square? (yes/no)'
+            answer: "yes"
+            solution_sketch: '$8 \times 8 = 64$.'
+          - problem: 'What number squared gives $121$?'
+            answer: "11"
+          - problem: 'Is $50$ a perfect square? (yes/no)'
+            answer: "no"
+        constraints: "numbers up to 150"
+    diagnostic_exemplar:
+      problem: 'What whole number squared gives $144$?'
+      answer: '12'
+      solution_sketch: '$12^2 = 144$.'
+    anki_seeds:
+      - front: "13 squared ="
+        back: "169"
+        type: basic
+      - front: "A perfect square is a number that equals..."
+        back: "a whole number times itself (e.g. 36 = 6 x 6)"
+        type: basic
+
+  - id: place-value
+    name: Place Value
+    core: true
+    difficulty: 0.1
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 30
+    prerequisites: []          # mastery-floor root
+    knowledge_points:
+      - id: kp1
+        name: Value of a digit by position
+        exemplars:
+          - problem: 'What is the value of the $7$ in $74$?'
+            answer: "70"
+          - problem: 'Which digit is in the hundreds place of $3852$?'
+            answer: "8"
+        constraints: "numbers up to 4 digits"
+      - id: kp2
+        name: Expanded form and larger numbers
+        exemplars:
+          - problem: 'What is the value of the $5$ in $5{,}280$?'
+            answer: "5000"
+          - problem: 'Write $4{,}506$ in expanded form.'
+            answer: "4000 + 500 + 6"
+            solution_sketch: '$4$ thousands + $5$ hundreds + $0$ tens + $6$ ones.'
+        constraints: "numbers up to 5 digits, may include internal zeros"
+    diagnostic_exemplar:
+      problem: 'What is the value of the $4$ in $23{,}406$?'
+      answer: '400'
+      solution_sketch: 'The $4$ sits in the hundreds place.'
+    anki_seeds:
+      - front: "In 4,321 the digit 4 sits in the {{c1::thousands}} place."
+        back: "thousands"
+        type: cloze
+
+  - id: comparing-ordering-whole-numbers
+    name: Comparing and Ordering Whole Numbers
+    core: true
+    difficulty: 0.1
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 45
+    prerequisites:
+      - id: place-value
+        weight: 0.9
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: Compare two numbers
+        key_prerequisites: [place-value]
+        exemplars:
+          - problem: 'Which is larger, $4{,}562$ or $4{,}652$?'
+            answer: "4652"
+            solution_sketch: 'Same thousands digit; compare hundreds: $6 > 5$.'
+          - problem: 'Which is smaller, $389$ or $401$?'
+            answer: "389"
+        constraints: "numbers up to 5 digits, same or different digit counts"
+      - id: kp2
+        name: Order a list of numbers
+        key_prerequisites: [place-value]
+        exemplars:
+          - problem: 'Order from least to greatest: $315$, $351$, $153$.'
+            answer: "153, 315, 351"
+          - problem: 'Which is greatest: $2{,}087$, $2{,}870$, or $2{,}078$?'
+            answer: "2870"
+        constraints: "3-4 numbers, up to 4 digits"
+    diagnostic_exemplar:
+      problem: 'Order from least to greatest: $4{,}071$, $4{,}710$, $4{,}017$.'
+      answer: '4017, 4071, 4710'
+      solution_sketch: 'All three have four digits, so compare place by place from the left.'
+    anki_seeds:
+      - front: "To compare two whole numbers with the same number of digits, compare digits..."
+        back: "from left to right; the first place where they differ decides"
+        type: basic
+      - front: "A whole number with more digits than another is always..."
+        back: "larger (e.g. 1,000 > 999)"
+        type: basic
+
+  - id: rounding-whole-numbers
+    name: Rounding Whole Numbers
+    core: true
+    difficulty: 0.12
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 35
+    prerequisites:
+      - id: place-value
+        weight: 0.8
+        key: true
+      - id: comparing-ordering-whole-numbers
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Round to the nearest ten or hundred
+        key_prerequisites: [place-value]
+        exemplars:
+          - problem: 'Round $47$ to the nearest ten.'
+            answer: "50"
+          - problem: 'Round $83$ to the nearest ten.'
+            answer: "80"
+          - problem: 'Round $342$ to the nearest hundred.'
+            answer: "300"
+            solution_sketch: 'The tens digit is $4 (< 5)$, so round down to $300$.'
+        constraints: "2-3 digit numbers"
+      - id: kp2
+        name: Round to larger places, including boundary cases
+        key_prerequisites: [place-value]
+        exemplars:
+          - problem: 'Round $2{,}681$ to the nearest thousand.'
+            answer: "3000"
+          - problem: 'Round $7{,}450$ to the nearest hundred.'
+            answer: "7500"
+            solution_sketch: 'The tens digit is exactly $5$, so round up: $7{,}500$.'
+          - problem: 'Round $4{,}500$ to the nearest thousand.'
+            answer: "5000"
+        constraints: "up to 4 digits; include boundary (5) cases"
+    diagnostic_exemplar:
+      problem: 'Round $6{,}350$ to the nearest hundred.'
+      answer: "6400"
+      solution_sketch: 'The tens digit is $5$, so the hundreds digit rounds up: $6{,}400$.'
+    anki_seeds:
+      - front: "When rounding, look at the digit to the right of the target place: if it is 5 or more you..."
+        back: "round up; if it is 4 or less, round down (keep the digit)"
+        type: basic
+
+  # --------------------------------------------------------------------- #
+  # Multi-digit computation
+  # --------------------------------------------------------------------- #
+  - id: addition-with-carrying
+    name: Addition with Carrying
+    core: true
+    difficulty: 0.12
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 45
+    prerequisites:
+      - id: single-digit-addition
+        weight: 1.0
+        key: true
+      - id: place-value
+        weight: 0.6
+    knowledge_points:
+      - id: kp1
+        name: Two-digit addition with a carry
+        key_prerequisites: [single-digit-addition]
+        exemplars:
+          - problem: 'Compute $47 + 38$.'
+            answer: "85"
+            solution_sketch: '$7 + 8 = 15$, write $5$ carry $1$; $4 + 3 + 1 = 8$.'
+          - problem: 'Compute $56 + 27$.'
+            answer: "83"
+        constraints: "2-digit addends, exactly one carry"
+      - id: kp2
+        name: Three-digit addition with multiple carries
+        key_prerequisites: [place-value]
+        exemplars:
+          - problem: 'Compute $256 + 178$.'
+            answer: "434"
+            solution_sketch: 'Ones: $6+8=14$ (carry); tens: $5+7+1=13$ (carry); hundreds: $2+1+1=4$.'
+          - problem: 'Compute $385 + 247$.'
+            answer: "632"
+        constraints: "3-digit addends, at least two carries"
+      - id: kp3
+        name: Several addends
+        key_prerequisites: [single-digit-addition]
+        exemplars:
+          - problem: 'Compute $25 + 37 + 18$.'
+            answer: "80"
+          - problem: 'Compute $123 + 45 + 206$.'
+            answer: "374"
+        constraints: "three addends, up to 3 digits each"
+    diagnostic_exemplar:
+      problem: 'Compute $256 + 187 + 45$.'
+      answer: '488'
+      solution_sketch: 'Units $6 + 7 + 5 = 18$ (carry 1); tens $5 + 8 + 4 + 1 = 18$ (carry 1); hundreds $2 + 1 + 1 = 4$.'
+    anki_seeds:
+      - front: "In column addition, when a column's sum reaches 10 or more you write the ones digit and..."
+        back: "carry the tens digit to the next column left"
+        type: basic
+
+  - id: subtraction-with-borrowing
+    name: Subtraction with Borrowing
+    core: true
+    difficulty: 0.13
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 45
+    prerequisites:
+      - id: subtraction-facts
+        weight: 1.0
+        key: true
+      - id: place-value
+        weight: 0.7
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: Two-digit subtraction with a borrow
+        key_prerequisites: [subtraction-facts]
+        exemplars:
+          - problem: 'Compute $82 - 47$.'
+            answer: "35"
+            solution_sketch: 'Borrow: $12 - 7 = 5$; then $7 - 4 = 3$.'
+          - problem: 'Compute $61 - 28$.'
+            answer: "33"
+        constraints: "2-digit numbers, minuend >= subtrahend, one borrow"
+      - id: kp2
+        name: Three-digit subtraction
+        key_prerequisites: [place-value]
+        exemplars:
+          - problem: 'Compute $435 - 187$.'
+            answer: "248"
+          - problem: 'Compute $612 - 345$.'
+            answer: "267"
+        constraints: "3-digit numbers, at least one borrow, no zeros in the minuend"
+      - id: kp3
+        name: Checking by addition
+        key_prerequisites: [subtraction-facts]
+        exemplars:
+          - problem: 'Compute $74 - 29$, then verify by addition.'
+            answer: "45"
+            solution_sketch: '$74 - 29 = 45$; check: $29 + 45 = 74$.'
+          - problem: 'Compute $725 - 468$.'
+            answer: "257"
+        constraints: "2-3 digit numbers; encourage the addition check"
+    diagnostic_exemplar:
+      problem: 'Compute $623 - 457$.'
+      answer: '166'
+      solution_sketch: 'Borrow in both columns; check by addition: $166 + 457 = 623$.'
+    anki_seeds:
+      - front: "In column subtraction, when the top digit is smaller than the bottom digit you must..."
+        back: "borrow (regroup) one unit from the next place to the left"
+        type: basic
+
+  - id: multi-digit-addition-subtraction
+    name: Multi-Digit Addition and Subtraction
+    core: true
+    difficulty: 0.18
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 60
+    prerequisites:
+      - id: addition-with-carrying
+        weight: 0.9
+        key: true
+      - id: subtraction-with-borrowing
+        weight: 0.9
+        key: true
+      - id: place-value
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: Four-digit addition
+        key_prerequisites: [addition-with-carrying]
+        exemplars:
+          - problem: 'Compute $1{,}867 + 3{,}589$.'
+            answer: "5456"
+          - problem: 'Compute $4{,}675 + 2{,}848$.'
+            answer: "7523"
+        constraints: "4-digit addends, multiple carries"
+      - id: kp2
+        name: Subtracting across zeros
+        key_prerequisites: [subtraction-with-borrowing]
+        exemplars:
+          - problem: 'Compute $503 - 268$.'
+            answer: "235"
+            solution_sketch: 'Borrow across the zero: $503 - 268 = 235$ (check $268 + 235 = 503$).'
+          - problem: 'Compute $700 - 356$.'
+            answer: "344"
+          - problem: 'Compute $4{,}003 - 1{,}567$.'
+            answer: "2436"
+        constraints: "minuend contains zeros requiring a chain borrow"
+      - id: kp3
+        name: Combined multi-step computations
+        key_prerequisites: [addition-with-carrying]
+        exemplars:
+          - problem: 'Compute $350 + 275 - 125$.'
+            answer: "500"
+          - problem: 'Compute $812 - (347 + 165)$.'
+            answer: "300"
+            solution_sketch: '$347 + 165 = 512$; $812 - 512 = 300$.'
+        constraints: "two operations, numbers up to 4 digits"
+    diagnostic_exemplar:
+      problem: 'Compute $4{,}000 - (1{,}268 + 947)$.'
+      answer: '1785'
+      solution_sketch: '$1{,}268 + 947 = 2{,}215$; then $4{,}000 - 2{,}215 = 1{,}785$, borrowing across the zeros.'
+    anki_seeds:
+      - front: "To check a subtraction a - b = c, verify that..."
+        back: "b + c = a"
+        type: basic
+
+  - id: addition-subtraction-word-problems
+    name: Addition and Subtraction Word Problems
+    core: false                # enrichment / applications leaf topic
+    difficulty: 0.2
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 75
+    prerequisites:
+      - id: multi-digit-addition-subtraction
+        weight: 0.9
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: One-step problems
+        key_prerequisites: [multi-digit-addition-subtraction]
+        exemplars:
+          - problem: 'A library has $1{,}240$ books and buys $385$ more. How many books does it have now?'
+            answer: "1625"
+          - problem: 'A stadium holds $4{,}500$ people and $3{,}862$ attend. How many seats are empty?'
+            answer: "638"
+        constraints: "one operation; numbers up to 4 digits"
+      - id: kp2
+        name: Two-step problems
+        key_prerequisites: [multi-digit-addition-subtraction]
+        exemplars:
+          - problem: 'Maya had €250, spent €78, then earned €45. How much does she have now?'
+            answer: "217"
+            solution_sketch: '$250 - 78 = 172$; $172 + 45 = 217$.'
+          - problem: 'A school has $364$ students. $88$ are in year $5$ and $95$ are in year $6$. How many are in other years?'
+            answer: "181"
+        constraints: "two operations; numbers up to 3 digits"
+      - id: kp3
+        name: Comparison problems
+        key_prerequisites: [multi-digit-addition-subtraction]
+        exemplars:
+          - problem: 'Sam has $128$ stamps, which is $43$ more than Ana has. How many stamps does Ana have?'
+            answer: "85"
+            solution_sketch: '"$43$ more than Ana" means Ana has $128 - 43 = 85$.'
+          - problem: 'Mount A is $3{,}776$ m tall and Mount B is $2{,}917$ m tall. How much taller is Mount A?'
+            answer: "859"
+        constraints: "difference/comparison language; up to 4 digits"
+    diagnostic_exemplar:
+      problem: 'Tomas has $215$ stamps, which is $58$ more than Rita has. How many stamps do they have together?'
+      answer: "372"
+      solution_sketch: 'Rita has $215 - 58 = 157$; together $215 + 157 = 372$.'
+    anki_seeds:
+      - front: "In a word problem, the phrase 'how many more' signals which operation?"
+        back: "subtraction (finding a difference)"
+        type: basic
+
+  - id: multiplying-by-powers-of-ten
+    name: Multiplying by Powers of Ten
+    core: true
+    difficulty: 0.15
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 40
+    prerequisites:
+      - id: multiplication-tables
+        weight: 0.8
+        key: true
+      - id: place-value
+        weight: 0.7
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: Multiply by 10, 100, and 1000
+        key_prerequisites: [place-value]
+        exemplars:
+          - problem: 'Compute $47 \times 10$.'
+            answer: "470"
+          - problem: 'Compute $36 \times 100$.'
+            answer: "3600"
+          - problem: 'Compute $8 \times 1000$.'
+            answer: "8000"
+        constraints: "1-2 digit number times 10, 100, or 1000"
+      - id: kp2
+        name: Multiply multiples of ten
+        key_prerequisites: [multiplication-tables]
+        exemplars:
+          - problem: 'Compute $40 \times 70$.'
+            answer: "2800"
+            solution_sketch: '$4 \times 7 = 28$, then append the two zeros.'
+          - problem: 'Compute $240 \times 30$.'
+            answer: "7200"
+          - problem: 'Compute $600 \times 50$.'
+            answer: "30000"
+            solution_sketch: '$6 \times 5 = 30$, then append three zeros: $30{,}000$.'
+        constraints: "both factors end in zeros; underlying fact from the tables"
+    diagnostic_exemplar:
+      problem: 'Compute $60 \times 80$.'
+      answer: "4800"
+      solution_sketch: '$6 \times 8 = 48$, then restore the two zeros: $4{,}800$.'
+    anki_seeds:
+      - front: "To multiply by a multiple of ten (e.g. 240 x 30), multiply the nonzero parts then..."
+        back: "append the total number of trailing zeros (24 x 3 = 72 -> 7200)"
+        type: basic
+
+  - id: multiplying-by-one-digit
+    name: Multiplying by a One-Digit Number
+    core: true
+    difficulty: 0.18
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 60
+    prerequisites:
+      - id: multiplication-tables
+        weight: 0.9
+        key: true
+      - id: addition-with-carrying
+        weight: 0.7
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: Two-digit by one-digit
+        key_prerequisites: [multiplication-tables]
+        exemplars:
+          - problem: 'Compute $34 \times 6$.'
+            answer: "204"
+            solution_sketch: '$30 \times 6 = 180$, $4 \times 6 = 24$, $180 + 24 = 204$.'
+          - problem: 'Compute $57 \times 8$.'
+            answer: "456"
+        constraints: "2-digit x 1-digit"
+      - id: kp2
+        name: Three-digit by one-digit
+        key_prerequisites: [addition-with-carrying]
+        exemplars:
+          - problem: 'Compute $234 \times 4$.'
+            answer: "936"
+          - problem: 'Compute $507 \times 6$.'
+            answer: "3042"
+            solution_sketch: '$500 \times 6 = 3000$ and $7 \times 6 = 42$.'
+        constraints: "3-digit x 1-digit, may include an internal zero"
+      - id: kp3
+        name: Break-apart mental strategies
+        key_prerequisites: [multiplication-tables]
+        exemplars:
+          - problem: 'Compute $49 \times 5$ mentally.'
+            answer: "245"
+            solution_sketch: '$50 \times 5 = 250$, minus one $5$: $245$.'
+          - problem: 'Compute $6 \times 99$ mentally.'
+            answer: "594"
+            solution_sketch: '$6 \times 100 = 600$, minus $6$: $594$.'
+        constraints: "one factor near a round number"
+    diagnostic_exemplar:
+      problem: 'Compute $406 \times 7$.'
+      answer: '2842'
+      solution_sketch: '$400 \times 7 = 2800$ and $6 \times 7 = 42$.'
+    anki_seeds:
+      - front: "Break-apart (distributive) strategy: 34 x 6 = (30 x 6) + ..."
+        back: "(4 x 6), i.e. 180 + 24 = 204"
+        type: basic
+
+  - id: multi-digit-multiplication
+    name: Multi-Digit Multiplication
+    core: true
+    difficulty: 0.25
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 90
+    prerequisites:
+      - id: multiplying-by-one-digit
+        weight: 0.9
+        key: true
+      - id: multiplying-by-powers-of-ten
+        weight: 0.6
+        key: true
+      - id: multi-digit-addition-subtraction
+        weight: 0.5
+    knowledge_points:
+      - id: kp1
+        name: Two-digit by two-digit
+        key_prerequisites: [multiplying-by-one-digit]
+        exemplars:
+          - problem: 'Compute $23 \times 45$.'
+            answer: "1035"
+            solution_sketch: '$23 \times 40 = 920$, $23 \times 5 = 115$, $920 + 115 = 1035$.'
+          - problem: 'Compute $68 \times 24$.'
+            answer: "1632"
+        constraints: "2-digit x 2-digit"
+      - id: kp2
+        name: Three-digit by two-digit
+        key_prerequisites: [multiplying-by-powers-of-ten]
+        exemplars:
+          - problem: 'Compute $125 \times 12$.'
+            answer: "1500"
+          - problem: 'Compute $214 \times 36$.'
+            answer: "7704"
+            solution_sketch: '$214 \times 30 = 6420$, $214 \times 6 = 1284$, sum $7704$.'
+          - problem: 'Compute $342 \times 27$.'
+            answer: "9234"
+        constraints: "3-digit x 2-digit"
+      - id: kp3
+        name: Partial products and estimation checks
+        key_prerequisites: [multi-digit-addition-subtraction]
+        exemplars:
+          - problem: 'Compute $56 \times 34$ using partial products.'
+            answer: "1904"
+            solution_sketch: '$50 \times 30 = 1500$, $50 \times 4 = 200$, $6 \times 30 = 180$, $6 \times 4 = 24$; sum $1904$.'
+          - problem: 'Compute $41 \times 29$ and check that the answer is close to $40 \times 30$.'
+            answer: "1189"
+            solution_sketch: 'Estimate $40 \times 30 = 1200$; exact: $41 \times 29 = 1189$.'
+        constraints: "2-digit x 2-digit; show or check with partial products"
+    diagnostic_exemplar:
+      problem: 'Compute $263 \times 34$.'
+      answer: '8942'
+      solution_sketch: '$263 \times 30 = 7890$; $263 \times 4 = 1052$; total $8942$.'
+    anki_seeds:
+      - front: "In 2-digit column multiplication, the second partial product is shifted one place left because..."
+        back: "it comes from multiplying by the tens digit (a multiple of ten)"
+        type: basic
+
+  - id: division-with-remainders
+    name: Division with Remainders
+    core: true
+    difficulty: 0.2
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 60
+    prerequisites:
+      - id: division-facts
+        weight: 0.9
+        key: true
+      - id: subtraction-facts
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: Quotient and remainder
+        key_prerequisites: [division-facts]
+        exemplars:
+          - problem: 'Compute $47 \div 5$. Give quotient and remainder.'
+            answer: "9 R2"
+            solution_sketch: '$5 \times 9 = 45$, remainder $47 - 45 = 2$.'
+          - problem: 'Compute $26 \div 4$. Give quotient and remainder.'
+            answer: "6 R2"
+        constraints: "2-digit dividend, 1-digit divisor, nonzero remainder; answer as 'q Rr'"
+      - id: kp2
+        name: Checking with divisor x quotient + remainder
+        key_prerequisites: [division-facts]
+        exemplars:
+          - problem: 'Compute $38 \div 7$ and verify your answer.'
+            answer: "5 R3"
+            solution_sketch: '$7 \times 5 = 35$ and $35 + 3 = 38$.'
+          - problem: 'Compute $50 \div 6$. Give quotient and remainder.'
+            answer: "8 R2"
+        constraints: "remainder strictly smaller than the divisor"
+      - id: kp3
+        name: Remainders in context
+        key_prerequisites: [subtraction-facts]
+        exemplars:
+          - problem: '$23$ apples are packed in bags of $4$. How many full bags are packed?'
+            answer: "5"
+            solution_sketch: '$23 \div 4 = 5$ R$3$; only full bags count, so $5$.'
+          - problem: '$31$ students ride in cars that hold $4$ each. How many cars are needed?'
+            answer: "8"
+            solution_sketch: '$31 \div 4 = 7$ R$3$; the $3$ leftover students still need a car, so $8$.'
+        constraints: "context decides whether to drop or round up the remainder"
+    diagnostic_exemplar:
+      problem: 'Egg boxes hold $6$ eggs each. How many boxes are needed to hold $40$ eggs?'
+      answer: "7"
+      solution_sketch: '$40 \div 6 = 6$ remainder $4$; the leftover eggs still need a box, so round up to $7$.'
+    anki_seeds:
+      - front: "To check a division a / b = q remainder r, verify that..."
+        back: "b x q + r = a"
+        type: basic
+      - front: "In a valid division with remainder, the remainder must always be..."
+        back: "smaller than the divisor"
+        type: basic
+
+  - id: long-division-one-digit
+    name: Long Division with One-Digit Divisors
+    core: true
+    difficulty: 0.25
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 75
+    prerequisites:
+      - id: division-with-remainders
+        weight: 0.9
+        key: true
+      - id: multiplying-by-one-digit
+        weight: 0.6
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: Two-digit dividends
+        key_prerequisites: [division-with-remainders]
+        exemplars:
+          - problem: 'Compute $84 \div 6$.'
+            answer: "14"
+          - problem: 'Compute $96 \div 4$.'
+            answer: "24"
+        constraints: "2-digit dividend, 1-digit divisor, divides evenly"
+      - id: kp2
+        name: Three-digit dividends, no remainder
+        key_prerequisites: [multiplying-by-one-digit]
+        exemplars:
+          - problem: 'Compute $156 \div 4$.'
+            answer: "39"
+          - problem: 'Compute $936 \div 8$.'
+            answer: "117"
+        constraints: "3-digit dividend, 1-digit divisor, divides evenly"
+      - id: kp3
+        name: Three-digit dividends with remainders
+        key_prerequisites: [division-with-remainders]
+        exemplars:
+          - problem: 'Compute $725 \div 3$. Give quotient and remainder.'
+            answer: "241 R2"
+          - problem: 'Compute $500 \div 7$. Give quotient and remainder.'
+            answer: "71 R3"
+            solution_sketch: '$7 \times 71 = 497$, remainder $500 - 497 = 3$.'
+        constraints: "3-digit dividend, 1-digit divisor, nonzero remainder; answer as 'q Rr'"
+    diagnostic_exemplar:
+      problem: 'Compute $611 \div 4$. Give quotient and remainder.'
+      answer: "152 R3"
+      solution_sketch: '$4 \times 152 = 608$ and $611 - 608 = 3$.'
+    anki_seeds:
+      - front: "The repeating cycle of the long-division algorithm is..."
+        back: "divide, multiply, subtract, bring down the next digit"
+        type: basic
+
+  - id: long-division
+    name: Long Division
+    core: true
+    difficulty: 0.35
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 120
+    prerequisites:
+      - id: long-division-one-digit
+        weight: 0.9
+        key: true
+      - id: multi-digit-multiplication
+        weight: 0.6
+        key: true
+      - id: multi-digit-addition-subtraction
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: Four-digit dividends
+        key_prerequisites: [long-division-one-digit]
+        exemplars:
+          - problem: 'Compute $5{,}208 \div 6$.'
+            answer: "868"
+          - problem: 'Compute $4{,}361 \div 7$.'
+            answer: "623"
+        constraints: "4-digit dividend, 1-digit divisor"
+      - id: kp2
+        name: Two-digit divisors
+        key_prerequisites: [multi-digit-multiplication]
+        exemplars:
+          - problem: 'Compute $986 \div 29$.'
+            answer: "34"
+            solution_sketch: 'Estimate: $29 \approx 30$ and $986 \div 30 \approx 33$; test $29 \times 34 = 986$.'
+          - problem: 'Compute $812 \div 14$.'
+            answer: "58"
+        constraints: "3-digit dividend, 2-digit divisor, divides evenly"
+      - id: kp3
+        name: Two-digit divisors with remainders
+        key_prerequisites: [multi-digit-addition-subtraction]
+        exemplars:
+          - problem: 'Compute $750 \div 32$. Give quotient and remainder.'
+            answer: "23 R14"
+            solution_sketch: '$32 \times 23 = 736$; $750 - 736 = 14$.'
+          - problem: 'Compute $1{,}000 \div 24$. Give quotient and remainder.'
+            answer: "41 R16"
+        constraints: "2-digit divisor, nonzero remainder; answer as 'q Rr'"
+    diagnostic_exemplar:
+      problem: 'Compute $1{,}484 \div 36$. Give quotient and remainder.'
+      answer: '41 R8'
+      solution_sketch: '$36 \times 41 = 1476$ and $1484 - 1476 = 8$.'
+    anki_seeds:
+      - front: "To pick each quotient digit when dividing by a 2-digit divisor, first..."
+        back: "estimate by rounding the divisor to the nearest ten, then adjust"
+        type: basic
+
+  - id: multiplication-division-word-problems
+    name: Multiplication and Division Word Problems
+    core: false                # enrichment / applications leaf topic
+    difficulty: 0.3
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 90
+    prerequisites:
+      - id: multi-digit-multiplication
+        weight: 0.8
+        key: true
+      - id: long-division-one-digit
+        weight: 0.8
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: Equal groups and arrays
+        key_prerequisites: [multi-digit-multiplication]
+        exemplars:
+          - problem: 'An auditorium has $12$ rows of $15$ chairs. How many chairs in all?'
+            answer: "180"
+          - problem: 'A crate holds $24$ cans. How many cans are in $17$ crates?'
+            answer: "408"
+        constraints: "one multiplication; factors up to 2 digits"
+      - id: kp2
+        name: Sharing and grouping division
+        key_prerequisites: [long-division-one-digit]
+        exemplars:
+          - problem: '$348$ pencils are packed $6$ to a box. How many boxes are filled?'
+            answer: "58"
+          - problem: '€392 is split equally among $8$ people. How much does each get?'
+            answer: "49"
+        constraints: "one division; 3-digit dividend, 1-digit divisor, divides evenly"
+      - id: kp3
+        name: Interpreting remainders and two-step problems
+        key_prerequisites: [long-division-one-digit]
+        exemplars:
+          - problem: '$130$ students go on a trip. Each bus holds $40$. How many buses are needed?'
+            answer: "4"
+            solution_sketch: '$130 \div 40 = 3$ R$10$; the leftover $10$ students need a fourth bus.'
+          - problem: 'Tickets cost €9 each. A group buys $14$ tickets and pays with €130. How much change do they get?'
+            answer: "4"
+            solution_sketch: '$14 \times 9 = 126$; $130 - 126 = 4$.'
+        constraints: "remainder interpretation or two operations"
+    diagnostic_exemplar:
+      problem: '$155$ pupils travel to a match by minibus. Each minibus seats $18$. How many minibuses are needed?'
+      answer: "9"
+      solution_sketch: '$18 \times 8 = 144$ leaves $11$ pupils without a seat, so round the quotient up to $9$.'
+    anki_seeds:
+      - front: "When a word problem asks 'how many containers are needed' and the division leaves a remainder, you..."
+        back: "round the quotient up (the leftovers still need a container)"
+        type: basic
+
+  # --------------------------------------------------------------------- #
+  # Expressions and order of operations
+  # --------------------------------------------------------------------- #
+  - id: whole-number-exponents
+    name: Whole-Number Exponents
+    core: true
+    difficulty: 0.25
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 50
+    prerequisites:
+      - id: multiplication-tables
+        weight: 0.8
+        key: true
+      - id: perfect-squares
+        weight: 0.5
+    knowledge_points:
+      - id: kp1
+        name: Exponent notation
+        key_prerequisites: [multiplication-tables]
+        exemplars:
+          - problem: 'Write $3 \times 3 \times 3 \times 3$ using an exponent.'
+            answer: "3^4"
+          - problem: 'Write $5^3$ as a repeated multiplication.'
+            answer: "5 x 5 x 5"
+        constraints: "base 2-10, exponent 2-5"
+      - id: kp2
+        name: Evaluating powers
+        key_prerequisites: [multiplication-tables]
+        exemplars:
+          - problem: 'Compute $2^5$.'
+            answer: "32"
+            solution_sketch: '$2, 4, 8, 16, 32$.'
+          - problem: 'Compute $3^4$.'
+            answer: "81"
+          - problem: 'Compute $10^3$.'
+            answer: "1000"
+        constraints: "value at most 1000"
+      - id: kp3
+        name: Squares, cubes, and comparisons
+        key_prerequisites: [perfect-squares]
+        exemplars:
+          - problem: 'Compute $4^3$.'
+            answer: "64"
+          - problem: 'Which is larger, $2^6$ or $6^2$?'
+            answer: "2^6"
+            solution_sketch: '$2^6 = 64$ and $6^2 = 36$.'
+          - problem: 'Compute $1^9$.'
+            answer: "1"
+        constraints: "compare or evaluate; values at most 200"
+    diagnostic_exemplar:
+      problem: 'Which is larger, $3^4$ or $4^3$?'
+      answer: '3^4'
+      solution_sketch: '$3^4 = 81$ and $4^3 = 64$.'
+    anki_seeds:
+      - front: "In the power 5^3, 5 is the base and 3 is the {{c1::exponent}}."
+        back: "exponent"
+        type: cloze
+      - front: "For any number a, a^1 equals..."
+        back: "a itself"
+        type: basic
+
+  - id: expressions-with-parentheses
+    name: Expressions with Parentheses
+    core: true
+    difficulty: 0.22
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 45
+    prerequisites:
+      - id: multi-digit-addition-subtraction
+        weight: 0.6
+        key: true
+      - id: multiplication-tables
+        weight: 0.5
+    knowledge_points:
+      - id: kp1
+        name: Evaluate inside the parentheses first
+        key_prerequisites: [multiplication-tables]
+        exemplars:
+          - problem: 'Compute $(3 + 4) \times 5$.'
+            answer: "35"
+          - problem: 'Compute $2 \times (9 - 3)$.'
+            answer: "12"
+        constraints: "one set of parentheses, single-digit operands"
+      - id: kp2
+        name: Parentheses change the value
+        key_prerequisites: [multi-digit-addition-subtraction]
+        exemplars:
+          - problem: 'Compute $10 - (4 - 2)$.'
+            answer: "8"
+          - problem: 'Compute $(10 - 4) - 2$.'
+            answer: "4"
+            solution_sketch: 'Grouping matters: $10 - (4 - 2) = 8$ but $(10 - 4) - 2 = 4$.'
+        constraints: "same numbers grouped differently"
+      - id: kp3
+        name: Translating words into grouped expressions
+        key_prerequisites: [multiplication-tables]
+        exemplars:
+          - problem: 'Evaluate: multiply the sum of $7$ and $5$ by $3$.'
+            answer: "36"
+            solution_sketch: '$(7 + 5) \times 3 = 12 \times 3 = 36$.'
+          - problem: 'Evaluate: twice the difference of $9$ and $4$.'
+            answer: "10"
+        constraints: "verbal description of one grouped operation"
+    diagnostic_exemplar:
+      problem: 'Evaluate: multiply the sum of $4$ and $5$ by $3$.'
+      answer: "27"
+      solution_sketch: 'The sum inside comes first: $(4 + 5) \times 3 = 9 \times 3 = 27$.'
+    anki_seeds:
+      - front: "In any numerical expression, the part evaluated first is..."
+        back: "whatever is inside parentheses (innermost first)"
+        type: basic
+
+  - id: order-of-operations
+    name: Order of Operations
+    core: true
+    difficulty: 0.3
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 60
+    prerequisites:
+      - id: expressions-with-parentheses
+        weight: 0.8
+        key: true
+      - id: whole-number-exponents
+        weight: 0.7
+        key: true
+      - id: division-facts
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: Multiply and divide before add and subtract
+        key_prerequisites: [division-facts]
+        exemplars:
+          - problem: 'Compute $3 + 4 \times 5$.'
+            answer: "23"
+            solution_sketch: 'Multiply first: $4 \times 5 = 20$, then $3 + 20 = 23$.'
+          - problem: 'Compute $20 - 12 \div 4$.'
+            answer: "17"
+        constraints: "single-digit operands, no parentheses"
+      - id: kp2
+        name: Exponents in the order of operations
+        key_prerequisites: [whole-number-exponents]
+        exemplars:
+          - problem: 'Compute $2 + 3^2 \times 4$.'
+            answer: "38"
+            solution_sketch: '$3^2 = 9$; $9 \times 4 = 36$; $2 + 36 = 38$.'
+          - problem: 'Compute $5 \times 2^3 - 7$.'
+            answer: "33"
+        constraints: "one exponent, small bases"
+      - id: kp3
+        name: Full expressions with grouping
+        key_prerequisites: [expressions-with-parentheses]
+        exemplars:
+          - problem: 'Compute $48 \div 6 + 2 \times 5$.'
+            answer: "18"
+            solution_sketch: '$48 \div 6 = 8$ and $2 \times 5 = 10$, then $8 + 10 = 18$.'
+          - problem: 'Compute $(5 + 3) \times 2 - 4^2$.'
+            answer: "0"
+            solution_sketch: '$8 \times 2 = 16$; $4^2 = 16$; $16 - 16 = 0$.'
+          - problem: 'Compute $36 \div (9 - 3)^2$.'
+            answer: "1"
+        constraints: "3-4 operations mixing parentheses, exponents, +, -, x, /"
+    diagnostic_exemplar:
+      problem: 'Compute $(4 + 2) \times 3 - 2^3$.'
+      answer: "10"
+      solution_sketch: 'Parentheses, then the power: $6 \times 3 - 8 = 18 - 8 = 10$.'
+    anki_seeds:
+      - front: "State the order of operations (PEMDAS)."
+        back: "Parentheses, Exponents, Multiplication/Division (left to right), Addition/Subtraction (left to right)"
+        type: basic
+
+  # --------------------------------------------------------------------- #
+  # Number theory
+  # --------------------------------------------------------------------- #
+  - id: factors-and-multiples
+    name: Factors and Multiples
+    core: true
+    difficulty: 0.15
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 45
+    prerequisites:
+      - id: multiplication-tables
+        weight: 0.8
+        key: true
+      - id: division-facts
+        weight: 0.7
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: Listing factors
+        key_prerequisites: [division-facts]
+        exemplars:
+          - problem: 'List all the factors of $12$.'
+            answer: "1, 2, 3, 4, 6, 12"
+            solution_sketch: 'Factor pairs: $1 \times 12$, $2 \times 6$, $3 \times 4$.'
+          - problem: 'List all the factors of $18$.'
+            answer: "1, 2, 3, 6, 9, 18"
+        constraints: "numbers up to 50"
+      - id: kp2
+        name: Listing multiples
+        key_prerequisites: [multiplication-tables]
+        exemplars:
+          - problem: 'List the first four multiples of $6$.'
+            answer: "6, 12, 18, 24"
+          - problem: 'List the first three multiples of $9$.'
+            answer: "9, 18, 27"
+        constraints: "base 2-12, first 3-5 multiples"
+      - id: kp3
+        name: Factor or multiple?
+        key_prerequisites: [division-facts]
+        exemplars:
+          - problem: 'Is $7$ a factor of $84$? (yes/no)'
+            answer: "yes"
+            solution_sketch: '$84 = 7 \times 12$.'
+          - problem: 'Is $51$ a multiple of $3$? (yes/no)'
+            answer: "yes"
+            solution_sketch: '$3 \times 17 = 51$.'
+        constraints: "numbers up to 100"
+    diagnostic_exemplar:
+      problem: 'List all the factors of $20$ that are also multiples of $4$.'
+      answer: '4, 20'
+      solution_sketch: 'Factors of $20$: $1, 2, 4, 5, 10, 20$; of these only $4$ and $20$ are multiples of $4$.'
+    anki_seeds:
+      - front: "6 is a factor of 42; equivalently, 42 is a ... of 6."
+        back: "multiple"
+        type: basic
+
+  - id: divisibility-rules
+    name: Divisibility Rules
+    core: true
+    difficulty: 0.2
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 35
+    prerequisites:
+      - id: factors-and-multiples
+        weight: 0.6
+        key: true
+      - id: division-facts
+        weight: 0.4
+      - id: long-division-one-digit
+        weight: 0.0            # conceptual-only: divisibility rules AVOID doing the division
+    knowledge_points:
+      - id: kp1
+        name: Rules for 2, 5, and 10
+        key_prerequisites: [factors-and-multiples]
+        exemplars:
+          - problem: 'Is $470$ divisible by $5$? (yes/no)'
+            answer: "yes"
+            solution_sketch: 'It ends in $0$, so it is divisible by $5$ (and by $10$).'
+          - problem: 'Is $384$ divisible by $2$? (yes/no)'
+            answer: "yes"
+        constraints: "3-digit numbers"
+      - id: kp2
+        name: Rules for 3 and 9 (digit sums)
+        key_prerequisites: [factors-and-multiples]
+        exemplars:
+          - problem: 'Is $471$ divisible by $3$? (yes/no)'
+            answer: "yes"
+            solution_sketch: '$4 + 7 + 1 = 12$, which is divisible by $3$.'
+          - problem: 'Is $522$ divisible by $9$? (yes/no)'
+            answer: "yes"
+            solution_sketch: '$5 + 2 + 2 = 9$, which is divisible by $9$.'
+        constraints: "3-digit numbers"
+      - id: kp3
+        name: Rules for 4 and 6
+        key_prerequisites: [factors-and-multiples]
+        exemplars:
+          - problem: 'Is $316$ divisible by $4$? (yes/no)'
+            answer: "yes"
+            solution_sketch: 'The last two digits, $16$, form a multiple of $4$.'
+          - problem: 'Is $234$ divisible by $6$? (yes/no)'
+            answer: "yes"
+            solution_sketch: 'It is even AND $2 + 3 + 4 = 9$ is divisible by $3$, so divisible by $6$.'
+        constraints: "3-digit numbers"
+    diagnostic_exemplar:
+      problem: 'Is $438$ divisible by $6$? (yes/no)'
+      answer: "yes"
+      solution_sketch: 'Divisible by $6$ means divisible by both $2$ and $3$: $438$ is even and $4 + 3 + 8 = 15$ is a multiple of $3$.'
+    anki_seeds:
+      - front: "A number is divisible by 3 if..."
+        back: "the sum of its digits is divisible by 3"
+        type: basic
+      - front: "A number is divisible by 9 if..."
+        back: "the sum of its digits is divisible by 9"
+        type: basic
+      - front: "A number is divisible by 4 if..."
+        back: "the number formed by its last two digits is divisible by 4"
+        type: basic
+
+  - id: prime-composite-numbers
+    name: Prime and Composite Numbers
+    core: true
+    difficulty: 0.18
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 40
+    prerequisites:
+      - id: factors-and-multiples
+        weight: 0.9
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: Classifying numbers as prime or composite
+        key_prerequisites: [factors-and-multiples]
+        exemplars:
+          - problem: 'Is $17$ prime or composite?'
+            answer: "prime"
+          - problem: 'Is $21$ prime or composite?'
+            answer: "composite"
+            solution_sketch: '$21 = 3 \times 7$, so it has factors other than $1$ and itself.'
+        constraints: "numbers 2-50"
+      - id: kp2
+        name: Knowing the small primes
+        key_prerequisites: [factors-and-multiples]
+        exemplars:
+          - problem: 'List all the primes between $10$ and $20$.'
+            answer: "11, 13, 17, 19"
+          - problem: 'What is the smallest prime greater than $30$?'
+            answer: "31"
+        constraints: "primes below 50"
+      - id: kp3
+        name: Edge cases
+        key_prerequisites: [factors-and-multiples]
+        exemplars:
+          - problem: 'Is $1$ prime? (yes/no)'
+            answer: "no"
+            solution_sketch: '$1$ is neither prime nor composite.'
+          - problem: 'What is the only even prime number?'
+            answer: "2"
+        constraints: "the numbers 0, 1, 2 and even numbers"
+    diagnostic_exemplar:
+      problem: 'List all the primes less than $10$.'
+      answer: '2, 3, 5, 7'
+      solution_sketch: '$1$ is not prime; $2$ is the only even prime; $4$, $6$, $8$ and $9$ are composite.'
+    anki_seeds:
+      - front: "A prime number is..."
+        back: "a whole number greater than 1 whose only factors are 1 and itself"
+        type: basic
+      - front: "Is 1 prime, composite, or neither?"
+        back: "neither"
+        type: basic
+      - front: "The only even prime number is..."
+        back: "2"
+        type: basic
+
+  - id: prime-factorization
+    name: Prime Factorization
+    core: true
+    difficulty: 0.3
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 80
+    prerequisites:
+      - id: divisibility-rules
+        weight: 0.6
+        key: true
+      - id: prime-composite-numbers
+        weight: 0.7
+        key: true
+      - id: long-division-one-digit
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Factoring small numbers
+        key_prerequisites: [prime-composite-numbers]
+        exemplars:
+          - problem: 'Write the prime factorization of $12$.'
+            answer: "2 x 2 x 3"
+            solution_sketch: '$12 = 4 \times 3 = 2 \times 2 \times 3$, i.e. $2^2 \times 3$.'
+          - problem: 'Write the prime factorization of $18$.'
+            answer: "2 x 3 x 3"
+        constraints: "numbers 4-30; give the product of primes"
+      - id: kp2
+        name: Factor trees for larger numbers
+        key_prerequisites: [divisibility-rules]
+        exemplars:
+          - problem: 'Write the prime factorization of $60$.'
+            answer: "2 x 2 x 3 x 5"
+          - problem: 'Write the prime factorization of $84$.'
+            answer: "2 x 2 x 3 x 7"
+            solution_sketch: '$84 = 4 \times 21 = 2 \times 2 \times 3 \times 7$.'
+        constraints: "numbers 30-100"
+      - id: kp3
+        name: Repeated prime factors
+        key_prerequisites: [divisibility-rules]
+        exemplars:
+          - problem: 'Write the prime factorization of $72$.'
+            answer: "2 x 2 x 2 x 3 x 3"
+            solution_sketch: '$72 = 8 \times 9 = 2^3 \times 3^2$.'
+          - problem: 'Write the prime factorization of $100$.'
+            answer: "2 x 2 x 5 x 5"
+        constraints: "numbers with repeated factors, up to 150"
+    diagnostic_exemplar:
+      problem: 'Write the prime factorization of $90$.'
+      answer: '2 x 3 x 3 x 5'
+      solution_sketch: '$90 = 9 \times 10 = 3 \times 3 \times 2 \times 5$.'
+    anki_seeds:
+      - front: "The Fundamental Theorem of Arithmetic: every whole number greater than 1 has..."
+        back: "exactly one prime factorization (up to the order of the factors)"
+        type: basic
+
+  - id: greatest-common-factor
+    name: Greatest Common Factor
+    core: true
+    difficulty: 0.25
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 60
+    prerequisites:
+      - id: factors-and-multiples
+        weight: 0.9
+        key: true
+      - id: division-facts
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: GCF by listing factors
+        key_prerequisites: [factors-and-multiples]
+        exemplars:
+          - problem: 'Find the GCF of $12$ and $18$.'
+            answer: "6"
+            solution_sketch: 'Factors of $12$: $1,2,3,4,6,12$; of $18$: $1,2,3,6,9,18$; largest common is $6$.'
+          - problem: 'Find the GCF of $8$ and $20$.'
+            answer: "4"
+        constraints: "two numbers up to 30"
+      - id: kp2
+        name: GCF of larger pairs
+        key_prerequisites: [factors-and-multiples]
+        exemplars:
+          - problem: 'Find the GCF of $24$ and $36$.'
+            answer: "12"
+          - problem: 'Find the GCF of $30$ and $45$.'
+            answer: "15"
+        constraints: "two numbers up to 60"
+      - id: kp3
+        name: Relatively prime pairs and factor pairs
+        key_prerequisites: [factors-and-multiples]
+        exemplars:
+          - problem: 'Find the GCF of $9$ and $16$.'
+            answer: "1"
+            solution_sketch: 'They share no common factor besides $1$: relatively prime.'
+          - problem: 'Find the GCF of $7$ and $35$.'
+            answer: "7"
+        constraints: "include GCF 1 and one-number-divides-the-other cases"
+    diagnostic_exemplar:
+      problem: 'Find the GCF of $42$ and $56$.'
+      answer: '14'
+      solution_sketch: '$42 = 2 \times 3 \times 7$ and $56 = 2 \times 2 \times 2 \times 7$; the common part is $2 \times 7 = 14$.'
+    anki_seeds:
+      - front: "Two numbers whose GCF is 1 are called..."
+        back: "relatively prime (coprime)"
+        type: basic
+
+  - id: least-common-multiple
+    name: Least Common Multiple
+    core: true
+    difficulty: 0.25
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 60
+    prerequisites:
+      - id: factors-and-multiples
+        weight: 0.9
+        key: true
+      - id: multiplication-tables
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: LCM by listing multiples
+        key_prerequisites: [factors-and-multiples]
+        exemplars:
+          - problem: 'Find the LCM of $4$ and $6$.'
+            answer: "12"
+            solution_sketch: 'Multiples of $4$: $4, 8, 12, \dots$; of $6$: $6, 12, \dots$; first common is $12$.'
+          - problem: 'Find the LCM of $3$ and $5$.'
+            answer: "15"
+        constraints: "two numbers up to 12"
+      - id: kp2
+        name: Special cases
+        key_prerequisites: [factors-and-multiples]
+        exemplars:
+          - problem: 'Find the LCM of $6$ and $18$.'
+            answer: "18"
+            solution_sketch: '$18$ is already a multiple of $6$.'
+          - problem: 'Find the LCM of $5$ and $7$.'
+            answer: "35"
+            solution_sketch: 'No common factors, so the LCM is the product $5 \times 7$.'
+        constraints: "one number divides the other, or the pair is relatively prime"
+      - id: kp3
+        name: LCM of three numbers
+        key_prerequisites: [multiplication-tables]
+        exemplars:
+          - problem: 'Find the LCM of $2$, $3$, and $4$.'
+            answer: "12"
+          - problem: 'Find the LCM of $3$, $4$, and $6$.'
+            answer: "12"
+        constraints: "three numbers up to 10"
+    diagnostic_exemplar:
+      problem: 'Find the LCM of $4$, $6$, and $9$.'
+      answer: '36'
+      solution_sketch: 'LCM$(4, 6) = 12$, then LCM$(12, 9) = 36$.'
+    anki_seeds:
+      - front: "If two numbers share no common factor besides 1, their LCM equals..."
+        back: "their product"
+        type: basic
+      - front: "If a divides b, then LCM(a, b) equals..."
+        back: "b"
+        type: basic
+
+  - id: gcf-lcm
+    name: Greatest Common Factor and Least Common Multiple
+    core: true
+    difficulty: 0.35
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 90
+    prerequisites:
+      - id: greatest-common-factor
+        weight: 0.8
+        key: true
+      - id: least-common-multiple
+        weight: 0.8
+        key: true
+      - id: prime-factorization
+        weight: 0.7
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: GCF via prime factorization
+        key_prerequisites: [prime-factorization]
+        exemplars:
+          - problem: 'Find the GCF of $45$ and $60$.'
+            answer: "15"
+            solution_sketch: '$45 = 3^2 \times 5$, $60 = 2^2 \times 3 \times 5$; common part $3 \times 5 = 15$.'
+          - problem: 'Find the GCF of $72$ and $120$.'
+            answer: "24"
+            solution_sketch: '$72 = 2^3 \times 3^2$, $120 = 2^3 \times 3 \times 5$; $2^3 \times 3 = 24$.'
+        constraints: "two numbers 40-150 where listing factors is slow"
+      - id: kp2
+        name: LCM via prime factorization
+        key_prerequisites: [prime-factorization]
+        exemplars:
+          - problem: 'Find the LCM of $8$ and $12$.'
+            answer: "24"
+            solution_sketch: '$8 = 2^3$, $12 = 2^2 \times 3$; $\text{LCM} = 2^3 \times 3 = 24$.'
+          - problem: 'Find the LCM of $9$ and $15$.'
+            answer: "45"
+          - problem: 'Find the LCM of $12$ and $18$.'
+            answer: "36"
+        constraints: "two numbers up to 60; highest power of each prime"
+      - id: kp3
+        name: GCF and LCM in applications
+        key_prerequisites: [greatest-common-factor]
+        exemplars:
+          - problem: 'One bus leaves every $12$ minutes and another every $18$ minutes. They leave together at 9:00. In how many minutes do they next leave together?'
+            answer: "36"
+            solution_sketch: '$\text{LCM}(12, 18) = 36$.'
+          - problem: 'What is the side length of the largest square tile that exactly covers a $24$ by $36$ floor?'
+            answer: "12"
+            solution_sketch: '$\text{GCF}(24, 36) = 12$.'
+        constraints: "recognize whether the situation needs the GCF or the LCM"
+    diagnostic_exemplar:
+      problem: 'A gardener has $84$ tulips and $126$ daffodils and makes identical bunches with no flowers left over. What is the greatest number of bunches?'
+      answer: '42'
+      solution_sketch: '$84 = 2^2 \times 3 \times 7$ and $126 = 2 \times 3^2 \times 7$, so the GCF is $2 \times 3 \times 7 = 42$.'
+    anki_seeds:
+      - front: "From prime factorizations, the GCF is found by multiplying..."
+        back: "the primes common to both numbers, each to its lowest power"
+        type: basic
+      - front: "From prime factorizations, the LCM is found by multiplying..."
+        back: "every prime that appears in either number, each to its highest power"
+        type: basic
+      - front: "For any two positive whole numbers a and b, GCF(a,b) x LCM(a,b) equals..."
+        back: "a x b"
+        type: basic
+
+  - id: rounding-estimation
+    name: Rounding and Estimation
+    core: false                # estimation leaf; heads the terminal estimation branch
+    difficulty: 0.2
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 50
+    prerequisites:
+      - id: rounding-whole-numbers
+        weight: 0.9
+        key: true
+      - id: multi-digit-addition-subtraction
+        weight: 0.4
+      - id: multiplying-by-one-digit
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Estimating sums and differences
+        key_prerequisites: [rounding-whole-numbers]
+        exemplars:
+          - problem: 'Estimate $68 + 21$ by rounding each number to the nearest ten.'
+            answer: "90"
+            solution_sketch: '$70 + 20 = 90$.'
+          - problem: 'Estimate $412 - 189$ by rounding each number to the nearest hundred.'
+            answer: "200"
+        constraints: "2-3 digit operands; answer is the rounded estimate"
+      - id: kp2
+        name: Estimating products and quotients
+        key_prerequisites: [multiplying-by-one-digit]
+        exemplars:
+          - problem: 'Estimate $49 \times 31$ by rounding each factor to the nearest ten.'
+            answer: "1500"
+            solution_sketch: '$50 \times 30 = 1500$.'
+          - problem: 'Estimate $358 \div 6$ using the compatible numbers $360$ and $6$.'
+            answer: "60"
+        constraints: "round to compatible numbers; answer is the estimate"
+      - id: kp3
+        name: Judging reasonableness
+        key_prerequisites: [multi-digit-addition-subtraction]
+        exemplars:
+          - problem: 'Without computing exactly, is $297 + 304$ closer to $600$ or to $700$?'
+            answer: "600"
+            solution_sketch: '$297 \approx 300$ and $304 \approx 300$; the exact sum is $601$.'
+          - problem: 'Ellie estimates $42 \times 19$ as $42 \times 20 = 840$. Is the exact product larger or smaller than $840$?'
+            answer: "smaller"
+            solution_sketch: 'She rounded a factor up, so $840$ is an overestimate ($42 \times 19 = 798$).'
+        constraints: "answer chooses between options or over/under"
+    diagnostic_exemplar:
+      problem: 'Estimate $62 \times 38$ by rounding each factor to the nearest ten.'
+      answer: "2400"
+      solution_sketch: 'Round to $60$ and $40$: $60 \times 40 = 2{,}400$.'
+    anki_seeds:
+      - front: "If you round both factors UP before multiplying, your estimate is guaranteed to be..."
+        back: "an overestimate of the true product"
+        type: basic

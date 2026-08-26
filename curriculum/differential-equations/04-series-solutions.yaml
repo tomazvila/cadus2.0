@@ -1,0 +1,148 @@
+unit: series-solutions
+course: differential-equations
+module: "Series Solutions"
+topics:
+  - id: power-series-method
+    name: The Power Series Method
+    core: false                # parallel terminal solution technique; the course's core
+                               # spine (characteristic equation / Laplace / eigenvalues)
+                               # does not build on it, and only the supplemental
+                               # series-solutions topic consumes it
+    difficulty: 0.76
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 240
+    prerequisites:
+      - id: power-series
+        weight: 0.6
+        key: true
+      - id: differentiating-integrating-power-series
+        weight: 0.6
+        key: true
+      - id: standard-maclaurin-series
+        weight: 0.4
+        key: false
+      - id: ode-classification-verification
+        weight: 0.3
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: Shifting the index of summation
+        key_prerequisites: [differentiating-integrating-power-series]
+        exemplars:
+          - problem: 'Rewrite $\sum_{n=1}^{\infty} n a_n x^{n-1}$ as a series in powers $x^k$ starting at $k = 0$.'
+            answer: '$\sum_{k=0}^{\infty} (k+1)a_{k+1}x^k$'
+            solution_sketch: 'Set $k = n - 1$, so $n = k + 1$; the lower limit $n = 1$ becomes $k = 0$.'
+          - problem: 'Rewrite $\sum_{n=2}^{\infty} n(n-1)a_n x^{n-2}$ as a series in powers $x^k$.'
+            answer: '$\sum_{k=0}^{\infty} (k+2)(k+1)a_{k+2}x^k$'
+            solution_sketch: 'Substitute $k = n - 2$: each coefficient index moves up by $2$.'
+          - problem: 'Combine $\sum_{k=0}^{\infty} (k+1)a_{k+1}x^k - \sum_{k=0}^{\infty} a_k x^k$ into a single series.'
+            answer: '$\sum_{k=0}^{\infty} \left[(k+1)a_{k+1} - a_k\right]x^k$'
+            solution_sketch: 'Both series run over the same powers, so subtract coefficients termwise.'
+        constraints: "index shifts by 1 or 2 only; coefficients stay symbolic a_n; when combining, series must already share the same starting index"
+      - id: kp2
+        name: First-order equations by power series
+        key_prerequisites: [power-series, standard-maclaurin-series]
+        exemplars:
+          - problem: "Substitute $y = \\sum a_n x^n$ into $y' - y = 0$ with $y(0) = 1$. Find the recurrence, the coefficients, and identify the solution."
+            answer: '$a_{n+1} = \dfrac{a_n}{n+1}$, so $a_n = \dfrac{1}{n!}$ and $y = e^x$.'
+            solution_sketch: 'Matching coefficients of $x^n$ gives $(n+1)a_{n+1} = a_n$; iterating from $a_0 = 1$ yields $1/n!$, the Maclaurin series of $e^x$.'
+          - problem: "Solve $y' + 2y = 0$, $y(0) = 3$, by power series and identify the solution in closed form."
+            answer: '$a_n = \dfrac{3(-2)^n}{n!}$, so $y = 3e^{-2x}$.'
+            solution_sketch: '$(n+1)a_{n+1} = -2a_n$ gives $a_{n+1} = \frac{-2a_n}{n+1}$; iterate from $a_0 = 3$.'
+          - problem: "Solve $y' = 2xy$, $y(0) = 1$, by power series: give the recurrence and the first three nonzero terms."
+            answer: '$a_1 = 0$ and $a_{k+1} = \dfrac{2a_{k-1}}{k+1}$; $y = 1 + x^2 + \dfrac{x^4}{2} + \cdots$ (this is $e^{x^2}$).'
+            solution_sketch: 'The right side shifts powers up by one, so odd coefficients vanish and $a_{2m} = 1/m!$.'
+        constraints: "equations y' = cy or y' = cxy with small integer c; solutions must be recognizable standard Maclaurin series (e^{cx}, e^{x^2}-type)"
+      - id: kp3
+        name: Deriving the recurrence for second-order equations
+        key_prerequisites: [differentiating-integrating-power-series, ode-classification-verification]
+        exemplars:
+          - problem: "Substitute $y = \\sum a_n x^n$ into $y'' + y = 0$ and derive the recurrence relation."
+            answer: '$a_{k+2} = -\dfrac{a_k}{(k+2)(k+1)}$'
+            solution_sketch: 'Shift the $y''''$ series by 2 and match coefficients of $x^k$: $(k+2)(k+1)a_{k+2} + a_k = 0$.'
+          - problem: "Derive the recurrence for the Airy equation $y'' - xy = 0$."
+            answer: '$a_2 = 0$ and $a_{k+2} = \dfrac{a_{k-1}}{(k+2)(k+1)}$ for $k \ge 1$.'
+            solution_sketch: 'The $xy$ term shifts powers up by one, so the constant term forces $2a_2 = 0$ and thereafter indices differ by 3.'
+          - problem: "Why does the recurrence for $y'' + y = 0$ determine every coefficient from $a_0$ and $a_1$ alone?"
+            answer: "The recurrence links $a_{k+2}$ to $a_k$, so the even coefficients all descend from $a_0$ and the odd ones from $a_1$ — matching the two arbitrary constants of a second-order equation."
+        constraints: "coefficients constant or a single factor x; derive the recurrence only, do not iterate it out"
+    diagnostic_exemplar:
+      problem: "Substitute $y = \\sum_{n=0}^{\\infty} a_n x^n$ into $y'' + y = 0$ and derive the recurrence relation for the coefficients."
+      answer: '$a_{k+2} = -\dfrac{a_k}{(k+2)(k+1)}$'
+      solution_sketch: 'Differentiate twice, shift the index by 2, and match coefficients of $x^k$.'
+    anki_seeds:
+      - front: 'Index shift: $\sum_{n=2}^{\infty} n(n-1)a_n x^{n-2}$ rewritten in powers $x^k$?'
+        back: '$\sum_{k=0}^{\infty}(k+2)(k+1)a_{k+2}x^k$ (substitute $k = n-2$).'
+        type: basic
+      - front: "The power series method in three steps?"
+        back: "Substitute $y = \\sum a_n x^n$, shift indices so all series share the power $x^k$, and match coefficients to get a recurrence."
+        type: basic
+
+  - id: series-solutions-ordinary-points
+    name: Series Solutions at Ordinary Points
+    core: false                # terminal wing: nothing in the tree builds on series
+                               # solutions; the method itself lives in power-series-method
+    difficulty: 0.82
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 300
+    prerequisites:
+      - id: power-series-method
+        weight: 0.8
+        key: true
+      - id: standard-maclaurin-series
+        weight: 0.4
+        key: false
+      - id: homogeneous-constant-coefficients
+        weight: 0.3
+        key: false
+      - id: radius-of-convergence
+        weight: 0.2
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: First terms from initial conditions
+        key_prerequisites: [power-series-method]
+        exemplars:
+          - problem: "Find the first three nonzero terms of the series solution of $y'' + y = 0$, $y(0) = 0$, $y'(0) = 1$."
+            answer: '$y = x - \dfrac{x^3}{6} + \dfrac{x^5}{120} - \cdots$'
+            solution_sketch: '$a_0 = 0$, $a_1 = 1$; the recurrence $a_{k+2} = -a_k/((k+2)(k+1))$ gives $a_3 = -1/6$, $a_5 = 1/120$ — the sine series.'
+          - problem: "Find the first three nonzero terms of the series solution of $y'' - 4y = 0$, $y(0) = 1$, $y'(0) = 0$."
+            answer: '$y = 1 + 2x^2 + \dfrac{2x^4}{3} + \cdots$'
+            solution_sketch: '$a_{k+2} = 4a_k/((k+2)(k+1))$: $a_2 = 2$, $a_4 = \frac{4 \cdot 2}{12} = \frac{2}{3}$.'
+        constraints: "constant coefficients with small integer values; initial conditions kill one of the two coefficient chains or keep both chains short; ask for exactly the first three nonzero terms"
+      - id: kp2
+        name: The two basic solutions
+        key_prerequisites: [power-series-method, homogeneous-constant-coefficients]
+        exemplars:
+          - problem: "For $y'' - y = 0$, give the first three terms of the basic solutions $y_1$ (with $a_0 = 1$, $a_1 = 0$) and $y_2$ (with $a_0 = 0$, $a_1 = 1$)."
+            answer: '$y_1 = 1 + \dfrac{x^2}{2} + \dfrac{x^4}{24} + \cdots$, $\quad y_2 = x + \dfrac{x^3}{6} + \dfrac{x^5}{120} + \cdots$'
+            solution_sketch: 'The recurrence $a_{k+2} = a_k/((k+2)(k+1))$ runs the even chain from $a_0$ and the odd chain from $a_1$.'
+          - problem: "How do the series $y_1, y_2$ for $y'' - y = 0$ relate to the characteristic-equation solution $c_1 e^x + c_2 e^{-x}$?"
+            answer: '$y_1 = \dfrac{e^x + e^{-x}}{2}$ and $y_2 = \dfrac{e^x - e^{-x}}{2}$: the same solution space, in a different basis.'
+            solution_sketch: 'Adding and subtracting the Maclaurin series of $e^x$ and $e^{-x}$ reproduces the even and odd series.'
+        constraints: "constant-coefficient equations whose closed forms the learner can check against characteristic-equation solutions"
+      - id: kp3
+        name: Polynomial coefficients and the guaranteed radius
+        key_prerequisites: [power-series-method, radius-of-convergence]
+        exemplars:
+          - problem: "Find the first three nonzero terms of the solution of the Airy equation $y'' = xy$ with $y(0) = 1$, $y'(0) = 0$."
+            answer: '$y = 1 + \dfrac{x^3}{6} + \dfrac{x^6}{180} + \cdots$'
+            solution_sketch: '$a_2 = 0$, $a_{k+2} = a_{k-1}/((k+2)(k+1))$: $a_3 = \frac{1}{6}$, $a_6 = \frac{a_3}{30} = \frac{1}{180}$.'
+          - problem: "The equation $(1 + x^2)y'' + y = 0$ is solved by a power series about $x = 0$. What minimum radius of convergence is guaranteed, and why?"
+            answer: "Radius at least $1$: the guaranteed radius is the distance from $0$ to the nearest singular point, and $1 + x^2 = 0$ at $x = \\pm i$, at distance $1$."
+          - problem: "Is $x = 0$ an ordinary point of $x^2y'' + y = 0$?"
+            answer: "No: dividing by $x^2$ makes the coefficient of $y$ blow up at $x = 0$, so $x = 0$ is a singular point and the method is not guaranteed there."
+        constraints: "polynomial coefficients of degree at most 2; expansion about x = 0 only; radius questions use singular points at distance 1 or 2"
+    diagnostic_exemplar:
+      problem: 'Find the first three nonzero terms of the power-series solution of $y'''' = 2xy$ with $y(0) = 1$, $y''(0) = 0$.'
+      answer: '$y = 1 + \dfrac{x^3}{3} + \dfrac{x^6}{45} + \cdots$'
+      solution_sketch: 'Substituting $y = \sum a_n x^n$ gives $(n+2)(n+1)a_{n+2} = 2a_{n-1}$. With $a_0 = 1$, $a_1 = 0$ and $a_2 = 0$: $a_3 = \frac{2}{6} = \frac{1}{3}$, $a_4 = a_5 = 0$, and $a_6 = \frac{2a_3}{30} = \frac{1}{45}$.'
+    anki_seeds:
+      - front: "An ordinary point of y'' + p(x)y' + q(x)y = 0 is..."
+        back: "a point where $p$ and $q$ are both analytic (no blow-up); there the series method is guaranteed to work."
+        type: basic
+      - front: "Guaranteed radius of convergence of a series solution about an ordinary point?"
+        back: "At least the distance from the expansion point to the nearest singular point of the equation."
+        type: basic

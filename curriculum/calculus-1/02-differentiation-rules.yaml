@@ -1,0 +1,1046 @@
+unit: differentiation-rules
+course: calculus-1
+module: "Differentiation Rules"
+topics:
+  - id: general-power-rule
+    name: The General Power Rule
+    core: true
+    difficulty: 0.6
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 120
+    prerequisites:
+      - id: derivative-power-rule
+        weight: 0.8
+        key: true
+      - id: function-composition
+        weight: 0.6
+        key: true
+      - id: product-quotient-rules
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Power of a function
+        key_prerequisites: [derivative-power-rule, function-composition]
+        exemplars:
+          - problem: 'Differentiate $f(x) = (x^2 + 1)^5$.'
+            answer: "10x(x^2 + 1)^4"
+            solution_sketch: 'Outer derivative $5(x^2+1)^4$ times inner derivative $2x$.'
+          - problem: 'Differentiate $f(x) = (3x - 2)^4$.'
+            answer: "12(3x - 2)^3"
+          - problem: 'Differentiate $f(x) = \sqrt{x^2 + 9}$.'
+            answer: "x/√(x^2 + 9)"
+            solution_sketch: '$\frac{1}{2}(x^2+9)^{-1/2} \cdot 2x = \frac{x}{\sqrt{x^2+9}}$.'
+        constraints: "inner function linear or quadratic; outer power an integer or 1/2"
+      - id: kp2
+        name: Reciprocals and negative powers
+        key_prerequisites: [derivative-power-rule]
+        exemplars:
+          - problem: 'Differentiate $f(x) = \frac{1}{x^2 + 1}$ by writing it as a power.'
+            answer: "-2x/(x^2 + 1)^2"
+            solution_sketch: '$f = (x^2+1)^{-1}$, so $f'' = -(x^2+1)^{-2} \cdot 2x$.'
+          - problem: 'Differentiate $f(x) = (2x + 1)^{-3}$.'
+            answer: "-6(2x + 1)^(-4)"
+        constraints: "rewrite as a negative power; inner function linear or quadratic"
+      - id: kp3
+        name: Name the inner and outer functions
+        key_prerequisites: [function-composition, derivative-power-rule]
+        exemplars:
+          - problem: 'For $f(x) = (x^3 + 2x)^4$, name the inner function $u$ to yourself, then give $f''(x)$ in factored form.'
+            answer: "4(x^3 + 2x)^3 (3x^2 + 2)"
+            solution_sketch: 'With $u = x^3 + 2x$: differentiate the outer power at $u$, then multiply by $u'' = 3x^2 + 2$.'
+          - problem: 'Differentiate $f(x) = \sqrt{5x - 1}$.'
+            answer: "5/(2√(5x - 1))"
+        constraints: "the student identifies u before differentiating; the answer is the factored derivative"
+    diagnostic_exemplar:
+      problem: 'Differentiate $f(x) = \frac{1}{(x^2 + 4)^3}$ by writing it as a power first.'
+      answer: '-6x/(x^2 + 4)^4'
+      solution_sketch: '$f(x) = (x^2 + 4)^{-3}$, so $f''(x) = -3(x^2+4)^{-4}\cdot 2x = -\frac{6x}{(x^2+4)^4}$.'
+    anki_seeds:
+      - front: "General power rule: d/dx [u(x)]^n = ?"
+        back: "n·[u(x)]^(n-1) · u'(x)"
+        type: basic
+      - front: "The most common general-power-rule error is forgetting to..."
+        back: "multiply by the inner derivative u'(x)"
+        type: basic
+
+  - id: chain-rule
+    name: The Chain Rule
+    core: true
+    difficulty: 0.65
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 150
+    prerequisites:
+      - id: general-power-rule
+        weight: 0.8
+        key: true
+      - id: function-composition
+        weight: 0.5
+        key: true
+      - id: product-quotient-rules
+        weight: 0.5
+    knowledge_points:
+      - id: kp1
+        name: The chain rule in general form
+        key_prerequisites: [general-power-rule, function-composition]
+        exemplars:
+          - problem: 'Let $h(x) = f(g(x))$ with $g(1) = 2$, $g''(1) = 3$, $f''(2) = 5$. Find $h''(1)$.'
+            answer: "15"
+            solution_sketch: '$h''(1) = f''(g(1)) \cdot g''(1) = f''(2) \cdot g''(1) = 5 \cdot 3 = 15$.'
+          - problem: 'Let $h(x) = f(g(x))$ with $g(0) = 3$, $g''(0) = -4$, $f''(3) = 2$. Find $h''(0)$.'
+            answer: "-8"
+          - problem: 'With $y = u^5$ and $u = x^2 + 1$, use $\frac{dy}{dx} = \frac{dy}{du} \cdot \frac{du}{dx}$ to find $\frac{dy}{dx}$.'
+            answer: "10x(x^2 + 1)^4"
+            solution_sketch: '$5u^4 \cdot 2x$ with $u = x^2 + 1$.'
+        constraints: "table values are single digits; the Leibniz-form problem uses a named u"
+      - id: kp2
+        name: Nested compositions (chain rule twice)
+        key_prerequisites: [general-power-rule]
+        exemplars:
+          - problem: 'Differentiate $f(x) = \sqrt{1 + \sqrt{x}}$.'
+            answer: "1/(4√x · √(1 + √x))"
+            solution_sketch: '$\frac{1}{2\sqrt{1+\sqrt{x}}} \cdot \frac{1}{2\sqrt{x}}$.'
+          - problem: 'Differentiate $f(x) = \left(1 + (2x + 1)^3\right)^4$.'
+            answer: "24(2x + 1)^2 (1 + (2x + 1)^3)^3"
+            solution_sketch: 'Outer power: $4(1 + (2x+1)^3)^3$; inner derivative $3(2x+1)^2 \cdot 2$.'
+        constraints: "exactly two chained layers; factors kept in factored form"
+      - id: kp3
+        name: Chain rule combined with product and quotient rules
+        key_prerequisites: [general-power-rule, product-quotient-rules]
+        exemplars:
+          - problem: 'Differentiate $f(x) = x^2(2x + 1)^3$.'
+            answer: "2x(2x + 1)^3 + 6x^2(2x + 1)^2"
+            solution_sketch: 'Product rule with a chain-rule factor: $2x(2x+1)^3 + x^2 \cdot 3(2x+1)^2 \cdot 2$; factored form $2x(2x+1)^2(5x+1)$ also accepted.'
+          - problem: 'Differentiate $f(x) = \left(\frac{x + 1}{x - 1}\right)^2$.'
+            answer: "-4(x + 1)/(x - 1)^3"
+            solution_sketch: 'General power rule with inner quotient: $2 \cdot \frac{x+1}{x-1} \cdot \frac{-2}{(x-1)^2}$.'
+        constraints: "one product-with-chain and one quotient-inside-power problem; low-degree polynomials"
+    diagnostic_exemplar:
+      problem: 'Differentiate $f(x) = x^3(3x - 2)^2$.'
+      answer: "3x^2(3x - 2)^2 + 6x^3(3x - 2)"
+      solution_sketch: 'Product rule with a chain-rule factor: $3x^2(3x-2)^2 + x^3 \cdot 2(3x-2) \cdot 3$; factored form $3x^2(3x-2)(5x-2)$ also accepted.'
+    anki_seeds:
+      - front: "Chain rule: d/dx f(g(x)) = ?"
+        back: "f'(g(x)) · g'(x) — outer derivative at the inner function, times the inner derivative"
+        type: basic
+      - front: "Chain rule in Leibniz notation: dy/dx = ?"
+        back: "(dy/du) · (du/dx)"
+        type: basic
+
+  - id: derivatives-sin-cos
+    name: Derivatives of Sine and Cosine
+    core: true
+    difficulty: 0.55
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 90
+    prerequisites:
+      - id: derivative-power-rule
+        weight: 0.6
+        key: true
+      - id: unit-circle
+        weight: 0.5
+        key: true
+      - id: product-rule
+        weight: 0.4
+      - id: special-trig-limits
+        weight: 0
+      - id: trig-graphs-basic
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Derivatives of sin x and cos x
+        key_prerequisites: [derivative-power-rule]
+        exemplars:
+          - problem: 'Differentiate $f(x) = \sin x$.'
+            answer: "cos x"
+          - problem: 'Differentiate $f(x) = 3\sin x - 2\cos x$.'
+            answer: "3cos x + 2sin x"
+          - problem: 'Differentiate $f(x) = 4\cos x + x^2$.'
+            answer: "-4sin x + 2x"
+        constraints: "linear combinations of sin, cos, and power terms with integer coefficients"
+      - id: kp2
+        name: Evaluate trig derivatives at unit-circle angles
+        key_prerequisites: [unit-circle]
+        exemplars:
+          - problem: 'For $f(x) = \sin x$, find $f''(\pi/3)$.'
+            answer: "1/2"
+            solution_sketch: '$f''(x) = \cos x$ and $\cos(\pi/3) = \frac{1}{2}$.'
+          - problem: 'For $f(x) = \cos x$, find $f''(\pi/6)$.'
+            answer: "-1/2"
+            solution_sketch: '$f''(x) = -\sin x$ and $\sin(\pi/6) = \frac{1}{2}$.'
+          - problem: 'Find the slope of $y = 2\sin x$ at $x = 0$.'
+            answer: "2"
+        constraints: "evaluation angles from the unit circle (0, π/6, π/4, π/3, π/2); exact values only"
+      - id: kp3
+        name: Products of power and trig factors
+        key_prerequisites: [product-rule, derivative-power-rule]
+        exemplars:
+          - problem: 'Differentiate $f(x) = x \sin x$.'
+            answer: "sin x + x cos x"
+          - problem: 'Differentiate $f(x) = x^2 \cos x$.'
+            answer: "2x cos x - x^2 sin x"
+            solution_sketch: 'Product rule: $2x \cos x + x^2(-\sin x)$.'
+        constraints: "one power factor times sin or cos; no chain rule yet"
+    diagnostic_exemplar:
+      problem: 'For $f(x) = x^2 \sin x$, find $f\''(\pi)$.'
+      answer: '-pi^2'
+      solution_sketch: '$f''(x) = 2x\sin x + x^2\cos x$; at $x = \pi$, $\sin \pi = 0$ and $\cos \pi = -1$, so $f''(\pi) = -\pi^2$.'
+    anki_seeds:
+      - front: "d/dx sin x and d/dx cos x = ?"
+        back: "cos x and -sin x (the minus sign lands on the cosine's derivative)"
+        type: basic
+      - front: "The limit behind d/dx sin x = cos x is..."
+        back: "lim_{h→0} (sin h)/h = 1 (radians required)"
+        type: basic
+
+  - id: derivatives-trig
+    name: Derivatives of Trigonometric Functions
+    core: true
+    difficulty: 0.62
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 120
+    prerequisites:
+      - id: derivatives-sin-cos
+        weight: 0.8
+        key: true
+      - id: chain-rule
+        weight: 0.7
+        key: true
+      - id: reciprocal-trig-functions
+        weight: 0.4
+      - id: trig-identities-basic
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: All six trig derivatives
+        key_prerequisites: [derivatives-sin-cos]
+        exemplars:
+          - problem: 'Differentiate $f(x) = \tan x$.'
+            answer: "sec^2 x"
+            solution_sketch: 'Quotient rule on $\frac{\sin x}{\cos x}$: $\frac{\cos^2 x + \sin^2 x}{\cos^2 x} = \sec^2 x$.'
+          - problem: 'Differentiate $f(x) = \sec x$.'
+            answer: "sec x tan x"
+          - problem: 'Differentiate $f(x) = \csc x$.'
+            answer: "-csc x cot x"
+        constraints: "tan, cot, sec, csc; derivations via quotient rule accepted, memorized forms required"
+      - id: kp2
+        name: Trig derivatives with the chain rule
+        key_prerequisites: [chain-rule, derivatives-sin-cos]
+        exemplars:
+          - problem: 'Differentiate $f(x) = \sin(3x)$.'
+            answer: "3cos(3x)"
+          - problem: 'Differentiate $f(x) = \cos(x^2)$.'
+            answer: "-2x sin(x^2)"
+            solution_sketch: 'Outer $-\sin(\cdot)$ at $x^2$, times inner derivative $2x$.'
+          - problem: 'Differentiate $f(x) = \sin^2 x$.'
+            answer: "2 sin x cos x"
+            solution_sketch: 'General power rule: $2\sin x \cdot \cos x$ (equivalently $\sin 2x$).'
+        constraints: "inner function bx or x^2, or an outer square of a trig function; integer multipliers"
+      - id: kp3
+        name: Products, quotients, and evaluation
+        key_prerequisites: [derivatives-sin-cos, chain-rule]
+        exemplars:
+          - problem: 'Differentiate $f(x) = x \tan x$.'
+            answer: "tan x + x sec^2 x"
+          - problem: 'For $f(x) = \sin(2x)$, find $f''(\pi/6)$.'
+            answer: "1"
+            solution_sketch: '$f''(x) = 2\cos(2x)$; $2\cos(\pi/3) = 2 \cdot \frac{1}{2} = 1$.'
+          - problem: 'Differentiate $f(x) = \frac{\sin x}{1 + \cos x}$ and simplify.'
+            answer: "1/(1 + cos x)"
+            solution_sketch: 'Quotient rule: $\frac{\cos x(1 + \cos x) + \sin^2 x}{(1 + \cos x)^2} = \frac{\cos x + 1}{(1 + \cos x)^2}$.'
+        constraints: "evaluation angles from the unit circle; simplification via sin² + cos² = 1"
+    diagnostic_exemplar:
+      problem: 'Differentiate $f(x) = x\sec(2x)$.'
+      answer: 'sec(2x) + 2x sec(2x) tan(2x)'
+      solution_sketch: 'Product rule with a chain-rule factor: $\sec(2x) + x \cdot 2\sec(2x)\tan(2x)$.'
+    anki_seeds:
+      - front: "d/dx tan x = ?"
+        back: "sec^2 x"
+        type: basic
+      - front: "d/dx sec x = ? and d/dx csc x = ?"
+        back: "sec x tan x and -csc x cot x (co-functions carry the minus sign)"
+        type: basic
+
+  - id: second-derivatives
+    name: Second Derivatives
+    core: true
+    difficulty: 0.52
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 90
+    prerequisites:
+      - id: derivative-power-rule
+        weight: 0.7
+        key: true
+      - id: derivatives-of-polynomials
+        weight: 0.5
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: Compute second derivatives of polynomials
+        key_prerequisites: [derivative-power-rule, derivatives-of-polynomials]
+        exemplars:
+          - problem: 'Find $f''''(x)$ for $f(x) = x^4$.'
+            answer: "12x^2"
+            solution_sketch: '$f''(x) = 4x^3$, then $f''''(x) = 12x^2$.'
+          - problem: 'Find $f''''(x)$ for $f(x) = 2x^3 - x^2 + 5$.'
+            answer: "12x - 2"
+        constraints: "polynomials of degree ≤ 5 with integer coefficients"
+      - id: kp2
+        name: Notation and evaluation
+        key_prerequisites: [derivative-power-rule]
+        exemplars:
+          - problem: 'For $f(x) = x^3 - 4x$, find $f''''(2)$.'
+            answer: "12"
+            solution_sketch: '$f''''(x) = 6x$, so $f''''(2) = 12$.'
+          - problem: 'For $y = 5x^2 - x$, find $\frac{d^2y}{dx^2}$.'
+            answer: "10"
+        constraints: "both prime and Leibniz notation; integer evaluations"
+      - id: kp3
+        name: Velocity and acceleration
+        key_prerequisites: [derivative-power-rule, derivatives-of-polynomials]
+        exemplars:
+          - problem: 'A particle''s position is $s(t) = t^3$ meters at time $t$ seconds. Find its acceleration at $t = 2$, with units.'
+            answer: "12 m/s^2"
+            solution_sketch: '$v(t) = s''(t) = 3t^2$ and $a(t) = v''(t) = 6t$, so $a(2) = 12$ m/s².'
+          - problem: 'For $s(t) = t^2 - 4t$, what is the (constant) acceleration?'
+            answer: "2"
+        constraints: "polynomial position functions; acceleration is the second derivative"
+    diagnostic_exemplar:
+      problem: 'A particle''s position is $s(t) = t^3 + 2t^2$ metres at time $t$ seconds. Find its acceleration at $t = 2$ (in m/s²).'
+      answer: '16'
+      solution_sketch: 'Velocity $s\''(t) = 3t^2 + 4t$; acceleration $s\''\''(t) = 6t + 4$, so $s\''\''(2) = 16$ m/s².'
+    anki_seeds:
+      - front: "In physics terms, if s(t) is position then s'(t) and s''(t) are..."
+        back: "velocity and acceleration"
+        type: basic
+      - front: "Two notations for the second derivative of y = f(x):"
+        back: "f''(x) and d²y/dx²"
+        type: basic
+
+  - id: higher-order-derivatives
+    name: Higher-Order Derivatives
+    core: true
+    difficulty: 0.58
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 90
+    prerequisites:
+      - id: second-derivatives
+        weight: 0.8
+        key: true
+      - id: derivatives-trig
+        weight: 0.4
+      - id: derivative-power-rule
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: Third and higher derivatives of polynomials
+        key_prerequisites: [second-derivatives, derivative-power-rule]
+        exemplars:
+          - problem: 'Find $f''''''(x)$ (the third derivative) for $f(x) = x^5$.'
+            answer: "60x^2"
+            solution_sketch: '$5x^4 \to 20x^3 \to 60x^2$.'
+          - problem: 'Find the fourth derivative of $f(x) = x^4$.'
+            answer: "24"
+        constraints: "up to the fifth derivative; integer coefficients"
+      - id: kp2
+        name: Patterns in repeated differentiation
+        key_prerequisites: [second-derivatives, derivative-power-rule]
+        exemplars:
+          - problem: 'Find the fifth derivative of $f(x) = x^4$.'
+            answer: "0"
+            solution_sketch: 'Each derivative drops the degree by one; after the fourth the function is constant.'
+          - problem: 'Find $f''''(x)$ for $f(x) = \frac{1}{x}$.'
+            answer: "2/x^3"
+            solution_sketch: '$-x^{-2} \to 2x^{-3}$.'
+          - problem: 'The $n$th derivative of $x^n$ equals...'
+            answer: "n!"
+            solution_sketch: 'Each step peels off one factor: $n x^{n-1} \to n(n-1)x^{n-2} \to \cdots \to n!$.'
+        constraints: "degree-drop and negative-power patterns; exploit structure instead of grinding"
+      - id: kp3
+        name: Repeated differentiation of trig functions
+        key_prerequisites: [derivatives-trig, second-derivatives]
+        exemplars:
+          - problem: 'Find $f''''(x)$ for $f(x) = \sin x$.'
+            answer: "-sin x"
+            solution_sketch: '$\cos x \to -\sin x$.'
+          - problem: 'Find the fourth derivative of $f(x) = \sin x$.'
+            answer: "sin x"
+            solution_sketch: 'The cycle $\sin \to \cos \to -\sin \to -\cos \to \sin$ has period 4.'
+          - problem: 'Find $f''''''(x)$ (the third derivative) for $f(x) = \cos x$.'
+            answer: "sin x"
+            solution_sketch: '$\cos \to -\sin \to -\cos \to \sin$.'
+        constraints: "sin and cos only; exploit the 4-cycle"
+    diagnostic_exemplar:
+      problem: 'Find $f''''''(x)$ (the third derivative) for $f(x) = x^4 + \sin x$.'
+      answer: "24x - cos x"
+      solution_sketch: 'Differentiate three times in turn: $4x^3 + \cos x$, then $12x^2 - \sin x$, then $24x - \cos x$.'
+    anki_seeds:
+      - front: "The derivatives of sin x cycle with period..."
+        back: "4: sin → cos → -sin → -cos → sin"
+        type: basic
+      - front: "The nth derivative of x^n is ___; the (n+1)st is ___."
+        back: "n!; 0"
+        type: basic
+
+  - id: derivatives-natural-exp
+    name: Derivatives of e^x
+    core: true
+    difficulty: 0.58
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 90
+    prerequisites:
+      - id: chain-rule
+        weight: 0.7
+        key: true
+      # Phase C (critical gap C-2, Wave-2 edge): e and e^x as a function are now
+      # taught in foundations' natural-exponential-function — the learner no
+      # longer meets e for the first time while being asked to differentiate it.
+      - id: natural-exponential-function
+        weight: 0.6
+        key: true
+      - id: exponential-functions
+        weight: 0.5
+        key: true
+      - id: graphs-of-exponential-functions
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: e^x is its own derivative
+        key_prerequisites: [natural-exponential-function, exponential-functions]
+        exemplars:
+          - problem: 'Differentiate $f(x) = e^x$.'
+            answer: "e^x"
+          - problem: 'Differentiate $f(x) = 5e^x + x^3$.'
+            answer: "5e^x + 3x^2"
+          - problem: 'Find the slope of $y = e^x$ at $x = 0$.'
+            answer: "1"
+        constraints: "linear combinations of e^x and power terms; integer coefficients"
+      - id: kp2
+        name: e to a function, via the chain rule
+        key_prerequisites: [chain-rule]
+        exemplars:
+          - problem: 'Differentiate $f(x) = e^{3x}$.'
+            answer: "3e^(3x)"
+          - problem: 'Differentiate $f(x) = e^{-x^2}$.'
+            answer: "-2x e^(-x^2)"
+            solution_sketch: 'Chain rule: $e^{-x^2} \cdot (-2x)$.'
+          - problem: 'Differentiate $f(x) = e^{2x}$.'
+            answer: "2e^(2x)"
+        constraints: "inner function bx, x^2, or -x^2; integer parameters"
+      - id: kp3
+        name: Products with e^x
+        key_prerequisites: [chain-rule, exponential-functions]
+        exemplars:
+          - problem: 'Differentiate $f(x) = x e^x$.'
+            answer: "(x + 1)e^x"
+            solution_sketch: 'Product rule: $1 \cdot e^x + x \cdot e^x$.'
+          - problem: 'Differentiate $f(x) = x^2 e^{3x}$.'
+            answer: "2x e^(3x) + 3x^2 e^(3x)"
+            solution_sketch: 'Product rule with a chain factor: $2x e^{3x} + x^2 \cdot 3e^{3x}$; factored form $x e^{3x}(2 + 3x)$ also accepted.'
+        constraints: "one power factor times e^(bx); factored or expanded answers accepted"
+    diagnostic_exemplar:
+      problem: 'Differentiate $f(x) = x e^{2x}$.'
+      answer: "e^(2x) + 2x e^(2x)"
+      solution_sketch: 'Product rule with a chain-rule factor: $1 \cdot e^{2x} + x \cdot 2e^{2x}$.'
+    anki_seeds:
+      - front: "d/dx e^x = ?"
+        back: "e^x — the exponential is its own derivative"
+        type: basic
+      - front: "d/dx e^(u(x)) = ?"
+        back: "e^(u(x)) · u'(x)"
+        type: basic
+
+  - id: derivatives-natural-log
+    name: Derivatives of ln x
+    core: true
+    difficulty: 0.6
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 90
+    prerequisites:
+      - id: derivatives-natural-exp
+        weight: 0.6
+        key: true
+      - id: logarithm-properties
+        weight: 0.5
+        key: true
+      - id: chain-rule
+        weight: 0.5
+    knowledge_points:
+      - id: kp1
+        name: The derivative of ln x
+        key_prerequisites: [derivatives-natural-exp, logarithm-properties]
+        exemplars:
+          - problem: 'Differentiate $f(x) = \ln x$ for $x > 0$.'
+            answer: "1/x"
+          - problem: 'Differentiate $f(x) = 3\ln x + x^2$.'
+            answer: "3/x + 2x"
+          - problem: 'Differentiate $f(x) = 5e^x - 2\ln x$.'
+            answer: "5e^x - 2/x"
+        constraints: "linear combinations of ln x, e^x, and power terms with integer coefficients"
+      - id: kp2
+        name: ln of a function, via the chain rule
+        key_prerequisites: [chain-rule]
+        exemplars:
+          - problem: 'Differentiate $f(x) = \ln(x^2 + 1)$.'
+            answer: "2x/(x^2 + 1)"
+            solution_sketch: '$\frac{1}{x^2+1} \cdot 2x$.'
+          - problem: 'Differentiate $f(x) = \ln(5x - 2)$.'
+            answer: "5/(5x - 2)"
+          - problem: 'Differentiate $f(x) = \ln(3x)$ and simplify.'
+            answer: "1/x"
+            solution_sketch: '$\frac{3}{3x} = \frac{1}{x}$ (or note $\ln 3x = \ln 3 + \ln x$).'
+        constraints: "inner function linear or x^2 + c; the general pattern u'/u"
+      - id: kp3
+        name: Simplify with log properties before differentiating
+        key_prerequisites: [logarithm-properties, chain-rule]
+        exemplars:
+          - problem: 'Differentiate $f(x) = \ln(x^3)$ for $x > 0$ (simplify with log properties first).'
+            answer: "3/x"
+            solution_sketch: '$\ln(x^3) = 3\ln x$, so the derivative is $\frac{3}{x}$.'
+          - problem: 'Differentiate $f(x) = \ln\left(x^2(x + 1)\right)$ for $x > 0$.'
+            answer: "2/x + 1/(x + 1)"
+            solution_sketch: '$\ln(x^2(x+1)) = 2\ln x + \ln(x+1)$; differentiate term by term.'
+          - problem: 'Differentiate $f(x) = \ln\sqrt{x}$ for $x > 0$.'
+            answer: "1/(2x)"
+            solution_sketch: '$\ln\sqrt{x} = \frac{1}{2}\ln x$.'
+        constraints: "products, powers, and roots inside the log; expand with log rules before differentiating"
+    diagnostic_exemplar:
+      problem: 'Differentiate $f(x) = \ln\left(\frac{x^2}{x + 3}\right)$ for $x > 0$ (simplify with log properties first).'
+      answer: "2/x - 1/(x + 3)"
+      solution_sketch: 'Split the log first: $\ln\left(\frac{x^2}{x+3}\right) = 2\ln x - \ln(x+3)$, whose derivative is $\frac{2}{x} - \frac{1}{x+3}$.'
+    anki_seeds:
+      - front: "d/dx ln x = ?"
+        back: "1/x (for x > 0)"
+        type: basic
+      - front: "d/dx ln(u(x)) = ?"
+        back: "u'(x)/u(x)"
+        type: basic
+
+  - id: derivatives-exp-log
+    name: Derivatives of Exponential and Logarithmic Functions
+    core: true
+    difficulty: 0.63
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 120
+    prerequisites:
+      - id: derivatives-natural-exp
+        weight: 0.7
+        key: true
+      - id: derivatives-natural-log
+        weight: 0.7
+        key: true
+      - id: change-of-base-formula
+        weight: 0.4
+      - id: product-quotient-rules
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: General exponential bases
+        key_prerequisites: [derivatives-natural-exp]
+        exemplars:
+          - problem: 'Differentiate $f(x) = 2^x$.'
+            answer: "2^x ln 2"
+            solution_sketch: '$2^x = e^{x \ln 2}$, so the derivative is $e^{x \ln 2} \cdot \ln 2$.'
+          - problem: 'Differentiate $f(x) = 10^x$.'
+            answer: "10^x ln 10"
+          - problem: 'Differentiate $f(x) = 3^{2x}$.'
+            answer: "(2 ln 3) 3^(2x)"
+            solution_sketch: 'Chain rule on $e^{2x \ln 3}$: the factor is $2\ln 3$.'
+        constraints: "bases 2, 3, 5, or 10; rewrite as e^(x ln a) or use the memorized a^x ln a"
+      - id: kp2
+        name: General logarithmic bases
+        key_prerequisites: [derivatives-natural-log, change-of-base-formula]
+        exemplars:
+          - problem: 'Differentiate $f(x) = \log_2 x$.'
+            answer: "1/(x ln 2)"
+            solution_sketch: '$\log_2 x = \frac{\ln x}{\ln 2}$, so the derivative is $\frac{1}{x \ln 2}$.'
+          - problem: 'Differentiate $f(x) = \log_{10} x$.'
+            answer: "1/(x ln 10)"
+          - problem: 'Differentiate $f(x) = \log_3(x^2 + 1)$.'
+            answer: "2x/((x^2 + 1) ln 3)"
+        constraints: "convert to natural logs via change of base; inner functions linear or x^2 + c"
+      - id: kp3
+        name: Products and quotients of exponential and log factors
+        key_prerequisites: [derivatives-natural-exp, derivatives-natural-log, product-quotient-rules]
+        exemplars:
+          - problem: 'Differentiate $f(x) = x^2 \ln x$.'
+            answer: "2x ln x + x"
+            solution_sketch: 'Product rule: $2x \ln x + x^2 \cdot \frac{1}{x}$.'
+          - problem: 'Differentiate $f(x) = \frac{e^x}{x}$.'
+            answer: "e^x(x - 1)/x^2"
+            solution_sketch: 'Quotient rule: $\frac{e^x x - e^x}{x^2}$.'
+          - problem: 'Differentiate $f(x) = x \cdot 2^x$.'
+            answer: "2^x(1 + x ln 2)"
+            solution_sketch: 'Product rule: $2^x + x \cdot 2^x \ln 2$.'
+        constraints: "one product and one quotient mixing power, exponential, and log factors"
+    diagnostic_exemplar:
+      problem: 'Differentiate $f(x) = x \cdot 3^x$.'
+      answer: "3^x (1 + x ln 3)"
+      solution_sketch: 'Product rule with $\frac{d}{dx}3^x = 3^x\ln 3$: $3^x + x\,3^x\ln 3$, then factor out $3^x$.'
+    anki_seeds:
+      - front: "d/dx a^x = ?"
+        back: "a^x · ln a"
+        type: basic
+      - front: "d/dx log_a x = ?"
+        back: "1/(x ln a)"
+        type: basic
+
+  - id: derivatives-piecewise-functions
+    name: Derivatives of Piecewise Functions
+    core: false                # worked special case; differentiability stays core
+    difficulty: 0.62
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 150
+    prerequisites:
+      - id: differentiability
+        weight: 0.7
+        key: true
+      - id: derivatives-of-polynomials
+        weight: 0.5
+        key: true
+      - id: limits-piecewise-functions
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Differentiate away from the seam
+        key_prerequisites: [derivatives-of-polynomials]
+        exemplars:
+          - problem: 'Let $f(x) = x^2$ for $x < 1$ and $f(x) = 2x - 1$ for $x \geq 1$. Find $f''(3)$.'
+            answer: "2"
+            solution_sketch: 'At $x = 3$ only the $2x - 1$ branch applies; its derivative is $2$.'
+          - problem: 'With the same $f$, find $f''(0)$.'
+            answer: "0"
+            solution_sketch: 'At $x = 0$ the $x^2$ branch applies: $f''(x) = 2x$, so $f''(0) = 0$.'
+        constraints: "points strictly inside one branch; differentiate that branch only"
+      - id: kp2
+        name: Check differentiability at the seam
+        key_prerequisites: [differentiability, derivatives-of-polynomials]
+        exemplars:
+          - problem: 'Let $f(x) = x^2$ for $x < 1$ and $f(x) = 2x - 1$ for $x \geq 1$. Is $f$ differentiable at $x = 1$, and if so what is $f''(1)$?'
+            answer: "yes; f'(1) = 2"
+            solution_sketch: 'Values match ($1 = 1$) and one-sided slopes match ($2 \cdot 1 = 2$), so $f''(1) = 2$.'
+          - problem: 'Let $g(x) = x^2$ for $x < 2$ and $g(x) = 4x - 3$ for $x \geq 2$. Is $g$ differentiable at $x = 2$?'
+            answer: "no — g is not even continuous there (4 ≠ 5)"
+        constraints: "check continuity first, then one-sided derivatives; polynomial branches"
+      - id: kp3
+        name: Choose constants to make a piecewise function differentiable
+        key_prerequisites: [differentiability, derivatives-of-polynomials]
+        exemplars:
+          - problem: 'Find $a$ and $b$ so that $f(x) = x^2$ for $x \leq 2$ and $f(x) = ax + b$ for $x > 2$ is differentiable at $x = 2$.'
+            answer: "a = 4, b = -4"
+            solution_sketch: 'Slopes: $2 \cdot 2 = a$. Continuity: $4 = 2a + b = 8 + b$, so $b = -4$.'
+          - problem: 'Find $a$ and $b$ so that $f(x) = ax^3$ for $x \leq 1$ and $f(x) = 3x + b$ for $x > 1$ is differentiable at $x = 1$.'
+            answer: "a = 1, b = -2"
+            solution_sketch: 'Slopes: $3a = 3$ gives $a = 1$. Continuity: $1 = 3 + b$ gives $b = -2$.'
+        constraints: "two unknowns; the slope equation and the continuity equation each yield an integer"
+    diagnostic_exemplar:
+      problem: 'Find $a$ and $b$ so that $f(x) = x^2$ for $x \leq 3$ and $f(x) = ax + b$ for $x > 3$ is differentiable at $x = 3$.'
+      answer: "a = 6, b = -9"
+      solution_sketch: 'Two conditions, slopes first: $2(3) = a$ gives $a = 6$, and then matching values, $3^2 = 6(3) + b$, gives $b = -9$.'
+    anki_seeds:
+      - front: "To make a piecewise function differentiable at its seam you need TWO equations:"
+        back: "branch values equal (continuity) and branch derivatives equal (matching slopes)"
+        type: basic
+      - front: "Matching one-sided slopes at a seam is not enough on its own because..."
+        back: "the function must also be continuous there — a jump with parallel slopes is still not differentiable"
+        type: basic
+
+  - id: implicit-differentiation-basic
+    name: Implicit Differentiation Basics
+    core: true
+    difficulty: 0.6
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 150
+    prerequisites:
+      - id: chain-rule
+        weight: 0.8
+        key: true
+      - id: literal-equations
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: Differentiate y-terms with the chain rule
+        key_prerequisites: [chain-rule]
+        exemplars:
+          - problem: 'If $y$ is a function of $x$, what is $\frac{d}{dx}\left[y^4\right]$?'
+            answer: "4y^3 · dy/dx"
+          - problem: 'If $y$ is a function of $x$, what is $\frac{d}{dx}\left[y^2 + x^3\right]$?'
+            answer: "2y · dy/dx + 3x^2"
+        constraints: "single y-power terms; every y-term picks up a dy/dx factor"
+      - id: kp2
+        name: Solve for dy/dx (powers of x and y only)
+        key_prerequisites: [chain-rule, literal-equations]
+        exemplars:
+          - problem: 'Find $\frac{dy}{dx}$ for the circle $x^2 + y^2 = 25$.'
+            answer: "-x/y"
+            solution_sketch: '$2x + 2y \frac{dy}{dx} = 0$, so $\frac{dy}{dx} = -\frac{x}{y}$.'
+          - problem: 'Find $\frac{dy}{dx}$ for $x^3 + y^3 = 6$.'
+            answer: "-x^2/y^2"
+          - problem: 'Find $\frac{dy}{dx}$ for $2x^2 + 3y^2 = 12$.'
+            answer: "-2x/(3y)"
+            solution_sketch: '$4x + 6y \frac{dy}{dx} = 0$.'
+        constraints: "powers of x and y only, no mixed terms; isolate dy/dx"
+      - id: kp3
+        name: Evaluate the slope at a point
+        key_prerequisites: [chain-rule]
+        exemplars:
+          - problem: 'Find the slope of the tangent to $x^2 + y^2 = 25$ at $(3, 4)$.'
+            answer: "-3/4"
+            solution_sketch: '$\frac{dy}{dx} = -\frac{x}{y} = -\frac{3}{4}$ at $(3, 4)$.'
+          - problem: 'Find the slope of the tangent to $y^2 = 4x$ at $(1, 2)$.'
+            answer: "1"
+            solution_sketch: '$2y \frac{dy}{dx} = 4$ gives $\frac{dy}{dx} = \frac{2}{y} = 1$ at $y = 2$.'
+        constraints: "the given point must satisfy the equation; slopes are integers or simple fractions"
+    diagnostic_exemplar:
+      problem: 'Find $\frac{dy}{dx}$ for $x^2 + y^2 = 9$.'
+      answer: "-x/y"
+      solution_sketch: 'Differentiate both sides in $x$, treating $y$ as a function of $x$: $2x + 2y\frac{dy}{dx} = 0$.'
+    anki_seeds:
+      - front: "When differentiating y^n implicitly with respect to x, you get..."
+        back: "n·y^(n-1) · dy/dx (chain rule — y is a function of x)"
+        type: basic
+      - front: "Implicit differentiation procedure in three steps:"
+        back: "differentiate both sides in x (chain rule on y terms); collect dy/dx terms; solve for dy/dx"
+        type: basic
+
+  - id: implicit-differentiation
+    name: Implicit Differentiation
+    core: true
+    difficulty: 0.68
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 210
+    prerequisites:
+      - id: implicit-differentiation-basic
+        weight: 0.8
+        key: true
+      - id: product-quotient-rules
+        weight: 0.6
+        key: true
+      - id: tangent-line-equation
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: Implicit differentiation with product terms
+        key_prerequisites: [product-quotient-rules, implicit-differentiation-basic]
+        exemplars:
+          - problem: 'Find $\frac{dy}{dx}$ for $xy = 4$.'
+            answer: "-y/x"
+            solution_sketch: 'Product rule: $y + x\frac{dy}{dx} = 0$.'
+          - problem: 'Find $\frac{dy}{dx}$ for $x^2 + xy = 6$.'
+            answer: "-(2x + y)/x"
+            solution_sketch: '$2x + y + x\frac{dy}{dx} = 0$, so $\frac{dy}{dx} = -\frac{2x + y}{x}$.'
+          - problem: 'Find $\frac{dy}{dx}$ for $x^2 y + y^2 = 5$.'
+            answer: "-2xy/(x^2 + 2y)"
+            solution_sketch: '$2xy + x^2 y'' + 2y y'' = 0$; collect: $y''(x^2 + 2y) = -2xy$.'
+        constraints: "one xy or x²y term; collect the dy/dx terms on one side before solving"
+      - id: kp2
+        name: Tangent lines to implicit curves
+        key_prerequisites: [implicit-differentiation-basic, tangent-line-equation]
+        exemplars:
+          - problem: 'Find the slope of the tangent to $x^2 - y^2 = 9$ at $(5, 4)$.'
+            answer: "5/4"
+            solution_sketch: '$2x - 2y\frac{dy}{dx} = 0$ gives $\frac{dy}{dx} = \frac{x}{y} = \frac{5}{4}$.'
+          - problem: 'Find the slope of the tangent to $x^2 + xy = 10$ at $(2, 3)$.'
+            answer: "-7/2"
+            solution_sketch: '$\frac{dy}{dx} = -\frac{2x + y}{x} = -\frac{4 + 3}{2} = -\frac{7}{2}$.'
+          - problem: 'Find the tangent line to $x^2 + y^2 = 25$ at $(3, 4)$. Give the expression for $y$.'
+            answer: "-3x/4 + 25/4"
+            solution_sketch: 'Slope $-\frac{x}{y} = -\frac{3}{4}$; point-slope through $(3, 4)$ gives $y = -\frac{3x}{4} + \frac{25}{4}$.'
+        constraints: "the given point must satisfy the equation; slopes are simple fractions"
+      - id: kp3
+        name: Second derivatives implicitly
+        key_prerequisites: [implicit-differentiation-basic, product-quotient-rules]
+        exemplars:
+          - problem: 'For $x^2 + y^2 = 25$, find $\frac{d^2y}{dx^2}$ in terms of $x$ and $y$ (simplify using the original equation).'
+            answer: "-25/y^3"
+            solution_sketch: '$y'' = -\frac{x}{y}$; quotient rule gives $y'''' = -\frac{y - x y''}{y^2} = -\frac{y^2 + x^2}{y^3} = -\frac{25}{y^3}$.'
+          - problem: 'For $y^2 = 4x$, find $\frac{d^2y}{dx^2}$ in terms of $y$.'
+            answer: "-4/y^3"
+            solution_sketch: '$y'' = \frac{2}{y}$; then $y'''' = -\frac{2}{y^2} y'' = -\frac{2}{y^2} \cdot \frac{2}{y} = -\frac{4}{y^3}$.'
+        constraints: "differentiate dy/dx again, substitute the first derivative, and simplify with the original equation"
+    diagnostic_exemplar:
+      problem: 'For $x^2 + y^2 = 16$, find $\frac{d^2y}{dx^2}$ in terms of $y$ (simplify using the original equation).'
+      answer: '-16/y^3'
+      solution_sketch: 'Implicitly $y'' = -x/y$; differentiating again, $y'''' = -\frac{y - x y''}{y^2} = -\frac{y + x^2/y}{y^2} = -\frac{x^2 + y^2}{y^3} = -\frac{16}{y^3}$.'
+    anki_seeds:
+      - front: "After computing y'' implicitly, always simplify using..."
+        back: "the original equation (substitute it to collapse x² + y² -type expressions)"
+        type: basic
+      - front: "d/dx [xy] = ?"
+        back: "y + x·dy/dx (product rule — both factors vary)"
+        type: basic
+
+  - id: derivatives-inverse-functions
+    name: Derivatives of Inverse Functions
+    core: true
+    difficulty: 0.65
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 150
+    prerequisites:
+      - id: inverse-functions
+        weight: 0.6
+        key: true
+      - id: chain-rule
+        weight: 0.6
+        key: true
+      - id: derivative-definition
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: The inverse-derivative formula
+        key_prerequisites: [inverse-functions, chain-rule]
+        exemplars:
+          - problem: 'Let $f(x) = x^3 + 2$, so $f(1) = 3$. Find $(f^{-1})''(3)$.'
+            answer: "1/3"
+            solution_sketch: '$(f^{-1})''(3) = \frac{1}{f''(f^{-1}(3))} = \frac{1}{f''(1)} = \frac{1}{3}$.'
+          - problem: 'Let $f(x) = x^5 + x + 1$, so $f(1) = 3$. Find $(f^{-1})''(3)$.'
+            answer: "1/6"
+            solution_sketch: '$f''(x) = 5x^4 + 1$, so $f''(1) = 6$.'
+        constraints: "f(a) given or trivially computed; f'(a) is a small integer"
+      - id: kp2
+        name: Inverse derivatives from tables
+        key_prerequisites: [inverse-functions, chain-rule]
+        exemplars:
+          - problem: 'Given $f(2) = 5$ and $f''(2) = 8$, find $(f^{-1})''(5)$.'
+            answer: "1/8"
+          - problem: 'Given $g(-1) = 4$ and $g''(-1) = 3$, find $(g^{-1})''(4)$.'
+            answer: "1/3"
+        constraints: "table gives f and f' at one point; the student inverts through the OUTPUT value"
+      - id: kp3
+        name: Where the formula comes from
+        key_prerequisites: [chain-rule, inverse-functions]
+        exemplars:
+          - problem: 'Differentiate both sides of $f(f^{-1}(x)) = x$ with the chain rule to see why $(f^{-1})''$ is the reciprocal of $f''$ at the pre-image. Then apply it: for $f(x) = x^2 + 1$ with $x > 0$, find $(f^{-1})''(5)$.'
+            answer: "1/4"
+            solution_sketch: 'Chain rule: $f''(f^{-1}(x)) \cdot (f^{-1})''(x) = 1$, so $(f^{-1})''(x) = \frac{1}{f''(f^{-1}(x))}$. Here $f^{-1}(5) = 2$ and $f''(2) = 4$, giving $\frac{1}{4}$.'
+          - problem: 'Let $f(x) = x^3$. Find $(f^{-1})''(8)$.'
+            answer: "1/12"
+            solution_sketch: '$f^{-1}(8) = 2$ and $f''(2) = 12$.'
+          - problem: 'Let $f(x) = x^3 + x$, so $f(2) = 10$. Find $(f^{-1})''(10)$.'
+            answer: "1/13"
+        constraints: "evaluate at the correct pre-image; reciprocal answers are unit fractions"
+    diagnostic_exemplar:
+      problem: 'Let $f(x) = x^3$. Find $(f^{-1})''(27)$.'
+      answer: "1/27"
+      solution_sketch: '$f^{-1}(27) = 3$ and $f''(3) = 27$, so $(f^{-1})''(27) = \frac{1}{27}$.'
+    anki_seeds:
+      - front: "Inverse function derivative: (f⁻¹)'(b) = ?"
+        back: "1 / f'(f⁻¹(b)) — the reciprocal of f' at the PRE-image of b"
+        type: basic
+      - front: "Graphically, the tangent slopes of f and f⁻¹ at mirrored points are..."
+        back: "reciprocals of each other (reflection across y = x)"
+        type: basic
+
+  - id: derivatives-inverse-trig
+    name: Derivatives of Inverse Trigonometric Functions
+    core: true
+    difficulty: 0.68
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 150
+    prerequisites:
+      - id: inverse-trig-functions
+        weight: 0.6
+        key: true
+      - id: chain-rule
+        weight: 0.6
+        key: true
+      - id: implicit-differentiation-basic
+        weight: 0.4
+      - id: derivatives-inverse-functions
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: The three main formulas
+        key_prerequisites: [inverse-trig-functions, implicit-differentiation-basic]
+        exemplars:
+          - problem: 'Differentiate $f(x) = \arcsin x$.'
+            answer: "1/√(1 - x^2)"
+            solution_sketch: 'From $\sin y = x$: $\cos y \cdot y'' = 1$, and $\cos y = \sqrt{1 - x^2}$ on the principal range.'
+          - problem: 'Differentiate $f(x) = \arctan x$.'
+            answer: "1/(1 + x^2)"
+          - problem: 'Differentiate $f(x) = \arccos x$.'
+            answer: "-1/√(1 - x^2)"
+        constraints: "the three standard formulas; arccos is the negative of arcsin's derivative"
+      - id: kp2
+        name: Inverse trig with the chain rule
+        key_prerequisites: [chain-rule, inverse-trig-functions]
+        exemplars:
+          - problem: 'Differentiate $f(x) = \arctan(3x)$.'
+            answer: "3/(1 + 9x^2)"
+          - problem: 'Differentiate $f(x) = \arcsin(x^2)$.'
+            answer: "2x/√(1 - x^4)"
+            solution_sketch: '$\frac{1}{\sqrt{1 - (x^2)^2}} \cdot 2x$.'
+          - problem: 'Differentiate $f(x) = \arctan(\sqrt{x})$.'
+            answer: "1/(2√x (1 + x))"
+            solution_sketch: '$\frac{1}{1 + x} \cdot \frac{1}{2\sqrt{x}}$.'
+        constraints: "inner function bx, x^2, or √x; the inner square lands inside the formula"
+      - id: kp3
+        name: Products and evaluation
+        key_prerequisites: [chain-rule, inverse-trig-functions]
+        exemplars:
+          - problem: 'Differentiate $f(x) = x \arctan x$.'
+            answer: "arctan x + x/(1 + x^2)"
+          - problem: 'For $f(x) = \arcsin x$, find $f''(1/2)$.'
+            answer: "2√3/3"
+            solution_sketch: '$\frac{1}{\sqrt{1 - 1/4}} = \frac{1}{\sqrt{3}/2} = \frac{2}{\sqrt{3}} = \frac{2\sqrt{3}}{3}$.'
+          - problem: 'Find the slope of $y = \arctan x$ at $x = 1$.'
+            answer: "1/2"
+        constraints: "evaluation points where 1 - x² or 1 + x² is a clean value; rationalized exact answers"
+    diagnostic_exemplar:
+      problem: 'Differentiate $f(x) = x \arctan(2x)$.'
+      answer: "arctan(2x) + 2x/(1 + 4x^2)"
+      solution_sketch: 'Product rule with $\frac{d}{dx}\arctan(2x) = \frac{2}{1 + (2x)^2}$: $\arctan(2x) + \frac{2x}{1 + 4x^2}$.'
+    anki_seeds:
+      - front: "d/dx arcsin x and d/dx arctan x = ?"
+        back: "1/√(1 - x²) and 1/(1 + x²)"
+        type: basic
+      - front: "d/dx arccos x = ?"
+        back: "-1/√(1 - x²) — the negative of arcsin's derivative"
+        type: basic
+
+  - id: logarithmic-differentiation
+    name: Logarithmic Differentiation
+    core: false                # special-case technique; nothing downstream
+    difficulty: 0.68
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 210
+    prerequisites:
+      - id: derivatives-natural-log
+        weight: 0.7
+        key: true
+      - id: implicit-differentiation-basic
+        weight: 0.6
+        key: true
+      - id: derivatives-exp-log
+        weight: 0.5
+      - id: derivatives-sin-cos
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Variable base to a variable power
+        key_prerequisites: [derivatives-natural-log, implicit-differentiation-basic]
+        exemplars:
+          - problem: 'Differentiate $y = x^x$ for $x > 0$.'
+            answer: "x^x (ln x + 1)"
+            solution_sketch: '$\ln y = x \ln x$; differentiate: $\frac{y''}{y} = \ln x + 1$; multiply by $y$.'
+          - problem: 'Differentiate $y = x^{2x}$ for $x > 0$.'
+            answer: "2x^(2x) (ln x + 1)"
+            solution_sketch: '$\ln y = 2x \ln x$ gives $\frac{y''}{y} = 2\ln x + 2$.'
+          - problem: 'Differentiate $y = x^{\sin x}$ for $x > 0$.'
+            answer: "x^(sin x) (cos(x) ln(x) + sin(x)/x)"
+            solution_sketch: '$\ln y = \sin x \ln x$; differentiate: $\frac{y''}{y} = \cos x \ln x + \frac{\sin x}{x}$; multiply by $y$.'
+        constraints: "x^(u(x)) forms; take ln of both sides, differentiate implicitly, multiply back by y"
+      - id: kp2
+        name: Big products and quotients
+        key_prerequisites: [derivatives-natural-log, implicit-differentiation-basic]
+        exemplars:
+          - problem: 'Use logarithmic differentiation on $y = (x + 1)^2 (x + 2)^3$ and fully factor the result.'
+            answer: "(x + 1)(x + 2)^2 (5x + 7)"
+            solution_sketch: '$\frac{y''}{y} = \frac{2}{x+1} + \frac{3}{x+2}$; multiply by $y$ and combine: $(x+1)(x+2)^2\left[2(x+2) + 3(x+1)\right]$.'
+          - problem: 'Use logarithmic differentiation on $y = x^2\sqrt{x + 1}$ (answer may be left in $y \cdot (\ldots)$ form).'
+            answer: "x^2 √(x + 1) · (2/x + 1/(2(x + 1)))"
+            solution_sketch: '$\ln y = 2\ln x + \frac{1}{2}\ln(x+1)$; differentiate and multiply by $y$.'
+        constraints: "2-3 factors with integer powers or square roots; sum-of-fractions form times y accepted"
+      - id: kp3
+        name: Choose the right tool
+        key_prerequisites: [derivatives-natural-log, derivatives-exp-log]
+        exemplars:
+          - problem: 'Which of $2^x$, $x^2$, and $x^x$ REQUIRES logarithmic differentiation (rather than a standard rule)?'
+            answer: "x^x"
+            solution_sketch: 'Only $x^x$ has a varying base AND a varying exponent; $2^x$ uses $a^x \ln a$ and $x^2$ the power rule.'
+          - problem: 'Differentiate $y = x^x$ by first rewriting it as $e^{x \ln x}$.'
+            answer: "x^x (ln x + 1)"
+            solution_sketch: '$\frac{d}{dx} e^{x \ln x} = e^{x \ln x}(\ln x + 1)$ — the same result as taking logs.'
+        constraints: "contrast constant-base, constant-exponent, and variable-variable cases"
+    diagnostic_exemplar:
+      problem: 'Differentiate $y = x^{\ln x}$ for $x > 0$.'
+      answer: "x^(ln x) (2 ln x)/x"
+      solution_sketch: '$\ln y = (\ln x)^2$, so $y''/y = 2\ln x \cdot \frac{1}{x}$ and $y'' = x^{\ln x}\cdot\frac{2\ln x}{x}$.'
+    anki_seeds:
+      - front: "Logarithmic differentiation procedure:"
+        back: "take ln of both sides; differentiate implicitly (y'/y = ...); multiply by y"
+        type: basic
+      - front: "d/dx x^x = ?"
+        back: "x^x (ln x + 1)"
+        type: basic
+
+  - id: combining-differentiation-rules
+    name: Combining Differentiation Rules
+    core: true
+    difficulty: 0.7
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 210
+    prerequisites:
+      - id: chain-rule
+        weight: 0.6
+        key: true
+      - id: derivatives-trig
+        weight: 0.6
+        key: true
+      - id: derivatives-exp-log
+        weight: 0.6
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: Chain rule through transcendental layers
+        key_prerequisites: [chain-rule, derivatives-trig, derivatives-exp-log]
+        exemplars:
+          - problem: 'Differentiate $f(x) = e^{\sin x}$.'
+            answer: "e^(sin x) cos x"
+          - problem: 'Differentiate $f(x) = \sin(e^x)$.'
+            answer: "e^x cos(e^x)"
+          - problem: 'Differentiate $f(x) = \ln(1 + e^x)$.'
+            answer: "e^x/(1 + e^x)"
+        constraints: "one transcendental function inside another; single chain application"
+      - id: kp2
+        name: Products and quotients of transcendental factors
+        key_prerequisites: [derivatives-trig, derivatives-exp-log]
+        exemplars:
+          - problem: 'Differentiate $f(x) = e^x \sin x$.'
+            answer: "e^x(sin x + cos x)"
+          - problem: 'Differentiate $f(x) = \frac{\ln x}{x}$.'
+            answer: "(1 - ln x)/x^2"
+            solution_sketch: 'Quotient rule: $\frac{\frac{1}{x} \cdot x - \ln x}{x^2}$.'
+          - problem: 'Differentiate $f(x) = x^2 e^{-x}$.'
+            answer: "e^(-x)(2x - x^2)"
+            solution_sketch: 'Product rule with a chain factor: $2x e^{-x} - x^2 e^{-x}$.'
+        constraints: "two factors mixing power, trig, exp, and log; factored answers preferred"
+      - id: kp3
+        name: Multi-layer problems requiring a strategy
+        key_prerequisites: [chain-rule, derivatives-trig, derivatives-exp-log]
+        exemplars:
+          - problem: 'Differentiate $f(x) = \sqrt{1 + \sin^2 x}$.'
+            answer: "sin(x) cos(x)/sqrt(1 + sin(x)^2)"
+            solution_sketch: '$\frac{1}{2}(1 + \sin^2 x)^{-1/2} \cdot 2\sin x \cos x$.'
+          - problem: 'Differentiate $f(x) = \tan(e^{2x})$.'
+            answer: "2e^(2x) sec^2(e^(2x))"
+          - problem: 'Differentiate $f(x) = e^{x^2}\cos(3x)$.'
+            answer: "e^(x^2)(2x cos(3x) - 3 sin(3x))"
+            solution_sketch: 'Product rule; each factor needs its own chain rule.'
+        constraints: "at least two rules per problem (chain + product/quotient/power); plan before differentiating"
+    diagnostic_exemplar:
+      problem: 'Differentiate $f(x) = e^{2x}\sin x$.'
+      answer: "e^(2x)(2 sin x + cos x)"
+      solution_sketch: 'Product rule with a chain-rule factor: $2e^{2x}\sin x + e^{2x}\cos x$; factor out $e^{2x}$.'
+    anki_seeds:
+      - front: "Attacking a multi-rule derivative, first identify..."
+        back: "the OUTERMOST structure (sum, product, quotient, or composition) and apply its rule first"
+        type: basic
+      - front: "d/dx e^(u(x)) and d/dx ln(u(x)) in one line:"
+        back: "u'·e^u and u'/u"
+        type: basic

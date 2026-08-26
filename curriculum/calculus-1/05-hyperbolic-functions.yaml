@@ -1,0 +1,153 @@
+unit: hyperbolic-functions
+course: calculus-1
+module: "Hyperbolic Functions"
+topics:
+  # Phase C (gap I-3): sinh/cosh had 0 hits tree-wide. Built directly on
+  # foundations' natural-exponential-function, since cosh x = (e^x + e^{-x})/2
+  # IS the definition. Both topics are supplemental: nothing downstream in the
+  # tree consumes hyperbolics — a terminal enrichment branch (PDF p. 391:
+  # destinations the curriculum arrives at, not machinery later material uses).
+
+  - id: hyperbolic-functions
+    name: Hyperbolic Functions
+    core: false                # terminal enrichment branch; no downstream consumer outside this unit
+    difficulty: 0.6
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 150
+    prerequisites:
+      - id: natural-exponential-function
+        weight: 0.8
+        key: true
+      - id: even-odd-functions
+        weight: 0.3
+      - id: graphs-of-exponential-functions
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Definitions and evaluation
+        key_prerequisites: [natural-exponential-function]
+        exemplars:
+          - problem: 'Using $\cosh x = \frac{e^x + e^{-x}}{2}$, evaluate $\cosh 0$.'
+            answer: "1"
+            solution_sketch: '$\frac{e^0 + e^0}{2} = \frac{1 + 1}{2} = 1$; similarly $\sinh 0 = 0$.'
+          - problem: 'Write $\sinh 1 = \frac{e^1 - e^{-1}}{2}$ exactly in terms of $e$.'
+            answer: "(e - 1/e)/2"
+            solution_sketch: 'Substitute $x = 1$ into $\sinh x = \frac{e^x - e^{-x}}{2}$.'
+          - problem: 'Evaluate $\sinh(\ln 2)$ exactly.'
+            answer: "3/4"
+            solution_sketch: '$e^{\ln 2} = 2$ and $e^{-\ln 2} = \frac{1}{2}$, so $\sinh(\ln 2) = \frac{2 - \frac{1}{2}}{2} = \frac{3}{4}$.'
+        constraints: "arguments 0, ±1, or ± ln k with k a small integer, so e^x collapses to exact values; state the e^x definitions in the stem until the anki cards have had time to stick"
+      - id: kp2
+        name: The identity cosh^2 - sinh^2 = 1 and parity
+        key_prerequisites: [natural-exponential-function, even-odd-functions]
+        exemplars:
+          - problem: 'Expand $\cosh^2 x - \sinh^2 x$ using the $e^x$ definitions and simplify.'
+            answer: "1"
+            solution_sketch: '$\frac{(e^x + e^{-x})^2 - (e^x - e^{-x})^2}{4} = \frac{4 e^x e^{-x}}{4} = 1$ — the hyperbolic analogue of $\sin^2 + \cos^2 = 1$, but with a minus sign.'
+          - problem: 'Given $\cosh x = \frac{5}{4}$ with $x > 0$, find $\sinh x$.'
+            answer: "3/4"
+            solution_sketch: '$\sinh^2 x = \cosh^2 x - 1 = \frac{25}{16} - 1 = \frac{9}{16}$; $x > 0$ gives the positive root $\frac{3}{4}$.'
+          - problem: 'Simplify $\cosh(-x)$: is it $\cosh(x)$ or $-\cosh(x)$?'
+            answer: "cosh(x)"
+            solution_sketch: 'Swapping $x \to -x$ swaps $e^x$ and $e^{-x}$, which leaves their sum unchanged: $\cosh$ is even (and $\sinh$, built on the difference, is odd).'
+        constraints: "identity values from the pairs (cosh, sinh) = (5/4, 3/4) or (13/12, 5/12); state x > 0 so the sign of sinh is determined; parity questions offer the two candidate answers"
+      - id: kp3
+        name: Graphs and the catenary
+        key_prerequisites: [natural-exponential-function, graphs-of-exponential-functions]
+        exemplars:
+          - problem: 'The graph of $y = \cosh x$ is the catenary — the shape of a hanging chain. What is its minimum value, attained at $x = 0$?'
+            answer: "1"
+            solution_sketch: 'Both $e^x$ and $e^{-x}$ are positive and their product is $1$; the sum $\frac{e^x + e^{-x}}{2}$ is smallest when they are equal, at $x = 0$, giving $\cosh 0 = 1$.'
+          - problem: 'A chain hangs in the catenary shape $y = \cosh x$. Compute its height at $x = \ln 3$.'
+            answer: "5/3"
+            solution_sketch: '$\cosh(\ln 3) = \frac{3 + \frac{1}{3}}{2} = \frac{10/3}{2} = \frac{5}{3}$.'
+          - problem: 'For large $x$ the term $e^{-x}$ is negligible, so $\cosh x \approx \frac{e^x}{2}$. Using $e^3 \approx 20.09$, estimate $\cosh 3$ to one decimal place.'
+            answer: "10.0"
+            solution_sketch: '$\cosh 3 \approx \frac{20.09}{2} = 10.045 \approx 10.0$ (the exact value is $10.07$ — the discarded $e^{-3}/2$ is under $0.03$).'
+        constraints: "heights at ± ln k for exact fractions; large-x estimates supply the needed e-power and state the rounding; only y = cosh x and y = sinh x, no shifts or stretches"
+    diagnostic_exemplar:
+      problem: 'Evaluate $\sinh(\ln 3)$ exactly from the definition $\sinh x = \frac{e^x - e^{-x}}{2}$, and confirm with $\cosh^2 x - \sinh^2 x = 1$ that $\cosh(\ln 3) = \frac{5}{3}$.'
+      answer: '4/3'
+      solution_sketch: '$\sinh(\ln 3) = \frac{3 - 1/3}{2} = \frac{4}{3}$; then $\cosh^2 = 1 + \frac{16}{9} = \frac{25}{9}$ and $\cosh > 0$, so $\cosh(\ln 3) = \frac{5}{3}$.'
+    anki_seeds:
+      - front: "sinh x = ? (in terms of e^x)"
+        back: "(e^x − e^(−x))/2"
+        type: basic
+      - front: "cosh x = ? (in terms of e^x)"
+        back: "(e^x + e^(−x))/2"
+        type: basic
+      - front: "Fundamental hyperbolic identity?"
+        back: "cosh²x − sinh²x = 1"
+        type: basic
+
+  - id: derivatives-hyperbolic-functions
+    name: Derivatives of Hyperbolic Functions
+    core: false                # terminal enrichment: closes the hyperbolic branch, nothing builds on it
+    difficulty: 0.65
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 150
+    prerequisites:
+      - id: hyperbolic-functions
+        weight: 0.8
+        key: true
+      - id: derivatives-natural-exp
+        weight: 0.7
+        key: true
+      - id: chain-rule
+        weight: 0.5
+      - id: product-quotient-rules
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: sinh' = cosh and cosh' = sinh
+        key_prerequisites: [hyperbolic-functions, derivatives-natural-exp]
+        exemplars:
+          - problem: 'Differentiate $\sinh x = \frac{e^x - e^{-x}}{2}$ term by term.'
+            answer: "cosh(x)"
+            solution_sketch: '$\frac{e^x - (-e^{-x})}{2} = \frac{e^x + e^{-x}}{2} = \cosh x$.'
+          - problem: 'Differentiate $f(x) = \cosh x$.'
+            answer: "sinh(x)"
+            solution_sketch: '$\frac{e^x + (-e^{-x})}{2} = \sinh x$ — note there is NO minus sign, unlike $\frac{d}{dx}\cos x = -\sin x$.'
+          - problem: 'Differentiate $f(x) = 3\cosh x + x^2$.'
+            answer: "3sinh(x) + 2x"
+        constraints: "linear combinations of sinh x, cosh x, and power terms; integer coefficients; occasionally ask for the derivation from the e^x definitions"
+      - id: kp2
+        name: Chain rule with hyperbolic functions
+        key_prerequisites: [chain-rule, hyperbolic-functions]
+        exemplars:
+          - problem: 'Differentiate $f(x) = \sinh(3x)$.'
+            answer: "3cosh(3x)"
+          - problem: 'Differentiate $f(x) = \cosh(x^2)$.'
+            answer: "2x sinh(x^2)"
+            solution_sketch: 'Chain rule: $\sinh(x^2) \cdot 2x$.'
+          - problem: 'Using the quotient rule on $\tanh x = \frac{\sinh x}{\cosh x}$ and the identity $\cosh^2 x - \sinh^2 x = 1$, differentiate $\tanh x$.'
+            answer: "1/cosh(x)^2"
+            solution_sketch: '$\frac{\cosh^2 x - \sinh^2 x}{\cosh^2 x} = \frac{1}{\cosh^2 x}$.'
+        constraints: "inner function bx or x^2; the tanh derivative always routed through the quotient rule plus the identity"
+      - id: kp3
+        name: Products and the slope of the catenary
+        key_prerequisites: [product-quotient-rules, hyperbolic-functions]
+        exemplars:
+          - problem: 'Differentiate $f(x) = x\sinh x$.'
+            answer: "sinh(x) + x cosh(x)"
+            solution_sketch: 'Product rule: $1 \cdot \sinh x + x \cdot \cosh x$.'
+          - problem: 'A chain hangs as the catenary $y = \cosh x$. Find its slope at $x = \ln 2$.'
+            answer: "3/4"
+            solution_sketch: 'The slope is $y'' = \sinh x$; $\sinh(\ln 2) = \frac{2 - \frac{1}{2}}{2} = \frac{3}{4}$.'
+        constraints: "one power factor times sinh or cosh; slope evaluations at ± ln k so the answer is an exact fraction"
+    diagnostic_exemplar:
+      problem: 'Differentiate $f(x) = x\cosh(2x)$.'
+      answer: 'cosh(2x) + 2x sinh(2x)'
+      solution_sketch: 'Product rule with a chain-rule factor: $\cosh(2x) + x \cdot 2\sinh(2x)$.'
+    anki_seeds:
+      - front: "d/dx sinh x = ?"
+        back: "cosh x"
+        type: basic
+      - front: "d/dx cosh x = ? (watch the sign)"
+        back: "sinh x — no minus sign, unlike d/dx cos x = −sin x"
+        type: basic
+      - front: "d/dx tanh x = ?"
+        back: "1/cosh²x"
+        type: basic

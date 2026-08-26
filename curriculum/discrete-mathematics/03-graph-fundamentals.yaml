@@ -1,0 +1,371 @@
+unit: graph-fundamentals
+course: discrete-mathematics
+module: "Graph Fundamentals"
+topics:
+  - id: graphs-intro
+    name: "Graphs & Their Representations"
+    core: true
+    difficulty: 0.5
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 120
+    prerequisites:
+      - id: set-notation
+        weight: 0.6
+        key: true
+      - id: relations-digraphs-matrices
+        weight: 0.4
+        key: false
+      - id: combinations
+        weight: 0.5
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: "Vertices, edges, and standard graphs"
+        key_prerequisites: [set-notation, combinations]
+        exemplars:
+          - problem: 'How many edges does the complete graph $K_5$ have?'
+            answer: "10"
+            solution_sketch: 'Every pair of the $5$ vertices is joined: $\binom{5}{2} = 10$.'
+          - problem: 'A simple graph has vertex set $\{a, b, c, d\}$ and edge set $\{ab, ac, cd\}$. List the vertices adjacent to $c$, and state the number of edges.'
+            answer: 'Adjacent to $c$: $a$ and $d$; $3$ edges.'
+        constraints: "simple undirected graphs, <= 8 vertices; K_n, C_n, P_n vocabulary; C(n,2) edge counts"
+      - id: kp2
+        name: "Adjacency matrices and lists"
+        key_prerequisites: [set-notation]
+        exemplars:
+          - problem: 'A simple undirected graph has $7$ edges. How many $1$s does its adjacency matrix contain?'
+            answer: "14"
+            solution_sketch: 'Each edge $uv$ contributes two entries, $(u,v)$ and $(v,u)$.'
+          - problem: 'Write the adjacency matrix of the path $a - b - c$ (order the vertices $a, b, c$).'
+            answer: '$\begin{pmatrix} 0 & 1 & 0 \\ 1 & 0 & 1 \\ 0 & 1 & 0 \end{pmatrix}$'
+            solution_sketch: 'Edges $ab$ and $bc$ give symmetric $1$s; the diagonal is $0$ for a simple graph.'
+        constraints: "graphs with <= 5 vertices; symmetric 0/1 matrices, zero diagonal"
+    diagnostic_exemplar:
+      problem: 'How many $1$s does the adjacency matrix of the complete graph $K_5$ contain?'
+      answer: '20'
+      solution_sketch: '$K_5$ has $\binom{5}{2} = 10$ edges; each contributes two symmetric $1$s.'
+    anki_seeds:
+      - front: "Number of edges of the complete graph $K_n$"
+        back: '$\binom{n}{2} = \dfrac{n(n-1)}{2}$.'
+        type: basic
+      - front: "Adjacency matrix of a simple undirected graph is always..."
+        back: "symmetric, with zero diagonal; each edge appears as two 1s."
+        type: basic
+
+  - id: degree-handshake
+    name: "Degree & the Handshake Lemma"
+    core: true
+    difficulty: 0.5
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 120
+    prerequisites:
+      - id: graphs-intro
+        weight: 0.85
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: "Degree sum equals twice the edge count"
+        key_prerequisites: [graphs-intro]
+        exemplars:
+          - problem: 'A graph has degree sequence $3, 3, 2, 2, 2$. How many edges does it have?'
+            answer: "6"
+            solution_sketch: 'Degree sum $= 12 = 2|E|$, so $|E| = 6$.'
+          - problem: 'A graph has $10$ edges and every vertex has degree $4$. How many vertices does it have?'
+            answer: "5"
+            solution_sketch: '$4n = 2 \cdot 10$ gives $n = 5$ (e.g. $K_5$).'
+        constraints: "degree sums <= 40; regular-graph variants n*d = 2|E|"
+      - id: kp2
+        name: "Parity: the number of odd-degree vertices is even"
+        key_prerequisites: [graphs-intro]
+        exemplars:
+          - problem: 'Can a graph have exactly five vertices, each of degree $3$?'
+            answer: 'No: the degree sum would be $15$, which is odd.'
+            solution_sketch: 'The degree sum is $2|E|$, always even; five odd degrees sum to an odd number.'
+          - problem: 'At a party, is it possible that exactly three people each shook hands an odd number of times?'
+            answer: 'No: the number of odd-degree vertices must be even.'
+            solution_sketch: 'Handshake lemma parity corollary.'
+        constraints: "yes/no with a parity justification; degree sequences of length <= 8"
+    diagnostic_exemplar:
+      problem: 'A graph has degree sequence $3, 3, 2, 2, 1, 1$. How many edges does it have — and can any graph have degree sequence $3, 3, 2, 1$?'
+      answer: '$6$ edges; no — the degree sum $9$ is odd, but every degree sum equals $2|E|$.'
+      solution_sketch: 'Sum $12 = 2|E|$ gives $6$ edges; parity rules out the second sequence.'
+    anki_seeds:
+      - front: "Handshake lemma"
+        back: '$\sum_{v} \deg(v) = 2|E|$.'
+        type: basic
+      - front: "Corollary of the handshake lemma about odd degrees"
+        back: "Every graph has an even number of odd-degree vertices."
+        type: basic
+
+  - id: walks-paths-connectivity
+    name: "Walks, Paths & Connectivity"
+    core: true
+    difficulty: 0.55
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 150
+    prerequisites:
+      - id: graphs-intro
+        weight: 0.8
+        key: true
+      - id: degree-handshake
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Walks vs. paths; distance"
+        key_prerequisites: [graphs-intro]
+        exemplars:
+          - problem: 'In the cycle $C_6$ with vertices $1, 2, \dots, 6$ in order, what is the distance between vertices $1$ and $4$?'
+            answer: "3"
+            solution_sketch: 'Going either way around takes $3$ steps: $1\!-\!2\!-\!3\!-\!4$ or $1\!-\!6\!-\!5\!-\!4$.'
+          - problem: 'A walk visits the vertices $a, b, c, b, d$ in order (each consecutive pair adjacent). How many distinct vertices does it visit?'
+            answer: "4"
+            solution_sketch: 'The sequence lists $5$ vertices but only $4$ distinct ones — $b$ repeats — so this is a walk and not a path (paths forbid repeated vertices).'
+        constraints: "graphs with <= 8 vertices; distance = length of a shortest path; walk-vs-path items ask for a count (length or distinct vertices)"
+      - id: kp2
+        name: "Connected components and edge thresholds"
+        key_prerequisites: [graphs-intro]
+        exemplars:
+          - problem: 'The graph on vertices $\{1, \dots, 6\}$ has edges $\{12, 23, 45\}$. How many connected components does it have?'
+            answer: "3"
+            solution_sketch: 'Components $\{1,2,3\}$, $\{4,5\}$, $\{6\}$.'
+          - problem: 'What is the minimum number of edges a connected graph on $8$ vertices can have?'
+            answer: "7"
+            solution_sketch: 'A connected graph on $n$ vertices needs at least $n - 1$ edges (achieved exactly by trees).'
+        constraints: "<= 8 vertices; component counting from an edge list; n-1 and n-c edge bounds"
+    diagnostic_exemplar:
+      problem: 'A graph has $9$ vertices and $3$ connected components. What is the minimum possible number of edges?'
+      answer: "6"
+      solution_sketch: 'Each component with $n_i$ vertices needs $\ge n_i - 1$ edges; total $\ge 9 - 3 = 6$.'
+    anki_seeds:
+      - front: "Difference between a walk and a path"
+        back: "A walk may repeat vertices and edges; a path repeats neither."
+        type: basic
+      - front: "Minimum edges for a connected graph on $n$ vertices"
+        back: '$n - 1$ (attained exactly by trees).'
+        type: basic
+
+  - id: graph-isomorphism
+    name: "Graph Isomorphism"
+    core: false                # terminal classification skill; nothing in the tree builds on it
+    difficulty: 0.6
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 180
+    prerequisites:
+      - id: graphs-intro
+        weight: 0.8
+        key: true
+      - id: degree-handshake
+        weight: 0.6
+        key: true
+      - id: walks-paths-connectivity
+        weight: 0.5
+        key: false
+      - id: functions-injective-surjective
+        weight: 0.3
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Non-isomorphism via basic invariants"
+        key_prerequisites: [graphs-intro, degree-handshake]
+        exemplars:
+          - problem: 'Graph $G$ has $6$ vertices and $7$ edges; graph $H$ has $6$ vertices and $8$ edges. Can $G$ and $H$ be isomorphic?'
+            answer: 'No: isomorphic graphs have the same number of edges, and $7 \neq 8$.'
+            solution_sketch: 'An isomorphism is an adjacency-preserving bijection, so it matches edges one-to-one; vertex and edge counts are invariants.'
+          - problem: 'Graphs $G$ and $H$ each have $5$ vertices and $6$ edges. $G$ has degree sequence $3, 3, 2, 2, 2$ and $H$ has degree sequence $4, 2, 2, 2, 2$. Are they isomorphic?'
+            answer: 'No: isomorphic graphs have identical degree sequences, and $H$ has a degree-$4$ vertex while $G$ does not.'
+            solution_sketch: 'A bijection preserving adjacency sends each vertex to a vertex of the same degree, so the sorted degree sequence is an invariant — even when vertex and edge counts agree.'
+        constraints: "graphs with <= 8 vertices given by counts, edge lists, or degree sequences; yes/no answers must name the violated invariant (vertex count, edge count, degree sequence); degree sums even"
+      - id: kp2
+        name: "Exhibiting an isomorphism"
+        key_prerequisites: [graphs-intro, functions-injective-surjective]
+        exemplars:
+          - problem: '$G$ has vertices $\{1, 2, 3, 4\}$ and edges $\{12, 23, 34, 14\}$; $H$ has vertices $\{a, b, c, d\}$ and edges $\{ac, cb, bd, da\}$. Give an isomorphism $G \to H$ as a mapping table.'
+            answer: '$1 \to a$, $2 \to c$, $3 \to b$, $4 \to d$.'
+            solution_sketch: 'Both are $4$-cycles; follow $G$''s cycle $1\!-\!2\!-\!3\!-\!4\!-\!1$ around $H$''s cycle $a\!-\!c\!-\!b\!-\!d\!-\!a$. Check every edge: $12 \to ac$, $23 \to cb$, $34 \to bd$, $14 \to ad$ — all edges of $H$.'
+          - problem: '$G$ has vertices $\{1, 2, 3, 4\}$ and edges $\{12, 23, 24\}$; $H$ has vertices $\{w, x, y, z\}$ and edges $\{wx, wy, wz\}$. Give an isomorphism $G \to H$.'
+            answer: '$2 \to w$, $1 \to x$, $3 \to y$, $4 \to z$ (the degree-$3$ vertices must correspond; the three leaves may be matched in any order).'
+            solution_sketch: 'Match degrees first: $2$ and $w$ are the unique degree-$3$ vertices, so any isomorphism sends $2 \to w$; each edge of $G$ then maps to an edge of $H$ for any assignment of the leaves.'
+        constraints: "graphs with 4-6 vertices given as edge lists; the answer is a vertex bijection (mapping table); degree matching should guide the construction, and every edge must map to an edge"
+      - id: kp3
+        name: "Same degree sequence, still not isomorphic"
+        key_prerequisites: [degree-handshake, walks-paths-connectivity]
+        exemplars:
+          - problem: '$G$ is the cycle $C_6$; $H$ consists of two disjoint triangles ($\{ab, bc, ca\}$ and $\{de, ef, fd\}$). Both are $2$-regular with $6$ vertices and $6$ edges. Are they isomorphic?'
+            answer: 'No: $G$ is connected ($1$ component) while $H$ has $2$ components, and the number of components is an invariant.'
+            solution_sketch: 'Equal degree sequences do not force isomorphism; an isomorphism maps walks to walks, so it preserves connectivity and component counts.'
+          - problem: '$G$ has vertices $\{1, \dots, 5\}$ and edges $\{12, 23, 34, 45, 52\}$; $H$ has vertices $\{a, \dots, e\}$ and edges $\{ab, bc, ca, cd, de\}$. Both are connected with degree sequence $3, 2, 2, 2, 1$. Are they isomorphic?'
+            answer: 'No: $H$ contains a $3$-cycle ($a\!-\!b\!-\!c$), while the only cycle in $G$ is the $4$-cycle $2\!-\!3\!-\!4\!-\!5$; isomorphisms preserve cycle lengths.'
+            solution_sketch: 'An isomorphism maps a cycle to a cycle of the same length, so the multiset of cycle lengths is an invariant that separates graphs sharing vertex count, edge count, degree sequence, and connectivity.'
+        constraints: "pairs with <= 8 vertices agreeing on vertex count, edge count, and degree sequence; distinguish via component counts or cycle lengths; yes/no answers must name the distinguishing invariant"
+    diagnostic_exemplar:
+      problem: '$G$ is the cycle $C_8$; $H$ consists of two disjoint $4$-cycles. Both are $2$-regular with $8$ vertices and $8$ edges. Decide whether $G$ and $H$ are isomorphic: give an isomorphism, or name an invariant that differs.'
+      answer: 'Not isomorphic: $G$ is connected ($1$ component) while $H$ has $2$ components, and the number of components is preserved by isomorphisms.'
+      solution_sketch: 'Vertex count, edge count, and degree sequence all agree — the component count is the distinguishing invariant.'
+    anki_seeds:
+      - front: "Definition of a graph isomorphism"
+        back: 'A bijection $f$ between the vertex sets with $uv$ an edge iff $f(u)f(v)$ is an edge.'
+        type: basic
+      - front: "Invariants preserved by graph isomorphism"
+        back: "Vertex count, edge count, degree sequence, number of components, cycle lengths."
+        type: basic
+      - front: "Does an equal degree sequence guarantee two graphs are isomorphic?"
+        back: 'No — $C_6$ and two disjoint triangles are both $2$-regular on $6$ vertices but not isomorphic (component counts differ).'
+        type: basic
+
+  - id: euler-trails-circuits
+    name: "Euler Trails & Circuits"
+    core: false                # named terminal graph result
+    difficulty: 0.6
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 150
+    prerequisites:
+      - id: walks-paths-connectivity
+        weight: 0.8
+        key: true
+      - id: degree-handshake
+        weight: 0.7
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: "Existence criteria from degree parity"
+        key_prerequisites: [walks-paths-connectivity, degree-handshake]
+        exemplars:
+          - problem: 'Does $K_5$ have an Euler circuit? Justify via degrees.'
+            answer: 'Yes: it is connected and every vertex has even degree $4$.'
+            solution_sketch: 'Euler circuit iff connected (ignoring isolated vertices) and all degrees even.'
+          - problem: 'Does $K_4$ have an Euler circuit or an Euler trail?'
+            answer: 'Neither: all four vertices have odd degree $3$ (a trail needs exactly two odd vertices).'
+            solution_sketch: 'Four odd-degree vertices exceed the allowed zero (circuit) or two (trail).'
+        constraints: "connected graphs <= 8 vertices; answer must cite the odd-degree count (0, 2, or more)"
+      - id: kp2
+        name: "Bridges of Konigsberg and route problems"
+        key_prerequisites: [walks-paths-connectivity, degree-handshake]
+        exemplars:
+          - problem: 'The Konigsberg multigraph has degree sequence $5, 3, 3, 3$. Explain why no walk crosses every bridge exactly once.'
+            answer: 'It has four odd-degree vertices; an Euler trail allows at most two.'
+            solution_sketch: 'Each pass through a vertex uses two edge-ends, so intermediate vertices need even degree; only the two endpoints may be odd.'
+          - problem: 'For which $n \ge 3$ does $K_n$ have an Euler circuit?'
+            answer: 'Odd $n$: each degree $n - 1$ must be even.'
+            solution_sketch: '$K_n$ is connected; all degrees are $n-1$, even exactly when $n$ is odd.'
+        constraints: "route/bridge framings; multigraphs allowed; justification through degree parity required"
+    diagnostic_exemplar:
+      problem: 'For which $n \ge 3$ does the complete graph $K_n$ have an Euler circuit? Justify your answer with the degrees.'
+      answer: 'exactly the odd n: K_n is connected and every vertex has degree n - 1, which is even precisely when n is odd (for even n every degree is odd, and more than two odd vertices rule out even an Euler trail)'
+      solution_sketch: 'Euler circuit $\iff$ connected and all degrees even; in $K_n$ every degree is $n - 1$.'
+    anki_seeds:
+      - front: "Euler circuit existence criterion"
+        back: "Connected (ignoring isolated vertices) and every vertex of even degree."
+        type: basic
+      - front: "Euler trail (not circuit) existence criterion"
+        back: "Connected with exactly two odd-degree vertices — the trail's endpoints."
+        type: basic
+
+  - id: hamilton-paths-cycles
+    name: "Hamilton Paths & Cycles"
+    core: false                # named terminal graph result
+    difficulty: 0.65
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 180
+    prerequisites:
+      - id: walks-paths-connectivity
+        weight: 0.8
+        key: true
+      - id: permutations
+        weight: 0.5
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Finding and counting Hamilton cycles"
+        key_prerequisites: [walks-paths-connectivity]
+        exemplars:
+          - problem: 'How many distinct Hamilton cycles does $K_4$ have (cycles counted up to starting point and direction)?'
+            answer: "3"
+            solution_sketch: '$(4-1)!/2 = 3$.'
+          - problem: 'How many distinct Hamilton cycles does $K_5$ have?'
+            answer: "12"
+            solution_sketch: '$(5-1)!/2 = 24/2 = 12$.'
+        constraints: "complete graphs n <= 6; formula (n-1)!/2; or exhibit a Hamilton cycle in a small graph"
+      - id: kp2
+        name: "Dirac's sufficient condition"
+        key_prerequisites: [walks-paths-connectivity]
+        exemplars:
+          - problem: 'A graph has $8$ vertices, each of degree at least $4$. Must it have a Hamilton cycle?'
+            answer: 'Yes, by Dirac''s theorem: every degree $\ge n/2 = 4$.'
+            solution_sketch: 'Dirac: $n \ge 3$ and minimum degree $\ge n/2$ suffice.'
+          - problem: 'A graph has $6$ vertices with minimum degree $2$. Does Dirac''s theorem apply? Can the graph still be Hamiltonian?'
+            answer: 'Dirac does not apply ($2 < 3$), but the graph may still be Hamiltonian — e.g. the cycle $C_6$ itself.'
+            solution_sketch: 'Dirac is sufficient, not necessary.'
+        constraints: "n <= 10; must distinguish sufficient from necessary; contrast with Euler criteria"
+    diagnostic_exemplar:
+      problem: 'A graph has $10$ vertices, each of degree at least $5$. Must it have a Hamilton cycle? Name the theorem that applies — and is the condition also necessary?'
+      answer: 'Yes — Dirac''s theorem: every degree $\ge n/2 = 5$ forces a Hamilton cycle. The condition is sufficient but not necessary: $C_{10}$ is Hamiltonian with all degrees $2$.'
+      solution_sketch: 'Dirac''s bound is $n/2$; the cycle $C_{10}$ witnesses non-necessity.'
+    anki_seeds:
+      - front: "Hamilton cycle vs. Euler circuit"
+        back: "Hamilton: visits every vertex exactly once. Euler: uses every edge exactly once."
+        type: basic
+      - front: "Dirac's theorem"
+        back: 'If $n \ge 3$ and every vertex has degree $\ge n/2$, the graph has a Hamilton cycle.'
+        type: basic
+      - front: "Number of distinct Hamilton cycles in $K_n$"
+        back: '$(n-1)!/2$.'
+        type: basic
+
+  - id: trees-characterizations
+    name: "Trees & Their Characterizations"
+    core: true
+    difficulty: 0.65
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 180
+    prerequisites:
+      - id: walks-paths-connectivity
+        weight: 0.85
+        key: true
+      - id: mathematical-induction
+        weight: 0.4
+        key: false
+      - id: degree-handshake
+        weight: 0.5
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: "n vertices, n-1 edges, unique paths"
+        key_prerequisites: [walks-paths-connectivity]
+        exemplars:
+          - problem: 'A tree has $17$ edges. How many vertices does it have?'
+            answer: "18"
+            solution_sketch: 'A tree on $n$ vertices has exactly $n - 1$ edges.'
+          - problem: 'A forest has $20$ vertices and $3$ components. How many edges does it have?'
+            answer: "17"
+            solution_sketch: 'Each tree component with $n_i$ vertices has $n_i - 1$ edges; total $20 - 3 = 17$.'
+        constraints: "trees/forests <= 30 vertices; use |E| = |V| - c"
+      - id: kp2
+        name: "Degree constraints and leaves"
+        key_prerequisites: [walks-paths-connectivity, degree-handshake]
+        exemplars:
+          - problem: 'Can a tree on $7$ vertices have degree sequence $4, 2, 2, 1, 1, 1, 1$?'
+            answer: 'Yes: the degree sum is $12 = 2(n-1)$, and such a tree exists — a center of degree $4$ joined to two leaves and to two paths of length $2$.'
+            solution_sketch: 'For a tree the degree sum must equal $2(n-1)$; any positive sequence meeting that is realizable by a tree.'
+          - problem: 'Show that every tree with $n \ge 2$ vertices has at least $2$ leaves, using the degree sum.'
+            answer: 'If at most one vertex had degree $1$, the degree sum would be $\ge 1 + 2(n-1) = 2n - 1 > 2n - 2 = 2|E|$, a contradiction.'
+            solution_sketch: 'Degrees are $\ge 1$; a tree''s degree sum is exactly $2(n-1)$, forcing at least two $1$s.'
+        constraints: "degree sums checked against 2(n-1); n <= 10"
+    diagnostic_exemplar:
+      problem: 'Can a tree on $8$ vertices have degree sequence $3, 3, 2, 2, 1, 1, 1, 1$? Check the degree sum against what a tree requires, and exhibit such a tree or rule it out.'
+      answer: 'Yes: the degree sum is $14 = 2(n-1)$, matching a tree''s $7$ edges — e.g. a path $a$-$c$-$d$-$b$ with two extra leaves on each of $a$ and $b$.'
+      solution_sketch: 'A tree on $8$ vertices has exactly $7$ edges, so the degrees must sum to $14$; the construction realizes the sequence.'
+    anki_seeds:
+      - front: "Three equivalent characterizations of a tree on $n$ vertices"
+        back: "connected + acyclic; connected + exactly n-1 edges; a unique path between every pair of vertices."
+        type: basic
+      - front: "Minimum number of leaves in a tree with $n \\ge 2$ vertices"
+        back: "2."
+        type: basic

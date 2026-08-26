@@ -1,0 +1,862 @@
+unit: integration-applications
+course: calculus-2
+module: "Applications of Integration"
+topics:
+  - id: area-between-curves-x
+    name: Area Between Curves on a Given Interval
+    core: true
+    difficulty: 0.52
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 120
+    prerequisites:
+      - id: definite-integrals-ftc
+        weight: 0.8
+        key: true
+      - id: area-under-a-curve
+        weight: 0.6
+        key: true
+      - id: antiderivatives
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: Top minus bottom, polynomial curves
+        key_prerequisites: [definite-integrals-ftc, area-under-a-curve]
+        exemplars:
+          - problem: 'Find the area between $y = x$ and $y = x^2$ for $0 \le x \le 1$.'
+            answer: '$1/6$'
+            solution_sketch: 'On $[0,1]$, $x \ge x^2$: $\int_0^1 (x - x^2)\,dx = \frac{1}{2} - \frac{1}{3} = \frac{1}{6}$.'
+          - problem: 'Find the area between $y = x^2 + 1$ and $y = x$ for $0 \le x \le 2$.'
+            answer: '$8/3$'
+            solution_sketch: '$x^2 + 1 > x$ everywhere: $\int_0^2 (x^2 - x + 1)\,dx = \frac{8}{3} - 2 + 2 = \frac{8}{3}$.'
+        constraints: "interval given explicitly; top curve does not change on the interval; polynomial integrands with small integer coefficients"
+      - id: kp2
+        name: Exponential and trig curves
+        key_prerequisites: [definite-integrals-ftc, antiderivatives]
+        exemplars:
+          - problem: 'Find the area between $y = e^x$ and $y = 1$ for $0 \le x \le 1$.'
+            answer: '$e - 2$'
+            solution_sketch: '$\int_0^1 (e^x - 1)\,dx = (e - 1) - 1 = e - 2$.'
+          - problem: 'Find the area between $y = e^x$ and $y = e^{-x}$ for $0 \le x \le 1$.'
+            answer: '$e + 1/e - 2$'
+            solution_sketch: '$e^x \ge e^{-x}$ for $x \ge 0$: $[e^x + e^{-x}]_0^1 = (e + e^{-1}) - 2$.'
+          - problem: 'Find the area between $y = \sin x$ and the $x$-axis for $0 \le x \le \pi$.'
+            answer: "2"
+            solution_sketch: '$\int_0^{\pi} \sin x\,dx = [-\cos x]_0^{\pi} = 2$.'
+        constraints: "integrands limited to e^{ax}, sin x, cos x; the ordering of the curves must not change on the interval"
+    diagnostic_exemplar:
+      problem: 'Find the area between $y = e^x$ and $y = x$ for $0 \le x \le 1$.'
+      answer: '$e - 3/2$'
+      solution_sketch: '$\int_0^1 (e^x - x)\,dx = [e^x - x^2/2]_0^1 = (e - \tfrac12) - 1$.'
+    anki_seeds:
+      - front: "Area between curves f (top) and g (bottom) on [a, b]?"
+        back: '$\int_a^b (f(x) - g(x)) \, dx$'
+        type: basic
+      - front: "Before integrating f - g for an area, first check..."
+        back: "which curve is on top throughout the interval (the integrand must stay nonnegative)"
+        type: basic
+
+  - id: area-between-curves
+    name: Area Between Curves
+    core: true
+    difficulty: 0.55
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 150
+    prerequisites:
+      - id: area-between-curves-x
+        weight: 0.8
+        key: true
+      - id: definite-integrals-ftc
+        weight: 0.5
+      - id: quadratic-graphs-vertex
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Find the intersection points first
+        key_prerequisites: [area-between-curves-x, quadratic-graphs-vertex]
+        exemplars:
+          - problem: 'Find the area of the region enclosed by $y = x^2$ and $y = x + 2$.'
+            answer: '$9/2$'
+            solution_sketch: '$x^2 = x + 2$ at $x = -1, 2$. $\int_{-1}^{2} (x + 2 - x^2)\,dx = [\frac{x^2}{2} + 2x - \frac{x^3}{3}]_{-1}^{2} = \frac{10}{3} + \frac{7}{6} = \frac{9}{2}$.'
+          - problem: 'Find the area of the region enclosed by $y = \sqrt{x}$ and $y = x$.'
+            answer: '$1/6$'
+            solution_sketch: 'Curves meet at $x = 0, 1$; $\int_0^1 (\sqrt{x} - x)\,dx = \frac{2}{3} - \frac{1}{2} = \frac{1}{6}$.'
+          - problem: 'Find the area of the region enclosed by $y = x^2$ and $y = 2x$.'
+            answer: '$4/3$'
+            solution_sketch: 'Intersections at $x = 0, 2$; $\int_0^2 (2x - x^2)\,dx = 4 - \frac{8}{3} = \frac{4}{3}$.'
+        constraints: "intersections solvable by factoring a quadratic with integer roots (or x = 0, 1 for root curves)"
+      - id: kp2
+        name: Crossing curves (split at the crossing)
+        key_prerequisites: [area-between-curves-x]
+        exemplars:
+          - problem: 'Find the total area between $y = x^3$ and $y = x$ for $-1 \le x \le 1$.'
+            answer: '$1/2$'
+            solution_sketch: 'The curves cross at $x = 0$; by symmetry the area is $2\int_0^1 (x - x^3)\,dx = 2(\frac{1}{2} - \frac{1}{4}) = \frac{1}{2}$.'
+          - problem: 'Find the total area between $y = \cos x$ and $y = \sin x$ for $0 \le x \le \pi/2$.'
+            answer: '$2\sqrt 2 - 2$'
+            solution_sketch: 'They cross at $x = \pi/4$. $\int_0^{\pi/4}(\cos x - \sin x)\,dx = \sqrt{2} - 1$; the second piece equals the first by symmetry, so the total is $2\sqrt{2} - 2$.'
+        constraints: "at most one sign change inside the interval; split the integral there and add absolute areas"
+      - id: kp3
+        name: Integrating with respect to y
+        key_prerequisites: [area-between-curves-x]
+        exemplars:
+          - problem: 'Find the area of the region enclosed by $x = y^2$ and $x = y + 2$.'
+            answer: '$9/2$'
+            solution_sketch: 'Integrate in $y$: $y^2 = y + 2$ at $y = -1, 2$; $\int_{-1}^{2} (y + 2 - y^2)\,dy = \frac{9}{2}$.'
+          - problem: 'Find the area of the region enclosed by $x = y^2$ and $x = 2 - y^2$.'
+            answer: '$8/3$'
+            solution_sketch: '$y^2 = 2 - y^2$ at $y = \pm 1$; $\int_{-1}^{1} (2 - 2y^2)\,dy = 4 - \frac{4}{3} = \frac{8}{3}$.'
+        constraints: "y-integration regions bounded by parabolas opening sideways and lines; intersections have integer y-coordinates"
+    diagnostic_exemplar:
+      problem: 'Find the area of the region enclosed by $x = y^2$ and $x = y + 6$.'
+      answer: '$125/6$'
+      solution_sketch: 'The curves meet at $y = -2$ and $y = 3$; integrating in $y$, $\int_{-2}^{3}(y + 6 - y^2)\,dy = \frac{125}{6}$.'
+    anki_seeds:
+      - front: "If two curves cross inside the interval, the total area requires..."
+        back: "splitting the integral at each crossing and integrating |f - g| piecewise"
+        type: basic
+      - front: "When is integrating with respect to y the better choice for an area?"
+        back: "When the region's boundaries are functions of y (e.g. sideways parabolas) — right curve minus left curve, dy"
+        type: basic
+
+  - id: consumer-producer-surplus
+    name: Consumer and Producer Surplus
+    core: false                # economics application of the definite integral
+    difficulty: 0.58
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 180
+    prerequisites:
+      - id: area-between-curves-x
+        weight: 0.7
+        key: true
+      - id: definite-integrals-ftc
+        weight: 0.5
+        key: true
+      - id: systems-substitution
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Consumer surplus at a given price
+        key_prerequisites: [area-between-curves-x, definite-integrals-ftc]
+        exemplars:
+          - problem: 'The demand curve is $p = 50 - q$. At market price $p = 20$, find the consumer surplus.'
+            answer: "450"
+            solution_sketch: '$q^* = 30$ at $p = 20$. $CS = \int_0^{30} (50 - q - 20)\,dq = 900 - 450 = 450$.'
+          - problem: 'The demand curve is $p = 30 - q$. At market price $p = 10$, find the consumer surplus.'
+            answer: "200"
+            solution_sketch: '$q^* = 20$; $CS = \int_0^{20} (20 - q)\,dq = 400 - 200 = 200$.'
+        constraints: "linear or quadratic demand with integer intercepts; market quantity solves to an integer"
+      - id: kp2
+        name: Producer surplus at a given price
+        key_prerequisites: [area-between-curves-x, definite-integrals-ftc]
+        exemplars:
+          - problem: 'The supply curve is $p = 2q$. At market price $p = 20$, find the producer surplus.'
+            answer: "100"
+            solution_sketch: '$q^* = 10$; $PS = \int_0^{10} (20 - 2q)\,dq = 200 - 100 = 100$.'
+          - problem: 'Explain what producer surplus measures geometrically.'
+            answer: 'the area between the market-price line and the supply curve from $q = 0$ to the market quantity'
+            solution_sketch: 'Producers willing to sell below the market price gain the gap; summing the gaps over all units is the area $\int_0^{q^*}(p^* - s(q))\,dq$.'
+        constraints: "linear supply through small integer coefficients; one conceptual identification exemplar allowed"
+      - id: kp3
+        name: Equilibrium, then both surpluses
+        key_prerequisites: [systems-substitution, definite-integrals-ftc]
+        exemplars:
+          - problem: 'Demand is $p = 48 - q^2$ and supply is $p = 2q^2$. Find the equilibrium point and the consumer surplus.'
+            answer: '$q^* = 4$, $p^* = 32$; $CS = 128/3$'
+            solution_sketch: '$48 - q^2 = 2q^2$ gives $q^* = 4$, $p^* = 32$. $CS = \int_0^4 (48 - q^2 - 32)\,dq = 64 - \frac{64}{3} = \frac{128}{3}$.'
+          - problem: 'With demand $p = 48 - q^2$ and supply $p = 2q^2$ (equilibrium $q^* = 4$, $p^* = 32$), find the producer surplus.'
+            answer: '$256/3$'
+            solution_sketch: '$PS = \int_0^4 (32 - 2q^2)\,dq = 128 - \frac{128}{3} = \frac{256}{3}$.'
+        constraints: "equilibrium solvable by setting demand = supply and factoring; quantities and prices come out as integers"
+    diagnostic_exemplar:
+      problem: 'Demand is $p = 27 - q^2$ and supply is $p = 2q^2$. Find the equilibrium point and the consumer surplus.'
+      answer: '$q^* = 3$, $p^* = 18$; $CS = 18$'
+      solution_sketch: '$27 - q^2 = 2q^2$ gives $q^* = 3$ and $p^* = 18$; then $CS = \int_0^3 (27 - q^2)\,dq - 3 \cdot 18 = 72 - 54$.'
+    anki_seeds:
+      - front: "Consumer surplus formula (demand d(q), market price p*, quantity q*)?"
+        back: '$CS = \int_0^{q^*} (d(q) - p^*) \, dq$ — the area between the demand curve and the price line'
+        type: basic
+      - front: "Producer surplus formula (supply s(q), market price p*, quantity q*)?"
+        back: '$PS = \int_0^{q^*} (p^* - s(q)) \, dq$ — the area between the price line and the supply curve'
+        type: basic
+
+  - id: volumes-known-cross-sections
+    name: Volumes by Known Cross Sections
+    core: false                # head of the solids-of-revolution applications branch
+    difficulty: 0.58
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 210
+    prerequisites:
+      - id: definite-integrals-ftc
+        weight: 0.7
+        key: true
+      - id: area-between-curves-x
+        weight: 0.5
+        key: true
+      - id: area-triangles-quadrilaterals
+        weight: 0.3
+      - id: circle-area-circumference
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Square cross sections
+        key_prerequisites: [definite-integrals-ftc, area-between-curves-x]
+        exemplars:
+          - problem: 'The base of a solid is the region under $y = \sqrt{x}$ for $0 \le x \le 4$. Cross sections perpendicular to the $x$-axis are squares with side running from the $x$-axis to the curve. Find the volume.'
+            answer: "8"
+            solution_sketch: 'Side $= \sqrt{x}$, so $A(x) = x$ and $V = \int_0^4 x\,dx = 8$.'
+          - problem: 'The base of a solid is the region between $y = 1 - x^2$ and the $x$-axis. Cross sections perpendicular to the $x$-axis are squares. Find the volume.'
+            answer: '$16/15$'
+            solution_sketch: '$V = \int_{-1}^{1} (1 - x^2)^2\,dx = 2\left(1 - \frac{2}{3} + \frac{1}{5}\right) = \frac{16}{15}$.'
+        constraints: "side length equals the height of the base region; (side)^2 integrates as a polynomial"
+      - id: kp2
+        name: Semicircular and triangular cross sections
+        key_prerequisites: [circle-area-circumference, area-triangles-quadrilaterals]
+        exemplars:
+          - problem: 'The base of a solid is the region under $y = \sqrt{x}$ for $0 \le x \le 4$. Cross sections perpendicular to the $x$-axis are semicircles with diameter running from the $x$-axis to the curve. Find the volume.'
+            answer: '$\pi$'
+            solution_sketch: 'Radius $= \frac{\sqrt{x}}{2}$, area $= \frac{\pi x}{8}$: $V = \frac{\pi}{8}\int_0^4 x\,dx = \pi$.'
+          - problem: 'The base of a solid is the region between $y = 1 - x^2$ and the $x$-axis. Cross sections perpendicular to the $x$-axis are equilateral triangles. Find the volume.'
+            answer: '$4\sqrt 3/15$'
+            solution_sketch: 'Area of an equilateral triangle with side $s$ is $\frac{\sqrt{3}}{4}s^2$: $V = \frac{\sqrt{3}}{4}\int_{-1}^{1}(1 - x^2)^2\,dx = \frac{\sqrt{3}}{4}\cdot\frac{16}{15} = \frac{4\sqrt{3}}{15}$.'
+        constraints: "cross-section area = (known shape constant) x (base width)^2; semicircle uses the width as diameter"
+      - id: kp3
+        name: Cross sections perpendicular to the y-axis
+        key_prerequisites: [definite-integrals-ftc, area-between-curves-x]
+        exemplars:
+          - problem: 'The base of a solid is the region between the $y$-axis and $x = 4 - y^2$ for $-2 \le y \le 2$. Cross sections perpendicular to the $y$-axis are squares. Find the volume.'
+            answer: '$512/15$'
+            solution_sketch: '$V = \int_{-2}^{2} (4 - y^2)^2\,dy = 2\left(32 - \frac{64}{3} + \frac{32}{5}\right) = \frac{512}{15}$.'
+          # The stem said "set up (do not evaluate)" while storing the evaluated value, so a
+          # learner who followed the instruction was graded wrong. kp3's own constraints say
+          # "evaluate to an exact rational", and an unevaluated integral is unparseable under
+          # this topic's `expression` kind — so the instruction was the anomaly, not the answer.
+          - problem: 'Find the volume of a solid whose base is the region between $x = y^2$ and $x = 1$, with square cross sections perpendicular to the $y$-axis.'
+            answer: '16/15'
+            solution_sketch: 'Slice at height $y$: side $= 1 - y^2$, so $A(y) = (1 - y^2)^2$; integrate over $-1 \le y \le 1$.'
+        constraints: "slices taken in y; width read as right curve minus left curve; evaluate to an exact rational"
+    diagnostic_exemplar:
+      problem: 'The base of a solid is the region between the $y$-axis and $x = 1 - y^2$ for $-1 \le y \le 1$. Cross sections perpendicular to the $y$-axis are squares. Find the volume.'
+      answer: '$16/15$'
+      solution_sketch: 'The side at height $y$ is $1 - y^2$, so $V = \int_{-1}^{1}(1 - y^2)^2\,dy = \frac{16}{15}$.'
+    anki_seeds:
+      - front: "Volume of a solid with cross-sectional area A(x) from a to b?"
+        back: '$V = \int_a^b A(x) \, dx$'
+        type: basic
+      - front: "Semicircular cross section on a diameter of length w: its area?"
+        back: '$\frac{\pi w^2}{8}$ (radius $w/2$, half of $\pi r^2$)'
+        type: basic
+
+  - id: volumes-disks
+    name: Volumes by Disks
+    core: false                # solids-of-revolution applications branch
+    difficulty: 0.6
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 210
+    prerequisites:
+      - id: volumes-known-cross-sections
+        weight: 0.7
+        key: true
+      - id: definite-integrals-ftc
+        weight: 0.5
+        key: true
+      - id: circle-area-circumference
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: Disks about the x-axis
+        key_prerequisites: [volumes-known-cross-sections, circle-area-circumference]
+        exemplars:
+          - problem: 'The region under $y = \sqrt{x}$ for $0 \le x \le 4$ is rotated about the $x$-axis. Find the volume.'
+            answer: '$8\pi$'
+            solution_sketch: '$V = \pi\int_0^4 (\sqrt{x})^2\,dx = \pi\int_0^4 x\,dx = 8\pi$.'
+          - problem: 'The region under $y = x^2$ for $0 \le x \le 1$ is rotated about the $x$-axis. Find the volume.'
+            answer: '$\pi/5$'
+            solution_sketch: '$V = \pi\int_0^1 x^4\,dx = \frac{\pi}{5}$.'
+          - problem: 'The region under $y = e^x$ for $0 \le x \le 1$ is rotated about the $x$-axis. Find the volume.'
+            answer: '$\pi(e^2 - 1)/2$'
+            solution_sketch: '$V = \pi\int_0^1 e^{2x}\,dx = \frac{\pi}{2}(e^2 - 1)$.'
+        constraints: "region under a single curve down to the axis of rotation; radius^2 integrates as a polynomial or e^{2x}"
+      - id: kp2
+        name: Disks about the y-axis
+        key_prerequisites: [volumes-known-cross-sections, definite-integrals-ftc]
+        exemplars:
+          - problem: 'The region bounded by $y = x^2$, $y = 1$, and $x = 0$ (with $x \ge 0$) is rotated about the $y$-axis. Find the volume.'
+            answer: '$\pi/2$'
+            solution_sketch: 'Slice horizontally: radius $x = \sqrt{y}$, so $V = \pi\int_0^1 y\,dy = \frac{\pi}{2}$.'
+          - problem: 'The region bounded by $y = x^3$, $y = 8$, and $x = 0$ (with $x \ge 0$) is rotated about the $y$-axis. Find the volume.'
+            answer: '$96\pi/5$'
+            solution_sketch: 'Radius $x = y^{1/3}$: $V = \pi\int_0^8 y^{2/3}\,dy = \pi\cdot\frac{3}{5}\cdot 32 = \frac{96\pi}{5}$.'
+        constraints: "invert the curve to x as a function of y; y-bounds are small integers"
+      - id: kp3
+        name: Checking against known solids
+        key_prerequisites: [volumes-known-cross-sections, circle-area-circumference]
+        exemplars:
+          - problem: 'Rotate $y = \sqrt{9 - x^2}$ about the $x$-axis and verify the sphere volume formula for radius $3$.'
+            answer: '$36\pi$'
+            solution_sketch: '$V = \pi\int_{-3}^{3} (9 - x^2)\,dx = \pi(54 - 18) = 36\pi = \frac{4}{3}\pi(3)^3$.'
+          - problem: 'Rotate $y = \frac{r}{h}x$ for $0 \le x \le h$ about the $x$-axis and derive the cone volume formula.'
+            answer: '$\pi r^2 h/3$'
+            solution_sketch: '$V = \pi\int_0^h \frac{r^2}{h^2}x^2\,dx = \pi\frac{r^2}{h^2}\cdot\frac{h^3}{3} = \frac{\pi r^2 h}{3}$.'
+        constraints: "sphere and cone derivations only; answers must match the geometry formulas"
+    diagnostic_exemplar:
+      problem: 'The region bounded by $y = x^2$, $y = 4$, and $x = 0$ (with $x \ge 0$) is rotated about the $y$-axis. Find the volume.'
+      answer: '$8\pi$'
+      solution_sketch: 'Invert to $x^2 = y$ and stack disks in $y$: $V = \pi\int_0^4 y\,dy = 8\pi$.'
+    anki_seeds:
+      - front: "Disk method volume formula about the x-axis?"
+        back: '$V = \pi \int_a^b f(x)^2 \, dx$ (each slice is a disk of radius f(x))'
+        type: basic
+      - front: "Disk method about the y-axis: what must you do to the curve first?"
+        back: "Solve for x as a function of y; then V = pi times the integral of x(y)^2 dy"
+        type: basic
+
+  - id: volumes-disks-washers
+    name: Volumes by Disks and Washers
+    core: false                # solids-of-revolution applications branch
+    difficulty: 0.62
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 240
+    prerequisites:
+      - id: volumes-disks
+        weight: 0.8
+        key: true
+      - id: area-between-curves
+        weight: 0.6
+        key: true
+      - id: definite-integrals-ftc
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: Washers about the x-axis
+        key_prerequisites: [volumes-disks, area-between-curves]
+        exemplars:
+          - problem: 'The region between $y = x$ and $y = x^2$ is rotated about the $x$-axis. Find the volume.'
+            answer: '$2\pi/15$'
+            solution_sketch: '$V = \pi\int_0^1 (x^2 - x^4)\,dx = \pi(\frac{1}{3} - \frac{1}{5}) = \frac{2\pi}{15}$.'
+          - problem: 'The region between $y = \sqrt{x}$ and $y = x$ is rotated about the $x$-axis. Find the volume.'
+            answer: '$\pi/6$'
+            solution_sketch: 'Outer radius $\sqrt{x}$, inner $x$: $V = \pi\int_0^1 (x - x^2)\,dx = \frac{\pi}{6}$.'
+        constraints: "curves intersect at x = 0 and x = 1 (or other integer bounds); subtract squared radii, never square the difference"
+      - id: kp2
+        name: Washers about the y-axis
+        key_prerequisites: [volumes-disks, area-between-curves]
+        exemplars:
+          - problem: 'The region between $y = x^2$ and $y = \sqrt{x}$ is rotated about the $y$-axis. Find the volume.'
+            answer: '$3\pi/10$'
+            solution_sketch: 'At height $y$: outer $x = \sqrt{y}$, inner $x = y^2$. $V = \pi\int_0^1 (y - y^4)\,dy = \pi(\frac{1}{2} - \frac{1}{5}) = \frac{3\pi}{10}$.'
+          - problem: 'The region between $y = \sqrt{x}$ and $y = \frac{x}{2}$ is rotated about the $y$-axis. Find the volume.'
+            answer: '$64\pi/15$'
+            solution_sketch: 'For $0 \le y \le 2$: outer $x = 2y$, inner $x = y^2$. $V = \pi\int_0^2 (4y^2 - y^4)\,dy = \pi(\frac{32}{3} - \frac{32}{5}) = \frac{64\pi}{15}$.'
+        constraints: "invert both curves to x as functions of y; intersections at integer y-values"
+      - id: kp3
+        name: Rotation about other horizontal lines
+        key_prerequisites: [volumes-disks, area-between-curves]
+        exemplars:
+          - problem: 'The region between $y = \sqrt{x}$ and $y = 1$ for $0 \le x \le 1$ is rotated about the line $y = 1$. Find the volume.'
+            answer: '$\pi/6$'
+            solution_sketch: 'Radius $= 1 - \sqrt{x}$: $V = \pi\int_0^1 (1 - \sqrt{x})^2\,dx = \pi\int_0^1 (1 - 2\sqrt{x} + x)\,dx = \pi(1 - \frac{4}{3} + \frac{1}{2}) = \frac{\pi}{6}$.'
+          - problem: 'The region between $y = x^2$ and $y = 1$ is rotated about the line $y = 1$. Find the volume.'
+            answer: '$16\pi/15$'
+            solution_sketch: 'Radius $= 1 - x^2$: $V = \pi\int_{-1}^{1} (1 - x^2)^2\,dx = \frac{16\pi}{15}$.'
+        constraints: "axis is a line y = c tangent to the region boundary; radii stay nonnegative"
+    diagnostic_exemplar:
+      problem: 'The region between $y = \sqrt{x}$ and $y = x$ is rotated about the line $y = -1$. Find the volume.'
+      answer: '$\pi/2$'
+      solution_sketch: 'Radii measured from $y = -1$: $R = \sqrt x + 1$, $r = x + 1$, so $V = \pi\int_0^1 (2\sqrt x - x - x^2)\,dx = \frac{\pi}{2}$.'
+    anki_seeds:
+      - front: "Washer method volume formula about the x-axis?"
+        back: '$V = \pi \int_a^b \left(R(x)^2 - r(x)^2\right) dx$ (outer radius squared minus inner radius squared)'
+        type: basic
+      - front: "Classic washer error: pi times the integral of (R - r)^2 is wrong because..."
+        back: '$(R - r)^2 \neq R^2 - r^2$; square each radius separately, then subtract'
+        type: basic
+
+  - id: volumes-shells-y-axis
+    name: Cylindrical Shells About the y-Axis
+    core: false                # solids-of-revolution applications branch
+    difficulty: 0.64
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 210
+    prerequisites:
+      - id: volumes-disks-washers
+        weight: 0.7
+        key: true
+      - id: definite-integrals-ftc
+        weight: 0.5
+      - id: circle-area-circumference
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: The shell formula
+        key_prerequisites: [volumes-disks-washers, circle-area-circumference]
+        exemplars:
+          - problem: 'The region under $y = x^2$ for $0 \le x \le 1$ is rotated about the $y$-axis. Find the volume by shells.'
+            answer: '$\pi/2$'
+            solution_sketch: '$V = 2\pi\int_0^1 x \cdot x^2\,dx = 2\pi \cdot \frac{1}{4} = \frac{\pi}{2}$.'
+          - problem: 'The region under $y = 2$ for $0 \le x \le 1$ is rotated about the $y$-axis. Compute the shell integral and check it against the cylinder volume.'
+            answer: '$2\pi$'
+            solution_sketch: '$V = 2\pi\int_0^1 2x\,dx = 2\pi$; a cylinder of radius $1$ and height $2$ has volume $\pi(1)^2(2) = 2\pi$.'
+        constraints: "shell radius x, height = curve; one verification against an elementary solid"
+      - id: kp2
+        name: Shells with power-function heights
+        key_prerequisites: [volumes-disks-washers, definite-integrals-ftc]
+        exemplars:
+          - problem: 'The region under $y = \sqrt{x}$ for $0 \le x \le 1$ is rotated about the $y$-axis. Find the volume by shells.'
+            answer: '$4\pi/5$'
+            solution_sketch: '$V = 2\pi\int_0^1 x\sqrt{x}\,dx = 2\pi\int_0^1 x^{3/2}\,dx = 2\pi \cdot \frac{2}{5} = \frac{4\pi}{5}$.'
+          - problem: 'The region under $y = 2x - x^2$ for $0 \le x \le 2$ is rotated about the $y$-axis. Find the volume.'
+            answer: '$8\pi/3$'
+            solution_sketch: '$V = 2\pi\int_0^2 x(2x - x^2)\,dx = 2\pi[\frac{2x^3}{3} - \frac{x^4}{4}]_0^2 = 2\pi(\frac{16}{3} - 4) = \frac{8\pi}{3}$.'
+          - problem: 'The region under $y = \frac{1}{x}$ for $1 \le x \le 2$ is rotated about the $y$-axis. Find the volume by shells.'
+            answer: '$2\pi$'
+            solution_sketch: '$V = 2\pi\int_1^2 x \cdot \frac{1}{x}\,dx = 2\pi\int_1^2 dx = 2\pi$.'
+        constraints: "integrand x f(x) stays a polynomial or a single power; bounds are small integers"
+    diagnostic_exemplar:
+      problem: 'The region under $y = \sqrt{x}$ for $0 \le x \le 4$ is rotated about the $y$-axis. Find the volume by shells.'
+      answer: '$128\pi/5$'
+      solution_sketch: '$V = 2\pi\int_0^4 x\sqrt x\,dx = 2\pi \cdot \frac{2}{5}\cdot 32$.'
+    anki_seeds:
+      - front: "Shell method volume formula about the y-axis?"
+        back: '$V = 2\pi \int_a^b x \, f(x) \, dx$ (radius times height)'
+        type: basic
+      - front: "Where does the shell factor 2 pi x come from?"
+        back: 'Unrolling a thin cylindrical shell of radius $x$ gives a slab of length $2\pi x$ (the circumference), height $f(x)$, thickness $dx$.'
+        type: basic
+
+  - id: volumes-cylindrical-shells
+    name: Volumes by Cylindrical Shells
+    core: false                # solids-of-revolution applications branch
+    difficulty: 0.68
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 240
+    prerequisites:
+      - id: volumes-shells-y-axis
+        weight: 0.8
+        key: true
+      - id: area-between-curves
+        weight: 0.5
+      - id: volumes-disks-washers
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: Shells with height between two curves
+        key_prerequisites: [volumes-shells-y-axis, area-between-curves]
+        exemplars:
+          - problem: 'The region between $y = x$ and $y = x^2$ is rotated about the $y$-axis. Find the volume.'
+            answer: '$\pi/6$'
+            solution_sketch: '$V = 2\pi\int_0^1 x(x - x^2)\,dx = 2\pi(\frac{1}{3} - \frac{1}{4}) = \frac{\pi}{6}$.'
+          - problem: 'The region between $y = \sqrt{x}$ and $y = x$ is rotated about the $y$-axis. Find the volume.'
+            answer: '$2\pi/15$'
+            solution_sketch: '$V = 2\pi\int_0^1 x(\sqrt{x} - x)\,dx = 2\pi\left(\frac{2}{5} - \frac{1}{3}\right) = \frac{2\pi}{15}$.'
+        constraints: "curves intersect at x = 0 and x = 1; height = top minus bottom"
+      - id: kp2
+        name: Shells about other vertical lines
+        key_prerequisites: [volumes-shells-y-axis]
+        exemplars:
+          - problem: 'The region under $y = x^2$ for $0 \le x \le 1$ is rotated about the line $x = 2$. Find the volume.'
+            answer: '$5\pi/6$'
+            solution_sketch: 'Shell radius $2 - x$: $V = 2\pi\int_0^1 (2 - x)x^2\,dx = 2\pi(\frac{2}{3} - \frac{1}{4}) = \frac{5\pi}{6}$.'
+          - problem: 'The region between $y = x$ and $y = x^2$ is rotated about the line $x = -1$. Find the volume.'
+            answer: '$\pi/2$'
+            solution_sketch: 'Shell radius $x + 1$: $V = 2\pi\int_0^1 (x + 1)(x - x^2)\,dx = 2\pi\int_0^1 (x - x^3)\,dx = 2\pi\cdot\frac{1}{4} = \frac{\pi}{2}$.'
+        constraints: "axis x = c with c outside the region; radius written as (c - x) or (x - c) to stay positive"
+      - id: kp3
+        name: Choosing shells versus washers
+        key_prerequisites: [volumes-shells-y-axis, volumes-disks-washers]
+        exemplars:
+          - problem: 'The region under $y = \sin(x^2)$, $0 \le x \le \sqrt{\pi}$, is rotated about the $y$-axis. Give the exact volume.'
+            answer: '2*pi'
+            solution_sketch: 'Shells avoid inverting $\sin(x^2)$: $V = 2\pi\int_0^{\sqrt{\pi}} x\sin(x^2)\,dx$; with $u = x^2$ this is $\pi\int_0^{\pi} \sin u\,du = 2\pi$.'
+          - problem: 'The region between $y = x$ and $y = x^2$ is rotated about the $x$-axis. Which method uses the curves as given, without inverting them? Answer with one word: shells or washers.'
+            answer: 'washers'
+            solution_sketch: 'The axis is horizontal and both curves give $y$ in terms of $x$; washers in $x$ avoid solving for $x(y)$, shells would require it.'
+        constraints: "one computational and one purely strategic exemplar; the named method must genuinely be simpler"
+    diagnostic_exemplar:
+      problem: 'The region between $y = 2x$ and $y = x^2$ is rotated about the line $x = -1$. Find the volume.'
+      answer: '$16\pi/3$'
+      solution_sketch: 'Shell radius $x + 1$, height $2x - x^2$, over $0 \le x \le 2$: $V = 2\pi\int_0^2 (x+1)(2x - x^2)\,dx = \frac{16\pi}{3}$.'
+    anki_seeds:
+      - front: "Choose shells over washers when..."
+        back: "the slice parallel to the axis of rotation is simpler — typically rotating about a vertical axis with y = f(x) hard to invert"
+        type: basic
+      - front: "Shell radius when rotating about the line x = c (region to the left of c)?"
+        back: '$c - x$'
+        type: basic
+
+  - id: arc-length
+    name: Arc Length
+    core: true
+    difficulty: 0.7
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 240
+    prerequisites:
+      - id: definite-integrals-ftc
+        weight: 0.7
+        key: true
+      - id: integration-substitution
+        weight: 0.5
+        key: true
+      - id: chain-rule
+        weight: 0.4
+      - id: simplifying-radicals
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: The arc length integral
+        key_prerequisites: [definite-integrals-ftc, chain-rule]
+        exemplars:
+          - problem: 'Set up (do not evaluate) the arc length integral for $y = x^2$ on $[0, 1]$.'
+            answer: '$\int_0^1 \sqrt{1 + 4x^2} \, dx$'
+            solution_sketch: '$L = \int_a^b \sqrt{1 + (y'')^2}\,dx$ with $y'' = 2x$.'
+          - problem: 'Find the length of $y = 3x + 1$ for $0 \le x \le 4$, and check against the distance formula.'
+            answer: '$4\sqrt{10}$'
+            solution_sketch: '$L = \int_0^4 \sqrt{1 + 9}\,dx = 4\sqrt{10}$; the segment from $(0,1)$ to $(4,13)$ has length $\sqrt{16 + 144} = 4\sqrt{10}$.'
+        constraints: "curves where 1 + (y')^2 is constant, or setup-only problems"
+      - id: kp2
+        name: Power curves via substitution
+        key_prerequisites: [integration-substitution, definite-integrals-ftc]
+        exemplars:
+          - problem: 'Find the length of $y = x^{3/2}$ for $0 \le x \le 5$.'
+            answer: '$335/27$'
+            solution_sketch: '$y'' = \frac{3}{2}x^{1/2}$; $L = \int_0^5 \sqrt{1 + \frac{9x}{4}}\,dx = \frac{8}{27}\left[(1 + \tfrac{9x}{4})^{3/2}\right]_0^5 = \frac{8}{27}(\frac{343}{8} - 1) = \frac{335}{27}$.'
+          - problem: 'Find the length of $y = 2x^{3/2}$ for $0 \le x \le 1$.'
+            answer: '$\frac{2(10\sqrt{10} - 1)}{27}$'
+            solution_sketch: '$y'' = 3x^{1/2}$; $L = \int_0^1 \sqrt{1 + 9x}\,dx = \frac{2}{27}\left[(1 + 9x)^{3/2}\right]_0^1 = \frac{2}{27}(10\sqrt{10} - 1)$.'
+        constraints: "curves where 1 + (y')^2 is linear in x; the substitution is one step"
+      - id: kp3
+        name: Perfect-square integrands
+        key_prerequisites: [simplifying-radicals, definite-integrals-ftc]
+        exemplars:
+          - problem: 'Find the length of $y = \frac{x^3}{3} + \frac{1}{4x}$ for $1 \le x \le 2$.'
+            answer: '$59/24$'
+            solution_sketch: '$y'' = x^2 - \frac{1}{4x^2}$, so $1 + (y'')^2 = (x^2 + \frac{1}{4x^2})^2$. $L = \int_1^2 (x^2 + \frac{1}{4x^2})\,dx = [\frac{x^3}{3} - \frac{1}{4x}]_1^2 = \frac{7}{3} + \frac{1}{8} = \frac{59}{24}$.'
+          - problem: 'Find the length of $y = \frac{e^x + e^{-x}}{2}$ for $0 \le x \le 1$.'
+            answer: '$\frac{e - e^{-1}}{2}$'
+            solution_sketch: '$1 + (y'')^2 = \left(\frac{e^x + e^{-x}}{2}\right)^2$, so $L = \int_0^1 \frac{e^x + e^{-x}}{2}\,dx = \frac{e - e^{-1}}{2}$.'
+        constraints: "engineered curves of the form ax^n + b x^{-n} or (e^x + e^{-x})/2 where 1 + (y')^2 is a perfect square"
+    diagnostic_exemplar:
+      problem: 'Find the length of $y = \frac{x^3}{6} + \frac{1}{2x}$ for $1 \le x \le 2$.'
+      answer: '$17/12$'
+      solution_sketch: '$1 + \left(\frac{dy}{dx}\right)^2 = \left(\frac{x^2}{2} + \frac{1}{2x^2}\right)^2$ is a perfect square, so the length is $\left[\frac{x^3}{6} - \frac{1}{2x}\right]_1^2 = \frac{17}{12}$.'
+    anki_seeds:
+      - front: "Arc length formula for y = f(x) on [a, b]?"
+        back: '$L = \int_a^b \sqrt{1 + f''(x)^2} \, dx$'
+        type: basic
+      - front: "Textbook arc length curves like x^3/3 + 1/(4x) are engineered so that..."
+        back: '$1 + (y'')^2$ is a perfect square, letting the square root vanish'
+        type: basic
+
+  - id: surface-area-revolution
+    name: Surface Area of Revolution
+    core: false                # application of the definite integral
+    difficulty: 0.72
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 240
+    prerequisites:
+      - id: arc-length
+        weight: 0.7
+        key: true
+      - id: integration-substitution
+        weight: 0.5
+        key: true
+      - id: circle-area-circumference
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: The surface area integral and cone checks
+        key_prerequisites: [arc-length, circle-area-circumference]
+        exemplars:
+          - problem: 'The segment $y = x$, $0 \le x \le 1$, is rotated about the $x$-axis. Find the surface area.'
+            answer: '$\pi \sqrt 2$'
+            solution_sketch: '$S = 2\pi\int_0^1 x\sqrt{1 + 1}\,dx = 2\pi\sqrt{2} \cdot \frac{1}{2} = \pi\sqrt{2}$ — the lateral area $\pi r \ell$ of a cone with $r = 1$, $\ell = \sqrt{2}$.'
+          - problem: 'The segment $y = 2x$, $0 \le x \le 1$, is rotated about the $x$-axis. Find the surface area and check it against the cone formula $\pi r \ell$.'
+            answer: '$2\pi \sqrt 5$'
+            solution_sketch: '$S = 2\pi\int_0^1 2x\sqrt{1 + 4}\,dx = 2\pi\sqrt{5}$; the cone has $r = 2$, $\ell = \sqrt{5}$, so $\pi r\ell = 2\pi\sqrt{5}$.'
+        constraints: "line segments through the origin; verify against pi r l"
+      - id: kp2
+        name: Surfaces requiring substitution
+        key_prerequisites: [arc-length, integration-substitution]
+        exemplars:
+          - problem: 'The curve $y = x^3$, $0 \le x \le 1$, is rotated about the $x$-axis. Find the surface area.'
+            answer: 'pi*(10*sqrt(10) - 1)/27'
+            solution_sketch: '$S = 2\pi\int_0^1 x^3\sqrt{1 + 9x^4}\,dx$; $u = 1 + 9x^4$ gives $\frac{2\pi}{36} \cdot \frac{2}{3}\left[u^{3/2}\right]_1^{10} = \frac{\pi}{27}(10^{3/2} - 1)$.'
+          - problem: 'The curve $y = \sqrt{x}$, $0 \le x \le 1$, is rotated about the $x$-axis. Find the surface area.'
+            answer: '$\pi(5\sqrt 5 - 1)/6$'
+            solution_sketch: '$S = 2\pi\int_0^1 \sqrt{x}\sqrt{1 + \frac{1}{4x}}\,dx = 2\pi\int_0^1 \sqrt{x + \tfrac{1}{4}}\,dx = \frac{4\pi}{3}\left[(x + \tfrac{1}{4})^{3/2}\right]_0^1 = \frac{\pi}{6}(5\sqrt{5} - 1)$.'
+        constraints: "the radical must fall to a one-step u-substitution; answers exact with radicals"
+      - id: kp3
+        name: Sphere zones
+        key_prerequisites: [arc-length, circle-area-circumference]
+        exemplars:
+          - problem: 'Rotate $y = \sqrt{4 - x^2}$, $-2 \le x \le 2$, about the $x$-axis and verify the sphere surface area formula for radius $2$.'
+            answer: '$16\pi$'
+            solution_sketch: '$\sqrt{1 + (y'')^2} = \frac{2}{\sqrt{4 - x^2}}$, so $S = 2\pi\int_{-2}^{2} \sqrt{4 - x^2}\cdot\frac{2}{\sqrt{4-x^2}}\,dx = 4\pi\int_{-2}^{2} dx = 16\pi = 4\pi(2)^2$.'
+          - problem: 'Find the area of the zone of the sphere $y = \sqrt{4 - x^2}$ rotated about the $x$-axis for $0 \le x \le 1$.'
+            answer: '$4\pi$'
+            solution_sketch: 'The integrand collapses to the constant $4\pi$: $S = 4\pi(1 - 0) = 4\pi$ — zone area depends only on the slab width.'
+        constraints: "radius 2 or 3; highlight that the integrand becomes constant (Archimedes' hat-box)"
+    diagnostic_exemplar:
+      problem: 'The curve $y = \sqrt{x}$, $0 \le x \le 3$, is rotated about the $x$-axis. Find the surface area.'
+      answer: '$\pi(13\sqrt{13} - 1)/6$'
+      solution_sketch: '$S = 2\pi\int_0^3 \sqrt x\sqrt{1 + \frac{1}{4x}}\,dx = 2\pi\int_0^3 \sqrt{x + \tfrac14}\,dx = \frac{4\pi}{3}\left[\left(\tfrac{13}{4}\right)^{3/2} - \left(\tfrac14\right)^{3/2}\right]$.'
+    anki_seeds:
+      - front: "Surface area formula for y = f(x) >= 0 rotated about the x-axis?"
+        back: '$S = 2\pi \int_a^b f(x)\sqrt{1 + f''(x)^2} \, dx$'
+        type: basic
+      - front: "Sphere zone fact (Archimedes): the area of a zone depends only on..."
+        back: "the sphere's radius and the width of the slab — $S = 2\\pi R h$"
+        type: basic
+
+  - id: work-springs
+    name: Work and Springs
+    core: false                # physical application branch
+    difficulty: 0.58
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 150
+    prerequisites:
+      - id: definite-integrals-ftc
+        weight: 0.7
+        key: true
+      - id: antiderivatives
+        weight: 0.4
+      - id: evaluating-formulas
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Work done by a variable force
+        key_prerequisites: [definite-integrals-ftc]
+        exemplars:
+          - problem: 'A force $F(x) = 3x^2$ N acts along the $x$-axis. Find the work done moving an object from $x = 0$ to $x = 2$ m.'
+            answer: '$8$ J'
+            solution_sketch: '$W = \int_0^2 3x^2\,dx = 8$ J.'
+          - problem: 'A constant force of $12$ N moves an object $5$ m. Check that the work integral gives the familiar $W = Fd$.'
+            answer: '$60$ J'
+            solution_sketch: '$W = \int_0^5 12\,dx = 60$ J $= 12 \cdot 5$.'
+        constraints: "force given explicitly as a polynomial in x; SI units; one constant-force sanity check"
+      - id: kp2
+        name: Hooke's law and spring work
+        key_prerequisites: [definite-integrals-ftc, evaluating-formulas]
+        exemplars:
+          - problem: 'A force of $10$ N stretches a spring $0.2$ m beyond its natural length. How much work is done stretching it from natural length to $0.4$ m beyond?'
+            answer: '$4$ J'
+            solution_sketch: '$k = \frac{10}{0.2} = 50$ N/m; $W = \int_0^{0.4} 50x\,dx = 25(0.4)^2 = 4$ J.'
+          - problem: 'A spring has constant $k = 200$ N/m. Find the work to stretch it $0.3$ m from natural length.'
+            answer: '$9$ J'
+            solution_sketch: '$W = \int_0^{0.3} 200x\,dx = 100(0.3)^2 = 9$ J.'
+          - problem: 'A spring with $k = 100$ N/m is already stretched $0.2$ m beyond natural length. Find the work to stretch it to $0.4$ m beyond.'
+            answer: '$6$ J'
+            solution_sketch: '$W = \int_{0.2}^{0.4} 100x\,dx = 50(0.16 - 0.04) = 6$ J — the bounds are displacements from natural length.'
+        constraints: "SI units; k determined from one force-displacement pair; displacements chosen so answers are clean"
+    diagnostic_exemplar:
+      problem: 'A force of $15$ N stretches a spring $0.3$ m beyond its natural length. How much work is done stretching it from $0.2$ m to $0.5$ m beyond natural length?'
+      answer: '$5.25$ J'
+      solution_sketch: 'Hooke gives $k = 15/0.3 = 50$ N/m; then $W = \int_{0.2}^{0.5} 50x\,dx = 25(0.25 - 0.04)$.'
+    anki_seeds:
+      - front: "Work done by a variable force F(x) moving from a to b?"
+        back: '$W = \int_a^b F(x) \, dx$'
+        type: basic
+      - front: "Hooke's law?"
+        back: '$F = kx$ — the restoring force is proportional to the displacement from natural length'
+        type: basic
+
+  - id: average-value-work
+    name: Average Value and Work
+    core: false                # physical application; feeds only fluid force
+    difficulty: 0.65
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 240
+    prerequisites:
+      - id: work-springs
+        weight: 0.7
+        key: true
+      - id: average-value-function
+        weight: 0.5
+        key: true
+      - id: definite-integrals-ftc
+        weight: 0.5
+      - id: volume-prisms-cylinders
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Average value and the MVT for integrals
+        key_prerequisites: [average-value-function, definite-integrals-ftc]
+        exemplars:
+          - problem: 'Find the average value of $f(x) = \sin x$ on $[0, \pi]$.'
+            answer: '$2/\pi$'
+            solution_sketch: '$\frac{1}{\pi}\int_0^{\pi} \sin x\,dx = \frac{2}{\pi}$.'
+          - problem: 'For $f(x) = x^2$ on $[0, 3]$, find the $c$ guaranteed by the Mean Value Theorem for integrals ($f(c) = f_{avg}$).'
+            answer: '$c = \sqrt{3}$'
+            solution_sketch: '$f_{avg} = \frac{1}{3}\int_0^3 x^2\,dx = 3$, so $c^2 = 3$ with $c \in [0, 3]$.'
+          - problem: 'Find the average value of $f(x) = \frac{1}{x}$ on $[1, e]$.'
+            answer: '$\frac{1}{e - 1}$'
+            solution_sketch: '$\frac{1}{e - 1}\int_1^e \frac{dx}{x} = \frac{1}{e - 1}$.'
+        constraints: "f is sin/cos, 1/x, or a polynomial; interval endpoints small integers, e, or multiples of pi"
+      - id: kp2
+        name: Work lifting cables and chains
+        key_prerequisites: [work-springs, definite-integrals-ftc]
+        exemplars:
+          - problem: 'A $10$ m cable of linear density $2$ kg/m hangs from a winch. Find the work to wind in the whole cable ($g = 9.8$ m/s$^2$).'
+            answer: '$980$ J'
+            solution_sketch: 'A slice at distance $x$ below the top weighs $2(9.8)\,dx$ and rises $x$: $W = \int_0^{10} 19.6x\,dx = 19.6 \cdot 50 = 980$ J.'
+          - problem: 'A $20$ m chain of linear density $3$ kg/m hangs from a crane. Find the work to lift the entire chain to the top ($g = 9.8$ m/s$^2$).'
+            answer: '$5880$ J'
+            solution_sketch: '$W = \int_0^{20} 3(9.8)x\,dx = 29.4 \cdot 200 = 5880$ J.'
+        constraints: "uniform cables/chains only; distances measured from the lift destination; g = 9.8"
+      - id: kp3
+        name: Work pumping liquids
+        key_prerequisites: [work-springs, definite-integrals-ftc]
+        exemplars:
+          - problem: 'A cylindrical tank of radius $1$ m and height $2$ m is full of water (weight density $9800$ N/m$^3$). Find the work to pump all the water over the top rim.'
+            answer: '$19600\pi$ J'
+            solution_sketch: 'A slice at depth $x$ below the rim has volume $\pi(1)^2\,dx$ and rises $x$: $W = 9800\pi\int_0^2 x\,dx = 19600\pi$ J.'
+          - problem: 'The same tank (radius $1$ m, height $2$ m) is only half full: water occupies depths $1$ to $2$ below the rim. Find the work to pump it all over the rim.'
+            answer: '$14700\pi$ J'
+            solution_sketch: '$W = 9800\pi\int_1^2 x\,dx = 9800\pi \cdot \frac{3}{2} = 14700\pi$ J.'
+        constraints: "cylindrical tanks only; slices indexed by depth below the rim; weight density 9800 N/m^3"
+    diagnostic_exemplar:
+      problem: 'A cylindrical tank of radius $2$ m and height $3$ m is full of water (weight density $9800$ N/m$^3$). Find the work to pump all the water over the top rim.'
+      answer: '$176400\pi$ J'
+      solution_sketch: 'A slab at depth $y$ below the rim has weight $9800 \cdot 4\pi\,dy$ and is lifted $y$: $W = 39200\pi\int_0^3 y\,dy = 176400\pi$.'
+    anki_seeds:
+      - front: "Average value of f on [a, b]?"
+        back: '$f_{avg} = \frac{1}{b-a} \int_a^b f(x) \, dx$'
+        type: basic
+      - front: "Setting up a pumping problem: each slice's work contribution is..."
+        back: "(weight density) x (slice volume) x (distance the slice must rise)"
+        type: basic
+
+  - id: fluid-force
+    name: Hydrostatic Force
+    core: false                # physical application of the definite integral
+    difficulty: 0.66
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 240
+    prerequisites:
+      - id: average-value-work
+        weight: 0.6
+        key: true
+      - id: definite-integrals-ftc
+        weight: 0.5
+        key: true
+      - id: area-triangles-quadrilaterals
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Pressure and force on horizontal surfaces
+        key_prerequisites: [definite-integrals-ftc]
+        exemplars:
+          - problem: 'Water has weight density $9800$ N/m$^3$. Find the fluid force on the bottom of a pool $2$ m deep with bottom area $12$ m$^2$.'
+            answer: '$235200$ N'
+            solution_sketch: 'Pressure at depth $2$ is $9800 \cdot 2 = 19600$ Pa; force $= 19600 \cdot 12 = 235200$ N.'
+          - problem: 'State the fluid pressure at depth $d$ in a fluid of weight density $\rho g$.'
+            answer: '$P = \rho g \, d$ (pressure grows linearly with depth)'
+            solution_sketch: 'The weight of the fluid column of height $d$ over a unit area is $\rho g d$.'
+        constraints: "horizontal surfaces: force = pressure x area, no integral needed; weight density 9800 N/m^3"
+      - id: kp2
+        name: Force on vertical rectangular plates
+        key_prerequisites: [average-value-work, definite-integrals-ftc]
+        exemplars:
+          - problem: 'A rectangular plate $2$ m wide is submerged vertically with its top edge $1$ m and bottom edge $3$ m below the surface. Find the fluid force on one side ($9800$ N/m$^3$).'
+            answer: '$78400$ N'
+            solution_sketch: 'A strip at depth $y$ has area $2\,dy$ and pressure $9800y$: $F = 9800\int_1^3 2y\,dy = 9800 \cdot 8 = 78400$ N.'
+          - problem: 'A dam gate is a rectangle $3$ m wide whose top edge lies at the water surface and whose bottom edge is $2$ m deep. Find the force on the gate.'
+            answer: '$58800$ N'
+            solution_sketch: '$F = 9800\int_0^2 3y\,dy = 9800 \cdot 6 = 58800$ N.'
+        constraints: "strips indexed by depth y; width constant; depths are small integers"
+      - id: kp3
+        name: Plates with varying width
+        key_prerequisites: [average-value-work, area-triangles-quadrilaterals]
+        exemplars:
+          - problem: 'A triangular plate has its base of $6$ m at the water surface and its apex $3$ m directly below the base''s midpoint. Find the fluid force on one side ($9800$ N/m$^3$).'
+            answer: '$88200$ N'
+            solution_sketch: 'Width at depth $y$ is $6 - 2y$ (linear from $6$ to $0$): $F = 9800\int_0^3 y(6 - 2y)\,dy = 9800(27 - 18) = 88200$ N.'
+          - problem: 'A circular plate of radius $1$ m is submerged vertically with its center $3$ m deep. Use the centroid shortcut $F = \rho g \bar{h} A$ to find the force.'
+            answer: '$29400\pi$ N'
+            solution_sketch: 'By symmetry the average depth over the plate is the center''s depth: $F = 9800 \cdot 3 \cdot \pi(1)^2 = 29400\pi$ N.'
+        constraints: "width w(y) linear in depth, or the centroid shortcut for symmetric plates; state w(y) explicitly"
+    diagnostic_exemplar:
+      problem: 'A triangular plate has its base of $4$ m at the water surface and its apex $3$ m directly below the midpoint of the base. Find the fluid force on one side ($9800$ N/m$^3$).'
+      answer: '$58800$ N'
+      solution_sketch: 'The width at depth $y$ is $4(1 - y/3)$, so $F = 9800\int_0^3 y\cdot 4\left(1 - \frac{y}{3}\right)dy = 39200 \cdot \frac{3}{2}$.'
+    anki_seeds:
+      - front: "Hydrostatic force on a vertical plate (strip at depth y, width w(y))?"
+        back: '$F = \rho g \int y \, w(y) \, dy$ over the plate''s depth range'
+        type: basic
+      - front: "Centroid shortcut for hydrostatic force?"
+        back: '$F = \rho g \bar{h} A$ — weight density times centroid depth times plate area'
+        type: basic
+
+  - id: center-of-mass
+    name: Moments and Center of Mass
+    core: false                # physical application of the definite integral
+    difficulty: 0.7
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 270
+    prerequisites:
+      - id: area-between-curves
+        weight: 0.7
+        key: true
+      - id: definite-integrals-ftc
+        weight: 0.5
+        key: true
+      - id: weighted-averages
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Discrete point masses
+        key_prerequisites: [weighted-averages]
+        exemplars:
+          - problem: 'Masses of $2$, $3$, and $5$ kg sit at $x = 1$, $4$, and $6$. Find the center of mass.'
+            answer: '$\bar{x} = 22/5$'
+            solution_sketch: '$\bar{x} = \frac{2(1) + 3(4) + 5(6)}{2 + 3 + 5} = \frac{44}{10} = \frac{22}{5}$.'
+          - problem: 'Masses of $1$ and $3$ kg sit at $x = 0$ and $x = 4$. Where is the balance point?'
+            answer: '$\bar{x} = 3$'
+            solution_sketch: '$\bar{x} = \frac{0 + 12}{4} = 3$ — closer to the heavier mass.'
+        constraints: "2-4 point masses with integer positions and masses; answer a fraction or integer"
+      - id: kp2
+        name: Centroid of a region under a curve
+        key_prerequisites: [definite-integrals-ftc, area-between-curves]
+        exemplars:
+          - problem: 'Find the centroid of the region under $y = x^2$ for $0 \le x \le 1$.'
+            answer: '$\left(\frac{3}{4}, \frac{3}{10}\right)$'
+            solution_sketch: '$A = \frac{1}{3}$; $\bar{x} = 3\int_0^1 x\cdot x^2\,dx = \frac{3}{4}$; $\bar{y} = 3\int_0^1 \frac{(x^2)^2}{2}\,dx = \frac{3}{10}$.'
+          - problem: 'Find $\bar{y}$ for the semicircular region under $y = \sqrt{1 - x^2}$.'
+            answer: '$\bar{y} = \frac{4}{3\pi}$'
+            solution_sketch: '$A = \frac{\pi}{2}$; $\bar{y} = \frac{2}{\pi}\int_{-1}^{1} \frac{1 - x^2}{2}\,dx = \frac{2}{\pi}\cdot\frac{2}{3} = \frac{4}{3\pi}$ ($\bar{x} = 0$ by symmetry).'
+        constraints: "regions under a single polynomial or circular curve; use symmetry to kill one coordinate where possible"
+      - id: kp3
+        name: Centroid between two curves
+        key_prerequisites: [area-between-curves, definite-integrals-ftc]
+        exemplars:
+          - problem: 'Find the centroid of the region between $y = x$ and $y = x^2$.'
+            answer: '$\left(\frac{1}{2}, \frac{2}{5}\right)$'
+            solution_sketch: '$A = \frac{1}{6}$; $\bar{x} = 6\int_0^1 x(x - x^2)\,dx = \frac{1}{2}$; $\bar{y} = 6\int_0^1 \frac{x^2 - x^4}{2}\,dx = \frac{2}{5}$.'
+          - problem: 'Verify by integration that the centroid of the triangle with vertices $(0,0)$, $(1,0)$, $(0,1)$ has $\bar{x} = 1/3$.'
+            answer: '$\bar{x} = 1/3$'
+            solution_sketch: 'Region under $y = 1 - x$: $A = \frac{1}{2}$; $\bar{x} = 2\int_0^1 x(1 - x)\,dx = 2(\frac{1}{2} - \frac{1}{3}) = \frac{1}{3}$ — matching the vertex-average rule.'
+        constraints: "curves intersect at x = 0 and x = 1; moments integrate as polynomials"
+    diagnostic_exemplar:
+      problem: 'Find the centroid of the region between $y = \sqrt{x}$ and $y = x^2$.'
+      answer: '$\left(\frac{9}{20}, \frac{9}{20}\right)$'
+      solution_sketch: 'The area is $\frac13$; $\bar x = 3\int_0^1 x(\sqrt x - x^2)dx = \frac{9}{20}$, and the region is symmetric in $y = x$, so $\bar y = \bar x$.'
+    anki_seeds:
+      - front: "Centroid formulas for the region under y = f(x) on [a, b] (area A)?"
+        back: '$\bar{x} = \frac{1}{A}\int_a^b x f(x)\,dx$, $\quad \bar{y} = \frac{1}{A}\int_a^b \frac{f(x)^2}{2}\,dx$'
+        type: basic
+      - front: "Center of mass of point masses m_i at x_i?"
+        back: '$\bar{x} = \frac{\sum m_i x_i}{\sum m_i}$ (total moment over total mass)'
+        type: basic

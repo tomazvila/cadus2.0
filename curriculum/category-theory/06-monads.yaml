@@ -1,0 +1,639 @@
+unit: monads
+course: category-theory
+module: "Monads & Beyond"
+topics:
+  - id: monad-definition-laws
+    name: Monads — Definition and Laws
+    core: true
+    difficulty: 0.74
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 210
+    prerequisites:
+      - id: whiskering
+        weight: 0.5
+        key: true
+      - id: natural-transformations
+        weight: 0.4
+        key: true
+      - id: functor-composition-identity
+        weight: 0.4
+        key: true
+      - id: functor-categories
+        weight: 0.2
+      - id: poset-monoid-categories
+        weight: 0.2
+    knowledge_points:
+      - id: kp1
+        name: The data and the types of the whiskered transformations
+        key_prerequisites: [whiskering]
+        constraints: "Give the type of each whiskered transformation and its component at an object before writing any law."
+        exemplars:
+          - problem: "List the data of a monad $(T,\\eta,\\mu)$ on $\\mathcal{C}$ and give the types of $T\\mu$, $\\mu T$, $T\\eta$, and $\\eta T$."
+            answer: "$T$ an endofunctor, $\\eta\\colon 1_{\\mathcal{C}}\\Rightarrow T$, $\\mu\\colon T^2\\Rightarrow T$; then $T\\mu,\\mu T\\colon T^3\\Rightarrow T^2$ and $T\\eta,\\eta T\\colon T\\Rightarrow T^2$."
+            solution_sketch: "The data is an endofunctor $T\\colon\\mathcal{C}\\to\\mathcal{C}$ together with natural transformations $\\eta\\colon 1_{\\mathcal{C}}\\Rightarrow T$ and $\\mu\\colon T\\circ T\\Rightarrow T$. Whiskering $\\mu$ on the left by $T$ gives $T\\mu\\colon T\\circ T^2=T^3\\Rightarrow T\\circ T=T^2$; whiskering on the right gives $\\mu T\\colon T^2\\circ T=T^3\\Rightarrow T\\circ T=T^2$. Similarly $T\\eta\\colon T\\circ 1=T\\Rightarrow T\\circ T=T^2$ and $\\eta T\\colon 1\\circ T=T\\Rightarrow T\\circ T=T^2$. So all four are transformations between the displayed composite functors."
+          - problem: "Write the components of $T\\mu$, $\\mu T$, $T\\eta$, $\\eta T$ at an object $A$, and say why left and right whiskering give different maps."
+            answer: "$(T\\mu)_A=T(\\mu_A)$, $(\\mu T)_A=\\mu_{TA}$, $(T\\eta)_A=T(\\eta_A)$, $(\\eta T)_A=\\eta_{TA}$; left whiskering applies $T$, right whiskering re-indexes."
+            solution_sketch: "Left whiskering applies the functor to the component: $(T\\mu)_A=T(\\mu_A)\\colon T^3A\\to T^2A$ and $(T\\eta)_A=T(\\eta_A)\\colon TA\\to T^2A$. Right whiskering re-indexes: $(\\mu T)_A=\\mu_{TA}\\colon T^3A\\to T^2A$ and $(\\eta T)_A=\\eta_{TA}\\colon TA\\to T^2A$. The types match but the maps generally differ; for the list monad, $(T\\eta)_A$ wraps each entry ($[a,b]\\mapsto[[a],[b]]$) while $(\\eta T)_A$ wraps the whole list ($[a,b]\\mapsto[[a,b]]$). Distinguishing them is the whole content of reading the monad laws correctly."
+      - id: kp2
+        name: The three laws
+        key_prerequisites: [natural-transformations]
+        constraints: "State each law as an equation between transformations with matching source and target functors."
+        exemplars:
+          - problem: "Define a monad $(T,\\eta,\\mu)$ on a category $\\mathcal C$ and state its three laws, with the type of each equation."
+            answer: "Endofunctor $T$ with $\\eta\\colon 1\\Rightarrow T$, $\\mu\\colon T^2\\Rightarrow T$ and $\\mu\\circ T\\mu=\\mu\\circ\\mu T$ ($T^3\\Rightarrow T$), $\\mu\\circ T\\eta=1_T=\\mu\\circ\\eta T$ ($T\\Rightarrow T$)."
+            solution_sketch: "A monad is an endofunctor $T\\colon\\mathcal C\\to\\mathcal C$ with natural transformations $\\eta\\colon 1_{\\mathcal C}\\Rightarrow T$ (unit) and $\\mu\\colon T\\circ T\\Rightarrow T$ (multiplication) satisfying: associativity $\\mu\\circ T\\mu=\\mu\\circ\\mu T\\colon T^3\\Rightarrow T$, and the unit laws $\\mu\\circ T\\eta=1_T=\\mu\\circ\\eta T\\colon T\\Rightarrow T$. These are the commuting associativity square and the two unit triangles; each side of each equation is a vertical composite of whiskerings."
+          - problem: "Write the associativity and unit laws componentwise at an object $A$."
+            answer: "$\\mu_A\\circ T(\\mu_A)=\\mu_A\\circ\\mu_{TA}\\colon T^3A\\to TA$, and $\\mu_A\\circ T(\\eta_A)=1_{TA}=\\mu_A\\circ\\eta_{TA}$."
+            solution_sketch: "Evaluate each whiskering at $A$. Associativity $\\mu\\circ T\\mu=\\mu\\circ\\mu T$ becomes $\\mu_A\\circ(T\\mu)_A=\\mu_A\\circ(\\mu T)_A$, i.e. $\\mu_A\\circ T(\\mu_A)=\\mu_A\\circ\\mu_{TA}$, both maps $T^3A\\to TA$. The unit laws become $\\mu_A\\circ T(\\eta_A)=1_{TA}$ and $\\mu_A\\circ\\eta_{TA}=1_{TA}$, both maps $TA\\to TA$. Checking a proposed monad amounts to verifying these three equations at every object."
+      - id: kp3
+        name: First verifications
+        key_prerequisites: [poset-monoid-categories]
+        constraints: "In the poset case use that hom-sets have at most one element, so the laws are automatic."
+        exemplars:
+          - problem: "Show that the identity endofunctor $T=1_{\\mathcal C}$ with $\\eta=1$ and $\\mu=1$ satisfies the monad laws."
+            answer: "All three laws reduce to $1\\circ 1=1$."
+            solution_sketch: "Here $T=1_{\\mathcal C}$, so $T^2=1_{\\mathcal C}$ and $\\eta=\\mu=1_{1_{\\mathcal C}}$. Associativity: $\\mu\\circ T\\mu=1\\circ 1=1=1\\circ 1=\\mu\\circ\\mu T$. Unit laws: $\\mu\\circ T\\eta=1\\circ 1=1_T$ and $\\mu\\circ\\eta T=1\\circ 1=1_T$. All laws hold trivially, so $(1_{\\mathcal C},1,1)$ is the identity monad."
+          - problem: "Let $P$ be a poset viewed as a category. Prove that a monad on $P$ is exactly a closure operator (monotone, inflationary, idempotent)."
+            answer: "$T$ monotone, $\\eta$ says $x\\le Tx$, $\\mu$ says $TTx\\le Tx$; the laws are automatic and force $TTx=Tx$."
+            solution_sketch: "An endofunctor of a poset category is a monotone map $T$. A transformation $\\eta\\colon 1\\Rightarrow T$ is a choice of arrow $x\\to Tx$ for each $x$, i.e. the statement $x\\le Tx$ (inflationary), and $\\mu\\colon T^2\\Rightarrow T$ is $TTx\\le Tx$. All three monad laws are equations between arrows in a thin category, so they hold automatically. Finally, applying the monotone $T$ to $x\\le Tx$ gives $Tx\\le TTx$, and with $TTx\\le Tx$ antisymmetry gives $TTx=Tx$: $T$ is idempotent. Conversely, a closure operator supplies exactly this data, so monads on $P$ are precisely closure operators."
+    diagnostic_exemplar:
+      problem: "Regard $(\\mathcal P(S),\\subseteq)$ as a poset category and fix a subset $K\\subseteq S$. Define $T(X)=X\\cup K$. Show that $T$ carries the structure of a monad $(T,\\eta,\\mu)$: give the component of $\\eta$ and of $\\mu$ at $X$, give the component of the whiskered transformation $\\mu T$ at $X$ with its type, and check the three monad laws."
+      answer: "$T$ is monotone ($X\\subseteq Y$ gives $X\\cup K\\subseteq Y\\cup K$), so it is an endofunctor of the poset category. Unit: $X\\subseteq X\\cup K$, so there is an arrow $\\eta_X\\colon X\\to TX$, and it is the unique one. Since $T^2X=(X\\cup K)\\cup K=X\\cup K=TX$, the arrow $\\mu_X\\colon T^2X\\to TX$ is the identity arrow of $X\\cup K$. Whiskering: $(\\mu T)_X=\\mu_{TX}\\colon T^3X\\to T^2X$, the unique arrow $T(X\\cup K)=X\\cup K\\to X\\cup K$, i.e. again the identity arrow (whereas $(T\\mu)_X=T(\\mu_X)$ is the same arrow here only because $T$ is idempotent on these objects). Laws: $\\mu\\circ T\\mu=\\mu\\circ\\mu T$ ($T^3\\Rightarrow T$) and $\\mu\\circ T\\eta=1_T=\\mu\\circ\\eta T$ ($T\\Rightarrow T$) are equations between parallel arrows of a poset category, whose hom-sets have at most one element, so all three hold automatically. Hence $(T,\\eta,\\mu)$ is a monad — precisely the closure operator $X\\mapsto X\\cup K$ (monotone, inflationary, idempotent)."
+      solution_sketch: "Note first that $T^2X=TX$ here, so $\\mu_X$ and every whiskering of it are identity arrows on $X\\cup K$. Then the real point: in a thin category all three monad laws are equations between parallel arrows and hold automatically — this monad is precisely the closure operator $X\\mapsto X\\cup K$."
+    anki_seeds:
+      - front: "A monad is an endofunctor $T$ with two natural transformations: a unit {{c1::$\\eta\\colon 1\\Rightarrow T$}} and a multiplication {{c2::$\\mu\\colon T^2\\Rightarrow T$}}."
+        back: "$\\eta\\colon 1\\Rightarrow T$; $\\mu\\colon T^2\\Rightarrow T$"
+        type: cloze
+      - front: "State the associativity law of a monad $(T,\\eta,\\mu)$."
+        back: "$\\mu\\circ T\\mu=\\mu\\circ\\mu T$."
+        type: basic
+      - front: "State the unit laws of a monad $(T,\\eta,\\mu)$."
+        back: "$\\mu\\circ T\\eta=1_T=\\mu\\circ\\eta T$."
+        type: basic
+
+  - id: monads
+    name: Monads
+    core: true
+    difficulty: 0.78
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 240
+    prerequisites:
+      - id: monad-definition-laws
+        weight: 0.6
+        key: true
+      - id: natural-transformations
+        weight: 0.4
+        key: true
+      - id: functors
+        weight: 0.3
+        key: true
+      - id: monoids
+        weight: 0.3
+      - id: functor-categories
+        weight: 0.2
+    knowledge_points:
+      - id: kp1
+        name: A monad is a monoid in endofunctors
+        key_prerequisites: [monoids]
+        constraints: "The monoid analogy only, in the monoidal category $([\\mathcal C,\\mathcal C],\\circ,1_{\\mathcal C})$: match $\\mu$ with the product and $\\eta$ with the unit, and note that composition of endofunctors is strictly associative and unital, so no associator or unitor cells appear."
+        exemplars:
+          - problem: "Explain the slogan 'a monad is a monoid in the category of endofunctors'."
+            answer: "$([\\mathcal C,\\mathcal C],\\circ,1_{\\mathcal C})$ is monoidal; a monad is a monoid object in it."
+            solution_sketch: "The endofunctor category $[\\mathcal C,\\mathcal C]$ is monoidal under composition $\\circ$, with unit the identity functor $1_{\\mathcal C}$. A monoid object there is an object $T$ with multiplication $\\mu\\colon T\\circ T\\Rightarrow T$ and unit $\\eta\\colon 1\\Rightarrow T$ obeying associativity and unit laws — precisely a monad. Hence a monad is a monoid in $([\\mathcal C,\\mathcal C],\\circ)$."
+          - problem: "In the monoid analogy, which monad data play the roles of a monoid's product $m\\colon M\\times M\\to M$ and unit $e\\colon 1\\to M$, and why do no associator/unitor coherences intervene?"
+            answer: "$\\mu$ plays $m$ and $\\eta$ plays $e$; composition of endofunctors is strictly associative and unital, so the coherences are identities."
+            solution_sketch: "In $([\\mathcal C,\\mathcal C],\\circ,1_{\\mathcal C})$ the tensor is functor composition. A monoid object $T$ has multiplication $\\mu\\colon T\\circ T\\Rightarrow T$ (the analogue of $m$) and unit $\\eta\\colon 1_{\\mathcal C}\\Rightarrow T$ (the analogue of $e$). Since $\\circ$ is strictly associative and strictly unital, the monoid's associativity and unit diagrams become exactly $\\mu\\circ T\\mu=\\mu\\circ\\mu T$ and $\\mu\\circ T\\eta=1_T=\\mu\\circ\\eta T$ with no nontrivial associator or unitors — the monad laws."
+      - id: kp2
+        name: Checking the laws on the power-set monad
+        key_prerequisites: [natural-transformations]
+        constraints: "The power-set monad on $\\mathbf{Set}$ with $\\eta_A(a)=\\{a\\}$ and $\\mu_A(\\mathcal S)=\\bigcup\\mathcal S$; verify one law at a time by evaluating both legs on a general element of $PA$, $P^2A$ or $P^3A$ and comparing the resulting unions."
+        exemplars:
+          - problem: "For the power-set monad $P$ with $\\eta_A(a)=\\{a\\}$ and $\\mu_A(\\mathcal S)=\\bigcup\\mathcal S$, verify the unit law $\\mu\\circ\\eta T=1_T$."
+            answer: "$\\mu_A(\\eta_{PA}(S))=\\bigcup\\{S\\}=S$."
+            solution_sketch: "$(\\eta T)_A=\\eta_{PA}\\colon PA\\to P(PA)$, $S\\mapsto\\{S\\}$. Then $\\mu_A(\\eta_{PA}(S))=\\mu_A(\\{S\\})=\\bigcup\\{S\\}=S$, so $\\mu\\circ\\eta T=1_{PA}$. Similarly $(T\\eta)_A$ sends $S\\mapsto\\{\\{a\\}:a\\in S\\}$ and $\\mu$ unions back to $S$; associativity is $\\bigcup\\bigcup\\mathcal T=\\bigcup\\bigcup\\mathcal T$. So $P$ is a monad."
+          - problem: "For the power-set monad $P$, verify the associativity law $\\mu\\circ P\\mu=\\mu\\circ\\mu P$ on a family $\\mathcal U\\in P^3A$."
+            answer: "Both sides equal $\\bigcup_{\\mathcal S\\in\\mathcal U}\\bigcup_{S\\in\\mathcal S}S$."
+            solution_sketch: "Let $\\mathcal U\\in P^3A$, a set of elements $\\mathcal S\\in P^2A$. Then $(P\\mu)_A(\\mathcal U)=\\{\\bigcup\\mathcal S:\\mathcal S\\in\\mathcal U\\}$, and applying $\\mu_A$ gives $\\bigcup_{\\mathcal S\\in\\mathcal U}\\bigcup_{S\\in\\mathcal S}S$. The other way, $(\\mu P)_A(\\mathcal U)=\\mu_{PA}(\\mathcal U)=\\bigcup\\mathcal U$, and applying $\\mu_A$ gives $\\bigcup_{\\mathcal S\\in\\mathcal U}\\bigcup_{S\\in\\mathcal S}S$ as well. The two agree, so $\\mu\\circ P\\mu=\\mu\\circ\\mu P$."
+      - id: kp3
+        name: Comonads by duality
+        key_prerequisites: [functor-categories]
+        constraints: "Obtain every comonad law by reversing the arrows of a monad law; check types with whiskering."
+        exemplars:
+          - problem: "Define a comonad $(W,\\varepsilon,\\delta)$ on $\\mathcal{D}$ by dualizing the monad axioms, and state its three laws."
+            answer: "$\\varepsilon\\colon W\\Rightarrow 1$, $\\delta\\colon W\\Rightarrow W^2$, with $W\\delta\\circ\\delta=\\delta W\\circ\\delta$ and $\\varepsilon W\\circ\\delta=1_W=W\\varepsilon\\circ\\delta$."
+            solution_sketch: "A comonad on $\\mathcal{D}$ is exactly a monad on $\\mathcal{D}^{op}$, so reverse every arrow. The unit $\\eta\\colon 1\\Rightarrow T$ becomes a counit $\\varepsilon\\colon W\\Rightarrow 1_{\\mathcal{D}}$ and the multiplication $\\mu\\colon T^2\\Rightarrow T$ becomes a comultiplication $\\delta\\colon W\\Rightarrow W^2$. Coassociativity is $W\\delta\\circ\\delta=\\delta W\\circ\\delta\\colon W\\Rightarrow W^3$ and the counit laws are $\\varepsilon W\\circ\\delta=1_W=W\\varepsilon\\circ\\delta$. Types check: $\\delta\\colon W\\Rightarrow W^2$, $W\\delta,\\delta W\\colon W^2\\Rightarrow W^3$, and $\\varepsilon W,W\\varepsilon\\colon W^2\\Rightarrow W$."
+          - problem: "Given an adjunction $F\\dashv G$ with unit $\\eta$ and counit $\\varepsilon$, show that $W=FG$ with counit $\\varepsilon$ and comultiplication $\\delta=F\\eta G$ satisfies the two counit laws."
+            answer: "Both counit laws are the two triangle identities: $\\varepsilon_{FGD}\\circ F\\eta_{GD}=1$ and $FG\\varepsilon_D\\circ F\\eta_{GD}=1$."
+            solution_sketch: "Types first: $\\eta\\colon 1_{\\mathcal{C}}\\Rightarrow GF$, so $F\\eta G\\colon FG\\Rightarrow FGFG=W^2$, and $\\varepsilon\\colon FG\\Rightarrow 1_{\\mathcal{D}}$ is the counit. At an object $D$: $(\\varepsilon W\\circ\\delta)_D=\\varepsilon_{FGD}\\circ F(\\eta_{GD})$, which is the first triangle identity $\\varepsilon F\\circ F\\eta=1_F$ evaluated at the object $GD$, hence equals $1_{FGD}$. And $(W\\varepsilon\\circ\\delta)_D=FG(\\varepsilon_D)\\circ F(\\eta_{GD})=F\\big(G(\\varepsilon_D)\\circ\\eta_{GD}\\big)=F(1_{GD})=1_{FGD}$, using the second triangle identity $G\\varepsilon\\circ\\eta G=1_G$. So both counit laws hold; coassociativity follows dually from naturality of $\\eta$, making $(FG,\\varepsilon,F\\eta G)$ the comonad dual to the monad $(GF,\\eta,G\\varepsilon F)$."
+    diagnostic_exemplar:
+      problem: "Fix a set $A$ and define $W\\colon\\mathbf{Set}\\to\\mathbf{Set}$ by $WX=A\\times X$, $Wf=1_A\\times f$, with $\\varepsilon_X(a,x)=x$ and $\\delta_X(a,x)=(a,(a,x))$. Prove that $(W,\\varepsilon,\\delta)$ is a comonad: give the type of each whiskered transformation and check coassociativity and both counit laws elementwise."
+      answer: "Types: $\\varepsilon\\colon W\\Rightarrow 1_{\\mathbf{Set}}$ and $\\delta\\colon W\\Rightarrow W^2$; whiskering gives $W\\varepsilon,\\varepsilon W\\colon W^2\\Rightarrow W$ and $W\\delta,\\delta W\\colon W^2\\Rightarrow W^3$, so the counit laws $\\varepsilon W\\circ\\delta=1_W=W\\varepsilon\\circ\\delta$ and the coassociativity law $W\\delta\\circ\\delta=\\delta W\\circ\\delta$ are equations $W\\Rightarrow W$ and $W\\Rightarrow W^3$ — the monad axioms with every arrow reversed. Both $\\varepsilon$ and $\\delta$ are natural (they only copy or discard the $A$-coordinate and commute with $1_A\\times f$). Counit laws: $(\\varepsilon W)_X=\\varepsilon_{WX}$ sends $(a,(a',x))\\mapsto(a',x)$, so on $\\delta_X(a,x)=(a,(a,x))$ it returns $(a,x)$; $(W\\varepsilon)_X=W(\\varepsilon_X)$ sends $(a,(a',x))\\mapsto(a,x)$, so on $(a,(a,x))$ it also returns $(a,x)$. Both composites are $1_{WX}$. Coassociativity: $(W\\delta)_X\\big(\\delta_X(a,x)\\big)=W(\\delta_X)(a,(a,x))=(a,\\delta_X(a,x))=(a,(a,(a,x)))$, while $(\\delta W)_X\\big(\\delta_X(a,x)\\big)=\\delta_{WX}(a,(a,x))=(a,(a,(a,x)))$. The two agree, so $(W,\\varepsilon,\\delta)$ is a comonad."
+      solution_sketch: "Reverse every arrow of the monad axioms to fix the types, then chase the pair $(a,x)$ through each composite. $\\delta$ duplicates the $A$-slot and each counit law discards one of the two copies, which is why both return $(a,x)$; coassociativity is the observation that both routes build the same triply nested pair."
+    anki_seeds:
+      - front: "A monad is a monoid in the category of {{c1::endofunctors}} (under composition)."
+        back: "endofunctors"
+        type: cloze
+      - front: "In the power-set monad, what are $\\eta$ and $\\mu$?"
+        back: "$\\eta_A(a)=\\{a\\}$ and $\\mu_A(\\mathcal{S})=\\bigcup\\mathcal{S}$."
+        type: basic
+      - front: "A comonad $(W,\\varepsilon,\\delta)$ is a monad on which category?"
+        back: "$\\mathcal{D}^{op}$ — reverse all arrows: $\\varepsilon\\colon W\\Rightarrow 1$ and $\\delta\\colon W\\Rightarrow W^2$."
+        type: basic
+
+  - id: monad-examples
+    name: Examples of Monads
+    core: false                # examples leaf topic
+    difficulty: 0.72
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 240
+    prerequisites:
+      - id: monads
+        weight: 0.6
+        key: true
+      - id: functor-examples
+        weight: 0.3
+        key: true
+      - id: products-coproducts
+        weight: 0.2
+      - id: exponential-objects
+        weight: 0.0
+    knowledge_points:
+      - id: kp1
+        name: The maybe monad
+        key_prerequisites: [monads]
+        constraints: "The maybe monad $TA=A\\sqcup\\{*\\}$ on $\\mathbf{Set}$; concrete Kleisli composites use explicit finite sets of at most 3 elements, and every answer must say what the composite does on the $*$ branch."
+        exemplars:
+          - problem: "Describe the 'maybe' monad $TA=A+1$ on $\\mathbf{Set}$: give $\\eta$ and $\\mu$ and why the laws hold."
+            answer: "$TA=A\\sqcup\\{*\\}$; $\\eta$ = inclusion; $\\mu$ collapses the two $*$ layers; laws hold since collapsing 'nothing' is unambiguous."
+            solution_sketch: "$TA=A\\sqcup\\{*\\}$ (a value or 'nothing'). $\\eta_A\\colon A\\hookrightarrow A\\sqcup\\{*\\}$. $\\mu_A\\colon (A\\sqcup\\{*\\})\\sqcup\\{*\\}\\to A\\sqcup\\{*\\}$ sends $a\\mapsto a$ and both $*$'s to $*$. Unit laws: inserting then collapsing a 'nothing' layer is the identity. Associativity: collapsing three nested layers yields the same result either way. So $(T,\\eta,\\mu)$ is a monad."
+          - problem: "In the maybe monad, compute the Kleisli composite $g\\circ_T f$ where $f\\colon\\{1,2\\}\\to\\{a,b\\}+1$ has $f(1)=a$, $f(2)=*$ and $g\\colon\\{a,b\\}\\to\\{x\\}+1$ has $g(a)=*$, $g(b)=x$."
+            answer: "$(g\\circ_T f)(1)=*$ and $(g\\circ_T f)(2)=*$."
+            solution_sketch: "$g\\circ_T f=\\mu\\circ Tg\\circ f$ with $T=(-)+1$. On $1$: $f(1)=a$, then $Tg(a)=g(a)=*$, then $\\mu(*)=*$. On $2$: $f(2)=*$, then $Tg$ sends this outer 'nothing' to $*$, and $\\mu(*)=*$. Both inputs map to $*$: a 'nothing' anywhere propagates, so Kleisli composition here is composition of partial functions and this composite is nowhere defined."
+      - id: kp2
+        name: The list monad
+        key_prerequisites: [functor-examples]
+        constraints: "The list monad $TA=A^*$ with $\\eta_A(a)=[a]$ and $\\mu_A=$ flatten; concrete instances use alphabets of at most 3 letters and words of length at most 3, and answers are written as explicit bracketed lists (the empty list as $[\\,]$)."
+        exemplars:
+          - problem: "For the list monad $TA=A^*$ with $\\eta_A(a)=[a]$ and $\\mu_A=$ flatten, verify the right unit law $\\mu\\circ T\\eta=1$."
+            answer: "$\\mu_A([[a_1],\\dots,[a_n]])=[a_1,\\dots,a_n]=w$."
+            solution_sketch: "$T\\eta_A$ maps $w=[a_1,\\dots,a_n]$ to the list of singletons $[[a_1],\\dots,[a_n]]$, and $\\mu_A$ concatenates it back to $[a_1,\\dots,a_n]=w$; so $\\mu\\circ T\\eta=1$. The left unit law $\\mu\\circ\\eta T=1$ and associativity of $\\mu$ are the unit and associativity of list concatenation."
+          - problem: "In the list monad, compute the Kleisli composite $g\\circ_T f$ where $f\\colon\\{1\\}\\to\\{a,b\\}^*$ has $f(1)=[a,b]$ and $g\\colon\\{a,b\\}\\to\\{x,y\\}^*$ has $g(a)=[x,y]$, $g(b)=[\\,]$."
+            answer: "$(g\\circ_T f)(1)=[x,y]$."
+            solution_sketch: "$g\\circ_T f=\\mu\\circ Tg\\circ f$. Start with $f(1)=[a,b]$. Then $Tg$ applies $g$ entrywise, giving $[g(a),g(b)]=[[x,y],[\\,]]$. Finally $\\mu$ flattens by concatenation: $[x,y]\\ast[\\,]=[x,y]$. The empty list from $g(b)$ contributes nothing, matching nondeterministic (relational) composition of the possibilities."
+      - id: kp3
+        name: The writer monad over a monoid
+        key_prerequisites: [monads]
+        constraints: "The writer monad $TA=M\\times A$ over an explicitly named monoid, with $(\\mathbb N,+,0)$ as the concrete case; answers are pairs $(m,a)$, and each monad law must be traced back to the corresponding monoid law."
+        exemplars:
+          - problem: "For a monoid $(M,\\cdot,e)$, show the writer functor $TA=M\\times A$ with $\\eta_A(a)=(e,a)$, $\\mu_A(m,(m',a))=(m\\cdot m',a)$ is a monad."
+            answer: "Unit and associativity of the monad reduce to those of $M$."
+            solution_sketch: "$TA=M\\times A$ pairs a value with accumulated output. Unit laws: $\\mu(\\eta T)$ gives $(e\\cdot m',a)=(m',a)$ and $\\mu(T\\eta)$ gives $(m\\cdot e,a)=(m,a)$, using $e$ as identity. Associativity of $\\mu$ is $(mm')m''=m(m'm'')$, i.e. associativity in $M$. So the writer monad is a monad; it threads a value while multiplying outputs in $M$."
+          - problem: "For the writer monad with $M=(\\mathbb N,+,0)$, compute the Kleisli composite $g\\circ_T f$ where $f(a)=(2,b)$ and $g(b)=(3,c)$."
+            answer: "$(g\\circ_T f)(a)=(5,c)$."
+            solution_sketch: "$g\\circ_T f=\\mu\\circ Tg\\circ f$. First $f(a)=(2,b)$. Then $Tg(2,b)=(2,g(b))=(2,(3,c))$. Finally $\\mu(2,(3,c))=(2+3,c)=(5,c)$, using the monoid $(\\mathbb N,+,0)$. The writer monad adds the two logged counts, so the composite records the total cost $5$ alongside the output $c$."
+    diagnostic_exemplar:
+      problem: "Work in the writer monad $TA=M\\times A$ over the monoid $M=(\\mathbb N,+,0)$, with $\\eta_A(a)=(0,a)$ and $\\mu_A(m,(m',a))=(m+m',a)$. Let $f(u)=(2,v)$, $g(v)=(3,w)$ and $h(w)=(4,z)$ be Kleisli arrows. Compute $h\\circ_T(g\\circ_T f)$ and $(h\\circ_T g)\\circ_T f$ at $u$, and say whether they agree."
+      answer: "Kleisli composition is $g\\circ_T f=\\mu\\circ Tg\\circ f$. First route: $f(u)=(2,v)$, $Tg(2,v)=(2,(3,w))$, $\\mu=(2+3,w)=(5,w)$, so $(g\\circ_T f)(u)=(5,w)$; then $Th(5,w)=(5,(4,z))$ and $\\mu=(5+4,z)=(9,z)$, so $\\big(h\\circ_T(g\\circ_T f)\\big)(u)=(9,z)$. Second route: $Th(g(v))=Th(3,w)=(3,(4,z))$ and $\\mu=(7,z)$, so $(h\\circ_T g)(v)=(7,z)$; then $T(h\\circ_T g)(f(u))=T(h\\circ_T g)(2,v)=(2,(7,z))$ and $\\mu=(2+7,z)=(9,z)$. Both give $(9,z)$ — they agree, as the associativity of Kleisli composition (inherited from the monad associativity law, here from associativity of $+$) requires."
+      solution_sketch: "Apply $g\\circ_T f=\\mu\\circ Tg\\circ f$ literally: $T$ leaves the accumulated $\\mathbb N$-tag alone and $\\mu$ adds the two tags. Both bracketings therefore accumulate $2+3+4$, and associativity of $+$ in the monoid is exactly what makes them agree."
+    anki_seeds:
+      - front: "The maybe monad on $\\mathbf{Set}$: underlying functor $TA$?"
+        back: "$A+1$ (a value, or 'nothing')."
+        type: basic
+      - front: "The list monad on $\\mathbf{Set}$: underlying functor $TA$?"
+        back: "$A^*$ (finite lists over $A$)."
+        type: basic
+      - front: "The writer monad over a monoid $M$: underlying functor $TA$?"
+        back: "$M\\times A$ (a value paired with an accumulated $M$-output)."
+        type: basic
+      - front: "The list monad's multiplication is {{c1::flatten (concatenation)}}."
+        back: "flatten (concatenation)"
+        type: cloze
+
+  - id: kleisli-categories
+    name: Kleisli Categories
+    core: false
+    difficulty: 0.78
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 240
+    prerequisites:
+      - id: monads
+        weight: 0.6
+        key: true
+      - id: functor-categories
+        weight: 0.2
+      - id: category-definition
+        weight: 0.2
+    knowledge_points:
+      - id: kp1
+        name: The Kleisli construction
+        key_prerequisites: [monads]
+        constraints: "Give the objects, the hom-sets $\\mathcal C_T(A,B)=\\mathcal C(A,TB)$, the identity $\\eta_A$ and the composite $g\\circ_T f=\\mu_C\\circ Tg\\circ f$ before anything else; the only concrete identification is $\\mathbf{Set}_P\\simeq\\mathbf{Rel}$ for the power-set monad."
+        exemplars:
+          - problem: "Given a monad $T$ on $\\mathcal C$, define the Kleisli category $\\mathcal C_T$ and its composition."
+            answer: "Same objects; $\\mathcal C_T(A,B)=\\mathcal C(A,TB)$; identity $\\eta_A$; $g\\circ_T f=\\mu_C\\circ Tg\\circ f$."
+            solution_sketch: "$\\mathcal C_T$ has the same objects as $\\mathcal C$; a Kleisli morphism $A\\to B$ is a $\\mathcal C$-map $f\\colon A\\to TB$. The identity on $A$ is $\\eta_A\\colon A\\to TA$. The Kleisli composite of $f\\colon A\\to TB$ and $g\\colon B\\to TC$ is $g\\circ_T f=\\mu_C\\circ Tg\\circ f\\colon A\\to TC$ (apply $g$, then multiply)."
+          - problem: "Identify the Kleisli category of the power-set monad $P$ on $\\mathbf{Set}$."
+            answer: "$\\mathbf{Set}_P\\simeq\\mathbf{Rel}$: objects are sets, morphisms are relations, composition is relational."
+            solution_sketch: "A Kleisli map $A\\to B$ for $P$ is a function $A\\to PB$, equivalently a relation $R\\subseteq A\\times B$ via $a\\mapsto\\{b:aRb\\}$. The identity $\\eta_A(a)=\\{a\\}$ is the diagonal relation. Kleisli composition $\\mu_C\\circ Pg\\circ f$ sends $a\\mapsto\\bigcup_{b\\in f(a)}g(b)$, which is exactly relational composition $\\{(a,c):\\exists b,\\,aRb\\wedge bSc\\}$. Hence $\\mathbf{Set}_P\\simeq\\mathbf{Rel}$."
+      - id: kp2
+        name: The Kleisli laws come from the monad laws
+        key_prerequisites: [monads]
+        constraints: "Purely equational chases from the definition of $\\circ_T$: every step must cite a monad law or a naturality square of $\\eta$ or $\\mu$ by name, and no elements may be used."
+        exemplars:
+          - problem: "Show the unit and associativity laws of $\\mathcal C_T$ follow from the monad laws."
+            answer: "Unit laws use $\\mu\\circ\\eta T=1=\\mu\\circ T\\eta$ and naturality of $\\eta$; associativity uses monad associativity and naturality of $\\mu$."
+            solution_sketch: "Right unit of $\\mathcal C_T$ (composing with the identity first), $f\\circ_T\\eta_A=\\mu_B\\circ Tf\\circ\\eta_A=\\mu_B\\circ\\eta_{TB}\\circ f=f$, using naturality of $\\eta$ and then the monad's left unit law $\\mu\\circ\\eta T=1$. Left unit of $\\mathcal C_T$ (composing with the identity last), $\\eta_B\\circ_T f=\\mu_B\\circ T\\eta_B\\circ f=f$, from the monad's right unit law $\\mu\\circ T\\eta=1$. (The two namings cross over: the Kleisli side is named for where the identity sits in $\\circ_T$, the monad side for whether $\\eta$ is whiskered on the left or the right of $T$.) Associativity of $\\circ_T$ expands, after using naturality of $\\mu$, to $\\mu\\circ T\\mu=\\mu\\circ\\mu T$, the monad associativity law. So $\\mathcal C_T$ is a category."
+          - problem: "Show that $J\\colon\\mathcal C\\to\\mathcal C_T$, $A\\mapsto A$, $f\\mapsto\\eta_B\\circ f$, is a functor into the Kleisli category."
+            answer: "It preserves identities and composition, using $\\mu\\circ T\\eta=1$ and naturality of $\\eta$."
+            solution_sketch: "$J(1_A)=\\eta_A$ is the Kleisli identity. For $f\\colon A\\to B$, $h\\colon B\\to C$, the Kleisli composite is $J(h)\\circ_T J(f)=\\mu_C\\circ T(\\eta_C\\circ h)\\circ\\eta_B\\circ f=\\mu_C\\circ T\\eta_C\\circ Th\\circ\\eta_B\\circ f$. Now $\\mu_C\\circ T\\eta_C=1$ (right unit law) and $Th\\circ\\eta_B=\\eta_C\\circ h$ (naturality of $\\eta$), giving $\\eta_C\\circ h\\circ f=J(h\\circ f)$. So $J$ is a functor."
+    diagnostic_exemplar:
+      problem: "Let $T$ be a monad on $\\mathcal C$ and $\\mathcal C_T$ its Kleisli category, with $\\mathcal C_T(A,B)=\\mathcal C(A,TB)$, identities $\\eta_A$ and composition $g\\circ_T f=\\mu_C\\circ Tg\\circ f$. Prove that $\\eta$ is a two-sided identity for $\\circ_T$: for every $f\\colon A\\to TB$, $\\eta_B\\circ_T f=f$ and $f\\circ_T\\eta_A=f$. Name the monad law or naturality square used at each step."
+      answer: "Right identity for $\\eta_B$: $\\eta_B\\circ_T f=\\mu_B\\circ T(\\eta_B)\\circ f=(\\mu\\circ T\\eta)_B\\circ f=1_{TB}\\circ f=f$, using the monad unit law $\\mu\\circ T\\eta=1_T$ at $B$. Left identity for $\\eta_A$: $f\\circ_T\\eta_A=\\mu_B\\circ Tf\\circ\\eta_A$. Naturality of $\\eta\\colon 1\\Rightarrow T$ at the morphism $f\\colon A\\to TB$ gives $Tf\\circ\\eta_A=\\eta_{TB}\\circ f$, so this equals $\\mu_B\\circ\\eta_{TB}\\circ f=(\\mu\\circ\\eta T)_B\\circ f=1_{TB}\\circ f=f$, using the other monad unit law $\\mu\\circ\\eta T=1_T$ at $B$. So $\\eta_A$ is a two-sided identity at $A$ in $\\mathcal C_T$."
+      solution_sketch: "Two different laws do the two sides. $\\eta_B\\circ_T f$ unfolds straight to $(\\mu\\circ T\\eta)_B\\circ f$, one unit law. The other side, $f\\circ_T\\eta_A$, first needs naturality of $\\eta$ at $f$ to move $\\eta$ past $Tf$, and only then the second unit law $\\mu\\circ\\eta T=1_T$."
+    anki_seeds:
+      - front: "In the Kleisli category $\\mathcal C_T$, what is a morphism $A\\to B$?"
+        back: "a $\\mathcal C$-morphism $A\\to TB$."
+        type: basic
+      - front: "What is the identity on $A$ in the Kleisli category $\\mathcal C_T$?"
+        back: "the monad unit $\\eta_A\\colon A\\to TA$."
+        type: basic
+      - front: "Kleisli composition of $f\\colon A\\to TB$, $g\\colon B\\to TC$ is {{c1::$\\mu_C\\circ Tg\\circ f$}}."
+        back: "$\\mu_C\\circ Tg\\circ f$"
+        type: cloze
+
+  - id: algebras-over-monads
+    name: Algebras over a Monad
+    core: false                # terminal; feeds only Kleisli-vs-Eilenberg-Moore
+    difficulty: 0.8
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 270
+    prerequisites:
+      - id: monads
+        weight: 0.6
+        key: true
+      - id: natural-transformations
+        weight: 0.3
+      - id: adjunctions
+        weight: 0.3
+        key: true
+      - id: initial-terminal-objects
+        weight: 0.0
+      # Phase C reconciliation: kp2 identifies the algebras of the free-group monad
+      # $T = UF$ — the argument works with $TA$ as reduced words in $A$ and evaluation
+      # respecting concatenation-then-reduction (free-groups-presentations kp1's model).
+      - id: free-groups-presentations
+        weight: 0.2
+    knowledge_points:
+      - id: kp1
+        name: Eilenberg-Moore algebras
+        key_prerequisites: [monads]
+        constraints: "State the two laws $a\\circ\\eta_A=1_A$ and $a\\circ\\mu_A=a\\circ Ta$ and the morphism condition $f\\circ a=b\\circ Tf$ before any identification; the concrete monad is the maybe monad on $\\mathbf{Set}$, whose algebras are read off as pointed sets."
+        exemplars:
+          - problem: "Define a $T$-algebra for a monad $T$, its two laws, and morphisms of $T$-algebras."
+            answer: "$(A,a\\colon TA\\to A)$ with $a\\circ\\eta_A=1_A$, $a\\circ\\mu_A=a\\circ Ta$; a morphism $f$ satisfies $f\\circ a=b\\circ Tf$."
+            solution_sketch: "A $T$-algebra is an object $A$ with a structure map $a\\colon TA\\to A$ satisfying the unit law $a\\circ\\eta_A=1_A$ and the associativity law $a\\circ\\mu_A=a\\circ Ta\\colon T^2A\\to A$. A morphism $(A,a)\\to(B,b)$ is $f\\colon A\\to B$ with $f\\circ a=b\\circ Tf$. These form the Eilenberg-Moore category $\\mathcal C^T$."
+          - problem: "Show that algebras for the maybe monad $TA=A+1$ on $\\mathbf{Set}$ are pointed sets."
+            answer: "An algebra $a\\colon A+1\\to A$ amounts to a choice of basepoint $a(*)\\in A$; the unit law forces $a|_A=1_A$."
+            solution_sketch: "A structure map $a\\colon A+1\\to A$ splits into its action on $A$ and on the added point $*$. The unit law $a\\circ\\eta_A=1_A$ (with $\\eta_A$ the inclusion $A\\hookrightarrow A+1$) forces $a|_A=1_A$, so the only free datum is $p:=a(*)\\in A$, a basepoint. The associativity law $a\\circ\\mu_A=a\\circ Ta$ then holds automatically (both send each 'nothing' layer to $p$). Algebra morphisms preserve $p$, so $\\mathbf{Set}^T\\simeq\\mathbf{Set}_*$, the category of pointed sets."
+      - id: kp2
+        name: Algebras recover familiar structures
+        key_prerequisites: [natural-transformations, free-groups-presentations]
+        constraints: "Identifications only, for monads on $\\mathbf{Set}$ induced by free-forgetful adjunctions (list $\\Rightarrow$ monoids, free group $\\Rightarrow$ groups); say what the structure map does to a formal expression and name the equivalence $\\mathbf{Set}^T\\simeq\\ldots$."
+        exemplars:
+          - problem: "Identify the algebras for the list monad on $\\mathbf{Set}$."
+            answer: "Monoids: the structure map evaluates a word to a product."
+            solution_sketch: "An algebra $a\\colon A^*\\to A$ assigns a value to each word. The unit law $a([x])=x$ and associativity $a\\circ\\mu=a\\circ Ta$ (evaluate a flattened list of lists in either order) say exactly that $a$ is a unital, associative multiplication. So $T$-algebras for the list monad are monoids and their morphisms are monoid homomorphisms: $\\mathbf{Set}^T\\simeq\\mathbf{Mon}$."
+          - problem: "Identify the algebras for the free-group monad $T=UF$ on $\\mathbf{Set}$ (from $F\\dashv U$, $\\mathbf{Set}\\rightleftarrows\\mathbf{Grp}$)."
+            answer: "Groups: $\\mathbf{Set}^T\\simeq\\mathbf{Grp}$."
+            solution_sketch: "Here $TA$ is the underlying set of the free group on $A$, so a structure map $a\\colon TA\\to A$ evaluates each reduced word in $A$ and its formal inverses to an element of $A$. The unit law makes generators evaluate to themselves, and associativity makes evaluation respect concatenation and reduction, so $a$ equips $A$ with an associative unital multiplication with inverses — a group. The free-forgetful adjunction is monadic (Beck), giving $\\mathbf{Set}^T\\simeq\\mathbf{Grp}$ with algebra maps = group homomorphisms."
+      - id: kp3
+        name: The free-forgetful adjunction of the algebras
+        key_prerequisites: [adjunctions]
+        constraints: "The free algebra is $(TC,\\mu_C)$: its two algebra laws must be identified with the two monad laws taken at $C$, never reproved from scratch, and the adjunction $F^T\\dashv U^T$ named together with its unit $\\eta$."
+        exemplars:
+          - problem: "Describe the free $T$-algebra on an object and the adjunction $\\mathcal C\\rightleftarrows\\mathcal C^T$."
+            answer: "Free algebra on $C$ is $(TC,\\mu_C)$; $F^T\\dashv U^T$ has unit $\\eta$ and induced monad $T$."
+            solution_sketch: "The forgetful $U^T\\colon\\mathcal C^T\\to\\mathcal C$, $(A,a)\\mapsto A$, has left adjoint $F^T\\colon C\\mapsto(TC,\\mu_C)$; $\\mu_C$ is an algebra structure by the monad associativity and unit laws. The unit of $F^T\\dashv U^T$ is $\\eta$, and $U^T F^T=T$ with the original $\\eta,\\mu$. This Eilenberg-Moore adjunction resolves the monad $T$."
+          - problem: "Verify that the free algebra $(TC,\\mu_C)$ satisfies the two $T$-algebra laws."
+            answer: "Its unit law is the monad law $\\mu\\circ\\eta T=1$ and its associativity is $\\mu\\circ\\mu T=\\mu\\circ T\\mu$."
+            solution_sketch: "Take structure map $\\mu_C\\colon T(TC)\\to TC$. The algebra unit law $\\mu_C\\circ\\eta_{TC}=1_{TC}$ is exactly the monad unit law $\\mu\\circ\\eta T=1_T$ evaluated at $C$. The algebra associativity law $\\mu_C\\circ\\mu_{TC}=\\mu_C\\circ T\\mu_C$ is exactly the monad associativity $\\mu\\circ\\mu T=\\mu\\circ T\\mu$ at $C$. Both hold, so $(TC,\\mu_C)$ is a $T$-algebra — the free one on $C$."
+    diagnostic_exemplar:
+      problem: "Let $T$ be the list monad on $\\mathbf{Set}$ ($TX=X^*$, $\\eta_X(x)=[x]$, $\\mu_X=$ flatten). Verify that the free $T$-algebra on a set $C$, namely $(TC,\\mu_C)$, satisfies the two $T$-algebra laws, and identify the resulting structure on $C^*$ concretely."
+      answer: "The algebra laws for $(A,a)=(TC,\\mu_C)$ read $a\\circ\\eta_A=1_A$, i.e. $\\mu_C\\circ\\eta_{TC}=1_{TC}$, and $a\\circ\\mu_A=a\\circ Ta$, i.e. $\\mu_C\\circ\\mu_{TC}=\\mu_C\\circ T(\\mu_C)$. These are exactly the monad unit law $\\mu\\circ\\eta T=1_T$ and the monad associativity law $\\mu\\circ\\mu T=\\mu\\circ T\\mu$, both taken at the object $C$ — so nothing new has to be proved. Concretely: $\\eta_{TC}$ wraps a word $w$ as the one-element list $[w]$ and flattening returns $w$; and a list of lists of lists flattens to the same word whether the outer or the inner grouping is collapsed first (both give the concatenation of all letters in order). Since algebras for the list monad are monoids, with the structure map evaluating a word of elements to their product, $(C^*,\\mu_C)$ is the free monoid on $C$: concatenation of words, with the empty word as unit."
+      solution_sketch: "Prove nothing new: instantiate the two algebra laws at $(TC,\\mu_C)$ and watch them turn into the monad unit and associativity laws at $C$. Then read the structure off concretely — flattening is concatenation, so this is the free monoid on $C$."
+    anki_seeds:
+      - front: "A $T$-algebra is an object $A$ equipped with a structure map of what type?"
+        back: "$a\\colon TA\\to A$."
+        type: basic
+      - front: "State the unit law for a $T$-algebra $(A,a)$."
+        back: "$a\\circ\\eta_A=1_A$."
+        type: basic
+      - front: "State the associativity law for a $T$-algebra $(A,a)$."
+        back: "$a\\circ\\mu_A=a\\circ Ta$."
+        type: basic
+      - front: "A morphism of $T$-algebras $(A,a)\\to(B,b)$ is a map $f\\colon A\\to B$ with..."
+        back: "$f\\circ a=b\\circ Tf$."
+        type: basic
+      - front: "Algebras for the list monad on $\\mathbf{Set}$ are exactly {{c1::monoids}}."
+        back: "monoids"
+        type: cloze
+
+  - id: adjunctions-give-monads
+    name: Adjunctions and Monads
+    core: false                # stated theorem feeding only Kleisli-vs-Eilenberg-Moore
+    difficulty: 0.8
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 270
+    prerequisites:
+      - id: adjunctions
+        weight: 0.5
+      - id: unit-counit
+        weight: 0.4
+      - id: triangle-identities
+        weight: 0.4
+        key: true
+      - id: monads
+        weight: 0.4
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: Every adjunction induces a monad
+        key_prerequisites: [adjunctions]
+        constraints: "Build $T=GF$, $\\eta$, $\\mu=G\\varepsilon F$ from a given adjunction and derive every law from naturality plus the two triangle identities, naming which one is used; the concrete instances are free-forgetful adjunctions over $\\mathbf{Set}$ ($\\mathbf{Mon}$ giving the list monad, $\\mathbf{Grp}$ the free-group monad)."
+        exemplars:
+          - problem: "Given $F\\dashv G$ with unit $\\eta$ and counit $\\varepsilon$, show $T=GF$, $\\eta$, $\\mu=G\\varepsilon F$ is a monad."
+            answer: "The monad laws follow from naturality and the triangle identities."
+            solution_sketch: "Let $T=GF$, unit $\\eta\\colon 1\\Rightarrow GF$, and $\\mu=G\\varepsilon F\\colon GFGF\\Rightarrow GF$. Unit laws: $\\mu\\circ T\\eta=G\\varepsilon F\\circ GF\\eta=G(\\varepsilon F\\circ F\\eta)=G(1_F)=1_T$ (triangle identity), and $\\mu\\circ\\eta T=G\\varepsilon F\\circ\\eta GF=(G\\varepsilon\\circ\\eta G)F=1_G F=1_T$ (other triangle identity, via naturality). Associativity $\\mu\\circ T\\mu=\\mu\\circ\\mu T$ is naturality of $\\varepsilon$ applied to $\\varepsilon F$. So $(GF,\\eta,G\\varepsilon F)$ is a monad."
+          - problem: "Which monad does the free-forgetful adjunction $F\\dashv U$, $\\mathbf{Set}\\rightleftarrows\\mathbf{Mon}$, induce?"
+            answer: "The list monad: $T=UF$ with $TA=A^*$."
+            solution_sketch: "$F$ sends a set $A$ to the free monoid $A^*$ of finite words and $U$ forgets structure, so $T=UF$ has $TA=A^*$. The unit $\\eta_A\\colon A\\to A^*$ is $a\\mapsto[a]$. The counit $\\varepsilon_M\\colon FUM\\to M$ multiplies a word of elements of $M$ to their product; then $\\mu=U\\varepsilon F$ at $A$ is $\\varepsilon_{A^*}\\colon A^{**}\\to A^*$, which concatenates a word of words — i.e. flatten. So this adjunction resolves exactly the list monad."
+      - id: kp2
+        name: Every monad comes from an adjunction
+        key_prerequisites: [monads]
+        constraints: "The converse direction: name the Kleisli and Eilenberg-Moore resolutions, give the two functors of the chosen one explicitly on objects and morphisms, and verify $U_TF_T=T$ (or $U^TF^T=T$) rather than asserting it."
+        exemplars:
+          - problem: "State that every monad arises from an adjunction and name the two canonical resolutions."
+            answer: "Yes — the Kleisli adjunction and the Eilenberg-Moore adjunction both induce $T$."
+            solution_sketch: "Every monad $T$ is induced by an adjunction. The Kleisli adjunction $F_T\\dashv U_T$ between $\\mathcal C$ and $\\mathcal C_T$ is the initial such resolution, and the Eilenberg-Moore adjunction $F^T\\dashv U^T$ between $\\mathcal C$ and $\\mathcal C^T$ the terminal one; both satisfy $U F=T$ with the given $\\eta$ and $\\mu$. So the induced-monad construction is surjective, and these are the extreme resolutions of $T$."
+          - problem: "Describe the Kleisli adjunction $F_T\\dashv U_T$ resolving a monad $T$ on $\\mathcal C$, and check $U_TF_T=T$."
+            answer: "$F_T$ is identity on objects with $f\\mapsto\\eta_B\\circ f$; $U_T$ sends $A\\mapsto TA$, $g\\mapsto\\mu_B\\circ Tg$; and $U_TF_T=T$."
+            solution_sketch: "$F_T\\colon\\mathcal C\\to\\mathcal C_T$ is the identity on objects and sends $f\\colon A\\to B$ to $\\eta_B\\circ f$. Its right adjoint $U_T\\colon\\mathcal C_T\\to\\mathcal C$ sends $A\\mapsto TA$ and a Kleisli map $g\\colon A\\to TB$ to $\\mu_B\\circ Tg\\colon TA\\to TB$. The natural bijection $\\mathcal C_T(F_TA,B)=\\mathcal C(A,TB)=\\mathcal C(A,U_TB)$ is the adjunction, with unit $\\eta$. Then $U_TF_TA=TA$ and $U_TF_T(f)=\\mu_B\\circ T(\\eta_B\\circ f)=Tf$ (using $\\mu\\circ T\\eta=1$), so $U_TF_T=T$; this is the initial resolution."
+    diagnostic_exemplar:
+      problem: "Let $F\\dashv G$ have unit $\\eta$ and counit $\\varepsilon$, and set $T=GF$ with $\\mu=G\\varepsilon F$. Prove the two unit laws $\\mu\\circ T\\eta=1_T=\\mu\\circ\\eta T$, naming the triangle identity used at each step, and identify the monad this construction produces for the free-forgetful adjunction $F\\dashv U$ between $\\mathbf{Set}$ and $\\mathbf{Grp}$."
+      answer: "Components: $T_C=GFC$ and $\\mu_C=G(\\varepsilon_{FC})$. First law: $(\\mu\\circ T\\eta)_C=\\mu_C\\circ GF(\\eta_C)=G(\\varepsilon_{FC})\\circ G(F\\eta_C)=G\\big(\\varepsilon_{FC}\\circ F\\eta_C\\big)=G(1_{FC})=1_{GFC}$, using functoriality of $G$ and then the first triangle identity $\\varepsilon F\\circ F\\eta=1_F$. Second law: $(\\mu\\circ\\eta T)_C=\\mu_C\\circ\\eta_{GFC}=G(\\varepsilon_{FC})\\circ\\eta_{G(FC)}=(G\\varepsilon\\circ\\eta G)_{FC}=1_{G(FC)}$, which is the second triangle identity $G\\varepsilon\\circ\\eta G=1_G$ evaluated at the object $FC$. For $F\\dashv U$ between $\\mathbf{Set}$ and $\\mathbf{Grp}$ the induced monad is the free-group monad $T=UF$: $TX$ is the underlying set of the free group on $X$ (reduced words in the letters of $X$ and their formal inverses), $\\eta_X$ inserts a letter as a one-letter word, and $\\mu_X$ multiplies out a word of words."
+      solution_sketch: "Push $G$ through each composite by functoriality until a triangle identity appears inside it: the first law reduces to $\\varepsilon F\\circ F\\eta=1_F$ under $G$, and the second is $G\\varepsilon\\circ\\eta G=1_G$ evaluated at the object $FC$. Then name the induced monad on $\\mathbf{Set}$."
+    anki_seeds:
+      - front: "The monad induced by an adjunction $F\\dashv G$?"
+        back: "$T=GF$, unit $\\eta$, multiplication $\\mu=G\\varepsilon F$."
+        type: basic
+      - front: "Every monad arises from an adjunction — canonical ones are the {{c1::Kleisli}} and {{c2::Eilenberg-Moore}} resolutions."
+        back: "Kleisli; Eilenberg-Moore"
+        type: cloze
+
+  - id: kleisli-vs-eilenberg-moore
+    name: Kleisli versus Eilenberg-Moore
+    core: false
+    difficulty: 0.82
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 300
+    prerequisites:
+      - id: kleisli-categories
+        weight: 0.5
+        key: true
+      - id: algebras-over-monads
+        weight: 0.5
+        key: true
+      - id: adjunctions-give-monads
+        weight: 0.4
+        key: true
+      - id: adjunctions
+        weight: 0.2
+    knowledge_points:
+      - id: kp1
+        name: The comparison functor
+        key_prerequisites: [kleisli-categories]
+        constraints: "Every step must cite a monad law or a naturality square by name."
+        exemplars:
+          - problem: "Define the comparison functor $K\\colon\\mathcal{C}_T\\to\\mathcal{C}^T$ and verify it lands in $T$-algebras and preserves identities and composition."
+            answer: "$K(A)=(TA,\\mu_A)$ and $K(f)=\\mu_B\\circ Tf$ for $f\\colon A\\to TB$; functoriality uses the unit law and associativity."
+            solution_sketch: "$(TA,\\mu_A)$ is a $T$-algebra: its unit law $\\mu_A\\circ\\eta_{TA}=1_{TA}$ and associativity $\\mu_A\\circ\\mu_{TA}=\\mu_A\\circ T\\mu_A$ are the monad laws at $A$. Identities: $K(\\eta_A)=\\mu_A\\circ T\\eta_A=1_{TA}$ by the unit law. Composition: for $f\\colon A\\to TB$ and $g\\colon B\\to TC$, $K(g\\circ_T f)=\\mu_C\\circ T(\\mu_C\\circ Tg\\circ f)=\\mu_C\\circ T\\mu_C\\circ T^2g\\circ Tf$, while $K(g)\\circ K(f)=\\mu_C\\circ Tg\\circ\\mu_B\\circ Tf=\\mu_C\\circ\\mu_{TC}\\circ T^2g\\circ Tf$ using naturality of $\\mu$ at $g$. The two agree by monad associativity $\\mu\\circ T\\mu=\\mu\\circ\\mu T$."
+          - problem: "Verify that $K(f)=\\mu_B\\circ Tf$ is a morphism of $T$-algebras $(TA,\\mu_A)\\to(TB,\\mu_B)$."
+            answer: "$K(f)\\circ\\mu_A=\\mu_B\\circ T(K(f))$, by naturality of $\\mu$ and monad associativity."
+            solution_sketch: "An algebra morphism must satisfy $K(f)\\circ\\mu_A=\\mu_B\\circ T(K(f))$. Left side: $\\mu_B\\circ Tf\\circ\\mu_A=\\mu_B\\circ\\mu_{TB}\\circ T^2f$, using naturality of $\\mu$ at $f\\colon A\\to TB$, which gives $Tf\\circ\\mu_A=\\mu_{TB}\\circ T^2f$. Right side: $\\mu_B\\circ T(\\mu_B\\circ Tf)=\\mu_B\\circ T\\mu_B\\circ T^2f$. Since $\\mu_B\\circ\\mu_{TB}=\\mu_B\\circ T\\mu_B$ by monad associativity, the two sides agree."
+      - id: kp2
+        name: Kleisli as the free algebras
+        key_prerequisites: [algebras-over-monads]
+        constraints: "Use the Eilenberg-Moore free-forgetful bijection; verify both round trips."
+        exemplars:
+          - problem: "Prove the Eilenberg-Moore bijection $\\mathrm{Hom}_{\\mathcal{C}^T}((TA,\\mu_A),(B,b))\\cong\\mathrm{Hom}_{\\mathcal{C}}(A,B)$."
+            answer: "$\\varphi\\mapsto\\varphi\\circ\\eta_A$ with inverse $f\\mapsto b\\circ Tf$; the round trips use the algebra laws and naturality."
+            solution_sketch: "For $f\\colon A\\to B$, the map $b\\circ Tf$ is an algebra morphism: $(b\\circ Tf)\\circ\\mu_A=b\\circ\\mu_B\\circ T^2f=b\\circ Tb\\circ T^2f=b\\circ T(b\\circ Tf)$, using naturality of $\\mu$ and the algebra associativity $b\\circ\\mu_B=b\\circ Tb$. One round trip: $(b\\circ Tf)\\circ\\eta_A=b\\circ\\eta_B\\circ f=f$, by naturality of $\\eta$ and the algebra unit law. The other: for an algebra morphism $\\varphi$, $b\\circ T(\\varphi\\circ\\eta_A)=b\\circ T\\varphi\\circ T\\eta_A=\\varphi\\circ\\mu_A\\circ T\\eta_A=\\varphi$, using that $\\varphi$ is an algebra morphism and the monad unit law. Hence the two maps are mutually inverse."
+          - problem: "Deduce that $K$ is fully faithful and identify its essential image."
+            answer: "$\\mathrm{Hom}_{\\mathcal{C}^T}(KA,KB)\\cong\\mathrm{Hom}_{\\mathcal{C}}(A,TB)=\\mathcal{C}_T(A,B)$, and the image consists of the free algebras $(TA,\\mu_A)$."
+            solution_sketch: "Apply the bijection with $(B,b)=(TB,\\mu_B)$: $\\mathrm{Hom}_{\\mathcal{C}^T}((TA,\\mu_A),(TB,\\mu_B))\\cong\\mathrm{Hom}_{\\mathcal{C}}(A,TB)$, and unwinding, the inverse sends $f$ to $\\mu_B\\circ Tf=K(f)$. So $K_{A,B}$ is exactly this bijection between $\\mathcal{C}_T(A,B)=\\mathrm{Hom}_{\\mathcal{C}}(A,TB)$ and $\\mathrm{Hom}_{\\mathcal{C}^T}(KA,KB)$: $K$ is fully faithful. On objects $K$ hits precisely the free algebras $(TA,\\mu_A)$, so $\\mathcal{C}_T$ is equivalent to the full subcategory of free $T$-algebras inside $\\mathcal{C}^T$."
+      - id: kp3
+        name: The extreme resolutions of a monad
+        key_prerequisites: [adjunctions-give-monads]
+        constraints: "A resolution is an adjunction inducing $T$; comparison functors must commute with both the left and the right adjoint."
+        exemplars:
+          - problem: "Verify that $K$ commutes with the two resolutions: $K F_T=F^T$ and $U^T K=U_T$."
+            answer: "On objects both sides give $(TA,\\mu_A)$ and $TA$; on morphisms the monad unit law gives $K(\\eta_B\\circ f)=Tf$."
+            solution_sketch: "Objects: $KF_T(A)=K(A)=(TA,\\mu_A)=F^T(A)$, and $U^TK(A)=U^T(TA,\\mu_A)=TA=U_T(A)$. Morphisms: $F_T(f)=\\eta_B\\circ f$ for $f\\colon A\\to B$ in $\\mathcal{C}$, so $K(F_T f)=\\mu_B\\circ T(\\eta_B\\circ f)=\\mu_B\\circ T\\eta_B\\circ Tf=Tf=F^T(f)$, using $\\mu\\circ T\\eta=1$. And for a Kleisli map $g\\colon A\\to TB$, $U^T(Kg)=\\mu_B\\circ Tg=U_T(g)$. So $K$ is a morphism of resolutions of $T$."
+          - problem: "State in what sense the Kleisli and Eilenberg-Moore adjunctions are the extreme resolutions of $T$."
+            answer: "Among adjunctions inducing $T$, the Kleisli one is initial and the Eilenberg-Moore one is terminal; $K$ is the unique comparison between them."
+            solution_sketch: "A resolution of $T$ is an adjunction $F\\dashv G$ between $\\mathcal{C}$ and some $\\mathcal{E}$ with $GF=T$ and matching unit and multiplication; a morphism of resolutions is a functor $\\mathcal{E}\\to\\mathcal{E}'$ commuting with both adjoints. In this category of resolutions, the Kleisli adjunction $F_T\\dashv U_T$ is initial: from it there is exactly one morphism to any resolution, since a functor out of $\\mathcal{C}_T$ is forced on objects and on morphisms by the two commutation conditions. Dually, the Eilenberg-Moore adjunction $F^T\\dashv U^T$ is terminal. The unique morphism from the initial to the terminal resolution is exactly the comparison functor $K$, which is why $\\mathcal{C}_T$ sits inside $\\mathcal{C}^T$ as the free algebras."
+    diagnostic_exemplar:
+      problem: "Let $T$ be a monad on $\\mathcal C$ and $K\\colon\\mathcal C_T\\to\\mathcal C^T$ the comparison functor, $K(A)=(TA,\\mu_A)$ and $K(f)=\\mu_B\\circ Tf$ for $f\\colon A\\to TB$. Prove that $K$ is fully faithful by exhibiting a two-sided inverse to the hom-set map $f\\mapsto K(f)$, and identify the essential image of $K$."
+      answer: "Define $\\Lambda(\\varphi)=\\varphi\\circ\\eta_A$ for an algebra morphism $\\varphi\\colon(TA,\\mu_A)\\to(TB,\\mu_B)$; note $\\Lambda(\\varphi)\\colon A\\to TB$ is a morphism $A\\to B$ of $\\mathcal C_T$. Faithfulness: $\\Lambda(K(f))=\\mu_B\\circ Tf\\circ\\eta_A=\\mu_B\\circ\\eta_{TB}\\circ f=1_{TB}\\circ f=f$, using naturality of $\\eta$ at $f\\colon A\\to TB$ and then the monad unit law $\\mu\\circ\\eta T=1_T$. Fullness: $K(\\Lambda(\\varphi))=\\mu_B\\circ T(\\varphi\\circ\\eta_A)=\\mu_B\\circ T\\varphi\\circ T\\eta_A=\\varphi\\circ\\mu_A\\circ T\\eta_A=\\varphi\\circ 1_{TA}=\\varphi$, using that $\\varphi$ is an algebra morphism ($\\varphi\\circ\\mu_A=\\mu_B\\circ T\\varphi$) and then the other unit law $\\mu\\circ T\\eta=1_T$. So $f\\mapsto K(f)$ is a bijection $\\mathcal C_T(A,B)=\\mathrm{Hom}_{\\mathcal C}(A,TB)\\cong\\mathrm{Hom}_{\\mathcal C^T}\\big((TA,\\mu_A),(TB,\\mu_B)\\big)$ and $K$ is fully faithful. Its essential image is the full subcategory of $\\mathcal C^T$ spanned by the free algebras $(TA,\\mu_A)$ — the Kleisli category is the category of free $T$-algebras."
+      solution_sketch: "The only candidate inverse to $f\\mapsto K(f)$ is $\\varphi\\mapsto\\varphi\\circ\\eta_A$. One round trip uses naturality of $\\eta$ and then $\\mu\\circ\\eta T=1_T$; the other uses the algebra-morphism square for $\\varphi$ and then $\\mu\\circ T\\eta=1_T$. Those two round trips are precisely faithfulness and fullness."
+    anki_seeds:
+      - front: "The comparison functor $\\mathcal{C}_T\\to\\mathcal{C}^T$ sends $A\\mapsto$? and $f\\colon A\\to TB\\mapsto$?"
+        back: "$A\\mapsto(TA,\\mu_A)$; $f\\mapsto\\mu_B\\circ Tf$."
+        type: basic
+      - front: "The Kleisli category is equivalent to which part of the Eilenberg-Moore category?"
+        back: "the full subcategory of free algebras $(TA,\\mu_A)$."
+        type: basic
+      - front: "Among resolutions of a monad $T$, Kleisli is the {{c1::initial}} one and Eilenberg-Moore the {{c2::terminal}} one."
+        back: "initial; terminal"
+        type: cloze
+
+  - id: cartesian-closed-categories
+    name: Cartesian Closed Categories
+    core: false
+    difficulty: 0.78
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 240
+    prerequisites:
+      - id: exponential-objects
+        weight: 0.5
+        key: true
+      - id: products-coproducts
+        weight: 0.4
+        key: true
+      - id: initial-terminal-objects
+        weight: 0.2
+      - id: adjunctions
+        weight: 0.2
+    knowledge_points:
+      - id: kp1
+        name: Definition
+        key_prerequisites: [exponential-objects]
+        constraints: "State all three ingredients (terminal object, binary products, exponentials) and give the exponential either as the right adjoint of $-\\times A$ or by evaluation plus unique currying; the uniqueness of $\\lambda f$ must be part of the statement."
+        exemplars:
+          - problem: "Define a cartesian closed category (CCC)."
+            answer: "Has a terminal object, binary products, and exponentials (each $-\\times A$ has a right adjoint $(-)^A$)."
+            solution_sketch: "A category is cartesian closed if it has a terminal object, all binary products, and for each object $A$ an exponential $(-)^A$ that is right adjoint to $-\\times A$: natural bijections $\\mathrm{Hom}(X\\times A,B)\\cong\\mathrm{Hom}(X,B^A)$. Equivalently, it has finite products and every functor $-\\times A$ has a right adjoint."
+          - problem: "State the universal property characterizing the exponential object $B^A$ in a category with binary products."
+            answer: "An object $B^A$ with $\\mathrm{ev}\\colon B^A\\times A\\to B$ such that each $f\\colon X\\times A\\to B$ equals $\\mathrm{ev}\\circ(\\lambda f\\times 1_A)$ for a unique $\\lambda f\\colon X\\to B^A$."
+            solution_sketch: "The exponential $B^A$ carries an evaluation map $\\mathrm{ev}\\colon B^A\\times A\\to B$ that is universal: for every $X$ and $f\\colon X\\times A\\to B$ there is a unique transpose (curry) $\\lambda f\\colon X\\to B^A$ with $\\mathrm{ev}\\circ(\\lambda f\\times 1_A)=f$. Equivalently $(-)^A$ is right adjoint to $-\\times A$. A category with a terminal object, binary products, and all such exponentials is a CCC."
+      - id: kp2
+        name: Set is cartesian closed
+        key_prerequisites: [products-coproducts]
+        constraints: "$\\mathbf{Set}$ is the positive case (exponential $=$ function set, currying $=$ the adjunction); a negative verdict must be settled by a left-adjoint preservation failure in an additive category such as $\\mathbf{Vect}_k$ or $\\mathbf{Ab}$, exhibiting $0\\times V\\cong V$ with $V$ nonzero."
+        exemplars:
+          - problem: "Show $\\mathbf{Set}$ is cartesian closed and describe its exponential."
+            answer: "Terminal $\\{*\\}$, products $A\\times B$, exponential $B^A$ = function set; currying is the adjunction."
+            solution_sketch: "$\\mathbf{Set}$ has terminal object $\\{*\\}$, cartesian products, and exponentials $B^A=\\{$functions $A\\to B\\}$ with $\\mathrm{ev}(f,a)=f(a)$. Currying gives $\\mathrm{Hom}(X\\times A,B)\\cong\\mathrm{Hom}(X,B^A)$ naturally, so $-\\times A\\dashv(-)^A$ and $\\mathbf{Set}$ is a CCC. (Order-theoretic analogue: a bounded lattice is cartesian closed iff it is a Heyting algebra. A mere poset can be cartesian closed without being one — it need not have joins or a bottom.)"
+          - problem: "Give a category with finite products that is not cartesian closed, and justify it."
+            answer: "$\\mathbf{Vect}_k$: in a CCC $-\\times V$ preserves the initial object, but $0\\times V\\cong V\\neq 0$ for $V\\neq 0$."
+            solution_sketch: "In any CCC, $-\\times A$ has a right adjoint $(-)^A$, so it preserves all colimits, in particular the initial object: $0\\times A\\cong 0$. In $\\mathbf{Vect}_k$ finite products are direct sums and the initial object is the zero space $0$; but $0\\times V\\cong V$, which is not $\\cong 0$ when $V\\neq 0$. So $-\\times V$ fails to preserve the initial object, and $\\mathbf{Vect}_k$ is not cartesian closed (its closed structure is monoidal via $\\otimes$, not $\\times$)."
+      - id: kp3
+        name: The Curry-Howard-Lambek correspondence
+        key_prerequisites: [adjunctions]
+        constraints: "Statements of the correspondence at the level of CCCs, the simply typed lambda calculus and intuitionistic propositional logic; every type-theoretic item must be paired with its categorical counterpart ($A\\to B$ with $B^A$, a closed term with a global element $1\\to B^A$, the $\\beta$-rule with $\\mathrm{ev}\\circ(\\lambda f\\times 1_A)=f$)."
+        exemplars:
+          - problem: "State the Curry-Howard-Lambek correspondence at the level of CCCs."
+            answer: "CCCs are the categorical models of the simply typed lambda calculus and of intuitionistic propositional logic."
+            solution_sketch: "In a CCC, objects are types, morphisms are terms up to $\\beta\\eta$-equality, products are pairing, and the exponential $B^A$ is the function type with $\\mathrm{ev}$ = application and currying = $\\lambda$-abstraction. This makes the internal language of a CCC the simply typed lambda calculus; via Curry-Howard it also models intuitionistic propositional logic (types = propositions, terms = proofs). CCCs are exactly the models."
+          - problem: "Under Curry-Howard-Lambek, what do the type $A\\to B$, a closed term of it, and the $\\beta$-rule correspond to categorically?"
+            answer: "$A\\to B$ is $B^A$; a closed term is a global element $1\\to B^A$; the $\\beta$-rule is the law $\\mathrm{ev}\\circ(\\lambda f\\times 1_A)=f$."
+            solution_sketch: "The function type $A\\to B$ is the exponential $B^A$; an open term $x\\colon A\\vdash t\\colon B$ is a morphism $A\\to B$, and a closed term $\\vdash t\\colon A\\to B$ is a global element $1\\to B^A$. Application is $\\mathrm{ev}\\colon B^A\\times A\\to B$ and $\\lambda$-abstraction is currying. The computation rule $(\\lambda x.t)\\,u=t[u/x]$ is exactly $\\mathrm{ev}\\circ(\\lambda f\\times 1_A)=f$, while the $\\eta$-rule is uniqueness of the transpose. So typing/provability becomes existence of morphisms."
+    diagnostic_exemplar:
+      problem: "In a cartesian closed category with terminal object $1$, prove that the global elements $1\\to B^A$ correspond bijectively to the morphisms $A\\to B$, and explain what this correspondence says under the Curry-Howard-Lambek reading."
+      answer: "The universal property of $B^A$ says every $g\\colon X\\times A\\to B$ equals $\\mathrm{ev}\\circ(\\lambda g\\times 1_A)$ for a unique $\\lambda g\\colon X\\to B^A$; that is, currying is a bijection $\\mathrm{Hom}(X\\times A,B)\\cong\\mathrm{Hom}(X,B^A)$. Take $X=1$: $\\mathrm{Hom}(1,B^A)\\cong\\mathrm{Hom}(1\\times A,B)$. The projection $\\pi_A\\colon 1\\times A\\to A$ is an isomorphism, with inverse $\\langle{!}_A,1_A\\rangle$ where ${!}_A\\colon A\\to 1$ is the unique such map: $\\pi_A\\circ\\langle{!}_A,1_A\\rangle=1_A$ by the product's equations, and $\\langle{!}_A,1_A\\rangle\\circ\\pi_A=1_{1\\times A}$ because both sides are maps into $1\\times A$ whose two components agree (the $1$-component by terminality, the $A$-component by $\\pi_A$). Composing, $\\mathrm{Hom}(1,B^A)\\cong\\mathrm{Hom}(1\\times A,B)\\cong\\mathrm{Hom}(A,B)$, explicitly $t\\mapsto\\mathrm{ev}\\circ(t\\times 1_A)\\circ\\langle{!}_A,1_A\\rangle$. Under Curry-Howard-Lambek, $B^A$ is the type $A\\to B$, a global element $1\\to B^A$ is a closed term of that type, and the bijection is application followed by $\\beta$-conversion, $\\mathrm{ev}\\circ(\\lambda f\\times 1_A)=f$: a closed function term is the same thing as the morphism it computes. In $\\mathbf{Set}$ this is the familiar identification of elements of the function set $B^A$ with functions $A\\to B$."
+      solution_sketch: "Set $X=1$ in the currying bijection, then remove the $1$ using the isomorphism $1\\times A\\cong A$, which you verify from the product equations and terminality. Reading the composite bijection back says that a closed term of function type is the same thing as the morphism it computes."
+    anki_seeds:
+      - front: "A cartesian closed category has a {{c1::terminal object}}, {{c2::binary products}}, and {{c3::exponentials}} ($-\\times A\\dashv(-)^A$)."
+        back: "terminal object; binary products; exponentials"
+        type: cloze
+      - front: "CCCs model the {{c1::simply typed lambda calculus}} (Curry-Howard-Lambek)."
+        back: "simply typed lambda calculus"
+        type: cloze
+
+  - id: presheaves-intro
+    name: A First Look at Presheaves
+    core: false
+    difficulty: 0.78
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 240
+    prerequisites:
+      - id: yoneda-embedding
+        weight: 0.4
+        key: true
+      - id: functor-categories
+        weight: 0.4
+        key: true
+      - id: covariant-contravariant-functors
+        weight: 0.2
+      - id: limits-colimits
+        weight: 0.2
+      - id: category-of-elements
+        weight: 0.0             # R-58: kp2's density statement is indexed by ∫P — the learner must read the (presheaf-convention) ∫F taught there, but no exemplar computes in it
+    knowledge_points:
+      - id: kp1
+        name: The presheaf category and representables
+        key_prerequisites: [functor-categories]
+        constraints: "Presheaves are functors $\\mathcal C^{op}\\to\\mathbf{Set}$ with natural transformations as morphisms; representables are $\\mathrm{Hom}(-,A)$, and any full-faithfulness claim must be derived by instantiating the Yoneda lemma at a second representable, not asserted."
+        exemplars:
+          - problem: "Define the category of presheaves on $\\mathcal C$ and identify the representable presheaves inside it."
+            answer: "$\\widehat{\\mathcal C}=[\\mathcal C^{op},\\mathbf{Set}]$; representables are $\\mathrm{Hom}(-,A)$, embedded by Yoneda."
+            solution_sketch: "A presheaf on $\\mathcal C$ is a functor $\\mathcal C^{op}\\to\\mathbf{Set}$; presheaves and natural transformations form $\\widehat{\\mathcal C}=[\\mathcal C^{op},\\mathbf{Set}]$. The representable presheaves $\\mathrm{Hom}(-,A)$ lie inside via the Yoneda embedding $\\mathbf{y}$, which is fully faithful, so $\\mathcal C$ is a full subcategory of $\\widehat{\\mathcal C}$."
+          - problem: "State the Yoneda lemma in $\\widehat{\\mathcal C}$ and derive that the Yoneda embedding is fully faithful."
+            answer: "$\\mathrm{Nat}(\\mathrm{Hom}(-,A),P)\\cong P(A)$ naturally; taking $P=\\mathrm{Hom}(-,B)$ gives $\\mathrm{Nat}(\\mathbf yA,\\mathbf yB)\\cong\\mathrm{Hom}(A,B)$."
+            solution_sketch: "For a presheaf $P\\colon\\mathcal C^{op}\\to\\mathbf{Set}$ and object $A$, the Yoneda lemma gives a bijection $\\mathrm{Nat}(\\mathrm{Hom}(-,A),P)\\cong P(A)$, natural in $A$ and $P$, sending $\\alpha\\mapsto\\alpha_A(1_A)$. Setting $P=\\mathrm{Hom}(-,B)$ yields $\\mathrm{Nat}(\\mathbf yA,\\mathbf yB)\\cong\\mathrm{Hom}(A,B)$, so $\\mathbf y\\colon\\mathcal C\\to\\widehat{\\mathcal C}$ is fully faithful."
+      - id: kp2
+        name: Completeness and density
+        key_prerequisites: [limits-colimits]
+        constraints: "Limits and colimits in $\\widehat{\\mathcal C}$ are computed pointwise, inherited from $\\mathbf{Set}$: give the value of the constructed presheaf at an object $C$ explicitly; the density theorem is quoted as a statement only, with no proof."
+        exemplars:
+          - problem: "Explain why (co)limits in $\\widehat{\\mathcal C}$ are computed pointwise, and state that every presheaf is a colimit of representables."
+            answer: "$\\mathbf{Set}$ is (co)complete so $\\widehat{\\mathcal C}$ is too, objectwise; the density theorem writes each presheaf as a colimit of representables."
+            solution_sketch: "Because $\\mathbf{Set}$ is complete and cocomplete, the functor category $[\\mathcal C^{op},\\mathbf{Set}]$ is too, with limits and colimits computed objectwise: $(\\mathrm{colim}_i P_i)(C)=\\mathrm{colim}_i(P_i(C))$. Moreover the density (co-Yoneda) theorem canonically writes each presheaf $P$ as a colimit of representables indexed by its category of elements $\\int P$. Thus $\\widehat{\\mathcal C}$ is the free cocompletion of $\\mathcal C$."
+          - problem: "Describe the terminal object and binary products of $\\widehat{\\mathcal C}=[\\mathcal C^{op},\\mathbf{Set}]$."
+            answer: "Terminal is the constant presheaf $1\\colon C\\mapsto\\{*\\}$; products are pointwise, $(P\\times Q)(C)=P(C)\\times Q(C)$."
+            solution_sketch: "Since limits in a functor category valued in $\\mathbf{Set}$ are computed objectwise, the terminal presheaf is $1\\colon C\\mapsto\\{*\\}$, and the product of $P,Q$ is $(P\\times Q)(C)=P(C)\\times Q(C)$ with pointwise projections, acting on arrows componentwise. Universality is checked objectwise: a cone into $P\\times Q$ is a pair of cones into $P$ and $Q$. This is a special case of the general pointwise computation of (co)limits in $\\widehat{\\mathcal C}$."
+    diagnostic_exemplar:
+      problem: "Let $\\mathcal C$ be a small category. Prove that the presheaf category $\\widehat{\\mathcal C}=[\\mathcal C^{op},\\mathbf{Set}]$ has binary products, computed pointwise by $(P\\times Q)(C)=P(C)\\times Q(C)$, by verifying the universal property; then use the Yoneda lemma to compute $\\mathrm{Nat}(\\mathbf yA,P\\times Q)$ for a representable $\\mathbf yA=\\mathrm{Hom}(-,A)$."
+      answer: "Define $(P\\times Q)(C)=PC\\times QC$ and, for $f\\colon C'\\to C$ in $\\mathcal C$, $(P\\times Q)(f)=Pf\\times Qf$; functoriality (contravariant) is componentwise, so $P\\times Q$ is a presheaf, and the componentwise projections $\\pi^P_C,\\pi^Q_C$ are natural because $Pf\\times Qf$ acts coordinatewise. Universal property: given natural transformations $\\alpha\\colon R\\Rightarrow P$ and $\\beta\\colon R\\Rightarrow Q$, set $\\gamma_C=\\langle\\alpha_C,\\beta_C\\rangle\\colon RC\\to PC\\times QC$. This is natural: each coordinate of $\\gamma_{C'}\\circ Rf$ and of $(Pf\\times Qf)\\circ\\gamma_C$ is the naturality square of $\\alpha$ or of $\\beta$. It satisfies $\\pi^P\\cdot\\gamma=\\alpha$ and $\\pi^Q\\cdot\\gamma=\\beta$, and it is the only such transformation because at each $C$ the pair $(\\alpha_C,\\beta_C)$ determines $\\gamma_C$ uniquely by the universal property of the product of sets. So $P\\times Q$ with its projections is the product in $\\widehat{\\mathcal C}$: limits in a presheaf category are computed pointwise, inherited from $\\mathbf{Set}$. Finally the Yoneda lemma gives $\\mathrm{Nat}(\\mathbf yA,P\\times Q)\\cong(P\\times Q)(A)=PA\\times QA$."
+      solution_sketch: "Define everything pointwise and check that each condition is the corresponding condition in $\\mathbf{Set}$ at every object: naturality of the pairing is the naturality squares of $\\alpha$ and $\\beta$ coordinatewise, and uniqueness is uniqueness of pairs. The final count is Yoneda applied verbatim, since $\\mathrm{Nat}(\\mathbf yA,-)$ is evaluation at $A$."
+    anki_seeds:
+      - front: "The presheaf category $\\widehat{\\mathcal C}$ is..."
+        back: "$[\\mathcal C^{op},\\mathbf{Set}]$: functors $\\mathcal C^{op}\\to\\mathbf{Set}$ and natural transformations."
+        type: basic
+      - front: "Every presheaf is canonically a {{c1::colimit of representables}} (density / co-Yoneda)."
+        back: "colimit of representables"
+        type: cloze
+
+  - id: toposes-glimpse
+    name: A Glimpse of Toposes
+    core: false
+    difficulty: 0.8
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 240
+    prerequisites:
+      - id: cartesian-closed-categories
+        weight: 0.5
+        key: true
+      - id: presheaves-intro
+        weight: 0.4
+        key: true
+      - id: initial-terminal-objects
+        weight: 0.2
+      - id: limits-colimits
+        weight: 0.2
+      - id: epi-mono-factorizations
+        weight: 0.3             # R-59: subobjects as iso-classes of monos (its kp3) carry the classifier axiom — kp1 ex2 works with Sub(X) directly; kp2 uses Sub(B)≅P(B) in Set and G-sets
+    knowledge_points:
+      - id: kp1
+        name: The definition of an elementary topos
+        key_prerequisites: [cartesian-closed-categories]
+        constraints: "Name all three axioms (finite limits, cartesian closure, a subobject classifier) and give $\\mathrm{true}\\colon 1\\to\\Omega$ with its classifying-pullback property; the representability reading must name $\\mathrm{Sub}$ as the functor represented and $\\mathrm{true}$ as the universal element."
+        exemplars:
+          - problem: "State the defining properties of an elementary topos, including the subobject classifier."
+            answer: "Finitely complete, cartesian closed, with a subobject classifier $\\Omega$ ($\\mathrm{true}\\colon 1\\to\\Omega$ classifying monos by pullback)."
+            solution_sketch: "An elementary topos is a category that (i) has all finite limits, (ii) is cartesian closed, and (iii) has a subobject classifier: an object $\\Omega$ with $\\mathrm{true}\\colon 1\\to\\Omega$ such that every monomorphism $S\\hookrightarrow X$ is the pullback of $\\mathrm{true}$ along a unique characteristic map $\\chi_S\\colon X\\to\\Omega$. Thus subobjects of $X$ correspond to maps $X\\to\\Omega$."
+          - problem: "Express the subobject classifier axiom as representability of the subobject functor $\\mathrm{Sub}$."
+            answer: "$\\Omega$ represents $\\mathrm{Sub}$: a natural isomorphism $\\mathrm{Sub}(X)\\cong\\mathrm{Hom}(X,\\Omega)$ with universal element $\\mathrm{true}\\colon 1\\to\\Omega$."
+            solution_sketch: "The functor $\\mathrm{Sub}\\colon\\mathcal E^{op}\\to\\mathbf{Set}$ sends $X$ to its set of subobjects (monos into $X$ up to iso), with pullback as reindexing. A subobject classifier is a representing object $\\Omega$ with universal element $\\mathrm{true}\\colon 1\\to\\Omega$, i.e. a natural bijection $\\mathrm{Sub}(X)\\cong\\mathrm{Hom}(X,\\Omega)$ sending $S\\hookrightarrow X$ to its characteristic map $\\chi_S$, with $S$ recovered as the pullback of $\\mathrm{true}$ along $\\chi_S$. So a topos is a finitely complete, cartesian closed category in which $\\mathrm{Sub}$ is representable."
+      - id: kp2
+        name: Set and presheaf toposes
+        key_prerequisites: [presheaves-intro]
+        constraints: "Concrete toposes only: $\\mathbf{Set}$ (with $\\Omega=\\{\\top,\\bot\\}$) and presheaf categories, including $\\mathbf{Set}^{BG}$ for a group $G$; describe $\\Omega$ and the characteristic map explicitly, and note that the $G$-action on $\\Omega$ is trivial."
+        exemplars:
+          - problem: "Identify the subobject classifier of $\\mathbf{Set}$ and state that every presheaf category is a topos."
+            answer: "$\\Omega=\\{\\top,\\bot\\}$; $[\\mathcal C^{op},\\mathbf{Set}]$ is a topos (with $\\Omega$ classifying sieves)."
+            solution_sketch: "In $\\mathbf{Set}$ the subobject classifier is $\\Omega=\\{\\top,\\bot\\}$ with $\\mathrm{true}\\colon *\\mapsto\\top$; a subset $S\\subseteq X$ has characteristic function $\\chi_S$, and $S$ is the pullback of $\\mathrm{true}$ along $\\chi_S$. Every presheaf category $[\\mathcal C^{op},\\mathbf{Set}]$ is a topos, its $\\Omega$ classifying subfunctors by sieves. Toposes generalize set theory and carry an internal intuitionistic higher-order logic."
+          - problem: "For a group $G$, describe the subobject classifier of the topos $\\mathbf{Set}^{BG}$ of $G$-sets."
+            answer: "$\\Omega=\\{0,1\\}$ with trivial $G$-action; $\\chi_S$ is the indicator of a $G$-invariant subset."
+            solution_sketch: "$\\mathbf{Set}^{BG}$ is the category of left $G$-sets, while presheaves on $BG$ are right $G$-sets; the two agree because $g\\mapsto g^{-1}$ is an isomorphism of categories $BG^{op}\\cong BG$, so $\\mathbf{Set}^{BG}\\cong[BG^{op},\\mathbf{Set}]$ and the presheaf-topos results apply verbatim. Subobjects of a $G$-set $X$ are its $G$-invariant subsets $S\\subseteq X$. Sieves on the unique object are the right ideals of $G$; since $G$ is a group these are only $\\emptyset$ and $G$, so $\\Omega=\\{0,1\\}$ with trivial action and $\\mathrm{true}\\colon *\\mapsto 1$. Then $\\chi_S\\colon X\\to\\Omega$ is the indicator of $S$, equivariant exactly when $S$ is invariant, and $S$ is the pullback of $\\mathrm{true}$ along $\\chi_S$."
+    diagnostic_exemplar:
+      problem: "In $\\mathbf{Set}$, verify that $\\Omega=\\{\\top,\\bot\\}$ with $\\mathrm{true}\\colon 1\\to\\Omega$, $*\\mapsto\\top$, is a subobject classifier: show that for every mono $m\\colon S\\hookrightarrow X$ there is exactly one $\\chi\\colon X\\to\\Omega$ making the square over $\\mathrm{true}$ a pullback. Then say what this makes of the functor $\\mathrm{Sub}$."
+      answer: "Monos in $\\mathbf{Set}$ are the injections. Given $m\\colon S\\hookrightarrow X$ define $\\chi(x)=\\top$ if $x\\in m[S]$ and $\\chi(x)=\\bot$ otherwise. The square with sides $m$, $\\chi$, ${!}_S\\colon S\\to 1$ and $\\mathrm{true}$ commutes, since $\\chi(m(s))=\\top$ for all $s$. Pullback: suppose $g\\colon Y\\to X$ satisfies $\\chi\\circ g=\\mathrm{true}\\circ{!}_Y$, i.e. $g(y)\\in m[S]$ for every $y$. Because $m$ is injective each $g(y)$ has exactly one preimage, so $u(y):=m^{-1}(g(y))$ is a well-defined function $Y\\to S$ with $m\\circ u=g$, and it is the only such function (again by injectivity of $m$). So the square has the universal property of a pullback. Uniqueness of $\\chi$: if $\\chi'$ also makes the square a pullback, then pulling $\\mathrm{true}$ back along $\\chi'$ gives the inclusion of $\\chi'^{-1}(\\top)$, which must agree with $m$ as a subobject, forcing $\\chi'^{-1}(\\top)=m[S]$ and hence $\\chi'=\\chi$. Consequently $\\mathrm{Sub}(X)\\cong\\mathrm{Hom}(X,\\Omega)$, naturally in $X$ (pullback of a subobject along $f$ corresponds to pre-composition of $\\chi$ with $f$): $\\Omega$ represents the subobject functor $\\mathrm{Sub}$, with universal element $\\mathrm{true}$. Together with finite completeness and cartesian closure of $\\mathbf{Set}$, this makes $\\mathbf{Set}$ an elementary topos."
+      solution_sketch: "Take $\\chi$ to be the indicator of the image of $m$. Injectivity of $m$ is what makes the preimage map $u(y)=m^{-1}(g(y))$ well defined and unique, which is the pullback property; uniqueness of $\\chi$ follows because pulling $\\mathrm{true}$ back along any classifying map recovers the same subset. The upshot is $\\mathrm{Sub}\\cong\\mathrm{Hom}(-,\\Omega)$."
+    anki_seeds:
+      - front: "An elementary topos is a category that is {{c1::finitely complete}}, {{c2::cartesian closed}}, and has a {{c3::subobject classifier $\\Omega$}}."
+        back: "finitely complete; cartesian closed; subobject classifier $\\Omega$"
+        type: cloze
+      - front: "The subobject classifier of $\\mathbf{Set}$ is {{c1::$\\Omega=\\{\\top,\\bot\\}$}}."
+        back: "$\\Omega=\\{\\top,\\bot\\}$"
+        type: cloze

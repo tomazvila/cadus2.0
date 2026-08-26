@@ -1,0 +1,527 @@
+unit: morphisms
+course: abstract-algebra
+module: "Isomorphisms & the Isomorphism Theorems"
+topics:
+  - id: group-isomorphisms
+    name: "Group Isomorphisms"
+    core: true
+    difficulty: 0.68
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 240
+    prerequisites:
+      - id: homomorphisms-intro
+        weight: 0.9
+        key: true
+      - id: functions-injective-surjective
+        weight: 0.6
+        key: true
+      - id: cyclic-groups-generators
+        weight: 0.5
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Definition and verifying isomorphisms"
+        key_prerequisites: [homomorphisms-intro, functions-injective-surjective]
+        exemplars:
+          - problem: 'Show that $\varphi : (\mathbb{R}, +) \to (\mathbb{R}^{+}, \cdot)$, $\varphi(x) = 2^x$, is an isomorphism.'
+            answer: '$\varphi(x+y) = 2^{x+y} = 2^x 2^y$; it is a bijection with inverse $\log_2$, hence an isomorphism.'
+            solution_sketch: 'Check the homomorphism law via the exponent rule, then exhibit the two-sided inverse $\log_2$.'
+          - problem: 'Show that $\varphi : \mathbb{Z}_4 \to \langle i \rangle \subseteq \mathbb{C}^*$, $\varphi(k) = i^k$, is an isomorphism.'
+            answer: '$\varphi(j + k) = i^{j+k} = i^j i^k$ (well defined since $i^4 = 1$); it hits all of $\{1, i, -1, -i\}$ injectively.'
+            solution_sketch: 'Well-definedness uses $i^4 = 1$; the four powers are distinct, so bijective.'
+        constraints: "explicit maps between groups of order <= 8 or classic infinite examples (exp/log); full verification expected"
+      - id: kp2
+        name: "Properties preserved by isomorphisms"
+        key_prerequisites: [homomorphisms-intro]
+        exemplars:
+          - problem: 'Prove that an isomorphism $\varphi: G \to H$ sends the identity to the identity.'
+            answer: '$\varphi(e)\varphi(e) = \varphi(ee) = \varphi(e)$; cancel to get $\varphi(e) = e_H$.'
+            solution_sketch: 'Apply the homomorphism law to $e \cdot e = e$ and cancel.'
+          - problem: 'Prove that isomorphisms preserve element orders: $|\varphi(g)| = |g|$.'
+            answer: '$\varphi(g)^k = \varphi(g^k)$, and injectivity gives $\varphi(g^k) = e_H \iff g^k = e$; the same exponents kill both.'
+            solution_sketch: 'Powers commute with $\varphi$; injectivity transfers "equals identity" both ways, so the minimal exponents agree.'
+        constraints: "standard preservation lemmas: identity, inverses, orders, abelian-ness, cyclicity"
+      - id: kp3
+        name: "Isomorphism as an equivalence; automorphisms"
+        key_prerequisites: [homomorphisms-intro, functions-injective-surjective]
+        exemplars:
+          - problem: 'Prove that if $\varphi : G \to H$ is an isomorphism, so is $\varphi^{-1} : H \to G$.'
+            answer: 'For $h_1 = \varphi(g_1), h_2 = \varphi(g_2)$: $\varphi^{-1}(h_1h_2) = \varphi^{-1}(\varphi(g_1g_2)) = g_1g_2 = \varphi^{-1}(h_1)\varphi^{-1}(h_2)$.'
+            solution_sketch: 'Surjectivity lets you write arbitrary elements of $H$ as images; then unwind.'
+          - problem: 'Show that $\varphi(x) = -x$ is an automorphism of $(\mathbb{Z}, +)$.'
+            answer: '$-(x + y) = (-x) + (-y)$, and the map is its own inverse, hence bijective.'
+            solution_sketch: 'Negation respects addition and is an involution.'
+        constraints: "closure of isomorphisms under inverse and composition; simple automorphisms of Z, Z_n"
+    diagnostic_exemplar:
+      problem: 'Exhibit an isomorphism $U(10) \to \mathbb{Z}_4$ and justify briefly.'
+      answer: '$U(10) = \langle 3 \rangle$ with $3^1=3, 3^2=9, 3^3=7, 3^4=1$; send $3^k \mapsto k$. A generator-to-generator map of cyclic groups of equal order is an isomorphism.'
+      solution_sketch: 'Both groups are cyclic of order $4$; matching generators gives $\varphi(3^k) = k \bmod 4$, which converts multiplication into addition of exponents.'
+    anki_seeds:
+      - front: "What is a group isomorphism?"
+        back: "A bijective homomorphism; its inverse is automatically a homomorphism too."
+        type: basic
+      - front: "Name four properties preserved by isomorphism."
+        back: "Group order, element orders, being abelian, being cyclic (any structural property)."
+        type: basic
+
+  - id: isomorphism-invariants
+    name: "Proving Groups Non-Isomorphic"
+    core: false                # technique feeding only the classification capstone
+    difficulty: 0.70
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 180
+    prerequisites:
+      - id: group-isomorphisms
+        weight: 0.9
+        key: true
+      - id: direct-products
+        weight: 0.5
+        key: false
+      - id: order-of-an-element
+        weight: 0.5
+        key: false
+      # Phase C: kp2's named invariant is abelian-ness; verifying/refuting it is the
+      # skill taught in proofs/abelian-groups.
+      - id: abelian-groups
+        weight: 0.2
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Order profiles as invariants"
+        key_prerequisites: [group-isomorphisms, order-of-an-element]
+        exemplars:
+          - problem: 'Prove that $\mathbb{Z}_4 \not\cong U(8)$.'
+            answer: '$\mathbb{Z}_4$ has an element of order $4$ (namely $1$); every element of $U(8)$ satisfies $x^2 = 1$. Isomorphisms preserve orders.'
+            solution_sketch: 'Compare maximal element orders: $4$ vs $2$.'
+          - problem: 'Prove that $\mathbb{Z}_2 \times \mathbb{Z}_2 \not\cong \mathbb{Z}_4$ by counting elements of order $2$.'
+            answer: 'The Klein group has $3$ elements of order $2$; $\mathbb{Z}_4$ has exactly $1$ (namely $2$).'
+            solution_sketch: 'The count of elements of each order is an isomorphism invariant.'
+        constraints: "groups of order <= 12; distinguish via element-order counts"
+      - id: kp2
+        name: "Abelian-ness, cyclicity, and other structural invariants"
+        key_prerequisites: [group-isomorphisms]
+        exemplars:
+          - problem: 'Prove that $S_3 \not\cong \mathbb{Z}_6$.'
+            answer: '$\mathbb{Z}_6$ is abelian; $S_3$ is not ($(1\,2)(1\,3) \neq (1\,3)(1\,2)$).'
+            solution_sketch: 'Abelian-ness transfers across isomorphisms; exhibit one non-commuting pair.'
+          - problem: 'Prove that $(\mathbb{Q}, +) \not\cong (\mathbb{Z}, +)$.'
+            answer: '$\mathbb{Z}$ is cyclic; $\mathbb{Q}$ is not (no single rational generates all of $\mathbb{Q}$: $q/2 \notin \langle q \rangle$).'
+            solution_sketch: 'Cyclicity is invariant; any candidate generator fails to reach half of itself.'
+        constraints: "one clean invariant per problem; include one infinite-group example per set"
+      - id: kp3
+        name: "Full comparisons of small groups"
+        key_prerequisites: [group-isomorphisms, direct-products]
+        exemplars:
+          - problem: 'Decide: $\mathbb{Z}_{12} \cong \mathbb{Z}_4 \times \mathbb{Z}_3$?'
+            answer: 'Yes: $\gcd(4,3) = 1$, so the product is cyclic of order $12$.'
+            solution_sketch: '$(1,1)$ has order $\mathrm{lcm}(4,3) = 12$; a cyclic group of order $12$ is unique up to isomorphism.'
+          - problem: 'Decide: $D_6$ (order $12$) $\cong A_4$?'
+            answer: 'No: $D_6$ has an element of order $6$ (the rotation $r$); $A_4$ has elements of orders $1, 2, 3$ only.'
+            solution_sketch: 'Compare element orders — $A_4$''s elements are the identity, double transpositions, and 3-cycles.'
+        constraints: "yes/no with proof, orders <= 12; use the gcd criterion and order profiles"
+    diagnostic_exemplar:
+      problem: 'Are $\mathbb{Z}_8$, $\mathbb{Z}_4 \times \mathbb{Z}_2$, and $\mathbb{Z}_2 \times \mathbb{Z}_2 \times \mathbb{Z}_2$ pairwise non-isomorphic? Prove it.'
+      answer: 'Yes: their maximal element orders are $8$, $4$, and $2$ respectively, and maximal order is an isomorphism invariant.'
+      solution_sketch: 'Compute the largest order in each (generator; $(1,0)$ of order $4$; all non-identity elements order $2$).'
+    anki_seeds:
+      - front: "Fastest way to show two finite groups are NOT isomorphic?"
+        back: "Find an invariant that differs: order, abelian-ness, cyclicity, or the count of elements of some order."
+        type: basic
+      - front: "Element orders occurring in $A_4$?"
+        back: "$1, 2, 3$ — in particular no element of order $6$ or $12$."
+        type: basic
+
+  - id: kernels-images
+    name: "Kernels and Images"
+    core: true
+    difficulty: 0.70
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 180
+    prerequisites:
+      - id: homomorphisms-intro
+        weight: 0.8
+        key: true
+      - id: normal-subgroups
+        weight: 0.7
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: "Computing kernels and images"
+        key_prerequisites: [homomorphisms-intro]
+        exemplars:
+          - problem: 'Let $\varphi : \mathbb{Z}_{12} \to \mathbb{Z}_{12}$, $\varphi(x) = 3x \bmod 12$. Find $\ker \varphi$ and $\mathrm{im}\, \varphi$.'
+            answer: '$\ker \varphi = \{0, 4, 8\}$; $\mathrm{im}\, \varphi = \{0, 3, 6, 9\}$.'
+            solution_sketch: '$3x \equiv 0 \pmod{12}$ iff $x \equiv 0 \pmod 4$. The image is the multiples of $3$.'
+          - problem: 'Find the kernel of the sign homomorphism $\mathrm{sgn} : S_4 \to \{\pm 1\}$.'
+            answer: '$A_4$'
+            solution_sketch: 'The even permutations are exactly those with sign $+1$.'
+        constraints: "maps k -> ak on Z_n, sign map, reduction maps Z -> Z_n; answers as explicit sets or named subgroups"
+      - id: kp2
+        name: "Kernels are normal; injectivity criterion"
+        key_prerequisites: [homomorphisms-intro, normal-subgroups]
+        exemplars:
+          - problem: 'Prove that $\ker \varphi$ is a normal subgroup of $G$.'
+            answer: 'It is a subgroup (contains $e$, closed under products/inverses since $\varphi$ respects them), and $\varphi(gkg^{-1}) = \varphi(g)e\varphi(g)^{-1} = e$, so it is closed under conjugation.'
+            solution_sketch: 'Subgroup checks follow from the homomorphism law; conjugation stays in the kernel because the image conjugates the identity.'
+          - problem: 'Prove: $\varphi$ is injective iff $\ker \varphi = \{e\}$.'
+            answer: 'If injective, only $e$ maps to $e$. Conversely $\varphi(a) = \varphi(b) \implies \varphi(ab^{-1}) = e \implies ab^{-1} = e \implies a = b$.'
+            solution_sketch: 'The trivial-kernel condition converts equal images into a kernel element.'
+        constraints: "the two standard lemmas, proved from the definitions"
+      - id: kp3
+        name: "Counting with |G| = |ker||im|"
+        key_prerequisites: [homomorphisms-intro]
+        exemplars:
+          - problem: 'A homomorphism $\varphi : G \to H$ has $|G| = 24$ and $|\ker \varphi| = 4$. How many elements does the image have?'
+            answer: "6"
+            solution_sketch: 'Cosets of the kernel biject with image points: $|\mathrm{im}\,\varphi| = |G|/|\ker\varphi| = 24/4 = 6$.'
+          - problem: 'How many elements map to any single point of the image (same setup)?'
+            answer: '$4$ — each fiber is a coset of the kernel.'
+            solution_sketch: 'Fibers of a homomorphism are kernel cosets, all of size $|\ker \varphi|$.'
+        constraints: "fiber/counting problems with |G| <= 60"
+    diagnostic_exemplar:
+      problem: 'For $\varphi : \mathbb{Z}_{12} \to \mathbb{Z}_{12}$, $\varphi(x) = 4x \bmod 12$: compute $\ker \varphi$ and $\mathrm{im}\,\varphi$, check that $|\ker \varphi| \cdot |\mathrm{im}\,\varphi| = 12$, and say whether $\varphi$ is injective.'
+      answer: '$\ker \varphi = \{0, 3, 6, 9\}$ and $\mathrm{im}\,\varphi = \{0, 4, 8\}$, so $4 \cdot 3 = 12$. $\varphi$ is not injective: the kernel is bigger than $\{0\}$ (for instance $\varphi(3) = \varphi(0) = 0$), and a homomorphism is injective exactly when its kernel is trivial.'
+      solution_sketch: '$4x \equiv 0 \pmod{12}$ iff $3 \mid x$; the image consists of the multiples of $\gcd(4,12) = 4$. Then apply the kernel criterion for injectivity.'
+    anki_seeds:
+      - front: "$\\ker \\varphi$ for a group homomorphism is always a ______ of the domain."
+        back: "Normal subgroup."
+        type: basic
+      - front: "Injectivity criterion for a group homomorphism?"
+        back: "$\\varphi$ is injective iff $\\ker \\varphi = \\{e\\}$."
+        type: basic
+      - front: "Size relation among domain, kernel, image of a homomorphism (finite)?"
+        back: "$|G| = |\\ker \\varphi| \\cdot |\\mathrm{im}\\, \\varphi|$."
+        type: basic
+
+  - id: first-isomorphism-theorem
+    name: "The First Isomorphism Theorem"
+    core: true
+    difficulty: 0.76
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 300
+    prerequisites:
+      - id: kernels-images
+        weight: 0.9
+        key: true
+      - id: quotient-groups
+        weight: 0.9
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: "Statement and the induced map"
+        key_prerequisites: [kernels-images, quotient-groups]
+        exemplars:
+          - problem: 'State the first isomorphism theorem and define the induced map.'
+            answer: 'For a homomorphism $\varphi : G \to H$, the map $\bar\varphi : G/\ker\varphi \to \mathrm{im}\,\varphi$, $\bar\varphi(g\ker\varphi) = \varphi(g)$, is a well-defined isomorphism.'
+            solution_sketch: 'Well defined because representatives differing by a kernel element have equal images; injective because the kernel collapses to the identity coset; surjective onto the image by construction.'
+          - problem: 'In the proof, why is $\bar\varphi$ well defined?'
+            answer: 'If $aK = bK$ ($K = \ker\varphi$) then $b^{-1}a \in K$, so $\varphi(a) = \varphi(b)\varphi(b^{-1}a) = \varphi(b)$.'
+            solution_sketch: 'Coset equality means the representatives differ by a kernel element, which $\varphi$ kills.'
+        constraints: "statement, well-definedness, injectivity, surjectivity — one step at a time"
+      - id: kp2
+        name: "Identifying quotients via a good homomorphism"
+        key_prerequisites: [kernels-images, quotient-groups]
+        exemplars:
+          - problem: 'Use the first isomorphism theorem to identify $\mathbb{Z}/6\mathbb{Z}$.'
+            answer: 'Reduction $\varphi:\mathbb{Z} \to \mathbb{Z}_6$ is onto with kernel $6\mathbb{Z}$, so $\mathbb{Z}/6\mathbb{Z} \cong \mathbb{Z}_6$.'
+            solution_sketch: 'Pick the surjection whose kernel is the subgroup you are quotienting by.'
+          - problem: 'Identify $S_4/A_4$ up to isomorphism using a homomorphism.'
+            answer: '$\mathrm{sgn}: S_4 \to \{\pm 1\}$ is onto with kernel $A_4$, so $S_4/A_4 \cong \mathbb{Z}_2$.'
+            solution_sketch: 'The sign map realizes the quotient as the two-element group.'
+        constraints: "quotients of Z, Z_n, S_n, D_n realized by reduction, sign, or power maps"
+      - id: kp3
+        name: "Existence and counting consequences"
+        key_prerequisites: [kernels-images, quotient-groups]
+        exemplars:
+          - problem: 'Prove that every homomorphic image of $G$ has order dividing $|G|$ (finite $G$).'
+            answer: '$\mathrm{im}\,\varphi \cong G/\ker\varphi$, whose order $|G|/|\ker\varphi|$ divides $|G|$.'
+            solution_sketch: 'First isomorphism theorem plus Lagrange.'
+          - problem: 'Show there is no surjective homomorphism $\mathbb{Z}_8 \to \mathbb{Z}_3$.'
+            answer: 'The image would have order $3$, but $3 \nmid 8$.'
+            solution_sketch: 'Image order divides domain order; $3$ does not divide $8$.'
+        constraints: "existence/non-existence of surjections between groups of order <= 30"
+    diagnostic_exemplar:
+      problem: 'Let $\varphi : \mathbb{Z}_{12} \to \mathbb{Z}_{12}$, $\varphi(x) = 3x$. Apply the first isomorphism theorem: what is $\mathbb{Z}_{12}/\{0,4,8\}$ isomorphic to?'
+      answer: '$\mathbb{Z}_4$ (the image $\{0,3,6,9\}$ is cyclic of order $4$).'
+      solution_sketch: '$\ker\varphi = \{0,4,8\}$ and $\mathrm{im}\,\varphi = \langle 3 \rangle \cong \mathbb{Z}_4$, so the quotient is $\mathbb{Z}_4$.'
+    anki_seeds:
+      - front: "First isomorphism theorem?"
+        back: "$G/\\ker\\varphi \\cong \\mathrm{im}\\,\\varphi$ via $g\\ker\\varphi \\mapsto \\varphi(g)$."
+        type: basic
+      - front: "Strategy to identify a quotient $G/N$?"
+        back: "Find a surjective homomorphism out of $G$ whose kernel is exactly $N$; the image is the quotient."
+        type: basic
+
+  - id: isomorphism-theorems-2-3
+    name: "The Second and Third Isomorphism Theorems"
+    core: false                # terminal theorem toolkit: nothing downstream assumes them (prime-maximal-ideals routes via quotient characterizations, verified in the re-audit)
+    difficulty: 0.80
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 300
+    prerequisites:
+      - id: first-isomorphism-theorem
+        weight: 0.9
+        key: true
+      - id: quotient-groups
+        weight: 0.6
+        key: true
+      # kp3 (re-audit R-55) states the ring version of the first isomorphism theorem,
+      # closing the untaught citation in quotient-rings' solution sketches.
+      - id: quotient-rings
+        weight: 0.5
+        key: true
+      - id: complex-numbers
+        weight: 0.2
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "The second (diamond) isomorphism theorem"
+        key_prerequisites: [first-isomorphism-theorem, quotient-groups]
+        exemplars:
+          - problem: 'State the second isomorphism theorem, and sketch its proof from the first isomorphism theorem.'
+            answer: 'For $H \le G$ and $N \trianglelefteq G$: $HN \le G$, $H \cap N \trianglelefteq H$, and $HN/N \cong H/(H \cap N)$. Proof: the map $\varphi : H \to HN/N$, $\varphi(h) = hN$, is a homomorphism; it is onto since $hnN = hN$; and $\varphi(h) = N \iff h \in N \iff h \in H \cap N$, so $\ker \varphi = H \cap N$. The first isomorphism theorem finishes it.'
+            solution_sketch: 'Restrict the quotient map $G \to G/N$ to $H$; compute its image ($HN/N$) and kernel ($H \cap N$).'
+          - problem: 'In $(\mathbb{Z}, +)$, take $H = 4\mathbb{Z}$ and $N = 6\mathbb{Z}$. Compute $H + N$ and $H \cap N$, and state what the second isomorphism theorem gives.'
+            answer: '$H + N = 2\mathbb{Z}$ (integer combinations of $4$ and $6$ are the multiples of $\gcd(4,6) = 2$) and $H \cap N = 12\mathbb{Z}$ (common multiples, $\mathrm{lcm} = 12$). The theorem: $2\mathbb{Z}/6\mathbb{Z} \cong 4\mathbb{Z}/12\mathbb{Z}$ — both cyclic of order $3$.'
+            solution_sketch: 'In $\mathbb{Z}$, sums of subgroups are gcds and intersections are lcms; both quotients have index $3$.'
+        constraints: "statement + the restrict-the-quotient-map proof; concrete instances in Z (gcd/lcm) and S_3 (H a transposition subgroup, N = A_3); every instance names all four groups in the diamond"
+      - id: kp2
+        name: "The third isomorphism theorem and the correspondence theorem"
+        key_prerequisites: [quotient-groups, first-isomorphism-theorem]
+        exemplars:
+          - problem: 'State the third isomorphism theorem, and use it to identify $(\mathbb{Z}/12\mathbb{Z})\,/\,(4\mathbb{Z}/12\mathbb{Z})$.'
+            answer: 'For $N \le K$ both normal in $G$: $(G/N)/(K/N) \cong G/K$ — the common $N$ cancels. Here $G = \mathbb{Z}$, $N = 12\mathbb{Z}$, $K = 4\mathbb{Z}$: the quotient is $\mathbb{Z}/4\mathbb{Z} \cong \mathbb{Z}_4$.'
+            solution_sketch: 'Apply the cancellation statement directly; no element computation needed.'
+          - problem: 'State the correspondence theorem for $G/N$, and use it to count the subgroups of $\mathbb{Z}_{12} = \mathbb{Z}/12\mathbb{Z}$.'
+            answer: 'Subgroups of $G/N$ correspond bijectively to subgroups of $G$ containing $N$ (via $H \mapsto H/N$), and the correspondence preserves normality, indices, and containment. Subgroups of $\mathbb{Z}$ containing $12\mathbb{Z}$ are the $d\mathbb{Z}$ with $d \mid 12$: $d \in \{1, 2, 3, 4, 6, 12\}$, so $\mathbb{Z}_{12}$ has $6$ subgroups.'
+            solution_sketch: 'Every subgroup of $\mathbb{Z}$ is $d\mathbb{Z}$; containing $12\mathbb{Z}$ means $d \mid 12$; count divisors.'
+        constraints: "third-theorem identifications in Z and Z_n (n <= 24); correspondence used to count or list subgroups of Z_n via divisors; statements expected verbatim before use"
+      - id: kp3
+        name: "The first isomorphism theorem for rings"
+        key_prerequisites: [quotient-rings, first-isomorphism-theorem]
+        exemplars:
+          - problem: 'State the first isomorphism theorem for rings, and apply it to the evaluation map $\varphi : \mathbb{Z}[x] \to \mathbb{Z}$, $\varphi(p) = p(0)$.'
+            answer: 'For a ring homomorphism $\varphi : R \to S$: $\ker \varphi$ is an ideal of $R$ and $R/\ker\varphi \cong \mathrm{im}\,\varphi$ as rings, via $r + \ker\varphi \mapsto \varphi(r)$. Evaluation at $0$ is onto $\mathbb{Z}$ with kernel $\langle x \rangle$, so $\mathbb{Z}[x]/\langle x \rangle \cong \mathbb{Z}$.'
+            solution_sketch: 'Same induced-map construction as for groups, with "normal subgroup" replaced by "ideal" and both operations preserved.'
+          - problem: 'Let $\varphi : \mathbb{R}[x] \to \mathbb{C}$ be evaluation at $i$, $\varphi(p) = p(i)$. Show $\varphi$ is onto with kernel $\langle x^2 + 1 \rangle$, and conclude $\mathbb{R}[x]/\langle x^2 + 1 \rangle \cong \mathbb{C}$.'
+            answer: 'Onto: $a + bx \mapsto a + bi$ hits every complex number. Kernel: $p(i) = 0$ with $p$ real forces $x^2 + 1 \mid p$ (divide with remainder: $p = (x^2+1)q + (ax + b)$ and $ai + b = 0$ gives $a = b = 0$). So $\ker \varphi = \langle x^2 + 1 \rangle$ and the ring first isomorphism theorem gives $\mathbb{R}[x]/\langle x^2 + 1 \rangle \cong \mathbb{C}$.'
+            solution_sketch: 'Linear polynomials already cover $\mathbb{C}$; the remainder argument pins the kernel; apply the theorem.'
+        constraints: "statement + applications via evaluation and reduction maps: Z[x] -> Z, Z -> Z_n, R[x] -> C; the kernel identified by a division-with-remainder argument, not asserted"
+    diagnostic_exemplar:
+      problem: 'In $(\mathbb{Z}, +)$ take $H = 6\mathbb{Z}$ and $N = 10\mathbb{Z}$. Use the second isomorphism theorem to identify $6\mathbb{Z}/30\mathbb{Z}$, then use the third isomorphism theorem to identify $(\mathbb{Z}/30\mathbb{Z})\,/\,(6\mathbb{Z}/30\mathbb{Z})$.'
+      answer: '$H + N = 2\mathbb{Z}$ (integer combinations of $6$ and $10$ are the multiples of $\gcd(6,10) = 2$) and $H \cap N = 30\mathbb{Z}$ (common multiples, $\mathrm{lcm}(6,10) = 30$). The second isomorphism theorem gives $(H+N)/N \cong H/(H \cap N)$, i.e. $2\mathbb{Z}/10\mathbb{Z} \cong 6\mathbb{Z}/30\mathbb{Z}$; both are cyclic of order $5$, so $6\mathbb{Z}/30\mathbb{Z} \cong \mathbb{Z}_5$. Since $30\mathbb{Z} \subseteq 6\mathbb{Z}$, the third isomorphism theorem cancels the common $30\mathbb{Z}$: $(\mathbb{Z}/30\mathbb{Z})/(6\mathbb{Z}/30\mathbb{Z}) \cong \mathbb{Z}/6\mathbb{Z} \cong \mathbb{Z}_6$.'
+      solution_sketch: 'In $\mathbb{Z}$, the sum of two subgroups is generated by the gcd and the intersection by the lcm. Apply the diamond theorem, then cancel $30\mathbb{Z}$ with the third theorem.'
+    anki_seeds:
+      - front: "Second (diamond) isomorphism theorem?"
+        back: "$H \\le G$, $N \\trianglelefteq G$: $\\ HN/N \\cong H/(H \\cap N)$."
+        type: basic
+      - front: "Third isomorphism theorem?"
+        back: "$N \\le K$ both normal in $G$: $\\ (G/N)/(K/N) \\cong G/K$ — cancel the common $N$."
+        type: basic
+      - front: "First isomorphism theorem for rings?"
+        back: "$R/\\ker\\varphi \\cong \\mathrm{im}\\,\\varphi$ as rings; the kernel of a ring homomorphism is an ideal."
+        type: basic
+
+  - id: counting-homomorphisms
+    name: "Counting Homomorphisms Between Cyclic Groups"
+    core: false                # enumeration exercise; terminal
+    difficulty: 0.72
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 180
+    prerequisites:
+      - id: kernels-images
+        weight: 0.7
+        key: true
+      - id: cyclic-groups-generators
+        weight: 0.8
+        key: true
+      - id: euclidean-algorithm
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "A homomorphism from Z_m is determined by phi(1)"
+        key_prerequisites: [cyclic-groups-generators, kernels-images]
+        exemplars:
+          - problem: 'A homomorphism $\varphi : \mathbb{Z}_{10} \to \mathbb{Z}_4$ is determined by $\varphi(1)$, which must satisfy $10\,\varphi(1) = 0$. How many elements of $\mathbb{Z}_4$ satisfy that condition?'
+            answer: "2"
+            solution_sketch: 'Every element of $\mathbb{Z}_m$ is a multiple of $1$, so $\varphi(k) = k\,\varphi(1)$; well-definedness needs the relation $m \cdot 1 = 0$ to map to the identity, i.e. $|\varphi(1)|$ divides $m$. Here $10h \equiv 2h \equiv 0 \pmod 4$ holds for $h = 0, 2$.'
+          - problem: 'How many homomorphisms $\mathbb{Z} \to \mathbb{Z}_5$ are there?'
+            answer: "5"
+            solution_sketch: '$\mathbb{Z}$ is free on one generator: any choice of $\varphi(1) \in \mathbb{Z}_5$ works.'
+        constraints: "determination-by-generator arguments; targets of order <= 12"
+      - id: kp2
+        name: "The gcd count for Z_m -> Z_n"
+        key_prerequisites: [cyclic-groups-generators, euclidean-algorithm]
+        exemplars:
+          - problem: 'How many homomorphisms are there from $\mathbb{Z}_{12}$ to $\mathbb{Z}_{18}$?'
+            answer: "6"
+            solution_sketch: 'Need $12 \cdot \varphi(1) \equiv 0 \pmod{18}$; solutions form the subgroup of order $\gcd(12,18) = 6$, namely the multiples of $3$.'
+          - problem: 'How many homomorphisms are there from $\mathbb{Z}_8$ to $\mathbb{Z}_6$?'
+            answer: "2"
+            solution_sketch: '$\gcd(8, 6) = 2$: send $1 \mapsto 0$ or $1 \mapsto 3$.'
+        constraints: "m, n <= 30; the count is gcd(m, n)"
+      - id: kp3
+        name: "Surjective and injective homomorphism counts"
+        key_prerequisites: [cyclic-groups-generators, kernels-images]
+        exemplars:
+          - problem: 'How many surjective homomorphisms $\mathbb{Z}_{12} \to \mathbb{Z}_4$ are there?'
+            answer: "2"
+            solution_sketch: 'Every choice of $\varphi(1) \in \mathbb{Z}_4$ satisfies $12\,\varphi(1) \equiv 0$; surjectivity requires $\varphi(1)$ to generate $\mathbb{Z}_4$, giving the $\varphi(4) = 2$ choices $1$ and $3$.'
+          - problem: 'How many injective homomorphisms $\mathbb{Z}_4 \to \mathbb{Z}_8$ are there?'
+            answer: "2"
+            solution_sketch: 'Injective iff $|\varphi(1)| = 4$; the elements of order $4$ in $\mathbb{Z}_8$ are $2$ and $6$.'
+        constraints: "surjective count phi(n) when n | m; injective count = # elements of order m in target"
+    diagnostic_exemplar:
+      problem: 'How many surjective homomorphisms are there from $\mathbb{Z}_{20}$ to $\mathbb{Z}_{10}$?'
+      answer: '4'
+      solution_sketch: 'A homomorphism is determined by $a = \varphi(1)$, subject to $20a \equiv 0 \pmod{10}$ — true for every $a$, so there are $\gcd(20,10) = 10$ homomorphisms in all. It is onto exactly when $a$ generates $\mathbb{Z}_{10}$, i.e. $\gcd(a,10) = 1$: $\varphi(10) = 4$ choices, namely $a = 1, 3, 7, 9$.'
+    anki_seeds:
+      - front: "Number of group homomorphisms $\\mathbb{Z}_m \\to \\mathbb{Z}_n$?"
+        back: "$\\gcd(m, n)$."
+        type: basic
+      - front: "A homomorphism out of a cyclic group is completely determined by..."
+        back: "The image of one generator."
+        type: basic
+
+  - id: classifying-small-groups
+    name: "Classifying Small Groups"
+    core: false                # classification capstone; terminal
+    difficulty: 0.76
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 240
+    prerequisites:
+      - id: isomorphism-invariants
+        weight: 0.8
+        key: true
+      - id: consequences-of-lagrange
+        weight: 0.7
+        key: true
+      - id: direct-products
+        weight: 0.6
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Orders 1-5: only cyclic and Klein"
+        key_prerequisites: [consequences-of-lagrange, isomorphism-invariants]
+        exemplars:
+          - problem: 'Classify all groups of order $4$ up to isomorphism.'
+            answer: '$\mathbb{Z}_4$ and the Klein group $\mathbb{Z}_2 \times \mathbb{Z}_2$.'
+            solution_sketch: 'If some element has order $4$, cyclic. Otherwise all non-identity elements have order $2$, forcing the Klein table.'
+          - problem: 'Prove every group of order at most $5$ is abelian.'
+            answer: 'Orders $1,2,3,5$ are $1$ or prime, hence cyclic; order $4$ gives $\mathbb{Z}_4$ or Klein, both abelian.'
+            solution_sketch: 'Prime orders are cyclic by Lagrange; order 4 splits into the two known cases.'
+        constraints: "orders <= 5; case analysis on element orders"
+      - id: kp2
+        name: "Order 6 and order 2p"
+        key_prerequisites: [consequences-of-lagrange, isomorphism-invariants]
+        exemplars:
+          - problem: 'Name the two groups of order $6$ up to isomorphism and one invariant separating them.'
+            answer: '$\mathbb{Z}_6$ and $S_3 \cong D_3$; abelian-ness (or: existence of an element of order $6$).'
+            solution_sketch: 'The abelian one is cyclic; the non-abelian one is the symmetric group on $3$ letters.'
+          - problem: 'A group of order $10$ is non-abelian. Identify it up to isomorphism.'
+            answer: '$D_5$'
+            solution_sketch: 'For prime $p$, the groups of order $2p$ are $\mathbb{Z}_{2p}$ and $D_p$; non-abelian forces $D_5$.'
+        constraints: "orders 6, 10, 14: cyclic vs dihedral dichotomy (may be quoted)"
+      - id: kp3
+        name: "Recognizing a given group in the catalog"
+        key_prerequisites: [isomorphism-invariants]
+        exemplars:
+          - problem: 'Identify $U(12)$ up to isomorphism.'
+            answer: '$\mathbb{Z}_2 \times \mathbb{Z}_2$ (Klein): $U(12) = \{1,5,7,11\}$ and $5^2 = 7^2 = 11^2 = 1$.'
+            solution_sketch: 'Order $4$ with no element of order $4$ is Klein.'
+          - problem: 'Identify $U(10)$ up to isomorphism.'
+            answer: '$\mathbb{Z}_4$: $3$ has order $4$.'
+            solution_sketch: 'Order $4$ with an element of order $4$ is cyclic.'
+        constraints: "U(n) for n <= 16, small quotients and products; match against Z_n, Klein, S_3, D_4, D_5"
+    diagnostic_exemplar:
+      problem: 'The group $U(18)$ has order $6$. Decide which of the two groups of order $6$ it is, and name the invariant that settles it.'
+      answer: 'Up to isomorphism the groups of order $6$ are $\mathbb{Z}_6$ and $S_3 \cong D_3$, separated by commutativity (equivalently, by having an element of order $6$). $U(18) = \{1,5,7,11,13,17\}$ is abelian, since multiplication mod $18$ is commutative, so $U(18) \cong \mathbb{Z}_6$. Concretely $5$ has order $6$: $5,\ 25 \equiv 7,\ 35 \equiv 17,\ 85 \equiv 13,\ 65 \equiv 11,\ 55 \equiv 1$, so $U(18) = \langle 5 \rangle$.'
+      solution_sketch: 'Recall the order-$6$ catalogue, then test the separating invariant on $U(18)$ — abelian-ness, confirmed by exhibiting a generator.'
+    anki_seeds:
+      - front: "The two groups of order 4 up to isomorphism?"
+        back: "$\\mathbb{Z}_4$ and the Klein four-group $\\mathbb{Z}_2 \\times \\mathbb{Z}_2$."
+        type: basic
+      - front: "The two groups of order 6 up to isomorphism?"
+        back: "$\\mathbb{Z}_6$ and $S_3$ (the smallest non-abelian group)."
+        type: basic
+      - front: "Groups of order $2p$ ($p$ odd prime)?"
+        back: "$\\mathbb{Z}_{2p}$ and $D_p$."
+        type: basic
+
+  - id: free-groups-presentations
+    name: "Free Groups and Presentations"
+    core: true                 # category-theory builds on the free group (free-forgetful adjunction, "the free group on one generator is Z"); machinery
+    difficulty: 0.78
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 240
+    prerequisites:
+      - {id: direct-products, weight: 0.3, key: false}            # L1 #9: kp3 constraints match presentations to Z_m x Z_n via commuting generators
+      - id: group-isomorphisms
+        weight: 0.6
+        key: true
+      - id: dihedral-groups
+        weight: 0.6
+        key: true
+      - id: quotient-groups
+        weight: 0.5
+        key: false
+      - id: cyclic-groups-generators
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Free groups and reduced words"
+        key_prerequisites: [group-isomorphisms, cyclic-groups-generators]
+        exemplars:
+          - problem: 'In the free group $F(\{a, b\})$, reduce the word $a\,b\,b^{-1}\,a^{-1}\,b\,a$.'
+            answer: '$ba$'
+            solution_sketch: 'Cancel adjacent inverse pairs: $a(bb^{-1})a^{-1}ba = (aa^{-1})ba = ba$; no further cancellation is possible.'
+          - problem: 'Identify the free group on one generator, $F(\{a\})$, up to isomorphism.'
+            answer: '$(\mathbb{Z}, +)$'
+            solution_sketch: 'Reduced words are exactly the powers $a^n$ ($n \in \mathbb{Z}$), and $a^m a^n = a^{m+n}$: the map $a^n \mapsto n$ is an isomorphism.'
+        constraints: "words of length <= 8 on at most 2 generators; note F on >= 2 generators is nonabelian (ab and ba are distinct reduced words)"
+      - id: kp2
+        name: "The universal property: generators map freely"
+        key_prerequisites: [group-isomorphisms]
+        exemplars:
+          - problem: 'Explain why homomorphisms $F(\{a\}) \to G$ correspond exactly to elements of $G$.'
+            answer: 'Freeness: any choice $\varphi(a) = g$ extends uniquely by $\varphi(a^n) = g^n$, and there are no relations to respect — so $\varphi \leftrightarrow \varphi(a)$ is a bijection with $G$.'
+            solution_sketch: 'A homomorphism out of a free group is determined by, and free to choose, the images of the generators.'
+          - problem: 'How many homomorphisms are there from $F(\{a, b\})$ to $\mathbb{Z}_5$?'
+            answer: "25"
+            solution_sketch: 'Each of $a, b$ may map to any of the $5$ elements independently: $5^2 = 25$.'
+        constraints: "hom counts |G|^(number of generators) with |G| <= 8; contrast with the constrained counts for Z_m -> Z_n"
+      - id: kp3
+        name: "Presentations by generators and relations"
+        key_prerequisites: [dihedral-groups, quotient-groups]
+        exemplars:
+          - problem: 'Identify the group $\langle a \mid a^6 = e \rangle$ up to isomorphism.'
+            answer: '$\mathbb{Z}_6$'
+            solution_sketch: 'One generator with the single relation $a^6 = e$ leaves exactly the powers $e, a, \dots, a^5$ — the cyclic group of order $6$ (the quotient of $F(\{a\})$ by the relation).'
+          - problem: 'The presentation $\langle r, s \mid r^4 = s^2 = e,\ srs = r^{-1} \rangle$ defines which familiar group of order $8$?'
+            answer: '$D_4$'
+            solution_sketch: 'These are exactly the dihedral relations: a quarter-turn $r$, a reflection $s$, and conjugation by $s$ inverting $r$; the relations reduce every word to one of $r^i s^j$ ($0 \le i < 4$, $j \in \{0,1\}$).'
+        constraints: "match presentations to Z_n, D_n (n <= 6), and Z_m x Z_n (via commuting generators); target orders <= 12; that the relations cap the order may be quoted"
+    diagnostic_exemplar:
+      problem: 'How many homomorphisms are there from the free group $F(\{a, b\})$ to $\mathbb{Z}_3$, and which group does the presentation $\langle x \mid x^5 = e \rangle$ define?'
+      answer: '$3^2 = 9$ homomorphisms; the presentation defines $\mathbb{Z}_5$.'
+      solution_sketch: 'Generators of a free group map freely; a single generator with $x^5 = e$ gives the cyclic group of order $5$.'
+    anki_seeds:
+      - front: "What is the free group $F(S)$?"
+        back: "Reduced words in the generators $S$ and their inverses, multiplied by concatenation-then-cancellation; no relations hold except the forced ones."
+        type: basic
+      - front: "Free group on one generator?"
+        back: "$F(\\{a\\}) \\cong (\\mathbb{Z}, +)$."
+        type: basic
+      - front: "Presentation of the dihedral group $D_n$?"
+        back: "$\\langle r, s \\mid r^n = s^2 = e,\\ srs = r^{-1} \\rangle$."
+        type: basic

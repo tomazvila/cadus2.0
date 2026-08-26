@@ -1,0 +1,722 @@
+unit: lines-angles
+course: geometry
+module: "Lines & Angles"
+topics:
+  - id: points-lines-planes
+    name: Points, Lines, and Planes
+    core: true
+    difficulty: 0.15
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 60
+    prerequisites:
+      - id: coordinate-plane
+        weight: 0.3
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: Name points, lines, and planes
+        key_prerequisites: []
+        exemplars:
+          - problem: 'How many distinct lines pass through two distinct points?'
+            answer: 'Exactly one'
+          - problem: 'Points $P$ and $Q$ are distinct. Give two valid names for the line through them.'
+            answer: 'Line $PQ$ and line $QP$ (either order names the same line).'
+        constraints: "naming conventions only; two-point line names, three-point plane names"
+      - id: kp2
+        name: Collinear and coplanar points
+        key_prerequisites: []
+        exemplars:
+          - problem: 'Point $B$ lies between points $A$ and $C$ on a line. Are $A$, $B$, and $C$ collinear?'
+            answer: 'Yes; all three lie on one line.'
+          - problem: 'What is the maximum number of points in which two distinct lines can intersect?'
+            answer: 'One'
+            solution_sketch: 'Two distinct lines share at most one point; sharing two would force them to be the same line.'
+        constraints: "small configurations of 2-4 points/lines; ask collinear/coplanar or intersection counts"
+      - id: kp3
+        name: Intersections of lines and planes
+        key_prerequisites: []
+        exemplars:
+          - problem: 'Two distinct planes intersect. What kind of figure is their intersection?'
+            answer: 'A line'
+          - problem: 'A line intersects a plane that does not contain it. In how many points can they meet?'
+            answer: 'Exactly one'
+        constraints: "postulate-level facts; no coordinates required"
+    diagnostic_exemplar:
+      problem: 'State the number of distinct lines through two distinct points, and the figure in which two distinct intersecting planes meet.'
+      answer: 'Exactly one line; the planes meet in a line.'
+      solution_sketch: 'These are the incidence postulates: two distinct points determine exactly one line, and two distinct planes that meet intersect in a line — never in a single point.'
+    anki_seeds:
+      - front: "Through any two distinct points there is exactly..."
+        back: "one line"
+        type: basic
+      - front: "Two distinct intersecting planes intersect in a..."
+        back: "line"
+        type: basic
+
+  - id: measuring-segments-angles
+    name: Measuring Segments and Angles
+    core: true
+    difficulty: 0.18
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 60
+    prerequisites:
+      - id: points-lines-planes
+        weight: 0.5
+        key: false
+      - id: one-step-equations
+        weight: 0.6
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: Segment addition with numbers
+        key_prerequisites: [one-step-equations]
+        exemplars:
+          - problem: 'Point $B$ lies on $\overline{AC}$ with $AB = 7$ and $BC = 12$. Find $AC$.'
+            answer: "19"
+          - problem: 'Point $M$ lies on $\overline{PQ}$ with $PQ = 30$ and $PM = 13$. Find $MQ$.'
+            answer: "17"
+            solution_sketch: '$MQ = PQ - PM = 30 - 13 = 17$.'
+          - problem: 'On a number line, $A$ has coordinate $-3$ and $B$ has coordinate $8$. Find $AB$.'
+            answer: "11"
+            solution_sketch: '$AB = |8 - (-3)| = 11$.'
+        constraints: "integer lengths 1-50; point always between the endpoints; ruler-postulate items use coordinates between -20 and 20"
+      - id: kp2
+        name: Angle addition with numbers
+        key_prerequisites: [one-step-equations]
+        exemplars:
+          - problem: 'Ray $\overrightarrow{OB}$ lies in the interior of $\angle AOC$. If $m\angle AOB = 34^\circ$ and $m\angle BOC = 51^\circ$, find $m\angle AOC$ in degrees.'
+            answer: "85"
+          - problem: 'Ray $\overrightarrow{QR}$ lies in the interior of $\angle PQS$. If $m\angle PQS = 110^\circ$ and $m\angle PQR = 45^\circ$, find $m\angle RQS$ in degrees.'
+            answer: "65"
+            solution_sketch: '$m\angle RQS = 110^\circ - 45^\circ = 65^\circ$.'
+        constraints: "whole-degree measures; totals stay below 180 degrees"
+      - id: kp3
+        name: Classify angles by measure
+        key_prerequisites: []
+        exemplars:
+          - problem: 'Classify a $134^\circ$ angle as acute, right, obtuse, or straight.'
+            answer: 'obtuse'
+          - problem: 'Classify a $90^\circ$ angle as acute, right, obtuse, or straight.'
+            answer: 'right'
+        constraints: "measures between 1 and 180 degrees; the four standard classes"
+    diagnostic_exemplar:
+      problem: 'Point $X$ lies on $\overline{WY}$ with $WY = 41$ and $WX = 18$. Find $XY$.'
+      answer: "23"
+      solution_sketch: '$XY = WY - WX = 41 - 18 = 23$.'
+    anki_seeds:
+      - front: "An angle measuring more than 90 but less than 180 degrees is..."
+        back: "obtuse"
+        type: basic
+      - front: "On a number line, the distance between coordinates a and b is..."
+        back: "|a - b|"
+        type: basic
+
+  - id: segment-angle-addition
+    name: Segment and Angle Addition
+    core: true
+    difficulty: 0.2
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 75
+    prerequisites:
+      - id: measuring-segments-angles
+        weight: 0.7
+        key: true
+      - id: one-step-equations
+        weight: 0.5
+        key: false
+      - id: evaluating-expressions
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: Set up an equation from a segment diagram
+        key_prerequisites: [one-step-equations, measuring-segments-angles]
+        exemplars:
+          - problem: 'Point $B$ lies on $\overline{AC}$ with $AB = 2x + 3$, $BC = 3x - 1$, and $AC = 22$. Find $x$.'
+            answer: "4"
+            solution_sketch: '$(2x+3) + (3x-1) = 22 \Rightarrow 5x + 2 = 22 \Rightarrow x = 4$.'
+          - problem: 'Point $N$ lies on $\overline{RS}$ with $RN = 4x - 3$, $NS = 2x + 9$, and $RS = 42$. Find $RN$.'
+            answer: "21"
+            solution_sketch: '$6x + 6 = 42 \Rightarrow x = 6$, so $RN = 4(6) - 3 = 21$.'
+        constraints: "linear expressions with integer solutions; lengths come out positive"
+      - id: kp2
+        name: Midpoint and segment bisector equations
+        key_prerequisites: [one-step-equations, measuring-segments-angles]
+        exemplars:
+          - problem: '$M$ is the midpoint of $\overline{AB}$, with $AM = 3x - 5$ and $MB = x + 9$. Find $AB$.'
+            answer: "32"
+            solution_sketch: '$3x - 5 = x + 9 \Rightarrow x = 7$, so $AM = 16$ and $AB = 2 \cdot 16 = 32$.'
+          - problem: 'Segment $\overline{XY}$ is bisected at $T$, with $XT = 4x + 1$ and $XY = 10x - 6$. Find $XY$.'
+            answer: "34"
+            solution_sketch: '$2(4x + 1) = 10x - 6 \Rightarrow 8x + 2 = 10x - 6 \Rightarrow x = 4$; $XY = 10(4) - 6 = 34$.'
+        constraints: "the relation 2(half) = whole; integer solutions; positive lengths"
+      - id: kp3
+        name: Angle addition equations
+        key_prerequisites: [one-step-equations, measuring-segments-angles]
+        exemplars:
+          - problem: 'Ray $\overrightarrow{OB}$ lies in the interior of $\angle AOC$. If $m\angle AOB = (2x + 5)^\circ$, $m\angle BOC = (3x - 10)^\circ$, and $m\angle AOC = 70^\circ$, find $m\angle AOB$ in degrees.'
+            answer: "35"
+            solution_sketch: '$5x - 5 = 70 \Rightarrow x = 15$; $m\angle AOB = 2(15) + 5 = 35^\circ$.'
+          - problem: 'Ray $\overrightarrow{OB}$ bisects $\angle AOC$ with $m\angle AOB = (4x - 6)^\circ$ and $m\angle BOC = (2x + 18)^\circ$. Find $m\angle AOC$ in degrees.'
+            answer: "84"
+            solution_sketch: '$4x - 6 = 2x + 18 \Rightarrow x = 12$; each half is $42^\circ$, so $m\angle AOC = 84^\circ$.'
+        constraints: "linear expressions; whole-degree answers; totals below 180 degrees"
+    diagnostic_exemplar:
+      problem: 'Ray $\overrightarrow{OB}$ bisects $\angle AOC$, with $m\angle AOB = (3x + 4)^\circ$ and $m\angle AOC = (8x - 12)^\circ$. Find $m\angle AOC$, in degrees.'
+      answer: '68'
+      solution_sketch: 'The bisector gives $2(3x + 4) = 8x - 12$, so $6x + 8 = 8x - 12$ and $x = 10$; then $m\angle AOB = 34^\circ$ and $m\angle AOC = 68^\circ$.'
+    anki_seeds:
+      - front: "Segment addition postulate: if B is between A and C, then AB + BC = ..."
+        back: "AC"
+        type: basic
+      - front: "The midpoint of a segment divides it into two segments that are..."
+        back: "congruent (each half the original length)"
+        type: basic
+
+  - id: complementary-supplementary-angles
+    name: Complementary and Supplementary Angles
+    core: true
+    difficulty: 0.24
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 60
+    prerequisites:
+      - id: measuring-segments-angles
+        weight: 0.6
+        key: true
+      - id: one-step-equations
+        weight: 0.5
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: Complements
+        key_prerequisites: [measuring-segments-angles]
+        exemplars:
+          - problem: 'Find the complement of a $37^\circ$ angle (in degrees).'
+            answer: "53"
+          - problem: 'Find the complement of a $62^\circ$ angle (in degrees).'
+            answer: "28"
+            solution_sketch: '$90 - 62 = 28$.'
+        constraints: "whole-degree acute angles"
+      - id: kp2
+        name: Supplements
+        key_prerequisites: [measuring-segments-angles]
+        exemplars:
+          - problem: 'Find the supplement of a $104^\circ$ angle (in degrees).'
+            answer: "76"
+          - problem: 'Find the supplement of a $45^\circ$ angle (in degrees).'
+            answer: "135"
+            solution_sketch: '$180 - 45 = 135$.'
+        constraints: "whole-degree angles between 1 and 179 degrees"
+      - id: kp3
+        name: Self-referential complements and supplements
+        key_prerequisites: [one-step-equations]
+        exemplars:
+          - problem: 'An angle equals its own complement. What is its measure in degrees?'
+            answer: "45"
+            solution_sketch: '$x = 90 - x \Rightarrow x = 45$.'
+          - problem: 'An angle equals its own supplement. What is its measure in degrees?'
+            answer: "90"
+            solution_sketch: '$x = 180 - x \Rightarrow x = 90$.'
+        constraints: "short linear equation setups (collect x, then divide)"
+    diagnostic_exemplar:
+      problem: 'An angle is twice its complement. Find the supplement of that angle, in degrees.'
+      answer: '120'
+      solution_sketch: '$x = 2(90 - x)$ gives $3x = 180$, so the angle is $60^\circ$; its supplement is $180 - 60 = 120^\circ$.'
+    anki_seeds:
+      - front: "Complementary angles sum to..."
+        back: "90 degrees"
+        type: basic
+      - front: "Supplementary angles sum to..."
+        back: "180 degrees"
+        type: basic
+
+  - id: angle-relationships
+    name: Angle Pair Relationships
+    core: true
+    difficulty: 0.28
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 75
+    prerequisites:
+      - id: complementary-supplementary-angles
+        weight: 0.7
+        key: true
+      - id: segment-angle-addition
+        weight: 0.5
+        key: false
+      - id: two-step-equations
+        weight: 0.6
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: Vertical angles and linear pairs
+        key_prerequisites: [two-step-equations]
+        exemplars:
+          - problem: 'Two lines intersect. One angle measures $118^\circ$. What is the measure of its vertical angle, in degrees?'
+            answer: "118"
+          - problem: 'Two angles form a linear pair and measure $(3x + 10)^\circ$ and $(2x + 20)^\circ$. Find $x$.'
+            answer: "30"
+            solution_sketch: '$5x + 30 = 180 \Rightarrow x = 30$ (angles $100^\circ$ and $80^\circ$).'
+        constraints: "vertical angles congruent; linear pairs sum to 180; integer solutions"
+      - id: kp2
+        name: Equations from complement and supplement conditions
+        key_prerequisites: [two-step-equations, complementary-supplementary-angles]
+        exemplars:
+          - problem: 'An angle measures $24^\circ$ more than its complement. Find the angle, in degrees.'
+            answer: "57"
+            solution_sketch: '$x = (90 - x) + 24 \Rightarrow 2x = 114 \Rightarrow x = 57$.'
+          - problem: 'An angle is twice its supplement. Find the angle, in degrees.'
+            answer: "120"
+            solution_sketch: '$x = 2(180 - x) \Rightarrow 3x = 360 \Rightarrow x = 120$.'
+        constraints: "one linear condition relating an angle to its complement or supplement; integer answers"
+      - id: kp3
+        name: Vertical-angle equations and angles at a point
+        key_prerequisites: [two-step-equations]
+        exemplars:
+          - problem: 'Two vertical angles measure $(7x - 8)^\circ$ and $(5x + 16)^\circ$. Find the measure of each, in degrees.'
+            answer: "76"
+            solution_sketch: 'Vertical angles are equal: $7x - 8 = 5x + 16 \Rightarrow x = 12$; each is $76^\circ$.'
+          - problem: 'Four angles around a point measure $x^\circ$, $(2x)^\circ$, $(3x)^\circ$, and $(4x)^\circ$. Find the largest, in degrees.'
+            answer: "144"
+            solution_sketch: '$10x = 360 \Rightarrow x = 36$; largest is $4x = 144^\circ$.'
+        constraints: "angles at a point sum to 360; vertical pairs equal; integer solutions"
+    diagnostic_exemplar:
+      problem: 'Two vertical angles measure $(5x - 12)^\circ$ and $(3x + 8)^\circ$. Find the measure of an angle that forms a linear pair with them, in degrees.'
+      answer: '142'
+      solution_sketch: 'Vertical angles are congruent: $5x - 12 = 3x + 8$ gives $x = 10$, so each measures $38^\circ$; the linear-pair partner is $180 - 38 = 142^\circ$.'
+    anki_seeds:
+      - front: "Vertical angles are always..."
+        back: "congruent"
+        type: basic
+      - front: "A linear pair of angles is..."
+        back: "supplementary (sums to 180 degrees)"
+        type: basic
+      - front: "The angles around a point sum to..."
+        back: "360 degrees"
+        type: basic
+
+  - id: angle-bisectors
+    name: Angle Bisectors
+    core: true
+    difficulty: 0.3
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 90
+    prerequisites:
+      - id: angle-relationships
+        weight: 0.6
+        key: true
+      - id: segment-angle-addition
+        weight: 0.5
+        key: false
+      - id: two-step-equations
+        weight: 0.5
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: A bisector halves the angle
+        key_prerequisites: [segment-angle-addition]
+        exemplars:
+          - problem: 'Ray $\overrightarrow{OB}$ bisects $\angle AOC$ and $m\angle AOC = 84^\circ$. Find $m\angle AOB$, in degrees.'
+            answer: "42"
+          - problem: 'Ray $\overrightarrow{OB}$ bisects $\angle AOC$ and $m\angle AOB = 31^\circ$. Find $m\angle AOC$, in degrees.'
+            answer: "62"
+            solution_sketch: 'The bisector makes two equal halves: $m\angle AOC = 2 \cdot 31 = 62^\circ$.'
+        constraints: "even whole angles so halves are whole degrees"
+      - id: kp2
+        name: Bisector equations with variables
+        key_prerequisites: [two-step-equations]
+        exemplars:
+          - problem: 'Ray $\overrightarrow{OB}$ bisects $\angle AOC$; $m\angle AOB = (3x + 4)^\circ$ and $m\angle BOC = (5x - 12)^\circ$. Find $m\angle AOC$, in degrees.'
+            answer: "56"
+            solution_sketch: '$3x + 4 = 5x - 12 \Rightarrow x = 8$; each half is $28^\circ$, so $m\angle AOC = 56^\circ$.'
+          - problem: 'Ray $\overrightarrow{QS}$ bisects $\angle PQR$; $m\angle PQS = (2x + 7)^\circ$ and $m\angle PQR = (6x - 10)^\circ$. Find $m\angle PQR$, in degrees.'
+            answer: "62"
+            solution_sketch: '$2(2x + 7) = 6x - 10 \Rightarrow 4x + 14 = 6x - 10 \Rightarrow x = 12$; $m\angle PQR = 62^\circ$.'
+        constraints: "set the halves equal, or 2(half) = whole; integer solutions"
+      - id: kp3
+        name: Bisectors combined with other angle relationships
+        key_prerequisites: [angle-relationships]
+        exemplars:
+          - problem: '$\angle AOC$ and $\angle COD$ form a linear pair with $m\angle COD = 48^\circ$. Ray $\overrightarrow{OB}$ bisects $\angle AOC$. Find $m\angle AOB$, in degrees.'
+            answer: "66"
+            solution_sketch: '$m\angle AOC = 180 - 48 = 132^\circ$; half of that is $66^\circ$.'
+          - problem: '$m\angle AOB = 88^\circ$. Ray $\overrightarrow{OC}$ bisects $\angle AOB$, and ray $\overrightarrow{OD}$ bisects $\angle AOC$. Find $m\angle AOD$, in degrees.'
+            answer: "22"
+            solution_sketch: '$m\angle AOC = 44^\circ$; bisecting again gives $22^\circ$.'
+        constraints: "at most two steps: one linear pair/supplement step plus one or two halvings"
+    diagnostic_exemplar:
+      problem: '$\angle AOC$ and $\angle COD$ form a linear pair, with $m\angle AOC = (6x + 20)^\circ$ and $m\angle COD = (4x)^\circ$. Ray $\overrightarrow{OB}$ bisects $\angle AOC$. Find $m\angle AOB$, in degrees.'
+      answer: '58'
+      solution_sketch: '$(6x + 20) + 4x = 180$ gives $x = 16$, so $m\angle AOC = 116^\circ$ and the bisector halves it: $m\angle AOB = 58^\circ$.'
+    anki_seeds:
+      - front: "An angle bisector divides an angle into..."
+        back: "two congruent angles"
+        type: basic
+
+  - id: perpendicular-bisectors
+    name: Perpendicular Lines and Perpendicular Bisectors
+    core: true
+    difficulty: 0.32
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 90
+    prerequisites:
+      - id: segment-angle-addition
+        weight: 0.5
+        key: true
+      - id: angle-relationships
+        weight: 0.5
+        key: false
+      - id: two-step-equations
+        weight: 0.5
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: Perpendicularity and the bisected segment
+        key_prerequisites: [angle-relationships]
+        exemplars:
+          - problem: 'Two perpendicular lines intersect. What is the measure of each angle they form, in degrees?'
+            answer: "90"
+          - problem: 'Line $\ell$ is the perpendicular bisector of $\overline{XY}$, meeting it at $M$. If $XY = 26$, find $XM$.'
+            answer: "13"
+            solution_sketch: 'The bisector cuts the segment in half: $26/2 = 13$.'
+        constraints: "even segment lengths; right angles stated in whole degrees"
+      - id: kp2
+        name: Equidistance from the endpoints
+        key_prerequisites: [two-step-equations]
+        exemplars:
+          - problem: 'Point $P$ lies on the perpendicular bisector of $\overline{AB}$ and $PA = 17$. Find $PB$.'
+            answer: "17"
+            solution_sketch: 'Every point on the perpendicular bisector is equidistant from the endpoints.'
+          - problem: 'Point $P$ lies on the perpendicular bisector of $\overline{AB}$ with $PA = 3x + 5$ and $PB = 5x - 9$. Find $PA$.'
+            answer: "26"
+            solution_sketch: '$3x + 5 = 5x - 9 \Rightarrow x = 7$; $PA = 3(7) + 5 = 26$.'
+        constraints: "equidistance theorem; linear expressions with integer solutions"
+      - id: kp3
+        name: Equations through the midpoint or the right angle
+        key_prerequisites: [two-step-equations, segment-angle-addition]
+        exemplars:
+          - problem: 'The perpendicular bisector of $\overline{AB}$ meets it at $M$. If $AB = 4x + 2$ and $AM = 15$, find $x$.'
+            answer: "7"
+            solution_sketch: '$AB = 2 \cdot AM = 30$, so $4x + 2 = 30 \Rightarrow x = 7$.'
+          - problem: 'Line $m \perp$ line $n$, and one of the angles they form measures $(3x + 18)^\circ$. Find $x$.'
+            answer: "24"
+            solution_sketch: 'Perpendicular lines form right angles: $3x + 18 = 90 \Rightarrow x = 24$.'
+        constraints: "one linear equation from the midpoint relation or the 90-degree condition"
+    diagnostic_exemplar:
+      problem: 'Point $P$ lies on the perpendicular bisector of $\overline{AB}$ with $PA = 2x + 9$ and $PB = 4x - 7$. Find $PA$.'
+      answer: "25"
+      solution_sketch: '$2x + 9 = 4x - 7 \Rightarrow x = 8$; $PA = 25$.'
+    anki_seeds:
+      - front: "Any point on the perpendicular bisector of a segment is equidistant from..."
+        back: "the segment's endpoints"
+        type: basic
+      - front: "Perpendicular lines meet at angles of..."
+        back: "90 degrees"
+        type: basic
+
+  - id: transversal-angle-pairs
+    name: Transversal Angle Pairs
+    core: true
+    difficulty: 0.3
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 75
+    prerequisites:
+      - id: angle-relationships
+        weight: 0.7
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: Name the angle pair
+        key_prerequisites: [angle-relationships]
+        exemplars:
+          - problem: 'A transversal crosses two lines. Two angles lie between the lines on opposite sides of the transversal. What is this pair called?'
+            answer: 'alternate interior angles'
+          - problem: 'A transversal crosses two lines. Two angles occupy the same corner position at each intersection (same side of the transversal, same side of each line). What is this pair called?'
+            answer: 'corresponding angles'
+          - problem: 'A transversal crosses two lines. Two angles lie between the lines on the same side of the transversal. What is this pair called?'
+            answer: 'same-side (co-interior) interior angles'
+        constraints: "pairs limited to corresponding, alternate interior, alternate exterior, same-side interior"
+      - id: kp2
+        name: Compute congruent pairs with parallel lines
+        key_prerequisites: [angle-relationships]
+        exemplars:
+          - problem: 'Parallel lines are cut by a transversal. One angle measures $65^\circ$. Find its alternate interior angle, in degrees.'
+            answer: "65"
+          - problem: 'Parallel lines are cut by a transversal. One angle measures $132^\circ$. Find its corresponding angle, in degrees.'
+            answer: "132"
+            solution_sketch: 'With parallel lines, corresponding angles are congruent.'
+        constraints: "whole-degree angles; congruent pairs: corresponding, alternate interior, alternate exterior"
+      - id: kp3
+        name: Compute supplementary pairs with parallel lines
+        key_prerequisites: [angle-relationships]
+        exemplars:
+          - problem: 'Parallel lines are cut by a transversal. One same-side (co-interior) interior angle measures $112^\circ$. Find the other, in degrees.'
+            answer: "68"
+            solution_sketch: 'Same-side interior angles are supplementary: $180 - 112 = 68$.'
+          - problem: 'Parallel lines are cut by a transversal, and one exterior angle measures $48^\circ$. Find the measure of the same-side exterior angle paired with it, in degrees.'
+            answer: "132"
+            solution_sketch: 'Same-side exterior angles are supplementary: $180 - 48 = 132$.'
+        constraints: "supplementary pairs: same-side interior, same-side exterior; whole-degree angles"
+    diagnostic_exemplar:
+      problem: 'Parallel lines are cut by a transversal. One interior angle measures $73^\circ$. Find its same-side interior partner, in degrees.'
+      answer: "107"
+      solution_sketch: 'Same-side interior angles are supplementary: $180 - 73 = 107$.'
+    anki_seeds:
+      - front: "With parallel lines, alternate interior angles are..."
+        back: "congruent"
+        type: basic
+      - front: "With parallel lines, same-side (co-interior) interior angles are..."
+        back: "supplementary (sum to 180 degrees)"
+        type: basic
+      - front: "With parallel lines, corresponding angles are..."
+        back: "congruent"
+        type: basic
+
+  - id: parallel-lines-transversals
+    name: Parallel Lines and Transversals
+    core: true
+    difficulty: 0.35
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 90
+    prerequisites:
+      - id: transversal-angle-pairs
+        weight: 0.8
+        key: true
+      - id: multi-step-equations
+        weight: 0.5
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: Solve congruent-pair equations
+        key_prerequisites: [transversal-angle-pairs]
+        exemplars:
+          - problem: 'Corresponding angles measure $(5x - 10)^\circ$ and $(3x + 40)^\circ$ where the lines are parallel. Find $x$.'
+            answer: "25"
+            solution_sketch: 'Corresponding angles are congruent: $5x - 10 = 3x + 40 \Rightarrow x = 25$.'
+          - problem: 'Alternate exterior angles measure $(7x - 4)^\circ$ and $(5x + 22)^\circ$ where the lines are parallel. Find $x$.'
+            answer: "13"
+            solution_sketch: 'Alternate exterior angles are congruent: $7x - 4 = 5x + 22 \Rightarrow x = 13$.'
+        constraints: "linear expressions; congruent pairs only; integer solutions"
+      - id: kp2
+        name: Solve supplementary-pair equations
+        key_prerequisites: [transversal-angle-pairs]
+        exemplars:
+          - problem: 'Same-side interior angles measure $(2x + 30)^\circ$ and $(3x + 20)^\circ$ where the lines are parallel. Find $x$.'
+            answer: "26"
+            solution_sketch: 'They are supplementary: $5x + 50 = 180 \Rightarrow x = 26$.'
+          - problem: 'Same-side interior angles measure $(4x + 18)^\circ$ and $(2x + 30)^\circ$ where the lines are parallel. Find $x$.'
+            answer: "22"
+            solution_sketch: '$6x + 48 = 180 \Rightarrow x = 22$ (angles $106^\circ$ and $74^\circ$).'
+        constraints: "linear expressions; the pair sums to 180; integer solutions; both angles positive and distinct from 90"
+      - id: kp3
+        name: Multi-step angle chains
+        key_prerequisites: [transversal-angle-pairs]
+        exemplars:
+          - problem: 'Parallel lines are cut by a transversal. An angle of $(3x)^\circ$ and its same-side interior partner of $(2x + 20)^\circ$ are formed. Find the larger of the two angles, in degrees.'
+            answer: "96"
+            solution_sketch: '$5x + 20 = 180 \Rightarrow x = 32$; the angles are $96^\circ$ and $84^\circ$.'
+          - problem: 'Parallel lines are cut by a transversal. $\angle 1$ and $\angle 2$ are corresponding angles, and $\angle 2$ and $\angle 3$ form a linear pair. If $m\angle 1 = 64^\circ$, find $m\angle 3$, in degrees.'
+            answer: "116"
+            solution_sketch: '$m\angle 2 = 64^\circ$ (corresponding); $m\angle 3 = 180 - 64 = 116^\circ$.'
+        constraints: "two-step chains through vertical angles, linear pairs, and one parallel-line pair"
+    diagnostic_exemplar:
+      problem: 'Parallel lines are cut by a transversal. $\angle 1$ and $\angle 2$ are alternate interior angles with $m\angle 1 = (4x + 15)^\circ$ and $m\angle 2 = (6x - 5)^\circ$, and $\angle 2$ and $\angle 3$ form a linear pair. Find $m\angle 3$, in degrees.'
+      answer: '125'
+      solution_sketch: 'Alternate interior angles are congruent: $4x + 15 = 6x - 5$ gives $x = 10$, so $m\angle 2 = 55^\circ$ and $m\angle 3 = 180 - 55 = 125^\circ$.'
+    anki_seeds:
+      - front: "To solve for x across a transversal, first decide whether the angle pair is congruent or..."
+        back: "supplementary"
+        type: basic
+      - front: "With parallel lines, alternate exterior angles are..."
+        back: "congruent"
+        type: basic
+
+  - id: proving-lines-parallel
+    name: Proving Lines Parallel
+    core: false                # proof-practice genre; terminal
+    difficulty: 0.4
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 120
+    prerequisites:
+      - id: parallel-lines-transversals
+        weight: 0.8
+        key: true
+      - id: transversal-angle-pairs
+        weight: 0.4
+        key: false
+      - id: postulates-theorems-justifications
+        weight: 0.5
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: Identify the converse that applies
+        key_prerequisites: [transversal-angle-pairs]
+        exemplars:
+          - problem: 'A transversal cuts lines $\ell$ and $m$, and a pair of corresponding angles is congruent. Which theorem lets you conclude $\ell \parallel m$?'
+            answer: 'The converse of the corresponding angles postulate.'
+          - problem: 'A transversal cuts lines $\ell$ and $m$, and a pair of same-side interior angles sums to $180^\circ$. Which theorem lets you conclude $\ell \parallel m$?'
+            answer: 'The converse of the same-side interior angles theorem.'
+        constraints: "name the converse matching the given angle pair"
+      - id: kp2
+        name: Solve for the value that makes lines parallel
+        key_prerequisites: [parallel-lines-transversals]
+        exemplars:
+          - problem: 'Lines $m$ and $n$ are cut by a transversal; alternate interior angles measure $(4x + 12)^\circ$ and $(6x - 20)^\circ$. For what value of $x$ are $m$ and $n$ parallel?'
+            answer: "16"
+            solution_sketch: 'Parallel iff the alternate interior angles are equal: $4x + 12 = 6x - 20 \Rightarrow x = 16$.'
+          - problem: 'Lines $p$ and $q$ are cut by a transversal; same-side interior angles measure $(3x + 25)^\circ$ and $(5x - 45)^\circ$. For what value of $x$ are $p$ and $q$ parallel?'
+            answer: "25"
+            solution_sketch: 'Parallel iff the pair is supplementary: $8x - 20 = 180 \Rightarrow x = 25$.'
+        constraints: "linear expressions; state whether the pair must be equal or supplementary; integer solutions"
+      - id: kp3
+        name: Decide from measures whether lines are parallel
+        key_prerequisites: [transversal-angle-pairs]
+        exemplars:
+          - problem: 'A transversal makes alternate interior angles of $71^\circ$ and $71^\circ$ with lines $a$ and $b$. Are $a$ and $b$ parallel?'
+            answer: 'Yes; congruent alternate interior angles force the lines parallel.'
+          - problem: 'A transversal makes corresponding angles of $84^\circ$ and $86^\circ$ with lines $a$ and $b$. Are $a$ and $b$ parallel?'
+            answer: 'No; corresponding angles would have to be congruent.'
+          - problem: 'A transversal makes same-side interior angles of $92^\circ$ and $88^\circ$ with lines $a$ and $b$. Are $a$ and $b$ parallel?'
+            answer: 'Yes; the same-side interior angles sum to $180^\circ$.'
+        constraints: "give the yes/no decision plus the converse used"
+    diagnostic_exemplar:
+      problem: 'Lines $r$ and $s$ are cut by a transversal; alternate exterior angles measure $(5x - 30)^\circ$ and $(3x + 40)^\circ$. For what value of $x$ are $r$ and $s$ parallel?'
+      answer: "35"
+      solution_sketch: 'Parallel iff the alternate exterior angles are equal: $5x - 30 = 3x + 40 \Rightarrow x = 35$.'
+    anki_seeds:
+      - front: "If a transversal makes congruent alternate interior angles with two lines, the lines are..."
+        back: "parallel (converse of the alternate interior angles theorem)"
+        type: basic
+      - front: "To prove lines parallel from same-side interior angles, show the pair..."
+        back: "sums to 180 degrees"
+        type: basic
+
+  - id: triangle-angle-sum
+    name: Triangle Angle Sum
+    core: true
+    difficulty: 0.35
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 90
+    prerequisites:
+      - id: angle-relationships
+        weight: 0.6
+        key: true
+      - id: parallel-lines-transversals
+        weight: 0.5
+        key: false
+      - id: multi-step-equations
+        weight: 0.5
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: Find the third angle
+        key_prerequisites: [angle-relationships]
+        exemplars:
+          - problem: 'Two angles of a triangle measure $48^\circ$ and $63^\circ$. Find the third angle, in degrees.'
+            answer: "69"
+          - problem: 'A right triangle has an acute angle of $27^\circ$. Find the other acute angle, in degrees.'
+            answer: "63"
+            solution_sketch: 'The acute angles of a right triangle are complementary: $90 - 27 = 63$.'
+        constraints: "whole-degree angles summing to 180"
+      - id: kp2
+        name: Algebraic angle sums
+        key_prerequisites: [multi-step-equations]
+        exemplars:
+          - problem: 'The angles of a triangle measure $x^\circ$, $(2x)^\circ$, and $(3x)^\circ$. Find the largest angle, in degrees.'
+            answer: "90"
+            solution_sketch: '$6x = 180 \Rightarrow x = 30$; largest is $3x = 90^\circ$.'
+          - problem: 'The angles of a triangle measure $(2x + 10)^\circ$, $(3x - 5)^\circ$, and $(x + 25)^\circ$. Find the largest angle, in degrees.'
+            answer: "70"
+            solution_sketch: '$6x + 30 = 180 \Rightarrow x = 25$; the angles are $60^\circ$, $70^\circ$, $50^\circ$.'
+        constraints: "linear expressions with integer solutions; all angles positive"
+      - id: kp3
+        name: Angle sums from verbal and combined conditions
+        key_prerequisites: [multi-step-equations, angle-relationships]
+        exemplars:
+          - problem: 'In $\triangle ABC$, $m\angle A = 2 \cdot m\angle B$ and $m\angle C = 60^\circ$. Find $m\angle B$, in degrees.'
+            answer: "40"
+            solution_sketch: '$m\angle A + m\angle B = 120^\circ$ and $m\angle A = 2m\angle B$, so $3m\angle B = 120 \Rightarrow m\angle B = 40^\circ$.'
+          - problem: 'The acute angles of a right triangle measure $(3x + 10)^\circ$ and $(2x + 5)^\circ$. Find the larger acute angle, in degrees.'
+            answer: "55"
+            solution_sketch: '$5x + 15 = 90 \Rightarrow x = 15$; the acute angles are $55^\circ$ and $35^\circ$.'
+        constraints: "verbal ratio/difference conditions or a right-angle condition; integer answers"
+    diagnostic_exemplar:
+      problem: 'In $\triangle ABC$, $m\angle A$ is twice $m\angle B$, and $m\angle C = 48^\circ$. Find $m\angle A$, in degrees.'
+      answer: '88'
+      solution_sketch: '$m\angle A + m\angle B = 180 - 48 = 132$; with $m\angle A = 2\,m\angle B$ this gives $3\,m\angle B = 132$, so $m\angle B = 44^\circ$ and $m\angle A = 88^\circ$.'
+    anki_seeds:
+      - front: "The interior angles of a triangle sum to..."
+        back: "180 degrees"
+        type: basic
+      - front: "The two acute angles of a right triangle are..."
+        back: "complementary (sum to 90 degrees)"
+        type: basic
+
+  - id: exterior-angle-theorem
+    name: Exterior Angle Theorem
+    core: false                # named terminal triangle theorem
+    difficulty: 0.38
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 90
+    prerequisites:
+      - id: triangle-angle-sum
+        weight: 0.8
+        key: true
+      - id: multi-step-equations
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: Exterior angle equals the remote interior sum
+        key_prerequisites: [triangle-angle-sum]
+        exemplars:
+          - problem: 'The two remote interior angles of a triangle measure $41^\circ$ and $65^\circ$. Find the exterior angle, in degrees.'
+            answer: "106"
+            solution_sketch: 'Exterior angle $=$ sum of the remote interior angles $= 41 + 65$.'
+          - problem: 'An exterior angle of a triangle measures $130^\circ$ and one remote interior angle measures $55^\circ$. Find the other remote interior angle, in degrees.'
+            answer: "75"
+        constraints: "exterior angle strictly between 91 and 179 degrees"
+      - id: kp2
+        name: Exterior angle equations
+        key_prerequisites: [multi-step-equations, triangle-angle-sum]
+        exemplars:
+          - problem: 'An exterior angle of a triangle measures $(7x + 2)^\circ$; the remote interior angles measure $(3x + 20)^\circ$ and $(2x + 10)^\circ$. Find the exterior angle, in degrees.'
+            answer: "100"
+            solution_sketch: '$7x + 2 = 5x + 30 \Rightarrow x = 14$; exterior angle $= 7(14) + 2 = 100^\circ$.'
+          - problem: 'An exterior angle measures $(4x - 24)^\circ$; the remote interior angles measure $(x + 15)^\circ$ and $(2x - 9)^\circ$. Find the exterior angle, in degrees.'
+            answer: "96"
+            solution_sketch: '$4x - 24 = 3x + 6 \Rightarrow x = 30$; exterior angle $= 96^\circ$ (remotes $45^\circ$ and $51^\circ$).'
+        constraints: "linear expressions; integer solutions; remote interior angles positive"
+      - id: kp3
+        name: Exterior angles around a triangle
+        key_prerequisites: [triangle-angle-sum]
+        exemplars:
+          - problem: 'Two exterior angles of a triangle (one per vertex) measure $140^\circ$ and $130^\circ$. Find the third exterior angle, in degrees.'
+            answer: "90"
+            solution_sketch: 'One exterior angle per vertex sums to $360^\circ$: $360 - 140 - 130 = 90$.'
+          - problem: 'An exterior angle of a triangle measures $105^\circ$. Find the interior angle adjacent to it, in degrees.'
+            answer: "75"
+            solution_sketch: 'Adjacent interior and exterior angles form a linear pair: $180 - 105 = 75$.'
+        constraints: "one exterior angle per vertex; totals 360; linear-pair steps allowed"
+    diagnostic_exemplar:
+      problem: 'An exterior angle of a triangle measures $(5x)^\circ$; the remote interior angles measure $48^\circ$ and $(2x + 15)^\circ$. Find the exterior angle, in degrees.'
+      answer: "105"
+      solution_sketch: '$5x = 48 + 2x + 15 \Rightarrow 3x = 63 \Rightarrow x = 21$; exterior angle $= 105^\circ$.'
+    anki_seeds:
+      - front: "An exterior angle of a triangle equals..."
+        back: "the sum of the two remote interior angles"
+        type: basic
+      - front: "Taking one exterior angle at each vertex of a triangle, their sum is..."
+        back: "360 degrees"
+        type: basic

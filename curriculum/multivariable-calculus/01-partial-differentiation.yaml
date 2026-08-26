@@ -1,0 +1,794 @@
+unit: partial-differentiation
+course: multivariable-calculus
+module: "Partial Differentiation"
+topics:
+  - id: evaluating-multivariable-functions
+    name: "Evaluating Multivariable Functions and Domains"
+    core: true
+    difficulty: 0.55
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 90
+    prerequisites:
+      - id: domain-range
+        weight: 0.6
+        key: true
+      - id: evaluating-functions
+        weight: 0.4
+        key: false
+      - id: logarithm-basics
+        weight: 0.3
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Evaluation"
+        key_prerequisites: [evaluating-functions]
+        exemplars:
+          - problem: 'Let $g(x, y) = \dfrac{xy}{x^2 + y^2}$. Compute $g(1, 2)$.'
+            answer: '$\frac{2}{5}$'
+          - problem: 'Let $f(x, y) = x^2 y - 3y$. Compute $f(2, -1)$.'
+            answer: '$-1$'
+            solution_sketch: '$4 \cdot (-1) - 3(-1) = -4 + 3 = -1$.'
+          - problem: 'Let $f(x, y, z) = xyz + z^2$. Compute $f(2, 3, 1)$.'
+            answer: "7"
+        constraints: "small integer inputs; rational outputs with single-digit numerators and denominators"
+      - id: kp2
+        name: "Domains"
+        key_prerequisites: [domain-range, logarithm-basics]
+        exemplars:
+          - problem: 'Find the domain of $f(x, y) = \sqrt{9 - x^2 - y^2}$.'
+            answer: 'The closed disk $x^2 + y^2 \le 9$.'
+            solution_sketch: 'The radicand must be nonnegative: $9 - x^2 - y^2 \ge 0$.'
+          - problem: 'Let $f(x, y) = \ln(x + y - 1)$. Compute $f(2, 3)$ and state the domain.'
+            answer: '$f(2, 3) = \ln 4$; domain $x + y > 1$.'
+          - problem: 'Find the domain of $f(x, y) = \dfrac{x + y}{x - y}$.'
+            answer: 'All $(x, y)$ with $x \ne y$.'
+        constraints: "domains defined by one square root, log, or nonzero denominator; regions are disks, half-planes, or the plane minus a line"
+      - id: kp3
+        name: "Ranges of simple functions"
+        key_prerequisites: [domain-range]
+        exemplars:
+          - problem: 'Find the range of $f(x, y) = \sqrt{9 - x^2 - y^2}$.'
+            answer: '$[0, 3]$'
+            solution_sketch: 'The radicand runs from $0$ (on the boundary circle) to $9$ (at the origin).'
+          - problem: 'Find the range of $f(x, y) = x^2 + y^2$.'
+            answer: '$[0, \infty)$'
+        constraints: "ranges of sums of squares or a root of one; closed-form interval answers"
+    diagnostic_exemplar:
+      problem: 'Let $f(x, y) = \sqrt{25 - x^2 - y^2}$. Compute $f(3, 0)$ and state the domain and the range of $f$.'
+      answer: '$f(3, 0) = 4$; domain the closed disk $x^2 + y^2 \le 25$; range $[0, 5]$.'
+      solution_sketch: '$f(3,0) = \sqrt{25 - 9} = 4$. The radicand must be non-negative, giving the disk of radius $5$; on it $25 - x^2 - y^2$ runs over $[0, 25]$, so $f$ runs over $[0, 5]$.'
+    anki_seeds:
+      - front: 'The domain of a function $f(x, y)$ is a subset of...'
+        back: 'the plane $\mathbb{R}^2$ (the set of input points where the formula is defined).'
+        type: basic
+      - front: 'Domain of $f(x,y) = \ln g(x,y)$?'
+        back: 'The region where $g(x, y) > 0$.'
+        type: basic
+
+  - id: functions-several-variables
+    name: "Level Curves and Contour Maps"
+    core: true
+    difficulty: 0.62
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 120
+    prerequisites:
+      - id: evaluating-multivariable-functions
+        weight: 0.7
+        key: true
+      - id: coordinates-surfaces-3d
+        weight: 0.5
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: "Level curves"
+        key_prerequisites: [evaluating-multivariable-functions]
+        exemplars:
+          - problem: 'Describe the level curves of $f(x, y) = x^2 + y^2$.'
+            answer: 'Concentric circles $x^2 + y^2 = k$ of radius $\sqrt{k}$ for $k > 0$ (and the single point at the origin for $k = 0$).'
+          - problem: 'Find an equation of the level curve of $f(x, y) = y - x^2$ passing through $(1, 3)$.'
+            answer: '$y = x^2 + 2$'
+            solution_sketch: '$f(1, 3) = 3 - 1 = 2$, so the level curve is $y - x^2 = 2$.'
+          - problem: 'Describe the level curves of $f(x, y) = xy$.'
+            answer: 'Hyperbolas $xy = k$ for $k \ne 0$; the two coordinate axes for $k = 0$.'
+        constraints: "level sets are circles, lines, parabolas, or hyperbolas; k values keep radii and intercepts exact"
+      - id: kp2
+        name: "Reading contour maps"
+        key_prerequisites: [evaluating-multivariable-functions, coordinates-surfaces-3d]
+        exemplars:
+          - problem: 'For $f(x, y) = x^2 + y^2$, the contours $k = 1, 4, 9$ are circles of radii $1, 2, 3$: equal radius steps for larger and larger jumps in level. What does this say about the surface $z = f(x, y)$?'
+            answer: 'The surface steepens away from the origin: each unit step outward raises the height by more than the last (jumps of $3$, then $5$).'
+            solution_sketch: 'Equal horizontal steps ($\Delta r = 1$) produce growing height gains $\Delta k = 3, 5, \dots$, so the paraboloid gets steeper outward.'
+          - problem: 'The level curves of a function $f(x, y)$ are evenly spaced parallel lines. What kind of function is $f$?'
+            answer: 'A linear function $f(x, y) = ax + by + c$; its graph is a plane.'
+          - problem: 'On a contour map, what does it mean when level curves crowd close together?'
+            answer: 'The function changes rapidly there — the graph is steep.'
+        constraints: "qualitative reading of contour maps: spacing vs steepness, parallel lines vs planes"
+      - id: kp3
+        name: "Graphs of two-variable functions"
+        key_prerequisites: [coordinates-surfaces-3d]
+        exemplars:
+          - problem: 'Identify the graph of $f(x, y) = \sqrt{9 - x^2 - y^2}$.'
+            answer: 'The upper hemisphere of the sphere $x^2 + y^2 + z^2 = 9$ (radius $3$).'
+            solution_sketch: '$z = \sqrt{9 - x^2 - y^2}$ squares to the sphere equation with $z \ge 0$.'
+          - problem: 'Identify the graph of $f(x, y) = 6 - 2x - 3y$.'
+            answer: 'The plane $2x + 3y + z = 6$.'
+        constraints: "graphs are planes, paraboloids, or hemispheres recognizable from the quadric catalog"
+    diagnostic_exemplar:
+      problem: 'Identify the graph of $f(x, y) = \sqrt{16 - x^2 - y^2}$ and describe its level curves.'
+      answer: 'The graph is the upper hemisphere of the sphere $x^2 + y^2 + z^2 = 16$ (radius $4$). The level curves $f = k$ are the concentric circles $x^2 + y^2 = 16 - k^2$ of radius $\sqrt{16 - k^2}$, for $0 \le k \le 4$; equally spaced levels crowd together near the rim $x^2 + y^2 = 16$, where the hemisphere is steepest, and spread out near the top $k = 4$, where it flattens.'
+      solution_sketch: 'Squaring $z = \sqrt{16 - x^2 - y^2}$ with $z \ge 0$ gives $x^2 + y^2 + z^2 = 16$, $z \ge 0$. Setting $f = k$ gives $x^2 + y^2 = 16 - k^2$.'
+    anki_seeds:
+      - front: 'What is a level curve of $f(x, y)$?'
+        back: 'The set of points where $f(x, y) = k$ for a fixed constant $k$; the contour at height $k$.'
+        type: basic
+      - front: 'The level curves of $f(x,y) = x^2 + y^2$ are {{c1::concentric circles centered at the origin}}.'
+        back: 'concentric circles centered at the origin'
+        type: cloze
+
+  - id: level-surfaces
+    name: "Functions of Three Variables and Level Surfaces"
+    core: false                # descriptive leaf topic
+    difficulty: 0.65
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 120
+    prerequisites:
+      - id: functions-several-variables
+        weight: 0.7
+        key: true
+      - id: coordinates-surfaces-3d
+        weight: 0.6
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: "Level surfaces of f(x, y, z)"
+        key_prerequisites: [functions-several-variables]
+        exemplars:
+          - problem: 'Describe the level surfaces of $f(x, y, z) = x^2 + y^2 + z^2$.'
+            answer: 'Concentric spheres of radius $\sqrt{k}$ centered at the origin for $k > 0$ (the origin itself for $k = 0$).'
+          - problem: 'Find the level surface of $f(x, y, z) = x^2 + y^2 - z$ passing through the origin.'
+            answer: 'The paraboloid $z = x^2 + y^2$.'
+            solution_sketch: '$f(0,0,0) = 0$, so the surface is $x^2 + y^2 - z = 0$.'
+        constraints: "f is a quadratic or linear polynomial; the required level passes through a given small-integer point"
+      - id: kp2
+        name: "Identifying the surface"
+        key_prerequisites: [functions-several-variables, coordinates-surfaces-3d]
+        exemplars:
+          - problem: 'Identify the level surface $f(x, y, z) = 2x + 3y + z = 6$.'
+            answer: 'A plane (normal vector $\langle 2, 3, 1 \rangle$).'
+          - problem: 'Identify the level surface of $f(x, y, z) = x^2 + y^2 - z^2$ at level $k = 1$, and at $k = 0$.'
+            answer: '$k = 1$: a hyperboloid of one sheet; $k = 0$: a double cone.'
+          - problem: 'Identify the surface $x^2 + y^2 = 4$ regarded as a level surface in $\mathbb{R}^3$.'
+            answer: 'A circular cylinder of radius $2$ about the $z$-axis.'
+        constraints: "surfaces come from the standard quadric catalog: spheres, planes, cylinders, cones, paraboloids, hyperboloids"
+    diagnostic_exemplar:
+      problem: 'Identify the level surface of $f(x, y, z) = x^2 + y^2 - z^2$ at $k = 4$, and at $k = 0$.'
+      answer: '$k = 4$: the hyperboloid of one sheet $x^2 + y^2 - z^2 = 4$ with axis the $z$-axis. $k = 0$: the double cone $z^2 = x^2 + y^2$ with axis the $z$-axis.'
+      solution_sketch: 'For $k > 0$ the equation $x^2 + y^2 - z^2 = k$ has one negative square and non-empty traces $z = c$ for every $c$, so it is a one-sheeted hyperboloid; at $k = 0$ it degenerates to $x^2 + y^2 = z^2$, the cone.'
+    anki_seeds:
+      - front: 'What is a level surface of $f(x, y, z)$?'
+        back: 'The set of points in space where $f(x, y, z) = k$ for a fixed constant $k$.'
+        type: basic
+      - front: 'Why do we describe $f(x, y, z)$ with level surfaces instead of a graph?'
+        back: 'Its graph $w = f(x,y,z)$ lives in four dimensions; level surfaces show the function inside $\mathbb{R}^3$.'
+        type: basic
+
+  - id: limits-along-paths
+    name: "Limits Along Paths"
+    core: false                # head of the terminal multivariable-limits branch
+    difficulty: 0.68
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 150
+    prerequisites:
+      - id: functions-several-variables
+        weight: 0.6
+        key: true
+      - id: limit-laws
+        weight: 0.6
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: "Evaluating a limit along a given path"
+        key_prerequisites: [functions-several-variables, limit-laws]
+        exemplars:
+          - problem: 'Evaluate $\lim_{(x,y) \to (0,0)} \dfrac{xy}{x^2 + y^2}$ along the line $y = x$, and along the line $y = 0$.'
+            answer: 'Along $y = x$: $\frac{x^2}{2x^2} = \frac{1}{2}$. Along $y = 0$: $0$.'
+            solution_sketch: 'Substitute the path into the formula and take a one-variable limit.'
+          - problem: 'Evaluate $\lim_{(x,y) \to (0,0)} \dfrac{x^2 - y^2}{x^2 + y^2}$ along each coordinate axis.'
+            answer: 'Along the $x$-axis ($y = 0$): $1$. Along the $y$-axis ($x = 0$): $-1$.'
+        constraints: "paths are lines y = mx, axes, or parabolas; the restricted limit is a one-variable computation"
+      - id: kp2
+        name: "The two-path test"
+        key_prerequisites: [functions-several-variables, limit-laws]
+        exemplars:
+          - problem: 'Show that $\lim_{(x,y) \to (0,0)} \dfrac{xy}{x^2 + y^2}$ does not exist.'
+            answer: 'Along $y = 0$ the function is $0$; along $y = x$ it is $\frac{x^2}{2x^2} = \frac{1}{2}$. Different path limits, so the limit does not exist.'
+            solution_sketch: 'Two straight-line paths give limits $0$ and $\frac{1}{2}$.'
+          - problem: 'Determine whether $\lim_{(x,y) \to (0,0)} \dfrac{2xy^2}{x^2 + y^4}$ exists.'
+            answer: 'No: along $y = 0$ the limit is $0$, but along the parabola $x = y^2$ it is $\frac{2y^4}{2y^4} = 1$.'
+            solution_sketch: 'Straight lines all give $0$, but the parabolic path $x = y^2$ gives $1$ — so lines alone never prove existence.'
+        constraints: "rational functions homogeneous of degree 0 (or needing one parabolic path); always exhibit two explicit paths"
+    diagnostic_exemplar:
+      problem: 'Determine whether $\lim_{(x,y) \to (0,0)} \dfrac{x^2 - y^2}{x^2 + y^2}$ exists.'
+      answer: 'No: along $y = 0$ the limit is $1$; along $x = 0$ it is $-1$.'
+      solution_sketch: 'The two coordinate-axis paths give different values, so no limit exists.'
+    anki_seeds:
+      - front: 'Two-path test for multivariable limits?'
+        back: 'If two different paths into the point give different limits, the limit does not exist. (Agreeing paths prove nothing.)'
+        type: basic
+      - front: 'Can checking every straight line prove a multivariable limit exists?'
+        back: 'No — e.g. $\frac{2xy^2}{x^2+y^4}$ is $0$ along every line but $1$ along $x = y^2$. Use squeeze/polar bounds instead.'
+        type: basic
+
+  - id: multivariable-limits-continuity
+    name: "Multivariable Limits and Continuity"
+    core: false                # terminal limits branch; nothing differentiates through it
+    difficulty: 0.72
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 180
+    prerequisites:
+      - id: limits-along-paths
+        weight: 0.7
+        key: true
+      - id: continuity
+        weight: 0.5
+        key: true
+      - id: limit-laws
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Limits that exist: substitution and algebra"
+        key_prerequisites: [limit-laws, limits-along-paths]
+        exemplars:
+          - problem: 'Compute $\lim_{(x,y) \to (1,2)} (x^2 y + 3y)$.'
+            answer: "8"
+            solution_sketch: 'Polynomials are continuous: substitute to get $1 \cdot 2 + 6 = 8$.'
+          - problem: 'Compute $\lim_{(x,y) \to (0,0)} \dfrac{x^2 - y^2}{x - y}$ (taken over points with $x \ne y$).'
+            answer: "0"
+            solution_sketch: 'For $x \ne y$, $\frac{x^2 - y^2}{x - y} = x + y$, which tends to $0$.'
+        constraints: "continuous functions or a single factor cancellation; answers are small exact numbers"
+      - id: kp2
+        name: "Squeeze arguments"
+        key_prerequisites: [limits-along-paths, limit-laws]
+        exemplars:
+          - problem: 'Compute $\lim_{(x,y) \to (0,0)} \dfrac{x^2 y}{x^2 + y^2}$.'
+            answer: "0"
+            solution_sketch: '$\left|\frac{x^2 y}{x^2 + y^2}\right| \le |y|$ since $x^2 \le x^2 + y^2$; squeeze with $|y| \to 0$.'
+          - problem: 'Compute $\lim_{(x,y) \to (0,0)} \dfrac{x^3}{x^2 + y^2}$.'
+            answer: "0"
+            solution_sketch: '$\left|\frac{x^3}{x^2 + y^2}\right| = |x| \cdot \frac{x^2}{x^2 + y^2} \le |x| \to 0$.'
+        constraints: "numerator degree strictly exceeds denominator degree; the bounding factor is |x| or |y|"
+      - id: kp3
+        name: "Continuity and deciding existence"
+        key_prerequisites: [continuity, limits-along-paths]
+        exemplars:
+          - problem: 'Where is $f(x, y) = \dfrac{1}{x^2 + y^2 - 1}$ continuous?'
+            answer: 'Everywhere except on the circle $x^2 + y^2 = 1$.'
+            solution_sketch: 'A quotient of continuous functions is continuous wherever the denominator is nonzero.'
+          - problem: 'Where is $f(x, y) = \ln(x + y)$ continuous?'
+            answer: 'On the open half-plane $x + y > 0$.'
+          - problem: 'Determine whether $\lim_{(x,y) \to (0,0)} \dfrac{x^2 y^2}{x^2 + y^2}$ exists, and find it if so.'
+            answer: 'Yes; the limit is $0$.'
+            solution_sketch: '$\frac{x^2 y^2}{x^2 + y^2} \le y^2 \cdot \frac{x^2}{x^2+y^2} \le y^2 \to 0$: squeeze. (Paths only suggest the value; the bound proves it.)'
+        constraints: "continuity questions reduce to where a denominator or log/root argument fails; existence decisions need an explicit squeeze bound"
+    diagnostic_exemplar:
+      problem: 'Determine whether $\lim_{(x,y) \to (0,0)} \dfrac{x y^3}{x^2 + y^2}$ exists, and find it if so.'
+      answer: 'Yes; the limit is $0$.'
+      solution_sketch: '$\left|\frac{xy^3}{x^2+y^2}\right| = |xy| \cdot \frac{y^2}{x^2+y^2} \le |xy| \to 0$, so the squeeze gives $0$.'
+    anki_seeds:
+      - front: 'Standard squeeze bounds at $(0,0)$: $\dfrac{x^2}{x^2 + y^2} \le$ {{c1::$1$}} and $|x| \le$ {{c2::$\sqrt{x^2 + y^2}$}}.'
+        back: '$1$ / $\sqrt{x^2+y^2}$'
+        type: cloze
+      - front: 'Where are rational functions of $x$ and $y$ continuous?'
+        back: 'Everywhere the denominator is nonzero.'
+        type: basic
+
+  - id: multivariable-limits-polar
+    name: "Multivariable Limits in Polar Coordinates"
+    core: false                # special-case limit technique; terminal
+    difficulty: 0.74
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 150
+    prerequisites:
+      - id: multivariable-limits-continuity
+        weight: 0.7
+        key: true
+      - id: polar-coordinates
+        weight: 0.5
+        key: true
+      - id: lhopitals-rule
+        weight: 0.0
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Polar substitution for limits at the origin"
+        key_prerequisites: [multivariable-limits-continuity, polar-coordinates]
+        exemplars:
+          - problem: 'Use polar coordinates to compute $\lim_{(x,y) \to (0,0)} \dfrac{x^3}{x^2 + y^2}$.'
+            answer: "0"
+            solution_sketch: '$x = r\cos\theta$, $y = r\sin\theta$: the quotient is $r\cos^3\theta$, and $|r\cos^3\theta| \le r \to 0$ uniformly in $\theta$.'
+          - problem: 'Use polar coordinates to compute $\lim_{(x,y) \to (0,0)} \dfrac{xy}{\sqrt{x^2 + y^2}}$.'
+            answer: "0"
+            solution_sketch: '$x = r\cos\theta$, $y = r\sin\theta$ and $\sqrt{x^2+y^2} = r$: the quotient is $\frac{r^2\cos\theta\sin\theta}{r} = r\cos\theta\sin\theta$, and $|r\cos\theta\sin\theta| \le r \to 0$ uniformly in $\theta$.'
+          - problem: 'Use polar coordinates to compute $\lim_{(x,y) \to (0,0)} (x^2 + y^2)\ln(x^2 + y^2)$.'
+            answer: "0"
+            solution_sketch: 'The expression is $r^2 \ln r^2 = 2r^2 \ln r \to 0$ as $r \to 0^+$ (independent of $\theta$; the one-variable limit is the $0 \cdot \infty$ form $\lim_{r \to 0^+} r^2\ln r$, rewritten as $\frac{\ln r}{r^{-2}}$ and evaluated by l''Hôpital).'
+        constraints: "after substitution the expression is bounded by a function of r alone tending to 0; that bounding function may itself require a one-variable limit (e.g. r^2 ln r -> 0), which must then be evaluated explicitly"
+      - id: kp2
+        name: "Detecting angle dependence"
+        key_prerequisites: [multivariable-limits-continuity, polar-coordinates]
+        exemplars:
+          - problem: 'Write $\dfrac{x^2 - y^2}{x^2 + y^2}$ in polar coordinates and conclude whether its limit at the origin exists.'
+            answer: 'It equals $\cos 2\theta$: the value depends on the approach angle and is independent of $r$, so the limit does not exist.'
+            solution_sketch: '$\frac{r^2\cos^2\theta - r^2\sin^2\theta}{r^2} = \cos 2\theta$.'
+          - problem: 'Write $\dfrac{xy}{x^2 + y^2}$ in polar coordinates and conclude whether its limit at the origin exists.'
+            answer: 'It equals $\cos\theta \sin\theta = \frac{1}{2}\sin 2\theta$, which depends on $\theta$: no limit.'
+        constraints: "homogeneous degree-0 quotients whose polar form is a pure function of theta"
+    diagnostic_exemplar:
+      problem: 'Use polar coordinates to decide whether $\lim_{(x,y) \to (0,0)} \dfrac{xy}{x^2 + 2y^2}$ exists.'
+      answer: 'No, the limit does not exist.'
+      solution_sketch: 'In polar coordinates the quotient is $\dfrac{r^2\cos\theta\sin\theta}{r^2(\cos^2\theta + 2\sin^2\theta)} = \dfrac{\cos\theta\,\sin\theta}{1 + \sin^2\theta}$: independent of $r$ but varying with $\theta$ (it equals $0$ along $\theta = 0$ and $\tfrac{1}{3}$ along $\theta = \pi/4$), so the value depends on the direction of approach.'
+    anki_seeds:
+      - front: 'Polar substitution for limits at the origin?'
+        back: '$x = r\cos\theta$, $y = r\sin\theta$, so $x^2 + y^2 = r^2$ and $(x,y) \to (0,0)$ becomes $r \to 0^+$.'
+        type: basic
+      - front: 'When does the polar method prove a limit exists?'
+        back: 'When $|f|$ is bounded by a function of $r$ alone that tends to $0$; if the polar form depends on $\theta$ but not $r$, the limit fails.'
+        type: basic
+
+  - id: first-order-partial-derivatives
+    name: "First-Order Partial Derivatives"
+    core: true
+    difficulty: 0.58
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 100
+    prerequisites:
+      - id: evaluating-multivariable-functions
+        weight: 0.6
+        key: true
+      - id: derivatives-of-polynomials
+        weight: 0.6
+        key: true
+      - id: product-quotient-rules
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Partials of polynomials"
+        key_prerequisites: [evaluating-multivariable-functions, derivatives-of-polynomials]
+        exemplars:
+          - problem: 'Let $f(x, y) = x^3 y^2 + 2x - y$. Find $f_x$ and $f_y$; state the pair $(f_x, f_y)$.'
+            answer: '$(3x^2 y^2 + 2,\ 2x^3 y - 1)$'
+            solution_sketch: 'For $f_x$ treat $y$ as a constant; for $f_y$ treat $x$ as a constant.'
+          - problem: 'Let $f(x, y) = x^2 y^3$. Compute $f_y(1, 2)$.'
+            answer: "12"
+            solution_sketch: '$f_y = 3x^2 y^2$; at $(1, 2)$: $3 \cdot 1 \cdot 4 = 12$.'
+        constraints: "polynomial in x, y with integer coefficients, total degree at most 5"
+      - id: kp2
+        name: "The limit definition and notation"
+        key_prerequisites: [derivatives-of-polynomials]
+        exemplars:
+          - problem: 'For $f(x, y) = x^2 - 2xy$, use the limit definition to compute $f_x(1, 2)$.'
+            answer: '$-2$'
+            solution_sketch: '$\frac{f(1+h,\,2) - f(1,\,2)}{h} = \frac{(1+h)^2 - 4(1+h) - (-3)}{h} = \frac{h^2 - 2h}{h} = h - 2 \to -2$. Check: $f_x = 2x - 2y = -2$ at $(1,2)$.'
+          - problem: 'Let $f(x, y) = x y^2$. Use the limit definition of $f_y$ (not the power rule) to compute $f_y(2, 1)$.'
+            answer: "4"
+            solution_sketch: '$\frac{f(2,\,1+h) - f(2,\,1)}{h} = \frac{2(1+h)^2 - 2}{h} = \frac{4h + 2h^2}{h} = 4 + 2h \to 4$. Check: $f_y = 2xy = 4$ at $(2, 1)$.'
+        constraints: "quadratic f so the difference quotient simplifies by cancellation; also test the equivalent notations for the partial derivative (∂z/∂x, ∂f/∂x, f_x) — never the straight-d dz/dx of one-variable calculus"
+      - id: kp3
+        name: "Products, quotients, and three variables"
+        key_prerequisites: [product-quotient-rules, evaluating-multivariable-functions]
+        exemplars:
+          - problem: 'Let $f(x, y) = \dfrac{xy}{x + y}$. Find $f_x$.'
+            answer: '$y^2/(x + y)^2$'
+            solution_sketch: 'Quotient rule in $x$: $\frac{y(x+y) - xy}{(x+y)^2} = \frac{y^2}{(x+y)^2}$.'
+          - problem: 'Let $f(x, y, z) = x^2 y + y z^3$. Find $f_z$.'
+            answer: '$3yz^2$'
+            solution_sketch: 'Both $x$ and $y$ are held constant; only the $yz^3$ term involves $z$.'
+        constraints: "one quotient-rule layer at most; three-variable examples are polynomial"
+    diagnostic_exemplar:
+      problem: 'Let $f(x, y, z) = \dfrac{xy}{x + z}$. Find $f_x$.'
+      answer: '$yz/(x + z)^2$'
+      solution_sketch: 'Treat $y$ and $z$ as constants and use the quotient rule: $f_x = \dfrac{y(x + z) - xy}{(x + z)^2} = \dfrac{yz}{(x + z)^2}$.'
+    anki_seeds:
+      - front: 'Definition of the partial derivative $f_x(a, b)$ as a limit?'
+        back: '$f_x(a,b) = \lim_{h \to 0} \frac{f(a+h,\,b) - f(a,\,b)}{h}$ — differentiate in $x$ holding $y = b$ fixed.'
+        type: basic
+      - front: 'To compute $f_x$, treat {{c1::every other variable}} as a constant.'
+        back: 'every other variable'
+        type: cloze
+
+  - id: estimating-partial-derivatives
+    name: "Interpreting and Estimating Partial Derivatives"
+    core: false                # interpretation / estimation leaf topic
+    difficulty: 0.62
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 120
+    prerequisites:
+      - id: first-order-partial-derivatives
+        weight: 0.6
+        key: true
+      - id: functions-several-variables
+        weight: 0.5
+        key: true
+      - id: estimating-derivatives
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Estimating partials from tables"
+        key_prerequisites: [first-order-partial-derivatives, estimating-derivatives]
+        exemplars:
+          - problem: 'A table gives $f(2, 1) = 10$ and $f(2.5, 1) = 12$. Estimate $f_x(2, 1)$.'
+            answer: '$f_x(2, 1) \approx \dfrac{12 - 10}{0.5} = 4$'
+          - problem: 'A table gives $f(1.9, 3) = 7.2$ and $f(2.1, 3) = 7.8$. Use a central difference to estimate $f_x(2, 3)$.'
+            answer: '$f_x(2, 3) \approx \dfrac{7.8 - 7.2}{0.2} = 3$'
+            solution_sketch: 'Central difference: $\frac{f(2.1,3) - f(1.9,3)}{2(0.1)}$.'
+        constraints: "one variable changes at a time; difference quotients evaluate to one-decimal or integer answers"
+      - id: kp2
+        name: "Interpretation and signs from contour maps"
+        key_prerequisites: [first-order-partial-derivatives, functions-several-variables]
+        exemplars:
+          - problem: 'Let $T(x, t)$ be the temperature at position $x$ and time $t$. What does $T_t(5, 30)$ measure?'
+            answer: 'The instantaneous rate of change of temperature with respect to time at position $x = 5$, at time $t = 30$ (position held fixed).'
+          - problem: 'On a contour map of $f$, moving right (in the $+x$ direction) from a point $P$ you cross from the level curve $f = 40$ to the level curve $f = 30$. What is the sign of $f_x(P)$?'
+            answer: 'Negative: $f$ decreases in the $+x$ direction.'
+          - problem: 'Along the horizontal line through $P$, the contour $f = 10$ crosses at $x = 2$ and the contour $f = 20$ crosses at $x = 3$. Estimate $f_x$ near $P$.'
+            answer: '$f_x \approx \dfrac{20 - 10}{3 - 2} = 10$'
+        constraints: "contour levels differ by round numbers; interpretation answers must name the fixed variable"
+    diagnostic_exemplar:
+      problem: 'On a contour map of $f$, the level curve $f = 30$ crosses the horizontal line through $P$ at $x = 4$ and the level curve $f = 24$ crosses it at $x = 6$. Estimate $f_x$ near $P$, and say what its sign means.'
+      answer: '$f_x \approx \dfrac{24 - 30}{6 - 4} = -3$; the sign is negative, so $f$ decreases as one moves in the $+x$ direction.'
+      solution_sketch: 'Along the horizontal line only $x$ varies, so the difference quotient in $x$ estimates $f_x$.'
+    anki_seeds:
+      - front: 'Difference-quotient estimate of $f_x(a,b)$ from a table?'
+        back: '$f_x(a,b) \approx \dfrac{f(a+h,\,b) - f(a,\,b)}{h}$ for a small tabulated step $h$.'
+        type: basic
+      - front: 'On a contour map, $f_x > 0$ at $P$ means that moving in the $+x$ direction you cross to {{c1::higher}} level curves.'
+        back: 'higher'
+        type: cloze
+
+  - id: partial-derivatives-trig-exp
+    name: "Partial Derivatives with the Chain Rule"
+    core: true
+    difficulty: 0.63
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 120
+    prerequisites:
+      - id: first-order-partial-derivatives
+        weight: 0.7
+        key: true
+      - id: chain-rule
+        weight: 0.6
+        key: true
+      - id: derivatives-trig
+        weight: 0.4
+        key: false
+      - id: derivatives-exp-log
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Exponentials and logarithms"
+        key_prerequisites: [chain-rule, derivatives-exp-log]
+        exemplars:
+          - problem: 'Let $f(x, y) = e^{xy}$. Find $f_x$ and $f_y$.'
+            answer: '$f_x = y e^{xy}$, $\; f_y = x e^{xy}$'
+          - problem: 'Let $f(x, y) = \ln(x^2 + y^2)$. Find $f_x$.'
+            answer: '$\dfrac{2x}{x^2 + y^2}$'
+        constraints: "one composition layer; inner functions polynomial in x, y"
+      - id: kp2
+        name: "Trigonometric compositions"
+        key_prerequisites: [chain-rule, derivatives-trig]
+        exemplars:
+          - problem: 'Let $f(x, y) = \sin(x^2 y)$. Find $f_x$.'
+            answer: '$2xy \cos(x^2 y)$'
+            solution_sketch: 'Chain rule with inner function $x^2 y$: $\cos(x^2 y) \cdot 2xy$.'
+          - problem: 'Let $f(x, y) = \cos(x y^2)$. Find $f_y$.'
+            answer: '$-2xy \sin(x y^2)$'
+            solution_sketch: '$-\sin(xy^2) \cdot \frac{\partial}{\partial y}(xy^2) = -\sin(xy^2) \cdot 2xy$.'
+        constraints: "sin or cos of a monomial in x, y; one chain-rule layer"
+      - id: kp3
+        name: "Combined forms and evaluation"
+        key_prerequisites: [first-order-partial-derivatives, chain-rule]
+        exemplars:
+          - problem: 'Let $f(x, y) = y e^{x^2}$. Compute $f_x(1, 2)$.'
+            answer: '$4e$'
+            solution_sketch: '$f_x = 2xy e^{x^2}$; at $(1, 2)$: $2 \cdot 1 \cdot 2 \cdot e = 4e$.'
+          - problem: 'Let $f(x, y) = e^{2x} \cos(3y)$. Find $f_y$.'
+            answer: '$-3e^{2x} \sin(3y)$'
+        constraints: "products of an exponential and a trig or polynomial factor; evaluations at points giving exact multiples of e"
+    diagnostic_exemplar:
+      problem: 'Let $f(x, y) = e^{2x}\sin(3y)$. Compute $f_y(1, 0)$.'
+      answer: '$3e^2$'
+      solution_sketch: '$f_y = 3e^{2x}\cos(3y)$; at $(1, 0)$ this is $3e^2 \cdot 1 = 3e^2$.'
+    anki_seeds:
+      - front: '$\dfrac{\partial}{\partial x} e^{xy} = $ ?'
+        back: '$y e^{xy}$ (chain rule; $y$ is a constant while differentiating in $x$).'
+        type: basic
+      - front: 'Strategy for partials of composite functions like $\sin(x^2 y)$?'
+        back: 'Hold the other variable constant and apply the single-variable chain rule to the inner function.'
+        type: basic
+
+  - id: partial-derivatives
+    name: "Higher-Order and Mixed Partial Derivatives"
+    core: true
+    difficulty: 0.66
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 130
+    prerequisites:
+      - id: first-order-partial-derivatives
+        weight: 0.7
+        key: true
+      - id: partial-derivatives-trig-exp
+        weight: 0.7
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: "Second-order partials"
+        key_prerequisites: [first-order-partial-derivatives]
+        exemplars:
+          - problem: 'Let $f(x, y) = x^3 y^2$. Compute $f_{xx}$ and $f_{yy}$; state the pair $(f_{xx}, f_{yy})$.'
+            answer: '$(6x y^2,\ 2x^3)$'
+            solution_sketch: '$f_x = 3x^2y^2 \Rightarrow f_{xx} = 6xy^2$; $f_y = 2x^3 y \Rightarrow f_{yy} = 2x^3$.'
+          - problem: 'Let $f(x, y) = x^4 - 3x^2 y^3$. Compute $f_{xx}$ and $f_{yy}$; state the pair $(f_{xx}, f_{yy})$.'
+            answer: '$(12x^2 - 6y^3,\ -18x^2 y)$'
+        constraints: "polynomials of total degree at most 6; differentiate twice in the same variable"
+      - id: kp2
+        name: "Mixed partials and Clairaut''s theorem"
+        key_prerequisites: [first-order-partial-derivatives, partial-derivatives-trig-exp]
+        exemplars:
+          - problem: 'Let $f(x, y) = x^3 y^2$. Compute $f_{xy}$ and $f_{yx}$, verify they agree, and state their common value.'
+            answer: '$6x^2 y$'
+            solution_sketch: '$f_x = 3x^2 y^2 \Rightarrow f_{xy} = 6x^2 y$; $f_y = 2x^3 y \Rightarrow f_{yx} = 6x^2 y$. Equality is Clairaut''s theorem.'
+          - problem: 'Let $f(x, y) = y \ln x$. Compute $f_{xy}$.'
+            answer: '$1/x$'
+            solution_sketch: '$f_x = \frac{y}{x}$, so $f_{xy} = \frac{1}{x}$; equivalently $f_y = \ln x$ gives $f_{yx} = \frac{1}{x}$.'
+        constraints: "smooth functions where mixed partials agree; always confirm both orders"
+      - id: kp3
+        name: "Third-order partials and verifying PDEs"
+        key_prerequisites: [first-order-partial-derivatives, partial-derivatives-trig-exp]
+        exemplars:
+          - problem: 'Let $f(x, y) = e^x \sin y$. Compute $f_{xx} + f_{yy}$.'
+            answer: "0"
+            solution_sketch: '$f_{xx} = e^x \sin y$ and $f_{yy} = -e^x \sin y$, so the sum vanishes ($f$ is harmonic).'
+          - problem: 'Let $f(x, y) = x^3 y^2$. Compute $f_{xxy}$.'
+            answer: '$12xy$'
+            solution_sketch: '$f_x = 3x^2y^2$, $f_{xx} = 6xy^2$, $f_{xxy} = 12xy$.'
+          - problem: 'Verify that $u(x, t) = e^{-t} \sin x$ satisfies the heat equation $u_t = u_{xx}$ by computing $u_t - u_{xx}$.'
+            answer: "0"
+            solution_sketch: '$u_t = -e^{-t}\sin x$ and $u_{xx} = -e^{-t}\sin x$, so $u_t - u_{xx} = 0$ and the heat equation holds.'
+        constraints: "at most third order; PDE checks limited to the Laplace and heat equations with single-term solutions"
+    diagnostic_exemplar:
+      problem: 'Let $f(x, y) = x^4 y^3$. Compute $f_{xxy}$.'
+      answer: '$36x^2y^2$'
+      solution_sketch: '$f_x = 4x^3y^3$, $f_{xx} = 12x^2y^3$, $f_{xxy} = 36x^2y^2$.'
+    anki_seeds:
+      - front: 'Clairaut''s theorem says that when $f_{xy}$ and $f_{yx}$ are continuous, they are...'
+        back: 'equal: $f_{xy} = f_{yx}$.'
+        type: basic
+      - front: 'The subscript notation $f_{xy}$ means differentiate first in {{c1::$x$}}, then in {{c2::$y$}} — i.e. $(f_x)_y = \frac{\partial^2 f}{\partial y \partial x}$.'
+        back: '$x$ first, then $y$'
+        type: cloze
+
+  - id: tangent-planes-linear-approximation
+    name: "Tangent Planes and Linear Approximation"
+    core: true
+    difficulty: 0.70
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 150
+    prerequisites:
+      - id: partial-derivatives
+        weight: 0.8
+        key: true
+      - id: planes-in-space
+        weight: 0.5
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: "Tangent planes to z = f(x, y)"
+        key_prerequisites: [partial-derivatives, planes-in-space]
+        exemplars:
+          - problem: 'Find the tangent plane to $z = x^2 + y^2$ at the point $(1, 2, 5)$.'
+            answer: '$z = 2x + 4y - 5$'
+            solution_sketch: '$f_x(1,2) = 2$, $f_y(1,2) = 4$; $z = 5 + 2(x-1) + 4(y-2)$.'
+          - problem: 'Find the tangent plane to $z = xy$ at the point $(2, 3, 6)$.'
+            answer: '$z = 3x + 2y - 6$'
+            solution_sketch: '$f_x = y = 3$, $f_y = x = 2$ at the point; $z = 6 + 3(x-2) + 2(y-3)$.'
+          - problem: 'Find the tangent plane to $z = y e^x$ at the point $(0, 2, 2)$.'
+            answer: '$z = 2x + y$'
+            solution_sketch: '$f_x = y e^x = 2$ and $f_y = e^x = 1$ at $(0,2)$; $z = 2 + 2x + (y - 2)$.'
+        constraints: "integer base points; partials evaluate to small integers"
+      - id: kp2
+        name: "Linearization and estimates"
+        key_prerequisites: [partial-derivatives]
+        exemplars:
+          - problem: 'Find the linearization $L(x, y)$ of $f(x, y) = \sqrt{x^2 + y^2}$ at $(3, 4)$ and use it to estimate $f(3.1, 3.9)$.'
+            answer: '$L(x,y) = 5 + \frac{3}{5}(x - 3) + \frac{4}{5}(y - 4)$; $\;f(3.1, 3.9) \approx 4.98$'
+            solution_sketch: '$f(3,4) = 5$, $f_x = \frac{x}{\sqrt{x^2+y^2}} = \frac{3}{5}$, $f_y = \frac{4}{5}$. Then $L(3.1, 3.9) = 5 + 0.6(0.1) + 0.8(-0.1) = 4.98$.'
+          - problem: 'Find the linearization of $f(x, y) = x^2 y$ at $(1, 2)$ and estimate $f(1.1, 1.9)$.'
+            answer: '$L(x,y) = 2 + 4(x - 1) + (y - 2)$; $\;f(1.1, 1.9) \approx 2.3$'
+            solution_sketch: '$f(1,2) = 2$, $f_x = 2xy = 4$, $f_y = x^2 = 1$; $L(1.1, 1.9) = 2 + 0.4 - 0.1 = 2.3$ (true value $2.299$).'
+        constraints: "base points where f and its partials are exact rationals; estimates stay within 0.05 of the true value"
+    diagnostic_exemplar:
+      problem: 'Use the linearization of $f(x, y) = x^2 y$ at $(2, 3)$ to estimate $f(2.1, 2.9)$.'
+      answer: '$12.8$'
+      solution_sketch: '$f(2,3) = 12$, $f_x = 2xy = 12$, $f_y = x^2 = 4$, so $L(x,y) = 12 + 12(x-2) + 4(y-3)$ and $L(2.1, 2.9) = 12 + 1.2 - 0.4 = 12.8$.'
+    anki_seeds:
+      - front: 'Tangent plane to $z = f(x,y)$ at $(a, b, f(a,b))$?'
+        back: '$z = f(a,b) + f_x(a,b)(x-a) + f_y(a,b)(y-b)$'
+        type: basic
+      - front: 'Linearization $L(x, y)$ of $f$ at $(a, b)$?'
+        back: '$L(x,y) = f(a,b) + f_x(a,b)(x-a) + f_y(a,b)(y-b)$ — the tangent plane used as an approximation.'
+        type: basic
+
+  - id: differentials-error-estimation
+    name: "Differentials and Error Estimation"
+    core: false                # error-estimation application; terminal
+    difficulty: 0.72
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 180
+    prerequisites:
+      - id: tangent-planes-linear-approximation
+        weight: 0.7
+        key: true
+      - id: differentials-error-propagation
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "The total differential"
+        key_prerequisites: [tangent-planes-linear-approximation]
+        exemplars:
+          - problem: 'Find the total differential $dz$ of $z = x^2 y^3$, and evaluate it at $(1, 1)$ with $dx = 0.1$, $dy = -0.2$.'
+            answer: '$dz = 2xy^3\, dx + 3x^2 y^2\, dy$; at the given values $dz = 0.2 - 0.6 = -0.4$'
+          - problem: 'Find the total differential of $w = x^2 + y^2 + z^2$.'
+            answer: '$dw = 2x\,dx + 2y\,dy + 2z\,dz$'
+        constraints: "polynomial or single-radical functions; numeric evaluations use one-decimal increments"
+      - id: kp2
+        name: "Error estimation"
+        key_prerequisites: [tangent-planes-linear-approximation]
+        exemplars:
+          - problem: 'A box has measured dimensions $10 \times 5 \times 2$ cm, each with maximum error $0.1$ cm. Use differentials to estimate the maximum error in the volume $V = xyz$.'
+            answer: '$dV = yz\,dx + xz\,dy + xy\,dz = (10 + 20 + 50)(0.1) = 8$ cm$^3$'
+            solution_sketch: '$yz = 10$, $xz = 20$, $xy = 50$; each error contributes with the worst sign.'
+          - problem: 'The radius and height of a cylinder are measured as $r = 5$ and $h = 10$ with relative errors of $1\%$ and $0.5\%$. Estimate the relative error in $V = \pi r^2 h$.'
+            answer: '$\dfrac{dV}{V} = 2\dfrac{dr}{r} + \dfrac{dh}{h} = 2(0.01) + 0.005 = 0.025 = 2.5\%$'
+            solution_sketch: 'Logarithmic differential: $\ln V = \ln \pi + 2\ln r + \ln h$.'
+        constraints: "measurement errors of 0.05-0.1 units or 0.5-2 percent; answers exact decimals or percents"
+    diagnostic_exemplar:
+      problem: 'A rectangular box is measured as $20 \times 10 \times 5$ cm, each dimension with a maximum error of $0.1$ cm. Use differentials to estimate the maximum error in the computed volume $V = xyz$.'
+      answer: '$35$ cm$^3$'
+      solution_sketch: '$dV = yz\,dx + xz\,dy + xy\,dz = (50 + 100 + 200)(0.1) = 35$.'
+    anki_seeds:
+      - front: 'Total differential of $z = f(x, y)$?'
+        back: '$dz = f_x\, dx + f_y\, dy$'
+        type: basic
+      - front: 'Estimating maximum error with differentials: combine each term with...'
+        back: 'the worst-case (same) sign: $|dz| \le |f_x||dx| + |f_y||dy|$.'
+        type: basic
+
+  - id: chain-rule-one-parameter
+    name: "Chain Rule Along a Curve"
+    core: true
+    difficulty: 0.70
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 150
+    prerequisites:
+      - id: partial-derivatives
+        weight: 0.7
+        key: true
+      - id: chain-rule
+        weight: 0.5
+        key: true
+      - id: parametric-equations
+        weight: 0.3
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "The one-parameter chain rule"
+        key_prerequisites: [partial-derivatives, chain-rule]
+        exemplars:
+          - problem: 'Let $z = x^2 y$ with $x = t^2$, $y = t^3$. Use the chain rule to find $\frac{dz}{dt}$, and simplify.'
+            answer: '$7t^6$'
+            solution_sketch: '$\frac{dz}{dt} = 2xy \cdot 2t + x^2 \cdot 3t^2 = 4t^6 + 3t^6 = 7t^6$. Check: $z = t^7$ directly.'
+          - problem: 'Let $w = xy + z^2$ with $x = e^t$, $y = e^{-t}$, $z = t$. Find $\frac{dw}{dt}$.'
+            answer: '$2t$'
+            solution_sketch: '$\frac{dw}{dt} = y e^t + x(-e^{-t}) + 2z = 1 - 1 + 2t = 2t$. Check: $w = 1 + t^2$.'
+        constraints: "compositions collapse to a clean single-variable check; require the chain-rule computation, not just substitution"
+      - id: kp2
+        name: "Rates along a moving point"
+        key_prerequisites: [partial-derivatives, chain-rule]
+        exemplars:
+          - problem: 'Let $z = x^2 + y^2$ with $x = \cos t$, $y = \sin t$. Compute $\frac{dz}{dt}$ and explain the answer.'
+            answer: '$\frac{dz}{dt} = 2x(-\sin t) + 2y\cos t = 0$: the point moves along the unit circle, a level curve of $z$.'
+          - problem: 'The temperature at $(x, y)$ is $T(x, y) = x^2 y$. A bug at $(2, 1)$ moves with $\frac{dx}{dt} = 3$ and $\frac{dy}{dt} = -1$. How fast is the temperature changing at the bug''s location?'
+            answer: '$\frac{dT}{dt} = 2xy \cdot 3 + x^2 \cdot (-1) = 12 - 4 = 8$'
+        constraints: "evaluation at a specific instant with integer partials and velocities; include one level-curve (zero-rate) case"
+    diagnostic_exemplar:
+      problem: 'The temperature at $(x, y)$ is $T(x, y) = x^2 y$. A particle passing through $(3, 2)$ has $\frac{dx}{dt} = -1$ and $\frac{dy}{dt} = 4$. How fast is the temperature at the particle changing?'
+      answer: '$24$ degrees per unit time.'
+      solution_sketch: '$\frac{dT}{dt} = T_x \frac{dx}{dt} + T_y \frac{dy}{dt} = 2xy(-1) + x^2(4) = 12(-1) + 9(4) = 24$.'
+    anki_seeds:
+      - front: 'Chain rule for $z = f(x, y)$, $x = x(t)$, $y = y(t)$?'
+        back: '$\frac{dz}{dt} = \frac{\partial z}{\partial x}\frac{dx}{dt} + \frac{\partial z}{\partial y}\frac{dy}{dt}$'
+        type: basic
+      - front: 'If a point moves along a level curve of $f$, then $\frac{df}{dt} = $ {{c1::$0$}}.'
+        back: '$0$'
+        type: cloze
+
+  - id: multivariable-chain-rule
+    name: "The Multivariable Chain Rule"
+    core: true
+    difficulty: 0.75
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 180
+    prerequisites:
+      - id: chain-rule-one-parameter
+        weight: 0.8
+        key: true
+      - id: implicit-differentiation
+        weight: 0.5
+        key: false
+      - id: partial-derivatives
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Chain rule with two independent variables"
+        key_prerequisites: [chain-rule-one-parameter, partial-derivatives]
+        exemplars:
+          - problem: 'Let $z = x^2 + xy$ with $x = s + t$, $y = s - t$. Find $\frac{\partial z}{\partial s}$ in terms of $s$ and $t$.'
+            answer: '$4s + 2t$'
+            solution_sketch: '$\frac{\partial z}{\partial s} = (2x + y)(1) + x(1) = 3x + y = 3(s+t) + (s-t) = 4s + 2t$.'
+          - problem: 'Let $z = e^x \sin y$ with $x = st^2$, $y = s^2 t$. Find $\frac{\partial z}{\partial t}$.'
+            answer: '$e^{st^2}\left(2st \sin(s^2 t) + s^2 \cos(s^2 t)\right)$'
+            solution_sketch: '$\frac{\partial z}{\partial t} = e^x \sin y \cdot 2st + e^x \cos y \cdot s^2$; substitute $x = st^2$, $y = s^2 t$.'
+        constraints: "two intermediate and two independent variables; draw or imply the dependency tree"
+      - id: kp2
+        name: "Tree diagrams and the general version"
+        key_prerequisites: [chain-rule-one-parameter, partial-derivatives]
+        exemplars:
+          - problem: 'Let $u = x^2 y^3$ with $x = s t^2$, $y = s^2 t$. Find $\frac{\partial u}{\partial s}$, and verify by substituting first.'
+            answer: '$8 s^7 t^7$'
+            solution_sketch: '$\frac{\partial u}{\partial s} = 2xy^3 \cdot t^2 + 3x^2y^2 \cdot 2st$; with $x = st^2$, $y = s^2t$ both terms combine to $2s^7t^7 + 6s^7t^7$. Check: $u = s^8 t^7$.'
+          - problem: 'Suppose $z = f(x, y)$ with $x = g(s, t)$, $y = h(s, t)$, and at $(s, t) = (1, 2)$: $g(1,2) = 3$, $h(1,2) = 4$, $g_s(1,2) = -1$, $h_s(1,2) = 6$, $f_x(3,4) = 5$, $f_y(3,4) = 2$. Find $\frac{\partial z}{\partial s}$ at $(1, 2)$.'
+            answer: '$5(-1) + 2(6) = 7$'
+            solution_sketch: 'Follow both branches of the tree: $z_s = f_x g_s + f_y h_s$, evaluated at the matching points.'
+        constraints: "one symbolic and one numeric (table-values) exemplar; every branch of the tree contributes exactly one product"
+      - id: kp3
+        name: "Implicit differentiation via partials"
+        key_prerequisites: [chain-rule-one-parameter]
+        exemplars:
+          - problem: 'Use $\frac{dy}{dx} = -F_x / F_y$ to find $\frac{dy}{dx}$ for the folium $x^3 + y^3 = 6xy$.'
+            answer: '$\dfrac{dy}{dx} = \dfrac{2y - x^2}{y^2 - 2x}$'
+            solution_sketch: '$F = x^3 + y^3 - 6xy$; $F_x = 3x^2 - 6y$, $F_y = 3y^2 - 6x$; $-F_x/F_y = \frac{6y - 3x^2}{3y^2 - 6x} = \frac{2y - x^2}{y^2 - 2x}$.'
+          - problem: 'For the sphere $x^2 + y^2 + z^2 = 9$, find $\frac{\partial z}{\partial x}$.'
+            answer: '$-\dfrac{x}{z}$'
+            solution_sketch: '$\frac{\partial z}{\partial x} = -F_x/F_z = -\frac{2x}{2z}$.'
+        constraints: "F polynomial with integer coefficients; answers simplified by canceling common factors"
+    diagnostic_exemplar:
+      problem: 'Use $\frac{dy}{dx} = -F_x / F_y$ to find $\frac{dy}{dx}$ for the curve $x^3 + y^3 = 9xy$.'
+      answer: '$\dfrac{3y - x^2}{y^2 - 3x}$'
+      solution_sketch: 'With $F = x^3 + y^3 - 9xy$: $F_x = 3x^2 - 9y$ and $F_y = 3y^2 - 9x$, so $\frac{dy}{dx} = -\dfrac{3x^2 - 9y}{3y^2 - 9x} = \dfrac{3y - x^2}{y^2 - 3x}$.'
+    anki_seeds:
+      - front: 'General multivariable chain rule via tree diagram?'
+        back: 'For each independent variable, sum over every path from the output to it, multiplying the derivatives along each branch.'
+        type: basic
+      - front: 'Implicit differentiation formula: if $F(x, y) = 0$ defines $y(x)$, then $\frac{dy}{dx} = $ ...'
+        back: '$-F_x / F_y$ (where $F_y \ne 0$)'
+        type: basic

@@ -1,0 +1,174 @@
+unit: reasoning-proof
+course: geometry
+module: "Reasoning & Proof"
+topics:
+  - id: geometric-reasoning
+    name: Inductive and Deductive Reasoning in Geometry
+    core: true                 # proof machinery: every proof-demanding geometry topic builds on it
+    difficulty: 0.3
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 90
+    prerequisites:
+      - id: angle-relationships
+        weight: 0.5
+        key: true
+      - id: triangle-angle-sum
+        weight: 0.3
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: Conjectures from examples and counterexamples
+        key_prerequisites: [angle-relationships]
+        exemplars:
+          - problem: 'A student measures three pairs of vertical angles and finds each pair congruent, then concludes that vertical angles are always congruent. Is this inductive or deductive reasoning?'
+            answer: 'Inductive; the conclusion generalizes from observed examples rather than following from accepted facts.'
+          - problem: 'Conjecture: any two acute angles are complementary. Give a counterexample.'
+            answer: 'Angles of $30^\circ$ and $40^\circ$: both are acute, but $30^\circ + 40^\circ = 70^\circ \neq 90^\circ$.'
+            solution_sketch: 'One pair of acute angles whose measures do not sum to $90^\circ$ disproves the conjecture.'
+        constraints: "concrete geometric conjectures about angles, segments, or triangles; a counterexample must satisfy the hypothesis and violate the conclusion; no symbolic logic"
+      - id: kp2
+        name: Hypothesis and conclusion of an if-then statement
+        key_prerequisites: []
+        exemplars:
+          - problem: 'Rewrite in if-then form: "All right angles are congruent." Identify the hypothesis and the conclusion.'
+            answer: 'If two angles are right angles, then they are congruent. Hypothesis: the two angles are right angles; conclusion: they are congruent.'
+          - problem: 'Identify the hypothesis and the conclusion of: "If a point $M$ is the midpoint of $\overline{AB}$, then $AM = MB$."'
+            answer: 'Hypothesis: $M$ is the midpoint of $\overline{AB}$; conclusion: $AM = MB$.'
+        constraints: "statements about angles, segments, triangles, or parallel lines; ask for the if-then rewrite and the two parts"
+      - id: kp3
+        name: Converses and deduction with geometric statements
+        key_prerequisites: [angle-relationships]
+        exemplars:
+          - problem: 'Write the converse of: "If two angles are vertical angles, then they are congruent." Is the converse true?'
+            answer: 'Converse: if two angles are congruent, then they are vertical angles. False; two congruent corresponding angles at parallel lines are congruent without being vertical.'
+            solution_sketch: 'Swap the hypothesis and the conclusion, then look for congruent angles that are not vertical.'
+          - problem: 'Given the true statement "if $M$ is the midpoint of $\overline{AB}$, then $AM = MB$", and given that $M$ is the midpoint of $\overline{AB}$ with $AB = 14$, what may you deduce about $AM$?'
+            answer: '$AM = MB = 7$; the hypothesis holds, so the conclusion follows deductively.'
+            solution_sketch: 'The statement plus its satisfied hypothesis yields the conclusion; the halves are $14/2 = 7$.'
+        constraints: "converse formed by swapping hypothesis and conclusion; a false converse needs a counterexample; deductions stay one step, using stated geometric facts only; no truth tables"
+    diagnostic_exemplar:
+      problem: 'Write the converse of "if two angles are vertical angles, then they are congruent", state whether the converse is true, and give a counterexample if it is false.'
+      answer: 'Converse: if two angles are congruent, then they are vertical angles. It is false: two $40^\circ$ base angles of an isosceles triangle are congruent but not vertical.'
+      solution_sketch: 'Swap hypothesis and conclusion; then exhibit congruent angles that do not form a vertical pair.'
+    anki_seeds:
+      - front: "A single example showing a conjecture false is called a..."
+        back: "counterexample"
+        type: basic
+      - front: "Generalizing from observed examples is ... reasoning; concluding from accepted facts by logical steps is ... reasoning"
+        back: "inductive; deductive"
+        type: basic
+
+  - id: postulates-theorems-justifications
+    name: Postulates, Theorems, and Justifications
+    core: true                 # the "reasons" vocabulary every proof step cites; gates all geometry proof topics
+    difficulty: 0.34
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 90
+    prerequisites:
+      - id: geometric-reasoning
+        weight: 0.7
+        key: true
+      - id: segment-angle-addition
+        weight: 0.5
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: Definitions, postulates, and theorems
+        key_prerequisites: []
+        exemplars:
+          - problem: 'Is "through any two distinct points there is exactly one line" a definition, a postulate, or a theorem?'
+            answer: 'A postulate; it is accepted without proof.'
+          - problem: 'Is "vertical angles are congruent" a definition, a postulate, or a theorem?'
+            answer: 'A theorem; it can be proved from the linear pair postulate.'
+            solution_sketch: 'Both vertical angles are supplementary to the same angle, which forces them congruent — a proved statement is a theorem.'
+        constraints: "classify standard geometry statements as definition, postulate, or theorem; include one reversible definition (midpoint, bisector, right angle) per set"
+      - id: kp2
+        name: Properties of equality and congruence as reasons
+        key_prerequisites: [segment-angle-addition]
+        exemplars:
+          - problem: 'Which property justifies: if $AB = CD$ and $CD = EF$, then $AB = EF$?'
+            answer: 'The transitive property of equality.'
+          - problem: 'Which property justifies: $\angle A \cong \angle A$?'
+            answer: 'The reflexive property of congruence.'
+          - problem: 'Which property justifies the step from $m\angle 1 + 25 = 90$ to $m\angle 1 = 65$?'
+            answer: 'The subtraction property of equality.'
+        constraints: "reasons drawn from reflexive, symmetric, transitive, substitution, and addition/subtraction properties; one algebraic step at most"
+      - id: kp3
+        name: Choose the justification for a geometric step
+        key_prerequisites: [segment-angle-addition, angle-relationships]
+        exemplars:
+          - problem: '$M$ is the midpoint of $\overline{AB}$. What reason justifies the statement $AM = MB$?'
+            answer: 'The definition of midpoint.'
+          - problem: 'Ray $\overrightarrow{OB}$ lies in the interior of $\angle AOC$. What reason justifies $m\angle AOB + m\angle BOC = m\angle AOC$?'
+            answer: 'The angle addition postulate.'
+          - problem: '$\angle 1$ and $\angle 2$ form a linear pair. What reason justifies $m\angle 1 + m\angle 2 = 180^\circ$?'
+            answer: 'The linear pair postulate (angles forming a linear pair are supplementary).'
+        constraints: "each item is one proof step needing one named reason: definitions of midpoint/bisector/right angle, segment and angle addition postulates, linear pair postulate, vertical angles theorem"
+    diagnostic_exemplar:
+      problem: 'Give the reason that justifies each step: (1) $\overrightarrow{BD}$ bisects $\angle ABC$, so $\angle ABD \cong \angle DBC$; (2) $m\angle ABD = m\angle DBC$ and $m\angle DBC = 32^\circ$, so $m\angle ABD = 32^\circ$.'
+      answer: '(1) Definition of angle bisector; (2) the transitive property of equality (or substitution).'
+      solution_sketch: 'Step (1) is exactly what a bisector is defined to do; step (2) chains two equalities through the shared middle term $m\angle DBC$, which is the transitive property.'
+    anki_seeds:
+      - front: "A statement accepted without proof is a ...; a statement proved from accepted statements is a ..."
+        back: "postulate (axiom); theorem"
+        type: basic
+      - front: "In a proof, AB = AB is justified by the ... property"
+        back: "reflexive"
+        type: basic
+
+  - id: writing-geometric-proofs
+    name: Writing Two-Column and Paragraph Proofs
+    core: true                 # the assembled proof-writing skill the four proof-demanding geometry topics gate on
+    difficulty: 0.38
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 180
+    prerequisites:
+      - id: postulates-theorems-justifications
+        weight: 0.8
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: Complete a partially written two-column proof
+        key_prerequisites: [postulates-theorems-justifications]
+        exemplars:
+          - problem: 'A two-column proof reads — Statements: 1. $M$ is the midpoint of $\overline{AB}$; 2. $AM = MB$. Reasons: 1. Given; 2. (blank). Supply the missing reason.'
+            answer: 'Definition of midpoint.'
+          - problem: 'A two-column proof that $m\angle 1 = m\angle 3$ reads — Statements: 1. $\angle 1$ and $\angle 2$ form a linear pair; $\angle 2$ and $\angle 3$ form a linear pair; 2. $m\angle 1 + m\angle 2 = 180^\circ$ and $m\angle 2 + m\angle 3 = 180^\circ$; 3. $m\angle 1 + m\angle 2 = m\angle 2 + m\angle 3$; 4. $m\angle 1 = m\angle 3$. Give the reasons for steps 2, 3, and 4.'
+            answer: '2. Linear pair postulate; 3. substitution (both sums equal $180^\circ$); 4. subtraction property of equality.'
+            solution_sketch: 'Each statement is licensed by exactly one named postulate or property; subtracting $m\angle 2$ finishes.'
+        constraints: "3-5 line proofs about segments and angles; one or two blanks, in either column; reasons limited to given, definitions, addition postulates, linear pair postulate, properties of equality"
+      - id: kp2
+        name: Write a short two-column proof
+        key_prerequisites: [postulates-theorems-justifications]
+        exemplars:
+          - problem: 'Write a two-column proof. Given: $\angle 1$ and $\angle 2$ are supplementary; $\angle 2$ and $\angle 3$ are supplementary. Prove: $\angle 1 \cong \angle 3$.'
+            answer: '1. $\angle 1, \angle 2$ supplementary; $\angle 2, \angle 3$ supplementary (Given). 2. $m\angle 1 + m\angle 2 = 180^\circ$; $m\angle 2 + m\angle 3 = 180^\circ$ (definition of supplementary). 3. $m\angle 1 + m\angle 2 = m\angle 2 + m\angle 3$ (substitution). 4. $m\angle 1 = m\angle 3$ (subtraction property). 5. $\angle 1 \cong \angle 3$ (definition of congruent angles).'
+            solution_sketch: 'The congruent supplements argument: both angles are supplementary to the same angle.'
+          - problem: 'Write a two-column proof. Given: $B$ is the midpoint of $\overline{AC}$ and $AB = 5$. Prove: $AC = 10$.'
+            answer: '1. $B$ is the midpoint of $\overline{AC}$; $AB = 5$ (Given). 2. $AB = BC$ (definition of midpoint). 3. $BC = 5$ (substitution). 4. $AB + BC = AC$ (segment addition postulate). 5. $AC = 5 + 5 = 10$ (substitution).'
+            solution_sketch: 'Midpoint halves the segment; segment addition reassembles it.'
+        constraints: "every statement carries a reason; 4-6 lines; content limited to segment/angle addition, midpoints, bisectors, supplementary/complementary pairs, vertical angles"
+      - id: kp3
+        name: Paragraph proofs
+        key_prerequisites: [postulates-theorems-justifications]
+        exemplars:
+          - problem: 'Write a paragraph proof: vertical angles $\angle 1$ and $\angle 3$ are congruent.'
+            answer: '$\angle 1$ and $\angle 2$ form a linear pair, as do $\angle 2$ and $\angle 3$, so each of $\angle 1$ and $\angle 3$ is supplementary to $\angle 2$ by the linear pair postulate. Then $m\angle 1 = 180^\circ - m\angle 2 = m\angle 3$, so $\angle 1 \cong \angle 3$.'
+            solution_sketch: 'Both vertical angles are supplements of the shared angle between them.'
+          - problem: 'Rewrite as a paragraph proof — Statements: 1. $\overrightarrow{BD}$ bisects $\angle ABC$; 2. $\angle ABD \cong \angle DBC$; 3. $m\angle ABD = m\angle DBC$. Reasons: 1. Given; 2. definition of angle bisector; 3. definition of congruent angles.'
+            answer: 'Since $\overrightarrow{BD}$ bisects $\angle ABC$, the definition of angle bisector gives $\angle ABD \cong \angle DBC$, and congruent angles have equal measures, so $m\angle ABD = m\angle DBC$.'
+        constraints: "same content scope as kp2; every claim in the paragraph must still name its reason; 2-4 sentences"
+    diagnostic_exemplar:
+      problem: 'Write a two-column proof. Given: $\angle 1$ and $\angle 2$ are vertical angles. Prove: $\angle 1 \cong \angle 2$.'
+      answer: '1. $\angle 1$ and $\angle 2$ are vertical angles (Given). 2. $\angle 1$ and $\angle 3$ form a linear pair; $\angle 2$ and $\angle 3$ form a linear pair (definition of vertical angles: the sides form two intersecting lines). 3. $m\angle 1 + m\angle 3 = 180^\circ$; $m\angle 2 + m\angle 3 = 180^\circ$ (linear pair postulate). 4. $m\angle 1 + m\angle 3 = m\angle 2 + m\angle 3$ (substitution). 5. $m\angle 1 = m\angle 2$, so $\angle 1 \cong \angle 2$ (subtraction property; definition of congruent angles).'
+      solution_sketch: 'Both angles are supplements of the shared adjacent angle.'
+    anki_seeds:
+      - front: "The two columns of a two-column proof are..."
+        back: "statements and reasons"
+        type: basic
+      - front: "Two angles supplementary to the same angle are..."
+        back: "congruent (congruent supplements theorem)"
+        type: basic

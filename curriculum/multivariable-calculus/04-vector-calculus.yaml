@@ -1,0 +1,991 @@
+unit: vector-calculus
+course: multivariable-calculus
+module: "Vector Calculus"
+topics:
+  - id: vector-fields
+    name: "Vector Fields"
+    core: true
+    difficulty: 0.72
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 120
+    prerequisites:
+      - id: vectors-in-rn
+        weight: 0.6
+        key: true
+      - id: functions-several-variables
+        weight: 0.6
+        key: true
+      - id: gradient-directional-derivatives
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Evaluating and recognizing fields"
+        key_prerequisites: [vectors-in-rn, functions-several-variables]
+        exemplars:
+          - problem: 'Let $\mathbf{F}(x, y) = \langle -y, x \rangle$. Compute $\mathbf{F}(2, 1)$ and describe the field geometrically.'
+            answer: '$\mathbf{F}(2, 1) = \langle -1, 2 \rangle$; the field rotates counterclockwise about the origin (each vector is perpendicular to the position vector).'
+          - problem: 'Let $\mathbf{F}(x, y) = \langle x, y \rangle$. What is $|\mathbf{F}(x, y)|$, and in which direction does the field point?'
+            answer: '$|\mathbf{F}| = \sqrt{x^2 + y^2}$; the field points radially outward from the origin.'
+        constraints: "fields built from x, y with integer coefficients; evaluation at small integer points; identify radial vs rotational"
+      - id: kp2
+        name: "Gradient fields"
+        key_prerequisites: [functions-several-variables, gradient-directional-derivatives]
+        exemplars:
+          - problem: 'Find the gradient field of $f(x, y) = x^2 y - y^3$.'
+            answer: '$\nabla f = \langle 2xy, x^2 - 3y^2 \rangle$'
+          - problem: 'Find a function $f$ whose gradient field is $\mathbf{F} = \langle 2x, 2y \rangle$.'
+            answer: '$f(x, y) = x^2 + y^2$ (plus any constant)'
+            solution_sketch: 'Antidifferentiate: $f_x = 2x \Rightarrow f = x^2 + g(y)$; then $g''(y) = 2y$.'
+        constraints: "potentials are polynomials of degree at most 3"
+    diagnostic_exemplar:
+      problem: 'Find the gradient field of $f(x, y) = x^3 y - y^2$ and evaluate it at $(1, 2)$.'
+      answer: '$\nabla f = \langle 3x^2 y,\; x^3 - 2y \rangle$; $\nabla f(1, 2) = \langle 6, -3 \rangle$.'
+      solution_sketch: 'Differentiate in each variable: $f_x = 3x^2y$, $f_y = x^3 - 2y$; at $(1,2)$ these are $6$ and $1 - 4 = -3$.'
+    anki_seeds:
+      - front: 'What is a vector field on $\mathbb{R}^2$?'
+        back: 'A function assigning a vector $\mathbf{F}(x, y)$ to each point $(x, y)$.'
+        type: basic
+      - front: 'What is the gradient field of a scalar function $f$?'
+        back: 'The vector field $\nabla f = \langle f_x, f_y \rangle$; fields of this form are called conservative.'
+        type: basic
+
+  - id: scalar-line-integrals
+    name: "Scalar Line Integrals"
+    core: true
+    difficulty: 0.74
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 180
+    prerequisites:
+      - id: arc-length-space-curves
+        weight: 0.7
+        key: true
+      - id: definite-integrals-ftc
+        weight: 0.4
+        key: false
+      - id: trigonometric-integrals
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Line integrals along segments"
+        key_prerequisites: [arc-length-space-curves]
+        exemplars:
+          - problem: 'Evaluate $\int_C x \, ds$ where $C$ is the segment from $(0, 0)$ to $(3, 4)$.'
+            answer: '$\frac{15}{2}$'
+            solution_sketch: 'Parametrize $\mathbf{r}(t) = \langle 3t, 4t \rangle$, $0 \le t \le 1$; $ds = 5\, dt$, so $\int_0^1 3t \cdot 5\, dt = \frac{15}{2}$.'
+          - problem: 'Evaluate $\int_C (x + y)\, ds$ where $C$ is the segment from $(0, 0)$ to $(3, 4)$.'
+            answer: '$\frac{35}{2}$'
+            solution_sketch: 'With $\mathbf{r}(t) = \langle 3t, 4t \rangle$, $ds = 5\,dt$: $\int_0^1 7t \cdot 5\, dt = \frac{35}{2}$.'
+        constraints: "segments with Pythagorean-triple directions so ds = |r'| dt is a constant integer"
+      - id: kp2
+        name: "Line integrals along circles and curves"
+        key_prerequisites: [arc-length-space-curves, trigonometric-integrals]
+        exemplars:
+          - problem: 'Evaluate $\int_C (x^2 + y^2)\, ds$ where $C$ is the unit circle.'
+            answer: '$2\pi$'
+            solution_sketch: 'On the unit circle $x^2 + y^2 = 1$, so the integral is the arc length $2\pi$.'
+          - problem: 'Evaluate $\int_C x^2 \, ds$ where $C$ is the circle of radius $2$ centered at the origin.'
+            answer: '$8\pi$'
+            solution_sketch: '$\mathbf{r}(t) = \langle 2\cos t, 2\sin t \rangle$, $ds = 2\,dt$: $\int_0^{2\pi} 4\cos^2 t \cdot 2\, dt = 8 \cdot \pi$.'
+        constraints: "circles centered at the origin with small integer radii; use cos^2 integrals over full periods"
+      - id: kp3
+        name: "Mass of a wire and 3D curves"
+        key_prerequisites: [arc-length-space-curves]
+        exemplars:
+          - problem: 'A wire follows the upper unit semicircle and has density $\rho(x, y) = y$. Find its mass.'
+            answer: "2"
+            solution_sketch: '$\mathbf{r}(t) = \langle \cos t, \sin t \rangle$, $t \in [0, \pi]$, $ds = dt$: $m = \int_0^\pi \sin t\, dt = 2$.'
+          - problem: 'Evaluate $\int_C z \, ds$ where $C$ is the helix $\mathbf{r}(t) = \langle \cos t, \sin t, t \rangle$, $0 \le t \le 2\pi$.'
+            answer: '$2\sqrt{2}\,\pi^2$'
+            solution_sketch: '$|\mathbf{r}''(t)| = \sqrt{2}$: $\int_0^{2\pi} t \sqrt{2}\, dt = \sqrt{2} \cdot 2\pi^2$.'
+        constraints: "curves with constant speed (circles, helices); densities linear in one coordinate; answers exact"
+    diagnostic_exemplar:
+      problem: 'A wire follows the helix $\mathbf{r}(t) = \langle 3\cos t,\; 3\sin t,\; 4t \rangle$ for $0 \le t \le \pi$ and has density $\rho(x, y, z) = z$. Find its mass.'
+      answer: '$10\pi^2$'
+      solution_sketch: '$|\mathbf{r}''| = \sqrt{9\sin^2 t + 9\cos^2 t + 16} = 5$, so $m = \int_0^{\pi} (4t)(5)\,dt = 20\cdot\frac{\pi^2}{2} = 10\pi^2$.'
+    anki_seeds:
+      - front: 'In a scalar line integral $\int_C f\, ds$, the element $ds$ equals...'
+        back: '$|\mathbf{r}''(t)|\, dt$'
+        type: basic
+      - front: 'Physical interpretation of $\int_C \rho\, ds$ for a wire $C$ with density $\rho$?'
+        back: 'The mass of the wire.'
+        type: basic
+
+  - id: vector-line-integrals
+    name: "Line Integrals of Vector Fields"
+    core: true
+    difficulty: 0.77
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 200
+    prerequisites:
+      - id: scalar-line-integrals
+        weight: 0.7
+        key: true
+      - id: vector-fields
+        weight: 0.7
+        key: true
+      - id: dot-product
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Computing F · dr along parametrized curves"
+        key_prerequisites: [scalar-line-integrals, vector-fields, dot-product]
+        exemplars:
+          - problem: 'Evaluate $\int_C \mathbf{F} \cdot d\mathbf{r}$ for $\mathbf{F} = \langle y, x \rangle$ along $\mathbf{r}(t) = \langle t, t^2 \rangle$, $0 \le t \le 1$.'
+            answer: "1"
+            solution_sketch: '$\mathbf{F}(\mathbf{r}(t)) \cdot \mathbf{r}''(t) = t^2 \cdot 1 + t \cdot 2t = 3t^2$; $\int_0^1 3t^2\, dt = 1$.'
+          - problem: 'Evaluate $\int_C \mathbf{F} \cdot d\mathbf{r}$ for $\mathbf{F} = \langle y, z, x \rangle$ along $\mathbf{r}(t) = \langle t, t, t \rangle$, $0 \le t \le 1$.'
+            answer: '$\frac{3}{2}$'
+            solution_sketch: '$\mathbf{F}(\mathbf{r}(t)) = \langle t, t, t \rangle$, $\mathbf{r}''(t) = \langle 1, 1, 1 \rangle$; integrand $3t$, integral $\frac{3}{2}$.'
+        constraints: "curves are lines or parabolas; F polynomial; integrands reduce to single-variable polynomials"
+      - id: kp2
+        name: "Circulation around closed curves"
+        key_prerequisites: [scalar-line-integrals, vector-fields, dot-product]
+        exemplars:
+          - problem: 'Evaluate $\oint_C \mathbf{F} \cdot d\mathbf{r}$ for $\mathbf{F} = \langle y, -x \rangle$ around the unit circle traversed counterclockwise.'
+            answer: '$-2\pi$'
+            solution_sketch: 'With $\mathbf{r} = \langle \cos t, \sin t \rangle$: $\mathbf{F}\cdot\mathbf{r}'' = \sin t(-\sin t) + (-\cos t)(\cos t) = -1$; integrate over $[0, 2\pi]$.'
+          - problem: 'Evaluate $\oint_C \mathbf{F} \cdot d\mathbf{r}$ for $\mathbf{F} = \langle -y, x \rangle$ around the circle of radius $2$, counterclockwise.'
+            answer: '$8\pi$'
+            solution_sketch: '$\mathbf{r} = \langle 2\cos t, 2\sin t \rangle$: $\mathbf{F}\cdot\mathbf{r}'' = 4\sin^2 t + 4\cos^2 t = 4$; $\int_0^{2\pi} 4\, dt = 8\pi$.'
+        constraints: "circles centered at the origin; the integrand collapses via sin^2 + cos^2 = 1"
+      - id: kp3
+        name: "Work and orientation"
+        key_prerequisites: [scalar-line-integrals, vector-fields, dot-product]
+        exemplars:
+          - problem: 'Find the work done by $\mathbf{F} = \langle y, x \rangle$ on a particle moving along the segment from $(0, 0)$ to $(2, 3)$.'
+            answer: "6"
+            solution_sketch: '$\mathbf{r}(t) = \langle 2t, 3t \rangle$: $\mathbf{F}\cdot\mathbf{r}'' = 3t \cdot 2 + 2t \cdot 3 = 12t$; $\int_0^1 12t\, dt = 6$.'
+          - problem: 'If $\int_C \mathbf{F} \cdot d\mathbf{r} = 7$, what is the integral along the same curve traversed in the opposite direction?'
+            answer: '$-7$'
+            solution_sketch: 'Reversing orientation reverses $d\mathbf{r}$, so a vector line integral changes sign.'
+        constraints: "work = line integral of F; always state orientation; sign-flip questions use given integer values"
+    diagnostic_exemplar:
+      problem: 'Evaluate $\oint_C \mathbf{F} \cdot d\mathbf{r}$ for $\mathbf{F} = \langle y, -x \rangle$ around the circle of radius $3$ centred at the origin, traversed counterclockwise.'
+      answer: '$-18\pi$'
+      solution_sketch: 'With $\mathbf{r}(t) = \langle 3\cos t, 3\sin t \rangle$: $\mathbf{F} = \langle 3\sin t, -3\cos t \rangle$ and $\mathbf{r}''(t) = \langle -3\sin t, 3\cos t \rangle$, so $\mathbf{F}\cdot\mathbf{r}'' = -9$ and the integral is $-9(2\pi) = -18\pi$.'
+    anki_seeds:
+      - front: 'How do you evaluate $\int_C \mathbf{F} \cdot d\mathbf{r}$ with a parametrization $\mathbf{r}(t)$, $a \le t \le b$?'
+        back: '$\int_a^b \mathbf{F}(\mathbf{r}(t)) \cdot \mathbf{r}''(t)\, dt$'
+        type: basic
+      - front: 'What happens to $\int_C \mathbf{F} \cdot d\mathbf{r}$ when the orientation of $C$ is reversed?'
+        back: 'It changes sign. (Scalar integrals $\int_C f\, ds$ do not.)'
+        type: basic
+
+  - id: line-integrals
+    name: "Line Integrals: Differential Forms and Piecewise Paths"
+    core: true
+    difficulty: 0.78
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 240
+    prerequisites:
+      - id: vector-line-integrals
+        weight: 0.8
+        key: true
+      - id: scalar-line-integrals
+        weight: 0.5
+        key: true
+      - id: arc-length-space-curves
+        weight: 0.3
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Differential-form line integrals"
+        key_prerequisites: [vector-line-integrals, scalar-line-integrals]
+        exemplars:
+          - problem: 'Evaluate $\int_C y^2\, dx + x\, dy$ where $C$ is the segment from $(0,0)$ to $(1,1)$.'
+            answer: '$\frac{5}{6}$'
+            solution_sketch: 'Parametrize $x = t$, $y = t$: $\int_0^1 (t^2 + t)\, dt = \frac{1}{3} + \frac{1}{2} = \frac{5}{6}$.'
+          - problem: 'Evaluate $\int_C y\, dx + x\, dy$ along $\mathbf{r}(t) = \langle t, t^2 \rangle$, $0 \le t \le 1$.'
+            answer: "1"
+            solution_sketch: '$dx = dt$, $dy = 2t\, dt$: $\int_0^1 (t^2 + 2t^2)\, dt = 1$. (Same as $\mathbf{F} = \langle y, x \rangle$ in vector form.)'
+        constraints: "P dx + Q dy with polynomial P, Q; curves are segments or parabolas"
+      - id: kp2
+        name: "Piecewise paths and path dependence"
+        key_prerequisites: [vector-line-integrals]
+        exemplars:
+          - problem: 'Evaluate $\int_C y^2\, dx + x\, dy$ along the two-segment path $(0,0) \to (1,0) \to (1,1)$. Compare with the value $\frac{5}{6}$ along the straight segment to $(1,1)$.'
+            answer: '$1$ — different from $\frac{5}{6}$, so this integral is path-dependent.'
+            solution_sketch: 'On $(0,0) \to (1,0)$: $y = 0$, $dy = 0$, contribution $0$. On $(1,0) \to (1,1)$: $dx = 0$, $\int_0^1 1\, dy = 1$.'
+          - problem: 'Evaluate $\oint_C x\, dy - y\, dx$ counterclockwise around the triangle $(0,0)$, $(1,0)$, $(0,1)$.'
+            answer: "1"
+            solution_sketch: 'The legs along the axes contribute $0$; on the hypotenuse $x = 1-t$, $y = t$: $\int_0^1 \left((1-t) + t\right) dt = 1$. (This equals twice the enclosed area.)'
+        constraints: "paths of 2-3 segments parallel to axes plus one slanted edge; each piece contributes a one-line integral"
+      - id: kp3
+        name: "Three-dimensional and closed-curve capstones"
+        key_prerequisites: [vector-line-integrals, scalar-line-integrals]
+        exemplars:
+          - problem: 'Evaluate $\int_C \mathbf{F} \cdot d\mathbf{r}$ for $\mathbf{F} = \langle y, x, z \rangle$ along $\mathbf{r}(t) = \langle t, t, t^2 \rangle$, $0 \le t \le 1$.'
+            answer: '$\frac{3}{2}$'
+            solution_sketch: '$\mathbf{F}(\mathbf{r}(t)) \cdot \mathbf{r}''(t) = t + t + t^2 \cdot 2t = 2t + 2t^3$; $\int_0^1 (2t + 2t^3)\, dt = 1 + \frac{1}{2}$.'
+          - problem: 'Evaluate $\oint_C x^2\, dy$ counterclockwise around the unit square $[0,1]^2$.'
+            answer: "1"
+            solution_sketch: 'Only the vertical edges contribute: right edge ($x = 1$, $dy > 0$) gives $1$; left edge ($x = 0$) gives $0$; horizontal edges have $dy = 0$.'
+        constraints: "3D curves polynomial in t; closed squares/triangles traversed counterclockwise; answers small rationals"
+    diagnostic_exemplar:
+      problem: 'Evaluate $\oint_C x^2\,dy - y\,dx$ counterclockwise around the triangle with vertices $(0,0)$, $(1,0)$, $(0,1)$.'
+      answer: '$\dfrac{5}{6}$'
+      solution_sketch: 'On $(0,0) \to (1,0)$: $y = 0$, $dy = 0$, contribution $0$. On $(1,0) \to (0,1)$, with $x = 1-t$, $y = t$: the integrand is $\left[(1-t)^2 + t\right]dt$, giving $\tfrac{1}{3} + \tfrac{1}{2} = \tfrac{5}{6}$. On $(0,1) \to (0,0)$: $x = 0$, $dx = 0$, contribution $0$.'
+    anki_seeds:
+      - front: 'How does $\int_C P\, dx + Q\, dy$ relate to a vector line integral?'
+        back: 'It equals $\int_C \mathbf{F} \cdot d\mathbf{r}$ for $\mathbf{F} = \langle P, Q \rangle$.'
+        type: basic
+      - front: 'Does the value of $\int_C \mathbf{F} \cdot d\mathbf{r}$ depend only on the endpoints of $C$?'
+        back: 'In general no — only for conservative fields is the integral path-independent.'
+        type: basic
+
+  - id: conservative-fields-potential-functions
+    name: "Conservative Fields and Potential Functions"
+    core: true
+    difficulty: 0.80
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 240
+    prerequisites:
+      - id: line-integrals
+        weight: 0.8
+        key: true
+      - id: gradient-directional-derivatives
+        weight: 0.6
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: "Testing for conservativity"
+        key_prerequisites: [line-integrals, gradient-directional-derivatives]
+        exemplars:
+          - problem: 'Is $\mathbf{F} = \langle 2xy, x^2 \rangle$ conservative on $\mathbb{R}^2$?'
+            answer: 'Yes: $\frac{\partial}{\partial y}(2xy) = 2x = \frac{\partial}{\partial x}(x^2)$.'
+          - problem: 'Is $\mathbf{F} = \langle y, -x \rangle$ conservative?'
+            answer: 'No: $P_y = 1 \ne -1 = Q_x$.'
+          - problem: 'Is $\mathbf{F} = \langle y^2 + 2x, 2xy + 3 \rangle$ conservative on $\mathbb{R}^2$?'
+            answer: 'Yes: $P_y = 2y = Q_x$.'
+        constraints: "fields polynomial on all of R^2 (simply connected, so P_y = Q_x is decisive)"
+      - id: kp2
+        name: "Finding potential functions"
+        key_prerequisites: [line-integrals, gradient-directional-derivatives]
+        exemplars:
+          - problem: 'Find a potential function for $\mathbf{F} = \langle 2xy, x^2 \rangle$.'
+            answer: '$f(x, y) = x^2 y$ (plus any constant)'
+            solution_sketch: '$f_x = 2xy \Rightarrow f = x^2 y + g(y)$; then $f_y = x^2 + g''(y) = x^2$ forces $g'' = 0$.'
+          - problem: 'Find a potential function for $\mathbf{F} = \langle e^y, x e^y \rangle$.'
+            answer: '$f(x, y) = x e^y$'
+          - problem: 'Find a potential function for $\mathbf{F} = \langle 2x + y, x + 2y \rangle$.'
+            answer: '$f(x, y) = x^2 + xy + y^2$'
+            solution_sketch: 'Integrate $f_x = 2x + y$ in $x$: $f = x^2 + xy + g(y)$; match $f_y = x + g''(y) = x + 2y$.'
+        constraints: "potentials are polynomials or x e^y-type products; verify by re-differentiating"
+      - id: kp3
+        name: "Harder potentials"
+        key_prerequisites: [line-integrals, gradient-directional-derivatives]
+        exemplars:
+          - problem: 'Find a potential function for $\mathbf{F} = \langle 2xy + y^3, x^2 + 3xy^2 \rangle$.'
+            answer: '$f(x, y) = x^2 y + x y^3$'
+            solution_sketch: 'Check $P_y = 2x + 3y^2 = Q_x$; integrate $f_x$: $f = x^2 y + x y^3 + g(y)$; matching $f_y$ forces $g'' = 0$.'
+          - problem: 'Find a potential function for $\mathbf{F} = \langle 3x^2 + 2xy, x^2 + 2y \rangle$.'
+            answer: '$f(x, y) = x^3 + x^2 y + y^2$'
+            solution_sketch: '$f = x^3 + x^2 y + g(y)$ from $f_x$; then $g''(y) = 2y$.'
+        constraints: "every mixed term appears in BOTH components; degree at most 4; always verify with the component test first"
+    diagnostic_exemplar:
+      problem: 'Show that $\mathbf{F} = \langle 3x^2 + 2xy^3,\; 3x^2y^2 + 4y \rangle$ is conservative and find a potential function.'
+      answer: '$P_y = 6xy^2 = Q_x$, so $\mathbf{F}$ is conservative; $f(x, y) = x^3 + x^2y^3 + 2y^2$ (plus any constant).'
+      solution_sketch: 'Integrating $P$ in $x$: $f = x^3 + x^2y^3 + g(y)$. Then $f_y = 3x^2y^2 + g''(y) = 3x^2y^2 + 4y$ forces $g''(y) = 4y$, so $g(y) = 2y^2$.'
+    anki_seeds:
+      - front: 'Component test for a conservative field $\mathbf{F} = \langle P, Q \rangle$ on a simply connected domain?'
+        back: '$\dfrac{\partial P}{\partial y} = \dfrac{\partial Q}{\partial x}$'
+        type: basic
+      - front: 'What does it mean for $\mathbf{F}$ to be conservative?'
+        back: '$\mathbf{F} = \nabla f$ for some potential function $f$.'
+        type: basic
+
+  - id: fundamental-theorem-line-integrals
+    name: "The Fundamental Theorem for Line Integrals"
+    core: false                # stated theorem; feeds only conservative-fields-3d
+    difficulty: 0.81
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 180
+    prerequisites:
+      - id: conservative-fields-potential-functions
+        weight: 0.8
+        key: true
+      - id: vector-line-integrals
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Applying the theorem"
+        key_prerequisites: [conservative-fields-potential-functions, vector-line-integrals]
+        exemplars:
+          - problem: 'Evaluate $\int_C \nabla f \cdot d\mathbf{r}$ for $f(x, y) = x^2 y$ along any curve from $(1, 1)$ to $(2, 3)$.'
+            answer: "11"
+            solution_sketch: '$f(2, 3) - f(1, 1) = 12 - 1 = 11$, independent of the path.'
+          - problem: 'Evaluate $\int_C \mathbf{F} \cdot d\mathbf{r}$ for the conservative field $\mathbf{F} = \langle 2xy, x^2 \rangle$ along any path from $(0, 0)$ to $(1, 2)$.'
+            answer: "2"
+            solution_sketch: 'Potential $f = x^2 y$: $f(1, 2) - f(0, 0) = 2$.'
+          - problem: 'What is $\oint_C \mathbf{F} \cdot d\mathbf{r}$ for a conservative field $\mathbf{F}$ around any closed curve?'
+            answer: "0"
+            solution_sketch: 'Endpoints coincide, so $f(\text{end}) - f(\text{start}) = 0$.'
+        constraints: "endpoints at small integer points; potential values exact integers"
+      - id: kp2
+        name: "Find the potential, then evaluate"
+        key_prerequisites: [conservative-fields-potential-functions, vector-line-integrals]
+        exemplars:
+          - problem: 'Evaluate $\int_C \mathbf{F} \cdot d\mathbf{r}$ for $\mathbf{F} = \langle 2x + y, x \rangle$ along any path from $(0, 0)$ to $(2, 3)$.'
+            answer: "10"
+            solution_sketch: 'Potential $f = x^2 + xy$: $f(2, 3) - f(0, 0) = 4 + 6 = 10$.'
+          - problem: 'Evaluate $\int_C \mathbf{F} \cdot d\mathbf{r}$ for $\mathbf{F} = \langle e^y, x e^y \rangle$ along any path from $(1, 0)$ to $(2, \ln 2)$.'
+            answer: "3"
+            solution_sketch: 'Potential $f = x e^y$: $f(2, \ln 2) - f(1, 0) = 4 - 1 = 3$.'
+        constraints: "field given without its potential; endpoints chosen so f evaluates to integers"
+    diagnostic_exemplar:
+      problem: 'Evaluate $\int_C \mathbf{F} \cdot d\mathbf{r}$ for $\mathbf{F} = \langle 2xy,\; x^2 + 3y^2 \rangle$ along any path from $(0, 0)$ to $(2, 1)$.'
+      answer: '$5$'
+      solution_sketch: '$P_y = 2x = Q_x$, so $\mathbf{F}$ is conservative with potential $f(x,y) = x^2 y + y^3$. By the fundamental theorem the integral is $f(2,1) - f(0,0) = 5 - 0 = 5$.'
+    anki_seeds:
+      - front: 'Fundamental theorem for line integrals?'
+        back: '$\int_C \nabla f \cdot d\mathbf{r} = f(\mathbf{r}(b)) - f(\mathbf{r}(a))$ — path-independent, zero on closed curves.'
+        type: basic
+      - front: 'Equivalent conditions for a continuous field $\mathbf{F}$ on an open connected domain?'
+        back: '$\mathbf{F}$ conservative $\iff$ line integrals are path-independent $\iff$ $\oint_C \mathbf{F}\cdot d\mathbf{r} = 0$ for every closed curve.'
+        type: basic
+
+  - id: computing-div-curl
+    name: "Computing Divergence and Curl"
+    core: true
+    difficulty: 0.78
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 150
+    prerequisites:
+      - id: vector-fields
+        weight: 0.7
+        key: true
+      - id: cross-product
+        weight: 0.6
+        key: true
+      - id: partial-derivatives
+        weight: 0.5
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Divergence"
+        key_prerequisites: [vector-fields, partial-derivatives]
+        exemplars:
+          - problem: 'Compute $\operatorname{div} \mathbf{F}$ for $\mathbf{F} = \langle x^2, xy, z^2 \rangle$.'
+            answer: '$3x + 2z$'
+            solution_sketch: '$\nabla \cdot \mathbf{F} = \frac{\partial}{\partial x}(x^2) + \frac{\partial}{\partial y}(xy) + \frac{\partial}{\partial z}(z^2) = 2x + x + 2z$.'
+          - problem: 'Compute $\operatorname{div} \mathbf{F}$ for $\mathbf{F} = \langle xy, yz, zx \rangle$.'
+            answer: '$x + y + z$'
+        constraints: "polynomial fields in three variables, degree at most 2 per component"
+      - id: kp2
+        name: "Curl"
+        key_prerequisites: [vector-fields, cross-product]
+        exemplars:
+          - problem: 'Compute $\operatorname{curl} \mathbf{F}$ for $\mathbf{F} = \langle y, z, x \rangle$.'
+            answer: '$\langle -1, -1, -1 \rangle$'
+            solution_sketch: '$\nabla \times \mathbf{F} = \langle \partial_y x - \partial_z z,\; \partial_z y - \partial_x x,\; \partial_x z - \partial_y y \rangle = \langle -1, -1, -1 \rangle$.'
+          - problem: 'Compute $\operatorname{curl} \mathbf{F}$ for $\mathbf{F} = \langle xy, yz, xz \rangle$.'
+            answer: '$\langle -y, -z, -x \rangle$'
+            solution_sketch: 'First component: $\partial_y(xz) - \partial_z(yz) = -y$; the others follow the same cyclic pattern.'
+        constraints: "components are monomials in x, y, z; compute via the symbolic determinant with i, j, k"
+      - id: kp3
+        name: "The identities curl grad = 0 and div curl = 0"
+        key_prerequisites: [vector-fields, cross-product, partial-derivatives]
+        exemplars:
+          - problem: 'Verify the identity $\operatorname{curl}(\nabla f) = \mathbf{0}$ for $f = x^2 y + z$: compute $\nabla f$, then $\operatorname{curl}(\nabla f)$, and state the vector you get.'
+            answer: "0"
+            solution_sketch: '$\nabla f = \langle 2xy,\; x^2,\; 1 \rangle$, and its curl is $\langle 0 - 0,\; 0 - 0,\; 2x - 2x \rangle = \mathbf{0}$ — the zero vector, as $\operatorname{curl}(\nabla f) = \mathbf{0}$ guarantees.'
+          - problem: 'For $\mathbf{F} = \langle xy, yz, xz \rangle$, compute $\operatorname{div}(\operatorname{curl} \mathbf{F})$.'
+            answer: "0"
+            solution_sketch: '$\operatorname{curl}\mathbf{F} = \langle -y, -z, -x \rangle$, whose divergence is $0 + 0 + 0 = 0$ — as the identity $\nabla \cdot (\nabla \times \mathbf{F}) = 0$ guarantees.'
+        constraints: "verifications on concrete low-degree fields; state which identity the computation illustrates"
+    diagnostic_exemplar:
+      problem: 'For $\mathbf{F} = \langle x^2, y^2, z^2 \rangle$, confirm that $\operatorname{curl} \mathbf{F} = \mathbf{0}$ and then state $\operatorname{div} \mathbf{F}$.'
+      answer: '$2x + 2y + 2z$'
+      solution_sketch: 'Each component depends only on its own variable, so all mixed partials in the curl vanish; the divergence is $2x + 2y + 2z$.'
+    anki_seeds:
+      - front: 'Formulas: $\operatorname{div}\mathbf{F}$ and $\operatorname{curl}\mathbf{F}$ in terms of $\nabla$?'
+        back: '$\operatorname{div}\mathbf{F} = \nabla \cdot \mathbf{F}$ (a scalar); $\operatorname{curl}\mathbf{F} = \nabla \times \mathbf{F}$ (a vector).'
+        type: basic
+      - front: 'What is $\operatorname{curl}(\nabla f)$ for any twice continuously differentiable $f$?'
+        back: '$\mathbf{0}$ — gradient fields are irrotational.'
+        type: basic
+      - front: 'What is $\operatorname{div}(\operatorname{curl} \mathbf{F})$ for any twice continuously differentiable $\mathbf{F}$?'
+        back: '$0$ — curl fields are divergence-free.'
+        type: basic
+
+  - id: conservative-fields-3d
+    name: "Conservative Fields in Three Dimensions"
+    core: false                # vector-calculus capstone; terminal
+    difficulty: 0.83
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 240
+    prerequisites:
+      - id: conservative-fields-potential-functions
+        weight: 0.7
+        key: true
+      - id: computing-div-curl
+        weight: 0.7
+        key: true
+      - id: fundamental-theorem-line-integrals
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "The curl test"
+        key_prerequisites: [conservative-fields-potential-functions, computing-div-curl]
+        exemplars:
+          - problem: 'Is $\mathbf{F} = \langle yz, xz, xy \rangle$ conservative on $\mathbb{R}^3$?'
+            answer: 'Yes: $\operatorname{curl}\mathbf{F} = \mathbf{0}$ (e.g. the first component is $\partial_y(xy) - \partial_z(xz) = x - x = 0$).'
+          - problem: 'Is $\mathbf{F} = \langle y, -x, 0 \rangle$ conservative on $\mathbb{R}^3$?'
+            answer: 'No: $\operatorname{curl}\mathbf{F} = \langle 0, 0, -2 \rangle \ne \mathbf{0}$.'
+        constraints: "polynomial fields on all of R^3; the curl either vanishes identically or has a constant nonzero component"
+      - id: kp2
+        name: "Finding 3D potential functions"
+        key_prerequisites: [conservative-fields-potential-functions, computing-div-curl]
+        exemplars:
+          - problem: 'Find a potential function for $\mathbf{F} = \langle yz, xz, xy \rangle$.'
+            answer: '$f(x, y, z) = xyz$'
+            solution_sketch: '$f = xyz + g(y,z)$ from $f_x = yz$; matching $f_y = xz$ and $f_z = xy$ forces $g$ constant.'
+          - problem: 'Find a potential function for $\mathbf{F} = \langle y + z, x + z, x + y \rangle$.'
+            answer: '$f(x, y, z) = xy + yz + zx$'
+            solution_sketch: 'Integrate $f_x = y + z$: $f = xy + xz + g(y,z)$; then $f_y = x + g_y = x + z$ gives $g = yz$, and $f_z$ checks out.'
+        constraints: "potentials are sums of degree-2 or -3 monomials; successive integration in x, then y, then z"
+      - id: kp3
+        name: "Path-independent integrals in space"
+        key_prerequisites: [conservative-fields-potential-functions, computing-div-curl, fundamental-theorem-line-integrals]
+        exemplars:
+          - problem: 'Evaluate $\int_C \mathbf{F} \cdot d\mathbf{r}$ for $\mathbf{F} = \langle yz, xz, xy \rangle$ along any path from $(1, 1, 1)$ to $(2, 3, 1)$.'
+            answer: "5"
+            solution_sketch: 'Potential $f = xyz$: $f(2,3,1) - f(1,1,1) = 6 - 1 = 5$.'
+          - problem: 'Evaluate $\int_C \mathbf{F} \cdot d\mathbf{r}$ for $\mathbf{F} = \langle 2x, 2y, 2z \rangle$ along any path from $(0, 0, 0)$ to $(1, 2, 2)$.'
+            answer: "9"
+            solution_sketch: 'Potential $f = x^2 + y^2 + z^2$: $f(1,2,2) = 9$.'
+        constraints: "endpoints at small integer points; potential values exact integers"
+    diagnostic_exemplar:
+      problem: 'Evaluate $\int_C \mathbf{F} \cdot d\mathbf{r}$ for $\mathbf{F} = \langle yz,\; xz + 2y,\; xy \rangle$ along any path from $(1, 0, 2)$ to $(2, 1, 3)$.'
+      answer: '$7$'
+      solution_sketch: '$\operatorname{curl}\mathbf{F} = \langle x - x,\; y - y,\; z - z \rangle = \mathbf{0}$, so $\mathbf{F}$ is conservative with potential $f = xyz + y^2$. The integral is $f(2,1,3) - f(1,0,2) = 7 - 0 = 7$.'
+    anki_seeds:
+      - front: 'Test for a conservative field $\mathbf{F}$ on $\mathbb{R}^3$ (simply connected)?'
+        back: '$\operatorname{curl}\mathbf{F} = \mathbf{0}$'
+        type: basic
+      - front: 'Procedure for finding a 3D potential function?'
+        back: 'Integrate $f_x = P$ in $x$ (constant of integration $g(y,z)$), then match $f_y = Q$ and $f_z = R$ to pin down $g$.'
+        type: basic
+
+  - id: greens-theorem
+    name: "Green's Theorem"
+    core: false                # stated theorem feeding only the terminal capstones
+    difficulty: 0.82
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 240
+    prerequisites:
+      - id: line-integrals
+        weight: 0.8
+        key: true
+      - id: double-integrals
+        weight: 0.7
+        key: true
+      - id: double-integrals-polar
+        weight: 0.4
+        key: false
+      - id: conservative-fields-potential-functions
+        weight: 0.3
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Converting circulation integrals to double integrals"
+        key_prerequisites: [line-integrals, double-integrals]
+        exemplars:
+          - problem: 'Use Green''s theorem to evaluate $\oint_C (-y\, dx + x\, dy)$ where $C$ is the unit circle, counterclockwise.'
+            answer: '$2\pi$'
+            solution_sketch: '$Q_x - P_y = 1 - (-1) = 2$; the integral is $\iint_D 2\, dA = 2\pi$.'
+          - problem: 'Use Green''s theorem to evaluate $\oint_C xy\, dx + x^2\, dy$ where $C$ is the boundary of the unit square $[0,1]^2$, counterclockwise.'
+            answer: '$\frac{1}{2}$'
+            solution_sketch: '$Q_x - P_y = 2x - x = x$; $\iint_{[0,1]^2} x\, dA = \frac{1}{2}$.'
+          - problem: 'Use Green''s theorem to evaluate $\oint_C y^2\, dx + 3xy\, dy$ where $C$ bounds the upper half of the unit disk, counterclockwise.'
+            answer: '$\frac{2}{3}$'
+            solution_sketch: '$Q_x - P_y = 3y - 2y = y$; in polar, $\int_0^\pi \int_0^1 r\sin\theta \cdot r\, dr\, d\theta = \frac{1}{3} \cdot 2 = \frac{2}{3}$.'
+        constraints: "C is a circle, square, or half-disk, always counterclockwise; Q_x - P_y is a monomial"
+      - id: kp2
+        name: "Area via Green's theorem"
+        key_prerequisites: [line-integrals, double-integrals]
+        exemplars:
+          - problem: 'Use $A = \frac{1}{2}\oint_C (x\, dy - y\, dx)$ to find the area of the ellipse $x = 3\cos t$, $y = 2\sin t$.'
+            answer: '$6\pi$'
+            solution_sketch: '$\frac{1}{2}\int_0^{2\pi} \left(3\cos t \cdot 2\cos t - 2\sin t \cdot (-3\sin t)\right) dt = \frac{1}{2}\int_0^{2\pi} 6\, dt = 6\pi$.'
+          - problem: 'Why does $\frac{1}{2}\oint_C (x\, dy - y\, dx)$ compute the enclosed area?'
+            answer: 'Because $Q_x - P_y = \frac{1}{2} - \left(-\frac{1}{2}\right) = 1$, so by Green''s theorem the integral equals $\iint_D 1\, dA = A$.'
+        constraints: "ellipses and polygons parametrized with sin/cos or segments; the integrand collapses via sin^2 + cos^2 = 1"
+    diagnostic_exemplar:
+      problem: 'Use Green''s theorem to evaluate $\oint_C xy\,dx + x^2\,dy$ where $C$ is the boundary of the triangle with vertices $(0,0)$, $(2,0)$, $(2,2)$, traversed counterclockwise.'
+      answer: '$\dfrac{8}{3}$'
+      solution_sketch: '$Q_x - P_y = 2x - x = x$, and the triangle is $0 \le x \le 2$, $0 \le y \le x$, so the integral is $\int_0^2\!\int_0^x x\,dy\,dx = \int_0^2 x^2\,dx = \tfrac{8}{3}$.'
+    anki_seeds:
+      - front: 'Green''s theorem (circulation form)?'
+        back: '$\oint_C P\, dx + Q\, dy = \iint_D \left(\frac{\partial Q}{\partial x} - \frac{\partial P}{\partial y}\right) dA$, with $C$ the positively oriented boundary of $D$.'
+        type: basic
+      - front: 'Area formula from Green''s theorem?'
+        back: '$A = \frac{1}{2}\oint_C (x\, dy - y\, dx)$'
+        type: basic
+
+  - id: flux-form-greens-theorem
+    name: "Flux and the Divergence Form of Green's Theorem"
+    core: false                # restatement of Green's theorem; terminal
+    difficulty: 0.83
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 240
+    prerequisites:
+      - id: greens-theorem
+        weight: 0.7
+        key: true
+      - id: computing-div-curl
+        weight: 0.6
+        key: true
+      - id: vector-line-integrals
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Outward flux across a curve, directly"
+        key_prerequisites: [greens-theorem, vector-line-integrals]
+        exemplars:
+          - problem: 'Compute the outward flux $\oint_C \mathbf{F} \cdot \mathbf{n}\, ds$ of $\mathbf{F} = \langle x, y \rangle$ across the unit circle.'
+            answer: '$2\pi$'
+            solution_sketch: 'On the unit circle the outward normal is $\langle \cos t, \sin t \rangle$ and $\mathbf{F} \cdot \mathbf{n} = \cos^2 t + \sin^2 t = 1$; the flux is the arc length $2\pi$.'
+          - problem: 'Compute the outward flux of $\mathbf{F} = \langle x, 0 \rangle$ across the unit circle.'
+            answer: '$\pi$'
+            solution_sketch: '$\mathbf{F} \cdot \mathbf{n} = \cos^2 t$; $\int_0^{2\pi} \cos^2 t\, dt = \pi$.'
+        constraints: "circles centered at the origin where n = <cos t, sin t>; F.n reduces via cos^2 or sin^2 averages"
+      - id: kp2
+        name: "The divergence (flux) form of Green's theorem"
+        key_prerequisites: [greens-theorem, computing-div-curl]
+        exemplars:
+          - problem: 'Use the flux form of Green''s theorem to find the outward flux of $\mathbf{F} = \langle x^2, y^2 \rangle$ across the boundary of the unit square $[0,1]^2$.'
+            answer: "2"
+            solution_sketch: '$\operatorname{div}\mathbf{F} = 2x + 2y$; flux $= \iint_{[0,1]^2} (2x + 2y)\, dA = 1 + 1 = 2$.'
+          - problem: 'Find the outward flux of $\mathbf{F} = \langle x, y \rangle$ across the circle $x^2 + y^2 = 9$.'
+            answer: '$18\pi$'
+            solution_sketch: '$\operatorname{div}\mathbf{F} = 2$, so the flux is $2 \cdot \text{area} = 2 \cdot 9\pi = 18\pi$.'
+          - problem: 'Find the outward flux of $\mathbf{F} = \langle xy, y^2 \rangle$ across the boundary of the unit square $[0,1]^2$.'
+            answer: '$\frac{3}{2}$'
+            solution_sketch: '$\operatorname{div}\mathbf{F} = y + 2y = 3y$; $\iint 3y\, dA = \frac{3}{2}$.'
+        constraints: "div F is a constant or single monomial; regions are squares and origin-centered disks"
+    diagnostic_exemplar:
+      problem: 'Use the flux form of Green''s theorem to find the outward flux of $\mathbf{F} = \langle x^2 y,\; x y^2 \rangle$ across the boundary of the unit square $[0,1]^2$.'
+      answer: '$1$'
+      solution_sketch: '$\operatorname{div}\mathbf{F} = 2xy + 2xy = 4xy$, so the flux is $\int_0^1\!\int_0^1 4xy\,dx\,dy = 4\cdot\tfrac{1}{2}\cdot\tfrac{1}{2} = 1$.'
+    anki_seeds:
+      - front: 'Flux (divergence) form of Green''s theorem?'
+        back: '$\oint_C \mathbf{F} \cdot \mathbf{n}\, ds = \iint_D \operatorname{div}\mathbf{F}\, dA$, with $\mathbf{n}$ the outward normal.'
+        type: basic
+      - front: 'The two forms of Green''s theorem measure what quantities?'
+        back: 'Tangential form: circulation, via $Q_x - P_y$ (curl). Normal form: outward flux, via $P_x + Q_y$ (divergence).'
+        type: basic
+
+  - id: parametrized-surfaces
+    name: "Parametrized Surfaces"
+    core: true
+    difficulty: 0.80
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 240
+    prerequisites:
+      - id: vector-valued-functions
+        weight: 0.6
+        key: true
+      - id: cross-product
+        weight: 0.7
+        key: true
+      - id: cylindrical-spherical-coordinates
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Parametrizing standard surfaces"
+        key_prerequisites: [vector-valued-functions]
+        exemplars:
+          - problem: 'Parametrize the cylinder $x^2 + y^2 = 4$, $0 \le z \le 3$.'
+            answer: '$\mathbf{r}(\theta, z) = \langle 2\cos\theta, 2\sin\theta, z \rangle$, $\;0 \le \theta \le 2\pi$, $\;0 \le z \le 3$'
+          - problem: 'Parametrize the graph $z = x^2 + y^2$ over the unit disk.'
+            answer: '$\mathbf{r}(x, y) = \langle x, y, x^2 + y^2 \rangle$, $\;x^2 + y^2 \le 1$'
+        constraints: "cylinders, spheres, and graphs; always state the parameter domain"
+      - id: kp2
+        name: "Normal vectors r_u x r_v"
+        key_prerequisites: [vector-valued-functions, cross-product]
+        exemplars:
+          - problem: 'For the plane $\mathbf{r}(u, v) = \langle u, v, 1 - u - v \rangle$, compute $\mathbf{r}_u \times \mathbf{r}_v$.'
+            answer: '$\langle 1, 1, 1 \rangle$'
+            solution_sketch: '$\mathbf{r}_u = \langle 1, 0, -1 \rangle$, $\mathbf{r}_v = \langle 0, 1, -1 \rangle$; the cross product is $\langle 1, 1, 1 \rangle$.'
+          - problem: 'For the cylinder $\mathbf{r}(\theta, z) = \langle 2\cos\theta, 2\sin\theta, z \rangle$, compute $\mathbf{r}_\theta \times \mathbf{r}_z$.'
+            answer: '$\langle 2\cos\theta, 2\sin\theta, 0 \rangle$ — the outward radial direction, with magnitude $2$.'
+            solution_sketch: '$\mathbf{r}_\theta = \langle -2\sin\theta, 2\cos\theta, 0 \rangle$, $\mathbf{r}_z = \langle 0, 0, 1 \rangle$; cross out the determinant.'
+        constraints: "planes and cylinders; cross products have clean components; note the geometric direction of the normal"
+      - id: kp3
+        name: "The surface-area element"
+        key_prerequisites: [vector-valued-functions, cross-product]
+        exemplars:
+          - problem: 'Using $dS = |\mathbf{r}_\theta \times \mathbf{r}_z| \, d\theta\, dz$, find the lateral area of the cylinder $x^2 + y^2 = 4$, $0 \le z \le 3$.'
+            answer: '$12\pi$'
+            solution_sketch: '$|\mathbf{r}_\theta \times \mathbf{r}_z| = 2$: area $= \int_0^3 \int_0^{2\pi} 2\, d\theta\, dz = 12\pi$ (matches $2\pi r h$).'
+          - problem: 'For the plane patch $\mathbf{r}(u, v) = \langle u, v, 2u + 2v \rangle$, compute $|\mathbf{r}_u \times \mathbf{r}_v|$.'
+            answer: "3"
+            solution_sketch: '$\mathbf{r}_u \times \mathbf{r}_v = \langle -2, -2, 1 \rangle$, whose length is $\sqrt{4 + 4 + 1} = 3$ — the same $\sqrt{1 + f_x^2 + f_y^2}$ as in the surface-area formula.'
+        constraints: "constant |r_u x r_v|; results reconcile with elementary area formulas"
+    diagnostic_exemplar:
+      problem: 'Find the lateral surface area of the cylinder $x^2 + y^2 = 4$, $0 \le z \le 5$, by parametrizing the surface and using $dS = |\mathbf{r}_\theta \times \mathbf{r}_z|\,d\theta\,dz$.'
+      answer: '$20\pi$'
+      solution_sketch: '$\mathbf{r}(\theta, z) = \langle 2\cos\theta, 2\sin\theta, z \rangle$ gives $\mathbf{r}_\theta \times \mathbf{r}_z = \langle 2\cos\theta, 2\sin\theta, 0 \rangle$ of magnitude $2$, so the area is $\int_0^{2\pi}\!\int_0^5 2\,dz\,d\theta = 20\pi$.'
+    anki_seeds:
+      - front: 'Normal vector to a parametrized surface $\mathbf{r}(u, v)$?'
+        back: '$\mathbf{N} = \mathbf{r}_u \times \mathbf{r}_v$'
+        type: basic
+      - front: 'Surface-area element for a parametrized surface?'
+        back: '$dS = |\mathbf{r}_u \times \mathbf{r}_v| \, du \, dv$'
+        type: basic
+
+  - id: surface-integrals
+    name: "Surface Integrals and Flux"
+    core: false                # feeds only the terminal flux/theorem branch (divergence-curl capstone + the supplemental general-flux/Stokes/divergence topics)
+    difficulty: 0.84
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 300
+    prerequisites:
+      - id: parametrized-surfaces
+        weight: 0.8
+        key: true
+      - id: surface-area-double-integrals
+        weight: 0.5
+        key: true
+      - id: double-integrals
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Scalar surface integrals"
+        key_prerequisites: [parametrized-surfaces, surface-area-double-integrals]
+        exemplars:
+          - problem: 'Evaluate $\iint_S z \, dS$ where $S$ is the part of the plane $z = 1 - x - y$ over the triangle $x, y \ge 0$, $x + y \le 1$.'
+            answer: '$\frac{\sqrt{3}}{6}$'
+            solution_sketch: '$dS = \sqrt{3}\, dA$: $\sqrt{3} \iint (1 - x - y)\, dA = \sqrt{3} \cdot \frac{1}{6}$.'
+          - problem: 'Evaluate $\iint_S z \, dS$ where $S$ is the upper unit hemisphere.'
+            answer: '$\pi$'
+            solution_sketch: 'In spherical parameters $z = \cos\varphi$ and $dS = \sin\varphi\, d\varphi\, d\theta$: $\int_0^{2\pi}\int_0^{\pi/2} \cos\varphi \sin\varphi\, d\varphi\, d\theta = 2\pi \cdot \frac{1}{2}$.'
+        constraints: "planes over triangles/squares and unit hemispheres; dS is constant or sin(phi)"
+      - id: kp2
+        name: "Flux integrals through closed and simple surfaces"
+        key_prerequisites: [parametrized-surfaces, surface-area-double-integrals]
+        exemplars:
+          - problem: 'Find the upward flux of $\mathbf{F} = \langle 0, 0, 3 \rangle$ through the disk $x^2 + y^2 \le 4$ in the plane $z = 0$.'
+            answer: '$12\pi$'
+            solution_sketch: '$\mathbf{F} \cdot \mathbf{n} = 3$ with $\mathbf{n} = \langle 0, 0, 1 \rangle$; flux $= 3 \cdot \text{area} = 3 \cdot 4\pi$.'
+          - problem: 'Find the outward flux of $\mathbf{F} = \langle x, y, z \rangle$ through the unit sphere, directly.'
+            answer: '$4\pi$'
+            solution_sketch: 'On the unit sphere $\mathbf{n} = \langle x, y, z \rangle$, so $\mathbf{F} \cdot \mathbf{n} = x^2 + y^2 + z^2 = 1$; the flux is the surface area $4\pi$.'
+          - problem: 'Find the outward flux of $\mathbf{F} = \langle x, y, 0 \rangle$ through the lateral surface of the cylinder $x^2 + y^2 = 1$, $0 \le z \le 2$.'
+            answer: '$4\pi$'
+            solution_sketch: 'On the cylinder $\mathbf{n} = \langle x, y, 0 \rangle$ and $\mathbf{F} \cdot \mathbf{n} = x^2 + y^2 = 1$; flux $=$ lateral area $= 2\pi \cdot 1 \cdot 2$.'
+        constraints: "surfaces where F.n is constant (radial fields on spheres/cylinders, constant fields on flat disks)"
+      - id: kp3
+        name: "Flux through graphs z = g(x, y)"
+        key_prerequisites: [parametrized-surfaces, surface-area-double-integrals]
+        exemplars:
+          - problem: 'Find the upward flux of $\mathbf{F} = \langle y, x, z \rangle$ through the part of the plane $z = 1 - x - y$ over the triangle $x, y \ge 0$, $x + y \le 1$.'
+            answer: '$\frac{1}{2}$'
+            solution_sketch: 'Upward normal $\langle -g_x, -g_y, 1 \rangle = \langle 1, 1, 1 \rangle$: $\mathbf{F} \cdot \mathbf{N} = y + x + (1 - x - y) = 1$; flux $= \iint 1\, dA = \frac{1}{2}$.'
+          - problem: 'Find the upward flux of $\mathbf{F} = \langle 0, 0, x \rangle$ through the part of the plane $z = x + y$ over $[0,1]^2$.'
+            answer: '$\frac{1}{2}$'
+            solution_sketch: '$\mathbf{N} = \langle -1, -1, 1 \rangle$: $\mathbf{F} \cdot \mathbf{N} = x$; $\iint_{[0,1]^2} x\, dA = \frac{1}{2}$.'
+        constraints: "flux formula F . <-g_x, -g_y, 1> dA over triangles/squares; integrands collapse to constants or single monomials"
+    diagnostic_exemplar:
+      problem: 'Find the upward flux of $\mathbf{F} = \langle x,\; y,\; z \rangle$ through the part of the plane $z = 2 - x - y$ lying over the triangle $x \ge 0$, $y \ge 0$, $x + y \le 2$.'
+      answer: '$4$'
+      solution_sketch: 'For a graph $z = g(x,y)$ with upward normal, the flux is $\iint_D (-F_1 g_x - F_2 g_y + F_3)\,dA = \iint_D \left(x + y + (2 - x - y)\right)dA = \iint_D 2\,dA$. The triangle has area $2$, so the flux is $4$.'
+    anki_seeds:
+      - front: 'Flux integral of $\mathbf{F}$ through a parametrized surface $\mathbf{r}(u, v)$?'
+        back: '$\iint_S \mathbf{F} \cdot d\mathbf{S} = \iint_D \mathbf{F} \cdot (\mathbf{r}_u \times \mathbf{r}_v)\, du\, dv$'
+        type: basic
+      - front: 'Upward flux of $\mathbf{F} = \langle P, Q, R \rangle$ through the graph $z = g(x, y)$?'
+        back: '$\iint_D \mathbf{F} \cdot \langle -g_x, -g_y, 1 \rangle \, dA$'
+        type: basic
+
+  - id: divergence-curl
+    name: "Divergence, Curl, and the Big Theorems"
+    core: false                # gentle first statement of the big theorems; feeds only the supplemental stokes-theorem / divergence-theorem topics
+    difficulty: 0.85
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 240
+    prerequisites:
+      - id: computing-div-curl
+        weight: 0.8
+        key: true
+      - id: surface-integrals
+        weight: 0.6
+        key: true
+      - id: greens-theorem
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Interpreting divergence and curl"
+        key_prerequisites: [computing-div-curl]
+        exemplars:
+          - problem: 'For $\mathbf{F} = \langle x, y \rangle$, compute $\operatorname{div}\mathbf{F}$ and interpret it.'
+            answer: '$\operatorname{div}\mathbf{F} = 2 > 0$: the field is expanding — every point acts as a source.'
+          - problem: 'Compute $\operatorname{curl} \mathbf{F}$ for $\mathbf{F} = \langle -y, x, 0 \rangle$ and interpret it.'
+            answer: '$\langle 0, 0, 2 \rangle$: the field rotates counterclockwise about the $z$-axis, with constant angular tendency.'
+          - problem: 'Compute $\operatorname{curl} \mathbf{F}$ for $\mathbf{F} = \langle yz, xz, xy \rangle$. What does the result say about $\mathbf{F}$?'
+            answer: '$\mathbf{0}$; the field is irrotational, and indeed $\mathbf{F} = \nabla(xyz)$.'
+            solution_sketch: 'Each component of the curl cancels, e.g. $\partial_y(xy) - \partial_z(xz) = x - x = 0$.'
+        constraints: "radial vs rotational model fields; interpretation must name source/sink or axis and sense of rotation"
+      - id: kp2
+        name: "The divergence theorem"
+        key_prerequisites: [computing-div-curl, surface-integrals]
+        exemplars:
+          - problem: 'Use the divergence theorem to find the outward flux of $\mathbf{F} = \langle x, y, z \rangle$ through the unit sphere.'
+            answer: '$4\pi$'
+            solution_sketch: '$\operatorname{div}\mathbf{F} = 3$, so the flux is $\iiint_B 3\, dV = 3 \cdot \frac{4\pi}{3} = 4\pi$.'
+          - problem: 'Use the divergence theorem to find the outward flux of $\mathbf{F} = \langle x, y^2, z \rangle$ through the boundary of the unit cube $[0,1]^3$.'
+            answer: "3"
+            solution_sketch: '$\operatorname{div}\mathbf{F} = 1 + 2y + 1$; $\iiint (2 + 2y)\, dV = 2 + 1 = 3$.'
+          - problem: 'Find the outward flux of $\mathbf{F} = \langle x, y, z \rangle$ through the sphere of radius $2$.'
+            answer: '$32\pi$'
+            solution_sketch: '$\operatorname{div}\mathbf{F} = 3$ times the ball volume $\frac{32\pi}{3}$.'
+        constraints: "div F constant or linear; solids are balls and boxes with known volumes"
+      - id: kp3
+        name: "Stokes' theorem"
+        key_prerequisites: [computing-div-curl, surface-integrals]
+        exemplars:
+          - problem: 'Use Stokes'' theorem to evaluate $\oint_C \mathbf{F} \cdot d\mathbf{r}$ for $\mathbf{F} = \langle -y, x, 0 \rangle$, where $C$ is the unit circle in the $xy$-plane (counterclockwise seen from above), taking $S$ to be the unit disk.'
+            answer: '$2\pi$'
+            solution_sketch: '$\operatorname{curl}\mathbf{F} = \langle 0, 0, 2 \rangle$; the flux through the disk with upward normal is $2 \cdot \pi = 2\pi$, matching the direct computation from Green''s theorem.'
+          - problem: 'Use Stokes'' theorem to evaluate $\oint_C \mathbf{F} \cdot d\mathbf{r}$ for $\mathbf{F} = \langle -y, x, z^2 \rangle$ around the circle $x^2 + y^2 = 4$ in the plane $z = 0$, counterclockwise from above.'
+            answer: '$8\pi$'
+            solution_sketch: '$\operatorname{curl}\mathbf{F} = \langle 0, 0, 2 \rangle$; flux through the disk of radius $2$ is $2 \cdot 4\pi = 8\pi$ (the $z^2$ component does not affect the curl''s $z$-part).'
+        constraints: "constant-curl fields over flat disks; orientation counterclockwise from above with upward normal"
+    diagnostic_exemplar:
+      problem: 'Use Stokes'' theorem to evaluate $\oint_C \mathbf{F} \cdot d\mathbf{r}$ for $\mathbf{F} = \langle -y,\; x,\; z^2 \rangle$, where $C$ is the circle $x^2 + y^2 = 9$ in the plane $z = 0$, counterclockwise seen from above.'
+      answer: '$18\pi$'
+      solution_sketch: '$\operatorname{curl}\mathbf{F} = \langle 0, 0, 2 \rangle$. Taking $S$ to be the disk of radius $3$ with upward normal, the flux of the curl is $2 \cdot \pi \cdot 3^2 = 18\pi$.'
+    anki_seeds:
+      - front: 'Divergence theorem (statement)?'
+        back: 'The outward flux of $\mathbf{F}$ through a closed surface equals $\iiint_E \operatorname{div}\mathbf{F}\, dV$ over the enclosed solid.'
+        type: basic
+      - front: 'Stokes'' theorem (statement)?'
+        back: '$\oint_{\partial S} \mathbf{F} \cdot d\mathbf{r} = \iint_S \operatorname{curl}\mathbf{F} \cdot d\mathbf{S}$, with compatible orientations.'
+        type: basic
+      - front: 'Which classical theorem does Green''s theorem generalize to in 3D, in each of its two forms?'
+        back: 'Circulation form $\to$ Stokes'' theorem; flux form $\to$ the divergence theorem.'
+        type: basic
+
+  - id: general-flux-integrals
+    name: "General Flux Integrals"
+    core: false                # feeds only the supplemental Stokes/divergence theorem topics; the whole flux/theorem branch is a terminal destination nothing downstream consumes
+    difficulty: 0.85
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 280
+    prerequisites:
+      - id: surface-integrals
+        weight: 0.8
+        key: true
+      - id: parametrized-surfaces
+        weight: 0.5
+        key: true
+      - id: double-integrals-polar
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Flux via F · (r_u x r_v) with non-constant integrands"
+        key_prerequisites: [surface-integrals, parametrized-surfaces]
+        exemplars:
+          - problem: 'Find the outward flux of $\mathbf{F} = \langle xz, yz, 0 \rangle$ across the lateral surface of the cylinder $x^2 + y^2 = 1$, $0 \le z \le 2$.'
+            answer: '$4\pi$'
+            solution_sketch: 'With $\mathbf{r}(\theta, z) = \langle \cos\theta, \sin\theta, z \rangle$, $\mathbf{r}_\theta \times \mathbf{r}_z = \langle \cos\theta, \sin\theta, 0 \rangle$ (outward). $\mathbf{F} \cdot (\mathbf{r}_\theta \times \mathbf{r}_z) = z\cos^2\theta + z\sin^2\theta = z$ — not constant, so integrate: $\int_0^{2\pi}\int_0^2 z\, dz\, d\theta = 2\pi \cdot 2 = 4\pi$.'
+          - problem: 'Find the outward flux of $\mathbf{F} = \langle 0, 0, z \rangle$ through the unit sphere.'
+            answer: '$\frac{4\pi}{3}$'
+            solution_sketch: 'In spherical parameters the outward normal is $\mathbf{N} = \sin\varphi\, \langle \sin\varphi\cos\theta, \sin\varphi\sin\theta, \cos\varphi \rangle$, so $\mathbf{F} \cdot \mathbf{N} = \cos\varphi \cdot \sin\varphi\cos\varphi = \sin\varphi\cos^2\varphi$. Then $\int_0^{2\pi}\int_0^\pi \sin\varphi\cos^2\varphi\, d\varphi\, d\theta = 2\pi \left[-\frac{\cos^3\varphi}{3}\right]_0^\pi = \frac{4\pi}{3}$ (equal to the volume of the ball — a fact the divergence theorem will explain).'
+        constraints: "cylinders and spheres with small integer radii; F . N is a product like z, z cos^2(theta), or sin(phi) cos^2(phi) requiring one genuine iterated integral (u-substitution at worst); answers exact multiples of pi"
+      - id: kp2
+        name: "Flux through graphs with polar conversion"
+        key_prerequisites: [surface-integrals, double-integrals-polar]
+        exemplars:
+          - problem: 'Find the upward flux of $\mathbf{F} = \langle x, y, 0 \rangle$ through the paraboloid $z = 4 - x^2 - y^2$, $z \ge 0$.'
+            answer: '$16\pi$'
+            solution_sketch: 'Upward normal $\langle -g_x, -g_y, 1 \rangle = \langle 2x, 2y, 1 \rangle$: $\mathbf{F} \cdot \mathbf{N} = 2x^2 + 2y^2 = 2r^2$. In polar over $r \le 2$: $\int_0^{2\pi}\int_0^2 2r^2 \cdot r\, dr\, d\theta = 2\pi \cdot 2 \cdot \frac{16}{4} = 16\pi$.'
+          - problem: 'Find the upward flux of $\mathbf{F} = \langle y, -x, z \rangle$ through the paraboloid $z = 1 - x^2 - y^2$, $z \ge 0$.'
+            answer: '$\frac{\pi}{2}$'
+            solution_sketch: '$\mathbf{N} = \langle 2x, 2y, 1 \rangle$: $\mathbf{F} \cdot \mathbf{N} = 2xy - 2xy + (1 - x^2 - y^2) = 1 - r^2$. $\int_0^{2\pi}\int_0^1 (1 - r^2)\, r\, dr\, d\theta = 2\pi\left(\frac{1}{2} - \frac{1}{4}\right) = \frac{\pi}{2}$.'
+        constraints: "surfaces are paraboloids z = a - x^2 - y^2 or planes over disks; F . <-g_x, -g_y, 1> reduces to a polynomial in r after polar conversion; answers exact multiples of pi or small rational multiples of pi"
+      - id: kp3
+        name: "Closed surfaces piece by piece"
+        key_prerequisites: [surface-integrals, parametrized-surfaces]
+        exemplars:
+          - problem: 'Find the total outward flux of $\mathbf{F} = \langle x, y, z^2 \rangle$ through the closed cylinder $x^2 + y^2 = 1$, $0 \le z \le 1$ (lateral surface plus both caps), computing each piece separately.'
+            answer: '$3\pi$'
+            solution_sketch: 'Lateral: $\mathbf{F} \cdot \mathbf{n} = x^2 + y^2 = 1$, contributing the lateral area $2\pi$. Top cap ($z = 1$, $\mathbf{n} = \langle 0,0,1 \rangle$): $z^2 = 1$, contributing $\pi$. Bottom cap ($z = 0$, $\mathbf{n} = \langle 0,0,-1 \rangle$): $-z^2 = 0$. Total $2\pi + \pi + 0 = 3\pi$.'
+          - problem: 'Find the total outward flux of $\mathbf{F} = \langle x^2, 0, 0 \rangle$ through the boundary of the unit cube $[0,1]^3$, face by face.'
+            answer: "1"
+            solution_sketch: 'Only the faces $x = 1$ and $x = 0$ see the field: at $x = 1$, $\mathbf{F} \cdot \mathbf{n} = 1$ giving $1$; at $x = 0$, $\mathbf{F} \cdot \mathbf{n} = -x^2 = 0$. The four remaining faces have $\mathbf{F} \perp \mathbf{n}$. Total $1$.'
+        constraints: "closed cylinders and boxes assembled from 2-6 pieces; each piece is a flat cap, box face, or lateral surface whose contribution is a one-line integral; always state the outward normal of each piece"
+    diagnostic_exemplar:
+      problem: 'Find the total outward flux of $\mathbf{F} = \langle x,\; y,\; z^2 \rangle$ through the closed cylinder $x^2 + y^2 = 1$, $0 \le z \le 2$ (lateral surface plus both caps), computing each piece separately.'
+      answer: '$8\pi$'
+      solution_sketch: 'Lateral surface: the outward unit normal is $\langle x, y, 0 \rangle$, so $\mathbf{F}\cdot\mathbf{n} = x^2 + y^2 = 1$ and the flux is the area $4\pi$. Top cap $z = 2$: $\mathbf{F}\cdot\mathbf{n} = z^2 = 4$ over area $\pi$, giving $4\pi$. Bottom cap $z = 0$: $\mathbf{F}\cdot\mathbf{n} = -z^2 = 0$. Total $8\pi$ (matching $\iiint (2 + 2z)\,dV$).'
+    anki_seeds:
+      - front: 'General formula for the flux of $\mathbf{F}$ through a parametrized surface $\mathbf{r}(u, v)$ over domain $D$?'
+        back: '$\iint_D \mathbf{F}(\mathbf{r}(u,v)) \cdot (\mathbf{r}_u \times \mathbf{r}_v)\, du\, dv$ — orient by the direction of $\mathbf{r}_u \times \mathbf{r}_v$.'
+        type: basic
+      - front: 'What happens to a flux integral $\iint_S \mathbf{F} \cdot d\mathbf{S}$ if the orientation of $S$ is reversed?'
+        back: 'It changes sign.'
+        type: basic
+      - front: 'Outward normal direction of $\mathbf{r}(\varphi, \theta)$ on a sphere, as computed from $\mathbf{r}_\varphi \times \mathbf{r}_\theta$?'
+        back: '$\sin\varphi$ times the radial unit vector — outward, with magnitude the area factor $\rho^2 \sin\varphi$ on a sphere of radius $\rho$.'
+        type: basic
+
+  - id: stokes-theorem
+    name: "Stokes' Theorem"
+    core: false                # terminal theorem-application topic: no course in the tree builds on Stokes' theorem (verified by grep across DE/AA/CT), so it is a destination, not machinery (PDF p. 391)
+    difficulty: 0.87
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 300
+    prerequisites:
+      - id: divergence-curl
+        weight: 0.6
+        key: true
+      - id: general-flux-integrals
+        weight: 0.7
+        key: true
+      - id: computing-div-curl
+        weight: 0.5
+        key: false
+      - id: vector-line-integrals
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Circulation via non-constant curl"
+        key_prerequisites: [divergence-curl, computing-div-curl]
+        exemplars:
+          - problem: 'Use Stokes'' theorem to evaluate $\oint_C \mathbf{F} \cdot d\mathbf{r}$ for $\mathbf{F} = \langle -y^3, x^3, 0 \rangle$, where $C$ is the unit circle in the $xy$-plane, counterclockwise seen from above.'
+            answer: '$\frac{3\pi}{2}$'
+            solution_sketch: '$\operatorname{curl}\mathbf{F} = \langle 0, 0, 3x^2 + 3y^2 \rangle$ — not constant. Flux through the unit disk with upward normal, in polar: $\int_0^{2\pi}\int_0^1 3r^2 \cdot r\, dr\, d\theta = 2\pi \cdot \frac{3}{4} = \frac{3\pi}{2}$.'
+          - problem: 'Use Stokes'' theorem to evaluate $\oint_C \mathbf{F} \cdot d\mathbf{r}$ for $\mathbf{F} = \langle xy, x^2, 0 \rangle$ around the boundary of the unit square $[0,1]^2$ in the $xy$-plane, counterclockwise seen from above.'
+            answer: '$\frac{1}{2}$'
+            solution_sketch: 'The $z$-component of the curl is $\partial_x(x^2) - \partial_y(xy) = 2x - x = x$; $\iint_{[0,1]^2} x\, dA = \frac{1}{2}$.'
+        constraints: "curl F has a non-constant z-component (a polynomial like 3r^2, x, or 1 - 2y); C bounds a disk or square in the xy-plane; the double integral is a one-step polar or iterated computation"
+      - id: kp2
+        name: "Surface independence: choosing a convenient surface"
+        key_prerequisites: [divergence-curl, general-flux-integrals]
+        exemplars:
+          - problem: 'Evaluate $\iint_S \operatorname{curl}\mathbf{F} \cdot d\mathbf{S}$ for $\mathbf{F} = \langle -y, x, xz \rangle$, where $S$ is the paraboloid $z = 4 - x^2 - y^2$, $z \ge 0$, with upward normal.'
+            answer: '$8\pi$'
+            solution_sketch: '$S$ shares its boundary (the circle $x^2 + y^2 = 4$ in $z = 0$) with the flat disk, so by Stokes'' theorem both surfaces give the same value. $\operatorname{curl}\mathbf{F} = \langle 0, -z, 2 \rangle$, which on the disk ($z = 0$) is $\langle 0, 0, 2 \rangle$: flux $= 2 \cdot 4\pi = 8\pi$.'
+          - problem: 'Explain why the flux of $\operatorname{curl}\mathbf{F}$ through the upper unit hemisphere (upward normal) equals its flux through the unit disk in the $xy$-plane (upward normal), and use this to evaluate it for $\mathbf{F} = \langle -y, x, z^2 \rangle$.'
+            answer: 'Both surfaces have the same positively oriented boundary (the unit circle), so Stokes'' theorem equates both fluxes to $\oint_C \mathbf{F} \cdot d\mathbf{r}$; the value is $2\pi$.'
+            solution_sketch: '$\operatorname{curl}\mathbf{F} = \langle 0, 0, 2 \rangle$; through the disk the flux is $2\pi$, hence through the hemisphere too.'
+        constraints: "the two surfaces share a circular boundary; the convenient replacement is a flat disk where the curl's z-component is a constant or single monomial; the inconvenient surface is a paraboloid or hemisphere"
+      - id: kp3
+        name: "Both sides of the theorem"
+        key_prerequisites: [divergence-curl, general-flux-integrals, vector-line-integrals]
+        exemplars:
+          - problem: 'Verify Stokes'' theorem for $\mathbf{F} = \langle z, x, y \rangle$ on the upper unit hemisphere with upward normal: compute both $\oint_C \mathbf{F} \cdot d\mathbf{r}$ around the unit circle and $\iint_S \operatorname{curl}\mathbf{F} \cdot d\mathbf{S}$, and confirm they agree.'
+            answer: 'Both sides equal $\pi$.'
+            solution_sketch: 'Line side: $\mathbf{r}(t) = \langle \cos t, \sin t, 0 \rangle$ gives $\mathbf{F} \cdot \mathbf{r}'' = \cos^2 t$, integrating to $\pi$. Surface side: $\operatorname{curl}\mathbf{F} = \langle 1, 1, 1 \rangle$ and $\operatorname{curl}\mathbf{F} \cdot \mathbf{N} = \sin^2\varphi\cos\theta + \sin^2\varphi\sin\theta + \sin\varphi\cos\varphi$; the $\theta$-integrals kill the first two terms, leaving $2\pi \int_0^{\pi/2} \sin\varphi\cos\varphi\, d\varphi = \pi$.'
+          - problem: 'Evaluate $\iint_S \operatorname{curl}\mathbf{F} \cdot d\mathbf{S}$ for $\mathbf{F} = \langle y^2, x, z^2 \rangle$, where $S$ is the paraboloid $z = 1 - x^2 - y^2$, $z \ge 0$, with upward normal — by integrating around the boundary instead.'
+            answer: '$\pi$'
+            solution_sketch: 'The boundary is the unit circle in $z = 0$, counterclockwise from above: $\mathbf{F}(\mathbf{r}(t)) \cdot \mathbf{r}''(t) = -\sin^3 t + \cos^2 t$, and $\int_0^{2\pi}(-\sin^3 t + \cos^2 t)\, dt = 0 + \pi = \pi$.'
+        constraints: "verification exemplars use fields with constant curl but genuinely curved surfaces (spherical integral on one side); reversal exemplars trade a hard surface integral for a boundary integral that reduces via sin/cos power integrals over full periods"
+    diagnostic_exemplar:
+      problem: 'Use Stokes'' theorem to evaluate $\iint_S \operatorname{curl}\mathbf{F} \cdot d\mathbf{S}$ for $\mathbf{F} = \langle -y,\; x,\; xz \rangle$, where $S$ is the paraboloid $z = 9 - x^2 - y^2$, $z \ge 0$, with upward normal.'
+      answer: '$18\pi$'
+      solution_sketch: 'The boundary of $S$ is the circle $x^2 + y^2 = 9$ in $z = 0$, counterclockwise from above. There $\mathbf{F} = \langle -y, x, 0 \rangle$, and with $\mathbf{r}(t) = \langle 3\cos t, 3\sin t, 0 \rangle$ the integrand $\mathbf{F}\cdot\mathbf{r}'' = 9$, so the circulation — and hence the flux of the curl — is $18\pi$.'
+    anki_seeds:
+      - front: 'Why can $\iint_S \operatorname{curl}\mathbf{F} \cdot d\mathbf{S}$ be computed on a different surface $S''$?'
+        back: 'If $S$ and $S''$ share the same positively oriented boundary, Stokes'' theorem equates both fluxes to $\oint_{\partial S} \mathbf{F} \cdot d\mathbf{r}$ — pick the convenient surface (usually a flat disk).'
+        type: basic
+      - front: 'Orientation convention in Stokes'' theorem?'
+        back: 'The boundary is traversed counterclockwise when viewed from the side the normal points to (right-hand rule: thumb along $\mathbf{n}$, fingers along $C$).'
+        type: basic
+
+  - id: divergence-theorem
+    name: "The Divergence Theorem"
+    core: false                # terminal theorem-application topic: no course in the tree builds on the divergence theorem (verified by grep across DE/AA/CT), so it is a destination, not machinery (PDF p. 391)
+    difficulty: 0.87
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 300
+    prerequisites:
+      - id: divergence-curl
+        weight: 0.6
+        key: true
+      - id: general-flux-integrals
+        weight: 0.6
+        key: true
+      - id: triple-integrals-cylindrical
+        weight: 0.6
+        key: true
+      - id: cylindrical-spherical-coordinates
+        weight: 0.5
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: "Non-constant divergence over boxes and cylinders"
+        key_prerequisites: [divergence-curl, triple-integrals-cylindrical]
+        exemplars:
+          - problem: 'Use the divergence theorem to find the outward flux of $\mathbf{F} = \langle x^2, y^2, z^2 \rangle$ through the boundary of the unit cube $[0,1]^3$.'
+            answer: "3"
+            solution_sketch: '$\operatorname{div}\mathbf{F} = 2x + 2y + 2z$; $\iiint_{[0,1]^3} (2x + 2y + 2z)\, dV = 3 \cdot 2 \cdot \frac{1}{2} = 3$.'
+          - problem: 'Use the divergence theorem to find the outward flux of $\mathbf{F} = \langle x, y, z^2 \rangle$ through the closed cylinder $x^2 + y^2 \le 1$, $0 \le z \le 1$, and check it against the piece-by-piece surface computation, which gives $3\pi$.'
+            answer: '$3\pi$'
+            solution_sketch: '$\operatorname{div}\mathbf{F} = 2 + 2z$; slicing the cylinder, $\iiint (2 + 2z)\, dV = \pi \int_0^1 (2 + 2z)\, dz = \pi(2 + 1) = 3\pi$ — agreeing with the lateral-plus-caps computation.'
+        constraints: "div F is a genuine polynomial (2x + 2y + 2z, 2 + 2z, 3z^2), never constant; solids are unit cubes, boxes, or cylinders integrated by slicing or in cylindrical coordinates"
+      - id: kp2
+        name: "Spherical solids"
+        key_prerequisites: [divergence-curl, cylindrical-spherical-coordinates]
+        exemplars:
+          - problem: 'Use the divergence theorem to find the outward flux of $\mathbf{F} = \langle x^3, y^3, z^3 \rangle$ through the unit sphere.'
+            answer: '$\frac{12\pi}{5}$'
+            solution_sketch: '$\operatorname{div}\mathbf{F} = 3(x^2 + y^2 + z^2) = 3\rho^2$; in spherical coordinates $\iiint 3\rho^2 \cdot \rho^2 \sin\varphi\, d\rho\, d\varphi\, d\theta = 4\pi \cdot 3 \cdot \frac{1}{5} = \frac{12\pi}{5}$.'
+          - problem: 'Use the divergence theorem to find the outward flux of $\mathbf{F} = \langle xy^2, yz^2, zx^2 \rangle$ through the unit sphere.'
+            answer: '$\frac{4\pi}{5}$'
+            solution_sketch: '$\operatorname{div}\mathbf{F} = y^2 + z^2 + x^2 = \rho^2$; $\iiint_B \rho^2\, dV = \int_0^{2\pi}\int_0^\pi\int_0^1 \rho^4 \sin\varphi\, d\rho\, d\varphi\, d\theta = 2\pi \cdot 2 \cdot \frac{1}{5} = \frac{4\pi}{5}$.'
+        constraints: "div F reduces to a function of rho^2 alone; balls centered at the origin with radius 1 or 2; the triple integral is a product of one-variable integrals in spherical coordinates"
+      - id: kp3
+        name: "Strategic uses: closing surfaces and divergence-free fields"
+        key_prerequisites: [divergence-curl, general-flux-integrals]
+        exemplars:
+          - problem: 'Find the upward flux of $\mathbf{F} = \langle y, -x, z \rangle$ through the paraboloid $z = 1 - x^2 - y^2$, $z \ge 0$, by closing the surface with the unit disk in the plane $z = 0$ and applying the divergence theorem.'
+            answer: '$\frac{\pi}{2}$'
+            solution_sketch: '$\operatorname{div}\mathbf{F} = 1$, so the outward flux through the closed surface equals the enclosed volume $\int_0^{2\pi}\int_0^1 (1 - r^2)\, r\, dr\, d\theta = \frac{\pi}{2}$. On the bottom disk the outward normal is $\langle 0, 0, -1 \rangle$ and $\mathbf{F} \cdot \mathbf{n} = -z = 0$, so the paraboloid carries all of it: $\frac{\pi}{2}$ — matching the direct parametrized computation.'
+          - problem: 'What is the outward flux of $\mathbf{F} = \langle y, z, x \rangle$ through the sphere of radius $3$? Justify without computing any surface integral.'
+            answer: "0"
+            solution_sketch: '$\operatorname{div}\mathbf{F} = 0 + 0 + 0 = 0$, so by the divergence theorem the flux through any closed surface is $\iiint 0\, dV = 0$.'
+        constraints: "closing exemplars use paraboloids or hemispheres capped by a flat disk on which F . n is 0 or constant; divergence-free exemplars require citing the theorem, not integrating; answers small rational multiples of pi or 0"
+    diagnostic_exemplar:
+      problem: 'Find the upward flux of $\mathbf{F} = \langle y,\; -x,\; z \rangle$ through the paraboloid $z = 4 - x^2 - y^2$, $z \ge 0$, by closing the surface with the disk $x^2 + y^2 \le 4$ in the plane $z = 0$ and applying the divergence theorem.'
+      answer: '$8\pi$'
+      solution_sketch: '$\operatorname{div}\mathbf{F} = 1$, so the total outward flux through the closed surface equals the volume $\int_0^{2\pi}\!\int_0^2 (4 - r^2)\,r\,dr\,d\theta = 8\pi$. On the bottom disk the outward normal is $\langle 0,0,-1\rangle$ and $\mathbf{F}\cdot\mathbf{n} = -z = 0$, so the whole $8\pi$ passes upward through the paraboloid.'
+    anki_seeds:
+      - front: 'If $\operatorname{div}\mathbf{F} = 0$ everywhere, what is the outward flux of $\mathbf{F}$ through any closed surface?'
+        back: '$0$ — by the divergence theorem the flux equals $\iiint \operatorname{div}\mathbf{F}\, dV = 0$.'
+        type: basic
+      - front: 'Strategy for computing the flux of $\mathbf{F}$ through a surface $S$ that is NOT closed, using the divergence theorem?'
+        back: 'Close $S$ with a simple cap (usually a flat disk), apply the theorem to the enclosed solid, then subtract the cap''s flux.'
+        type: basic
+      - front: 'The divergence theorem applies to surfaces that are ___ and oriented ___.'
+        back: 'Closed (bounding a solid region); oriented by the outward normal.'
+        type: basic

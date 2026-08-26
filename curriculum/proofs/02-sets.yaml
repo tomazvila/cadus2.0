@@ -1,0 +1,929 @@
+unit: sets
+course: proofs
+module: "Sets"
+topics:
+  - id: set-notation
+    name: "Set Notation"
+    core: true
+    difficulty: 0.45
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 120
+    prerequisites:
+      - id: quantifiers
+        weight: 0.4
+        key: true
+      - id: propositional-logic
+        weight: 0.2
+    knowledge_points:
+      - id: kp1
+        name: "Roster and set-builder notation"
+        key_prerequisites: [quantifiers]
+        exemplars:
+          - problem: 'List the elements of $\{x \in \mathbb{Z} : -2 \le x < 3\}$.'
+            answer: '$\{-2, -1, 0, 1, 2\}$'
+            solution_sketch: 'The integers from $-2$ up to but not including $3$.'
+          - problem: 'Rewrite $\{2, 4, 6, 8, \dots\}$ in set-builder notation.'
+            answer: '$\{2k : k \in \mathbb{Z}^{+}\}$ (equivalently $\{n \in \mathbb{Z}^{+} : n \text{ is even}\}$).'
+            solution_sketch: 'Describe the pattern by a predicate or an image form using a parameter $k$.'
+        constraints: "convert between roster and set-builder; finite or clearly-patterned sets"
+      - id: kp2
+        name: "Membership and number systems"
+        key_prerequisites: [propositional-logic]
+        exemplars:
+          - problem: 'True or false: $\tfrac{1}{2} \in \mathbb{Z}$, $-3 \in \mathbb{Z}$, $\sqrt{2} \in \mathbb{Q}$.'
+            answer: 'False, True, False.'
+            solution_sketch: '$\tfrac12$ is not an integer; $-3$ is an integer; $\sqrt 2$ is irrational, hence not rational.'
+          - problem: 'True or false: $5 \in \mathbb{Q}$, $\sqrt{9} \in \mathbb{Z}$, $\pi \in \mathbb{Q}$.'
+            answer: 'True, True, False.'
+            solution_sketch: '$5 = 5/1$ is rational; $\sqrt 9 = 3$ is an integer; $\pi$ is irrational, so not rational.'
+        constraints: "test membership in $\\mathbb{N}, \\mathbb{Z}, \\mathbb{Q}, \\mathbb{R}$"
+      - id: kp3
+        name: "Describing sets by a property"
+        key_prerequisites: [quantifiers]
+        exemplars:
+          - problem: 'Write "the set of even integers" in set-builder notation.'
+            answer: '$\{n \in \mathbb{Z} : n = 2k \text{ for some } k \in \mathbb{Z}\}$, or $\{2k : k \in \mathbb{Z}\}$.'
+            solution_sketch: 'Capture evenness with an existential predicate, or use the image form $\{2k : k \in \mathbb{Z}\}$.'
+          - problem: 'Write "the set of perfect squares" in set-builder notation.'
+            answer: '$\{n^2 : n \in \mathbb{Z}\}$ (equivalently $\{m \in \mathbb{N} : m = n^2 \text{ for some } n \in \mathbb{Z}\}$).'
+            solution_sketch: 'Use the image form with parameter $n$, or a predicate stating $m$ is a square.'
+        constraints: "translate an English description into a defining predicate"
+    diagnostic_exemplar:
+      problem: 'Write the set $\{1, 4, 9, 16, 25, \dots\}$ of squares of positive integers in set-builder notation, and decide whether it is a subset of $\mathbb{N}$, of $\mathbb{Z}$ and of $\mathbb{Q}$.'
+      answer: 'In set-builder notation: $\{n^2 : n \in \mathbb{Z}^{+}\}$, equivalently $\{m \in \mathbb{N} : m = n^2 \text{ for some } n \in \mathbb{Z}^{+}\}$. Every such $m$ is a positive whole number, so it lies in $\mathbb{N}$, hence in $\mathbb{Z}$, hence in $\mathbb{Q}$ (as $m/1$): the set is a subset of all three.'
+      solution_sketch: 'Name the generating rule to convert the roster into set-builder form, then check membership in each number system using $\mathbb{N} \subseteq \mathbb{Z} \subseteq \mathbb{Q}$.'
+    anki_seeds:
+      - front: 'Roster vs. set-builder notation?'
+        back: 'Roster lists the elements $\{1, 2, 3\}$; set-builder describes them by a property $\{x : P(x)\}$.'
+        type: basic
+      - front: 'The symbols $\mathbb{N}, \mathbb{Z}, \mathbb{Q}, \mathbb{R}$?'
+        back: 'Naturals, integers, rationals, reals.'
+        type: basic
+
+  - id: union-intersection-difference
+    name: "Union, Intersection, and Difference"
+    core: true
+    difficulty: 0.45
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 90
+    prerequisites:
+      - id: set-notation
+        weight: 0.6
+        key: true
+      - id: propositional-logic
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: "Union and intersection"
+        key_prerequisites: [set-notation]
+        exemplars:
+          - problem: 'With $A = \{1, 3, 5, 7\}$ and $B = \{3, 4, 5\}$, find $A \cup B$ and $A \cap B$.'
+            answer: '$A \cup B = \{1, 3, 4, 5, 7\}$ and $A \cap B = \{3, 5\}$.'
+            solution_sketch: 'The union collects everything in either set; the intersection keeps only the shared elements $3$ and $5$.'
+          - problem: 'With $A = \{a, b, c\}$ and $B = \{b, c, d, e\}$, find $A \cup B$ and $A \cap B$.'
+            answer: '$A \cup B = \{a, b, c, d, e\}$ and $A \cap B = \{b, c\}$.'
+            solution_sketch: 'List each element once for the union; keep the common elements $b, c$ for the intersection.'
+        constraints: "a single union or intersection of small listed sets"
+      - id: kp2
+        name: "Set difference"
+        key_prerequisites: [set-notation]
+        exemplars:
+          - problem: 'With $A = \{1, 2, 3, 4, 5\}$ and $B = \{2, 4\}$, find $A \setminus B$ and $B \setminus A$.'
+            answer: '$A \setminus B = \{1, 3, 5\}$ and $B \setminus A = \varnothing$.'
+            solution_sketch: 'Remove the elements of $B$ from $A$; since every element of $B$ lies in $A$, nothing is left for $B \setminus A$.'
+          - problem: 'With $A = \{1, 2, 3\}$ and $B = \{4, 5\}$, find $A \setminus B$.'
+            answer: '$\{1, 2, 3\}$'
+            solution_sketch: 'The sets are disjoint, so removing the elements of $B$ leaves all of $A$.'
+        constraints: "one difference of small listed sets; include a disjoint or nested case"
+      - id: kp3
+        name: "Operations on described sets"
+        key_prerequisites: [propositional-logic]
+        exemplars:
+          - problem: 'Let $E$ be the even integers and $T$ the multiples of $3$. Describe $E \cap T$.'
+            answer: 'The multiples of $6$.'
+            solution_sketch: 'An integer lies in both sets iff it is divisible by $2$ and by $3$, i.e. by $6$.'
+          - problem: 'Let $E$ be the even integers and $O$ the odd integers. Find $E \cup O$ and $E \cap O$.'
+            answer: '$E \cup O = \mathbb{Z}$ and $E \cap O = \varnothing$.'
+            solution_sketch: 'Every integer is even or odd, and no integer is both.'
+        constraints: "operate on sets given by a defining property; answer with a description"
+    diagnostic_exemplar:
+      problem: 'Let $E$ be the set of even integers and $T$ the set of multiples of $3$. Describe $E \cup T$, $E \cap T$ and $E \setminus T$.'
+      answer: '$E \cup T$ is the set of integers divisible by $2$ or by $3$ (or both). $E \cap T$ is the set of multiples of $6$: an integer divisible by both $2$ and $3$ is divisible by $6$, and conversely. $E \setminus T$ is the set of even integers that are not multiples of $3$ — equivalently, the even integers not divisible by $6$.'
+      solution_sketch: 'Read each operation off the defining conditions: "or" for the union, "and" for the intersection (which forces divisibility by $6$), "and not" for the difference.'
+    anki_seeds:
+      - front: 'Is $A \setminus B$ equal to $B \setminus A$ in general?'
+        back: 'No; e.g. $A = \{1, 2\}$, $B = \{2\}$: $A \setminus B = \{1\}$ but $B \setminus A = \varnothing$.'
+        type: basic
+      - front: '$A \cap B$ when $A$ and $B$ are disjoint?'
+        back: '$\varnothing$ — disjoint means no common elements.'
+        type: basic
+
+  - id: complement-universal-set
+    name: "Complements and the Universal Set"
+    core: true
+    difficulty: 0.47
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 90
+    prerequisites:
+      - id: union-intersection-difference
+        weight: 0.5
+        key: true
+      - id: negating-statements
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: "Complements in a finite universe"
+        key_prerequisites: [union-intersection-difference]
+        exemplars:
+          - problem: 'With universe $U = \{1, 2, \dots, 10\}$ and $A = \{2, 4, 6, 8, 10\}$, find $A^{c}$.'
+            answer: '$\{1, 3, 5, 7, 9\}$'
+            solution_sketch: 'The complement collects the members of $U$ not in $A$: the odd numbers up to $9$.'
+          - problem: 'With $U = \{1, \dots, 6\}$ and $A = \{1, 2, 3\}$, find $A^{c}$ and $(A^{c})^{c}$.'
+            answer: '$A^{c} = \{4, 5, 6\}$ and $(A^{c})^{c} = \{1, 2, 3\} = A$.'
+            solution_sketch: 'Complementing removes $A$ from $U$; complementing again restores $A$.'
+        constraints: "complement of a listed set relative to a small stated universe"
+      - id: kp2
+        name: "The complement depends on the universe"
+        key_prerequisites: [negating-statements]
+        exemplars:
+          - problem: 'Find the complement of $A = \{1, 2\}$ relative to $U = \{1, 2, 3\}$, and relative to $U = \{1, 2, 3, 4, 5\}$.'
+            answer: '$\{3\}$ and $\{3, 4, 5\}$ respectively.'
+            solution_sketch: 'The same set has different complements in different universes: everything in $U$ but not in $A$.'
+          - problem: 'With universe $\mathbb{Z}$, describe the complement of the set of even integers.'
+            answer: 'The odd integers.'
+            solution_sketch: 'An integer fails to be even exactly when it is odd.'
+        constraints: "same set, different universes, or a described set in $\\mathbb{Z}$"
+      - id: kp3
+        name: "Difference via complement"
+        key_prerequisites: [union-intersection-difference]
+        exemplars:
+          - problem: 'With $U = \{1, \dots, 8\}$, $A = \{1, 2, 3, 4\}$, $B = \{3, 4, 5\}$, compute $A \setminus B$ and $A \cap B^{c}$, and compare.'
+            answer: 'Both equal $\{1, 2\}$.'
+            solution_sketch: '$A \setminus B = \{1, 2\}$; $B^{c} = \{1, 2, 6, 7, 8\}$, so $A \cap B^{c} = \{1, 2\}$ — the identity $A \setminus B = A \cap B^{c}$ in action.'
+          - problem: 'With $U = \{1, \dots, 5\}$ and $A = \{1, 3\}$, compute $A \cup A^{c}$ and $A \cap A^{c}$.'
+            answer: '$A \cup A^{c} = U$ and $A \cap A^{c} = \varnothing$.'
+            solution_sketch: '$A^{c} = \{2, 4, 5\}$; together they cover $U$ and share nothing.'
+        constraints: "verify $A \\setminus B = A \\cap B^{c}$ or the $A \\cup A^{c} = U$, $A \\cap A^{c} = \\varnothing$ pair on small sets"
+    diagnostic_exemplar:
+      problem: 'With universe $U = \{1, 2, \dots, 8\}$, $A = \{1,2,3,4\}$ and $B = \{3,4,5\}$: verify that $A \setminus B = A \cap B^{c}$, and say what $A^{c}$ becomes if the universe is changed to $V = \{1, \dots, 5\}$.'
+      answer: 'Inside $U$: $B^{c} = \{1,2,6,7,8\}$, so $A \cap B^{c} = \{1,2\}$; and directly $A \setminus B = \{1,2\}$ — the two agree. Relative to $U$, $A^{c} = \{5,6,7,8\}$; relative to $V = \{1,\dots,5\}$, $A^{c} = \{5\}$. The complement depends on the universe, whereas $A \setminus B$ does not.'
+      solution_sketch: 'Compute $B^{c}$ inside $U$ and intersect with $A$; then recompute $A^{c}$ in the smaller universe to see the dependence.'
+    anki_seeds:
+      - front: '$(A^{c})^{c} = $ ?'
+        back: '$A$ — complementing twice returns the original set.'
+        type: basic
+      - front: '$A \cup A^{c}$ and $A \cap A^{c}$?'
+        back: '$U$ and $\varnothing$.'
+        type: basic
+
+  - id: symmetric-difference
+    name: "Symmetric Difference"
+    core: true
+    difficulty: 0.48
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 90
+    prerequisites:
+      - id: union-intersection-difference
+        weight: 0.6
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: "Computing symmetric differences"
+        key_prerequisites: [union-intersection-difference]
+        exemplars:
+          - problem: 'With $A = \{1, 2, 3, 4\}$ and $B = \{3, 4, 5, 6\}$, find $A \triangle B$.'
+            answer: '$\{1, 2, 5, 6\}$'
+            solution_sketch: '$A \setminus B = \{1, 2\}$ and $B \setminus A = \{5, 6\}$; the symmetric difference is their union.'
+          - problem: 'With $A = \{a, b\}$ and $B = \{b, c\}$, find $A \triangle B$.'
+            answer: '$\{a, c\}$'
+            solution_sketch: 'Keep the elements in exactly one of the two sets; $b$ is in both, so it is dropped.'
+        constraints: "symmetric difference of two small listed sets"
+      - id: kp2
+        name: "Two equivalent forms"
+        key_prerequisites: [union-intersection-difference]
+        exemplars:
+          - problem: 'For $A = \{1, 2, 3\}$ and $B = \{2, 3, 4\}$, compute $(A \cup B) \setminus (A \cap B)$ and $(A \setminus B) \cup (B \setminus A)$, and compare.'
+            answer: 'Both equal $\{1, 4\}$.'
+            solution_sketch: '$A \cup B = \{1,2,3,4\}$ minus $A \cap B = \{2,3\}$ gives $\{1,4\}$; also $A \setminus B = \{1\}$ and $B \setminus A = \{4\}$ union to $\{1,4\}$ — the two definitions agree.'
+          - problem: 'If $A \subseteq B$, what is $A \triangle B$? Check with $A = \{1, 2\}$, $B = \{1, 2, 3\}$.'
+            answer: '$B \setminus A$; here $\{3\}$.'
+            solution_sketch: 'When $A \subseteq B$, $A \setminus B = \varnothing$, so only $B \setminus A$ contributes.'
+        constraints: "verify $(A \\cup B) \\setminus (A \\cap B) = (A \\setminus B) \\cup (B \\setminus A)$ on small sets"
+      - id: kp3
+        name: "Basic properties"
+        key_prerequisites: [union-intersection-difference]
+        exemplars:
+          - problem: 'For any set $A$, compute $A \triangle A$ and $A \triangle \varnothing$.'
+            answer: '$A \triangle A = \varnothing$ and $A \triangle \varnothing = A$.'
+            solution_sketch: '$A \setminus A = \varnothing$ gives the first; $A \setminus \varnothing = A$ and $\varnothing \setminus A = \varnothing$ give the second.'
+          - problem: 'With $A = \{1, 5\}$ and $B = \{2, 5\}$, verify $A \triangle B = B \triangle A$.'
+            answer: 'Both equal $\{1, 2\}$.'
+            solution_sketch: 'The definition is symmetric in $A$ and $B$: elements in exactly one of the two sets.'
+        constraints: "identity-style facts checked on small concrete sets"
+    diagnostic_exemplar:
+      problem: 'With $A = \{1, 3, 5\}$ and $B = \{1, 2, 3\}$: compute $(A \cup B) \setminus (A \cap B)$ and $(A \setminus B) \cup (B \setminus A)$, confirm they agree, and state $A \triangle A$.'
+      answer: '$A \cup B = \{1,2,3,5\}$ and $A \cap B = \{1,3\}$, so $(A \cup B) \setminus (A \cap B) = \{2,5\}$. Also $A \setminus B = \{5\}$ and $B \setminus A = \{2\}$, whose union is $\{2,5\}$ — the two forms agree, and both equal $A \triangle B$. Finally $A \triangle A = \varnothing$: no element lies in one copy of $A$ without lying in the other.'
+      solution_sketch: 'Compute both standard forms of the symmetric difference and compare; the last part follows from the definition applied to a set and itself.'
+    anki_seeds:
+      - front: 'Definition of the symmetric difference $A \triangle B$?'
+        back: '$(A \setminus B) \cup (B \setminus A)$ — the elements in exactly one of $A, B$.'
+        type: basic
+      - front: '$A \triangle A$ and $A \triangle \varnothing$?'
+        back: '$\varnothing$ and $A$.'
+        type: basic
+
+  - id: set-operations
+    name: "Set Operations"
+    core: true
+    difficulty: 0.50
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 130
+    prerequisites:
+      - id: union-intersection-difference
+        weight: 0.6
+        key: true
+      - id: complement-universal-set
+        weight: 0.5
+        key: true
+      - id: symmetric-difference
+        weight: 0.3
+      - id: set-notation
+        weight: 0.2
+      - id: logical-equivalence
+        weight: 0.2
+    knowledge_points:
+      - id: kp1
+        name: "Nested and combined operations"
+        key_prerequisites: [union-intersection-difference]
+        exemplars:
+          - problem: 'With $A = \{1,2,3\}$, $B = \{2,3,4\}$, $C = \{3,4,5\}$, find $(A \cup B) \cap C$.'
+            answer: '$\{3, 4\}$'
+            solution_sketch: '$A \cup B = \{1,2,3,4\}$; intersecting with $C = \{3,4,5\}$ leaves $\{3, 4\}$.'
+          - problem: 'With $A = \{1,2,3\}$, $B = \{2,3,4\}$, $C = \{1,4\}$, find $(A \cap B) \cup C$.'
+            answer: '$\{1, 2, 3, 4\}$'
+            solution_sketch: '$A \cap B = \{2, 3\}$; union with $C = \{1, 4\}$ gives $\{1, 2, 3, 4\}$.'
+        constraints: "respect operation order; parentheses first"
+      - id: kp2
+        name: "Operations with complements"
+        key_prerequisites: [complement-universal-set]
+        exemplars:
+          - problem: 'With universe $U = \{1, \dots, 8\}$, $A = \{1,2,3,4\}$, $B = \{2,4,6,8\}$, find $A^{c} \cap B$ and $(A \cup B)^{c}$.'
+            answer: '$A^{c} \cap B = \{6, 8\}$ and $(A \cup B)^{c} = \{5, 7\}$.'
+            solution_sketch: '$A^{c} = \{5,6,7,8\}$, so $A^{c} \cap B = \{6, 8\}$. $A \cup B = \{1,2,3,4,6,8\}$, so its complement in $U$ is $\{5, 7\}$.'
+          - problem: 'With universe $U = \{1, \dots, 6\}$, $A = \{1, 2\}$, $B = \{2, 3, 5\}$, compute $(A \cap B)^{c}$ and $A^{c} \cup B^{c}$, and compare.'
+            answer: 'Both equal $\{1, 3, 4, 5, 6\}$.'
+            solution_sketch: '$A \cap B = \{2\}$, so $(A \cap B)^{c} = \{1,3,4,5,6\}$. $A^{c} = \{3,4,5,6\}$ and $B^{c} = \{1,4,6\}$; their union is $\{1,3,4,5,6\}$ — the same set (a De Morgan instance).'
+        constraints: "mix complement with union/intersection relative to a stated universe"
+      - id: kp3
+        name: "Multi-operation calculations"
+        key_prerequisites: [union-intersection-difference]
+        exemplars:
+          - problem: 'With $A = \{1,2,3,4,5\}$, $B = \{2,4,6\}$, $C = \{1,4,7\}$, find $(A \setminus B) \cap (A \setminus C)$.'
+            answer: '$\{3, 5\}$'
+            solution_sketch: '$A \setminus B = \{1,3,5\}$ and $A \setminus C = \{2,3,5\}$; the intersection is $\{3, 5\}$.'
+          - problem: 'With $A = \{1,2,3\}$, $B = \{2,3,4\}$, $C = \{3,4,5\}$, find $(A \triangle B) \cup (B \cap C)$.'
+            answer: '$\{1, 3, 4\}$'
+            solution_sketch: '$A \triangle B = \{1, 4\}$ and $B \cap C = \{3, 4\}$; the union is $\{1, 3, 4\}$.'
+        constraints: "chains of two or three operations, mixing difference, symmetric difference, and intersection"
+    diagnostic_exemplar:
+      problem: 'With universe $U = \{1, \dots, 8\}$, $A = \{1,2,3,4\}$, $B = \{2,4,6\}$ and $C = \{1,4,7\}$, compute $(A \setminus B) \cap C^{c}$.'
+      answer: '$A \setminus B = \{1,3\}$ and $C^{c} = \{2,3,5,6,8\}$, so $(A \setminus B) \cap C^{c} = \{3\}$.'
+      solution_sketch: 'Work outward: first the difference, then the complement inside $U$, then the intersection.'
+    anki_seeds:
+      - front: 'Set-builder definition of the union $A \cup B$?'
+        back: '$A \cup B = \{x : x \in A \lor x \in B\}$.'
+        type: basic
+      - front: 'Set-builder definition of the intersection $A \cap B$?'
+        back: '$A \cap B = \{x : x \in A \land x \in B\}$.'
+        type: basic
+      - front: 'Set-builder definition of the difference $A \setminus B$?'
+        back: '$A \setminus B = \{x : x \in A \land x \notin B\}$.'
+        type: basic
+      - front: 'Complement $A^{c}$ relative to a universe $U$?'
+        back: '$A^{c} = \{x \in U : x \notin A\} = U \setminus A$.'
+        type: basic
+
+  - id: interval-notation-real-sets
+    name: "Intervals and Sets of Reals"
+    core: true
+    difficulty: 0.48
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 100
+    prerequisites:
+      - {id: interval-notation, weight: 0.5, key: false}          # re-audit ladder edge: rigorizes the foundations notation topic
+      - id: union-intersection-difference
+        weight: 0.5
+        key: true
+      - id: set-notation
+        weight: 0.3
+      - id: compound-inequalities
+        weight: 0.2
+    knowledge_points:
+      - id: kp1
+        name: "Intervals as sets"
+        key_prerequisites: [set-notation]
+        exemplars:
+          - problem: 'Write $\{x \in \mathbb{R} : -1 \le x < 4\}$ in interval notation.'
+            answer: '$[-1, 4)$'
+            solution_sketch: 'The endpoint $-1$ is included (square bracket) and $4$ is excluded (round bracket).'
+          - problem: 'True or false: $2 \in (2, 5]$ and $5 \in (2, 5]$.'
+            answer: 'False, True.'
+            solution_sketch: 'The round bracket at $2$ excludes it; the square bracket at $5$ includes it.'
+        constraints: "convert between inequality and interval notation; test endpoint membership"
+      - id: kp2
+        name: "Unions and intersections of intervals"
+        key_prerequisites: [union-intersection-difference]
+        exemplars:
+          - problem: 'Compute $[0, 3] \cap (1, 5)$.'
+            answer: '$(1, 3]$'
+            solution_sketch: 'A real lies in both iff $0 \le x \le 3$ and $1 < x < 5$, i.e. $1 < x \le 3$.'
+          - problem: 'Compute $(-\infty, 2) \cup [1, 4]$.'
+            answer: '$(-\infty, 4]$'
+            solution_sketch: 'The pieces overlap on $[1, 2)$, so the union is everything up to and including $4$.'
+        constraints: "one union or intersection of two overlapping intervals"
+      - id: kp3
+        name: "Complements and differences of intervals"
+        key_prerequisites: [union-intersection-difference]
+        exemplars:
+          - problem: 'Describe $\mathbb{R} \setminus [0, 1]$ as a union of intervals.'
+            answer: '$(-\infty, 0) \cup (1, \infty)$'
+            solution_sketch: 'A real is outside $[0,1]$ iff $x < 0$ or $x > 1$; both endpoints belong to $[0,1]$, so they are excluded.'
+          - problem: 'Compute $[0, 5] \setminus (1, 2)$.'
+            answer: '$[0, 1] \cup [2, 5]$'
+            solution_sketch: 'Remove the open middle piece; the endpoints $1$ and $2$ stay because $(1,2)$ excludes them.'
+        constraints: "complement or difference producing a union of at most two intervals"
+    diagnostic_exemplar:
+      problem: 'Write $\{x \in \mathbb{R} : 2 < x \le 7\}$ in interval notation, then compute $[1, 4] \cap (2, 6)$ and $\mathbb{R} \setminus [1, 4]$.'
+      answer: '$(2, 7]$ — a round bracket for the strict inequality, a square bracket for the inclusive one. Next, $[1,4] \cap (2,6) = (2, 4]$: the intersection begins at the larger left endpoint (excluded) and ends at the smaller right endpoint (included). Finally $\mathbb{R} \setminus [1,4] = (-\infty, 1) \cup (4, \infty)$.'
+      solution_sketch: 'Match strict inequalities to round brackets; intersect by taking the larger left endpoint and the smaller right endpoint, and complement by removing a closed block from the line.'
+    anki_seeds:
+      - front: 'Square bracket vs. round bracket in interval notation?'
+        back: 'Square includes the endpoint; round excludes it.'
+        type: basic
+      - front: '$\mathbb{R} \setminus [a, b]$ as intervals?'
+        back: '$(-\infty, a) \cup (b, \infty)$.'
+        type: basic
+
+  - id: venn-diagram-counting
+    name: "Venn Diagrams and Counting with Sets"
+    core: false                # supplemental: counting-with-sets applications leaf topic
+    difficulty: 0.50
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 130
+    prerequisites:
+      - id: union-intersection-difference
+        weight: 0.5
+        key: true
+      - id: complement-universal-set
+        weight: 0.4
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: "Region counts for two sets"
+        key_prerequisites: [union-intersection-difference]
+        exemplars:
+          - problem: 'If $|A| = 12$, $|B| = 9$, and $|A \cap B| = 4$, how many elements lie in exactly one of $A$ and $B$?'
+            answer: '$13$'
+            solution_sketch: 'Put $4$ in the overlap; $12 - 4 = 8$ sit in $A$ only and $9 - 4 = 5$ in $B$ only, so the two outer regions hold $8 + 5 = 13$.'
+          - problem: 'If $|A| = 15$, $|B| = 10$, and $|A \cap B| = 6$, find $|A \cup B|$.'
+            answer: '$19$'
+            solution_sketch: '$15 + 10 - 6 = 19$; the overlap is counted once, not twice.'
+        constraints: "fill the three Venn regions from the given counts"
+      - id: kp2
+        name: "Inclusion-exclusion for two sets"
+        key_prerequisites: [union-intersection-difference]
+        exemplars:
+          - problem: 'If $|A| = 20$, $|B| = 15$, and $|A \cup B| = 27$, find $|A \cap B|$.'
+            answer: '$8$'
+            solution_sketch: 'From $|A \cup B| = |A| + |B| - |A \cap B|$: $27 = 35 - |A \cap B|$, so $|A \cap B| = 8$.'
+          - problem: 'In a universe of $40$ items, $|A| = 22$, $|B| = 18$, $|A \cap B| = 9$. How many items are in neither set?'
+            answer: '$9$'
+            solution_sketch: '$|A \cup B| = 22 + 18 - 9 = 31$, so $40 - 31 = 9$ items lie outside both.'
+        constraints: "solve $|A \\cup B| = |A| + |B| - |A \\cap B|$ for a missing quantity; may involve the complement"
+      - id: kp3
+        name: "Three sets"
+        key_prerequisites: [union-intersection-difference, complement-universal-set]
+        exemplars:
+          - problem: 'Given $|A| = 10$, $|B| = 9$, $|C| = 8$, $|A \cap B| = 4$, $|A \cap C| = 3$, $|B \cap C| = 2$, $|A \cap B \cap C| = 1$, find $|A \cup B \cup C|$.'
+            answer: '$19$'
+            solution_sketch: '$10 + 9 + 8 - 4 - 3 - 2 + 1 = 19$ by three-set inclusion-exclusion.'
+          - problem: 'Among $50$ students: $25$ take $A$, $20$ take $B$, $15$ take $C$, $8$ take $A$ and $B$, $6$ take $A$ and $C$, $5$ take $B$ and $C$, $2$ take all three. How many take none?'
+            answer: '$7$'
+            solution_sketch: '$|A \cup B \cup C| = 25 + 20 + 15 - 8 - 6 - 5 + 2 = 43$, so $50 - 43 = 7$ take none.'
+        constraints: "three-set inclusion-exclusion with all pairwise and triple intersections given"
+    diagnostic_exemplar:
+      problem: 'Among $60$ students, $30$ study French, $25$ German and $20$ Spanish; $12$ study French and German, $9$ French and Spanish, $7$ German and Spanish, and $4$ study all three. How many study none of the three languages?'
+      answer: '9'
+      solution_sketch: 'Inclusion-exclusion for three sets: $|F \cup G \cup S| = 30 + 25 + 20 - 12 - 9 - 7 + 4 = 51$, so $60 - 51 = 9$ students study none.'
+    anki_seeds:
+      - front: 'Inclusion-exclusion for two sets?'
+        back: '$|A \cup B| = |A| + |B| - |A \cap B|$.'
+        type: basic
+      - front: 'Inclusion-exclusion for three sets?'
+        back: '$|A \cup B \cup C| = |A|+|B|+|C| - |A \cap B| - |A \cap C| - |B \cap C| + |A \cap B \cap C|$.'
+        type: basic
+
+  - id: subset-relation-basics
+    name: "The Subset Relation"
+    core: true
+    difficulty: 0.48
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 100
+    prerequisites:
+      - id: set-notation
+        weight: 0.6
+        key: true
+      - id: quantifiers
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: "Deciding subset relations"
+        key_prerequisites: [set-notation]
+        exemplars:
+          - problem: 'True or false: $\{1, 3\} \subseteq \{1, 2, 3\}$ and $\{1, 4\} \subseteq \{1, 2, 3\}$.'
+            answer: 'True, False.'
+            solution_sketch: 'Both $1$ and $3$ lie in $\{1,2,3\}$; but $4$ does not, so the second fails.'
+          - problem: 'True or false: $\{a, b\} \subseteq \{a, b\}$.'
+            answer: 'True.'
+            solution_sketch: 'Every element of the set lies in the set; every set is a subset of itself.'
+        constraints: "membership checks element by element on small listed sets"
+      - id: kp2
+        name: "Element versus subset"
+        key_prerequisites: [set-notation]
+        exemplars:
+          - problem: 'Let $A = \{1, \{2\}, 3\}$. True or false: $\{2\} \in A$, $\{2\} \subseteq A$, $2 \in A$.'
+            answer: 'True, False, False.'
+            solution_sketch: 'The object $\{2\}$ is an element of $A$. But $\{2\} \subseteq A$ would need $2 \in A$, and the elements of $A$ are $1$, $\{2\}$, $3$ — not $2$.'
+          - problem: 'True or false: $\varnothing \in \{\varnothing\}$ and $\varnothing \subseteq \{\varnothing\}$.'
+            answer: 'True, True.'
+            solution_sketch: '$\{\varnothing\}$ has one element, namely $\varnothing$, so membership holds; and $\varnothing$ is a subset of every set.'
+        constraints: "distinguish $\\in$ from $\\subseteq$, including sets whose elements are sets"
+      - id: kp3
+        name: "Proper subsets and set equality"
+        key_prerequisites: [quantifiers]
+        exemplars:
+          - problem: 'Are $\{1, 2\}$ and $\{2, 1, 1\}$ equal as sets?'
+            answer: 'Yes.'
+            solution_sketch: 'Sets ignore order and repetition; both have exactly the elements $1$ and $2$.'
+          - problem: 'List all proper subsets of $\{1, 2\}$.'
+            answer: '$\varnothing$, $\{1\}$, $\{2\}$.'
+            solution_sketch: 'A proper subset is a subset other than the set itself; drop $\{1, 2\}$ from the four subsets.'
+        constraints: "set equality via mutual containment; proper vs improper subsets"
+    diagnostic_exemplar:
+      problem: 'Let $A = \{1, \{2\}, 3\}$. Decide each of (a) $\{2\} \in A$, (b) $\{2\} \subseteq A$, (c) $\{1,3\} \subseteq A$, (d) $\varnothing \subseteq A$; and state how many proper subsets $A$ has.'
+      answer: '(a) True — the set $\{2\}$ is listed as an element of $A$. (b) False — this would require $2 \in A$, but the number $2$ is not an element of $A$ (only the set $\{2\}$ is). (c) True — both $1$ and $3$ are elements of $A$. (d) True — the empty set is a subset of every set, vacuously. Since $|A| = 3$, there are $2^3 = 8$ subsets, of which $8 - 1 = 7$ are proper (all but $A$ itself).'
+      solution_sketch: 'Keep "element of" and "subset of" apart: $\{2\}$ occurs here as an element, not as a subset. Then count subsets as $2^{|A|}$ and discard $A$ itself.'
+    anki_seeds:
+      - front: '$x \in A$ versus $\{x\} \subseteq A$?'
+        back: 'They say the same thing: the element $x$ belongs to $A$.'
+        type: basic
+      - front: 'A proper subset of $A$ is...'
+        back: 'a subset of $A$ that is not equal to $A$ (written $B \subsetneq A$).'
+        type: basic
+
+  - id: power-set-enumeration
+    name: "Power Sets: Enumeration and Counting"
+    core: true
+    difficulty: 0.52
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 110
+    prerequisites:
+      - id: subset-relation-basics
+        weight: 0.6
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: "Listing power sets"
+        key_prerequisites: [subset-relation-basics]
+        exemplars:
+          - problem: 'List the elements of $\mathcal{P}(\{1, 2\})$.'
+            answer: '$\{\varnothing, \{1\}, \{2\}, \{1, 2\}\}$'
+            solution_sketch: 'Every subset of $\{1,2\}$: the empty set, two singletons, and the whole set.'
+          - problem: 'List the elements of $\mathcal{P}(\{a, b, c\})$.'
+            answer: '$\varnothing, \{a\}, \{b\}, \{c\}, \{a,b\}, \{a,c\}, \{b,c\}, \{a,b,c\}$ — eight subsets.'
+            solution_sketch: 'Organize by size: one empty set, three singletons, three pairs, one triple; $2^3 = 8$ in all.'
+        constraints: "enumerate all subsets of a set with at most 3 elements"
+      - id: kp2
+        name: "Counting subsets"
+        key_prerequisites: [subset-relation-basics]
+        exemplars:
+          - problem: 'How many subsets does a $5$-element set have? How many of them are proper?'
+            answer: '$32$ subsets; $31$ proper.'
+            solution_sketch: 'Each element is in or out: $2^5 = 32$; excluding the set itself leaves $31$.'
+          - problem: 'How many subsets of $\{1, 2, 3, 4\}$ contain the element $1$?'
+            answer: '$8$'
+            solution_sketch: 'Fix $1$ in; the other three elements are free: $2^3 = 8$.'
+        constraints: "powers of two; optionally one fixed-element or proper-subset twist"
+      - id: kp3
+        name: "Membership in a power set"
+        key_prerequisites: [subset-relation-basics]
+        exemplars:
+          - problem: 'True or false: $\{1, 2\} \in \mathcal{P}(\{1, 2, 3\})$ and $\{0\} \in \mathcal{P}(\{1, 2, 3\})$.'
+            answer: 'True, False.'
+            solution_sketch: 'Membership in $\mathcal{P}(A)$ means being a subset of $A$: $\{1,2\} \subseteq \{1,2,3\}$ but $\{0\} \not\subseteq \{1,2,3\}$.'
+          - problem: 'List $\mathcal{P}(\varnothing)$ and $\mathcal{P}(\{\varnothing\})$.'
+            answer: '$\mathcal{P}(\varnothing) = \{\varnothing\}$ and $\mathcal{P}(\{\varnothing\}) = \{\varnothing, \{\varnothing\}\}$.'
+            solution_sketch: 'The empty set has exactly one subset (itself); a one-element set has $2^1 = 2$ subsets.'
+        constraints: "unwind $S \\in \\mathcal{P}(A) \\iff S \\subseteq A$ on concrete sets"
+    diagnostic_exemplar:
+      problem: 'List $\mathcal{P}(\{a, b\})$ and $\mathcal{P}(\varnothing)$, and state how many elements $\mathcal{P}(S)$ has when $|S| = 6$.'
+      answer: '$\mathcal{P}(\{a,b\}) = \{\varnothing, \{a\}, \{b\}, \{a,b\}\}$ — four subsets. $\mathcal{P}(\varnothing) = \{\varnothing\}$: a one-element set whose single member is the empty set. And $|\mathcal{P}(S)| = 2^{6} = 64$ when $|S| = 6$.'
+      solution_sketch: 'Enumerate subsets by size, remembering that the empty set and the whole set both count; then use $|\mathcal{P}(S)| = 2^{|S|}$.'
+    anki_seeds:
+      - front: '$S \in \mathcal{P}(A)$ if and only if...'
+        back: '$S \subseteq A$.'
+        type: basic
+      - front: '$\mathcal{P}(\varnothing)$?'
+        back: '$\{\varnothing\}$ — a one-element set.'
+        type: basic
+
+  - id: subsets-power-sets
+    name: "Subsets and Power Sets"
+    core: true
+    difficulty: 0.55
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 180
+    prerequisites:
+      - id: subset-relation-basics
+        weight: 0.5
+        key: true
+      - id: power-set-enumeration
+        weight: 0.4
+        key: true
+      - id: set-operations
+        weight: 0.3
+      - id: quantifiers
+        weight: 0.3
+      - id: set-notation
+        weight: 0.0
+    knowledge_points:
+      - id: kp1
+        name: "Proving a subset relation"
+        key_prerequisites: [set-notation]
+        exemplars:
+          - problem: 'Prove: for all sets $A, B$, $A \cap B \subseteq A$.'
+            answer: 'Take $x \in A \cap B$; then $x \in A$.'
+            solution_sketch: 'Let $x \in A \cap B$. By definition $x \in A$ and $x \in B$, so in particular $x \in A$. As $x$ was arbitrary, $A \cap B \subseteq A$. $\square$'
+          - problem: 'Prove: for all sets $A, B$, $A \subseteq A \cup B$.'
+            answer: 'Take $x \in A$; then $x \in A \cup B$.'
+            solution_sketch: 'Let $x \in A$. Then $x \in A$ or $x \in B$, so $x \in A \cup B$. As $x$ was arbitrary, $A \subseteq A \cup B$. $\square$'
+        constraints: "take an arbitrary element of the smaller set and show membership in the larger"
+      - id: kp2
+        name: "Set equality by double inclusion"
+        key_prerequisites: [set-operations]
+        exemplars:
+          - problem: 'Prove: $A \subseteq B$ if and only if $A \cap B = A$.'
+            answer: 'Both directions by inclusion / element chasing.'
+            solution_sketch: '($\Rightarrow$) If $A \subseteq B$: $A \cap B \subseteq A$ always, and $x \in A$ gives $x \in B$, so $x \in A \cap B$; thus $A = A \cap B$. ($\Leftarrow$) If $A \cap B = A$ and $x \in A$, then $x \in A \cap B \subseteq B$, so $A \subseteq B$. $\square$'
+          - problem: 'Prove: $A \subseteq B$ if and only if $A \cup B = B$.'
+            answer: 'Both directions by inclusion.'
+            solution_sketch: '($\Rightarrow$) If $A \subseteq B$: $B \subseteq A \cup B$ always, and $x \in A \cup B$ gives $x \in A \subseteq B$ or $x \in B$, so $A \cup B \subseteq B$; equality. ($\Leftarrow$) If $A \cup B = B$ and $x \in A$, then $x \in A \cup B = B$, so $A \subseteq B$. $\square$'
+        constraints: "prove an iff about sets; use double inclusion where needed"
+      - id: kp3
+        name: "Reasoning about power sets"
+        key_prerequisites: [power-set-enumeration]
+        exemplars:
+          - problem: 'Prove: for all sets $A, B$, $A \subseteq B$ if and only if $\mathcal{P}(A) \subseteq \mathcal{P}(B)$.'
+            answer: 'Unwind $S \in \mathcal{P}(A) \iff S \subseteq A$ in both directions.'
+            solution_sketch: '($\Rightarrow$) If $S \in \mathcal{P}(A)$ then $S \subseteq A \subseteq B$, so $S \in \mathcal{P}(B)$. ($\Leftarrow$) $A \in \mathcal{P}(A) \subseteq \mathcal{P}(B)$, so $A \subseteq B$. $\square$'
+          - problem: 'Prove: for every set $A$, $\varnothing \in \mathcal{P}(A)$ and $A \in \mathcal{P}(A)$.'
+            answer: '$\varnothing \subseteq A$ vacuously and $A \subseteq A$ trivially.'
+            solution_sketch: 'Membership in $\mathcal{P}(A)$ means being a subset of $A$. $\varnothing \subseteq A$ holds vacuously, and $A \subseteq A$ since every $x \in A$ is in $A$. $\square$'
+        constraints: "prove power-set statements by unwinding $S \\in \\mathcal{P}(A) \\iff S \\subseteq A$"
+    diagnostic_exemplar:
+      problem: 'Prove: for all sets $A$ and $B$, $\mathcal{P}(A) \cap \mathcal{P}(B) = \mathcal{P}(A \cap B)$.'
+      answer: 'Take any set $X$. Then $X \in \mathcal{P}(A) \cap \mathcal{P}(B)$ iff $X \in \mathcal{P}(A)$ and $X \in \mathcal{P}(B)$, i.e. iff $X \subseteq A$ and $X \subseteq B$. Now $X \subseteq A$ and $X \subseteq B$ hold iff every $x \in X$ lies in both $A$ and $B$, i.e. iff $X \subseteq A \cap B$, i.e. iff $X \in \mathcal{P}(A \cap B)$. Each step is an equivalence, so the two power sets have exactly the same elements and are equal (this is double inclusion run in both directions at once).'
+      solution_sketch: 'Unwind membership in a power set as a subset relation, then use that being a subset of both sets is the same as being a subset of their intersection.'
+    anki_seeds:
+      - front: 'To prove $A \subseteq B$, you...'
+        back: 'take an arbitrary $x \in A$ and show that $x \in B$.'
+        type: basic
+      - front: 'To prove two sets are equal, $A = B$...'
+        back: 'prove $A \subseteq B$ and $B \subseteq A$ (double inclusion).'
+        type: basic
+      - front: 'Cardinality of the power set of an $n$-element set?'
+        back: '$|\mathcal{P}(A)| = 2^{n}$.'
+        type: basic
+
+  - id: disjoint-sets-partitions
+    name: "Disjoint Sets and Partitions"
+    core: true
+    difficulty: 0.55
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 140
+    prerequisites:
+      - id: subset-relation-basics
+        weight: 0.5
+        key: true
+      - id: union-intersection-difference
+        weight: 0.4
+        key: true
+      - id: complement-universal-set
+        weight: 0.2
+    knowledge_points:
+      - id: kp1
+        name: "Disjoint and pairwise disjoint sets"
+        key_prerequisites: [union-intersection-difference]
+        exemplars:
+          - problem: 'Are $\{1, 2\}$ and $\{3, 4\}$ disjoint? Are $\{1, 2\}$ and $\{2, 3\}$?'
+            answer: 'Yes; no ($2$ is common).'
+            solution_sketch: 'Disjoint means empty intersection: $\{1,2\} \cap \{3,4\} = \varnothing$, but $\{1,2\} \cap \{2,3\} = \{2\}$.'
+          - problem: 'Is the family $\{1, 2\}, \{3\}, \{2, 4\}$ pairwise disjoint?'
+            answer: 'No; $\{1, 2\} \cap \{2, 4\} = \{2\}$.'
+            solution_sketch: 'Pairwise disjoint requires every pair to have empty intersection; one overlapping pair breaks it.'
+        constraints: "check emptiness of intersections, including a pairwise check over 3 sets"
+      - id: kp2
+        name: "Recognizing partitions"
+        key_prerequisites: [subset-relation-basics]
+        exemplars:
+          - problem: 'Is $\{\{1, 2\}, \{3\}, \{4, 5\}\}$ a partition of $\{1, 2, 3, 4, 5\}$?'
+            answer: 'Yes.'
+            solution_sketch: 'The blocks are nonempty, pairwise disjoint, and their union is the whole set.'
+          - problem: 'Is $\{\{1, 2\}, \{2, 3\}\}$ a partition of $\{1, 2, 3\}$? Is $\{\{1\}, \{3\}\}$?'
+            answer: 'No (blocks overlap at $2$); no ($2$ is not covered).'
+            solution_sketch: 'A partition must cover every element exactly once: the first fails disjointness, the second fails covering.'
+        constraints: "test the three partition conditions: nonempty blocks, pairwise disjoint, union is everything"
+      - id: kp3
+        name: "Partitions of infinite sets"
+        key_prerequisites: [complement-universal-set]
+        exemplars:
+          - problem: 'Show that the even integers and the odd integers form a partition of $\mathbb{Z}$.'
+            answer: 'Both nonempty, disjoint, and their union is $\mathbb{Z}$.'
+            solution_sketch: 'Every integer is even or odd (covering), no integer is both (disjointness), and both classes are nonempty.'
+          - problem: 'Do the three sets $\{3k\}$, $\{3k + 1\}$, $\{3k + 2\}$ (over $k \in \mathbb{Z}$) partition $\mathbb{Z}$?'
+            answer: 'Yes — every integer has exactly one remainder mod $3$.'
+            solution_sketch: 'Division by $3$ gives each integer a unique remainder $0$, $1$, or $2$, so the classes are nonempty, disjoint, and cover $\mathbb{Z}$.'
+        constraints: "described sets partitioning $\\mathbb{Z}$ by parity or remainder"
+    diagnostic_exemplar:
+      problem: 'Which of these are partitions: (i) $\{\{1,2\},\{3,4\}\}$ of $\{1,2,3,4\}$; (ii) the even integers together with the odd integers, of $\mathbb{Z}$; (iii) $\{\{1,2,3\},\{3,4\}\}$ of $\{1,2,3,4\}$?'
+      answer: '(i) Yes: both blocks are nonempty, they are disjoint, and their union is $\{1,2,3,4\}$. (ii) Yes: both blocks are nonempty, no integer is both even and odd (disjoint), and every integer is one or the other, so they cover $\mathbb{Z}$. (iii) No: the blocks share the element $3$, so they are not pairwise disjoint.'
+      solution_sketch: 'Check all three conditions for each family — nonempty blocks, pairwise disjoint, union equal to the whole set.'
+    anki_seeds:
+      - front: 'A partition of a set $A$ is...'
+        back: 'a collection of nonempty, pairwise disjoint subsets of $A$ whose union is $A$.'
+        type: basic
+      - front: '"Disjoint" for two sets means...'
+        back: '$A \cap B = \varnothing$.'
+        type: basic
+
+  - id: cartesian-products
+    name: "Cartesian Products"
+    core: true
+    difficulty: 0.50
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 140
+    prerequisites:
+      - id: set-notation
+        weight: 0.5
+        key: true
+      - id: set-operations
+        weight: 0.3
+      - id: quantifiers
+        weight: 0.0
+    knowledge_points:
+      - id: kp1
+        name: "Ordered pairs and products"
+        key_prerequisites: [set-notation]
+        exemplars:
+          - problem: 'With $A = \{1, 2\}$ and $B = \{x, y\}$, list $A \times B$.'
+            answer: '$\{(1, x), (1, y), (2, x), (2, y)\}$'
+            solution_sketch: 'All ordered pairs with first entry in $A$ and second entry in $B$.'
+          - problem: 'With $A = \{a, b, c\}$ and $B = \{1\}$, list $A \times B$.'
+            answer: '$\{(a, 1), (b, 1), (c, 1)\}$'
+            solution_sketch: 'Pair every element of $A$ with the single element $1$ of $B$.'
+        constraints: "enumerate a product of small sets; order of coordinates matters"
+      - id: kp2
+        name: "Counting a product"
+        key_prerequisites: [set-notation]
+        exemplars:
+          - problem: 'If $|A| = 3$ and $|B| = 4$, how many elements are in $A \times B$? In $A \times A$?'
+            answer: '$12$ and $9$.'
+            solution_sketch: '$|A \times B| = |A|\,|B| = 12$ and $|A \times A| = 3^2 = 9$.'
+          - problem: 'If $|A| = 5$ and $|B| = 0$, how many elements are in $A \times B$?'
+            answer: '$0$.'
+            solution_sketch: '$|A \times B| = |A|\,|B| = 5 \cdot 0 = 0$; pairing with the empty set gives no pairs.'
+        constraints: "use $|A \\times B| = |A|\\,|B|$"
+      - id: kp3
+        name: "Subsets of a product"
+        key_prerequisites: [set-operations]
+        exemplars:
+          - problem: 'With $A = \{1, 2, 3\}$, list the pairs in $\{(a, b) \in A \times A : a < b\}$.'
+            answer: '$\{(1, 2), (1, 3), (2, 3)\}$'
+            solution_sketch: 'From $A \times A$, keep the ordered pairs whose first entry is strictly less than the second.'
+          - problem: 'With $A = \{1, 2, 3\}$, list the pairs in $\{(a, b) \in A \times A : a + b = 4\}$.'
+            answer: '$\{(1, 3), (2, 2), (3, 1)\}$'
+            solution_sketch: 'From $A \times A$, keep the ordered pairs whose entries sum to $4$.'
+        constraints: "carve a subset of a product by a condition on coordinates"
+    diagnostic_exemplar:
+      problem: 'With $A = \{1, 2, 3\}$, give $|A \times A|$ and list the pairs in $\{(a,b) \in A \times A : a + b \le 4\}$.'
+      answer: '$|A \times A| = 3 \cdot 3 = 9$. The pairs with $a + b \le 4$ are $(1,1), (1,2), (1,3), (2,1), (2,2), (3,1)$ — six of the nine; order matters, so $(1,3)$ and $(3,1)$ count separately.'
+      solution_sketch: 'Count the product as $|A| \cdot |A|$, then run through the ordered pairs and keep those whose coordinate sum is at most $4$.'
+    anki_seeds:
+      - front: 'The Cartesian product $A \times B$?'
+        back: 'The set of ordered pairs $\{(a, b) : a \in A,\ b \in B\}$.'
+        type: basic
+      - front: '$|A \times B|$ in terms of $|A|$ and $|B|$?'
+        back: '$|A \times B| = |A| \cdot |B|$.'
+        type: basic
+
+  - id: indexed-unions-intersections
+    name: "Indexed Unions and Intersections"
+    core: true
+    difficulty: 0.55
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 150
+    prerequisites:
+      - id: union-intersection-difference
+        weight: 0.5
+        key: true
+      - id: quantifiers
+        weight: 0.4
+        key: true
+      - id: interval-notation-real-sets
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: "Finitely indexed families"
+        key_prerequisites: [union-intersection-difference]
+        exemplars:
+          - problem: 'For $i = 1, 2, 3$ let $A_i = \{i, i+1, i+2\}$. Compute $\bigcup_{i=1}^{3} A_i$ and $\bigcap_{i=1}^{3} A_i$.'
+            answer: '$\bigcup A_i = \{1, 2, 3, 4, 5\}$ and $\bigcap A_i = \{3\}$.'
+            solution_sketch: '$A_1 = \{1,2,3\}$, $A_2 = \{2,3,4\}$, $A_3 = \{3,4,5\}$; only $3$ lies in all three.'
+          - problem: 'For $i = 1, 2, 3$ let $B_i = \{i, 2i\}$. Compute $\bigcup_{i=1}^{3} B_i$ and $\bigcap_{i=1}^{3} B_i$.'
+            answer: '$\bigcup B_i = \{1, 2, 3, 4, 6\}$ and $\bigcap B_i = \varnothing$.'
+            solution_sketch: '$B_1 = \{1,2\}$, $B_2 = \{2,4\}$, $B_3 = \{3,6\}$; $B_1 \cap B_2 = \{2\}$ but $2 \notin B_3$, so the intersection is empty.'
+        constraints: "3-4 explicitly listable indexed sets; compute both the union and the intersection"
+      - id: kp2
+        name: "Interval families"
+        key_prerequisites: [interval-notation-real-sets]
+        exemplars:
+          - problem: 'For $n \ge 1$ let $A_n = \left[\tfrac{1}{n}, 1\right]$. Compute $\bigcup_{n \ge 1} A_n$.'
+            answer: '$(0, 1]$'
+            solution_sketch: 'Every $x$ with $0 < x \le 1$ lies in $A_n$ once $\tfrac{1}{n} \le x$; but $0$ itself is in no $A_n$.'
+          - problem: 'For $n \ge 1$ let $B_n = \left[0,\, 1 + \tfrac{1}{n}\right)$. Compute $\bigcap_{n \ge 1} B_n$.'
+            answer: '$[0, 1]$'
+            solution_sketch: '$x$ lies in every $B_n$ iff $0 \le x$ and $x < 1 + \tfrac{1}{n}$ for all $n$, i.e. $x \le 1$.'
+        constraints: "families of intervals shrinking or growing with $n$; answer as an interval"
+      - id: kp3
+        name: "Membership via quantifiers"
+        key_prerequisites: [quantifiers]
+        exemplars:
+          - problem: 'For $n \ge 1$ let $C_n = \left(-\tfrac{1}{n}, \tfrac{1}{n}\right)$. Is $0 \in \bigcap_{n \ge 1} C_n$? Is $0.1$?'
+            answer: '$0$: yes. $0.1$: no.'
+            solution_sketch: '$x \in \bigcap C_n$ means $x \in C_n$ for every $n$. $0$ is in every interval; $0.1 \notin C_{11}$ since $0.1 > \tfrac{1}{11}$.'
+          - problem: 'For $n \ge 1$ let $A_n = [n, \infty)$. Compute $\bigcup_{n \ge 1} A_n$ and $\bigcap_{n \ge 1} A_n$.'
+            answer: '$\bigcup A_n = [1, \infty)$ and $\bigcap A_n = \varnothing$.'
+            solution_sketch: 'The union is the largest set, $A_1$. For the intersection, any real $x$ fails $x \ge n$ once $n > x$, so no real is in every $A_n$.'
+        constraints: "translate $\\bigcup$/$\\bigcap$ membership into $\\exists$/$\\forall$ statements and decide them"
+    diagnostic_exemplar:
+      problem: 'For $n \ge 1$ let $A_n = \left(0,\ 1 + \tfrac{1}{n}\right)$. Compute $\bigcup_{n \ge 1} A_n$ and $\bigcap_{n \ge 1} A_n$.'
+      answer: 'The intervals shrink as $n$ grows ($A_1 \supseteq A_2 \supseteq \cdots$), so the union is the largest one: $\bigcup_{n \ge 1} A_n = A_1 = (0, 2)$. For the intersection, $x$ lies in every $A_n$ iff $x > 0$ and $x < 1 + \tfrac1n$ for every $n$; any $x > 1$ fails once $\tfrac1n < x - 1$, while every $x \le 1$ passes. Hence $\bigcap_{n \ge 1} A_n = (0, 1]$.'
+      solution_sketch: 'For a nested decreasing family the union is the first set; for the intersection ask which $x$ survive every bound $1 + 1/n$.'
+    anki_seeds:
+      - front: 'For nested sets $A_1 \subseteq A_2 \subseteq \cdots$, what are $\bigcup A_n$ and $\bigcap A_n$ over a finite range?'
+        back: 'The largest set and the smallest set in the range, respectively.'
+        type: basic
+      - front: '$\bigcap_{n \ge 1} \left(-\tfrac{1}{n}, \tfrac{1}{n}\right) = $ ?'
+        back: '$\{0\}$.'
+        type: basic
+
+  - id: indexed-families
+    name: "Indexed Families of Sets"
+    core: true
+    difficulty: 0.60
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 200
+    prerequisites:
+      - id: indexed-unions-intersections
+        weight: 0.5
+        key: true
+      - id: quantifiers
+        weight: 0.4
+        key: true
+      - id: subsets-power-sets
+        weight: 0.3
+      - id: set-operations
+        weight: 0.2
+    knowledge_points:
+      - id: kp1
+        name: "Bounding an indexed family"
+        key_prerequisites: [indexed-unions-intersections]
+        exemplars:
+          - problem: 'Prove: for any family $\{A_i\}_{i \in I}$ and any $j \in I$, $\bigcap_{i \in I} A_i \subseteq A_j \subseteq \bigcup_{i \in I} A_i$.'
+            answer: 'Unwind the quantifier meaning of $\bigcap$ and $\bigcup$.'
+            solution_sketch: 'If $x \in \bigcap_i A_i$ then $x \in A_i$ for every $i$, in particular $x \in A_j$. If $x \in A_j$, then $x \in A_i$ for some $i$ (namely $j$), so $x \in \bigcup_i A_i$. $\square$'
+          - problem: 'Prove: if $A_i \subseteq B$ for every $i \in I$, then $\bigcup_{i \in I} A_i \subseteq B$.'
+            answer: 'An element of the union lies in some $A_j \subseteq B$.'
+            solution_sketch: 'Let $x \in \bigcup_i A_i$; then $x \in A_j$ for some $j \in I$. Since $A_j \subseteq B$, $x \in B$. As $x$ was arbitrary, $\bigcup_i A_i \subseteq B$. $\square$'
+        constraints: "short inclusion proofs straight from the quantifier meaning of $\\bigcup, \\bigcap$"
+      - id: kp2
+        name: "Membership proofs with families"
+        key_prerequisites: [quantifiers]
+        exemplars:
+          - problem: 'For $n \ge 1$ let $B_n = \left(-\tfrac{1}{n}, \tfrac{1}{n}\right) \subseteq \mathbb{R}$. Prove $\bigcap_{n \ge 1} B_n = \{0\}$.'
+            answer: '$0$ lies in every $B_n$; any $x \ne 0$ is excluded for large $n$.'
+            solution_sketch: '$0 \in B_n$ for all $n$, so $\{0\} \subseteq \bigcap B_n$. Conversely if $x \ne 0$, choose $n > 1/|x|$; then $|x| > 1/n$, so $x \notin B_n$ and $x \notin \bigcap B_n$. Hence $\bigcap B_n = \{0\}$. $\square$'
+          - problem: 'For $n \ge 1$ let $D_n = \left[0,\, 1 - \tfrac{1}{n}\right]$. Prove $\bigcup_{n \ge 1} D_n = [0, 1)$.'
+            answer: 'Each $D_n \subseteq [0,1)$, and every point of $[0,1)$ lies in some $D_n$.'
+            solution_sketch: 'Each $D_n \subseteq [0, 1)$, so the union is $\subseteq [0, 1)$. Conversely if $0 \le x < 1$, choose $n > \tfrac{1}{1 - x}$; then $1 - \tfrac1n > x$, so $x \in D_n$. Hence the union is $[0, 1)$. $\square$'
+        constraints: "translate $x \\in \\bigcap A_i$ into a universal statement and argue both inclusions"
+      - id: kp3
+        name: "Distributing over an indexed family"
+        key_prerequisites: [quantifiers]
+        exemplars:
+          - problem: 'Prove: $B \cap \bigcup_{i \in I} A_i = \bigcup_{i \in I} (B \cap A_i)$.'
+            answer: 'Element chase using the meaning of indexed union.'
+            solution_sketch: '$x \in B \cap \bigcup_i A_i$ iff $x \in B$ and $x \in A_j$ for some $j$, iff $x \in B \cap A_j$ for some $j$, iff $x \in \bigcup_i (B \cap A_i)$. $\square$'
+          - problem: 'Prove: $B \cup \bigcap_{i \in I} A_i = \bigcap_{i \in I} (B \cup A_i)$.'
+            answer: 'Element chase using the meaning of indexed intersection.'
+            solution_sketch: '$x \in B \cup \bigcap_i A_i$ iff $x \in B$ or ($x \in A_i$ for all $i$) iff for all $i$, ($x \in B$ or $x \in A_i$) iff $x \in \bigcap_i (B \cup A_i)$. (The step uses that "$x \in B$" does not depend on $i$.) $\square$'
+        constraints: "prove an identity involving an indexed family by element chasing"
+    diagnostic_exemplar:
+      problem: 'Prove the generalized De Morgan law $\left(\bigcup_{i \in I} A_i\right)^{c} = \bigcap_{i \in I} A_i^{\,c}$.'
+      answer: 'Not in any $A_i$ iff in every complement.'
+      solution_sketch: '$x \in (\bigcup_i A_i)^{c}$ iff $x \notin \bigcup_i A_i$ iff for all $i$, $x \notin A_i$, iff for all $i$, $x \in A_i^{c}$, iff $x \in \bigcap_i A_i^{c}$. $\square$'
+    anki_seeds:
+      - front: 'Meaning of $x \in \bigcup_{i \in I} A_i$ and $x \in \bigcap_{i \in I} A_i$?'
+        back: '$\bigcup$: $x \in A_i$ for some $i \in I$. $\bigcap$: $x \in A_i$ for every $i \in I$.'
+        type: basic
+      - front: 'Generalized De Morgan law for a complemented indexed union?'
+        back: '$\left(\bigcup_{i \in I} A_i\right)^{c} = \bigcap_{i \in I} A_i^{\,c}$ (and dually for an intersection).'
+        type: basic
+
+  - id: set-identities-proofs
+    name: "Proving Set Identities"
+    core: true
+    difficulty: 0.60
+    drill: false
+    answer_kind: proof
+    expected_time_secs: 210
+    prerequisites:
+      - id: subsets-power-sets
+        weight: 0.5
+        key: true
+      - id: set-operations
+        weight: 0.5
+        key: true
+      - id: logical-equivalence
+        weight: 0.4
+      - id: quantifiers
+        weight: 0.0
+    knowledge_points:
+      - id: kp1
+        name: "Distributive laws for sets"
+        key_prerequisites: [set-operations]
+        exemplars:
+          - problem: 'Prove: $A \cap (B \cup C) = (A \cap B) \cup (A \cap C)$.'
+            answer: 'Element chase using distributivity of $\land$ over $\lor$.'
+            solution_sketch: '$x \in A \cap (B \cup C)$ iff $x \in A$ and ($x \in B$ or $x \in C$) iff ($x \in A$ and $x \in B$) or ($x \in A$ and $x \in C$) iff $x \in (A \cap B) \cup (A \cap C)$. $\square$'
+          - problem: 'Prove: $A \cup (B \cap C) = (A \cup B) \cap (A \cup C)$.'
+            answer: 'Element chase using distributivity of $\lor$ over $\land$.'
+            solution_sketch: '$x \in A \cup (B \cap C)$ iff $x \in A$ or ($x \in B$ and $x \in C$) iff ($x \in A$ or $x \in B$) and ($x \in A$ or $x \in C$) iff $x \in (A \cup B) \cap (A \cup C)$. $\square$'
+        constraints: "prove via element chasing, citing the logical distributive law"
+      - id: kp2
+        name: "De Morgan laws for sets"
+        key_prerequisites: [logical-equivalence]
+        exemplars:
+          - problem: 'Prove: $(A \cup B)^{c} = A^{c} \cap B^{c}$.'
+            answer: 'Element chase using De Morgan for logic.'
+            solution_sketch: '$x \in (A \cup B)^{c}$ iff $\neg(x \in A \lor x \in B)$ iff $x \notin A \land x \notin B$ (De Morgan) iff $x \in A^{c} \cap B^{c}$. $\square$'
+          - problem: 'Prove: $(A \cap B)^{c} = A^{c} \cup B^{c}$.'
+            answer: 'Element chase using De Morgan for logic.'
+            solution_sketch: '$x \in (A \cap B)^{c}$ iff $\neg(x \in A \land x \in B)$ iff $x \notin A \lor x \notin B$ (De Morgan) iff $x \in A^{c} \cup B^{c}$. $\square$'
+        constraints: "reduce a set De Morgan law to the logical one"
+      - id: kp3
+        name: "Identities with set difference"
+        key_prerequisites: [set-operations]
+        exemplars:
+          - problem: 'Prove: $A \setminus (B \cap C) = (A \setminus B) \cup (A \setminus C)$.'
+            answer: 'Rewrite $\setminus$, apply De Morgan and distributivity.'
+            solution_sketch: '$x \in A \setminus (B \cap C)$ iff $x \in A \land \neg(x \in B \land x \in C)$ iff $x \in A \land (x \notin B \lor x \notin C)$ iff $(x \in A \land x \notin B) \lor (x \in A \land x \notin C)$ iff $x \in (A \setminus B) \cup (A \setminus C)$. $\square$'
+          - problem: 'Prove: $A \setminus (B \cup C) = (A \setminus B) \cap (A \setminus C)$.'
+            answer: 'Rewrite $\setminus$, apply De Morgan.'
+            solution_sketch: '$x \in A \setminus (B \cup C)$ iff $x \in A \land \neg(x \in B \lor x \in C)$ iff $x \in A \land x \notin B \land x \notin C$ iff $(x \in A \land x \notin B) \land (x \in A \land x \notin C)$ iff $x \in (A \setminus B) \cap (A \setminus C)$. $\square$'
+        constraints: "express difference as membership plus non-membership; then chase"
+    diagnostic_exemplar:
+      problem: 'Prove: $A \setminus (B \setminus C) = (A \setminus B) \cup (A \cap C)$.'
+      answer: 'Element chase. $x \in A \setminus (B \setminus C)$ iff $x \in A$ and $\lnot(x \in B \land x \notin C)$. By De Morgan the second condition becomes $x \notin B \lor x \in C$, so the whole condition is $x \in A \land (x \notin B \lor x \in C)$. Distributing the conjunction over the disjunction gives $(x \in A \land x \notin B) \lor (x \in A \land x \in C)$, i.e. $x \in A \setminus B$ or $x \in A \cap C$, i.e. $x \in (A \setminus B) \cup (A \cap C)$. Every step is an equivalence, so the two sets are equal.'
+      solution_sketch: 'Rewrite the differences as conjunctions with negations, apply De Morgan to the inner difference, then distribute.'
+    anki_seeds:
+      - front: 'The two standard ways to prove a set identity?'
+        back: 'Element-chasing (show $x \in$ LHS iff $x \in$ RHS) or double inclusion ($\subseteq$ both ways).'
+        type: basic
+      - front: 'De Morgan''s laws for sets?'
+        back: '$(A \cup B)^{c} = A^{c} \cap B^{c}$ and $(A \cap B)^{c} = A^{c} \cup B^{c}$.'
+        type: basic

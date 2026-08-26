@@ -1,0 +1,2032 @@
+unit: rational-trig
+course: foundations
+module: "Rational Expressions & Trigonometry"
+topics:
+  - id: rational-expression-restrictions
+    name: Excluded Values of Rational Expressions
+    core: true
+    difficulty: 0.5
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 90
+    prerequisites:
+      - id: quadratic-equations-factoring
+        weight: 0.5
+        key: true
+      - id: two-step-equations
+        weight: 0.4
+      - id: fraction-basics
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Monomial and simple binomial denominators
+        key_prerequisites: [fraction-basics]
+        constraints: "denominators of degree at most 1 here; integer excluded values"
+        exemplars:
+          - problem: 'State the excluded value(s) of $\frac{5}{x}$.'
+            answer: "x = 0"
+          - problem: 'State the excluded value(s) of $\frac{x+2}{x-3}$.'
+            answer: "x = 3"
+            solution_sketch: 'The denominator is $0$ when $x = 3$.'
+      - id: kp2
+        name: Solve a linear denominator equal to zero
+        key_prerequisites: [two-step-equations]
+        constraints: "denominators of the form ax + b with small integer a and b; the excluded value is an integer or a simple fraction"
+        exemplars:
+          - problem: 'State the excluded value(s) of $\frac{7}{2x - 6}$.'
+            answer: "x = 3"
+          - problem: 'State the excluded value(s) of $\frac{1}{3x + 12}$.'
+            answer: "x = -4"
+      - id: kp3
+        name: Factorable quadratic denominators
+        key_prerequisites: [quadratic-equations-factoring]
+        constraints: "denominators are factorable quadratics (difference of squares or monic trinomials) with two integer roots; give both excluded values"
+        exemplars:
+          - problem: 'State the excluded value(s) of $\frac{x+1}{x^2 - 9}$.'
+            answer: "x = 3 and x = -3"
+            solution_sketch: '$x^2 - 9 = (x-3)(x+3)$.'
+          - problem: 'State the excluded value(s) of $\frac{x}{x^2 - 5x + 6}$.'
+            answer: "x = 2 and x = 3"
+    diagnostic_exemplar:
+      problem: 'State the excluded value(s) of $\frac{x + 4}{x^2 - 7x + 12}$.'
+      answer: "x = 3 and x = 4"
+      solution_sketch: 'Factor the denominator: $(x - 3)(x - 4) = 0$.'
+    anki_seeds:
+      - front: "The excluded values of a rational expression are..."
+        back: "the values that make the denominator zero."
+        type: basic
+
+  - id: simplifying-rational-monomials
+    name: Simplifying Monomial Rational Expressions
+    core: true
+    difficulty: 0.5
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 90
+    prerequisites:
+      - id: equivalent-fractions
+        weight: 0.7
+        key: true
+      - id: exponent-product-quotient-rules
+        weight: 0.6
+        key: true
+      - id: negative-zero-exponents
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Reduce numeric coefficients
+        key_prerequisites: [equivalent-fractions]
+        constraints: "coefficients at most 20; single variable"
+        exemplars:
+          - problem: 'Simplify $\frac{6x^2}{9x}$.'
+            answer: "2x/3"
+            solution_sketch: '$\frac{6}{9} = \frac{2}{3}$ and $\frac{x^2}{x} = x$.'
+          - problem: 'Simplify $\frac{8x}{12}$.'
+            answer: "2x/3"
+      - id: kp2
+        name: Quotients of powers
+        key_prerequisites: [exponent-product-quotient-rules]
+        constraints: "one variable; subtract exponents, leaving the variable in the numerator or in the denominator; coefficients at most 20"
+        exemplars:
+          - problem: 'Simplify $\frac{x^5}{x^2}$.'
+            answer: "x^3"
+          - problem: 'Simplify $\frac{10x^3}{15x^5}$.'
+            answer: "2/(3x^2)"
+            solution_sketch: 'Reduce $\frac{10}{15}$ and cancel $x^3$ from top and bottom.'
+      - id: kp3
+        name: Several variables at once
+        key_prerequisites: [exponent-product-quotient-rules, equivalent-fractions]
+        constraints: "two or three variables with exponents at most 3; reduce the coefficients and each variable separately"
+        exemplars:
+          - problem: 'Simplify $\frac{12x^2 y}{18x y^2}$.'
+            answer: "2x/(3y)"
+          - problem: 'Simplify $\frac{4a^3 b}{6a}$.'
+            answer: "2a^2·b/3"
+    diagnostic_exemplar:
+      problem: 'Simplify $\frac{15x^3 y}{20x y^3}$.'
+      answer: "3x^2/(4y^2)"
+      solution_sketch: '$\frac{15}{20} = \frac{3}{4}$, $\frac{x^3}{x} = x^2$, and $\frac{y}{y^3} = \frac{1}{y^2}$.'
+    anki_seeds:
+      - front: "To simplify a monomial fraction, reduce the coefficients and..."
+        back: "subtract exponents of like bases."
+        type: basic
+
+  - id: rational-expressions
+    name: Simplifying Rational Expressions
+    core: true
+    difficulty: 0.6
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 120
+    prerequisites:
+      - id: simplifying-rational-monomials
+        weight: 0.7
+        key: true
+      - id: factoring-trinomials
+        weight: 0.6
+        key: true
+      - id: rational-expression-restrictions
+        weight: 0.4
+      - id: difference-of-squares
+        weight: 0.4
+      - id: factoring-gcf
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Factor, then cancel a common binomial
+        key_prerequisites: [factoring-trinomials, difference-of-squares]
+        constraints: "numerator is a difference of squares or a monic trinomial; the denominator is one of its linear factors; the answer is a binomial"
+        exemplars:
+          - problem: 'Simplify $\frac{x^2 - 9}{x + 3}$.'
+            answer: "x - 3"
+            solution_sketch: '$\frac{(x+3)(x-3)}{x+3}$.'
+          - problem: 'Simplify $\frac{x^2 + 5x + 6}{x + 2}$.'
+            answer: "x + 3"
+      - id: kp2
+        name: Factor numerator and denominator
+        key_prerequisites: [factoring-trinomials]
+        constraints: "numerator and denominator both factor into linear binomials with integer roots; exactly one factor cancels"
+        exemplars:
+          - problem: 'Simplify $\frac{x^2 - 4}{x^2 + 4x + 4}$.'
+            answer: "(x - 2)/(x + 2)"
+            solution_sketch: '$\frac{(x+2)(x-2)}{(x+2)^2}$.'
+          - problem: 'Simplify $\frac{x^2 - x - 6}{x^2 - 9}$.'
+            answer: "(x + 2)/(x + 3)"
+      - id: kp3
+        name: Opposite factors
+        key_prerequisites: [factoring-gcf, difference-of-squares]
+        constraints: "one factor pair of the form (a - x) and (x - a)"
+        exemplars:
+          - problem: 'Simplify $\frac{5 - x}{x - 5}$.'
+            answer: "-1"
+            solution_sketch: '$5 - x = -(x - 5)$.'
+          - problem: 'Simplify $\frac{x^2 - 4}{2 - x}$.'
+            answer: "-(x + 2)"
+            solution_sketch: '$\frac{(x-2)(x+2)}{-(x-2)} = -(x+2)$.'
+    diagnostic_exemplar:
+      problem: 'Simplify $\frac{x^2 - 9}{6 - 2x}$.'
+      answer: "-(x + 3)/2"
+      solution_sketch: '$6 - 2x = -2(x - 3)$, and $x^2 - 9 = (x - 3)(x + 3)$; the $(x - 3)$ cancels and the minus sign survives.'
+    anki_seeds:
+      - front: "(a - b)/(b - a) = ?"
+        back: "-1"
+        type: basic
+
+  - id: multiplying-rational-expressions
+    name: Multiplying Rational Expressions
+    core: true
+    difficulty: 0.6
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 120
+    prerequisites:
+      - id: rational-expressions
+        weight: 0.7
+        key: true
+      - id: multiplying-fractions
+        weight: 0.7
+        key: true
+      - id: factoring-trinomials
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: Multiply monomial rational expressions
+        key_prerequisites: [multiplying-fractions]
+        constraints: "coefficients at most 12; results must reduce to a single fraction"
+        exemplars:
+          - problem: 'Multiply $\frac{2}{x} \cdot \frac{x^2}{6}$.'
+            answer: "x/3"
+            solution_sketch: '$\frac{2x^2}{6x} = \frac{x}{3}$.'
+          - problem: 'Multiply $\frac{3}{x+1} \cdot \frac{x+1}{9}$.'
+            answer: "1/3"
+      - id: kp2
+        name: Factor, multiply, and cancel
+        key_prerequisites: [rational-expressions, factoring-trinomials]
+        constraints: "one factor needs a difference of squares or a monic trinomial factored first; exactly one binomial cancels"
+        exemplars:
+          - problem: 'Multiply $\frac{x+2}{x-3} \cdot \frac{x^2-9}{x+2}$.'
+            answer: "x + 3"
+            solution_sketch: 'Cancel $(x+2)$; $\frac{x^2-9}{x-3} = x+3$.'
+          - problem: 'Multiply $\frac{x}{x+4} \cdot \frac{x^2+8x+16}{x}$.'
+            answer: "x + 4"
+      - id: kp3
+        name: Cross-cancel before multiplying
+        key_prerequisites: [rational-expressions]
+        constraints: "a factor of each numerator cancels against a factor of the other denominator; cancel before multiplying, never expand"
+        exemplars:
+          - problem: 'Multiply $\frac{x^2-1}{x+2} \cdot \frac{x+2}{x+1}$.'
+            answer: "x - 1"
+            solution_sketch: 'Cancel $(x+2)$ and $(x+1)$.'
+          - problem: 'Multiply $\frac{x^2+3x}{x^2-4} \cdot \frac{x+2}{x}$.'
+            answer: "(x + 3)/(x - 2)"
+            solution_sketch: '$\frac{x(x+3)}{(x-2)(x+2)} \cdot \frac{x+2}{x}$.'
+    diagnostic_exemplar:
+      problem: 'Multiply $\frac{x^2 - 4}{x^2 + 5x} \cdot \frac{x + 5}{x - 2}$.'
+      answer: "(x + 2)/x"
+      solution_sketch: 'Factor to $\frac{(x - 2)(x + 2)}{x(x + 5)} \cdot \frac{x + 5}{x - 2}$; the $(x - 2)$ and $(x + 5)$ cancel.'
+    anki_seeds:
+      - front: "To multiply rational expressions..."
+        back: "factor everything, cancel common factors, then multiply what remains."
+        type: basic
+
+  - id: dividing-rational-expressions
+    name: Dividing Rational Expressions
+    core: true
+    difficulty: 0.65
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 120
+    prerequisites:
+      - id: multiplying-rational-expressions
+        weight: 0.7
+        key: true
+      - id: dividing-fractions
+        weight: 0.6
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: Divide monomial rational expressions
+        key_prerequisites: [dividing-fractions]
+        constraints: "flip-and-multiply; every quotient cancels to a simple monomial fraction"
+        exemplars:
+          - problem: 'Divide $\frac{x}{3} \div \frac{x^2}{9}$.'
+            answer: "3/x"
+            solution_sketch: '$\frac{x}{3} \cdot \frac{9}{x^2} = \frac{9x}{3x^2} = \frac{3}{x}$.'
+          - problem: 'Divide $\frac{5}{x^2} \div \frac{10}{x}$.'
+            answer: "1/(2x)"
+      - id: kp2
+        name: Divide with binomial factors
+        key_prerequisites: [multiplying-rational-expressions, dividing-fractions]
+        constraints: "flip the divisor, then cancel matching linear binomials; no trinomials at this level"
+        exemplars:
+          - problem: 'Divide $\frac{x+1}{x-2} \div \frac{x+1}{x+2}$.'
+            answer: "(x + 2)/(x - 2)"
+          - problem: 'Divide $\frac{x^2-25}{x} \div \frac{x-5}{x}$.'
+            answer: "x + 5"
+            solution_sketch: '$\frac{(x-5)(x+5)}{x} \cdot \frac{x}{x-5}$.'
+      - id: kp3
+        name: Divide with trinomial factoring
+        key_prerequisites: [multiplying-rational-expressions]
+        constraints: "one numerator is a monic trinomial factoring over the integers; flip, factor, then cancel"
+        exemplars:
+          - problem: 'Divide $\frac{x^2+7x+10}{x+3} \div \frac{x+2}{x+3}$.'
+            answer: "x + 5"
+          - problem: 'Divide $\frac{x^2-x-12}{x+1} \div \frac{x-4}{x+1}$.'
+            answer: "x + 3"
+            solution_sketch: '$\frac{(x-4)(x+3)}{x+1} \cdot \frac{x+1}{x-4} = x+3$.'
+    diagnostic_exemplar:
+      problem: 'Divide $\frac{x^2 + 6x + 8}{x - 1} \div \frac{x + 2}{x - 1}$.'
+      answer: "x + 4"
+      solution_sketch: 'Multiply by the reciprocal; $x^2 + 6x + 8 = (x + 2)(x + 4)$, and $(x + 2)$ and $(x - 1)$ both cancel.'
+    anki_seeds:
+      - front: "To divide rational expressions..."
+        back: "multiply by the reciprocal of the divisor."
+        type: basic
+
+  - id: multiplying-dividing-rational-expressions
+    name: Multiplying and Dividing Rational Expressions
+    # over-coverage: kp1/kp2 duplicate multiplying-rational-expressions kp2 and
+    # dividing-rational-expressions kp3; only kp3 (mixed x-and-/ chains) is new
+    core: false
+    difficulty: 0.65
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 150
+    prerequisites:
+      - id: multiplying-rational-expressions
+        weight: 0.7
+        key: true
+      - id: dividing-rational-expressions
+        weight: 0.7
+        key: true
+      - id: factoring-trinomials
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: Products needing full factoring
+        key_prerequisites: [multiplying-rational-expressions, factoring-trinomials]
+        constraints: "every numerator and denominator factors into linear binomials with integer roots; the answer is one reduced fraction"
+        exemplars:
+          - problem: 'Multiply $\frac{x^2-x-6}{x^2-4} \cdot \frac{x+2}{x-3}$.'
+            answer: "(x + 2)/(x - 2)"
+            solution_sketch: '$\frac{(x-3)(x+2)}{(x-2)(x+2)} \cdot \frac{x+2}{x-3}$.'
+          - problem: 'Multiply $\frac{x^2+5x+4}{x+3} \cdot \frac{x+3}{x+4}$.'
+            answer: "x + 1"
+      - id: kp2
+        name: Quotients needing full factoring
+        key_prerequisites: [dividing-rational-expressions, factoring-trinomials]
+        constraints: "flip the divisor first, then factor all four parts; monic quadratics with integer roots only"
+        exemplars:
+          - problem: 'Divide $\frac{x^2-9}{x^2+6x+5} \div \frac{x+3}{x+5}$.'
+            answer: "(x - 3)/(x + 1)"
+            solution_sketch: '$\frac{(x-3)(x+3)}{(x+1)(x+5)} \cdot \frac{x+5}{x+3}$.'
+          - problem: 'Divide $\frac{x^2+2x-8}{x} \div \frac{x+4}{x}$.'
+            answer: "x - 2"
+      - id: kp3
+        name: Combined multiply-and-divide chains
+        key_prerequisites: [multiplying-rational-expressions, dividing-rational-expressions]
+        constraints: "three factors chained by one multiplication and one division; everything cancels to a monomial or a binomial"
+        exemplars:
+          - problem: 'Simplify $\frac{x}{x+1} \cdot \frac{x^2-1}{x} \div (x - 1)$.'
+            answer: "1"
+            solution_sketch: '$\frac{x}{x+1} \cdot \frac{(x-1)(x+1)}{x} = x-1$; dividing by $(x-1)$ gives $1$.'
+          - problem: 'Simplify $\frac{x+2}{x} \cdot \frac{x^2}{x^2-4} \div \frac{1}{x-2}$.'
+            answer: "x"
+    diagnostic_exemplar:
+      problem: 'Simplify $\frac{x^2 - 4}{x + 1} \cdot \frac{x^2 - 1}{x - 2} \div (x + 2)$.'
+      answer: "x - 1"
+      solution_sketch: 'Factor everything and treat $\div (x + 2)$ as $\times \frac{1}{x + 2}$; then $(x - 2)$, $(x + 1)$ and $(x + 2)$ all cancel.'
+    anki_seeds:
+      - front: "In a chain of × and ÷ of rational expressions, first..."
+        back: "rewrite every division as multiplication by the reciprocal, then factor everything and cancel."
+        type: basic
+      - front: "When multiplying rational expressions, cancel only..."
+        back: "common factors of a numerator and a denominator — never terms inside a sum."
+        type: basic
+
+  - id: rational-expressions-common-denominators
+    name: Adding Rational Expressions with Common Denominators
+    core: true
+    difficulty: 0.6
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 90
+    prerequisites:
+      - id: adding-subtracting-fractions
+        weight: 0.7
+        key: true
+      - id: rational-expressions
+        weight: 0.5
+      - id: combining-like-terms
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: Add and subtract over one denominator
+        key_prerequisites: [adding-subtracting-fractions]
+        constraints: "identical denominators (a monomial or one linear binomial); combine the numerators only, no LCD building"
+        exemplars:
+          - problem: 'Add $\frac{2}{x} + \frac{5}{x}$.'
+            answer: "7/x"
+          - problem: 'Subtract $\frac{3x}{x+1} - \frac{x}{x+1}$.'
+            answer: "2x/(x + 1)"
+      - id: kp2
+        name: Distribute the minus sign
+        key_prerequisites: [combining-like-terms]
+        constraints: "numerators are linear binomials; subtraction must require distributing"
+        exemplars:
+          - problem: 'Subtract $\frac{5x+1}{x+2} - \frac{2x-5}{x+2}$.'
+            answer: "3"
+            solution_sketch: '$\frac{(5x+1)-(2x-5)}{x+2} = \frac{3x+6}{x+2} = 3$.'
+          - problem: 'Subtract $\frac{7x}{x-3} - \frac{2x+1}{x-3}$.'
+            answer: "(5x - 1)/(x - 3)"
+      - id: kp3
+        name: Simplify the combined result
+        key_prerequisites: [rational-expressions]
+        constraints: "the combined numerator factors and shares the denominator's factor, so the result simplifies to a polynomial"
+        exemplars:
+          - problem: 'Add $\frac{x^2}{x+3} + \frac{3x}{x+3}$.'
+            answer: "x"
+            solution_sketch: '$\frac{x^2+3x}{x+3} = \frac{x(x+3)}{x+3} = x$.'
+          - problem: 'Subtract $\frac{x^2}{x-2} - \frac{4}{x-2}$.'
+            answer: "x + 2"
+    diagnostic_exemplar:
+      problem: 'Subtract $\frac{x^2}{x - 3} - \frac{2x + 3}{x - 3}$.'
+      answer: "x + 1"
+      solution_sketch: 'One denominator already: $\frac{x^2 - 2x - 3}{x - 3} = \frac{(x - 3)(x + 1)}{x - 3}$. Distribute the minus over both terms.'
+    anki_seeds:
+      - front: "When subtracting a rational expression, remember to..."
+        back: "distribute the minus sign across the whole numerator being subtracted."
+        type: basic
+
+  - id: adding-subtracting-rational-expressions
+    name: Adding and Subtracting Rational Expressions
+    core: true
+    difficulty: 0.7
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 180
+    prerequisites:
+      - id: rational-expressions-common-denominators
+        weight: 0.7
+        key: true
+      - id: rational-expressions
+        weight: 0.5
+        key: true
+      - id: gcf-lcm
+        weight: 0.4
+      - id: factoring-trinomials
+        weight: 0.4
+      - id: adding-subtracting-fractions
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Build a least common denominator from monomials
+        key_prerequisites: [adding-subtracting-fractions, gcf-lcm]
+        constraints: "denominators are monomials or integers; the LCD is their product or the higher power; the answer is a single fraction"
+        exemplars:
+          - problem: 'Add $\frac{1}{x} + \frac{1}{3}$.'
+            answer: "(3 + x)/(3x)"
+            solution_sketch: 'LCD $= 3x$.'
+          - problem: 'Add $\frac{2}{x} + \frac{3}{x^2}$.'
+            answer: "(2x + 3)/x^2"
+      - id: kp2
+        name: Distinct binomial denominators
+        key_prerequisites: [rational-expressions-common-denominators]
+        constraints: "two distinct linear binomial denominators with no common factor; the LCD is their product, left in factored form"
+        exemplars:
+          - problem: 'Subtract $\frac{1}{x-2} - \frac{1}{x+2}$.'
+            answer: "4/((x - 2)(x + 2))"
+            solution_sketch: '$\frac{(x+2)-(x-2)}{(x-2)(x+2)} = \frac{4}{(x-2)(x+2)}$.'
+          - problem: 'Add $\frac{3}{x+1} + \frac{2}{x-1}$.'
+            answer: "(5x - 1)/((x + 1)(x - 1))"
+      - id: kp3
+        name: Factor denominators to build the LCD
+        key_prerequisites: [rational-expressions, factoring-trinomials]
+        constraints: "one denominator factors and contains the other as a factor; the LCD stays factored in the answer"
+        exemplars:
+          - problem: 'Add $\frac{3}{x+3} + \frac{2x}{x^2-9}$.'
+            answer: "(5x - 9)/((x + 3)(x - 3))"
+            solution_sketch: '$\frac{3(x-3) + 2x}{(x+3)(x-3)} = \frac{5x-9}{(x+3)(x-3)}$.'
+          - problem: 'Add $\frac{1}{x^2+3x+2} + \frac{1}{x+1}$.'
+            answer: "(x + 3)/((x + 1)(x + 2))"
+            solution_sketch: '$\frac{1 + (x+2)}{(x+1)(x+2)}$.'
+    diagnostic_exemplar:
+      problem: 'Add $\frac{2}{x - 4} + \frac{x}{x^2 - 16}$.'
+      answer: "(3x + 8)/((x - 4)(x + 4))"
+      solution_sketch: '$x^2 - 16 = (x - 4)(x + 4)$ is the LCD: $\frac{2(x + 4) + x}{(x - 4)(x + 4)}$.'
+    anki_seeds:
+      - front: "LCD of 1/(x+3) and 1/(x²-9)?"
+        back: "(x+3)(x-3)"
+        type: basic
+
+  - id: complex-fractions
+    name: Complex Fractions
+    core: true
+    difficulty: 0.7
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 150
+    prerequisites:
+      - id: adding-subtracting-rational-expressions
+        weight: 0.6
+        key: true
+      - id: dividing-rational-expressions
+        weight: 0.5
+        key: true
+      - id: dividing-fractions
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: Numeric complex fractions
+        key_prerequisites: [dividing-fractions]
+        constraints: "numeric fractions only, at most one sum; answers are reduced fractions or integers"
+        exemplars:
+          - problem: 'Simplify $\frac{3/4}{9/8}$.'
+            answer: "2/3"
+            solution_sketch: '$\frac{3}{4} \cdot \frac{8}{9} = \frac{2}{3}$.'
+          - problem: 'Simplify $\frac{\frac{1}{2} + \frac{1}{3}}{\frac{1}{6}}$.'
+            answer: "5"
+            solution_sketch: 'Numerator $= \frac{5}{6}$; $\frac{5}{6} \div \frac{1}{6} = 5$.'
+      - id: kp2
+        name: One fraction over another
+        key_prerequisites: [dividing-rational-expressions]
+        constraints: "a single monomial fraction over another; invert and multiply; coefficients at most 12"
+        exemplars:
+          - problem: 'Simplify $\frac{x/3}{x^2/6}$.'
+            answer: "2/x"
+          - problem: 'Simplify $\frac{5/x}{10/x^3}$.'
+            answer: "x^2/2"
+            solution_sketch: '$\frac{5}{x} \cdot \frac{x^3}{10} = \frac{x^2}{2}$.'
+      - id: kp3
+        name: Sums in the numerator or denominator
+        key_prerequisites: [adding-subtracting-rational-expressions]
+        constraints: "clearable by multiplying top and bottom by a monomial LCD"
+        exemplars:
+          - problem: 'Simplify $\frac{1 + \frac{1}{x}}{1 - \frac{1}{x}}$.'
+            answer: "(x + 1)/(x - 1)"
+            solution_sketch: 'Multiply top and bottom by $x$.'
+          - problem: 'Simplify $\frac{\frac{1}{x} + \frac{1}{y}}{\frac{1}{xy}}$.'
+            answer: "x + y"
+            solution_sketch: 'Multiply top and bottom by $xy$.'
+    diagnostic_exemplar:
+      problem: 'Simplify $\frac{\frac{1}{x} - \frac{1}{3}}{\frac{1}{x} + \frac{1}{3}}$.'
+      answer: "(3 - x)/(3 + x)"
+      solution_sketch: 'Multiply numerator and denominator by $3x$, which clears all four small fractions at once.'
+    anki_seeds:
+      - front: "Fastest way to simplify a complex fraction?"
+        back: "Multiply top and bottom by the LCD of all the inner fractions."
+        type: basic
+
+  - id: basic-rational-equations
+    name: Basic Rational Equations
+    core: true
+    difficulty: 0.6
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 120
+    prerequisites:
+      - id: equations-with-fractions
+        weight: 0.7
+        key: true
+      - id: ratios-proportions
+        weight: 0.6
+        key: true
+      - id: rational-expression-restrictions
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Solve proportions with x in a denominator
+        key_prerequisites: [ratios-proportions]
+        constraints: "integer or simple-fraction solutions; never a solution at an excluded value"
+        exemplars:
+          - problem: 'Solve $\frac{3}{x} = 6$.'
+            answer: "x = 1/2"
+            solution_sketch: '$3 = 6x$; $x = \frac{1}{2}$.'
+          - problem: 'Solve $\frac{x}{4} = \frac{3}{2}$.'
+            answer: "x = 6"
+      - id: kp2
+        name: Cross-multiply with binomials
+        key_prerequisites: [ratios-proportions, equations-with-fractions]
+        constraints: "a proportion with a linear binomial in at least one part; cross-multiply, then solve a linear equation; integer solutions"
+        exemplars:
+          - problem: 'Solve $\frac{x+1}{3} = \frac{x-1}{2}$.'
+            answer: "x = 5"
+            solution_sketch: '$2(x+1) = 3(x-1)$; $2x+2 = 3x-3$.'
+          - problem: 'Solve $\frac{4}{x+2} = \frac{2}{x}$.'
+            answer: "x = 2"
+            solution_sketch: '$4x = 2(x+2)$.'
+      - id: kp3
+        name: Clear denominators
+        key_prerequisites: [equations-with-fractions]
+        constraints: "two or three terms, one with x in a monomial denominator; multiply through by that denominator; integer or simple-fraction solutions"
+        exemplars:
+          - problem: 'Solve $\frac{1}{x} + \frac{1}{2} = 1$.'
+            answer: "x = 2"
+            solution_sketch: '$\frac{1}{x} = \frac{1}{2}$, so $x = 2$.'
+          - problem: 'Solve $\frac{2}{x} + 3 = 5$.'
+            answer: "x = 1"
+    diagnostic_exemplar:
+      problem: 'Solve $\frac{4}{x + 1} - \frac{1}{2} = 1$.'
+      answer: "x = 5/3"
+      solution_sketch: 'Move the $\frac{1}{2}$ across: $\frac{4}{x + 1} = \frac{3}{2}$, so $8 = 3(x + 1)$.'
+    anki_seeds:
+      - front: "After solving a rational equation, always check that..."
+        back: "no solution makes an original denominator zero."
+        type: basic
+
+  - id: inverse-variation
+    name: "Inverse Variation"
+    # core: the y = k/x on-ramp that precalculus:vertical-horizontal-asymptotes
+    # (core) builds on (re-audit R-03, edge lands in the Wave-2 precalc lane);
+    # the reciprocal parent graph is machinery for all rational-function graphing.
+    core: true
+    difficulty: 0.55
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 100
+    prerequisites:
+      - id: proportional-relationships
+        weight: 0.6
+        key: true
+      - id: basic-rational-equations
+        weight: 0.6
+        key: true
+      - id: rational-expression-restrictions
+        weight: 0.3
+      - id: reading-function-graphs
+        weight: 0.2
+    knowledge_points:
+      - id: kp1
+        name: "Find k and use y = k/x"
+        key_prerequisites: [proportional-relationships, basic-rational-equations]
+        exemplars:
+          - problem: '$y$ varies inversely with $x$, and $y = 6$ when $x = 2$. Find the constant $k$ in $y = \frac{k}{x}$.'
+            answer: "12"
+            solution_sketch: 'For inverse variation the product is constant: $k = xy = 2 \cdot 6 = 12$.'
+          - problem: '$y$ varies inversely with $x$ with constant $k = 24$. Find $y$ when $x = 8$.'
+            answer: "3"
+            solution_sketch: '$y = \frac{24}{8} = 3$.'
+        constraints: "equation form y = k/x with k = xy; integer k and integer or simple-fraction values; contrast with y = kx (direct) in wording only"
+      - id: kp2
+        name: "Solve across two states; halve-and-double reasoning"
+        key_prerequisites: [basic-rational-equations]
+        exemplars:
+          - problem: '$y$ varies inversely with $x$, and $y = 4$ when $x = 9$. Find $y$ when $x = 6$.'
+            answer: "6"
+            solution_sketch: '$k = 4 \cdot 9 = 36$; $y = \frac{36}{6} = 6$.'
+          - problem: '$y$ varies inversely with $x$. If $x$ is doubled, $y$ is multiplied by what number?'
+            answer: "1/2"
+            solution_sketch: '$\frac{k}{2x} = \frac{1}{2} \cdot \frac{k}{x}$: doubling $x$ halves $y$.'
+          - problem: 'A journey takes $6$ hours at $80$ km/h. Travel time varies inversely with speed. How many hours does it take at $120$ km/h?'
+            answer: "4"
+            solution_sketch: '$k = 6 \cdot 80 = 480$ km; $t = \frac{480}{120} = 4$ hours.'
+        constraints: "constant-product reasoning across two states; one applied context (speed-time, workers-time) with metric units; integer or simple-fraction answers"
+      - id: kp3
+        name: "The reciprocal parent graph"
+        key_prerequisites: [rational-expression-restrictions, reading-function-graphs]
+        exemplars:
+          - problem: 'Which value of $x$ is excluded from the domain of $y = \frac{12}{x}$?'
+            answer: "0"
+            solution_sketch: 'The denominator cannot be zero, so the graph has no point at $x = 0$.'
+          - problem: 'For $y = \frac{8}{x}$ with $x > 0$: as $x$ increases, is $y$ increasing or decreasing?'
+            answer: "decreasing"
+            solution_sketch: 'A fixed numerator over a growing denominator shrinks: the branch falls toward the $x$-axis.'
+          - problem: 'The graph of $y = \frac{6}{x}$ passes through $(2, c)$. Find $c$.'
+            answer: "3"
+        constraints: "parent graph y = k/x with k > 0 only; no shifts; excluded value, branch behavior, and point checks — no asymptote vocabulary beyond 'never touches the axes'"
+    diagnostic_exemplar:
+      problem: '$y$ varies inversely with $x$, and $y = 10$ when $x = 3$. Find $y$ when $x = 5$.'
+      answer: "6"
+      solution_sketch: '$k = 10 \cdot 3 = 30$; $y = \frac{30}{5} = 6$.'
+    anki_seeds:
+      - front: "Inverse variation: equation form and what stays constant?"
+        back: "y = k/x — the product xy = k is constant (direct variation keeps the ratio y/x constant)"
+        type: basic
+      - front: "In inverse variation, doubling x does what to y?"
+        back: "halves it (multiplying x by a multiplies y by 1/a)"
+        type: basic
+      - front: "The graph of y = k/x has no point at ___ and never touches ___."
+        back: "x = 0; the coordinate axes (two separate branches)"
+        type: basic
+
+  - id: rational-equations
+    name: Solving Rational Equations
+    core: true
+    difficulty: 0.7
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 180
+    prerequisites:
+      - id: basic-rational-equations
+        weight: 0.7
+        key: true
+      - id: adding-subtracting-rational-expressions
+        weight: 0.5
+        key: true
+      - id: quadratic-equations-factoring
+        weight: 0.4
+      # multiplying-dividing-rational-expressions dropped: none of the three KPs
+      # below multiplies or divides two rational expressions — they clear
+      # denominators, produce a quadratic, and test extraneous roots
+      - id: rational-expression-restrictions
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Clear denominators in multi-term equations
+        key_prerequisites: [basic-rational-equations, adding-subtracting-rational-expressions]
+        constraints: "two or three terms with monomial or linear-binomial denominators; the cleared equation is linear; solutions may be fractions"
+        exemplars:
+          - problem: 'Solve $\frac{5}{x+1} + \frac{1}{2} = 2$.'
+            answer: "x = 7/3"
+            solution_sketch: '$\frac{5}{x+1} = \frac{3}{2}$; $3(x+1) = 10$.'
+          - problem: 'Solve $\frac{4}{x} - \frac{1}{3} = \frac{1}{x}$.'
+            answer: "x = 9"
+            solution_sketch: '$\frac{3}{x} = \frac{1}{3}$.'
+      - id: kp2
+        name: Equations that lead to a quadratic
+        key_prerequisites: [quadratic-equations-factoring, adding-subtracting-rational-expressions]
+        constraints: "clearing denominators gives a monic quadratic that factors over the integers; report both roots"
+        exemplars:
+          - problem: 'Solve $x + \frac{6}{x} = 5$.'
+            answer: "x = 2 or x = 3"
+            solution_sketch: 'Multiply by $x$: $x^2 - 5x + 6 = 0$; $(x-2)(x-3) = 0$.'
+          - problem: 'Solve $x - \frac{12}{x} = 1$.'
+            answer: "x = 4 or x = -3"
+      - id: kp3
+        name: Extraneous solutions
+        key_prerequisites: [rational-expression-restrictions, basic-rational-equations]
+        constraints: "the cleared equation has a root at an excluded value"
+        exemplars:
+          - problem: 'Solve $\frac{x}{x-3} = \frac{3}{x-3} + 2$.'
+            answer: "no solution"
+            solution_sketch: 'Clearing gives $x = 3 + 2(x-3)$, so $x = 3$ — but $x = 3$ is excluded.'
+          - problem: 'Solve $\frac{1}{x-2} + \frac{1}{x+2} = \frac{4}{x^2-4}$.'
+            answer: "no solution"
+            solution_sketch: '$(x+2)+(x-2) = 4$ gives $x = 2$, which is excluded.'
+    diagnostic_exemplar:
+      problem: 'Solve $\frac{x^2}{x - 2} = \frac{4}{x - 2} + 3$.'
+      answer: "x = 1"
+      solution_sketch: 'Clear $(x - 2)$ to get $x^2 = 3x - 2$, so $(x - 1)(x - 2) = 0$; $x = 2$ is extraneous.'
+    anki_seeds:
+      - front: "An extraneous solution of a rational equation is..."
+        back: "a root of the cleared equation that makes an original denominator zero."
+        type: basic
+
+  - id: work-rate-problems
+    name: Work and Rate Problems
+    # over-coverage: the 1/a + 1/b = 1/t context schema over rational-equations
+    core: false
+    difficulty: 0.75
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 240
+    prerequisites:
+      - id: rational-equations
+        weight: 0.7
+        key: true
+      - id: ratios-proportions
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: Combined work time
+        key_prerequisites: [rational-equations, ratios-proportions]
+        constraints: "individual times chosen so the combined time is a whole number"
+        exemplars:
+          - problem: 'Ann paints a room in $3$ hours; Ben paints it in $6$ hours. How long do they take together?'
+            answer: "2 hours"
+            solution_sketch: '$\frac{1}{3} + \frac{1}{6} = \frac{1}{2}$ room per hour.'
+          - problem: 'One pipe fills a tank in $4$ hours, another in $12$ hours. How long together?'
+            answer: "3 hours"
+            solution_sketch: '$\frac{1}{4} + \frac{1}{12} = \frac{1}{3}$.'
+      - id: kp2
+        name: Find an unknown individual time
+        key_prerequisites: [rational-equations]
+        constraints: "1/a + 1/b = 1/t with two of the three times given; whole-hour data chosen so the unknown time is a whole number"
+        exemplars:
+          - problem: 'Together two crews finish a job in $4$ hours. The first crew alone needs $6$ hours. How long does the second crew need alone?'
+            answer: "12 hours"
+            solution_sketch: '$\frac{1}{6} + \frac{1}{x} = \frac{1}{4}$; $\frac{1}{x} = \frac{1}{12}$.'
+          - problem: 'Two painters together take $2$ hours; one alone takes $3$ hours. How long does the other take alone?'
+            answer: "6 hours"
+      - id: kp3
+        name: Opposing rates and round trips
+        key_prerequisites: [rational-equations]
+        constraints: "rates that oppose each other (fill against drain, so subtract), or an out-and-back trip whose two speeds differ by a constant; whole-number answers"
+        exemplars:
+          - problem: 'A pipe fills a tank in $6$ hours while a drain empties it in $10$ hours. With both open, how long to fill the tank?'
+            answer: "15 hours"
+            solution_sketch: '$\frac{1}{6} - \frac{1}{10} = \frac{1}{15}$.'
+          - problem: 'A cyclist rides $12$ km out at speed $x$ km/h and returns at $x - 2$ km/h, taking $5$ hours total. Find $x$.'
+            answer: "x = 6"
+            solution_sketch: '$\frac{12}{x} + \frac{12}{x-2} = 5$ gives $5x^2 - 34x + 24 = 0$; $x = 6$ (reject $x = 4/5$).'
+    diagnostic_exemplar:
+      problem: 'A tap fills a tank in $4$ hours while an open drain empties it in $12$ hours. With both running, how long does the tank take to fill?'
+      answer: "6 hours"
+      solution_sketch: 'Rates add, the drain negatively: $\frac{1}{4} - \frac{1}{12} = \frac{1}{6}$ tank per hour.'
+    anki_seeds:
+      - front: "If a job takes t hours, the work rate is..."
+        back: "1/t of the job per hour."
+        type: basic
+      - front: "Combined work rate of two workers = ..."
+        back: "the sum of their individual rates."
+        type: basic
+
+  - id: trig-ratios-definition
+    name: Defining the Trigonometric Ratios
+    core: true
+    difficulty: 0.5
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 90
+    prerequisites:
+      - id: ratios-proportions
+        weight: 0.6
+        key: true
+      - id: pythagorean-theorem
+        weight: 0.5
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: SOH-CAH-TOA from labeled sides
+        key_prerequisites: [ratios-proportions]
+        constraints: "Pythagorean triples (3-4-5, 5-12-13, 8-15-17) scaled by small integers"
+        exemplars:
+          - problem: 'In a right triangle with opposite $= 3$, adjacent $= 4$, hypotenuse $= 5$, find $\sin \theta$.'
+            answer: "3/5"
+            solution_sketch: '$\sin \theta = \frac{\text{opposite}}{\text{hypotenuse}}$.'
+          - problem: 'For the same triangle (opp $3$, adj $4$, hyp $5$), find $\tan \theta$.'
+            answer: "3/4"
+            solution_sketch: '$\tan \theta = \frac{\text{opposite}}{\text{adjacent}} = \frac{3}{4}$.'
+      - id: kp2
+        name: Ratios of the other acute angle
+        key_prerequisites: [ratios-proportions]
+        constraints: "the same Pythagorean-triple triangle read from the other acute angle, so opposite and adjacent swap"
+        exemplars:
+          - problem: 'In the $3$-$4$-$5$ triangle, $\sin \theta = \frac{3}{5}$. Find $\sin \phi$ for the other acute angle $\phi$.'
+            answer: "4/5"
+            solution_sketch: 'The opposite and adjacent sides swap roles.'
+          - problem: 'A right triangle has legs $8$ and $15$ and hypotenuse $17$. If $\tan \theta = \frac{8}{15}$, find $\tan \phi$ for the other acute angle.'
+            answer: "15/8"
+      - id: kp3
+        name: Find the missing side first
+        key_prerequisites: [pythagorean-theorem]
+        constraints: "two of the three sides given; find the third by Pythagoras (triples 3-4-5, 5-12-13, 8-15-17 and small multiples) before writing the ratio"
+        exemplars:
+          - problem: 'A right triangle has legs $6$ and $8$. For the angle $\theta$ opposite the side of length $6$, find $\sin \theta$.'
+            answer: "3/5"
+            solution_sketch: 'Hypotenuse $= \sqrt{36+64} = 10$; $\sin \theta = \frac{6}{10} = \frac{3}{5}$.'
+          - problem: 'A right triangle has hypotenuse $13$ and one leg $5$. For the angle $\theta$ adjacent to the other leg, find $\cos \theta$.'
+            answer: "12/13"
+            solution_sketch: 'Other leg $= \sqrt{169-25} = 12$.'
+    diagnostic_exemplar:
+      problem: 'A right triangle has hypotenuse $10$ and one leg $6$. For the acute angle $\phi$ adjacent to the leg of length $6$, find $\tan \phi$.'
+      answer: "4/3"
+      solution_sketch: 'Pythagoras gives the missing leg $8$; opposite over adjacent is $\frac{8}{6}$.'
+    anki_seeds:
+      - front: "SOH-CAH-TOA: sin, cos, tan equal which ratios?"
+        back: "sin = opp/hyp, cos = adj/hyp, tan = opp/adj."
+        type: basic
+
+  - id: solving-right-triangles-sides
+    name: Right Triangles — Solving for Sides
+    core: true
+    difficulty: 0.55
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 120
+    prerequisites:
+      - id: trig-ratios-definition
+        weight: 0.8
+        key: true
+      - id: one-step-equations
+        weight: 0.3
+      - id: multiplying-fractions
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Multiply to find a leg
+        key_prerequisites: [trig-ratios-definition]
+        constraints: "give the needed trig value in the problem (exact or rounded)"
+        exemplars:
+          - problem: 'In a right triangle the hypotenuse is $10$ and one acute angle is $30^\circ$. Find the side opposite that angle. Use $\sin 30^\circ = \frac{1}{2}$.'
+            answer: "5"
+            solution_sketch: '$x = 10 \sin 30^\circ = 5$.'
+          - problem: 'The hypotenuse is $8$ and one acute angle is $60^\circ$. Find the side adjacent to it. Use $\cos 60^\circ = \frac{1}{2}$.'
+            answer: "4"
+      - id: kp2
+        name: Use tangent between the legs
+        key_prerequisites: [trig-ratios-definition]
+        constraints: "the two legs and one acute angle; the tangent value is given in the problem, exact or rounded to two decimals"
+        exemplars:
+          - problem: 'One acute angle is $45^\circ$ and its adjacent leg is $7$. Find the opposite leg. Use $\tan 45^\circ = 1$.'
+            answer: "7"
+          - problem: 'One acute angle is $35^\circ$ and its adjacent leg is $20$. Find the opposite leg. Use $\tan 35^\circ \approx 0.70$.'
+            answer: "≈ 14"
+            solution_sketch: '$x = 20 \tan 35^\circ \approx 20 \cdot 0.70$.'
+      - id: kp3
+        name: Divide to find the hypotenuse
+        key_prerequisites: [trig-ratios-definition, one-step-equations]
+        constraints: "the hypotenuse is the unknown, so divide by the given sine or cosine; values chosen so the quotient is a whole number"
+        exemplars:
+          - problem: 'The side opposite a $30^\circ$ angle is $9$. Find the hypotenuse. Use $\sin 30^\circ = \frac{1}{2}$.'
+            answer: "18"
+            solution_sketch: '$\sin 30^\circ = \frac{9}{h}$, so $h = 9 \div \frac{1}{2} = 18$.'
+          - problem: 'The side adjacent to a $40^\circ$ angle is $15.4$. Find the hypotenuse. Use $\cos 40^\circ \approx 0.77$.'
+            answer: "≈ 20"
+    diagnostic_exemplar:
+      problem: 'One acute angle is $40^\circ$ and the leg opposite it is $12.6$. Find the leg adjacent to that angle. Use $\tan 40^\circ \approx 0.84$.'
+      answer: "15"
+      solution_sketch: '$\tan 40^\circ = \frac{\text{opposite}}{\text{adjacent}} = \frac{12.6}{x}$, so $x = \frac{12.6}{0.84}$.'
+    anki_seeds:
+      - front: "To solve for a right-triangle side, pick the trig ratio that links..."
+        back: "the known angle, the known side, and the side you want."
+        type: basic
+
+  - id: right-triangle-trig
+    name: Right Triangle Trigonometry
+    core: true
+    difficulty: 0.6
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 150
+    prerequisites:
+      - id: trig-ratios-definition
+        weight: 0.7
+        key: true
+      - id: solving-right-triangles-sides
+        weight: 0.7
+        key: true
+      - id: square-roots
+        weight: 0.3
+      - id: simplifying-radicals
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Find angles from exact ratios
+        key_prerequisites: [trig-ratios-definition]
+        constraints: "ratios are the exact special values 1/2, √2/2, √3/2, 1, √3 or √3/3; answers are 30, 45 or 60 degrees"
+        exemplars:
+          - problem: 'An acute angle $\theta$ satisfies $\sin \theta = \frac{1}{2}$. Find $\theta$.'
+            answer: "30°"
+          - problem: 'An acute angle $\theta$ satisfies $\tan \theta = 1$. Find $\theta$.'
+            answer: "45°"
+          - problem: 'An acute angle $\theta$ satisfies $\tan \theta = \sqrt{3}$. Find $\theta$.'
+            answer: "60°"
+      - id: kp2
+        name: Find angles with a calculator (inverse trig keys)
+        key_prerequisites: [trig-ratios-definition]
+        constraints: "acute angles only; answers rounded to one decimal place"
+        exemplars:
+          - problem: 'An acute angle $\theta$ satisfies $\sin \theta = 0.6$. Use a calculator to find $\theta$ to the nearest tenth of a degree.'
+            answer: "≈ 36.9°"
+            solution_sketch: '$\theta = \sin^{-1}(0.6)$.'
+          - problem: 'An acute angle $\theta$ satisfies $\tan \theta = 1.6$. Find $\theta$ to the nearest tenth of a degree.'
+            answer: "≈ 58.0°"
+      - id: kp3
+        name: Solve the whole right triangle
+        key_prerequisites: [solving-right-triangles-sides, simplifying-radicals]
+        constraints: "30-60-90 and 45-45-90 triangles, or two legs given; answers are exact, with radicals where needed"
+        exemplars:
+          - problem: 'A right triangle has a $30^\circ$ angle and hypotenuse $10$. Find the length of the leg adjacent to the $30^\circ$ angle.'
+            answer: "5√3"
+            solution_sketch: 'The other acute angle is $60^\circ$; $10\cos 30^\circ = 10 \cdot \frac{\sqrt{3}}{2} = 5\sqrt{3}$ (the short leg is $10\sin 30^\circ = 5$).'
+          - problem: 'A right triangle has legs $3$ and $3$. Find the length of the hypotenuse.'
+            answer: "3√2"
+            solution_sketch: 'Both acute angles are $45^\circ$; $\sqrt{3^2 + 3^2} = 3\sqrt{2}$.'
+    diagnostic_exemplar:
+      problem: 'A right triangle has hypotenuse $12$ and one acute angle of $60^\circ$. Find the length of the leg opposite the $60^\circ$ angle.'
+      answer: "6√3"
+      solution_sketch: '$12\sin 60^\circ = 12 \cdot \frac{\sqrt{3}}{2} = 6\sqrt{3}$ (the other leg is $12\cos 60^\circ = 6$).'
+    anki_seeds:
+      - front: "To find an acute angle from tan θ = k, use..."
+        back: "the inverse tangent (tan⁻¹ / arctan) key."
+        type: basic
+
+  - id: special-right-triangles
+    name: Special Right Triangles
+    core: true
+    difficulty: 0.6
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 120
+    prerequisites:
+      - id: right-triangle-trig
+        weight: 0.7
+        key: true
+      - id: simplifying-radicals
+        weight: 0.5
+        key: true
+      - id: square-roots
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: 45-45-90 triangles
+        key_prerequisites: [simplifying-radicals, right-triangle-trig]
+        constraints: "45-45-90 triangles, sides in the ratio 1 : 1 : √2; the given side is chosen so the others stay exact"
+        exemplars:
+          - problem: 'In a 45-45-90 triangle with leg $5$, find the hypotenuse.'
+            answer: "5√2"
+            solution_sketch: '$\text{hypotenuse} = \text{leg} \cdot \sqrt{2}$.'
+          - problem: 'In a 45-45-90 triangle with hypotenuse $8$, find each leg.'
+            answer: "4√2"
+      - id: kp2
+        name: 30-60-90 triangles
+        key_prerequisites: [right-triangle-trig]
+        constraints: "30-60-90 triangles, sides in the ratio 1 : √3 : 2; the given side is chosen so the others stay exact"
+        exemplars:
+          - problem: 'In a 30-60-90 triangle with short leg $3$, find the long leg and hypotenuse.'
+            answer: "long leg 3√3, hypotenuse 6"
+            solution_sketch: '$\text{long} = \text{short} \cdot \sqrt{3}$; $\text{hyp} = 2 \cdot \text{short}$.'
+          - problem: 'In a 30-60-90 triangle with hypotenuse $10$, find the short leg.'
+            answer: "5"
+    diagnostic_exemplar:
+      problem: 'In a 30-60-90 triangle the longer leg is $9\sqrt{3}$. Find the hypotenuse.'
+      answer: "18"
+      solution_sketch: 'The sides are $x$, $x\sqrt{3}$, $2x$; the longer leg $x\sqrt{3} = 9\sqrt{3}$ gives $x = 9$.'
+    anki_seeds:
+      - front: "Side ratios in a 30-60-90 triangle (short : long : hypotenuse)?"
+        back: "1 : √3 : 2"
+        type: basic
+      - front: "Side ratios in a 45-45-90 triangle (leg : leg : hypotenuse)?"
+        back: "1 : 1 : √2"
+        type: basic
+
+  - id: complementary-angle-trig
+    name: Trig Ratios of Complementary Angles
+    core: false                # terminal cofunction fact
+    difficulty: 0.6
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 90
+    prerequisites:
+      - id: trig-ratios-definition
+        weight: 0.7
+        key: true
+      - id: right-triangle-trig
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: Sine and cosine swap for complements
+        key_prerequisites: [trig-ratios-definition]
+        constraints: "acute angles in whole degrees; sin of an angle equals cos of its complement; the answer names the cofunction of 90 minus the angle"
+        exemplars:
+          - problem: 'Write $\sin 20^\circ$ as the cosine of an angle.'
+            answer: "cos 70°"
+            solution_sketch: '$\sin \theta = \cos(90^\circ - \theta)$.'
+          - problem: 'Verify: $\sin 30^\circ$ and $\cos 60^\circ$ are both equal to what value?'
+            answer: "1/2"
+      - id: kp2
+        name: Solve cofunction equations
+        key_prerequisites: [trig-ratios-definition, right-triangle-trig]
+        constraints: "acute angles; answers are whole degrees"
+        exemplars:
+          - problem: 'If $\sin 25^\circ = \cos \theta$ for an acute angle $\theta$, find $\theta$.'
+            answer: "65°"
+          - problem: 'If $\cos 41^\circ = \sin \theta$ for an acute angle $\theta$, find $\theta$.'
+            answer: "49°"
+      - id: kp3
+        name: Complementary acute angles in one triangle
+        key_prerequisites: [trig-ratios-definition]
+        constraints: "a right triangle whose acute angles are A and B; ratios are Pythagorean-triple fractions; the answer equals the given ratio"
+        exemplars:
+          - problem: 'In a right triangle the acute angles are $A$ and $B$. If $\sin A = \frac{3}{5}$, find $\cos B$.'
+            answer: "3/5"
+            solution_sketch: '$A + B = 90^\circ$, so $\cos B = \sin A$.'
+          - problem: 'In a right triangle with acute angles $A$ and $B$, $\cos A = \frac{8}{17}$. Find $\sin B$.'
+            answer: "8/17"
+    diagnostic_exemplar:
+      problem: 'In a right triangle with acute angles $A$ and $B$, $\sin A = \frac{5}{13}$. Find $\cos B$.'
+      answer: "5/13"
+      solution_sketch: '$A$ and $B$ are complementary, and cosine of one is sine of the other.'
+    anki_seeds:
+      - front: "sin θ = cos(?)"
+        back: "cos(90° − θ)"
+        type: basic
+
+  - id: angle-of-elevation-depression
+    name: Angles of Elevation and Depression
+    core: false                # applications branch above trig-applications
+    difficulty: 0.65
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 150
+    prerequisites:
+      - id: solving-right-triangles-sides
+        weight: 0.7
+        key: true
+      - id: right-triangle-trig
+        weight: 0.5
+    knowledge_points:
+      - id: kp1
+        name: Angle of elevation problems
+        key_prerequisites: [solving-right-triangles-sides]
+        constraints: "give the needed trig value; keep exact answers where possible"
+        exemplars:
+          - problem: 'A $10$ m ladder leans against a wall at $60^\circ$ to the ground. How high up the wall does it reach? Use $\sin 60^\circ = \frac{\sqrt{3}}{2}$.'
+            answer: "5√3 m"
+            solution_sketch: '$\text{height} = 10 \sin 60^\circ = 5\sqrt{3}$.'
+          - problem: 'From $100$ m away, the angle of elevation to a tower top is $45^\circ$. How tall is the tower? Use $\tan 45^\circ = 1$.'
+            answer: "100 m"
+      - id: kp2
+        name: Angle of depression problems
+        key_prerequisites: [solving-right-triangles-sides]
+        constraints: "the angle of depression from a height equals the angle of elevation from the ground; the needed trig value is given; metric lengths"
+        exemplars:
+          - problem: 'From the top of a $50$ m cliff, the angle of depression to a boat is $30^\circ$. Find the horizontal distance to the boat. Use $\tan 30^\circ = \frac{\sqrt{3}}{3}$.'
+            answer: "50√3 m"
+            solution_sketch: 'Distance $= \frac{50}{\tan 30^\circ} = 50\sqrt{3}$.'
+          - problem: 'A plane at altitude $2000$ m sights a runway at a $45^\circ$ angle of depression. Find the horizontal ground distance. Use $\tan 45^\circ = 1$.'
+            answer: "2000 m"
+      - id: kp3
+        name: Find the angle
+        key_prerequisites: [right-triangle-trig]
+        constraints: "both sides fixing the angle are given, so the tangent is an exact special value (1, √3 or √3/3); answers are 30, 45 or 60 degrees"
+        exemplars:
+          - problem: 'A $30$ m tree casts a $30$ m shadow. Find the angle of elevation of the sun.'
+            answer: "45°"
+            solution_sketch: '$\tan \theta = \frac{30}{30} = 1$.'
+          - problem: 'A ramp rises $5$ m over a horizontal run of $5\sqrt{3}$ m. Find its angle with the ground.'
+            answer: "30°"
+            solution_sketch: '$\tan \theta = \frac{5}{5\sqrt{3}} = \frac{\sqrt{3}}{3}$.'
+    diagnostic_exemplar:
+      problem: 'From the top of a $40$ m lighthouse the angle of depression to a boat is $\theta$, and the boat is $40\sqrt{3}$ m from the foot of the lighthouse. Find $\theta$.'
+      answer: "30°"
+      solution_sketch: '$\tan\theta = \frac{40}{40\sqrt{3}} = \frac{1}{\sqrt{3}}$.'
+    anki_seeds:
+      - front: "The angle of depression from A to B equals..."
+        back: "the angle of elevation from B to A (alternate interior angles)."
+        type: basic
+
+  - id: trig-applications
+    name: Right-Triangle Trigonometry Applications
+    core: false                # supplemental applications capstone
+    difficulty: 0.75
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 240
+    prerequisites:
+      - id: angle-of-elevation-depression
+        weight: 0.7
+        key: true
+      - id: right-triangle-trig
+        weight: 0.5
+        key: true
+      - id: special-right-triangles
+        weight: 0.3
+      - id: multi-step-equations
+        weight: 0.2
+    knowledge_points:
+      - id: kp1
+        name: Distances via trig ratios
+        key_prerequisites: [right-triangle-trig, special-right-triangles]
+        constraints: "one right triangle in a metric context; the needed trig value is given, or the sides form a Pythagorean triple; exact answers"
+        exemplars:
+          - problem: 'A ramp rises $3$ m over a horizontal run of $4$ m. Find the length of the ramp.'
+            answer: "5 m"
+            solution_sketch: '$\sqrt{3^2 + 4^2} = 5$.'
+          - problem: 'A kite string is $50$ m long at $30^\circ$ to the ground. How high is the kite? Use $\sin 30^\circ = \frac{1}{2}$.'
+            answer: "25 m"
+      - id: kp2
+        name: Multi-step problems
+        key_prerequisites: [angle-of-elevation-depression]
+        constraints: "two right triangles sharing a side, or a triangle needing Pythagoras before a ratio; exact answers, radicals allowed"
+        exemplars:
+          - problem: 'A $26$ m guy wire runs from the ground to the top of a tower, anchored $24$ m from the base. Find the tower height and $\tan \theta$ for the wire''s angle of elevation $\theta$.'
+            answer: "height 10 m, tan θ = 5/12"
+            solution_sketch: '$\sqrt{26^2 - 24^2} = 10$; $\tan \theta = \frac{10}{24} = \frac{5}{12}$.'
+          - problem: 'From a point, the angle of elevation to the top of a building is $45^\circ$. From $20$ m closer, it is $60^\circ$. Find the height. Use $\tan 60^\circ = \sqrt{3}$.'
+            answer: "30 + 10√3 m (≈ 47.3 m)"
+            solution_sketch: '$h = d$ and $h = (d - 20)\sqrt{3}$; solve $d = \sqrt{3}(d-20)$.'
+      - id: kp3
+        name: Solve for angles in context
+        key_prerequisites: [right-triangle-trig, angle-of-elevation-depression]
+        constraints: "the two sides that fix the angle are given; exact special angles, or a calculator value rounded to one decimal place"
+        exemplars:
+          - problem: 'A $10$ m ladder reaches $5$ m up a wall. Find its angle with the ground.'
+            answer: "30°"
+            solution_sketch: '$\sin \theta = \frac{5}{10} = \frac{1}{2}$.'
+          - problem: 'A road rises $8$ m for every $100$ m of horizontal distance. Find its angle of incline to the nearest tenth of a degree.'
+            answer: "≈ 4.6°"
+            solution_sketch: '$\theta = \tan^{-1}(0.08)$.'
+    diagnostic_exemplar:
+      problem: 'From a point on level ground the angle of elevation to the top of a mast is $30^\circ$; from a point $20$ m closer it is $60^\circ$. Find the height of the mast. Use $\tan 30^\circ = \frac{\sqrt{3}}{3}$ and $\tan 60^\circ = \sqrt{3}$.'
+      answer: "10√3 m (≈ 17.3 m)"
+      solution_sketch: 'With $d$ the far distance, $d = h\sqrt{3}$ and $d - 20 = \frac{h}{\sqrt{3}}$; eliminating $d$ gives $\frac{2h}{\sqrt{3}} = 20$.'
+    anki_seeds:
+      - front: "Choosing the trig ratio in an application: pick the ratio that links..."
+        back: "the known side and the wanted side — sin = opp/hyp, cos = adj/hyp, tan = opp/adj (SOH-CAH-TOA)."
+        type: basic
+      - front: "The angle of depression from A down to B equals..."
+        back: "the angle of elevation from B up to A (alternate angles with the horizontal)."
+        type: basic
+      - front: "To find an angle from two known sides, use..."
+        back: "an inverse trig function, e.g. θ = tan⁻¹(opposite/adjacent)."
+        type: basic
+
+  - id: radians-degrees
+    name: Radians and Degrees
+    core: true
+    difficulty: 0.5
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 90
+    prerequisites:
+      - id: ratios-proportions
+        weight: 0.5
+        key: true
+      - id: multiplying-fractions
+        weight: 0.4
+      - id: equivalent-fractions
+        weight: 0.3
+      - id: fraction-decimal-conversion
+        weight: 0.2
+    knowledge_points:
+      - id: kp1
+        name: Convert degrees to radians
+        key_prerequisites: [ratios-proportions]
+        constraints: "multiply degrees by π/180"
+        exemplars:
+          - problem: 'Convert $180^\circ$ to radians.'
+            answer: "π"
+          - problem: 'Convert $90^\circ$ to radians.'
+            answer: "π/2"
+          - problem: 'Convert $60^\circ$ to radians.'
+            answer: "π/3"
+      - id: kp2
+        name: Convert radians to degrees
+        key_prerequisites: [multiplying-fractions]
+        constraints: "multiply radians by 180/π; inputs are simple multiples of π/6, π/4, π/3 and π/2; answers in whole degrees"
+        exemplars:
+          - problem: 'Convert $\pi/4$ radians to degrees.'
+            answer: "45°"
+            solution_sketch: '$(\pi/4) \cdot (180/\pi) = 45$.'
+          - problem: 'Convert $2\pi/3$ radians to degrees.'
+            answer: "120°"
+    diagnostic_exemplar:
+      problem: 'Convert $30^\circ$ to radians.'
+      answer: "π/6"
+      solution_sketch: 'Multiply by $\frac{\pi}{180}$: $\frac{30\pi}{180} = \frac{\pi}{6}$.'
+    anki_seeds:
+      - front: "To convert degrees to radians, multiply by..."
+        back: "π/180"
+        type: basic
+      - front: "To convert radians to degrees, multiply by..."
+        back: "180/π"
+        type: basic
+
+  - id: coterminal-angles
+    name: Standard Position and Coterminal Angles
+    core: true
+    difficulty: 0.55
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 90
+    prerequisites:
+      - id: radians-degrees
+        weight: 0.7
+        key: true
+      - id: coordinate-plane
+        weight: 0.4
+      - id: integer-addition-subtraction
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Quadrant of an angle in standard position
+        key_prerequisites: [radians-degrees, coordinate-plane]
+        constraints: "angles in whole degrees from 0 to 360, or simple multiples of π/6 and π/4; the answer is the quadrant number 1-4"
+        exemplars:
+          - problem: 'In which quadrant does a $135^\circ$ angle in standard position terminate? Answer with the quadrant number $1$, $2$, $3$, or $4$.'
+            answer: "2"
+            solution_sketch: '$90^\circ < 135^\circ < 180^\circ$, so it terminates in Quadrant II.'
+          - problem: 'In which quadrant does a $300^\circ$ angle terminate? Answer with the quadrant number $1$, $2$, $3$, or $4$.'
+            answer: "4"
+            solution_sketch: '$270^\circ < 300^\circ < 360^\circ$, so it terminates in Quadrant IV.'
+          - problem: 'In which quadrant does an angle of $\frac{5\pi}{6}$ terminate? Answer with the quadrant number $1$, $2$, $3$, or $4$.'
+            answer: "2"
+            solution_sketch: '$\frac{5\pi}{6} = 150^\circ$, between $90^\circ$ and $180^\circ$: Quadrant II.'
+      - id: kp2
+        name: Coterminal angles in degrees
+        key_prerequisites: [integer-addition-subtraction]
+        constraints: "answers between 0° and 360°"
+        exemplars:
+          - problem: 'Find the angle between $0^\circ$ and $360^\circ$ coterminal with $-45^\circ$.'
+            answer: "315°"
+            solution_sketch: '$-45 + 360 = 315$.'
+          - problem: 'Find the angle between $0^\circ$ and $360^\circ$ coterminal with $400^\circ$.'
+            answer: "40°"
+          - problem: 'Find the angle between $0^\circ$ and $360^\circ$ coterminal with $780^\circ$.'
+            answer: "60°"
+            solution_sketch: '$780 - 720 = 60$.'
+      - id: kp3
+        name: Coterminal angles in radians
+        key_prerequisites: [radians-degrees]
+        constraints: "add or subtract 2π once; inputs are simple multiples of π/6, π/4 and π/3; answers lie in [0, 2π)"
+        exemplars:
+          - problem: 'Find the angle in $[0, 2\pi)$ coterminal with $\frac{9\pi}{4}$.'
+            answer: "π/4"
+            solution_sketch: '$\frac{9\pi}{4} - 2\pi = \frac{\pi}{4}$.'
+          - problem: 'Find the angle in $[0, 2\pi)$ coterminal with $-\frac{\pi}{3}$.'
+            answer: "5π/3"
+    diagnostic_exemplar:
+      problem: 'Find the angle in $[0, 2\pi)$ coterminal with $-\frac{2\pi}{3}$.'
+      answer: "4π/3"
+      solution_sketch: 'Add one full turn: $-\frac{2\pi}{3} + \frac{6\pi}{3} = \frac{4\pi}{3}$.'
+    anki_seeds:
+      - front: "Coterminal angles differ by..."
+        back: "a whole-number multiple of 360° (2π radians)."
+        type: basic
+
+  - id: reference-angles
+    name: Reference Angles
+    core: true
+    difficulty: 0.6
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 90
+    prerequisites:
+      - id: coterminal-angles
+        weight: 0.7
+        key: true
+      - id: radians-degrees
+        weight: 0.5
+    knowledge_points:
+      - id: kp1
+        name: Reference angles in degrees
+        key_prerequisites: [coterminal-angles]
+        constraints: "terminal sides in quadrants II-IV; multiples of 15°"
+        exemplars:
+          - problem: 'Find the reference angle of $150^\circ$.'
+            answer: "30°"
+            solution_sketch: '$180 - 150 = 30$.'
+          - problem: 'Find the reference angle of $225^\circ$.'
+            answer: "45°"
+          - problem: 'Find the reference angle of $300^\circ$.'
+            answer: "60°"
+      - id: kp2
+        name: Reference angles in radians
+        key_prerequisites: [coterminal-angles, radians-degrees]
+        constraints: "terminal sides in quadrants II-IV; inputs are simple multiples of π/6 and π/4; answers are π/6, π/4 or π/3"
+        exemplars:
+          - problem: 'Find the reference angle of $\frac{5\pi}{6}$.'
+            answer: "π/6"
+          - problem: 'Find the reference angle of $\frac{4\pi}{3}$.'
+            answer: "π/3"
+            solution_sketch: '$\frac{4\pi}{3} - \pi = \frac{\pi}{3}$.'
+      - id: kp3
+        name: Negative and large angles
+        key_prerequisites: [coterminal-angles]
+        constraints: "angles below 0 or beyond one full turn; reduce to a coterminal angle first; degree inputs are multiples of 15"
+        exemplars:
+          - problem: 'Find the reference angle of $420^\circ$.'
+            answer: "60°"
+            solution_sketch: 'Coterminal with $60^\circ$, which is its own reference angle.'
+          - problem: 'Find the reference angle of $-120^\circ$.'
+            answer: "60°"
+            solution_sketch: 'Coterminal with $240^\circ$; $240 - 180 = 60$.'
+    diagnostic_exemplar:
+      problem: 'Find the reference angle of $-\frac{7\pi}{6}$.'
+      answer: "π/6"
+      solution_sketch: 'Adding $2\pi$ lands on $\frac{5\pi}{6}$ in Quadrant II, whose reference angle is $\pi - \frac{5\pi}{6}$.'
+    anki_seeds:
+      - front: "The reference angle is..."
+        back: "the acute angle between the terminal side and the x-axis."
+        type: basic
+
+  - id: unit-circle-special-angles
+    name: Unit Circle — Quadrantal and Special Angles
+    core: true
+    difficulty: 0.6
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 120
+    prerequisites:
+      - id: special-right-triangles
+        weight: 0.7
+        key: true
+      - id: radians-degrees
+        weight: 0.6
+        key: true
+      - id: trig-ratios-definition
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: Quadrantal angles
+        key_prerequisites: [radians-degrees]
+        constraints: "angles limited to multiples of π/2 here; special angles in later KPs"
+        exemplars:
+          - problem: 'Find $\cos(0)$ using the unit circle.'
+            answer: "1"
+            solution_sketch: 'At angle $0$ the unit-circle point is $(1, 0)$, and cosine is the $x$-coordinate.'
+          - problem: 'Find $\cos(\pi)$ using the unit circle.'
+            answer: "-1"
+            solution_sketch: 'At $\pi$ the point is $(-1, 0)$.'
+          - problem: 'Find $\sin(3\pi/2)$.'
+            answer: "-1"
+      - id: kp2
+        name: First-quadrant special angles
+        key_prerequisites: [special-right-triangles]
+        constraints: "first-quadrant angles π/6, π/4 and π/3; answers are the exact values 1/2, √2/2 and √3/2"
+        exemplars:
+          - problem: 'Find $\cos(\pi/6)$.'
+            answer: "√3/2"
+            solution_sketch: 'The $30$-$60$-$90$ triangle gives $\cos(\pi/6) = \frac{\sqrt{3}}{2}$ (and $\sin(\pi/6) = \frac{1}{2}$).'
+          - problem: 'Find $\sin(\pi/4)$.'
+            answer: "√2/2"
+            solution_sketch: 'The $45$-$45$-$90$ triangle gives $\sin(\pi/4) = \cos(\pi/4) = \frac{\sqrt{2}}{2}$.'
+          - problem: 'Find $\cos(\pi/3)$.'
+            answer: "1/2"
+            solution_sketch: 'The $30$-$60$-$90$ triangle gives $\cos(\pi/3) = \frac{1}{2}$ (and $\sin(\pi/3) = \frac{\sqrt{3}}{2}$).'
+      - id: kp3
+        name: Tangent at special angles
+        key_prerequisites: [special-right-triangles, trig-ratios-definition]
+        constraints: "tangent at π/6, π/4 and π/3; answers are √3/3, 1 and √3, rationalized"
+        exemplars:
+          - problem: 'Find $\tan(\pi/4)$.'
+            answer: "1"
+          - problem: 'Find $\tan(\pi/6)$.'
+            answer: "√3/3"
+            solution_sketch: '$\frac{1/2}{\sqrt{3}/2} = \frac{1}{\sqrt{3}} = \frac{\sqrt{3}}{3}$.'
+          - problem: 'Find $\tan(\pi/3)$.'
+            answer: "√3"
+    diagnostic_exemplar:
+      problem: 'Find $\cos(\pi/6) \cdot \tan(\pi/6) + \sin(3\pi/2)$.'
+      answer: "-1/2"
+      solution_sketch: '$\cos\frac{\pi}{6}\tan\frac{\pi}{6} = \sin\frac{\pi}{6} = \frac{1}{2}$, and $\sin\frac{3\pi}{2} = -1$.'
+    anki_seeds:
+      - front: "sin(π/6), sin(π/4), sin(π/3) = ?"
+        back: "1/2, √2/2, √3/2"
+        type: basic
+      - front: "cos(0), cos(π/2), cos(π) = ?"
+        back: "1, 0, -1"
+        type: basic
+
+  - id: unit-circle
+    name: The Unit Circle
+    core: true
+    difficulty: 0.7
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 180
+    prerequisites:
+      - id: unit-circle-special-angles
+        weight: 0.8
+        key: true
+      - id: reference-angles
+        weight: 0.7
+        key: true
+      - id: coterminal-angles
+        weight: 0.4
+      - id: simplifying-radicals
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Signs by quadrant (ASTC)
+        key_prerequisites: [reference-angles]
+        constraints: "the quadrant is named, or the angle is given in whole degrees; the answer states signs or quadrant numbers, never a value"
+        exemplars:
+          - problem: 'State the signs of $\sin \theta$ and $\cos \theta$ for $\theta$ in Quadrant III.'
+            answer: "both negative"
+          - problem: 'In which quadrants is $\tan \theta$ positive? Give the two quadrant numbers in increasing order.'
+            answer: "1, 3"
+            solution_sketch: 'Tangent is positive where sine and cosine share a sign: Quadrants I and III.'
+          - problem: 'Is $\cos(200^\circ)$ positive or negative?'
+            answer: "negative"
+      - id: kp2
+        name: Exact values via reference angles
+        key_prerequisites: [unit-circle-special-angles, reference-angles]
+        constraints: "angles in quadrants II-IV that are multiples of π/6 or π/4; reference angle plus the quadrant sign; exact values"
+        exemplars:
+          - problem: 'Find $\sin(2\pi/3)$.'
+            answer: "√3/2"
+            solution_sketch: 'Reference angle $\pi/3$; sine positive in Quadrant II.'
+          - problem: 'Find $\cos(5\pi/4)$.'
+            answer: "-√2/2"
+          - problem: 'Find $\tan(5\pi/6)$.'
+            answer: "-√3/3"
+      - id: kp3
+        name: Negative angles and angles beyond 2π
+        key_prerequisites: [coterminal-angles, unit-circle-special-angles]
+        constraints: "negative angles or angles beyond one full turn; reduce to a coterminal angle first; exact special values"
+        exemplars:
+          - problem: 'Find $\cos(-\pi/3)$.'
+            answer: "1/2"
+            solution_sketch: 'Coterminal with $5\pi/3$; cosine positive in Quadrant IV.'
+          - problem: 'Find $\sin(405^\circ)$.'
+            answer: "√2/2"
+            solution_sketch: 'Coterminal with $45^\circ$.'
+    diagnostic_exemplar:
+      problem: 'Find $\cos\left(-\frac{4\pi}{3}\right)$.'
+      answer: "-1/2"
+      solution_sketch: 'Cosine is even, so this is $\cos\frac{4\pi}{3}$ — Quadrant III, reference angle $\frac{\pi}{3}$, cosine negative.'
+    anki_seeds:
+      - front: "ASTC: which trig functions are positive in QI, QII, QIII, QIV?"
+        back: "QI all, QII sine, QIII tangent, QIV cosine."
+        type: basic
+
+  - id: reciprocal-trig-functions
+    name: Reciprocal Trigonometric Functions
+    core: true
+    difficulty: 0.65
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 120
+    prerequisites:
+      - id: trig-ratios-definition
+        weight: 0.6
+        key: true
+      - id: unit-circle-special-angles
+        weight: 0.5
+        key: true
+      - id: dividing-fractions
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Definitions from triangle sides
+        key_prerequisites: [trig-ratios-definition]
+        constraints: "Pythagorean-triple side lengths"
+        exemplars:
+          - problem: 'In a right triangle with opposite $3$, adjacent $4$, hypotenuse $5$, find $\csc \theta$.'
+            answer: "5/3"
+            solution_sketch: '$\csc \theta = \frac{\text{hyp}}{\text{opp}}$.'
+          - problem: 'For the same triangle, find $\cot \theta$.'
+            answer: "4/3"
+      - id: kp2
+        name: Reciprocal relationships
+        key_prerequisites: [dividing-fractions, trig-ratios-definition]
+        constraints: "one ratio given as a simple fraction or a terminating decimal; the answer is its reciprocal"
+        exemplars:
+          - problem: 'If $\cos \theta = \frac{2}{5}$, find $\sec \theta$.'
+            answer: "5/2"
+          - problem: 'If $\sin \theta = 0.25$, find $\csc \theta$.'
+            answer: "4"
+      - id: kp3
+        name: Values at special angles
+        key_prerequisites: [unit-circle-special-angles]
+        constraints: "special angles 30, 45 and 60 degrees (or π/6, π/4, π/3); exact answers with radicals rationalized"
+        exemplars:
+          - problem: 'Find $\csc(30^\circ)$.'
+            answer: "2"
+            solution_sketch: '$\frac{1}{\sin 30^\circ} = \frac{1}{1/2} = 2$.'
+          - problem: 'Find $\sec(\pi/4)$.'
+            answer: "√2"
+            solution_sketch: '$\frac{1}{\sqrt{2}/2} = \frac{2}{\sqrt{2}} = \sqrt{2}$.'
+          - problem: 'Find $\cot(60^\circ)$.'
+            answer: "√3/3"
+    diagnostic_exemplar:
+      problem: 'Find $\sec(60^\circ)$.'
+      answer: "2"
+      solution_sketch: '$\sec\theta = \frac{1}{\cos\theta}$ and $\cos 60^\circ = \frac{1}{2}$.'
+    anki_seeds:
+      - front: "csc θ = ?"
+        back: "1/sin θ"
+        type: basic
+      - front: "sec θ = 1/{{c1::cos θ}} and cot θ = 1/{{c2::tan θ}}"
+        back: "cos θ; tan θ"
+        type: cloze
+
+  - id: sine-cosine-parent-graphs
+    name: Graphs of Sine and Cosine — Key Features
+    core: true
+    difficulty: 0.6
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 120
+    prerequisites:
+      - id: unit-circle
+        weight: 0.7
+        key: true
+      - id: coordinate-plane
+        weight: 0.3
+      - id: function-notation
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Key points of y = sin x
+        key_prerequisites: [unit-circle]
+        constraints: "restrict to the interval [0, 2π]"
+        exemplars:
+          - problem: 'On $[0, 2\pi]$, where does $\sin x = 0$? List the $x$-values in increasing order.'
+            answer: "0, π, 2π"
+            solution_sketch: 'Sine crosses zero at the start, middle, and end of one period.'
+          - problem: 'On $[0, 2\pi]$, at what $x$ does $\sin x$ reach its maximum value $1$?'
+            answer: "π/2"
+      - id: kp2
+        name: Key points of y = cos x
+        key_prerequisites: [unit-circle]
+        constraints: "restrict to the interval [0, 2π]; key x-values are multiples of π/2; points given as ordered pairs"
+        exemplars:
+          - problem: 'What point does the graph of $y = \cos x$ pass through on the $y$-axis?'
+            answer: "(0, 1)"
+          - problem: 'On $[0, 2\pi]$, where does $\cos x = 0$? List the $x$-values in increasing order.'
+            answer: "π/2, 3π/2"
+            solution_sketch: 'Cosine is zero a quarter-period in, and again three quarters in.'
+          - problem: 'On $[0, 2\pi]$, at what $x$ does $\cos x$ reach its minimum?'
+            answer: "π"
+      - id: kp3
+        name: Domain, range, and period of the parent graphs
+        key_prerequisites: [unit-circle]
+        constraints: "parent graphs y = sin x and y = cos x only, no amplitude, period or shift changes; range as an inequality, period as 2π"
+        exemplars:
+          - problem: 'State the range of $y = \sin x$.'
+            answer: "-1 ≤ y ≤ 1"
+          - problem: 'What is the period of $y = \sin(x)$?'
+            answer: "2π"
+          - problem: 'State the domain of $y = \cos x$.'
+            answer: "all real numbers"
+    diagnostic_exemplar:
+      problem: 'On $[0, 2\pi]$, the graph of $y = \sin x$ reaches its maximum at $x = a$ and the graph of $y = \cos x$ reaches its minimum at $x = b$. Find $a + b$.'
+      answer: "3π/2"
+      solution_sketch: '$\sin x$ peaks at $\frac{\pi}{2}$ and $\cos x$ bottoms out at $\pi$.'
+    anki_seeds:
+      - front: "y = sin x passes through the origin; y = cos x starts at..."
+        back: "(0, 1)."
+        type: basic
+
+  - id: trig-graphs-basic
+    name: Graphing Sine and Cosine
+    core: true
+    difficulty: 0.65
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 150
+    prerequisites:
+      - id: sine-cosine-parent-graphs
+        weight: 0.8
+        key: true
+      - id: unit-circle
+        weight: 0.4
+      - id: function-notation
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Amplitude
+        key_prerequisites: [sine-cosine-parent-graphs]
+        constraints: "y = a sin x or y = a cos x with integer a from 2 to 5 and no vertical shift; the amplitude is |a|"
+        exemplars:
+          - problem: 'What is the amplitude of $y = 3\sin(x)$?'
+            answer: "3"
+          - problem: 'What are the maximum and minimum values of $y = 2\cos(x)$?'
+            answer: "maximum 2, minimum -2"
+      - id: kp2
+        name: Period with a coefficient on x
+        key_prerequisites: [sine-cosine-parent-graphs]
+        constraints: "period = 2π/|b| for y = sin(bx)"
+        exemplars:
+          - problem: 'What is the period of $y = \sin(2x)$?'
+            answer: "π"
+            solution_sketch: '$2\pi/2 = \pi$.'
+          - problem: 'What is the period of $y = \cos(x/2)$?'
+            answer: "4π"
+      - id: kp3
+        name: Amplitude and period together
+        key_prerequisites: [sine-cosine-parent-graphs]
+        constraints: "y = a sin(bx) or y = a cos(bx) with integer a from 2 to 5 and b from 1 to 4; state amplitude a and period 2π/b together"
+        exemplars:
+          - problem: 'For $y = 4\sin(x)$, state the amplitude and period.'
+            answer: "amplitude 4, period 2π"
+          - problem: 'For $y = 2\sin(3x)$, state the amplitude and period.'
+            answer: "amplitude 2, period 2π/3"
+    diagnostic_exemplar:
+      problem: 'State the amplitude and period of $y = 3\cos(4x)$.'
+      answer: "amplitude 3, period π/2"
+      solution_sketch: 'Amplitude is $|a| = 3$; the period is $\frac{2\pi}{b} = \frac{2\pi}{4}$.'
+    anki_seeds:
+      - front: "For y = a·sin(bx), the amplitude and period are..."
+        back: "amplitude = |a|, period = 2π/|b|."
+        type: basic
+
+  - id: trig-graphs-midline
+    name: Midline and Vertical Shifts of Sinusoids
+    core: false                # graph-transformation leaf; trig-graphs-basic stays core
+    difficulty: 0.7
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 120
+    prerequisites:
+      - id: trig-graphs-basic
+        weight: 0.8
+        key: true
+    knowledge_points:
+      - id: kp1
+        name: The midline
+        key_prerequisites: [trig-graphs-basic]
+        constraints: "y = a sin x + d or y = a cos x + d with integer d from -5 to 5; the midline is the line y = d"
+        exemplars:
+          - problem: 'State the midline of $y = \sin(x) + 3$.'
+            answer: "y = 3"
+          - problem: 'State the midline of $y = 2\cos(x) - 1$.'
+            answer: "y = -1"
+      - id: kp2
+        name: Maximum and minimum with a shift
+        key_prerequisites: [trig-graphs-basic]
+        constraints: "integer amplitude and integer vertical shift; the maximum is d + a and the minimum is d - a"
+        exemplars:
+          - problem: 'Find the maximum and minimum values of $y = 2\sin(x) + 5$.'
+            answer: "maximum 7, minimum 3"
+            solution_sketch: '$5 \pm 2$.'
+          - problem: 'Find the maximum and minimum values of $y = 3\cos(x) - 2$.'
+            answer: "maximum 1, minimum -5"
+      - id: kp3
+        name: Recover amplitude and midline from max and min
+        key_prerequisites: [trig-graphs-basic]
+        constraints: "max/min pairs with integer midline and amplitude"
+        exemplars:
+          - problem: 'A sinusoid oscillates between $2$ and $8$. Find its midline and amplitude.'
+            answer: "midline y = 5, amplitude 3"
+            solution_sketch: 'Midline $= \frac{2+8}{2}$; amplitude $= \frac{8-2}{2}$.'
+          - problem: 'A sinusoid oscillates between $-4$ and $10$. Find its midline and amplitude.'
+            answer: "midline y = 3, amplitude 7"
+    diagnostic_exemplar:
+      problem: 'A sinusoid oscillates between $-3$ and $9$. State its midline and amplitude.'
+      answer: "midline y = 3, amplitude 6"
+      solution_sketch: 'The midline is the average of the extremes and the amplitude is half their difference.'
+    anki_seeds:
+      - front: "Midline of y = a·sin(bx) + d?"
+        back: "y = d"
+        type: basic
+      - front: "Amplitude from a graph's max and min?"
+        back: "(max − min)/2"
+        type: basic
+
+  - id: pythagorean-identity
+    name: The Pythagorean Identity
+    core: true
+    difficulty: 0.65
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 120
+    prerequisites:
+      - id: unit-circle
+        weight: 0.6
+        key: true
+      - id: trig-ratios-definition
+        weight: 0.4
+      - id: pythagorean-theorem
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: State and verify the identity
+        key_prerequisites: [unit-circle, pythagorean-theorem]
+        constraints: "verify at a special angle, or read the identity off the unit-circle equation x^2 + y^2 = 1; the value is always 1"
+        exemplars:
+          - problem: 'Verify the Pythagorean identity at $\theta = \pi/3$: compute $\sin^2(\pi/3) + \cos^2(\pi/3)$.'
+            answer: "1"
+            solution_sketch: '$\frac{3}{4} + \frac{1}{4} = 1$.'
+          - problem: 'A unit-circle point is $(\cos \theta, \sin \theta)$ and satisfies $x^2 + y^2 = 1$. Substituting gives the Pythagorean identity: $\sin^2 \theta + \cos^2 \theta$ equals what?'
+            answer: "1"
+            solution_sketch: 'Substituting $x = \cos \theta$, $y = \sin \theta$ into $x^2 + y^2 = 1$ gives $\sin^2 \theta + \cos^2 \theta = 1$.'
+      - id: kp2
+        name: Find cosine from sine in Quadrant I
+        key_prerequisites: [unit-circle]
+        constraints: "first-quadrant angles only, so both ratios are positive; Pythagorean-triple fractions such as 3/5 or 5/13"
+        exemplars:
+          - problem: 'If $\sin \theta = \frac{3}{5}$ and $\theta$ is in the first quadrant, find $\cos \theta$.'
+            answer: "4/5"
+            solution_sketch: '$\cos^2 \theta = 1 - \frac{9}{25} = \frac{16}{25}$.'
+          - problem: 'If $\cos \theta = \frac{5}{13}$ in the first quadrant, find $\sin \theta$.'
+            answer: "12/13"
+      - id: kp3
+        name: Use quadrant signs
+        key_prerequisites: [unit-circle]
+        constraints: "Pythagorean-triple ratios; quadrant given explicitly"
+        exemplars:
+          - problem: 'If $\sin \theta = \frac{4}{5}$ and $\theta$ is in Quadrant II, find $\cos \theta$.'
+            answer: "-3/5"
+            solution_sketch: 'Cosine is negative in Quadrant II.'
+          - problem: 'If $\cos \theta = -\frac{8}{17}$ and $\theta$ is in Quadrant III, find $\sin \theta$.'
+            answer: "-15/17"
+    diagnostic_exemplar:
+      problem: 'If $\cos \theta = -\frac{3}{5}$ and $\theta$ is in Quadrant III, find $\sin \theta$.'
+      answer: "-4/5"
+      solution_sketch: '$\sin^2\theta = 1 - \frac{9}{25} = \frac{16}{25}$; in Quadrant III sine is negative.'
+    anki_seeds:
+      - front: "State the Pythagorean identity."
+        back: "sin²θ + cos²θ = 1"
+        type: basic
+
+  - id: trig-identities-basic
+    name: Basic Trigonometric Identities
+    core: true
+    difficulty: 0.7
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 150
+    prerequisites:
+      - id: pythagorean-identity
+        weight: 0.7
+        key: true
+      - id: unit-circle
+        weight: 0.4
+      - id: reciprocal-trig-functions
+        weight: 0.4
+      - id: rational-expressions
+        weight: 0.2
+    knowledge_points:
+      - id: kp1
+        name: The quotient identity for tangent
+        key_prerequisites: [unit-circle]
+        constraints: "tan = sin over cos; ratios given as Pythagorean-triple fractions, or the answer is the symbolic identity itself"
+        exemplars:
+          - problem: 'If $\sin \theta = \frac{3}{5}$ and $\cos \theta = \frac{4}{5}$, find $\tan \theta$.'
+            answer: "3/4"
+            solution_sketch: '$\tan \theta = \frac{\sin \theta}{\cos \theta} = \frac{3/5}{4/5}$.'
+          - problem: 'Simplify $\frac{\sin \theta}{\cos \theta}$.'
+            answer: "tan θ"
+      - id: kp2
+        name: Simplify expressions using identities
+        key_prerequisites: [pythagorean-identity, reciprocal-trig-functions]
+        constraints: "one-step simplifications using the Pythagorean and quotient identities; the answer is a single trig function"
+        exemplars:
+          - problem: 'Simplify $1 - \cos^2 \theta$.'
+            answer: "sin^2 θ"
+            solution_sketch: 'From $\sin^2 \theta + \cos^2 \theta = 1$.'
+          - problem: 'Simplify $\frac{\sin^2 \theta + \cos^2 \theta}{\cos \theta}$.'
+            answer: "sec θ"
+            solution_sketch: 'The numerator is $1$, so this is $\frac{1}{\cos \theta} = \sec \theta$.'
+      - id: kp3
+        name: Find all ratios from one
+        key_prerequisites: [pythagorean-identity, unit-circle]
+        constraints: "Pythagorean-triple ratios; quadrant given"
+        exemplars:
+          - problem: 'If $\tan \theta = \frac{3}{4}$ and $\theta$ is in Quadrant III, find $\sin \theta$.'
+            answer: "-3/5"
+            solution_sketch: 'A 3-4-5 reference triangle; both $\sin \theta$ and $\cos \theta$ are negative in Quadrant III, so $\sin \theta = -\frac{3}{5}$ and $\cos \theta = -\frac{4}{5}$.'
+          - problem: 'If $\sec \theta = \frac{5}{3}$ and $\theta$ is in Quadrant IV, find $\tan \theta$.'
+            answer: "-4/3"
+            solution_sketch: '$\cos \theta = \frac{3}{5}$ and sine is negative in Quadrant IV, so $\sin \theta = -\frac{4}{5}$ and $\tan \theta = -\frac{4}{3}$.'
+    diagnostic_exemplar:
+      problem: 'If $\tan \theta = -\frac{5}{12}$ and $\theta$ is in Quadrant IV, find $\sin \theta$.'
+      answer: "-5/13"
+      solution_sketch: 'The reference triangle has legs $5$ and $12$, so the hypotenuse is $13$; in Quadrant IV sine is negative.'
+    anki_seeds:
+      - front: "tan θ = ?"
+        back: "sin θ / cos θ"
+        type: basic
+
+  - id: law-of-sines
+    name: The Law of Sines
+    core: false                # terminal named theorem, feeds only law-of-sines-cosines
+    difficulty: 0.7
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 180
+    prerequisites:
+      - id: right-triangle-trig
+        weight: 0.7
+        key: true
+      - id: unit-circle
+        weight: 0.4
+      - id: ratios-proportions
+        weight: 0.3
+    knowledge_points:
+      - id: kp1
+        name: Find a side (AAS/ASA)
+        key_prerequisites: [right-triangle-trig, ratios-proportions]
+        constraints: "a/sin A = b/sin B = c/sin C; use special-angle sines"
+        exemplars:
+          - problem: 'In a triangle $a = 10$, $A = 30^\circ$, $B = 45^\circ$. Find $b$ (round to two decimals). Use $\frac{a}{\sin A} = \frac{b}{\sin B}$.'
+            answer: "≈ 14.14"
+            solution_sketch: '$b = 10 \cdot \frac{\sin 45^\circ}{\sin 30^\circ} = 10\sqrt{2} \approx 14.14$.'
+          - problem: 'Given $a = 8$, $A = 30^\circ$, $B = 90^\circ$, find $b$.'
+            answer: "16"
+      - id: kp2
+        name: Find the third angle first
+        key_prerequisites: [right-triangle-trig]
+        constraints: "two angles given, so the third comes from the 180 degree sum; angles drawn from 30, 45, 60, 75 and 105 degrees so answers stay exact radicals"
+        exemplars:
+          - problem: 'In a triangle $A = 30^\circ$, $C = 105^\circ$, and $a = 6$. Find $b$ exactly.'
+            answer: "6√2"
+            solution_sketch: '$B = 45^\circ$; $b = 6 \cdot \frac{\sin 45^\circ}{\sin 30^\circ} = 6\sqrt{2}$.'
+          - problem: 'In a triangle $A = 45^\circ$, $B = 60^\circ$, and $a = 10$. Find $b$ exactly.'
+            answer: "5√6"
+            solution_sketch: '$b = 10 \cdot \frac{\sin 60^\circ}{\sin 45^\circ} = 10 \cdot \frac{\sqrt{3}}{\sqrt{2}} = 5\sqrt{6}$.'
+      - id: kp3
+        name: Find an angle
+        key_prerequisites: [right-triangle-trig, unit-circle]
+        constraints: "choose data so sin B is an exact special value; non-obtuse, unambiguous case only"
+        exemplars:
+          - problem: 'In a triangle $a = 5$, $A = 30^\circ$, $b = 10$. Find $\sin B$ and the angle $B$.'
+            answer: "sin B = 1, B = 90°"
+            solution_sketch: '$\sin B = \frac{b \sin A}{a} = \frac{10 \cdot 1/2}{5} = 1$.'
+          - problem: 'In a triangle $a = 6$, $A = 30^\circ$, $b = 6\sqrt{2}$, with $B$ acute. Find $B$.'
+            answer: "45°"
+            solution_sketch: '$\sin B = \frac{6\sqrt{2} \cdot 1/2}{6} = \frac{\sqrt{2}}{2}$.'
+    diagnostic_exemplar:
+      problem: 'In a triangle $c = 9$, $C = 60^\circ$ and $a = 3\sqrt{6}$, with $A$ acute. Find $A$.'
+      answer: "45°"
+      solution_sketch: '$\frac{\sin A}{a} = \frac{\sin C}{c}$ gives $\sin A = \frac{3\sqrt{6}}{9} \cdot \frac{\sqrt{3}}{2} = \frac{\sqrt{2}}{2}$.'
+    anki_seeds:
+      - front: "State the Law of Sines."
+        back: "a/sin A = b/sin B = c/sin C"
+        type: basic
+
+  - id: law-of-cosines
+    name: The Law of Cosines
+    core: false                # terminal named theorem, feeds only law-of-sines-cosines
+    difficulty: 0.7
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 180
+    prerequisites:
+      - id: right-triangle-trig
+        weight: 0.7
+        key: true
+      - id: unit-circle
+        weight: 0.4
+      - id: pythagorean-theorem
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: Find a side (SAS)
+        key_prerequisites: [right-triangle-trig]
+        constraints: "a^2 = b^2 + c^2 - 2bc·cos A; special-angle cosines"
+        exemplars:
+          - problem: 'In a triangle with $b = 5$, $c = 7$, and included angle $A = 60^\circ$, find $a$.'
+            answer: "√39"
+            solution_sketch: '$a^2 = 25 + 49 - 70 \cdot \frac{1}{2} = 39$.'
+          - problem: 'Find $a$ if $b = 3$, $c = 4$, and $A = 90^\circ$.'
+            answer: "5"
+            solution_sketch: '$\cos 90^\circ = 0$ reduces to the Pythagorean theorem.'
+      - id: kp2
+        name: Obtuse included angles
+        key_prerequisites: [right-triangle-trig, unit-circle]
+        constraints: "included angles of 120 or 135 degrees, whose cosine is negative; answers are exact square roots, simplified"
+        exemplars:
+          - problem: 'In a triangle with $b = 5$, $c = 8$, and included angle $A = 120^\circ$, find $a$.'
+            answer: "√129"
+            solution_sketch: '$a^2 = 25 + 64 - 80 \cdot (-\frac{1}{2}) = 129$.'
+          - problem: 'In a triangle with $b = 4$, $c = 6$, and included angle $A = 120^\circ$, find $a$.'
+            answer: "2√19"
+            solution_sketch: '$a^2 = 16 + 36 + 24 = 76$.'
+      - id: kp3
+        name: Find an angle (SSS)
+        key_prerequisites: [right-triangle-trig, pythagorean-theorem]
+        constraints: "all three sides given as integers; data chosen so the cosine comes out as 1/2, 0 or -1/2, giving 60, 90 or 120 degrees"
+        exemplars:
+          - problem: 'A triangle has sides $3$, $5$, $7$. Find the angle opposite the side of length $7$.'
+            answer: "120°"
+            solution_sketch: '$\cos C = \frac{9 + 25 - 49}{2 \cdot 15} = -\frac{1}{2}$.'
+          - problem: 'A triangle has sides $5$, $12$, $13$. Find the angle opposite the side of length $13$.'
+            answer: "90°"
+            solution_sketch: '$\cos C = \frac{25 + 144 - 169}{120} = 0$.'
+    diagnostic_exemplar:
+      problem: 'A triangle has sides $6$, $10$ and $14$. Find the angle opposite the side of length $14$.'
+      answer: "120°"
+      solution_sketch: 'The largest side faces the largest angle: $\cos C = \frac{36 + 100 - 196}{2(6)(10)} = -\frac{1}{2}$.'
+    anki_seeds:
+      - front: "State the Law of Cosines for side a."
+        back: "a² = b² + c² - 2bc·cos A"
+        type: basic
+
+  - id: law-of-sines-cosines
+    name: Law of Sines and Law of Cosines
+    core: false                # clearly supplemental (oblique-triangle extension)
+    difficulty: 0.75
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 240
+    prerequisites:
+      - id: law-of-sines
+        weight: 0.7
+        key: true
+      - id: law-of-cosines
+        weight: 0.7
+        key: true
+      - id: right-triangle-trig
+        weight: 0.4
+    knowledge_points:
+      - id: kp1
+        name: Choose the right law
+        key_prerequisites: [law-of-sines, law-of-cosines]
+        constraints: "the answer names a law, not a value: two angles and a side use the Law of Sines; SSS and SAS use the Law of Cosines"
+        exemplars:
+          - problem: 'You know two angles and one side of a triangle. Which law finds the remaining sides?'
+            answer: "Law of Sines"
+          - problem: 'You know all three sides. Which law finds an angle?'
+            answer: "Law of Cosines"
+          - problem: 'You know two sides and the included angle. Which law finds the third side?'
+            answer: "Law of Cosines"
+      - id: kp2
+        name: Combine both laws
+        key_prerequisites: [law-of-sines, law-of-cosines]
+        constraints: "one triangle needing both laws in turn, or SSS where the largest angle is asked; special-angle data, exact answers"
+        exemplars:
+          - problem: 'In a triangle $b = 5$, $c = 8$, $A = 60^\circ$. Find $a$, then $\sin B$.'
+            answer: "a = 7, sin B = 5√3/14"
+            solution_sketch: '$a^2 = 25 + 64 - 40 = 49$; $\sin B = \frac{b \sin A}{a} = \frac{5\sqrt{3}/2}{7}$.'
+          - problem: 'A triangle has sides $7$, $8$, $13$. Find the largest angle.'
+            answer: "120°"
+            solution_sketch: 'Opposite the side $13$: $\cos C = \frac{49+64-169}{112} = -\frac{1}{2}$.'
+      - id: kp3
+        name: Applications to distances
+        key_prerequisites: [law-of-cosines]
+        constraints: "navigation and surveying contexts in metric units; two sides and the included angle, or three sides; exact answers"
+        exemplars:
+          - problem: 'Two ships leave port on courses $60^\circ$ apart, traveling $40$ km and $30$ km. How far apart are they?'
+            answer: "10√13 km"
+            solution_sketch: '$d^2 = 1600 + 900 - 2400 \cdot \frac{1}{2} = 1300$.'
+          - problem: 'A triangular park has sides $60$ m and $80$ m meeting at $120^\circ$. Find the third side.'
+            answer: "20√37 m"
+            solution_sketch: '$d^2 = 3600 + 6400 + 4800 = 14800$.'
+    diagnostic_exemplar:
+      problem: 'Two ships leave a port on courses $120^\circ$ apart, one travelling $30$ km and the other $50$ km. How far apart are they?'
+      answer: "70 km"
+      solution_sketch: 'SAS, so use the law of cosines: $c^2 = 900 + 2500 - 2(30)(50)\cos 120^\circ = 3400 + 1500$.'
+    anki_seeds:
+      - front: "Given SSS or SAS use ___; given ASA/AAS use ___."
+        back: "Law of Cosines; Law of Sines."
+        type: basic
+
+  - id: triangle-area-sine
+    name: Triangle Area via Sine
+    core: false                # supplemental applications leaf (terminal area formula)
+    difficulty: 0.7
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 120
+    prerequisites:
+      - id: right-triangle-trig
+        weight: 0.6
+        key: true
+      - id: unit-circle-special-angles
+        weight: 0.5
+    knowledge_points:
+      - id: kp1
+        name: The area formula
+        key_prerequisites: [right-triangle-trig]
+        constraints: "Area = (1/2)·a·b·sin C with special angles"
+        exemplars:
+          - problem: 'Find the area of a triangle with sides $6$ and $8$ meeting at $30^\circ$.'
+            answer: "12"
+            solution_sketch: '$\frac{1}{2} \cdot 6 \cdot 8 \cdot \sin 30^\circ = 24 \cdot \frac{1}{2}$.'
+          - problem: 'Find the area of a triangle with sides $5$ and $12$ meeting at $90^\circ$.'
+            answer: "30"
+      - id: kp2
+        name: Exact areas with radicals
+        key_prerequisites: [right-triangle-trig, unit-circle-special-angles]
+        constraints: "included angles of 45 or 60 degrees, so the area carries a radical; integer side lengths"
+        exemplars:
+          - problem: 'Find the area of a triangle with sides $4$ and $6$ meeting at $60^\circ$.'
+            answer: "6√3"
+            solution_sketch: '$\frac{1}{2} \cdot 24 \cdot \frac{\sqrt{3}}{2} = 6\sqrt{3}$.'
+          - problem: 'Find the area of a triangle with sides $10$ and $10$ meeting at $45^\circ$.'
+            answer: "25√2"
+      - id: kp3
+        name: Obtuse included angles
+        key_prerequisites: [unit-circle-special-angles]
+        constraints: "included angles of 120, 135 or 150 degrees; the sine of the supplement is used, so the area stays positive; integer sides"
+        exemplars:
+          - problem: 'Find the area of a triangle with sides $6$ and $10$ meeting at $150^\circ$.'
+            answer: "15"
+            solution_sketch: '$\sin 150^\circ = \frac{1}{2}$; $\frac{1}{2} \cdot 60 \cdot \frac{1}{2} = 15$.'
+          - problem: 'Find the area of a triangle with sides $8$ and $9$ meeting at $120^\circ$.'
+            answer: "18√3"
+            solution_sketch: '$\sin 120^\circ = \frac{\sqrt{3}}{2}$; $\frac{1}{2} \cdot 72 \cdot \frac{\sqrt{3}}{2}$.'
+    diagnostic_exemplar:
+      problem: 'Find the area of a triangle with sides $6$ and $10$ meeting at $120^\circ$.'
+      answer: "15√3"
+      solution_sketch: '$\frac{1}{2}ab\sin C = \frac{1}{2}(6)(10)\sin 120^\circ = 30 \cdot \frac{\sqrt{3}}{2}$.'
+    anki_seeds:
+      - front: "Area of a triangle from sides a, b and included angle C?"
+        back: "(1/2)·a·b·sin C"
+        type: basic
