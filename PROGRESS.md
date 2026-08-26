@@ -28,7 +28,16 @@ atom (`x*cos(2)`); a percent rescaled the whole body; an unbounded LCM cost 8.4 
 in-grammar answer; a space-grouped numerator read as a mixed number. Rulings are in the
 record. Fix units FIXM2a–c.
 
-Known items for the M2 fix wave: the lexer refuses a multi-letter run (`3xy^2`, 11
+Fix units FIXM2a–c fixed all 21 plus the known items: mixed numbers with vulgar
+glyphs (`2⅓` = 7/3), labels as `Ast::Assign` with symmetric tolerance and name
+comparison, juxtaposed function arguments (`cos 2x` = `cos(2x)`), percent bound to its
+number, times-`x`/`X` between numerals, multi-letter runs split (with prose still
+refused), `ln`≡`log`, `Atom::Exp`, a width-charged work bound, debug/release timing
+rules, a killable oracle worker. Regenerated: corpus split 3,227 parsed / 265
+undecidable; oracle set 14,989 pairs, class 3 agreement 14,037/14,037, 21 documented
+divergences. Gate with the live oracle green.
+
+Known items before the M2 fix wave were: the lexer refused a multi-letter run (`3xy^2`, 11
 corpus answers on 9 topics) — split unknown letter runs into single-letter variables
 except function names and differentials; `e` and `E` both read as Euler's number (1.0
 reads lowercase `e` as a symbol); spec §8.2/§8.3 counts to annotate with the measured
