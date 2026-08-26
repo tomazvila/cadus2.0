@@ -87,6 +87,35 @@ took the product reading; one 4,000-char in-grammar answer cost 378 ms in releas
 work bound did not charge sum rebuilds); two missing negative tests. Fix unit FIXM2j;
 then M2 closes (four rounds: 21, 17, 14, 4).
 
+### M2 close (2026-08-27)
+
+FIXM2j fixed the four round-4 findings (a `b/c` fraction after a `/`- or `^`-consumed
+number is Undecidable; the work bound charges sum rebuilds — the 3,267-char review case
+went from 369 ms decided to 0.8 ms refused; the corpus worst case is 104 µs in release;
+two negative tests). Final gate on `main` with the live oracle: all steps PASS.
+
+What M2 delivers: `cadus_core::answer` — normalization (six whole-string steps), a lexer
+with LaTeX and glyph tokens, a recursive-descent parser for the decidable grammar
+(integers, decimals, fractions, mixed numbers in five spellings, radicals, polynomials,
+function applications, tuples/sets/lists, intervals and chained inequalities, percent,
+value labels), exact canonical forms (BigRational, squarefree radicals, sparse
+polynomials, `Canon::Value {num, den}`), `check(expected, learner, kind) → Decided{correct,
+notation} | Undecidable`, a work bound, and a 1.0 oracle harness with 47 generator
+families: 17,874 pairs, class-3 agreement 16,554/16,554, 355 documented divergences in
+14 specific classes. Corpus: 3,227 of 3,492 answers decidable; the 265 residue rows are
+listed for re-kinding in `docs/reference/undecidable-answers.md`.
+
+Review record: four rounds, 21 + 17 + 14 + 4 confirmed, all fixed and mutation-checked.
+
+### Decision for the owner (M2)
+
+The D6 rule makes a decimal approximation of an exact value WRONG in 2.0: `0.3333333333`
+for `1/3`, `11.31370850` for `8√2` (240 generated pairs, 1.0 accepted them at 1e-6).
+A decidable alternative exists: accept a learner decimal when it equals the exact value
+rounded to the digits the learner typed (exact rational arithmetic, no floats) and flag
+it `notation`, the way the dot-thousands reading is flagged. This changes verdicts on
+real learner input, so it is the owner's call; the code path is a small M2 follow-up.
+
 Known items before the M2 fix wave were: the lexer refused a multi-letter run (`3xy^2`, 11
 corpus answers on 9 topics) — split unknown letter runs into single-letter variables
 except function names and differentials; `e` and `E` both read as Euler's number (1.0
