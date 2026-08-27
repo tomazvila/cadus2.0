@@ -181,6 +181,11 @@ fn store_direct_normal_dependencies_are_the_literal_list() {
         found,
         vec![
             "cadus-core",
+            // M5 U9 added `serde`. `diagnosis::JobPayload` is the document the
+            // grade transaction writes and the worker claim reads, so it derives
+            // its reader and its writer. It is a data-format crate: it opens
+            // nothing and it talks to no model.
+            "serde",
             "serde_json",
             "sqlx",
             "thiserror",

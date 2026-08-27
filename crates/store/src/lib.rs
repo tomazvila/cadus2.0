@@ -27,6 +27,7 @@ use uuid::Uuid;
 
 pub mod auth;
 pub mod content;
+pub mod diagnosis;
 pub mod pool;
 pub mod state;
 

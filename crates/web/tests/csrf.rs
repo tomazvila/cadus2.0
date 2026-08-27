@@ -106,19 +106,15 @@ const REJECTION_BODY: &str = concat!(
 const EMPTY_BODY_REJECTION: &str =
     r#"{"error":{"code":"invalid_request","message":"The body is not JSON."}}"#;
 
-/// The body of the `404` fallback, character for character.
-const NOT_FOUND_BODY: &str =
-    r#"{"error":{"code":"not_found","message":"This path serves nothing."}}"#;
-
 /// The body of the `401` the `Tenant` extractor answers, character for
 /// character.
 ///
 /// Unit U8 added `POST /api/task/{task_id}/answer`, so a request the CSRF layer
 /// ALLOWS now reaches that route and its tenant guard. These tests carry no
 /// credential, so "not refused by the CSRF layer" is this `401` on the task
-/// paths and the `404` fallback on the `/api/auth/*` paths that unit U4 has not
-/// added yet. Both are literals, and both are stronger than "not 403": a layer
-/// that answered `500` would pass the weaker check.
+/// paths. It is a literal, and it is stronger than "not 403": a layer that
+/// answered `500` would pass the weaker check. The `/api/auth/*` paths that
+/// unit U4 added answer their own refusal, so they carry their own marker.
 const UNAUTHORIZED_BODY: &str = concat!(
     r#"{"error":{"code":"unauthorized","message":"This route needs a session. Send the "#,
     r#"session cookie or a bearer token."}}"#

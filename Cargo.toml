@@ -99,6 +99,13 @@ tracing-subscriber = { version = "0.3.23", features = ["env-filter"] }
 anyhow = { version = "1.0.104" }
 thiserror = { version = "2.0.20" }
 
+# M5 U9. The A4 push stream. `tokio-stream` turns the broadcast receiver of the
+# diagnosis hub into the `Stream` that `axum::response::sse::Sse` takes. `sqlx`
+# already resolves the same version, so the lock file gains no crate.
+tokio-stream = { version = "0.1.19", default-features = false, features = [
+    "sync",
+] }
+
 # HTTP test helpers. `tower` gives `ServiceExt::oneshot`, so a route test drives
 # the router in process and needs no socket.
 tower = { version = "0.5.3", features = ["util"] }

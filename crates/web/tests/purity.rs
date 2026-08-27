@@ -212,6 +212,11 @@ fn web_direct_normal_dependencies_are_the_declared_list() {
             "sqlx",
             "subtle",
             "tokio",
+            // M5 U9 added `tokio-stream`. It is a stream ADAPTER: it turns the
+            // broadcast receiver of the diagnosis hub into the `Stream` that
+            // `axum::response::sse::Sse` takes. It opens nothing and it talks to
+            // no model.
+            "tokio-stream",
             "tracing",
             "tracing-subscriber",
             "unicode-normalization",
@@ -229,6 +234,10 @@ fn store_direct_normal_dependencies_are_the_declared_list() {
         found,
         vec![
             "cadus-core",
+            // M5 U9 added `serde`. `diagnosis::JobPayload` is the document the
+            // grade transaction writes and the worker claim reads, so it derives
+            // its reader and its writer. It is a data-format crate.
+            "serde",
             "serde_json",
             "sqlx",
             "thiserror",

@@ -36,8 +36,16 @@
 //! the `quiz_result` and the multi-step closes, their weighted scores, and their
 //! XP) is not ported yet, and neither is `POST /api/task/{id}/abort`. A
 //! non-lesson task therefore reaches `done` by count parity, exactly as
-//! `api.py:1610-1614` does, but no close event stands behind it. The `diagnosis`
-//! field of section 2.1 belongs to unit U9.
+//! `api.py:1610-1614` does, but no close event stands behind it.
+//!
+//! # The `diagnosis` field (unit U9)
+//!
+//! [`crate::diagnosis`] owns every rule of it. This path calls
+//! `diagnosis::decide` at ONE point, after the attempt is appended and before
+//! the commit, so the enqueue of spec section 4.3 step 9 shares the fate of the
+//! attempt: a grade that rolls back leaves no job row. A quiz reply carries no
+//! `diagnosis` and starts no job — a quiz reveals nothing before its batch
+//! reveal (trap W7), and the reveal unit is the one that hands the prose out.
 
 use axum::Json;
 use axum::extract::{Path, State};
@@ -58,10 +66,11 @@ use cadus_store::state::{EventRow, append_event, project_and_save};
 use serde_json::{Value, json};
 
 use crate::AppState;
+use crate::diagnosis::{self, Miss, Pending};
 use crate::error::ApiError;
 use crate::serve::{Open, find, install_next, open, progress_for, unix_seconds};
 use crate::session::{bound, content, failed, now_pair, projection_input, write_state};
-use crate::state::{INVALID_REQUEST, STATE_UNAVAILABLE, ServedProblem, Tenant, WebState};
+use crate::state::{Content, INVALID_REQUEST, STATE_UNAVAILABLE, ServedProblem, Tenant, WebState};
 
 /// The code of an answer or a work field over its cap (`api.py:1292-1293`).
 pub const ANSWER_TOO_LARGE: &str = "answer_too_large";
@@ -703,6 +712,27 @@ pub async fn answer(
     .await
     .map_err(|err| failed(&err))?;
     if appended.is_none() {
+        // The replay reads the pre-authored answer and the job id the FIRST
+        // request wrote, and writes neither. A retried request therefore names
+        // one job, not two, and the rollback below leaves the queue as it was.
+        let replayed = diagnosis::decide(
+            &state,
+            &mut tx,
+            user_id,
+            &mut scratch,
+            &pending(
+                content,
+                &served,
+                kind,
+                &attempt_id,
+                &session,
+                &task_id,
+                &submitted,
+                &grade,
+                false,
+            ),
+        )
+        .await?;
         tx.rollback().await.map_err(|err| failed(&err.into()))?;
         return Ok(Json(json!({
             "attempt_id": attempt_id,
@@ -713,6 +743,7 @@ pub async fn answer(
             "task_status": STATUS_ALREADY_RECORDED,
             "remediation": Vec::<Value>::new(),
             "next": Value::Null,
+            "diagnosis": replayed,
         })));
     }
 
@@ -727,6 +758,32 @@ pub async fn answer(
     bound(&state.db, project_and_save(&mut tx, user_id, &input, None))
         .await
         .map_err(|err| failed(&err))?;
+
+    // Step 9. The pre-authored lookup and, on a miss with none, the enqueue.
+    // Both run inside THIS transaction (spec section 4.3, D-M5-1). A quiz
+    // reveals nothing before its batch reveal, so it asks for nothing here.
+    let diagnosis = if task.task_type == TaskType::Quiz {
+        Value::Null
+    } else {
+        diagnosis::decide(
+            &state,
+            &mut tx,
+            user_id,
+            &mut scratch,
+            &pending(
+                content,
+                &served,
+                kind,
+                &attempt_id,
+                &session,
+                &task_id,
+                &submitted,
+                &grade,
+                true,
+            ),
+        )
+        .await?
+    };
 
     // Step 8 and step 10: move the task on, draw the next problem, write the row.
     let closed = task_moved_on(&mut scratch, &task, &moved, graph, &served);
@@ -783,7 +840,45 @@ pub async fn answer(
         next,
         unavailable,
         &task,
+        diagnosis,
     )))
+}
+
+/// What the diagnosis is about: THIS submission, never the stashed H3 attempt.
+///
+/// A failed re-solve records the stashed CORRECT answer with `correct` rewritten
+/// to false (section 5.4), so the recorded row names an answer that is not a
+/// mistake. The mistake the learner just made is `submitted.answer`, and that is
+/// what the worker must read.
+#[expect(
+    clippy::too_many_arguments,
+    reason = "the call sites of one function; every value comes from a different source"
+)]
+fn pending<'a>(
+    content: &'a Content,
+    served: &'a ServedProblem,
+    kind: AnswerKind,
+    attempt_id: &'a str,
+    session: &'a str,
+    task_id: &'a str,
+    submitted: &'a Submission,
+    grade: &Grade,
+    write: bool,
+) -> Pending<'a> {
+    Pending {
+        cfg: &content.cfg,
+        served,
+        kind,
+        miss: Miss {
+            attempt_id,
+            session: Some(session),
+            task_id,
+            answer: &submitted.answer,
+            work: submitted.work.as_deref(),
+            correct: grade.correct,
+        },
+        write,
+    }
 }
 
 /// Build the `attempt` event of one submission (`_graded_answer`).
@@ -881,6 +976,7 @@ fn reply(
     next: Option<Value>,
     unavailable: bool,
     task: &Task,
+    diagnosis: Value,
 ) -> Value {
     let remediation: Vec<Value> = moved
         .remediation
@@ -902,6 +998,7 @@ fn reply(
         "task_status": moved.status,
         "remediation": remediation,
         "next": next,
+        "diagnosis": diagnosis,
     });
     let Some(map) = payload.as_object_mut() else {
         return payload;

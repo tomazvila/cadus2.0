@@ -46,6 +46,7 @@
 
 pub mod auth;
 pub mod cookie;
+pub mod diagnosis;
 pub mod error;
 pub mod grade;
 pub mod health;
@@ -66,6 +67,7 @@ use cadus_store::{Db, RoleInfo, StoreError, bounded};
 use crate::auth::oauth::OAuthConfig;
 use crate::auth::password::Argon2Profile;
 use crate::cookie::CookiePosture;
+use crate::diagnosis::DiagnosisHub;
 use crate::metrics::Registry;
 use crate::origin::OriginPolicy;
 use crate::state::Content;
@@ -102,6 +104,11 @@ pub struct AppState {
     /// the provider calls (M5 U5). The default serves no provider, so both
     /// OAuth routes answer `404 not_found`.
     pub oauth: OAuthConfig,
+    /// The A4 push hub (M5 U9, D7). One process-wide `LISTEN` connection feeds
+    /// it, and every open `/api/diagnosis/stream` subscribes to it. A process
+    /// that starts no listener still serves the poll fallback, so the default
+    /// hub is a hub with nothing attached.
+    pub diagnosis: Arc<DiagnosisHub>,
 }
 
 impl AppState {
@@ -116,6 +123,7 @@ impl AppState {
             content: None,
             argon2: Argon2Profile::PROD,
             oauth: OAuthConfig::default(),
+            diagnosis: Arc::new(DiagnosisHub::new()),
         }
     }
 
@@ -153,6 +161,16 @@ impl AppState {
         self.oauth = oauth;
         self
     }
+
+    /// The same state with a shared A4 push hub (M5 U9).
+    ///
+    /// The binary builds ONE hub, hands it here, and runs the `LISTEN` loop on
+    /// the same handle, so every stream of the process reads one connection.
+    #[must_use]
+    pub fn with_diagnosis(mut self, diagnosis: Arc<DiagnosisHub>) -> Self {
+        self.diagnosis = diagnosis;
+        self
+    }
 }
 
 /// Build the axum application.
@@ -186,6 +204,9 @@ pub fn create_app(state: AppState) -> Router {
         // never reads them and the provider's callback navigation is never
         // refused.
         .merge(auth::oauth_routes::router())
+        // M5 U9: the A4 client surface. Both are GET, and both sit before the
+        // three layers, so the stream carries the section 3.1 headers too.
+        .merge(diagnosis::router())
         // axum's own fallbacks answer with an empty body, so both of them
         // return the envelope instead (spec section 2).
         .fallback(error::not_found)

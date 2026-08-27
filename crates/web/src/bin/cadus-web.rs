@@ -47,6 +47,7 @@ use cadus_store::{Db, DbConfig, StoreError};
 use cadus_web::auth::oauth::OAuthConfig;
 use cadus_web::auth::password::{ARGON2_PROFILE_VAR, Argon2Profile};
 use cadus_web::cookie::{CookiePosture, INSECURE_COOKIE_VAR};
+use cadus_web::diagnosis::DiagnosisHub;
 use cadus_web::origin::{OriginPolicy, PUBLIC_ORIGIN_VAR};
 use cadus_web::state::Content;
 use cadus_web::{AppState, BIND_ADDR_VAR, create_app};
@@ -289,13 +290,33 @@ async fn run() -> Result<(), Fatal> {
     // after the message, so that literal never appeared (finding #10).
     tracing::info!("cadus-web: listening on {local}");
 
+    // M5 U9, D7. ONE `LISTEN diagnosis_done` connection feeds every open
+    // `/api/diagnosis/stream` of this process. The task runs beside the server:
+    // a listener that cannot start leaves the poll fallback serving, which is
+    // the required fallback anyway (spec section 2.1), so it never stops the
+    // start.
+    let hub = Arc::new(DiagnosisHub::new());
+    let listener_task = tokio::spawn({
+        let hub = Arc::clone(&hub);
+        let db = db.clone();
+        async move {
+            if let Err(err) = hub.listen(&db).await {
+                tracing::error!(
+                    error = %err,
+                    "cadus-web: the diagnosis listener stopped; clients fall back to polling"
+                );
+            }
+        }
+    });
+
     let app = create_app(
         AppState::new(db.clone())
             .with_posture(posture)
             .with_origin(origin)
             .with_content(Arc::clone(&content))
             .with_argon2(argon2)
-            .with_oauth(oauth),
+            .with_oauth(oauth)
+            .with_diagnosis(Arc::clone(&hub)),
     );
     // The per-address rate rules key on the client address, so the service needs
     // the peer address of the socket. `axum::serve` carries it only through this
@@ -339,6 +360,9 @@ async fn run() -> Result<(), Fatal> {
         }
     };
 
+    // The listener holds one pooled connection, so it ends BEFORE the pool
+    // close; otherwise the close waits for a connection that never comes back.
+    listener_task.abort();
     close_within(close_budget(deadline, drain_elapsed), db.pool().close()).await;
     result.map_err(|err| Fatal::Startup(format!("serve failed: {err}")))
 }
