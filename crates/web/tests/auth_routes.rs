@@ -31,8 +31,8 @@ use cadus_store::test_support::TestDb;
 use cadus_web::auth::rate::{RateRule, UNKNOWN_CLIENT_IP, client_ip};
 use common::{
     Answer, GOOD_PASSWORD, OTHER_PASSWORD, SESSION_TOKEN_ONE, SESSION_TOKEN_TWO, SHORT_PASSWORD,
-    app_of, disable, get, get_bearer, last_seen_at, login, mark_verified, post, post_bearer,
-    seed_session, send, session_count, shift, signup, user_id, verified_login,
+    app_of, disable, get, get_bearer, in_one_window, last_seen_at, login, mark_verified, post,
+    post_bearer, seed_session, send, session_count, shift, signup, user_id, verified_login,
 };
 use serde_json::{Value, json};
 
@@ -133,37 +133,43 @@ async fn signup_mints_one_verification_token_for_a_new_address_only() {
 /// the 6th call from one host are the first two refused.
 ///
 /// The numbers are the 1.0 literals: 3 per address and 5 per host, in one hour.
+/// `in_one_window` holds the six calls inside one counter window.
 #[tokio::test]
 async fn the_signup_counters_refuse_the_fourth_address_call_and_the_sixth_host_call() {
     TestDb::with(|db| async move {
         let app = app_of(&db);
 
-        for round in 1..=3 {
-            let answer = signup(&app, "victim@example.com", GOOD_PASSWORD).await;
-            assert_eq!(answer.status.as_u16(), 200, "call {round} for one address");
-        }
+        let (fourth, sixth) = in_one_window(&db, 3_600, || async {
+            for round in 1..=3 {
+                let answer = signup(&app, "victim@example.com", GOOD_PASSWORD).await;
+                assert_eq!(answer.status.as_u16(), 200, "call {round} for one address");
+            }
 
-        let fourth = signup(&app, "victim@example.com", GOOD_PASSWORD).await;
+            let fourth = signup(&app, "victim@example.com", GOOD_PASSWORD).await;
+
+            // The host tally is still at 3, so two more addresses go through.
+            assert_eq!(
+                signup(&app, "one@example.com", GOOD_PASSWORD)
+                    .await
+                    .status
+                    .as_u16(),
+                200
+            );
+            assert_eq!(
+                signup(&app, "two@example.com", GOOD_PASSWORD)
+                    .await
+                    .status
+                    .as_u16(),
+                200
+            );
+
+            let sixth = signup(&app, "three@example.com", GOOD_PASSWORD).await;
+            (fourth, sixth)
+        })
+        .await;
+
         assert_eq!(fourth.status.as_u16(), 429);
         assert_eq!(fourth.code(), "rate_limited");
-
-        // The host tally is still at 3, so two more addresses go through.
-        assert_eq!(
-            signup(&app, "one@example.com", GOOD_PASSWORD)
-                .await
-                .status
-                .as_u16(),
-            200
-        );
-        assert_eq!(
-            signup(&app, "two@example.com", GOOD_PASSWORD)
-                .await
-                .status
-                .as_u16(),
-            200
-        );
-
-        let sixth = signup(&app, "three@example.com", GOOD_PASSWORD).await;
         assert_eq!(sixth.status.as_u16(), 429);
         assert_eq!(sixth.code(), "rate_limited");
     })
@@ -177,17 +183,19 @@ async fn the_login_rule_refuses_the_thirty_first_attempt_from_one_host() {
     TestDb::with(|db| async move {
         let app = app_of(&db);
 
-        for index in 0..30 {
-            let answer = login(
-                &app,
-                &format!("spray{index}@example.com"),
-                "wrong wrong wrong",
-            )
-            .await;
-            assert_eq!(answer.status.as_u16(), 401, "attempt {index}");
-        }
-
-        let refused = login(&app, "spray30@example.com", "wrong wrong wrong").await;
+        let refused = in_one_window(&db, 300, || async {
+            for index in 0..30 {
+                let answer = login(
+                    &app,
+                    &format!("spray{index}@example.com"),
+                    "wrong wrong wrong",
+                )
+                .await;
+                assert_eq!(answer.status.as_u16(), 401, "attempt {index}");
+            }
+            login(&app, "spray30@example.com", "wrong wrong wrong").await
+        })
+        .await;
 
         assert_eq!(refused.status.as_u16(), 429);
         assert_eq!(refused.code(), "rate_limited");
@@ -202,12 +210,14 @@ async fn the_login_rule_refuses_the_eleventh_attempt_for_one_address() {
     TestDb::with(|db| async move {
         let app = app_of(&db);
 
-        for index in 1..=10 {
-            let answer = login(&app, "target@example.com", "wrong wrong wrong").await;
-            assert_eq!(answer.status.as_u16(), 401, "attempt {index}");
-        }
-
-        let refused = login(&app, "target@example.com", "wrong wrong wrong").await;
+        let refused = in_one_window(&db, 300, || async {
+            for index in 1..=10 {
+                let answer = login(&app, "target@example.com", "wrong wrong wrong").await;
+                assert_eq!(answer.status.as_u16(), 401, "attempt {index}");
+            }
+            login(&app, "target@example.com", "wrong wrong wrong").await
+        })
+        .await;
 
         assert_eq!(refused.status.as_u16(), 429);
         assert_eq!(refused.code(), "rate_limited");
@@ -223,9 +233,12 @@ async fn the_login_rule_refuses_the_eleventh_attempt_for_one_address() {
 async fn an_address_refusal_does_not_spend_a_host_call() {
     TestDb::with(|db| async move {
         let app = app_of(&db);
-        for _ in 0..4 {
-            signup(&app, "victim@example.com", GOOD_PASSWORD).await;
-        }
+        in_one_window(&db, 3_600, || async {
+            for _ in 0..4 {
+                signup(&app, "victim@example.com", GOOD_PASSWORD).await;
+            }
+        })
+        .await;
 
         let host_count: i32 =
             sqlx::query_scalar("SELECT count FROM auth_rate_counters WHERE scope = 'signup_ip'")
@@ -251,13 +264,69 @@ async fn the_address_counter_keys_on_the_normalized_address() {
     TestDb::with(|db| async move {
         let app = app_of(&db);
 
-        signup(&app, "Mixed@Example.COM", GOOD_PASSWORD).await;
-        signup(&app, "  mixed@example.com  ", GOOD_PASSWORD).await;
-        signup(&app, "MIXED@EXAMPLE.COM", GOOD_PASSWORD).await;
-        let fourth = signup(&app, "mixed@example.com", GOOD_PASSWORD).await;
+        let fourth = in_one_window(&db, 3_600, || async {
+            signup(&app, "Mixed@Example.COM", GOOD_PASSWORD).await;
+            signup(&app, "  mixed@example.com  ", GOOD_PASSWORD).await;
+            signup(&app, "MIXED@EXAMPLE.COM", GOOD_PASSWORD).await;
+            signup(&app, "mixed@example.com", GOOD_PASSWORD).await
+        })
+        .await;
 
         assert_eq!(fourth.status.as_u16(), 429);
         assert_eq!(fourth.code(), "rate_limited");
+    })
+    .await;
+}
+
+/// (9a) The refusal of a registered address is byte for byte the refusal of an
+/// unregistered one.
+///
+/// Both counters run BEFORE any account lookup (specification section 3.2), so
+/// nothing in a `429` tells the two apart. The rule below is the forgot one: 3
+/// per address and 10 per host in one hour. Eight calls spend six host calls, so
+/// the host ceiling stays clear and BOTH refusals come from the address counter.
+#[tokio::test]
+async fn the_rate_refusal_of_a_known_address_matches_an_unknown_one() {
+    TestDb::with(|db| async move {
+        let app = app_of(&db);
+        signup(&app, "known@example.com", GOOD_PASSWORD).await;
+
+        let forgot = |address: &'static str| {
+            let app = app.clone();
+            async move {
+                send(
+                    &app,
+                    post("/api/auth/password/forgot", &json!({ "email": address })),
+                )
+                .await
+            }
+        };
+
+        let (known, unknown) = in_one_window(&db, 3_600, || async {
+            for round in 1..=3 {
+                assert_eq!(
+                    forgot("known@example.com").await.status.as_u16(),
+                    200,
+                    "known call {round}"
+                );
+            }
+            let known = forgot("known@example.com").await;
+
+            for round in 1..=3 {
+                assert_eq!(
+                    forgot("never@example.com").await.status.as_u16(),
+                    200,
+                    "unknown call {round}"
+                );
+            }
+            (known, forgot("never@example.com").await)
+        })
+        .await;
+
+        assert_eq!(known.status.as_u16(), 429);
+        assert_eq!(known.code(), "rate_limited");
+        assert_eq!(unknown.status, known.status);
+        assert_eq!(unknown.body, known.body);
     })
     .await;
 }
@@ -303,6 +372,33 @@ async fn a_disabled_account_answers_401_invalid_credentials() {
 
         assert_eq!(answer.status.as_u16(), 401);
         assert_eq!(answer.code(), "invalid_credentials");
+    })
+    .await;
+}
+
+/// (11a) An account with no password hash gets the same refusal, and it opens
+/// no session.
+///
+/// A NULL `password_hash` is the OAuth-only shape, and the specification refuses
+/// it at login step 1 (section 3.3, "Login"). The account below is verified and
+/// live, so the refusal comes from the missing password alone. A `200` here is
+/// a sign-in with a password that the account never had.
+#[tokio::test]
+async fn an_account_with_no_password_answers_401_invalid_credentials() {
+    TestDb::with(|db| async move {
+        let app = app_of(&db);
+        signup(&app, "oauth@example.com", GOOD_PASSWORD).await;
+        mark_verified(&db, "oauth@example.com").await;
+        common::clear_password_hash(&db, "oauth@example.com").await;
+        let user = user_id(&db, "oauth@example.com").await;
+
+        let answer = login(&app, "oauth@example.com", GOOD_PASSWORD).await;
+
+        assert_eq!(answer.status.as_u16(), 401);
+        assert_eq!(answer.code(), "invalid_credentials");
+        assert_eq!(answer.body.get("session_token"), None);
+        assert_eq!(answer.cookie(), None);
+        assert_eq!(session_count(&db, user).await, 0);
     })
     .await;
 }
@@ -705,6 +801,25 @@ async fn logout_all_ends_every_session_of_the_account() {
                 .as_u16(),
             401
         );
+    })
+    .await;
+}
+
+/// (24a) Sign-out-everywhere is guarded. Sign-out is public and idempotent.
+/// This route is neither: with no credential it is `401 unauthorized`, and it
+/// deletes nothing.
+#[tokio::test]
+async fn logout_all_without_a_session_is_401_unauthorized() {
+    TestDb::with(|db| async move {
+        let app = app_of(&db);
+        verified_login(&db, &app, "kept@example.com", GOOD_PASSWORD).await;
+        let user = user_id(&db, "kept@example.com").await;
+
+        let answer = send(&app, post("/api/auth/logout-all", &json!({}))).await;
+
+        assert_eq!(answer.status.as_u16(), 401);
+        assert_eq!(answer.code(), "unauthorized");
+        assert_eq!(session_count(&db, user).await, 1);
     })
     .await;
 }

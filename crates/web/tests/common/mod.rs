@@ -18,6 +18,8 @@
     clippy::unimplemented
 )]
 
+use std::future::Future;
+
 use axum::Router;
 use axum::body::Body;
 use axum::http::{HeaderMap, Request, StatusCode};
@@ -331,6 +333,19 @@ pub async fn password_hash(db: &TestDb, email: &str) -> Option<String> {
         .unwrap()
 }
 
+/// Drop the password hash of `email` with the admin pool.
+///
+/// The row that stays behind has the shape of an OAuth-only account: an address
+/// and no password. The M5 call order refuses a password login against it
+/// (specification section 3.3, "Login").
+pub async fn clear_password_hash(db: &TestDb, email: &str) {
+    sqlx::query("UPDATE users SET password_hash = NULL WHERE email = $1::text::citext")
+        .bind(email)
+        .execute(&db.admin)
+        .await
+        .unwrap();
+}
+
 /// Whether `email` is a verified address.
 pub async fn is_verified(db: &TestDb, email: &str) -> bool {
     let stamp: Option<DateTime<Utc>> =
@@ -345,4 +360,59 @@ pub async fn is_verified(db: &TestDb, email: &str) -> bool {
 /// `now` plus `secs`, for a seeded window.
 pub fn shift(secs: i64) -> DateTime<Utc> {
     DateTime::from_timestamp(Utc::now().timestamp() + secs, 0).unwrap()
+}
+
+/// The fixed-window index of the cluster clock, for a window of `window_secs`.
+///
+/// A rate rule floors `now` to a window that starts at the 1970 epoch
+/// (specification section 3.2). The expression below writes that formula in SQL,
+/// so the guard never calls the function it guards.
+pub async fn window_index(db: &TestDb, window_secs: i64) -> i64 {
+    sqlx::query_scalar("SELECT floor(extract(epoch FROM now()) / $1)::bigint")
+        .bind(window_secs)
+        .fetch_one(&db.admin)
+        .await
+        .unwrap()
+}
+
+/// Delete every rate counter of this throwaway database.
+pub async fn clear_rate_counters(db: &TestDb) {
+    sqlx::query("DELETE FROM auth_rate_counters")
+        .execute(&db.admin)
+        .await
+        .unwrap();
+}
+
+/// Run `burst` inside ONE fixed window, and give the answer of that run.
+///
+/// **Why the guard exists.** The windows are fixed, not sliding: a burst that
+/// crosses a boundary starts a second counter, the tally falls back to 1, and
+/// the refusal the test asks for never comes. The shortest window is 300
+/// seconds and a burst of 31 logins takes seconds, so the crossing is rare and
+/// it is not impossible. A test that fails once a month is a test nobody trusts.
+///
+/// The guard reads the window index before and after the burst. Two equal
+/// indices mean one window held the whole burst, and the answer stands. Two
+/// different indices mean the window rolled: the guard clears the counters and
+/// runs the burst again. A second crossing fails the test instead of looping.
+pub async fn in_one_window<F, Fut, T>(db: &TestDb, window_secs: i64, mut burst: F) -> T
+where
+    F: FnMut() -> Fut,
+    Fut: Future<Output = T>,
+{
+    let opened = window_index(db, window_secs).await;
+    let answer = burst().await;
+    if window_index(db, window_secs).await == opened {
+        return answer;
+    }
+
+    clear_rate_counters(db).await;
+    let opened = window_index(db, window_secs).await;
+    let answer = burst().await;
+    assert_eq!(
+        window_index(db, window_secs).await,
+        opened,
+        "the burst crossed a window boundary twice"
+    );
+    answer
 }

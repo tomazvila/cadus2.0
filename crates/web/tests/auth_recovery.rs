@@ -25,8 +25,8 @@ mod common;
 use cadus_store::test_support::TestDb;
 use common::{
     GOOD_PASSWORD, OTHER_PASSWORD, RESET_TOKEN_ONE, RESET_TOKEN_TWO, SHORT_PASSWORD,
-    VERIFY_TOKEN_ONE, VERIFY_TOKEN_TWO, app_of, disable, get_bearer, is_verified, login,
-    mark_verified, password_hash, post, post_bearer, seed_token, send, session_count, shift,
+    VERIFY_TOKEN_ONE, VERIFY_TOKEN_TWO, app_of, disable, get_bearer, in_one_window, is_verified,
+    login, mark_verified, password_hash, post, post_bearer, seed_token, send, session_count, shift,
     signup, token_count, user_id, verified_login,
 };
 use serde_json::{Value, json};
@@ -255,35 +255,39 @@ async fn the_forgot_rule_refuses_the_fourth_address_call_and_the_eleventh_host_c
         let app = app_of(&db);
         let body = json!({ "email": "one@example.com" });
 
-        for round in 1..=3 {
-            let answer = send(&app, post("/api/auth/password/forgot", &body)).await;
-            assert_eq!(answer.status.as_u16(), 200, "call {round}");
-        }
-        let fourth = send(&app, post("/api/auth/password/forgot", &body)).await;
-        assert_eq!(fourth.status.as_u16(), 429);
-        assert_eq!(fourth.code(), "rate_limited");
+        let (fourth, eleventh) = in_one_window(&db, 3_600, || async {
+            for round in 1..=3 {
+                let answer = send(&app, post("/api/auth/password/forgot", &body)).await;
+                assert_eq!(answer.status.as_u16(), 200, "call {round}");
+            }
+            let fourth = send(&app, post("/api/auth/password/forgot", &body)).await;
 
-        // The host tally stands at 3. Seven more addresses fill it to 10.
-        for index in 0..7 {
-            let answer = send(
+            // The host tally stands at 3. Seven more addresses fill it to 10.
+            for index in 0..7 {
+                let answer = send(
+                    &app,
+                    post(
+                        "/api/auth/password/forgot",
+                        &json!({ "email": format!("host{index}@example.com") }),
+                    ),
+                )
+                .await;
+                assert_eq!(answer.status.as_u16(), 200, "host call {index}");
+            }
+            let eleventh = send(
                 &app,
                 post(
                     "/api/auth/password/forgot",
-                    &json!({ "email": format!("host{index}@example.com") }),
+                    &json!({ "email": "last@example.com" }),
                 ),
             )
             .await;
-            assert_eq!(answer.status.as_u16(), 200, "host call {index}");
-        }
-        let eleventh = send(
-            &app,
-            post(
-                "/api/auth/password/forgot",
-                &json!({ "email": "last@example.com" }),
-            ),
-        )
+            (fourth, eleventh)
+        })
         .await;
 
+        assert_eq!(fourth.status.as_u16(), 429);
+        assert_eq!(fourth.code(), "rate_limited");
         assert_eq!(eleventh.status.as_u16(), 429);
         assert_eq!(eleventh.code(), "rate_limited");
     })
@@ -683,34 +687,38 @@ async fn the_resend_rule_refuses_the_fourth_address_call_and_the_eleventh_host_c
         let app = app_of(&db);
         let body = json!({ "email": "one@example.com" });
 
-        for round in 1..=3 {
-            let answer = send(&app, post("/api/auth/verify-email/resend", &body)).await;
-            assert_eq!(answer.status.as_u16(), 200, "call {round}");
-        }
-        let fourth = send(&app, post("/api/auth/verify-email/resend", &body)).await;
-        assert_eq!(fourth.status.as_u16(), 429);
-        assert_eq!(fourth.code(), "rate_limited");
+        let (fourth, eleventh) = in_one_window(&db, 3_600, || async {
+            for round in 1..=3 {
+                let answer = send(&app, post("/api/auth/verify-email/resend", &body)).await;
+                assert_eq!(answer.status.as_u16(), 200, "call {round}");
+            }
+            let fourth = send(&app, post("/api/auth/verify-email/resend", &body)).await;
 
-        for index in 0..7 {
-            let answer = send(
+            for index in 0..7 {
+                let answer = send(
+                    &app,
+                    post(
+                        "/api/auth/verify-email/resend",
+                        &json!({ "email": format!("host{index}@example.com") }),
+                    ),
+                )
+                .await;
+                assert_eq!(answer.status.as_u16(), 200, "host call {index}");
+            }
+            let eleventh = send(
                 &app,
                 post(
                     "/api/auth/verify-email/resend",
-                    &json!({ "email": format!("host{index}@example.com") }),
+                    &json!({ "email": "last@example.com" }),
                 ),
             )
             .await;
-            assert_eq!(answer.status.as_u16(), 200, "host call {index}");
-        }
-        let eleventh = send(
-            &app,
-            post(
-                "/api/auth/verify-email/resend",
-                &json!({ "email": "last@example.com" }),
-            ),
-        )
+            (fourth, eleventh)
+        })
         .await;
 
+        assert_eq!(fourth.status.as_u16(), 429);
+        assert_eq!(fourth.code(), "rate_limited");
         assert_eq!(eleventh.status.as_u16(), 429);
         assert_eq!(eleventh.code(), "rate_limited");
     })
