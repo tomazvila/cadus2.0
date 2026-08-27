@@ -1658,10 +1658,13 @@ fn a_wide_coefficient_costs_more_than_a_narrow_one() {
             matches!(outcome, Outcome::Undecidable(_)),
             "{bomb:?} gave {outcome:?}"
         );
-        let one_check_budget = one_check_budget();
+        // A refused bomb takes the bomb budget (M2 review 1 ruling: 50 ms in a
+        // release build, 500 ms in a debug build), not the single-check budget: the
+        // debug bound of 50 ms failed under load while other builds ran on the box.
+        let bomb_budget = bomb_budget();
         assert!(
-            elapsed < one_check_budget,
-            "{bomb:?} took {elapsed:?}, and the budget is {one_check_budget:?}"
+            elapsed < bomb_budget,
+            "{bomb:?} took {elapsed:?}, and the budget is {bomb_budget:?}"
         );
     }
 }
