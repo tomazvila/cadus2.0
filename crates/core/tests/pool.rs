@@ -25,14 +25,17 @@
     clippy::unimplemented
 )]
 
+use cadus_core::curriculum::AnswerKind;
 use cadus_core::curriculum::model::{Exemplar, KnowledgePoint, Slug};
 use cadus_core::learner::problem_text_hash;
 use cadus_core::pool::{
-    Avoid, ExemplarSource, FILL_ROUNDS, FillError, POP_CANDIDATES, PoolCounters, ProblemSource,
-    RING_CAPACITY, Ring, SOURCES, Source, TASK_MEMORY_CAPACITY, TaskMemory, TemplateSource, pick,
-    serve,
+    Avoid, Batch, ExemplarSource, FILL_ROUNDS, FillError, POP_CANDIDATES, PoolCounters,
+    ProblemSource, REFUSAL_FLAG_PERCENT, RING_CAPACITY, Ring, SOURCES, Source,
+    TASK_MEMORY_CAPACITY, TaskMemory, TemplateSource, check_instance, pick, serve,
 };
-use cadus_core::template::{Bindings, Compiled, Instance, Scalar, TemplateDoc, from_body};
+use cadus_core::template::{
+    Bindings, Compiled, GateSpec, Instance, Scalar, TemplateDoc, from_body, gate,
+};
 
 // --------------------------------------------------------------------------
 // Fixtures
@@ -635,8 +638,14 @@ fn the_counters_round_trip_as_a_document() {
     assert_eq!(counters.blocked, 0);
     assert_eq!(counters.pool_exhausted, 0);
 
+    counters.record_undecodable(2);
+    assert_eq!(counters.pool_row_undecodable, 2);
+
     let body = serde_json::to_string(&counters).unwrap();
-    assert_eq!(body, r#"{"served":1,"blocked":0,"pool_exhausted":0}"#);
+    assert_eq!(
+        body,
+        r#"{"served":1,"blocked":0,"pool_exhausted":0,"pool_row_undecodable":2}"#
+    );
     assert_eq!(
         serde_json::from_str::<PoolCounters>(&body).unwrap(),
         counters
@@ -792,4 +801,245 @@ fn a_ring_only_view_ignores_the_task_memory() {
     let nothing = Avoid::none();
     assert!(nothing.is_empty());
     assert!(!nothing.blocks("44b34b7dc138"));
+}
+
+// --------------------------------------------------------------------------
+// The per-instance re-check (C4, C6; review round 1, findings #1, #2, #15)
+// --------------------------------------------------------------------------
+
+/// The reviewer's template: 10,000 declared tuples, one of which breaks the
+/// envelope.
+///
+/// The declared space is above `EXHAUSTIVE_SPACE_LIMIT`, so the gate reads a
+/// 4,096-tuple sample from its constant seed and never meets `a = 100, b = 100`.
+/// That tuple answers `-1`, and every authored answer of the knowledge point is a
+/// non-negative whole number.
+fn big_subtraction_body() -> &'static str {
+    r#"{
+      "v": 1,
+      "topic_id": "big-subtraction",
+      "answer_kind": "numeric",
+      "statement": "Compute $9999 - {a} \\times {b}$.",
+      "params": {"a": {"kind": "int", "low": 1, "high": 100},
+                 "b": {"kind": "int", "low": 1, "high": 100}},
+      "answer_expr": "9999 - a*b",
+      "hints": ["What is the product first?"],
+      "samples": [{"params": {"a": 1, "b": 1}, "expected": "9998"},
+                  {"params": {"a": 100, "b": 1}, "expected": "9899"},
+                  {"params": {"a": 1, "b": 100}, "expected": "9899"}]
+    }"#
+}
+
+/// The two authored exemplars of that knowledge point.
+///
+/// Both answers are non-negative whole numbers, so the envelope is
+/// `{non_negative: true, integral: true}`.
+fn big_subtraction_exemplars() -> Vec<Exemplar> {
+    vec![
+        Exemplar {
+            problem: "Compute $9999 - 1 \\times 12$.".to_string(),
+            answer: "9987".to_string(),
+            solution_sketch: None,
+        },
+        Exemplar {
+            problem: "Compute $9999 - 10 \\times 12$.".to_string(),
+            answer: "9879".to_string(),
+            solution_sketch: None,
+        },
+    ]
+}
+
+/// C4: the fill refuses `a = 100, b = 100`, and no pool row ever carries it.
+///
+/// Seed 1459 is the seed the review round 1 report names: at that seed the batch
+/// draws the one violating tuple of the 10,000. Every number below is a literal.
+#[test]
+fn the_fill_refuses_the_instance_the_gates_sample_never_read() {
+    let doc = doc_from(big_subtraction_body());
+    let exemplars = big_subtraction_exemplars();
+    let source = TemplateSource::new("big-subtraction", &doc)
+        .expect("the fixture compiles")
+        .with_exemplars(&exemplars);
+
+    // The gate ACCEPTS this document: its 4,096-tuple sample from the constant
+    // GATE_SEED never meets the violating tuple of the 10,000.
+    let spec = GateSpec {
+        answer_kind: AnswerKind::Numeric,
+        exemplars: &exemplars,
+    };
+    let verified = gate(&doc, &spec).expect("the gate accepts the document");
+    assert!(
+        !verified.exhaustive,
+        "10,000 declared tuples is above the exhaustive limit"
+    );
+    assert_eq!(verified.instances_checked, 4096);
+
+    let batch = source
+        .fill("big-subtraction", 24, 1459)
+        .expect("the template fills");
+
+    assert_eq!(batch.len(), 24, "the batch still fills to the depth asked");
+    assert_eq!(
+        batch.refusals().len(),
+        1,
+        "exactly one candidate of this batch breaks the envelope"
+    );
+
+    let refused = &batch.refusals()[0];
+    assert_eq!(refused.code, "envelope-sign");
+    assert_eq!(
+        refused.message,
+        "instance {'a': 100, 'b': 100} answers '-1', but every authored answer for this knowledge \
+         point is non-negative — narrow the domains so no instance goes below zero"
+    );
+    assert_eq!(
+        refused.text.as_deref(),
+        Some("Compute $9999 - 100 \\times 100$."),
+        "the refusal names the statement that must not be served"
+    );
+
+    // The refused statement is in NO instance of the batch.
+    for instance in batch.instances() {
+        assert_ne!(
+            instance.text, "Compute $9999 - 100 \\times 100$.",
+            "the refused instance must not reach the pool"
+        );
+        assert_ne!(instance.answer, "-1", "no served answer is negative");
+    }
+}
+
+/// The same batch without the exemplars keeps the instance.
+///
+/// The envelope is the exemplars' rule, so a source that carries none has no
+/// envelope to apply. The test states the boundary of the fix: the exemplars are
+/// what the fill must be given.
+#[test]
+fn a_source_without_exemplars_has_no_envelope_to_apply() {
+    let doc = doc_from(big_subtraction_body());
+    let source = TemplateSource::new("big-subtraction", &doc).expect("the fixture compiles");
+
+    let batch = source
+        .fill("big-subtraction", 24, 1459)
+        .expect("the template fills");
+
+    assert!(batch.refusals().is_empty());
+    assert_eq!(source.exemplars().len(), 0);
+    assert_eq!(
+        batch
+            .instances()
+            .iter()
+            .filter(|instance| instance.answer == "-1")
+            .count(),
+        1,
+        "with no envelope the negative instance stays in the batch"
+    );
+}
+
+/// The refusal counters of one batch.
+#[test]
+fn a_batch_reports_its_refusal_rate() {
+    let doc = doc_from(big_subtraction_body());
+    let exemplars = big_subtraction_exemplars();
+    let source = TemplateSource::new("big-subtraction", &doc)
+        .expect("the fixture compiles")
+        .with_exemplars(&exemplars);
+
+    let batch = source
+        .fill("big-subtraction", 24, 1459)
+        .expect("the template fills");
+    assert_eq!(batch.checked(), 25, "24 kept and 1 refused");
+    assert_eq!(batch.refusal_percent(), 4, "1 of 25 is 4 percent");
+    assert!(
+        !batch.is_flagged(),
+        "4 percent is under the 10 percent limit"
+    );
+    assert_eq!(REFUSAL_FLAG_PERCENT, 10);
+
+    // A batch of 4 kept and 1 refused is 20 percent, which is above the limit.
+    let flagged = Batch::new(
+        batch.instances()[..4].to_vec(),
+        batch.refusals()[..1].to_vec(),
+    );
+    assert_eq!(flagged.checked(), 5);
+    assert_eq!(flagged.refusal_percent(), 20);
+    assert!(flagged.is_flagged());
+
+    let empty = Batch::default();
+    assert_eq!(empty.checked(), 0);
+    assert_eq!(empty.refusal_percent(), 0);
+    assert!(!empty.is_flagged());
+}
+
+/// `check_instance` writes the gate's own message for each per-instance rule.
+#[test]
+fn check_instance_refuses_a_negative_answer_with_the_gate_message() {
+    let doc = doc_from(big_subtraction_body());
+    let compiled = Compiled::new(&doc).expect("the fixture compiles");
+    let exemplars = big_subtraction_exemplars();
+    let spec = GateSpec {
+        answer_kind: AnswerKind::Numeric,
+        exemplars: &exemplars,
+    };
+
+    let mut bindings = Bindings::new();
+    bindings.insert("a".to_string(), Scalar::Int(100).value());
+    bindings.insert("b".to_string(), Scalar::Int(100).value());
+    let instance = compiled.instantiate(bindings).expect("it instantiates");
+    assert_eq!(instance.text, "Compute $9999 - 100 \\times 100$.");
+    assert_eq!(instance.answer, "-1");
+
+    let refusal = check_instance(&doc, &spec, &instance).expect_err("the envelope refuses it");
+    assert_eq!(refusal.code, "envelope-sign");
+    assert_eq!(
+        refusal.message,
+        "instance {'a': 100, 'b': 100} answers '-1', but every authored answer for this knowledge \
+         point is non-negative — narrow the domains so no instance goes below zero"
+    );
+
+    // The same instance with no exemplar passes: there is no envelope to read.
+    let bare = GateSpec {
+        answer_kind: AnswerKind::Numeric,
+        exemplars: &[],
+    };
+    assert!(check_instance(&doc, &bare, &instance).is_ok());
+}
+
+/// A hint rung that names the answer of ONE instance refuses that instance.
+#[test]
+fn check_instance_refuses_a_hint_that_names_the_answer() {
+    let body = r#"{
+      "v": 1,
+      "topic_id": "perfect-squares",
+      "answer_kind": "numeric",
+      "statement": "What is the square of the number after ${a}$?",
+      "params": {"a": {"kind": "int", "low": 1, "high": 12}},
+      "answer_expr": "(a + 1)**2",
+      "hints": ["Add 1 to get 4, then square it."]
+    }"#;
+    let doc = doc_from(body);
+    let compiled = Compiled::new(&doc).expect("the fixture compiles");
+    let spec = GateSpec {
+        answer_kind: AnswerKind::Numeric,
+        exemplars: &[],
+    };
+
+    // a = 1 answers 4, and the rung reads `4`.
+    let refused = compiled
+        .instantiate(bind_int("a", 1))
+        .expect("it instantiates");
+    assert_eq!(refused.answer, "4");
+    let refusal = check_instance(&doc, &spec, &refused).expect_err("the hint gives the answer");
+    assert_eq!(refusal.code, "hint-answer");
+    assert_eq!(
+        refusal.message,
+        "hint 0 reads 'Add 1 to get 4, then square it.' for {'a': 1}, which names the answer '4' \
+         — a hint is a question, never the final step (Hard Rule 3)"
+    );
+
+    // a = 2 answers 9, which the rung does not name, so the instance passes.
+    let kept = compiled
+        .instantiate(bind_int("a", 2))
+        .expect("it instantiates");
+    assert_eq!(kept.answer, "9");
+    assert!(check_instance(&doc, &spec, &kept).is_ok());
 }

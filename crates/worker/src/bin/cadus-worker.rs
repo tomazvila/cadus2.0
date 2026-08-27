@@ -25,7 +25,7 @@ use std::path::PathBuf;
 use std::process::ExitCode;
 use std::time::Duration;
 
-use cadus_core::curriculum::{Curriculum, load_curriculum};
+use cadus_core::curriculum::{Curriculum, CurriculumError, LoadError, load_curriculum};
 use cadus_store::{Db, DbConfig, bounded};
 use cadus_worker::{RefillJob, WorkerConfig, WorkerError};
 
@@ -36,6 +36,11 @@ use cadus_worker::{RefillJob, WorkerConfig, WorkerError};
 const CURRICULUM_ENV: &str = "CADUS_CURRICULUM";
 
 /// The tree the worker reads when the variable names none.
+///
+/// The path is relative to the working directory. The image sets
+/// `CADUS_CURRICULUM=/app/curriculum` and carries the tree there, and the
+/// repository holds `curriculum/` at its root, so both the container and a run
+/// from the repository root find a tree without an operator flag.
 const DEFAULT_CURRICULUM: &str = "curriculum";
 
 /// The bound on the pool close after the tick loop stops.
@@ -80,6 +85,10 @@ async fn run() -> Result<u64, WorkerError> {
     // by signal (finding #39).
     let mut shutdown = Shutdown::install()?;
 
+    // The curriculum load runs BEFORE the connect, so a deployment with no
+    // curriculum tree fails at once and needs no database to say so.
+    let curriculum = load_arena()?;
+
     // `Db::connect` opens the pool AND keeps the client-side bound of
     // `DB_CLIENT_TIMEOUT_MS`. Every query below therefore runs inside that
     // bound (L1).
@@ -122,23 +131,28 @@ async fn run() -> Result<u64, WorkerError> {
         "cadus-worker: database role"
     );
 
-    // The refill job (D-O4) reads the curriculum for the A6 exemplar fallback.
-    // A tree that does not load is news, not a fatal error: the worker still
-    // refills every knowledge point that has an approved template, and it says
-    // in the log that the fallback is off.
-    let curriculum = load_arena();
-    let job = curriculum.as_ref().map(RefillJob::new);
+    // The refill job (D-O4) reads the curriculum for the A6 exemplar fallback
+    // and for the gate's knowledge-point half. A tree that does not load is
+    // fatal: without it the fallback is gone, and a worker that heartbeats
+    // forever while `serving_pool` stays empty gives the operator one warn line
+    // and no other signal (findings #5 and #6). `load_arena` above therefore
+    // ends the process with exit code 2, and its message names the path and the
+    // first finding.
+    let job = RefillJob::new(&curriculum);
 
-    let ticks = cadus_worker::run_with(&db, &cfg, job.as_ref(), shutdown.wait()).await?;
+    let ticks = cadus_worker::run_with(&db, &cfg, Some(&job), shutdown.wait()).await?;
     close_within(POOL_CLOSE_DEADLINE, db.pool().close()).await;
     Ok(ticks)
 }
 
 /// Read the curriculum tree that `CADUS_CURRICULUM` names.
 ///
-/// The function returns `None` on every failure and logs the reason. The refill
-/// job then runs from approved templates only.
-fn load_arena() -> Option<Curriculum> {
+/// # Errors
+///
+/// Returns [`WorkerError::Config`] when the tree does not load. The message names
+/// the path and the first finding, so an operator reads the cause in the one line
+/// the process prints before it exits 2.
+fn load_arena() -> Result<Curriculum, WorkerError> {
     let path = PathBuf::from(
         std::env::var(CURRICULUM_ENV).unwrap_or_else(|_| DEFAULT_CURRICULUM.to_string()),
     );
@@ -150,16 +164,34 @@ fn load_arena() -> Option<Curriculum> {
                 findings = findings.len(),
                 "cadus-worker: curriculum is loaded"
             );
-            Some(curriculum)
+            Ok(curriculum)
         }
         Err(err) => {
-            tracing::warn!(
+            let reason = first_reason(&err);
+            tracing::error!(
                 path = %path.display(),
-                error = %err,
-                "cadus-worker: the curriculum did not load; the A6 exemplar fallback is off"
+                error = %reason,
+                "cadus-worker: the curriculum did not load; set CADUS_CURRICULUM to a tree that does"
             );
-            None
+            Err(WorkerError::Config(format!(
+                "the curriculum at {} did not load: {reason}",
+                path.display()
+            )))
         }
+    }
+}
+
+/// The first finding of a load error, or the error itself.
+///
+/// A fatal parse stage carries every finding, and the joined text of a large tree
+/// runs to many lines. The first one names the file the operator must fix.
+fn first_reason(err: &LoadError) -> String {
+    let LoadError::Curriculum(CurriculumError::FatalFindings { findings }) = err else {
+        return err.to_string();
+    };
+    match findings.first() {
+        Some(finding) => format!("[{}] {}", finding.code, finding.message),
+        None => err.to_string(),
     }
 }
 

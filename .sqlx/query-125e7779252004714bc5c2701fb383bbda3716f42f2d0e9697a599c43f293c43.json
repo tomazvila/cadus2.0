@@ -1,0 +1,24 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        SELECT expected_answer::text AS \"expected!\"\n        FROM serving_pool\n        WHERE user_id = $1 AND kp_id = $2 AND claimed_at IS NULL\n        ORDER BY created_at, id\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "expected!",
+        "type_info": "Text",
+        "origin": "Expression"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Uuid",
+        "Text"
+      ]
+    },
+    "nullable": [
+      null
+    ]
+  },
+  "hash": "125e7779252004714bc5c2701fb383bbda3716f42f2d0e9697a599c43f293c43"
+}

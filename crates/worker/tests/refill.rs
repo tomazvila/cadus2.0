@@ -22,13 +22,16 @@
 
 use std::collections::BTreeSet;
 use std::path::PathBuf;
+use std::time::{Duration, Instant};
 
 use cadus_core::curriculum::{Curriculum, load_curriculum};
 use cadus_core::pool::{Avoid, PoolProblem, Ring, TaskMemory};
-use cadus_store::pool::{pop_with_ring, refill_targets, unclaimed_depth};
+use cadus_store::pool::{operator_flags, pop_with_ring, refill_targets, unclaimed_depth};
 use cadus_store::test_support::TestDb;
 use cadus_store::{DEFAULT_CLIENT_TIMEOUT_MS, Db};
-use cadus_worker::{RefillConfig, RefillJob, RefillState, batch_seed, refill_once};
+use cadus_worker::{
+    REFILL_BACKOFF, RefillConfig, RefillJob, RefillState, batch_seed, refill_once, refill_once_at,
+};
 use sqlx::PgPool;
 use sqlx::types::Uuid;
 
@@ -476,6 +479,7 @@ async fn a_repeated_nonce_draws_the_batch_it_drew_before() {
             pop_with_ring(&db.admin, user, SQUARES, &avoid)
                 .await
                 .unwrap()
+                .claimed
                 .expect("the pool still holds a row");
         }
         assert_eq!(unclaimed_depth(&db.admin, user, SQUARES).await.unwrap(), 4);
@@ -510,6 +514,287 @@ async fn a_pass_with_no_target_is_a_no_op() {
         assert_eq!(report.targets, 0);
         assert_eq!(report.inserted, 0);
         assert!(state.is_empty());
+    })
+    .await;
+}
+
+// --------------------------------------------------------------------------
+// (5) Every instance is checked again before the pool
+//     (review round 1, findings #1, #2, #15)
+// --------------------------------------------------------------------------
+
+/// The serving key of the knowledge point whose template has one bad corner.
+const BIG_SUB: &str = "big-subtraction/kp1";
+
+/// The digest of its approved template row.
+const BIG_SUB_DIGEST: &str = "template-big-sub-1";
+
+/// A template the gate accepts and one of whose 10,000 instances answers `-1`.
+///
+/// The declared space is above `EXHAUSTIVE_SPACE_LIMIT`, so the gate reads a
+/// 4,096-tuple sample from its constant seed and never meets `a = 100, b = 100`.
+/// Both authored exemplars of the knowledge point answer a non-negative whole
+/// number, so the envelope refuses that instance.
+const BIG_SUB_BODY: &str = r#"{
+    "v": 1,
+    "topic_id": "big-subtraction",
+    "answer_kind": "numeric",
+    "statement": "Compute $9999 - {a} \\times {b}$.",
+    "params": {"a": {"kind": "int", "low": 1, "high": 100},
+               "b": {"kind": "int", "low": 1, "high": 100}},
+    "answer_expr": "9999 - a*b",
+    "hints": ["What is the product first?"],
+    "samples": [{"params": {"a": 1, "b": 1}, "expected": "9998"},
+                {"params": {"a": 100, "b": 1}, "expected": "9899"},
+                {"params": {"a": 1, "b": 100}, "expected": "9899"}]
+}"#;
+
+/// The base seed whose nonce-1 batch for `USER_ID` draws the violating tuple.
+///
+/// The seed is a literal, found by a walk over the base seeds outside this test:
+/// `batch_seed(145, USER_ID, "big-subtraction/kp1", 1)` is
+/// 14,794,079,017,945,678,686, and the batch of that seed holds `a = 100,
+/// b = 100`.
+const BIG_SUB_BASE_SEED: u64 = 145;
+
+/// The statement of the one instance the envelope refuses.
+const BIG_SUB_REFUSED_TEXT: &str = "Compute $9999 - 100 \\times 100$.";
+
+/// Every unclaimed answer of one pair, in pop order.
+async fn answers_of(admin: &PgPool, user_id: Uuid, kp_id: &str) -> Vec<String> {
+    let rows = sqlx::query!(
+        r#"
+        SELECT expected_answer::text AS "expected!"
+        FROM serving_pool
+        WHERE user_id = $1 AND kp_id = $2 AND claimed_at IS NULL
+        ORDER BY created_at, id
+        "#,
+        user_id,
+        kp_id,
+    )
+    .fetch_all(admin)
+    .await
+    .expect("the rows read");
+
+    rows.into_iter()
+        .map(|row| {
+            cadus_core::pool::PoolAnswer::from_body(&row.expected)
+                .expect("the document reads")
+                .answer
+        })
+        .collect()
+}
+
+/// C4: the instance the gate's sample never read does not reach the pool.
+///
+/// The document passes the gate, a human approves it (C6), and the refill draws
+/// the corner the gate missed. The per-instance re-check refuses that one
+/// instance, counts it, and writes the other twelve.
+#[tokio::test]
+async fn an_instance_the_re_check_refuses_never_reaches_the_pool() {
+    TestDb::with(|db| async move {
+        let user = seed_fixed_user(&db.admin).await;
+        seed_approved(&db.admin, BIG_SUB_DIGEST, BIG_SUB, BIG_SUB_BODY).await;
+        seed_drained_pair(&db.admin, user, BIG_SUB).await;
+
+        let curriculum = arena();
+        let job = RefillJob::new(&curriculum).with_config(RefillConfig {
+            target_depth: 12,
+            targets_per_tick: 32,
+            base_seed: BIG_SUB_BASE_SEED,
+        });
+        let mut state = RefillState::new();
+        let report = refill_once(&db_of(&db.admin), &job, &mut state, 1)
+            .await
+            .expect("the pass runs");
+
+        assert_eq!(report.targets, 1);
+        assert_eq!(report.inserted, 12, "the twelve good instances are written");
+        assert_eq!(report.from_template, 12);
+        assert_eq!(
+            report.refused_instances, 1,
+            "one instance broke the exemplar envelope"
+        );
+        assert_eq!(
+            report.flagged_refusals, 0,
+            "1 refusal of 13 checked is 7 percent, under the 10 percent limit"
+        );
+        assert_eq!(report.failed, 0);
+        assert_eq!(
+            state.refusal(BIG_SUB_DIGEST),
+            None,
+            "the DOCUMENT is accepted; one INSTANCE of it is not"
+        );
+
+        let rows = rows_of(&db.admin, user, BIG_SUB).await;
+        assert_eq!(rows.len(), 12);
+        for (_source, _digest, _seed, text) in &rows {
+            assert_ne!(
+                text, BIG_SUB_REFUSED_TEXT,
+                "the refused statement must not be a pool row"
+            );
+        }
+
+        let answers = answers_of(&db.admin, user, BIG_SUB).await;
+        assert_eq!(answers.len(), 12);
+        assert!(
+            !answers.iter().any(|answer| answer == "-1"),
+            "no pool row carries the answer the envelope refuses, the answers were {answers:?}"
+        );
+    })
+    .await;
+}
+
+// --------------------------------------------------------------------------
+// (6) A pair that cannot fill leaves the target list
+//     (review round 1, finding #3)
+// --------------------------------------------------------------------------
+
+/// The serving key of a pair the curriculum does not name and no template serves.
+const UNFILLABLE: &str = "aaa-unknown/kp1";
+
+/// D-O4: a starved pair does not spend the per-tick budget.
+///
+/// Three pairs sit at depth 0, and the budget is ONE pair per tick. The target
+/// query orders by `(depth, user_id, kp_id)`, so the unfillable pair is the head
+/// of the list on every tick. Without the backoff it takes the only slot forever
+/// and neither fillable pair ever gains a row.
+#[tokio::test]
+async fn a_starved_pair_does_not_consume_the_tick_budget() {
+    TestDb::with(|db| async move {
+        let user = seed_fixed_user(&db.admin).await;
+        seed_approved(&db.admin, SQUARES_DIGEST, SQUARES, SQUARES_BODY).await;
+        seed_drained_pair(&db.admin, user, UNFILLABLE).await;
+        seed_drained_pair(&db.admin, user, ADDING).await;
+        seed_drained_pair(&db.admin, user, SQUARES).await;
+
+        let curriculum = arena();
+        let job = RefillJob::new(&curriculum).with_config(RefillConfig {
+            target_depth: 12,
+            targets_per_tick: 1,
+            base_seed: 0,
+        });
+        let mut state = RefillState::new();
+        let now = Instant::now();
+
+        // Tick 1: the head of the list is the pair that can never fill.
+        let first = refill_once_at(&db_of(&db.admin), &job, &mut state, 1, now)
+            .await
+            .expect("the pass runs");
+        assert_eq!(first.targets, 1);
+        assert_eq!(first.without_source, 1);
+        assert_eq!(first.inserted, 0);
+        assert_eq!(first.skipped_starved, 0, "nothing was on backoff yet");
+        assert_eq!(state.starved_len(), 1, "the pair left the target list");
+        assert!(state.is_starved(user, UNFILLABLE, now));
+
+        // Tick 2: the slot goes to the first fillable pair.
+        let second = refill_once_at(&db_of(&db.admin), &job, &mut state, 2, now)
+            .await
+            .expect("the pass runs");
+        assert_eq!(second.targets, 1);
+        assert_eq!(second.skipped_starved, 1, "the starved pair is held out");
+        assert_eq!(second.inserted, 3, "adding-two-digits has 3 exemplars");
+        assert_eq!(second.from_exemplar, 3);
+
+        // Tick 3: the slot goes to the second fillable pair.
+        let third = refill_once_at(&db_of(&db.admin), &job, &mut state, 3, now)
+            .await
+            .expect("the pass runs");
+        assert_eq!(third.targets, 1);
+        assert_eq!(third.inserted, 12, "the perfect-squares template has 12");
+        assert_eq!(third.from_template, 12);
+
+        assert_eq!(unclaimed_depth(&db.admin, user, ADDING).await.unwrap(), 3);
+        assert_eq!(unclaimed_depth(&db.admin, user, SQUARES).await.unwrap(), 12);
+        assert_eq!(
+            unclaimed_depth(&db.admin, user, UNFILLABLE).await.unwrap(),
+            0,
+            "the pair that cannot fill still holds no row"
+        );
+    })
+    .await;
+}
+
+/// The backoff ends after 15 minutes, and the pair is tried again.
+#[tokio::test]
+async fn a_starved_pair_returns_to_the_list_after_the_backoff() {
+    TestDb::with(|db| async move {
+        let user = seed_fixed_user(&db.admin).await;
+        seed_drained_pair(&db.admin, user, UNFILLABLE).await;
+
+        let curriculum = arena();
+        let job = RefillJob::new(&curriculum).with_config(RefillConfig {
+            target_depth: 12,
+            targets_per_tick: 32,
+            base_seed: 0,
+        });
+        let mut state = RefillState::new();
+        let now = Instant::now();
+
+        let first = refill_once_at(&db_of(&db.admin), &job, &mut state, 1, now)
+            .await
+            .expect("the pass runs");
+        assert_eq!(first.without_source, 1);
+
+        // One second before the period ends: the pair is still out.
+        let inside = now + REFILL_BACKOFF - Duration::from_secs(1);
+        let held = refill_once_at(&db_of(&db.admin), &job, &mut state, 2, inside)
+            .await
+            .expect("the pass runs");
+        assert_eq!(
+            held.targets, 0,
+            "the pair is not a target inside the period"
+        );
+        assert_eq!(held.skipped_starved, 1);
+
+        // One second after: the pair is a target again.
+        let outside = now + REFILL_BACKOFF + Duration::from_secs(1);
+        let retried = refill_once_at(&db_of(&db.admin), &job, &mut state, 3, outside)
+            .await
+            .expect("the pass runs");
+        assert_eq!(retried.targets, 1, "the period ended, so the pair is back");
+        assert_eq!(retried.skipped_starved, 0);
+        assert_eq!(retried.without_source, 1, "it still cannot fill");
+        assert_eq!(REFILL_BACKOFF, Duration::from_secs(900));
+    })
+    .await;
+}
+
+/// A6: `operator_flags` names the starved pair's knowledge point.
+///
+/// The backoff is worker-local, so the operator view is what tells a human that
+/// the knowledge point needs a template. The row exists for every knowledge point
+/// that holds a pool row.
+#[tokio::test]
+async fn a_starved_knowledge_point_is_flagged_for_the_operator() {
+    TestDb::with(|db| async move {
+        let user = seed_fixed_user(&db.admin).await;
+        seed_drained_pair(&db.admin, user, UNFILLABLE).await;
+
+        let curriculum = arena();
+        let job = RefillJob::new(&curriculum).with_config(RefillConfig {
+            target_depth: 12,
+            targets_per_tick: 32,
+            base_seed: 0,
+        });
+        let mut state = RefillState::new();
+        let report = refill_once(&db_of(&db.admin), &job, &mut state, 1)
+            .await
+            .expect("the pass runs");
+        assert_eq!(report.without_source, 1);
+
+        let flags = operator_flags(&db.admin).await.expect("the flags read");
+        let flag = flags
+            .iter()
+            .find(|flag| flag.kp_id == UNFILLABLE)
+            .expect("the starved knowledge point has an operator row");
+        assert_eq!(flag.approved_templates, 0);
+        assert_eq!(flag.pool_depth, 0);
+        assert!(
+            flag.needs_template,
+            "A6: every serve of this knowledge point would be a fallback"
+        );
     })
     .await;
 }

@@ -131,6 +131,27 @@ pub struct Claimed {
     pub candidates: usize,
 }
 
+/// The outcome of one pop, including the rows it retired.
+///
+/// A pool row that this build cannot decode is skipped, claimed, and counted; the
+/// pop then continues with the rows behind it. The claim is what retires the row:
+/// it leaves the unclaimed set, so it never blocks a later serve of the same pair
+/// and it never counts toward the refill depth again.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct Pop {
+    /// The row the transaction claimed and the report of the candidate rule.
+    ///
+    /// `None` means the pool held no servable row for this pair. The caller then
+    /// instantiates an exemplar in process and raises the A6 flag; it must not
+    /// generate.
+    pub claimed: Option<Claimed>,
+    /// The count of rows this pop retired because they did not decode.
+    ///
+    /// The caller counts it as
+    /// [`PoolCounters::pool_row_undecodable`](cadus_core::pool::PoolCounters::pool_row_undecodable).
+    pub undecodable: usize,
+}
+
 /// One approved template document of a knowledge point (C6).
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ApprovedTemplate {
@@ -312,20 +333,29 @@ fn read_row(
 /// every popped row is blocked the LAST row wins and [`Pick::exhausted`] says so.
 /// The pop never redraws; the redraw is the worker's job (D-O4).
 ///
-/// `Ok(None)` means the pool held no unclaimed row for this pair. The caller then
-/// instantiates an exemplar in process and raises the A6 flag (specification
-/// section 7.2); it must not generate.
+/// [`Pop::claimed`] is `None` when the pool held no servable row for this pair.
+/// The caller then instantiates an exemplar in process and raises the A6 flag
+/// (specification section 7.2); it must not generate.
+///
+/// # A row that does not decode is retired, not fatal
+///
+/// A row whose `problem`, `expected_answer`, or `source` this build refuses is
+/// skipped, claimed with the reason in the log, and counted in
+/// [`Pop::undecodable`]; the pop continues with the other candidates. The old
+/// code returned the decode error, so ONE stale row denied every serve of that
+/// pair forever, and the row itself was never retired. The module rule holds the
+/// other way round: a repeat is a far smaller failure than no problem.
 ///
 /// # Errors
 ///
-/// Returns [`StoreError::PoolRow`] when a row does not decode, and
-/// [`StoreError::Db`] when a statement fails.
+/// Returns [`StoreError::Db`] when a statement fails, and [`StoreError::PoolRow`]
+/// when the candidate rule names a row the pop did not read.
 pub async fn pop_with_ring_tx(
     tx: &mut Transaction<'_, Postgres>,
     user_id: Uuid,
     kp_id: &str,
     avoid: &Avoid<'_>,
-) -> Result<Option<Claimed>, StoreError> {
+) -> Result<Pop, StoreError> {
     let popped = sqlx::query!(
         r#"
         SELECT id AS "id!",
@@ -348,19 +378,38 @@ pub async fn pop_with_ring_tx(
     .await?;
 
     let mut candidates: Vec<PoolRow> = Vec::with_capacity(popped.len());
+    let mut undecodable: usize = 0;
     for row in popped {
-        candidates.push(read_row(
-            row.id,
+        let id = row.id;
+        match read_row(
+            id,
             &row.source,
             row.content_digest,
             &row.problem,
             &row.expected,
             row.instance_hash,
-        )?);
+        ) {
+            Ok(candidate) => candidates.push(candidate),
+            Err(err) => {
+                undecodable = undecodable.saturating_add(1);
+                tracing::warn!(
+                    row_id = %id,
+                    user_id = %user_id,
+                    kp_id = %kp_id,
+                    reason = %err,
+                    "pool: a row this build cannot decode is claimed and skipped; the serve \
+                     continues with the rows behind it"
+                );
+                retire_row(tx, id).await?;
+            }
+        }
     }
 
     let Some(chosen) = pick(&candidates, avoid) else {
-        return Ok(None);
+        return Ok(Pop {
+            claimed: None,
+            undecodable,
+        });
     };
     let Some(row) = candidates.get(chosen.index).cloned() else {
         return Err(StoreError::PoolRow(format!(
@@ -389,11 +438,32 @@ pub async fn pop_with_ring_tx(
         )));
     }
 
-    Ok(Some(Claimed {
-        row,
-        pick: chosen,
-        candidates: candidates.len(),
-    }))
+    Ok(Pop {
+        claimed: Some(Claimed {
+            row,
+            pick: chosen,
+            candidates: candidates.len(),
+        }),
+        undecodable,
+    })
+}
+
+/// Claim one row the pop cannot decode, so it leaves the unclaimed set.
+///
+/// The row stays in the table: a claimed row is the served-instance log of A5,
+/// and a retention job of M5 owns the delete.
+async fn retire_row(tx: &mut Transaction<'_, Postgres>, id: Uuid) -> Result<(), StoreError> {
+    sqlx::query!(
+        r#"
+        UPDATE serving_pool
+        SET claimed_at = now()
+        WHERE id = $1 AND claimed_at IS NULL
+        "#,
+        id,
+    )
+    .execute(&mut **tx)
+    .await?;
+    Ok(())
 }
 
 /// [`pop_with_ring_tx`] inside a tenant transaction of its own.
@@ -410,11 +480,11 @@ pub async fn pop_with_ring(
     user_id: Uuid,
     kp_id: &str,
     avoid: &Avoid<'_>,
-) -> Result<Option<Claimed>, StoreError> {
+) -> Result<Pop, StoreError> {
     let mut tx = begin_tenant(pool, user_id).await?;
-    let claimed = pop_with_ring_tx(&mut tx, user_id, kp_id, avoid).await?;
+    let popped = pop_with_ring_tx(&mut tx, user_id, kp_id, avoid).await?;
     tx.commit().await?;
-    Ok(claimed)
+    Ok(popped)
 }
 
 /// The count of unclaimed rows of one `(user, kp)` pair.
@@ -466,12 +536,51 @@ pub async fn refill_targets<'e, E>(
 where
     E: PgExecutor<'e>,
 {
+    refill_targets_skipping(executor, target_depth, limit, &[]).await
+}
+
+/// [`refill_targets`] without the pairs of `skip` (D-O4).
+///
+/// A `(user, kp)` pair with no approved template and no decidable exemplar can
+/// never gain a row. It stays at depth 0, and depth 0 sorts first, so such a pair
+/// took the head of the list on every tick and the whole per-tick budget went to
+/// pairs that could not use it. The worker holds those pairs in a backoff map and
+/// passes them here, so the `LIMIT` counts pairs that CAN fill.
+///
+/// The exclusion runs before the grouping, so a skipped pair costs no slot at
+/// all.
+///
+/// # Errors
+///
+/// Returns [`StoreError::Db`] when the statement fails.
+pub async fn refill_targets_skipping<'e, E>(
+    executor: E,
+    target_depth: i64,
+    limit: i64,
+    skip: &[(Uuid, String)],
+) -> Result<Vec<PoolTarget>, StoreError>
+where
+    E: PgExecutor<'e>,
+{
+    let mut skip_users: Vec<Uuid> = Vec::with_capacity(skip.len());
+    let mut skip_kps: Vec<String> = Vec::with_capacity(skip.len());
+    for (user_id, kp_id) in skip {
+        skip_users.push(*user_id);
+        skip_kps.push(kp_id.clone());
+    }
+
     let rows = sqlx::query!(
         r#"
         SELECT user_id AS "user_id!",
                kp_id AS "kp_id!",
                count(*) FILTER (WHERE claimed_at IS NULL) AS "depth!"
         FROM serving_pool
+        WHERE NOT EXISTS (
+                  SELECT 1
+                  FROM unnest($3::uuid[], $4::text[]) AS skip(user_id, kp_id)
+                  WHERE skip.user_id = serving_pool.user_id
+                    AND skip.kp_id = serving_pool.kp_id
+              )
         GROUP BY user_id, kp_id
         HAVING count(*) FILTER (WHERE claimed_at IS NULL) < $1
         ORDER BY "depth!", user_id, kp_id
@@ -479,6 +588,8 @@ where
         "#,
         target_depth,
         limit,
+        &skip_users,
+        &skip_kps,
     )
     .fetch_all(executor)
     .await?;

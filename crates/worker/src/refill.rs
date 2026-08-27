@@ -27,21 +27,46 @@
 //! [`batch_seed`] derives the seed of one batch from the base seed of the
 //! deployment, the learner, the serving key, and the nonce of the tick. The seed
 //! goes into `serving_pool.problem`, so a reviewer reproduces the whole batch
-//! from the row. The nonce changes every tick, so a second refill of one pair
-//! draws a different batch and the pool grows past the tuples it already holds.
+//! from the row.
 //!
-//! # The gate runs again
+//! The nonce is the UTC microsecond clock
+//! ([`batch_nonce`](crate::batch_nonce)), so a second refill of one pair draws a
+//! different batch and the pool grows past the tuples it already holds. A
+//! process-local tick counter did that inside one process and failed across
+//! processes: a restart began the count at zero, redrew the batches the pool
+//! already held, and inserted no row for the whole window the old process had
+//! walked (finding #10).
+//!
+//! # The gate runs again, and every instance runs again
 //!
 //! 1.0 re-runs its whole check set at serve time (`problem_templates.py:427-467`),
 //! and the comment at `:432-437` records why: the exemplar envelope once ran in
 //! the authoring gate only, and a 10,000-instance subtraction template was
 //! accepted on 22 of 60 seeds with 55 negative instances. 2.0 keeps that property
-//! and moves the cost off the request path: the refill gates an approved document
-//! once per digest and caches the verdict in [`RefillState`].
+//! and moves the cost off the request path. Two checks run, and both are needed:
 //!
-//! A knowledge point the loaded curriculum does not name has no exemplars and no
-//! answer kind, so no [`GateSpec`] exists for it. Such a document is filled on its
-//! C6 approval alone, and the fact is logged.
+//! - The DOCUMENT goes through [`gate`] once per digest, and the verdict is
+//!   cached in [`RefillState`]. The gate is a pure function of the document, so
+//!   one verdict per content address is exact (C6).
+//! - Every INSTANCE goes through the per-instance rules again inside
+//!   [`ProblemSource::fill`]. The document verdict says nothing about the tuples
+//!   the batch draws: above the exhaustive limit the gate reads a sample from a
+//!   constant seed, and the fill draws from the batch seed. A refused instance is
+//!   skipped and counted, and a pair whose refusal rate is above
+//!   [`REFUSAL_FLAG_PERCENT`] is logged and flagged (C4).
+//!
+//! A knowledge point the loaded curriculum does not name has no exemplars, so its
+//! envelope rule stays silent. Such a document is filled on its C6 approval alone,
+//! and the fact is logged.
+//!
+//! # A pair that cannot fill leaves the target list
+//!
+//! A `(user, kp)` pair with no approved template and no decidable exemplar can
+//! never gain a row, and it sits at depth 0 forever. The target query orders by
+//! ascending depth, so such a pair took the head of every tick and the budget
+//! never reached a pair that CAN fill. The pass therefore holds a backoff map
+//! keyed by the pair: a starved pair leaves the target list for
+//! [`REFILL_BACKOFF`], and `operator_flags` shows it with `needs_template`.
 //!
 //! # No model call
 //!
@@ -49,11 +74,12 @@
 //! process, exactly as the gate does.
 
 use std::collections::{HashMap, HashSet};
+use std::time::{Duration, Instant};
 
 use cadus_core::curriculum::{Curriculum, Exemplar, KnowledgePoint};
 use cadus_core::pool::{
-    ExemplarSource, FillError, PoolAnswer, PoolProblem, ProblemSource, Source, TemplateSource,
-    split_kp_key,
+    Batch, ExemplarSource, FillError, PoolAnswer, PoolProblem, ProblemSource, REFUSAL_FLAG_PERCENT,
+    Source, TemplateSource, split_kp_key,
 };
 use cadus_core::template::{GateSpec, TemplateDoc, from_body, gate};
 use cadus_store::Db;
@@ -76,6 +102,13 @@ pub const DEFAULT_TARGETS_PER_TICK: i64 = 32;
 
 /// The base seed of a deployment that sets none.
 pub const DEFAULT_BASE_SEED: u64 = 0;
+
+/// How long a pair with no fillable source stays out of the target list.
+///
+/// The pair is retried after this period, because the operator can approve a
+/// template or author an exemplar at any time. Fifteen minutes is the M4 review
+/// ruling on finding #3.
+pub const REFILL_BACKOFF: Duration = Duration::from_secs(15 * 60);
 
 /// The configuration of the refill job.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -100,15 +133,15 @@ impl Default for RefillConfig {
 
 /// The refill job: its configuration and the curriculum it reads exemplars from.
 ///
-/// The curriculum is optional. A deployment that cannot load it still refills
-/// from approved templates; it loses the A6 exemplar fallback, and the job says
-/// so in its report.
+/// The curriculum is required. The worker refuses to start without one (the M4
+/// review ruling on findings #5 and #6), so the A6 exemplar fallback and the
+/// gate's knowledge-point half are always available here.
 #[derive(Debug, Clone, Copy)]
 pub struct RefillJob<'arena> {
     /// The configuration.
     pub cfg: RefillConfig,
     /// The loaded curriculum, for the A6 exemplar fallback and for the gate.
-    pub curriculum: Option<&'arena Curriculum>,
+    pub curriculum: &'arena Curriculum,
 }
 
 impl<'arena> RefillJob<'arena> {
@@ -117,16 +150,7 @@ impl<'arena> RefillJob<'arena> {
     pub fn new(curriculum: &'arena Curriculum) -> Self {
         Self {
             cfg: RefillConfig::default(),
-            curriculum: Some(curriculum),
-        }
-    }
-
-    /// Build a job with no curriculum: approved templates only.
-    #[must_use]
-    pub fn templates_only(cfg: RefillConfig) -> Self {
-        Self {
-            cfg,
-            curriculum: None,
+            curriculum,
         }
     }
 
@@ -140,7 +164,7 @@ impl<'arena> RefillJob<'arena> {
     /// The knowledge point of one serving key, when the curriculum names it.
     #[must_use]
     pub fn knowledge_point(&self, kp_key: &str) -> Option<(&'arena KnowledgePoint, AnswerKindOf)> {
-        let curriculum = self.curriculum?;
+        let curriculum = self.curriculum;
         let (topic_id, kp_id) = split_kp_key(kp_key)?;
         let topic_idx = curriculum.idx_of(topic_id)?;
         let topic = curriculum.topic(topic_idx)?;
@@ -169,6 +193,8 @@ pub struct RefillState {
     accepted: HashSet<String>,
     /// Digests the gate refused, with the reason it wrote.
     refused: HashMap<String, String>,
+    /// Pairs with no fillable source, and the instant each one is tried again.
+    starved: HashMap<(Uuid, String), Instant>,
 }
 
 impl RefillState {
@@ -195,6 +221,34 @@ impl RefillState {
     pub fn refusal(&self, digest: &str) -> Option<&str> {
         self.refused.get(digest).map(String::as_str)
     }
+
+    /// The count of pairs the backoff map holds.
+    #[must_use]
+    pub fn starved_len(&self) -> usize {
+        self.starved.len()
+    }
+
+    /// Whether one pair is out of the target list at `now`.
+    #[must_use]
+    pub fn is_starved(&self, user_id: Uuid, kp_id: &str, now: Instant) -> bool {
+        self.starved
+            .get(&(user_id, kp_id.to_string()))
+            .is_some_and(|until| *until > now)
+    }
+
+    /// Put one pair out of the target list for [`REFILL_BACKOFF`].
+    fn starve(&mut self, user_id: Uuid, kp_id: &str, now: Instant) {
+        let until = now.checked_add(REFILL_BACKOFF).unwrap_or(now);
+        self.starved.insert((user_id, kp_id.to_string()), until);
+    }
+
+    /// Drop every backoff entry whose period ended, and list the ones that hold.
+    fn active_starved(&mut self, now: Instant) -> Vec<(Uuid, String)> {
+        self.starved.retain(|_, until| *until > now);
+        let mut pairs: Vec<(Uuid, String)> = self.starved.keys().cloned().collect();
+        pairs.sort();
+        pairs
+    }
 }
 
 /// What one refill call did.
@@ -209,9 +263,17 @@ pub struct RefillReport {
     /// The count of rows that came from an exemplar (A6).
     pub from_exemplar: u64,
     /// The count of pairs with no approved template and no exemplar.
+    ///
+    /// Each one leaves the target list for [`REFILL_BACKOFF`].
     pub without_source: usize,
     /// The count of pairs whose fill or insert failed.
     pub failed: usize,
+    /// The count of instances the per-instance re-check refused (C4).
+    pub refused_instances: u64,
+    /// The count of pairs whose refusal rate is above [`REFUSAL_FLAG_PERCENT`].
+    pub flagged_refusals: usize,
+    /// The count of pairs the backoff map held out of this pass.
+    pub skipped_starved: usize,
 }
 
 /// What one target gave.
@@ -220,7 +282,12 @@ enum Filled {
     /// The pair reached its depth already.
     Full,
     /// The pair took rows from the named source.
-    Rows { source: Source, inserted: u64 },
+    Rows {
+        source: Source,
+        inserted: u64,
+        refused: u64,
+        flagged: bool,
+    },
     /// The pair has no approved template and no exemplar.
     NoSource,
 }
@@ -286,15 +353,38 @@ pub async fn refill_once(
     state: &mut RefillState,
     nonce: u64,
 ) -> Result<RefillReport, WorkerError> {
-    let targets = cadus_store::pool::refill_targets(
+    refill_once_at(db, job, state, nonce, Instant::now()).await
+}
+
+/// [`refill_once`] at a given instant.
+///
+/// The instant drives the backoff map alone. A test passes a literal instant and
+/// gets a pass that reads no clock.
+///
+/// # Errors
+///
+/// Returns [`WorkerError::Store`] when the target query fails.
+pub async fn refill_once_at(
+    db: &Db,
+    job: &RefillJob<'_>,
+    state: &mut RefillState,
+    nonce: u64,
+    now: Instant,
+) -> Result<RefillReport, WorkerError> {
+    // A pair with no fillable source leaves the target list. The database
+    // excludes it, so the per-tick budget goes to pairs that can fill.
+    let starved = state.active_starved(now);
+    let targets = cadus_store::pool::refill_targets_skipping(
         db.pool(),
         job.cfg.target_depth,
         job.cfg.targets_per_tick,
+        &starved,
     )
     .await?;
 
     let mut report = RefillReport {
         targets: targets.len(),
+        skipped_starved: starved.len(),
         ..RefillReport::default()
     };
 
@@ -303,13 +393,26 @@ pub async fn refill_once(
             Ok(Filled::Full) => {}
             Ok(Filled::NoSource) => {
                 report.without_source = report.without_source.saturating_add(1);
+                state.starve(target.user_id, &target.kp_id, now);
                 tracing::warn!(
+                    user_id = %target.user_id,
                     kp_id = %target.kp_id,
-                    "refill: the knowledge point has no approved template and no exemplar (A6)"
+                    backoff_secs = REFILL_BACKOFF.as_secs(),
+                    "refill: the knowledge point has no approved template and no exemplar; \
+                     the pair leaves the target list and operator_flags names it (A6)"
                 );
             }
-            Ok(Filled::Rows { source, inserted }) => {
+            Ok(Filled::Rows {
+                source,
+                inserted,
+                refused,
+                flagged,
+            }) => {
                 report.inserted = report.inserted.saturating_add(inserted);
+                report.refused_instances = report.refused_instances.saturating_add(refused);
+                if flagged {
+                    report.flagged_refusals = report.flagged_refusals.saturating_add(1);
+                }
                 match source {
                     Source::Exemplar => {
                         report.from_exemplar = report.from_exemplar.saturating_add(inserted);
@@ -331,6 +434,36 @@ pub async fn refill_once(
     }
 
     Ok(report)
+}
+
+/// Log every refusal of one batch, and say whether the pair is flagged (C4).
+///
+/// A refusal means the gate accepted a document one of whose instances breaks a
+/// per-instance rule. That is a content defect, so every one of them reaches the
+/// log with the rule that refused it.
+fn report_refusals(kp_id: &str, digest: Option<&str>, batch: &Batch) -> bool {
+    for refused in batch.refusals() {
+        tracing::warn!(
+            kp_id = %kp_id,
+            digest = digest.unwrap_or(""),
+            code = %refused.code,
+            reason = %refused.message,
+            "refill: the per-instance check refused an instance; it is not in the pool (C4)"
+        );
+    }
+    let flagged = batch.is_flagged();
+    if flagged {
+        tracing::warn!(
+            kp_id = %kp_id,
+            digest = digest.unwrap_or(""),
+            refused = batch.refusals().len(),
+            checked = batch.checked(),
+            percent = batch.refusal_percent(),
+            limit = REFUSAL_FLAG_PERCENT,
+            "refill: the refusal rate of this knowledge point is above the limit (C4, C6)"
+        );
+    }
+    flagged
 }
 
 /// Fill one `(user, kp)` pair up to the target depth.
@@ -363,16 +496,24 @@ async fn refill_target(
             known,
         ) {
             Ok(Some(doc)) => {
+                // The source carries the authored exemplars, so the per-instance
+                // re-check applies the A6 envelope to every instance it draws
+                // (C4). A knowledge point the curriculum does not name has none,
+                // and the envelope rule then stays silent.
+                let exemplars: &[Exemplar] = known.map_or(&[], |(kp, _)| kp.exemplars.as_slice());
                 let source = TemplateSource::new(target.kp_id.clone(), &doc)
                     .map_err(|err| WorkerError::Refill(err.to_string()))?
-                    .with_digest(approved.digest.clone());
-                let instances = source
+                    .with_digest(approved.digest.clone())
+                    .with_exemplars(exemplars);
+                let batch = source
                     .fill(&target.kp_id, need, seed)
                     .map_err(|err: FillError| WorkerError::Refill(err.to_string()))?;
+                let flagged = report_refusals(&target.kp_id, Some(&approved.digest), &batch);
+                let refused = u64::try_from(batch.refusals().len()).unwrap_or(u64::MAX);
                 let inserted = insert(
                     db,
                     target,
-                    &instances,
+                    batch.instances(),
                     Source::Template,
                     Some(&approved.digest),
                     seed,
@@ -381,6 +522,8 @@ async fn refill_target(
                 return Ok(Filled::Rows {
                     source: Source::Template,
                     inserted,
+                    refused,
+                    flagged,
                 });
             }
             // The gate refused the approved document, or the body did not read.
@@ -415,15 +558,19 @@ async fn refill_target(
             "refill: the exemplar count is under the anti-repeat ring (A6)"
         );
     }
-    let instances = match source.fill(&target.kp_id, need, seed) {
-        Ok(instances) => instances,
+    let batch = match source.fill(&target.kp_id, need, seed) {
+        Ok(batch) => batch,
         Err(FillError::NoExemplar) => return Ok(Filled::NoSource),
         Err(err) => return Err(WorkerError::Refill(err.to_string())),
     };
-    let inserted = insert(db, target, &instances, Source::Exemplar, None, seed).await?;
+    let flagged = report_refusals(&target.kp_id, None, &batch);
+    let refused = u64::try_from(batch.refusals().len()).unwrap_or(u64::MAX);
+    let inserted = insert(db, target, batch.instances(), Source::Exemplar, None, seed).await?;
     Ok(Filled::Rows {
         source: Source::Exemplar,
         inserted,
+        refused,
+        flagged,
     })
 }
 

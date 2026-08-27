@@ -228,6 +228,7 @@ async fn binary_ticks_and_exits_zero_on_sigterm() {
             tokio::process::Command::new(env!("CARGO_BIN_EXE_cadus-worker"))
                 .env("DATABASE_URL", &dsn)
                 .env("WORKER_TICK_SECS", "1")
+                .env("CADUS_CURRICULUM", fixture_curriculum())
                 .env("RUST_LOG", "info")
                 .stdout(std::process::Stdio::piped())
                 .stderr(std::process::Stdio::piped())
@@ -280,6 +281,7 @@ async fn binary_exits_zero_on_sigterm_during_the_connect() {
         tokio::process::Command::new(env!("CARGO_BIN_EXE_cadus-worker"))
             .env("DATABASE_URL", "postgresql://x@127.0.0.1:1/x")
             .env("WORKER_TICK_SECS", "1")
+            .env("CADUS_CURRICULUM", fixture_curriculum())
             .env("RUST_LOG", "info")
             .stdout(std::process::Stdio::piped())
             .stderr(std::process::Stdio::piped())
@@ -329,6 +331,7 @@ async fn binary_exits_zero_on_sigterm_during_the_role_report() {
         tokio::process::Command::new(env!("CARGO_BIN_EXE_cadus-worker"))
             .env("DATABASE_URL", deaf.dsn())
             .env("WORKER_TICK_SECS", "1")
+            .env("CADUS_CURRICULUM", fixture_curriculum())
             .env("RUST_LOG", "info")
             .stdout(std::process::Stdio::piped())
             .stderr(std::process::Stdio::piped())
@@ -374,6 +377,71 @@ async fn binary_exits_zero_on_sigterm_during_the_role_report() {
     assert!(
         log.contains("cadus-worker: the stop signal came before the role report"),
         "the log must name the role report as the point of the stop; log:\n{log}"
+    );
+}
+
+/// The fixture curriculum tree of this crate.
+///
+/// The worker refuses to start without a curriculum, so every binary test names
+/// one. The tree is the same fixture `tests/refill.rs` reads.
+fn fixture_curriculum() -> String {
+    std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+        .join("tests/fixtures/pool")
+        .to_string_lossy()
+        .into_owned()
+}
+
+/// (7) A curriculum path that does not exist ends the process with exit code 2.
+///
+/// The refill (D-O4) needs the tree for the A6 exemplar fallback and for the
+/// knowledge-point half of the gate re-run. The old binary logged one warn line
+/// and kept its tick loop, so the shipped image -- which carried no curriculum at
+/// all -- refilled nothing for any learner and said nothing about it (review
+/// round 1, findings #5 and #6).
+///
+/// The load runs before the database connect, so this test needs no database.
+#[tokio::test]
+async fn binary_exits_two_when_the_curriculum_does_not_load() {
+    let missing = "/home/deploy/dev/cadus2.0/no-such-curriculum";
+    let child = KillOnDrop::new(
+        tokio::process::Command::new(env!("CARGO_BIN_EXE_cadus-worker"))
+            .env("DATABASE_URL", "postgresql://x@127.0.0.1:1/x")
+            .env("WORKER_TICK_SECS", "1")
+            .env("CADUS_CURRICULUM", missing)
+            .env("RUST_LOG", "info")
+            .stdout(std::process::Stdio::piped())
+            .stderr(std::process::Stdio::piped())
+            .spawn()
+            .expect("the worker binary must start"),
+    );
+
+    let output = tokio::time::timeout(
+        Duration::from_secs(10),
+        child.into_inner().wait_with_output(),
+    )
+    .await
+    .expect("the worker must exit within 10 s")
+    .expect("reading the worker output must succeed");
+
+    let mut log = String::from_utf8_lossy(&output.stdout).into_owned();
+    log.push_str(&String::from_utf8_lossy(&output.stderr));
+
+    assert_eq!(
+        output.status.code(),
+        Some(2),
+        "a curriculum that does not load must end the process with 2; log:\n{log}"
+    );
+    assert!(
+        log.contains(
+            "cadus-worker: configuration error: the curriculum at \
+             /home/deploy/dev/cadus2.0/no-such-curriculum did not load: no courses.yaml under \
+             /home/deploy/dev/cadus2.0/no-such-curriculum"
+        ),
+        "the message must name the path and the reason; log:\n{log}"
+    );
+    assert!(
+        !log.contains("heartbeat tick="),
+        "the process must not reach its tick loop; log:\n{log}"
     );
 }
 

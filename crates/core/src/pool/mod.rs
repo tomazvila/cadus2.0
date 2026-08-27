@@ -16,6 +16,7 @@
 //! | Piece | What it owns |
 //! |---|---|
 //! | [`source`] | [`ProblemSource`], [`TemplateSource`] (A1), [`ExemplarSource`] (A6) |
+//! | [`recheck`] | [`check_instance`], the per-instance rules every instance passes |
 //! | [`ring`] | [`Ring`] (20 per topic), [`TaskMemory`] (12 per task), the candidate rule |
 //! | this file | [`Source`], the wire tag of the pool row, and [`PoolCounters`] |
 //!
@@ -43,10 +44,12 @@
 //! (R3). Every draw takes a recorded `u64` seed from its caller, so a reviewer
 //! reproduces any served instance from the pool row.
 
+pub mod recheck;
 pub mod ring;
 pub mod row;
 pub mod source;
 
+pub use recheck::{Refusal, check_instance};
 pub use ring::{
     Avoid, Candidate, Pick, RING_CAPACITY, Ring, TASK_MEMORY_CAPACITY, TaskMemory, pick, serve,
 };
@@ -55,7 +58,8 @@ pub use row::{
     split_kp_key,
 };
 pub use source::{
-    ExemplarRefusal, ExemplarSource, FILL_ROUNDS, FillError, ProblemSource, TemplateSource,
+    Batch, ExemplarRefusal, ExemplarSource, FILL_ROUNDS, FillError, ProblemSource,
+    REFUSAL_FLAG_PERCENT, Refused, TemplateSource,
 };
 
 use std::fmt;
@@ -145,6 +149,12 @@ pub struct PoolCounters {
     /// knowledge point has too few distinct instances. 1.0 counts the same event
     /// as `resample_exhausted` and serves the repeat anyway.
     pub pool_exhausted: u64,
+    /// The count of pool rows a pop retired because they did not decode.
+    ///
+    /// A row this build refuses is claimed and skipped, and the pop continues
+    /// with the rows behind it. A rising number says a version bump or a writer
+    /// of another build left rows the reader does not know.
+    pub pool_row_undecodable: u64,
 }
 
 impl PoolCounters {
@@ -155,6 +165,7 @@ impl PoolCounters {
             served: 0,
             blocked: 0,
             pool_exhausted: 0,
+            pool_row_undecodable: 0,
         }
     }
 
@@ -166,5 +177,11 @@ impl PoolCounters {
         if pick.exhausted {
             self.pool_exhausted = self.pool_exhausted.saturating_add(1);
         }
+    }
+
+    /// Count the rows one pop retired because they did not decode.
+    pub fn record_undecodable(&mut self, rows: usize) {
+        let rows = u64::try_from(rows).unwrap_or(u64::MAX);
+        self.pool_row_undecodable = self.pool_row_undecodable.saturating_add(rows);
     }
 }
