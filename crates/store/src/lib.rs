@@ -25,6 +25,7 @@ use sqlx::postgres::{PgConnectOptions, PgPoolOptions};
 use sqlx::{PgPool, Postgres, Transaction};
 use uuid::Uuid;
 
+pub mod content;
 pub mod pool;
 pub mod state;
 

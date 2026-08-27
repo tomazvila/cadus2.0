@@ -50,6 +50,7 @@ pub mod health;
 pub mod metrics;
 pub mod origin;
 pub mod security;
+pub mod serve;
 pub mod session;
 pub mod state;
 
@@ -144,6 +145,10 @@ pub fn create_app(state: AppState) -> Router {
         .route("/api/session/start", post(session::session_start))
         .route("/api/session/end", post(session::session_end))
         .route("/api/session/plan", get(session::session_plan))
+        // Unit U7, spec section 11. The same rule: before the three layers.
+        .route("/api/task/{task_id}/serve", post(serve::serve))
+        .route("/api/task/{task_id}/teach", post(serve::teach))
+        .route("/api/task/{task_id}/hint", post(serve::hint))
         // axum's own fallbacks answer with an empty body, so both of them
         // return the envelope instead (spec section 2).
         .fallback(error::not_found)
