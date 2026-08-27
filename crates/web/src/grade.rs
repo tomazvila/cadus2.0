@@ -68,6 +68,7 @@ use serde_json::{Value, json};
 use crate::AppState;
 use crate::diagnosis::{self, Miss, Pending};
 use crate::error::ApiError;
+use crate::metrics;
 use crate::serve::{Open, find, install_next, open, progress_for, unix_seconds};
 use crate::session::{bound, content, failed, now_pair, projection_input, write_state};
 use crate::state::{Content, INVALID_REQUEST, STATE_UNAVAILABLE, ServedProblem, Tenant, WebState};
@@ -621,6 +622,9 @@ pub async fn answer(
         return Err(broken_state("the served problem names no answer kind"));
     };
     if !matches!(kind, AnswerKind::Numeric | AnswerKind::Expression) {
+        // T6, spec section 7: the one `undecidable` decision of the counter.
+        // This service asks no model for a verdict, so the kind ends here.
+        state.metrics.count_grade(metrics::GRADE_UNDECIDABLE);
         return Err(ApiError::new(
             StatusCode::CONFLICT,
             UNDECIDABLE_KIND,
@@ -629,6 +633,8 @@ pub async fn answer(
         ));
     }
     let grade = deterministic_grade(&served.expected.answer, &submitted.answer, kind);
+    // T6, spec section 7: one count per grade DECISION, taken with no model call.
+    state.metrics.count_grade(metrics::grade_result(&grade));
     let mut error_tags = grade.error_tags.clone();
     error_tags.extend(timing_tags);
 

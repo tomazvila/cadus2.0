@@ -459,6 +459,54 @@ transport error. A truncated reply repeats with a 4× output ceiling, because a
 reasoning model shares its completion budget with its hidden reasoning and an
 identical retry reproduces the truncation exactly.
 
+### The model-call ledger (T6)
+
+Every HTTP attempt the worker makes writes one row of `model_call_log`: the
+purpose, the model id, the provider, the cached and uncached input tokens, the
+output tokens, the reasoning tokens, the wall clock in milliseconds, the cost and
+the provider's request id. A truncation retry is two calls and two bills, so it
+writes two rows.
+
+Read the ledger through an ADMIN connection. `cadus_app`, the role the web
+service uses, holds no privilege on the table and none on its sequence, and that
+is why the table needs no tenant policy.
+
+```sh
+docker compose exec db psql -U cadus_admin -d cadus -c \
+  "SELECT date_trunc('day', ts) AS day, purpose, count(*) AS calls,
+          sum(input_tokens_uncached) AS input, sum(output_tokens) AS output,
+          sum(cost_usd) AS usd
+     FROM model_call_log GROUP BY 1, 2 ORDER BY 1 DESC"
+```
+
+Two columns need a word:
+
+- `cost_usd` is NULL when the provider priced nothing. An unmeasured call is
+  visible AS unmeasured; it is never a dropped row and never a guess.
+- `output_tokens` counts the VISIBLE output. A provider that reports its hidden
+  reasoning inside `completion_tokens` has that part moved to
+  `reasoning_tokens`, so the two columns count different tokens and their sum is
+  what the provider billed as completion.
+
+### The metrics series
+
+`GET /metrics` reports four series beyond the two request series:
+
+| Series | Labels | Source |
+|---|---|---|
+| `cadus_deterministic_grade_total` | `result` = `correct`, `notation`, `blank`, `incorrect`, `undecidable` | The web process. It counts grade decisions taken with NO model call, and it starts at zero on every restart. |
+| `cadus_diagnosis_jobs_total` | `result` = `ready_preauthored`, `enqueued`, `done`, `failed`, `capped` | `ready_preauthored` is a hit in the authored bank, which writes no job row, so the web process counts it. The other four are the `diagnosis_jobs` rows themselves. |
+| `cadus_model_call_tokens_total` | `purpose`, `kind` = `cached`, `uncached`, `output`, `reasoning` | `model_call_log`. |
+| `cadus_model_call_latency_seconds` | `purpose` | `model_call_log`, as a `_sum` and a `_count`. |
+
+The model calls run in the worker, a different process from the one that answers
+`/metrics`, so the last two series and three labels of the second come from the
+tables and not from a counter in memory. They survive a restart of either
+process. The scrape reads them with two SECURITY DEFINER aggregates
+(`migrations/0009_metrics_readers.sql`) that return sums by purpose and by status
+and no row of either table. A datastore that answers nothing drops those series
+from one scrape; the request series and the grade counter still answer 200.
+
 ## Query bound
 
 `DB_STATEMENT_TIMEOUT_MS` (default `5000`) bounds every query of the web and

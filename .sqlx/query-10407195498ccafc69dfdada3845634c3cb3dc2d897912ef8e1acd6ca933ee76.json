@@ -1,0 +1,26 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n            INSERT INTO model_call_log\n                (ts, purpose, model_id, provider, user_id, session_id,\n                 input_tokens_cached, input_tokens_uncached, output_tokens,\n                 reasoning_tokens, latency_ms, cost_usd, request_id)\n            VALUES (now() - make_interval(secs => $1), $2, $3, $4, $5, $6,\n                    $7, $8, $9, $10, $11, $12::text::numeric, $13)\n            ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Float8",
+        "Text",
+        "Text",
+        "Text",
+        "Uuid",
+        "Text",
+        "Int4",
+        "Int4",
+        "Int4",
+        "Int4",
+        "Int4",
+        "Text",
+        "Text"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "10407195498ccafc69dfdada3845634c3cb3dc2d897912ef8e1acd6ca933ee76"
+}

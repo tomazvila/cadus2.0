@@ -176,7 +176,7 @@ const APP_TABLE_PRIVILEGES: [(&str, [bool; 5]); 20] = [
 ///
 /// The list holds no function of an extension.
 /// `public_functions_are_the_literal_list` pins those separately.
-const PUBLIC_FUNCTIONS: [(&str, bool, &str, bool, bool, bool); 6] = [
+const PUBLIC_FUNCTIONS: [(&str, bool, &str, bool, bool, bool); 8] = [
     // #1: the session cookie, read before the tenant bind.
     (
         "auth_session_by_token_hash",
@@ -221,6 +221,34 @@ const PUBLIC_FUNCTIONS: [(&str, bool, &str, bool, bool, bool); 6] = [
     // no payload, no prose.
     (
         "diagnosis_claim_age_secs",
+        true,
+        r#"{"search_path=public, pg_temp"}"#,
+        true,
+        true,
+        false,
+    ),
+    // M5 U11, migration 0009: the `cadus_diagnosis_jobs_total` counts of
+    // `/metrics` (T6). `/metrics` runs unbound on a `cadus_app` connection and
+    // `diagnosis_jobs` carries a FORCEd tenant policy, so a plain SELECT reads
+    // zero rows. This function gives back one line per job STATUS and no row of
+    // the queue: no id, no attempt, no payload, no prose.
+    (
+        "diagnosis_job_totals",
+        true,
+        r#"{"search_path=public, pg_temp"}"#,
+        true,
+        true,
+        false,
+    ),
+    // M5 U11, migration 0009: the `cadus_model_call_tokens_total` and
+    // `cadus_model_call_latency_seconds` totals of `/metrics` (T6). Findings #5
+    // and #12 leave `cadus_app` with no privilege on `model_call_log` and none
+    // on its sequence, and that stays true: what this function returns is one
+    // line per `purpose` with token sums, a latency sum and a call count. The
+    // money column and every per-learner column stay inside the ledger, which
+    // only `cadus_admin` reads.
+    (
+        "model_call_totals",
         true,
         r#"{"search_path=public, pg_temp"}"#,
         true,
@@ -1515,7 +1543,7 @@ async fn events_attempt_idem_is_unique() {
     .await;
 }
 
-/// D9: a second migration run applies nothing and leaves the eight rows.
+/// D9: a second migration run applies nothing and leaves the nine rows.
 #[tokio::test]
 async fn migrate_is_idempotent() {
     TestDb::with(|db| async move {
@@ -1525,7 +1553,7 @@ async fn migrate_is_idempotent() {
             .fetch_one(&db.admin)
             .await
             .unwrap();
-        assert_eq!(count, 8);
+        assert_eq!(count, 9);
     })
     .await;
 }

@@ -1,4 +1,5 @@
-//! M5 U10 acceptance: the diagnosis worker (A4, D-O5, D7, T4, T5).
+//! M5 U10 and U11 acceptance: the diagnosis worker and its ledger (A4, D-O5,
+//! D7, T4, T5, T6).
 //!
 //! The section 11 row of the spec names five checks, and each one is a test
 //! here:
@@ -10,6 +11,12 @@
 //! 3. a 400 does not retry (`crates/model-client/tests/client.rs`);
 //! 4. a tag outside the vocabulary is dropped;
 //! 5. three failures dead-letter the row.
+//!
+//! Row U11 names three more, and the last section of this file holds them:
+//!
+//! 6. a reply with no `usage` block writes a zeros row with a NULL cost;
+//! 7. a truncation retry writes two rows;
+//! 8. `cadus_app` cannot read, write, or `nextval` the table or its sequence.
 //!
 //! Every expected value is a LITERAL: a literal status string, a literal tag
 //! list, a literal row count, a literal NOTIFY payload. Nothing is read back
@@ -39,6 +46,7 @@ use serde_json::{Value, json};
 use sqlx::PgPool;
 use sqlx::postgres::PgListener;
 use sqlx::types::Uuid;
+use sqlx::types::chrono::{DateTime, Utc};
 use tokio::io::{AsyncReadExt, AsyncWriteExt};
 use tokio::net::TcpListener;
 
@@ -670,6 +678,469 @@ async fn a_four_hundred_spends_one_attempt_and_requeues_the_row() {
         assert_eq!(report.outcome, Outcome::Retry);
         assert_eq!(row_of(&db.admin, id).await.0, "pending");
         assert_eq!(row_of(&db.admin, id).await.1, 1);
+    })
+    .await;
+}
+
+// --------------------------------------------------------------------------- //
+// M5 U11 — the T6 model-call ledger (spec section 7)
+// --------------------------------------------------------------------------- //
+
+/// One `model_call_log` row, without the two fields a clock decides.
+///
+/// `cost_usd` is read back as its exact TEXT, so the assertion compares money
+/// and never a float. `ts` and `latency_ms` are asserted where they are the
+/// subject, because a wall clock has no literal value.
+#[derive(Debug, Clone, PartialEq, Eq)]
+struct Ledger {
+    purpose: String,
+    model_id: String,
+    provider: Option<String>,
+    user_id: Option<Uuid>,
+    session_id: Option<String>,
+    cached: i32,
+    uncached: i32,
+    output: i32,
+    reasoning: i32,
+    cost: Option<String>,
+    request_id: Option<String>,
+}
+
+/// Every ledger row, oldest first.
+async fn ledger(pool: &PgPool) -> Vec<Ledger> {
+    sqlx::query!(
+        r#"
+        SELECT purpose AS "purpose!", model_id AS "model_id!", provider,
+               user_id, session_id,
+               input_tokens_cached AS "cached!", input_tokens_uncached AS "uncached!",
+               output_tokens AS "output!", reasoning_tokens AS "reasoning!",
+               cost_usd::text AS cost, request_id
+          FROM model_call_log
+         ORDER BY id
+        "#
+    )
+    .fetch_all(pool)
+    .await
+    .unwrap()
+    .into_iter()
+    .map(|row| Ledger {
+        purpose: row.purpose,
+        model_id: row.model_id,
+        provider: row.provider,
+        user_id: row.user_id,
+        session_id: row.session_id,
+        cached: row.cached,
+        uncached: row.uncached,
+        output: row.output,
+        reasoning: row.reasoning,
+        cost: row.cost,
+        request_id: row.request_id,
+    })
+    .collect()
+}
+
+/// The `ts` and `latency_ms` of every ledger row, oldest first.
+async fn ledger_clock(pool: &PgPool) -> Vec<(DateTime<Utc>, i32)> {
+    sqlx::query!(
+        r#"SELECT ts AS "ts!", latency_ms AS "latency_ms!" FROM model_call_log ORDER BY id"#
+    )
+    .fetch_all(pool)
+    .await
+    .unwrap()
+    .into_iter()
+    .map(|row| (row.ts, row.latency_ms))
+    .collect()
+}
+
+/// The U11 acceptance literal: a reply with NO `usage` block writes a zeros row
+/// with a NULL cost.
+///
+/// An unmeasured call must be visible AS unmeasured, so the row is written and
+/// the money column is NULL. A dropped row hides a call the operator paid
+/// for.
+#[tokio::test]
+async fn a_reply_with_no_usage_block_writes_a_zeros_row_with_a_null_cost() {
+    TestDb::with(|db| async move {
+        let user = db.seed_user("nousage@example.test").await;
+        let id = enqueue(&db.admin, user, "task-1", &payload(Some("session-1"))).await;
+        let bare = json!({
+            "id": "gen-bare",
+            "choices": [{"finish_reason": "tool_calls", "message": {"tool_calls": [{"function": {
+                "name": "emit_diagnosis",
+                "arguments": "{\"error_tags\":[\"sign-error\"],\"prose\":\"Watch the sign.\"}"
+            }}]}}]
+        })
+        .to_string();
+        let server = FakeModel::start(vec![(200, bare)]).await;
+        let mut job = server.job(0);
+        let handle = Db::new(db.admin.clone(), DEFAULT_CLIENT_TIMEOUT_MS);
+
+        let report = run_once(&handle, &mut job).await.unwrap();
+
+        assert_eq!(report.outcome, Outcome::Done);
+        assert_eq!(row_of(&db.admin, id).await.0, "done");
+        assert_eq!(
+            ledger(&db.admin).await,
+            vec![Ledger {
+                purpose: "diagnosis".to_string(),
+                model_id: "qwen3.6".to_string(),
+                provider: None,
+                user_id: Some(user),
+                session_id: Some("session-1".to_string()),
+                cached: 0,
+                uncached: 0,
+                output: 0,
+                reasoning: 0,
+                cost: None,
+                request_id: Some("gen-bare".to_string()),
+            }]
+        );
+    })
+    .await;
+}
+
+/// The U11 acceptance literal: a truncation retry writes TWO rows.
+///
+/// A truncation retry is two calls and two bills. The first row carries the
+/// truncated attempt's own tokens, and its `ts` is the OLDER one: the client
+/// waited 500 ms between the two attempts, so the two stamps are at least that
+/// far apart and they stand in the order the attempts ran.
+#[tokio::test]
+async fn a_truncation_retry_writes_two_ledger_rows() {
+    TestDb::with(|db| async move {
+        let user = db.seed_user("twobills@example.test").await;
+        let id = enqueue(&db.admin, user, "task-1", &payload(Some("session-1"))).await;
+        let truncated = json!({
+            "id": "gen-cut",
+            "choices": [{"finish_reason": "length", "message": {"content": null}}],
+            "usage": {"prompt_tokens": 900, "completion_tokens": 600}
+        })
+        .to_string();
+        let server = FakeModel::start(vec![
+            (200, truncated),
+            (
+                200,
+                tool_reply("{\"error_tags\":[\"sign-error\"],\"prose\":\"Watch the sign.\"}"),
+            ),
+        ])
+        .await;
+        let mut job = server.job(0);
+        let handle = Db::new(db.admin.clone(), DEFAULT_CLIENT_TIMEOUT_MS);
+
+        let report = run_once(&handle, &mut job).await.unwrap();
+
+        assert_eq!(report.outcome, Outcome::Done);
+        assert_eq!(row_of(&db.admin, id).await.0, "done");
+        let rows = ledger(&db.admin).await;
+        assert_eq!(rows.len(), 2, "two HTTP attempts are two rows");
+        assert_eq!(
+            rows,
+            vec![
+                Ledger {
+                    purpose: "diagnosis".to_string(),
+                    model_id: "qwen3.6".to_string(),
+                    provider: None,
+                    user_id: Some(user),
+                    session_id: Some("session-1".to_string()),
+                    cached: 0,
+                    uncached: 900,
+                    output: 600,
+                    reasoning: 0,
+                    cost: None,
+                    request_id: Some("gen-cut".to_string()),
+                },
+                Ledger {
+                    purpose: "diagnosis".to_string(),
+                    model_id: "qwen3.6".to_string(),
+                    provider: None,
+                    user_id: Some(user),
+                    session_id: Some("session-1".to_string()),
+                    cached: 0,
+                    uncached: 500,
+                    output: 60,
+                    reasoning: 0,
+                    cost: None,
+                    request_id: Some("gen-1".to_string()),
+                },
+            ]
+        );
+
+        let clock = ledger_clock(&db.admin).await;
+        let gap = clock[1].0 - clock[0].0;
+        assert!(
+            gap.num_milliseconds() >= 500,
+            "the 500 ms backoff sits between the two starts, not {gap:?}"
+        );
+    })
+    .await;
+}
+
+/// The token reader: cached, uncached, output and reasoning, from one reply.
+///
+/// `prompt_tokens` 500 with 200 cached leaves 300 uncached. `completion_tokens`
+/// 60 holds 40 reasoning tokens inside it, so the visible output is 20 and the
+/// two columns count disjoint tokens. `usage.cost` reaches `numeric(12,6)` as
+/// its own text, so the money column reads back exactly.
+#[tokio::test]
+async fn the_ledger_reads_every_token_field_of_one_reply() {
+    TestDb::with(|db| async move {
+        let user = db.seed_user("tokens@example.test").await;
+        enqueue(&db.admin, user, "task-1", &payload(Some("session-7"))).await;
+        let full = json!({
+            "id": "gen-full",
+            "provider": "DeepInfra",
+            "choices": [{"finish_reason": "tool_calls", "message": {"tool_calls": [{"function": {
+                "name": "emit_diagnosis",
+                "arguments": "{\"error_tags\":[\"sign-error\"],\"prose\":\"Watch the sign.\"}"
+            }}]}}],
+            "usage": {
+                "prompt_tokens": 500,
+                "prompt_tokens_details": {"cached_tokens": 200},
+                "completion_tokens": 60,
+                "completion_tokens_details": {"reasoning_tokens": 40},
+                "cost": 0.001234
+            }
+        })
+        .to_string();
+        let server = FakeModel::start(vec![(200, full)]).await;
+        let mut job = server.job(0);
+        let handle = Db::new(db.admin.clone(), DEFAULT_CLIENT_TIMEOUT_MS);
+
+        let report = run_once(&handle, &mut job).await.unwrap();
+
+        assert_eq!(report.outcome, Outcome::Done);
+        assert_eq!(
+            ledger(&db.admin).await,
+            vec![Ledger {
+                purpose: "diagnosis".to_string(),
+                model_id: "qwen3.6".to_string(),
+                provider: Some("DeepInfra".to_string()),
+                user_id: Some(user),
+                session_id: Some("session-7".to_string()),
+                cached: 200,
+                uncached: 300,
+                output: 20,
+                reasoning: 40,
+                cost: Some("0.001234".to_string()),
+                request_id: Some("gen-full".to_string()),
+            }]
+        );
+        let clock = ledger_clock(&db.admin).await;
+        assert_eq!(clock.len(), 1);
+        assert!(
+            clock[0].1 >= 0,
+            "the row carries the wall clock of its call"
+        );
+    })
+    .await;
+}
+
+/// One row per HTTP ATTEMPT, not per job that finished.
+///
+/// Two 500s are two calls the operator pays for and no diagnosis at all, so the
+/// ledger holds two rows while the queue holds one pending row.
+#[tokio::test]
+async fn two_failed_attempts_write_two_ledger_rows() {
+    TestDb::with(|db| async move {
+        let user = db.seed_user("failedbills@example.test").await;
+        let id = enqueue(&db.admin, user, "task-1", &payload(None)).await;
+        let server = FakeModel::start(vec![
+            (500, json!({"error": "upstream"}).to_string()),
+            (500, json!({"error": "upstream"}).to_string()),
+        ])
+        .await;
+        let mut job = server.job(0);
+        let handle = Db::new(db.admin.clone(), DEFAULT_CLIENT_TIMEOUT_MS);
+
+        let report = run_once(&handle, &mut job).await.unwrap();
+
+        assert_eq!(report.outcome, Outcome::Retry);
+        assert_eq!(row_of(&db.admin, id).await.0, "pending");
+        let rows = ledger(&db.admin).await;
+        assert_eq!(rows.len(), 2, "two paid attempts are two rows");
+        for row in &rows {
+            assert_eq!(row.purpose, "diagnosis");
+            assert_eq!(row.user_id, Some(user));
+            assert_eq!(row.session_id, None, "this payload names no session");
+            assert_eq!(
+                (row.cached, row.uncached, row.output, row.reasoning),
+                (0, 0, 0, 0)
+            );
+            assert_eq!(
+                row.cost, None,
+                "an unpriced attempt is a NULL, never a guess"
+            );
+        }
+    })
+    .await;
+}
+
+/// A capped job makes no HTTP call, so it writes no ledger row (T4).
+#[tokio::test]
+async fn a_capped_job_writes_no_ledger_row() {
+    TestDb::with(|db| async move {
+        let user = db.seed_user("capbill@example.test").await;
+        let spent = enqueue(&db.admin, user, "task-0", &payload(Some("session-1"))).await;
+        sqlx::query!(
+            "UPDATE diagnosis_jobs SET status = 'done' WHERE id = $1",
+            spent
+        )
+        .execute(&db.admin)
+        .await
+        .unwrap();
+        enqueue(&db.admin, user, "task-1", &payload(Some("session-1"))).await;
+
+        let server = FakeModel::start(Vec::new()).await;
+        let mut job = server.job(1);
+        let handle = Db::new(db.admin.clone(), DEFAULT_CLIENT_TIMEOUT_MS);
+
+        let report = run_once(&handle, &mut job).await.unwrap();
+
+        assert_eq!(report.outcome, Outcome::Capped);
+        assert!(ledger(&db.admin).await.is_empty(), "no call, no bill");
+    })
+    .await;
+}
+
+/// The U11 acceptance literal: `cadus_app` cannot read, write, or `nextval` the
+/// ledger or its sequence — with rows in it.
+///
+/// `42501` is `insufficient_privilege`. The table stays outside row-level
+/// security on this basis (`docs/SCHEMA.md`, findings #5 and #12): the runtime
+/// role reaches no row of it with any statement. The two aggregate readers of
+/// migration 0009 are the one exception, and they hand back sums by purpose and
+/// no row at all.
+#[tokio::test]
+async fn the_app_role_cannot_read_write_or_advance_the_ledger() {
+    TestDb::with(|db| async move {
+        let user = db.seed_user("locked-out@example.test").await;
+        enqueue(&db.admin, user, "task-1", &payload(Some("session-1"))).await;
+        let server = FakeModel::start(vec![(
+            200,
+            tool_reply("{\"error_tags\":[\"sign-error\"],\"prose\":\"Watch the sign.\"}"),
+        )])
+        .await;
+        let mut job = server.job(0);
+        let handle = Db::new(db.admin.clone(), DEFAULT_CLIENT_TIMEOUT_MS);
+        run_once(&handle, &mut job).await.unwrap();
+        assert_eq!(
+            ledger(&db.admin).await.len(),
+            1,
+            "the ledger holds a row now"
+        );
+
+        let read = sqlx::query_scalar!(r#"SELECT count(*) AS "count!" FROM model_call_log"#)
+            .fetch_one(&db.app)
+            .await
+            .unwrap_err();
+        assert_eq!(
+            read.as_database_error().and_then(|e| e.code()).as_deref(),
+            Some("42501")
+        );
+
+        let write = sqlx::query!(
+            "INSERT INTO model_call_log (purpose, model_id, latency_ms) VALUES ('x', 'y', 1)"
+        )
+        .execute(&db.app)
+        .await
+        .unwrap_err();
+        assert_eq!(
+            write.as_database_error().and_then(|e| e.code()).as_deref(),
+            Some("42501")
+        );
+
+        let erase = sqlx::query!("DELETE FROM model_call_log")
+            .execute(&db.app)
+            .await
+            .unwrap_err();
+        assert_eq!(
+            erase.as_database_error().and_then(|e| e.code()).as_deref(),
+            Some("42501")
+        );
+
+        let advance = sqlx::query_scalar!(r#"SELECT nextval('model_call_log_id_seq') AS "next!""#)
+            .fetch_one(&db.app)
+            .await
+            .unwrap_err();
+        assert_eq!(
+            advance
+                .as_database_error()
+                .and_then(|e| e.code())
+                .as_deref(),
+            Some("42501")
+        );
+
+        let last =
+            sqlx::query_scalar!(r#"SELECT last_value AS "last!" FROM model_call_log_id_seq"#)
+                .fetch_one(&db.app)
+                .await
+                .unwrap_err();
+        assert_eq!(
+            last.as_database_error().and_then(|e| e.code()).as_deref(),
+            Some("42501")
+        );
+    })
+    .await;
+}
+
+/// The two aggregate readers of migration 0009 give `cadus_app` sums and no row.
+///
+/// `/metrics` runs on a `cadus_app` connection with no tenant bound, so this is
+/// the one path from the request tier to the worker's two tables. The numbers
+/// are the sums of the row above; nothing in the result names a learner, a
+/// session, a request id or a cost.
+#[tokio::test]
+async fn the_app_role_reads_the_ledger_totals_and_no_row() {
+    TestDb::with(|db| async move {
+        let user = db.seed_user("totals@example.test").await;
+        enqueue(&db.admin, user, "task-1", &payload(Some("session-1"))).await;
+        let full = json!({
+            "id": "gen-full",
+            "choices": [{"finish_reason": "tool_calls", "message": {"tool_calls": [{"function": {
+                "name": "emit_diagnosis",
+                "arguments": "{\"error_tags\":[\"sign-error\"],\"prose\":\"Watch the sign.\"}"
+            }}]}}],
+            "usage": {
+                "prompt_tokens": 500,
+                "prompt_tokens_details": {"cached_tokens": 200},
+                "completion_tokens": 60,
+                "completion_tokens_details": {"reasoning_tokens": 40}
+            }
+        })
+        .to_string();
+        let server = FakeModel::start(vec![(200, full)]).await;
+        let mut job = server.job(0);
+        let handle = Db::new(db.admin.clone(), DEFAULT_CLIENT_TIMEOUT_MS);
+        run_once(&handle, &mut job).await.unwrap();
+
+        let totals = sqlx::query!(
+            r#"
+            SELECT purpose AS "purpose!", input_cached AS "cached!",
+                   input_uncached AS "uncached!", output_tokens AS "output!",
+                   reasoning_tokens AS "reasoning!", calls AS "calls!"
+              FROM model_call_totals()
+            "#
+        )
+        .fetch_all(&db.app)
+        .await
+        .unwrap();
+        assert_eq!(totals.len(), 1);
+        assert_eq!(totals[0].purpose, "diagnosis");
+        assert_eq!(totals[0].cached, 200);
+        assert_eq!(totals[0].uncached, 300);
+        assert_eq!(totals[0].output, 20);
+        assert_eq!(totals[0].reasoning, 40);
+        assert_eq!(totals[0].calls, 1);
+
+        let jobs = sqlx::query!(
+            r#"SELECT status AS "status!", jobs AS "jobs!" FROM diagnosis_job_totals()"#
+        )
+        .fetch_all(&db.app)
+        .await
+        .unwrap();
+        assert_eq!(jobs.len(), 1);
+        assert_eq!(jobs[0].status, "done");
+        assert_eq!(jobs[0].jobs, 1);
     })
     .await;
 }

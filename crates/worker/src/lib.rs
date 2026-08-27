@@ -16,6 +16,7 @@
 )]
 
 pub mod diagnosis;
+pub mod model_log;
 pub mod refill;
 
 use std::future::Future;
@@ -24,6 +25,7 @@ use std::time::{Duration, SystemTime, UNIX_EPOCH};
 use cadus_store::{Db, StoreError, bounded};
 
 pub use diagnosis::{DiagnosisJob, Outcome as DiagnosisOutcome, Report as DiagnosisReport};
+pub use model_log::{CallRecord, PURPOSE_AUTHORING, PURPOSE_DIAGNOSIS};
 pub use refill::{
     EMPTY_FILLS_BEFORE_BACKOFF, EXHAUSTED_BACKOFF, REFILL_BACKOFF, RefillConfig, RefillJob,
     RefillReport, RefillState, batch_seed, refill_once, refill_once_at,

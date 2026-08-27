@@ -62,6 +62,7 @@ use serde_json::{Value, json};
 use sqlx::types::Uuid;
 
 use crate::WorkerError;
+use crate::model_log::{self, CallRecord, PURPOSE_DIAGNOSIS};
 
 /// The attempts one job gets before it dead-letters (spec section 6.1).
 pub const MAX_JOB_ATTEMPTS: i32 = 3;
@@ -579,6 +580,20 @@ pub async fn run_once(db: &Db, job: &mut DiagnosisJob) -> Result<Report, WorkerE
     };
     let call = job.client.call(&request).await;
     let attempts = call.attempts;
+
+    // T6: the bill lands BEFORE the row settles, so no paid call is ever
+    // recorded as free. One row per HTTP attempt (spec section 7). A ledger
+    // write that fails is logged with the record it did not write and stops
+    // nothing: the learner keeps the diagnosis that is already paid for.
+    let record = CallRecord {
+        purpose: PURPOSE_DIAGNOSIS,
+        user_id: Some(claimed.user_id),
+        session_id: payload.session.as_deref(),
+    };
+    if let Err(err) = model_log::write(db, &record, &attempts).await {
+        tracing::error!(job = %claimed.id, error = %err, attempts = ?attempts,
+                        "diagnosis: the model-call ledger did not write");
+    }
 
     match call.result {
         Ok(arguments) => {

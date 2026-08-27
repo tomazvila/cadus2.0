@@ -952,3 +952,63 @@ fn the_distractor_match_reads_the_checker_and_the_vocabulary() {
         None
     );
 }
+
+// --------------------------------------------------------------------------- //
+// M5 U11: the one diagnosis result that writes no row (T6, spec section 7)
+// --------------------------------------------------------------------------- //
+
+/// Read `/metrics` from the same router and return the exposition text.
+async fn scrape(app: &Router) -> String {
+    let request = Request::builder()
+        .method(Method::GET)
+        .uri("/metrics")
+        .body(Body::empty())
+        .unwrap();
+    let response = app.clone().oneshot(request).await.unwrap();
+    assert_eq!(response.status(), StatusCode::OK);
+    let bytes = response.into_body().collect().await.unwrap().to_bytes();
+    String::from_utf8_lossy(&bytes).into_owned()
+}
+
+/// A pre-authored hit counts `ready_preauthored`, and it is the only label of
+/// `cadus_diagnosis_jobs_total` that no row can carry.
+///
+/// The hit writes NO job row (spec section 6.2), so the queue holds nothing to
+/// count and the counter of this process is the whole record of it. `enqueued`
+/// stays at zero in the same scrape, which is the saving the label exists to
+/// show.
+#[tokio::test]
+async fn a_preauthored_hit_counts_ready_preauthored_and_enqueues_nothing() {
+    TestDb::with(|db| async move {
+        let app = app(&db);
+        let user = learner(&db, "u11-counted@example.test").await;
+        seed_distractors(
+            &db,
+            "u11-digest-ready",
+            &json!({
+                "v": 1,
+                "distractors": [
+                    { "answer": DISTRACTOR_ANSWER,
+                      "error_tag": "arithmetic-slip",
+                      "note": DISTRACTOR_NOTE }
+                ]
+            }),
+        )
+        .await;
+
+        let (status, body) = answer(&app, user, DISTRACTOR_ANSWER).await;
+        assert_eq!(status, StatusCode::OK);
+        assert_eq!(body["diagnosis"]["status"], json!("ready"));
+
+        let text = scrape(&app).await;
+        assert!(
+            text.contains("cadus_diagnosis_jobs_total{result=\"ready_preauthored\"} 1\n"),
+            "the scrape carries no pre-authored count:\n{text}"
+        );
+        assert!(
+            text.contains("cadus_diagnosis_jobs_total{result=\"enqueued\"} 0\n"),
+            "a pre-authored hit must enqueue nothing:\n{text}"
+        );
+    })
+    .await;
+}

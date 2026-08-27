@@ -1523,3 +1523,144 @@ fn a_quiz_attempt_is_never_reference_assisted() {
     assert!(!reference_assisted(TaskType::Quiz, false, 2));
     assert!(!reference_assisted(TaskType::Quiz, true, 2));
 }
+
+// --------------------------------------------------------------------------- //
+// M5 U11: the deterministic-grade counter (T6, spec section 7)
+// --------------------------------------------------------------------------- //
+
+/// Read `/metrics` from the same router and return the exposition text.
+async fn scrape(app: &Router) -> String {
+    let (status, body) = call(app, Method::GET, "/metrics", None, None).await;
+    assert_eq!(status, StatusCode::OK, "{body}");
+    body
+}
+
+/// Assert that `text` holds `line`, and print the whole scrape when it does not.
+fn holds(text: &str, line: &str) {
+    assert!(
+        text.contains(&format!("{line}\n")),
+        "the scrape carries no line {line:?}:\n{text}"
+    );
+}
+
+/// Four verdicts, four `result` labels, read from `GET /metrics`.
+///
+/// The counter is the T6 half that costs no token: it says how many decisions
+/// this service took with no model call at all. Each learner below answers once,
+/// so each label carries the count 1.
+#[tokio::test]
+async fn every_deterministic_verdict_counts_its_own_grade_label() {
+    TestDb::with(|db| async move {
+        let app = app(&db);
+
+        let right = learner(
+            &db,
+            "count-correct@example.com",
+            served(5.0, "kp1", Vec::new()),
+        )
+        .await;
+        let (status, _) = answer(
+            &app,
+            right,
+            json!({"problem_id": PROBLEM_ID, "answer": EXPECTED_ANSWER}),
+        )
+        .await;
+        assert_eq!(status, StatusCode::OK);
+
+        let wrong = learner(
+            &db,
+            "count-wrong@example.com",
+            served(5.0, "kp1", Vec::new()),
+        )
+        .await;
+        answer(
+            &app,
+            wrong,
+            json!({"problem_id": PROBLEM_ID, "answer": "14"}),
+        )
+        .await;
+
+        let empty = learner(
+            &db,
+            "count-blank@example.com",
+            served(5.0, "kp1", Vec::new()),
+        )
+        .await;
+        answer(
+            &app,
+            empty,
+            json!({"problem_id": PROBLEM_ID, "answer": "   "}),
+        )
+        .await;
+
+        let mut grouped = served(5.0, "kp1", Vec::new());
+        grouped.expected.answer = "7329".to_string();
+        let form = learner(&db, "count-notation@example.com", grouped).await;
+        answer(
+            &app,
+            form,
+            json!({"problem_id": PROBLEM_ID, "answer": "7.329"}),
+        )
+        .await;
+
+        let text = scrape(&app).await;
+        holds(
+            &text,
+            "cadus_deterministic_grade_total{result=\"correct\"} 1",
+        );
+        holds(
+            &text,
+            "cadus_deterministic_grade_total{result=\"incorrect\"} 1",
+        );
+        holds(&text, "cadus_deterministic_grade_total{result=\"blank\"} 1");
+        holds(
+            &text,
+            "cadus_deterministic_grade_total{result=\"notation\"} 1",
+        );
+        holds(
+            &text,
+            "cadus_deterministic_grade_total{result=\"undecidable\"} 0",
+        );
+    })
+    .await;
+}
+
+/// An answer kind with no deterministic verdict counts `undecidable`.
+///
+/// The route refuses the kind with `409 undecidable_kind` and asks no model, so
+/// the refusal is the decision and the counter records it. Nothing is graded and
+/// nothing is recorded, so no other label moves.
+#[tokio::test]
+async fn an_undecidable_kind_counts_one_undecidable_grade() {
+    TestDb::with(|db| async move {
+        let app = app(&db);
+        let mut live = served(5.0, "kp1", Vec::new());
+        live.answer_kind = Some("proof".to_string());
+        let user = learner(&db, "count-proof@example.com", live).await;
+
+        let (status, body) = call(
+            &app,
+            Method::POST,
+            &format!("/api/task/{LESSON}/answer"),
+            Some(user),
+            Some(json!({"problem_id": PROBLEM_ID, "answer": "Assume the contrary."})),
+        )
+        .await;
+        assert_eq!(status, StatusCode::CONFLICT, "{body}");
+
+        let text = scrape(&app).await;
+        holds(
+            &text,
+            "cadus_deterministic_grade_total{result=\"undecidable\"} 1",
+        );
+        holds(
+            &text,
+            "cadus_deterministic_grade_total{result=\"correct\"} 0",
+        );
+        holds(
+            &text,
+            "cadus_deterministic_grade_total{result=\"incorrect\"} 0",
+        );
+    })
+    .await;
+}

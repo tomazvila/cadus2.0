@@ -14,6 +14,9 @@ lineage is 1.0's `docs/DATA_MODEL.md` §9.
 | `0004_scratch` | per-user scratch and queues | `profiles`, `session_plans`, `diag_states`, `user_settings`, `web_states`, `anki_queue`, `anki_cards_created`, `email_outbox` |
 | `0005_content` | new in 2.0 | `content_store`, `serving_pool`, `model_call_log`, `diagnosis_jobs` |
 | `0006_grants_rls` | grants and RLS | no tables |
+| `0007_worker_liveness` | worker liveness (D-M5-6) | no tables; `diagnosis_claim_age_secs()` |
+| `0008_auth_session_absolute` | the 90-day session window | no tables; `auth_session_by_token_hash` returns `created_at` |
+| `0009_metrics_readers` | the new `/metrics` series (T6) | no tables; `model_call_totals()`, `diagnosis_job_totals()` |
 
 ## Roles
 
@@ -264,7 +267,7 @@ point of the flow.
 
 | Table | Reason |
 |---|---|
-| `model_call_log` | Findings #5 and #12: `cadus_app` holds no privilege on the table and none on its identity sequence, so no runtime statement reaches either. Only `cadus_admin` reads and writes them. |
+| `model_call_log` | Findings #5 and #12: `cadus_app` holds no privilege on the table and none on its identity sequence, so no runtime statement reaches either. Only `cadus_admin` reads and writes them. Migration 0009 adds `model_call_totals()`, a SECURITY DEFINER aggregate that `/metrics` calls: it returns one line per `purpose` with token sums, a latency sum and a call count, and no row of the table. The privilege set of `cadus_app` on the table and on the sequence stays empty, so the exemption stands. |
 
 `auth_sessions`, `auth_tokens`, and `oauth_accounts` left the exempt list with
 round-4 finding #1. The old reason was "looked up before a tenant context

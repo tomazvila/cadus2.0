@@ -9,6 +9,24 @@
 //! - `cadus_http_request_duration_seconds`, a histogram, labelled `method` and
 //!   `route`.
 //!
+//! Unit U11 adds the four series of spec section 7. They come from TWO sources,
+//! and the split is the design:
+//!
+//! - [`GRADE_METRIC`] and the `ready_preauthored` label of [`DIAGNOSIS_METRIC`]
+//!   count DECISIONS this process took. They live in [`Registry`], they start at
+//!   zero on every boot, and a replayed request counts its decision again.
+//! - [`MODEL_TOKENS_METRIC`], [`MODEL_LATENCY_METRIC`] and the other labels of
+//!   [`DIAGNOSIS_METRIC`] count ROWS. The model calls run in `cadus-worker`, a
+//!   different process, so a counter in this one reports zero for ever.
+//!   The scrape reads them from the two tables the worker writes, through the
+//!   SECURITY DEFINER aggregates of `migrations/0009_metrics_readers.sql`
+//!   ([`ledger_totals`]). They survive a restart of either process, and they
+//!   stay correct with more than one worker.
+//!
+//! `cadus_app` reaches no ROW of `model_call_log` and no row of `diagnosis_jobs`
+//! through those functions: what comes back is one line per `purpose` and one
+//! line per job `status`, with no tenant, no session and no money in it.
+//!
 //! **The label set is bounded, and that is the whole design.** `route` is the
 //! matched route TEMPLATE — `/api/task/{task_id}/serve`, never
 //! `/api/task/t-review-fractions/serve` — so the label space is the route set,
@@ -24,13 +42,16 @@
 
 use std::collections::BTreeMap;
 use std::sync::{Mutex, MutexGuard};
+use std::time::Duration;
 
 use axum::extract::{MatchedPath, Request, State};
 use axum::http::{HeaderValue, Method, StatusCode, header};
 use axum::middleware::Next;
 use axum::response::{IntoResponse, Response};
+use cadus_store::{Db, bounded};
 
 use crate::AppState;
+use crate::grade::{Grade, TAG_BLANK_ANSWER, TAG_NOTATION};
 
 /// The route label of a path that matched no route.
 pub const UNMATCHED_ROUTE: &str = "__unmatched__";
@@ -43,6 +64,79 @@ pub const REQUESTS_METRIC: &str = "cadus_http_requests_total";
 
 /// The name of the request-latency histogram.
 pub const DURATION_METRIC: &str = "cadus_http_request_duration_seconds";
+
+/// The name of the deterministic-grade counter (1.0: `metrics.py:109-114`).
+pub const GRADE_METRIC: &str = "cadus_deterministic_grade_total";
+
+/// The name of the diagnosis-job counter.
+pub const DIAGNOSIS_METRIC: &str = "cadus_diagnosis_jobs_total";
+
+/// The name of the model-call token counter (T6).
+pub const MODEL_TOKENS_METRIC: &str = "cadus_model_call_tokens_total";
+
+/// The name of the model-call latency summary (T6).
+pub const MODEL_LATENCY_METRIC: &str = "cadus_model_call_latency_seconds";
+
+/// Every `result` label of [`GRADE_METRIC`], rendered whether it counted or not.
+///
+/// The full label set ships even at zero, because a dashboard that silently
+/// misses a series reads as a service that never took that decision.
+///
+/// - `correct`: the answer is the authored answer.
+/// - `notation`: correct, written in a form the checker names (a period-grouped
+///   integer). It is a pass, counted apart, so the share of near-misses in FORM
+///   is visible.
+/// - `blank`: nothing was submitted.
+/// - `incorrect`: a deterministic miss. An answer outside the grammar is one of
+///   these (spec section 5.1), not a third thing.
+/// - `undecidable`: the answer kind carries no deterministic verdict, so the
+///   route answers `409 undecidable_kind` and this service asks no model.
+pub const GRADE_RESULTS: [&str; 5] = ["correct", "notation", "blank", "incorrect", "undecidable"];
+
+/// The `result` label of a correct answer.
+pub const GRADE_CORRECT: &str = "correct";
+
+/// The `result` label of a correct answer in a named form.
+pub const GRADE_NOTATION: &str = "notation";
+
+/// The `result` label of a blank submission.
+pub const GRADE_BLANK: &str = "blank";
+
+/// The `result` label of a deterministic miss.
+pub const GRADE_INCORRECT: &str = "incorrect";
+
+/// The `result` label of an answer kind with no deterministic verdict.
+pub const GRADE_UNDECIDABLE: &str = "undecidable";
+
+/// The `result` label of a diagnosis served from pre-authored content.
+///
+/// A pre-authored hit writes NO job row (spec section 6.2), so this label has no
+/// row to be counted from and lives in [`Registry`] instead.
+pub const DIAGNOSIS_PREAUTHORED: &str = "ready_preauthored";
+
+/// The `result` label of every job row the queue holds.
+pub const DIAGNOSIS_ENQUEUED: &str = "enqueued";
+
+/// The job statuses [`DIAGNOSIS_METRIC`] reports one by one, and the `result`
+/// label each one carries. `pending` and `running` are not final, so they count
+/// under [`DIAGNOSIS_ENQUEUED`] only.
+pub const DIAGNOSIS_STATUSES: [&str; 3] = ["done", "failed", "capped"];
+
+/// The `kind` labels of [`MODEL_TOKENS_METRIC`].
+pub const TOKEN_KINDS: [&str; 4] = ["cached", "uncached", "output", "reasoning"];
+
+/// The `purpose` labels that ship even at zero (T2 names no third spender).
+pub const PURPOSES: [&str; 2] = ["authoring", "diagnosis"];
+
+/// The bound on the two ledger reads of one scrape.
+///
+/// A scrape must answer fast even when the datastore does not. The client bound
+/// of [`Db`] is 10 s by default and a Prometheus scrape gives up at 10 s, so a
+/// datastore that hangs then costs the operator the request series as well as
+/// the ledger series. This bound cuts the ledger read first, and the rest of the
+/// scrape still answers. Both reads are one aggregate over two small tables, so
+/// a healthy datastore is three orders of magnitude inside it.
+pub const LEDGER_READ_BOUND: Duration = Duration::from_millis(2_000);
 
 /// The content type of the Prometheus text exposition format, version 0.0.4.
 pub const EXPOSITION_CONTENT_TYPE: &str = "text/plain; version=0.0.4; charset=utf-8";
@@ -85,6 +179,7 @@ type Key = (&'static str, String, u16);
 #[derive(Debug, Default)]
 pub struct Registry {
     series: Mutex<BTreeMap<Key, Series>>,
+    counters: Mutex<BTreeMap<(&'static str, &'static str), u64>>,
 }
 
 impl Registry {
@@ -103,6 +198,47 @@ impl Registry {
         self.series
             .lock()
             .unwrap_or_else(|poisoned| poisoned.into_inner())
+    }
+
+    /// Take the counter lock. The same rule as [`Registry::lock`]: a poisoned
+    /// lock gives its data back, because dropped metrics must not take the
+    /// process with them.
+    fn counter_lock(&self) -> MutexGuard<'_, BTreeMap<(&'static str, &'static str), u64>> {
+        self.counters
+            .lock()
+            .unwrap_or_else(|poisoned| poisoned.into_inner())
+    }
+
+    /// Count one deterministic grade decision (spec section 7).
+    ///
+    /// `result` is one of [`GRADE_RESULTS`]. The count is per DECISION: a
+    /// replayed request grades the same submission again and counts again,
+    /// exactly as 1.0 counts at its own grade call.
+    pub fn count_grade(&self, result: &'static str) {
+        *self
+            .counter_lock()
+            .entry((GRADE_METRIC, result))
+            .or_default() += 1;
+    }
+
+    /// Count one diagnosis decision this process took.
+    ///
+    /// The only label the request tier owns is [`DIAGNOSIS_PREAUTHORED`]: a
+    /// pre-authored hit writes no job row, so no row can be counted for it. The
+    /// other labels come from the queue itself ([`ledger_totals`]).
+    pub fn count_diagnosis(&self, result: &'static str) {
+        *self
+            .counter_lock()
+            .entry((DIAGNOSIS_METRIC, result))
+            .or_default() += 1;
+    }
+
+    /// The current value of one counter. For the tests.
+    pub fn counter_of(&self, metric: &str, label: &str) -> u64 {
+        self.counter_lock()
+            .iter()
+            .find(|((m, l), _)| *m == metric && *l == label)
+            .map_or(0, |(_, count)| *count)
     }
 
     /// Record one finished request.
@@ -178,7 +314,222 @@ impl Registry {
                 entry.count, entry.sum, entry.count
             ));
         }
+        drop(series);
+
+        out.push_str(&format!(
+            "# HELP {GRADE_METRIC} Grading decisions taken with no model call, by result.\n\
+             # TYPE {GRADE_METRIC} counter\n"
+        ));
+        for result in GRADE_RESULTS {
+            out.push_str(&format!(
+                "{GRADE_METRIC}{{result=\"{result}\"}} {}\n",
+                self.counter_of(GRADE_METRIC, result)
+            ));
+        }
         out
+    }
+}
+
+/// The token, latency and call totals of one `purpose` (T6).
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct PurposeTotals {
+    /// `'diagnosis'` or `'authoring'`.
+    pub purpose: String,
+    /// `input_tokens_cached`, summed.
+    pub cached: i64,
+    /// `input_tokens_uncached`, summed.
+    pub uncached: i64,
+    /// `output_tokens`, summed.
+    pub output: i64,
+    /// `reasoning_tokens`, summed.
+    pub reasoning: i64,
+    /// `latency_ms`, summed.
+    pub latency_ms: i64,
+    /// How many HTTP attempts the ledger holds for this purpose.
+    pub calls: i64,
+}
+
+/// What one scrape reads from the two tables the worker writes.
+#[derive(Debug, Clone, Default, PartialEq, Eq)]
+pub struct LedgerTotals {
+    /// One entry per `purpose` in `model_call_log`.
+    pub model_calls: Vec<PurposeTotals>,
+    /// One entry per `status` in `diagnosis_jobs`, as `(status, rows)`.
+    pub jobs: Vec<(String, i64)>,
+}
+
+/// Read the ledger totals under [`LEDGER_READ_BOUND`].
+///
+/// `None` means the read failed or ran past the bound. The scrape then renders
+/// the request series alone: a gap in a counter is a gap, and zeros read as a
+/// counter reset that never happened.
+pub async fn ledger_totals(db: &Db) -> Option<LedgerTotals> {
+    match tokio::time::timeout(LEDGER_READ_BOUND, read_totals(db)).await {
+        Ok(totals) => totals,
+        Err(_) => {
+            tracing::warn!(
+                bound_ms = LEDGER_READ_BOUND.as_millis(),
+                "metrics: the ledger read ran past its bound"
+            );
+            None
+        }
+    }
+}
+
+/// Read the ledger totals through the two SECURITY DEFINER aggregates.
+async fn read_totals(db: &Db) -> Option<LedgerTotals> {
+    let calls = sqlx::query!(
+        r#"
+        SELECT purpose AS "purpose!", input_cached AS "cached!",
+               input_uncached AS "uncached!", output_tokens AS "output!",
+               reasoning_tokens AS "reasoning!", latency_ms AS "latency_ms!",
+               calls AS "calls!"
+          FROM model_call_totals()
+        "#
+    )
+    .fetch_all(db.pool());
+    let calls = match bounded(db, calls).await {
+        Ok(rows) => rows,
+        Err(err) => {
+            tracing::warn!(error = %err, "metrics: the model-call totals did not read");
+            return None;
+        }
+    };
+
+    let jobs =
+        sqlx::query!(r#"SELECT status AS "status!", jobs AS "jobs!" FROM diagnosis_job_totals()"#)
+            .fetch_all(db.pool());
+    let jobs = match bounded(db, jobs).await {
+        Ok(rows) => rows,
+        Err(err) => {
+            tracing::warn!(error = %err, "metrics: the diagnosis-job totals did not read");
+            return None;
+        }
+    };
+
+    Some(LedgerTotals {
+        model_calls: calls
+            .into_iter()
+            .map(|row| PurposeTotals {
+                purpose: row.purpose,
+                cached: row.cached,
+                uncached: row.uncached,
+                output: row.output,
+                reasoning: row.reasoning,
+                latency_ms: row.latency_ms,
+                calls: row.calls,
+            })
+            .collect(),
+        jobs: jobs.into_iter().map(|row| (row.status, row.jobs)).collect(),
+    })
+}
+
+/// Render the three ledger-backed series of spec section 7.
+///
+/// `preauthored` is the one label of [`DIAGNOSIS_METRIC`] that no row carries.
+/// Every `purpose` of [`PURPOSES`] renders even at zero, and a purpose the
+/// ledger holds beyond that list renders too, so a new spender is visible the
+/// day it first spends.
+#[must_use]
+pub fn render_ledger(totals: &LedgerTotals, preauthored: u64) -> String {
+    let mut out = String::new();
+
+    let mut jobs: BTreeMap<&str, i64> = BTreeMap::new();
+    for (status, count) in &totals.jobs {
+        *jobs.entry(status.as_str()).or_default() += *count;
+    }
+    let enqueued: i64 = jobs.values().sum();
+
+    out.push_str(&format!(
+        "# HELP {DIAGNOSIS_METRIC} Async diagnosis jobs, by result.\n\
+         # TYPE {DIAGNOSIS_METRIC} counter\n\
+         {DIAGNOSIS_METRIC}{{result=\"{DIAGNOSIS_PREAUTHORED}\"}} {preauthored}\n\
+         {DIAGNOSIS_METRIC}{{result=\"{DIAGNOSIS_ENQUEUED}\"}} {enqueued}\n"
+    ));
+    for status in DIAGNOSIS_STATUSES {
+        out.push_str(&format!(
+            "{DIAGNOSIS_METRIC}{{result=\"{status}\"}} {}\n",
+            jobs.get(status).copied().unwrap_or(0)
+        ));
+    }
+
+    let mut purposes: BTreeMap<&str, PurposeTotals> = BTreeMap::new();
+    for purpose in PURPOSES {
+        purposes.insert(
+            purpose,
+            PurposeTotals {
+                purpose: purpose.to_string(),
+                cached: 0,
+                uncached: 0,
+                output: 0,
+                reasoning: 0,
+                latency_ms: 0,
+                calls: 0,
+            },
+        );
+    }
+    for row in &totals.model_calls {
+        purposes.insert(row.purpose.as_str(), row.clone());
+    }
+
+    out.push_str(&format!(
+        "# HELP {MODEL_TOKENS_METRIC} Model tokens spent, by purpose and kind.\n\
+         # TYPE {MODEL_TOKENS_METRIC} counter\n"
+    ));
+    for (purpose, row) in &purposes {
+        let label = escape(purpose);
+        for (kind, count) in
+            TOKEN_KINDS
+                .iter()
+                .zip([row.cached, row.uncached, row.output, row.reasoning])
+        {
+            out.push_str(&format!(
+                "{MODEL_TOKENS_METRIC}{{purpose=\"{label}\",kind=\"{kind}\"}} {count}\n"
+            ));
+        }
+    }
+
+    out.push_str(&format!(
+        "# HELP {MODEL_LATENCY_METRIC} Model-call wall clock in seconds, by purpose. One \
+         observation per HTTP attempt.\n\
+         # TYPE {MODEL_LATENCY_METRIC} summary\n"
+    ));
+    for (purpose, row) in &purposes {
+        let label = escape(purpose);
+        #[expect(
+            clippy::cast_precision_loss,
+            reason = "a latency sum in milliseconds is far below 2**53"
+        )]
+        let seconds = row.latency_ms as f64 / 1000.0;
+        out.push_str(&format!(
+            "{MODEL_LATENCY_METRIC}_sum{{purpose=\"{label}\"}} {seconds}\n\
+             {MODEL_LATENCY_METRIC}_count{{purpose=\"{label}\"}} {}\n",
+            row.calls
+        ));
+    }
+    out
+}
+
+/// The `result` label of one deterministic grade (spec section 7).
+///
+/// The three server-produced tags decide it: a blank submission carries
+/// [`TAG_BLANK_ANSWER`] and a correct answer in a named form carries
+/// [`TAG_NOTATION`]. An answer outside the grammar is a MISS with no tag (spec
+/// section 5.1), so it counts as [`GRADE_INCORRECT`], which is what it is.
+/// [`GRADE_UNDECIDABLE`] belongs to the answer KIND, not to the answer: the
+/// route counts it where it refuses the kind.
+#[must_use]
+pub fn grade_result(grade: &Grade) -> &'static str {
+    if grade.error_tags.iter().any(|tag| tag == TAG_BLANK_ANSWER) {
+        return GRADE_BLANK;
+    }
+    if !grade.correct {
+        return GRADE_INCORRECT;
+    }
+    if grade.error_tags.iter().any(|tag| tag == TAG_NOTATION) {
+        GRADE_NOTATION
+    } else {
+        GRADE_CORRECT
     }
 }
 
@@ -243,14 +594,29 @@ pub async fn request_metrics_layer(
 }
 
 /// `GET /metrics`. The current value of every series, as Prometheus text.
+///
+/// The request series and the grade counter come from this process. The three
+/// ledger-backed series of spec section 7 come from the two tables the worker
+/// writes, so the scrape does one read of each. A failed read drops those series
+/// from this scrape and never fails the endpoint: an operator who cannot see the
+/// token counters must still see the request counters.
 pub async fn scrape(State(state): State<AppState>) -> Response {
+    let mut body = state.metrics.render();
+    if let Some(totals) = ledger_totals(&state.db).await {
+        body.push_str(&render_ledger(
+            &totals,
+            state
+                .metrics
+                .counter_of(DIAGNOSIS_METRIC, DIAGNOSIS_PREAUTHORED),
+        ));
+    }
     (
         StatusCode::OK,
         [(
             header::CONTENT_TYPE,
             HeaderValue::from_static(EXPOSITION_CONTENT_TYPE),
         )],
-        state.metrics.render(),
+        body,
     )
         .into_response()
 }

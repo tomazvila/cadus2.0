@@ -325,6 +325,11 @@ pub(crate) async fn decide(
         if let Some(hit) =
             doc.and_then(|doc| match_distractor(&doc.body, miss.answer, kind, &cfg.error_tags))
         {
+            // T6, spec section 7: the pre-authored hit is the one diagnosis
+            // result with NO job row, so the counter is the only record of it.
+            state
+                .metrics
+                .count_diagnosis(crate::metrics::DIAGNOSIS_PREAUTHORED);
             return Ok(json!({
                 "status": STATUS_READY,
                 "error_tags": hit.error_tags,
