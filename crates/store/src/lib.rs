@@ -26,6 +26,7 @@ use sqlx::{PgPool, Postgres, Transaction};
 use uuid::Uuid;
 
 pub mod auth;
+pub mod content;
 pub mod pool;
 pub mod state;
 

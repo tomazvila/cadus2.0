@@ -540,6 +540,120 @@ async fn retire_row(tx: &mut Transaction<'_, Postgres>, id: Uuid) -> Result<(), 
     Ok(())
 }
 
+/// Serve one exemplar row of this pair again, oldest serve first (A6).
+///
+/// The A6 fallback of the M5 serve path instantiates the knowledge point's
+/// exemplars in process, writes them with [`insert_batch`], and pops. A pair
+/// whose whole exemplar list is already claimed pops nothing, and the pool cannot
+/// grow: the unique index `(user_id, kp_id, instance_hash)` refuses a second copy
+/// of a statement the authored list already holds. This call is the rotation for
+/// that pair.
+///
+/// It reads the CLAIMED exemplar rows of the pair, oldest serve first, lets the
+/// D5 rule of [`pick`] choose among them, and re-stamps `claimed_at`. Two
+/// consequences, both wanted:
+///
+/// - the learner keeps getting the least recently served exemplar, which is
+///   1.0's `pool[index % len]` rotation with an anti-repeat rule on top
+///   (specification section 6.1);
+/// - `last_exemplar_at` of [`operator_flags`] tracks the newest fallback serve,
+///   so the A6 dashboard shows a knowledge point that is STILL on exemplars and
+///   not only the day it first fell back.
+///
+/// A row that this build cannot decode is skipped and left alone: it is claimed
+/// already, so it is outside the unclaimed set and outside the refill depth, and
+/// [`pop_with_ring_tx`] owns the retirement of an unclaimed one.
+///
+/// `Ok(None)` means the pair holds no exemplar row at all. The caller then has
+/// nothing to serve for this knowledge point.
+///
+/// # Errors
+///
+/// Returns [`StoreError::Db`] when a statement fails, and [`StoreError::PoolRow`]
+/// when the candidate rule names a row the read did not return.
+pub async fn reclaim_exemplar_tx(
+    tx: &mut Transaction<'_, Postgres>,
+    user_id: Uuid,
+    kp_id: &str,
+    avoid: &Avoid<'_>,
+) -> Result<Option<PoolRow>, StoreError> {
+    let rows = sqlx::query!(
+        r#"
+        SELECT sp.id AS "id!",
+               sp.source AS "source!",
+               sp.content_digest,
+               sp.problem::text AS "problem!",
+               sp.expected_answer::text AS "expected!",
+               sp.instance_hash AS "instance_hash!"
+        FROM serving_pool AS sp
+        WHERE sp.user_id = $1
+          AND sp.kp_id = $2
+          AND sp.source = 'exemplar'
+          AND sp.claimed_at IS NOT NULL
+        ORDER BY sp.claimed_at, sp.id
+        FOR UPDATE OF sp SKIP LOCKED
+        LIMIT $3
+        "#,
+        user_id,
+        kp_id,
+        POP_LIMIT,
+    )
+    .fetch_all(&mut **tx)
+    .await?;
+
+    let mut candidates: Vec<PoolRow> = Vec::with_capacity(rows.len());
+    for row in rows {
+        let id = row.id;
+        match read_row(
+            id,
+            &row.source,
+            row.content_digest,
+            &row.problem,
+            &row.expected,
+            row.instance_hash,
+        ) {
+            Ok(candidate) => candidates.push(candidate),
+            Err(err) => tracing::warn!(
+                row_id = %id,
+                user_id = %user_id,
+                kp_id = %kp_id,
+                reason = %err,
+                "pool: an exemplar row this build cannot decode is skipped by the A6 rotation"
+            ),
+        }
+    }
+
+    let Some(chosen) = pick(&candidates, avoid) else {
+        return Ok(None);
+    };
+    // The rows come back oldest serve first, so the first UNBLOCKED row is the
+    // one the learner saw longest ago. When every row is blocked — the steady
+    // state of a knowledge point whose exemplar count is under the ring size —
+    // [`pick`] takes the LAST candidate, which here is the row the learner saw
+    // most recently. Take the first one instead: the repeat must be the oldest
+    // one, or a two-exemplar knowledge point serves one statement forever.
+    let index = if chosen.exhausted { 0 } else { chosen.index };
+    let Some(row) = candidates.get(index).cloned() else {
+        return Err(StoreError::PoolRow(format!(
+            "the candidate rule chose index {index} of {} exemplar rows",
+            candidates.len()
+        )));
+    };
+
+    sqlx::query!(
+        r#"
+        UPDATE serving_pool
+        SET claimed_at = now()
+        WHERE id = $1
+        "#,
+        row.id,
+    )
+    .execute(&mut **tx)
+    .await?;
+
+    Ok(Some(row))
+}
+
 /// [`pop_with_ring_tx`] inside a tenant transaction of its own.
 ///
 /// The M5 serve path uses [`pop_with_ring_tx`], because it writes the D-S6 state

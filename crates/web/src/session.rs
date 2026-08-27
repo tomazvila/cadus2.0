@@ -244,7 +244,7 @@ fn has_diagnostic(events: &[EventRow]) -> bool {
 // --------------------------------------------------------------------------- //
 
 /// Run a store call under the client-side query bound of `db` (L1, R4).
-async fn bound<T>(
+pub(crate) async fn bound<T>(
     db: &Db,
     call: impl Future<Output = Result<T, StoreError>>,
 ) -> Result<T, StoreError> {
@@ -253,7 +253,7 @@ async fn bound<T>(
 
 /// Map a store failure onto the envelope. The cause goes to the log, never to
 /// the client: it names table and column text.
-fn failed(err: &StoreError) -> ApiError {
+pub(crate) fn failed(err: &StoreError) -> ApiError {
     tracing::error!(error = %err, "cadus-web: a state operation failed");
     ApiError::new(
         StatusCode::INTERNAL_SERVER_ERROR,
@@ -267,7 +267,7 @@ fn failed(err: &StoreError) -> ApiError {
 /// `begin_tenant` runs `set_config('app.user_id', $1, true)`, which is a
 /// statement like any other, so it takes the bound of `DB_CLIENT_TIMEOUT_MS`
 /// too (R4, L1).
-async fn begin(
+pub(crate) async fn begin(
     state: &AppState,
     user_id: sqlx::types::Uuid,
 ) -> Result<Transaction<'static, Postgres>, ApiError> {
@@ -277,7 +277,7 @@ async fn begin(
 }
 
 /// The curriculum of this process, or `503` when the binary loaded none.
-fn content(state: &AppState) -> Result<&Content, ApiError> {
+pub(crate) fn content(state: &AppState) -> Result<&Content, ApiError> {
     state.content.as_deref().ok_or_else(|| {
         ApiError::new(
             StatusCode::SERVICE_UNAVAILABLE,
@@ -288,19 +288,19 @@ fn content(state: &AppState) -> Result<&Content, ApiError> {
 }
 
 /// The `now` of one request, as the core spells it.
-fn now_pair() -> (DateTime<Utc>, Timestamp) {
+pub(crate) fn now_pair() -> (DateTime<Utc>, Timestamp) {
     let now = Utc::now();
     (now, Timestamp::from_micros(now.timestamp_micros()))
 }
 
 /// The projection inputs of one request.
-fn projection_input<'a>(content: &'a Content, now: Timestamp) -> ProjectionInput<'a> {
+pub(crate) fn projection_input<'a>(content: &'a Content, now: Timestamp) -> ProjectionInput<'a> {
     ProjectionInput::new(&content.curriculum, &content.cfg, now)
         .with_timezone(content.cfg.timezone.as_deref())
 }
 
 /// Read the D-S6 document of this tenant. An absent row gives an empty one.
-async fn read_state(
+pub(crate) async fn read_state(
     db: &Db,
     tx: &mut Transaction<'_, Postgres>,
     user_id: sqlx::types::Uuid,
@@ -319,6 +319,26 @@ async fn read_state(
             "The stored session state is not readable.",
         )
     })
+}
+
+/// Write the D-S6 document of this tenant, inside the caller's transaction.
+pub(crate) async fn write_state(
+    db: &Db,
+    tx: &mut Transaction<'_, Postgres>,
+    user_id: sqlx::types::Uuid,
+    scratch: &WebState,
+) -> Result<(), ApiError> {
+    let doc = scratch.to_doc().map_err(|reason| {
+        tracing::error!(error = %reason, "cadus-web: the D-S6 document did not write");
+        ApiError::new(
+            StatusCode::INTERNAL_SERVER_ERROR,
+            STATE_UNAVAILABLE,
+            "The session state could not be written.",
+        )
+    })?;
+    bound(db, save_web_state(tx, user_id, &doc))
+        .await
+        .map_err(|err| failed(&err))
 }
 
 /// The `{id, name}` view of a course. `None` means the learner enrolled in none.
@@ -759,17 +779,7 @@ pub async fn session_start(
     // (Re)bind the scratch to this session. The bind resets it on a drift.
     let mut scratch = read_state(&state.db, &mut tx, user_id).await?;
     scratch.bind(&session);
-    let doc = scratch.to_doc().map_err(|reason| {
-        tracing::error!(error = %reason, "cadus-web: the D-S6 document did not write");
-        ApiError::new(
-            StatusCode::INTERNAL_SERVER_ERROR,
-            STATE_UNAVAILABLE,
-            "The session state could not be written.",
-        )
-    })?;
-    bound(&state.db, save_web_state(&mut tx, user_id, &doc))
-        .await
-        .map_err(|err| failed(&err))?;
+    write_state(&state.db, &mut tx, user_id, &scratch).await?;
     tx.commit().await.map_err(|err| failed(&err.into()))?;
 
     let model = projection.model;
@@ -901,32 +911,7 @@ pub async fn session_plan(
     let model = projection.model;
     let stack = enrollment_stack(&events);
     let course = stack.last().map(String::as_str);
-    let learned = learned_at(&events);
-    let drilled = last_drill_at(&events);
-    let days = active_study_days(&events);
-    let closed = closed_task_ids(&events);
-    let no_test_prep: BTreeSet<String> = BTreeSet::new();
-    let mut sampler = SeededSampler::new(session_seed(&session));
-
-    let ctx = SessionContext::default()
-        .with_session_id(&session)
-        .with_course(course)
-        .with_pending_remediation(&model.pending_remediation)
-        .with_quiz_state(Some(&model.quiz))
-        .with_learned_at(Some(&learned))
-        .with_last_drill_at(Some(&drilled))
-        .with_active_study_days(Some(&days))
-        .with_quiz_streak(quiz_high_score_streak(&events))
-        .with_test_prep(&no_test_prep)
-        .with_multistep(i64::try_from(closed.len()).unwrap_or(i64::MAX), &closed);
-    let plan = compose_session(
-        &model.topics,
-        graph,
-        &content.cfg,
-        now.micros(),
-        &mut sampler,
-        &ctx,
-    );
+    let plan = compose_plan(content, &events, &model, &session, now);
 
     let tasks: Vec<Value> = plan
         .tasks
@@ -952,6 +937,52 @@ pub async fn session_plan(
             .and_then(|stamp| DateTime::<Utc>::from_timestamp_micros(stamp.micros()))
             .map(|stamp| stamp.to_rfc3339()),
     })))
+}
+
+/// Compose the ordered plan of one open session (`api.py:928-945`).
+///
+/// It is the ONE derivation of the plan. `GET /api/session/plan` lists it and
+/// the serve, teach, and hint routes of unit U7 look one task up in it, so a
+/// second copy of this call order would let a listed task and a served task
+/// disagree.
+///
+/// The call is PURE: it reads the log, the learner model, and the arena, and it
+/// writes nothing. Trap W3 makes that load-bearing for the plan route.
+pub(crate) fn compose_plan(
+    content: &Content,
+    events: &[EventRow],
+    model: &LearnerModel,
+    session: &str,
+    now: Timestamp,
+) -> cadus_core::selector::SessionPlan {
+    let stack = enrollment_stack(events);
+    let course = stack.last().map(String::as_str);
+    let learned = learned_at(events);
+    let drilled = last_drill_at(events);
+    let days = active_study_days(events);
+    let closed = closed_task_ids(events);
+    let no_test_prep: BTreeSet<String> = BTreeSet::new();
+    let mut sampler = SeededSampler::new(session_seed(session));
+
+    let ctx = SessionContext::default()
+        .with_session_id(session)
+        .with_course(course)
+        .with_pending_remediation(&model.pending_remediation)
+        .with_quiz_state(Some(&model.quiz))
+        .with_learned_at(Some(&learned))
+        .with_last_drill_at(Some(&drilled))
+        .with_active_study_days(Some(&days))
+        .with_quiz_streak(quiz_high_score_streak(events))
+        .with_test_prep(&no_test_prep)
+        .with_multistep(i64::try_from(closed.len()).unwrap_or(i64::MAX), &closed);
+    compose_session(
+        &model.topics,
+        &content.curriculum,
+        &content.cfg,
+        now.micros(),
+        &mut sampler,
+        &ctx,
+    )
 }
 
 /// The quiz-sampler seed of one session (`service.py:1259`).

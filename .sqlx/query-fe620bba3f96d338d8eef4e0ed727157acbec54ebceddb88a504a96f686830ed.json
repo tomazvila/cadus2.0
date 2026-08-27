@@ -1,0 +1,48 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n            SELECT source AS \"source!\", content_digest,\n                   (claimed_at IS NOT NULL) AS \"claimed!\"\n            FROM serving_pool WHERE user_id = $1 AND kp_id = $2\n            ORDER BY claimed_at NULLS LAST, id\n            ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "source!",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "serving_pool",
+            "name": "source"
+          }
+        }
+      },
+      {
+        "ordinal": 1,
+        "name": "content_digest",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "serving_pool",
+            "name": "content_digest"
+          }
+        }
+      },
+      {
+        "ordinal": 2,
+        "name": "claimed!",
+        "type_info": "Bool",
+        "origin": "Expression"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Uuid",
+        "Text"
+      ]
+    },
+    "nullable": [
+      false,
+      true,
+      null
+    ]
+  },
+  "hash": "fe620bba3f96d338d8eef4e0ed727157acbec54ebceddb88a504a96f686830ed"
+}

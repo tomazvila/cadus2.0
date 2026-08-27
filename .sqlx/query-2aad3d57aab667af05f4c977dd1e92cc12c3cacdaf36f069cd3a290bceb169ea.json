@@ -1,0 +1,40 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n            SELECT instance_hash AS \"hash!\", claimed_at AS \"claimed!\"\n            FROM serving_pool WHERE user_id = $1 ORDER BY instance_hash\n            ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "hash!",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "serving_pool",
+            "name": "instance_hash"
+          }
+        }
+      },
+      {
+        "ordinal": 1,
+        "name": "claimed!",
+        "type_info": "Timestamptz",
+        "origin": {
+          "Table": {
+            "table": "serving_pool",
+            "name": "claimed_at"
+          }
+        }
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Uuid"
+      ]
+    },
+    "nullable": [
+      false,
+      true
+    ]
+  },
+  "hash": "2aad3d57aab667af05f4c977dd1e92cc12c3cacdaf36f069cd3a290bceb169ea"
+}
