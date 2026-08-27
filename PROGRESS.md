@@ -2,6 +2,24 @@
 
 One entry per milestone cycle (HANDOVER.md §2). Newest first.
 
+## M5 — HTTP API, session state, deterministic grading, async diagnosis, model-call log (2026-08-27, in progress)
+
+Requirement IDs: A3, A4, C1–C4, R2, R4, L1–L6, T1–T6. Plan: `docs/plans/M5.md`. Spec:
+`docs/reference/web-service-1.0-spec.md`. Owner go: 2026-08-27; D-M5-2 on the plan default.
+
+| Unit | Branch | Result |
+|---|---|---|
+| U1 axum skeleton: error envelope, security headers, CSRF origin layer, route-template metrics, `/api/health`, `/api/ready` (worker liveness from `diagnosis_jobs`, migration 0007) | `m5/u1` | gate green |
+| U2 auth primitives: Argon2id, password policy, tokens, email normalization, cookie writer | `m5/u2` | gate green |
+| U3 `cadus_store::auth`: the five SECURITY DEFINER lookups and the bound writes | `m5/u3` | gate green |
+| U6 `cadus_web::state`: the D-S6 row, the per-tenant lock, session routes, export | `m5/u6` | gate green |
+| U7 serve + teach + hint: pool pop, A6 exemplar fallback, authored teach page and hint ladder | `m5/u7` | gate green |
+| U4 auth routes, U5 OAuth, U8 grade path, U9–U11 diagnosis + T6, U12 budgets | `m5/u4b`… | in progress (continuation workflow after a process exit interrupted U4 and U8; their WIP is preserved on `m5/u4`, `m5/u8`) |
+
+Gate on `main` after U1/U2/U3/U6/U7 (commit 0573e11): 1,332 tests, 0 failed. Two merge
+seams were resolved by hand (additive: the web purity list, the store error variants and
+module list); one load-sensitive debug timing test now uses the bomb budget.
+
 ## M4 — serving pool, template instantiation, anti-repeat, L1/L2 benchmarks (2026-08-27)
 
 Requirement IDs: A1, A5, A6, A7, D5, D-S4, D-S5, D-O1, D-O4, L1, L2, C6, T1, V2. Plan:
