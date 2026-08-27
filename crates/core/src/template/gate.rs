@@ -42,6 +42,15 @@
 //! | `space_size` is the SATISFYING count | 1.0 stores the product and saturates it (spec trap 9) |
 //! | a hint ladder of at least one rung, and no rung names the answer | Hard Rule 3 |
 //! | the exemplar envelope reads exact rationals | 1.0 reads `float()` (spec trap 12) |
+//! | every parameter the answer reads appears where a learner reads it | one statement must carry one answer (C4) |
+//!
+//! # The per-instance rules run twice
+//!
+//! Above [`super::domain::EXHAUSTIVE_SPACE_LIMIT`] the gate reads a SAMPLE of
+//! the space, and the refill of D-O4 draws from the same space, so the refill
+//! meets tuples the gate never saw. [`check_instance`] is the per-instance half
+//! of the gate, and the refill runs it on every instance before the instance
+//! enters the pool.
 //!
 //! # No panic, on any document
 //!
@@ -60,10 +69,9 @@ use crate::curriculum::{AnswerKind, Exemplar};
 use super::constraint::{Constraint, Term, all_hold, constraint_params, holds, term_params};
 use super::document::{Compiled, Instance, InstantiateError, TEMPLATE_VERSION, TemplateDoc};
 use super::domain::{
-    Bindings, Domain, EXHAUSTIVE_SPACE_LIMIT, MAX_CHOICES, MAX_DOMAIN_SIZE, MIN_SPACE_SIZE,
-    SpaceSize, Value, declared_space, enumerate, space_size,
+    Bindings, Domain, EXHAUSTIVE_SPACE_LIMIT, MAX_CHOICES, MAX_DECIMAL_SCALE, MAX_DOMAIN_SIZE,
+    MIN_SPACE_SIZE, SpaceSize, Value, declared_space, enumerate, space_size,
 };
-use super::draw::DrawError;
 use super::eval::{EvalError, answer as evaluate_answer, parse_answer_expr};
 use super::render::{render, scan};
 
@@ -75,6 +83,14 @@ use super::render::{render, scan};
 /// chosen for a Python loop that calls SymPy once per instance; the 2.0 loop
 /// evaluates an already-parsed tree.
 pub const GATE_SAMPLES: u32 = 4_096;
+
+/// The largest count of tuples the sampled walk draws.
+///
+/// The walk keeps drawing until it holds [`GATE_SAMPLES`] satisfying tuples or
+/// it spends this budget, so one sparse draw never ends the walk (M4 review 1,
+/// findings 7 and 12). The budget bounds the work of the gate: a document whose
+/// constraints almost never hold costs this many draws and no more.
+pub const GATE_DRAW_BUDGET: u32 = 262_144;
 
 /// The seed of the sampled branch.
 ///
@@ -242,7 +258,7 @@ impl Rejection {
 }
 
 /// What the gate learned about a document it accepted.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Verified {
     /// The count of tuples the constraints admit. The gate fills it, not a model.
     pub space: SpaceSize,
@@ -250,6 +266,12 @@ pub struct Verified {
     pub instances_checked: u64,
     /// True when the gate walked every tuple, false when it drew [`GATE_SAMPLES`].
     pub exhaustive: bool,
+    /// The checks the gate skipped, and the reason for each one.
+    ///
+    /// The core writes no log (R3), so the caller of the gate writes these lines
+    /// to its own log. A skipped check is never a silent one (M4 review 1,
+    /// findings 12 and 22).
+    pub notes: Vec<String>,
 }
 
 /// Verify one template document against the knowledge point it serves.
@@ -274,14 +296,15 @@ pub fn gate(doc: &TemplateDoc, spec: &GateSpec) -> Result<Verified, Rejection> {
     check_space(doc, &walk)?;
     let samples = check_samples(doc, &compiled, spec)?;
     check_distractors(doc, &compiled)?;
-    let extremes = axis_extremes(doc, &values, &walk);
-    check_coverage(doc, &values, &extremes, &samples)?;
-    let envelope = exemplar_envelope(spec.exemplars);
-    check_instances(doc, &compiled, spec, envelope.as_ref(), &walk)?;
+    let extremes = axis_extremes(doc, &walk);
+    let mut notes = walk.notes.clone();
+    check_coverage(doc, &values, &extremes, &samples, &walk, &mut notes)?;
+    check_instances(doc, &compiled, spec, &walk)?;
     Ok(Verified {
         space: walk.space,
         instances_checked: u64::try_from(walk.tuples.len()).unwrap_or(u64::MAX),
         exhaustive: walk.exhaustive,
+        notes,
     })
 }
 
@@ -507,6 +530,26 @@ fn domain_rejection(domain: &Domain) -> Rejection {
                 ),
             )
         }
+        Domain::Decimal { low, high, scale } => {
+            if *scale > MAX_DECIMAL_SCALE {
+                return Rejection::new(
+                    "decimal-domain",
+                    format!(
+                        "decimal domain scale {scale} exceeds MAX_DECIMAL_SCALE ({MAX_DECIMAL_SCALE})"
+                    ),
+                );
+            }
+            if high < low {
+                return Rejection::new(
+                    "decimal-domain",
+                    format!("decimal domain {low}..{high} at scale {scale} is empty"),
+                );
+            }
+            Rejection::new(
+                "domain-size",
+                format!("decimal domain {low}..{high} exceeds MAX_DOMAIN_SIZE ({MAX_DOMAIN_SIZE})"),
+            )
+        }
     }
 }
 
@@ -699,23 +742,23 @@ fn compile<'doc>(doc: &'doc TemplateDoc) -> Result<Compiled<'doc>, Rejection> {
 /// appears only in a constraint does not count: a constraint narrows the space
 /// and shows the learner nothing.
 fn check_dead_parameters(doc: &TemplateDoc, ast: &Ast) -> Result<(), Rejection> {
-    let mut used = scan(&doc.statement).0;
+    let mut rendered = scan(&doc.statement).0;
     if let Some(sketch) = &doc.solution_sketch {
-        used.extend(scan(sketch).0);
+        rendered.extend(scan(sketch).0);
     }
     for hint in &doc.hints {
-        used.extend(scan(hint).0);
+        rendered.extend(scan(hint).0);
     }
     for distractor in &doc.distractors {
         if let Some(note) = &distractor.note {
-            used.extend(scan(note).0);
+            rendered.extend(scan(note).0);
         }
     }
-    used.extend(ast_names(ast));
+    let answer_names = ast_names(ast);
     let dead: Vec<String> = doc
         .params
         .keys()
-        .filter(|name| !used.contains(*name))
+        .filter(|name| !rendered.contains(*name) && !answer_names.contains(*name))
         .cloned()
         .collect();
     if !dead.is_empty() {
@@ -723,6 +766,32 @@ fn check_dead_parameters(doc: &TemplateDoc, ast: &Ast) -> Result<(), Rejection> 
             "dead-parameter",
             format!("parameters {} are declared but never used", py_list(&dead)),
         ));
+    }
+    check_hidden_parameters(doc, &rendered, &answer_names)
+}
+
+/// Every parameter the answer reads appears where a learner reads it.
+///
+/// A parameter that changes the answer and shows nowhere splits one printed
+/// problem into several different correct answers: the pool keys an instance by
+/// the statement digest, so it keeps one tuple of the many and serves the answer
+/// of that one (M4 review 1, finding 4). The rule is the C4 rule "two tuples
+/// that render one statement must compute one answer", read on the document.
+fn check_hidden_parameters(
+    doc: &TemplateDoc,
+    rendered: &BTreeSet<String>,
+    answer_names: &BTreeSet<String>,
+) -> Result<(), Rejection> {
+    for name in doc.params.keys() {
+        if answer_names.contains(name) && !rendered.contains(name) {
+            return Err(Rejection::new(
+                "hidden-parameter",
+                format!(
+                    "parameter {} changes the answer but never appears in the statement",
+                    py_str(name)
+                ),
+            ));
+        }
     }
     Ok(())
 }
@@ -815,6 +884,10 @@ struct Walk {
     tuples: Vec<Bindings>,
     /// True when `tuples` is every satisfying tuple.
     exhaustive: bool,
+    /// The count of tuples the sampled walk drew, and `None` below the limit.
+    drawn: Option<u32>,
+    /// What the walk did not do, and why.
+    notes: Vec<String>,
 }
 
 /// Count the satisfying tuples and collect the ones the gate reads.
@@ -843,6 +916,8 @@ fn build_walk(doc: &TemplateDoc, compiled: &Compiled<'_>) -> Result<Walk, Reject
             space: SpaceSize::Exact(count),
             tuples,
             exhaustive: true,
+            drawn: None,
+            notes: Vec::new(),
         });
     }
     let space = space_size(&doc.params, &doc.constraints).map_err(|err| {
@@ -851,25 +926,35 @@ fn build_walk(doc: &TemplateDoc, compiled: &Compiled<'_>) -> Result<Walk, Reject
             format!("the declared domains do not count: {err}"),
         )
     })?;
+    // The walk draws until it holds GATE_SAMPLES satisfying tuples or it spends
+    // GATE_DRAW_BUDGET draws. A tuple the constraints refuse is skipped and the
+    // walk goes on: one refused draw says nothing about the next one, and the
+    // old walk stopped the whole collection at the first sparse stretch (M4
+    // review 1, findings 7 and 12).
     let mut rng = super::draw::rng_from_seed(GATE_SEED);
-    let mut tuples = Vec::with_capacity(GATE_SAMPLES as usize);
-    for _ in 0..GATE_SAMPLES {
-        match compiled.plan().draw_satisfying(&doc.constraints, &mut rng) {
-            Ok(tuple) => tuples.push(tuple),
-            Err(DrawError::NoSatisfyingTuple { .. }) => break,
-            Err(DrawError::Constraint(err)) => return Err(constraint_rejection(err)),
-            Err(DrawError::Domain(err)) => {
-                return Err(Rejection::new(
-                    "domain-size",
-                    format!("the declared domains do not draw: {err}"),
-                ));
-            }
+    let mut tuples = Vec::new();
+    let mut drawn: u32 = 0;
+    while u32::try_from(tuples.len()).unwrap_or(u32::MAX) < GATE_SAMPLES && drawn < GATE_DRAW_BUDGET
+    {
+        drawn += 1;
+        let tuple = compiled.plan().draw(&mut rng);
+        if all_hold(&doc.constraints, &tuple).map_err(constraint_rejection)? {
+            tuples.push(tuple);
         }
+    }
+    let found = u32::try_from(tuples.len()).unwrap_or(u32::MAX);
+    let mut notes = Vec::new();
+    if found < GATE_SAMPLES {
+        notes.push(format!(
+            "the sampled walk found {found} satisfying tuple(s) in {drawn} draw(s), and the instance check read those {found}"
+        ));
     }
     Ok(Walk {
         space,
         tuples,
         exhaustive: false,
+        drawn: Some(drawn),
+        notes,
     })
 }
 
@@ -877,10 +962,15 @@ fn build_walk(doc: &TemplateDoc, compiled: &Compiled<'_>) -> Result<Walk, Reject
 /// space clears the distinct-problem floor.
 fn check_space(doc: &TemplateDoc, walk: &Walk) -> Result<(), Rejection> {
     if walk.tuples.is_empty() {
-        return Err(Rejection::new(
-            "no-satisfying-tuple",
-            "the constraints refuse every tuple of the declared domains, so the template has no instance to serve".to_string(),
-        ));
+        // The sampled branch names what it did, because it read a sample and not
+        // the whole space (M4 review 1, finding 12).
+        let message = match walk.drawn {
+            None => "the constraints refuse every tuple of the declared domains, so the template has no instance to serve".to_string(),
+            Some(drawn) => format!(
+                "the sampled walk drew {drawn} tuple(s) of the declared domains and 0 satisfied the constraints, so the template has no instance to serve"
+            ),
+        };
+        return Err(Rejection::new("no-satisfying-tuple", message));
     }
     if let Some(stated) = doc.space_size
         && (stated.count() != walk.space.count() || stated.is_exact() != walk.space.is_exact())
@@ -1016,27 +1106,26 @@ fn check_distractors(doc: &TemplateDoc, compiled: &Compiled<'_>) -> Result<(), R
 /// The lowest and the highest value of every ordered axis.
 ///
 /// Spec trap 11: under 2.0 constraints an axis is effectively single-valued more
-/// often, so the ends are read off the SATISFYING tuples wherever the gate walked
-/// them. Above the exhaustive limit the gate has no such walk and reads the
-/// declared ends, which is what 1.0 always does.
-fn axis_extremes(
-    doc: &TemplateDoc,
-    values: &BTreeMap<String, Vec<Value>>,
-    walk: &Walk,
-) -> BTreeMap<String, (Value, Value)> {
+/// often, so the ends are read off the SATISFYING tuples. Above the exhaustive
+/// limit the ends come from the satisfying SAMPLE, and never from the declared
+/// value list: a declared end the constraints forbid asks the author for a
+/// worked sample the sample-constraint rule then refuses, and no author input
+/// clears both (M4 review 1, finding 16). The sample is drawn from the fixed
+/// seed [`GATE_SEED`], so the ends the gate names are reproducible.
+fn axis_extremes(doc: &TemplateDoc, walk: &Walk) -> BTreeMap<String, (Value, Value)> {
     let mut extremes = BTreeMap::new();
     for (name, domain) in &doc.params {
-        if !matches!(domain, Domain::Int { .. } | Domain::Rational { .. }) {
+        if !matches!(
+            domain,
+            Domain::Int { .. } | Domain::Rational { .. } | Domain::Decimal { .. }
+        ) {
             continue;
         }
-        let seen: Vec<Value> = if walk.exhaustive {
-            walk.tuples
-                .iter()
-                .filter_map(|tuple| tuple.get(name).cloned())
-                .collect()
-        } else {
-            values.get(name).cloned().unwrap_or_default()
-        };
+        let seen: Vec<Value> = walk
+            .tuples
+            .iter()
+            .filter_map(|tuple| tuple.get(name).cloned())
+            .collect();
         let (Some(low), Some(high)) = (seen.iter().min(), seen.iter().max()) else {
             continue;
         };
@@ -1051,6 +1140,8 @@ fn check_coverage(
     values: &BTreeMap<String, Vec<Value>>,
     extremes: &BTreeMap<String, (Value, Value)>,
     samples: &[Bindings],
+    walk: &Walk,
+    notes: &mut Vec<String>,
 ) -> Result<(), Rejection> {
     for (index, sample) in doc.samples.iter().enumerate() {
         for (name, scalar) in &sample.params {
@@ -1121,7 +1212,7 @@ fn check_coverage(
             }
         }
     }
-    check_crossed_corners(extremes, samples)
+    check_crossed_corners(doc, extremes, samples, walk, notes)
 }
 
 /// Every pair of ordered axes needs a sample at OPPOSITE ends.
@@ -1132,8 +1223,11 @@ fn check_coverage(
 /// on 50 of 50 seeds and then graded a correct learner wrong on 18 of 30 served
 /// problems.
 fn check_crossed_corners(
+    doc: &TemplateDoc,
     extremes: &BTreeMap<String, (Value, Value)>,
     samples: &[Bindings],
+    walk: &Walk,
+    notes: &mut Vec<String>,
 ) -> Result<(), Rejection> {
     let names: Vec<&String> = extremes.keys().collect();
     for (position, left) in names.iter().enumerate() {
@@ -1144,6 +1238,28 @@ fn check_crossed_corners(
                 continue;
             };
             if low_l == high_l || low_r == high_r {
+                continue;
+            }
+            // The rule asks for a sample at one of two corners, so it applies
+            // only when the constraints admit BOTH of them. A band constraint
+            // admits neither, and the rule and the sample-constraint rule then
+            // deadlock: the gate names two tuples that it refuses (M4 review 1,
+            // finding 22).
+            let mut unreachable = Vec::new();
+            for (bound_l, bound_r) in [(low_l, high_r), (high_l, low_r)] {
+                if !corner_holds(doc, walk, left, bound_l, right, bound_r) {
+                    unreachable.push(format!(
+                        "{left}={} with {right}={}",
+                        bound_l.canonical_string(),
+                        bound_r.canonical_string()
+                    ));
+                }
+            }
+            if !unreachable.is_empty() {
+                notes.push(format!(
+                    "the crossed-corner rule is skipped for {left} and {right}: the constraints admit no tuple at {}",
+                    unreachable.join(", nor at ")
+                ));
                 continue;
             }
             let crossed = samples.iter().any(|bindings| {
@@ -1170,6 +1286,31 @@ fn check_crossed_corners(
     Ok(())
 }
 
+/// Whether a satisfying tuple binds `left` and `right` to the corner values.
+///
+/// The probe takes every tuple of the walk, overwrites the two axes with the
+/// corner values, and asks the constraints. The other axes therefore carry
+/// values that hold together, which is what makes the answer a statement about
+/// the constraints and not about one guessed tuple.
+fn corner_holds(
+    doc: &TemplateDoc,
+    walk: &Walk,
+    left: &str,
+    left_value: &Value,
+    right: &str,
+    right_value: &Value,
+) -> bool {
+    for tuple in &walk.tuples {
+        let mut probe = tuple.clone();
+        probe.insert(left.to_string(), left_value.clone());
+        probe.insert(right.to_string(), right_value.clone());
+        if all_hold(&doc.constraints, &probe).unwrap_or(false) {
+            return true;
+        }
+    }
+    false
+}
+
 // --------------------------------------------------------------------------
 // Rows 24 to 28, and the 2.0 canonical round trip and hint rule
 // --------------------------------------------------------------------------
@@ -1179,74 +1320,135 @@ fn check_instances(
     doc: &TemplateDoc,
     compiled: &Compiled<'_>,
     spec: &GateSpec,
-    envelope: Option<&Envelope>,
     walk: &Walk,
 ) -> Result<(), Rejection> {
+    let envelope = exemplar_envelope(spec.exemplars);
     for bindings in &walk.tuples {
         let instance = instantiate(compiled, bindings)?;
-        if !scan(&instance.text).0.is_empty() {
-            return Err(Rejection::new(
-                "placeholder-left",
-                "a rendered problem still contains a placeholder".to_string(),
-            ));
-        }
-        if instance.answer.trim().is_empty() {
-            return Err(Rejection::new(
-                "empty-answer",
-                format!(
-                    "instantiation for {} produced no answer",
-                    py_bindings(bindings)
-                ),
-            ));
-        }
-        let tokens = identifier_tokens(&instance.answer);
-        let poisoned: Vec<String> = tokens
-            .iter()
-            .filter(|token| NON_ANSWERS.contains(&token.as_str()))
-            .cloned()
+        check_one_instance(doc, spec, envelope.as_ref(), &instance)?;
+    }
+    Ok(())
+}
+
+/// Verify ONE instance against the per-instance rules of the gate.
+///
+/// The refill of D-O4 calls this on every instance it builds, because the gate
+/// reads a sample of a large space and the refill draws from the same space: an
+/// instance the gate never saw must meet the same rules before it enters the
+/// pool (M4 review 1, findings 1, 2, and 15). The rules are the ones that read
+/// the instance alone — the exemplar envelope, the non-answer tokens, the free
+/// symbols, the decimal trailing-zero run, the hint give-away, and the canonical
+/// round trip.
+///
+/// # Errors
+///
+/// Returns [`Rejection`] with the literal message of the rule that refused the
+/// instance.
+pub fn check_instance(
+    doc: &TemplateDoc,
+    spec: &GateSpec<'_>,
+    instance: &Instance,
+) -> Result<(), Rejection> {
+    let envelope = exemplar_envelope(spec.exemplars);
+    check_one_instance(doc, spec, envelope.as_ref(), instance)
+}
+
+/// The per-instance rules, with the envelope already read.
+fn check_one_instance(
+    doc: &TemplateDoc,
+    spec: &GateSpec,
+    envelope: Option<&Envelope>,
+    instance: &Instance,
+) -> Result<(), Rejection> {
+    let bindings = &instance.bindings;
+    if !scan(&instance.text).0.is_empty() {
+        return Err(Rejection::new(
+            "placeholder-left",
+            "a rendered problem still contains a placeholder".to_string(),
+        ));
+    }
+    if instance.answer.trim().is_empty() {
+        return Err(Rejection::new(
+            "empty-answer",
+            format!(
+                "instantiation for {} produced no answer",
+                py_bindings(bindings)
+            ),
+        ));
+    }
+    let tokens = identifier_tokens(&instance.answer);
+    let poisoned: Vec<String> = tokens
+        .iter()
+        .filter(|token| NON_ANSWERS.contains(&token.as_str()))
+        .cloned()
+        .collect();
+    if !poisoned.is_empty() {
+        return Err(Rejection::new(
+            "not-a-number",
+            format!(
+                "instance {} answers {}, which is not a number ({})",
+                py_bindings(bindings),
+                py_str(&instance.answer),
+                py_list(&poisoned)
+            ),
+        ));
+    }
+    if trailing_zero_run(&instance.answer) {
+        return Err(Rejection::new(
+            "decimal-answer",
+            format!(
+                "instance {} answers {}, which is a decimal with a trailing zero run — 2.0 answers hold exact values only (D6)",
+                py_bindings(bindings),
+                py_str(&instance.answer)
+            ),
+        ));
+    }
+    if spec.answer_kind == AnswerKind::Numeric {
+        let leftover: Vec<String> = tokens
+            .into_iter()
+            .filter(|token| !RESERVED_NAMES.contains(&token.as_str()))
             .collect();
-        if !poisoned.is_empty() {
+        if !leftover.is_empty() {
             return Err(Rejection::new(
-                "not-a-number",
+                "free-symbol",
                 format!(
-                    "instance {} answers {}, which is not a number ({})",
-                    py_bindings(bindings),
+                    "numeric answer {} for {} still contains {} — a parameter is undeclared",
                     py_str(&instance.answer),
-                    py_list(&poisoned)
-                ),
-            ));
-        }
-        if trailing_zero_run(&instance.answer) {
-            return Err(Rejection::new(
-                "decimal-answer",
-                format!(
-                    "instance {} answers {}, which is a decimal with a trailing zero run — 2.0 answers hold exact values only (D6)",
                     py_bindings(bindings),
-                    py_str(&instance.answer)
+                    py_list(&leftover)
                 ),
             ));
         }
-        if spec.answer_kind == AnswerKind::Numeric {
-            let leftover: Vec<String> = tokens
-                .into_iter()
-                .filter(|token| !RESERVED_NAMES.contains(&token.as_str()))
-                .collect();
-            if !leftover.is_empty() {
-                return Err(Rejection::new(
-                    "free-symbol",
-                    format!(
-                        "numeric answer {} for {} still contains {} — a parameter is undeclared",
-                        py_str(&instance.answer),
-                        py_bindings(bindings),
-                        py_list(&leftover)
-                    ),
-                ));
-            }
-            if let Some(envelope) = envelope {
-                check_envelope(&instance, envelope)?;
-            }
+        if let Some(envelope) = envelope {
+            check_envelope(instance, envelope)?;
         }
-        check_hints(doc, &instance)?;
+    }
+    check_canonical(instance)?;
+    check_hints(doc, instance)
+}
+
+/// The answer string reads back as the canonical form the instance carries (V2).
+fn check_canonical(instance: &Instance) -> Result<(), Rejection> {
+    let read = canonical_form(&instance.answer).map_err(|reason| {
+        Rejection::new(
+            "undecidable-answer",
+            format!(
+                "instance {} answers {}, which the answer checker cannot decide: {} — every instance answer must canonicalize (V2)",
+                py_bindings(&instance.bindings),
+                py_str(&instance.answer),
+                reason.reason
+            ),
+        )
+    })?;
+    if read != instance.canon {
+        return Err(Rejection::new(
+            "canonical-mismatch",
+            format!(
+                "instance {} answers {}, which does not read back as the canonical form the instance carries — the answer and its canonical form must agree (V2)",
+                py_bindings(&instance.bindings),
+                py_str(&instance.answer)
+            ),
+        ));
     }
     Ok(())
 }
@@ -1443,7 +1645,7 @@ fn params_rejection(value: &serde_json::Value) -> Option<Rejection> {
                     ));
                 }
             }
-            Some("rational") => {}
+            Some("rational" | "decimal") => {}
             other => {
                 let written = other.map_or_else(|| "None".to_string(), py_str);
                 return Some(Rejection::new(
@@ -1608,7 +1810,9 @@ fn py_bindings(bindings: &Bindings) -> String {
     let written: Vec<String> = bindings
         .iter()
         .map(|(name, value)| match value {
-            Value::Num(_) => format!("{}: {}", py_str(name), value.canonical_string()),
+            Value::Num(_) | Value::Spelled { .. } => {
+                format!("{}: {}", py_str(name), value.canonical_string())
+            }
             Value::Text(text) => format!("{}: {}", py_str(name), py_str(text)),
         })
         .collect();

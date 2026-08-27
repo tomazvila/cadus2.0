@@ -56,7 +56,7 @@ use num_rational::BigRational;
 use num_traits::{One, Signed, ToPrimitive, Zero};
 use serde::{Deserialize, Serialize};
 
-use super::domain::{Bindings, Scalar, Value, gcd_of, is_whole, is_zero};
+use super::domain::{Bindings, Scalar, Value, gcd_of, is_whole, is_zero, literal_to_rational};
 
 /// The largest count of decimal digits [`Term::DigitSum`] and `carries` read.
 ///
@@ -174,9 +174,9 @@ impl TryFrom<TermRepr> for Term {
         match repr {
             TermRepr::Param(name) => Ok(Self::Param(name)),
             TermRepr::Op(TermOp::Lit(scalar)) => {
-                scalar.rational().map(Self::Lit).ok_or_else(|| {
+                literal_rational(&scalar).map(Self::Lit).ok_or_else(|| {
                     format!(
-                        "a lit term needs a whole number or a decimal string, not {:?}",
+                        "a lit term needs a whole number, a decimal string, or 'n/d', not {:?}",
                         scalar.text()
                     )
                 })
@@ -196,6 +196,17 @@ impl TryFrom<TermRepr> for Term {
                 Ok(Self::DigitSum(Box::new(Self::try_from(*inner)?)))
             }
         }
+    }
+}
+
+/// The exact rational one literal scalar names.
+///
+/// The reader takes back every form [`write_rational`] writes, the `n/d` form
+/// included, so a body the gate accepted reads again (M4 review 1, finding 8).
+fn literal_rational(scalar: &Scalar) -> Option<BigRational> {
+    match scalar {
+        Scalar::Int(number) => Some(BigRational::from(BigInt::from(*number))),
+        Scalar::Text(text) => literal_to_rational(text),
     }
 }
 
@@ -370,11 +381,13 @@ pub fn eval_term(term: &Term, bindings: &Bindings) -> Result<BigRational, Constr
     match term {
         Term::Param(name) => match bindings.get(name) {
             None => Err(ConstraintError::UnknownParam { name: name.clone() }),
-            Some(Value::Text(text)) => Err(ConstraintError::NotNumeric {
-                name: name.clone(),
-                text: text.clone(),
-            }),
-            Some(Value::Num(number)) => Ok(number.clone()),
+            Some(value) => match value.as_rational() {
+                Some(number) => Ok(number.clone()),
+                None => Err(ConstraintError::NotNumeric {
+                    name: name.clone(),
+                    text: value.canonical_string(),
+                }),
+            },
         },
         Term::Lit(number) => Ok(number.clone()),
         Term::Add(items) => {

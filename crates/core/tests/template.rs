@@ -26,9 +26,10 @@ use std::collections::BTreeSet;
 use cadus_core::learner::problem_text_hash;
 use cadus_core::template::{Bindings, eval::EvalError, render::RenderError};
 use cadus_core::template::{
-    Cmp, Compiled, Constraint, DrawPlan, EXHAUSTIVE_SPACE_LIMIT, Instance, MAX_CHOICES,
-    MAX_DOMAIN_SIZE, MIN_SPACE_SIZE, RESAMPLE_ATTEMPTS, SpaceSize, TEMPLATE_VERSION, TemplateDoc,
-    Term, Value, below, from_body, holds, rng_from_seed, space_size, stray_brace, to_body,
+    Cmp, Compiled, Constraint, Domain, DrawPlan, EXHAUSTIVE_SPACE_LIMIT, Instance, MAX_CHOICES,
+    MAX_DOMAIN_SIZE, MIN_SPACE_SIZE, RESAMPLE_ATTEMPTS, Scalar, SpaceSize, TEMPLATE_VERSION,
+    TemplateDoc, Term, Value, below, from_body, holds, render, rng_from_seed, space_size,
+    stray_brace, to_body,
 };
 
 // --------------------------------------------------------------------------
@@ -306,12 +307,16 @@ fn a_decimal_coefficient_answers_an_exact_integer_and_not_a_float_repr() {
     }
 }
 
-/// A negative bound value never re-associates into the answer.
+/// A negative bound value never re-associates, in the answer or in the statement.
 ///
 /// 1.0 substitutes textually, so `a**2` with `a = -3` would read `-3**2` = -9
 /// unless every value is wrapped in brackets; 1.0 wraps them for exactly this
 /// reason (`sympy_check.py:297-305`). 2.0 substitutes a literal node into a tree,
 /// and the writer brackets a negative literal under a power.
+///
+/// The statement side takes the same brackets, and the renderer writes them: the
+/// author writes `${a}^{{2}}$` and the learner reads `$(-3)^{2}$`, which is the
+/// question the answer 9 answers (M4 review 1, finding 18).
 #[test]
 fn a_negative_bound_value_squares_to_a_positive_answer() {
     let doc = doc_from(
@@ -319,7 +324,7 @@ fn a_negative_bound_value_squares_to_a_positive_answer() {
           "v": 1,
           "topic_id": "squares-of-negatives",
           "answer_kind": "numeric",
-          "statement": "Compute $({a})^{{2}}$.",
+          "statement": "Compute ${a}^{{2}}$.",
           "params": {"a": {"kind": "int", "low": -12, "high": -1}},
           "answer_expr": "a**2",
           "hints": ["What sign does a square carry?"],
@@ -688,7 +693,7 @@ fn the_scanner_reads_the_placeholder_grammar() {
 /// worked by hand.
 #[test]
 fn the_evaluation_only_functions_compute_exactly_and_disappear() {
-    let cases: [EvalCase; 12] = [
+    let cases: [EvalCase; 14] = [
         ("gcd(a, b)", &[("a", 12), ("b", 18)], "6"),
         ("lcm(a, b)", &[("a", 4), ("b", 6)], "12"),
         ("floor(a/b)", &[("a", 7), ("b", 2)], "3"),
@@ -700,6 +705,10 @@ fn the_evaluation_only_functions_compute_exactly_and_disappear() {
         ("abs(a - b)", &[("a", 3), ("b", 10)], "7"),
         ("sqrt(a)", &[("a", 49)], "7"),
         ("sqrt(a)", &[("a", 8)], "sqrt(8)"),
+        // The radicand of a root is not always whole: the denominator needs the
+        // same perfect-square test as the numerator (M4 review 1, finding 14).
+        ("sqrt(4/a)", &[("a", 3)], "sqrt(4/3)"),
+        ("sqrt(4/a)", &[("a", 9)], "2/3"),
         ("a/b", &[("a", 10), ("b", 4)], "5/2"),
     ];
 
@@ -1145,4 +1154,259 @@ fn a_domain_past_the_bound_is_refused() {
             .to_string(),
         "the denominator range -3..3 of a rational domain holds zero"
     );
+}
+
+// --------------------------------------------------------------------------
+// The M4 review 1 repairs
+// --------------------------------------------------------------------------
+
+/// M4 review 1, finding 8: a decimal constraint literal survives the body.
+///
+/// `write_rational` writes `1/2` for the literal `0.5`, because 2 is not a power
+/// of ten. The reader took decimals only, so a gate-accepted document wrote a
+/// body it did not read again, and the refill refused the digest a reviewer
+/// had approved (C6).
+#[test]
+fn a_constraint_literal_round_trips_through_every_form_it_writes() {
+    for (written, again) in [
+        (r#"{"lit": "0.5"}"#, "1/2"),
+        (r#"{"lit": "3/2"}"#, "3/2"),
+        (r#"{"lit": "-5/2"}"#, "-5/2"),
+        (r#"{"lit": "0.1"}"#, "0.1"),
+        (r#"{"lit": 100}"#, "100"),
+    ] {
+        let source = format!(r#"{{"op": "ge", "left": "p", "right": {written}}}"#);
+        let constraint: Constraint = serde_json::from_str(&source).expect("the term reads");
+        let body = serde_json::to_string(&constraint).expect("the term writes");
+        let reread: Constraint = serde_json::from_str(&body).expect("the written term reads again");
+        assert_eq!(constraint, reread, "{written} does not round-trip");
+        assert!(
+            body.contains(again),
+            "{written} writes {body}, which does not carry {again}"
+        );
+    }
+
+    // The whole document round-trips, which is the property the digest rests on.
+    let doc = doc_from(
+        r#"{"v": 1, "topic_id": "fraction-of-a-number", "answer_kind": "numeric",
+            "statement": "Compute ${p} \\times {a}$.",
+            "params": {"p": {"kind": "rational", "num": {"low": 1, "high": 4},
+                             "den": {"low": 2, "high": 5}},
+                       "a": {"kind": "int", "low": 4, "high": 12}},
+            "constraints": [{"op": "ge", "left": "p", "right": {"lit": "0.5"}}],
+            "answer_expr": "p*a", "hints": ["What does the denominator ask for?"],
+            "samples": [{"params": {"p": "0.5", "a": 4}, "expected": "2"}]}"#,
+    );
+    let body = to_body(&doc).expect("the document writes");
+    assert!(
+        body.contains(r#"{"lit":"1/2"}"#),
+        "the body writes the literal as a fraction: {body}"
+    );
+    let again = from_body(&body).expect("the written body reads again");
+    assert_eq!(doc, again);
+}
+
+/// A literal outside the three forms names the three forms the reader takes.
+#[test]
+fn a_literal_that_is_not_a_number_names_the_forms_the_reader_takes() {
+    let error = serde_json::from_str::<Constraint>(
+        r#"{"op": "eq", "left": "a", "right": {"lit": "one half"}}"#,
+    )
+    .expect_err("a word is not a literal");
+    assert!(
+        error.to_string().starts_with(
+            "a lit term needs a whole number, a decimal string, or 'n/d', not \"one half\""
+        ),
+        "{error}"
+    );
+}
+
+/// M4 review 1, finding 9: a value keeps the spelling its author wrote.
+///
+/// A choice value of `0.2` is the rational 1/5 for the evaluator and the text
+/// `0.2` for the renderer. Before the repair the renderer wrote `1/5`, so a
+/// decimals knowledge point served fraction problems.
+#[test]
+fn a_decimal_value_renders_as_the_decimal_its_author_wrote() {
+    let value = Scalar::Text("0.2".to_string()).value();
+    assert_eq!(value.canonical_string(), "0.2");
+    assert_eq!(
+        value.as_rational().map(std::string::ToString::to_string),
+        Some("1/5".to_string())
+    );
+    // The number decides equality and order, and never the spelling.
+    assert_eq!(
+        value,
+        Value::Num(num_rational::BigRational::new(
+            num_bigint::BigInt::from(1),
+            num_bigint::BigInt::from(5),
+        ))
+    );
+
+    // A decimal domain writes the same spelling, at the scale it declares.
+    let domain: Domain =
+        serde_json::from_str(r#"{"kind": "decimal", "low": -2, "high": 21, "scale": 1}"#)
+            .expect("the domain reads");
+    let values = domain.values("d").expect("the domain walks");
+    assert_eq!(values.len(), 24);
+    let written: Vec<String> = values.iter().map(Value::canonical_string).collect();
+    assert_eq!(written.first().map(String::as_str), Some("-0.2"));
+    assert_eq!(written.get(2).map(String::as_str), Some("0.0"));
+    assert_eq!(written.get(4).map(String::as_str), Some("0.2"));
+    assert_eq!(written.last().map(String::as_str), Some("2.1"));
+    assert_eq!(domain.size("d").expect("the domain counts"), 24);
+
+    // A scale past the bound is a domain error, and never a wide number.
+    let wide: Domain =
+        serde_json::from_str(r#"{"kind": "decimal", "low": 1, "high": 9, "scale": 12}"#)
+            .expect("the domain reads");
+    assert_eq!(
+        wide.values("d")
+            .expect_err("the scale is too large")
+            .to_string(),
+        "decimal domain scale 12 exceeds MAX_DECIMAL_SCALE (9)"
+    );
+}
+
+/// M4 review 1, finding 18: a value that is not atomic takes brackets.
+///
+/// The evaluator brackets a negative literal and a fraction under a power. The
+/// renderer now writes the same brackets, so the printed problem asks the
+/// question the stored answer answers. A decimal and a text choice are atomic
+/// and take none.
+#[test]
+fn the_renderer_brackets_a_negative_value_and_a_fraction() {
+    let statement = "Compute ${a}^{{2}}$.";
+    assert_eq!(
+        render(statement, &bind(&[("a", -3)])).expect("it renders"),
+        "Compute $(-3)^{2}$."
+    );
+    assert_eq!(
+        render(statement, &bind(&[("a", 3)])).expect("it renders"),
+        "Compute $3^{2}$."
+    );
+
+    let mut fraction = Bindings::new();
+    fraction.insert(
+        "a".to_string(),
+        Value::Num(num_rational::BigRational::new(
+            num_bigint::BigInt::from(3),
+            num_bigint::BigInt::from(2),
+        )),
+    );
+    assert_eq!(
+        render(statement, &fraction).expect("it renders"),
+        "Compute $(3/2)^{2}$."
+    );
+
+    let mut decimal = Bindings::new();
+    decimal.insert("a".to_string(), Scalar::Text("0.2".to_string()).value());
+    assert_eq!(
+        render(statement, &decimal).expect("it renders"),
+        "Compute $0.2^{2}$."
+    );
+
+    let mut negative_decimal = Bindings::new();
+    negative_decimal.insert("a".to_string(), Scalar::Text("-0.2".to_string()).value());
+    assert_eq!(
+        render(statement, &negative_decimal).expect("it renders"),
+        "Compute $(-0.2)^{2}$."
+    );
+
+    let mut text = Bindings::new();
+    let (name, value) = text_binding("a", "\\times");
+    text.insert(name, value);
+    assert_eq!(
+        render("Compute $2 {a} 3$.", &text).expect("it renders"),
+        "Compute $2 \\times 3$."
+    );
+}
+
+/// The statement and the answer of one instance ask and answer one question.
+///
+/// `a**2` with `a = -3` answers 9. The statement must therefore read `(-3)^{2}`
+/// and never `-3^{2}`, which is -9 (M4 review 1, finding 18).
+#[test]
+fn a_negative_instance_states_the_question_its_answer_answers() {
+    let doc = doc_from(
+        r#"{"v": 1, "topic_id": "squares-of-negatives", "answer_kind": "numeric",
+            "statement": "Compute ${a}^{{2}}$.",
+            "params": {"a": {"kind": "int", "low": -12, "high": -1}},
+            "answer_expr": "a**2", "hints": ["What sign does a square carry?"],
+            "samples": [{"params": {"a": -1}, "expected": "1"}]}"#,
+    );
+    let compiled = Compiled::new(&doc).expect("the template compiles");
+    for (value, text, answer) in [
+        (-3, "Compute $(-3)^{2}$.", "9"),
+        (-12, "Compute $(-12)^{2}$.", "144"),
+    ] {
+        let instance = compiled
+            .instantiate(bind(&[("a", value)]))
+            .expect("the tuple instantiates");
+        assert_eq!(instance.text, text);
+        assert_eq!(instance.answer, answer);
+    }
+}
+
+/// M4 review 1, finding 17: the answer writer brackets a power under a power.
+///
+/// `**` groups to the right, so `x**2**3` reads as `x**(2**3)`. The M2 parser
+/// refuses that string as a tower of powers, so the unbracketed form left the
+/// decidable grammar and every instance of such a template was refused (V2).
+#[test]
+fn the_answer_writer_brackets_a_power_that_is_the_base_of_a_power() {
+    for (source, wanted) in [
+        ("(x**2)**3", "(x**2)**3"),
+        ("2*(x**2)**3", "2*(x**2)**3"),
+        ("((x + 1)**2)**2", "((1 + x)**2)**2"),
+        ("(-x)**2", "(-x)**2"),
+        ("(x/2)**3", "(x/2)**3"),
+        ("(x*y)**2", "(x*y)**2"),
+        ("sqrt(x)**2", "sqrt(x)**2"),
+        ("x**2*y**3", "x**2*y**3"),
+    ] {
+        let ast = cadus_core::template::parse_answer_expr(source)
+            .unwrap_or_else(|error| panic!("{source} parses: {error}"));
+        let value = cadus_core::template::evaluate(&ast, &Bindings::new())
+            .unwrap_or_else(|error| panic!("{source} evaluates: {error}"));
+        let written = cadus_core::template::write(&value)
+            .unwrap_or_else(|error| panic!("{source} writes: {error}"));
+        assert_eq!(written, wanted, "{source}");
+        cadus_core::answer::canonical_form(&written)
+            .unwrap_or_else(|reason| panic!("{written} does not canonicalize: {reason}"));
+    }
+}
+
+/// The candidate stream walks past a draw that spends its budget.
+///
+/// The constraint holds for about one tuple in 2,048, so about six draws in ten
+/// spend the 1,000-draw budget. The stream that stopped at the first such draw
+/// was empty three runs in five, and the refill then had no instance to insert
+/// for a template the gate accepts (M4 review 1, findings 7 and 12).
+#[test]
+fn a_sparse_candidate_stream_skips_the_draws_that_spend_their_budget() {
+    let doc = doc_from(
+        r#"{"v": 1, "topic_id": "sparse", "answer_kind": "numeric",
+            "statement": "Compute ${a} + {b}$.",
+            "params": {"a": {"kind": "int", "low": 4096, "high": 8192},
+                       "b": {"kind": "int", "low": 1, "high": 10}},
+            "constraints": [{"op": "eq", "left": {"mod": ["a", {"lit": 4096}]},
+                             "right": {"lit": 0}}],
+            "answer_expr": "a + b", "hints": ["Which column do you add first?"],
+            "samples": [{"params": {"a": 4096, "b": 1}, "expected": "4097"}]}"#,
+    );
+    let compiled = Compiled::new(&doc).expect("the template compiles");
+    // The counts are the ones the three seeds produce, and a seeded draw is the
+    // same on every machine.
+    for (seed, count) in [(1_u64, 11_usize), (5, 10), (9, 6)] {
+        let mut rng = rng_from_seed(seed);
+        let stream = compiled.candidates(&mut rng).expect("the stream builds");
+        assert_eq!(stream.len(), count, "seed {seed}");
+        for bindings in &stream {
+            assert!(
+                cadus_core::template::all_hold(&doc.constraints, bindings).expect("it decides"),
+                "the stream never yields a tuple the constraints refuse"
+            );
+        }
+    }
 }

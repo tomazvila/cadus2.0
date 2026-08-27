@@ -42,7 +42,9 @@
 //! - Above the limit, yield at most [`RESAMPLE_ATTEMPTS`] independent draws. 1.0
 //!   states the reason at `:211-216`: with 12 values and 11 already served, 24
 //!   random draws miss the free value about 13% of the time, so the small space
-//!   needs the exhaustive walk.
+//!   needs the exhaustive walk. A draw that spends its [`MAX_REJECTIONS`] budget
+//!   is skipped and the stream goes on, so a sparse constraint set costs draws
+//!   and never an empty stream.
 //!
 //! A constrained draw NEVER returns a tuple the constraints refuse. It returns
 //! [`DrawError::NoSatisfyingTuple`] instead, so a violating tuple cannot reach a
@@ -246,7 +248,12 @@ pub fn candidates(
     for _ in 0..RESAMPLE_ATTEMPTS {
         match plan.draw_satisfying(constraints, rng) {
             Ok(bindings) => out.push(bindings),
-            Err(DrawError::NoSatisfyingTuple { .. }) => break,
+            // A draw that spends its budget is skipped, and the stream goes on.
+            // One spent draw says nothing about the next one: with a density of
+            // one tuple in a thousand, six draws in ten spend the budget and the
+            // stream that stopped there was empty (M4 review 1, findings 7
+            // and 12, the same defect in the gate walk).
+            Err(DrawError::NoSatisfyingTuple { .. }) => continue,
             Err(other) => return Err(other),
         }
     }

@@ -31,6 +31,15 @@
 //! [`super::domain::Value::canonical_string`] writes an exact rational, so a
 //! rendered statement never carries a float, and it never introduces a thousands
 //! separator the checker would then have to undo (spec section 8, trap 7).
+//!
+//! # A value that is not atomic takes brackets
+//!
+//! The evaluator brackets a negative literal and a fraction on the answer side,
+//! because `-3**2` and `3/2**2` re-read. The statement side needs the same rule,
+//! or the printed problem asks a different question than the stored answer
+//! answers (M4 review 1, finding 18). The renderer therefore writes `(-3)` and
+//! `(3/2)`, and [`super::domain::Value::needs_brackets`] holds the rule. An
+//! author who wants the bare form writes the sign in the statement.
 
 use std::collections::BTreeSet;
 
@@ -98,7 +107,13 @@ pub fn render(statement: &str, bindings: &Bindings) -> Result<String, RenderErro
             let Some(value) = bindings.get(&name) else {
                 return Err(RenderError::Undeclared { name });
             };
-            out.push_str(&value.canonical_string());
+            if value.needs_brackets() {
+                out.push('(');
+                out.push_str(&value.canonical_string());
+                out.push(')');
+            } else {
+                out.push_str(&value.canonical_string());
+            }
             at = end;
             continue;
         }

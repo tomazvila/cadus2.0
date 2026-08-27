@@ -40,7 +40,7 @@ use num_traits::{One, Signed, ToPrimitive, Zero};
 use crate::answer::ast::Ast;
 use crate::answer::{Canon, Undecidable, canonical_form, parse_with_functions};
 
-use super::domain::{Bindings, Value, gcd_of, is_whole};
+use super::domain::{Bindings, gcd_of, is_whole};
 
 /// The evaluation-only functions and the argument count each one takes.
 ///
@@ -230,11 +230,13 @@ pub fn evaluate(ast: &Ast, bindings: &Bindings) -> Result<Ast, EvalError> {
         }
         Ast::Var(name) => match bindings.get(name) {
             None => Ok(Ast::Var(name.clone())),
-            Some(Value::Text(text)) => Err(EvalError::NotNumeric {
-                name: name.clone(),
-                text: text.clone(),
-            }),
-            Some(Value::Num(number)) => literal(number.clone()),
+            Some(value) => match value.as_rational() {
+                Some(number) => literal(number.clone()),
+                None => Err(EvalError::NotNumeric {
+                    name: name.clone(),
+                    text: value.canonical_string(),
+                }),
+            },
         },
         Ast::Const(constant) => Ok(Ast::Const(*constant)),
         Ast::Neg(inner) => {
@@ -352,8 +354,15 @@ enum Prec {
     Sum,
     /// An operand of a product or a quotient.
     Product,
-    /// The base of a power.
+    /// A place where a power stands with no brackets: an operand of a product,
+    /// the divisor of a quotient, and the operand of a minus sign.
     Power,
+    /// The base of a power, which reads no operator of its own.
+    ///
+    /// The level exists because `**` groups to the right: the base of a power
+    /// must be atomic, or `Pow(Pow(x, 2), 3)` writes `x**2**3`, which the M2
+    /// parser refuses as a tower of powers (M4 review 1, finding 17).
+    Atom,
 }
 
 /// Which variadic fold one node takes.
@@ -659,6 +668,10 @@ fn width_ok(value: &BigRational) -> Result<(), EvalError> {
 /// leading minus sign is the case that matters: `Ast::Integer(-3)` writes `-3`,
 /// and `-3**2` reads as `-(3**2)`, so a negative literal takes the level of a
 /// sum and the power brackets it into `(-3)**2`.
+///
+/// A power writes an operator of its own, so it is not atomic and the base of a
+/// power brackets it. Every self-delimiting node — a non-negative literal, a
+/// name, a function call, a root, a collection — is atomic.
 fn level(node: &Ast) -> Prec {
     match node {
         Ast::Ineq { .. } | Ast::Assign { .. } | Ast::Chain { .. } => Prec::Lowest,
@@ -667,7 +680,8 @@ fn level(node: &Ast) -> Prec {
         Ast::Decimal { mantissa, .. } if mantissa.is_negative() => Prec::Sum,
         Ast::Fraction { numerator, .. } if numerator.is_negative() => Prec::Sum,
         Ast::Fraction { .. } | Ast::Mul(_) | Ast::Div(_, _) => Prec::Product,
-        _ => Prec::Power,
+        Ast::Pow(_, _) => Prec::Power,
+        _ => Prec::Atom,
     }
 }
 
@@ -723,7 +737,7 @@ fn write_bare(node: &Ast, out: &mut String) -> Result<(), EvalError> {
             out.push(')');
         }
         Ast::Pow(base, exponent) => {
-            write_at(base, Prec::Power, out)?;
+            write_at(base, Prec::Atom, out)?;
             out.push_str("**");
             if *exponent < 0 {
                 out.push('(');

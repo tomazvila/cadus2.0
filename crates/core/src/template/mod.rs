@@ -65,8 +65,8 @@ pub use document::{
 };
 pub use domain::{
     Bindings, Domain, DomainError, ESTIMATE_SAMPLES, ESTIMATE_SEED, EXHAUSTIVE_SPACE_LIMIT,
-    IntRange, MAX_CHOICES, MAX_DOMAIN_SIZE, MIN_SPACE_SIZE, Params, Scalar, SpaceSize, Value,
-    declared_space, enumerate, space_size,
+    IntRange, MAX_CHOICES, MAX_DECIMAL_SCALE, MAX_DOMAIN_SIZE, MIN_SPACE_SIZE, Params, Scalar,
+    SpaceSize, Value, declared_space, enumerate, literal_to_rational, space_size,
 };
 pub use draw::{
     DrawError, DrawPlan, MAX_REJECTIONS, RESAMPLE_ATTEMPTS, below, candidates, draw_bindings,
@@ -77,8 +77,8 @@ pub use eval::{
     evaluate, parse_answer_expr, write,
 };
 pub use gate::{
-    Envelope, FREE_SYMBOLS, GATE_SAMPLES, GATE_SEED, GateSpec, MAX_EXPONENT, NON_ANSWERS,
-    RESERVED_NAMES, Rejection, TEMPLATABLE_KINDS, Verified, exemplar_envelope, gate, gate_body,
-    with_space_size,
+    Envelope, FREE_SYMBOLS, GATE_DRAW_BUDGET, GATE_SAMPLES, GATE_SEED, GateSpec, MAX_EXPONENT,
+    NON_ANSWERS, RESERVED_NAMES, Rejection, TEMPLATABLE_KINDS, Verified, check_instance,
+    exemplar_envelope, gate, gate_body, with_space_size,
 };
 pub use render::{RenderError, SNIPPET_CHARS, StrayBrace, placeholders, render, scan, stray_brace};
