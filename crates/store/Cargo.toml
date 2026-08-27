@@ -34,6 +34,11 @@ cadus-store = { path = ".", features = ["test-support"] }
 # Development only. `tests/purity.rs` reads the resolved dependency graph with
 # it (R4).
 cargo_metadata = { workspace = true }
+# Development only. Benchmark B builds the D-S5 and D-S6 documents of its
+# fixture with it (`tests/bench_serve_roundtrip.rs`). `sqlx` already resolves
+# the same version for its `json` feature, so the lock file gains no crate, and
+# a dev edge stays outside both guards of `tests/purity.rs` (R4).
+serde_json = { workspace = true }
 
 [lints]
 workspace = true

@@ -86,3 +86,15 @@ jobs:
 
       - name: Run the gate
         run: scripts/gate.sh
+
+      # The gate runs `scripts/bench.sh`, which writes the L1 and L2 numbers of
+      # docs/reference/l1-budget.md to target/bench as JSON. The gate reads only
+      # the p95 assertions; the review cycle reads the trend across runs, so the
+      # artifact goes up on a red run too (spec section 10.2).
+      - name: Upload the benchmark artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: benchmarks
+          path: target/bench/*.json
+          if-no-files-found: warn
