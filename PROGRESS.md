@@ -14,9 +14,15 @@ Requirement IDs: A3, A4, C1–C4, R2, R4, L1–L6, T1–T6. Plan: `docs/plans/M5
 | U3 `cadus_store::auth`: the five SECURITY DEFINER lookups and the bound writes | `m5/u3` | gate green |
 | U6 `cadus_web::state`: the D-S6 row, the per-tenant lock, session routes, export | `m5/u6` | gate green |
 | U7 serve + teach + hint: pool pop, A6 exemplar fallback, authored teach page and hint ladder | `m5/u7` | gate green |
-| U4 auth routes, U5 OAuth, U8 grade path, U9–U11 diagnosis + T6, U12 budgets | `m5/u4b`… | in progress (continuation workflow after a process exit interrupted U4 and U8; their WIP is preserved on `m5/u4`, `m5/u8`) |
+| U4 `/api/auth/*` routes, the four paired rate rules, anti-enumeration | `m5/u4b` | gate green (continued from the interrupted U4 WIP) |
+| U5 OAuth: Google + GitHub, PKCE, state, handshake cookie | `m5/u5` | gate green |
+| U8 the one-transaction grade path: check, tier, `{task_id}-{n}`, ON CONFLICT no-op, incremental fold / full replay on regrade, H3, timing, caps | `m5/u8b` | gate green (continued from the interrupted U8 WIP) |
+| U9 A4 client surface: `diagnosis` field, distractor lookup, job enqueue, `GET /api/diagnosis/{id}`, SSE over LISTEN/NOTIFY | `m5/u9` | gate green |
+| U10 diagnosis worker: SKIP LOCKED claim, sweeps, the model client crate with T5 defaults, retries, vocabulary filter, NOTIFY | `m5/u10` | gate green |
+| U11 T6 model-call ledger and `/metrics` series (migration 0009) | `m5/u11` | gate green |
+| U12 budgets: per-route table, grade/serve benchmarks, L6 crate-boundary test, arena benchmark, operator flags endpoint | `m5/u12` | in progress |
 
-Gate on `main` after U1/U2/U3/U6/U7 (commit 0573e11): 1,332 tests, 0 failed. Two merge
+Gate on `main` after U1–U11 (commit 1b720bf): 1,514 tests, 0 failed, live oracle enabled. Two merge
 seams were resolved by hand (additive: the web purity list, the store error variants and
 module list); one load-sensitive debug timing test now uses the bomb budget.
 
