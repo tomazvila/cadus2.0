@@ -25,6 +25,7 @@ use sqlx::postgres::{PgConnectOptions, PgPoolOptions};
 use sqlx::{PgPool, Postgres, Transaction};
 use uuid::Uuid;
 
+pub mod auth;
 pub mod pool;
 
 #[cfg(feature = "test-support")]
@@ -218,6 +219,10 @@ pub enum StoreError {
     /// claim did not take the row the pop locked.
     #[error("serving pool error: {0}")]
     PoolRow(String),
+
+    /// An auth statement did not hold the M5 call order (`docs/SCHEMA.md`).
+    #[error("auth error: {0}")]
+    Auth(String),
 
     /// C3 boot guard: the connected role escapes row-level security.
     #[error(
