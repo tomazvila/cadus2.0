@@ -71,6 +71,23 @@ rand_chacha = { version = "0.3.1", default-features = false }
 # `default-features = false` drops `getrandom`.
 rand_core = { version = "0.6.4", default-features = false }
 
+# M5 U2 auth primitives (spec section 3.1). All five are pure computation: no
+# network, no database, no model call.
+# `argon2` is the RustCrypto Argon2id implementation. `default-features = false`
+# with `std` drops the crate's own `rand` path, so the one entropy source of
+# `cadus-web` is the single `getrandom` call that U2 writes.
+argon2 = { version = "0.5.3", default-features = false, features = ["std"] }
+# The operating-system entropy of the session token and of the Argon2 salt. It
+# is a syscall wrapper: no network, no process start.
+getrandom = { version = "0.2.17" }
+# URL-safe base64 without padding, for the 43-character session token. The
+# encoder reads no table by a secret index, so it leaks no timing.
+base64ct = { version = "1.8.3", features = ["alloc"] }
+# Constant-time byte equality for a token compare.
+subtle = { version = "2.6.1" }
+# NFKC for the email normalization of spec section 3.1.
+unicode-normalization = { version = "0.1.25" }
+
 # Insertion-ordered map for the places where 1.0 relies on Python dict order
 # (M3, spec trap T6): the `balances` map of `diagnostic_placed` and the ability
 # delta map of the FIRe update.
