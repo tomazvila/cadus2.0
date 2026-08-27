@@ -48,7 +48,7 @@ use sqlx::{AssertSqlSafe, Connection, PgConnection};
 use uuid::Uuid;
 
 /// The line that the operator reads in `docker compose logs migrate`.
-const APPLIED_ALL: &str = "cadus-migrate: applied 7 migrations (7 total)";
+const APPLIED_ALL: &str = "cadus-migrate: applied 8 migrations (8 total)";
 
 /// The environment variable that names the lock database of the binary.
 const MAINTENANCE_DB_VAR: &str = "CADUS_MAINTENANCE_DB";
@@ -541,7 +541,7 @@ async fn admin_login_flag_grants_the_login() {
         );
         // The migrations of this database ran already, so this run applies none.
         assert!(
-            stdout.contains("cadus-migrate: applied 0 migrations (7 total)"),
+            stdout.contains("cadus-migrate: applied 0 migrations (8 total)"),
             "stdout: {stdout}"
         );
         // No password variable is set, so the binary reports no password.

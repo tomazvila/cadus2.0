@@ -90,6 +90,16 @@ const REJECTION_BODY: &str = concat!(
     r#"token."}}"#
 );
 
+/// The `422` body of a pre-auth route that ran and read an empty body.
+///
+/// U1 wrote tests (9) and (10) before the `/api/auth/*` routes existed, so "the
+/// layer let this through" showed as the `404` of an unmatched path. M5 U4
+/// mounted the three pre-auth routes, so the same request now reaches the
+/// handler and the handler refuses the empty body. The MARKER changed; the rule
+/// under test did not. A `403` on any of them still fails the test.
+const EMPTY_BODY_REJECTION: &str =
+    r#"{"error":{"code":"invalid_request","message":"The body is not JSON."}}"#;
+
 /// The body of the `404` fallback, character for character.
 const NOT_FOUND_BODY: &str =
     r#"{"error":{"code":"not_found","message":"This path serves nothing."}}"#;
@@ -349,10 +359,10 @@ async fn a_header_less_post_to_a_pre_auth_route_is_not_refused() {
 
         assert_eq!(
             status.as_u16(),
-            404,
+            422,
             "{path} must let a header-less POST through"
         );
-        assert_eq!(body, NOT_FOUND_BODY);
+        assert_eq!(body, EMPTY_BODY_REJECTION);
     }
 }
 
@@ -361,7 +371,7 @@ async fn a_header_less_post_to_a_pre_auth_route_is_not_refused() {
 async fn a_bearer_post_to_a_pre_auth_route_is_not_refused() {
     let app = app();
 
-    let (status, _body) = send(
+    let (status, body) = send(
         &app,
         post(
             "/api/auth/login",
@@ -374,7 +384,8 @@ async fn a_bearer_post_to_a_pre_auth_route_is_not_refused() {
     )
     .await;
 
-    assert_eq!(status.as_u16(), 404);
+    assert_eq!(status.as_u16(), 422);
+    assert_eq!(body, EMPTY_BODY_REJECTION);
 }
 
 /// (11) A same-origin cookie write goes through, by either signal.

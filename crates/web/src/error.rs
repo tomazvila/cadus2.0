@@ -30,6 +30,32 @@ pub const METHOD_NOT_ALLOWED: &str = "method_not_allowed";
 /// The code of the CSRF origin layer. Spec section 10, row "CSRF".
 pub const CROSS_ORIGIN_REJECTED: &str = "cross_origin_rejected";
 
+/// The code of a body that is not the JSON object the route reads. Spec section
+/// 10, row "Error envelope".
+pub const INVALID_REQUEST: &str = "invalid_request";
+
+/// The code of a request with no usable session (spec section 3.3, "Cookie
+/// check"). It never says WHICH of the refusals fired.
+pub const UNAUTHORIZED: &str = "unauthorized";
+
+/// The code of every login refusal and of a wrong current password (spec
+/// section 10, row "Weak password / wrong current password").
+pub const INVALID_CREDENTIALS: &str = "invalid_credentials";
+
+/// The code of a new password that the section 3.1 policy refuses.
+pub const WEAK_PASSWORD: &str = "weak_password";
+
+/// The code of a reset or verification token that cannot be spent (spec section
+/// 10, row "Bad / reused token").
+pub const INVALID_TOKEN: &str = "invalid_token";
+
+/// The code of a refused rate rule (spec section 3.2).
+pub const RATE_LIMITED: &str = "rate_limited";
+
+/// The code of a fault inside the service. The message names no account, no
+/// address, and no token.
+pub const INTERNAL_ERROR: &str = "internal_error";
+
 /// One error answer: a status code, a machine code, and a human message.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ApiError {
@@ -66,6 +92,70 @@ impl ApiError {
             StatusCode::METHOD_NOT_ALLOWED,
             METHOD_NOT_ALLOWED,
             "This path does not serve that method.",
+        )
+    }
+
+    /// `422 invalid_request` — the body is not the JSON object the route reads.
+    pub fn invalid_request(message: impl Into<String>) -> Self {
+        Self::new(
+            StatusCode::UNPROCESSABLE_ENTITY,
+            INVALID_REQUEST,
+            message.into(),
+        )
+    }
+
+    /// `401 unauthorized` — the request carries no usable session.
+    ///
+    /// The message stays generic on purpose. A caller must not learn whether the
+    /// session is absent, expired, or attached to a disabled account.
+    pub fn unauthorized(message: impl Into<String>) -> Self {
+        Self::new(StatusCode::UNAUTHORIZED, UNAUTHORIZED, message.into())
+    }
+
+    /// `401 invalid_credentials` — one uniform refusal for every login failure.
+    pub fn invalid_credentials(message: impl Into<String>) -> Self {
+        Self::new(
+            StatusCode::UNAUTHORIZED,
+            INVALID_CREDENTIALS,
+            message.into(),
+        )
+    }
+
+    /// `422 weak_password` — the new password breaks the length policy.
+    pub fn weak_password(message: impl Into<String>) -> Self {
+        Self::new(
+            StatusCode::UNPROCESSABLE_ENTITY,
+            WEAK_PASSWORD,
+            message.into(),
+        )
+    }
+
+    /// `400 invalid_token` — the token is unknown, spent, stale, or of another
+    /// purpose. One code covers all four, so nothing tells the four apart.
+    pub fn invalid_token(message: impl Into<String>) -> Self {
+        Self::new(StatusCode::BAD_REQUEST, INVALID_TOKEN, message.into())
+    }
+
+    /// `429 rate_limited` — this call passed the ceiling of its rate rule.
+    pub fn rate_limited() -> Self {
+        Self::new(
+            StatusCode::TOO_MANY_REQUESTS,
+            RATE_LIMITED,
+            "Too many requests; please wait a bit and try again.",
+        )
+    }
+
+    /// `500 internal_error` — the service failed, and the caller did nothing
+    /// wrong.
+    ///
+    /// The argument names the failing STEP, never a value of it. A store error
+    /// text can carry a token hash or an address, so it goes to the log and
+    /// never into the body.
+    pub fn internal(step: &'static str) -> Self {
+        Self::new(
+            StatusCode::INTERNAL_SERVER_ERROR,
+            INTERNAL_ERROR,
+            format!("The service could not finish this request ({step})."),
         )
     }
 

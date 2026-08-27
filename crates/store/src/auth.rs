@@ -17,7 +17,7 @@
 //! |---|---|---|
 //! | unbound lookups | a pool with no tenant | [`user_by_email`], [`user_by_id`], [`session_by_token_hash`], [`token_by_hash`], [`oauth_account_user`] |
 //! | unbound write | a pool with no tenant | [`insert_user`] |
-//! | bound writes | a [`begin_tenant`] transaction | [`insert_session`], [`touch_last_seen`], [`delete_session`], [`delete_all_sessions`], [`delete_other_sessions`], [`insert_token`], [`delete_tokens_for_purpose`], [`consume_token`], [`set_password_hash`], [`mark_email_verified`], [`insert_oauth_account`] |
+//! | bound writes | a [`begin_tenant`] transaction | [`insert_session`], [`touch_last_seen`], [`delete_session`], [`delete_all_sessions`], [`delete_other_sessions`], [`insert_token`], [`delete_tokens_for_purpose`], [`consume_token`], [`set_password_hash`], [`mark_email_verified`], [`account_profile`], [`insert_oauth_account`] |
 //! | either | any executor | [`bump_rate_counter`] |
 //!
 //! [`sign_up`], [`start_session`], and [`consume_token_tx`] compose the three
@@ -70,10 +70,32 @@ pub struct AuthUser {
 pub struct SessionRow {
     /// The account the cookie belongs to.
     pub user_id: Uuid,
+    /// The start of the absolute window. The mint stamps it and nothing slides
+    /// it, so the caller tests the 90-day ceiling against this value before the
+    /// tenant bind (migration 0008).
+    pub created_at: DateTime<Utc>,
     /// The end of the idle window.
     pub expires_at: DateTime<Utc>,
     /// The last touch. The caller touches it at most once per hour.
     pub last_seen_at: DateTime<Utc>,
+}
+
+/// The account view that a BOUND caller reads with a plain SELECT.
+///
+/// `AuthUser` carries what the pre-tenant refusals need. This row carries what
+/// the profile answer needs, and the M5 call order gives it plainly: "after the
+/// bind a plain SELECT on `users` reads the caller's own rows"
+/// (`docs/SCHEMA.md`).
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct AccountProfile {
+    /// The primary key, and the bound tenant.
+    pub id: Uuid,
+    /// The stored address, as `citext` folded it.
+    pub email: String,
+    /// `None` until the address is verified.
+    pub email_verified_at: Option<DateTime<Utc>>,
+    /// When the account was created.
+    pub created_at: DateTime<Utc>,
 }
 
 /// One out-of-band token row, as [`token_by_hash`] returns it.
@@ -205,8 +227,8 @@ where
     Ok(sqlx::query_as!(
         SessionRow,
         r#"
-        SELECT user_id AS "user_id!", expires_at AS "expires_at!",
-               last_seen_at AS "last_seen_at!"
+        SELECT user_id AS "user_id!", created_at AS "created_at!",
+               expires_at AS "expires_at!", last_seen_at AS "last_seen_at!"
         FROM auth_session_by_token_hash($1)
         "#,
         token_hash
@@ -537,6 +559,31 @@ where
     .execute(executor)
     .await?
     .rows_affected())
+}
+
+/// Read the bound account's own row (the profile answer of `GET
+/// /api/auth/me`).
+///
+/// This is the plain SELECT that the M5 call order allows after the bind. The
+/// `users_read_self` policy holds the statement to the bound tenant, so the
+/// answer is the caller's row or nothing.
+///
+/// # Errors
+///
+/// Returns [`StoreError::Db`] when the statement fails.
+pub async fn account_profile<'e, E>(executor: E) -> Result<Option<AccountProfile>, StoreError>
+where
+    E: PgExecutor<'e>,
+{
+    Ok(sqlx::query_as!(
+        AccountProfile,
+        r#"
+        SELECT id, email::text AS "email!", email_verified_at, created_at
+        FROM users
+        "#
+    )
+    .fetch_optional(executor)
+    .await?)
 }
 
 /// Link one provider account to the bound account (the OAuth callback).

@@ -1515,7 +1515,7 @@ async fn events_attempt_idem_is_unique() {
     .await;
 }
 
-/// D9: a second migration run applies nothing and leaves the seven rows.
+/// D9: a second migration run applies nothing and leaves the eight rows.
 #[tokio::test]
 async fn migrate_is_idempotent() {
     TestDb::with(|db| async move {
@@ -1525,7 +1525,7 @@ async fn migrate_is_idempotent() {
             .fetch_one(&db.admin)
             .await
             .unwrap();
-        assert_eq!(count, 7);
+        assert_eq!(count, 8);
     })
     .await;
 }
