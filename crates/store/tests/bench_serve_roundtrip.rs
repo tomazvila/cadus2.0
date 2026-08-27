@@ -10,23 +10,40 @@
 //! ```text
 //! BEGIN;                                   -- with the tenant bound (C3)
 //!   SELECT model FROM learner_models        -- D-S3, one read
+//!   -- cadus_store::pool::pop_with_ring_tx runs the next two statements:
 //!   SELECT ... FROM serving_pool
 //!    WHERE claimed_at IS NULL
-//!    ORDER BY created_at LIMIT 8
-//!      FOR UPDATE SKIP LOCKED               -- D-O1 pop, at most POP_CANDIDATES
+//!    ORDER BY created_at, id LIMIT 8
+//!      FOR UPDATE SKIP LOCKED               -- D-O1 pop, at most POP_LIMIT
 //!   -- the D5 ring rejects the digests it holds; the first survivor wins
 //!   UPDATE serving_pool SET claimed_at = now()   -- the claim
 //!   UPDATE web_states  SET doc = $2               -- served problem plus ring
 //! COMMIT;
 //! ```
 //!
+//! # The measured code is the production code
+//!
+//! The benchmark pops with [`cadus_store::pool::pop_with_ring_tx`], the function
+//! the M5 serve path calls, and it seeds with
+//! [`cadus_store::pool::insert_batch`], the function the D-O4 worker calls. An
+//! earlier version of this file carried its own SELECT and its own fixture
+//! documents. Those documents did not decode through the production reader, and
+//! the inline SELECT diverged from the pop in its ORDER BY and in its claim
+//! (M4 review 1, finding 11).
+//!
 //! # The fixture
 //!
-//! One seeded user, one knowledge point, [`POOL_DEPTH`] unclaimed rows with
-//! distinct `created_at` values, and a full [`RING_OVERLAP`]-deep overlap
-//! between the D5 ring and the oldest pool rows. The pop therefore skips three
-//! rows on every sample and serves the fourth, so the measured transaction
-//! carries the skip loop and not a lucky first hit.
+//! One seeded user, one knowledge point, and [`POOL_DEPTH`] unclaimed rows
+//! written by [`BATCHES`] calls of `insert_batch`. One call is one statement, so
+//! every row of one batch carries ONE `created_at`: the pop reads the batches in
+//! age order and breaks the tie inside a batch by `id`. That tie sort over
+//! [`BATCH_ROWS`] equal timestamps is the sort every production pop performs,
+//! and the old fixture, with a distinct `created_at` per row, never measured it.
+//!
+//! The fixture builds the ring from the pool and not from a guess: it reads the
+//! first [`RING_OVERLAP`] digests in the pop's own `created_at, id` order and
+//! puts those into the D5 ring. The pop therefore skips three rows on every
+//! sample and serves the fourth, whatever order the random row ids take.
 //!
 //! Every sample starts from the same in-memory ring and restores the claim it
 //! made, so the 500 samples measure one transaction shape and not a pool that
@@ -46,15 +63,18 @@
     clippy::unimplemented
 )]
 
+use std::collections::BTreeMap;
 use std::path::{Path, PathBuf};
 use std::time::Instant;
 
 use cadus_core::learner::problem_text_hash;
-use cadus_core::pool::{Avoid, POP_CANDIDATES, Pick, Ring, TaskMemory, pick};
-use cadus_store::begin_tenant;
+use cadus_core::pool::{
+    Avoid, POOL_ROW_VERSION, PoolAnswer, PoolProblem, Ring, Source, TaskMemory,
+};
+use cadus_store::pool::{NewInstance, POP_LIMIT, insert_batch, pop_with_ring_tx};
 use cadus_store::test_support::TestDb;
+use cadus_store::{StoreError, begin_tenant};
 use sqlx::PgPool;
-use sqlx::types::JsonValue;
 use uuid::Uuid;
 
 /// The knowledge point of the fixture.
@@ -62,6 +82,19 @@ const KP_ID: &str = "perfect-squares";
 
 /// The unclaimed rows the fixture puts in the pool (spec section 10.2).
 const POOL_DEPTH: usize = 200;
+
+/// The count of `insert_batch` calls that write the pool.
+///
+/// The D-O4 worker refills in batches, and one batch is one statement. Two
+/// batches give the pop both halves of its `ORDER BY created_at, id`: the age
+/// order between the batches, and the tie sort inside one batch.
+const BATCHES: usize = 2;
+
+/// The rows of one batch.
+const BATCH_ROWS: usize = POOL_DEPTH / BATCHES;
+
+/// The seed the refill batch records in every `problem` document.
+const BATCH_SEED: u64 = 20_260_827;
 
 /// The untimed transactions that warm the connection and the plan cache.
 const WARMUPS: usize = 50;
@@ -71,8 +104,8 @@ const SAMPLES: usize = 500;
 
 /// The count of ring digests that also sit in the pool.
 ///
-/// The three rows are the three oldest, so `ORDER BY created_at` puts them
-/// first and the anti-repeat rule skips exactly three rows per serve.
+/// The three rows are the three the pop reads first, so the anti-repeat rule
+/// skips exactly three rows per serve.
 const RING_OVERLAP: usize = 3;
 
 /// The p95 budget of one serve transaction, in nanoseconds: 100 ms of the
@@ -161,18 +194,30 @@ fn instance_hash(index: usize) -> String {
     problem_text_hash(&statement(index))
 }
 
-/// The `problem` document of pool row `index` (D-S5, spec section 3.2).
+/// Pool row `index`, in the shape the D-O4 refill inserts (D-S5).
 ///
-/// The row carries the seed and the drawn bindings, so a reviewer reproduces
-/// the instance from the row alone.
-fn problem_document(index: usize) -> JsonValue {
-    let text = statement(index);
-    serde_json::json!({
-        "text": text,
-        "seed": 20_260_827_u64,
-        "bindings": {"a": index + 1},
-        "kind": "numeric",
-    })
+/// The row is a [`NewInstance`], so `insert_batch` writes the two documents with
+/// the production writers and `pop_with_ring_tx` reads them back with the
+/// production readers. The `problem` document carries the batch seed and the
+/// drawn binding, so a reviewer reproduces the instance from the row alone.
+fn new_instance(index: usize) -> NewInstance {
+    let mut bindings = BTreeMap::new();
+    bindings.insert("a".to_string(), (index + 1).to_string());
+    NewInstance {
+        source: Source::Template,
+        content_digest: None,
+        problem: PoolProblem {
+            v: POOL_ROW_VERSION,
+            text: statement(index),
+            bindings,
+            seed: BATCH_SEED,
+        },
+        expected_answer: PoolAnswer {
+            v: POOL_ROW_VERSION,
+            answer: ((index + 1) * (index + 1)).to_string(),
+        },
+        instance_hash: instance_hash(index),
+    }
 }
 
 /// Seed one user, one learner model, one state row, and the pool.
@@ -198,11 +243,60 @@ async fn seed(db: &TestDb) -> (Uuid, Ring, TaskMemory) {
     .await
     .unwrap();
 
-    // The ring holds 20 digests. The three oldest pool rows are among them, so
-    // the pop skips three rows and serves the fourth.
+    // The production insert, one call per batch. Every row of one call takes one
+    // `created_at`, so the pool carries BATCHES timestamps and BATCH_ROWS rows
+    // per timestamp.
+    let rows: Vec<NewInstance> = (0..POOL_DEPTH).map(new_instance).collect();
+    for batch in rows.chunks(BATCH_ROWS) {
+        let inserted = insert_batch(&db.admin, user, KP_ID, batch).await.unwrap();
+        assert_eq!(
+            inserted,
+            batch.len() as u64,
+            "insert_batch skipped a digest, so the fixture is not the depth it claims"
+        );
+    }
+
+    let timestamps = sqlx::query_scalar!(
+        r#"SELECT count(DISTINCT created_at) AS "count!"
+             FROM serving_pool WHERE user_id = $1 AND kp_id = $2"#,
+        user,
+        KP_ID
+    )
+    .fetch_one(&db.admin)
+    .await
+    .unwrap();
+    assert_eq!(
+        timestamps, BATCHES as i64,
+        "the pool carries one created_at per batch, so the pop sorts a real tie"
+    );
+
+    // Read the first digests in the pop's own order and put them into the ring.
+    // The ring then blocks the rows the pop reads first, whatever order the
+    // random row ids take inside the oldest batch.
+    let head = sqlx::query_scalar!(
+        r#"SELECT instance_hash AS "instance_hash!"
+             FROM serving_pool
+            WHERE user_id = $1 AND kp_id = $2 AND claimed_at IS NULL
+            ORDER BY created_at, id
+            LIMIT $3"#,
+        user,
+        KP_ID,
+        POP_LIMIT
+    )
+    .fetch_all(&db.admin)
+    .await
+    .unwrap();
+    assert_eq!(
+        head.len(),
+        POP_LIMIT as usize,
+        "the pool is shallower than one pop"
+    );
+
+    // The ring holds 20 digests. The RING_OVERLAP rows the pop reads first are
+    // among them, so the pop skips those and serves the next one.
     let mut ring = Ring::new();
-    for index in 0..RING_OVERLAP {
-        ring.push(&instance_hash(index));
+    for digest in head.iter().take(RING_OVERLAP) {
+        ring.push(digest);
     }
     for filler in 0..(Ring::capacity() - RING_OVERLAP) {
         ring.push(&problem_text_hash(&format!("An older problem {filler}.")));
@@ -228,26 +322,6 @@ async fn seed(db: &TestDb) -> (Uuid, Ring, TaskMemory) {
     .await
     .unwrap();
 
-    for index in 0..POOL_DEPTH {
-        // The oldest row is index 0. `ORDER BY created_at` then reads the rows
-        // in index order, so the fixture's ring overlap is deterministic.
-        let age_secs = i32::try_from(POOL_DEPTH - index).unwrap();
-        sqlx::query!(
-            "INSERT INTO serving_pool
-                 (user_id, kp_id, source, problem, expected_answer, instance_hash, created_at)
-             VALUES ($1, $2, 'template', $3, $4, $5, now() - ($6::int * interval '1 second'))",
-            user,
-            KP_ID,
-            problem_document(index),
-            JsonValue::String(((index + 1) * (index + 1)).to_string()),
-            instance_hash(index),
-            age_secs
-        )
-        .execute(&db.admin)
-        .await
-        .unwrap();
-    }
-
     (user, ring, task)
 }
 
@@ -259,69 +333,68 @@ async fn seed(db: &TestDb) -> (Uuid, Ring, TaskMemory) {
 struct Served {
     /// The pool row the transaction claimed.
     id: Uuid,
-    /// The anti-repeat decision the pop made.
-    pick: Pick,
+    /// The index of the claimed row among the popped candidates.
+    index: usize,
+    /// The count of candidates the anti-repeat rule walked past.
+    skipped: usize,
+    /// Whether every popped row sat inside the anti-repeat windows.
+    exhausted: bool,
+    /// The count of rows the pop read.
+    candidates: usize,
+    /// The statement of the served row, as the production reader decoded it.
+    text: String,
+    /// The expected answer of the served row, as the production reader decoded
+    /// it.
+    answer: String,
 }
 
 /// Run the D-O1 serve transaction once and return what it served.
 ///
 /// The caller times this function. Everything inside it is on the request path
 /// of `POST /api/task/{task_id}/serve`: the tenant binding, the learner-model
-/// read, the pool pop, the claim, the state write, and the commit.
-async fn serve_once(pool: &PgPool, user: Uuid, ring: &Ring, task: &TaskMemory) -> Served {
-    let mut tx = begin_tenant(pool, user).await.unwrap();
+/// read, the production pool pop with its claim, the state write, and the
+/// commit.
+///
+/// # Errors
+///
+/// Returns the error of the pop or of a statement. A sample that does not serve
+/// is a broken fixture, and the caller stops the run.
+async fn serve_once(
+    pool: &PgPool,
+    user: Uuid,
+    ring: &Ring,
+    task: &TaskMemory,
+) -> Result<Served, StoreError> {
+    let mut tx = begin_tenant(pool, user).await?;
 
     let model = sqlx::query!(
         "SELECT model, through_seq FROM learner_models WHERE user_id = $1",
         user
     )
     .fetch_one(&mut *tx)
-    .await
-    .unwrap();
+    .await?;
     assert_eq!(
         model.through_seq, 41,
         "the learner model row is the fixture"
     );
 
-    let candidates = sqlx::query!(
-        "SELECT id, problem, expected_answer, instance_hash, source, content_digest
-           FROM serving_pool
-          WHERE user_id = $1 AND kp_id = $2 AND claimed_at IS NULL
-          ORDER BY created_at
-          LIMIT $3
-            FOR UPDATE SKIP LOCKED",
-        user,
-        KP_ID,
-        POP_CANDIDATES as i64
-    )
-    .fetch_all(&mut *tx)
-    .await
-    .unwrap();
-
-    let hashes: Vec<String> = candidates
-        .iter()
-        .map(|row| row.instance_hash.clone())
-        .collect();
     let avoid = Avoid::new(ring, task);
-    let chosen = pick(&hashes, &avoid).expect("the pool is not empty");
-    let row = &candidates[chosen.index];
-
-    sqlx::query!(
-        "UPDATE serving_pool SET claimed_at = now() WHERE id = $1",
-        row.id
-    )
-    .execute(&mut *tx)
-    .await
-    .unwrap();
+    let claimed = pop_with_ring_tx(&mut tx, user, KP_ID, &avoid)
+        .await?
+        .expect("the pool holds an unclaimed row");
 
     // The served digest enters BOTH windows, and the caller writes them back in
     // the same transaction as the claim (D5, D-S6).
     let mut next_ring = ring.clone();
     let mut next_task = task.clone();
-    next_ring.push(&row.instance_hash);
-    next_task.push(&row.instance_hash);
+    next_ring.push(&claimed.row.instance_hash);
+    next_task.push(&claimed.row.instance_hash);
     let doc = serde_json::json!({
-        "served": {"pool_id": row.id, "text": row.problem, "expected": row.expected_answer},
+        "served": {
+            "pool_id": claimed.row.id,
+            "text": claimed.row.problem.text,
+            "expected": claimed.row.expected_answer.answer,
+        },
         "ring": next_ring,
         "task_memory": next_task,
     });
@@ -331,14 +404,18 @@ async fn serve_once(pool: &PgPool, user: Uuid, ring: &Ring, task: &TaskMemory) -
         doc
     )
     .execute(&mut *tx)
-    .await
-    .unwrap();
+    .await?;
 
-    tx.commit().await.unwrap();
-    Served {
-        id: row.id,
-        pick: chosen,
-    }
+    tx.commit().await?;
+    Ok(Served {
+        id: claimed.row.id,
+        index: claimed.pick.index,
+        skipped: claimed.pick.skipped,
+        exhausted: claimed.pick.exhausted,
+        candidates: claimed.candidates,
+        text: claimed.row.problem.text,
+        answer: claimed.row.expected_answer.answer,
+    })
 }
 
 /// Put the claimed row back, so the next sample reads the same pool.
@@ -373,19 +450,23 @@ async fn benchmark_b_serve_round_trip_holds_the_l1_segment() {
         // the transaction and never the contention of a pool (spec 10.2).
         let app = db.pool_as("cadus_app", 1).await;
 
-        for _ in 0..WARMUPS {
-            let served = serve_once(&app, user, &ring, &task).await;
+        for index in 0..WARMUPS {
+            let served = serve_once(&app, user, &ring, &task)
+                .await
+                .unwrap_or_else(|err| panic!("warm-up {index} did not serve: {err}"));
             release(&db.admin, served.id).await;
         }
 
         let mut samples: Vec<u128> = Vec::with_capacity(SAMPLES);
-        let mut picks: Vec<Pick> = Vec::with_capacity(SAMPLES);
-        for _ in 0..SAMPLES {
+        let mut served_rows: Vec<Served> = Vec::with_capacity(SAMPLES);
+        for index in 0..SAMPLES {
             let start = Instant::now();
-            let served = serve_once(&app, user, &ring, &task).await;
+            let served = serve_once(&app, user, &ring, &task)
+                .await
+                .unwrap_or_else(|err| panic!("sample {index} did not serve: {err}"));
             samples.push(start.elapsed().as_nanos());
-            picks.push(served.pick);
             release(&db.admin, served.id).await;
+            served_rows.push(served);
         }
 
         let times = Percentiles::of(&samples);
@@ -400,13 +481,14 @@ async fn benchmark_b_serve_round_trip_holds_the_l1_segment() {
         );
         write_artifact(&format!(
             "{{\n  \"benchmark\": \"B\",\n  \"profile\": {:?},\n  \"pool_depth\": {},\n  \
-             \"ring_overlap\": {},\n  \"pop_candidates\": {},\n  \"warmups\": {},\n  \
-             \"samples\": {},\n  \"serve_ns\": {{\"p50_ns\": {}, \"p95_ns\": {}, \
-             \"p99_ns\": {}, \"max_ns\": {}}},\n  \"p95_budget_ns\": {}\n}}\n",
+             \"batches\": {},\n  \"ring_overlap\": {},\n  \"pop_candidates\": {},\n  \
+             \"warmups\": {},\n  \"samples\": {},\n  \"serve_ns\": {{\"p50_ns\": {}, \
+             \"p95_ns\": {}, \"p99_ns\": {}, \"max_ns\": {}}},\n  \"p95_budget_ns\": {}\n}}\n",
             profile(),
             POOL_DEPTH,
+            BATCHES,
             RING_OVERLAP,
-            POP_CANDIDATES,
+            POP_LIMIT,
             WARMUPS,
             SAMPLES,
             times.p50,
@@ -417,14 +499,30 @@ async fn benchmark_b_serve_round_trip_holds_the_l1_segment() {
         ));
 
         assert_eq!(samples.len(), SAMPLES, "every sample is measured");
-        // The ring blocks the three oldest rows on every sample, so the pop
-        // skips three and serves the fourth. A pick that skips none means the
-        // fixture stopped exercising the anti-repeat rule.
-        for (index, chosen) in picks.iter().enumerate() {
+        // The ring blocks the three rows the pop reads first, so the pop skips
+        // three and serves the fourth. A pick that skips none means the fixture
+        // stopped exercising the anti-repeat rule. The two decoded fields prove
+        // the production reader read the production writer's documents, which
+        // the old inline SELECT never did (M4 review 1, finding 11).
+        for (index, served) in served_rows.iter().enumerate() {
             assert_eq!(
-                (chosen.index, chosen.skipped, chosen.exhausted),
-                (3, 3, false),
+                (served.index, served.skipped, served.exhausted),
+                (RING_OVERLAP, RING_OVERLAP, false),
                 "sample {index} did not skip the three blocked rows"
+            );
+            assert_eq!(
+                served.candidates, POP_LIMIT as usize,
+                "sample {index} popped a different count of candidates"
+            );
+            assert!(
+                served.text.starts_with("Compute $") && served.text.ends_with("^{2}$."),
+                "sample {index} decoded the statement as {:?}",
+                served.text
+            );
+            assert!(
+                served.answer.chars().all(|c| c.is_ascii_digit()),
+                "sample {index} decoded the expected answer as {:?}",
+                served.answer
             );
         }
         assert!(
