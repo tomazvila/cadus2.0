@@ -37,12 +37,16 @@
 )]
 
 use std::future::{Future, IntoFuture};
+use std::path::PathBuf;
 use std::process::ExitCode;
+use std::sync::Arc;
 use std::time::{Duration, Instant};
 
+use cadus_core::curriculum::{CurriculumError, LoadError, load_curriculum};
 use cadus_store::{Db, DbConfig, StoreError};
 use cadus_web::cookie::{CookiePosture, INSECURE_COOKIE_VAR};
 use cadus_web::origin::{OriginPolicy, PUBLIC_ORIGIN_VAR};
+use cadus_web::state::Content;
 use cadus_web::{AppState, BIND_ADDR_VAR, create_app};
 use tokio::net::TcpListener;
 use tracing_subscriber::EnvFilter;
@@ -52,6 +56,12 @@ const SHUTDOWN_DEADLINE_VAR: &str = "SHUTDOWN_DEADLINE_SECS";
 
 /// The drain deadline in seconds when `SHUTDOWN_DEADLINE_SECS` is absent.
 const DEFAULT_SHUTDOWN_DEADLINE_SECS: u64 = 10;
+
+/// The environment variable that names the curriculum tree (M5 U6).
+const CURRICULUM_ENV: &str = "CADUS_CURRICULUM";
+
+/// The curriculum tree when `CADUS_CURRICULUM` is absent.
+const DEFAULT_CURRICULUM: &str = "curriculum";
 
 /// The least time the pool close gets after the drain.
 ///
@@ -98,6 +108,54 @@ fn init_tracing() {
         .init();
 }
 
+/// Read the curriculum tree that `CADUS_CURRICULUM` names.
+///
+/// A tree that does not load is fatal: `/api/status`, `/api/graph`,
+/// `/api/modules`, and `/api/session/plan` all compose against it, and an empty
+/// graph serves an empty dashboard with no error anywhere.
+fn load_content() -> Result<Content, Fatal> {
+    let path = PathBuf::from(
+        std::env::var(CURRICULUM_ENV).unwrap_or_else(|_| DEFAULT_CURRICULUM.to_string()),
+    );
+    match load_curriculum(&path) {
+        Ok((curriculum, findings)) => {
+            tracing::info!(
+                path = %path.display(),
+                topics = curriculum.topic_count(),
+                findings = findings.len(),
+                "cadus-web: curriculum is loaded"
+            );
+            Ok(Content::new(curriculum))
+        }
+        Err(err) => {
+            let reason = first_reason(&err);
+            tracing::error!(
+                path = %path.display(),
+                error = %reason,
+                "cadus-web: the curriculum did not load; set CADUS_CURRICULUM to a tree that does"
+            );
+            Err(Fatal::Startup(format!(
+                "the curriculum at {} did not load: {reason}",
+                path.display()
+            )))
+        }
+    }
+}
+
+/// The first finding of a load error, or the error itself.
+///
+/// A fatal parse stage carries every finding, and the joined text of a large
+/// tree runs to many lines. The first one names the file the operator must fix.
+fn first_reason(err: &LoadError) -> String {
+    let LoadError::Curriculum(CurriculumError::FatalFindings { findings }) = err else {
+        return err.to_string();
+    };
+    match findings.first() {
+        Some(finding) => format!("[{}] {}", finding.code, finding.message),
+        None => err.to_string(),
+    }
+}
+
 async fn run() -> Result<(), Fatal> {
     let cfg = DbConfig::from_env().map_err(|err| Fatal::Startup(err.to_string()))?;
     // Read every configuration value before the pool opens. A bad value then
@@ -133,6 +191,16 @@ async fn run() -> Result<(), Fatal> {
              makes an https deployment rebuild as http://"
         );
     }
+
+    // M5 U6. The dashboard, the graph, and the session plan compose against the
+    // curriculum, so the tree loads BEFORE the pool opens and a tree that does
+    // not load stops the start with exit code 2. `cadus-worker` follows the same
+    // rule: a service that serves an empty graph gives the operator one warn
+    // line and no other signal.
+    //
+    // The read comes AFTER every environment parse above. Those parses cost
+    // nothing, so a typo in a variable is reported before this file read runs.
+    let content = Arc::new(load_content()?);
 
     // Install the stop signals before the connect. The handlers exist from this
     // point, so a SIGTERM during the connect gives exit code 0 instead of a kill
@@ -197,7 +265,8 @@ async fn run() -> Result<(), Fatal> {
     let app = create_app(
         AppState::new(db.clone())
             .with_posture(posture)
-            .with_origin(origin),
+            .with_origin(origin)
+            .with_content(Arc::clone(&content)),
     );
 
     // `fired_rx` reports the moment of the stop signal, so the deadline below

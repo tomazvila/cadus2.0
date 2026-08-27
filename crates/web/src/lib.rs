@@ -50,17 +50,20 @@ pub mod health;
 pub mod metrics;
 pub mod origin;
 pub mod security;
+pub mod session;
+pub mod state;
 
 use std::sync::Arc;
 
 use axum::Router;
 use axum::middleware::{from_fn, from_fn_with_state};
-use axum::routing::get;
+use axum::routing::{get, post};
 use cadus_store::{Db, RoleInfo, StoreError, bounded};
 
 use crate::cookie::CookiePosture;
 use crate::metrics::Registry;
 use crate::origin::OriginPolicy;
+use crate::state::Content;
 
 /// The state that every handler and every layer shares. The process keeps no
 /// session data in memory, so the app tier stays stateless (C3).
@@ -79,6 +82,13 @@ pub struct AppState {
     pub origin: OriginPolicy,
     /// The request metrics of this process.
     pub metrics: Arc<Registry>,
+    /// The curriculum and the scheduler config the M5 routes compose with.
+    ///
+    /// `None` means the process loaded no curriculum, and every route that
+    /// needs one answers `503 curriculum_unavailable`. The binary loads the tree
+    /// at boot and exits 2 when it does not load, so `None` is a test-only
+    /// state and never a running deployment.
+    pub content: Option<Arc<Content>>,
 }
 
 impl AppState {
@@ -90,7 +100,15 @@ impl AppState {
             posture: CookiePosture::SECURE,
             origin: OriginPolicy::default(),
             metrics: Arc::new(Registry::new()),
+            content: None,
         }
+    }
+
+    /// The same state with a loaded curriculum.
+    #[must_use]
+    pub fn with_content(mut self, content: Arc<Content>) -> Self {
+        self.content = Some(content);
+        self
     }
 
     /// The same state with another cookie posture.
@@ -116,6 +134,16 @@ pub fn create_app(state: AppState) -> Router {
         .route("/api/health", get(health::health))
         .route("/api/ready", get(health::ready))
         .route("/metrics", get(metrics::scrape))
+        // Unit U6, spec section 11. Every route below is added BEFORE the three
+        // `.layer(...)` calls, or it escapes all three layers.
+        .route("/api/status", get(session::status))
+        .route("/api/graph", get(session::graph))
+        .route("/api/modules", get(session::modules))
+        .route("/api/export", get(session::export))
+        .route("/api/enroll", post(session::enroll))
+        .route("/api/session/start", post(session::session_start))
+        .route("/api/session/end", post(session::session_end))
+        .route("/api/session/plan", get(session::session_plan))
         // axum's own fallbacks answer with an empty body, so both of them
         // return the envelope instead (spec section 2).
         .fallback(error::not_found)

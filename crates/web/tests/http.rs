@@ -67,6 +67,21 @@ fn state_with(pool: PgPool) -> AppState {
 /// The environment variable that holds the superuser DSN of the test cluster.
 const TEST_DSN_VAR: &str = "CADUS_TEST_DATABASE_URL";
 
+/// The curriculum tree of the repository (M5 U6).
+///
+/// `cadus-web` loads the tree at boot and exits 2 when it does not load, so
+/// every spawned binary here gets the reviewed tree. Cargo runs a test with the
+/// PACKAGE directory as its working directory, so the default relative path
+/// `curriculum` would resolve to `crates/web/curriculum`, which does not exist.
+fn curriculum_dir() -> String {
+    let manifest = std::path::Path::new(env!("CARGO_MANIFEST_DIR"));
+    let root = manifest
+        .parent()
+        .and_then(std::path::Path::parent)
+        .unwrap_or_else(|| panic!("`{}` has no grandparent", manifest.display()));
+    root.join("curriculum").display().to_string()
+}
+
 /// Build a DSN for one database on the test cluster.
 ///
 /// `user` selects the role. `None` keeps the superuser credentials of
@@ -322,6 +337,8 @@ async fn binary_exits_3_with_a_superuser_dsn() {
 
         let mut child = KillOnDrop::new(
             Command::new(env!("CARGO_BIN_EXE_cadus-web"))
+                .env("CADUS_CURRICULUM", curriculum_dir())
+                .env("CADUS_CURRICULUM", curriculum_dir())
                 .env("DATABASE_URL", &dsn)
                 .env("BIND_ADDR", "127.0.0.1:0")
                 .env("RUST_LOG", "info")
@@ -364,6 +381,8 @@ async fn binary_serves_health_and_stops_on_sigterm() {
 
         let mut child = KillOnDrop::new(
             Command::new(env!("CARGO_BIN_EXE_cadus-web"))
+                .env("CADUS_CURRICULUM", curriculum_dir())
+                .env("CADUS_CURRICULUM", curriculum_dir())
                 .env("DATABASE_URL", &dsn)
                 .env("BIND_ADDR", &address)
                 .env("RUST_LOG", "info")
@@ -452,6 +471,8 @@ async fn binary_exits_zero_with_a_half_sent_request_open() {
 
         let mut child = KillOnDrop::new(
             Command::new(env!("CARGO_BIN_EXE_cadus-web"))
+                .env("CADUS_CURRICULUM", curriculum_dir())
+                .env("CADUS_CURRICULUM", curriculum_dir())
                 .env("DATABASE_URL", &dsn)
                 .env("BIND_ADDR", &address)
                 .env("SHUTDOWN_DEADLINE_SECS", "2")
@@ -505,6 +526,7 @@ async fn binary_exits_zero_with_a_half_sent_request_open() {
 async fn binary_exits_2_without_a_database_url() {
     let mut child = KillOnDrop::new(
         Command::new(env!("CARGO_BIN_EXE_cadus-web"))
+            .env("CADUS_CURRICULUM", curriculum_dir())
             .env_remove("DATABASE_URL")
             .env("BIND_ADDR", "127.0.0.1:0")
             .env("RUST_LOG", "info")
@@ -542,6 +564,7 @@ async fn binary_exits_2_with_a_bind_addr_that_is_not_unicode() {
     let broken = OsStr::from_bytes(b"127.0.0.1:19099\xff");
     let mut child = KillOnDrop::new(
         Command::new(env!("CARGO_BIN_EXE_cadus-web"))
+            .env("CADUS_CURRICULUM", curriculum_dir())
             .env("DATABASE_URL", "postgresql://nobody@127.0.0.1:1/nodb")
             .env("BIND_ADDR", broken)
             .env("RUST_LOG", "info")
@@ -578,6 +601,7 @@ async fn binary_exits_zero_on_sigterm_during_the_boot_guard() {
 
     let mut child = KillOnDrop::new(
         Command::new(env!("CARGO_BIN_EXE_cadus-web"))
+            .env("CADUS_CURRICULUM", curriculum_dir())
             .env("DATABASE_URL", deaf.dsn())
             .env("BIND_ADDR", "127.0.0.1:0")
             .env("SHUTDOWN_DEADLINE_SECS", "1")
@@ -645,6 +669,8 @@ fn kill_on_drop_ends_the_child_when_the_test_body_panics() {
     let outcome = std::panic::catch_unwind(move || {
         let child = KillOnDrop::new(
             Command::new(env!("CARGO_BIN_EXE_cadus-web"))
+                .env("CADUS_CURRICULUM", curriculum_dir())
+                .env("CADUS_CURRICULUM", curriculum_dir())
                 .env("DATABASE_URL", "postgresql://x@127.0.0.1:1/x")
                 .env("BIND_ADDR", "127.0.0.1:0")
                 .env("RUST_LOG", "info")
@@ -747,6 +773,7 @@ async fn ready_returns_503_when_the_database_answers_nothing() {
 async fn binary_exits_2_with_a_bad_insecure_cookie_value() {
     let mut child = KillOnDrop::new(
         Command::new(env!("CARGO_BIN_EXE_cadus-web"))
+            .env("CADUS_CURRICULUM", curriculum_dir())
             .env("DATABASE_URL", "postgresql://nobody@127.0.0.1:1/nodb")
             .env("BIND_ADDR", "127.0.0.1:0")
             .env("CADUS_WEB_INSECURE_COOKIE", "true")
@@ -781,6 +808,7 @@ async fn binary_exits_2_with_a_bad_insecure_cookie_value() {
 async fn binary_exits_2_with_a_public_origin_that_is_not_an_origin() {
     let mut child = KillOnDrop::new(
         Command::new(env!("CARGO_BIN_EXE_cadus-web"))
+            .env("CADUS_CURRICULUM", curriculum_dir())
             .env("DATABASE_URL", "postgresql://nobody@127.0.0.1:1/nodb")
             .env("BIND_ADDR", "127.0.0.1:0")
             .env("PUBLIC_ORIGIN", "https://tutor.example/app")

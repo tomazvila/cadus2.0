@@ -26,6 +26,7 @@ use sqlx::{PgPool, Postgres, Transaction};
 use uuid::Uuid;
 
 pub mod pool;
+pub mod state;
 
 #[cfg(feature = "test-support")]
 pub mod test_support;
@@ -218,6 +219,15 @@ pub enum StoreError {
     /// claim did not take the row the pop locked.
     #[error("serving pool error: {0}")]
     PoolRow(String),
+
+    /// A stored document did not read or did not write: an `events.payload`, a
+    /// `learner_models.model`, or the config preimage (M5 U6).
+    #[error("document error: {0}")]
+    Document(String),
+
+    /// The fold refused the stream (M5 U6).
+    #[error("projection error: {0}")]
+    Projector(#[from] cadus_core::projector::ProjectorError),
 
     /// C3 boot guard: the connected role escapes row-level security.
     #[error(

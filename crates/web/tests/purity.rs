@@ -198,6 +198,7 @@ fn web_direct_normal_dependencies_are_the_declared_list() {
             "axum",
             "cadus-core",
             "cadus-store",
+            "serde",
             "serde_json",
             "sqlx",
             "tokio",
@@ -217,6 +218,7 @@ fn store_direct_normal_dependencies_are_the_declared_list() {
         found,
         vec![
             "cadus-core",
+            "serde_json",
             "sqlx",
             "thiserror",
             "tokio",

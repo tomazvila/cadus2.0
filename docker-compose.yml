@@ -154,6 +154,11 @@ services:
       # 0 (the default) serves the `__Host-cadus_session` cookie with Secure.
       # 1 serves the plain `cadus_session` cookie for local http:// only.
       CADUS_WEB_INSECURE_COOKIE: ${CADUS_WEB_INSECURE_COOKIE:-0}
+      # The curriculum tree the dashboard, the graph, and the session plan
+      # compose against (M5 U6, C5). The image carries it at /app/curriculum,
+      # and cadus-web exits 2 when the tree does not load. Point this at a bind
+      # mount to run a tree the image does not carry.
+      CADUS_CURRICULUM: ${CADUS_CURRICULUM:-/app/curriculum}
     # Longer than the stop budget, so the process exits by itself and Docker
     # never has to send SIGKILL (exit 137). Total stop time
     # <= SHUTDOWN_DEADLINE_SECS + 1 s < stop_grace_period 20 s. The old code
