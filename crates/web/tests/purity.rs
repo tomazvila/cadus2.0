@@ -195,14 +195,25 @@ fn web_direct_normal_dependencies_are_the_declared_list() {
     assert_eq!(
         found,
         vec![
+            // M5 U2 added `argon2`, `base64ct`, `getrandom`, `sha2`, `subtle`,
+            // and `unicode-normalization` for the auth primitives. Every one of
+            // the six is local CPU work: a hash, an encoder, a comparison, a
+            // normalizer, or one `getrandom` syscall. None of them opens a
+            // socket, and none of them talks to a model.
+            "argon2",
             "axum",
+            "base64ct",
             "cadus-core",
             "cadus-store",
+            "getrandom",
             "serde_json",
+            "sha2",
             "sqlx",
+            "subtle",
             "tokio",
             "tracing",
             "tracing-subscriber",
+            "unicode-normalization",
         ],
         "R4: a new normal dependency of cadus-web needs a review; update this list with it"
     );
