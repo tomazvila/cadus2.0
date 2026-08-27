@@ -1,0 +1,74 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        UPDATE serving_pool AS sp\n        SET claimed_at = now()\n        FROM content_store AS cs\n        WHERE cs.digest = sp.content_digest\n          AND sp.claimed_at IS NULL\n          AND cs.status <> 'approved'\n        RETURNING sp.id AS \"id!\",\n                  sp.user_id AS \"user_id!\",\n                  sp.kp_id AS \"kp_id!\",\n                  sp.content_digest AS \"content_digest!\",\n                  cs.status AS \"status!\"\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id!",
+        "type_info": "Uuid",
+        "origin": {
+          "Table": {
+            "table": "serving_pool",
+            "name": "id"
+          }
+        }
+      },
+      {
+        "ordinal": 1,
+        "name": "user_id!",
+        "type_info": "Uuid",
+        "origin": {
+          "Table": {
+            "table": "serving_pool",
+            "name": "user_id"
+          }
+        }
+      },
+      {
+        "ordinal": 2,
+        "name": "kp_id!",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "serving_pool",
+            "name": "kp_id"
+          }
+        }
+      },
+      {
+        "ordinal": 3,
+        "name": "content_digest!",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "serving_pool",
+            "name": "content_digest"
+          }
+        }
+      },
+      {
+        "ordinal": 4,
+        "name": "status!",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "content_store",
+            "name": "status"
+          }
+        }
+      }
+    ],
+    "parameters": {
+      "Left": []
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      true,
+      false
+    ]
+  },
+  "hash": "a2e970cbd448cc51947b548b56f731c4077f3dab48191112f7d63cd512995995"
+}

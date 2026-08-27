@@ -1,0 +1,16 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        DELETE FROM serving_pool\n        WHERE id IN (\n            SELECT id FROM serving_pool\n            WHERE user_id = $1 AND kp_id = $2 AND claimed_at IS NULL\n            ORDER BY id\n            LIMIT $3\n        )\n        ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Uuid",
+        "Text",
+        "Int8"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "32c407883beca01b40ea805a99b7b3598f3177167f4f9c865bc8ae43f92a8022"
+}

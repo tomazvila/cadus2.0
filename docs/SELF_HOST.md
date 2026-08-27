@@ -312,6 +312,83 @@ services:
 image the compose file builds, so a `COPY` line that goes missing fails the gate
 and not the deployment.
 
+## The operator flags (A6, C6)
+
+`cadus_store::pool::operator_flags` gives one row per knowledge point. M5 puts it
+on a read-only endpoint. Each row carries six fields:
+
+| Field | Meaning |
+|---|---|
+| `kp_id` | The serving key, `"<topic_id>/<kp_id>"`. |
+| `approved_templates` | The count of `content_store` template rows with `status = 'approved'` (C6). |
+| `pool_depth` | The count of unclaimed `serving_pool` rows of that knowledge point. |
+| `last_source` | The source of the newest served row: `template`, `exemplar`, or `generator` (A7). |
+| `last_exemplar_at` | When the knowledge point last fell back to an exemplar (A6). |
+| `needs_template` | `true` when `approved_templates` is 0. Every serve of this knowledge point is an exemplar rotation. |
+| `source_exhausted` | `true` when the refill filled a pair of this knowledge point twice in a row and wrote no new statement. |
+
+`needs_template` and `source_exhausted` are two different faults, and the cure
+differs:
+
+- **`needs_template = true`** — nobody approved a template. Author one, put it
+  through the gate, and approve it (C6). Until then the learner sees the authored
+  exemplars in rotation, and the pool of that knowledge point holds at most one
+  row per exemplar.
+- **`source_exhausted = true`** — a source exists and it produces nothing the pool
+  does not hold. An exemplar list of 3 under a target depth of 24 does this after
+  the learner works through all 3, and so does a template whose whole space is in
+  the pool. Widen the parameter domains of the template, or author more
+  exemplars. A restart of the worker does not repair it.
+
+The exhausted pair leaves the refill target list for 60 minutes, so the per-tick
+budget goes to the pairs that still grow. A pair with no source at all leaves it
+for 15 minutes.
+
+### The refill log line
+
+The worker writes one line per tick at info level:
+
+```
+refill tick=42 targets=3 inserted=27 from_template=24 from_exemplar=3 without_source=0 failed=0 refused_instances=0 flagged_refusals=0 skipped_starved=1 exhausted=0 retired_unapproved=0 nonce=1772150400123456
+```
+
+Read three of those fields first:
+
+- `without_source` counts the pairs with no approved template and no exemplar.
+- `exhausted` counts the pairs this tick put on the 60-minute backoff.
+- `retired_unapproved` counts the pool rows this tick took out of the pool
+  because their digest lost its approval.
+
+`source_exhausted` lives in the worker process and in no table, so a reader
+outside that process gets `false`. The `exhausted` count of the log line is the
+signal a deployment reads today.
+
+### Revoke a wrong template (C6)
+
+If the log or a learner report names a template that computes a wrong answer, do
+these steps:
+
+1. Set the status of the digest to `rejected`:
+
+   ```sql
+   UPDATE content_store SET status = 'rejected' WHERE digest = '<digest>';
+   ```
+
+2. Wait one worker tick. The refill claims every unclaimed pool row of that
+   digest, writes one warn line per row, and counts them in `retired_unapproved`.
+3. Read `docker compose logs worker` and do a check of the count. It is the
+   number of wrong problems that never reached a learner.
+4. Author the corrected template and approve it. The next tick fills the pool
+   from the new digest.
+
+The pop reads the approval on every serve, so step 1 alone stops the wrong
+problems. Step 2 is what lets the corrected template take their place: the pool
+holds one row per statement (A5), and a corrected template inserts nothing over
+rows that are still unclaimed.
+
+**Do not delete the `content_store` row.** `serving_pool.content_digest`
+references it, and the approval record is the C6 audit trail.
+
 ## Query bound
 
 `DB_STATEMENT_TIMEOUT_MS` (default `5000`) bounds every query of the web and

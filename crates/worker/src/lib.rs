@@ -23,8 +23,8 @@ use std::time::{Duration, SystemTime, UNIX_EPOCH};
 use cadus_store::{Db, StoreError, bounded};
 
 pub use refill::{
-    REFILL_BACKOFF, RefillConfig, RefillJob, RefillReport, RefillState, batch_seed, refill_once,
-    refill_once_at,
+    EMPTY_FILLS_BEFORE_BACKOFF, EXHAUSTED_BACKOFF, REFILL_BACKOFF, RefillConfig, RefillJob,
+    RefillReport, RefillState, batch_seed, refill_once, refill_once_at,
 };
 
 /// The environment variable that holds the tick period in whole seconds.
@@ -261,6 +261,8 @@ pub async fn run_with(
                     refused_instances = report.refused_instances,
                     flagged_refusals = report.flagged_refusals,
                     skipped_starved = report.skipped_starved,
+                    exhausted = report.exhausted,
+                    retired_unapproved = report.retired_unapproved,
                     nonce,
                     "refill tick={ticks}"
                 ),

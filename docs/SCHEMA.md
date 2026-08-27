@@ -303,6 +303,78 @@ changed each one with the whole gate green.
 | `public_functions_are_the_literal_list` | `pg_proc` for every function of schema `public`: name, `prosecdef`, `proconfig`, and the EXECUTE bits of `cadus_app`, `cadus_admin`, and PUBLIC. The old test matched the name prefix `auth_user_by_`, so a new SECURITY DEFINER helper was invisible. Every other function of the schema belongs to the `citext` extension. | #7, #4 |
 | `foreign_key_delete_actions_are_the_literal_list` | `pg_constraint.confdeltype` for every foreign key of schema `public`. `events_user_id_fkey` must stay `r` (RESTRICT): C2 says the event log outlives the account, and a flip to CASCADE erased a learner's whole history on one `DELETE FROM users`. | #8 |
 
+## The `serving_pool` pop rule (D-O1, C6, A5)
+
+The pop is `cadus_store::pool::pop_with_ring_tx`. It reads at most 8 rows of one
+`(user_id, kp_id)` pair, gives them to the D5 anti-repeat rule, and claims the
+row that rule chooses — all inside the caller's transaction (D-O1).
+
+A row is a candidate when all three hold:
+
+1. `claimed_at IS NULL`. The claim is what retires a row. A claimed row stays in
+   the table as the served-instance log of A5; a retention job of M5 owns the
+   delete.
+2. `user_id` and `kp_id` name the pair the serve asks for.
+3. The row carries NO `content_digest`, or the `content_store` row of that
+   digest carries `status = 'approved'`.
+
+Rule 3 is the C6 gate on the serve path. The pop therefore joins:
+
+```sql
+FROM serving_pool AS sp
+LEFT JOIN content_store AS cs ON cs.digest = sp.content_digest
+WHERE sp.user_id = $1
+  AND sp.kp_id = $2
+  AND sp.claimed_at IS NULL
+  AND (sp.content_digest IS NULL OR cs.status = 'approved')
+ORDER BY sp.created_at, sp.id
+FOR UPDATE OF sp SKIP LOCKED
+LIMIT $3
+```
+
+Three details of that statement are load-bearing:
+
+- **`FOR UPDATE OF sp`**, not a bare `FOR UPDATE`. The lock belongs on the pool
+  row. Two learners of one template share one `content_store` row, and a lock on
+  that row makes the second serve wait for the first.
+- **`SKIP LOCKED`** (D7). Two serves of one pair walk past each other's locked
+  rows, so neither one waits and neither one reads the row the other claims.
+- **`ORDER BY sp.created_at, sp.id`**. One refill batch is one statement, so
+  every row of a batch shares `created_at`. The pool serves batch by batch in age
+  order, and the `id` breaks the tie inside a batch.
+
+### Why the approval is read on every serve
+
+`content_store.status` is the only lever C6 gives an operator. Before M4 review 2
+the pop read `serving_pool` alone, so a revocation stopped the next refill and
+nothing else: the up-to-`target_depth` unclaimed rows the digest had already
+written kept reaching learners, one per serve, each with the answer the operator
+rejected (finding #4).
+
+A row with no digest is an exemplar rotation (A6). Its authority is the
+curriculum file, `content_store` holds no row for it, and the pop serves it.
+
+### The refill retires what the pop walks past
+
+The pop does not write to the rows it refuses; the serve path stays one
+transaction with no extra write. `cadus_store::pool::retire_unapproved` is the
+other half, and the D-O4 refill job runs it at the start of every pass:
+
+```sql
+UPDATE serving_pool AS sp
+SET claimed_at = now()
+FROM content_store AS cs
+WHERE cs.digest = sp.content_digest
+  AND sp.claimed_at IS NULL
+  AND cs.status <> 'approved'
+RETURNING ...
+```
+
+Each returned row reaches the log with its pair, its digest, and the new status.
+The retire runs BEFORE the target query of the pass, so a pair the retire emptied
+falls under its target depth in that same pass and refills from the source that
+IS approved.
+
 ## Two deliberate differences from 1.0
 
 1. **`events.payload` is `jsonb`, not `json` (D7).** 1.0 used `json` because its

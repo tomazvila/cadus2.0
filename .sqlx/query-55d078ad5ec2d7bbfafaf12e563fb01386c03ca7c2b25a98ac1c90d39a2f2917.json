@@ -1,0 +1,34 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        INSERT INTO serving_pool\n            (user_id, kp_id, source, content_digest, problem, expected_answer,\n             instance_hash, created_at)\n        VALUES ($1, $2, 'template', $3, $4::text::jsonb, $5::text::jsonb, $6, $7)\n        RETURNING id\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Uuid",
+        "origin": {
+          "Table": {
+            "table": "serving_pool",
+            "name": "id"
+          }
+        }
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Uuid",
+        "Text",
+        "Text",
+        "Text",
+        "Text",
+        "Text",
+        "Timestamptz"
+      ]
+    },
+    "nullable": [
+      false
+    ]
+  },
+  "hash": "55d078ad5ec2d7bbfafaf12e563fb01386c03ca7c2b25a98ac1c90d39a2f2917"
+}
