@@ -262,12 +262,24 @@ steps above keep the volume.
   dependencies of `cadus-web`, `cadus-worker`, and `cadus-store`, so any new
   dependency of the three tier crates is a reviewable diff. The gate does not
   inspect handler bodies.
-- **Runtime.** `/api/ready` runs one `SELECT 1` through the web pool. It reports
-  the datastore only, and it reports nothing about `cadus-worker`: a 200 from
-  `/api/ready` is no proof that the async layer runs. M0 gives the worker no
-  monitoring endpoint; read `docker compose logs worker` instead. Caddy 404s
-  `/api/ready` at the edge on purpose; scrape it over the compose network at
-  `web:8080`.
+- **Runtime.** `/api/ready` answers
+  `{"ok", "db", "worker": {"claim_age_secs", "stale"}}` (ruling D-M5-6). `db` is
+  the verdict of one `SELECT 1` through the web pool, and it alone decides the
+  status code: `ok` with 200, `down` with 503. `claim_age_secs` is the age in
+  seconds of the oldest diagnosis job that still waits for a claim, and `null`
+  means no job waits. A backlog older than 60 s sets `stale` and adds
+  `"warnings": ["worker_claim_stale"]`, and it NEVER gives a 503: the whole grade
+  verdict is local CPU work, so a learner studies through a worker outage and
+  only the diagnosis prose waits. Caddy 404s `/api/ready` at the edge on purpose;
+  scrape it over the compose network at `web:8080`.
+- **The CSRF origin check.** `cadus-web` refuses a cross-origin write that
+  carries the session cookie with `403 cross_origin_rejected`. Set
+  `PUBLIC_ORIGIN` in `.env` to the origin you serve, such as
+  `https://tutor.example`. Unset, the check rebuilds the origin from
+  `X-Forwarded-Proto` and `Host`, and a proxy that stops sending
+  `X-Forwarded-Proto` then makes every browser write answer 403. A value with a
+  path or a trailing slash matches no `Origin` header at all, so `cadus-web`
+  exits 2 rather than refuse every write.
 
 ## The curriculum in the image
 

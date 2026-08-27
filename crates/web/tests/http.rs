@@ -1,8 +1,14 @@
-//! Proof tests for the M0 HTTP surface and the C3 boot guard.
+//! Proof tests for the two probes, the C3 boot guard, and the start sequence of
+//! the binary.
 //!
-//! Tests 1, 2, 3, and 6 drive the router and the guard in process. Tests 4, 5,
-//! 7, 8, and 9 start the real binary as a child process, because an exit code
-//! and a signal handler exist only in a real process.
+//! Tests 1, 2, 3, 6, and 12 drive the router and the guard in process. Tests 4,
+//! 5, 7, 8, 9, 10, 13, and 14 start the real binary as a child process, because
+//! an exit code and a signal handler exist only in a real process.
+//!
+//! The `/api/ready` body follows ruling D-M5-6 of `docs/plans/M5.md`: the 1.0
+//! `redis` field is gone (2.0 has no Redis, D8) and worker liveness comes from
+//! the `diagnosis_jobs` claim age. `crates/web/tests/skeleton.rs` holds the
+//! tests of that field; the ones here pin the two `db` verdicts.
 //!
 //! Every assertion names a literal value: a literal status code, literal body
 //! bytes, a literal role name, a literal exit code.
@@ -43,7 +49,7 @@ use axum::body::Body;
 use axum::http::{Request, StatusCode};
 use cadus_store::test_support::{DeafPostgres, TestDb};
 use cadus_store::{DEFAULT_CLIENT_TIMEOUT_MS, Db, DbConfig, RoleInfo, StoreError, connect_options};
-use cadus_web::{AppState, boot_check, router};
+use cadus_web::{AppState, boot_check, create_app};
 use http_body_util::BodyExt;
 use sqlx::PgPool;
 use sqlx::postgres::PgPoolOptions;
@@ -55,9 +61,7 @@ use tower::ServiceExt;
 /// `DEFAULT_CLIENT_TIMEOUT_MS` is the value that an absent `DB_CLIENT_TIMEOUT_MS`
 /// gives, so these tests run the router exactly as the deployment does.
 fn state_with(pool: PgPool) -> AppState {
-    AppState {
-        db: Db::new(pool, DEFAULT_CLIENT_TIMEOUT_MS),
-    }
+    AppState::new(Db::new(pool, DEFAULT_CLIENT_TIMEOUT_MS))
 }
 
 /// The environment variable that holds the superuser DSN of the test cluster.
@@ -231,7 +235,7 @@ async fn health_returns_200_and_exact_body() {
     let pool = PgPoolOptions::new()
         .connect_lazy("postgresql://nobody@127.0.0.1:1/nodb")
         .expect("a lazy pool needs no server");
-    let app = router(state_with(pool));
+    let app = create_app(state_with(pool));
 
     let response = app
         .oneshot(
@@ -260,7 +264,7 @@ async fn health_returns_200_and_exact_body() {
 #[tokio::test]
 async fn ready_returns_200_on_a_live_pool() {
     TestDb::with(|db| async move {
-        let app = router(state_with(db.app.clone()));
+        let app = create_app(state_with(db.app.clone()));
 
         let response = app
             .oneshot(
@@ -274,7 +278,10 @@ async fn ready_returns_200_on_a_live_pool() {
 
         assert_eq!(response.status(), StatusCode::OK);
         let body = response.into_body().collect().await.unwrap().to_bytes();
-        assert_eq!(&body[..], b"{\"ready\":true}");
+        assert_eq!(
+            &body[..],
+            b"{\"db\":\"ok\",\"ok\":true,\"worker\":{\"claim_age_secs\":null,\"stale\":false}}"
+        );
     })
     .await;
 }
@@ -401,7 +408,7 @@ async fn ready_returns_503_on_a_closed_pool() {
     TestDb::with(|db| async move {
         let pool = db.app.clone();
         pool.close().await;
-        let app = router(state_with(pool));
+        let app = create_app(state_with(pool));
 
         let response = app
             .oneshot(
@@ -415,7 +422,10 @@ async fn ready_returns_503_on_a_closed_pool() {
 
         assert_eq!(response.status(), StatusCode::SERVICE_UNAVAILABLE);
         let body = response.into_body().collect().await.unwrap().to_bytes();
-        assert_eq!(&body[..], b"{\"ready\":false}");
+        assert_eq!(
+            &body[..],
+            b"{\"db\":\"down\",\"ok\":false,\"worker\":{\"claim_age_secs\":null,\"stale\":false}}"
+        );
     })
     .await;
 }
@@ -694,9 +704,7 @@ async fn ready_returns_503_when_the_database_answers_nothing() {
         .max_connections(1)
         .acquire_timeout(Duration::from_secs(5))
         .connect_lazy_with(connect_options(&cfg).expect("the deaf DSN parses"));
-    let app = router(AppState {
-        db: Db::new(pool.clone(), cfg.client_timeout_ms),
-    });
+    let app = create_app(AppState::new(Db::new(pool.clone(), cfg.client_timeout_ms)));
 
     let start = Instant::now();
     let response = app
@@ -712,11 +720,87 @@ async fn ready_returns_503_when_the_database_answers_nothing() {
 
     assert_eq!(response.status(), StatusCode::SERVICE_UNAVAILABLE);
     let body = response.into_body().collect().await.unwrap().to_bytes();
-    assert_eq!(&body[..], b"{\"ready\":false}");
+    assert_eq!(
+        &body[..],
+        b"{\"db\":\"down\",\"ok\":false,\"worker\":{\"claim_age_secs\":null,\"stale\":false}}"
+    );
     assert!(
         elapsed < Duration::from_secs(2),
         "the readiness probe took {elapsed:?}, so the client-side bound did not apply"
     );
 
     pool.close().await;
+}
+
+/// (13) The cookie-posture guard stops the start: a `CADUS_WEB_INSECURE_COOKIE`
+/// value that is neither `0` nor `1` gives exit code exactly 2.
+///
+/// Spec section 3.1, row "Guards", and unit U1 of section 11. An insecure cookie
+/// posture must be a deliberate choice. A silent fallback on
+/// `CADUS_WEB_INSECURE_COOKIE=true` would ship the production `__Host-` cookie
+/// to a developer on `http://`, and the browser would discard it without a word
+/// (trap W9).
+///
+/// The guard runs before the database connect, so the unreachable DSN below
+/// costs the test no time.
+#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+async fn binary_exits_2_with_a_bad_insecure_cookie_value() {
+    let mut child = KillOnDrop::new(
+        Command::new(env!("CARGO_BIN_EXE_cadus-web"))
+            .env("DATABASE_URL", "postgresql://nobody@127.0.0.1:1/nodb")
+            .env("BIND_ADDR", "127.0.0.1:0")
+            .env("CADUS_WEB_INSECURE_COOKIE", "true")
+            .env("RUST_LOG", "info")
+            .stdout(Stdio::piped())
+            .stderr(Stdio::piped())
+            .spawn()
+            .expect("start cadus-web"),
+    );
+
+    wait_for_exit(child.as_mut(), Duration::from_secs(10), "cookie posture");
+    let output = child
+        .into_inner()
+        .wait_with_output()
+        .expect("collect the child output");
+
+    assert_eq!(output.status.code(), Some(2));
+    let stderr = String::from_utf8_lossy(&output.stderr);
+    assert!(
+        stderr.contains("CADUS_WEB_INSECURE_COOKIE must be 0 or 1"),
+        "stderr does not name the rule: {stderr}"
+    );
+}
+
+/// (14) A `PUBLIC_ORIGIN` that is not an origin gives exit code exactly 2.
+///
+/// Trap W10. `PUBLIC_ORIGIN` is what takes the CSRF origin comparison off the
+/// proxy header. A value with a path or a trailing slash matches no `Origin`
+/// header at all, so the deployment would refuse every browser write. The
+/// process refuses to start instead.
+#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+async fn binary_exits_2_with_a_public_origin_that_is_not_an_origin() {
+    let mut child = KillOnDrop::new(
+        Command::new(env!("CARGO_BIN_EXE_cadus-web"))
+            .env("DATABASE_URL", "postgresql://nobody@127.0.0.1:1/nodb")
+            .env("BIND_ADDR", "127.0.0.1:0")
+            .env("PUBLIC_ORIGIN", "https://tutor.example/app")
+            .env("RUST_LOG", "info")
+            .stdout(Stdio::piped())
+            .stderr(Stdio::piped())
+            .spawn()
+            .expect("start cadus-web"),
+    );
+
+    wait_for_exit(child.as_mut(), Duration::from_secs(10), "public origin");
+    let output = child
+        .into_inner()
+        .wait_with_output()
+        .expect("collect the child output");
+
+    assert_eq!(output.status.code(), Some(2));
+    let stderr = String::from_utf8_lossy(&output.stderr);
+    assert!(
+        stderr.contains("PUBLIC_ORIGIN"),
+        "stderr does not name the variable: {stderr}"
+    );
 }
