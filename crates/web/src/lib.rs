@@ -63,6 +63,8 @@ use axum::middleware::{from_fn, from_fn_with_state};
 use axum::routing::{get, post};
 use cadus_store::{Db, RoleInfo, StoreError, bounded};
 
+use crate::auth::oauth::OAuthConfig;
+use crate::auth::password::Argon2Profile;
 use crate::cookie::CookiePosture;
 use crate::metrics::Registry;
 use crate::origin::OriginPolicy;
@@ -92,6 +94,14 @@ pub struct AppState {
     /// at boot and exits 2 when it does not load, so `None` is a test-only
     /// state and never a running deployment.
     pub content: Option<Arc<Content>>,
+    /// The Argon2id parameter profile of this deployment. The auth routes hash
+    /// and rehash with it, and the anti-enumeration dummy hash carries the same
+    /// parameters, so the unknown-address path costs what the known one costs.
+    pub argon2: Argon2Profile,
+    /// The OAuth providers this deployment serves, and the transport that runs
+    /// the provider calls (M5 U5). The default serves no provider, so both
+    /// OAuth routes answer `404 not_found`.
+    pub oauth: OAuthConfig,
 }
 
 impl AppState {
@@ -104,6 +114,8 @@ impl AppState {
             origin: OriginPolicy::default(),
             metrics: Arc::new(Registry::new()),
             content: None,
+            argon2: Argon2Profile::PROD,
+            oauth: OAuthConfig::default(),
         }
     }
 
@@ -125,6 +137,20 @@ impl AppState {
     #[must_use]
     pub fn with_origin(mut self, origin: OriginPolicy) -> Self {
         self.origin = origin;
+        self
+    }
+
+    /// The same state with another Argon2id profile.
+    #[must_use]
+    pub fn with_argon2(mut self, argon2: Argon2Profile) -> Self {
+        self.argon2 = argon2;
+        self
+    }
+
+    /// The same state with an OAuth configuration.
+    #[must_use]
+    pub fn with_oauth(mut self, oauth: OAuthConfig) -> Self {
+        self.oauth = oauth;
         self
     }
 }
@@ -153,6 +179,13 @@ pub fn create_app(state: AppState) -> Router {
         .route("/api/task/{task_id}/hint", post(serve::hint))
         // Unit U8, spec section 11. The same rule: before the three layers.
         .route("/api/task/{task_id}/answer", post(grade::answer))
+        // M5 U4: the `/api/auth/*` routes. They sit INSIDE every layer
+        // below, so a cross-origin login is refused before the handler runs.
+        .merge(auth::routes::router())
+        // M5 U5: the OAuth start and callback. Both are GET, so the CSRF layer
+        // never reads them and the provider's callback navigation is never
+        // refused.
+        .merge(auth::oauth_routes::router())
         // axum's own fallbacks answer with an empty body, so both of them
         // return the envelope instead (spec section 2).
         .fallback(error::not_found)

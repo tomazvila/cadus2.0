@@ -389,7 +389,13 @@ async fn the_duration_histogram_carries_its_buckets_and_summary() {
 /// route together.
 ///
 /// 1.0 labels the latency histogram by method and route only, so a route that
-/// answers `200` and `404` has ONE latency series with both counts in it.
+/// answers two different statuses has ONE latency series with both counts in it.
+///
+/// The two POSTs below are the demonstration. `/api/auth/login` is a real route
+/// since M5 U4, so both carry the route TEMPLATE as their label: the first is
+/// `403 cross_origin_rejected` from the CSRF layer, the second is
+/// `422 invalid_request` from the handler, and the one series counts 2. The two
+/// GETs match no route at all, so they fold into the one `__unmatched__` label.
 #[tokio::test]
 async fn the_histogram_folds_the_statuses_of_one_route() {
     let app = offline_app();
@@ -397,23 +403,37 @@ async fn the_histogram_folds_the_statuses_of_one_route() {
     send(&app, get("/nope-one")).await;
     send(&app, get("/nope-two")).await;
 
-    let request = Request::builder()
+    let refused = Request::builder()
         .method("POST")
         .uri("/api/auth/login")
         .header("host", "tutor.example")
         .header("origin", "https://evil.example")
         .body(Body::empty())
         .unwrap();
-    send(&app, request).await;
+    let (refused_status, _headers, _body) = send(&app, refused).await;
+
+    let served = Request::builder()
+        .method("POST")
+        .uri("/api/auth/login")
+        .header("host", "tutor.example")
+        .body(Body::empty())
+        .unwrap();
+    let (served_status, _headers, _body) = send(&app, served).await;
 
     let text = scrape(&app).await;
 
+    assert_eq!(refused_status.as_u16(), 403);
+    assert_eq!(served_status.as_u16(), 422);
     assert!(text.contains(
         "cadus_http_request_duration_seconds_count{method=\"GET\",route=\"__unmatched__\"} 2\n"
     ));
-    assert!(text.contains(
-        "cadus_http_request_duration_seconds_count{method=\"POST\",route=\"__unmatched__\"} 1\n"
-    ));
+    assert!(
+        text.contains(
+            "cadus_http_request_duration_seconds_count{method=\"POST\",route=\"/api/auth/login\"} \
+             2\n"
+        ),
+        "the two statuses of one route must fold into one latency series:\n{text}"
+    );
 }
 
 /// (13) An empty registry still renders both HELP and TYPE lines.
