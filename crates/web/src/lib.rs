@@ -1,13 +1,37 @@
-//! HTTP adapter: the axum application, routes, and request handlers.
+//! HTTP adapter: the axum application, its layers, and its request handlers.
 //!
 //! Requirements: C3 (the boot guard refuses a role that bypasses row-level
 //! security), R2 (axum on top of sqlx with compile-time checked queries), R4
-//! (handlers do local work and database I/O only).
+//! (handlers do local work and database I/O only), L6 (this crate never links
+//! the model-client crate, so a model call on a request path is a compile
+//! error, not a review note).
 //!
-//! M0 serves two probes and nothing else. `/api/health` reports that the
-//! process is alive. `/api/ready` reports that the database answers. Milestone
-//! M5 owns the product API. No handler here calls a model, and no handler here
-//! starts generation (R4).
+//! Spec: `docs/reference/web-service-1.0-spec.md`, section 11, unit U1. M5 U1
+//! delivers the skeleton every later unit hangs its routes on:
+//!
+//! - [`create_app`], the one place that builds the router and orders the layers;
+//! - [`error::ApiError`], the `{"error":{"code","message"}}` envelope of every
+//!   4xx and 5xx answer, and both router fallbacks;
+//! - [`security::security_headers_layer`], the section 3.1 header literals;
+//! - [`origin::csrf_origin_layer`], the CSRF origin check in both polarities;
+//! - [`metrics::request_metrics_layer`] and `GET /metrics`, labelled by route
+//!   TEMPLATE;
+//! - `/api/health` and `/api/ready` (D-M5-6);
+//! - the two boot guards: [`boot_check`] (C3) and
+//!   [`cookie::CookiePosture::assert_safe`].
+//!
+//! No handler here calls a model, and no handler here starts generation (R4,
+//! T1).
+//!
+//! **The layer order is part of the contract.** axum wraps the router in each
+//! layer as it is added, so the LAST layer added is the OUTERMOST one. Reading
+//! [`create_app`] from the outside in:
+//!
+//! 1. the request-metrics layer, so it counts every answer, the `403` of the
+//!    CSRF layer included (1.0 orders it the same way, `cadus_web/app.py:315`);
+//! 2. the security-header layer, so the `403` carries the headers too;
+//! 3. the CSRF origin layer, which answers before any handler runs;
+//! 4. the routes and the two fallbacks.
 
 #![cfg_attr(
     test,
@@ -20,78 +44,89 @@
     )
 )]
 
-use axum::extract::State;
-use axum::http::StatusCode;
-use axum::response::{IntoResponse, Response};
-use axum::routing::get;
-use axum::{Json, Router};
-use cadus_store::{Db, RoleInfo, StoreError, bounded};
-use serde_json::json;
+pub mod cookie;
+pub mod error;
+pub mod health;
+pub mod metrics;
+pub mod origin;
+pub mod security;
 
-/// The state that every handler shares. The process keeps no session data in
-/// memory, so the app tier stays stateless (C3).
+use std::sync::Arc;
+
+use axum::Router;
+use axum::middleware::{from_fn, from_fn_with_state};
+use axum::routing::get;
+use cadus_store::{Db, RoleInfo, StoreError, bounded};
+
+use crate::cookie::CookiePosture;
+use crate::metrics::Registry;
+use crate::origin::OriginPolicy;
+
+/// The state that every handler and every layer shares. The process keeps no
+/// session data in memory, so the app tier stays stateless (C3).
 ///
 /// The state carries a `Db`, not a bare `PgPool`. A `Db` holds the pool AND the
 /// client-side query bound of `DB_CLIENT_TIMEOUT_MS`, so every handler that
 /// takes this state applies the bound with `cadus_store::bounded` (R4, L1).
 #[derive(Clone)]
 pub struct AppState {
+    /// The connection pool and its client-side query bound.
     pub db: Db,
+    /// The session-cookie posture. The CSRF layer reads the active cookie name
+    /// from it, and unit U2 writes the cookie with it.
+    pub posture: CookiePosture,
+    /// How the CSRF layer names this deployment's own origin.
+    pub origin: OriginPolicy,
+    /// The request metrics of this process.
+    pub metrics: Arc<Registry>,
 }
 
-/// Build the axum application.
-pub fn router(state: AppState) -> Router {
-    Router::new()
-        .route("/api/health", get(health))
-        .route("/api/ready", get(ready))
-        .with_state(state)
-}
+impl AppState {
+    /// The state of a production deployment with the default posture and the
+    /// fallback origin policy.
+    pub fn new(db: Db) -> Self {
+        Self {
+            db,
+            posture: CookiePosture::SECURE,
+            origin: OriginPolicy::default(),
+            metrics: Arc::new(Registry::new()),
+        }
+    }
 
-/// Liveness probe. The answer depends on nothing outside the process.
-///
-/// The body is exactly `{"ok":true}` and the content type is
-/// `application/json`.
-async fn health() -> Response {
-    (StatusCode::OK, Json(json!({ "ok": true }))).into_response()
-}
+    /// The same state with another cookie posture.
+    #[must_use]
+    pub fn with_posture(mut self, posture: CookiePosture) -> Self {
+        self.posture = posture;
+        self
+    }
 
-/// Readiness probe. The handler sends `SELECT 1` through the pool.
-///
-/// The answer is `200` with `{"ready":true}` when the database replies, and
-/// `503` with `{"ready":false}` when it does not. A load balancer reads the
-/// status code, so the code carries the verdict and the body repeats it.
-///
-/// The query runs inside `cadus_store::bounded`, so `DB_CLIENT_TIMEOUT_MS`
-/// bounds it (L1). A database that accepts the socket and then answers nothing
-/// held this handler open without end, because `statement_timeout` needs a live
-/// server and sqlx 0.9 sets no TCP keepalive. The bound turns that stall into
-/// the same `503` that every other database fault gives.
-async fn ready(State(state): State<AppState>) -> Response {
-    let query = sqlx::query_scalar!(r#"SELECT 1 AS "one!""#).fetch_one(state.db.pool());
-    match bounded(&state.db, query).await {
-        Ok(1) => (StatusCode::OK, Json(json!({ "ready": true }))).into_response(),
-        Ok(other) => {
-            tracing::warn!(value = other, "web: the readiness probe got a wrong value");
-            unready()
-        }
-        Err(StoreError::Timeout { after_ms }) => {
-            tracing::warn!("web: the readiness probe timed out after {after_ms} ms");
-            unready()
-        }
-        Err(err) => {
-            tracing::warn!(error = %err, "web: the readiness probe failed");
-            unready()
-        }
+    /// The same state with another origin policy.
+    #[must_use]
+    pub fn with_origin(mut self, origin: OriginPolicy) -> Self {
+        self.origin = origin;
+        self
     }
 }
 
-/// The single negative answer of the readiness probe.
-fn unready() -> Response {
-    (
-        StatusCode::SERVICE_UNAVAILABLE,
-        Json(json!({ "ready": false })),
-    )
-        .into_response()
+/// Build the axum application.
+///
+/// The module header gives the layer order and why it is the contract.
+pub fn create_app(state: AppState) -> Router {
+    Router::new()
+        .route("/api/health", get(health::health))
+        .route("/api/ready", get(health::ready))
+        .route("/metrics", get(metrics::scrape))
+        // axum's own fallbacks answer with an empty body, so both of them
+        // return the envelope instead (spec section 2).
+        .fallback(error::not_found)
+        .method_not_allowed_fallback(error::method_not_allowed)
+        .layer(from_fn_with_state(state.clone(), origin::csrf_origin_layer))
+        .layer(from_fn(security::security_headers_layer))
+        .layer(from_fn_with_state(
+            state.clone(),
+            metrics::request_metrics_layer,
+        ))
+        .with_state(state)
 }
 
 /// C3 boot guard. Return `Ok` only when row-level security applies to the

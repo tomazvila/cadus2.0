@@ -48,7 +48,7 @@ use sqlx::{AssertSqlSafe, Connection, PgConnection};
 use uuid::Uuid;
 
 /// The line that the operator reads in `docker compose logs migrate`.
-const APPLIED_SIX: &str = "cadus-migrate: applied 6 migrations (6 total)";
+const APPLIED_ALL: &str = "cadus-migrate: applied 7 migrations (7 total)";
 
 /// The environment variable that names the lock database of the binary.
 const MAINTENANCE_DB_VAR: &str = "CADUS_MAINTENANCE_DB";
@@ -212,7 +212,7 @@ async fn clear_app_password(db: &TestDb) {
 /// D9: a fresh database gets the whole migration set, and the binary reports
 /// the literal count that `docs/SELF_HOST.md` tells the operator to read.
 #[tokio::test]
-async fn fresh_database_reports_six_applied() {
+async fn fresh_database_reports_every_migration_applied() {
     TestDb::with(|db| async move {
         // The database of `TestDb` is migrated already, so this test makes a
         // second, unmigrated one on the same cluster.
@@ -231,7 +231,7 @@ async fn fresh_database_reports_six_applied() {
             Some(0),
             "stdout: {stdout}stderr: {stderr}"
         );
-        assert!(stdout.contains(APPLIED_SIX), "stdout: {stdout}");
+        assert!(stdout.contains(APPLIED_ALL), "stdout: {stdout}");
         dropped.unwrap();
     })
     .await;
@@ -262,7 +262,7 @@ async fn a_short_statement_timeout_does_not_reach_the_migrations() {
             Some(0),
             "stdout: {stdout}stderr: {stderr}"
         );
-        assert!(stdout.contains(APPLIED_SIX), "stdout: {stdout}");
+        assert!(stdout.contains(APPLIED_ALL), "stdout: {stdout}");
         dropped.unwrap();
     })
     .await;
@@ -541,7 +541,7 @@ async fn admin_login_flag_grants_the_login() {
         );
         // The migrations of this database ran already, so this run applies none.
         assert!(
-            stdout.contains("cadus-migrate: applied 0 migrations (6 total)"),
+            stdout.contains("cadus-migrate: applied 0 migrations (7 total)"),
             "stdout: {stdout}"
         );
         // No password variable is set, so the binary reports no password.

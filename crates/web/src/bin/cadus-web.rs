@@ -3,15 +3,19 @@
 //! The start sequence is:
 //!
 //! 1. Start the tracing subscriber. `RUST_LOG` selects the level.
-//! 2. Read `DATABASE_URL`, `BIND_ADDR` (default `0.0.0.0:8080`), and
-//!    `SHUTDOWN_DEADLINE_SECS` (default 10).
-//! 3. Install the stop signals. The handlers exist before the pool opens, so a
+//! 2. Read `DATABASE_URL`, `BIND_ADDR` (default `0.0.0.0:8080`),
+//!    `SHUTDOWN_DEADLINE_SECS` (default 10), `CADUS_WEB_INSECURE_COOKIE`
+//!    (default 0), and `PUBLIC_ORIGIN` (default: rebuild from
+//!    `X-Forwarded-Proto` and `Host`).
+//! 3. Run the cookie-posture guard. A `__Host-` cookie without `Secure` stops
+//!    the process with exit code 2.
+//! 4. Install the stop signals. The handlers exist before the pool opens, so a
 //!    signal during the connect gives a clean stop.
-//! 4. Open the connection pool.
-//! 5. Run the C3 boot guard. A role that bypasses row-level security stops the
+//! 5. Open the connection pool.
+//! 6. Run the C3 boot guard. A role that bypasses row-level security stops the
 //!    process with exit code 3.
-//! 6. Bind the address and serve.
-//! 7. Stop on `SIGTERM` or `SIGINT`, let the open requests finish, and exit 0.
+//! 7. Bind the address and serve.
+//! 8. Stop on `SIGTERM` or `SIGINT`, let the open requests finish, and exit 0.
 //!    The drain has a deadline: at the deadline the process closes the open
 //!    connections and still exits 0.
 //!
@@ -37,7 +41,9 @@ use std::process::ExitCode;
 use std::time::{Duration, Instant};
 
 use cadus_store::{Db, DbConfig, StoreError};
-use cadus_web::{AppState, BIND_ADDR_VAR, router};
+use cadus_web::cookie::{CookiePosture, INSECURE_COOKIE_VAR};
+use cadus_web::origin::{OriginPolicy, PUBLIC_ORIGIN_VAR};
+use cadus_web::{AppState, BIND_ADDR_VAR, create_app};
 use tokio::net::TcpListener;
 use tracing_subscriber::EnvFilter;
 
@@ -99,6 +105,35 @@ async fn run() -> Result<(), Fatal> {
     let addr = bind_addr()?;
     let deadline = shutdown_deadline()?;
 
+    // The cookie-posture guard (spec section 3.1, "Guards"; unit U1). A
+    // `__Host-` cookie without `Secure` is discarded by the browser without a
+    // word, so the login appears to work and no session ever persists (trap
+    // W9). An insecure posture must be a deliberate choice, never an accident,
+    // so both the guard and a bad value of the knob stop the start here.
+    let posture = CookiePosture::from_env(std::env::var_os(INSECURE_COOKIE_VAR))
+        .map_err(|err| Fatal::Startup(err.to_string()))?;
+    posture
+        .assert_safe()
+        .map_err(|err| Fatal::Startup(err.to_string()))?;
+    if !posture.secure {
+        tracing::warn!(
+            "cadus-web: {INSECURE_COOKIE_VAR}=1, so the session cookie is {} without Secure; use \
+             this for local http:// development only",
+            posture.name
+        );
+    }
+
+    // How the CSRF origin layer names this deployment's own origin (trap W10).
+    let origin = OriginPolicy::from_env(std::env::var_os(PUBLIC_ORIGIN_VAR))
+        .map_err(|err| Fatal::Startup(err.to_string()))?;
+    if origin.public_origin.is_none() {
+        tracing::info!(
+            "cadus-web: {PUBLIC_ORIGIN_VAR} is not set, so the CSRF origin check rebuilds the \
+             origin from X-Forwarded-Proto and Host; a proxy that drops X-Forwarded-Proto then \
+             makes an https deployment rebuild as http://"
+        );
+    }
+
     // Install the stop signals before the connect. The handlers exist from this
     // point, so a SIGTERM during the connect gives exit code 0 instead of a kill
     // by signal (finding #39).
@@ -159,7 +194,11 @@ async fn run() -> Result<(), Fatal> {
     // after the message, so that literal never appeared (finding #10).
     tracing::info!("cadus-web: listening on {local}");
 
-    let app = router(AppState { db: db.clone() });
+    let app = create_app(
+        AppState::new(db.clone())
+            .with_posture(posture)
+            .with_origin(origin),
+    );
 
     // `fired_rx` reports the moment of the stop signal, so the deadline below
     // starts at the signal and not at the start of the process.
