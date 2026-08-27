@@ -41,6 +41,7 @@ use std::process::ExitCode;
 use std::time::{Duration, Instant};
 
 use cadus_store::{Db, DbConfig, StoreError};
+use cadus_web::auth::password::{ARGON2_PROFILE_VAR, Argon2Profile};
 use cadus_web::cookie::{CookiePosture, INSECURE_COOKIE_VAR};
 use cadus_web::origin::{OriginPolicy, PUBLIC_ORIGIN_VAR};
 use cadus_web::{AppState, BIND_ADDR_VAR, create_app};
@@ -123,6 +124,19 @@ async fn run() -> Result<(), Fatal> {
         );
     }
 
+    // The Argon2id parameter profile of the auth routes (spec section 3.1). A
+    // bad value stops the start: a silent fallback to the fast test parameters
+    // would ship a production deployment with a cheap password hash.
+    let argon2 = Argon2Profile::from_env(std::env::var_os(ARGON2_PROFILE_VAR))
+        .map_err(|err| Fatal::Startup(err.to_string()))?;
+    if argon2 != Argon2Profile::PROD {
+        tracing::warn!(
+            "cadus-web: {ARGON2_PROFILE_VAR}={}, so the password hash uses the {} parameters; use              this for tests only",
+            argon2.name,
+            argon2.name
+        );
+    }
+
     // How the CSRF origin layer names this deployment's own origin (trap W10).
     let origin = OriginPolicy::from_env(std::env::var_os(PUBLIC_ORIGIN_VAR))
         .map_err(|err| Fatal::Startup(err.to_string()))?;
@@ -197,8 +211,14 @@ async fn run() -> Result<(), Fatal> {
     let app = create_app(
         AppState::new(db.clone())
             .with_posture(posture)
-            .with_origin(origin),
+            .with_origin(origin)
+            .with_argon2(argon2),
     );
+    // The per-address rate rules key on the client address, so the service needs
+    // the peer address of the socket. `axum::serve` carries it only through this
+    // make-service. Without it every request from every host shares one bucket,
+    // and 5 sign-ups an hour would bound the whole deployment (spec section 3.2).
+    let app = app.into_make_service_with_connect_info::<std::net::SocketAddr>();
 
     // `fired_rx` reports the moment of the stop signal, so the deadline below
     // starts at the signal and not at the start of the process.

@@ -154,6 +154,10 @@ services:
       # 0 (the default) serves the `__Host-cadus_session` cookie with Secure.
       # 1 serves the plain `cadus_session` cookie for local http:// only.
       CADUS_WEB_INSECURE_COOKIE: ${CADUS_WEB_INSECURE_COOKIE:-0}
+      # The Argon2id parameter profile of the password hash. `prod` (the
+      # default) is 3 passes over 65536 KiB with 4 lanes. `test` is a CHEAP
+      # hash for a test run and never for a deployment.
+      CADUS_AUTH_ARGON2_PROFILE: ${CADUS_AUTH_ARGON2_PROFILE:-prod}
     # Longer than the stop budget, so the process exits by itself and Docker
     # never has to send SIGKILL (exit 137). Total stop time
     # <= SHUTDOWN_DEADLINE_SECS + 1 s < stop_grace_period 20 s. The old code

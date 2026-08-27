@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n        SELECT user_id AS \"user_id!\", expires_at AS \"expires_at!\",\n               last_seen_at AS \"last_seen_at!\"\n        FROM auth_session_by_token_hash($1)\n        ",
+  "query": "\n        SELECT user_id AS \"user_id!\", created_at AS \"created_at!\",\n               expires_at AS \"expires_at!\", last_seen_at AS \"last_seen_at!\"\n        FROM auth_session_by_token_hash($1)\n        ",
   "describe": {
     "columns": [
       {
@@ -11,12 +11,18 @@
       },
       {
         "ordinal": 1,
-        "name": "expires_at!",
+        "name": "created_at!",
         "type_info": "Timestamptz",
         "origin": "Expression"
       },
       {
         "ordinal": 2,
+        "name": "expires_at!",
+        "type_info": "Timestamptz",
+        "origin": "Expression"
+      },
+      {
+        "ordinal": 3,
         "name": "last_seen_at!",
         "type_info": "Timestamptz",
         "origin": "Expression"
@@ -30,8 +36,9 @@
     "nullable": [
       null,
       null,
+      null,
       null
     ]
   },
-  "hash": "4d1810bb1c8f56255558d6cf8ba7320db735e14003e03379270f3cd76184d7ad"
+  "hash": "5a30ca638f9049554e705abb5513883d52e94a09614905af1f71d58821da667d"
 }

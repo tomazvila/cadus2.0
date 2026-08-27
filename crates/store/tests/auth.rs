@@ -795,3 +795,92 @@ fn the_window_start_floors_from_the_epoch() {
     // A width of 0 gives the instant unchanged.
     assert_eq!(auth::window_start(now, 0), now);
 }
+
+// ---------------------------------------------------------------------------
+// Migration 0008 and the bound profile read
+// ---------------------------------------------------------------------------
+
+/// The session lookup gives `created_at`, so the 90-day absolute window has a
+/// value to test BEFORE the tenant bind.
+///
+/// Specification section 3.3, "Cookie check", step 1 puts both refusals in the
+/// unbound step. Migration 0006 returned three columns and left the second one
+/// with nothing to read; migration 0008 adds the fourth.
+#[tokio::test]
+async fn the_session_lookup_gives_the_created_at_of_the_row() {
+    TestDb::with(|db| async move {
+        let user = db.seed_user("created-at@example.test").await;
+        // 2025-08-24T00:00:00Z, written as an epoch second.
+        let minted = DateTime::from_timestamp(1_755_993_600, 0).unwrap();
+        // 30 days later: 1 755 993 600 + 2 592 000.
+        let ends = DateTime::from_timestamp(1_758_585_600, 0).unwrap();
+        sqlx::query!(
+            "INSERT INTO auth_sessions
+                 (token_hash, user_id, created_at, last_seen_at, expires_at)
+             VALUES ('created-at-hash', $1, $2, $3, $4)",
+            user,
+            minted,
+            minted,
+            ends
+        )
+        .execute(&db.admin)
+        .await
+        .unwrap();
+
+        let session = auth::session_by_token_hash(&db.app, "created-at-hash")
+            .await
+            .unwrap()
+            .expect("the unbound session lookup must read the row");
+
+        assert_eq!(session.user_id, user);
+        assert_eq!(session.created_at.timestamp(), 1_755_993_600);
+        assert_eq!(session.last_seen_at.timestamp(), 1_755_993_600);
+        assert_eq!(session.expires_at.timestamp(), 1_758_585_600);
+    })
+    .await;
+}
+
+/// The bound profile read answers the CALLER's row and no other tenant's.
+///
+/// `docs/SCHEMA.md`: "after the bind a plain SELECT on `users` reads the
+/// caller's own rows". The `users_read_self` policy is what holds it, so the
+/// statement carries no `WHERE` clause of its own.
+#[tokio::test]
+async fn the_bound_profile_read_answers_the_callers_row_alone() {
+    TestDb::with(|db| async move {
+        let user_a = db.seed_user("profile-a@example.test").await;
+        let user_b = db.seed_user("profile-b@example.test").await;
+        sqlx::query!(
+            "UPDATE users SET email_verified_at = now() WHERE id = $1",
+            user_a
+        )
+        .execute(&db.admin)
+        .await
+        .unwrap();
+
+        let mut tx = begin_tenant(&db.app, user_a).await.unwrap();
+        let mine = auth::account_profile(&mut *tx)
+            .await
+            .unwrap()
+            .expect("the bound read must answer the caller's row");
+        let _ = tx.rollback().await;
+
+        assert_eq!(mine.id, user_a);
+        assert_eq!(mine.email, "profile-a@example.test");
+        assert!(mine.email_verified_at.is_some());
+        assert_ne!(mine.id, user_b);
+
+        // Bound to B the same statement answers B's row, never A's.
+        let mut tx = begin_tenant(&db.app, user_b).await.unwrap();
+        let yours = auth::account_profile(&mut *tx).await.unwrap().unwrap();
+        let _ = tx.rollback().await;
+
+        assert_eq!(yours.id, user_b);
+        assert_eq!(yours.email, "profile-b@example.test");
+        assert_eq!(yours.email_verified_at, None);
+
+        // Unbound the same statement reads nothing at all.
+        assert_eq!(auth::account_profile(&db.app).await.unwrap(), None);
+    })
+    .await;
+}

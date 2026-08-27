@@ -59,6 +59,7 @@ use axum::middleware::{from_fn, from_fn_with_state};
 use axum::routing::get;
 use cadus_store::{Db, RoleInfo, StoreError, bounded};
 
+use crate::auth::password::Argon2Profile;
 use crate::cookie::CookiePosture;
 use crate::metrics::Registry;
 use crate::origin::OriginPolicy;
@@ -80,6 +81,10 @@ pub struct AppState {
     pub origin: OriginPolicy,
     /// The request metrics of this process.
     pub metrics: Arc<Registry>,
+    /// The Argon2id parameter profile of this deployment. The auth routes hash
+    /// and rehash with it, and the anti-enumeration dummy hash carries the same
+    /// parameters, so the unknown-address path costs what the known one costs.
+    pub argon2: Argon2Profile,
 }
 
 impl AppState {
@@ -91,6 +96,7 @@ impl AppState {
             posture: CookiePosture::SECURE,
             origin: OriginPolicy::default(),
             metrics: Arc::new(Registry::new()),
+            argon2: Argon2Profile::PROD,
         }
     }
 
@@ -107,6 +113,13 @@ impl AppState {
         self.origin = origin;
         self
     }
+
+    /// The same state with another Argon2id profile.
+    #[must_use]
+    pub fn with_argon2(mut self, argon2: Argon2Profile) -> Self {
+        self.argon2 = argon2;
+        self
+    }
 }
 
 /// Build the axum application.
@@ -117,6 +130,9 @@ pub fn create_app(state: AppState) -> Router {
         .route("/api/health", get(health::health))
         .route("/api/ready", get(health::ready))
         .route("/metrics", get(metrics::scrape))
+        // M5 U4: the ten `/api/auth/*` routes. They sit INSIDE every layer
+        // below, so a cross-origin login is refused before the handler runs.
+        .merge(auth::routes::router())
         // axum's own fallbacks answer with an empty body, so both of them
         // return the envelope instead (spec section 2).
         .fallback(error::not_found)
