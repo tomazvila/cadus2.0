@@ -182,6 +182,26 @@ pub fn deterministic_grade(expected: &str, answer: &str, kind: AnswerKind) -> Gr
     }
 }
 
+/// Whether one submission is reference-assisted (H3, spec section 5.4).
+///
+/// An attempt is assisted when the learner took a hint on this problem or the
+/// client flags it (`api.py:1360`).
+///
+/// A QUIZ attempt is never assisted. 1.0 answers a quiz in `_quiz_answer` and
+/// returns from it BEFORE the assisted rule runs (`api.py:1349-1358`), so no
+/// quiz answer of 1.0 carries the flag and no quiz answer reaches the H3 reply.
+/// The order matters here and not only for parity: the H3 reply names
+/// `expected` and `solution`, and a quiz reveals NOTHING before its batch reveal
+/// (trap W7). Without this rule a client that sends `"assisted": true` with a
+/// correct quiz answer reads the authored answer of every remaining question.
+#[must_use]
+pub fn reference_assisted(task_type: TaskType, client_flag: bool, hints_given: usize) -> bool {
+    if task_type == TaskType::Quiz {
+        return false;
+    }
+    client_flag || hints_given > 0
+}
+
 /// The server-measured solve time and its timing tags (`_measure_secs`).
 ///
 /// `expected_time_secs` is `None` when the topic is not in the arena. 1.0 skips
@@ -610,9 +630,8 @@ pub async fn answer(
     let elapsed = secs as f64;
     scratch.active_secs += elapsed;
 
-    // H3, section 5.4. An attempt is reference-assisted when the learner took a
-    // hint on this problem or the client says so.
-    let assisted = submitted.assisted || !served.hints_given.is_empty();
+    // H3, section 5.4.
+    let assisted = reference_assisted(task.task_type, submitted.assisted, served.hints_given.len());
     let Some(session) = scratch.session.clone() else {
         return Err(broken_state("the state row names no session"));
     };

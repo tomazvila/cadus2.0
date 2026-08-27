@@ -36,15 +36,17 @@ use std::sync::Arc;
 use axum::Router;
 use axum::body::Body;
 use axum::http::{Method, Request, StatusCode, header};
+use cadus_core::config::Config;
 use cadus_core::curriculum::{
     AnswerKind, Catalog, Course, Curriculum, Exemplar, KnowledgePoint, RawCurriculum, RawUnit,
     Slug, Topic, Unit,
 };
-use cadus_core::event::{Event, SchemaVersion, SessionStart, Timestamp};
+use cadus_core::event::{Event, SchemaVersion, SessionStart, TaskType, Timestamp};
+use cadus_core::learner::{LearnerModel, TopicState};
 use cadus_core::pool::{PoolAnswer, PoolProblem};
 use cadus_store::test_support::TestDb;
 use cadus_store::{DEFAULT_CLIENT_TIMEOUT_MS, Db};
-use cadus_web::grade::{Grade, deterministic_grade};
+use cadus_web::grade::{Grade, deterministic_grade, reference_assisted};
 use cadus_web::state::{Content, ServedProblem, TaskProgress, Tenant, WebState};
 use cadus_web::{AppState, create_app};
 use http_body_util::BodyExt;
@@ -1105,4 +1107,419 @@ async fn a_hostile_body_never_panics() {
         assert_eq!(parse(&raw)["error"]["code"], "invalid_request");
     })
     .await;
+}
+
+// --------------------------------------------------------------------------- //
+// The recorded session stream (oracle parity, HANDOVER section 2.5)
+// --------------------------------------------------------------------------- //
+
+/// Every event of `user`, oldest first, as `(seq, type, payload)`.
+async fn event_stream(db: &TestDb, user: Uuid) -> Vec<(i64, String, Value)> {
+    sqlx::query!(
+        r#"
+        SELECT seq AS "seq!", type AS "type!", payload AS "payload!"
+        FROM events WHERE user_id = $1 ORDER BY seq
+        "#,
+        user
+    )
+    .fetch_all(&db.admin)
+    .await
+    .unwrap()
+    .into_iter()
+    .map(|row| (row.seq, row.r#type, row.payload))
+    .collect()
+}
+
+/// The sorted key list of one event payload.
+fn keys_of(event: &Value) -> Vec<String> {
+    let mut keys: Vec<String> = event.as_object().unwrap().keys().cloned().collect();
+    keys.sort();
+    keys
+}
+
+/// Put four wrong answers at `kp1` of the lesson into the log, at `seq` 2 to 5.
+async fn seed_four_misses(db: &TestDb, user: Uuid) {
+    for n in 0..4_i64 {
+        let key = format!("{LESSON}-seed-{n}");
+        let payload = json!({
+            "type": "attempt",
+            "ts": "2026-01-01T00:00:10Z",
+            "session": SESSION,
+            "v": 1,
+            "attempt_id": key,
+            "task_id": LESSON,
+            "topic": "addition",
+            "kp": "kp1",
+            "task_type": "lesson",
+            "problem": {"text": PROBLEM_TEXT, "expected": EXPECTED_ANSWER},
+            "given_answer": "14",
+            "correct": false,
+            "secs": 20,
+            "error_tags": [],
+            "work_quality": "nearly_passable",
+        });
+        let ts = DateTime::<Utc>::from_timestamp_micros(BASE_US + 10_000_000).unwrap();
+        sqlx::query!(
+            r#"
+            INSERT INTO events (user_id, seq, ts, type, session_id, v, attempt_id, payload)
+            VALUES ($1, $2, $3, 'attempt', $4, 1, $5, $6)
+            "#,
+            user,
+            n + 2,
+            ts,
+            SESSION,
+            key,
+            payload
+        )
+        .execute(&db.admin)
+        .await
+        .unwrap();
+    }
+}
+
+/// The WHOLE stream one recorded session writes, diffed field by field against
+/// the 1.0 shape (`docs/reference/projector-1.0-spec.md:34-46`).
+///
+/// The closing miss appends three events in one transaction, so this case reads
+/// all three 1.0 shapes the grade path produces: `attempt`, `lesson_result` and
+/// `remediation_triggered`. The envelope of every one of them is `ts`, `session`
+/// and `v` (`model.py:212-218`), and `type` is the union discriminator.
+/// `attempt_id` is excepted from the diff: 2.0 defines its own deterministic
+/// rule (trap T12).
+#[tokio::test]
+async fn the_recorded_session_stream_matches_the_1_0_event_shapes() {
+    TestDb::with(|db| async move {
+        let app = app(&db);
+        let user = db.seed_user("stream@example.com").await;
+        seed_open_session(&db, user).await;
+        put_state(
+            &db,
+            user,
+            &state_with(served(20.0, "kp1", Vec::new()), 4, false),
+        )
+        .await;
+        seed_four_misses(&db, user).await;
+
+        let (status, body) = answer(
+            &app,
+            user,
+            json!({"problem_id": PROBLEM_ID, "answer": "14", "work": "8 + 5.5 = 14"}),
+        )
+        .await;
+        assert_eq!(status, StatusCode::OK, "{body}");
+
+        let stream = event_stream(&db, user).await;
+        let shape: Vec<(i64, &str)> = stream
+            .iter()
+            .map(|(seq, kind, _)| (*seq, kind.as_str()))
+            .collect();
+        assert_eq!(
+            shape,
+            vec![
+                (1, "session_start"),
+                (2, "attempt"),
+                (3, "attempt"),
+                (4, "attempt"),
+                (5, "attempt"),
+                (6, "attempt"),
+                (7, "lesson_result"),
+                (8, "remediation_triggered"),
+            ]
+        );
+
+        // The three events this ONE request appended, in the order it appended
+        // them.
+        let attempt = &stream[5].2;
+        let result = &stream[6].2;
+        let remediation = &stream[7].2;
+
+        assert_eq!(
+            keys_of(attempt),
+            vec![
+                "answer_kind",
+                "assisted",
+                "attempt_id",
+                "correct",
+                "error_tags",
+                "given_answer",
+                "grader_note",
+                "kp",
+                "problem",
+                "secs",
+                "session",
+                "task_id",
+                "task_type",
+                "topic",
+                "ts",
+                "type",
+                "v",
+                "work",
+                "work_quality",
+            ]
+        );
+        assert_eq!(attempt["type"], "attempt");
+        assert_eq!(attempt["task_id"], LESSON);
+        assert_eq!(attempt["topic"], "addition");
+        assert_eq!(attempt["kp"], "kp1");
+        assert_eq!(attempt["task_type"], "lesson");
+        assert_eq!(attempt["answer_kind"], "numeric");
+        assert_eq!(attempt["problem"]["text"], PROBLEM_TEXT);
+        assert_eq!(attempt["problem"]["expected"], EXPECTED_ANSWER);
+        assert_eq!(attempt["given_answer"], "14");
+        assert_eq!(attempt["work"], "8 + 5.5 = 14");
+        assert_eq!(attempt["correct"], false);
+        assert_eq!(attempt["work_quality"], "nearly_passable");
+        assert_eq!(attempt["error_tags"], json!([]));
+        assert_eq!(attempt["grader_note"], "deterministic");
+        assert_eq!(attempt["assisted"], false);
+        assert_eq!(attempt["session"], SESSION);
+        assert_eq!(attempt["v"], 1);
+
+        assert_eq!(
+            keys_of(result),
+            vec![
+                "assisted",
+                "failed_at_kp",
+                "passed",
+                "quality_tier",
+                "session",
+                "topic",
+                "ts",
+                "type",
+                "v",
+                "xp",
+            ]
+        );
+        assert_eq!(result["type"], "lesson_result");
+        assert_eq!(result["topic"], "addition");
+        assert_eq!(result["passed"], false);
+        assert_eq!(result["failed_at_kp"], "kp1");
+        assert_eq!(result["xp"], 1.05);
+        assert_eq!(result["quality_tier"], "nearly_passable");
+        assert_eq!(result["assisted"], false);
+        assert_eq!(result["session"], SESSION);
+        assert_eq!(result["v"], 1);
+
+        assert_eq!(
+            keys_of(remediation),
+            vec![
+                "kind",
+                "session",
+                "source_topic",
+                "targets",
+                "ts",
+                "type",
+                "v",
+            ]
+        );
+        assert_eq!(remediation["type"], "remediation_triggered");
+        assert_eq!(remediation["kind"], "lesson_fail");
+        assert_eq!(remediation["source_topic"], "addition");
+        assert_eq!(remediation["targets"], json!([]));
+        assert_eq!(remediation["session"], SESSION);
+        assert_eq!(remediation["v"], 1);
+
+        // The envelope instant of all three is the RFC 3339 `Z` spelling of 1.0.
+        for event in [attempt, result, remediation] {
+            let ts = event["ts"].as_str().unwrap();
+            assert!(ts.ends_with('Z'), "{ts}");
+            DateTime::parse_from_rfc3339(ts).unwrap();
+        }
+
+        // The three rows carry the session on the COLUMN too, so the session
+        // reader of unit U6 finds them without reading the payload.
+        let tagged = sqlx::query_scalar!(
+            r#"SELECT count(*) AS "n!" FROM events WHERE user_id = $1 AND session_id = $2"#,
+            user,
+            SESSION
+        )
+        .fetch_one(&db.admin)
+        .await
+        .unwrap();
+        assert_eq!(tagged, 8);
+    })
+    .await;
+}
+
+// --------------------------------------------------------------------------- //
+// The fold: incremental, and the full replay a `regraded` forces
+// --------------------------------------------------------------------------- //
+
+/// The second topic of the fixture curriculum. No event of these two logs ever
+/// names it, so a saved model that carries it proves the fold started FROM the
+/// cache, and a saved model without it proves the fold threw the cache away and
+/// replayed the whole log.
+const SENTINEL_TOPIC: &str = "subtraction";
+
+/// The ability the cached model stamps on [`SENTINEL_TOPIC`]. It is a value no
+/// fold of these logs can produce.
+const SENTINEL_ABILITY: f64 = 0.75;
+
+/// Cache a learner model at `through_seq` that carries [`SENTINEL_TOPIC`].
+async fn poison_cache(db: &TestDb, user: Uuid, through_seq: i64) {
+    let mut topics = BTreeMap::new();
+    topics.insert(
+        SENTINEL_TOPIC.to_string(),
+        TopicState {
+            ability: SENTINEL_ABILITY,
+            ..TopicState::default()
+        },
+    );
+    let model = LearnerModel {
+        topics,
+        ..LearnerModel::default()
+    };
+    sqlx::query!(
+        r#"
+        INSERT INTO learner_models
+            (user_id, model, through_seq, projector_version, config_hash)
+        VALUES ($1, $2, $3, 3, $4)
+        "#,
+        user,
+        serde_json::to_value(&model).unwrap(),
+        through_seq,
+        Config::default().config_hash().unwrap()
+    )
+    .execute(&db.admin)
+    .await
+    .unwrap();
+}
+
+/// The cached model of `user` and the cursor it stands at.
+async fn cached_model(db: &TestDb, user: Uuid) -> (Value, i64) {
+    let row = sqlx::query!(
+        r#"
+        SELECT model AS "model!", through_seq AS "through_seq!"
+        FROM learner_models WHERE user_id = $1
+        "#,
+        user
+    )
+    .fetch_one(&db.admin)
+    .await
+    .unwrap();
+    (row.model, row.through_seq)
+}
+
+/// One `regraded` of an earlier attempt, at `seq`.
+async fn seed_regraded(db: &TestDb, user: Uuid, seq: i64, attempt_id: &str) {
+    let payload = json!({
+        "type": "regraded",
+        "ts": "2026-01-01T00:00:20Z",
+        "session": SESSION,
+        "v": 1,
+        "task_id": LESSON,
+        "topic": "addition",
+        "attempts": [{
+            "attempt_id": attempt_id,
+            "work_quality": "poor",
+            "error_tags": ["arithmetic-slip"],
+            "grader_note": "operator repair",
+        }],
+        "reason": "an operator repair",
+    });
+    let ts = DateTime::<Utc>::from_timestamp_micros(BASE_US + 20_000_000).unwrap();
+    sqlx::query!(
+        r#"
+        INSERT INTO events (user_id, seq, ts, type, session_id, v, payload)
+        VALUES ($1, $2, $3, 'regraded', $4, 1, $5)
+        "#,
+        user,
+        seq,
+        ts,
+        SESSION,
+        payload
+    )
+    .execute(&db.admin)
+    .await
+    .unwrap();
+}
+
+/// Spec section 4.3 step 7. The grade path folds ONE event forward from the
+/// cache, and it replays the WHOLE log when the events after the cursor hold a
+/// `regraded`.
+///
+/// Both learners start from the same poisoned cache at `seq` 1. The learner
+/// whose log holds no `regraded` keeps the sentinel topic, because the fold
+/// started from the cache. The learner whose log holds one loses it, because the
+/// fold threw the cache away.
+#[tokio::test]
+async fn a_regraded_in_the_log_makes_the_grade_path_replay_the_whole_fold() {
+    TestDb::with(|db| async move {
+        let app = app(&db);
+
+        // The incremental arm: session_start at 1, the new attempt at 2.
+        let plain = learner(
+            &db,
+            "fold-plain@example.com",
+            served(5.0, "kp1", Vec::new()),
+        )
+        .await;
+        poison_cache(&db, plain, 1).await;
+        let (status, body) = answer(
+            &app,
+            plain,
+            json!({"problem_id": PROBLEM_ID, "answer": "13.5"}),
+        )
+        .await;
+        assert_eq!(status, StatusCode::OK, "{body}");
+        let (model, cursor) = cached_model(&db, plain).await;
+        assert_eq!(cursor, 2);
+        assert_eq!(
+            model["topics"][SENTINEL_TOPIC]["ability"],
+            json!(0.75),
+            "the incremental fold must start from the cached model: {model}"
+        );
+
+        // The replay arm: session_start at 1, a `regraded` at 2, the new attempt
+        // at 3.
+        let repaired = learner(
+            &db,
+            "fold-regrade@example.com",
+            served(5.0, "kp1", Vec::new()),
+        )
+        .await;
+        poison_cache(&db, repaired, 1).await;
+        seed_regraded(&db, repaired, 2, "s_2026-01-01a-lesson-addition-0").await;
+        let (status, body) = answer(
+            &app,
+            repaired,
+            json!({"problem_id": PROBLEM_ID, "answer": "13.5"}),
+        )
+        .await;
+        assert_eq!(status, StatusCode::OK, "{body}");
+        let (model, cursor) = cached_model(&db, repaired).await;
+        assert_eq!(cursor, 3);
+        assert!(
+            model["topics"].get(SENTINEL_TOPIC).is_none(),
+            "a regraded must force the full replay, which drops the cache: {model}"
+        );
+    })
+    .await;
+}
+
+// --------------------------------------------------------------------------- //
+// The H3 rule and the quiz reveal (trap W7)
+// --------------------------------------------------------------------------- //
+
+/// Spec section 5.4 and trap W7. A hint on the problem makes an attempt
+/// reference-assisted, and so does the client flag — but never inside a quiz.
+///
+/// 1.0 answers a quiz in `_quiz_answer` and returns from it before the assisted
+/// rule runs (`api.py:1349-1358`), so no quiz answer of 1.0 carries the flag.
+/// The H3 reply names `expected` and `solution`; a quiz that could reach it
+/// would hand the authored answer to any client that sends `"assisted": true`,
+/// which is the pre-reveal leak trap W7 forbids.
+#[test]
+fn a_quiz_attempt_is_never_reference_assisted() {
+    // Outside a quiz the two sources both set the flag.
+    assert!(reference_assisted(TaskType::Lesson, true, 0));
+    assert!(reference_assisted(TaskType::Lesson, false, 1));
+    assert!(reference_assisted(TaskType::Review, true, 0));
+    assert!(reference_assisted(TaskType::Review, false, 3));
+    assert!(!reference_assisted(TaskType::Lesson, false, 0));
+
+    // Inside a quiz neither source sets it.
+    assert!(!reference_assisted(TaskType::Quiz, true, 0));
+    assert!(!reference_assisted(TaskType::Quiz, false, 2));
+    assert!(!reference_assisted(TaskType::Quiz, true, 2));
 }
