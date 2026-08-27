@@ -25,6 +25,7 @@ use sqlx::postgres::{PgConnectOptions, PgPoolOptions};
 use sqlx::{PgPool, Postgres, Transaction};
 use uuid::Uuid;
 
+pub mod auth;
 pub mod pool;
 pub mod state;
 
@@ -228,6 +229,10 @@ pub enum StoreError {
     /// The fold refused the stream (M5 U6).
     #[error("projection error: {0}")]
     Projector(#[from] cadus_core::projector::ProjectorError),
+
+    /// An auth statement did not hold the M5 call order (`docs/SCHEMA.md`).
+    #[error("auth error: {0}")]
+    Auth(String),
 
     /// C3 boot guard: the connected role escapes row-level security.
     #[error(

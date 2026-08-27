@@ -1,0 +1,30 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        INSERT INTO auth_rate_counters (scope, key, window_start, count)\n        VALUES ($1, $2, $3, 1)\n        ON CONFLICT (scope, key, window_start)\n        DO UPDATE SET count = auth_rate_counters.count + 1\n        RETURNING count AS \"count!\"\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "count!",
+        "type_info": "Int4",
+        "origin": {
+          "Table": {
+            "table": "auth_rate_counters",
+            "name": "count"
+          }
+        }
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Text",
+        "Text",
+        "Timestamptz"
+      ]
+    },
+    "nullable": [
+      false
+    ]
+  },
+  "hash": "c37e8e87cf26231b111797483c471e9ca34a1ce5539d1f93d3718f962278979f"
+}
