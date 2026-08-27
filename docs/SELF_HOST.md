@@ -401,6 +401,64 @@ rows that are still unclaimed.
 **Do not delete the `content_store` row.** `serving_pool.content_digest`
 references it, and the approval record is the C6 audit trail.
 
+## The diagnosis worker (A4, T4, T5)
+
+The worker claims one `diagnosis_jobs` row per tick, calls the model, filters the
+error tags, writes `result`, and sends `NOTIFY diagnosis_done`. The learner never
+waits on it: the verdict, the worked solution and the re-solve instruction are
+all deterministic and already on screen (A3, L2). A diagnosis that fails costs
+prose and nothing else.
+
+### The seven variables
+
+`OPENAI_API_KEY` is the switch. If it is empty or absent, the worker runs its
+refill job, leaves the queue standing, and calls no model. If it holds a value,
+every variable below is binding and a bad one exits the process with code 2.
+
+| Variable | Default | Meaning |
+|---|---|---|
+| `OPENAI_API_KEY` | none | The bearer token. Empty means: call no model. |
+| `OPENAI_BASE_URL` | `https://openrouter.ai/api/v1` | The endpoint. A local OpenAI-compatible server, for example `http://10.8.0.3:8080/v1`, is the same code path. |
+| `OPENAI_MODEL` | `deepseek/deepseek-v4-pro` | The model id the request names (O2). |
+| `OPENROUTER_PROVIDER_ORDER` | none | A comma-separated provider list. T5 pins the order, so an OpenRouter endpoint with an empty list is a configuration error. |
+| `DIAGNOSIS_OUTPUT_TOKENS` | `600` | The output ceiling per call. It is a latency bound, not a spend cap. |
+| `DIAGNOSIS_REASONING_MAX_TOKENS` | `600` | The reasoning ceiling per call (T5). |
+| `DIAGNOSIS_CALLS_PER_SESSION` | `0` | The T4 call cap per session. `0` is unlimited (O2). |
+
+`provider` and `reasoning` are OpenRouter extensions. The client puts them in the
+body only when the PARSED host of `OPENAI_BASE_URL` is `openrouter.ai`, so a
+local endpoint gets the plain OpenAI shape and a look-alike host such as
+`openrouter.ai.attacker.example` gets neither the extensions nor the routing
+behavior.
+
+### The four end states of a row
+
+| `status` | What it means | What the operator does |
+|---|---|---|
+| `pending` | The row waits for a worker. | Nothing. |
+| `running` | A worker holds it. A lease past 5 minutes goes back to `pending`. | Nothing. |
+| `done` | `result` holds the diagnosis. | Nothing. |
+| `failed` | Three attempts failed, or the payload does not read. | Read the warn lines; the learner kept the verdict. |
+| `capped` | A configured `DIAGNOSIS_CALLS_PER_SESSION` refused the call. | Raise the cap, or leave it. |
+
+A row goes back on the queue after each failed attempt and dead-letters on the
+third. The sweep runs every 5 minutes and does two things: it returns a stale
+lease to `pending`, and it dead-letters a stale row that already used its three
+attempts.
+
+### The diagnosis log line
+
+The worker writes one line per pass that did something, at info level:
+
+```
+diagnosis tick=42 outcome=Done job=Some(0f0e...) http_attempts=2
+```
+
+`http_attempts` above 1 is a retry: a truncated reply, a 429, a 5xx, or a
+transport error. A truncated reply repeats with a 4× output ceiling, because a
+reasoning model shares its completion budget with its hidden reasoning and an
+identical retry reproduces the truncation exactly.
+
 ## Query bound
 
 `DB_STATEMENT_TIMEOUT_MS` (default `5000`) bounds every query of the web and

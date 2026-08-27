@@ -1,0 +1,16 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        UPDATE diagnosis_jobs\n           SET status = $1, claimed_at = NULL\n         WHERE status = $2\n           AND claimed_at < now() - make_interval(secs => $3)\n        ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Text",
+        "Text",
+        "Float8"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "df87c7d29d7f4305f8d77a9500bb9107b428e039637361ca5013e67402d52cf6"
+}

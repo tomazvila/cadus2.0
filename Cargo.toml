@@ -12,6 +12,7 @@ publish = false
 [workspace.dependencies]
 cadus-core = { path = "crates/core" }
 cadus-store = { path = "crates/store" }
+cadus-model-client = { path = "crates/model-client" }
 
 tokio = { version = "1.53.1", features = ["full"] }
 axum = { version = "0.8.9" }
@@ -105,6 +106,42 @@ thiserror = { version = "2.0.20" }
 tokio-stream = { version = "0.1.19", default-features = false, features = [
     "sync",
 ] }
+
+# M5 U10 (T2, T5). The ONE outbound HTTP client of the workspace lives in
+# `crates/model-client`, and `cadus-worker` is its only user (L6). The pieces
+# below are the client half of crates the workspace already resolves for their
+# server half, plus the TLS layer that the OpenRouter endpoint needs.
+#
+# `hyper` gives `client::conn::http1::handshake`, which speaks HTTP/1.1 on a
+# stream this crate opens itself. A pooling client (`hyper-util`'s legacy client,
+# `reqwest`) buys connection reuse that one model call per job does not need.
+hyper = { version = "1.11.0", features = ["client", "http1"] }
+# `TokioIo` adapts a tokio stream to the `hyper::rt` traits. Nothing else of the
+# crate is used, and its client module stays out of every source file (R4).
+hyper-util = { version = "0.1.20", default-features = false, features = [
+    "tokio",
+] }
+# The request body and the collected response body of one call.
+bytes = { version = "1.12.1" }
+# `default-features = false` with `ring` keeps `aws-lc-rs` and its C toolchain
+# out of the build; `sqlx` already resolves the ring provider for its own TLS.
+rustls = { version = "0.23.43", default-features = false, features = [
+    "ring",
+    "std",
+    "tls12",
+    "logging",
+] }
+tokio-rustls = { version = "0.26.4", default-features = false, features = [
+    "ring",
+    "tls12",
+    "logging",
+] }
+# The trust anchors of the TLS handshake. `sqlx` already resolves the crate.
+webpki-roots = { version = "1.0.9" }
+# Spec section 6.4: the OpenRouter routing block is gated on a PARSED host, never
+# on a substring. In 1.0 `"openrouter.ai" in url` also matched
+# `https://openrouter.ai.attacker.example/v1`.
+url = { version = "2.5.8" }
 
 # HTTP test helpers. `tower` gives `ServiceExt::oneshot`, so a route test drives
 # the router in process and needs no socket.

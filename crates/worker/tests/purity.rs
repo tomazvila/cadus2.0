@@ -47,10 +47,14 @@ use std::path::{Path, PathBuf};
 
 use cargo_metadata::{DependencyKind, Metadata, MetadataCommand, Package, PackageId};
 
-/// Crates that must never enter the normal dependency closure of `cadus-worker`
-/// while M0 runs. Each one is an outbound HTTP client, a websocket client, or a
-/// model SDK. The milestone that adds the model call adds the name here in the
-/// same diff.
+/// Crates that must never enter the normal dependency closure of `cadus-worker`.
+/// Each one is an outbound HTTP client, a websocket client, or a model SDK.
+///
+/// M5 U10 gave the worker its model call, and the list did NOT shrink for it.
+/// The call lives in `cadus-model-client`, which speaks HTTP/1.1 on
+/// `hyper::client::conn` — a name this list never carried, because `axum` pulls
+/// `hyper` for the server half of `cadus-web` anyway. Every crate below is still
+/// a way to reach the network that no review has approved.
 const FORBIDDEN: [&str; 9] = [
     "anthropic",
     "async-openai",
@@ -183,7 +187,7 @@ fn worker_normal_closure_carries_no_http_client_or_model_sdk() {
     for name in FORBIDDEN {
         assert!(
             !closure.contains(name),
-            "R4: `{name}` is in the normal dependency closure of cadus-worker; M0 gives the worker no model client yet"
+            "R4: `{name}` is in the normal dependency closure of cadus-worker; the ONE approved client is cadus-model-client"
         );
     }
 }
@@ -197,7 +201,16 @@ fn worker_direct_normal_dependencies_are_the_declared_list() {
         found,
         vec![
             "cadus-core",
+            // M5 U10 added `cadus-model-client`. It is the ONE crate of the
+            // workspace that opens an outbound socket, and this is the ONE
+            // manifest that names it: L6 makes a model call from `cadus-web` a
+            // compile error, not a review note.
+            "cadus-model-client",
             "cadus-store",
+            // M5 U10 added `serde_json`. The diagnosis payload, the tool schema
+            // and the result document are JSON documents. It is a data-format
+            // crate: no socket, no model.
+            "serde_json",
             "sqlx",
             "thiserror",
             "tokio",

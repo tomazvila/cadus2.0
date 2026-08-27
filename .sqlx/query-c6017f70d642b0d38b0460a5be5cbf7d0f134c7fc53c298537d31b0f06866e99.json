@@ -1,0 +1,77 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        WITH job AS (\n          SELECT id FROM diagnosis_jobs\n           WHERE status = $1\n           ORDER BY created_at\n           FOR UPDATE SKIP LOCKED\n           LIMIT 1)\n        UPDATE diagnosis_jobs d\n           SET status = $2, claimed_at = now(), attempts = attempts + 1\n          FROM job WHERE d.id = job.id\n        RETURNING d.id AS \"id!\", d.user_id AS \"user_id!\", d.attempt_id AS \"attempt_id!\",\n                  d.payload AS \"payload!\", d.attempts AS \"attempts!\"\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id!",
+        "type_info": "Uuid",
+        "origin": {
+          "Table": {
+            "table": "diagnosis_jobs",
+            "name": "id"
+          }
+        }
+      },
+      {
+        "ordinal": 1,
+        "name": "user_id!",
+        "type_info": "Uuid",
+        "origin": {
+          "Table": {
+            "table": "diagnosis_jobs",
+            "name": "user_id"
+          }
+        }
+      },
+      {
+        "ordinal": 2,
+        "name": "attempt_id!",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "diagnosis_jobs",
+            "name": "attempt_id"
+          }
+        }
+      },
+      {
+        "ordinal": 3,
+        "name": "payload!",
+        "type_info": "Jsonb",
+        "origin": {
+          "Table": {
+            "table": "diagnosis_jobs",
+            "name": "payload"
+          }
+        }
+      },
+      {
+        "ordinal": 4,
+        "name": "attempts!",
+        "type_info": "Int4",
+        "origin": {
+          "Table": {
+            "table": "diagnosis_jobs",
+            "name": "attempts"
+          }
+        }
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Text",
+        "Text"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      false,
+      false
+    ]
+  },
+  "hash": "c6017f70d642b0d38b0460a5be5cbf7d0f134c7fc53c298537d31b0f06866e99"
+}

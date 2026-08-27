@@ -15,6 +15,7 @@
     )
 )]
 
+pub mod diagnosis;
 pub mod refill;
 
 use std::future::Future;
@@ -22,6 +23,7 @@ use std::time::{Duration, SystemTime, UNIX_EPOCH};
 
 use cadus_store::{Db, StoreError, bounded};
 
+pub use diagnosis::{DiagnosisJob, Outcome as DiagnosisOutcome, Report as DiagnosisReport};
 pub use refill::{
     EMPTY_FILLS_BEFORE_BACKOFF, EXHAUSTED_BACKOFF, REFILL_BACKOFF, RefillConfig, RefillJob,
     RefillReport, RefillState, batch_seed, refill_once, refill_once_at,
@@ -151,7 +153,7 @@ pub enum WorkerError {
 ///   with `SELECT ... FOR UPDATE SKIP LOCKED`, so two workers never claim the
 ///   same job and neither one blocks the other.
 pub async fn run(db: &Db, cfg: &WorkerConfig, shutdown: impl Future) -> Result<u64, WorkerError> {
-    run_with(db, cfg, None, shutdown).await
+    run_with(db, cfg, None, None, shutdown).await
 }
 
 /// The batch nonce of one refill pass: the UTC clock in microseconds.
@@ -175,19 +177,28 @@ pub fn batch_nonce() -> u64 {
     u64::try_from(since_epoch).unwrap_or(u64::MAX)
 }
 
-/// [`run`] with the M4 pool refill job in the loop (D-O4).
+/// [`run`] with the M4 pool refill job and the M5 diagnosis job in the loop
+/// (D-O4, D-O5).
 ///
-/// Each tick runs the heartbeat and then one refill pass. The pass takes the UTC
-/// microsecond clock as its nonce, so the batch seed of a pair changes every tick
-/// and a second refill draws past the tuples the pool already holds.
+/// Each tick runs the heartbeat, then one refill pass, then one diagnosis pass.
+/// The refill pass takes the UTC microsecond clock as its nonce, so the batch
+/// seed of a pair changes every tick and a second refill draws past the tuples
+/// the pool already holds.
 ///
-/// A refill failure is news, not a fatal error: the pass logs the pair and the
-/// loop takes the next tick. A database that is gone shows up on the heartbeat,
-/// which is the branch that stops the loop.
+/// A job failure is news, not a fatal error: the pass logs it and the loop takes
+/// the next tick. A database that is gone shows up on the heartbeat, which is
+/// the branch that stops the loop.
 ///
-/// The refill runs as a branch of a `select`, not inside a branch body, for the
+/// A `None` diagnosis job runs the loop with no model call at all. The binary
+/// passes `None` when the environment configures no endpoint, so a deployment
+/// with no API key keeps its refill worker (T2: the queue costs nothing while it
+/// waits).
+///
+/// Each job runs as a branch of a `select`, not inside a branch body, for the
 /// reason the heartbeat does: a branch body that waits keeps the shutdown future
-/// unpolled, and a long refill would make the worker deaf to SIGTERM.
+/// unpolled, and a long job would make the worker deaf to SIGTERM. The model
+/// call is the longest wait in the process — up to 60 s per HTTP attempt — so
+/// this matters most here.
 ///
 /// # Errors
 ///
@@ -196,8 +207,10 @@ pub async fn run_with(
     db: &Db,
     cfg: &WorkerConfig,
     refill: Option<&RefillJob<'_>>,
+    diagnosis: Option<&mut DiagnosisJob>,
     shutdown: impl Future,
 ) -> Result<u64, WorkerError> {
+    let mut diagnosis = diagnosis;
     let mut state = RefillState::new();
     let mut ticks: u64 = 0;
     let mut interval = tokio::time::interval(cfg.tick);
@@ -267,6 +280,30 @@ pub async fn run_with(
                     "refill tick={ticks}"
                 ),
                 Err(err) => tracing::warn!(error = %err, "refill: the pass did not run"),
+            }
+        }
+
+        // Step 5: the M5 diagnosis pass (D-O5). One claim, one model call, one
+        // end state. A pass that claims nothing returns at once, so an empty
+        // queue costs one indexed read per tick.
+        let Some(job) = diagnosis.as_deref_mut() else {
+            continue;
+        };
+        tokio::select! {
+            biased;
+            _ = &mut shutdown => break,
+            result = diagnosis::run_once(db, job) => match result {
+                Ok(report) => match report.outcome {
+                    // An idle queue is the common case. It says nothing.
+                    diagnosis::Outcome::Idle => {}
+                    outcome => tracing::info!(
+                        ?outcome,
+                        job = ?report.job_id,
+                        http_attempts = report.attempts.len(),
+                        "diagnosis tick={ticks}"
+                    ),
+                },
+                Err(err) => tracing::warn!(error = %err, "diagnosis: the pass did not run"),
             }
         }
     }

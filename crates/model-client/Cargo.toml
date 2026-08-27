@@ -1,0 +1,37 @@
+[package]
+name = "cadus-model-client"
+edition.workspace = true
+rust-version.workspace = true
+version.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[lib]
+name = "cadus_model_client"
+path = "src/lib.rs"
+
+# L6: this crate holds the ONE outbound HTTP client of the workspace. Only
+# `cadus-worker` depends on it, so a model call from a request handler is a
+# compile error and not a review note (T1, T2, R4).
+[dependencies]
+bytes = { workspace = true }
+http-body-util = { workspace = true }
+hyper = { workspace = true }
+hyper-util = { workspace = true }
+rustls = { workspace = true }
+serde_json = { workspace = true }
+thiserror = { workspace = true }
+tokio = { workspace = true }
+tokio-rustls = { workspace = true }
+tracing = { workspace = true }
+url = { workspace = true }
+webpki-roots = { workspace = true }
+
+[dev-dependencies]
+# Test only. The fake OpenAI-compatible server of `tests/client.rs` is one
+# `tokio::net::TcpListener` and a hand-written HTTP/1.1 reply, so the tests need
+# no network and no second crate.
+tokio = { workspace = true }
+
+[lints]
+workspace = true

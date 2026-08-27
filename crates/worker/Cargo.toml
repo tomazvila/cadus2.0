@@ -16,7 +16,13 @@ path = "src/bin/cadus-worker.rs"
 
 [dependencies]
 cadus-core = { workspace = true }
+# M5 U10 (L6, T2). The ONE crate that reaches a model endpoint. `cadus-worker` is
+# its only user, so a model call from a request handler is a compile error.
+cadus-model-client = { workspace = true }
 cadus-store = { workspace = true }
+# M5 U10. The diagnosis payload, the tool schema and the result document are JSON
+# documents. It is a data-format crate: no socket, no model.
+serde_json = { workspace = true }
 sqlx = { workspace = true }
 thiserror = { workspace = true }
 tokio = { workspace = true }

@@ -26,8 +26,9 @@ use std::process::ExitCode;
 use std::time::Duration;
 
 use cadus_core::curriculum::{Curriculum, CurriculumError, LoadError, load_curriculum};
+use cadus_model_client::{API_KEY_VAR, Client, ModelConfig};
 use cadus_store::{Db, DbConfig, bounded};
-use cadus_worker::{RefillJob, WorkerConfig, WorkerError};
+use cadus_worker::{DiagnosisJob, RefillJob, WorkerConfig, WorkerError};
 
 /// The environment variable that names the curriculum tree.
 ///
@@ -140,9 +141,51 @@ async fn run() -> Result<u64, WorkerError> {
     // first finding.
     let job = RefillJob::new(&curriculum);
 
-    let ticks = cadus_worker::run_with(&db, &cfg, Some(&job), shutdown.wait()).await?;
+    // The A4 diagnosis job (D-O5). A deployment with no endpoint keeps its
+    // refill worker and leaves the queue standing: the learner already holds the
+    // verdict, the worked solution and the re-solve instruction, so an absent
+    // model costs prose and nothing else (spec section 6.5).
+    let mut diagnosis = diagnosis_job()?;
+
+    let ticks =
+        cadus_worker::run_with(&db, &cfg, Some(&job), diagnosis.as_mut(), shutdown.wait()).await?;
     close_within(POOL_CLOSE_DEADLINE, db.pool().close()).await;
     Ok(ticks)
+}
+
+/// Build the diagnosis job, or `None` when the environment configures no model.
+///
+/// An absent or empty `OPENAI_API_KEY` is a deployment that spends no model
+/// tokens. It is not an error: the queue costs nothing while it waits, and every
+/// learner path stays deterministic (A3, L2).
+///
+/// A key that IS set makes every other model variable binding. A wrong provider
+/// order or an unparseable base URL then ends the process with exit code 2,
+/// because T5 pins both and a silent fallback ships 1.0's unset routing again.
+///
+/// # Errors
+///
+/// Returns [`WorkerError::Config`] when a key is set and the rest of the model
+/// configuration does not read.
+fn diagnosis_job() -> Result<Option<DiagnosisJob>, WorkerError> {
+    let key = std::env::var(API_KEY_VAR).unwrap_or_default();
+    if key.trim().is_empty() {
+        tracing::info!(
+            "cadus-worker: {API_KEY_VAR} is empty; the diagnosis queue waits and no model is called"
+        );
+        return Ok(None);
+    }
+
+    let model_cfg = ModelConfig::from_env().map_err(|err| WorkerError::Config(err.to_string()))?;
+    let calls_per_session = DiagnosisJob::calls_per_session_from_env()?;
+    let client = Client::new(model_cfg).map_err(|err| WorkerError::Config(err.to_string()))?;
+    tracing::info!(
+        model = %client.config().model,
+        base_url = %client.config().base_url,
+        calls_per_session,
+        "cadus-worker: the diagnosis job is configured"
+    );
+    Ok(Some(DiagnosisJob::new(client, calls_per_session)))
 }
 
 /// Read the curriculum tree that `CADUS_CURRICULUM` names.

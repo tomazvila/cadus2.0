@@ -49,8 +49,13 @@ use cargo_metadata::{DependencyKind, Metadata, MetadataCommand, Package, Package
 
 /// Crates that must never enter the normal dependency closure of `cadus-web`.
 /// Each one is an outbound HTTP client, a websocket client, or a model SDK.
-const FORBIDDEN: [&str; 9] = [
+const FORBIDDEN: [&str; 10] = [
     "anthropic",
+    // M5 U10. `cadus-model-client` holds the ONE outbound HTTP client of the
+    // workspace. L6 says the request path never links it, and this line is that
+    // rule: a `cadus-model-client` dependency in `cadus-web`, direct or through
+    // any crate it imports, fails here.
+    "cadus-model-client",
     "async-openai",
     "curl",
     "isahc",
