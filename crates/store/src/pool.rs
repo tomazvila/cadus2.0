@@ -24,7 +24,8 @@
 //!
 //! ```text
 //! BEGIN;                                  -- begin_tenant sets app.user_id (C3)
-//!   SELECT ... FOR UPDATE SKIP LOCKED LIMIT 8;   -- D7, the pop
+//!   SELECT ... LEFT JOIN content_store    -- D7, the pop; C6 reads the status
+//!     FOR UPDATE OF serving_pool SKIP LOCKED LIMIT 8;
 //!   -- cadus_core::pool::pick skips every ring hit
 //!   UPDATE serving_pool SET claimed_at = now() WHERE id = $1;
 //!   -- the caller writes the D-S6 state row here, in this same transaction
@@ -33,7 +34,24 @@
 //!
 //! `SKIP LOCKED` is the whole concurrency argument: two serves of one
 //! `(user, kp)` walk past each other's locked rows, so neither one waits and
-//! neither one reads the row the other claims.
+//! neither one reads the row the other claims. `FOR UPDATE OF serving_pool`
+//! keeps the lock on the pool row alone, so a serve never locks the shared
+//! `content_store` row of a template and two learners of one template never
+//! wait for each other.
+//!
+//! # The approval decides the serve, on every serve (C6)
+//!
+//! A pool row that names a `content_store` digest is servable only while that
+//! digest is `approved`. The pop joins `content_store` and reads
+//! `status`, so a revoked approval stops the serve of the rows the digest
+//! already wrote. A row with NO digest is an exemplar rotation (A6): the
+//! curriculum file is its authority, `content_store` holds no row for it, and
+//! the pop serves it.
+//!
+//! The pop leaves the unapproved rows in place. [`retire_unapproved`] is the
+//! second half: the D-O4 refill job claims them, writes the reason in the log,
+//! and the pair then falls under its target depth and refills from the source
+//! that IS approved.
 //!
 //! # A claimed row stays
 //!
@@ -46,6 +64,8 @@
 //! Every function returns [`StoreError`]. A row with a `source` value this build
 //! does not know, and a document that does not read, both give an error and never
 //! an unwrap.
+
+use std::collections::BTreeSet;
 
 use cadus_core::pool::{Avoid, Candidate, Pick, PoolAnswer, PoolProblem, Source, pick};
 use sqlx::types::chrono::{DateTime, Utc};
@@ -187,6 +207,33 @@ pub struct KpFlag {
     /// `true` is the A6 flag the dashboard shows: every serve of this knowledge
     /// point is an exemplar rotation.
     pub needs_template: bool,
+    /// Whether a `(user, kp)` pair of this knowledge point ran its source dry.
+    ///
+    /// `true` says the source produced no NEW statement twice in a row, so the
+    /// pool of that pair cannot grow: an exemplar list under the target depth,
+    /// or a template whose whole space is already in the pool. The pair is on a
+    /// one-hour backoff and the knowledge point needs more authored content
+    /// (M4 review 2, finding #8).
+    ///
+    /// The state is the worker's, not the database's. `operator_flags` therefore
+    /// reads `false` for every row; a caller that holds the refill state passes
+    /// it to [`operator_flags_with_exhausted`].
+    pub source_exhausted: bool,
+}
+
+/// One pool row the refill retired because its digest lost its approval (C6).
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct RetiredRow {
+    /// The primary key of the retired row.
+    pub id: Uuid,
+    /// The learner the row belonged to.
+    pub user_id: Uuid,
+    /// The serving key of the row.
+    pub kp_id: String,
+    /// The `content_store` digest the row names.
+    pub content_digest: String,
+    /// The status that digest carries now: `pending` or `rejected`.
+    pub status: String,
 }
 
 /// One `(user, kp)` pair whose unclaimed depth is under the target (D-O4).
@@ -333,6 +380,29 @@ fn read_row(
 /// every popped row is blocked the LAST row wins and [`Pick::exhausted`] says so.
 /// The pop never redraws; the redraw is the worker's job (D-O4).
 ///
+/// # The approval is read on every serve (C6)
+///
+/// The statement joins `content_store` on `serving_pool.content_digest`, and a
+/// row that names a digest is a candidate only while that digest carries
+/// `status = 'approved'`. A row with NO digest is an exemplar rotation, whose
+/// authority is the curriculum file (A6), so the pop serves it.
+///
+/// The old statement read `serving_pool` alone. An operator who read a wrong
+/// answer in the refill log and set `content_store.status = 'rejected'` stopped
+/// the NEXT refill and nothing else: the up to `target_depth` unclaimed rows the
+/// digest had already written kept being served, one per serve, each with the
+/// wrong `expected_answer`, and the M5 grade path wrote an append-only wrong
+/// attempt for every one of them (M4 review 2, finding #4).
+///
+/// The join costs one index probe on the `content_store` primary key per
+/// candidate row, and the pop reads at most [`POP_LIMIT`] rows.
+/// `FOR UPDATE OF sp` keeps the row lock on `serving_pool`: the pop must not
+/// lock the one `content_store` row that every learner of that template shares.
+///
+/// The pop does not retire the rows it walks past. [`retire_unapproved`] does
+/// that, in the D-O4 refill job, so the serve path stays one transaction with no
+/// extra write.
+///
 /// [`Pop::claimed`] is `None` when the pool held no servable row for this pair.
 /// The caller then instantiates an exemplar in process and raises the A6 flag
 /// (specification section 7.2); it must not generate.
@@ -358,16 +428,20 @@ pub async fn pop_with_ring_tx(
 ) -> Result<Pop, StoreError> {
     let popped = sqlx::query!(
         r#"
-        SELECT id AS "id!",
-               source AS "source!",
-               content_digest,
-               problem::text AS "problem!",
-               expected_answer::text AS "expected!",
-               instance_hash AS "instance_hash!"
-        FROM serving_pool
-        WHERE user_id = $1 AND kp_id = $2 AND claimed_at IS NULL
-        ORDER BY created_at, id
-        FOR UPDATE SKIP LOCKED
+        SELECT sp.id AS "id!",
+               sp.source AS "source!",
+               sp.content_digest,
+               sp.problem::text AS "problem!",
+               sp.expected_answer::text AS "expected!",
+               sp.instance_hash AS "instance_hash!"
+        FROM serving_pool AS sp
+        LEFT JOIN content_store AS cs ON cs.digest = sp.content_digest
+        WHERE sp.user_id = $1
+          AND sp.kp_id = $2
+          AND sp.claimed_at IS NULL
+          AND (sp.content_digest IS NULL OR cs.status = 'approved')
+        ORDER BY sp.created_at, sp.id
+        FOR UPDATE OF sp SKIP LOCKED
         LIMIT $3
         "#,
         user_id,
@@ -485,6 +559,65 @@ pub async fn pop_with_ring(
     let popped = pop_with_ring_tx(&mut tx, user_id, kp_id, avoid).await?;
     tx.commit().await?;
     Ok(popped)
+}
+
+/// Retire every unclaimed row whose digest is no longer approved (C6, D-O4).
+///
+/// The statement claims the row, exactly as a serve does: `claimed_at` leaves
+/// the unclaimed set, so the row never reaches a pop again and never counts
+/// toward the refill depth again. The row itself stays, because a claimed row is
+/// the served-instance log of A5 and the retention job of M5 owns the delete.
+///
+/// A row with no digest is an exemplar rotation and is never retired here (A6).
+///
+/// The call returns one [`RetiredRow`] per claimed row, so the caller writes the
+/// pair, the digest, and the status into the log. The D-O4 refill job is that
+/// caller: it runs this before it reads the target list, so a pair whose rows
+/// this statement took falls under its target depth in the SAME pass and refills
+/// from the source that IS approved.
+///
+/// # The role decides how much this reaches
+///
+/// The statement carries no tenant bind, so it retires across every learner. The
+/// worker connects as `cadus_admin`, which holds BYPASSRLS, so it sees them all.
+/// A caller inside a tenant transaction retires that tenant's rows alone, and a
+/// caller with no tenant bound retires nothing; neither one is an error.
+///
+/// # Errors
+///
+/// Returns [`StoreError::Db`] when the statement fails.
+pub async fn retire_unapproved<'e, E>(executor: E) -> Result<Vec<RetiredRow>, StoreError>
+where
+    E: PgExecutor<'e>,
+{
+    let rows = sqlx::query!(
+        r#"
+        UPDATE serving_pool AS sp
+        SET claimed_at = now()
+        FROM content_store AS cs
+        WHERE cs.digest = sp.content_digest
+          AND sp.claimed_at IS NULL
+          AND cs.status <> 'approved'
+        RETURNING sp.id AS "id!",
+                  sp.user_id AS "user_id!",
+                  sp.kp_id AS "kp_id!",
+                  sp.content_digest AS "content_digest!",
+                  cs.status AS "status!"
+        "#
+    )
+    .fetch_all(executor)
+    .await?;
+
+    Ok(rows
+        .into_iter()
+        .map(|row| RetiredRow {
+            id: row.id,
+            user_id: row.user_id,
+            kp_id: row.kp_id,
+            content_digest: row.content_digest,
+            status: row.status,
+        })
+        .collect())
 }
 
 /// The count of unclaimed rows of one `(user, kp)` pair.
@@ -656,6 +789,32 @@ pub async fn operator_flags<'e, E>(executor: E) -> Result<Vec<KpFlag>, StoreErro
 where
     E: PgExecutor<'e>,
 {
+    operator_flags_with_exhausted(executor, &[]).await
+}
+
+/// [`operator_flags`] with the exhausted knowledge points of the refill (A6).
+///
+/// `exhausted` holds the serving keys whose source ran dry: the refill filled the
+/// pair twice in a row and inserted no new statement either time, so the pair is
+/// on a one-hour backoff and the pool cannot grow (M4 review 2, finding #8). A
+/// key in the slice sets [`KpFlag::source_exhausted`] on that row.
+///
+/// The backoff map lives in `cadus_worker::refill::RefillState`, in the worker
+/// process. A caller in that process passes `RefillState::exhausted_kps()` here.
+/// A caller in another process passes an empty slice and reads `false`, because
+/// 2.0 has no table that carries the refill state across processes.
+///
+/// # Errors
+///
+/// Returns the errors of [`operator_flags`].
+pub async fn operator_flags_with_exhausted<'e, E>(
+    executor: E,
+    exhausted: &[String],
+) -> Result<Vec<KpFlag>, StoreError>
+where
+    E: PgExecutor<'e>,
+{
+    let exhausted: BTreeSet<&str> = exhausted.iter().map(String::as_str).collect();
     let rows = sqlx::query!(
         r#"
         WITH kps AS (
@@ -718,6 +877,7 @@ where
                 }
             },
         };
+        let source_exhausted = exhausted.contains(row.kp_id.as_str());
         flags.push(KpFlag {
             kp_id: row.kp_id,
             approved_templates: row.approved_templates,
@@ -725,6 +885,7 @@ where
             last_source,
             last_exemplar_at: row.last_exemplar_at,
             needs_template: row.approved_templates == 0,
+            source_exhausted,
         });
     }
     Ok(flags)

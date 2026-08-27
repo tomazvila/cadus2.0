@@ -26,11 +26,14 @@ use std::time::{Duration, Instant};
 
 use cadus_core::curriculum::{Curriculum, load_curriculum};
 use cadus_core::pool::{Avoid, PoolProblem, Ring, TaskMemory};
-use cadus_store::pool::{operator_flags, pop_with_ring, refill_targets, unclaimed_depth};
+use cadus_store::pool::{
+    operator_flags, operator_flags_with_exhausted, pop_with_ring, refill_targets, unclaimed_depth,
+};
 use cadus_store::test_support::TestDb;
 use cadus_store::{DEFAULT_CLIENT_TIMEOUT_MS, Db};
 use cadus_worker::{
-    REFILL_BACKOFF, RefillConfig, RefillJob, RefillState, batch_seed, refill_once, refill_once_at,
+    EMPTY_FILLS_BEFORE_BACKOFF, EXHAUSTED_BACKOFF, REFILL_BACKOFF, RefillConfig, RefillJob,
+    RefillState, batch_seed, refill_once, refill_once_at,
 };
 use sqlx::PgPool;
 use sqlx::types::Uuid;
@@ -795,6 +798,411 @@ async fn a_starved_knowledge_point_is_flagged_for_the_operator() {
             flag.needs_template,
             "A6: every serve of this knowledge point would be a fallback"
         );
+    })
+    .await;
+}
+
+// --------------------------------------------------------------------------
+// (7) The approval is read on every serve, and the refill retires the rest
+//     (C6, M4 review 2, finding #4)
+// --------------------------------------------------------------------------
+
+/// The digest of the corrected template the operator approves second.
+const SQUARES_FIXED_DIGEST: &str = "template-squares-2";
+
+/// The corrected perfect-squares template: 12 statements, none of them shared
+/// with `SQUARES_BODY`, so every instance is a new row in the pool (A5).
+const SQUARES_FIXED_BODY: &str = r#"{
+    "v": 1,
+    "topic_id": "perfect-squares",
+    "answer_kind": "numeric",
+    "statement": "Compute the square of ${a}$.",
+    "params": {"a": {"kind": "int", "low": 1, "high": 12}},
+    "answer_expr": "a**2",
+    "solution_sketch": "${a} \\times {a}$ gives the answer.",
+    "hints": ["What does squaring a number mean?"],
+    "samples": [{"params": {"a": 1}, "expected": "1"},
+                {"params": {"a": 12}, "expected": "144"}]
+}"#;
+
+/// Set the status of one `content_store` row, as an operator does (C6).
+async fn set_status(admin: &PgPool, digest: &str, status: &str) {
+    let changed = sqlx::query!(
+        "UPDATE content_store SET status = $2 WHERE digest = $1",
+        digest,
+        status,
+    )
+    .execute(admin)
+    .await
+    .expect("the status update runs")
+    .rows_affected();
+    assert_eq!(changed, 1, "the operator changed exactly one content row");
+}
+
+/// C6: a revoked approval stops the serve, and the next pass retires the rows.
+///
+/// The operator reads a wrong answer in the refill log, authors a corrected
+/// template, approves it, and rejects the old digest. Before this fix the pop
+/// read `serving_pool` alone, so the 11 unclaimed rows of the rejected digest
+/// kept being served with the wrong answer and the corrected template inserted
+/// nothing over them (M4 review 2, finding #4).
+#[tokio::test]
+async fn a_revoked_approval_stops_the_serve_and_the_next_pass_retires_the_rows() {
+    TestDb::with(|db| async move {
+        let user = db.seed_user("revoked@example.test").await;
+        seed_approved(&db.admin, SQUARES_DIGEST, SQUARES, SQUARES_BODY).await;
+        seed_drained_pair(&db.admin, user, SQUARES).await;
+
+        let curriculum = arena();
+        let job = RefillJob::new(&curriculum).with_config(RefillConfig {
+            target_depth: 12,
+            targets_per_tick: 32,
+            base_seed: 0,
+        });
+        let mut state = RefillState::new();
+
+        // Pass 1: the approved template fills the pool.
+        let first = refill_once(&db_of(&db.admin), &job, &mut state, 1)
+            .await
+            .expect("the pass runs");
+        assert_eq!(first.inserted, 12);
+        assert_eq!(first.from_template, 12);
+        assert_eq!(first.retired_unapproved, 0, "every digest is approved");
+
+        let ring = Ring::new();
+        let task = TaskMemory::new();
+        let avoid = Avoid::new(&ring, &task);
+        let served = pop_with_ring(&db.admin, user, SQUARES, &avoid)
+            .await
+            .expect("the pop runs")
+            .claimed
+            .expect("the approved digest serves");
+        assert_eq!(
+            served.row.content_digest.as_deref(),
+            Some("template-squares-1")
+        );
+
+        // The operator approves the corrected template and rejects the old one.
+        seed_approved(&db.admin, SQUARES_FIXED_DIGEST, SQUARES, SQUARES_FIXED_BODY).await;
+        set_status(&db.admin, SQUARES_DIGEST, "rejected").await;
+
+        // The 11 unclaimed rows of the rejected digest are no longer served.
+        let blocked = pop_with_ring(&db.admin, user, SQUARES, &avoid)
+            .await
+            .expect("the pop runs");
+        assert_eq!(
+            blocked.claimed, None,
+            "C6: no row of the rejected digest reaches a learner"
+        );
+        assert_eq!(
+            unclaimed_depth(&db.admin, user, SQUARES).await.unwrap(),
+            11,
+            "the rows are still in the pool and no longer servable"
+        );
+
+        // Pass 2 retires them and fills the pair from the corrected template.
+        let second = refill_once(&db_of(&db.admin), &job, &mut state, 2)
+            .await
+            .expect("the pass runs");
+        assert_eq!(
+            second.retired_unapproved, 11,
+            "every unclaimed row of the rejected digest is retired"
+        );
+        assert_eq!(second.targets, 1, "the retire put the pair under the depth");
+        assert_eq!(second.inserted, 12, "the corrected template fills the pool");
+        assert_eq!(second.from_template, 12);
+        assert_eq!(second.from_exemplar, 0);
+        assert_eq!(second.failed, 0);
+
+        let rows = rows_of(&db.admin, user, SQUARES).await;
+        assert_eq!(rows.len(), 12);
+        for (source, digest, _seed, text) in &rows {
+            assert_eq!(source, "template");
+            assert_eq!(
+                digest.as_deref(),
+                Some("template-squares-2"),
+                "every unclaimed row now names the corrected document (C6)"
+            );
+            assert!(
+                text.starts_with("Compute the square of $"),
+                "the pool carries the corrected statement, it read {text}"
+            );
+        }
+
+        // The next serve takes a corrected row.
+        let corrected = pop_with_ring(&db.admin, user, SQUARES, &avoid)
+            .await
+            .expect("the pop runs")
+            .claimed
+            .expect("the corrected digest serves");
+        assert_eq!(
+            corrected.row.content_digest.as_deref(),
+            Some("template-squares-2")
+        );
+        assert_eq!(corrected.candidates, 8, "the pop still reads 8 candidates");
+
+        // A third pass retires nothing more: a claimed row is out of the pool.
+        let third = refill_once(&db_of(&db.admin), &job, &mut state, 3)
+            .await
+            .expect("the pass runs");
+        assert_eq!(third.retired_unapproved, 0, "the retire is idempotent");
+    })
+    .await;
+}
+
+// --------------------------------------------------------------------------
+// (8) A pair whose source runs dry leaves the target list
+//     (D-O4, A6, M4 review 2, finding #8)
+// --------------------------------------------------------------------------
+
+/// The second learner of the exhausted-source test. A fixed id sorts the list.
+const OTHER_USER_ID: &str = "22222222-2222-3333-4444-555555555555";
+
+/// Insert a learner with a literal id, so the target order is a literal.
+async fn seed_user_with_id(admin: &PgPool, id: &str, email: &str) -> Uuid {
+    let id: Uuid = id.parse().expect("the literal id parses");
+    sqlx::query!(
+        "INSERT INTO users (id, email) VALUES ($1, $2::text::citext)",
+        id,
+        email,
+    )
+    .execute(admin)
+    .await
+    .expect("the learner inserts");
+    id
+}
+
+/// Claim every unclaimed row of one pair, as a run of serves does.
+async fn claim_every_row(admin: &PgPool, user_id: Uuid, kp_id: &str) -> u64 {
+    sqlx::query!(
+        r#"
+        UPDATE serving_pool SET claimed_at = now()
+        WHERE user_id = $1 AND kp_id = $2 AND claimed_at IS NULL
+        "#,
+        user_id,
+        kp_id,
+    )
+    .execute(admin)
+    .await
+    .expect("the claim runs")
+    .rows_affected()
+}
+
+/// Delete `count` unclaimed rows of one pair, as an M5 retention job does.
+async fn delete_rows(admin: &PgPool, user_id: Uuid, kp_id: &str, count: i64) -> u64 {
+    sqlx::query!(
+        r#"
+        DELETE FROM serving_pool
+        WHERE id IN (
+            SELECT id FROM serving_pool
+            WHERE user_id = $1 AND kp_id = $2 AND claimed_at IS NULL
+            ORDER BY id
+            LIMIT $3
+        )
+        "#,
+        user_id,
+        kp_id,
+        count,
+    )
+    .execute(admin)
+    .await
+    .expect("the delete runs")
+    .rows_affected()
+}
+
+/// D-O4: an exhausted pair stops taking a tick slot, and the pairs behind fill.
+///
+/// The learner worked through all 3 exemplars of `adding-two-digits/kp1`, so the
+/// pair sits at depth 0 and the unique index of A5 blocks every re-insert of
+/// those 3 statements: the fill succeeds, inserts 0, and depth 0 is the head of
+/// the depth-ordered target list forever. The budget is ONE pair per tick, so
+/// without the rule the two templated pairs behind it never gain a row
+/// (M4 review 2, finding #8).
+#[tokio::test]
+async fn an_exhausted_pair_stops_taking_a_tick_slot() {
+    TestDb::with(|db| async move {
+        let user = seed_fixed_user(&db.admin).await;
+        let other = seed_user_with_id(&db.admin, OTHER_USER_ID, "second@example.test").await;
+        seed_drained_pair(&db.admin, user, ADDING).await;
+
+        let curriculum = arena();
+        let job = RefillJob::new(&curriculum).with_config(RefillConfig {
+            target_depth: 24,
+            targets_per_tick: 1,
+            base_seed: 0,
+        });
+        let mut state = RefillState::new();
+        let now = Instant::now();
+
+        // Tick 1: the exemplar pair takes its 3 rows.
+        let one = refill_once_at(&db_of(&db.admin), &job, &mut state, 1, now)
+            .await
+            .expect("the pass runs");
+        assert_eq!(one.targets, 1);
+        assert_eq!(one.inserted, 3, "the knowledge point has 3 exemplars");
+        assert_eq!(one.exhausted, 0);
+
+        // The learner works through all 3. The pair is empty, and the 3
+        // statements are locked in the A5 unique index for good.
+        assert_eq!(claim_every_row(&db.admin, user, ADDING).await, 3);
+
+        // Two templated pairs enter the list behind it, both at depth 0.
+        seed_approved(&db.admin, SQUARES_DIGEST, SQUARES, SQUARES_BODY).await;
+        seed_drained_pair(&db.admin, user, SQUARES).await;
+        seed_drained_pair(&db.admin, other, SQUARES).await;
+
+        // Tick 2: the exemplar pair is the head of the list and inserts nothing.
+        // ONE empty fill is not enough: the pair keeps its slot.
+        let two = refill_once_at(&db_of(&db.admin), &job, &mut state, 2, now)
+            .await
+            .expect("the pass runs");
+        assert_eq!(two.targets, 1);
+        assert_eq!(two.inserted, 0, "every statement is in the pool already");
+        assert_eq!(two.from_exemplar, 0);
+        assert_eq!(two.without_source, 0, "the pair HAS a source");
+        assert_eq!(two.failed, 0, "the fill and the insert both succeeded");
+        assert_eq!(
+            two.exhausted, 0,
+            "one empty fill is not an exhausted source"
+        );
+        assert_eq!(state.exhausted_len(), 0);
+        assert_eq!(state.starved_len(), 0);
+
+        // Tick 3: the second empty fill in a row exhausts the pair.
+        let three = refill_once_at(&db_of(&db.admin), &job, &mut state, 3, now)
+            .await
+            .expect("the pass runs");
+        assert_eq!(three.targets, 1);
+        assert_eq!(three.inserted, 0);
+        assert_eq!(three.exhausted, 1, "two empty fills in a row exhaust it");
+        assert_eq!(state.exhausted_len(), 1);
+        assert!(state.is_exhausted(user, ADDING));
+        assert!(
+            !state.is_exhausted(user, SQUARES),
+            "the template pair is not"
+        );
+        assert_eq!(state.starved_len(), 1, "the pair left the target list");
+
+        // Tick 4: the slot goes to the first templated pair.
+        let four = refill_once_at(&db_of(&db.admin), &job, &mut state, 4, now)
+            .await
+            .expect("the pass runs");
+        assert_eq!(four.skipped_starved, 1, "the exhausted pair is held out");
+        assert_eq!(four.targets, 1);
+        assert_eq!(four.inserted, 12, "the perfect-squares template has 12");
+        assert_eq!(four.from_template, 12);
+        assert_eq!(four.exhausted, 0);
+
+        // Tick 5: the slot goes to the second templated pair.
+        let five = refill_once_at(&db_of(&db.admin), &job, &mut state, 5, now)
+            .await
+            .expect("the pass runs");
+        assert_eq!(five.skipped_starved, 1);
+        assert_eq!(five.targets, 1);
+        assert_eq!(five.inserted, 12);
+        assert_eq!(five.from_template, 12);
+
+        assert_eq!(unclaimed_depth(&db.admin, user, ADDING).await.unwrap(), 0);
+        assert_eq!(unclaimed_depth(&db.admin, user, SQUARES).await.unwrap(), 12);
+        assert_eq!(
+            unclaimed_depth(&db.admin, other, SQUARES).await.unwrap(),
+            12,
+            "both pairs behind the exhausted one are filled"
+        );
+
+        // The backoff is one hour, not the fifteen minutes of a starved pair.
+        assert_eq!(EXHAUSTED_BACKOFF, Duration::from_secs(3600));
+        assert!(state.is_starved(user, ADDING, now + Duration::from_secs(3599)));
+        assert!(!state.is_starved(user, ADDING, now + Duration::from_secs(3601)));
+
+        // A6: the operator view names the knowledge point that ran dry.
+        assert_eq!(state.exhausted_kps(), vec!["adding-two-digits/kp1"]);
+        let flags = operator_flags_with_exhausted(&db.admin, &state.exhausted_kps())
+            .await
+            .expect("the flags read");
+        let dry = flags
+            .iter()
+            .find(|flag| flag.kp_id == ADDING)
+            .expect("the exhausted knowledge point has an operator row");
+        assert!(
+            dry.source_exhausted,
+            "A6: the operator sees that this knowledge point needs more content"
+        );
+        let full = flags
+            .iter()
+            .find(|flag| flag.kp_id == SQUARES)
+            .expect("the templated knowledge point has an operator row");
+        assert!(
+            !full.source_exhausted,
+            "the knowledge point that still fills is not flagged"
+        );
+    })
+    .await;
+}
+
+/// The empty-fill count is CONSECUTIVE: one fill that writes a row clears it.
+///
+/// A cumulative count would exhaust the pair on tick 4 below, one empty fill
+/// after a pass that inserted 6 rows.
+#[tokio::test]
+async fn a_fill_that_writes_a_row_clears_the_empty_fill_count() {
+    TestDb::with(|db| async move {
+        let user = seed_fixed_user(&db.admin).await;
+        seed_approved(&db.admin, SQUARES_DIGEST, SQUARES, SQUARES_BODY).await;
+        seed_drained_pair(&db.admin, user, SQUARES).await;
+
+        let curriculum = arena();
+        let job = RefillJob::new(&curriculum).with_config(RefillConfig {
+            target_depth: 24,
+            targets_per_tick: 32,
+            base_seed: 0,
+        });
+        let mut state = RefillState::new();
+        let now = Instant::now();
+
+        // Tick 1: the whole space of the template enters the pool.
+        let one = refill_once_at(&db_of(&db.admin), &job, &mut state, 1, now)
+            .await
+            .expect("the pass runs");
+        assert_eq!(one.inserted, 12);
+        assert_eq!(one.exhausted, 0);
+
+        // Tick 2: the space is in the pool, so the fill writes nothing. Count 1.
+        let two = refill_once_at(&db_of(&db.admin), &job, &mut state, 2, now)
+            .await
+            .expect("the pass runs");
+        assert_eq!(two.inserted, 0);
+        assert_eq!(two.exhausted, 0);
+
+        // A retention job deletes 6 rows, so 6 statements are free again.
+        assert_eq!(delete_rows(&db.admin, user, SQUARES, 6).await, 6);
+
+        // Tick 3: the pass writes 6 rows, which clears the count.
+        let three = refill_once_at(&db_of(&db.admin), &job, &mut state, 3, now)
+            .await
+            .expect("the pass runs");
+        assert_eq!(three.inserted, 6);
+        assert_eq!(three.exhausted, 0);
+        assert_eq!(state.exhausted_len(), 0);
+
+        // Tick 4: the FIRST empty fill after that write. A cumulative count
+        // would reach 2 here and exhaust the pair.
+        let four = refill_once_at(&db_of(&db.admin), &job, &mut state, 4, now)
+            .await
+            .expect("the pass runs");
+        assert_eq!(four.inserted, 0);
+        assert_eq!(four.exhausted, 0, "the count restarted at the write");
+        assert_eq!(state.exhausted_len(), 0);
+        assert!(!state.is_exhausted(user, SQUARES));
+
+        // Tick 5: the second empty fill in a row exhausts it.
+        let five = refill_once_at(&db_of(&db.admin), &job, &mut state, 5, now)
+            .await
+            .expect("the pass runs");
+        assert_eq!(five.inserted, 0);
+        assert_eq!(five.exhausted, 1);
+        assert!(state.is_exhausted(user, SQUARES));
+        assert_eq!(EMPTY_FILLS_BEFORE_BACKOFF, 2);
     })
     .await;
 }

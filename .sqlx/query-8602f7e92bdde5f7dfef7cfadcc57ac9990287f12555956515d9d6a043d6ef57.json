@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n        SELECT id AS \"id!\",\n               source AS \"source!\",\n               content_digest,\n               problem::text AS \"problem!\",\n               expected_answer::text AS \"expected!\",\n               instance_hash AS \"instance_hash!\"\n        FROM serving_pool\n        WHERE user_id = $1 AND kp_id = $2 AND claimed_at IS NULL\n        ORDER BY created_at, id\n        FOR UPDATE SKIP LOCKED\n        LIMIT $3\n        ",
+  "query": "\n        SELECT sp.id AS \"id!\",\n               sp.source AS \"source!\",\n               sp.content_digest,\n               sp.problem::text AS \"problem!\",\n               sp.expected_answer::text AS \"expected!\",\n               sp.instance_hash AS \"instance_hash!\"\n        FROM serving_pool AS sp\n        LEFT JOIN content_store AS cs ON cs.digest = sp.content_digest\n        WHERE sp.user_id = $1\n          AND sp.kp_id = $2\n          AND sp.claimed_at IS NULL\n          AND (sp.content_digest IS NULL OR cs.status = 'approved')\n        ORDER BY sp.created_at, sp.id\n        FOR UPDATE OF sp SKIP LOCKED\n        LIMIT $3\n        ",
   "describe": {
     "columns": [
       {
@@ -76,5 +76,5 @@
       false
     ]
   },
-  "hash": "3e38954a514003fc4030f28d35451b9873a918845ba0895c76d547dc4176c9cd"
+  "hash": "8602f7e92bdde5f7dfef7cfadcc57ac9990287f12555956515d9d6a043d6ef57"
 }

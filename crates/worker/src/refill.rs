@@ -68,6 +68,32 @@
 //! keyed by the pair: a starved pair leaves the target list for
 //! [`REFILL_BACKOFF`], and `operator_flags` shows it with `needs_template`.
 //!
+//! # A pair whose source runs dry leaves it too
+//!
+//! A pair can also have a source that fills and inserts NOTHING. An exemplar
+//! list of 3 under a target depth of 24 is the common case: `ExemplarSource`
+//! returns the same 3 statements on every call, the pool already holds them, and
+//! `ON CONFLICT DO NOTHING` writes 0 rows. A template whose whole space is in the
+//! pool does the same. Such a pair stays under the target depth forever, sorts
+//! first on every tick, and takes a slot the whole deployment needs, which is the
+//! starvation above under a different name (M4 review 2, finding #8).
+//!
+//! The pass therefore counts the CONSECUTIVE fills of a pair that inserted 0
+//! rows. At [`EMPTY_FILLS_BEFORE_BACKOFF`] the pair leaves the target list for
+//! [`EXHAUSTED_BACKOFF`] and [`RefillState::exhausted_kps`] names its knowledge
+//! point, which `cadus_store::pool::operator_flags_with_exhausted` shows as
+//! `source_exhausted`. One fill that inserts a row clears both.
+//!
+//! # A digest that lost its approval is retired first
+//!
+//! Every pass starts with `cadus_store::pool::retire_unapproved`. An operator who
+//! revokes an approval (C6) stops the next fill from using the digest, and the
+//! rows the digest already wrote stay unclaimed and keep being served with the
+//! answer the operator rejected (M4 review 2, finding #4). The retire claims
+//! those rows and writes the pair, the digest, and the new status into the log.
+//! It runs BEFORE the target query, so the pair falls under its target depth in
+//! the same pass and refills from the source that IS approved.
+//!
 //! # No model call
 //!
 //! Nothing here calls a model (T1). The refill draws, renders, and evaluates in
@@ -109,6 +135,21 @@ pub const DEFAULT_BASE_SEED: u64 = 0;
 /// template or author an exemplar at any time. Fifteen minutes is the M4 review
 /// ruling on finding #3.
 pub const REFILL_BACKOFF: Duration = Duration::from_secs(15 * 60);
+
+/// How long a pair whose source ran dry stays out of the target list.
+///
+/// The pair HAS a source and the source works; it simply produces no statement
+/// the pool does not already hold. The cure is authored content, not a retry, so
+/// the period is four times [`REFILL_BACKOFF`]. Sixty minutes is the M4 review 2
+/// ruling on finding #8.
+pub const EXHAUSTED_BACKOFF: Duration = Duration::from_secs(60 * 60);
+
+/// The count of consecutive zero-insert fills that exhausts a pair.
+///
+/// One zero-insert fill is normal: two ticks inside one second draw the same
+/// tuples from a template with a small space. Two in a row say the source has no
+/// more to give (M4 review 2, finding #8).
+pub const EMPTY_FILLS_BEFORE_BACKOFF: u32 = 2;
 
 /// The configuration of the refill job.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -195,6 +236,13 @@ pub struct RefillState {
     refused: HashMap<String, String>,
     /// Pairs with no fillable source, and the instant each one is tried again.
     starved: HashMap<(Uuid, String), Instant>,
+    /// Pairs whose last fills inserted no row, and how many in a row.
+    ///
+    /// A fill that inserts a row removes the pair from this map, so the count is
+    /// the CONSECUTIVE count and never a running total (finding #8).
+    empty_fills: HashMap<(Uuid, String), u32>,
+    /// Pairs whose source ran dry, so `operator_flags` names them (A6).
+    exhausted: HashSet<(Uuid, String)>,
 }
 
 impl RefillState {
@@ -236,10 +284,62 @@ impl RefillState {
             .is_some_and(|until| *until > now)
     }
 
-    /// Put one pair out of the target list for [`REFILL_BACKOFF`].
-    fn starve(&mut self, user_id: Uuid, kp_id: &str, now: Instant) {
-        let until = now.checked_add(REFILL_BACKOFF).unwrap_or(now);
+    /// The count of pairs whose source ran dry.
+    #[must_use]
+    pub fn exhausted_len(&self) -> usize {
+        self.exhausted.len()
+    }
+
+    /// Whether the source of one pair ran dry (finding #8).
+    #[must_use]
+    pub fn is_exhausted(&self, user_id: Uuid, kp_id: &str) -> bool {
+        self.exhausted.contains(&(user_id, kp_id.to_string()))
+    }
+
+    /// The serving keys whose source ran dry, sorted and without a repeat.
+    ///
+    /// The list is the `exhausted` argument of
+    /// `cadus_store::pool::operator_flags_with_exhausted`, whose row is per
+    /// knowledge point and not per pair: one exhausted learner is enough to
+    /// flag the knowledge point, because the cure is authored content (A6).
+    #[must_use]
+    pub fn exhausted_kps(&self) -> Vec<String> {
+        let mut keys: Vec<String> = self
+            .exhausted
+            .iter()
+            .map(|(_, kp_id)| kp_id.clone())
+            .collect();
+        keys.sort();
+        keys.dedup();
+        keys
+    }
+
+    /// Put one pair out of the target list for `backoff`.
+    fn starve(&mut self, user_id: Uuid, kp_id: &str, now: Instant, backoff: Duration) {
+        let until = now.checked_add(backoff).unwrap_or(now);
         self.starved.insert((user_id, kp_id.to_string()), until);
+    }
+
+    /// Count one fill of `pair` that inserted no row, and give the new count.
+    fn note_empty_fill(&mut self, user_id: Uuid, kp_id: &str) -> u32 {
+        let count = self
+            .empty_fills
+            .entry((user_id, kp_id.to_string()))
+            .or_insert(0);
+        *count = count.saturating_add(1);
+        *count
+    }
+
+    /// Mark the source of one pair dry, so `operator_flags` names it (A6).
+    fn exhaust(&mut self, user_id: Uuid, kp_id: &str) {
+        self.exhausted.insert((user_id, kp_id.to_string()));
+    }
+
+    /// Clear both empty-fill records of one pair after a fill that wrote a row.
+    fn note_filled(&mut self, user_id: Uuid, kp_id: &str) {
+        let key = (user_id, kp_id.to_string());
+        self.empty_fills.remove(&key);
+        self.exhausted.remove(&key);
     }
 
     /// Drop every backoff entry whose period ended, and list the ones that hold.
@@ -274,6 +374,18 @@ pub struct RefillReport {
     pub flagged_refusals: usize,
     /// The count of pairs the backoff map held out of this pass.
     pub skipped_starved: usize,
+    /// The count of pairs this pass put on the [`EXHAUSTED_BACKOFF`] period.
+    ///
+    /// The pair filled and inserted 0 rows [`EMPTY_FILLS_BEFORE_BACKOFF`] times
+    /// in a row, so its source has no statement the pool does not hold
+    /// (finding #8). `operator_flags` shows the knowledge point as
+    /// `source_exhausted`.
+    pub exhausted: usize,
+    /// The count of rows this pass retired because their digest lost approval.
+    ///
+    /// Each one is a row an operator's revocation (C6) took out of the pool
+    /// (finding #4). A count above 0 is news: it says a served answer was wrong.
+    pub retired_unapproved: u64,
 }
 
 /// What one target gave.
@@ -371,6 +483,23 @@ pub async fn refill_once_at(
     nonce: u64,
     now: Instant,
 ) -> Result<RefillReport, WorkerError> {
+    // Step 0: retire every unclaimed row whose digest lost its approval (C6,
+    // finding #4). This runs BEFORE the target query, so a pair the retire
+    // emptied falls under its target depth in this same pass and refills from
+    // the source that IS approved.
+    let retired = cadus_store::pool::retire_unapproved(db.pool()).await?;
+    for row in &retired {
+        tracing::warn!(
+            row_id = %row.id,
+            user_id = %row.user_id,
+            kp_id = %row.kp_id,
+            digest = %row.content_digest,
+            status = %row.status,
+            "refill: the digest of this pool row is no longer approved; the row is claimed and \
+             leaves the pool, and the pair refills from an approved source (C6)"
+        );
+    }
+
     // A pair with no fillable source leaves the target list. The database
     // excludes it, so the per-tick budget goes to pairs that can fill.
     let starved = state.active_starved(now);
@@ -385,6 +514,7 @@ pub async fn refill_once_at(
     let mut report = RefillReport {
         targets: targets.len(),
         skipped_starved: starved.len(),
+        retired_unapproved: u64::try_from(retired.len()).unwrap_or(u64::MAX),
         ..RefillReport::default()
     };
 
@@ -393,7 +523,7 @@ pub async fn refill_once_at(
             Ok(Filled::Full) => {}
             Ok(Filled::NoSource) => {
                 report.without_source = report.without_source.saturating_add(1);
-                state.starve(target.user_id, &target.kp_id, now);
+                state.starve(target.user_id, &target.kp_id, now, REFILL_BACKOFF);
                 tracing::warn!(
                     user_id = %target.user_id,
                     kp_id = %target.kp_id,
@@ -420,6 +550,32 @@ pub async fn refill_once_at(
                     Source::Template | Source::Generator => {
                         report.from_template = report.from_template.saturating_add(inserted);
                     }
+                }
+
+                // A fill that wrote no row is the second starvation shape
+                // (finding #8): the source works, and it has nothing the pool
+                // does not hold. Two in a row take the pair off the list for an
+                // hour, so the budget reaches the pairs that CAN grow.
+                if inserted > 0 {
+                    state.note_filled(target.user_id, &target.kp_id);
+                } else if state.note_empty_fill(target.user_id, &target.kp_id)
+                    >= EMPTY_FILLS_BEFORE_BACKOFF
+                {
+                    state.starve(target.user_id, &target.kp_id, now, EXHAUSTED_BACKOFF);
+                    state.exhaust(target.user_id, &target.kp_id);
+                    report.exhausted = report.exhausted.saturating_add(1);
+                    tracing::warn!(
+                        user_id = %target.user_id,
+                        kp_id = %target.kp_id,
+                        source = %source.as_str(),
+                        depth = target.depth,
+                        target_depth = job.cfg.target_depth,
+                        empty_fills = EMPTY_FILLS_BEFORE_BACKOFF,
+                        backoff_secs = EXHAUSTED_BACKOFF.as_secs(),
+                        "refill: the source of this pair produced no new statement twice in a \
+                         row; the pair leaves the target list and operator_flags names it \
+                         source_exhausted (A6, D-O4)"
+                    );
                 }
             }
             Err(err) => {
