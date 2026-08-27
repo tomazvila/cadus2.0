@@ -10,3 +10,4 @@ Decisions that REQUIREMENTS.md §8 left open. Each line records the answer and t
 | — | Review loop: stop after four rounds; fix the accepted-not-fixed items; continue with M1. | 2026-08-26 | Recorded in PROGRESS.md. |
 | — | Continue with M3 when M2 is closed. | 2026-08-27 | The M3 survey of the 1.0 scheduler/projector starts in parallel with the M2 verification round; M3 units start after the M2 close commit. |
 | — | Continue with M4 when M3 is closed. | 2026-08-27 | The M4 survey (1.0 templates, exemplar rotation, anti-repeat) starts in parallel with the M3 pipeline; M4 units start after the M3 close commit. |
+| — | Go for M5 (2026-08-27). D-M5-2 stays on the plan default: a decided miss records `nearly_passable`, a blank records `poor`; the async diagnosis never moves the tier. | 2026-08-27 | M5 pipeline U1–U12 starts from `docs/plans/M5.md`. |
