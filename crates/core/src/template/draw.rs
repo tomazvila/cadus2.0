@@ -28,9 +28,9 @@
 //! [`DrawPlan`] materializes the value list of every parameter ONCE, the way 1.0
 //! materializes `domain.values()`. A refill batch builds one plan and draws from
 //! it many times, so a draw allocates the bound tuple and nothing else. Every
-//! draw is uniform over the DISTINCT values of the domain, which is what makes
-//! the rejection-sampling estimate of `space_size` an estimate of the same count
-//! the exhaustive walk produces.
+//! draw is uniform over the DISTINCT values of the domain, which is what lets
+//! the sampled walk of `space_size` reach every satisfying tuple the exhaustive
+//! walk visits.
 //!
 //! # The candidate stream
 //!

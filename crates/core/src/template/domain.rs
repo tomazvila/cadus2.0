@@ -33,6 +33,7 @@ use num_traits::{One, Signed, Zero};
 use serde::{Deserialize, Serialize};
 
 use super::constraint::{Constraint, ConstraintError, all_hold};
+use super::gate::{GATE_DRAW_BUDGET, GATE_SAMPLES, GATE_SEED};
 
 /// The largest count of values one domain holds (1.0 `MAX_DOMAIN_SIZE`).
 pub const MAX_DOMAIN_SIZE: u64 = 10_000;
@@ -49,7 +50,8 @@ pub const MAX_DECIMAL_SCALE: u32 = 9;
 /// The largest tuple count the space walk enumerates (1.0 `EXHAUSTIVE_SPACE_LIMIT`).
 ///
 /// At or under the limit the satisfying count is exact, because the walk visits
-/// every tuple once. Above it the count is a rejection-sampling estimate.
+/// every tuple once. Above it the count is the count of distinct satisfying
+/// tuples one sampled walk found, which is a floor of the true count.
 pub const EXHAUSTIVE_SPACE_LIMIT: u64 = 4_096;
 
 /// The smallest satisfying count a template needs (1.0 `MIN_SPACE_SIZE`).
@@ -60,17 +62,12 @@ pub const EXHAUSTIVE_SPACE_LIMIT: u64 = 4_096;
 /// the count it bounds.
 pub const MIN_SPACE_SIZE: u64 = 12;
 
-/// The count of tuples the estimator draws above [`EXHAUSTIVE_SPACE_LIMIT`].
-///
-/// The estimator draws as many tuples as the exhaustive walk visits, so the two
-/// branches of [`space_size`] cost the same work.
-pub const ESTIMATE_SAMPLES: u32 = 4_096;
-
-/// The seed of the estimator.
-///
-/// The seed is a constant, so `space_size` is a function of the document alone
-/// and a reviewer reproduces the stored number from the body (C6).
-pub const ESTIMATE_SEED: u64 = 0;
+// The second estimator is gone. Above [`EXHAUSTIVE_SPACE_LIMIT`] the count comes
+// from the ONE walk of [`walk_satisfying`], which spends the gate's own draw
+// budget. 2.0 kept a 4,096-draw rejection-sampling estimate beside a
+// 262,144-draw walk, and the two numbers disagreed by two orders of magnitude in
+// both directions: a space of 4 tuples read as 244 and a space of 20 tuples read
+// as 0 (M4 review 2, findings 2 and 5).
 
 /// A scalar the document writes: a whole number, or a text.
 ///
@@ -594,20 +591,26 @@ pub type Params = BTreeMap<String, Domain>;
 /// The count is the count of tuples the constraints accept, and never the product
 /// of the domain sizes. 1.0 stores the product and saturates it at
 /// `MAX_DOMAIN_SIZE`, so a 1.0 `space_size` of 10,000 reads "at least 10,000"
-/// (spec section 8, trap 9). 2.0 stores a count or a labeled estimate, so the
-/// number never lies about what it is.
+/// (spec section 8, trap 9). 2.0 stores an exact count, or the count one walk
+/// found with the draws it spent, so the number never lies about what it is.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum SpaceSize {
     /// The exact count. The walk visited every tuple.
     Exact(u64),
-    /// A rejection-sampling estimate, with the evidence it rests on.
+    /// The count the sampled walk found, with the evidence it rests on.
+    ///
+    /// The count is a FLOOR and never a scaled guess: it counts the DISTINCT
+    /// satisfying tuples one walk saw. The walk stops at
+    /// [`GATE_SAMPLES`](super::gate::GATE_SAMPLES) distinct tuples or at
+    /// [`GATE_DRAW_BUDGET`](super::gate::GATE_DRAW_BUDGET) draws, so a space
+    /// larger than `GATE_SAMPLES` reads as `GATE_SAMPLES`.
     Estimated {
-        /// The estimated count of satisfying tuples.
+        /// The count of DISTINCT satisfying tuples the walk found.
         estimate: u64,
-        /// The count of tuples the estimator drew.
+        /// The count of tuples the walk drew.
         samples: u32,
-        /// The count of drawn tuples the constraints accepted.
+        /// The count of drawn tuples the constraints accepted, repeats included.
         hits: u32,
     },
 }
@@ -675,44 +678,103 @@ pub fn enumerate(params: &Params, limit: u64) -> Result<Vec<Bindings>, DomainErr
     Ok(tuples)
 }
 
-/// Count the tuples the constraints accept (spec section 2.3, decision 1).
+/// The satisfying tuples of a document, and the count the gate stores.
+///
+/// The walk is the ONE place 2.0 counts a constrained space. The gate reads its
+/// tuples and its count from the same call, so the number a reviewer approves
+/// and the instances the gate checked can never disagree (M4 review 2, findings
+/// 2 and 5).
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct SatisfyingWalk {
+    /// The satisfying count: exact below the limit, the found count above it.
+    pub space: SpaceSize,
+    /// The distinct satisfying tuples, in walk order.
+    pub tuples: Vec<Bindings>,
+    /// True when `tuples` holds every satisfying tuple of the declared domains.
+    pub exhaustive: bool,
+    /// The count of tuples the sampled walk drew, and `None` below the limit.
+    pub drawn: Option<u32>,
+}
+
+/// Walk the space and collect the tuples the constraints accept.
 ///
 /// At or under [`EXHAUSTIVE_SPACE_LIMIT`] declared tuples the walk visits every
-/// tuple and the count is exact. Above the limit the function draws
-/// [`ESTIMATE_SAMPLES`] tuples from the seed [`ESTIMATE_SEED`] and scales the hit
-/// rate by the declared product, and it records the sample count with the
-/// estimate.
+/// tuple and the count is exact. Above the limit the walk draws from the seed
+/// [`GATE_SEED`](super::gate::GATE_SEED) until it holds
+/// [`GATE_SAMPLES`](super::gate::GATE_SAMPLES) distinct satisfying tuples or it
+/// spends [`GATE_DRAW_BUDGET`](super::gate::GATE_DRAW_BUDGET) draws, and the
+/// count is the count of those distinct tuples.
+///
+/// # Errors
+///
+/// Returns [`DomainError`] when a domain is empty or past its bound, and when a
+/// constraint cannot decide on a tuple.
+pub fn walk_satisfying(
+    params: &Params,
+    constraints: &[Constraint],
+) -> Result<SatisfyingWalk, DomainError> {
+    let declared = declared_space(params)?;
+    if declared <= EXHAUSTIVE_SPACE_LIMIT {
+        let mut tuples: Vec<Bindings> = Vec::new();
+        for tuple in enumerate(params, EXHAUSTIVE_SPACE_LIMIT)? {
+            if all_hold(constraints, &tuple)? {
+                tuples.push(tuple);
+            }
+        }
+        let count = u64::try_from(tuples.len()).unwrap_or(u64::MAX);
+        return Ok(SatisfyingWalk {
+            space: SpaceSize::Exact(count),
+            tuples,
+            exhaustive: true,
+            drawn: None,
+        });
+    }
+    let plan = super::draw::DrawPlan::new(params)?;
+    let mut rng = super::draw::rng_from_seed(GATE_SEED);
+    let mut tuples: Vec<Bindings> = Vec::new();
+    let mut distinct: BTreeSet<Bindings> = BTreeSet::new();
+    let mut drawn: u32 = 0;
+    let mut hits: u32 = 0;
+    // A refused draw says nothing about the next one, so the walk keeps drawing
+    // past a sparse stretch and stops on the budget alone (M4 review 1, findings
+    // 7 and 12).
+    while u32::try_from(distinct.len()).unwrap_or(u32::MAX) < GATE_SAMPLES
+        && drawn < GATE_DRAW_BUDGET
+    {
+        drawn = drawn.saturating_add(1);
+        let tuple = plan.draw(&mut rng);
+        if all_hold(constraints, &tuple)? {
+            hits = hits.saturating_add(1);
+            if distinct.insert(tuple.clone()) {
+                tuples.push(tuple);
+            }
+        }
+    }
+    let found = u64::try_from(tuples.len()).unwrap_or(u64::MAX);
+    Ok(SatisfyingWalk {
+        space: SpaceSize::Estimated {
+            estimate: found,
+            samples: drawn,
+            hits,
+        },
+        tuples,
+        exhaustive: false,
+        drawn: Some(drawn),
+    })
+}
+
+/// Count the tuples the constraints accept (spec section 2.3, decision 1).
+///
+/// The count is the `space` of [`walk_satisfying`]: exact at or under
+/// [`EXHAUSTIVE_SPACE_LIMIT`] declared tuples, and the count of distinct
+/// satisfying tuples the sampled walk found above it.
 ///
 /// # Errors
 ///
 /// Returns [`DomainError`] when a domain is empty or past its bound, and when a
 /// constraint cannot decide on a tuple.
 pub fn space_size(params: &Params, constraints: &[Constraint]) -> Result<SpaceSize, DomainError> {
-    let declared = declared_space(params)?;
-    if declared <= EXHAUSTIVE_SPACE_LIMIT {
-        let mut count: u64 = 0;
-        for tuple in enumerate(params, EXHAUSTIVE_SPACE_LIMIT)? {
-            if all_hold(constraints, &tuple)? {
-                count += 1;
-            }
-        }
-        return Ok(SpaceSize::Exact(count));
-    }
-    let plan = super::draw::DrawPlan::new(params)?;
-    let mut rng = super::draw::rng_from_seed(ESTIMATE_SEED);
-    let mut hits: u32 = 0;
-    for _ in 0..ESTIMATE_SAMPLES {
-        let tuple = plan.draw(&mut rng);
-        if all_hold(constraints, &tuple)? {
-            hits += 1;
-        }
-    }
-    let estimate = u128::from(declared) * u128::from(hits) / u128::from(ESTIMATE_SAMPLES);
-    Ok(SpaceSize::Estimated {
-        estimate: u64::try_from(estimate).unwrap_or(u64::MAX),
-        samples: ESTIMATE_SAMPLES,
-        hits,
-    })
+    Ok(walk_satisfying(params, constraints)?.space)
 }
 
 /// The greatest common divisor of two whole numbers, as a non-negative number.

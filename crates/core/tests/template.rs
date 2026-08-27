@@ -29,7 +29,7 @@ use cadus_core::template::{
     Cmp, Compiled, Constraint, Domain, DrawPlan, EXHAUSTIVE_SPACE_LIMIT, Instance, MAX_CHOICES,
     MAX_DOMAIN_SIZE, MIN_SPACE_SIZE, RESAMPLE_ATTEMPTS, Scalar, SpaceSize, TEMPLATE_VERSION,
     TemplateDoc, Term, Value, below, from_body, holds, render, rng_from_seed, space_size,
-    stray_brace, to_body,
+    stray_brace, to_body, walk_satisfying,
 };
 
 // --------------------------------------------------------------------------
@@ -867,14 +867,19 @@ fn the_space_of_the_1_0_fixtures_is_twelve() {
     );
 }
 
-/// Above the exhaustive limit the count is a labeled estimate, with its evidence.
+/// Above the exhaustive limit the count is the count the walk found.
 ///
 /// Two domains of 200 values make 40,000 declared tuples, which is the sampled
-/// branch of `tests/test_problem_templates.py:1180-1200`. The constraint `a > b`
-/// holds on 19,900 of them, which is 49.75 percent, so a 4,096-sample estimate
-/// lands near 19,900 and never on it.
+/// branch of `tests/test_problem_templates.py:1180-1200`. The constraint
+/// `a > b` holds on 19,900 of them, worked by hand: 199 + 198 + ... + 1.
+///
+/// The count is the count of DISTINCT satisfying tuples one walk found, and the
+/// walk stops at `GATE_SAMPLES` distinct tuples, so the number is 4,096. It is a
+/// floor of the 19,900 and never a scaled guess: the deleted 4,096-draw
+/// estimator read 4 satisfying tuples as 244 and 20 as 0 (M4 review 2, findings
+/// 2 and 5).
 #[test]
-fn a_space_above_the_limit_is_an_estimate_that_names_its_sample_count() {
+fn a_space_above_the_limit_counts_the_tuples_the_walk_found() {
     let doc = doc_from(
         r#"{"v": 1, "topic_id": "big-space", "answer_kind": "numeric",
             "statement": "Compute ${a} - {b}$.",
@@ -885,29 +890,33 @@ fn a_space_above_the_limit_is_an_estimate_that_names_its_sample_count() {
             "samples": [{"params": {"a": 200, "b": 1}, "expected": "199"}]}"#,
     );
     let counted = space_size(&doc.params, &doc.constraints).expect("the space counts");
-    let SpaceSize::Estimated {
-        estimate,
-        samples,
-        hits,
-    } = counted
-    else {
-        panic!("40,000 declared tuples are past the 4,096 limit: {counted:?}");
-    };
-    assert_eq!(samples, 4_096);
-    assert!(hits > 0 && hits < 4_096, "hits = {hits}");
-    // 19,900 of 40,000 tuples satisfy `a > b`. A 4,096-sample estimate stays
-    // inside a tenth of that count.
-    assert!(
-        (17_910..=21_890).contains(&estimate),
-        "estimate = {estimate}"
+    assert_eq!(
+        counted,
+        SpaceSize::Estimated {
+            estimate: 4_096,
+            samples: 9_371,
+            hits: 4_575,
+        }
     );
     assert!(!counted.is_exact());
-    // The estimate is a function of the document alone: the seed is a constant,
-    // so a reviewer reproduces the stored number.
+    // The count never runs above the true satisfying count of 19,900. The
+    // deleted estimator ran above it and below it.
+    assert!(counted.count() <= 19_900, "count = {}", counted.count());
+    // The count is a function of the document alone: the seed is a constant, so
+    // a reviewer reproduces the stored number.
     assert_eq!(
         space_size(&doc.params, &doc.constraints).expect("the space counts"),
         counted
     );
+    // The walk that produced the count carries the tuples the gate reads, so the
+    // two can never disagree.
+    let walked = walk_satisfying(&doc.params, &doc.constraints).expect("the space walks");
+    assert_eq!(walked.space, counted);
+    assert_eq!(walked.tuples.len(), 4_096);
+    assert!(!walked.exhaustive);
+    assert_eq!(walked.drawn, Some(9_371));
+    let distinct: BTreeSet<Bindings> = walked.tuples.iter().cloned().collect();
+    assert_eq!(distinct.len(), 4_096);
 }
 
 /// The bounded draw never returns the bound, and it repeats from its seed.

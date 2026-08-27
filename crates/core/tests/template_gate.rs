@@ -698,10 +698,14 @@ fn a_space_too_large_to_walk_takes_the_sampled_branch() {
 }
 
 #[test]
-fn the_sampled_branch_reports_its_estimate_and_its_sample_count() {
+fn the_sampled_branch_reports_its_found_count_and_its_draw_count() {
     // The same 200 x 200 space with an expression that never leaves the
-    // envelope. 40,000 declared tuples, no constraint, so every drawn tuple is a
-    // hit and the estimate is the declared product.
+    // envelope. 40,000 declared tuples and no constraint, so every drawn tuple
+    // is a hit. The walk stops at GATE_SAMPLES distinct tuples, so the count it
+    // reports is 4,096 of the 40,000: the number is a FLOOR of the satisfying
+    // count and never a scaled guess (M4 review 2, findings 2 and 5). It took
+    // 4,298 draws to reach 4,096 distinct tuples, and 202 of those draws
+    // repeated a tuple the walk already held.
     let verified = accept(
         &body_with(&[
             ("statement", r#""Compute ${a} + {b}$.""#),
@@ -726,13 +730,16 @@ fn the_sampled_branch_reports_its_estimate_and_its_sample_count() {
     assert_eq!(
         verified.space,
         SpaceSize::Estimated {
-            estimate: 40_000,
-            samples: 4_096,
-            hits: 4_096,
+            estimate: 4_096,
+            samples: 4_298,
+            hits: 4_298,
         }
     );
     assert_eq!(verified.instances_checked, 4_096);
     assert!(!verified.exhaustive);
+    // Every tuple the instance check read is distinct, so the count of instances
+    // and the recorded count are the same number.
+    assert_eq!(verified.space.count(), 4_096);
 }
 
 // --------------------------------------------------------------------------
@@ -1316,19 +1323,24 @@ fn a_sparse_constraint_is_walked_past_the_draws_that_spend_their_budget() {
         AnswerKind::Numeric,
         &["25"],
     );
+    // The 20 satisfying tuples are `a` in {4096, 8192} times `b` in 1..10,
+    // worked by hand. The walk spends the whole budget and finds every one of
+    // them, so the recorded count is the true count and no estimator scales it
+    // (M4 review 2, findings 2 and 5). 128 of the 262,144 draws satisfied the
+    // constraint, and those 128 draws hold 20 distinct tuples.
     assert_eq!(
         sparse.space,
         SpaceSize::Estimated {
             estimate: 20,
-            samples: 4_096,
-            hits: 2,
+            samples: 262_144,
+            hits: 128,
         }
     );
-    assert_eq!(sparse.instances_checked, 128);
+    assert_eq!(sparse.instances_checked, 20);
     assert_eq!(
         sparse.notes,
         vec![
-            "the sampled walk found 128 satisfying tuple(s) in 262144 draw(s), and the instance check read those 128"
+            "the sampled walk found 20 satisfying tuple(s) in 262144 draw(s), and the instance check read those 20"
                 .to_string()
         ]
     );
@@ -1360,15 +1372,18 @@ fn a_sparse_constraint_is_walked_past_the_draws_that_spend_their_budget() {
         AnswerKind::Numeric,
         &["25"],
     );
+    // The walk finds all 18 of them, so the recorded count is the hand-worked
+    // count. The deleted estimator scaled 9 hits of 4,096 draws to 17 and was
+    // never the count of anything (M4 review 2, findings 2 and 5).
     assert_eq!(
         paired.space,
         SpaceSize::Estimated {
-            estimate: 17,
-            samples: 4_096,
-            hits: 9,
+            estimate: 18,
+            samples: 262_144,
+            hits: 617,
         }
     );
-    assert_eq!(paired.instances_checked, 617);
+    assert_eq!(paired.instances_checked, 18);
 }
 
 /// A sampled walk that finds nothing says what it drew.
@@ -1444,12 +1459,15 @@ fn above_the_limit_the_axis_ends_come_from_the_satisfying_sample() {
         AnswerKind::Numeric,
         &["25"],
     );
+    // 4,950 tuples of the 10,000 satisfy `a > b`, by hand: 99 + 98 + ... + 1.
+    // The walk stops at GATE_SAMPLES distinct tuples, so it records 4,096 of
+    // them: 17,666 draws, 8,662 of which the constraint accepted.
     assert_eq!(
         verified.space,
         SpaceSize::Estimated {
-            estimate: 4_938,
-            samples: 4_096,
-            hits: 2_023,
+            estimate: 4_096,
+            samples: 17_666,
+            hits: 8_662,
         }
     );
     assert_eq!(verified.instances_checked, 4_096);
@@ -1830,5 +1848,369 @@ fn the_per_instance_check_reads_the_answer_string_back() {
         ),
         "{}",
         rejection.message
+    );
+}
+
+// --------------------------------------------------------------------------
+// 7. M4 review round 2
+// --------------------------------------------------------------------------
+
+/// The reviewer's adjacent-parameter document, with the answer it takes.
+///
+/// `${a}{b}$` writes the two numbers next to each other, so `a = 1, b = 12` and
+/// `a = 11, b = 2` render ONE statement, `$112$`.
+fn adjacent(verb: &str, noun: &str, expression: &str, samples: &str) -> String {
+    body_with(&[
+        (
+            "statement",
+            &format!(
+                r#""A code is made by writing one number next to another: ${{a}}{{b}}$. {verb} the two numbers that were written. What is the {noun}?""#
+            ),
+        ),
+        (
+            "params",
+            r#"{"a": {"kind": "int", "low": 1, "high": 12},
+                "b": {"kind": "int", "low": 1, "high": 12}}"#,
+        ),
+        ("answer_expr", expression),
+        ("solution_sketch", r#""Read the two numbers apart.""#),
+        ("hints", r#"["Which two numbers were written down?"]"#),
+        ("samples", samples),
+    ])
+}
+
+/// The four corners of `a` and `b` over 1..12, with the product of each pair.
+const PRODUCT_SAMPLES: &str = r#"[{"params": {"a": 1, "b": 1}, "expected": "1"},
+    {"params": {"a": 1, "b": 12}, "expected": "12"},
+    {"params": {"a": 12, "b": 1}, "expected": "12"},
+    {"params": {"a": 12, "b": 12}, "expected": "144"}]"#;
+
+/// The same four corners, with the sum of each pair.
+const SUM_SAMPLES: &str = r#"[{"params": {"a": 1, "b": 1}, "expected": "2"},
+    {"params": {"a": 1, "b": 12}, "expected": "13"},
+    {"params": {"a": 12, "b": 1}, "expected": "13"},
+    {"params": {"a": 12, "b": 12}, "expected": "24"}]"#;
+
+/// M4 review 2, finding 1: one statement carries one answer (C4).
+///
+/// Every parameter of this document appears in the statement, so the
+/// hidden-parameter rule of review 1 finding 4 passes it. The statement writes
+/// the two numbers next to each other, so `a = 1, b = 12` and `a = 11, b = 2`
+/// render the same text `$112$` and the same digest, and the product of the two
+/// tuples is 12 and 22. `serving_pool` keys a row by that digest, so the pool
+/// keeps ONE of the two answers and a learner who reads the other one is graded
+/// wrong.
+#[test]
+fn one_statement_that_two_tuples_answer_differently_is_refused() {
+    let rejection = reject_squares(&adjacent(
+        "Multiply",
+        "product",
+        r#""a * b""#,
+        PRODUCT_SAMPLES,
+    ));
+    assert_eq!(rejection.code, "statement-collision");
+    assert_eq!(
+        rejection.message,
+        "statement 'A code is made by writing one number next to another: $112$. Multiply the two numbers that were written. What is the product?' renders from 2 tuples with different answers"
+    );
+}
+
+/// The rule reads the ANSWERS, and never the count of digests.
+///
+/// The same statement shape with the sum of the two numbers renders `$112$`
+/// from the same two tuples, and both of them answer 13. One statement, one
+/// answer: the gate accepts it and the pool keeps one row for the two tuples.
+#[test]
+fn one_statement_that_two_tuples_answer_alike_is_accepted() {
+    let verified = accept(
+        &adjacent("Add", "sum", r#""a + b""#, SUM_SAMPLES),
+        AnswerKind::Numeric,
+        &["49", "81"],
+    );
+    assert_eq!(verified.space, SpaceSize::Exact(144));
+    assert_eq!(verified.instances_checked, 144);
+    assert!(verified.exhaustive);
+}
+
+/// M4 review 2, findings 2 and 5: the A1 flagship shape is approvable.
+///
+/// Three axes over 1..50 with `a*a + b*b = c*c` admit 40 tuples: the 20
+/// unordered triples with every side at 50 or under — (3,4,5), (6,8,10),
+/// (9,12,15), (12,16,20), (15,20,25), (18,24,30), (21,28,35), (24,32,40),
+/// (27,36,45), (30,40,50), (5,12,13), (10,24,26), (15,36,39), (8,15,17),
+/// (16,30,34), (7,24,25), (14,48,50), (20,21,29), (9,40,41), (12,35,37) —
+/// each of them with the two legs in both orders.
+///
+/// 125,000 declared tuples put the document above the exhaustive limit, so the
+/// deleted 4,096-draw estimator scaled 0 hits to a space of 0 and the gate
+/// answered `only 0 distinct problem(s)`. The walk of 262,144 draws finds
+/// [`PYTHAGOREAN_FOUND`] of the 40 tuples, and that count is what the gate
+/// stores and what the floor reads.
+const PYTHAGOREAN_FOUND: u64 = 35;
+
+/// The count of tuples the constraints admit, worked by hand from the list above.
+const PYTHAGOREAN_TUPLES: u64 = 40;
+
+#[test]
+fn a_pythagorean_triple_template_is_accepted_above_the_limit() {
+    let triples = |samples: &str| -> String {
+        body_with(&[
+            (
+                "statement",
+                r#""A right triangle has legs ${a}$ and ${b}$, and a hypotenuse of ${c}$. What is the perimeter?""#,
+            ),
+            (
+                "params",
+                r#"{"a": {"kind": "int", "low": 1, "high": 50},
+                    "b": {"kind": "int", "low": 1, "high": 50},
+                    "c": {"kind": "int", "low": 1, "high": 50}}"#,
+            ),
+            (
+                "constraints",
+                r#"[{"op": "eq",
+                     "left": {"add": [{"mul": ["a", "a"]}, {"mul": ["b", "b"]}]},
+                     "right": {"mul": ["c", "c"]}}]"#,
+            ),
+            ("answer_expr", r#""a + b + c""#),
+            ("solution_sketch", r#""Add the three side lengths.""#),
+            ("hints", r#"["Which three lengths make the way around?"]"#),
+            ("samples", samples),
+        ])
+    };
+    let verified = accept(
+        &triples(
+            r#"[{"params": {"a": 3, "b": 4, "c": 5}, "expected": "12"},
+                {"params": {"a": 4, "b": 3, "c": 5}, "expected": "12"},
+                {"params": {"a": 40, "b": 9, "c": 41}, "expected": "90"},
+                {"params": {"a": 9, "b": 40, "c": 41}, "expected": "90"},
+                {"params": {"a": 14, "b": 48, "c": 50}, "expected": "112"}]"#,
+        ),
+        AnswerKind::Numeric,
+        &["25"],
+    );
+    assert_eq!(verified.space.count(), PYTHAGOREAN_FOUND);
+    assert_eq!(verified.instances_checked, PYTHAGOREAN_FOUND);
+    assert!(!verified.exhaustive);
+    // The count is a floor of the hand-worked 40 and it clears the floor of 12.
+    assert!(verified.space.count() < PYTHAGOREAN_TUPLES);
+    assert!(verified.space.count() >= MIN_SPACE_SIZE);
+    assert_eq!(
+        verified.space,
+        SpaceSize::Estimated {
+            estimate: 35,
+            samples: 262_144,
+            hits: 90,
+        }
+    );
+}
+
+/// M4 review 2, findings 3 and 9: a constrained choice axis is approvable.
+///
+/// `n` in 1..12 over the divisor list [2,3,4,5,6,8,10,12] with `d divides n` and
+/// `n != d` admits 12 tuples: d=2 takes n in {4,6,8,10,12}, d=3 takes {6,9,12},
+/// d=4 takes {8,12}, d=5 takes {10}, and d=6 takes {12}. The constraints admit
+/// no tuple at d=8, d=10, or d=12, because the only multiple of each of them in
+/// 1..12 is the divisor itself.
+///
+/// The rule read the DECLARED choice list, so it asked for a worked sample at
+/// d=8, and the sample-constraint rule refused exactly that sample. No sample
+/// list cleared both rules and the document was unapprovable.
+#[test]
+fn a_constrained_choice_axis_is_covered_by_its_reachable_values() {
+    let division = |samples: &str| -> String {
+        body_with(&[
+            ("statement", r#""Divide ${n}$ by ${d}$.""#),
+            (
+                "params",
+                r#"{"n": {"kind": "int", "low": 1, "high": 12},
+                    "d": {"kind": "choice", "values": [2, 3, 4, 5, 6, 8, 10, 12]}}"#,
+            ),
+            (
+                "constraints",
+                r#"[{"op": "divides", "left": "d", "right": "n"},
+                    {"op": "ne", "left": "n", "right": "d"}]"#,
+            ),
+            ("answer_expr", r#""n / d""#),
+            (
+                "solution_sketch",
+                r#""Share ${n}$ into ${d}$ equal groups.""#,
+            ),
+            ("hints", r#"["How many groups do you need?"]"#),
+            ("samples", samples),
+        ])
+    };
+    let every_reachable = r#"[{"params": {"n": 4, "d": 2}, "expected": "2"},
+        {"params": {"n": 6, "d": 3}, "expected": "2"},
+        {"params": {"n": 8, "d": 4}, "expected": "2"},
+        {"params": {"n": 10, "d": 5}, "expected": "2"},
+        {"params": {"n": 12, "d": 6}, "expected": "2"}]"#;
+    let verified = accept(&division(every_reachable), AnswerKind::Numeric, &["25"]);
+    assert_eq!(verified.space, SpaceSize::Exact(12));
+    assert_eq!(verified.instances_checked, 12);
+
+    // A reachable choice with no worked sample is still refused: drop the sample
+    // that binds d=5, and d=5 is the value the gate names.
+    let rejection = reject(
+        &division(
+            r#"[{"params": {"n": 4, "d": 2}, "expected": "2"},
+                {"params": {"n": 6, "d": 3}, "expected": "2"},
+                {"params": {"n": 8, "d": 4}, "expected": "2"},
+                {"params": {"n": 12, "d": 6}, "expected": "2"}]"#,
+        ),
+        AnswerKind::Numeric,
+        &["25"],
+    );
+    assert_eq!(rejection.code, "choice-coverage");
+    assert_eq!(
+        rejection.message,
+        "no worked sample uses d=['5'] — every choice must appear in a sample, or the expression is unverified for it"
+    );
+}
+
+/// M4 review 2, finding 10: an unconstrained axis reads its DECLARED ends.
+///
+/// `a` in 1..10000 with no constraint puts the document above the exhaustive
+/// limit. Every declared value lies in a satisfying tuple, so both declared ends
+/// are reachable, and the gate asks for a worked sample at 1 and at 10000. The
+/// sampled ends of review 1 finding 16 asked for a worked sample at 2, a number
+/// that appears nowhere in the document: it was the smallest value the draws of
+/// `GATE_SEED` happened to hit.
+#[test]
+fn an_unconstrained_axis_reads_its_declared_ends_above_the_limit() {
+    let squares = |samples: &str| -> String {
+        body_with(&[
+            (
+                "params",
+                r#"{"a": {"kind": "int", "low": 1, "high": 10000}}"#,
+            ),
+            ("samples", samples),
+        ])
+    };
+    let verified = accept(
+        &squares(
+            r#"[{"params": {"a": 1}, "expected": "1"},
+                {"params": {"a": 10000}, "expected": "100000000"}]"#,
+        ),
+        AnswerKind::Numeric,
+        &["49", "81"],
+    );
+    assert!(!verified.exhaustive);
+    assert_eq!(verified.instances_checked, 4_096);
+
+    // The declared low end is the one the rule names, and a sample at 2 does not
+    // cover it. The gate's own comment names `a = 1` of this template as the
+    // degenerate instance that matters.
+    let rejection = reject(
+        &squares(
+            r#"[{"params": {"a": 2}, "expected": "4"},
+                {"params": {"a": 10000}, "expected": "100000000"}]"#,
+        ),
+        AnswerKind::Numeric,
+        &["49", "81"],
+    );
+    assert_eq!(rejection.code, "edge-coverage");
+    assert_eq!(
+        rejection.message,
+        "no worked sample uses the low end of a (1) — the edges are where an expression stops being right"
+    );
+}
+
+/// M4 review 2, finding 10: a sample at a declared end covers that end.
+///
+/// `a > b` names both axes, so the ends of `a` come from the satisfying sample
+/// and the sample above the limit misses the declared high end 10000. A worked
+/// sample AT 10000 is inside the constraints and it verifies the true edge, so
+/// the rule takes it. Without that exemption the author must run the gate and
+/// copy the seed's own maximum back into the document.
+#[test]
+fn a_sample_at_a_declared_end_covers_a_constrained_axis() {
+    let banded = |samples: &str| -> String {
+        body_with(&[
+            ("statement", r#""Compute ${a} - {b}$.""#),
+            (
+                "params",
+                r#"{"a": {"kind": "int", "low": 1, "high": 10000},
+                    "b": {"kind": "int", "low": 1, "high": 2}}"#,
+            ),
+            (
+                "constraints",
+                r#"[{"op": "gt", "left": "a", "right": "b"}]"#,
+            ),
+            ("answer_expr", r#""a - b""#),
+            ("solution_sketch", r#""Take ${b}$ from ${a}$.""#),
+            ("hints", r#"["Which number is larger?"]"#),
+            ("samples", samples),
+        ])
+    };
+    let verified = accept(
+        &banded(
+            r#"[{"params": {"a": 5, "b": 1}, "expected": "4"},
+                {"params": {"a": 5, "b": 2}, "expected": "3"},
+                {"params": {"a": 10000, "b": 2}, "expected": "9998"}]"#,
+        ),
+        AnswerKind::Numeric,
+        &["25"],
+    );
+    assert!(!verified.exhaustive);
+
+    // The exemption reads a DECLARED end and nothing else: a sample below the
+    // sampled high end is still refused, and the gate names the end it read.
+    let rejection = reject(
+        &banded(
+            r#"[{"params": {"a": 5, "b": 1}, "expected": "4"},
+                {"params": {"a": 5, "b": 2}, "expected": "3"},
+                {"params": {"a": 9990, "b": 2}, "expected": "9988"}]"#,
+        ),
+        AnswerKind::Numeric,
+        &["25"],
+    );
+    assert_eq!(rejection.code, "edge-coverage");
+}
+
+/// M4 review 2, findings 2 and 5: the floor holds above the exhaustive limit.
+///
+/// The reviewer's document: `a` and `b` in 1..1000 with `a = b` and `202`
+/// divides `a`, which admits four tuples — a = b = 202, 404, 606, and 808.
+/// 1,000,000 declared tuples put it above the limit, and the deleted estimator
+/// scaled its one hit in 4,096 draws to a space of 244, cleared the floor of 12,
+/// and stored 244 in a body a human then approved. The pool of that knowledge
+/// point can hold four rows, and the D5 ring holds twenty digests, so every
+/// serve after the fourth is a ring hit forever.
+///
+/// The walk counts what it found and the floor refuses the document. The
+/// constraints are sparse — four tuples in a million — so the 262,144 draws of
+/// the budget find one of the four, and the gate names that one. Four is under
+/// the floor of twelve as well, so the verdict holds for the true count too.
+#[test]
+fn a_space_under_the_floor_above_the_limit_is_refused() {
+    let rejection = reject(
+        &body_with(&[
+            ("statement", r#""Compute ${a} \\times {b}$.""#),
+            (
+                "params",
+                r#"{"a": {"kind": "int", "low": 1, "high": 1000},
+                    "b": {"kind": "int", "low": 1, "high": 1000}}"#,
+            ),
+            (
+                "constraints",
+                r#"[{"op": "eq", "left": "a", "right": "b"},
+                    {"op": "divides", "left": {"lit": 202}, "right": "a"}]"#,
+            ),
+            ("answer_expr", r#""a * b""#),
+            ("solution_sketch", r#""Multiply ${a}$ by ${b}$.""#),
+            ("hints", r#"["Which two numbers do you multiply?"]"#),
+            (
+                "samples",
+                r#"[{"params": {"a": 202, "b": 202}, "expected": "40804"},
+                    {"params": {"a": 808, "b": 808}, "expected": "652864"}]"#,
+            ),
+        ]),
+        AnswerKind::Numeric,
+        &["25"],
+    );
+    assert_eq!(rejection.code, "space-floor");
+    assert_eq!(
+        rejection.message,
+        "the declared domains produce only 1 distinct problem(s); at least 12 are needed for randomized values and for avoidance of a recently-served problem to mean anything (Hard Rule 4)"
     );
 }

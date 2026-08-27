@@ -64,9 +64,9 @@ pub use document::{
     from_body, to_body,
 };
 pub use domain::{
-    Bindings, Domain, DomainError, ESTIMATE_SAMPLES, ESTIMATE_SEED, EXHAUSTIVE_SPACE_LIMIT,
-    IntRange, MAX_CHOICES, MAX_DECIMAL_SCALE, MAX_DOMAIN_SIZE, MIN_SPACE_SIZE, Params, Scalar,
-    SpaceSize, Value, declared_space, enumerate, literal_to_rational, space_size,
+    Bindings, Domain, DomainError, EXHAUSTIVE_SPACE_LIMIT, IntRange, MAX_CHOICES,
+    MAX_DECIMAL_SCALE, MAX_DOMAIN_SIZE, MIN_SPACE_SIZE, Params, SatisfyingWalk, Scalar, SpaceSize,
+    Value, declared_space, enumerate, literal_to_rational, space_size, walk_satisfying,
 };
 pub use draw::{
     DrawError, DrawPlan, MAX_REJECTIONS, RESAMPLE_ATTEMPTS, below, candidates, draw_bindings,

@@ -40,6 +40,7 @@
 //! | every constraint holds on every sample | a sample outside the constraints verifies nothing |
 //! | the constraints admit at least one tuple | a template with no instance must not be stored |
 //! | `space_size` is the SATISFYING count | 1.0 stores the product and saturates it (spec trap 9) |
+//! | one statement carries one answer | C4; the pool keys a row by the statement digest |
 //! | a hint ladder of at least one rung, and no rung names the answer | Hard Rule 3 |
 //! | the exemplar envelope reads exact rationals | 1.0 reads `float()` (spec trap 12) |
 //! | every parameter the answer reads appears where a learner reads it | one statement must carry one answer (C4) |
@@ -69,19 +70,22 @@ use crate::curriculum::{AnswerKind, Exemplar};
 use super::constraint::{Constraint, Term, all_hold, constraint_params, holds, term_params};
 use super::document::{Compiled, Instance, InstantiateError, TEMPLATE_VERSION, TemplateDoc};
 use super::domain::{
-    Bindings, Domain, EXHAUSTIVE_SPACE_LIMIT, MAX_CHOICES, MAX_DECIMAL_SCALE, MAX_DOMAIN_SIZE,
-    MIN_SPACE_SIZE, SpaceSize, Value, declared_space, enumerate, space_size,
+    Bindings, Domain, MAX_CHOICES, MAX_DECIMAL_SCALE, MAX_DOMAIN_SIZE, MIN_SPACE_SIZE, SpaceSize,
+    Value, walk_satisfying,
 };
 use super::eval::{EvalError, answer as evaluate_answer, parse_answer_expr};
 use super::render::{render, scan};
 
-/// The count of tuples the gate walks when the space is too large to enumerate.
+/// The count of DISTINCT satisfying tuples the walk collects above the limit.
 ///
 /// 1.0 draws `GATE_SAMPLES = 200` (`problem_templates.py:183`). 2.0 raises the
 /// count to the exhaustive limit, so the sampled branch and the walked branch
 /// read the same number of instances and cost the same work. The 1.0 number was
 /// chosen for a Python loop that calls SymPy once per instance; the 2.0 loop
 /// evaluates an already-parsed tree.
+///
+/// The walk stops here, so the count it records is a floor of the satisfying
+/// count and never a number above it (M4 review 2, findings 2 and 5).
 pub const GATE_SAMPLES: u32 = 4_096;
 
 /// The largest count of tuples the sampled walk draws.
@@ -292,11 +296,11 @@ pub fn gate(doc: &TemplateDoc, spec: &GateSpec) -> Result<Verified, Rejection> {
     let compiled = compile(doc)?;
     check_dead_parameters(doc, compiled.answer_ast())?;
     check_answer_names(doc, compiled.answer_ast(), spec)?;
-    let walk = build_walk(doc, &compiled)?;
+    let walk = build_walk(doc)?;
     check_space(doc, &walk)?;
     let samples = check_samples(doc, &compiled, spec)?;
     check_distractors(doc, &compiled)?;
-    let extremes = axis_extremes(doc, &walk);
+    let extremes = axis_extremes(doc, &values, &walk);
     let mut notes = walk.notes.clone();
     check_coverage(doc, &values, &extremes, &samples, &walk, &mut notes)?;
     check_instances(doc, &compiled, spec, &walk)?;
@@ -775,8 +779,15 @@ fn check_dead_parameters(doc: &TemplateDoc, ast: &Ast) -> Result<(), Rejection> 
 /// A parameter that changes the answer and shows nowhere splits one printed
 /// problem into several different correct answers: the pool keys an instance by
 /// the statement digest, so it keeps one tuple of the many and serves the answer
-/// of that one (M4 review 1, finding 4). The rule is the C4 rule "two tuples
-/// that render one statement must compute one answer", read on the document.
+/// of that one (M4 review 1, finding 4).
+///
+/// The rule reads NAMES, and it is one half of the C4 rule "two tuples that
+/// render one statement must compute one answer". It is the half a document
+/// answers before any tuple is walked, and it is strictly weaker than the rule
+/// itself: two SHOWN parameters collide too when the statement writes them next
+/// to each other (M4 review 2, finding 1). The other half is
+/// [`check_one_answer_per_statement`], which groups the walked instances by
+/// their digest.
 fn check_hidden_parameters(
     doc: &TemplateDoc,
     rendered: &BTreeSet<String>,
@@ -878,9 +889,9 @@ fn collect_ast_names(ast: &Ast, names: &mut BTreeSet<String>) {
 
 /// The tuples the gate reads, and the count it stores.
 struct Walk {
-    /// The satisfying count, exact below the limit and estimated above it.
+    /// The satisfying count: exact below the limit, the found count above it.
     space: SpaceSize,
-    /// The tuples the instance check reads.
+    /// The distinct tuples the instance check reads.
     tuples: Vec<Bindings>,
     /// True when `tuples` is every satisfying tuple.
     exhaustive: bool,
@@ -891,69 +902,31 @@ struct Walk {
 }
 
 /// Count the satisfying tuples and collect the ones the gate reads.
-fn build_walk(doc: &TemplateDoc, compiled: &Compiled<'_>) -> Result<Walk, Rejection> {
-    let declared = declared_space(&doc.params).map_err(|err| {
+///
+/// The count and the tuples come from ONE call, so the number the body records
+/// is the count of distinct instances the walk actually found (M4 review 2,
+/// findings 2 and 5).
+fn build_walk(doc: &TemplateDoc) -> Result<Walk, Rejection> {
+    let walked = walk_satisfying(&doc.params, &doc.constraints).map_err(|err| {
         Rejection::new(
             "domain-size",
             format!("the declared domains do not count: {err}"),
         )
     })?;
-    if declared <= EXHAUSTIVE_SPACE_LIMIT {
-        let every = enumerate(&doc.params, EXHAUSTIVE_SPACE_LIMIT).map_err(|err| {
-            Rejection::new(
-                "domain-size",
-                format!("the declared domains do not walk: {err}"),
-            )
-        })?;
-        let mut tuples = Vec::new();
-        for tuple in every {
-            if all_hold(&doc.constraints, &tuple).map_err(constraint_rejection)? {
-                tuples.push(tuple);
-            }
-        }
-        let count = u64::try_from(tuples.len()).unwrap_or(u64::MAX);
-        return Ok(Walk {
-            space: SpaceSize::Exact(count),
-            tuples,
-            exhaustive: true,
-            drawn: None,
-            notes: Vec::new(),
-        });
-    }
-    let space = space_size(&doc.params, &doc.constraints).map_err(|err| {
-        Rejection::new(
-            "domain-size",
-            format!("the declared domains do not count: {err}"),
-        )
-    })?;
-    // The walk draws until it holds GATE_SAMPLES satisfying tuples or it spends
-    // GATE_DRAW_BUDGET draws. A tuple the constraints refuse is skipped and the
-    // walk goes on: one refused draw says nothing about the next one, and the
-    // old walk stopped the whole collection at the first sparse stretch (M4
-    // review 1, findings 7 and 12).
-    let mut rng = super::draw::rng_from_seed(GATE_SEED);
-    let mut tuples = Vec::new();
-    let mut drawn: u32 = 0;
-    while u32::try_from(tuples.len()).unwrap_or(u32::MAX) < GATE_SAMPLES && drawn < GATE_DRAW_BUDGET
-    {
-        drawn += 1;
-        let tuple = compiled.plan().draw(&mut rng);
-        if all_hold(&doc.constraints, &tuple).map_err(constraint_rejection)? {
-            tuples.push(tuple);
-        }
-    }
-    let found = u32::try_from(tuples.len()).unwrap_or(u32::MAX);
     let mut notes = Vec::new();
-    if found < GATE_SAMPLES {
-        notes.push(format!(
-            "the sampled walk found {found} satisfying tuple(s) in {drawn} draw(s), and the instance check read those {found}"
-        ));
+    if let Some(drawn) = walked.drawn {
+        let found = walked.tuples.len();
+        if u32::try_from(found).unwrap_or(u32::MAX) < GATE_SAMPLES {
+            notes.push(format!(
+                "the sampled walk found {found} satisfying tuple(s) in {drawn} draw(s), and the instance check read those {found}"
+            ));
+        }
     }
     Ok(Walk {
-        space,
-        tuples,
-        exhaustive: false,
-        drawn: Some(drawn),
+        space: walked.space,
+        tuples: walked.tuples,
+        exhaustive: walked.exhaustive,
+        drawn: walked.drawn,
         notes,
     })
 }
@@ -1103,22 +1076,67 @@ fn check_distractors(doc: &TemplateDoc, compiled: &Compiled<'_>) -> Result<(), R
 // Rows 20 to 23 — the samples lie inside the space and exercise it
 // --------------------------------------------------------------------------
 
+/// The two ends of one ordered axis, and the declared ends when they differ.
+#[derive(Debug, Clone)]
+struct AxisEnds {
+    /// The low end the coverage rule asks a worked sample for.
+    low: Value,
+    /// The high end the coverage rule asks a worked sample for.
+    high: Value,
+    /// The declared ends, when a constraint names the axis.
+    ///
+    /// A sample at a declared end covers that end too: the walk above the
+    /// exhaustive limit is a sample and it misses a reachable end, so a correct
+    /// worked sample is never asked to move inward (M4 review 2, finding 10).
+    declared: Option<(Value, Value)>,
+}
+
 /// The lowest and the highest value of every ordered axis.
 ///
-/// Spec trap 11: under 2.0 constraints an axis is effectively single-valued more
-/// often, so the ends are read off the SATISFYING tuples. Above the exhaustive
-/// limit the ends come from the satisfying SAMPLE, and never from the declared
-/// value list: a declared end the constraints forbid asks the author for a
-/// worked sample the sample-constraint rule then refuses, and no author input
-/// clears both (M4 review 1, finding 16). The sample is drawn from the fixed
-/// seed [`GATE_SEED`], so the ends the gate names are reproducible.
-fn axis_extremes(doc: &TemplateDoc, walk: &Walk) -> BTreeMap<String, (Value, Value)> {
+/// The rule splits on the constraints, because both failures of 2.0 came from
+/// reading ONE set for both cases (M4 review 1, finding 16; M4 review 2, finding
+/// 10):
+///
+/// - An axis NO constraint names reads its DECLARED ends. Every declared value
+///   of such an axis lies in a satisfying tuple, so both ends are reachable, and
+///   the sampled walk's own minimum is an artifact of [`GATE_SEED`] that no
+///   author can read off the document.
+/// - An axis a constraint names reads the ends of the satisfying set. A declared
+///   end the constraints forbid would ask the author for a worked sample the
+///   sample-constraint rule then refuses, and no author input clears both. The
+///   declared ends travel with the axis, so a worked sample AT one of them
+///   covers that end as well.
+fn axis_extremes(
+    doc: &TemplateDoc,
+    values: &BTreeMap<String, Vec<Value>>,
+    walk: &Walk,
+) -> BTreeMap<String, AxisEnds> {
+    let constrained = constraint_params(&doc.constraints);
     let mut extremes = BTreeMap::new();
     for (name, domain) in &doc.params {
         if !matches!(
             domain,
             Domain::Int { .. } | Domain::Rational { .. } | Domain::Decimal { .. }
         ) {
+            continue;
+        }
+        let declared = values.get(name).and_then(|list| {
+            let (Some(low), Some(high)) = (list.iter().min(), list.iter().max()) else {
+                return None;
+            };
+            Some((low.clone(), high.clone()))
+        });
+        if !constrained.contains(name) {
+            if let Some((low, high)) = declared {
+                extremes.insert(
+                    name.clone(),
+                    AxisEnds {
+                        low,
+                        high,
+                        declared: None,
+                    },
+                );
+            }
             continue;
         }
         let seen: Vec<Value> = walk
@@ -1129,7 +1147,14 @@ fn axis_extremes(doc: &TemplateDoc, walk: &Walk) -> BTreeMap<String, (Value, Val
         let (Some(low), Some(high)) = (seen.iter().min(), seen.iter().max()) else {
             continue;
         };
-        extremes.insert(name.clone(), (low.clone(), high.clone()));
+        extremes.insert(
+            name.clone(),
+            AxisEnds {
+                low: low.clone(),
+                high: high.clone(),
+                declared,
+            },
+        );
     }
     extremes
 }
@@ -1138,7 +1163,7 @@ fn axis_extremes(doc: &TemplateDoc, walk: &Walk) -> BTreeMap<String, (Value, Val
 fn check_coverage(
     doc: &TemplateDoc,
     values: &BTreeMap<String, Vec<Value>>,
-    extremes: &BTreeMap<String, (Value, Value)>,
+    extremes: &BTreeMap<String, AxisEnds>,
     samples: &[Bindings],
     walk: &Walk,
     notes: &mut Vec<String>,
@@ -1179,10 +1204,17 @@ fn check_coverage(
             .filter_map(|bindings| bindings.get(name).cloned())
             .collect();
         if matches!(domain, Domain::Choice { .. }) {
-            let missing: Vec<String> = values
-                .get(name)
-                .into_iter()
-                .flatten()
+            // The rule reads the choices of the SATISFYING set, and never the
+            // declared list: a declared choice the constraints forbid asks for a
+            // worked sample the sample-constraint rule then refuses, and no
+            // author input clears both (M4 review 2, findings 3 and 9).
+            let reachable: BTreeSet<Value> = walk
+                .tuples
+                .iter()
+                .filter_map(|tuple| tuple.get(name).cloned())
+                .collect();
+            let missing: Vec<String> = reachable
+                .iter()
                 .filter(|value| !seen.contains(*value))
                 .map(Value::canonical_string)
                 .collect();
@@ -1197,11 +1229,18 @@ fn check_coverage(
             }
             continue;
         }
-        let Some((low, high)) = extremes.get(name) else {
+        let Some(ends) = extremes.get(name) else {
             continue;
         };
-        for (edge, which) in [(low, "low"), (high, "high")] {
-            if !seen.contains(edge) {
+        let declared_low = ends.declared.as_ref().map(|(low, _)| low);
+        let declared_high = ends.declared.as_ref().map(|(_, high)| high);
+        for (edge, declared_edge, which) in [
+            (&ends.low, declared_low, "low"),
+            (&ends.high, declared_high, "high"),
+        ] {
+            let covered =
+                seen.contains(edge) || declared_edge.is_some_and(|value| seen.contains(value));
+            if !covered {
                 return Err(Rejection::new(
                     "edge-coverage",
                     format!(
@@ -1224,7 +1263,7 @@ fn check_coverage(
 /// problems.
 fn check_crossed_corners(
     doc: &TemplateDoc,
-    extremes: &BTreeMap<String, (Value, Value)>,
+    extremes: &BTreeMap<String, AxisEnds>,
     samples: &[Bindings],
     walk: &Walk,
     notes: &mut Vec<String>,
@@ -1232,11 +1271,11 @@ fn check_crossed_corners(
     let names: Vec<&String> = extremes.keys().collect();
     for (position, left) in names.iter().enumerate() {
         for right in names.iter().skip(position + 1) {
-            let (Some((low_l, high_l)), Some((low_r, high_r))) =
-                (extremes.get(*left), extremes.get(*right))
-            else {
+            let (Some(ends_l), Some(ends_r)) = (extremes.get(*left), extremes.get(*right)) else {
                 continue;
             };
+            let (low_l, high_l) = (&ends_l.low, &ends_l.high);
+            let (low_r, high_r) = (&ends_r.low, &ends_r.high);
             if low_l == high_l || low_r == high_r {
                 continue;
             }
@@ -1315,7 +1354,21 @@ fn corner_holds(
 // Rows 24 to 28, and the 2.0 canonical round trip and hint rule
 // --------------------------------------------------------------------------
 
-/// Every instance renders, solves, canonicalizes, and looks like the topic.
+/// One rendered statement, and the answers the walk computed for it.
+struct Statement {
+    /// The rendered text, as the learner reads it.
+    text: String,
+    /// The count of walked tuples that render this text.
+    tuples: u64,
+    /// The distinct canonical answers those tuples computed.
+    ///
+    /// Equality of two answers is equality of two [`Canon`] values, so a set of
+    /// more than one element is a statement with more than one right answer.
+    answers: BTreeSet<Canon>,
+}
+
+/// Every instance renders, solves, canonicalizes, and looks like the topic, and
+/// one statement carries one answer.
 fn check_instances(
     doc: &TemplateDoc,
     compiled: &Compiled<'_>,
@@ -1323,9 +1376,71 @@ fn check_instances(
     walk: &Walk,
 ) -> Result<(), Rejection> {
     let envelope = exemplar_envelope(spec.exemplars);
+    let mut order: Vec<String> = Vec::new();
+    let mut statements: BTreeMap<String, Statement> = BTreeMap::new();
     for bindings in &walk.tuples {
         let instance = instantiate(compiled, bindings)?;
         check_one_instance(doc, spec, envelope.as_ref(), &instance)?;
+        match statements.get_mut(&instance.instance_hash) {
+            Some(statement) => {
+                statement.tuples = statement.tuples.saturating_add(1);
+                statement.answers.insert(instance.canon);
+            }
+            None => {
+                order.push(instance.instance_hash.clone());
+                let mut answers = BTreeSet::new();
+                answers.insert(instance.canon);
+                statements.insert(
+                    instance.instance_hash,
+                    Statement {
+                        text: instance.text,
+                        tuples: 1,
+                        answers,
+                    },
+                );
+            }
+        }
+    }
+    check_one_answer_per_statement(&order, &statements)
+}
+
+/// Two tuples that render ONE statement must compute ONE answer (C4).
+///
+/// The pool keys an instance by the digest of its statement
+/// (`serving_pool.instance_hash`), so a statement two tuples render with two
+/// different answers reaches a learner as ONE printed problem whose stored
+/// answer is the one of whichever tuple the fill met first. A learner who reads
+/// the other one answers correctly and the grade path records a failure.
+///
+/// The hidden-parameter rule is a proxy for this rule and a strictly weaker one:
+/// it refuses a parameter the statement never shows, and two SHOWN parameters
+/// collide as well when the statement writes them next to each other, for
+/// example `${a}{b}$` with `a = 1, b = 12` and `a = 11, b = 2` (M4 review 2,
+/// finding 1). The gate holds the rendered text and the canonical answer of
+/// every walked tuple already, so the rule is a grouping of what it read.
+///
+/// The rule runs on the sampled walk too. Above the exhaustive limit it reads
+/// the tuples the walk drew, so it refuses a collision the sample carries and it
+/// says nothing about a collision the sample missed; `TemplateSource::fill`
+/// refuses that one per batch.
+fn check_one_answer_per_statement(
+    order: &[String],
+    statements: &BTreeMap<String, Statement>,
+) -> Result<(), Rejection> {
+    for digest in order {
+        let Some(statement) = statements.get(digest) else {
+            continue;
+        };
+        if statement.answers.len() > 1 {
+            let count = statement.tuples;
+            return Err(Rejection::new(
+                "statement-collision",
+                format!(
+                    "statement {} renders from {count} tuples with different answers",
+                    py_str(&statement.text)
+                ),
+            ));
+        }
     }
     Ok(())
 }
@@ -1778,7 +1893,7 @@ fn trailing_zero_run(text: &str) -> bool {
 /// none of them holds a quote character, so the quote-switching rule of Python's
 /// `repr` never applies: the writer always uses single quotes and escapes a
 /// backslash and a quote.
-fn py_str(text: &str) -> String {
+pub(crate) fn py_str(text: &str) -> String {
     let mut out = String::with_capacity(text.len() + 2);
     out.push('\'');
     for character in text.chars() {

@@ -40,9 +40,9 @@
 //! refill job flags a knowledge point whose refusal rate is above
 //! [`REFUSAL_FLAG_PERCENT`].
 
-use std::collections::BTreeSet;
+use std::collections::{BTreeMap, BTreeSet};
 
-use crate::answer::{Undecidable, canonical_form};
+use crate::answer::{Canon, Undecidable, canonical_form};
 use crate::curriculum::model::{Exemplar, KnowledgePoint};
 use crate::learner::problem_text_hash;
 use crate::template::{
@@ -53,6 +53,7 @@ use crate::template::{
 use super::Source;
 use super::ring::RING_CAPACITY;
 use crate::template::check_instance;
+use crate::template::gate::py_str;
 
 /// The count of candidate streams one [`TemplateSource::fill`] call walks.
 ///
@@ -132,10 +133,11 @@ impl Batch {
         &self.refusals
     }
 
-    /// The count of distinct candidates the re-check read.
+    /// The count of candidates the re-check read.
     ///
-    /// The sum of the instances and the refusals. A repeated statement is read
-    /// once, so the number never counts one candidate twice.
+    /// The sum of the instances and the refusals. A repeated statement with the
+    /// same answer is read once. A repeated statement with a DIFFERENT answer is
+    /// a refusal, so it is read again and counted again (M4 review 2, finding 1).
     #[must_use]
     pub fn checked(&self) -> usize {
         self.instances.len().saturating_add(self.refusals.len())
@@ -386,7 +388,11 @@ impl ProblemSource for TemplateSource<'_> {
         let mut rng = rng_from_seed(seed);
         let mut out: Vec<Instance> = Vec::new();
         let mut refusals: Vec<Refused> = Vec::new();
-        let mut seen: BTreeSet<String> = BTreeSet::new();
+        // The digest of a statement, and the first answer the batch computed
+        // for it. `serving_pool` keys a row by the digest, so a second tuple
+        // that renders the same statement with a DIFFERENT answer must not
+        // become the row a learner reads (C4, M4 review 2, finding 1).
+        let mut seen: BTreeMap<String, (String, Canon)> = BTreeMap::new();
         let mut last: Option<String> = None;
         let whole_space = self.walks_whole_space();
         for _round in 0..FILL_ROUNDS {
@@ -412,10 +418,29 @@ impl ProblemSource for TemplateSource<'_> {
                     }
                     Ok(instance) => {
                         // One statement is decided once. A digest the walk
-                        // already read is neither served again nor counted
-                        // again.
-                        if !seen.insert(instance.instance_hash.clone()) {
-                            continue;
+                        // already read with the SAME answer is neither served
+                        // again nor counted again; the same digest with another
+                        // answer is refused and counted.
+                        match seen.get(&instance.instance_hash) {
+                            Some((_, first)) if *first == instance.canon => continue,
+                            Some((first, _)) => {
+                                let message =
+                                    collision_message(&instance.text, first, &instance.answer);
+                                last = Some(message.clone());
+                                refusals.push(Refused {
+                                    bindings,
+                                    text: Some(instance.text),
+                                    code: "statement-collision".to_string(),
+                                    message,
+                                });
+                                continue;
+                            }
+                            None => {
+                                seen.insert(
+                                    instance.instance_hash.clone(),
+                                    (instance.answer.clone(), instance.canon.clone()),
+                                );
+                            }
                         }
                         match check_instance(self.doc(), &spec, &instance) {
                             Err(rejection) => {
@@ -449,6 +474,21 @@ impl ProblemSource for TemplateSource<'_> {
             None => Err(FillError::NoSatisfyingTuple),
         }
     }
+}
+
+/// The refusal one statement with two answers earns (C4).
+///
+/// The gate refuses the same defect on the tuples it walked, and it names the
+/// count of colliding tuples because it holds every one of them. The fill meets
+/// its tuples one at a time, so its message names the two answers it holds and
+/// no count (M4 review 2, finding 1).
+fn collision_message(text: &str, first: &str, other: &str) -> String {
+    format!(
+        "statement {} already answers {} and this tuple answers {} — one statement carries one answer",
+        py_str(text),
+        py_str(first),
+        py_str(other)
+    )
 }
 
 /// One exemplar the checker cannot decide.
@@ -573,6 +613,8 @@ impl ProblemSource for ExemplarSource<'_> {
         }
         let mut out: Vec<Instance> = Vec::new();
         let mut refusals: Vec<Refused> = Vec::new();
+        // The exemplar list is authored text, and one entry is one statement, so
+        // the digest alone decides a repeat here.
         let mut seen: BTreeSet<String> = BTreeSet::new();
         for exemplar in self.exemplars {
             let canon = match canonical_form(&exemplar.answer) {

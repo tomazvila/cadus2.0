@@ -101,6 +101,13 @@ fn bind_int(name: &str, value: i64) -> Bindings {
     bindings
 }
 
+/// Bind two whole numbers to two parameter names.
+fn bind_two(first: &str, one: i64, second: &str, two: i64) -> Bindings {
+    let mut bindings = bind_int(first, one);
+    bindings.insert(second.to_string(), Scalar::Int(two).value());
+    bindings
+}
+
 /// The twelve statements of the perfect-squares template and their digests.
 ///
 /// Every digest is `sha1(utf8(statement))[:12]`, worked out from the statement
@@ -1042,4 +1049,117 @@ fn check_instance_refuses_a_hint_that_names_the_answer() {
         .expect("it instantiates");
     assert_eq!(kept.answer, "9");
     assert!(check_instance(&doc, &spec, &kept).is_ok());
+}
+
+/// The reviewer's adjacent-parameter document (M4 review 2, finding 1).
+///
+/// The statement writes the two numbers next to each other, so `a = 1, b = 12`
+/// and `a = 11, b = 2` render ONE statement, `$112$`, and the product of the two
+/// tuples is 12 and 22. The gate refuses the document; this fixture is the
+/// document reaching the fill anyway, which is what a hand-written body or a
+/// gate defect gives the refill job.
+fn adjacent_product_body() -> &'static str {
+    r#"{
+      "v": 1,
+      "topic_id": "two-digit-codes",
+      "answer_kind": "numeric",
+      "statement": "A code is written as ${a}{b}$. What is the product of the two numbers?",
+      "params": {"a": {"kind": "int", "low": 1, "high": 12},
+                 "b": {"kind": "int", "low": 1, "high": 12}},
+      "answer_expr": "a * b",
+      "solution_sketch": "Read the two numbers apart and multiply them.",
+      "hints": ["Which two numbers were written down?"],
+      "samples": [{"params": {"a": 1, "b": 1}, "expected": "1"},
+                  {"params": {"a": 12, "b": 12}, "expected": "144"}]
+    }"#
+}
+
+/// M4 review 2, finding 1: one statement carries one answer, in the fill too.
+///
+/// `serving_pool` keys a row by `instance_hash`, so two tuples that render one
+/// statement give ONE row. The fill kept whichever tuple it met first and threw
+/// the other away in silence, so a learner read `$112$` and the row answered 22
+/// while the learner's own reading of the code answered 12 (C4).
+///
+/// The 144 tuples render 142 distinct statements. `$111$` comes from `a = 1,
+/// b = 11` and from `a = 11, b = 1`, and both tuples answer 11, so the fill
+/// keeps one row and counts nothing. `$112$` comes from `a = 1, b = 12` and from
+/// `a = 11, b = 2`, and the two answers differ, so the second tuple is a refusal
+/// the batch reports.
+#[test]
+fn a_statement_with_a_second_answer_is_refused_by_the_fill_and_counted() {
+    let doc = doc_from(adjacent_product_body());
+    let source = TemplateSource::new("two-digit-codes", &doc).expect("the source compiles");
+    let filled = source
+        .fill("two-digit-codes", 200, 0)
+        .expect("the fill runs");
+
+    assert_eq!(filled.instances().len(), 142);
+    assert_eq!(filled.refusals().len(), 1);
+    assert_eq!(filled.checked(), 143);
+
+    let refused = &filled.refusals()[0];
+    assert_eq!(refused.code, "statement-collision");
+    assert_eq!(
+        refused.text.as_deref(),
+        Some("A code is written as $112$. What is the product of the two numbers?")
+    );
+    assert_eq!(
+        refused.message,
+        "statement 'A code is written as $112$. What is the product of the two numbers?' already answers '22' and this tuple answers '12' — one statement carries one answer"
+    );
+    assert_eq!(refused.bindings, bind_two("a", 1, "b", 12));
+
+    // The instance the batch kept is the one the digest names, and no instance
+    // of the batch carries the refused answer.
+    let colliding: Vec<&Instance> = filled
+        .instances()
+        .iter()
+        .filter(|instance| {
+            instance.text == "A code is written as $112$. What is the product of the two numbers?"
+        })
+        .collect();
+    assert_eq!(colliding.len(), 1);
+    assert_eq!(colliding[0].answer, "22");
+
+    // One statement is one digest, so the pool insert of U4 would have dropped
+    // the refused row on its unique index and kept no record of it.
+    assert_eq!(
+        problem_text_hash("A code is written as $112$. What is the product of the two numbers?"),
+        colliding[0].instance_hash
+    );
+
+    // One refusal in 143 candidates is under the flag rate.
+    assert_eq!(filled.refusal_percent(), 0);
+    assert!(!filled.is_flagged());
+}
+
+/// Two tuples with one statement and ONE answer are still one row, in silence.
+///
+/// The rule reads the answers. `$111$` renders from two tuples that both answer
+/// 11, so the batch holds one instance for them and counts no refusal.
+#[test]
+fn a_repeated_statement_with_one_answer_is_kept_once_and_not_counted() {
+    let doc = doc_from(adjacent_product_body());
+    let source = TemplateSource::new("two-digit-codes", &doc).expect("the source compiles");
+    let filled = source
+        .fill("two-digit-codes", 200, 0)
+        .expect("the fill runs");
+    let repeated: Vec<&Instance> = filled
+        .instances()
+        .iter()
+        .filter(|instance| {
+            instance.text == "A code is written as $111$. What is the product of the two numbers?"
+        })
+        .collect();
+    assert_eq!(repeated.len(), 1);
+    assert_eq!(repeated[0].answer, "11");
+    assert!(
+        filled
+            .refusals()
+            .iter()
+            .all(|refused| refused.text.as_deref()
+                != Some("A code is written as $111$. What is the product of the two numbers?")),
+        "a statement with one answer is never a refusal"
+    );
 }
