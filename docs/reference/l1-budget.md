@@ -69,15 +69,30 @@ File: `crates/core/tests/bench_l1.rs`.
   `problem_text_hash`, and ask the D5 anti-repeat view about the digest.
 - **Sample.** 2,000 iterations, one fixed seed, 20 templates in file order.
 - **Assertions.** p95 of one iteration under 5 ms; the allocation count of the
-  whole loop under a fixed literal; and two pinned literals of the drawn
-  sequence (the count of anti-repeat hits and the last digest of the ring).
+  whole loop under a fixed literal; the count of anti-repeat hits and the last
+  digest of the ring; and the pinned sequence of the next bullet.
+- **The pinned sequence.** `the_measured_sequence_is_pinned` replays the 2,000
+  draws outside the allocation counter and holds them to literals: the fixture,
+  the rendered text, the answer, and the digest of iteration 0, iteration 9, and
+  iteration 19 (the first draw of fixture 1, of fixture 10, and of fixture 20),
+  and one `problem_text_hash` over all 2,000 iterations. The digest over all
+  2,000 reads every one of the 20 fixtures, so a change to the draw order, to
+  the renderer, to the evaluator, or to the hash moves it. The test needs no
+  `CADUS_BENCH`, so `cargo test --workspace` runs it too. The benchmark itself
+  ties its measured loop to the replay by the last digest, asserts the same
+  sequence digest, and writes it to `benchmark-a.json`, so a CI artifact records
+  what the loop rendered and not the timings alone. Before M4 review 2
+  (finding 6) the file pinned the last draw and a count of set hits alone: the
+  FIXM4a bracket rule changed 183 of the 2,000 statements and moved neither
+  literal, so a C4 regression on 19 of the 20 fixtures passed this gate.
 - **The allocation bound.** A counting global allocator counts every `alloc`,
   `alloc_zeroed`, and `realloc` of the measuring thread. The bound catches the
   regression a timing bound on a shared runner never catches: a `format!` in a
-  hot loop. The bound is the measured count plus 0.5 percent, so the headroom is
-  0.26 allocations per iteration and ONE added allocation per served instance
-  fails the assertion. The old bound of 2.2 percent held 1.2 allocations of
-  headroom per iteration and passed that mutation (M4 review 1, finding 21).
+  hot loop. The bound is the measured count plus 0.5 percent, rounded down, so
+  the headroom is 0.269 allocations per iteration and ONE added allocation per
+  served instance fails the assertion. The old bound of 2.2 percent held 1.2
+  allocations of headroom per iteration and passed that mutation (M4 review 1,
+  finding 21). Section 8 holds the measured count and the rule that re-pins it.
 - **L2 half.** The second test runs `answer::check` over the 3,492 answers of
   the 1.0 corpus and asserts the p95 of one check. The learner side of each pair
   is a re-spelling of the authored answer, not the authored answer itself: a
@@ -173,9 +188,38 @@ run, not a promise; the artifacts of each CI run carry the trend.
 | A | `answer::check`, 3,492 re-spelled corpus pairs | 3,010 ns | 24,969 ns | 52,219 ns | 220,505 ns | 5 ms |
 | B | serve transaction, 500 samples | 1,790,191 ns | 2,051,004 ns | 8,755,455 ns | 18,645,335 ns | 100 ms |
 
-Benchmark A allocates 107,581 times for 2,000 iterations, which is 53.79 per
-instance. The bound is 108,118, the measured count plus 0.5 percent. The count
-is the same number in the debug profile and in the release profile.
+Benchmark A allocates 107,680 times for 2,000 iterations, which is 53.84 per
+instance. The bound is `ALLOCATION_BOUND = 108_218`, the measured count plus 0.5
+percent, rounded down: floor(107,680 x 1.005). The headroom is 538 allocations
+over the loop, which is 0.269 per iteration. The count is the same number in the
+debug profile and in the release profile, and five runs on this box gave the same
+number, so it is a deterministic literal, unlike the timings in the table above.
+
+The count was measured on 2026-08-27 on the merged M4 tree (commit cd59434).
+Before that measurement both this document and `crates/core/tests/bench_l1.rs`
+recorded 107,581, the count of the tree before FIXM4a, and the bound 108,118 was
+measured plus 0.407 percent (M4 review 2, findings 7 and 11).
+
+**To re-pin the allocation count, do these steps:**
+
+1. Run the measurement:
+
+   ```sh
+   CADUS_BENCH=1 cargo test --release -p cadus-core --test bench_l1 -- \
+       --test-threads=1 --nocapture benchmark_a_instantiation
+   ```
+
+2. Read `n` from the printed `<n> allocations` field.
+3. Set `ALLOCATION_BOUND` in `crates/core/tests/bench_l1.rs` to
+   `floor(n * 1005 / 1000)`.
+4. Record `n`, `n / 2000`, and the new bound in this section and in the docstring
+   of `ALLOCATION_BOUND`.
+
+NOTE: the FIXM4d fix unit changes the gate and the template source in the same
+fix wave as this measurement. If the merged tree prints a different count, repeat
+the four steps once after the merge. If the merged tree draws different tuples,
+re-pin the literals of `the_measured_sequence_is_pinned` in the same commit; the
+test prints its current values before it asserts.
 
 The L2 row of the table moved with the fix of finding 20. The same corpus,
 measured with the authored answer on both sides, gave a p50 of 460 ns and a p95

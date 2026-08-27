@@ -26,9 +26,21 @@
 //! # Determinism
 //!
 //! The draw takes [`BENCH_SEED`] and nothing else, so the 2,000 iterations are
-//! one fixed sequence of instances. [`RING_TAIL_AFTER_THE_RUN`] and
-//! [`BLOCKED_IN_THE_RUN`] pin that sequence: a change to the draw, the renderer,
-//! the evaluator, or the hash moves one of the two literals.
+//! one fixed sequence of instances. [`the_measured_sequence_is_pinned`] holds
+//! that sequence to literals:
+//!
+//! - the fixture, the rendered text, the answer, and the digest of three
+//!   iterations, one per named fixture ([`PINNED_INSTANCES`]);
+//! - one digest over all 2,000 iterations ([`SEQUENCE_DIGEST`]), which moves on
+//!   a change to the draw, the renderer, the evaluator, or the hash of ANY of
+//!   the 20 fixtures.
+//!
+//! [`RING_TAIL_AFTER_THE_RUN`] and [`BLOCKED_IN_THE_RUN`] pin the last draw of
+//! the measured loop and the count of anti-repeat hits. They read the ring the
+//! measured loop itself fills, so they tie that loop to the pinned sequence.
+//! They are not the sequence guard: the tail is one digest of 2,000, and the
+//! blocked count compares digests to digests, so both hold under a renderer
+//! change on the other 19 fixtures (M4 review 2, finding 6).
 //!
 //! # How to run it
 //!
@@ -52,6 +64,7 @@ use std::time::Instant;
 
 use cadus_core::answer::{Outcome, canonical_form, check, normalize};
 use cadus_core::curriculum::{AnswerKind, Exemplar};
+use cadus_core::learner::problem_text_hash;
 use cadus_core::pool::{Avoid, Ring, TaskMemory};
 use cadus_core::template::{
     Compiled, GateSpec, TemplateDoc, from_body, gate, rng_from_seed, to_body,
@@ -90,30 +103,58 @@ const DEBUG_SLOWDOWN: u128 = 10;
 ///
 /// The counting allocator counts one for every `alloc`, `alloc_zeroed`, and
 /// `realloc` of the measuring thread while the loop runs. The measured run
-/// allocates 107,581 times for 2,000 instantiations, which is 53.79 per
+/// allocates 107,680 times for 2,000 instantiations, which is 53.84 per
 /// instance:
 /// the drawn `BigRational` values, the rendered statement, the evaluated tree,
 /// the canonical form, the digest, and the two anti-repeat views. The count is
 /// the same number in the debug profile and in the release profile, so this
 /// bound binds in both.
 ///
-/// The bound is the measured count plus 0.5 percent, rounded down: 107,581 +
-/// 537 = 108,118. Per iteration the bound is 54.05 allocations against the
-/// measured 53.79, so the headroom is 0.26 allocations per iteration. One added
-/// heap allocation per instance therefore moves the loop to 109,581 and fails
-/// this assertion. That is the regression spec section 10.1 asks this bound to
-/// catch and a timing bound on a shared runner never catches. The old bound of
-/// 110,000 held 1.2 allocations of headroom per iteration and passed the same
-/// mutation (M4 review 1, finding 21).
+/// The bound is the measured count plus 0.5 percent, rounded down:
+/// floor(107,680 x 1.005) = 108,218. Per iteration the bound is 54.109
+/// allocations against the measured 53.84, so the headroom is 538 allocations
+/// over the loop, which is 0.269 per iteration. One added heap allocation per
+/// instance therefore moves the loop to 109,680 and fails this assertion. That
+/// is the regression spec section 10.1 asks this bound to catch and a timing
+/// bound on a shared runner never catches. The old bound of 110,000 held 1.2
+/// allocations of headroom per iteration and passed the same mutation (M4
+/// review 1, finding 21).
+///
+/// # How to re-pin this literal
 ///
 /// A change that alters the count on purpose moves this literal in the same
-/// commit and records the new measured number in the paragraph above.
-const ALLOCATION_BOUND: u64 = 108_118;
+/// commit. Follow these steps:
+///
+/// 1. Run the measurement command:
+///
+/// ```sh
+/// CADUS_BENCH=1 cargo test --release -p cadus-core --test bench_l1 -- \
+///     --test-threads=1 --nocapture benchmark_a_instantiation
+/// ```
+///
+/// 2. Read `n` from the printed `<n> allocations` field.
+/// 3. Set this literal to `floor(n * 1005 / 1000)`, the rule of the M4 review 1
+///    ruling on finding 21.
+/// 4. Record `n`, `n / 2000`, and the new bound in the paragraph above and in
+///    `docs/reference/l1-budget.md` section 8.
+///
+/// The measurement behind the literal below is 107,680, taken on the M4 review 2
+/// tree (commit cd59434) in the release profile and in the debug profile, five
+/// runs, one test thread. M4 review 2 findings 7 and 11 are the record of what a
+/// stale measurement costs.
+///
+/// NOTE: FIXM4d changes the gate and the template source in the same fix wave.
+/// If the merged tree prints a different count, repeat the four steps above once
+/// after the merge, and re-run [`the_measured_sequence_is_pinned`] as well: a
+/// change that moves the drawn tuples moves those literals too.
+const ALLOCATION_BOUND: u64 = 108_218;
 
 /// The last digest of the ring after the measured loop.
 ///
-/// The literal is the instance hash of the 2,000th draw. It pins the whole
-/// sequence: the draw order, the rendered text, and `problem_text_hash`.
+/// The literal is the instance hash of the 2,000th draw alone. It pins the last
+/// iteration and nothing else, and iteration 1,999 reads fixture 20, because
+/// `1999 % TEMPLATE_COUNT == 19`. [`SEQUENCE_DIGEST`] is the guard over all
+/// 2,000 iterations and all 20 fixtures (M4 review 2, finding 6).
 const RING_TAIL_AFTER_THE_RUN: &str = "c027d35bab27";
 
 /// The count of iterations whose digest the anti-repeat view already held.
@@ -123,6 +164,74 @@ const RING_TAIL_AFTER_THE_RUN: &str = "c027d35bab27";
 /// the 12-digest task memory is expected, and the count is a fixed number of
 /// this fixed sequence.
 const BLOCKED_IN_THE_RUN: usize = 47;
+
+/// One pinned iteration of the measured sequence.
+///
+/// The four fields are the whole record of one draw: the fixture the loop read,
+/// the statement the learner reads, the answer the pool row carries, and the
+/// digest the D5 anti-repeat view holds.
+struct PinnedInstance {
+    /// The index of the iteration inside the 2,000-iteration loop.
+    iteration: usize,
+    /// The file name of the fixture the iteration draws from.
+    fixture: &'static str,
+    /// The rendered statement.
+    text: &'static str,
+    /// The expected answer, inside the M2 grammar.
+    answer: &'static str,
+    /// `problem_text_hash` of `text`.
+    hash: &'static str,
+}
+
+/// Three pinned iterations: the first draw of fixture 1, of fixture 10, and of
+/// fixture 20 (M4 review 2, ruling on findings 6, 7 and 11).
+///
+/// `index % TEMPLATE_COUNT` picks the fixture, so iteration 0 draws the first
+/// fixture in file-name order, iteration 9 draws the tenth, and iteration 19
+/// draws the twentieth. These three literals are the readable half of the
+/// sequence guard: a reviewer reads the fixture, the statement, and the answer
+/// and compares them by eye. [`SEQUENCE_DIGEST`] is the half that covers the
+/// other 17 fixtures.
+///
+/// [`the_measured_sequence_is_pinned`] prints the current values before it
+/// asserts, so a deliberate change re-pins these literals from the printed
+/// lines.
+const PINNED_INSTANCES: [PinnedInstance; 3] = [
+    PinnedInstance {
+        iteration: 0,
+        fixture: "01-perfect-squares.json",
+        text: "Compute $3^{2}$.",
+        answer: "9",
+        hash: "e61280d48db9",
+    },
+    PinnedInstance {
+        iteration: 9,
+        fixture: "10-distribute-over-a-sum.json",
+        text: "Expand $5(x + 3)$.",
+        answer: "15 + 5*x",
+        hash: "54a94abb69bd",
+    },
+    PinnedInstance {
+        iteration: 19,
+        fixture: "20-two-digit-difference.json",
+        text: "Compute $48 - 34$.",
+        answer: "14",
+        hash: "1287954c19c6",
+    },
+];
+
+/// The digest of the whole measured sequence.
+///
+/// [`sequence_digest`] folds the fixture name, the rendered text, the answer,
+/// and the instance hash of all 2,000 iterations into one `problem_text_hash`.
+/// The literal therefore moves on a change to the draw order, to the renderer,
+/// to the evaluator, or to the digest of ANY of the 20 fixtures.
+///
+/// This literal is the answer to M4 review 2 finding 6. Before it, the file
+/// pinned the last draw and a count of set hits alone, and the FIXM4a bracket
+/// rule changed 183 of the 2,000 statements (fixtures 07 and 08) while both
+/// literals held byte for byte.
+const SEQUENCE_DIGEST: &str = "c767c554c277";
 
 /// The count of answers in the 1.0 corpus (`docs/plans/M2.md`).
 const CORPUS_ANSWERS: usize = 3_492;
@@ -463,6 +572,154 @@ fn the_fixture_spans_the_named_shapes() {
 }
 
 // ---------------------------------------------------------------------------
+// The pinned sequence
+// ---------------------------------------------------------------------------
+
+/// One replayed iteration of the measured sequence.
+struct Replayed {
+    /// The file name of the fixture the iteration drew from.
+    fixture: String,
+    /// The rendered statement.
+    text: String,
+    /// The expected answer.
+    answer: String,
+    /// `problem_text_hash` of `text`.
+    hash: String,
+}
+
+/// Replay the measured sequence outside the allocation counter.
+///
+/// The replay draws the same 2,000 instances as
+/// [`benchmark_a_instantiation_holds_the_l1_segment`]: the same seed, the same
+/// fixtures, the same order, the same production `draw`. The measured loop keeps
+/// no text and no digest of its own, because a kept `String` is an allocation
+/// [`ALLOCATION_BOUND`] pays for; this function keeps all four fields of every
+/// iteration and costs the measured numbers nothing.
+///
+/// The ring and the task memory of the measured loop read the digests and never
+/// feed the draw, so the two loops walk one sequence. The benchmark asserts that
+/// tie: its ring tail equals the last digest of this replay.
+fn replay() -> Vec<Replayed> {
+    let fixtures = fixtures();
+    assert_eq!(fixtures.len(), TEMPLATE_COUNT);
+    let compiled: Vec<Compiled<'_>> = fixtures
+        .iter()
+        .map(|(name, doc)| {
+            Compiled::new(doc).unwrap_or_else(|err| panic!("{name} does not compile: {err}"))
+        })
+        .collect();
+
+    let mut rng = rng_from_seed(BENCH_SEED);
+    let mut run: Vec<Replayed> = Vec::with_capacity(ITERATIONS);
+    for index in 0..ITERATIONS {
+        let slot = index % TEMPLATE_COUNT;
+        let instance = match compiled[slot].draw(&mut rng) {
+            Ok(instance) => instance,
+            Err(err) => panic!("iteration {index} did not instantiate: {err}"),
+        };
+        run.push(Replayed {
+            fixture: fixtures[slot].0.clone(),
+            text: instance.text,
+            answer: instance.answer,
+            hash: instance.instance_hash,
+        });
+    }
+    run
+}
+
+/// The digest of a whole replayed run.
+///
+/// The preimage holds one line per iteration. One line is the fixture name, the
+/// rendered text, the answer, and the instance hash, in that order, separated by
+/// the unit separator `U+001F`. No field of the four carries that character or a
+/// newline, so one preimage reads back as one sequence.
+///
+/// The function hashes the preimage with `problem_text_hash`, the production
+/// digest of a problem text, so the fold needs no second hash definition
+/// (trap T17).
+fn sequence_digest(run: &[Replayed]) -> String {
+    let mut preimage = String::new();
+    for row in run {
+        preimage.push_str(&row.fixture);
+        preimage.push('\u{1f}');
+        preimage.push_str(&row.text);
+        preimage.push('\u{1f}');
+        preimage.push_str(&row.answer);
+        preimage.push('\u{1f}');
+        preimage.push_str(&row.hash);
+        preimage.push('\n');
+    }
+    problem_text_hash(&preimage)
+}
+
+/// The measured sequence is the pinned sequence.
+///
+/// This test is the determinism guard of benchmark A, and it runs without
+/// `CADUS_BENCH`: a renderer, evaluator, draw, or digest regression fails the
+/// ordinary `cargo test --workspace` run, not the benchmark alone.
+///
+/// It asserts two things:
+///
+/// - the fixture, the text, the answer, and the digest of three iterations, one
+///   per fixture the M4 review 2 ruling names ([`PINNED_INSTANCES`]);
+/// - one digest over all 2,000 iterations ([`SEQUENCE_DIGEST`]), which reads all
+///   20 fixtures.
+///
+/// The test prints every pinned value before it asserts, so a deliberate change
+/// re-pins the literals from the printed lines (`--nocapture` shows them).
+#[test]
+fn the_measured_sequence_is_pinned() {
+    let run = replay();
+    assert_eq!(run.len(), ITERATIONS, "every iteration is replayed");
+
+    for pin in &PINNED_INSTANCES {
+        let row = &run[pin.iteration];
+        println!(
+            "pinned iteration {}: fixture {:?} text {:?} answer {:?} hash {:?}",
+            pin.iteration, row.fixture, row.text, row.answer, row.hash
+        );
+    }
+    let digest = sequence_digest(&run);
+    println!("sequence digest: {digest:?}");
+
+    for pin in &PINNED_INSTANCES {
+        let row = &run[pin.iteration];
+        let at = pin.iteration;
+        assert_eq!(
+            row.fixture, pin.fixture,
+            "iteration {at} reads a different fixture"
+        );
+        assert_eq!(
+            row.text, pin.text,
+            "iteration {at} renders a different statement"
+        );
+        assert_eq!(
+            row.answer, pin.answer,
+            "iteration {at} evaluates a different answer"
+        );
+        assert_eq!(row.hash, pin.hash, "iteration {at} hashes to a new digest");
+        // The digest of a pool row is `problem_text_hash` of the statement and
+        // of nothing else (D-S5). The pinned text and the pinned hash therefore
+        // hold each other: a rewrite of one of the two alone fails here.
+        assert_eq!(
+            problem_text_hash(pin.text),
+            pin.hash,
+            "the pinned text of iteration {at} does not hash to the pinned digest"
+        );
+    }
+
+    assert_eq!(
+        digest, SEQUENCE_DIGEST,
+        "the fixture, the text, the answer, or the digest of one of the 2,000 iterations moved"
+    );
+    assert_eq!(
+        run[ITERATIONS - 1].hash,
+        RING_TAIL_AFTER_THE_RUN,
+        "the last replayed digest is the ring tail the benchmark pins"
+    );
+}
+
+// ---------------------------------------------------------------------------
 // Benchmark A, part 1 — instantiate, evaluate, canonicalize, hash, ring
 // ---------------------------------------------------------------------------
 
@@ -521,6 +778,12 @@ fn benchmark_a_instantiation_holds_the_l1_segment() {
 
     let times = Percentiles::of(&samples);
     let budget = budget(INSTANTIATE_P95_BUDGET_NS);
+    // Replay the same 2,000 draws outside the counter, and fold them into one
+    // digest. `the_measured_sequence_is_pinned` holds that digest to a literal,
+    // and the artifact below carries it, so a CI run records what the loop
+    // rendered and not the timings alone (M4 review 2, finding 6).
+    let replayed = replay();
+    let replayed_digest = sequence_digest(&replayed);
     // Report first, then assert. A failed budget must still print the numbers
     // and leave the artifact behind, because the review cycle reads the trend
     // of the failing run as well as of the passing one (spec section 10.2).
@@ -542,7 +805,7 @@ fn benchmark_a_instantiation_holds_the_l1_segment() {
             "{{\n  \"benchmark\": \"A\",\n  \"profile\": {:?},\n  \"templates\": {},\n  \
              \"iterations\": {},\n  \"seed\": {},\n  \"instantiate_ns\": {},\n  \
              \"allocations\": {{\"total\": {}, \"per_iteration\": {}, \"bound\": {}}},\n  \
-             \"p95_budget_ns\": {}\n}}\n",
+             \"sequence_digest\": {:?},\n  \"p95_budget_ns\": {}\n}}\n",
             profile(),
             TEMPLATE_COUNT,
             ITERATIONS,
@@ -551,6 +814,7 @@ fn benchmark_a_instantiation_holds_the_l1_segment() {
             allocations,
             allocations / ITERATIONS as u64,
             ALLOCATION_BOUND,
+            replayed_digest,
             budget,
         ),
     );
@@ -565,6 +829,21 @@ fn benchmark_a_instantiation_holds_the_l1_segment() {
         ring.hashes().last().map(String::as_str),
         Some(RING_TAIL_AFTER_THE_RUN),
         "the last drawn instance changed"
+    );
+    // Tie the measured loop to the pinned sequence. `replay` draws the same
+    // instances in the same order, and `the_measured_sequence_is_pinned` holds
+    // that replay to literals, so this equality carries every one of those
+    // literals onto the loop the numbers above measure. The replay runs after
+    // the measured loop and outside the allocation counter, so it costs the
+    // reported count nothing.
+    assert_eq!(
+        ring.hashes().last().map(String::as_str),
+        replayed.last().map(|row| row.hash.as_str()),
+        "the measured loop and the pinned replay walked different sequences"
+    );
+    assert_eq!(
+        replayed_digest, SEQUENCE_DIGEST,
+        "the measured loop rendered a sequence the pinned digest does not hold"
     );
     assert!(
         times.p95 < budget,
