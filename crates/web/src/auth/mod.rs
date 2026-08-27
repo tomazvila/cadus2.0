@@ -26,7 +26,12 @@
 //! - [`rate`] — the four paired rate rules and the client-address key;
 //! - [`guard`] — the session guard, the one seam where a request gets a
 //!   `user_id`;
-//! - [`routes`] — the ten handlers and the router that carries them.
+//! - [`routes`] — the ten handlers and the router that carries them;
+//! - [`oauth`] — the OAuth mechanics of unit U5: the two providers, PKCE S256,
+//!   the handshake record, and the transport PORT that keeps the outbound call
+//!   out of this crate (R4);
+//! - [`oauth_routes`] — the start route, the callback route, and the list the
+//!   sign-in page reads.
 //!
 //! [`store_call`] below is the one place a route reaches the database, so the
 //! query bound, the `500` mapping, and the "no store text in a body" rule each
@@ -41,6 +46,8 @@
 
 pub mod email;
 pub mod guard;
+pub mod oauth;
+pub mod oauth_routes;
 pub mod password;
 pub mod rate;
 pub mod routes;
@@ -90,6 +97,10 @@ where
 
 pub use email::normalize_email;
 pub use guard::{Authed, current_user};
+pub use oauth::{
+    Credentials, GITHUB, GOOGLE, Handshake, Identity, OAuthConfig, OAuthFailure, Provider,
+    ProviderRequest, ProviderResponse, ProviderTransport, TransportError,
+};
 pub use password::{
     ARGON2_PROFILE_VAR, Argon2Profile, MAX_PASSWORD_BYTES, MAX_PASSWORD_LENGTH,
     MIN_PASSWORD_LENGTH, PasswordError, WeakPassword, hash_password, needs_rehash,

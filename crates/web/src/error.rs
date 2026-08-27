@@ -52,6 +52,11 @@ pub const INVALID_TOKEN: &str = "invalid_token";
 /// The code of a refused rate rule (spec section 3.2).
 pub const RATE_LIMITED: &str = "rate_limited";
 
+/// The code of a recoverable OAuth failure (spec section 10, row "OAuth"). It
+/// is never a `500`: a provider hiccup and a tampered callback are both bad
+/// requests.
+pub const OAUTH_ERROR: &str = "oauth_error";
+
 /// The code of a fault inside the service. The message names no account, no
 /// address, and no token.
 pub const INTERNAL_ERROR: &str = "internal_error";
@@ -157,6 +162,20 @@ impl ApiError {
             INTERNAL_ERROR,
             format!("The service could not finish this request ({step})."),
         )
+    }
+
+    /// `404 not_found` — this deployment serves no such OAuth provider.
+    ///
+    /// The code is the same `not_found` an unmatched path gives, so an
+    /// unconfigured deployment presents no OAuth surface at all.
+    pub fn oauth_not_found(message: impl Into<String>) -> Self {
+        Self::new(StatusCode::NOT_FOUND, NOT_FOUND, message.into())
+    }
+
+    /// `400 oauth_error` — the OAuth handshake, the exchange, or the identity
+    /// did not hold.
+    pub fn oauth_error(message: impl Into<String>) -> Self {
+        Self::new(StatusCode::BAD_REQUEST, OAUTH_ERROR, message.into())
     }
 
     /// `403 cross_origin_rejected` — the CSRF origin layer refused the write.

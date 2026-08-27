@@ -272,12 +272,15 @@ fn dummy_verify(profile: Argon2Profile) {
 }
 
 /// Start a transaction and bind the tenant to it (C3).
-async fn bind(db: &Db, user_id: Uuid) -> Result<Transaction<'static, Postgres>, ApiError> {
+pub(crate) async fn bind(
+    db: &Db,
+    user_id: Uuid,
+) -> Result<Transaction<'static, Postgres>, ApiError> {
     store_call(db, "tenant bind", begin_tenant(db.pool(), user_id)).await
 }
 
 /// Commit a bound transaction. `step` names the write for the log.
-async fn commit(
+pub(crate) async fn commit(
     db: &Db,
     tx: Transaction<'static, Postgres>,
     step: &'static str,
@@ -287,7 +290,7 @@ async fn commit(
 
 /// The session row of a login, a sign-in by verification link, or an OAuth
 /// callback.
-fn new_session_row<'a>(
+pub(crate) fn new_session_row<'a>(
     token_hash: &'a str,
     now: DateTime<Utc>,
     expires_at: DateTime<Utc>,
@@ -305,7 +308,7 @@ fn new_session_row<'a>(
 }
 
 /// The `User-Agent` of the request, for the session list.
-fn user_agent(headers: &HeaderMap) -> Option<&str> {
+pub(crate) fn user_agent(headers: &HeaderMap) -> Option<&str> {
     headers
         .get(header::USER_AGENT)
         .and_then(|value| value.to_str().ok())

@@ -62,6 +62,7 @@ use axum::middleware::{from_fn, from_fn_with_state};
 use axum::routing::{get, post};
 use cadus_store::{Db, RoleInfo, StoreError, bounded};
 
+use crate::auth::oauth::OAuthConfig;
 use crate::auth::password::Argon2Profile;
 use crate::cookie::CookiePosture;
 use crate::metrics::Registry;
@@ -96,6 +97,10 @@ pub struct AppState {
     /// and rehash with it, and the anti-enumeration dummy hash carries the same
     /// parameters, so the unknown-address path costs what the known one costs.
     pub argon2: Argon2Profile,
+    /// The OAuth providers this deployment serves, and the transport that runs
+    /// the provider calls (M5 U5). The default serves no provider, so both
+    /// OAuth routes answer `404 not_found`.
+    pub oauth: OAuthConfig,
 }
 
 impl AppState {
@@ -109,6 +114,7 @@ impl AppState {
             metrics: Arc::new(Registry::new()),
             content: None,
             argon2: Argon2Profile::PROD,
+            oauth: OAuthConfig::default(),
         }
     }
 
@@ -139,6 +145,13 @@ impl AppState {
         self.argon2 = argon2;
         self
     }
+
+    /// The same state with an OAuth configuration.
+    #[must_use]
+    pub fn with_oauth(mut self, oauth: OAuthConfig) -> Self {
+        self.oauth = oauth;
+        self
+    }
 }
 
 /// Build the axum application.
@@ -166,6 +179,10 @@ pub fn create_app(state: AppState) -> Router {
         // M5 U4: the `/api/auth/*` routes. They sit INSIDE every layer
         // below, so a cross-origin login is refused before the handler runs.
         .merge(auth::routes::router())
+        // M5 U5: the OAuth start and callback. Both are GET, so the CSRF layer
+        // never reads them and the provider's callback navigation is never
+        // refused.
+        .merge(auth::oauth_routes::router())
         // axum's own fallbacks answer with an empty body, so both of them
         // return the envelope instead (spec section 2).
         .fallback(error::not_found)
