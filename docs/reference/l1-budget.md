@@ -74,9 +74,23 @@ File: `crates/core/tests/bench_l1.rs`.
 - **The allocation bound.** A counting global allocator counts every `alloc`,
   `alloc_zeroed`, and `realloc` of the measuring thread. The bound catches the
   regression a timing bound on a shared runner never catches: a `format!` in a
-  hot loop.
+  hot loop. The bound is the measured count plus 0.5 percent, so the headroom is
+  0.26 allocations per iteration and ONE added allocation per served instance
+  fails the assertion. The old bound of 2.2 percent held 1.2 allocations of
+  headroom per iteration and passed that mutation (M4 review 1, finding 21).
 - **L2 half.** The second test runs `answer::check` over the 3,492 answers of
-  the 1.0 corpus and asserts the p95 of one check.
+  the 1.0 corpus and asserts the p95 of one check. The learner side of each pair
+  is a re-spelling of the authored answer, not the authored answer itself: a
+  numeric answer takes `+0`, and an expression answer goes inside parentheses
+  and takes `*1`. A self-check returns at rung 2, the string-key rung, so it
+  measures `normalize` and a string compare and never the parser or the exact
+  canonicalizer (M4 review 1, finding 20).
+- **The two guards of the L2 half.** The test counts, outside the timed loop,
+  the pairs whose two normalized string keys differ (3,492 of 3,492: no measured
+  call returns at rung 2) and the pairs whose two sides both reach a canonical
+  form (2,985: the calls that run the exact arithmetic). Both counts are pinned
+  literals. A p50 floor of 1,000 ns is the backstop: the same corpus measured a
+  p50 of 460 ns while the learner side was the authored answer.
 
 ## 5. What benchmark A does not yet measure
 
@@ -95,10 +109,21 @@ File: `crates/store/tests/bench_serve_roundtrip.rs`.
   model row, pop at most 8 pool rows with `FOR UPDATE SKIP LOCKED`, reject the
   digests the D5 ring holds, claim the survivor, write the D-S6 state document,
   and commit.
-- **Fixture.** One seeded user, one knowledge point, 200 unclaimed pool rows
-  with distinct `created_at` values, and a ring of 20 digests that overlaps the
-  three oldest pool rows. The pop therefore skips three rows on every sample, so
-  the measured transaction carries the skip loop.
+- **The measured code is the production code.** The pop is
+  `cadus_store::pool::pop_with_ring_tx`, the function the M5 serve path calls,
+  and the seed is `cadus_store::pool::insert_batch`, the function the D-O4
+  worker calls. An earlier version carried its own SELECT over its own fixture
+  documents; those documents did not decode through the production reader, and
+  the inline SELECT diverged from the pop in its ORDER BY and in its claim
+  (M4 review 1, finding 11). The benchmark now asserts the decoded statement and
+  the decoded expected answer of every sample.
+- **Fixture.** One seeded user, one knowledge point, and 200 unclaimed pool rows
+  written by two `insert_batch` calls. One call is one statement, so 100 rows
+  share one `created_at`: the pop reads the two batches in age order and breaks
+  the tie inside a batch by `id`, which is the sort every production pop
+  performs. The fixture reads the first three digests in that same
+  `created_at, id` order and puts them into a ring of 20, so the pop skips three
+  rows on every sample and the measured transaction carries the skip loop.
 - **Sample.** 50 untimed warm-ups, then 500 timed transactions on one
   connection, with no concurrency.
 - **Gate policy.** The build fails at p95 above 100 ms. It never fails on p50
@@ -128,6 +153,13 @@ L2.
 
 `CADUS_BENCH_DIR` moves the artifact directory. The default is `target/bench`.
 
+`scripts/bench.sh` runs one more step between the two benchmarks:
+`CADUS_RELEASE_BENCH=1 cargo test --release -p cadus-core --test answer_check`.
+That file holds the M2 budgets of the checker — 5 ms per check and 1 s per
+corpus pass in a release build, ten times wider without the variable. Before
+M4 review 1 (finding 20) no script set the variable, so the release budgets of
+the checker ran nowhere.
+
 ---
 
 ## 8. The measured numbers
@@ -137,16 +169,22 @@ run, not a promise; the artifacts of each CI run carry the trend.
 
 | Benchmark | Segment | p50 | p95 | p99 | max | Budget |
 |---|---|---|---|---|---|---|
-| A | instantiate, evaluate, canonicalize, hash, ring | 3,760 ns | 8,450 ns | 10,230 ns | 24,809 ns | 5 ms |
-| A | `answer::check`, 3,492 corpus answers | 460 ns | 1,560 ns | 2,160 ns | 14,090 ns | 5 ms |
-| B | serve transaction, 500 samples | 1,589,154 ns | 1,889,478 ns | 4,859,173 ns | 4,893,662 ns | 100 ms |
+| A | instantiate, evaluate, canonicalize, hash, ring | 3,590 ns | 8,340 ns | 8,810 ns | 13,320 ns | 5 ms |
+| A | `answer::check`, 3,492 re-spelled corpus pairs | 3,010 ns | 24,969 ns | 52,219 ns | 220,505 ns | 5 ms |
+| B | serve transaction, 500 samples | 1,790,191 ns | 2,051,004 ns | 8,755,455 ns | 18,645,335 ns | 100 ms |
 
-Benchmark A allocates 107,581 times for 2,000 iterations, which is 53 per
-instance. The bound is 110,000. The count is the same number in the debug
-profile and in the release profile.
+Benchmark A allocates 107,581 times for 2,000 iterations, which is 53.79 per
+instance. The bound is 108,118, the measured count plus 0.5 percent. The count
+is the same number in the debug profile and in the release profile.
 
-The instantiation p95 is 592 times under its segment. The check p95 is 3,205
-times under its segment. The serve transaction p95 is 53 times under its
-segment. 1.0 measured the same instantiation path in Python at a p95 of
-0.171 ms (spec section 1), so the Rust path is about 20 times faster than the
-path the A1 claim rests on.
+The L2 row of the table moved with the fix of finding 20. The same corpus,
+measured with the authored answer on both sides, gave a p50 of 460 ns and a p95
+of 1,560 ns; those numbers were the cost of `normalize` and a string compare.
+The re-spelled pairs cost 6.5 times the p50 and 16 times the p95, and 2,985 of
+the 3,492 calls reach the exact canonicalizer.
+
+The instantiation p95 is 599 times under its segment. The check p95 is 200 times
+under its segment. The serve transaction p95 is 48 times under its segment. 1.0
+measured the same instantiation path in Python at a p95 of 0.171 ms (spec
+section 1), so the Rust path is about 20 times faster than the path the A1 claim
+rests on.
