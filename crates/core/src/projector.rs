@@ -1192,3 +1192,36 @@ fn render_json(value: &Value, out: &mut String) {
 fn json_string(value: &str) -> String {
     serde_json::to_string(value).unwrap_or_default()
 }
+
+// --------------------------------------------------------------------------- //
+// The lesson knowledge-point gates (`projector.py:860-872`)
+// --------------------------------------------------------------------------- //
+
+/// Whether a lesson knowledge point is mastered (`projector.py:860-867`).
+///
+/// The rule is `lesson.kp_pass = "2consec|3of4"`: two correct answers in a row at
+/// the tail, or three correct out of the first four. 1.0 hard-codes both arms and
+/// reads the config string for neither, so this port takes no config either. A
+/// second rule spelling would need a parser in both tiers, and 1.0 has none.
+///
+/// `seq` is the answer sequence of ONE knowledge point, oldest first.
+#[must_use]
+pub fn kp_passed(seq: &[bool]) -> bool {
+    let len = seq.len();
+    if len >= 2 && seq[len - 1] && seq[len - 2] {
+        return true;
+    }
+    if len >= 4 && seq.iter().take(4).filter(|correct| **correct).count() >= 3 {
+        return true;
+    }
+    false
+}
+
+/// Whether a lesson knowledge point failed (`projector.py:870-872`).
+///
+/// A knowledge point fails when `lesson.fail_after` answers stand and
+/// [`kp_passed`] is still false.
+#[must_use]
+pub fn kp_failed(seq: &[bool], cfg: &Config) -> bool {
+    i64::try_from(seq.len()).unwrap_or(i64::MAX) >= cfg.lesson.fail_after && !kp_passed(seq)
+}

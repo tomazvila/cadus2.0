@@ -47,6 +47,7 @@
 pub mod auth;
 pub mod cookie;
 pub mod error;
+pub mod grade;
 pub mod health;
 pub mod metrics;
 pub mod origin;
@@ -150,6 +151,8 @@ pub fn create_app(state: AppState) -> Router {
         .route("/api/task/{task_id}/serve", post(serve::serve))
         .route("/api/task/{task_id}/teach", post(serve::teach))
         .route("/api/task/{task_id}/hint", post(serve::hint))
+        // Unit U8, spec section 11. The same rule: before the three layers.
+        .route("/api/task/{task_id}/answer", post(grade::answer))
         // axum's own fallbacks answer with an empty body, so both of them
         // return the envelope instead (spec section 2).
         .fallback(error::not_found)

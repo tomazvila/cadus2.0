@@ -46,7 +46,7 @@ use cadus_store::content::{KIND_HINT_LADDER, KIND_TEACH, approved_document};
 use cadus_store::pool::{
     NewInstance, PoolRow, insert_batch, pop_with_ring_tx, reclaim_exemplar_tx,
 };
-use cadus_store::state::{load_events, lock_web_state, project_current};
+use cadus_store::state::{EventRow, load_events, lock_web_state, project_current};
 use serde::Deserialize;
 use serde_json::{Value, json};
 use sqlx::types::Uuid;
@@ -130,7 +130,7 @@ pub struct HintLadder {
 // --------------------------------------------------------------------------- //
 
 /// The Unix instant of `now`, in seconds, as the D-S6 document spells it.
-fn unix_seconds(micros: i64) -> f64 {
+pub(crate) fn unix_seconds(micros: i64) -> f64 {
     micros as f64 / 1_000_000.0
 }
 
@@ -289,7 +289,7 @@ fn no_problem(topic_id: &str) -> ApiError {
 /// (`_progress_for`, `api.py:567-583`).
 ///
 /// The serve path may install it. `GET /api/session/plan` may NOT: trap W3.
-fn progress_for<'state>(
+pub(crate) fn progress_for<'state>(
     scratch: &'state mut WebState,
     task: &Task,
     graph: &Curriculum,
@@ -357,13 +357,15 @@ fn serve_payload(
 // --------------------------------------------------------------------------- //
 
 /// What every one of the three routes reads before it does its own work.
-struct Open {
+pub(crate) struct Open {
     /// The tenant-bound transaction. The caller commits it or rolls it back.
-    tx: Transaction<'static, Postgres>,
+    pub(crate) tx: Transaction<'static, Postgres>,
+    /// The whole append-only log of the tenant, in `seq` order.
+    pub(crate) events: Vec<EventRow>,
     /// The D-S6 document, bound to the open session.
-    scratch: WebState,
+    pub(crate) scratch: WebState,
     /// The plan of the open session.
-    plan: SessionPlan,
+    pub(crate) plan: SessionPlan,
 }
 
 /// Open the transaction, read the log and the state, and compose the plan.
@@ -373,7 +375,7 @@ struct Open {
 ///
 /// The whole read is inside ONE transaction, so the plan a route serves from and
 /// the state row it validates against cannot disagree.
-async fn open(
+pub(crate) async fn open(
     state: &AppState,
     content: &Content,
     user_id: Uuid,
@@ -399,11 +401,19 @@ async fn open(
     let mut scratch = read_state(&state.db, &mut tx, user_id).await?;
     scratch.bind(&session);
     let plan = compose_plan(content, &events, &projection.model, &session, now);
-    Ok(Open { tx, scratch, plan })
+    Ok(Open {
+        tx,
+        events,
+        scratch,
+        plan,
+    })
 }
 
 /// The task of this plan, or `404 unknown_task`.
-fn find<'plan>(plan: &'plan SessionPlan, task_id: &str) -> Result<&'plan Task, ApiError> {
+pub(crate) fn find<'plan>(
+    plan: &'plan SessionPlan,
+    task_id: &str,
+) -> Result<&'plan Task, ApiError> {
     plan.tasks
         .iter()
         .find(|task| task.task_id == task_id)
@@ -432,6 +442,7 @@ pub async fn serve(
         mut tx,
         mut scratch,
         plan,
+        ..
     } = open(&state, content, user_id, now, true).await?;
     let task = find(&plan, &task_id)?;
     let task_type = task.task_type;
@@ -443,28 +454,65 @@ pub async fn serve(
             "This task is already complete.",
         ));
     }
-    let total = task.n_problems;
-    let index = next_serve_index(task_type, &progress);
 
     // A problem is already live for this task: a reload, or the problem the last
     // answer installed. Re-stamp the clock and hand the SAME one back
     // (`_serve_live`, section 5.6).
-    if let Some(live) = scratch.served.get_mut(&task_id) {
+    let payload = if let Some(live) = scratch.served.get_mut(&task_id) {
         live.started_at = started_at;
-        let payload = serve_payload(live, total, task_type, graph, content.cfg.drill.target_secs);
-        write_state(&state.db, &mut tx, user_id, &scratch).await?;
-        tx.commit().await.map_err(|err| failed(&err.into()))?;
-        return Ok(Json(payload));
-    }
+        serve_payload(
+            live,
+            task.n_problems,
+            task_type,
+            graph,
+            content.cfg.drill.target_secs,
+        )
+    } else {
+        install_next(
+            &state,
+            content,
+            &mut tx,
+            user_id,
+            task,
+            &mut scratch,
+            started_at,
+        )
+        .await?
+    };
+    write_state(&state.db, &mut tx, user_id, &scratch).await?;
+    tx.commit().await.map_err(|err| failed(&err.into()))?;
+    Ok(Json(payload))
+}
+
+/// Draw the next problem of `task`, install it in the D-S6 row, and give back
+/// its client-safe payload.
+///
+/// It is the ONE place that installs a served problem. `serve` calls it when no
+/// problem is live, and the grade path of unit U8 calls it after the attempt
+/// commits, so the `next` of a grade reply and a later serve cannot disagree.
+///
+/// The caller owns the transaction: this writes into `scratch` and into the
+/// pool, and it commits nothing.
+pub(crate) async fn install_next(
+    state: &AppState,
+    content: &Content,
+    tx: &mut Transaction<'_, Postgres>,
+    user_id: Uuid,
+    task: &Task,
+    scratch: &mut WebState,
+    started_at: f64,
+) -> Result<Value, ApiError> {
+    let graph = &content.curriculum;
+    let task_id = task.task_id.clone();
+    let task_type = task.task_type;
+    let progress = progress_for(scratch, task, graph).clone();
+    let index = next_serve_index(task_type, &progress);
 
     let target = target_of(task, index, &progress, graph)?;
     let key = target.key();
     let ring = scratch.ring(&target.serve);
     let memory = scratch.memory(&task_id);
-    let row = draw(
-        &state, &mut tx, user_id, graph, &target, &key, &ring, &memory,
-    )
-    .await?;
+    let row = draw(state, tx, user_id, graph, &target, &key, &ring, &memory).await?;
 
     let served = ServedProblem {
         problem_id: Uuid::new_v4().simple().to_string(),
@@ -482,7 +530,7 @@ pub async fn serve(
     };
     let payload = serve_payload(
         &served,
-        total,
+        task.n_problems,
         task_type,
         graph,
         content.cfg.drill.target_secs,
@@ -492,9 +540,7 @@ pub async fn serve(
     if let Some(progress) = scratch.tasks.get_mut(&task_id) {
         progress.served = progress.served.saturating_add(1);
     }
-    write_state(&state.db, &mut tx, user_id, &scratch).await?;
-    tx.commit().await.map_err(|err| failed(&err.into()))?;
-    Ok(Json(payload))
+    Ok(payload)
 }
 
 /// The answer kind the checker reads for a statement of this topic.
@@ -634,6 +680,7 @@ pub async fn teach(
         mut tx,
         scratch,
         plan,
+        ..
     } = open(&state, content, user_id, now, false).await?;
     let task = find(&plan, &task_id)?;
     if task.task_type != TaskType::Lesson {
@@ -717,6 +764,7 @@ pub async fn hint(
         mut tx,
         mut scratch,
         plan,
+        ..
     } = open(&state, content, user_id, now, true).await?;
     let task = find(&plan, &task_id)?;
     let task_type = task.task_type;
@@ -800,7 +848,7 @@ pub async fn hint(
 // --------------------------------------------------------------------------- //
 
 /// `409 no_open_session`: these three routes all need an open session.
-fn no_open_session() -> ApiError {
+pub(crate) fn no_open_session() -> ApiError {
     ApiError::new(StatusCode::CONFLICT, NO_OPEN_SESSION, "No session is open.")
 }
 
