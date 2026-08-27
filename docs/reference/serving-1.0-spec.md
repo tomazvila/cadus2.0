@@ -177,6 +177,14 @@ term       := "<param>"                     // the bound value, an exact rationa
 
 ---
 
+**2.0 note (after review rounds 1–2).** `space_size` above the exhaustive limit is NOT a
+rejection-sampling estimate: the gate's single walk draws until it holds 4,096 distinct
+satisfying tuples or spends 262,144 draws, and records the distinct count found (a floor)
+with the draws spent. The gate also refuses a document whose one rendered statement carries
+two different answers (`statement-collision`), and a parameter the answer reads that no
+rendered field shows (`hidden-parameter`). A `decimal` domain kind `{low, high, scale}`
+exists; values keep their authored spelling when rendered.
+
 ## 3. Instantiation
 
 ### 3.1 How parameters are drawn

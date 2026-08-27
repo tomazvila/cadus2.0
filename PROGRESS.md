@@ -13,7 +13,7 @@ Requirement IDs: A1, A5, A6, A7, D5, D-S4, D-S5, D-O1, D-O4, L1, L2, C6, T1, V2.
 | U2 verification gate: the 28 checks with literal 1.0 messages + the 2.0 additions | `m4/u2` | 38 tests; the four live 1.0 rejections reproduce byte-for-byte |
 | U3 pool sources: `ProblemSource` trait (A7), template and exemplar sources, ring 20, task memory 12, candidate rule | `m4/u3` | 32 tests |
 | U4 store pool ops (batch insert, pop with `SKIP LOCKED` + ring filter + claim in one transaction, `operator_flags`) and the worker refill job | `m4/u4` | 33 tests; 2×100 concurrent pops give 200 distinct rows; RLS holds |
-| U5 benchmarks A and B, `docs/reference/l1-budget.md`, `scripts/bench.sh`, CI artifact | `m4/u5` | A: p95 8.45 µs (segment 5 ms), 107,581 allocations (bound 110,000); B: p95 1.9 ms (segment 100 ms) on this box |
+| U5 benchmarks A and B, `docs/reference/l1-budget.md`, `scripts/bench.sh`, CI artifact | `m4/u5` | A: p95 8.45 µs (segment 5 ms), 107,581 allocations at U5 (107,680 after the fix waves, bound 108,218); B: p95 1.9 ms (segment 100 ms) on this box |
 
 Gate on integrated `main`: all steps PASS (debug + release parity + benchmarks), live oracle enabled.
 
