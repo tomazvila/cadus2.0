@@ -306,9 +306,13 @@ async fn the_csrf_refusal_is_counted() {
 
     let text = scrape(&app).await;
 
+    // Unit U8 added the route, so the refusal now carries its TEMPLATE. The
+    // label is the template either way: the layer sits outside the CSRF layer
+    // and reads the matched route, not the raw path.
     assert!(
         text.contains(
-            "cadus_http_requests_total{method=\"POST\",route=\"__unmatched__\",status=\"403\"} 1\n"
+            "cadus_http_requests_total{method=\"POST\",route=\"/api/task/{task_id}/answer\",\
+             status=\"403\"} 1\n"
         ),
         "the scrape carries no 403 counter:\n{text}"
     );

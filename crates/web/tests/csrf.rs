@@ -14,14 +14,20 @@
 //! **These tests never depend on a route existing.** The layer runs before the
 //! router picks a handler, so the paths below (`/api/task/{id}/answer`,
 //! `/api/auth/login`) reach it whether or not units U4 and U8 have added their
-//! routes yet. An allowed request therefore lands on the `404 not_found`
-//! fallback, and `404` is what "not refused by the CSRF layer" looks like here.
-//! Asserting that literal `404` is stronger than asserting "not 403": a layer
-//! that answered `500` would pass the weaker check.
+//! routes yet. What an ALLOWED request lands on depends on that:
 //!
-//! The pool below is lazy and points at an address with no server. No test in
-//! this file reaches a handler that touches the database, so a connect never
-//! starts.
+//! - `/api/task/{id}/answer` exists since unit U8, and these requests carry no
+//!   credential, so an allowed one is `401 unauthorized` from the tenant guard;
+//! - `/api/auth/*` waits for unit U4, so an allowed one is the `404 not_found`
+//!   fallback.
+//!
+//! Both are literals, and asserting the literal is stronger than asserting
+//! "not 403": a layer that answered `500` would pass the weaker check. No test
+//! below reaches a handler that touches the database, because the tenant guard
+//! answers first.
+//!
+//! The pool below is lazy and points at an address with no server, so a connect
+//! never starts.
 
 #![allow(
     clippy::unwrap_used,
@@ -94,6 +100,20 @@ const REJECTION_BODY: &str = concat!(
 const NOT_FOUND_BODY: &str =
     r#"{"error":{"code":"not_found","message":"This path serves nothing."}}"#;
 
+/// The body of the `401` the `Tenant` extractor answers, character for
+/// character.
+///
+/// Unit U8 added `POST /api/task/{task_id}/answer`, so a request the CSRF layer
+/// ALLOWS now reaches that route and its tenant guard. These tests carry no
+/// credential, so "not refused by the CSRF layer" is this `401` on the task
+/// paths and the `404` fallback on the `/api/auth/*` paths that unit U4 has not
+/// added yet. Both are literals, and both are stronger than "not 403": a layer
+/// that answered `500` would pass the weaker check.
+const UNAUTHORIZED_BODY: &str = concat!(
+    r#"{"error":{"code":"unauthorized","message":"This route needs a session. Send the "#,
+    r#"session cookie or a bearer token."}}"#
+);
+
 /// (1) U1 acceptance: a cookie-authed cross-site POST to `/api/*` is
 /// `403 cross_origin_rejected`.
 ///
@@ -147,9 +167,9 @@ async fn the_same_cross_site_post_with_a_bearer_token_is_not_refused() {
     )
     .await;
 
-    assert_eq!(status, StatusCode::NOT_FOUND);
-    assert_eq!(status.as_u16(), 404);
-    assert_eq!(body, NOT_FOUND_BODY);
+    assert_eq!(status, StatusCode::UNAUTHORIZED);
+    assert_eq!(status.as_u16(), 401);
+    assert_eq!(body, UNAUTHORIZED_BODY);
 }
 
 /// (3) The scheme of the bearer header is case-insensitive (RFC 9110), so
@@ -172,7 +192,7 @@ async fn a_lowercase_bearer_scheme_earns_the_exemption() {
     )
     .await;
 
-    assert_eq!(status.as_u16(), 404);
+    assert_eq!(status.as_u16(), 401);
 }
 
 /// (4) A bare `Authorization: Bearer` earns NO exemption.
@@ -272,7 +292,7 @@ async fn a_cross_site_post_without_a_session_cookie_is_not_refused() {
     )
     .await;
 
-    assert_eq!(status.as_u16(), 404);
+    assert_eq!(status.as_u16(), 401);
 }
 
 /// (8) U1 acceptance: a cross-origin POST to `/api/auth/login` is `403`, and so
@@ -398,7 +418,7 @@ async fn a_same_origin_cookie_write_goes_through() {
 
         assert_eq!(
             status.as_u16(),
-            404,
+            401,
             "Sec-Fetch-Site: {site} is same-origin"
         );
     }
@@ -418,7 +438,7 @@ async fn a_same_origin_cookie_write_goes_through() {
     )
     .await;
 
-    assert_eq!(status.as_u16(), 404);
+    assert_eq!(status.as_u16(), 401);
 }
 
 /// (12) A safe method is never refused, whatever it carries.
@@ -474,7 +494,7 @@ async fn the_layer_reads_the_cookie_name_of_the_active_posture() {
     };
 
     assert_eq!(send(&dev, cross_site(DEV_COOKIE)).await.0.as_u16(), 403);
-    assert_eq!(send(&dev, cross_site(SECURE_COOKIE)).await.0.as_u16(), 404);
+    assert_eq!(send(&dev, cross_site(SECURE_COOKIE)).await.0.as_u16(), 401);
     assert_eq!(
         send(&production, cross_site(SECURE_COOKIE))
             .await
@@ -484,7 +504,7 @@ async fn the_layer_reads_the_cookie_name_of_the_active_posture() {
     );
     assert_eq!(
         send(&production, cross_site(DEV_COOKIE)).await.0.as_u16(),
-        404
+        401
     );
 }
 
@@ -545,7 +565,7 @@ async fn public_origin_pins_the_comparison() {
         ),
     )
     .await;
-    assert_eq!(status.as_u16(), 404);
+    assert_eq!(status.as_u16(), 401);
 
     // The same name over http:// is another origin, so it is refused.
     let (status, body) = send(
@@ -590,7 +610,7 @@ async fn x_forwarded_proto_decides_the_scheme_when_no_origin_is_pinned() {
         ),
     )
     .await;
-    assert_eq!(status.as_u16(), 404);
+    assert_eq!(status.as_u16(), 401);
 
     let (status, _body) = send(
         &app,
@@ -627,7 +647,7 @@ async fn a_forwarded_proto_list_reads_its_first_value() {
     )
     .await;
 
-    assert_eq!(status.as_u16(), 404);
+    assert_eq!(status.as_u16(), 401);
 }
 
 /// (18) Trap W11 stated directly: the two origin tests are not each other's

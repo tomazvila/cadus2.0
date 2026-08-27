@@ -28,7 +28,7 @@ use cadus_core::fire::initial_ability;
 use cadus_core::learner::{LearnerModel, TopicState, VelocityState};
 use cadus_core::projector::{
     PROJECTOR_VERSION, ProjectionInput, Projector, apply_regrades, blob_digest, canonical_blob,
-    project, project_incremental,
+    kp_failed, kp_passed, project, project_incremental,
 };
 
 mod common;
@@ -1475,4 +1475,39 @@ fn the_ability_seed_of_an_untouched_topic_is_a_compensated_mean() {
     let untouched: BTreeMap<String, TopicState> = BTreeMap::new();
     let neutral = initial_ability("seeded-topic", &graph, &untouched, &cfg);
     assert!((neutral - 0.5).abs() < f64::EPSILON, "{neutral}");
+}
+
+// ---------------------------------------------------------------------------
+// The lesson knowledge-point gates (`projector.py:860-872`)
+// ---------------------------------------------------------------------------
+
+/// `lesson.kp_pass` is `"2consec|3of4"`. Two correct answers at the TAIL pass
+/// the knowledge point, and so do three correct out of the FIRST four. Every
+/// expected value below is a literal.
+#[test]
+fn kp_passed_is_two_at_the_tail_or_three_of_the_first_four() {
+    assert!(!kp_passed(&[]));
+    assert!(!kp_passed(&[true]));
+    assert!(kp_passed(&[true, true]));
+    assert!(!kp_passed(&[true, false]));
+    // A pass at the tail, not anywhere: the first two do not count once a later
+    // answer stands.
+    assert!(!kp_passed(&[true, true, false]));
+    assert!(kp_passed(&[false, true, true]));
+    // Three of the first FOUR, with no pair at the tail.
+    assert!(kp_passed(&[true, false, true, true]));
+    assert!(kp_passed(&[true, true, false, true]));
+    assert!(!kp_passed(&[false, true, false, true, false]));
+}
+
+/// `lesson.fail_after` is 5: five answers that have not passed fail the
+/// knowledge point, and a passed sequence never fails.
+#[test]
+fn kp_failed_is_five_answers_without_a_pass() {
+    let cfg = Config::default();
+    assert!(!kp_failed(&[false, false, false, false], &cfg));
+    assert!(kp_failed(&[false, false, false, false, false], &cfg));
+    assert!(kp_failed(&[false, true, false, true, false], &cfg));
+    // Three of the first four is a pass, so five answers do not fail it.
+    assert!(!kp_failed(&[true, true, false, true, false], &cfg));
 }
