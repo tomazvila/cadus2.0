@@ -2,6 +2,26 @@
 
 One entry per milestone cycle (HANDOVER.md §2). Newest first.
 
+## M4 — serving pool, template instantiation, anti-repeat, L1/L2 benchmarks (2026-08-27)
+
+Requirement IDs: A1, A5, A6, A7, D5, D-S4, D-S5, D-O1, D-O4, L1, L2, C6, T1, V2. Plan:
+`docs/plans/M4.md`. Spec: `docs/reference/serving-1.0-spec.md`.
+
+| Unit | Branch | Result |
+|---|---|---|
+| U1 template core: document, constraint language, renderer, exact evaluator over the M2 AST, domains, `space_size`, seeded draws | `m4/u1` | 26 tests; `a**2` renders the 1.0 statement, hash `e4047cd6798e`; `a > b` holds on 10,000 draws; 7 mutations red |
+| U2 verification gate: the 28 checks with literal 1.0 messages + the 2.0 additions | `m4/u2` | 38 tests; the four live 1.0 rejections reproduce byte-for-byte |
+| U3 pool sources: `ProblemSource` trait (A7), template and exemplar sources, ring 20, task memory 12, candidate rule | `m4/u3` | 32 tests |
+| U4 store pool ops (batch insert, pop with `SKIP LOCKED` + ring filter + claim in one transaction, `operator_flags`) and the worker refill job | `m4/u4` | 33 tests; 2×100 concurrent pops give 200 distinct rows; RLS holds |
+| U5 benchmarks A and B, `docs/reference/l1-budget.md`, `scripts/bench.sh`, CI artifact | `m4/u5` | A: p95 8.45 µs (segment 5 ms), 107,581 allocations (bound 110,000); B: p95 1.9 ms (segment 100 ms) on this box |
+
+Gate on integrated `main`: all steps PASS (debug + release parity + benchmarks), live oracle enabled.
+
+Open notes: the serving key is `"<topic_id>/<kp_id>"` (a KP id is unique inside its topic
+only) — M5/M6 must use the same spelling; the refill target list derives from existing
+pool rows, so the M5 serve path writes the first row on a pool miss; M5 adds the L1
+arena-traversal and the L2 grade-transaction benchmarks.
+
 ## M3 — core scheduler/projector port, incremental fold, parity (2026-08-27)
 
 Requirement IDs: R5, D3, D4, C2, C4. Plan: `docs/plans/M3.md`. Spec:
