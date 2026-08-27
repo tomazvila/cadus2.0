@@ -16,6 +16,11 @@ path = "src/bin/cadus-migrate.rs"
 
 [dependencies]
 cadus-core = { workspace = true }
+# M5 U6. `events.payload`, `learner_models.model`, and the D-S6 `web_states.doc`
+# are jsonb columns, so the store reads and writes them as `serde_json::Value`.
+# sqlx already resolves the same version for its `json` feature, so the lock file
+# gains no crate; the edge is new and `tests/purity.rs` pins it.
+serde_json = { workspace = true }
 sqlx = { workspace = true }
 tokio = { workspace = true }
 uuid = { workspace = true }
@@ -34,11 +39,6 @@ cadus-store = { path = ".", features = ["test-support"] }
 # Development only. `tests/purity.rs` reads the resolved dependency graph with
 # it (R4).
 cargo_metadata = { workspace = true }
-# Development only. Benchmark B builds the D-S5 and D-S6 documents of its
-# fixture with it (`tests/bench_serve_roundtrip.rs`). `sqlx` already resolves
-# the same version for its `json` feature, so the lock file gains no crate, and
-# a dev edge stays outside both guards of `tests/purity.rs` (R4).
-serde_json = { workspace = true }
 
 [lints]
 workspace = true

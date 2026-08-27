@@ -205,7 +205,11 @@ fn web_direct_normal_dependencies_are_the_declared_list() {
             "base64ct",
             "cadus-core",
             "cadus-store",
+<<<<<<< HEAD
             "getrandom",
+=======
+            "serde",
+>>>>>>> m5/u6
             "serde_json",
             "sha2",
             "sqlx",
@@ -228,6 +232,7 @@ fn store_direct_normal_dependencies_are_the_declared_list() {
         found,
         vec![
             "cadus-core",
+            "serde_json",
             "sqlx",
             "thiserror",
             "tokio",

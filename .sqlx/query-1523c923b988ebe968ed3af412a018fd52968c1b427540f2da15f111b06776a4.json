@@ -1,0 +1,19 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        INSERT INTO learner_models\n            (user_id, model, through_seq, projector_version, config_hash, curriculum_hash)\n        VALUES ($1, $2, $3, $4, $5, $6)\n        ON CONFLICT (user_id) DO UPDATE SET\n            model = EXCLUDED.model,\n            through_seq = EXCLUDED.through_seq,\n            projector_version = EXCLUDED.projector_version,\n            config_hash = EXCLUDED.config_hash,\n            curriculum_hash = EXCLUDED.curriculum_hash,\n            built_at = now()\n        ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Uuid",
+        "Jsonb",
+        "Int8",
+        "Int4",
+        "Text",
+        "Text"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "1523c923b988ebe968ed3af412a018fd52968c1b427540f2da15f111b06776a4"
+}

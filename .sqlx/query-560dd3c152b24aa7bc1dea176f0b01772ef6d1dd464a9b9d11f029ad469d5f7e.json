@@ -1,0 +1,15 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        INSERT INTO web_states (user_id, doc) VALUES ($1, $2)\n        ON CONFLICT (user_id) DO UPDATE SET doc = EXCLUDED.doc, updated_at = now()\n        ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Uuid",
+        "Jsonb"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "560dd3c152b24aa7bc1dea176f0b01772ef6d1dd464a9b9d11f029ad469d5f7e"
+}

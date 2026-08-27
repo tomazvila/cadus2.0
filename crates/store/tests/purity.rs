@@ -181,6 +181,7 @@ fn store_direct_normal_dependencies_are_the_literal_list() {
         found,
         vec![
             "cadus-core",
+            "serde_json",
             "sqlx",
             "thiserror",
             "tokio",
