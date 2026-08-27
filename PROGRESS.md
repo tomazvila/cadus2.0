@@ -17,6 +17,15 @@ Requirement IDs: A1, A5, A6, A7, D5, D-S4, D-S5, D-O1, D-O4, L1, L2, C6, T1, V2.
 
 Gate on integrated `main`: all steps PASS (debug + release parity + benchmarks), live oracle enabled.
 
+### Adversarial review round 1 (M4)
+
+Six lenses, two find/refute rounds: 40 raised, 22 confirmed, 6 blockers
+(`docs/reviews/M4-review-1.md`). Blockers: the refill inserted instances the gate never
+checked (the gate samples a fixed 4,096 tuples above the limit; the 1.0 incident the
+spec records); a parameter used only in the answer let one statement carry several
+answers; the image ships no curriculum, so the worker refilled nothing; a pair that can
+never fill starved the refill queue. Rulings in the record. Fix units FIXM4a–c.
+
 Open notes: the serving key is `"<topic_id>/<kp_id>"` (a KP id is unique inside its topic
 only) — M5/M6 must use the same spelling; the refill target list derives from existing
 pool rows, so the M5 serve path writes the first row on a pool miss; M5 adds the L1
