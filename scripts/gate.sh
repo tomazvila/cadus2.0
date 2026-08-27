@@ -50,6 +50,24 @@ cargo test --workspace
 echo "== cargo test --release -p cadus-core --test parity_events --test projector"
 cargo test --release -p cadus-core --test parity_events --test projector
 
+# The budget benchmarks (L1, L2) run AFTER the test suite and never beside it:
+# parallel suites contend on this box and on a two-core runner, and a contended
+# benchmark measures the scheduler, not the code (spec section 10.5).
+# `scripts/bench.sh` runs benchmark A always and benchmark B when
+# CADUS_TEST_DATABASE_URL is set, which the gate always sets above.
+# docs/reference/l1-budget.md holds the split both benchmarks assert.
+if [ ! -f scripts/bench.sh ]; then
+    echo "GATE FAILED: scripts/bench.sh is missing"
+    exit 2
+fi
+
+echo "== scripts/bench.sh"
+if [ -x scripts/bench.sh ]; then
+    scripts/bench.sh
+else
+    bash scripts/bench.sh
+fi
+
 # `--all-targets` puts the queries of the tests into the check too. Without it
 # the check covers the library and the binaries only, and a stale query file of a
 # test stays hidden until an offline build breaks.

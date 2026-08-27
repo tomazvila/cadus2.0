@@ -10,8 +10,16 @@ the core; the core depends on no adapter (R3).
 
 Run `scripts/gate.sh` before every commit. It runs `cargo fmt`, `cargo clippy`
 with `-D warnings`, the test suite, the parity fold in the release profile,
-`cargo sqlx prepare --check`, `scripts/check_migrations.sh`, and
-`scripts/check_ops.sh`.
+`scripts/bench.sh`, `cargo sqlx prepare --check`,
+`scripts/check_migrations.sh`, and `scripts/check_ops.sh`.
+
+`scripts/bench.sh` is the budget step (L1, L2). It runs the two benchmarks of
+`docs/reference/l1-budget.md` in the release profile, after the test suite and
+never beside it: benchmark A (core only, always) and benchmark B (the serve
+transaction against the test database, when `CADUS_TEST_DATABASE_URL` is set).
+Both write JSON to `target/bench`, which CI uploads as an artifact. A plain
+`cargo test --workspace` skips both, because they run only with `CADUS_BENCH`
+in the environment.
 
 The release step is `cargo test --release -p cadus-core --test parity_events
 --test projector`, and it is not a duplicate of `cargo test --workspace`. The

@@ -1,0 +1,90 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "SELECT id, problem, expected_answer, instance_hash, source, content_digest\n           FROM serving_pool\n          WHERE user_id = $1 AND kp_id = $2 AND claimed_at IS NULL\n          ORDER BY created_at\n          LIMIT $3\n            FOR UPDATE SKIP LOCKED",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Uuid",
+        "origin": {
+          "Table": {
+            "table": "serving_pool",
+            "name": "id"
+          }
+        }
+      },
+      {
+        "ordinal": 1,
+        "name": "problem",
+        "type_info": "Jsonb",
+        "origin": {
+          "Table": {
+            "table": "serving_pool",
+            "name": "problem"
+          }
+        }
+      },
+      {
+        "ordinal": 2,
+        "name": "expected_answer",
+        "type_info": "Jsonb",
+        "origin": {
+          "Table": {
+            "table": "serving_pool",
+            "name": "expected_answer"
+          }
+        }
+      },
+      {
+        "ordinal": 3,
+        "name": "instance_hash",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "serving_pool",
+            "name": "instance_hash"
+          }
+        }
+      },
+      {
+        "ordinal": 4,
+        "name": "source",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "serving_pool",
+            "name": "source"
+          }
+        }
+      },
+      {
+        "ordinal": 5,
+        "name": "content_digest",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "serving_pool",
+            "name": "content_digest"
+          }
+        }
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Uuid",
+        "Text",
+        "Int8"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      false,
+      false,
+      true
+    ]
+  },
+  "hash": "897dadde99fd679b98ddc58b0384d1c919a0c4ae8f1898e585307790dd1a214f"
+}
