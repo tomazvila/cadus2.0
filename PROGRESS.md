@@ -38,7 +38,33 @@ A verification round (round 2): 18 raised, 11 confirmed, 0 blockers
 (`docs/reviews/M4-review-2.md`) — two tuples could render one statement with different
 answers; the space estimator and the walk used different draw budgets; choice coverage
 read the declared list; pool rows were served after an approval was revoked; benchmark
-literals were stale. Fix units FIXM4d–f; then M4 closes on the two-round cap.
+literals were stale. Fix units FIXM4d–f fixed all 11: the gate refuses a statement that two tuples answer
+differently (`statement-collision`) and the fill refuses a colliding digest; one walk
+counts the distinct satisfying tuples (the 4,096-draw estimator is gone); choice coverage
+and axis ends read the satisfying sample where a constraint names the axis and the
+declared ends otherwise; the pop joins `content_store` and serves a template row only
+while its digest is approved, and the refill retires rows of a revoked digest; a pair with
+two empty fills is backed off 60 minutes and flagged; benchmark A pins three rendered
+instances and the bound is measured + 0.5% (108,218).
+
+### M4 close (2026-08-27)
+
+Final gate on `main`: all steps PASS in both profiles, live oracle enabled, benchmarks in
+the gate (A instantiate p95 8.3 µs / 5 ms; A check p95 25 µs / 5 ms; B serve p95 3.7 ms /
+100 ms). What M4 delivers: `cadus_core::template` (document with inter-parameter
+constraints, exact evaluator over the M2 AST, renderer, domains incl. `decimal`, seeded
+draws, `space_size`), the 28-check verification gate with the 1.0 messages plus the 2.0
+rules (grammar membership, canonical round-trip, hidden parameter, statement collision),
+`cadus_core::pool` (`ProblemSource` seam, template and exemplar sources, per-instance
+re-check on every fill, ring 20 + task memory 12), `cadus_store::pool` (batch insert,
+pop with `SKIP LOCKED` + ring + approval join + claim in one transaction, retirement,
+`operator_flags`), the worker refill job with backoff and clock nonces, the image with
+`/app/curriculum`, benchmarks A/B and `docs/reference/l1-budget.md`. Review: two rounds,
+22 + 11 confirmed, all fixed. M4 closes on the two-round cap.
+
+Open for M5: `source_exhausted` is worker-process state (a durable per-pair table needs a
+migration); two approved digests for one KP both stay servable until one is rejected;
+`ExemplarSource` dedups by digest without the answer check (an authored-content lint item).
 
 Open notes: the serving key is `"<topic_id>/<kp_id>"` (a KP id is unique inside its topic
 only) — M5/M6 must use the same spelling; the refill target list derives from existing
