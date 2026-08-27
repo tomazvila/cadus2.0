@@ -1,0 +1,54 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        WITH kps AS (\n            SELECT kp_id FROM serving_pool\n            UNION\n            SELECT kp_id FROM content_store WHERE kind = 'template'\n        ),\n        approved AS (\n            SELECT kp_id, count(*) AS approved\n            FROM content_store\n            WHERE kind = 'template' AND status = 'approved'\n            GROUP BY kp_id\n        ),\n        depth AS (\n            SELECT kp_id, count(*) AS depth\n            FROM serving_pool\n            WHERE claimed_at IS NULL\n            GROUP BY kp_id\n        ),\n        last_served AS (\n            SELECT DISTINCT ON (kp_id) kp_id, source, claimed_at\n            FROM serving_pool\n            WHERE claimed_at IS NOT NULL\n            ORDER BY kp_id, claimed_at DESC, id\n        ),\n        last_exemplar AS (\n            SELECT kp_id, max(claimed_at) AS at\n            FROM serving_pool\n            WHERE claimed_at IS NOT NULL AND source = 'exemplar'\n            GROUP BY kp_id\n        )\n        SELECT kps.kp_id AS \"kp_id!\",\n               coalesce(approved.approved, 0) AS \"approved_templates!\",\n               coalesce(depth.depth, 0) AS \"pool_depth!\",\n               last_served.source AS \"last_source?\",\n               last_exemplar.at AS \"last_exemplar_at?\"\n        FROM kps\n        LEFT JOIN approved ON approved.kp_id = kps.kp_id\n        LEFT JOIN depth ON depth.kp_id = kps.kp_id\n        LEFT JOIN last_served ON last_served.kp_id = kps.kp_id\n        LEFT JOIN last_exemplar ON last_exemplar.kp_id = kps.kp_id\n        ORDER BY kps.kp_id\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "kp_id!",
+        "type_info": "Text",
+        "origin": "Expression"
+      },
+      {
+        "ordinal": 1,
+        "name": "approved_templates!",
+        "type_info": "Int8",
+        "origin": "Expression"
+      },
+      {
+        "ordinal": 2,
+        "name": "pool_depth!",
+        "type_info": "Int8",
+        "origin": "Expression"
+      },
+      {
+        "ordinal": 3,
+        "name": "last_source?",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "serving_pool",
+            "name": "source"
+          }
+        }
+      },
+      {
+        "ordinal": 4,
+        "name": "last_exemplar_at?",
+        "type_info": "Timestamptz",
+        "origin": "Expression"
+      }
+    ],
+    "parameters": {
+      "Left": []
+    },
+    "nullable": [
+      null,
+      null,
+      null,
+      true,
+      null
+    ]
+  },
+  "hash": "7f485b4c489e36ccea1a7d3af6b2ca0c54db3666d337fffebd3097e53a7c9da8"
+}

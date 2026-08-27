@@ -1,0 +1,48 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        SELECT user_id AS \"user_id!\",\n               kp_id AS \"kp_id!\",\n               count(*) FILTER (WHERE claimed_at IS NULL) AS \"depth!\"\n        FROM serving_pool\n        GROUP BY user_id, kp_id\n        HAVING count(*) FILTER (WHERE claimed_at IS NULL) < $1\n        ORDER BY \"depth!\", user_id, kp_id\n        LIMIT $2\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "user_id!",
+        "type_info": "Uuid",
+        "origin": {
+          "Table": {
+            "table": "serving_pool",
+            "name": "user_id"
+          }
+        }
+      },
+      {
+        "ordinal": 1,
+        "name": "kp_id!",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "serving_pool",
+            "name": "kp_id"
+          }
+        }
+      },
+      {
+        "ordinal": 2,
+        "name": "depth!",
+        "type_info": "Int8",
+        "origin": "Expression"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int8",
+        "Int8"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      null
+    ]
+  },
+  "hash": "610ab9f733d9167f78cfb306f7288cb07859057a89e34dabc4af61bbfaa9611e"
+}

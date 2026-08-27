@@ -1,0 +1,80 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        SELECT id AS \"id!\",\n               source AS \"source!\",\n               content_digest,\n               problem::text AS \"problem!\",\n               expected_answer::text AS \"expected!\",\n               instance_hash AS \"instance_hash!\"\n        FROM serving_pool\n        WHERE user_id = $1 AND kp_id = $2 AND claimed_at IS NULL\n        ORDER BY created_at, id\n        FOR UPDATE SKIP LOCKED\n        LIMIT $3\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id!",
+        "type_info": "Uuid",
+        "origin": {
+          "Table": {
+            "table": "serving_pool",
+            "name": "id"
+          }
+        }
+      },
+      {
+        "ordinal": 1,
+        "name": "source!",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "serving_pool",
+            "name": "source"
+          }
+        }
+      },
+      {
+        "ordinal": 2,
+        "name": "content_digest",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "serving_pool",
+            "name": "content_digest"
+          }
+        }
+      },
+      {
+        "ordinal": 3,
+        "name": "problem!",
+        "type_info": "Text",
+        "origin": "Expression"
+      },
+      {
+        "ordinal": 4,
+        "name": "expected!",
+        "type_info": "Text",
+        "origin": "Expression"
+      },
+      {
+        "ordinal": 5,
+        "name": "instance_hash!",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "serving_pool",
+            "name": "instance_hash"
+          }
+        }
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Uuid",
+        "Text",
+        "Int8"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      true,
+      null,
+      null,
+      false
+    ]
+  },
+  "hash": "3e38954a514003fc4030f28d35451b9873a918845ba0895c76d547dc4176c9cd"
+}

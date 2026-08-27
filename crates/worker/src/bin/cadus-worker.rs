@@ -21,11 +21,22 @@
 )]
 
 use std::future::Future;
+use std::path::PathBuf;
 use std::process::ExitCode;
 use std::time::Duration;
 
+use cadus_core::curriculum::{Curriculum, load_curriculum};
 use cadus_store::{Db, DbConfig, bounded};
-use cadus_worker::{WorkerConfig, WorkerError};
+use cadus_worker::{RefillJob, WorkerConfig, WorkerError};
+
+/// The environment variable that names the curriculum tree.
+///
+/// The refill job (D-O4) reads the authored exemplars from it for the A6
+/// fallback, and it reads the topic answer kind for the gate re-run.
+const CURRICULUM_ENV: &str = "CADUS_CURRICULUM";
+
+/// The tree the worker reads when the variable names none.
+const DEFAULT_CURRICULUM: &str = "curriculum";
 
 /// The bound on the pool close after the tick loop stops.
 ///
@@ -111,9 +122,45 @@ async fn run() -> Result<u64, WorkerError> {
         "cadus-worker: database role"
     );
 
-    let ticks = cadus_worker::run(&db, &cfg, shutdown.wait()).await?;
+    // The refill job (D-O4) reads the curriculum for the A6 exemplar fallback.
+    // A tree that does not load is news, not a fatal error: the worker still
+    // refills every knowledge point that has an approved template, and it says
+    // in the log that the fallback is off.
+    let curriculum = load_arena();
+    let job = curriculum.as_ref().map(RefillJob::new);
+
+    let ticks = cadus_worker::run_with(&db, &cfg, job.as_ref(), shutdown.wait()).await?;
     close_within(POOL_CLOSE_DEADLINE, db.pool().close()).await;
     Ok(ticks)
+}
+
+/// Read the curriculum tree that `CADUS_CURRICULUM` names.
+///
+/// The function returns `None` on every failure and logs the reason. The refill
+/// job then runs from approved templates only.
+fn load_arena() -> Option<Curriculum> {
+    let path = PathBuf::from(
+        std::env::var(CURRICULUM_ENV).unwrap_or_else(|_| DEFAULT_CURRICULUM.to_string()),
+    );
+    match load_curriculum(&path) {
+        Ok((curriculum, findings)) => {
+            tracing::info!(
+                path = %path.display(),
+                topics = curriculum.topic_count(),
+                findings = findings.len(),
+                "cadus-worker: curriculum is loaded"
+            );
+            Some(curriculum)
+        }
+        Err(err) => {
+            tracing::warn!(
+                path = %path.display(),
+                error = %err,
+                "cadus-worker: the curriculum did not load; the A6 exemplar fallback is off"
+            );
+            None
+        }
+    }
 }
 
 /// Read the identity of the database role under the client-side bound.

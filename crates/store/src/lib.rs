@@ -25,6 +25,8 @@ use sqlx::postgres::{PgConnectOptions, PgPoolOptions};
 use sqlx::{PgPool, Postgres, Transaction};
 use uuid::Uuid;
 
+pub mod pool;
+
 #[cfg(feature = "test-support")]
 pub mod test_support;
 
@@ -207,6 +209,15 @@ pub enum StoreError {
     /// A query ran longer than the client-side bound.
     #[error("the query did not answer within {after_ms} ms")]
     Timeout { after_ms: u64 },
+
+    /// A `serving_pool` document did not read or did not write (M4 U4).
+    #[error("pool document error: {0}")]
+    Body(#[from] cadus_core::pool::PoolBodyError),
+
+    /// A `serving_pool` row carries a value this build does not know, or a
+    /// claim did not take the row the pop locked.
+    #[error("serving pool error: {0}")]
+    PoolRow(String),
 
     /// C3 boot guard: the connected role escapes row-level security.
     #[error(

@@ -1,0 +1,34 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        INSERT INTO serving_pool\n            (user_id, kp_id, source, content_digest, problem, expected_answer, instance_hash)\n        SELECT $1, $2, batch.source, batch.digest, batch.problem::jsonb,\n               batch.expected::jsonb, batch.instance_hash\n        FROM unnest($3::text[], $4::text[], $5::text[], $6::text[], $7::text[])\n             AS batch(source, digest, problem, expected, instance_hash)\n        ON CONFLICT (user_id, kp_id, instance_hash) DO NOTHING\n        RETURNING id AS \"id!\"\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id!",
+        "type_info": "Uuid",
+        "origin": {
+          "Table": {
+            "table": "serving_pool",
+            "name": "id"
+          }
+        }
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Uuid",
+        "Text",
+        "TextArray",
+        "TextArray",
+        "TextArray",
+        "TextArray",
+        "TextArray"
+      ]
+    },
+    "nullable": [
+      false
+    ]
+  },
+  "hash": "c6b04441f0148cb5abffe419cd46b87d2a78016387e5e5cd54ec576c7aa4d994"
+}

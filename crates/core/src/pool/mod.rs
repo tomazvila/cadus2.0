@@ -44,10 +44,15 @@
 //! reproduces any served instance from the pool row.
 
 pub mod ring;
+pub mod row;
 pub mod source;
 
 pub use ring::{
     Avoid, Candidate, Pick, RING_CAPACITY, Ring, TASK_MEMORY_CAPACITY, TaskMemory, pick, serve,
+};
+pub use row::{
+    KP_KEY_SEPARATOR, POOL_ROW_VERSION, PoolAnswer, PoolBodyError, PoolProblem, kp_key,
+    split_kp_key,
 };
 pub use source::{
     ExemplarRefusal, ExemplarSource, FILL_ROUNDS, FillError, ProblemSource, TemplateSource,
@@ -96,6 +101,21 @@ impl Source {
             Self::Template => "template",
             Self::Exemplar => "exemplar",
             Self::Generator => "generator",
+        }
+    }
+
+    /// Read one wire value back.
+    ///
+    /// The three accepted strings are the three values of the `serving_pool.source`
+    /// check constraint. Every other string returns `None`, so a row a later
+    /// migration writes never decodes into a value this build guesses.
+    #[must_use]
+    pub fn from_wire(value: &str) -> Option<Self> {
+        match value {
+            "template" => Some(Self::Template),
+            "exemplar" => Some(Self::Exemplar),
+            "generator" => Some(Self::Generator),
+            _ => None,
         }
     }
 }

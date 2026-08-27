@@ -1,0 +1,649 @@
+//! M4 U4 acceptance: the serving-pool operations (D-O1, D-O4, D7, A6, C3).
+//!
+//! Every expected value here is a LITERAL: a literal row count, a literal pop
+//! width, a literal digest, a literal flag. Nothing is read back from the code
+//! under test.
+//!
+//! The literals come from three places:
+//!
+//! - `docs/reference/serving-1.0-spec.md` section 5.5 and section 7.2: the pop
+//!   takes 8 candidates, skips the ring hits, and serves the last candidate on
+//!   exhaustion;
+//! - `migrations/0005_content.sql`: `UNIQUE (user_id, kp_id, instance_hash)` and
+//!   the three `source` values;
+//! - `migrations/0006_grants_rls.sql`: the tenant policy on `serving_pool`.
+//!
+//! Every test takes its own throwaway database, so a failure drops the database
+//! instead of leaving it on the shared cluster.
+
+#![allow(
+    clippy::unwrap_used,
+    clippy::expect_used,
+    clippy::panic,
+    clippy::todo,
+    clippy::unimplemented
+)]
+
+use std::collections::BTreeSet;
+
+use cadus_core::pool::{Avoid, PoolAnswer, PoolProblem, Ring, Source, TaskMemory};
+use cadus_store::pool::{
+    ApprovedTemplate, NewInstance, POP_LIMIT, approved_template, insert_batch_for_user,
+    operator_flags, pop_with_ring, refill_targets, unclaimed_depth,
+};
+use cadus_store::test_support::TestDb;
+use sqlx::PgPool;
+use sqlx::types::chrono::{DateTime, Utc};
+use uuid::Uuid;
+
+/// The serving key of the tests: `"<topic_id>/<kp_id>"`.
+const KP: &str = "perfect-squares/kp1";
+
+/// A second serving key, for the flag query.
+const OTHER_KP: &str = "adding-two-digits/kp1";
+
+/// The Unix instant of 2026-01-01T00:00:00Z.
+const BASE_INSTANT: i64 = 1_767_225_600;
+
+/// The instant the seeded row at `index` carries. Every later row adds one
+/// second, so `ORDER BY created_at` is the seeding order and the pop is
+/// deterministic.
+fn at(index: i64) -> DateTime<Utc> {
+    DateTime::from_timestamp(BASE_INSTANT + index, 0).expect("the instant is inside the range")
+}
+
+/// The digest of the row at `index`: `pool-instance-0007`.
+fn digest(index: usize) -> String {
+    format!("pool-instance-{index:04}")
+}
+
+/// Seed one pool row with an explicit instant and digest.
+async fn seed_row(
+    admin: &PgPool,
+    user_id: Uuid,
+    kp_id: &str,
+    index: usize,
+    source: Source,
+) -> Uuid {
+    let problem = format!(r#"{{"v":1,"text":"Compute ${index}^2$.","seed":0}}"#);
+    let expected = r#"{"v":1,"answer":"2"}"#;
+    sqlx::query_scalar!(
+        r#"
+        INSERT INTO serving_pool
+            (user_id, kp_id, source, problem, expected_answer, instance_hash, created_at)
+        VALUES ($1, $2, $3, $4::text::jsonb, $5::text::jsonb, $6, $7)
+        RETURNING id
+        "#,
+        user_id,
+        kp_id,
+        source.as_str(),
+        problem,
+        expected,
+        digest(index),
+        at(index as i64),
+    )
+    .fetch_one(admin)
+    .await
+    .expect("the seeded pool row inserts")
+}
+
+/// Seed `count` rows, oldest first.
+async fn seed_rows(admin: &PgPool, user_id: Uuid, kp_id: &str, count: usize) -> Vec<Uuid> {
+    let mut ids = Vec::with_capacity(count);
+    for index in 0..count {
+        ids.push(seed_row(admin, user_id, kp_id, index, Source::Template).await);
+    }
+    ids
+}
+
+/// One instance on its way into the pool, with a literal digest.
+fn new_instance(index: usize) -> NewInstance {
+    NewInstance {
+        source: Source::Template,
+        content_digest: Some("deadbeefdeadbeef".to_string()),
+        problem: PoolProblem {
+            v: 1,
+            text: format!("Compute ${index}^2$."),
+            bindings: [("a".to_string(), index.to_string())].into_iter().collect(),
+            seed: 7,
+        },
+        expected_answer: PoolAnswer {
+            v: 1,
+            answer: (index * index).to_string(),
+        },
+        instance_hash: digest(index),
+    }
+}
+
+// --------------------------------------------------------------------------
+// (1) The acceptance check: two concurrent pops never return one row.
+// --------------------------------------------------------------------------
+
+/// D7: `FOR UPDATE SKIP LOCKED` gives 200 distinct rows to 2 tasks × 100 pops.
+///
+/// The pool holds exactly 200 rows and the two tasks take exactly 200 pops
+/// between them, so a single repeated row makes the distinct count fall under
+/// 200 and the test fails. Both literals are written out here; neither one is
+/// read from the code.
+#[tokio::test(flavor = "multi_thread", worker_threads = 4)]
+async fn two_concurrent_pops_never_return_the_same_row() {
+    TestDb::with(|db| async move {
+        let user = db.seed_user("pop-race@example.test").await;
+        seed_rows(&db.admin, user, KP, 200).await;
+
+        let one = {
+            let pool = db.app.clone();
+            tokio::spawn(async move { pop_many(&pool, user, 100).await })
+        };
+        let two = {
+            let pool = db.app.clone();
+            tokio::spawn(async move { pop_many(&pool, user, 100).await })
+        };
+
+        let mut served: Vec<Uuid> = one.await.expect("task one finishes");
+        served.extend(two.await.expect("task two finishes"));
+
+        assert_eq!(served.len(), 200, "2 tasks × 100 pops give 200 serves");
+        let distinct: BTreeSet<Uuid> = served.iter().copied().collect();
+        assert_eq!(
+            distinct.len(),
+            200,
+            "every serve must be a different row; {} rows came back twice",
+            200 - distinct.len()
+        );
+
+        let left = unclaimed_depth(&db.admin, user, KP).await.unwrap();
+        assert_eq!(left, 0, "200 pops claim all 200 rows");
+    })
+    .await;
+}
+
+/// Pop `count` times and return the claimed row ids.
+async fn pop_many(pool: &PgPool, user: Uuid, count: usize) -> Vec<Uuid> {
+    let ring = Ring::new();
+    let task = TaskMemory::new();
+    let avoid = Avoid::new(&ring, &task);
+    let mut ids = Vec::with_capacity(count);
+    for _ in 0..count {
+        let claimed = pop_with_ring(pool, user, KP, &avoid)
+            .await
+            .expect("the pop runs")
+            .expect("the pool still holds a row");
+        ids.push(claimed.row.id);
+    }
+    ids
+}
+
+// --------------------------------------------------------------------------
+// (2) The acceptance check: RLS keeps a pop inside its tenant.
+// --------------------------------------------------------------------------
+
+/// C3: a pop bound to tenant A never returns tenant B's rows.
+///
+/// Tenant B holds 8 rows and tenant A holds 2. A pop bound to A therefore reads
+/// 2 candidates, not 10, and both of them are A's.
+#[tokio::test]
+async fn a_pop_bound_to_one_tenant_never_returns_another_tenants_rows() {
+    TestDb::with(|db| async move {
+        let alice = db.seed_user("alice@example.test").await;
+        let bob = db.seed_user("bob@example.test").await;
+        let bob_rows = seed_rows(&db.admin, bob, KP, 8).await;
+        let alice_rows = seed_rows(&db.admin, alice, KP, 2).await;
+
+        let ring = Ring::new();
+        let task = TaskMemory::new();
+        let avoid = Avoid::new(&ring, &task);
+
+        let first = pop_with_ring(&db.app, alice, KP, &avoid)
+            .await
+            .unwrap()
+            .expect("alice has a row");
+        assert_eq!(
+            first.candidates, 2,
+            "the pop reads alice's 2 rows and none of bob's 8"
+        );
+        assert!(
+            alice_rows.contains(&first.row.id),
+            "the claimed row must be one of alice's"
+        );
+        assert!(
+            !bob_rows.contains(&first.row.id),
+            "the claimed row must not be bob's"
+        );
+
+        let second = pop_with_ring(&db.app, alice, KP, &avoid)
+            .await
+            .unwrap()
+            .expect("alice has a second row");
+        assert_eq!(second.candidates, 1);
+
+        let third = pop_with_ring(&db.app, alice, KP, &avoid).await.unwrap();
+        assert!(third.is_none(), "alice's pool is empty after 2 pops");
+
+        // Bob's rows are untouched: the tenant boundary held on the write side
+        // too.
+        assert_eq!(unclaimed_depth(&db.admin, bob, KP).await.unwrap(), 8);
+    })
+    .await;
+}
+
+// --------------------------------------------------------------------------
+// (3) The pop width and the ring filter.
+// --------------------------------------------------------------------------
+
+/// The pop reads 8 rows, never more (specification section 5.5).
+#[tokio::test]
+async fn one_pop_reads_eight_candidates() {
+    TestDb::with(|db| async move {
+        let user = db.seed_user("width@example.test").await;
+        seed_rows(&db.admin, user, KP, 20).await;
+
+        let ring = Ring::new();
+        let task = TaskMemory::new();
+        let avoid = Avoid::new(&ring, &task);
+        let claimed = pop_with_ring(&db.app, user, KP, &avoid)
+            .await
+            .unwrap()
+            .expect("a row comes back");
+
+        assert_eq!(claimed.candidates, 8, "the pop takes 8 rows");
+        assert_eq!(POP_LIMIT, 8, "the pop width of the M4 decision is 8");
+        assert_eq!(claimed.pick.index, 0, "an empty ring serves the oldest row");
+        assert_eq!(claimed.pick.skipped, 0);
+        assert!(!claimed.pick.exhausted);
+        assert_eq!(claimed.row.instance_hash, "pool-instance-0000");
+    })
+    .await;
+}
+
+/// The ring blocks the three oldest rows, so the fourth is served.
+#[tokio::test]
+async fn the_pop_skips_every_ring_hit() {
+    TestDb::with(|db| async move {
+        let user = db.seed_user("ring@example.test").await;
+        seed_rows(&db.admin, user, KP, 8).await;
+
+        let ring = Ring::from_hashes([
+            "pool-instance-0000",
+            "pool-instance-0001",
+            "pool-instance-0002",
+        ]);
+        let task = TaskMemory::new();
+        let avoid = Avoid::new(&ring, &task);
+        let claimed = pop_with_ring(&db.app, user, KP, &avoid)
+            .await
+            .unwrap()
+            .expect("a row comes back");
+
+        assert_eq!(claimed.row.instance_hash, "pool-instance-0003");
+        assert_eq!(claimed.pick.index, 3);
+        assert_eq!(claimed.pick.skipped, 3);
+        assert!(!claimed.pick.exhausted);
+
+        // The three blocked rows stayed unclaimed: 8 rows, one claimed.
+        assert_eq!(unclaimed_depth(&db.admin, user, KP).await.unwrap(), 7);
+    })
+    .await;
+}
+
+/// Every candidate blocked: the LAST one is served and `exhausted` says so.
+///
+/// 1.0 states the reason at `problem_templates.py:388-392`: "A repeat is a far
+/// smaller failure than no problem."
+#[tokio::test]
+async fn a_fully_blocked_pop_serves_the_last_candidate() {
+    TestDb::with(|db| async move {
+        let user = db.seed_user("blocked@example.test").await;
+        seed_rows(&db.admin, user, KP, 8).await;
+
+        let blocked: Vec<String> = (0..8).map(digest).collect();
+        let ring = Ring::from_hashes(blocked);
+        let task = TaskMemory::new();
+        let avoid = Avoid::new(&ring, &task);
+        let claimed = pop_with_ring(&db.app, user, KP, &avoid)
+            .await
+            .unwrap()
+            .expect("a repeat is still a serve");
+
+        assert_eq!(claimed.row.instance_hash, "pool-instance-0007");
+        assert_eq!(claimed.pick.index, 7);
+        assert_eq!(claimed.pick.skipped, 8);
+        assert!(claimed.pick.exhausted, "every candidate was blocked");
+    })
+    .await;
+}
+
+/// An empty pool gives `None`. The serve path then falls back (A6).
+#[tokio::test]
+async fn an_empty_pool_gives_no_row() {
+    TestDb::with(|db| async move {
+        let user = db.seed_user("empty@example.test").await;
+        let ring = Ring::new();
+        let task = TaskMemory::new();
+        let avoid = Avoid::new(&ring, &task);
+        let claimed = pop_with_ring(&db.app, user, KP, &avoid).await.unwrap();
+        assert!(claimed.is_none());
+    })
+    .await;
+}
+
+/// A claimed row never comes back, and the row stays as the served log (A5).
+#[tokio::test]
+async fn a_claimed_row_stays_and_never_pops_again() {
+    TestDb::with(|db| async move {
+        let user = db.seed_user("claim@example.test").await;
+        seed_rows(&db.admin, user, KP, 2).await;
+
+        let ring = Ring::new();
+        let task = TaskMemory::new();
+        let avoid = Avoid::new(&ring, &task);
+        let first = pop_with_ring(&db.app, user, KP, &avoid)
+            .await
+            .unwrap()
+            .unwrap();
+        let second = pop_with_ring(&db.app, user, KP, &avoid)
+            .await
+            .unwrap()
+            .unwrap();
+        assert_ne!(first.row.id, second.row.id);
+
+        let rows = sqlx::query_scalar!(
+            r#"SELECT count(*) AS "n!" FROM serving_pool WHERE user_id = $1"#,
+            user
+        )
+        .fetch_one(&db.admin)
+        .await
+        .unwrap();
+        assert_eq!(rows, 2, "a claimed row is kept as the served-instance log");
+        assert_eq!(unclaimed_depth(&db.admin, user, KP).await.unwrap(), 0);
+    })
+    .await;
+}
+
+// --------------------------------------------------------------------------
+// (4) The batch insert.
+// --------------------------------------------------------------------------
+
+/// `ON CONFLICT DO NOTHING` on `(user_id, kp_id, instance_hash)` (A5).
+///
+/// The second call repeats three of the five digests, so it inserts 2.
+#[tokio::test]
+async fn a_repeated_digest_never_enters_the_pool_twice() {
+    TestDb::with(|db| async move {
+        let user = db.seed_user("batch@example.test").await;
+        // `serving_pool.content_digest` references `content_store.digest`, so
+        // the template row must exist before a row names it.
+        seed_template(&db.admin, "deadbeefdeadbeef", KP, "approved", "ok").await;
+
+        let first: Vec<NewInstance> = (0..5).map(new_instance).collect();
+        let inserted = insert_batch_for_user(&db.admin, user, KP, &first)
+            .await
+            .unwrap();
+        assert_eq!(inserted, 5);
+
+        let second: Vec<NewInstance> = (2..7).map(new_instance).collect();
+        let inserted = insert_batch_for_user(&db.admin, user, KP, &second)
+            .await
+            .unwrap();
+        assert_eq!(inserted, 2, "digests 2, 3, and 4 are already in the pool");
+
+        assert_eq!(unclaimed_depth(&db.admin, user, KP).await.unwrap(), 7);
+
+        // The same digest under a different knowledge point is a different row:
+        // the unique index carries kp_id.
+        let inserted = insert_batch_for_user(&db.admin, user, OTHER_KP, &first)
+            .await
+            .unwrap();
+        assert_eq!(inserted, 5);
+    })
+    .await;
+}
+
+/// The two documents survive the round trip through jsonb.
+#[tokio::test]
+async fn the_row_documents_round_trip() {
+    TestDb::with(|db| async move {
+        let user = db.seed_user("roundtrip@example.test").await;
+        seed_template(&db.admin, "deadbeefdeadbeef", KP, "approved", "ok").await;
+        let rows = vec![new_instance(3)];
+        assert_eq!(
+            insert_batch_for_user(&db.admin, user, KP, &rows)
+                .await
+                .unwrap(),
+            1
+        );
+
+        let ring = Ring::new();
+        let task = TaskMemory::new();
+        let avoid = Avoid::new(&ring, &task);
+        let claimed = pop_with_ring(&db.app, user, KP, &avoid)
+            .await
+            .unwrap()
+            .unwrap();
+
+        assert_eq!(claimed.row.problem.v, 1);
+        assert_eq!(claimed.row.problem.text, "Compute $3^2$.");
+        assert_eq!(claimed.row.problem.seed, 7);
+        assert_eq!(
+            claimed.row.problem.bindings.get("a").map(String::as_str),
+            Some("3")
+        );
+        assert_eq!(claimed.row.expected_answer.answer, "9");
+        assert_eq!(claimed.row.source, Source::Template);
+        assert_eq!(
+            claimed.row.content_digest.as_deref(),
+            Some("deadbeefdeadbeef")
+        );
+        assert_eq!(claimed.row.instance_hash, "pool-instance-0003");
+    })
+    .await;
+}
+
+/// An empty batch writes nothing and reports 0.
+#[tokio::test]
+async fn an_empty_batch_inserts_nothing() {
+    TestDb::with(|db| async move {
+        let user = db.seed_user("nobatch@example.test").await;
+        assert_eq!(
+            insert_batch_for_user(&db.admin, user, KP, &[])
+                .await
+                .unwrap(),
+            0
+        );
+        assert_eq!(unclaimed_depth(&db.admin, user, KP).await.unwrap(), 0);
+    })
+    .await;
+}
+
+// --------------------------------------------------------------------------
+// (5) The approved-template read (C6).
+// --------------------------------------------------------------------------
+
+/// Insert one `content_store` row.
+async fn seed_template(admin: &PgPool, digest: &str, kp_id: &str, status: &str, statement: &str) {
+    let body = format!(r#"{{"v":1,"statement":"{statement}"}}"#);
+    sqlx::query!(
+        r#"
+        INSERT INTO content_store (digest, kp_id, kind, body, status, approved_at)
+        VALUES ($1, $2, 'template', $3::text::jsonb, $4,
+                CASE WHEN $4 = 'approved' THEN now() ELSE NULL END)
+        "#,
+        digest,
+        kp_id,
+        body,
+        status,
+    )
+    .execute(admin)
+    .await
+    .expect("the content row inserts");
+}
+
+/// C6: a pending body is never read, and an approved body is.
+#[tokio::test]
+async fn only_an_approved_template_is_read() {
+    TestDb::with(|db| async move {
+        seed_template(&db.admin, "pending-1", KP, "pending", "pending body").await;
+        seed_template(&db.admin, "rejected-1", KP, "rejected", "rejected body").await;
+
+        let none = approved_template(&db.admin, KP).await.unwrap();
+        assert_eq!(none, None, "a pending template is never served (C6)");
+
+        seed_template(&db.admin, "approved-1", KP, "approved", "approved body").await;
+        let found = approved_template(&db.admin, KP).await.unwrap();
+        assert_eq!(
+            found,
+            Some(ApprovedTemplate {
+                digest: "approved-1".to_string(),
+                body: r#"{"v": 1, "statement": "approved body"}"#.to_string(),
+            })
+        );
+    })
+    .await;
+}
+
+// --------------------------------------------------------------------------
+// (6) The acceptance check: the A6 operator flags.
+// --------------------------------------------------------------------------
+
+/// A6: a knowledge point without an approved template is flagged.
+///
+/// `KP` has one approved template and one pending one. `OTHER_KP` has a pending
+/// template only, and its last serve fell back to an exemplar. The flag row of
+/// `OTHER_KP` therefore reads `approved_templates = 0`, `needs_template = true`,
+/// and a `last_exemplar_at` instant.
+#[tokio::test]
+async fn a_knowledge_point_without_an_approved_template_is_flagged() {
+    TestDb::with(|db| async move {
+        let user = db.seed_user("flags@example.test").await;
+
+        seed_template(&db.admin, "approved-1", KP, "approved", "ok").await;
+        seed_template(&db.admin, "pending-1", KP, "pending", "wait").await;
+        seed_template(&db.admin, "pending-2", OTHER_KP, "pending", "wait").await;
+
+        seed_rows(&db.admin, user, KP, 3).await;
+        seed_row(&db.admin, user, OTHER_KP, 0, Source::Exemplar).await;
+        seed_row(&db.admin, user, OTHER_KP, 1, Source::Exemplar).await;
+
+        // Serve one row of each knowledge point.
+        let ring = Ring::new();
+        let task = TaskMemory::new();
+        let avoid = Avoid::new(&ring, &task);
+        pop_with_ring(&db.app, user, KP, &avoid)
+            .await
+            .unwrap()
+            .unwrap();
+        pop_with_ring(&db.app, user, OTHER_KP, &avoid)
+            .await
+            .unwrap()
+            .unwrap();
+
+        let flags = operator_flags(&db.admin).await.unwrap();
+        assert_eq!(flags.len(), 2, "two knowledge points have rows");
+
+        let names: Vec<&str> = flags.iter().map(|flag| flag.kp_id.as_str()).collect();
+        assert_eq!(names, [OTHER_KP, KP], "the rows come back in key order");
+
+        let fallback = &flags[0];
+        assert_eq!(fallback.kp_id, "adding-two-digits/kp1");
+        assert_eq!(fallback.approved_templates, 0);
+        assert!(
+            fallback.needs_template,
+            "A6: this knowledge point is flagged"
+        );
+        assert_eq!(fallback.pool_depth, 1);
+        assert_eq!(fallback.last_source, Some(Source::Exemplar));
+        assert!(
+            fallback.last_exemplar_at.is_some(),
+            "the fallback instant is recorded"
+        );
+
+        let served = &flags[1];
+        assert_eq!(served.kp_id, "perfect-squares/kp1");
+        assert_eq!(
+            served.approved_templates, 1,
+            "the pending row does not count"
+        );
+        assert!(!served.needs_template);
+        assert_eq!(served.pool_depth, 2);
+        assert_eq!(served.last_source, Some(Source::Template));
+        assert_eq!(served.last_exemplar_at, None, "this KP never fell back");
+    })
+    .await;
+}
+
+/// A knowledge point with a template document and no pool row still appears.
+#[tokio::test]
+async fn a_knowledge_point_with_no_pool_row_still_appears_in_the_flags() {
+    TestDb::with(|db| async move {
+        seed_template(&db.admin, "pending-1", OTHER_KP, "pending", "wait").await;
+        let flags = operator_flags(&db.admin).await.unwrap();
+        assert_eq!(flags.len(), 1);
+        assert_eq!(flags[0].kp_id, "adding-two-digits/kp1");
+        assert_eq!(flags[0].approved_templates, 0);
+        assert_eq!(flags[0].pool_depth, 0);
+        assert_eq!(flags[0].last_source, None);
+        assert!(flags[0].needs_template);
+    })
+    .await;
+}
+
+// --------------------------------------------------------------------------
+// (7) The refill targets (D-O4).
+// --------------------------------------------------------------------------
+
+/// The target list names the pairs under the depth, shallowest first.
+#[tokio::test]
+async fn the_refill_targets_name_the_pairs_below_the_depth() {
+    TestDb::with(|db| async move {
+        let user = db.seed_user("targets@example.test").await;
+        seed_rows(&db.admin, user, KP, 5).await;
+        seed_row(&db.admin, user, OTHER_KP, 0, Source::Exemplar).await;
+
+        let targets = refill_targets(&db.admin, 4, 10).await.unwrap();
+        assert_eq!(
+            targets.len(),
+            1,
+            "only the shallow pair is under a depth of 4"
+        );
+        assert_eq!(targets[0].kp_id, "adding-two-digits/kp1");
+        assert_eq!(targets[0].depth, 1);
+        assert_eq!(targets[0].user_id, user);
+
+        let targets = refill_targets(&db.admin, 6, 10).await.unwrap();
+        assert_eq!(targets.len(), 2, "both pairs are under a depth of 6");
+        assert_eq!(targets[0].depth, 1);
+        assert_eq!(targets[1].depth, 5);
+
+        let targets = refill_targets(&db.admin, 6, 1).await.unwrap();
+        assert_eq!(targets.len(), 1, "the limit bounds one pass");
+        assert_eq!(targets[0].depth, 1);
+    })
+    .await;
+}
+
+/// A pair whose rows are all claimed has depth 0 and is a refill target.
+#[tokio::test]
+async fn a_fully_claimed_pair_is_a_refill_target() {
+    TestDb::with(|db| async move {
+        let user = db.seed_user("drained@example.test").await;
+        seed_rows(&db.admin, user, KP, 2).await;
+
+        let ring = Ring::new();
+        let task = TaskMemory::new();
+        let avoid = Avoid::new(&ring, &task);
+        pop_with_ring(&db.app, user, KP, &avoid)
+            .await
+            .unwrap()
+            .unwrap();
+        pop_with_ring(&db.app, user, KP, &avoid)
+            .await
+            .unwrap()
+            .unwrap();
+
+        let targets = refill_targets(&db.admin, 8, 10).await.unwrap();
+        assert_eq!(targets.len(), 1);
+        assert_eq!(targets[0].depth, 0, "an empty pool is depth 0, not absent");
+        assert_eq!(targets[0].kp_id, "perfect-squares/kp1");
+    })
+    .await;
+}
