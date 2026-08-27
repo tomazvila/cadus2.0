@@ -32,7 +32,7 @@
 //! # Every instance is checked again, one by one
 //!
 //! [`TemplateSource::fill`] runs the per-instance rules of the gate
-//! ([`check_instance`](super::recheck::check_instance)) on EVERY candidate before
+//! ([`check_instance`](crate::template::check_instance)) on EVERY candidate before
 //! the candidate joins the batch. The gate samples a large space from a constant
 //! seed and the fill draws from the batch seed, so the two sets differ and an
 //! unchecked corner would otherwise reach a learner (C4). A refused candidate is
@@ -46,13 +46,13 @@ use crate::answer::{Undecidable, canonical_form};
 use crate::curriculum::model::{Exemplar, KnowledgePoint};
 use crate::learner::problem_text_hash;
 use crate::template::{
-    Bindings, Compiled, EXHAUSTIVE_SPACE_LIMIT, Envelope, GateSpec, Instance, InstantiateError,
-    TemplateDoc, exemplar_envelope, rng_from_seed,
+    Bindings, Compiled, EXHAUSTIVE_SPACE_LIMIT, GateSpec, Instance, InstantiateError, TemplateDoc,
+    rng_from_seed,
 };
 
 use super::Source;
-use super::recheck;
 use super::ring::RING_CAPACITY;
+use crate::template::check_instance;
 
 /// The count of candidate streams one [`TemplateSource::fill`] call walks.
 ///
@@ -383,7 +383,6 @@ impl ProblemSource for TemplateSource<'_> {
         let spec = self.gate_spec();
         // The envelope reads every authored answer, so the fill reads it once
         // per batch and not once per instance.
-        let envelope: Option<Envelope> = exemplar_envelope(spec.exemplars);
         let mut rng = rng_from_seed(seed);
         let mut out: Vec<Instance> = Vec::new();
         let mut refusals: Vec<Refused> = Vec::new();
@@ -418,8 +417,7 @@ impl ProblemSource for TemplateSource<'_> {
                         if !seen.insert(instance.instance_hash.clone()) {
                             continue;
                         }
-                        // FIXM4a: replace with template::check_instance
-                        match recheck::check_one(self.doc(), &spec, envelope.as_ref(), &instance) {
+                        match check_instance(self.doc(), &spec, &instance) {
                             Err(rejection) => {
                                 last = Some(rejection.message.clone());
                                 refusals.push(Refused {

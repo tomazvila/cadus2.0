@@ -44,12 +44,14 @@
 //! (R3). Every draw takes a recorded `u64` seed from its caller, so a reviewer
 //! reproduces any served instance from the pool row.
 
-pub mod recheck;
 pub mod ring;
 pub mod row;
 pub mod source;
 
-pub use recheck::{Refusal, check_instance};
+/// The per-instance rules of the gate, re-exported for the fill path.
+pub use crate::template::check_instance;
+/// A refused instance carries the gate's rejection.
+pub type Refusal = crate::template::Rejection;
 pub use ring::{
     Avoid, Candidate, Pick, RING_CAPACITY, Ring, TASK_MEMORY_CAPACITY, TaskMemory, pick, serve,
 };

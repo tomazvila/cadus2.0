@@ -381,6 +381,7 @@ async fn serve_once(
     let avoid = Avoid::new(ring, task);
     let claimed = pop_with_ring_tx(&mut tx, user, KP_ID, &avoid)
         .await?
+        .claimed
         .expect("the pool holds an unclaimed row");
 
     // The served digest enters BOTH windows, and the caller writes them back in
