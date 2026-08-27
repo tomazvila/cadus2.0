@@ -176,7 +176,7 @@ const APP_TABLE_PRIVILEGES: [(&str, [bool; 5]); 20] = [
 ///
 /// The list holds no function of an extension.
 /// `public_functions_are_the_literal_list` pins those separately.
-const PUBLIC_FUNCTIONS: [(&str, bool, &str, bool, bool, bool); 5] = [
+const PUBLIC_FUNCTIONS: [(&str, bool, &str, bool, bool, bool); 6] = [
     // #1: the session cookie, read before the tenant bind.
     (
         "auth_session_by_token_hash",
@@ -207,6 +207,20 @@ const PUBLIC_FUNCTIONS: [(&str, bool, &str, bool, bool, bool); 5] = [
     // #11: the account status behind a session cookie.
     (
         "auth_user_by_id",
+        true,
+        r#"{"search_path=public, pg_temp"}"#,
+        true,
+        true,
+        false,
+    ),
+    // M5 U1, migration 0007: the worker-liveness read of `/api/ready`
+    // (D-M5-6). `diagnosis_jobs` carries a FORCEd tenant policy and the
+    // readiness probe runs unbound, so a plain SELECT reads zero rows on every
+    // deployment. This function is the ONE read that crosses that policy, and
+    // it gives back one aggregate number and no tenant row: no id, no attempt,
+    // no payload, no prose.
+    (
+        "diagnosis_claim_age_secs",
         true,
         r#"{"search_path=public, pg_temp"}"#,
         true,
@@ -1501,7 +1515,7 @@ async fn events_attempt_idem_is_unique() {
     .await;
 }
 
-/// D9: a second migration run applies nothing and leaves the six rows.
+/// D9: a second migration run applies nothing and leaves the seven rows.
 #[tokio::test]
 async fn migrate_is_idempotent() {
     TestDb::with(|db| async move {
@@ -1511,7 +1525,7 @@ async fn migrate_is_idempotent() {
             .fetch_one(&db.admin)
             .await
             .unwrap();
-        assert_eq!(count, 6);
+        assert_eq!(count, 7);
     })
     .await;
 }

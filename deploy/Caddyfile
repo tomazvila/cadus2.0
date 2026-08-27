@@ -9,11 +9,11 @@
 {$SITE_ADDRESS} {
 	encode zstd gzip
 
-	# Operational endpoints stay off the internet. /api/ready runs one SELECT 1
-	# through the web pool: it reports the datastore only. It reports nothing
-	# about cadus-worker. Scrape it over the compose network (web:8080), never
-	# through Caddy. /api/health stays reachable at the edge, so a 404 here
-	# breaks no bring-up check.
+	# Operational endpoints stay off the internet. /api/ready reports the
+	# datastore verdict and the age of the diagnosis backlog (D-M5-6), and
+	# /metrics reports every request series. Scrape both over the compose
+	# network (web:8080), never through Caddy. /api/health stays reachable at
+	# the edge, so a 404 here breaks no bring-up check.
 	@ops path /api/ready /metrics /metrics/*
 	handle @ops {
 		respond 404
