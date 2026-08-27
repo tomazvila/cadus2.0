@@ -24,7 +24,17 @@ Six lenses, two find/refute rounds: 40 raised, 22 confirmed, 6 blockers
 checked (the gate samples a fixed 4,096 tuples above the limit; the 1.0 incident the
 spec records); a parameter used only in the answer let one statement carry several
 answers; the image ships no curriculum, so the worker refilled nothing; a pair that can
-never fill starved the refill queue. Rulings in the record. Fix units FIXM4a–c.
+never fill starved the refill queue. Rulings in the record. Fix units FIXM4a–c fixed all 22 (commit d717818): every
+instance is re-checked by `template::check_instance` before it enters the pool; a
+hidden answer-only parameter is refused; the sampled walk continues past a spent draw and
+reads coverage from the satisfying sample; constraint literals read `n/d`; values keep
+their authored spelling (new `decimal` domain kind); rendered negatives and fractions are
+parenthesized; the answer writer brackets nested powers; the image carries
+`/app/curriculum` and the worker exits 2 without a curriculum; unfillable pairs leave the
+refill queue with a 15-minute backoff; the batch nonce is the clock; an undecodable pool
+row is retired and the pop continues; benchmark B runs the production insert/pop; A's L2
+half bypasses the string rung. Gate: 1,148 tests, benchmarks A p95 8.3 µs / B p95 1.9 ms.
+A verification round follows.
 
 Open notes: the serving key is `"<topic_id>/<kp_id>"` (a KP id is unique inside its topic
 only) — M5/M6 must use the same spelling; the refill target list derives from existing
