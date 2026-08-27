@@ -269,6 +269,49 @@ steps above keep the volume.
   `/api/ready` at the edge on purpose; scrape it over the compose network at
   `web:8080`.
 
+## The curriculum in the image
+
+The image carries the reviewed curriculum tree at `/app/curriculum`, and the
+`worker` service reads it there. `CADUS_CURRICULUM` names the path, and the
+image sets that variable to `/app/curriculum`, so a normal deployment sets
+nothing.
+
+The worker needs the tree for two jobs of the pool refill (D-O4):
+
+- the A6 exemplar fallback, which fills the pool of a knowledge point that has no
+  approved template;
+- the knowledge-point half of the verification gate, which reads the topic answer
+  kind and the authored exemplars.
+
+**`cadus-worker` exits 2 when the tree does not load.** The message names the
+path and the first finding, for example:
+
+```
+cadus-worker: configuration error: the curriculum at /app/curriculum did not load: no courses.yaml under /app/curriculum
+```
+
+An earlier build treated a missing tree as a warning and kept the tick loop
+running. The refill then filled nothing for any learner, and the one log line
+named the exemplar fallback alone (review round 1, findings #5 and #6). An exit
+is the honest report: `docker compose ps` shows the worker in a restart loop, and
+`docker compose logs worker` names the path to fix.
+
+To run a tree the image does not carry, bind-mount it and point the variable at
+the mount:
+
+```yaml
+services:
+  worker:
+    environment:
+      CADUS_CURRICULUM: /srv/curriculum
+    volumes:
+      - ./my-curriculum:/srv/curriculum:ro
+```
+
+`scripts/check_ops.sh` asserts that `/app/curriculum` is a directory in every
+image the compose file builds, so a `COPY` line that goes missing fails the gate
+and not the deployment.
+
 ## Query bound
 
 `DB_STATEMENT_TIMEOUT_MS` (default `5000`) bounds every query of the web and

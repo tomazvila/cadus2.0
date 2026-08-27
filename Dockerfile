@@ -10,9 +10,10 @@
 #
 # Multi-stage:
 #   * builder  -- rust:1.98-bookworm compiles the whole workspace in release mode.
-#   * runtime  -- debian:bookworm-slim carries the three binaries only. It
-#                 carries no compiler, no source, and no SQL file. `sqlx` embeds
-#                 the migrations in cadus-migrate at compile time.
+#   * runtime  -- debian:bookworm-slim carries the three binaries and the
+#                 curriculum tree. It carries no compiler, no source, and no SQL
+#                 file. `sqlx` embeds the migrations in cadus-migrate at compile
+#                 time.
 
 # --------------------------------------------------------------------------- #
 # Stage 1 -- builder: compile the workspace
@@ -65,6 +66,20 @@ WORKDIR /app
 COPY --from=builder /src/target/release/cadus-web /usr/local/bin/cadus-web
 COPY --from=builder /src/target/release/cadus-worker /usr/local/bin/cadus-worker
 COPY --from=builder /src/target/release/cadus-migrate /usr/local/bin/cadus-migrate
+
+# The curriculum tree (D-S1, C5). The worker reads it for the A6 exemplar
+# fallback and for the knowledge-point half of the gate re-run, and it REFUSES TO
+# START without it (exit 2). The old image carried the three binaries alone, so
+# every deployment started in that state: the worker heartbeated forever and
+# `serving_pool` stayed empty for every learner (findings #5 and #6).
+#
+# The tree is reviewed data under git (C5), so it belongs in the image beside the
+# code that reads it, and a deployment needs no volume for it.
+COPY --from=builder /src/curriculum /app/curriculum
+
+# The default the worker reads. `scripts/check_ops.sh` asserts that this path is
+# a directory inside every image the compose file builds.
+ENV CADUS_CURRICULUM=/app/curriculum
 
 RUN chown -R cadus:cadus /app
 

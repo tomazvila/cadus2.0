@@ -6,7 +6,7 @@
 # broken compose key first appears on the operator's server. This script runs
 # the operator's own commands in the gate instead.
 #
-# The script does eight checks and prints one line per check:
+# The script does nine checks and prints one line per check:
 #   (a) compose  -- `docker compose config` resolves docker-compose.yml. The
 #                   placeholder values below stand in for `.env`, which the
 #                   repository never carries. Every `:?` variable of the compose
@@ -19,6 +19,11 @@
 #   (c) binaries -- the three binaries of the Dockerfile exist in every image the
 #                   compose file builds. The image promise is one image and three
 #                   commands.
+#   (c2) curriculum -- /app/curriculum is a directory in every image the compose
+#                   file builds, and it holds courses.yaml. cadus-worker reads
+#                   the tree there for the A6 exemplar fallback and exits 2 when
+#                   the tree does not load, so an image without it gives a worker
+#                   that restarts forever (findings #5 and #6).
 #   (d) commands -- the whole `command:` of every service that builds the app
 #                   image is correct. `docker compose config` treats a
 #                   `command:` as opaque strings, so the compose file itself
@@ -211,6 +216,33 @@ EOF
 
 if [ "$binaries_ok" -eq 1 ]; then
     echo "PASS: binaries -- ${BINARIES[*]} exist in every image the compose file builds"
+fi
+
+# ---------------------------------------------------------------------------
+# (c2) the curriculum tree is in every image the compose file builds
+#
+# The tree is the input of the D-O4 pool refill. cadus-worker exits 2 when it
+# does not load, so a missing COPY line turns every deployment into a worker
+# restart loop. The check reads the path the Dockerfile sets as the default.
+# ---------------------------------------------------------------------------
+CURRICULUM_PATH=/app/curriculum
+
+curriculum_ok=1
+while read -r image; do
+    [ -n "$image" ] || continue
+    if ! docker run --rm --entrypoint sh "$image" \
+        -c '[ -d "$1" ] && [ -f "$1/courses.yaml" ]' sh "$CURRICULUM_PATH" \
+        >/dev/null 2>&1; then
+        echo "FAIL: curriculum -- image $image carries no $CURRICULUM_PATH/courses.yaml"
+        curriculum_ok=0
+        rc=1
+    fi
+done <<EOF
+$built_images
+EOF
+
+if [ "$curriculum_ok" -eq 1 ]; then
+    echo "PASS: curriculum -- $CURRICULUM_PATH/courses.yaml exists in every image the compose file builds"
 fi
 
 # ---------------------------------------------------------------------------

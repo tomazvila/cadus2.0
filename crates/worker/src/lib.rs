@@ -18,11 +18,14 @@
 pub mod refill;
 
 use std::future::Future;
-use std::time::Duration;
+use std::time::{Duration, SystemTime, UNIX_EPOCH};
 
 use cadus_store::{Db, StoreError, bounded};
 
-pub use refill::{RefillConfig, RefillJob, RefillReport, RefillState, batch_seed, refill_once};
+pub use refill::{
+    REFILL_BACKOFF, RefillConfig, RefillJob, RefillReport, RefillState, batch_seed, refill_once,
+    refill_once_at,
+};
 
 /// The environment variable that holds the tick period in whole seconds.
 const TICK_SECS_VAR: &str = "WORKER_TICK_SECS";
@@ -151,11 +154,32 @@ pub async fn run(db: &Db, cfg: &WorkerConfig, shutdown: impl Future) -> Result<u
     run_with(db, cfg, None, shutdown).await
 }
 
+/// The batch nonce of one refill pass: the UTC clock in microseconds.
+///
+/// The nonce is an input of `batch_seed`, so it decides which tuples one pass
+/// draws. A process-local tick counter restarts at zero with every process, so a
+/// restart replayed the batches the pool already held and `ON CONFLICT DO
+/// NOTHING` wrote no row: the pool of an active learner stalled at depth 0 for
+/// the whole window the old process had already walked, and two replicas drew
+/// identical batches (finding #10). The wall clock does not restart, so a new
+/// process and a second replica both draw a batch nobody drew before.
+///
+/// A clock before the epoch gives 0, and a clock past the range of a `u64` gives
+/// the largest `u64`. Neither one panics, and neither one is reachable on a
+/// machine whose clock is set at all.
+#[must_use]
+pub fn batch_nonce() -> u64 {
+    let since_epoch = SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .map_or(0_u128, |elapsed| elapsed.as_micros());
+    u64::try_from(since_epoch).unwrap_or(u64::MAX)
+}
+
 /// [`run`] with the M4 pool refill job in the loop (D-O4).
 ///
-/// Each tick runs the heartbeat and then one refill pass. The pass takes the
-/// tick number as its nonce, so the batch seed of a pair changes every tick and
-/// a second refill draws past the tuples the pool already holds.
+/// Each tick runs the heartbeat and then one refill pass. The pass takes the UTC
+/// microsecond clock as its nonce, so the batch seed of a pair changes every tick
+/// and a second refill draws past the tuples the pool already holds.
 ///
 /// A refill failure is news, not a fatal error: the pass logs the pair and the
 /// loop takes the next tick. A database that is gone shows up on the heartbeat,
@@ -216,15 +240,17 @@ pub async fn run_with(
             }
         }
 
-        // Step 4: the M4 refill pass (D-O4). The nonce is the tick number, so
-        // each pass draws a different batch for the same pair.
+        // Step 4: the M4 refill pass (D-O4). The nonce is the UTC microsecond
+        // clock, so each pass draws a different batch for the same pair and a
+        // restart does not replay the batches the pool already holds.
         let Some(job) = refill else {
             continue;
         };
+        let nonce = batch_nonce();
         tokio::select! {
             biased;
             _ = &mut shutdown => break,
-            result = refill::refill_once(db, job, &mut state, ticks) => match result {
+            result = refill::refill_once(db, job, &mut state, nonce) => match result {
                 Ok(report) => tracing::info!(
                     targets = report.targets,
                     inserted = report.inserted,
@@ -232,6 +258,10 @@ pub async fn run_with(
                     from_exemplar = report.from_exemplar,
                     without_source = report.without_source,
                     failed = report.failed,
+                    refused_instances = report.refused_instances,
+                    flagged_refusals = report.flagged_refusals,
+                    skipped_starved = report.skipped_starved,
+                    nonce,
                     "refill tick={ticks}"
                 ),
                 Err(err) => tracing::warn!(error = %err, "refill: the pass did not run"),
@@ -257,8 +287,40 @@ async fn heartbeat(db: &Db) -> Result<(), WorkerError> {
 
 #[cfg(test)]
 mod tests {
-    use super::{WorkerConfig, WorkerError};
+    use super::{WorkerConfig, WorkerError, batch_nonce};
     use std::time::Duration;
+
+    /// The batch nonce is the UTC clock in microseconds, not a tick counter.
+    ///
+    /// The literal below is the microsecond count of 2026-01-01T00:00:00Z. A
+    /// nonce that counts ticks, or that reads milliseconds or seconds, is far
+    /// under it and fails here (finding #10).
+    #[test]
+    fn the_batch_nonce_is_the_utc_microsecond_clock() {
+        const Y2026: u64 = 1_767_225_600_000_000;
+        const Y2100: u64 = 4_102_444_800_000_000;
+
+        let nonce = batch_nonce();
+        assert!(
+            nonce > Y2026,
+            "the nonce must be a microsecond clock past 2026, it read {nonce}"
+        );
+        assert!(
+            nonce < Y2100,
+            "the nonce must be a microsecond clock before 2100, it read {nonce}"
+        );
+    }
+
+    /// Two nonces of one process never go backwards, and a restart repeats none.
+    #[test]
+    fn the_batch_nonce_does_not_go_backwards() {
+        let first = batch_nonce();
+        let second = batch_nonce();
+        assert!(
+            second >= first,
+            "the clock must not go backwards: {first} then {second}"
+        );
+    }
 
     /// The parse of one raw value. Each expected string below is a literal.
     #[test]

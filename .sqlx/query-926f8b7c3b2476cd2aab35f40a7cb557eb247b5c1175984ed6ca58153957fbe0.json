@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n        SELECT user_id AS \"user_id!\",\n               kp_id AS \"kp_id!\",\n               count(*) FILTER (WHERE claimed_at IS NULL) AS \"depth!\"\n        FROM serving_pool\n        GROUP BY user_id, kp_id\n        HAVING count(*) FILTER (WHERE claimed_at IS NULL) < $1\n        ORDER BY \"depth!\", user_id, kp_id\n        LIMIT $2\n        ",
+  "query": "\n        SELECT user_id AS \"user_id!\",\n               kp_id AS \"kp_id!\",\n               count(*) FILTER (WHERE claimed_at IS NULL) AS \"depth!\"\n        FROM serving_pool\n        WHERE NOT EXISTS (\n                  SELECT 1\n                  FROM unnest($3::uuid[], $4::text[]) AS skip(user_id, kp_id)\n                  WHERE skip.user_id = serving_pool.user_id\n                    AND skip.kp_id = serving_pool.kp_id\n              )\n        GROUP BY user_id, kp_id\n        HAVING count(*) FILTER (WHERE claimed_at IS NULL) < $1\n        ORDER BY \"depth!\", user_id, kp_id\n        LIMIT $2\n        ",
   "describe": {
     "columns": [
       {
@@ -35,7 +35,9 @@
     "parameters": {
       "Left": [
         "Int8",
-        "Int8"
+        "Int8",
+        "UuidArray",
+        "TextArray"
       ]
     },
     "nullable": [
@@ -44,5 +46,5 @@
       null
     ]
   },
-  "hash": "610ab9f733d9167f78cfb306f7288cb07859057a89e34dabc4af61bbfaa9611e"
+  "hash": "926f8b7c3b2476cd2aab35f40a7cb557eb247b5c1175984ed6ca58153957fbe0"
 }

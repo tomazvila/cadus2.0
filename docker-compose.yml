@@ -180,6 +180,10 @@ services:
       # Client-side bound on every query, in milliseconds (0 = none). See the
       # `web` service above.
       DB_CLIENT_TIMEOUT_MS: ${DB_CLIENT_TIMEOUT_MS:-10000}
+      # The curriculum tree the pool refill reads (D-O4, A6). The image carries
+      # it at /app/curriculum, and the worker exits 2 when the tree does not
+      # load. Point this at a bind mount to run a tree the image does not carry.
+      CADUS_CURRICULUM: ${CADUS_CURRICULUM:-/app/curriculum}
       RUST_LOG: ${RUST_LOG:-info}
     depends_on:
       migrate:
