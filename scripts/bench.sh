@@ -26,6 +26,12 @@
 #
 # Each benchmark writes its numbers to $CADUS_BENCH_DIR (default target/bench)
 # as JSON. CI uploads that directory, so a trend is visible per run.
+#
+# Benchmark A prints one deterministic number beside the timings: `<n>
+# allocations`. ALLOCATION_BOUND in crates/core/tests/bench_l1.rs is
+# floor(n * 1005 / 1000), and docs/reference/l1-budget.md section 8 records n and
+# the four steps that re-pin it. If a change moves n on purpose, do those steps
+# in the same commit (M4 review 2, findings 7 and 11).
 set -euo pipefail
 
 # Put the project toolchain first, if it is installed on this machine.
