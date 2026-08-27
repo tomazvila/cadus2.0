@@ -34,7 +34,11 @@ parenthesized; the answer writer brackets nested powers; the image carries
 refill queue with a 15-minute backoff; the batch nonce is the clock; an undecodable pool
 row is retired and the pop continues; benchmark B runs the production insert/pop; A's L2
 half bypasses the string rung. Gate: 1,148 tests, benchmarks A p95 8.3 µs / B p95 1.9 ms.
-A verification round follows.
+A verification round (round 2): 18 raised, 11 confirmed, 0 blockers
+(`docs/reviews/M4-review-2.md`) — two tuples could render one statement with different
+answers; the space estimator and the walk used different draw budgets; choice coverage
+read the declared list; pool rows were served after an approval was revoked; benchmark
+literals were stale. Fix units FIXM4d–f; then M4 closes on the two-round cap.
 
 Open notes: the serving key is `"<topic_id>/<kp_id>"` (a KP id is unique inside its topic
 only) — M5/M6 must use the same spelling; the refill target list derives from existing
