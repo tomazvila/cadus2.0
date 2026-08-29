@@ -252,6 +252,7 @@ fn live_problem() -> ServedProblem {
         problem_id: PROBLEM_ID.to_string(),
         task_id: LESSON.to_string(),
         topic: Some("addition".to_string()),
+        serve_topic: Some("addition".to_string()),
         kp: Some("kp1".to_string()),
         answer_kind: Some("numeric".to_string()),
         text: PROBLEM_TEXT.to_string(),

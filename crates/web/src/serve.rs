@@ -21,7 +21,8 @@
 //!
 //! There is no model call (T1, R4), so the whole serve is one transaction
 //! (`serving-1.0-spec.md` section 7.2): the advisory lock, the log read, the
-//! projection, the pool pop, the state write, commit. `started_at` is re-stamped
+//! projection, the pool pop, the authored-solution read of a template row, the
+//! state write, commit. `started_at` is re-stamped
 //! at EVERY hand-off, a re-serve of a live problem included, because that is the
 //! moment the problem goes on screen (section 5.6). A re-serve therefore returns
 //! the SAME `problem_id` with a FRESH `started_at`.
@@ -35,16 +36,19 @@
 //! [`reclaim_exemplar_tx`], which re-stamps `claimed_at` and so keeps
 //! `last_exemplar_at` of the A6 operator view current.
 
+use std::collections::BTreeMap;
+
 use axum::Json;
 use axum::extract::{Path, State};
 use axum::http::StatusCode;
-use cadus_core::curriculum::Curriculum;
+use cadus_core::curriculum::{Curriculum, KnowledgePoint};
 use cadus_core::event::{TaskType, Timestamp};
 use cadus_core::pool::{Avoid, ExemplarSource, ProblemSource, Ring, Source, TaskMemory, kp_key};
 use cadus_core::selector::{SessionPlan, Task};
+use cadus_core::template::{Bindings, Value as Binding, from_body, literal_to_rational, render};
 use cadus_store::content::{KIND_HINT_LADDER, KIND_TEACH, approved_document};
 use cadus_store::pool::{
-    NewInstance, PoolRow, insert_batch, pop_with_ring_tx, reclaim_exemplar_tx,
+    NewInstance, PoolRow, approved_template, insert_batch, pop_with_ring_tx, reclaim_exemplar_tx,
 };
 use cadus_store::state::{EventRow, load_events, lock_web_state, project_current};
 use serde::Deserialize;
@@ -513,16 +517,18 @@ pub(crate) async fn install_next(
     let ring = scratch.ring(&target.serve);
     let memory = scratch.memory(&task_id);
     let row = draw(state, tx, user_id, graph, &target, &key, &ring, &memory).await?;
+    let solution_sketch = solution_of(state, tx, graph, &target, &key, &row).await?;
 
     let served = ServedProblem {
         problem_id: Uuid::new_v4().simple().to_string(),
         task_id: task_id.clone(),
         topic: Some(target.record.clone()),
+        serve_topic: Some(target.serve.clone()),
         kp: Some(target.kp.clone()),
         answer_kind: answer_kind_of(graph, &target.serve),
         text: row.problem.text.clone(),
         expected: row.expected_answer.clone(),
-        solution_sketch: None,
+        solution_sketch,
         started_at,
         hints_given: Vec::new(),
         index,
@@ -548,6 +554,134 @@ fn answer_kind_of(graph: &Curriculum, topic_id: &str) -> Option<String> {
     let idx = graph.idx_of(topic_id)?;
     let topic = graph.topic(idx)?;
     Some(topic.answer_kind.as_str().to_string())
+}
+
+// --------------------------------------------------------------------------- //
+// The authored solution sketch (A4, D-M5-3)
+// --------------------------------------------------------------------------- //
+
+/// The authored worked solution of the drawn row, or `None`.
+///
+/// The grade reply of unit U8 reveals it after the attempt commits, and the
+/// stock re-solve text of D-M5-3 tells the learner to study it, so a served
+/// problem that carries no sketch makes that text point at nothing (M5 review 1,
+/// findings F2 and F11).
+///
+/// The pool row names its own author. An `exemplar` row (A6) names the authored
+/// exemplar of the knowledge point by its statement, which
+/// [`ExemplarSource::fill`] copies verbatim. A `template` row names the
+/// `content_store` document by `content_digest`, and that document's sketch is a
+/// statement over the same parameters, so the row's own bindings render it.
+///
+/// The read costs one indexed `content_store` statement inside the transaction
+/// the caller owns, and only for a template row. A `generator` row (A7) names no
+/// author, so it takes the `None` branch.
+///
+/// `None` is the closed answer of every refusal: a row whose digest lost its
+/// approval, a document that does not read, an author who wrote no sketch, and a
+/// sketch that does not render. The reply then omits `solution`, and the learner
+/// keeps the verdict and the expected answer.
+async fn solution_of(
+    state: &AppState,
+    tx: &mut Transaction<'_, Postgres>,
+    graph: &Curriculum,
+    target: &Target,
+    key: &str,
+    row: &PoolRow,
+) -> Result<Option<String>, ApiError> {
+    if row.source == Source::Exemplar {
+        return Ok(exemplar_sketch(graph, target, &row.problem.text));
+    }
+    let Some(digest) = row.content_digest.as_deref() else {
+        return Ok(None);
+    };
+    let found = bound(&state.db, approved_template(&mut **tx, key))
+        .await
+        .map_err(|err| failed(&err))?;
+    let Some(found) = found else {
+        return Ok(None);
+    };
+    // C6: the row was drawn from ONE digest, and the approved document may be a
+    // later one. The sketch of a different document is not this problem's
+    // solution.
+    if found.digest != digest {
+        return Ok(None);
+    }
+    Ok(template_sketch(&found.body, &row.problem.bindings, key))
+}
+
+/// The authored exemplar whose statement is `text`, and its sketch (A6).
+fn exemplar_sketch(graph: &Curriculum, target: &Target, text: &str) -> Option<String> {
+    let kp = authored_kp(graph, &target.serve, &target.kp)?;
+    kp.exemplars
+        .iter()
+        .find(|exemplar| exemplar.problem == text)
+        .and_then(|exemplar| exemplar.solution_sketch.clone())
+}
+
+/// Render the sketch of one template document against the bindings of one row.
+fn template_sketch(body: &str, bindings: &BTreeMap<String, String>, key: &str) -> Option<String> {
+    let doc = match from_body(body) {
+        Ok(doc) => doc,
+        Err(reason) => {
+            tracing::warn!(
+                kp_id = %key,
+                error = %reason,
+                "serve: the approved template did not read, so the serve carries no solution"
+            );
+            return None;
+        }
+    };
+    let sketch = doc.solution_sketch?;
+    let values: Bindings = bindings
+        .iter()
+        .map(|(name, text)| (name.clone(), binding_value(text)))
+        .collect();
+    match render(&sketch, &values) {
+        Ok(text) => Some(text),
+        Err(reason) => {
+            tracing::warn!(
+                kp_id = %key,
+                error = %reason,
+                "serve: the authored solution sketch did not render"
+            );
+            None
+        }
+    }
+}
+
+/// Read one canonical binding string back into the value the draw bound.
+///
+/// The pool row keeps every bound value as its canonical string (D6), and the
+/// renderer takes values. The reader is the inverse of
+/// [`cadus_core::template::Value::canonical_string`]: a spelling that names an
+/// exact rational and carries a decimal point is the authored spelling of a
+/// decimal domain; every other spelling that names a rational is a number; and a
+/// spelling that names no rational is a text choice, such as a multiplication
+/// sign. The three cases write the same string back and take the same brackets
+/// as the draw took.
+fn binding_value(canonical: &str) -> Binding {
+    let Some(number) = literal_to_rational(canonical) else {
+        return Binding::Text(canonical.to_string());
+    };
+    if canonical.contains('.') {
+        return Binding::Spelled {
+            text: canonical.to_string(),
+            number,
+        };
+    }
+    Binding::Num(number)
+}
+
+/// The authored knowledge point of one topic, or `None`.
+fn authored_kp<'graph>(
+    graph: &'graph Curriculum,
+    topic_id: &str,
+    kp_id: &str,
+) -> Option<&'graph KnowledgePoint> {
+    let idx = graph.idx_of(topic_id)?;
+    let kp_idx = graph.kp_idx_of(idx, kp_id)?;
+    graph.knowledge_point(idx, kp_idx)
 }
 
 /// Take one instance out of the pool, and fall back to the exemplars (A6).
@@ -622,13 +756,7 @@ fn exemplar_rows(
     target: &Target,
     key: &str,
 ) -> Result<Vec<NewInstance>, ApiError> {
-    let Some(idx) = graph.idx_of(&target.serve) else {
-        return Ok(Vec::new());
-    };
-    let Some(kp_idx) = graph.kp_idx_of(idx, &target.kp) else {
-        return Ok(Vec::new());
-    };
-    let Some(kp) = graph.knowledge_point(idx, kp_idx) else {
+    let Some(kp) = authored_kp(graph, &target.serve, &target.kp) else {
         return Ok(Vec::new());
     };
     let source = ExemplarSource::new(key, &kp.exemplars);
@@ -778,6 +906,13 @@ pub async fn hint(
     // The section 4.2 re-check, in its two refusals: a closed task is
     // `409 task_complete` and a superseded id is `404 unknown_problem`.
     let served = scratch.validate(&task_id, &problem_id)?;
+    // The ladder belongs to the knowledge point that produced the STATEMENT, so
+    // the key comes from `serve_topic`. `topic` is the topic the attempt records
+    // against, and for a review that micro-interleaves a component skill the two
+    // name different knowledge points (M5 review 1, findings F10 and F16). The
+    // reference-lesson escalation below still names the RECORD topic, which is
+    // the lesson the review stands for.
+    let serving = served.serving_topic().map(ToString::to_string);
     let (topic, kp) = (served.topic.clone(), served.kp.clone());
     let rung = served.hints_given.len();
     let Some(kp) = kp else {
@@ -786,7 +921,9 @@ pub async fn hint(
     let Some(topic) = topic else {
         return Err(no_ladder());
     };
-    let key = kp_key(&topic, &kp);
+    // `serving_topic` gives `topic` when the D-S6 row names no serve topic, so
+    // the fallback here never runs and the key is always a real pair.
+    let key = kp_key(serving.as_deref().unwrap_or(&topic), &kp);
 
     let doc = bound(
         &state.db,

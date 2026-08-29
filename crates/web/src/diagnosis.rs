@@ -314,7 +314,13 @@ pub(crate) async fn decide(
     }
 
     // Spec section 6.2: the pre-authored path first. A hit writes no job row.
-    if let (Some(topic), Some(point)) = (served.topic.as_deref(), served.kp.as_deref()) {
+    //
+    // The distractors belong to the knowledge point that produced the STATEMENT,
+    // so the key comes from `serve_topic`. For a review that micro-interleaves a
+    // component skill, `topic` names the parent the attempt records against and
+    // the pair `(topic, kp)` names a knowledge point that never produced this
+    // problem (M5 review 1, findings F10 and F16).
+    if let (Some(topic), Some(point)) = (served.serving_topic(), served.kp.as_deref()) {
         let key = kp_key(topic, point);
         let doc = bound(
             &state.db,

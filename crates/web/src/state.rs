@@ -123,10 +123,23 @@ pub struct ServedProblem {
     pub problem_id: String,
     /// The task this problem belongs to.
     pub task_id: String,
-    /// The topic of the problem.
+    /// The topic the attempt records against.
     #[serde(default)]
     pub topic: Option<String>,
-    /// The knowledge point of the problem.
+    /// The topic the statement was drawn from.
+    ///
+    /// It differs from `topic` for a review that micro-interleaves a component
+    /// skill: the review records its FIRe against the parent topic, and the
+    /// statement comes from the component (`api.py:352-357`). The serving key of
+    /// `serving_pool` and `content_store` is built from THIS topic, so the hint
+    /// ladder and the pre-authored diagnosis name the knowledge point that
+    /// produced the statement (M5 review 1, findings F10 and F16).
+    ///
+    /// A document written before this field reads back `None`. The two readers
+    /// then fall back to `topic`, which is the behavior of that older document.
+    #[serde(default)]
+    pub serve_topic: Option<String>,
+    /// The knowledge point of the problem, inside `serve_topic`.
     #[serde(default)]
     pub kp: Option<String>,
     /// The answer kind the checker reads.
@@ -152,6 +165,20 @@ pub struct ServedProblem {
     /// The stashed assisted pass that waits for its unaided re-solve (H3).
     #[serde(default)]
     pub rework: Option<Json>,
+}
+
+impl ServedProblem {
+    /// The topic the serving key is built from.
+    ///
+    /// `serving_pool.kp_id` and `content_store.kp_id` both hold
+    /// [`kp_key`](cadus_core::pool::kp_key) of THIS topic and of `kp`, so the
+    /// hint ladder and the pre-authored diagnosis read the knowledge point that
+    /// produced the statement. A document written before `serve_topic` gives
+    /// `topic`.
+    #[must_use]
+    pub fn serving_topic(&self) -> Option<&str> {
+        self.serve_topic.as_deref().or(self.topic.as_deref())
+    }
 }
 
 /// How far one task has got (`state.py:63-73`). 2.0 keeps it verbatim.
