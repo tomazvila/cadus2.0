@@ -31,7 +31,11 @@
 //!    CSRF layer included (1.0 orders it the same way, `cadus_web/app.py:315`);
 //! 2. the security-header layer, so the `403` carries the headers too;
 //! 3. the CSRF origin layer, which answers before any handler runs;
-//! 4. the routes and the two fallbacks.
+//! 4. the tenant layer, which turns a live credential into the `Tenant` that a
+//!    guarded route extracts (FIX-M5-C). It runs INSIDE the CSRF layer, so a
+//!    forged cross-origin write is refused before the ambient cookie is read as
+//!    a credential;
+//! 5. the routes and the two fallbacks.
 
 #![cfg_attr(
     test,
@@ -215,6 +219,11 @@ pub fn create_app(state: AppState) -> Router {
         // return the envelope instead (spec section 2).
         .fallback(error::not_found)
         .method_not_allowed_fallback(error::method_not_allowed)
+        // FIX-M5-C: the tenant layer. It runs `auth::guard::current_user` and
+        // writes the `Tenant` that every guarded route extracts. It is added
+        // FIRST, so it is the INNERMOST of the four and the CSRF layer refuses a
+        // forged write before this layer reads the ambient cookie.
+        .layer(from_fn_with_state(state.clone(), auth::layer::tenant_layer))
         .layer(from_fn_with_state(state.clone(), origin::csrf_origin_layer))
         .layer(from_fn(security::security_headers_layer))
         .layer(from_fn_with_state(

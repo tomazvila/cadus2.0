@@ -18,6 +18,10 @@
 //! Every expected value is a LITERAL: a literal status code, a literal error
 //! code, a literal wire status, a literal tag, a literal count. Nothing here
 //! re-reads a constant from the code under test.
+//!
+//! Every call presents a real session cookie, and `auth::layer::tenant_layer`
+//! binds the tenant from it (FIX-M5-C). No test here writes a request extension
+//! by hand.
 
 #![allow(
     clippy::unwrap_used,
@@ -26,6 +30,8 @@
     clippy::todo,
     clippy::unimplemented
 )]
+
+mod common;
 
 use std::sync::Arc;
 use std::time::Duration;
@@ -43,7 +49,7 @@ use cadus_store::diagnosis::JobRow;
 use cadus_store::test_support::TestDb;
 use cadus_store::{DEFAULT_CLIENT_TIMEOUT_MS, Db};
 use cadus_web::diagnosis::{DiagnosisHub, job_view, match_distractor};
-use cadus_web::state::{Content, ServedProblem, TaskProgress, Tenant, WebState};
+use cadus_web::state::{Content, ServedProblem, TaskProgress, WebState};
 use cadus_web::{AppState, create_app};
 use http_body_util::BodyExt;
 use serde_json::{Value, json};
@@ -205,7 +211,7 @@ async fn call(
     };
     let mut request = builder.body(payload).unwrap();
     if let Some(user) = tenant {
-        request.extensions_mut().insert(Tenant(user));
+        common::present_session(request.headers_mut(), user);
     }
     let response = app.clone().oneshot(request).await.unwrap();
     let status = response.status();
@@ -322,7 +328,7 @@ async fn stored_state(db: &TestDb, user: Uuid) -> WebState {
 
 /// Seed a learner with an open session and one live lesson problem.
 async fn learner(db: &TestDb, email: &str) -> Uuid {
-    let user = db.seed_user(email).await;
+    let user = common::seed_learner(db, email).await;
     seed_open_session(db, user).await;
     put_state(db, user, &state_with_live_problem()).await;
     user
@@ -625,7 +631,7 @@ async fn a_rolled_back_grade_leaves_no_job_row() {
 #[tokio::test]
 async fn an_enqueue_inside_a_rolled_back_transaction_leaves_no_row() {
     TestDb::with(|db| async move {
-        let user = db.seed_user("u9-rollback@example.test").await;
+        let user = common::seed_learner(&db, "u9-rollback@example.test").await;
         let payload = json!({ "v": 1, "given_answer": "99" });
 
         let mut tx = cadus_store::begin_tenant(&db.app, user).await.unwrap();
@@ -697,7 +703,7 @@ async fn open_stream(app: &Router, user: Uuid) -> Body {
         .uri("/api/diagnosis/stream")
         .body(Body::empty())
         .unwrap();
-    request.extensions_mut().insert(Tenant(user));
+    common::present_session(request.headers_mut(), user);
     let response = app.clone().oneshot(request).await.unwrap();
     assert_eq!(response.status(), StatusCode::OK);
     assert_eq!(
@@ -722,8 +728,8 @@ async fn a_notify_for_one_tenant_never_reaches_another_tenants_stream() {
     TestDb::with(|db| async move {
         let hub = Arc::new(DiagnosisHub::new());
         let app = app_with(&db, &hub);
-        let alice = db.seed_user("u9-alice@example.test").await;
-        let bob = db.seed_user("u9-bob@example.test").await;
+        let alice = common::seed_learner(&db, "u9-alice@example.test").await;
+        let bob = common::seed_learner(&db, "u9-bob@example.test").await;
         let job = seed_done_job(
             &db,
             alice,
@@ -804,8 +810,8 @@ async fn a_notify_for_one_tenant_never_reaches_another_tenants_stream() {
 async fn a_poll_for_another_tenants_id_is_404_unknown_diagnosis() {
     TestDb::with(|db| async move {
         let app = app(&db);
-        let alice = db.seed_user("u9-poll-alice@example.test").await;
-        let bob = db.seed_user("u9-poll-bob@example.test").await;
+        let alice = common::seed_learner(&db, "u9-poll-alice@example.test").await;
+        let bob = common::seed_learner(&db, "u9-poll-bob@example.test").await;
         let job = seed_done_job(
             &db,
             alice,
@@ -854,7 +860,7 @@ async fn a_poll_for_another_tenants_id_is_404_unknown_diagnosis() {
 async fn an_unknown_id_and_a_missing_session_are_the_pinned_refusals() {
     TestDb::with(|db| async move {
         let app = app(&db);
-        let user = db.seed_user("u9-refusals@example.test").await;
+        let user = common::seed_learner(&db, "u9-refusals@example.test").await;
 
         for id in ["not-a-uuid", "11111111-1111-4111-8111-111111111111"] {
             let (status, body) = call(
