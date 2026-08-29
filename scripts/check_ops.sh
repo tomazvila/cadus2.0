@@ -47,12 +47,16 @@
 #   (e) deploy   -- scripts/deploy.sh exists, is executable, and parses. It is
 #                   THE upgrade procedure (finding #16), so a broken file must
 #                   fail the gate and not the operator's upgrade.
-#   (f) invariants -- three compose facts that a review round paid for:
+#   (f) invariants -- four compose facts that a review round paid for:
 #                   the `db` healthcheck probes TCP (`-h`), because the initdb
 #                   temp server answers the unix socket while port 5432 still
-#                   refuses (finding #15); and `migrate` gets neither
+#                   refuses (finding #15); `migrate` gets neither
 #                   DB_STATEMENT_TIMEOUT_MS nor DB_CLIENT_TIMEOUT_MS, because a
-#                   migration runs without a query bound (finding #1).
+#                   migration runs without a query bound (finding #1); and
+#                   `worker` gets the seven A4 model variables, because a worker
+#                   that never sees OPENAI_API_KEY reads an empty key, builds no
+#                   diagnosis job, and leaves the queue standing for ever
+#                   (M5 review finding F8).
 #   (g) shell    -- `shellcheck -S warning scripts/*.sh`. The scripts here are
 #                   ops code: deploy.sh is THE upgrade procedure, and an unquoted
 #                   expansion or a lost exit code in it lands on the operator's
@@ -331,7 +335,13 @@ if [ "$deploy_ok" -eq 1 ]; then
 fi
 
 # ---------------------------------------------------------------------------
-# (f) the two compose invariants of review round 3
+# (f) the compose invariants of the review rounds
+#
+# The seven A4 model variables reach the `worker` service, because model calls
+# run in cadus-worker and never on a request path (R4, L6). Compose keeps a key
+# whose `${VAR:-}` value is unset, and gives it an empty string, so the check
+# reads the KEY and never the value: an empty OPENAI_API_KEY is the documented
+# "call no model" deployment (docs/SELF_HOST.md).
 # ---------------------------------------------------------------------------
 invariant_log=""
 if invariant_log="$(printf '%s' "$config_json" | python3 -c '
@@ -357,6 +367,25 @@ for key in ("DB_STATEMENT_TIMEOUT_MS", "DB_CLIENT_TIMEOUT_MS"):
     if key in migrate_env:
         problems.append("migrate carries " + key + "; a migration runs unbounded")
 
+# The seven A4 variables of docs/SELF_HOST.md, section "The seven variables".
+model_keys = (
+    "OPENAI_API_KEY",
+    "OPENAI_BASE_URL",
+    "OPENAI_MODEL",
+    "OPENROUTER_PROVIDER_ORDER",
+    "DIAGNOSIS_OUTPUT_TOKENS",
+    "DIAGNOSIS_REASONING_MAX_TOKENS",
+    "DIAGNOSIS_CALLS_PER_SESSION",
+)
+worker_env = services.get("worker", {}).get("environment", {}) or {}
+missing = [key for key in model_keys if key not in worker_env]
+if missing:
+    problems.append(
+        "the worker service does not carry the A4 model variable(s) "
+        + ", ".join(missing)
+        + "; the diagnosis job then reads an empty OPENAI_API_KEY and calls no model"
+    )
+
 for line in problems:
     print(line)
 ')"; then
@@ -364,7 +393,7 @@ for line in problems:
         printf 'FAIL: invariants -- %s\n' "$invariant_log"
         rc=1
     else
-        echo "PASS: invariants -- db probes TCP, and migrate carries no query bound"
+        echo "PASS: invariants -- db probes TCP, migrate carries no query bound, and worker carries the seven A4 model variables"
     fi
 else
     echo "FAIL: invariants -- the compose invariant check did not run"
