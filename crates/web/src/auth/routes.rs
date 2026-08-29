@@ -8,6 +8,14 @@
 //! section 3.3 call order through `cadus_store::auth`, and render the answer.
 //! No handler here calls a model and no handler here panics on a body (R4).
 //!
+//! Seven of the ten routes read a body, and each one takes it through
+//! [`LimitedBody`], never through the axum `Bytes` extractor. The axum rejection
+//! answers a plain-text sentence, and the section 2 envelope has no exception,
+//! so a body over the limit is `413 payload_too_large` and a body that fails
+//! mid-read is `422 invalid_request`, both as JSON. The other three routes read
+//! no body: `logout` and `logout-all` take the session alone, and `me` is a
+//! `GET`. No body rejection can reach those three.
+//!
 //! # The three rules that shape every handler
 //!
 //! **Nothing tells a registered address from an unregistered one.** Sign-up
@@ -64,6 +72,7 @@ use sqlx::types::chrono::{DateTime, Utc};
 use sqlx::{Postgres, Transaction};
 
 use crate::AppState;
+use crate::auth::body::LimitedBody;
 use crate::auth::email::normalize_email;
 use crate::auth::guard::{Authed, current_user, plus_secs};
 use crate::auth::password::{
@@ -413,7 +422,7 @@ pub async fn signup(
     State(state): State<AppState>,
     ClientAddr(peer): ClientAddr,
     headers: HeaderMap,
-    body: Bytes,
+    LimitedBody(body): LimitedBody,
 ) -> Result<Response, ApiError> {
     let value = object(&body)?;
     let email = normalize_email(field(&value, "email")?);
@@ -469,7 +478,7 @@ pub async fn login(
     State(state): State<AppState>,
     ClientAddr(peer): ClientAddr,
     headers: HeaderMap,
-    body: Bytes,
+    LimitedBody(body): LimitedBody,
 ) -> Result<Response, ApiError> {
     let value = object(&body)?;
     let email = normalize_email(field(&value, "email")?);
@@ -597,7 +606,7 @@ async fn bound_profile(db: &Db, user_id: Uuid) -> Result<AccountProfile, ApiErro
 pub async fn change_password(
     State(state): State<AppState>,
     headers: HeaderMap,
-    body: Bytes,
+    LimitedBody(body): LimitedBody,
 ) -> Result<Response, ApiError> {
     let Authed { user, token_hash } = current_user(&state, &headers).await?;
     let value = object(&body)?;
@@ -642,7 +651,7 @@ pub async fn forgot_password(
     State(state): State<AppState>,
     ClientAddr(peer): ClientAddr,
     headers: HeaderMap,
-    body: Bytes,
+    LimitedBody(body): LimitedBody,
 ) -> Result<Response, ApiError> {
     let value = object(&body)?;
     let email = normalize_email(field(&value, "email")?);
@@ -682,7 +691,7 @@ pub async fn forgot_password(
 /// including an attacker's.
 pub async fn reset_password(
     State(state): State<AppState>,
-    body: Bytes,
+    LimitedBody(body): LimitedBody,
 ) -> Result<Response, ApiError> {
     let value = object(&body)?;
     let raw = field(&value, "token")?;
@@ -745,7 +754,7 @@ pub async fn verify_email(
     State(state): State<AppState>,
     ClientAddr(peer): ClientAddr,
     headers: HeaderMap,
-    body: Bytes,
+    LimitedBody(body): LimitedBody,
 ) -> Result<Response, ApiError> {
     let value = object(&body)?;
     let raw = field(&value, "token")?;
@@ -806,7 +815,7 @@ pub async fn resend_verification(
     State(state): State<AppState>,
     ClientAddr(peer): ClientAddr,
     headers: HeaderMap,
-    body: Bytes,
+    LimitedBody(body): LimitedBody,
 ) -> Result<Response, ApiError> {
     let value = object(&body)?;
     let email = normalize_email(field(&value, "email")?);

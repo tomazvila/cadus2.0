@@ -987,3 +987,116 @@ fn the_client_address_key_reads_the_forwarded_header_first() {
     assert_eq!(client_ip(&HeaderMap::new(), None), "unknown");
     assert_eq!(UNKNOWN_CLIENT_IP, "unknown");
 }
+
+// ---------------------------------------------------------------------------
+// The request-body limit of the write routes (spec section 2, F6)
+// ---------------------------------------------------------------------------
+
+/// The seven `/api/auth/*` routes that read a request body.
+///
+/// The other three routes read none: `logout` and `logout-all` take the session
+/// alone, and `me` is a `GET`. No body rejection reaches those three.
+const BODY_ROUTES: [&str; 7] = [
+    "/api/auth/signup",
+    "/api/auth/login",
+    "/api/auth/password/change",
+    "/api/auth/password/forgot",
+    "/api/auth/password/reset",
+    "/api/auth/verify-email",
+    "/api/auth/verify-email/resend",
+];
+
+/// A `POST` of a raw body to `path`, with no credential and no origin header.
+///
+/// The shared `post` helper renders a `Value`. These two tests send a body that
+/// no `Value` can carry: one past the limit, and one that fails mid-read.
+fn post_raw(path: &str, body: Body) -> Request<Body> {
+    Request::builder()
+        .method("POST")
+        .uri(path)
+        .header("content-type", "application/json")
+        .body(body)
+        .unwrap()
+}
+
+/// (31) A body over the limit answers `413 payload_too_large` in the envelope.
+///
+/// The section 2 envelope has no exception, so the answer carries
+/// `{"error":{"code","message"}}` as JSON, not the axum plain-text sentence.
+#[tokio::test]
+async fn a_body_over_the_limit_is_413_payload_too_large_on_every_write_route() {
+    TestDb::with(|db| async move {
+        let app = app_of(&db);
+        // 3 MiB of JSON. It is past the 2 MiB that the server buffers, so the
+        // read stops before any handler sees a field.
+        let huge = format!(
+            "{{\"email\":\"big@example.com\",\"password\":\"{}\"}}",
+            "a".repeat(3 * 1024 * 1024)
+        );
+
+        for path in BODY_ROUTES {
+            let answer = send(&app, post_raw(path, Body::from(huge.clone()))).await;
+
+            assert_eq!(
+                answer.status.as_u16(),
+                413,
+                "route {path} answered {}",
+                answer.body
+            );
+            assert_eq!(answer.code(), "payload_too_large", "route {path}");
+            assert_eq!(
+                answer
+                    .headers
+                    .get("content-type")
+                    .and_then(|value| value.to_str().ok()),
+                Some("application/json"),
+                "route {path}"
+            );
+            assert_eq!(
+                answer
+                    .body
+                    .get("error")
+                    .and_then(|error| error.get("message"))
+                    .and_then(Value::as_str),
+                Some("The request body is over the size limit."),
+                "route {path}"
+            );
+        }
+    })
+    .await;
+}
+
+/// (32) A body that the server cannot read answers `422 invalid_request`.
+///
+/// The stream below fails on its first frame, which is what a client that hangs
+/// up mid-body gives. The answer is the envelope, never a plain-text `400`.
+#[tokio::test]
+async fn a_body_the_server_cannot_buffer_is_422_invalid_request() {
+    TestDb::with(|db| async move {
+        let app = app_of(&db);
+        let broken = Body::from_stream(tokio_stream::once(Err::<&'static [u8], std::io::Error>(
+            std::io::Error::other("the client hung up"),
+        )));
+
+        let answer = send(&app, post_raw("/api/auth/signup", broken)).await;
+
+        assert_eq!(answer.status.as_u16(), 422, "body gave {}", answer.body);
+        assert_eq!(answer.code(), "invalid_request");
+        assert_eq!(
+            answer
+                .headers
+                .get("content-type")
+                .and_then(|value| value.to_str().ok()),
+            Some("application/json")
+        );
+        assert_eq!(
+            answer
+                .body
+                .get("error")
+                .and_then(|error| error.get("message"))
+                .and_then(Value::as_str),
+            Some("The server could not read the request body.")
+        );
+    })
+    .await;
+}
