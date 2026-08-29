@@ -326,8 +326,11 @@ and not the deployment.
 
 ## The operator flags (A6, C6)
 
-`cadus_store::pool::operator_flags` gives one row per knowledge point. M5 puts it
-on a read-only endpoint. Each row carries six fields:
+`cadus_store::pool::operator_flags` gives one row per knowledge point. M5 U12
+puts it on `GET /api/operator/flags`, a read-only route that serves an ADMIN
+account only: a session on an account with `users.is_admin = false` gets
+`403 forbidden`, and a request with no session gets `401 unauthorized`. Each row
+carries seven fields:
 
 | Field | Meaning |
 |---|---|
@@ -355,6 +358,38 @@ differs:
 The exhausted pair leaves the refill target list for 60 minutes, so the per-tick
 budget goes to the pairs that still grow. A pair with no source at all leaves it
 for 15 minutes.
+
+### What the endpoint reads, and what it does not
+
+Two limits, and both are in the answer:
+
+- **`pool_depth` and `last_source` are the CALLING account's.** `serving_pool`
+  is under row-level security, and the route binds the tenant of the admin who
+  called it (C3). `approved_templates` and `needs_template` read
+  `content_store`, which holds curriculum content and stands outside row-level
+  security, so those two are deployment-wide.
+- **`source_exhausted` is always `false` here.** The backoff map lives in the
+  worker process, and 2.0 has no table that carries it across processes. The
+  worker log line is where that flag is true.
+
+### The gate block
+
+The answer carries a second block, `gate`. It runs
+`cadus_core::template::gate` over the approved template of a knowledge point and
+reports `Verified::notes` — the checks the gate SKIPPED and why. The core writes
+no log, so the caller of the gate reports them, and the refill worker drops them.
+An empty `notes` list is the good case.
+
+One gate call walks up to 4,096 instances, about 10 ms of CPU. The route
+therefore gates at most 20 templates per request, in `kp_id` order, and sets
+`gate_truncated` when it left some template ungated. Add `?kp=<topic>/<kp>` to
+scope the whole answer to one knowledge point and read that template's notes.
+
+A row with `gated: false` names a serving key the loaded curriculum does not
+hold: the gate needs the topic's answer kind and the point's exemplars, and that
+key has neither. A row with a `rejected` object names a template that
+`content_store` carries as `approved` and the gate refuses today — a
+disagreement worth an operator's attention.
 
 ### The refill log line
 

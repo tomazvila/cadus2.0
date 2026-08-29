@@ -14,7 +14,7 @@
 //! target platform, so a client that enters through any crate, any manifest
 //! table, or any `cfg` fails the test.
 //!
-//! Three guards work together:
+//! Four guards work together:
 //!
 //! 1. `web_normal_closure_carries_no_http_client_or_model_sdk` rejects the named
 //!    clients and SDKs anywhere in the closure.
@@ -27,6 +27,12 @@
 //!    of both tiers. Guards 1 and 2 see dependencies only, and `std::net` and
 //!    `std::process` are dependencies of nothing, so a handler that opens a
 //!    socket by hand passed both.
+//! 4. M5 U12 adds the L6 boundary and its positive control at the end of this
+//!    file: `cadus-web` and `cadus-store` must NOT hold `cadus-model-client`,
+//!    `cadus-worker` MUST, and the three tests read one walk. Guard 1 covers the
+//!    web closure alone, so a client that entered through `cadus-store` was
+//!    caught there and never named; guard 4 names the store, the manifests, and
+//!    the crate that proves the walk still works.
 //!
 //! NOTE: `hyper-util` is not in `FORBIDDEN`. `axum` pulls `hyper` and
 //! `hyper-util` for the SERVER side, so both sit in the closure of every axum
@@ -385,4 +391,99 @@ fn web_and_worker_sources_hold_no_socket_or_process_call() {
         "R4: a handler does local CPU work and DB I/O only; these lines leave the process:\n{}",
         hits.join("\n")
     );
+}
+
+// ---------------------------------------------------------------------------
+// Guard 4 — the L6 crate boundary, with its positive control (M5 U12)
+// ---------------------------------------------------------------------------
+
+/// The ONE crate of the workspace that reaches a model endpoint (L6, T2).
+const MODEL_CLIENT: &str = "cadus-model-client";
+
+/// The crates of the REQUEST path.
+///
+/// `cadus-web` answers requests, and `cadus-store` links into every one of its
+/// handlers, so L6 binds both: a model call a learner waits on must be a build
+/// failure and not a review note (spec section 8, the L6 row).
+const REQUEST_PATH_CRATES: [&str; 2] = ["cadus-web", "cadus-store"];
+
+/// The crate that MAY link the model client. It answers no request (R4, T2).
+const MODEL_CALLER: &str = "cadus-worker";
+
+/// Whether `name` is in the normal dependency closure of `root`.
+///
+/// The three tests below share this one function, so the test that proves the
+/// walk FINDS the model client and the tests that require it absent read the
+/// same answer from the same code. A walk that reports nothing therefore fails
+/// the positive control instead of passing the two boundary tests on an empty
+/// set.
+fn closure_holds(metadata: &Metadata, root: &str, name: &str) -> bool {
+    normal_closure(metadata, root).contains(name)
+}
+
+/// L6: neither request-path crate links the model client.
+///
+/// This is the test spec section 11 names in the U12 row: "the L6 test fails
+/// when a handler crate is given a model-client dependency". A
+/// `cadus-model-client` line in `crates/web/Cargo.toml` or in
+/// `crates/store/Cargo.toml` — direct, transitive, or under any `cfg` — puts the
+/// name in the closure and fails here.
+#[test]
+fn no_request_path_crate_links_the_model_client() {
+    let metadata = metadata();
+    for root in REQUEST_PATH_CRATES {
+        assert!(
+            !closure_holds(&metadata, root, MODEL_CLIENT),
+            "L6: `{MODEL_CLIENT}` is in the normal dependency closure of `{root}`, so a model \
+             call can run on the request path"
+        );
+    }
+}
+
+/// The positive control of the test above: the walk DOES find the client.
+///
+/// `cadus-worker` declares `cadus-model-client` in its own manifest, so the same
+/// walk over the same graph reports `true` for it. Without this test a broken
+/// walk — a lost edge, an empty resolve, a renamed package — would make
+/// `no_request_path_crate_links_the_model_client` pass while proving nothing.
+/// The pair is the whole L6 guard: one crate must hold the client and two must
+/// not.
+#[test]
+fn the_l6_walk_finds_the_model_client_in_the_worker() {
+    let metadata = metadata();
+    assert!(
+        closure_holds(&metadata, MODEL_CALLER, MODEL_CLIENT),
+        "the L6 walk did not find `{MODEL_CLIENT}` in the closure of `{MODEL_CALLER}`, which \
+         declares it; the walk is broken, so the two boundary tests prove nothing"
+    );
+    // The store is the crate both tiers link, and it is the shortest path a
+    // model client could take onto the request path. Naming it here keeps the
+    // control and the boundary on the same two crates.
+    assert!(
+        closure_holds(&metadata, MODEL_CALLER, "cadus-store"),
+        "the L6 walk lost `cadus-store` in the closure of `{MODEL_CALLER}`"
+    );
+}
+
+/// The model client crate is the only member of the workspace that carries an
+/// outbound client, and no member of the request path names it.
+///
+/// The two tests above read the resolved graph. This one reads the MANIFESTS of
+/// the two request-path crates, so a `cadus-model-client` line that a feature
+/// flag or a `cfg` keeps out of one resolve still fails a test.
+#[test]
+fn no_request_path_manifest_names_the_model_client() {
+    let metadata = metadata();
+    for root in REQUEST_PATH_CRATES {
+        let declared: Vec<String> = package(&metadata, root)
+            .dependencies
+            .iter()
+            .map(|dep| dep.name.to_string())
+            .collect();
+        assert!(
+            !declared.iter().any(|name| name == MODEL_CLIENT),
+            "L6: `{root}` declares `{MODEL_CLIENT}` in its manifest; the request path links no \
+             model client, under any dependency kind and any target"
+        );
+    }
 }

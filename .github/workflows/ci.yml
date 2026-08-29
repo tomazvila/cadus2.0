@@ -84,12 +84,20 @@ jobs:
         env:
           DATABASE_URL: ${{ env.CADUS_TEST_DATABASE_URL }}
 
-      - name: Run the gate
+      # ONE job, and one step for the whole gate. `scripts/gate.sh` runs
+      # `cargo test --workspace` first and `scripts/bench.sh` after it, never
+      # beside it: parallel suites contend on a two-core runner, and a contended
+      # benchmark measures the scheduler and not the code (spec section 10.5).
+      # `scripts/check_ops.sh` check (i) reads both files and fails a workflow
+      # that moves the benchmarks into a job of their own (M5 U12).
+      - name: Run the gate, then the budget benchmarks it serializes after the tests
         run: scripts/gate.sh
 
       # The gate runs `scripts/bench.sh`, which writes the L1 and L2 numbers of
-      # docs/reference/l1-budget.md to target/bench as JSON. The gate reads only
-      # the p95 assertions; the review cycle reads the trend across runs, so the
+      # docs/reference/l1-budget.md to target/bench as JSON: benchmark-a.json,
+      # benchmark-a-check.json, benchmark-a-arena.json, benchmark-a-grade.json,
+      # benchmark-b.json, and benchmark-b-grade.json. The gate reads only the
+      # p95 assertions; the review cycle reads the trend across runs, so the
       # artifact goes up on a red run too (spec section 10.2).
       - name: Upload the benchmark artifacts
         if: always()

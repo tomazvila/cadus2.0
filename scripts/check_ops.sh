@@ -6,7 +6,7 @@
 # broken compose key first appears on the operator's server. This script runs
 # the operator's own commands in the gate instead.
 #
-# The script does nine checks and prints one line per check:
+# The script does ten checks and prints one line per check:
 #   (a) compose  -- `docker compose config` resolves docker-compose.yml. The
 #                   placeholder values below stand in for `.env`, which the
 #                   repository never carries. Every `:?` variable of the compose
@@ -61,6 +61,9 @@
 #                   127.0.0.1. The gate database in CI runs with trust auth, so
 #                   a `5432:5432` line puts a superuser port on every interface
 #                   of the runner for the length of the job.
+#   (i) bench    -- the budget benchmarks run AFTER `cargo test --workspace` and
+#                   in the one CI job. A contended benchmark measures the
+#                   scheduler, not the code (spec section 10.5).
 #
 # Compose names a built image `<project>-<service>` when the service declares no
 # `image:` key. The script reads the project name and the service names from
@@ -446,6 +449,66 @@ for problem in problems:
 else
     echo "FAIL: ci       -- the workflow port check did not run"
     printf '%s\n' "$ci_log"
+    rc=1
+fi
+
+# ---------------------------------------------------------------------------
+# (i) the budget benchmarks run AFTER the test suite and never beside it
+#
+# Spec section 10.5 and docs/reference/l1-budget.md section 7: parallel suites
+# contend on one box and on a two-core runner, and a contended benchmark
+# measures the scheduler and not the code. The rule has two halves, and this
+# check reads both:
+#
+#   1. scripts/gate.sh runs `cargo test --workspace` BEFORE scripts/bench.sh.
+#      The gate is one shell script, so the order of the two lines is the order
+#      of the two steps.
+#   2. .github/workflows/ci.yml declares ONE job. A second job runs beside the
+#      gate on its own runner, and a benchmark job among them measures a shared
+#      machine. One `runs-on:` line is one job.
+#
+# M5 U12 added the check. Before it, nothing failed a workflow edit that moved
+# the benchmarks into a job of their own.
+# ---------------------------------------------------------------------------
+bench_rc=0
+if [ ! -f scripts/gate.sh ]; then
+    echo "FAIL: bench    -- scripts/gate.sh is missing"
+    bench_rc=1
+else
+    # The COMMAND lines, not the `echo` lines that announce them: a moved
+    # command under an unmoved banner must fail this check.
+    test_line="$(grep -n '^cargo test --workspace$' scripts/gate.sh | head -1 | cut -d: -f1)"
+    bench_line="$(grep -n '^ *\(bash \)\?scripts/bench.sh$' scripts/gate.sh | tail -1 | cut -d: -f1)"
+    if [ -z "$test_line" ]; then
+        echo "FAIL: bench    -- scripts/gate.sh runs no 'cargo test --workspace'"
+        bench_rc=1
+    elif [ -z "$bench_line" ]; then
+        echo "FAIL: bench    -- scripts/gate.sh runs no scripts/bench.sh"
+        bench_rc=1
+    elif [ "$test_line" -ge "$bench_line" ]; then
+        echo "FAIL: bench    -- scripts/gate.sh runs the benchmarks at line $bench_line, at or before the test suite at line $test_line"
+        bench_rc=1
+    fi
+fi
+
+if [ ! -f ".github/workflows/ci.yml" ]; then
+    echo "FAIL: bench    -- .github/workflows/ci.yml is missing"
+    bench_rc=1
+else
+    runners="$(grep -c 'runs-on:' .github/workflows/ci.yml || true)"
+    if [ "$runners" != "1" ]; then
+        echo "FAIL: bench    -- .github/workflows/ci.yml declares $runners jobs; the benchmarks run in the one gate job and never beside it"
+        bench_rc=1
+    fi
+    if ! grep -q 'scripts/gate.sh' .github/workflows/ci.yml; then
+        echo "FAIL: bench    -- .github/workflows/ci.yml runs no scripts/gate.sh"
+        bench_rc=1
+    fi
+fi
+
+if [ "$bench_rc" -eq 0 ]; then
+    echo "PASS: bench    -- the budget benchmarks run after cargo test, in the one CI job"
+else
     rc=1
 fi
 

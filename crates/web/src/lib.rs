@@ -51,6 +51,7 @@ pub mod error;
 pub mod grade;
 pub mod health;
 pub mod metrics;
+pub mod operator;
 pub mod origin;
 pub mod security;
 pub mod serve;
@@ -207,6 +208,9 @@ pub fn create_app(state: AppState) -> Router {
         // M5 U9: the A4 client surface. Both are GET, and both sit before the
         // three layers, so the stream carries the section 3.1 headers too.
         .merge(diagnosis::router())
+        // M5 U12: the A6 operator view. It reads its own credential, and it
+        // refuses every account that is not an admin.
+        .route("/api/operator/flags", get(operator::flags))
         // axum's own fallbacks answer with an empty body, so both of them
         // return the envelope instead (spec section 2).
         .fallback(error::not_found)
