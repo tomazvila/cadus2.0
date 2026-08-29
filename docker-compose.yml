@@ -213,6 +213,39 @@ services:
       # load. Point this at a bind mount to run a tree the image does not carry.
       CADUS_CURRICULUM: ${CADUS_CURRICULUM:-/app/curriculum}
       RUST_LOG: ${RUST_LOG:-info}
+      # The seven variables of the A4 diagnosis job (M5 U10, T4, T5). They are
+      # on THIS service and on no other: a model call runs in cadus-worker and
+      # never on a request path (R4, L6). Compose reads `.env` for
+      # interpolation only, so a key that no `environment:` block names never
+      # reaches a container. Before these seven lines, the worker read an empty
+      # key, built no diagnosis job, and left the queue standing for ever
+      # (M5 review finding F8).
+      #
+      # Every reader takes a blank value as "absent" and applies the default in
+      # the table of `docs/SELF_HOST.md`, section "The seven variables". An
+      # empty OPENAI_API_KEY, which is what an operator who set nothing gets,
+      # is the documented "call no model" deployment: the worker runs the pool
+      # refill, and every learner keeps the deterministic verdict, the worked
+      # solution and the re-solve instruction (A3, L2).
+      #
+      # OPENAI_API_KEY is the switch. A key that IS set makes the other six
+      # binding, and a bad one exits the worker 2.
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      # The endpoint. Blank means https://openrouter.ai/api/v1 (O2). A local
+      # OpenAI-compatible server is the same code path.
+      OPENAI_BASE_URL: ${OPENAI_BASE_URL:-}
+      # The model id the request names. Blank means deepseek/deepseek-v4-pro (O2).
+      OPENAI_MODEL: ${OPENAI_MODEL:-}
+      # The comma-separated provider order (T5). It applies to an openrouter.ai
+      # endpoint, and an empty list on that endpoint exits the worker 2.
+      OPENROUTER_PROVIDER_ORDER: ${OPENROUTER_PROVIDER_ORDER:-}
+      # The output ceiling of one call. Blank means 600. It bounds the latency;
+      # it is not a spend cap.
+      DIAGNOSIS_OUTPUT_TOKENS: ${DIAGNOSIS_OUTPUT_TOKENS:-}
+      # The reasoning ceiling of one call (T5). Blank means 600.
+      DIAGNOSIS_REASONING_MAX_TOKENS: ${DIAGNOSIS_REASONING_MAX_TOKENS:-}
+      # The T4 call cap per session. Blank means 0, and 0 is unlimited (O2).
+      DIAGNOSIS_CALLS_PER_SESSION: ${DIAGNOSIS_CALLS_PER_SESSION:-}
     depends_on:
       migrate:
         condition: service_completed_successfully

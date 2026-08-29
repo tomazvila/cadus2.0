@@ -450,6 +450,30 @@ prose and nothing else.
 refill job, leaves the queue standing, and calls no model. If it holds a value,
 every variable below is binding and a bad one exits the process with code 2.
 
+Set the seven keys in `.env`. `docker-compose.yml` forwards them to the `worker`
+service and to no other service: a model call runs in `cadus-worker` and never on
+a request path (R4, L6). Compose reads `.env` for interpolation only, so a key
+that no `environment:` block names never reaches a container. A blank value takes
+the default of the table below. Run `scripts/deploy.sh` after a change, and do a
+check of the result inside the container:
+
+```sh
+docker compose exec worker env | sort | grep -E "OPENAI|DIAGNOSIS"
+```
+
+A worker that gets a key writes one info line at start. The line names the model,
+the endpoint and the cap:
+
+```
+cadus-worker: the diagnosis job is configured
+```
+
+A worker that gets no key writes this line instead:
+
+```
+cadus-worker: OPENAI_API_KEY is empty; the diagnosis queue waits and no model is called
+```
+
 | Variable | Default | Meaning |
 |---|---|---|
 | `OPENAI_API_KEY` | none | The bearer token. Empty means: call no model. |
