@@ -20,15 +20,25 @@
 //! (R4, L6), so the whole request holds one short transaction and the 1.0
 //! three-way `tolerate_duplicate` / `tolerate_closed` recovery is gone.
 //!
-//! # Idempotency
+//! # The attempt number and idempotency
 //!
 //! `attempt_id` is `"{task_id}-{n}"`, `n` being the 1-based position of the
-//! SERVED problem inside its task (`docs/plans/M3.md`, trap T12). It is a
-//! function of the problem the client answers and never of the log, so a retry
-//! of one request computes the same id, the partial unique index on
-//! `(user_id, attempt_id)` makes the INSERT a no-op, and the reply is
-//! [`STATUS_ALREADY_RECORDED`] with nothing appended (spec section 4.3 step 6).
+//! attempt inside its task (`docs/plans/M3.md`, trap T12). [`attempt_index`]
+//! reads that position from the LOG, inside this transaction and under the
+//! tenant's advisory lock. The D-S6 row is loss-tolerant — `POST /api/enroll`
+//! deletes it inside an open session — so a counter that lives there restarts
+//! while the task ids stay, and every later attempt of that task then repeats an
+//! id the log already holds. The log does not restart.
+//!
 //! The H3 unaided re-solve takes the same id with `-rework` after it.
+//!
+//! A log this build writes is dense, so the number of a new attempt is free. A
+//! log with a gap in it — an operator repair, or a 1.0 log whose ids came from
+//! the problem id (spec section 4.1) — can still put the computed id on a row
+//! that stands. The partial unique index on `(user_id, attempt_id)` then makes
+//! the INSERT a no-op, and the reply is [`STATUS_ALREADY_RECORDED`] with the
+//! STORED verdict and nothing appended (spec section 4.3 step 6: "reply with the
+//! state read").
 //!
 //! # What this unit does NOT do
 //!
@@ -661,6 +671,7 @@ pub async fn answer(
         assisted,
         &session,
         now,
+        attempt_index(&events, &task.task_id),
     )?;
 
     // H3 first branch: an assisted attempt that grades CORRECT is NOT recorded.
@@ -718,6 +729,17 @@ pub async fn answer(
     .await
     .map_err(|err| failed(&err))?;
     if appended.is_none() {
+        // Spec section 4.3 step 6: reply with the state READ. The verdict this
+        // request graded is NOT what the log holds, so the log's own verdict is
+        // what the client reads. `stored` falls back to the graded attempt only
+        // when the standing row is outside this transaction's read, which the
+        // advisory lock rules out.
+        let stored = stored_attempt(&events, &attempt_id).unwrap_or(&recorded);
+        let standing = Grade {
+            correct: stored.correct,
+            work_quality: stored.work_quality,
+            error_tags: stored.error_tags.clone(),
+        };
         // The replay reads the pre-authored answer and the job id the FIRST
         // request wrote, and writes neither. A retried request therefore names
         // one job, not two, and the rollback below leaves the queue as it was.
@@ -734,23 +756,24 @@ pub async fn answer(
                 &session,
                 &task_id,
                 &submitted,
-                &grade,
+                &standing,
                 false,
             ),
         )
         .await?;
-        tx.rollback().await.map_err(|err| failed(&err.into()))?;
-        return Ok(Json(json!({
+        let body = json!({
             "attempt_id": attempt_id,
-            "correct": recorded.correct,
-            "work_quality": recorded.work_quality,
-            "error_tags": recorded.error_tags,
-            "secs": recorded.secs.get(),
+            "correct": stored.correct,
+            "work_quality": stored.work_quality,
+            "error_tags": stored.error_tags,
+            "secs": stored.secs.get(),
             "task_status": STATUS_ALREADY_RECORDED,
             "remediation": Vec::<Value>::new(),
             "next": Value::Null,
             "diagnosis": replayed,
-        })));
+        });
+        tx.rollback().await.map_err(|err| failed(&err.into()))?;
+        return Ok(Json(body));
     }
 
     // Step 7. The lesson advance, its close event, and its remediation.
@@ -887,6 +910,47 @@ fn pending<'a>(
     }
 }
 
+/// The 1-based position of THIS attempt inside its task, read from the log.
+///
+/// It counts the `attempt` events the task already holds and adds one. An id of
+/// the task is `{task_id}-{n}`, so the count takes the ids that carry the
+/// `{task_id}-` prefix AND a digit after it. A topic id may hold a hyphen, so
+/// one task id can be the prefix of another; the digit keeps the attempts of
+/// task `{task}-{other}` out of the count of task `{task}`. The H3 re-solve id
+/// `{task_id}-{n}-rework` passes both tests, so a re-solve counts as the one
+/// attempt it records.
+///
+/// The caller holds the tenant's advisory lock and reads the log inside the same
+/// transaction as the INSERT, so no second request of this tenant computes the
+/// same number.
+fn attempt_index(events: &[EventRow], task_id: &str) -> i64 {
+    let prefix = format!("{task_id}-");
+    let recorded = events
+        .iter()
+        .filter(|row| match &row.event {
+            Event::Attempt(attempt) => attempt
+                .attempt_id
+                .strip_prefix(&prefix)
+                .is_some_and(|rest| rest.starts_with(|first: char| first.is_ascii_digit())),
+            _ => false,
+        })
+        .count();
+    i64::try_from(recorded)
+        .unwrap_or(i64::MAX)
+        .saturating_add(1)
+}
+
+/// The attempt the log already holds under `attempt_id`.
+///
+/// Step 6 appends nothing when that row stands, so this is the "state read" the
+/// [`STATUS_ALREADY_RECORDED`] reply answers with.
+fn stored_attempt<'a>(events: &'a [EventRow], attempt_id: &str) -> Option<&'a Attempt> {
+    events.iter().find_map(|row| match &row.event {
+        Event::Attempt(attempt) if attempt.attempt_id == attempt_id => Some(attempt),
+        _ => None,
+    })
+}
+
 /// Build the `attempt` event of one submission (`_graded_answer`).
 #[expect(
     clippy::too_many_arguments,
@@ -903,13 +967,11 @@ fn build_attempt(
     assisted: bool,
     session: &str,
     now: Timestamp,
+    index: i64,
 ) -> Result<Attempt, ApiError> {
     let Some(topic) = served.topic.as_deref().and_then(|id| Slug::new(id).ok()) else {
         return Err(broken_state("the served problem names no topic"));
     };
-    // The 1-based position of the SERVED problem inside its task. It is a
-    // function of the problem and not of the log, so a retry recomputes it.
-    let index = served.index.saturating_add(1);
     let secs = Secs::new(secs).map_err(|err| broken_state(&format!("secs: {err}")))?;
     Ok(Attempt {
         ts: now,

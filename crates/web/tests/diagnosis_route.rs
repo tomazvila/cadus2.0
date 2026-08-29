@@ -75,6 +75,12 @@ const PROBLEM_ID: &str = "p0000000000000000000000000000001";
 /// The `attempt_id` of the first answer of the lesson (`{task_id}-{n}`, n = 1).
 const ATTEMPT_ID: &str = "s_2026-01-01a-lesson-addition-1";
 
+/// The `attempt_id` of the second attempt of the lesson.
+const ATTEMPT_ID_2: &str = "s_2026-01-01a-lesson-addition-2";
+
+/// The `attempt_id` of the third attempt of the lesson.
+const ATTEMPT_ID_3: &str = "s_2026-01-01a-lesson-addition-3";
+
 /// The wrong answer the authored distractor names.
 const DISTRACTOR_ANSWER: &str = "13";
 
@@ -354,6 +360,59 @@ async fn jobs_of(db: &TestDb, user: Uuid) -> Vec<(Uuid, String, Value)> {
     .collect()
 }
 
+/// Put one wrong attempt of the lesson into the log, at `seq`, under `attempt_id`.
+async fn seed_attempt(db: &TestDb, user: Uuid, seq: i64, attempt_id: &str) {
+    let payload = json!({
+        "type": "attempt",
+        "ts": "2026-01-01T00:00:10Z",
+        "session": SESSION,
+        "v": 1,
+        "attempt_id": attempt_id,
+        "task_id": LESSON,
+        "topic": "addition",
+        "kp": "kp1",
+        "task_type": "lesson",
+        "problem": {"text": PROBLEM_TEXT, "expected": EXPECTED_ANSWER},
+        "given_answer": UNKNOWN_MISS,
+        "correct": false,
+        "secs": 20,
+        "error_tags": [],
+        "work_quality": "nearly_passable",
+    });
+    let ts = DateTime::<Utc>::from_timestamp_micros(BASE_US + 10_000_000).unwrap();
+    sqlx::query!(
+        r#"
+        INSERT INTO events (user_id, seq, ts, type, session_id, v, attempt_id, payload)
+        VALUES ($1, $2, $3, 'attempt', $4, 1, $5, $6)
+        "#,
+        user,
+        seq,
+        ts,
+        SESSION,
+        attempt_id,
+        payload
+    )
+    .execute(&db.admin)
+    .await
+    .unwrap();
+}
+
+/// Seed one pending job row and return its id.
+async fn seed_pending_job(db: &TestDb, user: Uuid, attempt_id: &str) -> Uuid {
+    sqlx::query_scalar!(
+        r#"
+        INSERT INTO diagnosis_jobs (user_id, attempt_id, status, payload)
+        VALUES ($1, $2, 'pending', '{}'::jsonb)
+        RETURNING id AS "id!"
+        "#,
+        user,
+        attempt_id,
+    )
+    .fetch_one(&db.admin)
+    .await
+    .unwrap()
+}
+
 /// Seed one finished job row and return its id.
 async fn seed_done_job(db: &TestDb, user: Uuid, attempt_id: &str, result: &Value) -> Uuid {
     sqlx::query_scalar!(
@@ -494,34 +553,46 @@ async fn a_correct_and_a_blank_answer_are_not_offered_and_write_no_row() {
 
 /// Spec section 4.3 step 9: the enqueue is INSIDE the grade transaction.
 ///
-/// A replayed request meets the standing `attempt_id`, appends nothing, and
-/// rolls the whole transaction back (step 6). The queue must therefore still
-/// hold exactly ONE row, and the replay must name the same job — not a second
-/// one, and not nothing.
+/// A request whose `attempt_id` already stands appends nothing and rolls the
+/// whole transaction back (step 6). The queue must therefore hold no NEW row,
+/// and the reply must name the job that stands against that attempt — not a
+/// second one, and not nothing.
+///
+/// `n` is the position of the attempt in the LOG (`cadus_web::grade`), so the
+/// number of a new attempt is free on a dense log. The log seeded below has a
+/// gap: attempt `-3` of the task stands with a pending job of its own, and `-2`
+/// is open. The first answer therefore takes `-2`, and the second one computes
+/// `-3` and meets the standing row.
 #[tokio::test]
 async fn a_rolled_back_grade_leaves_no_job_row() {
     TestDb::with(|db| async move {
         let app = app(&db);
         let user = learner(&db, "u9-replay@example.test").await;
+        seed_attempt(&db, user, 2, ATTEMPT_ID_3).await;
+        let standing = seed_pending_job(&db, user, ATTEMPT_ID_3).await.to_string();
 
         let (status, first) = answer(&app, user, UNKNOWN_MISS).await;
         assert_eq!(status, StatusCode::OK);
         assert_eq!(first["task_status"], json!("continue"));
+        assert_eq!(first["attempt_id"], json!(ATTEMPT_ID_2));
         let id = first["diagnosis"]["id"].as_str().unwrap().to_string();
-        assert_eq!(jobs_of(&db, user).await.len(), 1);
+        assert_eq!(jobs_of(&db, user).await.len(), 2);
 
-        // The request comes again: a stale tab, or a client that lost the first
-        // reply. The stored document is the one the first COMMIT wrote, so its
-        // `pending_diagnoses` map stands; only the live problem is put back.
+        // The stored document is the one the first COMMIT wrote, so its
+        // `pending_diagnoses` map stands. The live problem goes back, and the
+        // map names the job of the attempt that already stands.
         let mut scratch = stored_state(&db, user).await;
         assert_eq!(
             scratch
                 .pending_diagnoses
-                .get(ATTEMPT_ID)
+                .get(ATTEMPT_ID_2)
                 .map(String::as_str),
             Some(id.as_str()),
             "the commit records the job id against the attempt"
         );
+        scratch
+            .pending_diagnoses
+            .insert(ATTEMPT_ID_3.to_string(), standing.clone());
         scratch.served.insert(LESSON.to_string(), live_problem());
         put_state(&db, user, &scratch).await;
 
@@ -529,14 +600,15 @@ async fn a_rolled_back_grade_leaves_no_job_row() {
 
         assert_eq!(status, StatusCode::OK);
         assert_eq!(second["task_status"], json!("already_recorded"));
+        assert_eq!(second["attempt_id"], json!(ATTEMPT_ID_3));
         assert_eq!(
             second["diagnosis"],
-            json!({ "id": id, "status": "pending" }),
+            json!({ "id": standing, "status": "pending" }),
             "the replay names the standing job: {second}"
         );
         assert_eq!(
             jobs_of(&db, user).await.len(),
-            1,
+            2,
             "a grade that appends nothing and rolls back must add no job row"
         );
     })

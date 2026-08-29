@@ -498,45 +498,54 @@ async fn a_blank_answer_is_poor_and_carries_the_re_solve_text() {
 // Acceptance 2: the replay
 // --------------------------------------------------------------------------- //
 
-/// Spec section 4.3 step 6. The `attempt_id` is `{task_id}-{n}` over the SERVED
-/// problem, so a replayed request computes the same id, the partial unique index
-/// makes the INSERT a no-op, and the reply says `already_recorded` with nothing
-/// appended.
+/// Spec section 4.3 step 6. The `attempt_id` is `{task_id}-{n}`, `n` being the
+/// 1-based position of the attempt in the LOG, so a request whose id already
+/// stands appends nothing: the partial unique index makes the INSERT a no-op and
+/// the reply is `already_recorded`.
+///
+/// The reply is then the state READ, never the verdict this request graded. The
+/// submission below is right and the standing attempt is a blank miss, so every
+/// verdict field of the reply must be the stored one.
+///
+/// The log holds `-2` and no `-1`, which is a log this build did not write: an
+/// operator repair, or a 1.0 log whose ids came from the problem id (spec
+/// section 4.1). A log this build writes is dense, so the branch is a guard.
 #[tokio::test]
 async fn a_replayed_request_appends_nothing_and_returns_already_recorded() {
     TestDb::with(|db| async move {
         let app = app(&db);
         let user = learner(&db, "replay@example.com", served(5.0, "kp1", Vec::new())).await;
-
-        let (status, first) = answer(
-            &app,
-            user,
-            json!({"problem_id": PROBLEM_ID, "answer": "13.5"}),
-        )
-        .await;
-        assert_eq!(status, StatusCode::OK, "{first}");
-        assert_eq!(first["task_status"], "continue");
-        assert_eq!(events_of_type(&db, user, "attempt").await.len(), 1);
-
-        // The request comes again against the same served problem: a stale tab,
-        // or a client that lost the first reply.
-        put_state(
+        seed_attempt(
             &db,
             user,
-            &state_with(served(5.0, "kp1", Vec::new()), 0, false),
+            2,
+            "s_2026-01-01a-lesson-addition-2",
+            Verdict {
+                given_answer: "",
+                correct: false,
+                work_quality: "poor",
+                error_tags: json!(["blank-answer"]),
+                secs: 41,
+            },
         )
         .await;
-        let (status, second) = answer(
+
+        let (status, body) = answer(
             &app,
             user,
             json!({"problem_id": PROBLEM_ID, "answer": "13.5"}),
         )
         .await;
-        assert_eq!(status, StatusCode::OK, "{second}");
-        assert_eq!(second["task_status"], "already_recorded");
-        assert_eq!(second["attempt_id"], "s_2026-01-01a-lesson-addition-1");
-        assert_eq!(second["next"], Value::Null);
-        // Nothing was appended, before or after (C2, FR-14).
+        assert_eq!(status, StatusCode::OK, "{body}");
+        assert_eq!(body["task_status"], "already_recorded");
+        assert_eq!(body["attempt_id"], "s_2026-01-01a-lesson-addition-2");
+        assert_eq!(body["correct"], false);
+        assert_eq!(body["work_quality"], "poor");
+        assert_eq!(body["error_tags"], json!(["blank-answer"]));
+        assert_eq!(body["secs"], 41);
+        assert_eq!(body["next"], Value::Null);
+        assert_eq!(body["remediation"], json!([]));
+        // Nothing was appended (C2, FR-14).
         assert_eq!(events_of_type(&db, user, "attempt").await.len(), 1);
     })
     .await;
@@ -1660,6 +1669,258 @@ async fn an_undecidable_kind_counts_one_undecidable_grade() {
         holds(
             &text,
             "cadus_deterministic_grade_total{result=\"incorrect\"} 0",
+        );
+    })
+    .await;
+}
+
+// --------------------------------------------------------------------------- //
+// The attempt number: `{task_id}-{n}` with `n` read from the log (F1, F12)
+// --------------------------------------------------------------------------- //
+
+/// Serve the lesson's problem over the route that owns the draw.
+async fn serve(app: &Router, user: Uuid) -> (StatusCode, Value) {
+    let (status, raw) = call(
+        app,
+        Method::POST,
+        &format!("/api/task/{LESSON}/serve"),
+        Some(user),
+        None,
+    )
+    .await;
+    (status, parse(&raw))
+}
+
+/// Switch the enrolled course. The route clears the D-S6 row and leaves the
+/// session open (`api.py:833`).
+async fn enroll(app: &Router, user: Uuid) -> (StatusCode, Value) {
+    let (status, raw) = call(
+        app,
+        Method::POST,
+        "/api/enroll",
+        Some(user),
+        Some(json!({"course": "c1"})),
+    )
+    .await;
+    (status, parse(&raw))
+}
+
+/// The `attempt_id` column of every attempt row of `user`, oldest first.
+async fn attempt_ids(db: &TestDb, user: Uuid) -> Vec<String> {
+    sqlx::query_scalar!(
+        r#"
+        SELECT attempt_id AS "attempt_id!" FROM events
+        WHERE user_id = $1 AND type = 'attempt' ORDER BY seq
+        "#,
+        user
+    )
+    .fetch_all(&db.admin)
+    .await
+    .unwrap()
+}
+
+/// The verdict one seeded attempt carries. Every field is a literal of the
+/// caller, so a test can pin what the stored event holds and read it back from a
+/// reply.
+struct Verdict<'a> {
+    given_answer: &'a str,
+    correct: bool,
+    work_quality: &'a str,
+    error_tags: Value,
+    secs: i64,
+}
+
+/// A wrong answer of the lesson at the `nearly_passable` tier.
+fn a_miss() -> Verdict<'static> {
+    Verdict {
+        given_answer: "14",
+        correct: false,
+        work_quality: "nearly_passable",
+        error_tags: json!([]),
+        secs: 20,
+    }
+}
+
+/// Put one attempt of the lesson into the log, at `seq`, under `attempt_id`.
+async fn seed_attempt(db: &TestDb, user: Uuid, seq: i64, attempt_id: &str, verdict: Verdict<'_>) {
+    seed_task_attempt(db, user, seq, LESSON, attempt_id, verdict).await;
+}
+
+/// Put one attempt of `task_id` into the log, at `seq`, under `attempt_id`.
+async fn seed_task_attempt(
+    db: &TestDb,
+    user: Uuid,
+    seq: i64,
+    task_id: &str,
+    attempt_id: &str,
+    verdict: Verdict<'_>,
+) {
+    let payload = json!({
+        "type": "attempt",
+        "ts": "2026-01-01T00:00:10Z",
+        "session": SESSION,
+        "v": 1,
+        "attempt_id": attempt_id,
+        "task_id": task_id,
+        "topic": "addition",
+        "kp": "kp1",
+        "task_type": "lesson",
+        "problem": {"text": PROBLEM_TEXT, "expected": EXPECTED_ANSWER},
+        "given_answer": verdict.given_answer,
+        "correct": verdict.correct,
+        "secs": verdict.secs,
+        "error_tags": verdict.error_tags,
+        "work_quality": verdict.work_quality,
+    });
+    let ts = DateTime::<Utc>::from_timestamp_micros(BASE_US + 10_000_000).unwrap();
+    sqlx::query!(
+        r#"
+        INSERT INTO events (user_id, seq, ts, type, session_id, v, attempt_id, payload)
+        VALUES ($1, $2, $3, 'attempt', $4, 1, $5, $6)
+        "#,
+        user,
+        seq,
+        ts,
+        SESSION,
+        attempt_id,
+        payload
+    )
+    .execute(&db.admin)
+    .await
+    .unwrap();
+}
+
+/// F1. `POST /api/enroll` clears the D-S6 row and leaves the session open, so
+/// the serve counter restarts while the task ids stay. `n` comes from the LOG,
+/// so the answer after the enroll takes `-2` and stands in the log.
+///
+/// The 1-based attempt index of the task is `docs/plans/M3.md` trap T12 and spec
+/// section 4.3 step 6. A counter that lives in the deletable scratch repeats
+/// `-1`, and the partial unique index then discards the whole second attempt.
+#[tokio::test]
+async fn an_enroll_between_two_answers_numbers_the_second_attempt_from_the_log() {
+    TestDb::with(|db| async move {
+        let app = app(&db);
+        let user = learner(
+            &db,
+            "enroll-clear@example.com",
+            served(5.0, "kp1", Vec::new()),
+        )
+        .await;
+        seed_pool_row(&db, user, "Compute 2 + 2.", "4", "hash-a").await;
+        seed_pool_row(&db, user, "Compute 3 + 3.", "6", "hash-b").await;
+
+        let (status, first) = answer(
+            &app,
+            user,
+            json!({"problem_id": PROBLEM_ID, "answer": "14"}),
+        )
+        .await;
+        assert_eq!(status, StatusCode::OK, "{first}");
+        assert_eq!(first["attempt_id"], "s_2026-01-01a-lesson-addition-1");
+
+        let (status, switched) = enroll(&app, user).await;
+        assert_eq!(status, StatusCode::OK, "{switched}");
+        assert_eq!(switched["enrolled"], "c1");
+
+        let (status, drawn) = serve(&app, user).await;
+        assert_eq!(status, StatusCode::OK, "{drawn}");
+        let problem_id = drawn["problem_id"].as_str().unwrap().to_string();
+
+        let (status, second) =
+            answer(&app, user, json!({"problem_id": problem_id, "answer": "0"})).await;
+        assert_eq!(status, StatusCode::OK, "{second}");
+        assert_eq!(second["attempt_id"], "s_2026-01-01a-lesson-addition-2");
+        assert_eq!(second["task_status"], "continue");
+        assert_eq!(
+            attempt_ids(&db, user).await,
+            vec![
+                "s_2026-01-01a-lesson-addition-1".to_string(),
+                "s_2026-01-01a-lesson-addition-2".to_string(),
+            ]
+        );
+    })
+    .await;
+}
+
+/// A topic id may hold a hyphen, so one task id can be the prefix of another.
+/// The number of a task counts ITS OWN attempts: an attempt of the sibling task
+/// `{LESSON}-extra` carries the `{LESSON}-` prefix, and it must not move this
+/// lesson's number.
+///
+/// `assign_ids` builds `{session}-{type}-{topic}`, so the two task ids below are
+/// the topics `addition` and `addition-extra` of one session.
+#[tokio::test]
+async fn an_attempt_of_a_sibling_task_does_not_move_this_number() {
+    TestDb::with(|db| async move {
+        let app = app(&db);
+        let user = learner(&db, "sibling@example.com", served(5.0, "kp1", Vec::new())).await;
+        seed_task_attempt(
+            &db,
+            user,
+            2,
+            "s_2026-01-01a-lesson-addition-extra",
+            "s_2026-01-01a-lesson-addition-extra-1",
+            a_miss(),
+        )
+        .await;
+
+        let (status, body) = answer(
+            &app,
+            user,
+            json!({"problem_id": PROBLEM_ID, "answer": "13.5"}),
+        )
+        .await;
+        assert_eq!(status, StatusCode::OK, "{body}");
+        assert_eq!(body["attempt_id"], "s_2026-01-01a-lesson-addition-1");
+        assert_eq!(body["task_status"], "continue");
+    })
+    .await;
+}
+
+/// F12. The chain serve -> answer -> serve -> answer, over the real routes, on a
+/// log that already holds one attempt of the task and a D-S6 row that holds no
+/// counter at all. The two answers take `-2` and `-3`: the number is the
+/// position in the LOG, never the position in the scratch.
+#[tokio::test]
+async fn a_serve_answer_chain_numbers_the_attempts_from_the_log() {
+    TestDb::with(|db| async move {
+        let app = app(&db);
+        let user = db.seed_user("chain@example.com").await;
+        seed_open_session(&db, user).await;
+        // The learner answered one problem of this lesson already. The scratch
+        // was cleared after it, so the D-S6 row carries no serve counter.
+        seed_attempt(&db, user, 2, "s_2026-01-01a-lesson-addition-1", a_miss()).await;
+        put_state(&db, user, &WebState::for_session(SESSION)).await;
+        seed_pool_row(&db, user, "Compute 2 + 2.", "4", "hash-a").await;
+        seed_pool_row(&db, user, "Compute 3 + 3.", "6", "hash-b").await;
+
+        let (status, first_problem) = serve(&app, user).await;
+        assert_eq!(status, StatusCode::OK, "{first_problem}");
+        let first_id = first_problem["problem_id"].as_str().unwrap().to_string();
+        let (status, first) =
+            answer(&app, user, json!({"problem_id": first_id, "answer": "0"})).await;
+        assert_eq!(status, StatusCode::OK, "{first}");
+        assert_eq!(first["attempt_id"], "s_2026-01-01a-lesson-addition-2");
+
+        let (status, second_problem) = serve(&app, user).await;
+        assert_eq!(status, StatusCode::OK, "{second_problem}");
+        let second_id = second_problem["problem_id"].as_str().unwrap().to_string();
+        // The chain answers two DIFFERENT problems, so the two attempts are two
+        // attempts and not one request sent twice.
+        assert_ne!(first_id, second_id);
+        let (status, second) =
+            answer(&app, user, json!({"problem_id": second_id, "answer": "0"})).await;
+        assert_eq!(status, StatusCode::OK, "{second}");
+        assert_eq!(second["attempt_id"], "s_2026-01-01a-lesson-addition-3");
+
+        assert_eq!(
+            attempt_ids(&db, user).await,
+            vec![
+                "s_2026-01-01a-lesson-addition-1".to_string(),
+                "s_2026-01-01a-lesson-addition-2".to_string(),
+                "s_2026-01-01a-lesson-addition-3".to_string(),
+            ]
         );
     })
     .await;
