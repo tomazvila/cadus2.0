@@ -170,6 +170,25 @@ fn the_redirect_target_is_a_same_site_path_or_the_root() {
     assert_eq!(safe_next(Some("dashboard")), "/");
 }
 
+/// A byte below `0x21`, and a backslash anywhere, are refused.
+///
+/// A browser removes every ASCII tab, LF, and CR from a URL before it parses the
+/// URL (WHATWG URL, "remove all ASCII tab or newline"), so a target of `/`, one
+/// tab, `/evil.example` becomes the scheme-relative `//evil.example`. A
+/// backslash is a path separator to a browser. The accepted set is therefore a
+/// leading `/`, a second byte that is not `/` or a backslash, and no other byte
+/// below `0x21` and no other backslash.
+#[test]
+fn a_control_byte_or_a_backslash_in_the_target_is_refused() {
+    assert_eq!(safe_next(Some("/\t/evil.example")), "/");
+    assert_eq!(safe_next(Some("/\n/evil.example")), "/");
+    assert_eq!(safe_next(Some("/\r/evil.example")), "/");
+    assert_eq!(safe_next(Some("/ /evil.example")), "/");
+    assert_eq!(safe_next(Some("/dashboard\u{0}")), "/");
+    assert_eq!(safe_next(Some("/a\\evil.example")), "/");
+    assert_eq!(safe_next(Some("/dashboard\t")), "/");
+}
+
 /// A cookie value whose `next` is not same-site reads back as `/`.
 ///
 /// The base64url is of `{"next":"//evil.example","p":"google","s":"x","v":"y"}`.
