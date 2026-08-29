@@ -595,6 +595,7 @@ async fn a_closed_task_refuses_a_serve_and_a_hint_with_409_task_complete() {
                 problem_id: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa".to_string(),
                 task_id: LESSON.to_string(),
                 topic: Some("addition".to_string()),
+                serve_topic: Some("addition".to_string()),
                 kp: Some("kp1".to_string()),
                 answer_kind: Some("numeric".to_string()),
                 text: POOL_TEXT.to_string(),
@@ -743,6 +744,7 @@ async fn the_third_hint_on_a_review_escalates_to_the_reference_lesson() {
                 problem_id: "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb".to_string(),
                 task_id: REVIEW.to_string(),
                 topic: Some("addition".to_string()),
+                serve_topic: Some("addition".to_string()),
                 kp: Some("kp1".to_string()),
                 answer_kind: Some("numeric".to_string()),
                 text: POOL_TEXT.to_string(),
@@ -986,6 +988,58 @@ async fn a_pool_miss_instantiates_an_exemplar_and_raises_the_a6_flag() {
         let stored = stored_state(&db, user).await;
         assert_eq!(stored.ring("addition").len(), 1);
         assert_eq!(stored.memory(LESSON).len(), 1);
+    })
+    .await;
+}
+
+/// The D-S6 row of one serve names both topics and holds the authored solution.
+///
+/// `serve_topic` is the topic the STATEMENT came from and `topic` is the topic
+/// the attempt records against. They are the same topic for a lesson, and the
+/// hint ladder and the pre-authored diagnosis key on the first one (M5 review 1,
+/// findings F10 and F16). `solution_sketch` is the exemplar's own worked
+/// solution, which the grade reply of unit U8 reveals after the attempt commits
+/// (findings F2 and F11).
+///
+/// Hard Rule 1 still holds: neither value leaves the D-S6 row on this route.
+#[tokio::test]
+async fn a_serve_stores_the_serve_topic_and_the_authored_solution() {
+    TestDb::with(|db| async move {
+        let user = db.seed_user("sketch@example.com").await;
+        let app = app(&db);
+        seed_open_session(&db, user).await;
+
+        let served = serve_lesson(&app, user).await;
+        let text = served["text"].as_str().unwrap().to_string();
+        // One batch takes one `created_at`, so either authored exemplar may win
+        // the pop. The solution is the one the WINNER authored.
+        let solution = if text == EXEMPLAR_TEXT {
+            "Add the parts to reach 13.5."
+        } else {
+            "Add the parts to reach 13.25."
+        };
+
+        let stored = stored_state(&db, user).await;
+        let live = &stored.served[LESSON];
+        assert_eq!(live.topic.as_deref(), Some("addition"));
+        assert_eq!(live.serve_topic.as_deref(), Some("addition"));
+        assert_eq!(live.kp.as_deref(), Some("kp1"));
+        assert_eq!(
+            live.solution_sketch.as_deref(),
+            Some(solution),
+            "the D-S6 row holds no authored solution"
+        );
+
+        // Trap W7: scan the RAW payload. The serve reveals neither.
+        let raw = serde_json::to_string(&served).unwrap();
+        assert!(
+            !raw.contains("solution"),
+            "the serve leaked a solution: {raw}"
+        );
+        assert!(
+            !raw.contains("serve_topic"),
+            "the serve leaked the serve topic: {raw}"
+        );
     })
     .await;
 }
