@@ -18,8 +18,9 @@
 //! Every expected value is a LITERAL: a literal status code, a literal error
 //! code, a literal statement, a literal count.
 //!
-//! Unit U2 writes the credential reader, so this file puts the `Tenant` into the
-//! request extensions the way the auth layer will.
+//! Every call presents a real session cookie, and `auth::layer::tenant_layer`
+//! binds the tenant from it (FIX-M5-C). No test here writes a request extension
+//! by hand.
 
 #![allow(
     clippy::unwrap_used,
@@ -28,6 +29,8 @@
     clippy::todo,
     clippy::unimplemented
 )]
+
+mod common;
 
 use std::sync::Arc;
 
@@ -43,7 +46,7 @@ use cadus_core::pool::{PoolAnswer, PoolProblem};
 use cadus_store::pool::operator_flags;
 use cadus_store::test_support::TestDb;
 use cadus_store::{DEFAULT_CLIENT_TIMEOUT_MS, Db};
-use cadus_web::state::{Content, ServedProblem, TaskProgress, Tenant, WebState};
+use cadus_web::state::{Content, ServedProblem, TaskProgress, WebState};
 use cadus_web::{AppState, create_app};
 use http_body_util::BodyExt;
 use serde_json::{Value, json};
@@ -199,7 +202,7 @@ async fn call(
     };
     let mut request = builder.body(payload).unwrap();
     if let Some(user) = tenant {
-        request.extensions_mut().insert(Tenant(user));
+        common::present_session(request.headers_mut(), user);
     }
     let response = app.clone().oneshot(request).await.unwrap();
     let status = response.status();
@@ -348,7 +351,7 @@ async fn every_u7_route_without_a_tenant_is_401_unauthorized() {
 #[tokio::test]
 async fn an_unknown_task_is_404_and_a_closed_session_is_409() {
     TestDb::with(|db| async move {
-        let user = db.seed_user("unknown@example.com").await;
+        let user = common::seed_learner(&db, "unknown@example.com").await;
         let app = app(&db);
 
         let (status, body) = call(
@@ -388,7 +391,7 @@ async fn an_unknown_task_is_404_and_a_closed_session_is_409() {
 #[tokio::test]
 async fn a_re_serve_returns_the_same_problem_id_and_a_fresh_started_at() {
     TestDb::with(|db| async move {
-        let user = db.seed_user("reserve@example.com").await;
+        let user = common::seed_learner(&db, "reserve@example.com").await;
         let app = app(&db);
         seed_open_session(&db, user).await;
         seed_pool_row(&db, user, POOL_TEXT, POOL_ANSWER, "hash-a").await;
@@ -450,7 +453,7 @@ async fn a_re_serve_returns_the_same_problem_id_and_a_fresh_started_at() {
 #[tokio::test]
 async fn a_serve_never_carries_the_expected_answer_or_the_sketch() {
     TestDb::with(|db| async move {
-        let user = db.seed_user("secrecy@example.com").await;
+        let user = common::seed_learner(&db, "secrecy@example.com").await;
         let app = app(&db);
         seed_open_session(&db, user).await;
         seed_pool_row(&db, user, POOL_TEXT, POOL_ANSWER, "hash-a").await;
@@ -516,7 +519,7 @@ async fn a_serve_never_carries_the_expected_answer_or_the_sketch() {
 #[tokio::test]
 async fn a_stale_problem_id_is_404_unknown_problem_on_hint_and_on_answer() {
     TestDb::with(|db| async move {
-        let user = db.seed_user("stale@example.com").await;
+        let user = common::seed_learner(&db, "stale@example.com").await;
         let app = app(&db);
         seed_open_session(&db, user).await;
         seed_pool_row(&db, user, POOL_TEXT, POOL_ANSWER, "hash-a").await;
@@ -572,7 +575,7 @@ async fn a_stale_problem_id_is_404_unknown_problem_on_hint_and_on_answer() {
 #[tokio::test]
 async fn a_closed_task_refuses_a_serve_and_a_hint_with_409_task_complete() {
     TestDb::with(|db| async move {
-        let user = db.seed_user("closed@example.com").await;
+        let user = common::seed_learner(&db, "closed@example.com").await;
         let app = app(&db);
         seed_open_session(&db, user).await;
 
@@ -646,7 +649,7 @@ async fn a_closed_task_refuses_a_serve_and_a_hint_with_409_task_complete() {
 #[tokio::test]
 async fn a_hint_never_carries_the_expected_answer() {
     TestDb::with(|db| async move {
-        let user = db.seed_user("hint@example.com").await;
+        let user = common::seed_learner(&db, "hint@example.com").await;
         let app = app(&db);
         seed_open_session(&db, user).await;
         seed_pool_row(&db, user, POOL_TEXT, POOL_ANSWER, "hash-a").await;
@@ -725,7 +728,7 @@ async fn a_hint_never_carries_the_expected_answer() {
 #[tokio::test]
 async fn the_third_hint_on_a_review_escalates_to_the_reference_lesson() {
     TestDb::with(|db| async move {
-        let user = db.seed_user("escalate@example.com").await;
+        let user = common::seed_learner(&db, "escalate@example.com").await;
         let app = app(&db);
         seed_open_session(&db, user).await;
         seed_content(
@@ -783,7 +786,7 @@ async fn the_third_hint_on_a_review_escalates_to_the_reference_lesson() {
 #[tokio::test]
 async fn a_knowledge_point_with_no_approved_ladder_refuses_the_hint() {
     TestDb::with(|db| async move {
-        let user = db.seed_user("noladder@example.com").await;
+        let user = common::seed_learner(&db, "noladder@example.com").await;
         let app = app(&db);
         seed_open_session(&db, user).await;
         seed_pool_row(&db, user, POOL_TEXT, POOL_ANSWER, "hash-a").await;
@@ -840,7 +843,7 @@ async fn a_knowledge_point_with_no_approved_ladder_refuses_the_hint() {
 #[tokio::test]
 async fn teach_on_a_review_is_409_no_instruction() {
     TestDb::with(|db| async move {
-        let user = db.seed_user("teachreview@example.com").await;
+        let user = common::seed_learner(&db, "teachreview@example.com").await;
         let app = app(&db);
         seed_open_session(&db, user).await;
         seed_due_review(&db, user).await;
@@ -874,7 +877,7 @@ async fn teach_on_a_review_is_409_no_instruction() {
 #[tokio::test]
 async fn teach_on_a_lesson_serves_the_authored_page() {
     TestDb::with(|db| async move {
-        let user = db.seed_user("teach@example.com").await;
+        let user = common::seed_learner(&db, "teach@example.com").await;
         let app = app(&db);
         seed_open_session(&db, user).await;
         let uri = format!("/api/task/{LESSON}/teach");
@@ -926,7 +929,7 @@ async fn teach_on_a_lesson_serves_the_authored_page() {
 #[tokio::test]
 async fn a_pool_miss_instantiates_an_exemplar_and_raises_the_a6_flag() {
     TestDb::with(|db| async move {
-        let user = db.seed_user("fallback@example.com").await;
+        let user = common::seed_learner(&db, "fallback@example.com").await;
         let app = app(&db);
         seed_open_session(&db, user).await;
 
@@ -997,7 +1000,7 @@ async fn a_pool_miss_instantiates_an_exemplar_and_raises_the_a6_flag() {
 #[tokio::test]
 async fn the_exemplar_rotation_serves_the_list_again_when_it_is_exhausted() {
     TestDb::with(|db| async move {
-        let user = db.seed_user("rotate@example.com").await;
+        let user = common::seed_learner(&db, "rotate@example.com").await;
         let app = app(&db);
         seed_open_session(&db, user).await;
 
@@ -1045,7 +1048,7 @@ async fn the_exemplar_rotation_serves_the_list_again_when_it_is_exhausted() {
 #[tokio::test]
 async fn the_serve_pops_the_pool_before_it_falls_back() {
     TestDb::with(|db| async move {
-        let user = db.seed_user("pop@example.com").await;
+        let user = common::seed_learner(&db, "pop@example.com").await;
         let app = app(&db);
         seed_open_session(&db, user).await;
         seed_pool_row(&db, user, POOL_TEXT, POOL_ANSWER, "hash-a").await;

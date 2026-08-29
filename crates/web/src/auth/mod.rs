@@ -26,6 +26,8 @@
 //! - [`rate`] — the four paired rate rules and the client-address key;
 //! - [`guard`] — the session guard, the one seam where a request gets a
 //!   `user_id`;
+//! - [`layer`] — the tenant layer, the one place that runs [`guard`] on EVERY
+//!   request and writes the `Tenant` that a guarded route extracts;
 //! - [`routes`] — the ten handlers and the router that carries them;
 //! - [`oauth`] — the OAuth mechanics of unit U5: the two providers, PKCE S256,
 //!   the handshake record, and the transport PORT that keeps the outbound call
@@ -46,6 +48,7 @@
 
 pub mod email;
 pub mod guard;
+pub mod layer;
 pub mod oauth;
 pub mod oauth_routes;
 pub mod password;
@@ -97,6 +100,7 @@ where
 
 pub use email::normalize_email;
 pub use guard::{Authed, current_user};
+pub use layer::tenant_layer;
 pub use oauth::{
     Credentials, GITHUB, GOOGLE, Handshake, Identity, OAuthConfig, OAuthFailure, Provider,
     ProviderRequest, ProviderResponse, ProviderTransport, TransportError,

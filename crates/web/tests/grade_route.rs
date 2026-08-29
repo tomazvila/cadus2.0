@@ -19,8 +19,9 @@
 //! code, a literal tier, a literal tag, a literal count, a literal XP total.
 //! Nothing here re-reads a constant from the code under test.
 //!
-//! Unit U2 writes the credential reader, so this file puts the `Tenant` into the
-//! request extensions the way the auth layer will.
+//! Every call presents a real session cookie, and `auth::layer::tenant_layer`
+//! binds the tenant from it (FIX-M5-C). No test here writes a request extension
+//! by hand.
 
 #![allow(
     clippy::unwrap_used,
@@ -29,6 +30,8 @@
     clippy::todo,
     clippy::unimplemented
 )]
+
+mod common;
 
 use std::collections::BTreeMap;
 use std::sync::Arc;
@@ -47,7 +50,7 @@ use cadus_core::pool::{PoolAnswer, PoolProblem};
 use cadus_store::test_support::TestDb;
 use cadus_store::{DEFAULT_CLIENT_TIMEOUT_MS, Db};
 use cadus_web::grade::{Grade, deterministic_grade, reference_assisted};
-use cadus_web::state::{Content, ServedProblem, TaskProgress, Tenant, WebState};
+use cadus_web::state::{Content, ServedProblem, TaskProgress, WebState};
 use cadus_web::{AppState, create_app};
 use http_body_util::BodyExt;
 use serde_json::{Value, json};
@@ -197,7 +200,7 @@ async fn call(
     };
     let mut request = builder.body(payload).unwrap();
     if let Some(user) = tenant {
-        request.extensions_mut().insert(Tenant(user));
+        common::present_session(request.headers_mut(), user);
     }
     let response = app.clone().oneshot(request).await.unwrap();
     let status = response.status();
@@ -359,7 +362,7 @@ async fn events_of_type(db: &TestDb, user: Uuid, kind: &str) -> Vec<Value> {
 
 /// Seed a learner with an open session and one live lesson problem.
 async fn learner(db: &TestDb, email: &str, live: ServedProblem) -> Uuid {
-    let user = db.seed_user(email).await;
+    let user = common::seed_learner(db, email).await;
     seed_open_session(db, user).await;
     put_state(db, user, &state_with(live, 0, false)).await;
     user
@@ -782,7 +785,7 @@ async fn a_recorded_attempt_matches_the_1_0_event_shape() {
 async fn a_second_correct_answer_at_the_last_kp_passes_the_lesson() {
     TestDb::with(|db| async move {
         let app = app(&db);
-        let user = db.seed_user("pass@example.com").await;
+        let user = common::seed_learner(&db, "pass@example.com").await;
         seed_open_session(&db, user).await;
         put_state(
             &db,
@@ -858,7 +861,7 @@ async fn a_second_correct_answer_at_the_last_kp_passes_the_lesson() {
 async fn the_fifth_wrong_answer_fails_the_lesson_and_queues_remediation() {
     TestDb::with(|db| async move {
         let app = app(&db);
-        let user = db.seed_user("fail@example.com").await;
+        let user = common::seed_learner(&db, "fail@example.com").await;
         seed_open_session(&db, user).await;
         put_state(
             &db,
@@ -1190,7 +1193,7 @@ async fn seed_four_misses(db: &TestDb, user: Uuid) {
 async fn the_recorded_session_stream_matches_the_1_0_event_shapes() {
     TestDb::with(|db| async move {
         let app = app(&db);
-        let user = db.seed_user("stream@example.com").await;
+        let user = common::seed_learner(&db, "stream@example.com").await;
         seed_open_session(&db, user).await;
         put_state(
             &db,

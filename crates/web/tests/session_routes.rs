@@ -17,8 +17,9 @@
 //! Every expected value is a LITERAL: a literal status code, a literal error
 //! code, a literal session id, a literal node count.
 //!
-//! Unit U2 writes the credential reader, so this file puts the [`Tenant`] into
-//! the request extensions the way the auth layer will.
+//! Every call presents a real session cookie, and `auth::layer::tenant_layer`
+//! binds the tenant from it (FIX-M5-C). No test here writes a request extension
+//! by hand.
 
 #![allow(
     clippy::unwrap_used,
@@ -27,6 +28,8 @@
     clippy::todo,
     clippy::unimplemented
 )]
+
+mod common;
 
 use std::collections::BTreeMap;
 use std::sync::Arc;
@@ -42,7 +45,7 @@ use cadus_core::event::{Event, SchemaVersion, SessionStart, Timestamp, TopicStat
 use cadus_core::learner::{LearnerModel, TopicState};
 use cadus_store::test_support::TestDb;
 use cadus_store::{DEFAULT_CLIENT_TIMEOUT_MS, Db};
-use cadus_web::state::{Content, TaskProgress, Tenant, WebState};
+use cadus_web::state::{Content, TaskProgress, WebState};
 use cadus_web::{AppState, create_app};
 use http_body_util::BodyExt;
 use serde_json::{Value, json};
@@ -168,7 +171,7 @@ async fn call(
     };
     let mut request = builder.body(payload).unwrap();
     if let Some(user) = tenant {
-        request.extensions_mut().insert(Tenant(user));
+        common::present_session(request.headers_mut(), user);
     }
     let response = app.clone().oneshot(request).await.unwrap();
     let status = response.status();
@@ -299,7 +302,7 @@ async fn every_u6_route_without_a_tenant_is_401_unauthorized() {
 #[tokio::test]
 async fn a_route_that_needs_the_curriculum_is_503_without_one() {
     TestDb::with(|db| async move {
-        let user = db.seed_user("nocontent@example.com").await;
+        let user = common::seed_learner(&db, "nocontent@example.com").await;
         let app = app_without_content(&db);
         let (status, _, body) = call(&app, Method::GET, "/api/status", Some(user), None).await;
         assert_eq!(status, StatusCode::SERVICE_UNAVAILABLE);
@@ -318,7 +321,7 @@ async fn a_route_that_needs_the_curriculum_is_503_without_one() {
 #[tokio::test]
 async fn the_session_cycle_opens_once_resumes_and_refuses_a_second_end() {
     TestDb::with(|db| async move {
-        let user = db.seed_user("cycle@example.com").await;
+        let user = common::seed_learner(&db, "cycle@example.com").await;
         let app = app(&db);
 
         let (status, _, body) =
@@ -403,7 +406,7 @@ async fn the_session_cycle_opens_once_resumes_and_refuses_a_second_end() {
 #[tokio::test]
 async fn listing_the_plan_writes_nothing() {
     TestDb::with(|db| async move {
-        let user = db.seed_user("plan@example.com").await;
+        let user = common::seed_learner(&db, "plan@example.com").await;
         let app = app(&db);
         seed_open_session(&db, user).await;
         seed_due_review(&db, user, 1).await;
@@ -485,7 +488,7 @@ async fn listing_the_plan_writes_nothing() {
 #[tokio::test]
 async fn progress_done_is_true_for_a_recomposed_failed_review() {
     TestDb::with(|db| async move {
-        let user = db.seed_user("recompose@example.com").await;
+        let user = common::seed_learner(&db, "recompose@example.com").await;
         let app = app(&db);
         seed_open_session(&db, user).await;
         // Enroll in `c1`, so `fractions` stays out of scope. An in-scope lesson
@@ -586,8 +589,8 @@ async fn progress_done_is_true_for_a_recomposed_failed_review() {
 #[tokio::test]
 async fn the_export_round_trips_through_the_event_reader() {
     TestDb::with(|db| async move {
-        let user = db.seed_user("export@example.com").await;
-        let stranger = db.seed_user("stranger@example.com").await;
+        let user = common::seed_learner(&db, "export@example.com").await;
+        let stranger = common::seed_learner(&db, "stranger@example.com").await;
         let app = app(&db);
 
         let written = vec![
@@ -657,7 +660,7 @@ async fn the_export_round_trips_through_the_event_reader() {
 #[tokio::test]
 async fn enroll_refuses_a_missing_or_unknown_course_and_clears_the_scratch() {
     TestDb::with(|db| async move {
-        let user = db.seed_user("enroll@example.com").await;
+        let user = common::seed_learner(&db, "enroll@example.com").await;
         let app = app(&db);
 
         let (status, _, body) = call(
@@ -731,7 +734,7 @@ async fn enroll_refuses_a_missing_or_unknown_course_and_clears_the_scratch() {
 #[tokio::test]
 async fn status_reports_the_enrolled_course_and_the_counts() {
     TestDb::with(|db| async move {
-        let user = db.seed_user("status@example.com").await;
+        let user = common::seed_learner(&db, "status@example.com").await;
         let app = app(&db);
         seed_open_session(&db, user).await;
         seed_due_review(&db, user, 1).await;
@@ -781,7 +784,7 @@ async fn status_reports_the_enrolled_course_and_the_counts() {
 #[tokio::test]
 async fn graph_filters_by_scope_and_404s_an_unknown_course() {
     TestDb::with(|db| async move {
-        let user = db.seed_user("graph@example.com").await;
+        let user = common::seed_learner(&db, "graph@example.com").await;
         let app = app(&db);
 
         let (status, _, body) =
@@ -829,7 +832,7 @@ async fn graph_filters_by_scope_and_404s_an_unknown_course() {
 #[tokio::test]
 async fn modules_lists_the_enrolled_course_modules() {
     TestDb::with(|db| async move {
-        let user = db.seed_user("modules@example.com").await;
+        let user = common::seed_learner(&db, "modules@example.com").await;
         let app = app(&db);
 
         // With no enrollment the whole curriculum is in scope.
