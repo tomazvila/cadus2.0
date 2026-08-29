@@ -380,17 +380,10 @@ L2.
 
 `CADUS_BENCH_DIR` moves the artifact directory. The default is `target/bench`.
 
-**Open, for the integrator of FIX-M5-G.** `scripts/bench.sh` does not yet name
-`crates/store/tests/bench_long_log.rs`, because FIX-M5-G owns no file under
-`scripts/`. Until the step below is in that script, the TIMING gate of section
-6.3 runs only by hand and the COUNTING gate of section 6.3 is what
-`cargo test --workspace` runs. Add the step after benchmark B (grade):
-
-```sh
-echo "== benchmark B (long log): cargo test --release -p cadus-store --test bench_long_log"
-cargo test --release -p cadus-store --test bench_long_log -- \
-    --test-threads=1 --nocapture
-```
+`scripts/bench.sh` runs `crates/store/tests/bench_long_log.rs` after benchmark
+B (grade), so the TIMING gate of section 6.3 (serve p95 < 100 ms, grade p95
+< 150 ms on a 20,000-event log) is part of every gate run. The COUNTING gate of
+section 6.3 runs inside `cargo test --workspace`.
 
 `scripts/bench.sh` runs one more step between the two benchmarks:
 `CADUS_RELEASE_BENCH=1 cargo test --release -p cadus-core --test answer_check`.

@@ -22,9 +22,9 @@ Requirement IDs: A3, A4, C1–C4, R2, R4, L1–L6, T1–T6. Plan: `docs/plans/M5
 | U11 T6 model-call ledger and `/metrics` series (migration 0009) | `m5/u11` | gate green |
 | U12 budgets: per-route table, grade/serve benchmarks, L6 crate-boundary test, arena benchmark, `GET /api/operator/flags` | `m5/u12` | gate green (commit 1ee253f; release p95: serve 1.9 ms, grade 7.6 ms, arena 3.3 ms, instantiate 8.3 µs) |
 
-Gate on `main` after U1–U12: 1,534 tests, 0 failed, live oracle enabled (log gate-m5-3).
+Gate on `main` after U1–U12: 1,534 tests, 0 failed, live oracle enabled (log gate-m5-3). Gate after the fix wave: 1,572 tests, 0 failed (log gate-m5-4).
 
-Review rounds 1 and 2 (2026-08-29, `docs/reviews/M5-review-1.md`): 28 raised, 18 confirmed, 12 distinct defects (three blockers: the `Tenant` layer that no route had, the `attempt_id` counter reset, the worker compose block without the model variables). Fix wave `wf_84cbaac3-726`: units FIX-M5-A..F and T in parallel, then G and H in sequence.
+Review rounds 1 and 2 (2026-08-29, `docs/reviews/M5-review-1.md`): 28 raised, 18 confirmed, 12 distinct defects (three blockers: the `Tenant` layer that no route had, the `attempt_id` counter reset, the worker compose block without the model variables). Fix wave `wf_84cbaac3-726` (2026-08-29/30): units FIX-M5-A..F and T in parallel, then G and H in sequence; all nine gate green on their branches; merged through `m5/fix-h`. Changes: the attempt number comes from the event log; `ServedProblem` carries `solution_sketch` and `serve_topic`; the tenant layer (`auth::layer`) binds a live session on every route; `safe_next` rejects control bytes and a provider link to an unverified account clears its password; `/api/auth/*` body rejections answer the envelope; compose forwards the seven model variables to the worker; a quiz route test; one event-log read per request behind a cached session view (migration 0010, benchmark `bench_long_log` at 20,000 events: serve p95 < 100 ms, grade p95 112.9 ms < 150 ms); the serve appends `task_served` (ruling D-M5-8).
 
 U12 items for the M5 review (from the unit report):
 - The L1 arena segment moved from 5 ms to 20 ms (`docs/reference/l1-budget.md` §2). M4 wrote 5 ms without a measurement; the first measurement is 3.24 ms p95. The 150 ms total is unchanged. The review rules on the split.

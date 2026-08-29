@@ -82,6 +82,12 @@ if [ -n "${CADUS_TEST_DATABASE_URL:-}" ]; then
     echo "== benchmark B (grade): cargo test --release -p cadus-store --test bench_grade_transaction"
     cargo test --release -p cadus-store --test bench_grade_transaction -- \
         --test-threads=1 --nocapture
+
+    # The 20,000-event log of FIX-M5-G (L1, L4, L5). It runs after the grade
+    # half, for the same reason: one transaction benchmark at a time.
+    echo "== benchmark B (long log): cargo test --release -p cadus-store --test bench_long_log"
+    cargo test --release -p cadus-store --test bench_long_log -- \
+        --test-threads=1 --nocapture
 else
     echo "SKIPPED benchmark B: CADUS_TEST_DATABASE_URL is not set"
 fi
