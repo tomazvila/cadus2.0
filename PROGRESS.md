@@ -24,6 +24,8 @@ Requirement IDs: A3, A4, C1–C4, R2, R4, L1–L6, T1–T6. Plan: `docs/plans/M5
 
 Gate on `main` after U1–U12: 1,534 tests, 0 failed, live oracle enabled (log gate-m5-3).
 
+Review rounds 1 and 2 (2026-08-29, `docs/reviews/M5-review-1.md`): 28 raised, 18 confirmed, 12 distinct defects (three blockers: the `Tenant` layer that no route had, the `attempt_id` counter reset, the worker compose block without the model variables). Fix wave `wf_84cbaac3-726`: units FIX-M5-A..F and T in parallel, then G and H in sequence.
+
 U12 items for the M5 review (from the unit report):
 - The L1 arena segment moved from 5 ms to 20 ms (`docs/reference/l1-budget.md` §2). M4 wrote 5 ms without a measurement; the first measurement is 3.24 ms p95. The 150 ms total is unchanged. The review rules on the split.
 - `GET /api/operator/flags` reports `pool_depth` and `last_source` for the calling admin's tenant only (`serving_pool` is under RLS); `approved_templates` and `needs_template` are deployment-wide. `source_exhausted` is always false (the refill backoff map lives in the worker process). `docs/SELF_HOST.md` states both limits.
