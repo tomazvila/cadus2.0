@@ -20,9 +20,14 @@ Requirement IDs: A3, A4, C1–C4, R2, R4, L1–L6, T1–T6. Plan: `docs/plans/M5
 | U9 A4 client surface: `diagnosis` field, distractor lookup, job enqueue, `GET /api/diagnosis/{id}`, SSE over LISTEN/NOTIFY | `m5/u9` | gate green |
 | U10 diagnosis worker: SKIP LOCKED claim, sweeps, the model client crate with T5 defaults, retries, vocabulary filter, NOTIFY | `m5/u10` | gate green |
 | U11 T6 model-call ledger and `/metrics` series (migration 0009) | `m5/u11` | gate green |
-| U12 budgets: per-route table, grade/serve benchmarks, L6 crate-boundary test, arena benchmark, operator flags endpoint | `m5/u12` | in progress |
+| U12 budgets: per-route table, grade/serve benchmarks, L6 crate-boundary test, arena benchmark, `GET /api/operator/flags` | `m5/u12` | gate green (commit 1ee253f; release p95: serve 1.9 ms, grade 7.6 ms, arena 3.3 ms, instantiate 8.3 µs) |
 
-Gate on `main` after U1–U11 (commit 1b720bf): 1,514 tests, 0 failed, live oracle enabled. Two merge
+Gate on `main` after U1–U12: 1,534 tests, 0 failed, live oracle enabled (log gate-m5-3).
+
+U12 items for the M5 review (from the unit report):
+- The L1 arena segment moved from 5 ms to 20 ms (`docs/reference/l1-budget.md` §2). M4 wrote 5 ms without a measurement; the first measurement is 3.24 ms p95. The 150 ms total is unchanged. The review rules on the split.
+- `GET /api/operator/flags` reports `pool_depth` and `last_source` for the calling admin's tenant only (`serving_pool` is under RLS); `approved_templates` and `needs_template` are deployment-wide. `source_exhausted` is always false (the refill backoff map lives in the worker process). `docs/SELF_HOST.md` states both limits.
+- The route runs `cadus_core::template::gate` at request time (at most 20 runs, about 200 ms CPU). No L* line covers the route; R4 holds. Two merge
 seams were resolved by hand (additive: the web purity list, the store error variants and
 module list); one load-sensitive debug timing test now uses the bomb budget.
 
