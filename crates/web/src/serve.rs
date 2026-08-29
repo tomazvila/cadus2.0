@@ -22,7 +22,8 @@
 //! There is no model call (T1, R4), so the whole serve is one transaction
 //! (`serving-1.0-spec.md` section 7.2): the advisory lock, the projection, the
 //! session-window read, the pool pop, the authored-solution read of a template
-//! row, the state write, commit. NO step of it reads the whole event log: the
+//! row, the `task_served` append of a task served for the first time, the state
+//! write, commit. NO step of it reads the whole event log: the
 //! projection answers from the cached model and the cached
 //! [`cadus_store::state::SessionView`], and the window read asks for the events
 //! of the OPEN SESSION only (M5 review 1, finding F18). `started_at` is
@@ -30,6 +31,19 @@
 //! at EVERY hand-off, a re-serve of a live problem included, because that is the
 //! moment the problem goes on screen (section 5.6). A re-serve therefore returns
 //! the SAME `problem_id` with a FRESH `started_at`.
+//!
+//! # The `task_served` event (D-M5-8)
+//!
+//! The serve appends one `task_served` event the first time a session serves a
+//! task, and never a second one for that task id. The event is the only source
+//! of `SessionView::last_drill_at`, and that map is the only gate of the
+//! 3.5-day drill cadence, so before this append the selector re-offered every
+//! drill-eligible topic in every session (M5 review 1, finding F17). 1.0 writes
+//! the event at plan composition; `GET /api/session/plan` of 2.0 stays a pure
+//! read (trap W3), so the serve is the append point.
+//!
+//! [`forget_own_drills`] keeps the drill of the OPEN session servable to its
+//! last question: the cadence gate reads the drills of the EARLIER sessions.
 //!
 //! # The A6 fallback
 //!
@@ -40,13 +54,13 @@
 //! [`reclaim_exemplar_tx`], which re-stamps `claimed_at` and so keeps
 //! `last_exemplar_at` of the A6 operator view current.
 
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, BTreeSet};
 
 use axum::Json;
 use axum::extract::{Path, State};
 use axum::http::StatusCode;
 use cadus_core::curriculum::{Curriculum, KnowledgePoint};
-use cadus_core::event::{TaskType, Timestamp};
+use cadus_core::event::{Event, SchemaVersion, Slug, TaskServed, TaskType, Timestamp};
 use cadus_core::pool::{Avoid, ExemplarSource, ProblemSource, Ring, Source, TaskMemory, kp_key};
 use cadus_core::selector::{SessionPlan, Task};
 use cadus_core::template::{Bindings, Value as Binding, from_body, literal_to_rational, render};
@@ -54,7 +68,9 @@ use cadus_store::content::{KIND_HINT_LADDER, KIND_TEACH, approved_document};
 use cadus_store::pool::{
     NewInstance, PoolRow, approved_template, insert_batch, pop_with_ring_tx, reclaim_exemplar_tx,
 };
-use cadus_store::state::{EventRow, load_events_after, lock_web_state, project_current};
+use cadus_store::state::{
+    EventRow, SessionView, append_event, load_events_after, lock_web_state, project_current,
+};
 use serde::Deserialize;
 use serde_json::{Value, json};
 use sqlx::types::Uuid;
@@ -375,7 +391,8 @@ pub(crate) struct Open {
     /// is `{task_id}-{n}`, so every event of a task of the open session stands in
     /// this window. The grade route reads it for the attempt count of one task
     /// and for the earlier attempts of one knowledge point, and both are
-    /// task-scoped.
+    /// task-scoped. The serve route reads it for the tasks this session already
+    /// served (D-M5-8).
     pub(crate) events: Vec<EventRow>,
     /// The D-S6 document, bound to the open session.
     pub(crate) scratch: WebState,
@@ -417,7 +434,7 @@ pub(crate) async fn open(
     let projection = bound(&state.db, project_current(&mut tx, user_id, &input))
         .await
         .map_err(|err| failed(&err))?;
-    let view = projection.view;
+    let mut view = projection.view;
     let Some(session) = view.current_session.clone() else {
         return Err(no_open_session());
     };
@@ -429,6 +446,7 @@ pub(crate) async fn open(
         .map_err(|err| failed(&err))?;
     let mut scratch = read_state(&state.db, &mut tx, user_id).await?;
     scratch.bind(&session);
+    forget_own_drills(&mut view, &events, &session);
     let plan = compose_plan(content, &view, &projection.model, &session, now);
     Ok(Open {
         tx,
@@ -436,6 +454,105 @@ pub(crate) async fn open(
         scratch,
         plan,
     })
+}
+
+// --------------------------------------------------------------------------- //
+// The `task_served` event (D-M5-8, M5 review 1 finding F17)
+// --------------------------------------------------------------------------- //
+
+/// The task ids this session already served (`served_task_ids`,
+/// `service.py:1078`).
+///
+/// `events` is the window of the OPEN SESSION, and the filter still reads the
+/// session field of every row, because a log whose `session_start` names no
+/// session gives a window over the WHOLE log.
+fn served_task_ids(events: &[EventRow], session: &str) -> BTreeSet<String> {
+    events
+        .iter()
+        .filter_map(|row| match &row.event {
+            Event::TaskServed(body) if body.session.as_deref() == Some(session) => {
+                Some(body.task_id.clone())
+            }
+            _ => None,
+        })
+        .collect()
+}
+
+/// Take the drills this session itself served out of the cadence map.
+///
+/// [`cadus_core::selector::schedule_drills`] drops a topic whose last drill is
+/// inside the 3.5-day window, and [`record_first_serve`] stamps that instant at
+/// the FIRST serve of the drill. Without this step the drill task would leave
+/// the plan while the learner is still working through its 20 questions, and the
+/// serve of question 2 would answer `404 unknown_task`.
+///
+/// The cadence therefore reads "no NEW drill of this topic for 3.5 days", and a
+/// drill the open session is already working on stays in that session's plan.
+/// The rule is the queue stability of `_reserve_open_plan` (`selector.py:1630`):
+/// a task the session already serves keeps its id and its place.
+fn forget_own_drills(view: &mut SessionView, events: &[EventRow], session: &str) {
+    for row in events {
+        if let Event::TaskServed(body) = &row.event
+            && body.session.as_deref() == Some(session)
+            && body.task_type == TaskType::Drill
+            && let Some(topic) = body.topic.as_ref()
+        {
+            view.last_drill_at.remove(topic.as_str());
+        }
+    }
+}
+
+/// Append `task_served` the first time this session serves `task` (D-M5-8).
+///
+/// It is the ONE source of `SessionView::last_drill_at`, and so of the 3.5-day
+/// drill cadence: no other 2.0 path writes the event (M5 review 1, finding
+/// F17). 1.0 appends it at plan composition (`service.py:1302-1321`); 2.0
+/// appends it here, because `GET /api/session/plan` stays a pure read (trap W3).
+///
+/// It is idempotent per task id: a re-serve, the next question of a running
+/// task, and a second browser tab all find the id in `events` and write nothing.
+/// The caller holds the advisory lock, so the read of the window and the append
+/// cannot interleave with another append of this learner.
+///
+/// The event carries the fields 1.0 records. `problems` stays empty: 1.0 emits
+/// the event before it draws a statement, and no 2.0 code reads the stubs.
+async fn record_first_serve(
+    state: &AppState,
+    tx: &mut Transaction<'_, Postgres>,
+    user_id: Uuid,
+    task: &Task,
+    session: &str,
+    events: &[EventRow],
+    now: Timestamp,
+) -> Result<(), ApiError> {
+    if served_task_ids(events, session).contains(&task.task_id) {
+        return Ok(());
+    }
+    let event = Event::TaskServed(TaskServed {
+        ts: now,
+        session: Some(session.to_owned()),
+        v: SchemaVersion,
+        task_id: task.task_id.clone(),
+        task_type: task.task_type,
+        // A quiz task spans many topics and names none of its own, so its event
+        // carries no topic (`service.py:1307-1310`, trap D2).
+        topic: task.topic.as_deref().and_then(|id| Slug::new(id).ok()),
+        kp: task
+            .start_at_kp
+            .as_deref()
+            .and_then(|id| Slug::new(id).ok()),
+        problems: Vec::new(),
+        component_topics: task
+            .component_topics
+            .iter()
+            .filter_map(|id| Slug::new(id).ok())
+            .collect(),
+        seed: None,
+    });
+    bound(&state.db, append_event(tx, user_id, &event, None))
+        .await
+        .map_err(|err| failed(&err))?;
+    Ok(())
 }
 
 /// The task of this plan, or `404 unknown_task`.
@@ -471,7 +588,7 @@ pub async fn serve(
         mut tx,
         mut scratch,
         plan,
-        ..
+        events,
     } = open(&state, content, user_id, now, true).await?;
     let task = find(&plan, &task_id)?;
     let task_type = task.task_type;
@@ -508,6 +625,9 @@ pub async fn serve(
         )
         .await?
     };
+    // The hand-off happened, so the task is served. The event goes in once per
+    // task and per session, and it is what fills the drill cadence (D-M5-8).
+    record_first_serve(&state, &mut tx, user_id, task, &plan.session, &events, now).await?;
     write_state(&state.db, &mut tx, user_id, &scratch).await?;
     tx.commit().await.map_err(|err| failed(&err.into()))?;
     Ok(Json(payload))

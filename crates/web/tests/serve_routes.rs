@@ -66,6 +66,15 @@ const LESSON: &str = "s_2026-01-01a-lesson-addition";
 /// The task id of the `addition` review.
 const REVIEW: &str = "s_2026-01-01a-review-addition";
 
+/// The task id of the `tables` drill (`assign_ids`: `{session}-{type}-{topic}`).
+const DRILL: &str = "s_2026-01-01a-drill-tables";
+
+/// The session the cadence test opens after it closes [`SESSION`].
+const SESSION_2: &str = "s_2026-01-02a";
+
+/// The task id the `tables` drill would take in [`SESSION_2`].
+const DRILL_2: &str = "s_2026-01-02a-drill-tables";
+
 /// The serving key of the first knowledge point of `addition`.
 const KEY: &str = "addition/kp1";
 
@@ -79,6 +88,9 @@ const EXEMPLAR_TEXT_2: &str = "Compute 9 + 4.25.";
 /// answer literal in this file carries a decimal point, which no `problem_id`
 /// can hold, so a raw-body scan cannot match one by accident.
 const EXEMPLAR_ANSWER: &str = "13.5";
+
+/// The statement of the first authored exemplar of `tables/kp1`.
+const DRILL_TEXT: &str = "Compute 8 x 7 + 0.5.";
 
 /// The statement of the pool row the pop test seeds.
 const POOL_TEXT: &str = "Compute 21 + 34.75.";
@@ -128,8 +140,18 @@ fn topic(id: &str, points: Vec<KnowledgePoint>) -> Topic {
     }
 }
 
-/// The fixture curriculum: one course, one module, two topics. `addition`
-/// authors two knowledge points and two exemplars on the first one.
+/// A drill-tagged topic. `schedule_drills` reads `drill` and offers the topic
+/// once the learner masters it and stays under the automaticity bar.
+fn drill_topic(id: &str, points: Vec<KnowledgePoint>) -> Topic {
+    Topic {
+        drill: true,
+        ..topic(id, points)
+    }
+}
+
+/// The fixture curriculum: one course, one module, three topics. `addition`
+/// authors two knowledge points and two exemplars on the first one, and
+/// `tables` is the drill-tagged topic of the cadence tests.
 fn graph() -> Curriculum {
     let catalog = Catalog {
         courses: vec![Course {
@@ -164,6 +186,16 @@ fn graph() -> Curriculum {
                         ],
                     ),
                     topic("subtraction", vec![kp("kp1", vec![])]),
+                    drill_topic(
+                        "tables",
+                        vec![kp(
+                            "kp1",
+                            vec![
+                                exemplar(DRILL_TEXT, "56.5"),
+                                exemplar("Compute 6 x 7 + 0.25.", "42.25"),
+                            ],
+                        )],
+                    ),
                 ],
             },
             first_load_index: 0,
@@ -1159,4 +1191,234 @@ async fn seed_due_review(db: &TestDb, user: Uuid) {
     .execute(&db.admin)
     .await
     .unwrap();
+}
+
+// --------------------------------------------------------------------------- //
+// The drill cadence (F17, D-M5-8)
+// --------------------------------------------------------------------------- //
+
+/// Write a learner model whose `tables` topic is mastered and still under the
+/// automaticity bar, which is what `schedule_drills` asks for.
+async fn seed_drill_due(db: &TestDb, user: Uuid) {
+    let mut topics: std::collections::BTreeMap<String, cadus_core::learner::TopicState> =
+        std::collections::BTreeMap::new();
+    topics.insert(
+        "tables".to_string(),
+        cadus_core::learner::TopicState {
+            status: cadus_core::event::TopicStatus::Learning,
+            rep_num: 1.0,
+            memory_base: 1.0,
+            t0: Some(Timestamp::from_micros(BASE_US)),
+            interval_days: 30.0,
+            ability: 0.6,
+            ..cadus_core::learner::TopicState::default()
+        },
+    );
+    let model = cadus_core::learner::LearnerModel {
+        topics,
+        ..cadus_core::learner::LearnerModel::default()
+    };
+    sqlx::query!(
+        r#"
+        INSERT INTO learner_models
+            (user_id, model, through_seq, projector_version, config_hash)
+        VALUES ($1, $2, 1, 3, $3)
+        "#,
+        user,
+        serde_json::to_value(&model).unwrap(),
+        cadus_core::config::Config::default().config_hash().unwrap()
+    )
+    .execute(&db.admin)
+    .await
+    .unwrap();
+}
+
+/// Append one event at the next dense `seq` of `user`.
+async fn append_log(db: &TestDb, user: Uuid, event: &Event, micros: i64) {
+    let ts = DateTime::<Utc>::from_timestamp_micros(micros).unwrap();
+    sqlx::query!(
+        r#"
+        INSERT INTO events (user_id, seq, ts, type, session_id, v, payload)
+        SELECT $1, COALESCE(MAX(e.seq), 0) + 1, $2, $3, $4, 1, $5
+        FROM events e WHERE e.user_id = $1
+        "#,
+        user,
+        ts,
+        event.type_name(),
+        event.session(),
+        serde_json::to_value(event).unwrap()
+    )
+    .execute(&db.admin)
+    .await
+    .unwrap();
+}
+
+/// The task ids `GET /api/session/plan` lists, in order.
+async fn plan_task_ids(app: &Router, user: Uuid) -> Vec<String> {
+    let (status, body) = call(app, Method::GET, "/api/session/plan", Some(user), None).await;
+    assert_eq!(status, StatusCode::OK, "{body}");
+    parse(&body)["tasks"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|task| task["task_id"].as_str().unwrap().to_string())
+        .collect()
+}
+
+/// How many `task_served` rows the log holds for one task id.
+async fn task_served_rows(db: &TestDb, user: Uuid, task_id: &str) -> i64 {
+    sqlx::query_scalar!(
+        r#"
+        SELECT count(*) AS "n!" FROM events
+        WHERE user_id = $1 AND type = 'task_served' AND payload->>'task_id' = $2
+        "#,
+        user,
+        task_id
+    )
+    .fetch_one(&db.admin)
+    .await
+    .unwrap()
+}
+
+/// Serve `task_id` and give back the status and the parsed body.
+async fn serve_task(app: &Router, user: Uuid, task_id: &str) -> (StatusCode, Value) {
+    let (status, body) = call(
+        app,
+        Method::POST,
+        &format!("/api/task/{task_id}/serve"),
+        Some(user),
+        Some(json!({})),
+    )
+    .await;
+    (status, parse(&body))
+}
+
+/// F17 and ruling D-M5-8. The serve appends `task_served`, so the drill cadence
+/// of `schedule_drills` finally has its one source. The 3.5-day window
+/// (`DRILL_INTERVAL_DAYS`) has not passed when the next session opens, so the
+/// plan of that session offers NO drill.
+///
+/// Every expected value here is a literal: one event row, the drill task id of
+/// each session, and the empty drill offer of the second session.
+#[tokio::test]
+async fn a_served_drill_is_recorded_and_the_next_session_offers_no_drill() {
+    TestDb::with(|db| async move {
+        let user = common::seed_learner(&db, "cadence@example.com").await;
+        let app = app(&db);
+        seed_open_session(&db, user).await;
+        seed_drill_due(&db, user).await;
+
+        // The drill stands in the plan of the first session.
+        assert!(
+            plan_task_ids(&app, user).await.contains(&DRILL.to_string()),
+            "the fixture learner is not drill-eligible"
+        );
+        assert_eq!(task_served_rows(&db, user, DRILL).await, 0);
+
+        let (status, served) = serve_task(&app, user, DRILL).await;
+        assert_eq!(status, StatusCode::OK, "{served}");
+        assert_eq!(served["index"], 1);
+        assert_eq!(served["countdown"], true);
+
+        // The serve wrote the cadence event, and it wrote exactly one.
+        assert_eq!(task_served_rows(&db, user, DRILL).await, 1);
+        let stored = sqlx::query!(
+            r#"
+            SELECT session_id AS "session_id!", payload AS "payload!"
+            FROM events WHERE user_id = $1 AND type = 'task_served'
+            "#,
+            user
+        )
+        .fetch_one(&db.admin)
+        .await
+        .unwrap();
+        assert_eq!(stored.session_id, SESSION);
+        assert_eq!(stored.payload["task_id"], DRILL);
+        assert_eq!(stored.payload["task_type"], "drill");
+        assert_eq!(stored.payload["topic"], "tables");
+        assert_eq!(stored.payload["session"], SESSION);
+
+        // Close the session and open the next one. The cadence event stays in
+        // the log, so the new session's plan holds no drill at all.
+        append_log(
+            &db,
+            user,
+            &Event::SessionEnd(cadus_core::event::SessionEnd {
+                ts: Timestamp::from_micros(BASE_US),
+                session: Some(SESSION.to_string()),
+                v: SchemaVersion,
+                xp_earned: 0.0,
+                minutes: 0.0,
+            }),
+            BASE_US,
+        )
+        .await;
+        append_log(
+            &db,
+            user,
+            &Event::SessionStart(SessionStart {
+                ts: Timestamp::from_micros(BASE_US),
+                session: Some(SESSION_2.to_string()),
+                v: SchemaVersion,
+            }),
+            BASE_US,
+        )
+        .await;
+
+        let ids = plan_task_ids(&app, user).await;
+        assert!(
+            !ids.contains(&DRILL_2.to_string()),
+            "the drill came back inside the 3.5-day window: {ids:?}"
+        );
+        assert!(
+            !ids.iter().any(|id| id.contains("-drill-")),
+            "the plan still offers a drill: {ids:?}"
+        );
+
+        // The refusal is the cadence, not a missing task: a serve of a task the
+        // plan does not hold is `404 unknown_task`.
+        let (status, body) = serve_task(&app, user, DRILL_2).await;
+        assert_eq!(status, StatusCode::NOT_FOUND, "{body}");
+        assert_eq!(body["error"]["code"], "unknown_task");
+    })
+    .await;
+}
+
+/// The append is idempotent per task id, and the cadence never takes a drill
+/// away from the session that serves it (D-M5-8). The second problem of the
+/// running drill comes back under the SAME task id, and the log still holds one
+/// `task_served` row.
+#[tokio::test]
+async fn a_running_drill_keeps_its_task_and_appends_no_second_event() {
+    TestDb::with(|db| async move {
+        let user = common::seed_learner(&db, "running@example.com").await;
+        let app = app(&db);
+        seed_open_session(&db, user).await;
+        seed_drill_due(&db, user).await;
+
+        let (status, first) = serve_task(&app, user, DRILL).await;
+        assert_eq!(status, StatusCode::OK, "{first}");
+        assert_eq!(first["index"], 1);
+        assert_eq!(task_served_rows(&db, user, DRILL).await, 1);
+
+        // Close the live problem, the way an answer does, and ask for the next
+        // one. The task must still stand in the plan of its own session.
+        let mut scratch = stored_state(&db, user).await;
+        scratch.served.remove(DRILL);
+        put_state(&db, user, &scratch).await;
+
+        let (status, second) = serve_task(&app, user, DRILL).await;
+        assert_eq!(status, StatusCode::OK, "{second}");
+        assert_eq!(second["index"], 2);
+        assert_eq!(task_served_rows(&db, user, DRILL).await, 1);
+
+        // NOTE. `GET /api/session/plan` composes its own view in
+        // `crates/web/src/session.rs`, which unit FIX-M5-H does not own, so that
+        // route drops the running drill from the LISTING while the serve keeps
+        // it. The open issue of the unit asks for the `forget_own_drills` call
+        // to move into `compose_plan`, where both derivations read it.
+        let progress = stored_state(&db, user).await;
+        assert_eq!(progress.tasks[DRILL].served, 2);
+    })
+    .await;
 }

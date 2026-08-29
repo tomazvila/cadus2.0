@@ -638,6 +638,15 @@ compile error, not a review note.
 | D-M5-6 | `/api/ready`: drop `redis` and `worker.heartbeat`, or keep a worker liveness probe on a Postgres row | drop `redis`; keep liveness, sourced from `diagnosis_jobs` claim age |
 | D-M5-7 | Add `blank-answer` to the vocabulary, or drop the tag (W1) | add it, hyphenated |
 
+**Note — where `task_served` is appended (D-M5-8, decided in M5 review 1).** 1.0 appends one
+`task_served` per new task at plan composition (`service.py:1302-1321`), so `GET /session/plan`
+writes to the log. 2.0 appends it at the FIRST serve of the task instead, one row per task id,
+because the plan route stays a pure read (trap W3). The event is the only source of
+`SessionView.last_drill_at`, and that map is the only gate of the 3.5-day drill cadence
+(`selector.py:845-869`). The serve path takes the drills of the OPEN session out of that map
+before it composes, because 2.0 recomposes the plan on every request: without that step the
+drill task leaves the plan after its first question, and question 2 answers `404 unknown_task`.
+
 ---
 
 ## 10. Pinned literals from the 1.0 tests

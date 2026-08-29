@@ -1,0 +1,18 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        INSERT INTO events (user_id, seq, ts, type, session_id, v, payload)\n        SELECT $1, COALESCE(MAX(e.seq), 0) + 1, $2, $3, $4, 1, $5\n        FROM events e WHERE e.user_id = $1\n        ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Uuid",
+        "Timestamptz",
+        "Text",
+        "Text",
+        "Jsonb"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "c35e29fc726605b47c3e8df0870831d8019ed85aad9081a7a3d64729e02b2b74"
+}
