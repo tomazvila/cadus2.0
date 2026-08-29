@@ -23,6 +23,8 @@
 //! The three ROUTE modules compose those primitives with `cadus_store::auth`, in
 //! the section 3.3 call order:
 //!
+//! - [`body`] — the request-body extractor of the routes that read one, with
+//!   the axum rejection mapped onto the section 2 error envelope;
 //! - [`rate`] — the four paired rate rules and the client-address key;
 //! - [`guard`] — the session guard, the one seam where a request gets a
 //!   `user_id`;
@@ -46,6 +48,7 @@
 //! The posture — the one `(name, secure)` pair — has one definition, in
 //! [`crate::cookie::CookiePosture`], and both sides read it from there.
 
+pub mod body;
 pub mod email;
 pub mod guard;
 pub mod layer;
@@ -98,6 +101,7 @@ where
     }
 }
 
+pub use body::LimitedBody;
 pub use email::normalize_email;
 pub use guard::{Authed, current_user};
 pub use layer::tenant_layer;

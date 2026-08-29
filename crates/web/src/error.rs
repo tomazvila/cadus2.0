@@ -34,6 +34,13 @@ pub const CROSS_ORIGIN_REJECTED: &str = "cross_origin_rejected";
 /// 10, row "Error envelope".
 pub const INVALID_REQUEST: &str = "invalid_request";
 
+/// The code of a request body that is past the size the server buffers. The
+/// body never reaches the route, so no field rule of the route applies to it.
+///
+/// It is not the `answer_too_large` of the grade route: that one names a FIELD
+/// of a body the server did read.
+pub const PAYLOAD_TOO_LARGE: &str = "payload_too_large";
+
 /// The code of a request with no usable session (spec section 3.3, "Cookie
 /// check"). It never says WHICH of the refusals fired.
 pub const UNAUTHORIZED: &str = "unauthorized";
@@ -106,6 +113,18 @@ impl ApiError {
             StatusCode::UNPROCESSABLE_ENTITY,
             INVALID_REQUEST,
             message.into(),
+        )
+    }
+
+    /// `413 payload_too_large` — the body is past the size the server buffers.
+    ///
+    /// The message names no number. The limit is a deployment setting, and a
+    /// caller that learns it learns nothing it can use.
+    pub fn payload_too_large() -> Self {
+        Self::new(
+            StatusCode::PAYLOAD_TOO_LARGE,
+            PAYLOAD_TOO_LARGE,
+            "The request body is over the size limit.",
         )
     }
 
