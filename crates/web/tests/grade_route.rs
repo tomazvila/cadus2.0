@@ -1890,7 +1890,7 @@ async fn an_attempt_of_a_sibling_task_does_not_move_this_number() {
 async fn a_serve_answer_chain_numbers_the_attempts_from_the_log() {
     TestDb::with(|db| async move {
         let app = app(&db);
-        let user = db.seed_user("chain@example.com").await;
+        let user = common::seed_learner(&db, "chain@example.com").await;
         seed_open_session(&db, user).await;
         // The learner answered one problem of this lesson already. The scratch
         // was cleared after it, so the D-S6 row carries no serve counter.

@@ -1008,7 +1008,7 @@ async fn a_pool_miss_instantiates_an_exemplar_and_raises_the_a6_flag() {
 #[tokio::test]
 async fn a_serve_stores_the_serve_topic_and_the_authored_solution() {
     TestDb::with(|db| async move {
-        let user = db.seed_user("sketch@example.com").await;
+        let user = common::seed_learner(&db, "sketch@example.com").await;
         let app = app(&db);
         seed_open_session(&db, user).await;
 

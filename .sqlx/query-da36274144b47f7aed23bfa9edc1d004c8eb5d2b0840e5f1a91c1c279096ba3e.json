@@ -1,0 +1,20 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        INSERT INTO events (user_id, seq, ts, type, session_id, v, attempt_id, payload)\n        SELECT $1, line.seq, line.ts, line.type, line.session_id, 1, line.attempt_id, line.payload\n        FROM UNNEST($2::bigint[], $3::timestamptz[], $4::text[], $5::text[], $6::text[],\n                    $7::jsonb[])\n             AS line(seq, ts, type, session_id, attempt_id, payload)\n        ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Uuid",
+        "Int8Array",
+        "TimestamptzArray",
+        "TextArray",
+        "TextArray",
+        "TextArray",
+        "JsonbArray"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "da36274144b47f7aed23bfa9edc1d004c8eb5d2b0840e5f1a91c1c279096ba3e"
+}

@@ -13,6 +13,10 @@ every benchmark.
 M5 U12 added section 2.1 (the per-route table), the arena row of section 2, the
 grade rows of section 3, and the L6 boundary test of section 5.
 
+FIX-M5-G added section 6.3, the long-log rows of section 8, and the D-S2 rule
+that section 6.3 states: a benchmark that seeds a short log measures a new
+account and not a learner (M5 review 1, findings F15 and F18).
+
 ---
 
 ## 1. Why a split and not one number
@@ -311,6 +315,43 @@ File: `crates/store/tests/bench_grade_transaction.rs`.
   one slow sample.
 - **Artifact.** `benchmark-b-grade.json`.
 
+### 6.3 The lifetime log (L1 and L2) — new in FIX-M5-G
+
+File: `crates/store/tests/bench_long_log.rs`.
+
+- **Why it exists.** Sections 6.1 and 6.2 seed 0 and 201 events. D-S2
+  (`REQUIREMENTS.md:158`) says the event log grows forever and nothing deletes a
+  row from it, so those two numbers describe a NEW ACCOUNT and not a learner.
+  M5 review 1 finding F15 and finding F18 both come from that gap: every learner
+  route read the whole log and folded it, twice on the serve path and three
+  times on the grade path, and the cost grew with the lifetime event count.
+- **Fixture.** 20,000 events: 200 sessions of 100 events each. Every session but
+  the last one is closed. The last one is OPEN and carries 100 events, so the
+  CURRENT session is short while the account is long. That is the shape D-S2
+  produces, and it is the shape a per-request whole-log read fails on.
+- **What it measures.** Two transactions, both built out of the production store
+  functions the handlers call. The serve half is `cadus_web::serve::open` plus
+  the pool pop and the state write; the grade half adds the one append and
+  `project_and_save`.
+- **Gate policy.** The file carries two gates. The COUNTING gate runs always: it
+  holds the literal row count the open read decodes (100, the open session) and
+  the literal cursor the fold reaches, so a whole-log read that comes back fails
+  it, and no clock enters the assertion. The TIMING gate runs under
+  `CADUS_BENCH`, like every other benchmark of this document, and fails at p95
+  above 100 ms (serve) and 150 ms (grade). A debug build holds a budget ten
+  times wider.
+- **Artifacts.** `benchmark-b-long-log-serve.json` and
+  `benchmark-b-long-log-grade.json`.
+
+**The fix this benchmark gates.** `learner_models.session_view` (migration 0010)
+caches the whole-log maps beside the model — the enrollment stack, `learned_at`,
+`last_drill_at`, the closed task ids, the active study days, and the open
+session — and folds forward from the same `through_seq` cursor the model uses.
+`cadus_store::state::load_events_after` is the range read that makes the forward
+fold cheap. A request that appends nothing therefore reads NO event row beyond
+the one cursor line, and the grade path reads the whole log ONCE instead of
+three times.
+
 ---
 
 ## 7. How to run the benchmarks
@@ -339,6 +380,18 @@ L2.
 
 `CADUS_BENCH_DIR` moves the artifact directory. The default is `target/bench`.
 
+**Open, for the integrator of FIX-M5-G.** `scripts/bench.sh` does not yet name
+`crates/store/tests/bench_long_log.rs`, because FIX-M5-G owns no file under
+`scripts/`. Until the step below is in that script, the TIMING gate of section
+6.3 runs only by hand and the COUNTING gate of section 6.3 is what
+`cargo test --workspace` runs. Add the step after benchmark B (grade):
+
+```sh
+echo "== benchmark B (long log): cargo test --release -p cadus-store --test bench_long_log"
+cargo test --release -p cadus-store --test bench_long_log -- \
+    --test-threads=1 --nocapture
+```
+
 `scripts/bench.sh` runs one more step between the two benchmarks:
 `CADUS_RELEASE_BENCH=1 cargo test --release -p cadus-core --test answer_check`.
 That file holds the M2 budgets of the checker — 5 ms per check and 1 s per
@@ -362,6 +415,8 @@ the trend.
 | A | `compose_session` over 1,090 topics, 200 samples | 3,225,251 ns | 3,303,850 ns | 3,395,587 ns | 4,799,996 ns | 20 ms |
 | B | serve transaction, 500 samples | 1,775,822 ns | 1,928,299 ns | 3,523,444 ns | 5,085,911 ns | 100 ms |
 | B | grade transaction, 200 samples | 6,721,186 ns | 7,587,387 ns | 10,069,463 ns | 10,216,820 ns | 150 ms |
+| B | serve transaction, 20,000-event log, 100 samples | 2,532,990 ns | 2,969,148 ns | 4,490,576 ns | 5,166,486 ns | 100 ms |
+| B | grade transaction, 20,000-event log, 100 samples | 99,521,747 ns | 112,881,445 ns | 119,705,726 ns | 119,715,831 ns | 150 ms |
 
 The four M5 U12 measurements read this way:
 
@@ -376,6 +431,31 @@ The four M5 U12 measurements read this way:
   and it is why the segment is 20 ms and not 10.
 - The grade transaction folds a log of 201 events per sample. It is 19 times
   under its 150 ms segment.
+
+The two long-log rows are the FIX-M5-G measurement, on the same box and in the
+same profile. They read this way:
+
+- **Before the fix**, the same two transactions over the same 20,000-event
+  fixture measured a serve p95 of 389,378,016 ns and a grade p95 of
+  639,033,961 ns. Both passed their whole L\* budget on the log read alone, and
+  the serve number is 3.9 times its 100 ms segment.
+- **After the fix**, the serve p95 is 2,969,148 ns, which is 33 times under its
+  segment and 131 times faster than before. The serve transaction reads no event
+  row beyond the cursor line and the open session's own 100 events, so the number
+  no longer grows with the log.
+- The grade p95 is 112,881,445 ns, which is 1.33 times under its 150 ms segment.
+  Two runs on this box read 103,942,116 ns and 112,881,445 ns, and the table
+  records the WORSE of the two. It is the TIGHTEST row of this table, and the
+  reason is named:
+  `cadus_core::projector::project_incremental` seeds the FIRe states from the
+  cache but replays the EARLIER events for their light indices, so the append
+  path still reads and folds the whole log ONCE. The read is about 77 ms of the
+  104 ms and the fold is about 25 ms. Removing the last whole-log term needs a
+  cached light-index document inside the projector crate, which FIX-M5-G does
+  not own. Until then this row is the one to watch on a slower runner.
+- Both numbers grow with the log, so both are a function of the 20,000 events
+  the fixture seeds. A learner ten times deeper would move the grade row and not
+  the serve row.
 
 Benchmark A allocates 107,680 times for 2,000 iterations, which is 53.84 per
 instance. The bound is `ALLOCATION_BOUND = 108_218`, the measured count plus 0.5

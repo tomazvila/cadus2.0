@@ -11,14 +11,20 @@
 //!
 //! | Route | Lock | Events | `web_states` | `learner_models` |
 //! |---|---|---|---|---|
-//! | `GET /api/status` | no | read | no | read |
-//! | `GET /api/graph` | no | read | no | read |
-//! | `GET /api/modules` | no | read | no | no |
-//! | `GET /api/export` | no | read | no | no |
+//! | `GET /api/status` | no | none | no | read |
+//! | `GET /api/graph` | no | none | no | read |
+//! | `GET /api/modules` | no | none | no | read |
+//! | `GET /api/export` | no | read all | no | no |
 //! | `POST /api/enroll` | yes | append `enrolled` | clear | write |
 //! | `POST /api/session/start` | yes | append `session_start` | bind | write |
 //! | `POST /api/session/end` | yes | append `session_end` | clear | write |
-//! | `GET /api/session/plan` | yes | read | READ ONLY | read |
+//! | `GET /api/session/plan` | yes | none | READ ONLY | read |
+//!
+//! "none" in the Events column means the route reads no event row when the
+//! cursor already stands at the head of the log: the cached model and the cached
+//! [`SessionView`] answer it (F15, F18). `GET /api/export` is the one route that
+//! reads every row, and section 8 of `docs/reference/l1-budget.md` gives it no
+//! p95 for that reason.
 //!
 //! `GET /api/session/plan` writes NOTHING. Trap W3 states the rule: the plan
 //! reports each task through [`crate::state::WebState::plan_progress`], a plain
@@ -32,6 +38,13 @@
 //! `quiz_high_score_streak` are ports of the 1.0 service-layer scans
 //! (`cadus/service.py:298-334`, `:1078-1165`). Each one is a pure fold over the
 //! log, so each one has its own test with literal expected values.
+//!
+//! The FOLD itself moved to [`cadus_store::state::SessionView`] (M5 review 1,
+//! findings F15 and F18). The document is cached beside the learner model and
+//! folds forward from `through_seq`, so no route on a learner path reads the
+//! whole log any more. The eight functions below stay as the named entry points
+//! the tests hold, and each one is now one call of that ONE fold: two copies of
+//! a fold drift apart, one copy cannot.
 
 use std::collections::{BTreeMap, BTreeSet};
 
@@ -42,7 +55,7 @@ use axum::response::{IntoResponse, Response};
 use cadus_core::config::Config;
 use cadus_core::curriculum::{Curriculum, TopicIdx};
 use cadus_core::event::{
-    Enrolled, Event, SchemaVersion, SessionEnd, SessionStart, Slug, TaskType, Timestamp,
+    Enrolled, Event, SchemaVersion, SessionEnd, SessionStart, Slug, Timestamp,
 };
 use cadus_core::learner::{LearnerModel, TopicState};
 use cadus_core::projector::ProjectionInput;
@@ -51,8 +64,8 @@ use cadus_core::selector::{
     is_course_complete, is_mastered, mastered_set, nearly_due, quiz_is_due, schedule_drills,
 };
 use cadus_store::state::{
-    EventRow, append_event, clear_web_state, load_events, load_web_state, lock_web_state,
-    project_and_save, project_current, save_web_state,
+    EventRow, SessionView, append_event, clear_web_state, load_events, load_web_state,
+    lock_web_state, project_and_save, project_current, save_web_state,
 };
 use cadus_store::{Db, StoreError, begin_tenant, bounded};
 use serde_json::{Value, json};
@@ -73,10 +86,9 @@ pub const INTERNAL_ERROR: &str = "internal_error";
 pub const EXPORT_MEDIA_TYPE: &str = "application/x-ndjson";
 
 /// A quiz scored at or above this counts as aced (`service.py:1096`).
-pub const QUIZ_HIGH_SCORE: f64 = 0.9;
-
-/// The letters a same-day session id takes, in order (`service.py:316`).
-const SESSION_LETTERS: &str = "abcdefghijklmnopqrstuvwxyz";
+///
+/// The fold that reads it lives in the store, so the number is defined once.
+pub const QUIZ_HIGH_SCORE: f64 = cadus_store::state::QUIZ_HIGH_SCORE;
 
 // --------------------------------------------------------------------------- //
 // The pure event scans
@@ -85,53 +97,19 @@ const SESSION_LETTERS: &str = "abcdefghijklmnopqrstuvwxyz";
 /// The open session id: a `session_start` with no later `session_end`.
 #[must_use]
 pub fn current_session(events: &[EventRow]) -> Option<String> {
-    let mut open: Option<String> = None;
-    for row in events {
-        match &row.event {
-            Event::SessionStart(body) => open = body.session.clone(),
-            Event::SessionEnd(_) => open = None,
-            _ => {}
-        }
-    }
-    open
+    SessionView::of_log(events).current_session
 }
 
 /// The next unused session id of the day: `s_<date><letter>`.
 #[must_use]
 pub fn new_session_id(events: &[EventRow], today: DateTime<Utc>) -> String {
-    let prefix = format!("s_{}", today.date_naive());
-    let used: BTreeSet<&str> = events
-        .iter()
-        .filter_map(|row| match &row.event {
-            Event::SessionStart(body) => body.session.as_deref(),
-            _ => None,
-        })
-        .filter(|session| session.starts_with(&prefix))
-        .collect();
-    for letter in SESSION_LETTERS.chars() {
-        let candidate = format!("{prefix}{letter}");
-        if !used.contains(candidate.as_str()) {
-            return candidate;
-        }
-    }
-    format!("{prefix}z")
+    SessionView::of_log(events).new_session_id(today)
 }
 
 /// The XP the log credits inside one session, rounded to two places.
 #[must_use]
 pub fn session_xp(events: &[EventRow], session: &str) -> f64 {
-    let mut total = 0.0_f64;
-    let mut inside = false;
-    for row in events {
-        match &row.event {
-            Event::SessionStart(body) if body.session.as_deref() == Some(session) => inside = true,
-            Event::SessionEnd(body) if body.session.as_deref() == Some(session) => inside = false,
-            Event::LessonResult(body) if inside => total += body.xp,
-            Event::ReviewResult(body) if inside => total += body.xp,
-            _ => {}
-        }
-    }
-    (total * 100.0).round() / 100.0
+    SessionView::of_log(events).xp_in_session(session)
 }
 
 /// The enrollment stack, base first and effective last (`service.py:1142-1165`).
@@ -140,103 +118,37 @@ pub fn session_xp(events: &[EventRow], session: &str) -> f64 {
 /// `gap-return` switch pops one level.
 #[must_use]
 pub fn enrollment_stack(events: &[EventRow]) -> Vec<String> {
-    let mut stack: Vec<String> = Vec::new();
-    for row in events {
-        let Event::Enrolled(body) = &row.event else {
-            continue;
-        };
-        let course = body.course.as_str().to_string();
-        match body.reason {
-            Some(cadus_core::event::EnrollReason::GapFill) => stack.push(course),
-            Some(cadus_core::event::EnrollReason::GapReturn) => {
-                if stack.len() > 1 {
-                    stack.pop();
-                }
-            }
-            None => stack = vec![course],
-        }
-    }
-    stack
+    SessionView::of_log(events).enrollment_stack
 }
 
 /// Topic id to the instant it was FIRST passed (`service.py:1086-1091`).
 #[must_use]
 pub fn learned_at(events: &[EventRow]) -> BTreeMap<String, i64> {
-    let mut out = BTreeMap::new();
-    for row in events {
-        if let Event::LessonResult(body) = &row.event
-            && body.passed
-        {
-            out.entry(body.topic.as_str().to_string())
-                .or_insert_with(|| body.ts.micros());
-        }
-    }
-    out
+    SessionView::of_log(events).learned_at
 }
 
 /// Topic id to the instant of its last served drill (`service.py:1120-1129`).
 #[must_use]
 pub fn last_drill_at(events: &[EventRow]) -> BTreeMap<String, i64> {
-    let mut out = BTreeMap::new();
-    for row in events {
-        if let Event::TaskServed(body) = &row.event
-            && body.task_type == TaskType::Drill
-            && let Some(topic) = body.topic.as_ref()
-        {
-            out.insert(topic.as_str().to_string(), body.ts.micros());
-        }
-    }
-    out
+    SessionView::of_log(events).last_drill_at
 }
 
 /// The distinct UTC dates that carry an attempt (`service.py:1099-1103`).
 #[must_use]
 pub fn active_study_days(events: &[EventRow]) -> Vec<NaiveDate> {
-    let mut days: BTreeSet<NaiveDate> = BTreeSet::new();
-    for row in events {
-        if let Event::Attempt(body) = &row.event
-            && let Some(stamp) = DateTime::<Utc>::from_timestamp_micros(body.ts.micros())
-        {
-            days.insert(stamp.date_naive());
-        }
-    }
-    days.into_iter().collect()
+    SessionView::of_log(events).study_days()
 }
 
 /// The trailing run of quizzes scored at or above [`QUIZ_HIGH_SCORE`].
 #[must_use]
 pub fn quiz_high_score_streak(events: &[EventRow]) -> i64 {
-    let mut streak = 0;
-    for row in events.iter().rev() {
-        if let Event::QuizResult(body) = &row.event {
-            if body.score >= QUIZ_HIGH_SCORE {
-                streak += 1;
-            } else {
-                break;
-            }
-        }
-    }
-    streak
+    SessionView::of_log(events).quiz_high_score_streak
 }
 
 /// The task ids a `review_result` already closed (`service.py:1261`).
 #[must_use]
 pub fn closed_task_ids(events: &[EventRow]) -> BTreeSet<String> {
-    events
-        .iter()
-        .filter_map(|row| match &row.event {
-            Event::ReviewResult(body) => body.task_id.clone(),
-            _ => None,
-        })
-        .collect()
-}
-
-/// Whether any `diagnostic_placed` event stands in the log.
-#[must_use]
-fn has_diagnostic(events: &[EventRow]) -> bool {
-    events
-        .iter()
-        .any(|row| matches!(row.event, Event::DiagnosticPlaced(_)))
+    SessionView::of_log(events).closed_task_ids
 }
 
 // --------------------------------------------------------------------------- //
@@ -405,16 +317,14 @@ pub async fn status(
     let input = projection_input(content, now);
 
     let mut tx = begin(&state, user_id).await?;
-    let events = bound(&state.db, load_events(&mut tx, user_id))
-        .await
-        .map_err(|err| failed(&err))?;
     let projection = bound(&state.db, project_current(&mut tx, user_id, &input))
         .await
         .map_err(|err| failed(&err))?;
     tx.rollback().await.map_err(|err| failed(&err.into()))?;
 
     let model = projection.model;
-    let stack = enrollment_stack(&events);
+    let view = projection.view;
+    let stack = &view.enrollment_stack;
     let course = stack.last().map(String::as_str);
     let (frontier_count, due_count, nearly_count) = due_counts(
         &model,
@@ -428,20 +338,20 @@ pub async fn status(
             topic.status,
             cadus_core::event::TopicStatus::Placed | cadus_core::event::TopicStatus::Learning
         )
-    }) || has_diagnostic(&events);
+    }) || view.has_diagnostic;
     let quiz_due = quiz_is_due(
         Some(&model.quiz),
         &model.topics,
         &content.curriculum,
         &content.cfg,
         now.micros(),
-        Some(&active_study_days(&events)),
+        Some(&view.study_days()),
     );
     let drill_due = !schedule_drills(
         &model.topics,
         &content.curriculum,
         now.micros(),
-        Some(&last_drill_at(&events)),
+        Some(&view.last_drill_at),
     )
     .is_empty();
 
@@ -490,16 +400,13 @@ pub async fn graph(
     let input = projection_input(content, now);
 
     let mut tx = begin(&state, user_id).await?;
-    let events = bound(&state.db, load_events(&mut tx, user_id))
-        .await
-        .map_err(|err| failed(&err))?;
     let projection = bound(&state.db, project_current(&mut tx, user_id, &input))
         .await
         .map_err(|err| failed(&err))?;
     tx.rollback().await.map_err(|err| failed(&err.into()))?;
 
     let graph = &content.curriculum;
-    let stack = enrollment_stack(&events);
+    let stack = &projection.view.enrollment_stack;
     let enrolled = stack.last().map(String::as_str);
     let scope = query.scope.as_deref();
     let selected: Vec<TopicIdx> = match scope {
@@ -570,14 +477,16 @@ pub async fn modules(
     Tenant(user_id): Tenant,
 ) -> Result<Json<Value>, ApiError> {
     let content = content(&state)?;
+    let (_, now) = now_pair();
+    let input = projection_input(content, now);
     let mut tx = begin(&state, user_id).await?;
-    let events = bound(&state.db, load_events(&mut tx, user_id))
+    let projection = bound(&state.db, project_current(&mut tx, user_id, &input))
         .await
         .map_err(|err| failed(&err))?;
     tx.rollback().await.map_err(|err| failed(&err.into()))?;
 
     let graph = &content.curriculum;
-    let stack = enrollment_stack(&events);
+    let stack = &projection.view.enrollment_stack;
     let course = stack.last().map(String::as_str);
     let mut seen: Vec<&str> = Vec::new();
     for idx in course_scope(graph, course).indices() {
@@ -688,12 +597,12 @@ pub async fn enroll(
     bound(&state.db, lock_web_state(&mut tx, user_id))
         .await
         .map_err(|err| failed(&err))?;
-    let events = bound(&state.db, load_events(&mut tx, user_id))
+    let projection = bound(&state.db, project_current(&mut tx, user_id, &input))
         .await
         .map_err(|err| failed(&err))?;
     let event = Event::Enrolled(Enrolled {
         ts: now,
-        session: current_session(&events),
+        session: projection.view.current_session.clone(),
         v: SchemaVersion,
         course: slug,
         reason: None,
@@ -750,16 +659,16 @@ pub async fn session_start(
     bound(&state.db, lock_web_state(&mut tx, user_id))
         .await
         .map_err(|err| failed(&err))?;
-    let events = bound(&state.db, load_events(&mut tx, user_id))
+    let before = bound(&state.db, project_current(&mut tx, user_id, &input))
         .await
         .map_err(|err| failed(&err))?;
 
-    let open = current_session(&events);
+    let open = before.view.current_session.clone();
     let reopened = open.is_some();
     let session = match open {
         Some(session) => session,
         None => {
-            let session = new_session_id(&events, wall);
+            let session = before.view.new_session_id(wall);
             let event = Event::SessionStart(SessionStart {
                 ts: now,
                 session: Some(session.clone()),
@@ -783,7 +692,7 @@ pub async fn session_start(
     tx.commit().await.map_err(|err| failed(&err.into()))?;
 
     let model = projection.model;
-    let stack = enrollment_stack(&events);
+    let stack = &projection.view.enrollment_stack;
     let (frontier_count, due_count, _) = due_counts(
         &model,
         &content.curriculum,
@@ -822,10 +731,10 @@ pub async fn session_end(
     bound(&state.db, lock_web_state(&mut tx, user_id))
         .await
         .map_err(|err| failed(&err))?;
-    let events = bound(&state.db, load_events(&mut tx, user_id))
+    let before = bound(&state.db, project_current(&mut tx, user_id, &input))
         .await
         .map_err(|err| failed(&err))?;
-    let Some(session) = current_session(&events) else {
+    let Some(session) = before.view.current_session.clone() else {
         tx.rollback().await.map_err(|err| failed(&err.into()))?;
         return Err(ApiError::new(
             StatusCode::CONFLICT,
@@ -839,7 +748,7 @@ pub async fn session_end(
         Some(value) => value,
         None => (scratch.active_secs / 60.0 * 100.0).round() / 100.0,
     };
-    let xp_earned = session_xp(&events, &session);
+    let xp_earned = before.view.xp_in_session(&session);
     let event = Event::SessionEnd(SessionEnd {
         ts: now,
         session: Some(session.clone()),
@@ -890,10 +799,10 @@ pub async fn session_plan(
     bound(&state.db, lock_web_state(&mut tx, user_id))
         .await
         .map_err(|err| failed(&err))?;
-    let events = bound(&state.db, load_events(&mut tx, user_id))
+    let projection = bound(&state.db, project_current(&mut tx, user_id, &input))
         .await
         .map_err(|err| failed(&err))?;
-    let Some(session) = current_session(&events) else {
+    let Some(session) = projection.view.current_session.clone() else {
         tx.rollback().await.map_err(|err| failed(&err.into()))?;
         return Err(ApiError::new(
             StatusCode::CONFLICT,
@@ -901,17 +810,14 @@ pub async fn session_plan(
             "No session is open.",
         ));
     };
-    let projection = bound(&state.db, project_current(&mut tx, user_id, &input))
-        .await
-        .map_err(|err| failed(&err))?;
     let scratch = read_state(&state.db, &mut tx, user_id).await?;
     tx.rollback().await.map_err(|err| failed(&err.into()))?;
 
     let graph = &content.curriculum;
+    let view = projection.view;
     let model = projection.model;
-    let stack = enrollment_stack(&events);
-    let course = stack.last().map(String::as_str);
-    let plan = compose_plan(content, &events, &model, &session, now);
+    let course = view.enrollment_stack.last().map(String::as_str);
+    let plan = compose_plan(content, &view, &model, &session, now);
 
     let tasks: Vec<Value> = plan
         .tasks
@@ -946,21 +852,20 @@ pub async fn session_plan(
 /// second copy of this call order would let a listed task and a served task
 /// disagree.
 ///
-/// The call is PURE: it reads the log, the learner model, and the arena, and it
-/// writes nothing. Trap W3 makes that load-bearing for the plan route.
+/// The call is PURE: it reads the session view, the learner model, and the
+/// arena, and it writes nothing. Trap W3 makes that load-bearing for the plan
+/// route. It reads NO event row: the six maps it needs are the cached
+/// [`SessionView`] of the same `through_seq` as `model` (F15, F18).
 pub(crate) fn compose_plan(
     content: &Content,
-    events: &[EventRow],
+    view: &SessionView,
     model: &LearnerModel,
     session: &str,
     now: Timestamp,
 ) -> cadus_core::selector::SessionPlan {
-    let stack = enrollment_stack(events);
-    let course = stack.last().map(String::as_str);
-    let learned = learned_at(events);
-    let drilled = last_drill_at(events);
-    let days = active_study_days(events);
-    let closed = closed_task_ids(events);
+    let course = view.enrollment_stack.last().map(String::as_str);
+    let days = view.study_days();
+    let closed = &view.closed_task_ids;
     let no_test_prep: BTreeSet<String> = BTreeSet::new();
     let mut sampler = SeededSampler::new(session_seed(session));
 
@@ -969,12 +874,12 @@ pub(crate) fn compose_plan(
         .with_course(course)
         .with_pending_remediation(&model.pending_remediation)
         .with_quiz_state(Some(&model.quiz))
-        .with_learned_at(Some(&learned))
-        .with_last_drill_at(Some(&drilled))
+        .with_learned_at(Some(&view.learned_at))
+        .with_last_drill_at(Some(&view.last_drill_at))
         .with_active_study_days(Some(&days))
-        .with_quiz_streak(quiz_high_score_streak(events))
+        .with_quiz_streak(view.quiz_high_score_streak)
         .with_test_prep(&no_test_prep)
-        .with_multistep(i64::try_from(closed.len()).unwrap_or(i64::MAX), &closed);
+        .with_multistep(i64::try_from(closed.len()).unwrap_or(i64::MAX), closed);
     compose_session(
         &model.topics,
         &content.curriculum,

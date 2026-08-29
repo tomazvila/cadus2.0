@@ -266,6 +266,9 @@ fn question(
         problem_id: problem_id.to_string(),
         task_id: QUIZ.to_string(),
         topic: Some(topic.to_string()),
+        // A quiz question draws its statement from its own topic, so the two
+        // topics agree here (M5 review 1, findings F10 and F16).
+        serve_topic: Some(topic.to_string()),
         kp: Some("kp1".to_string()),
         answer_kind: Some("numeric".to_string()),
         text: text.to_string(),

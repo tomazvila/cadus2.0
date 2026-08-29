@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n        SELECT seq AS \"seq!\", payload AS \"payload!\"\n        FROM events WHERE user_id = $1 ORDER BY seq\n        ",
+  "query": "\n        SELECT seq AS \"seq!\", payload AS \"payload!: sqlx::types::Json<Event>\"\n        FROM events WHERE user_id = $1 AND seq > $2 ORDER BY seq\n        ",
   "describe": {
     "columns": [
       {
@@ -16,7 +16,7 @@
       },
       {
         "ordinal": 1,
-        "name": "payload!",
+        "name": "payload!: sqlx::types::Json<Event>",
         "type_info": "Jsonb",
         "origin": {
           "Table": {
@@ -28,7 +28,8 @@
     ],
     "parameters": {
       "Left": [
-        "Uuid"
+        "Uuid",
+        "Int8"
       ]
     },
     "nullable": [
@@ -36,5 +37,5 @@
       false
     ]
   },
-  "hash": "b799de4e5d07fd764f2b820832735cbe6cabd0765f655a6b18a94a8db1f7d381"
+  "hash": "912b0b3405735416e433738a538f6a452b031d81c3a37748e1baec4b52ee4822"
 }

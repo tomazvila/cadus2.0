@@ -20,9 +20,13 @@
 //! # One transaction, and the clock
 //!
 //! There is no model call (T1, R4), so the whole serve is one transaction
-//! (`serving-1.0-spec.md` section 7.2): the advisory lock, the log read, the
-//! projection, the pool pop, the authored-solution read of a template row, the
-//! state write, commit. `started_at` is re-stamped
+//! (`serving-1.0-spec.md` section 7.2): the advisory lock, the projection, the
+//! session-window read, the pool pop, the authored-solution read of a template
+//! row, the state write, commit. NO step of it reads the whole event log: the
+//! projection answers from the cached model and the cached
+//! [`cadus_store::state::SessionView`], and the window read asks for the events
+//! of the OPEN SESSION only (M5 review 1, finding F18). `started_at` is
+//! re-stamped
 //! at EVERY hand-off, a re-serve of a live problem included, because that is the
 //! moment the problem goes on screen (section 5.6). A re-serve therefore returns
 //! the SAME `problem_id` with a FRESH `started_at`.
@@ -50,7 +54,7 @@ use cadus_store::content::{KIND_HINT_LADDER, KIND_TEACH, approved_document};
 use cadus_store::pool::{
     NewInstance, PoolRow, approved_template, insert_batch, pop_with_ring_tx, reclaim_exemplar_tx,
 };
-use cadus_store::state::{EventRow, load_events, lock_web_state, project_current};
+use cadus_store::state::{EventRow, load_events_after, lock_web_state, project_current};
 use serde::Deserialize;
 use serde_json::{Value, json};
 use sqlx::types::Uuid;
@@ -59,8 +63,8 @@ use sqlx::{Postgres, Transaction};
 use crate::AppState;
 use crate::error::ApiError;
 use crate::session::{
-    INTERNAL_ERROR, begin, bound, compose_plan, content, current_session, failed, now_pair,
-    projection_input, read_state, write_state,
+    INTERNAL_ERROR, begin, bound, compose_plan, content, failed, now_pair, projection_input,
+    read_state, write_state,
 };
 use crate::state::Content;
 use crate::state::{
@@ -364,7 +368,14 @@ fn serve_payload(
 pub(crate) struct Open {
     /// The tenant-bound transaction. The caller commits it or rolls it back.
     pub(crate) tx: Transaction<'static, Postgres>,
-    /// The whole append-only log of the tenant, in `seq` order.
+    /// The events of the OPEN SESSION, in `seq` order, `session_start` first.
+    ///
+    /// It is NOT the whole log (M5 review 1, findings F15 and F18). A task id is
+    /// `{session}-{task_type}-{topic}` (`selector::assign_ids`) and an attempt id
+    /// is `{task_id}-{n}`, so every event of a task of the open session stands in
+    /// this window. The grade route reads it for the attempt count of one task
+    /// and for the earlier attempts of one knowledge point, and both are
+    /// task-scoped.
     pub(crate) events: Vec<EventRow>,
     /// The D-S6 document, bound to the open session.
     pub(crate) scratch: WebState,
@@ -372,13 +383,23 @@ pub(crate) struct Open {
     pub(crate) plan: SessionPlan,
 }
 
-/// Open the transaction, read the log and the state, and compose the plan.
+/// Open the transaction, read the state and the session window, and compose the
+/// plan.
 ///
 /// `lock` takes the tenant's advisory lock first. A route that WRITES the D-S6
 /// row takes it; the read-only teach route does not (section 4.2).
 ///
 /// The whole read is inside ONE transaction, so the plan a route serves from and
 /// the state row it validates against cannot disagree.
+///
+/// # What it reads (F18)
+///
+/// One `learner_models` row, one EMPTY range read of `events` when the fold
+/// cursor already stands at the head of the log, one range read of the open
+/// session's own events, and one `web_states` row. Nothing here grows with the
+/// lifetime event count. The earlier version read the whole log twice and folded
+/// it twice, which passed the 150 ms budget of L1, L4 and L5 on its own at about
+/// 8,000 attempts.
 pub(crate) async fn open(
     state: &AppState,
     content: &Content,
@@ -393,18 +414,22 @@ pub(crate) async fn open(
             .await
             .map_err(|err| failed(&err))?;
     }
-    let events = bound(&state.db, load_events(&mut tx, user_id))
+    let projection = bound(&state.db, project_current(&mut tx, user_id, &input))
         .await
         .map_err(|err| failed(&err))?;
-    let Some(session) = current_session(&events) else {
+    let view = projection.view;
+    let Some(session) = view.current_session.clone() else {
         return Err(no_open_session());
     };
-    let projection = bound(&state.db, project_current(&mut tx, user_id, &input))
+    // The window starts AT the `session_start` that opened the session, so the
+    // read asks for the events after the line before it.
+    let after = view.session_start_seq.unwrap_or(0).saturating_sub(1);
+    let events = bound(&state.db, load_events_after(&mut tx, user_id, after))
         .await
         .map_err(|err| failed(&err))?;
     let mut scratch = read_state(&state.db, &mut tx, user_id).await?;
     scratch.bind(&session);
-    let plan = compose_plan(content, &events, &projection.model, &session, now);
+    let plan = compose_plan(content, &view, &projection.model, &session, now);
     Ok(Open {
         tx,
         events,

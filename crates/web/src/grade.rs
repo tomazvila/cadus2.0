@@ -30,6 +30,17 @@
 //! while the task ids stay, and every later attempt of that task then repeats an
 //! id the log already holds. The log does not restart.
 //!
+//! # The log read (M5 review 1, finding F15)
+//!
+//! The window this path reads is `Open::events`, the events of the OPEN SESSION
+//! and not the whole log. A task id is `{session}-{task_type}-{topic}`
+//! (`cadus_core::selector::assign_ids`) and an attempt id is `{task_id}-{n}`, so
+//! every attempt of every task of the open session stands in that window, and
+//! [`attempt_index`], [`stored_attempt`] and [`advance`] are all task-scoped.
+//! The whole-log read this path carried before grew with the lifetime event
+//! count and passed the 150 ms Postgres segment of L2 on its own.
+//! `crates/store/tests/bench_long_log.rs` is the gate.
+//!
 //! The H3 unaided re-solve takes the same id with `-rework` after it.
 //!
 //! A log this build writes is dense, so the number of a new attempt is free. A
@@ -919,6 +930,9 @@ fn pending<'a>(
 /// task `{task}-{other}` out of the count of task `{task}`. The H3 re-solve id
 /// `{task_id}-{n}-rework` passes both tests, so a re-solve counts as the one
 /// attempt it records.
+///
+/// `events` is the OPEN SESSION's window, and a task id carries its session id,
+/// so every attempt of the task is inside it (F15).
 ///
 /// The caller holds the tenant's advisory lock and reads the log inside the same
 /// transaction as the INSERT, so no second request of this tenant computes the

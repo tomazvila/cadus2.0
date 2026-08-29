@@ -1,0 +1,22 @@
+-- 0010_session_view: the cached whole-log maps beside the learner model.
+-- Requirements: D4 (through_seq is the fold cursor), D-S2 (the log grows
+-- forever), L1, L2, L4, L5 (the per-request budgets).
+--
+-- M5 review 1, findings F15 and F18: every learner route read the whole event
+-- log and folded it, so the cost of one request grew with the lifetime event
+-- count. `cadus_store::state::SessionView` is the second cached document that
+-- removes that read. It holds the enrollment stack, `learned_at`,
+-- `last_drill_at`, the closed task ids, the active study days, and the open
+-- session, and it folds forward from the SAME `through_seq` cursor the model
+-- uses.
+--
+-- The column is nullable. A row written before this migration carries NULL, and
+-- `project_current` reads NULL as "no view", which takes the full-replay branch
+-- once and writes a view. No backfill is needed.
+--
+-- 0006_grants_rls grants DML on the whole table to cadus_app and cadus_admin,
+-- and a new column inherits a table-level grant, so this migration adds no
+-- GRANT. Row-level security is on the table too, so the column is tenant-bound
+-- like every other one (C3).
+
+ALTER TABLE learner_models ADD COLUMN session_view jsonb;
