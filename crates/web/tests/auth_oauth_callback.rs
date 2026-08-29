@@ -27,9 +27,10 @@ use std::sync::Arc;
 
 use cadus_store::test_support::TestDb;
 use common::{
-    Answer, FakeProvider, GOOD_PASSWORD, cookies_of, disable, get, get_with_cookie, github_config,
-    google_config, is_verified, location_of, maybe_user_id, oauth_app, oauth_link_count,
-    password_hash, send, signup, user_count, user_id,
+    Answer, FakeProvider, GOOD_PASSWORD, SESSION_TOKEN_ONE, cookies_of, disable, get,
+    get_with_cookie, github_config, google_config, is_verified, location_of, login, mark_verified,
+    maybe_user_id, oauth_app, oauth_link_count, password_hash, seed_session, send, session_count,
+    shift, signup, user_count, user_id,
 };
 use sqlx::types::Uuid;
 
@@ -79,6 +80,15 @@ fn google_verified() -> FakeProvider {
 /// How many session rows this database holds.
 async fn session_rows(db: &TestDb) -> i64 {
     sqlx::query_scalar("SELECT count(*) FROM auth_sessions")
+        .fetch_one(&db.admin)
+        .await
+        .unwrap()
+}
+
+/// How many session rows carry `token_hash` (0 or 1).
+async fn seeded_session_rows(db: &TestDb, token_hash: &str) -> i64 {
+    sqlx::query_scalar("SELECT count(*) FROM auth_sessions WHERE token_hash = $1")
+        .bind(token_hash)
         .fetch_one(&db.admin)
         .await
         .unwrap()
@@ -252,14 +262,26 @@ async fn a_verified_github_identity_links_the_primary_address() {
 }
 
 /// An account that already owns the verified address is linked, not duplicated.
+///
+/// The address is verified BEFORE the callback runs, so the person who set the
+/// password held the address. That password survives the link.
 #[tokio::test]
 async fn a_verified_identity_links_into_the_account_that_owns_the_address() {
     TestDb::with(|db| async move {
         let app = oauth_app(&db, google_config(Arc::new(google_verified())));
         let answer = signup(&app, "learner@example.com", GOOD_PASSWORD).await;
         assert_eq!(answer.status.as_u16(), 200);
+        mark_verified(&db, "learner@example.com").await;
         let user = user_id(&db, "learner@example.com").await;
-        assert!(!is_verified(&db, "learner@example.com").await);
+        seed_session(
+            &db,
+            user,
+            SESSION_TOKEN_ONE.1,
+            shift(0),
+            shift(0),
+            shift(3600),
+        )
+        .await;
 
         let answer = send(
             &app,
@@ -274,10 +296,64 @@ async fn a_verified_identity_links_into_the_account_that_owns_the_address() {
         assert_eq!(user_count(&db).await, 1, "no second account was created");
         assert_eq!(user_id(&db, "learner@example.com").await, user);
         assert_eq!(oauth_link_count(&db, user).await, 1);
-        // The password survives the link, and the provider's claim verifies the
-        // address that the sign-up left unverified.
+        // The password of a verified address survives the link, and so does
+        // every session that address opened.
         assert!(password_hash(&db, "learner@example.com").await.is_some());
         assert!(is_verified(&db, "learner@example.com").await);
+        assert_eq!(session_count(&db, user).await, 2);
+    })
+    .await;
+}
+
+/// A link into an UNVERIFIED account clears the password and every session.
+///
+/// Sign-up asks for no proof of the address, so an attacker registers an address
+/// that the attacker does not hold and sets a password on it. Login refuses that
+/// password for one reason: the address is not verified. The provider sign-in of
+/// the real address owner removes that reason. The callback therefore clears the
+/// password hash and deletes every session of the account, and only then stamps
+/// `email_verified_at` (finding F14).
+#[tokio::test]
+async fn a_link_into_an_unverified_account_clears_the_password_and_the_sessions() {
+    TestDb::with(|db| async move {
+        let app = oauth_app(&db, google_config(Arc::new(google_verified())));
+        let answer = signup(&app, "learner@example.com", GOOD_PASSWORD).await;
+        assert_eq!(answer.status.as_u16(), 200);
+        let user = user_id(&db, "learner@example.com").await;
+        assert!(!is_verified(&db, "learner@example.com").await);
+        seed_session(
+            &db,
+            user,
+            SESSION_TOKEN_ONE.1,
+            shift(0),
+            shift(0),
+            shift(3600),
+        )
+        .await;
+
+        let answer = send(
+            &app,
+            get_with_cookie(
+                "/api/auth/oauth/google/callback?code=u5-code&state=u5-state-value",
+                &google_jar(),
+            ),
+        )
+        .await;
+
+        assert_eq!(answer.status.as_u16(), 302);
+        assert_eq!(user_count(&db).await, 1, "no second account was created");
+        assert_eq!(user_id(&db, "learner@example.com").await, user);
+        assert_eq!(password_hash(&db, "learner@example.com").await, None);
+        assert!(is_verified(&db, "learner@example.com").await);
+        // The planted session is gone, and the one row left is the session this
+        // callback opened.
+        assert_eq!(session_rows(&db).await, 1);
+        assert_eq!(seeded_session_rows(&db, SESSION_TOKEN_ONE.1).await, 0);
+
+        // The password the attacker set does not sign in.
+        let refused = login(&app, "learner@example.com", GOOD_PASSWORD).await;
+        assert_eq!(refused.status.as_u16(), 401);
+        assert_eq!(refused.code(), "invalid_credentials");
     })
     .await;
 }
@@ -678,6 +754,35 @@ async fn a_tampered_target_sends_the_browser_to_the_root() {
         assert_eq!(answer.status.as_u16(), 302);
         assert_eq!(location_of(&answer), "/");
         assert!(maybe_user_id(&db, "learner@example.com").await.is_some());
+    })
+    .await;
+}
+
+/// A tab inside the target sends the browser to `/`.
+///
+/// A browser removes every ASCII tab from a URL before it parses the URL, so a
+/// `Location` of `/`, one tab, `/evil.example` reaches the parser as the
+/// scheme-relative `//evil.example` and leaves the site (finding F5).
+///
+/// The base64url is of
+/// `{"next":"/<TAB>/evil.example","p":"google","s":"u5-state-value","v":"u5-pkce-verifier"}`,
+/// where `<TAB>` marks the two characters `\t`, the JSON escape of one tab.
+#[tokio::test]
+async fn a_tab_in_the_target_sends_the_browser_to_the_root() {
+    TestDb::with(|db| async move {
+        let app = oauth_app(&db, google_config(Arc::new(google_verified())));
+
+        let answer = send(
+            &app,
+            get_with_cookie(
+                "/api/auth/oauth/google/callback?code=u5-code&state=u5-state-value",
+                "cadus_oauth_handshake=eyJuZXh0IjoiL1x0L2V2aWwuZXhhbXBsZSIsInAiOiJnb29nbGUiLCJzIjoidTUtc3RhdGUtdmFsdWUiLCJ2IjoidTUtcGtjZS12ZXJpZmllciJ9",
+            ),
+        )
+        .await;
+
+        assert_eq!(answer.status.as_u16(), 302);
+        assert_eq!(location_of(&answer), "/");
     })
     .await;
 }

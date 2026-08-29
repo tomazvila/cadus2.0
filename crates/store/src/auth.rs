@@ -17,7 +17,7 @@
 //! |---|---|---|
 //! | unbound lookups | a pool with no tenant | [`user_by_email`], [`user_by_id`], [`session_by_token_hash`], [`token_by_hash`], [`oauth_account_user`] |
 //! | unbound write | a pool with no tenant | [`insert_user`] |
-//! | bound writes | a [`begin_tenant`] transaction | [`insert_session`], [`touch_last_seen`], [`delete_session`], [`delete_all_sessions`], [`delete_other_sessions`], [`insert_token`], [`delete_tokens_for_purpose`], [`consume_token`], [`set_password_hash`], [`mark_email_verified`], [`account_profile`], [`insert_oauth_account`] |
+//! | bound writes | a [`begin_tenant`] transaction | [`insert_session`], [`touch_last_seen`], [`delete_session`], [`delete_all_sessions`], [`delete_other_sessions`], [`insert_token`], [`delete_tokens_for_purpose`], [`consume_token`], [`set_password_hash`], [`clear_password_hash`], [`mark_email_verified`], [`account_profile`], [`insert_oauth_account`] |
 //! | either | any executor | [`bump_rate_counter`] |
 //!
 //! [`sign_up`], [`start_session`], and [`consume_token_tx`] compose the three
@@ -537,6 +537,30 @@ where
         "UPDATE users SET password_hash = $2 WHERE id = $1",
         user_id,
         password_hash
+    )
+    .execute(executor)
+    .await?
+    .rows_affected())
+}
+
+/// Drop the password hash of the bound account.
+///
+/// The OAuth callback runs this before it stamps an address that no one
+/// verified. Sign-up asks for no proof of the address, so a password on an
+/// unverified account proves nothing about who set it. The stamp alone would
+/// turn that password into a live credential, so the password goes first and the
+/// row keeps the shape of an OAuth-only account.
+///
+/// # Errors
+///
+/// Returns [`StoreError::Db`] when the statement fails.
+pub async fn clear_password_hash<'e, E>(executor: E, user_id: Uuid) -> Result<u64, StoreError>
+where
+    E: PgExecutor<'e>,
+{
+    Ok(sqlx::query!(
+        "UPDATE users SET password_hash = NULL WHERE id = $1",
+        user_id
     )
     .execute(executor)
     .await?

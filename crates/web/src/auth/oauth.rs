@@ -353,19 +353,36 @@ fn draw(bytes: usize) -> Result<String, EntropyError> {
 
 /// A same-site relative target, or [`DEFAULT_NEXT`].
 ///
-/// Only a path that starts with ONE `/` is kept. A browser reads `//host` and
-/// `/\host` as scheme-relative, so both would leave the site: that is the open
-/// redirect this function closes. The callback runs it again on the value it
-/// read from the cookie, which is what lets the cookie stay unsigned.
+/// The accepted set is one path that holds three properties:
+///
+/// 1. the first byte is `/`;
+/// 2. the second byte is neither `/` nor a backslash;
+/// 3. no byte is below `0x21`, and no byte is a backslash.
+///
+/// Rule 2 closes the plain open redirect: a browser reads `//host` and `/\host`
+/// as scheme-relative, so both leave the site. Rule 3 closes the same redirect
+/// through one control byte. A browser removes every ASCII tab, LF, and CR from
+/// a URL before it parses the URL (WHATWG URL, "remove all ASCII tab or
+/// newline"), so a target of `/`, one tab, `/host` reaches the parser as
+/// `//host` and leaves the site too. A backslash is a path separator to a
+/// browser, so rule 3 refuses it in every position.
+///
+/// The callback runs this function again on the value it read from the cookie,
+/// which is what lets the cookie stay unsigned.
 #[must_use]
 pub fn safe_next(next_url: Option<&str>) -> String {
     let Some(next) = next_url else {
         return DEFAULT_NEXT.to_string();
     };
-    if !next.starts_with('/') || next.starts_with("//") || next.starts_with("/\\") {
-        return DEFAULT_NEXT.to_string();
+    let bytes = next.as_bytes();
+    let same_site = bytes.first() == Some(&b'/')
+        && !matches!(bytes.get(1), Some(b'/' | b'\\'))
+        && bytes.iter().all(|byte| *byte >= 0x21 && *byte != b'\\');
+    if same_site {
+        next.to_string()
+    } else {
+        DEFAULT_NEXT.to_string()
     }
-    next.to_string()
 }
 
 /// Serialize a handshake into the cookie value.

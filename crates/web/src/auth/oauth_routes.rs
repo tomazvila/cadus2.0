@@ -39,13 +39,23 @@
 //!    provider-verified address;
 //! 3. otherwise the sign-up steps with a NULL `password_hash`.
 //! 4. THE guard: a disabled account is refused here, before anything is written.
-//! 5. bind the tenant, then, in ONE transaction: stamp `email_verified_at` when
-//!    it is absent, insert the `oauth_accounts` row when step 1 found none, and
-//!    insert the session row.
+//! 5. bind the tenant, then, in ONE transaction: when `email_verified_at` is
+//!    absent, clear `password_hash`, delete every session of the account, and
+//!    stamp `email_verified_at`; insert the `oauth_accounts` row when step 1
+//!    found none; and insert the session row.
 //!
 //! Step 5 runs only for a verified provider email. Step 4 sits above every
 //! write, so a refused account is never stamped verified and its link is never
 //! re-pointed.
+//!
+//! # The stamp carries no old credential with it
+//!
+//! Sign-up writes a password on an address it never proves, and login refuses
+//! that password for ONE reason: `email_verified_at IS NULL`. A stamp that keeps
+//! the password therefore hands the account to whoever pre-registered the
+//! address. The three writes above run in the fixed order clear, delete, stamp,
+//! inside the one transaction, so the verified account holds only the
+//! credentials the provider just proved.
 
 use std::collections::HashMap;
 
@@ -57,8 +67,8 @@ use axum::routing::get;
 use axum::{Json, Router};
 use cadus_store::Db;
 use cadus_store::auth::{
-    AuthUser, SignUp, insert_oauth_account, insert_session, mark_email_verified,
-    oauth_account_user, sign_up, user_by_email, user_by_id,
+    AuthUser, SignUp, clear_password_hash, delete_all_sessions, insert_oauth_account,
+    insert_session, mark_email_verified, oauth_account_user, sign_up, user_by_email, user_by_id,
 };
 use serde_json::json;
 use sqlx::types::chrono::Utc;
@@ -299,6 +309,21 @@ pub async fn callback(
 
     let mut tx = bind(&state.db, user.id).await?;
     if user.email_verified_at.is_none() {
+        // The stamp removes the ONE reason login refuses a password on an
+        // unverified account, so every credential that predates the stamp goes
+        // first. Sign-up asks for no proof of the address, so the password and
+        // the sessions of an unverified account have an unproven source. The
+        // order is fixed — clear, delete, then stamp — and the three writes
+        // share this transaction, so no window opens in which the address is
+        // verified and the old password still signs in. The session row of THIS
+        // sign-in goes in below, after the deletion.
+        store_call(
+            &state.db,
+            "password clear",
+            clear_password_hash(&mut *tx, user.id),
+        )
+        .await?;
+        store_call(&state.db, "session sweep", delete_all_sessions(&mut *tx)).await?;
         // The provider just proved the address, which is what the verification
         // link proves.
         store_call(
