@@ -77,8 +77,13 @@ export function authModeFor(pathname: string): AuthMode {
 }
 
 /**
- * Drop the spent token from the URL, so a refresh cannot replay it and no Referer carries
- * it to a third party.
+ * Drop the token from the URL, so a refresh cannot replay it and no Referer carries it to a
+ * third party.
+ *
+ * WHEN EACH OF THE TWO IS DROPPED. A `?verify=` token is spent by `bootWith` itself, so it
+ * goes as soon as that POST returns. A `?reset=` token is spent by the reset CARD, so it
+ * stays in the URL until `Root` hands it over and calls back (M6-review-1, F22); a token
+ * dropped before the card is on is a token no card ever receives.
  *
  * `/verify` has no screen of its own — the account is verified and the session is open — so
  * it lands on the dashboard. `/reset` keeps its path, because the reset card renders there.
@@ -140,8 +145,16 @@ export async function bootWith(
 
   let user: User | null = null;
   if (verifyToken) user = await spendVerifyToken(client, verifyToken);
-  if (verifyToken || resetToken) stripBootTokens(pathname);
-  if (!user) user = await currentUser(client);
+  // The verify token is spent by the call above, so it goes now. The reset token does not.
+  if (verifyToken) stripBootTokens(pathname);
+
+  // A RESET LINK OUTRANKS A LIVE SESSION, AND THE ORDER HERE IS WHAT MAKES IT SO
+  // (M6-review-1, F22). The token is read before the session, and a URL that carries one
+  // reads no session at all: `Root` shows the auth card while `user` is null, so a learner
+  // who was still signed in on that browser reached the dashboard and never saw the card
+  // the emailed link is for. The link names one thing to do, and the account holding the
+  // cookie is the account the link belongs to.
+  if (!user && !resetToken) user = await currentUser(client);
 
   const root = createRoot(mount);
   root.render(
@@ -151,9 +164,12 @@ export async function bootWith(
         initialUser={user}
         authMode={resetToken ? 'reset' : authModeFor(pathname)}
         resetToken={resetToken ?? ''}
-        // Only the two operator routes read it (`app/routes.ts`). Every other path,
-        // `/verify` included, renders the same signed-in branch it rendered before.
+        // The seed of the location the router reads (`app/Root.tsx`). Only the two operator
+        // routes name a screen (`app/routes.ts`); every other path, `/verify` included,
+        // renders the same signed-in branch it rendered before.
         pathname={pathname}
+        // The card has the token now, so the URL no longer needs it.
+        onResetTokenTaken={() => { stripBootTokens(pathname); }}
       />
     </StrictMode>,
   );
