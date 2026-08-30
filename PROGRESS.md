@@ -15,6 +15,11 @@ S3 hooks (`8407b1f`), S4 design system (`7ca9371`), S5 math input (`33bd45e`), S
 (`ab9b308`), S8 session loop (`8b4fbe7`), S9 diagnosis panel (`f48ba90`) — all gate green on their branches. R5 and S10 were
 in flight; their partial work is on `m6/r5-wip` and `m6/s10-wip`, which the resumed units merge first.
 
+Second interruption (2026-08-30, the box swapped and froze; the owner wiped the tmpfs `/tmp`, which also removed the
+workflow scripts): R5 (`1c79599`), S10 (`527a462`), S11 (`330dc3d`), S12 (`208bf59`) were done and green by then. R6 and
+R7 were mid-run; their WIP is on `m6/r6-wip` and `m6/r7-wip`. The finishing workflow `wf_bb9ccf5d-d45` runs R6 ∥ R7 (from
+the WIP) → R8 beside S13 → S14, with `CARGO_BUILD_JOBS=6` (now the default in `scripts/gate.sh`, commit `6795cab`).
+
 In parallel, unit FIX-D6 (branch `d6/decimal`) implements the owner's D6 ruling of 2026-08-30 (`docs/DECISIONS.md`
 row `D6-dec`): a learner decimal that equals the exact value rounded half-to-even to the typed digits is
 correct-with-`notation`; exact rational arithmetic, no float; the 240 M2 divergence pairs get pinned counts.
