@@ -236,6 +236,14 @@ pub enum StoreError {
     #[error("auth error: {0}")]
     Auth(String),
 
+    /// A statement addressed a row that the table does not hold (R4, C6).
+    ///
+    /// The M6 admin routes answer 404 to this variant, so a reviewer who
+    /// approves a digest that is gone reads "not found" and never "approved"
+    /// (`docs/reference/authoring-and-spa-1.0-spec.md` section 3.2).
+    #[error("no {entity} row with key {key}")]
+    NotFound { entity: &'static str, key: String },
+
     /// C3 boot guard: the connected role escapes row-level security.
     #[error(
         "role {role} bypasses row-level security (superuser={superuser}, bypassrls={bypass_rls})"

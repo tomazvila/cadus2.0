@@ -1,0 +1,16 @@
+//! The offline authoring pipeline of M6 (A2, R4, T3, T5, T6).
+//!
+//! Authoring is a batch job of `cadus-worker`. It never runs in a request
+//! handler (R4, L6), and the request tier never depends on the model client.
+//!
+//! Spec: `docs/reference/authoring-and-spa-1.0-spec.md` section 2 in full, and
+//! rows R1 to R3 of section 7.
+//!
+//! Unit R1 gives the pipeline its prompts ([`prompt`]). Unit R2 adds the batch
+//! loop ([`job`]). Unit R3 adds the T3 accounting ([`cost`]): the ledger row of
+//! every attempt, the bill on the stored row, and the alert above three
+//! attempts.
+
+pub mod cost;
+pub mod job;
+pub mod prompt;
