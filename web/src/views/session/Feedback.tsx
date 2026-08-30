@@ -22,9 +22,24 @@ export interface FeedbackProps {
   onContinue: () => void;
   onEnd: () => void;
   continueRef?: React.Ref<HTMLButtonElement>;
+  /**
+   * The async diagnosis panel (S9), rendered LAST and above the actions.
+   *
+   * It is a slot rather than a field of `res`, because its content arrives seconds after
+   * this panel paints. Anything above it would move down the page as it lands, and the
+   * solution is the one thing the learner is reading at that moment.
+   */
+  children?: React.ReactNode;
 }
 
-export function Feedback({ res, hasNext, onContinue, onEnd, continueRef }: FeedbackProps) {
+export function Feedback({
+  res,
+  hasNext,
+  onContinue,
+  onEnd,
+  continueRef,
+  children,
+}: FeedbackProps) {
   return (
     <div className={`feedback feedback-${res.correct ? 'correct' : 'incorrect'}`}>
       <div className="feedback-head">
@@ -60,6 +75,8 @@ export function Feedback({ res, hasNext, onContinue, onEnd, continueRef }: Feedb
           </ul>
         </div>
       ) : null}
+
+      {children}
 
       <div className="actions">
         <button ref={continueRef} type="button" className="btn btn-primary" onClick={onContinue}>

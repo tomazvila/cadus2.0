@@ -36,9 +36,12 @@
  * accumulator and prices XP with it, so `sessionEnd()` is called with NO arguments and this
  * view keeps no cumulative counter.
  *
- * WHAT THIS UNIT DOES NOT OWN. There is no router yet, so navigation arrives as props. The
- * diagnosis panel of the grade reply is S9's: this view paints the verdict immediately and
- * reads no `diagnosis` field.
+ * THE DIAGNOSIS IS A PASSENGER (S9). The verdict, the solution and the re-solve instruction
+ * come from local CPU and paint at once; the `diagnosis` field of the same reply feeds a
+ * panel that fills in later, from the one per-session subscription this view opens. Nothing
+ * in the loop waits on it, and no exit is blocked by it — see `useDiagnosis.ts`.
+ *
+ * WHAT THIS UNIT DOES NOT OWN. There is no router yet, so navigation arrives as props.
  */
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { MathBlock } from '@/components/MathBlock';
@@ -63,6 +66,8 @@ import type {
 import { useSessionPlan } from './useSessionPlan';
 import { Teach } from './Teach';
 import { Feedback, Rework } from './Feedback';
+import { Diagnosis } from './Diagnosis';
+import { useDiagnosisStream } from './useDiagnosis';
 
 type Phase = 'loading' | 'ready' | 'submitting' | 'feedback' | 'done';
 
@@ -104,6 +109,10 @@ export function Session({
   const call = useCall({ demo, onUnauthorized });
   const [phase, gate] = usePhase<Phase>('loading');
   const session = useSessionPlan();
+  // ONE connection for the whole session, never one per problem (spec section 4.1). It opens
+  // here and closes when this view unmounts. The demo runs no worker and answers
+  // `not_offered` to every grade, so it opens nothing.
+  const diagnosis = useDiagnosisStream({ api, life, enabled: !demo });
 
   const [problem, setProblem] = useState<ServedProblem | null>(null);
   const [teaching, setTeaching] = useState<TeachResponse | null>(null);
@@ -559,7 +568,11 @@ export function Session({
             onContinue={() => advance(result.next, result.next_unavailable)}
             onEnd={endSession}
             continueRef={continueRef}
-          />
+          >
+            {/* Keyed by the attempt, so a second grade of the same problem — the DD-3/P1
+                re-solve — never shows the first attempt's explanation. */}
+            <Diagnosis key={result.attempt_id} store={diagnosis} field={result.diagnosis} />
+          </Feedback>
         ) : null}
       </div>
     </section>

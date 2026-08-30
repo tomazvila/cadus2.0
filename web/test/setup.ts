@@ -98,6 +98,79 @@ if (!('ResizeObserver' in globalThis)) {
 }
 
 // ---------------------------------------------------------------------------
+// EventSource — the one per-session diagnosis subscription (A4, S9). Absent in jsdom
+// outright, so without this the session view throws at mount.
+//
+// The stub is CONTROLLABLE, because the three rules S9 owns are all about what the stream
+// does not do: a frame that never comes, a connection that drops, a subscription that must
+// close. Each test drives them by hand.
+// ---------------------------------------------------------------------------
+/** Every EventSource the code under test opened, in order. */
+export const eventSources: EventSourceStub[] = [];
+
+export class EventSourceStub {
+  static readonly CONNECTING = 0;
+  static readonly OPEN = 1;
+  static readonly CLOSED = 2;
+
+  readonly url: string;
+  readyState = 1;
+  closed = false;
+  private readonly listeners = new Map<string, Set<(e: Event) => void>>();
+
+  constructor(url: string) {
+    this.url = url;
+    eventSources.push(this);
+  }
+
+  addEventListener(type: string, fn: (e: Event) => void): void {
+    if (!this.listeners.has(type)) this.listeners.set(type, new Set());
+    this.listeners.get(type)!.add(fn);
+  }
+
+  removeEventListener(type: string, fn: (e: Event) => void): void {
+    this.listeners.get(type)?.delete(fn);
+  }
+
+  close(): void {
+    this.closed = true;
+    this.readyState = 2;
+  }
+
+  private dispatch(event: Event): void {
+    this.listeners.get(event.type)?.forEach((fn) => fn(event));
+  }
+
+  /** One `event: diagnosis` frame, exactly as `crates/web/src/diagnosis.rs` writes it. */
+  emit(body: unknown): void {
+    this.dispatch(new MessageEvent('diagnosis', { data: JSON.stringify(body) }));
+  }
+
+  /** A frame whose data is not JSON — a truncated write, or a proxy that mangled it. */
+  emitRaw(data: string): void {
+    this.dispatch(new MessageEvent('diagnosis', { data }));
+  }
+
+  /** The drop. A real EventSource reconnects by itself after this. */
+  drop(): void {
+    this.readyState = 0;
+    this.dispatch(new Event('error'));
+  }
+}
+
+/** The connection currently under test. Throws rather than return a stale one. */
+export function lastEventSource(): EventSourceStub {
+  const source = eventSources.at(-1);
+  if (!source) throw new Error('no EventSource was opened');
+  return source;
+}
+
+if (!('EventSource' in globalThis)) {
+  (globalThis as unknown as { EventSource: typeof EventSourceStub }).EventSource =
+    EventSourceStub;
+}
+
+// ---------------------------------------------------------------------------
 // Object URLs — the JSONL export (DEP-3, S7). Absent in jsdom.
 // ---------------------------------------------------------------------------
 let objectUrlSeq = 0;
@@ -248,6 +321,7 @@ beforeEach(() => {
   objectUrls.length = 0;
   downloads.length = 0;
   navigations.length = 0;
+  eventSources.length = 0;
   searchOverride = null;
   document.head.innerHTML = '';
   // The document shell index.html provides. Boot resolves all three by id, so a bare body
