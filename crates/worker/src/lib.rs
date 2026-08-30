@@ -183,6 +183,7 @@ pub fn batch_nonce() -> u64 {
 /// (D-O4, D-O5).
 ///
 /// Each tick runs the heartbeat, then one refill pass, then one diagnosis pass.
+/// A tick skips a pass whose job is `None` and runs every other pass.
 /// The refill pass takes the UTC microsecond clock as its nonce, so the batch
 /// seed of a pair changes every tick and a second refill draws past the tuples
 /// the pool already holds.
@@ -191,10 +192,15 @@ pub fn batch_nonce() -> u64 {
 /// the next tick. A database that is gone shows up on the heartbeat, which is
 /// the branch that stops the loop.
 ///
+/// The two jobs are independent of each other.
+///
 /// A `None` diagnosis job runs the loop with no model call at all. The binary
 /// passes `None` when the environment configures no endpoint, so a deployment
 /// with no API key keeps its refill worker (T2: the queue costs nothing while it
 /// waits).
+///
+/// A `None` refill job runs the diagnosis pass alone. `None` for both jobs runs
+/// the heartbeat alone, which is what [`run`] does.
 ///
 /// Each job runs as a branch of a `select`, not inside a branch body, for the
 /// reason the heartbeat does: a branch body that waits keeps the shutdown future
@@ -258,54 +264,59 @@ pub async fn run_with(
         // Step 4: the M4 refill pass (D-O4). The nonce is the UTC microsecond
         // clock, so each pass draws a different batch for the same pair and a
         // restart does not replay the batches the pool already holds.
-        let Some(job) = refill else {
-            continue;
-        };
-        let nonce = batch_nonce();
-        tokio::select! {
-            biased;
-            _ = &mut shutdown => break,
-            result = refill::refill_once(db, job, &mut state, nonce) => match result {
-                Ok(report) => tracing::info!(
-                    targets = report.targets,
-                    inserted = report.inserted,
-                    from_template = report.from_template,
-                    from_exemplar = report.from_exemplar,
-                    without_source = report.without_source,
-                    failed = report.failed,
-                    refused_instances = report.refused_instances,
-                    flagged_refusals = report.flagged_refusals,
-                    skipped_starved = report.skipped_starved,
-                    exhausted = report.exhausted,
-                    retired_unapproved = report.retired_unapproved,
-                    nonce,
-                    "refill tick={ticks}"
-                ),
-                Err(err) => tracing::warn!(error = %err, "refill: the pass did not run"),
+        //
+        // A `None` refill job skips this pass and the tick goes on to step 5. A
+        // `continue` here made the two jobs one job: a worker with a diagnosis
+        // job and no refill job never ran the diagnosis pass (finding V7).
+        if let Some(job) = refill {
+            let nonce = batch_nonce();
+            tokio::select! {
+                biased;
+                _ = &mut shutdown => break,
+                result = refill::refill_once(db, job, &mut state, nonce) => match result {
+                    Ok(report) => tracing::info!(
+                        targets = report.targets,
+                        inserted = report.inserted,
+                        from_template = report.from_template,
+                        from_exemplar = report.from_exemplar,
+                        without_source = report.without_source,
+                        failed = report.failed,
+                        refused_instances = report.refused_instances,
+                        flagged_refusals = report.flagged_refusals,
+                        skipped_starved = report.skipped_starved,
+                        exhausted = report.exhausted,
+                        retired_unapproved = report.retired_unapproved,
+                        nonce,
+                        "refill tick={ticks}"
+                    ),
+                    Err(err) => tracing::warn!(error = %err, "refill: the pass did not run"),
+                }
             }
         }
 
         // Step 5: the M5 diagnosis pass (D-O5). One claim, one model call, one
         // end state. A pass that claims nothing returns at once, so an empty
         // queue costs one indexed read per tick.
-        let Some(job) = diagnosis.as_deref_mut() else {
-            continue;
-        };
-        tokio::select! {
-            biased;
-            _ = &mut shutdown => break,
-            result = diagnosis::run_once(db, job) => match result {
-                Ok(report) => match report.outcome {
-                    // An idle queue is the common case. It says nothing.
-                    diagnosis::Outcome::Idle => {}
-                    outcome => tracing::info!(
-                        ?outcome,
-                        job = ?report.job_id,
-                        http_attempts = report.attempts.len(),
-                        "diagnosis tick={ticks}"
-                    ),
-                },
-                Err(err) => tracing::warn!(error = %err, "diagnosis: the pass did not run"),
+        //
+        // A `None` diagnosis job skips this pass, exactly as step 4 skips its
+        // own.
+        if let Some(job) = diagnosis.as_deref_mut() {
+            tokio::select! {
+                biased;
+                _ = &mut shutdown => break,
+                result = diagnosis::run_once(db, job) => match result {
+                    Ok(report) => match report.outcome {
+                        // An idle queue is the common case. It says nothing.
+                        diagnosis::Outcome::Idle => {}
+                        outcome => tracing::info!(
+                            ?outcome,
+                            job = ?report.job_id,
+                            http_attempts = report.attempts.len(),
+                            "diagnosis tick={ticks}"
+                        ),
+                    },
+                    Err(err) => tracing::warn!(error = %err, "diagnosis: the pass did not run"),
+                }
             }
         }
     }
