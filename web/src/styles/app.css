@@ -223,7 +223,7 @@ p { margin: 0.4rem 0; }
 /* ---- technical readouts ---- */
 /* Timers, counts, XP and every stat value read as instrument output: monospace with aligned
    figures. A proportional font makes a 1 Hz counter jitter its own width. */
-.timer, .progress-count, .stat-value, .ring-label strong, .mono {
+.timer, .progress-count, .remaining, .stat-value, .ring-label strong, .mono {
   font-family: var(--mono);
   font-variant-numeric: tabular-nums;
   letter-spacing: -0.01em;
@@ -418,6 +418,42 @@ p { margin: 0.4rem 0; }
 }
 .teach-problem { font-weight: 600; margin-bottom: 0.6rem; }
 .teach-steps { color: var(--muted); }
+
+/* ---- the timed quiz (S10) ---- */
+/* The count and the promise sit under the field, and they are the ONLY thing the quiz says
+   between the first answer and the last (QUIZ-reveal). */
+.quiz-note {
+  display: flex; align-items: center; justify-content: space-between; gap: 0.6rem;
+  margin-top: 0.8rem; font-size: 0.85rem;
+}
+.remaining { font-weight: 650; color: var(--accent); }
+.quiz-recorded { font-size: 1.05rem; margin-bottom: 0.3rem; }
+
+/* ---- the placement diagnostic (S10) ---- */
+/* R15: the card takes focus on entry, so it carries no ring — the heading and the rules
+   under it are what the reader lands on. */
+.intro-card { outline: none; }
+.intro-card h2 { margin-bottom: 0.4rem; }
+.intro-rules {
+  margin: 0.9rem 0 0.2rem; padding-left: 1.15rem;
+  display: flex; flex-direction: column; gap: 0.7rem;
+}
+.intro-rules li { line-height: 1.5; }
+.intro-rules li::marker { color: var(--accent); }
+.intro-rules strong { color: var(--accent); }
+.intro-error { color: var(--bad); margin: 0.8rem 0 0; font-size: 0.92rem; }
+.progress-bar {
+  height: 6px; background: var(--surface-2); border-radius: 999px;
+  overflow: hidden; margin-bottom: 1rem;
+}
+.progress-fill { height: 100%; background: var(--accent); transition: width 0.3s ease; }
+/* A tick or a cross beside one word, on one line. There is no body to this panel, because
+   placement reveals no solution (DIAG-nosol). */
+.view-diagnostic .feedback { display: flex; align-items: center; gap: 0.5rem; }
+.feedback-skip { background: var(--surface-2); }
+.feedback-skip .feedback-mark { color: var(--muted); }
+.frontier-block { margin-top: 0.8rem; }
+.frontier-list { margin: 0.3rem 0 0 1.1rem; padding: 0; }
 
 /* ---- responsive ---- */
 @media (max-width: 400px) {
