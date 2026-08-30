@@ -716,6 +716,67 @@ async fn the_queue_filters_by_status_kind_and_serving_key() {
     .await;
 }
 
+/// `page` reads the queue past the rows one read answers (T3).
+///
+/// The bill of the operator screen prices EVERY stored document, and one read
+/// answers at most 200 of them. 201 rows are therefore two pages: a full one,
+/// then a page of one row. The pages are cut from one order, so between them
+/// they name each of the 201 digests once.
+#[tokio::test]
+async fn the_page_parameter_reads_the_queue_past_one_page() {
+    TestDb::with(|db| async move {
+        let app = app(&db);
+        seed_admin(&db).await;
+        seed_approved(&db, KEY, "r5-page", 201).await;
+
+        let digests = |answer: &Answer| -> Vec<String> {
+            answer
+                .body
+                .get("items")
+                .and_then(Value::as_array)
+                .expect("the answer carries no items array")
+                .iter()
+                .map(|item| {
+                    item.get("digest")
+                        .and_then(Value::as_str)
+                        .expect("a queue line carries no digest")
+                        .to_string()
+                })
+                .collect()
+        };
+
+        let first = admin_get(&app, LIST_PATH).await;
+        let second = admin_get(&app, "/api/admin/content?page=1").await;
+        assert_eq!(first.status.as_u16(), 200, "{}", first.body);
+        assert_eq!(second.status.as_u16(), 200, "{}", second.body);
+
+        let mut all = digests(&first);
+        assert_eq!(all.len(), 200);
+        assert_eq!(digests(&second).len(), 1);
+        all.extend(digests(&second));
+        all.sort();
+        all.dedup();
+        assert_eq!(all.len(), 201, "the two pages name one digest twice");
+
+        // An absent page and page 0 are the same page.
+        let zero = admin_get(&app, "/api/admin/content?page=0").await;
+        assert_eq!(zero.body.get("items"), first.body.get("items"));
+
+        // A page past the last one answers no row, and it is not a failure.
+        let past = admin_get(&app, "/api/admin/content?page=2").await;
+        assert_eq!(past.status.as_u16(), 200, "{}", past.body);
+        assert_eq!(past.body.get("items"), Some(&json!([])));
+
+        // A page that is not a page is refused. It does NOT read as page 0: a
+        // bill added up from the first page of a request for a later page is
+        // wrong with nothing on screen to say so (A6).
+        let refused = admin_get(&app, "/api/admin/content?page=two").await;
+        assert_eq!(refused.status.as_u16(), 422, "{}", refused.body);
+        assert_eq!(refused.code(), "invalid_request");
+    })
+    .await;
+}
+
 // --------------------------------------------------------------------------- //
 // The two writes
 // --------------------------------------------------------------------------- //

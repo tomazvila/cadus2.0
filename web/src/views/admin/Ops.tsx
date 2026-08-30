@@ -13,6 +13,13 @@
  * queue that never arrived is `$0.0000` for every knowledge point, which reads as "nothing
  * was spent" and is the one wrong answer this panel can give.
  *
+ * THE BILL READS EVERY PAGE, and that is what makes it a bill (T3, A6). One
+ * `GET /api/admin/content` answers at most `limit` rows — 200, `cadus_store::content::
+ * LIST_LIMIT` — so a deployment with more stored documents than that priced a fraction of
+ * its spend and printed the fraction as a Total. Money that is silently short is the one
+ * wrong answer this panel can give, so the read walks the pages until one comes back short.
+ * The walk has its own bound, and a walk that ends on the bound says so on screen.
+ *
  * NOTHING HERE WRITES. The screen has no button that changes a row, so it needs no
  * confirmation step and no busy guard: a double-press of Refresh starts one more read.
  */
@@ -23,7 +30,7 @@ import { costByKp, usd } from './cost';
 import { useAdminLoad } from './adminLoad';
 import { LoadingBlock } from '@/components/primitives';
 import { num } from '@/lib/format';
-import type { ApiClient } from '@/api/types';
+import type { ApiClient, ReviewItem } from '@/api/types';
 
 /** The heading, and the string the click-through of S13 looks for. */
 export const OPS_TITLE = 'Operator';
@@ -37,6 +44,61 @@ export const COST_UNAVAILABLE = 'The authoring bill could not be read.';
 /** The line of a queue that priced nothing. */
 export const COST_EMPTY = 'No authored document carries a bill yet.';
 
+/**
+ * The pages one bill reads, at most.
+ *
+ * The route serves 100 pages (`admin.rs` `MAX_PAGE`), and this screen asks for a quarter of
+ * them: 25 pages of 200 rows price 5,000 documents, which is past the size of every
+ * deployment this build sizes for. The bound exists because the walk is a loop over a reply
+ * this screen does not control, and a loop with no bound is a browser tab that never
+ * answers.
+ */
+export const BILL_MAX_PAGES = 25;
+
+/** The line of a bill that stopped on that bound. It names the bound it stopped on. */
+export const BILL_TRUNCATED =
+  `The bill stopped after ${BILL_MAX_PAGES} pages. More documents are stored than the `
+  + 'numbers below count.';
+
+/** Every stored document, and whether the walk read all of them. */
+export interface Bill {
+  items: ReviewItem[];
+  /** True when the walk stopped on [`BILL_MAX_PAGES`] with a full page in hand. */
+  truncated: boolean;
+}
+
+/**
+ * Read the whole review queue, one page at a time.
+ *
+ * THE STOP IS THE SHORT PAGE, not a count of rows: `limit` is the service's own bound
+ * (`ReviewListResponse.limit`), and a page that carries fewer rows than the bound is the
+ * last page there is. A `limit` the service did not send stops the walk after one page,
+ * because a bound of zero would otherwise read 25 identical pages.
+ *
+ * A DIGEST COUNTS ONCE. The pages are cut from one order, and a document stored between two
+ * reads shifts the rows under the walk, so one digest can land on two pages. A bill that
+ * counted it twice would charge twice for it.
+ *
+ * A PAGE THAT FAILS ENDS THE WALK, and the screen renders the failure in place of the table.
+ * The pages before it are a part of the bill, and a part of a bill on screen under the word
+ * Total is a number that reads as the whole one.
+ */
+export async function readBill(api: ApiClient): Promise<Bill> {
+  const items: ReviewItem[] = [];
+  const seen = new Set<string>();
+  for (let page = 0; page < BILL_MAX_PAGES; page += 1) {
+    const reply = await api.listContent({ page });
+    for (const row of reply.items) {
+      if (seen.has(row.digest)) continue;
+      seen.add(row.digest);
+      items.push(row);
+    }
+    const limit = num(reply.limit);
+    if (limit <= 0 || reply.items.length < limit) return { items, truncated: false };
+  }
+  return { items, truncated: true };
+}
+
 export interface OperatorScreenProps {
   api: ApiClient;
   /** Demo mode. A 401 then keeps the reader on the screen. */
@@ -49,7 +111,7 @@ export function OperatorScreen({ api, demo = false, onUnauthorized }: OperatorSc
   // Both reads are stable per client, so each starts exactly once per mount. An inline
   // arrow here would be a new function on every render and a read loop.
   const loadFlags = useCallback(() => api.getOperatorFlags(), [api]);
-  const loadQueue = useCallback(() => api.listContent(), [api]);
+  const loadQueue = useCallback(() => readBill(api), [api]);
   const flags = useAdminLoad({ load: loadFlags, demo, onUnauthorized });
   const queue = useAdminLoad({ load: loadQueue, demo, onUnauthorized });
 
@@ -142,6 +204,11 @@ export function OperatorScreen({ api, demo = false, onUnauthorized }: OperatorSc
         <p className="muted small">
           Every stored document, of every status. A rejected document still cost money.
         </p>
+        {/* The line belongs to the payload on screen. A read that failed renders its own
+            line below, and the two together would name two states of one panel. */}
+        {!queue.failure && queue.data?.truncated ? (
+          <p className="gate-line gate-warn">{BILL_TRUNCATED}</p>
+        ) : null}
         {queue.failure ? (
           <p className="muted">
             {COST_UNAVAILABLE} {queue.message}
@@ -183,7 +250,10 @@ export function OperatorScreen({ api, demo = false, onUnauthorized }: OperatorSc
               <tfoot>
                 <tr>
                   <th scope="row">Total</th>
-                  <td className="mono">{queue.data.items.length}</td>
+                  {/* The count is the documents the walk read, and it says the word: a bare
+                      number under a column head reads as a row count of the table above it,
+                      which holds one row per knowledge point and not one per document. */}
+                  <td className="mono">{queue.data.items.length} documents</td>
                   <td />
                   <td className="mono">{usd(total)}</td>
                   <td />

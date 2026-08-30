@@ -20,6 +20,14 @@
  * modifier — otherwise typing a rejection reason with the word "jar" in it walks the queue
  * and opens two dialogs.
  *
+ * A DECISION NEEDS THE BODY ON SCREEN (C6, F5). Approve and Reject stay disabled until the
+ * pane reports that it rendered the body of the SELECTED digest, and the two writes post
+ * that reported digest. The pane owns its own read, so a `GET /api/admin/content/{digest}`
+ * that fails replaces the body, the instances and the gate with a failure block. Live
+ * buttons over that block let a reviewer approve — irreversibly, and for the digest — a
+ * document nobody read. The rule covers the keyboard too: `a` and `r` decide on the same
+ * value the buttons do.
+ *
  * THE REFUSAL OWNS THE WHOLE SCREEN. A non-admin gets the refusal block and no queue, no
  * filter, and no buttons (REVIEW-admin). The service is the only gate there is: `is_admin`
  * is outside the runtime role's column grants, so no reply the SPA reads carries the flag.
@@ -49,6 +57,9 @@ export const REVIEW_EMPTY = 'Nothing is waiting for review.';
 
 /** The status the queue reads. The screen shows the pending work and nothing else. */
 export const PENDING = 'pending';
+
+/** The line under the two disabled writes. It names the condition that opens them. */
+export const REVIEW_UNREAD = 'Approve and Reject open when the body of this digest is on screen.';
 
 /** The busy key of the two writes. One key, because one row decides at a time. */
 const DECIDE_KEY = 'decide';
@@ -180,6 +191,10 @@ export function ReviewScreen({ api, demo = false, onUnauthorized }: ReviewScreen
 
   const [selected, setSelected] = useState<string | null>(null);
 
+  // The digest of the body the pane has on screen, reported by the pane itself. It is null
+  // before the first reply, and null again on a failed read. See the module note.
+  const [readDigest, setReadDigest] = useState<string | null>(null);
+
   const groups = useMemo(() => groupByKp(queue.data?.items ?? []), [queue.data]);
   const order = useMemo(() => walkOrder(groups), [groups]);
   const items = useMemo(() => groups.flatMap((group) => group.items), [groups]);
@@ -192,6 +207,11 @@ export function ReviewScreen({ api, demo = false, onUnauthorized }: ReviewScreen
   // all, over a queue that no longer contains it.
   const active = selected !== null && order.includes(selected) ? selected : (order[0] ?? null);
   const selectedItem = items.find((item) => item.digest === active) ?? null;
+
+  // The document a decision may name: the selected row, and only while the pane has the body
+  // of THAT digest on screen. Null disables both writes and both keys.
+  const decidable =
+    selectedItem !== null && readDigest === selectedItem.digest ? selectedItem : null;
 
   // True from the moment a dialog is asked for until it settles. The keyboard reads it, so
   // it is a ref and not state: a render is not needed, and the keydown that follows the
@@ -257,9 +277,9 @@ export function ReviewScreen({ api, demo = false, onUnauthorized }: ReviewScreen
         setSelected(next);
         return;
       }
-      if ((e.key === 'a' || e.key === 'r') && selectedItem) {
+      if ((e.key === 'a' || e.key === 'r') && decidable) {
         e.preventDefault();
-        busy.run(DECIDE_KEY, () => decide(e.key === 'a' ? 'approve' : 'reject', selectedItem));
+        busy.run(DECIDE_KEY, () => decide(e.key === 'a' ? 'approve' : 'reject', decidable));
       }
     };
   });
@@ -364,19 +384,26 @@ export function ReviewScreen({ api, demo = false, onUnauthorized }: ReviewScreen
                   <button
                     type="button"
                     className={busy.cls(DECIDE_KEY, 'btn btn-primary')}
-                    disabled={busy.is(DECIDE_KEY)}
-                    onClick={() => busy.run(DECIDE_KEY, () => decide('approve', selectedItem))}
+                    disabled={busy.is(DECIDE_KEY) || decidable === null}
+                    onClick={() => {
+                      if (decidable) busy.run(DECIDE_KEY, () => decide('approve', decidable));
+                    }}
                   >
                     Approve
                   </button>
                   <button
                     type="button"
                     className={busy.cls(DECIDE_KEY, 'btn')}
-                    disabled={busy.is(DECIDE_KEY)}
-                    onClick={() => busy.run(DECIDE_KEY, () => decide('reject', selectedItem))}
+                    disabled={busy.is(DECIDE_KEY) || decidable === null}
+                    onClick={() => {
+                      if (decidable) busy.run(DECIDE_KEY, () => decide('reject', decidable));
+                    }}
                   >
                     Reject
                   </button>
+                  {decidable === null ? (
+                    <p className="muted small review-unread">{REVIEW_UNREAD}</p>
+                  ) : null}
                 </div>
                 {/* Keyed by digest: a new digest builds a new pane. See its module note. */}
                 <ReviewDocumentPane
@@ -385,6 +412,7 @@ export function ReviewScreen({ api, demo = false, onUnauthorized }: ReviewScreen
                   digest={selectedItem.digest}
                   demo={demo}
                   onUnauthorized={onUnauthorized}
+                  onLoaded={setReadDigest}
                 />
               </>
             ) : (

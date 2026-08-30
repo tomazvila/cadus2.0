@@ -131,6 +131,8 @@ export const api: ApiClient = {
     if (filter.status) query.set('status', filter.status);
     if (filter.kind) query.set('kind', filter.kind);
     if (filter.kp) query.set('kp', filter.kp);
+    // Page 0 sends no key: the route reads an absent `page` as the first page.
+    if (filter.page) query.set('page', String(filter.page));
     const suffix = query.toString();
     return request<ReviewListResponse>(
       'GET',

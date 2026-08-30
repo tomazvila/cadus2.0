@@ -375,6 +375,47 @@ describe('the dashboard', () => {
     expect(more.querySelectorAll('button').length).toBe(5);
   });
 
+  it('F9: the course picker is a dialog, on a modal surface, and Esc leaves it', async () => {
+    const user = userEvent.setup();
+    const enroll = vi.fn(createDemoApi().enroll);
+    await mount({ api: stubApi({ enroll }) });
+    await user.click(screen.getByText('More'));
+    await user.click(screen.getByRole('button', { name: 'Switch course' }));
+
+    const picker = screen.getByRole('dialog');
+    // `aria-modal` is what tells a screen reader the page behind is inert, and the focus
+    // trap of `Modal` is what makes that true. Neither one works without the role.
+    expect(picker.getAttribute('aria-modal')).toBe('true');
+    expect(picker.getAttribute('aria-labelledby')).toBe('picker-h');
+    expect(document.getElementById('picker-h')!.textContent).toBe('Switch course');
+    // `.modal` is the one rule in app.css that paints a dialog surface: the background, the
+    // border, the radius, the padding, the width and the grid the rows are laid out by.
+    expect(picker.classList.contains('modal')).toBe(true);
+    expect(picker.parentElement!.classList.contains('modal-overlay')).toBe(true);
+
+    // The trap holds: focus starts inside, and Tab does not walk out to the page behind.
+    expect(picker.contains(document.activeElement)).toBe(true);
+    await user.tab();
+    await user.tab();
+    expect(picker.contains(document.activeElement)).toBe(true);
+
+    await user.keyboard('{Escape}');
+    await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull());
+    expect(enroll).not.toHaveBeenCalled();
+  });
+
+  it('F9: the picker enrolls in the course the learner names', async () => {
+    const user = userEvent.setup();
+    const enroll = vi.fn(createDemoApi().enroll);
+    await mount({ api: stubApi({ enroll }) });
+    await user.click(screen.getByText('More'));
+    await user.click(screen.getByRole('button', { name: 'Switch course' }));
+
+    await user.click(within(screen.getByRole('dialog')).getByRole('button', { name: 'Proofs' }));
+
+    await waitFor(() => expect(enroll).toHaveBeenCalledWith('proofs'));
+  });
+
   it('reports zero axe violations', async () => {
     const view = await mount();
     expect(await axe(view.container, AXE_IN_JSDOM)).toHaveNoViolations();

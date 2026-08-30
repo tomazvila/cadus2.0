@@ -18,8 +18,15 @@
  * digest lands into a pane still showing the first, and for one paint the instances of one
  * document sit under the summary of another — which is the exact confusion a reviewer must
  * never be handed before an irreversible decision.
+ *
+ * THE PANE REPORTS WHAT IT RENDERED, and the two writes hang off that report (C6). The
+ * screen approves a digest; the reviewer approves a BODY. `onLoaded` carries the digest of
+ * the document that is on screen right now, and it carries null while there is none — before
+ * the first reply, and after a failed read, where the block replaces the body and the
+ * previous payload stays in the hook. A reviewer who does not see the body must not decide on
+ * it, so the caller gates Approve and Reject on this value.
  */
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import { AdminFailureBlock } from './AdminFailure';
 import { GateBlock } from './GateBlock';
 import { alerts, usd } from './cost';
@@ -41,6 +48,11 @@ export interface ReviewDocumentPaneProps {
   digest: string;
   demo?: boolean;
   onUnauthorized: () => void;
+  /**
+   * The digest of the body on screen, or null while none is. It MUST be stable — a state
+   * setter, or a `useCallback` — because it is an effect dependency.
+   */
+  onLoaded: (digest: string | null) => void;
 }
 
 export function ReviewDocumentPane({
@@ -48,9 +60,18 @@ export function ReviewDocumentPane({
   digest,
   demo = false,
   onUnauthorized,
+  onLoaded,
 }: ReviewDocumentPaneProps) {
   const load = useCallback(() => api.getContent(digest), [api, digest]);
   const doc = useAdminLoad({ load, demo, onUnauthorized });
+
+  // The digest the SERVICE gave the body below, and null on every path that renders no body.
+  // A failed reload keeps the previous payload in the hook — the S11 rule — and renders the
+  // failure block over it, so the failure decides this value before the payload does.
+  const rendered = doc.failure === null ? (doc.data?.digest ?? null) : null;
+  useEffect(() => {
+    onLoaded(rendered);
+  }, [onLoaded, rendered]);
 
   if (doc.failure) {
     return (

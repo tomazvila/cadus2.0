@@ -559,7 +559,7 @@ export interface OperatorFlagsResponse {
 // The review surface (C6, spec section 3.2)
 // ---------------------------------------------------------------------------
 
-/** The three filters `GET /api/admin/content` reads. An absent key applies no filter. */
+/** The filters `GET /api/admin/content` reads. An absent key applies no filter. */
 export interface ContentFilter {
   /** `pending`, `approved`, or `rejected`. */
   status?: string;
@@ -567,6 +567,8 @@ export interface ContentFilter {
   kind?: string;
   /** One serving key, `topic:point`. */
   kp?: string;
+  /** The zero-based page (`admin.rs` `PAGE_PARAM`). An absent page is page 0. */
+  page?: number;
 }
 
 /**
