@@ -62,6 +62,7 @@ use cadus_core::template::{
 };
 use cadus_model_client::{Attempt, Client};
 use cadus_store::Db;
+use cadus_store::content::{Admin, NewDocument, insert_pending};
 use serde_json::Value;
 use sha2::{Digest, Sha256};
 
@@ -320,13 +321,15 @@ pub async fn slots_taken(db: &Db, kp_id: &str, kind: Kind) -> Result<i64, Worker
 
 /// Insert one verified document as `pending` (C6, spec section 2.2, step 4).
 ///
-/// The worker connects as `cadus_admin`. `cadus_app` holds SELECT only on the
-/// table (`docs/SCHEMA.md`, finding #14), so the request tier can never write a
-/// row that already carries `status = 'approved'`.
+/// The insert itself is [`cadus_store::content::insert_pending`], the one write
+/// path of `content_store` (unit R4). The worker connects as `cadus_admin`, and
+/// `cadus_app` holds SELECT only on the table (`docs/SCHEMA.md`, finding #14),
+/// so the request tier can never write a row that already carries
+/// `status = 'approved'`. [`Admin::new`] names that connection at the call site.
 ///
 /// Returns `true` when the row is new. A digest the table already holds is not
 /// an error and not a rewrite: the body is the same body, and a human may have
-/// rejected it already, so `ON CONFLICT DO NOTHING` leaves that verdict alone.
+/// rejected it already, so the insert leaves that verdict alone.
 ///
 /// # Errors
 ///
@@ -341,21 +344,16 @@ pub async fn store_pending(
 ) -> Result<bool, WorkerError> {
     let document: Value = serde_json::from_str(body)
         .map_err(|err| WorkerError::Config(format!("the verified body does not read: {err}")))?;
-    let query = sqlx::query!(
-        r#"
-        INSERT INTO content_store (digest, kp_id, kind, body, status, authoring_attempts)
-        VALUES ($1, $2, $3, $4, $5, $6)
-        ON CONFLICT (digest) DO NOTHING
-        "#,
-        body_digest(body),
+    let digest = body_digest(body);
+    let doc = NewDocument {
+        digest: &digest,
         kp_id,
-        kind.as_str(),
-        document,
-        STATUS_PENDING,
-        i32::try_from(attempts).unwrap_or(i32::MAX),
-    )
-    .execute(db.pool());
-    Ok(cadus_store::bounded(db, query).await?.rows_affected() == 1)
+        kind: kind.as_str(),
+        body: &document,
+        authoring_attempts: attempts,
+        cost_usd: None,
+    };
+    Ok(insert_pending(Admin::new(db), &doc).await?)
 }
 
 /// Author one knowledge point and one kind (spec section 2.2).
