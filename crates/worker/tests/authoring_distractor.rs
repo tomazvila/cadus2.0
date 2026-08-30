@@ -60,16 +60,18 @@ const UNKNOWN_TAG: &str = "carelessness";
 /// {"v":1,"topic_id":"addition","answer_kind":"numeric","distractors":[{"answer":"13","error_tag":"arithmetic-slip","note":"You added the whole parts and dropped the half."}]}
 /// ```
 ///
-/// The digest is computed outside this tree with
+/// The key of `content_store` is the knowledge point, the kind AND the body, so
+/// the material is `KP_KEY`, one NUL byte, `diagnosis`, one NUL byte, and the
+/// body. The digest is computed outside this tree with
 ///
 /// ```sh
-/// printf '%s' '<the body above>' | sha256sum
-/// # 51fcd300f5bd3b1a5cf840692a37ce954704d9a4eb441efbc871ed9e0666b8b6
+/// printf 'addition/kp1\0diagnosis\0%s' '<the body above>' | sha256sum
+/// # 69ceac16786901e7c87fa0bbdf503b0b25738289cfe446593fe880c1c93c48bc
 /// ```
 ///
 /// It pins the stored bytes, which the `content_store.body` column cannot: the
 /// column holds jsonb, and jsonb keeps neither key order nor whitespace.
-const STORED_DIGEST: &str = "sha256:51fcd300f5bd3b1a";
+const STORED_DIGEST: &str = "sha256:69ceac16786901e7";
 
 /// The first line of the retry block (1.0 `prompts.py:767-769`).
 const RETRY_HEADER: &str = "YOUR PREVIOUS ATTEMPT WAS REFUSED. The server's exact reason was:";

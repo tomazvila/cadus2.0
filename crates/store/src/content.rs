@@ -24,9 +24,11 @@
 //!
 //! # The two paths of this module
 //!
-//! The read takes any executor, because `cadus_app` holds SELECT on the table
-//! and the serve path is a request-tier read. The three writes take [`Admin`],
-//! because `cadus_app` holds nothing else (`docs/SCHEMA.md`, finding #14).
+//! The serve reads take any executor, because `cadus_app` holds SELECT on the
+//! table and the serve path is a request-tier read. The three writes take
+//! [`Admin`], because `cadus_app` holds nothing else (`docs/SCHEMA.md`, finding
+//! #14). [`verdict`] stands between them: it is a read, and it takes [`Db`],
+//! because the authoring job runs it on its own write path.
 
 use serde_json::Value as Json;
 use sqlx::PgExecutor;
@@ -153,7 +155,14 @@ impl<'a> Admin<'a> {
 /// One authored document to insert as `pending` (C6, T3).
 #[derive(Debug, Clone)]
 pub struct NewDocument<'a> {
-    /// The content address of `body`. Approval binds to it (C6).
+    /// The content address of the document. Approval binds to it (C6).
+    ///
+    /// The key of the table is the knowledge point, the kind, AND the body, so
+    /// the digest covers all three. A digest of the body alone gives two
+    /// knowledge points that earn one body a single primary key, and
+    /// [`insert_pending`] then drops the second document with no error (M6
+    /// review finding F1). The writer computes the value in ONE function:
+    /// `cadus_worker::authoring::job::document_digest`.
     pub digest: &'a str,
     /// The serving key `cadus_core::pool::kp_key` writes: `"<topic>/<kp>"`.
     pub kp_id: &'a str,
@@ -188,9 +197,14 @@ pub struct Decision {
 /// Insert one verified document as `pending` (C6, spec section 2.2, step 4).
 ///
 /// Returns `true` when the row is new. A digest the table already holds is not
-/// an error and not a rewrite: the digest is the content address of the body,
-/// so the body is the same body, and a human may have approved or rejected it
-/// already. `ON CONFLICT DO NOTHING` leaves that verdict alone.
+/// an error and not a rewrite: the digest is the content address of the
+/// knowledge point, the kind and the body, so the document is the same
+/// document, and a human may have approved or rejected it already.
+/// `ON CONFLICT DO NOTHING` leaves that verdict alone.
+///
+/// A caller that answers to an operator reads that verdict with [`verdict`]: a
+/// pass that reproduces a REJECTED body stored nothing, and it must say so
+/// instead of counting a document it did not write (M6 review finding F6).
 ///
 /// The row always enters as `pending`. There is no parameter for the status,
 /// because a caller that writes `approved` is the review gate C6 exists to
@@ -288,6 +302,12 @@ pub async fn approve(
 /// The reason overwrites an earlier reason: a second review of the same digest
 /// gives the current reason, not the first one.
 ///
+/// The statement changes ONE row: `digest` is the primary key of the table, so
+/// the WHERE clause addresses one row and every other document of the same
+/// knowledge point and kind keeps the status it had.
+/// `crates/store/tests/content_admin.rs` pins that with three seeded rows (M6
+/// review finding F26).
+///
 /// # Errors
 ///
 /// Returns [`StoreError::NotFound`] when the table holds no row with that
@@ -316,6 +336,47 @@ pub async fn reject(admin: Admin<'_>, digest: &str, reason: &str) -> Result<Deci
         approved_by: row.approved_by,
         approved_at: row.approved_at,
     })
+}
+
+/// The review verdict the table holds for one digest (C6).
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct Verdict {
+    /// The `content_store.status` of the row.
+    pub status: String,
+    /// The reason of the last rejection, when a reviewer wrote one.
+    pub review_reason: Option<String>,
+}
+
+/// The verdict of one digest, for the writer that collided with it (C6).
+///
+/// [`insert_pending`] answers `false` when the table already holds the digest,
+/// and the digest is the content address of the knowledge point, the kind and
+/// the body. A collision therefore says that a reviewer saw this exact document
+/// already, and this read says what the reviewer did with it. The authoring job
+/// reads it to tell a duplicate `pending` document from a body a human refused
+/// (M6 review finding F6).
+///
+/// The read takes [`Db`] and not an executor, because the caller runs it on its
+/// write path and the client-side bound of that path applies to it.
+///
+/// # Errors
+///
+/// Returns [`StoreError::Db`] when the statement fails, and
+/// [`StoreError::Timeout`] when the client-side bound expires.
+pub async fn verdict(db: &Db, digest: &str) -> Result<Option<Verdict>, StoreError> {
+    let query = sqlx::query!(
+        r#"
+        SELECT status AS "status!", review_reason
+        FROM content_store
+        WHERE digest = $1
+        "#,
+        digest,
+    )
+    .fetch_optional(db.pool());
+    Ok(crate::bounded(db, query).await?.map(|row| Verdict {
+        status: row.status,
+        review_reason: row.review_reason,
+    }))
 }
 
 /// The typed answer to a review write whose digest is not in the table.
