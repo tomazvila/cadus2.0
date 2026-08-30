@@ -20,6 +20,35 @@ workflow scripts): R5 (`1c79599`), S10 (`527a462`), S11 (`330dc3d`), S12 (`208bf
 R7 were mid-run; their WIP is on `m6/r6-wip` and `m6/r7-wip`. The finishing workflow `wf_bb9ccf5d-d45` runs R6 ∥ R7 (from
 the WIP) → R8 beside S13 → S14, with `CARGO_BUILD_JOBS=6` (now the default in `scripts/gate.sh`, commit `6795cab`).
 
+### Units and outcome (M6)
+
+| Unit | Branch | Result |
+|---|---|---|
+| R1 authoring prompts, tool schema, retry block, prompt digest | `m6/r1` | gate green (`80e8104`) |
+| R2 per-KP batch loop: author → gate → retry (5 attempts), decline path | `m6/r2` | gate green (`5a9de31`) |
+| R3 T3 accounting: `purpose=authoring` ledger rows, `authoring_attempts`, `authoring_cost_usd`, the >3 alert | `m6/r3` | gate green (`e434c1b`) |
+| R4 `cadus_store::content` admin path: insert pending, approve/reject by digest | `m6/r4` | gate green (`9f687dc`) |
+| R5 `/api/admin/content*` four routes, admin-gated, rendered instances + gate notes | `m6/r5` | gate green (`1c79599`) |
+| R6 teach and hint-ladder authoring with their gates | `m6/r6` | gate green (`7f556f1`) |
+| R7 distractor authoring and the A4 pre-authored `diagnosis: ready` path | `m6/r7` | gate green (`a0e84f1`) |
+| R8 `cadus-worker author` CLI and the runbook | `m6/r8` | gate green (`6856946`) |
+| S1 `web/` scaffold, check chain, CSP + invariant self-tests | `m6/s1` | gate green (`5e530c7`) |
+| S2 typed API layer, fetch client, error envelope | `m6/s2` | gate green (`15065f3`) |
+| S3 `useLifetime`, `usePhase`, `useCall`, `ErrorBoundary`, toast store | `m6/s3` | gate green (`8407b1f`) |
+| S4 Tokyo Night tokens, primitives, `Modal`, app shell | `m6/s4` | gate green (`7ca9371`) |
+| S5 `MathBlock`, `AnswerField`, `WorkField` (KaTeX idiom) | `m6/s5` | gate green (`33bd45e`) |
+| S6 auth screens, OAuth gate, boot token | `m6/s6` | gate green (`ab27bf6`) |
+| S7 dashboard and status, JSONL export | `m6/s7` | gate green (`ab9b308`) |
+| S8 the session loop: plan, serve, teach, hint, answer, re-solve, auto-advance | `m6/s8` | gate green (`8b4fbe7`) |
+| S9 async diagnosis panel: SSE + poll fallback + 30 s rule | `m6/s9` | gate green (`f48ba90`) |
+| S10 quiz and diagnostic placement | `m6/s10` | gate green (`527a462`) |
+| S11 curriculum map (Cytoscape behind dynamic import), list view | `m6/s11` | gate green (`330dc3d`) |
+| S12 operator screen `/ops` and review screen `/review` | `m6/s12` | gate green (`208bf59`) |
+| S13 Playwright click-through in the container, screenshots | `m6/s13` | gate green (`586a310`) |
+| S14 packaging: node build stage, Caddy same-origin, CI step | `m6/s14` | gate green (`3261a22`) |
+
+All 22 units green on their branches; `m6/r8` and `m6/s14` merged into `main` at `53a9ef8` (2026-08-30). Gate on `main`: `cd web && npm run check` PASS (CSP audit: 32 built files, no eval, no `data:` URIs); Rust gate 1,754 tests, 0 failed (migration 0011 content review; log gate-m6-1). Review rounds next (`docs/reviews/M6-review-1.md`).
+
 In parallel, unit FIX-D6 (branch `d6/decimal`) implements the owner's D6 ruling of 2026-08-30 (`docs/DECISIONS.md`
 row `D6-dec`): a learner decimal that equals the exact value rounded half-to-even to the typed digits is
 correct-with-`notation`; exact rational arithmetic, no float; the 240 M2 divergence pairs get pinned counts.
