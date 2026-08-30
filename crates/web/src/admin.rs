@@ -58,7 +58,7 @@ use cadus_core::pool::{ProblemSource, TemplateSource};
 use cadus_core::template::{GATE_SEED, from_body};
 use cadus_store::content::{
     self, Admin, BANK_TARGET, Decision, KIND_TEMPLATE, LIST_LIMIT, ReviewFilter, ReviewItem,
-    StoredDoc,
+    STATUS_APPROVED, StoredDoc,
 };
 use cadus_store::{Db, StoreError};
 use serde_json::{Value, json};
@@ -92,6 +92,56 @@ pub const KIND_PARAM: &str = "kind";
 
 /// The query parameter that selects one serving key.
 pub const KP_PARAM: &str = "kp";
+
+/// The query parameter that selects one page of the queue.
+///
+/// The queue read is capped at [`LIST_LIMIT`] rows, and one answer of spec
+/// section 3.2 needs more rows than one page holds: the T3 bill of the operator
+/// screen prices EVERY stored document, of every status. `page` is zero-based,
+/// and page `n` skips `n * LIST_LIMIT` rows of the order the first page was cut
+/// from, so a caller that reads pages until one comes back short has read the
+/// whole table.
+pub const PAGE_PARAM: &str = "page";
+
+/// The highest page this route serves.
+///
+/// A page number is free text from a caller, and an `OFFSET` on a large number
+/// is a scan the reader throws away. These pages hold 20,000 documents between
+/// them, which is more than the deployments this build sizes for, and the bound
+/// keeps one careless URL out of the planner.
+pub const MAX_PAGE: i64 = 99;
+
+/// The message of a `page` that is not a page.
+fn page_message() -> String {
+    format!("The page must be a whole number from 0 to {MAX_PAGE}.")
+}
+
+/// The zero-based page one query string asks for.
+///
+/// An absent parameter is page 0, so a caller that names no page reads the queue
+/// exactly as it did before this parameter existed.
+///
+/// Every other bad value is refused. A `page=two` that the route silently reads
+/// as 0 answers the FIRST 200 rows to a caller that asked for a later page, and
+/// a bill added up from that answer is wrong with nothing on screen to say so,
+/// which is the silent skip A6 forbids.
+///
+/// # Errors
+///
+/// - `422 invalid_request` — the value is empty, is not a whole number, is
+///   negative, or is past [`MAX_PAGE`].
+pub fn page_of(raw: Option<&str>) -> Result<i64, ApiError> {
+    let Some(text) = raw else {
+        return Ok(0);
+    };
+    let page: i64 = text
+        .parse()
+        .map_err(|_| ApiError::invalid_request(page_message()))?;
+    if !(0..=MAX_PAGE).contains(&page) {
+        return Err(ApiError::invalid_request(page_message()));
+    }
+    Ok(page)
+}
 
 /// The field of the reject body that carries the reason.
 pub const REASON_FIELD: &str = "reason";
@@ -260,16 +310,88 @@ fn item_json(item: &ReviewItem) -> Value {
     })
 }
 
+/// One page of the review queue, newest first.
+///
+/// WHY THIS STATEMENT LIVES IN THE WEB CRATE. [`content::review_list`] answers
+/// the first [`LIST_LIMIT`] rows and takes no offset, so a caller cannot reach
+/// the row after the two hundredth, and the T3 bill of the operator screen
+/// prices every stored document. The fix unit that added [`PAGE_PARAM`] (the M6
+/// review of 2026-08-30, unit FIX-M6-E) may open no file under `crates/store`,
+/// so the paged read sits beside its caller. Fold it back into
+/// [`content::review_list`] — one `offset` field on [`ReviewFilter`] — when the
+/// store is next opened, and delete this function.
+///
+/// The order is the order of [`content::review_list`]: `created_at` descending
+/// with the digest as the tie break. One order for every page is what makes the
+/// walk whole — page `n + 1` starts on the row page `n` stopped before — so this
+/// route reads every page through this one statement, page 0 included.
+///
+/// # Errors
+///
+/// Returns [`StoreError::Db`] when the statement fails.
+async fn review_page(
+    db: &Db,
+    filter: &ReviewFilter<'_>,
+    offset: i64,
+) -> Result<Vec<ReviewItem>, StoreError> {
+    let rows = sqlx::query!(
+        r#"
+        SELECT c.digest AS "digest!", c.kp_id AS "kp_id!", c.kind AS "kind!",
+               c.status AS "status!", c.authoring_attempts AS "authoring_attempts!",
+               c.authoring_cost_usd::text AS "cost_usd?",
+               c.created_at AS "created_at!", c.body AS "body!",
+               (SELECT count(*) FROM content_store a
+                 WHERE a.kp_id = c.kp_id AND a.kind = $4 AND a.status = $5)
+                 AS "approved_templates!"
+        FROM content_store c
+        WHERE ($1::text IS NULL OR c.status = $1)
+          AND ($2::text IS NULL OR c.kind = $2)
+          AND ($3::text IS NULL OR c.kp_id = $3)
+        ORDER BY c.created_at DESC, c.digest
+        LIMIT $6 OFFSET $7
+        "#,
+        filter.status,
+        filter.kind,
+        filter.kp_id,
+        KIND_TEMPLATE,
+        STATUS_APPROVED,
+        LIST_LIMIT,
+        offset,
+    )
+    .fetch_all(db.pool())
+    .await?;
+
+    Ok(rows
+        .into_iter()
+        .map(|row| ReviewItem {
+            digest: row.digest,
+            kp_id: row.kp_id,
+            kind: row.kind,
+            status: row.status,
+            authoring_attempts: row.authoring_attempts,
+            cost_usd: row.cost_usd,
+            created_at: row.created_at,
+            body: row.body,
+            approved_templates: row.approved_templates,
+        })
+        .collect())
+}
+
 /// `GET /api/admin/content` — the review queue (C6, T3).
 ///
 /// The three query parameters of spec section 3.2 filter the queue: `status`,
 /// `kind`, and `kp`. A parameter this route does not name is ignored, and an
 /// absent parameter applies no filter of that kind.
 ///
+/// [`PAGE_PARAM`] reads the queue past [`LIST_LIMIT`] rows. The reply carries
+/// `limit`, so a caller asks for the next page while a page comes back full and
+/// stops on the first short one.
+///
 /// # Errors
 ///
 /// - `401 unauthorized` — the request carries no live session.
 /// - `403 forbidden` — the account is not an admin.
+/// - `422 invalid_request` — `page` is not a page. See [`page_of`].
 /// - `500 internal_error` — the statement failed or passed its bound.
 pub async fn list(
     State(state): State<AppState>,
@@ -281,10 +403,11 @@ pub async fn list(
         kind: params.get(KIND_PARAM).map(String::as_str),
         kp_id: params.get(KP_PARAM).map(String::as_str),
     };
+    let page = page_of(params.get(PAGE_PARAM).map(String::as_str))?;
     let rows = store_call(
         &state.db,
         "admin content list",
-        content::review_list(state.db.pool(), &filter),
+        review_page(&state.db, &filter, page * LIST_LIMIT),
     )
     .await?;
 
@@ -508,4 +631,40 @@ pub async fn reject(
         "digest": decision.digest,
         "status": decision.status,
     })))
+}
+
+#[cfg(test)]
+mod tests {
+    use axum::http::StatusCode;
+
+    use super::{MAX_PAGE, page_message, page_of};
+
+    /// An absent `page` is page 0, so a caller that names none reads the queue
+    /// as it read it before the parameter existed.
+    #[test]
+    fn an_absent_page_is_the_first_page() {
+        assert_eq!(page_of(None), Ok(0));
+    }
+
+    /// A whole number inside the bound is the page, and the bound holds at both
+    /// ends.
+    #[test]
+    fn a_whole_number_inside_the_bound_is_the_page() {
+        assert_eq!(MAX_PAGE, 99);
+        assert_eq!(page_of(Some("0")), Ok(0));
+        assert_eq!(page_of(Some("1")), Ok(1));
+        assert_eq!(page_of(Some("99")), Ok(99));
+    }
+
+    /// Every other value is refused, and NONE of them reads as page 0: a bill
+    /// added up from the first page of a request for a later page is wrong with
+    /// nothing on screen to say so (A6).
+    #[test]
+    fn a_value_that_is_not_a_page_is_refused() {
+        for raw in ["", " ", "two", "1.5", "-1", "100", "1e2", "0x1"] {
+            let refused = page_of(Some(raw)).expect_err("this value is not a page");
+            assert_eq!(refused.status, StatusCode::UNPROCESSABLE_ENTITY);
+            assert_eq!(refused.message, page_message());
+        }
+    }
 }

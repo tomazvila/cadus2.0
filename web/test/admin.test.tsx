@@ -26,8 +26,10 @@ import { ApiError, createDemoApi } from '@/api';
 import { DialogProvider } from '@/components/Modal';
 import { Root } from '@/app/Root';
 import { adminRouteFor } from '@/app/routes';
-import { COST_UNAVAILABLE, OperatorScreen } from '@/views/admin/Ops';
-import { ReviewScreen, REVIEW_EMPTY } from '@/views/admin/Review';
+import {
+  BILL_MAX_PAGES, BILL_TRUNCATED, COST_UNAVAILABLE, OperatorScreen,
+} from '@/views/admin/Ops';
+import { ReviewScreen, REVIEW_EMPTY, REVIEW_UNREAD } from '@/views/admin/Review';
 import { FORBIDDEN_MESSAGE, FORBIDDEN_TITLE, UNAVAILABLE_TITLE } from '@/views/admin/adminLoad';
 import { SAMPLED_LINE } from '@/views/admin/GateBlock';
 import { REASON_REQUIRED, REASON_TOO_LONG, usableReason } from '@/views/admin/reason';
@@ -37,6 +39,7 @@ import { resetToasts } from '@/app/toast';
 import { AXE_IN_JSDOM } from './axe';
 import type {
   ApiClient,
+  ContentFilter,
   OperatorFlagsResponse,
   ReviewDocument,
   ReviewItem,
@@ -217,6 +220,25 @@ async function mountOps(api: ApiClient = stubApi()) {
 
 /** The queue rows on screen, in render order. */
 const rowButtons = () => Array.from(document.querySelectorAll<HTMLElement>('.review-row'));
+
+/** One of the two write buttons of the review screen, as the DOM has it right now. */
+const writeButton = (name: 'Approve' | 'Reject') =>
+  screen.getByRole('button', { name }) as HTMLButtonElement;
+
+/**
+ * `n` priced documents of one knowledge point, with digests that start at `from`.
+ *
+ * Each one costs $0.0100 and spent one attempt, so a page of 200 is $2.0000 and the T3
+ * alert stays off: the arithmetic of a paging test is about the count and nothing else.
+ */
+const page = (n: number, from: number): ReviewItem[] =>
+  Array.from({ length: n }, (_, i) =>
+    item({
+      digest: `p${from + i}`,
+      kp_id: 'algebra:linear',
+      authoring_attempts: 1,
+      authoring_cost_usd: '0.0100',
+    }));
 
 // --------------------------------------------------------------------------- //
 // The paths
@@ -441,6 +463,98 @@ describe('Approve', () => {
     expect(list).toHaveBeenCalledTimes(2);
   });
 
+  it('C6/F5: a document that did not load leaves both writes disabled', async () => {
+    const user = userEvent.setup();
+    const approve = vi.fn();
+    const reject = vi.fn();
+    // The pane of the SECOND row fails, and the first row loads. So the screen starts with
+    // two live buttons, and the failed read is the only thing that changes.
+    const getContent = vi.fn(async (digest: string) => {
+      if (digest === 'd1') {
+        throw new ApiError(500, 'server_error', 'The document read failed.');
+      }
+      return docOf(digest);
+    });
+    await mountReview(stubApi({ getContent, approveContent: approve, rejectContent: reject }));
+    await waitFor(() => expect(writeButton('Approve').disabled).toBe(false));
+
+    await user.click(rowButtons()[1]);
+
+    // The body, the instances and the gate are gone, and the failure block stands where they
+    // were. An irreversible decision on that screen decides a document nobody read.
+    await waitFor(() => expect(screen.getByText('The document read failed.')).toBeTruthy());
+    expect(document.querySelector('.review-doc')).toBeNull();
+    expect(writeButton('Approve').disabled).toBe(true);
+    expect(writeButton('Reject').disabled).toBe(true);
+    // The screen says which condition opens them again.
+    expect(screen.getByText(REVIEW_UNREAD)).toBeTruthy();
+
+    // The keyboard reads the same value: `a` and `r` open nothing and post nothing.
+    await user.keyboard('a');
+    await user.keyboard('r');
+    expect(screen.queryByRole('dialog')).toBeNull();
+    expect(approve).not.toHaveBeenCalled();
+    expect(reject).not.toHaveBeenCalled();
+  });
+
+  it('C6/F5: both writes are disabled while the document is still loading', async () => {
+    let release!: (doc: ReviewDocument) => void;
+    const pending = new Promise<ReviewDocument>((r) => { release = r; });
+    await mountReview(stubApi({ getContent: () => pending }));
+
+    expect(screen.getByText('Loading the document…')).toBeTruthy();
+    expect(writeButton('Approve').disabled).toBe(true);
+    expect(writeButton('Reject').disabled).toBe(true);
+
+    await act(async () => { release(docOf('d2')); });
+    expect(writeButton('Approve').disabled).toBe(false);
+    expect(writeButton('Reject').disabled).toBe(false);
+  });
+
+  it('C6/F16: approves the digest of the row the reviewer read, not the first row', async () => {
+    const user = userEvent.setup();
+    const approve = vi.fn(async (digest: string) => ({
+      digest,
+      status: 'approved',
+      approved_at: '2026-08-30T12:00:00+00:00',
+    }));
+    await mountReview(stubApi({ approveContent: approve }));
+
+    // The screen opens on d2. The reviewer moves to the second row and reads d1 there.
+    await user.click(rowButtons()[1]);
+    expect(await screen.findByText('d1 instance 1: Solve $5x = 20$ for $x$.')).toBeTruthy();
+    await waitFor(() => expect(writeButton('Approve').disabled).toBe(false));
+
+    await user.click(writeButton('Approve'));
+    const dialog = screen.getByRole('dialog');
+    // The confirmation restates the digest of the document in the pane, and no other.
+    expect(within(dialog).getByText('d1')).toBeTruthy();
+    await user.click(within(dialog).getByRole('button', { name: 'Approve' }));
+
+    await waitFor(() => expect(approve).toHaveBeenCalledWith('d1'));
+    expect(approve).toHaveBeenCalledTimes(1);
+    expect(approve).not.toHaveBeenCalledWith('d2');
+  });
+
+  it('C6/F16: rejects the digest of the row the reviewer read, not the first row', async () => {
+    const user = userEvent.setup();
+    const reject = vi.fn(async (digest: string) => ({ digest, status: 'rejected' }));
+    await mountReview(stubApi({ rejectContent: reject }));
+
+    await user.click(rowButtons()[1]);
+    expect(await screen.findByText('d1 instance 1: Solve $5x = 20$ for $x$.')).toBeTruthy();
+    await waitFor(() => expect(writeButton('Reject').disabled).toBe(false));
+
+    await user.click(writeButton('Reject'));
+    await user.type(screen.getByLabelText('Reason'), 'the second row is the wrong one');
+    await user.click(within(screen.getByRole('dialog')).getByRole('button', { name: 'Reject' }));
+
+    await waitFor(() =>
+      expect(reject).toHaveBeenCalledWith('d1', 'the second row is the wrong one'),
+    );
+    expect(reject).toHaveBeenCalledTimes(1);
+  });
+
   it('posts nothing when the confirmation is cancelled', async () => {
     const user = userEvent.setup();
     const approve = vi.fn();
@@ -595,7 +709,55 @@ describe('the operator screen', () => {
       // A null cost adds nothing, and the two documents still count.
       'arith:borrow22$0.0050—',
     ]);
-    expect(cost.querySelector('tfoot')!.textContent).toBe('Total4$0.0450');
+    expect(cost.querySelector('tfoot')!.textContent).toBe('Total4 documents$0.0450');
+  });
+
+  it('T3/F20: the bill reads every page, so 250 stored documents total 250', async () => {
+    // The service caps one read at `limit` rows. 250 documents are two reads: a full page
+    // of 200, then a short page of 50, which is the page that ends the walk.
+    const list = vi.fn(async (filter?: ContentFilter) => ({
+      ...QUEUE,
+      items: (filter?.page ?? 0) === 0 ? page(200, 0) : page(50, 200),
+    }));
+    await mountOps(stubApi({ listContent: list }));
+
+    const cost = document.querySelectorAll('.admin-table')[1]!;
+    // 250 documents at $0.0100 each, and every one of them counted once.
+    expect(cost.querySelector('tfoot')!.textContent).toBe('Total250 documents$2.5000');
+    expect(Array.from(cost.querySelectorAll('tbody tr')).map((r) => r.textContent)).toEqual([
+      'algebra:linear250250$2.5000—',
+    ]);
+    expect(list).toHaveBeenCalledTimes(2);
+    expect(list).toHaveBeenNthCalledWith(1, { page: 0 });
+    expect(list).toHaveBeenNthCalledWith(2, { page: 1 });
+    expect(screen.queryByText(BILL_TRUNCATED)).toBeNull();
+  });
+
+  it('T3/F20: a queue longer than the walk is said to be, never quietly cut', async () => {
+    // Every page comes back full, so the walk never meets its short page and stops on its
+    // own bound. A6: the numbers below the line are partial, and the line says so.
+    const list = vi.fn(async (filter?: ContentFilter) =>
+      ({ ...QUEUE, items: page(200, (filter?.page ?? 0) * 200) }));
+    await mountOps(stubApi({ listContent: list }));
+
+    expect(list).toHaveBeenCalledTimes(BILL_MAX_PAGES);
+    expect(screen.getByText(BILL_TRUNCATED)).toBeTruthy();
+    const cost = document.querySelectorAll('.admin-table')[1]!;
+    expect(cost.querySelector('tfoot')!.textContent).toBe('Total5000 documents$50.0000');
+  });
+
+  it('T3/F20: one digest on two pages is one document on the bill', async () => {
+    // A document stored between two reads shifts the rows under the walk, and the same
+    // digest lands on both pages. It is one document, and it cost its money once.
+    const list = vi.fn(async (filter?: ContentFilter) => ({
+      ...QUEUE,
+      items: (filter?.page ?? 0) === 0 ? page(200, 0) : page(50, 190),
+    }));
+    await mountOps(stubApi({ listContent: list }));
+
+    const cost = document.querySelectorAll('.admin-table')[1]!;
+    // 200 digests, then 50 of which the first 10 are already counted: 240 documents.
+    expect(cost.querySelector('tfoot')!.textContent).toBe('Total240 documents$2.4000');
   });
 
   it('keeps the serving health when only the bill could not be read', async () => {
