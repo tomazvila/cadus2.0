@@ -1833,7 +1833,7 @@ fn identifier_tokens(text: &str) -> BTreeSet<String> {
 /// `is 16.`, because the point ends a sentence; `2` does not stand inside `1/2`,
 /// because the slash carries the numerator; and `0` does not stand inside `0.5`,
 /// because the point carries the decimal.
-fn contains_token(text: &str, token: &str) -> bool {
+pub(crate) fn contains_token(text: &str, token: &str) -> bool {
     if token.is_empty() {
         return false;
     }

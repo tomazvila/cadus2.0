@@ -16,6 +16,7 @@ pub mod config;
 pub mod curriculum;
 pub mod event;
 pub mod fire;
+pub mod instruction;
 pub mod learner;
 pub mod numeric;
 pub mod pool;

@@ -59,13 +59,22 @@
 //! [`Report::alert`]; the alert stops nothing. `crate::authoring::cost` holds
 //! the rules.
 //!
+//! # The three gates the loop runs
+//!
+//! One loop serves every kind, and the kind picks the gate ([`verify_kind`]):
+//! `template` goes to `cadus_core::template::gate_body`, `teach` to
+//! `cadus_core::instruction::gate_teach`, and `hint_ladder` to
+//! `cadus_core::instruction::gate_hint_ladder` (unit R6). Every gate returns the
+//! same [`Rejection`], so the retry block carries a literal message whatever the
+//! kind is.
+//!
 //! # What this unit does not do
 //!
-//! Kinds `teach`, `hint_ladder` and `diagnosis` have no gate in
-//! `cadus_core::template` yet, and a loop with no gate would spend tokens on
-//! content nothing can verify. [`author_one`] answers [`Outcome::NoGate`] for
-//! those three kinds and makes zero calls. Units R6 and R7 add the gates.
+//! Kind `diagnosis` has no gate yet, and a loop with no gate would spend tokens
+//! on content nothing can verify. [`author_one`] answers [`Outcome::NoGate`] for
+//! that kind and makes zero calls. Unit R7 adds the gate.
 
+use cadus_core::instruction::{InstructionSpec, gate_hint_ladder, gate_teach};
 use cadus_core::pool::kp_key;
 use cadus_core::template::{
     GateSpec, Rejection, TEMPLATABLE_KINDS, TEMPLATE_VERSION, gate_body, to_body, with_space_size,
@@ -112,12 +121,16 @@ pub const DIGEST_PREFIX: &str = "sha256:";
 pub const NO_ARGUMENTS: &str = "the tool call carried no JSON object of arguments — emit every required field of the tool in \
 one object";
 
+/// The refusal a kind with no gate earns (unit R7).
+pub const NO_GATE: &str =
+    "this kind has no verification gate yet, so nothing verifies the document";
+
 /// What one pass did with one knowledge point and kind.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Outcome {
     /// The bank is full. The pass made no model call.
     Skipped,
-    /// The kind has no gate yet (units R6 and R7). The pass made no model call.
+    /// The kind has no gate yet (unit R7). The pass made no model call.
     NoGate,
     /// The gate accepted a document and the row is `pending`.
     Stored,
@@ -314,6 +327,84 @@ pub fn verify(spec: &AuthoringSpec, arguments: &Value) -> Result<String, Rejecti
     })
 }
 
+/// The tool arguments of an instruction document, as the text its gate reads.
+///
+/// An instruction document carries no server-side field: the serve reader of L4
+/// and L5 refuses an unknown field, so `v` or `topic_id` on a teach body would
+/// serve a `500` instead of a page. The tool arguments are therefore the body,
+/// and the gate is the only thing between them and the table.
+fn instruction_body(arguments: &Value) -> Result<String, Rejection> {
+    if arguments.is_object() {
+        Ok(arguments.to_string())
+    } else {
+        Err(Rejection {
+            code: "tool-arguments",
+            message: NO_ARGUMENTS.to_owned(),
+        })
+    }
+}
+
+/// The refusal a document that the gate accepted but serde cannot write earns.
+fn unwritable(err: &serde_json::Error) -> Rejection {
+    Rejection {
+        code: "tool-arguments",
+        message: format!("the verified document does not write as JSON: {err}"),
+    }
+}
+
+/// Gate one teach page, and write the body the row stores (L4, unit R6).
+///
+/// The written text comes from the GATED document and not from the arguments, so
+/// a field the gate ignores never reaches the row and never reaches the digest.
+///
+/// # Errors
+///
+/// Returns the [`Rejection`] of `cadus_core::instruction::gate_teach`, and the
+/// rejection a tool call with no JSON object earns.
+pub fn verify_teach(spec: &AuthoringSpec, arguments: &Value) -> Result<String, Rejection> {
+    let body = instruction_body(arguments)?;
+    let gate_spec = InstructionSpec {
+        exemplars: &spec.exemplars,
+    };
+    serde_json::to_string(&gate_teach(&body, &gate_spec)?).map_err(|err| unwritable(&err))
+}
+
+/// Gate one hint ladder, and write the body the row stores (L5, unit R6).
+///
+/// # Errors
+///
+/// Returns the [`Rejection`] of `cadus_core::instruction::gate_hint_ladder`, and
+/// the rejection a tool call with no JSON object earns.
+pub fn verify_hint_ladder(spec: &AuthoringSpec, arguments: &Value) -> Result<String, Rejection> {
+    let body = instruction_body(arguments)?;
+    let gate_spec = InstructionSpec {
+        exemplars: &spec.exemplars,
+    };
+    serde_json::to_string(&gate_hint_ladder(&body, &gate_spec)?).map_err(|err| unwritable(&err))
+}
+
+/// The gate of one kind (spec section 2.2, step 2).
+///
+/// # Errors
+///
+/// Returns the [`Rejection`] the kind's gate wrote. The message is the literal
+/// text the next attempt reads.
+pub fn verify_kind(
+    kind: Kind,
+    spec: &AuthoringSpec,
+    arguments: &Value,
+) -> Result<String, Rejection> {
+    match kind {
+        Kind::Template => verify(spec, arguments),
+        Kind::Teach => verify_teach(spec, arguments),
+        Kind::HintLadder => verify_hint_ladder(spec, arguments),
+        Kind::Diagnosis => Err(Rejection {
+            code: "no-gate",
+            message: NO_GATE.to_owned(),
+        }),
+    }
+}
+
 /// How many slots of one knowledge point and kind are occupied (C6).
 ///
 /// An approved row serves; a pending row waits for a human. Both occupy a slot,
@@ -464,7 +555,7 @@ pub async fn author_one(
         alert: false,
     };
 
-    if kind != Kind::Template {
+    if kind == Kind::Diagnosis {
         tracing::info!(kp = %kp_id, kind = kind.as_str(),
                        "authoring: the kind has no gate yet; the pass makes no call");
         return Ok(quiet(Outcome::NoGate, kp_id));
@@ -481,10 +572,13 @@ pub async fn author_one(
     }
 
     // Step 2: a knowledge point the gate can never accept costs nothing. The
-    // gate refuses every document of an undecidable answer kind, so five calls
-    // would buy five copies of one refusal (T3).
+    // TEMPLATE gate refuses every document of an undecidable answer kind, so
+    // five calls would buy five copies of one refusal (T3). A teach page and a
+    // hint ladder carry no answer expression, so the rule is the template's
+    // alone: a knowledge point nothing can grade is still a knowledge point a
+    // page teaches and a ladder supports.
     let mut reasons: Vec<String> = Vec::new();
-    if !TEMPLATABLE_KINDS.contains(&spec.answer_kind) {
+    if kind == Kind::Template && !TEMPLATABLE_KINDS.contains(&spec.answer_kind) {
         let reason = format!(
             "answer kind {} is not symbolically decidable",
             spec.answer_kind
@@ -529,7 +623,7 @@ pub async fn author_one(
             // never saw a document, so the next attempt repeats the message it
             // already had.
             Err(err) => err.to_string(),
-            Ok(arguments) => match verify(spec, &arguments) {
+            Ok(arguments) => match verify_kind(kind, spec, &arguments) {
                 Ok(body) => {
                     let digest = body_digest(&body);
                     // T3: the row carries the count of calls the pass spent and
@@ -639,7 +733,7 @@ pub async fn run_batch(
 mod tests {
     use super::{
         AUTHORING_ATTEMPTS, BANK_TARGET, DIGEST_PREFIX, NO_ARGUMENTS, SINGLE_DOCUMENT, assemble,
-        bank_target, body_digest,
+        bank_target, body_digest, verify_kind, verify_teach,
     };
     use crate::authoring::prompt::{AuthoringSpec, Kind};
     use cadus_core::curriculum::AnswerKind;
@@ -712,5 +806,42 @@ mod tests {
             .expect_err("a string is not an arguments object");
         assert_eq!(rejection.code, "tool-arguments");
         assert_eq!(rejection.message, NO_ARGUMENTS);
+        let instruction = verify_teach(&spec(), &json!("emit_teach"))
+            .expect_err("a string is not an arguments object");
+        assert_eq!(instruction.code, "tool-arguments");
+        assert_eq!(instruction.message, NO_ARGUMENTS);
+    }
+
+    /// The stored text of an instruction document is the GATED document and
+    /// carries no server-side field: the serve reader refuses one (unit R6).
+    #[test]
+    fn a_gated_teach_page_stores_the_document_and_nothing_else() {
+        let body = verify_kind(
+            Kind::Teach,
+            &spec(),
+            &json!({
+                "concept": "A square multiplies a number by itself.",
+                "worked_example": {"problem": "Compute $6^2$.", "steps": ["$6 \\times 6 = 36$."]}
+            }),
+        )
+        .expect("the gate accepts the page");
+
+        assert_eq!(
+            body,
+            r#"{"concept":"A square multiplies a number by itself.","worked_example":{"problem":"Compute $6^2$.","steps":["$6 \\times 6 = 36$."]}}"#
+        );
+    }
+
+    /// A kind with no gate refuses every document, so no unverified body can
+    /// reach the table through [`verify_kind`] (unit R7).
+    #[test]
+    fn a_kind_with_no_gate_refuses_every_document() {
+        let rejection = verify_kind(Kind::Diagnosis, &spec(), &json!({"distractors": []}))
+            .expect_err("the diagnosis kind has no gate");
+        assert_eq!(rejection.code, "no-gate");
+        assert_eq!(
+            rejection.message,
+            "this kind has no verification gate yet, so nothing verifies the document"
+        );
     }
 }
