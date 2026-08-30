@@ -2,6 +2,17 @@
 
 One entry per milestone cycle (HANDOVER.md §2). Newest first.
 
+## M6 — offline authoring pipeline, review tooling, React + TypeScript SPA (2026-08-30, in progress)
+
+Requirement IDs: A2, C6, T2, T3, T5, T6, C5, C1, L4, L5, O3. Plan: `docs/plans/M6.md`. Spec:
+`docs/reference/authoring-and-spa-1.0-spec.md` (§7: units R1–R8, S1–S14). Owner go: 2026-08-30
+(`docs/DECISIONS.md`). Pipeline workflow `wf_ca4db33a-875`: the Rust chain R1 → R2 → (R3 ∥ R4) → R5 →
+(R6 ∥ R7) → R8 and the SPA chain S1 → … → S14 run in parallel; S12 waits for R5. Branches `m6/r<n>`, `m6/s<n>`.
+
+In parallel, unit FIX-D6 (branch `d6/decimal`) implements the owner's D6 ruling of 2026-08-30 (`docs/DECISIONS.md`
+row `D6-dec`): a learner decimal that equals the exact value rounded half-to-even to the typed digits is
+correct-with-`notation`; exact rational arithmetic, no float; the 240 M2 divergence pairs get pinned counts.
+
 ## M5 — HTTP API, session state, deterministic grading, async diagnosis, model-call log (2026-08-27 to 2026-08-30, closed)
 
 Requirement IDs: A3, A4, C1–C4, R2, R4, L1–L6, T1–T6. Plan: `docs/plans/M5.md`. Spec:
