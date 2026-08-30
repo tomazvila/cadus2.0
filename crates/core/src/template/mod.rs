@@ -10,7 +10,7 @@
 //! **No model call runs here, at authoring time or at serve time (T1).** No float
 //! enters any value (D6). No step panics on any document (C4).
 //!
-//! # The seven pieces
+//! # The eight pieces
 //!
 //! | Module | What it owns |
 //! |---|---|
@@ -21,6 +21,7 @@
 //! | [`eval`] | the exact evaluator of `answer_expr` and the answer writer |
 //! | [`draw`] | the seeded draws and the candidate stream |
 //! | [`gate`] | the verification gate: every check, with the reason it writes |
+//! | [`distractor`] | the `diagnosis` document of A4: its gate, and the match the grade path runs |
 //!
 //! # The path of one instance
 //!
@@ -48,6 +49,7 @@
 //!   never returns the violating tuple.
 
 pub mod constraint;
+pub mod distractor;
 pub mod document;
 pub mod domain;
 pub mod draw;
@@ -58,6 +60,10 @@ pub mod render;
 pub use constraint::{
     Cmp, Constraint, ConstraintError, Term, all_hold, constraint_params, eval_term, holds,
     term_params,
+};
+pub use distractor::{
+    DIAGNOSIS_VERSION, DiagnosisDoc, KIND_DIAGNOSIS, Preauthored, gate_diagnosis,
+    gate_diagnosis_body, keep_known_tags, match_answer, read_distractors, to_diagnosis_body,
 };
 pub use document::{
     Compiled, Distractor, Instance, InstantiateError, Sample, TEMPLATE_VERSION, TemplateDoc,

@@ -684,14 +684,18 @@ async fn a_rejected_body_is_not_resurrected_as_pending() {
     .await;
 }
 
-/// The three kinds with no gate make no call and store nothing (units R6, R7).
+/// The two kinds with no gate make no call and store nothing (unit R6).
+///
+/// `diagnosis` left this list in unit R7, which added its gate
+/// (`cadus_core::template::distractor`); `crates/worker/tests/authoring_distractor.rs`
+/// holds its pass.
 #[tokio::test]
 async fn a_kind_with_no_gate_makes_no_call() {
     TestDb::with(|db| async move {
         let fake = FakeModel::start(vec![tool_reply(&good_arguments())]).await;
         let handle = Db::new(db.admin.clone(), DEFAULT_CLIENT_TIMEOUT_MS);
 
-        for kind in [Kind::Teach, Kind::HintLadder, Kind::Diagnosis] {
+        for kind in [Kind::Teach, Kind::HintLadder] {
             let report = author_one(&handle, &fake.job(), kind, &spec())
                 .await
                 .unwrap();

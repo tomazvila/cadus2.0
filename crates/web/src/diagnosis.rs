@@ -50,16 +50,14 @@ use axum::extract::State;
 use axum::http::StatusCode;
 use axum::response::sse::{Event as SseEvent, KeepAlive, Sse};
 use axum::routing::get;
-use cadus_core::answer::check::{Outcome, check};
 use cadus_core::config::Config;
 use cadus_core::curriculum::AnswerKind;
 use cadus_core::pool::kp_key;
-use cadus_core::template::Distractor;
+use cadus_core::template::{Preauthored, match_answer, read_distractors};
 use cadus_store::diagnosis::{
     JOB_CAPPED, JOB_DONE, JOB_FAILED, JobPayload, JobRow, Notice, PAYLOAD_VERSION, enqueue, job,
 };
 use cadus_store::{Db, begin_tenant};
-use serde::Deserialize;
 use serde_json::{Value, json};
 use sqlx::types::Uuid;
 use sqlx::types::chrono::{DateTime, Utc};
@@ -196,27 +194,13 @@ impl DiagnosisHub {
 // The pre-authored distractor lookup (spec section 6.2)
 // --------------------------------------------------------------------------- //
 
-/// The `content_store` body of a kind-`diagnosis` document.
-///
-/// The reader takes the `distractors` list and nothing else, so the same reader
-/// serves a dedicated diagnosis row and a template document stored under this
-/// kind. An absent list is an empty list, which matches nothing.
-#[derive(Debug, Deserialize)]
-struct DiagnosisDoc {
-    #[serde(default)]
-    distractors: Vec<Distractor>,
-}
-
-/// The pre-authored diagnosis of one wrong answer.
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct Preauthored {
-    /// The authored tag, after the section 5.3 vocabulary filter.
-    pub error_tags: Vec<String>,
-    /// The authored prose the learner reads.
-    pub prose: Option<String>,
-}
-
 /// Find the authored distractor that names this answer (spec section 6.2).
+///
+/// The whole rule lives in `cadus_core::template::distractor`, so the gate that
+/// AUTHORS a distractor list and the grade path that READS one share one
+/// definition of a match and one vocabulary filter (unit R7). This function is
+/// the request tier's spelling of it: it reads the stored body and hands the
+/// distractors over.
 ///
 /// The match runs through [`cadus_core::answer::check`], so `12` and `12.0`
 /// name the same mistake, exactly as they name the same right answer. A
@@ -234,23 +218,7 @@ pub fn match_distractor(
     kind: AnswerKind,
     vocabulary: &[String],
 ) -> Option<Preauthored> {
-    let doc: DiagnosisDoc = serde_json::from_value(body.clone()).ok()?;
-    let hit = doc.distractors.iter().find(|distractor| {
-        matches!(
-            check(&distractor.answer, answer, kind),
-            Outcome::Decided(verdict) if verdict.correct
-        )
-    })?;
-    let error_tags: Vec<String> = vocabulary
-        .iter()
-        .filter(|tag| *tag == &hit.error_tag)
-        .cloned()
-        .collect();
-    let prose = hit.note.clone().filter(|note| !note.trim().is_empty());
-    if error_tags.is_empty() && prose.is_none() {
-        return None;
-    }
-    Some(Preauthored { error_tags, prose })
+    match_answer(&read_distractors(body), answer, kind, vocabulary)
 }
 
 // --------------------------------------------------------------------------- //

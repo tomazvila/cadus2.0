@@ -1911,7 +1911,7 @@ pub(crate) fn py_str(text: &str) -> String {
 }
 
 /// Write a name list the way Python writes a sorted list of strings.
-fn py_list(items: &[String]) -> String {
+pub(crate) fn py_list(items: &[String]) -> String {
     let written: Vec<String> = items.iter().map(|item| py_str(item)).collect();
     format!("[{}]", written.join(", "))
 }
