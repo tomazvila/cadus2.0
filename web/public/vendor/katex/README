@@ -1,0 +1,17 @@
+KaTeX 0.17.0 — vendored.
+
+Source: the 1.0 tree at /home/deploy/dev/cadus/static/vendor/katex, copied byte for byte.
+Files: katex.min.js (UMD), auto-render.min.js (the extension), katex.min.css, fonts/*.woff2
+(woff2 only — the npm package also ships woff and ttf, 1.5 MB against 600 KB).
+
+Why this tree and not the npm package (spec section 4.3):
+
+- index.html loads the two scripts as UMD globals, katex.min.js FIRST. auto-render reads
+  `katex.ParseError` at load; the reverse order captures `undefined`, every render throws,
+  and every problem prints raw LaTeX.
+- The stylesheet stays a <link> to this tree, ahead of the app bundle, so the app's
+  `.problem-text .katex` override keeps the cascade.
+- The files sit under `public/`, so Vite copies them verbatim. A build never rewrites,
+  hashes, or inlines them, and `font-src 'self'` (no `data:`) stays satisfied.
+
+Do not edit these files. To move to another KaTeX release, replace the whole directory.
