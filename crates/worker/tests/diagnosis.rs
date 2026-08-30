@@ -18,6 +18,9 @@
 //! 7. a truncation retry writes two rows;
 //! 8. `cadus_app` cannot read, write, or `nextval` the table or its sequence.
 //!
+//! The last section holds one more check, from review round 2: a `None` refill
+//! job still runs the diagnosis pass (finding V7).
+//!
 //! Every expected value is a LITERAL: a literal status string, a literal tag
 //! list, a literal row count, a literal NOTIFY payload. Nothing is read back
 //! from the code under test.
@@ -42,6 +45,7 @@ use cadus_store::{DEFAULT_CLIENT_TIMEOUT_MS, Db};
 use cadus_worker::diagnosis::{
     DiagnosisJob, MAX_JOB_ATTEMPTS, Outcome, claim, filter_tags, run_once, sweep,
 };
+use cadus_worker::{WorkerConfig, run_with};
 use serde_json::{Value, json};
 use sqlx::PgPool;
 use sqlx::postgres::PgListener;
@@ -1141,6 +1145,80 @@ async fn the_app_role_reads_the_ledger_totals_and_no_row() {
         assert_eq!(jobs.len(), 1);
         assert_eq!(jobs[0].status, "done");
         assert_eq!(jobs[0].jobs, 1);
+    })
+    .await;
+}
+
+// --------------------------------------------------------------------------- //
+// The tick loop reaches the diagnosis pass (V7)
+// --------------------------------------------------------------------------- //
+
+/// A `None` refill job must not skip the diagnosis pass.
+///
+/// `run_with` read a `None` refill as a `continue`, so the tick returned to the
+/// heartbeat and step 5 never ran. `run` itself passes `None` for both jobs, so
+/// a `None` refill is a legal input that means "skip the refill pass" and
+/// nothing more.
+///
+/// The loop below runs with a queued row and no refill job. The first tick
+/// claims the row, calls the fake endpoint and bills one ledger row; a later
+/// tick finds the queue empty and calls nobody. Every value below is a literal:
+/// the status text, the call count, and the one ledger row.
+#[tokio::test]
+async fn a_none_refill_job_still_runs_the_diagnosis_pass() {
+    TestDb::with(|db| async move {
+        let user = db.seed_user("looped@example.test").await;
+        let id = enqueue(&db.admin, user, "task-1", &payload(Some("session-1"))).await;
+        let server = FakeModel::start(vec![(
+            200,
+            tool_reply("{\"error_tags\":[\"sign-error\"],\"prose\":\"Watch the sign.\"}"),
+        )])
+        .await;
+        let mut job = server.job(0);
+        let handle = Db::new(db.admin.clone(), DEFAULT_CLIENT_TIMEOUT_MS);
+        let cfg = WorkerConfig {
+            tick: Duration::from_millis(50),
+        };
+
+        let ticks = run_with(
+            &handle,
+            &cfg,
+            None,
+            Some(&mut job),
+            tokio::time::sleep(Duration::from_millis(400)),
+        )
+        .await
+        .unwrap();
+
+        assert!(
+            ticks >= 2,
+            "the loop must reach at least 2 ticks in 400 ms, it reached {ticks}"
+        );
+        let (status, attempts, result) = row_of(&db.admin, id).await;
+        assert_eq!(status, "done", "the tick loop must finish the queued row");
+        assert_eq!(attempts, 1, "one claim finished the row");
+        assert_eq!(result.unwrap()["error_tags"], json!(["sign-error"]));
+        assert_eq!(
+            server.calls().len(),
+            1,
+            "one queued row is one model call, and an empty queue calls nobody"
+        );
+        assert_eq!(
+            ledger(&db.admin).await,
+            vec![Ledger {
+                purpose: "diagnosis".to_string(),
+                model_id: "qwen3.6".to_string(),
+                provider: None,
+                user_id: Some(user),
+                session_id: Some("session-1".to_string()),
+                cached: 0,
+                uncached: 500,
+                output: 60,
+                reasoning: 0,
+                cost: None,
+                request_id: Some("gen-1".to_string()),
+            }]
+        );
     })
     .await;
 }
