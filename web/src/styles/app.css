@@ -515,6 +515,106 @@ p { margin: 0.4rem 0; }
 .map-list-group ul { margin: 0.4rem 0 0; padding-left: 1.2rem; }
 .map-list-group li { padding: 0.15rem 0; }
 
+/* ---- the two operator screens (S12) ---- */
+/* The queue and the tables go wider than a reading column: `--maxw` is set for prose, and a
+   five-column table inside it wraps every cell. Both screens opt out, as the map does. */
+.view:has(.view-ops), .view:has(.view-review) { max-width: min(1400px, 96vw); }
+
+.admin-head { display: flex; align-items: baseline; gap: 0.8rem; margin-bottom: 0.9rem; }
+.admin-head h1 { margin: 0; font-size: 1.5rem; }
+/* The keyboard legend sits between the heading and the button, and the button stays right. */
+.review-keys { margin: 0; }
+.admin-head .btn { margin-left: auto; }
+.admin-card { margin-bottom: 1rem; }
+
+/* A wide table scrolls INSIDE its own box. Without this the page scrolls sideways and the
+   topbar goes with it. */
+.table-scroll { overflow-x: auto; }
+.admin-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+.admin-table th, .admin-table td {
+  text-align: left; padding: 0.45rem 0.6rem; border-bottom: 1px solid var(--border);
+  vertical-align: top; white-space: nowrap;
+}
+.admin-table thead th { font-size: 0.78rem; color: var(--muted); font-weight: 600; }
+.admin-table tfoot th, .admin-table tfoot td { border-bottom: 0; font-weight: 650; }
+.admin-table .chip { margin-right: 0.3rem; }
+
+/* The caption a sighted reader does not need and a screen reader does. It is clipped rather
+   than `display: none`, which would take it out of the accessibility tree as well. */
+.visually-hidden {
+  position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0;
+  overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0;
+}
+
+/* The refusal block. It is the whole screen when it shows, so it needs no frame of its
+   own — `.empty` centers it — and it carries no accent: a refusal is not an error. */
+.admin-refused h2 { font-size: 1.2rem; }
+.admin-refused p { max-width: 46ch; margin-left: auto; margin-right: auto; }
+
+/* ---- the gate notes (A6) ---- */
+.gate-note {
+  border: 1px solid var(--border); border-radius: 10px;
+  padding: 0.6rem 0.8rem; margin-top: 0.6rem;
+}
+.gate-head { margin: 0 0 0.2rem; font-size: 0.85rem; }
+.gate-line { margin: 0.2rem 0; font-size: 0.88rem; }
+/* Three states, three colors, and the sampled one is a warning on purpose: a sampled space
+   is where a bad corner survives (spec section 3.2). */
+.gate-good { color: var(--good); }
+.gate-warn { color: var(--warn); }
+.gate-bad { color: var(--bad); }
+.gate-notes { margin: 0.3rem 0 0; padding-left: 1.2rem; color: var(--muted); }
+
+/* ---- the review screen ---- */
+/* The queue on the left, the document on the right. It collapses to one column below the
+   width where a 320px queue plus a document is unreadable. */
+.review-layout { display: grid; grid-template-columns: minmax(260px, 340px) 1fr; gap: 1rem; }
+.review-queue { display: flex; flex-direction: column; gap: 0.8rem; max-height: 78vh; overflow-y: auto; }
+.review-group { border: 1px solid var(--border); border-radius: var(--radius); padding: 0.6rem; }
+.review-group-head {
+  display: flex; align-items: baseline; justify-content: space-between; gap: 0.5rem;
+  margin: 0 0 0.3rem; font-size: 0.9rem;
+}
+.review-rows { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.35rem; }
+.review-row {
+  display: grid; gap: 0.25rem; width: 100%; min-height: 44px; text-align: left;
+  padding: 0.5rem 0.6rem; border: 1px solid var(--border); border-radius: 10px;
+  background: var(--surface); color: var(--text); font: inherit; cursor: pointer;
+}
+.review-row:hover { background: var(--surface-2); }
+.review-row:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+/* The selected row is marked by a border AND by `aria-current`, so the state is not carried
+   by color alone. */
+.review-row.is-selected { border-color: var(--accent); background: var(--accent-weak); }
+.review-row-top { display: flex; flex-wrap: wrap; gap: 0.25rem; }
+.review-row-summary { font-size: 0.85rem; color: var(--muted); overflow-wrap: anywhere; }
+
+.review-pane { min-width: 0; }
+.review-actions { display: flex; gap: 0.5rem; margin-bottom: 0.8rem; }
+.review-doc-head { margin-bottom: 0.1rem; font-size: 1.15rem; }
+.review-digest { margin: 0 0 0.5rem; overflow-wrap: anywhere; }
+.review-chips { display: flex; flex-wrap: wrap; gap: 0.3rem; margin: 0 0 0.6rem; }
+.review-reason-line { color: var(--bad); font-size: 0.9rem; }
+/* The instances come first and are the largest thing on the pane. See ReviewDocument.tsx. */
+.instance-list { margin: 0.4rem 0 0; padding-left: 1.4rem; display: grid; gap: 0.5rem; }
+.instance {
+  border-bottom: 1px solid var(--border); padding-bottom: 0.5rem;
+}
+.instance-text { font-size: 1rem; overflow-x: auto; }
+.instance-answer { font-size: 0.9rem; color: var(--good); overflow-x: auto; }
+.review-body { margin-top: 0.8rem; }
+.review-body summary { cursor: pointer; color: var(--muted); font-size: 0.9rem; min-height: 44px; }
+.review-body summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.review-body pre {
+  margin: 0.4rem 0 0; padding: 0.6rem; overflow-x: auto;
+  background: var(--bg-dark); border-radius: 10px;
+}
+
+@media (max-width: 900px) {
+  .review-layout { grid-template-columns: 1fr; }
+  .review-queue { max-height: none; }
+}
+
 /* ---- responsive ---- */
 @media (max-width: 400px) {
   .view { padding: 1rem 0.75rem 4rem; }

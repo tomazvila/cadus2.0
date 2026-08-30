@@ -151,6 +151,9 @@ export async function bootWith(
         initialUser={user}
         authMode={resetToken ? 'reset' : authModeFor(pathname)}
         resetToken={resetToken ?? ''}
+        // Only the two operator routes read it (`app/routes.ts`). Every other path,
+        // `/verify` included, renders the same signed-in branch it rendered before.
+        pathname={pathname}
       />
     </StrictMode>,
   );

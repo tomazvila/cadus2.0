@@ -76,6 +76,9 @@ export type ErrorCode =
   // The diagnosis and operator routes (`diagnosis.rs`, `operator.rs`).
   | 'unknown_diagnosis'
   | 'forbidden'
+  // The review surface (`admin.rs`). The deployment configured no admin connection, so
+  // the two review writes are closed while the two reads still answer.
+  | 'admin_path_unavailable'
   /** Synthesized when `fetch` itself rejects. The server never sends it. */
   | 'network';
 
@@ -553,6 +556,94 @@ export interface OperatorFlagsResponse {
 }
 
 // ---------------------------------------------------------------------------
+// The review surface (C6, spec section 3.2)
+// ---------------------------------------------------------------------------
+
+/** The three filters `GET /api/admin/content` reads. An absent key applies no filter. */
+export interface ContentFilter {
+  /** `pending`, `approved`, or `rejected`. */
+  status?: string;
+  /** `template`, `teach`, `hint_ladder`, or `diagnosis`. */
+  kind?: string;
+  /** One serving key, `topic:point`. */
+  kp?: string;
+}
+
+/**
+ * One line of the review queue (`admin.rs` `item_json`).
+ *
+ * `authoring_cost_usd` IS A STRING, not a number. The column is `NUMERIC`, the store reads
+ * it as a decimal string, and the handler writes that string through. Parsing it to a
+ * float here would round money the reviewer is asked to approve; the screen sums it as a
+ * number only for a total it labels as such.
+ */
+export interface ReviewItem {
+  digest: string;
+  kp_id: string;
+  kind: string;
+  status: string;
+  authoring_attempts: number;
+  /** A decimal string, or null when no T6 row priced the run. */
+  authoring_cost_usd: string | null;
+  /** RFC 3339. */
+  created_at: string;
+  /** The first `SUMMARY_CHARS` characters of the statement (`admin.rs` `summary`). */
+  summary: string;
+  approved_templates: number;
+  /** True while this knowledge point holds fewer than `bank_target` approved templates. */
+  bank_warning: boolean;
+}
+
+/** `GET /api/admin/content` — the queue, plus the two bounds it was built under. */
+export interface ReviewListResponse {
+  items: ReviewItem[];
+  /** `cadus_store::content::BANK_TARGET`. The screen never hard-codes 3. */
+  bank_target: number;
+  /** `cadus_store::content::LIST_LIMIT`. A full page means the queue is longer. */
+  limit: number;
+}
+
+/** One rendered instance of a pending template: the statement and its computed answer. */
+export interface RenderedInstance {
+  text: string;
+  answer: string;
+}
+
+/**
+ * `GET /api/admin/content/{digest}` — the document a reviewer decides on.
+ *
+ * `gate` and `instances` belong to a template. Every other kind carries `gate: null` and an
+ * empty instance list, because there is no statement to render and no answer to compute.
+ */
+export interface ReviewDocument extends ReviewItem {
+  /** RFC 3339, or null while the document is not approved. */
+  approved_at: string | null;
+  /** The reason a reviewer refused it, or null. */
+  review_reason: string | null;
+  /** The authored payload, verbatim. The screen renders it and rewrites nothing. */
+  body: unknown;
+  gate: OperatorGateNote | null;
+  instances: RenderedInstance[];
+  /** Why the instance list is empty, when it is. Never an empty list with no cause (A6). */
+  instances_note: string | null;
+  /** `admin.rs` `SAMPLE_INSTANCES`. */
+  sample_instances: number;
+}
+
+/** `POST /api/admin/content/{digest}/approve`. */
+export interface ApproveResponse {
+  digest: string;
+  status: string;
+  approved_at: string | null;
+}
+
+/** `POST /api/admin/content/{digest}/reject`. */
+export interface RejectResponse {
+  digest: string;
+  status: string;
+}
+
+// ---------------------------------------------------------------------------
 // The client surface
 // ---------------------------------------------------------------------------
 
@@ -612,6 +703,14 @@ export interface ApiClient {
   // The operator view and the export.
   getOperatorFlags(kp?: string): Promise<OperatorFlagsResponse>;
   downloadExport(): Promise<void>;
+
+  // The review surface (C6). All four refuse a non-admin session with `403 forbidden`,
+  // and that refusal is what the two admin screens render (REVIEW-admin).
+  listContent(filter?: ContentFilter): Promise<ReviewListResponse>;
+  getContent(digest: string): Promise<ReviewDocument>;
+  approveContent(digest: string): Promise<ApproveResponse>;
+  /** The reason is required by the service and by the screen (REVIEW-reason). */
+  rejectContent(digest: string, reason: string): Promise<RejectResponse>;
 }
 
 // ---------------------------------------------------------------------------
@@ -687,6 +786,14 @@ export const ROUTES: readonly RouteRow[] = [
   { method: 'GET', path: '/api/diagnosis/{id}', auth: 'S', via: 'method', client: 'getDiagnosis' },
 
   { method: 'GET', path: '/api/operator/flags', auth: 'S', via: 'method', client: 'getOperatorFlags' },
+
+  // The C6 review surface. Admin only, and the service is the gate: `users.is_admin` is
+  // outside the runtime role's column grants, so no reply the SPA reads carries the flag
+  // and no client-side check could stand in for these four `403`s.
+  { method: 'GET', path: '/api/admin/content', auth: 'S', via: 'method', client: 'listContent' },
+  { method: 'GET', path: '/api/admin/content/{digest}', auth: 'S', via: 'method', client: 'getContent' },
+  { method: 'POST', path: '/api/admin/content/{digest}/approve', auth: 'S', via: 'method', client: 'approveContent' },
+  { method: 'POST', path: '/api/admin/content/{digest}/reject', auth: 'S', via: 'method', client: 'rejectContent' },
 ];
 
 /**

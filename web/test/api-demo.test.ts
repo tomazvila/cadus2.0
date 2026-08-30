@@ -12,7 +12,7 @@ describe('the demo client', () => {
   it('F-F6-1: implements every method the route table names', () => {
     const demo = createDemoApi() as unknown as Record<string, unknown>;
     const named = ROUTES.filter((r) => r.via !== 'none').map((r) => String(r.client));
-    expect(named.length).toBe(29);
+    expect(named.length).toBe(33);
     for (const member of named) {
       expect(typeof demo[member], `the demo lacks ${member}`).toBe('function');
     }

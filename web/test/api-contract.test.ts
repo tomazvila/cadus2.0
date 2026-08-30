@@ -17,10 +17,10 @@ const clients: Array<[string, Record<string, unknown>]> = [
 ];
 
 describe('the route table mirrors create_app', () => {
-  it('holds all 31 routes of create_app', () => {
-    expect(ROUTES).toHaveLength(31);
-    expect(ROUTES.filter((r) => r.method === 'GET')).toHaveLength(15);
-    expect(ROUTES.filter((r) => r.method === 'POST')).toHaveLength(16);
+  it('holds all 35 routes of create_app', () => {
+    expect(ROUTES).toHaveLength(35);
+    expect(ROUTES.filter((r) => r.method === 'GET')).toHaveLength(17);
+    expect(ROUTES.filter((r) => r.method === 'POST')).toHaveLength(18);
   });
 
   it('names every path exactly once', () => {

@@ -7,6 +7,7 @@
 import { downloadFile, request } from './client';
 import type {
   ApiClient,
+  ApproveResponse,
   DiagnosisJob,
   EnrollResponse,
   GraphResponse,
@@ -19,6 +20,9 @@ import type {
   OkResponse,
   OperatorFlagsResponse,
   ReadyResponse,
+  RejectResponse,
+  ReviewDocument,
+  ReviewListResponse,
   ServedProblem,
   SessionEndResponse,
   SessionPlanResponse,
@@ -117,4 +121,27 @@ export const api: ApiClient = {
     ),
   // Through the cookie, never a token in the URL (SEC-cookie, DEP-3).
   downloadExport: () => downloadFile('/export', EXPORT_FALLBACK_NAME),
+
+  // --- The review surface (C6) --------------------------------------------
+  // A filter key with no value is OMITTED, never sent empty: `?status=` reaches the
+  // handler as the empty string, and `ReviewFilter { status: Some("") }` matches no row.
+  // The screen's "all" choice must therefore send no key at all.
+  listContent: (filter = {}) => {
+    const query = new URLSearchParams();
+    if (filter.status) query.set('status', filter.status);
+    if (filter.kind) query.set('kind', filter.kind);
+    if (filter.kp) query.set('kp', filter.kp);
+    const suffix = query.toString();
+    return request<ReviewListResponse>(
+      'GET',
+      suffix ? `/admin/content?${suffix}` : '/admin/content',
+    );
+  },
+  getContent: (digest) => request<ReviewDocument>('GET', `/admin/content/${seg(digest)}`),
+  // The body is ignored by the handler, and `{}` is sent anyway: a POST with no body
+  // carries no `Content-Type`, and the CSRF layer reads a simple request differently.
+  approveContent: (digest) =>
+    request<ApproveResponse>('POST', `/admin/content/${seg(digest)}/approve`, {}),
+  rejectContent: (digest, reason) =>
+    request<RejectResponse>('POST', `/admin/content/${seg(digest)}/reject`, { reason }),
 };

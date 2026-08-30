@@ -106,6 +106,9 @@ function demoTask(): PlanTask {
   };
 }
 
+/** The message the four review routes refuse a demo caller with (C6). */
+const DEMO_ADMIN_ONLY = 'This route serves an admin account only.';
+
 /** A refusal the demo cannot honestly answer. Same shape as a served one. */
 function refuse(status: number, code: string, message: string): never {
   throw new ApiError(status, code, message);
@@ -335,5 +338,16 @@ export function createDemoApi(): ApiClient {
 
     downloadExport: async () =>
       refuse(403, 'forbidden', 'The demo keeps no event log to export.'),
+
+    // The review surface (C6). The demo account is NOT an admin, so all five admin routes
+    // — the operator flags above and these four — answer the same `403 forbidden` the
+    // service answers a signed-in learner. That is what makes `?demo=1` an honest
+    // rehearsal of the non-admin path the two admin screens have to render (REVIEW-admin),
+    // and it is why the demo defines no fixture queue: a demo that showed a review queue
+    // would let a screen be built against a state no non-admin can reach.
+    listContent: async () => refuse(403, 'forbidden', DEMO_ADMIN_ONLY),
+    getContent: async () => refuse(403, 'forbidden', DEMO_ADMIN_ONLY),
+    approveContent: async () => refuse(403, 'forbidden', DEMO_ADMIN_ONLY),
+    rejectContent: async () => refuse(403, 'forbidden', DEMO_ADMIN_ONLY),
   };
 }
