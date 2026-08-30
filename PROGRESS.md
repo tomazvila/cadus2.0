@@ -13,6 +13,14 @@ In parallel, unit FIX-D6 (branch `d6/decimal`) implements the owner's D6 ruling 
 row `D6-dec`): a learner decimal that equals the exact value rounded half-to-even to the typed digits is
 correct-with-`notation`; exact rational arithmetic, no float; the 240 M2 divergence pairs get pinned counts.
 
+FIX-D6 merged (`7830b47`, gate on its branch 1,610 tests): rung 5 of `cadus_core::answer::check` and the module
+`cadus_core::answer::rounding`. Of the 240 pairs: 151 correct-with-notation, 5 stay wrong (three nested radicals,
+two fractions), 84 name `pi` or `e` and get no verdict (a miss at the route, spec 5.1). Class-3 agreement with 1.0:
+16,498/16,498. D6 follow-ups for the M6 backlog:
+- A nested radical (`√(2+√3)/2` vs `0.9659258263`) canonicalizes to a `Poly` over a `sqrt` call and stays wrong although the decimal is the exact rounding; extend the rule to a symbol-free `Poly` of `sqrt` calls.
+- `pi` and `e` against a decimal get no verdict; rational interval bounds for the two constants make the case decidable (`3.14` for `π` is the exact rounding to 2 digits).
+- `notation_note` (the prose "Correct value. One note on form: ...") has no caller: the M5 reply carries the `notation` tag only. Wiring the note into the reply is an API change (web-service spec 2.1).
+
 ## M5 — HTTP API, session state, deterministic grading, async diagnosis, model-call log (2026-08-27 to 2026-08-30, closed)
 
 Requirement IDs: A3, A4, C1–C4, R2, R4, L1–L6, T1–T6. Plan: `docs/plans/M5.md`. Spec:
