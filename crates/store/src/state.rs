@@ -48,6 +48,10 @@
 //!
 //! [`load_events_after`] is the read that makes the forward fold cheap, and
 //! `crates/store/tests/bench_long_log.rs` is the gate that keeps it cheap.
+//!
+//! [`load_session_view`] reads the view alone, under the same two branches. The
+//! grade path calls it for the repeat-fail map, which no session window holds
+//! (M5 review 2, finding V2).
 
 use std::collections::{BTreeMap, BTreeSet};
 
@@ -337,6 +341,25 @@ pub struct SessionView {
     pub last_drill_at: BTreeMap<String, i64>,
     /// The task ids a `review_result` already closed (`service.py:1261`).
     pub closed_task_ids: BTreeSet<String>,
+    /// Topic id to the knowledge points a FAILED `lesson_result` stopped at,
+    /// over the whole log (`_topic_already_failed`, `service.py:495-513`).
+    ///
+    /// The repeat-fail peel-back of section 8 reads it. A second failure of one
+    /// lesson is only reachable in a LATER session, because a lesson task id is
+    /// `{session}-lesson-{topic}` and the closed task stays done for the rest of
+    /// its session, so the open-session window cannot answer the question and
+    /// this whole-log map is the only place the earlier failure stands (M5
+    /// review 2, finding V2).
+    ///
+    /// A result with no `failed_at_kp` folds nothing: the peel-back names the
+    /// key prerequisites of ONE knowledge point, and a topic that authors none
+    /// has no prerequisite to peel back to.
+    ///
+    /// The field carries no `serde` default ON PURPOSE. A document written
+    /// before this map does not read back, [`load_learner_model`] then treats it
+    /// as absent, and the next fold rebuilds the view from the whole log. That
+    /// is why migration 0010 needs no backfill.
+    pub lesson_failures: BTreeMap<String, BTreeSet<String>>,
     /// The distinct UTC dates that carry an attempt (`service.py:1099`).
     pub active_study_days: BTreeSet<NaiveDate>,
     /// The trailing run of quizzes scored at or above [`QUIZ_HIGH_SCORE`].
@@ -358,6 +381,7 @@ impl Default for SessionView {
             learned_at: BTreeMap::new(),
             last_drill_at: BTreeMap::new(),
             closed_task_ids: BTreeSet::new(),
+            lesson_failures: BTreeMap::new(),
             active_study_days: BTreeSet::new(),
             quiz_high_score_streak: 0,
             has_diagnostic: false,
@@ -414,6 +438,11 @@ impl SessionView {
                     self.learned_at
                         .entry(body.topic.as_str().to_string())
                         .or_insert_with(|| body.ts.micros());
+                } else if let Some(kp) = body.failed_at_kp.as_ref() {
+                    self.lesson_failures
+                        .entry(body.topic.as_str().to_string())
+                        .or_default()
+                        .insert(kp.as_str().to_string());
                 }
                 self.credit(body.xp);
             }
@@ -455,6 +484,19 @@ impl SessionView {
         let mut view = Self::default();
         view.fold(rows);
         view
+    }
+
+    /// Whether a FAILED `lesson_result` already stopped `topic` at `kp`.
+    ///
+    /// This is the repeat test of the peel-back (`_topic_already_failed`,
+    /// `service.py:495-513`). A caller that names no knowledge point gets
+    /// `false`: [`Self::lesson_failures`] folds no result without one.
+    #[must_use]
+    pub fn already_failed(&self, topic: &str, kp: Option<&str>) -> bool {
+        let Some(kp) = kp else { return false };
+        self.lesson_failures
+            .get(topic)
+            .is_some_and(|points| points.contains(kp))
     }
 
     /// The XP the log credits inside one session, rounded to two places.
@@ -507,6 +549,16 @@ pub struct CachedModel {
     pub config_hash: String,
 }
 
+/// Read one stored `session_view` document.
+///
+/// A document of another shape or another version is treated as ABSENT, not as
+/// a failure: the caller then folds the view from the log and writes a fresh
+/// one. That rule is why a new field of [`SessionView`] needs no migration.
+fn decode_view(doc: Option<Json>) -> Option<SessionView> {
+    doc.and_then(|doc| serde_json::from_value::<SessionView>(doc).ok())
+        .filter(|view| view.v == SESSION_VIEW_VERSION)
+}
+
 /// Read the cached learner model. `None` means the learner has none yet.
 ///
 /// # Errors
@@ -533,12 +585,7 @@ pub async fn load_learner_model(
     let mut model: LearnerModel = serde_json::from_value(row.model)
         .map_err(|err| StoreError::Document(format!("learner_models.model: {err}")))?;
     model.through_seq = Some(row.through_seq);
-    // A view of another shape or another version is treated as absent, not as a
-    // failure: the caller then replays the whole log and writes a fresh one.
-    let view = row
-        .session_view
-        .and_then(|doc| serde_json::from_value::<SessionView>(doc).ok())
-        .filter(|view| view.v == SESSION_VIEW_VERSION);
+    let view = decode_view(row.session_view);
     Ok(Some(CachedModel {
         model,
         view,
@@ -710,6 +757,72 @@ pub async fn project_current(
     replay(rows, input)
 }
 
+/// Read this tenant's [`SessionView`], folded through the head of the log.
+///
+/// The grade path calls this for the whole-log answers its verdict needs, which
+/// the open-session window cannot give (M5 review 2, finding V2). It folds no
+/// learner model, so it costs less than [`project_current`].
+///
+/// # The two branches
+///
+/// 1. **Resume.** The row carries a view and its cursor sits on a line the log
+///    still holds. The read is the `through_seq` and the `session_view` of one
+///    `learner_models` row, plus the events from the cursor line up, and the
+///    view folds forward over them, so the cost never grows with the lifetime
+///    event count (F15, F18).
+/// 2. **Full replay.** No row, no view, a cursor the log cannot show, or a
+///    `regraded` above the cursor. One whole-log read and one whole-log fold.
+///
+/// The `projector_version` and the `config_hash` gate the MODEL and not this
+/// document. [`SessionView`] folds the raw log and reads no config, so a drift
+/// of either one leaves the stored view correct through its own cursor.
+///
+/// # Errors
+///
+/// Returns [`StoreError::Db`] when a statement fails or when a payload is not an
+/// event of this build.
+pub async fn load_session_view(
+    tx: &mut Transaction<'_, Postgres>,
+    user_id: Uuid,
+) -> Result<SessionView, StoreError> {
+    // The read asks for the cursor and the view alone. It leaves the model
+    // document in the row, so this call never decodes the FIRe states a second
+    // time on a path that already folded them.
+    let row = sqlx::query!(
+        r#"
+        SELECT through_seq AS "through_seq!", session_view
+        FROM learner_models WHERE user_id = $1
+        "#,
+        user_id
+    )
+    .fetch_optional(&mut **tx)
+    .await?;
+    let cached = row.and_then(|row| {
+        let cursor = row.through_seq;
+        decode_view(row.session_view).map(|view| (cursor, view))
+    });
+
+    if let Some((through_seq, mut view)) = cached {
+        // The read starts at the cursor LINE, not after it, so the answer proves
+        // the cursor sits on a line the log still holds. That is the anchor rule
+        // of `project_current`, spelled the same way here.
+        let window = load_events_after(tx, user_id, through_seq.saturating_sub(1)).await?;
+        let anchored = through_seq == 0 || window.first().is_some_and(|row| row.seq == through_seq);
+        // A cursor of 0 sits BEFORE the first line, so the whole window is new.
+        let first_new = usize::from(through_seq > 0);
+        let new_rows: &[EventRow] = window.get(first_new..).unwrap_or_default();
+        let corrected = new_rows
+            .iter()
+            .any(|row| matches!(row.event, Event::Regraded(_)));
+        if anchored && !corrected {
+            view.fold(new_rows);
+            return Ok(view);
+        }
+    }
+    let rows = load_events(tx, user_id).await?;
+    Ok(SessionView::of_log(&rows))
+}
+
 /// Fold the log and write the `learner_models` row (spec section 4.3 step 7).
 ///
 /// # Errors
@@ -770,6 +883,8 @@ mod tests {
         QuizResult, ReviewResult, SchemaVersion, Secs, SessionEnd, SessionStart, Slug, TaskServed,
         TaskType, Timestamp, WorkQuality,
     };
+
+    use std::collections::BTreeSet;
 
     use super::{EventRow, SESSION_VIEW_VERSION, SessionView};
 
@@ -935,6 +1050,20 @@ mod tests {
                     task_id: Some("s_2026-01-02a-review-adding-integers".to_string()),
                 }),
             ),
+            row(
+                12,
+                Event::LessonResult(LessonResult {
+                    ts: at(1444),
+                    session: Some("s_2026-01-02a".to_string()),
+                    v: SchemaVersion,
+                    topic: slug("adding-integers"),
+                    passed: false,
+                    failed_at_kp: Some(slug("kp2")),
+                    xp: 0.0,
+                    quality_tier: WorkQuality::NearlyPassable,
+                    assisted: false,
+                }),
+            ),
         ]
     }
 
@@ -960,6 +1089,13 @@ mod tests {
         assert!(
             view.closed_task_ids
                 .contains("s_2026-01-02a-review-adding-integers")
+        );
+        // The failed lesson of line 12 folds into the map; the passed lesson of
+        // line 5 folds into `learned_at` and never here (V2).
+        assert_eq!(view.lesson_failures.len(), 1);
+        assert_eq!(
+            view.lesson_failures.get("adding-integers"),
+            Some(&BTreeSet::from(["kp2".to_string()]))
         );
         assert_eq!(view.study_days().len(), 1);
         assert_eq!(view.quiz_high_score_streak, 1);
@@ -987,6 +1123,47 @@ mod tests {
                 "the fold resumed at line {cut} left another document"
             );
         }
+    }
+
+    /// One failed lesson, with and without a knowledge point.
+    fn failed_lesson(topic: &str, kp: Option<&str>) -> Event {
+        Event::LessonResult(LessonResult {
+            ts: at(8),
+            session: Some("s_2026-01-01a".to_string()),
+            v: SchemaVersion,
+            topic: slug(topic),
+            passed: false,
+            failed_at_kp: kp.map(slug),
+            xp: 0.0,
+            quality_tier: WorkQuality::NearlyPassable,
+            assisted: false,
+        })
+    }
+
+    /// The map folds every FAILED `lesson_result` that names a knowledge point,
+    /// and [`SessionView::already_failed`] answers the repeat test from it (V2).
+    #[test]
+    fn the_failure_map_holds_every_failed_knowledge_point() {
+        let log = vec![
+            row(1, failed_lesson("adding-integers", Some("kp1"))),
+            row(2, failed_lesson("adding-integers", Some("kp2"))),
+            row(3, failed_lesson("adding-integers", Some("kp1"))),
+            row(4, failed_lesson("fractions", None)),
+        ];
+        let view = SessionView::of_log(&log);
+
+        assert_eq!(view.lesson_failures.len(), 1);
+        assert_eq!(
+            view.lesson_failures.get("adding-integers"),
+            Some(&BTreeSet::from(["kp1".to_string(), "kp2".to_string()]))
+        );
+        assert!(view.already_failed("adding-integers", Some("kp1")));
+        assert!(view.already_failed("adding-integers", Some("kp2")));
+        assert!(!view.already_failed("adding-integers", Some("kp3")));
+        // A result with no knowledge point folds nothing, so it never repeats.
+        assert!(!view.already_failed("adding-integers", None));
+        assert!(!view.already_failed("fractions", Some("kp1")));
+        assert!(!view.already_failed("subtracting-integers", Some("kp1")));
     }
 
     /// The document round-trips through the `session_view` column shape.

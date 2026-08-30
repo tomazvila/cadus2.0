@@ -43,6 +43,18 @@
 //!
 //! The H3 unaided re-solve takes the same id with `-rework` after it.
 //!
+//! # The history read (M5 review 2, finding V2)
+//!
+//! ONE decision of this path reads more than the open session: the repeat-fail
+//! peel-back. A lesson task id is `{session}-lesson-{topic}`, and the failed
+//! task is `done` in the D-S6 row for the rest of its own session, so a second
+//! failure of one lesson is only reachable in a LATER session and the window
+//! above can never hold the earlier `lesson_result`.
+//! `cadus_store::state::load_session_view` answers it from the whole-log map
+//! `SessionView::lesson_failures`, which costs one `learner_models` row plus
+//! the events above the fold cursor and never grows with the lifetime event
+//! count.
+//!
 //! A log this build writes is dense, so the number of a new attempt is free. A
 //! log with a gap in it — an operator repair, or a 1.0 log whose ids came from
 //! the problem id (spec section 4.1) — can still put the computed id on a row
@@ -83,7 +95,9 @@ use cadus_core::selector::{
     REMEDIATION_LESSON_FAIL, REMEDIATION_REPEAT_FAIL, Task, remediation_for_repeat_fail,
 };
 use cadus_core::xp::{is_rushing, task_xp};
-use cadus_store::state::{EventRow, append_event, project_and_save};
+use cadus_store::state::{
+    EventRow, SessionView, append_event, load_session_view, project_and_save,
+};
 use serde_json::{Value, json};
 
 use crate::AppState;
@@ -322,6 +336,7 @@ fn advance(
     now: Timestamp,
     attempt: &Attempt,
     prior: &[EventRow],
+    history: &SessionView,
 ) -> Advance {
     if attempt.task_type != TaskType::Lesson {
         return Advance::carry_on();
@@ -355,7 +370,7 @@ fn advance(
     sequence.push(attempt.correct);
 
     if kp_failed(&sequence, cfg) {
-        return lesson_failed(graph, cfg, now, attempt, kp.as_deref(), prior);
+        return lesson_failed(graph, cfg, now, attempt, kp.as_deref(), history);
     }
     if !kp_passed(&sequence) {
         return Advance::carry_on();
@@ -405,7 +420,7 @@ fn lesson_failed(
     now: Timestamp,
     attempt: &Attempt,
     kp: Option<&str>,
-    prior: &[EventRow],
+    history: &SessionView,
 ) -> Advance {
     let quality = attempt.work_quality;
     let expected = graph
@@ -431,10 +446,16 @@ fn lesson_failed(
 
     // A SECOND failure at one knowledge point peels back to its key
     // prerequisites; the first one queues a plain lesson-fail remediation.
-    let repeat = prior.iter().any(|row| {
-        matches!(&row.event, Event::LessonResult(body)
-            if body.topic == attempt.topic && !body.passed && body.failed_at_kp == failed_at_kp)
-    });
+    //
+    // The test reads the WHOLE-LOG map and not the open session (V2): the first
+    // failure closed its lesson task, and that task stays done for the rest of
+    // its own session, so the earlier `lesson_result` always stands in an
+    // earlier session. The map holds the knowledge point of the event, so the
+    // lookup spells the key the same way (`_topic_already_failed`).
+    let repeat = history.already_failed(
+        attempt.topic.as_str(),
+        failed_at_kp.as_ref().map(Slug::as_str),
+    );
     let mut remediation = Vec::new();
     if repeat {
         let queued =
@@ -788,7 +809,13 @@ pub async fn answer(
     }
 
     // Step 7. The lesson advance, its close event, and its remediation.
-    let moved = advance(graph, &content.cfg, now, &recorded, &events);
+    //
+    // The repeat-fail peel-back reads HISTORY, not the open session (V2), so the
+    // advance takes the whole-log session view beside the session window.
+    let history = bound(&state.db, load_session_view(&mut tx, user_id))
+        .await
+        .map_err(|err| failed(&err))?;
+    let moved = advance(graph, &content.cfg, now, &recorded, &events, &history);
     for extra in moved.result.iter().chain(moved.remediation.iter()) {
         bound(&state.db, append_event(&mut tx, user_id, extra, None))
             .await

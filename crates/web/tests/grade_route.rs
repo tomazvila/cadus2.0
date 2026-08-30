@@ -133,8 +133,24 @@ fn topic(id: &str, points: Vec<KnowledgePoint>) -> Topic {
 }
 
 /// The fixture curriculum: one course, one module, two topics. `addition`
-/// authors two knowledge points.
+/// authors two knowledge points, and neither one names a key prerequisite.
 fn graph() -> Curriculum {
+    build_graph(Vec::new())
+}
+
+/// The same fixture, with `subtraction` a KEY prerequisite of `addition/kp1`.
+///
+/// The repeat-fail peel-back queues the key prerequisites of the failed
+/// knowledge point, so a fixture with none can never show the event.
+fn graph_with_key_prereq() -> Curriculum {
+    build_graph(vec![Slug::new("subtraction").unwrap()])
+}
+
+/// The fixture curriculum: one course, one module, two topics. `addition`
+/// authors two knowledge points, and `kp1` names `key_prereqs`.
+fn build_graph(key_prereqs: Vec<Slug>) -> Curriculum {
+    let mut first = kp("kp1", vec![exemplar(PROBLEM_TEXT, EXPECTED_ANSWER)]);
+    first.key_prerequisites = key_prereqs;
     let catalog = Catalog {
         courses: vec![Course {
             id: Slug::new("c1").unwrap(),
@@ -157,7 +173,7 @@ fn graph() -> Curriculum {
                     topic(
                         "addition",
                         vec![
-                            kp("kp1", vec![exemplar(PROBLEM_TEXT, EXPECTED_ANSWER)]),
+                            first,
                             kp("kp2", vec![exemplar("Compute 40 + 2.5.", "42.5")]),
                         ],
                     ),
@@ -176,9 +192,14 @@ fn graph() -> Curriculum {
 
 /// The router of a test, with the fixture curriculum loaded.
 fn app(db: &TestDb) -> Router {
+    router(db, graph())
+}
+
+/// The router of a test, with `arena` loaded.
+fn router(db: &TestDb, arena: Curriculum) -> Router {
     create_app(
         AppState::new(Db::new(db.app.clone(), DEFAULT_CLIENT_TIMEOUT_MS))
-            .with_content(Arc::new(Content::new(graph()))),
+            .with_content(Arc::new(Content::new(arena))),
     )
 }
 
@@ -1925,6 +1946,195 @@ async fn a_serve_answer_chain_numbers_the_attempts_from_the_log() {
                 "s_2026-01-01a-lesson-addition-2".to_string(),
                 "s_2026-01-01a-lesson-addition-3".to_string(),
             ]
+        );
+    })
+    .await;
+}
+
+// --------------------------------------------------------------------------- //
+// The repeat-fail peel-back reads HISTORY (M5 review 2, finding V2)
+// --------------------------------------------------------------------------- //
+
+/// The session that closed one day before [`SESSION`].
+const EARLIER: &str = "s_2025-12-31a";
+
+/// The Unix microsecond instant of 2025-12-31T00:00:00Z.
+const EARLIER_US: i64 = BASE_US - 86_400_000_000;
+
+/// Put one literal event of `user` into the log, at `seq`.
+async fn seed_event(db: &TestDb, user: Uuid, seq: i64, ts_us: i64, session: &str, payload: Value) {
+    let ts = DateTime::<Utc>::from_timestamp_micros(ts_us).unwrap();
+    let kind = payload["type"].as_str().unwrap().to_owned();
+    sqlx::query!(
+        r#"
+        INSERT INTO events (user_id, seq, ts, type, session_id, v, payload)
+        VALUES ($1, $2, $3, $4, $5, 1, $6)
+        "#,
+        user,
+        seq,
+        ts,
+        kind,
+        session,
+        payload
+    )
+    .execute(&db.admin)
+    .await
+    .unwrap();
+}
+
+/// V2. A lesson that failed at `kp1` in an EARLIER session peels back to the key
+/// prerequisites of that knowledge point when it fails a second time.
+///
+/// The second failure of one lesson is only reachable in a later session: a
+/// lesson task id is `{session}-lesson-{topic}`, and the failed task is `done`
+/// in the D-S6 row for the rest of its own session. The open-session window
+/// therefore never holds the earlier `lesson_result`, and the repeat test has to
+/// read the whole-log map of the session view.
+///
+/// The literals: the reply queues `repeat_fail` on `subtraction`, the log holds
+/// ONE `remediation_triggered` of that kind, and the second `lesson_result`
+/// stands beside the first.
+#[tokio::test]
+async fn a_lesson_failed_in_an_earlier_session_peels_back_on_the_second_failure() {
+    TestDb::with(|db| async move {
+        let app = router(&db, graph_with_key_prereq());
+        let user = common::seed_learner(&db, "repeat-fail@example.com").await;
+
+        // Session one: the lesson failed at `kp1`, and the session closed.
+        seed_event(
+            &db,
+            user,
+            1,
+            EARLIER_US,
+            EARLIER,
+            json!({
+                "type": "session_start",
+                "ts": "2025-12-31T00:00:00Z",
+                "session": EARLIER,
+                "v": 1,
+            }),
+        )
+        .await;
+        seed_event(
+            &db,
+            user,
+            2,
+            EARLIER_US + 60_000_000,
+            EARLIER,
+            json!({
+                "type": "lesson_result",
+                "ts": "2025-12-31T00:01:00Z",
+                "session": EARLIER,
+                "v": 1,
+                "topic": "addition",
+                "passed": false,
+                "failed_at_kp": "kp1",
+                "xp": 1.05,
+                "quality_tier": "nearly_passable",
+                "assisted": false,
+            }),
+        )
+        .await;
+        seed_event(
+            &db,
+            user,
+            3,
+            EARLIER_US + 120_000_000,
+            EARLIER,
+            json!({
+                "type": "session_end",
+                "ts": "2025-12-31T00:02:00Z",
+                "session": EARLIER,
+                "v": 1,
+                "xp_earned": 1.05,
+                "minutes": 2.0,
+            }),
+        )
+        .await;
+
+        // Session two: the same lesson, with four misses at `kp1` behind it.
+        seed_event(
+            &db,
+            user,
+            4,
+            BASE_US,
+            SESSION,
+            json!({
+                "type": "session_start",
+                "ts": "2026-01-01T00:00:00Z",
+                "session": SESSION,
+                "v": 1,
+            }),
+        )
+        .await;
+        for n in 0..4_i64 {
+            seed_attempt(&db, user, n + 5, &format!("{LESSON}-seed-{n}"), a_miss()).await;
+        }
+        put_state(
+            &db,
+            user,
+            &state_with(served(20.0, "kp1", Vec::new()), 4, false),
+        )
+        .await;
+
+        // The fifth miss fails `kp1` a SECOND time.
+        let (status, body) = answer(
+            &app,
+            user,
+            json!({"problem_id": PROBLEM_ID, "answer": "14"}),
+        )
+        .await;
+        assert_eq!(status, StatusCode::OK, "{body}");
+        assert_eq!(body["task_status"], "task_failed");
+        assert_eq!(
+            body["remediation"],
+            json!([{"kind": "repeat_fail", "targets": ["subtraction"]}])
+        );
+
+        let queued = events_of_type(&db, user, "remediation_triggered").await;
+        assert_eq!(queued.len(), 1);
+        assert_eq!(queued[0]["kind"], "repeat_fail");
+        assert_eq!(queued[0]["source_topic"], "addition");
+        assert_eq!(queued[0]["targets"], json!(["subtraction"]));
+
+        let closes = events_of_type(&db, user, "lesson_result").await;
+        assert_eq!(closes.len(), 2);
+        assert_eq!(closes[1]["passed"], false);
+        assert_eq!(closes[1]["failed_at_kp"], "kp1");
+    })
+    .await;
+}
+
+/// The FIRST failure of a lesson still queues the plain `lesson_fail`, even when
+/// the failed knowledge point names a key prerequisite. The peel-back is the
+/// SECOND failure and nothing else.
+#[tokio::test]
+async fn a_first_failure_queues_the_plain_lesson_fail() {
+    TestDb::with(|db| async move {
+        let app = router(&db, graph_with_key_prereq());
+        let user = common::seed_learner(&db, "first-fail@example.com").await;
+        seed_open_session(&db, user).await;
+        for n in 0..4_i64 {
+            seed_attempt(&db, user, n + 2, &format!("{LESSON}-seed-{n}"), a_miss()).await;
+        }
+        put_state(
+            &db,
+            user,
+            &state_with(served(20.0, "kp1", Vec::new()), 4, false),
+        )
+        .await;
+
+        let (status, body) = answer(
+            &app,
+            user,
+            json!({"problem_id": PROBLEM_ID, "answer": "14"}),
+        )
+        .await;
+        assert_eq!(status, StatusCode::OK, "{body}");
+        assert_eq!(body["task_status"], "task_failed");
+        assert_eq!(
+            body["remediation"],
+            json!([{"kind": "lesson_fail", "targets": []}])
         );
     })
     .await;
