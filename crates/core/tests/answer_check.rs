@@ -135,8 +135,11 @@ fn corpus_budget() -> Duration {
 
 #[test]
 fn spec_6_1_numeric_equivalence() {
+    // The first row of the 1.0 table, `2/3` against `0.667`, is not here: 2.0
+    // reads it as the exact rounding of two thirds and grades it correct with a
+    // notation tag (ruling `D6-dec`). The pair lives in `answer_divergence.rs`
+    // with its 1.0 verdict, which is the rule of this file's header.
     run_table(&[
-        ("2/3", "0.667", N, false),
         ("2*x+1", "1 + 2*x", E, true),
         ("x**2 - 1", "(x-1)*(x+1)", E, true),
         ("3", "4", N, false),

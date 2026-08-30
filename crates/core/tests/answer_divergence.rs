@@ -10,7 +10,9 @@
 //! below are the classes of spec section 9.3:
 //!
 //! 1. The answer leaves the decidable grammar, so 2.0 refuses a verdict (V2).
-//! 2. 2.0 holds exact values only, so no float rung decides an answer (D6).
+//! 2. 2.0 holds exact values only, so no float rung decides an answer (D6). A
+//!    learner decimal is correct when it is the exact rounding of the value, and
+//!    the verdict names the form (ruling `D6-dec`).
 //! 3. 2.0 decides a wrong verifiable answer, and 1.0 handed it to the model (A3).
 //! 4. 2.0 canonicalizes instead of simplifying, so it fixes some 1.0 misses and
 //!    narrows some 1.0 hits (V1).
@@ -161,49 +163,75 @@ fn a_mixed_number_whose_fraction_is_not_proper_gets_no_verdict() {
 }
 
 // ---------------------------------------------------------------------------
-// Class 2 — no float rung (D6, V1)
+// Class 2 — no float rung, and the exact rounding instead (D6, ruling `D6-dec`)
 // ---------------------------------------------------------------------------
 
 #[test]
-fn a_rounded_decimal_is_not_the_exact_value() {
-    // 1.0: True for all four. The SymPy rung compares `evalf()` results at a 1e-6
-    // relative tolerance (spec section 3.2), so a learner who rounds is "correct"
-    // and a learner who rounds a little more is not. 2.0 has no float in any
-    // equality decision (D6), so a rounded decimal is a different value.
-    assert_eq!(check("1/3", "0.333333", N), decided(false, false));
-    assert_eq!(check("1/3", "0.3333333333", N), decided(false, false));
-    assert_eq!(check("sqrt(2)", "1.41421356", N), decided(false, false));
-    assert_eq!(check("pi", "3.14159", N), decided(false, false));
-    // The 1.0 boundary case stays wrong in both versions.
-    assert_eq!(check("2/3", "0.667", N), decided(false, false));
+fn a_rounded_decimal_is_the_value_with_a_note_on_its_form() {
+    // 1.0: True for the first three, on a 1e-6 relative tolerance of two
+    // `evalf()` results (spec section 3.2). The tolerance reads the SIZE of the
+    // number, so a learner who rounds to six digits is "correct" and a learner
+    // who rounds to five is not.
+    //
+    // 2.0 reads the DIGITS the learner typed (ruling `D6-dec`): every decimal
+    // below is the half-to-even rounding of the exact value to its own digit
+    // count, so every one of them is correct and carries the notation tag. The
+    // decision is exact rational arithmetic and no float enters it (D6).
+    assert_eq!(check("1/3", "0.333333", N), decided(true, true));
+    assert_eq!(check("1/3", "0.3333333333", N), decided(true, true));
+    assert_eq!(check("sqrt(2)", "1.41421356", N), decided(true, true));
+    // 1.0: False. Five digits leave the 1e-6 tolerance, and five digits are a
+    // rounding all the same.
+    assert_eq!(check("1/3", "0.33333", N), decided(true, true));
+    // 1.0: False, and 2.0 agrees. `0.3334` is no rounding of one third.
+    assert_eq!(check("1/3", "0.3334", N), decided(false, false));
+    // The 1.0 boundary case. 1.0: False at both tolerances. 2.0: correct, with
+    // the tag, because `0.667` is two thirds to three digits.
+    assert_eq!(check("2/3", "0.667", N), decided(true, true));
+    assert_eq!(check("2/3", "0.666", N), decided(false, false));
+    // 1.0: True. `pi` is not a square root of a positive rational, so 2.0 brings
+    // no exact bound to the question and refuses the pair (V2). The refusal is a
+    // model grade and never a verdict.
+    assert_undecidable(
+        "pi",
+        "3.14159",
+        N,
+        "a rounding of a constant is not decidable",
+    );
 }
 
 #[test]
-fn a_decimal_of_ten_significant_digits_is_not_the_value_it_rounds() {
+fn a_decimal_of_ten_significant_digits_is_the_value_it_rounds() {
     // The `significant_decimal` generator family of spec section 9.3, added in
-    // FIXM2f. It is the largest documented divergence of the generated set: 238
+    // FIXM2f. It was the largest documented divergence of the generated set: 238
     // of the 240 pairs under the reason "no float tolerance rung (D6)". FIXM2i
     // widened the family from a rational and a radical to every irrational
     // number the grammar holds, so `pi` and `e` joined the roots.
     //
     // 1.0: True for all five, on the 1e-6 `evalf` rung
-    // (`sympy_check.py:345-352`). 2.0: False, because a decimal is an exact
-    // rational and it is not the rational or the radical it approximates (D6).
-    // Each pair below is one shape of the family, taken from the generated set.
+    // (`sympy_check.py:345-352`). 2.0 now decides the family by the rounding
+    // rule, and `crates/core/tests/answer_oracle.rs` pins the split of the 240
+    // pairs: 151 correct with the tag, 5 wrong, 84 refused.
     // A rational with no exact decimal:
-    assert_eq!(check("5/12", "0.4166666667", N), decided(false, false));
+    assert_eq!(check("5/12", "0.4166666667", N), decided(true, true));
     // The same, with a negative value:
-    assert_eq!(check("-5/6", "-0.8333333333", E), decided(false, false));
+    assert_eq!(check("-5/6", "-0.8333333333", E), decided(true, true));
     // A radical with a whole coefficient:
-    assert_eq!(check("8*sqrt(2)", "11.31370850", E), decided(false, false));
+    assert_eq!(check("8*sqrt(2)", "11.31370850", E), decided(true, true));
     // A radical over a divisor:
-    assert_eq!(check("2√3/3", "1.154700538", E), decided(false, false));
-    // A nested radical. `both_sides_are_numbers` refused this shape, so the
-    // harness left it in class 3; the tolerance predicate names it.
+    assert_eq!(check("2√3/3", "1.154700538", E), decided(true, true));
+    // A nested radical. The canonical form of `sqrt(2 + sqrt(3))` is a
+    // polynomial over a `sqrt` call, because the radicand is not a rational, so
+    // the rounding rule does not read it and the pair keeps the wrong verdict.
+    // It is one of the 5 pairs of the residue.
     assert_eq!(
         check("√(2 + √3)/2", "0.9659258263", E),
         decided(false, false)
     );
+    // A fraction is the other shape of the residue. 1.0: True, at 1e-6 on two
+    // values 1e-6 apart. A fraction carries no digit count, so no rounding reads
+    // it and 2.0 grades it wrong.
+    assert_eq!(check("1/1000", "1/1001", N), decided(false, false));
 }
 
 // ---------------------------------------------------------------------------

@@ -2352,7 +2352,7 @@ impl Class {
 /// old substring test claimed it did, and it excused five parse divergences that
 /// hold no identity (M2 review 2, findings 10 and 14). The narrowing keeps its
 /// literal pairs in `answer_divergence.rs` instead.
-const DOCUMENTED_REASONS: [&str; 14] = [
+const DOCUMENTED_REASONS: [&str; 16] = [
     // The two narrowings of the canonical rational form (FIXM2h). Both mark a
     // correct learner WRONG in 2.0, and both carry a SPECIFIC predicate: the
     // recorded SymPy evidence must say the difference is zero, AND the two
@@ -2377,6 +2377,12 @@ const DOCUMENTED_REASONS: [&str; 14] = [
     // 2.0 reads a construct that 1.0 hands to SymPy as a symbol.
     "2.0 reads a spaced `x` as the times sign (review 1, finding 18)",
     "the juxtaposed argument stops at a function name (review 3, finding 5)",
+    // The two readings of ruling `D6-dec`. 2.0 reads a learner decimal as the
+    // exact rounding of the authored value and marks the FORM; 1.0 had a float
+    // tolerance instead, which accepted a rounding inside 1e-6 with no note and
+    // refused every rounding outside it.
+    "the exact rounding carries the notation tag (D6-dec)",
+    "an exact rounding 1.0 refused is correct (D6-dec)",
 ];
 
 /// Whether 1.0 refuses `source` for a tower of powers (1.0 `_POW_TOWER_RE`).
@@ -2577,6 +2583,62 @@ fn the_1_0_float_rung_closes_the_gap(pair: &Pair) -> bool {
             1e-6
         };
     (expected_value - learner_value).abs() <= tolerance * expected_value.abs().max(1.0)
+}
+
+/// Whether the learner wrote the exact rounding of the authored value (`D6-dec`).
+///
+/// The predicate is the harness's own arithmetic, and it calls nothing of the
+/// code under test. It reads the learner answer as a plain decimal of `n` digits
+/// and writes the authored value with `n` digits: Rust formats a `f64` with
+/// correct rounding and breaks a tie to the even digit, which is the rule of the
+/// ruling. A learner answer that is not a plain decimal, and an authored answer
+/// the harness reader refuses, both give false.
+///
+/// The predicate CLASSIFIES a divergence and pins no verdict. Every literal
+/// verdict of the rule stands in `crates/core/tests/answer_decimal.rs`, where
+/// the arithmetic is exact.
+fn the_learner_wrote_the_exact_rounding(pair: &Pair) -> bool {
+    let learner_source = one_zero_source(&pair.learner);
+    let Some((negative, whole, fraction)) = decimal_parts(&learner_source) else {
+        return false;
+    };
+    if fraction.is_empty() {
+        return false;
+    }
+    let Some(value) = authored_value(&pair.expected) else {
+        return false;
+    };
+    if !value.is_finite() {
+        return false;
+    }
+    let sign = if negative { "-" } else { "" };
+    format!("{value:.*}", fraction.len()) == format!("{sign}{whole}.{fraction}")
+}
+
+/// The authored value, as the 2.0 grammar reads it.
+///
+/// [`numeric_value`] is a port of the reader of the two 1.0 float rungs, so it
+/// reads no mixed number: 1.0 has no such production and takes `4 1/6` for the
+/// product `4*1/6` (spec section 7.8). The 2.0 grammar holds the mixed number
+/// (spec section 8.1), and a rounding of `4 1/6` is a rounding of 25/6. The
+/// order matters: the mixed number is tried first, because the 1.0 reader
+/// accepts the same string as a product.
+fn authored_value(text: &str) -> Option<f64> {
+    let source = one_zero_source(text);
+    mixed_number_value(&source).or_else(|| numeric_value(&source))
+}
+
+/// Read `a b/c` as `a + b/c`, with the sign of the whole part.
+fn mixed_number_value(source: &str) -> Option<f64> {
+    let (whole_text, fraction_text) = source.trim().split_once(' ')?;
+    let (negative, digits) = integer_digits(whole_text.trim())?;
+    let whole: f64 = digits.parse().ok()?;
+    let (numerator, denominator) = fraction_parts(fraction_text.trim())?;
+    if denominator == 0 || numerator < 0 {
+        return None;
+    }
+    let magnitude = whole + numerator as f64 / denominator as f64;
+    Some(if negative { -magnitude } else { magnitude })
 }
 
 /// Whether Python `float()` reads the whole source (1.0 `_numeric_equal`).
@@ -2883,6 +2945,18 @@ fn documented_reason(
 ) -> Option<&'static str> {
     if pair.shape == "prose_or_words" {
         return Some("prose is not a value (V2)");
+    }
+    // 2.0 reads a learner decimal as the exact rounding of the authored value,
+    // and it marks the FORM with the notation tag (ruling `D6-dec`). 1.0 had no
+    // such rung: its float tolerance accepted a rounding inside 1e-6 with no
+    // note, and refused every rounding outside it. The branch runs FIRST,
+    // because the pair carries a 2.0 `correct` and the two branches below both
+    // ask about a disagreement over `correct` alone.
+    if rust_correct && the_learner_wrote_the_exact_rounding(pair) {
+        if oracle.equivalent {
+            return Some("the exact rounding carries the notation tag (D6-dec)");
+        }
+        return Some("an exact rounding 1.0 refused is correct (D6-dec)");
     }
     // 2.0 says no where 1.0 said yes.
     if oracle.equivalent && !rust_correct {
@@ -3290,10 +3364,14 @@ fn print_report(report: &Report) {
         println!("{name}: {count}");
     }
     // The two rewrite narrowings are the new divergences of FIXM2i, and the M2
-    // plan quotes their pairs, so the report names every one of them.
+    // plan quotes their pairs, so the report names every one of them. The float
+    // rung joins them under ruling `D6-dec`: the rung held 240 pairs, the
+    // rounding rule of FIX-D6 decides all but a few of them, and the report
+    // names every pair that stays wrong.
     for reason in [
         "no polynomial GCD (V1 narrowing)",
         "no radical rationalization (V1 narrowing)",
+        "no float tolerance rung (D6)",
     ] {
         for line in report.per_reason_pairs.get(reason).into_iter().flatten() {
             println!("[{reason}] {line}");
@@ -3375,11 +3453,18 @@ const GENERATOR_COUNTS: [(&str, usize); 47] = [
 ///
 /// The counts are measured against the live 1.0 checker, not read back from the
 /// committed file.
+///
+/// FIX-D6 moved 56 pairs out of class 3 and 235 pairs out of class 4, and it
+/// moved 91 pairs into class 1. The three numbers are one rule (ruling
+/// `D6-dec`): a learner decimal that is the exact rounding of the authored value
+/// is correct with a notation tag, and a rounding of `pi` or `e` has no exact
+/// rational bound, so the checker refuses it (V2) and the pair leaves the
+/// comparison. Class 1 was 965, class 3 was 16,554, and class 4 was 355.
 const CLASS_COUNTS: [(&str, usize); 5] = [
-    ("class 1 outside_grammar", 965),
+    ("class 1 outside_grammar", 1056),
     ("class 2 prose_expected", 0),
-    ("class 3 comparable", 16554),
-    ("class 4 documented_divergence", 355),
+    ("class 3 comparable", 16498),
+    ("class 4 documented_divergence", 320),
     ("oracle_silent", 0),
 ];
 
@@ -3399,16 +3484,34 @@ const CLASS_COUNTS: [(&str, usize); 5] = [
 /// 3. The 1.0 defects and the grammar rulings that this set reaches. Every one of
 ///    them marks a correct learner WRONG in 1.0, and 2.0 decides it correctly.
 ///
-/// The float rung carries 240 pairs, and 238 of them come from the
+/// The float rung carried 240 pairs before FIX-D6, and 238 of them came from the
 /// `significant_decimal` family that spec section 9.3 names: a rational with no
 /// exact decimal, a radical, `pi`, or `e`, against its own value in ten
-/// significant digits. 1.0 grades every one of them True on a float rung, and
-/// 2.0 grades them False (D6). `crates/core/tests/answer_divergence.rs` pins one
-/// pair of each shape.
-const REASON_COUNTS: [(&str, usize); 14] = [
+/// significant digits. Ruling `D6-dec` decides that family. The 240 pairs split
+/// 151 / 5 / 84, which [`D6_SPLIT`] pins:
+///
+/// - 151 are correct with the notation tag, and 1.0 said correct with no tag.
+/// - 5 stay wrong: three nested radicals, whose canonical form is a polynomial
+///   over a `sqrt` call and not a radical combination, and two FRACTIONS inside
+///   the 1.0 tolerance (`1/1001` for `1/1000`). A fraction carries no digit
+///   count, so no rounding reads it.
+/// - 84 name `pi` or `e`, which no exact rational bound brackets, so the checker
+///   refuses them (V2). They are class 1 and carry no reason.
+///
+/// Two more groups move. 49 pairs that 1.0 graded WRONG are the exact rounding
+/// in 2.0: 46 of the `coarse_decimal` family, whose decimal sits outside the
+/// 1e-6 tolerance, and 3 mixed numbers, which 1.0 reads as a product (spec
+/// section 7.8). Another 7 `coarse_decimal` pairs name `pi`, and both checkers
+/// called them wrong before; 2.0 refuses them now, so class 1 grows by 91.
+///
+/// `crates/core/tests/answer_divergence.rs` and
+/// `crates/core/tests/answer_decimal.rs` pin one pair of each shape.
+const REASON_COUNTS: [(&str, usize); 16] = [
     ("no polynomial GCD (V1 narrowing)", 6),
     ("no radical rationalization (V1 narrowing)", 6),
-    ("no float tolerance rung (D6)", 240),
+    ("no float tolerance rung (D6)", 5),
+    ("the exact rounding carries the notation tag (D6-dec)", 151),
+    ("an exact rounding 1.0 refused is correct (D6-dec)", 49),
     ("a transcendental identity is not simplified (V1)", 0),
     ("prose is not a value (V2)", 0),
     ("a SymPy name is not a value (V2)", 0),
@@ -3957,8 +4060,70 @@ fn the_two_checkers_agree_on_every_comparable_pair() {
     );
 }
 
+/// The literal split of the 240 pairs the 1.0 float rung once carried (`D6-dec`).
+///
+/// The counts are `(rounded, wrong, undecidable)`. Every pair of the class is a
+/// pair 1.0 graded True inside its 1e-6 tolerance and 2.0 graded False before
+/// FIX-D6.
+const D6_SPLIT: (usize, usize, usize) = (151, 5, 84);
+
+/// The refusals the rounding rule of `D6-dec` writes, and no other rung writes.
+///
+/// A pair that carries one of them left the class because of the rule. Every
+/// other refusal was already there before the rule, which is class 1.
+const ROUNDING_REFUSALS: [&str; 4] = [
+    "a rounding of a constant is not decidable",
+    "a rounding of a negative radicand is not decidable",
+    "the value holds more roots than the rounding bound",
+    "the rounding needs a finer bound than the checker builds",
+];
+
 #[test]
-fn every_documented_reason_is_one_of_the_named_fourteen() {
+fn the_1_0_float_rung_class_splits_into_a_rounding_and_a_residue() {
+    // The unit asks for the literal counts, so the test walks the same 240 pairs
+    // and reads the 2.0 outcome of each one. `check` runs here; the split is
+    // measured, and the three numbers are pinned above.
+    let pairs = generated_pairs();
+    let verdicts = committed_verdicts();
+    let (mut rounded, mut wrong, mut undecidable) = (0_usize, 0_usize, 0_usize);
+    for pair in &pairs {
+        if pair.shape == "prose_or_words" {
+            continue;
+        }
+        let key = (
+            pair.expected.clone(),
+            pair.learner.clone(),
+            pair.kind.as_str().to_string(),
+        );
+        let Some(Some(oracle)) = verdicts.get(&key).copied() else {
+            continue;
+        };
+        // The class is what `documented_reason` named before the rule: 1.0 says
+        // the two answers are equal, and the 1.0 float rung is the reason.
+        if !oracle.equivalent || !the_1_0_float_rung_closes_the_gap(pair) {
+            continue;
+        }
+        match check(&pair.expected, &pair.learner, pair.kind) {
+            // The pair is the same value on both sides, so it never diverged and
+            // it was never in the class. The float rung closes a gap of zero.
+            Outcome::Decided(verdict) if verdict.correct && !verdict.notation => {}
+            // The rounding rule refuses it; every other refusal was already
+            // there, and its pair is class 1.
+            Outcome::Undecidable(refusal) => {
+                if ROUNDING_REFUSALS.contains(&refusal.reason) {
+                    undecidable += 1;
+                }
+            }
+            Outcome::Decided(verdict) if verdict.correct => rounded += 1,
+            Outcome::Decided(_) => wrong += 1,
+        }
+    }
+    assert_eq!((rounded, wrong, undecidable), D6_SPLIT);
+    assert_eq!(rounded + wrong + undecidable, 240);
+}
+
+#[test]
+fn every_documented_reason_is_one_of_the_named_sixteen() {
     for (name, _) in REASON_COUNTS {
         assert!(
             DOCUMENTED_REASONS.contains(&name),
