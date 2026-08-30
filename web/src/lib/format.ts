@@ -25,3 +25,22 @@ export function clamp01(v: unknown): number {
 export function pct(v: unknown): number {
   return Math.round(clamp01(v) * 100);
 }
+
+/** Sign-prefixed, for an XP readout: '+5', '-4', '+0' — never '+-4'. */
+export function signed(v: unknown, d = 0): string {
+  const n = num(v, d);
+  return (n >= 0 ? '+' : '') + n;
+}
+
+/**
+ * `m:SS`, floored, never negative. No hours component, by design.
+ *
+ * NOT byte-identical to 1.0, and the difference is deliberate. Vanilla writes `secs || 0`,
+ * which passes a non-numeric value straight through: `fmtClock('nope')` paints `NaN:NaN`
+ * and `fmtClock(Infinity)` paints `Infinity:NaN` — in a timer, on screen, once a second.
+ * The route through `num()` paints `0:00` instead. Every numeric input agrees with vanilla.
+ */
+export function fmtClock(secs: unknown): string {
+  const total = Math.max(0, Math.floor(num(secs)));
+  return `${Math.floor(total / 60)}:${String(total % 60).padStart(2, '0')}`;
+}

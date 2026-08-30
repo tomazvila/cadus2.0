@@ -223,7 +223,7 @@ p { margin: 0.4rem 0; }
 /* ---- technical readouts ---- */
 /* Timers, counts, XP and every stat value read as instrument output: monospace with aligned
    figures. A proportional font makes a 1 Hz counter jitter its own width. */
-.stat-value, .ring-label strong, .mono {
+.timer, .progress-count, .stat-value, .ring-label strong, .mono {
   font-family: var(--mono);
   font-variant-numeric: tabular-nums;
   letter-spacing: -0.01em;
@@ -325,6 +325,93 @@ p { margin: 0.4rem 0; }
   color: var(--muted); animation: spin 0.7s linear infinite;
 }
 .btn-primary.is-busy::after { color: var(--accent-ink); }
+
+/* ---- the study loop ---- */
+/* One dominant control per card (W-C5): Submit carries `.btn-primary`, Hint and Exit stay
+   ghost weight. `.actions` puts the primary LAST in the source order and first on screen,
+   so a keyboard reaches Hint before Submit while the eye meets Submit first. */
+.task-header { margin-bottom: 0.8rem; }
+.task-meta { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
+.topic-name { font-weight: 650; }
+.topic-module { font-size: 0.8rem; color: var(--muted); }
+.task-right {
+  display: flex; align-items: center; gap: 0.8rem; margin-top: 0.35rem;
+  color: var(--muted); font-size: 0.9rem;
+}
+.timer { font-weight: 600; color: var(--text); }
+/* The drill countdown turns red at three seconds. Color alone carries no meaning here —
+   the number beside it is the message. */
+.timer.urgent { color: var(--bad); }
+.btn-exit { margin-left: auto; }
+.why-chip {
+  margin-top: 0.5rem; font-size: 0.82rem; color: var(--muted);
+  background: var(--surface-2); border-radius: 8px; padding: 0.35rem 0.6rem;
+  display: inline-block;
+}
+.chip-lesson, .chip-review, .chip-drill { background: var(--accent-weak); color: var(--accent); }
+.chip-quiz, .chip-multi-step { background: var(--surface-2); }
+.chip-quality { background: var(--surface-2); }
+.chip-xp { background: var(--good-weak); color: var(--good); }
+.chip-tag { background: var(--bad-weak); color: var(--bad); font-family: var(--mono); }
+
+.problem-card { padding: 1.3rem 1.2rem; }
+.actions { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+.actions .btn-primary { order: 2; }
+.hint-list { margin-bottom: 0.8rem; }
+.hint {
+  background: var(--accent-weak); border-radius: 10px; padding: 0.6rem 0.8rem;
+  margin-bottom: 0.5rem; font-size: 0.95rem;
+}
+.hint-text { display: inline; }
+/* W-A4: one pointer, however many hints follow it. */
+.reference-lesson {
+  margin-top: 0.6rem; padding: 0.6rem 0.8rem; border-radius: 8px;
+  background: var(--accent-weak); color: var(--muted); font-size: 0.92rem;
+}
+
+/* The verdict. `--good` and `--bad` fill the wash; the tick, the cross and the title carry
+   the meaning, so the panel reads the same with no color at all. */
+.feedback { margin-top: 1rem; padding: 1rem; border-radius: 12px; border: 1px solid var(--border); }
+.feedback-correct { background: var(--good-weak); border-color: var(--good); }
+.feedback-incorrect { background: var(--bad-weak); border-color: var(--bad); }
+.feedback-rework { background: var(--surface-2); }
+.feedback-head { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem; flex-wrap: wrap; }
+.feedback-mark { display: inline-flex; }
+.feedback-correct .feedback-mark { color: var(--good); }
+.feedback-incorrect .feedback-mark { color: var(--bad); }
+.feedback-title { font-weight: 700; font-size: 1.05rem; }
+.feedback-text { margin: 0.3rem 0 0.6rem; }
+.feedback .actions { margin-top: 0.8rem; }
+.error-tags { display: flex; flex-wrap: wrap; gap: 0.3rem; margin-bottom: 0.4rem; }
+.re-solve { font-size: 0.92rem; }
+.solution { margin-top: 0.6rem; padding-top: 0.6rem; border-top: 1px dashed var(--border); }
+.solution-label {
+  font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;
+  color: var(--muted); margin-bottom: 0.2rem;
+}
+.solution-text { overflow-x: auto; }
+.remediation { margin: 0.3rem 0 0 1rem; padding: 0; }
+.summary-card { text-align: center; }
+.summary-card .stat-grid { margin: 1rem 0; }
+
+/* The lesson's worked example: taught before it is practised. */
+.teach-badge {
+  font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.05em;
+  color: var(--accent); border: 1px solid var(--accent); border-radius: 999px;
+  padding: 0.15rem 0.6rem;
+}
+.teach-card { border-left: 3px solid var(--accent); }
+.teach-concept { font-size: 1.05rem; margin-bottom: 1rem; }
+.teach-example {
+  background: var(--surface-2); border-radius: 10px; padding: 0.9rem 1.1rem;
+  margin-bottom: 1.1rem;
+}
+.teach-label {
+  font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.05em;
+  color: var(--muted); margin: 0.2rem 0 0.3rem;
+}
+.teach-problem { font-weight: 600; margin-bottom: 0.6rem; }
+.teach-steps { color: var(--muted); }
 
 /* ---- responsive ---- */
 @media (max-width: 400px) {
