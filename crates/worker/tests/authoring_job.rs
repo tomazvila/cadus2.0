@@ -684,14 +684,15 @@ async fn a_rejected_body_is_not_resurrected_as_pending() {
     .await;
 }
 
-/// The three kinds with no gate make no call and store nothing (units R6, R7).
+/// The one kind with no gate makes no call and stores nothing (unit R7). Unit R6
+/// gave `teach` and `hint_ladder` their gates, so `diagnosis` is the last one.
 #[tokio::test]
 async fn a_kind_with_no_gate_makes_no_call() {
     TestDb::with(|db| async move {
         let fake = FakeModel::start(vec![tool_reply(&good_arguments())]).await;
         let handle = Db::new(db.admin.clone(), DEFAULT_CLIENT_TIMEOUT_MS);
 
-        for kind in [Kind::Teach, Kind::HintLadder, Kind::Diagnosis] {
+        for kind in [Kind::Diagnosis] {
             let report = author_one(&handle, &fake.job(), kind, &spec())
                 .await
                 .unwrap();
@@ -719,6 +720,241 @@ async fn an_attempt_bound_of_zero_makes_no_call() {
         assert_eq!(report.outcome, Outcome::Declined);
         assert_eq!(report.attempts, 0);
         assert_eq!(fake.calls().len(), 0);
+    })
+    .await;
+}
+
+// --------------------------------------------------------------------------- //
+// Unit R6: the teach page (L4) and the hint ladder (L5) reach the table
+// --------------------------------------------------------------------------- //
+
+/// The tool arguments of a teach page the gate accepts.
+fn teach_arguments() -> Value {
+    json!({
+        "concept": "Squaring a number multiplies it by itself.",
+        "worked_example": {
+            "problem": "Compute $6^2$.",
+            "steps": ["Write $6^2$ as $6 \\times 6$.", "Multiply: $6 \\times 6 = 36$."]
+        }
+    })
+}
+
+/// The tool arguments of a hint ladder the gate accepts. No rung names 49.
+fn ladder_arguments() -> Value {
+    json!({
+        "hints": [
+            "What does the small 2 above the number ask you to do?",
+            "A square is the number multiplied by itself.",
+            "Write the base twice with a multiplication sign between them, then multiply."
+        ]
+    })
+}
+
+/// The same ladder with the last rung stating the answer of the exemplar.
+fn ladder_that_names_the_answer() -> Value {
+    json!({
+        "hints": [
+            "What does the small 2 above the number ask you to do?",
+            "A square is the number multiplied by itself, so $7^2$ is 49."
+        ]
+    })
+}
+
+/// A reply that calls a NAMED tool with these arguments.
+fn named_reply(tool: &str, arguments: &Value) -> (u16, String) {
+    let payload = json!({
+        "id": "gen-1",
+        "choices": [{"finish_reason": "tool_calls", "message": {"tool_calls": [{"function": {
+            "name": tool, "arguments": arguments.to_string()
+        }}]}}],
+        "usage": {"prompt_tokens": 900, "completion_tokens": 300}
+    });
+    (200, payload.to_string())
+}
+
+/// Seed one `content_store` row of any kind.
+async fn seed_kind_row(pool: &PgPool, digest: &str, kp_id: &str, kind: &str, status: &str) {
+    sqlx::query(
+        "INSERT INTO content_store (digest, kp_id, kind, body, status)
+         VALUES ($1, $2, $3, '{}'::jsonb, $4)",
+    )
+    .bind(digest)
+    .bind(kp_id)
+    .bind(kind)
+    .bind(status)
+    .execute(pool)
+    .await
+    .unwrap();
+}
+
+/// Every `content_store` row of one knowledge point and kind, as
+/// `(digest, status, authoring_attempts, body)`.
+async fn rows_of_kind(pool: &PgPool, kp_id: &str, kind: &str) -> Vec<(String, String, i32, Value)> {
+    sqlx::query_as::<_, (String, String, i32, Value)>(
+        "SELECT digest, status, authoring_attempts, body FROM content_store
+          WHERE kp_id = $1 AND kind = $2 ORDER BY digest",
+    )
+    .bind(kp_id)
+    .bind(kind)
+    .fetch_all(pool)
+    .await
+    .unwrap()
+}
+
+/// The body the loop stores for [`teach_arguments`], character for character.
+///
+/// The stored text is the GATED document, so the field order is the document's
+/// and no spare field survives. Its digest is `sha256:` and the first 16 hex
+/// characters of the SHA-256 of these bytes, computed outside this tree with
+///
+/// ```sh
+/// printf '%s' '<STORED_TEACH_BODY>' | sha256sum
+/// # 0b3913a20a571f6322dbd8366adae9b1404b6d32a4c8100efb8c0b81c6b4d6d2
+/// ```
+const STORED_TEACH_BODY: &str = r#"{"concept":"Squaring a number multiplies it by itself.","worked_example":{"problem":"Compute $6^2$.","steps":["Write $6^2$ as $6 \\times 6$.","Multiply: $6 \\times 6 = 36$."]}}"#;
+
+/// The digest of [`STORED_TEACH_BODY`].
+const STORED_TEACH_DIGEST: &str = "sha256:0b3913a20a571f63";
+
+/// The body the loop stores for [`ladder_arguments`], character for character.
+///
+/// ```sh
+/// printf '%s' '<STORED_LADDER_BODY>' | sha256sum
+/// # d94e012408a809b374ccf51353e36c4fe49ede71ef6990f192d2bb6c1a0f578d
+/// ```
+const STORED_LADDER_BODY: &str = r#"{"hints":["What does the small 2 above the number ask you to do?","A square is the number multiplied by itself.","Write the base twice with a multiplication sign between them, then multiply."]}"#;
+
+/// The digest of [`STORED_LADDER_BODY`].
+const STORED_LADDER_DIGEST: &str = "sha256:d94e012408a809b3";
+
+/// The gate's give-away sentence for the last rung of
+/// [`ladder_that_names_the_answer`] (`crates/core/src/instruction.rs`).
+const NAMES_THE_ANSWER: &str = "rung 1 reads 'A square is the number multiplied by itself, so \
+$7^2$ is 49.', which names the answer '49' of the exemplar 'Compute $7^2$.' — a hint is a \
+question, never the final step (Hard Rule 3)";
+
+/// A gated teach page reaches `content_store` as one `pending` row (L4, C6).
+#[tokio::test]
+async fn a_teach_page_is_gated_and_stored_pending() {
+    TestDb::with(|db| async move {
+        let fake = FakeModel::start(vec![named_reply("emit_teach", &teach_arguments())]).await;
+        let handle = Db::new(db.admin.clone(), DEFAULT_CLIENT_TIMEOUT_MS);
+
+        let report = author_one(&handle, &fake.job(), Kind::Teach, &spec())
+            .await
+            .unwrap();
+
+        assert_eq!(report.outcome, Outcome::Stored);
+        assert_eq!(report.attempts, 1);
+        assert_eq!(report.digest.as_deref(), Some(STORED_TEACH_DIGEST));
+
+        let rows = rows_of_kind(&db.admin, KP_KEY, "teach").await;
+        assert_eq!(rows.len(), 1);
+        assert_eq!(rows[0].0, STORED_TEACH_DIGEST);
+        assert_eq!(rows[0].1, "pending");
+        assert_eq!(rows[0].2, 1);
+        assert_eq!(
+            rows[0].3,
+            serde_json::from_str::<Value>(STORED_TEACH_BODY).unwrap()
+        );
+
+        // The call is the teach call: the forced tool is the teach tool.
+        assert_eq!(fake.calls().len(), 1);
+        assert_eq!(
+            fake.calls()[0]["tool_choice"]["function"]["name"],
+            json!("emit_teach")
+        );
+    })
+    .await;
+}
+
+/// A ladder whose last rung names the answer is refused, the LITERAL sentence
+/// reaches attempt 2, and the clean ladder is stored (L5, Hard Rule 3).
+#[tokio::test]
+async fn a_ladder_that_names_the_answer_is_re_prompted_and_rescued() {
+    TestDb::with(|db| async move {
+        let fake = FakeModel::start(vec![
+            named_reply("emit_hint_ladder", &ladder_that_names_the_answer()),
+            named_reply("emit_hint_ladder", &ladder_arguments()),
+        ])
+        .await;
+        let handle = Db::new(db.admin.clone(), DEFAULT_CLIENT_TIMEOUT_MS);
+
+        let report = author_one(&handle, &fake.job(), Kind::HintLadder, &spec())
+            .await
+            .unwrap();
+
+        assert_eq!(report.outcome, Outcome::Stored);
+        assert_eq!(report.attempts, 2);
+        assert_eq!(report.digest.as_deref(), Some(STORED_LADDER_DIGEST));
+
+        // The retry block carries the gate's own words, indented under the
+        // header.
+        let second = fake.user_message(1);
+        assert!(
+            second.contains(&format!("{RETRY_HEADER}\n    {NAMES_THE_ANSWER}\n")),
+            "the retry block did not carry the literal sentence: {second}"
+        );
+
+        let rows = rows_of_kind(&db.admin, KP_KEY, "hint_ladder").await;
+        assert_eq!(rows.len(), 1);
+        assert_eq!(rows[0].0, STORED_LADDER_DIGEST);
+        assert_eq!(rows[0].1, "pending");
+        assert_eq!(rows[0].2, 2);
+        assert_eq!(
+            rows[0].3,
+            serde_json::from_str::<Value>(STORED_LADDER_BODY).unwrap()
+        );
+    })
+    .await;
+}
+
+/// One approved teach page fills the bank of that kind, so the next pass makes
+/// ZERO calls: `teach` and `hint_ladder` keep one document per knowledge point.
+#[tokio::test]
+async fn an_approved_teach_page_fills_the_bank_of_one() {
+    TestDb::with(|db| async move {
+        let fake = FakeModel::start(vec![named_reply("emit_teach", &teach_arguments())]).await;
+        let handle = Db::new(db.admin.clone(), DEFAULT_CLIENT_TIMEOUT_MS);
+        seed_kind_row(&db.admin, "digest-teach", KP_KEY, "teach", "approved").await;
+
+        assert_eq!(bank_target(Kind::Teach), 1);
+        assert_eq!(slots_taken(&handle, KP_KEY, Kind::Teach).await.unwrap(), 1);
+
+        let report = author_one(&handle, &fake.job(), Kind::Teach, &spec())
+            .await
+            .unwrap();
+
+        assert_eq!(report.outcome, Outcome::Skipped);
+        assert_eq!(report.attempts, 0);
+        assert_eq!(fake.calls().len(), 0);
+        assert_eq!(rows_of_kind(&db.admin, KP_KEY, "teach").await.len(), 1);
+    })
+    .await;
+}
+
+/// A knowledge point whose answer kind no checker decides still gets a teach
+/// page: only the TEMPLATE gate reads the answer kind.
+#[tokio::test]
+async fn an_undecidable_answer_kind_still_gets_a_teach_page() {
+    TestDb::with(|db| async move {
+        let fake = FakeModel::start(vec![named_reply("emit_teach", &teach_arguments())]).await;
+        let handle = Db::new(db.admin.clone(), DEFAULT_CLIENT_TIMEOUT_MS);
+        let mut proof = spec();
+        proof.answer_kind = AnswerKind::Proof;
+
+        let template = author_one(&handle, &fake.job(), Kind::Template, &proof)
+            .await
+            .unwrap();
+        assert_eq!(template.outcome, Outcome::Declined);
+        assert_eq!(template.attempts, 0);
+
+        let teach = author_one(&handle, &fake.job(), Kind::Teach, &proof)
+            .await
+            .unwrap();
+        assert_eq!(teach.outcome, Outcome::Stored);
+        assert_eq!(teach.attempts, 1);
+        assert_eq!(fake.calls().len(), 1);
     })
     .await;
 }

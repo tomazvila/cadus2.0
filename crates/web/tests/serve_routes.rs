@@ -42,6 +42,7 @@ use cadus_core::curriculum::{
     Slug, Topic, Unit,
 };
 use cadus_core::event::{Event, SchemaVersion, SessionStart, Timestamp};
+use cadus_core::instruction::{InstructionSpec, gate_teach};
 use cadus_core::pool::{PoolAnswer, PoolProblem};
 use cadus_store::pool::operator_flags;
 use cadus_store::test_support::TestDb;
@@ -950,6 +951,96 @@ async fn teach_on_a_lesson_serves_the_authored_page() {
         assert_eq!(rows, 0, "the teach read installed a state row");
     })
     .await;
+}
+
+/// M6 R6 acceptance, the third check: an APPROVED teach body serves through the
+/// M5 teach route with no model call (L4, L5, T1).
+///
+/// The page the route serves is the output of the M6 authoring gate
+/// (`cadus_core::instruction::gate_teach`), so the two halves of the unit meet
+/// here: what the gate accepts is what the route reads, field for field.
+///
+/// "No model call" is a LITERAL count. Every model call of 2.0 writes one
+/// `model_call_log` row per HTTP attempt (T6, `docs/plans/M5.md:31-33`), so a
+/// request tier that spent a token leaves a row. The count is 0 before the
+/// request and 0 after it. `crates/web/tests/purity.rs` holds the other half of
+/// the rule: `cadus-web` declares no dependency on the model client (L6).
+#[tokio::test]
+async fn an_approved_teach_page_from_the_gate_serves_with_no_model_call() {
+    TestDb::with(|db| async move {
+        let user = common::seed_learner(&db, "authoredteach@example.com").await;
+        let app = app(&db);
+        seed_open_session(&db, user).await;
+
+        // The tool arguments of one authoring attempt, as the model emits them.
+        let arguments = r#"{
+            "concept": "To add a whole number and a decimal, line up the decimal points.",
+            "worked_example": {
+                "problem": "Compute 6 + 2.25.",
+                "steps": [
+                    "Write 6 as 6.00, so both numbers carry two decimal places.",
+                    "Add the hundredths, the tenths, then the ones: $6.00 + 2.25 = 8.25$."
+                ]
+            }
+        }"#;
+        let exemplars = vec![
+            exemplar(EXEMPLAR_TEXT, EXEMPLAR_ANSWER),
+            exemplar(EXEMPLAR_TEXT_2, "13.25"),
+        ];
+        let page = gate_teach(
+            arguments,
+            &InstructionSpec {
+                exemplars: &exemplars,
+            },
+        )
+        .expect("the gate accepts the page");
+        let body = serde_json::to_value(&page).unwrap();
+        seed_content(&db, "teach", "sha256:authored-teach", body).await;
+
+        assert_eq!(model_calls(&db).await, 0);
+
+        let (status, raw) = call(
+            &app,
+            Method::POST,
+            &format!("/api/task/{LESSON}/teach"),
+            Some(user),
+            Some(json!({})),
+        )
+        .await;
+
+        assert_eq!(status, StatusCode::OK, "{raw}");
+        let served = parse(&raw);
+        assert_eq!(served["kp"], "kp1");
+        assert_eq!(
+            served["concept"],
+            "To add a whole number and a decimal, line up the decimal points."
+        );
+        assert_eq!(served["worked_example"]["problem"], "Compute 6 + 2.25.");
+        assert_eq!(
+            served["worked_example"]["steps"][0],
+            "Write 6 as 6.00, so both numbers carry two decimal places."
+        );
+        assert_eq!(
+            served["worked_example"]["steps"][1],
+            "Add the hundredths, the tenths, then the ones: $6.00 + 2.25 = 8.25$."
+        );
+        assert_eq!(
+            served["worked_example"]["steps"].as_array().unwrap().len(),
+            2
+        );
+
+        // T1: the route spent no model token.
+        assert_eq!(model_calls(&db).await, 0);
+    })
+    .await;
+}
+
+/// The count of `model_call_log` rows, of every purpose (T6).
+async fn model_calls(db: &TestDb) -> i64 {
+    sqlx::query_scalar!(r#"SELECT count(*) AS "n!" FROM model_call_log"#)
+        .fetch_one(&db.admin)
+        .await
+        .unwrap()
 }
 
 // --------------------------------------------------------------------------- //
