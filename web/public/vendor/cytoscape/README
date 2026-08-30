@@ -1,0 +1,35 @@
+Cytoscape.js 3.34.1 — vendored.
+
+Source: the 1.0 tree at /home/deploy/dev/cadus/static/vendor/cytoscape, copied byte for
+byte. 1.0 retrieved it from https://unpkg.com/cytoscape@3.34.1/dist/cytoscape.esm.min.mjs
+on 2026-08-16.
+License: MIT (The Cytoscape Consortium). See LICENSE alongside.
+Integrity: sha256-0mh4fcdKY4B7HB0kDAeQ+03vAehF0Fi6b5wqRXF/m8k=
+  Re-verified on the copy in this tree with:
+    openssl dgst -sha256 -binary cytoscape.esm.min.mjs | openssl base64
+
+The sole export is `default`, the `cytoscape` factory. The curriculum map loads it lazily,
+and only when the map opens:
+
+  const cytoscape = (await import('/vendor/cytoscape/cytoscape.esm.min.mjs')).default;
+
+Why this tree (spec section 4.6):
+
+- The file sits under `public/`, so Vite copies it verbatim into `dist/`. `vite.config.ts`
+  marks `/vendor/**` external, so the specifier above survives into the bundle as a runtime
+  URL, and the 434 KB library stays out of the entry chunk.
+- The deployed CSP is `default-src 'self'` with no `script-src`, no `unsafe-eval`, and no
+  `worker-src` (crates/web/src/security.rs:25-29). A grep of this file finds zero hits for
+  `eval(`, `new Function`, `new Worker`, `new SharedWorker`, `importScripts`, and zero
+  `data:` URIs. `scripts/check-bundle-csp.mjs` runs that grep over `dist/` on every build.
+  The file does hold one `Function("return this")()` — lodash's globalThis fallback,
+  short-circuited by `typeof self === "object"` in every browser, so it never runs.
+- 2.0 computes NO layout on the server: `GET /api/graph` carries no `x` and no `y`
+  (crates/web/src/session.rs:509-517). `src/views/map/layout.ts` lays the graph out on the
+  client, and the map uses the built-in `preset` layout with those coordinates.
+
+Do not add a layout extension. cytoscape-dagre, cola/webcola, and spread use eval or a blob
+worker, and the CSP blocks both. To move to another Cytoscape release, replace the whole
+directory.
+
+Do not edit these files.
