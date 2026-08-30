@@ -9,6 +9,12 @@ Requirement IDs: A2, C6, T2, T3, T5, T6, C5, C1, L4, L5, O3. Plan: `docs/plans/M
 (`docs/DECISIONS.md`). Pipeline workflow `wf_ca4db33a-875`: the Rust chain R1 → R2 → (R3 ∥ R4) → R5 →
 (R6 ∥ R7) → R8 and the SPA chain S1 → … → S14 run in parallel; S12 waits for R5. Branches `m6/r<n>`, `m6/s<n>`.
 
+Progress at 2026-08-30 (a process exit interrupted the run; resumed with `resumeFromRunId`): R1 prompts (`80e8104`), R2 batch
+loop (`5a9de31`), R3 T3 accounting (`e434c1b`), R4 store admin path (`9f687dc`), S1 scaffold (`5e530c7`), S2 API (`15065f3`),
+S3 hooks (`8407b1f`), S4 design system (`7ca9371`), S5 math input (`33bd45e`), S6 auth screens (`ab27bf6`), S7 dashboard
+(`ab9b308`), S8 session loop (`8b4fbe7`), S9 diagnosis panel (`f48ba90`) — all gate green on their branches. R5 and S10 were
+in flight; their partial work is on `m6/r5-wip` and `m6/s10-wip`, which the resumed units merge first.
+
 In parallel, unit FIX-D6 (branch `d6/decimal`) implements the owner's D6 ruling of 2026-08-30 (`docs/DECISIONS.md`
 row `D6-dec`): a learner decimal that equals the exact value rounded half-to-even to the typed digits is
 correct-with-`notation`; exact rational arithmetic, no float; the 240 M2 divergence pairs get pinned counts.
