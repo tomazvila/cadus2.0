@@ -182,12 +182,56 @@ p { margin: 0.4rem 0; }
   letter-spacing: -0.01em;
 }
 
+/* ---- the study fields ---- */
+/* The problem text carries the KaTeX cascade: `.problem-text .katex` sizes the math against
+   the prose around it, so the rendered output has to be a DESCENDANT of the classed node. A
+   wrapper between them loses the sizing and nothing reports it. A long expression scrolls
+   inside the block instead of widening the study column. */
+.problem-text { font-size: 1.15rem; margin-bottom: 1rem; overflow-x: auto; }
+.problem-text .katex { font-size: 1.15em; }
+
+.answer-field { margin-bottom: 0.7rem; }
+.answer-input, .work-input {
+  width: 100%; font: inherit; color: var(--text);
+  background: var(--surface); border: 1.5px solid var(--border); border-radius: 10px;
+  padding: 0.75rem 0.85rem;
+}
+.answer-input { font-size: 1.1rem; }
+/* The accent border marks the focused field for a mouse user as well. It never writes
+   `outline: none`: the focus ring below is the accessible one, and it stays. */
+.answer-input:focus, .work-input:focus {
+  border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-weak);
+}
+.answer-input:focus-visible, .work-input:focus-visible, .sym-key:focus-visible {
+  outline: 2px solid var(--accent); outline-offset: 2px;
+}
+.field-hint { font-size: 0.8rem; color: var(--muted); margin: 0.35rem 0.2rem 0; }
+
+/* The palette is a `role="toolbar"` of twelve keys. Each key is a button, so it takes the
+   44px minimum target height of spec section 4.5 — 1.0 shipped 26px keys, and a thumb on a
+   phone hit the wrong symbol. */
+.sym-palette { display: flex; flex-wrap: wrap; gap: 0.3rem; margin-top: 0.4rem; }
+.sym-key {
+  min-height: 44px; min-width: 2.75rem; padding: 0.25rem 0.45rem; font-size: 1rem;
+  line-height: 1; color: var(--text); background: var(--surface);
+  border: 1px solid var(--border); border-radius: 6px; cursor: pointer;
+}
+.sym-key:hover { border-color: var(--accent); background: var(--accent-weak); }
+
+/* A native `<details>`: `.work summary` is styled here, and the element gives the disclosure
+   keyboard and screen-reader semantics for free. */
+.work { margin-bottom: 0.8rem; }
+.work summary { cursor: pointer; color: var(--muted); font-size: 0.9rem; padding: 0.3rem 0; }
+.work summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.work-input { margin-top: 0.5rem; resize: vertical; }
+
 /* ---- responsive ---- */
 @media (max-width: 400px) {
   .view { padding: 1rem 0.75rem 4rem; }
   .card { padding: 1rem; }
   .ring svg { width: 96px; height: 96px; }
   .stat-value { font-size: 1.15rem; }
+  .problem-text { font-size: 1.08rem; }
 }
 
 /* Strip every animation and transition when the reader asks for less motion (spec section

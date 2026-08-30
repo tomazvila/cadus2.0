@@ -17,6 +17,7 @@ import * as axeMatchers from 'vitest-axe/matchers';
 import 'vitest-axe/extend-expect';
 import { TextDecoder, TextEncoder } from 'node:util';
 import { TransformStream } from 'node:stream/web';
+import { resetMathCache } from '@/lib/katex';
 
 expect.extend(axeMatchers);
 
@@ -240,6 +241,10 @@ beforeEach(() => {
   installGlobalStubs();
   mediaState.clear();
   mathRenderCalls.length = 0;
+  // The render cache of `lib/katex.ts` is a module-scope singleton, and Vitest isolates
+  // modules per FILE. Without this a later test in the same file counts zero KaTeX calls for
+  // a string an earlier test already rendered.
+  resetMathCache();
   objectUrls.length = 0;
   downloads.length = 0;
   navigations.length = 0;
