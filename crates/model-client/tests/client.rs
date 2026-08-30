@@ -141,7 +141,17 @@ fn chat_request() -> ChatRequest {
         tool: ToolSpec {
             name: "emit_diagnosis".to_owned(),
             description: "Name the misconception.".to_owned(),
-            parameters: json!({"type": "object", "additionalProperties": false}),
+            // The required list is the schema of spec section 6.3. The client
+            // reads it to decide truncation shape 3, so the fixture states it.
+            parameters: json!({
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["error_tags", "prose"],
+                "properties": {
+                    "error_tags": {"type": "array", "items": {"type": "string"}},
+                    "prose": {"type": "string"},
+                },
+            }),
         },
     }
 }
@@ -487,5 +497,66 @@ async fn a_silent_endpoint_ends_at_the_bound() {
     match call.result {
         Err(ModelError::Transport(_)) => {}
         other => panic!("a silent endpoint must give a transport error, it gave {other:?}"),
+    }
+}
+
+/// The required-field check comes from the TOOL'S schema, not from one document.
+///
+/// M6 R2 sends a second tool through this client. The M5 spelling hard-coded the
+/// two fields of the diagnosis document, so it answered `name no error_tags` for
+/// every authoring reply and no authoring call could land.
+#[tokio::test]
+async fn the_required_fields_come_from_the_tool_schema() {
+    let request = ChatRequest {
+        system: "You are the author for Cadus.".to_owned(),
+        user: "Author a template.".to_owned(),
+        tool: ToolSpec {
+            name: "emit_template".to_owned(),
+            description: "Emit one template.".to_owned(),
+            parameters: json!({
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["statement", "samples"],
+                "properties": {
+                    "statement": {"type": "string"},
+                    "samples": {"type": "array", "items": {"type": "object"}},
+                },
+            }),
+        },
+    };
+    let complete = json!({
+        "choices": [{"finish_reason": "tool_calls", "message": {"tool_calls": [{"function": {
+            "name": "emit_template",
+            "arguments": "{\"statement\":\"Compute $2+2$.\",\"samples\":[]}"
+        }}]}}]
+    })
+    .to_string();
+    let partial = json!({
+        "choices": [{"finish_reason": "length", "message": {"tool_calls": [{"function": {
+            "name": "emit_template",
+            "arguments": "{\"statement\":\"Compute $2+2$.\"}"
+        }}]}}]
+    })
+    .to_string();
+
+    // A reply that satisfies the tool's own schema is accepted at once, and no
+    // field of the diagnosis document is named anywhere.
+    let server = FakeModel::start(vec![(200, complete)]).await;
+    let call = server.client().call(&request).await;
+    assert_eq!(server.seen().len(), 1);
+    assert_eq!(
+        call.result.unwrap(),
+        json!({"statement": "Compute $2+2$.", "samples": []})
+    );
+
+    // A reply that misses one of the tool's required fields names THAT field.
+    let server = FakeModel::start(vec![(200, partial.clone()), (200, partial)]).await;
+    let call = server.client().call(&request).await;
+    assert_eq!(server.seen().len(), 2);
+    match call.result {
+        Err(ModelError::Reply(why)) => {
+            assert_eq!(why, "the arguments of emit_template name no samples");
+        }
+        other => panic!("a missing required field must give a reply error, it gave {other:?}"),
     }
 }

@@ -48,6 +48,7 @@
     )
 )]
 
+pub mod admin;
 pub mod auth;
 pub mod cookie;
 pub mod diagnosis;
@@ -115,6 +116,18 @@ pub struct AppState {
     /// that starts no listener still serves the poll fallback, so the default
     /// hub is a hub with nothing attached.
     pub diagnosis: Arc<DiagnosisHub>,
+    /// The admin connection of the content store (M6 R5, C6).
+    ///
+    /// `cadus_app` holds SELECT on `content_store` and nothing else
+    /// (`docs/SCHEMA.md`, finding #14), so the approve route and the reject
+    /// route need a handle of `cadus_admin`. This field is that explicit path,
+    /// and `cadus_store::content::Admin` names it at every call site.
+    ///
+    /// `None` is the default. Both review writes then answer
+    /// `503 admin_path_unavailable`, and every other route of the process is
+    /// unchanged: a deployment that runs no review screen needs no second
+    /// connection.
+    pub admin: Option<Db>,
 }
 
 impl AppState {
@@ -130,6 +143,7 @@ impl AppState {
             argon2: Argon2Profile::PROD,
             oauth: OAuthConfig::default(),
             diagnosis: Arc::new(DiagnosisHub::new()),
+            admin: None,
         }
     }
 
@@ -177,6 +191,18 @@ impl AppState {
         self.diagnosis = diagnosis;
         self
     }
+
+    /// The same state with the admin connection of the content store (M6 R5).
+    ///
+    /// The handle must connect as `cadus_admin`. The C3 boot guard runs on the
+    /// TENANT pool alone, because that is the pool every learner route takes;
+    /// this one exists for the two review writes of `/api/admin/content*` and
+    /// for nothing else.
+    #[must_use]
+    pub fn with_admin(mut self, admin: Db) -> Self {
+        self.admin = Some(admin);
+        self
+    }
 }
 
 /// Build the axum application.
@@ -216,6 +242,12 @@ pub fn create_app(state: AppState) -> Router {
         // M5 U12: the A6 operator view. It reads its own credential, and it
         // refuses every account that is not an admin.
         .route("/api/operator/flags", get(operator::flags))
+        // M6 R5: the C6 review surface. All four refuse an account that is not
+        // an admin, and both writes take the admin connection of `AppState`.
+        .route("/api/admin/content", get(admin::list))
+        .route("/api/admin/content/{digest}", get(admin::show))
+        .route("/api/admin/content/{digest}/approve", post(admin::approve))
+        .route("/api/admin/content/{digest}/reject", post(admin::reject))
         // axum's own fallbacks answer with an empty body, so both of them
         // return the envelope instead (spec section 2).
         .fallback(error::not_found)
