@@ -47,6 +47,31 @@ cargo clippy --all-targets --workspace -- -D warnings
 echo "== cargo test --workspace"
 cargo test --workspace
 
+# FIX-M6-G. The SPA route table gets its oracle from
+# `crates/web/tests/route_table.rs`: the test dumps every route of `create_app`
+# into `web/src/api/routes.generated.json`, and `web/test/api-contract.test.ts`
+# reads that fixture. The `cargo test` step above already fails on a committed
+# fixture that the router does not match.
+#
+# This step covers the other half: it runs the REWRITE path and proves the
+# rewrite changes nothing. Without it, a dump that wrote one file and compared
+# another would pass the check above and still hand the SPA a stale table. The
+# file is restored before the failure exit, so the gate never leaves a rewritten
+# fixture in the tree.
+echo "== the route fixture is unchanged after a rewrite"
+routes_fixture="web/src/api/routes.generated.json"
+routes_saved="target/routes.generated.json.gate"
+mkdir -p target
+cp "$routes_fixture" "$routes_saved"
+CADUS_ROUTES_BLESS=1 cargo test -p cadus-web --test route_table
+if ! cmp -s "$routes_saved" "$routes_fixture"; then
+    cp "$routes_saved" "$routes_fixture"
+    rm -f "$routes_saved"
+    echo "GATE FAILED: $routes_fixture is not the route table of create_app"
+    exit 2
+fi
+rm -f "$routes_saved"
+
 # The parity fold runs a SECOND time in the release profile (spec section 7, trap
 # T21). The debug profile emits a real `pow` call for every `powf`, while an
 # optimized build rewrites a literal base into `exp2`, which is a different number
