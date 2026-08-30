@@ -269,6 +269,71 @@ async fn binary_ticks_and_exits_zero_on_sigterm() {
     .await;
 }
 
+/// (4b) The diagnosis job keeps the DIAGNOSIS budget of 600 and 600 (T5,
+/// finding F18).
+///
+/// The authoring pass takes a wider budget of its own, so the two paths must not
+/// share one knob. This test reads the configuration line of the tick loop: the
+/// run names no token variable at all, so both ceilings are the shipped
+/// defaults.
+///
+/// The endpoint is a closed port. The loop makes no model call, because the
+/// queue holds no row, so the port is never opened.
+#[tokio::test]
+async fn binary_configures_the_diagnosis_job_with_the_diagnosis_budget() {
+    TestDb::with(|db| async move {
+        let dsn = superuser_dsn(&db.name);
+
+        let child = KillOnDrop::new(
+            tokio::process::Command::new(env!("CARGO_BIN_EXE_cadus-worker"))
+                .env("DATABASE_URL", &dsn)
+                .env("WORKER_TICK_SECS", "1")
+                .env("CADUS_CURRICULUM", fixture_curriculum())
+                .env("OPENAI_API_KEY", "test-key")
+                .env("OPENAI_BASE_URL", "http://127.0.0.1:1/v1")
+                .env("OPENAI_MODEL", "qwen3.6")
+                .env("RUST_LOG", "info")
+                // `tracing_subscriber` colors its fields on a pipe too, so the
+                // line reaches this test with escape bytes inside
+                // `output_tokens=600`. `NO_COLOR` turns the color off.
+                .env("NO_COLOR", "1")
+                .stdout(std::process::Stdio::piped())
+                .stderr(std::process::Stdio::piped())
+                .spawn()
+                .expect("the worker binary must start"),
+        );
+
+        let pid = child.as_ref().id().expect("the child must report a pid");
+        tokio::time::sleep(Duration::from_millis(1500)).await;
+
+        // SAFETY: `pid` names a child process of this test, and the process is
+        // still alive because nothing reaped it yet.
+        let sent = unsafe { libc::kill(pid as libc::pid_t, libc::SIGTERM) };
+        assert_eq!(sent, 0, "kill(SIGTERM) must return 0");
+
+        let output = tokio::time::timeout(
+            Duration::from_secs(10),
+            child.into_inner().wait_with_output(),
+        )
+        .await
+        .expect("the worker must exit within 10 s after SIGTERM")
+        .expect("reading the worker output must succeed");
+
+        let mut log = String::from_utf8_lossy(&output.stdout).into_owned();
+        log.push_str(&String::from_utf8_lossy(&output.stderr));
+
+        assert!(
+            log.contains("cadus-worker: the diagnosis job is configured"),
+            "the log must hold the configuration line; log:\n{log}"
+        );
+        assert!(
+            log.contains("output_tokens=600 reasoning_max_tokens=600"),
+            "the diagnosis job must keep the 600 and 600 ceilings; log:\n{log}"
+        );
+    })
+    .await;
+}
+
 /// (5) A stop signal during the database connect gives exit code 0.
 ///
 /// The DSN points at a closed port, so the process stays inside `connect` for

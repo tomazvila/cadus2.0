@@ -137,6 +137,9 @@ async fn author(args: &AuthorArgs) -> Result<(), WorkerError> {
 
 /// Build the authoring job from the environment.
 ///
+/// The token budget comes from [`ModelConfig::authoring_from_env`], so an
+/// authoring call carries the authoring ceilings and not the diagnosis ones.
+///
 /// # Errors
 ///
 /// Returns [`WorkerError::Config`] when the key is empty and when the rest of
@@ -152,11 +155,19 @@ fn authoring_job() -> Result<AuthoringJob, WorkerError> {
              use `--dry-run` to print the plan without one"
         )));
     }
-    let model_cfg = ModelConfig::from_env().map_err(|err| WorkerError::Config(err.to_string()))?;
+    // `authoring_from_env` and NOT `from_env`: an authoring call takes
+    // `AUTHORING_OUTPUT_TOKENS` (4000) and `AUTHORING_REASONING_MAX_TOKENS`
+    // (2000), never the diagnosis values. A diagnosis budget of 600 output
+    // tokens with a reasoning ceiling of 600 beside it leaves zero visible
+    // tokens for an authored document (finding F18).
+    let model_cfg =
+        ModelConfig::authoring_from_env().map_err(|err| WorkerError::Config(err.to_string()))?;
     let client = Client::new(model_cfg).map_err(|err| WorkerError::Config(err.to_string()))?;
     tracing::info!(
         model = %client.config().model,
         base_url = %client.config().base_url,
+        output_tokens = client.config().output_tokens,
+        reasoning_max_tokens = client.config().reasoning_max_tokens,
         "cadus-worker: the authoring pass is configured"
     );
     Ok(AuthoringJob::new(client))
@@ -277,6 +288,8 @@ fn diagnosis_job() -> Result<Option<DiagnosisJob>, WorkerError> {
     tracing::info!(
         model = %client.config().model,
         base_url = %client.config().base_url,
+        output_tokens = client.config().output_tokens,
+        reasoning_max_tokens = client.config().reasoning_max_tokens,
         calls_per_session,
         "cadus-worker: the diagnosis job is configured"
     );

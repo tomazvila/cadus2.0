@@ -73,13 +73,20 @@ pub const OUTPUT_TOKENS_VAR: &str = "DIAGNOSIS_OUTPUT_TOKENS";
 /// The environment variable that holds the reasoning bound (T5).
 pub const REASONING_MAX_TOKENS_VAR: &str = "DIAGNOSIS_REASONING_MAX_TOKENS";
 
+/// The environment variable that holds the AUTHORING output bound (T3, T5).
+pub const AUTHORING_OUTPUT_TOKENS_VAR: &str = "AUTHORING_OUTPUT_TOKENS";
+
+/// The environment variable that holds the AUTHORING reasoning bound (T5).
+pub const AUTHORING_REASONING_MAX_TOKENS_VAR: &str = "AUTHORING_REASONING_MAX_TOKENS";
+
 /// The endpoint the deployment uses when the environment names none (O2).
 pub const DEFAULT_BASE_URL: &str = "https://openrouter.ai/api/v1";
 
 /// The model the deployment uses when the environment names none (O2).
 pub const DEFAULT_MODEL: &str = "deepseek/deepseek-v4-pro";
 
-/// The per-call output bound (T4 knob `DIAGNOSIS_OUTPUT_TOKENS`).
+/// The per-call output bound of a DIAGNOSIS call (T4 knob
+/// `DIAGNOSIS_OUTPUT_TOKENS`).
 ///
 /// O2 sets no spend cap. This one stays at a real value because it is a LATENCY
 /// bound (T5), not a spend cap.
@@ -87,6 +94,24 @@ pub const DEFAULT_OUTPUT_TOKENS: u32 = 600;
 
 /// The reasoning bound of every request (T5, `reasoning.max_tokens`).
 pub const DEFAULT_REASONING_MAX_TOKENS: u32 = 600;
+
+/// The per-call output bound of an AUTHORING call (knob
+/// `AUTHORING_OUTPUT_TOKENS`).
+///
+/// A diagnosis reply is one short document about one answer. An authored
+/// document is a whole template, a teach page, a hint ladder or a distractor
+/// set, so it needs a wider budget. An authoring pass is also offline: it pays
+/// per BATCH and no learner waits for it, so the latency bound of the diagnosis
+/// path does not apply here.
+pub const DEFAULT_AUTHORING_OUTPUT_TOKENS: u32 = 4000;
+
+/// The reasoning bound of an AUTHORING call (T5,
+/// `AUTHORING_REASONING_MAX_TOKENS`).
+///
+/// The reasoning budget is part of the output budget, so a reasoning ceiling
+/// equal to the output ceiling leaves zero visible tokens. This value keeps half
+/// of [`DEFAULT_AUTHORING_OUTPUT_TOKENS`] for the document itself.
+pub const DEFAULT_AUTHORING_REASONING_MAX_TOKENS: u32 = 2000;
 
 /// The host whose body carries the `provider` and `reasoning` blocks.
 pub const ROUTING_HOST: &str = "openrouter.ai";
@@ -193,6 +218,30 @@ impl ModelConfig {
             reasoning_max_tokens: number(REASONING_MAX_TOKENS_VAR, DEFAULT_REASONING_MAX_TOKENS)?,
             provider_order,
             timeout: Duration::from_secs(TIMEOUT_SECS),
+        })
+    }
+
+    /// Read the endpoint from the environment for an AUTHORING pass.
+    ///
+    /// The endpoint, the key, the model and the provider order are the ones
+    /// [`ModelConfig::from_env`] reads. The two token bounds are not: authoring
+    /// takes [`AUTHORING_OUTPUT_TOKENS_VAR`] and
+    /// [`AUTHORING_REASONING_MAX_TOKENS_VAR`], and it NEVER takes the diagnosis
+    /// values. A diagnosis budget of 600 output tokens with a reasoning ceiling
+    /// of 600 beside it leaves zero visible tokens for an authored document.
+    ///
+    /// # Errors
+    ///
+    /// Returns every [`ModelError::Config`] of [`ModelConfig::from_env`], and
+    /// one more when an authoring token bound is not a whole number.
+    pub fn authoring_from_env() -> Result<Self, ModelError> {
+        Ok(Self {
+            output_tokens: number(AUTHORING_OUTPUT_TOKENS_VAR, DEFAULT_AUTHORING_OUTPUT_TOKENS)?,
+            reasoning_max_tokens: number(
+                AUTHORING_REASONING_MAX_TOKENS_VAR,
+                DEFAULT_AUTHORING_REASONING_MAX_TOKENS,
+            )?,
+            ..Self::from_env()?
         })
     }
 }

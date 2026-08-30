@@ -863,13 +863,16 @@ pub async fn author_one(
     }
 
     // Step 2: a knowledge point the gate can never accept costs nothing. The
-    // TEMPLATE gate refuses every document of an undecidable answer kind, so
-    // five calls would buy five copies of one refusal (T3). A teach page and a
-    // hint ladder carry no answer expression, so the rule is the template's
-    // alone: a knowledge point nothing can grade is still a knowledge point a
-    // page teaches and a ladder supports.
+    // template gate AND the diagnosis gate refuse every document of an
+    // undecidable answer kind, with one message, so five calls of either kind
+    // buy five copies of one refusal (T3, finding F19). A teach page and a hint
+    // ladder carry no answer expression, so the rule is not theirs: a knowledge
+    // point nothing can grade is still a knowledge point a page teaches and a
+    // ladder supports.
     let mut reasons: Vec<String> = Vec::new();
-    if kind == Kind::Template && !TEMPLATABLE_KINDS.contains(&spec.answer_kind) {
+    if matches!(kind, Kind::Template | Kind::Diagnosis)
+        && !TEMPLATABLE_KINDS.contains(&spec.answer_kind)
+    {
         let reason = format!(
             "answer kind {} is not symbolically decidable",
             spec.answer_kind

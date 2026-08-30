@@ -510,6 +510,45 @@ async fn an_undecidable_answer_kind_declines_with_no_call() {
     .await;
 }
 
+/// The zero-call guard covers EVERY kind whose gate refuses the answer kind
+/// (T3, finding F19).
+///
+/// `gate_diagnosis` holds the same rule as the template gate and refuses a
+/// `proof` document with the same sentence, so a `proof` knowledge point must
+/// cost zero calls for `diagnosis` too. The old guard read `template` alone, so
+/// a diagnosis pass over a `proof` topic paid five calls for one refusal that no
+/// retry can fix.
+#[tokio::test]
+async fn an_undecidable_answer_kind_declines_with_no_call_for_every_gated_kind() {
+    TestDb::with(|db| async move {
+        let fake = FakeModel::start(vec![tool_reply(&good_arguments())]).await;
+        let handle = Db::new(db.admin.clone(), DEFAULT_CLIENT_TIMEOUT_MS);
+        let spec = AuthoringSpec {
+            answer_kind: AnswerKind::Proof,
+            ..spec()
+        };
+
+        for kind in [Kind::Template, Kind::Diagnosis] {
+            let report = author_one(&handle, &fake.job(), kind, &spec).await.unwrap();
+
+            assert_eq!(report.outcome, Outcome::Declined);
+            assert_eq!(report.attempts, 0);
+            let decline = report.decline.expect("a decline record");
+            assert_eq!(decline.kp_id, KP_KEY);
+            assert_eq!(decline.kind, kind);
+            assert_eq!(decline.attempts, 0);
+            assert_eq!(
+                decline.reasons,
+                vec!["answer kind proof is not symbolically decidable".to_owned()]
+            );
+        }
+
+        assert_eq!(fake.calls().len(), 0);
+        assert!(rows_of(&db.admin, KP_KEY).await.is_empty());
+    })
+    .await;
+}
+
 /// An endpoint that refuses every request declines with the endpoint's reason,
 /// and the reason is not fed back as authoring feedback.
 ///

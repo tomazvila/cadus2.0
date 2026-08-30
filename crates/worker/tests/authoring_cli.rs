@@ -131,6 +131,11 @@ impl FakeModel {
     fn call_count(&self) -> usize {
         self.calls.lock().unwrap().len()
     }
+
+    /// The request bodies the endpoint received, in order.
+    fn calls(&self) -> Vec<Value> {
+        self.calls.lock().unwrap().clone()
+    }
 }
 
 /// A reply that carries a complete `emit_template` call with these arguments.
@@ -241,20 +246,34 @@ struct Run {
 /// pass that calls a model reaches the fake and a pass that must call none is
 /// caught by the fake's own counter.
 async fn run_binary(dsn: &str, base_url: &str, args: &[&str]) -> Run {
-    let child = KillOnDrop::new(
-        tokio::process::Command::new(env!("CARGO_BIN_EXE_cadus-worker"))
-            .args(args)
-            .env("DATABASE_URL", dsn)
-            .env("CADUS_CURRICULUM", fixture_curriculum())
-            .env("OPENAI_API_KEY", "test-key")
-            .env("OPENAI_BASE_URL", base_url)
-            .env("OPENAI_MODEL", "qwen3.6")
-            .env("RUST_LOG", "info")
-            .stdout(std::process::Stdio::piped())
-            .stderr(std::process::Stdio::piped())
-            .spawn()
-            .expect("the worker binary must start"),
-    );
+    run_binary_with(dsn, base_url, args, &[]).await
+}
+
+/// [`run_binary`], plus these environment variables.
+///
+/// The pairs go in last, so a test names the exact value of a knob the run
+/// reads. A knob the pairs do not name keeps the value of the shell that started
+/// the test.
+async fn run_binary_with(dsn: &str, base_url: &str, args: &[&str], env: &[(&str, &str)]) -> Run {
+    let mut command = tokio::process::Command::new(env!("CARGO_BIN_EXE_cadus-worker"));
+    command
+        .args(args)
+        .env("DATABASE_URL", dsn)
+        .env("CADUS_CURRICULUM", fixture_curriculum())
+        .env("OPENAI_API_KEY", "test-key")
+        .env("OPENAI_BASE_URL", base_url)
+        .env("OPENAI_MODEL", "qwen3.6")
+        .env("RUST_LOG", "info")
+        // `tracing_subscriber` colors its fields on a pipe too, so a log line
+        // reaches this test with escape bytes inside `output_tokens=4000`.
+        // `NO_COLOR` turns the color off and leaves the text readable.
+        .env("NO_COLOR", "1")
+        .stdout(std::process::Stdio::piped())
+        .stderr(std::process::Stdio::piped());
+    for (name, value) in env {
+        command.env(name, value);
+    }
+    let child = KillOnDrop::new(command.spawn().expect("the worker binary must start"));
 
     let output = tokio::time::timeout(
         Duration::from_secs(30),
@@ -550,6 +569,72 @@ async fn the_runbook_author_command_stores_a_pending_document() {
         assert_eq!(
             rows_of(&db.admin, KP_KEY).await,
             vec![("template".to_owned(), "pending".to_owned())]
+        );
+    })
+    .await;
+}
+
+/// An authoring call carries the AUTHORING output budget, never the diagnosis
+/// one (T3, T5, finding F18).
+///
+/// The run below sets both diagnosis knobs to their shipped 600 and sets no
+/// `AUTHORING_*` knob. The body on the wire must still carry `max_tokens` 4000,
+/// and the configuration line must name 4000 and 2000. The old code handed
+/// `ModelConfig::from_env()` to the pass, so the body carried 600 with a
+/// reasoning ceiling of 600 beside it, which leaves zero visible tokens.
+///
+/// The second run names `AUTHORING_OUTPUT_TOKENS`, so the operator knob is read
+/// under its own name and not by its default alone.
+#[tokio::test]
+async fn an_authoring_call_takes_the_authoring_output_budget() {
+    TestDb::with(|db| async move {
+        let dsn = superuser_dsn(&db.name);
+        let diagnosis_knobs = [
+            ("DIAGNOSIS_OUTPUT_TOKENS", "600"),
+            ("DIAGNOSIS_REASONING_MAX_TOKENS", "600"),
+        ];
+
+        let fake = FakeModel::start(vec![tool_reply(&good_arguments())]).await;
+        let run = run_binary_with(
+            &dsn,
+            &fake.base_url,
+            &["author", "--kp", KP_KEY, "--kind", "template"],
+            &diagnosis_knobs,
+        )
+        .await;
+
+        assert_eq!(run.code, Some(0), "stderr:\n{}", run.stderr);
+        let sent = fake.calls();
+        assert_eq!(sent.len(), 1);
+        assert_eq!(sent[0]["max_tokens"], json!(4000));
+        assert!(
+            run.stderr
+                .contains("output_tokens=4000 reasoning_max_tokens=2000"),
+            "the configuration line must name both authoring ceilings; stderr:\n{}",
+            run.stderr
+        );
+
+        let wider = FakeModel::start(vec![tool_reply(&good_arguments())]).await;
+        let mut knobs = diagnosis_knobs.to_vec();
+        knobs.push(("AUTHORING_OUTPUT_TOKENS", "1234"));
+        knobs.push(("AUTHORING_REASONING_MAX_TOKENS", "567"));
+        let run = run_binary_with(
+            &dsn,
+            &wider.base_url,
+            &["author", "--kp", KP_KEY, "--kind", "template"],
+            &knobs,
+        )
+        .await;
+
+        assert_eq!(run.code, Some(0), "stderr:\n{}", run.stderr);
+        let sent = wider.calls();
+        assert_eq!(sent.len(), 1);
+        assert_eq!(sent[0]["max_tokens"], json!(1234));
+        assert!(
+            run.stderr
+                .contains("output_tokens=1234 reasoning_max_tokens=567"),
+            "the operator knobs must reach the configuration line; stderr:\n{}",
+            run.stderr
         );
     })
     .await;
