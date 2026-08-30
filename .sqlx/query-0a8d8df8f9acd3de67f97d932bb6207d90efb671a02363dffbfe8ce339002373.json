@@ -1,0 +1,119 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n            SELECT status AS \"status!\", kind AS \"kind!\", kp_id AS \"kp_id!\",\n                   body AS \"body!\", authoring_attempts AS \"attempts!\",\n                   authoring_cost_usd::text AS \"cost\", review_reason,\n                   approved_by, approved_at\n            FROM content_store WHERE digest = $1\n            ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "status!",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "content_store",
+            "name": "status"
+          }
+        }
+      },
+      {
+        "ordinal": 1,
+        "name": "kind!",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "content_store",
+            "name": "kind"
+          }
+        }
+      },
+      {
+        "ordinal": 2,
+        "name": "kp_id!",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "content_store",
+            "name": "kp_id"
+          }
+        }
+      },
+      {
+        "ordinal": 3,
+        "name": "body!",
+        "type_info": "Jsonb",
+        "origin": {
+          "Table": {
+            "table": "content_store",
+            "name": "body"
+          }
+        }
+      },
+      {
+        "ordinal": 4,
+        "name": "attempts!",
+        "type_info": "Int4",
+        "origin": {
+          "Table": {
+            "table": "content_store",
+            "name": "authoring_attempts"
+          }
+        }
+      },
+      {
+        "ordinal": 5,
+        "name": "cost",
+        "type_info": "Text",
+        "origin": "Expression"
+      },
+      {
+        "ordinal": 6,
+        "name": "review_reason",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "content_store",
+            "name": "review_reason"
+          }
+        }
+      },
+      {
+        "ordinal": 7,
+        "name": "approved_by",
+        "type_info": "Uuid",
+        "origin": {
+          "Table": {
+            "table": "content_store",
+            "name": "approved_by"
+          }
+        }
+      },
+      {
+        "ordinal": 8,
+        "name": "approved_at",
+        "type_info": "Timestamptz",
+        "origin": {
+          "Table": {
+            "table": "content_store",
+            "name": "approved_at"
+          }
+        }
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Text"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      false,
+      false,
+      null,
+      true,
+      true,
+      true
+    ]
+  },
+  "hash": "0a8d8df8f9acd3de67f97d932bb6207d90efb671a02363dffbfe8ce339002373"
+}

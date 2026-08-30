@@ -1,0 +1,21 @@
+-- 0011_content_review: the reason a reviewer gives when a document is refused.
+-- Requirements: C6 (a human review gate binds approval to the digest), R4
+-- (`cadus_store::content` approves and rejects by digest).
+--
+-- Spec `docs/reference/authoring-and-spa-1.0-spec.md` section 3.2: the reject
+-- route takes `{reason}`, and the review screen makes the reason mandatory. 1.0
+-- kept that text in the cache slot it overwrote
+-- (`scripts/review_templates.py:201-214`). 2.0 keeps the body, because approval
+-- binds to the digest of the body, so the reason needs a column of its own.
+--
+-- The column is nullable. Every row written before this migration carries NULL,
+-- and a `pending` or `approved` row carries NULL too: the reason belongs to a
+-- rejection. No backfill is needed.
+--
+-- 0006_grants_rls leaves cadus_app with SELECT on content_store and gives
+-- cadus_admin full DML. A new column inherits the table-level grant, so this
+-- migration adds no GRANT and the runtime role still cannot write the reason.
+-- content_store is outside row-level security: it holds curriculum content and
+-- not learner data (docs/SCHEMA.md).
+
+ALTER TABLE content_store ADD COLUMN review_reason text;

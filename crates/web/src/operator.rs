@@ -93,7 +93,7 @@ fn flag_json(flag: &KpFlag) -> Value {
 /// no exemplars, so the gate cannot run on it. The row then carries
 /// `gated: false`, which is the same report the refill worker logs for that
 /// case. Silence is what A6 refuses.
-fn gate_json(content: &Content, kp_id: &str, digest: &str, body: &str) -> Value {
+pub(crate) fn gate_json(content: &Content, kp_id: &str, digest: &str, body: &str) -> Value {
     let Some(spec) = spec_of(content, kp_id) else {
         return json!({
             "kp_id": kp_id,
@@ -127,7 +127,7 @@ fn gate_json(content: &Content, kp_id: &str, digest: &str, body: &str) -> Value 
 /// The answer kind belongs to the topic and the exemplars belong to the
 /// knowledge point, which is the pair `cadus_worker::refill` builds for the same
 /// call.
-fn spec_of<'a>(content: &'a Content, kp_id: &str) -> Option<GateSpec<'a>> {
+pub(crate) fn spec_of<'a>(content: &'a Content, kp_id: &str) -> Option<GateSpec<'a>> {
     let graph = &content.curriculum;
     let (topic_id, point_id) = split_kp_key(kp_id)?;
     let topic_idx = graph.idx_of(topic_id)?;
