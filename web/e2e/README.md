@@ -1,7 +1,8 @@
 # The browser click-through (S13)
 
 Two walks that drive the BUILT bundle in a real Chromium: `demo.mjs` against `?demo=1`, and
-`authed.mjs` against the M5 `cadus-web` binary.
+`authed.mjs` against the M5 `cadus-web` binary. Beside them, `packaging.sh` (S14) drives the
+deployed stack itself — Caddy, the service and the database — with curl instead of a browser.
 
 ## Why this exists, concretely
 
@@ -123,22 +124,59 @@ of the four false failures in 1.0's first run were exactly that.
 Both exit non-zero on any console error, page error, failed request or 4xx/5xx, and write
 screenshots to `e2e/shots/`.
 
-## Still owed
+## The packaging check (S14)
 
-`e2e/shots/` is written to be uploaded as a CI artifact, and the CI step is **not** wired
-here: `.github/workflows/ci.yml` belongs to S14, and `scripts/check_ops.sh` fails a workflow
-that declares a second `runs-on:`. The step S14 needs, after its TypeScript job runs
-`node e2e/run.mjs acceptance`:
+`packaging.sh` is the third script here, and the only one that starts the real deployment:
 
-```yaml
-      - name: Upload the click-through screenshots
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: click-through
-          path: web/e2e/shots/*.png
-          if-no-files-found: warn
+```sh
+web/e2e/packaging.sh              # build, bring up, check, tear down
+web/e2e/packaging.sh --no-build   # reuse the images that are already built
+web/e2e/packaging.sh --keep       # leave the stack up on http://127.0.0.1:18080
 ```
 
-Keep it a step of the TypeScript job and out of the Rust gate job: the browser walk needs
-docker, and a docker outage must never block the unit gate (spec section 7.3).
+It runs `docker-compose.yml` under its own project name (`cadus2s14acc`) and its own port
+(18080), so it touches no other stack on the box, and it removes the project and its volumes
+on the way out.
+
+`scripts/check_ops.sh` reads the Dockerfile, the compose file and the Caddyfile and proves
+what they SAY. This script proves what the stack DOES, and it holds the four facts of spec
+section 7.1 row S14:
+
+```
+PASS: nonode   -- neither the app image nor the edge image carries node, npm, or npx
+PASS: csp      -- the bundle inside the edge image passes the audit
+PASS: edge     -- one origin: / and /ops serve the bundle with the five security headers,
+                  /api/health answers {"ok":true} from the service, /api/ready and /metrics
+                  answer 404
+PASS: csrf     -- through Caddy, the cookie POST from the deployment's own origin is 200 and
+                  the same cookie POST from https://evil.example is 403 cross_origin_rejected
+```
+
+The last one is why the whole stack has to run. The `403` comes from the CSRF origin layer of
+the SERVICE (`crates/web/src/origin.rs`) and never from Caddy, so only a real proxy in front
+of a real service on ONE origin tells the two POSTs apart. `serve.mjs` reproduces that shape
+for the click-through; this script is the shape itself.
+
+The CSP audit reads the bundle out of the EDGE IMAGE and not out of a host build:
+`packaging.sh` replaces `web/dist` with `docker cp` from the image and runs `npm run csp`
+over those bytes. A host build that passes says nothing about what the image ships.
+
+It is not part of `npm run check` and not part of the Rust gate. It builds two images and
+brings a database up, so it runs when the packaging changes.
+
+## In CI
+
+`.github/workflows/ci.yml` runs three SPA steps in the ONE gate job, in this order:
+
+1. `npm ci` in `web/`;
+2. `npm run check` — the unit gate, native, no docker;
+3. `node e2e/run.mjs acceptance` — the click-through, in the Playwright container;
+
+then it uploads `web/e2e/shots/*.png` as the `click-through` artifact with `if: always()`, so
+a red run keeps the screenshots that explain it.
+
+Steps 2 and 3 are SEPARATE STEPS on purpose (spec section 7.3): a docker outage then fails the
+click-through with the unit gate already green and reported. They stay in the one job because
+`scripts/check_ops.sh` check (i) refuses a second `runs-on:` — the budget benchmarks run
+inside `scripts/gate.sh` and must not run beside another suite. Steps of one job run one at a
+time, so nothing there contends with a benchmark.

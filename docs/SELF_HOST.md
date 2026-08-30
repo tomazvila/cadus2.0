@@ -232,16 +232,32 @@ steps above keep the volume.
   `listening on`, and prints the last 40 log lines of that service.
 - **The ops surface (U6).** `scripts/check_ops.sh` runs the operator's own
   commands: `docker compose config` resolves `docker-compose.yml`, and
-  `docker compose build` builds every service that has a `build:` section. It
-  then runs a container from each built image and proves that `cadus-web`,
-  `cadus-worker`, and `cadus-migrate` are on the `PATH` there. For every service
-  that builds the app image it proves three more facts: the service HAS a
-  `command:`, its first token names one of the three binaries and exists in the
-  image, and every further token is in the allowlist of that binary
-  (`cadus-migrate` takes `--admin-login`; `cadus-web` and `cadus-worker` take no
-  argument). A renamed binary target, a wrong `dockerfile:` key, a deleted
-  `command:`, or a mistyped flag then fails the gate instead of the operator's
-  next bring-up (review round 2, finding #12; review round 4, finding #9).
+  `docker compose build` builds every service that has a `build:` section. Every
+  such service names its image in a `target:` key -- `runtime` for the app image,
+  `spa` for the edge image -- and the checks below read that key, because the two
+  images carry different things.
+
+  In each APP image it proves that `cadus-web`, `cadus-worker`, and
+  `cadus-migrate` are on the `PATH`, and that `/app/curriculum/courses.yaml`
+  exists. For every service that builds the app image it proves three more facts:
+  the service HAS a `command:`, its first token names one of the three binaries
+  and exists in the image, and every further token is in the allowlist of that
+  binary (`cadus-migrate` takes `--admin-login`; `cadus-web` and `cadus-worker`
+  take no argument). A renamed binary target, a wrong `dockerfile:` key, a
+  deleted `command:`, or a mistyped flag then fails the gate instead of the
+  operator's next bring-up (review round 2, finding #12; review round 4,
+  finding #9).
+
+  In each EDGE image it proves that the built bundle is under `/srv` --
+  `index.html`, the hashed `assets/`, and the vendored KaTeX -- and that `caddy`
+  runs it, and that the service declares NO `command:`, because a command
+  replaces the Caddy entrypoint. In BOTH images it proves that `node`, `npm` and
+  `npx` are absent: node builds the bundle in a stage that ships nothing.
+  Finally it reads `deploy/Caddyfile`, which is a bind mount that no image check
+  can see, and proves that `/api/*` proxies to `web:8080`, that every other path
+  serves the bundle out of the Dockerfile's own `/srv` with an `index.html`
+  fallback, and that its five security headers equal `SECURITY_HEADERS` of
+  `crates/web/src/security.rs` character for character.
 - **The shell scripts.** `scripts/check_ops.sh` runs
   `shellcheck -S warning scripts/*.sh`. `scripts/deploy.sh` is THE upgrade
   procedure, so an unquoted expansion or a lost exit code in it lands on the
