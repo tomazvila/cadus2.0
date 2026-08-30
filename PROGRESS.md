@@ -2,7 +2,7 @@
 
 One entry per milestone cycle (HANDOVER.md §2). Newest first.
 
-## M5 — HTTP API, session state, deterministic grading, async diagnosis, model-call log (2026-08-27, in progress)
+## M5 — HTTP API, session state, deterministic grading, async diagnosis, model-call log (2026-08-27 to 2026-08-30, closed)
 
 Requirement IDs: A3, A4, C1–C4, R2, R4, L1–L6, T1–T6. Plan: `docs/plans/M5.md`. Spec:
 `docs/reference/web-service-1.0-spec.md`. Owner go: 2026-08-27; D-M5-2 on the plan default.
@@ -34,6 +34,25 @@ U12 items for the M5 review (from the unit report):
 - The route runs `cadus_core::template::gate` at request time (at most 20 runs, about 200 ms CPU). No L* line covers the route; R4 holds. Two merge
 seams were resolved by hand (additive: the web purity list, the store error variants and
 module list); one load-sensitive debug timing test now uses the bomb budget.
+
+### M5 close (2026-08-30)
+
+Fix wave 2 (`wf_53264f5d-8dd`): five units, all gate green on their branches, merged through `m5/fix2-c`. Changes: the serve folds and saves after it appends `task_served`, so `through_seq` stands at the log head after every route; `GET /api/session/plan`, `GET /api/status` and the serve path compose from one session view (`session::view_for_open_session`); the repeat-fail rule reads a `lesson_failures` map in the cached session view; the worker tick runs the diagnosis pass without a refill job; `ApiPath` maps the path rejection into the envelope; the email field is capped at 254 bytes after normalization; `safe_next` accepts bytes `0x21..=0x7e` only; benchmark B (grade) folds its attempt, the pool tail test accepts `None` at the tail, the histogram test asserts shape.
+
+Gate on `main` at `da01837`: 1,593 tests, 0 failed (log gate-m5-5). Release benchmarks: serve p95 1.9 ms, grade p95 7.6 ms, 20,000-event log serve p95 2.7 ms and grade p95 104.6 ms, arena p95 3.3 ms.
+
+Review totals for M5: round 1 and 2 raised 28, confirmed 18 (12 distinct); the verification round raised 19, confirmed 13 (10 distinct). All 22 distinct defects are fixed with a red-then-green test each and a mutation check. No third review round: the verification round re-opened none of the round-1 fixes, and no blocker appeared in wave 2.
+
+Open items carried to M6 (`docs/plans/M6.md` backlog):
+- The FIRST serve of a task in a session pays one whole-log read and fold (114–167 ms at 20,000 events, once per task per session): `project_incremental` replays the earlier events for the light indices (xp, streak, velocity, quiz, remediation). A cached light-index document removes the last whole-log term.
+- `SessionContext::with_open_multistep_components` has no caller, so the R6 stable-component branch reads an empty slice; the `task_served` event now carries `component_topics`, so the read is one lookup in `compose_plan`.
+- The tenant layer runs `current_user`, and `/api/auth/me`, `logout`, `logout-all` and `/api/operator/flags` run it again (a cost, not a defect).
+- The client-facing `index` restarts after `POST /api/enroll`; the recorded attempt number does not.
+- `JobPayload.topic` carries the record topic beside the serve topic's knowledge point.
+- The refill pass has no test through `run_with` (every refill test calls `refill_once`).
+- The pool tail test's lower bound (`>= 192` serves) rests on an argument, not a proof.
+- The 1.0 quiz batch reveal route (`service.complete_task`) is not ported; the quiz test proves the reveal material only.
+- `GET /api/operator/flags`: `pool_depth` is per calling tenant, `source_exhausted` is always false, the route runs the template gate at request time.
 
 ## M4 — serving pool, template instantiation, anti-repeat, L1/L2 benchmarks (2026-08-27)
 
