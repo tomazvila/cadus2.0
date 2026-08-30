@@ -474,10 +474,39 @@ cadus-worker --help                # the option list
 | `--dry-run` | Print the plan. Make no model call and no write. |
 
 The pass reads `DATABASE_URL` (the `cadus_admin` connection),
-`CADUS_CURRICULUM` (the tree; the default is `./curriculum`), and the model
-variables of the section "The diagnosis worker" below. A dry run needs no model
-variable. A run that is not a dry run needs `OPENAI_API_KEY`, and an empty key
-ends the process with exit code 2.
+`CADUS_CURRICULUM` (the tree; the default is `./curriculum`), and the endpoint
+variables of the section "The diagnosis worker" below: `OPENAI_API_KEY`,
+`OPENAI_BASE_URL`, `OPENAI_MODEL` and `OPENROUTER_PROVIDER_ORDER`. A dry run
+needs no model variable. A run that is not a dry run needs `OPENAI_API_KEY`, and
+an empty key ends the process with exit code 2.
+
+### The authoring token budget
+
+The pass does NOT read the two `DIAGNOSIS_*` token variables. It reads its own
+two, and it keeps them apart on purpose: an authored document is a whole
+template, teach page, hint ladder or distractor set, and the diagnosis ceiling of
+600 output tokens with a reasoning ceiling of 600 beside it leaves zero visible
+tokens for one.
+
+| Variable | Default | Meaning |
+|---|---|---|
+| `AUTHORING_OUTPUT_TOKENS` | `4000` | The output ceiling of one authoring call. The pass is offline and no learner waits for it, so this is not a latency bound. |
+| `AUTHORING_REASONING_MAX_TOKENS` | `2000` | The reasoning ceiling of one authoring call (T5). The reasoning budget is part of the output budget, so this default keeps half of the output ceiling for the document. |
+
+The configuration line of the pass names both values. Read it before you spend
+tokens:
+
+```
+cadus-worker: the authoring pass is configured model=deepseek/deepseek-v4-pro base_url=https://openrouter.ai/api/v1 output_tokens=4000 reasoning_max_tokens=2000
+```
+
+`docker-compose.yml` does not forward the two variables yet, so pass them on the
+command line of an authoring run in a container:
+
+```sh
+docker compose exec -e AUTHORING_OUTPUT_TOKENS=6000 worker \
+  cadus-worker author --kp perfect-squares/kp1 --kind template
+```
 
 ### Read the plan first
 
@@ -533,6 +562,11 @@ The plan prints first, then one result line per kind:
   was full.
 - `declined` — the knowledge points that used all five attempts. A decline stores
   nothing, and a `declined ...` line follows with the last refusal of the gate.
+  A knowledge point of an answer kind the gate can never accept declines with
+  ZERO calls: `template` and `diagnosis` both need a symbolically decidable
+  answer kind (`numeric` or `expression`), so a `proof` topic costs nothing for
+  either kind. `teach` and `hint_ladder` carry no answer expression, so the pass
+  authors them for every answer kind.
 - `calls` and `alerts` — the model calls of the pass, and the passes above three
   attempts (T3).
 
@@ -679,8 +713,8 @@ cadus-worker: OPENAI_API_KEY is empty; the diagnosis queue waits and no model is
 | `OPENAI_BASE_URL` | `https://openrouter.ai/api/v1` | The endpoint. A local OpenAI-compatible server, for example `http://10.8.0.3:8080/v1`, is the same code path. |
 | `OPENAI_MODEL` | `deepseek/deepseek-v4-pro` | The model id the request names (O2). |
 | `OPENROUTER_PROVIDER_ORDER` | none | A comma-separated provider list. T5 pins the order, so an OpenRouter endpoint with an empty list is a configuration error. |
-| `DIAGNOSIS_OUTPUT_TOKENS` | `600` | The output ceiling per call. It is a latency bound, not a spend cap. |
-| `DIAGNOSIS_REASONING_MAX_TOKENS` | `600` | The reasoning ceiling per call (T5). |
+| `DIAGNOSIS_OUTPUT_TOKENS` | `600` | The output ceiling of one diagnosis call. It is a latency bound, not a spend cap. The authoring pass has its own ceiling; see "The authoring token budget". |
+| `DIAGNOSIS_REASONING_MAX_TOKENS` | `600` | The reasoning ceiling of one diagnosis call (T5). |
 | `DIAGNOSIS_CALLS_PER_SESSION` | `0` | The T4 call cap per session. `0` is unlimited (O2). |
 
 `provider` and `reasoning` are OpenRouter extensions. The client puts them in the
