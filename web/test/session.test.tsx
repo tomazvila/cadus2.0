@@ -18,11 +18,12 @@
 import { describe, expect, it, vi } from 'vitest';
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { axe } from 'vitest-axe';
-import { createDemoApi } from '@/api';
+import { ApiError, createDemoApi } from '@/api';
 import { DialogProvider } from '@/components/Modal';
 import { Dashboard, type DashboardProps } from '@/views/Dashboard';
 import { Session, isDrill, type SessionProps } from '@/views/session/Session';
-import { resetToasts } from '@/app/toast';
+import { RETRY_STALE_MESSAGE } from '@/hooks/useCall';
+import { fireToastAction, resetToasts, toastStore } from '@/app/toast';
 import { fmtClock, signed } from '@/lib/format';
 import { AXE_IN_JSDOM } from './axe';
 import type {
@@ -362,6 +363,79 @@ describe('DD-3/P1: the re-solve', () => {
 
     expect(taskAnswer).toHaveBeenCalledTimes(1);
     expect(screen.getByText('Make it stick')).toBeTruthy();
+  });
+});
+
+describe('the stale Retry', () => {
+  const toasts = () => toastStore.getSnapshot();
+
+  it('F-37-1c: a Retry pressed after the same problem was graded posts nothing', async () => {
+    // The defect this pins (F10): the Retry re-entered the request function direct, past the
+    // phase gate, and posted a consumed `problem_id`. The service answers `404
+    // unknown_problem`, and that failure armed another Retry that never expired.
+    let attempts = 0;
+    const taskAnswer = vi.fn<ApiClient['taskAnswer']>(async () => {
+      attempts += 1;
+      if (attempts === 1) throw new ApiError(503, 'unavailable', 'The service is busy.');
+      return graded({ next: null, task_status: 'task_passed' });
+    });
+    await mount({ api: stubApi({ taskAnswer }) });
+
+    // The first grade fails. The problem comes back to the learner with a Retry armed.
+    typeAnswer('3/4');
+    await act(async () => { fireEvent.click(submitButton()); });
+    expect(toasts().length).toBe(1);
+    expect(toasts()[0].label).toBe('Retry');
+    expect(submitButton().hasAttribute('disabled')).toBe(false);
+
+    // The learner submits again instead, and THAT attempt is graded.
+    typeAnswer('3/4');
+    await act(async () => { fireEvent.click(submitButton()); });
+    expect(screen.getByText('Correct')).toBeTruthy();
+    expect(taskAnswer).toHaveBeenCalledTimes(2);
+
+    // The Retry now names a consumed problem, so the gate refuses it.
+    const stale = toasts()[0];
+    await act(async () => { fireToastAction(stale.id); });
+
+    expect(taskAnswer).toHaveBeenCalledTimes(2);
+    // One toast, and it is the refusal. A refusal toast carries no action, so it expires.
+    expect(toasts().length).toBe(1);
+    expect(toasts()[0].message).toBe(RETRY_STALE_MESSAGE);
+    expect(toasts()[0].label).toBeUndefined();
+    expect(toasts()[0].onAction).toBeUndefined();
+    expect(toasts()[0].kind).toBe('info');
+  });
+
+  it('DD-3/P1: a Retry is refused once the service answered, even with the problem still live', async () => {
+    // The re-solve keeps the SAME problem live, so problem identity alone does not say the
+    // request is still good. The assisted attempt earned its reply and is spent: a Retry
+    // would post that attempt's answer as the unaided re-solve.
+    let attempts = 0;
+    const taskAnswer = vi.fn<ApiClient['taskAnswer']>(async () => {
+      attempts += 1;
+      if (attempts === 1) throw new ApiError(503, 'unavailable', 'The service is busy.');
+      return REWORK;
+    });
+    await mount({ api: stubApi({ taskAnswer }) });
+
+    typeAnswer('3/4');
+    await act(async () => { fireEvent.click(submitButton()); });
+    expect(toasts()[0].label).toBe('Retry');
+
+    typeAnswer('3/4');
+    await act(async () => { fireEvent.click(submitButton()); });
+    expect(screen.getByText('Make it stick')).toBeTruthy();
+
+    await act(async () => { fireToastAction(toasts()[0].id); });
+
+    expect(taskAnswer).toHaveBeenCalledTimes(2);
+    expect(toasts().length).toBe(1);
+    expect(toasts()[0].message).toBe(RETRY_STALE_MESSAGE);
+    expect(toasts()[0].onAction).toBeUndefined();
+    // The problem is still live, and the learner's own re-solve is still the way on.
+    expect(screen.getByText('Make it stick')).toBeTruthy();
+    expect(submitButton().hasAttribute('disabled')).toBe(false);
   });
 });
 
@@ -752,6 +826,64 @@ describe('the drill countdown', () => {
 
     await act(async () => { vi.advanceTimersByTime(5000); });
     expect(taskAnswer).toHaveBeenCalledTimes(1);
+  });
+
+  it('DD-3/P1: a drill re-solve stops the countdown, so no blank second post lands', async () => {
+    // The defect this pins (F7): the rework branch returned the view to `ready` and left the
+    // leftover seconds to run out. The auto-submit then posted a BLANK answer for the same
+    // `problem_id`, and the service rewrote the stashed assisted pass into a permanent miss
+    // in an append-only log.
+    vi.useFakeTimers();
+    const taskAnswer = vi.fn<ApiClient['taskAnswer']>(async () => REWORK);
+    await mount({
+      plan: planOf(DRILL),
+      api: stubApi({
+        taskAnswer,
+        taskServe: async () => P(1, { countdown: true, time_budget_secs: 3 }),
+      }),
+    });
+
+    expect(document.querySelector('.timer')!.textContent).toBe('0:03');
+    typeAnswer('3/4');
+    await act(async () => { fireEvent.click(submitButton()); });
+
+    // The assisted pass is stashed, and the problem waits for the unaided re-solve.
+    expect(screen.getByText('Make it stick')).toBeTruthy();
+
+    // Five seconds — more than the three the countdown had left.
+    await act(async () => { vi.advanceTimersByTime(5000); });
+
+    expect(taskAnswer).toHaveBeenCalledTimes(1);
+    expect(taskAnswer.mock.calls[0][1]).toEqual({ problem_id: 'p1', answer: '3/4' });
+    expect(screen.getByText('Make it stick')).toBeTruthy();
+    // The re-solve is untimed: the countdown was stopped and cleared, so the clock counts
+    // the re-solve up from zero and never turns urgent again.
+    expect(document.querySelector('.timer')!.textContent).toBe('0:05');
+    expect(document.querySelector('.timer')!.className).not.toContain('urgent');
+  });
+
+  it('ends the countdown on ANY reply that hands the problem back', async () => {
+    // The rule is not "the rework branch". The service holds an attempt for this
+    // `problem_id` whatever the reply says, so every branch that returns the view to `ready`
+    // latches the countdown out. The receipt branch drives it here because it is the one
+    // such branch that leaves `rework` null.
+    vi.useFakeTimers();
+    const receipt = { accepted: true as const, remaining: 2, quiz_complete: false };
+    const taskAnswer = vi.fn<ApiClient['taskAnswer']>(async () => receipt);
+    await mount({
+      plan: planOf(DRILL),
+      api: stubApi({
+        taskAnswer,
+        taskServe: async () => P(1, { countdown: true, time_budget_secs: 3 }),
+      }),
+    });
+
+    typeAnswer('3/4');
+    await act(async () => { fireEvent.click(submitButton()); });
+    await act(async () => { vi.advanceTimersByTime(5000); });
+
+    expect(taskAnswer).toHaveBeenCalledTimes(1);
+    expect(taskAnswer.mock.calls[0][1]).toEqual({ problem_id: 'p1', answer: '3/4' });
   });
 });
 

@@ -16,7 +16,9 @@
  *   DD-3/P1 — THE RE-SOLVE. An assisted answer that grades correct is NOT recorded. The
  *   service stashes it and keeps the problem live, so the view returns to `ready` with the
  *   solution revealed and the SAME submit sends the unaided re-solve. `feedback` is not
- *   terminal.
+ *   terminal. The re-solve is UNTIMED: the return to `ready` stops and clears the drill
+ *   countdown, because a leftover second that runs out posts a blank re-solve and the
+ *   service then rewrites the stashed assisted pass into a permanent miss.
  *
  *   NO-2BILL — ONE WRITE PER MOUNT. A lesson mount posts `/teach` and nothing else; the
  *   serve waits for "I've got it". 1.0 fired a warm-up serve behind the worked example, and
@@ -136,8 +138,15 @@ export function Session({
   const taskRef = useRef<PlanTask | null>(null);
   const startedOnce = useRef(false);
   // Latches the drill timeout PER PROBLEM. A failed grade returns the phase to `ready` with
-  // the clock still at zero, and an unlatched effect re-fires on every one of them.
+  // the clock still at zero, and an unlatched effect re-fires on every one of them. The
+  // learner still has the field and the Submit button, so a timeout that failed to post is
+  // not a dead end.
   const timedOutFor = useRef<string | null>(null);
+  // Latches the problem the SERVICE ALREADY ANSWERED, whatever the answer said. Two rules
+  // read it, and both are about a problem the view hands back to the learner (the DD-3/P1
+  // re-solve): the countdown of that problem is over, so no blank auto-submit follows, and
+  // the request that earned the reply is spent, so no stale Retry re-posts it.
+  const answeredFor = useRef<string | null>(null);
   // The knowledge point whose worked example is on screen. A new one inside a lesson has to
   // be taught before it is practised.
   const taughtKp = useRef<string | null>(null);
@@ -147,6 +156,9 @@ export function Session({
   const setLive = useCallback((p: ServedProblem | null, startAt: number) => {
     problemRef.current = p;
     setProblem(p);
+    // Both latches belong to the problem that is live, so a fresh serve starts unlatched.
+    timedOutFor.current = null;
+    answeredFor.current = null;
     // The clock's starting value travels WITH the problem, so the ticking effect never
     // writes state synchronously to reset it.
     setElapsed(startAt);
@@ -271,7 +283,10 @@ export function Session({
 
   // ---- the display clock ---------------------------------------------------
 
-  const countdown = isDrill(session.task, problem);
+  // A re-solve is UNTIMED (DD-3/P1). The timed attempt is already made and stashed, so the
+  // budget of this problem is spent: the clock counts the re-solve up from zero, and the
+  // auto-submit effect below — which fires only on a countdown — cannot fire at all.
+  const countdown = isDrill(session.task, problem) && !rework;
   const ticking = phase === 'ready' && !!problem;
   const liveProblemId = problem?.problem_id ?? null;
 
@@ -310,6 +325,11 @@ export function Session({
       }),
       (reply) => {
         if (!life.alive()) return;
+        // THE SERVICE ANSWERED THIS PROBLEM, whatever the reply says. The latch is set here,
+        // before any branch: a branch that returns the view to `ready` leaves the leftover
+        // seconds to run out, and the auto-submit then posts a BLANK second attempt for a
+        // `problem_id` the service already holds an attempt for.
+        answeredFor.current = current.problem_id;
         if (isQuizReceipt(reply)) {
           // Unreachable by construction: a quiz task is handed to the quiz screen before it
           // is served, so this view posts no quiz answer. The branch exists because the
@@ -321,7 +341,14 @@ export function Session({
           // DD-3/P1: back to `ready`, deliberately. The next submit of this same problem is
           // the unaided re-solve, and only that locks the assisted pass in. The service
           // needs no flag from here — it counts the hints it served.
+          //
+          // THE COUNTDOWN STOPS AND CLEARS HERE. The timed attempt is made and the service
+          // stashed it; the re-solve is untimed, and `countdown` reads false while `rework`
+          // stands. Leaving the leftover seconds to run out fires a blank re-solve of this
+          // same problem, and the service then rewrites the stashed assisted pass into a
+          // permanent miss in an append-only log.
           setRework(reply);
+          setElapsed(0);
           answerRef.current?.clear();
           gate.enter('ready');
           return;
@@ -333,11 +360,21 @@ export function Session({
         if (reply.remediation.length) session.requestReplan();
         gate.enter('feedback');
       },
-    ).then((reply) => {
-      // A failed grade returns the problem to the learner. Without this the view sits at
-      // `submitting` with every control disabled and no way back.
-      if (!reply && life.alive() && gate.is('submitting')) gate.enter('ready');
-    });
+      {
+        // THE RETRY RE-ENTERS THE GATE (F-37-1c). `useCall` holds no view state, so a Retry
+        // pressed after a second submit graded this problem would post a `problem_id` the
+        // service already spent: `404 unknown_problem` against an append-only log, and that
+        // failure arms yet another Retry. The gate refuses it instead, and the refusal
+        // toast expires.
+        retryGate: () => problemRef.current?.problem_id === current.problem_id
+          && answeredFor.current !== current.problem_id
+          && gate.tryEnter('ready', 'submitting'),
+        // A failed grade returns the problem to the learner — the first attempt and every
+        // retried one alike. Without this the view sits at `submitting` with every control
+        // disabled and no way back.
+        onFail: () => { if (life.alive() && gate.is('submitting')) gate.enter('ready'); },
+      },
+    );
   }, [api, call, gate, life, session]);
 
   // The drill auto-submit goes through the SAME gate, so it can only fire while the problem
@@ -345,7 +382,9 @@ export function Session({
   useEffect(() => {
     if (!countdown || elapsed !== 0 || phase !== 'ready') return;
     const id = problemRef.current?.problem_id;
-    if (!id || timedOutFor.current === id) return;
+    // Two latches, one rule each: the timeout of this problem already fired, or the service
+    // already answered this problem and handed it back for the re-solve.
+    if (!id || timedOutFor.current === id || answeredFor.current === id) return;
     timedOutFor.current = id;
     submit({ timedOut: true });
   }, [countdown, elapsed, phase, submit]);
