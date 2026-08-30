@@ -211,6 +211,10 @@ fn worker_direct_normal_dependencies_are_the_declared_list() {
             // and the result document are JSON documents. It is a data-format
             // crate: no socket, no model.
             "serde_json",
+            // M6 R1 added `sha2`. The authoring prompt digest is a SHA-256, the
+            // way 1.0's `template_prompt_digest` is. It is a pure computation
+            // crate: no socket, no model.
+            "sha2",
             "sqlx",
             "thiserror",
             "tokio",

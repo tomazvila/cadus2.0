@@ -23,6 +23,11 @@ cadus-store = { workspace = true }
 # M5 U10. The diagnosis payload, the tool schema and the result document are JSON
 # documents. It is a data-format crate: no socket, no model.
 serde_json = { workspace = true }
+# M6 R1 (A2, C6). SHA-256 for the authoring prompt digest, which is 1.0's
+# `template_prompt_digest` (`prompts.py:779-796`). It is a pure computation
+# crate: no socket, no database, no model. `sqlx` already resolves the same
+# version, so the lock file gains no crate.
+sha2 = { workspace = true }
 sqlx = { workspace = true }
 thiserror = { workspace = true }
 tokio = { workspace = true }
