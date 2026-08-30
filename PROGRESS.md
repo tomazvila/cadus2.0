@@ -47,7 +47,7 @@ the WIP) → R8 beside S13 → S14, with `CARGO_BUILD_JOBS=6` (now the default i
 | S13 Playwright click-through in the container, screenshots | `m6/s13` | gate green (`586a310`) |
 | S14 packaging: node build stage, Caddy same-origin, CI step | `m6/s14` | gate green (`3261a22`) |
 
-All 22 units green on their branches; `m6/r8` and `m6/s14` merged into `main` at `53a9ef8` (2026-08-30). Gate on `main`: `cd web && npm run check` PASS (CSP audit: 32 built files, no eval, no `data:` URIs); Rust gate 1,754 tests, 0 failed (migration 0011 content review; log gate-m6-1). Review rounds next (`docs/reviews/M6-review-1.md`).
+All 22 units green on their branches; `m6/r8` and `m6/s14` merged into `main` at `53a9ef8` (2026-08-30). Gate on `main`: `cd web && npm run check` PASS (CSP audit: 32 built files, no eval, no `data:` URIs); Rust gate 1,754 tests, 0 failed (migration 0011 content review; log gate-m6-1). Review rounds 1 and 2 (2026-08-30, `docs/reviews/M6-review-1.md`): 40 raised, 26 confirmed, 20 distinct defects, four blockers (the content_store digest collision across knowledge points; the hint/teach gates that never read a served template instance; a drill countdown that blank-submits the re-solve; the authoring pass sending the diagnosis token ceiling) plus the deploy/ops gaps (deploy.sh reports OK while Caddy crash-loops, a Caddyfile change never applies, the shipped .env serves a Secure cookie over http). Fix wave `wf_3f2ed520-c7a`: nine units in three phases (A1+B+D1+D2+E, then C+G+F, then A2), at most two Rust builders at once.
 
 In parallel, unit FIX-D6 (branch `d6/decimal`) implements the owner's D6 ruling of 2026-08-30 (`docs/DECISIONS.md`
 row `D6-dec`): a learner decimal that equals the exact value rounded half-to-even to the typed digits is
