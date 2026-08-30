@@ -19,6 +19,7 @@ lineage is 1.0's `docs/DATA_MODEL.md` §9.
 | `0009_metrics_readers` | the new `/metrics` series (T6) | no tables; `model_call_totals()`, `diagnosis_job_totals()` |
 | `0010_session_view` | the cached session view (D4) | no tables; `learner_models.session_view` |
 | `0011_content_review` | the C6 review gate | no tables; `content_store.review_reason` |
+| `0012_content_prompt_digest` | the prompt that authored a row (C6) | no tables; `content_store.prompt_digest` |
 
 ## Roles
 

@@ -10,9 +10,11 @@
 //! loop ([`job`]). Unit R3 adds the T3 accounting ([`cost`]): the ledger row of
 //! every attempt, the bill on the stored row, and the alert above three
 //! attempts. Unit R8 adds the operator entry point ([`cli`]): the `author`
-//! subcommand, its plan, and its dry run.
+//! subcommand, its plan, and its dry run. Unit FIX-M6-A2 adds the LaTeX escape
+//! repair of the boundary ([`repair`]), which every gate runs behind.
 
 pub mod cli;
 pub mod cost;
 pub mod job;
 pub mod prompt;
+pub mod repair;

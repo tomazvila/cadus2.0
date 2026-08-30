@@ -92,6 +92,20 @@
 //! gate (`cadus_core::instruction`); unit R7 added the diagnosis gate
 //! (`cadus_core::template::distractor`). [`verify_kind`] answers a gate for all
 //! four kinds, so no kind reaches the table unverified.
+//!
+//! # The two doors before a gate
+//!
+//! [`verify_kind`] runs `crate::authoring::repair::repair_arguments` on the
+//! decoded tool arguments FIRST, on every kind. No gate reads a control
+//! character, so an under-escaped `"$\times$"` used to reach `content_store` as
+//! `$<TAB>imes$` (spec section 5, trap T1; M6 review finding F3).
+//!
+//! [`store_pending`] then writes `content_store.prompt_digest`: the row names
+//! the prompt that authored it, so a prompt edit marks the row for re-authoring
+//! and never unapproves it ([`stale_slots`], [`stale_rows`]; spec section 2.2,
+//! "Prompt digest"; M6 review finding F4).
+
+use std::fmt::Write as _;
 
 use cadus_core::instruction::{InstructionSpec, gate_hint_ladder, gate_teach};
 use cadus_core::pool::kp_key;
@@ -101,15 +115,14 @@ use cadus_core::template::{
 };
 use cadus_model_client::{Attempt, Client};
 use cadus_store::Db;
-use cadus_store::content::{
-    Admin, KIND_TEMPLATE, NewDocument, Verdict, insert_pending, verdict,
-};
+use cadus_store::content::{Admin, KIND_TEMPLATE, NewDocument, Verdict, insert_pending, verdict};
 use serde_json::Value;
 use sha2::{Digest, Sha256};
 
 use crate::WorkerError;
 use crate::authoring::cost;
 use crate::authoring::prompt::{self, AuthoringSpec, DIGEST_CHARS, Kind};
+use crate::authoring::repair;
 use crate::diagnosis::MODEL_ERROR_TAGS;
 use crate::model_log::{self, CallRecord, PURPOSE_AUTHORING};
 
@@ -656,6 +669,11 @@ pub fn verify_kind(
     arguments: &Value,
     instance_answers: &[String],
 ) -> Result<String, Rejection> {
+    // Trap T1, on EVERY kind and before EVERY gate. A model that writes one
+    // backslash emits valid JSON whose decoded value is `$<TAB>imes$`; no gate
+    // reads a control character, so the mangled text reached `content_store` on
+    // `template`, `teach` and `hint_ladder` alike (M6 review finding F3).
+    let arguments = &repair::repair_arguments(arguments)?;
     match kind {
         Kind::Template => verify(spec, arguments),
         Kind::Teach => verify_teach(spec, arguments, instance_answers),
@@ -694,6 +712,123 @@ pub async fn slots_taken(db: &Db, kp_id: &str, kind: Kind) -> Result<i64, Worker
     )
     .fetch_one(db.pool());
     Ok(cadus_store::bounded(db, query).await?)
+}
+
+/// How many slots of one knowledge point and kind an OLDER prompt wrote (C6).
+///
+/// Spec section 2.2, "Prompt digest": 1.0 folds the prompt digest into the cache
+/// key, so a prompt edit retires every stored template
+/// (`problem_templates.py:1129-1163`). 2.0 keeps the digest on the row, because
+/// the C6 approval binds to the content. A prompt edit therefore does not
+/// unapprove anything; it marks the row for re-authoring, and this count is that
+/// mark.
+///
+/// A row with a NULL `prompt_digest` is NOT stale. NULL means "the prompt is not
+/// recorded", which every row written before migration `0012` carries, and a
+/// pass that read NULL as stale would re-author the whole bank on the first run
+/// after the deployment (M6 review finding F4).
+///
+/// The count covers `approved` AND `pending` rows, exactly as [`slots_taken`]
+/// does, so [`author_one`] subtracts one count from the other and reads the
+/// slots the CURRENT prompt holds.
+///
+/// # Errors
+///
+/// Returns [`WorkerError::Store`] when the statement fails or the bound expires.
+pub async fn stale_slots(db: &Db, kp_id: &str, kind: Kind) -> Result<i64, WorkerError> {
+    let current = prompt::prompt_digest(kind);
+    let query = sqlx::query_scalar!(
+        r#"
+        SELECT count(*) AS "count!"
+          FROM content_store
+         WHERE kp_id = $1 AND kind = $2 AND status IN ($3, $4)
+           AND prompt_digest IS NOT NULL AND prompt_digest <> $5
+        "#,
+        kp_id,
+        kind.as_str(),
+        STATUS_APPROVED,
+        STATUS_PENDING,
+        current,
+    )
+    .fetch_one(db.pool());
+    Ok(cadus_store::bounded(db, query).await?)
+}
+
+/// One approved row an older prompt wrote (spec section 2.2, "Prompt digest").
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct StaleRow {
+    /// The serving key `"<topic_id>/<kp_id>"` of the row.
+    pub kp_id: String,
+    /// The kind of the row.
+    pub kind: Kind,
+    /// The content address of the row. The approval still binds to it.
+    pub digest: String,
+    /// The prompt digest the row carries.
+    pub prompt_digest: String,
+}
+
+/// Every APPROVED row of these kinds that an older prompt wrote (C6).
+///
+/// This is the read behind `cadus-worker author --stale`. It lists the approved
+/// rows alone, because those are the rows a learner is served: a `pending` row
+/// an older prompt wrote is already in front of a reviewer, and the reviewer
+/// reads the body and not the prompt.
+///
+/// The order is the kind of [`KINDS`](crate::authoring::prompt::KINDS), then the
+/// serving key, then the digest, so two runs over one table print one text.
+///
+/// # Errors
+///
+/// Returns [`WorkerError::Store`] when a statement fails or the bound expires.
+pub async fn stale_rows(db: &Db, kinds: &[Kind]) -> Result<Vec<StaleRow>, WorkerError> {
+    let mut rows = Vec::new();
+    for kind in kinds {
+        let current = prompt::prompt_digest(*kind);
+        let query = sqlx::query!(
+            r#"
+            SELECT kp_id AS "kp_id!", digest AS "digest!", prompt_digest AS "prompt_digest!"
+              FROM content_store
+             WHERE kind = $1 AND status = $2
+               AND prompt_digest IS NOT NULL AND prompt_digest <> $3
+             ORDER BY kp_id, digest
+            "#,
+            kind.as_str(),
+            STATUS_APPROVED,
+            current,
+        )
+        .fetch_all(db.pool());
+        for row in cadus_store::bounded(db, query).await? {
+            rows.push(StaleRow {
+                kp_id: row.kp_id,
+                kind: *kind,
+                digest: row.digest,
+                prompt_digest: row.prompt_digest,
+            });
+        }
+    }
+    Ok(rows)
+}
+
+/// The stale rows, as the text `cadus-worker author --stale` prints on stdout.
+///
+/// One line names the columns, one line follows per row, and the last line
+/// counts them. Every field is fixed, so an operator reads the text and a test
+/// asserts it.
+#[must_use]
+pub fn render_stale(rows: &[StaleRow]) -> String {
+    let mut text = String::from("stale documents\nkp_id kind digest prompt_digest\n");
+    for row in rows {
+        let _ = writeln!(
+            text,
+            "{} {} {} {}",
+            row.kp_id,
+            row.kind.as_str(),
+            row.digest,
+            row.prompt_digest
+        );
+    }
+    let _ = writeln!(text, "stale: rows {}", rows.len());
+    text
 }
 
 /// The money of one authoring pass, as the text `content_store` stores (T3).
@@ -788,6 +923,7 @@ pub async fn store_pending(
         .map_err(|err| WorkerError::Config(format!("the verified body does not read: {err}")))?;
     let cost_usd = total(db, spend).await?;
     let digest = document_digest(kp_id, kind, body);
+    let stamp = prompt::prompt_digest(kind);
     let doc = NewDocument {
         digest: &digest,
         kp_id,
@@ -795,6 +931,10 @@ pub async fn store_pending(
         body: &document,
         authoring_attempts: attempts,
         cost_usd: cost_usd.as_deref(),
+        // Spec section 2.2, "Prompt digest": the row names the prompt that
+        // wrote it, so a prompt edit marks the row for re-authoring and never
+        // unapproves it (M6 review finding F4).
+        prompt_digest: Some(&stamp),
     };
     let inserted = insert_pending(Admin::new(db), &doc).await?;
     let held = if inserted {
@@ -856,10 +996,18 @@ pub async fn author_one(
     // other one, because it is the check that keeps T3 amortized: one knowledge
     // point is paid for once and then serves forever.
     let taken = slots_taken(db, &kp_id, kind).await?;
-    if taken >= bank_target(kind) {
-        tracing::debug!(kp = %kp_id, kind = kind.as_str(), taken,
+    // Spec section 2.2, "Prompt digest": a slot an EDITED prompt wrote does not
+    // fill the bank. The pass re-authors it, and the old row keeps the approval
+    // it has (M6 review finding F4).
+    let stale = stale_slots(db, &kp_id, kind).await?;
+    if taken.saturating_sub(stale) >= bank_target(kind) {
+        tracing::debug!(kp = %kp_id, kind = kind.as_str(), taken, stale,
                         "authoring: the bank is full; the pass makes no call");
         return Ok(quiet(Outcome::Skipped, kp_id));
+    }
+    if stale > 0 {
+        tracing::info!(kp = %kp_id, kind = kind.as_str(), taken, stale,
+                       "authoring: a stored document names an older prompt; the pass re-authors");
     }
 
     // Step 2: a knowledge point the gate can never accept costs nothing. The
@@ -1015,6 +1163,38 @@ pub async fn author_one(
     })
 }
 
+/// The specs of one batch, the pairs an older prompt wrote first.
+///
+/// Spec section 2.2, "Prompt digest": a prompt edit marks the affected rows for
+/// re-authoring, and the batch loop takes those pairs before the rest. A pass an
+/// operator stops halfway therefore spends its calls on the stale material and
+/// not on a knowledge point that is already current (M6 review finding F4).
+///
+/// The order inside each half is the caller's order, so a batch with no stale
+/// row runs exactly as it ran before.
+///
+/// # Errors
+///
+/// Returns [`WorkerError::Store`] when a count fails or the bound expires.
+async fn stale_first<'a>(
+    db: &Db,
+    kind: Kind,
+    specs: &'a [AuthoringSpec],
+) -> Result<Vec<&'a AuthoringSpec>, WorkerError> {
+    let mut stale: Vec<&AuthoringSpec> = Vec::new();
+    let mut rest: Vec<&AuthoringSpec> = Vec::new();
+    for spec in specs {
+        let key = kp_key(&spec.topic_id, &spec.kp_id);
+        if stale_slots(db, &key, kind).await? > 0 {
+            stale.push(spec);
+        } else {
+            rest.push(spec);
+        }
+    }
+    stale.extend(rest);
+    Ok(stale)
+}
+
 /// Author one kind over a list of knowledge points (A2: a batch job; R4: never a
 /// request handler).
 ///
@@ -1031,7 +1211,7 @@ pub async fn run_batch(
     specs: &[AuthoringSpec],
 ) -> Result<BatchReport, WorkerError> {
     let mut batch = BatchReport::default();
-    for spec in specs {
+    for spec in stale_first(db, kind, specs).await? {
         let report = author_one(db, job, kind, spec).await?;
         batch.calls = batch.calls.saturating_add(report.attempts);
         if report.alert {

@@ -337,7 +337,27 @@ fn the_author_options_read() {
             kps: vec!["perfect-squares/kp1".to_owned(), "bare/kp1".to_owned()],
             kinds: vec![Kind::Teach],
             dry_run: true,
+            stale: false,
         })
+    );
+}
+
+/// `--stale` reads, and it stands beside `--dry-run` and never inside it.
+#[test]
+fn the_stale_option_reads() {
+    let parsed = parse(&["author", "--kind", "teach", "--stale"]).expect("the line parses");
+
+    assert_eq!(
+        parsed,
+        Command::Author(AuthorArgs {
+            kps: Vec::new(),
+            kinds: vec![Kind::Teach],
+            dry_run: false,
+            stale: true,
+        })
+    );
+    assert!(
+        HELP.contains("--stale                 list the approved documents an older prompt wrote,")
     );
 }
 
@@ -531,6 +551,49 @@ async fn dry_run_prints_the_plan_and_calls_no_model() {
         assert_eq!(run.stdout, EMPTY_TEMPLATE_PLAN);
         assert_eq!(fake.call_count(), 0, "a dry run must call no model");
         assert!(rows_of(&db.admin, KP_KEY).await.is_empty());
+    })
+    .await;
+}
+
+/// FIX-M6-A2: `author --stale` lists the approved rows an older prompt wrote,
+/// and it makes ZERO model calls.
+///
+/// Spec section 2.2, "Prompt digest": a prompt edit marks the affected rows for
+/// re-authoring and never unapproves one, so the operator reads the mark before
+/// a pass spends a token (M6 review finding F4). The seeded row names a prompt
+/// digest no kind of this checkout carries.
+#[tokio::test]
+async fn the_stale_command_lists_the_rows_of_an_older_prompt() {
+    TestDb::with(|db| async move {
+        let fake = FakeModel::start(vec![tool_reply(&good_arguments())]).await;
+        let dsn = superuser_dsn(&db.name);
+        sqlx::query(
+            "INSERT INTO content_store (digest, kp_id, kind, body, status, prompt_digest)
+             VALUES ('sha256:old-row', $1, 'teach', '{}'::jsonb, 'approved',
+                     'sha256:0000000000000000')",
+        )
+        .bind(KP_KEY)
+        .execute(&db.admin)
+        .await
+        .unwrap();
+
+        let run = run_binary(
+            &dsn,
+            &fake.base_url,
+            &["author", "--kp", KP_KEY, "--kind", "teach", "--stale"],
+        )
+        .await;
+
+        assert_eq!(run.code, Some(0), "stderr:\n{}", run.stderr);
+        assert_eq!(
+            run.stdout,
+            "stale documents\n\
+             kp_id kind digest prompt_digest\n\
+             perfect-squares/kp1 teach sha256:old-row sha256:0000000000000000\n\
+             stale: rows 1\n"
+        );
+        assert_eq!(fake.call_count(), 0, "a stale listing must call no model");
+        assert_eq!(rows_of(&db.admin, KP_KEY).await.len(), 1);
     })
     .await;
 }

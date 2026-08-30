@@ -33,6 +33,11 @@ const KP: &str = "perfect-squares/kp1";
 /// The digest of the document under review.
 const DIGEST: &str = "sha256:0123456789abcdef";
 
+/// The prompt digest the template fixture carries (spec section 2.2, "Prompt
+/// digest"). The value is a literal of this file and never a value the code
+/// under test computes.
+const PROMPT_DIGEST: &str = "sha256:aaaabbbbccccdddd";
+
 /// Wrap a pool in a `Db` with no client-side bound. The tests measure the
 /// statement, not the timeout, and unit `client_timeout.rs` pins the bound.
 fn handle(pool: &PgPool) -> Db {
@@ -48,6 +53,7 @@ fn template<'a>(digest: &'a str, body: &'a serde_json::Value) -> NewDocument<'a>
         body,
         authoring_attempts: 2,
         cost_usd: Some("0.004500"),
+        prompt_digest: Some(PROMPT_DIGEST),
     }
 }
 
@@ -129,6 +135,53 @@ async fn the_app_role_cannot_insert_update_or_delete_content_store() {
 // --------------------------------------------------------------------------
 // insert_pending
 // --------------------------------------------------------------------------
+
+/// F4: the insert writes `prompt_digest`, and `None` writes NULL.
+///
+/// Spec section 2.2, "Prompt digest": the digest is a COLUMN on the row and
+/// never part of the content digest, because the C6 approval binds to the
+/// content. A prompt edit therefore marks the row for re-authoring and never
+/// unapproves it. A NULL means "the prompt is not recorded", which every row
+/// written before migration `0012_content_prompt_digest` carries.
+#[tokio::test]
+async fn the_insert_writes_the_prompt_digest_column() {
+    TestDb::with(|db| async move {
+        let admin = handle(&db.admin);
+        let body = json!({"statement": "Compute $7^{{2}}$."});
+        insert_pending(Admin::new(&admin), &template(DIGEST, &body))
+            .await
+            .unwrap();
+        insert_pending(
+            Admin::new(&admin),
+            &NewDocument {
+                digest: "sha256:no-prompt-digest",
+                kp_id: KP,
+                kind: KIND_TEACH,
+                body: &body,
+                authoring_attempts: 1,
+                cost_usd: None,
+                prompt_digest: None,
+            },
+        )
+        .await
+        .unwrap();
+
+        let rows = sqlx::query!(
+            r#"SELECT digest AS "digest!", prompt_digest
+                 FROM content_store ORDER BY digest"#
+        )
+        .fetch_all(&db.admin)
+        .await
+        .unwrap();
+
+        assert_eq!(rows.len(), 2);
+        assert_eq!(rows[0].digest, DIGEST);
+        assert_eq!(rows[0].prompt_digest.as_deref(), Some(PROMPT_DIGEST));
+        assert_eq!(rows[1].digest, "sha256:no-prompt-digest");
+        assert_eq!(rows[1].prompt_digest, None);
+    })
+    .await;
+}
 
 /// The insert writes `pending`, the T3 columns, and nothing else. A second
 /// insert of the same digest writes no row and reports `false`.
@@ -278,6 +331,7 @@ async fn approving_twice_keeps_the_first_stamp() {
                 body: &body,
                 authoring_attempts: 1,
                 cost_usd: None,
+                prompt_digest: None,
             },
         )
         .await

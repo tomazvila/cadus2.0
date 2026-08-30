@@ -35,7 +35,7 @@ use cadus_core::curriculum::{Curriculum, CurriculumError, LoadError, load_curric
 use cadus_model_client::{API_KEY_VAR, Client, ModelConfig};
 use cadus_store::{Db, DbConfig, bounded};
 use cadus_worker::authoring::cli::{self, AuthorArgs, Command};
-use cadus_worker::authoring::job::{AuthoringJob, run_batch};
+use cadus_worker::authoring::job::{self, AuthoringJob, run_batch};
 use cadus_worker::{DiagnosisJob, RefillJob, WorkerConfig, WorkerError};
 
 /// The environment variable that names the curriculum tree.
@@ -118,6 +118,17 @@ async fn author(args: &AuthorArgs) -> Result<(), WorkerError> {
 
     let db_cfg = DbConfig::from_env()?;
     let db = Db::connect(&db_cfg).await?;
+    // `--stale` is a read and an exit. Spec section 2.2, "Prompt digest": the
+    // list names the approved rows an older prompt wrote, so an operator reads
+    // the re-authoring queue before a pass spends a token (M6 review finding
+    // F4).
+    if args.stale {
+        let rows = job::stale_rows(&db, &kinds).await?;
+        print!("{}", job::render_stale(&rows));
+        close_within(POOL_CLOSE_DEADLINE, db.pool().close()).await;
+        return Ok(());
+    }
+
     let rows = cli::plan(&db, &specs, &kinds).await?;
     print!("{}", cli::render_plan(&rows, args.dry_run));
 

@@ -243,7 +243,8 @@ fn the_digest_is_sixteen_hex_characters_and_one_per_kind() {
 /// 1.0 pins the same value in its own survey
 /// (`docs/reference/serving-1.0-spec.md:113`: `f322b85a40b9ac50`). The pin makes
 /// every prompt edit and every schema edit a visible diff, and it is the value
-/// unit R2 writes onto the stored row.
+/// `cadus_worker::authoring::job::store_pending` writes into
+/// `content_store.prompt_digest` (M6 review finding F4).
 #[test]
 fn the_prompt_digests_of_this_checkout_are_pinned() {
     let pinned = [

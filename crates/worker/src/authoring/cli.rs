@@ -47,6 +47,8 @@ AUTHOR OPTIONS:
                             teach, hint_ladder, diagnosis. The default is all
                             four.
     --dry-run               print the plan, and make no model call and no write.
+    --stale                 list the approved documents an older prompt wrote,
+                            and make no model call and no write.
 
 ENVIRONMENT:
     DATABASE_URL       the connection the pass reads and writes (cadus_admin).
@@ -75,6 +77,12 @@ pub struct AuthorArgs {
     pub kinds: Vec<Kind>,
     /// Print the plan and make no call.
     pub dry_run: bool,
+    /// List the approved documents an older prompt wrote, and make no call.
+    ///
+    /// Spec section 2.2, "Prompt digest": a prompt edit marks the affected rows
+    /// for re-authoring and never unapproves one, so an operator needs a way to
+    /// read the mark (M6 review finding F4).
+    pub stale: bool,
 }
 
 impl AuthorArgs {
@@ -127,6 +135,7 @@ pub fn parse<S: AsRef<str>>(args: &[S]) -> Result<Command, CliError> {
     while let Some(argument) = args.next() {
         match argument {
             "--dry-run" => parsed.dry_run = true,
+            "--stale" => parsed.stale = true,
             "--help" | "-h" => return Ok(Command::Help),
             "--kp" => parsed.kps.push(value_of("--kp", args.next())?),
             "--kind" => {

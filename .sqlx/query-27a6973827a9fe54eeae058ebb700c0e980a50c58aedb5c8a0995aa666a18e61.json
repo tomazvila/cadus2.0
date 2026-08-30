@@ -1,0 +1,54 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n            SELECT kp_id AS \"kp_id!\", digest AS \"digest!\", prompt_digest AS \"prompt_digest!\"\n              FROM content_store\n             WHERE kind = $1 AND status = $2\n               AND prompt_digest IS NOT NULL AND prompt_digest <> $3\n             ORDER BY kp_id, digest\n            ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "kp_id!",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "content_store",
+            "name": "kp_id"
+          }
+        }
+      },
+      {
+        "ordinal": 1,
+        "name": "digest!",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "content_store",
+            "name": "digest"
+          }
+        }
+      },
+      {
+        "ordinal": 2,
+        "name": "prompt_digest!",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "content_store",
+            "name": "prompt_digest"
+          }
+        }
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Text",
+        "Text",
+        "Text"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      true
+    ]
+  },
+  "hash": "27a6973827a9fe54eeae058ebb700c0e980a50c58aedb5c8a0995aa666a18e61"
+}

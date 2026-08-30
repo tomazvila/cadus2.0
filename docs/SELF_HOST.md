@@ -492,6 +492,7 @@ cadus-worker --help                # the option list
 | `--kp <topic_id/kp_id>` | Author for this knowledge point. Repeat it for more. The default is every knowledge point of the tree. |
 | `--kind <kind>` | Author this kind: `template`, `teach`, `hint_ladder`, or `diagnosis`. Repeat it for more. The default is all four. |
 | `--dry-run` | Print the plan. Make no model call and no write. |
+| `--stale` | List the approved documents an older prompt wrote. Make no model call and no write. |
 
 The pass reads `DATABASE_URL` (the `cadus_admin` connection),
 `CADUS_CURRICULUM` (the tree; the default is `./curriculum`), and the endpoint
@@ -593,6 +594,68 @@ The plan prints first, then one result line per kind:
 The process exits 0 after a pass and 2 after a configuration error. An unknown
 knowledge point, an unknown kind, an unreadable curriculum, and an empty
 `OPENAI_API_KEY` are all exit code 2, and the one line on stderr names the cause.
+
+### The LaTeX escape repair (trap T1)
+
+A model that writes its own JSON with ONE backslash emits `"$\times$"`. That is
+valid JSON, and `\t` is a valid JSON escape, so the decoded value is
+`$<TAB>imes$` and the LaTeX command is gone. No gate reads a control character,
+so the mangled text used to reach `content_store` on every kind.
+
+The pass now repairs every text field of the model's reply before any gate runs:
+the statement, the solution sketch, every hint, the concept, every worked step,
+and every distractor answer and note. Two fields are never repaired —
+`answer_expr` and the `expected` of a worked sample — because the server
+COMPUTES over both and a rewrite changes the arithmetic.
+
+A control character that the repair cannot name refuses the whole body. The
+refusal reads:
+
+```
+the text carries a control character that is not a LaTeX command — a JSON string eats the first letter of \times when the backslash is written once, so write EVERY backslash of a LaTeX command twice
+```
+
+That sentence goes to the model as the feedback of the next attempt, so a
+refusal costs one attempt of the five and usually buys a clean document. A
+newline stays legal text; every other control character refuses.
+
+### After a prompt edit (C6)
+
+Every stored row names the prompt that authored it, in
+`content_store.prompt_digest`. The digest covers the system prompt, the tool
+name and the tool schema of the kind. An edit to any of the three gives the kind
+a new digest, and every row of the old digest becomes STALE.
+
+A stale row keeps its approval. C6 binds an approval to the CONTENT, and a
+prompt edit changes no content, so a stale approved document goes on serving
+until a reviewer approves its replacement. The edit marks the row; it never
+unapproves it.
+
+List the marked rows:
+
+```sh
+docker compose exec worker cadus-worker author --kind teach --stale
+```
+
+```
+stale documents
+kp_id kind digest prompt_digest
+perfect-squares/kp1 teach sha256:0f3c1a94b7e2d508 sha256:a1b2c3d4e5f60718
+stale: rows 1
+```
+
+The listing names APPROVED rows alone. A `pending` row of an older prompt is
+already in front of a reviewer, and a reviewer reads the body and not the
+prompt.
+
+The next pass then re-authors the marked pairs first, and a stale slot does NOT
+fill the bank: a knowledge point with one stale approved teach page authors one
+new teach page, although the teach bank is 1. Approve the new document, and
+reject the old one when it is no longer wanted.
+
+A row with an EMPTY `prompt_digest` is never stale. NULL means "the prompt is
+not recorded", which is what every row written before migration
+`0012_content_prompt_digest` carries.
 
 ### After the pass
 

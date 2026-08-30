@@ -179,6 +179,17 @@ pub struct NewDocument<'a> {
     /// is `numeric(12,6)` and the cast is `text::numeric`, exactly as
     /// `model_call_log.cost_usd` is written.
     pub cost_usd: Option<&'a str>,
+    /// The digest of the PROMPT that authored this document (spec section 2.2,
+    /// "Prompt digest").
+    ///
+    /// The value is `cadus_worker::authoring::prompt::prompt_digest` of the
+    /// kind. It is a column and never part of [`digest`](Self::digest),
+    /// because the C6 approval binds to the CONTENT: a prompt edit marks the
+    /// affected rows for re-authoring and never unapproves one.
+    ///
+    /// `None` writes NULL, which means "the prompt is not recorded". A NULL row
+    /// is never stale (M6 review finding F4).
+    pub prompt_digest: Option<&'a str>,
 }
 
 /// The state of one document after a review write (C6).
@@ -220,8 +231,9 @@ pub async fn insert_pending(admin: Admin<'_>, doc: &NewDocument<'_>) -> Result<b
     let query = sqlx::query!(
         r#"
         INSERT INTO content_store
-            (digest, kp_id, kind, body, status, authoring_attempts, authoring_cost_usd)
-        VALUES ($1, $2, $3, $4, $5, $6, $7::text::numeric)
+            (digest, kp_id, kind, body, status, authoring_attempts, authoring_cost_usd,
+             prompt_digest)
+        VALUES ($1, $2, $3, $4, $5, $6, $7::text::numeric, $8)
         ON CONFLICT (digest) DO NOTHING
         "#,
         doc.digest,
@@ -231,6 +243,7 @@ pub async fn insert_pending(admin: Admin<'_>, doc: &NewDocument<'_>) -> Result<b
         STATUS_PENDING,
         i32::try_from(doc.authoring_attempts).unwrap_or(i32::MAX),
         doc.cost_usd,
+        doc.prompt_digest,
     )
     .execute(db.pool());
     Ok(crate::bounded(db, query).await?.rows_affected() == 1)
