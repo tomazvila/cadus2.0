@@ -15,6 +15,7 @@
     )
 )]
 
+pub mod authoring;
 pub mod diagnosis;
 pub mod model_log;
 pub mod refill;
@@ -24,6 +25,7 @@ use std::time::{Duration, SystemTime, UNIX_EPOCH};
 
 use cadus_store::{Db, StoreError, bounded};
 
+pub use authoring::prompt::{AuthoringSpec, KINDS, Kind as AuthoringKind};
 pub use diagnosis::{DiagnosisJob, Outcome as DiagnosisOutcome, Report as DiagnosisReport};
 pub use model_log::{CallRecord, PURPOSE_AUTHORING, PURPOSE_DIAGNOSIS};
 pub use refill::{
