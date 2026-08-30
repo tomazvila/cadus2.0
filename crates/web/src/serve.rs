@@ -22,15 +22,28 @@
 //! There is no model call (T1, R4), so the whole serve is one transaction
 //! (`serving-1.0-spec.md` section 7.2): the advisory lock, the projection, the
 //! session-window read, the pool pop, the authored-solution read of a template
-//! row, the `task_served` append of a task served for the first time, the state
-//! write, commit. NO step of it reads the whole event log: the
-//! projection answers from the cached model and the cached
-//! [`cadus_store::state::SessionView`], and the window read asks for the events
-//! of the OPEN SESSION only (M5 review 1, finding F18). `started_at` is
+//! row, the `task_served` append of a task served for the first time, the fold
+//! and save that append needs, the state write, commit. `started_at` is
 //! re-stamped
 //! at EVERY hand-off, a re-serve of a live problem included, because that is the
 //! moment the problem goes on screen (section 5.6). A re-serve therefore returns
 //! the SAME `problem_id` with a FRESH `started_at`.
+//!
+//! # What the serve reads (F18, V1, V8)
+//!
+//! A serve that appends NOTHING — the re-serve of a live problem and the second
+//! to twentieth question of a task — reads no whole log: the projection answers
+//! from the cached model and the cached [`cadus_store::state::SessionView`], and
+//! the window read asks for the events of the OPEN SESSION only.
+//!
+//! The FIRST serve of a task appends `task_served`, and it then folds and saves
+//! in the same transaction, so the log head and the fold cursor of
+//! `learner_models` move together. That fold takes the incremental branch of
+//! `cadus_store::state::project_current`, which reads the whole log ONCE, the
+//! same term the grade path pays (`docs/reference/l1-budget.md` section 8). The
+//! alternative is worse: a cursor left one line behind hands that whole-log read
+//! to EVERY later serve, teach, hint, plan and status request of the learner,
+//! until a grade or a session event repairs it.
 //!
 //! # The `task_served` event (D-M5-8)
 //!
@@ -42,8 +55,11 @@
 //! the event at plan composition; `GET /api/session/plan` of 2.0 stays a pure
 //! read (trap W3), so the serve is the append point.
 //!
-//! [`forget_own_drills`] keeps the drill of the OPEN session servable to its
-//! last question: the cadence gate reads the drills of the EARLIER sessions.
+//! [`crate::session::view_for_open_session`] keeps the drill of the OPEN session
+//! servable to its last question: the cadence gate reads the drills of the
+//! EARLIER sessions. The plan route and the dashboard call that one helper too,
+//! so the three routes list, gate and serve the same drill (M5 review 2,
+//! findings V3 and V9).
 //!
 //! # The A6 fallback
 //!
@@ -69,7 +85,7 @@ use cadus_store::pool::{
     NewInstance, PoolRow, approved_template, insert_batch, pop_with_ring_tx, reclaim_exemplar_tx,
 };
 use cadus_store::state::{
-    EventRow, SessionView, append_event, load_events_after, lock_web_state, project_current,
+    EventRow, append_event, lock_web_state, project_and_save, project_current,
 };
 use serde::Deserialize;
 use serde_json::{Value, json};
@@ -80,7 +96,7 @@ use crate::AppState;
 use crate::error::ApiError;
 use crate::session::{
     INTERNAL_ERROR, begin, bound, compose_plan, content, failed, now_pair, projection_input,
-    read_state, write_state,
+    read_state, view_for_open_session, write_state,
 };
 use crate::state::Content;
 use crate::state::{
@@ -411,7 +427,7 @@ pub(crate) struct Open {
 ///
 /// # What it reads (F18)
 ///
-/// One `learner_models` row, one EMPTY range read of `events` when the fold
+/// One `learner_models` row, one ONE-LINE range read of `events` when the fold
 /// cursor already stands at the head of the log, one range read of the open
 /// session's own events, and one `web_states` row. Nothing here grows with the
 /// lifetime event count. The earlier version read the whole log twice and folded
@@ -438,15 +454,11 @@ pub(crate) async fn open(
     let Some(session) = view.current_session.clone() else {
         return Err(no_open_session());
     };
-    // The window starts AT the `session_start` that opened the session, so the
-    // read asks for the events after the line before it.
-    let after = view.session_start_seq.unwrap_or(0).saturating_sub(1);
-    let events = bound(&state.db, load_events_after(&mut tx, user_id, after))
-        .await
-        .map_err(|err| failed(&err))?;
+    // The window of the OPEN SESSION, and the drill cadence repaired with it.
+    // The plan route and the dashboard call the SAME helper (V3, V9).
+    let events = view_for_open_session(state, &mut tx, user_id, &mut view, &session).await?;
     let mut scratch = read_state(&state.db, &mut tx, user_id).await?;
     scratch.bind(&session);
-    forget_own_drills(&mut view, &events, &session);
     let plan = compose_plan(content, &view, &projection.model, &session, now);
     Ok(Open {
         tx,
@@ -478,30 +490,6 @@ fn served_task_ids(events: &[EventRow], session: &str) -> BTreeSet<String> {
         .collect()
 }
 
-/// Take the drills this session itself served out of the cadence map.
-///
-/// [`cadus_core::selector::schedule_drills`] drops a topic whose last drill is
-/// inside the 3.5-day window, and [`record_first_serve`] stamps that instant at
-/// the FIRST serve of the drill. Without this step the drill task would leave
-/// the plan while the learner is still working through its 20 questions, and the
-/// serve of question 2 would answer `404 unknown_task`.
-///
-/// The cadence therefore reads "no NEW drill of this topic for 3.5 days", and a
-/// drill the open session is already working on stays in that session's plan.
-/// The rule is the queue stability of `_reserve_open_plan` (`selector.py:1630`):
-/// a task the session already serves keeps its id and its place.
-fn forget_own_drills(view: &mut SessionView, events: &[EventRow], session: &str) {
-    for row in events {
-        if let Event::TaskServed(body) = &row.event
-            && body.session.as_deref() == Some(session)
-            && body.task_type == TaskType::Drill
-            && let Some(topic) = body.topic.as_ref()
-        {
-            view.last_drill_at.remove(topic.as_str());
-        }
-    }
-}
-
 /// Append `task_served` the first time this session serves `task` (D-M5-8).
 ///
 /// It is the ONE source of `SessionView::last_drill_at`, and so of the 3.5-day
@@ -516,6 +504,10 @@ fn forget_own_drills(view: &mut SessionView, events: &[EventRow], session: &str)
 ///
 /// The event carries the fields 1.0 records. `problems` stays empty: 1.0 emits
 /// the event before it draws a statement, and no 2.0 code reads the stubs.
+///
+/// The answer is `true` when the append went in. The caller folds and saves on a
+/// `true`, so the log head and the fold cursor leave the transaction together
+/// (M5 review 2, findings V1 and V8).
 async fn record_first_serve(
     state: &AppState,
     tx: &mut Transaction<'_, Postgres>,
@@ -524,9 +516,9 @@ async fn record_first_serve(
     session: &str,
     events: &[EventRow],
     now: Timestamp,
-) -> Result<(), ApiError> {
+) -> Result<bool, ApiError> {
     if served_task_ids(events, session).contains(&task.task_id) {
-        return Ok(());
+        return Ok(false);
     }
     let event = Event::TaskServed(TaskServed {
         ts: now,
@@ -552,7 +544,7 @@ async fn record_first_serve(
     bound(&state.db, append_event(tx, user_id, &event, None))
         .await
         .map_err(|err| failed(&err))?;
-    Ok(())
+    Ok(true)
 }
 
 /// The task of this plan, or `404 unknown_task`.
@@ -627,7 +619,20 @@ pub async fn serve(
     };
     // The hand-off happened, so the task is served. The event goes in once per
     // task and per session, and it is what fills the drill cadence (D-M5-8).
-    record_first_serve(&state, &mut tx, user_id, task, &plan.session, &events, now).await?;
+    let appended =
+        record_first_serve(&state, &mut tx, user_id, task, &plan.session, &events, now).await?;
+    // An append moves the head of the log, so the fold cursor moves with it in
+    // the SAME transaction (V1, V8). A cursor one line behind takes every later
+    // request of this learner out of the "nothing new" branch of
+    // `project_current` and into the incremental branch, which reads the WHOLE
+    // log. A serve that appends nothing leaves the cursor where it stands, so
+    // the common re-serve writes no `learner_models` row at all.
+    if appended {
+        let input = projection_input(content, now);
+        bound(&state.db, project_and_save(&mut tx, user_id, &input, None))
+            .await
+            .map_err(|err| failed(&err))?;
+    }
     write_state(&state.db, &mut tx, user_id, &scratch).await?;
     tx.commit().await.map_err(|err| failed(&err.into()))?;
     Ok(Json(payload))

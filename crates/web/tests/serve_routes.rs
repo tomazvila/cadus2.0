@@ -1412,13 +1412,138 @@ async fn a_running_drill_keeps_its_task_and_appends_no_second_event() {
         assert_eq!(second["index"], 2);
         assert_eq!(task_served_rows(&db, user, DRILL).await, 1);
 
-        // NOTE. `GET /api/session/plan` composes its own view in
-        // `crates/web/src/session.rs`, which unit FIX-M5-H does not own, so that
-        // route drops the running drill from the LISTING while the serve keeps
-        // it. The open issue of the unit asks for the `forget_own_drills` call
-        // to move into `compose_plan`, where both derivations read it.
+        // The plan route lists the running drill too: the three routes compose
+        // from `session::view_for_open_session` (V3, V9), and
+        // `the_plan_and_the_status_keep_the_drill_the_session_serves` pins it.
         let progress = stored_state(&db, user).await;
         assert_eq!(progress.tasks[DRILL].served, 2);
+    })
+    .await;
+}
+
+// --------------------------------------------------------------------------- //
+// The fold cursor and the one session view (M5 review 2, V1, V3, V8, V9)
+// --------------------------------------------------------------------------- //
+
+/// The highest `seq` the log of `user` holds. 0 means an empty log.
+async fn log_head(db: &TestDb, user: Uuid) -> i64 {
+    sqlx::query_scalar!(
+        r#"SELECT COALESCE(MAX(seq), 0) AS "head!" FROM events WHERE user_id = $1"#,
+        user
+    )
+    .fetch_one(&db.admin)
+    .await
+    .unwrap()
+}
+
+/// The fold cursor of the cached learner model of `user`.
+async fn fold_cursor(db: &TestDb, user: Uuid) -> i64 {
+    sqlx::query_scalar!(
+        r#"SELECT through_seq AS "through_seq!" FROM learner_models WHERE user_id = $1"#,
+        user
+    )
+    .fetch_one(&db.admin)
+    .await
+    .unwrap()
+}
+
+/// The parsed body of `GET /api/status`.
+async fn status_body(app: &Router, user: Uuid) -> Value {
+    let (status, body) = call(app, Method::GET, "/api/status", Some(user), None).await;
+    assert_eq!(status, StatusCode::OK, "{body}");
+    parse(&body)
+}
+
+/// V1 and V8 of M5 review 2. The serve appends `task_served`, so the serve folds
+/// and saves in the SAME transaction. A cursor one line behind the head makes
+/// `project_current` leave the "nothing new" branch, and the incremental branch
+/// then reads the whole log on every later request of that learner (F15, F18).
+///
+/// Every expected value is a literal: the head line, the cursor line, and the
+/// count of the cadence rows.
+#[tokio::test]
+async fn a_serve_leaves_the_fold_cursor_at_the_log_head() {
+    TestDb::with(|db| async move {
+        let user = common::seed_learner(&db, "cursor@example.com").await;
+        let app = app(&db);
+        seed_open_session(&db, user).await;
+        seed_drill_due(&db, user).await;
+
+        // The fixture: one `session_start` at line 1, and a cursor on it.
+        assert_eq!(log_head(&db, user).await, 1);
+        assert_eq!(fold_cursor(&db, user).await, 1);
+
+        let (status, served) = serve_task(&app, user, DRILL).await;
+        assert_eq!(status, StatusCode::OK, "{served}");
+
+        // The serve appended line 2, and the cursor moved onto it.
+        assert_eq!(log_head(&db, user).await, 2);
+        assert_eq!(fold_cursor(&db, user).await, 2);
+        assert_eq!(task_served_rows(&db, user, DRILL).await, 1);
+
+        // A re-serve of the live problem appends nothing, so the head and the
+        // cursor both stay on line 2.
+        let (status, again) = serve_task(&app, user, DRILL).await;
+        assert_eq!(status, StatusCode::OK, "{again}");
+        assert_eq!(again["problem_id"], served["problem_id"]);
+        assert_eq!(log_head(&db, user).await, 2);
+        assert_eq!(fold_cursor(&db, user).await, 2);
+        assert_eq!(task_served_rows(&db, user, DRILL).await, 1);
+    })
+    .await;
+}
+
+/// V3 and V9 of M5 review 2. `POST /serve`, `GET /api/session/plan` and
+/// `GET /api/status` compose from ONE session view, so the drill the open
+/// session already serves stays in the plan of that session and `drill_due`
+/// stays true while its questions run.
+///
+/// Every expected value is a literal: the drill task id, the `true` of
+/// `drill_due`, and the served index of each hand-off.
+#[tokio::test]
+async fn the_plan_and_the_status_keep_the_drill_the_session_serves() {
+    TestDb::with(|db| async move {
+        let user = common::seed_learner(&db, "one-view@example.com").await;
+        let app = app(&db);
+        seed_open_session(&db, user).await;
+        seed_drill_due(&db, user).await;
+
+        // Before the serve: the drill stands in the plan and the dashboard
+        // reports it due.
+        assert!(
+            plan_task_ids(&app, user).await.contains(&DRILL.to_string()),
+            "the fixture learner is not drill-eligible"
+        );
+        assert_eq!(status_body(&app, user).await["drill_due"], true);
+
+        // Question 1 of 20 goes on screen. It stamps the cadence.
+        let (status, first) = serve_task(&app, user, DRILL).await;
+        assert_eq!(status, StatusCode::OK, "{first}");
+        assert_eq!(first["index"], 1);
+        assert_eq!(task_served_rows(&db, user, DRILL).await, 1);
+
+        // The plan of the SAME session still lists the drill, and the dashboard
+        // still reports it due: the cadence gate reads the EARLIER sessions.
+        let ids = plan_task_ids(&app, user).await;
+        assert!(
+            ids.contains(&DRILL.to_string()),
+            "the plan dropped the drill the session is working on: {ids:?}"
+        );
+        assert_eq!(status_body(&app, user).await["drill_due"], true);
+
+        // Question 2 comes back under the SAME task id, and it appends no
+        // second cadence event.
+        let mut scratch = stored_state(&db, user).await;
+        scratch.served.remove(DRILL);
+        put_state(&db, user, &scratch).await;
+        let (status, second) = serve_task(&app, user, DRILL).await;
+        assert_eq!(status, StatusCode::OK, "{second}");
+        assert_eq!(second["index"], 2);
+        assert_eq!(task_served_rows(&db, user, DRILL).await, 1);
+        assert!(
+            plan_task_ids(&app, user).await.contains(&DRILL.to_string()),
+            "the plan dropped the drill after its second question"
+        );
     })
     .await;
 }
