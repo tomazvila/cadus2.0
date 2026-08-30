@@ -15,6 +15,8 @@
 //!   Client::call()     -- the T5 body; one ledger row per HTTP attempt (T6)
 //!      │
 //!      ├─ Ok  -> assemble -> gate -> Ok  -> store `pending` -> STORED
+//!      │                        │              ├─ the digest is held -> DUPLICATE
+//!      │                        │              └─ a reviewer refused it -> REJECTED
 //!      │                        └─ Err -> the LITERAL message becomes the
 //!      │                                  feedback of the next attempt
 //!      └─ Err -> the transport reason becomes the reason of this attempt
@@ -22,6 +24,21 @@
 //!      ▼ (after AUTHORING_ATTEMPTS refusals)
 //!   DECLINED           -- no `content_store` row, one decline record
 //! ```
+//!
+//! # The key of one document
+//!
+//! [`document_digest`] is the one function that computes a `content_store`
+//! digest, and the digest covers the knowledge point, the kind AND the body. Two
+//! knowledge points that earn one teach page therefore store two rows. The
+//! digest of the body alone gave them one primary key, and the second document
+//! vanished under `ON CONFLICT DO NOTHING` (M6 review finding F1).
+//!
+//! A pass that collides with a digest reads the verdict of that row
+//! ([`cadus_store::content::verdict`]). A `pending` or `approved` row is
+//! [`Outcome::Duplicate`], which the batch counts beside `stored` and never
+//! inside it. A `rejected` row is [`Outcome::Rejected`]: the pass reproduced a
+//! body a human refused, the batch counts a decline, and the reviewer's reason
+//! reaches the operator in the decline record (M6 review finding F6).
 //!
 //! # Why the rejection message goes in verbatim
 //!
@@ -84,7 +101,7 @@ use cadus_core::template::{
 };
 use cadus_model_client::{Attempt, Client};
 use cadus_store::Db;
-use cadus_store::content::{Admin, NewDocument, insert_pending};
+use cadus_store::content::{Admin, NewDocument, Verdict, insert_pending, verdict};
 use serde_json::Value;
 use sha2::{Digest, Sha256};
 
@@ -118,8 +135,26 @@ pub const STATUS_PENDING: &str = "pending";
 /// The `content_store.status` of a document a human approved (C6).
 pub const STATUS_APPROVED: &str = "approved";
 
+/// The `content_store.status` of a document a human refused (C6).
+pub const STATUS_REJECTED: &str = "rejected";
+
 /// The prefix of a `content_store.digest`, so the row names its hash function.
 pub const DIGEST_PREFIX: &str = "sha256:";
+
+/// The byte between the three parts of the digest material.
+///
+/// Postgres holds no NUL byte in a `text` value, so no `kp_id` and no kind
+/// carries this byte and the three parts of [`document_digest`] cannot run
+/// together into one ambiguous string.
+pub const DIGEST_SEPARATOR: u8 = 0;
+
+/// The decline reason a pass that reproduces a refused body earns (C6).
+///
+/// The reviewer's own reason follows it, after a colon and a space.
+pub const SAME_BODY: &str = "a reviewer refused this exact body already";
+
+/// What stands in the decline reason when the refused row carries no reason.
+pub const NO_REVIEW_REASON: &str = "the row carries no reason";
 
 /// The refusal a forced tool call with no arguments object earns.
 pub const NO_ARGUMENTS: &str = "the tool call carried no JSON object of arguments — emit every required field of the tool in \
@@ -132,8 +167,22 @@ pub enum Outcome {
     Skipped,
     /// The gate accepted a document and the row is `pending`.
     Stored,
-    /// The gate accepted a document whose digest the table already holds.
+    /// The gate accepted a document that the table already holds as `pending`
+    /// or as `approved`. Nothing is stored, and the pass is NOT a store.
     Duplicate,
+    /// The gate accepted a document that a reviewer already REFUSED (C6).
+    ///
+    /// `same_body` is `true` when the digest of the pass names the refused row.
+    /// The digest covers the knowledge point, the kind and the body, so a
+    /// digest that collides is the same body of the same knowledge point, and
+    /// this pass reaches the outcome that way alone. The reviewer's reason
+    /// reaches [`Report::decline`], and the pass counts as a decline: the
+    /// knowledge point still needs a document (M6 review finding F6).
+    Rejected {
+        /// Whether the refused row carries the body of this pass, byte for
+        /// byte.
+        same_body: bool,
+    },
     /// Every attempt was refused. Nothing is stored.
     Declined,
 }
@@ -186,8 +235,13 @@ pub struct Report {
 /// What one pass of [`run_batch`] did over a list of knowledge points.
 #[derive(Debug, Default)]
 pub struct BatchReport {
-    /// The knowledge points that hold a `pending` document after the pass.
+    /// The knowledge points that hold a NEW `pending` document after the pass.
     pub stored: u32,
+    /// The knowledge points whose document the table already held (C6).
+    ///
+    /// The pass paid for its calls and wrote no row, so the count stands beside
+    /// `stored` and never inside it (M6 review finding F1).
+    pub duplicate: u32,
     /// The knowledge points the pass did not call for.
     pub skipped: u32,
     /// The knowledge points that used every attempt.
@@ -248,7 +302,22 @@ pub const fn bank_target(kind: Kind) -> i64 {
     }
 }
 
-/// The content address of one stored body (C6, spec section 8, trap 8).
+/// The content address of one stored document (C6, spec section 8, trap 8).
+///
+/// The key of `content_store` is the knowledge point, the kind, and the body,
+/// and this is the ONE function that computes it. Every writer and every reader
+/// of a digest calls it.
+///
+/// A teach page and a hint ladder carry no knowledge-point field: the serve
+/// reader of L4 and L5 refuses an unknown field, so [`instruction_body`] keeps
+/// the model's fields alone. Two knowledge points can therefore earn one body,
+/// and a digest of the body alone gave both documents one primary key. The
+/// second insert then vanished under `ON CONFLICT (digest) DO NOTHING`, the pass
+/// counted a store it did not make, and the losing knowledge point stayed at
+/// zero slots forever (M6 review finding F1).
+///
+/// The material is `kp_id`, the kind, and the body text, with
+/// [`DIGEST_SEPARATOR`] between the parts.
 ///
 /// The digest covers the WHOLE body, `samples` and `space_size` included, so a
 /// change to either asks for a new approval. The text it hashes is the output of
@@ -257,8 +326,14 @@ pub const fn bank_target(kind: Kind) -> i64 {
 /// `to_body` again. The column holds jsonb, and jsonb keeps neither key order
 /// nor whitespace.
 #[must_use]
-pub fn body_digest(body: &str) -> String {
-    let hash = Sha256::digest(body.as_bytes());
+pub fn document_digest(kp_id: &str, kind: Kind, body: &str) -> String {
+    let mut hasher = Sha256::new();
+    hasher.update(kp_id.as_bytes());
+    hasher.update([DIGEST_SEPARATOR]);
+    hasher.update(kind.as_str().as_bytes());
+    hasher.update([DIGEST_SEPARATOR]);
+    hasher.update(body.as_bytes());
+    let hash = hasher.finalize();
     let mut hex = String::with_capacity(DIGEST_CHARS);
     for byte in hash.iter().take(DIGEST_CHARS.div_ceil(2)) {
         hex.push_str(&format!("{byte:02x}"));
@@ -497,6 +572,11 @@ pub fn verify_kind(
 /// `rejected` row occupies nothing: a human refused that body, and the knowledge
 /// point still needs a document.
 ///
+/// The pass that follows a rejection therefore runs again, and it can reproduce
+/// the refused body. That pass stores nothing, and [`author_one`] answers
+/// [`Outcome::Rejected`] with the reviewer's reason: a re-author of a refused
+/// body is a decline, never a store (M6 review finding F6).
+///
 /// # Errors
 ///
 /// Returns [`WorkerError::Store`] when the statement fails or the bound expires.
@@ -543,12 +623,20 @@ async fn total(db: &Db, spend: &[String]) -> Result<Option<String>, WorkerError>
     Ok(cadus_store::bounded(db, query).await?)
 }
 
-/// What the insert of one authored document did (T3).
+/// What the insert of one authored document did (C6, T3).
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Stored {
+    /// The content address of the document: [`document_digest`] of the
+    /// knowledge point, the kind and the body.
+    pub digest: String,
     /// `true` when the row is new, `false` when the table already held the
     /// digest.
     pub inserted: bool,
+    /// What the table already holds for the digest, when the row is not new.
+    ///
+    /// `None` when the row is new. A `rejected` status here is the reviewer's
+    /// refusal of this exact body (M6 review finding F6).
+    pub verdict: Option<Verdict>,
     /// The exact text of `authoring_cost_usd` on the new row.
     ///
     /// `None` in two cases: the row is not new, or no call of the pass reported
@@ -572,10 +660,17 @@ pub struct Stored {
 /// (`crate::authoring::cost`, section "The sum runs in Postgres").
 ///
 /// [`Stored::inserted`] is `true` when the row is new. A digest the table
-/// already holds is not an error and not a rewrite: the body is the same body,
-/// and a human may have rejected it already, so `ON CONFLICT DO NOTHING` leaves
-/// that verdict AND the earlier row's accounting alone. The second pass paid for
-/// its own calls, and the ledger holds that spend.
+/// already holds is not an error and not a rewrite: the document is the same
+/// document of the same knowledge point, and a human may have rejected it
+/// already, so `ON CONFLICT DO NOTHING` leaves that verdict AND the earlier
+/// row's accounting alone. The second pass paid for its own calls, and the
+/// ledger holds that spend.
+///
+/// A collision then reads [`cadus_store::content::verdict`] and reports it in
+/// [`Stored::verdict`], so the caller tells a duplicate document from a body a
+/// reviewer refused. A row another transaction wrote and did not commit yet is
+/// invisible to that read, which answers `None`; the caller then reports a
+/// duplicate, which is what a `pending` collision is.
 ///
 /// # Errors
 ///
@@ -592,7 +687,7 @@ pub async fn store_pending(
     let document: Value = serde_json::from_str(body)
         .map_err(|err| WorkerError::Config(format!("the verified body does not read: {err}")))?;
     let cost_usd = total(db, spend).await?;
-    let digest = body_digest(body);
+    let digest = document_digest(kp_id, kind, body);
     let doc = NewDocument {
         digest: &digest,
         kp_id,
@@ -602,10 +697,28 @@ pub async fn store_pending(
         cost_usd: cost_usd.as_deref(),
     };
     let inserted = insert_pending(Admin::new(db), &doc).await?;
+    let held = if inserted {
+        None
+    } else {
+        verdict(db, &digest).await?
+    };
     Ok(Stored {
+        digest,
         inserted,
+        verdict: held,
         cost_usd: if inserted { cost_usd } else { None },
     })
+}
+
+/// The decline reason of a pass that reproduced a body a reviewer refused (C6).
+///
+/// The text leads with [`SAME_BODY`] and carries the reviewer's own reason, so
+/// the decline record gives the operator the reason of the refusal.
+fn same_body_reason(held: Option<&Verdict>) -> String {
+    let reason = held
+        .and_then(|held| held.review_reason.as_deref())
+        .unwrap_or(NO_REVIEW_REASON);
+    format!("{SAME_BODY}: {reason}")
 }
 
 /// Author one knowledge point and one kind (spec section 2.2).
@@ -703,20 +816,45 @@ pub async fn author_one(
             Err(err) => err.to_string(),
             Ok(arguments) => match verify_kind(kind, spec, &arguments) {
                 Ok(body) => {
-                    let digest = body_digest(&body);
                     // T3: the row carries the count of calls the pass spent and
                     // the sum of what those calls cost.
                     let spend = cost::spend(&http_attempts);
                     let stored = store_pending(db, &kp_id, kind, &body, attempt, &spend).await?;
+                    let digest = stored.digest.clone();
+                    // C6: a collision with a REFUSED row is not a store and not
+                    // a duplicate. The reviewer's verdict stands, the knowledge
+                    // point still needs a document, and the reason reaches the
+                    // operator (finding F6).
+                    let refused = stored
+                        .verdict
+                        .as_ref()
+                        .is_some_and(|held| held.status == STATUS_REJECTED);
                     let outcome = if stored.inserted {
                         Outcome::Stored
+                    } else if refused {
+                        Outcome::Rejected { same_body: true }
                     } else {
                         Outcome::Duplicate
                     };
-                    tracing::info!(kp = %kp_id, kind = kind.as_str(), attempt, digest,
-                                   inserted = stored.inserted,
-                                   cost_usd = stored.cost_usd.as_deref().unwrap_or("unknown"),
-                                   "authoring: the gate accepted the document");
+                    let decline = if refused {
+                        let reason = same_body_reason(stored.verdict.as_ref());
+                        tracing::warn!(kp = %kp_id, kind = kind.as_str(), attempt, digest,
+                                       reason,
+                                       "authoring: the pass reproduced a refused body");
+                        reasons.push(reason);
+                        Some(Decline {
+                            kp_id: kp_id.clone(),
+                            kind,
+                            attempts: attempt,
+                            reasons,
+                        })
+                    } else {
+                        tracing::info!(kp = %kp_id, kind = kind.as_str(), attempt, digest,
+                                       inserted = stored.inserted,
+                                       cost_usd = stored.cost_usd.as_deref().unwrap_or("unknown"),
+                                       "authoring: the gate accepted the document");
+                        None
+                    };
                     let alert = cost::raise(&kp_id, kind, attempt, stored.cost_usd.as_deref());
                     return Ok(Report {
                         kp_id,
@@ -724,7 +862,7 @@ pub async fn author_one(
                         outcome,
                         attempts: attempt,
                         digest: Some(digest),
-                        decline: None,
+                        decline,
                         http_attempts,
                         cost_usd: stored.cost_usd,
                         alert,
@@ -788,9 +926,12 @@ pub async fn run_batch(
             batch.alerts = batch.alerts.saturating_add(1);
         }
         match report.outcome {
-            Outcome::Stored | Outcome::Duplicate => batch.stored += 1,
+            Outcome::Stored => batch.stored += 1,
+            Outcome::Duplicate => batch.duplicate += 1,
             Outcome::Skipped => batch.skipped += 1,
-            Outcome::Declined => batch.declined += 1,
+            // C6: a re-author of a refused body wrote nothing, so it counts
+            // where a decline counts (M6 review findings F1 and F6).
+            Outcome::Rejected { .. } | Outcome::Declined => batch.declined += 1,
         }
         if let Some(decline) = report.decline {
             batch.declines.push(decline);
@@ -798,6 +939,7 @@ pub async fn run_batch(
     }
     tracing::info!(
         stored = batch.stored,
+        duplicate = batch.duplicate,
         skipped = batch.skipped,
         declined = batch.declined,
         calls = batch.calls,
@@ -810,11 +952,13 @@ pub async fn run_batch(
 #[cfg(test)]
 mod tests {
     use super::{
-        AUTHORING_ATTEMPTS, BANK_TARGET, DIGEST_PREFIX, NO_ARGUMENTS, SINGLE_DOCUMENT, assemble,
-        bank_target, body_digest, verify_kind, verify_teach,
+        AUTHORING_ATTEMPTS, BANK_TARGET, DIGEST_PREFIX, NO_ARGUMENTS, NO_REVIEW_REASON, SAME_BODY,
+        SINGLE_DOCUMENT, assemble, bank_target, document_digest, same_body_reason, verify_kind,
+        verify_teach,
     };
     use crate::authoring::prompt::{AuthoringSpec, Kind};
     use cadus_core::curriculum::AnswerKind;
+    use cadus_store::content::Verdict;
     use serde_json::json;
 
     /// The two bounds of spec section 2.2, as literals.
@@ -829,15 +973,75 @@ mod tests {
         assert_eq!(bank_target(Kind::Diagnosis), 1);
     }
 
-    /// The digest is the prefix and 16 hex characters of the SHA-256 of the body.
+    /// The digest is the prefix and 16 hex characters of the SHA-256 of the
+    /// knowledge point, the kind, and the body.
     ///
-    /// The literal below is `sha256sum` of the two bytes `{}`:
-    /// `44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a`.
+    /// The material of the first literal is `perfect-squares/squares`, one NUL
+    /// byte, `template`, one NUL byte, and the two bytes `{}`. The value comes
+    /// from outside this tree:
+    ///
+    /// ```sh
+    /// printf 'perfect-squares/squares\0template\0{}' | sha256sum
+    /// # deb2349817ba6f6dcee6997c850abbf070a6b05b172e9f98b6fa86be54347c86
+    /// ```
     #[test]
     fn the_digest_is_sixteen_hex_characters_of_sha256() {
-        assert_eq!(body_digest("{}"), "sha256:44136fa355b3678a");
-        assert_eq!(body_digest("{}").len(), DIGEST_PREFIX.len() + 16);
-        assert_ne!(body_digest("{}"), body_digest("{ }"));
+        let kp = "perfect-squares/squares";
+        assert_eq!(
+            document_digest(kp, Kind::Template, "{}"),
+            "sha256:deb2349817ba6f6d"
+        );
+        assert_eq!(
+            document_digest(kp, Kind::Template, "{}").len(),
+            DIGEST_PREFIX.len() + 16
+        );
+        assert_ne!(
+            document_digest(kp, Kind::Template, "{}"),
+            document_digest(kp, Kind::Template, "{ }")
+        );
+    }
+
+    /// F1: the kind and the knowledge point are inside the digest, so one body
+    /// under two knowledge points is two keys, and under two kinds is two keys.
+    #[test]
+    fn one_body_under_two_knowledge_points_is_two_digests() {
+        let body = r#"{"concept":"one page"}"#;
+        assert_eq!(
+            document_digest("perfect-squares/squares", Kind::Teach, body),
+            "sha256:81cf98710751b9f0"
+        );
+        assert_ne!(
+            document_digest("perfect-squares/squares", Kind::Teach, body),
+            document_digest("perfect-cubes/cubes", Kind::Teach, body)
+        );
+        assert_ne!(
+            document_digest("perfect-squares/squares", Kind::Teach, body),
+            document_digest("perfect-squares/squares", Kind::HintLadder, body)
+        );
+    }
+
+    /// F6: the decline reason of a reproduced body carries the reviewer's own
+    /// words, and a row with no reason still reads as a sentence.
+    #[test]
+    fn the_same_body_reason_carries_the_reviewer_words() {
+        let held = Verdict {
+            status: "rejected".to_owned(),
+            review_reason: Some("the statement asks for two answers".to_owned()),
+        };
+        assert_eq!(
+            same_body_reason(Some(&held)),
+            "a reviewer refused this exact body already: the statement asks for two answers"
+        );
+        let silent = Verdict {
+            status: "rejected".to_owned(),
+            review_reason: None,
+        };
+        assert_eq!(
+            same_body_reason(Some(&silent)),
+            "a reviewer refused this exact body already: the row carries no reason"
+        );
+        assert_eq!(SAME_BODY, "a reviewer refused this exact body already");
+        assert_eq!(NO_REVIEW_REASON, "the row carries no reason");
     }
 
     /// A spec for the perfect-squares knowledge point.

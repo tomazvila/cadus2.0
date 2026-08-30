@@ -14,6 +14,11 @@
 //! row that does not occupy a slot, a duplicate body, an endpoint that refuses
 //! every attempt, and a batch that keeps going past one decline.
 //!
+//! The M6 review adds three checks of the `content_store` key (findings F1 and
+//! F6): one body under two knowledge points stores two rows, a duplicate is
+//! counted as a duplicate and never as a store, and a pass that reproduces a
+//! body a reviewer refused declines with the reviewer's reason.
+//!
 //! Every expected value is a LITERAL: a literal rejection sentence, a literal
 //! digest, a literal row count, a literal status. Nothing is read back from the
 //! code under test.
@@ -67,17 +72,21 @@ const KP_KEY: &str = "perfect-squares/squares";
 /// and the document skips an empty list.
 const STORED_BODY: &str = r#"{"v":1,"topic_id":"perfect-squares","answer_kind":"numeric","statement":"Compute ${a}^{{2}}$.","params":{"a":{"kind":"int","low":1,"high":12}},"answer_expr":"a**2","solution_sketch":"${a} \\times {a}$ gives the answer.","hints":["What does squaring a number mean?"],"samples":[{"params":{"a":1},"expected":"1"},{"params":{"a":12},"expected":"144"}],"space_size":12}"#;
 
-/// The digest of [`STORED_BODY`]: `sha256:` and the first 16 hex characters of
-/// its SHA-256. Computed outside this tree with
+/// The digest of [`STORED_BODY`] under [`KP_KEY`] and kind `template`.
+///
+/// The key of `content_store` is the knowledge point, the kind AND the body, so
+/// the material is `KP_KEY`, one NUL byte, `template`, one NUL byte, and the
+/// body. Computed outside this tree with
 ///
 /// ```sh
-/// printf '%s' '<STORED_BODY>' | sha256sum
-/// # eeef7de45ea6a41dc0f3ac2be84a1e3dfecd61af994b796a2a51914c1f23d2d3
+/// printf 'perfect-squares/squares\0template\0%s' '<STORED_BODY>' | sha256sum
+/// # fbed1683b615cbc029d86252b22400070c4ac4c30680d8bc71c0cfff23608f17
 /// ```
 ///
 /// The value changes when the stored body changes, which is the point: C6 binds
-/// the approval to it.
-const STORED_DIGEST: &str = "sha256:eeef7de45ea6a41d";
+/// the approval to it. It changes with the knowledge point too, so two
+/// knowledge points that earn one body store two rows (M6 review finding F1).
+const STORED_DIGEST: &str = "sha256:fbed1683b615cbc0";
 
 // --------------------------------------------------------------------------- //
 // The fake OpenAI-compatible server
@@ -275,6 +284,21 @@ async fn seed_row(pool: &PgPool, digest: &str, kp_id: &str, status: &str) {
     .bind(digest)
     .bind(kp_id)
     .bind(status)
+    .execute(pool)
+    .await
+    .unwrap();
+}
+
+/// Seed one `content_store` row a reviewer refused, with the reason.
+async fn seed_rejected(pool: &PgPool, digest: &str, kp_id: &str, kind: &str, reason: &str) {
+    sqlx::query(
+        "INSERT INTO content_store (digest, kp_id, kind, body, status, review_reason)
+         VALUES ($1, $2, $3, '{}'::jsonb, 'rejected', $4)",
+    )
+    .bind(digest)
+    .bind(kp_id)
+    .bind(kind)
+    .bind(reason)
     .execute(pool)
     .await
     .unwrap();
@@ -661,8 +685,9 @@ async fn a_rejected_row_does_not_occupy_a_slot() {
 
 /// A body a human already rejected never comes back as `pending` (C6).
 ///
-/// The digest is the identity of the body, so the second insert conflicts and
-/// does nothing. The reviewer's verdict stands.
+/// The digest is the identity of the document, so the second insert conflicts
+/// and does nothing. The reviewer's verdict stands, and the pass says so:
+/// `Outcome::Rejected` and not `Outcome::Duplicate` (M6 review finding F6).
 #[tokio::test]
 async fn a_rejected_body_is_not_resurrected_as_pending() {
     TestDb::with(|db| async move {
@@ -674,12 +699,226 @@ async fn a_rejected_body_is_not_resurrected_as_pending() {
             .await
             .unwrap();
 
-        assert_eq!(report.outcome, Outcome::Duplicate);
+        assert_eq!(report.outcome, Outcome::Rejected { same_body: true });
         assert_eq!(report.digest.as_deref(), Some(STORED_DIGEST));
         let rows = rows_of(&db.admin, KP_KEY).await;
         assert_eq!(rows.len(), 1);
         assert_eq!(rows[0].1, "rejected");
         assert_eq!(rows[0].3, json!({}));
+    })
+    .await;
+}
+
+// --------------------------------------------------------------------------- //
+// M6 review: the key of one document (F1) and the refused body (F6)
+// --------------------------------------------------------------------------- //
+
+/// F1: two knowledge points that earn ONE teach page store TWO rows.
+///
+/// A teach page carries no knowledge-point field: the serve reader of L4 refuses
+/// an unknown field, so the stored body of `perfect-squares/squares` and the
+/// stored body of `perfect-cubes/cubes` are the same bytes. The key of the table
+/// covers the knowledge point, so the two documents are two rows, both `pending`
+/// and both counted.
+///
+/// A key of the body alone gave both rows one digest: the second insert vanished
+/// under `ON CONFLICT (digest) DO NOTHING`, the batch counted two stores, and
+/// the second knowledge point held no document at all.
+#[tokio::test]
+async fn one_teach_body_under_two_knowledge_points_stores_two_rows() {
+    TestDb::with(|db| async move {
+        let fake = FakeModel::start(vec![
+            named_reply("emit_teach", &teach_arguments()),
+            named_reply("emit_teach", &teach_arguments()),
+        ])
+        .await;
+        let handle = Db::new(db.admin.clone(), DEFAULT_CLIENT_TIMEOUT_MS);
+
+        let batch = run_batch(&handle, &fake.job(), Kind::Teach, &[spec(), other_spec()])
+            .await
+            .unwrap();
+
+        assert_eq!(batch.stored, 2);
+        assert_eq!(batch.duplicate, 0);
+        assert_eq!(batch.declined, 0);
+        assert_eq!(batch.calls, 2);
+
+        // One row per knowledge point, with its own digest.
+        let squares = rows_of_kind(&db.admin, KP_KEY, "teach").await;
+        assert_eq!(squares.len(), 1);
+        assert_eq!(squares[0].0, STORED_TEACH_DIGEST);
+        assert_eq!(squares[0].1, "pending");
+
+        let cubes = rows_of_kind(&db.admin, "perfect-cubes/cubes", "teach").await;
+        assert_eq!(cubes.len(), 1);
+        assert_eq!(cubes[0].0, OTHER_TEACH_DIGEST);
+        assert_eq!(cubes[0].1, "pending");
+
+        // The two rows hold the same body and two different keys.
+        assert_eq!(squares[0].3, cubes[0].3);
+        assert_ne!(squares[0].0, cubes[0].0);
+
+        // The second knowledge point holds its slot now, so the next pass makes
+        // no call for it.
+        assert_eq!(
+            slots_taken(&handle, "perfect-cubes/cubes", Kind::Teach)
+                .await
+                .unwrap(),
+            1
+        );
+    })
+    .await;
+}
+
+/// F1: a document the table already holds is a DUPLICATE, never a store.
+///
+/// The bank target of `template` is 3, so a knowledge point with one `pending`
+/// row is authored again. The model answers the same arguments, the body is the
+/// same, and the digest is the same: the insert writes nothing. The operator
+/// reads one store and one duplicate, and the table holds one row.
+#[tokio::test]
+async fn a_repeated_body_is_counted_as_a_duplicate_and_never_as_a_store() {
+    TestDb::with(|db| async move {
+        let fake = FakeModel::start(vec![
+            tool_reply(&good_arguments()),
+            tool_reply(&good_arguments()),
+        ])
+        .await;
+        let handle = Db::new(db.admin.clone(), DEFAULT_CLIENT_TIMEOUT_MS);
+
+        let batch = run_batch(&handle, &fake.job(), Kind::Template, &[spec(), spec()])
+            .await
+            .unwrap();
+
+        assert_eq!(batch.stored, 1);
+        assert_eq!(batch.duplicate, 1);
+        assert_eq!(batch.declined, 0);
+        assert_eq!(batch.skipped, 0);
+        assert_eq!(batch.calls, 2);
+        assert!(batch.declines.is_empty());
+
+        let rows = rows_of(&db.admin, KP_KEY).await;
+        assert_eq!(rows.len(), 1);
+        assert_eq!(rows[0].0, STORED_DIGEST);
+        assert_eq!(rows[0].1, "pending");
+        // The row keeps the accounting of the pass that WROTE it.
+        assert_eq!(rows[0].2, 1);
+    })
+    .await;
+}
+
+/// F6: a pass that reproduces a refused body declines, with the reviewer's own
+/// reason in the decline record (C6).
+///
+/// A `rejected` row occupies no slot, so the knowledge point is authored again.
+/// The model answers the body the reviewer refused, the digest is the refused
+/// digest, and the insert writes nothing. The pass therefore stores nothing, and
+/// the batch counts a decline and not a store.
+#[tokio::test]
+async fn a_re_author_of_a_refused_body_declines_with_the_reviewer_reason() {
+    TestDb::with(|db| async move {
+        let fake = FakeModel::start(vec![tool_reply(&good_arguments())]).await;
+        let handle = Db::new(db.admin.clone(), DEFAULT_CLIENT_TIMEOUT_MS);
+        seed_rejected(
+            &db.admin,
+            STORED_DIGEST,
+            KP_KEY,
+            "template",
+            "the statement asks for two answers",
+        )
+        .await;
+
+        assert_eq!(
+            slots_taken(&handle, KP_KEY, Kind::Template).await.unwrap(),
+            0,
+            "a rejected row occupies no slot, so the pass runs"
+        );
+
+        let batch = run_batch(&handle, &fake.job(), Kind::Template, &[spec()])
+            .await
+            .unwrap();
+
+        assert_eq!(batch.stored, 0);
+        assert_eq!(batch.duplicate, 0);
+        assert_eq!(batch.declined, 1);
+        assert_eq!(batch.calls, 1);
+        assert_eq!(batch.declines.len(), 1);
+
+        let decline = &batch.declines[0];
+        assert_eq!(decline.kp_id, KP_KEY);
+        assert_eq!(decline.kind, Kind::Template);
+        assert_eq!(decline.attempts, 1);
+        assert_eq!(
+            decline.reasons,
+            vec![
+                "a reviewer refused this exact body already: the statement asks for two answers"
+                    .to_owned()
+            ]
+        );
+
+        // The refused row is untouched: one row, still `rejected`, still with
+        // the reviewer's reason.
+        let rows = sqlx::query_as::<_, (String, String, Option<String>)>(
+            "SELECT digest, status, review_reason FROM content_store WHERE kp_id = $1",
+        )
+        .bind(KP_KEY)
+        .fetch_all(&db.admin)
+        .await
+        .unwrap();
+        assert_eq!(rows.len(), 1);
+        assert_eq!(rows[0].0, STORED_DIGEST);
+        assert_eq!(rows[0].1, "rejected");
+        assert_eq!(
+            rows[0].2.as_deref(),
+            Some("the statement asks for two answers")
+        );
+    })
+    .await;
+}
+
+/// F6: the same pass through `author_one`, with the report of one knowledge
+/// point.
+///
+/// The outcome names the reproduced body, the report carries the refused digest,
+/// and the decline record is the one the batch collects.
+#[tokio::test]
+async fn a_refused_teach_page_reports_the_rejection_and_stores_nothing() {
+    TestDb::with(|db| async move {
+        let fake = FakeModel::start(vec![named_reply("emit_teach", &teach_arguments())]).await;
+        let handle = Db::new(db.admin.clone(), DEFAULT_CLIENT_TIMEOUT_MS);
+        seed_rejected(
+            &db.admin,
+            STORED_TEACH_DIGEST,
+            KP_KEY,
+            "teach",
+            "the worked example skips the last step",
+        )
+        .await;
+
+        let report = author_one(&handle, &fake.job(), Kind::Teach, &spec())
+            .await
+            .unwrap();
+
+        assert_eq!(report.outcome, Outcome::Rejected { same_body: true });
+        assert_eq!(report.attempts, 1);
+        assert_eq!(report.digest.as_deref(), Some(STORED_TEACH_DIGEST));
+        assert_eq!(report.cost_usd, None);
+        let decline = report
+            .decline
+            .expect("a rejection carries a decline record");
+        assert_eq!(decline.kp_id, KP_KEY);
+        assert_eq!(
+            decline.reasons,
+            vec![
+                "a reviewer refused this exact body already: the worked example skips the last step"
+                    .to_owned()
+            ]
+        );
+
+        // Nothing new reached the table, and the verdict stands.
+        let rows = rows_of_kind(&db.admin, KP_KEY, "teach").await;
+        assert_eq!(rows.len(), 1);
+        assert_eq!(rows[0].1, "rejected");
     })
     .await;
 }
@@ -813,28 +1052,39 @@ async fn rows_of_kind(pool: &PgPool, kp_id: &str, kind: &str) -> Vec<(String, St
 /// The body the loop stores for [`teach_arguments`], character for character.
 ///
 /// The stored text is the GATED document, so the field order is the document's
-/// and no spare field survives. Its digest is `sha256:` and the first 16 hex
-/// characters of the SHA-256 of these bytes, computed outside this tree with
+/// and no spare field survives. It carries no knowledge-point field at all,
+/// which is why the digest below covers the knowledge point and the kind beside
+/// the body (M6 review finding F1). Computed outside this tree with
 ///
 /// ```sh
-/// printf '%s' '<STORED_TEACH_BODY>' | sha256sum
-/// # 0b3913a20a571f6322dbd8366adae9b1404b6d32a4c8100efb8c0b81c6b4d6d2
+/// printf 'perfect-squares/squares\0teach\0%s' '<STORED_TEACH_BODY>' | sha256sum
+/// # fc031ed7deaa7d60283410d81fe87f114375d02356f9ba5fe315fb9af1a362c2
 /// ```
 const STORED_TEACH_BODY: &str = r#"{"concept":"Squaring a number multiplies it by itself.","worked_example":{"problem":"Compute $6^2$.","steps":["Write $6^2$ as $6 \\times 6$.","Multiply: $6 \\times 6 = 36$."]}}"#;
 
-/// The digest of [`STORED_TEACH_BODY`].
-const STORED_TEACH_DIGEST: &str = "sha256:0b3913a20a571f63";
+/// The digest of [`STORED_TEACH_BODY`] under [`KP_KEY`] and kind `teach`.
+const STORED_TEACH_DIGEST: &str = "sha256:fc031ed7deaa7d60";
+
+/// The digest of [`STORED_TEACH_BODY`] under the SECOND knowledge point,
+/// `perfect-cubes/cubes`, and kind `teach`.
+///
+/// ```sh
+/// printf 'perfect-cubes/cubes\0teach\0%s' '<STORED_TEACH_BODY>' | sha256sum
+/// # 642bb7b9c96c3add8a9d5536215f271fd914f47ecf0d5c18fdd4822a1841d5a0
+/// ```
+const OTHER_TEACH_DIGEST: &str = "sha256:642bb7b9c96c3add";
 
 /// The body the loop stores for [`ladder_arguments`], character for character.
 ///
 /// ```sh
-/// printf '%s' '<STORED_LADDER_BODY>' | sha256sum
-/// # d94e012408a809b374ccf51353e36c4fe49ede71ef6990f192d2bb6c1a0f578d
+/// printf 'perfect-squares/squares\0hint_ladder\0%s' '<STORED_LADDER_BODY>' | sha256sum
+/// # 5c235ad773e2b639164134d43addb74700535dc11aa9973f494ff79b78853e5b
 /// ```
 const STORED_LADDER_BODY: &str = r#"{"hints":["What does the small 2 above the number ask you to do?","A square is the number multiplied by itself.","Write the base twice with a multiplication sign between them, then multiply."]}"#;
 
-/// The digest of [`STORED_LADDER_BODY`].
-const STORED_LADDER_DIGEST: &str = "sha256:d94e012408a809b3";
+/// The digest of [`STORED_LADDER_BODY`] under [`KP_KEY`] and kind
+/// `hint_ladder`.
+const STORED_LADDER_DIGEST: &str = "sha256:5c235ad773e2b639";
 
 /// The gate's give-away sentence for the last rung of
 /// [`ladder_that_names_the_answer`] (`crates/core/src/instruction.rs`).

@@ -53,7 +53,7 @@ const KP_KEY: &str = "perfect-squares/squares";
 /// The digest of the body every accepted reply of this file stores.
 ///
 /// `authoring_job.rs` pins the same value beside the body text it covers.
-const STORED_DIGEST: &str = "sha256:eeef7de45ea6a41d";
+const STORED_DIGEST: &str = "sha256:fbed1683b615cbc0";
 
 /// The three prices of the three-attempt pass, in the order the calls run.
 const PRICES: [f64; 3] = [0.001234, 0.0002, 0.5];
