@@ -37,7 +37,7 @@ use cadus_model_client::{Client, ModelConfig};
 use cadus_store::test_support::TestDb;
 use cadus_store::{DEFAULT_CLIENT_TIMEOUT_MS, Db};
 use cadus_worker::authoring::job::{
-    AuthoringJob, Outcome, author_one, bank_target, run_batch, slots_taken,
+    AuthoringJob, Outcome, author_one, bank_target, run_batch, served_answers, slots_taken,
 };
 use cadus_worker::authoring::prompt::{AuthoringSpec, Kind};
 use serde_json::{Value, json};
@@ -839,8 +839,8 @@ const STORED_LADDER_DIGEST: &str = "sha256:d94e012408a809b3";
 /// The gate's give-away sentence for the last rung of
 /// [`ladder_that_names_the_answer`] (`crates/core/src/instruction.rs`).
 const NAMES_THE_ANSWER: &str = "rung 1 reads 'A square is the number multiplied by itself, so \
-$7^2$ is 49.', which names the answer '49' of the exemplar 'Compute $7^2$.' — a hint is a \
-question, never the final step (Hard Rule 3)";
+$7^2$ is 49.', which names the answer '49' this knowledge point serves — a hint is a question, \
+never the final step (Hard Rule 3)";
 
 /// A gated teach page reaches `content_store` as one `pending` row (L4, C6).
 #[tokio::test]
@@ -1028,6 +1028,166 @@ async fn an_undecidable_answer_kind_still_gets_a_teach_page() {
         assert_eq!(teach.outcome, Outcome::Stored);
         assert_eq!(teach.attempts, 1);
         assert_eq!(fake.calls().len(), 1);
+    })
+    .await;
+}
+
+// --------------------------------------------------------------------------- //
+// M6 review, findings F2 and F15: the ladder is judged against the material the
+// knowledge point actually serves
+// --------------------------------------------------------------------------- //
+
+/// The `content_store` body of an approved template of [`KP_KEY`].
+///
+/// It is [`STORED_BODY`]: the perfect-squares template, `a` over 1 to 12, answer
+/// `a**2`. The serve path renders it, so its instance answers are answers a
+/// learner reads.
+async fn seed_approved_template(pool: &PgPool, digest: &str, kp_id: &str, body: &str) {
+    sqlx::query(
+        "INSERT INTO content_store (digest, kp_id, kind, body, status)
+         VALUES ($1, $2, 'template', $3::jsonb, 'approved')",
+    )
+    .bind(digest)
+    .bind(kp_id)
+    .bind(body)
+    .execute(pool)
+    .await
+    .unwrap();
+}
+
+/// A ladder whose last rung states 81, which is the answer of the instance
+/// `Compute $9^2$.` and is NOT the answer of any exemplar.
+fn ladder_that_names_an_instance_answer() -> Value {
+    json!({
+        "hints": [
+            "What does the small 2 above the number ask you to do?",
+            "For a base of 9 the product is 81."
+        ]
+    })
+}
+
+/// The answers `served_answers` reads off the approved perfect-squares
+/// template, in order: the two worked samples first (`a = 1` and `a = 12`), then
+/// the eight instances drawn from the fixed gate seed, each answer once.
+///
+/// Eight draws over `a` in 1 to 12 repeat, so seven answers stand here. The list
+/// is a function of the document and the seed alone, so it is the same list on
+/// every run.
+const SERVED_ANSWERS: [&str; 7] = ["1", "144", "81", "36", "121", "49", "100"];
+
+/// The gate's give-away sentence for the last rung of
+/// [`ladder_that_names_an_instance_answer`].
+const NAMES_AN_INSTANCE_ANSWER: &str = "rung 1 reads 'For a base of 9 the product is 81.', which \
+names the answer '81' this knowledge point serves — a hint is a question, never the final step \
+(Hard Rule 3)";
+
+/// Findings F2 and F15. The approved templates of the knowledge point are read,
+/// and their instance answers are the answers the hint gate judges against.
+#[tokio::test]
+async fn the_served_answers_are_the_instance_answers_of_the_approved_templates() {
+    TestDb::with(|db| async move {
+        let handle = Db::new(db.admin.clone(), DEFAULT_CLIENT_TIMEOUT_MS);
+
+        // No approved template: A6 serves the exemplars, and nothing else.
+        assert_eq!(
+            served_answers(&handle, KP_KEY).await.unwrap(),
+            Vec::<String>::new()
+        );
+
+        // A PENDING template is not served, so it contributes no answer (C6).
+        seed_approved_template(&db.admin, "sha256:pending-one", KP_KEY, STORED_BODY).await;
+        sqlx::query("UPDATE content_store SET status = 'pending' WHERE digest = $1")
+            .bind("sha256:pending-one")
+            .execute(&db.admin)
+            .await
+            .unwrap();
+        assert_eq!(
+            served_answers(&handle, KP_KEY).await.unwrap(),
+            Vec::<String>::new()
+        );
+
+        seed_approved_template(&db.admin, STORED_DIGEST, KP_KEY, STORED_BODY).await;
+        assert_eq!(
+            served_answers(&handle, KP_KEY).await.unwrap(),
+            SERVED_ANSWERS
+                .iter()
+                .map(|answer| (*answer).to_owned())
+                .collect::<Vec<String>>()
+        );
+
+        // The template of ANOTHER knowledge point is not read.
+        assert_eq!(
+            served_answers(&handle, "perfect-cubes/cubes")
+                .await
+                .unwrap(),
+            Vec::<String>::new()
+        );
+    })
+    .await;
+}
+
+/// Findings F2 and F15. A rung that states the answer of a rendered instance of
+/// an approved template is refused, and the LITERAL message reaches the next
+/// attempt as its feedback. The exemplar answer is 49; the rung names 81, which
+/// only the template serves.
+#[tokio::test]
+async fn a_rung_that_names_a_template_instance_answer_is_refused() {
+    TestDb::with(|db| async move {
+        let fake = FakeModel::start(vec![
+            named_reply("emit_hint_ladder", &ladder_that_names_an_instance_answer()),
+            named_reply("emit_hint_ladder", &ladder_arguments()),
+        ])
+        .await;
+        let handle = Db::new(db.admin.clone(), DEFAULT_CLIENT_TIMEOUT_MS);
+        seed_approved_template(&db.admin, STORED_DIGEST, KP_KEY, STORED_BODY).await;
+
+        let report = author_one(&handle, &fake.job(), Kind::HintLadder, &spec())
+            .await
+            .unwrap();
+
+        // Attempt 1 is refused, attempt 2 carries the gate's own sentence and is
+        // stored.
+        assert_eq!(report.outcome, Outcome::Stored);
+        assert_eq!(report.attempts, 2);
+        assert_eq!(report.digest.as_deref(), Some(STORED_LADDER_DIGEST));
+
+        let second = fake.user_message(1);
+        assert!(
+            second.contains(&format!("{RETRY_HEADER}\n    {NAMES_AN_INSTANCE_ANSWER}\n")),
+            "the retry block did not carry the literal sentence: {second}"
+        );
+
+        let rows = rows_of_kind(&db.admin, KP_KEY, "hint_ladder").await;
+        assert_eq!(rows.len(), 1);
+        assert_eq!(rows[0].0, STORED_LADDER_DIGEST);
+        assert_eq!(rows[0].1, "pending");
+    })
+    .await;
+}
+
+/// The same rung passes when the knowledge point serves no template: 81 is then
+/// no answer of the served material, so the gate has nothing to refuse. The
+/// approved template is what makes the difference, and this test is the control.
+#[tokio::test]
+async fn the_same_rung_passes_when_no_template_is_approved() {
+    TestDb::with(|db| async move {
+        let fake = FakeModel::start(vec![named_reply(
+            "emit_hint_ladder",
+            &ladder_that_names_an_instance_answer(),
+        )])
+        .await;
+        let handle = Db::new(db.admin.clone(), DEFAULT_CLIENT_TIMEOUT_MS);
+
+        let report = author_one(&handle, &fake.job(), Kind::HintLadder, &spec())
+            .await
+            .unwrap();
+
+        assert_eq!(report.outcome, Outcome::Stored);
+        assert_eq!(report.attempts, 1);
+        assert_eq!(
+            rows_of_kind(&db.admin, KP_KEY, "hint_ladder").await.len(),
+            1
+        );
     })
     .await;
 }

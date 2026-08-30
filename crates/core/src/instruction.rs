@@ -22,16 +22,25 @@
 //! | teach | the worked problem is not an exemplar | A6 serves the exemplars, so an exemplar worked out hands the learner an answer before the attempt (Hard Rule 1) |
 //! | hint | `hints` holds at least one rung | the hint route serves the rungs and nothing else |
 //! | hint | no rung repeats an earlier rung | each rung goes one step past the one before it |
-//! | hint | no rung names an exemplar's answer | Hard Rule 3: a hint is a question, never the final step |
+//! | hint | no rung names an answer the knowledge point serves | Hard Rule 3: a hint is a question, never the final step |
 //! | both | no unknown field | the serve reader refuses one, so a stored body it cannot read serves nothing |
 //!
-//! # Why the rungs are judged against the exemplars
+//! # What "an answer the knowledge point serves" means
 //!
-//! One ladder serves every instance of one knowledge point, so the gate has no
-//! single instance to read. The exemplars are the authored problems of that
-//! knowledge point, and A6 serves them when no template is approved, so a rung
-//! that names an exemplar's answer names an answer a learner is served. The
-//! template gate reads the same rule over the instances it renders
+//! One ladder serves every instance of one knowledge point, so the gate reads the
+//! whole set of answers that knowledge point hands a learner, and not one
+//! instance:
+//!
+//! - every exemplar answer — A6 serves the exemplars when no template is
+//!   approved;
+//! - every answer of an instance the approved templates render
+//!   ([`InstructionSpec::instance_answers`], filled by the worker).
+//!
+//! The set carries no exemption. An earlier build skipped an exemplar whose own
+//! problem showed its answer; a rendered instance is a different statement that
+//! shows nothing, and the L5 route serves the stored rung with no re-check, so
+//! the skip handed the answer to the learner (M6 review, findings F2, F15 and
+//! F25). The template gate reads the same rule over the instances it renders
 //! (`crate::template::gate`).
 //!
 //! # No panic, on any body
@@ -83,11 +92,40 @@ pub struct HintLadder {
 }
 
 /// What one instruction gate knows about the knowledge point it judges for.
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone)]
 pub struct InstructionSpec<'a> {
     /// The authored problems of the knowledge point. A6 serves these when no
     /// template is approved, so their answers are answers a learner sees.
     pub exemplars: &'a [Exemplar],
+    /// The answers of the instances the approved templates of this knowledge
+    /// point render. The serve path draws one instance per attempt, so every
+    /// answer here is an answer a learner reads.
+    ///
+    /// The worker fills the list from the approved `template` documents of the
+    /// knowledge point (`cadus_worker::authoring::job::served_answers`). An
+    /// empty list is the honest value for a knowledge point with no approved
+    /// template: A6 serves the exemplars there and nothing else.
+    pub instance_answers: Vec<String>,
+}
+
+impl InstructionSpec<'_> {
+    /// Every answer this knowledge point serves, in one list and in a fixed
+    /// order: the exemplar answers first, then the instance answers.
+    ///
+    /// The list holds each answer once, and it holds no empty answer.
+    #[must_use]
+    pub fn served_answers(&self) -> Vec<&str> {
+        let mut answers: Vec<&str> = Vec::new();
+        let exemplars = self.exemplars.iter().map(|exemplar| &exemplar.answer);
+        for answer in exemplars.chain(self.instance_answers.iter()) {
+            let answer = answer.as_str();
+            if answer.is_empty() || answers.contains(&answer) {
+                continue;
+            }
+            answers.push(answer);
+        }
+        answers
+    }
 }
 
 /// Read one JSON object, or refuse the body with the reader's own words.
@@ -297,27 +335,36 @@ the one before it, and a repeated rung leaves the learner exactly as stuck"
     Ok(HintLadder { hints })
 }
 
-/// No rung names the answer of an exemplar of this knowledge point.
+/// No rung names an answer this knowledge point serves.
 ///
-/// Hard Rule 3 (`docs/WEB_SERVICE.md:22-32`). An exemplar whose own problem
-/// carries its answer is skipped, exactly as the template gate skips an instance
-/// whose statement carries its answer: the learner reads that token in the
-/// problem, so a rung that repeats it gives nothing away.
+/// Hard Rule 3 (`docs/WEB_SERVICE.md:22-32`). The answer set is
+/// [`InstructionSpec::served_answers`]: every exemplar answer and every answer
+/// of an instance the approved templates render. There is no exemption.
+///
+/// # Why the "the problem shows it already" exemption is gone
+///
+/// The gate used to skip an exemplar whose own problem carried its answer, on
+/// the reading that a learner already reads the token in the problem. One ladder
+/// serves EVERY instance of the knowledge point, and a rendered template instance
+/// is a different problem with a different statement, so the token the exemplar
+/// showed is a token the served instance hides. 307 shipped knowledge points took
+/// that exemption, and 62 of them took it on every exemplar they hold, so a
+/// ladder that stated every answer passed the whole gate (M6 review, findings F2,
+/// F15 and F25; `crates/core/tests/instruction_gate.rs` pins both counts). The
+/// serve path re-reads nothing: the L5 route returns the stored rung as it
+/// stands.
 fn check_no_answer(hints: &[String], spec: &InstructionSpec<'_>) -> Result<(), Rejection> {
-    for exemplar in spec.exemplars {
-        if contains_token(&exemplar.problem, &exemplar.answer) {
-            continue;
-        }
-        for (index, rung) in hints.iter().enumerate() {
-            if contains_token(rung, &exemplar.answer) {
+    let served = spec.served_answers();
+    for (index, rung) in hints.iter().enumerate() {
+        for answer in &served {
+            if contains_token(rung, answer) {
                 return Err(Rejection {
                     code: "hint-answer",
                     message: format!(
-                        "rung {index} reads {}, which names the answer {} of the exemplar {} — a \
-hint is a question, never the final step (Hard Rule 3)",
+                        "rung {index} reads {}, which names the answer {} this knowledge point \
+serves — a hint is a question, never the final step (Hard Rule 3)",
                         py_str(rung),
-                        py_str(&exemplar.answer),
-                        py_str(&exemplar.problem)
+                        py_str(answer)
                     ),
                 });
             }
