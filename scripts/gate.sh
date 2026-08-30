@@ -12,6 +12,11 @@
 #
 # Repeat `cargo sqlx migrate run` after every new migration.
 set -euo pipefail
+# Memory rule for this box (2026-08-30): a 16-job rustc build beside other work
+# pushed the machine into swap and froze sshd. Six jobs is the cap unless the
+# caller sets its own value.
+: "${CARGO_BUILD_JOBS:=6}"
+export CARGO_BUILD_JOBS
 
 # Put the project toolchain first, if it is installed on this machine.
 for dir in "$HOME/.local/share/cadus2-tooling/gcc/bin" \
