@@ -250,7 +250,10 @@ fn the_prompt_digests_of_this_checkout_are_pinned() {
         (Kind::Template, "a40cdfe609d76a83"),
         (Kind::Teach, "dfc6329034bf030f"),
         (Kind::HintLadder, "c8e040f53fce1881"),
-        (Kind::Diagnosis, "58c973541013bfab"),
+        // Unit R7 moved this one: the `emit_distractors` tool asks for a
+        // literal answer, and the `emit_template` tool keeps its expression, so
+        // the template digest above stands.
+        (Kind::Diagnosis, "164baef458d55e4f"),
     ];
     for (kind, digest) in pinned {
         assert_eq!(

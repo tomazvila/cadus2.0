@@ -15,6 +15,11 @@
 //! 4. a poll for another tenant's id is `404 unknown_diagnosis` —
 //!    [`a_poll_for_another_tenants_id_is_404_unknown_diagnosis`].
 //!
+//! The second acceptance check of M6 row R7 joins them, because it is the same
+//! route: a learner answer that matches a distractor of an AUTHORED document
+//! returns `status:"ready"` and writes no job row —
+//! [`an_authored_distractor_document_is_ready_and_writes_no_job_row`].
+//!
 //! Every expected value is a LITERAL: a literal status code, a literal error
 //! code, a literal wire status, a literal tag, a literal count. Nothing here
 //! re-reads a constant from the code under test.
@@ -45,6 +50,7 @@ use cadus_core::curriculum::{
 };
 use cadus_core::event::{Event, SchemaVersion, SessionStart, Timestamp};
 use cadus_core::pool::PoolAnswer;
+use cadus_core::template::{GateSpec, gate_diagnosis_body};
 use cadus_store::diagnosis::JobRow;
 use cadus_store::test_support::TestDb;
 use cadus_store::{DEFAULT_CLIENT_TIMEOUT_MS, Db};
@@ -476,6 +482,76 @@ async fn a_matching_distractor_is_ready_and_writes_no_job_row() {
                 "prose": "You added the whole parts and dropped the half.",
             }),
             "a matching distractor answers inline: {body}"
+        );
+        assert_eq!(
+            jobs_of(&db, user).await.len(),
+            0,
+            "a pre-authored hit must write no diagnosis_jobs row"
+        );
+    })
+    .await;
+}
+
+/// M6 row R7, second acceptance check: a learner answer that matches a
+/// distractor returns `status:"ready"` and writes no `diagnosis_jobs` row.
+///
+/// The body under test is the one the R7 AUTHORING gate writes, not a
+/// hand-written one: the test runs `gate_diagnosis_body` over a raw authored
+/// list, stores what it returns, and answers with it. That is the wiring the row
+/// names — the gate that drops a tag and the grade path that reads the document
+/// share one definition.
+///
+/// The learner writes `13.0` and the document names `13`. The checker decides
+/// the form, so one authored answer names every spelling of one mistake.
+#[tokio::test]
+async fn an_authored_distractor_document_is_ready_and_writes_no_job_row() {
+    TestDb::with(|db| async move {
+        let app = app(&db);
+        let user = learner(&db, "r7-authored@example.test").await;
+        let raw = json!({
+            "distractors": [
+                { "answer": DISTRACTOR_ANSWER, "error_tag": "arithmetic-slip",
+                  "note": DISTRACTOR_NOTE },
+                { "answer": "2.5", "error_tag": "carelessness",
+                  "note": "You subtracted where the problem adds." },
+            ],
+            "v": 1,
+            "topic_id": "addition",
+            "answer_kind": "numeric",
+        })
+        .to_string();
+        let exemplars = vec![exemplar(PROBLEM_TEXT, EXPECTED_ANSWER)];
+        let gate_spec = GateSpec {
+            answer_kind: AnswerKind::Numeric,
+            exemplars: &exemplars,
+        };
+        let vocabulary: Vec<String> = VOCABULARY.iter().map(|tag| (*tag).to_string()).collect();
+        let (doc, dropped) = gate_diagnosis_body(&raw, &gate_spec, &vocabulary)
+            .expect("the gate accepts the authored list");
+        assert_eq!(
+            dropped,
+            vec!["carelessness".to_owned()],
+            "the gate drops the tag outside the vocabulary"
+        );
+        seed_distractors(
+            &db,
+            "r7-digest-authored",
+            &serde_json::to_value(&doc).unwrap(),
+        )
+        .await;
+
+        let (status, body) = answer(&app, user, "13.0").await;
+
+        assert_eq!(status, StatusCode::OK);
+        assert_eq!(body["correct"], json!(false));
+        assert_eq!(
+            body["diagnosis"],
+            json!({
+                "status": "ready",
+                "error_tags": ["arithmetic-slip"],
+                "prose": "You added the whole parts and dropped the half.",
+            }),
+            "the authored document answers inline: {body}"
         );
         assert_eq!(
             jobs_of(&db, user).await.len(),

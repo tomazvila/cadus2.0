@@ -684,24 +684,33 @@ async fn a_rejected_body_is_not_resurrected_as_pending() {
     .await;
 }
 
-/// The one kind with no gate makes no call and stores nothing (unit R7). Unit R6
-/// gave `teach` and `hint_ladder` their gates, so `diagnosis` is the last one.
+/// A full bank makes no call, for every kind (spec section 2.2, step 1).
+///
+/// No kind is gateless now: unit R6 gave `teach` and `hint_ladder` their gates
+/// and unit R7 gave `diagnosis` its gate. The zero-call rule that the gateless
+/// kinds carried is the bank rule alone.
 #[tokio::test]
-async fn a_kind_with_no_gate_makes_no_call() {
+async fn a_full_bank_makes_no_call_for_every_kind() {
     TestDb::with(|db| async move {
         let fake = FakeModel::start(vec![tool_reply(&good_arguments())]).await;
         let handle = Db::new(db.admin.clone(), DEFAULT_CLIENT_TIMEOUT_MS);
+        for (digest, kind) in [
+            ("sha256:aa11", Kind::Teach),
+            ("sha256:bb22", Kind::HintLadder),
+            ("sha256:cc33", Kind::Diagnosis),
+        ] {
+            seed_kind_row(&db.admin, digest, KP_KEY, kind.as_str(), "approved").await;
+        }
 
-        for kind in [Kind::Diagnosis] {
+        for kind in [Kind::Teach, Kind::HintLadder, Kind::Diagnosis] {
             let report = author_one(&handle, &fake.job(), kind, &spec())
                 .await
                 .unwrap();
-            assert_eq!(report.outcome, Outcome::NoGate);
+            assert_eq!(report.outcome, Outcome::Skipped);
             assert_eq!(report.attempts, 0);
         }
 
         assert_eq!(fake.calls().len(), 0);
-        assert!(rows_of(&db.admin, KP_KEY).await.is_empty());
     })
     .await;
 }

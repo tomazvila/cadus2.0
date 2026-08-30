@@ -495,8 +495,25 @@ const TERM_DESCRIPTION: &str = "A term: the parameter name as a bare string, {\"
 {\"add\": [term, ...]}, {\"sub\": [term, term]}, {\"mul\": [term, ...]}, {\"abs\": term}, \
 {\"mod\": [term, term]}, {\"digit_sum\": term}.";
 
-/// The distractor schema. The template tool and the distractor tool share it.
-fn distractor_items() -> Value {
+/// The distractor schema. The template tool and the distractor tool share every
+/// field of it, and they ask for a different `answer`.
+///
+/// A template distractor is an EXPRESSION over the declared parameters, and the
+/// gate evaluates it on each worked sample. A `diagnosis` document declares no
+/// parameters — the knowledge point serves authored exemplars — so its
+/// distractor answer is the wrong answer itself. One description for both kinds
+/// spends attempts on documents the gate refuses (unit R7).
+fn distractor_items(kind: Kind) -> Value {
+    let answer = match kind {
+        Kind::Diagnosis => {
+            "The wrong answer itself, written the way a learner writes it. It is a literal \
+answer, not a formula: this knowledge point declares no parameters."
+        }
+        Kind::Template | Kind::Teach | Kind::HintLadder => {
+            "The wrong answer, as an expression over the declared parameters, so the server \
+computes it per instance."
+        }
+    };
     json!({
         "type": "object",
         "additionalProperties": false,
@@ -504,9 +521,7 @@ fn distractor_items() -> Value {
         "properties": {
             "answer": {
                 "type": "string",
-                "description":
-                    "The wrong answer, as an expression over the declared parameters, so the \
-    server computes it per instance.",
+                "description": answer,
             },
             "error_tag": {"type": "string", "enum": MODEL_ERROR_TAGS},
             "note": {
@@ -645,7 +660,7 @@ fn template_schema() -> Value {
                 "description":
                     "The wrong answers this knowledge point produces, with the mistake each one \
     names. Empty when you can name none.",
-                "items": distractor_items(),
+                "items": distractor_items(Kind::Template),
             },
             "samples": {
                 "type": "array",
@@ -736,7 +751,7 @@ pub fn tool_schema(kind: Kind) -> Value {
                 "distractors": {
                     "type": "array",
                     "minItems": 1,
-                    "items": distractor_items(),
+                    "items": distractor_items(Kind::Diagnosis),
                 },
             },
         }),
