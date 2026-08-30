@@ -415,10 +415,12 @@ signal a deployment reads today.
 If the log or a learner report names a template that computes a wrong answer, do
 these steps:
 
-1. Set the status of the digest to `rejected`:
+1. Reject the digest through the review surface below:
 
-   ```sql
-   UPDATE content_store SET status = 'rejected' WHERE digest = '<digest>';
+   ```sh
+   curl -fsS -X POST -H 'content-type: application/json' \
+     -b "$COOKIE" -d '{"reason":"computes a wrong answer"}' \
+     https://<host>/api/admin/content/<digest>/reject
    ```
 
 2. Wait one worker tick. The refill claims every unclaimed pool row of that
@@ -435,6 +437,40 @@ rows that are still unclaimed.
 
 **Do not delete the `content_store` row.** `serving_pool.content_digest`
 references it, and the approval record is the C6 audit trail.
+
+## The review surface (C6)
+
+M6 R5 puts the four review routes on `/api/admin/content*`. All four serve an
+ADMIN account only: a session on an account with `users.is_admin = false` gets
+`403 forbidden`, and a request with no session gets `401 unauthorized`.
+
+| Method and path | What it does |
+|---|---|
+| `GET /api/admin/content?status=&kind=&kp=` | The review queue. Each line carries the digest, the serving key, the kind, the status, `authoring_attempts`, `authoring_cost_usd`, `created_at`, a 64-character summary, `approved_templates`, and `bank_warning`. |
+| `GET /api/admin/content/{digest}` | One document: the body, the gate block, and 8 rendered instances with their computed answers. |
+| `POST /api/admin/content/{digest}/approve` | Approve that digest. The body is `{}`. The call is idempotent. |
+| `POST /api/admin/content/{digest}/reject` | Reject that digest. The body is `{"reason": "..."}`, and a request with no reason is `422`. |
+
+Three rules an operator must know:
+
+- **Approval binds to the digest (C6).** An edited body is a new digest and a
+  new row, so no approval carries over. Do not edit a body in `psql`.
+- **`bank_warning` is `true` below three approved templates.** A knowledge
+  point serves from its approved slots alone, so a bank of two repeats a
+  smaller set of problem shapes than the bank was sized for.
+- **The 8 instances are the point.** A template that computes correctly and
+  asks the wrong question is obvious in the instances and invisible in the
+  expression. Read them before you approve.
+
+### The admin connection
+
+`cadus_app` holds SELECT on `content_store` and nothing else, so the two WRITE
+routes need a connection of `cadus_admin`. `CADUS_ADMIN_DATABASE_URL` names it,
+and the compose file sets it from `CADUS_ADMIN_PASSWORD` already. Unset, both
+writes answer `503 admin_path_unavailable`, the two read routes still serve, and
+every other route of the process is unchanged. The C3 boot guard runs on
+`DATABASE_URL` alone: `cadus_admin` bypasses row-level security by design, and no
+learner route takes this pool.
 
 ## The authoring bill (T3)
 
