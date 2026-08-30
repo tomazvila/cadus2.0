@@ -173,6 +173,53 @@ p { margin: 0.4rem 0; }
 .modal h2 { margin: 0 0 0.3rem; font-size: 1.1rem; }
 .modal-actions { display: flex; gap: 0.5rem; justify-content: flex-end; margin-top: 0.7rem; }
 
+/* ---- the auth card ---- */
+/* One card, seven modes. It reuses `.modal` for the surface — the same raised panel, the
+   same hairline — and centers it in the view instead of over a scrim. The width matches the
+   modal exactly, so a learner who signs in and then meets a dialog sees one shape twice. */
+.auth-view { display: grid; place-items: center; min-height: 62vh; padding: 1.5rem 0; }
+.auth-card { width: min(92vw, 380px); gap: 0.55rem; }
+.auth-brand { display: inline-flex; align-items: center; gap: 0.55rem; }
+.auth-brand .brand-mark { width: 1.7rem; height: 1.7rem; }
+.brand-lg { font-size: 1.5rem; font-weight: 700; }
+.auth-tagline { margin: 0.1rem 0 0.4rem; font-size: 0.92rem; }
+/* The mode line is the one instrument readout on this card: mono, accent, upper case. It
+   tells the learner which of the seven screens they are on without a heading. */
+.auth-mode {
+  font-family: var(--mono); font-size: 0.72rem; text-transform: uppercase;
+  letter-spacing: 0.08em; color: var(--accent); margin: 0 0 0.3rem;
+}
+.auth-label { font-size: 0.78rem; font-weight: 600; color: var(--muted); margin-top: 0.15rem; }
+.auth-input {
+  width: 100%; font: inherit; color: var(--text);
+  background: var(--surface); border: 1.5px solid var(--border); border-radius: 10px;
+  padding: 0.75rem 0.85rem;
+}
+/* The accent border marks the focused field for a mouse user. It never writes
+   `outline: none`: the 2px ring below is the accessible one, and it stays. */
+.auth-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-weak); }
+.auth-input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.auth-submit { margin-top: 0.7rem; width: 100%; }
+.auth-toggle { margin: 0.6rem 0 0; font-size: 0.9rem; text-align: center; }
+.auth-help { margin: 0.1rem 0 0.6rem; font-size: 0.9rem; line-height: 1.5; }
+.auth-forgot { margin: 0.5rem 0 0; font-size: 0.85rem; text-align: right; }
+.auth-check-email-addr { margin: 0 0 0.4rem; font-size: 0.9rem; word-break: break-all; }
+/* The inline error of AUTH-inline. It is the whole visible difference between a mistyped
+   password and a lost session, so it sits in the card and never in a toast. */
+.field-error { color: var(--bad); font-size: 0.85rem; }
+.link-btn {
+  background: none; border: 0; padding: 0; font: inherit; cursor: pointer;
+  color: var(--accent); font-weight: 600;
+}
+.link-btn:hover { text-decoration: underline; }
+.link-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+.auth-divider {
+  display: flex; align-items: center; gap: 0.6rem;
+  margin: 0.8rem 0 0.2rem; color: var(--muted); font-size: 0.8rem;
+}
+.auth-divider::before, .auth-divider::after { content: ""; flex: 1; height: 1px; background: var(--border); }
+.oauth-btn { width: 100%; margin-top: 0.4rem; }
+
 /* ---- technical readouts ---- */
 /* Timers, counts, XP and every stat value read as instrument output: monospace with aligned
    figures. A proportional font makes a 1 Hz counter jitter its own width. */
