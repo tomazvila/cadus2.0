@@ -436,6 +436,47 @@ rows that are still unclaimed.
 **Do not delete the `content_store` row.** `serving_pool.content_digest`
 references it, and the approval record is the C6 audit trail.
 
+## The authoring bill (T3)
+
+The offline authoring pipeline is the second spender of model tokens, and T2
+names no third one. Every attempt of it writes one `model_call_log` row with
+`purpose = 'authoring'` and no `user_id`: an authoring call belongs to a
+knowledge point, not to a learner.
+
+The stored document carries the bill of the pass that wrote it:
+
+| Column | Meaning |
+|---|---|
+| `content_store.authoring_attempts` | The model calls that pass spent. The pipeline stops at 5 (`docs/reference/authoring-and-spa-1.0-spec.md`, section 2.2). |
+| `content_store.authoring_cost_usd` | The sum of the prices of those calls. Each price is rounded to six decimal places first, the way its own ledger row holds it, so the total on the row is the sum of the call rows of that pass. |
+
+`authoring_cost_usd` is NULL when no call of the pass reported a price. The
+attempt count stays exact in that case: read the count when the money is NULL.
+
+**The T3 alert.** A pass above 3 attempts writes an `error` log line with the
+knowledge point, the kind, the attempts and the bill:
+
+```
+T3 alert: this knowledge point spent more than 3 authoring attempts
+```
+
+Two passes raise it: a pass the gate accepted late, and a pass that used all five
+attempts and stored nothing. The alert stops no job.
+
+List the documents the alert covers:
+
+```sh
+docker compose exec db psql -U cadus_admin -d cadus -c \
+  "SELECT kp_id, kind, authoring_attempts, authoring_cost_usd
+     FROM content_store WHERE authoring_attempts > 3
+    ORDER BY authoring_attempts DESC, kp_id"
+```
+
+A declined knowledge point holds no row there, because a decline stores nothing.
+It has no approved template, so the operator flags name it with
+`needs_template = true`, and its spend is in the ledger under
+`purpose = 'authoring'`.
+
 ## The diagnosis worker (A4, T4, T5)
 
 The worker claims one `diagnosis_jobs` row per tick, calls the model, filters the

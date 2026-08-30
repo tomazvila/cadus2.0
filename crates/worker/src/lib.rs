@@ -25,9 +25,14 @@ use std::time::{Duration, SystemTime, UNIX_EPOCH};
 
 use cadus_store::{Db, StoreError, bounded};
 
+pub use authoring::cost::{
+    ATTEMPT_ALERT as AUTHORING_ATTEMPT_ALERT, Alert as AuthoringAlert,
+    alerting as authoring_alerting,
+};
 pub use authoring::job::{
     AUTHORING_ATTEMPTS, AuthoringJob, BANK_TARGET, BatchReport, Decline as AuthoringDecline,
-    Outcome as AuthoringOutcome, Report as AuthoringReport, author_one, run_batch,
+    Outcome as AuthoringOutcome, Report as AuthoringReport, Stored as AuthoringStored, author_one,
+    run_batch,
 };
 pub use authoring::prompt::{AuthoringSpec, KINDS, Kind as AuthoringKind};
 pub use diagnosis::{DiagnosisJob, Outcome as DiagnosisOutcome, Report as DiagnosisReport};

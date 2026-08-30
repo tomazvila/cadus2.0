@@ -49,6 +49,16 @@
 //! the log, and it never occupies a `content_store` row that a reviewer would
 //! have to approve or reject.
 //!
+//! # The bill of one pass (T3)
+//!
+//! Every attempt writes its `model_call_log` rows BEFORE the document reaches
+//! the table, so no paid call is recorded as free. The stored row then carries
+//! `authoring_attempts` — the count of model calls this pass spent — and
+//! `authoring_cost_usd` — the sum of what those calls cost. A pass above
+//! [`cost::ATTEMPT_ALERT`] raises the T3 operator alert and sets
+//! [`Report::alert`]; the alert stops nothing. `crate::authoring::cost` holds
+//! the rules.
+//!
 //! # What this unit does not do
 //!
 //! Kinds `teach`, `hint_ladder` and `diagnosis` have no gate in
@@ -66,6 +76,7 @@ use serde_json::Value;
 use sha2::{Digest, Sha256};
 
 use crate::WorkerError;
+use crate::authoring::cost;
 use crate::authoring::prompt::{self, AuthoringSpec, DIGEST_CHARS, Kind};
 use crate::model_log::{self, CallRecord, PURPOSE_AUTHORING};
 
@@ -147,8 +158,17 @@ pub struct Report {
     pub digest: Option<String>,
     /// The decline record, when every attempt was refused.
     pub decline: Option<Decline>,
-    /// One record per HTTP attempt, in order (T6). Unit R3 sums the cost.
+    /// One record per HTTP attempt, in order (T6).
     pub http_attempts: Vec<Attempt>,
+    /// The money the stored row carries, as the exact text of
+    /// `content_store.authoring_cost_usd` (T3).
+    ///
+    /// `None` in two cases: the pass stored no row, or no call of the pass
+    /// reported a price.
+    pub cost_usd: Option<String>,
+    /// Whether the pass raised the T3 alert of
+    /// [`cost::ATTEMPT_ALERT`](crate::authoring::cost::ATTEMPT_ALERT).
+    pub alert: bool,
 }
 
 /// What one pass of [`run_batch`] did over a list of knowledge points.
@@ -162,6 +182,8 @@ pub struct BatchReport {
     pub declined: u32,
     /// The model calls the whole pass spent (T3).
     pub calls: u32,
+    /// The knowledge points that raised the T3 attempt alert.
+    pub alerts: u32,
     /// One record per declined knowledge point.
     pub declines: Vec<Decline>,
 }
@@ -318,15 +340,37 @@ pub async fn slots_taken(db: &Db, kp_id: &str, kind: Kind) -> Result<i64, Worker
     Ok(cadus_store::bounded(db, query).await?)
 }
 
-/// Insert one verified document as `pending` (C6, spec section 2.2, step 4).
+/// What the insert of one authored document did (T3).
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct Stored {
+    /// `true` when the row is new, `false` when the table already held the
+    /// digest.
+    pub inserted: bool,
+    /// The exact text of `authoring_cost_usd` on the new row.
+    ///
+    /// `None` in two cases: the row is not new, or no call of the pass reported
+    /// a price.
+    pub cost_usd: Option<String>,
+}
+
+/// Insert one verified document as `pending`, with its bill (C6, T3; spec
+/// section 2.2, step 4).
 ///
 /// The worker connects as `cadus_admin`. `cadus_app` holds SELECT only on the
 /// table (`docs/SCHEMA.md`, finding #14), so the request tier can never write a
 /// row that already carries `status = 'approved'`.
 ///
-/// Returns `true` when the row is new. A digest the table already holds is not
-/// an error and not a rewrite: the body is the same body, and a human may have
-/// rejected it already, so `ON CONFLICT DO NOTHING` leaves that verdict alone.
+/// `attempts` is the count of model calls the pass spent, and `spend` is the
+/// price of each of those calls that reported one
+/// ([`cost::spend`](crate::authoring::cost::spend)). The statement sums the
+/// prices in Postgres, so the money reaches `numeric(12,6)` with no float step
+/// (`crate::authoring::cost`, section "The sum runs in Postgres").
+///
+/// [`Stored::inserted`] is `true` when the row is new. A digest the table
+/// already holds is not an error and not a rewrite: the body is the same body,
+/// and a human may have rejected it already, so `ON CONFLICT DO NOTHING` leaves
+/// that verdict AND the earlier row's accounting alone. The second pass paid for
+/// its own calls, and the ledger holds that spend.
 ///
 /// # Errors
 ///
@@ -338,14 +382,20 @@ pub async fn store_pending(
     kind: Kind,
     body: &str,
     attempts: u32,
-) -> Result<bool, WorkerError> {
+    spend: &[String],
+) -> Result<Stored, WorkerError> {
     let document: Value = serde_json::from_str(body)
         .map_err(|err| WorkerError::Config(format!("the verified body does not read: {err}")))?;
     let query = sqlx::query!(
         r#"
-        INSERT INTO content_store (digest, kp_id, kind, body, status, authoring_attempts)
-        VALUES ($1, $2, $3, $4, $5, $6)
+        INSERT INTO content_store
+            (digest, kp_id, kind, body, status, authoring_attempts, authoring_cost_usd)
+        VALUES ($1, $2, $3, $4, $5, $6,
+                (SELECT CASE WHEN abs(sum(round(c::numeric, 6))) < 1000000
+                             THEN sum(round(c::numeric, 6)) END
+                   FROM unnest($7::text[]) AS c))
         ON CONFLICT (digest) DO NOTHING
+        RETURNING authoring_cost_usd::text AS "cost_usd?"
         "#,
         body_digest(body),
         kp_id,
@@ -353,9 +403,14 @@ pub async fn store_pending(
         document,
         STATUS_PENDING,
         i32::try_from(attempts).unwrap_or(i32::MAX),
+        spend,
     )
-    .execute(db.pool());
-    Ok(cadus_store::bounded(db, query).await?.rows_affected() == 1)
+    .fetch_optional(db.pool());
+    let row = cadus_store::bounded(db, query).await?;
+    Ok(Stored {
+        inserted: row.is_some(),
+        cost_usd: row.and_then(|row| row.cost_usd),
+    })
 }
 
 /// Author one knowledge point and one kind (spec section 2.2).
@@ -385,6 +440,8 @@ pub async fn author_one(
         digest: None,
         decline: None,
         http_attempts: Vec::new(),
+        cost_usd: None,
+        alert: false,
     };
 
     if kind != Kind::Template {
@@ -455,14 +512,20 @@ pub async fn author_one(
             Ok(arguments) => match verify(spec, &arguments) {
                 Ok(body) => {
                     let digest = body_digest(&body);
-                    let inserted = store_pending(db, &kp_id, kind, &body, attempt).await?;
-                    let outcome = if inserted {
+                    // T3: the row carries the count of calls the pass spent and
+                    // the sum of what those calls cost.
+                    let spend = cost::spend(&http_attempts);
+                    let stored = store_pending(db, &kp_id, kind, &body, attempt, &spend).await?;
+                    let outcome = if stored.inserted {
                         Outcome::Stored
                     } else {
                         Outcome::Duplicate
                     };
                     tracing::info!(kp = %kp_id, kind = kind.as_str(), attempt, digest,
-                                   inserted, "authoring: the gate accepted the document");
+                                   inserted = stored.inserted,
+                                   cost_usd = stored.cost_usd.as_deref().unwrap_or("unknown"),
+                                   "authoring: the gate accepted the document");
+                    let alert = cost::raise(&kp_id, kind, attempt, stored.cost_usd.as_deref());
                     return Ok(Report {
                         kp_id,
                         kind,
@@ -471,6 +534,8 @@ pub async fn author_one(
                         digest: Some(digest),
                         decline: None,
                         http_attempts,
+                        cost_usd: stored.cost_usd,
+                        alert,
                     });
                 }
                 Err(rejection) => {
@@ -487,6 +552,9 @@ pub async fn author_one(
 
     tracing::error!(kp = %kp_id, kind = kind.as_str(), attempts = spent,
                     "authoring: the knowledge point declines; nothing is stored");
+    // T3: a decline stores no row, so the alert is the only place its spend is
+    // named. A pass that used every attempt is above the bound by definition.
+    let alert = cost::raise(&kp_id, kind, spent, None);
     Ok(Report {
         kp_id: kp_id.clone(),
         kind,
@@ -500,6 +568,8 @@ pub async fn author_one(
             reasons,
         }),
         http_attempts,
+        cost_usd: None,
+        alert,
     })
 }
 
@@ -522,6 +592,9 @@ pub async fn run_batch(
     for spec in specs {
         let report = author_one(db, job, kind, spec).await?;
         batch.calls = batch.calls.saturating_add(report.attempts);
+        if report.alert {
+            batch.alerts = batch.alerts.saturating_add(1);
+        }
         match report.outcome {
             Outcome::Stored | Outcome::Duplicate => batch.stored += 1,
             Outcome::Skipped | Outcome::NoGate => batch.skipped += 1,
@@ -536,6 +609,7 @@ pub async fn run_batch(
         skipped = batch.skipped,
         declined = batch.declined,
         calls = batch.calls,
+        alerts = batch.alerts,
         "authoring: the batch is complete"
     );
     Ok(batch)
