@@ -14,12 +14,11 @@
  * carries the meaning — a tick with no sentence tells a screen reader nothing.
  */
 import { useId } from 'react';
+import { clamp01 } from '@/lib/format';
 
-/** Clamp to 0..1. A fraction outside it draws a ring arc longer than the circle. */
-export function clamp01(n: number): number {
-  if (!Number.isFinite(n)) return 0;
-  return Math.min(1, Math.max(0, n));
-}
+// The ring geometry and the percent readout of the dashboard clamp the same fraction, so
+// `lib/format.ts` owns the one implementation. The re-export keeps the S4 import path.
+export { clamp01 };
 
 /**
  * The Cadus mark: four strokes on a widening beat — the spaced-repetition intervals —

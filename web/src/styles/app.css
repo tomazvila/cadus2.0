@@ -272,6 +272,60 @@ p { margin: 0.4rem 0; }
 .work summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .work-input { margin-top: 0.5rem; resize: vertical; }
 
+/* ---- the dashboard ---- */
+/* One primary action per state (W-C2), so exactly one control here carries `.btn-primary`
+   and `.btn-hero`. The hero is full width: it is the thing to press, and a learner reading
+   on a phone finds it without a scan. Everything quiet keeps the plain `.btn` weight. */
+.status-card { padding-bottom: 1rem; }
+.status-head { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+.status-head h2 { margin-bottom: 0.15rem; }
+
+/* The journey: the courses in order, with the enrolled one in the accent. The separator is
+   `--border`, which is decorative contrast only — it carries no meaning a reader needs. */
+.course-arc {
+  display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;
+  margin-bottom: 1rem; font-size: 0.9rem;
+}
+.arc-course { color: var(--muted); }
+.arc-current { color: var(--accent); font-weight: 700; }
+.arc-sep { color: var(--border); }
+
+.btn-hero { font-size: 1.05rem; padding: 0.85rem 1.4rem; width: 100%; }
+.primary-action { margin: 1.1rem 0 0.5rem; display: grid; gap: 0.5rem; }
+.primary-sub { margin: 0; text-align: center; }
+.caught-up { font-size: 1.05rem; margin: 0; text-align: center; }
+.onboard-card { text-align: center; }
+.onboard-card .btn-hero { margin: 1rem 0 0.4rem; }
+.onboard-foot { margin-top: 0.4rem; }
+
+/* The quiet secondaries (W-C5). A native `<details>` keeps the keyboard behavior and the
+   screen-reader semantics, and it needs no ARIA. The custom marker replaces the platform
+   triangle, which two engines draw at two sizes. */
+.more-menu { margin-top: 1.2rem; border-top: 1px solid var(--border); padding-top: 0.6rem; }
+.more-menu summary {
+  cursor: pointer; color: var(--muted); font-size: 0.9rem; list-style: none; padding: 0.3rem 0;
+}
+.more-menu summary::-webkit-details-marker { display: none; }
+.more-menu summary::before { content: '⌄ '; }
+.more-menu[open] summary::before { content: '⌃ '; }
+.more-menu summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.more-actions { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.6rem; }
+.more-caption { margin: 0.6rem 0 0; }
+.demo-hint { text-align: center; margin-top: 1rem; }
+
+/* The course picker inside the modal. */
+.picker-list { display: grid; gap: 0.4rem; margin-top: 0.7rem; }
+
+/* An in-button spinner for a call in flight. The label goes transparent rather than away,
+   so the button keeps its width and the row under it does not jump. */
+.btn.is-busy { position: relative; color: transparent; opacity: 0.65; cursor: default; }
+.btn.is-busy::after {
+  content: ""; position: absolute; width: 16px; height: 16px; border-radius: 50%;
+  border: 2px solid currentColor; border-top-color: transparent;
+  color: var(--muted); animation: spin 0.7s linear infinite;
+}
+.btn-primary.is-busy::after { color: var(--accent-ink); }
+
 /* ---- responsive ---- */
 @media (max-width: 400px) {
   .view { padding: 1rem 0.75rem 4rem; }
@@ -279,6 +333,8 @@ p { margin: 0.4rem 0; }
   .ring svg { width: 96px; height: 96px; }
   .stat-value { font-size: 1.15rem; }
   .problem-text { font-size: 1.08rem; }
+  /* The ring first, the numbers under it: a 120px ring beside a heading overflows here. */
+  .status-head { flex-direction: column-reverse; align-items: flex-start; }
 }
 
 /* Strip every animation and transition when the reader asks for less motion (spec section
