@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <!-- Dark is primary; light is the fallback when the OS asks for it (spec section 4.2).
+       The two theme-color values paint the browser chrome to match. -->
+  <meta name="color-scheme" content="dark light">
+  <meta name="theme-color" content="#1a1b26" media="(prefers-color-scheme: dark)">
+  <meta name="theme-color" content="#e1e2e7" media="(prefers-color-scheme: light)">
+  <title>Cadus</title>
+  <!-- The icon is a FILE. 1.0 inlined the same drawing into this attribute; the S1
+       acceptance check is that the build emits zero inline-data URIs, and
+       `scripts/check-bundle-csp.mjs` reads every built file, this document included. -->
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <!-- The vendored KaTeX stylesheet and its two UMD scripts are INJECTED by the
+       vendorTags() plugin of vite.config.ts, not written here, and that is not tidiness.
+       Vite's HTML plugin rewrites <link rel="stylesheet"> and <script src> into module
+       graph entries so it can hash and bundle them. The vendored tree is external, so the
+       stylesheet came out as a bare module import at the top of the entry chunk. Chrome
+       refuses a CSS file as a module, the entry never evaluates, and the app renders a
+       BLANK PAGE while every asset answers 200. Injection also puts the tags ahead of
+       Vite's own module script, which is the order the render idiom needs. See
+       `vendor-tags.ts`. -->
+</head>
+<body>
+  <header class="topbar" id="topbar"></header>
+  <main class="view" id="view"></main>
+  <!-- The live region exists BEFORE its first toast, or a screen reader announces nothing.
+       A region that mounts together with its content is the common React bug. -->
+  <div class="toasts" id="toasts" aria-live="polite"></div>
+  <script type="module" src="/src/main.tsx"></script>
+</body>
+</html>

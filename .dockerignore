@@ -9,9 +9,22 @@ target
 .gitignore
 .claude
 
-# Frontend install output (M6 adds the SPA; the line lands first so a local
-# install never enters the build context).
-node_modules
+# Frontend install output and build output. The `**/` prefix is load-bearing: a
+# .dockerignore pattern is matched against the path RELATIVE TO THE CONTEXT ROOT,
+# so a bare `node_modules` line excludes `./node_modules` and leaves
+# `web/node_modules` in the context. The SPA install is the one that exists, it
+# is hundreds of megabytes, and the image build makes its own with `npm ci`.
+#
+# `dist` is excluded for the same reason plus a sharper one: a stale host build
+# copied over the image's own would ship a bundle nobody built here.
+**/node_modules
+web/dist
+
+# The click-through's scratch trees and screenshots (M6 S13). `e2e/work` holds a
+# full copy of `web/` per broken variant, so it is large and it is never input to
+# an image.
+web/e2e/work
+web/e2e/shots
 
 # Local environment and compose overrides never belong in the image.
 .env

@@ -15,10 +15,17 @@ name: cadus2
 
 # ONE image, three commands. `migrate`, `web`, and `worker` all build from this
 # block, so the three processes always run the same commit.
+#
+# `target: runtime` is REQUIRED and not decoration. The Dockerfile also holds the
+# `spa` stage that the `caddy` service builds. Without an explicit target, docker
+# builds the LAST stage of the file, so a reordering of the stages would silently
+# hand these three services the Caddy image. `scripts/check_ops.sh` reads this
+# key to tell the app image from the edge image.
 x-app-image: &app-image
   build:
     context: .
     dockerfile: Dockerfile
+    target: runtime
 
 services:
   # Postgres -- the system of record. It has no `ports:` and it sits on the
@@ -259,9 +266,20 @@ services:
     networks: [backend]
     restart: unless-stopped
 
-  # Reverse proxy and automatic HTTPS. Put a real domain in SITE_ADDRESS and
-  # Caddy fetches a Let's Encrypt certificate by itself. It needs ports 80 and
-  # 443 open and the DNS record pointed at this server.
+  # The edge: the SPA and the reverse proxy, on ONE origin (M6 S14, O3).
+  #
+  # The service BUILDS the `spa` stage of the Dockerfile, which is `caddy:2` plus
+  # the bundle that a node stage built into /srv. The bundle is baked in, so the
+  # files Caddy serves always match the commit that built them, and no volume and
+  # no separate publish step stands between the two. The runtime image carries no
+  # node; the node lives in the build stage alone.
+  #
+  # `deploy/Caddyfile` stays a bind mount, so an operator changes the routing
+  # with a restart and no rebuild.
+  #
+  # Automatic HTTPS: put a real domain in SITE_ADDRESS and Caddy fetches a
+  # Let's Encrypt certificate by itself. It needs ports 80 and 443 open and the
+  # DNS record pointed at this server.
   # `frontend` only -- Caddy reaches `web` and has no route to `db`.
   #
   # `:?` makes an unset SITE_ADDRESS fail the whole compose command with the
@@ -276,7 +294,10 @@ services:
   # container, so the Caddyfile and SITE_ADDRESS stay the same. A moved port
   # reaches no ACME server: set SITE_ADDRESS=:80 for such a bring-up.
   caddy:
-    image: caddy:2
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: spa
     ports:
       - "${CADDY_HTTP_PORT:-80}:80"
       - "${CADDY_HTTPS_PORT:-443}:443"

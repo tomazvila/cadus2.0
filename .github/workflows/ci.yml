@@ -1,9 +1,28 @@
-# Cadus 2.0 merge gate in CI (C3, D9).
+# Cadus 2.0 merge gate in CI (C3, D9, O3).
 #
-# The job runs `scripts/gate.sh`, the same script a developer runs on a laptop.
-# CI adds no extra step and no weaker step. The gate holds the whole contract:
-# fmt, clippy with -D warnings, the test suite, `cargo sqlx prepare --check`,
-# `scripts/check_migrations.sh`, and `scripts/check_ops.sh`.
+# The Rust step runs `scripts/gate.sh`, the same script a developer runs on a
+# laptop. CI adds no extra step and no weaker step. The gate holds the whole
+# contract: fmt, clippy with -D warnings, the test suite,
+# `cargo sqlx prepare --check`, `scripts/check_migrations.sh`, and
+# `scripts/check_ops.sh`.
+#
+# The SPA (M6, O3) adds TWO MORE STEPS to this same job, never a second job:
+#
+#   * the TypeScript unit gate, `cd web && npm run check`. It runs natively and
+#     needs no docker, so it goes BEFORE the Rust gate and fails in minutes.
+#   * the browser click-through, `node e2e/run.mjs acceptance`. It needs docker,
+#     because Playwright's browsers do not launch on a host without root
+#     (spec section 7.3), so it runs inside
+#     mcr.microsoft.com/playwright:v1.62.1-noble. It goes last.
+#
+# The two are SEPARATE STEPS on purpose (spec section 7.3): a docker outage then
+# fails the click-through with the unit gate already green and reported, instead
+# of one red step that says nothing about which half broke.
+#
+# They stay in the ONE job for the reason `scripts/check_ops.sh` check (i)
+# states: the budget benchmarks run inside `scripts/gate.sh`, after the test
+# suite and never beside it. Steps of one job run one at a time, so nothing here
+# contends with a benchmark. A second job is what the check refuses.
 name: gate
 
 on:
@@ -59,6 +78,17 @@ jobs:
       - name: Check out the repository
         uses: actions/checkout@v4
 
+      # The SPA toolchain. The version is the one spec section 7.3 measured and
+      # the one `web/package.json` "engines" allows (>=22 <23). `cache: npm`
+      # keeps the download of ~400 packages off the critical path; it needs the
+      # lock file path, because the workspace root carries none.
+      - name: Install the node toolchain
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.21.1
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+
       - name: Install the Rust toolchain
         uses: dtolnay/rust-toolchain@stable
         with:
@@ -66,6 +96,25 @@ jobs:
 
       - name: Restore the cargo cache
         uses: Swatinem/rust-cache@v2
+
+      # The SPA unit gate runs FIRST of the three checks: it is minutes where the
+      # Rust gate is tens of minutes, and `scripts/check_ops.sh` builds the SPA
+      # image inside that gate, so a broken bundle would fail there anyway with a
+      # far worse message.
+      #
+      # `npm ci` and never `npm install`: it installs the locked tree exactly and
+      # fails on a lock file that does not match the manifest.
+      - name: Install the SPA dependencies
+        working-directory: web
+        run: npm ci
+
+      # The TypeScript unit gate (`web/package.json`): selftest, lint, types,
+      # test, invariants, build, csp. It runs natively and reaches no docker, so
+      # it reports on its own even when docker is out for every step after it.
+      # It writes `web/dist`, which `.dockerignore` keeps out of the image build.
+      - name: Run the SPA unit gate
+        working-directory: web
+        run: npm run check
 
       - name: Install sqlx-cli
         run: cargo install sqlx-cli --no-default-features --features postgres,rustls --locked
@@ -105,4 +154,28 @@ jobs:
         with:
           name: benchmarks
           path: target/bench/*.json
+          if-no-files-found: warn
+
+      # The browser click-through (M6 S13). `acceptance` builds each of the three
+      # deliberately broken trees of `e2e/breaks.mjs`, requires the walk to name
+      # that failure, and then requires a clean pass on the real tree. It drives
+      # Chromium inside mcr.microsoft.com/playwright:v1.62.1-noble.
+      #
+      # E2E_NETWORK=host skips the probe that `run.mjs` runs to find out how the
+      # container reaches the host. On a GitHub runner the docker bridge is open
+      # and both routes work, and the probe costs a container start.
+      - name: Run the browser click-through
+        working-directory: web
+        env:
+          E2E_NETWORK: host
+        run: node e2e/run.mjs acceptance
+
+      # The walk writes one screenshot per view and one after any hang, so a red
+      # run is the run whose screenshots matter most: `if: always()`.
+      - name: Upload the click-through screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: click-through
+          path: web/e2e/shots/*.png
           if-no-files-found: warn

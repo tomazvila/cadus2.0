@@ -1,4 +1,13 @@
-# Cadus 2.0 reverse proxy. SITE_ADDRESS comes from .env:
+# Cadus 2.0 edge. Caddy is the sole ingress. It serves the SPA bundle from /srv
+# and proxies /api to the web service, so the bundle and the API are ONE ORIGIN
+# (M6 S14, O3).
+#
+# The one origin is not a preference. `crates/web/src/origin.rs` answers
+# `403 cross_origin_rejected` to a cookie-carrying write whose `Origin` is not
+# this deployment's own, because a session cookie is an ambient credential. Serve
+# the bundle from a second origin and every authed POST of the SPA fails.
+#
+# SITE_ADDRESS comes from .env:
 #   a real domain (for example math.example.com) -> automatic HTTPS from
 #                                                   Let's Encrypt. Open ports 80
 #                                                   and 443 and point the DNS
@@ -6,6 +15,10 @@
 #   :80                                          -> http only, for a test on a
 #                                                   bare IP. .env.example ships
 #                                                   this value.
+#
+# Set PUBLIC_ORIGIN in .env to the SAME origin a browser types, scheme included
+# (for example https://math.example.com). The service compares `Origin` against
+# that value and against no proxy header (trap W10).
 {$SITE_ADDRESS} {
 	encode zstd gzip
 
@@ -19,15 +32,50 @@
 		respond 404
 	}
 
-	# Everything else goes to the web service. Caddy is the sole ingress and the
-	# AUTHORITY on the client IP: OVERWRITE X-Forwarded-For with the real remote
-	# address and discard what the client sent. A client then cannot spoof it to
-	# evade the per-IP rate limits or to poison the access log. Do NOT write
-	# `-X-Forwarded-For` here: that only deletes the header, and the app then
-	# reads Caddy's own container IP for every request.
-	handle {
+	# The API. Caddy is the AUTHORITY on the client IP: OVERWRITE
+	# X-Forwarded-For with the real remote address and discard what the client
+	# sent. A client then cannot spoof it to evade the per-IP rate limits or to
+	# poison the access log. Do NOT write `-X-Forwarded-For` here: that only
+	# deletes the header, and the app then reads Caddy's own container IP for
+	# every request.
+	@api path /api/*
+	handle @api {
 		reverse_proxy web:8080 {
 			header_up X-Forwarded-For {http.request.remote.host}
 		}
+	}
+
+	# Everything else is the SPA. `handle` blocks are mutually exclusive and
+	# Caddy evaluates them by matcher specificity, so the two matched blocks
+	# above answer first and this matcher-less one takes every path they leave.
+	# `web/e2e/packaging.sh` proves that order against a running Caddy: it reads
+	# 404 from /api/ready, {"ok":true} from /api/health, and the document from
+	# both / and /ops.
+	handle {
+		# The five security headers of `crates/web/src/security.rs`
+		# (SECURITY_HEADERS), character for character. The service stamps them on
+		# its own answers; nothing stamps them on a file Caddy serves, and the
+		# DOCUMENT is where a Content-Security-Policy does its work. Without this
+		# block index.html ships with no CSP and the whole policy is decoration.
+		#
+		# Keep the two lists identical. `scripts/check_ops.sh` check (j) reads
+		# both files and fails a drift.
+		header {
+			Content-Security-Policy "default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; font-src 'self'; base-uri 'none'; frame-ancestors 'none'; connect-src 'self' http://localhost:* http://127.0.0.1:*"
+			X-Content-Type-Options "nosniff"
+			X-Frame-Options "DENY"
+			Referrer-Policy "no-referrer"
+			Cache-Control "no-cache"
+		}
+
+		root * /srv
+
+		# The SPA fallback. `/ops` and `/review` are real URLs an operator
+		# reloads and bookmarks (`web/src/app/routes.ts`); no file of that name
+		# exists, so the document answers for them. `try_files` keeps the URL, so
+		# the router still reads the path it was given.
+		try_files {path} /index.html
+
+		file_server
 	}
 }
