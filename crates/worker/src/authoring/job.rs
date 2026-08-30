@@ -272,6 +272,11 @@ pub fn body_digest(body: &str) -> String {
 /// Returns the [`Rejection`] the retry block carries when the tool call answered
 /// no JSON object.
 pub fn assemble(spec: &AuthoringSpec, arguments: &Value) -> Result<String, Rejection> {
+    write_body(&assemble_value(spec, arguments)?)
+}
+
+/// [`assemble`], before the body is written out.
+fn assemble_value(spec: &AuthoringSpec, arguments: &Value) -> Result<Value, Rejection> {
     let Some(fields) = arguments.as_object() else {
         return Err(Rejection {
             code: "tool-arguments",
@@ -288,10 +293,32 @@ pub fn assemble(spec: &AuthoringSpec, arguments: &Value) -> Result<String, Rejec
         "answer_kind".to_owned(),
         Value::from(spec.answer_kind.as_str()),
     );
-    serde_json::to_string(&Value::Object(body)).map_err(|err| Rejection {
+    Ok(Value::Object(body))
+}
+
+/// Write one assembled body as the text the gate reads.
+fn write_body(body: &Value) -> Result<String, Rejection> {
+    serde_json::to_string(body).map_err(|err| Rejection {
         code: "tool-arguments",
         message: format!("the tool arguments do not write as JSON: {err}"),
     })
+}
+
+/// Assemble one body and drop the tags outside the vocabulary (spec section
+/// 5.3, row R7).
+///
+/// The drop runs BEFORE the gate. A distractor note is a rendered field, so a
+/// drop after the gate stores a document the gate refuses
+/// (`cadus_core::template::keep_known_tags` gives the reason in full).
+///
+/// The template path calls this, because the template gate holds no vocabulary.
+/// The diagnosis path does not: `cadus_core::template::gate_diagnosis_body`
+/// takes the vocabulary and runs the same drop in the same place.
+fn assemble_kept(kind: Kind, spec: &AuthoringSpec, arguments: &Value) -> Result<String, Rejection> {
+    let mut body = assemble_value(spec, arguments)?;
+    let dropped = keep_known_tags(&mut body, &authoring_vocabulary());
+    report_dropped(spec, kind, &dropped);
+    write_body(&body)
 }
 
 /// Assemble, gate, and fill in the satisfying count.
@@ -304,17 +331,16 @@ pub fn assemble(spec: &AuthoringSpec, arguments: &Value) -> Result<String, Rejec
 /// `cadus_core::template::gate`. The message is the literal text of the check
 /// that refused the document, and it is what the next attempt reads.
 pub fn verify(spec: &AuthoringSpec, arguments: &Value) -> Result<String, Rejection> {
-    let body = assemble(spec, arguments)?;
+    // Spec section 5.3, and row R7: an error_tag outside the vocabulary is
+    // dropped, on this document and on the diagnosis document alike, and the
+    // drop runs before the gate reads the body.
+    let body = assemble_kept(Kind::Template, spec, arguments)?;
     let gate_spec = GateSpec {
         answer_kind: spec.answer_kind,
         exemplars: &spec.exemplars,
     };
     let (doc, verified) = gate_body(&body, &gate_spec)?;
-    let mut filled = with_space_size(&doc, &verified);
-    // Spec section 5.3, and row R7: an error_tag outside the vocabulary is
-    // dropped, on this document and on the diagnosis document alike.
-    let dropped = keep_known_tags(&mut filled.distractors, &authoring_vocabulary());
-    report_dropped(spec, Kind::Template, &dropped);
+    let filled = with_space_size(&doc, &verified);
     to_body(&filled).map_err(|err| Rejection {
         code: "tool-arguments",
         message: format!("the verified document does not write as JSON: {err}"),
@@ -325,8 +351,9 @@ pub fn verify(spec: &AuthoringSpec, arguments: &Value) -> Result<String, Rejecti
 ///
 /// It is the vocabulary the prompt states to the model
 /// ([`MODEL_ERROR_TAGS`]), so the gate keeps exactly what the instruction
-/// invites. The three server-assigned tags of section 5.3 are outside it, and
-/// `cadus_core::config::default_error_tags` holds every one of these, so the
+/// invites. `blank-answer` stands outside it: the grade path stamps that tag on
+/// a blank submission, and no distractor claims a blank answer.
+/// `cadus_core::config::default_error_tags` holds every tag of this list, so the
 /// grade path never drops a tag the gate kept.
 #[must_use]
 pub fn authoring_vocabulary() -> Vec<String> {

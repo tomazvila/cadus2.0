@@ -27,11 +27,14 @@ use std::sync::{Arc, Mutex};
 use std::time::Duration;
 
 use cadus_core::curriculum::{AnswerKind, Exemplar};
+use cadus_core::template::{GateSpec, gate_body};
 use cadus_model_client::{Client, ModelConfig};
 use cadus_store::test_support::TestDb;
 use cadus_store::{DEFAULT_CLIENT_TIMEOUT_MS, Db};
-use cadus_worker::authoring::job::{AuthoringJob, Outcome, author_one, authoring_vocabulary};
-use cadus_worker::authoring::prompt::{AuthoringSpec, Kind};
+use cadus_worker::authoring::job::{
+    AuthoringJob, Outcome, author_one, authoring_vocabulary, verify,
+};
+use cadus_worker::authoring::prompt::{AuthoringSpec, Kind, tool_schema};
 use serde_json::{Value, json};
 use sqlx::PgPool;
 use tokio::io::{AsyncReadExt, AsyncWriteExt};
@@ -342,6 +345,37 @@ async fn a_refused_list_is_re_prompted_verbatim_and_rescued_on_attempt_two() {
     .await;
 }
 
+/// The two tools ask for a different `answer`, because the two documents hold a
+/// different one.
+///
+/// A template distractor is an expression over the declared parameters. A
+/// `diagnosis` document declares none, so its answer is the wrong answer itself.
+/// One description for both kinds sends the distractor author to write a formula
+/// over parameters that do not exist, and the gate spends an attempt on it.
+#[test]
+fn the_distractor_tool_asks_for_a_literal_answer() {
+    let of = |kind| {
+        tool_schema(kind)["properties"]["distractors"]["items"]["properties"]["answer"]
+        ["description"]
+        .clone()
+    };
+
+    assert_eq!(
+        of(Kind::Diagnosis),
+        json!(
+            "The wrong answer itself, written the way a learner writes it. It is a literal \
+answer, not a formula: this knowledge point declares no parameters."
+        )
+    );
+    assert_eq!(
+        of(Kind::Template),
+        json!(
+            "The wrong answer, as an expression over the declared parameters, so the server \
+computes it per instance."
+        )
+    );
+}
+
 /// The gate keeps exactly the 11 tags of spec section 5.3, and the grade path
 /// keeps every one of them.
 ///
@@ -374,10 +408,16 @@ fn the_gate_keeps_only_tags_the_grade_path_also_keeps() {
             "the grade path drops {tag}, which the gate keeps"
         );
     }
-    assert!(
-        !authoring_vocabulary().contains(&"blank_answer".to_owned()),
-        "blank_answer is server-assigned, so no distractor carries it"
-    );
+    // 2.0 spells the tag `blank-answer` and 1.0 spells it `blank_answer`
+    // (`cadus_web::grade::TAG_BLANK_ANSWER`, spec section 5.3, the trap). The
+    // gate keeps neither: the grade path stamps that tag on a blank submission,
+    // and a distractor names an answer the learner wrote.
+    for spelling in ["blank-answer", "blank_answer"] {
+        assert!(
+            !authoring_vocabulary().contains(&spelling.to_owned()),
+            "{spelling} is server-assigned, so no distractor carries it"
+        );
+    }
 }
 
 /// A knowledge point whose diagnosis list is already approved pays nothing: the
@@ -406,4 +446,135 @@ async fn an_approved_list_makes_no_call() {
         assert_eq!(rows_of(&db.admin, KP_KEY).await.len(), 1);
     })
     .await;
+}
+
+// --------------------------------------------------------------------------- //
+// The template document: the same drop, in the same place
+// --------------------------------------------------------------------------- //
+
+/// The knowledge point the two template tests author for. Its exemplar answers
+/// `49`.
+fn template_spec() -> AuthoringSpec {
+    AuthoringSpec {
+        kp_id: "squares".to_owned(),
+        kp_name: "Squares of one-digit and two-digit numbers".to_owned(),
+        topic_id: "perfect-squares".to_owned(),
+        topic_name: "Perfect squares".to_owned(),
+        answer_kind: AnswerKind::Numeric,
+        difficulty_target: None,
+        constraints: None,
+        exemplars: vec![Exemplar {
+            problem: "Compute $7^2$.".to_owned(),
+            answer: "49".to_owned(),
+            solution_sketch: None,
+        }],
+    }
+}
+
+/// A template whose two distractors carry one known tag and one tag outside the
+/// vocabulary. Neither note renders a parameter, so the drop takes the
+/// distractor and nothing else.
+fn mixed_template() -> Value {
+    json!({
+        "statement": "Compute ${a}^{{2}}$.",
+        "params": {"a": {"kind": "int", "low": 1, "high": 12}},
+        "constraints": [],
+        "answer_expr": "a**2",
+        "solution_sketch": "${a} \\times {a}$ gives the answer.",
+        "hints": ["What does squaring a number mean?"],
+        "distractors": [
+            {"answer": "2*a", "error_tag": "arithmetic-slip",
+             "note": "You doubled the number instead of squaring it."},
+            {"answer": "a+2", "error_tag": UNKNOWN_TAG,
+             "note": "You added two instead of squaring."}
+        ],
+        "samples": [
+            {"params": {"a": 1}, "expected": "1"},
+            {"params": {"a": 12}, "expected": "144"}
+        ]
+    })
+}
+
+/// The same template, with the parameter `b` rendered in ONE place: the note of
+/// the single distractor. The tag decides whether that note survives.
+fn note_holds_the_only_use(tag: &str) -> Value {
+    json!({
+        "statement": "Compute ${a}^{{2}}$.",
+        "params": {
+            "a": {"kind": "int", "low": 1, "high": 12},
+            "b": {"kind": "int", "low": 1, "high": 2}
+        },
+        "constraints": [],
+        "answer_expr": "a**2",
+        "solution_sketch": "${a} \\times {a}$ gives the answer.",
+        "hints": ["What does squaring a number mean?"],
+        "distractors": [
+            {"answer": "2*a", "error_tag": tag,
+             "note": "You multiplied by {b} instead of squaring."}
+        ],
+        "samples": [
+            {"params": {"a": 1, "b": 1}, "expected": "1"},
+            {"params": {"a": 12, "b": 2}, "expected": "144"},
+            {"params": {"a": 1, "b": 2}, "expected": "1"},
+            {"params": {"a": 12, "b": 1}, "expected": "144"}
+        ]
+    })
+}
+
+/// Row R7, first acceptance check, on the OTHER document that carries
+/// distractors: the template. The stored body holds the distractor the
+/// vocabulary names, and the gate accepts that body a second time.
+///
+/// The re-gate is the point. `content_store` keeps the body the digest covers,
+/// and the reviewer of unit R5 reads the gate block of that stored body. A
+/// stored body the gate refuses shows the reviewer a refusal the authored
+/// document never earned.
+#[test]
+fn a_template_tag_outside_the_vocabulary_is_dropped_and_the_stored_body_re_gates() {
+    let spec = template_spec();
+
+    let body = verify(&spec, &mixed_template()).expect("the gate accepts the template");
+
+    let stored: Value = serde_json::from_str(&body).unwrap();
+    assert_eq!(
+        stored["distractors"],
+        json!([{
+            "answer": "2*a",
+            "error_tag": "arithmetic-slip",
+            "note": "You doubled the number instead of squaring it."
+        }]),
+        "the dropped tag is not in the stored body: {body}"
+    );
+    let gate_spec = GateSpec {
+        answer_kind: AnswerKind::Numeric,
+        exemplars: &spec.exemplars,
+    };
+    gate_body(&body, &gate_spec).expect("the stored body passes the gate a second time");
+}
+
+/// The drop runs BEFORE the gate, and that order is the whole rule.
+///
+/// One document, one tag apart. A distractor note is a rendered field, so the
+/// note is where the parameter `b` does its work. The known tag keeps the note,
+/// and the gate accepts. The unknown tag takes the note with the distractor, and
+/// the gate then reads the FILTERED document: it names the dead parameter, and
+/// the next attempt reads that sentence.
+///
+/// A drop after the gate stores the second document instead, and the row then
+/// holds a body the gate refuses.
+#[test]
+fn the_template_drop_runs_before_the_gate() {
+    let spec = template_spec();
+
+    verify(&spec, &note_holds_the_only_use("arithmetic-slip"))
+        .expect("the surviving note renders the parameter");
+
+    let rejection = verify(&spec, &note_holds_the_only_use(UNKNOWN_TAG))
+        .expect_err("the drop leaves the parameter dead");
+
+    assert_eq!(rejection.code, "dead-parameter");
+    assert_eq!(
+        rejection.message,
+        "parameters ['b'] are declared but never used"
+    );
 }

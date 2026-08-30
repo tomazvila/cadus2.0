@@ -28,6 +28,10 @@
 //! states the rule to the model ("A tag outside it is dropped"), so the drop is
 //! the documented answer and not a surprise.
 //!
+//! The filter runs on the RAW body, before the gate reads it, so the document
+//! the gate accepts is the document the row stores. [`keep_known_tags`] gives
+//! the reason in full.
+//!
 //! # A note is served verbatim
 //!
 //! The note of a `diagnosis` document reaches the learner as prose. Nothing
@@ -136,17 +140,52 @@ pub fn match_answer(
     Some(Preauthored { error_tags, prose })
 }
 
+/// The field both authored documents keep their distractors in.
+const FIELD_DISTRACTORS: &str = "distractors";
+
+/// The field that names the mistake one distractor makes.
+const FIELD_ERROR_TAG: &str = "error_tag";
+
 /// Drop every distractor whose `error_tag` is outside the vocabulary.
 ///
+/// The filter reads the RAW body and one field of it, so one rule holds for the
+/// diagnosis document and for the template document alike. A body that carries
+/// no `distractors` array loses nothing.
+///
 /// The answer is the dropped tags, in the order they stood, so the caller
-/// records what the document lost. The pipeline calls this at the gate, on the
-/// diagnosis document AND on the template document, so one rule holds for both.
-pub fn keep_known_tags(distractors: &mut Vec<Distractor>, vocabulary: &[String]) -> Vec<String> {
+/// records what the document lost.
+///
+/// # The filter runs BEFORE the gate, and the order is load bearing
+///
+/// A distractor note is a rendered field: [`gate`](super::gate) reads the
+/// placeholders of a note and counts each one as a use of that parameter. A drop
+/// AFTER the gate therefore stores a document the gate refuses, because the
+/// parameter whose only use stood in the dropped note is now dead. The drop runs
+/// first, so the document the gate accepts is the document the row stores, and a
+/// document the drop breaks earns the dead-parameter message the next attempt
+/// reads.
+///
+/// A distractor whose `error_tag` is absent, is not a string, or is blank stays
+/// here. The gate names it ("distractor N carries no error_tag"), and a filter
+/// that swallows it turns that refusal into a silent drop.
+pub fn keep_known_tags(body: &mut Value, vocabulary: &[String]) -> Vec<String> {
     let mut dropped: Vec<String> = Vec::new();
-    distractors.retain(|distractor| {
-        let known = vocabulary.iter().any(|tag| tag == &distractor.error_tag);
+    let Some(list) = body
+        .get_mut(FIELD_DISTRACTORS)
+        .and_then(Value::as_array_mut)
+    else {
+        return dropped;
+    };
+    list.retain(|entry| {
+        let Some(tag) = entry.get(FIELD_ERROR_TAG).and_then(Value::as_str) else {
+            return true;
+        };
+        if tag.trim().is_empty() {
+            return true;
+        }
+        let known = vocabulary.iter().any(|name| name == tag);
         if !known {
-            dropped.push(distractor.error_tag.clone());
+            dropped.push(tag.to_owned());
         }
         known
     });
@@ -161,20 +200,22 @@ pub fn keep_known_tags(distractors: &mut Vec<Distractor>, vocabulary: &[String])
 /// # Errors
 ///
 /// Returns the [`Rejection`] of a body that does not read as a diagnosis
-/// document, of every check [`gate_diagnosis`] runs, and of a list the filter
-/// empties.
+/// document, of a list the filter empties, and of every check
+/// [`gate_diagnosis`] runs.
 pub fn gate_diagnosis_body(
     body: &str,
     spec: &GateSpec<'_>,
     vocabulary: &[String],
 ) -> Result<(DiagnosisDoc, Vec<String>), Rejection> {
-    let mut doc: DiagnosisDoc = serde_json::from_str(body).map_err(|err| Rejection {
+    let unread = |err: &serde_json::Error| Rejection {
         code: "diagnosis-body",
         message: format!("the distractor list does not read as a diagnosis document: {err}"),
-    })?;
-    gate_diagnosis(&doc, spec)?;
-    let dropped = keep_known_tags(&mut doc.distractors, vocabulary);
-    if doc.distractors.is_empty() {
+    };
+    let mut raw: Value = serde_json::from_str(body).map_err(|err| unread(&err))?;
+    // The drop runs first: the gate verifies the document the row stores.
+    let dropped = keep_known_tags(&mut raw, vocabulary);
+    let doc: DiagnosisDoc = serde_json::from_value(raw).map_err(|err| unread(&err))?;
+    if doc.distractors.is_empty() && !dropped.is_empty() {
         return Err(Rejection {
             code: "distractor-vocabulary",
             message: format!(
@@ -183,6 +224,7 @@ pub fn gate_diagnosis_body(
             ),
         });
     }
+    gate_diagnosis(&doc, spec)?;
     Ok((doc, dropped))
 }
 

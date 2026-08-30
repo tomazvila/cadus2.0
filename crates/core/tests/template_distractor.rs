@@ -212,6 +212,19 @@ alone explains nothing"
     );
 }
 
+/// A blank tag is no tag. The filter leaves it for the gate, which names it, so
+/// the model reads the sentence about the field it left empty and not the
+/// sentence about the vocabulary.
+#[test]
+fn a_blank_error_tag_reaches_the_gate_and_is_named() {
+    let rejection = refusal(&body(json!([
+        {"answer": "13", "error_tag": "  ", "note": KEPT_NOTE},
+    ])));
+
+    assert_eq!(rejection.code, "distractor");
+    assert_eq!(rejection.message, "distractor 0 carries no error_tag");
+}
+
 /// An answer the checker cannot read never matches, so the gate refuses it with
 /// the reason the parser gives.
 #[test]
