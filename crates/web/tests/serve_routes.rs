@@ -42,6 +42,7 @@ use cadus_core::curriculum::{
     Slug, Topic, Unit,
 };
 use cadus_core::event::{Event, SchemaVersion, SessionStart, Timestamp};
+use cadus_core::instruction::{InstructionSpec, gate_hint_ladder, gate_teach};
 use cadus_core::pool::{PoolAnswer, PoolProblem};
 use cadus_store::pool::operator_flags;
 use cadus_store::test_support::TestDb;
@@ -950,6 +951,186 @@ async fn teach_on_a_lesson_serves_the_authored_page() {
         assert_eq!(rows, 0, "the teach read installed a state row");
     })
     .await;
+}
+
+/// M6 R6 acceptance, the third check: an APPROVED teach body serves through the
+/// M5 teach route with no model call (L4, L5, T1).
+///
+/// The page the route serves is the output of the M6 authoring gate
+/// (`cadus_core::instruction::gate_teach`), so the two halves of the unit meet
+/// here: what the gate accepts is what the route reads, field for field.
+///
+/// "No model call" is a LITERAL count. Every model call of 2.0 writes one
+/// `model_call_log` row per HTTP attempt (T6, `docs/plans/M5.md:31-33`), so a
+/// request tier that spent a token leaves a row. The count is 0 before the
+/// request and 0 after it. `crates/web/tests/purity.rs` holds the other half of
+/// the rule: `cadus-web` declares no dependency on the model client (L6).
+#[tokio::test]
+async fn an_approved_teach_page_from_the_gate_serves_with_no_model_call() {
+    TestDb::with(|db| async move {
+        let user = common::seed_learner(&db, "authoredteach@example.com").await;
+        let app = app(&db);
+        seed_open_session(&db, user).await;
+
+        // The tool arguments of one authoring attempt, as the model emits them.
+        let arguments = r#"{
+            "concept": "To add a whole number and a decimal, line up the decimal points.",
+            "worked_example": {
+                "problem": "Compute 6 + 2.25.",
+                "steps": [
+                    "Write 6 as 6.00, so both numbers carry two decimal places.",
+                    "Add the hundredths, the tenths, then the ones: $6.00 + 2.25 = 8.25$."
+                ]
+            }
+        }"#;
+        let exemplars = vec![
+            exemplar(EXEMPLAR_TEXT, EXEMPLAR_ANSWER),
+            exemplar(EXEMPLAR_TEXT_2, "13.25"),
+        ];
+        let page = gate_teach(
+            arguments,
+            &InstructionSpec {
+                exemplars: &exemplars,
+            },
+        )
+        .expect("the gate accepts the page");
+        let body = serde_json::to_value(&page).unwrap();
+        seed_content(&db, "teach", "sha256:authored-teach", body).await;
+
+        assert_eq!(model_calls(&db).await, 0);
+
+        let (status, raw) = call(
+            &app,
+            Method::POST,
+            &format!("/api/task/{LESSON}/teach"),
+            Some(user),
+            Some(json!({})),
+        )
+        .await;
+
+        assert_eq!(status, StatusCode::OK, "{raw}");
+        let served = parse(&raw);
+        assert_eq!(served["kp"], "kp1");
+        assert_eq!(
+            served["concept"],
+            "To add a whole number and a decimal, line up the decimal points."
+        );
+        assert_eq!(served["worked_example"]["problem"], "Compute 6 + 2.25.");
+        assert_eq!(
+            served["worked_example"]["steps"][0],
+            "Write 6 as 6.00, so both numbers carry two decimal places."
+        );
+        assert_eq!(
+            served["worked_example"]["steps"][1],
+            "Add the hundredths, the tenths, then the ones: $6.00 + 2.25 = 8.25$."
+        );
+        assert_eq!(
+            served["worked_example"]["steps"].as_array().unwrap().len(),
+            2
+        );
+
+        // T1: the route spent no model token.
+        assert_eq!(model_calls(&db).await, 0);
+    })
+    .await;
+}
+
+/// M6 R6 acceptance, the third check, the L5 half: an APPROVED hint ladder
+/// serves through the M5 hint route with no model call.
+///
+/// The teach test above proves the L4 half. This one proves the L5 half over the
+/// same rule, because one gate output feeds one route reader: `gate_hint_ladder`
+/// writes the ladder, the route reads it with `deny_unknown_fields`, and the two
+/// are one type (`cadus_core::instruction::HintLadder`).
+///
+/// It also proves the give-away rule end to end. The gate refuses a rung that
+/// names an exemplar's answer at authoring time; here the SERVED problem is a
+/// pool row whose answer is `POOL_ANSWER`, and the rungs the route hands back
+/// carry neither that answer nor `expected`.
+#[tokio::test]
+async fn an_approved_hint_ladder_from_the_gate_serves_with_no_model_call() {
+    TestDb::with(|db| async move {
+        let user = common::seed_learner(&db, "authoredladder@example.com").await;
+        let app = app(&db);
+        seed_open_session(&db, user).await;
+        seed_pool_row(&db, user, POOL_TEXT, POOL_ANSWER, "hash-a").await;
+
+        // The tool arguments of one authoring attempt, as the model emits them.
+        let arguments = r#"{
+            "hints": [
+                "Which column do you line up first?",
+                "Write the whole number with a decimal point and two zeros after it.",
+                "Add the hundredths, then the tenths, then the ones."
+            ]
+        }"#;
+        let exemplars = vec![
+            exemplar(EXEMPLAR_TEXT, EXEMPLAR_ANSWER),
+            exemplar(EXEMPLAR_TEXT_2, "13.25"),
+        ];
+        let ladder = gate_hint_ladder(
+            arguments,
+            &InstructionSpec {
+                exemplars: &exemplars,
+            },
+        )
+        .expect("the gate accepts the ladder");
+        let body = serde_json::to_value(&ladder).unwrap();
+        seed_content(&db, "hint_ladder", "sha256:authored-ladder", body).await;
+
+        assert_eq!(model_calls(&db).await, 0);
+
+        let served = serve_lesson(&app, user).await;
+        let problem_id = served["problem_id"].as_str().unwrap().to_string();
+        let uri = format!("/api/task/{LESSON}/hint");
+
+        let (status, raw) = call(
+            &app,
+            Method::POST,
+            &uri,
+            Some(user),
+            Some(json!({"problem_id": problem_id})),
+        )
+        .await;
+
+        assert_eq!(status, StatusCode::OK, "{raw}");
+        let first = parse(&raw);
+        assert_eq!(first["hint"], "Which column do you line up first?");
+        assert_eq!(first["hint_number"], 1);
+        assert!(!raw.contains("expected"), "the hint leaked expected: {raw}");
+        assert!(
+            !raw.contains(POOL_ANSWER),
+            "the hint leaked the answer text: {raw}"
+        );
+
+        let (status, raw) = call(
+            &app,
+            Method::POST,
+            &uri,
+            Some(user),
+            Some(json!({"problem_id": problem_id})),
+        )
+        .await;
+
+        assert_eq!(status, StatusCode::OK, "{raw}");
+        let second = parse(&raw);
+        assert_eq!(
+            second["hint"],
+            "Write the whole number with a decimal point and two zeros after it."
+        );
+        assert_eq!(second["hint_number"], 2);
+
+        // T1: the two rungs cost no model token.
+        assert_eq!(model_calls(&db).await, 0);
+    })
+    .await;
+}
+
+/// The count of `model_call_log` rows, of every purpose (T6).
+async fn model_calls(db: &TestDb) -> i64 {
+    sqlx::query_scalar!(r#"SELECT count(*) AS "n!" FROM model_call_log"#)
+        .fetch_one(&db.admin)
+        .await
+        .unwrap()
 }
 
 // --------------------------------------------------------------------------- //

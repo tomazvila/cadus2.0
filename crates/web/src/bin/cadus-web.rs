@@ -60,6 +60,15 @@ const SHUTDOWN_DEADLINE_VAR: &str = "SHUTDOWN_DEADLINE_SECS";
 /// The drain deadline in seconds when `SHUTDOWN_DEADLINE_SECS` is absent.
 const DEFAULT_SHUTDOWN_DEADLINE_SECS: u64 = 10;
 
+/// The environment variable that names the admin connection of the content
+/// store (M6 R5).
+///
+/// `cadus_app` holds SELECT on `content_store` and nothing else, so the approve
+/// route and the reject route need a DSN of `cadus_admin`. An absent variable
+/// leaves both writes closed with `503 admin_path_unavailable`, and every other
+/// route is unchanged.
+const ADMIN_DSN_VAR: &str = "CADUS_ADMIN_DATABASE_URL";
+
 /// The environment variable that names the curriculum tree (M5 U6).
 const CURRICULUM_ENV: &str = "CADUS_CURRICULUM";
 
@@ -309,8 +318,31 @@ async fn run() -> Result<(), Fatal> {
         }
     });
 
+    // M6 R5. The second pool of the process, and the only writer of
+    // `content_store` on this tier. It opens AFTER the C3 boot guard, and the
+    // guard never runs on it: this role bypasses row-level security by design,
+    // and no learner route takes it.
+    let admin = match admin_dsn()? {
+        None => {
+            tracing::info!(
+                "cadus-web: {ADMIN_DSN_VAR} is not set, so the review writes of \
+                 /api/admin/content answer 503"
+            );
+            None
+        }
+        Some(admin_cfg) => Some(
+            Db::connect(&admin_cfg)
+                .await
+                .map_err(|err| Fatal::Startup(format!("{ADMIN_DSN_VAR}: {err}")))?,
+        ),
+    };
+
+    let mut state = AppState::new(db.clone());
+    if let Some(admin) = admin.clone() {
+        state = state.with_admin(admin);
+    }
     let app = create_app(
-        AppState::new(db.clone())
+        state
             .with_posture(posture)
             .with_origin(origin)
             .with_content(Arc::clone(&content))
@@ -363,8 +395,37 @@ async fn run() -> Result<(), Fatal> {
     // The listener holds one pooled connection, so it ends BEFORE the pool
     // close; otherwise the close waits for a connection that never comes back.
     listener_task.abort();
-    close_within(close_budget(deadline, drain_elapsed), db.pool().close()).await;
+    let budget = close_budget(deadline, drain_elapsed);
+    close_within(budget, db.pool().close()).await;
+    if let Some(admin) = admin {
+        close_within(budget, admin.pool().close()).await;
+    }
     result.map_err(|err| Fatal::Startup(format!("serve failed: {err}")))
+}
+
+/// The configuration of the admin connection, or `None` when the operator set
+/// no `CADUS_ADMIN_DATABASE_URL`.
+///
+/// The two bounds of the tenant pool apply to this pool too: the function reads
+/// `DbConfig::from_env` for them and replaces the connection string alone. A
+/// value that is empty or not valid Unicode is a start error, because a silent
+/// fallback would leave the review writes closed with no word to the operator.
+fn admin_dsn() -> Result<Option<DbConfig>, Fatal> {
+    let raw = match std::env::var(ADMIN_DSN_VAR) {
+        Ok(url) if url.is_empty() => {
+            return Err(Fatal::Startup(format!("{ADMIN_DSN_VAR} is empty")));
+        }
+        Ok(url) => url,
+        Err(std::env::VarError::NotPresent) => return Ok(None),
+        Err(std::env::VarError::NotUnicode(_)) => {
+            return Err(Fatal::Startup(format!(
+                "{ADMIN_DSN_VAR} is not valid Unicode"
+            )));
+        }
+    };
+    let mut cfg = DbConfig::from_env().map_err(|err| Fatal::Startup(err.to_string()))?;
+    cfg.database_url = raw;
+    Ok(Some(cfg))
 }
 
 /// Give the pool close what is left of the stop budget.

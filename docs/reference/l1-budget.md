@@ -77,16 +77,19 @@ style follows `serving-1.0-spec.md:540-550`, and
 | POST `/api/session/start`, `/end` | — | 300 ms | one event append + one fold |
 | GET `/api/export` | — | streamed | a full per-user scan; never in a p95 |
 | GET `/api/operator/flags` | — | not on a learner path | one `operator_flags` read + at most 20 gate runs, about 10 ms of CPU each; admin only (A6) |
+| `/api/admin/content*` | — | not on a learner path | the queue read is one statement of at most `LIST_LIMIT` rows; the show route adds one gate run and one 8-instance fill, about 20 ms of CPU; admin only (C6) |
 | **Every route above** | **L6** | **0 model calls** | asserted by `crates/web/tests/purity.rs`; section 5 |
 
 **T1 as a merge gate:** serve, teach, hint and the whole grade path spend **0
 model tokens**. The only spenders are the worker's diagnosis job and the offline
 authoring pipeline (T2).
 
-`/api/operator/flags` is the one route with no time budget. It serves an admin
-account, no learner waits on it, and one request runs the template gate up to 20
-times on purpose. Its cost is bounded by a count and not by a clock:
-`cadus_web::operator::GATE_NOTE_LIMIT`.
+`/api/operator/flags` and `/api/admin/content*` are the routes with no time
+budget. Both serve an admin account, no learner waits on either, and each one
+runs the template gate on purpose. The cost of both is bounded by a count and not
+by a clock: `cadus_web::operator::GATE_NOTE_LIMIT` for the flags,
+`cadus_web::admin::SAMPLE_INSTANCES` and `cadus_store::content::LIST_LIMIT` for
+the review surface.
 
 ## 3. The L2 split (grade a verifiable answer, 300 ms)
 

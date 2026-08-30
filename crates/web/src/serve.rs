@@ -87,7 +87,6 @@ use cadus_store::pool::{
 use cadus_store::state::{
     EventRow, append_event, lock_web_state, project_and_save, project_current,
 };
-use serde::Deserialize;
 use serde_json::{Value, json};
 use sqlx::types::Uuid;
 use sqlx::{Postgres, Transaction};
@@ -136,35 +135,12 @@ pub const STUCK_HINT_THRESHOLD: usize = 3;
 // The authored documents (D-O3)
 // --------------------------------------------------------------------------- //
 
-/// The body of a `content_store` row of kind `teach` (L4).
-#[derive(Debug, Clone, PartialEq, Eq, Deserialize)]
-#[serde(deny_unknown_fields)]
-pub struct TeachDoc {
-    /// The concept text.
-    pub concept: String,
-    /// The fully worked example.
-    pub worked_example: WorkedExample,
-}
-
-/// The worked example of a teach page (`api.py:1096-1103`).
-#[derive(Debug, Clone, PartialEq, Eq, Deserialize)]
-#[serde(deny_unknown_fields)]
-pub struct WorkedExample {
-    /// The example problem. It is self-contained: it never names the served
-    /// practice problem and it never reveals its answer (Hard Rule 1).
-    pub problem: String,
-    /// The solution steps, in order.
-    pub steps: Vec<String>,
-}
-
-/// The body of a `content_store` row of kind `hint_ladder` (L5).
-#[derive(Debug, Clone, PartialEq, Eq, Deserialize)]
-#[serde(deny_unknown_fields)]
-pub struct HintLadder {
-    /// The hints, from the widest to the narrowest. The authoring gate of M6
-    /// refuses a ladder whose text holds the answer.
-    pub hints: Vec<String>,
-}
+// The teach page (L4) and the hint ladder (L5) are the core's documents, so the
+// M6 authoring gate (`cadus_core::instruction`) and these routes read ONE shape.
+// A second declaration here would let a body the gate accepts fail at the route,
+// and `deny_unknown_fields` makes that failure a 500 on a page a reviewer
+// approved. `TeachDoc` keeps the M5 name of `TeachPage`.
+pub use cadus_core::instruction::{HintLadder, TeachPage as TeachDoc, WorkedExample};
 
 // --------------------------------------------------------------------------- //
 // Pure helpers
