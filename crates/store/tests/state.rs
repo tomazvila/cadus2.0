@@ -28,19 +28,20 @@ use std::collections::BTreeMap;
 use cadus_core::config::Config;
 use cadus_core::curriculum::{Catalog, Course, Curriculum, RawCurriculum, RawUnit, Topic, Unit};
 use cadus_core::event::{
-    AnswerKind, Attempt, AttemptProblem, Event, Regraded, RegradedAttempt, SchemaVersion, Secs,
-    SessionEnd, SessionStart, Slug, TaskType, Timestamp, TopicStatus, WorkQuality,
+    AnswerKind, Attempt, AttemptProblem, Event, LessonResult, Regraded, RegradedAttempt,
+    SchemaVersion, Secs, SessionEnd, SessionStart, Slug, TaskType, Timestamp, TopicStatus,
+    WorkQuality,
 };
 use cadus_core::learner::TopicState;
 use cadus_core::projector::ProjectionInput;
 use cadus_store::state::{
     WEB_STATE_LOCK_NAMESPACE, append_event, clear_web_state, load_events, load_learner_model,
-    load_web_state, lock_web_state, project_and_save, project_current, save_web_state,
-    web_state_lock_key,
+    load_session_view, load_web_state, lock_web_state, project_and_save, project_current,
+    save_web_state, web_state_lock_key,
 };
 use cadus_store::test_support::TestDb;
 use cadus_store::{DEFAULT_CLIENT_TIMEOUT_MS, Db, begin_tenant};
-use serde_json::json;
+use serde_json::{Value, json};
 use uuid::Uuid;
 
 /// The Unix microsecond instant of 2026-01-01T00:00:00Z.
@@ -596,6 +597,141 @@ async fn the_cached_model_reads_back_field_for_field() {
         assert_eq!(state.memory_base, 1.0);
         assert_eq!(state.interval_days, 2.0);
         assert_eq!(state.ability, 0.62);
+    })
+    .await;
+}
+
+// --------------------------------------------------------------------------- //
+// The session view alone (M5 review 2, finding V2)
+// --------------------------------------------------------------------------- //
+
+/// One lesson that FAILED `topic` at `kp`.
+fn lesson_failure(topic: &str, kp: &str) -> Event {
+    Event::LessonResult(LessonResult {
+        ts: Timestamp::from_micros(BASE_US),
+        session: Some("s_2026-01-01a".to_string()),
+        v: SchemaVersion,
+        topic: Slug::new(topic).unwrap(),
+        passed: false,
+        failed_at_kp: Some(Slug::new(kp).unwrap()),
+        xp: 0.0,
+        quality_tier: WorkQuality::NearlyPassable,
+        assisted: false,
+    })
+}
+
+/// The stored `session_view` document of `user`.
+async fn stored_view(db: &TestDb, user: Uuid) -> Value {
+    sqlx::query_scalar!(
+        r#"SELECT session_view AS "session_view!" FROM learner_models WHERE user_id = $1"#,
+        user
+    )
+    .fetch_one(&db.admin)
+    .await
+    .unwrap()
+}
+
+/// Overwrite the stored `session_view` document of `user`.
+async fn put_view(db: &TestDb, user: Uuid, doc: &Value) {
+    sqlx::query!(
+        "UPDATE learner_models SET session_view = $2 WHERE user_id = $1",
+        user,
+        doc
+    )
+    .execute(&db.admin)
+    .await
+    .unwrap();
+}
+
+/// V2. `load_session_view` resumes from the STORED document and folds the events
+/// above the cursor into it.
+///
+/// The stored document names a failure the log does not hold, so a fold that
+/// replayed the log instead of resuming loses it. The `session_end` appended
+/// after the save is above the cursor, so the answer proves the forward fold ran
+/// too.
+#[tokio::test]
+async fn the_failure_map_resumes_from_the_stored_view() {
+    TestDb::with(|db| async move {
+        let user = db.seed_user("resume-view@example.com").await;
+        let handle = app(&db);
+        let arena = graph();
+        let cfg = Config::default();
+        let input = ProjectionInput::new(&arena, &cfg, Timestamp::from_micros(BASE_US));
+
+        let mut tx = begin_tenant(handle.pool(), user).await.unwrap();
+        lock_web_state(&mut tx, user).await.unwrap();
+        append_event(&mut tx, user, &start("s_2026-01-01a"), None)
+            .await
+            .unwrap();
+        append_event(&mut tx, user, &attempt("t-1"), Some("t-1"))
+            .await
+            .unwrap();
+        let saved = project_and_save(&mut tx, user, &input, None).await.unwrap();
+        assert_eq!(saved.through_seq, 2);
+        assert_eq!(saved.view.lesson_failures.len(), 0);
+        tx.commit().await.unwrap();
+
+        // A failure the LOG does not hold, written straight into the cache.
+        let mut doc = stored_view(&db, user).await;
+        doc["lesson_failures"] = json!({"fractions": ["kp9"]});
+        put_view(&db, user, &doc).await;
+
+        let mut tx = begin_tenant(handle.pool(), user).await.unwrap();
+        lock_web_state(&mut tx, user).await.unwrap();
+        append_event(&mut tx, user, &end("s_2026-01-01a"), None)
+            .await
+            .unwrap();
+        let view = load_session_view(&mut tx, user).await.unwrap();
+        tx.rollback().await.unwrap();
+
+        assert_eq!(view.lesson_failures.len(), 1);
+        assert!(view.already_failed("fractions", Some("kp9")));
+        // The `session_end` of line 3 folded forward into the resumed document.
+        assert_eq!(view.current_session, None);
+    })
+    .await;
+}
+
+/// V2, and the reason migration 0010 needs no backfill: a stored document that
+/// carries no `lesson_failures` map does not read back, so the fold rebuilds the
+/// whole view from the log.
+#[tokio::test]
+async fn a_stored_view_without_the_failure_map_is_rebuilt_from_the_log() {
+    TestDb::with(|db| async move {
+        let user = db.seed_user("old-view@example.com").await;
+        let handle = app(&db);
+        let arena = graph();
+        let cfg = Config::default();
+        let input = ProjectionInput::new(&arena, &cfg, Timestamp::from_micros(BASE_US));
+
+        let mut tx = begin_tenant(handle.pool(), user).await.unwrap();
+        lock_web_state(&mut tx, user).await.unwrap();
+        append_event(&mut tx, user, &start("s_2026-01-01a"), None)
+            .await
+            .unwrap();
+        append_event(&mut tx, user, &lesson_failure("addition", "kp1"), None)
+            .await
+            .unwrap();
+        let saved = project_and_save(&mut tx, user, &input, None).await.unwrap();
+        assert_eq!(saved.through_seq, 2);
+        assert!(saved.view.already_failed("addition", Some("kp1")));
+        tx.commit().await.unwrap();
+
+        // The document of a row written before the map: every other key, and no
+        // `lesson_failures`.
+        let mut doc = stored_view(&db, user).await;
+        doc.as_object_mut().unwrap().remove("lesson_failures");
+        assert!(doc.get("lesson_failures").is_none());
+        put_view(&db, user, &doc).await;
+
+        let mut tx = begin_tenant(handle.pool(), user).await.unwrap();
+        let view = load_session_view(&mut tx, user).await.unwrap();
+        tx.rollback().await.unwrap();
+
+        assert_eq!(view.lesson_failures.len(), 1);
+        assert!(view.already_failed("addition", Some("kp1")));
+        assert_eq!(view.current_session.as_deref(), Some("s_2026-01-01a"));
     })
     .await;
 }
