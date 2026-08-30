@@ -136,6 +136,35 @@ describe('the boot tokens', () => {
     });
   });
 
+  it('opens the reset card for a learner who still holds a session', async () => {
+    // F22 (M6-review-1). Boot resolved the live session and `Root` rendered the signed-in
+    // branch, so a learner who was still signed in on that browser reached the dashboard and
+    // never saw the card the link is for. The token is read BEFORE the session, and it wins:
+    // a reset link names one thing to do, and the account that holds the cookie is the same
+    // account the link belongs to.
+    const me = vi.fn(async () => ({ user: USER }));
+    const resetPassword = vi.fn(async () => ({ ok: true as const }));
+    history.replaceState({}, '', '/reset?token=reset-9');
+
+    await boot(stub({ me, resetPassword }), '/reset', '?token=reset-9');
+
+    expect(screen.getByText('choose a new password')).toBeTruthy();
+    // The session is never read on this path, so nothing can outrank the card.
+    expect(me).not.toHaveBeenCalled();
+
+    fireEvent.change(screen.getByLabelText('New password'), {
+      target: { value: 'hunter2hunter2' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: 'Set new password' }));
+
+    await waitFor(() => {
+      expect(resetPassword).toHaveBeenCalledWith('reset-9', 'hunter2hunter2');
+    });
+    // The card took the token, so the URL no longer carries it.
+    expect(window.location.pathname).toBe('/reset');
+    expect(window.location.search).toBe('');
+  });
+
   it('spends nothing when the URL carries no token', async () => {
     const verifyEmail = vi.fn(async () => ({ user: USER }));
     const resetPassword = vi.fn(async () => ({ ok: true as const }));
