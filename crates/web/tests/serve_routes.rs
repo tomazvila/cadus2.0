@@ -42,7 +42,7 @@ use cadus_core::curriculum::{
     Slug, Topic, Unit,
 };
 use cadus_core::event::{Event, SchemaVersion, SessionStart, Timestamp};
-use cadus_core::instruction::{InstructionSpec, gate_teach};
+use cadus_core::instruction::{InstructionSpec, gate_hint_ladder, gate_teach};
 use cadus_core::pool::{PoolAnswer, PoolProblem};
 use cadus_store::pool::operator_flags;
 use cadus_store::test_support::TestDb;
@@ -1030,6 +1030,96 @@ async fn an_approved_teach_page_from_the_gate_serves_with_no_model_call() {
         );
 
         // T1: the route spent no model token.
+        assert_eq!(model_calls(&db).await, 0);
+    })
+    .await;
+}
+
+/// M6 R6 acceptance, the third check, the L5 half: an APPROVED hint ladder
+/// serves through the M5 hint route with no model call.
+///
+/// The teach test above proves the L4 half. This one proves the L5 half over the
+/// same rule, because one gate output feeds one route reader: `gate_hint_ladder`
+/// writes the ladder, the route reads it with `deny_unknown_fields`, and the two
+/// are one type (`cadus_core::instruction::HintLadder`).
+///
+/// It also proves the give-away rule end to end. The gate refuses a rung that
+/// names an exemplar's answer at authoring time; here the SERVED problem is a
+/// pool row whose answer is `POOL_ANSWER`, and the rungs the route hands back
+/// carry neither that answer nor `expected`.
+#[tokio::test]
+async fn an_approved_hint_ladder_from_the_gate_serves_with_no_model_call() {
+    TestDb::with(|db| async move {
+        let user = common::seed_learner(&db, "authoredladder@example.com").await;
+        let app = app(&db);
+        seed_open_session(&db, user).await;
+        seed_pool_row(&db, user, POOL_TEXT, POOL_ANSWER, "hash-a").await;
+
+        // The tool arguments of one authoring attempt, as the model emits them.
+        let arguments = r#"{
+            "hints": [
+                "Which column do you line up first?",
+                "Write the whole number with a decimal point and two zeros after it.",
+                "Add the hundredths, then the tenths, then the ones."
+            ]
+        }"#;
+        let exemplars = vec![
+            exemplar(EXEMPLAR_TEXT, EXEMPLAR_ANSWER),
+            exemplar(EXEMPLAR_TEXT_2, "13.25"),
+        ];
+        let ladder = gate_hint_ladder(
+            arguments,
+            &InstructionSpec {
+                exemplars: &exemplars,
+            },
+        )
+        .expect("the gate accepts the ladder");
+        let body = serde_json::to_value(&ladder).unwrap();
+        seed_content(&db, "hint_ladder", "sha256:authored-ladder", body).await;
+
+        assert_eq!(model_calls(&db).await, 0);
+
+        let served = serve_lesson(&app, user).await;
+        let problem_id = served["problem_id"].as_str().unwrap().to_string();
+        let uri = format!("/api/task/{LESSON}/hint");
+
+        let (status, raw) = call(
+            &app,
+            Method::POST,
+            &uri,
+            Some(user),
+            Some(json!({"problem_id": problem_id})),
+        )
+        .await;
+
+        assert_eq!(status, StatusCode::OK, "{raw}");
+        let first = parse(&raw);
+        assert_eq!(first["hint"], "Which column do you line up first?");
+        assert_eq!(first["hint_number"], 1);
+        assert!(!raw.contains("expected"), "the hint leaked expected: {raw}");
+        assert!(
+            !raw.contains(POOL_ANSWER),
+            "the hint leaked the answer text: {raw}"
+        );
+
+        let (status, raw) = call(
+            &app,
+            Method::POST,
+            &uri,
+            Some(user),
+            Some(json!({"problem_id": problem_id})),
+        )
+        .await;
+
+        assert_eq!(status, StatusCode::OK, "{raw}");
+        let second = parse(&raw);
+        assert_eq!(
+            second["hint"],
+            "Write the whole number with a decimal point and two zeros after it."
+        );
+        assert_eq!(second["hint_number"], 2);
+
+        // T1: the two rungs cost no model token.
         assert_eq!(model_calls(&db).await, 0);
     })
     .await;

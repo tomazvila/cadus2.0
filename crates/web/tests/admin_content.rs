@@ -521,6 +521,11 @@ async fn the_show_route_of_an_unknown_digest_is_not_found() {
 /// A teach page has no statement and no answer expression, so the show route
 /// carries an empty instance list and a null gate block. A6 refuses a silent
 /// empty list, so the kind is visible in the same answer.
+///
+/// The body is the document unit R6 defined
+/// (`cadus_core::instruction::TeachPage`), so the reviewer line reads its
+/// `concept`. That document denies an unknown field, so a stored teach row can
+/// carry no headline field of its own.
 #[tokio::test]
 async fn a_teach_document_renders_no_instance_and_no_gate() {
     TestDb::with(|db| async move {
@@ -528,7 +533,13 @@ async fn a_teach_document_renders_no_instance_and_no_gate() {
         seed_admin(&db).await;
         let mut seed = Seed::template("r5-teach-digest", KEY, "pending");
         seed.kind = "teach";
-        seed.body = json!({"title": "Borrowing", "concept": "Take from the next column."});
+        seed.body = json!({
+            "concept": "Take from the next column.",
+            "worked_example": {
+                "problem": "Compute $52 - 27$.",
+                "steps": ["Borrow ten from the tens column.", "$12 - 7 = 5$ and $4 - 2 = 2$."]
+            }
+        });
         seed_row(&db, &seed).await;
 
         let answer = admin_get(&app, "/api/admin/content/r5-teach-digest").await;
@@ -537,7 +548,45 @@ async fn a_teach_document_renders_no_instance_and_no_gate() {
         assert_eq!(answer.body.get("kind"), Some(&json!("teach")));
         assert_eq!(answer.body.get("instances"), Some(&json!([])));
         assert_eq!(answer.body.get("gate"), Some(&Value::Null));
-        assert_eq!(answer.body.get("summary"), Some(&json!("Borrowing")));
+        assert_eq!(
+            answer.body.get("summary"),
+            Some(&json!("Take from the next column."))
+        );
+    })
+    .await;
+}
+
+/// The queue line of a hint ladder reads its widest rung (unit R6).
+///
+/// A ladder carries `hints` and nothing else, so the line has no `statement` and
+/// no `concept` to read. Rung 0 is the widest nudge, so it is the sentence that
+/// tells a reviewer which ladder the line is, and the raw JSON text never
+/// reaches the queue.
+#[tokio::test]
+async fn a_hint_ladder_line_reads_its_widest_rung() {
+    TestDb::with(|db| async move {
+        let app = app(&db);
+        seed_admin(&db).await;
+        let mut seed = Seed::template("r6-ladder-digest", KEY, "pending");
+        seed.kind = "hint_ladder";
+        seed.body = json!({
+            "hints": [
+                "Which column do you take from first?",
+                "The ones column needs ten more before it can subtract."
+            ]
+        });
+        seed_row(&db, &seed).await;
+
+        let answer = admin_get(&app, "/api/admin/content/r6-ladder-digest").await;
+
+        assert_eq!(answer.status.as_u16(), 200, "{}", answer.body);
+        assert_eq!(answer.body.get("kind"), Some(&json!("hint_ladder")));
+        assert_eq!(answer.body.get("instances"), Some(&json!([])));
+        assert_eq!(answer.body.get("gate"), Some(&Value::Null));
+        assert_eq!(
+            answer.body.get("summary"),
+            Some(&json!("Which column do you take from first?"))
+        );
     })
     .await;
 }

@@ -213,11 +213,21 @@ fn decided(step: &'static str, answer: Result<Decision, StoreError>) -> Result<D
 
 /// The first [`SUMMARY_CHARS`] characters of the one line a reviewer scans.
 ///
-/// A template body carries its `statement`, and a teach body carries its
-/// `title`. A body with neither field falls back to its own JSON text, so a
-/// queue line is never empty.
+/// Each kind names its own headline field, and unit R6 fixed the two that were
+/// open: a template body carries `statement`, a teach page carries `concept`
+/// (`cadus_core::instruction::TeachPage`), and a hint ladder carries its widest
+/// rung as `hints[0]` (`cadus_core::instruction::HintLadder`). Both instruction
+/// documents deny an unknown field, so neither one can carry a headline field of
+/// its own. The queue therefore reads the fields the documents have.
+///
+/// A body with none of the three falls back to its own JSON text, so a queue
+/// line is never empty.
 fn summary(body: &Value) -> String {
-    let text = match body.get("statement").or_else(|| body.get("title")) {
+    let headline = body
+        .get("statement")
+        .or_else(|| body.get("concept"))
+        .or_else(|| body.get("hints").and_then(|rungs| rungs.get(0)));
+    let text = match headline {
         Some(Value::String(text)) => text.clone(),
         _ => body.to_string(),
     };

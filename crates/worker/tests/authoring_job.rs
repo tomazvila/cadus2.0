@@ -868,6 +868,70 @@ async fn a_teach_page_is_gated_and_stored_pending() {
     .await;
 }
 
+/// The tool arguments of a teach page with no `worked_example.steps`.
+///
+/// The concept and the worked problem are both there, so only the missing
+/// solution earns the refusal.
+fn teach_without_steps() -> Value {
+    json!({
+        "concept": "Squaring a number multiplies it by itself.",
+        "worked_example": {"problem": "Compute $6^2$."}
+    })
+}
+
+/// The gate's sentence for [`teach_without_steps`]
+/// (`crates/core/src/instruction.rs`).
+const NO_STEPS: &str = "a teach page needs 'worked_example.steps': the complete solution, one \
+step per entry, ending with the final answer — a concept with no worked solution teaches nothing";
+
+/// ACCEPTANCE, at the loop. A teach body with no `worked_example.steps` is
+/// refused, the LITERAL sentence reaches attempt 2, and the complete page is
+/// stored (L4, spec section 7 row R6).
+///
+/// The gate test in `crates/core/tests/instruction_gate.rs` proves the rule. This
+/// test proves the LOOP runs that gate for `teach`: a loop that stored the tool
+/// arguments unread would store this page on attempt 1, with one call and a body
+/// no route can serve.
+#[tokio::test]
+async fn a_teach_page_with_no_steps_is_re_prompted_and_rescued() {
+    TestDb::with(|db| async move {
+        let fake = FakeModel::start(vec![
+            named_reply("emit_teach", &teach_without_steps()),
+            named_reply("emit_teach", &teach_arguments()),
+        ])
+        .await;
+        let handle = Db::new(db.admin.clone(), DEFAULT_CLIENT_TIMEOUT_MS);
+
+        let report = author_one(&handle, &fake.job(), Kind::Teach, &spec())
+            .await
+            .unwrap();
+
+        assert_eq!(report.outcome, Outcome::Stored);
+        assert_eq!(report.attempts, 2);
+        assert_eq!(report.digest.as_deref(), Some(STORED_TEACH_DIGEST));
+
+        // The retry block carries the gate's own words, indented under the
+        // header.
+        let second = fake.user_message(1);
+        assert!(
+            second.contains(&format!("{RETRY_HEADER}\n    {NO_STEPS}\n")),
+            "the retry block did not carry the literal sentence: {second}"
+        );
+
+        // Attempt 1 stored nothing: the table holds the rescued page alone.
+        let rows = rows_of_kind(&db.admin, KP_KEY, "teach").await;
+        assert_eq!(rows.len(), 1);
+        assert_eq!(rows[0].0, STORED_TEACH_DIGEST);
+        assert_eq!(rows[0].1, "pending");
+        assert_eq!(rows[0].2, 2);
+        assert_eq!(
+            rows[0].3,
+            serde_json::from_str::<Value>(STORED_TEACH_BODY).unwrap()
+        );
+    })
+    .await;
+}
+
 /// A ladder whose last rung names the answer is refused, the LITERAL sentence
 /// reaches attempt 2, and the clean ladder is stored (L5, Hard Rule 3).
 #[tokio::test]
