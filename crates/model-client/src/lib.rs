@@ -597,7 +597,7 @@ fn parse_reply(body: &Value, tool: &ToolSpec) -> Result<Value, ReplyProblem> {
         Some(raw) => match serde_json::from_str::<Value>(strip_fence(raw)) {
             Err(err) => format!("the arguments of {} do not parse: {err}", tool.name),
             // Shape 3: they parse and miss a required field.
-            Ok(parsed) => match missing_field(&parsed) {
+            Ok(parsed) => match missing_field(&parsed, &tool.parameters) {
                 Some(field) => format!("the arguments of {} name no {field}", tool.name),
                 None => return Ok(parsed),
             },
@@ -610,14 +610,43 @@ fn parse_reply(body: &Value, tool: &ToolSpec) -> Result<Value, ReplyProblem> {
     Err(ReplyProblem::Malformed(problem))
 }
 
-/// The first required field of the section 6.3 document that is absent or has
-/// the wrong type, if any.
-fn missing_field(arguments: &Value) -> Option<&'static str> {
-    if !arguments.get("error_tags").is_some_and(Value::is_array) {
-        return Some("error_tags");
-    }
-    if !arguments.get("prose").is_some_and(Value::is_string) {
-        return Some("prose");
+/// The first required field of the TOOL'S OWN schema that is absent or that
+/// carries the wrong type, if any.
+///
+/// The check reads `parameters.required` and `parameters.properties`, so one
+/// client serves every tool. M5 hard-coded the two fields of the diagnosis
+/// document here, and that spelling refused every reply of the M6 authoring
+/// tools with `name no error_tags`: the client is the ONE crate that reaches a
+/// model (L6), so its validation must come from the schema the request carried.
+///
+/// A schema that names no required field validates nothing here. The reply still
+/// has to parse as JSON, and the caller still decides whether the document is
+/// usable — for authoring, that decision is the gate (A2).
+fn missing_field(arguments: &Value, schema: &Value) -> Option<String> {
+    let required = schema.get("required").and_then(Value::as_array)?;
+    for name in required.iter().filter_map(Value::as_str) {
+        let Some(value) = arguments.get(name) else {
+            return Some(name.to_owned());
+        };
+        let declared = schema
+            .get("properties")
+            .and_then(|properties| properties.get(name))
+            .and_then(|property| property.get("type"))
+            .and_then(Value::as_str);
+        let holds = match declared {
+            Some("array") => value.is_array(),
+            Some("string") => value.is_string(),
+            Some("object") => value.is_object(),
+            Some("boolean") => value.is_boolean(),
+            Some("integer") => value.is_i64() || value.is_u64(),
+            Some("number") => value.is_number(),
+            // A property with no stated type, or a union of types, is present or
+            // it is not. A null is absent: JSON writes an unset field that way.
+            _ => !value.is_null(),
+        };
+        if !holds {
+            return Some(name.to_owned());
+        }
     }
     None
 }
