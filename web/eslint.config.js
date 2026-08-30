@@ -6,7 +6,9 @@ import jsxA11y from 'eslint-plugin-jsx-a11y';
 import vitest from '@vitest/eslint-plugin';
 
 export default tseslint.config(
-  { ignores: ['dist', 'node_modules', 'coverage'] },
+  // `e2e/work` holds the deliberately broken copies of this tree, and `e2e/shots` the
+  // screenshots. Both are build output and neither is source.
+  { ignores: ['dist', 'node_modules', 'coverage', 'e2e/work', 'e2e/shots'] },
   js.configs.recommended,
   ...tseslint.configs.recommended,
   {
@@ -48,13 +50,25 @@ export default tseslint.config(
     },
   },
   {
-    // The gate scripts are Node ESM, not browser code. They are the most load-bearing files
-    // here, and in 1.0 they were linted by nothing at all.
+    // The gate scripts and the click-through are Node ESM, not browser code. They are the
+    // most load-bearing files here, and in 1.0 they were linted by nothing at all.
     files: ['scripts/**/*.mjs', '*.config.js'],
     languageOptions: {
       ecmaVersion: 2022,
       sourceType: 'module',
       globals: { ...globals.node },
+    },
+  },
+  {
+    // The click-through is Node ESM that also carries BROWSER code: the body of every
+    // `page.evaluate()` callback is serialized and run inside Chromium, where `document` and
+    // `localStorage` are the real globals. Both sets belong here, and only here — the gate
+    // scripts above stay node-only, so a stray `document` in one of them is still an error.
+    files: ['e2e/**/*.mjs'],
+    languageOptions: {
+      ecmaVersion: 2022,
+      sourceType: 'module',
+      globals: { ...globals.node, ...globals.browser },
     },
   },
 );

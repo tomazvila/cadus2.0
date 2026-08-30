@@ -16,10 +16,10 @@
  * host is outside both, because the failure it reports is often the failure that removed the
  * view.
  *
- * WHAT S4 DOES NOT DECIDE. There is no router yet, so `children` defaults to the placeholder
- * card and the navigation callbacks default to no-ops. The unit that adds URL routing (spec
- * section 4.1) passes the routed view as `children`, `key={route}` on the boundary, and real
- * `onHome` / `onMap` / `onLogout`; S6 passes the signed-in `user`.
+ * WHAT S4 DID NOT DECIDE, AND `Root` NOW DOES. The router passes the routed view as
+ * `children`, the route name as `routeKey`, and real `onHome` / `onMap` / `onLogout`; S6
+ * passes the signed-in `user`. The placeholder card below is what a caller with no children
+ * still gets — the S4 tests mount exactly that.
  */
 import { useState, type ReactNode } from 'react';
 import { ErrorBoundary } from './ErrorBoundary';
@@ -36,6 +36,14 @@ export interface AppProps {
   onHome?: () => void;
   onMap?: () => void;
   onLogout?: () => void;
+  /**
+   * The name of the routed screen.
+   *
+   * It rides in the boundary's key, so leaving a screen that threw builds a NEW boundary
+   * whose error is null. Without it the caught error survives the navigation and the next
+   * screen renders the failure card instead of itself.
+   */
+  routeKey?: string;
   /** The routed view. */
   children?: ReactNode;
 }
@@ -48,17 +56,22 @@ export function App({
   onHome = noop,
   onMap = noop,
   onLogout = noop,
+  routeKey = '',
   children,
 }: AppProps) {
-  // The boundary resets BY KEY: a new key builds a new boundary whose error is null. The
-  // router passes the route name here, so one broken screen does not poison the next.
+  // The boundary resets BY KEY: a new key builds a new boundary whose error is null. Two
+  // things move that key — the route name, so one broken screen does not poison the next,
+  // and the Try again of the boundary itself.
   const [generation, setGeneration] = useState(0);
 
   return (
     <>
       <Topbar user={user} demo={demo} onHome={onHome} onMap={onMap} onLogout={onLogout} />
       <DialogProvider>
-        <ErrorBoundary key={generation} onReset={() => setGeneration((n) => n + 1)}>
+        <ErrorBoundary
+          key={`${routeKey}:${String(generation)}`}
+          onReset={() => setGeneration((n) => n + 1)}
+        >
           {children ?? (
             <section className="card">
               <h1>Cadus</h1>

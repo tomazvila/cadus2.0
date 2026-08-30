@@ -121,3 +121,18 @@ export function createDemoDiagApi(): DiagnosticApi {
     },
   };
 }
+
+/**
+ * The placement port one page load gets.
+ *
+ * `?demo=1` walks the three canned probes; every other load posts to the service. The
+ * function is PURE and takes the flag, for the reason `resolveApi` takes the query string:
+ * a read of a global inside would make every caller depend on one.
+ *
+ * The router calls it ONCE per mount and keeps the answer, because both adapters hold
+ * state — `createDemoDiagApi` counts the probes it asked — and a fresh port per render
+ * restarts the placement at probe 1.
+ */
+export function resolveDiag(demo: boolean): DiagnosticApi {
+  return demo ? createDemoDiagApi() : diagApi;
+}
