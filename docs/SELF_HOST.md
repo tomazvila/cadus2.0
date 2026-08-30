@@ -438,6 +438,112 @@ rows that are still unclaimed.
 **Do not delete the `content_store` row.** `serving_pool.content_digest`
 references it, and the approval record is the C6 audit trail.
 
+## The authoring run (A2, T3, C6)
+
+M6 R8 puts the offline authoring pipeline behind one subcommand of the worker
+binary. The pass reads the curriculum, authors documents, gates them, and stores
+each accepted document as `pending`. It never runs on a request path (R4), and
+`cadus-web` never reaches a model endpoint (L6).
+
+```sh
+cadus-worker                       # the tick loop: refill and diagnosis
+cadus-worker author [OPTIONS]      # one authoring pass
+cadus-worker --help                # the option list
+```
+
+| Option | What it does |
+|---|---|
+| `--kp <topic_id/kp_id>` | Author for this knowledge point. Repeat it for more. The default is every knowledge point of the tree. |
+| `--kind <kind>` | Author this kind: `template`, `teach`, `hint_ladder`, or `diagnosis`. Repeat it for more. The default is all four. |
+| `--dry-run` | Print the plan. Make no model call and no write. |
+
+The pass reads `DATABASE_URL` (the `cadus_admin` connection),
+`CADUS_CURRICULUM` (the tree; the default is `./curriculum`), and the model
+variables of the section "The diagnosis worker" below. A dry run needs no model
+variable. A run that is not a dry run needs `OPENAI_API_KEY`, and an empty key
+ends the process with exit code 2.
+
+### Read the plan first
+
+A run spends model tokens (T3), so read the plan before you spend them:
+
+```sh
+docker compose exec worker cadus-worker author \
+  --kp perfect-squares/kp1 --kind template --kind teach --dry-run
+```
+
+```
+authoring plan
+kp_id kind taken target author
+perfect-squares/kp1 template 0 3 1
+perfect-squares/kp1 teach 0 1 1
+plan: pairs 2, documents 2, model calls 2 to 10
+dry run: no model call and no write
+```
+
+Read the columns like this:
+
+- `taken` — the approved and the pending documents this pair holds now. Both
+  occupy a bank slot, so a pending document stops a second copy of itself.
+- `target` — the documents a full bank holds: 3 for `template`, 1 for the other
+  three kinds.
+- `author` — the documents THIS pass writes for the pair: 1 for a short bank, 0
+  for a full one.
+
+**One pass authors at most one document per pair.** A template bank of three
+therefore fills over three passes, and a human reviews what each pass stored
+before the next pass runs (C6). The last line states the bill: one model call per
+document when the gate accepts the first reply, and five calls when every attempt
+is refused.
+
+### Run the pass
+
+```sh
+docker compose exec worker cadus-worker author --kp perfect-squares/kp1 --kind template
+```
+
+```
+authoring plan
+kp_id kind taken target author
+perfect-squares/kp1 template 0 3 1
+plan: pairs 1, documents 1, model calls 1 to 5
+template: stored 1 skipped 0 declined 0 calls 1 alerts 0
+```
+
+The plan prints first, then one result line per kind:
+
+- `stored` — the knowledge points that hold a `pending` document after the pass.
+- `skipped` — the knowledge points the pass made no call for, because the bank
+  was full.
+- `declined` — the knowledge points that used all five attempts. A decline stores
+  nothing, and a `declined ...` line follows with the last refusal of the gate.
+- `calls` and `alerts` — the model calls of the pass, and the passes above three
+  attempts (T3).
+
+The process exits 0 after a pass and 2 after a configuration error. An unknown
+knowledge point, an unknown kind, an unreadable curriculum, and an empty
+`OPENAI_API_KEY` are all exit code 2, and the one line on stderr names the cause.
+
+### After the pass
+
+Every stored document is `pending` and serves nothing. Approve it on the review
+surface below, or reject it with a reason. The 8 rendered instances of the show
+route are where a wrong template is visible (C6).
+
+### Run it against a test database
+
+The commands above run against any database the migrations built. Point
+`DATABASE_URL` at it, point `CADUS_CURRICULUM` at a tree, and run the dry run
+first:
+
+```sh
+DATABASE_URL=postgresql://…/cadus_test \
+CADUS_CURRICULUM=crates/worker/tests/fixtures/pool \
+  cadus-worker author --kp perfect-squares/kp1 --kind template --dry-run
+```
+
+A dry run makes no call and writes no row, so it is safe on any database.
+
 ## The review surface (C6)
 
 M6 R5 puts the four review routes on `/api/admin/content*`. All four serve an

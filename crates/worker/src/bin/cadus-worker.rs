@@ -1,13 +1,19 @@
-//! Entry point of the Cadus background worker (R4).
+//! Entry point of the Cadus background worker (R4) and of the authoring pass
+//! (M6 R8).
 //!
-//! The program reads `DATABASE_URL` and `WORKER_TICK_SECS`, installs the stop
-//! signals, opens a pool, logs the identity of its database role, and runs the
-//! tick loop until SIGTERM or SIGINT. It exits 0 after a clean stop and 2 after
-//! an error.
+//! With no argument the program reads `DATABASE_URL` and `WORKER_TICK_SECS`,
+//! installs the stop signals, opens a pool, logs the identity of its database
+//! role, and runs the tick loop until SIGTERM or SIGINT. It exits 0 after a
+//! clean stop and 2 after an error.
 //!
 //! The signal handlers exist before the pool opens, so a signal during the
 //! connect also gives exit code 0. The role report runs under the same signal
 //! guard, and the pool close after the loop has a deadline.
+//!
+//! With `author` the program runs ONE authoring pass instead of the loop:
+//! [`author`] prints the plan, and `--dry-run` stops there. The plan goes to
+//! stdout, because it is the operator's output; the log stays on stderr.
+//! `cadus_worker::authoring::cli` holds the parser and the plan.
 
 #![cfg_attr(
     test,
@@ -28,6 +34,8 @@ use std::time::Duration;
 use cadus_core::curriculum::{Curriculum, CurriculumError, LoadError, load_curriculum};
 use cadus_model_client::{API_KEY_VAR, Client, ModelConfig};
 use cadus_store::{Db, DbConfig, bounded};
+use cadus_worker::authoring::cli::{self, AuthorArgs, Command};
+use cadus_worker::authoring::job::{AuthoringJob, run_batch};
 use cadus_worker::{DiagnosisJob, RefillJob, WorkerConfig, WorkerError};
 
 /// The environment variable that names the curriculum tree.
@@ -54,17 +62,104 @@ const POOL_CLOSE_DEADLINE: Duration = Duration::from_secs(5);
 async fn main() -> ExitCode {
     init_tracing();
 
-    match run().await {
-        Ok(ticks) => {
-            tracing::info!("cadus-worker: stop after {ticks} ticks");
+    let args: Vec<String> = std::env::args().skip(1).collect();
+    let command = match cli::parse(&args) {
+        Ok(command) => command,
+        Err(err) => return fail(&err.to_string()),
+    };
+
+    match command {
+        Command::Help => {
+            print!("{}", cli::HELP);
             ExitCode::SUCCESS
         }
-        Err(err) => {
-            tracing::error!("cadus-worker: {err}");
-            eprintln!("cadus-worker: {err}");
-            ExitCode::from(2)
-        }
+        Command::Serve => match run().await {
+            Ok(ticks) => {
+                tracing::info!("cadus-worker: stop after {ticks} ticks");
+                ExitCode::SUCCESS
+            }
+            Err(err) => fail(&err.to_string()),
+        },
+        Command::Author(author_args) => match author(&author_args).await {
+            Ok(()) => ExitCode::SUCCESS,
+            Err(err) => fail(&err.to_string()),
+        },
     }
+}
+
+/// Report one failure on both channels and answer exit code 2.
+fn fail(reason: &str) -> ExitCode {
+    tracing::error!("cadus-worker: {reason}");
+    eprintln!("cadus-worker: {reason}");
+    ExitCode::from(2)
+}
+
+/// Run one authoring pass (M6 R8).
+///
+/// The order is fixed: read the curriculum, pick the knowledge points, open the
+/// pool, count the bank slots, print the plan. A dry run stops at the print and
+/// makes ZERO model calls: no client exists on that path, so no code of the pass
+/// can reach an endpoint.
+///
+/// A run that is not a dry run then needs a model endpoint. An empty
+/// `OPENAI_API_KEY` is an error here and not a quiet skip: the operator asked
+/// for an authoring pass, and a pass with no endpoint authors nothing.
+///
+/// # Errors
+///
+/// Returns [`WorkerError::Config`] for a curriculum that does not load, a
+/// knowledge point the tree does not hold, and a model configuration that does
+/// not read; and the error of the store for a pool or a count that fails.
+async fn author(args: &AuthorArgs) -> Result<(), WorkerError> {
+    let curriculum = load_arena()?;
+    let specs =
+        cli::select(&curriculum, &args.kps).map_err(|err| WorkerError::Config(err.to_string()))?;
+    let kinds = args.kinds();
+
+    let db_cfg = DbConfig::from_env()?;
+    let db = Db::connect(&db_cfg).await?;
+    let rows = cli::plan(&db, &specs, &kinds).await?;
+    print!("{}", cli::render_plan(&rows, args.dry_run));
+
+    if args.dry_run {
+        close_within(POOL_CLOSE_DEADLINE, db.pool().close()).await;
+        return Ok(());
+    }
+
+    let job = authoring_job()?;
+    for kind in kinds {
+        let report = run_batch(&db, &job, kind, &specs).await?;
+        print!("{}", cli::render_batch(kind, &report));
+    }
+    close_within(POOL_CLOSE_DEADLINE, db.pool().close()).await;
+    Ok(())
+}
+
+/// Build the authoring job from the environment.
+///
+/// # Errors
+///
+/// Returns [`WorkerError::Config`] when the key is empty and when the rest of
+/// the model configuration does not read.
+fn authoring_job() -> Result<AuthoringJob, WorkerError> {
+    if std::env::var(API_KEY_VAR)
+        .unwrap_or_default()
+        .trim()
+        .is_empty()
+    {
+        return Err(WorkerError::Config(format!(
+            "{API_KEY_VAR} is empty — an authoring run needs a model endpoint; \
+             use `--dry-run` to print the plan without one"
+        )));
+    }
+    let model_cfg = ModelConfig::from_env().map_err(|err| WorkerError::Config(err.to_string()))?;
+    let client = Client::new(model_cfg).map_err(|err| WorkerError::Config(err.to_string()))?;
+    tracing::info!(
+        model = %client.config().model,
+        base_url = %client.config().base_url,
+        "cadus-worker: the authoring pass is configured"
+    );
+    Ok(AuthoringJob::new(client))
 }
 
 /// Send the log to stderr. `RUST_LOG` overrides the default level.

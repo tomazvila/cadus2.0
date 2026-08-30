@@ -9,8 +9,10 @@
 //! Unit R1 gives the pipeline its prompts ([`prompt`]). Unit R2 adds the batch
 //! loop ([`job`]). Unit R3 adds the T3 accounting ([`cost`]): the ledger row of
 //! every attempt, the bill on the stored row, and the alert above three
-//! attempts.
+//! attempts. Unit R8 adds the operator entry point ([`cli`]): the `author`
+//! subcommand, its plan, and its dry run.
 
+pub mod cli;
 pub mod cost;
 pub mod job;
 pub mod prompt;
