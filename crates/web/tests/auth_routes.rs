@@ -32,7 +32,8 @@ use cadus_web::auth::rate::{RateRule, UNKNOWN_CLIENT_IP, client_ip};
 use common::{
     Answer, GOOD_PASSWORD, OTHER_PASSWORD, SESSION_TOKEN_ONE, SESSION_TOKEN_TWO, SHORT_PASSWORD,
     app_of, disable, get, get_bearer, in_one_window, last_seen_at, login, mark_verified, post,
-    post_bearer, seed_session, send, session_count, shift, signup, user_id, verified_login,
+    post_bearer, seed_session, send, session_count, shift, signup, user_count, user_id,
+    verified_login,
 };
 use serde_json::{Value, json};
 
@@ -1096,6 +1097,215 @@ async fn a_body_the_server_cannot_buffer_is_422_invalid_request() {
                 .and_then(|error| error.get("message"))
                 .and_then(Value::as_str),
             Some("The server could not read the request body.")
+        );
+    })
+    .await;
+}
+
+// ---------------------------------------------------------------------------
+// FIX2-M5-C, finding V5: the email field has a byte cap
+// ---------------------------------------------------------------------------
+
+/// How many rate-counter rows this database holds.
+///
+/// The four public credential routes bump two counters each, so a route that
+/// reached its rate rule leaves at least one row behind.
+async fn rate_counter_rows(db: &TestDb) -> i64 {
+    sqlx::query_scalar("SELECT count(*) FROM auth_rate_counters")
+        .fetch_one(&db.admin)
+        .await
+        .unwrap()
+}
+
+/// One body of `{"email": <address>}` plus the fields that `extra` names.
+fn email_body(address: &str, extra: &[(&str, &str)]) -> Value {
+    let mut body = json!({ "email": address });
+    for (name, value) in extra {
+        body[*name] = json!(value);
+    }
+    body
+}
+
+/// The four public routes that read an email field, with the extra fields each
+/// one needs to reach its email step.
+const EMAIL_ROUTES: [(&str, &[(&str, &str)]); 4] = [
+    ("/api/auth/signup", &[("password", GOOD_PASSWORD)]),
+    ("/api/auth/login", &[("password", GOOD_PASSWORD)]),
+    ("/api/auth/password/forgot", &[]),
+    ("/api/auth/verify-email/resend", &[]),
+];
+
+/// (33) A 3 KB address is `422 invalid_request` on all four public routes, and
+/// it writes NOTHING.
+///
+/// Without the cap the normalized address becomes the `key` of the
+/// `auth_rate_counters` primary key and the `email` of the `users` unique
+/// index. A btree index entry has a hard limit of about 2704 bytes, so a long
+/// address of low compressibility makes the rate limiter itself throw, and the
+/// very call the limiter must refuse answers `500` uncounted.
+///
+/// This test pins the CAP, not that index limit: it asserts the `422` and then
+/// asserts that both tables stayed empty, so the refusal came before the
+/// counter and before the account write. The address here is one repeated
+/// character, so Postgres compresses it and the index takes it — which is
+/// exactly why the earlier code accepted a 3012-byte address instead of
+/// refusing it.
+#[tokio::test]
+async fn a_three_kilobyte_email_is_422_invalid_request_and_writes_nothing() {
+    TestDb::with(|db| async move {
+        let app = app_of(&db);
+        let address = format!("{}@example.com", "a".repeat(3000));
+        assert_eq!(address.len(), 3012);
+
+        for (path, extra) in EMAIL_ROUTES {
+            let answer = send(&app, post(path, &email_body(&address, extra))).await;
+
+            assert_eq!(
+                answer.status.as_u16(),
+                422,
+                "{path} answered {} with {}",
+                answer.status,
+                answer.body
+            );
+            assert_eq!(answer.code(), "invalid_request", "{path}");
+            assert_eq!(
+                answer
+                    .body
+                    .get("error")
+                    .and_then(|error| error.get("message"))
+                    .and_then(Value::as_str),
+                Some("The email address is too long."),
+                "{path}"
+            );
+        }
+
+        assert_eq!(
+            rate_counter_rows(&db).await,
+            0,
+            "an over-cap address must reach no rate counter"
+        );
+        assert_eq!(
+            user_count(&db).await,
+            0,
+            "an over-cap address must write no account"
+        );
+    })
+    .await;
+}
+
+/// (34) The cap is 254 bytes: 254 passes, 255 is refused.
+///
+/// 254 octets is the longest address that RFC 5321 carries, so the boundary is
+/// where a real address stops.
+#[tokio::test]
+async fn the_email_cap_admits_254_bytes_and_refuses_255() {
+    TestDb::with(|db| async move {
+        let app = app_of(&db);
+
+        // 242 + "@example.com" (12 bytes) = 254 bytes.
+        let at_cap = format!("{}@example.com", "a".repeat(242));
+        assert_eq!(at_cap.len(), 254);
+        // One byte more.
+        let over_cap = format!("{}@example.com", "a".repeat(243));
+        assert_eq!(over_cap.len(), 255);
+
+        let accepted = send(
+            &app,
+            post(
+                "/api/auth/signup",
+                &json!({ "email": at_cap, "password": GOOD_PASSWORD }),
+            ),
+        )
+        .await;
+        assert_eq!(accepted.status.as_u16(), 200, "body {}", accepted.body);
+        assert_eq!(
+            accepted.body.get("status").and_then(Value::as_str),
+            Some("verification_required")
+        );
+
+        let refused = send(
+            &app,
+            post(
+                "/api/auth/signup",
+                &json!({ "email": over_cap, "password": GOOD_PASSWORD }),
+            ),
+        )
+        .await;
+        assert_eq!(refused.status.as_u16(), 422, "body {}", refused.body);
+        assert_eq!(refused.code(), "invalid_request");
+
+        assert_eq!(
+            user_count(&db).await,
+            1,
+            "only the address at the cap opens an account"
+        );
+    })
+    .await;
+}
+
+/// (35) The cap counts the bytes AFTER normalization.
+///
+/// `U+3316` (`㌖`) is 3 UTF-8 bytes, and NFKC replaces it with the six
+/// characters `キロメートル`, which are 18 UTF-8 bytes. The address below is 102
+/// bytes on the wire and 552 bytes after normalization, so a cap on the raw
+/// field would let it through and a cap on the normalized string refuses it.
+/// The normalized string is what reaches the counter key, so the cap counts it.
+#[tokio::test]
+async fn the_email_cap_counts_the_bytes_after_normalization() {
+    TestDb::with(|db| async move {
+        let app = app_of(&db);
+        let address = format!("{}@example.com", "\u{3316}".repeat(30));
+        assert_eq!(address.len(), 102, "the raw address is under the 254 cap");
+
+        let answer = send(
+            &app,
+            post(
+                "/api/auth/signup",
+                &json!({ "email": address, "password": GOOD_PASSWORD }),
+            ),
+        )
+        .await;
+
+        assert_eq!(answer.status.as_u16(), 422, "body {}", answer.body);
+        assert_eq!(answer.code(), "invalid_request");
+        assert_eq!(
+            rate_counter_rows(&db).await,
+            0,
+            "the refusal comes before the rate counter"
+        );
+    })
+    .await;
+}
+
+/// (36) A registered over-cap address and an unknown one give the SAME answer.
+///
+/// The cap runs before every account lookup, so it opens no enumeration
+/// channel. The seeded address is 300 bytes, which the `users` unique index
+/// still holds, so the known half of the pair really exists.
+#[tokio::test]
+async fn a_known_and_an_unknown_over_cap_address_answer_the_same() {
+    TestDb::with(|db| async move {
+        let app = app_of(&db);
+        let known = format!("{}@example.com", "k".repeat(288));
+        let unknown = format!("{}@example.com", "u".repeat(288));
+        assert_eq!(known.len(), 300);
+        assert_eq!(unknown.len(), 300);
+        db.seed_user(&known).await;
+
+        for (path, extra) in EMAIL_ROUTES {
+            let on_known = send(&app, post(path, &email_body(&known, extra))).await;
+            let on_unknown = send(&app, post(path, &email_body(&unknown, extra))).await;
+
+            assert_eq!(on_known.status.as_u16(), 422, "{path}");
+            assert_eq!(on_unknown.status.as_u16(), 422, "{path}");
+            assert_eq!(on_known.status, on_unknown.status, "{path}");
+            assert_eq!(on_known.body, on_unknown.body, "{path}");
+        }
+
+        assert_eq!(
+            rate_counter_rows(&db).await,
+            0,
+            "neither half reaches the rate counter"
         );
     })
     .await;

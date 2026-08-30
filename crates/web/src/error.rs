@@ -11,10 +11,16 @@
 //! contract and each value is a literal in a test. `message` is the human half.
 //!
 //! Every error answer in `cadus_web` goes through [`ApiError`]. axum's own
-//! rejections carry a plain-text body, so a route that parses a body wraps the
-//! rejection and returns an `ApiError` instead. The router also sets both
+//! rejections carry a plain-text body, so an extractor that can reject wraps the
+//! rejection and returns an `ApiError` instead. Two wrappers do that work:
+//! [`crate::auth::body::LimitedBody`] for the request body, and
+//! [`crate::path::ApiPath`] for a path segment. The router also sets both
 //! fallbacks ([`not_found`] and [`method_not_allowed`]), because the axum
 //! defaults answer with an empty body and no envelope.
+//!
+//! A bare axum extractor on a handler is therefore a defect, not a style note: a
+//! `400 text/plain` from a rejection breaks this envelope for a client that
+//! branches on `error.code`.
 
 use axum::Json;
 use axum::http::StatusCode;

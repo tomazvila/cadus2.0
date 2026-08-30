@@ -118,6 +118,29 @@ pub const DUMMY_PASSWORD: &str = "anti-enumeration-throwaway-password";
 /// The password that the dummy verify tests against the dummy hash.
 pub const DUMMY_MISMATCH: &str = "anti-enumeration-throwaway-mismatch";
 
+/// The ceiling of the email field, in UTF-8 bytes AFTER normalization.
+///
+/// RFC 5321 section 4.5.3.1.3 bounds a forward path at 256 octets, and the two
+/// angle brackets take two of them, so 254 is the longest address that SMTP
+/// carries. It is the same kind of bound as [`MAX_PASSWORD_BYTES`]: it is not a
+/// usability rule, it bounds the work that the routes do over the input.
+///
+/// The normalized address is the `key` of the `auth_rate_counters` primary key.
+/// A btree index entry has a limit of about 2704 bytes on the deployed Postgres
+/// 16, so an unbounded address makes the rate counter itself throw, and the very
+/// call that the counter must refuse goes uncounted. The cap runs BEFORE the
+/// counter and before every lookup, so the refusal costs one length test.
+///
+/// [`MAX_PASSWORD_BYTES`]: crate::auth::password::MAX_PASSWORD_BYTES
+pub const MAX_EMAIL_BYTES: usize = 254;
+
+/// The refusal message of an address past [`MAX_EMAIL_BYTES`].
+///
+/// It is one sentence for every over-cap address. A registered address and an
+/// unknown one give the same status, the same code, and this same message, so
+/// the cap tells a caller nothing about who has an account.
+pub const EMAIL_TOO_LONG_MESSAGE: &str = "The email address is too long.";
+
 /// The peer address of the request, when the server wired one.
 ///
 /// `axum::serve` carries it in `ConnectInfo` only when the binary calls
@@ -174,6 +197,24 @@ fn field<'v>(value: &'v Value, name: &str) -> Result<&'v str, ApiError> {
         .get(name)
         .and_then(Value::as_str)
         .ok_or_else(|| ApiError::invalid_request(format!("The body needs a string {name}.")))
+}
+
+/// Read the `email` field, normalize it, and hold it to [`MAX_EMAIL_BYTES`].
+///
+/// The cap applies AFTER normalization, because the normalized string is what
+/// reaches the rate counter and the account lookup. NFKC can make a string
+/// longer than the string it read, so a cap on the raw field would let a longer
+/// key through.
+///
+/// Every caller runs this BEFORE its rate rule and before its account lookup.
+/// An over-cap address therefore costs one length test, writes no counter row,
+/// and reads no table.
+fn email_field(value: &Value) -> Result<String, ApiError> {
+    let email = normalize_email(field(value, "email")?);
+    if email.len() > MAX_EMAIL_BYTES {
+        return Err(ApiError::invalid_request(EMAIL_TOO_LONG_MESSAGE));
+    }
+    Ok(email)
 }
 
 /// Whether the caller asked for the raw session token in the body.
@@ -425,7 +466,7 @@ pub async fn signup(
     LimitedBody(body): LimitedBody,
 ) -> Result<Response, ApiError> {
     let value = object(&body)?;
-    let email = normalize_email(field(&value, "email")?);
+    let email = email_field(&value)?;
     let password = field(&value, "password")?;
 
     let now = Utc::now();
@@ -481,7 +522,7 @@ pub async fn login(
     LimitedBody(body): LimitedBody,
 ) -> Result<Response, ApiError> {
     let value = object(&body)?;
-    let email = normalize_email(field(&value, "email")?);
+    let email = email_field(&value)?;
     let password = field(&value, "password")?;
 
     let now = Utc::now();
@@ -654,7 +695,7 @@ pub async fn forgot_password(
     LimitedBody(body): LimitedBody,
 ) -> Result<Response, ApiError> {
     let value = object(&body)?;
-    let email = normalize_email(field(&value, "email")?);
+    let email = email_field(&value)?;
 
     let now = Utc::now();
     enforce(
@@ -818,7 +859,7 @@ pub async fn resend_verification(
     LimitedBody(body): LimitedBody,
 ) -> Result<Response, ApiError> {
     let value = object(&body)?;
-    let email = normalize_email(field(&value, "email")?);
+    let email = email_field(&value)?;
 
     let now = Utc::now();
     enforce(

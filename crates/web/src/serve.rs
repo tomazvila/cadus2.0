@@ -73,7 +73,7 @@
 use std::collections::{BTreeMap, BTreeSet};
 
 use axum::Json;
-use axum::extract::{Path, State};
+use axum::extract::State;
 use axum::http::StatusCode;
 use cadus_core::curriculum::{Curriculum, KnowledgePoint};
 use cadus_core::event::{Event, SchemaVersion, Slug, TaskServed, TaskType, Timestamp};
@@ -94,6 +94,7 @@ use sqlx::{Postgres, Transaction};
 
 use crate::AppState;
 use crate::error::ApiError;
+use crate::path::ApiPath;
 use crate::session::{
     INTERNAL_ERROR, begin, bound, compose_plan, content, failed, now_pair, projection_input,
     read_state, view_for_open_session, write_state,
@@ -569,7 +570,7 @@ pub(crate) fn find<'plan>(
 pub async fn serve(
     State(state): State<AppState>,
     Tenant(user_id): Tenant,
-    Path(task_id): Path<String>,
+    ApiPath(task_id): ApiPath<String>,
 ) -> Result<Json<Value>, ApiError> {
     let content = content(&state)?;
     let graph = &content.curriculum;
@@ -948,7 +949,7 @@ fn exemplar_rows(
 pub async fn teach(
     State(state): State<AppState>,
     Tenant(user_id): Tenant,
-    Path(task_id): Path<String>,
+    ApiPath(task_id): ApiPath<String>,
 ) -> Result<Json<Value>, ApiError> {
     let content = content(&state)?;
     let graph = &content.curriculum;
@@ -1018,7 +1019,7 @@ pub async fn teach(
 pub async fn hint(
     State(state): State<AppState>,
     Tenant(user_id): Tenant,
-    Path(task_id): Path<String>,
+    ApiPath(task_id): ApiPath<String>,
     body: Option<Json<Value>>,
 ) -> Result<Json<Value>, ApiError> {
     let content = content(&state)?;

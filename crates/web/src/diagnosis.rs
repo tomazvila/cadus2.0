@@ -46,7 +46,7 @@ use std::time::Duration;
 
 use axum::Json;
 use axum::Router;
-use axum::extract::{Path, State};
+use axum::extract::State;
 use axum::http::StatusCode;
 use axum::response::sse::{Event as SseEvent, KeepAlive, Sse};
 use axum::routing::get;
@@ -71,6 +71,7 @@ use tokio_stream::{Stream, StreamExt};
 
 use crate::AppState;
 use crate::error::ApiError;
+use crate::path::ApiPath;
 use crate::session::{bound, failed};
 use crate::state::{ServedProblem, Tenant, WebState};
 
@@ -458,7 +459,7 @@ fn unknown_diagnosis() -> ApiError {
 pub async fn poll(
     State(state): State<AppState>,
     Tenant(user_id): Tenant,
-    Path(id): Path<String>,
+    ApiPath(id): ApiPath<String>,
 ) -> Result<Json<Value>, ApiError> {
     let Ok(id) = Uuid::parse_str(&id) else {
         return Err(unknown_diagnosis());

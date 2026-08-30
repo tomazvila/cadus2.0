@@ -81,7 +81,7 @@
 //! reveal (trap W7), and the reveal unit is the one that hands the prose out.
 
 use axum::Json;
-use axum::extract::{Path, State};
+use axum::extract::State;
 use axum::http::StatusCode;
 use cadus_core::answer::check::{Outcome, check};
 use cadus_core::config::Config;
@@ -104,6 +104,7 @@ use crate::AppState;
 use crate::diagnosis::{self, Miss, Pending};
 use crate::error::ApiError;
 use crate::metrics;
+use crate::path::ApiPath;
 use crate::serve::{Open, find, install_next, open, progress_for, unix_seconds};
 use crate::session::{bound, content, failed, now_pair, projection_input, write_state};
 use crate::state::{Content, INVALID_REQUEST, STATE_UNAVAILABLE, ServedProblem, Tenant, WebState};
@@ -629,7 +630,7 @@ fn clear_task_scratch(scratch: &mut WebState, task_id: &str) {
 pub async fn answer(
     State(state): State<AppState>,
     Tenant(user_id): Tenant,
-    Path(task_id): Path<String>,
+    ApiPath(task_id): ApiPath<String>,
     body: Option<Json<Value>>,
 ) -> Result<Json<Value>, ApiError> {
     let content = content(&state)?;

@@ -60,7 +60,7 @@
 use std::collections::HashMap;
 
 use axum::extract::rejection::QueryRejection;
-use axum::extract::{Path, Query, State};
+use axum::extract::{Query, State};
 use axum::http::{HeaderMap, HeaderValue, StatusCode, header};
 use axum::response::{IntoResponse, Response};
 use axum::routing::get;
@@ -90,6 +90,7 @@ use crate::auth::token::{hash_token, tokens_equal};
 use crate::cookie::read_session_cookie;
 use crate::error::ApiError;
 use crate::origin::own_origin;
+use crate::path::ApiPath;
 
 /// The message of a provider this deployment does not serve.
 pub const PROVIDER_NOT_ENABLED_MESSAGE: &str = "This OAuth provider is not enabled.";
@@ -192,7 +193,7 @@ pub async fn providers(State(state): State<AppState>) -> Response {
 /// browser to the provider.
 pub async fn start(
     State(state): State<AppState>,
-    Path(name): Path<String>,
+    ApiPath(name): ApiPath<String>,
     query: Result<Query<HashMap<String, String>>, QueryRejection>,
     headers: HeaderMap,
 ) -> Result<Response, ApiError> {
@@ -232,7 +233,7 @@ pub async fn start(
 /// provider-verified identity, open a session, and send the browser back.
 pub async fn callback(
     State(state): State<AppState>,
-    Path(name): Path<String>,
+    ApiPath(name): ApiPath<String>,
     ClientAddr(peer): ClientAddr,
     query: Result<Query<HashMap<String, String>>, QueryRejection>,
     headers: HeaderMap,

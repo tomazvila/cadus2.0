@@ -72,6 +72,13 @@ pub const CODE_CHALLENGE_METHOD: &str = "S256";
 /// The redirect target when the handshake carries no usable `next`.
 pub const DEFAULT_NEXT: &str = "/";
 
+/// The bytes that [`safe_next`] lets through, before it also drops a backslash.
+///
+/// The range is the printable ASCII set with the space removed. The floor drops
+/// every control byte and the space, and the ceiling drops `0x7f`, which a
+/// `Location` header value cannot carry.
+pub const SAFE_NEXT_BYTES: std::ops::RangeInclusive<u8> = 0x21..=0x7e;
+
 /// The `Accept` of the token exchange.
 pub const JSON_ACCEPT: &str = "application/json";
 
@@ -357,7 +364,7 @@ fn draw(bytes: usize) -> Result<String, EntropyError> {
 ///
 /// 1. the first byte is `/`;
 /// 2. the second byte is neither `/` nor a backslash;
-/// 3. no byte is below `0x21`, and no byte is a backslash.
+/// 3. every byte is in [`SAFE_NEXT_BYTES`], and no byte is a backslash.
 ///
 /// Rule 2 closes the plain open redirect: a browser reads `//host` and `/\host`
 /// as scheme-relative, so both leave the site. Rule 3 closes the same redirect
@@ -366,6 +373,17 @@ fn draw(bytes: usize) -> Result<String, EntropyError> {
 /// newline"), so a target of `/`, one tab, `/host` reaches the parser as
 /// `//host` and leaves the site too. A backslash is a path separator to a
 /// browser, so rule 3 refuses it in every position.
+///
+/// **The upper bound of rule 3 is what the answer must survive.** The answer of
+/// this function becomes the `Location` header of a `302`, and
+/// `HeaderValue::from_str` refuses `0x7f` (`http` builds a header value from the
+/// rule `b >= 32 && b != 127 || b == b'\t'`). A `0x7f` that reached the header
+/// therefore failed the build AFTER the callback had already committed the
+/// account, the provider link, and the session row, so the learner got a `500`
+/// and no `Set-Cookie` for a session that exists. Rule 3 stops at `0x7e`, so
+/// every accepted answer builds. A byte at or above `0x80` cannot stand alone in
+/// a `&str`, and rule 3 refuses the multi-byte sequences that carry it, so the
+/// accepted set is ASCII text.
 ///
 /// The callback runs this function again on the value it read from the cookie,
 /// which is what lets the cookie stay unsigned.
@@ -377,7 +395,9 @@ pub fn safe_next(next_url: Option<&str>) -> String {
     let bytes = next.as_bytes();
     let same_site = bytes.first() == Some(&b'/')
         && !matches!(bytes.get(1), Some(b'/' | b'\\'))
-        && bytes.iter().all(|byte| *byte >= 0x21 && *byte != b'\\');
+        && bytes
+            .iter()
+            .all(|byte| SAFE_NEXT_BYTES.contains(byte) && *byte != b'\\');
     if same_site {
         next.to_string()
     } else {

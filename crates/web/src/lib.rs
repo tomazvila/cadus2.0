@@ -57,6 +57,7 @@ pub mod health;
 pub mod metrics;
 pub mod operator;
 pub mod origin;
+pub mod path;
 pub mod security;
 pub mod serve;
 pub mod session;

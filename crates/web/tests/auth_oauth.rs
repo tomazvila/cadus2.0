@@ -27,6 +27,7 @@ mod common;
 use std::collections::HashMap;
 use std::sync::Arc;
 
+use axum::http::HeaderValue;
 use cadus_store::test_support::TestDb;
 use cadus_web::auth::oauth::{
     Credentials, Handshake, OAuthConfig, code_challenge_s256, decode_handshake, encode_handshake,
@@ -168,6 +169,94 @@ fn the_redirect_target_is_a_same_site_path_or_the_root() {
     assert_eq!(safe_next(Some("/\\evil.example")), "/");
     assert_eq!(safe_next(Some("https://evil.example")), "/");
     assert_eq!(safe_next(Some("dashboard")), "/");
+}
+
+/// FIX2-M5-C, findings V6 and V13: the accept set of `safe_next` is exactly the
+/// set of bytes that a `Location` header carries.
+///
+/// The answer of `safe_next` becomes the `Location` of the callback `302`, and
+/// `HeaderValue::from_str` builds that header. The two sets disagreed on `0x7f`:
+/// `safe_next` took every byte at or above `0x21` except a backslash, and the
+/// header builder refuses `0x7f`. A handshake `next` that held `0x7f` therefore
+/// reached `redirect()` AFTER the account, the provider link, and the
+/// `auth_sessions` row were committed, and the learner got `500 internal_error`
+/// with no `Set-Cookie` for a session that exists.
+///
+/// The loop below walks every byte `0x00..=0xff` once. Each byte sits at index
+/// 2, so the leading `/` and the second-byte rule never decide the case. Every
+/// byte that `safe_next` accepts must also build a header value, and the
+/// accepted set is pinned as a literal: `0x21..=0x7e` without the backslash,
+/// which is 93 bytes.
+///
+/// A byte at or above `0x80` never stands alone in a `&str`, so those 128 bytes
+/// cannot reach `safe_next` on their own. `a_non_ascii_target_is_refused` covers
+/// the multi-byte sequences that carry them.
+#[test]
+fn the_accept_set_of_safe_next_is_what_the_location_header_carries() {
+    let mut accepted: Vec<u8> = Vec::new();
+    let mut single_byte_candidates = 0_usize;
+
+    for byte in 0x00_u8..=0xff {
+        let Ok(candidate) = String::from_utf8(vec![b'/', b'd', byte]) else {
+            assert!(
+                byte >= 0x80,
+                "byte {byte:#04x} is ASCII and must build a string"
+            );
+            continue;
+        };
+        single_byte_candidates += 1;
+
+        let answer = safe_next(Some(&candidate));
+        if answer == candidate {
+            accepted.push(byte);
+            assert!(
+                HeaderValue::from_str(&answer).is_ok(),
+                "safe_next accepted {byte:#04x} and the Location header refuses it"
+            );
+        } else {
+            assert_eq!(
+                answer, "/",
+                "safe_next refused {byte:#04x} with something other than the root"
+            );
+        }
+    }
+
+    assert_eq!(single_byte_candidates, 128, "every ASCII byte was tried");
+
+    let expected: Vec<u8> = (0x21_u8..=0x7e).filter(|byte| *byte != b'\\').collect();
+    assert_eq!(expected.len(), 93);
+    assert_eq!(accepted, expected);
+    assert_eq!(accepted.len(), 93);
+    assert_eq!(accepted.first().copied(), Some(0x21));
+    assert_eq!(accepted.last().copied(), Some(0x7e));
+    assert!(!accepted.contains(&0x5c), "the backslash is refused");
+    assert!(!accepted.contains(&0x7f), "DEL is refused");
+}
+
+/// The DEL byte in a target is refused, and the root builds a header value.
+///
+/// This is the single byte on which the old predicate and `HeaderValue` split.
+#[test]
+fn the_del_byte_in_the_target_is_refused() {
+    assert_eq!(safe_next(Some("/dash\u{7f}board")), "/");
+    assert_eq!(safe_next(Some("/\u{7f}")), "/");
+    assert!(HeaderValue::from_str("/").is_ok());
+    assert!(
+        HeaderValue::from_str("/dash\u{7f}board").is_err(),
+        "the Location header must refuse the DEL byte"
+    );
+}
+
+/// A target with a non-ASCII character is refused.
+///
+/// Rule 3 stops at `0x7e`, so every byte of a multi-byte UTF-8 sequence fails
+/// it. The accepted set is ASCII text, and a caller that needs a non-ASCII
+/// target percent-encodes it.
+#[test]
+fn a_non_ascii_target_is_refused() {
+    assert_eq!(safe_next(Some("/dash\u{e9}board")), "/");
+    assert_eq!(safe_next(Some("/\u{4f60}\u{597d}")), "/");
+    assert_eq!(safe_next(Some("/dash%C3%A9board")), "/dash%C3%A9board");
 }
 
 /// A byte below `0x21`, and a backslash anywhere, are refused.
