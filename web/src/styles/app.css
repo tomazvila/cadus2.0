@@ -1,0 +1,40 @@
+/*
+ * Base layout for the scaffold.
+ *
+ * S4 owns the design system: the Tokyo Night token table of spec section 4.2, in both
+ * themes, with a contract test over every hex (invariant TOKENS-hex). Nothing here declares
+ * a color, so that table has exactly one home.
+ *
+ * The three rules below are the ones index.html's shell needs to be readable at all.
+ */
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+}
+
+h1, h2, h3 { line-height: 1.25; }
+
+.view {
+  margin: 0 auto;
+  /* The study column. The map goes wider (spec section 4.2). */
+  max-width: 720px;
+  padding: 24px 16px;
+}
+
+/* Every animation goes when the reader asks for less motion (spec section 4.5). S4 states
+   the rule again over the real component set; it belongs in the base too, so a transition
+   added before S4 lands cannot ignore it. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
