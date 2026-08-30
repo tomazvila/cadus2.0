@@ -61,14 +61,16 @@
 //!
 //! # What this unit does not do
 //!
-//! Kinds `teach`, `hint_ladder` and `diagnosis` have no gate in
-//! `cadus_core::template` yet, and a loop with no gate would spend tokens on
-//! content nothing can verify. [`author_one`] answers [`Outcome::NoGate`] for
-//! those three kinds and makes zero calls. Units R6 and R7 add the gates.
+//! Kinds `teach` and `hint_ladder` have no gate in `cadus_core::template` yet,
+//! and a loop with no gate spends tokens on content nothing verifies.
+//! [`author_one`] answers [`Outcome::NoGate`] for those two kinds and makes zero
+//! calls. Unit R6 adds their gates. Kind `diagnosis` has its gate: unit R7 added
+//! `cadus_core::template::distractor`, and [`verify_diagnosis`] runs it.
 
 use cadus_core::pool::kp_key;
 use cadus_core::template::{
-    GateSpec, Rejection, TEMPLATABLE_KINDS, TEMPLATE_VERSION, gate_body, to_body, with_space_size,
+    GateSpec, Rejection, TEMPLATABLE_KINDS, TEMPLATE_VERSION, gate_body, gate_diagnosis_body,
+    keep_known_tags, to_body, to_diagnosis_body, with_space_size,
 };
 use cadus_model_client::{Attempt, Client};
 use cadus_store::Db;
@@ -79,6 +81,7 @@ use sha2::{Digest, Sha256};
 use crate::WorkerError;
 use crate::authoring::cost;
 use crate::authoring::prompt::{self, AuthoringSpec, DIGEST_CHARS, Kind};
+use crate::diagnosis::MODEL_ERROR_TAGS;
 use crate::model_log::{self, CallRecord, PURPOSE_AUTHORING};
 
 /// The model calls one knowledge point and kind gets before it declines.
@@ -117,7 +120,7 @@ one object";
 pub enum Outcome {
     /// The bank is full. The pass made no model call.
     Skipped,
-    /// The kind has no gate yet (units R6 and R7). The pass made no model call.
+    /// The kind has no gate yet (unit R6). The pass made no model call.
     NoGate,
     /// The gate accepted a document and the row is `pending`.
     Stored,
@@ -307,11 +310,97 @@ pub fn verify(spec: &AuthoringSpec, arguments: &Value) -> Result<String, Rejecti
         exemplars: &spec.exemplars,
     };
     let (doc, verified) = gate_body(&body, &gate_spec)?;
-    let filled = with_space_size(&doc, &verified);
+    let mut filled = with_space_size(&doc, &verified);
+    // Spec section 5.3, and row R7: an error_tag outside the vocabulary is
+    // dropped, on this document and on the diagnosis document alike.
+    let dropped = keep_known_tags(&mut filled.distractors, &authoring_vocabulary());
+    report_dropped(spec, Kind::Template, &dropped);
     to_body(&filled).map_err(|err| Rejection {
         code: "tool-arguments",
         message: format!("the verified document does not write as JSON: {err}"),
     })
+}
+
+/// The error tags an authored document keeps (spec section 5.3).
+///
+/// It is the vocabulary the prompt states to the model
+/// ([`MODEL_ERROR_TAGS`]), so the gate keeps exactly what the instruction
+/// invites. The three server-assigned tags of section 5.3 are outside it, and
+/// `cadus_core::config::default_error_tags` holds every one of these, so the
+/// grade path never drops a tag the gate kept.
+#[must_use]
+pub fn authoring_vocabulary() -> Vec<String> {
+    MODEL_ERROR_TAGS
+        .iter()
+        .map(|tag| (*tag).to_owned())
+        .collect()
+}
+
+/// Log the tags the vocabulary filter dropped, for the operator (T3).
+///
+/// A drop is silent to the model, because the schema already constrains
+/// `error_tag` to the vocabulary and the prompt states the rule. It is not
+/// silent to an operator: a model that keeps inventing tags shows up here.
+fn report_dropped(spec: &AuthoringSpec, kind: Kind, dropped: &[String]) {
+    if dropped.is_empty() {
+        return;
+    }
+    tracing::warn!(
+        kp = %kp_key(&spec.topic_id, &spec.kp_id),
+        kind = kind.as_str(),
+        dropped = ?dropped,
+        "authoring: an error_tag outside the vocabulary is dropped at the gate"
+    );
+}
+
+/// Assemble one distractor list and verify it (A4; spec section 6.2).
+///
+/// The returned text is what the row stores and what the digest covers. The
+/// document is the FILTERED one: `cadus_core::template::gate_diagnosis_body`
+/// drops every distractor whose tag is outside
+/// [`authoring_vocabulary`], and it refuses the list when nothing is left.
+///
+/// # Errors
+///
+/// Returns the [`Rejection`] of [`assemble`] and every rejection of
+/// `cadus_core::template::gate_diagnosis`. The message is the literal text the
+/// next attempt reads.
+pub fn verify_diagnosis(spec: &AuthoringSpec, arguments: &Value) -> Result<String, Rejection> {
+    let body = assemble(spec, arguments)?;
+    let gate_spec = GateSpec {
+        answer_kind: spec.answer_kind,
+        exemplars: &spec.exemplars,
+    };
+    let (doc, dropped) = gate_diagnosis_body(&body, &gate_spec, &authoring_vocabulary())?;
+    report_dropped(spec, Kind::Diagnosis, &dropped);
+    to_diagnosis_body(&doc).map_err(|err| Rejection {
+        code: "tool-arguments",
+        message: format!("the verified document does not write as JSON: {err}"),
+    })
+}
+
+/// Verify the document of one kind (spec section 2.2, step 2).
+///
+/// # Errors
+///
+/// Returns the [`Rejection`] the next attempt reads, and a rejection naming the
+/// kind for a kind whose gate is not written yet (unit R6).
+pub fn verify_kind(
+    kind: Kind,
+    spec: &AuthoringSpec,
+    arguments: &Value,
+) -> Result<String, Rejection> {
+    match kind {
+        Kind::Template => verify(spec, arguments),
+        Kind::Diagnosis => verify_diagnosis(spec, arguments),
+        Kind::Teach | Kind::HintLadder => Err(Rejection {
+            code: "no-gate",
+            message: format!(
+                "the kind {} has no gate, so nothing verifies its document",
+                kind.as_str()
+            ),
+        }),
+    }
 }
 
 /// How many slots of one knowledge point and kind are occupied (C6).
@@ -464,7 +553,7 @@ pub async fn author_one(
         alert: false,
     };
 
-    if kind != Kind::Template {
+    if matches!(kind, Kind::Teach | Kind::HintLadder) {
         tracing::info!(kp = %kp_id, kind = kind.as_str(),
                        "authoring: the kind has no gate yet; the pass makes no call");
         return Ok(quiet(Outcome::NoGate, kp_id));
@@ -529,7 +618,7 @@ pub async fn author_one(
             // never saw a document, so the next attempt repeats the message it
             // already had.
             Err(err) => err.to_string(),
-            Ok(arguments) => match verify(spec, &arguments) {
+            Ok(arguments) => match verify_kind(kind, spec, &arguments) {
                 Ok(body) => {
                     let digest = body_digest(&body);
                     // T3: the row carries the count of calls the pass spent and
