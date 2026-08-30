@@ -1,0 +1,39 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "jsx": "react-jsx",
+    "types": ["vite/client", "vitest/globals"],
+
+    // tsc knows nothing about Vite's resolver, so every alias needs a twin here or an
+    // import type-errors while the tests pass.
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    },
+
+    "strict": true,
+    "noImplicitOverride": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "exactOptionalPropertyTypes": true,
+    "verbatimModuleSyntax": true,
+
+    // DELIBERATELY OFF (spec section 4.6). Turned on with every API payload hand-typed, it
+    // forces a guard or a non-null assertion on every index read and drowns the port in
+    // casts. S2 hand-writes `src/api/types.ts` against the web-service spec instead.
+    "noUncheckedIndexedAccess": false,
+
+    "allowJs": false,
+    "checkJs": false,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true
+  },
+  "include": ["src", "test", "*.ts", "*.config.ts"]
+}

@@ -1,0 +1,444 @@
+/*
+ * The design system — the rules the app shell, the primitives, and the modal need.
+ *
+ * NO COLOR LITERAL BELONGS HERE. Every color reads a token from `tokens.css`, which is the
+ * one home of the section 4.2 palette; `test/tokens.test.ts` fails the build on a hex or an
+ * `rgb(...)` anywhere in this file. Later units append their own screen rules under the same
+ * rule.
+ *
+ * The aesthetic, from spec section 4.2: technical, precise, calm, high-signal. Hairline
+ * dividers over heavy frames. Monospace for the technical. No gamified motion.
+ *
+ * Four rules are load-bearing and are asserted by tests, not left to review:
+ *   * every focus ring is `2px solid var(--accent)` with `outline-offset: 2px`;
+ *   * every button is at least 44px tall;
+ *   * every technical readout is monospace with tabular figures;
+ *   * `prefers-reduced-motion: reduce` strips every animation and transition.
+ */
+
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3 { line-height: 1.25; margin: 0 0 0.4rem; }
+h2 { font-size: 1.4rem; }
+p { margin: 0.4rem 0; }
+.muted { color: var(--muted); }
+.small { font-size: 0.85rem; }
+
+/* ---- the topbar ---- */
+/* It PORTALS into the `#topbar` element index.html ships, so it is a sibling of the React
+   root rather than a child of it. Sticky, hairline-bottomed, and painted on `--bg` so a
+   scrolled card passes under it instead of showing through. */
+.topbar {
+  display: flex; align-items: center; gap: 0.6rem;
+  padding: 0.8rem 1rem; border-bottom: 1px solid var(--border);
+  position: sticky; top: 0; background: var(--bg); z-index: 5;
+}
+.brand {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  background: none; border: 0; color: var(--text); cursor: pointer;
+  font-size: 1.05rem; font-weight: 650; padding: 0.2rem 0.3rem; border-radius: 8px;
+}
+.brand:hover { background: var(--surface-2); }
+.brand:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.brand-mark { display: inline-flex; width: 1.15em; height: 1.15em; }
+.brand-mark svg { width: 100%; height: 100%; display: block; }
+.demo-badge {
+  font-size: 0.7rem; font-weight: 700; letter-spacing: 0.06em;
+  color: var(--accent); border: 1px solid var(--accent); border-radius: 999px;
+  padding: 0.1rem 0.5rem;
+}
+/* The signed-in cluster, pushed to the trailing edge. */
+.topbar-user { margin-left: auto; display: inline-flex; align-items: center; gap: 0.6rem; min-width: 0; }
+.user-email {
+  font-size: 0.82rem; color: var(--muted);
+  max-width: min(44vw, 240px); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.logout-btn { min-height: 34px; padding: 0.35rem 0.7rem; font-size: 0.85rem; }
+/* The quiet Map affordance: mono, hairline, no frame until it is hovered. */
+.topbar-link {
+  background: none; border: 0; cursor: pointer;
+  font-family: var(--mono); font-size: 0.82rem; letter-spacing: 0.04em;
+  color: var(--muted); padding: 0.3rem 0.5rem; border-radius: 6px;
+}
+.topbar-link:hover { color: var(--accent); background: var(--surface-2); }
+.topbar-link:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* ---- layout ---- */
+.view { max-width: var(--maxw); margin: 0 auto; padding: 1.2rem 1rem 4rem; }
+.card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); box-shadow: var(--shadow);
+  padding: 1.2rem; margin-bottom: 1rem;
+}
+
+/* ---- buttons ---- */
+/* `min-height: 44px` is the minimum target size of spec section 4.5. The ghost variant is
+   the quiet secondary: no frame, muted glyphs, and it never competes with the primary. */
+.btn {
+  appearance: none; border: 1px solid var(--border); background: var(--surface);
+  color: var(--text); font: inherit; font-weight: 550;
+  padding: 0.7rem 1.1rem; border-radius: 10px; cursor: pointer;
+  transition: background 0.12s, border-color 0.12s, transform 0.05s;
+  display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem;
+  min-height: 44px;
+}
+.btn:hover { background: var(--surface-2); }
+.btn:active { transform: translateY(1px); }
+.btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.btn-primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); font-weight: 650; }
+.btn-primary:hover { filter: brightness(1.08); background: var(--accent); }
+.btn-ghost { border-color: transparent; background: transparent; color: var(--muted); }
+.btn-ghost:hover { background: var(--surface-2); }
+.btn:disabled { opacity: 0.65; cursor: default; }
+
+/* ---- chips ---- */
+.chip {
+  display: inline-flex; align-items: center; font-size: 0.72rem; font-weight: 650;
+  padding: 0.15rem 0.55rem; border-radius: 999px; background: var(--surface-2); color: var(--muted);
+  text-transform: capitalize; letter-spacing: 0.01em;
+}
+.chip-accent { background: var(--accent-weak); color: var(--accent); }
+.chip-good { background: var(--good-weak); color: var(--good); }
+.chip-bad { background: var(--bad-weak); color: var(--bad); }
+
+/* ---- stats and the progress ring ---- */
+.stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.6rem; margin-top: 1rem; }
+.stat {
+  background: var(--surface-2); border-radius: 10px; padding: 0.7rem 0.6rem; text-align: center;
+}
+.stat-value { font-size: 1.3rem; font-weight: 700; }
+.stat-label { font-size: 0.75rem; color: var(--muted); }
+.stat.accent .stat-value { color: var(--accent); }
+.stat.warn .stat-value { color: var(--warn); }
+
+.ring { position: relative; flex: 0 0 auto; display: grid; place-items: center; }
+.ring svg { display: block; }
+.ring-bg { stroke: var(--ring-bg); }
+.ring-fg { stroke: var(--accent); transition: stroke-dashoffset 0.6s ease; }
+.ring-label { position: absolute; text-align: center; }
+/* `.ring-label strong` gives the number its size and its own line. A `<span>` here loses
+   both, and the ring reads as one run of small text. The element type is load-bearing. */
+.ring-label strong { display: block; font-size: 1.25rem; }
+.ring-label span { font-size: 0.72rem; color: var(--muted); }
+
+/* ---- empty and loading ---- */
+.empty { text-align: center; padding: 3rem 1rem; }
+.empty .btn { margin-top: 1rem; }
+.loading { display: flex; align-items: center; justify-content: center; gap: 0.6rem; color: var(--muted); padding: 3rem 1rem; }
+.spinner svg { animation: spin 0.9s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ---- toasts ---- */
+/* The container is in index.html with `aria-live="polite"` already on it, because a live
+   region that mounts together with its content announces nothing. */
+.toasts {
+  position: fixed; left: 50%; bottom: 1rem; transform: translateX(-50%); z-index: 50;
+  display: grid; gap: 0.5rem; width: min(92vw, 460px);
+}
+.toast {
+  display: flex; align-items: center; gap: 0.6rem; background: var(--surface);
+  border: 1px solid var(--border); border-left: 4px solid var(--bad);
+  border-radius: 10px; padding: 0.7rem 0.9rem; box-shadow: var(--shadow);
+  animation: rise 0.18s ease;
+}
+.toast-info { border-left-color: var(--accent); }
+.toast-success { border-left-color: var(--good); }
+.toast-msg { flex: 1; font-size: 0.92rem; }
+.toast-action { background: none; border: 0; color: var(--accent); font: inherit; font-weight: 650; cursor: pointer; padding: 0.2rem 0.4rem; }
+.toast-close { background: none; border: 0; color: var(--muted); font-size: 1.2rem; line-height: 1; cursor: pointer; padding: 0 0.2rem; }
+.toast-action:focus-visible, .toast-close:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+@keyframes rise { from { opacity: 0; transform: translateY(8px); } }
+
+/* ---- the modal ---- */
+/* The overlay is scenery: the dialog INSIDE carries `role="dialog"`. The overlay's own
+   `--scrim` is the only thing dimming the page behind it. */
+.modal-overlay {
+  position: fixed; inset: 0; background: var(--scrim);
+  display: grid; place-items: center; z-index: 100; padding: 1rem;
+}
+.modal {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  box-shadow: var(--shadow); padding: 1.6rem; width: min(92vw, 380px);
+  display: grid; gap: 0.7rem;
+}
+.modal h2 { margin: 0 0 0.3rem; font-size: 1.1rem; }
+.modal-actions { display: flex; gap: 0.5rem; justify-content: flex-end; margin-top: 0.7rem; }
+
+/* ---- the auth card ---- */
+/* One card, seven modes. It reuses `.modal` for the surface — the same raised panel, the
+   same hairline — and centers it in the view instead of over a scrim. The width matches the
+   modal exactly, so a learner who signs in and then meets a dialog sees one shape twice. */
+.auth-view { display: grid; place-items: center; min-height: 62vh; padding: 1.5rem 0; }
+.auth-card { width: min(92vw, 380px); gap: 0.55rem; }
+.auth-brand { display: inline-flex; align-items: center; gap: 0.55rem; }
+.auth-brand .brand-mark { width: 1.7rem; height: 1.7rem; }
+.brand-lg { font-size: 1.5rem; font-weight: 700; }
+.auth-tagline { margin: 0.1rem 0 0.4rem; font-size: 0.92rem; }
+/* The mode line is the one instrument readout on this card: mono, accent, upper case. It
+   tells the learner which of the seven screens they are on without a heading. */
+.auth-mode {
+  font-family: var(--mono); font-size: 0.72rem; text-transform: uppercase;
+  letter-spacing: 0.08em; color: var(--accent); margin: 0 0 0.3rem;
+}
+.auth-label { font-size: 0.78rem; font-weight: 600; color: var(--muted); margin-top: 0.15rem; }
+.auth-input {
+  width: 100%; font: inherit; color: var(--text);
+  background: var(--surface); border: 1.5px solid var(--border); border-radius: 10px;
+  padding: 0.75rem 0.85rem;
+}
+/* The accent border marks the focused field for a mouse user. It never writes
+   `outline: none`: the 2px ring below is the accessible one, and it stays. */
+.auth-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-weak); }
+.auth-input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.auth-submit { margin-top: 0.7rem; width: 100%; }
+.auth-toggle { margin: 0.6rem 0 0; font-size: 0.9rem; text-align: center; }
+.auth-help { margin: 0.1rem 0 0.6rem; font-size: 0.9rem; line-height: 1.5; }
+.auth-forgot { margin: 0.5rem 0 0; font-size: 0.85rem; text-align: right; }
+.auth-check-email-addr { margin: 0 0 0.4rem; font-size: 0.9rem; word-break: break-all; }
+/* The inline error of AUTH-inline. It is the whole visible difference between a mistyped
+   password and a lost session, so it sits in the card and never in a toast. */
+.field-error { color: var(--bad); font-size: 0.85rem; }
+.link-btn {
+  background: none; border: 0; padding: 0; font: inherit; cursor: pointer;
+  color: var(--accent); font-weight: 600;
+}
+.link-btn:hover { text-decoration: underline; }
+.link-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+.auth-divider {
+  display: flex; align-items: center; gap: 0.6rem;
+  margin: 0.8rem 0 0.2rem; color: var(--muted); font-size: 0.8rem;
+}
+.auth-divider::before, .auth-divider::after { content: ""; flex: 1; height: 1px; background: var(--border); }
+.oauth-btn { width: 100%; margin-top: 0.4rem; }
+
+/* ---- technical readouts ---- */
+/* Timers, counts, XP and every stat value read as instrument output: monospace with aligned
+   figures. A proportional font makes a 1 Hz counter jitter its own width. */
+.timer, .progress-count, .stat-value, .ring-label strong, .mono {
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+}
+
+/* ---- the study fields ---- */
+/* The problem text carries the KaTeX cascade: `.problem-text .katex` sizes the math against
+   the prose around it, so the rendered output has to be a DESCENDANT of the classed node. A
+   wrapper between them loses the sizing and nothing reports it. A long expression scrolls
+   inside the block instead of widening the study column. */
+.problem-text { font-size: 1.15rem; margin-bottom: 1rem; overflow-x: auto; }
+.problem-text .katex { font-size: 1.15em; }
+
+.answer-field { margin-bottom: 0.7rem; }
+.answer-input, .work-input {
+  width: 100%; font: inherit; color: var(--text);
+  background: var(--surface); border: 1.5px solid var(--border); border-radius: 10px;
+  padding: 0.75rem 0.85rem;
+}
+.answer-input { font-size: 1.1rem; }
+/* The accent border marks the focused field for a mouse user as well. It never writes
+   `outline: none`: the focus ring below is the accessible one, and it stays. */
+.answer-input:focus, .work-input:focus {
+  border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-weak);
+}
+.answer-input:focus-visible, .work-input:focus-visible, .sym-key:focus-visible {
+  outline: 2px solid var(--accent); outline-offset: 2px;
+}
+.field-hint { font-size: 0.8rem; color: var(--muted); margin: 0.35rem 0.2rem 0; }
+
+/* The palette is a `role="toolbar"` of twelve keys. Each key is a button, so it takes the
+   44px minimum target height of spec section 4.5 — 1.0 shipped 26px keys, and a thumb on a
+   phone hit the wrong symbol. */
+.sym-palette { display: flex; flex-wrap: wrap; gap: 0.3rem; margin-top: 0.4rem; }
+.sym-key {
+  min-height: 44px; min-width: 2.75rem; padding: 0.25rem 0.45rem; font-size: 1rem;
+  line-height: 1; color: var(--text); background: var(--surface);
+  border: 1px solid var(--border); border-radius: 6px; cursor: pointer;
+}
+.sym-key:hover { border-color: var(--accent); background: var(--accent-weak); }
+
+/* A native `<details>`: `.work summary` is styled here, and the element gives the disclosure
+   keyboard and screen-reader semantics for free. */
+.work { margin-bottom: 0.8rem; }
+.work summary { cursor: pointer; color: var(--muted); font-size: 0.9rem; padding: 0.3rem 0; }
+.work summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.work-input { margin-top: 0.5rem; resize: vertical; }
+
+/* ---- the dashboard ---- */
+/* One primary action per state (W-C2), so exactly one control here carries `.btn-primary`
+   and `.btn-hero`. The hero is full width: it is the thing to press, and a learner reading
+   on a phone finds it without a scan. Everything quiet keeps the plain `.btn` weight. */
+.status-card { padding-bottom: 1rem; }
+.status-head { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+.status-head h2 { margin-bottom: 0.15rem; }
+
+/* The journey: the courses in order, with the enrolled one in the accent. The separator is
+   `--border`, which is decorative contrast only — it carries no meaning a reader needs. */
+.course-arc {
+  display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;
+  margin-bottom: 1rem; font-size: 0.9rem;
+}
+.arc-course { color: var(--muted); }
+.arc-current { color: var(--accent); font-weight: 700; }
+.arc-sep { color: var(--border); }
+
+.btn-hero { font-size: 1.05rem; padding: 0.85rem 1.4rem; width: 100%; }
+.primary-action { margin: 1.1rem 0 0.5rem; display: grid; gap: 0.5rem; }
+.primary-sub { margin: 0; text-align: center; }
+.caught-up { font-size: 1.05rem; margin: 0; text-align: center; }
+.onboard-card { text-align: center; }
+.onboard-card .btn-hero { margin: 1rem 0 0.4rem; }
+.onboard-foot { margin-top: 0.4rem; }
+
+/* The quiet secondaries (W-C5). A native `<details>` keeps the keyboard behavior and the
+   screen-reader semantics, and it needs no ARIA. The custom marker replaces the platform
+   triangle, which two engines draw at two sizes. */
+.more-menu { margin-top: 1.2rem; border-top: 1px solid var(--border); padding-top: 0.6rem; }
+.more-menu summary {
+  cursor: pointer; color: var(--muted); font-size: 0.9rem; list-style: none; padding: 0.3rem 0;
+}
+.more-menu summary::-webkit-details-marker { display: none; }
+.more-menu summary::before { content: '⌄ '; }
+.more-menu[open] summary::before { content: '⌃ '; }
+.more-menu summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.more-actions { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.6rem; }
+.more-caption { margin: 0.6rem 0 0; }
+.demo-hint { text-align: center; margin-top: 1rem; }
+
+/* The course picker inside the modal. */
+.picker-list { display: grid; gap: 0.4rem; margin-top: 0.7rem; }
+
+/* An in-button spinner for a call in flight. The label goes transparent rather than away,
+   so the button keeps its width and the row under it does not jump. */
+.btn.is-busy { position: relative; color: transparent; opacity: 0.65; cursor: default; }
+.btn.is-busy::after {
+  content: ""; position: absolute; width: 16px; height: 16px; border-radius: 50%;
+  border: 2px solid currentColor; border-top-color: transparent;
+  color: var(--muted); animation: spin 0.7s linear infinite;
+}
+.btn-primary.is-busy::after { color: var(--accent-ink); }
+
+/* ---- the study loop ---- */
+/* One dominant control per card (W-C5): Submit carries `.btn-primary`, Hint and Exit stay
+   ghost weight. `.actions` puts the primary LAST in the source order and first on screen,
+   so a keyboard reaches Hint before Submit while the eye meets Submit first. */
+.task-header { margin-bottom: 0.8rem; }
+.task-meta { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
+.topic-name { font-weight: 650; }
+.topic-module { font-size: 0.8rem; color: var(--muted); }
+.task-right {
+  display: flex; align-items: center; gap: 0.8rem; margin-top: 0.35rem;
+  color: var(--muted); font-size: 0.9rem;
+}
+.timer { font-weight: 600; color: var(--text); }
+/* The drill countdown turns red at three seconds. Color alone carries no meaning here —
+   the number beside it is the message. */
+.timer.urgent { color: var(--bad); }
+.btn-exit { margin-left: auto; }
+.why-chip {
+  margin-top: 0.5rem; font-size: 0.82rem; color: var(--muted);
+  background: var(--surface-2); border-radius: 8px; padding: 0.35rem 0.6rem;
+  display: inline-block;
+}
+.chip-lesson, .chip-review, .chip-drill { background: var(--accent-weak); color: var(--accent); }
+.chip-quiz, .chip-multi-step { background: var(--surface-2); }
+.chip-quality { background: var(--surface-2); }
+.chip-xp { background: var(--good-weak); color: var(--good); }
+.chip-tag { background: var(--bad-weak); color: var(--bad); font-family: var(--mono); }
+
+.problem-card { padding: 1.3rem 1.2rem; }
+.actions { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+.actions .btn-primary { order: 2; }
+.hint-list { margin-bottom: 0.8rem; }
+.hint {
+  background: var(--accent-weak); border-radius: 10px; padding: 0.6rem 0.8rem;
+  margin-bottom: 0.5rem; font-size: 0.95rem;
+}
+.hint-text { display: inline; }
+/* W-A4: one pointer, however many hints follow it. */
+.reference-lesson {
+  margin-top: 0.6rem; padding: 0.6rem 0.8rem; border-radius: 8px;
+  background: var(--accent-weak); color: var(--muted); font-size: 0.92rem;
+}
+
+/* The verdict. `--good` and `--bad` fill the wash; the tick, the cross and the title carry
+   the meaning, so the panel reads the same with no color at all. */
+.feedback { margin-top: 1rem; padding: 1rem; border-radius: 12px; border: 1px solid var(--border); }
+.feedback-correct { background: var(--good-weak); border-color: var(--good); }
+.feedback-incorrect { background: var(--bad-weak); border-color: var(--bad); }
+.feedback-rework { background: var(--surface-2); }
+.feedback-head { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem; flex-wrap: wrap; }
+.feedback-mark { display: inline-flex; }
+.feedback-correct .feedback-mark { color: var(--good); }
+.feedback-incorrect .feedback-mark { color: var(--bad); }
+.feedback-title { font-weight: 700; font-size: 1.05rem; }
+.feedback-text { margin: 0.3rem 0 0.6rem; }
+.feedback .actions { margin-top: 0.8rem; }
+.error-tags { display: flex; flex-wrap: wrap; gap: 0.3rem; margin-bottom: 0.4rem; }
+.re-solve { font-size: 0.92rem; }
+.solution { margin-top: 0.6rem; padding-top: 0.6rem; border-top: 1px dashed var(--border); }
+.solution-label {
+  font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;
+  color: var(--muted); margin-bottom: 0.2rem;
+}
+.solution-text { overflow-x: auto; }
+.remediation { margin: 0.3rem 0 0 1rem; padding: 0; }
+
+/* The async diagnosis (A4). It lands seconds after the panel around it painted, so it sits
+   at the bottom: nothing already on screen moves when the prose arrives. */
+.diagnosis { margin-top: 0.6rem; padding-top: 0.6rem; border-top: 1px dashed var(--border); }
+.diagnosis-note { margin: 0.2rem 0 0; font-size: 0.92rem; }
+.diagnosis-prose { margin-top: 0.2rem; font-size: 0.95rem; overflow-x: auto; }
+.summary-card { text-align: center; }
+.summary-card .stat-grid { margin: 1rem 0; }
+
+/* The lesson's worked example: taught before it is practised. */
+.teach-badge {
+  font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.05em;
+  color: var(--accent); border: 1px solid var(--accent); border-radius: 999px;
+  padding: 0.15rem 0.6rem;
+}
+.teach-card { border-left: 3px solid var(--accent); }
+.teach-concept { font-size: 1.05rem; margin-bottom: 1rem; }
+.teach-example {
+  background: var(--surface-2); border-radius: 10px; padding: 0.9rem 1.1rem;
+  margin-bottom: 1.1rem;
+}
+.teach-label {
+  font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.05em;
+  color: var(--muted); margin: 0.2rem 0 0.3rem;
+}
+.teach-problem { font-weight: 600; margin-bottom: 0.6rem; }
+.teach-steps { color: var(--muted); }
+
+/* ---- responsive ---- */
+@media (max-width: 400px) {
+  .view { padding: 1rem 0.75rem 4rem; }
+  .card { padding: 1rem; }
+  .ring svg { width: 96px; height: 96px; }
+  .stat-value { font-size: 1.15rem; }
+  .problem-text { font-size: 1.08rem; }
+  /* The ring first, the numbers under it: a 120px ring beside a heading overflows here. */
+  .status-head { flex-direction: column-reverse; align-items: flex-start; }
+}
+
+/* Strip every animation and transition when the reader asks for less motion (spec section
+   4.5). It sits at the end so it wins over every rule above it. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
