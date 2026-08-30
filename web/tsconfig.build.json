@@ -1,0 +1,16 @@
+// The PRODUCTION typecheck: `src/` only.
+//
+// `tsconfig.json` covers src + test + the config files at the root. The Docker build stage
+// copies `web/` and runs `npm run build`, and a production build must typecheck what it
+// EMITS — not the test tree, and not the Node config files.
+//
+// `npm run types` still checks everything, tests included, and `npm run check` runs both.
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    // Vitest's globals are not in scope for production code. An `import { it } from
+    // 'vitest'` that strays into `src/` must fail the build, not ship.
+    "types": ["vite/client"]
+  },
+  "include": ["src"]
+}
