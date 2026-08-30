@@ -293,14 +293,17 @@ The tier a deterministic miss records (`docs/plans/M5.md` D-M5-2): the plan uses
 for a blank; the async diagnosis adds tags and prose but never moves the tier. The 1.0
 model chose the tier per miss. Say if you want a different tier.
 
-### Decision for the owner (M2)
+### Decision taken (M2, ruling `D6-dec`, 2026-08-30)
 
-The D6 rule makes a decimal approximation of an exact value WRONG in 2.0: `0.3333333333`
+The D6 rule made a decimal approximation of an exact value WRONG in 2.0: `0.3333333333`
 for `1/3`, `11.31370850` for `8√2` (240 generated pairs, 1.0 accepted them at 1e-6).
-A decidable alternative exists: accept a learner decimal when it equals the exact value
-rounded to the digits the learner typed (exact rational arithmetic, no floats) and flag
-it `notation`, the way the dot-thousands reading is flagged. This changes verdicts on
-real learner input, so it is the owner's call; the code path is a small M2 follow-up.
+The owner took the decidable alternative, and `docs/DECISIONS.md` row `D6-dec` records
+it. A learner decimal is correct when it equals the exact value rounded half-to-even to
+the digits the learner typed (exact rational arithmetic, no float), and the verdict
+carries the `notation` tag, the way the dot-thousands reading does. FIX-D6 ships it as
+rung 5 of `cadus_core::answer::check`, with the module `cadus_core::answer::rounding`.
+Of the 240 pairs, 151 are correct with the tag, 5 stay wrong (three nested radicals and
+two fractions), and 84 name `pi` or `e` and get no verdict (V2).
 
 Known items before the M2 fix wave were: the lexer refused a multi-letter run (`3xy^2`, 11
 corpus answers on 9 topics) — split unknown letter runs into single-letter variables

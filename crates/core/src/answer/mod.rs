@@ -11,7 +11,9 @@
 //! 2. [`parse`] lexes that source into tokens and reads the tokens into an
 //!    [`Ast`], or refuses it with [`Undecidable`].
 //! 3. [`canon`] reads an [`Ast`] into the canonical form [`Canon`].
-//! 4. [`check`] compares two answers and returns an [`Outcome`].
+//! 4. [`check`] compares two answers and returns an [`Outcome`]. [`rounding`]
+//!    owns one rung of it: a learner decimal that is the exact rounding of the
+//!    authored value (D6, ruling `D6-dec`).
 //!
 //! # A construct is a token, not a string rewrite
 //!
@@ -31,12 +33,14 @@ pub mod check;
 pub mod lexer;
 pub mod normalize;
 pub mod parse;
+pub mod rounding;
 
 pub use ast::{Ast, Const, IneqOp};
 pub use canon::{Atom, Basis, Canon, Monomial, Poly, canon};
-pub use check::{Outcome, Verdict, canonical_form, check, same_answer};
+pub use check::{Outcome, Verdict, canonical_form, check, notation_note, same_answer};
 pub use normalize::{MAX_ANSWER_CHARS, Normalized, normalize};
 pub use parse::{parse, parse_with_functions};
+pub use rounding::{Rounding, rounds_to};
 
 /// The answer is outside the decidable grammar, so the checker has no verdict (V2).
 ///

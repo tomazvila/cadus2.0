@@ -357,11 +357,18 @@ group 5 today, and a lower-case reading of it would make `HT` and `TH` the same 
 `≈ 36.9°` and `≈ 58.0°` (`right-triangle-trig`), `≈ 14` and `≈ 20`
 (`solving-right-triangles-sides`). The `≈` character is outside the grammar.
 
-**Action.** Author the exact value and state the rounding in the prompt. Do not add a
-tolerance rung. D6 forbids a float in an equality decision, and a tolerance is exactly the
-1.0 rung that makes `1/3` equal `0.333333` and not equal `0.33333` (spec section 3.2). If
-a rounded answer must stay authored, give the exemplar the rounded number as the exact
-expected value and drop the `≈`.
+**Action.** Author the exact value, state the rounding in the prompt, and drop the `≈`.
+The learner who then types the rounded decimal is still correct. Ruling `D6-dec` reads a
+learner decimal as the exact rounding of the authored value, half-to-even, to the digits
+the learner typed. The verdict carries the `notation` tag, and the note names the exact
+form. The action forbids a TOLERANCE, and it no longer forbids a decimal reading. D6
+forbids a float in an equality decision. The 1.0 tolerance is the rung that makes `1/3`
+equal `0.333333` and not equal `0.33333` (spec section 3.2). The rounding rule accepts
+both of those, and it refuses `0.3334`. Two limits stay. An authored `pi` or `e` gives a
+learner decimal no verdict, because no exact rational bound brackets a transcendental
+constant. A nested radical such as `sqrt(2 + sqrt(3))` keeps the wrong verdict, because
+its canonical form is a polynomial over a `sqrt` call. For both, author the rounded number
+as the exact expected value.
 
 ### 3.11 A value with a unit — 1 answer, 1 topic
 

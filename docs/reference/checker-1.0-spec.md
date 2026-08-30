@@ -229,6 +229,33 @@ eq('6','6.0000000001', numeric) = True     # float rung, 1e-9 * max(1,6) = 6e-9
 eq('6','6.000001',     numeric) = False
 ```
 
+**The 2.0 rule, beside the 1.0 rule** (D6, `docs/DECISIONS.md` row `D6-dec`). 2.0 keeps no
+tolerance. It reads the DIGITS the learner typed. A learner decimal is correct when it
+equals the authored value rounded half-to-even to that digit count. The verdict then
+carries the `notation` tag. Exact rational arithmetic decides it, so no float enters the
+decision. A 1.0 tolerance reads the SIZE of the number instead, which is why 1.0 accepts
+`0.333333` for `1/3` and refuses `0.33333`.
+
+| Pair | 1.0 | why | 2.0 | why |
+|---|---|---|---|---|
+| `1/3` / `0.333333` | True | 3.3e-7 ≤ 1e-6 | correct + `notation` | the 6-digit rounding of 1/3 |
+| `1/3` / `0.33333` | False | 3.3e-6 > 1e-6 | correct + `notation` | the 5-digit rounding of 1/3 |
+| `1/3` / `0.3334` | False | 6.7e-5 > 1e-6 | wrong | 0.3333 is the 4-digit rounding |
+| `2/3` / `0.667` | False | 3.3e-4 > 1e-6 | correct + `notation` | the 3-digit rounding of 2/3 |
+| `1/8` / `0.12` | False | 5e-3 > 1e-6 | correct + `notation` | the tie goes to the even digit |
+| `1/8` / `0.13` | False | 5e-3 > 1e-6 | wrong | half-to-even picks 0.12 |
+| `8*sqrt(2)` / `11.31370850` | True | 1.0e-9 ≤ 1.1e-5 | correct + `notation` | the 8-digit rounding |
+| `6` / `6.0000000001` | True | 1e-10 ≤ 6e-9 | wrong | 6.0000000000 is the 10-digit rounding |
+| `1/1000` / `1/1001` | True | 1.0e-6 ≤ 1e-6 | wrong | a fraction carries no digit count |
+| `pi` / `3.14` | False | 1.6e-3 > 1e-6 | Undecidable | no exact rational bound brackets `pi` |
+
+The 2.0 rule reads a learner DECIMAL and nothing else. A learner integer and a learner
+fraction carry no digit count, so they keep the equality verdict. The authored side must be
+an exact rational or a rational combination of square roots; `pi`, `e`, and a nested
+radical such as `sqrt(2 + sqrt(3))` take no rounding verdict.
+`crates/core/src/answer/rounding.rs` holds the rule, and
+`crates/core/tests/answer_decimal.rs` holds its literal pairs.
+
 **Comparison order in words:** identical strings after normalization; else exact float
 agreement to 1e-9; else, if both sides parse to free-symbol-free real finite numbers,
 `evalf` agreement to 1e-6; else structural SymPy equality (`lhs == rhs`); else
