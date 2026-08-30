@@ -9,4 +9,5 @@
 //! Unit R1 gives the pipeline its prompts. Unit R2 adds the batch loop, and unit
 //! R3 adds the T3 accounting.
 
+pub mod job;
 pub mod prompt;
