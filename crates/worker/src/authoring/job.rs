@@ -72,6 +72,7 @@ use cadus_core::template::{
 };
 use cadus_model_client::{Attempt, Client};
 use cadus_store::Db;
+use cadus_store::content::{Admin, NewDocument, insert_pending};
 use serde_json::Value;
 use sha2::{Digest, Sha256};
 
@@ -340,6 +341,33 @@ pub async fn slots_taken(db: &Db, kp_id: &str, kind: Kind) -> Result<i64, Worker
     Ok(cadus_store::bounded(db, query).await?)
 }
 
+/// The money of one authoring pass, as the text `content_store` stores (T3).
+///
+/// The sum runs in Postgres and every term rounds to [`MONEY_SCALE`](crate::authoring::cost::MONEY_SCALE) first, so
+/// the total matches the sum of the ledger rows of the same calls and no step
+/// passes through a float (`crate::authoring::cost`).
+///
+/// The answer is `None` when the pass reported no price at all, and `None` when
+/// the total is too large for `numeric(12,6)`. An overflow inside the INSERT
+/// would raise and lose the document, so the guard runs here and the row keeps
+/// its attempt count with a NULL bill.
+///
+/// # Errors
+///
+/// Returns [`WorkerError::Store`] when the statement fails or the bound expires.
+async fn total(db: &Db, spend: &[String]) -> Result<Option<String>, WorkerError> {
+    let query = sqlx::query_scalar!(
+        r#"
+        SELECT (CASE WHEN abs(sum(round(c::numeric, 6))) < 1000000
+                     THEN sum(round(c::numeric, 6)) END)::text AS "total?"
+          FROM unnest($1::text[]) AS c
+        "#,
+        spend,
+    )
+    .fetch_one(db.pool());
+    Ok(cadus_store::bounded(db, query).await?)
+}
+
 /// What the insert of one authored document did (T3).
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Stored {
@@ -356,14 +384,16 @@ pub struct Stored {
 /// Insert one verified document as `pending`, with its bill (C6, T3; spec
 /// section 2.2, step 4).
 ///
-/// The worker connects as `cadus_admin`. `cadus_app` holds SELECT only on the
-/// table (`docs/SCHEMA.md`, finding #14), so the request tier can never write a
-/// row that already carries `status = 'approved'`.
+/// The insert itself is [`cadus_store::content::insert_pending`], the one write
+/// path of `content_store` (unit R4). The worker connects as `cadus_admin`, and
+/// `cadus_app` holds SELECT only on the table (`docs/SCHEMA.md`, finding #14),
+/// so the request tier can never write a row that already carries
+/// `status = 'approved'`. [`Admin::new`] names that connection at the call site.
 ///
 /// `attempts` is the count of model calls the pass spent, and `spend` is the
 /// price of each of those calls that reported one
-/// ([`cost::spend`](crate::authoring::cost::spend)). The statement sums the
-/// prices in Postgres, so the money reaches `numeric(12,6)` with no float step
+/// ([`cost::spend`](crate::authoring::cost::spend)). [`total`] sums the prices
+/// in Postgres, so the money reaches `numeric(12,6)` with no float step
 /// (`crate::authoring::cost`, section "The sum runs in Postgres").
 ///
 /// [`Stored::inserted`] is `true` when the row is new. A digest the table
@@ -386,30 +416,20 @@ pub async fn store_pending(
 ) -> Result<Stored, WorkerError> {
     let document: Value = serde_json::from_str(body)
         .map_err(|err| WorkerError::Config(format!("the verified body does not read: {err}")))?;
-    let query = sqlx::query!(
-        r#"
-        INSERT INTO content_store
-            (digest, kp_id, kind, body, status, authoring_attempts, authoring_cost_usd)
-        VALUES ($1, $2, $3, $4, $5, $6,
-                (SELECT CASE WHEN abs(sum(round(c::numeric, 6))) < 1000000
-                             THEN sum(round(c::numeric, 6)) END
-                   FROM unnest($7::text[]) AS c))
-        ON CONFLICT (digest) DO NOTHING
-        RETURNING authoring_cost_usd::text AS "cost_usd?"
-        "#,
-        body_digest(body),
+    let cost_usd = total(db, spend).await?;
+    let digest = body_digest(body);
+    let doc = NewDocument {
+        digest: &digest,
         kp_id,
-        kind.as_str(),
-        document,
-        STATUS_PENDING,
-        i32::try_from(attempts).unwrap_or(i32::MAX),
-        spend,
-    )
-    .fetch_optional(db.pool());
-    let row = cadus_store::bounded(db, query).await?;
+        kind: kind.as_str(),
+        body: &document,
+        authoring_attempts: attempts,
+        cost_usd: cost_usd.as_deref(),
+    };
+    let inserted = insert_pending(Admin::new(db), &doc).await?;
     Ok(Stored {
-        inserted: row.is_some(),
-        cost_usd: row.and_then(|row| row.cost_usd),
+        inserted,
+        cost_usd: if inserted { cost_usd } else { None },
     })
 }
 
