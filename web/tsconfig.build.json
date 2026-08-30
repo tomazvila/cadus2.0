@@ -10,7 +10,14 @@
   "compilerOptions": {
     // Vitest's globals are not in scope for production code. An `import { it } from
     // 'vitest'` that strays into `src/` must fail the build, not ship.
-    "types": ["vite/client"]
+    "types": ["vite/client"],
+    "paths": {
+      "@/*": ["./src/*"],
+      // The vendored library, typed for production. Under `tsconfig.json` this same
+      // specifier maps to the test double instead. `paths` REPLACES the inherited object,
+      // so `@/*` has to be repeated here.
+      "/vendor/cytoscape/cytoscape.esm.min.mjs": ["./src/vendor-cytoscape.d.ts"]
+    }
   },
   "include": ["src"]
 }

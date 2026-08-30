@@ -455,6 +455,66 @@ p { margin: 0.4rem 0; }
 .frontier-block { margin-top: 0.8rem; }
 .frontier-list { margin: 0.3rem 0 0 1.1rem; padding: 0; }
 
+/* ---- the curriculum map (S11) ---- */
+/* The study column is 720px (`--maxw`); the map goes wider, because a 1,090-node graph in
+   one column is a smear (spec section 4.2). */
+.view:has(.view-map) { max-width: 1180px; }
+.map-head { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; }
+.map-readout { color: var(--muted); font-size: 0.85rem; }
+.map-controls {
+  display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; margin: 0.8rem 0;
+}
+.map-spacer { flex: 1 1 auto; }
+.map-select {
+  min-height: 44px; padding: 0 0.6rem;
+  background: var(--surface); color: var(--text);
+  border: 1px solid var(--border); border-radius: 10px;
+}
+.map-legend { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.8rem; }
+.legend-chip {
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  padding: 0.25rem 0.6rem; border-radius: 999px;
+  background: var(--surface-2); font-size: 0.85rem;
+}
+.legend-dot { width: 10px; height: 10px; border-radius: 999px; background: var(--muted); }
+/* One dot color per mastery state, and the same tokens `mapStyle.ts` paints the canvas
+   with, so the legend and the canvas cannot drift apart. */
+.ld-frontier { background: var(--accent); }
+.ld-learning { background: var(--info); }
+.ld-placed { background: var(--good); }
+.ld-floor { background: var(--accent-2); }
+.ld-untouched { background: var(--muted); }
+.map-body { position: relative; }
+/* The canvas keeps its height in both modes, so the map does not jump when the reader
+   comes back from the list. */
+.map-canvas {
+  position: relative; height: 60vh; min-height: 320px;
+  background: var(--bg-dark); border: 1px solid var(--border); border-radius: var(--radius);
+  overflow: hidden;
+}
+.map-host { position: absolute; inset: 0; }
+.map-empty { padding: 3rem 1rem; text-align: center; }
+.map-panel {
+  position: absolute; right: 1rem; bottom: 1rem; max-width: 320px; padding: 0.8rem 1rem;
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+.map-panel h2 { font-size: 1.1rem; }
+.map-panel-id { color: var(--muted); font-size: 0.8rem; }
+.map-panel-state { display: flex; align-items: center; gap: 0.4rem; }
+/* The screen-readable equivalent of the canvas. It replaces the canvas rather than sitting
+   under it: a permanently-mounted list is 1,090 rows rebuilt on every render. */
+.map-list { display: flex; flex-direction: column; gap: 0.5rem; }
+.map-list-group {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 0.6rem 0.9rem;
+}
+.map-list-group summary {
+  display: flex; align-items: center; gap: 0.5rem; cursor: pointer; min-height: 44px;
+}
+.map-list-group ul { margin: 0.4rem 0 0; padding-left: 1.2rem; }
+.map-list-group li { padding: 0.15rem 0; }
+
 /* ---- responsive ---- */
 @media (max-width: 400px) {
   .view { padding: 1rem 0.75rem 4rem; }

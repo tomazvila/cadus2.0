@@ -10,6 +10,16 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': here('./src'),
+
+      // `src/views/map/cytoscape-loader.ts` imports this ROOT-ABSOLUTE specifier, which the
+      // browser resolves against the origin Caddy serves `/vendor/` from. Vitest resolves
+      // nothing there, so without this alias every map test fails to load. It also hands
+      // the map a deterministic double instead of a 434 KB canvas library in jsdom.
+      //
+      // A TEST-config fix only. Production imports the vendored file (`vite.config.ts`
+      // marks `/vendor/**` external, and `scripts/check-bundle-csp.mjs` proves the build
+      // holds it).
+      '/vendor/cytoscape/cytoscape.esm.min.mjs': here('./test/mocks/cytoscape.ts'),
     },
   },
 

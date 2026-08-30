@@ -51,10 +51,13 @@ export default defineConfig({
       // `/vendor/**` is served, not bundled.
       //
       // The curriculum map does `import('/vendor/cytoscape/cytoscape.esm.min.mjs')` — a
-      // RUNTIME url the browser resolves against the same origin. Rollup otherwise tries to
-      // read it off disk relative to the project root and fails the build. External also
-      // keeps the 434 KB library out of the entry chunk, so the views that never open the
-      // map never pay for it.
+      // RUNTIME url the browser resolves against the same origin, so the 434 KB library
+      // stays out of the entry chunk and the views that never open the map never pay for
+      // it. The tree lives under `public/`, and Vite refuses a STATIC import of a file
+      // there ("Cannot import non-asset file … which is inside /public"), so
+      // `src/views/map/cytoscape-loader.ts` carries `@vite-ignore` on that one import and
+      // the specifier reaches the browser untouched. This rule stays as the backstop for
+      // any `/vendor/**` specifier Rollup does resolve.
       external: [/^\/vendor\//],
     },
   },

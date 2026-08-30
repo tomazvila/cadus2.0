@@ -11,7 +11,11 @@
     // import type-errors while the tests pass.
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      // The vendored Cytoscape build, under the config the TESTS use: the specifier maps to
+      // the double, exactly as the Vitest alias does. `tsconfig.build.json` maps the same
+      // specifier to `src/vendor-cytoscape.d.ts` for production.
+      "/vendor/cytoscape/cytoscape.esm.min.mjs": ["./test/mocks/cytoscape.ts"]
     },
 
     "strict": true,
