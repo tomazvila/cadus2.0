@@ -11,20 +11,23 @@
 //!
 //! | Route | Lock | Events | `web_states` | `learner_models` |
 //! |---|---|---|---|---|
-//! | `GET /api/status` | no | none | no | read |
+//! | `GET /api/status` | no | read the open session | no | read |
 //! | `GET /api/graph` | no | none | no | read |
 //! | `GET /api/modules` | no | none | no | read |
 //! | `GET /api/export` | no | read all | no | no |
 //! | `POST /api/enroll` | yes | append `enrolled` | clear | write |
 //! | `POST /api/session/start` | yes | append `session_start` | bind | write |
 //! | `POST /api/session/end` | yes | append `session_end` | clear | write |
-//! | `GET /api/session/plan` | yes | none | READ ONLY | read |
+//! | `GET /api/session/plan` | yes | read the open session | READ ONLY | read |
 //!
 //! "none" in the Events column means the route reads no event row when the
 //! cursor already stands at the head of the log: the cached model and the cached
-//! [`SessionView`] answer it (F15, F18). `GET /api/export` is the one route that
-//! reads every row, and section 8 of `docs/reference/l1-budget.md` gives it no
-//! p95 for that reason.
+//! [`SessionView`] answer it (F15, F18). "read the open session" is the range
+//! read of [`view_for_open_session`], the window of the OPEN SESSION and never
+//! the whole log: the two routes need it for the drill cadence of the running
+//! session (M5 review 2, findings V3 and V9). `GET /api/export` is the one route
+//! that reads every row, and section 8 of `docs/reference/l1-budget.md` gives it
+//! no p95 for that reason.
 //!
 //! `GET /api/session/plan` writes NOTHING. Trap W3 states the rule: the plan
 //! reports each task through [`crate::state::WebState::plan_progress`], a plain
@@ -55,7 +58,7 @@ use axum::response::{IntoResponse, Response};
 use cadus_core::config::Config;
 use cadus_core::curriculum::{Curriculum, TopicIdx};
 use cadus_core::event::{
-    Enrolled, Event, SchemaVersion, SessionEnd, SessionStart, Slug, Timestamp,
+    Enrolled, Event, SchemaVersion, SessionEnd, SessionStart, Slug, TaskType, Timestamp,
 };
 use cadus_core::learner::{LearnerModel, TopicState};
 use cadus_core::projector::ProjectionInput;
@@ -64,8 +67,8 @@ use cadus_core::selector::{
     is_course_complete, is_mastered, mastered_set, nearly_due, quiz_is_due, schedule_drills,
 };
 use cadus_store::state::{
-    EventRow, SessionView, append_event, clear_web_state, load_events, load_web_state,
-    lock_web_state, project_and_save, project_current, save_web_state,
+    EventRow, SessionView, append_event, clear_web_state, load_events, load_events_after,
+    load_web_state, lock_web_state, project_and_save, project_current, save_web_state,
 };
 use cadus_store::{Db, StoreError, begin_tenant, bounded};
 use serde_json::{Value, json};
@@ -233,6 +236,64 @@ pub(crate) async fn read_state(
     })
 }
 
+// --------------------------------------------------------------------------- //
+// The ONE view of the open session (M5 review 2, findings V3 and V9)
+// --------------------------------------------------------------------------- //
+
+/// Take the drills the OPEN session itself served out of the cadence map.
+///
+/// [`cadus_core::selector::schedule_drills`] drops a topic whose last drill is
+/// inside the 3.5-day window, and [`crate::serve::record_first_serve`] stamps
+/// that instant at the FIRST serve of the drill. Without this step the drill
+/// task leaves the plan while the learner still works through its 20 questions.
+///
+/// The cadence therefore reads "no NEW drill of this topic for 3.5 days", and a
+/// drill the open session already works on stays in that session's plan. The
+/// rule is the queue stability of `_reserve_open_plan` (`selector.py:1630`): a
+/// task the session already serves keeps its id and its place.
+fn forget_own_drills(view: &mut SessionView, events: &[EventRow], session: &str) {
+    for row in events {
+        if let Event::TaskServed(body) = &row.event
+            && body.session.as_deref() == Some(session)
+            && body.task_type == TaskType::Drill
+            && let Some(topic) = body.topic.as_ref()
+        {
+            view.last_drill_at.remove(topic.as_str());
+        }
+    }
+}
+
+/// Read the events of the OPEN SESSION and repair the drill cadence of `view`.
+///
+/// It is the ONE view every route composes from: `POST /api/task/{id}/serve`
+/// (through [`crate::serve::open`]), `GET /api/session/plan`, and
+/// `GET /api/status`. Before M5 review 2 the repair lived inside the serve
+/// alone, so the first serve of a drill took that drill out of the plan listing
+/// and turned `drill_due` false while the serve route still handed out its
+/// questions 2 to 20 (findings V3 and V9). Three derivations of one view drift
+/// apart; one derivation cannot.
+///
+/// The answer is the window itself, in `seq` order and `session_start` first,
+/// because the serve route reads it again for the tasks this session served.
+/// The window starts AT the `session_start` that opened the session, so the read
+/// asks for the events after the line before it. It is NOT the whole log (F15,
+/// F18): a task id is `{session}-{task_type}-{topic}`, so every event of a task
+/// of the open session stands in this window.
+pub(crate) async fn view_for_open_session(
+    state: &AppState,
+    tx: &mut Transaction<'_, Postgres>,
+    user_id: sqlx::types::Uuid,
+    view: &mut SessionView,
+    session: &str,
+) -> Result<Vec<EventRow>, ApiError> {
+    let after = view.session_start_seq.unwrap_or(0).saturating_sub(1);
+    let events = bound(&state.db, load_events_after(tx, user_id, after))
+        .await
+        .map_err(|err| failed(&err))?;
+    forget_own_drills(view, &events, session);
+    Ok(events)
+}
+
 /// Write the D-S6 document of this tenant, inside the caller's transaction.
 pub(crate) async fn write_state(
     db: &Db,
@@ -320,10 +381,16 @@ pub async fn status(
     let projection = bound(&state.db, project_current(&mut tx, user_id, &input))
         .await
         .map_err(|err| failed(&err))?;
+    let model = projection.model;
+    let mut view = projection.view;
+    // The dashboard reads `drill_due` off the same repaired view the plan and
+    // the serve read (V3, V9). A learner with no open session has no window to
+    // read, and no drill of an open session to forget.
+    if let Some(session) = view.current_session.clone() {
+        view_for_open_session(&state, &mut tx, user_id, &mut view, &session).await?;
+    }
     tx.rollback().await.map_err(|err| failed(&err.into()))?;
 
-    let model = projection.model;
-    let view = projection.view;
     let stack = &view.enrollment_stack;
     let course = stack.last().map(String::as_str);
     let (frontier_count, due_count, nearly_count) = due_counts(
@@ -811,10 +878,13 @@ pub async fn session_plan(
         ));
     };
     let scratch = read_state(&state.db, &mut tx, user_id).await?;
+    let mut view = projection.view;
+    // The listing composes from the SAME repaired view the serve route composes
+    // from (V3, V9): a drill this session already serves keeps its place.
+    view_for_open_session(&state, &mut tx, user_id, &mut view, &session).await?;
     tx.rollback().await.map_err(|err| failed(&err.into()))?;
 
     let graph = &content.curriculum;
-    let view = projection.view;
     let model = projection.model;
     let course = view.enrollment_stack.last().map(String::as_str);
     let plan = compose_plan(content, &view, &model, &session, now);

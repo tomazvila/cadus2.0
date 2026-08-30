@@ -36,8 +36,8 @@
 //!
 //! - **The counting gate runs ALWAYS** (it needs the test DSN and nothing else).
 //!   It asserts the LITERAL row counts and the LITERAL fold cursor of every
-//!   sample: the open read decodes [`OPEN_SESSION_EVENTS`] rows and never
-//!   [`SEEDED_EVENTS`], and the grade fold advances by exactly one line. Those
+//!   sample: the open read decodes the open session's window and never
+//!   [`SEEDED_EVENTS`], and each fold advances by exactly one line. Those
 //!   numbers are deterministic, so a contended runner cannot move them, and a
 //!   whole-log read that comes back fails them at once.
 //! - **The timing gate runs under `CADUS_BENCH`**, the switch every other
@@ -51,6 +51,17 @@
 //! Without `CADUS_BENCH` the run still takes [`samples`] samples and still
 //! prints the percentiles; it takes three of them instead of a hundred, so the
 //! counting gate stays cheap.
+//!
+//! # What the serve half measures (M5 review 2, findings V1 and V8)
+//!
+//! The serve appends `task_served` the FIRST time a session serves a task, and
+//! it folds and saves in the same transaction, so the fold cursor never falls
+//! behind the head of the log. The append is idempotent per task id: the first
+//! serve of a task pays one fold of the whole log, and the 19 hand-offs after it
+//! append nothing and fold nothing. [`serve_once`] drives both shapes. The run
+//! times the ONE first serve on its own and prints it, and the p50 and p95 of
+//! the table then describe the repeated hand-off, which is the shape of the
+//! load. Section 8 of `docs/reference/l1-budget.md` records both numbers.
 
 #![allow(
     clippy::unwrap_used,
@@ -68,7 +79,7 @@ use cadus_core::config::Config;
 use cadus_core::curriculum::{Curriculum, load_curriculum};
 use cadus_core::event::{
     AnswerKind, Attempt, AttemptProblem, Event, SchemaVersion, Secs, SessionEnd, SessionStart,
-    Slug, TaskType, Timestamp, WorkQuality,
+    Slug, TaskServed, TaskType, Timestamp, WorkQuality,
 };
 use cadus_core::learner::problem_text_hash;
 use cadus_core::pool::{
@@ -77,7 +88,7 @@ use cadus_core::pool::{
 use cadus_core::projector::ProjectionInput;
 use cadus_store::pool::{NewInstance, insert_batch, pop_with_ring_tx};
 use cadus_store::state::{
-    append_event, load_events_after, load_web_state, lock_web_state, project_and_save,
+    EventRow, append_event, load_events_after, load_web_state, lock_web_state, project_and_save,
     project_current, save_web_state,
 };
 use cadus_store::test_support::TestDb;
@@ -494,6 +505,17 @@ async fn restore(pool: &PgPool, user: Uuid, attempt_id: &str, claimed: Uuid, sna
     .unwrap();
 }
 
+/// The count of event rows the log of `user` holds.
+async fn log_len(pool: &PgPool, user: Uuid) -> i64 {
+    sqlx::query_scalar!(
+        r#"SELECT count(*) AS "n!" FROM events WHERE user_id = $1"#,
+        user
+    )
+    .fetch_one(pool)
+    .await
+    .unwrap()
+}
+
 /// Release one claimed pool row, outside the measured window.
 async fn release(pool: &PgPool, claimed: Uuid) {
     sqlx::query!(
@@ -518,7 +540,8 @@ struct Read {
     rows: usize,
     /// Whether the fold took the full-replay branch.
     replayed: bool,
-    /// The `seq` an appended event took, when the transaction appended one.
+    /// The `seq` an appended event took, or 0 when the transaction appended
+    /// none.
     seq: i64,
     /// The `seq` the fold reached.
     folded_through: i64,
@@ -527,12 +550,14 @@ struct Read {
 /// The read `cadus_web::serve::open` performs, statement for statement.
 ///
 /// The advisory lock, `project_current`, the OPEN SESSION's own event window,
-/// and the D-S6 document. No step reads the whole log.
+/// and the D-S6 document. No step reads the whole log. The answer carries the
+/// window itself, because the serve route reads it for the tasks this session
+/// already served (D-M5-8).
 async fn open_once(
     tx: &mut sqlx::Transaction<'_, sqlx::Postgres>,
     user: Uuid,
     input: &ProjectionInput<'_>,
-) -> Result<(usize, i64, Json), StoreError> {
+) -> Result<(Vec<EventRow>, i64, Json), StoreError> {
     lock_web_state(tx, user).await?;
     let projection = project_current(tx, user, input).await?;
     let after = projection
@@ -546,10 +571,42 @@ async fn open_once(
         !projection.replayed,
         "the open read took the full-replay branch, so the fixture cache is stale"
     );
-    Ok((events.len(), projection.through_seq, doc))
+    Ok((events, projection.through_seq, doc))
+}
+
+/// Whether this session already served `task` (`serve::served_task_ids`).
+fn already_served(events: &[EventRow], session: &str, task: &str) -> bool {
+    events.iter().any(|row| match &row.event {
+        Event::TaskServed(body) => body.session.as_deref() == Some(session) && body.task_id == task,
+        _ => false,
+    })
+}
+
+/// The `task_served` event the FIRST serve of the task of day `day` appends
+/// (D-M5-8).
+fn task_served_event(day: usize) -> Event {
+    Event::TaskServed(TaskServed {
+        ts: Timestamp::from_micros(BASE_US + (day as i64) * DAY_US),
+        session: Some(session_id(day)),
+        v: SchemaVersion,
+        task_id: task_id(day),
+        task_type: TaskType::Review,
+        topic: Some(Slug::new(TOPIC).unwrap()),
+        kp: None,
+        problems: Vec::new(),
+        component_topics: Vec::new(),
+        seed: None,
+    })
 }
 
 /// The D-O1 serve transaction, as `cadus_web::serve::serve` runs it.
+///
+/// The FIRST serve of the task appends `task_served` and folds and saves in the
+/// same transaction (M5 review 2, findings V1 and V8). The append is idempotent
+/// per task id, so every later serve of the run finds the line in the window,
+/// appends nothing, and leaves the cursor on the head of the log. That is the
+/// hand-off the learner repeats: one task takes 20 questions and one cadence
+/// line.
 async fn serve_once(
     pool: &PgPool,
     user: Uuid,
@@ -557,19 +614,33 @@ async fn serve_once(
     avoid: &Avoid<'_>,
 ) -> Result<Read, StoreError> {
     let mut tx = begin_tenant(pool, user).await?;
-    let (rows, through, doc) = open_once(&mut tx, user, input).await?;
+    let (events, through, doc) = open_once(&mut tx, user, input).await?;
+    let rows = events.len();
     let claimed = pop_with_ring_tx(&mut tx, user, KP_ID, avoid)
         .await?
         .claimed
         .expect("the pool holds an unclaimed row");
+
+    let day = SESSIONS - 1;
+    let (seq, replayed, folded_through) =
+        if already_served(&events, &session_id(day), &task_id(day)) {
+            (0, false, through)
+        } else {
+            let seq = append_event(&mut tx, user, &task_served_event(day), None)
+                .await?
+                .expect("the cadence event carries no attempt id, so the append writes");
+            let projection = project_and_save(&mut tx, user, input, None).await?;
+            (seq, projection.replayed, projection.through_seq)
+        };
+
     save_web_state(&mut tx, user, &doc).await?;
     tx.commit().await?;
     Ok(Read {
         claimed: claimed.row.id,
         rows,
-        replayed: false,
-        seq: 0,
-        folded_through: through,
+        replayed,
+        seq,
+        folded_through,
     })
 }
 
@@ -582,7 +653,8 @@ async fn grade_once(
     avoid: &Avoid<'_>,
 ) -> Result<Read, StoreError> {
     let mut tx = begin_tenant(pool, user).await?;
-    let (rows, _, doc) = open_once(&mut tx, user, input).await?;
+    let (events, _, doc) = open_once(&mut tx, user, input).await?;
+    let rows = events.len();
 
     let event = attempt_event(SESSIONS - 1, OPEN_SESSION_EVENTS, attempt_id);
     let seq = append_event(&mut tx, user, &event, Some(attempt_id))
@@ -624,6 +696,29 @@ async fn benchmark_long_log_serve_holds_the_l1_segment() {
         let avoid = Avoid::new(&ring, &task);
         let app = db.pool_as("cadus_app", 1).await;
 
+        // The FIRST serve of the task appends the cadence line and folds the
+        // whole log once (V1, V8). It is a different transaction from the 19
+        // hand-offs that follow it, so the run times it on its own, prints it,
+        // and pins its two literals. No segment of
+        // `docs/reference/l1-budget.md` covers it yet: section 8 records the
+        // number and names the open question.
+        let start = Instant::now();
+        let first = serve_once(&app, user, &input, &avoid)
+            .await
+            .unwrap_or_else(|err| panic!("the first serve of the task failed: {err}"));
+        let first_serve_ns = start.elapsed().as_nanos();
+        assert_eq!(
+            first.seq,
+            SEEDED_EVENTS as i64 + 1,
+            "the first serve appended the cadence line at another seq"
+        );
+        assert_eq!(
+            first.folded_through,
+            SEEDED_EVENTS as i64 + 1,
+            "the first serve left the fold cursor behind the head of the log"
+        );
+        release(&db.admin, first.claimed).await;
+
         for _ in 0..warmups() {
             let read = serve_once(&app, user, &input, &avoid)
                 .await
@@ -648,7 +743,8 @@ async fn benchmark_long_log_serve_holds_the_l1_segment() {
         let limit = budget(SERVE_P95_BUDGET_NS);
         println!(
             "long-log serve ({}): p50 {} ns, p95 {} ns, p99 {} ns, max {} ns over {} samples, \
-             log {} events, {} rows decoded per request, budget {} ns",
+             log {} events, {} rows decoded per request, budget {} ns, \
+             first serve of the task {} ns",
             profile(),
             times.p50,
             times.p95,
@@ -658,6 +754,7 @@ async fn benchmark_long_log_serve_holds_the_l1_segment() {
             SEEDED_EVENTS,
             reads[0].rows,
             limit,
+            first_serve_ns,
         );
         if std::env::var_os(BENCH_VAR).is_some() {
             write_artifact(
@@ -666,7 +763,8 @@ async fn benchmark_long_log_serve_holds_the_l1_segment() {
                     "{{\n  \"benchmark\": \"B-long-log-serve\",\n  \"profile\": {:?},\n  \
                      \"log_events\": {},\n  \"rows_decoded\": {},\n  \"samples\": {},\n  \
                      \"serve_ns\": {{\"p50_ns\": {}, \"p95_ns\": {}, \"p99_ns\": {}, \
-                     \"max_ns\": {}}},\n  \"p95_budget_ns\": {}\n}}\n",
+                     \"max_ns\": {}}},\n  \"p95_budget_ns\": {},\n  \
+                     \"first_serve_ns\": {}\n}}\n",
                     profile(),
                     SEEDED_EVENTS,
                     reads[0].rows,
@@ -676,6 +774,7 @@ async fn benchmark_long_log_serve_holds_the_l1_segment() {
                     times.p99,
                     times.max,
                     limit,
+                    first_serve_ns,
                 ),
             );
         }
@@ -685,18 +784,36 @@ async fn benchmark_long_log_serve_holds_the_l1_segment() {
                 !read.replayed,
                 "serve sample {index} took the full-replay branch; a read route never does"
             );
-            // The open read decodes the OPEN SESSION and nothing older. A number
-            // that reaches SEEDED_EVENTS means the whole-log read came back.
+            // The open read decodes the OPEN SESSION and nothing older: its 100
+            // seeded events plus the ONE cadence line the first serve of the run
+            // appended. A number that reaches SEEDED_EVENTS means the whole-log
+            // read came back.
             assert_eq!(
-                read.rows, OPEN_SESSION_EVENTS,
+                read.rows,
+                OPEN_SESSION_EVENTS + 1,
                 "serve sample {index} decoded another window"
             );
-            // A serve appends nothing, so the cursor stands at the log head.
+            // The first serve of the run appended the cadence line before the
+            // warm-ups. Every sample after it finds that line in the window and
+            // appends nothing, so `seq` stays 0.
             assert_eq!(
-                read.folded_through, SEEDED_EVENTS as i64,
+                read.seq, 0,
+                "serve sample {index} appended a second cadence line for one task"
+            );
+            // The serve folds and saves whenever it appends, so the cursor
+            // stands at the head of the log after every serve (V1, V8).
+            assert_eq!(
+                read.folded_through,
+                SEEDED_EVENTS as i64 + 1,
                 "serve sample {index} folded to another cursor"
             );
         }
+        // One task, one cadence line, however many hand-offs the run drove.
+        assert_eq!(
+            log_len(&db.admin, user).await,
+            SEEDED_EVENTS as i64 + 1,
+            "the serve run grew the log by more than the one cadence line"
+        );
         assert!(
             !timed() || times.p95 < limit,
             "the p95 serve transaction over {SEEDED_EVENTS} events took {} ns, and the budget \

@@ -331,15 +331,24 @@ File: `crates/store/tests/bench_long_log.rs`.
   produces, and it is the shape a per-request whole-log read fails on.
 - **What it measures.** Two transactions, both built out of the production store
   functions the handlers call. The serve half is `cadus_web::serve::open` plus
-  the pool pop and the state write; the grade half adds the one append and
-  `project_and_save`.
+  the pool pop, the `task_served` append of a task served for the FIRST time,
+  the fold and save that append needs, and the state write; the grade half is the
+  same shape with the attempt append, and it folds and saves on every sample.
+- **The serve half has two shapes** (M5 review 2, findings V1 and V8). The first
+  serve of a task appends the cadence line and folds the whole log ONCE, the
+  term section 8 names on the grade row. The 19 hand-offs after it append
+  nothing, fold nothing, and read the open session's window alone. The run times
+  the one first serve on its own and prints it, and the p50 and p95 of the table
+  describe the repeated hand-off.
 - **Gate policy.** The file carries two gates. The COUNTING gate runs always: it
-  holds the literal row count the open read decodes (100, the open session) and
+  holds the literal row count the open read decodes (101: the open session's 100
+  events and the one cadence line), the literal `seq` of that cadence line, and
   the literal cursor the fold reaches, so a whole-log read that comes back fails
   it, and no clock enters the assertion. The TIMING gate runs under
   `CADUS_BENCH`, like every other benchmark of this document, and fails at p95
   above 100 ms (serve) and 150 ms (grade). A debug build holds a budget ten
-  times wider.
+  times wider. The one first serve carries NO timing gate: see the open question
+  in section 8.
 - **Artifacts.** `benchmark-b-long-log-serve.json` and
   `benchmark-b-long-log-grade.json`.
 
@@ -398,7 +407,11 @@ the checker ran nowhere.
 
 Build box, 2026-08-29, release profile, one test thread, one `scripts/gate.sh`
 run. The numbers are one run, not a promise; the artifacts of each CI run carry
-the trend.
+the trend. The two serve rows of the 20,000-event fixture come from a
+`scripts/gate.sh` run of 2026-08-30 on the same box, after the M5 review 2 fix
+wave gave the serve its append (findings V1 and V8). That box carried three
+other builds during the run, so both rows read higher than the quiet numbers the
+bullets below name.
 
 | Benchmark | Segment | p50 | p95 | p99 | max | Budget |
 |---|---|---|---|---|---|---|
@@ -408,7 +421,8 @@ the trend.
 | A | `compose_session` over 1,090 topics, 200 samples | 3,225,251 ns | 3,303,850 ns | 3,395,587 ns | 4,799,996 ns | 20 ms |
 | B | serve transaction, 500 samples | 1,775,822 ns | 1,928,299 ns | 3,523,444 ns | 5,085,911 ns | 100 ms |
 | B | grade transaction, 200 samples | 6,721,186 ns | 7,587,387 ns | 10,069,463 ns | 10,216,820 ns | 150 ms |
-| B | serve transaction, 20,000-event log, 100 samples | 2,532,990 ns | 2,969,148 ns | 4,490,576 ns | 5,166,486 ns | 100 ms |
+| B | serve transaction, 20,000-event log, 100 samples | 4,246,350 ns | 8,087,918 ns | 10,316,572 ns | 10,857,669 ns | 100 ms |
+| B | FIRST serve of a task, 20,000-event log, 1 sample | 167,190,613 ns | — | — | — | none yet |
 | B | grade transaction, 20,000-event log, 100 samples | 99,521,747 ns | 112,881,445 ns | 119,705,726 ns | 119,715,831 ns | 150 ms |
 
 The four M5 U12 measurements read this way:
@@ -432,10 +446,35 @@ same profile. They read this way:
   fixture measured a serve p95 of 389,378,016 ns and a grade p95 of
   639,033,961 ns. Both passed their whole L\* budget on the log read alone, and
   the serve number is 3.9 times its 100 ms segment.
-- **After the fix**, the serve p95 is 2,969,148 ns, which is 33 times under its
-  segment and 131 times faster than before. The serve transaction reads no event
-  row beyond the cursor line and the open session's own 100 events, so the number
-  no longer grows with the log.
+- **After the fix**, the serve p95 is 8,087,918 ns, which is 12 times under its
+  segment and 48 times faster than before. The serve transaction reads no event
+  row beyond the cursor line and the open session's own 101 events, so the number
+  no longer grows with the log. That row is the repeated hand-off: the second to
+  twentieth question of a task, and every re-serve of a live problem. Two runs of
+  2026-08-30 read a p95 of 2,886,748 ns and 8,087,918 ns, and the table records
+  the WORSE of the two; the higher run shared this box with three other builds.
+- **The FIRST serve of a task is a different transaction**, and the M5 review 2
+  fix wave made it so (findings V1 and V8). It appends the `task_served` line of
+  the drill cadence, so it folds and saves in the same transaction and the fold
+  cursor stays on the head of the log. That fold takes the incremental branch of
+  `project_current`, which reads the whole log ONCE — the same read plus fold the
+  grade row pays. The two runs read 113,995,523 ns and 167,190,613 ns, and the
+  table again records the worse one. It is 20 times the cost of the hand-off
+  beside it, and it runs once per task and per session, which is once per 20
+  questions.
+- **The first serve carries no timing gate, and that is an OPEN QUESTION.** The
+  number stands 1.67 times OVER the 100 ms Postgres segment of section 2 (1.14
+  times on the quiet run), so a learner 20,000 events deep passes the whole
+  150 ms L1 budget on the first hand-off of each task. The two ways out both
+  need code no M5 fix unit owns: a `cadus_store::state` entry point that SAVES
+  the projection a caller
+  already folded, instead of re-reading and re-folding inside
+  `project_and_save`; or the cached light-index document inside the projector
+  crate that the grade row below also asks for. Either one removes the whole-log
+  term from both rows. Until then the benchmark prints the number, the artifact
+  records it, and no assertion holds it: no code in this tree holds that budget
+  today, and a budget the tree fails is not a gate. The old serve row asserted
+  "a serve appends nothing"; that assertion is gone, because the serve appends.
 - The grade p95 is 112,881,445 ns, which is 1.33 times under its 150 ms segment.
   Two runs on this box read 103,942,116 ns and 112,881,445 ns, and the table
   records the WORSE of the two. It is the TIGHTEST row of this table, and the
@@ -446,9 +485,9 @@ same profile. They read this way:
   104 ms and the fold is about 25 ms. Removing the last whole-log term needs a
   cached light-index document inside the projector crate, which FIX-M5-G does
   not own. Until then this row is the one to watch on a slower runner.
-- Both numbers grow with the log, so both are a function of the 20,000 events
-  the fixture seeds. A learner ten times deeper would move the grade row and not
-  the serve row.
+- The grade row and the first-serve row grow with the log, so both are a function
+  of the 20,000 events the fixture seeds. A learner ten times deeper would move
+  those two rows and not the serve hand-off row.
 
 Benchmark A allocates 107,680 times for 2,000 iterations, which is 53.84 per
 instance. The bound is `ALLOCATION_BOUND = 108_218`, the measured count plus 0.5
