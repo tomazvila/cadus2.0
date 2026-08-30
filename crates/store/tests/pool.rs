@@ -120,12 +120,20 @@ fn new_instance(index: usize) -> NewInstance {
 // (1) The acceptance check: two concurrent pops never return one row.
 // --------------------------------------------------------------------------
 
-/// D7: `FOR UPDATE SKIP LOCKED` gives 200 distinct rows to 2 tasks × 100 pops.
+/// D7: `FOR UPDATE SKIP LOCKED` never gives one row to two concurrent pops.
 ///
 /// The pool holds exactly 200 rows and the two tasks take exactly 200 pops
 /// between them, so a single repeated row makes the distinct count fall under
-/// 200 and the test fails. Both literals are written out here; neither one is
-/// read from the code.
+/// the serve count and the test fails.
+///
+/// The serve count itself is NOT 200. One open pop holds
+/// `FOR UPDATE ... SKIP LOCKED LIMIT 8` on up to 8 unclaimed rows until it
+/// commits, and it claims one of them, so a pop of the other task answers
+/// `claimed: None` whenever the rows left over are all locked. That answer is
+/// correct, and it happens only at the tail: it needs 8 or fewer unclaimed rows
+/// left. The run therefore serves at least `200 - 8` rows, and every served row
+/// is a different row (M5 review 2, finding V11). Every literal here is written
+/// out; none is read from the code.
 #[tokio::test(flavor = "multi_thread", worker_threads = 4)]
 async fn two_concurrent_pops_never_return_the_same_row() {
     TestDb::with(|db| async move {
@@ -144,36 +152,84 @@ async fn two_concurrent_pops_never_return_the_same_row() {
         let mut served: Vec<Uuid> = one.await.expect("task one finishes");
         served.extend(two.await.expect("task two finishes"));
 
-        assert_eq!(served.len(), 200, "2 tasks × 100 pops give 200 serves");
+        assert!(
+            served.len() <= 200,
+            "the pool holds 200 rows, so it cannot serve {} of them",
+            served.len()
+        );
+        assert!(
+            served.len() >= 200 - 8,
+            "a pop answers no row only when 8 or fewer unclaimed rows are left, so the run \
+             serves at least 192 rows; it served {}",
+            served.len()
+        );
         let distinct: BTreeSet<Uuid> = served.iter().copied().collect();
         assert_eq!(
             distinct.len(),
-            200,
+            served.len(),
             "every serve must be a different row; {} rows came back twice",
-            200 - distinct.len()
+            served.len() - distinct.len()
         );
 
         let left = unclaimed_depth(&db.admin, user, KP).await.unwrap();
-        assert_eq!(left, 0, "200 pops claim all 200 rows");
+        assert_eq!(
+            usize::try_from(left).unwrap() + served.len(),
+            200,
+            "every one of the 200 rows is either claimed or still in the pool"
+        );
     })
     .await;
 }
 
 /// Pop `count` times and return the claimed row ids.
+///
+/// A pop that answers `claimed: None` adds no id, and the loop goes on. Two
+/// conditions give that answer, and neither one is a failure of the pop: the
+/// pool is empty, or a concurrent transaction holds every unclaimed row under
+/// `FOR UPDATE ... SKIP LOCKED`. The caller states the property over the rows
+/// the helper got (M5 review 2, finding V11).
 async fn pop_many(pool: &PgPool, user: Uuid, count: usize) -> Vec<Uuid> {
     let ring = Ring::new();
     let task = TaskMemory::new();
     let avoid = Avoid::new(&ring, &task);
     let mut ids = Vec::with_capacity(count);
     for _ in 0..count {
-        let claimed = pop_with_ring(pool, user, KP, &avoid)
+        let pop = pop_with_ring(pool, user, KP, &avoid)
             .await
-            .expect("the pop runs")
-            .claimed
-            .expect("the pool still holds a row");
-        ids.push(claimed.row.id);
+            .expect("the pop runs");
+        if let Some(claimed) = pop.claimed {
+            ids.push(claimed.row.id);
+        }
     }
     ids
+}
+
+/// D7 at the tail: a pop on a drained pool answers `claimed: None`.
+///
+/// The pool holds 8 rows and the run takes 9 pops. The first 8 pops claim the 8
+/// rows, each one a different row, and the 9th finds nothing. `claimed: None` is
+/// the answer of the pop, not a failure: a concurrent pop meets the same answer
+/// whenever the other transaction holds every unclaimed row under
+/// `FOR UPDATE ... SKIP LOCKED` (M5 review 2, finding V11).
+#[tokio::test]
+async fn a_pop_on_a_drained_pool_answers_no_row() {
+    TestDb::with(|db| async move {
+        let user = db.seed_user("pop-tail@example.test").await;
+        seed_rows(&db.admin, user, KP, 8).await;
+
+        let served = pop_many(&db.app, user, 9).await;
+
+        assert_eq!(
+            served.len(),
+            8,
+            "8 rows give 8 serves, and the 9th pop finds no row"
+        );
+        let distinct: BTreeSet<Uuid> = served.iter().copied().collect();
+        assert_eq!(distinct.len(), 8, "every serve must be a different row");
+        let left = unclaimed_depth(&db.admin, user, KP).await.unwrap();
+        assert_eq!(left, 0, "8 pops claim all 8 rows");
+    })
+    .await;
 }
 
 // --------------------------------------------------------------------------

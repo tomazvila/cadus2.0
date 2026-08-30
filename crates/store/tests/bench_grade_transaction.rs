@@ -41,7 +41,9 @@
 //! sample the harness therefore restores the fixture with the admin pool,
 //! OUTSIDE the measured window: it deletes the appended event and the job row,
 //! releases the pool row, and rewrites the `learner_models` row to the snapshot
-//! it took before the run.
+//! it took before the FIRST grade of the run. That snapshot names the head of
+//! the restored log, so every sample folds its appended attempt on the
+//! incremental branch, which is the branch the request path takes.
 //!
 //! # Gate policy
 //!
@@ -409,8 +411,14 @@ struct Graded {
     seq: i64,
     /// The pool row the transaction claimed for the next problem.
     claimed: Uuid,
-    /// Whether the fold took the full-replay branch.
+    /// Whether the step-7 fold took the full-replay branch.
     replayed: bool,
+    /// Whether the step-5 fold took the full-replay branch.
+    resume_replayed: bool,
+    /// The `seq` the step-5 fold reached, before the append.
+    resumed_through: i64,
+    /// The `seq` the step-7 fold reached, after the append.
+    folded_through: i64,
     /// The count of events the fold read.
     events: usize,
 }
@@ -435,7 +443,7 @@ async fn grade_once(
     let mut tx = begin_tenant(pool, user).await?;
     lock_web_state(&mut tx, user).await?;
     let events = load_events(&mut tx, user).await?;
-    project_current(&mut tx, user, input).await?;
+    let resumed = project_current(&mut tx, user, input).await?;
     let doc = load_web_state(&mut tx, user)
         .await?
         .unwrap_or_else(|| json!({}));
@@ -457,8 +465,40 @@ async fn grade_once(
         seq,
         claimed: claimed.row.id,
         replayed: projection.replayed,
+        resume_replayed: resumed.replayed,
+        resumed_through: resumed.through_seq,
+        folded_through: projection.through_seq,
         events: events.len(),
     })
+}
+
+/// Run `rounds` untimed grade transactions and return the snapshot every later
+/// restore writes back.
+///
+/// The snapshot is taken BEFORE the first grade of the run, and every restore
+/// of the run writes back that one snapshot. A snapshot taken AFTER a grade
+/// carries a `through_seq` one line ahead of the log the same restore leaves
+/// behind, and a cursor the log does not hold sends the step-5 fold down the
+/// full-replay branch and the step-7 fold down the "nothing new" branch: the
+/// appended attempt is never folded and the row goes back unchanged (M5 review
+/// 2, finding V10).
+async fn warm_up(
+    db: &TestDb,
+    app: &PgPool,
+    user: Uuid,
+    input: &ProjectionInput<'_>,
+    avoid: &Avoid<'_>,
+    rounds: usize,
+) -> Snapshot {
+    let snap = snapshot(&db.admin, user).await;
+    for index in 0..rounds {
+        let id = format!("warmup-{index}");
+        let graded = grade_once(app, user, input, &id, index, avoid)
+            .await
+            .unwrap_or_else(|err| panic!("warm-up {index} did not grade: {err}"));
+        restore(&db.admin, user, &id, graded.claimed, &snap).await;
+    }
+    snap
 }
 
 // ---------------------------------------------------------------------------
@@ -486,18 +526,12 @@ async fn benchmark_b_grade_transaction_holds_the_l2_segment() {
         // the transaction and never the contention of a pool (spec 10.2).
         let app = db.pool_as("cadus_app", 1).await;
 
-        for index in 0..WARMUPS {
-            let id = format!("warmup-{index}");
-            let graded = grade_once(&app, user, &input, &id, index, &avoid)
-                .await
-                .unwrap_or_else(|err| panic!("warm-up {index} did not grade: {err}"));
-            let snap = snapshot(&db.admin, user).await;
-            restore(&db.admin, user, &id, graded.claimed, &snap).await;
-        }
-
-        // The snapshot is taken after the warm-ups, so every timed sample starts
-        // from the same `learner_models` row.
-        let snap = snapshot(&db.admin, user).await;
+        let snap = warm_up(&db, &app, user, &input, &avoid, WARMUPS).await;
+        assert_eq!(
+            snap.through_seq,
+            SEEDED_ATTEMPTS as i64 + 1,
+            "the restored cursor must name the head of the restored log"
+        );
         let mut samples: Vec<u128> = Vec::with_capacity(SAMPLES);
         let mut graded_rows: Vec<Graded> = Vec::with_capacity(SAMPLES);
         for index in 0..SAMPLES {
@@ -561,11 +595,97 @@ async fn benchmark_b_grade_transaction_holds_the_l2_segment() {
                 "sample {index} took the full-replay branch, which no grade of a fresh attempt \
                  takes (spec section 4.3)"
             );
+            assert!(
+                !graded.resume_replayed,
+                "sample {index} replayed the whole log BEFORE the append, which no grade of a \
+                 warm fixture takes (spec section 4.3)"
+            );
+            assert_eq!(
+                graded.resumed_through,
+                SEEDED_ATTEMPTS as i64 + 1,
+                "sample {index} resumed from a cursor that is not the head of the log"
+            );
+            assert_eq!(
+                graded.folded_through,
+                SEEDED_ATTEMPTS as i64 + 2,
+                "sample {index} did not fold the appended attempt"
+            );
         }
         assert!(
             times.p95 < P95_BUDGET_NS,
             "the p95 grade transaction took {} ns, and the budget is {P95_BUDGET_NS} ns",
             times.p95
+        );
+    })
+    .await;
+}
+
+/// The harness invariant: the restored fixture folds the appended attempt.
+///
+/// The benchmark restores the fixture between samples, so the restored state
+/// must be the state a grade meets in a deployment: a `learner_models` cursor
+/// that names the HEAD of the log. A cursor one line ahead of the log sends the
+/// step-5 fold down the full-replay branch and the step-7 fold down the "nothing
+/// new" branch. The appended attempt is then never folded and the row goes back
+/// unchanged, so the timed samples measure a transaction no request runs (M5
+/// review 2, finding V10).
+///
+/// This test needs no `CADUS_BENCH`: it takes no measurement, and the shape of
+/// the harness is a property of every run.
+#[tokio::test]
+async fn the_restored_fixture_folds_the_appended_attempt() {
+    if std::env::var_os(TEST_DSN_VAR).is_none() {
+        println!("SKIPPED the harness check: {TEST_DSN_VAR} is not set");
+        return;
+    }
+    TestDb::with(|db| async move {
+        let graph = curriculum();
+        let cfg = Config::default();
+        let (user, ring, task) = seed(&db, &graph, &cfg).await;
+        let input = ProjectionInput::new(&graph, &cfg, Timestamp::from_micros(BASE_US));
+        let avoid = Avoid::new(&ring, &task);
+        let app = db.pool_as("cadus_app", 1).await;
+
+        let snap = warm_up(&db, &app, user, &input, &avoid, 2).await;
+        assert_eq!(
+            snap.through_seq,
+            SEEDED_ATTEMPTS as i64 + 1,
+            "the snapshot the run restores must name the head of the restored log"
+        );
+
+        let graded = grade_once(&app, user, &input, "check-0", 0, &avoid)
+            .await
+            .unwrap_or_else(|err| panic!("the checked grade did not run: {err}"));
+        restore(&db.admin, user, "check-0", graded.claimed, &snap).await;
+
+        assert_eq!(
+            graded.events,
+            SEEDED_ATTEMPTS + 1,
+            "the grade folded a log of another length"
+        );
+        assert_eq!(
+            graded.seq,
+            SEEDED_ATTEMPTS as i64 + 2,
+            "the grade appended at another seq"
+        );
+        assert!(
+            !graded.resume_replayed,
+            "the fold before the append replayed the whole log, so the restored cursor names a \
+             line the log does not hold"
+        );
+        assert_eq!(
+            graded.resumed_through,
+            SEEDED_ATTEMPTS as i64 + 1,
+            "the fold before the append reached another seq than the head of the log"
+        );
+        assert_eq!(
+            graded.folded_through,
+            SEEDED_ATTEMPTS as i64 + 2,
+            "the fold after the append did not reach the appended attempt"
+        );
+        assert!(
+            !graded.replayed,
+            "the fold after the append replayed the whole log"
         );
     })
     .await;
