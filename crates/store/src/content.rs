@@ -325,3 +325,184 @@ fn missing(digest: &str) -> StoreError {
         key: digest.to_string(),
     }
 }
+
+// --------------------------------------------------------------------------
+// R5: the review reads
+// --------------------------------------------------------------------------
+
+/// The count of approved templates one knowledge point needs (spec section 3.2,
+/// "The bank warning carries over").
+///
+/// A knowledge point serves from its APPROVED slots only, so a bank with fewer
+/// than three approved templates repeats a smaller set of problem shapes than
+/// the bank was sized for (1.0 `scripts/review_templates.py:100-112`).
+pub const BANK_TARGET: i64 = 3;
+
+/// The rows one [`review_list`] call returns, at most.
+///
+/// The review screen reads a queue, not an archive. A deployment with more
+/// pending documents than this reads the rest through the `kp` filter.
+pub const LIST_LIMIT: i64 = 200;
+
+/// Which documents [`review_list`] returns.
+///
+/// A `None` field applies no filter of that kind.
+#[derive(Debug, Clone, Copy, Default)]
+pub struct ReviewFilter<'a> {
+    /// One of [`STATUS_PENDING`], [`STATUS_APPROVED`], [`STATUS_REJECTED`].
+    pub status: Option<&'a str>,
+    /// One of [`KIND_TEMPLATE`], [`KIND_TEACH`], [`KIND_HINT_LADDER`],
+    /// [`KIND_DIAGNOSIS`].
+    pub kind: Option<&'a str>,
+    /// The serving key `"<topic>/<kp>"`.
+    pub kp_id: Option<&'a str>,
+}
+
+/// One row of the review queue (spec section 3.2, `GET /api/admin/content`).
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct ReviewItem {
+    /// The content address of the body.
+    pub digest: String,
+    /// The serving key of the document.
+    pub kp_id: String,
+    /// The kind of the document.
+    pub kind: String,
+    /// The review status of the document.
+    pub status: String,
+    /// How many model calls the authoring pass spent (T3).
+    pub authoring_attempts: i32,
+    /// What the authoring pass cost, as the exact text of the column (T3).
+    pub cost_usd: Option<String>,
+    /// When the row entered the table.
+    pub created_at: DateTime<Utc>,
+    /// The body, for the one-line summary the caller writes.
+    pub body: Json,
+    /// How many APPROVED templates this knowledge point holds.
+    ///
+    /// The count is of kind [`KIND_TEMPLATE`] alone, because the bank the
+    /// warning is about is the template bank.
+    pub approved_templates: i64,
+}
+
+/// The review queue, newest first (C6).
+///
+/// The read takes any executor: `content_store` holds curriculum content, it is
+/// outside row-level security, and `cadus_app` holds SELECT on it. The two
+/// WRITE paths take [`Admin`], and they are the only ones that need it.
+///
+/// The order is `created_at` descending with the digest as the tie break, so two
+/// rows written in one statement give one stable page.
+///
+/// # Errors
+///
+/// Returns [`StoreError::Db`] when the statement fails.
+pub async fn review_list<'e, E>(
+    executor: E,
+    filter: &ReviewFilter<'_>,
+) -> Result<Vec<ReviewItem>, StoreError>
+where
+    E: PgExecutor<'e>,
+{
+    let rows = sqlx::query!(
+        r#"
+        SELECT c.digest AS "digest!", c.kp_id AS "kp_id!", c.kind AS "kind!",
+               c.status AS "status!", c.authoring_attempts AS "authoring_attempts!",
+               c.authoring_cost_usd::text AS "cost_usd?",
+               c.created_at AS "created_at!", c.body AS "body!",
+               (SELECT count(*) FROM content_store a
+                 WHERE a.kp_id = c.kp_id AND a.kind = $4 AND a.status = $5)
+                 AS "approved_templates!"
+        FROM content_store c
+        WHERE ($1::text IS NULL OR c.status = $1)
+          AND ($2::text IS NULL OR c.kind = $2)
+          AND ($3::text IS NULL OR c.kp_id = $3)
+        ORDER BY c.created_at DESC, c.digest
+        LIMIT $6
+        "#,
+        filter.status,
+        filter.kind,
+        filter.kp_id,
+        KIND_TEMPLATE,
+        STATUS_APPROVED,
+        LIST_LIMIT,
+    )
+    .fetch_all(executor)
+    .await?;
+
+    Ok(rows
+        .into_iter()
+        .map(|row| ReviewItem {
+            digest: row.digest,
+            kp_id: row.kp_id,
+            kind: row.kind,
+            status: row.status,
+            authoring_attempts: row.authoring_attempts,
+            cost_usd: row.cost_usd,
+            created_at: row.created_at,
+            body: row.body,
+            approved_templates: row.approved_templates,
+        })
+        .collect())
+}
+
+/// One document as the review screen reads it (spec section 3.2,
+/// `GET /api/admin/content/{digest}`).
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct StoredDoc {
+    /// The queue row of this document.
+    pub item: ReviewItem,
+    /// The reason of the last rejection, when a reviewer wrote one.
+    pub review_reason: Option<String>,
+    /// When the document was approved.
+    pub approved_at: Option<DateTime<Utc>>,
+}
+
+/// One document of any status, by its digest (C6).
+///
+/// The read is the [`review_list`] read of one row, plus the two review columns
+/// the queue line does not carry. `None` means the table holds no such digest,
+/// and the caller answers 404.
+///
+/// # Errors
+///
+/// Returns [`StoreError::Db`] when the statement fails.
+pub async fn document<'e, E>(executor: E, digest: &str) -> Result<Option<StoredDoc>, StoreError>
+where
+    E: PgExecutor<'e>,
+{
+    let row = sqlx::query!(
+        r#"
+        SELECT c.digest AS "digest!", c.kp_id AS "kp_id!", c.kind AS "kind!",
+               c.status AS "status!", c.authoring_attempts AS "authoring_attempts!",
+               c.authoring_cost_usd::text AS "cost_usd?",
+               c.created_at AS "created_at!", c.body AS "body!",
+               c.review_reason, c.approved_at,
+               (SELECT count(*) FROM content_store a
+                 WHERE a.kp_id = c.kp_id AND a.kind = $2 AND a.status = $3)
+                 AS "approved_templates!"
+        FROM content_store c
+        WHERE c.digest = $1
+        "#,
+        digest,
+        KIND_TEMPLATE,
+        STATUS_APPROVED,
+    )
+    .fetch_optional(executor)
+    .await?;
+
+    Ok(row.map(|row| StoredDoc {
+        item: ReviewItem {
+            digest: row.digest,
+            kp_id: row.kp_id,
+            kind: row.kind,
+            status: row.status,
+            authoring_attempts: row.authoring_attempts,
+            cost_usd: row.cost_usd,
+            created_at: row.created_at,
+            body: row.body,
+            approved_templates: row.approved_templates,
+        },
+        review_reason: row.review_reason,
+        approved_at: row.approved_at,
+    }))
+}
