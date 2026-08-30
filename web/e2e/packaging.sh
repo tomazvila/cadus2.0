@@ -12,6 +12,12 @@
 #      is 403;
 #   3. the built bundle passes the CSP grep.
 #
+# It reads one more fact with fact 2, because the same login answer carries it:
+# on this http origin the session cookie is the plain `cadus_session` name
+# without `Secure`, which is the posture CADUS_WEB_INSECURE_COOKIE=1 buys. A
+# browser discards a `Secure __Host-` cookie on http without a word (M6 review,
+# finding F14).
+#
 # Fact 2 needs the whole stack, because the `403` comes from the CSRF origin
 # layer of the service (`crates/web/src/origin.rs`) and not from Caddy. Only a
 # real proxy in front of a real service on ONE origin shows the difference
@@ -59,10 +65,12 @@ cd "$repo_root"
 #   PUBLIC_ORIGIN               -- the origin the CSRF layer compares against. It
 #                                  is the origin curl uses below, so a same-site
 #                                  POST matches and a cross-site one does not.
-#   CADUS_WEB_INSECURE_COOKIE=1 -- plain http. A `__Host-` cookie without Secure
-#                                  is refused by the client, and the cookie
-#                                  posture guard stops the process rather than
-#                                  serve one.
+#   CADUS_WEB_INSECURE_COOKIE=1 -- plain http, and the pair that .env.example
+#                                  ships with SITE_ADDRESS=:80. Without it the
+#                                  service writes `__Host-cadus_session; Secure`,
+#                                  which a browser discards on an http origin:
+#                                  the login answers 200 and the authed POST
+#                                  below answers 401 (M6 review, finding F14).
 #   CADUS_AUTH_ARGON2_PROFILE   -- `test` is the cheap hash. `prod` is 65536 KiB
 #                                  per signup and this check makes two.
 export COMPOSE_PROJECT_NAME="$PROJECT"
@@ -277,6 +285,7 @@ docker compose -p "$PROJECT" exec -T db \
     "UPDATE users SET email_verified_at = now() WHERE email = lower('$email')" >/dev/null
 
 login_status="$(curl -sS -o "$work/login.json" -w '%{http_code}' -c "$jar" \
+    -D "$work/login.headers" \
     -X POST "$origin/api/auth/login" \
     -H 'content-type: application/json' -H "Origin: $origin" -d "$body")"
 
@@ -290,6 +299,40 @@ fi
 if ! grep -q 'cadus_session' "$jar"; then
     echo "FAIL: csrf     -- the login set no session cookie through Caddy"
     csrf_ok=0
+fi
+
+# The cookie posture of this origin, in the answer a browser reads.
+#
+# The stack runs on http, and this check exports CADUS_WEB_INSECURE_COOKIE=1 with
+# it, which is the pair .env.example ships (M6 review, finding F14). The service
+# must then serve the plain `cadus_session` name WITHOUT `Secure`. A browser
+# discards a `Secure __Host-` cookie on http without a word, so the login answers
+# 200 and the next authed write answers 401, and only the Set-Cookie line shows
+# it.
+cookie_line="$(grep -i '^set-cookie:.*cadus_session' "$work/login.headers" | head -n 1 | tr -d '\r')"
+if [ -z "$cookie_line" ]; then
+    echo "FAIL: cookie   -- the login answer carries no session Set-Cookie header"
+    csrf_ok=0
+else
+    case "$cookie_line" in
+        *__Host-*)
+            printf 'FAIL: cookie   -- the http origin got a __Host- cookie, which the browser discards: %s\n' "$cookie_line"
+            csrf_ok=0
+            ;;
+    esac
+    case "$cookie_line" in
+        *Secure*)
+            printf 'FAIL: cookie   -- the http origin got a Secure cookie, which the browser discards: %s\n' "$cookie_line"
+            csrf_ok=0
+            ;;
+    esac
+    case "$cookie_line" in
+        *HttpOnly*) ;;
+        *)
+            printf 'FAIL: cookie   -- the session cookie carries no HttpOnly: %s\n' "$cookie_line"
+            csrf_ok=0
+            ;;
+    esac
 fi
 
 same_status="$(curl -sS -o "$work/same.json" -w '%{http_code}' -b "$jar" \
@@ -314,8 +357,8 @@ elif ! grep -q 'cross_origin_rejected' "$work/cross.json"; then
 fi
 
 if [ "$csrf_ok" = "1" ]; then
-    printf 'PASS: csrf     -- through Caddy, the cookie POST from %s is %s and the same cookie POST from https://evil.example is %s cross_origin_rejected\n' \
-        "$origin" "$same_status" "$cross_status"
+    printf 'PASS: csrf     -- through Caddy, the cookie POST from %s is %s and the same cookie POST from https://evil.example is %s cross_origin_rejected; the http origin got %s\n' \
+        "$origin" "$same_status" "$cross_status" "$cookie_line"
 else
     rc=1
 fi

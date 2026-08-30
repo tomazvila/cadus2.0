@@ -11,14 +11,31 @@
 #   a real domain (for example math.example.com) -> automatic HTTPS from
 #                                                   Let's Encrypt. Open ports 80
 #                                                   and 443 and point the DNS
-#                                                   record at this server.
+#                                                   record at this server. Pair
+#                                                   it with
+#                                                   CADUS_WEB_INSECURE_COOKIE=0.
 #   :80                                          -> http only, for a test on a
 #                                                   bare IP. .env.example ships
-#                                                   this value.
+#                                                   this value, and pairs it with
+#                                                   CADUS_WEB_INSECURE_COOKIE=1,
+#                                                   because a browser discards a
+#                                                   `Secure __Host-` cookie on
+#                                                   http (finding F14).
 #
 # Set PUBLIC_ORIGIN in .env to the SAME origin a browser types, scheme included
 # (for example https://math.example.com). The service compares `Origin` against
 # that value and against no proxy header (trap W10).
+#
+# This file is a BIND MOUNT (docker-compose.yml, the `caddy` service), and Caddy
+# reads it once, at start. A commit that edits it alone changes no image, so
+# `docker compose up -d` keeps the container and the old configuration stays in
+# force. `scripts/deploy.sh` step 4 sees the unchanged container id and reloads
+# the file into the running process (finding F12).
+#
+# `scripts/check_ops.sh` check (j) runs `caddy validate` on this file in the edge
+# image and asserts that docker-compose.yml mounts it at /etc/caddy/Caddyfile. A
+# file that Caddy refuses, or a deleted mount, fails the gate here and never on
+# the operator's server (findings F13 and F23).
 {$SITE_ADDRESS} {
 	encode zstd gzip
 
@@ -27,6 +44,11 @@
 	# /metrics reports every request series. Scrape both over the compose
 	# network (web:8080), never through Caddy. /api/health stays reachable at
 	# the edge, so a 404 here breaks no bring-up check.
+	#
+	# `scripts/check_ops.sh` check (j) asserts this matcher and the 404 below,
+	# and `web/e2e/packaging.sh` reads 404 from both paths through a running
+	# Caddy. Delete either line and the edge publishes the readiness verdict and
+	# every metric series to the internet (finding F23).
 	@ops path /api/ready /metrics /metrics/*
 	handle @ops {
 		respond 404

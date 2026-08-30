@@ -11,7 +11,7 @@
 # (`target: spa`, Caddy and the built SPA bundle). Every image check below reads
 # the `target:` key of the service and holds the rules of that image alone.
 #
-# The script does fourteen checks and prints one line per check:
+# The script does fifteen checks and prints one line per check:
 #   (a) compose  -- `docker compose config` resolves docker-compose.yml. The
 #                   placeholder values below stand in for `.env`, which the
 #                   repository never carries. Every `:?` variable of the compose
@@ -64,7 +64,13 @@
 #                        `service_completed_successfully` (finding #9).
 #   (e) deploy   -- scripts/deploy.sh exists, is executable, and parses. It is
 #                   THE upgrade procedure (finding #16), so a broken file must
-#                   fail the gate and not the operator's upgrade.
+#                   fail the gate and not the operator's upgrade. The check then
+#                   RUNS a copy of the script against a docker stub and reads its
+#                   decisions: step 4 starts web, worker and caddy together; a
+#                   caddy that kept its container gets the Caddyfile of this
+#                   commit through `caddy reload`; a caddy restart loop exits 1
+#                   and names the container; and `--no-caddy` and
+#                   DEPLOY_SKIP_CADDY exit 2.
 #   (f) invariants -- four compose facts that a review round paid for:
 #                   the `db` healthcheck probes TCP (`-h`), because the initdb
 #                   temp server answers the unix socket while port 5432 still
@@ -89,16 +95,25 @@
 #   (j) caddy    -- `deploy/Caddyfile` proxies /api/* to web:8080 and serves
 #                   everything else out of the Dockerfile's own bundle root with
 #                   an index.html fallback, so the SPA and the API share ONE
-#                   origin; and its five security headers equal SECURITY_HEADERS
-#                   of `crates/web/src/security.rs`, character for character. The
-#                   Caddyfile is a bind mount, so no image check reads it.
+#                   origin; its @ops block answers 404 for /api/ready and
+#                   /metrics; its five security headers equal SECURITY_HEADERS of
+#                   `crates/web/src/security.rs`, character for character; the
+#                   compose file MOUNTS the file at /etc/caddy/Caddyfile; and
+#                   `caddy validate` in the edge image accepts it. The Caddyfile
+#                   is a bind mount, so no image check reads it.
+#   (k) envpair  -- .env.example pairs SITE_ADDRESS with
+#                   CADUS_WEB_INSECURE_COOKIE. An http SITE_ADDRESS needs
+#                   CADUS_WEB_INSECURE_COOKIE=1, because a browser discards a
+#                   `Secure __Host-` cookie on http and the session then never
+#                   persists (M6 review, finding F14).
 #
 # Compose names a built image `<project>-<service>` when the service declares no
 # `image:` key. The script reads the project name and the service names from
 # `docker compose config --format json`, so it needs no hard-coded image name.
 #
 # Input: docker, python3, and shellcheck on PATH. The script reads no `.env`
-# file and writes no state outside the local docker image store.
+# file. It writes the deploy sandbox of check (e) under `target/check_ops/`, and
+# no other state outside the local docker image store.
 set -euo pipefail
 
 # Put the project toolchain first, if it is installed on this machine.
@@ -491,7 +506,42 @@ if [ "$commands_ok" -eq 1 ]; then
 fi
 
 # ---------------------------------------------------------------------------
-# (e) the upgrade script is present, executable, and parses
+# (e) the upgrade script is present and executable, it parses, and it decides
+#     what the runbook says it decides
+#
+# scripts/deploy.sh is THE upgrade procedure (finding #16), so a broken file must
+# fail the gate and not the operator's upgrade. Three static facts open the
+# check: the file is there, it is executable, and it parses.
+#
+# The four runs after them DRIVE the script against a DOCKER STUB. deploy.sh
+# reaches the stack through `docker` and through nothing else, so a stub `docker`
+# first on PATH plays a whole compose stack, and the gate reads the decisions of
+# the script instead of the text of it:
+#
+#   1. ok       -- a stack that comes up. The script exits 0, prints DEPLOY OK,
+#                  and its `up -d --no-deps` line names web, worker AND caddy.
+#                  The caddy container holds the SPA bundle (M6 S14), so an
+#                  upgrade without it serves the previous commit's bundle against
+#                  the new API (M6 review, finding F24). The check command it
+#                  prints carries the port that `docker compose port` reported,
+#                  and never a guessed one (finding F11).
+#   2. loop     -- caddy reports state `running` and its restart count grows: the
+#                  restart loop of the sole ingress. The script must exit 1 and
+#                  name the caddy CONTAINER. The old script read the state of web
+#                  and worker only and printed DEPLOY OK over it (finding F11).
+#   3. kept     -- compose keeps the caddy container, which is what a commit that
+#                  edits the bind-mounted deploy/Caddyfile alone gives: no image
+#                  changes and no service spec changes. The script must apply the
+#                  file to that running process with `caddy reload`; otherwise the
+#                  proxy keeps the configuration it loaded at its own start
+#                  (finding F12).
+#   4. no-caddy -- the `--no-caddy` flag and DEPLOY_SKIP_CADDY are gone. Both
+#                  skipped the container that holds the bundle, so both must stop
+#                  the script with exit 2 (finding F24).
+#
+# The sandbox is a COPY of the script under target/, beside a `.env` of its own.
+# deploy.sh reads its repository root from its own path, so the runs touch no
+# stack, and the check reads and writes no `.env` of the operator.
 # ---------------------------------------------------------------------------
 deploy_ok=1
 if [ ! -f scripts/deploy.sh ]; then
@@ -509,7 +559,182 @@ elif ! bash -n scripts/deploy.sh; then
 fi
 
 if [ "$deploy_ok" -eq 1 ]; then
-    echo "PASS: deploy   -- scripts/deploy.sh is present, executable, and parses"
+    deploy_sandbox="$repo_root/target/check_ops/deploy"
+    rm -rf "$deploy_sandbox"
+    mkdir -p "$deploy_sandbox/scripts" "$deploy_sandbox/bin"
+    cp scripts/deploy.sh "$deploy_sandbox/scripts/deploy.sh"
+    : >"$deploy_sandbox/.env"
+
+    cat >"$deploy_sandbox/bin/docker" <<'DOCKERSTUB'
+#!/usr/bin/env bash
+# The `docker` stand-in of check (e) in scripts/check_ops.sh. It plays one
+# compose stack out of DEPLOY_STUB_SCENARIO and records every call in
+# $DEPLOY_STUB_STATE/log.
+set -uo pipefail
+
+state="$DEPLOY_STUB_STATE"
+log="$state/log"
+printf '%s\n' "$*" >>"$log"
+
+# A per-key call counter. The `loop` scenario reports it as the restart count of
+# caddy, so the count grows from one poll to the next.
+bump() {
+    local file="$state/count-$1" n=0
+    if [ -f "$file" ]; then
+        n="$(cat "$file")"
+    fi
+    n=$((n + 1))
+    printf '%s' "$n" >"$file"
+    printf '%s' "$n"
+}
+
+# The container id of caddy. `kept` keeps one id over the whole run, which is
+# what compose does for a service whose image and spec did not change. Every
+# other scenario gives a new id after the `up`.
+caddy_id() {
+    if [ "$DEPLOY_STUB_SCENARIO" = "kept" ]; then
+        printf 'caddy-old'
+    elif grep -q 'up -d --no-deps' "$log"; then
+        printf 'caddy-new'
+    else
+        printf 'caddy-old'
+    fi
+}
+
+case "$*" in
+    "compose build") ;;
+    "compose up -d db") ;;
+    "compose ps db --format {{.Health}}") echo healthy ;;
+    "compose run --rm migrate") ;;
+    "compose up -d --no-deps"*) ;;
+    "compose ps -q web") echo web-1 ;;
+    "compose ps -q worker") echo worker-1 ;;
+    "compose ps -q caddy") caddy_id; echo ;;
+    # The reader form of an older deploy.sh: one JSON object for one service. The
+    # stub answers it, so a script that reads the state this way makes a wrong
+    # DECISION in the checks above and not a stub error.
+    "compose ps web --format json") echo '{"Name":"cadus2-web-1","State":"running"}' ;;
+    "compose ps worker --format json") echo '{"Name":"cadus2-worker-1","State":"running"}' ;;
+    "compose ps caddy --format json")
+        if [ "$DEPLOY_STUB_SCENARIO" = "loop" ]; then
+            echo "{\"Name\":\"cadus2-caddy-1\",\"State\":\"running\",\"RestartCount\":$(bump caddy-inspect)}"
+        else
+            echo '{"Name":"cadus2-caddy-1","State":"running","RestartCount":7}'
+        fi
+        ;;
+    "inspect --format"*)
+        case "$*" in
+            *web-1) echo "running 0 /cadus2-web-1" ;;
+            *worker-1) echo "running 0 /cadus2-worker-1" ;;
+            *caddy-*)
+                if [ "$DEPLOY_STUB_SCENARIO" = "loop" ]; then
+                    echo "running $(bump caddy-inspect) /cadus2-caddy-1"
+                else
+                    echo "running 7 /cadus2-caddy-1"
+                fi
+                ;;
+            *) exit 1 ;;
+        esac
+        ;;
+    "compose logs"*)
+        case "$*" in
+            *web*) echo "web-1  | cadus-web: listening on 0.0.0.0:8080" ;;
+            *worker*) echo "worker-1  | cadus-worker: started" ;;
+            *caddy*) echo 'caddy-1  | {"level":"info","msg":"serving initial configuration"}' ;;
+        esac
+        ;;
+    "compose exec -T caddy caddy reload"*) ;;
+    "compose port caddy 80") echo "0.0.0.0:18080" ;;
+    *)
+        printf 'docker stub: no answer for `docker %s`\n' "$*" >&2
+        exit 9
+        ;;
+esac
+exit 0
+DOCKERSTUB
+    chmod +x "$deploy_sandbox/bin/docker"
+
+    deploy_rc=0
+    deploy_out="$deploy_sandbox/out"
+    deploy_log="$deploy_sandbox/state/log"
+
+    # Run the sandbox copy under one scenario. Every further argument goes to
+    # deploy.sh. START_LIMIT_SECS drops to 4 s, so the failure path reports
+    # inside the gate and waits no 30 s for it. DEPLOY_SKIP_CADDY_UNDER_TEST
+    # carries the value of the retired variable into one run and leaves it empty
+    # in every other.
+    run_deploy() {
+        local scenario="$1"
+        shift
+        rm -rf "$deploy_sandbox/state"
+        mkdir -p "$deploy_sandbox/state"
+        : >"$deploy_log"
+        deploy_rc=0
+        DEPLOY_STUB_SCENARIO="$scenario" \
+            DEPLOY_STUB_STATE="$deploy_sandbox/state" \
+            DEPLOY_START_LIMIT_SECS=4 \
+            DEPLOY_SKIP_CADDY="${DEPLOY_SKIP_CADDY_UNDER_TEST:-}" \
+            PATH="$deploy_sandbox/bin:$PATH" \
+            bash "$deploy_sandbox/scripts/deploy.sh" "$@" >"$deploy_out" 2>&1 || deploy_rc=$?
+    }
+
+    deploy_problems=()
+
+    run_deploy ok
+    if [ "$deploy_rc" -ne 0 ]; then
+        deploy_problems+=("the ok scenario exited $deploy_rc, not 0")
+    fi
+    if ! grep -q '^DEPLOY OK$' "$deploy_out"; then
+        deploy_problems+=("the ok scenario printed no DEPLOY OK line")
+    fi
+    if ! grep -qx 'compose up -d --no-deps web worker caddy' "$deploy_log"; then
+        deploy_problems+=("step 4 of the ok scenario did not start web, worker and caddy together; the caddy container holds the SPA bundle")
+    fi
+    if ! grep -q 'curl -fsS http://127.0.0.1:18080/api/health' "$deploy_out"; then
+        deploy_problems+=("the ok scenario named another health URL than the published port 18080 of caddy")
+    fi
+
+    run_deploy loop
+    if [ "$deploy_rc" -ne 1 ]; then
+        deploy_problems+=("the caddy restart loop exited $deploy_rc, not 1")
+    fi
+    if grep -q '^DEPLOY OK$' "$deploy_out"; then
+        deploy_problems+=("the caddy restart loop reported DEPLOY OK")
+    fi
+    if ! grep -q 'cadus2-caddy-1' "$deploy_out"; then
+        deploy_problems+=("the caddy restart loop named no caddy container in its failure report")
+    fi
+
+    run_deploy kept
+    if [ "$deploy_rc" -ne 0 ]; then
+        deploy_problems+=("the kept-container scenario exited $deploy_rc, not 0")
+    fi
+    if ! grep -q '^compose exec -T caddy caddy reload' "$deploy_log"; then
+        deploy_problems+=("a caddy that kept its container got no \`caddy reload\`, so an edited deploy/Caddyfile never reaches the running proxy")
+    fi
+
+    run_deploy ok --no-caddy
+    if [ "$deploy_rc" -ne 2 ]; then
+        deploy_problems+=("\`scripts/deploy.sh --no-caddy\` exited $deploy_rc, not 2; the flag that skipped the SPA container is gone")
+    fi
+
+    DEPLOY_SKIP_CADDY_UNDER_TEST=1 run_deploy ok
+    if [ "$deploy_rc" -ne 2 ]; then
+        deploy_problems+=("DEPLOY_SKIP_CADDY=1 exited $deploy_rc, not 2; the variable that skipped the SPA container is gone")
+    fi
+
+    if [ "${#deploy_problems[@]}" -ne 0 ]; then
+        for problem in "${deploy_problems[@]}"; do
+            printf 'FAIL: deploy   -- %s\n' "$problem"
+        done
+        printf '%s\n' "the last run of scripts/deploy.sh is in $deploy_out"
+        deploy_ok=0
+        rc=1
+    fi
+fi
+
+if [ "$deploy_ok" -eq 1 ]; then
+    echo "PASS: deploy   -- scripts/deploy.sh parses; against the docker stub it starts web, worker and caddy together, reloads a kept caddy, fails a caddy restart loop by container name, and refuses --no-caddy and DEPLOY_SKIP_CADDY"
 fi
 
 # ---------------------------------------------------------------------------
@@ -744,6 +969,7 @@ fi
 #      serves, and a Content-Security-Policy that never reaches the document
 #      protects nothing.
 # ---------------------------------------------------------------------------
+caddy_ok=1
 caddy_log=""
 if caddy_log="$(python3 - <<'PYCADDY'
 import io
@@ -808,6 +1034,7 @@ rows = records(caddy)
 
 # --- 1 and 2: the two handles ----------------------------------------------
 api_body = []
+ops_body = []
 fallback_body = []
 for index, (depth, line) in enumerate(rows):
     if depth != 1 or not line.startswith("handle"):
@@ -815,6 +1042,8 @@ for index, (depth, line) in enumerate(rows):
     matcher = line[len("handle"):].strip().rstrip("{").strip()
     if matcher == "@api":
         api_body = body_of(rows, index)
+    elif matcher == "@ops":
+        ops_body = body_of(rows, index)
     elif matcher == "":
         fallback_body = body_of(rows, index)
 
@@ -836,6 +1065,40 @@ elif not any(
 
 if not fallback_body:
     problems.append(CADDYFILE + " has no matcher-less `handle` block, so no path serves the SPA")
+
+# --- the @ops guard ---------------------------------------------------------
+# /api/ready reports the datastore verdict and the age of the diagnosis backlog
+# (D-M5-6), and /metrics reports every request series. Both are for the compose
+# network. Delete the matcher or the 404 and the edge publishes them to every
+# visitor (M6 review, finding F23).
+OPS_PATHS = ("/api/ready", "/metrics")
+ops_matcher = [line for _, line in rows if line.startswith("@ops ")]
+if not ops_matcher:
+    problems.append(
+        CADDYFILE + " declares no @ops matcher, so " + " and ".join(OPS_PATHS)
+        + " answer through the edge"
+    )
+elif not ops_matcher[0].startswith("@ops path "):
+    problems.append(
+        CADDYFILE + " declares the ops matcher as " + repr(ops_matcher[0])
+        + "; it matches on `path`"
+    )
+else:
+    guarded = ops_matcher[0].split()[2:]
+    for path in OPS_PATHS:
+        if path not in guarded:
+            problems.append(
+                CADDYFILE + " does not guard " + path + " in the @ops matcher, so the"
+                " edge publishes it"
+            )
+
+if not ops_body:
+    problems.append(
+        CADDYFILE + " has no `handle @ops` block, so the @ops paths fall through to the"
+        " SPA handle and answer 200"
+    )
+elif not any(line.startswith("respond 404") for _, line in ops_body):
+    problems.append(CADDYFILE + " does not answer 404 in the `handle @ops` block")
 
 roots = [line for _, line in fallback_body if line.startswith("root ")]
 if not roots:
@@ -914,13 +1177,247 @@ PYCADDY
 )"; then
     if [ -n "$caddy_log" ]; then
         printf 'FAIL: caddy    -- %s\n' "$caddy_log"
+        caddy_ok=0
         rc=1
-    else
-        echo "PASS: caddy    -- /api proxies to web:8080, the SPA falls back to index.html under the Dockerfile's root, and the five security headers match crates/web/src/security.rs"
     fi
 else
     echo "FAIL: caddy    -- the Caddyfile check did not run"
     printf '%s\n' "$caddy_log"
+    caddy_ok=0
+    rc=1
+fi
+
+# --- 5: the compose file mounts the file this check just read ---------------
+#
+# Every fact above is a fact about `deploy/Caddyfile` in the repository. The
+# `spa` image copies the bundle and NO Caddyfile, so the container runs the
+# stock `caddy:2` configuration unless the compose file bind-mounts this file
+# over /etc/caddy/Caddyfile. Delete that one line and the deployment serves the
+# Caddy welcome page while every check above stays green (M6 review, finding
+# F23).
+mount_log=""
+if mount_log="$(printf '%s' "$config_json" | python3 -c '
+import json
+import sys
+
+TARGET = "/etc/caddy/Caddyfile"
+SOURCE = "deploy/Caddyfile"
+
+doc = json.load(sys.stdin)
+problems = []
+edge = []
+
+for name, service in sorted(doc.get("services", {}).items()):
+    build = service.get("build") or {}
+    if build.get("target") == "spa":
+        edge.append((name, service))
+
+if not edge:
+    problems.append("no service builds the spa image, so nothing serves the bundle")
+
+for name, service in edge:
+    mounts = [
+        volume
+        for volume in service.get("volumes", []) or []
+        if isinstance(volume, dict) and volume.get("target") == TARGET
+    ]
+    if not mounts:
+        problems.append(
+            "the " + name + " service mounts no file at " + TARGET
+            + "; the container then runs the stock caddy:2 configuration and serves"
+            " the Caddy welcome page"
+        )
+        continue
+    source = str(mounts[0].get("source", ""))
+    if not source.replace("\\", "/").endswith(SOURCE):
+        problems.append(
+            "the " + name + " service mounts " + repr(source) + " at " + TARGET
+            + ", and not " + SOURCE + ", which is the file this check reads"
+        )
+
+for line in problems:
+    print(line)
+')"; then
+    if [ -n "$mount_log" ]; then
+        printf 'FAIL: caddy    -- %s\n' "$mount_log"
+        caddy_ok=0
+        rc=1
+    fi
+else
+    echo "FAIL: caddy    -- the Caddyfile mount check did not run"
+    caddy_ok=0
+    rc=1
+fi
+
+# --- 6: Caddy itself accepts the file ---------------------------------------
+#
+# The reader above holds no grammar of the Caddyfile: it counts braces and reads
+# lines. A file that Caddy REFUSES therefore passed the whole ops gate, and the
+# operator met the fault as a restart loop on the sole ingress (M6 review,
+# finding F13). `caddy validate` in the edge image is the authority: it runs the
+# same Caddy build that the deployment runs, and it reads the same file through
+# the same path. SITE_ADDRESS stands in for `.env`, because the file names it.
+validate_ok=1
+while read -r image; do
+    [ -n "$image" ] || continue
+    validate_log=""
+    if ! validate_log="$(docker run --rm --entrypoint caddy \
+        -e SITE_ADDRESS="$SITE_ADDRESS" \
+        -v "$repo_root/deploy/Caddyfile:/etc/caddy/Caddyfile:ro" \
+        "$image" validate --config /etc/caddy/Caddyfile --adapter caddyfile 2>&1)"; then
+        echo "FAIL: caddy    -- caddy validate refuses deploy/Caddyfile in image $image"
+        printf '%s\n' "$validate_log"
+        validate_ok=0
+        caddy_ok=0
+        rc=1
+    fi
+done <<EOF
+$spa_images
+EOF
+
+if [ "$caddy_ok" -eq 1 ] && [ "$validate_ok" -eq 1 ]; then
+    echo "PASS: caddy    -- caddy validate accepts deploy/Caddyfile in the edge image, the compose file mounts it at /etc/caddy/Caddyfile, /api proxies to web:8080, @ops answers 404 for /api/ready and /metrics, the SPA falls back to index.html under the Dockerfile's root, and the five security headers match crates/web/src/security.rs"
+fi
+
+# ---------------------------------------------------------------------------
+# (k) .env.example pairs SITE_ADDRESS with CADUS_WEB_INSECURE_COOKIE
+#
+# The two keys are one decision. `crates/web/src/cookie.rs` writes the session
+# cookie as `__Host-cadus_session; Secure` at the default, and a browser
+# DISCARDS such a cookie on an http:// origin without a word: the login answers
+# 200 and the next authed write answers 401. A copied .env.example that serves
+# http (SITE_ADDRESS `:80`, or a `http://` origin) must therefore carry
+# `CADUS_WEB_INSECURE_COOKIE=1`, and an https deployment must not (M6 review,
+# finding F14).
+#
+# The check holds three facts about .env.example:
+#
+#   1. The two keys agree. An http SITE_ADDRESS needs an ACTIVE
+#      CADUS_WEB_INSECURE_COOKIE=1 line; a domain needs the value 0, or no
+#      active line at all.
+#   2. Each of the two blocks names the other key, so an operator who edits one
+#      reads about the other in the same place.
+#   3. The file carries both worked examples: an http one that sets the cookie
+#      knob to 1, and an https one that does not.
+# ---------------------------------------------------------------------------
+envpair_log=""
+if envpair_log="$(python3 - <<'PYENVPAIR'
+import io
+import re
+
+ENV = ".env.example"
+
+SITE = "SITE_ADDRESS"
+COOKIE = "CADUS_WEB_INSECURE_COOKIE"
+
+problems = []
+text = io.open(ENV, encoding="utf-8").read()
+lines = text.splitlines()
+
+
+def active(key):
+    """The value of the last uncommented `KEY=value` line, or None."""
+    found = None
+    for line in lines:
+        stripped = line.strip()
+        if stripped.startswith(key + "="):
+            found = stripped[len(key) + 1:].strip()
+    return found
+
+
+def block_of(key):
+    """The block that documents one key.
+
+    A block is the run of lines above the key, up to the first blank line: the
+    comment paragraph and any key that sits in the same paragraph. The ACTIVE
+    line of the key comes first. A key that only appears commented out, which is
+    what an https deployment does with the cookie knob, falls back to the first
+    commented line.
+    """
+    index = None
+    for position, line in enumerate(lines):
+        if line.strip().startswith(key + "="):
+            index = position
+    if index is None:
+        for position, line in enumerate(lines):
+            if line.strip().lstrip("#").strip().startswith(key + "="):
+                index = position
+                break
+    if index is None:
+        return ""
+    start = index
+    while start > 0 and lines[start - 1].strip() != "":
+        start -= 1
+    return "\n".join(lines[start:index + 1])
+
+
+site = active(SITE)
+cookie = active(COOKIE)
+
+if site is None:
+    problems.append(ENV + " sets no " + SITE)
+else:
+    http_only = site.startswith(":") or site.startswith("http://")
+    if http_only and cookie != "1":
+        problems.append(
+            ENV + " serves http (" + SITE + "=" + site + ") and carries "
+            + (COOKIE + "=" + cookie if cookie is not None else "no active " + COOKIE)
+            + "; a browser discards the Secure __Host- cookie on http, so the login"
+            " answers 200 and the next authed write answers 401. Set " + COOKIE + "=1"
+        )
+    if not http_only and cookie == "1":
+        problems.append(
+            ENV + " serves https (" + SITE + "=" + site + ") and carries " + COOKIE
+            + "=1, which drops Secure from the session cookie of a public site"
+        )
+
+site_block = block_of(SITE)
+cookie_block = block_of(COOKIE)
+if COOKIE not in site_block:
+    problems.append(
+        "the " + SITE + " block of " + ENV + " does not name " + COOKIE
+        + "; the two keys are one decision and must be documented as a pair"
+    )
+if SITE not in cookie_block:
+    problems.append(
+        "the " + COOKIE + " block of " + ENV + " does not name " + SITE
+        + "; the two keys are one decision and must be documented as a pair"
+    )
+
+# The two worked examples. Each is a line pair inside a comment block: one
+# SITE_ADDRESS line and one CADUS_WEB_INSECURE_COOKIE line for that scheme.
+examples = re.findall(
+    r"^#\s*(?:" + SITE + r")\s*=\s*(\S+)[^\n]*\n#\s*(?:" + COOKIE + r")\s*=\s*(\S+)",
+    text,
+    re.M,
+)
+http_example = [pair for pair in examples if pair[0].startswith((":", "http://"))]
+https_example = [pair for pair in examples if not pair[0].startswith((":", "http://"))]
+
+if not any(pair[1] == "1" for pair in http_example):
+    problems.append(
+        ENV + " carries no http example that pairs an http " + SITE + " with "
+        + COOKIE + "=1"
+    )
+if not any(pair[1] == "0" for pair in https_example):
+    problems.append(
+        ENV + " carries no https example that pairs a domain in " + SITE + " with "
+        + COOKIE + "=0"
+    )
+
+for line in problems:
+    print(line)
+PYENVPAIR
+)"; then
+    if [ -n "$envpair_log" ]; then
+        printf 'FAIL: envpair  -- %s\n' "$envpair_log"
+        rc=1
+    else
+        echo "PASS: envpair  -- .env.example pairs SITE_ADDRESS with CADUS_WEB_INSECURE_COOKIE, documents both keys together, and carries the http example (=1) and the https example (=0)"
+    fi
+else
+    echo "FAIL: envpair  -- the .env.example pair check did not run"
+    printf '%s\n' "$envpair_log"
     rc=1
 fi
 

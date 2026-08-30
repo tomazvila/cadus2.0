@@ -5,9 +5,11 @@ One server, one `docker compose` stack. No cloud vendor, no managed service.
 ## Bring-up
 
 1. Install Docker Engine with the Compose plugin, then clone this repository.
-2. `cp .env.example .env`. The copied file carries `SITE_ADDRESS=:80`, which
-   serves http only and suits a test on a bare IP. For a real site, set
-   `SITE_ADDRESS` to your domain. Every key in the `Required` block of `.env`
+2. `cp .env.example .env`. The copied file carries the http pair
+   `SITE_ADDRESS=:80` and `CADUS_WEB_INSECURE_COOKIE=1`, which serves http only
+   and suits a test on a bare IP. For a real site, set `SITE_ADDRESS` to your
+   domain AND set `CADUS_WEB_INSECURE_COOKIE=0`. The two keys are one decision;
+   see "The cookie posture" below. Every key in the `Required` block of `.env`
    has no default: each `docker compose` command fails with
    `required variable <KEY> is missing a value` until you set the key. A silent
    fallback on a domain that the operator believes is on HTTPS is worse than a
@@ -61,27 +63,45 @@ scripts/deploy.sh
 3. `docker compose run --rm migrate` -- a non-zero exit stops the script, and
    the old `web` and `worker` still serve traffic on the old schema.
 4. `docker compose up -d --no-deps web worker caddy` -- the new image takes
-   over. The script then waits up to 30 s for three facts: `web` reports state
-   `running`, `worker` reports state `running`, and `docker compose logs web`
-   holds the line `listening on`. If the deadline passes, the script prints the
-   last 40 log lines of the service that failed and exits 1.
+   over. The script then applies the Caddyfile of this commit (below) and waits
+   up to 30 s for these facts: `web`, `worker`, and `caddy` each report container
+   state `running`; none of the three restarts while the check runs;
+   `docker compose logs web` holds the line `listening on`; and a recreated
+   `caddy` logs `serving initial configuration`. The facts must hold twice, 2 s
+   apart. If the deadline passes, the script names the CONTAINER that failed,
+   prints its last 40 log lines, and exits 1.
 
 `docker compose up -d` returns 0 as soon as the containers START, not when they
 stay up, so step 4 does its own check. A `web` that reads a bad value out of
 `.env` exits 2 before it binds and `restart: unless-stopped` restarts it without
 end; the old script printed `DEPLOY OK` over a site that answered every visitor
-with 502 (review round 4, finding #13). A failed step 4 leaves the new schema in
-place: correct the fault and run the script again.
+with 502 (review round 4, finding #13). The check covers `caddy` for the same
+reason: `caddy` carries no healthcheck, so a Caddyfile that Caddy refuses left
+the sole ingress in a restart loop under a `DEPLOY OK` line (M6 review, finding
+F11). A failed step 4 leaves the new schema in place: correct the fault and run
+the script again.
 
-The default path starts all of `web`, `worker`, and `caddy`, so the proxy runs
-the image and the Caddyfile of the new commit. Step 4 then prints the check
-command with the port that Caddy really publishes, so a moved `CADDY_HTTP_PORT`
-gives the right URL.
+The script has NO flag that skips `caddy`. The `spa` image bakes the built SPA
+bundle into that container (M6 S14), so `caddy` serves every byte of the front
+end. An upgrade that starts the new `web` and leaves `caddy` alone pins the
+browser to the previous commit's bundle against the new API (M6 review, finding
+F24). `scripts/deploy.sh --no-caddy` and `DEPLOY_SKIP_CADDY=1` are gone, and each
+stops the script with exit 2. Any other argument stops it with exit 2 as well.
 
-`scripts/deploy.sh --no-caddy` starts `web` and `worker` only and leaves `caddy`
-alone. `DEPLOY_SKIP_CADDY=1 scripts/deploy.sh` does the same. Use it on a stack
-that terminates TLS somewhere else: the operator keeps that proxy, and the
-script never touches it. Any other argument stops the script with exit 2.
+`deploy/Caddyfile` is a bind mount, and Caddy reads its configuration once, at
+start. A commit that edits that file alone changes no image and no service spec,
+so compose keeps the container and the proxy goes on with the configuration it
+loaded at its own start (M6 review, finding F12). Step 4 therefore reads the
+container id of `caddy` before and after the `up`. A NEW id is a new container
+that read the file at start. The SAME id gets
+`docker compose exec caddy caddy reload --config /etc/caddy/Caddyfile
+--adapter caddyfile`, which hands the running process the file and drops no
+connection. A configuration that Caddy refuses fails that reload, and the script
+then recreates the container, where the start check reports the failure.
+
+Step 4 prints the check command with the port that Caddy really publishes, so a
+moved `CADDY_HTTP_PORT` gives the right URL. If `docker compose port caddy 80`
+prints nothing, the script prints that command instead of a guessed URL.
 
 WARNING: Do not upgrade an existing stack with `docker compose up -d`. Compose
 creates every container first and starts them second, so it destroys the
@@ -834,6 +854,49 @@ silently. `cadus-migrate` ignores `DB_CLIENT_TIMEOUT_MS` for the same reason it
 ignores the server bound, and `docker-compose.yml` does not forward it to the
 `migrate` service. `scripts/check_ops.sh` check (f) fails the gate if either key
 reaches `migrate`.
+
+## The cookie posture
+
+`SITE_ADDRESS` and `CADUS_WEB_INSECURE_COOKIE` are ONE decision. Set them
+together:
+
+| Deployment | `SITE_ADDRESS` | `CADUS_WEB_INSECURE_COOKIE` | Session cookie |
+|---|---|---|---|
+| http, on a bare IP | `:80` | `1` | `cadus_session`, `HttpOnly`, `SameSite=Lax`, `Path=/` |
+| https, on a domain | `math.example.com` | `0` (the default) | `__Host-cadus_session`, and `Secure` with it |
+
+At the default `0`, `cadus-web` writes `__Host-cadus_session` with `Secure`. A
+browser DISCARDS such a cookie on an `http://` origin, and it reports nothing:
+the login answers 200, the SPA shows a signed-in screen, and the next authed
+write answers 401. `1` serves the plain name `cadus_session` without `Secure`,
+which is the only posture an http origin can hold. The value `1` belongs to an
+http deployment alone: it drops `Secure` from the session cookie, so a public
+site on https keeps the `0` (M6 review, finding F14).
+
+`.env.example` ships the http pair, so a copied file holds a session on a bare
+IP. `scripts/check_ops.sh` check (k) reads `.env.example` and fails the gate on
+any other pairing of the two keys. The only values are `0` and `1`; `cadus-web`
+exits 2 on anything else.
+
+## The edge configuration
+
+`deploy/Caddyfile` is the whole edge: it serves the SPA bundle from `/srv` and
+proxies `/api/*` to `web:8080`, so the bundle and the API share ONE origin. The
+`caddy` service bind-mounts the file at `/etc/caddy/Caddyfile`, which is the only
+path from the repository to the running proxy: the `spa` image copies the bundle
+and no Caddyfile, so a container without that mount runs the stock `caddy:2`
+configuration and serves the Caddy welcome page.
+
+`scripts/check_ops.sh` check (j) holds the file to six facts before a commit
+lands: `caddy validate` in the edge image accepts it; the compose file mounts it
+at `/etc/caddy/Caddyfile`; `/api/*` proxies to `web:8080`; the `@ops` block
+answers 404 for `/api/ready` and `/metrics`; the SPA handle falls back to
+`index.html` under the root the Dockerfile copies the bundle to; and its five
+security headers equal `SECURITY_HEADERS` of `crates/web/src/security.rs`,
+character for character. `caddy validate` is in that list because the other
+facts are text facts: a file that Caddy REFUSES passed the whole gate before, and
+the operator met the fault as a restart loop on the sole ingress (M6 review,
+finding F13).
 
 ## Proxy ports
 
