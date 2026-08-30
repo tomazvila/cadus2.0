@@ -16,6 +16,9 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { App } from './app/App';
+// The tokens come FIRST. `app.css` reads them and declares no color of its own, so a
+// stylesheet loaded the other way round paints one frame of unstyled text.
+import './styles/tokens.css';
 import './styles/app.css';
 
 /** The ids index.html provides. Each absence is a silent failure on its own. */

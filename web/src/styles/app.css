@@ -1,33 +1,197 @@
 /*
- * Base layout for the scaffold.
+ * The design system — the rules the app shell, the primitives, and the modal need.
  *
- * S4 owns the design system: the Tokyo Night token table of spec section 4.2, in both
- * themes, with a contract test over every hex (invariant TOKENS-hex). Nothing here declares
- * a color, so that table has exactly one home.
+ * NO COLOR LITERAL BELONGS HERE. Every color reads a token from `tokens.css`, which is the
+ * one home of the section 4.2 palette; `test/tokens.test.ts` fails the build on a hex or an
+ * `rgb(...)` anywhere in this file. Later units append their own screen rules under the same
+ * rule.
  *
- * The three rules below are the ones index.html's shell needs to be readable at all.
+ * The aesthetic, from spec section 4.2: technical, precise, calm, high-signal. Hairline
+ * dividers over heavy frames. Monospace for the technical. No gamified motion.
+ *
+ * Four rules are load-bearing and are asserted by tests, not left to review:
+ *   * every focus ring is `2px solid var(--accent)` with `outline-offset: 2px`;
+ *   * every button is at least 44px tall;
+ *   * every technical readout is monospace with tabular figures;
+ *   * `prefers-reduced-motion: reduce` strips every animation and transition.
  */
 
 * { box-sizing: border-box; }
+html, body { margin: 0; }
 
 body {
-  margin: 0;
+  background: var(--bg);
+  color: var(--text);
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
 }
 
-h1, h2, h3 { line-height: 1.25; }
+h1, h2, h3 { line-height: 1.25; margin: 0 0 0.4rem; }
+h2 { font-size: 1.4rem; }
+p { margin: 0.4rem 0; }
+.muted { color: var(--muted); }
+.small { font-size: 0.85rem; }
 
-.view {
-  margin: 0 auto;
-  /* The study column. The map goes wider (spec section 4.2). */
-  max-width: 720px;
-  padding: 24px 16px;
+/* ---- the topbar ---- */
+/* It PORTALS into the `#topbar` element index.html ships, so it is a sibling of the React
+   root rather than a child of it. Sticky, hairline-bottomed, and painted on `--bg` so a
+   scrolled card passes under it instead of showing through. */
+.topbar {
+  display: flex; align-items: center; gap: 0.6rem;
+  padding: 0.8rem 1rem; border-bottom: 1px solid var(--border);
+  position: sticky; top: 0; background: var(--bg); z-index: 5;
+}
+.brand {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  background: none; border: 0; color: var(--text); cursor: pointer;
+  font-size: 1.05rem; font-weight: 650; padding: 0.2rem 0.3rem; border-radius: 8px;
+}
+.brand:hover { background: var(--surface-2); }
+.brand:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.brand-mark { display: inline-flex; width: 1.15em; height: 1.15em; }
+.brand-mark svg { width: 100%; height: 100%; display: block; }
+.demo-badge {
+  font-size: 0.7rem; font-weight: 700; letter-spacing: 0.06em;
+  color: var(--accent); border: 1px solid var(--accent); border-radius: 999px;
+  padding: 0.1rem 0.5rem;
+}
+/* The signed-in cluster, pushed to the trailing edge. */
+.topbar-user { margin-left: auto; display: inline-flex; align-items: center; gap: 0.6rem; min-width: 0; }
+.user-email {
+  font-size: 0.82rem; color: var(--muted);
+  max-width: min(44vw, 240px); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.logout-btn { min-height: 34px; padding: 0.35rem 0.7rem; font-size: 0.85rem; }
+/* The quiet Map affordance: mono, hairline, no frame until it is hovered. */
+.topbar-link {
+  background: none; border: 0; cursor: pointer;
+  font-family: var(--mono); font-size: 0.82rem; letter-spacing: 0.04em;
+  color: var(--muted); padding: 0.3rem 0.5rem; border-radius: 6px;
+}
+.topbar-link:hover { color: var(--accent); background: var(--surface-2); }
+.topbar-link:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* ---- layout ---- */
+.view { max-width: var(--maxw); margin: 0 auto; padding: 1.2rem 1rem 4rem; }
+.card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); box-shadow: var(--shadow);
+  padding: 1.2rem; margin-bottom: 1rem;
 }
 
-/* Every animation goes when the reader asks for less motion (spec section 4.5). S4 states
-   the rule again over the real component set; it belongs in the base too, so a transition
-   added before S4 lands cannot ignore it. */
+/* ---- buttons ---- */
+/* `min-height: 44px` is the minimum target size of spec section 4.5. The ghost variant is
+   the quiet secondary: no frame, muted glyphs, and it never competes with the primary. */
+.btn {
+  appearance: none; border: 1px solid var(--border); background: var(--surface);
+  color: var(--text); font: inherit; font-weight: 550;
+  padding: 0.7rem 1.1rem; border-radius: 10px; cursor: pointer;
+  transition: background 0.12s, border-color 0.12s, transform 0.05s;
+  display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem;
+  min-height: 44px;
+}
+.btn:hover { background: var(--surface-2); }
+.btn:active { transform: translateY(1px); }
+.btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.btn-primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); font-weight: 650; }
+.btn-primary:hover { filter: brightness(1.08); background: var(--accent); }
+.btn-ghost { border-color: transparent; background: transparent; color: var(--muted); }
+.btn-ghost:hover { background: var(--surface-2); }
+.btn:disabled { opacity: 0.65; cursor: default; }
+
+/* ---- chips ---- */
+.chip {
+  display: inline-flex; align-items: center; font-size: 0.72rem; font-weight: 650;
+  padding: 0.15rem 0.55rem; border-radius: 999px; background: var(--surface-2); color: var(--muted);
+  text-transform: capitalize; letter-spacing: 0.01em;
+}
+.chip-accent { background: var(--accent-weak); color: var(--accent); }
+.chip-good { background: var(--good-weak); color: var(--good); }
+.chip-bad { background: var(--bad-weak); color: var(--bad); }
+
+/* ---- stats and the progress ring ---- */
+.stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.6rem; margin-top: 1rem; }
+.stat {
+  background: var(--surface-2); border-radius: 10px; padding: 0.7rem 0.6rem; text-align: center;
+}
+.stat-value { font-size: 1.3rem; font-weight: 700; }
+.stat-label { font-size: 0.75rem; color: var(--muted); }
+.stat.accent .stat-value { color: var(--accent); }
+.stat.warn .stat-value { color: var(--warn); }
+
+.ring { position: relative; flex: 0 0 auto; display: grid; place-items: center; }
+.ring svg { display: block; }
+.ring-bg { stroke: var(--ring-bg); }
+.ring-fg { stroke: var(--accent); transition: stroke-dashoffset 0.6s ease; }
+.ring-label { position: absolute; text-align: center; }
+/* `.ring-label strong` gives the number its size and its own line. A `<span>` here loses
+   both, and the ring reads as one run of small text. The element type is load-bearing. */
+.ring-label strong { display: block; font-size: 1.25rem; }
+.ring-label span { font-size: 0.72rem; color: var(--muted); }
+
+/* ---- empty and loading ---- */
+.empty { text-align: center; padding: 3rem 1rem; }
+.empty .btn { margin-top: 1rem; }
+.loading { display: flex; align-items: center; justify-content: center; gap: 0.6rem; color: var(--muted); padding: 3rem 1rem; }
+.spinner svg { animation: spin 0.9s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ---- toasts ---- */
+/* The container is in index.html with `aria-live="polite"` already on it, because a live
+   region that mounts together with its content announces nothing. */
+.toasts {
+  position: fixed; left: 50%; bottom: 1rem; transform: translateX(-50%); z-index: 50;
+  display: grid; gap: 0.5rem; width: min(92vw, 460px);
+}
+.toast {
+  display: flex; align-items: center; gap: 0.6rem; background: var(--surface);
+  border: 1px solid var(--border); border-left: 4px solid var(--bad);
+  border-radius: 10px; padding: 0.7rem 0.9rem; box-shadow: var(--shadow);
+  animation: rise 0.18s ease;
+}
+.toast-info { border-left-color: var(--accent); }
+.toast-success { border-left-color: var(--good); }
+.toast-msg { flex: 1; font-size: 0.92rem; }
+.toast-action { background: none; border: 0; color: var(--accent); font: inherit; font-weight: 650; cursor: pointer; padding: 0.2rem 0.4rem; }
+.toast-close { background: none; border: 0; color: var(--muted); font-size: 1.2rem; line-height: 1; cursor: pointer; padding: 0 0.2rem; }
+.toast-action:focus-visible, .toast-close:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+@keyframes rise { from { opacity: 0; transform: translateY(8px); } }
+
+/* ---- the modal ---- */
+/* The overlay is scenery: the dialog INSIDE carries `role="dialog"`. The overlay's own
+   `--scrim` is the only thing dimming the page behind it. */
+.modal-overlay {
+  position: fixed; inset: 0; background: var(--scrim);
+  display: grid; place-items: center; z-index: 100; padding: 1rem;
+}
+.modal {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  box-shadow: var(--shadow); padding: 1.6rem; width: min(92vw, 380px);
+  display: grid; gap: 0.7rem;
+}
+.modal h2 { margin: 0 0 0.3rem; font-size: 1.1rem; }
+.modal-actions { display: flex; gap: 0.5rem; justify-content: flex-end; margin-top: 0.7rem; }
+
+/* ---- technical readouts ---- */
+/* Timers, counts, XP and every stat value read as instrument output: monospace with aligned
+   figures. A proportional font makes a 1 Hz counter jitter its own width. */
+.stat-value, .ring-label strong, .mono {
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+}
+
+/* ---- responsive ---- */
+@media (max-width: 400px) {
+  .view { padding: 1rem 0.75rem 4rem; }
+  .card { padding: 1rem; }
+  .ring svg { width: 96px; height: 96px; }
+  .stat-value { font-size: 1.15rem; }
+}
+
+/* Strip every animation and transition when the reader asks for less motion (spec section
+   4.5). It sits at the end so it wins over every rule above it. */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
