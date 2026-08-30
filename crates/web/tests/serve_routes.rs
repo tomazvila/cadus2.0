@@ -991,6 +991,7 @@ async fn an_approved_teach_page_from_the_gate_serves_with_no_model_call() {
             arguments,
             &InstructionSpec {
                 exemplars: &exemplars,
+                instance_answers: Vec::new(),
             },
         )
         .expect("the gate accepts the page");
@@ -1071,6 +1072,7 @@ async fn an_approved_hint_ladder_from_the_gate_serves_with_no_model_call() {
             arguments,
             &InstructionSpec {
                 exemplars: &exemplars,
+                instance_answers: Vec::new(),
             },
         )
         .expect("the gate accepts the ladder");

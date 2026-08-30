@@ -14,6 +14,18 @@
 //! The third check (an approved teach body serves through the M5 teach route
 //! with no model call) is `crates/web/tests/serve_routes.rs`.
 //!
+//! The M6 review adds three more, one per finding:
+//!
+//! 3. a rung that names the answer of a rendered template instance is rejected
+//!    (findings F2 and F15) —
+//!    [`a_rung_that_names_a_template_instance_answer_is_rejected`];
+//! 4. an exemplar whose own problem shows its answer takes no exemption any more
+//!    (finding F25) —
+//!    [`a_rung_that_names_an_answer_the_exemplar_problem_shows_is_still_rejected`];
+//! 5. every shipped knowledge point that took that exemption now refuses a
+//!    give-away rung, and the count is pinned (finding F25) —
+//!    [`every_shipped_knowledge_point_whose_exemplar_shows_its_answer_gates`].
+//!
 //! Every expected value is a LITERAL: the whole rejection sentence, character
 //! for character, and the code beside it. No expected value is re-derived from
 //! the code under test.
@@ -26,7 +38,9 @@
     clippy::unimplemented
 )]
 
-use cadus_core::curriculum::Exemplar;
+use std::path::Path;
+
+use cadus_core::curriculum::{Exemplar, load_raw_curriculum};
 use cadus_core::instruction::{
     HintLadder, InstructionSpec, TeachPage, WorkedExample, gate_hint_ladder, gate_teach,
 };
@@ -45,9 +59,21 @@ fn exemplars() -> Vec<Exemplar> {
     }]
 }
 
-/// The spec of the knowledge point under test.
+/// The spec of the knowledge point under test: no approved template, so the
+/// exemplar answers are the whole served set.
 fn spec(exemplars: &[Exemplar]) -> InstructionSpec<'_> {
-    InstructionSpec { exemplars }
+    InstructionSpec {
+        exemplars,
+        instance_answers: Vec::new(),
+    }
+}
+
+/// The spec of a knowledge point that holds approved templates too.
+fn spec_with_instances<'a>(exemplars: &'a [Exemplar], answers: &[&str]) -> InstructionSpec<'a> {
+    InstructionSpec {
+        exemplars,
+        instance_answers: answers.iter().map(|answer| (*answer).to_owned()).collect(),
+    }
 }
 
 /// A teach body the gate accepts.
@@ -89,8 +115,8 @@ fn a_ladder_whose_last_rung_names_the_answer_is_rejected() {
     assert_eq!(
         rejection.message,
         "rung 1 reads 'A square is the number multiplied by itself, so $7^2$ is 49.', which names \
-the answer '49' of the exemplar 'Compute $7^2$.' — a hint is a question, never the final step \
-(Hard Rule 3)"
+the answer '49' this knowledge point serves — a hint is a question, never the final step (Hard \
+Rule 3)"
     );
 }
 
@@ -114,21 +140,62 @@ fn a_ladder_that_stops_short_of_the_answer_is_accepted() {
     );
 }
 
-/// A token the exemplar's own problem shows is not a give-away: the learner is
-/// reading it in the problem. This is the exemption the template gate takes over
-/// an instance whose statement carries its answer.
+/// M6 review, findings F2 and F15. One ladder serves every instance of the
+/// knowledge point, so an answer a rendered template instance carries is an
+/// answer a learner reads. A rung that names it is refused, and the message
+/// names the rung and the answer.
 #[test]
-fn a_rung_may_name_a_number_the_exemplar_problem_already_shows() {
+fn a_rung_that_names_a_template_instance_answer_is_rejected() {
+    let exemplars = exemplars();
+    let body = r#"{"hints": [
+        "What does the small 2 above the number ask you to do?",
+        "Multiply the base by itself; the product is 81."
+    ]}"#;
+
+    let rejection = gate_hint_ladder(body, &spec_with_instances(&exemplars, &["64", "81"]))
+        .expect_err("the rung names the answer of a served instance");
+
+    assert_eq!(rejection.code, "hint-answer");
+    assert_eq!(
+        rejection.message,
+        "rung 1 reads 'Multiply the base by itself; the product is 81.', which names the answer \
+'81' this knowledge point serves — a hint is a question, never the final step (Hard Rule 3)"
+    );
+}
+
+/// The same set with no rung that names one of its answers is accepted, so the
+/// wider set refuses give-away rungs and nothing else.
+#[test]
+fn a_ladder_that_names_no_instance_answer_is_accepted() {
+    let exemplars = exemplars();
+    let ladder = gate_hint_ladder(GOOD_LADDER, &spec_with_instances(&exemplars, &["64", "81"]))
+        .expect("no rung names 49, 64 or 81");
+
+    assert_eq!(ladder.hints.len(), 3);
+}
+
+/// M6 review, finding F25. The exemption is gone: an exemplar whose own problem
+/// shows its answer no longer takes its answer out of the give-away rule, because
+/// the ladder serves the rendered instances of the same knowledge point too, and
+/// their statements show nothing.
+#[test]
+fn a_rung_that_names_an_answer_the_exemplar_problem_shows_is_still_rejected() {
     let exemplars = vec![Exemplar {
         problem: "What is 49 divided by 7?".to_owned(),
         answer: "7".to_owned(),
         solution_sketch: None,
     }];
-    let body = r#"{"hints": ["How many 7s fit inside 49?"]}"#;
+    let body = r#"{"hints": ["Count in sevens; the answer is 7."]}"#;
 
-    let ladder = gate_hint_ladder(body, &spec(&exemplars)).expect("the exemption applies");
+    let rejection =
+        gate_hint_ladder(body, &spec(&exemplars)).expect_err("there is no exemption any more");
 
-    assert_eq!(ladder.hints.len(), 1);
+    assert_eq!(rejection.code, "hint-answer");
+    assert_eq!(
+        rejection.message,
+        "rung 0 reads 'Count in sevens; the answer is 7.', which names the answer '7' this \
+knowledge point serves — a hint is a question, never the final step (Hard Rule 3)"
+    );
 }
 
 /// A rung that repeats an earlier one leaves the learner exactly as stuck.
@@ -416,4 +483,101 @@ fn no_body_panics_either_gate() {
     let not_object = gate_hint_ladder("[]", &spec(&exemplars)).expect_err("a list is not a body");
     assert_eq!(not_object.code, "body");
     assert_eq!(not_object.message, "the hint body is not a JSON object");
+}
+
+// --------------------------------------------------------------------------- //
+// M6 review, finding F25: the shipped curriculum
+// --------------------------------------------------------------------------- //
+
+/// Whether `token` stands in `text` as a run of its own.
+///
+/// The rule is written out here, so the count below is this test's own number and
+/// never a number the code under test handed back. A letter, a digit, or an
+/// underscore beside the run makes the run part of a longer word or number. A
+/// point or a slash breaks the run only when a digit stands beyond it, so `16`
+/// stands at the end of `is 16.` and `2` does not stand inside `1/2`.
+fn stands_alone(text: &str, token: &str) -> bool {
+    if token.is_empty() {
+        return false;
+    }
+    let characters: Vec<char> = text.chars().collect();
+    let needle: Vec<char> = token.chars().collect();
+    let free = |near: Option<&char>, far: Option<&char>| -> bool {
+        match near {
+            None => true,
+            Some(near) if near.is_ascii_alphanumeric() || *near == '_' => false,
+            Some(near) if *near == '.' || *near == '/' => !far.is_some_and(char::is_ascii_digit),
+            Some(_) => true,
+        }
+    };
+    let last = characters.len().saturating_sub(needle.len());
+    for start in 0..=last {
+        if characters.get(start..start + needle.len()) != Some(needle.as_slice()) {
+            continue;
+        }
+        let after = start + needle.len();
+        let free_before = start.checked_sub(1).is_none_or(|index| {
+            free(
+                characters.get(index),
+                index.checked_sub(1).and_then(|far| characters.get(far)),
+            )
+        });
+        if free_before && free(characters.get(after), characters.get(after + 1)) {
+            return true;
+        }
+    }
+    false
+}
+
+/// The give-away ladder of one answer: one rung, and it states the answer.
+fn give_away(answer: &str) -> String {
+    let rung = serde_json::to_string(&format!("The answer is {answer}."))
+        .expect("a string writes as JSON");
+    format!(r#"{{"hints": [{rung}]}}"#)
+}
+
+/// Finding F25. Before this fix the gate skipped an exemplar outright whenever
+/// the exemplar's own problem carried its answer, so for those knowledge points a
+/// rung that stated the answer verbatim passed the gate, was stored `pending`,
+/// and served through the L5 hint route. The count of shipped knowledge points
+/// that took the exemption is pinned here, and every one of them now refuses a
+/// give-away rung.
+#[test]
+fn every_shipped_knowledge_point_whose_exemplar_shows_its_answer_gates() {
+    let root = Path::new(env!("CARGO_MANIFEST_DIR")).join("../../curriculum");
+    let (curriculum, _) = load_raw_curriculum(&root).expect("the shipped tree loads");
+
+    let mut exempted = 0_usize;
+    let mut blind = 0_usize;
+    for topic in curriculum.topics() {
+        for kp in &topic.topic.knowledge_points {
+            let shown: Vec<&Exemplar> = kp
+                .exemplars
+                .iter()
+                .filter(|exemplar| stands_alone(&exemplar.problem, &exemplar.answer))
+                .collect();
+            if shown.is_empty() {
+                continue;
+            }
+            exempted += 1;
+            if shown.len() == kp.exemplars.len() {
+                blind += 1;
+            }
+            let key = format!("{}/{}", topic.topic.id, kp.id);
+            for exemplar in shown {
+                match gate_hint_ladder(&give_away(&exemplar.answer), &spec(&kp.exemplars)) {
+                    Ok(_) => panic!(
+                        "{key} accepted a rung that states the answer {:?}",
+                        exemplar.answer
+                    ),
+                    Err(rejection) => assert_eq!(rejection.code, "hint-answer", "{key}"),
+                }
+            }
+        }
+    }
+
+    // `exempted` counts the knowledge points that held at least one exempted
+    // exemplar. `blind` counts the ones whose exemplars were ALL exempted: a
+    // ladder that stated every answer of those passed the whole gate.
+    assert_eq!((exempted, blind), (307, 62));
 }

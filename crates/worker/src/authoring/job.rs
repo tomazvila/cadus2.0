@@ -101,7 +101,9 @@ use cadus_core::template::{
 };
 use cadus_model_client::{Attempt, Client};
 use cadus_store::Db;
-use cadus_store::content::{Admin, NewDocument, Verdict, insert_pending, verdict};
+use cadus_store::content::{
+    Admin, KIND_TEMPLATE, NewDocument, Verdict, insert_pending, verdict,
+};
 use serde_json::Value;
 use sha2::{Digest, Sha256};
 
@@ -464,10 +466,15 @@ fn unwritable(err: &serde_json::Error) -> Rejection {
 ///
 /// Returns the [`Rejection`] of `cadus_core::instruction::gate_teach`, and the
 /// rejection a tool call with no JSON object earns.
-pub fn verify_teach(spec: &AuthoringSpec, arguments: &Value) -> Result<String, Rejection> {
+pub fn verify_teach(
+    spec: &AuthoringSpec,
+    arguments: &Value,
+    instance_answers: &[String],
+) -> Result<String, Rejection> {
     let body = instruction_body(arguments)?;
     let gate_spec = InstructionSpec {
         exemplars: &spec.exemplars,
+        instance_answers: instance_answers.to_vec(),
     };
     serde_json::to_string(&gate_teach(&body, &gate_spec)?).map_err(|err| unwritable(&err))
 }
@@ -478,10 +485,15 @@ pub fn verify_teach(spec: &AuthoringSpec, arguments: &Value) -> Result<String, R
 ///
 /// Returns the [`Rejection`] of `cadus_core::instruction::gate_hint_ladder`, and
 /// the rejection a tool call with no JSON object earns.
-pub fn verify_hint_ladder(spec: &AuthoringSpec, arguments: &Value) -> Result<String, Rejection> {
+pub fn verify_hint_ladder(
+    spec: &AuthoringSpec,
+    arguments: &Value,
+    instance_answers: &[String],
+) -> Result<String, Rejection> {
     let body = instruction_body(arguments)?;
     let gate_spec = InstructionSpec {
         exemplars: &spec.exemplars,
+        instance_answers: instance_answers.to_vec(),
     };
     serde_json::to_string(&gate_hint_ladder(&body, &gate_spec)?).map_err(|err| unwritable(&err))
 }
@@ -545,7 +557,94 @@ pub fn verify_diagnosis(spec: &AuthoringSpec, arguments: &Value) -> Result<Strin
     })
 }
 
+/// The instances one approved template contributes to the instruction gates.
+///
+/// The number is the floor the M6 review ruling names for findings F2, F15 and
+/// F25. Every draw runs from [`cadus_core::template::GATE_SEED`], so the answer
+/// set of one document is the same set on every pass and a reviewer reproduces
+/// the verdict (C6).
+pub const INSTANCE_SAMPLES: u32 = 8;
+
+/// Every answer the approved templates of one knowledge point serve (M6 review,
+/// findings F2, F15 and F25).
+///
+/// The hint gate refuses a rung that names an answer the learner is served. The
+/// exemplars are one source of those answers; the approved templates are the
+/// other, and they are the source the serve path reads first (A6 serves the
+/// exemplars only when no template is approved). This read supplies the second
+/// source, and [`InstructionSpec::instance_answers`] carries it into the gate.
+///
+/// `kp_id` is the serving key `cadus_core::pool::kp_key` writes.
+///
+/// # Errors
+///
+/// Returns [`WorkerError::Store`] when the statement fails or the bound expires.
+pub async fn served_answers(db: &Db, kp_id: &str) -> Result<Vec<String>, WorkerError> {
+    let query = sqlx::query_scalar!(
+        r#"
+        SELECT body::text AS "body!"
+          FROM content_store
+         WHERE kp_id = $1 AND kind = $2 AND status = $3
+         ORDER BY approved_at DESC NULLS LAST, created_at DESC, digest
+        "#,
+        kp_id,
+        KIND_TEMPLATE,
+        STATUS_APPROVED,
+    )
+    .fetch_all(db.pool());
+    let bodies: Vec<String> = cadus_store::bounded(db, query).await?;
+    let mut answers: Vec<String> = Vec::new();
+    for body in &bodies {
+        for answer in template_answers(body) {
+            if !answers.contains(&answer) {
+                answers.push(answer);
+            }
+        }
+    }
+    Ok(answers)
+}
+
+/// The answers of the instances one approved template body renders.
+///
+/// The list holds the answer of every worked sample the document pins and the
+/// answer of [`INSTANCE_SAMPLES`] drawn instances. A body this build cannot read
+/// or cannot compile contributes nothing: it is an approved row of an older
+/// shape, and a hint gate that refused every rung over it would teach the model
+/// nothing it can act on.
+#[must_use]
+pub fn template_answers(body: &str) -> Vec<String> {
+    let Ok(doc) = cadus_core::template::from_body(body) else {
+        return Vec::new();
+    };
+    let Ok(compiled) = cadus_core::template::Compiled::new(&doc) else {
+        return Vec::new();
+    };
+    let mut answers: Vec<String> = Vec::new();
+    let mut keep = |answer: String| {
+        if !answer.is_empty() && !answers.contains(&answer) {
+            answers.push(answer);
+        }
+    };
+    for sample in &doc.samples {
+        if let Ok(instance) = compiled.instantiate(sample.bindings()) {
+            keep(instance.answer);
+        }
+    }
+    let mut rng = cadus_core::template::rng_from_seed(cadus_core::template::GATE_SEED);
+    for _ in 0..INSTANCE_SAMPLES {
+        if let Ok(instance) = compiled.draw(&mut rng) {
+            keep(instance.answer);
+        }
+    }
+    answers
+}
+
 /// The gate of one kind (spec section 2.2, step 2).
+///
+/// `instance_answers` holds the answers the approved templates of the knowledge
+/// point serve ([`served_answers`]). The two instruction gates read it; the
+/// template gate and the diagnosis gate read the document's own instances and
+/// ignore it.
 ///
 /// # Errors
 ///
@@ -555,11 +654,12 @@ pub fn verify_kind(
     kind: Kind,
     spec: &AuthoringSpec,
     arguments: &Value,
+    instance_answers: &[String],
 ) -> Result<String, Rejection> {
     match kind {
         Kind::Template => verify(spec, arguments),
-        Kind::Teach => verify_teach(spec, arguments),
-        Kind::HintLadder => verify_hint_ladder(spec, arguments),
+        Kind::Teach => verify_teach(spec, arguments, instance_answers),
+        Kind::HintLadder => verify_hint_ladder(spec, arguments, instance_answers),
         Kind::Diagnosis => verify_diagnosis(spec, arguments),
     }
 }
@@ -786,6 +886,15 @@ pub async fn author_one(
         return Ok(report);
     }
 
+    // Step 3: the two instruction gates read the answers of the material this
+    // knowledge point serves, and an approved template is that material (M6
+    // review, findings F2, F15 and F25). The read runs once per pass, before the
+    // first call, so a five-attempt retry costs one statement.
+    let instance_answers = match kind {
+        Kind::Teach | Kind::HintLadder => served_answers(db, &kp_id).await?,
+        Kind::Template | Kind::Diagnosis => Vec::new(),
+    };
+
     let mut feedback: Option<String> = None;
     let mut http_attempts: Vec<Attempt> = Vec::new();
     let mut spent = 0_u32;
@@ -814,7 +923,7 @@ pub async fn author_one(
             // never saw a document, so the next attempt repeats the message it
             // already had.
             Err(err) => err.to_string(),
-            Ok(arguments) => match verify_kind(kind, spec, &arguments) {
+            Ok(arguments) => match verify_kind(kind, spec, &arguments, &instance_answers) {
                 Ok(body) => {
                     // T3: the row carries the count of calls the pass spent and
                     // the sum of what those calls cost.
@@ -1088,7 +1197,7 @@ mod tests {
             .expect_err("a string is not an arguments object");
         assert_eq!(rejection.code, "tool-arguments");
         assert_eq!(rejection.message, NO_ARGUMENTS);
-        let instruction = verify_teach(&spec(), &json!("emit_teach"))
+        let instruction = verify_teach(&spec(), &json!("emit_teach"), &[])
             .expect_err("a string is not an arguments object");
         assert_eq!(instruction.code, "tool-arguments");
         assert_eq!(instruction.message, NO_ARGUMENTS);
@@ -1105,6 +1214,7 @@ mod tests {
                 "concept": "A square multiplies a number by itself.",
                 "worked_example": {"problem": "Compute $6^2$.", "steps": ["$6 \\times 6 = 36$."]}
             }),
+            &[],
         )
         .expect("the gate accepts the page");
 
@@ -1118,15 +1228,15 @@ mod tests {
     /// reaches the table (units R6 and R7).
     #[test]
     fn every_kind_reaches_a_gate() {
-        let rejection = verify_kind(Kind::Diagnosis, &spec(), &json!({"distractors": []}))
+        let rejection = verify_kind(Kind::Diagnosis, &spec(), &json!({"distractors": []}), &[])
             .expect_err("an empty distractor list is refused");
         assert_eq!(rejection.code, "distractor-missing");
 
-        let rejection = verify_kind(Kind::Teach, &spec(), &json!({}))
+        let rejection = verify_kind(Kind::Teach, &spec(), &json!({}), &[])
             .expect_err("a teach page with no concept is refused");
         assert_eq!(rejection.code, "teach-concept");
 
-        let rejection = verify_kind(Kind::HintLadder, &spec(), &json!({"hints": []}))
+        let rejection = verify_kind(Kind::HintLadder, &spec(), &json!({"hints": []}), &[])
             .expect_err("an empty hint ladder is refused");
         assert_eq!(rejection.code, "hint-missing");
     }
