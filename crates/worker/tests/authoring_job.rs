@@ -19,6 +19,11 @@
 //! counted as a duplicate and never as a store, and a pass that reproduces a
 //! body a reviewer refused declines with the reviewer's reason.
 //!
+//! The verification round adds the prompt stamp of a collision (finding V3): a
+//! re-author that reproduces the body of a STALE row stamps the current prompt
+//! on that row, so the row leaves the stale set and the pass after it makes no
+//! model call.
+//!
 //! Every expected value is a LITERAL: a literal rejection sentence, a literal
 //! digest, a literal row count, a literal status. Nothing is read back from the
 //! code under test.
@@ -42,9 +47,10 @@ use cadus_model_client::{Client, ModelConfig};
 use cadus_store::test_support::TestDb;
 use cadus_store::{DEFAULT_CLIENT_TIMEOUT_MS, Db};
 use cadus_worker::authoring::job::{
-    AuthoringJob, Outcome, author_one, bank_target, run_batch, served_answers, slots_taken,
+    AuthoringJob, Outcome, author_one, bank_target, render_stale, run_batch, served_answers,
+    slots_taken, stale_rows, stale_slots,
 };
-use cadus_worker::authoring::prompt::{AuthoringSpec, Kind};
+use cadus_worker::authoring::prompt::{AuthoringSpec, KINDS, Kind, prompt_digest};
 use serde_json::{Value, json};
 use sqlx::PgPool;
 use tokio::io::{AsyncReadExt, AsyncWriteExt};
@@ -1477,6 +1483,252 @@ async fn the_same_rung_passes_when_no_template_is_approved() {
             rows_of_kind(&db.admin, KP_KEY, "hint_ladder").await.len(),
             1
         );
+    })
+    .await;
+}
+
+// --------------------------------------------------------------------------- //
+// V3: a re-author that reproduces the same body stamps the current prompt
+// --------------------------------------------------------------------------- //
+
+/// A prompt digest that is NOT the digest of any current kind.
+///
+/// It stands for the prompt an operator has since edited (spec section 2.2,
+/// "Prompt digest"). It is 16 hex characters, as every prompt digest is.
+const OLD_PROMPT: &str = "0000000000000000";
+
+/// The `--stale` listing of an empty stale set, character for character
+/// (`render_stale`).
+const NO_STALE_ROWS: &str = "stale documents\nkp_id kind digest prompt_digest\nstale: rows 0\n";
+
+/// Seed the teach row of [`STORED_TEACH_BODY`] as `approved`, with the prompt
+/// stamp of an EDITED prompt.
+///
+/// The digest is the digest the pass computes for that body, so a re-author that
+/// reproduces the body collides with this row.
+async fn seed_stale_teach(pool: &PgPool) {
+    sqlx::query(
+        "INSERT INTO content_store
+             (digest, kp_id, kind, body, status, prompt_digest)
+         VALUES ($1, $2, 'teach', $3::jsonb, 'approved', $4)",
+    )
+    .bind(STORED_TEACH_DIGEST)
+    .bind(KP_KEY)
+    .bind(STORED_TEACH_BODY)
+    .bind(OLD_PROMPT)
+    .execute(pool)
+    .await
+    .unwrap();
+}
+
+/// Every `content_store` row of one knowledge point and kind, as
+/// `(digest, status, body, prompt_digest)`.
+async fn stamped_rows(
+    pool: &PgPool,
+    kp_id: &str,
+    kind: &str,
+) -> Vec<(String, String, Value, Option<String>)> {
+    sqlx::query_as::<_, (String, String, Value, Option<String>)>(
+        "SELECT digest, status, body, prompt_digest FROM content_store
+          WHERE kp_id = $1 AND kind = $2 ORDER BY digest",
+    )
+    .bind(kp_id)
+    .bind(kind)
+    .fetch_all(pool)
+    .await
+    .unwrap()
+}
+
+/// V3, the acceptance check: two passes after a prompt edit make ONE model call,
+/// and the stale set is empty after the first pass.
+///
+/// The seeded row is the row an EDITED prompt marked: it is `approved`, it holds
+/// the body the model reproduces, and it names an older prompt. The pass
+/// therefore re-authors the knowledge point, and the model answers the same
+/// document.
+///
+/// The insert writes nothing, because the digest is the digest of that row. The
+/// pass stamps the CURRENT prompt on the row instead, so
+///
+/// - the outcome is [`Outcome::Refreshed`],
+/// - the row leaves the stale set and `--stale` lists nothing,
+/// - the SECOND pass makes no call, and
+/// - the approval, the body and the digest stand (C6).
+///
+/// Before the fix the row kept the old stamp: every pass counted it as stale,
+/// re-authored it, and paid for one model call, forever.
+#[tokio::test]
+async fn a_re_author_of_the_same_body_stamps_the_current_prompt_and_the_loop_stops() {
+    TestDb::with(|db| async move {
+        let fake = FakeModel::start(vec![named_reply("emit_teach", &teach_arguments())]).await;
+        let handle = Db::new(db.admin.clone(), DEFAULT_CLIENT_TIMEOUT_MS);
+        seed_stale_teach(&db.admin).await;
+
+        // The bank of `teach` is 1, the row holds the slot, and the slot is
+        // stale: the pass re-authors it.
+        assert_eq!(slots_taken(&handle, KP_KEY, Kind::Teach).await.unwrap(), 1);
+        assert_eq!(stale_slots(&handle, KP_KEY, Kind::Teach).await.unwrap(), 1);
+        assert_eq!(
+            render_stale(&stale_rows(&handle, &KINDS).await.unwrap()),
+            "stale documents\n\
+             kp_id kind digest prompt_digest\n\
+             perfect-squares/squares teach sha256:fc031ed7deaa7d60 0000000000000000\n\
+             stale: rows 1\n"
+        );
+
+        let first = author_one(&handle, &fake.job_with_attempts(1), Kind::Teach, &spec())
+            .await
+            .unwrap();
+
+        assert_eq!(first.outcome, Outcome::Refreshed);
+        assert_eq!(first.attempts, 1);
+        assert_eq!(first.digest.as_deref(), Some(STORED_TEACH_DIGEST));
+        assert!(first.decline.is_none());
+        assert_eq!(fake.calls().len(), 1);
+
+        // The row left the stale set, and the operator's listing is empty.
+        assert_eq!(stale_slots(&handle, KP_KEY, Kind::Teach).await.unwrap(), 0);
+        assert_eq!(
+            render_stale(&stale_rows(&handle, &KINDS).await.unwrap()),
+            NO_STALE_ROWS
+        );
+
+        // C6: the approval, the digest and the body stand. The stamp is the
+        // only column the pass wrote.
+        let rows = stamped_rows(&db.admin, KP_KEY, "teach").await;
+        assert_eq!(rows.len(), 1);
+        assert_eq!(rows[0].0, STORED_TEACH_DIGEST);
+        assert_eq!(rows[0].1, "approved");
+        assert_eq!(
+            rows[0].2,
+            serde_json::from_str::<Value>(STORED_TEACH_BODY).expect("the literal body reads")
+        );
+        assert_ne!(rows[0].3.as_deref(), Some(OLD_PROMPT));
+        assert_eq!(rows[0].3.as_deref().unwrap_or_default().len(), 16);
+        assert_eq!(rows[0].3, Some(prompt_digest(Kind::Teach)));
+
+        // The second pass makes no call: the bank is full and nothing is stale.
+        let second = author_one(&handle, &fake.job_with_attempts(1), Kind::Teach, &spec())
+            .await
+            .unwrap();
+
+        assert_eq!(second.outcome, Outcome::Skipped);
+        assert_eq!(second.attempts, 0);
+        assert_eq!(
+            fake.calls().len(),
+            1,
+            "the two passes together pay for ONE model call"
+        );
+        assert_eq!(rows_of_kind(&db.admin, KP_KEY, "teach").await.len(), 1);
+    })
+    .await;
+}
+
+/// V3: the batch counts a refresh where it counts a duplicate, and the summary
+/// prints the count.
+///
+/// The pass paid for its call and wrote no document, so the count stands beside
+/// `stored` and never inside it (M6 review finding F1).
+#[tokio::test]
+async fn a_refreshed_row_is_counted_as_a_duplicate_and_never_as_a_store() {
+    TestDb::with(|db| async move {
+        let fake = FakeModel::start(vec![named_reply("emit_teach", &teach_arguments())]).await;
+        let handle = Db::new(db.admin.clone(), DEFAULT_CLIENT_TIMEOUT_MS);
+        seed_stale_teach(&db.admin).await;
+
+        let batch = run_batch(&handle, &fake.job(), Kind::Teach, &[spec()])
+            .await
+            .unwrap();
+
+        assert_eq!(batch.stored, 0);
+        assert_eq!(batch.duplicate, 1);
+        assert_eq!(batch.skipped, 0);
+        assert_eq!(batch.declined, 0);
+        assert_eq!(batch.calls, 1);
+        assert!(batch.declines.is_empty());
+
+        assert_eq!(stale_slots(&handle, KP_KEY, Kind::Teach).await.unwrap(), 0);
+        assert_eq!(rows_of_kind(&db.admin, KP_KEY, "teach").await.len(), 1);
+    })
+    .await;
+}
+
+/// V3: a collision with a row that ALREADY names the current prompt is a
+/// duplicate, not a refresh.
+///
+/// The bank target of `template` is 3, so a knowledge point with one `pending`
+/// row is authored again. The first pass wrote that row with the current stamp,
+/// so the second pass has no stamp to write: the outcome names the duplicate,
+/// and a pass that reported a refresh here would count a write it did not make.
+#[tokio::test]
+async fn a_collision_with_the_current_prompt_stamp_stays_a_duplicate() {
+    TestDb::with(|db| async move {
+        let fake = FakeModel::start(vec![
+            tool_reply(&good_arguments()),
+            tool_reply(&good_arguments()),
+        ])
+        .await;
+        let handle = Db::new(db.admin.clone(), DEFAULT_CLIENT_TIMEOUT_MS);
+
+        let first = author_one(&handle, &fake.job_with_attempts(1), Kind::Template, &spec())
+            .await
+            .unwrap();
+        let second = author_one(&handle, &fake.job_with_attempts(1), Kind::Template, &spec())
+            .await
+            .unwrap();
+
+        assert_eq!(first.outcome, Outcome::Stored);
+        assert_eq!(second.outcome, Outcome::Duplicate);
+        assert_eq!(fake.calls().len(), 2);
+
+        let rows = stamped_rows(&db.admin, KP_KEY, "template").await;
+        assert_eq!(rows.len(), 1);
+        assert_eq!(rows[0].0, STORED_DIGEST);
+        assert_eq!(rows[0].1, "pending");
+        assert_eq!(rows[0].3, Some(prompt_digest(Kind::Template)));
+        assert_eq!(
+            stale_slots(&handle, KP_KEY, Kind::Template).await.unwrap(),
+            0
+        );
+    })
+    .await;
+}
+
+/// V3 and F6: a row a reviewer REFUSED keeps its old stamp.
+///
+/// A `rejected` row occupies no slot and is never stale, so it drives no
+/// re-author and there is nothing to clear. The pass declines with the
+/// reviewer's reason, and it writes no column of that row.
+#[tokio::test]
+async fn a_refused_row_keeps_the_prompt_stamp_it_has() {
+    TestDb::with(|db| async move {
+        let fake = FakeModel::start(vec![named_reply("emit_teach", &teach_arguments())]).await;
+        let handle = Db::new(db.admin.clone(), DEFAULT_CLIENT_TIMEOUT_MS);
+        sqlx::query(
+            "INSERT INTO content_store
+                 (digest, kp_id, kind, body, status, review_reason, prompt_digest)
+             VALUES ($1, $2, 'teach', $3::jsonb, 'rejected', $4, $5)",
+        )
+        .bind(STORED_TEACH_DIGEST)
+        .bind(KP_KEY)
+        .bind(STORED_TEACH_BODY)
+        .bind("the worked example skips the last step")
+        .bind(OLD_PROMPT)
+        .execute(&db.admin)
+        .await
+        .unwrap();
+
+        let report = author_one(&handle, &fake.job_with_attempts(1), Kind::Teach, &spec())
+            .await
+            .unwrap();
+
+        assert_eq!(report.outcome, Outcome::Rejected { same_body: true });
+        assert_eq!(report.attempts, 1);
+
+        let rows = stamped_rows(&db.admin, KP_KEY, "teach").await;
+        assert_eq!(rows.len(), 1);
+        assert_eq!(rows[0].1, "rejected");
+        assert_eq!(rows[0].3.as_deref(), Some(OLD_PROMPT));
     })
     .await;
 }
