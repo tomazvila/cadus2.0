@@ -10,8 +10,8 @@
  *                 per-question value a serve carries. The per-question value is ONE topic's
  *                 raw expected time; using it as the whole-quiz clock expired mid-quiz and
  *                 blank-submitted the rest, which made quizzes unpassable. The budget times
- *                 the QUIZ, not the screen: the deadline outlives an unmount, and a
- *                 re-mount resumes the running clock (M6-review-2, V6).
+ *                 the QUIZ, not the screen: the START is server state, so a re-mount AND a
+ *                 page reload both resume the running clock (M6-review-2, V6).
  *   QUIZ-reveal   No correctness on screen before the last answer. The receipt carries no
  *                 verdict, and this screen renders none even when a payload carries one.
  *   QUIZ-timeout  On timeout with an answer in flight, SKIP that question. Re-posting the
@@ -53,25 +53,50 @@ type Phase = 'loading' | 'ready' | 'submitting' | 'done';
  * The KEY is the API client: boot builds one per page load and every screen shares it, so an
  * entry lives exactly as long as the connection the quiz runs on.
  *
- * WHAT THIS DOES NOT REACH. A page reload builds a new client and starts the budget again.
- * Closing that needs the quiz start on the wire: the D-S6 row holds `started_at`
- * (`crates/web/src/state.rs:157`) and `serve_payload` (`crates/web/src/serve.rs:361-369`)
- * emits seven keys, none of them a timestamp.
+ * IT IS THE FALLBACK, NOT THE CLOCK. A page reload builds a new client, so this map is empty
+ * and every deadline in it is gone. The clock itself is SERVER state: the D-S6 quiz buffer
+ * holds the quiz start (`crates/web/src/state.rs` `QuizBuffer.started_at`) and the quiz serve
+ * reports `quiz_elapsed_secs`. The map answers only for a serve that carries no count, which
+ * is a task type with no quiz clock at all.
  */
 const deadlines = new WeakMap<ApiClient, Map<string, number>>();
 
 /**
- * The Unix time in milliseconds this quiz ends at, from the first mount that started it.
+ * The Unix time in milliseconds this quiz ends at.
  *
- * The first call of a task stamps the deadline; every later call gives that stamp back, so
- * the clock RESUMES instead of restarting.
+ * `elapsed` is the server's own count of the seconds the quiz has run, and it WINS: the
+ * server stamps the start once per task, so its count survives a re-mount and a reload
+ * alike. A count at or past the budget gives a deadline in the past, and `secsTo` then
+ * reads 0, which runs the timeout path on the first render (M6-review-2, V6).
+ *
+ * With no count from the server the map answers instead: the first call of a task stamps the
+ * deadline, and every later call gives that stamp back, so the clock RESUMES.
  */
-function deadlineOf(api: ApiClient, taskId: string, budget: number): number {
+function deadlineOf(
+  api: ApiClient,
+  taskId: string,
+  budget: number,
+  elapsed: number | null,
+): number {
   let open = deadlines.get(api);
   if (!open) { open = new Map(); deadlines.set(api, open); }
-  const end = open.get(taskId) ?? Date.now() + budget * 1000;
+  const end = elapsed === null
+    ? open.get(taskId) ?? Date.now() + budget * 1000
+    : Date.now() + (budget - elapsed) * 1000;
   open.set(taskId, end);
   return end;
+}
+
+/**
+ * The server's count of the seconds this quiz has run, or null when it sent none.
+ *
+ * Null and zero are DIFFERENT answers, so `num` is the wrong reader here: it turns an absent
+ * count into 0, and a deadline seeded from 0 is the whole budget over again — the defect
+ * (V6). Only a finite number is a count.
+ */
+function elapsedOf(served: ServedProblem): number | null {
+  const secs = served.quiz_elapsed_secs;
+  return typeof secs === 'number' && Number.isFinite(secs) ? secs : null;
 }
 
 /** Whole seconds from now to `end`, never below zero. */
@@ -220,9 +245,10 @@ export function Quiz({
       // question. The serve value is the fallback and nothing more.
       const budget = num(task.time_budget_secs) || num(s.time_budget_secs);
       if (budget > 0) {
-        // The deadline of THIS quiz, which the first mount stamped. At or under zero the
-        // effect below runs the timeout path at once.
-        const end = deadlineOf(api, task.task_id, budget);
+        // The deadline of THIS quiz. The server's own count of the seconds gone comes
+        // first, so a page RELOAD resumes the running clock; the module-scope map is the
+        // fallback. At or under zero the effect below runs the timeout path at once.
+        const end = deadlineOf(api, task.task_id, budget, elapsedOf(s));
         deadlineRef.current = end;
         setLeft(secsTo(end));
       }

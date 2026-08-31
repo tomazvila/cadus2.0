@@ -363,8 +363,9 @@ export interface SessionPlanResponse {
 /**
  * `POST /api/task/{task_id}/serve` — the task's live problem.
  *
- * Seven keys, always all seven (`serve.rs` `serve_payload`). `expected` and
- * `solution_sketch` are named out of this payload on purpose (Hard Rule 1).
+ * Seven keys on every serve, and an eighth on a QUIZ serve (`serve.rs`
+ * `serve_payload`). `expected` and `solution_sketch` are named out of this payload on
+ * purpose (Hard Rule 1).
  *
  * The route is IDEMPOTENT: calling it twice re-serves the same problem and re-stamps
  * `started_at`. A mock that advances a cursor per call makes the learner practise the
@@ -382,6 +383,15 @@ export interface ServedProblem {
   time_budget_secs: number | null;
   /** Only a drill counts down. */
   countdown: boolean;
+  /**
+   * The seconds the WHOLE quiz has run, on a quiz serve alone (QUIZ-budget).
+   *
+   * The quiz clock is server state: `crates/web/src/state.rs` `QuizBuffer.started_at`
+   * holds the start, and the serve reports the seconds since it. A page reload therefore
+   * resumes the running clock. Absent on every other task type, and absent on an open
+   * quiz stamped by no serve yet.
+   */
+  quiz_elapsed_secs?: number;
 }
 
 /** `POST /api/task/{task_id}/teach` — the authored teach page (L4). */

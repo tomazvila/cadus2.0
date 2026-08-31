@@ -512,8 +512,10 @@ async fn a_serve_never_carries_the_expected_answer_or_the_sketch() {
             !body.contains(POOL_ANSWER),
             "the serve leaked the answer text: {body}"
         );
-        // The payload carries these seven fields and no eighth
-        // (`_serve_payload`, `api.py:501-527`).
+        // The LESSON payload carries these seven fields and no eighth
+        // (`_serve_payload`, `api.py:501-527`). A QUIZ serve carries one more,
+        // the whole-quiz clock, and this list is what holds that key to the
+        // quiz: `crates/web/tests/quiz_route.rs` pins the eight keys there.
         let payload = parse(&body);
         let keys: Vec<&str> = payload
             .as_object()

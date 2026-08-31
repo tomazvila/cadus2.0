@@ -437,6 +437,31 @@ describe('the stale Retry', () => {
     expect(screen.getByText('Make it stick')).toBeTruthy();
     expect(submitButton().hasAttribute('disabled')).toBe(false);
   });
+
+  it('F-37-1b: a Retry pressed after the session view is gone posts nothing', async () => {
+    // The residual of FIX2-M6-C. The quiz and the placement got the liveness term; the
+    // session grade did not. The toast store is module-scope, so the Retry OUTLIVES the
+    // view, and the refs of an unmounted view still name the last problem: every other term
+    // of the gate holds, and the press posts a grade for a screen the learner already left.
+    const taskAnswer = vi.fn<ApiClient['taskAnswer']>(async () => {
+      throw new ApiError(503, 'unavailable', 'The service is busy.');
+    });
+    const { unmount } = await mount({ api: stubApi({ taskAnswer }) });
+
+    typeAnswer('3/4');
+    await act(async () => { fireEvent.click(submitButton()); });
+    expect(taskAnswer).toHaveBeenCalledTimes(1);
+    const stale = toasts().find((t) => t.label === 'Retry')!;
+    expect(stale).toBeTruthy();
+
+    unmount();
+    await act(async () => { fireToastAction(stale.id); });
+
+    // ONE post, the one the learner made while the screen was up.
+    expect(taskAnswer).toHaveBeenCalledTimes(1);
+    expect(toasts().some((t) => t.message === RETRY_STALE_MESSAGE)).toBe(true);
+    expect(toasts().every((t) => t.onAction === undefined)).toBe(true);
+  });
 });
 
 describe('the hint ladder', () => {
