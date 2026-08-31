@@ -99,6 +99,28 @@ that read the file at start. The SAME id gets
 connection. A configuration that Caddy refuses fails that reload, and the script
 then recreates the container, where the start check reports the failure.
 
+The compose file binds the DIRECTORY `deploy/` at `/etc/caddy`, and Caddy reads
+`/etc/caddy/Caddyfile` inside it. That shape is what makes the reload above
+work, and it is the fix for M6 review 2, finding V9. The old mount named the
+FILE (`./deploy/Caddyfile:/etc/caddy/Caddyfile`). A single-file bind mount binds
+the INODE that the container started with, and it follows no replacement of that
+inode. `git pull` writes the working-tree file as a NEW inode. Every editor and
+`sed -i` do the same. The container therefore kept the copy from before the pull,
+the reload re-read THAT copy, logged `using config from file` and `adapted
+config to JSON`, and exited 0. `scripts/deploy.sh` read the exit 0 as proof,
+skipped the recreate, and printed `DEPLOY OK` while the Caddyfile of the pulled
+commit never reached the edge. A directory bind binds the directory, so Caddy
+opens the name inside it on every reload and reads the file that name points at
+now. The deploy script therefore needs no `docker compose cp` step ahead of the
+reload. `scripts/check_ops.sh` check (l) drives the whole sequence against the
+real edge image: it replaces the file with a new inode, reloads, and reads the
+answer the proxy serves.
+
+NOTE: The upgrade ACROSS the commit that changed that mount recreates the
+`caddy` container by itself, because the `volumes:` list of the service changed.
+The reload path does not run for that one upgrade. Every upgrade after it uses
+the reload again.
+
 Step 4 prints the check command with the port that Caddy really publishes, so a
 moved `CADDY_HTTP_PORT` gives the right URL. If `docker compose port caddy 80`
 prints nothing, the script prints that command instead of a guessed URL.
@@ -278,6 +300,13 @@ steps above keep the volume.
   serves the bundle out of the Dockerfile's own `/srv` with an `index.html`
   fallback, and that its five security headers equal `SECURITY_HEADERS` of
   `crates/web/src/security.rs` character for character.
+
+  One check goes further than the text. It starts the EDGE image with the mount
+  the compose file declares, replaces the sandbox Caddyfile with a NEW INODE as
+  `git pull` does, runs `caddy reload`, and reads the answer the proxy serves.
+  The answer must carry the new file. A single-file bind mount binds the inode,
+  so the reload re-read the pre-pull copy and exited 0, and the deploy printed
+  `DEPLOY OK` on the pre-pull routing (M6 review 2, finding V9).
 - **The shell scripts.** `scripts/check_ops.sh` runs
   `shellcheck -S warning scripts/*.sh`. `scripts/deploy.sh` is THE upgrade
   procedure, so an unquoted expansion or a lost exit code in it lands on the
@@ -974,10 +1003,17 @@ exits 2 on anything else.
 
 `deploy/Caddyfile` is the whole edge: it serves the SPA bundle from `/srv` and
 proxies `/api/*` to `web:8080`, so the bundle and the API share ONE origin. The
-`caddy` service bind-mounts the file at `/etc/caddy/Caddyfile`, which is the only
-path from the repository to the running proxy: the `spa` image copies the bundle
-and no Caddyfile, so a container without that mount runs the stock `caddy:2`
+`caddy` service bind-mounts the DIRECTORY `deploy/` at `/etc/caddy`, and the
+image CMD reads `/etc/caddy/Caddyfile` inside it. That mount is the only path
+from the repository to the running proxy: the `spa` image copies the bundle and
+no Caddyfile, so a container without the mount runs the stock `caddy:2`
 configuration and serves the Caddy welcome page.
+
+Mount the directory, never the file. A single-file bind mount binds the INODE
+the container started with. `git pull`, every editor, and `sed -i` replace the
+working-tree file with a NEW inode, so the container keeps the old copy and
+`caddy reload` re-reads it, reports success, and changes nothing (M6 review 2,
+finding V9). The section "Upgrade" above holds the whole failure.
 
 `scripts/check_ops.sh` check (j) holds the file to six facts before a commit
 lands: `caddy validate` in the edge image accepts it; the compose file mounts it
@@ -989,6 +1025,12 @@ character for character. `caddy validate` is in that list because the other
 facts are text facts: a file that Caddy REFUSES passed the whole gate before, and
 the operator met the fault as a restart loop on the sole ingress (M6 review,
 finding F13).
+
+Check (l) then holds the MOUNT to one run-time fact, because the shape of a bind
+mount is no text fact either. It starts the edge image with the mount the compose
+file declares, replaces the sandbox Caddyfile with a new inode, runs
+`caddy reload`, and reads the answer the proxy serves. The answer must be the new
+one. A single-file bind fails that check with a reload that exited 0.
 
 ## Proxy ports
 

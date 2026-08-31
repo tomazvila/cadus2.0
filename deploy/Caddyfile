@@ -32,10 +32,18 @@
 # force. `scripts/deploy.sh` step 4 sees the unchanged container id and reloads
 # the file into the running process (finding F12).
 #
+# The compose file mounts the DIRECTORY `deploy/` at /etc/caddy, and Caddy reads
+# /etc/caddy/Caddyfile inside it. Do NOT mount this file on its own. A
+# single-file bind binds the INODE, and `git pull` replaces the file with a new
+# inode, so the container kept the pre-pull copy and the reload above re-read
+# that copy and exited 0 (M6 review 2, finding V9).
+#
 # `scripts/check_ops.sh` check (j) runs `caddy validate` on this file in the edge
 # image and asserts that docker-compose.yml mounts it at /etc/caddy/Caddyfile. A
 # file that Caddy refuses, or a deleted mount, fails the gate here and never on
-# the operator's server (findings F13 and F23).
+# the operator's server (findings F13 and F23). Check (l) then replaces the file
+# with a new inode in a sandbox, reloads the real edge image, and reads the
+# answer the proxy serves.
 {$SITE_ADDRESS} {
 	encode zstd gzip
 

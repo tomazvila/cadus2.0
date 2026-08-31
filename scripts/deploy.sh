@@ -195,6 +195,21 @@ caddy_after="$(container_id caddy)"
 # `caddy reload` hands the running process the file through the admin API, and
 # drops no connection. A configuration that Caddy refuses fails that command, and
 # the recreate below then puts the failure where the start check sees it.
+#
+# The reload reads the file THROUGH THE MOUNT, so the mount decides whether it
+# reads this commit's file at all. docker-compose.yml binds the DIRECTORY
+# `deploy/` at /etc/caddy for that reason. A single-file bind binds the inode the
+# container started with; `git pull` replaces the working-tree file with a new
+# inode, so the container kept the pre-pull copy, this reload re-read that copy,
+# logged `using config from file` and exited 0, and the script below printed
+# DEPLOY OK on the pre-pull routing (M6 review 2, finding V9). A directory bind
+# follows the replacement, so the command below needs no `docker compose cp` step
+# ahead of it. `scripts/check_ops.sh` check (l) drives that whole sequence
+# against the real edge image.
+#
+# NOTE: The upgrade ACROSS the commit that made this change recreates the caddy
+# container by itself, because the volume list of the service changed. The
+# reload path below then does not run for that one upgrade.
 caddy_recreated=1
 if [ -n "$caddy_after" ] && [ "$caddy_before" = "$caddy_after" ]; then
     caddy_recreated=0
