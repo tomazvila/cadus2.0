@@ -26,6 +26,17 @@
 //!    give-away rung, and the count is pinned (finding F25) —
 //!    [`every_shipped_knowledge_point_whose_exemplar_shows_its_answer_gates`].
 //!
+//! The second M6 review adds three more, one per finding:
+//!
+//! 6. a give-away on the FIRST rung and on a MIDDLE rung is refused (finding
+//!    V10) — [`a_give_away_on_the_first_rung_is_rejected`] and
+//!    [`a_give_away_on_a_middle_rung_is_rejected`];
+//! 7. the teach gate reads the served instances, so a last step that names the
+//!    answer of ANOTHER served problem is refused (findings V2 and V11) —
+//!    [`a_last_step_that_names_another_served_answer_is_rejected`];
+//! 8. `regate` runs the gate of a stored document again, for the approve route
+//!    (the FIX2-M6-A ruling, part 3) — [`the_regate_reads_the_stored_kind`].
+//!
 //! Every expected value is a LITERAL: the whole rejection sentence, character
 //! for character, and the code beside it. No expected value is re-derived from
 //! the code under test.
@@ -42,7 +53,8 @@ use std::path::Path;
 
 use cadus_core::curriculum::{Exemplar, load_raw_curriculum};
 use cadus_core::instruction::{
-    HintLadder, InstructionSpec, TeachPage, WorkedExample, gate_hint_ladder, gate_teach,
+    HintLadder, InstructionSpec, ServedInstance, TeachPage, WorkedExample, gate_hint_ladder,
+    gate_teach, regate,
 };
 
 // --------------------------------------------------------------------------- //
@@ -68,13 +80,29 @@ fn spec(exemplars: &[Exemplar]) -> InstructionSpec<'_> {
     }
 }
 
-/// The spec of a knowledge point that holds approved templates too.
-fn spec_with_instances<'a>(exemplars: &'a [Exemplar], answers: &[&str]) -> InstructionSpec<'a> {
+/// The spec of a knowledge point whose stored templates render these instances.
+///
+/// Each pair is one served problem and the answer that problem expects. The
+/// teach gate reads the pair; the hint gate reads the answer alone.
+fn spec_with_instances<'a>(
+    exemplars: &'a [Exemplar],
+    instances: &[(&str, &str)],
+) -> InstructionSpec<'a> {
     InstructionSpec {
         exemplars,
-        instance_answers: answers.iter().map(|answer| (*answer).to_owned()).collect(),
+        instance_answers: instances
+            .iter()
+            .map(|(problem, answer)| ServedInstance {
+                problem: (*problem).to_owned(),
+                answer: (*answer).to_owned(),
+            })
+            .collect(),
     }
 }
+
+/// The two instances of every test that judges against served material: the
+/// squares of 8 and of 9.
+const INSTANCES: [(&str, &str); 2] = [("Compute $8^2$.", "64"), ("Compute $9^2$.", "81")];
 
 /// A teach body the gate accepts.
 const GOOD_TEACH: &str = r#"{
@@ -152,7 +180,7 @@ fn a_rung_that_names_a_template_instance_answer_is_rejected() {
         "Multiply the base by itself; the product is 81."
     ]}"#;
 
-    let rejection = gate_hint_ladder(body, &spec_with_instances(&exemplars, &["64", "81"]))
+    let rejection = gate_hint_ladder(body, &spec_with_instances(&exemplars, &INSTANCES))
         .expect_err("the rung names the answer of a served instance");
 
     assert_eq!(rejection.code, "hint-answer");
@@ -168,7 +196,7 @@ fn a_rung_that_names_a_template_instance_answer_is_rejected() {
 #[test]
 fn a_ladder_that_names_no_instance_answer_is_accepted() {
     let exemplars = exemplars();
-    let ladder = gate_hint_ladder(GOOD_LADDER, &spec_with_instances(&exemplars, &["64", "81"]))
+    let ladder = gate_hint_ladder(GOOD_LADDER, &spec_with_instances(&exemplars, &INSTANCES))
         .expect("no rung names 49, 64 or 81");
 
     assert_eq!(ladder.hints.len(), 3);
@@ -443,6 +471,190 @@ fn a_teach_body_with_a_spare_field_is_rejected() {
         rejection.message,
         "the worked example carries the unknown field 'answer' — it holds 'problem' and 'steps' \
 and nothing else"
+    );
+}
+
+// --------------------------------------------------------------------------- //
+// M6 review 2: the FIX2-M6-A findings
+// --------------------------------------------------------------------------- //
+
+/// FIX2-M6-A, finding V10. Every earlier test of the give-away rule put the
+/// answer on the LAST rung, so a gate that read the last rung alone passed all of
+/// them and no test saw the difference. The FIRST rung is refused too, and
+/// the message names rung 0.
+#[test]
+fn a_give_away_on_the_first_rung_is_rejected() {
+    let exemplars = exemplars();
+    let body = r#"{"hints": [
+        "A square is the number multiplied by itself, so $7^2$ is 49.",
+        "What does the small 2 above the number ask you to do?",
+        "Write the base twice with a multiplication sign between them, then multiply."
+    ]}"#;
+
+    let rejection = gate_hint_ladder(body, &spec(&exemplars)).expect_err("rung 0 names 49");
+
+    assert_eq!(rejection.code, "hint-answer");
+    assert_eq!(
+        rejection.message,
+        "rung 0 reads 'A square is the number multiplied by itself, so $7^2$ is 49.', which names \
+the answer '49' this knowledge point serves — a hint is a question, never the final step (Hard \
+Rule 3)"
+    );
+}
+
+/// FIX2-M6-A, finding V10, the other half. A MIDDLE rung of a three-rung ladder
+/// is refused, and the answer here is an instance answer, so the rule reads the
+/// whole served set on every rung and not on the last one.
+#[test]
+fn a_give_away_on_a_middle_rung_is_rejected() {
+    let exemplars = exemplars();
+    let body = r#"{"hints": [
+        "What does the small 2 above the number ask you to do?",
+        "For a base of 9 the product is 81.",
+        "Write the base twice with a multiplication sign between them, then multiply."
+    ]}"#;
+
+    let rejection = gate_hint_ladder(body, &spec_with_instances(&exemplars, &INSTANCES))
+        .expect_err("rung 1 of three names 81");
+
+    assert_eq!(rejection.code, "hint-answer");
+    assert_eq!(
+        rejection.message,
+        "rung 1 reads 'For a base of 9 the product is 81.', which names the answer '81' this \
+knowledge point serves — a hint is a question, never the final step (Hard Rule 3)"
+    );
+}
+
+/// FIX2-M6-A, findings V2 and V11. The teach gate READS the served instances.
+///
+/// The page works `Compute $15^2$.`, which no template of this knowledge point
+/// renders, so 225 is no served answer. Its last step also states 81, the answer
+/// of the served instance `Compute $9^2$.`, and that answer belongs to a problem
+/// the learner has not attempted yet.
+#[test]
+fn a_last_step_that_names_another_served_answer_is_rejected() {
+    let exemplars = exemplars();
+    let body = r#"{
+        "concept": "Squaring a number multiplies it by itself.",
+        "worked_example": {
+            "problem": "Compute $15^2$.",
+            "steps": [
+                "Write the base twice with a multiplication sign between them.",
+                "The product is 225, the same way $9^2$ is 81."
+            ]
+        }
+    }"#;
+
+    let rejection = gate_teach(body, &spec_with_instances(&exemplars, &INSTANCES))
+        .expect_err("the last step names the answer of a served instance");
+
+    assert_eq!(rejection.code, "teach-answer");
+    assert_eq!(
+        rejection.message,
+        "the last step of 'worked_example.steps' reads 'The product is 225, the same way $9^2$ is \
+81.', which names '81', the answer of 'Compute $9^2$.' — this knowledge point serves that problem \
+too, and the page works 'Compute $15^2$.', so the step hands the learner an answer before the \
+attempt (Hard Rule 1)"
+    );
+}
+
+/// The same page with no second answer in its last step is accepted, so the rule
+/// refuses a give-away and nothing else.
+#[test]
+fn a_last_step_that_names_only_its_own_answer_is_accepted() {
+    let exemplars = exemplars();
+    let body = r#"{
+        "concept": "Squaring a number multiplies it by itself.",
+        "worked_example": {
+            "problem": "Compute $15^2$.",
+            "steps": [
+                "Write the base twice with a multiplication sign between them.",
+                "The product is 225."
+            ]
+        }
+    }"#;
+
+    let page = gate_teach(body, &spec_with_instances(&exemplars, &INSTANCES))
+        .expect("no served answer stands in the last step");
+
+    assert_eq!(page.worked_example.problem, "Compute $15^2$.");
+}
+
+/// The page works its OWN problem to its own answer, and the gate accepts that.
+/// The worked problem here is the served instance `Compute $9^2$.`, so 81 is the
+/// answer of the problem the page works and not the answer of another one.
+#[test]
+fn a_page_that_works_a_served_problem_states_that_answer() {
+    let exemplars = exemplars();
+    let body = r#"{
+        "concept": "Squaring a number multiplies it by itself.",
+        "worked_example": {
+            "problem": "Compute $9^2$.",
+            "steps": ["Write $9$ twice.", "The product is 81."]
+        }
+    }"#;
+
+    let page = gate_teach(body, &spec_with_instances(&exemplars, &INSTANCES))
+        .expect("81 is the answer of the problem the page works");
+
+    assert_eq!(page.worked_example.steps.len(), 2);
+}
+
+/// An EARLIER step is not the answer of the page, so a numeral on the way to it
+/// is arithmetic and not a give-away.
+#[test]
+fn an_earlier_step_that_names_a_served_answer_is_accepted() {
+    let exemplars = exemplars();
+    let body = r#"{
+        "concept": "Squaring a number multiplies it by itself.",
+        "worked_example": {
+            "problem": "Compute $15^2$.",
+            "steps": [
+                "Split 15 into 8 and 7, and remember that $8^2$ is 64.",
+                "The product is 225."
+            ]
+        }
+    }"#;
+
+    let page = gate_teach(body, &spec_with_instances(&exemplars, &INSTANCES))
+        .expect("only the last step carries the answer of the page");
+
+    assert_eq!(page.worked_example.steps.len(), 2);
+}
+
+/// FIX2-M6-A, part 3. `regate` runs the gate of a STORED document again, so the
+/// approve route judges a pending ladder against material that reached the table
+/// after the ladder did. A kind that is not an instruction document is never
+/// judged.
+#[test]
+fn the_regate_reads_the_stored_kind() {
+    let exemplars = exemplars();
+    let ladder = r#"{"hints": ["For a base of 9 the product is 81."]}"#;
+
+    assert_eq!(regate("hint_ladder", ladder, &spec(&exemplars)), None);
+
+    let refused = regate(
+        "hint_ladder",
+        ladder,
+        &spec_with_instances(&exemplars, &INSTANCES),
+    )
+    .expect("the served instance answer is now in the set");
+    assert_eq!(refused.code, "hint-answer");
+    assert_eq!(
+        refused.message,
+        "rung 0 reads 'For a base of 9 the product is 81.', which names the answer '81' this \
+knowledge point serves — a hint is a question, never the final step (Hard Rule 3)"
+    );
+
+    // A template body is not an instruction document, so the re-gate answers
+    // None for it and the approve route leaves the row alone.
+    assert_eq!(
+        regate(
+            "template",
+            ladder,
+            &spec_with_instances(&exemplars, &INSTANCES)
+        ),
+        None
     );
 }
 

@@ -107,7 +107,9 @@
 
 use std::fmt::Write as _;
 
-use cadus_core::instruction::{InstructionSpec, gate_hint_ladder, gate_teach};
+use cadus_core::instruction::{
+    InstructionSpec, ServedInstance, gate_hint_ladder, gate_teach, template_instances,
+};
 use cadus_core::pool::kp_key;
 use cadus_core::template::{
     GateSpec, Rejection, TEMPLATABLE_KINDS, TEMPLATE_VERSION, gate_body, gate_diagnosis_body,
@@ -475,6 +477,11 @@ fn unwritable(err: &serde_json::Error) -> Rejection {
 /// The written text comes from the GATED document and not from the arguments, so
 /// a field the gate ignores never reaches the row and never reaches the digest.
 ///
+/// `instance_answers` is the served material of the knowledge point
+/// ([`served_instances`]), and `cadus_core::instruction::gate_teach` READS it:
+/// the last step of the worked example names no answer of a served problem other
+/// than the one the page works (M6 review 2, findings V2 and V11).
+///
 /// # Errors
 ///
 /// Returns the [`Rejection`] of `cadus_core::instruction::gate_teach`, and the
@@ -482,7 +489,7 @@ fn unwritable(err: &serde_json::Error) -> Rejection {
 pub fn verify_teach(
     spec: &AuthoringSpec,
     arguments: &Value,
-    instance_answers: &[String],
+    instance_answers: &[ServedInstance],
 ) -> Result<String, Rejection> {
     let body = instruction_body(arguments)?;
     let gate_spec = InstructionSpec {
@@ -501,7 +508,7 @@ pub fn verify_teach(
 pub fn verify_hint_ladder(
     spec: &AuthoringSpec,
     arguments: &Value,
-    instance_answers: &[String],
+    instance_answers: &[ServedInstance],
 ) -> Result<String, Rejection> {
     let body = instruction_body(arguments)?;
     let gate_spec = InstructionSpec {
@@ -570,94 +577,64 @@ pub fn verify_diagnosis(spec: &AuthoringSpec, arguments: &Value) -> Result<Strin
     })
 }
 
-/// The instances one approved template contributes to the instruction gates.
+/// Every instance the templates of one knowledge point serve (M6 review,
+/// findings F2, F15 and F25; M6 review 2, finding V1).
 ///
-/// The number is the floor the M6 review ruling names for findings F2, F15 and
-/// F25. Every draw runs from [`cadus_core::template::GATE_SEED`], so the answer
-/// set of one document is the same set on every pass and a reviewer reproduces
-/// the verdict (C6).
-pub const INSTANCE_SAMPLES: u32 = 8;
-
-/// Every answer the approved templates of one knowledge point serve (M6 review,
-/// findings F2, F15 and F25).
+/// The two instruction gates refuse a document that gives a served answer away.
+/// The exemplars are one source of those answers; the templates are the other,
+/// and they are the source the serve path reads first (A6 serves the exemplars
+/// only when no template is approved). This read supplies the second source, and
+/// [`InstructionSpec::instance_answers`] carries it into the gate.
 ///
-/// The hint gate refuses a rung that names an answer the learner is served. The
-/// exemplars are one source of those answers; the approved templates are the
-/// other, and they are the source the serve path reads first (A6 serves the
-/// exemplars only when no template is approved). This read supplies the second
-/// source, and [`InstructionSpec::instance_answers`] carries it into the gate.
+/// # Why a PENDING template counts
+///
+/// `cadus-worker author` writes all four kinds in ONE process, template first
+/// (`crate::authoring::prompt::KINDS`), and every kind enters `content_store` as
+/// `pending`. A read of the `approved` rows alone therefore answered an EMPTY
+/// list for every knowledge point of a fresh curriculum, and the hint gate of
+/// that pass judged the ladder against the exemplars alone (M6 review 2, finding
+/// V1). A pending template is the material the reviewer is about to approve, so
+/// it gates the ladder and the page authored beside it.
+///
+/// A `rejected` template is not read: a human refused that body, and it serves
+/// nothing.
 ///
 /// `kp_id` is the serving key `cadus_core::pool::kp_key` writes.
 ///
 /// # Errors
 ///
 /// Returns [`WorkerError::Store`] when the statement fails or the bound expires.
-pub async fn served_answers(db: &Db, kp_id: &str) -> Result<Vec<String>, WorkerError> {
+pub async fn served_instances(db: &Db, kp_id: &str) -> Result<Vec<ServedInstance>, WorkerError> {
     let query = sqlx::query_scalar!(
         r#"
         SELECT body::text AS "body!"
           FROM content_store
-         WHERE kp_id = $1 AND kind = $2 AND status = $3
+         WHERE kp_id = $1 AND kind = $2 AND status IN ($3, $4)
          ORDER BY approved_at DESC NULLS LAST, created_at DESC, digest
         "#,
         kp_id,
         KIND_TEMPLATE,
         STATUS_APPROVED,
+        STATUS_PENDING,
     )
     .fetch_all(db.pool());
     let bodies: Vec<String> = cadus_store::bounded(db, query).await?;
-    let mut answers: Vec<String> = Vec::new();
+    let mut served: Vec<ServedInstance> = Vec::new();
     for body in &bodies {
-        for answer in template_answers(body) {
-            if !answers.contains(&answer) {
-                answers.push(answer);
+        for instance in template_instances(body) {
+            if !served.contains(&instance) {
+                served.push(instance);
             }
         }
     }
-    Ok(answers)
-}
-
-/// The answers of the instances one approved template body renders.
-///
-/// The list holds the answer of every worked sample the document pins and the
-/// answer of [`INSTANCE_SAMPLES`] drawn instances. A body this build cannot read
-/// or cannot compile contributes nothing: it is an approved row of an older
-/// shape, and a hint gate that refused every rung over it would teach the model
-/// nothing it can act on.
-#[must_use]
-pub fn template_answers(body: &str) -> Vec<String> {
-    let Ok(doc) = cadus_core::template::from_body(body) else {
-        return Vec::new();
-    };
-    let Ok(compiled) = cadus_core::template::Compiled::new(&doc) else {
-        return Vec::new();
-    };
-    let mut answers: Vec<String> = Vec::new();
-    let mut keep = |answer: String| {
-        if !answer.is_empty() && !answers.contains(&answer) {
-            answers.push(answer);
-        }
-    };
-    for sample in &doc.samples {
-        if let Ok(instance) = compiled.instantiate(sample.bindings()) {
-            keep(instance.answer);
-        }
-    }
-    let mut rng = cadus_core::template::rng_from_seed(cadus_core::template::GATE_SEED);
-    for _ in 0..INSTANCE_SAMPLES {
-        if let Ok(instance) = compiled.draw(&mut rng) {
-            keep(instance.answer);
-        }
-    }
-    answers
+    Ok(served)
 }
 
 /// The gate of one kind (spec section 2.2, step 2).
 ///
-/// `instance_answers` holds the answers the approved templates of the knowledge
-/// point serve ([`served_answers`]). The two instruction gates read it; the
-/// template gate and the diagnosis gate read the document's own instances and
-/// ignore it.
+/// `instance_answers` holds the instances the templates of the knowledge point
+/// serve ([`served_instances`]). BOTH instruction gates read it; the template
+/// gate and the diagnosis gate read the document's own instances and ignore it.
 ///
 /// # Errors
 ///
@@ -667,7 +644,7 @@ pub fn verify_kind(
     kind: Kind,
     spec: &AuthoringSpec,
     arguments: &Value,
-    instance_answers: &[String],
+    instance_answers: &[ServedInstance],
 ) -> Result<String, Rejection> {
     // Trap T1, on EVERY kind and before EVERY gate. A model that writes one
     // backslash emits valid JSON whose decoded value is `$<TAB>imes$`; no gate
@@ -1037,12 +1014,13 @@ pub async fn author_one(
         return Ok(report);
     }
 
-    // Step 3: the two instruction gates read the answers of the material this
-    // knowledge point serves, and an approved template is that material (M6
-    // review, findings F2, F15 and F25). The read runs once per pass, before the
-    // first call, so a five-attempt retry costs one statement.
+    // Step 3: the two instruction gates read the material this knowledge point
+    // serves, and a template that is approved OR pending is that material (M6
+    // review, findings F2, F15 and F25; M6 review 2, finding V1). The read runs
+    // once per pass, before the first call, so a five-attempt retry costs one
+    // statement.
     let instance_answers = match kind {
-        Kind::Teach | Kind::HintLadder => served_answers(db, &kp_id).await?,
+        Kind::Teach | Kind::HintLadder => served_instances(db, &kp_id).await?,
         Kind::Template | Kind::Diagnosis => Vec::new(),
     };
 

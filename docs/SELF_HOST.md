@@ -595,6 +595,14 @@ The process exits 0 after a pass and 2 after a configuration error. An unknown
 knowledge point, an unknown kind, an unreadable curriculum, and an empty
 `OPENAI_API_KEY` are all exit code 2, and the one line on stderr names the cause.
 
+**The kinds run in one fixed order: `template`, `teach`, `hint_ladder`,
+`diagnosis`.** The order does not follow the command line: `--kind hint_ladder
+--kind template` runs `template` first too. The teach gate and the hint gate read
+the templates of the knowledge point, `approved` AND `pending`, so the template
+this same pass stored is the material the page and the ladder are judged against.
+Author the four kinds in one pass, and the ladder of a fresh curriculum is gated
+against a real rendered instance before a human reads anything.
+
 ### The LaTeX escape repair (trap T1)
 
 A model that writes its own JSON with ONE backslash emits `"$\times$"`. That is
@@ -687,10 +695,10 @@ ADMIN account only: a session on an account with `users.is_admin = false` gets
 |---|---|
 | `GET /api/admin/content?status=&kind=&kp=` | The review queue. Each line carries the digest, the serving key, the kind, the status, `authoring_attempts`, `authoring_cost_usd`, `created_at`, a 64-character summary, `approved_templates`, and `bank_warning`. |
 | `GET /api/admin/content/{digest}` | One document: the body, the gate block, and 8 rendered instances with their computed answers. |
-| `POST /api/admin/content/{digest}/approve` | Approve that digest. The body is `{}`. The call is idempotent. |
+| `POST /api/admin/content/{digest}/approve` | Approve that digest. The body is `{}`. The call is idempotent. The answer carries `rejected_documents`. |
 | `POST /api/admin/content/{digest}/reject` | Reject that digest. The body is `{"reason": "..."}`, and a request with no reason is `422`. |
 
-Three rules an operator must know:
+Four rules an operator must know:
 
 - **Approval binds to the digest (C6).** An edited body is a new digest and a
   new row, so no approval carries over. Do not edit a body in `psql`.
@@ -700,6 +708,27 @@ Three rules an operator must know:
 - **The 8 instances are the point.** A template that computes correctly and
   asks the wrong question is obvious in the instances and invisible in the
   expression. Read them before you approve.
+- **An approval of a template judges the documents beside it.** The teach page
+  and the hint ladder of a knowledge point never state an answer that knowledge
+  point serves (Hard Rules 1 and 3). Approving a template therefore
+  runs both gates again over every PENDING page and ladder of that knowledge
+  point. One the gate now refuses moves to `rejected`, with the gate's own
+  sentence as the `review_reason`, and the answer names it:
+
+  ```json
+  {
+    "digest": "sha256:...",
+    "status": "approved",
+    "approved_at": "2026-08-31T09:00:00+00:00",
+    "rejected_documents": [
+      {"digest": "sha256:...", "kind": "hint_ladder", "reason": "rung 1 reads ..."}
+    ]
+  }
+  ```
+
+  An APPROVED page or ladder is never touched: a human passed it. An empty list
+  means the approval refused nothing. A `null` means the re-gate itself failed;
+  the approval still stands, and the worker log carries the reason.
 
 ### The admin connection
 
