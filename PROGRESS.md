@@ -57,6 +57,8 @@ Unit FIX2-M6-G (branch `m6/fix2-g`) closes two residuals the wave-2 agents repor
 - QUIZ-budget: after D the quiz deadline survives a re-mount but a page RELOAD still restarts the whole budget, because the deadline lives in a client-side registry. The quiz start becomes server state (`QuizBuffer.started_at`, written at the first serve of the task) and the serve payload emits it, so a reload resumes the running clock.
 - The session grade's `retryGate` lacks the `life.alive()` term that C added to the quiz and placement gates, so a Retry pressed after the session view unmounts still posts a grade.
 
+G is gate green (`7fca2d7`; Rust gate and `npm run check` both pass). `QuizBuffer` gains `started_at`, stamped once at the first serve of the task (`WebState::start_quiz_clock`); the quiz serve payload gains `quiz_elapsed_secs` (a quiz serve carries eight keys, a lesson serve still seven); the SPA prefers the server count over its client registry and distinguishes an absent count from zero. `Session.tsx` gains the liveness term. Four mutations went red. Open items from G: `docs/reference/web-service-1.0-spec.md` §4.1 does not yet name `QuizBuffer.started_at` or `quiz_elapsed_secs`; the SPA re-syncs the deadline on mount only, so a long quiz still drifts by client clock skew between mounts.
+
 Fix-wave open items for the verification round (from the unit reports):
 - `cli.rs` `render_batch` does not print the new `duplicate` count.
 - The L5 hint route trusts the approved ladder at serve time; no re-check against the served instance answer (the gate covers 8 samples per template).
