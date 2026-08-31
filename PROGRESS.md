@@ -2,7 +2,7 @@
 
 One entry per milestone cycle (HANDOVER.md §2). Newest first.
 
-## M6 — offline authoring pipeline, review tooling, React + TypeScript SPA (2026-08-30, in progress)
+## M6 — offline authoring pipeline, review tooling, React + TypeScript SPA (2026-08-30 to 2026-08-31, closed)
 
 Requirement IDs: A2, C6, T2, T3, T5, T6, C5, C1, L4, L5, O3. Plan: `docs/plans/M6.md`. Spec:
 `docs/reference/authoring-and-spa-1.0-spec.md` (§7: units R1–R8, S1–S14). Owner go: 2026-08-30
@@ -83,6 +83,30 @@ two fractions), 84 name `pi` or `e` and get no verdict (a miss at the route, spe
 - A nested radical (`√(2+√3)/2` vs `0.9659258263`) canonicalizes to a `Poly` over a `sqrt` call and stays wrong although the decimal is the exact rounding; extend the rule to a symbol-free `Poly` of `sqrt` calls.
 - `pi` and `e` against a decimal get no verdict; rational interval bounds for the two constants make the case decidable (`3.14` for `π` is the exact rounding to 2 digits).
 - `notation_note` (the prose "Correct value. One note on form: ...") has no caller: the M5 reply carries the `notation` tag only. Wiring the note into the reply is an API change (web-service spec 2.1).
+
+### M6 close (2026-08-31)
+
+Fix wave 2 (`wf_5f6ab89c-c38`, six units) and the follow-up unit G are merged: `m6/fix2-f` (which holds A, B, C, D, E and F) and `m6/fix2-g`, both without conflict on `main`. Changes: the authoring gates read every stored template of the knowledge point (`status IN (approved, pending)`), so the single documented pass gates a ladder against the template it wrote minutes earlier; `gate_teach` refuses a worked example whose last step names another served problem's answer; the approve route re-gates the knowledge point and rejects a pending ladder or page that the newly approved material gives away; a stale row whose re-author reproduces the body refreshes its `prompt_digest` instead of paying again on every pass; the quiz and placement views carry the Retry gate; the whole-quiz clock is server state (`QuizBuffer.started_at`, `quiz_elapsed_secs` on a quiz serve), so a reload resumes it; the session grade's Retry gate carries the liveness term; the CSP audit refuses an inline script body and an inline handler attribute; the diagnosis poll interval and deadline are pinned as literals against the service constants; `deploy/` is bind-mounted as a directory, so a pulled Caddyfile reaches the edge, and `check_ops` proves it with a live reload probe.
+
+Gate on `main` at `9181577`: `cd web && npm run check` PASS (29 test files, 543 tests, invariants 33/33, CSP audit clean); Rust gate 1818 tests, 0 failed (log gate-m6-3).
+
+Review totals for M6: rounds 1 and 2 raised 40 and confirmed 26 (20 distinct); the verification round raised 16 and confirmed 12 (9 distinct); two fix waves of nine and seven units. Every distinct defect is fixed with a red-then-green test and a mutation check. No third review round: the verification round re-opened three round-1 fixes, wave 2 closed all three, and the two residuals the wave-2 agents reported themselves were closed by unit G.
+
+Open items (no owner; carried as the 2.0 backlog):
+- The teach give-away rule reads the LAST step only. An earlier step that names another served problem's answer is accepted, and a test pins that on purpose. Widening it needs a ruling.
+- The hint gate judges 8 rendered instances per approved template. A ladder approved before a template is added is not re-gated by a later template insert (only an approve re-gates).
+- `render_batch` (`crates/worker/src/authoring/cli.rs`) prints `stored skipped declined calls alerts` and not the `duplicate` count that the F1 and V3 fixes now report.
+- `docs/reference/web-service-1.0-spec.md` §4.1 does not name `QuizBuffer.started_at` or `quiz_elapsed_secs`.
+- The SPA re-syncs the quiz deadline on mount only; a long quiz drifts by the client clock skew between mounts.
+- `cadus_store::content::review_list` has no caller: the admin route's `review_page` duplicates the SELECT with an `OFFSET`.
+- `docker-compose.yml` does not forward `AUTHORING_OUTPUT_TOKENS` or `AUTHORING_REASONING_MAX_TOKENS` to the worker; `check_ops` asserts the seven A4 variables only.
+- The route fixture scans `.route("...")` string literals; a route built from a const or a macro escapes it.
+- The authoring pass takes no lock: two passes over one knowledge point at the same time both author.
+- Rows written before migration 0012 carry no `prompt_digest` and are never stale; rows written before the digest change keep the old key format.
+- The 1.0 quiz batch reveal route (`service.complete_task`) is not ported.
+- The M5 open items of the "M5 close" section stand (the first serve of a task pays one whole-log fold; `with_open_multistep_components` has no caller; the tenant layer's double session lookup; the client-facing `index` restart after an enroll; `JobPayload.topic`; `/api/operator/flags` per-tenant pool depth).
+
+**The build is complete.** M0 through M6 are closed on `main`.
 
 ## M5 — HTTP API, session state, deterministic grading, async diagnosis, model-call log (2026-08-27 to 2026-08-30, closed)
 
