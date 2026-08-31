@@ -16,7 +16,7 @@
  * `2 remaining`, the posted pairs of `problem_id` and `answer`.
  */
 import { describe, expect, it, vi } from 'vitest';
-import { act, fireEvent, render, screen } from '@testing-library/react';
+import { act, cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { axe } from 'vitest-axe';
 import { createDemoApi } from '@/api';
 import { Quiz, QUIZ_SILENCE_NOTE, QUIZ_TIMEOUT_MESSAGE, type QuizProps } from '@/views/Quiz';
@@ -151,6 +151,78 @@ describe('QUIZ-budget: the whole-quiz clock', () => {
     await tick(3_600_000);
     expect(taskAnswer).not.toHaveBeenCalled();
     expect(screen.queryByText('Quiz complete')).toBeNull();
+  });
+
+  it('QUIZ-budget: a re-mount resumes the running clock and keeps the answered count', async () => {
+    // V6. The topbar offers the map from the quiz and the map's Done gives the quiz back,
+    // so React unmounts the screen and mounts it again. A clock seeded from the budget on
+    // every mount hands the whole budget back once per trip, and the count on screen
+    // restarts at the full quiz: the timed quiz then has no end.
+    vi.useFakeTimers();
+    const taskServe = vi.fn<ApiClient['taskServe']>()
+      .mockResolvedValueOnce(Q(1))
+      .mockResolvedValue(Q(2));
+    const taskAnswer = vi.fn<ApiClient['taskAnswer']>(async () => receipt({ remaining: 2 }));
+    // ONE client for both mounts, as the router holds one for the whole page.
+    const api = stubApi({ taskServe, taskAnswer });
+
+    await mount({ api });
+    typeAnswer('7/12');
+    await act(async () => { fireEvent.click(submitButton()); });
+    await tick(30_000);
+    expect(timer()!.textContent).toBe('9:30');
+    expect(remaining()!.textContent).toBe('2 remaining');
+
+    // The map takes the screen: React unmounts the quiz, and Done mounts it again.
+    cleanup();
+    await mount({ api });
+
+    // 30 seconds of the 600 are spent, and the serve numbers the live question 2 of 3, so
+    // one answer is in: `10:00` and `3 remaining` here are the map round trip as a reset.
+    expect(timer()!.textContent).toBe('9:30');
+    expect(remaining()!.textContent).toBe('2 remaining');
+    expect(taskServe).toHaveBeenCalledTimes(3);
+  });
+
+  it('QUIZ-budget: a re-mount after the budget ran out blank-fills at once', async () => {
+    // The screen was away while the clock ran out. The resumed clock is at zero on the
+    // first render, so the timeout path runs on the spot instead of waiting out a second
+    // budget the learner never had.
+    vi.useFakeTimers();
+    const taskAnswer = vi.fn<ApiClient['taskAnswer']>(
+      async () => receipt({ remaining: 0, quiz_complete: true }),
+    );
+    const api = stubApi({ taskAnswer });
+    const short: PlanTask = { ...QUIZ, time_budget_secs: 5 };
+
+    await mount({ task: short, api });
+    cleanup();
+    // The clock dies with the view (F-37-1b), so nothing is posted while the quiz is off.
+    await tick(10_000);
+    expect(taskAnswer).not.toHaveBeenCalled();
+
+    await mount({ task: short, api });
+    await tick(0);
+
+    expect(posted(taskAnswer)).toEqual([['q1', '']]);
+    expect(screen.getByText('Quiz complete')).toBeTruthy();
+    expect(toastStore.getSnapshot().map((t) => t.message)).toContain(QUIZ_TIMEOUT_MESSAGE);
+  });
+
+  it('QUIZ-budget: a clock the browser froze gives no frozen second back', async () => {
+    // A hidden tab throttles the interval to about one tick a minute. A clock that counts
+    // ticks hands every skipped second back, so the whole-quiz budget stretches for as long
+    // as the learner keeps the tab in the background.
+    vi.useFakeTimers();
+    await mount();
+    expect(timer()!.textContent).toBe('10:00');
+
+    // Two minutes pass with the tab hidden, and the interval fires ONCE at the end of them.
+    vi.setSystemTime(Date.now() + 120_000);
+    await tick(1000);
+
+    // 121 seconds of the 600 are gone. A tick count says 9:59.
+    expect(timer()!.textContent).toBe('7:59');
   });
 
   it('turns the clock urgent in the last minute, at 60 seconds left', async () => {
