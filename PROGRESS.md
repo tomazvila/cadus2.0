@@ -106,6 +106,18 @@ Open items (no owner; carried as the 2.0 backlog):
 - The 1.0 quiz batch reveal route (`service.complete_task`) is not ported.
 - The M5 open items of the "M5 close" section stand (the first serve of a task pays one whole-log fold; `with_open_multistep_components` has no caller; the tenant layer's double session lookup; the client-facing `index` restart after an enroll; `JobPayload.topic`; `/api/operator/flags` per-tenant pool depth).
 
+### End-to-end verification on the final tree (2026-08-31, after the M6 close)
+
+The click-through is a CI step, not part of `scripts/gate.sh` or `npm run check`, and it last ran at `558a503`, fifteen SPA and API commits before HEAD. It was therefore re-run against the closed tree, together with a hand-driven pass over the real service:
+
+- `node e2e/run.mjs demo`: PASS, 14 steps, no console error, no page error, no failed request, no 4xx or 5xx. It covers the dashboard, the curriculum map, a lesson (worked example, practice, serve idempotence, hint, grade, auto-advance), the placement ground rules, and a 390 px viewport with zero horizontal overflow.
+- `node e2e/run.mjs authed --api=...`: PASS, 9 steps, same clean console. A real account against the `cadus-web` binary on a freshly migrated database: the auth card, sign-in, the `HttpOnly` session cookie with empty web storage, the service CSP header, the real curriculum map (1,090 topics, 3,281 links), the dashboard, and sign-out.
+- A hand-driven pass with `curl` over the real service closed the loop the authed walk does not reach: login, `POST /api/enroll` (mastery floor of 3 topics), `POST /api/session/start`, `GET /api/session/plan` (3 lesson tasks), `POST /api/task/{id}/serve` (`Compute $9 - 4$` from an exemplar), `POST /api/task/{id}/answer` with a wrong answer — graded `correct:false`, the `attempt` event appended after `session_start`, `enrolled` and `task_served`, a diagnosis job queued `pending`, and the next problem served in the same reply.
+
+**Gap found by this check, and it is real: the placement API does not exist.** `docs/reference/web-service-1.0-spec.md` §2 lists `POST /api/diag/start`, `/api/diag/answer` and `/api/diag/finish` as routes to keep; the shipped router has 35 routes and none of them. M5 never planned a unit for them and the M6 unit S10 built the placement screen against them, so the SPA placement fails against the real service ("The placement did not start"), while it works against the canned demo backend. A new learner is not blocked from studying — `POST /api/enroll` sets the mastery floor and the plan composes without a placement — but the diagnostic placement of the 1.0 product is missing from 2.0. It needs one M5-shaped unit: three routes over the existing `cadus_core` selector and checker.
+
+Not exercised anywhere, and not exercisable on this box: a real model provider (the authoring pipeline and the async diagnosis ran only against a local fake OpenAI-compatible server, so DeepSeek V4 through OpenRouter has never been called), and a real deployment (`scripts/deploy.sh` is driven against a docker stub in `check_ops`; the upgrade across the Caddy mount change is unverified on a server). `teach` and `hint` answer `no_instruction` and `no_hint_ladder` on a fresh deployment, which is correct: `content_store` is empty until an authoring pass runs against a reachable model.
+
 **The build is complete.** M0 through M6 are closed on `main`.
 
 ## M5 — HTTP API, session state, deterministic grading, async diagnosis, model-call log (2026-08-27 to 2026-08-30, closed)
