@@ -124,6 +124,20 @@ export function Quiz({
           fillBlanksRef.current(guard + 1);
         });
       },
+      {
+        // THE RETRY GATE (F-37-1c), for the time-up path. The fill owns `submitting` for
+        // its whole chain, so its Retry RESUMES the fill and must NOT re-take a `ready`
+        // lock the way a submit does. What the gate tests is that the fill still stands on
+        // this question: a Retry that names any other one posts a second attempt of a
+        // `problem_id` the service already holds.
+        retryGate: () => life.alive()
+          && !gate.is('done')
+          && problemRef.current?.problem_id === current.problem_id,
+        // Every failure — the first and each retried one — leaves the card LOCKED. The
+        // clock is at zero, and a release to `ready` would let a submit post an answer
+        // after the deadline, which is the second attempt QUIZ-timeout exists to stop.
+        onFail: () => { if (life.alive() && !gate.is('done')) gate.enter('submitting'); },
+      },
     );
   }, [api, call, finish, gate, life, task.task_id, total]);
 
@@ -215,10 +229,29 @@ export function Quiz({
           if (timedOutRef.current) fillBlanks();
         });
       },
-    ).then((res) => {
-      // A failed grade returns the question to the learner, rather than locking the card.
-      if (!res && life.alive() && gate.is('submitting')) gate.enter('ready');
-    });
+      {
+        // THE RETRY RE-ENTERS THE GATE (F-37-1c). `useCall` holds no view state, and this
+        // toast never expires (F-36-1b), so a Retry pressed after the learner answered
+        // again re-posts a `problem_id` the service already spent. A service that refuses
+        // it answers `404 unknown_problem` and arms yet another Retry; a service that
+        // accepts it is worse, because the stale continuation then runs `taskServe` and
+        // replaces the question on screen UNANSWERED. The gate refuses the retry, and the
+        // refusal toast expires.
+        //
+        // Two more terms sit in the gate. `life.alive()` comes first: the toast outlives
+        // the view — the store is module-scope — so a learner who left the quiz can still
+        // press this Retry, and a post from a dead screen is a write nobody is on
+        // (F-37-1b). `timedOutRef` comes last: past the deadline the blank fill owns every
+        // remaining post (QUIZ-timeout), and a retried answer is a second attempt.
+        retryGate: () => life.alive()
+          && problemRef.current?.problem_id === current.problem_id
+          && !timedOutRef.current
+          && gate.tryEnter('ready', 'submitting'),
+        // A failed grade returns the question to the learner — the first attempt and every
+        // retried one alike — rather than locking the card.
+        onFail: () => { if (life.alive() && gate.is('submitting')) gate.enter('ready'); },
+      },
+    );
   }, [api, call, fillBlanks, finish, gate, life, task.task_id]);
 
   if (phase === 'done') {
