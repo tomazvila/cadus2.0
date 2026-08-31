@@ -151,6 +151,39 @@ pub(crate) fn unix_seconds(micros: i64) -> f64 {
     micros as f64 / 1_000_000.0
 }
 
+/// Whole seconds from `started_at` to `now`, never below zero.
+///
+/// A clock that reads backwards gives the learner time the quiz never had, so a
+/// stamp in the future answers 0. `f64 as i64` saturates in Rust, and the value
+/// is a count of seconds, so the cast keeps the number it is given.
+fn elapsed_secs(now: f64, started_at: f64) -> i64 {
+    let secs = (now - started_at).floor();
+    if secs.is_finite() && secs > 0.0 {
+        secs as i64
+    } else {
+        0
+    }
+}
+
+/// The seconds the whole-quiz clock has run, or `None` off a quiz (QUIZ-budget).
+///
+/// The FIRST quiz serve stamps the clock and answers 0; every later serve of the
+/// open quiz reads that stamp, so a page reload resumes the running clock
+/// instead of handing the whole budget back (M6-review-2, V6). The stamp is
+/// server state: the client keeps no clock of its own across a reload.
+fn quiz_elapsed(
+    scratch: &mut WebState,
+    task_id: &str,
+    task_type: TaskType,
+    now: f64,
+) -> Option<i64> {
+    if task_type != TaskType::Quiz {
+        return None;
+    }
+    let started_at = scratch.start_quiz_clock(task_id, now);
+    Some(elapsed_secs(now, started_at))
+}
+
 /// The index the next serve takes (`_next_serve_index`, `api.py:398-407`).
 ///
 /// A quiz and a multi-step task index by ANSWERED count, so a mid-task reload
@@ -340,12 +373,17 @@ pub(crate) fn progress_for<'state>(
 /// lesson names no count and 1.0 answers `null` for it (`api.py:520`); the D-S6
 /// row flattens the absent count to 0, so reading it back would tell the client
 /// a lesson has zero problems.
+///
+/// `quiz_elapsed_secs` is the EIGHTH key, and a QUIZ serve alone carries it
+/// (M6-review-2, V6). Every other task type emits the seven keys of 1.0, so no
+/// other route and no other payload changes shape.
 fn serve_payload(
     served: &ServedProblem,
     total: Option<i64>,
     task_type: TaskType,
     graph: &Curriculum,
     drill_secs: i64,
+    quiz_elapsed_secs: Option<i64>,
 ) -> Value {
     let (time_budget_secs, countdown) = if task_type == TaskType::Drill {
         (Some(drill_secs), true)
@@ -358,7 +396,7 @@ fn serve_payload(
             .map(|topic| topic.expected_time_secs);
         (secs, false)
     };
-    json!({
+    let mut payload = json!({
         "problem_id": served.problem_id,
         "index": served.index + 1,
         "total": total,
@@ -366,7 +404,11 @@ fn serve_payload(
         "kp": served.kp,
         "time_budget_secs": time_budget_secs,
         "countdown": countdown,
-    })
+    });
+    if let (Some(elapsed), Some(map)) = (quiz_elapsed_secs, payload.as_object_mut()) {
+        map.insert("quiz_elapsed_secs".to_string(), json!(elapsed));
+    }
+    payload
 }
 
 // --------------------------------------------------------------------------- //
@@ -570,9 +612,15 @@ pub async fn serve(
         ));
     }
 
+    // The WHOLE-quiz clock, stamped by the first serve of the quiz and read by
+    // every later one (QUIZ-budget, V6). It stands before the branch below,
+    // because a re-serve of a live question is exactly the reload that must
+    // resume the running clock.
+    let elapsed = quiz_elapsed(&mut scratch, &task_id, task_type, started_at);
+
     // A problem is already live for this task: a reload, or the problem the last
-    // answer installed. Re-stamp the clock and hand the SAME one back
-    // (`_serve_live`, section 5.6).
+    // answer installed. Re-stamp the PER-PROBLEM clock and hand the SAME one
+    // back (`_serve_live`, section 5.6).
     let payload = if let Some(live) = scratch.served.get_mut(&task_id) {
         live.started_at = started_at;
         serve_payload(
@@ -581,6 +629,7 @@ pub async fn serve(
             task_type,
             graph,
             content.cfg.drill.target_secs,
+            elapsed,
         )
     } else {
         install_next(
@@ -638,6 +687,11 @@ pub(crate) async fn install_next(
     let task_type = task.task_type;
     let progress = progress_for(scratch, task, graph).clone();
     let index = next_serve_index(task_type, &progress);
+    // The grade path installs the next quiz question through here, so the clock
+    // of a quiz whose first question arrives on this path is stamped too. The
+    // stamp is written ONCE per task, so this call cannot restart a clock the
+    // serve route already started (V6).
+    let elapsed = quiz_elapsed(scratch, &task_id, task_type, started_at);
 
     let target = target_of(task, index, &progress, graph)?;
     let key = target.key();
@@ -667,6 +721,7 @@ pub(crate) async fn install_next(
         task_type,
         graph,
         content.cfg.drill.target_secs,
+        elapsed,
     );
     scratch.record_served(&target.serve, &task_id, &row.instance_hash);
     scratch.served.insert(task_id.clone(), served);

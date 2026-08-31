@@ -210,6 +210,58 @@ describe('QUIZ-budget: the whole-quiz clock', () => {
     expect(toastStore.getSnapshot().map((t) => t.message)).toContain(QUIZ_TIMEOUT_MESSAGE);
   });
 
+  it('QUIZ-budget: a page reload resumes the clock from the server count', async () => {
+    // The V6 residual. A reload builds a NEW api client, so the module-scope registry of
+    // FIX2-M6-D is empty and the clock it held is gone. The serve carries the seconds the
+    // WHOLE quiz has run (`quiz_elapsed_secs`, `crates/web/src/serve.rs`), and the mount
+    // prefers it: 120 of the 600 seconds are spent, so the reloaded screen reads 8:00.
+    // Without the server count the reload reads 10:00 and the timed quiz has no end.
+    vi.useFakeTimers();
+    // A client this test never used before, exactly as a reload builds one.
+    const api = stubApi({ taskServe: async () => Q(2, { quiz_elapsed_secs: 120 }) });
+    await mount({ api });
+
+    expect(timer()!.textContent).toBe('8:00');
+    await tick(1000);
+    expect(timer()!.textContent).toBe('7:59');
+    // The count on screen is server state too: question 2 of 3 means one answer is in.
+    expect(remaining()!.textContent).toBe('2 remaining');
+  });
+
+  it('QUIZ-budget: a reload after the budget ran out blank-fills at once', async () => {
+    // The learner reloads a quiz whose clock ran out while the tab was closed. The resumed
+    // clock is at zero on the first render, so the timeout path runs on the spot instead of
+    // handing out a second budget the learner never had.
+    vi.useFakeTimers();
+    const taskAnswer = vi.fn<ApiClient['taskAnswer']>(
+      async () => receipt({ remaining: 0, quiz_complete: true }),
+    );
+    // 600 seconds of budget and 900 seconds gone.
+    const api = stubApi({ taskServe: async () => Q(1, { quiz_elapsed_secs: 900 }), taskAnswer });
+    await mount({ api });
+    await tick(0);
+
+    expect(posted(taskAnswer)).toEqual([['q1', '']]);
+    expect(screen.getByText('Quiz complete')).toBeTruthy();
+    expect(toastStore.getSnapshot().map((t) => t.message)).toContain(QUIZ_TIMEOUT_MESSAGE);
+  });
+
+  it('QUIZ-budget: a serve that carries no count keeps the client registry', async () => {
+    // The fallback stays exactly as FIX2-M6-D left it. A serve with no `quiz_elapsed_secs`
+    // — an open quiz no serve has stamped — resumes from the registry across a re-mount,
+    // and 0 is NOT the reading of an absent count.
+    vi.useFakeTimers();
+    const api = stubApi({ taskServe: async () => Q(1) });
+
+    await mount({ api });
+    await tick(30_000);
+    expect(timer()!.textContent).toBe('9:30');
+
+    cleanup();
+    await mount({ api });
+    expect(timer()!.textContent).toBe('9:30');
+  });
+
   it('QUIZ-budget: a clock the browser froze gives no frozen second back', async () => {
     // A hidden tab throttles the interval to about one tick a minute. A clock that counts
     // ticks hands every skipped second back, so the whole-quiz budget stretches for as long

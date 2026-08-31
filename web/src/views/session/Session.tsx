@@ -366,7 +366,14 @@ export function Session({
         // service already spent: `404 unknown_problem` against an append-only log, and that
         // failure arms yet another Retry. The gate refuses it instead, and the refusal
         // toast expires.
-        retryGate: () => problemRef.current?.problem_id === current.problem_id
+        //
+        // `life.alive()` comes FIRST (F-37-1b). The toast store is module-scope, so the
+        // Retry outlives this view: a learner who left the session can still press it, and
+        // a post from a dead screen is a write nobody is on. The refs of an unmounted view
+        // still name the last problem, so no other term in this gate refuses that press
+        // (M6-review-2, the C residual).
+        retryGate: () => life.alive()
+          && problemRef.current?.problem_id === current.problem_id
           && answeredFor.current !== current.problem_id
           && gate.tryEnter('ready', 'submitting'),
         // A failed grade returns the problem to the learner — the first attempt and every

@@ -217,6 +217,16 @@ pub struct QuizBuffer {
     /// The answers, in serve order.
     #[serde(default)]
     pub answers: Vec<Json>,
+    /// When the WHOLE quiz started, in Unix seconds — the same time base as
+    /// [`ServedProblem::started_at`].
+    ///
+    /// QUIZ-budget times the quiz, not the screen. The first serve of the task
+    /// stamps this field, and no later serve rewrites it, so the client reads
+    /// one clock across a re-mount AND across a page reload (M6-review-2, V6).
+    /// `None` is an open quiz written before this field, and it stamps the
+    /// clock at the next serve.
+    #[serde(default)]
+    pub started_at: Option<f64>,
 }
 
 /// The pre-generated parts of a multi-step task (`state.py:118-125`). In 2.0 the
@@ -374,6 +384,20 @@ impl WebState {
     #[must_use]
     pub fn memory(&self, task_id: &str) -> TaskMemory {
         self.task_memory.get(task_id).cloned().unwrap_or_default()
+    }
+
+    /// Start the whole-quiz clock of one task, and give the stamp back.
+    ///
+    /// The FIRST call of a task stamps `now`; every later call answers with that
+    /// first stamp, so the clock runs on and a reload resumes it. It is the one
+    /// write point of [`QuizBuffer::started_at`] (M6-review-2, V6).
+    pub fn start_quiz_clock(&mut self, task_id: &str, now: f64) -> f64 {
+        *self
+            .quizzes
+            .entry(task_id.to_string())
+            .or_default()
+            .started_at
+            .get_or_insert(now)
     }
 
     /// Record one served instance hash in BOTH D5 windows (M4, section 4.1).

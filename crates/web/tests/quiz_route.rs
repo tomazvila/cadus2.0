@@ -19,6 +19,17 @@
 //! 4. the last answer of the batch, and the buffer the reveal reads —
 //!    [`the_last_quiz_answer_completes_the_batch_and_buffers_the_reveal`].
 //!
+//! Fix unit FIX2-M6-G, finding V6 of `docs/reviews/M6-review-2.md`, adds the
+//! whole-quiz clock (QUIZ-budget) to the same file, because the clock is D-S6
+//! state of the quiz task:
+//!
+//! 5. the first serve stamps the clock —
+//!    [`a_quiz_serve_stamps_the_whole_quiz_clock_and_reports_no_time_gone`];
+//! 6. a reload resumes it —
+//!    [`a_reload_of_a_running_quiz_resumes_the_clock_and_keeps_the_first_stamp`];
+//! 7. an open quiz written before the field —
+//!    [`an_open_quiz_with_no_stamp_starts_its_clock_at_the_next_serve`].
+//!
 //! Every check scans the RAW body text, and every expected value is a LITERAL:
 //! a literal status code, a literal key count, a literal remaining count, a
 //! literal `correct` in the log. Nothing here is read back from the code under
@@ -211,6 +222,22 @@ async fn answer(app: &Router, user: Uuid, body: Value) -> (StatusCode, String) {
     (status, String::from_utf8_lossy(&bytes).into())
 }
 
+/// Serve the quiz's question over HTTP. The reply comes back as RAW text, for
+/// the same reason [`answer`] does.
+async fn serve(app: &Router, user: Uuid) -> (StatusCode, String) {
+    let mut request = Request::builder()
+        .method(Method::POST)
+        .uri(format!("/api/task/{QUIZ}/serve"))
+        .header(header::CONTENT_TYPE, "application/json")
+        .body(Body::from("{}"))
+        .unwrap();
+    request.extensions_mut().insert(Tenant(user));
+    let response = app.clone().oneshot(request).await.unwrap();
+    let status = response.status();
+    let bytes = response.into_body().collect().await.unwrap().to_bytes();
+    (status, String::from_utf8_lossy(&bytes).into())
+}
+
 /// The parsed JSON body of a call.
 fn parse(body: &str) -> Value {
     serde_json::from_str(body).unwrap_or_else(|err| panic!("body is not JSON: {err}\n{body}"))
@@ -286,13 +313,22 @@ fn question(
 
 /// Write a D-S6 document for `user`.
 async fn put_state(db: &TestDb, user: Uuid, scratch: &WebState) {
+    put_doc(db, user, scratch.to_doc().unwrap()).await;
+}
+
+/// Write a RAW `web_states.doc` for `user`.
+///
+/// A test that pins how the route reads an OLDER document writes the JSON
+/// itself, because a document built from the current type cannot leave a field
+/// out.
+async fn put_doc(db: &TestDb, user: Uuid, doc: Value) {
     sqlx::query!(
         r#"
         INSERT INTO web_states (user_id, doc) VALUES ($1, $2)
         ON CONFLICT (user_id) DO UPDATE SET doc = excluded.doc
         "#,
         user,
-        scratch.to_doc().unwrap()
+        doc
     )
     .execute(&db.admin)
     .await
@@ -329,6 +365,18 @@ async fn attempts(db: &TestDb, user: Uuid) -> Vec<Value> {
 /// history and the quiz is due. The state document holds the served question;
 /// the answer route installs the progress row itself.
 async fn learner(db: &TestDb, email: &str, live: ServedProblem) -> Uuid {
+    let user = seed_quiz_learner(db, email).await;
+    let mut scratch = WebState::for_session(SESSION);
+    scratch.served.insert(QUIZ.to_string(), live);
+    put_state(db, user, &scratch).await;
+    user
+}
+
+/// Seed a learner whose plan carries the quiz and whose D-S6 row is empty.
+///
+/// The serve route then draws the first question itself, which is the path the
+/// whole-quiz clock is stamped on (M6-review-2, V6).
+async fn seed_quiz_learner(db: &TestDb, email: &str) -> Uuid {
     let user = db.seed_user(email).await;
     seed_event(
         db,
@@ -344,10 +392,13 @@ async fn learner(db: &TestDb, email: &str, live: ServedProblem) -> Uuid {
     .await;
     seed_event(db, user, 2, &passed_lesson("addition"), BASE_US).await;
     seed_event(db, user, 3, &passed_lesson("subtraction"), BASE_US).await;
-    let mut scratch = WebState::for_session(SESSION);
-    scratch.served.insert(QUIZ.to_string(), live);
-    put_state(db, user, &scratch).await;
+    put_state(db, user, &WebState::for_session(SESSION)).await;
     user
+}
+
+/// The Unix instant of now, in seconds, as the D-S6 document spells it.
+fn now_secs() -> f64 {
+    Utc::now().timestamp_micros() as f64 / 1_000_000.0
 }
 
 /// Put the next question of the quiz live, keeping everything the route wrote.
@@ -594,6 +645,169 @@ async fn the_last_quiz_answer_completes_the_batch_and_buffers_the_reveal() {
         assert_eq!(buffered[1]["given_answer"], "12");
         assert_eq!(buffered[1]["correct"], false);
         assert_eq!(buffered[1]["solution_sketch"], SOLUTION_TWO);
+    })
+    .await;
+}
+
+// --------------------------------------------------------------------------- //
+// 5. The whole-quiz clock (QUIZ-budget, M6-review-2 finding V6)
+// --------------------------------------------------------------------------- //
+
+/// Overwrite the whole-quiz stamp of `user`, and give back the value written.
+///
+/// It is how a test moves the clock: the route reads the stamp out of the D-S6
+/// row, so a stamp `secs` in the past is a quiz that has run for `secs`.
+async fn move_the_quiz_clock_back(db: &TestDb, user: Uuid, secs: f64) -> f64 {
+    let started_at = now_secs() - secs;
+    let mut scratch = stored_state(db, user).await;
+    scratch
+        .quizzes
+        .get_mut(QUIZ)
+        .unwrap()
+        .started_at
+        .replace(started_at);
+    put_state(db, user, &scratch).await;
+    started_at
+}
+
+/// The whole-quiz clock is SERVER state, and the serve payload carries it.
+///
+/// The first serve of the quiz stamps the clock and reports zero seconds gone.
+/// Both values come from the one instant the handler takes, so the count is an
+/// exact literal and not a measurement.
+///
+/// The payload gains this EIGHTH key and loses none:
+/// `crates/web/tests/serve_routes.rs` pins the seven keys of a lesson serve, so
+/// a key emitted off a quiz fails there.
+#[tokio::test]
+async fn a_quiz_serve_stamps_the_whole_quiz_clock_and_reports_no_time_gone() {
+    TestDb::with(|db| async move {
+        let app = app(&db);
+        let user = seed_quiz_learner(&db, "quiz-clock-start@example.com").await;
+
+        let (status, raw) = serve(&app, user).await;
+        assert_eq!(status, StatusCode::OK, "{raw}");
+
+        let body = parse(&raw);
+        let keys: Vec<&str> = body
+            .as_object()
+            .unwrap()
+            .keys()
+            .map(String::as_str)
+            .collect();
+        assert_eq!(
+            keys,
+            vec![
+                "countdown",
+                "index",
+                "kp",
+                "problem_id",
+                "quiz_elapsed_secs",
+                "text",
+                "time_budget_secs",
+                "total",
+            ]
+        );
+        assert_eq!(body["quiz_elapsed_secs"], 0);
+        assert_eq!(body["index"], 1);
+        assert_eq!(body["total"], 2);
+
+        // The stamp went into the quiz buffer, which is where a later serve
+        // reads it from. The buffer holds no answer yet.
+        let scratch = stored_state(&db, user).await;
+        let buffer = scratch.quizzes.get(QUIZ).unwrap();
+        assert_eq!(buffer.answers.len(), 0);
+        assert!(buffer.started_at.is_some(), "the serve stamped no clock");
+    })
+    .await;
+}
+
+/// A RELOAD resumes the running clock, because the clock is on the wire.
+///
+/// A reload builds a new client, so the client-side registry of unit FIX2-M6-D
+/// is empty and every clock it holds is gone. The serve answers with the seconds
+/// the quiz has run, and the second serve keeps the FIRST stamp: a reload that
+/// re-stamped the clock hands the whole budget back, which is the defect
+/// (M6-review-2, V6).
+///
+/// The elapsed count is a literal 90. The handler takes one instant and the
+/// stamp is 90.0 seconds before it, so the floor reads 90 unless the request
+/// takes a whole second; one serve against the test database takes tens of
+/// milliseconds.
+#[tokio::test]
+async fn a_reload_of_a_running_quiz_resumes_the_clock_and_keeps_the_first_stamp() {
+    TestDb::with(|db| async move {
+        let app = app(&db);
+        let user = seed_quiz_learner(&db, "quiz-clock-reload@example.com").await;
+
+        let (status, first) = serve(&app, user).await;
+        assert_eq!(status, StatusCode::OK, "{first}");
+        assert_eq!(parse(&first)["quiz_elapsed_secs"], 0);
+        let problem_id = parse(&first)["problem_id"].clone();
+
+        // 90 seconds of the quiz are gone, and the learner reloads the page.
+        let started_at = move_the_quiz_clock_back(&db, user, 90.0).await;
+        let (status, second) = serve(&app, user).await;
+        assert_eq!(status, StatusCode::OK, "{second}");
+
+        let body = parse(&second);
+        assert_eq!(body["quiz_elapsed_secs"], 90);
+        // The reload re-serves the SAME question (section 5.6), so the reload
+        // spends no question either.
+        assert_eq!(body["problem_id"], problem_id);
+        assert_eq!(body["index"], 1);
+
+        // The stamp did NOT move. Only the per-problem clock is re-stamped.
+        let scratch = stored_state(&db, user).await;
+        assert_eq!(
+            scratch.quizzes.get(QUIZ).unwrap().started_at,
+            Some(started_at)
+        );
+        assert!(scratch.served.get(QUIZ).unwrap().started_at > started_at);
+    })
+    .await;
+}
+
+/// An OPEN quiz written before this field keeps working, and its clock starts at
+/// the next serve.
+///
+/// The D-S6 document is jsonb, so there is no migration: a row whose buffer
+/// names no `started_at` reads as an unstamped clock. The serve stamps it and
+/// reports no time gone, which is what the learner sees today.
+#[tokio::test]
+async fn an_open_quiz_with_no_stamp_starts_its_clock_at_the_next_serve() {
+    TestDb::with(|db| async move {
+        let app = app(&db);
+        let user = seed_quiz_learner(&db, "quiz-clock-legacy@example.com").await;
+
+        // The row of an older build: one buffered answer, and NO clock key at
+        // all. The key is removed from the raw document, not set to null.
+        let mut scratch = WebState::for_session(SESSION);
+        scratch
+            .quizzes
+            .entry(QUIZ.to_string())
+            .or_default()
+            .answers
+            .push(json!({"problem_id": PROBLEM_ONE, "correct": true}));
+        let mut doc = scratch.to_doc().unwrap();
+        let removed = doc["quizzes"][QUIZ]
+            .as_object_mut()
+            .unwrap()
+            .remove("started_at");
+        assert!(removed.is_some(), "the buffer wrote no started_at key");
+        assert!(!doc.to_string().contains("started_at"), "{doc}");
+        put_doc(&db, user, doc).await;
+
+        let (status, raw) = serve(&app, user).await;
+        assert_eq!(status, StatusCode::OK, "{raw}");
+        assert_eq!(parse(&raw)["quiz_elapsed_secs"], 0);
+
+        // The stamp is in now, and the buffered answer survived it.
+        let stored = stored_state(&db, user).await;
+        let buffer = stored.quizzes.get(QUIZ).unwrap();
+        assert!(buffer.started_at.is_some());
+        assert_eq!(buffer.answers.len(), 1);
+        assert_eq!(buffer.answers[0]["problem_id"], PROBLEM_ONE);
     })
     .await;
 }
