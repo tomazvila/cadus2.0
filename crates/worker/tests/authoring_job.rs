@@ -1732,3 +1732,50 @@ async fn a_refused_row_keeps_the_prompt_stamp_it_has() {
     })
     .await;
 }
+
+/// V3: a stale row that WAITS for a reviewer is stamped as well.
+///
+/// [`stale_slots`] counts `approved` AND `pending` rows, so a `pending` row an
+/// older prompt wrote drives a re-author exactly as an approved row does. The
+/// stamp therefore covers both, and the row stays `pending`: the reviewer reads
+/// the body, and the prompt stamp is not a verdict (C6).
+///
+/// A stamp that named `approved` alone left this row stale, and the pass paid
+/// for one model call per run until a reviewer read the queue.
+#[tokio::test]
+async fn a_stale_row_that_waits_for_a_reviewer_is_stamped_and_stays_pending() {
+    TestDb::with(|db| async move {
+        let fake = FakeModel::start(vec![named_reply("emit_teach", &teach_arguments())]).await;
+        let handle = Db::new(db.admin.clone(), DEFAULT_CLIENT_TIMEOUT_MS);
+        sqlx::query(
+            "INSERT INTO content_store
+                 (digest, kp_id, kind, body, status, prompt_digest)
+             VALUES ($1, $2, 'teach', $3::jsonb, 'pending', $4)",
+        )
+        .bind(STORED_TEACH_DIGEST)
+        .bind(KP_KEY)
+        .bind(STORED_TEACH_BODY)
+        .bind(OLD_PROMPT)
+        .execute(&db.admin)
+        .await
+        .unwrap();
+
+        assert_eq!(stale_slots(&handle, KP_KEY, Kind::Teach).await.unwrap(), 1);
+
+        let report = author_one(&handle, &fake.job_with_attempts(1), Kind::Teach, &spec())
+            .await
+            .unwrap();
+
+        assert_eq!(report.outcome, Outcome::Refreshed);
+        assert_eq!(report.attempts, 1);
+        assert_eq!(fake.calls().len(), 1);
+        assert_eq!(stale_slots(&handle, KP_KEY, Kind::Teach).await.unwrap(), 0);
+
+        let rows = stamped_rows(&db.admin, KP_KEY, "teach").await;
+        assert_eq!(rows.len(), 1);
+        assert_eq!(rows[0].0, STORED_TEACH_DIGEST);
+        assert_eq!(rows[0].1, "pending");
+        assert_eq!(rows[0].3, Some(prompt_digest(Kind::Teach)));
+    })
+    .await;
+}
