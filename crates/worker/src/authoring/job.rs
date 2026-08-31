@@ -117,7 +117,9 @@ use cadus_core::template::{
 };
 use cadus_model_client::{Attempt, Client};
 use cadus_store::Db;
-use cadus_store::content::{Admin, KIND_TEMPLATE, NewDocument, Verdict, insert_pending, verdict};
+use cadus_store::content::{
+    Admin, KIND_TEMPLATE, NewDocument, Verdict, insert_pending, refresh_prompt_digest, verdict,
+};
 use serde_json::Value;
 use sha2::{Digest, Sha256};
 
@@ -187,6 +189,16 @@ pub enum Outcome {
     /// The gate accepted a document that the table already holds as `pending`
     /// or as `approved`. Nothing is stored, and the pass is NOT a store.
     Duplicate,
+    /// The gate accepted a document the table already holds, and the held row
+    /// named an OLDER prompt. Nothing is stored; the row now names the current
+    /// prompt (M6 review finding V3).
+    ///
+    /// The body is the body the current prompt writes, so the row leaves the
+    /// stale set and the next pass makes no call. Without the stamp the pass
+    /// re-authored the same row on every run, forever. A batch counts this
+    /// outcome where it counts a duplicate: the pass paid for its calls and
+    /// wrote no document.
+    Refreshed,
     /// The gate accepted a document that a reviewer already REFUSED (C6).
     ///
     /// `same_body` is `true` when the digest of the pass names the refused row.
@@ -258,6 +270,10 @@ pub struct BatchReport {
     ///
     /// The pass paid for its calls and wrote no row, so the count stands beside
     /// `stored` and never inside it (M6 review finding F1).
+    ///
+    /// [`Outcome::Refreshed`] counts here as well: that pass wrote no document
+    /// either, and it stamped the current prompt on the held row (M6 review
+    /// finding V3).
     pub duplicate: u32,
     /// The knowledge points the pass did not call for.
     pub skipped: u32,
@@ -709,6 +725,10 @@ pub async fn slots_taken(db: &Db, kp_id: &str, kind: Kind) -> Result<i64, Worker
 /// does, so [`author_one`] subtracts one count from the other and reads the
 /// slots the CURRENT prompt holds.
 ///
+/// A re-author that reproduces the identical body clears the mark of its row:
+/// [`store_pending`] stamps the current prompt on the held row, so the count
+/// drops by one and the next pass makes no call (M6 review finding V3).
+///
 /// # Errors
 ///
 /// Returns [`WorkerError::Store`] when the statement fails or the bound expires.
@@ -849,6 +869,12 @@ pub struct Stored {
     /// `None` when the row is new. A `rejected` status here is the reviewer's
     /// refusal of this exact body (M6 review finding F6).
     pub verdict: Option<Verdict>,
+    /// `true` when the held row named an older prompt and now names the current
+    /// one (M6 review finding V3).
+    ///
+    /// `false` for a new row, for a row that already named the current prompt,
+    /// for a row with no prompt stamp, and for a row a reviewer refused.
+    pub refreshed: bool,
     /// The exact text of `authoring_cost_usd` on the new row.
     ///
     /// `None` in two cases: the row is not new, or no call of the pass reported
@@ -883,6 +909,22 @@ pub struct Stored {
 /// reviewer refused. A row another transaction wrote and did not commit yet is
 /// invisible to that read, which answers `None`; the caller then reports a
 /// duplicate, which is what a `pending` collision is.
+///
+/// # The prompt stamp of a collision (M6 review finding V3)
+///
+/// A collision that is not a refusal stamps the CURRENT prompt on the held row
+/// ([`cadus_store::content::refresh_prompt_digest`]), and [`Stored::refreshed`]
+/// reports the stamp. The re-author of a stale row reproduced the identical
+/// body, so the current prompt writes that body and the row is no longer stale.
+///
+/// The stamp is what ends the re-authoring loop. Without it the held row kept
+/// the old stamp, [`stale_slots`] counted it on every run, [`author_one`]
+/// re-authored it on every run, and the operator paid for one model call per run
+/// forever.
+///
+/// A row a reviewer REFUSED keeps its stamp: that collision is a decline, the
+/// knowledge point still needs a document, and a `rejected` row occupies no slot
+/// and is never stale (C6, M6 review finding F6).
 ///
 /// # Errors
 ///
@@ -919,10 +961,19 @@ pub async fn store_pending(
     } else {
         verdict(db, &digest).await?
     };
+    let refused = held
+        .as_ref()
+        .is_some_and(|held| held.status == STATUS_REJECTED);
+    let refreshed = if inserted || refused {
+        false
+    } else {
+        refresh_prompt_digest(Admin::new(db), &digest, &stamp).await?
+    };
     Ok(Stored {
         digest,
         inserted,
         verdict: held,
+        refreshed,
         cost_usd: if inserted { cost_usd } else { None },
     })
 }
@@ -1071,6 +1122,11 @@ pub async fn author_one(
                         Outcome::Stored
                     } else if refused {
                         Outcome::Rejected { same_body: true }
+                    } else if stored.refreshed {
+                        // V3: the held row named an older prompt and names the
+                        // current one now, so it leaves the stale set and the
+                        // next pass makes no call.
+                        Outcome::Refreshed
                     } else {
                         Outcome::Duplicate
                     };
@@ -1197,7 +1253,9 @@ pub async fn run_batch(
         }
         match report.outcome {
             Outcome::Stored => batch.stored += 1,
-            Outcome::Duplicate => batch.duplicate += 1,
+            // V3: a refresh wrote no document either. It counts where a
+            // duplicate counts, and the summary prints the count.
+            Outcome::Duplicate | Outcome::Refreshed => batch.duplicate += 1,
             Outcome::Skipped => batch.skipped += 1,
             // C6: a re-author of a refused body wrote nothing, so it counts
             // where a decline counts (M6 review findings F1 and F6).
