@@ -519,6 +519,75 @@ where
         .collect())
 }
 
+/// One row the re-gate of a knowledge point reads (C6).
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct RegateRow {
+    /// The content address of the row.
+    pub digest: String,
+    /// The kind of the row: [`KIND_TEMPLATE`], [`KIND_TEACH`] or
+    /// [`KIND_HINT_LADDER`].
+    pub kind: String,
+    /// The review status of the row.
+    pub status: String,
+    /// The document body, as `content_store.body` holds it.
+    pub body: Json,
+}
+
+/// The rows one re-gate of a knowledge point reads (C6).
+///
+/// The approve route re-runs the two instruction gates after a template is
+/// approved, and it needs two sets of rows in one statement:
+///
+/// - every `template` row of the knowledge point that is `approved` or
+///   `pending`. Those rows render the instances the learner is served, and they
+///   are the answer set the gates judge against;
+/// - every `teach` and `hint_ladder` row that is `pending`. Those are the
+///   documents the re-gate moves to `rejected`. An APPROVED page or ladder is
+///   not read: a human passed it, and a later template does not undo that
+///   verdict.
+///
+/// A `rejected` row is not read at all: it serves nothing already.
+///
+/// The order is the kind, then the digest, so two runs over one table give one
+/// list.
+///
+/// # Errors
+///
+/// Returns [`StoreError::Db`] when the statement fails.
+pub async fn regate_rows<'e, E>(executor: E, kp_id: &str) -> Result<Vec<RegateRow>, StoreError>
+where
+    E: PgExecutor<'e>,
+{
+    let rows = sqlx::query!(
+        r#"
+        SELECT digest AS "digest!", kind AS "kind!", status AS "status!", body AS "body!"
+        FROM content_store
+        WHERE kp_id = $1
+          AND ((kind = $2 AND status IN ($3, $4))
+               OR (kind IN ($5, $6) AND status = $4))
+        ORDER BY kind, digest
+        "#,
+        kp_id,
+        KIND_TEMPLATE,
+        STATUS_APPROVED,
+        STATUS_PENDING,
+        KIND_TEACH,
+        KIND_HINT_LADDER,
+    )
+    .fetch_all(executor)
+    .await?;
+
+    Ok(rows
+        .into_iter()
+        .map(|row| RegateRow {
+            digest: row.digest,
+            kind: row.kind,
+            status: row.status,
+            body: row.body,
+        })
+        .collect())
+}
+
 /// One document as the review screen reads it (spec section 3.2,
 /// `GET /api/admin/content/{digest}`).
 #[derive(Debug, Clone, PartialEq, Eq)]
