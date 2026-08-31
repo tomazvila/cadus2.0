@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n        SELECT body::text AS \"body!\"\n          FROM content_store\n         WHERE kp_id = $1 AND kind = $2 AND status = $3\n         ORDER BY approved_at DESC NULLS LAST, created_at DESC, digest\n        ",
+  "query": "\n        SELECT body::text AS \"body!\"\n          FROM content_store\n         WHERE kp_id = $1 AND kind = $2 AND status IN ($3, $4)\n         ORDER BY approved_at DESC NULLS LAST, created_at DESC, digest\n        ",
   "describe": {
     "columns": [
       {
@@ -14,6 +14,7 @@
       "Left": [
         "Text",
         "Text",
+        "Text",
         "Text"
       ]
     },
@@ -21,5 +22,5 @@
       null
     ]
   },
-  "hash": "3bca63b127681508e7ba9a2a6633f44794832118786a84ce70b6f65011c1657d"
+  "hash": "697aed674cc5d4df4562e1aec670a988f842b8087a56b3801e3f5c73a534677d"
 }

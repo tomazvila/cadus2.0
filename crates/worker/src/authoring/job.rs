@@ -107,7 +107,9 @@
 
 use std::fmt::Write as _;
 
-use cadus_core::instruction::{InstructionSpec, gate_hint_ladder, gate_teach};
+use cadus_core::instruction::{
+    InstructionSpec, ServedInstance, gate_hint_ladder, gate_teach, template_instances,
+};
 use cadus_core::pool::kp_key;
 use cadus_core::template::{
     GateSpec, Rejection, TEMPLATABLE_KINDS, TEMPLATE_VERSION, gate_body, gate_diagnosis_body,
@@ -115,7 +117,9 @@ use cadus_core::template::{
 };
 use cadus_model_client::{Attempt, Client};
 use cadus_store::Db;
-use cadus_store::content::{Admin, KIND_TEMPLATE, NewDocument, Verdict, insert_pending, verdict};
+use cadus_store::content::{
+    Admin, KIND_TEMPLATE, NewDocument, Verdict, insert_pending, refresh_prompt_digest, verdict,
+};
 use serde_json::Value;
 use sha2::{Digest, Sha256};
 
@@ -185,6 +189,16 @@ pub enum Outcome {
     /// The gate accepted a document that the table already holds as `pending`
     /// or as `approved`. Nothing is stored, and the pass is NOT a store.
     Duplicate,
+    /// The gate accepted a document the table already holds, and the held row
+    /// named an OLDER prompt. Nothing is stored; the row now names the current
+    /// prompt (M6 review finding V3).
+    ///
+    /// The body is the body the current prompt writes, so the row leaves the
+    /// stale set and the next pass makes no call. Without the stamp the pass
+    /// re-authored the same row on every run, forever. A batch counts this
+    /// outcome where it counts a duplicate: the pass paid for its calls and
+    /// wrote no document.
+    Refreshed,
     /// The gate accepted a document that a reviewer already REFUSED (C6).
     ///
     /// `same_body` is `true` when the digest of the pass names the refused row.
@@ -256,6 +270,10 @@ pub struct BatchReport {
     ///
     /// The pass paid for its calls and wrote no row, so the count stands beside
     /// `stored` and never inside it (M6 review finding F1).
+    ///
+    /// [`Outcome::Refreshed`] counts here as well: that pass wrote no document
+    /// either, and it stamped the current prompt on the held row (M6 review
+    /// finding V3).
     pub duplicate: u32,
     /// The knowledge points the pass did not call for.
     pub skipped: u32,
@@ -475,6 +493,11 @@ fn unwritable(err: &serde_json::Error) -> Rejection {
 /// The written text comes from the GATED document and not from the arguments, so
 /// a field the gate ignores never reaches the row and never reaches the digest.
 ///
+/// `instance_answers` is the served material of the knowledge point
+/// ([`served_instances`]), and `cadus_core::instruction::gate_teach` READS it:
+/// the last step of the worked example names no answer of a served problem other
+/// than the one the page works (M6 review 2, findings V2 and V11).
+///
 /// # Errors
 ///
 /// Returns the [`Rejection`] of `cadus_core::instruction::gate_teach`, and the
@@ -482,7 +505,7 @@ fn unwritable(err: &serde_json::Error) -> Rejection {
 pub fn verify_teach(
     spec: &AuthoringSpec,
     arguments: &Value,
-    instance_answers: &[String],
+    instance_answers: &[ServedInstance],
 ) -> Result<String, Rejection> {
     let body = instruction_body(arguments)?;
     let gate_spec = InstructionSpec {
@@ -501,7 +524,7 @@ pub fn verify_teach(
 pub fn verify_hint_ladder(
     spec: &AuthoringSpec,
     arguments: &Value,
-    instance_answers: &[String],
+    instance_answers: &[ServedInstance],
 ) -> Result<String, Rejection> {
     let body = instruction_body(arguments)?;
     let gate_spec = InstructionSpec {
@@ -570,94 +593,64 @@ pub fn verify_diagnosis(spec: &AuthoringSpec, arguments: &Value) -> Result<Strin
     })
 }
 
-/// The instances one approved template contributes to the instruction gates.
+/// Every instance the templates of one knowledge point serve (M6 review,
+/// findings F2, F15 and F25; M6 review 2, finding V1).
 ///
-/// The number is the floor the M6 review ruling names for findings F2, F15 and
-/// F25. Every draw runs from [`cadus_core::template::GATE_SEED`], so the answer
-/// set of one document is the same set on every pass and a reviewer reproduces
-/// the verdict (C6).
-pub const INSTANCE_SAMPLES: u32 = 8;
-
-/// Every answer the approved templates of one knowledge point serve (M6 review,
-/// findings F2, F15 and F25).
+/// The two instruction gates refuse a document that gives a served answer away.
+/// The exemplars are one source of those answers; the templates are the other,
+/// and they are the source the serve path reads first (A6 serves the exemplars
+/// only when no template is approved). This read supplies the second source, and
+/// [`InstructionSpec::instance_answers`] carries it into the gate.
 ///
-/// The hint gate refuses a rung that names an answer the learner is served. The
-/// exemplars are one source of those answers; the approved templates are the
-/// other, and they are the source the serve path reads first (A6 serves the
-/// exemplars only when no template is approved). This read supplies the second
-/// source, and [`InstructionSpec::instance_answers`] carries it into the gate.
+/// # Why a PENDING template counts
+///
+/// `cadus-worker author` writes all four kinds in ONE process, template first
+/// (`crate::authoring::prompt::KINDS`), and every kind enters `content_store` as
+/// `pending`. A read of the `approved` rows alone therefore answered an EMPTY
+/// list for every knowledge point of a fresh curriculum, and the hint gate of
+/// that pass judged the ladder against the exemplars alone (M6 review 2, finding
+/// V1). A pending template is the material the reviewer is about to approve, so
+/// it gates the ladder and the page authored beside it.
+///
+/// A `rejected` template is not read: a human refused that body, and it serves
+/// nothing.
 ///
 /// `kp_id` is the serving key `cadus_core::pool::kp_key` writes.
 ///
 /// # Errors
 ///
 /// Returns [`WorkerError::Store`] when the statement fails or the bound expires.
-pub async fn served_answers(db: &Db, kp_id: &str) -> Result<Vec<String>, WorkerError> {
+pub async fn served_instances(db: &Db, kp_id: &str) -> Result<Vec<ServedInstance>, WorkerError> {
     let query = sqlx::query_scalar!(
         r#"
         SELECT body::text AS "body!"
           FROM content_store
-         WHERE kp_id = $1 AND kind = $2 AND status = $3
+         WHERE kp_id = $1 AND kind = $2 AND status IN ($3, $4)
          ORDER BY approved_at DESC NULLS LAST, created_at DESC, digest
         "#,
         kp_id,
         KIND_TEMPLATE,
         STATUS_APPROVED,
+        STATUS_PENDING,
     )
     .fetch_all(db.pool());
     let bodies: Vec<String> = cadus_store::bounded(db, query).await?;
-    let mut answers: Vec<String> = Vec::new();
+    let mut served: Vec<ServedInstance> = Vec::new();
     for body in &bodies {
-        for answer in template_answers(body) {
-            if !answers.contains(&answer) {
-                answers.push(answer);
+        for instance in template_instances(body) {
+            if !served.contains(&instance) {
+                served.push(instance);
             }
         }
     }
-    Ok(answers)
-}
-
-/// The answers of the instances one approved template body renders.
-///
-/// The list holds the answer of every worked sample the document pins and the
-/// answer of [`INSTANCE_SAMPLES`] drawn instances. A body this build cannot read
-/// or cannot compile contributes nothing: it is an approved row of an older
-/// shape, and a hint gate that refused every rung over it would teach the model
-/// nothing it can act on.
-#[must_use]
-pub fn template_answers(body: &str) -> Vec<String> {
-    let Ok(doc) = cadus_core::template::from_body(body) else {
-        return Vec::new();
-    };
-    let Ok(compiled) = cadus_core::template::Compiled::new(&doc) else {
-        return Vec::new();
-    };
-    let mut answers: Vec<String> = Vec::new();
-    let mut keep = |answer: String| {
-        if !answer.is_empty() && !answers.contains(&answer) {
-            answers.push(answer);
-        }
-    };
-    for sample in &doc.samples {
-        if let Ok(instance) = compiled.instantiate(sample.bindings()) {
-            keep(instance.answer);
-        }
-    }
-    let mut rng = cadus_core::template::rng_from_seed(cadus_core::template::GATE_SEED);
-    for _ in 0..INSTANCE_SAMPLES {
-        if let Ok(instance) = compiled.draw(&mut rng) {
-            keep(instance.answer);
-        }
-    }
-    answers
+    Ok(served)
 }
 
 /// The gate of one kind (spec section 2.2, step 2).
 ///
-/// `instance_answers` holds the answers the approved templates of the knowledge
-/// point serve ([`served_answers`]). The two instruction gates read it; the
-/// template gate and the diagnosis gate read the document's own instances and
-/// ignore it.
+/// `instance_answers` holds the instances the templates of the knowledge point
+/// serve ([`served_instances`]). BOTH instruction gates read it; the template
+/// gate and the diagnosis gate read the document's own instances and ignore it.
 ///
 /// # Errors
 ///
@@ -667,7 +660,7 @@ pub fn verify_kind(
     kind: Kind,
     spec: &AuthoringSpec,
     arguments: &Value,
-    instance_answers: &[String],
+    instance_answers: &[ServedInstance],
 ) -> Result<String, Rejection> {
     // Trap T1, on EVERY kind and before EVERY gate. A model that writes one
     // backslash emits valid JSON whose decoded value is `$<TAB>imes$`; no gate
@@ -731,6 +724,10 @@ pub async fn slots_taken(db: &Db, kp_id: &str, kind: Kind) -> Result<i64, Worker
 /// The count covers `approved` AND `pending` rows, exactly as [`slots_taken`]
 /// does, so [`author_one`] subtracts one count from the other and reads the
 /// slots the CURRENT prompt holds.
+///
+/// A re-author that reproduces the identical body clears the mark of its row:
+/// [`store_pending`] stamps the current prompt on the held row, so the count
+/// drops by one and the next pass makes no call (M6 review finding V3).
 ///
 /// # Errors
 ///
@@ -872,6 +869,12 @@ pub struct Stored {
     /// `None` when the row is new. A `rejected` status here is the reviewer's
     /// refusal of this exact body (M6 review finding F6).
     pub verdict: Option<Verdict>,
+    /// `true` when the held row named an older prompt and now names the current
+    /// one (M6 review finding V3).
+    ///
+    /// `false` for a new row, for a row that already named the current prompt,
+    /// for a row with no prompt stamp, and for a row a reviewer refused.
+    pub refreshed: bool,
     /// The exact text of `authoring_cost_usd` on the new row.
     ///
     /// `None` in two cases: the row is not new, or no call of the pass reported
@@ -906,6 +909,22 @@ pub struct Stored {
 /// reviewer refused. A row another transaction wrote and did not commit yet is
 /// invisible to that read, which answers `None`; the caller then reports a
 /// duplicate, which is what a `pending` collision is.
+///
+/// # The prompt stamp of a collision (M6 review finding V3)
+///
+/// A collision that is not a refusal stamps the CURRENT prompt on the held row
+/// ([`cadus_store::content::refresh_prompt_digest`]), and [`Stored::refreshed`]
+/// reports the stamp. The re-author of a stale row reproduced the identical
+/// body, so the current prompt writes that body and the row is no longer stale.
+///
+/// The stamp is what ends the re-authoring loop. Without it the held row kept
+/// the old stamp, [`stale_slots`] counted it on every run, [`author_one`]
+/// re-authored it on every run, and the operator paid for one model call per run
+/// forever.
+///
+/// A row a reviewer REFUSED keeps its stamp: that collision is a decline, the
+/// knowledge point still needs a document, and a `rejected` row occupies no slot
+/// and is never stale (C6, M6 review finding F6).
 ///
 /// # Errors
 ///
@@ -942,10 +961,19 @@ pub async fn store_pending(
     } else {
         verdict(db, &digest).await?
     };
+    let refused = held
+        .as_ref()
+        .is_some_and(|held| held.status == STATUS_REJECTED);
+    let refreshed = if inserted || refused {
+        false
+    } else {
+        refresh_prompt_digest(Admin::new(db), &digest, &stamp).await?
+    };
     Ok(Stored {
         digest,
         inserted,
         verdict: held,
+        refreshed,
         cost_usd: if inserted { cost_usd } else { None },
     })
 }
@@ -1037,12 +1065,13 @@ pub async fn author_one(
         return Ok(report);
     }
 
-    // Step 3: the two instruction gates read the answers of the material this
-    // knowledge point serves, and an approved template is that material (M6
-    // review, findings F2, F15 and F25). The read runs once per pass, before the
-    // first call, so a five-attempt retry costs one statement.
+    // Step 3: the two instruction gates read the material this knowledge point
+    // serves, and a template that is approved OR pending is that material (M6
+    // review, findings F2, F15 and F25; M6 review 2, finding V1). The read runs
+    // once per pass, before the first call, so a five-attempt retry costs one
+    // statement.
     let instance_answers = match kind {
-        Kind::Teach | Kind::HintLadder => served_answers(db, &kp_id).await?,
+        Kind::Teach | Kind::HintLadder => served_instances(db, &kp_id).await?,
         Kind::Template | Kind::Diagnosis => Vec::new(),
     };
 
@@ -1093,6 +1122,11 @@ pub async fn author_one(
                         Outcome::Stored
                     } else if refused {
                         Outcome::Rejected { same_body: true }
+                    } else if stored.refreshed {
+                        // V3: the held row named an older prompt and names the
+                        // current one now, so it leaves the stale set and the
+                        // next pass makes no call.
+                        Outcome::Refreshed
                     } else {
                         Outcome::Duplicate
                     };
@@ -1219,7 +1253,9 @@ pub async fn run_batch(
         }
         match report.outcome {
             Outcome::Stored => batch.stored += 1,
-            Outcome::Duplicate => batch.duplicate += 1,
+            // V3: a refresh wrote no document either. It counts where a
+            // duplicate counts, and the summary prints the count.
+            Outcome::Duplicate | Outcome::Refreshed => batch.duplicate += 1,
             Outcome::Skipped => batch.skipped += 1,
             // C6: a re-author of a refused body wrote nothing, so it counts
             // where a decline counts (M6 review findings F1 and F6).

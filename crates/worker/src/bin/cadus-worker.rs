@@ -138,6 +138,13 @@ async fn author(args: &AuthorArgs) -> Result<(), WorkerError> {
     }
 
     let job = authoring_job()?;
+    // The order of `kinds` is the order of `prompt::KINDS`, whatever order the
+    // operator named on the command line (`cli::AuthorArgs::kinds`), and
+    // `template` leads it. That order is a contract of the gate and not a
+    // preference: the teach gate and the hint gate read the templates of the
+    // knowledge point, `approved` AND `pending`, so a template this same process
+    // stored minutes earlier gates the page and the ladder authored after it
+    // (`job::served_instances`; M6 review 2, finding V1).
     for kind in kinds {
         let report = run_batch(&db, &job, kind, &specs).await?;
         print!("{}", cli::render_batch(kind, &report));

@@ -11,7 +11,18 @@
  * Every literal below is the frozen contract of `docs/reference/web-service-1.0-spec.md`
  * section 2.1: the `event: diagnosis` frame name, the stream path `/api/diagnosis/stream`,
  * the 2000 ms poll interval and the 30000 ms deadline. A reader checks each one by hand.
+ *
+ * The tests of the first block move the clock in units of the IMPORTED constants, which
+ * reads well and pins the RATIO only: a mutant that doubles both numbers keeps every one of
+ * them green (M6-review-2, finding V12). The second block is the absolute oracle. It writes
+ * 2000 and 30000 as numbers, and it reads the service's own `PENDING_DEADLINE_SECS` and
+ * `POLL_INTERVAL_SECS` out of `crates/web/src/diagnosis.rs`, because the client rule and the
+ * service rule are ONE rule and a client that gives up first reports a failure the service
+ * is still working on.
  */
+import { readFileSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
+import { dirname, join } from 'node:path';
 import { describe, expect, it, vi } from 'vitest';
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import { axe } from 'vitest-axe';
@@ -362,5 +373,73 @@ describe('the async diagnosis panel', () => {
     expect(panel()!.getAttribute('aria-live')).toBe('polite');
     const results = await axe(document.getElementById('view')!, AXE_IN_JSDOM);
     expect(results).toHaveNoViolations();
+  });
+});
+
+// ---------------------------------------------------------------------------
+// The two timing literals of spec section 2.1, pinned in absolute terms.
+// ---------------------------------------------------------------------------
+
+/** The service file that owns the same two rules. ONE rule, two implementations. */
+const DIAGNOSIS_RS = join(
+  dirname(fileURLToPath(import.meta.url)),
+  '../../crates/web/src/diagnosis.rs',
+);
+
+/**
+ * Read one `pub const NAME: i64 = N;` out of the service source.
+ *
+ * The source IS the shared constant: nothing generates a fixture for these two numbers, and
+ * a TypeScript copy of them would be one more thing to drift. An absent constant throws, so
+ * a rename in the service fails this file instead of passing it vacuously.
+ */
+function serverSecs(name: string): number {
+  const source = readFileSync(DIAGNOSIS_RS, 'utf8');
+  const found = new RegExp(`pub const ${name}: i64 = (\\d+);`).exec(source);
+  if (!found) throw new Error(`${name} is absent from crates/web/src/diagnosis.rs`);
+  return Number(found[1]);
+}
+
+describe('the diagnosis timing literals', () => {
+  it('polls every 2000 ms and gives up at 30000 ms', () => {
+    expect(DIAGNOSIS_POLL_MS).toBe(2000);
+    expect(DIAGNOSIS_DEADLINE_MS).toBe(30000);
+  });
+
+  it('gives up at the second the service gives up at', () => {
+    expect(serverSecs('PENDING_DEADLINE_SECS')).toBe(30);
+    expect(serverSecs('POLL_INTERVAL_SECS')).toBe(2);
+    expect(DIAGNOSIS_DEADLINE_MS).toBe(serverSecs('PENDING_DEADLINE_SECS') * 1000);
+    expect(DIAGNOSIS_POLL_MS).toBe(serverSecs('POLL_INTERVAL_SECS') * 1000);
+  });
+
+  it('reads nothing at 1999 ms, reads once at 2000 ms, and reads again at 4000 ms', async () => {
+    vi.useFakeTimers();
+    const getDiagnosis = vi.fn<ApiClient['getDiagnosis']>(async () => PENDING_JOB);
+    await mount({ api: stubApi({ getDiagnosis }) });
+    await answerWrong();
+
+    await tick(1999);
+    expect(getDiagnosis).toHaveBeenCalledTimes(0);
+    await tick(1);
+    expect(getDiagnosis).toHaveBeenCalledTimes(1);
+
+    await tick(1999);
+    expect(getDiagnosis).toHaveBeenCalledTimes(1);
+    await tick(1);
+    expect(getDiagnosis).toHaveBeenCalledTimes(2);
+  });
+
+  it('is still pending at 29999 ms and reads failed at 30000 ms', async () => {
+    vi.useFakeTimers();
+    await mount({ api: stubApi({ getDiagnosis: async () => PENDING_JOB }) });
+    await answerWrong();
+
+    await tick(29999);
+    expect(panel()!.getAttribute('data-status')).toBe('pending');
+
+    await tick(1);
+    expect(panel()!.getAttribute('data-status')).toBe('failed');
+    expect(noteText()).toBe(DIAGNOSIS_FAILED);
   });
 });

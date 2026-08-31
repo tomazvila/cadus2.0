@@ -16,11 +16,12 @@
  * `2 remaining`, the posted pairs of `problem_id` and `answer`.
  */
 import { describe, expect, it, vi } from 'vitest';
-import { act, fireEvent, render, screen } from '@testing-library/react';
+import { act, cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { axe } from 'vitest-axe';
-import { createDemoApi } from '@/api';
+import { ApiError, createDemoApi } from '@/api';
 import { Quiz, QUIZ_SILENCE_NOTE, QUIZ_TIMEOUT_MESSAGE, type QuizProps } from '@/views/Quiz';
-import { resetToasts, toastStore } from '@/app/toast';
+import { RETRY_STALE_MESSAGE } from '@/hooks/useCall';
+import { fireToastAction, resetToasts, toastStore, TOAST_TIMEOUT_MS } from '@/app/toast';
 import { AXE_IN_JSDOM } from './axe';
 import type {
   ApiClient,
@@ -151,6 +152,78 @@ describe('QUIZ-budget: the whole-quiz clock', () => {
     await tick(3_600_000);
     expect(taskAnswer).not.toHaveBeenCalled();
     expect(screen.queryByText('Quiz complete')).toBeNull();
+  });
+
+  it('QUIZ-budget: a re-mount resumes the running clock and keeps the answered count', async () => {
+    // V6. The topbar offers the map from the quiz and the map's Done gives the quiz back,
+    // so React unmounts the screen and mounts it again. A clock seeded from the budget on
+    // every mount hands the whole budget back once per trip, and the count on screen
+    // restarts at the full quiz: the timed quiz then has no end.
+    vi.useFakeTimers();
+    const taskServe = vi.fn<ApiClient['taskServe']>()
+      .mockResolvedValueOnce(Q(1))
+      .mockResolvedValue(Q(2));
+    const taskAnswer = vi.fn<ApiClient['taskAnswer']>(async () => receipt({ remaining: 2 }));
+    // ONE client for both mounts, as the router holds one for the whole page.
+    const api = stubApi({ taskServe, taskAnswer });
+
+    await mount({ api });
+    typeAnswer('7/12');
+    await act(async () => { fireEvent.click(submitButton()); });
+    await tick(30_000);
+    expect(timer()!.textContent).toBe('9:30');
+    expect(remaining()!.textContent).toBe('2 remaining');
+
+    // The map takes the screen: React unmounts the quiz, and Done mounts it again.
+    cleanup();
+    await mount({ api });
+
+    // 30 seconds of the 600 are spent, and the serve numbers the live question 2 of 3, so
+    // one answer is in: `10:00` and `3 remaining` here are the map round trip as a reset.
+    expect(timer()!.textContent).toBe('9:30');
+    expect(remaining()!.textContent).toBe('2 remaining');
+    expect(taskServe).toHaveBeenCalledTimes(3);
+  });
+
+  it('QUIZ-budget: a re-mount after the budget ran out blank-fills at once', async () => {
+    // The screen was away while the clock ran out. The resumed clock is at zero on the
+    // first render, so the timeout path runs on the spot instead of waiting out a second
+    // budget the learner never had.
+    vi.useFakeTimers();
+    const taskAnswer = vi.fn<ApiClient['taskAnswer']>(
+      async () => receipt({ remaining: 0, quiz_complete: true }),
+    );
+    const api = stubApi({ taskAnswer });
+    const short: PlanTask = { ...QUIZ, time_budget_secs: 5 };
+
+    await mount({ task: short, api });
+    cleanup();
+    // The clock dies with the view (F-37-1b), so nothing is posted while the quiz is off.
+    await tick(10_000);
+    expect(taskAnswer).not.toHaveBeenCalled();
+
+    await mount({ task: short, api });
+    await tick(0);
+
+    expect(posted(taskAnswer)).toEqual([['q1', '']]);
+    expect(screen.getByText('Quiz complete')).toBeTruthy();
+    expect(toastStore.getSnapshot().map((t) => t.message)).toContain(QUIZ_TIMEOUT_MESSAGE);
+  });
+
+  it('QUIZ-budget: a clock the browser froze gives no frozen second back', async () => {
+    // A hidden tab throttles the interval to about one tick a minute. A clock that counts
+    // ticks hands every skipped second back, so the whole-quiz budget stretches for as long
+    // as the learner keeps the tab in the background.
+    vi.useFakeTimers();
+    await mount();
+    expect(timer()!.textContent).toBe('10:00');
+
+    // Two minutes pass with the tab hidden, and the interval fires ONCE at the end of them.
+    vi.setSystemTime(Date.now() + 120_000);
+    await tick(1000);
+
+    // 121 seconds of the 600 are gone. A tick count says 9:59.
+    expect(timer()!.textContent).toBe('7:59');
   });
 
   it('turns the clock urgent in the last minute, at 60 seconds left', async () => {
@@ -413,6 +486,134 @@ describe('the phase gate and the view lifetime', () => {
     typeAnswer('7/12');
     await act(async () => { fireEvent.click(submitButton()); });
     expect(taskAnswer).toHaveBeenCalledTimes(2);
+  });
+});
+
+describe('the stale Retry', () => {
+  const toasts = () => toastStore.getSnapshot();
+
+  /** A quiz whose FIRST grade fails and whose later grades are accepted. */
+  function flakyFirstGrade() {
+    let attempts = 0;
+    return vi.fn<ApiClient['taskAnswer']>(async () => {
+      attempts += 1;
+      if (attempts === 1) throw new ApiError(503, 'unavailable', 'The service is busy.');
+      return receipt({ remaining: 2 });
+    });
+  }
+
+  it('F-37-1c: a stale quiz Retry posts nothing and consumes no question', async () => {
+    // The defect this pins (V4). The Retry toast of a failed grade never expires, and it
+    // re-entered `run()` with the SPENT `problem_id`. The stale continuation then ran a
+    // second `taskServe`, which replaced the question on screen unanswered.
+    vi.useFakeTimers();
+    const taskServe = vi.fn<ApiClient['taskServe']>()
+      .mockResolvedValueOnce(Q(1))
+      .mockResolvedValueOnce(Q(2))
+      .mockResolvedValue(Q(3));
+    const taskAnswer = flakyFirstGrade();
+    await mount({ api: stubApi({ taskServe, taskAnswer }) });
+
+    // The grade fails. The question comes back to the learner with a Retry armed.
+    typeAnswer('7/12');
+    await act(async () => { fireEvent.click(submitButton()); });
+    expect(toasts().length).toBe(1);
+    expect(toasts()[0].label).toBe('Retry');
+    expect(submitButton().hasAttribute('disabled')).toBe(false);
+
+    // The learner answers again instead, and THAT attempt is accepted. Question 2 arrives.
+    typeAnswer('7/12');
+    await act(async () => { fireEvent.click(submitButton()); });
+    expect(document.querySelector('.problem-text')!.textContent).toBe('Question 2.');
+    expect(taskServe).toHaveBeenCalledTimes(2);
+
+    // The Retry now names a consumed question, so the gate refuses it.
+    const stale = toasts()[0];
+    await act(async () => { fireToastAction(stale.id); });
+
+    expect(posted(taskAnswer)).toEqual([['q1', '7/12'], ['q1', '7/12']]);
+    // NO third serve: the question on screen is not consumed.
+    expect(taskServe).toHaveBeenCalledTimes(2);
+    expect(document.querySelector('.problem-text')!.textContent).toBe('Question 2.');
+    expect(document.querySelector('.progress-count')!.textContent).toBe('2 / 3');
+    expect(toasts().length).toBe(1);
+    expect(toasts()[0].message).toBe(RETRY_STALE_MESSAGE);
+    expect(RETRY_STALE_MESSAGE).toBe('That retry came too late. Continue from the screen.');
+    expect(toasts()[0].kind).toBe('info');
+  });
+
+  it('F-36-1b: the refusal of a stale quiz Retry expires and arms no second Retry', async () => {
+    // The defect this pins (V7). A stale Retry posted the spent `problem_id`, the service
+    // answered `404 unknown_problem`, and that failure armed ANOTHER actionable toast —
+    // which never expires either. The refusal carries no action, so it expires.
+    vi.useFakeTimers();
+    const taskServe = vi.fn<ApiClient['taskServe']>()
+      .mockResolvedValueOnce(Q(1))
+      .mockResolvedValue(Q(2));
+    // The append-only log of the service: the first grade fails, the second is accepted,
+    // and every later post of that same `problem_id` is `404 unknown_problem`.
+    const spent = new Set<string>();
+    let attempts = 0;
+    const taskAnswer = vi.fn<ApiClient['taskAnswer']>(async (_task, body) => {
+      attempts += 1;
+      if (attempts === 1) throw new ApiError(503, 'unavailable', 'The service is busy.');
+      if (spent.has(body.problem_id)) {
+        throw new ApiError(404, 'unknown_problem', 'That problem is no longer open.');
+      }
+      spent.add(body.problem_id);
+      return receipt({ remaining: 2 });
+    });
+    await mount({ api: stubApi({ taskServe, taskAnswer }) });
+
+    typeAnswer('7/12');
+    await act(async () => { fireEvent.click(submitButton()); });
+    const stale = toasts()[0];
+
+    // The Retry of a real failure stays on screen for the life of the quiz.
+    await tick(TOAST_TIMEOUT_MS + 1000);
+    expect(toasts().map((t) => t.id)).toEqual([stale.id]);
+
+    typeAnswer('7/12');
+    await act(async () => { fireEvent.click(submitButton()); });
+    expect(taskAnswer).toHaveBeenCalledTimes(2);
+
+    await act(async () => { fireToastAction(stale.id); });
+    expect(toasts().length).toBe(1);
+    expect(toasts()[0].label).toBeUndefined();
+    expect(toasts()[0].onAction).toBeUndefined();
+
+    // A plain toast expires, so the screen is left clean and no Retry survives.
+    await tick(TOAST_TIMEOUT_MS + 1000);
+    expect(toasts()).toEqual([]);
+    expect(taskAnswer).toHaveBeenCalledTimes(2);
+    expect(taskServe).toHaveBeenCalledTimes(2);
+  });
+
+  it('F-37-1b: a Retry pressed after the quiz view is gone posts nothing', async () => {
+    // The toast store is module-scope, so an actionable toast OUTLIVES the view that raised
+    // it. Without a gate the Retry of the blank fill posts an answer for a screen the
+    // learner already left — a write to an append-only log with nobody on it.
+    vi.useFakeTimers();
+    const taskAnswer = vi.fn<ApiClient['taskAnswer']>(async () => {
+      throw new ApiError(503, 'unavailable', 'The service is busy.');
+    });
+    const { unmount } = await mount({
+      task: { ...QUIZ, time_budget_secs: 3 },
+      api: stubApi({ taskAnswer }),
+    });
+
+    // The clock runs out and the blank fill fails, which arms the Retry.
+    await tick(3000);
+    expect(posted(taskAnswer)).toEqual([['q1', '']]);
+    const stale = toasts().find((t) => t.label === 'Retry')!;
+    expect(stale).toBeTruthy();
+
+    unmount();
+    await act(async () => { fireToastAction(stale.id); });
+
+    expect(posted(taskAnswer)).toEqual([['q1', '']]);
+    expect(toasts().some((t) => t.message === RETRY_STALE_MESSAGE)).toBe(true);
+    expect(toasts().every((t) => t.onAction === undefined)).toBe(true);
   });
 });
 

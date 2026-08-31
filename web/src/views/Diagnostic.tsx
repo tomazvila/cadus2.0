@@ -111,6 +111,10 @@ export function Diagnostic({ diag, demo = false, onUnauthorized, onExit }: Diagn
   const answerRef = useRef<AnswerFieldHandle>(null);
   const introRef = useRef<HTMLDivElement>(null);
   const homeRef = useRef<HTMLButtonElement>(null);
+  // The live probe, read SYNCHRONOUSLY by a submit and by a Retry — neither can wait for a
+  // render, and a Retry arrives renders after the closure that armed it. Every `setProbe`
+  // site assigns this on the same line.
+  const probeRef = useRef<DiagProbe | null>(null);
 
   // R15: the briefing CARD holds the focus, not the CTA.
   useEffect(() => { if (phase === 'intro') introRef.current?.focus(); }, [phase]);
@@ -123,6 +127,7 @@ export function Diagnostic({ diag, demo = false, onUnauthorized, onExit }: Diagn
     // learner sits on the answered question — with its tick and a live "Save & exit" —
     // through a placement commit that takes seconds.
     setProbe(null);
+    probeRef.current = null;
     setResult(null);
     setFinishing(true);
     void call(() => diag.diagFinish(), (s) => {
@@ -150,6 +155,7 @@ export function Diagnostic({ diag, demo = false, onUnauthorized, onExit }: Diagn
       // to ask.
       if (!s.probe) { finishRef.current(); return; }
       setProbe(s.probe);
+      probeRef.current = s.probe;
       setQNum(num(s.asked) + 1);
       setCap(num(s.cap, DIAG_DEFAULT_CAP) || DIAG_DEFAULT_CAP);
       gate.enter('ready');
@@ -162,7 +168,9 @@ export function Diagnostic({ diag, demo = false, onUnauthorized, onExit }: Diagn
   }, [call, diag, gate, life]);
 
   const send = useCallback((answer: string, skipped: boolean) => {
-    const current = probe;
+    // THE REF, never the render value: a Retry re-enters this closure renders later, and a
+    // captured probe is the stale one by then.
+    const current = probeRef.current;
     if (!current) return;
     // THE gate, for every entry point — Submit, Skip, and the Enter key, which bypasses the
     // disabled button entirely. Synchronous, before the first await.
@@ -175,11 +183,29 @@ export function Diagnostic({ diag, demo = false, onUnauthorized, onExit }: Diagn
         setResult({ res, skipped });
         gate.enter('feedback');
       },
-    ).then((res) => {
-      // Failed and toasted with a Retry — back to `ready`, so the learner can act.
-      if (!res && life.alive()) gate.enter('ready');
-    });
-  }, [call, diag, gate, life, probe]);
+      {
+        // THE RETRY RE-ENTERS THE GATE (F-37-1c). `useCall` holds no view state, and this
+        // toast never expires (F-36-1b), so a Retry pressed after the learner answered
+        // again re-posts a spent `problem_id` to an append-only log with no DELETE. Its
+        // continuation then runs the unconditional `gate.enter('feedback')` on top of the
+        // LIVE probe, and the beat below advances the placement off the OLD reply's
+        // `next_probe` — the probe on screen is skipped unanswered, and placement is the
+        // most leveraged input in the system. The gate refuses the retry, and the refusal
+        // toast expires.
+        //
+        // `life.alive()` FIRST. The toast outlives the view — the store is module-scope —
+        // so a learner who pressed "Save & exit" can still press this Retry, and DIAG-750
+        // says an exit commits nothing behind their back (F-37-1b).
+        retryGate: () => life.alive()
+          && probeRef.current?.problem_id === current.problem_id
+          && gate.tryEnter('ready', 'submitting'),
+        // A failed answer returns the probe to the learner — the first attempt and every
+        // retried one alike. Without this the view sits at `submitting` with every control
+        // disabled and no way on.
+        onFail: () => { if (life.alive() && gate.is('submitting')) gate.enter('ready'); },
+      },
+    );
+  }, [call, diag, gate, life]);
 
   /**
    * DIAG-750. The beat is armed in an EFFECT, registered in the lifetime, and cleared on
@@ -198,6 +224,7 @@ export function Diagnostic({ diag, demo = false, onUnauthorized, onExit }: Diagn
     const id = life.setTimeout(() => {
       if (isProbe) {
         setProbe(next as DiagProbe);
+        probeRef.current = next as DiagProbe;
         setResult(null);
         setQNum((n) => n + 1);
         answerRef.current?.clear();

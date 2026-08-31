@@ -249,6 +249,53 @@ pub async fn insert_pending(admin: Admin<'_>, doc: &NewDocument<'_>) -> Result<b
     Ok(crate::bounded(db, query).await?.rows_affected() == 1)
 }
 
+/// Stamp the CURRENT prompt on one stored document (spec section 2.2, "Prompt
+/// digest"; M6 review finding V3).
+///
+/// Returns `true` when the statement changed a row.
+///
+/// [`insert_pending`] ends in `ON CONFLICT (digest) DO NOTHING`, so a re-author
+/// that reproduces the identical body writes nothing and the held row keeps the
+/// OLD prompt stamp. The row then stays stale for
+/// `cadus_worker::authoring::job::stale_slots`, the next pass re-authors it, the
+/// pass after that re-authors it again, and the operator pays for one model call
+/// per run forever. This statement ends that loop: the body is the body the
+/// current prompt writes, so the row names the current prompt.
+///
+/// The write touches `prompt_digest` and NOTHING else. `status`, `body`,
+/// `approved_by` and `approved_at` stand, because C6 binds the approval to the
+/// content and a prompt edit changes no content.
+///
+/// A row with a NULL `prompt_digest` is not touched. NULL means "the prompt is
+/// not recorded", every row written before migration `0012` carries it, and such
+/// a row is not stale (M6 review finding F4), so there is no stamp to clear.
+///
+/// # Errors
+///
+/// Returns [`StoreError::Db`] when the statement fails, which includes SQLSTATE
+/// 42501 when `admin` names a connection of the runtime role, and
+/// [`StoreError::Timeout`] when the client-side bound expires.
+pub async fn refresh_prompt_digest(
+    admin: Admin<'_>,
+    digest: &str,
+    prompt_digest: &str,
+) -> Result<bool, StoreError> {
+    let db = admin.db();
+    let query = sqlx::query!(
+        r#"
+        UPDATE content_store
+           SET prompt_digest = $2
+         WHERE digest = $1
+           AND prompt_digest IS NOT NULL
+           AND prompt_digest <> $2
+        "#,
+        digest,
+        prompt_digest,
+    )
+    .execute(db.pool());
+    Ok(crate::bounded(db, query).await?.rows_affected() == 1)
+}
+
 /// Approve one document by its digest (C6).
 ///
 /// Approval binds to the digest and to nothing else: the statement names the
@@ -515,6 +562,75 @@ where
             created_at: row.created_at,
             body: row.body,
             approved_templates: row.approved_templates,
+        })
+        .collect())
+}
+
+/// One row the re-gate of a knowledge point reads (C6).
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct RegateRow {
+    /// The content address of the row.
+    pub digest: String,
+    /// The kind of the row: [`KIND_TEMPLATE`], [`KIND_TEACH`] or
+    /// [`KIND_HINT_LADDER`].
+    pub kind: String,
+    /// The review status of the row.
+    pub status: String,
+    /// The document body, as `content_store.body` holds it.
+    pub body: Json,
+}
+
+/// The rows one re-gate of a knowledge point reads (C6).
+///
+/// The approve route re-runs the two instruction gates after a template is
+/// approved, and it needs two sets of rows in one statement:
+///
+/// - every `template` row of the knowledge point that is `approved` or
+///   `pending`. Those rows render the instances the learner is served, and they
+///   are the answer set the gates judge against;
+/// - every `teach` and `hint_ladder` row that is `pending`. Those are the
+///   documents the re-gate moves to `rejected`. An APPROVED page or ladder is
+///   not read: a human passed it, and a later template does not undo that
+///   verdict.
+///
+/// A `rejected` row is not read at all: it serves nothing already.
+///
+/// The order is the kind, then the digest, so two runs over one table give one
+/// list.
+///
+/// # Errors
+///
+/// Returns [`StoreError::Db`] when the statement fails.
+pub async fn regate_rows<'e, E>(executor: E, kp_id: &str) -> Result<Vec<RegateRow>, StoreError>
+where
+    E: PgExecutor<'e>,
+{
+    let rows = sqlx::query!(
+        r#"
+        SELECT digest AS "digest!", kind AS "kind!", status AS "status!", body AS "body!"
+        FROM content_store
+        WHERE kp_id = $1
+          AND ((kind = $2 AND status IN ($3, $4))
+               OR (kind IN ($5, $6) AND status = $4))
+        ORDER BY kind, digest
+        "#,
+        kp_id,
+        KIND_TEMPLATE,
+        STATUS_APPROVED,
+        STATUS_PENDING,
+        KIND_TEACH,
+        KIND_HINT_LADDER,
+    )
+    .fetch_all(executor)
+    .await?;
+
+    Ok(rows
+        .into_iter()
+        .map(|row| RegateRow {
+            digest: row.digest,
+            kind: row.kind,
+            status: row.status,
+            body: row.body,
         })
         .collect())
 }

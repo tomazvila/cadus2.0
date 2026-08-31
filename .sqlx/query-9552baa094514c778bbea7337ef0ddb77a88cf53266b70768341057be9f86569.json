@@ -1,0 +1,69 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        SELECT digest AS \"digest!\", kind AS \"kind!\", status AS \"status!\", body AS \"body!\"\n        FROM content_store\n        WHERE kp_id = $1\n          AND ((kind = $2 AND status IN ($3, $4))\n               OR (kind IN ($5, $6) AND status = $4))\n        ORDER BY kind, digest\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "digest!",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "content_store",
+            "name": "digest"
+          }
+        }
+      },
+      {
+        "ordinal": 1,
+        "name": "kind!",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "content_store",
+            "name": "kind"
+          }
+        }
+      },
+      {
+        "ordinal": 2,
+        "name": "status!",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "content_store",
+            "name": "status"
+          }
+        }
+      },
+      {
+        "ordinal": 3,
+        "name": "body!",
+        "type_info": "Jsonb",
+        "origin": {
+          "Table": {
+            "table": "content_store",
+            "name": "body"
+          }
+        }
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Text",
+        "Text",
+        "Text",
+        "Text",
+        "Text",
+        "Text"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      false
+    ]
+  },
+  "hash": "9552baa094514c778bbea7337ef0ddb77a88cf53266b70768341057be9f86569"
+}

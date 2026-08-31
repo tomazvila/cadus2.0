@@ -275,7 +275,9 @@ services:
   # node; the node lives in the build stage alone.
   #
   # `deploy/Caddyfile` stays a bind mount, so an operator changes the routing
-  # with a restart and no rebuild.
+  # with a reload and no rebuild. The mount below binds the DIRECTORY `deploy/`
+  # at /etc/caddy, and Caddy reads /etc/caddy/Caddyfile inside it. Read the
+  # `volumes:` block for the reason.
   #
   # Automatic HTTPS: put a real domain in SITE_ADDRESS and Caddy fetches a
   # Let's Encrypt certificate by itself. It needs ports 80 and 443 open and the
@@ -304,7 +306,24 @@ services:
     environment:
       SITE_ADDRESS: ${SITE_ADDRESS:?set SITE_ADDRESS in .env - your domain, or :80 for http-only}
     volumes:
-      - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
+      # The DIRECTORY, never the file. A single-file bind mount binds the
+      # INODE that the container started with, and it follows no replacement of
+      # that inode. `git pull` writes the working-tree file as a NEW inode.
+      # Every editor and `sed -i` do the same. Under a file bind the container
+      # therefore kept the pre-pull copy, `caddy reload` re-read that stale copy,
+      # logged `using config from file` and exited 0, and `scripts/deploy.sh`
+      # printed DEPLOY OK on the pre-pull routing (M6 review 2, finding V9).
+      #
+      # A DIRECTORY bind binds the directory. Caddy opens /etc/caddy/Caddyfile
+      # through that directory on every reload, so it reads whatever file the
+      # name points at now. The image CMD already names that path
+      # (`caddy run --config /etc/caddy/Caddyfile --adapter caddyfile`), so the
+      # entrypoint is unchanged. `scripts/check_ops.sh` check (l) drives the
+      # whole sequence against the real edge image: replace the file with a new
+      # inode, reload, and read the answer the proxy serves.
+      #
+      # Keep the mount read-only. Caddy writes to /data and /config, never here.
+      - ./deploy:/etc/caddy:ro
       - caddy-data:/data
       - caddy-config:/config
     depends_on:

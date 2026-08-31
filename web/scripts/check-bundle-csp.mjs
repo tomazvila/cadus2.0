@@ -8,6 +8,10 @@
  *   connect-src 'self' http://localhost:* http://127.0.0.1:*
  *
  * There is no `script-src`, so scripts fall back to `'self'`: no inline script, no eval.
+ * BOTH halves are enforced here. `eval` and its family are token checks over the emitted
+ * scripts; the two shapes of inline script — a `<script>` element with a body and no `src`,
+ * and an `on*` handler attribute — are element checks over every emitted document, because
+ * neither one carries a `src=` for a script-tag scan to see.
  * `font-src 'self'` has no `data:`, so an inlined font is a silent runtime failure.
  *
  * The `data:` rule here is stricter than the header: the S1 acceptance check is that the
@@ -48,11 +52,74 @@ const DATA_URI = [
   { pattern: /\bdata:;base64,/, why: 'an untyped base64 data: URI' },
 ];
 
+/**
+ * An HTML comment, removed before every element scan.
+ *
+ * `index.html` explains the vendor-tag injection in prose that spells `<script src>`. A
+ * scanner that reads comments pairs that text with the NEXT real `</script>` and reports
+ * the entry module as an inline body. A gate that fails a correct build teaches its reader
+ * to turn the gate off, so the comments come out first.
+ */
+const HTML_COMMENT = /<!--[\s\S]*?-->/g;
+
+/** One start tag, with its attribute text. A quoted attribute value may hold `>`. */
+const TAG = /<([a-zA-Z][\w:-]*)((?:"[^"]*"|'[^']*'|[^>"'])*)>/g;
+
+/**
+ * One `name=value` attribute.
+ *
+ * The value is consumed WHOLE, quotes and all, so `data-note="onclick=x"` reports one
+ * attribute named `data-note` and not a handler.
+ */
+const ATTR = /([a-zA-Z_:][\w:.-]*)\s*=\s*(?:"[^"]*"|'[^']*'|[^\s"'>]*)/g;
+
+/** One `<script>` element, with its attribute text and its body. */
+const SCRIPT_ELEMENT = /<script\b((?:"[^"]*"|'[^']*'|[^>"'])*)>([\s\S]*?)<\/script\s*>/gi;
+
+const attributeNames = (attrs) => [...attrs.matchAll(ATTR)].map((a) => a[1].toLowerCase());
+
+/**
+ * Every inline script body in one document: a `<script>` with a non-empty body and no
+ * `src`. An empty element is not one — Vite emits none, and a body is what runs.
+ */
+export function inlineScriptBodies(html) {
+  const found = [];
+  for (const m of html.replace(HTML_COMMENT, '').matchAll(SCRIPT_ELEMENT)) {
+    if (attributeNames(m[1]).includes('src')) continue;
+    const body = m[2].trim();
+    if (body !== '') found.push(body.slice(0, 60));
+  }
+  return found;
+}
+
+/** Every inline event handler attribute in one document: `onclick=`, `onload=`, and rest. */
+export function inlineHandlerAttributes(html) {
+  const found = [];
+  for (const tag of html.replace(HTML_COMMENT, '').matchAll(TAG)) {
+    for (const name of attributeNames(tag[2])) {
+      if (/^on[a-z]/.test(name)) found.push(`<${tag[1].toLowerCase()} ${name}=>`);
+    }
+  }
+  return found;
+}
+
+/** The two inline shapes `default-src 'self'` refuses. Documents only. */
+const INLINE_SCRIPT = [
+  {
+    find: (t) => inlineScriptBodies(t).length > 0,
+    why: "an inline <script> body needs 'unsafe-inline'",
+  },
+  {
+    find: (t) => inlineHandlerAttributes(t).length > 0,
+    why: "an inline event handler attribute needs 'unsafe-inline'",
+  },
+];
+
 const RULES = {
   '.js': [...SCRIPT_VIOLATIONS, ...DATA_URI],
   '.mjs': [...SCRIPT_VIOLATIONS, ...DATA_URI],
   '.css': DATA_URI,
-  '.html': DATA_URI,
+  '.html': [...DATA_URI, ...INLINE_SCRIPT],
 };
 
 function walk(dir) {
@@ -65,14 +132,19 @@ function walk(dir) {
   return out;
 }
 
+/** Does one rule fire on this text? A rule carries a `pattern` OR a `find`. */
+function fires(rule, text) {
+  return rule.pattern ? rule.pattern.test(text) : rule.find(text);
+}
+
 export function audit(files, read) {
   const problems = [];
   for (const file of files) {
     const rules = RULES[extname(file)];
     if (!rules) continue;
     const text = read(file);
-    for (const { pattern, why } of rules) {
-      if (pattern.test(text)) problems.push({ file, why });
+    for (const rule of rules) {
+      if (fires(rule, text)) problems.push({ file, why: rule.why });
     }
   }
   return problems;
@@ -106,17 +178,37 @@ if (process.argv.includes('--selftest')) {
     '/x/bad.js': 'const f = new Function("return 1"); eval("2");',
     '/x/bad.css': '@font-face{src:url(data:font/woff2;base64,AA)}',
     '/x/bad.html': '<link rel="icon" href="data:image/svg+xml,%3Csvg%3E">',
+    // The two shapes with no `src=` on them. Neither one reaches a script-tag scan, and
+    // both run under `default-src 'self'` only with `'unsafe-inline'` added to the header.
+    '/x/inline-body.html': '<head><script>window.__boot = 1;</script></head>',
+    '/x/inline-handler.html': '<body><button onclick="go()">Go</button></body>',
   };
   const found = audit(Object.keys(bad), (f) => bad[f]);
   const flagged = new Set(found.map((p) => p.file));
+  const why = (f) => found.filter((p) => p.file === f).map((p) => p.why).join('; ');
   if (!flagged.has('/x/bad.js')) fails.push('new Function()/eval() in a script was not caught');
   if (!flagged.has('/x/bad.css')) fails.push('a data: font in a stylesheet was not caught');
   if (!flagged.has('/x/bad.html')) fails.push('a data: icon in the document was not caught');
+  if (!/inline <script> body/.test(why('/x/inline-body.html'))) {
+    fails.push('an inline <script> body in the document was not caught');
+  }
+  if (!/inline event handler/.test(why('/x/inline-handler.html'))) {
+    fails.push('an inline event handler attribute in the document was not caught');
+  }
 
   const clean = {
     '/x/ok.js': 'const a = 1; const o = {data: a.slice(0)};',
     '/x/ok.css': '@font-face{src:url(/vendor/katex/fonts/KaTeX_Main-Regular.woff2)}',
     '/x/ok.html': '<link rel="icon" href="/favicon.svg">',
+    // The document the build really emits: two deferred vendor tags, the hashed entry
+    // module, a comment that spells `<script src>` in prose, an EMPTY script element, and
+    // an attribute whose VALUE holds the text `onclick=`. None of the five is a violation,
+    // and a scanner that reports any of them fails a correct build.
+    '/x/ok-doc.html': '<!-- Vite rewrites a <script src> tag into a module graph entry. -->'
+      + '<script defer src="/vendor/katex/katex.min.js"></script>'
+      + '<script type="module" crossorigin src="/assets/index-B0ILUY8-.js"></script>'
+      + '<script></script>'
+      + '<div data-note="onclick=never" class="one"></div>',
   };
   const noise = audit(Object.keys(clean), (f) => clean[f]);
   if (noise.length !== 0) {
@@ -141,7 +233,7 @@ if (process.argv.includes('--selftest')) {
     for (const f of fails) console.error(`  ${f}`);
     process.exit(1);
   }
-  console.log('csp selftest: PASS (catches eval, new Function, data: in css/js/html; passes clean input; discovers vendor refs)');
+  console.log('csp selftest: PASS (catches eval, new Function, data: in css/js/html, an inline script body and an inline handler attribute; passes clean input; discovers vendor refs)');
   process.exit(0);
 }
 
@@ -253,6 +345,6 @@ if (orderProblems.length) {
 if (problems.length || missing.length || drift.length || orderProblems.length) process.exit(1);
 
 console.log(
-  `csp audit: PASS (no eval/Function/Worker, no data: URIs, ${required.length} referenced `
-  + 'vendor files present and byte-identical to public/vendor)',
+  `csp audit: PASS (no eval/Function/Worker, no inline script, no data: URIs, ${required.length} `
+  + 'referenced vendor files present and byte-identical to public/vendor)',
 );

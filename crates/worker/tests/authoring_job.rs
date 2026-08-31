@@ -19,6 +19,11 @@
 //! counted as a duplicate and never as a store, and a pass that reproduces a
 //! body a reviewer refused declines with the reviewer's reason.
 //!
+//! The verification round adds the prompt stamp of a collision (finding V3): a
+//! re-author that reproduces the body of a STALE row stamps the current prompt
+//! on that row, so the row leaves the stale set and the pass after it makes no
+//! model call.
+//!
 //! Every expected value is a LITERAL: a literal rejection sentence, a literal
 //! digest, a literal row count, a literal status. Nothing is read back from the
 //! code under test.
@@ -38,13 +43,16 @@ use std::sync::{Arc, Mutex};
 use std::time::Duration;
 
 use cadus_core::curriculum::{AnswerKind, Exemplar};
+use cadus_core::instruction::ServedInstance;
 use cadus_model_client::{Client, ModelConfig};
+use cadus_store::content::{Admin, approve};
 use cadus_store::test_support::TestDb;
 use cadus_store::{DEFAULT_CLIENT_TIMEOUT_MS, Db};
 use cadus_worker::authoring::job::{
-    AuthoringJob, Outcome, author_one, bank_target, run_batch, served_answers, slots_taken,
+    AuthoringJob, Outcome, author_one, bank_target, render_stale, run_batch, served_instances,
+    slots_taken, stale_rows, stale_slots,
 };
-use cadus_worker::authoring::prompt::{AuthoringSpec, Kind};
+use cadus_worker::authoring::prompt::{AuthoringSpec, KINDS, Kind, prompt_digest};
 use serde_json::{Value, json};
 use sqlx::PgPool;
 use tokio::io::{AsyncReadExt, AsyncWriteExt};
@@ -1344,6 +1352,32 @@ async fn seed_approved_template(pool: &PgPool, digest: &str, kp_id: &str, body: 
     .unwrap();
 }
 
+/// Move one stored row to another review status.
+async fn set_status(pool: &PgPool, digest: &str, status: &str) {
+    sqlx::query("UPDATE content_store SET status = $2 WHERE digest = $1")
+        .bind(digest)
+        .bind(status)
+        .execute(pool)
+        .await
+        .unwrap();
+}
+
+/// The tool arguments of a teach page that works a problem OUTSIDE the parameter
+/// space of the template: `a` runs 1 to 12, so no instance asks for $15^2$ and no
+/// served answer is 225.
+fn teach_outside_the_bank() -> Value {
+    json!({
+        "concept": "Squaring a number multiplies it by itself.",
+        "worked_example": {
+            "problem": "Compute $15^2$.",
+            "steps": [
+                "Write the base twice with a multiplication sign between them.",
+                "The product is 225."
+            ]
+        }
+    })
+}
+
 /// A ladder whose last rung states 81, which is the answer of the instance
 /// `Compute $9^2$.` and is NOT the answer of any exemplar.
 fn ladder_that_names_an_instance_answer() -> Value {
@@ -1355,14 +1389,33 @@ fn ladder_that_names_an_instance_answer() -> Value {
     })
 }
 
-/// The answers `served_answers` reads off the approved perfect-squares
-/// template, in order: the two worked samples first (`a = 1` and `a = 12`), then
-/// the eight instances drawn from the fixed gate seed, each answer once.
+/// The instances `served_instances` reads off the perfect-squares template, in
+/// order: the two worked samples first (`a = 1` and `a = 12`), then the eight
+/// instances drawn from the fixed gate seed, each pair once.
 ///
-/// Eight draws over `a` in 1 to 12 repeat, so seven answers stand here. The list
-/// is a function of the document and the seed alone, so it is the same list on
-/// every run.
-const SERVED_ANSWERS: [&str; 7] = ["1", "144", "81", "36", "121", "49", "100"];
+/// Eight draws over `a` in 1 to 12 repeat, so seven pairs stand here. The list is
+/// a function of the document and the seed alone, so it is the same list on every
+/// run.
+const SERVED_INSTANCES: [(&str, &str); 7] = [
+    ("Compute $1^{2}$.", "1"),
+    ("Compute $12^{2}$.", "144"),
+    ("Compute $9^{2}$.", "81"),
+    ("Compute $6^{2}$.", "36"),
+    ("Compute $11^{2}$.", "121"),
+    ("Compute $7^{2}$.", "49"),
+    ("Compute $10^{2}$.", "100"),
+];
+
+/// [`SERVED_INSTANCES`] as the type the gate reads.
+fn served_list() -> Vec<ServedInstance> {
+    SERVED_INSTANCES
+        .iter()
+        .map(|(problem, answer)| ServedInstance {
+            problem: (*problem).to_owned(),
+            answer: (*answer).to_owned(),
+        })
+        .collect()
+}
 
 /// The gate's give-away sentence for the last rung of
 /// [`ladder_that_names_an_instance_answer`].
@@ -1370,46 +1423,58 @@ const NAMES_AN_INSTANCE_ANSWER: &str = "rung 1 reads 'For a base of 9 the produc
 names the answer '81' this knowledge point serves — a hint is a question, never the final step \
 (Hard Rule 3)";
 
-/// Findings F2 and F15. The approved templates of the knowledge point are read,
-/// and their instance answers are the answers the hint gate judges against.
+/// FIX2-M6-A, finding V1. The templates the gates read are the `approved` rows
+/// AND the `pending` ones.
+///
+/// `cadus-worker author` writes all four kinds in ONE process, template first,
+/// and every kind enters `content_store` as `pending`. A read of the approved
+/// rows alone therefore answered an EMPTY list for every knowledge point of a
+/// fresh curriculum, and the hint gate of that pass judged the ladder against the
+/// exemplars alone. A `rejected` template still contributes nothing: a human
+/// refused that body, and it serves nobody.
 #[tokio::test]
-async fn the_served_answers_are_the_instance_answers_of_the_approved_templates() {
+async fn the_served_instances_are_the_instances_of_the_stored_templates() {
     TestDb::with(|db| async move {
         let handle = Db::new(db.admin.clone(), DEFAULT_CLIENT_TIMEOUT_MS);
 
-        // No approved template: A6 serves the exemplars, and nothing else.
+        // No template row at all: A6 serves the exemplars, and nothing else.
         assert_eq!(
-            served_answers(&handle, KP_KEY).await.unwrap(),
-            Vec::<String>::new()
+            served_instances(&handle, KP_KEY).await.unwrap(),
+            Vec::<ServedInstance>::new()
         );
 
-        // A PENDING template is not served, so it contributes no answer (C6).
+        // A PENDING template is the material the reviewer is about to approve,
+        // so its instances gate the page and the ladder of the same pass.
         seed_approved_template(&db.admin, "sha256:pending-one", KP_KEY, STORED_BODY).await;
-        sqlx::query("UPDATE content_store SET status = 'pending' WHERE digest = $1")
-            .bind("sha256:pending-one")
-            .execute(&db.admin)
-            .await
-            .unwrap();
+        set_status(&db.admin, "sha256:pending-one", "pending").await;
         assert_eq!(
-            served_answers(&handle, KP_KEY).await.unwrap(),
-            Vec::<String>::new()
+            served_instances(&handle, KP_KEY).await.unwrap(),
+            served_list()
         );
 
+        // A second row with the same body adds no pair: the list holds each
+        // problem and answer once.
         seed_approved_template(&db.admin, STORED_DIGEST, KP_KEY, STORED_BODY).await;
         assert_eq!(
-            served_answers(&handle, KP_KEY).await.unwrap(),
-            SERVED_ANSWERS
-                .iter()
-                .map(|answer| (*answer).to_owned())
-                .collect::<Vec<String>>()
+            served_instances(&handle, KP_KEY).await.unwrap(),
+            served_list()
+        );
+
+        // A REJECTED template serves nothing, so it contributes nothing (C6).
+        set_status(&db.admin, "sha256:pending-one", "rejected").await;
+        set_status(&db.admin, STORED_DIGEST, "rejected").await;
+        assert_eq!(
+            served_instances(&handle, KP_KEY).await.unwrap(),
+            Vec::<ServedInstance>::new()
         );
 
         // The template of ANOTHER knowledge point is not read.
+        set_status(&db.admin, STORED_DIGEST, "approved").await;
         assert_eq!(
-            served_answers(&handle, "perfect-cubes/cubes")
+            served_instances(&handle, "perfect-cubes/cubes")
                 .await
                 .unwrap(),
-            Vec::<String>::new()
+            Vec::<ServedInstance>::new()
         );
     })
     .await;
@@ -1477,6 +1542,386 @@ async fn the_same_rung_passes_when_no_template_is_approved() {
             rows_of_kind(&db.admin, KP_KEY, "hint_ladder").await.len(),
             1
         );
+    })
+    .await;
+}
+
+// --------------------------------------------------------------------------- //
+// M6 review 2, finding V1: one process authors all four kinds
+// --------------------------------------------------------------------------- //
+
+/// FIX2-M6-A, finding V1. ACCEPTANCE, end to end.
+///
+/// `cadus-worker author` authors the four kinds in ONE process, template first,
+/// and every document enters `content_store` as `pending` (C6). Before this fix
+/// the two instruction gates read the APPROVED templates alone, so the ladder of
+/// a fresh curriculum was judged with an empty instance set and a rung that
+/// stated a rendered answer was stored `pending`. One click then served it.
+///
+/// The pass here is that pass: a template, a teach page, and a give-away ladder,
+/// in the order of `prompt::KINDS`. The template is `pending` the whole time, and
+/// the ladder is refused against it. The reviewer then approves the template, and
+/// the ladder is still not in the table: it was never stored, so nothing serves
+/// it.
+#[tokio::test]
+async fn one_pass_gates_the_ladder_against_the_pending_template_of_the_same_pass() {
+    TestDb::with(|db| async move {
+        let fake = FakeModel::start(vec![
+            named_reply("emit_template", &good_arguments()),
+            named_reply("emit_teach", &teach_outside_the_bank()),
+            named_reply("emit_hint_ladder", &ladder_that_names_an_instance_answer()),
+        ])
+        .await;
+        let handle = Db::new(db.admin.clone(), DEFAULT_CLIENT_TIMEOUT_MS);
+
+        // Kind 1 of the pass. The row is `pending`: no human has read it yet.
+        let template = author_one(&handle, &fake.job(), Kind::Template, &spec())
+            .await
+            .unwrap();
+        assert_eq!(template.outcome, Outcome::Stored);
+        assert_eq!(template.digest.as_deref(), Some(STORED_DIGEST));
+        let rows = rows_of_kind(&db.admin, KP_KEY, "template").await;
+        assert_eq!(rows.len(), 1);
+        assert_eq!(rows[0].1, "pending");
+
+        // Kind 2. The page works $15^2$, which the template never renders, so no
+        // served answer stands in its last step.
+        let teach = author_one(&handle, &fake.job(), Kind::Teach, &spec())
+            .await
+            .unwrap();
+        assert_eq!(teach.outcome, Outcome::Stored);
+        assert_eq!(teach.attempts, 1);
+
+        // Kind 3. The rung states 81, which no exemplar answers and the PENDING
+        // template renders. One attempt, so the pass declines with the gate's own
+        // sentence and stores nothing.
+        let ladder = author_one(
+            &handle,
+            &fake.job_with_attempts(1),
+            Kind::HintLadder,
+            &spec(),
+        )
+        .await
+        .unwrap();
+        assert_eq!(ladder.outcome, Outcome::Declined);
+        assert_eq!(ladder.attempts, 1);
+        assert_eq!(ladder.digest, None);
+        assert_eq!(
+            ladder.decline.expect("a decline record").reasons,
+            vec![format!("hint-answer: {NAMES_AN_INSTANCE_ANSWER}")]
+        );
+        assert_eq!(
+            rows_of_kind(&db.admin, KP_KEY, "hint_ladder").await.len(),
+            0
+        );
+
+        // The reviewer approves the template. The give-away ladder is still not in
+        // the table, so the L5 route has nothing to serve for this knowledge point.
+        let decision = approve(Admin::new(&handle), STORED_DIGEST, None)
+            .await
+            .unwrap();
+        assert_eq!(decision.status, "approved");
+        assert_eq!(
+            rows_of_kind(&db.admin, KP_KEY, "hint_ladder").await.len(),
+            0
+        );
+        assert_eq!(
+            rows_of_kind(&db.admin, KP_KEY, "template").await[0].1,
+            "approved"
+        );
+    })
+    .await;
+}
+
+// --------------------------------------------------------------------------- //
+// V3: a re-author that reproduces the same body stamps the current prompt
+// --------------------------------------------------------------------------- //
+
+/// A prompt digest that is NOT the digest of any current kind.
+///
+/// It stands for the prompt an operator has since edited (spec section 2.2,
+/// "Prompt digest"). It is 16 hex characters, as every prompt digest is.
+const OLD_PROMPT: &str = "0000000000000000";
+
+/// The `--stale` listing of an empty stale set, character for character
+/// (`render_stale`).
+const NO_STALE_ROWS: &str = "stale documents\nkp_id kind digest prompt_digest\nstale: rows 0\n";
+
+/// Seed the teach row of [`STORED_TEACH_BODY`] as `approved`, with the prompt
+/// stamp of an EDITED prompt.
+///
+/// The digest is the digest the pass computes for that body, so a re-author that
+/// reproduces the body collides with this row.
+async fn seed_stale_teach(pool: &PgPool) {
+    sqlx::query(
+        "INSERT INTO content_store
+             (digest, kp_id, kind, body, status, prompt_digest)
+         VALUES ($1, $2, 'teach', $3::jsonb, 'approved', $4)",
+    )
+    .bind(STORED_TEACH_DIGEST)
+    .bind(KP_KEY)
+    .bind(STORED_TEACH_BODY)
+    .bind(OLD_PROMPT)
+    .execute(pool)
+    .await
+    .unwrap();
+}
+
+/// Every `content_store` row of one knowledge point and kind, as
+/// `(digest, status, body, prompt_digest)`.
+async fn stamped_rows(
+    pool: &PgPool,
+    kp_id: &str,
+    kind: &str,
+) -> Vec<(String, String, Value, Option<String>)> {
+    sqlx::query_as::<_, (String, String, Value, Option<String>)>(
+        "SELECT digest, status, body, prompt_digest FROM content_store
+          WHERE kp_id = $1 AND kind = $2 ORDER BY digest",
+    )
+    .bind(kp_id)
+    .bind(kind)
+    .fetch_all(pool)
+    .await
+    .unwrap()
+}
+
+/// V3, the acceptance check: two passes after a prompt edit make ONE model call,
+/// and the stale set is empty after the first pass.
+///
+/// The seeded row is the row an EDITED prompt marked: it is `approved`, it holds
+/// the body the model reproduces, and it names an older prompt. The pass
+/// therefore re-authors the knowledge point, and the model answers the same
+/// document.
+///
+/// The insert writes nothing, because the digest is the digest of that row. The
+/// pass stamps the CURRENT prompt on the row instead, so
+///
+/// - the outcome is [`Outcome::Refreshed`],
+/// - the row leaves the stale set and `--stale` lists nothing,
+/// - the SECOND pass makes no call, and
+/// - the approval, the body and the digest stand (C6).
+///
+/// Before the fix the row kept the old stamp: every pass counted it as stale,
+/// re-authored it, and paid for one model call, forever.
+#[tokio::test]
+async fn a_re_author_of_the_same_body_stamps_the_current_prompt_and_the_loop_stops() {
+    TestDb::with(|db| async move {
+        let fake = FakeModel::start(vec![named_reply("emit_teach", &teach_arguments())]).await;
+        let handle = Db::new(db.admin.clone(), DEFAULT_CLIENT_TIMEOUT_MS);
+        seed_stale_teach(&db.admin).await;
+
+        // The bank of `teach` is 1, the row holds the slot, and the slot is
+        // stale: the pass re-authors it.
+        assert_eq!(slots_taken(&handle, KP_KEY, Kind::Teach).await.unwrap(), 1);
+        assert_eq!(stale_slots(&handle, KP_KEY, Kind::Teach).await.unwrap(), 1);
+        assert_eq!(
+            render_stale(&stale_rows(&handle, &KINDS).await.unwrap()),
+            "stale documents\n\
+             kp_id kind digest prompt_digest\n\
+             perfect-squares/squares teach sha256:fc031ed7deaa7d60 0000000000000000\n\
+             stale: rows 1\n"
+        );
+
+        let first = author_one(&handle, &fake.job_with_attempts(1), Kind::Teach, &spec())
+            .await
+            .unwrap();
+
+        assert_eq!(first.outcome, Outcome::Refreshed);
+        assert_eq!(first.attempts, 1);
+        assert_eq!(first.digest.as_deref(), Some(STORED_TEACH_DIGEST));
+        assert!(first.decline.is_none());
+        assert_eq!(fake.calls().len(), 1);
+
+        // The row left the stale set, and the operator's listing is empty.
+        assert_eq!(stale_slots(&handle, KP_KEY, Kind::Teach).await.unwrap(), 0);
+        assert_eq!(
+            render_stale(&stale_rows(&handle, &KINDS).await.unwrap()),
+            NO_STALE_ROWS
+        );
+
+        // C6: the approval, the digest and the body stand. The stamp is the
+        // only column the pass wrote.
+        let rows = stamped_rows(&db.admin, KP_KEY, "teach").await;
+        assert_eq!(rows.len(), 1);
+        assert_eq!(rows[0].0, STORED_TEACH_DIGEST);
+        assert_eq!(rows[0].1, "approved");
+        assert_eq!(
+            rows[0].2,
+            serde_json::from_str::<Value>(STORED_TEACH_BODY).expect("the literal body reads")
+        );
+        assert_ne!(rows[0].3.as_deref(), Some(OLD_PROMPT));
+        assert_eq!(rows[0].3.as_deref().unwrap_or_default().len(), 16);
+        assert_eq!(rows[0].3, Some(prompt_digest(Kind::Teach)));
+
+        // The second pass makes no call: the bank is full and nothing is stale.
+        let second = author_one(&handle, &fake.job_with_attempts(1), Kind::Teach, &spec())
+            .await
+            .unwrap();
+
+        assert_eq!(second.outcome, Outcome::Skipped);
+        assert_eq!(second.attempts, 0);
+        assert_eq!(
+            fake.calls().len(),
+            1,
+            "the two passes together pay for ONE model call"
+        );
+        assert_eq!(rows_of_kind(&db.admin, KP_KEY, "teach").await.len(), 1);
+    })
+    .await;
+}
+
+/// V3: the batch counts a refresh where it counts a duplicate, and the summary
+/// prints the count.
+///
+/// The pass paid for its call and wrote no document, so the count stands beside
+/// `stored` and never inside it (M6 review finding F1).
+#[tokio::test]
+async fn a_refreshed_row_is_counted_as_a_duplicate_and_never_as_a_store() {
+    TestDb::with(|db| async move {
+        let fake = FakeModel::start(vec![named_reply("emit_teach", &teach_arguments())]).await;
+        let handle = Db::new(db.admin.clone(), DEFAULT_CLIENT_TIMEOUT_MS);
+        seed_stale_teach(&db.admin).await;
+
+        let batch = run_batch(&handle, &fake.job(), Kind::Teach, &[spec()])
+            .await
+            .unwrap();
+
+        assert_eq!(batch.stored, 0);
+        assert_eq!(batch.duplicate, 1);
+        assert_eq!(batch.skipped, 0);
+        assert_eq!(batch.declined, 0);
+        assert_eq!(batch.calls, 1);
+        assert!(batch.declines.is_empty());
+
+        assert_eq!(stale_slots(&handle, KP_KEY, Kind::Teach).await.unwrap(), 0);
+        assert_eq!(rows_of_kind(&db.admin, KP_KEY, "teach").await.len(), 1);
+    })
+    .await;
+}
+
+/// V3: a collision with a row that ALREADY names the current prompt is a
+/// duplicate, not a refresh.
+///
+/// The bank target of `template` is 3, so a knowledge point with one `pending`
+/// row is authored again. The first pass wrote that row with the current stamp,
+/// so the second pass has no stamp to write: the outcome names the duplicate,
+/// and a pass that reported a refresh here would count a write it did not make.
+#[tokio::test]
+async fn a_collision_with_the_current_prompt_stamp_stays_a_duplicate() {
+    TestDb::with(|db| async move {
+        let fake = FakeModel::start(vec![
+            tool_reply(&good_arguments()),
+            tool_reply(&good_arguments()),
+        ])
+        .await;
+        let handle = Db::new(db.admin.clone(), DEFAULT_CLIENT_TIMEOUT_MS);
+
+        let first = author_one(&handle, &fake.job_with_attempts(1), Kind::Template, &spec())
+            .await
+            .unwrap();
+        let second = author_one(&handle, &fake.job_with_attempts(1), Kind::Template, &spec())
+            .await
+            .unwrap();
+
+        assert_eq!(first.outcome, Outcome::Stored);
+        assert_eq!(second.outcome, Outcome::Duplicate);
+        assert_eq!(fake.calls().len(), 2);
+
+        let rows = stamped_rows(&db.admin, KP_KEY, "template").await;
+        assert_eq!(rows.len(), 1);
+        assert_eq!(rows[0].0, STORED_DIGEST);
+        assert_eq!(rows[0].1, "pending");
+        assert_eq!(rows[0].3, Some(prompt_digest(Kind::Template)));
+        assert_eq!(
+            stale_slots(&handle, KP_KEY, Kind::Template).await.unwrap(),
+            0
+        );
+    })
+    .await;
+}
+
+/// V3 and F6: a row a reviewer REFUSED keeps its old stamp.
+///
+/// A `rejected` row occupies no slot and is never stale, so it drives no
+/// re-author and there is nothing to clear. The pass declines with the
+/// reviewer's reason, and it writes no column of that row.
+#[tokio::test]
+async fn a_refused_row_keeps_the_prompt_stamp_it_has() {
+    TestDb::with(|db| async move {
+        let fake = FakeModel::start(vec![named_reply("emit_teach", &teach_arguments())]).await;
+        let handle = Db::new(db.admin.clone(), DEFAULT_CLIENT_TIMEOUT_MS);
+        sqlx::query(
+            "INSERT INTO content_store
+                 (digest, kp_id, kind, body, status, review_reason, prompt_digest)
+             VALUES ($1, $2, 'teach', $3::jsonb, 'rejected', $4, $5)",
+        )
+        .bind(STORED_TEACH_DIGEST)
+        .bind(KP_KEY)
+        .bind(STORED_TEACH_BODY)
+        .bind("the worked example skips the last step")
+        .bind(OLD_PROMPT)
+        .execute(&db.admin)
+        .await
+        .unwrap();
+
+        let report = author_one(&handle, &fake.job_with_attempts(1), Kind::Teach, &spec())
+            .await
+            .unwrap();
+
+        assert_eq!(report.outcome, Outcome::Rejected { same_body: true });
+        assert_eq!(report.attempts, 1);
+
+        let rows = stamped_rows(&db.admin, KP_KEY, "teach").await;
+        assert_eq!(rows.len(), 1);
+        assert_eq!(rows[0].1, "rejected");
+        assert_eq!(rows[0].3.as_deref(), Some(OLD_PROMPT));
+    })
+    .await;
+}
+
+/// V3: a stale row that WAITS for a reviewer is stamped as well.
+///
+/// [`stale_slots`] counts `approved` AND `pending` rows, so a `pending` row an
+/// older prompt wrote drives a re-author exactly as an approved row does. The
+/// stamp therefore covers both, and the row stays `pending`: the reviewer reads
+/// the body, and the prompt stamp is not a verdict (C6).
+///
+/// A stamp that named `approved` alone left this row stale, and the pass paid
+/// for one model call per run until a reviewer read the queue.
+#[tokio::test]
+async fn a_stale_row_that_waits_for_a_reviewer_is_stamped_and_stays_pending() {
+    TestDb::with(|db| async move {
+        let fake = FakeModel::start(vec![named_reply("emit_teach", &teach_arguments())]).await;
+        let handle = Db::new(db.admin.clone(), DEFAULT_CLIENT_TIMEOUT_MS);
+        sqlx::query(
+            "INSERT INTO content_store
+                 (digest, kp_id, kind, body, status, prompt_digest)
+             VALUES ($1, $2, 'teach', $3::jsonb, 'pending', $4)",
+        )
+        .bind(STORED_TEACH_DIGEST)
+        .bind(KP_KEY)
+        .bind(STORED_TEACH_BODY)
+        .bind(OLD_PROMPT)
+        .execute(&db.admin)
+        .await
+        .unwrap();
+
+        assert_eq!(stale_slots(&handle, KP_KEY, Kind::Teach).await.unwrap(), 1);
+
+        let report = author_one(&handle, &fake.job_with_attempts(1), Kind::Teach, &spec())
+            .await
+            .unwrap();
+
+        assert_eq!(report.outcome, Outcome::Refreshed);
+        assert_eq!(report.attempts, 1);
+        assert_eq!(fake.calls().len(), 1);
+        assert_eq!(stale_slots(&handle, KP_KEY, Kind::Teach).await.unwrap(), 0);
+
+        let rows = stamped_rows(&db.admin, KP_KEY, "teach").await;
+        assert_eq!(rows.len(), 1);
+        assert_eq!(rows[0].0, STORED_TEACH_DIGEST);
+        assert_eq!(rows[0].1, "pending");
+        assert_eq!(rows[0].3, Some(prompt_digest(Kind::Teach)));
     })
     .await;
 }
