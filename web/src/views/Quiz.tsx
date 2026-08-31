@@ -9,7 +9,9 @@
  *   QUIZ-budget   The clock is the WHOLE-quiz budget of the plan task, never the
  *                 per-question value a serve carries. The per-question value is ONE topic's
  *                 raw expected time; using it as the whole-quiz clock expired mid-quiz and
- *                 blank-submitted the rest, which made quizzes unpassable.
+ *                 blank-submitted the rest, which made quizzes unpassable. The budget times
+ *                 the QUIZ, not the screen: the deadline outlives an unmount, and a
+ *                 re-mount resumes the running clock (M6-review-2, V6).
  *   QUIZ-reveal   No correctness on screen before the last answer. The receipt carries no
  *                 verdict, and this screen renders none even when a payload carries one.
  *   QUIZ-timeout  On timeout with an answer in flight, SKIP that question. Re-posting the
@@ -38,6 +40,44 @@ import { isQuizReceipt } from '@/api/types';
 import type { ApiClient, PlanTask, ServedProblem } from '@/api/types';
 
 type Phase = 'loading' | 'ready' | 'submitting' | 'done';
+
+/**
+ * The deadline of every quiz this page load started, keyed by API client and task id.
+ *
+ * QUIZ-budget times the WHOLE quiz, so the deadline cannot live in component state. The
+ * topbar offers the map from every signed-in screen (`app/Topbar.tsx`), the map's Done gives
+ * the previous screen back (`app/Root.tsx`), and React unmounts and mounts the quiz across
+ * that round trip. A mount effect that seeds the clock from the budget hands the learner the
+ * whole budget again, once per trip, so the timed quiz has no end (M6-review-2, V6).
+ *
+ * The KEY is the API client: boot builds one per page load and every screen shares it, so an
+ * entry lives exactly as long as the connection the quiz runs on.
+ *
+ * WHAT THIS DOES NOT REACH. A page reload builds a new client and starts the budget again.
+ * Closing that needs the quiz start on the wire: the D-S6 row holds `started_at`
+ * (`crates/web/src/state.rs:157`) and `serve_payload` (`crates/web/src/serve.rs:361-369`)
+ * emits seven keys, none of them a timestamp.
+ */
+const deadlines = new WeakMap<ApiClient, Map<string, number>>();
+
+/**
+ * The Unix time in milliseconds this quiz ends at, from the first mount that started it.
+ *
+ * The first call of a task stamps the deadline; every later call gives that stamp back, so
+ * the clock RESUMES instead of restarting.
+ */
+function deadlineOf(api: ApiClient, taskId: string, budget: number): number {
+  let open = deadlines.get(api);
+  if (!open) { open = new Map(); deadlines.set(api, open); }
+  const end = open.get(taskId) ?? Date.now() + budget * 1000;
+  open.set(taskId, end);
+  return end;
+}
+
+/** Whole seconds from now to `end`, never below zero. */
+function secsTo(end: number): number {
+  return Math.max(0, Math.round((end - Date.now()) / 1000));
+}
 
 /** The clock turns red in the last minute. The 1.0 quiz literal (`quiz.js:46`). */
 export const QUIZ_URGENT_SECS = 60;
@@ -85,14 +125,21 @@ export function Quiz({
   const problemRef = useRef<ServedProblem | null>(null);
   const timedOutRef = useRef(false);
   const servedOnce = useRef(false);
+  // The end of the whole-quiz clock, in Unix milliseconds. Null until the first serve, and
+  // null again once the quiz closes.
+  const deadlineRef = useRef<number | null>(null);
 
   const finish = useCallback(() => {
     if (!life.alive()) return;
+    // The quiz closed, so its deadline goes with it. The service refuses a closed task with
+    // `409 task_complete`, so no later mount can spend the entry this drops.
+    deadlines.get(api)?.delete(task.task_id);
+    deadlineRef.current = null;
     setLeft(null);
     setProblem(null);
     problemRef.current = null;
     gate.enter('done');
-  }, [gate, life]);
+  }, [api, gate, life, task.task_id]);
 
   /**
    * Blank-submit whatever is left, so the service closes the quiz.
@@ -164,11 +211,21 @@ export function Quiz({
     void call(() => api.taskServe(task.task_id), (s) => {
       if (!life.alive()) return;
       setTotal(num(s.total));
-      setRemaining(num(s.total));
+      // The count is SERVER state. A quiz serve numbers the live question `answered + 1`
+      // (`crates/web/src/serve.rs:159-164`), so the answers already in survive a re-mount
+      // instead of resetting to the full quiz (V6).
+      const answered = Math.max(0, num(s.index) - 1);
+      setRemaining(Math.max(0, num(s.total) - answered));
       // QUIZ-budget. The plan task's budget times the WHOLE quiz; the serve value times one
       // question. The serve value is the fallback and nothing more.
       const budget = num(task.time_budget_secs) || num(s.time_budget_secs);
-      if (budget > 0) setLeft(budget);
+      if (budget > 0) {
+        // The deadline of THIS quiz, which the first mount stamped. At or under zero the
+        // effect below runs the timeout path at once.
+        const end = deadlineOf(api, task.task_id, budget);
+        deadlineRef.current = end;
+        setLeft(secsTo(end));
+      }
       setProblem(s);
       problemRef.current = s;
       gate.enter('ready');
@@ -184,7 +241,12 @@ export function Quiz({
   useEffect(() => {
     if (left === null || phase === 'done') return undefined;
     const id = life.setInterval(() => {
-      setLeft((v) => (v === null ? v : Math.max(0, v - 1)));
+      // Read the DEADLINE, not the last value: a browser throttles the interval of a hidden
+      // tab, and a clock that counts ticks gives that throttled time back to the learner.
+      // The read is here and not in the updater, because React runs an updater during the
+      // render phase and an updater must stay pure.
+      const secs = deadlineRef.current === null ? null : secsTo(deadlineRef.current);
+      setLeft((v) => (v === null ? v : secs ?? Math.max(0, v - 1)));
     }, 1000);
     return () => life.clearTimer(id);
     // Both deps are BOOLEANS, so a tick re-render recomputes the same values and React
