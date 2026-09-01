@@ -447,6 +447,44 @@ export interface DiagnosisPending {
 /** The `diagnosis` field of a grade reply. Null for a quiz, which reveals nothing. */
 export type DiagnosisField = DiagnosisNotOffered | DiagnosisReady | DiagnosisPending | null;
 
+/** One placement probe. `topic` is a bare name in 1.0 and a record in 2.0; both render. */
+export interface DiagProbe {
+  problem_id: string;
+  topic?: TopicRef | string | null;
+  text: string;
+}
+
+/**
+ * `POST /api/diag/start`.
+ *
+ * `probe` is NULLABLE. A diagnostic whose probe list is exhausted answers `{"probe": null}`,
+ * and a screen that reads `probe.text` off it goes blank.
+ */
+export interface DiagStartResponse {
+  probe: DiagProbe | null;
+  asked?: number;
+  cap?: number;
+}
+
+/**
+ * `POST /api/diag/answer`.
+ *
+ * The verdict is deterministic-only and the reply carries NO solution and NO expected
+ * answer. The screen renders a tick or a cross from `correct` and nothing else, even if a
+ * future payload grew a field (DIAG-nosol).
+ */
+export interface DiagAnswerResponse {
+  correct?: boolean;
+  next_probe?: DiagProbe | { done: true } | null;
+}
+
+/** `POST /api/diag/finish`. Three arrays of topic ids. */
+export interface DiagFinishResponse {
+  placed: string[];
+  conditional: string[];
+  frontier: string[];
+}
+
 /** `GET /api/diagnosis/{id}` and the `event: diagnosis` frame of the stream. */
 export interface DiagnosisJob {
   id: string;
@@ -707,6 +745,12 @@ export interface ApiClient {
     body: { problem_id: string; answer: string; work?: string; assisted?: boolean },
   ): Promise<TaskAnswerResponse>;
 
+  // The placement diagnostic (spec section 2). The verdict is deterministic and the
+  // reply carries no expected answer, so a screen cannot leak one.
+  diagStart(course?: string): Promise<DiagStartResponse>;
+  diagAnswer(body: { problem_id: string; answer: string }): Promise<DiagAnswerResponse>;
+  diagFinish(): Promise<DiagFinishResponse>;
+
   // The async diagnosis (A4).
   getDiagnosis(diagnosisId: string): Promise<DiagnosisJob>;
   /** The URL an `EventSource` subscribes to. One connection per session, not per problem. */
@@ -794,6 +838,10 @@ export const ROUTES: readonly RouteRow[] = [
   // The provider navigates the browser here. The SPA never calls it.
   { method: 'GET', path: '/api/auth/oauth/{provider}/callback', auth: 'P', via: 'none', client: null },
 
+  { method: 'POST', path: '/api/diag/start', auth: 'S', via: 'method', client: 'diagStart' },
+  { method: 'POST', path: '/api/diag/answer', auth: 'S', via: 'method', client: 'diagAnswer' },
+  { method: 'POST', path: '/api/diag/finish', auth: 'S', via: 'method', client: 'diagFinish' },
+
   { method: 'GET', path: '/api/diagnosis/stream', auth: 'S', via: 'stream', client: 'diagnosisStreamUrl' },
   { method: 'GET', path: '/api/diagnosis/{id}', auth: 'S', via: 'method', client: 'getDiagnosis' },
 
@@ -811,14 +859,14 @@ export const ROUTES: readonly RouteRow[] = [
 /**
  * Rows of the spec table (section 2) that `create_app` does not mount.
  *
- * M5 built neither, so no typed method reaches them and none is written: a client method
- * for a path that answers `404 not_found` would let a screen be built against a route that
- * does not exist. The screens that need them (S8's exit path, S10's placement) are blocked
- * until a Rust unit adds the routes.
+ * No typed method reaches one, and none is written: a client method for a path that
+ * answers `404 not_found` would let a screen be built against a route that does not
+ * exist. The screen that needs the row below (S8's exit path) is blocked until a Rust
+ * unit adds the route.
+ *
+ * The three `/api/diag/*` rows left this list when the placement routes landed. They are
+ * `ROUTES` members now, with a typed method each on both clients.
  */
 export const SPEC_ROUTES_ABSENT: readonly { method: string; path: string; needed_by: string }[] = [
   { method: 'POST', path: '/api/task/{task_id}/abort', needed_by: 'S8 (the exit paths)' },
-  { method: 'POST', path: '/api/diag/start', needed_by: 'S10 (diagnostic placement)' },
-  { method: 'POST', path: '/api/diag/answer', needed_by: 'S10 (diagnostic placement)' },
-  { method: 'POST', path: '/api/diag/finish', needed_by: 'S10 (diagnostic placement)' },
 ];

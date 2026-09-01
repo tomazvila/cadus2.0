@@ -14,6 +14,7 @@
 pub mod answer;
 pub mod config;
 pub mod curriculum;
+pub mod diagnostic;
 pub mod event;
 pub mod fire;
 pub mod instruction;

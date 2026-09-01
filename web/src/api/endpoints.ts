@@ -6,6 +6,9 @@
  */
 import { downloadFile, request } from './client';
 import type {
+  DiagAnswerResponse,
+  DiagFinishResponse,
+  DiagStartResponse,
   ApiClient,
   ApproveResponse,
   DiagnosisJob,
@@ -105,6 +108,14 @@ export const api: ApiClient = {
     if (assisted != null) body.assisted = assisted;
     return request<TaskAnswerResponse>('POST', `/task/${seg(taskId)}/answer`, body);
   },
+
+  // --- The placement diagnostic (spec section 2) ---------------------------
+  // `start` takes the course only when the caller names one: an empty body makes the
+  // service read the enrolled course, and a first-run learner gets the entry course.
+  diagStart: (course) =>
+    request<DiagStartResponse>('POST', '/diag/start', course ? { course } : {}),
+  diagAnswer: (body) => request<DiagAnswerResponse>('POST', '/diag/answer', body),
+  diagFinish: () => request<DiagFinishResponse>('POST', '/diag/finish', {}),
 
   // --- The async diagnosis (A4) -------------------------------------------
   getDiagnosis: (diagnosisId) =>

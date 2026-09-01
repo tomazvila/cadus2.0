@@ -22,11 +22,11 @@
  *               answer turns the next probe into a copy exercise and corrupts the
  *               plus-minus balance placement is built from.
  *
- * THE TRANSPORT IS A PROP. M5 mounts no `/api/diag/*` route (`SPEC_ROUTES_ABSENT` in
- * `api/types.ts`), so the three calls are a separate typed port — `api/diag.ts` states why.
- * The live adapter is correct the day the Rust unit lands; until then it answers
- * `404 not_found`, and a failed start returns to the intro with a stated line rather than
- * leaving the learner on a spinner.
+ * THE TRANSPORT IS A PROP. The service mounts the three `/api/diag/*` routes, and the
+ * live adapter posts to them — `api/diag.ts` states why the port stays a prop. The
+ * `404 not_found` branch stays too: a deployment older than those routes answers it, and
+ * a failed start returns to the intro with a stated line rather than leaving the learner
+ * on a spinner.
  *
  * WHAT THIS UNIT DOES NOT OWN. There is no router yet, so navigation arrives as props.
  */

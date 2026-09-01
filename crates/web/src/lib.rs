@@ -51,6 +51,7 @@
 pub mod admin;
 pub mod auth;
 pub mod cookie;
+pub mod diag;
 pub mod diagnosis;
 pub mod error;
 pub mod grade;
@@ -229,6 +230,11 @@ pub fn create_app(state: AppState) -> Router {
         .route("/api/task/{task_id}/hint", post(serve::hint))
         // Unit U8, spec section 11. The same rule: before the three layers.
         .route("/api/task/{task_id}/answer", post(grade::answer))
+        // The placement diagnostic, spec section 2. It sits with the task routes
+        // and before the three layers, for the same reason they do.
+        .route("/api/diag/start", post(diag::start))
+        .route("/api/diag/answer", post(diag::answer))
+        .route("/api/diag/finish", post(diag::finish))
         // M5 U4: the `/api/auth/*` routes. They sit INSIDE every layer
         // below, so a cross-origin login is refused before the handler runs.
         .merge(auth::routes::router())

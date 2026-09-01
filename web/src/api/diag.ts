@@ -1,64 +1,28 @@
 /**
  * The placement transport (`POST /api/diag/start|answer|finish`).
  *
- * WHY THIS IS A SEPARATE PORT AND NOT AN `ApiClient` MEMBER. `ROUTES` in `types.ts`
- * mirrors `crates/web/src/lib.rs` `create_app` row by row, and the S2 contract test proves
- * that every `ApiClient` member sits in that table. M5 mounts no `/api/diag/*` route:
- * `SPEC_ROUTES_ABSENT` records the three paths and names S10 as the unit that needs them.
- * Putting them on `ApiClient` would either break that proof or put a route in the table
- * that the service does not answer. So the placement screen takes ITS OWN typed port as a
- * prop, and the port has exactly three methods.
+ * WHY THIS PORT STILL EXISTS. The three calls are `ApiClient` members now — the service
+ * mounts the three routes, `ROUTES` in `types.ts` carries them, and both clients answer
+ * them. The port stays because the placement screen takes ITS OWN transport as a prop:
+ * one page load resolves it once and keeps it, and a test hands the screen a stub without
+ * building a whole client. `diagApi` is the live client's three methods and nothing else.
  *
- * WHAT THIS MEANS TODAY. `diagApi` posts to the literal spec paths and is correct the day
- * the Rust unit lands. Until then the service answers `404 not_found`, so a caller that
- * hands the live adapter to the screen gets the stated "not available" branch rather than
- * a spinner — `Diagnostic.tsx` owns that branch and one test pins it. `createDemoDiagApi`
- * walks a three-probe placement with no service at all, which is what `?demo=1` and the
- * S13 click-through use.
+ * The payload types moved to `types.ts`, beside every other response type, and are
+ * re-exported here for the screen that already imports them from this file.
  *
  * The payloads are the frozen contract of `docs/reference/web-service-1.0-spec.md`
  * (section 2, the three `/api/diag/*` rows).
  */
-import { ApiError, request } from './client';
-import type { TopicRef } from './types';
+import { ApiError } from './client';
+import { api } from './endpoints';
+import type {
+  DiagAnswerResponse,
+  DiagFinishResponse,
+  DiagProbe,
+  DiagStartResponse,
+} from './types';
 
-/** One placement probe. `topic` is a bare name in 1.0 and a record in 2.0; both render. */
-export interface DiagProbe {
-  problem_id: string;
-  topic?: TopicRef | string | null;
-  text: string;
-}
-
-/**
- * `POST /api/diag/start`.
- *
- * `probe` is NULLABLE. A diagnostic whose probe list is exhausted answers `{"probe": null}`,
- * and a screen that reads `probe.text` off it goes blank.
- */
-export interface DiagStartResponse {
-  probe: DiagProbe | null;
-  asked?: number;
-  cap?: number;
-}
-
-/**
- * `POST /api/diag/answer`.
- *
- * The verdict is deterministic-only and the reply carries NO solution and NO expected
- * answer. The screen renders a tick or a cross from `correct` and nothing else, even if a
- * future payload grew a field (DIAG-nosol).
- */
-export interface DiagAnswerResponse {
-  correct?: boolean;
-  next_probe?: DiagProbe | { done: true } | null;
-}
-
-/** `POST /api/diag/finish`. Three arrays of topic ids. */
-export interface DiagFinishResponse {
-  placed: string[];
-  conditional: string[];
-  frontier: string[];
-}
+export type { DiagAnswerResponse, DiagFinishResponse, DiagProbe, DiagStartResponse };
 
 /** The three calls the placement screen makes. Nothing else reaches this route family. */
 export interface DiagnosticApi {
@@ -67,14 +31,19 @@ export interface DiagnosticApi {
   diagFinish(): Promise<DiagFinishResponse>;
 }
 
-/** The error code the service answers for a route it does not mount. */
+/**
+ * The error code the service answers for a route it does not mount.
+ *
+ * `Diagnostic.tsx` still reads it: a deployment older than the placement routes answers
+ * `404 not_found`, and the screen states "not available" rather than spinning.
+ */
 export const ROUTE_ABSENT_CODE = 'not_found';
 
-/** The live adapter. Same cookie, same envelope, same `request` as every other call. */
+/** The live adapter: the three client methods, same cookie and same envelope. */
 export const diagApi: DiagnosticApi = {
-  diagStart: (course) => request<DiagStartResponse>('POST', '/diag/start', course ? { course } : {}),
-  diagAnswer: (body) => request<DiagAnswerResponse>('POST', '/diag/answer', body),
-  diagFinish: () => request<DiagFinishResponse>('POST', '/diag/finish', {}),
+  diagStart: (course) => api.diagStart(course),
+  diagAnswer: (body) => api.diagAnswer(body),
+  diagFinish: () => api.diagFinish(),
 };
 
 /** The three demo probes. Short, and each one names a different topic. */

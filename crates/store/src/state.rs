@@ -177,6 +177,70 @@ pub async fn clear_web_state(
     Ok(())
 }
 
+/// Read this tenant's in-progress placement diagnostic.
+///
+/// `None` means no diagnostic is open, which every `/api/diag/*` route answers
+/// with `409 no_diagnostic`. The document is `cadus_core::diagnostic::DiagState`,
+/// and the decode stays with the caller, because the store crate holds no
+/// pedagogy.
+///
+/// # Errors
+///
+/// Returns [`StoreError::Db`] when the statement fails.
+pub async fn load_diag_state(
+    tx: &mut Transaction<'_, Postgres>,
+    user_id: Uuid,
+) -> Result<Option<Json>, StoreError> {
+    let row = sqlx::query!(
+        r#"SELECT state AS "state!" FROM diag_states WHERE user_id = $1"#,
+        user_id
+    )
+    .fetch_optional(&mut **tx)
+    .await?;
+    Ok(row.map(|row| row.state))
+}
+
+/// Write this tenant's in-progress placement diagnostic.
+///
+/// # Errors
+///
+/// Returns [`StoreError::Db`] when the statement fails.
+pub async fn save_diag_state(
+    tx: &mut Transaction<'_, Postgres>,
+    user_id: Uuid,
+    state: &Json,
+) -> Result<(), StoreError> {
+    sqlx::query!(
+        r#"
+        INSERT INTO diag_states (user_id, state) VALUES ($1, $2)
+        ON CONFLICT (user_id) DO UPDATE SET state = EXCLUDED.state, updated_at = now()
+        "#,
+        user_id,
+        state
+    )
+    .execute(&mut **tx)
+    .await?;
+    Ok(())
+}
+
+/// Drop this tenant's in-progress placement diagnostic.
+///
+/// `POST /api/diag/finish` calls it in the transaction that appends
+/// `diagnostic_placed`, so a placement and its scratch cannot disagree.
+///
+/// # Errors
+///
+/// Returns [`StoreError::Db`] when the statement fails.
+pub async fn clear_diag_state(
+    tx: &mut Transaction<'_, Postgres>,
+    user_id: Uuid,
+) -> Result<(), StoreError> {
+    sqlx::query!("DELETE FROM diag_states WHERE user_id = $1", user_id)
+        .execute(&mut **tx)
+        .await?;
+    Ok(())
+}
+
 /// One row of the append-only log, with its dense per-user line number.
 #[derive(Debug, Clone, PartialEq)]
 pub struct EventRow {

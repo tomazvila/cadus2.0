@@ -109,14 +109,10 @@ describe('every route of the table has a typed method', () => {
   });
 });
 
-describe('the spec rows M5 did not build', () => {
-  it('records the four absent paths and reaches none of them', () => {
-    expect(SPEC_ROUTES_ABSENT.map((r) => r.path)).toEqual([
-      '/api/task/{task_id}/abort',
-      '/api/diag/start',
-      '/api/diag/answer',
-      '/api/diag/finish',
-    ]);
+describe('the spec rows no unit has built', () => {
+  it('records the one absent path and reaches none of them', () => {
+    // The three `/api/diag/*` rows left this list when the placement routes landed.
+    expect(SPEC_ROUTES_ABSENT.map((r) => r.path)).toEqual(['/api/task/{task_id}/abort']);
     // The service mounts none of them either, so no screen can be built against a 404.
     const mounted = new Set(routeFixture.routes.map((r) => r.path));
     for (const absent of SPEC_ROUTES_ABSENT) {
