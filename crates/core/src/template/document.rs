@@ -32,7 +32,6 @@ use std::collections::BTreeSet;
 
 use serde::{Deserialize, Serialize};
 
-use crate::answer::Undecidable;
 use crate::answer::ast::Ast;
 use crate::curriculum::AnswerKind;
 use crate::learner::problem_text_hash;
@@ -301,10 +300,4 @@ pub fn from_body(body: &str) -> Result<TemplateDoc, serde_json::Error> {
 /// Returns the `serde_json` error of a value that does not serialize.
 pub fn to_body(doc: &TemplateDoc) -> Result<String, serde_json::Error> {
     serde_json::to_string(doc)
-}
-
-/// The refusal an answer expression outside the grammar carries (V2).
-#[must_use]
-pub fn grammar_refusal(source: &str) -> Option<Undecidable> {
-    parse_answer_expr(source).err()
 }
