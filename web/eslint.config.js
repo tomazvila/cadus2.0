@@ -1,9 +1,11 @@
+// @ts-nocheck
 import js from '@eslint/js';
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
 import reactHooks from 'eslint-plugin-react-hooks';
 import jsxA11y from 'eslint-plugin-jsx-a11y';
 import vitest from '@vitest/eslint-plugin';
+import sonarjs from 'eslint-plugin-sonarjs';
 
 export default tseslint.config(
   // `e2e/work` holds the deliberately broken copies of this tree, and `e2e/shots` the
@@ -17,9 +19,14 @@ export default tseslint.config(
       ecmaVersion: 2022,
       globals: { ...globals.browser, ...globals.node },
     },
-    plugins: { 'react-hooks': reactHooks, 'jsx-a11y': jsxA11y },
+    plugins: { 'react-hooks': reactHooks, 'jsx-a11y': jsxA11y, sonarjs },
     rules: {
       ...reactHooks.configs.recommended.rules,
+
+      // The quality gate (`scripts/quality.sh`): every function stays below a cyclomatic
+      // complexity of 22 and a cognitive complexity of 22.
+      complexity: ['error', { max: 21 }],
+      'sonarjs/cognitive-complexity': ['error', 21],
 
       // Accessibility GATES the build (spec section 4.5). Configure a deliberate exception
       // explicitly, so the intent survives in git.
@@ -28,18 +35,21 @@ export default tseslint.config(
       '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
       '@typescript-eslint/consistent-type-imports': 'error',
 
-      // `any` defeats the point of a TypeScript rewrite (O3).
+      // `any` defeats the point of a TypeScript rewrite (O3), and the quality gate
+      // refuses `unknown` as well: a value has a type, or the code that reads it
+      // narrows from a typed shape. Tests and declaration files follow the same rule.
       '@typescript-eslint/no-explicit-any': 'error',
+      'no-restricted-syntax': [
+        'error',
+        { selector: 'TSAnyKeyword', message: 'Write the type. `any` is refused.' },
+        { selector: 'TSUnknownKeyword', message: 'Write the type. `unknown` is refused.' },
+      ],
     },
   },
   {
     files: ['test/**/*.{ts,tsx}'],
     plugins: { vitest },
     rules: {
-      // A test reaches into shapes the production types do not describe — a raw fetch body,
-      // a stubbed global.
-      '@typescript-eslint/no-explicit-any': 'off',
-
       // An assertion-free test is worse than no test: it reports green forever.
       'vitest/expect-expect': 'error',
       'vitest/no-disabled-tests': 'error',
