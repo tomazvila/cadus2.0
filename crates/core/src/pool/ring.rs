@@ -72,16 +72,6 @@ pub const RING_CAPACITY: usize = 20;
 /// 12, the value of 1.0 `SERVED_TEXT_MEMORY` (`cadus_web/state.py:133`).
 pub const TASK_MEMORY_CAPACITY: usize = 12;
 
-/// Append one digest and drop the oldest entries above `capacity`.
-///
-/// The window keeps a duplicate digest, exactly as the 1.0 fold does
-/// (`cadus/projector.py:213-224`). A repeat therefore costs two slots, and the
-/// window records what the server served, not what it served once.
-fn push_bounded(window: &mut Vec<String>, hash: &str, capacity: usize) {
-    window.push(hash.to_string());
-    keep_newest(window, capacity);
-}
-
 /// Truncate a window to its newest `capacity` entries.
 fn keep_newest(window: &mut Vec<String>, capacity: usize) {
     if window.len() > capacity {
@@ -90,35 +80,43 @@ fn keep_newest(window: &mut Vec<String>, capacity: usize) {
     }
 }
 
-/// The D5 anti-repeat ring of one `(user, topic)` pair.
+/// A bounded window of digests, oldest first.
 ///
 /// The document is `{"hashes": [...]}`, oldest first and newest last, with at
-/// most [`RING_CAPACITY`] entries. It is a field of the D-S6 state row.
+/// most `CAPACITY` entries. [`Ring`] and [`TaskMemory`] are the two sizes of it,
+/// and both are fields of the D-S6 state row.
 #[derive(Debug, Clone, Default, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
-pub struct Ring {
+pub struct Window<const CAPACITY: usize> {
     /// The digests, oldest first.
     #[serde(default)]
     hashes: Vec<String>,
 }
 
-impl Ring {
-    /// Build an empty ring.
+/// The D5 anti-repeat ring of one `(user, topic)` pair: [`RING_CAPACITY`] digests.
+pub type Ring = Window<RING_CAPACITY>;
+
+/// The per-task memory of one task, keyed by task id: [`TASK_MEMORY_CAPACITY`]
+/// digests.
+pub type TaskMemory = Window<TASK_MEMORY_CAPACITY>;
+
+impl<const CAPACITY: usize> Window<CAPACITY> {
+    /// Build an empty window.
     #[must_use]
     pub const fn new() -> Self {
         Self { hashes: Vec::new() }
     }
 
-    /// The count of digests the ring keeps.
+    /// The count of digests the window keeps.
     #[must_use]
     pub const fn capacity() -> usize {
-        RING_CAPACITY
+        CAPACITY
     }
 
-    /// Build a ring from digests in age order, oldest first.
+    /// Build a window from digests in age order, oldest first.
     ///
-    /// The call keeps the newest [`RING_CAPACITY`] digests and drops the rest, so
-    /// a state row that carries an over-long array loads to a legal ring.
+    /// The call keeps the newest `CAPACITY` digests and drops the rest, so a
+    /// state row that carries an over-long array loads to a legal window.
     #[must_use]
     pub fn from_hashes<I, S>(hashes: I) -> Self
     where
@@ -126,16 +124,21 @@ impl Ring {
         S: Into<String>,
     {
         let mut window: Vec<String> = hashes.into_iter().map(Into::into).collect();
-        keep_newest(&mut window, RING_CAPACITY);
+        keep_newest(&mut window, CAPACITY);
         Self { hashes: window }
     }
 
-    /// Record one served instance hash as the newest entry.
+    /// Record one served digest as the newest entry.
+    ///
+    /// The window keeps a duplicate digest, exactly as the 1.0 fold does
+    /// (`cadus/projector.py:213-224`). A repeat therefore costs two slots, and
+    /// the window records what the server served, not what it served once.
     pub fn push(&mut self, hash: &str) {
-        push_bounded(&mut self.hashes, hash, RING_CAPACITY);
+        self.hashes.push(hash.to_string());
+        keep_newest(&mut self.hashes, CAPACITY);
     }
 
-    /// Whether the ring holds the digest.
+    /// Whether the window holds the digest.
     #[must_use]
     pub fn contains(&self, hash: &str) -> bool {
         self.hashes.iter().any(|held| held == hash)
@@ -147,88 +150,13 @@ impl Ring {
         &self.hashes
     }
 
-    /// The count of digests the ring holds now.
+    /// The count of digests the window holds now.
     #[must_use]
     pub fn len(&self) -> usize {
         self.hashes.len()
     }
 
-    /// Whether the ring holds no digest.
-    #[must_use]
-    pub fn is_empty(&self) -> bool {
-        self.hashes.is_empty()
-    }
-
-    /// Drop every digest.
-    pub fn clear(&mut self) {
-        self.hashes.clear();
-    }
-}
-
-/// The per-task memory of one task.
-///
-/// The document is `{"hashes": [...]}`, oldest first and newest last, with at
-/// most [`TASK_MEMORY_CAPACITY`] entries. It is a field of the D-S6 state row,
-/// keyed by task id.
-#[derive(Debug, Clone, Default, PartialEq, Eq, Serialize, Deserialize)]
-#[serde(deny_unknown_fields)]
-pub struct TaskMemory {
-    /// The digests, oldest first.
-    #[serde(default)]
-    hashes: Vec<String>,
-}
-
-impl TaskMemory {
-    /// Build an empty memory.
-    #[must_use]
-    pub const fn new() -> Self {
-        Self { hashes: Vec::new() }
-    }
-
-    /// The count of digests the memory keeps.
-    #[must_use]
-    pub const fn capacity() -> usize {
-        TASK_MEMORY_CAPACITY
-    }
-
-    /// Build a memory from digests in age order, oldest first.
-    ///
-    /// The call keeps the newest [`TASK_MEMORY_CAPACITY`] digests.
-    #[must_use]
-    pub fn from_hashes<I, S>(hashes: I) -> Self
-    where
-        I: IntoIterator<Item = S>,
-        S: Into<String>,
-    {
-        let mut window: Vec<String> = hashes.into_iter().map(Into::into).collect();
-        keep_newest(&mut window, TASK_MEMORY_CAPACITY);
-        Self { hashes: window }
-    }
-
-    /// Record one served statement hash as the newest entry.
-    pub fn push(&mut self, hash: &str) {
-        push_bounded(&mut self.hashes, hash, TASK_MEMORY_CAPACITY);
-    }
-
-    /// Whether the memory holds the digest.
-    #[must_use]
-    pub fn contains(&self, hash: &str) -> bool {
-        self.hashes.iter().any(|held| held == hash)
-    }
-
-    /// The digests, oldest first.
-    #[must_use]
-    pub fn hashes(&self) -> &[String] {
-        &self.hashes
-    }
-
-    /// The count of digests the memory holds now.
-    #[must_use]
-    pub fn len(&self) -> usize {
-        self.hashes.len()
-    }
-
-    /// Whether the memory holds no digest.
+    /// Whether the window holds no digest.
     #[must_use]
     pub fn is_empty(&self) -> bool {
         self.hashes.is_empty()
@@ -349,23 +277,35 @@ pub struct Pick {
 /// section 7.2: the serve path instantiates an exemplar and raises the A6 flag).
 #[must_use]
 pub fn pick<C: Candidate>(candidates: &[C], avoid: &Avoid<'_>) -> Option<Pick> {
-    if candidates.is_empty() {
-        return None;
-    }
+    choose(candidates, avoid).map(|(chosen, _)| chosen)
+}
+
+/// The candidate rule, with the chosen candidate beside its outcome.
+fn choose<'pool, C: Candidate>(
+    candidates: &'pool [C],
+    avoid: &Avoid<'_>,
+) -> Option<(Pick, &'pool C)> {
+    let last = candidates.last()?;
     for (index, candidate) in candidates.iter().enumerate() {
         if !avoid.blocks(candidate.instance_hash()) {
-            return Some(Pick {
-                index,
-                skipped: index,
-                exhausted: false,
-            });
+            return Some((
+                Pick {
+                    index,
+                    skipped: index,
+                    exhausted: false,
+                },
+                candidate,
+            ));
         }
     }
-    Some(Pick {
-        index: candidates.len().saturating_sub(1),
-        skipped: candidates.len(),
-        exhausted: true,
-    })
+    Some((
+        Pick {
+            index: candidates.len().saturating_sub(1),
+            skipped: candidates.len(),
+            exhausted: true,
+        },
+        last,
+    ))
 }
 
 /// Run the candidate rule, record the served digest, and count the outcome.
@@ -382,11 +322,10 @@ pub fn serve<'pool, C: Candidate>(
     task: &mut TaskMemory,
     counters: &mut PoolCounters,
 ) -> Option<&'pool C> {
-    let chosen = {
+    let (chosen, served) = {
         let avoid = Avoid::new(ring, task);
-        pick(candidates, &avoid)?
+        choose(candidates, &avoid)?
     };
-    let served = candidates.get(chosen.index)?;
     let hash = served.instance_hash().to_string();
     ring.push(&hash);
     task.push(&hash);
