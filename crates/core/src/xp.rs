@@ -438,6 +438,7 @@ pub struct VelocityInput<'a> {
 ///
 /// Returns [`TimeError::TimestampOutOfRange`] for an unrepresentable instant.
 pub fn compute_velocity_state(input: &VelocityInput<'_>) -> Result<VelocityState, TimeError> {
+    let today = local_day_in(input.t_us, input.zone)?;
     let rate = xp_per_day(input.xp_entries, input.t_us, input.zone, input.window_days)?;
     let progress = match input.course_id {
         Some(course_id) => course_progress(input.states, input.graph, course_id),
@@ -450,7 +451,7 @@ pub fn compute_velocity_state(input: &VelocityInput<'_>) -> Result<VelocityState
             course_id,
             input.total_xp,
             rate,
-            local_day_in(input.t_us, input.zone)?,
+            today,
         ),
         None => None,
     };

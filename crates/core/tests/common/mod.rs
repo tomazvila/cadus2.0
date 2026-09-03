@@ -6,7 +6,7 @@
 //! [`RawCurriculum`], so the tests stay in one file and read no fixture tree.
 
 #![allow(dead_code)]
-#![allow(clippy::unwrap_used)]
+#![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
 
 use chrono::NaiveDate;
 use chrono_tz::Tz;
@@ -23,9 +23,6 @@ use cadus_core::numeric::{from_naive_utc, resolve_timezone};
 /// `T = datetime(2026, 7, 14, 12, 0, 0)` of the 1.0 FIRe tests, as UTC
 /// microseconds. A naive 1.0 timestamp is UTC (trap T8).
 pub const T_US: i64 = 1_784_030_400_000_000;
-
-/// `T = datetime(2026, 7, 28, 12, 0, 0)` of the 1.0 ability-seeding tests.
-pub const T_SEED_US: i64 = 1_785_240_000_000_000;
 
 /// One day, in microseconds.
 pub const DAY_US: i64 = 86_400_000_000;
@@ -336,11 +333,25 @@ pub fn mini_curriculum() -> Curriculum {
     )
 }
 pub mod answer;
+pub mod arena_view;
+pub mod bench;
 pub mod check;
 pub mod divergence;
+pub mod dump;
+pub mod events;
+pub mod fire;
 pub mod fixtures;
 pub mod fuzz;
 pub mod gate;
+pub mod instruction_fixtures;
+pub mod lint_view;
 pub mod oracle;
+pub mod parity;
 pub mod parse;
+pub mod parsed;
+pub mod paths;
+pub mod pool_fixtures;
+pub mod scratch;
+pub mod selector;
 pub mod template;
+pub mod xp_states;

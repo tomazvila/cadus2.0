@@ -13,22 +13,17 @@
     clippy::unimplemented,
     clippy::float_cmp
 )]
-
 mod common;
 
-use std::collections::BTreeMap;
-
 use cadus_core::config::Config;
-use cadus_core::event::{TaskType, TopicStatus, WorkQuality};
-use cadus_core::learner::TopicState;
+use cadus_core::event::{TaskType, WorkQuality};
 use cadus_core::numeric::local_day;
 use cadus_core::xp::{
     BLOWOFF_ESCALATION, DEFAULT_XP_PER_TOPIC, RUSH_PENALTY_MULT, RUSH_TIME_FRACTION,
-    VELOCITY_WINDOW_DAYS, VelocityInput, base_xp, compute_velocity_state, course_progress,
-    current_streak, daily_totals, estimate_eta, is_rushing, quality_multiplier, task_xp,
-    topics_per_week, window_start, xp_per_day,
+    VELOCITY_WINDOW_DAYS, base_xp, current_streak, daily_totals, is_rushing, quality_multiplier,
+    task_xp, topics_per_week, xp_per_day,
 };
-use common::{MINI_FRACTIONS, MINI_NUMBERS, assert_approx, mini_curriculum, noon_us, on, utc};
+use common::{assert_approx, noon_us, on, utc};
 
 /// Every work-quality tier, in declaration order.
 const ALL_TIERS: [WorkQuality; 6] = [
@@ -39,40 +34,6 @@ const ALL_TIERS: [WorkQuality; 6] = [
     WorkQuality::Poor,
     WorkQuality::Blowoff,
 ];
-
-/// The 12 topic ids of the mini curriculum, sorted, as the 1.0 test sorts them.
-fn mini_ids_sorted() -> Vec<String> {
-    let mut ids: Vec<String> = MINI_NUMBERS
-        .iter()
-        .chain(MINI_FRACTIONS.iter())
-        .map(|id| (*id).to_owned())
-        .collect();
-    ids.sort();
-    ids
-}
-
-/// The 1.0 states of the progress tests: the first `mastered` sorted topics are
-/// `learning`, the rest are `untouched`.
-fn mini_states(mastered: usize) -> BTreeMap<String, TopicState> {
-    mini_ids_sorted()
-        .into_iter()
-        .enumerate()
-        .map(|(index, id)| {
-            let status = if index < mastered {
-                TopicStatus::Learning
-            } else {
-                TopicStatus::Untouched
-            };
-            (
-                id,
-                TopicState {
-                    status,
-                    ..TopicState::default()
-                },
-            )
-        })
-        .collect()
-}
 
 // --------------------------------------------------------------------------- //
 // Base task XP (test_xp.py:42-49)
@@ -276,218 +237,4 @@ fn topics_per_week_over_window() {
     let rate = topics_per_week(&completions, noon_us(2026, 7, 14), utc(), 28).unwrap();
     assert_approx(rate, 2.0 / 4.0, "two distinct topics over four weeks");
     assert_eq!(rate, 0.5);
-}
-
-// --------------------------------------------------------------------------- //
-// Course progress (test_xp.py:185-200)
-// --------------------------------------------------------------------------- //
-
-#[test]
-fn course_progress_counts_mastered_topics() {
-    let graph = mini_curriculum();
-    let states = mini_states(6);
-    assert_approx(
-        course_progress(&states, &graph, "testcourse"),
-        6.0 / 12.0,
-        "six of twelve mastered",
-    );
-}
-
-#[test]
-fn progress_ignores_review_only_credit() {
-    let graph = mini_curriculum();
-    let states: BTreeMap<String, TopicState> = mini_ids_sorted()
-        .into_iter()
-        .map(|id| {
-            (
-                id,
-                TopicState {
-                    status: TopicStatus::Untouched,
-                    rep_num: 3.0,
-                    ..TopicState::default()
-                },
-            )
-        })
-        .collect();
-    assert_eq!(course_progress(&states, &graph, "testcourse"), 0.0);
-}
-
-// --------------------------------------------------------------------------- //
-// ETA (test_xp.py:208-233)
-// --------------------------------------------------------------------------- //
-
-#[test]
-fn estimate_eta_from_remaining_and_velocity() {
-    let graph = mini_curriculum();
-    let states = mini_states(6);
-    // 6 done, total XP 120 -> 20 XP per topic; 6 remaining -> 120 XP; at 10 XP
-    // per day -> 12 days.
-    let eta = estimate_eta(&states, &graph, "testcourse", 120.0, 10.0, on(2026, 7, 14));
-    assert_eq!(eta, Some(on(2026, 7, 26)));
-}
-
-#[test]
-fn estimate_eta_none_without_velocity() {
-    let graph = mini_curriculum();
-    let states = mini_states(0);
-    assert_eq!(
-        estimate_eta(&states, &graph, "testcourse", 0.0, 0.0, on(2026, 7, 14)),
-        None
-    );
-}
-
-#[test]
-fn estimate_eta_uses_default_before_any_completion() {
-    let graph = mini_curriculum();
-    let states = mini_states(0);
-    // 12 topics * 12.0 XP per topic / 12.0 XP per day -> 12 days.
-    let eta = estimate_eta(&states, &graph, "testcourse", 0.0, 12.0, on(2026, 7, 14));
-    assert_eq!(eta, Some(on(2026, 7, 26)));
-}
-
-#[test]
-fn estimate_eta_of_a_complete_course_is_today() {
-    let graph = mini_curriculum();
-    let states = mini_states(12);
-    assert_eq!(
-        estimate_eta(&states, &graph, "testcourse", 240.0, 10.0, on(2026, 7, 14)),
-        Some(on(2026, 7, 14))
-    );
-}
-
-// --------------------------------------------------------------------------- //
-// compute_velocity_state (test_xp.py:236-250)
-// --------------------------------------------------------------------------- //
-
-#[test]
-fn compute_velocity_state_integration() {
-    let graph = mini_curriculum();
-    let states = mini_states(6);
-    let ids = mini_ids_sorted();
-    let xp_entries = [(noon_us(2026, 7, 14), 280.0)];
-    let completions: Vec<(i64, String)> = (0..6)
-        .map(|index| (noon_us(2026, 7, 12), ids[index].clone()))
-        .collect();
-
-    let velocity = compute_velocity_state(&VelocityInput {
-        states: &states,
-        graph: &graph,
-        course_id: Some("testcourse"),
-        xp_entries: &xp_entries,
-        completions: &completions,
-        total_xp: 120.0,
-        t_us: noon_us(2026, 7, 14),
-        zone: utc(),
-        window_days: 28,
-    })
-    .unwrap();
-
-    assert_approx(velocity.xp_per_day_28d, 10.0, "280 XP over 28 days");
-    assert_approx(velocity.course_progress, 0.5, "six of twelve");
-    assert_approx(velocity.topics_per_week_28d, 1.5, "six topics over 4 weeks");
-    assert!(velocity.eta.is_some());
-}
-
-#[test]
-fn compute_velocity_state_without_a_course_has_no_progress_and_no_eta() {
-    let graph = mini_curriculum();
-    let states = mini_states(6);
-    let xp_entries = [(noon_us(2026, 7, 14), 280.0)];
-
-    let velocity = compute_velocity_state(&VelocityInput {
-        states: &states,
-        graph: &graph,
-        course_id: None,
-        xp_entries: &xp_entries,
-        completions: &[],
-        total_xp: 120.0,
-        t_us: noon_us(2026, 7, 14),
-        zone: utc(),
-        window_days: 28,
-    })
-    .unwrap();
-
-    assert_eq!(velocity.xp_per_day_28d, 10.0);
-    assert_eq!(velocity.course_progress, 0.0);
-    assert_eq!(velocity.topics_per_week_28d, 0.0);
-    assert_eq!(velocity.eta, None);
-}
-
-// --------------------------------------------------------------------------- //
-// Bit-exact 1.0 values (a run of the 1.0 engine, not a re-derivation)
-// --------------------------------------------------------------------------- //
-
-#[test]
-fn xp_values_are_bit_exact_with_1_0() {
-    let cfg = Config::default();
-    assert_eq!(base_xp(TaskType::Lesson, 2), 7.0);
-    assert_eq!(base_xp(TaskType::Lesson, 4), 14.0);
-    assert_eq!(quality_multiplier(WorkQuality::Blowoff, &cfg, 1), -0.5);
-    assert_eq!(quality_multiplier(WorkQuality::Blowoff, &cfg, 2), -0.75);
-    assert_eq!(quality_multiplier(WorkQuality::Blowoff, &cfg, 3), -1.125);
-    assert_eq!(
-        task_xp(TaskType::Lesson, WorkQuality::Perfect, &cfg, 2, 0, false),
-        9.1
-    );
-    assert_eq!(
-        task_xp(TaskType::Review, WorkQuality::Passable, &cfg, 0, 0, false),
-        4.25
-    );
-    assert_eq!(
-        task_xp(TaskType::Review, WorkQuality::Blowoff, &cfg, 0, 2, false),
-        -3.75
-    );
-    assert_eq!(
-        task_xp(TaskType::Review, WorkQuality::Passable, &cfg, 0, 0, true),
-        2.125
-    );
-    assert_eq!(
-        task_xp(TaskType::Review, WorkQuality::Blowoff, &cfg, 0, 1, true),
-        -2.5
-    );
-}
-
-// --------------------------------------------------------------------------- //
-// The XP boundaries, read AT the threshold
-// --------------------------------------------------------------------------- //
-//
-// The 1.0 answers below came from the live 1.0 engine:
-//
-//   .venv/bin/python -c "from cadus.xp import current_streak, xp_per_day, \
-//       _window_start; ..."
-//
-// M3 review round 1, findings #14 and #15. The whole-fold form of each boundary,
-// with a committed 1.0 digest, is in `crates/core/tests/projector.rs` on
-// `tests/fixtures/events/boundary/`.
-
-#[test]
-fn xp_per_day_counts_the_day_the_window_starts_on() {
-    // `xp.py:192-194` puts `window_days` days INCLUDING the reference day in the
-    // window, and `xp.py:207` tests `local_day(ts) >= start`. With a reference day
-    // of 2026-07-14 and a 28-day window, 1.0 gives a start of 2026-06-17, so the
-    // entry ON that day is inside the window and the entry one day earlier is not.
-    // The live 1.0 `xp_per_day` on these two entries prints 1.0; a `> start` port
-    // prints 0.0 (finding #14).
-    assert_eq!(
-        window_start(noon_us(2026, 7, 14), utc(), VELOCITY_WINDOW_DAYS).unwrap(),
-        on(2026, 6, 17)
-    );
-    let entries = [(noon_us(2026, 6, 17), 28.0), (noon_us(2026, 6, 16), 999.0)];
-    let rate = xp_per_day(&entries, noon_us(2026, 7, 14), utc(), VELOCITY_WINDOW_DAYS).unwrap();
-    assert_eq!(rate, 1.0);
-}
-
-#[test]
-fn a_reference_day_exactly_at_the_goal_starts_the_streak_today() {
-    // `xp.py:178` is `if daily.get(today, 0.0) < goal`, so a reference day EQUAL to
-    // the goal is not "in progress": the count starts at the reference day itself.
-    // The live 1.0 `current_streak` gives 2 here, and 1 when the reference day is
-    // one XP below the goal (finding #15).
-    let entries = [(noon_us(2026, 7, 13), 40.0), (noon_us(2026, 7, 14), 40.0)];
-    let mut daily = daily_totals(&entries, utc()).unwrap();
-    assert_eq!(daily[&on(2026, 7, 14)], 40.0);
-    assert_eq!(current_streak(&daily, 40.0, on(2026, 7, 14)), 2);
-
-    daily.insert(on(2026, 7, 14), 39.0);
-    assert_eq!(current_streak(&daily, 40.0, on(2026, 7, 14)), 1);
 }

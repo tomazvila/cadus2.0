@@ -340,6 +340,6 @@ impl Config {
     ///
     /// Returns the `serde_json` error when the config does not serialize.
     pub fn config_hash(&self) -> Result<String, serde_json::Error> {
-        Ok(short_sha256(&self.hash_preimage()?))
+        self.hash_preimage().map(|preimage| short_sha256(&preimage))
     }
 }

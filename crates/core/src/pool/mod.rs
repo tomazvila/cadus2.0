@@ -50,10 +50,9 @@ pub mod source;
 
 /// The per-instance rules of the gate, re-exported for the fill path.
 pub use crate::template::check_instance;
-/// A refused instance carries the gate's rejection.
-pub type Refusal = crate::template::Rejection;
 pub use ring::{
-    Avoid, Candidate, Pick, RING_CAPACITY, Ring, TASK_MEMORY_CAPACITY, TaskMemory, pick, serve,
+    Avoid, Candidate, Pick, RING_CAPACITY, Ring, TASK_MEMORY_CAPACITY, TaskMemory, Window, pick,
+    serve,
 };
 pub use row::{
     KP_KEY_SEPARATOR, POOL_ROW_VERSION, PoolAnswer, PoolBodyError, PoolProblem, kp_key,

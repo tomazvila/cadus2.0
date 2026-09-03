@@ -31,14 +31,19 @@ use cadus_core::diagnostic::{
 
 use common::{graph, graph_of_units, plain_topic};
 
-/// A chain `a -> b -> c -> d`: `a` is the sole root and `d` the sole leaf.
-fn chain() -> Curriculum {
-    graph(vec![
+/// The four topics of the chain `a -> b -> c -> d`, each with an exemplar.
+fn chain_topics() -> Vec<Topic> {
+    vec![
         with_exemplar(plain_topic("a", &[])),
         with_exemplar(plain_topic("b", &[("a", 1.0, true)])),
         with_exemplar(plain_topic("c", &[("b", 1.0, true)])),
         with_exemplar(plain_topic("d", &[("c", 1.0, true)])),
-    ])
+    ]
+}
+
+/// A chain `a -> b -> c -> d`: `a` is the sole root and `d` the sole leaf.
+fn chain() -> Curriculum {
+    graph(chain_topics())
 }
 
 /// The same topic, with a diagnostic exemplar the probe set needs.
@@ -117,6 +122,19 @@ fn a_smaller_radius_never_needs_fewer_probes() {
         tight.len(),
         wide.len()
     );
+}
+
+#[test]
+fn a_zero_radius_takes_every_topic_and_an_unknown_course_takes_none() {
+    let graph = chain();
+    let every: BTreeSet<String> = ["a", "b", "c", "d"].map(str::to_owned).into();
+    assert_eq!(probe_set(&graph, Some("c"), 0), every);
+    assert_eq!(probe_set(&graph, None, 3), probe_set(&graph, Some("c"), 3));
+    assert!(probe_set(&graph, Some("nope"), 3).is_empty());
+    // No course means the whole curriculum, with no mastery floor.
+    let state = init_session(&graph, &Config::default(), None);
+    assert_eq!(state.course, None);
+    assert_eq!(state.balances.len(), 4);
 }
 
 #[test]
@@ -223,6 +241,16 @@ fn a_topic_outside_the_universe_takes_no_credit() {
 }
 
 #[test]
+fn an_answer_on_an_unknown_topic_changes_nothing() {
+    let graph = chain();
+    let cfg = Config::default();
+    let mut state = state_over(&["a", "b", "c", "d"]);
+    apply_answer(&mut state, &graph, "ghost", true, 1.0, &cfg);
+    assert!(state.answered.is_empty());
+    assert!(state.balances.values().all(|balance| *balance == 0.0));
+}
+
+#[test]
 fn one_topic_joins_the_answered_list_once() {
     let graph = chain();
     let cfg = Config::default();
@@ -248,21 +276,19 @@ fn the_next_probe_settles_the_most_and_a_tie_takes_the_lowest_id() {
 
     // Give `a` a second dependent, and `a` alone settles four topics while `b`
     // settles three. The winner is then the score and not the id.
-    let wide = graph_of_units(
-        &[(
-            "M",
-            vec![
-                with_exemplar(plain_topic("a", &[])),
-                with_exemplar(plain_topic("b", &[("a", 1.0, true)])),
-                with_exemplar(plain_topic("c", &[("b", 1.0, true)])),
-                with_exemplar(plain_topic("d", &[("c", 1.0, true)])),
-                with_exemplar(plain_topic("e", &[("a", 1.0, true)])),
-            ],
-        )],
-        "c",
-    );
+    let mut topics = chain_topics();
+    topics.push(with_exemplar(plain_topic("e", &[("a", 1.0, true)])));
+    let wide = common::graph(topics);
     let wide_state = state_over(&["a", "b", "c", "d", "e"]);
     assert_eq!(next_probe(&wide_state, &wide, &cfg).as_deref(), Some("a"));
+}
+
+#[test]
+fn a_probe_outside_the_curriculum_is_never_asked() {
+    let graph = chain();
+    let cfg = Config::default();
+    let state = state_over(&["ghost", "d"]);
+    assert_eq!(next_probe(&state, &graph, &cfg).as_deref(), Some("d"));
 }
 
 #[test]
