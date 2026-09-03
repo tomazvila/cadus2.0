@@ -37,6 +37,25 @@ impl RawRow {
     }
 }
 
+/// One candidate read: the six columns of [`RawRow`] from `serving_pool AS
+/// sp`, followed by the rest of the statement, with the bind arguments.
+///
+/// The two reads of this module differ in their `WHERE` and `ORDER BY` alone,
+/// so the column list is written once. The macro expands to one
+/// `sqlx::query_as!`, so the statement stays compile-time checked (R2).
+macro_rules! candidate_read {
+    ($tail:literal, $($arg:expr),+ $(,)?) => {
+        sqlx::query_as!(
+            RawRow,
+            r#"
+        SELECT sp.id AS "id!", sp.source AS "source!", sp.content_digest,
+               sp.problem::text AS "problem!", sp.expected_answer::text AS "expected!",
+               sp.instance_hash AS "instance_hash!""# + $tail,
+            $($arg),+
+        )
+    };
+}
+
 /// Decode the rows of one candidate read.
 ///
 /// The answer is the decoded candidates, in the order of the read, and the ids
@@ -150,12 +169,8 @@ pub async fn pop_with_ring_tx(
     kp_id: &str,
     avoid: &Avoid<'_>,
 ) -> Result<Pop, StoreError> {
-    let popped = sqlx::query_as!(
-        RawRow,
+    let popped = candidate_read!(
         r#"
-        SELECT sp.id AS "id!", sp.source AS "source!", sp.content_digest,
-               sp.problem::text AS "problem!", sp.expected_answer::text AS "expected!",
-               sp.instance_hash AS "instance_hash!"
         FROM serving_pool AS sp
         LEFT JOIN content_store AS cs ON cs.digest = sp.content_digest
         WHERE sp.user_id = $1
@@ -257,12 +272,8 @@ pub async fn reclaim_exemplar_tx(
     kp_id: &str,
     avoid: &Avoid<'_>,
 ) -> Result<Option<PoolRow>, StoreError> {
-    let rows = sqlx::query_as!(
-        RawRow,
+    let rows = candidate_read!(
         r#"
-        SELECT sp.id AS "id!", sp.source AS "source!", sp.content_digest,
-               sp.problem::text AS "problem!", sp.expected_answer::text AS "expected!",
-               sp.instance_hash AS "instance_hash!"
         FROM serving_pool AS sp
         WHERE sp.user_id = $1
           AND sp.kp_id = $2
