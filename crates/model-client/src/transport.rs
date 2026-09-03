@@ -57,6 +57,10 @@ fn why(context: &str, err: &dyn std::fmt::Display) -> TransportError {
 #[derive(Debug)]
 pub struct HttpClient {
     endpoint: Url,
+    /// The host of the endpoint. `new` refuses a URL without one.
+    host: String,
+    /// The port of the endpoint, or the default port of its scheme.
+    port: u16,
     tls: Option<Arc<ClientConfig>>,
 }
 
@@ -75,19 +79,26 @@ impl HttpClient {
             base.as_str().trim_end_matches('/')
         ))
         .map_err(|err| why("the endpoint URL does not parse", &err))?;
-        if endpoint.host_str().is_none() {
+        let Some(host) = endpoint.host_str() else {
             return Err(TransportError("the base URL names no host".to_owned()));
-        }
-        let tls = match endpoint.scheme() {
-            "http" => None,
-            "https" => Some(tls_config()?),
+        };
+        let host = host.to_owned();
+        let (tls, default_port) = match endpoint.scheme() {
+            "http" => (None, 80),
+            "https" => (Some(tls_config()?), 443),
             other => {
                 return Err(TransportError(format!(
                     "the base URL scheme {other:?} is neither http nor https"
                 )));
             }
         };
-        Ok(Self { endpoint, tls })
+        let port = endpoint.port().unwrap_or(default_port);
+        Ok(Self {
+            endpoint,
+            host,
+            port,
+            tls,
+        })
     }
 
     /// POST one JSON body and read the status and the reply bytes.
@@ -123,18 +134,12 @@ impl HttpClient {
         cfg: &ModelConfig,
         body: &Value,
     ) -> Result<(u16, Vec<u8>), TransportError> {
-        let host = self
-            .endpoint
-            .host_str()
-            .ok_or_else(|| TransportError("the endpoint names no host".to_owned()))?;
-        let port = self
-            .endpoint
-            .port_or_known_default()
-            .ok_or_else(|| TransportError("the endpoint names no port".to_owned()))?;
+        let host = self.host.as_str();
+        let port = self.port;
         let authority = format!("{host}:{port}");
         let path = self.endpoint[url::Position::BeforePath..].to_owned();
-        let payload = serde_json::to_vec(body)
-            .map_err(|err| why("the request body does not serialize", &err))?;
+        // `Value::to_string` is the JSON text of the body, and it never fails.
+        let payload = body.to_string().into_bytes();
 
         let request = Request::builder()
             .method("POST")

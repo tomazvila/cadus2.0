@@ -46,14 +46,21 @@
     )
 )]
 
+mod attempt;
+mod config;
+mod reply;
 mod transport;
 
 use std::time::{Duration, Instant};
 
 use serde_json::{Value, json};
-use url::Url;
 
+pub use attempt::{Attempt, Usage};
+pub use config::{ModelConfig, is_routing_host};
 pub use transport::{HttpClient, TransportError};
+
+use attempt::{failed_attempt, read_attempt};
+use reply::{ReplyProblem, parse_reply};
 
 /// The environment variable that names the endpoint.
 pub const BASE_URL_VAR: &str = "OPENAI_BASE_URL";
@@ -164,125 +171,6 @@ pub enum ModelError {
     Reply(String),
 }
 
-/// The endpoint, the credentials and the T5 defaults of one deployment.
-#[derive(Debug, Clone, PartialEq)]
-pub struct ModelConfig {
-    /// The base URL, without a trailing `/chat/completions`.
-    pub base_url: String,
-    /// The bearer token of the endpoint.
-    pub api_key: String,
-    /// The model id the request names.
-    pub model: String,
-    /// The output ceiling of the first attempt (T4, T5).
-    pub output_tokens: u32,
-    /// The reasoning ceiling of every attempt (T5).
-    pub reasoning_max_tokens: u32,
-    /// The pinned provider order (T5). It is empty for a non-routing endpoint.
-    pub provider_order: Vec<String>,
-    /// The client-side bound of one attempt.
-    pub timeout: Duration,
-}
-
-impl ModelConfig {
-    /// Read the endpoint from the environment.
-    ///
-    /// # Errors
-    ///
-    /// Returns [`ModelError::Config`] when [`API_KEY_VAR`] is absent or empty,
-    /// when the base URL does not parse, when a token bound is not a whole
-    /// number, and when the endpoint is the routing host and
-    /// [`PROVIDER_ORDER_VAR`] names no provider. T5 makes the order a shipped
-    /// default, so an empty one is an operator mistake and not a silent
-    /// fallback to 1.0's unset routing.
-    pub fn from_env() -> Result<Self, ModelError> {
-        let base_url = var_or(BASE_URL_VAR, DEFAULT_BASE_URL);
-        let api_key = var_or(API_KEY_VAR, "");
-        if api_key.is_empty() {
-            return Err(ModelError::Config(format!("{API_KEY_VAR} is empty")));
-        }
-        let provider_order: Vec<String> = var_or(PROVIDER_ORDER_VAR, "")
-            .split(',')
-            .map(|name| name.trim().to_owned())
-            .filter(|name| !name.is_empty())
-            .collect();
-        if is_routing_host(&base_url)? && provider_order.is_empty() {
-            return Err(ModelError::Config(format!(
-                "{PROVIDER_ORDER_VAR} is empty; T5 pins the provider order of {ROUTING_HOST}"
-            )));
-        }
-        Ok(Self {
-            base_url,
-            api_key,
-            model: var_or(MODEL_VAR, DEFAULT_MODEL),
-            output_tokens: number(OUTPUT_TOKENS_VAR, DEFAULT_OUTPUT_TOKENS)?,
-            reasoning_max_tokens: number(REASONING_MAX_TOKENS_VAR, DEFAULT_REASONING_MAX_TOKENS)?,
-            provider_order,
-            timeout: Duration::from_secs(TIMEOUT_SECS),
-        })
-    }
-
-    /// Read the endpoint from the environment for an AUTHORING pass.
-    ///
-    /// The endpoint, the key, the model and the provider order are the ones
-    /// [`ModelConfig::from_env`] reads. The two token bounds are not: authoring
-    /// takes [`AUTHORING_OUTPUT_TOKENS_VAR`] and
-    /// [`AUTHORING_REASONING_MAX_TOKENS_VAR`], and it NEVER takes the diagnosis
-    /// values. A diagnosis budget of 600 output tokens with a reasoning ceiling
-    /// of 600 beside it leaves zero visible tokens for an authored document.
-    ///
-    /// # Errors
-    ///
-    /// Returns every [`ModelError::Config`] of [`ModelConfig::from_env`], and
-    /// one more when an authoring token bound is not a whole number.
-    pub fn authoring_from_env() -> Result<Self, ModelError> {
-        Ok(Self {
-            output_tokens: number(AUTHORING_OUTPUT_TOKENS_VAR, DEFAULT_AUTHORING_OUTPUT_TOKENS)?,
-            reasoning_max_tokens: number(
-                AUTHORING_REASONING_MAX_TOKENS_VAR,
-                DEFAULT_AUTHORING_REASONING_MAX_TOKENS,
-            )?,
-            ..Self::from_env()?
-        })
-    }
-}
-
-/// The environment value, or the default when it is absent or blank.
-fn var_or(name: &str, fallback: &str) -> String {
-    match std::env::var(name) {
-        Ok(raw) if !raw.trim().is_empty() => raw.trim().to_owned(),
-        _ => fallback.to_owned(),
-    }
-}
-
-/// One whole-number knob. A present value that is not a number is an error, so
-/// an operator typo never falls back to the default in silence.
-fn number(name: &str, fallback: u32) -> Result<u32, ModelError> {
-    let raw = var_or(name, "");
-    if raw.is_empty() {
-        return Ok(fallback);
-    }
-    raw.parse()
-        .map_err(|_| ModelError::Config(format!("{name} must be a whole number, not {raw:?}")))
-}
-
-/// Does this endpoint take the OpenRouter `provider` and `reasoning` blocks?
-///
-/// The check reads the parsed host and compares the WHOLE name, so
-/// `https://openrouter.ai.attacker.example/v1` is not the routing host and
-/// `https://openrouter.ai/api/v1` is.
-///
-/// # Errors
-///
-/// Returns [`ModelError::Config`] when the URL does not parse or names no host.
-pub fn is_routing_host(base_url: &str) -> Result<bool, ModelError> {
-    let url = Url::parse(base_url)
-        .map_err(|err| ModelError::Config(format!("{BASE_URL_VAR} does not parse: {err}")))?;
-    let host = url
-        .host_str()
-        .ok_or_else(|| ModelError::Config(format!("{BASE_URL_VAR} names no host")))?;
-    Ok(host.eq_ignore_ascii_case(ROUTING_HOST))
-}
-
 /// The forced tool of one call (spec section 6.3).
 #[derive(Debug, Clone)]
 pub struct ToolSpec {
@@ -305,50 +193,6 @@ pub struct ChatRequest {
     pub tool: ToolSpec,
 }
 
-/// The token counts of one HTTP attempt (T6, spec section 7).
-///
-/// Every field of an OpenAI-compatible `usage` block is optional on some
-/// provider, so each read defaults to 0 and a missing block gives a zeros
-/// record. An unmeasured call must be visible as unmeasured, never dropped.
-#[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
-pub struct Usage {
-    /// `usage.prompt_tokens_details.cached_tokens`.
-    pub input_cached: u32,
-    /// `usage.prompt_tokens` minus the cached part.
-    pub input_uncached: u32,
-    /// `usage.completion_tokens`.
-    pub output: u32,
-    /// `usage.completion_tokens_details.reasoning_tokens`.
-    pub reasoning: u32,
-}
-
-/// What one HTTP attempt cost and how it ended (T6).
-///
-/// Unit U11 writes one `model_call_log` row per record, so a truncation retry is
-/// two calls and two bills.
-#[derive(Debug, Clone, PartialEq)]
-pub struct Attempt {
-    /// The zero-based index of the attempt.
-    pub index: u32,
-    /// The `max_tokens` the request carried.
-    pub max_tokens: u32,
-    /// The HTTP status, or 0 when the attempt never reached a status.
-    pub status: u16,
-    /// The wall clock around the HTTP call, in milliseconds.
-    pub latency_ms: u32,
-    /// The tokens the reply reported.
-    pub usage: Usage,
-    /// The model id the request sent.
-    pub model_id: String,
-    /// OpenRouter's `provider` field; `None` elsewhere.
-    pub provider: Option<String>,
-    /// The provider's `id` field, for a support ticket.
-    pub request_id: Option<String>,
-    /// OpenRouter's `usage.cost`, as the exact text of the body. `None` keeps
-    /// the money column NULL rather than guessing at it.
-    pub cost_usd: Option<String>,
-}
-
 /// One finished call: the arguments of the forced tool, plus its bill.
 #[derive(Debug)]
 pub struct Call {
@@ -358,13 +202,15 @@ pub struct Call {
     pub result: Result<Value, ModelError>,
 }
 
-/// Why one reply is unusable.
-#[derive(Debug, Clone, PartialEq, Eq)]
-enum ReplyProblem {
-    /// The completion budget ran out. The retry widens the ceiling.
-    Truncated(String),
-    /// The reply is shaped wrong. The retry repeats the same ceiling.
-    Malformed(String),
+/// What one attempt decided.
+enum Verdict {
+    /// The reply held the arguments of the forced tool.
+    Done(Value),
+    /// The endpoint refused the request and a retry reproduces the refusal.
+    Stop(ModelError),
+    /// The attempt failed in a way a second attempt can mend. `widen` asks
+    /// the retry for a wider completion ceiling.
+    Retry { widen: bool, error: ModelError },
 }
 
 /// The client. It holds the configuration and the TLS setup, so one worker
@@ -404,76 +250,85 @@ impl Client {
         let mut last = ModelError::Transport("no attempt ran".to_owned());
 
         for index in 0..MAX_ATTEMPTS {
-            let body = request_body(&self.config, request, max_tokens);
-            let started = Instant::now();
-            let sent = self.http.post_json(&self.config, &body).await;
-            let latency_ms = u32::try_from(started.elapsed().as_millis()).unwrap_or(u32::MAX);
-
-            let (status, reply) = match sent {
-                Ok(answer) => answer,
-                Err(err) => {
-                    attempts.push(failed_attempt(index, max_tokens, latency_ms, &self.config));
-                    last = ModelError::Transport(err.0);
-                    // A transport error is retryable: the endpoint said nothing,
-                    // so nothing about the request is known to be wrong.
-                    if self.wait(index).await {
-                        continue;
-                    }
-                    break;
-                }
-            };
-            let parsed: Value = serde_json::from_slice(&reply).unwrap_or(Value::Null);
-            attempts.push(read_attempt(
-                index,
-                max_tokens,
-                status,
-                latency_ms,
-                &parsed,
-                &self.config,
-            ));
-
-            if status != 200 {
-                let text = String::from_utf8_lossy(&reply).chars().take(400).collect();
-                last = ModelError::Status { status, body: text };
-                // Spec section 6.5: 429 and 5xx retry; every other status —
-                // a 400 above all — returns at once.
-                if status == 429 || status >= 500 {
-                    if self.wait(index).await {
-                        continue;
-                    }
-                    break;
-                }
-                return Call {
-                    attempts,
-                    result: Err(last),
-                };
-            }
-
-            match parse_reply(&parsed, &request.tool) {
-                Ok(arguments) => {
+            match self
+                .attempt(index, max_tokens, request, &mut attempts)
+                .await
+            {
+                Verdict::Done(arguments) => {
                     return Call {
                         attempts,
                         result: Ok(arguments),
                     };
                 }
-                Err(problem) => {
-                    let widen = matches!(problem, ReplyProblem::Truncated(_));
-                    last = ModelError::Reply(match &problem {
-                        ReplyProblem::Truncated(why) | ReplyProblem::Malformed(why) => why.clone(),
-                    });
-                    if !self.wait(index).await {
-                        break;
-                    }
+                Verdict::Stop(error) => {
+                    return Call {
+                        attempts,
+                        result: Err(error),
+                    };
+                }
+                Verdict::Retry { widen, error } => {
+                    last = error;
                     if widen {
                         max_tokens = max_tokens.saturating_mul(TRUNCATION_FACTOR);
                     }
                 }
+            }
+            if !self.wait(index).await {
+                break;
             }
         }
 
         Call {
             attempts,
             result: Err(last),
+        }
+    }
+
+    /// Run one HTTP attempt with the ceiling `max_tokens`, record it in
+    /// `attempts`, and decide what the caller does next.
+    async fn attempt(
+        &self,
+        index: u32,
+        max_tokens: u32,
+        request: &ChatRequest,
+        attempts: &mut Vec<Attempt>,
+    ) -> Verdict {
+        let body = request_body(&self.config, request, max_tokens);
+        let started = Instant::now();
+        let sent = self.http.post_json(&self.config, &body).await;
+        let latency_ms = u32::try_from(started.elapsed().as_millis()).unwrap_or(u32::MAX);
+
+        let (status, reply) = match sent {
+            Ok(answer) => answer,
+            Err(err) => {
+                attempts.push(failed_attempt(index, max_tokens, latency_ms, &self.config));
+                // A transport error is retryable: the endpoint said nothing,
+                // so nothing about the request is known to be wrong.
+                return Verdict::Retry {
+                    widen: false,
+                    error: ModelError::Transport(err.0),
+                };
+            }
+        };
+        let parsed: Value = serde_json::from_slice(&reply).unwrap_or(Value::Null);
+        attempts.push(read_attempt(
+            index,
+            max_tokens,
+            status,
+            latency_ms,
+            &parsed,
+            &self.config,
+        ));
+
+        if status != 200 {
+            return status_verdict(status, &reply);
+        }
+        match parse_reply(&parsed, &request.tool) {
+            Ok(arguments) => Verdict::Done(arguments),
+            Err(problem) => Verdict::Retry {
+                widen: matches!(problem, ReplyProblem::Truncated(_)),
+                error: ModelError::Reply(problem.into_message()),
+            },
         }
     }
 
@@ -488,74 +343,21 @@ impl Client {
     }
 }
 
-/// The record of an attempt that never reached a status.
-fn failed_attempt(index: u32, max_tokens: u32, latency_ms: u32, cfg: &ModelConfig) -> Attempt {
-    Attempt {
-        index,
-        max_tokens,
-        status: 0,
-        latency_ms,
-        usage: Usage::default(),
-        model_id: cfg.model.clone(),
-        provider: None,
-        request_id: None,
-        cost_usd: None,
-    }
-}
-
-/// Read the T6 fields of one reply body (spec section 7).
-fn read_attempt(
-    index: u32,
-    max_tokens: u32,
-    status: u16,
-    latency_ms: u32,
-    body: &Value,
-    cfg: &ModelConfig,
-) -> Attempt {
-    let usage = body.get("usage");
-    let count = |path: &[&str]| -> u32 {
-        let mut node = match usage {
-            Some(node) => node,
-            None => return 0,
+/// The verdict of a status other than 200.
+///
+/// Spec section 6.5: 429 and 5xx retry; every other status — a 400 above all —
+/// returns at once. The error carries the first 400 characters of the body,
+/// for the operator log.
+fn status_verdict(status: u16, reply: &[u8]) -> Verdict {
+    let body = String::from_utf8_lossy(reply).chars().take(400).collect();
+    let error = ModelError::Status { status, body };
+    if status == 429 || status >= 500 {
+        return Verdict::Retry {
+            widen: false,
+            error,
         };
-        for key in path {
-            node = match node.get(key) {
-                Some(next) => next,
-                None => return 0,
-            };
-        }
-        node.as_u64()
-            .and_then(|n| u32::try_from(n).ok())
-            .unwrap_or(0)
-    };
-    let prompt = count(&["prompt_tokens"]);
-    let input_cached = count(&["prompt_tokens_details", "cached_tokens"]);
-    Attempt {
-        index,
-        max_tokens,
-        status,
-        latency_ms,
-        usage: Usage {
-            input_cached,
-            input_uncached: prompt.saturating_sub(input_cached),
-            output: count(&["completion_tokens"]),
-            reasoning: count(&["completion_tokens_details", "reasoning_tokens"]),
-        },
-        model_id: cfg.model.clone(),
-        provider: text(body.get("provider")),
-        request_id: text(body.get("id")),
-        cost_usd: usage
-            .and_then(|node| node.get("cost"))
-            .map(std::string::ToString::to_string),
     }
-}
-
-/// One JSON string, or `None` for anything else.
-fn text(node: Option<&Value>) -> Option<String> {
-    match node {
-        Some(Value::String(value)) if !value.is_empty() => Some(value.clone()),
-        _ => None,
-    }
+    Verdict::Stop(error)
 }
 
 /// Build the request body of one attempt (spec section 6.4).
@@ -614,145 +416,32 @@ pub fn request_body(cfg: &ModelConfig, request: &ChatRequest, max_tokens: u32) -
     body
 }
 
-/// Read the arguments of the forced tool out of one reply.
-///
-/// The order is the whole point of spec section 6.5: the arguments are read and
-/// validated FIRST, and `finish_reason` is consulted only after that read fails.
-/// A complete reply that happens to carry `finish_reason: "length"` is therefore
-/// accepted, and the three truncation shapes — no tool call, arguments cut off
-/// mid-JSON, and arguments that parse but miss a required field — all reach the
-/// widened retry.
-fn parse_reply(body: &Value, tool: &ToolSpec) -> Result<Value, ReplyProblem> {
-    let choice = body
-        .get("choices")
-        .and_then(|choices| choices.get(0))
-        .unwrap_or(&Value::Null);
-    let message = choice.get("message").unwrap_or(&Value::Null);
-
-    // Shape 1: the forced tool call. 1.0 also tolerates a model that ignores the
-    // forced tool and writes the object as message content, with or without a
-    // markdown fence, so both readers run here.
-    let arguments = message
-        .get("tool_calls")
-        .and_then(|calls| calls.get(0))
-        .and_then(|call| call.get("function"))
-        .and_then(|function| function.get("arguments"))
-        .and_then(Value::as_str)
-        .or_else(|| message.get("content").and_then(Value::as_str));
-
-    let problem = match arguments {
-        None => "the reply carries no tool call and no content".to_owned(),
-        // Shape 2: the arguments are cut off mid-JSON.
-        Some(raw) => match serde_json::from_str::<Value>(strip_fence(raw)) {
-            Err(err) => format!("the arguments of {} do not parse: {err}", tool.name),
-            // Shape 3: they parse and miss a required field.
-            Ok(parsed) => match missing_field(&parsed, &tool.parameters) {
-                Some(field) => format!("the arguments of {} name no {field}", tool.name),
-                None => return Ok(parsed),
-            },
-        },
-    };
-
-    if truncated(choice) {
-        return Err(ReplyProblem::Truncated(problem));
-    }
-    Err(ReplyProblem::Malformed(problem))
-}
-
-/// The first required field of the TOOL'S OWN schema that is absent or that
-/// carries the wrong type, if any.
-///
-/// The check reads `parameters.required` and `parameters.properties`, so one
-/// client serves every tool. M5 hard-coded the two fields of the diagnosis
-/// document here, and that spelling refused every reply of the M6 authoring
-/// tools with `name no error_tags`: the client is the ONE crate that reaches a
-/// model (L6), so its validation must come from the schema the request carried.
-///
-/// A schema that names no required field validates nothing here. The reply still
-/// has to parse as JSON, and the caller still decides whether the document is
-/// usable — for authoring, that decision is the gate (A2).
-fn missing_field(arguments: &Value, schema: &Value) -> Option<String> {
-    let required = schema.get("required").and_then(Value::as_array)?;
-    for name in required.iter().filter_map(Value::as_str) {
-        let Some(value) = arguments.get(name) else {
-            return Some(name.to_owned());
-        };
-        let declared = schema
-            .get("properties")
-            .and_then(|properties| properties.get(name))
-            .and_then(|property| property.get("type"))
-            .and_then(Value::as_str);
-        let holds = match declared {
-            Some("array") => value.is_array(),
-            Some("string") => value.is_string(),
-            Some("object") => value.is_object(),
-            Some("boolean") => value.is_boolean(),
-            Some("integer") => value.is_i64() || value.is_u64(),
-            Some("number") => value.is_number(),
-            // A property with no stated type, or a union of types, is present or
-            // it is not. A null is absent: JSON writes an unset field that way.
-            _ => !value.is_null(),
-        };
-        if !holds {
-            return Some(name.to_owned());
-        }
-    }
-    None
-}
-
-/// Did this choice run out of completion budget?
-///
-/// Both spellings count: OpenRouter reports the normalized `finish_reason` and
-/// the provider's own `native_finish_reason`, and a provider that fills only the
-/// second one truncated the reply just the same.
-fn truncated(choice: &Value) -> bool {
-    ["finish_reason", "native_finish_reason"]
-        .iter()
-        .any(|key| choice.get(*key).and_then(Value::as_str) == Some("length"))
-}
-
-/// Drop a markdown fence around a JSON object (1.0 `openai_engine.py:241-251`).
-fn strip_fence(raw: &str) -> &str {
-    let trimmed = raw.trim();
-    let Some(rest) = trimmed.strip_prefix("```") else {
-        return trimmed;
-    };
-    let rest = rest.strip_prefix("json").unwrap_or(rest);
-    rest.trim_end().strip_suffix("```").unwrap_or(rest).trim()
-}
-
 #[cfg(test)]
 mod tests {
-    use super::{ROUTING_HOST, is_routing_host, strip_fence};
+    use super::{ModelError, Verdict, status_verdict};
 
-    /// The routing check reads the parsed host, not a substring of the URL.
-    ///
-    /// 1.0's `"openrouter.ai" in url` accepted the attacker host of the third
-    /// case, which sends the API key to it (spec section 6.4).
+    /// A 429 and every 5xx retry; every other status stops the call. The
+    /// error carries at most 400 characters of the body.
     #[test]
-    fn the_routing_host_is_the_parsed_host() {
-        assert_eq!(ROUTING_HOST, "openrouter.ai");
-        assert_eq!(
-            is_routing_host("https://openrouter.ai/api/v1").ok(),
-            Some(true)
-        );
-        assert_eq!(
-            is_routing_host("https://OpenRouter.ai/api/v1").ok(),
-            Some(true)
-        );
-        assert_eq!(
-            is_routing_host("https://openrouter.ai.attacker.example/v1").ok(),
-            Some(false)
-        );
-        assert_eq!(is_routing_host("http://10.8.0.3:8080/v1").ok(), Some(false));
-        assert!(is_routing_host("not a url").is_err());
-    }
-
-    /// A fenced object loses its fence and a bare one is unchanged.
-    #[test]
-    fn a_markdown_fence_comes_off() {
-        assert_eq!(strip_fence("```json\n{\"a\":1}\n```"), "{\"a\":1}");
-        assert_eq!(strip_fence("```\n{\"a\":1}\n```"), "{\"a\":1}");
-        assert_eq!(strip_fence("  {\"a\":1}  "), "{\"a\":1}");
+    fn a_rate_limit_and_a_server_error_retry_and_every_other_status_stops() {
+        for (status, retries) in [
+            (429, true),
+            (500, true),
+            (503, true),
+            (400, false),
+            (404, false),
+        ] {
+            let verdict = status_verdict(status, b"body");
+            let retry = matches!(verdict, Verdict::Retry { widen: false, .. });
+            assert_eq!(retry, retries, "status {status}");
+        }
+        let long = "x".repeat(500);
+        let Verdict::Stop(ModelError::Status { status, body }) =
+            status_verdict(400, long.as_bytes())
+        else {
+            unreachable!("a 400 stops the call")
+        };
+        assert_eq!(status, 400);
+        assert_eq!(body.len(), 400);
     }
 }
