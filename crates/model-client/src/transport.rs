@@ -16,6 +16,7 @@ use http_body_util::{BodyExt, Full, Limited};
 use hyper::Request;
 use hyper::header::{AUTHORIZATION, CONTENT_TYPE, HOST};
 use hyper_util::rt::TokioIo;
+use rustls::pki_types::ServerName;
 use rustls::{ClientConfig, RootCertStore};
 use serde_json::Value;
 use tokio::net::TcpStream;
@@ -61,7 +62,8 @@ pub struct HttpClient {
     host: String,
     /// The port of the endpoint, or the default port of its scheme.
     port: u16,
-    tls: Option<Arc<ClientConfig>>,
+    /// The TLS setup and the server name of an `https` endpoint.
+    tls: Option<(Arc<ClientConfig>, ServerName<'static>)>,
 }
 
 impl HttpClient {
@@ -70,8 +72,8 @@ impl HttpClient {
     /// # Errors
     ///
     /// Returns [`TransportError`] when the base URL does not parse, names no
-    /// host, carries an unsupported scheme, or when the trust store does not
-    /// build.
+    /// host, carries an unsupported scheme, names an `https` host that is not
+    /// a TLS server name, or when the trust store does not build.
     pub fn new(base_url: &str) -> Result<Self, TransportError> {
         let base = Url::parse(base_url).map_err(|err| why("the base URL does not parse", &err))?;
         let endpoint = Url::parse(&format!(
@@ -85,7 +87,11 @@ impl HttpClient {
         let host = host.to_owned();
         let (tls, default_port) = match endpoint.scheme() {
             "http" => (None, 80),
-            "https" => (Some(tls_config()?), 443),
+            "https" => {
+                let name = ServerName::try_from(host.clone())
+                    .map_err(|err| why("the host is not a TLS server name", &err))?;
+                (Some((tls_config()?, name)), 443)
+            }
             other => {
                 return Err(TransportError(format!(
                     "the base URL scheme {other:?} is neither http nor https"
@@ -157,9 +163,7 @@ impl HttpClient {
 
         match self.tls.clone() {
             None => exchange(TokioIo::new(tcp), request).await,
-            Some(config) => {
-                let name = rustls::pki_types::ServerName::try_from(host.to_owned())
-                    .map_err(|err| why("the host is not a TLS server name", &err))?;
+            Some((config, name)) => {
                 let stream = TlsConnector::from(config)
                     .connect(name, tcp)
                     .await
