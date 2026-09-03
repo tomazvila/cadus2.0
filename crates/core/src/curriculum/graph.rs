@@ -53,11 +53,6 @@ impl Csr {
         Self { offsets, targets }
     }
 
-    /// The number of nodes.
-    pub fn node_count(&self) -> usize {
-        self.offsets.len().saturating_sub(1)
-    }
-
     /// The number of edges.
     pub fn edge_count(&self) -> usize {
         self.targets.len()
@@ -73,6 +68,24 @@ impl Csr {
             .get(start as usize..end as usize)
             .unwrap_or(&[])
     }
+}
+
+/// The reverse of one neighbor list per node: `out[target]` holds every node
+/// whose list names `target`, ascending.
+///
+/// The walk visits the nodes in order and each list in its own order, so a
+/// sorted input gives sorted output. A target at or past `node_count` is
+/// dropped, because the reverse has no slot for it.
+pub fn transpose(lists: &[Vec<u32>], node_count: usize) -> Vec<Vec<u32>> {
+    let mut out: Vec<Vec<u32>> = vec![Vec::new(); node_count];
+    for (node, list) in (0_u32..).zip(lists) {
+        for &target in list {
+            if let Some(slot) = out.get_mut(target as usize) {
+                slot.push(node);
+            }
+        }
+    }
+    out
 }
 
 /// A compressed adjacency list with a weight on every edge.
@@ -95,11 +108,6 @@ impl EncCsr {
             offsets.push(u32::try_from(edges.len()).unwrap_or(u32::MAX));
         }
         Self { offsets, edges }
-    }
-
-    /// The number of nodes.
-    pub fn node_count(&self) -> usize {
-        self.offsets.len().saturating_sub(1)
     }
 
     /// The number of edges.
@@ -164,67 +172,88 @@ const BLACK: u8 = 2;
 /// parity trap 11). 1.0 recurses; this walk keeps its own stack, so a deep
 /// prerequisite chain cannot overflow the thread stack.
 pub fn find_cycle(adj: &Csr, node_count: usize) -> Option<Vec<u32>> {
-    let mut color = vec![WHITE; node_count];
-    // `depth[n]` is the position of `n` on `path` while `n` is GRAY.
-    let mut depth = vec![u32::MAX; node_count];
-    let mut path: Vec<u32> = Vec::new();
-    // One frame per node on the path: the node and how many of its edges are done.
-    let mut frames: Vec<(u32, usize)> = Vec::new();
-
-    for start in 0..node_count {
-        if color.get(start).copied().unwrap_or(BLACK) != WHITE {
+    let mut search = CycleSearch {
+        color: vec![WHITE; node_count],
+        depth: vec![u32::MAX; node_count],
+        path: Vec::new(),
+        frames: Vec::new(),
+    };
+    for start in 0..u32::try_from(node_count).unwrap_or(u32::MAX) {
+        if search.color_of(start) != WHITE {
             continue;
         }
-        let Ok(start) = u32::try_from(start) else {
-            continue;
-        };
-        enter(&mut color, &mut depth, &mut path, &mut frames, start);
-
-        while let Some(&(node, cursor)) = frames.last() {
-            let neighbors = adj.neighbors(node as usize);
-            let Some(&next) = neighbors.get(cursor) else {
-                if let Some(slot) = color.get_mut(node as usize) {
-                    *slot = BLACK;
-                }
-                if let Some(slot) = depth.get_mut(node as usize) {
-                    *slot = u32::MAX;
-                }
-                path.pop();
-                frames.pop();
-                continue;
-            };
-            if let Some(frame) = frames.last_mut() {
-                frame.1 = cursor + 1;
-            }
-            match color.get(next as usize).copied().unwrap_or(WHITE) {
-                GRAY => {
-                    let at = depth.get(next as usize).copied().unwrap_or(0) as usize;
-                    return Some(path.get(at..).unwrap_or(&[]).to_vec());
-                }
-                WHITE => enter(&mut color, &mut depth, &mut path, &mut frames, next),
-                _ => {}
-            }
+        search.enter(start);
+        if let Some(cycle) = search.walk(adj) {
+            return Some(cycle);
         }
     }
     None
 }
 
-/// Put `node` on the search path and color it GRAY.
-fn enter(
-    color: &mut [u8],
-    depth: &mut [u32],
-    path: &mut Vec<u32>,
-    frames: &mut Vec<(u32, usize)>,
-    node: u32,
-) {
-    if let Some(slot) = color.get_mut(node as usize) {
-        *slot = GRAY;
+/// The state of one depth-first cycle search.
+struct CycleSearch {
+    /// The color of every node.
+    color: Vec<u8>,
+    /// `depth[n]` is the position of `n` on `path` while `n` is GRAY.
+    depth: Vec<u32>,
+    /// The nodes on the current search path, in order.
+    path: Vec<u32>,
+    /// One frame per node on the path: the node and how many of its edges are done.
+    frames: Vec<(u32, usize)>,
+}
+
+impl CycleSearch {
+    /// The color of a node. A node outside the graph reads WHITE, the same as a
+    /// node the walk has not reached.
+    fn color_of(&self, node: u32) -> u8 {
+        self.color.get(node as usize).copied().unwrap_or(WHITE)
     }
-    if let Some(slot) = depth.get_mut(node as usize) {
-        *slot = u32::try_from(path.len()).unwrap_or(u32::MAX);
+
+    /// Put `node` on the search path and color it GRAY.
+    fn enter(&mut self, node: u32) {
+        if let Some(slot) = self.color.get_mut(node as usize) {
+            *slot = GRAY;
+        }
+        if let Some(slot) = self.depth.get_mut(node as usize) {
+            *slot = u32::try_from(self.path.len()).unwrap_or(u32::MAX);
+        }
+        self.path.push(node);
+        self.frames.push((node, 0));
     }
-    path.push(node);
-    frames.push((node, 0));
+
+    /// Take the top node off the search path and color it BLACK.
+    fn leave(&mut self, node: u32) {
+        if let Some(slot) = self.color.get_mut(node as usize) {
+            *slot = BLACK;
+        }
+        if let Some(slot) = self.depth.get_mut(node as usize) {
+            *slot = u32::MAX;
+        }
+        self.path.pop();
+        self.frames.pop();
+    }
+
+    /// Walk the path down from its top frame until the path is empty or a GRAY
+    /// node is re-entered.
+    fn walk(&mut self, adj: &Csr) -> Option<Vec<u32>> {
+        while let Some(frame) = self.frames.last_mut() {
+            let (node, cursor) = *frame;
+            let Some(&next) = adj.neighbors(node as usize).get(cursor) else {
+                self.leave(node);
+                continue;
+            };
+            frame.1 = cursor + 1;
+            match self.color_of(next) {
+                GRAY => {
+                    let at = self.depth.get(next as usize).copied().unwrap_or(0) as usize;
+                    return Some(self.path.get(at..).unwrap_or(&[]).to_vec());
+                }
+                WHITE => self.enter(next),
+                _ => {}
+            }
+        }
+        None
+    }
 }
 
 /// Every node reachable from `start` along `adj`, ascending, without `start`.
@@ -285,4 +314,52 @@ pub fn relax(adj: &EncCsr, start: u32, node_count: usize) -> Vec<f64> {
         }
     }
     best
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    /// A target at or past the node count has no slot, so every walk drops it.
+    #[test]
+    fn a_target_outside_the_graph_is_dropped_by_every_walk() {
+        let adj = Csr::from_lists(&[vec![1, 7], vec![]]);
+        assert_eq!(adj.neighbors(0), [1, 7]);
+        assert_eq!(adj.neighbors(5), [] as [u32; 0]);
+        assert_eq!(transpose(&[vec![1, 7], vec![]], 2), vec![vec![], vec![0]]);
+        assert_eq!(closure(&adj, 0, 2), vec![1]);
+        assert_eq!(find_cycle(&adj, 2), None);
+
+        let prereqs = Csr::from_lists(&[vec![], vec![0]]);
+        let dependents = Csr::from_lists(&[vec![1, 9], vec![]]);
+        assert_eq!(topo_order(&prereqs, &dependents, 2), vec![0, 1]);
+    }
+
+    /// A cycle that goes through a node twice is reported from its re-entered
+    /// node, and a BLACK node is not entered again.
+    #[test]
+    fn a_cycle_behind_a_finished_branch_is_still_found() {
+        // 0 -> 1, 0 -> 2, 2 -> 1, 2 -> 3, 3 -> 2: the walk finishes 1 before it
+        // meets it again from 2, and then finds the loop 2 -> 3 -> 2.
+        let adj = Csr::from_lists(&[vec![1, 2], vec![], vec![1, 3], vec![2]]);
+        assert_eq!(find_cycle(&adj, 4), Some(vec![2, 3]));
+    }
+
+    /// The weighted walks read an empty edge list for a node outside the graph.
+    #[test]
+    fn a_weighted_walk_from_or_to_an_unknown_node_gives_zero() {
+        let far = EncEdge {
+            target: 9,
+            weight: 0.5,
+        };
+        let near = EncEdge {
+            target: 1,
+            weight: 0.5,
+        };
+        let adj = EncCsr::from_lists(&[vec![far, near], vec![]]);
+        assert_eq!(adj.edges_from(3), [] as [EncEdge; 0]);
+        assert_eq!(adj.edge_count(), 2);
+        assert_eq!(relax(&adj, 5, 2), vec![0.0, 0.0]);
+        assert_eq!(relax(&adj, 0, 2), vec![1.0, 0.5]);
+    }
 }
