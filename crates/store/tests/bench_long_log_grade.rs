@@ -33,7 +33,7 @@ async fn benchmark_long_log_grade_holds_the_l2_segment() {
         let snap = snapshot(&db.admin, user).await;
         for index in 0..rounds(BENCH_WARMUPS, 1) {
             let id = format!("warmup-{index}");
-            let read = grade_once(&app, user, &input, &id, &avoid)
+            let read = grade_once(app, user, &input, &id, &avoid)
                 .await
                 .unwrap_or_else(|err| panic!("warm-up {index} did not grade: {err}"));
             restore(&db.admin, user, &id, read.claimed, &snap).await;

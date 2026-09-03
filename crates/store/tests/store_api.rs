@@ -251,7 +251,7 @@ async fn with_drops_the_database_of_a_failed_setup() {
     );
 
     let left_behind =
-        cluster_count("SELECT count(*) FROM pg_database WHERE datname = $1", &name).await;
+        cluster_count("SELECT count(*) FROM pg_database WHERE datname = $1", name).await;
 
     assert_eq!(left_behind, 0, "the failed setup left {name} behind");
 }
