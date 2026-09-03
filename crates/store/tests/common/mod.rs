@@ -6,6 +6,7 @@
 
 #![allow(dead_code)]
 
+pub mod events;
 pub mod fault;
 
 use cadus_core::pool::{PoolAnswer, PoolProblem, Source};

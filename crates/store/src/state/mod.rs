@@ -337,14 +337,14 @@ pub async fn append_event(
     event: &Event,
     attempt_id: Option<&str>,
 ) -> Result<Option<i64>, StoreError> {
-    let payload = serde_json::to_value(event)
-        .map_err(|err| StoreError::Document(format!("the event does not serialize: {err}")))?;
     let ts = DateTime::<Utc>::from_timestamp_micros(event.ts().micros()).ok_or_else(|| {
         StoreError::Document(format!(
             "the event timestamp {} is outside the representable range",
             event.ts().micros()
         ))
     })?;
+    let payload = serde_json::to_value(event)
+        .map_err(|err| StoreError::Document(format!("the event does not serialize: {err}")))?;
 
     let seq = sqlx::query_scalar!(
         r#"
