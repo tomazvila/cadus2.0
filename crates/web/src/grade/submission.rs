@@ -285,9 +285,9 @@ mod tests {
         assert_eq!(event_kind(AnswerKind::Proof), Wire::Proof);
     }
 
-    /// A negative solve time is not an event field, and an instant outside the
-    /// wire range does not serialize: both are `state_unavailable`, never a
-    /// panic.
+    /// A negative solve time is not an event field, a problem with no topic
+    /// names no attempt topic, and an instant outside the wire range does not
+    /// serialize: each one is `state_unavailable`, never a panic.
     #[test]
     fn an_attempt_the_event_grammar_refuses_is_state_unavailable() {
         let grade = Grade {
@@ -314,6 +314,19 @@ mod tests {
         assert_eq!(refused.err().map(|err| err.code), Some(STATE_UNAVAILABLE));
 
         graded.secs = 20;
+        let mut orphan = served(Some("numeric"));
+        orphan.topic = None;
+        let refused = build_attempt(
+            &lesson(),
+            &orphan,
+            &miss(),
+            &graded,
+            Some("s"),
+            Timestamp::from_micros(0),
+            1,
+        );
+        assert_eq!(refused.err().map(|err| err.code), Some(STATE_UNAVAILABLE));
+
         let refused = build_attempt(
             &lesson(),
             &served(Some("numeric")),
