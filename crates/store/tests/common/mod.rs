@@ -6,8 +6,10 @@
 
 #![allow(dead_code)]
 
+pub mod bench;
 pub mod events;
 pub mod fault;
+pub mod long_log;
 
 use cadus_core::pool::{PoolAnswer, PoolProblem, Source};
 use cadus_store::pool::NewInstance;

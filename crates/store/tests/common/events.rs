@@ -77,31 +77,55 @@ pub fn end(session: &str) -> Event {
     })
 }
 
-/// One graded attempt on `addition`.
-pub fn attempt(attempt_id: &str) -> Event {
+/// One graded correct attempt of `topic` on the review task `task_id`, at
+/// `ts` inside `session`, with the statement `text` and its `answer`.
+///
+/// Every other field is the deterministic grade of a correct numeric answer.
+pub fn attempt_row(
+    ts: Timestamp,
+    session: &str,
+    task_id: &str,
+    topic: &str,
+    attempt_id: &str,
+    text: String,
+    answer: String,
+) -> Event {
     Event::Attempt(Attempt {
-        ts: Timestamp::from_micros(BASE_US),
-        session: Some(SESSION.to_string()),
+        ts,
+        session: Some(session.to_string()),
         v: SchemaVersion,
         attempt_id: attempt_id.to_string(),
-        task_id: "s_2026-01-01a-review-addition".to_string(),
-        topic: Slug::new("addition").unwrap(),
+        task_id: task_id.to_string(),
+        topic: Slug::new(topic).expect("the topic slug"),
         kp: None,
         task_type: TaskType::Review,
         problem: AttemptProblem {
-            text: "Compute $8 - 5$.".to_string(),
-            expected: "3".to_string(),
+            text,
+            expected: answer.clone(),
         },
-        given_answer: "3".to_string(),
+        given_answer: answer,
         work: None,
         answer_kind: Some(AnswerKind::Numeric),
         correct: true,
-        secs: Secs::new(12).unwrap(),
+        secs: Secs::new(12).expect("twelve seconds"),
         error_tags: Vec::new(),
         work_quality: WorkQuality::NearlyPerfect,
         grader_note: Some("deterministic".to_string()),
         assisted: false,
     })
+}
+
+/// One graded attempt on `addition`.
+pub fn attempt(attempt_id: &str) -> Event {
+    attempt_row(
+        Timestamp::from_micros(BASE_US),
+        SESSION,
+        "s_2026-01-01a-review-addition",
+        "addition",
+        attempt_id,
+        "Compute $8 - 5$.".to_string(),
+        "3".to_string(),
+    )
 }
 
 /// One correction of the attempt above.
