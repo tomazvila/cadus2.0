@@ -194,6 +194,25 @@ pub fn live_verdicts(python: &str, pairs: &[Pair]) -> Vec<Option<OracleVerdict>>
     out
 }
 
+/// The committed line of one pair and its 1.0 verdict. A timeout carries null verdict fields.
+pub fn verdict_line(pair: &Pair, verdict: Option<OracleVerdict>) -> serde_json::Value {
+    let (equivalent, notation) = match verdict {
+        Some(verdict) => (
+            serde_json::Value::Bool(verdict.equivalent),
+            serde_json::Value::Bool(verdict.notation),
+        ),
+        None => (serde_json::Value::Null, serde_json::Value::Null),
+    };
+    serde_json::json!({
+        "expected": pair.expected,
+        "learner": pair.learner,
+        "kind": pair.kind.as_str(),
+        "equivalent": equivalent,
+        "notation": notation,
+        "timeout": verdict.is_none(),
+    })
+}
+
 /// Ask the live 1.0 oracle for one pair, and return the raw response line.
 ///
 /// The helper starts one harness process, sends one request, and reads one

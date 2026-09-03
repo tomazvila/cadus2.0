@@ -260,25 +260,7 @@ fn record_the_oracle_verdicts_when_asked() {
     assert_eq!(live.len(), pairs.len(), "the oracle answered every pair");
     let mut out = String::new();
     for (pair, verdict) in pairs.iter().zip(live.iter()) {
-        let line = match verdict {
-            Some(verdict) => serde_json::json!({
-                "expected": pair.expected,
-                "learner": pair.learner,
-                "kind": pair.kind.as_str(),
-                "equivalent": verdict.equivalent,
-                "notation": verdict.notation,
-                "timeout": false,
-            }),
-            None => serde_json::json!({
-                "expected": pair.expected,
-                "learner": pair.learner,
-                "kind": pair.kind.as_str(),
-                "equivalent": serde_json::Value::Null,
-                "notation": serde_json::Value::Null,
-                "timeout": true,
-            }),
-        };
-        let _ = writeln!(out, "{line}");
+        let _ = writeln!(out, "{}", verdict_line(pair, *verdict));
     }
     let path = fixture("oracle_verdicts_1_0.jsonl");
     std::fs::write(&path, out).unwrap_or_else(|e| panic!("write {}: {e}", path.display()));
