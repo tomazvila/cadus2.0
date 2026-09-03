@@ -44,19 +44,28 @@ def uncovered_files(export):
 
 
 def crap_scores(export, complexity, limit):
-    out = []
+    # One function has several records: one per crate build (the library and its
+    # unit-test build) and one per generic instantiation. Merge them by source
+    # position and keep the best covered record, the way llvm-cov merges an
+    # instantiation group for the file summary.
+    best = {}
     for func in export["functions"]:
         regions = func["regions"]
         if not regions or not func["filenames"]:
             continue
         path = os.path.relpath(func["filenames"][0], REPO)
         start = min(region[0] for region in regions)
-        cc = complexity.get((path, start), 1.0)
         covered = sum(1 for region in regions if region[4] > 0)
         cov = covered / len(regions)
+        key = (path, start)
+        if key not in best or cov > best[key][1]:
+            best[key] = (func["name"][:60], cov)
+    out = []
+    for (path, start), (name, cov) in best.items():
+        cc = complexity.get((path, start), 1.0)
         crap = cc * cc * (1 - cov) ** 3 + cc
         if crap >= limit:
-            out.append((path, start, func["name"][:60], cc, cov, crap))
+            out.append((path, start, name, cc, cov, crap))
     return out
 
 
