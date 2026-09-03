@@ -21,6 +21,7 @@
 
 mod arena;
 mod db;
+mod fault;
 mod http;
 mod live;
 mod oauth;
@@ -29,6 +30,7 @@ mod seed;
 
 pub use arena::*;
 pub use db::*;
+pub use fault::*;
 pub use http::*;
 pub use live::*;
 pub use oauth::*;

@@ -130,6 +130,18 @@ async fn a_served_problem_with_no_answer_kind_is_500_state_unavailable() {
     .await;
 }
 
+/// A stashed H3 attempt that does not read as an attempt cannot be recorded.
+/// The route is `500 state_unavailable`, and nothing is recorded.
+#[tokio::test]
+async fn a_stash_that_is_not_an_attempt_is_500_state_unavailable() {
+    TestDb::with(|db| async move {
+        let mut live = lesson_problem(5.0, "kp1", Vec::new());
+        live.rework = Some(json!({"bogus": true}));
+        assert_state_unavailable(&db, "bad-stash@example.com", live).await;
+    })
+    .await;
+}
+
 /// A served problem that names no topic cannot build the `attempt` event. The
 /// route is `500 state_unavailable`, and nothing is recorded.
 #[tokio::test]

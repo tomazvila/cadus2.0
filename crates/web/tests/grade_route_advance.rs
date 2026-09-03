@@ -15,9 +15,9 @@ use cadus_core::learner::{LearnerModel, TopicState};
 use cadus_store::test_support::TestDb;
 use common::{
     BASE_US, LESSON, SESSION, Verdict, addition_curriculum, answer_lesson_ok, app_with_content,
-    attempt_payload, events_of_type, lesson_app as app, lesson_learner, lesson_problem,
-    lesson_state, put_state, seed_attempt_row, seed_cached_model, seed_event, seed_four_misses,
-    seed_learner, seed_open_session, stored_state,
+    attempt_payload, events_of_type, learner_at_the_fifth_miss, lesson_app as app, lesson_learner,
+    lesson_problem, lesson_state, put_state, seed_attempt_row, seed_cached_model, seed_event,
+    seed_four_misses, seed_learner, seed_open_session, stored_state,
 };
 use serde_json::{Value, json};
 use sqlx::types::Uuid;
@@ -34,24 +34,10 @@ fn app_with_key_prereq(db: &TestDb) -> Router {
     )
 }
 
-/// Seed a learner whose lesson stands at `kp1` with four misses behind it, so
-/// the next miss is the fifth.
-async fn learner_at_the_fifth_miss(db: &TestDb, email: &str) -> Uuid {
-    let user = seed_learner(db, email).await;
-    seed_open_session(db, user).await;
-    seed_four_misses(db, user, 2).await;
-    put_state(
-        db,
-        user,
-        &lesson_state(lesson_problem(20.0, "kp1", Vec::new()), 4, false),
-    )
-    .await;
-    user
-}
-
 /// Seed a learner whose lesson stands at `kp` with one correct answer at `kp`
 /// already in the log at `seq` 2, so the next correct answer passes the point.
-async fn learner_at_the_second_pass(db: &TestDb, email: &str, kp: &str) -> Uuid {
+/// `assisted` is the H3 flag of that earlier answer.
+async fn learner_at_the_second_pass(db: &TestDb, email: &str, kp: &str, assisted: bool) -> Uuid {
     let user = seed_learner(db, email).await;
     seed_open_session(db, user).await;
     put_state(
@@ -60,7 +46,7 @@ async fn learner_at_the_second_pass(db: &TestDb, email: &str, kp: &str) -> Uuid 
         &lesson_state(lesson_problem(5.0, kp, Vec::new()), 1, false),
     )
     .await;
-    let prior = attempt_payload(
+    let mut prior = attempt_payload(
         LESSON,
         "s_2026-01-01a-lesson-addition-0",
         kp,
@@ -73,6 +59,7 @@ async fn learner_at_the_second_pass(db: &TestDb, email: &str, kp: &str) -> Uuid 
             secs: 9,
         },
     );
+    prior["assisted"] = json!(assisted);
     seed_attempt_row(db, user, 2, "s_2026-01-01a-lesson-addition-0", &prior).await;
     user
 }
@@ -101,7 +88,7 @@ fn assert_plain_lesson_fail(body: &Value) {
 async fn a_second_correct_answer_at_the_last_kp_passes_the_lesson() {
     TestDb::with(|db| async move {
         let app = app(&db);
-        let user = learner_at_the_second_pass(&db, "pass@example.com", "kp2").await;
+        let user = learner_at_the_second_pass(&db, "pass@example.com", "kp2", false).await;
 
         let body = answer_lesson_ok(&app, user, "13.5").await;
         assert_eq!(body["task_status"], "task_passed");
@@ -123,6 +110,26 @@ async fn a_second_correct_answer_at_the_last_kp_passes_the_lesson() {
     .await;
 }
 
+/// The passing lesson is reference-assisted when ANY of its attempts was: the
+/// earlier answer took a hint, so the close carries `assisted: true` even
+/// though the closing answer did not.
+#[tokio::test]
+async fn a_lesson_passed_with_an_earlier_assisted_answer_closes_assisted() {
+    TestDb::with(|db| async move {
+        let app = app(&db);
+        let user = learner_at_the_second_pass(&db, "assisted-pass@example.com", "kp2", true).await;
+
+        let body = answer_lesson_ok(&app, user, "13.5").await;
+        assert_eq!(body["task_status"], "task_passed");
+
+        let closes = events_of_type(&db, user, "lesson_result").await;
+        assert_eq!(closes.len(), 1);
+        assert_eq!(closes[0]["passed"], true);
+        assert_eq!(closes[0]["assisted"], true);
+    })
+    .await;
+}
+
 /// Two correct answers at the FIRST knowledge point pass it, and the lesson
 /// moves on: `kp_advance`, no close event, no XP, the progress row at `kp2`,
 /// and a next problem drawn for it.
@@ -130,7 +137,7 @@ async fn a_second_correct_answer_at_the_last_kp_passes_the_lesson() {
 async fn a_second_correct_answer_at_the_first_kp_advances_the_lesson() {
     TestDb::with(|db| async move {
         let app = app(&db);
-        let user = learner_at_the_second_pass(&db, "advance@example.com", "kp1").await;
+        let user = learner_at_the_second_pass(&db, "advance@example.com", "kp1", false).await;
 
         let body = answer_lesson_ok(&app, user, "13.5").await;
         assert_eq!(body["task_status"], "kp_advance");

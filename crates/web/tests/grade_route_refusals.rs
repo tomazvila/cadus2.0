@@ -12,9 +12,9 @@ use axum::Router;
 use axum::http::{Method, StatusCode};
 use cadus_store::test_support::TestDb;
 use common::{
-    EXPECTED_ANSWER, LESSON, PROBLEM_ID, answer_lesson_ok, call, events_of_type, holds,
-    learner_with_kp1, lesson_app as app, lesson_learner, lesson_problem, lesson_state, parse,
-    put_state, scrape,
+    EXPECTED_ANSWER, LESSON, PROBLEM_ID, answer_lesson_ok, answer_task, app_of, call,
+    events_of_type, holds, learner_with_kp1, lesson_app as app, lesson_learner, lesson_problem,
+    lesson_state, parse, put_state, scrape, seed_learner,
 };
 use serde_json::{Value, json};
 use sqlx::types::Uuid;
@@ -127,6 +127,40 @@ async fn the_validate_refusals_are_the_pinned_literals() {
             refusal(&app, Some(user), right).await,
             (StatusCode::CONFLICT, "task_complete".to_string())
         );
+        assert_eq!(events_of_type(&db, user, "attempt").await.len(), 0);
+    })
+    .await;
+}
+
+/// The three refusals before the state read: a deployment with no curriculum
+/// is `503 curriculum_unavailable`, a learner with no open session is
+/// `409 no_open_session`, and a task id outside the plan is
+/// `404 unknown_task`.
+#[tokio::test]
+async fn the_opening_refusals_are_the_pinned_literals() {
+    TestDb::with(|db| async move {
+        let right = json!({"problem_id": PROBLEM_ID, "answer": "13.5"});
+
+        let bare = app_of(&db);
+        let user = learner_with_kp1(&db, "no-content@example.com", 5.0).await;
+        assert_eq!(
+            refusal(&bare, Some(user), right.clone()).await,
+            (
+                StatusCode::SERVICE_UNAVAILABLE,
+                "curriculum_unavailable".to_string()
+            )
+        );
+
+        let app = app(&db);
+        let idle = seed_learner(&db, "no-session@example.com").await;
+        assert_eq!(
+            refusal(&app, Some(idle), right.clone()).await,
+            (StatusCode::CONFLICT, "no_open_session".to_string())
+        );
+
+        let (status, body) = answer_task(&app, user, "s_2026-01-01a-lesson-nowhere", right).await;
+        assert_eq!(status, StatusCode::NOT_FOUND, "{body}");
+        assert_eq!(body["error"]["code"], "unknown_task");
         assert_eq!(events_of_type(&db, user, "attempt").await.len(), 0);
     })
     .await;

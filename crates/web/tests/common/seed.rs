@@ -323,6 +323,21 @@ pub async fn seed_attempt(
     seed_task_attempt(db, user, seq, LESSON, attempt_id, verdict).await;
 }
 
+/// Seed a learner whose lesson stands at `kp1` with four misses behind it, so
+/// the next miss is the fifth.
+pub async fn learner_at_the_fifth_miss(db: &TestDb, email: &str) -> Uuid {
+    let user = seed_learner(db, email).await;
+    seed_open_session(db, user).await;
+    seed_four_misses(db, user, 2).await;
+    put_state(
+        db,
+        user,
+        &lesson_state(lesson_problem(20.0, "kp1", Vec::new()), 4, false),
+    )
+    .await;
+    user
+}
+
 /// Put four wrong answers at `kp1` of the lesson into the log, at `seq`
 /// `first_seq` to `first_seq + 3`.
 pub async fn seed_four_misses(db: &TestDb, user: Uuid, first_seq: i64) {
