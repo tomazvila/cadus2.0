@@ -401,6 +401,9 @@ mod tests {
              source \"oracle\", which this build does not know"
         );
         assert!(raw("template", "not json").decode().is_err());
+        let mut bad_answer = raw("template", r#"{"v":1,"text":"t","seed":0}"#);
+        bad_answer.expected = "not json".to_string();
+        assert!(bad_answer.decode().is_err());
         assert!(
             raw("template", r#"{"v":1,"text":"t","seed":0}"#)
                 .decode()

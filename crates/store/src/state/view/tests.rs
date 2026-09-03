@@ -9,6 +9,8 @@ use cadus_core::event::{
 
 use std::collections::BTreeSet;
 
+use sqlx::types::chrono::{DateTime, Utc};
+
 use super::{SESSION_VIEW_VERSION, SessionView};
 use crate::state::EventRow;
 
@@ -297,4 +299,120 @@ fn the_view_round_trips_through_json() {
     let doc = serde_json::to_value(&view).expect("the view serializes");
     let back: SessionView = serde_json::from_value(doc).expect("the view reads back");
     assert_eq!(back, view);
+}
+
+/// The branches the sample log leaves out: a session start and end with no
+/// id, a gap return that pops the stack and one that keeps a lone base, a
+/// served task that is not a drill, a review with no task id, and a quiz
+/// under the high score that resets the streak.
+#[test]
+fn the_other_branches_of_the_fold_fold_nothing_or_reset() {
+    let mut view = SessionView::default();
+    view.apply(
+        1,
+        &Event::SessionStart(SessionStart {
+            ts: at(0),
+            session: None,
+            v: SchemaVersion,
+        }),
+    );
+    assert_eq!(view.current_session, None);
+    assert!(view.session_ids.is_empty());
+    view.apply(
+        2,
+        &Event::SessionEnd(SessionEnd {
+            ts: at(1),
+            session: None,
+            v: SchemaVersion,
+            xp_earned: 0.0,
+            minutes: 1.0,
+        }),
+    );
+    assert!(view.open_sessions.is_empty());
+
+    let enroll = |reason| {
+        Event::Enrolled(Enrolled {
+            ts: at(2),
+            session: None,
+            v: SchemaVersion,
+            course: slug("algebra-1"),
+            reason,
+            return_to: None,
+        })
+    };
+    view.apply(3, &enroll(Some(EnrollReason::GapReturn)));
+    assert!(view.enrollment_stack.is_empty());
+    view.apply(4, &enroll(None));
+    view.apply(5, &enroll(Some(EnrollReason::GapFill)));
+    view.apply(6, &enroll(Some(EnrollReason::GapReturn)));
+    assert_eq!(view.enrollment_stack, vec!["algebra-1".to_string()]);
+    view.apply(7, &enroll(Some(EnrollReason::GapReturn)));
+    assert_eq!(view.enrollment_stack, vec!["algebra-1".to_string()]);
+
+    view.apply(
+        8,
+        &Event::TaskServed(TaskServed {
+            ts: at(3),
+            session: None,
+            v: SchemaVersion,
+            task_id: "lesson".to_string(),
+            task_type: TaskType::Lesson,
+            topic: Some(slug("adding-integers")),
+            kp: None,
+            problems: Vec::new(),
+            component_topics: Vec::new(),
+            seed: None,
+        }),
+    );
+    assert!(view.last_drill_at.is_empty());
+
+    view.apply(
+        9,
+        &Event::ReviewResult(ReviewResult {
+            ts: at(4),
+            session: None,
+            v: SchemaVersion,
+            topic: slug("adding-integers"),
+            passed: true,
+            weighted_score: 1.0,
+            xp: 1.0,
+            quality_tier: WorkQuality::NearlyPerfect,
+            assisted: false,
+            task_id: None,
+        }),
+    );
+    assert!(view.closed_task_ids.is_empty());
+
+    let quiz = |score| {
+        Event::QuizResult(QuizResult {
+            ts: at(5),
+            session: None,
+            v: SchemaVersion,
+            quiz_id: "q".to_string(),
+            score,
+            per_topic: Vec::new(),
+            xp: 0.0,
+        })
+    };
+    view.apply(10, &quiz(0.95));
+    view.apply(11, &quiz(0.95));
+    assert_eq!(view.quiz_high_score_streak, 2);
+    view.apply(12, &quiz(0.5));
+    assert_eq!(view.quiz_high_score_streak, 0);
+}
+
+/// The next session id of a day takes the first unused letter, and a day
+/// that used all 26 gives `z` again.
+#[test]
+fn the_next_session_id_takes_the_first_unused_letter() {
+    let today = DateTime::<Utc>::from_timestamp(1_767_225_600, 0).expect("the instant");
+    let mut view = SessionView::default();
+    assert_eq!(view.new_session_id(today), "s_2026-01-01a");
+    view.session_ids.insert("s_2026-01-01a".to_string());
+    view.session_ids.insert("s_2026-01-01b".to_string());
+    assert_eq!(view.new_session_id(today), "s_2026-01-01c");
+    for letter in "abcdefghijklmnopqrstuvwxyz".chars() {
+        view.session_ids.insert(format!("s_2026-01-01{letter}"));
+    }
+    assert_eq!(view.new_session_id(today), "s_2026-01-01z");
 }
