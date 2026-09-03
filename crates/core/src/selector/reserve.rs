@@ -9,8 +9,8 @@ use crate::learner::TopicState;
 use crate::xp::is_mastered;
 use crate::{config::Config, curriculum::Curriculum};
 
-use super::compose::Frontier;
 use super::context::SessionContext;
+use super::frontier::Frontier;
 use super::gap_fill::is_course_complete;
 use super::interleave::SlotKind;
 use super::multistep::remediation_tasks;

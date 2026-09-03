@@ -5,108 +5,25 @@ use std::collections::{BTreeMap, BTreeSet};
 
 use crate::config::Config;
 use crate::curriculum::Curriculum;
-use crate::event::{TaskType, Timestamp};
+use crate::event::TaskType;
 use crate::fire::has_review_history;
 use crate::learner::TopicState;
 
 use super::compress::compress_with;
 use super::context::SessionContext;
+use super::frontier::Frontier;
 use super::gap_fill::is_course_complete;
-use super::interleave::{SlotKind, arrange_lessons, assign_ids, constraints_of, interleave};
+use super::interleave::{SlotKind, arrange_lessons, assign_ids, interleave};
 use super::multistep::{multistep_components, multistep_is_due, multistep_task, remediation_tasks};
 use super::quiz::{QuizSampler, quiz_composer, quiz_is_due};
 use super::reserve::reserve_open_plan;
-use super::review::{
-    due_reviews, in_retry_delay, nearly_due, order_lessons_with, retry_available_at,
-};
+use super::review::{due_reviews, nearly_due, order_lessons_with};
 use super::task::{
     SessionPlan, Task, drill_task, knockout_count, lesson_task, quiz_task, review_task,
     schedule_drills,
 };
-use super::topic_set::{ReachCache, TopicSet, course_scope, frontier, mastered_set};
+use super::topic_set::ReachCache;
 use super::{MULTISTEP_ENABLED, MULTISTEP_MIN_COMPONENTS};
-
-/// The frontier of the course scope, split by the lesson-fail retry delay.
-pub(super) struct Frontier {
-    /// The mastered set the frontier came from.
-    pub(super) mastered: TopicSet,
-    /// The topics of the course scope.
-    pub(super) course_topics: TopicSet,
-    /// The frontier inside the course scope, before the gap-fill chain filter.
-    pub(super) topics: TopicSet,
-    /// The frontier lessons the plan serves, sorted: inside the chain and not
-    /// in a retry delay.
-    pub(super) available: Vec<String>,
-    /// When the first retry-delayed lesson reopens, while no lesson is available.
-    pub(super) blocked_until: Option<i64>,
-}
-
-impl Frontier {
-    /// The frontier of `course_id`, restricted to `chain` when one is given.
-    pub(super) fn new(
-        states: &BTreeMap<String, TopicState>,
-        graph: &Curriculum,
-        cfg: &Config,
-        t_us: i64,
-        course_id: Option<&str>,
-        chain: Option<&BTreeSet<String>>,
-    ) -> Self {
-        let default = TopicState::default();
-        let mastered = mastered_set(states, graph);
-        let course_topics = course_scope(graph, course_id);
-        let topics = frontier(graph, &mastered).intersect(&course_topics);
-        let mut ids: Vec<String> = topics
-            .sorted_ids(graph)
-            .into_iter()
-            .map(ToOwned::to_owned)
-            .collect();
-        if let Some(chain) = chain {
-            ids.retain(|tid| chain.contains(tid));
-        }
-        let (blocked, available): (Vec<String>, Vec<String>) = ids
-            .into_iter()
-            .partition(|tid| in_retry_delay(states.get(tid).unwrap_or(&default), cfg, t_us));
-        // A blocked frontier is one with lessons and none available. With no
-        // lesson at all `blocked` is empty and the minimum is `None` as well.
-        let blocked_until = if available.is_empty() {
-            blocked
-                .iter()
-                .filter_map(|tid| states.get(tid))
-                .filter_map(|state| retry_available_at(state, cfg))
-                .min()
-        } else {
-            None
-        };
-        Self {
-            mastered,
-            course_topics,
-            topics,
-            available,
-            blocked_until,
-        }
-    }
-
-    /// The plan of `tasks` over this frontier, with the constraint report of
-    /// the interleaved `seq`.
-    pub(super) fn plan(
-        &self,
-        session: &str,
-        tasks: Vec<Task>,
-        quiz_due: bool,
-        course_complete: bool,
-        seq: &[(SlotKind, String)],
-        cfg: &Config,
-    ) -> SessionPlan {
-        SessionPlan {
-            session: session.to_owned(),
-            tasks,
-            quiz_due,
-            constraints: constraints_of(seq, !self.available.is_empty(), cfg),
-            course_complete,
-            frontier_blocked_until: self.blocked_until.map(Timestamp::from_micros),
-        }
-    }
-}
 
 /// The review side of one composition: the due list, the compression, and the
 /// interleaving inputs.
@@ -375,7 +292,9 @@ mod tests {
     fn tree() -> Curriculum {
         let mut plain = topic("lesson", &[("root", 0.3, false)]);
         plain.core = false;
-        let mut topics = vec![topic("root", &[])];
+        let mut drill = topic("drill", &[]);
+        drill.drill = true;
+        let mut topics = vec![topic("root", &[]), drill];
         topics.extend((0..8).map(|index| topic(&format!("r{index}"), &[("root", 0.3, false)])));
         topics.push(topic("knocker", &[("r2", 0.9, true)]));
         topics.push(plain);
@@ -457,17 +376,30 @@ mod tests {
     fn too_few_due_reviews_owe_no_multistep_task_and_a_delay_blocks_the_frontier() {
         let cfg = Config::default();
         let tree = tree();
-        // Five reviewable topics owe one task, but only two are due.
+        // Five reviewable topics owe one task, but only two are due. The quiz
+        // ran today, so none is due, and the fresh drill topic gets its drill.
         let mut few = states();
         for index in 2..8 {
             few.insert(format!("r{index}"), learned(0.9));
         }
-        let ctx = SessionContext::default();
+        few.insert("drill".to_owned(), learned(0.9));
+        let quiet = crate::learner::QuizState {
+            last_at: crate::selector::utc_date(T_US),
+            xp_since: 0,
+            retake_pending: false,
+        };
+        let ctx = SessionContext::default().with_quiz_state(Some(&quiet));
         let plan = compose_session(&few, &tree, &cfg, T_US, &mut SeededSampler::new(1), &ctx);
+        assert!(!plan.quiz_due);
         assert!(
             plan.tasks
                 .iter()
                 .all(|task| task.task_type != TaskType::MultiStep)
+        );
+        assert!(
+            plan.tasks
+                .iter()
+                .any(|task| task.task_type == TaskType::Drill)
         );
         // The one frontier lesson failed half a day ago: no lesson is available,
         // and the frontier reopens one retry delay after the failure.
@@ -503,7 +435,7 @@ mod tests {
                 .all(|task| task.task_type == TaskType::Lesson)
         );
         let front = Frontier::new(&none, &tree, &cfg, T_US, Some("c"), None);
-        assert_eq!(front.available, ["root"]);
+        assert_eq!(front.available, ["drill", "root"]);
         assert_eq!(front.blocked_until, None);
     }
 

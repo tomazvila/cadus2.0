@@ -29,6 +29,7 @@
 mod compose;
 mod compress;
 mod context;
+mod frontier;
 mod gap_fill;
 mod interleave;
 mod multistep;
