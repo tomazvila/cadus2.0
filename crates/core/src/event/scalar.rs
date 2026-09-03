@@ -215,6 +215,12 @@ impl Secs {
         }
         Ok(Self(value))
     }
+
+    /// The duration in whole seconds.
+    #[must_use]
+    pub const fn get(self) -> i64 {
+        self.0
+    }
 }
 
 checked_deserialize!(Secs, i64, Secs::new);
@@ -289,7 +295,8 @@ mod tests {
         assert_eq!(slug.to_string(), "a");
         assert_eq!(slug.as_ref(), "a");
         assert!(Slug::new(" ").is_err());
-        assert!(Secs::new(-1).is_err() && Secs::new(0).is_ok());
+        assert!(Secs::new(-1).is_err());
+        assert_eq!(Secs::new(7).expect("in range").get(), 7);
         assert!(PositiveSecs::new(0).is_err() && PositiveSecs::new(1).is_ok());
         assert!(Weight::new(1.5).is_err());
         assert_eq!(Weight::new(0.5).expect("in range").get(), 0.5);
