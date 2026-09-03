@@ -8,10 +8,12 @@
 
 pub mod auth;
 pub mod bench;
+pub mod content;
 pub mod events;
 pub mod fault;
 pub mod long_log;
 pub mod migrate;
+pub mod rls;
 pub mod state;
 
 use cadus_core::pool::{Avoid, PoolAnswer, PoolProblem, Ring, Source, TaskMemory};
