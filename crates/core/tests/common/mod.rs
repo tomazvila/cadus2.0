@@ -6,7 +6,7 @@
 //! [`RawCurriculum`], so the tests stay in one file and read no fixture tree.
 
 #![allow(dead_code)]
-#![allow(clippy::unwrap_used)]
+#![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
 
 use chrono::NaiveDate;
 use chrono_tz::Tz;
