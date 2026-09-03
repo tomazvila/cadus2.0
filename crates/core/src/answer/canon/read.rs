@@ -267,7 +267,7 @@ impl Work {
         let denominator = value.denom().clone();
         let radicand = value.numer() * &denominator;
         self.bounded_int(&radicand)?;
-        let root = self.root_of_integer(&radicand, arguments)?;
+        let root = self.root_of_integer(&radicand)?;
         if denominator.is_one() {
             return Ok(root);
         }
@@ -276,18 +276,8 @@ impl Work {
         self.multiply(&root, &scale)
     }
 
-    /// Reduce `sqrt(n)` for a whole number `n` into `outside * sqrt(radicand)`.
-    fn root_of_integer(
-        &mut self,
-        value: &BigInt,
-        arguments: Vec<Canon>,
-    ) -> Result<Canon, Undecidable> {
-        if value.is_negative() {
-            return Ok(atom_value(Atom::Call("sqrt".to_string(), arguments)));
-        }
-        if value.is_zero() {
-            return Ok(Canon::Rational(BigRational::zero()));
-        }
+    /// Reduce `sqrt(n)` for a positive whole number `n` into `outside * sqrt(radicand)`.
+    fn root_of_integer(&mut self, value: &BigInt) -> Result<Canon, Undecidable> {
         self.spend(1)?;
         let (outside, radicand) = extract_square(value)?;
         let mut monomial = Monomial::new();

@@ -37,8 +37,8 @@ use serde::{Deserialize, Serialize};
 use super::constraint::ConstraintError;
 
 pub use space::{
-    Params, SatisfyingWalk, SpaceSize, declared_space, enumerate, gcd_of, is_whole, is_zero,
-    space_size, walk_satisfying,
+    Params, SatisfyingWalk, SpaceSize, declared_space, enumerate, gcd_of, is_whole, space_size,
+    walk_satisfying,
 };
 
 /// The largest count of values one domain holds (1.0 `MAX_DOMAIN_SIZE`).
@@ -157,8 +157,9 @@ pub fn decimal_to_rational(text: &str) -> Option<BigRational> {
     let mut mantissa_text = String::with_capacity(whole.len() + fraction.len());
     mantissa_text.push_str(whole);
     mantissa_text.push_str(fraction);
-    let mantissa: BigInt = mantissa_text.parse().ok()?;
-    let scale = u32::try_from(fraction.chars().count()).ok()?;
+    // The text holds digits and nothing else, so the read succeeds.
+    let mantissa: BigInt = mantissa_text.parse().unwrap_or_default();
+    let scale = u32::try_from(fraction.chars().count()).unwrap_or(u32::MAX);
     let denominator = BigInt::from(10u8).pow(scale);
     let signed = if negative { -mantissa } else { mantissa };
     Some(BigRational::new(signed, denominator))

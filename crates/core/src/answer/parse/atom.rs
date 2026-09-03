@@ -28,9 +28,9 @@ impl Parser<'_> {
     /// `exp(t)`, which the grammar holds exactly. Every other base takes an integer
     /// exponent, because `Ast::Pow` carries an integer and nothing else (D6).
     fn parse_power(&mut self) -> Result<Ast, Undecidable> {
-        if let Some(letters) = self.peek_letter_run() {
+        if let Some((leading, last)) = self.peek_letter_run() {
             self.bump();
-            return self.finish_letter_run(&letters);
+            return self.finish_letter_run(&leading, last);
         }
         let base = self.parse_atom()?;
         let base = self.apply_percent(base)?;
@@ -60,7 +60,7 @@ impl Parser<'_> {
     }
 
     /// Read the letters of a splittable run at the cursor.
-    fn peek_letter_run(&self) -> Option<Vec<char>> {
+    fn peek_letter_run(&self) -> Option<(Vec<char>, char)> {
         let Some(Tok::Ident(name)) = self.peek() else {
             return None;
         };
@@ -70,12 +70,7 @@ impl Parser<'_> {
     /// Build the product of a split letter run. The power binds to the last letter.
     ///
     /// `3xy^2` is `3*x*y**2`, so the exponent belongs to `y` alone.
-    fn finish_letter_run(&mut self, letters: &[char]) -> Result<Ast, Undecidable> {
-        let Some((last, leading)) = letters.split_last() else {
-            return Err(Undecidable::new(
-                "a name that is not a function or variable",
-            ));
-        };
+    fn finish_letter_run(&mut self, leading: &[char], last: char) -> Result<Ast, Undecidable> {
         let mut factors: Vec<Ast> = leading
             .iter()
             .map(|letter| Ast::Var(letter.to_string()))
@@ -149,7 +144,7 @@ impl Parser<'_> {
                 Tok::Num(text) => {
                     let text = text.clone();
                     parser.bump();
-                    parse_number(&text)
+                    Ok(parse_number(&text))
                 }
                 Tok::Frac {
                     numerator,
@@ -206,7 +201,7 @@ impl Parser<'_> {
             Tok::Num(text) => {
                 let text = text.clone();
                 self.bump();
-                parse_number(&text)?
+                parse_number(&text)
             }
             Tok::Frac {
                 numerator,
@@ -221,9 +216,10 @@ impl Parser<'_> {
                 let name = name.clone();
                 self.bump();
                 match letter_run(&name, self.extra) {
-                    Some(letters) => collapse(
-                        letters
+                    Some((leading, last)) => collapse(
+                        leading
                             .iter()
+                            .chain(std::iter::once(&last))
                             .map(|letter| Ast::Var(letter.to_string()))
                             .collect(),
                         Ast::Mul,
@@ -320,8 +316,10 @@ impl Parser<'_> {
                 if !parser.starts_operand() {
                     break;
                 }
-                if matches!(parser.peek(), Some(Tok::Num(_))) {
-                    parser.check_implicit_number(factors.last())?;
+                if let Some(token) = parser.tokens.get(parser.at)
+                    && matches!(token.kind, Tok::Num(_))
+                {
+                    parser.check_implicit_number(factors.last(), token)?;
                 }
                 factors.push(parser.parse_power()?);
             }
@@ -359,24 +357,26 @@ impl Parser<'_> {
     }
 
     /// Parse `( … )`: a group, an ordered tuple, or the open end of an interval.
+    ///
+    /// The caller saw the opening bracket at the cursor.
     fn parse_paren_group(&mut self) -> Result<Ast, Undecidable> {
-        self.expect(&Tok::LParen, "a group with no opening bracket")?;
+        self.bump();
         let mut items = self.parse_comma_list()?;
         if self.eat(&Tok::RBrack) {
             return make_interval(items, false, true);
         }
         self.expect(&Tok::RParen, "a group with no closing bracket")?;
-        match items.len() {
-            1 => items
-                .pop()
-                .ok_or_else(|| Undecidable::new("an empty group")),
-            _ => Ok(Ast::Tuple(items)),
+        if items.len() == 1 {
+            return Ok(items.swap_remove(0));
         }
+        Ok(Ast::Tuple(items))
     }
 
     /// Parse `[ … ]`: an ordered list, or the closed end of an interval.
+    ///
+    /// The caller saw the opening bracket at the cursor.
     fn parse_bracket_group(&mut self) -> Result<Ast, Undecidable> {
-        self.expect(&Tok::LBrack, "a list with no opening bracket")?;
+        self.bump();
         let items = self.parse_comma_list()?;
         if self.eat(&Tok::RParen) {
             return make_interval(items, true, false);

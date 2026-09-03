@@ -1,7 +1,9 @@
 //! Rows 24 to 28 of the gate, the canonical round trip, and the hint rule: the
 //! rules that read one instance.
 
-use std::collections::{BTreeMap, BTreeSet};
+use std::collections::BTreeSet;
+
+use indexmap::IndexMap;
 
 use num_traits::{One, Signed};
 
@@ -40,8 +42,7 @@ pub(super) fn check_instances(
     walk: &Walk,
 ) -> Result<(), Rejection> {
     let envelope = exemplar_envelope(spec.exemplars);
-    let mut order: Vec<String> = Vec::new();
-    let mut statements: BTreeMap<String, Statement> = BTreeMap::new();
+    let mut statements: IndexMap<String, Statement> = IndexMap::new();
     for bindings in &walk.tuples {
         let instance = instantiate(compiled, bindings)?;
         check_one_instance(doc, spec, envelope.as_ref(), &instance)?;
@@ -51,7 +52,6 @@ pub(super) fn check_instances(
                 statement.answers.insert(instance.canon);
             }
             None => {
-                order.push(instance.instance_hash.clone());
                 let mut answers = BTreeSet::new();
                 answers.insert(instance.canon);
                 statements.insert(
@@ -65,7 +65,7 @@ pub(super) fn check_instances(
             }
         }
     }
-    check_one_answer_per_statement(&order, &statements)
+    check_one_answer_per_statement(&statements)
 }
 
 /// Two tuples that render ONE statement must compute ONE answer (C4).
@@ -88,13 +88,9 @@ pub(super) fn check_instances(
 /// says nothing about a collision the sample missed; `TemplateSource::fill`
 /// refuses that one per batch.
 fn check_one_answer_per_statement(
-    order: &[String],
-    statements: &BTreeMap<String, Statement>,
+    statements: &IndexMap<String, Statement>,
 ) -> Result<(), Rejection> {
-    for digest in order {
-        let Some(statement) = statements.get(digest) else {
-            continue;
-        };
+    for statement in statements.values() {
         if statement.answers.len() > 1 {
             let count = statement.tuples;
             return Err(Rejection::new(
@@ -314,10 +310,13 @@ fn check_hints(doc: &TemplateDoc, instance: &Instance) -> Result<(), Rejection> 
     if contains_token(&instance.text, &instance.answer) {
         return Ok(());
     }
-    for (index, hint) in doc.hints.iter().enumerate() {
-        let Ok(rendered) = render(hint, &instance.bindings) else {
-            continue;
-        };
+    // Every rung passed the rendered-field rules, so every rung renders.
+    let rungs = doc.hints.iter().enumerate().filter_map(|(index, hint)| {
+        render(hint, &instance.bindings)
+            .ok()
+            .map(|text| (index, text))
+    });
+    for (index, rendered) in rungs {
         if contains_token(&rendered, &instance.answer) {
             return Err(Rejection::new(
                 "hint-answer",

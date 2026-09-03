@@ -65,12 +65,10 @@ pub(super) fn identifier_tokens(text: &str) -> BTreeSet<String> {
 /// because the point carries the decimal.
 pub(crate) fn contains_token(text: &str, token: &str) -> bool {
     let needle: Vec<char> = token.chars().collect();
-    if needle.is_empty() {
-        return false;
-    }
     let characters: Vec<char> = text.chars().collect();
+    // An empty token stands nowhere: a window of one character never equals it.
     characters
-        .windows(needle.len())
+        .windows(needle.len().max(1))
         .enumerate()
         .any(|(start, window)| {
             window == needle.as_slice() && stands_free(&characters, start, needle.len())

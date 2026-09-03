@@ -103,22 +103,16 @@ pub(super) fn check_params(
 
 /// The values of one domain, or the rejection its shape earns.
 fn domain_values(name: &str, domain: &Domain) -> Result<Vec<Value>, Rejection> {
-    if let Domain::Choice { values } = domain {
-        if values.is_empty() {
-            return Err(Rejection::new(
-                "choice-domain",
-                "a choice domain needs a non-empty 'values' list".to_string(),
-            ));
-        }
-        if values.len() > MAX_CHOICES {
-            return Err(Rejection::new(
-                "choice-domain",
-                format!(
-                    "a choice domain of {} exceeds MAX_CHOICES ({MAX_CHOICES}); every choice must appear in a worked sample, so use an int domain or split the template",
-                    values.len()
-                ),
-            ));
-        }
+    if let Domain::Choice { values } = domain
+        && values.len() > MAX_CHOICES
+    {
+        return Err(Rejection::new(
+            "choice-domain",
+            format!(
+                "a choice domain of {} exceeds MAX_CHOICES ({MAX_CHOICES}); every choice must appear in a worked sample, so use an int domain or split the template",
+                values.len()
+            ),
+        ));
     }
     domain.values(name).map_err(|_| domain_rejection(domain))
 }
@@ -135,12 +129,11 @@ fn domain_rejection(domain: &Domain) -> Rejection {
                 format!("int domain {low}..{high} exceeds MAX_DOMAIN_SIZE"),
             )
         }
-        Domain::Choice { values } => Rejection::new(
+        // The walk refuses a choice list for one reason only: it is empty. A
+        // list past MAX_CHOICES never reaches the walk.
+        Domain::Choice { .. } => Rejection::new(
             "choice-domain",
-            format!(
-                "a choice domain of {} exceeds MAX_CHOICES ({MAX_CHOICES}); every choice must appear in a worked sample, so use an int domain or split the template",
-                values.len()
-            ),
+            "a choice domain needs a non-empty 'values' list".to_string(),
         ),
         Domain::Rational { num, den } => {
             if den.low <= 0 && den.high >= 0 {

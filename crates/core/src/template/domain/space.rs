@@ -5,7 +5,7 @@ use std::collections::{BTreeMap, BTreeSet};
 use num_bigint::BigInt;
 use num_integer::Integer;
 use num_rational::BigRational;
-use num_traits::{One, Signed, Zero};
+use num_traits::One;
 use serde::{Deserialize, Serialize};
 
 use super::{Bindings, Domain, DomainError, EXHAUSTIVE_SPACE_LIMIT};
@@ -142,10 +142,14 @@ pub fn walk_satisfying(
     params: &Params,
     constraints: &[Constraint],
 ) -> Result<SatisfyingWalk, DomainError> {
-    let declared = declared_space(params)?;
-    if declared <= EXHAUSTIVE_SPACE_LIMIT {
+    let every_tuple = match enumerate(params, EXHAUSTIVE_SPACE_LIMIT) {
+        Ok(tuples) => Some(tuples),
+        Err(DomainError::TooLarge { .. }) => None,
+        Err(other) => return Err(other),
+    };
+    if let Some(every_tuple) = every_tuple {
         let mut tuples: Vec<Bindings> = Vec::new();
-        for tuple in enumerate(params, EXHAUSTIVE_SPACE_LIMIT)? {
+        for tuple in every_tuple {
             if all_hold(constraints, &tuple)? {
                 tuples.push(tuple);
             }
@@ -206,21 +210,14 @@ pub fn space_size(params: &Params, constraints: &[Constraint]) -> Result<SpaceSi
     Ok(walk_satisfying(params, constraints)?.space)
 }
 
-/// The greatest common divisor of two whole numbers, as a non-negative number.
+/// The greatest common divisor of two whole numbers. `BigInt::gcd` is never negative.
 #[must_use]
 pub fn gcd_of(left: &BigInt, right: &BigInt) -> BigInt {
-    let gcd = left.gcd(right);
-    if gcd.is_negative() { -gcd } else { gcd }
+    left.gcd(right)
 }
 
 /// Whether the rational is a whole number.
 #[must_use]
 pub fn is_whole(number: &BigRational) -> bool {
     number.denom().is_one()
-}
-
-/// Whether the rational is zero.
-#[must_use]
-pub fn is_zero(number: &BigRational) -> bool {
-    number.numer().is_zero()
 }

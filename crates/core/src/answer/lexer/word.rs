@@ -17,10 +17,8 @@ pub(super) fn raises_a_superscript(previous: Option<&Token>) -> bool {
 /// Read a number literal at `at` and return its text and the index after it.
 pub(super) fn read_number(chars: &[char], at: usize) -> Result<(String, usize), Undecidable> {
     let mut index = at;
-    let mut digits = 0_usize;
     while matches!(chars.get(index), Some(c) if c.is_ascii_digit()) {
         index += 1;
-        digits += 1;
     }
     let mut fraction_digits = 0_usize;
     if chars.get(index) == Some(&'.') {
@@ -32,9 +30,6 @@ pub(super) fn read_number(chars: &[char], at: usize) -> Result<(String, usize), 
         if fraction_digits == 0 {
             return Err(Undecidable::new("a point with no digit after it"));
         }
-    }
-    if digits == 0 && fraction_digits == 0 {
-        return Err(Undecidable::new("a point that starts no number"));
     }
     if chars.get(index) == Some(&'.') {
         return Err(Undecidable::new("a number with two points"));
@@ -50,7 +45,7 @@ pub(super) fn read_frac(chars: &[char], at: usize) -> Option<(&[char], &[char], 
         return None;
     }
     let close = matching_delimiter(chars, after_first, '{', '}')?;
-    let denominator = chars.get(after_first + 1..close)?;
+    let denominator = &chars[after_first + 1..close];
     Some((numerator, denominator, close + 1))
 }
 
@@ -67,7 +62,7 @@ pub(super) fn read_braced_after<'a>(
         return None;
     }
     let close = matching_delimiter(chars, after_keyword, '{', '}')?;
-    Some((chars.get(after_keyword + 1..close)?, close + 1))
+    Some((&chars[after_keyword + 1..close], close + 1))
 }
 
 /// Match the characters of `literal` at `at` and return the index after them.
@@ -83,21 +78,21 @@ pub(super) fn match_literal(chars: &[char], at: usize, literal: &str) -> Option<
 }
 
 /// Find the delimiter that closes the `open` at `at`. Nesting is counted.
+///
+/// The caller found `open` at `at`, so the walk starts one level deep and the
+/// depth never goes below zero.
 pub(super) fn matching_delimiter(
     chars: &[char],
     at: usize,
     open: char,
     close: char,
 ) -> Option<usize> {
-    if chars.get(at) != Some(&open) {
-        return None;
-    }
     let mut depth = 0_usize;
-    for (offset, c) in chars.get(at..)?.iter().enumerate() {
+    for (offset, c) in chars[at..].iter().enumerate() {
         if *c == open {
             depth += 1;
         } else if *c == close {
-            depth = depth.checked_sub(1)?;
+            depth -= 1;
             if depth == 0 {
                 return Some(at + offset);
             }

@@ -86,12 +86,9 @@ pub(super) fn bound_terms(sum: &Poly) -> Result<(), Undecidable> {
     Ok(())
 }
 
-/// Build the reciprocal of a rational, or refuse zero.
-pub(super) fn reciprocal_of(value: &BigRational) -> Result<BigRational, Undecidable> {
-    if value.is_zero() {
-        return Err(Undecidable::new("a division by zero"));
-    }
-    Ok(value.recip())
+/// Build the reciprocal of a non-zero rational.
+pub(super) fn reciprocal_of(value: &BigRational) -> BigRational {
+    value.recip()
 }
 
 /// Split a positive integer into `outside^2 * radicand` with a squarefree radicand.
@@ -116,7 +113,7 @@ pub(super) fn extract_square(value: &BigInt) -> Result<(BigInt, BigInt), Undecid
             exhausted = true;
             break;
         }
-        split.divide_out(divisor)?;
+        split.divide_out(divisor);
         divisor += 1;
     }
     split.finish(exhausted)?;
@@ -135,24 +132,19 @@ struct SquareSplit {
 
 impl SquareSplit {
     /// Divide one candidate out of the remainder, and move its squares outside.
-    fn divide_out(&mut self, divisor: u128) -> Result<(), Undecidable> {
+    ///
+    /// The three parts multiply to the value at every step, and the value fits
+    /// a `u128`, so no product here overflows.
+    fn divide_out(&mut self, divisor: u128) {
         let mut multiplicity: u32 = 0;
         while self.remainder.is_multiple_of(divisor) {
             self.remainder /= divisor;
             multiplicity += 1;
         }
-        if multiplicity == 0 {
-            return Ok(());
-        }
-        self.outside = checked(
-            divisor
-                .checked_pow(multiplicity / 2)
-                .and_then(|square| self.outside.checked_mul(square)),
-        )?;
+        self.outside *= divisor.pow(multiplicity / 2);
         if multiplicity % 2 == 1 {
-            self.radicand = checked(self.radicand.checked_mul(divisor))?;
+            self.radicand *= divisor;
         }
-        Ok(())
     }
 
     /// Place the remainder of trial division under the root, or outside it as a square.
@@ -161,14 +153,14 @@ impl SquareSplit {
             return Ok(());
         }
         if exhausted || self.remainder < SQUAREFREE_CERTAIN {
-            self.radicand = checked(self.radicand.checked_mul(self.remainder))?;
+            self.radicand *= self.remainder;
             return Ok(());
         }
         let root = self.remainder.isqrt();
-        if root.saturating_mul(root) != self.remainder {
+        if root * root != self.remainder {
             return Err(Undecidable::new("a radicand past the factoring bound"));
         }
-        self.outside = checked(self.outside.checked_mul(root))?;
+        self.outside *= root;
         Ok(())
     }
 }
@@ -181,11 +173,6 @@ fn wide_square(value: &BigInt) -> Result<(BigInt, BigInt), Undecidable> {
     } else {
         Err(Undecidable::new("a radicand past the factoring bound"))
     }
-}
-
-/// Turn an overflowed unsigned product into a refusal.
-fn checked(value: Option<u128>) -> Result<u128, Undecidable> {
-    value.ok_or_else(|| Undecidable::new("a radicand past the factoring bound"))
 }
 
 /// Demote a quotient to the narrowest canonical variant that holds it.
@@ -205,11 +192,8 @@ pub(super) fn from_frac(quotient: Frac) -> Canon {
     }
 }
 
-/// Demote a sum of terms to the narrowest canonical variant that holds it.
+/// Demote a non-empty sum of terms to the narrowest canonical variant that holds it.
 pub(super) fn from_sum(sum: Poly) -> Canon {
-    if sum.is_empty() {
-        return Canon::Rational(BigRational::zero());
-    }
     if let Some((monomial, coefficient)) = single_term(&sum) {
         if monomial.is_empty() {
             return Canon::Rational(coefficient.clone());
@@ -247,9 +231,7 @@ fn as_radical(sum: &Poly) -> Option<BTreeMap<Basis, BigRational>> {
                 _ => return None,
             }
         }
-        if parts.insert(basis, coefficient.clone()).is_some() {
-            return None;
-        }
+        parts.insert(basis, coefficient.clone());
     }
     Some(parts)
 }

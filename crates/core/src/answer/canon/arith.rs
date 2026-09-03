@@ -123,9 +123,6 @@ impl Work {
 
     /// Raise one sum to a power of one or more.
     fn poly_pow(&mut self, base: &Poly, exponent: i64) -> Result<Poly, Undecidable> {
-        if exponent <= 0 {
-            return Ok(one_poly());
-        }
         if let Some((monomial, coefficient)) = one_term(base) {
             self.spend(monomial.len().saturating_add(1))?;
             let (monomial, coefficient) = self.power_of_term(&monomial, &coefficient, exponent)?;
@@ -147,16 +144,13 @@ impl Work {
         Ok(result)
     }
 
-    /// Add one term into a sum, and drop a term whose coefficient cancels to zero.
+    /// Add one non-zero term into a sum, and drop a term whose coefficient cancels to zero.
     pub(super) fn insert_term(
         &mut self,
         sum: &mut Poly,
         monomial: Monomial,
         coefficient: BigRational,
     ) -> Result<(), Undecidable> {
-        if coefficient.is_zero() {
-            return Ok(());
-        }
         let total = match sum.get(&monomial) {
             Some(present) => present.clone() + coefficient,
             None => coefficient,
@@ -219,9 +213,6 @@ impl Work {
         atom: &Atom,
         exponent: i64,
     ) -> Result<(), Undecidable> {
-        if exponent == 0 {
-            return Ok(());
-        }
         if let Atom::Exp(inner) = atom {
             let inner = inner.as_ref().clone();
             return self.add_exp(monomial, &inner, exponent);
@@ -271,9 +262,6 @@ impl Work {
         inner: &Canon,
         exponent: i64,
     ) -> Result<(), Undecidable> {
-        if exponent == 0 {
-            return Ok(());
-        }
         let scaled = if exponent == 1 {
             inner.clone()
         } else {
@@ -323,17 +311,10 @@ impl Work {
         Ok(())
     }
 
-    /// Raise an integer to an integer power, as an exact rational.
+    /// Raise a non-zero integer to an integer power, as an exact rational.
     fn int_power(&mut self, base: &BigInt, exponent: i64) -> Result<BigRational, Undecidable> {
         if exponent == 0 {
             return Ok(BigRational::one());
-        }
-        if base.is_zero() {
-            return if exponent > 0 {
-                Ok(BigRational::zero())
-            } else {
-                Err(Undecidable::new("a division by zero"))
-            };
         }
         let magnitude = exponent
             .checked_abs()
@@ -351,19 +332,12 @@ impl Work {
         self.bounded(value)
     }
 
-    /// Raise a rational to an integer power, as an exact rational.
+    /// Raise a non-zero rational to an integer power, as an exact rational.
     fn rational_power(
         &mut self,
         value: &BigRational,
         exponent: i64,
     ) -> Result<BigRational, Undecidable> {
-        if value.is_zero() {
-            return if exponent > 0 {
-                Ok(BigRational::zero())
-            } else {
-                Err(Undecidable::new("a division by zero"))
-            };
-        }
         let numerator = self.int_power(value.numer(), exponent)?;
         let denominator = self.int_power(value.denom(), exponent)?;
         self.bounded(numerator / denominator)

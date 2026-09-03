@@ -301,7 +301,7 @@ pub fn gate(doc: &TemplateDoc, spec: &GateSpec) -> Result<Verified, Rejection> {
     let values = check_params(doc, spec)?;
     check_constraint_shape(doc, &values)?;
     check_rendered_fields(doc)?;
-    let compiled = compile(doc)?;
+    let compiled = compile(doc, &values)?;
     check_dead_parameters(doc, compiled.answer_ast())?;
     check_answer_names(doc, compiled.answer_ast(), spec)?;
     let walk = build_walk(doc)?;

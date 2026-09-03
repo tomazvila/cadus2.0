@@ -210,6 +210,19 @@ impl<'doc> Compiled<'doc> {
         })
     }
 
+    /// Build from a parsed answer expression and a materialized plan.
+    ///
+    /// The gate validated the domains already, so it builds the plan from the
+    /// value lists it holds and skips a second read of the document.
+    #[must_use]
+    pub const fn from_parts(doc: &'doc TemplateDoc, answer_ast: Ast, plan: DrawPlan) -> Self {
+        Self {
+            doc,
+            answer_ast,
+            plan,
+        }
+    }
+
     /// The document this was compiled from.
     #[must_use]
     pub const fn doc(&self) -> &'doc TemplateDoc {

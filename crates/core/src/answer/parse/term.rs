@@ -7,7 +7,7 @@ use super::build::{
 use super::{FractionPart, Parser};
 use crate::answer::Undecidable;
 use crate::answer::ast::Ast;
-use crate::answer::lexer::Tok;
+use crate::answer::lexer::{Tok, Token};
 
 impl Parser<'_> {
     /// Parse a sum: `term (('+' | '-') term)*`.
@@ -51,8 +51,10 @@ impl Parser<'_> {
                     continue;
                 }
                 if parser.starts_operand() {
-                    if matches!(parser.peek(), Some(Tok::Num(_))) {
-                        parser.check_implicit_number(factors.last())?;
+                    if let Some(token) = parser.tokens.get(parser.at)
+                        && matches!(token.kind, Tok::Num(_))
+                    {
+                        parser.check_implicit_number(factors.last(), token)?;
                     }
                     factors.push(parser.parse_unary()?);
                     continue;
@@ -63,7 +65,7 @@ impl Parser<'_> {
         })
     }
 
-    /// Refuse a number that follows an operand where it reads as a label, not a product.
+    /// Refuse the number `token` at the cursor where it reads as a label, not a product.
     ///
     /// Three rules, and all of them come from how a learner writes:
     ///
@@ -76,19 +78,22 @@ impl Parser<'_> {
     ///   and nowhere else (the V4 table). After a factor, the second group of
     ///   `x/1 000` is not the factor 0, so the answer is undecidable (review
     ///   round 2, finding #11).
-    pub(super) fn check_implicit_number(&self, previous: Option<&Ast>) -> Result<(), Undecidable> {
+    pub(super) fn check_implicit_number(
+        &self,
+        previous: Option<&Ast>,
+        token: &Token,
+    ) -> Result<(), Undecidable> {
         if previous.is_some_and(is_numeric_literal) {
             return Err(Undecidable::new("two numbers stand side by side"));
         }
-        let Some(token) = self.tokens.get(self.at) else {
-            return Err(Undecidable::new("the answer ends where a value belongs"));
-        };
         if !token.space_before {
             return Err(Undecidable::new(
                 "a number glued to a name reads as a label",
             ));
         }
-        if self.continues_a_space_group(&token.kind) {
+        if let Tok::Num(text) = &token.kind
+            && self.continues_a_space_group(text)
+        {
             return Err(Undecidable::new(
                 "a space-grouped number stands after a factor",
             ));
@@ -112,10 +117,7 @@ impl Parser<'_> {
     ///
     /// `x 100` holds no group, because no number stands in front of the run, so
     /// it keeps the product reading that 1.0 gives it.
-    fn continues_a_space_group(&self, kind: &Tok) -> bool {
-        let Tok::Num(text) = kind else {
-            return false;
-        };
+    fn continues_a_space_group(&self, text: &str) -> bool {
         if !text.chars().all(|c| c.is_ascii_digit()) {
             return false;
         }

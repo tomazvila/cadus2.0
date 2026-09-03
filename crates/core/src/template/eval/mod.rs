@@ -261,7 +261,7 @@ pub fn evaluate(ast: &Ast, bindings: &Bindings) -> Result<Ast, EvalError> {
 /// [`EvalError::NotCanonical`] when the written answer leaves the M2 grammar.
 pub fn answer(ast: &Ast, bindings: &Bindings) -> Result<Answer, EvalError> {
     let value = evaluate(ast, bindings)?;
-    let text = write(&value)?;
+    let text = write::write_tree(&value);
     match canonical_form(&text) {
         Ok(canon) => Ok(Answer { text, canon }),
         Err(reason) => Err(EvalError::NotCanonical { text, reason }),

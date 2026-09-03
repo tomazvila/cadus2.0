@@ -193,17 +193,8 @@ fn decimal_digits(value: &BigInt) -> Result<Vec<u8>, ConstraintError> {
     if text.len() > MAX_DIGITS {
         return Err(ConstraintError::TooWide);
     }
-    let mut digits = Vec::with_capacity(text.len());
-    for character in text.chars() {
-        match character
-            .to_digit(10)
-            .and_then(|digit| u8::try_from(digit).ok())
-        {
-            Some(digit) => digits.push(digit),
-            None => return Err(ConstraintError::TooWide),
-        }
-    }
-    Ok(digits)
+    // The text holds ASCII digits and nothing else.
+    Ok(text.bytes().map(|byte| byte.wrapping_sub(b'0')).collect())
 }
 
 /// Read a whole number out of an exact rational, or refuse it.

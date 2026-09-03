@@ -1,15 +1,17 @@
 //! Rows 10 to 14 of the gate: the rendered fields, the answer expression, and
 //! the names it reaches for.
 
-use std::collections::BTreeSet;
+use std::collections::{BTreeMap, BTreeSet};
 
 use crate::answer::ast::Ast;
 use crate::curriculum::AnswerKind;
 
 use super::text::{py_list, py_str};
 use super::{EXPONENT_REASON, FREE_SYMBOLS, GateSpec, MAX_EXPONENT, RESERVED_NAMES, Rejection};
-use crate::template::document::{Compiled, InstantiateError, TemplateDoc};
-use crate::template::eval::EvalError;
+use crate::template::document::{Compiled, TemplateDoc};
+use crate::template::domain::Value;
+use crate::template::draw::DrawPlan;
+use crate::template::eval::parse_answer_expr;
 use crate::template::render::scan;
 
 /// Every rendered field names declared parameters and doubles its literal braces.
@@ -85,30 +87,38 @@ fn check_field(field: &str, doc: &TemplateDoc, what: &str, code: &str) -> Result
 // --------------------------------------------------------------------------
 
 /// Parse `answer_expr` once, and refuse a source outside the grammar.
-pub(super) fn compile<'doc>(doc: &'doc TemplateDoc) -> Result<Compiled<'doc>, Rejection> {
-    Compiled::new(doc).map_err(|err| match err {
-        InstantiateError::Eval(EvalError::Grammar(reason)) => {
-            if reason.reason == EXPONENT_REASON {
-                Rejection::new(
-                    "grammar",
-                    format!(
-                        "answer_expr {} exceeds the evaluation bound ({MAX_EXPONENT} is the largest exponent the grammar reads)",
-                        py_str(&doc.answer_expr)
-                    ),
-                )
-            } else {
-                Rejection::new(
-                    "grammar",
-                    format!(
-                        "answer_expr {} is outside the decidable grammar: {}",
-                        py_str(&doc.answer_expr),
-                        reason.reason
-                    ),
-                )
-            }
+///
+/// `values` holds the value list of every domain, which [`super::check_params`]
+/// read already, so the plan comes from those lists.
+pub(super) fn compile<'doc>(
+    doc: &'doc TemplateDoc,
+    values: &BTreeMap<String, Vec<Value>>,
+) -> Result<Compiled<'doc>, Rejection> {
+    let answer_ast = parse_answer_expr(&doc.answer_expr).map_err(|reason| {
+        if reason.reason == EXPONENT_REASON {
+            Rejection::new(
+                "grammar",
+                format!(
+                    "answer_expr {} exceeds the evaluation bound ({MAX_EXPONENT} is the largest exponent the grammar reads)",
+                    py_str(&doc.answer_expr)
+                ),
+            )
+        } else {
+            Rejection::new(
+                "grammar",
+                format!(
+                    "answer_expr {} is outside the decidable grammar: {}",
+                    py_str(&doc.answer_expr),
+                    reason.reason
+                ),
+            )
         }
-        other => Rejection::new("grammar", format!("answer_expr does not compile: {other}")),
-    })
+    })?;
+    Ok(Compiled::from_parts(
+        doc,
+        answer_ast,
+        DrawPlan::from_columns(values.clone()),
+    ))
 }
 
 // --------------------------------------------------------------------------

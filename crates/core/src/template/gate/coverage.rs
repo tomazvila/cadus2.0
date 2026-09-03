@@ -53,23 +53,18 @@ pub(super) fn axis_extremes(
         ) {
             continue;
         }
-        let declared = values.get(name).and_then(|list| {
-            let (Some(low), Some(high)) = (list.iter().min(), list.iter().max()) else {
-                return None;
-            };
-            Some((low.clone(), high.clone()))
-        });
+        let declared = ends_of(values.get(name).map_or(&[], Vec::as_slice));
         if !constrained.contains(name) {
-            if let Some((low, high)) = declared {
-                extremes.insert(
+            extremes.extend(declared.map(|(low, high)| {
+                (
                     name.clone(),
                     AxisEnds {
                         low,
                         high,
                         declared: None,
                     },
-                );
-            }
+                )
+            }));
             continue;
         }
         let seen: Vec<Value> = walk
@@ -77,19 +72,27 @@ pub(super) fn axis_extremes(
             .iter()
             .filter_map(|tuple| tuple.get(name).cloned())
             .collect();
-        let (Some(low), Some(high)) = (seen.iter().min(), seen.iter().max()) else {
-            continue;
-        };
-        extremes.insert(
-            name.clone(),
-            AxisEnds {
-                low: low.clone(),
-                high: high.clone(),
-                declared,
-            },
-        );
+        extremes.extend(ends_of(&seen).map(|(low, high)| {
+            (
+                name.clone(),
+                AxisEnds {
+                    low,
+                    high,
+                    declared,
+                },
+            )
+        }));
     }
     extremes
+}
+
+/// The lowest and the highest value of a list, when the list holds one.
+fn ends_of(values: &[Value]) -> Option<(Value, Value)> {
+    values
+        .iter()
+        .min()
+        .zip(values.iter().max())
+        .map(|(low, high)| (low.clone(), high.clone()))
 }
 
 /// The samples lie inside their own domains and exercise every axis.
@@ -112,9 +115,9 @@ pub(super) fn check_coverage(
             check_choice_axis(name, &seen, walk)?;
             continue;
         }
-        if let Some(ends) = extremes.get(name) {
-            check_axis_ends(name, ends, &seen)?;
-        }
+        extremes
+            .get(name)
+            .map_or(Ok(()), |ends| check_axis_ends(name, ends, &seen))?;
     }
     check_crossed_corners(doc, extremes, samples, walk, notes)
 }
@@ -299,10 +302,12 @@ fn check_corner_pair(
         return Ok(());
     }
     let crossed = samples.iter().any(|bindings| {
-        let (Some(bound_l), Some(bound_r)) = (bindings.get(left), bindings.get(right)) else {
-            return false;
-        };
-        (bound_l == low_l && bound_r == high_r) || (bound_l == high_l && bound_r == low_r)
+        bindings
+            .get(left)
+            .zip(bindings.get(right))
+            .is_some_and(|(bound_l, bound_r)| {
+                (bound_l == low_l && bound_r == high_r) || (bound_l == high_l && bound_r == low_r)
+            })
     });
     if crossed {
         return Ok(());

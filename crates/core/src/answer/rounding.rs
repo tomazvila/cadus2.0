@@ -55,7 +55,7 @@ const MAX_ROOT_TERMS: usize = 16;
 /// digits, which brackets the widest coefficient the canonicalizer builds
 /// (`MAX_BITS`, 4,096 bits) against the longest decimal it reads (`MAX_SCALE`,
 /// 1,000 digits). A pair that no round decides is refused.
-const REFINEMENTS: [u64; 4] = [128, 512, 2_048, 8_192];
+const REFINEMENTS: [usize; 4] = [128, 512, 2_048, 8_192];
 
 /// The answer of the rounding rule for one pair.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -89,11 +89,6 @@ fn rational_rounds_to(value: &BigRational, learner: &BigRational, scale: u32) ->
     let power = power_of_ten(scale);
     let scaled = value * BigRational::from_integer(power.clone());
     let target = learner * BigRational::from_integer(power);
-    if !target.is_integer() {
-        // The learner value is `mantissa / 10^scale`, so the product is always a
-        // whole number. The guard keeps the decision total.
-        return Rounding::Different;
-    }
     if round_half_even(&scaled) == target.to_integer() {
         Rounding::Same
     } else {
@@ -153,9 +148,7 @@ fn radical_rounds_to(
     // Half of the last digit the learner typed: 5 * 10^-(scale+1).
     let half = BigRational::new(BigInt::one(), power_of_ten(scale) * 2);
     for bits in REFINEMENTS {
-        let Some((low, high)) = interval(parts, bits) else {
-            return Rounding::Refused("the rounding needs a wider bound than the checker builds");
-        };
+        let (low, high) = interval(parts, bits);
         let low = low - learner;
         let high = high - learner;
         if high < half && low > -half.clone() {
@@ -172,12 +165,12 @@ fn radical_rounds_to(
 ///
 /// Every root is bracketed to `bits` bits, and the coefficient of the term
 /// decides which end of the bracket carries which end of the interval.
-fn interval(parts: &BTreeMap<Basis, BigRational>, bits: u64) -> Option<(BigRational, BigRational)> {
-    let unit = BigInt::one() << usize::try_from(bits).ok()?;
+fn interval(parts: &BTreeMap<Basis, BigRational>, bits: usize) -> (BigRational, BigRational) {
+    let unit = BigInt::one() << bits;
     let mut low = BigRational::zero();
     let mut high = BigRational::zero();
     for (basis, coefficient) in parts {
-        let (root_low, root_high) = root_interval(&basis.radicand, &unit, bits)?;
+        let (root_low, root_high) = root_interval(&basis.radicand, &unit, bits);
         if coefficient.is_negative() {
             low += coefficient * root_high;
             high += coefficient * root_low;
@@ -186,7 +179,7 @@ fn interval(parts: &BTreeMap<Basis, BigRational>, bits: u64) -> Option<(BigRatio
             high += coefficient * root_high;
         }
     }
-    Some((low, high))
+    (low, high)
 }
 
 /// Bracket one square root between two exact rationals of denominator `unit`.
@@ -194,20 +187,15 @@ fn interval(parts: &BTreeMap<Basis, BigRational>, bits: u64) -> Option<(BigRatio
 /// The floor of the integer square root of `radicand * 2^(2*bits)` is the lower
 /// end, and one unit above it is the upper end. A radicand of 1 carries no root,
 /// and its two ends are the exact 1.
-fn root_interval(
-    radicand: &BigInt,
-    unit: &BigInt,
-    bits: u64,
-) -> Option<(BigRational, BigRational)> {
+fn root_interval(radicand: &BigInt, unit: &BigInt, bits: usize) -> (BigRational, BigRational) {
     if radicand.is_one() {
         let one = BigRational::one();
-        return Some((one.clone(), one));
+        return (one.clone(), one);
     }
-    let shift = usize::try_from(bits.checked_mul(2)?).ok()?;
-    let floor = (radicand << shift).sqrt();
+    let floor = (radicand << (bits * 2)).sqrt();
     let low = BigRational::new(floor.clone(), unit.clone());
     let high = BigRational::new(floor + 1, unit.clone());
-    Some((low, high))
+    (low, high)
 }
 
 /// Build `10^scale` as a big integer.

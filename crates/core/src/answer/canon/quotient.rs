@@ -32,9 +32,6 @@ impl Work {
             self.bounded_int(&numerator_gcd)?;
             self.bounded_int(&denominator_lcm)?;
         }
-        if numerator_gcd.is_zero() {
-            return Err(Undecidable::new("a division by zero"));
-        }
         let leading_is_negative = sum
             .iter()
             .next_back()
@@ -46,13 +43,13 @@ impl Work {
             magnitude
         };
         let content = self.bounded(signed)?;
-        let divisor = reciprocal_of(&content)?;
+        let divisor = reciprocal_of(&content);
         let mut primitive = Poly::new();
+        // No coefficient is zero and the divisor is not zero, so no scaled
+        // coefficient is zero.
         for (monomial, coefficient) in sum {
             let scaled = self.bounded(coefficient * &divisor)?;
-            if !scaled.is_zero() {
-                primitive.insert(monomial.clone(), scaled);
-            }
+            primitive.insert(monomial.clone(), scaled);
         }
         Ok((content, primitive))
     }
@@ -110,25 +107,19 @@ impl Work {
             let den = self.poly_mul(&den, &factor)?;
             (num, den)
         };
-        if one_term(&den).is_some() {
+        if let Some((monomial, coefficient)) = one_term(&den) {
             // Rule 2. A denominator of one term is negative exponents of the
             // numerator, so `1/x` stays the monomial `x**-1`. A product of two
             // sums of two terms or more reaches this line too, when two atoms
             // merge: `(sqrt(2)+1)*(sqrt(2)-1)` is 1.
-            return self.fold_monomial_denominator(num, &den);
+            return self.fold_monomial_denominator(num, &monomial, &coefficient);
         }
         // Rule 4. The denominator holds coprime integer coefficients and a
         // positive greatest monomial; the scale moves into the numerator.
         let (content, primitive) = self.content_normalize(&den)?;
-        let scale = reciprocal_of(&content)?;
+        let scale = reciprocal_of(&content);
         let scale = self.bounded(scale)?;
         let num = self.poly_mul(&num, &term(Monomial::new(), scale))?;
-        if num.is_empty() {
-            return Ok(Frac {
-                num,
-                den: one_poly(),
-            });
-        }
         // Rule 5. A numerator that is a rational multiple of the denominator is
         // that rational: `(x+1)/(x+1)` is 1 and `(2*x+2)/(x+1)` is 2. The test
         // compares the two monomial keys first and the two coefficient ratios
@@ -176,12 +167,14 @@ impl Work {
     /// Rule 2 of the module header. `1/x` therefore stays the monomial `x**-1`,
     /// and `1/sqrt(2)` stays `sqrt(2)/2`, because the reciprocal of the term goes
     /// through the same atom laws as every other product.
-    fn fold_monomial_denominator(&mut self, num: Poly, den: &Poly) -> Result<Frac, Undecidable> {
-        let Some((monomial, coefficient)) = one_term(den) else {
-            return Err(Undecidable::new("a division by zero"));
-        };
+    fn fold_monomial_denominator(
+        &mut self,
+        num: Poly,
+        monomial: &Monomial,
+        coefficient: &BigRational,
+    ) -> Result<Frac, Undecidable> {
         self.spend(monomial.len().saturating_add(1))?;
-        let (monomial, coefficient) = self.power_of_term(&monomial, &coefficient, -1)?;
+        let (monomial, coefficient) = self.power_of_term(monomial, coefficient, -1)?;
         let num = self.poly_mul(&num, &term(monomial, coefficient))?;
         Ok(Frac {
             num,

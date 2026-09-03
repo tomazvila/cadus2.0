@@ -27,7 +27,7 @@ pub(super) fn is_variable_name(name: &str, extra: &[&str]) -> bool {
     GREEK_VARIABLES.contains(&name) || name.chars().count() == 1
 }
 
-/// Split a multi-letter run into its single-letter variables, or refuse it.
+/// Split a multi-letter run into its leading letters and its last letter, or refuse it.
 ///
 /// The run splits only when every letter is a [`RUN_LETTERS`] letter, the letters
 /// differ from each other, the run is not a function name of this parse (`extra`
@@ -37,9 +37,12 @@ pub(super) fn is_variable_name(name: &str, extra: &[&str]) -> bool {
 /// written as a power. Everything else — a function name, a Greek name, a
 /// differential (`dx`), a word (`yes`), a label (`HT`), an upper-case run
 /// (`DNE`) — stays undecidable (C4).
-pub(super) fn letter_run(name: &str, extra: &[&str]) -> Option<Vec<char>> {
+pub(super) fn letter_run(name: &str, extra: &[&str]) -> Option<(Vec<char>, char)> {
     let letters: Vec<char> = name.chars().collect();
-    if letters.len() < 2 || letters.len() > MAX_RUN_LETTERS {
+    let [first, middle @ .., last] = letters.as_slice() else {
+        return None;
+    };
+    if letters.len() > MAX_RUN_LETTERS {
         return None;
     }
     if FUNCTIONS.contains(&name)
@@ -53,11 +56,14 @@ pub(super) fn letter_run(name: &str, extra: &[&str]) -> Option<Vec<char>> {
         if !RUN_LETTERS.contains(letter) {
             return None;
         }
-        if letters.get(index + 1..)?.contains(letter) {
+        if letters.iter().skip(index + 1).any(|other| other == letter) {
             return None;
         }
     }
-    Some(letters)
+    let leading = std::iter::once(*first)
+        .chain(middle.iter().copied())
+        .collect();
+    Some((leading, *last))
 }
 
 /// Read the fraction part as a proper fraction, or refuse it.
@@ -73,8 +79,9 @@ pub(super) fn proper_fraction_part(part: &FractionPart) -> Option<(BigInt, BigIn
     if part.digit_run && numerator.chars().count() == 3 {
         return None;
     }
-    let numerator = numerator.parse::<BigInt>().ok()?;
-    let denominator = denominator.parse::<BigInt>().ok()?;
+    // Both runs are plain digit runs, so both reads succeed.
+    let numerator = numerator.parse::<BigInt>().unwrap_or_default();
+    let denominator = denominator.parse::<BigInt>().unwrap_or_default();
     if numerator.is_zero() || numerator >= denominator {
         return None;
     }
@@ -121,35 +128,22 @@ pub(super) fn is_numeric_literal(node: &Ast) -> bool {
 }
 
 /// Whether the text is a digit run that carries no grouping and no leading zero.
+///
+/// The text is the body of a number token, so it holds digits and points only.
 fn is_plain_digit_run(text: &str) -> bool {
-    let mut chars = text.chars();
-    let Some(first) = chars.next() else {
-        return false;
-    };
-    if !first.is_ascii_digit() {
-        return false;
-    }
-    if first == '0' && chars.clone().next().is_some() {
-        return false;
-    }
-    chars.all(|c| c.is_ascii_digit())
+    let no_leading_zero = text.len() == 1 || !text.starts_with('0');
+    no_leading_zero && text.chars().all(|c| c.is_ascii_digit())
 }
 
 /// Build an interval from the two ends of a mixed bracket pair.
 pub(super) fn make_interval(
-    mut items: Vec<Ast>,
+    items: Vec<Ast>,
     lo_closed: bool,
     hi_closed: bool,
 ) -> Result<Ast, Undecidable> {
-    if items.len() != 2 {
+    let Ok([lo, hi]) = <[Ast; 2]>::try_from(items) else {
         return Err(Undecidable::new("an interval that has no two ends"));
-    }
-    let hi = items
-        .pop()
-        .ok_or_else(|| Undecidable::new("an interval with no upper end"))?;
-    let lo = items
-        .pop()
-        .ok_or_else(|| Undecidable::new("an interval with no lower end"))?;
+    };
     Ok(Ast::Interval {
         lo: Box::new(lo),
         hi: Box::new(hi),
@@ -179,10 +173,7 @@ pub(super) fn simple_inequality(left: Ast, op: IneqOp, right: Ast) -> Result<Ast
 /// Fold a one-element list into its element, and a longer one into `build`.
 pub(super) fn collapse(mut parts: Vec<Ast>, build: fn(Vec<Ast>) -> Ast) -> Ast {
     if parts.len() == 1 {
-        match parts.pop() {
-            Some(single) => single,
-            None => build(parts),
-        }
+        parts.swap_remove(0)
     } else {
         build(parts)
     }
@@ -237,26 +228,24 @@ fn whole_number(node: &Ast) -> Option<BigInt> {
 }
 
 /// Turn a number literal into an integer or an exact decimal.
-pub(super) fn parse_number(text: &str) -> Result<Ast, Undecidable> {
+///
+/// The lexer built the literal from digits with at most one point, and the
+/// input cap bounds the digit count, so both reads succeed.
+pub(super) fn parse_number(text: &str) -> Ast {
     match text.split_once('.') {
-        None => Ok(Ast::Integer(parse_integer(text)?)),
+        None => Ast::Integer(parse_integer(text)),
         Some((whole, fraction)) => {
-            let scale = u32::try_from(fraction.chars().count())
-                .map_err(|_| Undecidable::new("a decimal with too many digits"))?;
+            let scale = u32::try_from(fraction.chars().count()).unwrap_or(u32::MAX);
             let digits = format!("{whole}{fraction}");
-            Ok(Ast::Decimal {
-                mantissa: parse_integer(&digits)?,
+            Ast::Decimal {
+                mantissa: parse_integer(&digits),
                 scale,
-            })
+            }
         }
     }
 }
 
 /// Parse a run of decimal digits into a big integer.
-fn parse_integer(text: &str) -> Result<BigInt, Undecidable> {
-    if text.is_empty() {
-        return Ok(BigInt::zero());
-    }
-    text.parse::<BigInt>()
-        .map_err(|_| Undecidable::new("a number the reader cannot read"))
+fn parse_integer(text: &str) -> BigInt {
+    text.parse::<BigInt>().unwrap_or_default()
 }

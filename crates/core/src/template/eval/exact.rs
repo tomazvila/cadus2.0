@@ -246,9 +246,6 @@ pub(super) fn power(base: &BigRational, exponent: i64) -> Result<BigRational, Ev
         width_ok(&result)?;
     }
     if exponent < 0 {
-        if result.is_zero() {
-            return Err(EvalError::DivideByZero);
-        }
         return Ok(result.recip());
     }
     Ok(result)
