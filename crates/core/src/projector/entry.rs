@@ -235,6 +235,7 @@ pub fn kp_failed(seq: &[bool], cfg: &Config) -> bool {
 mod tests {
     use super::super::tests::{stream, tree};
     use super::*;
+    use crate::numeric::TimeError;
 
     #[test]
     fn the_entry_points_fold_the_stream_and_report_an_unknown_zone() {
@@ -255,18 +256,14 @@ mod tests {
         assert!(blob.starts_with("{\"config_hash\":\"") && !blob.contains("built_from_ts"));
 
         let nowhere = input.with_timezone(Some("Nowhere/City"));
-        assert!(matches!(
-            project(&events, &nowhere),
-            Err(ProjectorError::Time(_))
-        ));
+        let unknown = ProjectorError::Time(TimeError::UnknownTimezone("Nowhere/City".to_owned()));
+        assert_eq!(project(&events, &nowhere).unwrap_err(), unknown);
         assert!(project_incremental(&cached, prior, fresh, &nowhere).is_err());
 
         let mut far = full;
         far.built_from_ts = Some(Timestamp::from_micros(i64::MAX));
-        assert!(matches!(
-            canonical_blob(&far),
-            Err(ProjectorError::Serialize(_))
-        ));
+        let error = canonical_blob(&far).unwrap_err().to_string();
+        assert!(error.starts_with("serialize:"), "{error}");
         assert!(blob_digest(&far).is_err());
     }
 

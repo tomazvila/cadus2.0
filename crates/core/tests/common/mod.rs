@@ -336,3 +336,11 @@ pub fn mini_curriculum() -> Curriculum {
 pub mod fire;
 
 pub mod events;
+
+pub mod dump;
+
+pub mod selector;
+
+pub mod bench;
+
+pub mod parity;

@@ -142,20 +142,23 @@ pub fn assert_same_blob(actual: &str, expected: &str, what: &str) {
     );
 }
 
-/// The 1.0 blob of one fixture stream, straight from the oracle, or `None` when
-/// `CADUS_ORACLE_PYTHON` is unset.
-pub fn live_oracle_blob(name: &str, tz: Option<&str>) -> Option<String> {
+/// The 1.0 blob of one stream file, or `None` when `CADUS_ORACLE_PYTHON` is
+/// unset. `goal` adds `--goal` to the oracle call.
+pub fn oracle_blob(path: &Path, tz: Option<&str>, goal: Option<i64>) -> Option<String> {
     let python = std::env::var("CADUS_ORACLE_PYTHON").ok()?;
     let mut command = Command::new(&python);
     command
         .arg(repo_root().join("scripts/oracle/dump_projector_1_0.py"))
-        .arg(fixture(name))
+        .arg(path)
         .arg("--curriculum")
         .arg(repo_root().join("curriculum"))
         .arg("--now")
         .arg("2000-01-01T00:00:00+00:00");
     if let Some(zone) = tz {
         command.arg("--tz").arg(zone);
+    }
+    if let Some(goal) = goal {
+        command.arg("--goal").arg(goal.to_string());
     }
     // The 1.0 package imports from its own tree.
     let output = command
@@ -169,4 +172,10 @@ pub fn live_oracle_blob(name: &str, tz: Option<&str>) -> Option<String> {
     );
     let text = String::from_utf8(output.stdout).expect("the oracle prints UTF-8");
     Some(text.trim_end_matches('\n').to_owned())
+}
+
+/// The 1.0 blob of one fixture stream at the default goal, or `None` when
+/// `CADUS_ORACLE_PYTHON` is unset.
+pub fn live_oracle_blob(name: &str, tz: Option<&str>) -> Option<String> {
+    oracle_blob(&fixture(name), tz, None)
 }

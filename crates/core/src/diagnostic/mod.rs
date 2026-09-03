@@ -275,10 +275,12 @@ pub fn apply_answer(
 
     if is_leaf(graph, idx) {
         let lateral = cfg.diag.sibling_credit * delta;
+        // Every sibling leaf is in the universe, so the entry is always present.
         for sibling in sibling_leaves(graph, idx, state) {
-            if let Some(balance) = state.balances.get_mut(&sibling) {
-                *balance += lateral;
-            }
+            state
+                .balances
+                .entry(sibling)
+                .and_modify(|balance| *balance += lateral);
         }
     }
 

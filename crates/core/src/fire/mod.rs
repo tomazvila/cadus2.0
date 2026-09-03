@@ -368,6 +368,11 @@ mod tests {
         assert_eq!(decay_for(&TopicState::default(), T_US, &cfg), 1.0);
         assert_eq!(raw_delta(0.15, 0.5, false, &cfg, false), -0.85);
         assert_eq!(raw_delta(1.0, 0.5, true, &cfg, true), 0.5);
+        let mut bare = Config::default();
+        bare.fire.interval_table.clear();
+        bare.fire.due_threshold = 1.0;
+        assert_eq!(interval_for(1.0, &bare), 0.0);
+        assert_eq!(raw_delta(1.0, 0.9, true, &bare, false), 1.0);
         assert_eq!(memory_at(&learned(0.5), T_US), 0.5);
     }
 }
