@@ -1,0 +1,80 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        SELECT sp.id AS \"id!\", sp.source AS \"source!\", sp.content_digest,\n               sp.problem::text AS \"problem!\", sp.expected_answer::text AS \"expected!\",\n               sp.instance_hash AS \"instance_hash!\"\n        FROM serving_pool AS sp\n        WHERE sp.user_id = $1\n          AND sp.kp_id = $2\n          AND sp.source = 'exemplar'\n          AND sp.claimed_at IS NOT NULL\n        ORDER BY sp.claimed_at, sp.id\n        FOR UPDATE OF sp SKIP LOCKED\n        LIMIT $3\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id!",
+        "type_info": "Uuid",
+        "origin": {
+          "Table": {
+            "table": "serving_pool",
+            "name": "id"
+          }
+        }
+      },
+      {
+        "ordinal": 1,
+        "name": "source!",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "serving_pool",
+            "name": "source"
+          }
+        }
+      },
+      {
+        "ordinal": 2,
+        "name": "content_digest",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "serving_pool",
+            "name": "content_digest"
+          }
+        }
+      },
+      {
+        "ordinal": 3,
+        "name": "problem!",
+        "type_info": "Text",
+        "origin": "Expression"
+      },
+      {
+        "ordinal": 4,
+        "name": "expected!",
+        "type_info": "Text",
+        "origin": "Expression"
+      },
+      {
+        "ordinal": 5,
+        "name": "instance_hash!",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "serving_pool",
+            "name": "instance_hash"
+          }
+        }
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Uuid",
+        "Text",
+        "Int8"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      true,
+      null,
+      null,
+      false
+    ]
+  },
+  "hash": "ca46d2c6cd6fe6e01fe672b62abb9933753b466e077c60481242e83271762ba0"
+}
