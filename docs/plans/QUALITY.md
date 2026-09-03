@@ -31,7 +31,7 @@ instrument, not the subject. CRAP is `cc^2 * (1 - coverage)^3 + cc` per function
 | Coverage | lines 92.1%, functions 87.7%, regions 90.6% | statements 96.4%, branches 87.2%, functions 79.1% |
 | Files below 100% coverage | 82 of 88 | 38 of 49 |
 | Functions with CRAP >= 25 | 569 | see coverage |
-| Mutants | 5,491 (a sample of 78 ran with 26 survivors) | 4,414 |
+| Mutants | 5,491 (a sample of 78 ran with 26 survivors) | 4,414, 1,394 survived (1,078 survived, 316 without coverage), score 64.8% |
 | `any` or `unknown` sites | not applicable | 81 |
 
 ## Units
