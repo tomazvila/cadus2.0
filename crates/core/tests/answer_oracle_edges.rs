@@ -114,39 +114,79 @@ fn the_verdict_line_spells_a_decided_verdict_and_a_timeout() {
 // ---------------------------------------------------------------------------
 // The harness helpers, against a fake interpreter
 // ---------------------------------------------------------------------------
-/// Write one fake interpreter under `target/oracle-fake`, and return its path.
+/// The fake interpreters, written once under `target/oracle-fake`.
+///
+/// One thread writes every script before any test starts a child process, so no
+/// write handle is open across a fork, and no exec meets a busy text file.
+fn fakes() -> &'static Path {
+    static DIR: std::sync::OnceLock<PathBuf> = std::sync::OnceLock::new();
+    DIR.get_or_init(|| {
+        let dir = Path::new(env!("CARGO_MANIFEST_DIR")).join("../../target/oracle-fake");
+        std::fs::create_dir_all(&dir).unwrap_or_else(|e| panic!("create {}: {e}", dir.display()));
+        write_fake(&dir.join("check.sh"), r#"{"ready": true}"#, CHECKER);
+        write_fake(&dir.join("boom.sh"), r#"{"boom": 1}"#, "  :");
+        write_fake(
+            &dir.join("rewrite.sh"),
+            r#"{"ready": true}"#,
+            &rewriter("expand"),
+        );
+        write_fake(
+            &dir.join("rewrite_bogus.sh"),
+            r#"{"ready": true}"#,
+            &rewriter("bogus"),
+        );
+        dir
+    })
+}
+
+/// The path of the fake interpreter `name`, as text.
+fn fake(name: &str) -> String {
+    fakes()
+        .join(name)
+        .to_str()
+        .expect("the path is text")
+        .to_string()
+}
+
+/// Write one fake interpreter at `path`.
 ///
 /// The script ignores the helper path and the timeout, prints `ready`, and then
 /// runs `answers` (a shell `case` over `$line`) once per request line.
-fn fake_interpreter(name: &str, ready: &str, answers: &str) -> String {
-    let dir = Path::new(env!("CARGO_MANIFEST_DIR")).join("../../target/oracle-fake");
-    std::fs::create_dir_all(&dir).unwrap_or_else(|e| panic!("create {}: {e}", dir.display()));
-    let path = dir.join(name);
+fn write_fake(path: &Path, ready: &str, answers: &str) {
     let script = format!(
         "#!/bin/sh\nn=0\nprintf '%s\\n' '{ready}'\nwhile IFS= read -r line; do\n{answers}\ndone\n"
     );
-    std::fs::write(&path, script).unwrap_or_else(|e| panic!("write {}: {e}", path.display()));
-    std::fs::set_permissions(&path, std::fs::Permissions::from_mode(0o755))
+    std::fs::write(path, script).unwrap_or_else(|e| panic!("write {}: {e}", path.display()));
+    std::fs::set_permissions(path, std::fs::Permissions::from_mode(0o755))
         .unwrap_or_else(|e| panic!("chmod {}: {e}", path.display()));
-    path.to_str().expect("the path is text").to_string()
 }
 
 /// The fake 1.0 checker: `slow` times out, `bad` errs, everything else is equivalent.
-fn fake_checker(name: &str) -> String {
-    fake_interpreter(
-        name,
-        r#"{"ready": true}"#,
-        r#"  case "$line" in
+const CHECKER: &str = r#"  case "$line" in
     *'"expected":"slow"'*) printf '%s\n' '{"timeout": true}' ;;
     *'"expected":"bad"'*) printf '%s\n' '{"error": "no reading"}' ;;
     *) printf '%s\n' '{"equivalent": true, "notation": false, "timeout": false}' ;;
-  esac"#,
+  esac"#;
+
+/// The fake rewrite helper. It refuses every second answer, and it spells the
+/// other answers twice: once verbatim and once as `(answer)*1` under `rule`.
+fn rewriter(rule: &str) -> String {
+    format!(
+        r#"  case "$line" in
+    *'"op":"rewrite"'*)
+      n=$((n+1))
+      if [ $((n % 2)) -eq 0 ]; then printf '%s\n' '{{"error": "refused"}}'; continue; fi
+      answer=$(printf '%s' "$line" | sed 's/^{{"answer":"\(.*\)","op":"rewrite"}}$/\1/')
+      printf '%s\n' "{{\"spellings\": [{{\"rule\": \"cancel\", \"text\": \"$answer\"}}, {{\"rule\": \"{rule}\", \"text\": \"($answer)*1\"}}]}}"
+      ;;
+    *'"op":"difference"'*) printf '%s\n' '{{"cancel_zero": true, "radsimp_zero": false}}' ;;
+  esac"#
     )
 }
 
 #[test]
 fn the_verdict_reader_keeps_a_decided_verdict_and_a_timeout_in_order() {
-    let python = fake_checker("check.sh");
+    let python = fake("check.sh");
     let pairs = [pair("7329", "7.329"), pair("slow", "x"), pair("6", "6.0")];
     let decided = Some(OracleVerdict {
         equivalent: true,
@@ -158,13 +198,13 @@ fn the_verdict_reader_keeps_a_decided_verdict_and_a_timeout_in_order() {
 #[test]
 #[should_panic(expected = "the oracle said {\"error\": \"no reading\"}")]
 fn the_verdict_reader_refuses_an_oracle_error() {
-    let python = fake_checker("check_error.sh");
+    let python = fake("check.sh");
     live_verdicts(&python, &[pair("bad", "1")]);
 }
 
 #[test]
 fn one_live_response_returns_the_trimmed_line() {
-    let python = fake_checker("check_one.sh");
+    let python = fake("check.sh");
     let request = serde_json::json!({"expected": "slow", "learner": "x", "kind": "numeric"});
     assert_eq!(
         one_live_response(&python, &request, "0.05"),
@@ -175,33 +215,13 @@ fn one_live_response_returns_the_trimmed_line() {
 #[test]
 #[should_panic(expected = "the oracle said \"{\\\"boom\\\": 1}\\n\"")]
 fn a_helper_that_does_not_say_ready_fails_the_test() {
-    let python = fake_interpreter("check_boom.sh", r#"{"boom": 1}"#, "  :");
+    let python = fake("boom.sh");
     one_live_response(&python, &serde_json::json!({}), "0.05");
-}
-
-/// The fake rewrite helper. It refuses every second answer, and it spells the
-/// other answers twice: once verbatim and once as `(answer)*1` under `rule`.
-fn fake_rewriter(name: &str, rule: &str) -> String {
-    fake_interpreter(
-        name,
-        r#"{"ready": true}"#,
-        &format!(
-            r#"  case "$line" in
-    *'"op":"rewrite"'*)
-      n=$((n+1))
-      if [ $((n % 2)) -eq 0 ]; then printf '%s\n' '{{"error": "refused"}}'; continue; fi
-      answer=$(printf '%s' "$line" | sed 's/^{{"answer":"\(.*\)","op":"rewrite"}}$/\1/')
-      printf '%s\n' "{{\"spellings\": [{{\"rule\": \"cancel\", \"text\": \"$answer\"}}, {{\"rule\": \"{rule}\", \"text\": \"($answer)*1\"}}]}}"
-      ;;
-    *'"op":"difference"'*) printf '%s\n' '{{"cancel_zero": true, "radsimp_zero": false}}' ;;
-  esac"#
-        ),
-    )
 }
 
 #[test]
 fn the_rewrite_reader_keeps_one_spelling_per_offered_row_and_sorts_them() {
-    let python = fake_rewriter("rewrite.sh", "expand");
+    let python = fake("rewrite.sh");
     let rows = live_rewrites(&python);
     let offered = in_grammar_rows()
         .iter()
@@ -231,6 +251,6 @@ fn the_rewrite_reader_keeps_one_spelling_per_offered_row_and_sorts_them() {
 #[test]
 #[should_panic(expected = "the helper wrote the unknown rule \"bogus\"")]
 fn the_rewrite_reader_refuses_an_unknown_rule() {
-    let python = fake_rewriter("rewrite_bogus.sh", "bogus");
+    let python = fake("rewrite_bogus.sh");
     live_rewrites(&python);
 }
