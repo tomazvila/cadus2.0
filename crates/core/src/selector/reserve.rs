@@ -51,48 +51,89 @@ pub fn task_still_valid(
     t_us: i64,
     ctx: &ValidityContext<'_>,
 ) -> bool {
-    let default = TopicState::default();
-    let band = |tid: &str, state: &TopicState| -> ReviewState {
-        review_state(state, t_us, cfg, ctx.test_prep_topics.contains(tid))
+    let validity = Validity {
+        states,
+        graph,
+        cfg,
+        t_us,
+        ctx,
     };
     match task.task_type {
-        TaskType::Quiz => return ctx.quiz_due,
-        TaskType::MultiStep => {
-            if ctx.closed_task_ids.contains(&task.task_id) {
-                return false;
-            }
-            return task.component_topics.iter().any(|component| {
-                band(component, states.get(component).unwrap_or(&default)) == ReviewState::Due
-            });
-        }
-        _ => {}
+        TaskType::Quiz => ctx.quiz_due,
+        TaskType::MultiStep => validity.multistep_open(task),
+        _ => task
+            .topic
+            .as_deref()
+            .is_some_and(|topic_id| validity.single_topic_valid(task, topic_id)),
     }
-    let Some(topic_id) = task.topic.as_deref() else {
-        return false;
-    };
-    if task.is_remediation {
-        return ctx.pending_targets.contains(topic_id);
+}
+
+/// The inputs of one validity test, bundled for the per-kind helpers.
+struct Validity<'a> {
+    states: &'a BTreeMap<String, TopicState>,
+    graph: &'a Curriculum,
+    cfg: &'a Config,
+    t_us: i64,
+    ctx: &'a ValidityContext<'a>,
+}
+
+impl Validity<'_> {
+    /// The review band of `tid` at the composition instant.
+    fn band(&self, tid: &str, state: &TopicState) -> ReviewState {
+        review_state(
+            state,
+            self.t_us,
+            self.cfg,
+            self.ctx.test_prep_topics.contains(tid),
+        )
     }
-    match task.task_type {
-        TaskType::Review => {
-            let Some(state) = states.get(topic_id) else {
-                return false;
-            };
-            let current = band(topic_id, state);
-            if task.nearly_due {
-                matches!(current, ReviewState::Due | ReviewState::NearlyDue)
-            } else {
-                current == ReviewState::Due
-            }
+
+    /// Whether an open multi-step task still has a due component.
+    fn multistep_open(&self, task: &Task) -> bool {
+        if self.ctx.closed_task_ids.contains(&task.task_id) {
+            return false;
         }
-        TaskType::Lesson => {
-            let state = states.get(topic_id).unwrap_or(&default);
-            ctx.frontier_topics.contains_id(graph, topic_id)
-                && !is_mastered(state)
-                && !in_retry_delay(state, cfg, t_us)
+        let default = TopicState::default();
+        task.component_topics.iter().any(|component| {
+            let state = self.states.get(component).unwrap_or(&default);
+            self.band(component, state) == ReviewState::Due
+        })
+    }
+
+    /// Whether a single-topic task still has its reason to be served.
+    fn single_topic_valid(&self, task: &Task, topic_id: &str) -> bool {
+        if task.is_remediation {
+            return self.ctx.pending_targets.contains(topic_id);
         }
-        TaskType::Drill => ctx.drill_eligible.contains(topic_id),
-        _ => true,
+        match task.task_type {
+            TaskType::Review => self.review_valid(task, topic_id),
+            TaskType::Lesson => self.lesson_valid(topic_id),
+            TaskType::Drill => self.ctx.drill_eligible.contains(topic_id),
+            _ => true,
+        }
+    }
+
+    /// Whether a review is still in its band: due, or the whole band for a
+    /// review served before its due date.
+    fn review_valid(&self, task: &Task, topic_id: &str) -> bool {
+        let Some(state) = self.states.get(topic_id) else {
+            return false;
+        };
+        let current = self.band(topic_id, state);
+        if task.nearly_due {
+            matches!(current, ReviewState::Due | ReviewState::NearlyDue)
+        } else {
+            current == ReviewState::Due
+        }
+    }
+
+    /// Whether a lesson is still on the frontier and open to a retry.
+    fn lesson_valid(&self, topic_id: &str) -> bool {
+        let default = TopicState::default();
+        let state = self.states.get(topic_id).unwrap_or(&default);
+        self.ctx.frontier_topics.contains_id(self.graph, topic_id)
+            && !is_mastered(state)
+            && !in_retry_delay(state, self.cfg, self.t_us)
     }
 }
 
@@ -262,6 +303,11 @@ mod tests {
             task_type: TaskType::Lesson,
             ..Task::default()
         };
+        let nearly = |topic: &str| Task {
+            task_id: format!("s-nearly-{topic}"),
+            nearly_due: true,
+            ..review(topic, false)
+        };
         let open = SessionPlan {
             session: "s".to_owned(),
             tasks: vec![
@@ -269,6 +315,8 @@ mod tests {
                 review("a", false),
                 review("b", false),
                 review("ghost", false),
+                nearly("a"),
+                nearly("b"),
                 quiz,
                 multistep,
                 lesson,
@@ -293,6 +341,12 @@ mod tests {
         assert_eq!(ids, ["s-rem-d", "s-review-a", "s-multi-step", "", ""]);
         assert!(plan.tasks[0].is_remediation && plan.tasks[1].is_remediation);
         assert!(!plan.quiz_due);
+
+        let capped = SessionContext::default()
+            .with_pending_remediation(&pending)
+            .with_limit(Some(2));
+        let short = reserve_open_plan(&open, &states, &tree, &cfg, T_US, &capped);
+        assert_eq!(short.tasks.len(), 2);
 
         let closed: BTreeSet<String> = ["s-multi-step".to_owned()].into();
         let done = SessionContext::default().with_multistep(0, &closed);

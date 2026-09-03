@@ -313,7 +313,9 @@ mod tests {
     use super::super::tests::{ev, tree};
     use super::*;
     use crate::config::Config;
-    use crate::event::{Event, QuizResult, SchemaVersion, TopicStatus};
+    use crate::event::{Event, QuizResult, ReviewResult, SchemaVersion, SessionStart, TopicStatus};
+    use crate::fire::testing::{DAY_US, T_US};
+    use crate::numeric::{OutOfRangeError, TimeError};
 
     /// A quiz result at `ts_us` with no question and no XP.
     fn quiz_at(ts_us: i64) -> Event {
@@ -328,6 +330,29 @@ mod tests {
         })
     }
 
+    /// A passed review of `q` at `ts_us` worth `xp`.
+    fn review_at(ts_us: i64, xp: f64) -> Event {
+        Event::ReviewResult(ReviewResult {
+            ts: Timestamp::from_micros(ts_us),
+            session: None,
+            v: SchemaVersion,
+            topic: Slug::new("q").expect("a slug"),
+            passed: true,
+            weighted_score: 1.0,
+            xp,
+            quality_tier: WorkQuality::Perfect,
+            assisted: false,
+            task_id: None,
+        })
+    }
+
+    /// The `OutOfRange` error of a rounded `-1e308`.
+    fn huge_negative() -> ProjectorError {
+        ProjectorError::OutOfRange(OutOfRangeError {
+            value: "-1e+308".to_owned(),
+        })
+    }
+
     #[test]
     fn the_assembly_reports_the_first_tally_that_fails() {
         let tree = tree();
@@ -335,8 +360,9 @@ mod tests {
         let now = Timestamp::from_micros(0);
         let mut quiz = Projector::new(&tree, &cfg);
         quiz.apply(&quiz_at(i64::MIN), true);
-        assert!(matches!(quiz.quiz_state(), Err(ProjectorError::Time(_))));
-        assert!(matches!(quiz.finalize(now), Err(ProjectorError::Time(_))));
+        let too_early = ProjectorError::Time(TimeError::TimestampOutOfRange(i64::MIN));
+        assert_eq!(quiz.quiz_state().unwrap_err(), too_early);
+        assert_eq!(quiz.finalize(now).unwrap_err(), too_early);
 
         let mut velocity = Projector::new(&tree, &cfg);
         velocity.apply(
@@ -345,21 +371,35 @@ mod tests {
         );
         assert!(velocity.velocity_state(i64::MAX).is_err());
         assert!(velocity.velocity_state(0).is_ok());
-
-        let mut huge = Projector::new(&tree, &cfg);
-        huge.apply(
-            &ev(r#"{"type":"review_result","ts":"2026-07-14T12:00:00Z","topic":"q","passed":true,"weighted_score":1.0,"xp":-1e308,"quality_tier":"perfect"}"#),
+        velocity.apply(
+            &Event::SessionStart(SessionStart {
+                ts: Timestamp::from_micros(i64::MAX),
+                session: None,
+                v: SchemaVersion,
+            }),
             true,
         );
-        assert!(matches!(
-            huge.quiz_state(),
-            Err(ProjectorError::OutOfRange(_))
-        ));
+        assert!(velocity.finalize(now).is_err());
+
+        let mut huge = Projector::new(&tree, &cfg);
+        huge.apply(&review_at(T_US, -1e308), true);
+        assert_eq!(huge.quiz_state().unwrap_err(), huge_negative());
         assert!(huge.xp_state(i64::MAX).is_err());
-        assert!(matches!(
-            huge.xp_state(0),
-            Err(ProjectorError::OutOfRange(_))
-        ));
+        assert_eq!(huge.xp_state(0).unwrap_err(), huge_negative());
+
+        // An XP record with no calendar day fails the daily totals, and the
+        // fold as a whole, once the quiz and the velocity pass.
+        let mut early = Projector::new(&tree, &cfg);
+        early.apply(&review_at(i64::MIN, 1.0), true);
+        assert_eq!(early.xp_state(0).unwrap_err(), too_early);
+        assert!(early.finalize(now).is_err());
+
+        // A finite whole-log total beside a reference day out of range.
+        let mut today = Projector::new(&tree, &cfg);
+        today.apply(&review_at(T_US, 1e308), true);
+        today.apply(&review_at(T_US + DAY_US, -1e308), true);
+        today.apply(&quiz_at(T_US + DAY_US + 1), true);
+        assert_eq!(today.xp_state(T_US + DAY_US).unwrap_err(), huge_negative());
     }
 
     #[test]

@@ -79,9 +79,7 @@ impl QuizSampler for SeededSampler {
         for index in 0..take {
             let pick = index + self.below(pool.len() - index);
             pool.swap(index, pick);
-            if let Some(chosen) = pool.get(index) {
-                out.push(chosen.clone());
-            }
+            out.extend(pool.get(index).cloned());
         }
         out
     }

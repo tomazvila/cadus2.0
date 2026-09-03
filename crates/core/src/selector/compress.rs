@@ -36,11 +36,9 @@ fn empty_mask(n: usize) -> DueMask {
     vec![0_u64; n.div_ceil(64)]
 }
 
-/// Set the bit of one due topic.
+/// Set the bit of one due topic. Every index is below the mask length.
 fn set_bit(mask: &mut DueMask, index: usize) {
-    if let Some(word) = mask.get_mut(index / 64) {
-        *word |= 1_u64 << (index % 64);
-    }
+    mask[index / 64] |= 1_u64 << (index % 64);
 }
 
 /// Whether the bit of one due topic is set.

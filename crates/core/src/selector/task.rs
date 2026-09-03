@@ -396,6 +396,8 @@ mod tests {
         let scope = TopicSet::empty(&tree);
         let gap = lesson_task("two", &states, &tree, &scope, &knockouts, true, Some("top"));
         assert!(gap.gap_fill && gap.why.contains("unblocks top") && gap.why.contains("core"));
+        let no_return = lesson_task("two", &states, &tree, &scope, &knockouts, true, None);
+        assert!(no_return.gap_fill && !no_return.why.contains("unblocks"));
         let plain = lesson_task("one", &states, &tree, &scope, &knockouts, false, None);
         assert!(plain.why.starts_with("frontier lesson") && !plain.why.contains("knocks"));
         let quiz = quiz_task(&QuizPlan::default(), 0);

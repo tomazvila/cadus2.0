@@ -180,21 +180,25 @@ mod tests {
         ]
         .map(ev);
         let out = apply_regrades(&events);
-        assert_eq!(out.len(), 5);
-        let Event::Attempt(attempt) = &out[0] else {
-            panic!("an attempt");
-        };
-        assert_eq!(attempt.work_quality, WorkQuality::Perfect);
-        let (Event::LessonResult(lesson), Event::ReviewResult(review)) = (&out[1], &out[2]) else {
-            panic!("a lesson result and a review result");
-        };
-        assert_eq!(lesson.quality_tier, WorkQuality::Perfect);
-        assert_eq!(review.quality_tier, WorkQuality::Perfect);
-        assert_eq!(lesson.xp, 1.0);
-        let Event::ReviewResult(other) = &out[3] else {
-            panic!("a review result");
-        };
-        assert_eq!(other.quality_tier, WorkQuality::Poor);
+        let grades: Vec<(Option<WorkQuality>, f64)> = out
+            .iter()
+            .map(|event| match event {
+                Event::Attempt(body) => (Some(body.work_quality), 0.0),
+                Event::LessonResult(body) => (Some(body.quality_tier), body.xp),
+                Event::ReviewResult(body) => (Some(body.quality_tier), body.xp),
+                _ => (None, 0.0),
+            })
+            .collect();
+        assert_eq!(
+            grades,
+            [
+                (Some(WorkQuality::Perfect), 0.0),
+                (Some(WorkQuality::Perfect), 1.0),
+                (Some(WorkQuality::Perfect), 1.0),
+                (Some(WorkQuality::Poor), 1.0),
+                (None, 0.0),
+            ]
+        );
         assert_eq!(apply_regrades(&out), out);
     }
 }

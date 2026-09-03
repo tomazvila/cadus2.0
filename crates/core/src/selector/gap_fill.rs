@@ -203,9 +203,9 @@ fn deeper_gap_course(
     }
     let tip = stack.last().map(String::as_str);
     let mut blockers = blocking_gap_ancestors(states, graph, tip, Some(mastered));
-    let chain = gap_fill_chain_for_stack(states, graph, stack, Some(mastered))
-        .unwrap_or_else(|| TopicSet::empty(graph));
-    for idx in chain.indices() {
+    // The stack holds two courses at least, so the chain is always given.
+    let chain = gap_fill_chain_for_stack(states, graph, stack, Some(mastered));
+    for idx in chain.iter().flat_map(TopicSet::indices) {
         for ancestor in graph.ancestors(idx) {
             if !mastered.contains(ancestor) {
                 blockers.insert(ancestor);
@@ -280,7 +280,14 @@ mod tests {
                     topic("mid-free", &[]),
                 ],
             ),
-            ("top", &[], vec![topic("top-a", &[("mid-a", 1.0, true)])]),
+            (
+                "top",
+                &[],
+                vec![
+                    topic("top-a", &[("mid-a", 1.0, true)]),
+                    topic("top-b", &[("mid-b", 1.0, true)]),
+                ],
+            ),
         ])
     }
 
@@ -313,7 +320,9 @@ mod tests {
         );
         assert!(serveable_gap_frontier(&none, &tree, &stack[..2], None).is_empty());
 
-        // `mid-a` failed its lesson half a day ago: the delay is not a gap.
+        // `mid-a` failed its lesson half a day ago and `mid-free` is on the
+        // floor: the one frontier lesson of `mid` is delayed, and a delay is
+        // not a gap.
         let mut delayed = TopicState {
             t0: Some(Timestamp::from_micros(T_US)),
             ..TopicState::default()
@@ -321,13 +330,30 @@ mod tests {
         delayed
             .kp_progress
             .insert("kp1".to_owned(), KpProgress::FailedOnce);
-        let states: BTreeMap<String, TopicState> =
-            [("low-a".to_owned(), floor()), ("mid-a".to_owned(), delayed)]
-                .into_iter()
-                .collect();
+        let mut states: BTreeMap<String, TopicState> = [
+            ("low-a".to_owned(), floor()),
+            ("mid-free".to_owned(), floor()),
+            ("mid-a".to_owned(), delayed),
+        ]
+        .into_iter()
+        .collect();
         assert_eq!(
             gap_course_for(&states, &tree, &cfg, T_US, Some("mid"), None),
             None
+        );
+        // The mastered `mid-free` blocks nothing; `mid-b` waits on `low-b`.
+        assert_eq!(
+            blocking_gap_ancestors(&states, &tree, Some("mid"), None).sorted_ids(&tree),
+            ["low-b"]
+        );
+        // With `mid-a` mastered too the tip serves nothing, and the descent
+        // walks the chain past the mastered `low-a` down to `low`.
+        states.insert("mid-a".to_owned(), floor());
+        let mastered = mastered_set(&states, &tree);
+        let stack = ["top", "mid"].map(str::to_owned);
+        assert_eq!(
+            deeper_gap_course(&states, &tree, &stack, &mastered).as_deref(),
+            Some("low")
         );
         let all: BTreeMap<String, TopicState> = tree
             .topics()
