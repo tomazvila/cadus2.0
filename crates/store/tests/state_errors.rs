@@ -24,7 +24,7 @@ use cadus_store::state::{
 use cadus_store::test_support::TestDb;
 use common::events::{BASE_US, attempt, graph, review, start};
 use common::fault::{poison_event, revoke, revoke_set_config};
-use common::store_sqlstate;
+use common::{sqlstate_in_tx, store_sqlstate};
 use serde_json::json;
 use uuid::Uuid;
 
@@ -131,12 +131,15 @@ async fn the_log_reports_a_bad_instant_a_refused_insert_and_a_bad_payload() {
         tx.rollback().await.unwrap();
 
         revoke(&db, "INSERT", "events").await;
-        let mut tx = begin_tenant(&db.app, user).await.unwrap();
-        let err = append_event(&mut tx, user, &attempt("t-9"), Some("t-9"))
-            .await
-            .unwrap_err();
-        assert_eq!(store_sqlstate(&err), "42501");
-        tx.rollback().await.unwrap();
+        assert_eq!(
+            sqlstate_in_tx!(db, user, |tx| append_event(
+                &mut tx,
+                user,
+                &attempt("t-9"),
+                Some("t-9")
+            )),
+            "42501"
+        );
     })
     .await;
 }
@@ -184,12 +187,10 @@ async fn the_fold_reports_the_cache_row_the_write_and_the_projector() {
 
         // The write of the row is refused after a fold that succeeded.
         revoke(&db, "INSERT", "learner_models").await;
-        let mut tx = begin_tenant(&db.app, user).await.unwrap();
-        let err = project_and_save(&mut tx, user, &input, None)
-            .await
-            .unwrap_err();
-        assert_eq!(store_sqlstate(&err), "42501");
-        tx.rollback().await.unwrap();
+        assert_eq!(
+            sqlstate_in_tx!(db, user, |tx| project_and_save(&mut tx, user, &input, None)),
+            "42501"
+        );
 
         // A cached model of another shape is a document error.
         sqlx::query(
@@ -214,18 +215,18 @@ async fn the_fold_reports_the_cache_row_the_write_and_the_projector() {
         revoke(&db, "SELECT", "learner_models").await;
         // A refused statement aborts its transaction, so each one gets its
         // own.
-        let mut tx = begin_tenant(&db.app, user).await.unwrap();
-        let err = load_learner_model(&mut tx, user).await.unwrap_err();
-        assert_eq!(store_sqlstate(&err), "42501", "{err:?}");
-        tx.rollback().await.unwrap();
-        let mut tx = begin_tenant(&db.app, user).await.unwrap();
-        let err = project_current(&mut tx, user, &input).await.unwrap_err();
-        assert_eq!(store_sqlstate(&err), "42501", "{err:?}");
-        tx.rollback().await.unwrap();
-        let mut tx = begin_tenant(&db.app, user).await.unwrap();
-        let err = load_session_view(&mut tx, user).await.unwrap_err();
-        assert_eq!(store_sqlstate(&err), "42501", "{err:?}");
-        tx.rollback().await.unwrap();
+        assert_eq!(
+            sqlstate_in_tx!(db, user, |tx| load_learner_model(&mut tx, user)),
+            "42501"
+        );
+        assert_eq!(
+            sqlstate_in_tx!(db, user, |tx| project_current(&mut tx, user, &input)),
+            "42501"
+        );
+        assert_eq!(
+            sqlstate_in_tx!(db, user, |tx| load_session_view(&mut tx, user)),
+            "42501"
+        );
     })
     .await;
 }

@@ -16,52 +16,30 @@
     clippy::unimplemented
 )]
 
+mod common;
+
 use cadus_core::pool::{Avoid, Ring, Source, TaskMemory};
 use cadus_store::begin_tenant;
 use cadus_store::content::{KIND_HINT_LADDER, KIND_TEACH, approved_document};
-use cadus_store::pool::reclaim_exemplar_tx;
+use cadus_store::pool::{PoolRow, reclaim_exemplar_tx};
 use cadus_store::test_support::TestDb;
+use common::{KP, at, seed_doc};
 use serde_json::json;
 use sqlx::PgPool;
 use sqlx::types::chrono::{DateTime, Utc};
 use uuid::Uuid;
 
-/// The serving key of these tests.
-const KP: &str = "perfect-squares/kp1";
-
-/// The Unix instant of 2026-01-01T00:00:00Z.
-const BASE_INSTANT: i64 = 1_767_225_600;
-
-/// The instant of the row at `index`. One second apart, so `ORDER BY claimed_at`
-/// is the seeding order and the rotation is deterministic.
-fn at(index: i64) -> DateTime<Utc> {
-    DateTime::from_timestamp(BASE_INSTANT + index, 0).expect("the instant is inside the range")
-}
-
-/// Seed one authored document.
-async fn seed_doc(
-    admin: &PgPool,
-    digest: &str,
-    kind: &str,
-    status: &str,
-    body: serde_json::Value,
-    approved: Option<DateTime<Utc>>,
-) {
-    sqlx::query!(
-        r#"
-        INSERT INTO content_store (digest, kp_id, kind, body, status, approved_at)
-        VALUES ($1, $2, $3, $4, $5, $6)
-        "#,
-        digest,
-        KP,
-        kind,
-        body,
-        status,
-        approved,
-    )
-    .execute(admin)
-    .await
-    .expect("the seeded document inserts");
+/// One A6 rotation of `user` with `ring` and an empty task memory, in a
+/// tenant transaction of its own.
+async fn rotate(db: &TestDb, user: Uuid, ring: Ring) -> Option<PoolRow> {
+    let task = TaskMemory::new();
+    let avoid = Avoid::new(&ring, &task);
+    let mut tx = begin_tenant(&db.app, user).await.unwrap();
+    let row = reclaim_exemplar_tx(&mut tx, user, KP, &avoid)
+        .await
+        .unwrap();
+    tx.commit().await.unwrap();
+    row
 }
 
 /// Seed one pool row. `claimed` non-`None` marks it served at that instant.
@@ -235,16 +213,9 @@ async fn the_rotation_serves_the_oldest_claimed_exemplar_and_restamps_it() {
 
         // Every hash is inside the ring: the steady state of a knowledge point
         // whose exemplar count is under the ring size.
-        let ring = Ring::from_hashes(["hash-oldest", "hash-newest"]);
-        let task = TaskMemory::new();
-        let avoid = Avoid::new(&ring, &task);
-
-        let mut tx = begin_tenant(&db.app, user).await.unwrap();
-        let row = reclaim_exemplar_tx(&mut tx, user, KP, &avoid)
+        let row = rotate(&db, user, Ring::from_hashes(["hash-oldest", "hash-newest"]))
             .await
-            .unwrap()
             .expect("the rotation serves a row");
-        tx.commit().await.unwrap();
 
         assert_eq!(row.instance_hash, "hash-oldest");
         assert_eq!(row.problem.text, "Compute 1 + 1.");
@@ -272,12 +243,9 @@ async fn the_rotation_serves_the_oldest_claimed_exemplar_and_restamps_it() {
         );
 
         // The next rotation, with the same full ring, alternates.
-        let mut tx = begin_tenant(&db.app, user).await.unwrap();
-        let row = reclaim_exemplar_tx(&mut tx, user, KP, &avoid)
+        let row = rotate(&db, user, Ring::from_hashes(["hash-oldest", "hash-newest"]))
             .await
-            .unwrap()
             .expect("the rotation serves a row");
-        tx.commit().await.unwrap();
         assert_eq!(row.instance_hash, "hash-newest");
     })
     .await;
@@ -326,16 +294,9 @@ async fn the_rotation_reads_claimed_exemplar_rows_only() {
         )
         .await;
 
-        let ring = Ring::from_hashes(["hash-blocked"]);
-        let task = TaskMemory::new();
-        let avoid = Avoid::new(&ring, &task);
-
-        let mut tx = begin_tenant(&db.app, user).await.unwrap();
-        let row = reclaim_exemplar_tx(&mut tx, user, KP, &avoid)
+        let row = rotate(&db, user, Ring::from_hashes(["hash-blocked"]))
             .await
-            .unwrap()
             .expect("the rotation serves a row");
-        tx.commit().await.unwrap();
 
         assert_eq!(row.instance_hash, "hash-free");
 
@@ -361,15 +322,7 @@ async fn the_rotation_reads_claimed_exemplar_rows_only() {
 async fn a_pair_with_no_exemplar_row_rotates_nothing() {
     TestDb::with(|db| async move {
         let user = db.seed_user("empty@example.com").await;
-        let ring = Ring::new();
-        let task = TaskMemory::new();
-        let avoid = Avoid::new(&ring, &task);
-
-        let mut tx = begin_tenant(&db.app, user).await.unwrap();
-        let row = reclaim_exemplar_tx(&mut tx, user, KP, &avoid)
-            .await
-            .unwrap();
-        tx.commit().await.unwrap();
+        let row = rotate(&db, user, Ring::new()).await;
 
         assert_eq!(row, None);
     })
@@ -393,15 +346,7 @@ async fn the_rotation_never_reaches_another_tenants_rows() {
         )
         .await;
 
-        let ring = Ring::new();
-        let task = TaskMemory::new();
-        let avoid = Avoid::new(&ring, &task);
-
-        let mut tx = begin_tenant(&db.app, mine).await.unwrap();
-        let row = reclaim_exemplar_tx(&mut tx, mine, KP, &avoid)
-            .await
-            .unwrap();
-        tx.commit().await.unwrap();
+        let row = rotate(&db, mine, Ring::new()).await;
 
         assert_eq!(row, None);
     })

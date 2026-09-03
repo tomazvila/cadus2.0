@@ -25,7 +25,7 @@ use cadus_store::{StoreError, begin_tenant};
 use common::fault::{
     closed_pool, dead_pool, drop_checks, fail_commit_on, fail_on, revoke, skip_updates_on,
 };
-use common::{KP, new_instance, seed_pool_row, seed_pool_rows, store_sqlstate};
+use common::{KP, new_instance, seed_pool_row, seed_pool_rows, sqlstate_in_tx, store_sqlstate};
 use uuid::Uuid;
 
 /// The message of a `StoreError::PoolRow`, or the Display of any other error.
@@ -121,23 +121,19 @@ async fn the_pop_reports_every_failed_statement() {
         assert_eq!(store_sqlstate(&err), "none");
 
         revoke(&db, "UPDATE", "serving_pool").await;
-        let mut tx = begin_tenant(&db.app, user).await.unwrap();
-        let err = pop_with_ring_tx(&mut tx, user, KP, &avoid)
-            .await
-            .unwrap_err();
-        assert_eq!(store_sqlstate(&err), "42501", "the claim is refused");
-        tx.rollback().await.unwrap();
+        assert_eq!(
+            sqlstate_in_tx!(db, user, |tx| pop_with_ring_tx(&mut tx, user, KP, &avoid)),
+            "42501"
+        );
 
         sqlx::query("UPDATE serving_pool SET problem = '{}'::jsonb")
             .execute(&db.admin)
             .await
             .unwrap();
-        let mut tx = begin_tenant(&db.app, user).await.unwrap();
-        let err = pop_with_ring_tx(&mut tx, user, KP, &avoid)
-            .await
-            .unwrap_err();
-        assert_eq!(store_sqlstate(&err), "42501", "the retire is refused");
-        tx.rollback().await.unwrap();
+        assert_eq!(
+            sqlstate_in_tx!(db, user, |tx| pop_with_ring_tx(&mut tx, user, KP, &avoid)),
+            "42501"
+        );
 
         revoke(&db, "SELECT", "serving_pool").await;
         let err = pop_with_ring(&db.app, user, KP, &avoid).await.unwrap_err();
@@ -191,20 +187,20 @@ async fn the_rotation_reports_a_refused_read_and_a_refused_restamp() {
         let avoid = Avoid::new(&ring, &task);
 
         fail_on(&db, "UPDATE", "serving_pool").await;
-        let mut tx = begin_tenant(&db.app, user).await.unwrap();
-        let err = reclaim_exemplar_tx(&mut tx, user, KP, &avoid)
-            .await
-            .unwrap_err();
-        assert_eq!(store_sqlstate(&err), "P0001", "the re-stamp is refused");
-        tx.rollback().await.unwrap();
+        assert_eq!(
+            sqlstate_in_tx!(db, user, |tx| reclaim_exemplar_tx(
+                &mut tx, user, KP, &avoid
+            )),
+            "P0001"
+        );
 
         revoke(&db, "SELECT", "serving_pool").await;
-        let mut tx = begin_tenant(&db.app, user).await.unwrap();
-        let err = reclaim_exemplar_tx(&mut tx, user, KP, &avoid)
-            .await
-            .unwrap_err();
-        assert_eq!(store_sqlstate(&err), "42501", "the read is refused");
-        tx.rollback().await.unwrap();
+        assert_eq!(
+            sqlstate_in_tx!(db, user, |tx| reclaim_exemplar_tx(
+                &mut tx, user, KP, &avoid
+            )),
+            "42501"
+        );
     })
     .await;
 }

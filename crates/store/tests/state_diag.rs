@@ -16,7 +16,7 @@ use cadus_store::begin_tenant;
 use cadus_store::state::{clear_diag_state, load_diag_state, save_diag_state};
 use cadus_store::test_support::TestDb;
 use common::fault::revoke;
-use common::store_sqlstate;
+use common::sqlstate_in_tx;
 use serde_json::json;
 
 /// The document round-trips, a second save replaces it, another tenant reads
@@ -62,22 +62,20 @@ async fn every_diagnostic_statement_reports_a_refused_privilege() {
         let alice = db.seed_user("alice@example.test").await;
         revoke(&db, "SELECT, INSERT, DELETE", "diag_states").await;
 
-        let mut tx = begin_tenant(&db.app, alice).await.unwrap();
-        let err = load_diag_state(&mut tx, alice).await.unwrap_err();
-        assert_eq!(store_sqlstate(&err), "42501", "{err:?}");
-        tx.rollback().await.unwrap();
+        assert_eq!(
+            sqlstate_in_tx!(db, alice, |tx| load_diag_state(&mut tx, alice)),
+            "42501"
+        );
 
-        let mut tx = begin_tenant(&db.app, alice).await.unwrap();
-        let err = save_diag_state(&mut tx, alice, &json!({}))
-            .await
-            .unwrap_err();
-        assert_eq!(store_sqlstate(&err), "42501", "{err:?}");
-        tx.rollback().await.unwrap();
+        assert_eq!(
+            sqlstate_in_tx!(db, alice, |tx| save_diag_state(&mut tx, alice, &json!({}))),
+            "42501"
+        );
 
-        let mut tx = begin_tenant(&db.app, alice).await.unwrap();
-        let err = clear_diag_state(&mut tx, alice).await.unwrap_err();
-        assert_eq!(store_sqlstate(&err), "42501", "{err:?}");
-        tx.rollback().await.unwrap();
+        assert_eq!(
+            sqlstate_in_tx!(db, alice, |tx| clear_diag_state(&mut tx, alice)),
+            "42501"
+        );
     })
     .await;
 }

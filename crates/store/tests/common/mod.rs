@@ -4,19 +4,20 @@
 //! Every test binary compiles this module, and no binary uses every helper, so
 //! the dead-code lint is off for the module.
 
-#![allow(dead_code)]
+#![allow(dead_code, unused_imports, unused_macros)]
 
 pub mod bench;
 pub mod events;
 pub mod fault;
 pub mod long_log;
+pub mod state;
 
-use cadus_core::pool::{PoolAnswer, PoolProblem, Source};
-use cadus_store::pool::NewInstance;
+use cadus_core::pool::{Avoid, PoolAnswer, PoolProblem, Ring, Source, TaskMemory};
+use cadus_store::pool::{Claimed, NewInstance, Pop, pop_with_ring};
 use cadus_store::test_support::TestDb;
 use cadus_store::{DEFAULT_CLIENT_TIMEOUT_MS, Db, StoreError};
-use sqlx::PgPool;
 use sqlx::types::chrono::{DateTime, Utc};
+use sqlx::{Connection, PgPool};
 use uuid::Uuid;
 
 /// The serving key of the tests: `"<topic_id>/<kp_id>"`.
@@ -160,7 +161,8 @@ pub async fn seed_doc(
     .expect("the seeded document inserts");
 }
 
-/// Seed one template document of `status` with `statement` as its text.
+/// Insert one template `content_store` row of `status` with `statement` as
+/// the text of its body. An approved row is stamped now.
 pub async fn seed_template(
     admin: &PgPool,
     digest: &str,
@@ -168,15 +170,77 @@ pub async fn seed_template(
     status: &str,
     statement: &str,
 ) {
-    sqlx::query(
-        "INSERT INTO content_store (digest, kp_id, kind, body, status) \
-         VALUES ($1, $2, 'template', $3, $4)",
+    let body = format!(r#"{{"v":1,"statement":"{statement}"}}"#);
+    sqlx::query!(
+        r#"
+        INSERT INTO content_store (digest, kp_id, kind, body, status, approved_at)
+        VALUES ($1, $2, 'template', $3::text::jsonb, $4,
+                CASE WHEN $4 = 'approved' THEN now() ELSE NULL END)
+        "#,
+        digest,
+        kp_id,
+        body,
+        status,
     )
-    .bind(digest)
-    .bind(kp_id)
-    .bind(serde_json::json!({ "statement": statement }))
-    .bind(status)
     .execute(admin)
     .await
-    .expect("the seeded template inserts");
+    .expect("the content row inserts");
 }
+
+/// One pop of `(user_id, kp_id)` with `ring` and an empty task memory, in a
+/// tenant transaction of its own.
+pub async fn pop_with(pool: &PgPool, user_id: Uuid, kp_id: &str, ring: &Ring) -> Pop {
+    let task = TaskMemory::new();
+    let avoid = Avoid::new(ring, &task);
+    pop_with_ring(pool, user_id, kp_id, &avoid)
+        .await
+        .expect("the pop runs")
+}
+
+/// One pop of `(user_id, kp_id)` with both anti-repeat windows empty.
+pub async fn pop_fresh(pool: &PgPool, user_id: Uuid, kp_id: &str) -> Pop {
+    pop_with(pool, user_id, kp_id, &Ring::new()).await
+}
+
+/// The row one fresh pop of `(user_id, kp_id)` claims.
+pub async fn claim_fresh(pool: &PgPool, user_id: Uuid, kp_id: &str) -> Claimed {
+    pop_fresh(pool, user_id, kp_id)
+        .await
+        .claimed
+        .expect("the pool holds a servable row")
+}
+
+/// The count of rows of `query` whose one bind is `name`, read through a
+/// maintenance connection of the test cluster.
+pub async fn cluster_count(query: &'static str, name: &str) -> i64 {
+    let dsn = std::env::var("CADUS_TEST_DATABASE_URL").expect("the test DSN is set");
+    let mut conn = sqlx::PgConnection::connect(&dsn)
+        .await
+        .expect("the maintenance connection opens");
+    let count: i64 = sqlx::query_scalar(query)
+        .bind(name)
+        .fetch_one(&mut conn)
+        .await
+        .expect("the count reads");
+    conn.close()
+        .await
+        .expect("the maintenance connection closes");
+    count
+}
+
+/// The SQLSTATE of one statement that runs inside a tenant transaction of its
+/// own; the transaction is rolled back after it.
+///
+/// A refused statement aborts its transaction, so a test that checks several
+/// refusals gives each one its own transaction.
+macro_rules! sqlstate_in_tx {
+    ($db:expr, $user:expr, |$tx:ident| $call:expr) => {{
+        let mut $tx = cadus_store::begin_tenant(&$db.app, $user)
+            .await
+            .expect("the tenant transaction starts");
+        let err = $call.await.expect_err("the statement is refused");
+        $tx.rollback().await.expect("the transaction rolls back");
+        $crate::common::store_sqlstate(&err)
+    }};
+}
+pub(crate) use sqlstate_in_tx;
