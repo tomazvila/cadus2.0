@@ -12,7 +12,10 @@
 
 use std::sync::Arc;
 
+mod common;
+
 use cadus_store::test_support::TestDb;
+use common::cluster_count;
 use sqlx::AssertSqlSafe;
 
 /// The message of a panic payload.
@@ -25,12 +28,8 @@ fn panic_message(payload: &(dyn std::any::Any + Send)) -> String {
 }
 
 /// The count of cluster roles with `name`.
-async fn roles_named(db: &TestDb, name: &str) -> i64 {
-    sqlx::query_scalar("SELECT count(*) FROM pg_roles WHERE rolname = $1")
-        .bind(name)
-        .fetch_one(&db.admin)
-        .await
-        .unwrap()
+async fn roles_named(name: &str) -> i64 {
+    cluster_count("SELECT count(*) FROM pg_roles WHERE rolname = $1", name).await
 }
 
 /// A role without LOGIN opens no pool. The fixture drops the role and raises
@@ -115,7 +114,7 @@ async fn a_drop_that_fails_after_the_body_stops_the_test() {
             .next()
             .unwrap()
             .to_string();
-        assert_eq!(roles_named(&db, &role).await, 1);
+        assert_eq!(roles_named(&role).await, 1);
         sqlx::query(AssertSqlSafe(format!(
             "REVOKE SELECT ON users FROM \"{role}\""
         )))
@@ -126,7 +125,7 @@ async fn a_drop_that_fails_after_the_body_stops_the_test() {
             .execute(&db.admin)
             .await
             .unwrap();
-        assert_eq!(roles_named(&db, &role).await, 0);
+        assert_eq!(roles_named(&role).await, 0);
     })
     .await;
 }

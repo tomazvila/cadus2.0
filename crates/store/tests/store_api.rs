@@ -18,9 +18,11 @@
 
 use std::time::{Duration, Instant};
 
+mod common;
+
 use cadus_store::test_support::TestDb;
 use cadus_store::{DbConfig, StoreError, assert_rls_enforced, begin_tenant};
-use sqlx::{Connection, PgConnection};
+use common::cluster_count;
 
 /// C3: `begin_tenant` binds the tenant to the transaction only.
 ///
@@ -186,16 +188,8 @@ async fn with_role_drops_the_role_of_a_panicking_body() {
         "with_role() must raise the panic of the body again"
     );
 
-    let dsn = std::env::var("CADUS_TEST_DATABASE_URL").unwrap();
-    let mut conn = PgConnection::connect(&dsn).await.unwrap();
-    let left_behind = sqlx::query_scalar!(
-        r#"SELECT count(*) AS "count!" FROM pg_roles WHERE rolname = $1"#,
-        role
-    )
-    .fetch_one(&mut conn)
-    .await
-    .unwrap();
-    conn.close().await.unwrap();
+    let left_behind =
+        cluster_count("SELECT count(*) FROM pg_roles WHERE rolname = $1", &role).await;
 
     assert_eq!(left_behind, 0, "the panicking body left the role {role}");
 }
@@ -223,16 +217,8 @@ async fn with_drops_the_database_of_a_panicking_body() {
         "with() must raise the panic of the body again"
     );
 
-    let dsn = std::env::var("CADUS_TEST_DATABASE_URL").unwrap();
-    let mut conn = PgConnection::connect(&dsn).await.unwrap();
-    let left_behind = sqlx::query_scalar!(
-        r#"SELECT count(*) AS "count!" FROM pg_database WHERE datname = $1"#,
-        name
-    )
-    .fetch_one(&mut conn)
-    .await
-    .unwrap();
-    conn.close().await.unwrap();
+    let left_behind =
+        cluster_count("SELECT count(*) FROM pg_database WHERE datname = $1", &name).await;
 
     assert_eq!(left_behind, 0, "the panicking test left {name} behind");
 }
@@ -270,16 +256,8 @@ async fn with_drops_the_database_of_a_failed_setup() {
         "the panic must name the role that failed: {message}"
     );
 
-    let dsn = std::env::var("CADUS_TEST_DATABASE_URL").unwrap();
-    let mut conn = PgConnection::connect(&dsn).await.unwrap();
-    let left_behind = sqlx::query_scalar!(
-        r#"SELECT count(*) AS "count!" FROM pg_database WHERE datname = $1"#,
-        name
-    )
-    .fetch_one(&mut conn)
-    .await
-    .unwrap();
-    conn.close().await.unwrap();
+    let left_behind =
+        cluster_count("SELECT count(*) FROM pg_database WHERE datname = $1", &name).await;
 
     assert_eq!(left_behind, 0, "the failed setup left {name} behind");
 }
