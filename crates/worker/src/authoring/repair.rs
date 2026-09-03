@@ -341,8 +341,9 @@ fn refuse(text: &str) -> Result<(), Rejection> {
     match stray_control(text) {
         None => Ok(()),
         Some(ch) => {
+            let code_point = format!("U+{:04X}", ch as u32);
             tracing::warn!(
-                code_point = format!("U+{:04X}", ch as u32),
+                code_point,
                 "authoring: the tool arguments keep a control character after the LaTeX repair"
             );
             Err(Rejection {
@@ -359,7 +360,8 @@ mod tests {
     // JSON decoder hands back for an under-escaped `\times`, `\neq` and
     // `\rightarrow`. That is the input the repair exists for.
     use super::{
-        CONTROL_CHARACTER, CONTROL_CODE, repair_arguments, repair_latex_escapes, stray_control,
+        CONTROL_CHARACTER, CONTROL_CODE, ambiguous_commands, repair_arguments,
+        repair_latex_escapes, stray_control,
     };
     use serde_json::json;
 
@@ -400,6 +402,32 @@ mod tests {
         assert_eq!(repair_latex_escapes("$$x \times y$$"), "$$x \\times y$$");
         assert_eq!(repair_latex_escapes("$a \neq b$"), "$a \\neq b$");
         assert_eq!(repair_latex_escapes("$a \tzzz$"), "$a \tzzz$");
+    }
+
+    /// A `$` with no closing delimiter opens no math span, so a TAB after it
+    /// stays a TAB, on the `$` form and on the `$$` form alike.
+    #[test]
+    fn a_math_span_with_no_end_is_ordinary_text() {
+        assert_eq!(repair_latex_escapes("$a \times b"), "$a \times b");
+        assert_eq!(repair_latex_escapes("$$a \times b"), "$$a \times b");
+        assert_eq!(repair_latex_escapes("cost: 5$ \to 6$"), "cost: 5$ \\to 6$");
+    }
+
+    /// Only TAB and LF name a command list; every other control character
+    /// names none.
+    #[test]
+    fn only_the_two_ambiguous_controls_name_a_command_list() {
+        assert!(ambiguous_commands('\t').contains(&"times"));
+        assert!(ambiguous_commands('\n').contains(&"neq"));
+        assert!(ambiguous_commands('\r').is_empty());
+    }
+
+    /// An object key with a control character refuses the body too.
+    #[test]
+    fn a_key_with_a_control_character_refuses_the_body() {
+        let rejection = repair_arguments(&json!({"state\u{1}ment": "Compute $1 + 1$."}))
+            .expect_err("a control character in a key refuses the body");
+        assert_eq!(rejection.code, CONTROL_CODE);
     }
 
     /// LF survives the check; every other control character refuses the body.

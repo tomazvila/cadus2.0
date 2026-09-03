@@ -99,20 +99,20 @@
 //! Nothing here calls a model (T1). The refill draws, renders, and evaluates in
 //! process, exactly as the gate does.
 
-use std::collections::{HashMap, HashSet};
+mod state;
+mod target;
+
 use std::time::{Duration, Instant};
 
-use cadus_core::curriculum::{Curriculum, Exemplar, KnowledgePoint};
-use cadus_core::pool::{
-    Batch, ExemplarSource, FillError, PoolAnswer, PoolProblem, ProblemSource, REFUSAL_FLAG_PERCENT,
-    Source, TemplateSource, split_kp_key,
-};
-use cadus_core::template::{GateSpec, TemplateDoc, from_body, gate};
+use cadus_core::curriculum::{Curriculum, KnowledgePoint};
+use cadus_core::pool::{Source, split_kp_key};
 use cadus_store::Db;
-use cadus_store::pool::{NewInstance, PoolTarget};
 use sqlx::types::Uuid;
 
+pub use state::RefillState;
+
 use crate::WorkerError;
+use target::{Filled, refill_target};
 
 /// The unclaimed depth one `(user, kp)` pair keeps.
 ///
@@ -205,12 +205,16 @@ impl<'arena> RefillJob<'arena> {
     /// The knowledge point of one serving key, when the curriculum names it.
     #[must_use]
     pub fn knowledge_point(&self, kp_key: &str) -> Option<(&'arena KnowledgePoint, AnswerKindOf)> {
-        let curriculum = self.curriculum;
         let (topic_id, kp_id) = split_kp_key(kp_key)?;
-        let topic_idx = curriculum.idx_of(topic_id)?;
-        let topic = curriculum.topic(topic_idx)?;
-        let kp_idx = curriculum.kp_idx_of(topic_idx, kp_id)?;
-        let kp = curriculum.knowledge_point(topic_idx, kp_idx)?;
+        let topic = self
+            .curriculum
+            .topics()
+            .iter()
+            .find(|topic| topic.id.as_str() == topic_id)?;
+        let kp = topic
+            .knowledge_points
+            .iter()
+            .find(|kp| kp.id.as_str() == kp_id)?;
         Some((kp, AnswerKindOf(topic.answer_kind)))
     }
 }
@@ -221,135 +225,6 @@ impl<'arena> RefillJob<'arena> {
 /// otherwise need.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct AnswerKindOf(pub cadus_core::curriculum::AnswerKind);
-
-/// The gate verdicts one worker process remembers.
-///
-/// The gate walks up to
-/// [`GATE_SAMPLES`](cadus_core::template::GATE_SAMPLES) instances, so it is far
-/// too heavy to run once per refill. The verdict belongs to the document, and the
-/// document is content-addressed (C6), so one verdict per digest is exact.
-#[derive(Debug, Default)]
-pub struct RefillState {
-    /// Digests the gate accepted.
-    accepted: HashSet<String>,
-    /// Digests the gate refused, with the reason it wrote.
-    refused: HashMap<String, String>,
-    /// Pairs with no fillable source, and the instant each one is tried again.
-    starved: HashMap<(Uuid, String), Instant>,
-    /// Pairs whose last fills inserted no row, and how many in a row.
-    ///
-    /// A fill that inserts a row removes the pair from this map, so the count is
-    /// the CONSECUTIVE count and never a running total (finding #8).
-    empty_fills: HashMap<(Uuid, String), u32>,
-    /// Pairs whose source ran dry, so `operator_flags` names them (A6).
-    exhausted: HashSet<(Uuid, String)>,
-}
-
-impl RefillState {
-    /// Build an empty cache.
-    #[must_use]
-    pub fn new() -> Self {
-        Self::default()
-    }
-
-    /// The count of digests the cache holds.
-    #[must_use]
-    pub fn len(&self) -> usize {
-        self.accepted.len().saturating_add(self.refused.len())
-    }
-
-    /// Whether the cache holds no verdict.
-    #[must_use]
-    pub fn is_empty(&self) -> bool {
-        self.accepted.is_empty() && self.refused.is_empty()
-    }
-
-    /// The refusal reason of a digest the gate rejected.
-    #[must_use]
-    pub fn refusal(&self, digest: &str) -> Option<&str> {
-        self.refused.get(digest).map(String::as_str)
-    }
-
-    /// The count of pairs the backoff map holds.
-    #[must_use]
-    pub fn starved_len(&self) -> usize {
-        self.starved.len()
-    }
-
-    /// Whether one pair is out of the target list at `now`.
-    #[must_use]
-    pub fn is_starved(&self, user_id: Uuid, kp_id: &str, now: Instant) -> bool {
-        self.starved
-            .get(&(user_id, kp_id.to_string()))
-            .is_some_and(|until| *until > now)
-    }
-
-    /// The count of pairs whose source ran dry.
-    #[must_use]
-    pub fn exhausted_len(&self) -> usize {
-        self.exhausted.len()
-    }
-
-    /// Whether the source of one pair ran dry (finding #8).
-    #[must_use]
-    pub fn is_exhausted(&self, user_id: Uuid, kp_id: &str) -> bool {
-        self.exhausted.contains(&(user_id, kp_id.to_string()))
-    }
-
-    /// The serving keys whose source ran dry, sorted and without a repeat.
-    ///
-    /// The list is the `exhausted` argument of
-    /// `cadus_store::pool::operator_flags_with_exhausted`, whose row is per
-    /// knowledge point and not per pair: one exhausted learner is enough to
-    /// flag the knowledge point, because the cure is authored content (A6).
-    #[must_use]
-    pub fn exhausted_kps(&self) -> Vec<String> {
-        let mut keys: Vec<String> = self
-            .exhausted
-            .iter()
-            .map(|(_, kp_id)| kp_id.clone())
-            .collect();
-        keys.sort();
-        keys.dedup();
-        keys
-    }
-
-    /// Put one pair out of the target list for `backoff`.
-    fn starve(&mut self, user_id: Uuid, kp_id: &str, now: Instant, backoff: Duration) {
-        let until = now.checked_add(backoff).unwrap_or(now);
-        self.starved.insert((user_id, kp_id.to_string()), until);
-    }
-
-    /// Count one fill of `pair` that inserted no row, and give the new count.
-    fn note_empty_fill(&mut self, user_id: Uuid, kp_id: &str) -> u32 {
-        let count = self
-            .empty_fills
-            .entry((user_id, kp_id.to_string()))
-            .or_insert(0);
-        *count = count.saturating_add(1);
-        *count
-    }
-
-    /// Mark the source of one pair dry, so `operator_flags` names it (A6).
-    fn exhaust(&mut self, user_id: Uuid, kp_id: &str) {
-        self.exhausted.insert((user_id, kp_id.to_string()));
-    }
-
-    /// Clear both empty-fill records of one pair after a fill that wrote a row.
-    fn note_filled(&mut self, user_id: Uuid, kp_id: &str) {
-        let key = (user_id, kp_id.to_string());
-        self.empty_fills.remove(&key);
-        self.exhausted.remove(&key);
-    }
-
-    /// Drop every backoff entry whose period ended, and list the ones that hold.
-    fn active_starved(&mut self, now: Instant) -> Vec<(Uuid, String)> {
-        self.starved.retain(|_, until| *until > now);
-        let mut pairs: Vec<(Uuid, String)> = self.starved.keys().cloned().collect();
-        pairs.sort();
-        pairs
-    }
-}
 
 /// What one refill call did.
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
@@ -386,22 +261,6 @@ pub struct RefillReport {
     /// Each one is a row an operator's revocation (C6) took out of the pool
     /// (finding #4). A count above 0 is news: it says a served answer was wrong.
     pub retired_unapproved: u64,
-}
-
-/// What one target gave.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-enum Filled {
-    /// The pair reached its depth already.
-    Full,
-    /// The pair took rows from the named source.
-    Rows {
-        source: Source,
-        inserted: u64,
-        refused: u64,
-        flagged: bool,
-    },
-    /// The pair has no approved template and no exemplar.
-    NoSource,
 }
 
 /// The 64-bit mixing step of SplitMix64.
@@ -517,17 +376,16 @@ pub async fn refill_once_at(
         retired_unapproved: u64::try_from(retired.len()).unwrap_or(u64::MAX),
         ..RefillReport::default()
     };
-
     for target in &targets {
         match refill_target(db, job, state, target, nonce).await {
-            Ok(Filled::Full) => {}
             Ok(Filled::NoSource) => {
                 report.without_source = report.without_source.saturating_add(1);
                 state.starve(target.user_id, &target.kp_id, now, REFILL_BACKOFF);
+                let backoff_secs = REFILL_BACKOFF.as_secs();
                 tracing::warn!(
                     user_id = %target.user_id,
                     kp_id = %target.kp_id,
-                    backoff_secs = REFILL_BACKOFF.as_secs(),
+                    backoff_secs,
                     "refill: the knowledge point has no approved template and no exemplar; \
                      the pair leaves the target list and operator_flags names it (A6)"
                 );
@@ -551,31 +409,8 @@ pub async fn refill_once_at(
                         report.from_template = report.from_template.saturating_add(inserted);
                     }
                 }
-
-                // A fill that wrote no row is the second starvation shape
-                // (finding #8): the source works, and it has nothing the pool
-                // does not hold. Two in a row take the pair off the list for an
-                // hour, so the budget reaches the pairs that CAN grow.
-                if inserted > 0 {
-                    state.note_filled(target.user_id, &target.kp_id);
-                } else if state.note_empty_fill(target.user_id, &target.kp_id)
-                    >= EMPTY_FILLS_BEFORE_BACKOFF
-                {
-                    state.starve(target.user_id, &target.kp_id, now, EXHAUSTED_BACKOFF);
-                    state.exhaust(target.user_id, &target.kp_id);
+                if note_fill(state, job, target, source, inserted, now) {
                     report.exhausted = report.exhausted.saturating_add(1);
-                    tracing::warn!(
-                        user_id = %target.user_id,
-                        kp_id = %target.kp_id,
-                        source = %source.as_str(),
-                        depth = target.depth,
-                        target_depth = job.cfg.target_depth,
-                        empty_fills = EMPTY_FILLS_BEFORE_BACKOFF,
-                        backoff_secs = EXHAUSTED_BACKOFF.as_secs(),
-                        "refill: the source of this pair produced no new statement twice in a \
-                         row; the pair leaves the target list and operator_flags names it \
-                         source_exhausted (A6, D-O4)"
-                    );
                 }
             }
             Err(err) => {
@@ -592,226 +427,42 @@ pub async fn refill_once_at(
     Ok(report)
 }
 
-/// Log every refusal of one batch, and say whether the pair is flagged (C4).
+/// Record one fill in the empty-fill count of its pair, and say whether the
+/// pair is exhausted now (finding #8).
 ///
-/// A refusal means the gate accepted a document one of whose instances breaks a
-/// per-instance rule. That is a content defect, so every one of them reaches the
-/// log with the rule that refused it.
-fn report_refusals(kp_id: &str, digest: Option<&str>, batch: &Batch) -> bool {
-    for refused in batch.refusals() {
-        tracing::warn!(
-            kp_id = %kp_id,
-            digest = digest.unwrap_or(""),
-            code = %refused.code,
-            reason = %refused.message,
-            "refill: the per-instance check refused an instance; it is not in the pool (C4)"
-        );
-    }
-    let flagged = batch.is_flagged();
-    if flagged {
-        tracing::warn!(
-            kp_id = %kp_id,
-            digest = digest.unwrap_or(""),
-            refused = batch.refusals().len(),
-            checked = batch.checked(),
-            percent = batch.refusal_percent(),
-            limit = REFUSAL_FLAG_PERCENT,
-            "refill: the refusal rate of this knowledge point is above the limit (C4, C6)"
-        );
-    }
-    flagged
-}
-
-/// Fill one `(user, kp)` pair up to the target depth.
-async fn refill_target(
-    db: &Db,
+/// A fill that wrote no row is the second starvation shape: the source works,
+/// and it has nothing the pool does not hold. Two in a row take the pair off the
+/// list for an hour, so the budget reaches the pairs that CAN grow.
+fn note_fill(
+    state: &mut RefillState,
     job: &RefillJob<'_>,
-    state: &mut RefillState,
-    target: &PoolTarget,
-    nonce: u64,
-) -> Result<Filled, WorkerError> {
-    let want = job.cfg.target_depth.saturating_sub(target.depth);
-    let Ok(need) = usize::try_from(want) else {
-        return Ok(Filled::Full);
-    };
-    if need == 0 {
-        return Ok(Filled::Full);
-    }
-
-    let seed = batch_seed(job.cfg.base_seed, target.user_id, &target.kp_id, nonce);
-    let known = job.knowledge_point(&target.kp_id);
-
-    // Step 1: an approved template (A1). C6 binds the approval to the digest, so
-    // `approved_template` never returns a pending body.
-    if let Some(approved) = cadus_store::pool::approved_template(db.pool(), &target.kp_id).await? {
-        match template_instances(
-            &approved.digest,
-            &approved.body,
-            state,
-            &target.kp_id,
-            known,
-        ) {
-            Ok(Some(doc)) => {
-                // The source carries the authored exemplars, so the per-instance
-                // re-check applies the A6 envelope to every instance it draws
-                // (C4). A knowledge point the curriculum does not name has none,
-                // and the envelope rule then stays silent.
-                let exemplars: &[Exemplar] = known.map_or(&[], |(kp, _)| kp.exemplars.as_slice());
-                let source = TemplateSource::new(target.kp_id.clone(), &doc)
-                    .map_err(|err| WorkerError::Refill(err.to_string()))?
-                    .with_digest(approved.digest.clone())
-                    .with_exemplars(exemplars);
-                let batch = source
-                    .fill(&target.kp_id, need, seed)
-                    .map_err(|err: FillError| WorkerError::Refill(err.to_string()))?;
-                let flagged = report_refusals(&target.kp_id, Some(&approved.digest), &batch);
-                let refused = u64::try_from(batch.refusals().len()).unwrap_or(u64::MAX);
-                let inserted = insert(
-                    db,
-                    target,
-                    batch.instances(),
-                    Source::Template,
-                    Some(&approved.digest),
-                    seed,
-                )
-                .await?;
-                return Ok(Filled::Rows {
-                    source: Source::Template,
-                    inserted,
-                    refused,
-                    flagged,
-                });
-            }
-            // The gate refused the approved document, or the body did not read.
-            // The knowledge point falls back to its exemplars (A6) instead of
-            // going off the air.
-            Ok(None) => {}
-            Err(reason) => {
-                tracing::warn!(
-                    kp_id = %target.kp_id,
-                    digest = %approved.digest,
-                    reason = %reason,
-                    "refill: the approved template is not servable; falling back to exemplars (A6)"
-                );
-            }
-        }
-    }
-
-    // Step 2: the A6 exemplar fallback. No model call, no synchronous
-    // generation: the rotation is the authored exemplar list.
-    let Some((kp, _)) = known else {
-        return Ok(Filled::NoSource);
-    };
-    let exemplars: &[Exemplar] = &kp.exemplars;
-    if exemplars.is_empty() {
-        return Ok(Filled::NoSource);
-    }
-    let source = ExemplarSource::new(target.kp_id.clone(), exemplars);
-    if !source.covers_ring() {
-        tracing::info!(
-            kp_id = %target.kp_id,
-            exemplars = source.len(),
-            "refill: the exemplar count is under the anti-repeat ring (A6)"
-        );
-    }
-    let batch = match source.fill(&target.kp_id, need, seed) {
-        Ok(batch) => batch,
-        Err(FillError::NoExemplar) => return Ok(Filled::NoSource),
-        Err(err) => return Err(WorkerError::Refill(err.to_string())),
-    };
-    let flagged = report_refusals(&target.kp_id, None, &batch);
-    let refused = u64::try_from(batch.refusals().len()).unwrap_or(u64::MAX);
-    let inserted = insert(db, target, batch.instances(), Source::Exemplar, None, seed).await?;
-    Ok(Filled::Rows {
-        source: Source::Exemplar,
-        inserted,
-        refused,
-        flagged,
-    })
-}
-
-/// Read an approved body and put its digest through the gate once.
-///
-/// `Ok(Some(doc))` means the document is servable. `Ok(None)` means a cached
-/// refusal. `Err(reason)` means this call read the refusal.
-fn template_instances(
-    digest: &str,
-    body: &str,
-    state: &mut RefillState,
-    kp_key: &str,
-    known: Option<(&KnowledgePoint, AnswerKindOf)>,
-) -> Result<Option<TemplateDoc>, String> {
-    if state.refused.contains_key(digest) {
-        return Ok(None);
-    }
-
-    let doc = match from_body(body) {
-        Ok(doc) => doc,
-        Err(err) => {
-            let reason = format!("the body did not read: {err}");
-            state.refused.insert(digest.to_string(), reason.clone());
-            return Err(reason);
-        }
-    };
-
-    if state.accepted.contains(digest) {
-        return Ok(Some(doc));
-    }
-
-    // The gate needs the topic's answer kind and the knowledge point's exemplars.
-    // A serving key the loaded curriculum does not name has neither, so the
-    // document runs on its C6 approval alone.
-    let Some((kp, answer_kind)) = known else {
-        tracing::info!(
-            kp_id = %kp_key,
-            digest = %digest,
-            "refill: the curriculum does not name this knowledge point; the gate did not run again"
-        );
-        state.accepted.insert(digest.to_string());
-        return Ok(Some(doc));
-    };
-
-    let spec = GateSpec {
-        answer_kind: answer_kind.0,
-        exemplars: &kp.exemplars,
-    };
-    match gate(&doc, &spec) {
-        Ok(_) => {
-            state.accepted.insert(digest.to_string());
-            Ok(Some(doc))
-        }
-        Err(rejection) => {
-            let reason = format!("[{}] {}", rejection.code, rejection.message);
-            state.refused.insert(digest.to_string(), reason.clone());
-            Err(reason)
-        }
-    }
-}
-
-/// Write one batch into the pool.
-async fn insert(
-    db: &Db,
-    target: &PoolTarget,
-    instances: &[cadus_core::template::Instance],
+    target: &cadus_store::pool::PoolTarget,
     source: Source,
-    digest: Option<&str>,
-    seed: u64,
-) -> Result<u64, WorkerError> {
-    if instances.is_empty() {
-        return Ok(0);
+    inserted: u64,
+    now: Instant,
+) -> bool {
+    if inserted > 0 {
+        state.note_filled(target.user_id, &target.kp_id);
+        return false;
     }
-    let rows: Vec<NewInstance> = instances
-        .iter()
-        .map(|instance| NewInstance {
-            source,
-            content_digest: digest.map(str::to_string),
-            problem: PoolProblem::from_instance(instance, seed),
-            expected_answer: PoolAnswer::from_instance(instance),
-            instance_hash: instance.instance_hash.clone(),
-        })
-        .collect();
-    let inserted =
-        cadus_store::pool::insert_batch_for_user(db.pool(), target.user_id, &target.kp_id, &rows)
-            .await?;
-    Ok(inserted)
+    if state.note_empty_fill(target.user_id, &target.kp_id) < EMPTY_FILLS_BEFORE_BACKOFF {
+        return false;
+    }
+    state.starve(target.user_id, &target.kp_id, now, EXHAUSTED_BACKOFF);
+    state.exhaust(target.user_id, &target.kp_id);
+    let source = source.as_str();
+    let backoff_secs = EXHAUSTED_BACKOFF.as_secs();
+    tracing::warn!(
+        user_id = %target.user_id,
+        kp_id = %target.kp_id,
+        source,
+        depth = target.depth,
+        target_depth = job.cfg.target_depth,
+        empty_fills = EMPTY_FILLS_BEFORE_BACKOFF,
+        backoff_secs,
+        "refill: the source of this pair produced no new statement twice in a \
+         row; the pair leaves the target list and operator_flags names it \
+         source_exhausted (A6, D-O4)"
+    );
+    true
 }

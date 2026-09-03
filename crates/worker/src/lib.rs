@@ -236,7 +236,8 @@ pub async fn run_with(
     interval.set_missed_tick_behavior(tokio::time::MissedTickBehavior::Delay);
     let mut shutdown = std::pin::pin!(shutdown);
 
-    tracing::info!(tick_ms = cfg.tick.as_millis() as u64, "worker: loop starts");
+    let tick_ms = cfg.tick.as_millis() as u64;
+    tracing::info!(tick_ms, "worker: loop starts");
 
     loop {
         // Step 1: wait for the next tick. `biased` gives the shutdown branch the
@@ -316,16 +317,7 @@ pub async fn run_with(
                 biased;
                 _ = &mut shutdown => break,
                 result = diagnosis::run_once(db, job) => match result {
-                    Ok(report) => match report.outcome {
-                        // An idle queue is the common case. It says nothing.
-                        diagnosis::Outcome::Idle => {}
-                        outcome => tracing::info!(
-                            ?outcome,
-                            job = ?report.job_id,
-                            http_attempts = report.attempts.len(),
-                            "diagnosis tick={ticks}"
-                        ),
-                    },
+                    Ok(report) => log_diagnosis(&report, ticks),
                     Err(err) => tracing::warn!(error = %err, "diagnosis: the pass did not run"),
                 }
             }
@@ -334,6 +326,22 @@ pub async fn run_with(
 
     tracing::info!("worker: loop stops after {ticks} ticks");
     Ok(ticks)
+}
+
+/// Log one diagnosis pass that did something.
+///
+/// An idle queue is the common case. It says nothing.
+fn log_diagnosis(report: &diagnosis::Report, ticks: u64) {
+    if report.outcome == diagnosis::Outcome::Idle {
+        return;
+    }
+    let http_attempts = report.attempts.len();
+    tracing::info!(
+        outcome = ?report.outcome,
+        job = ?report.job_id,
+        http_attempts,
+        "diagnosis tick={ticks}"
+    );
 }
 
 /// Run the heartbeat query. The compiler checks it against the schema (R2).
@@ -439,9 +447,16 @@ mod tests {
     /// with any variant, so this one names the variant too.
     #[test]
     fn an_empty_value_gives_the_config_variant() {
-        match WorkerConfig::from_raw("") {
-            Err(WorkerError::Config(_)) => {}
-            other => panic!("the parse must give WorkerError::Config, it gave {other:?}"),
-        }
+        let outcome = WorkerConfig::from_raw("");
+        assert!(
+            matches!(outcome, Err(WorkerError::Config(_))),
+            "the parse must give WorkerError::Config, it gave {outcome:?}"
+        );
+    }
+
+    /// The default period is 5 seconds, the value an absent variable gives.
+    #[test]
+    fn the_default_tick_is_five_seconds() {
+        assert_eq!(WorkerConfig::default().tick, Duration::from_secs(5));
     }
 }

@@ -26,31 +26,23 @@
     )
 )]
 
+#[path = "cadus-worker/curriculum.rs"]
+mod curriculum;
+#[path = "cadus-worker/shutdown.rs"]
+mod shutdown;
+
 use std::future::Future;
-use std::path::PathBuf;
 use std::process::ExitCode;
 use std::time::Duration;
 
-use cadus_core::curriculum::{Curriculum, CurriculumError, LoadError, load_curriculum};
 use cadus_model_client::{API_KEY_VAR, Client, ModelConfig};
 use cadus_store::{Db, DbConfig, bounded};
 use cadus_worker::authoring::cli::{self, AuthorArgs, Command};
 use cadus_worker::authoring::job::{self, AuthoringJob, run_batch};
 use cadus_worker::{DiagnosisJob, RefillJob, WorkerConfig, WorkerError};
 
-/// The environment variable that names the curriculum tree.
-///
-/// The refill job (D-O4) reads the authored exemplars from it for the A6
-/// fallback, and it reads the topic answer kind for the gate re-run.
-const CURRICULUM_ENV: &str = "CADUS_CURRICULUM";
-
-/// The tree the worker reads when the variable names none.
-///
-/// The path is relative to the working directory. The image sets
-/// `CADUS_CURRICULUM=/app/curriculum` and carries the tree there, and the
-/// repository holds `curriculum/` at its root, so both the container and a run
-/// from the repository root find a tree without an operator flag.
-const DEFAULT_CURRICULUM: &str = "curriculum";
+use curriculum::load_arena;
+use shutdown::Shutdown;
 
 /// The bound on the pool close after the tick loop stops.
 ///
@@ -178,17 +170,32 @@ fn authoring_job() -> Result<AuthoringJob, WorkerError> {
     // (2000), never the diagnosis values. A diagnosis budget of 600 output
     // tokens with a reasoning ceiling of 600 beside it leaves zero visible
     // tokens for an authored document (finding F18).
-    let model_cfg =
-        ModelConfig::authoring_from_env().map_err(|err| WorkerError::Config(err.to_string()))?;
-    let client = Client::new(model_cfg).map_err(|err| WorkerError::Config(err.to_string()))?;
-    tracing::info!(
-        model = %client.config().model,
-        base_url = %client.config().base_url,
-        output_tokens = client.config().output_tokens,
-        reasoning_max_tokens = client.config().reasoning_max_tokens,
-        "cadus-worker: the authoring pass is configured"
-    );
+    let model_cfg = ModelConfig::authoring_from_env().map_err(config_error)?;
+    let client = client_for(model_cfg, "the authoring pass is configured")?;
     Ok(AuthoringJob::new(client))
+}
+
+/// A configuration that does not read, as the error the process exits 2 with.
+fn config_error(err: impl std::fmt::Display) -> WorkerError {
+    WorkerError::Config(err.to_string())
+}
+
+/// Build the client of one model configuration, and log the endpoint it calls.
+///
+/// # Errors
+///
+/// Returns [`WorkerError::Config`] when the client does not build.
+fn client_for(model_cfg: ModelConfig, what: &str) -> Result<Client, WorkerError> {
+    let client = Client::new(model_cfg).map_err(config_error)?;
+    let cfg = client.config();
+    tracing::info!(
+        model = %cfg.model,
+        base_url = %cfg.base_url,
+        output_tokens = cfg.output_tokens,
+        reasoning_max_tokens = cfg.reasoning_max_tokens,
+        "cadus-worker: {what}"
+    );
+    Ok(client)
 }
 
 /// Send the log to stderr. `RUST_LOG` overrides the default level.
@@ -300,68 +307,14 @@ fn diagnosis_job() -> Result<Option<DiagnosisJob>, WorkerError> {
         return Ok(None);
     }
 
-    let model_cfg = ModelConfig::from_env().map_err(|err| WorkerError::Config(err.to_string()))?;
+    let model_cfg = ModelConfig::from_env().map_err(config_error)?;
     let calls_per_session = DiagnosisJob::calls_per_session_from_env()?;
-    let client = Client::new(model_cfg).map_err(|err| WorkerError::Config(err.to_string()))?;
+    let client = client_for(model_cfg, "the diagnosis job is configured")?;
     tracing::info!(
-        model = %client.config().model,
-        base_url = %client.config().base_url,
-        output_tokens = client.config().output_tokens,
-        reasoning_max_tokens = client.config().reasoning_max_tokens,
         calls_per_session,
-        "cadus-worker: the diagnosis job is configured"
+        "cadus-worker: the diagnosis session cap is configured"
     );
     Ok(Some(DiagnosisJob::new(client, calls_per_session)))
-}
-
-/// Read the curriculum tree that `CADUS_CURRICULUM` names.
-///
-/// # Errors
-///
-/// Returns [`WorkerError::Config`] when the tree does not load. The message names
-/// the path and the first finding, so an operator reads the cause in the one line
-/// the process prints before it exits 2.
-fn load_arena() -> Result<Curriculum, WorkerError> {
-    let path = PathBuf::from(
-        std::env::var(CURRICULUM_ENV).unwrap_or_else(|_| DEFAULT_CURRICULUM.to_string()),
-    );
-    match load_curriculum(&path) {
-        Ok((curriculum, findings)) => {
-            tracing::info!(
-                path = %path.display(),
-                topics = curriculum.topic_count(),
-                findings = findings.len(),
-                "cadus-worker: curriculum is loaded"
-            );
-            Ok(curriculum)
-        }
-        Err(err) => {
-            let reason = first_reason(&err);
-            tracing::error!(
-                path = %path.display(),
-                error = %reason,
-                "cadus-worker: the curriculum did not load; set CADUS_CURRICULUM to a tree that does"
-            );
-            Err(WorkerError::Config(format!(
-                "the curriculum at {} did not load: {reason}",
-                path.display()
-            )))
-        }
-    }
-}
-
-/// The first finding of a load error, or the error itself.
-///
-/// A fatal parse stage carries every finding, and the joined text of a large tree
-/// runs to many lines. The first one names the file the operator must fix.
-fn first_reason(err: &LoadError) -> String {
-    let LoadError::Curriculum(CurriculumError::FatalFindings { findings }) = err else {
-        return err.to_string();
-    };
-    match findings.first() {
-        Some(finding) => format!("[{}] {}", finding.code, finding.message),
-        None => err.to_string(),
-    }
 }
 
 /// Read the identity of the database role under the client-side bound.
@@ -386,68 +339,6 @@ async fn role_report(db: &Db) -> Result<cadus_store::RoleInfo, cadus_store::Stor
 async fn close_within<F: Future<Output = ()>>(deadline: Duration, close: F) {
     if tokio::time::timeout(deadline, close).await.is_err() {
         tracing::info!("pool close deadline reached");
-    }
-}
-
-/// The installed stop signals of the process.
-///
-/// `install` registers the handlers at once, so a signal from that moment on
-/// reaches the program. `wait` completes on the first signal. `docker stop`
-/// sends SIGTERM, so that is the normal stop path of the deployment.
-struct Shutdown {
-    #[cfg(unix)]
-    terminate: tokio::signal::unix::Signal,
-    #[cfg(unix)]
-    interrupt: tokio::signal::unix::Signal,
-}
-
-impl Shutdown {
-    /// Register the handlers for `SIGTERM` and `SIGINT`.
-    #[cfg(unix)]
-    fn install() -> Result<Self, WorkerError> {
-        use tokio::signal::unix::{SignalKind, signal};
-
-        let terminate = signal(SignalKind::terminate())
-            .map_err(|err| WorkerError::Signal(format!("the SIGTERM handler failed: {err}")))?;
-        let interrupt = signal(SignalKind::interrupt())
-            .map_err(|err| WorkerError::Signal(format!("the SIGINT handler failed: {err}")))?;
-        Ok(Self {
-            terminate,
-            interrupt,
-        })
-    }
-
-    /// A platform without unix signals has nothing to register here.
-    #[cfg(not(unix))]
-    fn install() -> Result<Self, WorkerError> {
-        Ok(Self {})
-    }
-
-    /// Complete on the first `SIGTERM` or `SIGINT`.
-    #[cfg(unix)]
-    async fn wait(&mut self) {
-        let Self {
-            terminate,
-            interrupt,
-        } = self;
-        tokio::select! {
-            _ = terminate.recv() => tracing::info!("cadus-worker: SIGTERM received"),
-            _ = interrupt.recv() => tracing::info!("cadus-worker: SIGINT received"),
-        }
-    }
-
-    /// Complete on Ctrl-C. A platform without unix signals has no `SIGTERM`.
-    #[cfg(not(unix))]
-    async fn wait(&mut self) {
-        match tokio::signal::ctrl_c().await {
-            Ok(()) => tracing::info!("cadus-worker: Ctrl-C received"),
-            Err(err) => {
-                tracing::error!(error = %err, "cadus-worker: the Ctrl-C handler failed");
-                // The handler is gone. Park here, so the loop keeps running
-                // instead of a stop at once.
-                std::future::pending::<()>().await;
-            }
-        }
     }
 }
 

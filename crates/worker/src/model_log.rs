@@ -123,13 +123,11 @@ pub fn money(raw: &str) -> Option<String> {
 /// attempts ran.
 #[must_use]
 pub fn started_ms_ago(attempts: &[Attempt]) -> Vec<u64> {
-    let mut ages = vec![0_u64; attempts.len()];
+    let mut ages = Vec::with_capacity(attempts.len());
     let mut tail = 0_u64;
     for (position, attempt) in attempts.iter().enumerate().rev() {
         tail = tail.saturating_add(u64::from(attempt.latency_ms));
-        if let Some(slot) = ages.get_mut(position) {
-            *slot = tail;
-        }
+        ages.push(tail);
         if let Some(before) = position
             .checked_sub(1)
             .and_then(|prior| attempts.get(prior))
@@ -137,6 +135,7 @@ pub fn started_ms_ago(attempts: &[Attempt]) -> Vec<u64> {
             tail = tail.saturating_add(backoff_ms(before.index));
         }
     }
+    ages.reverse();
     ages
 }
 

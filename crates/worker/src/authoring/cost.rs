@@ -148,12 +148,14 @@ pub fn raise(kp_id: &str, kind: Kind, attempts: u32, cost_usd: Option<&str>) -> 
     if !alerts(attempts) {
         return false;
     }
+    let kind = kind.as_str();
+    let cost_usd = cost_usd.unwrap_or("unknown");
     tracing::error!(
         kp = kp_id,
-        kind = kind.as_str(),
+        kind,
         attempts,
         bound = ATTEMPT_ALERT,
-        cost_usd = cost_usd.unwrap_or("unknown"),
+        cost_usd,
         "T3 alert: this knowledge point spent more than 3 authoring attempts"
     );
     true
@@ -199,7 +201,7 @@ pub async fn alerting(db: &Db) -> Result<Vec<Alert>, WorkerError> {
 
 #[cfg(test)]
 mod tests {
-    use super::{ALERT_BOUND, ATTEMPT_ALERT, MONEY_SCALE, alerts, raise, spend};
+    use super::{ALERT_BOUND, ATTEMPT_ALERT, MONEY_SCALE, alerts, is_decimal_char, raise, spend};
     use crate::authoring::prompt::Kind;
     use cadus_model_client::{Attempt, Usage};
 
@@ -277,10 +279,21 @@ mod tests {
         ];
         for text in spend(&attempts) {
             assert!(
-                text.chars()
-                    .all(|c| c.is_ascii_digit() || matches!(c, '.' | '+' | '-' | 'e' | 'E')),
+                text.chars().all(|c| "0123456789.+-eE".contains(c)),
                 "the cast would raise on {text:?}"
             );
+        }
+    }
+
+    /// The character guard keeps the digits, the point, the signs and the
+    /// exponent letters, and nothing else.
+    #[test]
+    fn the_character_guard_reads_the_decimal_alphabet() {
+        for c in "0123456789.+-eE".chars() {
+            assert!(is_decimal_char(c), "{c:?} belongs to a decimal number");
+        }
+        for c in ['x', ' ', ',', '"', 'i', 'n', '_'] {
+            assert!(!is_decimal_char(c), "{c:?} makes the cast raise");
         }
     }
 }
