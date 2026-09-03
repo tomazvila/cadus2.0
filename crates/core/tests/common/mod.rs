@@ -335,3 +335,12 @@ pub fn mini_curriculum() -> Curriculum {
         "testcourse",
     )
 }
+pub mod answer;
+pub mod check;
+pub mod divergence;
+pub mod fixtures;
+pub mod fuzz;
+pub mod gate;
+pub mod oracle;
+pub mod parse;
+pub mod template;

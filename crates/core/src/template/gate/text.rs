@@ -64,31 +64,28 @@ pub(super) fn identifier_tokens(text: &str) -> BTreeSet<String> {
 /// because the slash carries the numerator; and `0` does not stand inside `0.5`,
 /// because the point carries the decimal.
 pub(crate) fn contains_token(text: &str, token: &str) -> bool {
-    if token.is_empty() {
+    let needle: Vec<char> = token.chars().collect();
+    if needle.is_empty() {
         return false;
     }
     let characters: Vec<char> = text.chars().collect();
-    let needle: Vec<char> = token.chars().collect();
-    let last = characters.len().saturating_sub(needle.len());
-    for start in 0..=last {
-        let Some(window) = characters.get(start..start + needle.len()) else {
-            continue;
-        };
-        if window != needle.as_slice() {
-            continue;
-        }
-        let before = start.checked_sub(1);
-        let after = start + needle.len();
-        let free_before = before.is_none_or(|index| {
-            let outer = index.checked_sub(1).and_then(|far| characters.get(far));
-            free_side(characters.get(index), outer)
-        });
-        let free_after = free_side(characters.get(after), characters.get(after + 1));
-        if free_before && free_after {
-            return true;
-        }
-    }
-    false
+    characters
+        .windows(needle.len())
+        .enumerate()
+        .any(|(start, window)| {
+            window == needle.as_slice() && stands_free(&characters, start, needle.len())
+        })
+}
+
+/// Whether the run of `width` characters at `start` has a free side on both ends.
+fn stands_free(characters: &[char], start: usize, width: usize) -> bool {
+    let before = start.checked_sub(1);
+    let after = start + width;
+    let free_before = before.is_none_or(|index| {
+        let outer = index.checked_sub(1).and_then(|far| characters.get(far));
+        free_side(characters.get(index), outer)
+    });
+    free_before && free_side(characters.get(after), characters.get(after + 1))
 }
 
 /// Whether one side of a run leaves the run standing on its own.
