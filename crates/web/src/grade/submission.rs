@@ -285,6 +285,14 @@ mod tests {
         assert_eq!(event_kind(AnswerKind::Proof), Wire::Proof);
     }
 
+    /// The error code `build_attempt` refuses `live` with, for a miss graded
+    /// as `graded` at the instant `now`.
+    fn refusal(live: &ServedProblem, graded: &Graded<'_>, now: Timestamp) -> Option<&'static str> {
+        build_attempt(&lesson(), live, &miss(), graded, Some("s"), now, 1)
+            .err()
+            .map(|err| err.code)
+    }
+
     /// A negative solve time is not an event field, a problem with no topic
     /// names no attempt topic, and an instant outside the wire range does not
     /// serialize: each one is `state_unavailable`, never a panic.
@@ -302,41 +310,17 @@ mod tests {
             kind: AnswerKind::Numeric,
             assisted: false,
         };
-        let refused = build_attempt(
-            &lesson(),
-            &served(Some("numeric")),
-            &miss(),
-            &graded,
-            Some("s"),
-            Timestamp::from_micros(0),
-            1,
-        );
-        assert_eq!(refused.err().map(|err| err.code), Some(STATE_UNAVAILABLE));
+        let live = served(Some("numeric"));
+        let start = Timestamp::from_micros(0);
+        assert_eq!(refusal(&live, &graded, start), Some(STATE_UNAVAILABLE));
 
         graded.secs = 20;
         let mut orphan = served(Some("numeric"));
         orphan.topic = None;
-        let refused = build_attempt(
-            &lesson(),
-            &orphan,
-            &miss(),
-            &graded,
-            Some("s"),
-            Timestamp::from_micros(0),
-            1,
-        );
-        assert_eq!(refused.err().map(|err| err.code), Some(STATE_UNAVAILABLE));
+        assert_eq!(refusal(&orphan, &graded, start), Some(STATE_UNAVAILABLE));
 
-        let refused = build_attempt(
-            &lesson(),
-            &served(Some("numeric")),
-            &miss(),
-            &graded,
-            Some("s"),
-            Timestamp::from_micros(i64::MAX),
-            1,
-        );
-        assert_eq!(refused.err().map(|err| err.code), Some(STATE_UNAVAILABLE));
+        let never = Timestamp::from_micros(i64::MAX);
+        assert_eq!(refusal(&live, &graded, never), Some(STATE_UNAVAILABLE));
 
         let (attempt, stash) = build_attempt(
             &lesson(),
