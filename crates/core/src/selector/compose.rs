@@ -448,6 +448,44 @@ mod tests {
                 .iter()
                 .all(|task| task.task_type != TaskType::MultiStep)
         );
+        // An open plan re-serves through the reserve path.
+        let again = compose(&SessionContext::default().with_open_plan(Some(&done)));
+        assert_eq!(again.tasks.len(), done.tasks.len());
+    }
+
+    #[test]
+    fn too_few_due_reviews_owe_no_multistep_task_and_a_delay_blocks_the_frontier() {
+        let cfg = Config::default();
+        let tree = tree();
+        // Five reviewable topics owe one task, but only two are due.
+        let mut few = states();
+        for index in 2..8 {
+            few.insert(format!("r{index}"), learned(0.9));
+        }
+        let ctx = SessionContext::default();
+        let plan = compose_session(&few, &tree, &cfg, T_US, &mut SeededSampler::new(1), &ctx);
+        assert!(
+            plan.tasks
+                .iter()
+                .all(|task| task.task_type != TaskType::MultiStep)
+        );
+        // The one frontier lesson failed half a day ago: no lesson is available,
+        // and the frontier reopens one retry delay after the failure.
+        let mut failed = TopicState {
+            t0: Some(crate::event::Timestamp::from_micros(T_US)),
+            ..TopicState::default()
+        };
+        failed
+            .kp_progress
+            .insert("kp1".to_owned(), crate::event::KpProgress::FailedOnce);
+        let mut blocked = few;
+        blocked.insert("lesson".to_owned(), failed);
+        let front = Frontier::new(&blocked, &tree, &cfg, T_US, None, None);
+        assert!(front.available.is_empty());
+        assert_eq!(
+            front.blocked_until,
+            Some(T_US + cfg.lesson.retry_delay_days * 86_400_000_000)
+        );
     }
 
     #[test]

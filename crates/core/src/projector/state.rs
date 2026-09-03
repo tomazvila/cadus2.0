@@ -394,6 +394,22 @@ mod tests {
         assert_eq!(early.xp_state(0).unwrap_err(), too_early);
         assert!(early.finalize(now).is_err());
 
+        // A decay outside the finite range stops the fold, and the assembly
+        // reports that failure ahead of every tally.
+        let mut broken = Projector::new(&tree, &cfg);
+        broken.apply(
+            &ev(r#"{"type":"lesson_result","ts":"2060-01-01T09:00:00Z","topic":"q","passed":true,"quality_tier":"perfect"}"#),
+            true,
+        );
+        broken.apply(&review_at(T_US, 1.0), true);
+        assert_eq!(
+            broken.finalize(now).unwrap_err(),
+            ProjectorError::NonFinite {
+                topic: "q".to_owned(),
+                event_index: 1,
+            }
+        );
+
         // A finite whole-log total beside a reference day out of range.
         let mut today = Projector::new(&tree, &cfg);
         today.apply(&review_at(T_US, 1e308), true);

@@ -355,6 +355,10 @@ mod tests {
             deeper_gap_course(&states, &tree, &stack, &mastered).as_deref(),
             Some("low")
         );
+        assert_eq!(
+            deeper_gap_course(&states, &tree, &stack[..1], &mastered),
+            None
+        );
         let all: BTreeMap<String, TopicState> = tree
             .topics()
             .iter()
