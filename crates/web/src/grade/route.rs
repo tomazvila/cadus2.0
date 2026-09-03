@@ -5,7 +5,7 @@ use super::*;
 
 /// Run one store call under the client-side query bound (L1, R4), and map its
 /// failure onto the envelope.
-async fn store<T>(
+pub(crate) async fn store<T>(
     state: &AppState,
     call: impl Future<Output = Result<T, StoreError>>,
 ) -> Result<T, ApiError> {
@@ -18,7 +18,7 @@ fn store_failed(err: StoreError) -> ApiError {
 }
 
 /// The envelope of a commit or a rollback that failed.
-fn db_failed(err: sqlx::Error) -> ApiError {
+pub(crate) fn db_failed(err: sqlx::Error) -> ApiError {
     failed(&err.into())
 }
 

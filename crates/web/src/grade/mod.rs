@@ -125,6 +125,7 @@ mod verdict;
 use advance::*;
 use reply::*;
 pub use route::answer;
+pub(crate) use route::{db_failed, store};
 use submission::*;
 use verdict::round2;
 pub use verdict::{deterministic_grade, measure_secs, reference_assisted};
