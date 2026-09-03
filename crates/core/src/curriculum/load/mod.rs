@@ -417,10 +417,28 @@ fn is_falsy(value: &Value) -> bool {
 mod tests {
     use super::*;
 
-    /// A directory entry the file system cannot read fails the whole walk, the
-    /// same as an unreadable directory.
+    /// The walk keeps the `*.yaml` names in byte order, reports a name that is
+    /// not UTF-8, and fails on a directory entry the file system cannot read.
     #[test]
-    fn a_directory_entry_error_fails_the_walk() {
+    fn the_directory_walk_sorts_filters_and_fails_on_an_entry_error() {
+        use std::os::unix::ffi::OsStringExt;
+
+        let names = vec![
+            Ok(OsString::from("b.yaml")),
+            Ok(OsString::from("notes.txt")),
+            Ok(OsString::from_vec(b"a\xff.yaml".to_vec())),
+            Ok(OsString::from("a.yaml")),
+        ];
+        let entries = unit_entries_of(names.into_iter()).unwrap();
+        let shown: Vec<String> = entries
+            .into_iter()
+            .map(|entry| match entry {
+                UnitEntry::Name(name) => name,
+                UnitEntry::NotUtf8(lossy) => format!("lossy:{lossy}"),
+            })
+            .collect();
+        assert_eq!(shown, ["a.yaml", "lossy:a\u{fffd}.yaml", "b.yaml"]);
+
         let names = vec![
             Ok(OsString::from("b.yaml")),
             Err(io::Error::other("entry vanished")),

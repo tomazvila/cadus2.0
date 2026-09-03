@@ -329,3 +329,57 @@ fn a_constraint_set_with_no_satisfying_tuple_refuses_the_fill() {
         "no tuple of the declared domains satisfies the constraints"
     );
 }
+
+/// The exemplar source refuses a knowledge point it does not fill, the same as
+/// the template source.
+#[test]
+fn an_exemplar_source_refuses_a_knowledge_point_it_does_not_fill() {
+    let exemplars = exemplar_fixture();
+    let source = ExemplarSource::new("adding-two-digits", &exemplars);
+    let refusal = source.fill("subtraction", 4, 0).expect_err("refuses");
+    assert_eq!(
+        refusal,
+        FillError::UnknownKp {
+            have: "adding-two-digits".to_string(),
+            want: "subtraction".to_string(),
+        }
+    );
+}
+
+/// A document that does not compile is no source, and a constraint the draw
+/// cannot decide refuses the fill.
+#[test]
+fn a_document_the_instantiator_refuses_is_no_source() {
+    let uncompilable = doc_from(
+        r#"{
+      "v": 1,
+      "topic_id": "perfect-squares",
+      "answer_kind": "numeric",
+      "statement": "Compute ${a}$.",
+      "params": {"a": {"kind": "int", "low": 1, "high": 12}},
+      "answer_expr": "a +",
+      "hints": ["Read the statement again."]
+    }"#,
+    );
+    assert!(TemplateSource::new("perfect-squares", &uncompilable).is_err());
+
+    let undecidable = doc_from(
+        r#"{
+      "v": 1,
+      "topic_id": "perfect-squares",
+      "answer_kind": "numeric",
+      "statement": "Compute ${a}$ {b}.",
+      "params": {"a": {"kind": "int", "low": 1, "high": 12},
+                 "b": {"kind": "choice", "values": ["\\times", "+"]}},
+      "constraints": [{"op": "gt", "left": "a", "right": "b"}],
+      "answer_expr": "a",
+      "hints": ["Read the statement again."]
+    }"#,
+    );
+    let source = TemplateSource::new("perfect-squares", &undecidable).expect("the source compiles");
+    let refusal = source.fill("perfect-squares", 3, 0).expect_err("refuses");
+    assert!(
+        matches!(refusal, FillError::Instantiate(_)),
+        "it gave {refusal:?}"
+    );
+}

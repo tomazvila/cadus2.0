@@ -39,27 +39,46 @@ use super::graph::{Csr, EncCsr, EncEdge};
 use super::load::{ParseError, load_raw_curriculum};
 use super::model::{Course, KnowledgePoint, Topic};
 
-/// A topic of one build, numbered by load order (D2).
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-pub struct TopicIdx(u32);
+/// Define one `u32` index type of the arena.
+macro_rules! u32_index {
+    ($(#[$doc:meta])* $name:ident) => {
+        $(#[$doc])*
+        #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+        pub struct $name(u32);
 
-impl TopicIdx {
-    /// Wrap a raw index. An index out of range yields `None` or an empty slice
-    /// from every query, so this never makes a panic reachable.
-    pub const fn from_u32(raw: u32) -> Self {
-        Self(raw)
-    }
+        impl $name {
+            /// Wrap a raw index. An index out of range yields `None` or an empty
+            /// slice from every query, so this never makes a panic reachable.
+            pub const fn from_u32(raw: u32) -> Self {
+                Self(raw)
+            }
 
-    /// The raw index.
-    pub const fn as_u32(self) -> u32 {
-        self.0
-    }
+            /// The raw index.
+            pub const fn as_u32(self) -> u32 {
+                self.0
+            }
 
-    /// The raw index as a `usize`.
-    pub const fn index(self) -> usize {
-        self.0 as usize
-    }
+            /// The raw index as a `usize`.
+            pub const fn index(self) -> usize {
+                self.0 as usize
+            }
+        }
+    };
 }
+
+u32_index!(
+    /// A topic of one build, numbered by load order (D2).
+    TopicIdx
+);
+
+u32_index!(
+    /// A node of the encompassing maps: every topic, plus every dangling
+    /// `encompassings_extra` target 1.0 keeps as a phantom key (trap 7).
+    ///
+    /// The first [`Curriculum::topic_count`] nodes are the topics, in load order, so
+    /// `EncNode(t.as_u32())` is the node of `TopicIdx(t)`.
+    EncNode
+);
 
 /// A knowledge point inside one topic, numbered by authored order (D2).
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
@@ -69,31 +88,6 @@ impl KpIdx {
     /// Wrap a raw index.
     pub const fn from_u16(raw: u16) -> Self {
         Self(raw)
-    }
-
-    /// The raw index as a `usize`.
-    pub const fn index(self) -> usize {
-        self.0 as usize
-    }
-}
-
-/// A node of the encompassing maps: every topic, plus every dangling
-/// `encompassings_extra` target 1.0 keeps as a phantom key (trap 7).
-///
-/// The first [`Curriculum::topic_count`] nodes are the topics, in load order, so
-/// `EncNode(t.as_u32())` is the node of `TopicIdx(t)`.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-pub struct EncNode(u32);
-
-impl EncNode {
-    /// Wrap a raw index.
-    pub const fn from_u32(raw: u32) -> Self {
-        Self(raw)
-    }
-
-    /// The raw index.
-    pub const fn as_u32(self) -> u32 {
-        self.0
     }
 
     /// The raw index as a `usize`.

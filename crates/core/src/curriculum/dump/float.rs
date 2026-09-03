@@ -291,10 +291,7 @@ mod tests {
     fn a_number_renders_as_python_or_as_a_plain_integer() {
         let mut out = String::new();
         render_number(&Number::from(7), &mut out);
-        render_number(
-            &Number::from_f64(0.25).unwrap_or_else(|| unreachable!()),
-            &mut out,
-        );
+        render_number(&Number::from_f64(0.25).unwrap(), &mut out);
         assert_eq!(out, "70.25");
     }
 }

@@ -335,4 +335,11 @@ pub fn mini_curriculum() -> Curriculum {
         "testcourse",
     )
 }
+pub mod arena_view;
+pub mod instruction_fixtures;
+pub mod lint_view;
+pub mod parsed;
+pub mod paths;
 pub mod pool_fixtures;
+pub mod scratch;
+pub mod xp_states;

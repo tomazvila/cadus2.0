@@ -182,3 +182,13 @@ fn a_backslash_choice_value_round_trips() {
     assert_eq!(read.bindings.get("op").map(String::as_str), Some("\\times"));
     assert_eq!(read.text, "Compute $7 \\times 7$.");
 }
+
+/// A text that is no JSON document is refused with the reader's own words, for
+/// both documents.
+#[test]
+fn a_text_that_is_no_document_is_refused() {
+    let err = PoolAnswer::from_body("nope").expect_err("no JSON");
+    assert_eq!(err.message, "expected ident at line 1 column 2");
+    let err = PoolProblem::from_body("").expect_err("no JSON");
+    assert_eq!(err.message, "EOF while parsing a value at line 1 column 0");
+}

@@ -289,22 +289,31 @@ fn lists_of(mut map: HashMap<u32, Vec<EncEdge>>, node_count: usize) -> Vec<Vec<E
 #[cfg(test)]
 mod tests {
     use super::super::super::load::RawCurriculum;
-    use super::super::super::model::{AnswerKind, Catalog, Slug, Topic, Unit};
+    use super::super::super::model::{AnswerKind, Catalog, Course, PrereqEdge, Slug, Topic, Unit};
     use super::super::CurriculumError;
     use super::*;
 
-    /// One unit with `count` bare topics.
+    /// One unit of one course with `count` topics, each one a prerequisite of
+    /// the next.
     fn raw(count: u32) -> RawCurriculum {
         let topics = (0..count)
             .map(|index| Topic {
-                id: Slug::new(format!("t{index}")).unwrap_or_else(|_| unreachable!()),
+                id: Slug::new(format!("t{index}")).unwrap(),
                 name: format!("t{index}"),
                 core: true,
                 difficulty: 0.5,
                 drill: false,
                 answer_kind: AnswerKind::Numeric,
                 expected_time_secs: 30,
-                prerequisites: Vec::new(),
+                prerequisites: index
+                    .checked_sub(1)
+                    .map(|parent| PrereqEdge {
+                        id: Slug::new(format!("t{parent}")).unwrap(),
+                        weight: 0.5,
+                        key: false,
+                    })
+                    .into_iter()
+                    .collect(),
                 encompassings_extra: Vec::new(),
                 knowledge_points: Vec::new(),
                 diagnostic_exemplar: None,
@@ -313,14 +322,20 @@ mod tests {
             .collect();
         RawCurriculum {
             catalog: Catalog {
-                courses: Vec::new(),
+                courses: vec![Course {
+                    id: Slug::new("c").unwrap(),
+                    name: "C".to_owned(),
+                    order: 1,
+                    mastery_floor: Vec::new(),
+                    mastery_floor_course: None,
+                }],
             },
             units: vec![RawUnit {
                 course_id: "c".to_owned(),
                 file_name: "00.yaml".to_owned(),
                 unit: Unit {
                     unit: "u".to_owned(),
-                    course: Slug::new("c").unwrap_or_else(|_| unreachable!()),
+                    course: Slug::new("c").unwrap(),
                     module: "m".to_owned(),
                     topics,
                 },
@@ -342,9 +357,18 @@ mod tests {
             error.map(|error| error.to_string()),
             Some("3 topics exceed the 2 an index can address".to_owned())
         );
+        let mut repeated = raw(2);
+        let first = repeated.units[0].unit.topics[0].clone();
+        repeated.units[0].unit.topics.push(first);
         assert_eq!(
-            Curriculum::build_bounded(raw(2), 2).map(|arena| arena.topic_count()),
-            Ok(2)
+            Curriculum::build_bounded(repeated, 10).err(),
+            Some(CurriculumError::DuplicateTopicId {
+                id: "t0".to_owned()
+            })
         );
+        let built = Curriculum::build_bounded(raw(2), 2).unwrap();
+        assert_eq!(built.topic_count(), 2);
+        assert_eq!(built.topo_order(), [TopicIdx(0), TopicIdx(1)]);
+        assert_eq!(built.courses().len(), 1);
     }
 }

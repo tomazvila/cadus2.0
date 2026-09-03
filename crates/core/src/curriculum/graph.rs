@@ -136,10 +136,8 @@ pub fn topo_order(prereqs: &Csr, dependents: &Csr, node_count: usize) -> Vec<u32
         .map(|node| u32::try_from(prereqs.neighbors(node).len()).unwrap_or(u32::MAX))
         .collect();
     let mut ready: BinaryHeap<Reverse<u32>> = BinaryHeap::with_capacity(node_count);
-    for (node, count) in remaining.iter().enumerate() {
-        if *count == 0
-            && let Ok(node) = u32::try_from(node)
-        {
+    for (node, count) in (0_u32..).zip(&remaining) {
+        if *count == 0 {
             ready.push(Reverse(node));
         }
     }
@@ -320,19 +318,27 @@ pub fn relax(adj: &EncCsr, start: u32, node_count: usize) -> Vec<f64> {
 mod tests {
     use super::*;
 
-    /// A target at or past the node count has no slot, so every walk drops it.
+    /// A target at or past the node count has no slot, so every walk drops it,
+    /// and every walk reads a node it already holds once.
     #[test]
-    fn a_target_outside_the_graph_is_dropped_by_every_walk() {
-        let adj = Csr::from_lists(&[vec![1, 7], vec![]]);
+    fn every_walk_drops_a_target_outside_the_graph() {
+        let adj = Csr::from_lists(&[vec![1, 7], vec![0, 2], vec![1]]);
         assert_eq!(adj.neighbors(0), [1, 7]);
         assert_eq!(adj.neighbors(5), [] as [u32; 0]);
-        assert_eq!(transpose(&[vec![1, 7], vec![]], 2), vec![vec![], vec![0]]);
-        assert_eq!(closure(&adj, 0, 2), vec![1]);
-        assert_eq!(find_cycle(&adj, 2), None);
+        assert_eq!(adj.edge_count(), 5);
+        assert_eq!(
+            transpose(&[vec![1, 7], vec![0, 2], vec![1]], 3),
+            vec![vec![1], vec![0, 2], vec![1]]
+        );
+        assert_eq!(closure(&adj, 0, 3), vec![1, 2]);
+        assert_eq!(find_cycle(&adj, 3), Some(vec![0, 1]));
+        assert_eq!(find_cycle(&Csr::from_lists(&[vec![7]]), 1), None);
 
-        let prereqs = Csr::from_lists(&[vec![], vec![0]]);
-        let dependents = Csr::from_lists(&[vec![1, 9], vec![]]);
-        assert_eq!(topo_order(&prereqs, &dependents, 2), vec![0, 1]);
+        let prereqs = Csr::from_lists(&[vec![], vec![0], vec![0, 1]]);
+        let dependents = Csr::from_lists(&[vec![1, 2, 9], vec![2], vec![]]);
+        assert_eq!(topo_order(&prereqs, &dependents, 3), vec![0, 1, 2]);
+        let cyclic = Csr::from_lists(&[vec![1], vec![0]]);
+        assert_eq!(topo_order(&cyclic, &cyclic, 2), Vec::<u32>::new());
     }
 
     /// A cycle that goes through a node twice is reported from its re-entered
@@ -345,21 +351,19 @@ mod tests {
         assert_eq!(find_cycle(&adj, 4), Some(vec![2, 3]));
     }
 
-    /// The weighted walks read an empty edge list for a node outside the graph.
+    /// The weighted walks read an empty edge list for a node outside the graph,
+    /// and a product that does not beat the stored weight is not stored.
     #[test]
     fn a_weighted_walk_from_or_to_an_unknown_node_gives_zero() {
-        let far = EncEdge {
-            target: 9,
-            weight: 0.5,
-        };
-        let near = EncEdge {
-            target: 1,
-            weight: 0.5,
-        };
-        let adj = EncCsr::from_lists(&[vec![far, near], vec![]]);
+        let edge = |target: u32, weight: f64| EncEdge { target, weight };
+        let adj = EncCsr::from_lists(&[
+            vec![edge(1, 0.5), edge(2, 0.5), edge(9, 0.5)],
+            vec![edge(2, 0.4)],
+            vec![],
+        ]);
         assert_eq!(adj.edges_from(3), [] as [EncEdge; 0]);
-        assert_eq!(adj.edge_count(), 2);
-        assert_eq!(relax(&adj, 5, 2), vec![0.0, 0.0]);
-        assert_eq!(relax(&adj, 0, 2), vec![1.0, 0.5]);
+        assert_eq!(adj.edge_count(), 4);
+        assert_eq!(relax(&adj, 5, 3), vec![0.0, 0.0, 0.0]);
+        assert_eq!(relax(&adj, 0, 3), vec![1.0, 0.5, 0.5]);
     }
 }

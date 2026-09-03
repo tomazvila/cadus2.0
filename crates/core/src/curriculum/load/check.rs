@@ -108,10 +108,7 @@ impl<'a> Checker<'a> {
     }
 
     /// Visit one field. A missing required field is reported here.
-    fn field<F>(&mut self, map: &Mapping, key: &str, required: bool, visit: F)
-    where
-        F: FnOnce(&mut Self, &Value),
-    {
+    fn field(&mut self, map: &Mapping, key: &str, required: bool, visit: fn(&mut Self, &Value)) {
         match map.get(key) {
             Some(value) => {
                 self.push(key);
@@ -128,10 +125,7 @@ impl<'a> Checker<'a> {
     }
 
     /// Visit every item of a list field.
-    fn each<F>(&mut self, value: &Value, mut visit: F)
-    where
-        F: FnMut(&mut Self, &Value),
-    {
+    fn each(&mut self, value: &Value, visit: fn(&mut Self, &Value)) {
         match value {
             Value::Sequence(items) => {
                 for (index, item) in items.iter().enumerate() {
@@ -414,8 +408,7 @@ mod tests {
     /// file as the location.
     #[test]
     fn a_document_the_types_refuse_after_a_silent_walk_is_a_schema_finding() {
-        let document: Value = serde_norway::from_str("id: c\nname: C\norder: []\n")
-            .unwrap_or_else(|_| unreachable!());
+        let document: Value = serde_norway::from_str("id: c\nname: C\norder: []\n").unwrap();
         let findings = validate::<Course, _>(&document, "courses.yaml", |_, _| {})
             .err()
             .unwrap_or_default();

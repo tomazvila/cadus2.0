@@ -367,12 +367,9 @@ fn encompassing_edges(c: &Curriculum) -> Vec<EncEdgeRow<'_>> {
             });
         }
     }
-    rows.sort_by(|a, b| {
-        a.src
-            .cmp(b.src)
-            .then_with(|| a.dst.cmp(b.dst))
-            .then_with(|| compare_float(a.weight, b.weight))
-    });
+    // The forward map holds one edge per `(src, dst)` pair, so the two ids
+    // order the rows and no weight comparison is needed.
+    rows.sort_by(|a, b| a.src.cmp(b.src).then_with(|| a.dst.cmp(b.dst)));
     rows
 }
 

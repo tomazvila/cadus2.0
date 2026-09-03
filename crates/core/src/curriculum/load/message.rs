@@ -234,3 +234,17 @@ pub(super) fn quoted_alternatives(allowed: &[&str]) -> String {
         |(head, last)| format!("{head} or {last}"),
     )
 }
+
+#[cfg(test)]
+mod tests {
+    use super::quoted_alternatives;
+
+    /// The list reads the way pydantic writes it, for every length.
+    #[test]
+    fn the_alternatives_list_joins_with_commas_and_one_or() {
+        assert_eq!(quoted_alternatives(&[]), "");
+        assert_eq!(quoted_alternatives(&["a"]), "'a'");
+        assert_eq!(quoted_alternatives(&["a", "b"]), "'a' or 'b'");
+        assert_eq!(quoted_alternatives(&["a", "b", "c"]), "'a', 'b' or 'c'");
+    }
+}

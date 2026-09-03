@@ -104,6 +104,12 @@ impl PoolBodyError {
     }
 }
 
+impl From<serde_json::Error> for PoolBodyError {
+    fn from(error: serde_json::Error) -> Self {
+        Self::new(error.to_string())
+    }
+}
+
 /// Give one row document its `to_body` and `from_body` methods.
 macro_rules! pool_body {
     ($document:ident) => {
@@ -114,7 +120,7 @@ macro_rules! pool_body {
             ///
             /// Returns [`PoolBodyError`] when the document does not serialize.
             pub fn to_body(&self) -> Result<String, PoolBodyError> {
-                serde_json::to_string(self).map_err(|err| PoolBodyError::new(err.to_string()))
+                serde_json::to_string(self).map_err(PoolBodyError::from)
             }
 
             /// Read the document and refuse an unknown version.
@@ -124,8 +130,7 @@ macro_rules! pool_body {
             /// Returns [`PoolBodyError`] when the text is not this document, and when
             /// `v` is not [`POOL_ROW_VERSION`].
             pub fn from_body(body: &str) -> Result<Self, PoolBodyError> {
-                let doc: Self = serde_json::from_str(body)
-                    .map_err(|err| PoolBodyError::new(err.to_string()))?;
+                let doc: Self = serde_json::from_str(body)?;
                 check_version(doc.v)?;
                 Ok(doc)
             }

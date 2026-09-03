@@ -277,23 +277,35 @@ pub struct Pick {
 /// section 7.2: the serve path instantiates an exemplar and raises the A6 flag).
 #[must_use]
 pub fn pick<C: Candidate>(candidates: &[C], avoid: &Avoid<'_>) -> Option<Pick> {
-    if candidates.is_empty() {
-        return None;
-    }
+    choose(candidates, avoid).map(|(chosen, _)| chosen)
+}
+
+/// The candidate rule, with the chosen candidate beside its outcome.
+fn choose<'pool, C: Candidate>(
+    candidates: &'pool [C],
+    avoid: &Avoid<'_>,
+) -> Option<(Pick, &'pool C)> {
+    let last = candidates.last()?;
     for (index, candidate) in candidates.iter().enumerate() {
         if !avoid.blocks(candidate.instance_hash()) {
-            return Some(Pick {
-                index,
-                skipped: index,
-                exhausted: false,
-            });
+            return Some((
+                Pick {
+                    index,
+                    skipped: index,
+                    exhausted: false,
+                },
+                candidate,
+            ));
         }
     }
-    Some(Pick {
-        index: candidates.len().saturating_sub(1),
-        skipped: candidates.len(),
-        exhausted: true,
-    })
+    Some((
+        Pick {
+            index: candidates.len().saturating_sub(1),
+            skipped: candidates.len(),
+            exhausted: true,
+        },
+        last,
+    ))
 }
 
 /// Run the candidate rule, record the served digest, and count the outcome.
@@ -310,11 +322,10 @@ pub fn serve<'pool, C: Candidate>(
     task: &mut TaskMemory,
     counters: &mut PoolCounters,
 ) -> Option<&'pool C> {
-    let chosen = {
+    let (chosen, served) = {
         let avoid = Avoid::new(ring, task);
-        pick(candidates, &avoid)?
+        choose(candidates, &avoid)?
     };
-    let served = candidates.get(chosen.index)?;
     let hash = served.instance_hash().to_string();
     ring.push(&hash);
     task.push(&hash);
