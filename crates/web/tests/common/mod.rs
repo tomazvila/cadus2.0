@@ -20,6 +20,8 @@
 )]
 
 mod arena;
+mod bench;
+mod corpus;
 mod db;
 mod fault;
 mod http;
@@ -29,6 +31,8 @@ mod route;
 mod seed;
 
 pub use arena::*;
+pub use bench::*;
+pub use corpus::*;
 pub use db::*;
 pub use fault::*;
 pub use http::*;

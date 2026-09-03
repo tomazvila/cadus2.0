@@ -113,6 +113,9 @@ async fn a_diagnosis_lookup_that_fails_rolls_the_grade_back() {
 
 /// The replay of a standing miss looks the pre-authored answer up too, and a
 /// lookup that fails is the same `500`; the standing attempt stays alone.
+///
+/// The log holds `-2` and no `-1`, so the computed id `-2` meets the standing
+/// row and the request is a replay (spec section 4.3 step 6).
 #[tokio::test]
 async fn a_replayed_request_whose_lookup_fails_is_500() {
     TestDb::with(|db| async move {
@@ -122,7 +125,7 @@ async fn a_replayed_request_whose_lookup_fails_is_500() {
             &db,
             user,
             2,
-            "s_2026-01-01a-lesson-addition-1",
+            "s_2026-01-01a-lesson-addition-2",
             Verdict {
                 given_answer: "14",
                 correct: false,

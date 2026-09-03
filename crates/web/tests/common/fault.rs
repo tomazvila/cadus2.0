@@ -74,6 +74,11 @@ pub async fn fail_reads(db: &TestDb, table: &str, needle: &str) {
     .await;
     run(
         db,
+        format!("GRANT EXECUTE ON FUNCTION test_fault_query(text) TO {APP_ROLE}"),
+    )
+    .await;
+    run(
+        db,
         format!(
             "CREATE POLICY test_fault_read ON {table} AS RESTRICTIVE FOR SELECT \
              USING (test_fault_query('{needle}'))"

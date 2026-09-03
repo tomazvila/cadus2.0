@@ -182,6 +182,33 @@ async fn the_fifth_wrong_answer_fails_the_lesson_and_queues_remediation() {
     .await;
 }
 
+/// A served problem that names no knowledge point stands at the FIRST one of
+/// its topic (`advance_task`): the earlier misses at `kp1` count, and the
+/// fifth miss fails the lesson there.
+#[tokio::test]
+async fn a_served_problem_with_no_knowledge_point_stands_at_the_first_one() {
+    TestDb::with(|db| async move {
+        let app = app(&db);
+        let user = seed_learner(&db, "no-kp@example.com").await;
+        seed_open_session(&db, user).await;
+        seed_four_misses(&db, user, 2).await;
+        let mut live = lesson_problem(20.0, "kp1", Vec::new());
+        live.kp = None;
+        put_state(&db, user, &lesson_state(live, 4, false)).await;
+
+        let body = answer_lesson_ok(&app, user, "14").await;
+        assert_plain_lesson_fail(&body);
+
+        let closes = events_of_type(&db, user, "lesson_result").await;
+        assert_eq!(closes.len(), 1);
+        assert_eq!(closes[0]["failed_at_kp"], "kp1");
+        let recorded = events_of_type(&db, user, "attempt").await;
+        assert_eq!(recorded.len(), 5);
+        assert_eq!(recorded[4].get("kp"), Some(&Value::Null));
+    })
+    .await;
+}
+
 // --------------------------------------------------------------------------- //
 // The repeat-fail peel-back reads HISTORY (M5 review 2, finding V2)
 // --------------------------------------------------------------------------- //
