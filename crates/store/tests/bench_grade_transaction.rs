@@ -51,37 +51,25 @@
 //! one slow sample: a shared runner produces those, and a flaky gate blocks good
 //! work (spec section 10.2).
 
-#![allow(
-    clippy::unwrap_used,
-    clippy::expect_used,
-    clippy::panic,
-    clippy::todo,
-    clippy::unimplemented
-)]
+#![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
 
 mod common;
 
-use std::time::Instant;
-
-use cadus_core::config::Config;
-use cadus_core::curriculum::Curriculum;
 use cadus_core::event::{Event, SchemaVersion, SessionStart, Timestamp};
-use cadus_core::pool::{Avoid, Ring, TaskMemory};
+use cadus_core::pool::Avoid;
 use cadus_core::projector::ProjectionInput;
 use cadus_store::diagnosis::{JobPayload, PAYLOAD_VERSION, enqueue};
-use cadus_store::pool::{NewInstance, insert_batch, pop_with_ring_tx};
 use cadus_store::state::{
     append_event, load_events, load_web_state, lock_web_state, project_and_save, project_current,
-    save_web_state,
 };
 use cadus_store::test_support::TestDb;
 use cadus_store::{StoreError, begin_tenant};
 use common::bench::{
-    Percentiles, Snapshot, artifact_json, bench_instance, curriculum, delete_job, dsn_set,
-    full_windows, profile, report, restore, seed_web_state, snapshot, timed, timed_rounds,
-    write_artifact,
+    Percentiles, Run, Snapshot, append_and_fold, artifact_json, claim_and_commit, curriculum,
+    delete_job, dsn_set, finish_seed, profile, report, restore, snapshot, timed, timed_rounds,
+    timed_step, write_artifact,
 };
-use common::events::{BASE_US, attempt_row};
+use common::events::{BASE_US, Fixture, attempt_row};
 use serde_json::{Value as Json, json};
 use sqlx::PgPool;
 use uuid::Uuid;
@@ -155,7 +143,8 @@ fn job_payload(index: usize) -> Json {
 ///
 /// The seeds run on the admin pool, which bypasses row-level security, exactly
 /// as the worker does with `cadus_admin` (D-O4).
-async fn seed(db: &TestDb, graph: &Curriculum, cfg: &Config) -> (Uuid, Ring, TaskMemory) {
+async fn seed(db: &TestDb) -> Run {
+    let fixture = Fixture::of(curriculum());
     let user = db.seed_user("bench-grade@example.test").await;
 
     let mut tx = begin_tenant(&db.admin, user).await.unwrap();
@@ -177,22 +166,12 @@ async fn seed(db: &TestDb, graph: &Curriculum, cfg: &Config) -> (Uuid, Ring, Tas
             .await
             .unwrap();
     }
-    let input = ProjectionInput::new(graph, cfg, Timestamp::from_micros(BASE_US));
-    project_and_save(&mut tx, user, &input, None).await.unwrap();
+    project_and_save(&mut tx, user, &fixture.input(), None)
+        .await
+        .unwrap();
     tx.commit().await.unwrap();
 
-    let rows: Vec<NewInstance> = (0..POOL_DEPTH)
-        .map(|index| bench_instance(index, BATCH_SEED))
-        .collect();
-    let inserted = insert_batch(&db.admin, user, KP_ID, &rows).await.unwrap();
-    assert_eq!(
-        inserted, POOL_DEPTH as u64,
-        "insert_batch skipped a digest, so the pool is not the depth it claims"
-    );
-
-    let (ring, task) = full_windows();
-    seed_web_state(&db.admin, user, &ring, &task).await;
-    (user, ring, task)
+    finish_seed(db, fixture, user, KP_ID, POOL_DEPTH, BATCH_SEED).await
 }
 
 /// Put the fixture back the way the run found it, outside the measured window.
@@ -255,21 +234,13 @@ async fn grade_once(
         .unwrap_or_else(|| json!({}));
 
     let event = attempt_event(attempt_id, index);
-    let seq = append_event(&mut tx, user, &event, Some(attempt_id))
-        .await?
-        .expect("the attempt is new, so the append returns a seq");
-    let projection = project_and_save(&mut tx, user, input, None).await?;
+    let (seq, projection) = append_and_fold(&mut tx, user, input, &event, Some(attempt_id)).await?;
     enqueue(&mut tx, user, attempt_id, &job_payload(index)).await?;
-    let claimed = pop_with_ring_tx(&mut tx, user, KP_ID, avoid)
-        .await?
-        .claimed
-        .expect("the pool holds an unclaimed row");
-    save_web_state(&mut tx, user, &doc).await?;
-    tx.commit().await?;
+    let claimed = claim_and_commit(tx, user, KP_ID, avoid, &doc).await?;
 
     Ok(Graded {
         seq,
-        claimed: claimed.row.id,
+        claimed,
         replayed: projection.replayed,
         resume_replayed: resumed.replayed,
         resumed_through: resumed.through_seq,
@@ -278,8 +249,8 @@ async fn grade_once(
     })
 }
 
-/// Run `rounds` untimed grade transactions and return the snapshot every later
-/// restore writes back.
+/// Seed the fixture and run `rounds` untimed grade transactions; return the
+/// run and the snapshot every later restore writes back.
 ///
 /// The snapshot is taken BEFORE the first grade of the run, and every restore
 /// of the run writes back that one snapshot. A snapshot taken AFTER a grade
@@ -287,24 +258,25 @@ async fn grade_once(
 /// behind, and a cursor the log does not hold sends the step-5 fold down the
 /// full-replay branch and the step-7 fold down the "nothing new" branch: the
 /// appended attempt is never folded and the row goes back unchanged (M5 review
-/// 2, finding V10).
-async fn warm_up(
-    db: &TestDb,
-    app: &PgPool,
-    user: Uuid,
-    input: &ProjectionInput<'_>,
-    avoid: &Avoid<'_>,
-    rounds: usize,
-) -> Snapshot {
-    let snap = snapshot(&db.admin, user).await;
+/// 2, finding V10). The answer checks that the cursor names the head of the
+/// restored log.
+async fn warmed(db: &TestDb, rounds: usize) -> (Run, Snapshot) {
+    let run = seed(db).await;
+    let (input, avoid) = run.views();
+    let snap = snapshot(&db.admin, run.user).await;
     for index in 0..rounds {
         let id = format!("warmup-{index}");
-        let graded = grade_once(app, user, input, &id, index, avoid)
+        let graded = grade_once(&run.app, run.user, &input, &id, index, &avoid)
             .await
             .unwrap_or_else(|err| panic!("warm-up {index} did not grade: {err}"));
-        restore_grade(&db.admin, user, &id, graded.claimed, &snap).await;
+        restore_grade(&db.admin, run.user, &id, graded.claimed, &snap).await;
     }
-    snap
+    assert_eq!(
+        snap.through_seq,
+        SEEDED_ATTEMPTS as i64 + 1,
+        "the restored cursor must name the head of the restored log"
+    );
+    (run, snap)
 }
 
 // ---------------------------------------------------------------------------
@@ -322,31 +294,18 @@ async fn benchmark_b_grade_transaction_holds_the_l2_segment() {
         return;
     }
     TestDb::with(|db| async move {
-        let graph = curriculum();
-        let cfg = Config::default();
-        let (user, ring, task) = seed(&db, &graph, &cfg).await;
-        let input = ProjectionInput::new(&graph, &cfg, Timestamp::from_micros(BASE_US));
-        let avoid = Avoid::new(&ring, &task);
-        // One connection, no concurrency: the benchmark measures the shape of
-        // the transaction and never the contention of a pool (spec 10.2).
-        let app = db.pool_as("cadus_app", 1).await;
-
-        let snap = warm_up(&db, &app, user, &input, &avoid, WARMUPS).await;
-        assert_eq!(
-            snap.through_seq,
-            SEEDED_ATTEMPTS as i64 + 1,
-            "the restored cursor must name the head of the restored log"
-        );
+        let (run, snap) = warmed(&db, WARMUPS).await;
+        let (input, avoid) = run.views();
         let (samples, graded_rows) = timed_rounds(SAMPLES, |index| {
             let id = format!("sample-{index}");
-            let (db, app, input, avoid, snap) = (&db, &app, &input, &avoid, &snap);
+            let (db, run, input, avoid, snap) = (&db, &run, &input, &avoid, &snap);
             async move {
-                let start = Instant::now();
-                let graded = grade_once(app, user, input, &id, index, avoid)
-                    .await
-                    .unwrap_or_else(|err| panic!("sample {index} did not grade: {err}"));
-                let nanos = start.elapsed().as_nanos();
-                restore_grade(&db.admin, user, &id, graded.claimed, snap).await;
+                let (nanos, graded) = timed_step(
+                    format!("sample {index}"),
+                    grade_once(&run.app, run.user, input, &id, index, avoid),
+                )
+                .await;
+                restore_grade(&db.admin, run.user, &id, graded.claimed, snap).await;
                 (nanos, graded)
             }
         })
@@ -446,24 +405,13 @@ async fn the_restored_fixture_folds_the_appended_attempt() {
         return;
     }
     TestDb::with(|db| async move {
-        let graph = curriculum();
-        let cfg = Config::default();
-        let (user, ring, task) = seed(&db, &graph, &cfg).await;
-        let input = ProjectionInput::new(&graph, &cfg, Timestamp::from_micros(BASE_US));
-        let avoid = Avoid::new(&ring, &task);
-        let app = db.pool_as("cadus_app", 1).await;
+        let (run, snap) = warmed(&db, 2).await;
+        let (input, avoid) = run.views();
 
-        let snap = warm_up(&db, &app, user, &input, &avoid, 2).await;
-        assert_eq!(
-            snap.through_seq,
-            SEEDED_ATTEMPTS as i64 + 1,
-            "the snapshot the run restores must name the head of the restored log"
-        );
-
-        let graded = grade_once(&app, user, &input, "check-0", 0, &avoid)
+        let graded = grade_once(&run.app, run.user, &input, "check-0", 0, &avoid)
             .await
             .unwrap_or_else(|err| panic!("the checked grade did not run: {err}"));
-        restore_grade(&db.admin, user, "check-0", graded.claimed, &snap).await;
+        restore_grade(&db.admin, run.user, "check-0", graded.claimed, &snap).await;
         check_graded(&graded, "the checked grade");
         println!(
             "harness check ({}): the restored fixture folds the appended attempt",

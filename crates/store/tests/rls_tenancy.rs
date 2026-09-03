@@ -2,13 +2,7 @@
 //! isolation, the worker queues, the boot guard, the role attributes, the
 //! idempotency index, and the reset of the tenant setting (C3, D9).
 
-#![allow(
-    clippy::unwrap_used,
-    clippy::expect_used,
-    clippy::panic,
-    clippy::todo,
-    clippy::unimplemented
-)]
+#![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
 
 mod common;
 

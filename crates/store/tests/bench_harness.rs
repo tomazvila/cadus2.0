@@ -1,13 +1,7 @@
 //! The benchmark harness itself: the nearest-rank percentiles, the gating,
 //! the budget, the report line, and the artifact.
 
-#![allow(
-    clippy::unwrap_used,
-    clippy::expect_used,
-    clippy::panic,
-    clippy::todo,
-    clippy::unimplemented
-)]
+#![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
 
 mod common;
 

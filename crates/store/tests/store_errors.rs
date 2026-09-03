@@ -2,13 +2,7 @@
 //! parse, a cluster that does not answer, a closed pool, a bounded query that
 //! fails inside its bound, and a tenant bind whose `set_config` is refused.
 
-#![allow(
-    clippy::unwrap_used,
-    clippy::expect_used,
-    clippy::panic,
-    clippy::todo,
-    clippy::unimplemented
-)]
+#![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
 
 mod common;
 

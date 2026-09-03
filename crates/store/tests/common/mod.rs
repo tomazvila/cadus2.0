@@ -75,6 +75,15 @@ pub fn handle(pool: &PgPool) -> Db {
     Db::new(pool.clone(), 0)
 }
 
+/// The two row documents of the seeded pool row at `index`: the problem
+/// `Compute $<index>^2$.` and the answer `2`.
+pub fn pool_documents(index: usize) -> (String, &'static str) {
+    (
+        format!(r#"{{"v":1,"text":"Compute ${index}^2$.","seed":0}}"#),
+        r#"{"v":1,"answer":"2"}"#,
+    )
+}
+
 /// The digest of the pool row at `index`: `pool-instance-0007`.
 pub fn pool_digest(index: usize) -> String {
     format!("pool-instance-{index:04}")
@@ -89,8 +98,7 @@ pub async fn seed_pool_row(
     index: usize,
     source: Source,
 ) -> Uuid {
-    let problem = format!(r#"{{"v":1,"text":"Compute ${index}^2$.","seed":0}}"#);
-    let expected = r#"{"v":1,"answer":"2"}"#;
+    let (problem, expected) = pool_documents(index);
     sqlx::query_scalar!(
         r#"
         INSERT INTO serving_pool

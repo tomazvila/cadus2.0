@@ -1,13 +1,7 @@
 //! The serving pool, part 4: the approval is read on every serve (C6), the
 //! retire of the rows a revoked approval wrote, and the exhausted flags.
 
-#![allow(
-    clippy::unwrap_used,
-    clippy::expect_used,
-    clippy::panic,
-    clippy::todo,
-    clippy::unimplemented
-)]
+#![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
 
 mod common;
 
@@ -16,7 +10,9 @@ use cadus_store::pool::{
     operator_flags, operator_flags_with_exhausted, retire_unapproved, unclaimed_depth,
 };
 use cadus_store::test_support::TestDb;
-use common::{KP, at, claim_fresh, pool_digest, pop_fresh, seed_pool_row, seed_template};
+use common::{
+    KP, at, claim_fresh, pool_digest, pool_documents, pop_fresh, seed_pool_row, seed_template,
+};
 use sqlx::PgPool;
 use std::collections::BTreeSet;
 use uuid::Uuid;
@@ -40,8 +36,7 @@ async fn seed_row_of_digest(
     index: usize,
     content_digest: &str,
 ) -> Uuid {
-    let problem = format!(r#"{{"v":1,"text":"Compute ${index}^2$.","seed":0}}"#);
-    let expected = r#"{"v":1,"answer":"2"}"#;
+    let (problem, expected) = pool_documents(index);
     sqlx::query_scalar!(
         r#"
         INSERT INTO serving_pool

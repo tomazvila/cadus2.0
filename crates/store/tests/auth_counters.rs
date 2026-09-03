@@ -1,13 +1,7 @@
 //! The M5 auth contract, part 3: the rate counters, the session lookup, and
 //! the bound profile read (specification sections 3.2 and 3.3).
 
-#![allow(
-    clippy::unwrap_used,
-    clippy::expect_used,
-    clippy::panic,
-    clippy::todo,
-    clippy::unimplemented
-)]
+#![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
 
 mod common;
 

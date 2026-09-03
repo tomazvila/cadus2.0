@@ -1,13 +1,7 @@
 //! The deaf Postgres of `test_support`: it finishes the handshake, answers the
 //! pool ping, and then answers no query, so a bounded query ends at the bound.
 
-#![allow(
-    clippy::unwrap_used,
-    clippy::expect_used,
-    clippy::panic,
-    clippy::todo,
-    clippy::unimplemented
-)]
+#![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
 
 use std::time::Duration;
 

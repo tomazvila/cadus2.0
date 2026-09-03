@@ -1,17 +1,48 @@
 //! The event fixtures of the state tests: a two-topic curriculum and the
 //! events of one session on it.
 
+use cadus_core::config::Config;
 use cadus_core::curriculum::{Catalog, Course, Curriculum, RawCurriculum, RawUnit, Topic, Unit};
 use cadus_core::event::{
     AnswerKind, Attempt, AttemptProblem, Event, Regraded, RegradedAttempt, ReviewResult,
     SchemaVersion, Secs, SessionEnd, SessionStart, Slug, TaskType, Timestamp, WorkQuality,
 };
+use cadus_core::projector::ProjectionInput;
 
 /// The Unix microsecond instant of 2026-01-01T00:00:00Z.
 pub const BASE_US: i64 = 1_767_225_600_000_000;
 
 /// The session id of every fixture event.
 pub const SESSION: &str = "s_2026-01-01a";
+
+/// The curriculum and the config one fold reads.
+pub struct Fixture {
+    pub graph: Curriculum,
+    pub cfg: Config,
+}
+
+impl Fixture {
+    /// The two-topic micro-curriculum with the default config.
+    pub fn micro() -> Self {
+        Self {
+            graph: graph(),
+            cfg: Config::default(),
+        }
+    }
+
+    /// `graph` with the default config.
+    pub fn of(graph: Curriculum) -> Self {
+        Self {
+            graph,
+            cfg: Config::default(),
+        }
+    }
+
+    /// The projection input at `BASE_US`, with the 1.0 defaults.
+    pub fn input(&self) -> ProjectionInput<'_> {
+        ProjectionInput::new(&self.graph, &self.cfg, Timestamp::from_micros(BASE_US))
+    }
+}
 
 /// One micro-curriculum: one course `c`, one module `M`, two topics.
 pub fn graph() -> Curriculum {

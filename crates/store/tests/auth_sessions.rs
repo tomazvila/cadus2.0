@@ -2,13 +2,7 @@
 //! outs, the token creation, and the OAuth link, each inside the bound
 //! account (specification section 3.3).
 
-#![allow(
-    clippy::unwrap_used,
-    clippy::expect_used,
-    clippy::panic,
-    clippy::todo,
-    clippy::unimplemented
-)]
+#![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
 
 mod common;
 

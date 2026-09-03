@@ -2,13 +2,7 @@
 //! passwords and their rule, the stop signal, and the argument errors. The
 //! file comment of `migrate_bin.rs` explains the role lock these tests take.
 
-#![allow(
-    clippy::unwrap_used,
-    clippy::expect_used,
-    clippy::panic,
-    clippy::todo,
-    clippy::unimplemented
-)]
+#![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
 
 mod common;
 

@@ -2,13 +2,7 @@
 //! privilege matrix, the default privileges, the RLS coverage list, and the
 //! sequence privileges (D9).
 
-#![allow(
-    clippy::unwrap_used,
-    clippy::expect_used,
-    clippy::panic,
-    clippy::todo,
-    clippy::unimplemented
-)]
+#![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
 
 mod common;
 

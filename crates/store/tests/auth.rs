@@ -15,13 +15,7 @@
 //! Every test that needs a database uses `TestDb::with`, so a failed assertion
 //! drops its throwaway database instead of leaving it on the shared cluster.
 
-#![allow(
-    clippy::unwrap_used,
-    clippy::expect_used,
-    clippy::panic,
-    clippy::todo,
-    clippy::unimplemented
-)]
+#![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
 
 mod common;
 

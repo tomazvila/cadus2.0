@@ -2,13 +2,7 @@
 //! executor, a refused statement or a failed commit inside each composed
 //! order, and the sign-up whose lookup reads nothing back.
 
-#![allow(
-    clippy::unwrap_used,
-    clippy::expect_used,
-    clippy::panic,
-    clippy::todo,
-    clippy::unimplemented
-)]
+#![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
 
 mod common;
 

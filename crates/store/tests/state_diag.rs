@@ -2,13 +2,7 @@
 //! read, and dropped inside the tenant transaction, and refused with the
 //! privilege it lacks.
 
-#![allow(
-    clippy::unwrap_used,
-    clippy::expect_used,
-    clippy::panic,
-    clippy::todo,
-    clippy::unimplemented
-)]
+#![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
 
 mod common;
 

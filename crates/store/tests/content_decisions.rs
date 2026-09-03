@@ -2,22 +2,17 @@
 //! rejection with its reason, the verdict read, and the one-row scope of every
 //! write (spec section 3.2).
 
-#![allow(
-    clippy::unwrap_used,
-    clippy::expect_used,
-    clippy::panic,
-    clippy::todo,
-    clippy::unimplemented
-)]
+#![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
 
 mod common;
 
-use cadus_store::StoreError;
 use cadus_store::content::{
     Admin, KIND_TEACH, KIND_TEMPLATE, NewDocument, approve, approved_document, insert_pending,
     reject, verdict,
 };
 use cadus_store::test_support::TestDb;
+
+use cadus_store::StoreError;
 use common::content::{DIGEST, template};
 use common::{KP, handle, sqlstate};
 use serde_json::json;

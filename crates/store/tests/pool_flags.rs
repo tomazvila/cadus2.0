@@ -1,13 +1,7 @@
 //! The serving pool, part 2: the C6 approved-template read, the A6 operator
 //! flags, and the D-O4 refill targets.
 
-#![allow(
-    clippy::unwrap_used,
-    clippy::expect_used,
-    clippy::panic,
-    clippy::todo,
-    clippy::unimplemented
-)]
+#![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
 
 mod common;
 

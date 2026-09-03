@@ -1,13 +1,7 @@
 //! The A4 diagnosis queue: the idempotent enqueue inside the grade
 //! transaction, the tenant-scoped read, and the error of a refused insert.
 
-#![allow(
-    clippy::unwrap_used,
-    clippy::expect_used,
-    clippy::panic,
-    clippy::todo,
-    clippy::unimplemented
-)]
+#![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
 
 mod common;
 

@@ -1,13 +1,7 @@
 //! Proof tests for the database-level guarantees of M0, part 5: the auth
 //! tables under the tenant policy and the five SECURITY DEFINER lookups (C3).
 
-#![allow(
-    clippy::unwrap_used,
-    clippy::expect_used,
-    clippy::panic,
-    clippy::todo,
-    clippy::unimplemented
-)]
+#![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
 
 mod common;
 

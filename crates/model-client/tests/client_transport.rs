@@ -1,13 +1,7 @@
 //! The transport of the client: the endpoint rules of the constructor, and
 //! every way one HTTP attempt reaches no status.
 
-#![allow(
-    clippy::unwrap_used,
-    clippy::expect_used,
-    clippy::panic,
-    clippy::todo,
-    clippy::unimplemented
-)]
+#![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
 
 mod common;
 

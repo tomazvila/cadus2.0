@@ -2,17 +2,10 @@
 //! a lock that another tab holds, an event that does not write, a payload
 //! that does not read, and a fold that the projector refuses.
 
-#![allow(
-    clippy::unwrap_used,
-    clippy::expect_used,
-    clippy::panic,
-    clippy::todo,
-    clippy::unimplemented
-)]
+#![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
 
 mod common;
 
-use cadus_core::config::Config;
 use cadus_core::event::{Event, SchemaVersion, SessionStart, Timestamp};
 use cadus_core::projector::ProjectionInput;
 use cadus_store::begin_tenant;
@@ -22,18 +15,28 @@ use cadus_store::state::{
     save_web_state,
 };
 use cadus_store::test_support::TestDb;
-use common::events::{BASE_US, attempt, graph, review, start};
+use common::events::{BASE_US, Fixture, attempt, review, start};
 use common::fault::{poison_event, revoke, revoke_set_config};
 use common::{sqlstate_in_tx, store_sqlstate};
 use serde_json::json;
 use uuid::Uuid;
 
+/// Assert that the fold and the view read of `user` both fail, each in a
+/// tenant transaction of its own.
+async fn both_reads_fail(db: &TestDb, user: Uuid, input: &ProjectionInput<'_>) {
+    let mut tx = begin_tenant(&db.app, user).await.unwrap();
+    assert!(project_current(&mut tx, user, input).await.is_err());
+    tx.rollback().await.unwrap();
+    let mut tx = begin_tenant(&db.app, user).await.unwrap();
+    assert!(load_session_view(&mut tx, user).await.is_err());
+    tx.rollback().await.unwrap();
+}
+
 /// Append the fixture log of `count` events for `user` and fold it once, so
 /// the `learner_models` row stands with its cursor at the head.
 async fn seed_log(db: &TestDb, user: Uuid, count: usize) {
-    let arena = graph();
-    let cfg = Config::default();
-    let input = ProjectionInput::new(&arena, &cfg, Timestamp::from_micros(BASE_US));
+    let fixture = Fixture::micro();
+    let input = fixture.input();
     let mut tx = begin_tenant(&db.app, user).await.unwrap();
     append_event(&mut tx, user, &start("s_2026-01-01a"), None)
         .await
@@ -79,24 +82,18 @@ async fn every_web_state_statement_reports_a_refused_privilege() {
         revoke(&db, "SELECT, INSERT, DELETE", "web_states").await;
         // A refused statement aborts its transaction, so each one gets its
         // own.
-        let mut tx = begin_tenant(&db.app, user).await.unwrap();
         assert_eq!(
-            store_sqlstate(&load_web_state(&mut tx, user).await.unwrap_err()),
+            sqlstate_in_tx!(db, user, |tx| load_web_state(&mut tx, user)),
             "42501"
         );
-        tx.rollback().await.unwrap();
-        let mut tx = begin_tenant(&db.app, user).await.unwrap();
         assert_eq!(
-            store_sqlstate(&save_web_state(&mut tx, user, &json!({})).await.unwrap_err()),
+            sqlstate_in_tx!(db, user, |tx| save_web_state(&mut tx, user, &json!({}))),
             "42501"
         );
-        tx.rollback().await.unwrap();
-        let mut tx = begin_tenant(&db.app, user).await.unwrap();
         assert_eq!(
-            store_sqlstate(&clear_web_state(&mut tx, user).await.unwrap_err()),
+            sqlstate_in_tx!(db, user, |tx| clear_web_state(&mut tx, user)),
             "42501"
         );
-        tx.rollback().await.unwrap();
     })
     .await;
 }
@@ -152,9 +149,8 @@ async fn the_fold_reports_the_cache_row_the_write_and_the_projector() {
     TestDb::with(|db| async move {
         let user = db.seed_user("fold@example.test").await;
         seed_log(&db, user, 3).await;
-        let arena = graph();
-        let cfg = Config::default();
-        let input = ProjectionInput::new(&arena, &cfg, Timestamp::from_micros(BASE_US));
+        let fixture = Fixture::micro();
+        let input = fixture.input();
 
         // A zone name the projector does not know refuses both branches: the
         // resume over the cache, and the full replay.
@@ -239,9 +235,8 @@ async fn a_payload_that_does_not_read_stops_every_read_that_meets_it() {
     TestDb::with(|db| async move {
         let user = db.seed_user("poison@example.test").await;
         seed_log(&db, user, 3).await;
-        let arena = graph();
-        let cfg = Config::default();
-        let input = ProjectionInput::new(&arena, &cfg, Timestamp::from_micros(BASE_US));
+        let fixture = Fixture::micro();
+        let input = fixture.input();
 
         // Line 1 is below the cursor (3): the window read passes, the
         // whole-log read of branch 2 fails, and so does the view fold's own
@@ -259,12 +254,7 @@ async fn a_payload_that_does_not_read_stops_every_read_that_meets_it() {
         // Line 3 is the cursor line: the window read itself fails, for the
         // fold and for the view.
         poison_event(&db, user, 3).await;
-        let mut tx = begin_tenant(&db.app, user).await.unwrap();
-        assert!(project_current(&mut tx, user, &input).await.is_err());
-        tx.rollback().await.unwrap();
-        let mut tx = begin_tenant(&db.app, user).await.unwrap();
-        assert!(load_session_view(&mut tx, user).await.is_err());
-        tx.rollback().await.unwrap();
+        both_reads_fail(&db, user, &input).await;
 
         // No cache at all: the full replay meets line 1.
         sqlx::query("DELETE FROM learner_models WHERE user_id = $1")
@@ -272,12 +262,7 @@ async fn a_payload_that_does_not_read_stops_every_read_that_meets_it() {
             .execute(&db.admin)
             .await
             .unwrap();
-        let mut tx = begin_tenant(&db.app, user).await.unwrap();
-        assert!(project_current(&mut tx, user, &input).await.is_err());
-        tx.rollback().await.unwrap();
-        let mut tx = begin_tenant(&db.app, user).await.unwrap();
-        assert!(load_session_view(&mut tx, user).await.is_err());
-        tx.rollback().await.unwrap();
+        both_reads_fail(&db, user, &input).await;
     })
     .await;
 }
@@ -290,9 +275,8 @@ async fn the_cursor_shapes_choose_the_branch() {
     TestDb::with(|db| async move {
         let user = db.seed_user("cursor@example.test").await;
         seed_log(&db, user, 3).await;
-        let arena = graph();
-        let cfg = Config::default();
-        let input = ProjectionInput::new(&arena, &cfg, Timestamp::from_micros(BASE_US));
+        let fixture = Fixture::micro();
+        let input = fixture.input();
 
         sqlx::query("UPDATE learner_models SET session_view = NULL WHERE user_id = $1")
             .bind(user)

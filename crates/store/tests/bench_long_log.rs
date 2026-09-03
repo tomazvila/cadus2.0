@@ -63,28 +63,17 @@
 //! the table then describe the repeated hand-off, which is the shape of the
 //! load. Section 8 of `docs/reference/l1-budget.md` records both numbers.
 
-#![allow(
-    clippy::unwrap_used,
-    clippy::expect_used,
-    clippy::panic,
-    clippy::todo,
-    clippy::unimplemented
-)]
+#![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
 
 mod common;
 
 use std::time::Instant;
 
-use cadus_core::config::Config;
-use cadus_core::event::Timestamp;
-use cadus_core::pool::Avoid;
-use cadus_core::projector::ProjectionInput;
 use cadus_store::test_support::TestDb;
 use common::bench::{
-    Percentiles, artifact_json, budget, curriculum, dsn_set, release, report, rounds, timed,
-    timed_rounds, write_artifact,
+    Percentiles, artifact_json, budget, dsn_set, release, report, rounds, timed, timed_rounds,
+    timed_step, write_artifact,
 };
-use common::events::BASE_US;
 use common::long_log::{
     BENCH_SAMPLES, BENCH_WARMUPS, COUNTING_SAMPLES, OPEN_SESSION_EVENTS, Read, SEEDED_EVENTS,
     SERVE_P95_BUDGET_NS, log_len, seed, serve_once,
@@ -98,12 +87,8 @@ async fn benchmark_long_log_serve_holds_the_l1_segment() {
         return;
     }
     TestDb::with(|db| async move {
-        let graph = curriculum();
-        let cfg = Config::default();
-        let (user, ring, task) = seed(&db, &graph, &cfg).await;
-        let input = ProjectionInput::new(&graph, &cfg, Timestamp::from_micros(BASE_US));
-        let avoid = Avoid::new(&ring, &task);
-        let app = db.pool_as("cadus_app", 1).await;
+        let run = seed(&db).await;
+        let (input, avoid) = run.views();
 
         // The FIRST serve of the task appends the cadence line and folds the
         // whole log once (V1, V8). It is a different transaction from the 19
@@ -112,7 +97,7 @@ async fn benchmark_long_log_serve_holds_the_l1_segment() {
         // `docs/reference/l1-budget.md` covers it yet: section 8 records the
         // number and names the open question.
         let start = Instant::now();
-        let first = serve_once(&app, user, &input, &avoid)
+        let first = serve_once(&run.app, run.user, &input, &avoid)
             .await
             .unwrap_or_else(|err| panic!("the first serve of the task failed: {err}"));
         let first_serve_ns = start.elapsed().as_nanos();
@@ -129,7 +114,7 @@ async fn benchmark_long_log_serve_holds_the_l1_segment() {
         release(&db.admin, first.claimed).await;
 
         for _ in 0..rounds(BENCH_WARMUPS, 1) {
-            let read = serve_once(&app, user, &input, &avoid)
+            let read = serve_once(&run.app, run.user, &input, &avoid)
                 .await
                 .unwrap_or_else(|err| panic!("a warm-up serve failed: {err}"));
             release(&db.admin, read.claimed).await;
@@ -137,13 +122,13 @@ async fn benchmark_long_log_serve_holds_the_l1_segment() {
 
         let count = rounds(BENCH_SAMPLES, COUNTING_SAMPLES);
         let (timings, reads): (Vec<u128>, Vec<Read>) = timed_rounds(count, |index| {
-            let (db, app, input, avoid) = (&db, &app, &input, &avoid);
+            let (db, run, input, avoid) = (&db, &run, &input, &avoid);
             async move {
-                let start = Instant::now();
-                let read = serve_once(app, user, input, avoid)
-                    .await
-                    .unwrap_or_else(|err| panic!("serve sample {index} failed: {err}"));
-                let nanos = start.elapsed().as_nanos();
+                let (nanos, read) = timed_step(
+                    format!("serve sample {index} failed"),
+                    serve_once(&run.app, run.user, input, avoid),
+                )
+                .await;
                 release(&db.admin, read.claimed).await;
                 (nanos, read)
             }
@@ -211,7 +196,7 @@ async fn benchmark_long_log_serve_holds_the_l1_segment() {
         }
         // One task, one cadence line, however many hand-offs the run drove.
         assert_eq!(
-            log_len(&db.admin, user).await,
+            log_len(&db.admin, run.user).await,
             SEEDED_EVENTS as i64 + 1,
             "the serve run grew the log by more than the one cadence line"
         );

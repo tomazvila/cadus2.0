@@ -1,13 +1,7 @@
 //! The serving pool, part 3: a row this build cannot decode is retired, not
 //! fatal, and a pair on backoff leaves the target list.
 
-#![allow(
-    clippy::unwrap_used,
-    clippy::expect_used,
-    clippy::panic,
-    clippy::todo,
-    clippy::unimplemented
-)]
+#![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
 
 mod common;
 

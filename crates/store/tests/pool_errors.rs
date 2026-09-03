@@ -2,13 +2,7 @@
 //! a commit that fails, a claim that writes no row, a source value this build
 //! does not know, and the two document writers of a drawn instance.
 
-#![allow(
-    clippy::unwrap_used,
-    clippy::expect_used,
-    clippy::panic,
-    clippy::todo,
-    clippy::unimplemented
-)]
+#![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
 
 mod common;
 
@@ -26,7 +20,25 @@ use common::fault::{
     closed_pool, dead_pool, drop_checks, fail_commit_on, fail_on, revoke, skip_updates_on,
 };
 use common::{KP, new_instance, seed_pool_row, seed_pool_rows, sqlstate_in_tx, store_sqlstate};
+use sqlx::PgPool;
 use uuid::Uuid;
+
+/// The SQLSTATE of a fresh pop of `(user, KP)` on `pool`, which must fail.
+async fn pop_sqlstate(pool: &PgPool, user: Uuid) -> String {
+    let ring = Ring::new();
+    let task = TaskMemory::new();
+    let avoid = Avoid::new(&ring, &task);
+    store_sqlstate(&pop_with_ring(pool, user, KP, &avoid).await.unwrap_err())
+}
+
+/// The SQLSTATE of a fresh pop of `(user, KP)` inside a tenant transaction of
+/// its own, which must fail.
+async fn pop_tx_sqlstate(db: &TestDb, user: Uuid) -> String {
+    let ring = Ring::new();
+    let task = TaskMemory::new();
+    let avoid = Avoid::new(&ring, &task);
+    sqlstate_in_tx!(db, user, |tx| pop_with_ring_tx(&mut tx, user, KP, &avoid))
+}
 
 /// The message of a `StoreError::PoolRow`, or the Display of any other error.
 fn pool_row_message(err: &StoreError) -> String {
@@ -112,18 +124,15 @@ async fn the_pop_reports_every_failed_statement() {
     TestDb::with(|db| async move {
         let user = db.seed_user("pop@example.test").await;
         seed_pool_rows(&db.admin, user, KP, 2).await;
-        let ring = Ring::new();
-        let task = TaskMemory::new();
-        let avoid = Avoid::new(&ring, &task);
 
         let closed = closed_pool(&db).await;
-        let err = pop_with_ring(&closed, user, KP, &avoid).await.unwrap_err();
-        assert_eq!(store_sqlstate(&err), "none");
+        assert_eq!(pop_sqlstate(&closed, user).await, "none");
 
         revoke(&db, "UPDATE", "serving_pool").await;
         assert_eq!(
-            sqlstate_in_tx!(db, user, |tx| pop_with_ring_tx(&mut tx, user, KP, &avoid)),
-            "42501"
+            pop_tx_sqlstate(&db, user).await,
+            "42501",
+            "the claim is refused"
         );
 
         sqlx::query("UPDATE serving_pool SET problem = '{}'::jsonb")
@@ -131,13 +140,17 @@ async fn the_pop_reports_every_failed_statement() {
             .await
             .unwrap();
         assert_eq!(
-            sqlstate_in_tx!(db, user, |tx| pop_with_ring_tx(&mut tx, user, KP, &avoid)),
-            "42501"
+            pop_tx_sqlstate(&db, user).await,
+            "42501",
+            "the retire is refused"
         );
 
         revoke(&db, "SELECT", "serving_pool").await;
-        let err = pop_with_ring(&db.app, user, KP, &avoid).await.unwrap_err();
-        assert_eq!(store_sqlstate(&err), "42501", "the read is refused");
+        assert_eq!(
+            pop_sqlstate(&db.app, user).await,
+            "42501",
+            "the read is refused"
+        );
     })
     .await;
 }
@@ -149,15 +162,14 @@ async fn a_claim_that_writes_no_row_and_a_failed_commit_are_reported() {
     TestDb::with(|db| async move {
         let user = db.seed_user("claim@example.test").await;
         seed_pool_rows(&db.admin, user, KP, 2).await;
+
+        fail_commit_on(&db, "serving_pool").await;
+        assert_eq!(pop_sqlstate(&db.app, user).await, "P0001");
+
+        skip_updates_on(&db, "serving_pool").await;
         let ring = Ring::new();
         let task = TaskMemory::new();
         let avoid = Avoid::new(&ring, &task);
-
-        fail_commit_on(&db, "serving_pool").await;
-        let err = pop_with_ring(&db.app, user, KP, &avoid).await.unwrap_err();
-        assert_eq!(store_sqlstate(&err), "P0001");
-
-        skip_updates_on(&db, "serving_pool").await;
         let mut tx = begin_tenant(&db.app, user).await.unwrap();
         let err = pop_with_ring_tx(&mut tx, user, KP, &avoid)
             .await

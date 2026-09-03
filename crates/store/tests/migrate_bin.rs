@@ -30,13 +30,7 @@
 //! binary wait for the key that the test holds, and gives the key back before
 //! it reads the exit code.
 
-#![allow(
-    clippy::unwrap_used,
-    clippy::expect_used,
-    clippy::panic,
-    clippy::todo,
-    clippy::unimplemented
-)]
+#![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
 
 mod common;
 

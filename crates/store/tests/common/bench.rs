@@ -6,11 +6,20 @@ use std::future::Future;
 use std::path::{Path, PathBuf};
 
 use cadus_core::curriculum::{Curriculum, load_curriculum};
+use cadus_core::event::Event;
 use cadus_core::learner::problem_text_hash;
-use cadus_core::pool::{POOL_ROW_VERSION, PoolAnswer, PoolProblem, Ring, Source, TaskMemory};
-use cadus_store::pool::NewInstance;
+use cadus_core::pool::{
+    Avoid, POOL_ROW_VERSION, PoolAnswer, PoolProblem, Ring, Source, TaskMemory,
+};
+use cadus_core::projector::ProjectionInput;
+use cadus_store::pool::{NewInstance, insert_batch, pop_with_ring_tx};
+use cadus_store::state::{Projection, append_event, project_and_save, save_web_state};
+use cadus_store::test_support::TestDb;
+
+use super::events::Fixture;
+use cadus_store::{StoreError, begin_tenant};
 use serde_json::{Value as Json, json};
-use sqlx::PgPool;
+use sqlx::{PgPool, Postgres, Transaction};
 use uuid::Uuid;
 
 /// The environment variable that turns the timing gates on.
@@ -335,4 +344,112 @@ where
         values.push(value);
     }
     (timings, values)
+}
+
+/// The one app connection of a benchmark: no concurrency, so the run measures
+/// the shape of the transaction and never the contention of a pool (spec
+/// 10.2).
+pub async fn app_pool(db: &TestDb) -> PgPool {
+    db.pool_as("cadus_app", 1).await
+}
+
+/// Insert `depth` grade-fixture rows for `(user, kp_id)` with the admin pool,
+/// and check that every digest entered.
+pub async fn seed_pool(admin: &PgPool, user: Uuid, kp_id: &str, depth: usize, seed: u64) {
+    let rows: Vec<NewInstance> = (0..depth)
+        .map(|index| bench_instance(index, seed))
+        .collect();
+    let inserted = insert_batch(admin, user, kp_id, &rows)
+        .await
+        .expect("the pool inserts");
+    assert_eq!(
+        inserted, depth as u64,
+        "insert_batch skipped a digest, so the pool is not the depth it claims"
+    );
+}
+
+/// Steps 6 and 7 of the grade transaction: append `event` under `attempt_id`
+/// and fold the log into the `learner_models` row.
+pub async fn append_and_fold(
+    tx: &mut Transaction<'_, Postgres>,
+    user: Uuid,
+    input: &ProjectionInput<'_>,
+    event: &Event,
+    attempt_id: Option<&str>,
+) -> Result<(i64, Projection), StoreError> {
+    let seq = append_event(tx, user, event, attempt_id)
+        .await?
+        .expect("the event is new, so the append returns a seq");
+    let projection = project_and_save(tx, user, input, None).await?;
+    Ok((seq, projection))
+}
+
+/// Step 10 of the grade transaction and the end of the serve transaction: pop
+/// and claim one row of `kp_id`, write the D-S6 document back, and commit.
+/// The answer is the id of the claimed row.
+pub async fn claim_and_commit(
+    mut tx: Transaction<'static, Postgres>,
+    user: Uuid,
+    kp_id: &str,
+    avoid: &Avoid<'_>,
+    doc: &Json,
+) -> Result<Uuid, StoreError> {
+    let claimed = pop_with_ring_tx(&mut tx, user, kp_id, avoid)
+        .await?
+        .claimed
+        .expect("the pool holds an unclaimed row");
+    save_web_state(&mut tx, user, doc).await?;
+    tx.commit().await?;
+    Ok(claimed.row.id)
+}
+
+/// Time one measured step and stop the run with `what` when it fails.
+pub async fn timed_step<T, Fut>(what: String, step: Fut) -> (u128, T)
+where
+    Fut: Future<Output = Result<T, StoreError>>,
+{
+    let start = std::time::Instant::now();
+    let value = step
+        .await
+        .unwrap_or_else(|err| panic!("{what} failed: {err}"));
+    (start.elapsed().as_nanos(), value)
+}
+
+/// One seeded benchmark run: the learner, the two anti-repeat windows, the
+/// curriculum and config of the fold, and the one app connection.
+pub struct Run {
+    pub user: Uuid,
+    pub ring: Ring,
+    pub task: TaskMemory,
+    pub fixture: Fixture,
+    pub app: PgPool,
+}
+
+impl Run {
+    /// The projection input and the D5 view of the windows.
+    pub fn views(&self) -> (ProjectionInput<'_>, Avoid<'_>) {
+        (self.fixture.input(), Avoid::new(&self.ring, &self.task))
+    }
+}
+
+/// Finish a seed: fill the pool of `(user, kp_id)`, seed the D-S6 row with
+/// two full windows, and open the app connection.
+pub async fn finish_seed(
+    db: &TestDb,
+    fixture: Fixture,
+    user: Uuid,
+    kp_id: &str,
+    depth: usize,
+    seed: u64,
+) -> Run {
+    seed_pool(&db.admin, user, kp_id, depth, seed).await;
+    let (ring, task) = full_windows();
+    seed_web_state(&db.admin, user, &ring, &task).await;
+    Run {
+        user,
+        ring,
+        task,
+        fixture,
+        app: app_pool(db).await,
+    }
 }

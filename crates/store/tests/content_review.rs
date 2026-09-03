@@ -1,13 +1,7 @@
 //! R5: the review reads of `content_store`, the re-gate read, the one-document
 //! read, and the prompt stamp of a held row.
 
-#![allow(
-    clippy::unwrap_used,
-    clippy::expect_used,
-    clippy::panic,
-    clippy::todo,
-    clippy::unimplemented
-)]
+#![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
 
 mod common;
 

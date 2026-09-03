@@ -20,8 +20,8 @@ use sqlx::PgPool;
 use sqlx::types::chrono::{DateTime, Utc};
 use uuid::Uuid;
 
-use super::bench::{bench_instance, full_windows, seed_web_state};
-use super::events::{BASE_US, attempt_row};
+use super::bench::{Run, append_and_fold, claim_and_commit, curriculum, finish_seed};
+use super::events::{BASE_US, Fixture, attempt_row};
 
 /// One day, in microseconds. Session `i` runs on day `i`.
 pub const DAY_US: i64 = 86_400_000_000;
@@ -187,30 +187,20 @@ pub async fn seed_log(pool: &PgPool, user: Uuid) {
 }
 
 /// Seed one user, the whole log, the folded model, the D-S6 row, and the pool.
-pub async fn seed(db: &TestDb, graph: &Curriculum, cfg: &Config) -> (Uuid, Ring, TaskMemory) {
+pub async fn seed(db: &TestDb) -> Run {
+    let fixture = Fixture::of(curriculum());
     let user = db.seed_user("bench-long-log@example.test").await;
     seed_log(&db.admin, user).await;
 
     let mut tx = begin_tenant(&db.admin, user)
         .await
         .expect("the seed transaction starts");
-    let input = ProjectionInput::new(graph, cfg, Timestamp::from_micros(BASE_US));
-    project_and_save(&mut tx, user, &input, None)
+    project_and_save(&mut tx, user, &fixture.input(), None)
         .await
         .expect("the seed fold saves");
     tx.commit().await.expect("the seed transaction commits");
 
-    let rows: Vec<NewInstance> = (0..POOL_DEPTH)
-        .map(|index| bench_instance(index, BATCH_SEED))
-        .collect();
-    let inserted = insert_batch(&db.admin, user, KP_ID, &rows)
-        .await
-        .expect("the pool inserts");
-    assert_eq!(inserted, POOL_DEPTH as u64, "insert_batch skipped a digest");
-
-    let (ring, task) = full_windows();
-    seed_web_state(&db.admin, user, &ring, &task).await;
-    (user, ring, task)
+    finish_seed(db, fixture, user, KP_ID, POOL_DEPTH, BATCH_SEED).await
 }
 
 /// The count of event rows the log of `user` holds.
@@ -350,19 +340,11 @@ pub async fn grade_once(
     let rows = events.len();
 
     let event = attempt_event(SESSIONS - 1, OPEN_SESSION_EVENTS, attempt_id);
-    let seq = append_event(&mut tx, user, &event, Some(attempt_id))
-        .await?
-        .expect("the attempt is new, so the append returns a seq");
-    let projection = project_and_save(&mut tx, user, input, None).await?;
-    let claimed = pop_with_ring_tx(&mut tx, user, KP_ID, avoid)
-        .await?
-        .claimed
-        .expect("the pool holds an unclaimed row");
-    save_web_state(&mut tx, user, &doc).await?;
-    tx.commit().await?;
+    let (seq, projection) = append_and_fold(&mut tx, user, input, &event, Some(attempt_id)).await?;
+    let claimed = claim_and_commit(tx, user, KP_ID, avoid, &doc).await?;
 
     Ok(Read {
-        claimed: claimed.row.id,
+        claimed,
         rows,
         replayed: projection.replayed,
         seq,

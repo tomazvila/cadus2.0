@@ -2,13 +2,7 @@
 //! the pop, the anti-repeat rule over the popped candidates, and the batch
 //! insert with its A5 digest invariant.
 
-#![allow(
-    clippy::unwrap_used,
-    clippy::expect_used,
-    clippy::panic,
-    clippy::todo,
-    clippy::unimplemented
-)]
+#![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
 
 mod common;
 

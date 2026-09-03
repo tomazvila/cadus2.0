@@ -8,13 +8,7 @@
 //! Every test that needs a cluster role uses `TestDb::with_role`, so a failed
 //! assertion drops that role too (finding #9).
 
-#![allow(
-    clippy::unwrap_used,
-    clippy::expect_used,
-    clippy::panic,
-    clippy::todo,
-    clippy::unimplemented
-)]
+#![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
 
 use std::time::{Duration, Instant};
 

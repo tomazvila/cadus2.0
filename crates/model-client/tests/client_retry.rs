@@ -4,13 +4,7 @@
 //! Every expected value is a LITERAL: a literal `max_tokens`, a literal status,
 //! a literal request count. Nothing is read back from the code under test.
 
-#![allow(
-    clippy::unwrap_used,
-    clippy::expect_used,
-    clippy::panic,
-    clippy::todo,
-    clippy::unimplemented
-)]
+#![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
 
 mod common;
 

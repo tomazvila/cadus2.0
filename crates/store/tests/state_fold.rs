@@ -1,30 +1,23 @@
 //! The D4 fold: the three replay rules, the cached model, and the session
 //! view that resumes from its stored document.
 
-#![allow(
-    clippy::unwrap_used,
-    clippy::expect_used,
-    clippy::panic,
-    clippy::todo,
-    clippy::unimplemented
-)]
+#![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
 
 use std::collections::BTreeMap;
 
 mod common;
 
-use cadus_core::config::Config;
 use cadus_core::event::{
     Event, LessonResult, SchemaVersion, Slug, Timestamp, TopicStatus, WorkQuality,
 };
 use cadus_core::learner::TopicState;
-use cadus_core::projector::ProjectionInput;
 use cadus_store::begin_tenant;
 use cadus_store::state::{append_event, load_session_view, project_and_save, project_current};
 use cadus_store::test_support::TestDb;
-use common::app_db as app;
-use common::events::{BASE_US, attempt, end, graph, regraded, start};
-use common::state::{append_all, open_locked, read_cache, read_view};
+use common::events::{BASE_US, end, regraded, start};
+use common::state::{
+    Scene, append_all, open_first_session, open_locked, open_with, read_cache, read_view,
+};
 use serde_json::{Value, json};
 use uuid::Uuid;
 
@@ -39,21 +32,9 @@ use uuid::Uuid;
 async fn a_regraded_event_forces_the_full_replay_branch() {
     TestDb::with(|db| async move {
         let user = db.seed_user("fold@example.com").await;
-        let handle = app(&db);
-        let arena = graph();
-        let cfg = Config::default();
-        let input = ProjectionInput::new(&arena, &cfg, Timestamp::from_micros(BASE_US));
-
-        let mut tx = open_locked(&handle, user).await;
-        append_all(
-            &mut tx,
-            user,
-            &[
-                (&start("s_2026-01-01a"), None),
-                (&attempt("t-1"), Some("t-1")),
-            ],
-        )
-        .await;
+        let scene = Scene::new(&db);
+        let input = scene.input();
+        let mut tx = open_first_session(&scene.handle, user).await;
         // The first fold has no cache, so it replays by definition.
         let first = project_and_save(&mut tx, user, &input, None).await.unwrap();
         assert!(first.replayed);
@@ -74,7 +55,7 @@ async fn a_regraded_event_forces_the_full_replay_branch() {
         assert_eq!(saved, (2, 3));
 
         // One ordinary event after the cursor: the fold goes incremental.
-        let mut tx = open_locked(&handle, user).await;
+        let mut tx = open_locked(&scene.handle, user).await;
         append_all(&mut tx, user, &[(&end("s_2026-01-01a"), None)]).await;
         let incremental = project_current(&mut tx, user, &input).await.unwrap();
         assert!(
@@ -95,7 +76,7 @@ async fn a_regraded_event_forces_the_full_replay_branch() {
         tx.commit().await.unwrap();
 
         // A `regraded` after the cursor forces the full replay.
-        let mut tx = open_locked(&handle, user).await;
+        let mut tx = open_locked(&scene.handle, user).await;
         append_event(&mut tx, user, &regraded("t-1"), None)
             .await
             .unwrap();
@@ -116,13 +97,9 @@ async fn a_regraded_event_forces_the_full_replay_branch() {
 async fn a_config_drift_forces_the_full_replay() {
     TestDb::with(|db| async move {
         let user = db.seed_user("drift@example.com").await;
-        let handle = app(&db);
-        let arena = graph();
-        let cfg = Config::default();
-        let input = ProjectionInput::new(&arena, &cfg, Timestamp::from_micros(BASE_US));
-
-        let mut tx = open_locked(&handle, user).await;
-        append_all(&mut tx, user, &[(&start("s_2026-01-01a"), None)]).await;
+        let scene = Scene::new(&db);
+        let input = scene.input();
+        let mut tx = open_with(&scene.handle, user, &[(&start("s_2026-01-01a"), None)]).await;
         project_and_save(&mut tx, user, &input, Some("curriculum-hash"))
             .await
             .unwrap();
@@ -147,8 +124,8 @@ async fn a_config_drift_forces_the_full_replay() {
         .await
         .unwrap();
 
-        let cached = read_cache(&handle, user).await;
-        let mut tx = begin_tenant(handle.pool(), user).await.unwrap();
+        let cached = read_cache(&scene.handle, user).await;
+        let mut tx = begin_tenant(scene.handle.pool(), user).await.unwrap();
         assert_eq!(cached.through_seq, 1);
         assert_eq!(cached.model.through_seq, Some(1));
         assert_eq!(cached.config_hash, "deadbeefdeadbeef");
@@ -166,7 +143,7 @@ async fn a_config_drift_forces_the_full_replay() {
 async fn the_cached_model_reads_back_field_for_field() {
     TestDb::with(|db| async move {
         let user = db.seed_user("cache@example.com").await;
-        let handle = app(&db);
+        let scene = Scene::new(&db);
 
         let mut topics: BTreeMap<String, TopicState> = BTreeMap::new();
         topics.insert(
@@ -198,7 +175,7 @@ async fn the_cached_model_reads_back_field_for_field() {
         .await
         .unwrap();
 
-        let cached = read_cache(&handle, user).await;
+        let cached = read_cache(&scene.handle, user).await;
 
         assert_eq!(cached.through_seq, 7);
         assert_eq!(cached.projector_version, 3);
@@ -265,21 +242,9 @@ async fn put_view(db: &TestDb, user: Uuid, doc: &Value) {
 async fn the_failure_map_resumes_from_the_stored_view() {
     TestDb::with(|db| async move {
         let user = db.seed_user("resume-view@example.com").await;
-        let handle = app(&db);
-        let arena = graph();
-        let cfg = Config::default();
-        let input = ProjectionInput::new(&arena, &cfg, Timestamp::from_micros(BASE_US));
-
-        let mut tx = open_locked(&handle, user).await;
-        append_all(
-            &mut tx,
-            user,
-            &[
-                (&start("s_2026-01-01a"), None),
-                (&attempt("t-1"), Some("t-1")),
-            ],
-        )
-        .await;
+        let scene = Scene::new(&db);
+        let input = scene.input();
+        let mut tx = open_first_session(&scene.handle, user).await;
         let saved = project_and_save(&mut tx, user, &input, None).await.unwrap();
         assert_eq!(saved.through_seq, 2);
         assert_eq!(saved.view.lesson_failures.len(), 0);
@@ -290,7 +255,7 @@ async fn the_failure_map_resumes_from_the_stored_view() {
         doc["lesson_failures"] = json!({"fractions": ["kp9"]});
         put_view(&db, user, &doc).await;
 
-        let mut tx = open_locked(&handle, user).await;
+        let mut tx = open_locked(&scene.handle, user).await;
         append_all(&mut tx, user, &[(&end("s_2026-01-01a"), None)]).await;
         let view = load_session_view(&mut tx, user).await.unwrap();
         tx.rollback().await.unwrap();
@@ -310,13 +275,9 @@ async fn the_failure_map_resumes_from_the_stored_view() {
 async fn a_stored_view_without_the_failure_map_is_rebuilt_from_the_log() {
     TestDb::with(|db| async move {
         let user = db.seed_user("old-view@example.com").await;
-        let handle = app(&db);
-        let arena = graph();
-        let cfg = Config::default();
-        let input = ProjectionInput::new(&arena, &cfg, Timestamp::from_micros(BASE_US));
-
-        let mut tx = open_locked(&handle, user).await;
-        append_all(&mut tx, user, &[(&start("s_2026-01-01a"), None)]).await;
+        let scene = Scene::new(&db);
+        let input = scene.input();
+        let mut tx = open_with(&scene.handle, user, &[(&start("s_2026-01-01a"), None)]).await;
         append_event(&mut tx, user, &lesson_failure("addition", "kp1"), None)
             .await
             .unwrap();
@@ -332,7 +293,7 @@ async fn a_stored_view_without_the_failure_map_is_rebuilt_from_the_log() {
         assert!(doc.get("lesson_failures").is_none());
         put_view(&db, user, &doc).await;
 
-        let view = read_view(&handle, user).await;
+        let view = read_view(&scene.handle, user).await;
 
         assert_eq!(view.lesson_failures.len(), 1);
         assert!(view.already_failed("addition", Some("kp1")));

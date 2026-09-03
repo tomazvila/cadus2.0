@@ -2,28 +2,15 @@
 //! transactions, and the argument are in `common/long_log.rs` and in the
 //! header of `bench_long_log.rs`, which times the serve half.
 
-#![allow(
-    clippy::unwrap_used,
-    clippy::expect_used,
-    clippy::panic,
-    clippy::todo,
-    clippy::unimplemented
-)]
+#![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
 
 mod common;
 
-use std::time::Instant;
-
-use cadus_core::config::Config;
-use cadus_core::event::Timestamp;
-use cadus_core::pool::Avoid;
-use cadus_core::projector::ProjectionInput;
 use cadus_store::test_support::TestDb;
 use common::bench::{
-    Percentiles, artifact_json, budget, curriculum, dsn_set, report, restore, rounds, snapshot,
-    timed, timed_rounds, write_artifact,
+    Percentiles, artifact_json, budget, dsn_set, report, restore, rounds, snapshot, timed,
+    timed_rounds, timed_step, write_artifact,
 };
-use common::events::BASE_US;
 use common::long_log::{
     BENCH_SAMPLES, BENCH_WARMUPS, COUNTING_SAMPLES, GRADE_P95_BUDGET_NS, OPEN_SESSION_EVENTS, Read,
     SEEDED_EVENTS, grade_once, seed,
@@ -37,12 +24,9 @@ async fn benchmark_long_log_grade_holds_the_l2_segment() {
         return;
     }
     TestDb::with(|db| async move {
-        let graph = curriculum();
-        let cfg = Config::default();
-        let (user, ring, task) = seed(&db, &graph, &cfg).await;
-        let input = ProjectionInput::new(&graph, &cfg, Timestamp::from_micros(BASE_US));
-        let avoid = Avoid::new(&ring, &task);
-        let app = db.pool_as("cadus_app", 1).await;
+        let run = seed(&db).await;
+        let (input, avoid) = run.views();
+        let (user, app) = (run.user, &run.app);
 
         // The snapshot is taken BEFORE the first grade, so every warm-up and
         // every sample starts from the same cursor and folds the same log.
@@ -58,13 +42,13 @@ async fn benchmark_long_log_grade_holds_the_l2_segment() {
         let count = rounds(BENCH_SAMPLES, COUNTING_SAMPLES);
         let (timings, reads): (Vec<u128>, Vec<Read>) = timed_rounds(count, |index| {
             let id = format!("sample-{index}");
-            let (db, app, input, avoid, snap) = (&db, &app, &input, &avoid, &snap);
+            let (db, input, avoid, snap) = (&db, &input, &avoid, &snap);
             async move {
-                let start = Instant::now();
-                let read = grade_once(app, user, input, &id, avoid)
-                    .await
-                    .unwrap_or_else(|err| panic!("grade sample {index} did not grade: {err}"));
-                let nanos = start.elapsed().as_nanos();
+                let (nanos, read) = timed_step(
+                    format!("grade sample {index} did not grade"),
+                    grade_once(app, user, input, &id, avoid),
+                )
+                .await;
                 restore(&db.admin, user, &id, read.claimed, snap).await;
                 (nanos, read)
             }

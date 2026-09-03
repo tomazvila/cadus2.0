@@ -55,13 +55,7 @@
 //! sample: a shared runner produces those, and a flaky gate blocks good work
 //! (spec section 10.2). The numbers go to a JSON artifact on every run.
 
-#![allow(
-    clippy::unwrap_used,
-    clippy::expect_used,
-    clippy::panic,
-    clippy::todo,
-    clippy::unimplemented
-)]
+#![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
 
 mod common;
 
