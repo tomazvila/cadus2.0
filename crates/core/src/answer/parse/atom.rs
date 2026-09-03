@@ -316,11 +316,7 @@ impl Parser<'_> {
                 if !parser.starts_operand() {
                     break;
                 }
-                if let Some(token) = parser.tokens.get(parser.at)
-                    && matches!(token.kind, Tok::Num(_))
-                {
-                    parser.check_implicit_number(factors.last(), token)?;
-                }
+                parser.check_implicit_factor(&factors)?;
                 factors.push(parser.parse_power()?);
             }
             Ok(collapse(factors, Ast::Mul))

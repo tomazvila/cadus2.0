@@ -51,11 +51,7 @@ impl Parser<'_> {
                     continue;
                 }
                 if parser.starts_operand() {
-                    if let Some(token) = parser.tokens.get(parser.at)
-                        && matches!(token.kind, Tok::Num(_))
-                    {
-                        parser.check_implicit_number(factors.last(), token)?;
-                    }
+                    parser.check_implicit_factor(&factors)?;
                     factors.push(parser.parse_unary()?);
                     continue;
                 }
@@ -63,6 +59,16 @@ impl Parser<'_> {
             }
             Ok(collapse(factors, Ast::Mul))
         })
+    }
+
+    /// Refuse the number at the cursor when it reads as a label, before an implicit factor.
+    pub(super) fn check_implicit_factor(&self, factors: &[Ast]) -> Result<(), Undecidable> {
+        if let Some(token) = self.tokens.get(self.at)
+            && matches!(token.kind, Tok::Num(_))
+        {
+            self.check_implicit_number(factors.last(), token)?;
+        }
+        Ok(())
     }
 
     /// Refuse the number `token` at the cursor where it reads as a label, not a product.
