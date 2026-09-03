@@ -46,14 +46,12 @@ fn main() -> ExitCode {
 
     let stdout = std::io::stdout();
     let mut out = stdout.lock();
-    if let Err(error) = out.write_all(dump.as_bytes()) {
+    let written = out
+        .write_all(dump.as_bytes())
+        .and_then(|()| out.write_all(b"\n"))
+        .and_then(|()| out.flush());
+    if let Err(error) = written {
         return fail(&format!("dump_curriculum: write: {error}"));
-    }
-    if let Err(error) = out.write_all(b"\n") {
-        return fail(&format!("dump_curriculum: write: {error}"));
-    }
-    if let Err(error) = out.flush() {
-        return fail(&format!("dump_curriculum: flush: {error}"));
     }
 
     let stderr = std::io::stderr();
