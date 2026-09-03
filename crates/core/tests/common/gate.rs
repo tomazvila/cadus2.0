@@ -198,6 +198,11 @@ pub fn subtraction_body(a: (i64, i64), b: (i64, i64), samples: &str) -> String {
     ])
 }
 
+/// The three samples of the difference template under `a > b` over 1..6: the low end of `a`, the low end of `a - b`, and its high end.
+pub const DIFFERENCE_SAMPLES: &str = r#"[{"params": {"a": 2, "b": 1}, "expected": "1"},
+    {"params": {"a": 6, "b": 5}, "expected": "1"},
+    {"params": {"a": 6, "b": 1}, "expected": "5"}]"#;
+
 /// A difference template `a - b` with constraints, in the "take" wording.
 ///
 /// An empty `constraints` drops the field.

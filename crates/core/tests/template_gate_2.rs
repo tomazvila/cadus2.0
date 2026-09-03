@@ -160,11 +160,7 @@ fn the_space_is_the_satisfying_count_and_the_ends_come_from_it() {
             samples,
         )
     };
-    let verified = accept_numeric(&satisfying(
-        r#"[{"params": {"a": 2, "b": 1}, "expected": "1"},
-                {"params": {"a": 6, "b": 5}, "expected": "1"},
-                {"params": {"a": 6, "b": 1}, "expected": "5"}]"#,
-    ));
+    let verified = accept_numeric(&satisfying(DIFFERENCE_SAMPLES));
     assert_eq!(verified.space, SpaceSize::Exact(15));
     assert_eq!(verified.instances_checked, 15);
 

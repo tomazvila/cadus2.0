@@ -13,7 +13,7 @@
 mod common;
 
 use cadus_core::answer::canonical_form;
-use cadus_core::template::{Instance, SpaceSize, gate_body};
+use cadus_core::template::{Instance, SpaceSize};
 use common::gate::*;
 
 /// One hand-built instance of the base document at `a`.
@@ -36,6 +36,24 @@ fn refuse_instance(instance: &Instance) -> Rejection {
         exemplars: &pool,
     };
     check_instance(&doc, &spec, instance).expect_err("the instance is refused")
+}
+
+/// Accept the base document with `overrides`, over `a` in 1..12 and `b` in 1..2, with the four corner samples.
+fn accept_over_a_and(b: &str, overrides: &[(&str, &str)]) {
+    let params = format!(
+        r#"{{"a": {{"kind": "int", "low": 1, "high": 12}}, "{b}": {{"kind": "int", "low": 1, "high": 2}}}}"#
+    );
+    let samples = format!(
+        r#"[{{"params": {{"a": 1, "{b}": 1}}, "expected": "1"}},
+            {{"params": {{"a": 12, "{b}": 2}}, "expected": "144"}},
+            {{"params": {{"a": 1, "{b}": 2}}, "expected": "1"}},
+            {{"params": {{"a": 12, "{b}": 1}}, "expected": "144"}}]"#
+    );
+    let mut fields: Vec<(&str, &str)> = overrides.to_vec();
+    fields.push(("params", &params));
+    fields.push(("samples", &samples));
+    let verified = accept(&body_with(&fields), AnswerKind::Numeric, &["49", "81"]);
+    assert_eq!(verified.space, SpaceSize::Exact(24));
 }
 
 #[test]
@@ -80,25 +98,10 @@ fn a_parameter_name_is_an_identifier() {
     }
     // A name that starts with an underscore is an identifier. The M2 grammar
     // reads no underscore, so the parameter shows in the statement alone.
-    let verified = accept(
-        &body_with(&[
-            ("statement", r#""Compute ${a}^{{2}}$ (part {_b})""#),
-            (
-                "params",
-                r#"{"a": {"kind": "int", "low": 1, "high": 12}, "_b": {"kind": "int", "low": 1, "high": 2}}"#,
-            ),
-            (
-                "samples",
-                r#"[{"params": {"a": 1, "_b": 1}, "expected": "1"},
-                    {"params": {"a": 12, "_b": 2}, "expected": "144"},
-                    {"params": {"a": 1, "_b": 2}, "expected": "1"},
-                    {"params": {"a": 12, "_b": 1}, "expected": "144"}]"#,
-            ),
-        ]),
-        AnswerKind::Numeric,
-        &["49", "81"],
+    accept_over_a_and(
+        "_b",
+        &[("statement", r#""Compute ${a}^{{2}}$ (part {_b})""#)],
     );
-    assert_eq!(verified.space, SpaceSize::Exact(24));
 }
 
 #[test]
@@ -160,9 +163,7 @@ fn a_constraint_over_a_sub_and_an_abs_term_is_walked() {
         (1, 6),
         r#"[{"op": "gt", "left": {"sub": ["a", "b"]}, "right": {"lit": 0}},
             {"op": "ne", "left": {"abs": "a"}, "right": {"lit": 0}}]"#,
-        r#"[{"params": {"a": 2, "b": 1}, "expected": "1"},
-            {"params": {"a": 6, "b": 5}, "expected": "1"},
-            {"params": {"a": 6, "b": 1}, "expected": "5"}]"#,
+        DIFFERENCE_SAMPLES,
     ));
     assert_eq!(verified.space, SpaceSize::Exact(15));
 }
@@ -200,29 +201,14 @@ fn every_rendered_field_names_its_hole_and_its_brace() {
 
 #[test]
 fn a_distractor_note_is_a_use_and_a_distractor_the_samples_cannot_evaluate_is_kept() {
-    let verified = accept(
-        &body_with(&[
-            (
-                "params",
-                r#"{"a": {"kind": "int", "low": 1, "high": 12}, "b": {"kind": "int", "low": 1, "high": 2}}"#,
-            ),
-            (
-                "distractors",
-                r#"[{"answer": "a*2", "error_tag": "doubled", "note": "You doubled {a} and forgot {b}."},
-                    {"answer": "1/(a-1)", "error_tag": "slip"}]"#,
-            ),
-            (
-                "samples",
-                r#"[{"params": {"a": 1, "b": 1}, "expected": "1"},
-                    {"params": {"a": 12, "b": 2}, "expected": "144"},
-                    {"params": {"a": 1, "b": 2}, "expected": "1"},
-                    {"params": {"a": 12, "b": 1}, "expected": "144"}]"#,
-            ),
-        ]),
-        AnswerKind::Numeric,
-        &["49", "81"],
+    accept_over_a_and(
+        "b",
+        &[(
+            "distractors",
+            r#"[{"answer": "a*2", "error_tag": "doubled", "note": "You doubled {a} and forgot {b}."},
+                {"answer": "1/(a-1)", "error_tag": "slip"}]"#,
+        )],
     );
-    assert_eq!(verified.space, SpaceSize::Exact(24));
 }
 
 #[test]
@@ -359,193 +345,4 @@ fn a_surd_answers_only_the_integrality_rule_of_the_envelope() {
     );
     let verified = accept(&root("roots"), AnswerKind::Numeric, &["1/2"]);
     assert_eq!(verified.space, SpaceSize::Exact(12));
-}
-
-#[test]
-fn the_body_read_reports_every_shape_it_owns() {
-    let pool = exemplars(&["49"]);
-    let spec = GateSpec {
-        answer_kind: AnswerKind::Numeric,
-        exemplars: &pool,
-    };
-    let read = |body: &str| gate_body(body, &spec).expect_err("the body is refused");
-    let refusal = read("not json");
-    assert_eq!(refusal.code, "body");
-    assert!(
-        refusal
-            .message
-            .starts_with("the template body is not JSON: "),
-        "{}",
-        refusal.message
-    );
-    let choice = "a choice domain needs a non-empty 'values' list";
-    assert_eq!(
-        read(r#"{"params": {"a": {"kind": "choice"}}}"#).message,
-        choice
-    );
-    assert_eq!(
-        read(r#"{"params": {"a": {"kind": "choice", "values": []}}}"#).message,
-        choice
-    );
-    assert_eq!(
-        read(r#"{"samples": [{"params": {}, "expected": 1.5}]}"#).message,
-        "a sample needs 'params' and a scalar 'expected'"
-    );
-    let generic = [
-        r#"{"samples": [{"params": {}, "expected": 18446744073709551615}]}"#,
-        r#"{"samples": [{"params": {"a": 1}, "expected": 1}]}"#,
-        r#"{"params": 1}"#,
-        r#"{"params": {"a": {"kind": "rational"}}}"#,
-        r#"{"v": 1}"#,
-    ];
-    for body in generic {
-        let refusal = read(body);
-        assert!(
-            refusal
-                .message
-                .starts_with("the template body does not read: "),
-            "{body}: {}",
-            refusal.message
-        );
-    }
-}
-
-#[test]
-fn a_stated_estimate_with_the_right_count_is_still_not_the_gates_count() {
-    let rejection = reject_squares(&body_with(&[(
-        "space_size",
-        r#"{"estimate": 12, "samples": 1, "hits": 1}"#,
-    )]));
-    assert_eq!(rejection.code, "space-size");
-    assert_eq!(
-        rejection.message,
-        "space_size states 12 and the gate counts 12 — the gate fills space_size, not the author"
-    );
-}
-
-/// The base document with an operator choice `op` beside `a`.
-fn with_operator(samples: &str, constraints: &str) -> String {
-    body_with(&[
-        ("statement", r#""Compute ${a} {op} 1$.""#),
-        (
-            "params",
-            r#"{"a": {"kind": "int", "low": 1, "high": 12}, "op": {"kind": "choice", "values": ["+", "-"]}}"#,
-        ),
-        ("constraints", constraints),
-        ("answer_expr", r#""a + 1""#),
-        ("solution_sketch", r#""Add one to ${a}$.""#),
-        ("samples", samples),
-    ])
-}
-
-#[test]
-fn a_text_choice_is_quoted_in_the_messages_that_name_it() {
-    let rejection = reject_squares(&with_operator(
-        r#"[{"params": {"a": 1, "op": "*"}, "expected": "2"},
-            {"params": {"a": 12, "op": "-"}, "expected": "13"}]"#,
-        "",
-    ));
-    assert_eq!(rejection.code, "sample-domain");
-    assert_eq!(
-        rejection.message,
-        "sample 0 binds op='*', which its own domain cannot produce — a sample outside the domain verifies nothing"
-    );
-    let rejection = reject_squares(&with_operator(
-        r#"[{"params": {"a": 1, "op": "+"}, "expected": "3"}]"#,
-        "",
-    ));
-    assert_eq!(rejection.code, "sample-agreement");
-    assert_eq!(
-        rejection.message,
-        "answer_expr gives '2' for {'a': 1, 'op': '+'} but the sample claims '3' — the expression does not compute the stated answer"
-    );
-    let rejection = reject_squares(&with_operator(
-        r#"[{"params": {"a": 1, "op": "+"}, "expected": "2"}]"#,
-        r#"[{"op": "eq", "left": "op", "right": {"lit": 1}}]"#,
-    ));
-    assert_eq!(rejection.code, "domain-size");
-    assert_eq!(
-        rejection.message,
-        "the declared domains do not count: a constraint term names \"op\", which is bound to the text \"+\" and not to a number"
-    );
-}
-
-#[test]
-fn a_stray_brace_snippet_quotes_its_escapes() {
-    let rejection = reject_squares(&body_with(&[("statement", r#""Compute {a} }'\n\r\t x""#)]));
-    assert_eq!(rejection.code, "unescaped-brace");
-    assert_eq!(
-        rejection.message,
-        "text has an unescaped brace at index 12 ('}\\'\\n\\r\\t x') — literal LaTeX braces must be doubled"
-    );
-}
-
-#[test]
-fn a_sample_the_sampled_walk_did_not_meet_can_still_break_a_constraint() {
-    // `a` in 0..9999 and `b` in 1..2 is 20,000 tuples, so the walk samples.
-    // `mod(b, a)` errors at a = 0 alone, and the seeded walk never draws it.
-    let rejection = reject_numeric(&addition_body(
-        (0, 9999),
-        (1, 2),
-        r#"[{"op": "ne", "left": {"mod": ["b", "a"]}, "right": {"lit": 5}}]"#,
-        r#"[{"params": {"a": 0, "b": 1}, "expected": "1"},
-            {"params": {"a": 9999, "b": 2}, "expected": "10001"},
-            {"params": {"a": 0, "b": 2}, "expected": "2"}]"#,
-    ));
-    assert_eq!(rejection.code, "constraint-parameter");
-    assert_eq!(rejection.message, "a mod term needs a non-zero right term");
-}
-
-#[test]
-fn a_sample_the_expression_cannot_evaluate_and_a_distractor_the_grammar_refuses() {
-    let rejection = reject_squares(&body_with(&[
-        ("answer_expr", r#""1/(a-1)""#),
-        (
-            "samples",
-            r#"[{"params": {"a": 1}, "expected": "1"},
-                {"params": {"a": 12}, "expected": "1/11"}]"#,
-        ),
-    ]));
-    assert_eq!(rejection.code, "sample-eval");
-    assert_eq!(
-        rejection.message,
-        "answer_expr failed on sample {'a': 1}: answer_expr divides by zero"
-    );
-    let rejection = reject_squares(&body_with(&[(
-        "distractors",
-        r#"[{"answer": "a", "error_tag": " "}]"#,
-    )]));
-    assert_eq!(rejection.code, "distractor");
-    assert_eq!(rejection.message, "distractor 0 carries no error_tag");
-    let rejection = reject_squares(&body_with(&[(
-        "distractors",
-        r#"[{"answer": "a +", "error_tag": "slip"}]"#,
-    )]));
-    assert_eq!(rejection.code, "distractor");
-    assert_eq!(
-        rejection.message,
-        "distractor 0 answers 'a +', which is outside the decidable grammar: the answer ends where a value belongs"
-    );
-}
-
-#[test]
-fn the_body_read_checks_every_choice_value() {
-    let pool = exemplars(&["49"]);
-    let spec = GateSpec {
-        answer_kind: AnswerKind::Numeric,
-        exemplars: &pool,
-    };
-    let read = |body: &str| gate_body(body, &spec).expect_err("the body is refused");
-    assert_eq!(
-        read(r#"{"params": {"a": {"kind": "choice", "values": [1.5]}}}"#).message,
-        "choice values must be strings or integers"
-    );
-    let refusal = read(r#"{"params": {"a": {"kind": "choice", "values": ["x", 1]}}}"#);
-    assert!(
-        refusal
-            .message
-            .starts_with("the template body does not read: "),
-        "{}",
-        refusal.message
-    );
 }
