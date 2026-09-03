@@ -104,6 +104,35 @@ impl PoolBodyError {
     }
 }
 
+/// Give one row document its `to_body` and `from_body` methods.
+macro_rules! pool_body {
+    ($document:ident) => {
+        impl $document {
+            /// Write the document.
+            ///
+            /// # Errors
+            ///
+            /// Returns [`PoolBodyError`] when the document does not serialize.
+            pub fn to_body(&self) -> Result<String, PoolBodyError> {
+                serde_json::to_string(self).map_err(|err| PoolBodyError::new(err.to_string()))
+            }
+
+            /// Read the document and refuse an unknown version.
+            ///
+            /// # Errors
+            ///
+            /// Returns [`PoolBodyError`] when the text is not this document, and when
+            /// `v` is not [`POOL_ROW_VERSION`].
+            pub fn from_body(body: &str) -> Result<Self, PoolBodyError> {
+                let doc: Self = serde_json::from_str(body)
+                    .map_err(|err| PoolBodyError::new(err.to_string()))?;
+                check_version(doc.v)?;
+                Ok(doc)
+            }
+        }
+    };
+}
+
 /// The document of `serving_pool.problem`.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -133,29 +162,9 @@ impl PoolProblem {
             seed,
         }
     }
-
-    /// Write the document.
-    ///
-    /// # Errors
-    ///
-    /// Returns [`PoolBodyError`] when the document does not serialize.
-    pub fn to_body(&self) -> Result<String, PoolBodyError> {
-        serde_json::to_string(self).map_err(|err| PoolBodyError::new(err.to_string()))
-    }
-
-    /// Read the document and refuse an unknown version.
-    ///
-    /// # Errors
-    ///
-    /// Returns [`PoolBodyError`] when the text is not this document, and when
-    /// `v` is not [`POOL_ROW_VERSION`].
-    pub fn from_body(body: &str) -> Result<Self, PoolBodyError> {
-        let doc: Self =
-            serde_json::from_str(body).map_err(|err| PoolBodyError::new(err.to_string()))?;
-        check_version(doc.v)?;
-        Ok(doc)
-    }
 }
+
+pool_body!(PoolProblem);
 
 /// The document of `serving_pool.expected_answer`.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -176,29 +185,9 @@ impl PoolAnswer {
             answer: instance.answer.clone(),
         }
     }
-
-    /// Write the document.
-    ///
-    /// # Errors
-    ///
-    /// Returns [`PoolBodyError`] when the document does not serialize.
-    pub fn to_body(&self) -> Result<String, PoolBodyError> {
-        serde_json::to_string(self).map_err(|err| PoolBodyError::new(err.to_string()))
-    }
-
-    /// Read the document and refuse an unknown version.
-    ///
-    /// # Errors
-    ///
-    /// Returns [`PoolBodyError`] when the text is not this document, and when
-    /// `v` is not [`POOL_ROW_VERSION`].
-    pub fn from_body(body: &str) -> Result<Self, PoolBodyError> {
-        let doc: Self =
-            serde_json::from_str(body).map_err(|err| PoolBodyError::new(err.to_string()))?;
-        check_version(doc.v)?;
-        Ok(doc)
-    }
 }
+
+pool_body!(PoolAnswer);
 
 /// Refuse a document version this build does not know.
 fn check_version(v: u32) -> Result<(), PoolBodyError> {

@@ -335,3 +335,4 @@ pub fn mini_curriculum() -> Curriculum {
         "testcourse",
     )
 }
+pub mod pool_fixtures;
