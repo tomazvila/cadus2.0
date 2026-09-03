@@ -29,13 +29,17 @@
 //! `diagnostic_placed` event. Two writers of that rule give two answers after a
 //! replay, so there is exactly one.
 
-use std::collections::{BTreeMap, BTreeSet, VecDeque};
+use std::collections::{BTreeMap, BTreeSet};
 
 use indexmap::IndexMap;
 use serde::{Deserialize, Serialize};
 
 use crate::config::Config;
 use crate::curriculum::{Curriculum, TopicIdx};
+
+mod probe;
+
+pub use probe::probe_set;
 
 /// The undetermined band of PEDAGOGY section 9: a topic is DETERMINED once the
 /// magnitude of its balance reaches this value.
@@ -79,12 +83,6 @@ pub struct DiagState {
 }
 
 impl DiagState {
-    /// Every in-scope topic: the `balances` key set. It is derived, never stored.
-    #[must_use]
-    pub fn universe(&self) -> BTreeSet<&str> {
-        self.balances.keys().map(String::as_str).collect()
-    }
-
     /// Whether the topic is in the universe.
     #[must_use]
     pub fn in_universe(&self, topic: &str) -> bool {
@@ -176,151 +174,6 @@ fn sibling_leaves(graph: &Curriculum, idx: TopicIdx, state: &DiagState) -> Vec<S
         })
         .map(|&other| graph.id_of(other).to_owned())
         .collect()
-}
-
-// --------------------------------------------------------------------------- //
-// The probe set — a greedy set cover over the two demands of every topic
-// --------------------------------------------------------------------------- //
-
-/// The topics within `radius` hops of `start`, `start` itself excluded.
-///
-/// `forward` picks the edge direction: `true` walks dependents (downstream),
-/// `false` walks prerequisites (upstream).
-fn within(graph: &Curriculum, start: TopicIdx, radius: i64, forward: bool) -> BTreeSet<TopicIdx> {
-    let mut seen: BTreeSet<TopicIdx> = BTreeSet::new();
-    if radius <= 0 {
-        return seen;
-    }
-    let mut layer: VecDeque<TopicIdx> = VecDeque::from(vec![start]);
-    for _ in 0..radius {
-        let mut next: VecDeque<TopicIdx> = VecDeque::new();
-        for node in layer.drain(..) {
-            let neighbors: Vec<TopicIdx> = if forward {
-                graph.dependents(node).collect()
-            } else {
-                graph.prerequisites(node).collect()
-            };
-            for neighbor in neighbors {
-                if neighbor != start && seen.insert(neighbor) {
-                    next.push_back(neighbor);
-                }
-            }
-        }
-        if next.is_empty() {
-            break;
-        }
-        layer = next;
-    }
-    seen
-}
-
-/// A bit per demand. Demand `2i` is the ancestor demand of universe member `i`,
-/// and demand `2i + 1` is its descendant demand.
-type DemandMask = Vec<u64>;
-
-fn empty_mask(demands: usize) -> DemandMask {
-    vec![0_u64; demands.div_ceil(64)]
-}
-
-fn set_bit(mask: &mut DemandMask, bit: usize) {
-    mask[bit / 64] |= 1_u64 << (bit % 64);
-}
-
-fn overlap(left: &DemandMask, right: &DemandMask) -> u32 {
-    left.iter()
-        .zip(right.iter())
-        .map(|(a, b)| (a & b).count_ones())
-        .sum()
-}
-
-fn clear_all(target: &mut DemandMask, covered: &DemandMask) {
-    for (slot, bits) in target.iter_mut().zip(covered.iter()) {
-        *slot &= !bits;
-    }
-}
-
-/// A probe set that covers the course and its foundations at `radius`.
-///
-/// Every in-scope topic raises two demands: one probe among its ancestors within
-/// the radius (or itself), and one among its descendants within the radius (or
-/// itself). Choosing probe `p` answers the ancestor demand of every topic in the
-/// descendants of `p` within the radius, and the descendant demand of every topic
-/// in its ancestors within the radius.
-///
-/// The solution is the standard greedy set cover: take the probe that covers the
-/// most demands that are still open, and break a tie by the lowest id. It is an
-/// approximation and not a minimum, which is what 1.0 does. A root and a leaf are
-/// always taken, because only they answer their own demand, so the diagnostic
-/// always probes the extremes.
-///
-/// The cover of each candidate is computed ONCE as a bit mask over the demand
-/// list, and each greedy round intersects those bits. That is the same choice the
-/// set arithmetic of 1.0 makes, and it is the shape `selector::compress` already
-/// uses for the review compression.
-#[must_use]
-pub fn probe_set(graph: &Curriculum, course: Option<&str>, radius: i64) -> BTreeSet<String> {
-    let universe = scope(graph, course);
-    if universe.is_empty() {
-        return BTreeSet::new();
-    }
-    let members: Vec<TopicIdx> = universe.iter().filter_map(|id| graph.idx_of(id)).collect();
-    let demand_index: BTreeMap<TopicIdx, usize> = members
-        .iter()
-        .enumerate()
-        .map(|(position, &idx)| (idx, position))
-        .collect();
-    let demands = members.len() * 2;
-
-    let mut covers: Vec<(String, DemandMask)> = Vec::with_capacity(members.len());
-    for &probe in &members {
-        let mut mask = empty_mask(demands);
-        let mut ancestor_side = within(graph, probe, radius, true);
-        ancestor_side.insert(probe);
-        for topic in ancestor_side {
-            if let Some(&position) = demand_index.get(&topic) {
-                set_bit(&mut mask, position * 2);
-            }
-        }
-        let mut descendant_side = within(graph, probe, radius, false);
-        descendant_side.insert(probe);
-        for topic in descendant_side {
-            if let Some(&position) = demand_index.get(&topic) {
-                set_bit(&mut mask, position * 2 + 1);
-            }
-        }
-        covers.push((graph.id_of(probe).to_owned(), mask));
-    }
-    // The candidate order is the sorted id order, so a tie takes the lowest id.
-    covers.sort_by(|left, right| left.0.cmp(&right.0));
-
-    let mut remaining = empty_mask(demands);
-    for position in 0..demands {
-        set_bit(&mut remaining, position);
-    }
-    let mut chosen: BTreeSet<String> = BTreeSet::new();
-    loop {
-        if remaining.iter().all(|word| *word == 0) {
-            break;
-        }
-        let mut best: Option<(&str, u32)> = None;
-        for (id, mask) in &covers {
-            let gain = overlap(mask, &remaining);
-            // A STRICT maximum, so the first candidate of a tie wins.
-            if gain > best.map_or(0, |(_, best_gain)| best_gain) {
-                best = Some((id.as_str(), gain));
-            }
-        }
-        let Some((id, _)) = best else {
-            break;
-        };
-        let id = id.to_owned();
-        if let Some((_, mask)) = covers.iter().find(|(candidate, _)| *candidate == id) {
-            let mask = mask.clone();
-            clear_all(&mut remaining, &mask);
-        }
-        chosen.insert(id);
-    }
-    chosen
 }
 
 // --------------------------------------------------------------------------- //
@@ -530,5 +383,53 @@ pub fn placement(state: &DiagState, cfg: &Config) -> PlacementResult {
         placed,
         conditional,
         supplemental_candidates: supplemental,
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::fire::testing::{ladder, topic};
+
+    /// A root with two leaves in one module, and a floored base under the root.
+    fn fork() -> Curriculum {
+        ladder(&[(
+            "c",
+            &["base"],
+            vec![
+                topic("base", &[]),
+                topic("root", &[("base", 1.0, true)]),
+                topic("left", &[("root", 1.0, true)]),
+                topic("right", &[("root", 1.0, true)]),
+            ],
+        )])
+    }
+
+    #[test]
+    fn a_session_asks_settles_and_places() {
+        let tree = fork();
+        let cfg = Config::default();
+        let mut state = init_session(&tree, &cfg, Some("c"));
+        assert_eq!(state.probe_set, ["left", "right"]);
+        assert!(!state.in_universe("base"));
+        assert_eq!(scope(&tree, None).len(), 4);
+        assert_eq!(answer_weight(true, 30.0, 60.0), 0.5);
+        assert_eq!(answer_weight(false, 30.0, 60.0), 1.0);
+        assert_eq!(next_probe(&state, &tree, &cfg).as_deref(), Some("left"));
+        apply_answer(&mut state, &tree, "left", true, 1.0, &cfg);
+        apply_answer(&mut state, &tree, "ghost", true, 1.0, &cfg);
+        assert_eq!(state.balances["root"], 1.0);
+        assert_eq!(state.balances["right"], cfg.diag.sibling_credit);
+        assert_eq!(undetermined_set(&state).len(), 1);
+        assert_eq!(next_probe(&state, &tree, &cfg).as_deref(), Some("right"));
+        apply_answer(&mut state, &tree, "right", false, 1.0, &cfg);
+        assert_eq!(next_probe(&state, &tree, &cfg), None);
+        let placed = placement(&state, &cfg);
+        assert_eq!(placed.placed.len(), 2);
+        assert!(placed.event_balances().contains_key("left"));
+        assert!(!is_leaf(
+            &tree,
+            tree.idx_of("root").expect("root is a topic")
+        ));
     }
 }
