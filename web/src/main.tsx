@@ -103,7 +103,7 @@ export function stripBootTokens(pathname: string): void {
  * `/auth/me` after it: that second call is a round trip, and 1.0 recorded it racing the
  * verification write and reporting the just-verified learner as unverified.
  */
-export async function spendVerifyToken(client: ApiClient, token: string): Promise<User | null> {
+async function spendVerifyToken(client: ApiClient, token: string): Promise<User | null> {
   try {
     const res = await client.verifyEmail(token);
     toast('Email verified — thanks!', { kind: 'info' });

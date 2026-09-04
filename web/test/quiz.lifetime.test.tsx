@@ -11,21 +11,16 @@ import { Quiz } from '@/views/Quiz';
 import { RETRY_STALE_MESSAGE } from '@/hooks/useCall';
 import { fireToastAction } from '@/app/toast';
 import { busy, flakyOnce } from './helpers/api';
+import { held } from './helpers/held';
 import { renderInView } from './helpers/render';
 import { tick } from './helpers/timers';
 import { expectRefusalOnly } from './helpers/toasts';
+import { allowConsoleError } from './setup';
 import {
   QUIZ, Q, answerInput, completed, mount, posted, receipt, stubApi, submitAnswer, submitButton,
   threeQuestions, toasts, typeAnswer,
 } from './helpers/quiz';
 import type { ApiClient, ServedProblem, TaskAnswerResponse } from '@/api/types';
-
-/** A held reply the test releases by hand. */
-function held<T>() {
-  let release!: (value: T) => void;
-  const promise = new Promise<T>((r) => { release = r; });
-  return { promise, release: (value: T) => release(value) };
-}
 
 describe('the view lifetime', () => {
   it('NO-2BILL: a StrictMode mount serves exactly one question', async () => {
@@ -78,6 +73,23 @@ describe('the view lifetime', () => {
     expect(document.querySelector('.problem-card')).toBeNull();
   });
 
+  it('QUIZ-timeout: a serve behind a blank fill that lands after the view left fills nothing more', async () => {
+    vi.useFakeTimers();
+    const serve = held<ServedProblem>();
+    const taskServe = vi.fn<ApiClient['taskServe']>()
+      .mockResolvedValueOnce(Q(1))
+      .mockReturnValue(serve.promise);
+    const taskAnswer = vi.fn<ApiClient['taskAnswer']>(async () => receipt({ remaining: 2 }));
+    const view = await mount({ task: { ...QUIZ, time_budget_secs: 2 }, api: stubApi({ taskServe, taskAnswer }) });
+    await tick(2000);
+    expect(posted(taskAnswer)).toEqual([['q1', '']]);
+    expect(taskServe).toHaveBeenCalledTimes(2);
+
+    view.unmount();
+    await act(async () => { serve.release(Q(2)); });
+    expect(posted(taskAnswer)).toEqual([['q1', '']]);
+  });
+
   it('QUIZ-timeout: a blank fill that lands after the view left fills nothing more', async () => {
     vi.useFakeTimers();
     const grade = held<TaskAnswerResponse>();
@@ -89,6 +101,27 @@ describe('the view lifetime', () => {
     view.unmount();
     await act(async () => { grade.release(receipt({ remaining: 2 })); });
     expect(posted(taskAnswer)).toEqual([['q1', '']]);
+  });
+});
+
+describe('the gate under two events in one tick', () => {
+  it('F-37-1c: two Enters in one task post once, past the attribute', async () => {
+    // `fireEvent` commits the disabled attribute between two events, so the ATTRIBUTE stops
+    // the second. Two raw events in one task reach the handler before the commit, and only
+    // the gate can refuse the second.
+    allowConsoleError(/not wrapped in act/);
+    const grade = held<TaskAnswerResponse>();
+    const taskAnswer = vi.fn<ApiClient['taskAnswer']>(() => grade.promise);
+    await mount({ api: stubApi({ taskAnswer }) });
+
+    fireEvent.change(answerInput(), { target: { value: '7' } });
+    const enter = () => new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true });
+    answerInput().dispatchEvent(enter());
+    answerInput().dispatchEvent(enter());
+    expect(taskAnswer).toHaveBeenCalledTimes(1);
+
+    await act(async () => { grade.release(completed()); });
+    expect(taskAnswer).toHaveBeenCalledTimes(1);
   });
 });
 

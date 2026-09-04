@@ -227,11 +227,12 @@ export function Quiz({
 
   useEffect(() => { fillBlanksRef.current = fillBlanks; }, [fillBlanks]);
 
+  /**
+   * The clock ran out. Once per quiz: the effect below fires when `left` BECOMES zero, and
+   * a clock read off the deadline never leaves zero again.
+   */
   const timeUp = useCallback(() => {
-    // Once. The clock keeps ticking past zero, and `finish` clears it before `done`.
-    if (timedOutRef.current) return;
     timedOutRef.current = true;
-    setLeft(0);
     toast(QUIZ_TIMEOUT_MESSAGE, { kind: 'info' });
     // QUIZ-timeout. An answer for this question is already in flight: the service has it,
     // and a second post of the same `problem_id` writes a second attempt to an append-only

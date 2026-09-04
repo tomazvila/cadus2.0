@@ -3,36 +3,13 @@
  *
  * `auth.test.tsx` carries the module note.
  */
-import { StrictMode } from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import { ApiError, createDemoApi } from '@/api';
 import type { ApiClient } from '@/api';
 import { Auth, messageFor } from '@/views/Auth';
 import { resetToasts, toastStore } from '@/app/toast';
-
-/** A client with no OAuth provider, so the card holds email and password alone. */
-function stub(overrides: Partial<ApiClient> = {}): ApiClient {
-  return {
-    ...createDemoApi(),
-    demo: false,
-    oauthProviders: async () => ({ providers: [] }),
-    ...overrides,
-  };
-}
-
-function mount(node: React.ReactElement) {
-  return render(<StrictMode>{node}</StrictMode>, {
-    container: document.getElementById('view')!,
-  });
-}
-
-const type = (label: string, value: string) =>
-  fireEvent.change(screen.getByLabelText(label), { target: { value } });
-
-const press = (name: string) => fireEvent.click(screen.getByRole('button', { name }));
-
-const alertText = async () => (await screen.findByRole('alert')).textContent;
+import { alertText, mount, press, stub, type } from './helpers/auth';
 
 const messages = () => toastStore.getSnapshot().map((t) => t.message);
 

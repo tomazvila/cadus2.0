@@ -271,6 +271,15 @@ describe('the async diagnosis panel', () => {
     expect(getDiagnosis).not.toHaveBeenCalled();
   });
 
+  it('renders no tag row for a ready diagnosis with no tag', async () => {
+    await mount();
+    await answerWrong();
+    await act(async () => { lastEventSource().emit({ ...READY_JOB, error_tags: [] }); });
+    expect(panel()!.getAttribute('data-status')).toBe('ready');
+    expect(proseText()).toBe(READY_JOB.prose);
+    expect(panel()!.querySelector('.error-tags')).toBeNull();
+  });
+
   it('renders no panel at all for not_offered', async () => {
     await mount({ api: stubApi({ taskAnswer: async () => missed({ diagnosis: { status: 'not_offered' } }) }) });
     await answerWrong();

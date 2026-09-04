@@ -170,9 +170,10 @@ function CyCanvas({ nodes, edges, handleRef, onSelect, onRetry }: CyCanvasProps)
     // The host div is on the page for the life of this effect, so the ref is never null.
     const host = hostRef.current!;
     const observer = new ResizeObserver(() => {
-      // `hidden` in list mode: a resize against a zero box leaves the canvas blank on the
-      // way back, so skip it and let the mode switch resize instead.
-      if (host.offsetParent !== null || !host.hidden) cyRef.current?.resize();
+      // `hidden` in list mode, on the canvas the host sits in: a resize against a zero box
+      // leaves the canvas blank on the way back, so skip it and let the mode switch resize
+      // instead. The instance itself arrives later than the observer, so it may be absent.
+      if (host.closest('[hidden]') === null) cyRef.current?.resize();
     });
     observer.observe(host);
     return () => { observer.disconnect(); };

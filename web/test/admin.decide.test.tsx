@@ -6,7 +6,7 @@
  */
 import { describe, expect, it, vi } from 'vitest';
 import { act, screen, waitFor, within } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+import userEvent, { type UserEvent } from '@testing-library/user-event';
 import { ApiError } from '@/api';
 import { REVIEW_UNREAD } from '@/views/admin/Review';
 import { toastStore } from '@/app/toast';
@@ -23,6 +23,13 @@ const approving = () => vi.fn(async (digest: string) => ({
   status: 'approved',
   approved_at: '2026-08-30T12:00:00+00:00',
 }));
+
+/** Press Approve, confirm it, and wait for the one post. */
+async function approveSelected(user: UserEvent, approve: ReturnType<typeof vi.fn>) {
+  await user.click(writeButton('Approve'));
+  await user.click(dialogButton('Approve'));
+  await waitFor(() => expect(approve).toHaveBeenCalledTimes(1));
+}
 
 /** The reject route, answering the digest it was given. */
 const rejecting = () => vi.fn(async (digest: string) => ({ digest, status: 'rejected' }));
@@ -171,10 +178,7 @@ describe('Approve', () => {
     const list = vi.fn(async () => QUEUE);
     await mountReview(stubApi({ listContent: list, approveContent: approve }));
 
-    await user.click(writeButton('Approve'));
-    await user.click(dialogButton('Approve'));
-
-    await waitFor(() => expect(approve).toHaveBeenCalledTimes(1));
+    await approveSelected(user, approve);
     // No reload, and the row still stands: the failure is toasted with a Retry.
     expect(list).toHaveBeenCalledTimes(1);
     expect(rowButtons()).toHaveLength(4);
@@ -191,9 +195,7 @@ describe('Approve', () => {
     const list = vi.fn(async () => QUEUE);
     const view = await mountReview(stubApi({ listContent: list, approveContent: approve }));
 
-    await user.click(writeButton('Approve'));
-    await user.click(dialogButton('Approve'));
-    await waitFor(() => expect(approve).toHaveBeenCalledTimes(1));
+    await approveSelected(user, approve);
 
     view.unmount();
     await act(async () => { release(); });

@@ -11,7 +11,7 @@ import { loadCytoscape, resetCytoscapeLoader } from '@/views/map/cytoscape-loade
 import { layerOf, toElements } from '@/views/map/layout';
 import { MAP_RENDERER_FAILED } from '@/views/map/CyCanvas';
 import { fireToastAction, toastStore } from '@/app/toast';
-import { mediaListenerCount } from './setup';
+import { mediaListenerCount, resizeObservers } from './setup';
 import cytoscape, { instances } from './mocks/cytoscape';
 import {
   EDGES, NODES, canvas, deferredImport, failOnceImporter, flush, graph, last, listButton,
@@ -119,6 +119,36 @@ describe('the keys and the scheme', () => {
 
     view.unmount();
     expect(mediaListenerCount(SCHEME)).toBe(0);
+  });
+});
+
+describe('the resize and the fit', () => {
+  it('resizes the canvas when its box changes, and not while the list view hides it', async () => {
+    const { importer, release } = deferredImport();
+    resetCytoscapeLoader(importer);
+    const view = await mount();
+    const observer = resizeObservers[resizeObservers.length - 1]!;
+    // The box changes before the library landed: nothing to resize, nothing thrown.
+    expect(() => { act(() => { observer.fire(); }); }).not.toThrow();
+    await act(async () => { release(); });
+    await flush();
+    expect(observer.targets).toEqual([document.querySelector('.map-host')]);
+    act(() => { observer.fire(); });
+    expect(last().resizes).toBe(1);
+
+    // `hidden` in list mode: a resize against a zero box leaves the canvas blank.
+    await act(async () => { listButton().click(); });
+    act(() => { observer.fire(); });
+    expect(last().resizes).toBe(1);
+    view.unmount();
+    expect(observer.targets).toEqual([]);
+  });
+
+  it('fits the whole map from the Fit control', async () => {
+    const view = await mountLoaded();
+    await act(async () => { screen.getByRole('button', { name: 'Fit' }).click(); });
+    expect(last().fits).toBe(1);
+    view.unmount();
   });
 });
 

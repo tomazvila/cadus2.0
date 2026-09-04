@@ -13,49 +13,17 @@
  * input: an empty list renders no divider, no button, and no dead link to a start route that
  * answers a redirect to nowhere.
  */
-import { StrictMode } from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, screen, waitFor } from '@testing-library/react';
 import { axe } from 'vitest-axe';
-import { ApiError, createDemoApi } from '@/api';
-import type { ApiClient, User } from '@/api';
+import { ApiError } from '@/api';
 import { Auth, messageFor, providerLabel } from '@/views/Auth';
 import { SESSION_EXPIRED_MESSAGE } from '@/hooks/useCall';
 import { resetToasts, toastStore } from '@/app/toast';
 import { AXE_IN_JSDOM } from './axe';
+import { alertText, mount, press, stub, type } from './helpers/auth';
+import { USER } from './helpers/fixtures';
 import { navigations } from './setup';
-
-const USER: User = {
-  id: 'u1',
-  email: 'learner@example.com',
-  email_verified: true,
-  created_at: '2026-08-30T00:00:00Z',
-};
-
-/**
- * A full client with the methods this test cares about replaced.
- *
- * Built from the demo client, so every one of the thirty members exists and a screen that
- * calls something unexpected fails on the assertion rather than on `undefined is not a
- * function`. `demo` is false: the demo flag drives the topbar, not the auth card.
- */
-function stub(overrides: Partial<ApiClient> = {}): ApiClient {
-  return { ...createDemoApi(), demo: false, ...overrides };
-}
-
-/** Mount into the `<main>` the shell ships, under StrictMode — every effect runs twice. */
-function mount(node: React.ReactElement) {
-  return render(<StrictMode>{node}</StrictMode>, {
-    container: document.getElementById('view')!,
-  });
-}
-
-const type = (label: string, value: string) =>
-  fireEvent.change(screen.getByLabelText(label), { target: { value } });
-
-const press = (name: string) => fireEvent.click(screen.getByRole('button', { name }));
-
-const alertText = async () => (await screen.findByRole('alert')).textContent;
 
 const oauthNames = () =>
   screen

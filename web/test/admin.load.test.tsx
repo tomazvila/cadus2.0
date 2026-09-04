@@ -6,8 +6,9 @@
  * while it is the newest, and never after the view left.
  */
 import { describe, expect, it, vi } from 'vitest';
-import { act, cleanup, screen } from '@testing-library/react';
+import { act, cleanup, renderHook, screen } from '@testing-library/react';
 import { ApiError } from '@/api';
+import { useAdminLoad } from '@/views/admin/adminLoad';
 import { forbidden, mountReview, rowButtons, stubApi, QUEUE } from './helpers/admin';
 import type { ReviewListResponse } from '@/api/types';
 
@@ -99,5 +100,28 @@ describe('useAdminLoad', () => {
   it('renders the forbidden block for the demo client too', async () => {
     await mountReview(stubApi({ listContent: forbidden }), true);
     expect(screen.getByText('This screen serves operator accounts')).toBeTruthy();
+  });
+});
+
+describe('useAdminLoad, driven as a hook', () => {
+  it('lets a stale reply and a stale fault pass behind a newer generation', async () => {
+    const held: Array<{ resolve: (v: string) => void; reject: (e: Error) => void }> = [];
+    const load = vi.fn(() => new Promise<string>((resolve, reject) => { held.push({ resolve, reject }); }));
+    const { result } = renderHook(() => useAdminLoad({ load, demo: false, onUnauthorized: vi.fn() }));
+    expect(result.current.loading).toBe(true);
+
+    // Two more attempts while the first is still out: generations 1 and 2.
+    act(() => { result.current.reload(); });
+    act(() => { result.current.reload(); });
+    expect(load).toHaveBeenCalledTimes(3);
+
+    await act(async () => { held[2]!.resolve('newest'); });
+    expect(result.current.data).toBe('newest');
+    expect(result.current.loading).toBe(false);
+    // The stale reply and the stale fault of the older generations change nothing.
+    await act(async () => { held[1]!.resolve('older'); });
+    await act(async () => { held[0]!.reject(new ApiError(500, 'server_error', 'Down.')); });
+    expect(result.current.data).toBe('newest');
+    expect(result.current.failure).toBeNull();
   });
 });

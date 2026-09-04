@@ -104,12 +104,26 @@ if (!window.matchMedia) {
 // ResizeObserver — the curriculum map constructs one at mount (S11). Absent in jsdom, so
 // without this every map test throws before its first assertion.
 // ---------------------------------------------------------------------------
-if (!('ResizeObserver' in globalThis)) {
-  class ResizeObserverStub implements ResizeObserver {
-    observe(): void {}
-    unobserve(): void {}
-    disconnect(): void {}
+/** Every observer the code under test built, so a test fires its callback by hand. */
+export const resizeObservers: ResizeObserverStub[] = [];
+
+class ResizeObserverStub implements ResizeObserver {
+  readonly targets: Element[] = [];
+  private readonly callback: ResizeObserverCallback;
+
+  constructor(callback: ResizeObserverCallback) {
+    this.callback = callback;
+    resizeObservers.push(this);
   }
+
+  observe(target: Element): void { this.targets.push(target); }
+  unobserve(): void {}
+  disconnect(): void { this.targets.length = 0; }
+  /** Test affordance: the box changed. jsdom reports no size, so the entries are empty. */
+  fire(): void { this.callback([], this); }
+}
+
+if (!('ResizeObserver' in globalThis)) {
   Object.assign(globalThis, { ResizeObserver: ResizeObserverStub });
 }
 
@@ -341,6 +355,7 @@ beforeEach(() => {
   downloads.length = 0;
   navigations.length = 0;
   eventSources.length = 0;
+  resizeObservers.length = 0;
   searchOverride = null;
   document.head.innerHTML = '';
   // The document shell index.html provides. Boot resolves all three by id, so a bare body

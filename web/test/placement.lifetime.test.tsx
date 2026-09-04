@@ -7,21 +7,15 @@
  */
 import { describe, expect, it, vi } from 'vitest';
 import { act, fireEvent, screen } from '@testing-library/react';
-import { fireToastAction } from '@/app/toast';
 import { flakyOnce } from './helpers/api';
+import { held } from './helpers/held';
+import { pressRetry } from './helpers/toasts';
 import { allowConsoleError } from './setup';
 import {
   START, answer, answerInput, begin, mount, probe, probeText, progressCount, stubDiag,
   submitButton, toasts,
 } from './helpers/placement';
 import type { DiagAnswerResponse, DiagStartResponse, DiagnosticApi } from '@/api/diag';
-
-/** A held reply the test releases by hand. */
-function held<T>() {
-  let release!: (value: T) => void;
-  const promise = new Promise<T>((r) => { release = r; });
-  return { promise, release: (value: T) => release(value) };
-}
 
 describe('the view lifetime', () => {
   it('paints no probe from a start that lands after the view left', async () => {
@@ -81,10 +75,9 @@ describe('the Retry that proceeds', () => {
 
     // The probe on screen is the one the request named, and it is still unanswered: the
     // gate admits the Retry, and the retried reply paints the verdict.
-    await act(async () => { fireToastAction(toasts()[0].id); });
-    expect(diagAnswer).toHaveBeenCalledTimes(2);
+    await pressRetry();
+    expect([diagAnswer.mock.calls.length, toasts()]).toEqual([2, []]);
     expect(screen.getByText('Correct')).toBeTruthy();
-    expect(toasts()).toEqual([]);
   });
 });
 

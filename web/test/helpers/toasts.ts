@@ -28,6 +28,11 @@ export function expectRefusalOnly(): void {
   expect(toasts()[0].onAction).toBeUndefined();
 }
 
+/** Press the Retry the last failure armed, and let the retried request settle. */
+export async function pressRetry(): Promise<void> {
+  await act(async () => { fireToastAction(toasts().find((t) => t.label === 'Retry')!.id); });
+}
+
 /** Unmount the view, then press the Retry its last failure armed. */
 export async function pressRetryAfterUnmount(unmount: () => void): Promise<void> {
   const stale = toasts().find((t) => t.label === 'Retry')!;

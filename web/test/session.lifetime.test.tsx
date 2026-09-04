@@ -9,8 +9,9 @@ import { StrictMode } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 import { act, cleanup, screen } from '@testing-library/react';
 import { Session } from '@/views/session/Session';
-import { fireToastAction } from '@/app/toast';
 import { flakyOnce } from './helpers/api';
+import { held } from './helpers/held';
+import { pressRetry } from './helpers/toasts';
 import { renderInView } from './helpers/render';
 import {
   LESSON, REVIEW, REWORK, TEACHING, P, answerInput, closed, graded, mount, planOf, press,
@@ -20,13 +21,6 @@ import { allowConsoleError } from './setup';
 import type {
   ApiClient, HintResponse, ServedProblem, SessionPlanResponse, TaskAnswerResponse, TeachResponse,
 } from '@/api/types';
-
-/** A held reply the test releases by hand. */
-function held<T>() {
-  let release!: (value: T) => void;
-  const promise = new Promise<T>((r) => { release = r; });
-  return { promise, release: (value: T) => release(value) };
-}
 
 /** A grade that passes the task with a remediation, so the loop asks for a fresh plan. */
 const remediated = () => graded({
@@ -194,10 +188,10 @@ describe('the Retry that proceeds', () => {
     await submitAnswer('3/4');
     expect(toasts()[0].label).toBe('Retry');
 
-    await act(async () => { fireToastAction(toasts()[0].id); });
+    await pressRetry();
     expect(taskAnswer).toHaveBeenCalledTimes(2);
-    expect(screen.getByText('Correct')).toBeTruthy();
     expect(toasts()).toEqual([]);
+    expect(screen.getByText('Correct')).toBeTruthy();
   });
 });
 
@@ -242,6 +236,15 @@ describe('the payload shapes', () => {
     await mount({ api: stubApi({ taskAnswer: async () => ({ ...REWORK, solution: null }) }) });
     await submitAnswer('3/4');
     expect(document.querySelector('.solution-text')!.textContent).toBe(REWORK.expected);
+  });
+
+  it('renders no solution block when the verdict carries none', async () => {
+    const { solution, ...noSolution } = graded({ next: null });
+    expect(solution).toBeTruthy();
+    await mount({ api: stubApi({ taskAnswer: async () => noSolution }) });
+    await submitAnswer('3/4');
+    expect(screen.getByText('Correct')).toBeTruthy();
+    expect(document.querySelector('.solution')).toBeNull();
   });
 
   it('renders no tag row for a verdict with no tag, and a submit reads the field once', async () => {
