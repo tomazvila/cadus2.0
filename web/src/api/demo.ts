@@ -80,8 +80,8 @@ const DEMO_HINTS: readonly string[] = [
 
 const DEMO_TASK_ID = 'demo-lesson';
 
-/** The demo's grader: whitespace-insensitive, case-insensitive, a leading `+` dropped. */
-const norm = (value: string) => value.replace(/\s+/g, '').replace(/^\+/, '').toLowerCase();
+/** The demo's grader: whitespace-insensitive, and a leading `+` dropped. */
+const norm = (value: string) => value.replace(/\s/g, '').replace(/^\+/, '');
 
 /** A short delay, so a demo screen shows its loading state the way the real one does. */
 const wait = (ms: number) => new Promise<void>((resolve) => { setTimeout(resolve, ms); });
@@ -90,7 +90,8 @@ async function reply<T>(value: T, ms = 120): Promise<T> {
   return value;
 }
 
-function demoTask(): PlanTask {
+/** The one task of the demo plan, with `answered` of its problems graded so far. */
+function demoTask(answered: number): PlanTask {
   return {
     task_id: DEMO_TASK_ID,
     task_type: 'lesson',
@@ -103,7 +104,7 @@ function demoTask(): PlanTask {
     time_budget_secs: 600,
     difficulty_target: 0.7,
     why: 'Frontier topic: fractions is ready to learn.',
-    progress: { answered: 0, done: false },
+    progress: { answered, done: answered >= DEMO_PROBLEMS.length },
   };
 }
 
@@ -251,12 +252,10 @@ export function createDemoApi(): ApiClient {
       });
     },
 
-    getPlan: () => {
-      const task = demoTask();
-      task.progress = { answered, done: answered >= DEMO_PROBLEMS.length };
-      return reply({
+    getPlan: () =>
+      reply({
         session: open ?? 'demo-session',
-        tasks: [task],
+        tasks: [demoTask(answered)],
         quiz_due: false,
         constraints: {
           lesson_ratio_ok: true,
@@ -267,8 +266,7 @@ export function createDemoApi(): ApiClient {
         },
         course_complete: false,
         frontier_blocked_until: null,
-      });
-    },
+      }),
 
     // SERVE-idem: the SAME problem comes back until an answer commits it. `cursor` is read
     // here and written only by `taskAnswer`.

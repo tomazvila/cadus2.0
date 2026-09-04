@@ -17,6 +17,58 @@ function record() {
   return () => fetchMock.mock.calls.map(([url, init]) => [init.method, url, init.body ?? null]);
 }
 
+describe('the probes and the sign-in', () => {
+  it('read the two probes and post the credentials', async () => {
+    const calls = record();
+    await api.health();
+    await api.ready();
+    await api.login('a@b.test', 'pw');
+    await api.logout();
+    expect(calls()).toEqual([
+      ['GET', '/api/health', null],
+      ['GET', '/api/ready', null],
+      ['POST', '/api/auth/login', '{"email":"a@b.test","password":"pw"}'],
+      ['POST', '/api/auth/logout', '{}'],
+    ]);
+  });
+});
+
+describe('the study loop', () => {
+  it('reads the status, the graph and the plan, and serves, hints and grades', async () => {
+    const calls = record();
+    await api.getStatus();
+    await api.getGraph();
+    await api.getGraph('all');
+    await api.getPlan();
+    await api.taskServe('t1');
+    await api.taskHint('t1', 'p 1');
+    await api.taskAnswer('t1', { problem_id: 'p1', answer: '3/4' });
+    await api.taskAnswer('t1', { problem_id: 'p1', answer: '3/4', work: 'w', assisted: false });
+    await api.sessionEnd();
+    await api.sessionEnd(0);
+    await api.diagStart();
+    await api.diagStart('foundations');
+    await api.getOperatorFlags();
+    await api.getOperatorFlags('a:b');
+    expect(calls()).toEqual([
+      ['GET', '/api/status', null],
+      ['GET', '/api/graph', null],
+      ['GET', '/api/graph?scope=all', null],
+      ['GET', '/api/session/plan', null],
+      ['POST', '/api/task/t1/serve', '{}'],
+      ['POST', '/api/task/t1/hint', '{"problem_id":"p 1"}'],
+      ['POST', '/api/task/t1/answer', '{"problem_id":"p1","answer":"3/4"}'],
+      ['POST', '/api/task/t1/answer', '{"problem_id":"p1","answer":"3/4","work":"w","assisted":false}'],
+      ['POST', '/api/session/end', '{}'],
+      ['POST', '/api/session/end', '{"minutes":0}'],
+      ['POST', '/api/diag/start', '{}'],
+      ['POST', '/api/diag/start', '{"course":"foundations"}'],
+      ['GET', '/api/operator/flags', null],
+      ['GET', '/api/operator/flags?kp=a%3Ab', null],
+    ]);
+  });
+});
+
 describe('the auth routes', () => {
   it('post the credentials, the tokens and the addresses the service reads', async () => {
     const calls = record();

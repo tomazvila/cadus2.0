@@ -213,11 +213,19 @@ describe('the demo placement port', () => {
     expect((await b.diagStart()).probe!.problem_id).toBe('demo-d1');
   });
 
-  it('refuses an answer before a start', async () => {
+  it('refuses an answer before a start, and again after the finish', async () => {
     const demo = createDemoDiagApi();
-    await expect(demo.diagAnswer({ problem_id: 'demo-d1', answer: '5' })).rejects.toThrow(
-      'No diagnostic is open.',
-    );
+    const refused = { status: 409, code: 'no_diagnostic', message: 'No diagnostic is open.' };
+    await expect(demo.diagAnswer({ problem_id: 'demo-d1', answer: '5' })).rejects.toMatchObject(refused);
+    await demo.diagStart();
+    await demo.diagFinish();
+    await expect(demo.diagAnswer({ problem_id: 'demo-d1', answer: '5' })).rejects.toMatchObject(refused);
+  });
+
+  it('grades an answer of spaces alone as the honest skip', async () => {
+    const demo = createDemoDiagApi();
+    await demo.diagStart();
+    expect((await demo.diagAnswer({ problem_id: 'demo-d1', answer: '   ' })).correct).toBe(false);
   });
 });
 

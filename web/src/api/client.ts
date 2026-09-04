@@ -77,11 +77,11 @@ async function failure(
  * Read a body once and parse it, or give `null` for an empty or non-JSON one.
  *
  * `T` names the shape the caller expects. The parse itself checks nothing: the service
- * writes the contract of `types.ts`, and a reply outside it is a service defect.
+ * writes the contract of `types.ts`, and a reply outside it is a service defect. An empty
+ * body is not JSON either, so the one parse covers both.
  */
 async function readJson<T>(res: Response): Promise<T | null> {
   const text = await res.text();
-  if (!text) return null;
   try {
     const parsed: T = JSON.parse(text);
     return parsed;
@@ -124,9 +124,9 @@ export async function request<T>(method: string, path: string, body?: JsonBody):
 
 /** The `filename="…"` of a `Content-Disposition`, or null when there is none. */
 export function dispositionFilename(header: string | null): string | null {
-  if (!header) return null;
-  const match = /filename\*?=(?:UTF-8'')?"?([^";]+)"?/i.exec(header);
-  const name = match?.[1]?.trim();
+  // An absent header reads as the word `null`, which names no file.
+  const match = /filename\*?=(?:UTF-8'')?"?([^";]+)"?/i.exec(String(header));
+  const name = match?.[1].trim();
   if (!name) return null;
   // A server-named path separator would write outside the download directory.
   return name.replace(/[/\\]/g, '_');

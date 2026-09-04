@@ -227,12 +227,28 @@ describe('the download helper', () => {
       }),
     );
     await downloadFile('/export', 'fallback.jsonl');
+    // Hidden, in the document at the click, and gone from it after.
     expect(downloads).toEqual([
-      { href: objectUrls[0], download: 'cadus-export-u1.jsonl' },
+      { href: objectUrls[0], download: 'cadus-export-u1.jsonl', display: 'none', connected: true },
     ]);
+    expect(document.body.querySelector('a[download]')).toBeNull();
     expect(URL.revokeObjectURL).not.toHaveBeenCalled();
     vi.runAllTimers();
     expect(URL.revokeObjectURL).toHaveBeenCalledWith(objectUrls[0]);
+  });
+
+  it('asks for the file with a GET through the cookie', async () => {
+    const fetchMock = stubFetch(answer(200, 'line\n'));
+    await downloadFile('/export', 'fallback.jsonl');
+    const [url, opts] = fetchMock.mock.calls[0] as [string, RequestInit];
+    expect([url, opts.method, opts.credentials]).toEqual(['/api/export', 'GET', 'same-origin']);
+  });
+
+  it('names a failed download by its status when the body carries no envelope', async () => {
+    stubFetch(answer(500, '<html>oops</html>', { 'Content-Type': 'text/html' }));
+    const err = await rejection(downloadFile('/export', 'x.jsonl'));
+    expect(err.message).toBe('Download failed (500).');
+    expect(err.status).toBe(500);
   });
 
   it('reports a download whose fetch never reached the service as code network', async () => {
@@ -262,6 +278,7 @@ describe('the download helper', () => {
     expect(dispositionFilename('attachment; filename="a.jsonl"')).toBe('a.jsonl');
     expect(dispositionFilename("attachment; filename*=UTF-8''b.jsonl")).toBe('b.jsonl');
     expect(dispositionFilename('attachment; filename="../../etc/passwd"')).toBe('.._.._etc_passwd');
+    expect(dispositionFilename('attachment; filename=" spaced.jsonl "')).toBe('spaced.jsonl');
     expect(dispositionFilename(null)).toBeNull();
     expect(dispositionFilename('attachment')).toBeNull();
   });

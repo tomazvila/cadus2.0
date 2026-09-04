@@ -232,7 +232,14 @@ if (!URL.createObjectURL) {
 //
 // The href and the download name are captured AT CALL TIME, before the node goes.
 // ---------------------------------------------------------------------------
-export const downloads: Array<{ href: string; download: string }> = [];
+export const downloads: Array<{
+  href: string;
+  download: string;
+  /** The anchor was hidden, so no link flashed on screen. */
+  display: string;
+  /** The anchor was in the document at the click, which is what a browser downloads from. */
+  connected: boolean;
+}> = [];
 
 // ---------------------------------------------------------------------------
 // window.location.href — the OAuth start is a plain assignment to it (AUTH-7, S6).
@@ -268,7 +275,12 @@ function installAnchorSpy(): void {
   vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(function (
     this: HTMLAnchorElement,
   ) {
-    downloads.push({ href: this.href, download: this.download });
+    downloads.push({
+      href: this.href,
+      download: this.download,
+      display: this.style.display,
+      connected: this.isConnected,
+    });
   });
 }
 

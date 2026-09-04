@@ -58,7 +58,7 @@ describe('scaffold: jsdom stubs', () => {
     a.download = 'cadus-export.jsonl';
     a.click();
     expect(downloads).toEqual([
-      { href: `${location.origin}/api/export`, download: 'cadus-export.jsonl' },
+      { href: `${location.origin}/api/export`, download: 'cadus-export.jsonl', display: '', connected: false },
     ]);
   });
 
