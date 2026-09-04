@@ -17,6 +17,7 @@ use cadus_store::begin_tenant;
 use cadus_store::content::{KIND_HINT_LADDER, KIND_TEACH, approved_document};
 use cadus_store::pool::{PoolRow, reclaim_exemplar_tx};
 use cadus_store::test_support::TestDb;
+use common::fault::closed_pool;
 use common::{KP, at, seed_doc};
 use serde_json::json;
 use sqlx::PgPool;
@@ -343,6 +344,16 @@ async fn the_rotation_never_reaches_another_tenants_rows() {
         let row = rotate(&db, mine, Ring::new()).await;
 
         assert_eq!(row, None);
+    })
+    .await;
+}
+
+/// A closed pool is the error of the document read.
+#[tokio::test]
+async fn a_closed_pool_is_the_error_of_the_document_read() {
+    TestDb::with(|db| async move {
+        let pool = closed_pool(&db).await;
+        assert!(approved_document(&pool, KP, KIND_TEACH).await.is_err());
     })
     .await;
 }

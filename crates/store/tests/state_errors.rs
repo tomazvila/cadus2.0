@@ -220,6 +220,10 @@ async fn the_fold_reports_the_cache_row_the_write_and_the_projector() {
             "42501"
         );
         assert_eq!(
+            sqlstate_in_tx!(db, user, |tx| project_and_save(&mut tx, user, &input, None)),
+            "42501"
+        );
+        assert_eq!(
             sqlstate_in_tx!(db, user, |tx| load_session_view(&mut tx, user)),
             "42501"
         );

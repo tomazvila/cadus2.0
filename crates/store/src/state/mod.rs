@@ -327,10 +327,14 @@ pub async fn load_events(
 /// section 4.3 step 6). The caller holds [`lock_web_state`], so the `MAX(seq)`
 /// read and the INSERT are serialized for this tenant.
 ///
+/// The event goes into the `payload` column through [`sqlx::types::Json`], so
+/// the serializer runs inside the encoder of the statement.
+///
 /// # Errors
 ///
-/// Returns [`StoreError::Document`] when the event does not serialize and
-/// [`StoreError::Db`] when the statement fails.
+/// Returns [`StoreError::Document`] when the event timestamp is outside the
+/// range of `timestamptz` and [`StoreError::Db`] when the event does not
+/// serialize or the statement fails.
 pub async fn append_event(
     tx: &mut Transaction<'_, Postgres>,
     user_id: Uuid,
@@ -343,8 +347,6 @@ pub async fn append_event(
             event.ts().micros()
         ))
     })?;
-    let payload = serde_json::to_value(event)
-        .map_err(|err| StoreError::Document(format!("the event does not serialize: {err}")))?;
 
     let seq = sqlx::query_scalar!(
         r#"
@@ -360,7 +362,9 @@ pub async fn append_event(
         event.session(),
         EVENT_VERSION,
         attempt_id,
-        payload
+        // `as _`: the macro maps a `jsonb` parameter to `serde_json::Value`,
+        // and `Json<T>` writes the same wire form.
+        sqlx::types::Json(event) as _
     )
     .fetch_optional(&mut **tx)
     .await?;
