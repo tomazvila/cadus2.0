@@ -21,28 +21,38 @@
 
 mod arena;
 mod bench;
+mod callback;
 mod corpus;
 mod db;
+mod events;
 mod fault;
 mod http;
 mod live;
 mod oauth;
+mod oauth_url;
 mod plan;
+mod process;
 mod quiz;
+mod recovery;
 mod route;
 mod seed;
 mod task;
 
 pub use arena::*;
 pub use bench::*;
+pub use callback::*;
 pub use corpus::*;
 pub use db::*;
+pub use events::*;
 pub use fault::*;
 pub use http::*;
 pub use live::*;
 pub use oauth::*;
+pub use oauth_url::*;
 pub use plan::*;
+pub use process::*;
 pub use quiz::*;
+pub use recovery::*;
 pub use route::*;
 pub use seed::*;
 pub use task::*;
