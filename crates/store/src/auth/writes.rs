@@ -462,8 +462,25 @@ pub async fn consume_token_tx(
     token_hash: &str,
     effect: TokenEffect<'_>,
 ) -> Result<TokenConsumed, StoreError> {
+    consume_token_tx_inner(pool, user_id, token_hash, effect, false).await
+}
+
+/// [`consume_token_tx`] with a test seam: `break_backend` ends the backend
+/// before the rollback so the rollback fails. Production passes `false`.
+pub(crate) async fn consume_token_tx_inner(
+    pool: &PgPool,
+    user_id: Uuid,
+    token_hash: &str,
+    effect: TokenEffect<'_>,
+    break_backend: bool,
+) -> Result<TokenConsumed, StoreError> {
     let mut tx = begin_tenant(pool, user_id).await?;
     if consume_token(&mut *tx, token_hash).await? == TokenConsumed::AlreadySpent {
+        if break_backend {
+            let _ = sqlx::query("SELECT pg_terminate_backend(pg_backend_pid())")
+                .execute(&mut *tx)
+                .await;
+        }
         tx.rollback().await?;
         return Ok(TokenConsumed::AlreadySpent);
     }
@@ -478,3 +495,5 @@ pub async fn consume_token_tx(
     tx.commit().await?;
     Ok(TokenConsumed::Consumed)
 }
+#[cfg(test)]
+mod tests;
