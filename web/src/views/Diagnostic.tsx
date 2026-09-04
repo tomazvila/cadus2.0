@@ -33,17 +33,23 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { MathBlock } from '@/components/MathBlock';
 import { AnswerField, type AnswerFieldHandle } from '@/components/AnswerField';
-import { Chip, Cross, LoadingBlock, Stat, Tick } from '@/components/primitives';
+import { Chip, LoadingBlock } from '@/components/primitives';
+import { closeWith, releaseOnFail } from '@/hooks/screen';
 import { useCall } from '@/hooks/useCall';
 import { useLifetime } from '@/hooks/useLifetime';
 import { usePhase } from '@/hooks/usePhase';
 import { num } from '@/lib/format';
-import type {
-  DiagAnswerResponse,
-  DiagFinishResponse,
-  DiagProbe,
-  DiagnosticApi,
-} from '@/api/diag';
+import {
+  DIAG_START_FAILED,
+  IntroCard,
+  PlacementDone,
+  ProbeFeedback,
+  topicName,
+  type ProbeResult,
+} from './diagnostic/DiagnosticScreens';
+import type { DiagFinishResponse, DiagProbe, DiagnosticApi } from '@/api/diag';
+
+export { DIAG_START_FAILED };
 
 type Phase = 'intro' | 'loading' | 'ready' | 'submitting' | 'feedback' | 'done';
 
@@ -53,35 +59,9 @@ export const DIAG_BEAT_MS = 750;
 /** The probe cap when the service names none. */
 export const DIAG_DEFAULT_CAP = 40;
 
-/** The line a failed start leaves on the intro card. */
-export const DIAG_START_FAILED = 'The placement did not start. Try again in a moment.';
-
 /** The promise the learner reads on probe 1 (DIAG-nosol). */
 export const DIAG_NO_SOLUTIONS_NOTE =
   'No solutions are shown during placement — just answer as best you can.';
-
-/** The three ground rules, in order (P3). */
-const GROUND_RULES: readonly { head: string; body: string }[] = [
-  {
-    head: 'Don’t guess — skip instead.',
-    body: 'If you cannot see how to start within a couple of minutes, press “Skip — I don’t'
-      + ' know”. A lucky guess places you too high and gets you over-challenged; an honest'
-      + ' skip places you a little lower.',
-  },
-  {
-    head: 'No external resources.',
-    body: 'No notes, no textbooks, and no looking things up (a calculator only if the problem'
-      + ' itself calls for one). This measures what you recall, not what you can find.',
-  },
-  {
-    head: 'Answer honestly.',
-    body: 'This is not a test you can fail — it only finds the right starting point.'
-      + ' Overstating or understating what you know wastes your own time later.',
-  },
-];
-
-const topicName = (t: DiagProbe['topic']): string =>
-  (t && typeof t === 'object' ? (t.name ?? t.id) : t) ?? 'Placement';
 
 export interface DiagnosticProps {
   /** The three placement calls. See `api/diag.ts` for why this is not on `ApiClient`. */
@@ -101,7 +81,7 @@ export function Diagnostic({ diag, demo = false, onUnauthorized, onExit }: Diagn
   const [probe, setProbe] = useState<DiagProbe | null>(null);
   const [qNum, setQNum] = useState(1);
   const [cap, setCap] = useState(DIAG_DEFAULT_CAP);
-  const [result, setResult] = useState<{ res: DiagAnswerResponse; skipped: boolean } | null>(null);
+  const [result, setResult] = useState<ProbeResult | null>(null);
   const [summary, setSummary] = useState<DiagFinishResponse | null>(null);
   const [startFailed, setStartFailed] = useState(false);
   // Tells the two `loading` moments apart. `qNum` cannot: a placement whose FIRST probe is
@@ -130,12 +110,7 @@ export function Diagnostic({ diag, demo = false, onUnauthorized, onExit }: Diagn
     probeRef.current = null;
     setResult(null);
     setFinishing(true);
-    void call(() => diag.diagFinish(), (s) => {
-      if (life.alive()) { setSummary(s); gate.enter('done'); }
-    }).then((s) => {
-      // A failed commit still ends the screen: the summary is a receipt, not the record.
-      if (!s && life.alive()) { setSummary(null); gate.enter('done'); }
-    });
+    closeWith(call, life, gate, 'done', () => diag.diagFinish(), setSummary);
   }, [call, diag, gate, life]);
 
   // `finish` is read through a ref so it stays OUT of the beat effect's dependency list. It
@@ -199,10 +174,7 @@ export function Diagnostic({ diag, demo = false, onUnauthorized, onExit }: Diagn
         retryGate: () => life.alive()
           && probeRef.current?.problem_id === current.problem_id
           && gate.tryEnter('ready', 'submitting'),
-        // A failed answer returns the probe to the learner — the first attempt and every
-        // retried one alike. Without this the view sits at `submitting` with every control
-        // disabled and no way on.
-        onFail: () => { if (life.alive() && gate.is('submitting')) gate.enter('ready'); },
+        onFail: releaseOnFail(life, gate, 'submitting', 'ready'),
       },
     );
   }, [call, diag, gate, life]);
@@ -244,73 +216,11 @@ export function Diagnostic({ diag, demo = false, onUnauthorized, onExit }: Diagn
   }, [send]);
 
   if (phase === 'intro') {
-    return (
-      <section className="view-diagnostic">
-        {/* `tabindex="-1"` so the card holds focus without being interactive (R15). */}
-        <div className="card intro-card" tabIndex={-1} ref={introRef}>
-          <h2>Before we start</h2>
-          <p className="muted">
-            This short placement finds where you should start. It takes a few minutes, and
-            there is no way to fail it. Three ground rules keep it accurate:
-          </p>
-          <ul className="intro-rules">
-            {GROUND_RULES.map((rule) => (
-              <li key={rule.head}>
-                <strong>{rule.head}</strong>
-                <span>{` ${rule.body}`}</span>
-              </li>
-            ))}
-          </ul>
-          {startFailed ? <p className="intro-error">{DIAG_START_FAILED}</p> : null}
-          <div className="actions">
-            <button type="button" className="btn btn-primary" onClick={begin}>
-              Begin placement
-            </button>
-            <button type="button" className="btn btn-ghost" onClick={onExit}>
-              Not now
-            </button>
-          </div>
-        </div>
-      </section>
-    );
+    return <IntroCard cardRef={introRef} startFailed={startFailed} onBegin={begin} onExit={onExit} />;
   }
 
   if (phase === 'done') {
-    if (!summary) {
-      return (
-        <section className="view-diagnostic">
-          <div className="empty">
-            <p>Placement finished.</p>
-            <button ref={homeRef} type="button" className="btn btn-primary" onClick={onExit}>
-              Back to dashboard
-            </button>
-          </div>
-        </section>
-      );
-    }
-
-    const frontier = summary.frontier ?? [];
-    return (
-      <section className="view-diagnostic">
-        <div className="card summary-card">
-          <h2>Placement complete</h2>
-          <div className="stat-grid">
-            <Stat value={String(summary.placed?.length ?? 0)} label="topics placed" className="accent" />
-            <Stat value={String(summary.conditional?.length ?? 0)} label="conditional" />
-            <Stat value={String(frontier.length)} label="frontier topics" />
-          </div>
-          {frontier.length ? (
-            <div className="frontier-block">
-              <div className="solution-label">Start here</div>
-              <ul className="frontier-list">{frontier.map((t) => <li key={t}>{t}</li>)}</ul>
-            </div>
-          ) : null}
-          <button ref={homeRef} type="button" className="btn btn-primary" onClick={onExit}>
-            Back to dashboard
-          </button>
-        </div>
-      </section>
-    );
+    return <PlacementDone summary={summary} homeRef={homeRef} onExit={onExit} />;
   }
 
   if (!probe) {
@@ -377,19 +287,7 @@ export function Diagnostic({ diag, demo = false, onUnauthorized, onExit }: Diagn
           </button>
         </div>
 
-        {result ? (
-          <div
-            className={`feedback feedback-${
-              result.res.correct ? 'correct' : result.skipped ? 'skip' : 'incorrect'
-            }`}
-          >
-            <span className="feedback-mark">{result.res.correct ? <Tick /> : <Cross />}</span>
-            <span className="feedback-title">
-              {result.res.correct ? 'Correct' : result.skipped ? 'Skipped' : 'Not this time'}
-            </span>
-            {/* DIAG-nosol: a mark and a title. NOTHING else. */}
-          </div>
-        ) : null}
+        {result ? <ProbeFeedback result={result} /> : null}
 
         {qNum === 1 ? <p className="muted small">{DIAG_NO_SOLUTIONS_NOTE}</p> : null}
       </div>

@@ -43,6 +43,8 @@ import { useCall } from '@/hooks/useCall';
 import { useLifetime } from '@/hooks/useLifetime';
 import { num, pct } from '@/lib/format';
 import { toast } from '@/app/toast';
+import { CoursePicker } from './dashboard/CoursePicker';
+import { PrimaryAction } from './dashboard/PrimaryAction';
 import type { ApiClient, JourneyCourse, PlanTask, StatusResponse } from '@/api/types';
 
 export interface DashboardProps {
@@ -108,50 +110,6 @@ function reduce(state: State, action: Action): State {
     case 'fail':
       return action.gen < state.failedGen ? state : { ...state, failedGen: action.gen };
   }
-}
-
-/**
- * The picker behind "Switch course". It resolves a course id, or null on a cancel.
- *
- * IT IS THE DIALOG SURFACE, so it carries what a dialog carries (spec section 4.5). `Modal`
- * portals this element straight into `.modal-overlay` and adds no wrapper of its own, so
- * `role="dialog"` and `aria-modal="true"` live HERE or nowhere: without them the overlay
- * traps focus in a group a screen reader still reads as part of the page behind it. The
- * `.modal` class is the one rule in `app.css` that paints a dialog surface — the background,
- * the border, the radius, the padding, the width and the `display: grid` the picker's own
- * rows are laid out by — and `.picker` alone paints nothing at all.
- */
-function CoursePicker({
-  courses,
-  onDone,
-}: {
-  courses: JourneyCourse[];
-  onDone: (id: string | null) => void;
-}) {
-  return (
-    <div className="modal picker" role="dialog" aria-modal="true" aria-labelledby="picker-h">
-      <h2 id="picker-h">Switch course</h2>
-      <p className="muted small">Your progress in every course is kept.</p>
-      <div className="picker-list">
-        {courses.map((c) => (
-          <button
-            key={c.id}
-            type="button"
-            className="btn"
-            disabled={c.current}
-            onClick={() => onDone(c.id)}
-          >
-            {c.current ? `${c.name} · current` : c.name}
-          </button>
-        ))}
-      </div>
-      <div className="modal-actions">
-        <button type="button" className="btn btn-ghost" onClick={() => onDone(null)}>
-          Cancel
-        </button>
-      </div>
-    </div>
-  );
 }
 
 export function Dashboard({
@@ -306,17 +264,6 @@ export function Dashboard({
     );
   }
 
-  const work = hasScheduledWork(status);
-  const bits: string[] = [];
-  if (due) bits.push(`${due} review${due === 1 ? '' : 's'}`);
-  if (frontier) bits.push(`${frontier} new lesson${frontier === 1 ? '' : 's'}`);
-  if (status.quiz_due) bits.push('a quiz');
-  if (status.drill_due) bits.push('a drill');
-
-  const currentIndex = courses.findIndex((c) => c.current);
-  const nextCourse =
-    currentIndex >= 0 && currentIndex + 1 < courses.length ? courses[currentIndex + 1] : null;
-
   return (
     <section className="view-dashboard">
       {courseArc}
@@ -342,57 +289,14 @@ export function Dashboard({
       </div>
 
       {/* W-C2: one primary action, chosen by the state of the plan. */}
-      <div className="primary-action">
-        {work ? (
-          <>
-            <button
-              type="button"
-              className={busy.cls('session', 'btn btn-primary btn-hero')}
-              disabled={busy.is('session')}
-              onClick={() => busy.run('session', startSession)}
-            >
-              <span aria-hidden="true">▶</span> Continue studying
-            </button>
-            <p className="muted primary-sub">
-              {bits.length ? `Up next: ${bits.join(' · ')}.` : 'Practice is ready.'}
-            </p>
-          </>
-        ) : (
-          <>
-            <p className="caught-up">You are all caught up — nice work.</p>
-            {nextCourse ? (
-              <>
-                <button
-                  type="button"
-                  className={busy.cls('enroll', 'btn btn-primary btn-hero')}
-                  disabled={busy.is('enroll')}
-                  onClick={() => busy.run('enroll', () => doEnroll(nextCourse))}
-                >
-                  {`Start ${nextCourse.name} `}
-                  <span aria-hidden="true">▸</span>
-                </button>
-                {/* W-C3: the diagnostic stays in the open, beside the primary — never
-                    only inside the closed disclosure below. */}
-                <button type="button" className="btn btn-ghost" onClick={onDiagnostic}>
-                  Re-check where you are
-                </button>
-              </>
-            ) : (
-              // W-C3, the empty plan with nowhere else to go: the diagnostic IS the
-              // primary action. A screen that ends here with prose alone is the dead end
-              // this invariant exists to forbid.
-              <>
-                <button type="button" className="btn btn-primary btn-hero" onClick={onDiagnostic}>
-                  Re-check where you are <span aria-hidden="true">▸</span>
-                </button>
-                <p className="muted primary-sub">
-                  A short placement finds the next thing worth your time.
-                </p>
-              </>
-            )}
-          </>
-        )}
-      </div>
+      <PrimaryAction
+        status={status}
+        work={hasScheduledWork(status)}
+        busy={busy}
+        startSession={startSession}
+        enroll={doEnroll}
+        onDiagnostic={onDiagnostic}
+      />
 
       {/* W-C5: everything else is quiet, under a native disclosure. */}
       <details className="more-menu">

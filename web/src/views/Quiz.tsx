@@ -31,6 +31,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { MathBlock } from '@/components/MathBlock';
 import { AnswerField, type AnswerFieldHandle } from '@/components/AnswerField';
 import { Chip, LoadingBlock } from '@/components/primitives';
+import { releaseOnFail } from '@/hooks/screen';
 import { useCall } from '@/hooks/useCall';
 import { useLifetime } from '@/hooks/useLifetime';
 import { usePhase } from '@/hooks/usePhase';
@@ -335,9 +336,7 @@ export function Quiz({
           && problemRef.current?.problem_id === current.problem_id
           && !timedOutRef.current
           && gate.tryEnter('ready', 'submitting'),
-        // A failed grade returns the question to the learner — the first attempt and every
-        // retried one alike — rather than locking the card.
-        onFail: () => { if (life.alive() && gate.is('submitting')) gate.enter('ready'); },
+        onFail: releaseOnFail(life, gate, 'submitting', 'ready'),
       },
     );
   }, [api, call, fillBlanks, finish, gate, life, task.task_id]);

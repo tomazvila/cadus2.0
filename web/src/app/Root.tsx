@@ -39,9 +39,9 @@
  * screens sit inside the signed-in branch, so a signed-out visitor to either path is asked
  * to sign in and reaches no admin call at all.
  */
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState, type Dispatch, type SetStateAction } from 'react';
 import { App } from './App';
-import { adminRouteFor } from './routes';
+import { adminRouteFor, type AdminRoute } from './routes';
 import { Auth } from '@/views/Auth';
 import { Dashboard } from '@/views/Dashboard';
 import { Diagnostic } from '@/views/Diagnostic';
@@ -227,59 +227,82 @@ export function Root({
       }}
       onLogout={() => void logout()}
     >
-      {!user ? (
-        <Auth api={api} mode={authMode} token={resetToken} onSignedIn={setUser} />
-      ) : route === 'ops' ? (
-        <OperatorScreen api={api} demo={api.demo} onUnauthorized={onUnauthorized} />
-      ) : route === 'review' ? (
-        <ReviewScreen api={api} demo={api.demo} onUnauthorized={onUnauthorized} />
-      ) : view.name === 'session' ? (
-        <Session
+      {user ? (
+        <Screen
           api={api}
-          demo={api.demo}
+          route={route}
+          view={view}
+          placement={placement}
           onUnauthorized={onUnauthorized}
-          onExit={goHome}
-          onQuiz={(task) => { setView({ name: 'quiz', task, fromSession: true }); }}
-          onDiagnostic={() => { setView({ name: 'diagnostic' }); }}
-        />
-      ) : view.name === 'quiz' ? (
-        <Quiz
-          api={api}
-          task={view.task}
-          demo={api.demo}
-          fromSession={view.fromSession}
-          onUnauthorized={onUnauthorized}
-          // Back where the quiz came from. The session is still open behind it and its
-          // remaining tasks are re-served; a quiz opened from the dashboard has none.
-          onDone={() => { setView(view.fromSession ? { name: 'session' } : HOME); }}
-        />
-      ) : view.name === 'diagnostic' ? (
-        <Diagnostic
-          diag={placement}
-          demo={api.demo}
-          onUnauthorized={onUnauthorized}
-          onExit={goHome}
-        />
-      ) : view.name === 'map' ? (
-        <CurriculumMap
-          api={api}
-          demo={api.demo}
-          onUnauthorized={onUnauthorized}
-          onExit={() => { setView(view.back); }}
+          goHome={goHome}
+          setView={setView}
         />
       ) : (
-        <Dashboard
-          api={api}
-          demo={api.demo}
-          onUnauthorized={onUnauthorized}
-          onSession={() => { setView({ name: 'session' }); }}
-          onQuiz={(task) => { setView({ name: 'quiz', task, fromSession: false }); }}
-          onDiagnostic={() => { setView({ name: 'diagnostic' }); }}
-          onMap={() => { setView({ name: 'map', back: HOME }); }}
-        />
+        <Auth api={api} mode={authMode} token={resetToken} onSignedIn={setUser} />
       )}
     </App>
   );
+}
+
+interface ScreenProps {
+  api: ApiClient;
+  /** The operator screen the location names, or null on every learner path. */
+  route: AdminRoute | null;
+  view: View;
+  placement: DiagnosticApi;
+  onUnauthorized: () => void;
+  goHome: () => void;
+  setView: Dispatch<SetStateAction<View>>;
+}
+
+/**
+ * The signed-in branch: the operator paths first, then the view name.
+ *
+ * The map gives back the screen it was opened over, and the quiz gives back the session
+ * it came from: the session is still open behind it and its remaining tasks are re-served,
+ * while a quiz opened from the dashboard has none.
+ */
+function Screen({ api, route, view, placement, onUnauthorized, goHome, setView }: ScreenProps) {
+  const common = { api, demo: api.demo, onUnauthorized };
+  const openDiagnostic = () => { setView({ name: 'diagnostic' }); };
+
+  if (route === 'ops') return <OperatorScreen {...common} />;
+  if (route === 'review') return <ReviewScreen {...common} />;
+
+  switch (view.name) {
+    case 'session':
+      return (
+        <Session
+          {...common}
+          onExit={goHome}
+          onQuiz={(task) => { setView({ name: 'quiz', task, fromSession: true }); }}
+          onDiagnostic={openDiagnostic}
+        />
+      );
+    case 'quiz':
+      return (
+        <Quiz
+          {...common}
+          task={view.task}
+          fromSession={view.fromSession}
+          onDone={() => { setView(view.fromSession ? { name: 'session' } : HOME); }}
+        />
+      );
+    case 'diagnostic':
+      return <Diagnostic diag={placement} demo={api.demo} onUnauthorized={onUnauthorized} onExit={goHome} />;
+    case 'map':
+      return <CurriculumMap {...common} onExit={() => { setView(view.back); }} />;
+    default:
+      return (
+        <Dashboard
+          {...common}
+          onSession={() => { setView({ name: 'session' }); }}
+          onQuiz={(task) => { setView({ name: 'quiz', task, fromSession: false }); }}
+          onDiagnostic={openDiagnostic}
+          onMap={() => { setView({ name: 'map', back: HOME }); }}
+        />
+      );
+  }
 }
 
 /**

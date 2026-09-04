@@ -18,11 +18,8 @@
  * `getDiagnosis` refuses. That is the honest shape: the demo has no worker.
  */
 import { ApiError } from './client';
+import { createDemoDiagApi } from './diag';
 import type {
-  DiagAnswerResponse,
-  DiagFinishResponse,
-  DiagProbe,
-  DiagStartResponse,
   ApiClient,
   DiagnosisJob,
   PlanTask,
@@ -124,26 +121,16 @@ function refuse(status: number, code: string, message: string): never {
  * `cursor` moves only when an answer commits. `taskServe` reads it and never writes it,
  * which is the whole of SERVE-idem.
  */
-/** The three canned placement probes. Each one names a different topic. */
-const DEMO_DIAG_PROBES: readonly DiagProbe[] = [
-  { problem_id: 'demo-d1', topic: 'Adding integers', text: 'Work out $-7 + 12$.' },
-  { problem_id: 'demo-d2', topic: 'Fractions', text: 'Simplify $\\frac{9}{12}$.' },
-  { problem_id: 'demo-d3', topic: 'Linear equations', text: 'Solve $3x - 6 = 9$ for $x$.' },
-];
-
-/** The probe at one position, or `null` past the end. */
-function demoProbe(index: number): DiagProbe | null {
-  return DEMO_DIAG_PROBES[index] ?? null;
-}
-
 export function createDemoApi(): ApiClient {
   let cursor = 0;
   let answered = 0;
   let hintCount = 0;
   let open: string | null = null;
-  // The placement counters are per CLIENT, so one test never poisons the next.
-  let diagAsked = 0;
-  let diagStarted = false;
+  // The placement: the same three canned probes `api/diag.ts` walks for a screen that takes
+  // the port on its own. One adapter per CLIENT, so one test never poisons the next, and
+  // this pair keeps the client surface whole: every row of `ROUTES` has a method on both
+  // clients.
+  const placement = createDemoDiagApi();
 
   const served = (): ServedProblem => {
     const problem = DEMO_PROBLEMS[cursor];
@@ -346,27 +333,9 @@ export function createDemoApi(): ApiClient {
       return reply(reply_);
     },
 
-    // The placement, three canned probes. `createDemoDiagApi` in `api/diag.ts` walks the
-    // same three for a screen that takes the port on its own; this pair keeps the client
-    // surface whole, so every row of `ROUTES` has a method on both clients.
-    diagStart: async (): Promise<DiagStartResponse> => {
-      diagStarted = true;
-      return { probe: demoProbe(diagAsked), asked: diagAsked, cap: DEMO_DIAG_PROBES.length };
-    },
-    diagAnswer: async ({ answer }): Promise<DiagAnswerResponse> => {
-      if (!diagStarted) return refuse(409, 'no_diagnostic', 'No diagnostic is open.');
-      diagAsked += 1;
-      const next = demoProbe(diagAsked);
-      return { correct: answer.trim().length > 0, next_probe: next ?? { done: true } };
-    },
-    diagFinish: async (): Promise<DiagFinishResponse> => {
-      diagStarted = false;
-      return {
-        placed: ['integers', 'fractions'],
-        conditional: ['linear-equations'],
-        frontier: ['linear-equations'],
-      };
-    },
+    diagStart: placement.diagStart,
+    diagAnswer: placement.diagAnswer,
+    diagFinish: placement.diagFinish,
 
     getDiagnosis: async (diagnosisId): Promise<DiagnosisJob> =>
       refuse(404, 'unknown_diagnosis', `The demo wrote no job ${diagnosisId}.`),

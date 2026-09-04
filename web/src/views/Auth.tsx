@@ -141,15 +141,20 @@ export function Auth({ api, mode: initialMode = 'login', token = '', onSignedIn 
     }
   }, []);
 
-  function submitCredentials(e: React.FormEvent) {
+  /** The trimmed address a submit posts, or null once the empty-field line is on screen. */
+  function takeEmail(e: React.FormEvent): string | null {
     e.preventDefault();
     const address = email.trim();
     setError('');
-    if (!address) {
-      setError('Enter your email.');
-      emailRef.current?.focus();
-      return;
-    }
+    if (address) return address;
+    setError('Enter your email.');
+    emailRef.current?.focus();
+    return null;
+  }
+
+  function submitCredentials(e: React.FormEvent) {
+    const address = takeEmail(e);
+    if (!address) return;
     if (!password) {
       setError('Enter your password.');
       passwordRef.current?.focus();
@@ -183,14 +188,8 @@ export function Auth({ api, mode: initialMode = 'login', token = '', onSignedIn 
   }
 
   function submitForgot(e: React.FormEvent) {
-    e.preventDefault();
-    const address = email.trim();
-    setError('');
-    if (!address) {
-      setError('Enter your email.');
-      emailRef.current?.focus();
-      return;
-    }
+    const address = takeEmail(e);
+    if (!address) return;
     void run(async () => {
       try {
         await api.forgotPassword(address);
