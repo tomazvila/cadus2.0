@@ -246,11 +246,21 @@ mod tests {
         doc.to_string()
     }
 
+    /// The variant tag of one binding. Every arm is a case of the test below.
+    fn tag(binding: &Binding) -> &'static str {
+        match binding {
+            Binding::Num(_) => "num",
+            Binding::Spelled { .. } => "spelled",
+            Binding::Text(_) => "text",
+        }
+    }
+
     #[test]
     fn a_canonical_binding_reads_back_as_the_value_the_draw_bound() {
-        assert!(matches!(binding_value("8"), Binding::Num(_)));
-        assert!(matches!(binding_value("2.5"), Binding::Spelled { .. }));
-        assert!(matches!(binding_value("x"), Binding::Text(text) if text == "x"));
+        assert_eq!(tag(&binding_value("8")), "num");
+        assert_eq!(tag(&binding_value("2.5")), "spelled");
+        assert_eq!(tag(&binding_value("x")), "text");
+        assert_eq!(binding_value("x"), Binding::Text("x".to_string()));
     }
 
     #[test]

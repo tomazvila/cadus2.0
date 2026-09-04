@@ -41,21 +41,17 @@ pub const SECURITY_HEADERS: [(&str, &str); 5] = [
 ];
 
 /// Stamp the security headers on every answer.
+///
+/// Both halves of every pair are lowercase ASCII literals of this module, so
+/// [`HeaderName::from_static`] and [`HeaderValue::from_static`] carry the proof
+/// that they are valid, and no branch of this layer can drop a header.
 pub async fn security_headers_layer(request: Request, next: Next) -> Response {
     let mut response = next.run(request).await;
     let headers = response.headers_mut();
     for (name, value) in SECURITY_HEADERS {
-        // Both halves are literals of this module, so both parses hold. A parse
-        // that somehow fails drops that one header and answers the request; a
-        // handler never panics on any request (R4).
-        let (Ok(name), Ok(value)) = (
-            HeaderName::from_bytes(name.as_bytes()),
-            HeaderValue::from_str(value),
-        ) else {
-            continue;
-        };
+        let name = HeaderName::from_static(name);
         if !headers.contains_key(&name) {
-            headers.insert(name, value);
+            headers.insert(name, HeaderValue::from_static(value));
         }
     }
     response

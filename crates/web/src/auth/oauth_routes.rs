@@ -476,3 +476,30 @@ async fn resolve_account(db: &Db, identity: &Identity) -> Result<(AuthUser, bool
         }),
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use axum::http::{HeaderValue, StatusCode};
+
+    use super::{bad_redirect, handshake_cookie_failed, handshake_failed, no_redirect_base};
+    use crate::auth::session::CookieWriteError;
+    use crate::auth::token::EntropyError;
+
+    /// Every OAuth `500` mapper answers an internal error.
+    #[test]
+    fn the_oauth_mappers_answer_internal_errors() {
+        let bad =
+            HeaderValue::from_bytes(b"bad\nvalue").expect_err("a newline is not a header value");
+        let mappers = [
+            no_redirect_base(),
+            bad_redirect(bad),
+            handshake_failed(EntropyError {
+                reason: "no pool".to_string(),
+            }),
+            handshake_cookie_failed(CookieWriteError::BadValue),
+        ];
+        for err in mappers {
+            assert_eq!(err.status, StatusCode::INTERNAL_SERVER_ERROR);
+        }
+    }
+}

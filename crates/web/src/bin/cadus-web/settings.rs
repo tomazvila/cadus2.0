@@ -306,35 +306,51 @@ mod tests {
 
     use super::{Fatal, admin_dsn_from, deadline_secs, first_reason};
 
-    /// The text a `Fatal::Startup` carries.
-    fn startup_text(fatal: Fatal) -> String {
-        match fatal {
-            Fatal::Startup(message) => message,
-            Fatal::RlsBypass { .. } => panic!("expected a startup error"),
+    impl Fatal {
+        /// The text a fatal carries, for the assertions below. Both arms run.
+        fn text(&self) -> &str {
+            match self {
+                Fatal::Startup(message) => message,
+                Fatal::RlsBypass { role } => role,
+            }
         }
     }
 
-    /// The reason of a call that must fail with a startup error.
-    fn err_text<T>(outcome: Result<T, Fatal>) -> String {
-        match outcome {
-            Ok(_) => panic!("expected a startup error"),
-            Err(fatal) => startup_text(fatal),
-        }
+    /// The text reader visits both fatal variants.
+    #[test]
+    fn the_fatal_text_reads_both_variants() {
+        assert_eq!(Fatal::Startup("boom".to_string()).text(), "boom");
+        assert_eq!(
+            Fatal::RlsBypass {
+                role: "super".to_string(),
+            }
+            .text(),
+            "super"
+        );
     }
 
     /// An absent admin DSN is no admin path; an empty one and a not-Unicode one
     /// are start errors.
     #[test]
     fn the_admin_dsn_reads_the_three_no_database_branches() {
-        assert!(matches!(
-            admin_dsn_from(Err(std::env::VarError::NotPresent)),
-            Ok(None)
-        ));
-        assert!(err_text(admin_dsn_from(Ok(String::new()))).contains("is empty"));
         assert!(
-            err_text(admin_dsn_from(Err(std::env::VarError::NotUnicode(
+            admin_dsn_from(Err(std::env::VarError::NotPresent))
+                .ok()
+                .unwrap()
+                .is_none()
+        );
+        assert!(
+            admin_dsn_from(Ok(String::new()))
+                .unwrap_err()
+                .text()
+                .contains("is empty")
+        );
+        assert!(
+            admin_dsn_from(Err(std::env::VarError::NotUnicode(
                 std::ffi::OsString::from("x"),
-            ))))
+            )))
+            .unwrap_err()
+            .text()
             .contains("not valid Unicode")
         );
     }
@@ -343,10 +359,15 @@ mod tests {
     /// a non-number, and a zero value.
     #[test]
     fn the_deadline_reader_takes_a_positive_whole_number() {
-        assert!(matches!(deadline_secs("7"), Ok(7)));
-        assert!(err_text(deadline_secs("")).contains("is empty"));
-        assert!(err_text(deadline_secs("many")).contains("whole number of seconds"));
-        assert!(err_text(deadline_secs("0")).contains("1 or more"));
+        assert_eq!(deadline_secs("7").ok().unwrap(), 7);
+        assert!(deadline_secs("").unwrap_err().text().contains("is empty"));
+        assert!(
+            deadline_secs("many")
+                .unwrap_err()
+                .text()
+                .contains("whole number of seconds")
+        );
+        assert!(deadline_secs("0").unwrap_err().text().contains("1 or more"));
     }
 
     /// The first reason names the first finding of a fatal-findings error, and

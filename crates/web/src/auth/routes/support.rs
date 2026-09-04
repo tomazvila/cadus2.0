@@ -352,3 +352,42 @@ pub(super) async fn spendable_token(
     }
     Ok((token_hash, row.user_id))
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::auth::password::PasswordError;
+    use crate::auth::session::CookieWriteError;
+    use crate::auth::token::EntropyError;
+
+    /// Every defensive `500` mapper answers an internal error and names its
+    /// step in the message, never the cause.
+    #[test]
+    fn the_defensive_mappers_answer_internal_errors() {
+        let mappers = [
+            cookie_failed(CookieWriteError::BadValue),
+            session_window(),
+            hash_failed(PasswordError::Entropy {
+                reason: "no pool".to_string(),
+            }),
+            entropy_failed(EntropyError {
+                reason: "no pool".to_string(),
+            }),
+            no_account_row(),
+        ];
+        for err in mappers {
+            assert_eq!(err.status, StatusCode::INTERNAL_SERVER_ERROR);
+            assert!(!err.message.contains("no pool"), "{}", err.message);
+        }
+    }
+
+    /// The anti-enumeration dummy hash and verify run under the production
+    /// profile too, and the hash is stable across the two calls.
+    #[test]
+    fn the_dummy_hash_serves_the_production_profile() {
+        let first = dummy_hash(Argon2Profile::PROD).expect("the prod dummy hash builds");
+        let second = dummy_hash(Argon2Profile::PROD).expect("the prod dummy hash is cached");
+        assert_eq!(first, second);
+        dummy_verify(Argon2Profile::PROD);
+    }
+}

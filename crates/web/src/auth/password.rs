@@ -374,24 +374,23 @@ mod cov_tests {
             memory_cost_kib: 1,
             parallelism: 4,
         };
-        assert!(matches!(
-            hash_password(illegal, "correct horse battery staple"),
-            Err(PasswordError::Parameters {
-                profile: "illegal",
-                ..
-            })
-        ));
+        let err = hash_password(illegal, "correct horse battery staple").unwrap_err();
+        assert!(
+            err.to_string()
+                .contains("illegal Argon2 profile is not legal")
+        );
     }
 
     /// A salt fill that refuses is an entropy error and no hash.
     #[test]
     fn a_refused_salt_fill_is_an_entropy_error() {
-        let outcome = hash_password_with(
+        let err = hash_password_with(
             |_| Err(getrandom::Error::UNSUPPORTED),
             Argon2Profile::TEST,
             "correct horse battery staple",
-        );
-        assert!(matches!(outcome, Err(PasswordError::Entropy { .. })));
+        )
+        .unwrap_err();
+        assert!(err.to_string().contains("gave no entropy"));
     }
 
     /// A hash written under one profile needs a rehash under another, and a

@@ -211,3 +211,24 @@ pub fn router() -> Router<AppState> {
         .route("/api/diagnosis/stream", get(stream))
         .route("/api/diagnosis/{id}", get(poll))
 }
+
+#[cfg(test)]
+mod tests {
+    use sqlx::types::Uuid;
+
+    use super::*;
+
+    /// The default hub is a fresh one: publishing with no subscriber reaches
+    /// nobody, and one subscriber then receives the next notice.
+    #[test]
+    fn a_hub_publishes_to_its_subscribers() {
+        let hub = DiagnosisHub::default();
+        let notice = Notice {
+            job_id: Uuid::nil(),
+            user_id: Uuid::nil(),
+        };
+        assert_eq!(hub.publish(notice.clone()), 0);
+        let _receiver = hub.subscribe();
+        assert_eq!(hub.publish(notice), 1);
+    }
+}

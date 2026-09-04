@@ -135,3 +135,29 @@ pub async fn current_user(state: &AppState, headers: &HeaderMap) -> Result<Authe
 
     Ok(Authed { user, token_hash })
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    /// `plus_secs` refuses an offset that does not fit an `i64`, and one that
+    /// overflows the epoch second of `now`.
+    #[test]
+    fn plus_secs_refuses_an_offset_that_overflows() {
+        let now = DateTime::from_timestamp(1_700_000_000, 0).expect("a valid instant");
+        assert_eq!(plus_secs(now, u64::MAX), None);
+        assert_eq!(plus_secs(now, i64::MAX as u64), None);
+        assert!(plus_secs(now, 60).is_some());
+    }
+
+    /// `at_least_old` answers false for an offset that does not fit an `i64`,
+    /// and reads a real gap otherwise.
+    #[test]
+    fn at_least_old_refuses_an_offset_that_does_not_fit() {
+        let now = DateTime::from_timestamp(1_700_000_000, 0).expect("a valid instant");
+        let earlier = DateTime::from_timestamp(1_699_000_000, 0).expect("a valid instant");
+        assert!(!at_least_old(now, earlier, u64::MAX));
+        assert!(at_least_old(now, earlier, 60));
+        assert!(!at_least_old(now, earlier, 2_000_000));
+    }
+}

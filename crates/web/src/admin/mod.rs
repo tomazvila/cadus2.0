@@ -299,22 +299,23 @@ const fn bank_warning(approved_templates: i64) -> bool {
 
 /// The fields of one document that the queue line and the show route share.
 pub(super) fn item_fields(item: &ReviewItem) -> Map<String, Value> {
-    let fields = json!({
-        "digest": item.digest,
-        "kp_id": item.kp_id,
-        "kind": item.kind,
-        "status": item.status,
-        "authoring_attempts": item.authoring_attempts,
-        "authoring_cost_usd": item.cost_usd,
-        "created_at": item.created_at.to_rfc3339(),
-        "summary": summary(&item.body),
-        "approved_templates": item.approved_templates,
-        "bank_warning": bank_warning(item.approved_templates),
-    });
-    match fields {
-        Value::Object(map) => map,
-        _ => Map::new(),
-    }
+    // The pairs collect straight into a `Map`, so the answer is an object by
+    // construction and there is no non-object case to fall back from.
+    [
+        ("digest", json!(item.digest)),
+        ("kp_id", json!(item.kp_id)),
+        ("kind", json!(item.kind)),
+        ("status", json!(item.status)),
+        ("authoring_attempts", json!(item.authoring_attempts)),
+        ("authoring_cost_usd", json!(item.cost_usd)),
+        ("created_at", json!(item.created_at.to_rfc3339())),
+        ("summary", json!(summary(&item.body))),
+        ("approved_templates", json!(item.approved_templates)),
+        ("bank_warning", json!(bank_warning(item.approved_templates))),
+    ]
+    .into_iter()
+    .map(|(key, value)| (key.to_string(), value))
+    .collect()
 }
 
 /// One queue line, as JSON.
