@@ -6,6 +6,7 @@ use std::sync::Arc;
 use axum::Router;
 use axum::body::Body;
 use axum::http::{Method, Request, StatusCode, header};
+use axum::response::Response;
 use cadus_core::curriculum::Curriculum;
 use cadus_store::test_support::TestDb;
 use cadus_store::{DEFAULT_CLIENT_TIMEOUT_MS, Db};
@@ -18,22 +19,26 @@ use tower::ServiceExt;
 
 use super::{LESSON, PROBLEM_ID, addition_curriculum, present_session};
 
-/// The router of a test, with `arena` loaded.
-pub fn app_with_content(db: &TestDb, arena: Curriculum) -> Router {
-    create_app(
-        AppState::new(Db::new(db.app.clone(), DEFAULT_CLIENT_TIMEOUT_MS))
-            .with_content(Arc::new(Content::new(arena))),
-    )
+/// The state of a test, on the `cadus_app` pool of `db`, with `arena` loaded.
+pub fn state_with_content(db: &TestDb, arena: Curriculum) -> AppState {
+    AppState::new(Db::new(db.app.clone(), DEFAULT_CLIENT_TIMEOUT_MS))
+        .with_content(Arc::new(Content::new(arena)))
 }
 
-/// One request against the router. `tenant` is the bound learner.
-pub async fn call(
+/// The router of a test, with `arena` loaded.
+pub fn app_with_content(db: &TestDb, arena: Curriculum) -> Router {
+    create_app(state_with_content(db, arena))
+}
+
+/// One request against the router, and the whole response. `tenant` is the
+/// bound learner.
+pub async fn respond(
     app: &Router,
     method: Method,
     uri: &str,
     tenant: Option<Uuid>,
     body: Option<Value>,
-) -> (StatusCode, String) {
+) -> Response {
     let mut builder = Request::builder().method(method).uri(uri);
     let payload = match body {
         Some(value) => {
@@ -46,10 +51,26 @@ pub async fn call(
     if let Some(user) = tenant {
         present_session(request.headers_mut(), user);
     }
-    let response = app.clone().oneshot(request).await.unwrap();
-    let status = response.status();
+    app.clone().oneshot(request).await.unwrap()
+}
+
+/// The body text of a response.
+pub async fn body_text(response: Response) -> String {
     let bytes = response.into_body().collect().await.unwrap().to_bytes();
-    (status, String::from_utf8_lossy(&bytes).into())
+    String::from_utf8_lossy(&bytes).into()
+}
+
+/// One request against the router. `tenant` is the bound learner.
+pub async fn call(
+    app: &Router,
+    method: Method,
+    uri: &str,
+    tenant: Option<Uuid>,
+    body: Option<Value>,
+) -> (StatusCode, String) {
+    let response = respond(app, method, uri, tenant, body).await;
+    let status = response.status();
+    (status, body_text(response).await)
 }
 
 /// The parsed JSON body of a call.

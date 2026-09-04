@@ -11,6 +11,8 @@
 
 mod common;
 
+use common::BASE_US;
+
 use common::diagnosis::*;
 
 use axum::Router;

@@ -38,6 +38,8 @@
 
 mod common;
 
+use common::{EXPECTED_ANSWER, LESSON, PROBLEM_TEXT, SESSION, exemplar, put_state, stored_state};
+
 use common::diagnosis::*;
 
 use axum::http::StatusCode;

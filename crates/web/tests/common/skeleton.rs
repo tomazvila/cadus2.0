@@ -41,7 +41,7 @@ pub fn offline_app() -> Router {
 
 /// An application on `pool`, with the production posture.
 pub fn app_on(pool: PgPool) -> Router {
-    create_app(AppState::new(Db::new(pool, DEFAULT_CLIENT_TIMEOUT_MS)))
+    create_app(state_with(pool))
 }
 
 /// Send one request and return the status, the headers, and the body as text.

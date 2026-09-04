@@ -102,53 +102,16 @@ pub fn template_body() -> Value {
 
 /// The fixture curriculum: one course, one topic `band`, one knowledge point.
 pub fn graph() -> Curriculum {
-    let catalog = Catalog {
-        courses: vec![Course {
-            id: Slug::new("c1").unwrap(),
-            name: "Foundations".to_string(),
-            order: 0,
-            mastery_floor: Vec::new(),
-            mastery_floor_course: None,
+    let mut point = kp(
+        "kp1",
+        vec![Exemplar {
+            problem: "Compute $7 - 2$.".to_string(),
+            answer: "5".to_string(),
+            solution_sketch: None,
         }],
-    };
-    Curriculum::build(RawCurriculum {
-        catalog,
-        units: vec![RawUnit {
-            course_id: "c1".to_string(),
-            file_name: "00-M1.yaml".to_string(),
-            unit: Unit {
-                unit: "M1".to_string(),
-                course: Slug::new("c1").unwrap(),
-                module: "M1".to_string(),
-                topics: vec![Topic {
-                    id: Slug::new("band").unwrap(),
-                    name: "The band topic".to_string(),
-                    core: true,
-                    difficulty: 0.3,
-                    drill: false,
-                    answer_kind: AnswerKind::Numeric,
-                    expected_time_secs: 30,
-                    prerequisites: Vec::new(),
-                    encompassings_extra: Vec::new(),
-                    knowledge_points: vec![KnowledgePoint {
-                        id: Slug::new("kp1").unwrap(),
-                        name: "The first point".to_string(),
-                        key_prerequisites: Vec::new(),
-                        exemplars: vec![Exemplar {
-                            problem: "Compute $7 - 2$.".to_string(),
-                            answer: "5".to_string(),
-                            solution_sketch: None,
-                        }],
-                        constraints: None,
-                    }],
-                    diagnostic_exemplar: None,
-                    anki_seeds: Vec::new(),
-                }],
-            },
-            first_load_index: 0,
-        }],
-    })
-    .unwrap()
+    );
+    point.name = "The first point".to_string();
+    one_unit_curriculum(vec![topic("band", vec![point])])
 }
 
 /// The router of a test, with the fixture curriculum and the admin path.
@@ -158,8 +121,7 @@ pub fn graph() -> Curriculum {
 /// INSERT, UPDATE, and DELETE that `cadus_app` does not.
 pub fn app(db: &TestDb) -> Router {
     create_app(
-        AppState::new(Db::new(db.app.clone(), DEFAULT_CLIENT_TIMEOUT_MS))
-            .with_content(Arc::new(Content::new(graph())))
+        state_with_content(db, graph())
             .with_admin(Db::new(db.admin.clone(), DEFAULT_CLIENT_TIMEOUT_MS)),
     )
 }
@@ -167,10 +129,7 @@ pub fn app(db: &TestDb) -> Router {
 /// The same router with NO admin path, which is the default of a deployment
 /// that sets no `CADUS_ADMIN_DATABASE_URL`.
 pub fn app_without_admin(db: &TestDb) -> Router {
-    create_app(
-        AppState::new(Db::new(db.app.clone(), DEFAULT_CLIENT_TIMEOUT_MS))
-            .with_content(Arc::new(Content::new(graph()))),
-    )
+    app_with_content(db, graph())
 }
 
 /// Seed one account with a live session on `token_hash`, and return its id.

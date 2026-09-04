@@ -6,6 +6,7 @@
 use std::collections::BTreeMap;
 
 use cadus_core::config::Config;
+use cadus_core::event::Event;
 use cadus_core::learner::LearnerModel;
 use cadus_core::pool::{PoolAnswer, PoolProblem};
 use cadus_store::test_support::TestDb;
@@ -18,17 +19,17 @@ use super::{
     BASE_US, EXPECTED_ANSWER, LESSON, PROBLEM_ID, PROBLEM_TEXT, SESSION, SOLUTION, seed_learner,
 };
 
-/// Put one literal event of `user` into the log, at `seq`.
-pub async fn seed_event(
+/// Put one event row of `user` into the log, at `seq`.
+pub async fn seed_event_row(
     db: &TestDb,
     user: Uuid,
     seq: i64,
     ts_us: i64,
-    session: &str,
-    payload: Value,
+    kind: &str,
+    session: Option<&str>,
+    payload: &Value,
 ) {
     let ts = DateTime::<Utc>::from_timestamp_micros(ts_us).unwrap();
-    let kind = payload["type"].as_str().unwrap().to_owned();
     sqlx::query!(
         r#"
         INSERT INTO events (user_id, seq, ts, type, session_id, v, payload)
@@ -44,6 +45,33 @@ pub async fn seed_event(
     .execute(&db.admin)
     .await
     .unwrap();
+}
+
+/// Put one literal event of `user` into the log, at `seq`.
+pub async fn seed_event(
+    db: &TestDb,
+    user: Uuid,
+    seq: i64,
+    ts_us: i64,
+    session: &str,
+    payload: Value,
+) {
+    let kind = payload["type"].as_str().unwrap().to_owned();
+    seed_event_row(db, user, seq, ts_us, &kind, Some(session), &payload).await;
+}
+
+/// Put one typed event of `user` into the log, at `seq`, at its own `ts`.
+pub async fn seed_typed_event(db: &TestDb, user: Uuid, seq: i64, event: &Event) {
+    seed_event_row(
+        db,
+        user,
+        seq,
+        event.ts().micros(),
+        event.type_name(),
+        event.session(),
+        &serde_json::to_value(event).unwrap(),
+    )
+    .await;
 }
 
 /// Open `SESSION` in the log of `user`, at `seq` 1.

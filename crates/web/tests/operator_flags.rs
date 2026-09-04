@@ -22,23 +22,13 @@
 
 mod common;
 
-use std::sync::Arc;
-
-use axum::Router;
-use cadus_core::curriculum::load::{RawCurriculum, RawUnit};
-use cadus_core::curriculum::model::{Catalog, Course, Exemplar, KnowledgePoint, Slug, Topic, Unit};
-use cadus_core::curriculum::{AnswerKind, Curriculum};
 use cadus_store::test_support::TestDb;
-use cadus_store::{DEFAULT_CLIENT_TIMEOUT_MS, Db};
-use cadus_web::state::Content;
-use cadus_web::{AppState, create_app};
 use serde_json::{Value, json};
-use sqlx::types::Uuid;
 
-use common::{Answer, SESSION_TOKEN_ONE, get, get_bearer, seed_session, send, shift};
-
-/// The serving key of the fixture knowledge point.
-const KEY: &str = "band/kp1";
+use common::admin::{
+    KEY, admin_get as call, app_without_admin as app, seed_account, template_body,
+};
+use common::{SESSION_TOKEN_ONE, get, send};
 
 /// A second serving key, which the fixture curriculum does NOT name.
 const UNKNOWN_KEY: &str = "not-a-topic/kp9";
@@ -60,129 +50,6 @@ const GATE_NOTE: &str = "the crossed-corner rule is skipped for a and b: the con
 /// and 8 with a difference of 2.
 const INSTANCES_CHECKED: u64 = 17;
 
-/// The band template of the fixture knowledge point, as one document body.
-fn template_body() -> String {
-    json!({
-        "v": 1,
-        "topic_id": "band",
-        "answer_kind": "numeric",
-        "statement": "Compute ${a} - {b}$.",
-        "params": {
-            "a": {"kind": "int", "low": 1, "high": 10},
-            "b": {"kind": "int", "low": 1, "high": 10}
-        },
-        "constraints": [
-            {"op": "gt", "left": "a", "right": "b"},
-            {"op": "lt", "left": "a", "right": {"add": ["b", {"lit": 3}]}}
-        ],
-        "answer_expr": "a - b",
-        "solution_sketch": "Take ${b}$ from ${a}$.",
-        "hints": ["Which number is larger?"],
-        "samples": [
-            {"params": {"a": 2, "b": 1}, "expected": "1"},
-            {"params": {"a": 10, "b": 9}, "expected": "1"},
-            {"params": {"a": 3, "b": 1}, "expected": "2"},
-            {"params": {"a": 10, "b": 8}, "expected": "2"}
-        ]
-    })
-    .to_string()
-}
-
-// --------------------------------------------------------------------------- //
-// The fixture curriculum
-// --------------------------------------------------------------------------- //
-
-/// The fixture curriculum: one course, one topic `band`, one knowledge point.
-fn graph() -> Curriculum {
-    let catalog = Catalog {
-        courses: vec![Course {
-            id: Slug::new("c1").unwrap(),
-            name: "Foundations".to_string(),
-            order: 0,
-            mastery_floor: Vec::new(),
-            mastery_floor_course: None,
-        }],
-    };
-    Curriculum::build(RawCurriculum {
-        catalog,
-        units: vec![RawUnit {
-            course_id: "c1".to_string(),
-            file_name: "00-M1.yaml".to_string(),
-            unit: Unit {
-                unit: "M1".to_string(),
-                course: Slug::new("c1").unwrap(),
-                module: "M1".to_string(),
-                topics: vec![Topic {
-                    id: Slug::new("band").unwrap(),
-                    name: "The band topic".to_string(),
-                    core: true,
-                    difficulty: 0.3,
-                    drill: false,
-                    answer_kind: AnswerKind::Numeric,
-                    expected_time_secs: 30,
-                    prerequisites: Vec::new(),
-                    encompassings_extra: Vec::new(),
-                    knowledge_points: vec![KnowledgePoint {
-                        id: Slug::new("kp1").unwrap(),
-                        name: "The first point".to_string(),
-                        key_prerequisites: Vec::new(),
-                        exemplars: vec![Exemplar {
-                            problem: "Compute $7 - 2$.".to_string(),
-                            answer: "5".to_string(),
-                            solution_sketch: None,
-                        }],
-                        constraints: None,
-                    }],
-                    diagnostic_exemplar: None,
-                    anki_seeds: Vec::new(),
-                }],
-            },
-            first_load_index: 0,
-        }],
-    })
-    .unwrap()
-}
-
-// --------------------------------------------------------------------------- //
-// The harness
-// --------------------------------------------------------------------------- //
-
-/// The router of a test, with the fixture curriculum loaded.
-fn app(db: &TestDb) -> Router {
-    create_app(
-        AppState::new(Db::new(db.app.clone(), DEFAULT_CLIENT_TIMEOUT_MS))
-            .with_content(Arc::new(Content::new(graph()))),
-    )
-}
-
-/// Seed one account with a live session, and return its id.
-///
-/// The session row carries the LITERAL digest of [`SESSION_TOKEN_ONE`], and the
-/// request presents the raw token, so the guard's own `hash_token` is what joins
-/// the two.
-async fn seed_account(db: &TestDb, email: &str, admin: bool) -> Uuid {
-    let user = db.seed_user(email).await;
-    // The idle window of section 10 is 30 days and the absolute ceiling is 90.
-    // The row below opened one minute ago, so both windows are open.
-    seed_session(
-        db,
-        user,
-        SESSION_TOKEN_ONE.1,
-        shift(-60),
-        shift(-60),
-        shift(2_592_000),
-    )
-    .await;
-    if admin {
-        sqlx::query("UPDATE users SET is_admin = true WHERE id = $1")
-            .bind(user)
-            .execute(&db.admin)
-            .await
-            .unwrap();
-    }
-    user
-}
-
 /// Write one approved `content_store` template row with the admin pool.
 async fn seed_template(db: &TestDb, digest: &str, kp_id: &str, body: &str) {
     sqlx::query(
@@ -195,11 +62,6 @@ async fn seed_template(db: &TestDb, digest: &str, kp_id: &str, body: &str) {
     .execute(&db.admin)
     .await
     .unwrap();
-}
-
-/// Call the route with the raw session token of [`SESSION_TOKEN_ONE`].
-async fn call(app: &Router, uri: &str) -> Answer {
-    send(app, get_bearer(uri, SESSION_TOKEN_ONE.0)).await
 }
 
 /// The `flags` row of one serving key.
@@ -238,7 +100,7 @@ async fn a_request_with_no_session_is_unauthorized() {
 async fn a_session_that_is_not_an_admin_is_forbidden() {
     TestDb::with(|db| async move {
         let app = app(&db);
-        seed_account(&db, "u12-learner@example.test", false).await;
+        seed_account(&db, "u12-learner@example.test", SESSION_TOKEN_ONE.1, false).await;
 
         let answer = call(&app, "/api/operator/flags").await;
 
@@ -273,8 +135,8 @@ async fn a_session_that_is_not_an_admin_is_forbidden() {
 async fn an_admin_reads_the_flags_and_the_gate_notes() {
     TestDb::with(|db| async move {
         let app = app(&db);
-        seed_account(&db, "u12-admin@example.test", true).await;
-        seed_template(&db, DIGEST, KEY, &template_body()).await;
+        seed_account(&db, "u12-admin@example.test", SESSION_TOKEN_ONE.1, true).await;
+        seed_template(&db, DIGEST, KEY, &template_body().to_string()).await;
 
         let answer = call(&app, "/api/operator/flags").await;
 
@@ -318,8 +180,20 @@ async fn an_admin_reads_the_flags_and_the_gate_notes() {
 async fn an_unknown_knowledge_point_reports_that_the_gate_did_not_run() {
     TestDb::with(|db| async move {
         let app = app(&db);
-        seed_account(&db, "u12-admin-unknown@example.test", true).await;
-        seed_template(&db, "u12-unknown-digest", UNKNOWN_KEY, &template_body()).await;
+        seed_account(
+            &db,
+            "u12-admin-unknown@example.test",
+            SESSION_TOKEN_ONE.1,
+            true,
+        )
+        .await;
+        seed_template(
+            &db,
+            "u12-unknown-digest",
+            UNKNOWN_KEY,
+            &template_body().to_string(),
+        )
+        .await;
 
         let answer = call(&app, "/api/operator/flags").await;
 
@@ -347,7 +221,13 @@ async fn an_unknown_knowledge_point_reports_that_the_gate_did_not_run() {
 async fn a_refused_template_reports_the_rejection() {
     TestDb::with(|db| async move {
         let app = app(&db);
-        seed_account(&db, "u12-admin-refused@example.test", true).await;
+        seed_account(
+            &db,
+            "u12-admin-refused@example.test",
+            SESSION_TOKEN_ONE.1,
+            true,
+        )
+        .await;
         seed_template(&db, "u12-broken-digest", KEY, r#"{"v": 1}"#).await;
 
         let answer = call(&app, "/api/operator/flags").await;
@@ -375,9 +255,21 @@ async fn a_refused_template_reports_the_rejection() {
 async fn the_kp_parameter_scopes_the_answer_to_one_key() {
     TestDb::with(|db| async move {
         let app = app(&db);
-        seed_account(&db, "u12-admin-scope@example.test", true).await;
-        seed_template(&db, DIGEST, KEY, &template_body()).await;
-        seed_template(&db, "u12-other-digest", UNKNOWN_KEY, &template_body()).await;
+        seed_account(
+            &db,
+            "u12-admin-scope@example.test",
+            SESSION_TOKEN_ONE.1,
+            true,
+        )
+        .await;
+        seed_template(&db, DIGEST, KEY, &template_body().to_string()).await;
+        seed_template(
+            &db,
+            "u12-other-digest",
+            UNKNOWN_KEY,
+            &template_body().to_string(),
+        )
+        .await;
 
         let all = call(&app, "/api/operator/flags").await;
         let scoped = call(&app, "/api/operator/flags?kp=band/kp1").await;
@@ -419,7 +311,13 @@ async fn the_kp_parameter_scopes_the_answer_to_one_key() {
 async fn the_gate_stops_at_the_limit_and_reports_it() {
     TestDb::with(|db| async move {
         let app = app(&db);
-        seed_account(&db, "u12-admin-limit@example.test", true).await;
+        seed_account(
+            &db,
+            "u12-admin-limit@example.test",
+            SESSION_TOKEN_ONE.1,
+            true,
+        )
+        .await;
         // The keys are outside the fixture curriculum, so no gate call runs the
         // 4,096-instance walk and the test stays a test. The limit counts rows,
         // not gate calls, so the bound under test is the same one.
@@ -428,7 +326,7 @@ async fn the_gate_stops_at_the_limit_and_reports_it() {
                 &db,
                 &format!("u12-many-digest-{index:02}"),
                 &format!("many-{index:02}/kp1"),
-                &template_body(),
+                &template_body().to_string(),
             )
             .await;
         }
