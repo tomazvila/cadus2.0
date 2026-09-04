@@ -55,8 +55,8 @@ export function useBusy(): Busy {
         try {
           result = fn();
         } catch (e) {
+          // The render `force()` asked for above has not run yet, and it reads the key gone.
           running.delete(key);
-          force();
           throw e;
         }
 
