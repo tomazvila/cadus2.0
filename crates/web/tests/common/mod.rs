@@ -19,11 +19,14 @@
     clippy::unimplemented
 )]
 
+pub mod admin;
 mod arena;
 mod bench;
 mod callback;
 mod corpus;
+pub mod csrf;
 mod db;
+pub mod diagnosis;
 mod events;
 mod fault;
 mod http;
@@ -36,6 +39,8 @@ mod quiz;
 mod recovery;
 mod route;
 mod seed;
+pub mod sessions;
+pub mod skeleton;
 mod task;
 
 pub use arena::*;
