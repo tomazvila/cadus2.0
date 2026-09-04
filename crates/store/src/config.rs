@@ -159,8 +159,8 @@ mod tests {
     use std::ffi::OsString;
 
     use super::{
-        CLIENT_TIMEOUT_VAR, DEFAULT_CLIENT_TIMEOUT_MS, DEFAULT_STATEMENT_TIMEOUT_MS, DbConfig,
-        STATEMENT_TIMEOUT_VAR, parse_bound,
+        CLIENT_TIMEOUT_VAR, DATABASE_URL_VAR, DEFAULT_CLIENT_TIMEOUT_MS,
+        DEFAULT_STATEMENT_TIMEOUT_MS, DbConfig, STATEMENT_TIMEOUT_VAR, parse_bound,
     };
     use crate::StoreError;
 
@@ -264,6 +264,21 @@ mod tests {
             message(err),
             "configuration error: DB_CLIENT_TIMEOUT_MS is not valid Unicode"
         );
+        // A non-numeric bound reaches `from_reads` through `parse_bound`.
+        let err = DbConfig::from_reads(url(), Ok("nan".to_string()), Err(VarError::NotPresent))
+            .expect_err("a non-numeric statement bound must be an error");
+        assert_eq!(
+            message(err),
+            "configuration error: DB_STATEMENT_TIMEOUT_MS must be a whole number of \
+             milliseconds, not \"nan\""
+        );
+        let err = DbConfig::from_reads(url(), Err(VarError::NotPresent), Ok("nan".to_string()))
+            .expect_err("a non-numeric client bound must be an error");
+        assert_eq!(
+            message(err),
+            "configuration error: DB_CLIENT_TIMEOUT_MS must be a whole number of \
+             milliseconds, not \"nan\""
+        );
     }
 
     /// Three good reads give the URL and both bounds; two absent bounds give
@@ -285,17 +300,29 @@ mod tests {
     /// so it gives the answer of `from_reads` over those three reads.
     #[test]
     fn from_env_is_from_reads_over_the_process_environment() {
-        let expected = DbConfig::from_reads(
-            std::env::var("DATABASE_URL"),
-            std::env::var(STATEMENT_TIMEOUT_VAR),
-            std::env::var(CLIENT_TIMEOUT_VAR),
-        )
-        .map(|cfg| format!("{cfg:?}{}", cfg.database_url))
-        .map_err(message);
-        let actual = DbConfig::from_env()
-            .map(|cfg| format!("{cfg:?}{}", cfg.database_url))
-            .map_err(message);
-        assert_eq!(actual, expected);
+        // The full text of one outcome: the redacted Debug form and the URL, or
+        // the message. It runs on a known-good config here, and on the two
+        // process-environment reads below.
+        fn shown(outcome: Result<DbConfig, StoreError>) -> Result<String, String> {
+            outcome
+                .map(|cfg| format!("{cfg:?}{}", cfg.database_url))
+                .map_err(message)
+        }
+        let good = DbConfig::new("postgresql://h/d");
+        assert_eq!(
+            shown(Ok(good.clone())),
+            Ok(format!("{good:?}postgresql://h/d"))
+        );
+        // `from_env` reads exactly the three variables, so it gives the answer
+        // of `from_reads` over the reads of those three.
+        assert_eq!(
+            shown(DbConfig::from_env()),
+            shown(DbConfig::from_reads(
+                std::env::var(DATABASE_URL_VAR),
+                std::env::var(STATEMENT_TIMEOUT_VAR),
+                std::env::var(CLIENT_TIMEOUT_VAR),
+            )),
+        );
     }
 
     /// The Debug form redacts the connection string and shows both bounds.

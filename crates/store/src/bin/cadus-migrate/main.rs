@@ -341,7 +341,7 @@ mod tests {
     use std::os::unix::ffi::OsStringExt;
 
     use cadus_store::test_support::TestDb;
-    use cadus_store::{DbConfig, StoreError};
+    use cadus_store::{DEFAULT_CLIENT_TIMEOUT_MS, DbConfig, StoreError};
 
     use super::{
         Mode, Shutdown, applied_count, apply, handler, migrate_config, parse_args, until_signal,
@@ -370,16 +370,26 @@ mod tests {
     /// reads everything else as `DbConfig::from_env` does.
     #[test]
     fn the_migrate_config_turns_the_statement_timeout_off() {
-        let expected = DbConfig::from_env()
-            .map(|cfg| (cfg.database_url, cfg.client_timeout_ms))
-            .map_err(|err| err.to_string());
-        let actual = migrate_config()
-            .map(|cfg| {
-                assert_eq!(cfg.statement_timeout_ms, 0);
-                (cfg.database_url, cfg.client_timeout_ms)
-            })
-            .map_err(|err| err.to_string());
-        assert_eq!(actual, expected);
+        // The pair a config projects to. It runs on a known-good config here,
+        // and on `migrate_config` and `from_env` below.
+        fn pair(cfg: DbConfig) -> (String, u64) {
+            (cfg.database_url, cfg.client_timeout_ms)
+        }
+        assert_eq!(
+            pair(DbConfig::new("postgresql://h/d")),
+            ("postgresql://h/d".to_string(), DEFAULT_CLIENT_TIMEOUT_MS)
+        );
+        // The statement timeout is off, so a long migration never hits it.
+        if let Ok(cfg) = migrate_config() {
+            assert_eq!(cfg.statement_timeout_ms, 0);
+        }
+        // Everything else reads as `from_env` reads it.
+        assert_eq!(
+            migrate_config().map(pair).map_err(|err| err.to_string()),
+            DbConfig::from_env()
+                .map(pair)
+                .map_err(|err| err.to_string()),
+        );
     }
 
     /// A handler that did not register is a configuration error that names

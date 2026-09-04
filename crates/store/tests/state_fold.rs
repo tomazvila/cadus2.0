@@ -268,6 +268,40 @@ async fn the_failure_map_resumes_from_the_stored_view() {
     .await;
 }
 
+/// V2. A `regraded` above the cursor stops the resume of the stored view, so
+/// `load_session_view` rebuilds the whole view from the log.
+///
+/// The stored document names a failure the log does not hold. A resume would
+/// keep it; a full replay drops it. The answer proves the replay ran.
+#[tokio::test]
+async fn a_regraded_above_the_cursor_rebuilds_the_view_from_the_log() {
+    TestDb::with(|db| async move {
+        let user = db.seed_user("regraded-view@example.com").await;
+        let scene = Scene::new(&db);
+        let input = scene.input();
+        let mut tx = open_first_session(&scene.handle, user).await;
+        let saved = project_and_save(&mut tx, user, &input, None).await.unwrap();
+        assert_eq!(saved.through_seq, 2);
+        tx.commit().await.unwrap();
+
+        // A failure the LOG does not hold, written straight into the cache.
+        let mut doc = stored_view(&db, user).await;
+        doc["lesson_failures"] = json!({"fractions": ["kp9"]});
+        put_view(&db, user, &doc).await;
+
+        // A `regraded` above the cursor makes the window refuse the resume.
+        let mut tx = open_locked(&scene.handle, user).await;
+        append_all(&mut tx, user, &[(&regraded("t-1"), None)]).await;
+        let view = load_session_view(&mut tx, user).await.unwrap();
+        tx.rollback().await.unwrap();
+
+        // The replay rebuilt the view from the log, so the hand-written failure
+        // is gone.
+        assert_eq!(view.lesson_failures.len(), 0);
+    })
+    .await;
+}
+
 /// V2, and the reason migration 0010 needs no backfill: a stored document that
 /// carries no `lesson_failures` map does not read back, so the fold rebuilds the
 /// whole view from the log.

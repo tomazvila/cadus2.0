@@ -401,6 +401,53 @@ fn the_other_branches_of_the_fold_fold_nothing_or_reset() {
     assert_eq!(view.quiz_high_score_streak, 0);
 }
 
+/// An attempt whose instant is outside the representable range adds no study
+/// day, and an event this view folds nothing for leaves the view unchanged.
+#[test]
+fn an_unrepresentable_attempt_and_an_ignored_event_change_nothing() {
+    use cadus_core::event::ProfileReset;
+
+    let mut view = SessionView::default();
+    view.apply(
+        1,
+        &Event::Attempt(Attempt {
+            ts: Timestamp::from_micros(i64::MAX),
+            session: None,
+            v: SchemaVersion,
+            attempt_id: "a1".to_string(),
+            task_id: "t1".to_string(),
+            topic: slug("adding-integers"),
+            kp: None,
+            task_type: TaskType::Lesson,
+            problem: AttemptProblem {
+                text: "Compute $1 + 1$.".to_string(),
+                expected: "2".to_string(),
+            },
+            given_answer: "2".to_string(),
+            work: None,
+            answer_kind: None,
+            correct: true,
+            secs: Secs::new(9).expect("nine seconds"),
+            error_tags: Vec::new(),
+            work_quality: WorkQuality::NearlyPerfect,
+            grader_note: None,
+            assisted: false,
+        }),
+    );
+    assert!(view.study_days().is_empty());
+
+    view.apply(
+        2,
+        &Event::ProfileReset(ProfileReset {
+            ts: at(0),
+            session: None,
+            v: SchemaVersion,
+            topics: Vec::new(),
+        }),
+    );
+    assert_eq!(view, SessionView::default());
+}
+
 /// The next session id of a day takes the first unused letter, and a day
 /// that used all 26 gives `z` again.
 #[test]
