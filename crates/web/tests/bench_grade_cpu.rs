@@ -7,7 +7,7 @@
 //!
 //! `docs/reference/l1-budget.md` gives the CPU half of the grade path 5 ms of
 //! the 300 ms of L2. `crates/core/tests/bench_l1.rs` measures `check` alone.
-//! This file measures the three pieces the HANDLER runs on one submission, in
+//! This file measures the two pieces the HANDLER runs on one submission, in
 //! the order it runs them:
 //!
 //! 1. `cadus_core::learner::problem_text_hash` of the served statement — the D5
@@ -39,37 +39,27 @@
 //!
 //! `scripts/bench.sh` runs this file in the release profile. Without
 //! `CADUS_BENCH` in the environment it prints one skip line and returns, so
-//! `cargo test --workspace` stays a test run (spec section 10.5).
+//! `cargo test --workspace` stays a test run (spec section 10.5). The helpers
+//! of the run have their own tests below, which run either way.
 
-#![allow(
-    clippy::unwrap_used,
-    clippy::expect_used,
-    clippy::panic,
-    clippy::todo,
-    clippy::unimplemented
-)]
+#![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
 
-use std::path::{Path, PathBuf};
+mod common;
+
 use std::time::Instant;
 
 use cadus_core::answer::normalize;
 use cadus_core::curriculum::AnswerKind;
 use cadus_core::event::WorkQuality;
 use cadus_core::learner::problem_text_hash;
-use cadus_web::grade::deterministic_grade;
-
-/// The count of rows the 1.0 answer corpus holds.
-const CORPUS_ANSWERS: usize = 3_492;
+use cadus_web::grade::{Grade, deterministic_grade};
+use common::{
+    BENCH_VAR, CORPUS_ROWS, CorpusRow, Percentiles, benchmarks_are_on, budget, corpus, kind_of,
+    profile, write_artifact,
+};
 
 /// The p95 budget of one grade, in nanoseconds: 5 ms of the 300 ms of L2.
 const GRADE_P95_BUDGET_NS: u128 = 5_000_000;
-
-/// The debug-profile multiplier of the budget.
-///
-/// The exact arithmetic runs about ten times slower without optimization, which
-/// is the rule `crates/core/tests/bench_l1.rs` and
-/// `crates/core/tests/answer_check.rs` already carry.
-const DEBUG_SLOWDOWN: u128 = 10;
 
 /// Every `BLANK_STRIDE`-th row is graded blank.
 const BLANK_STRIDE: usize = 10;
@@ -108,108 +98,34 @@ const BLANK_TAGS: usize = 350;
 /// compare.
 const GRADE_P50_FLOOR_NS: u128 = 1_000;
 
-/// The environment variable that turns the benchmarks on.
-const BENCH_VAR: &str = "CADUS_BENCH";
-
-/// The environment variable that moves the artifact directory.
-const ARTIFACT_DIR_VAR: &str = "CADUS_BENCH_DIR";
+/// The width of a `problem_text_hash` digest, in hex characters.
+const DIGEST_WIDTH: usize = 12;
 
 // --------------------------------------------------------------------------- //
-// Percentiles and the artifact
+// The inputs
 // --------------------------------------------------------------------------- //
 
-/// The `percent` percentile of a sorted sample, by the nearest-rank rule.
+/// One measured submission: the served statement, the authored answer, the
+/// learner's answer, and the grammar.
+struct Case {
+    statement: String,
+    expected: String,
+    learner: String,
+    kind: AnswerKind,
+}
+
+/// The re-spelling of one reader source: a wrong value, or the same value in
+/// another string.
 ///
-/// The rank is `ceil(percent * n / 100)`, counted from one. The arithmetic is
-/// integer arithmetic, so no float enters a reported number (D6).
-fn percentile(sorted: &[u128], percent: u128) -> u128 {
-    assert!(!sorted.is_empty(), "a percentile needs a sample");
-    let count = sorted.len() as u128;
-    let rank = (percent * count).div_ceil(100).max(1);
-    let index = usize::try_from(rank - 1).unwrap_or(0);
-    sorted[index.min(sorted.len() - 1)]
-}
-
-/// The p50, p95, p99, and maximum of a sample of nanosecond durations.
-struct Percentiles {
-    p50: u128,
-    p95: u128,
-    p99: u128,
-    max: u128,
-}
-
-impl Percentiles {
-    /// Read the percentiles of one sample. The function sorts its own copy.
-    fn of(samples: &[u128]) -> Self {
-        let mut sorted = samples.to_vec();
-        sorted.sort_unstable();
-        Self {
-            p50: percentile(&sorted, 50),
-            p95: percentile(&sorted, 95),
-            p99: percentile(&sorted, 99),
-            max: *sorted.last().unwrap(),
-        }
-    }
-}
-
-/// The name of the build profile, for the artifact.
-fn profile() -> &'static str {
-    if cfg!(debug_assertions) {
-        "debug"
-    } else {
-        "release"
-    }
-}
-
-/// The time budget of this build profile.
-fn budget(release_ns: u128) -> u128 {
-    if cfg!(debug_assertions) {
-        release_ns * DEBUG_SLOWDOWN
-    } else {
-        release_ns
-    }
-}
-
-/// Write the benchmark artifact and print its path.
-fn write_artifact(body: &str) {
-    let dir = match std::env::var_os(ARTIFACT_DIR_VAR) {
-        Some(value) => PathBuf::from(value),
-        None => Path::new(env!("CARGO_MANIFEST_DIR")).join("../../target/bench"),
-    };
-    std::fs::create_dir_all(&dir).unwrap_or_else(|err| panic!("create {}: {err}", dir.display()));
-    let path = dir.join("benchmark-a-grade.json");
-    std::fs::write(&path, body).unwrap_or_else(|err| panic!("write {}: {err}", path.display()));
-    println!("artifact: {}", path.display());
-}
-
-// --------------------------------------------------------------------------- //
-// The corpus
-// --------------------------------------------------------------------------- //
-
-/// One row of the 1.0 answer corpus.
-#[derive(serde::Deserialize)]
-struct CorpusRow {
-    answer: String,
-    answer_kind: String,
-}
-
-/// Read the 1.0 answer corpus. It lives with the core tests that first read it.
-fn corpus() -> Vec<CorpusRow> {
-    let path = Path::new(env!("CARGO_MANIFEST_DIR"))
-        .join("../core/tests/fixtures/answers/corpus_1_0.jsonl");
-    let text = std::fs::read_to_string(&path)
-        .unwrap_or_else(|err| panic!("read {}: {err}", path.display()));
-    text.lines()
-        .map(|line| serde_json::from_str(line).unwrap_or_else(|err| panic!("row {line}: {err}")))
-        .collect()
-}
-
-/// The answer kind of one corpus row.
-fn kind_of(row: &CorpusRow) -> AnswerKind {
-    match row.answer_kind.as_str() {
-        "numeric" => AnswerKind::Numeric,
-        "expression" => AnswerKind::Expression,
-        other => panic!("the corpus holds only verifiable kinds, and this row is {other}"),
+/// The rewrite starts from the reader source and not the authored text: the
+/// author wraps an answer in `$...$`, and `normalize` strips that pair at the
+/// two ends only.
+fn respell(source: &str, wrong: bool, kind: AnswerKind) -> String {
+    match (wrong, kind) {
+        (true, AnswerKind::Numeric) => format!("{source}+1"),
+        (true, _) => format!("({source})*2"),
+        (false, AnswerKind::Numeric) => format!("{source}+0"),
+        (false, _) => format!("({source})*1"),
     }
 }
 
@@ -221,149 +137,182 @@ fn learner_answer(index: usize, row: &CorpusRow) -> String {
     if index.is_multiple_of(BLANK_STRIDE) {
         return String::new();
     }
-    // Re-spell the reader source and not the authored text. The author wraps an
-    // answer in `$...$`, and `normalize` strips that pair at the two ends only.
     let source = normalize(&row.answer).source;
-    match (index % BLANK_STRIDE, kind_of(row)) {
-        (WRONG_REMAINDER, AnswerKind::Numeric) => format!("{source}+1"),
-        (WRONG_REMAINDER, _) => format!("({source})*2"),
-        (_, AnswerKind::Numeric) => format!("{source}+0"),
-        (_, _) => format!("({source})*1"),
-    }
+    respell(
+        &source,
+        index % BLANK_STRIDE == WRONG_REMAINDER,
+        kind_of(row),
+    )
 }
 
-// --------------------------------------------------------------------------- //
-// The benchmark
-// --------------------------------------------------------------------------- //
-
-/// Benchmark A: the hash and the deterministic grade hold the 5 ms of L2.
-#[test]
-fn benchmark_a_grade_cpu_holds_the_l2_segment() {
-    if std::env::var_os(BENCH_VAR).is_none() {
-        println!("SKIPPED benchmark A (grade CPU): {BENCH_VAR} is not set");
-        return;
-    }
-    let corpus = corpus();
-    assert_eq!(corpus.len(), CORPUS_ANSWERS, "the corpus is 3,492 answers");
-
-    // Build every input before the loop. A `format!` of the fixture is fixture
-    // work, and fixture work never enters a measured sample.
-    let cases: Vec<(String, String, String, AnswerKind)> = corpus
+/// Every input of the run, built before the loop. A `format!` of the fixture
+/// is fixture work, and fixture work never enters a measured sample.
+fn cases(corpus: &[CorpusRow]) -> Vec<Case> {
+    corpus
         .iter()
         .enumerate()
-        .map(|(index, row)| {
-            (
-                format!("Problem {index}. State the value."),
-                row.answer.clone(),
-                learner_answer(index, row),
-                kind_of(row),
-            )
+        .map(|(index, row)| Case {
+            statement: format!("Problem {index}. State the value."),
+            expected: row.answer.clone(),
+            learner: learner_answer(index, row),
+            kind: kind_of(row),
         })
-        .collect();
+        .collect()
+}
 
-    let blanks = cases.iter().filter(|case| case.2.is_empty()).count();
+/// The three shares of the inputs.
+struct Shares {
+    blanks: usize,
+    wrong: usize,
+    respelled: usize,
+}
+
+/// Count the three shares of `cases`.
+fn shares(cases: &[Case]) -> Shares {
+    let blanks = cases.iter().filter(|case| case.learner.is_empty()).count();
     let respelled = cases
         .iter()
         .enumerate()
         .filter(|(index, _)| index % BLANK_STRIDE > WRONG_REMAINDER)
         .count();
-    let wrong = cases.len() - blanks - respelled;
+    Shares {
+        blanks,
+        wrong: cases.len() - blanks - respelled,
+        respelled,
+    }
+}
 
-    let mut samples: Vec<u128> = Vec::with_capacity(cases.len());
-    let mut digests: Vec<String> = Vec::with_capacity(cases.len());
-    let mut correct = 0_usize;
-    let mut poor = 0_usize;
-    let mut nearly_passable = 0_usize;
-    let mut blank_tags = 0_usize;
-    for (statement, expected, learner, kind) in &cases {
-        let start = Instant::now();
-        let digest = problem_text_hash(statement);
-        let grade = deterministic_grade(expected, learner, *kind);
-        samples.push(start.elapsed().as_nanos());
-        digests.push(digest);
+// --------------------------------------------------------------------------- //
+// The verdict tally
+// --------------------------------------------------------------------------- //
+
+/// How many grades of the run came back at each tier.
+#[derive(Default)]
+struct Tally {
+    correct: usize,
+    poor: usize,
+    nearly_passable: usize,
+    blank_tags: usize,
+}
+
+impl Tally {
+    /// Count one grade.
+    fn add(&mut self, grade: &Grade) {
         if grade.correct {
-            correct += 1;
+            self.correct += 1;
         }
         match grade.work_quality {
-            WorkQuality::Poor => poor += 1,
-            WorkQuality::NearlyPassable => nearly_passable += 1,
+            WorkQuality::Poor => self.poor += 1,
+            WorkQuality::NearlyPassable => self.nearly_passable += 1,
             _ => {}
         }
         if grade.error_tags.iter().any(|tag| tag == "blank-answer") {
-            blank_tags += 1;
+            self.blank_tags += 1;
         }
     }
+}
 
-    let times = Percentiles::of(&samples);
-    let budget = budget(GRADE_P95_BUDGET_NS);
-    // Report first, then assert: the review cycle reads the failing run too
-    // (spec section 10.2).
-    println!(
-        "benchmark A grade ({}): p50 {} ns, p95 {} ns, p99 {} ns, max {} ns over {} rows \
-         ({} blank, {} wrong, {} respelled; {} correct, {} poor, {} nearly_passable)",
-        profile(),
-        times.p50,
-        times.p95,
-        times.p99,
-        times.max,
-        cases.len(),
-        blanks,
-        wrong,
-        respelled,
-        correct,
-        poor,
-        nearly_passable,
-    );
-    write_artifact(&format!(
-        "{{\n  \"benchmark\": \"A-grade\",\n  \"profile\": {:?},\n  \"rows\": {},\n  \
+/// What one measured run produced.
+struct Run {
+    samples: Vec<u128>,
+    digests: Vec<String>,
+    tally: Tally,
+}
+
+/// Time the hash and the grade of every case, in the order the handler runs
+/// them.
+fn measure(cases: &[Case]) -> Run {
+    let mut run = Run {
+        samples: Vec::with_capacity(cases.len()),
+        digests: Vec::with_capacity(cases.len()),
+        tally: Tally::default(),
+    };
+    for case in cases {
+        let start = Instant::now();
+        let digest = problem_text_hash(&case.statement);
+        let grade = deterministic_grade(&case.expected, &case.learner, case.kind);
+        run.samples.push(start.elapsed().as_nanos());
+        run.digests.push(digest);
+        run.tally.add(&grade);
+    }
+    run
+}
+
+// --------------------------------------------------------------------------- //
+// The report and the assertions
+// --------------------------------------------------------------------------- //
+
+/// The JSON body of the artifact.
+fn artifact_body(rows: usize, shares: &Shares, tally: &Tally, times: &Percentiles) -> String {
+    format!(
+        "{{\n  \"benchmark\": \"A-grade\",\n  \"profile\": {:?},\n  \"rows\": {rows},\n  \
          \"inputs\": {{\"blank\": {}, \"wrong\": {}, \"respelled\": {}}},\n  \
          \"verdicts\": {{\"correct\": {}, \"poor\": {}, \"nearly_passable\": {}}},\n  \
-         \"grade_ns\": {{\"p50_ns\": {}, \"p95_ns\": {}, \"p99_ns\": {}, \"max_ns\": {}}},\n  \
-         \"p95_budget_ns\": {}\n}}\n",
+         \"grade_ns\": {},\n  \"p95_budget_ns\": {}\n}}\n",
         profile(),
-        cases.len(),
-        blanks,
-        wrong,
-        respelled,
-        correct,
-        poor,
-        nearly_passable,
-        times.p50,
-        times.p95,
-        times.p99,
-        times.max,
-        budget,
-    ));
+        shares.blanks,
+        shares.wrong,
+        shares.respelled,
+        tally.correct,
+        tally.poor,
+        tally.nearly_passable,
+        times.json(),
+        budget(GRADE_P95_BUDGET_NS),
+    )
+}
 
-    assert_eq!(samples.len(), CORPUS_ANSWERS, "every row is measured");
-    assert_eq!(blanks, BLANK_ROWS, "the blank share of the corpus changed");
-    assert_eq!(wrong, WRONG_ROWS, "the wrong share of the corpus changed");
+/// The three shares are the literals of the committed corpus.
+fn assert_shares(shares: &Shares) {
     assert_eq!(
-        respelled, RESPELLED_ROWS,
-        "the re-spelled share of the corpus changed"
+        shares.blanks, BLANK_ROWS,
+        "the blank share of the corpus changed"
     );
     assert_eq!(
-        digests.len(),
-        CORPUS_ANSWERS,
+        shares.wrong, WRONG_ROWS,
+        "the wrong share of the corpus changed"
+    );
+    assert_eq!(
+        shares.respelled, RESPELLED_ROWS,
+        "the re-spelled share of the corpus changed"
+    );
+}
+
+/// Every row is measured, every iteration produced a digest of the D5 width,
+/// and the verdict counts are the literals of the committed corpus.
+fn assert_verdicts(run: &Run) {
+    assert_eq!(run.samples.len(), CORPUS_ROWS, "every row is measured");
+    assert_eq!(
+        run.digests.len(),
+        CORPUS_ROWS,
         "a measured iteration produced no digest"
     );
     assert!(
-        digests.iter().all(|digest| digest.len() == 12),
+        run.digests
+            .iter()
+            .all(|digest| digest.len() == DIGEST_WIDTH),
         "problem_text_hash returned a digest of another width"
     );
     assert_eq!(
-        correct, CORRECT_GRADES,
+        run.tally.correct, CORRECT_GRADES,
         "the count of accepted re-spellings changed"
     );
-    assert_eq!(poor, POOR_GRADES, "the count of poor grades changed");
     assert_eq!(
-        nearly_passable, NEARLY_PASSABLE_GRADES,
+        run.tally.poor, POOR_GRADES,
+        "the count of poor grades changed"
+    );
+    assert_eq!(
+        run.tally.nearly_passable, NEARLY_PASSABLE_GRADES,
         "the count of nearly_passable grades changed"
     );
     assert_eq!(
-        blank_tags, BLANK_TAGS,
+        run.tally.blank_tags, BLANK_TAGS,
         "the count of blank-answer tags changed"
     );
+}
+
+/// The p95 holds the budget, and the p50 stands above the short-circuit floor.
+fn assert_times(times: &Percentiles) {
+    let budget = budget(GRADE_P95_BUDGET_NS);
     assert!(
         times.p95 < budget,
         "the p95 grade took {} ns, and the budget is {budget} ns",
@@ -375,4 +324,132 @@ fn benchmark_a_grade_cpu_holds_the_l2_segment() {
          short-circuited before the canonicalizer",
         times.p50
     );
+}
+
+/// The whole run: the corpus, the loop, the report, then the assertions.
+///
+/// The report comes first, so the review cycle reads the failing run too
+/// (spec section 10.2).
+fn run_benchmark() {
+    let corpus = corpus();
+    assert_eq!(corpus.len(), CORPUS_ROWS, "the corpus is 3,492 answers");
+    let cases = cases(&corpus);
+    let shares = shares(&cases);
+    let run = measure(&cases);
+    let times = Percentiles::of(&run.samples);
+    println!(
+        "benchmark A grade ({}): {} over {} rows ({} blank, {} wrong, {} respelled; \
+         {} correct, {} poor, {} nearly_passable)",
+        profile(),
+        times.phrase(),
+        cases.len(),
+        shares.blanks,
+        shares.wrong,
+        shares.respelled,
+        run.tally.correct,
+        run.tally.poor,
+        run.tally.nearly_passable,
+    );
+    write_artifact(
+        "benchmark-a-grade.json",
+        &artifact_body(cases.len(), &shares, &run.tally, &times),
+    );
+    assert_shares(&shares);
+    assert_verdicts(&run);
+    assert_times(&times);
+}
+
+/// Benchmark A: the hash and the deterministic grade hold the 5 ms of L2.
+#[test]
+fn benchmark_a_grade_cpu_holds_the_l2_segment() {
+    if !benchmarks_are_on() {
+        println!("SKIPPED benchmark A (grade CPU): {BENCH_VAR} is not set");
+        return;
+    }
+    run_benchmark();
+}
+
+// --------------------------------------------------------------------------- //
+// The helpers, tested without the benchmark switch
+// --------------------------------------------------------------------------- //
+
+/// One corpus row of `kind` with the authored answer `answer`.
+fn row(answer: &str, kind: &str) -> CorpusRow {
+    CorpusRow {
+        answer: answer.to_string(),
+        answer_kind: kind.to_string(),
+    }
+}
+
+/// The stride rule: index 0 is blank, index 1 is wrong, every other index is
+/// a re-spelling, and each rewrite follows the grammar of the row.
+#[test]
+fn the_learner_answer_follows_the_stride_rule() {
+    let numeric = row("$12$", "numeric");
+    let expression = row("2*x+1", "expression");
+    assert_eq!(learner_answer(0, &numeric), "");
+    assert_eq!(learner_answer(1, &numeric), "12+1");
+    assert_eq!(learner_answer(2, &numeric), "12+0");
+    assert_eq!(learner_answer(11, &expression), "(2*x+1)*2");
+    assert_eq!(learner_answer(12, &expression), "(2*x+1)*1");
+    assert_eq!(learner_answer(20, &expression), "");
+}
+
+/// The tally reads the three tiers and the blank tag of a grade.
+#[test]
+fn the_tally_counts_every_tier_once() {
+    let mut tally = Tally::default();
+    tally.add(&deterministic_grade("12", "12+0", AnswerKind::Numeric));
+    tally.add(&deterministic_grade("12", "12+1", AnswerKind::Numeric));
+    tally.add(&deterministic_grade("12", "", AnswerKind::Numeric));
+    assert_eq!(
+        (
+            tally.correct,
+            tally.poor,
+            tally.nearly_passable,
+            tally.blank_tags
+        ),
+        (1, 1, 1, 1)
+    );
+}
+
+/// The shares of a ten-row slice are one blank, one wrong, eight re-spelled.
+#[test]
+fn the_shares_follow_the_stride() {
+    let rows: Vec<CorpusRow> = (0..10).map(|_| row("7", "numeric")).collect();
+    let counted = shares(&cases(&rows));
+    assert_eq!(
+        (counted.blanks, counted.wrong, counted.respelled),
+        (1, 1, 8)
+    );
+}
+
+/// The percentiles follow the nearest-rank rule, and the artifact writer
+/// puts its file where it says it does.
+#[test]
+fn the_percentiles_and_the_artifact_are_readable() {
+    let times = Percentiles::of(&[5, 1, 4, 2, 3]);
+    assert_eq!((times.p50, times.p95, times.p99, times.max), (3, 5, 5, 5));
+    assert_eq!(
+        times.json(),
+        "{\"p50_ns\": 3, \"p95_ns\": 5, \"p99_ns\": 5, \"max_ns\": 5}"
+    );
+    assert_eq!(times.phrase(), "p50 3 ns, p95 5 ns, p99 5 ns, max 5 ns");
+    let empty = Percentiles::of(&[]);
+    assert_eq!((empty.p50, empty.max), (0, 0));
+
+    let body = artifact_body(
+        10,
+        &Shares {
+            blanks: 1,
+            wrong: 1,
+            respelled: 8,
+        },
+        &Tally::default(),
+        &times,
+    );
+    let path = write_artifact("benchmark-a-grade-probe.json", &body);
+    assert_eq!(std::fs::read_to_string(&path).unwrap(), body);
+    assert!(body.contains("\"benchmark\": \"A-grade\""));
+    assert!(body.contains(&format!("\"profile\": {:?}", profile())));
 }

@@ -1,0 +1,100 @@
+//! The bodies the route hands back: the section 2.1 reply, the H3 stash
+//! reply, and the quiz buffer the batch reveal reads.
+
+use super::*;
+
+/// The H3 `rework_required` reply: the solution and the authored answer, and
+/// the stock re-solve instruction (D-M5-3).
+pub(super) fn rework_reply(served: &ServedProblem) -> Value {
+    json!({
+        "rework_required": true,
+        "problem_id": served.problem_id,
+        "solution": served.solution_sketch,
+        "expected": served.expected.answer,
+        "re_solve": RE_SOLVE,
+    })
+}
+
+/// Drop every scratch entry a finished task owns (`_clear_task_scratch`).
+///
+/// The buffers hold each question's hidden `expected` and its solution sketch,
+/// and the D-S6 row is persisted, so a closed task must not keep them.
+pub(super) fn clear_task_scratch(scratch: &mut WebState, task_id: &str) {
+    scratch.served.remove(task_id);
+    scratch.quizzes.remove(task_id);
+    scratch.multistep.remove(task_id);
+    scratch.task_memory.remove(task_id);
+}
+
+/// The client reply of section 2.1.
+///
+/// It names every field it emits. `solution` is revealed only after the attempt
+/// commits, and `expected` never reaches the client on this path at all. A quiz
+/// never reaches this reply (trap W7): its receipt is `quiz_receipt`.
+pub(super) fn reply(
+    recorded: &Attempt,
+    moved: &Advance,
+    served: &ServedProblem,
+    next: Option<Value>,
+    closed: bool,
+    diagnosis: Value,
+) -> Value {
+    // A bare `next: null` on an open task reads as "task over" (trap W5), so
+    // an open task with no next problem says `next_unavailable` (trap W6).
+    let unavailable = !closed && next.is_none();
+    let mut map: Map<String, Value> = [
+        ("attempt_id", json!(recorded.attempt_id)),
+        ("correct", json!(recorded.correct)),
+        ("work_quality", json!(recorded.work_quality)),
+        ("error_tags", json!(recorded.error_tags)),
+        ("secs", json!(recorded.secs.get())),
+        ("task_status", json!(moved.status)),
+        ("remediation", json!(moved.remediation_view())),
+        ("next", json!(next)),
+        ("diagnosis", diagnosis),
+    ]
+    .into_iter()
+    .map(|(key, value)| (key.to_string(), value))
+    .collect();
+    // A quiz reveals nothing until its batch reveal (trap W7), so no solution
+    // and no re-solve text leaves this route for one.
+    if let Some(solution) = &served.solution_sketch {
+        map.insert("solution".to_string(), json!(solution));
+    }
+    if !recorded.correct {
+        map.insert("re_solve".to_string(), json!(RE_SOLVE));
+    }
+    if unavailable {
+        map.insert("next_unavailable".to_string(), json!(true));
+    }
+    if let Some(xp) = moved.xp {
+        map.insert("xp".to_string(), json!(xp));
+    }
+    Value::Object(map)
+}
+
+/// Put one answered quiz question into the buffer the batch reveal reads.
+///
+/// The buffer holds the hidden solution sketch of each question, so it is the
+/// one place a quiz keeps it; the reply carries none of it (trap W7).
+pub(super) fn buffer_quiz_answer(
+    scratch: &mut WebState,
+    task_id: &str,
+    served: &ServedProblem,
+    recorded: &Attempt,
+) {
+    scratch
+        .quizzes
+        .entry(task_id.to_string())
+        .or_default()
+        .answers
+        .push(json!({
+            "problem_id": served.problem_id,
+            "topic": served.topic,
+            "text": served.text,
+            "given_answer": recorded.given_answer,
+            "correct": recorded.correct,
+            "secs": recorded.secs.get(),
+            "solution_sketch": served.solution_sketch,
+        }));
+}

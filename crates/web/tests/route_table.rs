@@ -42,13 +42,7 @@
 //! fixture. The probe method, the two fallback status codes, and the two `Allow`
 //! values are written out.
 
-#![allow(
-    clippy::unwrap_used,
-    clippy::expect_used,
-    clippy::panic,
-    clippy::todo,
-    clippy::unimplemented
-)]
+#![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
 
 use std::collections::BTreeSet;
 use std::fs;

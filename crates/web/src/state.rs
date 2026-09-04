@@ -319,13 +319,11 @@ impl WebState {
         serde_json::from_value(doc.clone()).map_err(|err| err.to_string())
     }
 
-    /// Write the document for the `web_states.doc` column.
-    ///
-    /// # Errors
-    ///
-    /// Returns the `serde_json` message when the document does not serialize.
-    pub fn to_doc(&self) -> Result<Json, String> {
-        serde_json::to_value(self).map_err(|err| err.to_string())
+    /// Write the document for the `web_states.doc` column. Every field is a
+    /// plain value, so the conversion always succeeds.
+    #[must_use]
+    pub fn to_doc(&self) -> Json {
+        serde_json::json!(self)
     }
 
     /// Bind the document to `session`, and reset it when the session drifted.
