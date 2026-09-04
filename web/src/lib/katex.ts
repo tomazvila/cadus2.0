@@ -57,18 +57,6 @@ declare global {
 }
 
 /**
- * The auto-render extension, read off the window at call time.
- *
- * `index.html` loads it as a UMD global from the vendored tree, `katex.min.js` first (see
- * `vendor-tags.ts`). A read at module scope captures `undefined` when the bundle evaluates
- * before the deferred vendor scripts, and every problem then shows raw LaTeX forever.
- */
-function autoRender(): AutoRender | null {
-  const fn = window.renderMathInElement;
-  return typeof fn === 'function' ? fn : null;
-}
-
-/**
  * The rendered HTML of each source string seen so far.
  *
  * KaTeX parses and lays out every expression, and one statement appears in the problem card,
@@ -109,21 +97,21 @@ export function renderMathToHtml(source: string): string {
   // the model's output becomes a text node before anything parses it as markup.
   host.textContent = source;
 
-  const render = autoRender();
-  if (render) {
-    try {
-      render(host, { delimiters: DELIMITERS, throwOnError: false });
-    } catch {
-      // Put the escaped source back, rather than throw into a React render.
-      host.textContent = source;
-    }
+  // The auto-render extension is read off the window AT CALL TIME. `index.html` loads it as
+  // a UMD global from the vendored tree, `katex.min.js` first (see `vendor-tags.ts`). A read
+  // at module scope captures `undefined` when the bundle evaluates before the deferred vendor
+  // scripts, and every problem then shows raw LaTeX forever. An absent extension throws on
+  // the call, so the one catch covers the absent renderer and the failed render alike.
+  try {
+    window.renderMathInElement!(host, { delimiters: DELIMITERS, throwOnError: false });
+  } catch {
+    // Put the escaped source back, rather than throw into a React render.
+    host.textContent = source;
   }
 
   const html = host.innerHTML;
-  if (CACHE.size >= CACHE_LIMIT) {
-    const oldest = CACHE.keys().next().value;
-    if (oldest !== undefined) CACHE.delete(oldest);
-  }
+  // The cache is never empty here, so the oldest key exists.
+  if (CACHE.size >= CACHE_LIMIT) CACHE.delete(CACHE.keys().next().value!);
   CACHE.set(source, html);
   return html;
 }

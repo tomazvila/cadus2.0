@@ -110,8 +110,8 @@ export function Diagnostic({ diag, demo = false, onUnauthorized, onExit }: Diagn
     probeRef.current = null;
     setResult(null);
     setFinishing(true);
-    closeWith(call, life, gate, 'done', () => diag.diagFinish(), setSummary);
-  }, [call, diag, gate, life]);
+    closeWith(call, gate, 'done', () => diag.diagFinish(), setSummary);
+  }, [call, diag, gate]);
 
   // `finish` is read through a ref so it stays OUT of the beat effect's dependency list. It
   // is a `useCallback` keyed on the transport, and a caller that rebuilds that object each
@@ -174,7 +174,7 @@ export function Diagnostic({ diag, demo = false, onUnauthorized, onExit }: Diagn
         retryGate: () => life.alive()
           && probeRef.current?.problem_id === current.problem_id
           && gate.tryEnter('ready', 'submitting'),
-        onFail: releaseOnFail(life, gate, 'submitting', 'ready'),
+        onFail: releaseOnFail(gate, 'submitting', 'ready'),
       },
     );
   }, [call, diag, gate, life]);

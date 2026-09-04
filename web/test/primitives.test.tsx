@@ -89,6 +89,19 @@ describe('Chip and Stat', () => {
   });
 });
 
+describe('Stat and Ring without their options', () => {
+  it('keeps the bare stat class when no variant is given', () => {
+    const { container } = render(<Stat value="3" label="frontier" />);
+    expect(container.querySelector('.stat')?.className).toBe('stat');
+  });
+
+  it('draws an empty label and sub for a ring given neither', () => {
+    const { container } = render(<Ring fraction={0.25} />);
+    expect(container.querySelector('.ring-label strong')?.textContent).toBe('');
+    expect(container.querySelector('.ring-label span')?.textContent).toBe('');
+  });
+});
+
 describe('Ring', () => {
   /** 2 * PI * 54, to one decimal — the full circumference of the drawn circle. */
   const FULL = '339.3';

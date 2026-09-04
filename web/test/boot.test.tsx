@@ -89,6 +89,7 @@ describe('the boot tokens', () => {
     // second read raced the verification write in 1.0 and reported the learner unverified.
     expect(me).not.toHaveBeenCalled();
     expect(messages()).toEqual(['Email verified — thanks!']);
+    expect(toastStore.getSnapshot()[0].kind).toBe('info');
     // Verified and signed in: the shell shows the account, not the auth card.
     expect(screen.getByTitle('learner@example.com')).toBeTruthy();
     expect(screen.queryByRole('button', { name: 'Sign in' })).toBeNull();
@@ -108,12 +109,15 @@ describe('the boot tokens', () => {
     // The browser is ON the email link, so the strip is observable rather than vacuous.
     history.replaceState({}, '', '/verify?token=tok-4');
     expect(window.location.search).toBe('?token=tok-4');
+    const replace = vi.spyOn(history, 'replaceState');
 
     await boot(stub({ verifyEmail: async () => ({ user: USER }) }), '/verify', '?token=tok-4');
 
     // `/verify` has no screen of its own, so the spent link lands on the dashboard.
     expect(window.location.pathname).toBe('/');
     expect(window.location.search).toBe('');
+    expect(replace).toHaveBeenCalledTimes(1);
+    expect(replace).toHaveBeenCalledWith({}, '', '/');
   });
 
   it('toasts a generic line when the verify call fails for another reason', async () => {
@@ -123,6 +127,17 @@ describe('the boot tokens', () => {
 
     expect(messages()).toEqual(['Could not verify your email.']);
     expect(screen.getByRole('button', { name: 'Sign in' })).toBeTruthy();
+  });
+
+  it('calls a link expired on invalid_token alone, not on any service refusal', async () => {
+    const verifyEmail = vi.fn(async () => {
+      throw new ApiError(503, 'unavailable', 'Later.');
+    });
+
+    await boot(stub({ verifyEmail, me: SIGNED_OUT }), '/', '?verify=tok-3');
+
+    expect(messages()).toEqual(['Could not verify your email.']);
+    expect(toastStore.getSnapshot()[0].kind).toBe('error');
   });
 
   it('survives a blocked history write when it strips a token', () => {
@@ -181,11 +196,14 @@ describe('the boot tokens', () => {
   it('spends nothing when the URL carries no token', async () => {
     const verifyEmail = vi.fn(async () => ({ user: USER }));
     const resetPassword = vi.fn(async () => ({ ok: true as const }));
+    const replace = vi.spyOn(history, 'replaceState');
 
     await boot(stub({ verifyEmail, resetPassword, me: SIGNED_OUT }), '/login', '');
 
     expect(verifyEmail).not.toHaveBeenCalled();
     expect(resetPassword).not.toHaveBeenCalled();
+    // Nothing to strip, so the address bar is not touched.
+    expect(replace).not.toHaveBeenCalled();
     expect(messages()).toEqual([]);
     expect(screen.getByText('sign in')).toBeTruthy();
   });

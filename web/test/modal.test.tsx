@@ -68,6 +68,17 @@ function mountDialogs() {
   };
 }
 
+/** Press Confirm on the dialog on screen; `promise` then carries 'yes' and `seen` is `record`. */
+async function confirmOnScreen(
+  d: ReturnType<typeof mountDialogs>,
+  promise: Promise<string | null>,
+  record: Array<string | null>,
+): Promise<void> {
+  await act(async () => { screen.getByRole('button', { name: 'Confirm' }).click(); });
+  await expect(promise).resolves.toBe('yes');
+  expect(d.seen).toEqual(record);
+}
+
 describe('Modal', () => {
   it('portals the dialog to document.body, outside the React container', () => {
     const d = mountDialogs();
@@ -139,10 +150,7 @@ describe('Modal', () => {
     // overwritten and its handler waited forever.
     await expect(first).resolves.toBeNull();
     expect(screen.getAllByRole('dialog')).toHaveLength(1);
-
-    await act(async () => { screen.getByRole('button', { name: 'Confirm' }).click(); });
-    await expect(second).resolves.toBe('yes');
-    expect(d.seen).toEqual([null, 'yes']);
+    await confirmOnScreen(d, second, [null, 'yes']);
   });
 
   it('settles a promise once, even when Cancel and Esc both fire', async () => {
@@ -165,11 +173,19 @@ describe('Modal', () => {
     // `aria-modal="true"` tells a screen reader the page behind is inert. A Tab that walks
     // out to the opener makes that a lie.
     last.focus();
-    fireEvent.keyDown(document, { key: 'Tab' });
+    expect(fireEvent.keyDown(document, { key: 'Tab' })).toBe(false);
     expect(document.activeElement).toBe(first);
 
     first.focus();
-    fireEvent.keyDown(document, { key: 'Tab', shiftKey: true });
+    expect(fireEvent.keyDown(document, { key: 'Tab', shiftKey: true })).toBe(false);
+    expect(document.activeElement).toBe(last);
+
+    // Between the ends the browser moves the focus itself, so nothing is swallowed.
+    first.focus();
+    expect(fireEvent.keyDown(document, { key: 'Tab' })).toBe(true);
+    expect(document.activeElement).toBe(first);
+    last.focus();
+    expect(fireEvent.keyDown(document, { key: 'Tab', shiftKey: true })).toBe(true);
     expect(document.activeElement).toBe(last);
 
     d.unmount();
@@ -180,7 +196,7 @@ describe('Modal', () => {
     const d = mountDialogs();
     const promise = d.open();
     d.opener.focus();
-    fireEvent.keyDown(document, { key: 'Tab', shiftKey: true });
+    expect(fireEvent.keyDown(document, { key: 'Tab', shiftKey: true })).toBe(false);
     expect(document.activeElement).toBe(screen.getByRole('button', { name: 'Cancel' }));
     d.unmount();
     return expect(promise).resolves.toBeNull();
@@ -205,10 +221,45 @@ describe('Modal', () => {
     const d = mountDialogs();
     const promise = d.open();
     d.opener.focus();
-    fireEvent.keyDown(document, { key: 'Tab' });
+    expect(fireEvent.keyDown(document, { key: 'Tab' })).toBe(false);
     expect(document.activeElement).toBe(screen.getByRole('button', { name: 'Confirm' }));
     d.unmount();
     return expect(promise).resolves.toBeNull();
+  });
+
+  it('leaves every key but Tab and Escape alone, wherever the focus is', () => {
+    const d = mountDialogs();
+    const promise = d.open();
+    d.opener.focus();
+    expect(fireEvent.keyDown(document, { key: 'a' })).toBe(true);
+    expect(document.activeElement).toBe(d.opener);
+    d.unmount();
+    return expect(promise).resolves.toBeNull();
+  });
+
+  it('swallows the Escape it acts on', async () => {
+    const d = mountDialogs();
+    const promise = d.open();
+    let swallowed = false;
+    await act(async () => { swallowed = !fireEvent.keyDown(document, { key: 'Escape' }); });
+    expect(swallowed).toBe(true);
+    await expect(promise).resolves.toBeNull();
+  });
+
+  it('ignores a stale resolver, so the dialog after it stays open', async () => {
+    const d = mountDialogs();
+    let staleResolve!: (v: string | null) => void;
+    const first = d.open((resolve) => {
+      staleResolve = resolve;
+      return confirmDialog(resolve);
+    });
+    await act(async () => { screen.getByRole('button', { name: 'Cancel' }).click(); });
+    await expect(first).resolves.toBeNull();
+
+    const second = d.open();
+    await act(async () => { staleResolve('late'); });
+    expect(screen.getByRole('dialog')).toBeTruthy();
+    await confirmOnScreen(d, second, [null, 'yes']);
   });
 
   it('releases its key listener on unmount', async () => {

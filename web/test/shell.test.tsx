@@ -152,8 +152,7 @@ describe('the app shell', () => {
     mount(<App user={USER}><Flaky /></App>);
     expect(screen.getByRole('alert')).toBeTruthy();
 
-    // The fault is fixed, the generation moves, the key changes, and the NEW boundary
-    // renders the child again.
+    // The fault is fixed, the boundary clears its error, and the child renders again.
     throws = false;
     act(() => { screen.getByRole('button', { name: 'Try again' }).click(); });
     expect(screen.queryByRole('alert')).toBeNull();

@@ -227,8 +227,8 @@ export function Session({
     setLive(null, 0);
     // NO ARGUMENTS. The on-screen clock is display only; the service measures the session
     // from its own accumulator and that value prices the XP (trap T4).
-    closeWith(call, life, gate, 'done', () => api.sessionEnd(), setSummary);
-  }, [api, call, gate, life, setLive]);
+    closeWith(call, gate, 'done', () => api.sessionEnd(), setSummary);
+  }, [api, call, gate, setLive]);
 
   const advanceTask = useCallback(() => {
     if (!session.needsReplan()) {

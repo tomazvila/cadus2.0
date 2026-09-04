@@ -8,10 +8,11 @@
  * The 401 branch and the demo branch are here too, because both decide whether a learner
  * keeps the screen they are on.
  */
+import { useEffect } from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { waitFor } from '@testing-library/react';
+import { render, waitFor } from '@testing-library/react';
 import { ApiError, NETWORK_MESSAGE } from '@/api';
-import { GENERIC_FAILURE_MESSAGE, SESSION_EXPIRED_MESSAGE } from '@/hooks/useCall';
+import { GENERIC_FAILURE_MESSAGE, SESSION_EXPIRED_MESSAGE, useCall, type Call } from '@/hooks/useCall';
 import { fireToastAction, resetToasts } from '@/app/toast';
 import { flakyAttempts, mountCall } from './helpers/call';
 import { toasts } from './helpers/toasts';
@@ -172,5 +173,28 @@ describe('useCall', () => {
     const first = result.current;
     rerender({ demo: true, onUnauthorized });
     expect(result.current).toBe(first);
+  });
+});
+
+describe('useCall, before the first effect', () => {
+  it('reads its deps from a call made in a child effect, which runs before its own', async () => {
+    const onUnauthorized = vi.fn();
+    function Child({ call }: { call: Call }) {
+      useEffect(() => {
+        void call(async () => { throw new ApiError(401, 'unauthorized', 'No session.'); });
+      }, [call]);
+      return null;
+    }
+    function Host() {
+      return <Child call={useCall({ demo: false, onUnauthorized })} />;
+    }
+    render(<Host />);
+    await waitFor(() => expect(onUnauthorized).toHaveBeenCalledTimes(1));
+  });
+
+  it('falls back to the generic line when the throw is not even an object', async () => {
+    const { result } = mountCall();
+    await result.current(async () => { throw null; });
+    expect(toasts()[0].message).toBe(GENERIC_FAILURE_MESSAGE);
   });
 });

@@ -152,7 +152,7 @@ export function useGrade({
           && problemRef.current?.problem_id === current.problem_id
           && answeredForRef.current !== current.problem_id
           && gate.tryEnter('ready', 'submitting'),
-        onFail: releaseOnFail(life, gate, 'submitting', 'ready'),
+        onFail: releaseOnFail(gate, 'submitting', 'ready'),
       },
     );
   }, [

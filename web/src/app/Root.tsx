@@ -80,8 +80,11 @@ export interface RootProps {
   initialUser: User | null;
   /** Which auth card the URL asked for. */
   authMode?: AuthMode;
-  /** The single-use reset token. It is still in the URL until the reset card takes it. */
-  resetToken?: string;
+  /**
+   * The single-use reset token. It is still in the URL until the reset card takes it.
+   * Absent, or undefined, on every boot that did not come from a reset link.
+   */
+  resetToken?: string | undefined;
   /**
    * The path the page loaded on.
    *
@@ -111,7 +114,7 @@ export function Root({
   api,
   initialUser,
   authMode = 'login',
-  resetToken = '',
+  resetToken,
   pathname = HOME_PATH,
   diag,
   initialView = HOME,
@@ -207,7 +210,7 @@ export function Root({
   // The reset card is on. Boot holds the token in the URL until this render, and drops it
   // now (M6-review-1, F22). A second call writes the same URL, so a StrictMode remount and
   // a re-render are both harmless.
-  const resetCardOn = !user && authMode === 'reset' && resetToken !== '';
+  const resetCardOn = !user && authMode === 'reset' && resetToken !== undefined;
   useEffect(() => {
     if (resetCardOn) onResetTokenTaken?.();
   }, [resetCardOn, onResetTokenTaken]);

@@ -120,6 +120,36 @@ describe('the toast store', () => {
     expect(toasts().length).toBe(1);
   });
 
+  it('numbers its toasts upward from 1', () => {
+    toast('One.');
+    toast('Two.');
+    expect(toasts().map((t) => t.id)).toEqual([1, 2]);
+  });
+
+  it('arms no timer for a timeout of 0', () => {
+    vi.useFakeTimers();
+    toast('Stays.', { timeout: 0 });
+    expect(vi.getTimerCount()).toBe(0);
+    vi.advanceTimersByTime(60_000);
+    expect(toasts().length).toBe(1);
+  });
+
+  it('dismisses a plain toast through its action slot without a throw', () => {
+    toast('One.');
+    expect(() => { fireToastAction(toasts()[0].id); }).not.toThrow();
+    expect(toasts()).toEqual([]);
+  });
+
+  it('drops every pending timer on reset', () => {
+    vi.useFakeTimers();
+    toast('One.');
+    toast('Two.');
+    expect(vi.getTimerCount()).toBe(2);
+    resetToasts();
+    expect(vi.getTimerCount()).toBe(0);
+    expect(toasts()).toEqual([]);
+  });
+
   it('is a no-op when a dismissed id is dismissed again', () => {
     let notices = 0;
     toast('One.');
@@ -160,6 +190,13 @@ describe('the toast host', () => {
     act(() => { retry.click(); });
     expect(onAction).toHaveBeenCalledTimes(1);
     expect(screen.queryByRole('status')).toBeNull();
+  });
+
+  it('classes each toast by its kind', () => {
+    render(<ToastHost />);
+    act(() => { toast('Saved.', { kind: 'info' }); });
+    expect(document.getElementById('toasts')!.querySelector('[role="status"]')!.className)
+      .toBe('toast toast-info');
   });
 
   it('names an unlabelled action Retry', () => {

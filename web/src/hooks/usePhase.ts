@@ -64,9 +64,11 @@ class PhaseStore<P extends string> {
     return () => { this.listeners.delete(fn); };
   };
 
-  /** An unconditional set. Synchronous. */
+  /**
+   * An unconditional set. Synchronous. A set to the phase already on notifies as well;
+   * `useSyncExternalStore` compares the snapshot and renders nothing for it.
+   */
   readonly enter = (next: P): void => {
-    if (next === this.value) return;
     this.value = next;
     for (const fn of [...this.listeners]) fn();
   };

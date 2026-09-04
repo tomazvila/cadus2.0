@@ -65,12 +65,18 @@ function adminApi(over: Partial<ApiClient> = {}): ApiClient {
 const topbar = () => document.getElementById('topbar')!;
 const view = () => document.getElementById('view')!;
 
-/** Open `/ops` signed in, press the brand, and land on the dashboard. */
-async function leaveOpsThroughBrand(): Promise<ReturnType<typeof userEvent.setup>> {
+/** Open `/ops` signed in, and wait for the operator screen. */
+async function openOps(): Promise<ReturnType<typeof userEvent.setup>> {
   history.replaceState({}, '', '/ops');
   const person = userEvent.setup();
   render(<Root api={adminApi()} initialUser={USER} pathname="/ops" />, { container: view() });
   await waitFor(() => expect(screen.getByText(OPS_TITLE)).toBeTruthy());
+  return person;
+}
+
+/** Open `/ops` signed in, press the brand, and land on the dashboard. */
+async function leaveOpsThroughBrand(): Promise<ReturnType<typeof userEvent.setup>> {
+  const person = await openOps();
   expect(view().querySelector('.view-ops')).not.toBeNull();
 
   await person.click(topbar().querySelector('.brand')!);
@@ -215,12 +221,90 @@ describe('the reset card', () => {
   });
 
   it('leaves the token alone when the card is not the screen', async () => {
+    const onResetTokenTaken = await mountWithoutTheCard({ initialUser: USER });
+    expect(onResetTokenTaken).not.toHaveBeenCalled();
+  });
+});
+
+/**
+ * Mount `Root` with a token-taken callback and the props given, wait for the first screen,
+ * and give the callback back for the assertion.
+ */
+async function mountWithoutTheCard(props: { initialUser: User | null; resetToken?: string }) {
+  const onResetTokenTaken = vi.fn();
+  render(
+    <Root api={adminApi()} onResetTokenTaken={onResetTokenTaken} {...props} />,
+    { container: view() },
+  );
+  await waitFor(() => expect(view().querySelector('.view-dashboard, .auth-view')).not.toBeNull());
+  return onResetTokenTaken;
+}
+
+describe('the location', () => {
+  it('pushes one entry per move, and none for the path already on', async () => {
+    const push = vi.spyOn(window.history, 'pushState');
+    const person = await leaveOpsThroughBrand();
+    expect(push).toHaveBeenCalledTimes(1);
+    expect(push).toHaveBeenCalledWith({}, '', '/');
+
+    // Home, while home: the screen is already the dashboard, and the address bar agrees.
+    await person.click(topbar().querySelector('.brand')!);
+    await waitFor(() => expect(view().querySelector('.view-dashboard')).not.toBeNull());
+    expect(push).toHaveBeenCalledTimes(1);
+  });
+
+  it('removes its popstate listener with the view', () => {
+    const added = vi.spyOn(window, 'addEventListener');
+    const removed = vi.spyOn(window, 'removeEventListener');
+    const { unmount } = render(<Root api={adminApi()} initialUser={USER} />, { container: view() });
+    const onPop = added.mock.calls.find(([type]) => type === 'popstate')![1];
+
+    unmount();
+    expect(removed).toHaveBeenCalledWith('popstate', onPop);
+  });
+
+  it('sends the learner home from an operator path on sign-out', async () => {
+    const person = await openOps();
+    await person.click(topbar().querySelector('.logout-btn')!);
+
+    await waitFor(() => expect(view().querySelector('.auth-view')).not.toBeNull());
+    expect(window.location.pathname).toBe('/');
+  });
+});
+
+describe('the reset card, while a session is still open', () => {
+  it('waits for the sign-out, and takes the token then', async () => {
     const onResetTokenTaken = vi.fn();
+    const person = userEvent.setup();
     render(
-      <Root api={adminApi()} initialUser={USER} onResetTokenTaken={onResetTokenTaken} />,
+      <Root
+        api={adminApi()}
+        initialUser={USER}
+        authMode="reset"
+        resetToken="reset-9"
+        onResetTokenTaken={onResetTokenTaken}
+      />,
       { container: view() },
     );
     await waitFor(() => expect(view().querySelector('.view-dashboard')).not.toBeNull());
     expect(onResetTokenTaken).not.toHaveBeenCalled();
+
+    await person.click(topbar().querySelector('.logout-btn')!);
+    await waitFor(() => expect(screen.getByText('choose a new password')).toBeTruthy());
+    expect(onResetTokenTaken).toHaveBeenCalledTimes(1);
+  });
+
+  it('leaves a token alone on any other card', async () => {
+    const onResetTokenTaken = await mountWithoutTheCard({ initialUser: null, resetToken: 'reset-9' });
+    expect(screen.getByText('sign in')).toBeTruthy();
+    expect(onResetTokenTaken).not.toHaveBeenCalled();
+  });
+
+  it('shows the card with nobody to tell', async () => {
+    render(
+      <Root api={adminApi()} initialUser={null} authMode="reset" resetToken="reset-9" />,
+      { container: view() },
+    );
+    await waitFor(() => expect(screen.getByText('choose a new password')).toBeTruthy());
   });
 });

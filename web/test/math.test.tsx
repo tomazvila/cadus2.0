@@ -12,6 +12,7 @@
 import { useEffect, useState } from 'react';
 import { act } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { render } from '@testing-library/react';
 import katex from 'katex';
 import renderMathInElement from 'katex/contrib/auto-render';
 import { MathBlock } from '@/components/MathBlock';
@@ -70,6 +71,9 @@ describe('the KaTeX string idiom', () => {
     // learner still reads the raw text.
     expect(() => renderMathToHtml('$\\badmacro{')).not.toThrow();
     expect(renderMathToHtml('$\\badmacro{')).toBeTruthy();
+    // KaTeX marks the failed expression in place. With `throwOnError: true` auto-render
+    // leaves the raw text and reports to the console instead.
+    expect(renderMathToHtml('$x^$')).toContain('katex-error');
   });
 
   it('degrades to escaped plain text when the vendored scripts are absent', () => {
@@ -82,6 +86,14 @@ describe('the KaTeX string idiom', () => {
     // A renderer that throws must not throw INTO a React render: the learner reads the raw
     // text instead of a blank problem.
     vi.stubGlobal('renderMathInElement', () => { throw new Error('katex exploded'); });
+    expect(renderMathToHtml('<b>$x$</b>')).toBe('&lt;b&gt;$x$&lt;/b&gt;');
+  });
+
+  it('shows the escaped source, not a half-rendered host, when the renderer throws midway', () => {
+    vi.stubGlobal('renderMathInElement', (host: HTMLElement) => {
+      host.innerHTML = '<span class="katex">half</span>';
+      throw new Error('katex exploded midway');
+    });
     expect(renderMathToHtml('<b>$x$</b>')).toBe('&lt;b&gt;$x$&lt;/b&gt;');
   });
 
@@ -121,14 +133,15 @@ describe('the KaTeX string idiom', () => {
   it('renders again when the source text changes', () => {
     const spy = vi.fn(renderMathInElement);
     vi.stubGlobal('renderMathInElement', spy);
-    const m = mount(<MathBlock>{'$a$'}</MathBlock>);
-    const first = m.find('.problem-text')!.innerHTML;
+    const { container, rerender } = render(<MathBlock>{'$a$'}</MathBlock>);
+    const first = container.querySelector('.problem-text')!.innerHTML;
 
-    mount(<MathBlock>{'$b$'}</MathBlock>);
+    rerender(<MathBlock>{'$b$'}</MathBlock>);
     // A memo that never invalidates is a defect, not an optimization: the next problem then
     // shows the previous problem's math.
     expect(spy).toHaveBeenCalledTimes(2);
-    expect(m.find('.problem-text')!.innerHTML).toBe(first);
+    expect(container.querySelector('.problem-text')!.innerHTML).not.toBe(first);
+    expect(container.querySelector('.problem-text')!.textContent).toContain('b');
   });
 });
 

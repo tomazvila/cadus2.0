@@ -108,9 +108,11 @@ describe('AnswerField: the keyboard contract', () => {
     const m = mount(<AnswerField onHint={onHint} />);
     const input = m.find<HTMLInputElement>('.answer-input');
 
-    keydown(input, 'h');
+    const lower = keydown(input, 'h');
     keydown(input, 'H');
     expect(onHint).toHaveBeenCalledTimes(2);
+    // The keypress is spent on the hint, so no letter lands in the field.
+    expect(lower.defaultPrevented).toBe(true);
 
     // Once the learner types an answer, `h` is a letter: `sqrt` contains one.
     input.value = 'sq';
@@ -136,6 +138,30 @@ describe('AnswerField: the keyboard contract', () => {
 // ---------------------------------------------------------------------------
 // The caret contract.
 // ---------------------------------------------------------------------------
+
+describe('AnswerField: the field itself', () => {
+  it('asks for an answer, and spells nothing for the learner', () => {
+    const m = mount(<AnswerField />);
+    const input = m.find<HTMLInputElement>('.answer-input');
+    expect(input.placeholder).toBe('Your answer');
+    expect(input.getAttribute('spellcheck')).toBe('false');
+  });
+
+  it('takes an Enter with nobody to tell', () => {
+    const m = mount(<AnswerField />);
+    expect(() => keydown(m.find('.answer-input'), 'Enter')).not.toThrow();
+  });
+
+  it('gives the input the focus back after a symbol key', () => {
+    const m = mount(<AnswerField />);
+    const input = m.find<HTMLInputElement>('.answer-input');
+    document.body.focus();
+    expect(document.activeElement).not.toBe(input);
+
+    act(() => { m.find('.sym-key').click(); });
+    expect(document.activeElement).toBe(input);
+  });
+});
 
 describe('AnswerField: the caret contract', () => {
   it('inserts a symbol AT the caret and leaves the caret after it', () => {
@@ -281,6 +307,19 @@ describe('WorkField', () => {
     const shifted = keydown(area, 'Enter', { shiftKey: true });
     expect(onSubmit).toHaveBeenCalledTimes(1);
     expect(shifted.defaultPrevented).toBe(false);
+  });
+
+  it('leaves every other key to the textarea', () => {
+    const onSubmit = vi.fn();
+    const m = mount(<WorkField onSubmit={onSubmit} />);
+    const letter = keydown(m.find('.work-input'), 'a');
+    expect(onSubmit).not.toHaveBeenCalled();
+    expect(letter.defaultPrevented).toBe(false);
+  });
+
+  it('takes an Enter with nobody to tell', () => {
+    const m = mount(<WorkField />);
+    expect(() => keydown(m.find('.work-input'), 'Enter')).not.toThrow();
   });
 
   it('Enter is inert while the area is disabled or readOnly', () => {

@@ -35,12 +35,22 @@ export interface Toast {
 /** The default life of a plain toast, in milliseconds. */
 export const TOAST_TIMEOUT_MS = 6000;
 
+/** One live toast and the expiry timer it armed, if it armed one. */
+interface Entry {
+  toast: Toast;
+  timer: number | undefined;
+}
+
 let nextId = 1;
+let entries: readonly Entry[] = [];
+/** The snapshot the host reads: the toasts of `entries`, in order. */
 let toasts: readonly Toast[] = [];
 const listeners = new Set<() => void>();
-const timers = new Map<number, number>();
 
-function emit(): void {
+/** Replace the live entries, rebuild the snapshot, and tell the host. */
+function commit(next: readonly Entry[]): void {
+  entries = next;
+  toasts = entries.map((entry) => entry.toast);
   for (const fn of [...listeners]) fn();
 }
 
@@ -55,11 +65,10 @@ export const toastStore = {
 };
 
 export function dismissToast(id: number): void {
-  const timer = timers.get(id);
-  if (timer) { clearTimeout(timer); timers.delete(id); }
-  if (!toasts.some((t) => t.id === id)) return;
-  toasts = toasts.filter((t) => t.id !== id);
-  emit();
+  const entry = entries.find((e) => e.toast.id === id);
+  if (!entry) return;
+  clearTimeout(entry.timer);
+  commit(entries.filter((e) => e !== entry));
 }
 
 /** Raise a toast. Gives back its dismiss function. */
@@ -76,22 +85,20 @@ export function toast(message: string, opts: ToastOptions = {}): () => void {
     ...(label !== undefined ? { label } : {}),
     ...(onAction ? { onAction } : {}),
   };
-  toasts = [...toasts, entry];
 
-  // F-36-1b lives on this one line: an actionable toast arms no timer at all.
-  if (timeout && !onAction) {
-    timers.set(id, window.setTimeout(() => dismissToast(id), timeout));
-  }
-  emit();
+  // F-36-1b lives on this one line: an actionable toast arms no timer at all. A timeout of
+  // 0 arms none either.
+  const timer = onAction || !timeout ? undefined : window.setTimeout(() => dismissToast(id), timeout);
+  commit([...entries, { toast: entry, timer }]);
   return () => dismissToast(id);
 }
 
 /** The action dismisses FIRST and fires after, so a retry that toasts again does not stack. */
 export function fireToastAction(id: number): void {
-  const entry = toasts.find((t) => t.id === id);
+  const entry = entries.find((e) => e.toast.id === id);
   if (!entry) return;
   dismissToast(id);
-  entry.onAction?.();
+  entry.toast.onAction?.();
 }
 
 /**
@@ -103,8 +110,8 @@ export function fireToastAction(id: number): void {
  * reads the cleared snapshot anyway.
  */
 export function resetToasts(): void {
-  for (const timer of timers.values()) clearTimeout(timer);
-  timers.clear();
-  nextId = 1;
+  for (const entry of entries) clearTimeout(entry.timer);
+  entries = [];
   toasts = [];
+  nextId = 1;
 }

@@ -6,7 +6,8 @@
  *   `Topbar`        the one way out of any screen; portalled into `#topbar`.
  *   `DialogProvider` the modal host. It wraps the view, so `useDialogs().open()` reaches it
  *                    from any depth, and a view unmount settles the promise it is awaiting.
- *   `ErrorBoundary` a continuation throw would otherwise blank the page. It resets BY KEY.
+ *   `ErrorBoundary` a continuation throw would otherwise blank the page. It resets by
+ *                    route key, and its Try again resets it in place.
  *   `ToastHost`     mounted for the life of the app, so a toast raised after a view leaves
  *                   still lands.
  *
@@ -21,7 +22,7 @@
  * passes the signed-in `user`. The placeholder card below is what a caller with no children
  * still gets — the S4 tests mount exactly that.
  */
-import { useState, type ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import { ErrorBoundary } from './ErrorBoundary';
 import { ToastHost } from './ToastHost';
 import { Topbar } from './Topbar';
@@ -56,22 +57,18 @@ export function App({
   onHome = noop,
   onMap = noop,
   onLogout = noop,
-  routeKey = '',
+  routeKey,
   children,
 }: AppProps) {
-  // The boundary resets BY KEY: a new key builds a new boundary whose error is null. Two
-  // things move that key — the route name, so one broken screen does not poison the next,
-  // and the Try again of the boundary itself.
-  const [generation, setGeneration] = useState(0);
-
   return (
     <>
       <Topbar user={user} demo={demo} onHome={onHome} onMap={onMap} onLogout={onLogout} />
       <DialogProvider>
-        <ErrorBoundary
-          key={`${routeKey}:${String(generation)}`}
-          onReset={() => setGeneration((n) => n + 1)}
-        >
+        {/*
+          The boundary resets BY KEY: a new route name builds a new boundary whose error is
+          null, so one broken screen does not poison the next.
+        */}
+        <ErrorBoundary key={routeKey}>
           {children ?? (
             <section className="card">
               <h1>Cadus</h1>

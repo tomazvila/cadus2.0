@@ -78,8 +78,8 @@ export interface AuthProps {
   api: ApiClient;
   /** `reset` arrives from a `?reset=<token>` email link; the rest from the route. */
   mode?: AuthMode;
-  /** The single-use reset token, for `reset` mode. */
-  token?: string;
+  /** The single-use reset token, for `reset` mode. Absent, or undefined, in the others. */
+  token?: string | undefined;
   /** Called with the account after a successful sign-in. */
   onSignedIn?: (user: User) => void;
 }

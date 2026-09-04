@@ -32,14 +32,16 @@ export interface Busy {
 
 export function useBusy(): Busy {
   const running = useRef(new Set<string>());
-  const [, force] = useState(0);
+  // A fresh object is never the previous state, so every call renders once more.
+  const [, rerender] = useState({});
+  const force = () => { rerender({}); };
 
   const run = useCallback((key: string, fn: () => Promise<void> | void) => {
     // The synchronous check and set. A second click inside the same tick — or any time
     // before React commits the disabled attribute — finds the key present and drops.
     if (running.current.has(key)) return;
     running.current.add(key);
-    force((n) => n + 1);
+    force();
 
     // Called synchronously, not through a microtask: the handler's own first state updates
     // then land in the same batch as the click, and not one tick outside the caller's
@@ -49,13 +51,13 @@ export function useBusy(): Busy {
       result = fn();
     } catch (e) {
       running.current.delete(key);
-      force((n) => n + 1);
+      force();
       throw e;
     }
 
     void Promise.resolve(result).finally(() => {
       running.current.delete(key);
-      force((n) => n + 1);
+      force();
     });
   }, []);
 

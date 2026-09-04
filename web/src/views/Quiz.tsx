@@ -350,7 +350,7 @@ export function Quiz({
           && problemRef.current?.problem_id === current.problem_id
           && !timedOutRef.current
           && gate.tryEnter('ready', 'submitting'),
-        onFail: releaseOnFail(life, gate, 'submitting', 'ready'),
+        onFail: releaseOnFail(gate, 'submitting', 'ready'),
       },
     );
   }, [api, call, fillBlanks, finish, gate, life, task.task_id]);

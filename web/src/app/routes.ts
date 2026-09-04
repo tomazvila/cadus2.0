@@ -32,10 +32,11 @@ export type AdminRoute = 'ops' | 'review';
  * The operator screen one path names, or null for every other path.
  *
  * `/ops/` and `/review/` count: a browser, a proxy, and a pasted link all add the slash,
- * and a reader who typed one more character did not ask for the dashboard.
+ * and a reader who typed one more character did not ask for the dashboard. The root path
+ * loses its one slash too, and the empty string names no screen either.
  */
 export function adminRouteFor(pathname: string): AdminRoute | null {
-  const path = pathname.length > 1 && pathname.endsWith('/') ? pathname.slice(0, -1) : pathname;
+  const path = pathname.endsWith('/') ? pathname.slice(0, -1) : pathname;
   if (path === OPS_PATH) return 'ops';
   if (path === REVIEW_PATH) return 'review';
   return null;
