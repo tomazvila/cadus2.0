@@ -1,19 +1,14 @@
 //! The fixtures of `tests/admin_content.rs` and its parts.
 
-use std::sync::Arc;
-
-use axum::Router;
 use cadus_core::curriculum::load::{RawCurriculum, RawUnit};
 use cadus_core::curriculum::model::{Catalog, Course, Exemplar, KnowledgePoint, Slug, Topic, Unit};
 use cadus_core::curriculum::{AnswerKind, Curriculum};
-use cadus_store::test_support::TestDb;
 use cadus_store::{DEFAULT_CLIENT_TIMEOUT_MS, Db};
 use cadus_web::state::Content;
 use cadus_web::{AppState, create_app};
-use serde_json::{Value, json};
-use sqlx::types::Uuid;
 use sqlx::types::chrono::{DateTime, Utc};
 
+pub use super::prelude::*;
 use super::*;
 
 /// The serving key of the fixture knowledge point.

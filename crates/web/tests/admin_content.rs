@@ -19,9 +19,6 @@ mod common;
 
 use common::admin::*;
 
-use cadus_store::test_support::TestDb;
-use serde_json::{Value, json};
-
 use common::{SESSION_TOKEN_TWO, get, get_bearer, post_bearer, send};
 
 // --------------------------------------------------------------------------- //

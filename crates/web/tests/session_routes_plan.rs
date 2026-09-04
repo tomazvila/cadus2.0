@@ -5,15 +5,12 @@
 
 mod common;
 
-use common::{BASE_US, SESSION, parse, seed_open_session};
+use common::{BASE_US, SESSION, seed_open_session};
 
 use common::sessions::*;
 
-use axum::http::{Method, StatusCode};
 use cadus_core::event::{Event, SchemaVersion, SessionStart, Timestamp};
-use cadus_store::test_support::TestDb;
 use cadus_web::state::{TaskProgress, WebState};
-use serde_json::{Value, json};
 
 // --------------------------------------------------------------------------- //
 // Acceptance 2: listing the plan writes nothing
@@ -40,45 +37,18 @@ async fn listing_the_plan_writes_nothing() {
         .await
         .unwrap();
 
-        let before = sqlx::query!(
-            r#"
-            SELECT (SELECT count(*) FROM events WHERE user_id = $1) AS "events!",
-                   (SELECT doc FROM web_states WHERE user_id = $1) AS "doc!",
-                   (SELECT updated_at FROM web_states WHERE user_id = $1) AS "touched!",
-                   (SELECT built_at FROM learner_models WHERE user_id = $1) AS "built!",
-                   (SELECT through_seq FROM learner_models WHERE user_id = $1) AS "cursor!"
-            "#,
-            user
-        )
-        .fetch_one(&db.admin)
-        .await
-        .unwrap();
+        let before = storage_snapshot(&db, user).await;
 
-        let (status, _, body) =
-            call(&app, Method::GET, "/api/session/plan", Some(user), None).await;
-        assert_eq!(status, StatusCode::OK, "{body}");
-        let plan = parse(&body);
+        let plan = plan_of(&app, user).await;
         assert_eq!(plan["session"].as_str().unwrap(), SESSION);
         assert!(
             plan["tasks"]
                 .as_array()
                 .is_some_and(|tasks| !tasks.is_empty()),
-            "the plan composed no task: {body}"
+            "the plan composed no task: {plan}"
         );
 
-        let after = sqlx::query!(
-            r#"
-            SELECT (SELECT count(*) FROM events WHERE user_id = $1) AS "events!",
-                   (SELECT doc FROM web_states WHERE user_id = $1) AS "doc!",
-                   (SELECT updated_at FROM web_states WHERE user_id = $1) AS "touched!",
-                   (SELECT built_at FROM learner_models WHERE user_id = $1) AS "built!",
-                   (SELECT through_seq FROM learner_models WHERE user_id = $1) AS "cursor!"
-            "#,
-            user
-        )
-        .fetch_one(&db.admin)
-        .await
-        .unwrap();
+        let after = storage_snapshot(&db, user).await;
 
         assert_eq!(before.events, 1);
         assert_eq!(after.events, 1, "the plan appended an event");
@@ -113,20 +83,7 @@ async fn progress_done_is_true_for_a_recomposed_failed_review() {
         // Enroll in `c1`, so `fractions` stays out of scope. An in-scope lesson
         // that encompasses `addition` at weight 0.8 would compress the review
         // out of the plan before this test could look at it.
-        seed_event(
-            &db,
-            user,
-            2,
-            &Event::Enrolled(cadus_core::event::Enrolled {
-                ts: Timestamp::from_micros(BASE_US + 1),
-                session: Some(SESSION.to_string()),
-                v: SchemaVersion,
-                course: cadus_core::event::Slug::new("c1").unwrap(),
-                reason: None,
-                return_to: None,
-            }),
-        )
-        .await;
+        seed_event(&db, user, 2, &enrolled_c1()).await;
         seed_due_review(&db, user, 2).await;
 
         // The task id the composer assigns is `{session}-{type}-{topic}`
@@ -154,17 +111,14 @@ async fn progress_done_is_true_for_a_recomposed_failed_review() {
         .await
         .unwrap();
 
-        let (status, _, body) =
-            call(&app, Method::GET, "/api/session/plan", Some(user), None).await;
-        assert_eq!(status, StatusCode::OK, "{body}");
-        let plan = parse(&body);
+        let plan = plan_of(&app, user).await;
 
         let review = plan["tasks"]
             .as_array()
             .unwrap()
             .iter()
             .find(|task| task["task_id"] == json!(task_id.clone()))
-            .unwrap_or_else(|| panic!("the failed review did not recompose: {body}"));
+            .unwrap_or_else(|| panic!("the failed review did not recompose: {plan}"));
 
         assert_eq!(review["task_type"], "review");
         assert_eq!(review["topic"]["id"], "addition");
@@ -218,14 +172,7 @@ async fn the_export_round_trips_through_the_event_reader() {
                 session: Some(SESSION.to_string()),
                 v: SchemaVersion,
             }),
-            Event::Enrolled(cadus_core::event::Enrolled {
-                ts: Timestamp::from_micros(BASE_US + 1),
-                session: Some(SESSION.to_string()),
-                v: SchemaVersion,
-                course: cadus_core::event::Slug::new("c1").unwrap(),
-                reason: None,
-                return_to: None,
-            }),
+            enrolled_c1(),
         ];
         for (index, event) in written.iter().enumerate() {
             seed_event(&db, user, index as i64 + 1, event).await;

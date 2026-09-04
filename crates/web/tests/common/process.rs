@@ -205,3 +205,56 @@ pub fn send_sigterm(child: &Child) {
         .expect("run kill");
     assert_eq!(killed.code(), Some(0));
 }
+
+/// The command of the binary under test: the fixture curriculum, an info log,
+/// and both output pipes. The caller adds the variables of its case.
+pub fn web_command() -> Command {
+    let mut command = Command::new(env!("CARGO_BIN_EXE_cadus-web"));
+    command
+        .env("CADUS_CURRICULUM", curriculum_dir())
+        .env("RUST_LOG", "info")
+        .stdout(Stdio::piped())
+        .stderr(Stdio::piped());
+    command
+}
+
+/// Start `command` under the drop guard.
+pub fn spawn_web(command: &mut Command) -> KillOnDrop {
+    KillOnDrop::new(command.spawn().expect("start cadus-web"))
+}
+
+/// Read the exit code and the stderr of a child that ended.
+pub fn collect_exit(child: KillOnDrop) -> (Option<i32>, String) {
+    let output = child
+        .into_inner()
+        .wait_with_output()
+        .expect("collect the child output");
+    (
+        output.status.code(),
+        String::from_utf8_lossy(&output.stderr).into_owned(),
+    )
+}
+
+/// Wait for the child to end within `limit`, then read its exit code and its
+/// stderr. `what` names the case for the panic message.
+pub fn exit_of(mut child: KillOnDrop, limit: Duration, what: &str) -> (Option<i32>, String) {
+    wait_for_exit(child.as_mut(), limit, what);
+    collect_exit(child)
+}
+
+/// `GET /api/ready` on the router over `pool`.
+pub async fn ready_response(pool: PgPool) -> axum::response::Response {
+    create_app(state_with(pool))
+        .oneshot(
+            Request::builder()
+                .uri("/api/ready")
+                .body(Body::empty())
+                .unwrap(),
+        )
+        .await
+        .unwrap()
+}
+
+/// The `503` body of a readiness probe with the database down.
+pub const READY_DOWN: &[u8] =
+    b"{\"db\":\"down\",\"ok\":false,\"worker\":{\"claim_age_secs\":null,\"stale\":false}}";

@@ -17,9 +17,6 @@
 
 mod common;
 
-use std::sync::Arc;
-
-use cadus_store::test_support::TestDb;
 use common::*;
 
 // ---------------------------------------------------------------------------
@@ -139,11 +136,8 @@ async fn a_verified_github_identity_links_the_primary_address() {
 #[tokio::test]
 async fn a_verified_identity_links_into_the_account_that_owns_the_address() {
     TestDb::with(|db| async move {
-        let app = oauth_app(&db, google_config(Arc::new(google_verified())));
-        let answer = signup(&app, "learner@example.com", GOOD_PASSWORD).await;
-        assert_eq!(answer.status.as_u16(), 200);
+        let (app, user) = google_app_with_learner(&db).await;
         mark_verified(&db, "learner@example.com").await;
-        let user = user_id(&db, "learner@example.com").await;
         link_existing_account(&db, &app, user).await;
         assert_eq!(oauth_link_count(&db, user).await, 1);
         // The password of a verified address survives the link, and so does
@@ -166,12 +160,9 @@ async fn a_verified_identity_links_into_the_account_that_owns_the_address() {
 #[tokio::test]
 async fn a_link_into_an_unverified_account_clears_the_password_and_the_sessions() {
     TestDb::with(|db| async move {
-        let app = oauth_app(&db, google_config(Arc::new(google_verified())));
-        let answer = signup(&app, "learner@example.com", GOOD_PASSWORD).await;
-        assert_eq!(answer.status.as_u16(), 200);
-        let user = user_id(&db, "learner@example.com").await;
+        let (app, user) = google_app_with_learner(&db).await;
         assert!(!is_verified(&db, "learner@example.com").await);
-        let _answer = link_existing_account(&db, &app, user).await;
+        link_existing_account(&db, &app, user).await;
         assert_eq!(password_hash(&db, "learner@example.com").await, None);
         assert!(is_verified(&db, "learner@example.com").await);
         // The planted session is gone, and the one row left is the session this

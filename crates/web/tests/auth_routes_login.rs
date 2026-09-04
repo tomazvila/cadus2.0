@@ -5,11 +5,7 @@
 
 mod common;
 
-use axum::body::Body;
-use axum::http::Request;
-use cadus_store::test_support::TestDb;
 use common::*;
-use serde_json::{Value, json};
 
 // ---------------------------------------------------------------------------
 // Login (spec section 3.3 "Login", section 10 rows "Signup / unverified login")

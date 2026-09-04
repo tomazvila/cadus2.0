@@ -7,8 +7,6 @@ mod common;
 
 use common::csrf::*;
 
-use axum::body::Body;
-use axum::http::Request;
 use cadus_web::cookie::CookiePosture;
 use cadus_web::origin::OriginPolicy;
 use tower::ServiceExt;

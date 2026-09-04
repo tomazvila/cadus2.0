@@ -5,9 +5,7 @@
 
 mod common;
 
-use cadus_store::test_support::TestDb;
 use common::*;
-use serde_json::{Value, json};
 use sqlx::types::chrono::Utc;
 
 // Verify email, resend

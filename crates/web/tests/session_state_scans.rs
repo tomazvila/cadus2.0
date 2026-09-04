@@ -11,7 +11,6 @@ use cadus_core::event::{
     EnrollReason, Event, SchemaVersion, Slug, TaskType, Timestamp, WorkQuality,
 };
 use cadus_store::state::{append_event, lock_web_state};
-use cadus_store::test_support::TestDb;
 use cadus_store::{DEFAULT_CLIENT_TIMEOUT_MS, Db, begin_tenant};
 use cadus_web::session::{
     QUIZ_HIGH_SCORE, active_study_days, closed_task_ids, current_session, enrollment_stack,

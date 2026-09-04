@@ -5,9 +5,6 @@
 
 mod common;
 
-use std::sync::Arc;
-
-use cadus_store::test_support::TestDb;
 use cadus_web::auth::oauth::{Credentials, OAuthConfig};
 use common::*;
 

@@ -43,6 +43,19 @@ pub mod sessions;
 pub mod skeleton;
 mod task;
 
+/// The names every test file reads: the database, the JSON value, and the
+/// request types.
+pub mod prelude {
+    pub use std::sync::Arc;
+
+    pub use axum::Router;
+    pub use axum::body::Body;
+    pub use axum::http::{Method, Request, StatusCode};
+    pub use cadus_store::test_support::TestDb;
+    pub use serde_json::{Value, json};
+    pub use sqlx::types::Uuid;
+}
+
 pub use arena::*;
 pub use bench::*;
 pub use callback::*;
@@ -55,6 +68,7 @@ pub use live::*;
 pub use oauth::*;
 pub use oauth_url::*;
 pub use plan::*;
+pub use prelude::*;
 pub use process::*;
 pub use quiz::*;
 pub use recovery::*;

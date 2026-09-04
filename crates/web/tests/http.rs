@@ -35,12 +35,8 @@ mod common;
 
 use common::*;
 
-use std::process::{Command, Stdio};
 use std::time::Duration;
 
-use axum::body::Body;
-use axum::http::{Request, StatusCode};
-use cadus_store::test_support::TestDb;
 use cadus_store::{DEFAULT_CLIENT_TIMEOUT_MS, Db, RoleInfo, StoreError};
 use cadus_web::{boot_check, create_app};
 use http_body_util::BodyExt;
@@ -85,17 +81,7 @@ async fn health_returns_200_and_exact_body() {
 #[tokio::test]
 async fn ready_returns_200_on_a_live_pool() {
     TestDb::with(|db| async move {
-        let app = create_app(state_with(db.app.clone()));
-
-        let response = app
-            .oneshot(
-                Request::builder()
-                    .uri("/api/ready")
-                    .body(Body::empty())
-                    .unwrap(),
-            )
-            .await
-            .unwrap();
+        let response = ready_response(db.app.clone()).await;
 
         assert_eq!(response.status(), StatusCode::OK);
         let body = response.into_body().collect().await.unwrap().to_bytes();
@@ -141,27 +127,15 @@ async fn binary_exits_3_with_a_superuser_dsn() {
     TestDb::with(|db| async move {
         let dsn = dsn_for(&db.name, None);
 
-        let mut child = KillOnDrop::new(
-            Command::new(env!("CARGO_BIN_EXE_cadus-web"))
-                .env("CADUS_CURRICULUM", curriculum_dir())
-                .env("CADUS_CURRICULUM", curriculum_dir())
+        let child = spawn_web(
+            web_command()
                 .env("DATABASE_URL", &dsn)
-                .env("BIND_ADDR", "127.0.0.1:0")
-                .env("RUST_LOG", "info")
-                .stdout(Stdio::piped())
-                .stderr(Stdio::piped())
-                .spawn()
-                .expect("start cadus-web"),
+                .env("BIND_ADDR", "127.0.0.1:0"),
         );
 
-        wait_for_exit(child.as_mut(), Duration::from_secs(10), "boot guard");
-        let output = child
-            .into_inner()
-            .wait_with_output()
-            .expect("collect the child output");
+        let (code, stderr) = exit_of(child, Duration::from_secs(10), "boot guard");
 
-        assert_eq!(output.status.code(), Some(3));
-        let stderr = String::from_utf8_lossy(&output.stderr);
+        assert_eq!(code, Some(3));
         assert!(
             stderr.contains("bypasses RLS"),
             "stderr does not name the reason: {stderr}"
@@ -185,17 +159,10 @@ async fn binary_serves_health_and_stops_on_sigterm() {
         let port = free_port();
         let address = format!("127.0.0.1:{port}");
 
-        let mut child = KillOnDrop::new(
-            Command::new(env!("CARGO_BIN_EXE_cadus-web"))
-                .env("CADUS_CURRICULUM", curriculum_dir())
-                .env("CADUS_CURRICULUM", curriculum_dir())
+        let mut child = spawn_web(
+            web_command()
                 .env("DATABASE_URL", &dsn)
-                .env("BIND_ADDR", &address)
-                .env("RUST_LOG", "info")
-                .stdout(Stdio::piped())
-                .stderr(Stdio::piped())
-                .spawn()
-                .expect("start cadus-web"),
+                .env("BIND_ADDR", &address),
         );
 
         let (code, body) = wait_until_healthy(child.as_mut(), &address);
@@ -233,24 +200,11 @@ async fn ready_returns_503_on_a_closed_pool() {
     TestDb::with(|db| async move {
         let pool = db.app.clone();
         pool.close().await;
-        let app = create_app(state_with(pool));
-
-        let response = app
-            .oneshot(
-                Request::builder()
-                    .uri("/api/ready")
-                    .body(Body::empty())
-                    .unwrap(),
-            )
-            .await
-            .unwrap();
+        let response = ready_response(pool).await;
 
         assert_eq!(response.status(), StatusCode::SERVICE_UNAVAILABLE);
         let body = response.into_body().collect().await.unwrap().to_bytes();
-        assert_eq!(
-            &body[..],
-            b"{\"db\":\"down\",\"ok\":false,\"worker\":{\"claim_age_secs\":null,\"stale\":false}}"
-        );
+        assert_eq!(&body[..], READY_DOWN);
     })
     .await;
 }

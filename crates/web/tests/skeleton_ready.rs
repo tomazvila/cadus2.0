@@ -7,8 +7,6 @@ mod common;
 
 use common::skeleton::*;
 
-use cadus_store::test_support::TestDb;
-
 // ---------------------------------------------------------------------------
 // /api/ready (D-M5-6)
 // ---------------------------------------------------------------------------
@@ -39,8 +37,7 @@ async fn ready_reports_a_stale_worker_as_a_warning_and_not_a_503() {
         .await
         .expect("seed one pending diagnosis job");
 
-        let app = app_on(db.app.clone());
-        let (status, _headers, body) = send(&app, get("/api/ready")).await;
+        let (status, body) = ready_of(&db).await;
 
         assert_eq!(
             status.as_u16(),
@@ -84,8 +81,7 @@ async fn a_claimed_job_leaves_no_backlog() {
         .await
         .expect("seed one running diagnosis job");
 
-        let app = app_on(db.app.clone());
-        let (status, _headers, body) = send(&app, get("/api/ready")).await;
+        let (status, body) = ready_of(&db).await;
 
         assert_eq!(status.as_u16(), 200);
         assert_eq!(

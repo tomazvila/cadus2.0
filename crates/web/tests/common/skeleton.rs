@@ -1,9 +1,6 @@
 //! The fixtures of `tests/skeleton.rs` and its parts.
 
-use axum::Router;
-use axum::body::Body;
-use axum::http::{HeaderMap, Request, StatusCode};
-use cadus_store::test_support::TestDb;
+use axum::http::HeaderMap;
 use cadus_store::{DEFAULT_CLIENT_TIMEOUT_MS, Db};
 use cadus_web::cookie::{
     CookiePosture, CookiePostureError, read_bearer_token, read_session_cookie,
@@ -15,6 +12,7 @@ use sqlx::PgPool;
 use sqlx::postgres::PgPoolOptions;
 use tower::ServiceExt;
 
+pub use super::prelude::*;
 use super::*;
 
 /// The Content-Security-Policy of 1.0, character for character.
@@ -81,4 +79,24 @@ pub fn header_of(headers: &HeaderMap, name: &str) -> String {
         .to_str()
         .unwrap()
         .to_string()
+}
+
+/// A cookie-authed cross-site `POST` to the answer route: the request the CSRF
+/// layer refuses.
+pub fn cross_site_answer_post() -> Request<Body> {
+    Request::builder()
+        .method("POST")
+        .uri("/api/task/t-1/answer")
+        .header("host", "tutor.example")
+        .header("cookie", "__Host-cadus_session=s3cr3t")
+        .header("sec-fetch-site", "cross-site")
+        .body(Body::empty())
+        .unwrap()
+}
+
+/// `GET /api/ready` on the app pool of `db`: the status and the body.
+pub async fn ready_of(db: &TestDb) -> (StatusCode, String) {
+    let app = app_on(db.app.clone());
+    let (status, _headers, body) = send(&app, get("/api/ready")).await;
+    (status, body)
 }

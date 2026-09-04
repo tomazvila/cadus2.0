@@ -198,3 +198,22 @@ pub async fn link_existing_account(db: &TestDb, app: &Router, user: Uuid) -> Ans
     assert_eq!(user_id(db, "learner@example.com").await, user);
     answer
 }
+
+/// The router that serves Google through a verified identity, with the
+/// learner `learner@example.com` registered on it.
+pub async fn google_app_with_learner(db: &TestDb) -> (Router, Uuid) {
+    let app = google_app(db, Arc::new(google_verified()));
+    let answer = signup(&app, "learner@example.com", GOOD_PASSWORD).await;
+    assert_eq!(answer.status.as_u16(), 200);
+    let user = user_id(db, "learner@example.com").await;
+    (app, user)
+}
+
+/// Run the Google callback with `query` against a verified identity. The
+/// answer is the provider, for its call log, and the answer of the callback.
+pub async fn verified_google_callback(db: &TestDb, query: &str) -> (Arc<FakeProvider>, Answer) {
+    let provider = Arc::new(google_verified());
+    let app = google_app(db, Arc::clone(&provider));
+    let answer = google_callback(&app, query).await;
+    (provider, answer)
+}

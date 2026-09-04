@@ -96,21 +96,27 @@ pub fn one_course_catalog() -> Catalog {
     }
 }
 
+/// One unit file of `course`: the module `name`, with `topics`, loaded at
+/// `first_load_index`.
+pub fn unit(course: &str, name: &str, topics: Vec<Topic>, first_load_index: usize) -> RawUnit {
+    RawUnit {
+        course_id: course.to_string(),
+        file_name: format!("{first_load_index:02}-{name}.yaml"),
+        unit: Unit {
+            unit: name.to_string(),
+            course: Slug::new(course).unwrap(),
+            module: name.to_string(),
+            topics,
+        },
+        first_load_index,
+    }
+}
+
 /// One course, one module `M1`, and `topics` in that module.
 pub fn one_unit_curriculum(topics: Vec<Topic>) -> Curriculum {
     Curriculum::build(RawCurriculum {
         catalog: one_course_catalog(),
-        units: vec![RawUnit {
-            course_id: "c1".to_string(),
-            file_name: "00-M1.yaml".to_string(),
-            unit: Unit {
-                unit: "M1".to_string(),
-                course: Slug::new("c1").unwrap(),
-                module: "M1".to_string(),
-                topics,
-            },
-            first_load_index: 0,
-        }],
+        units: vec![unit("c1", "M1", topics, 0)],
     })
     .unwrap()
 }

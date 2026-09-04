@@ -5,12 +5,13 @@
 
 mod common;
 
-use cadus_core::pool::PoolAnswer;
+use common::review_problem;
+
 use cadus_store::state::{load_web_state, lock_web_state, save_web_state};
 use cadus_store::test_support::TestDb;
 use cadus_store::{DEFAULT_CLIENT_TIMEOUT_MS, Db, begin_tenant};
 use cadus_web::error::ApiError;
-use cadus_web::state::{ServedProblem, TaskProgress, ValidateError, WebState};
+use cadus_web::state::{TaskProgress, ValidateError, WebState};
 use serde_json::json;
 
 // --------------------------------------------------------------------------- //
@@ -30,27 +31,7 @@ async fn a_second_tab_answering_a_closed_task_gets_409_task_complete() {
         let task = "s_2026-01-01a-review-addition";
 
         let mut open = WebState::for_session("s_2026-01-01a");
-        open.served.insert(
-            task.to_string(),
-            ServedProblem {
-                problem_id: "p1".to_string(),
-                task_id: task.to_string(),
-                topic: Some("addition".to_string()),
-                serve_topic: Some("addition".to_string()),
-                kp: None,
-                answer_kind: Some("numeric".to_string()),
-                text: "Compute $8 - 5$.".to_string(),
-                expected: PoolAnswer {
-                    v: 1,
-                    answer: "3".to_string(),
-                },
-                solution_sketch: None,
-                started_at: 1_767_225_600.0,
-                hints_given: Vec::new(),
-                index: 0,
-                rework: None,
-            },
-        );
+        open.served.insert(task.to_string(), review_problem(task));
         let mut tx = begin_tenant(handle.pool(), user).await.unwrap();
         save_web_state(&mut tx, user, &open.to_doc()).await.unwrap();
         tx.commit().await.unwrap();

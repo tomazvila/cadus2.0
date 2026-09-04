@@ -36,11 +36,8 @@ use common::{EXPECTED_ANSWER, LESSON, PROBLEM_TEXT, SESSION, exemplar, put_state
 
 use common::diagnosis::*;
 
-use axum::http::StatusCode;
 use cadus_core::curriculum::AnswerKind;
 use cadus_core::template::{GateSpec, gate_diagnosis_body};
-use cadus_store::test_support::TestDb;
-use serde_json::json;
 
 // --------------------------------------------------------------------------- //
 // Acceptance 1: a matching distractor is `ready` and writes no job row

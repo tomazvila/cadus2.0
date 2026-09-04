@@ -35,8 +35,6 @@ mod common;
 
 use common::csrf::*;
 
-use axum::http::StatusCode;
-
 /// (1) U1 acceptance: a cookie-authed cross-site POST to `/api/*` is
 /// `403 cross_origin_rejected`.
 ///

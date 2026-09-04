@@ -7,9 +7,6 @@ mod common;
 
 use common::skeleton::*;
 
-use axum::body::Body;
-use axum::http::Request;
-
 // ---------------------------------------------------------------------------
 // The request-metrics layer and /metrics
 // ---------------------------------------------------------------------------
@@ -77,15 +74,7 @@ async fn an_unmatched_path_is_one_unmatched_metric_label() {
 async fn the_csrf_refusal_is_counted() {
     let app = offline_app();
 
-    let request = Request::builder()
-        .method("POST")
-        .uri("/api/task/t-1/answer")
-        .header("host", "tutor.example")
-        .header("cookie", "__Host-cadus_session=s3cr3t")
-        .header("sec-fetch-site", "cross-site")
-        .body(Body::empty())
-        .unwrap();
-    let (status, _headers, _body) = send(&app, request).await;
+    let (status, _headers, _body) = send(&app, cross_site_answer_post()).await;
     assert_eq!(status.as_u16(), 403);
 
     let text = scrape(&app).await;

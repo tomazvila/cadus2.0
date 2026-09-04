@@ -11,12 +11,12 @@
 
 mod common;
 
+use common::review_problem;
+
 use axum::http::StatusCode;
-use cadus_core::pool::{PoolAnswer, Ring, TaskMemory};
+use cadus_core::pool::{Ring, TaskMemory};
 use cadus_web::error::ApiError;
-use cadus_web::state::{
-    ServedProblem, TASK_COMPLETE, TaskProgress, UNKNOWN_PROBLEM, ValidateError, WebState,
-};
+use cadus_web::state::{TASK_COMPLETE, TaskProgress, UNKNOWN_PROBLEM, ValidateError, WebState};
 
 // --------------------------------------------------------------------------- //
 // The document
@@ -122,24 +122,7 @@ fn validate_gives_409_task_complete_and_404_unknown_problem() {
     let mut state = WebState::for_session("s_2026-01-01a");
     state.served.insert(
         "s_2026-01-01a-review-addition".to_string(),
-        ServedProblem {
-            problem_id: "p1".to_string(),
-            task_id: "s_2026-01-01a-review-addition".to_string(),
-            topic: Some("addition".to_string()),
-            serve_topic: Some("addition".to_string()),
-            kp: None,
-            answer_kind: Some("numeric".to_string()),
-            text: "Compute $8 - 5$.".to_string(),
-            expected: PoolAnswer {
-                v: 1,
-                answer: "3".to_string(),
-            },
-            solution_sketch: None,
-            started_at: 1_767_225_600.0,
-            hints_given: Vec::new(),
-            index: 0,
-            rework: None,
-        },
+        review_problem("s_2026-01-01a-review-addition"),
     );
 
     // The live problem passes.

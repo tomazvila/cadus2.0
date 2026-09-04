@@ -29,10 +29,6 @@ use common::parse;
 
 use common::sessions::*;
 
-use axum::http::{Method, StatusCode};
-use cadus_store::test_support::TestDb;
-use serde_json::json;
-
 // --------------------------------------------------------------------------- //
 // Auth seam and the curriculum guard
 // --------------------------------------------------------------------------- //

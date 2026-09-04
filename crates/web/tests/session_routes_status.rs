@@ -9,11 +9,8 @@ use common::{BASE_US, SESSION, parse, seed_open_session};
 
 use common::sessions::*;
 
-use axum::http::{Method, StatusCode};
 use cadus_core::event::{Event, SchemaVersion, Timestamp};
-use cadus_store::test_support::TestDb;
 use cadus_web::state::WebState;
-use serde_json::{Value, json};
 
 // --------------------------------------------------------------------------- //
 // enroll, status, graph, modules
@@ -103,20 +100,7 @@ async fn status_reports_the_enrolled_course_and_the_counts() {
         let app = app(&db);
         seed_open_session(&db, user).await;
         seed_due_review(&db, user, 1).await;
-        seed_event(
-            &db,
-            user,
-            2,
-            &Event::Enrolled(cadus_core::event::Enrolled {
-                ts: Timestamp::from_micros(BASE_US + 1),
-                session: Some(SESSION.to_string()),
-                v: SchemaVersion,
-                course: cadus_core::event::Slug::new("c1").unwrap(),
-                reason: None,
-                return_to: None,
-            }),
-        )
-        .await;
+        seed_event(&db, user, 2, &enrolled_c1()).await;
 
         let (status, _, body) = call(&app, Method::GET, "/api/status", Some(user), None).await;
         assert_eq!(status, StatusCode::OK, "{body}");

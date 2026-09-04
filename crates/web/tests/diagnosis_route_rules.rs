@@ -11,13 +11,9 @@ use common::BASE_US;
 
 use common::diagnosis::*;
 
-use axum::http::StatusCode;
 use cadus_core::curriculum::AnswerKind;
 use cadus_store::diagnosis::JobRow;
-use cadus_store::test_support::TestDb;
 use cadus_web::diagnosis::{job_view, match_distractor};
-use serde_json::{Value, json};
-use sqlx::types::Uuid;
 use sqlx::types::chrono::{DateTime, Utc};
 
 // --------------------------------------------------------------------------- //

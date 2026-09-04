@@ -116,6 +116,14 @@ async fn an_invalid_utf8_path_segment_is_422_invalid_request_on_all_seven_routes
     .await;
 }
 
+/// Fail the test when a `GET` of `path` as `user` is not the `404` that
+/// carries `expected`.
+async fn assert_not_found(app: &Router, path: &str, user: Option<Uuid>, expected: &str) {
+    let (status, _, body) = call(app, Method::GET, path, user).await;
+    assert_eq!(status, StatusCode::NOT_FOUND, "{body}");
+    assert_eq!(code(&body), expected);
+}
+
 /// A readable path segment still reaches the handler.
 ///
 /// The extractor holds no policy of its own, so each route keeps the answer it
@@ -129,19 +137,15 @@ async fn a_readable_path_segment_still_reaches_the_handler() {
         let app = common::app_of(&db);
         let user = common::seed_learner(&db, "path-readable@example.com").await;
 
-        let (status, _, body) = call(&app, Method::GET, "/api/auth/oauth/google/start", None).await;
-        assert_eq!(status, StatusCode::NOT_FOUND, "{body}");
-        assert_eq!(code(&body), "not_found");
-
-        let (status, _, body) =
-            call(&app, Method::GET, "/api/auth/oauth/google/callback", None).await;
-        assert_eq!(status, StatusCode::NOT_FOUND, "{body}");
-        assert_eq!(code(&body), "not_found");
-
-        let (status, _, body) =
-            call(&app, Method::GET, "/api/diagnosis/not-a-uuid", Some(user)).await;
-        assert_eq!(status, StatusCode::NOT_FOUND, "{body}");
-        assert_eq!(code(&body), "unknown_diagnosis");
+        assert_not_found(&app, "/api/auth/oauth/google/start", None, "not_found").await;
+        assert_not_found(&app, "/api/auth/oauth/google/callback", None, "not_found").await;
+        assert_not_found(
+            &app,
+            "/api/diagnosis/not-a-uuid",
+            Some(user),
+            "unknown_diagnosis",
+        )
+        .await;
     })
     .await;
 }

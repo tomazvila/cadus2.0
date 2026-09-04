@@ -9,15 +9,11 @@ use common::*;
 
 use std::io::Write;
 use std::net::TcpStream;
-use std::process::{Command, Stdio};
-use std::sync::Arc;
 use std::sync::atomic::{AtomicU32, Ordering};
 use std::thread::sleep;
 use std::time::{Duration, Instant};
 
-use axum::body::Body;
-use axum::http::{Request, StatusCode};
-use cadus_store::test_support::{DeafPostgres, TestDb};
+use cadus_store::test_support::DeafPostgres;
 use cadus_store::{Db, DbConfig, connect_options};
 use cadus_web::{AppState, create_app};
 use http_body_util::BodyExt;
@@ -44,18 +40,11 @@ async fn binary_exits_zero_with_a_half_sent_request_open() {
         let port = free_port();
         let address = format!("127.0.0.1:{port}");
 
-        let mut child = KillOnDrop::new(
-            Command::new(env!("CARGO_BIN_EXE_cadus-web"))
-                .env("CADUS_CURRICULUM", curriculum_dir())
-                .env("CADUS_CURRICULUM", curriculum_dir())
+        let mut child = spawn_web(
+            web_command()
                 .env("DATABASE_URL", &dsn)
                 .env("BIND_ADDR", &address)
-                .env("SHUTDOWN_DEADLINE_SECS", "2")
-                .env("RUST_LOG", "info")
-                .stdout(Stdio::piped())
-                .stderr(Stdio::piped())
-                .spawn()
-                .expect("start cadus-web"),
+                .env("SHUTDOWN_DEADLINE_SECS", "2"),
         );
 
         let (code, _body) = wait_until_healthy(child.as_mut(), &address);
@@ -72,13 +61,9 @@ async fn binary_exits_zero_with_a_half_sent_request_open() {
 
         wait_for_exit(child.as_mut(), Duration::from_secs(15), "bounded shutdown");
         let elapsed = stop_started.elapsed();
-        let output = child
-            .into_inner()
-            .wait_with_output()
-            .expect("collect the child output");
-        let stderr = String::from_utf8_lossy(&output.stderr);
+        let (code, stderr) = collect_exit(child);
         assert_eq!(
-            output.status.code(),
+            code,
             Some(0),
             "the server must exit 0 at the shutdown deadline; stderr:\n{stderr}"
         );
@@ -99,26 +84,15 @@ async fn binary_exits_zero_with_a_half_sent_request_open() {
 /// (finding #42).
 #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
 async fn binary_exits_2_without_a_database_url() {
-    let mut child = KillOnDrop::new(
-        Command::new(env!("CARGO_BIN_EXE_cadus-web"))
-            .env("CADUS_CURRICULUM", curriculum_dir())
+    let child = spawn_web(
+        web_command()
             .env_remove("DATABASE_URL")
-            .env("BIND_ADDR", "127.0.0.1:0")
-            .env("RUST_LOG", "info")
-            .stdout(Stdio::piped())
-            .stderr(Stdio::piped())
-            .spawn()
-            .expect("start cadus-web"),
+            .env("BIND_ADDR", "127.0.0.1:0"),
     );
 
-    wait_for_exit(child.as_mut(), Duration::from_secs(10), "start error");
-    let output = child
-        .into_inner()
-        .wait_with_output()
-        .expect("collect the child output");
+    let (code, stderr) = exit_of(child, Duration::from_secs(10), "start error");
 
-    assert_eq!(output.status.code(), Some(2));
-    let stderr = String::from_utf8_lossy(&output.stderr);
+    assert_eq!(code, Some(2));
     assert!(
         stderr.contains("DATABASE_URL"),
         "stderr does not name the variable: {stderr}"
@@ -137,26 +111,15 @@ async fn binary_exits_2_with_a_bind_addr_that_is_not_unicode() {
     use std::os::unix::ffi::OsStrExt;
 
     let broken = OsStr::from_bytes(b"127.0.0.1:19099\xff");
-    let mut child = KillOnDrop::new(
-        Command::new(env!("CARGO_BIN_EXE_cadus-web"))
-            .env("CADUS_CURRICULUM", curriculum_dir())
+    let child = spawn_web(
+        web_command()
             .env("DATABASE_URL", "postgresql://nobody@127.0.0.1:1/nodb")
-            .env("BIND_ADDR", broken)
-            .env("RUST_LOG", "info")
-            .stdout(Stdio::piped())
-            .stderr(Stdio::piped())
-            .spawn()
-            .expect("start cadus-web"),
+            .env("BIND_ADDR", broken),
     );
 
-    wait_for_exit(child.as_mut(), Duration::from_secs(10), "bad BIND_ADDR");
-    let output = child
-        .into_inner()
-        .wait_with_output()
-        .expect("collect the child output");
+    let (code, stderr) = exit_of(child, Duration::from_secs(10), "bad BIND_ADDR");
 
-    assert_eq!(output.status.code(), Some(2));
-    let stderr = String::from_utf8_lossy(&output.stderr);
+    assert_eq!(code, Some(2));
     assert!(
         stderr.contains("BIND_ADDR"),
         "stderr does not name the variable: {stderr}"
@@ -174,17 +137,11 @@ async fn binary_exits_2_with_a_bind_addr_that_is_not_unicode() {
 async fn binary_exits_zero_on_sigterm_during_the_boot_guard() {
     let deaf = DeafPostgres::start();
 
-    let mut child = KillOnDrop::new(
-        Command::new(env!("CARGO_BIN_EXE_cadus-web"))
-            .env("CADUS_CURRICULUM", curriculum_dir())
+    let mut child = spawn_web(
+        web_command()
             .env("DATABASE_URL", deaf.dsn())
             .env("BIND_ADDR", "127.0.0.1:0")
-            .env("SHUTDOWN_DEADLINE_SECS", "1")
-            .env("RUST_LOG", "info")
-            .stdout(Stdio::piped())
-            .stderr(Stdio::piped())
-            .spawn()
-            .expect("start cadus-web"),
+            .env("SHUTDOWN_DEADLINE_SECS", "1"),
     );
 
     // Wait until the guard query reaches the deaf server. The process is then
@@ -206,14 +163,9 @@ async fn binary_exits_zero_on_sigterm_during_the_boot_guard() {
         Duration::from_secs(5),
         "stop during the boot guard",
     );
-    let output = child
-        .into_inner()
-        .wait_with_output()
-        .expect("collect the child output");
-    let stderr = String::from_utf8_lossy(&output.stderr);
-
+    let (code, stderr) = collect_exit(child);
     assert_eq!(
-        output.status.code(),
+        code,
         Some(0),
         "the server must exit 0 after SIGTERM during the boot guard; stderr:\n{stderr}"
     );
@@ -242,17 +194,10 @@ fn kill_on_drop_ends_the_child_when_the_test_body_panics() {
     let inner = Arc::clone(&pid_slot);
 
     let outcome = std::panic::catch_unwind(move || {
-        let child = KillOnDrop::new(
-            Command::new(env!("CARGO_BIN_EXE_cadus-web"))
-                .env("CADUS_CURRICULUM", curriculum_dir())
-                .env("CADUS_CURRICULUM", curriculum_dir())
+        let child = spawn_web(
+            web_command()
                 .env("DATABASE_URL", "postgresql://x@127.0.0.1:1/x")
-                .env("BIND_ADDR", "127.0.0.1:0")
-                .env("RUST_LOG", "info")
-                .stdout(Stdio::piped())
-                .stderr(Stdio::piped())
-                .spawn()
-                .expect("start cadus-web"),
+                .env("BIND_ADDR", "127.0.0.1:0"),
         );
         let pid = child.as_ref().id();
         inner.store(pid, Ordering::SeqCst);
@@ -321,10 +266,7 @@ async fn ready_returns_503_when_the_database_answers_nothing() {
 
     assert_eq!(response.status(), StatusCode::SERVICE_UNAVAILABLE);
     let body = response.into_body().collect().await.unwrap().to_bytes();
-    assert_eq!(
-        &body[..],
-        b"{\"db\":\"down\",\"ok\":false,\"worker\":{\"claim_age_secs\":null,\"stale\":false}}"
-    );
+    assert_eq!(&body[..], READY_DOWN);
     assert!(
         elapsed < Duration::from_secs(2),
         "the readiness probe took {elapsed:?}, so the client-side bound did not apply"
@@ -346,27 +288,16 @@ async fn ready_returns_503_when_the_database_answers_nothing() {
 /// costs the test no time.
 #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
 async fn binary_exits_2_with_a_bad_insecure_cookie_value() {
-    let mut child = KillOnDrop::new(
-        Command::new(env!("CARGO_BIN_EXE_cadus-web"))
-            .env("CADUS_CURRICULUM", curriculum_dir())
+    let child = spawn_web(
+        web_command()
             .env("DATABASE_URL", "postgresql://nobody@127.0.0.1:1/nodb")
             .env("BIND_ADDR", "127.0.0.1:0")
-            .env("CADUS_WEB_INSECURE_COOKIE", "true")
-            .env("RUST_LOG", "info")
-            .stdout(Stdio::piped())
-            .stderr(Stdio::piped())
-            .spawn()
-            .expect("start cadus-web"),
+            .env("CADUS_WEB_INSECURE_COOKIE", "true"),
     );
 
-    wait_for_exit(child.as_mut(), Duration::from_secs(10), "cookie posture");
-    let output = child
-        .into_inner()
-        .wait_with_output()
-        .expect("collect the child output");
+    let (code, stderr) = exit_of(child, Duration::from_secs(10), "cookie posture");
 
-    assert_eq!(output.status.code(), Some(2));
-    let stderr = String::from_utf8_lossy(&output.stderr);
+    assert_eq!(code, Some(2));
     assert!(
         stderr.contains("CADUS_WEB_INSECURE_COOKIE must be 0 or 1"),
         "stderr does not name the rule: {stderr}"
@@ -381,27 +312,16 @@ async fn binary_exits_2_with_a_bad_insecure_cookie_value() {
 /// process refuses to start instead.
 #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
 async fn binary_exits_2_with_a_public_origin_that_is_not_an_origin() {
-    let mut child = KillOnDrop::new(
-        Command::new(env!("CARGO_BIN_EXE_cadus-web"))
-            .env("CADUS_CURRICULUM", curriculum_dir())
+    let child = spawn_web(
+        web_command()
             .env("DATABASE_URL", "postgresql://nobody@127.0.0.1:1/nodb")
             .env("BIND_ADDR", "127.0.0.1:0")
-            .env("PUBLIC_ORIGIN", "https://tutor.example/app")
-            .env("RUST_LOG", "info")
-            .stdout(Stdio::piped())
-            .stderr(Stdio::piped())
-            .spawn()
-            .expect("start cadus-web"),
+            .env("PUBLIC_ORIGIN", "https://tutor.example/app"),
     );
 
-    wait_for_exit(child.as_mut(), Duration::from_secs(10), "public origin");
-    let output = child
-        .into_inner()
-        .wait_with_output()
-        .expect("collect the child output");
+    let (code, stderr) = exit_of(child, Duration::from_secs(10), "public origin");
 
-    assert_eq!(output.status.code(), Some(2));
-    let stderr = String::from_utf8_lossy(&output.stderr);
+    assert_eq!(code, Some(2));
     assert!(
         stderr.contains("PUBLIC_ORIGIN"),
         "stderr does not name the variable: {stderr}"

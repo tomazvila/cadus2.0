@@ -1,11 +1,8 @@
 //! The fixtures of `tests/diagnosis_route.rs` and its parts.
 
-use std::sync::Arc;
 use std::time::Duration;
 
-use axum::Router;
-use axum::body::Body;
-use axum::http::{Method, Request, StatusCode, header};
+use axum::http::header;
 use cadus_core::curriculum::{
     AnswerKind, Catalog, Course, Curriculum, Exemplar, KnowledgePoint, RawCurriculum, RawUnit,
     Slug, Topic, Unit,
@@ -14,17 +11,15 @@ use cadus_core::event::{Event, SchemaVersion, SessionStart, Timestamp};
 use cadus_core::pool::PoolAnswer;
 use cadus_core::template::{GateSpec, gate_diagnosis_body};
 use cadus_store::diagnosis::JobRow;
-use cadus_store::test_support::TestDb;
 use cadus_store::{DEFAULT_CLIENT_TIMEOUT_MS, Db};
 use cadus_web::diagnosis::{DiagnosisHub, job_view, match_distractor};
 use cadus_web::state::{Content, ServedProblem, TaskProgress, WebState};
 use cadus_web::{AppState, create_app};
 use http_body_util::BodyExt;
-use serde_json::{Value, json};
-use sqlx::types::Uuid;
 use sqlx::types::chrono::{DateTime, Utc};
 use tower::ServiceExt;
 
+pub use super::prelude::*;
 use super::*;
 
 /// The `attempt_id` of the first answer of the lesson (`{task_id}-{n}`, n = 1).

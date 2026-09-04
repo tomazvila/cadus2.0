@@ -19,9 +19,7 @@
 
 mod common;
 
-use cadus_store::test_support::TestDb;
 use common::*;
-use serde_json::{Value, json};
 
 // ---------------------------------------------------------------------------
 // Sign-up (spec section 10, row "Signup / unverified login")

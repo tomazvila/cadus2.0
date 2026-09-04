@@ -5,9 +5,6 @@
 
 mod common;
 
-use std::sync::Arc;
-
-use cadus_store::test_support::TestDb;
 use common::*;
 
 // ---------------------------------------------------------------------------
@@ -18,10 +15,8 @@ use common::*;
 #[tokio::test]
 async fn a_mismatched_state_is_400_with_no_session() {
     TestDb::with(|db| async move {
-        let provider = Arc::new(google_verified());
-        let app = google_app(&db, Arc::clone(&provider));
-
-        let answer = google_callback(&app, "code=u5-code&state=u5-wrong-state").await;
+        let (provider, answer) =
+            verified_google_callback(&db, "code=u5-code&state=u5-wrong-state").await;
 
         assert_state_mismatch(&answer);
         assert_eq!(user_count(&db).await, 0);
@@ -112,10 +107,8 @@ async fn a_callback_without_a_whole_handshake_is_400() {
 #[tokio::test]
 async fn a_provider_error_query_is_400() {
     TestDb::with(|db| async move {
-        let provider = Arc::new(google_verified());
-        let app = google_app(&db, Arc::clone(&provider));
-
-        let answer = google_callback(&app, "error=access_denied&state=u5-state-value").await;
+        let (provider, answer) =
+            verified_google_callback(&db, "error=access_denied&state=u5-state-value").await;
 
         assert_oauth_error(&answer);
         assert_eq!(

@@ -20,9 +20,6 @@ mod common;
 
 use common::skeleton::*;
 
-use axum::body::Body;
-use axum::http::Request;
-
 // ---------------------------------------------------------------------------
 // The security headers (spec section 3.1)
 // ---------------------------------------------------------------------------
@@ -48,15 +45,7 @@ async fn every_security_header_literal_is_on_a_200() {
 async fn the_csrf_refusal_carries_the_security_headers() {
     let app = offline_app();
 
-    let request = Request::builder()
-        .method("POST")
-        .uri("/api/task/t-1/answer")
-        .header("host", "tutor.example")
-        .header("cookie", "__Host-cadus_session=s3cr3t")
-        .header("sec-fetch-site", "cross-site")
-        .body(Body::empty())
-        .unwrap();
-    let (status, headers, _body) = send(&app, request).await;
+    let (status, headers, _body) = send(&app, cross_site_answer_post()).await;
 
     assert_eq!(status.as_u16(), 403);
     for (name, value) in SECURITY_HEADERS {

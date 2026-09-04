@@ -7,18 +7,12 @@ mod common;
 
 use common::diagnosis::*;
 
-use std::sync::Arc;
 use std::time::Duration;
 
-use axum::Router;
-use axum::body::Body;
-use axum::http::{Method, Request, StatusCode, header};
-use cadus_store::test_support::TestDb;
+use axum::http::header;
 use cadus_store::{DEFAULT_CLIENT_TIMEOUT_MS, Db};
 use cadus_web::diagnosis::DiagnosisHub;
 use http_body_util::BodyExt;
-use serde_json::json;
-use sqlx::types::Uuid;
 use tower::ServiceExt;
 
 // --------------------------------------------------------------------------- //

@@ -1,8 +1,5 @@
 //! The fixtures of `tests/csrf.rs` and its parts.
 
-use axum::Router;
-use axum::body::Body;
-use axum::http::{Request, StatusCode};
 use cadus_store::{DEFAULT_CLIENT_TIMEOUT_MS, Db};
 use cadus_web::cookie::CookiePosture;
 use cadus_web::origin::OriginPolicy;
@@ -11,6 +8,7 @@ use http_body_util::BodyExt;
 use sqlx::postgres::PgPoolOptions;
 use tower::ServiceExt;
 
+pub use super::prelude::*;
 use super::*;
 
 /// A session cookie of the production posture, as a browser would send it.

@@ -1,27 +1,22 @@
 //! The fixtures of `tests/session_routes.rs` and its parts.
 
 use std::collections::BTreeMap;
-use std::sync::Arc;
 
-use axum::Router;
-use axum::body::Body;
-use axum::http::{Method, Request, StatusCode, header};
+use axum::http::header;
 use cadus_core::config::Config;
 use cadus_core::curriculum::{
     AnswerKind, Catalog, Course, Curriculum, PrereqEdge, RawCurriculum, RawUnit, Slug, Topic, Unit,
 };
 use cadus_core::event::{Event, SchemaVersion, SessionStart, Timestamp, TopicStatus};
 use cadus_core::learner::{LearnerModel, TopicState};
-use cadus_store::test_support::TestDb;
 use cadus_store::{DEFAULT_CLIENT_TIMEOUT_MS, Db};
 use cadus_web::state::{Content, TaskProgress, WebState};
 use cadus_web::{AppState, create_app};
 use http_body_util::BodyExt;
-use serde_json::{Value, json};
-use sqlx::types::Uuid;
 use sqlx::types::chrono::{DateTime, Utc};
 use tower::ServiceExt;
 
+pub use super::prelude::*;
 use super::*;
 
 /// One topic of the fixture curriculum, with no knowledge point and one key
@@ -64,28 +59,13 @@ pub fn graph() -> Curriculum {
     Curriculum::build(RawCurriculum {
         catalog,
         units: vec![
-            RawUnit {
-                course_id: "c1".to_string(),
-                file_name: "00-M1.yaml".to_string(),
-                unit: Unit {
-                    unit: "M1".to_string(),
-                    course: Slug::new("c1").unwrap(),
-                    module: "M1".to_string(),
-                    topics: vec![topic("addition", None), topic("subtraction", None)],
-                },
-                first_load_index: 0,
-            },
-            RawUnit {
-                course_id: "c2".to_string(),
-                file_name: "01-M2.yaml".to_string(),
-                unit: Unit {
-                    unit: "M2".to_string(),
-                    course: Slug::new("c2").unwrap(),
-                    module: "M2".to_string(),
-                    topics: vec![topic("fractions", Some("addition"))],
-                },
-                first_load_index: 2,
-            },
+            unit(
+                "c1",
+                "M1",
+                vec![topic("addition", None), topic("subtraction", None)],
+                0,
+            ),
+            unit("c2", "M2", vec![topic("fractions", Some("addition"))], 2),
         ],
     })
     .unwrap()
@@ -165,4 +145,60 @@ pub async fn seed_due_review(db: &TestDb, user: Uuid, through_seq: i64) {
     .execute(&db.admin)
     .await
     .unwrap();
+}
+
+/// The `enrolled` event of course `c1`, one microsecond into the session.
+pub fn enrolled_c1() -> Event {
+    Event::Enrolled(cadus_core::event::Enrolled {
+        ts: Timestamp::from_micros(BASE_US + 1),
+        session: Some(SESSION.to_string()),
+        v: SchemaVersion,
+        course: cadus_core::event::Slug::new("c1").unwrap(),
+        reason: None,
+        return_to: None,
+    })
+}
+
+/// `GET /api/session/plan` as `user`, and the `200` body.
+pub async fn plan_of(app: &Router, user: Uuid) -> Value {
+    let (status, _, body) = call(app, Method::GET, "/api/session/plan", Some(user), None).await;
+    assert_eq!(status, StatusCode::OK, "{body}");
+    parse(&body)
+}
+
+/// What one learner's three rows hold: the event count, the D-S6 document and
+/// its `updated_at`, and the `built_at` and the cursor of the model.
+#[derive(Debug, Clone, PartialEq)]
+pub struct StorageSnapshot {
+    pub events: i64,
+    pub doc: Value,
+    pub touched: DateTime<Utc>,
+    pub built: DateTime<Utc>,
+    pub cursor: i64,
+}
+
+/// Read the [`StorageSnapshot`] of `user`.
+pub async fn storage_snapshot(db: &TestDb, user: Uuid) -> StorageSnapshot {
+    // The text of the statement is byte for byte the one the query cache
+    // holds, so the offline check finds it.
+    let row = sqlx::query!(
+        r#"
+            SELECT (SELECT count(*) FROM events WHERE user_id = $1) AS "events!",
+                   (SELECT doc FROM web_states WHERE user_id = $1) AS "doc!",
+                   (SELECT updated_at FROM web_states WHERE user_id = $1) AS "touched!",
+                   (SELECT built_at FROM learner_models WHERE user_id = $1) AS "built!",
+                   (SELECT through_seq FROM learner_models WHERE user_id = $1) AS "cursor!"
+            "#,
+        user
+    )
+    .fetch_one(&db.admin)
+    .await
+    .unwrap();
+    StorageSnapshot {
+        events: row.events,
+        doc: row.doc,
+        touched: row.touched,
+        built: row.built,
+        cursor: row.cursor,
+    }
 }

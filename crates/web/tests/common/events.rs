@@ -133,3 +133,26 @@ pub fn quiz(score: f64, offset: i64) -> Event {
         xp: 0.0,
     })
 }
+
+/// The live review problem `Compute $8 - 5$.` of `task_id`, dealt at the start
+/// of 2026.
+pub fn review_problem(task_id: &str) -> ServedProblem {
+    ServedProblem {
+        problem_id: "p1".to_string(),
+        task_id: task_id.to_string(),
+        topic: Some("addition".to_string()),
+        serve_topic: Some("addition".to_string()),
+        kp: None,
+        answer_kind: Some("numeric".to_string()),
+        text: "Compute $8 - 5$.".to_string(),
+        expected: PoolAnswer {
+            v: 1,
+            answer: "3".to_string(),
+        },
+        solution_sketch: None,
+        started_at: 1_767_225_600.0,
+        hints_given: Vec::new(),
+        index: 0,
+        rework: None,
+    }
+}

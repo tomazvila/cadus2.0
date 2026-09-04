@@ -7,9 +7,6 @@ mod common;
 
 use common::admin::*;
 
-use cadus_store::test_support::TestDb;
-use serde_json::{Value, json};
-
 use common::Answer;
 
 // --------------------------------------------------------------------------- //

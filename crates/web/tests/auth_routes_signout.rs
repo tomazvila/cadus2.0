@@ -5,12 +5,8 @@
 
 mod common;
 
-use axum::body::Body;
-use axum::http::Request;
-use cadus_store::test_support::TestDb;
 use cadus_web::auth::rate::{RateRule, UNKNOWN_CLIENT_IP, client_ip};
 use common::*;
-use serde_json::json;
 
 // ---------------------------------------------------------------------------
 // Sign-out
