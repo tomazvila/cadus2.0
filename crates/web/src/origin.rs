@@ -316,7 +316,8 @@ mod origin_tests {
         }
     }
 
-    /// The own origin needs a `Host` header, and a blank one gives none.
+    /// The own origin needs a `Host` header, and a blank one or one that is not
+    /// text gives none.
     #[test]
     fn the_own_origin_needs_a_host_header() {
         use axum::http::{HeaderMap, HeaderValue};
@@ -327,5 +328,9 @@ mod origin_tests {
         let mut blank = HeaderMap::new();
         blank.insert("host", HeaderValue::from_static("   "));
         assert_eq!(own_origin(&policy, &blank), None);
+
+        let mut not_text = HeaderMap::new();
+        not_text.insert("host", HeaderValue::from_bytes(b"h\xffst").unwrap());
+        assert_eq!(own_origin(&policy, &not_text), None);
     }
 }
