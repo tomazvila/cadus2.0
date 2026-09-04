@@ -19,10 +19,7 @@ use cadus_core::selector::{
 use cadus_store::state::{EventRow, load_events, project_current};
 use serde_json::{Value, json};
 
-use super::store::{
-    RequestInput, begin, json_of, read_projection, reply_read, request_input, store,
-    unknown_course, view_for_open_session,
-};
+use super::store::{Ready, Reply, begin, json_of, reply_read, store, unknown_course};
 use super::{EXPORT_MEDIA_TYPE, INTERNAL_ERROR};
 use crate::AppState;
 use crate::error::ApiError;
@@ -88,47 +85,38 @@ fn is_placed(topic: &TopicState) -> bool {
 /// The dashboard payload (`api.py:749-800`).
 ///
 /// It is a pure read: no event is appended and no row is written.
-pub async fn status(
-    State(state): State<AppState>,
-    Tenant(user_id): Tenant,
-) -> Result<Json<Value>, ApiError> {
-    let RequestInput {
-        content,
-        now,
-        input,
-        ..
-    } = request_input(&state)?;
-    let mut tx = begin(&state, user_id).await?;
-    let projection = store(&state, project_current(&mut tx, user_id, &input)).await?;
+pub async fn status(req: Ready) -> Reply {
+    let input = req.input();
+    let mut tx = req.begin().await?;
+    let projection = req
+        .store(project_current(&mut tx, req.user_id, &input))
+        .await?;
     let model = projection.model;
     let mut view = projection.view;
     // The dashboard reads `drill_due` off the same repaired view the plan and
     // the serve read (V3, V9). A learner with no open session has no window to
     // read, and no drill of an open session to forget.
     if let Some(session) = view.current_session.clone() {
-        view_for_open_session(&state, &mut tx, user_id, &mut view, &session).await?;
+        req.view_for_open_session(&mut tx, &mut view, &session)
+            .await?;
     }
 
-    let graph = &content.curriculum;
+    let graph = req.graph();
+    let cfg = &req.content.cfg;
+    let t_us = req.now.micros();
     let course = view.enrollment_stack.last().map(String::as_str);
-    let (frontier_count, due_count, nearly_count) =
-        due_counts(&model, graph, &content.cfg, now.micros(), course);
+    let (frontier_count, due_count, nearly_count) = due_counts(&model, graph, cfg, t_us, course);
     let placed = model.topics.values().any(is_placed) || view.has_diagnostic;
     let quiz_due = quiz_is_due(
         Some(&model.quiz),
         &model.topics,
         graph,
-        &content.cfg,
-        now.micros(),
+        cfg,
+        t_us,
         Some(&view.study_days()),
     );
-    let drill_due = !schedule_drills(
-        &model.topics,
-        graph,
-        now.micros(),
-        Some(&view.last_drill_at),
-    )
-    .is_empty();
+    let drill_due =
+        !schedule_drills(&model.topics, graph, t_us, Some(&view.last_drill_at)).is_empty();
 
     let body = json!({
         "course": course_view(graph, course),
@@ -235,27 +223,16 @@ fn graph_view<'a>(
 ///
 /// It is a pure read. The scope is a VIEW FILTER only: the learner whose state
 /// joins is always the request tenant, so a scope can never select another one.
-pub async fn graph(
-    State(state): State<AppState>,
-    Query(query): Query<GraphQuery>,
-    Tenant(user_id): Tenant,
-) -> Result<Json<Value>, ApiError> {
-    let RequestInput {
-        content,
-        wall,
-        input,
-        ..
-    } = request_input(&state)?;
-    let projection = read_projection(&state, user_id, &input).await?;
-
-    let graph = &content.curriculum;
+pub async fn graph(req: Ready, Query(query): Query<GraphQuery>) -> Reply {
+    let projection = req.read_projection(&req.input()).await?;
+    let graph = req.graph();
     let enrolled = projection.view.enrollment_stack.last().map(String::as_str);
     let scope = query.scope.as_deref();
     let selected = scoped_topics(graph, scope, enrolled)?;
     let view = graph_view(graph, &projection.model, &selected);
 
     Ok(Json(json!({
-        "now": wall.to_rfc3339(),
+        "now": req.wall.to_rfc3339(),
         "scope": scope,
         "courses": journey(graph, enrolled),
         "modules": view.modules,
@@ -274,14 +251,9 @@ pub async fn graph(
 // --------------------------------------------------------------------------- //
 
 /// The enrolled course's module names, in curriculum order (`api.py:2291-2305`).
-pub async fn modules(
-    State(state): State<AppState>,
-    Tenant(user_id): Tenant,
-) -> Result<Json<Value>, ApiError> {
-    let RequestInput { content, input, .. } = request_input(&state)?;
-    let projection = read_projection(&state, user_id, &input).await?;
-
-    let graph = &content.curriculum;
+pub async fn modules(req: Ready) -> Reply {
+    let projection = req.read_projection(&req.input()).await?;
+    let graph = req.graph();
     let course = projection.view.enrollment_stack.last().map(String::as_str);
     let mut seen: Vec<&str> = Vec::new();
     for idx in course_scope(graph, course).indices() {

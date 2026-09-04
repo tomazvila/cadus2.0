@@ -2,7 +2,6 @@
 //! under the tenant's advisory lock.
 
 use axum::Json;
-use axum::extract::State;
 use axum::http::StatusCode;
 use cadus_core::curriculum::{AnswerKind, Course, Curriculum, Slug};
 use cadus_core::diagnostic::{self, DiagState, PlacementResult};
@@ -18,14 +17,10 @@ use super::{
     DIAG_TASK_ID, deal_probe, deterministic, load_diagnostic, no_diagnostic, save_diagnostic,
     topic_kind, topic_record,
 };
-use crate::AppState;
 use crate::error::ApiError;
 use crate::grade::{deterministic_grade, measure_secs};
-use crate::session::{
-    RequestInput, append, append_and_fold, enrolled_event, event_slug, locked_projection,
-    open_locked, read_state, reply_committed, request_input, store, unknown_course, write_state,
-};
-use crate::state::{Content, INVALID_REQUEST, ServedProblem, Tenant, UNKNOWN_PROBLEM, WebState};
+use crate::session::{Ready, Reply, enrolled_event, event_slug, reply_committed, unknown_course};
+use crate::state::{Content, INVALID_REQUEST, ServedProblem, UNKNOWN_PROBLEM, WebState};
 
 /// The enrolled course of one projection.
 fn enrolled_course(projection: &Projection) -> Option<String> {
@@ -92,40 +87,31 @@ fn markable_diagnostic(content: &Content, course: &str) -> DiagState {
 ///
 /// A second start REPLACES the diagnostic in progress, which is what 1.0 does:
 /// the balances go back to zero and the probe list starts again.
-pub async fn start(
-    State(state): State<AppState>,
-    Tenant(user_id): Tenant,
-    body: Option<Json<Value>>,
-) -> Result<Json<Value>, ApiError> {
-    let RequestInput {
-        content,
-        now,
-        input,
-        ..
-    } = request_input(&state)?;
+pub async fn start(req: Ready, body: Option<Json<Value>>) -> Reply {
     let asked = asked_course(body.as_ref());
-    let (mut tx, projection) = locked_projection(&state, user_id, &input).await?;
+    let input = req.input();
+    let (mut tx, projection) = req.locked_projection(&input).await?;
 
     let enrolled = enrolled_course(&projection);
     let first_run = enrolled.is_none() && asked.is_none();
-    let course = chosen_course(&content.curriculum, asked, enrolled)?;
+    let course = chosen_course(req.graph(), asked, enrolled)?;
     if first_run {
         // Bind the entry course, so the placement and the frontier readout after
         // it see one enrolled course.
         let session = projection.view.current_session.clone();
-        let event = enrolled_event(now, session, event_slug(&course.id)?);
-        append_and_fold(&state, &mut tx, user_id, &event, &input).await?;
+        let event = enrolled_event(req.now, session, event_slug(&course.id)?);
+        req.append_and_fold(&mut tx, &event, &input).await?;
     }
 
-    let diag = markable_diagnostic(content, course.id.as_str());
-    let mut scratch = read_state(&state.db, &mut tx, user_id).await?;
-    let probe = deal_probe(&diag, content, &mut scratch, now);
-    save_diagnostic(&state, &mut tx, user_id, &diag, &scratch).await?;
+    let diag = markable_diagnostic(&req.content, course.id.as_str());
+    let mut scratch = req.read_state(&mut tx).await?;
+    let probe = deal_probe(&diag, &req.content, &mut scratch, req.now);
+    save_diagnostic(&req.state, &mut tx, req.user_id, &diag, &scratch).await?;
 
     let body = json!({
         "probe": probe,
         "asked": diag.answered.len(),
-        "cap": content.cfg.diag.max_questions,
+        "cap": req.content.cfg.diag.max_questions,
     });
     reply_committed(tx, body).await
 }
@@ -244,23 +230,13 @@ fn answer_event(
 /// The reply carries the verdict and the next probe, and it carries NEITHER the
 /// expected answer NOR a solution. A placement that shows the answer measures
 /// nothing after the first probe.
-pub async fn answer(
-    State(state): State<AppState>,
-    Tenant(user_id): Tenant,
-    body: Option<Json<Value>>,
-) -> Result<Json<Value>, ApiError> {
-    let RequestInput {
-        content,
-        now,
-        input,
-        ..
-    } = request_input(&state)?;
-    let graph = &content.curriculum;
+pub async fn answer(req: Ready, body: Option<Json<Value>>) -> Reply {
+    let graph = req.graph();
     let (problem_id, submitted) = answer_body(body)?;
 
-    let mut tx = open_locked(&state, user_id).await?;
-    let mut diag = load_diagnostic(&state, &mut tx, user_id).await?;
-    let mut scratch = read_state(&state.db, &mut tx, user_id).await?;
+    let mut tx = req.open_locked().await?;
+    let mut diag = load_diagnostic(&req.state, &mut tx, req.user_id).await?;
+    let mut scratch = req.read_state(&mut tx).await?;
     let served = served_probe(&scratch, &problem_id)?;
     let (topic, kind) = probe_topic(&diag, graph, &served)?;
 
@@ -270,7 +246,7 @@ pub async fn answer(
         kind,
         &served,
         &submitted,
-        now.micros(),
+        req.now.micros(),
     );
     diagnostic::apply_answer(
         &mut diag,
@@ -278,16 +254,18 @@ pub async fn answer(
         topic.as_str(),
         marked.correct,
         marked.weight,
-        &content.cfg,
+        &req.content.cfg,
     );
 
-    let projection = store(&state, project_current(&mut tx, user_id, &input)).await?;
+    let projection = req
+        .store(project_current(&mut tx, req.user_id, &req.input()))
+        .await?;
     let session = projection.view.current_session.clone();
-    let event = answer_event(now, session, event_slug(topic)?, &marked);
-    append(&state, &mut tx, user_id, &event).await?;
+    let event = answer_event(req.now, session, event_slug(topic)?, &marked);
+    req.append(&mut tx, &event).await?;
 
-    let next = deal_probe(&diag, content, &mut scratch, now);
-    save_diagnostic(&state, &mut tx, user_id, &diag, &scratch).await?;
+    let next = deal_probe(&diag, &req.content, &mut scratch, req.now);
+    save_diagnostic(&req.state, &mut tx, req.user_id, &diag, &scratch).await?;
 
     let next_probe = next.unwrap_or_else(|| json!({ "done": true }));
     let body = json!({ "correct": marked.correct, "next_probe": next_probe });
@@ -335,36 +313,30 @@ fn frontier_readout<'a>(graph: &'a Curriculum, after: &Projection) -> Vec<&'a st
 /// second time, and a second `diagnostic_placed` folds into the model for good:
 /// the event carries no `attempt_id`, so no index dedups it and the log is
 /// append-only (1.0 BUG-2).
-pub async fn finish(
-    State(state): State<AppState>,
-    Tenant(user_id): Tenant,
-) -> Result<Json<Value>, ApiError> {
-    let RequestInput {
-        content,
-        now,
-        input,
-        ..
-    } = request_input(&state)?;
-    let graph = &content.curriculum;
+pub async fn finish(req: Ready) -> Reply {
+    let input = req.input();
+    let mut tx = req.open_locked().await?;
+    let diag = load_diagnostic(&req.state, &mut tx, req.user_id).await?;
+    let result = diagnostic::placement(&diag, &req.content.cfg);
+    let projection = req
+        .store(project_current(&mut tx, req.user_id, &input))
+        .await?;
+    let event = placed_event(req.now, projection.view.current_session.clone(), &result);
+    req.append_and_fold(&mut tx, &event, &input).await?;
+    req.store(clear_diag_state(&mut tx, req.user_id)).await?;
 
-    let mut tx = open_locked(&state, user_id).await?;
-    let diag = load_diagnostic(&state, &mut tx, user_id).await?;
-    let result = diagnostic::placement(&diag, &content.cfg);
-    let projection = store(&state, project_current(&mut tx, user_id, &input)).await?;
-    let event = placed_event(now, projection.view.current_session.clone(), &result);
-    append_and_fold(&state, &mut tx, user_id, &event, &input).await?;
-    store(&state, clear_diag_state(&mut tx, user_id)).await?;
-
-    let mut scratch = read_state(&state.db, &mut tx, user_id).await?;
+    let mut scratch = req.read_state(&mut tx).await?;
     scratch.served.remove(DIAG_TASK_ID);
-    write_state(&state.db, &mut tx, user_id, &scratch).await?;
+    req.write_state(&mut tx, &scratch).await?;
 
     // The readout comes from the model this transaction just wrote.
-    let after = store(&state, project_current(&mut tx, user_id, &input)).await?;
+    let after = req
+        .store(project_current(&mut tx, req.user_id, &input))
+        .await?;
     let body = json!({
         "placed": result.placed.keys().collect::<Vec<&String>>(),
         "conditional": result.conditional,
-        "frontier": frontier_readout(graph, &after),
+        "frontier": frontier_readout(req.graph(), &after),
     });
     reply_committed(tx, body).await
 }

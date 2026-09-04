@@ -3,8 +3,6 @@
 
 use std::collections::BTreeSet;
 
-use axum::Json;
-use axum::extract::State;
 use cadus_core::curriculum::Curriculum;
 use cadus_core::event::Timestamp;
 use cadus_core::learner::LearnerModel;
@@ -15,45 +13,32 @@ use cadus_store::state::SessionView;
 use serde_json::{Value, json};
 use sqlx::types::chrono::{DateTime, Utc};
 
-use super::store::{
-    RequestInput, locked_projection, no_open_session, read_state, reply_read, request_input,
-    view_for_open_session,
-};
-use crate::AppState;
-use crate::error::ApiError;
-use crate::state::{Content, Tenant, WebState};
+use super::store::{Ready, Reply, no_open_session, reply_read};
+use crate::state::{Content, WebState};
 
 /// The ordered session plan (`api.py:928-957`). It WRITES NOTHING.
 ///
 /// The plan and the per-task progress are read in ONE transaction, so the two
 /// cannot disagree, and the progress comes from
 /// [`crate::state::WebState::plan_progress`], a plain lookup (trap W3).
-pub async fn session_plan(
-    State(state): State<AppState>,
-    Tenant(user_id): Tenant,
-) -> Result<Json<Value>, ApiError> {
-    let RequestInput {
-        content,
-        now,
-        input,
-        ..
-    } = request_input(&state)?;
-    let (mut tx, projection) = locked_projection(&state, user_id, &input).await?;
+pub async fn session_plan(req: Ready) -> Reply {
+    let (mut tx, projection) = req.locked_projection(&req.input()).await?;
     let session = projection
         .view
         .current_session
         .clone()
         .ok_or_else(no_open_session)?;
-    let scratch = read_state(&state.db, &mut tx, user_id).await?;
+    let scratch = req.read_state(&mut tx).await?;
     let mut view = projection.view;
     // The listing composes from the SAME repaired view the serve route composes
     // from (V3, V9): a drill this session already serves keeps its place.
-    view_for_open_session(&state, &mut tx, user_id, &mut view, &session).await?;
+    req.view_for_open_session(&mut tx, &mut view, &session)
+        .await?;
 
-    let graph = &content.curriculum;
+    let graph = req.graph();
     let model = projection.model;
     let course = view.enrollment_stack.last().map(String::as_str);
-    let plan = compose_plan(content, &view, &model, &session, now);
+    let plan = compose_plan(&req.content, &view, &model, &session, req.now);
 
     let tasks: Vec<Value> = plan
         .tasks

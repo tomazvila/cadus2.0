@@ -3,7 +3,6 @@
 //! advisory lock.
 
 use axum::Json;
-use axum::extract::State;
 use axum::http::StatusCode;
 use cadus_core::event::{Event, SchemaVersion, SessionEnd, SessionStart};
 use cadus_store::state::{clear_web_state, project_and_save};
@@ -11,13 +10,11 @@ use serde_json::{Value, json};
 
 use super::dashboard::due_counts;
 use super::store::{
-    RequestInput, append, append_and_fold, enrolled_event, event_slug, json_of, locked_projection,
-    no_open_session, read_state, reply_committed, request_input, store, unknown_course,
-    write_state,
+    Ready, Reply, enrolled_event, event_slug, json_of, no_open_session, reply_committed,
+    unknown_course,
 };
-use crate::AppState;
 use crate::error::ApiError;
-use crate::state::{INVALID_REQUEST, Tenant};
+use crate::state::INVALID_REQUEST;
 
 /// The `course` field of an enroll body, or an empty text when it has none.
 fn asked_course(body: Option<&Json<Value>>) -> String {
@@ -42,17 +39,7 @@ fn asked_minutes(body: Option<&Json<Value>>) -> Option<f64> {
 /// The append, the re-projection, and the scratch clear are ONE transaction
 /// under the tenant's advisory lock, so a course switch never commits against a
 /// stale learner model or a stale served problem.
-pub async fn enroll(
-    State(state): State<AppState>,
-    Tenant(user_id): Tenant,
-    body: Option<Json<Value>>,
-) -> Result<Json<Value>, ApiError> {
-    let RequestInput {
-        content,
-        now,
-        input,
-        ..
-    } = request_input(&state)?;
+pub async fn enroll(req: Ready, body: Option<Json<Value>>) -> Reply {
     let course = asked_course(body.as_ref());
     if course.is_empty() {
         return Err(ApiError::new(
@@ -61,17 +48,18 @@ pub async fn enroll(
             "enroll requires a course id.",
         ));
     }
-    let graph = &content.curriculum;
+    let graph = req.graph();
     let Some(found) = graph.course(&course) else {
         return Err(unknown_course(&course));
     };
-
-    let (mut tx, projection) = locked_projection(&state, user_id, &input).await?;
     let slug = event_slug(&found.id)?;
-    let event = enrolled_event(now, projection.view.current_session.clone(), slug);
-    append_and_fold(&state, &mut tx, user_id, &event, &input).await?;
+
+    let input = req.input();
+    let (mut tx, projection) = req.locked_projection(&input).await?;
+    let event = enrolled_event(req.now, projection.view.current_session.clone(), slug);
+    req.append_and_fold(&mut tx, &event, &input).await?;
     // A new course makes every in-flight served problem stale.
-    store(&state, clear_web_state(&mut tx, user_id)).await?;
+    req.store(clear_web_state(&mut tx, req.user_id)).await?;
 
     let mut floor: Vec<&str> = graph
         .mastery_floor(&course)
@@ -98,47 +86,41 @@ pub async fn enroll(
 /// advisory lock. `session_start` carries no `attempt_id`, so the FR-14 index
 /// cannot dedup a second append out of an append-only log: the lock is the whole
 /// idempotence argument (1.0 BUG-2).
-pub async fn session_start(
-    State(state): State<AppState>,
-    Tenant(user_id): Tenant,
-) -> Result<Json<Value>, ApiError> {
-    let RequestInput {
-        content,
-        wall,
-        now,
-        input,
-    } = request_input(&state)?;
-    let (mut tx, before) = locked_projection(&state, user_id, &input).await?;
+pub async fn session_start(req: Ready) -> Reply {
+    let input = req.input();
+    let (mut tx, before) = req.locked_projection(&input).await?;
 
     let open = before.view.current_session.clone();
     let reopened = open.is_some();
     let session = match open {
         Some(session) => session,
         None => {
-            let session = before.view.new_session_id(wall);
+            let session = before.view.new_session_id(req.wall);
             let event = Event::SessionStart(SessionStart {
-                ts: now,
+                ts: req.now,
                 session: Some(session.clone()),
                 v: SchemaVersion,
             });
-            append(&state, &mut tx, user_id, &event).await?;
+            req.append(&mut tx, &event).await?;
             session
         }
     };
-    let projection = store(&state, project_and_save(&mut tx, user_id, &input, None)).await?;
+    let projection = req
+        .store(project_and_save(&mut tx, req.user_id, &input, None))
+        .await?;
 
     // (Re)bind the scratch to this session. The bind resets it on a drift.
-    let mut scratch = read_state(&state.db, &mut tx, user_id).await?;
+    let mut scratch = req.read_state(&mut tx).await?;
     scratch.bind(&session);
-    write_state(&state.db, &mut tx, user_id, &scratch).await?;
+    req.write_state(&mut tx, &scratch).await?;
 
     let model = projection.model;
     let course = projection.view.enrollment_stack.last().map(String::as_str);
     let (frontier_count, due_count, _) = due_counts(
         &model,
-        &content.curriculum,
-        &content.cfg,
-        now.micros(),
+        req.graph(),
+        &req.content.cfg,
+        req.now.micros(),
         course,
     );
     let body = json!({
@@ -156,33 +138,28 @@ pub async fn session_start(
 // --------------------------------------------------------------------------- //
 
 /// Close the open session (`api.py:884-925`). `409 no_open_session` when none is.
-pub async fn session_end(
-    State(state): State<AppState>,
-    Tenant(user_id): Tenant,
-    body: Option<Json<Value>>,
-) -> Result<Json<Value>, ApiError> {
-    let RequestInput { now, input, .. } = request_input(&state)?;
+pub async fn session_end(req: Ready, body: Option<Json<Value>>) -> Reply {
     let asked = asked_minutes(body.as_ref());
-
-    let (mut tx, before) = locked_projection(&state, user_id, &input).await?;
+    let input = req.input();
+    let (mut tx, before) = req.locked_projection(&input).await?;
     let session = before
         .view
         .current_session
         .clone()
         .ok_or_else(no_open_session)?;
 
-    let scratch = read_state(&state.db, &mut tx, user_id).await?;
+    let scratch = req.read_state(&mut tx).await?;
     let minutes = asked.unwrap_or_else(|| (scratch.active_secs / 60.0 * 100.0).round() / 100.0);
     let xp_earned = before.view.xp_in_session(&session);
     let event = Event::SessionEnd(SessionEnd {
-        ts: now,
+        ts: req.now,
         session: Some(session.clone()),
         v: SchemaVersion,
         xp_earned,
         minutes,
     });
-    let projection = append_and_fold(&state, &mut tx, user_id, &event, &input).await?;
-    store(&state, clear_web_state(&mut tx, user_id)).await?;
+    let projection = req.append_and_fold(&mut tx, &event, &input).await?;
+    req.store(clear_web_state(&mut tx, req.user_id)).await?;
 
     let body = json!({
         "session": session,

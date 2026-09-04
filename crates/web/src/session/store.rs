@@ -2,8 +2,12 @@
 //! tenant transaction, the projection, the D-S6 document, and the envelopes of
 //! the refusals more than one route gives.
 
+use std::sync::Arc;
+
 use axum::Json;
+use axum::extract::FromRequestParts;
 use axum::http::StatusCode;
+use axum::http::request::Parts;
 use cadus_core::event::{Enrolled, Event, SchemaVersion, Slug, TaskType, Timestamp};
 use cadus_core::projector::ProjectionInput;
 use cadus_store::state::{
@@ -21,12 +25,15 @@ use super::INTERNAL_ERROR;
 use crate::AppState;
 use crate::error::ApiError;
 use crate::state::{
-    CURRICULUM_UNAVAILABLE, Content, INVALID_REQUEST, NO_OPEN_SESSION, STATE_UNAVAILABLE,
+    CURRICULUM_UNAVAILABLE, Content, INVALID_REQUEST, NO_OPEN_SESSION, STATE_UNAVAILABLE, Tenant,
     UNKNOWN_COURSE, WebState,
 };
 
 /// A tenant transaction.
 pub(crate) type Tx = Transaction<'static, Postgres>;
+
+/// The answer of a JSON route.
+pub(crate) type Reply = Result<Json<Value>, ApiError>;
 
 /// Run a store call under the client-side query bound of `db` (L1, R4).
 pub(crate) async fn bound<T>(
@@ -111,29 +118,129 @@ pub(crate) fn projection_input<'a>(content: &'a Content, now: Timestamp) -> Proj
         .with_timezone(content.cfg.timezone.as_deref())
 }
 
-/// What one request derives before it opens its transaction.
-pub(crate) struct RequestInput<'a> {
+/// What a learner route reads before it opens its transaction: the tenant,
+/// the curriculum, and the clock of the request.
+///
+/// The extractor answers `401 unauthorized` with no live credential, then
+/// `503 curriculum_unavailable` when the binary loaded no curriculum, in that
+/// order.
+pub struct Ready {
+    /// The shared state of the process.
+    pub state: AppState,
+    /// The request tenant.
+    pub user_id: Uuid,
     /// The curriculum and the config of this process.
-    pub content: &'a Content,
+    pub content: Arc<Content>,
     /// The wall clock of the request.
     pub wall: DateTime<Utc>,
     /// The same instant, as the core spells it.
     pub now: Timestamp,
-    /// The projection inputs of the request.
-    pub input: ProjectionInput<'a>,
 }
 
-/// The curriculum, the clock, and the projection inputs of one request.
-pub(crate) fn request_input(state: &AppState) -> Result<RequestInput<'_>, ApiError> {
-    let content = content(state)?;
-    let (wall, now) = now_pair();
-    let input = projection_input(content, now);
-    Ok(RequestInput {
-        content,
-        wall,
-        now,
-        input,
-    })
+impl FromRequestParts<AppState> for Ready {
+    type Rejection = ApiError;
+
+    async fn from_request_parts(parts: &mut Parts, state: &AppState) -> Result<Self, ApiError> {
+        let Tenant(user_id) = Tenant::from_request_parts(parts, state).await?;
+        let content = state.content.clone().ok_or_else(curriculum_unavailable)?;
+        let (wall, now) = now_pair();
+        Ok(Self {
+            state: state.clone(),
+            user_id,
+            content,
+            wall,
+            now,
+        })
+    }
+}
+
+impl Ready {
+    /// The projection inputs of the request.
+    pub(crate) fn input(&self) -> ProjectionInput<'_> {
+        projection_input(&self.content, self.now)
+    }
+
+    /// The curriculum of this process.
+    pub(crate) fn graph(&self) -> &cadus_core::curriculum::Curriculum {
+        &self.content.curriculum
+    }
+
+    /// Run one store call for this request. See [`store`].
+    pub(crate) async fn store<T>(
+        &self,
+        call: impl Future<Output = Result<T, StoreError>>,
+    ) -> Result<T, ApiError> {
+        store(&self.state, call).await
+    }
+
+    /// Open the tenant transaction. See [`begin`].
+    pub(crate) async fn begin(&self) -> Result<Tx, ApiError> {
+        begin(&self.state, self.user_id).await
+    }
+
+    /// Open the tenant transaction and take the advisory lock. See
+    /// [`open_locked`].
+    pub(crate) async fn open_locked(&self) -> Result<Tx, ApiError> {
+        open_locked(&self.state, self.user_id).await
+    }
+
+    /// Open the locked transaction and fold the model. See
+    /// [`locked_projection`].
+    pub(crate) async fn locked_projection(
+        &self,
+        input: &ProjectionInput<'_>,
+    ) -> Result<(Tx, Projection), ApiError> {
+        locked_projection(&self.state, self.user_id, input).await
+    }
+
+    /// Fold the model in a read-only transaction. See [`read_projection`].
+    pub(crate) async fn read_projection(
+        &self,
+        input: &ProjectionInput<'_>,
+    ) -> Result<Projection, ApiError> {
+        read_projection(&self.state, self.user_id, input).await
+    }
+
+    /// Append one event. See [`append`].
+    pub(crate) async fn append(&self, tx: &mut Tx, event: &Event) -> Result<Option<i64>, ApiError> {
+        append(&self.state, tx, self.user_id, event).await
+    }
+
+    /// Append one event and fold it into the saved model. See
+    /// [`append_and_fold`].
+    pub(crate) async fn append_and_fold(
+        &self,
+        tx: &mut Tx,
+        event: &Event,
+        input: &ProjectionInput<'_>,
+    ) -> Result<Projection, ApiError> {
+        append_and_fold(&self.state, tx, self.user_id, event, input).await
+    }
+
+    /// Read the D-S6 document of the tenant. See [`read_state`].
+    pub(crate) async fn read_state(&self, tx: &mut Tx) -> Result<WebState, ApiError> {
+        read_state(&self.state.db, tx, self.user_id).await
+    }
+
+    /// Write the D-S6 document of the tenant. See [`write_state`].
+    pub(crate) async fn write_state(
+        &self,
+        tx: &mut Tx,
+        scratch: &WebState,
+    ) -> Result<(), ApiError> {
+        write_state(&self.state.db, tx, self.user_id, scratch).await
+    }
+
+    /// Read the window of the open session and repair the drill cadence. See
+    /// [`view_for_open_session`].
+    pub(crate) async fn view_for_open_session(
+        &self,
+        tx: &mut Tx,
+        view: &mut SessionView,
+        session: &str,
+    ) -> Result<Vec<EventRow>, ApiError> {
+        view_for_open_session(&self.state, tx, self.user_id, view, session).await
+    }
 }
 
 /// Open the tenant transaction and take the tenant's advisory lock.
