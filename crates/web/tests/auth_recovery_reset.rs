@@ -1,13 +1,7 @@
 //! Part of `tests/auth_recovery.rs`: the header of that file gives the
 //! requirements and the rules.
 
-#![allow(
-    clippy::unwrap_used,
-    clippy::expect_used,
-    clippy::panic,
-    clippy::todo,
-    clippy::unimplemented
-)]
+#![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
 
 mod common;
 
@@ -111,10 +105,8 @@ async fn a_reset_spends_the_link_once_and_ends_every_session() {
 #[tokio::test]
 async fn a_reset_verifies_an_unverified_address() {
     TestDb::with(|db| async move {
-        let app = app_of(&db);
-        signup(&app, "r@example.com", GOOD_PASSWORD).await;
-        let user = user_id(&db, "r@example.com").await;
-        seed_token(&db, user, RESET_TOKEN_ONE.1, "reset", shift(1_800)).await;
+        let (app, _user) =
+            learner_with_token(&db, "r@example.com", RESET_TOKEN_ONE.1, "reset", 1_800).await;
         assert!(!is_verified(&db, "r@example.com").await);
 
         let answer = send(
@@ -147,10 +139,8 @@ async fn a_reset_verifies_an_unverified_address() {
 #[tokio::test]
 async fn a_weak_reset_password_is_422_and_leaves_the_link_usable() {
     TestDb::with(|db| async move {
-        let app = app_of(&db);
-        signup(&app, "r@example.com", GOOD_PASSWORD).await;
-        let user = user_id(&db, "r@example.com").await;
-        seed_token(&db, user, RESET_TOKEN_TWO.1, "reset", shift(1_800)).await;
+        let (app, _user) =
+            learner_with_token(&db, "r@example.com", RESET_TOKEN_TWO.1, "reset", 1_800).await;
 
         let weak = send(
             &app,
@@ -184,10 +174,8 @@ async fn a_weak_reset_password_is_422_and_leaves_the_link_usable() {
 #[tokio::test]
 async fn a_verification_link_verifies_the_address_and_opens_a_session() {
     TestDb::with(|db| async move {
-        let app = app_of(&db);
-        signup(&app, "v@example.com", GOOD_PASSWORD).await;
-        let user = user_id(&db, "v@example.com").await;
-        seed_token(&db, user, VERIFY_TOKEN_ONE.1, "verify", shift(86_400)).await;
+        let (app, user) =
+            learner_with_token(&db, "v@example.com", VERIFY_TOKEN_ONE.1, "verify", 86_400).await;
 
         let answer = send(
             &app,
@@ -228,10 +216,8 @@ async fn a_verification_link_verifies_the_address_and_opens_a_session() {
 #[tokio::test]
 async fn a_verification_link_works_once_and_never_after_verification() {
     TestDb::with(|db| async move {
-        let app = app_of(&db);
-        signup(&app, "v@example.com", GOOD_PASSWORD).await;
-        let user = user_id(&db, "v@example.com").await;
-        seed_token(&db, user, VERIFY_TOKEN_ONE.1, "verify", shift(86_400)).await;
+        let (app, user) =
+            learner_with_token(&db, "v@example.com", VERIFY_TOKEN_ONE.1, "verify", 86_400).await;
         seed_token(&db, user, VERIFY_TOKEN_TWO.1, "verify", shift(86_400)).await;
 
         let first = send(

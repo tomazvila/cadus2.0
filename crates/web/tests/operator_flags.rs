@@ -12,13 +12,7 @@
 //! test pins the same sentence against `cadus_core::template::gate`, so this
 //! file proves the route carries `Verified::notes` to the operator unchanged.
 
-#![allow(
-    clippy::unwrap_used,
-    clippy::expect_used,
-    clippy::panic,
-    clippy::todo,
-    clippy::unimplemented
-)]
+#![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
 
 mod common;
 
@@ -26,7 +20,7 @@ use cadus_store::test_support::TestDb;
 use serde_json::{Value, json};
 
 use common::admin::{
-    KEY, admin_get as call, app_without_admin as app, seed_account, template_body,
+    KEY, admin_get as call, app_without_admin as app, assert_forbidden, seed_account, template_body,
 };
 use common::{SESSION_TOKEN_ONE, get, send};
 
@@ -104,16 +98,7 @@ async fn a_session_that_is_not_an_admin_is_forbidden() {
 
         let answer = call(&app, "/api/operator/flags").await;
 
-        assert_eq!(answer.status.as_u16(), 403);
-        assert_eq!(answer.code(), "forbidden");
-        assert_eq!(
-            answer
-                .body
-                .get("error")
-                .and_then(|error| error.get("message"))
-                .and_then(Value::as_str),
-            Some("This route serves an admin account only.")
-        );
+        assert_forbidden(&answer);
         assert!(
             answer.body.get("flags").is_none(),
             "the refusal carried a flags block: {}",

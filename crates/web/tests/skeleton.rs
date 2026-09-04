@@ -14,13 +14,7 @@
 //! Each test builds its own application, so each one gets its own metrics
 //! registry and no test can read another test's counts.
 
-#![allow(
-    clippy::unwrap_used,
-    clippy::expect_used,
-    clippy::panic,
-    clippy::todo,
-    clippy::unimplemented
-)]
+#![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
 
 mod common;
 

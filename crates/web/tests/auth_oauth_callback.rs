@@ -13,13 +13,7 @@
 //! Each test builds its own throwaway database, so two tests never share an
 //! account or a link row.
 
-#![allow(
-    clippy::unwrap_used,
-    clippy::expect_used,
-    clippy::panic,
-    clippy::todo,
-    clippy::unimplemented
-)]
+#![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
 
 mod common;
 
@@ -38,14 +32,7 @@ async fn a_verified_google_identity_creates_an_account_and_opens_a_session() {
     TestDb::with(|db| async move {
         let app = oauth_app(&db, google_config(Arc::new(google_verified())));
 
-        let answer = send(
-            &app,
-            get_with_cookie(
-                "/api/auth/oauth/google/callback?code=u5-code&state=u5-state-value",
-                &google_jar(),
-            ),
-        )
-        .await;
+        let answer = google_callback(&app, "code=u5-code&state=u5-state-value").await;
 
         assert_eq!(answer.status.as_u16(), 302);
         assert_eq!(location_of(&answer), "/dashboard");
@@ -89,14 +76,7 @@ async fn the_token_exchange_carries_the_verifier_and_the_identity_read_the_token
         let provider = Arc::new(google_verified());
         let app = oauth_app(&db, google_config(Arc::clone(&provider)));
 
-        send(
-            &app,
-            get_with_cookie(
-                "/api/auth/oauth/google/callback?code=u5-code&state=u5-state-value",
-                &google_jar(),
-            ),
-        )
-        .await;
+        google_callback(&app, "code=u5-code&state=u5-state-value").await;
 
         let seen = provider.seen();
         assert_eq!(seen.len(), 2, "one exchange and one identity read");
@@ -127,29 +107,13 @@ async fn the_token_exchange_carries_the_verifier_and_the_identity_read_the_token
 #[tokio::test]
 async fn a_verified_github_identity_links_the_primary_address() {
     TestDb::with(|db| async move {
-        let provider = FakeProvider::new()
-            .answer(
-                GITHUB_TOKEN_URL,
-                200,
-                r#"{"access_token":"u5-github-access"}"#,
-            )
-            .answer(GITHUB_USER_URL, 200, r#"{"id":424242,"login":"learner"}"#)
-            .answer(
-                GITHUB_EMAILS_URL,
-                200,
-                r#"[{"email":"second@example.com","primary":false,"verified":true},
-                    {"email":"Primary@Example.com","primary":true,"verified":true}]"#,
-            );
-        let app = oauth_app(&db, github_config(Arc::new(provider)));
+        let provider = github_provider(
+            r#"{"id":424242,"login":"learner"}"#,
+            r#"[{"email":"second@example.com","primary":false,"verified":true},
+                {"email":"Primary@Example.com","primary":true,"verified":true}]"#,
+        );
 
-        let answer = send(
-            &app,
-            get_with_cookie(
-                "/api/auth/oauth/github/callback?code=u5-code&state=u5-github-state",
-                &format!("cadus_oauth_handshake={GITHUB_COOKIE}"),
-            ),
-        )
-        .await;
+        let answer = github_callback(&db, provider).await;
 
         assert_eq!(answer.status.as_u16(), 302);
         assert_eq!(location_of(&answer), "/");
@@ -180,28 +144,7 @@ async fn a_verified_identity_links_into_the_account_that_owns_the_address() {
         assert_eq!(answer.status.as_u16(), 200);
         mark_verified(&db, "learner@example.com").await;
         let user = user_id(&db, "learner@example.com").await;
-        seed_session(
-            &db,
-            user,
-            SESSION_TOKEN_ONE.1,
-            shift(0),
-            shift(0),
-            shift(3600),
-        )
-        .await;
-
-        let answer = send(
-            &app,
-            get_with_cookie(
-                "/api/auth/oauth/google/callback?code=u5-code&state=u5-state-value",
-                &google_jar(),
-            ),
-        )
-        .await;
-
-        assert_eq!(answer.status.as_u16(), 302);
-        assert_eq!(user_count(&db).await, 1, "no second account was created");
-        assert_eq!(user_id(&db, "learner@example.com").await, user);
+        link_existing_account(&db, &app, user).await;
         assert_eq!(oauth_link_count(&db, user).await, 1);
         // The password of a verified address survives the link, and so does
         // every session that address opened.
@@ -228,28 +171,7 @@ async fn a_link_into_an_unverified_account_clears_the_password_and_the_sessions(
         assert_eq!(answer.status.as_u16(), 200);
         let user = user_id(&db, "learner@example.com").await;
         assert!(!is_verified(&db, "learner@example.com").await);
-        seed_session(
-            &db,
-            user,
-            SESSION_TOKEN_ONE.1,
-            shift(0),
-            shift(0),
-            shift(3600),
-        )
-        .await;
-
-        let answer = send(
-            &app,
-            get_with_cookie(
-                "/api/auth/oauth/google/callback?code=u5-code&state=u5-state-value",
-                &google_jar(),
-            ),
-        )
-        .await;
-
-        assert_eq!(answer.status.as_u16(), 302);
-        assert_eq!(user_count(&db).await, 1, "no second account was created");
-        assert_eq!(user_id(&db, "learner@example.com").await, user);
+        let _answer = link_existing_account(&db, &app, user).await;
         assert_eq!(password_hash(&db, "learner@example.com").await, None);
         assert!(is_verified(&db, "learner@example.com").await);
         // The planted session is gone, and the one row left is the session this

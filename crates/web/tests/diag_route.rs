@@ -17,13 +17,7 @@
 //! The tenant comes from a request extension, as `tests/quiz_route.rs` does: the
 //! subject here is the handler and not the auth layer.
 
-#![allow(
-    clippy::unwrap_used,
-    clippy::expect_used,
-    clippy::panic,
-    clippy::todo,
-    clippy::unimplemented
-)]
+#![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
 
 use std::sync::Arc;
 
@@ -249,11 +243,16 @@ async fn the_placement_loop_walks_probes_and_places_the_learner() {
         );
 
         // The diagnostic is closed: a second finish has nothing to close.
-        let (status, body) = call(&app, user, "/api/diag/finish", &json!({})).await;
-        assert_eq!(status, StatusCode::CONFLICT);
-        assert_eq!(code(&body), "no_diagnostic");
+        assert_finish_is_no_diagnostic(&app, user).await;
     })
     .await;
+}
+
+/// Fail the test when a finish for `user` is not `409 no_diagnostic`.
+async fn assert_finish_is_no_diagnostic(app: &Router, user: Uuid) {
+    let (status, body) = call(app, user, "/api/diag/finish", &json!({})).await;
+    assert_eq!(status, StatusCode::CONFLICT);
+    assert_eq!(code(&body), "no_diagnostic");
 }
 
 #[tokio::test]
@@ -403,9 +402,7 @@ async fn a_finish_with_no_diagnostic_is_409_no_diagnostic() {
     TestDb::with(|db| async move {
         let app = app(&db);
         let user = learner(&db, "nofinish@example.test").await;
-        let (status, body) = call(&app, user, "/api/diag/finish", &json!({})).await;
-        assert_eq!(status, StatusCode::CONFLICT);
-        assert_eq!(code(&body), "no_diagnostic");
+        assert_finish_is_no_diagnostic(&app, user).await;
     })
     .await;
 }

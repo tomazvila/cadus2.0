@@ -1,13 +1,7 @@
 //! Part of `tests/auth_recovery.rs`: the header of that file gives the
 //! requirements and the rules.
 
-#![allow(
-    clippy::unwrap_used,
-    clippy::expect_used,
-    clippy::panic,
-    clippy::todo,
-    clippy::unimplemented
-)]
+#![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
 
 mod common;
 
@@ -115,43 +109,7 @@ async fn a_resent_link_supersedes_the_older_one() {
 #[tokio::test]
 async fn the_resend_rule_refuses_the_fourth_address_call_and_the_eleventh_host_call() {
     TestDb::with(|db| async move {
-        let app = app_of(&db);
-        let body = json!({ "email": "one@example.com" });
-
-        let (fourth, eleventh) = in_one_window(&db, 3_600, || async {
-            for round in 1..=3 {
-                let answer = send(&app, post("/api/auth/verify-email/resend", &body)).await;
-                assert_eq!(answer.status.as_u16(), 200, "call {round}");
-            }
-            let fourth = send(&app, post("/api/auth/verify-email/resend", &body)).await;
-
-            for index in 0..7 {
-                let answer = send(
-                    &app,
-                    post(
-                        "/api/auth/verify-email/resend",
-                        &json!({ "email": format!("host{index}@example.com") }),
-                    ),
-                )
-                .await;
-                assert_eq!(answer.status.as_u16(), 200, "host call {index}");
-            }
-            let eleventh = send(
-                &app,
-                post(
-                    "/api/auth/verify-email/resend",
-                    &json!({ "email": "last@example.com" }),
-                ),
-            )
-            .await;
-            (fourth, eleventh)
-        })
-        .await;
-
-        assert_eq!(fourth.status.as_u16(), 429);
-        assert_eq!(fourth.code(), "rate_limited");
-        assert_eq!(eleventh.status.as_u16(), 429);
-        assert_eq!(eleventh.code(), "rate_limited");
+        assert_paired_rate_rule(&db, "/api/auth/verify-email/resend").await
     })
     .await;
 }

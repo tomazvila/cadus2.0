@@ -8,13 +8,7 @@
 //! under test, so a changed parameter fails here instead of passing quietly
 //! (HANDOVER section 3).
 
-#![allow(
-    clippy::unwrap_used,
-    clippy::expect_used,
-    clippy::panic,
-    clippy::todo,
-    clippy::unimplemented
-)]
+#![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
 
 use std::ffi::OsString;
 

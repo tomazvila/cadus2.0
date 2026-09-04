@@ -13,13 +13,7 @@
 //! and the row values the writes leave in `content_store`. Nothing is re-read
 //! from the code under test.
 
-#![allow(
-    clippy::unwrap_used,
-    clippy::expect_used,
-    clippy::panic,
-    clippy::todo,
-    clippy::unimplemented
-)]
+#![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
 
 mod common;
 
@@ -85,16 +79,7 @@ async fn a_session_that_is_not_an_admin_is_forbidden_on_all_four() {
             learner_post(APPROVE_PATH, json!({})).await,
             learner_post(REJECT_PATH, json!({"reason": "no good"})).await,
         ] {
-            assert_eq!(answer.status.as_u16(), 403, "{}", answer.body);
-            assert_eq!(answer.code(), "forbidden");
-            assert_eq!(
-                answer
-                    .body
-                    .get("error")
-                    .and_then(|error| error.get("message"))
-                    .and_then(Value::as_str),
-                Some("This route serves an admin account only.")
-            );
+            assert_forbidden(&answer);
             assert!(
                 answer.body.get("items").is_none() && answer.body.get("body").is_none(),
                 "the refusal carried a document: {}",
@@ -123,13 +108,7 @@ async fn a_session_that_is_not_an_admin_is_forbidden_on_all_four() {
 #[tokio::test]
 async fn the_show_route_returns_eight_instances_with_computed_answers() {
     TestDb::with(|db| async move {
-        let app = app(&db);
-        seed_admin(&db).await;
-        seed_pending(&db).await;
-
-        let answer = admin_get(&app, SHOW_PATH).await;
-
-        assert_eq!(answer.status.as_u16(), 200, "{}", answer.body);
+        let answer = show_pending(&db).await;
         assert_eq!(answer.body.get("sample_instances"), Some(&json!(8)));
         let instances = answer
             .body
@@ -166,13 +145,7 @@ async fn the_show_route_returns_eight_instances_with_computed_answers() {
 #[tokio::test]
 async fn the_show_route_carries_the_gate_notes_and_the_authoring_bill() {
     TestDb::with(|db| async move {
-        let app = app(&db);
-        seed_admin(&db).await;
-        seed_pending(&db).await;
-
-        let answer = admin_get(&app, SHOW_PATH).await;
-
-        assert_eq!(answer.status.as_u16(), 200, "{}", answer.body);
+        let answer = show_pending(&db).await;
         assert_eq!(answer.body.get("digest"), Some(&json!("r5-pending-digest")));
         assert_eq!(answer.body.get("kp_id"), Some(&json!("band/kp1")));
         assert_eq!(answer.body.get("kind"), Some(&json!("template")));
@@ -255,13 +228,7 @@ async fn a_teach_document_renders_no_instance_and_no_gate() {
         let answer = admin_get(&app, "/api/admin/content/r5-teach-digest").await;
 
         assert_eq!(answer.status.as_u16(), 200, "{}", answer.body);
-        assert_eq!(answer.body.get("kind"), Some(&json!("teach")));
-        assert_eq!(answer.body.get("instances"), Some(&json!([])));
-        assert_eq!(answer.body.get("gate"), Some(&Value::Null));
-        assert_eq!(
-            answer.body.get("summary"),
-            Some(&json!("Take from the next column."))
-        );
+        assert_instruction_document(&answer, "teach", "Take from the next column.");
     })
     .await;
 }
@@ -290,12 +257,10 @@ async fn a_hint_ladder_line_reads_its_widest_rung() {
         let answer = admin_get(&app, "/api/admin/content/r6-ladder-digest").await;
 
         assert_eq!(answer.status.as_u16(), 200, "{}", answer.body);
-        assert_eq!(answer.body.get("kind"), Some(&json!("hint_ladder")));
-        assert_eq!(answer.body.get("instances"), Some(&json!([])));
-        assert_eq!(answer.body.get("gate"), Some(&Value::Null));
-        assert_eq!(
-            answer.body.get("summary"),
-            Some(&json!("Which column do you take from first?"))
+        assert_instruction_document(
+            &answer,
+            "hint_ladder",
+            "Which column do you take from first?",
         );
     })
     .await;

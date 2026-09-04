@@ -14,13 +14,7 @@
 //! code, a URL, a cookie attribute, a digest, or a length. Nothing re-reads a
 //! constant of the code under test (HANDOVER section 3).
 
-#![allow(
-    clippy::unwrap_used,
-    clippy::expect_used,
-    clippy::panic,
-    clippy::todo,
-    clippy::unimplemented
-)]
+#![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
 
 mod common;
 

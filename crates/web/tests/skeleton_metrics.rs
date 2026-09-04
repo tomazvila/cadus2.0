@@ -1,13 +1,7 @@
 //! Part of `tests/skeleton.rs`: the header of that file gives the
 //! requirements and the rules.
 
-#![allow(
-    clippy::unwrap_used,
-    clippy::expect_used,
-    clippy::panic,
-    clippy::todo,
-    clippy::unimplemented
-)]
+#![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
 
 mod common;
 

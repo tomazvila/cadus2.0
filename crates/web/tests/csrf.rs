@@ -29,13 +29,7 @@
 //! The pool below is lazy and points at an address with no server, so a connect
 //! never starts.
 
-#![allow(
-    clippy::unwrap_used,
-    clippy::expect_used,
-    clippy::panic,
-    clippy::todo,
-    clippy::unimplemented
-)]
+#![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
 
 mod common;
 
@@ -53,19 +47,7 @@ use axum::http::StatusCode;
 async fn a_cookie_authed_cross_site_post_is_403_cross_origin_rejected() {
     let app = app();
 
-    let (status, body) = send(
-        &app,
-        post(
-            "/api/task/t-review-fractions/answer",
-            &[
-                ("host", "tutor.example"),
-                ("cookie", SECURE_COOKIE),
-                ("sec-fetch-site", "cross-site"),
-                ("origin", "https://evil.example"),
-            ],
-        ),
-    )
-    .await;
+    let (status, body) = cross_site_answer(&app, &[]).await;
 
     assert_eq!(status, StatusCode::FORBIDDEN);
     assert_eq!(status.as_u16(), 403);
@@ -81,20 +63,8 @@ async fn a_cookie_authed_cross_site_post_is_403_cross_origin_rejected() {
 async fn the_same_cross_site_post_with_a_bearer_token_is_not_refused() {
     let app = app();
 
-    let (status, body) = send(
-        &app,
-        post(
-            "/api/task/t-review-fractions/answer",
-            &[
-                ("host", "tutor.example"),
-                ("cookie", SECURE_COOKIE),
-                ("sec-fetch-site", "cross-site"),
-                ("origin", "https://evil.example"),
-                ("authorization", "Bearer a-session-token"),
-            ],
-        ),
-    )
-    .await;
+    let (status, body) =
+        cross_site_answer(&app, &[("authorization", "Bearer a-session-token")]).await;
 
     assert_eq!(status, StatusCode::UNAUTHORIZED);
     assert_eq!(status.as_u16(), 401);

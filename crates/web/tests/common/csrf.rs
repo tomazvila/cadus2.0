@@ -84,3 +84,20 @@ pub const UNAUTHORIZED_BODY: &str = concat!(
     r#"{"error":{"code":"unauthorized","message":"This route needs a session. Send the "#,
     r#"session cookie or a bearer token."}}"#
 );
+
+/// The headers of a cookie-authed cross-site write: the host, the production
+/// session cookie, the cross-site fetch signal, and a foreign origin.
+pub const CROSS_SITE: [(&str, &str); 4] = [
+    ("host", "tutor.example"),
+    ("cookie", SECURE_COOKIE),
+    ("sec-fetch-site", "cross-site"),
+    ("origin", "https://evil.example"),
+];
+
+/// Send a cross-site `POST` to the answer route, with `extra` headers on top
+/// of [`CROSS_SITE`].
+pub async fn cross_site_answer(app: &Router, extra: &[(&str, &str)]) -> (StatusCode, String) {
+    let mut headers: Vec<(&str, &str)> = CROSS_SITE.to_vec();
+    headers.extend_from_slice(extra);
+    send(app, post("/api/task/t-review-fractions/answer", &headers)).await
+}

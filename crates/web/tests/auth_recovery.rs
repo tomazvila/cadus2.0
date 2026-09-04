@@ -12,13 +12,7 @@
 //! token, so a seeded row and the presented token agree only when the production
 //! digest is right.
 
-#![allow(
-    clippy::unwrap_used,
-    clippy::expect_used,
-    clippy::panic,
-    clippy::todo,
-    clippy::unimplemented
-)]
+#![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
 
 mod common;
 
@@ -236,46 +230,9 @@ async fn a_reset_token_lives_thirty_minutes_and_supersedes_the_older_one() {
 /// from one host. 3 and 10 in one hour are the section 3.2 literals.
 #[tokio::test]
 async fn the_forgot_rule_refuses_the_fourth_address_call_and_the_eleventh_host_call() {
-    TestDb::with(|db| async move {
-        let app = app_of(&db);
-        let body = json!({ "email": "one@example.com" });
-
-        let (fourth, eleventh) = in_one_window(&db, 3_600, || async {
-            for round in 1..=3 {
-                let answer = send(&app, post("/api/auth/password/forgot", &body)).await;
-                assert_eq!(answer.status.as_u16(), 200, "call {round}");
-            }
-            let fourth = send(&app, post("/api/auth/password/forgot", &body)).await;
-
-            // The host tally stands at 3. Seven more addresses fill it to 10.
-            for index in 0..7 {
-                let answer = send(
-                    &app,
-                    post(
-                        "/api/auth/password/forgot",
-                        &json!({ "email": format!("host{index}@example.com") }),
-                    ),
-                )
-                .await;
-                assert_eq!(answer.status.as_u16(), 200, "host call {index}");
-            }
-            let eleventh = send(
-                &app,
-                post(
-                    "/api/auth/password/forgot",
-                    &json!({ "email": "last@example.com" }),
-                ),
-            )
-            .await;
-            (fourth, eleventh)
-        })
-        .await;
-
-        assert_eq!(fourth.status.as_u16(), 429);
-        assert_eq!(fourth.code(), "rate_limited");
-        assert_eq!(eleventh.status.as_u16(), 429);
-        assert_eq!(eleventh.code(), "rate_limited");
-    })
+    TestDb::with(
+        |db| async move { assert_paired_rate_rule(&db, "/api/auth/password/forgot").await },
+    )
     .await;
 }
 

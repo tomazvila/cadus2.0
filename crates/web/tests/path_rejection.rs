@@ -15,13 +15,7 @@
 //! Every expected value here is a LITERAL: a literal status code, a literal
 //! error code, a literal content type, a literal body.
 
-#![allow(
-    clippy::unwrap_used,
-    clippy::expect_used,
-    clippy::panic,
-    clippy::todo,
-    clippy::unimplemented
-)]
+#![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
 
 mod common;
 

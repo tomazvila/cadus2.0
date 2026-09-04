@@ -15,13 +15,7 @@
 //! Each test builds its own throwaway database, so two tests never share a rate
 //! counter, an account, or a session.
 
-#![allow(
-    clippy::unwrap_used,
-    clippy::expect_used,
-    clippy::panic,
-    clippy::todo,
-    clippy::unimplemented
-)]
+#![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
 
 mod common;
 

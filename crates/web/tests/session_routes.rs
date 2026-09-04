@@ -21,13 +21,7 @@
 //! binds the tenant from it (FIX-M5-C). No test here writes a request extension
 //! by hand.
 
-#![allow(
-    clippy::unwrap_used,
-    clippy::expect_used,
-    clippy::panic,
-    clippy::todo,
-    clippy::unimplemented
-)]
+#![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
 
 mod common;
 

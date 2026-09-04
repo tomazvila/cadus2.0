@@ -29,13 +29,7 @@
 //! points a lazy pool at that same server and measures the readiness probe
 //! against the client-side query bound (L1).
 
-#![allow(
-    clippy::unwrap_used,
-    clippy::expect_used,
-    clippy::panic,
-    clippy::todo,
-    clippy::unimplemented
-)]
+#![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
 
 mod common;
 

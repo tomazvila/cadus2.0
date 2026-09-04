@@ -1,13 +1,7 @@
 //! Part of `tests/admin_content.rs`: the header of that file gives the
 //! requirements and the rules.
 
-#![allow(
-    clippy::unwrap_used,
-    clippy::expect_used,
-    clippy::panic,
-    clippy::todo,
-    clippy::unimplemented
-)]
+#![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
 
 mod common;
 
@@ -65,11 +59,7 @@ async fn the_list_flags_a_knowledge_point_below_the_bank_target() {
 #[tokio::test]
 async fn an_empty_bank_is_flagged() {
     TestDb::with(|db| async move {
-        let app = app(&db);
-        seed_admin(&db).await;
-        seed_pending(&db).await;
-
-        let answer = admin_get(&app, LIST_PATH).await;
+        let answer = list_after_pending(&db).await;
 
         let line = item_of(&answer.body, PENDING);
         assert_eq!(line.get("approved_templates"), Some(&json!(0)));
@@ -83,11 +73,7 @@ async fn an_empty_bank_is_flagged() {
 #[tokio::test]
 async fn a_queue_line_carries_the_summary_and_the_authoring_bill() {
     TestDb::with(|db| async move {
-        let app = app(&db);
-        seed_admin(&db).await;
-        seed_pending(&db).await;
-
-        let answer = admin_get(&app, LIST_PATH).await;
+        let answer = list_after_pending(&db).await;
 
         let line = item_of(&answer.body, PENDING);
         assert_eq!(line.get("kind"), Some(&json!("template")));

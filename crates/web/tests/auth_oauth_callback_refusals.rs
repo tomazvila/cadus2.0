@@ -1,13 +1,7 @@
 //! Part of `tests/auth_oauth_callback.rs`: the header of that file gives the
 //! requirements and the rules.
 
-#![allow(
-    clippy::unwrap_used,
-    clippy::expect_used,
-    clippy::panic,
-    clippy::todo,
-    clippy::unimplemented
-)]
+#![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
 
 mod common;
 
@@ -25,23 +19,11 @@ use common::*;
 async fn a_mismatched_state_is_400_with_no_session() {
     TestDb::with(|db| async move {
         let provider = Arc::new(google_verified());
-        let app = oauth_app(&db, google_config(Arc::clone(&provider)));
+        let app = google_app(&db, Arc::clone(&provider));
 
-        let answer = send(
-            &app,
-            get_with_cookie(
-                "/api/auth/oauth/google/callback?code=u5-code&state=u5-wrong-state",
-                &google_jar(),
-            ),
-        )
-        .await;
+        let answer = google_callback(&app, "code=u5-code&state=u5-wrong-state").await;
 
-        assert_eq!(answer.status.as_u16(), 400);
-        assert_eq!(answer.code(), "oauth_error");
-        assert_eq!(
-            answer.body["error"]["message"],
-            "OAuth state mismatch; please start sign-in again."
-        );
+        assert_state_mismatch(&answer);
         assert_eq!(user_count(&db).await, 0);
         assert_eq!(session_rows(&db).await, 0);
         assert!(
@@ -64,21 +46,15 @@ async fn a_handshake_for_another_provider_is_refused() {
         let app = oauth_app(&db, github_config(Arc::new(FakeProvider::new())));
 
         // The cookie says `google`; the route is GitHub's.
-        let answer = send(
+        let answer = callback_with(
             &app,
-            get_with_cookie(
-                "/api/auth/oauth/github/callback?code=u5-code&state=u5-state-value",
-                &google_jar(),
-            ),
+            "github",
+            "code=u5-code&state=u5-state-value",
+            &google_jar(),
         )
         .await;
 
-        assert_eq!(answer.status.as_u16(), 400);
-        assert_eq!(answer.code(), "oauth_error");
-        assert_eq!(
-            answer.body["error"]["message"],
-            "OAuth state mismatch; please start sign-in again."
-        );
+        assert_state_mismatch(&answer);
         assert_eq!(session_rows(&db).await, 0);
     })
     .await;
@@ -137,19 +113,11 @@ async fn a_callback_without_a_whole_handshake_is_400() {
 async fn a_provider_error_query_is_400() {
     TestDb::with(|db| async move {
         let provider = Arc::new(google_verified());
-        let app = oauth_app(&db, google_config(Arc::clone(&provider)));
+        let app = google_app(&db, Arc::clone(&provider));
 
-        let answer = send(
-            &app,
-            get_with_cookie(
-                "/api/auth/oauth/google/callback?error=access_denied&state=u5-state-value",
-                &google_jar(),
-            ),
-        )
-        .await;
+        let answer = google_callback(&app, "error=access_denied&state=u5-state-value").await;
 
-        assert_eq!(answer.status.as_u16(), 400);
-        assert_eq!(answer.code(), "oauth_error");
+        assert_oauth_error(&answer);
         assert_eq!(
             answer.body["error"]["message"],
             "OAuth sign-in was cancelled or failed."
@@ -164,30 +132,10 @@ async fn a_provider_error_query_is_400() {
 #[tokio::test]
 async fn an_unverified_provider_email_never_links() {
     TestDb::with(|db| async move {
-        let provider = FakeProvider::new()
-            .answer(
-                GOOGLE_TOKEN_URL,
-                200,
-                r#"{"access_token":"u5-google-access"}"#,
-            )
-            .answer(
-                GOOGLE_USERINFO_URL,
-                200,
-                r#"{"sub":"google-subject-1","email":"learner@example.com","email_verified":false}"#,
-            );
-        let app = oauth_app(&db, google_config(Arc::new(provider)));
-
-        let answer = send(
-            &app,
-            get_with_cookie(
-                "/api/auth/oauth/google/callback?code=u5-code&state=u5-state-value",
-                &google_jar(),
-            ),
-        )
-        .await;
-
-        assert_eq!(answer.status.as_u16(), 400);
-        assert_eq!(answer.code(), "oauth_error");
+        let provider = google_provider(
+            r#"{"sub":"google-subject-1","email":"learner@example.com","email_verified":false}"#,
+        );
+        let answer = refused_google_callback(&db, provider).await;
         assert_eq!(user_count(&db).await, 0, "no account was created");
         assert_eq!(link_rows(&db).await, 0, "no link row was written");
         assert_eq!(session_rows(&db).await, 0, "no session was opened");
@@ -205,29 +153,14 @@ async fn an_unverified_provider_email_never_links() {
 #[tokio::test]
 async fn an_unverified_provider_email_never_reaches_an_existing_account() {
     TestDb::with(|db| async move {
-        let provider = FakeProvider::new()
-            .answer(
-                GOOGLE_TOKEN_URL,
-                200,
-                r#"{"access_token":"u5-google-access"}"#,
-            )
-            .answer(
-                GOOGLE_USERINFO_URL,
-                200,
-                r#"{"sub":"attacker-subject","email":"learner@example.com","email_verified":false}"#,
-            );
+        let provider = google_provider(
+            r#"{"sub":"attacker-subject","email":"learner@example.com","email_verified":false}"#,
+        );
         let app = oauth_app(&db, google_config(Arc::new(provider)));
         signup(&app, "learner@example.com", GOOD_PASSWORD).await;
         let user = user_id(&db, "learner@example.com").await;
 
-        let answer = send(
-            &app,
-            get_with_cookie(
-                "/api/auth/oauth/google/callback?code=u5-code&state=u5-state-value",
-                &google_jar(),
-            ),
-        )
-        .await;
+        let answer = google_callback(&app, "code=u5-code&state=u5-state-value").await;
 
         assert_eq!(answer.status.as_u16(), 400);
         assert_eq!(oauth_link_count(&db, user).await, 0);
@@ -244,31 +177,13 @@ async fn an_unverified_provider_email_never_reaches_an_existing_account() {
 #[tokio::test]
 async fn a_github_account_with_no_primary_address_never_links() {
     TestDb::with(|db| async move {
-        let provider = FakeProvider::new()
-            .answer(
-                GITHUB_TOKEN_URL,
-                200,
-                r#"{"access_token":"u5-github-access"}"#,
-            )
-            .answer(GITHUB_USER_URL, 200, r#"{"id":424242}"#)
-            .answer(
-                GITHUB_EMAILS_URL,
-                200,
-                r#"[{"email":"second@example.com","primary":false,"verified":true}]"#,
-            );
-        let app = oauth_app(&db, github_config(Arc::new(provider)));
+        let provider = github_provider(
+            r#"{"id":424242}"#,
+            r#"[{"email":"second@example.com","primary":false,"verified":true}]"#,
+        );
 
-        let answer = send(
-            &app,
-            get_with_cookie(
-                "/api/auth/oauth/github/callback?code=u5-code&state=u5-github-state",
-                &format!("cadus_oauth_handshake={GITHUB_COOKIE}"),
-            ),
-        )
-        .await;
-
-        assert_eq!(answer.status.as_u16(), 400);
-        assert_eq!(answer.code(), "oauth_error");
+        let answer = github_callback(&db, provider).await;
+        assert_oauth_error(&answer);
         assert_eq!(user_count(&db).await, 0);
     })
     .await;
@@ -280,19 +195,7 @@ async fn a_refused_token_exchange_is_400_and_opens_no_session() {
     TestDb::with(|db| async move {
         let provider =
             FakeProvider::new().answer(GOOGLE_TOKEN_URL, 400, r#"{"error":"invalid_grant"}"#);
-        let app = oauth_app(&db, google_config(Arc::new(provider)));
-
-        let answer = send(
-            &app,
-            get_with_cookie(
-                "/api/auth/oauth/google/callback?code=u5-code&state=u5-state-value",
-                &google_jar(),
-            ),
-        )
-        .await;
-
-        assert_eq!(answer.status.as_u16(), 400);
-        assert_eq!(answer.code(), "oauth_error");
+        let answer = refused_google_callback(&db, provider).await;
         assert_eq!(
             answer.body["error"]["message"],
             "OAuth sign-in failed; please try again."
@@ -307,26 +210,8 @@ async fn a_refused_token_exchange_is_400_and_opens_no_session() {
 #[tokio::test]
 async fn an_unreadable_identity_document_is_400() {
     TestDb::with(|db| async move {
-        let provider = FakeProvider::new()
-            .answer(
-                GOOGLE_TOKEN_URL,
-                200,
-                r#"{"access_token":"u5-google-access"}"#,
-            )
-            .answer(GOOGLE_USERINFO_URL, 200, "<html>not json</html>");
-        let app = oauth_app(&db, google_config(Arc::new(provider)));
-
-        let answer = send(
-            &app,
-            get_with_cookie(
-                "/api/auth/oauth/google/callback?code=u5-code&state=u5-state-value",
-                &google_jar(),
-            ),
-        )
-        .await;
-
-        assert_eq!(answer.status.as_u16(), 400);
-        assert_eq!(answer.code(), "oauth_error");
+        let provider = google_provider("<html>not json</html>");
+        let _answer = refused_google_callback(&db, provider).await;
         assert_eq!(session_rows(&db).await, 0);
     })
     .await;
@@ -342,21 +227,9 @@ async fn a_disabled_account_is_refused_with_the_generic_message() {
         let user = user_id(&db, "learner@example.com").await;
         disable(&db, "learner@example.com").await;
 
-        let answer = send(
-            &app,
-            get_with_cookie(
-                "/api/auth/oauth/google/callback?code=u5-code&state=u5-state-value",
-                &google_jar(),
-            ),
-        )
-        .await;
+        let answer = google_callback(&app, "code=u5-code&state=u5-state-value").await;
 
-        assert_eq!(answer.status.as_u16(), 400);
-        assert_eq!(answer.code(), "oauth_error");
-        assert_eq!(
-            answer.body["error"]["message"],
-            "OAuth state mismatch; please start sign-in again."
-        );
+        assert_state_mismatch(&answer);
         assert_eq!(oauth_link_count(&db, user).await, 0, "no link was written");
         assert_eq!(session_rows(&db).await, 0, "no session was opened");
         assert!(

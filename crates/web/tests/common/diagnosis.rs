@@ -207,3 +207,30 @@ pub const VOCABULARY: [&str; 11] = [
     "timing-unreliable",
     "blowoff",
 ];
+
+/// Put the authored `arithmetic-slip` distractor of [`DISTRACTOR_ANSWER`] on
+/// `KEY`, under `digest`.
+pub async fn seed_slip_distractor(db: &TestDb, digest: &str) {
+    seed_distractors(
+        db,
+        digest,
+        &json!({
+            "v": 1,
+            "distractors": [
+                { "answer": DISTRACTOR_ANSWER,
+                  "error_tag": "arithmetic-slip",
+                  "note": DISTRACTOR_NOTE }
+            ]
+        }),
+    )
+    .await;
+}
+
+/// The inline `ready` diagnosis of the `arithmetic-slip` distractor.
+pub fn ready_slip() -> Value {
+    json!({
+        "status": "ready",
+        "error_tags": ["arithmetic-slip"],
+        "prose": "You added the whole parts and dropped the half.",
+    })
+}

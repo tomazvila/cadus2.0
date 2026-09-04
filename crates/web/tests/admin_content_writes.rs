@@ -1,13 +1,7 @@
 //! Part of `tests/admin_content.rs`: the header of that file gives the
 //! requirements and the rules.
 
-#![allow(
-    clippy::unwrap_used,
-    clippy::expect_used,
-    clippy::panic,
-    clippy::todo,
-    clippy::unimplemented
-)]
+#![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
 
 mod common;
 
@@ -35,18 +29,10 @@ async fn a_reject_without_a_reason_is_unprocessable() {
         for body in [json!({}), json!({"reason": null}), json!({"reason": "   "})] {
             let answer = admin_post(&app, REJECT_PATH, &body).await;
 
-            assert_eq!(answer.status.as_u16(), 422, "{body} gave {}", answer.body);
-            assert_eq!(answer.code(), "invalid_request");
-            assert_eq!(
-                answer
-                    .body
-                    .get("error")
-                    .and_then(|error| error.get("message"))
-                    .and_then(Value::as_str),
-                Some(
-                    "A rejection needs a reason: send a JSON object with a non-empty \"reason\" \
-                     string."
-                )
+            assert_invalid_request(
+                &answer,
+                "A rejection needs a reason: send a JSON object with a non-empty \"reason\" \
+                 string.",
             );
         }
 
@@ -192,16 +178,7 @@ async fn a_reject_body_that_is_not_an_object_is_unprocessable() {
         for body in [json!("a string"), json!([1, 2, 3]), json!(7)] {
             let answer = admin_post(&app, REJECT_PATH, &body).await;
 
-            assert_eq!(answer.status.as_u16(), 422, "{body} gave {}", answer.body);
-            assert_eq!(answer.code(), "invalid_request");
-            assert_eq!(
-                answer
-                    .body
-                    .get("error")
-                    .and_then(|error| error.get("message"))
-                    .and_then(Value::as_str),
-                Some("The request body must be a JSON object.")
-            );
+            assert_invalid_request(&answer, "The request body must be a JSON object.");
         }
     })
     .await;
@@ -218,16 +195,7 @@ async fn a_reason_past_the_bound_is_unprocessable() {
         let long = "x".repeat(1_001);
         let answer = admin_post(&app, REJECT_PATH, &json!({ "reason": long })).await;
 
-        assert_eq!(answer.status.as_u16(), 422, "{}", answer.body);
-        assert_eq!(answer.code(), "invalid_request");
-        assert_eq!(
-            answer
-                .body
-                .get("error")
-                .and_then(|error| error.get("message"))
-                .and_then(Value::as_str),
-            Some("The rejection reason is too long.")
-        );
+        assert_invalid_request(&answer, "The rejection reason is too long.");
         assert_eq!(
             row_state(&db, PENDING).await,
             ("pending".to_string(), None, None, false)

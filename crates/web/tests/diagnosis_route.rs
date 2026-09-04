@@ -28,13 +28,7 @@
 //! binds the tenant from it (FIX-M5-C). No test here writes a request extension
 //! by hand.
 
-#![allow(
-    clippy::unwrap_used,
-    clippy::expect_used,
-    clippy::panic,
-    clippy::todo,
-    clippy::unimplemented
-)]
+#![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
 
 mod common;
 
@@ -61,19 +55,7 @@ async fn a_matching_distractor_is_ready_and_writes_no_job_row() {
     TestDb::with(|db| async move {
         let app = app(&db);
         let user = learner(&db, "u9-ready@example.test").await;
-        seed_distractors(
-            &db,
-            "u9-digest-ready",
-            &json!({
-                "v": 1,
-                "distractors": [
-                    { "answer": DISTRACTOR_ANSWER,
-                      "error_tag": "arithmetic-slip",
-                      "note": DISTRACTOR_NOTE }
-                ]
-            }),
-        )
-        .await;
+        seed_slip_distractor(&db, "u9-digest-ready").await;
 
         let (status, body) = answer(&app, user, DISTRACTOR_ANSWER).await;
 
@@ -81,11 +63,7 @@ async fn a_matching_distractor_is_ready_and_writes_no_job_row() {
         assert_eq!(body["correct"], json!(false));
         assert_eq!(
             body["diagnosis"],
-            json!({
-                "status": "ready",
-                "error_tags": ["arithmetic-slip"],
-                "prose": "You added the whole parts and dropped the half.",
-            }),
+            ready_slip(),
             "a matching distractor answers inline: {body}"
         );
         assert_eq!(
@@ -151,11 +129,7 @@ async fn an_authored_distractor_document_is_ready_and_writes_no_job_row() {
         assert_eq!(body["correct"], json!(false));
         assert_eq!(
             body["diagnosis"],
-            json!({
-                "status": "ready",
-                "error_tags": ["arithmetic-slip"],
-                "prose": "You added the whole parts and dropped the half.",
-            }),
+            ready_slip(),
             "the authored document answers inline: {body}"
         );
         assert_eq!(

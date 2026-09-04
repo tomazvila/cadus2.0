@@ -1,32 +1,24 @@
 //! Part of `tests/diagnosis_route.rs`: the header of that file gives the
 //! requirements and the rules.
 
-#![allow(
-    clippy::unwrap_used,
-    clippy::expect_used,
-    clippy::panic,
-    clippy::todo,
-    clippy::unimplemented
-)]
+#![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
 
 mod common;
+
+use common::scrape;
 
 use common::BASE_US;
 
 use common::diagnosis::*;
 
-use axum::Router;
-use axum::body::Body;
-use axum::http::{Method, Request, StatusCode};
+use axum::http::StatusCode;
 use cadus_core::curriculum::AnswerKind;
 use cadus_store::diagnosis::JobRow;
 use cadus_store::test_support::TestDb;
 use cadus_web::diagnosis::{job_view, match_distractor};
-use http_body_util::BodyExt;
 use serde_json::{Value, json};
 use sqlx::types::Uuid;
 use sqlx::types::chrono::{DateTime, Utc};
-use tower::ServiceExt;
 
 // --------------------------------------------------------------------------- //
 // The poll fallback rules (spec section 2.1, last paragraph)
@@ -162,19 +154,6 @@ fn the_distractor_match_reads_the_checker_and_the_vocabulary() {
 // M5 U11: the one diagnosis result that writes no row (T6, spec section 7)
 // --------------------------------------------------------------------------- //
 
-/// Read `/metrics` from the same router and return the exposition text.
-async fn scrape(app: &Router) -> String {
-    let request = Request::builder()
-        .method(Method::GET)
-        .uri("/metrics")
-        .body(Body::empty())
-        .unwrap();
-    let response = app.clone().oneshot(request).await.unwrap();
-    assert_eq!(response.status(), StatusCode::OK);
-    let bytes = response.into_body().collect().await.unwrap().to_bytes();
-    String::from_utf8_lossy(&bytes).into_owned()
-}
-
 /// A pre-authored hit counts `ready_preauthored`, and it is the only label of
 /// `cadus_diagnosis_jobs_total` that no row can carry.
 ///
@@ -187,19 +166,7 @@ async fn a_preauthored_hit_counts_ready_preauthored_and_enqueues_nothing() {
     TestDb::with(|db| async move {
         let app = app(&db);
         let user = learner(&db, "u11-counted@example.test").await;
-        seed_distractors(
-            &db,
-            "u11-digest-ready",
-            &json!({
-                "v": 1,
-                "distractors": [
-                    { "answer": DISTRACTOR_ANSWER,
-                      "error_tag": "arithmetic-slip",
-                      "note": DISTRACTOR_NOTE }
-                ]
-            }),
-        )
-        .await;
+        seed_slip_distractor(&db, "u11-digest-ready").await;
 
         let (status, body) = answer(&app, user, DISTRACTOR_ANSWER).await;
         assert_eq!(status, StatusCode::OK);

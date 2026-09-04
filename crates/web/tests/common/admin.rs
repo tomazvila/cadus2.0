@@ -252,3 +252,61 @@ pub fn item_of<'a>(body: &'a Value, digest: &str) -> &'a Value {
         .find(|item| item.get("digest").and_then(Value::as_str) == Some(digest))
         .unwrap_or_else(|| panic!("the queue names no line for {digest}: {body}"))
 }
+
+/// Fail the test when `answer` is not the `403 forbidden` a learner gets on
+/// an admin route.
+pub fn assert_forbidden(answer: &Answer) {
+    assert_eq!(answer.status.as_u16(), 403, "{}", answer.body);
+    assert_eq!(answer.code(), "forbidden");
+    assert_eq!(
+        answer
+            .body
+            .get("error")
+            .and_then(|error| error.get("message"))
+            .and_then(Value::as_str),
+        Some("This route serves an admin account only.")
+    );
+}
+
+/// Fail the test when `answer` is not the `422 invalid_request` that carries
+/// `message`.
+pub fn assert_invalid_request(answer: &Answer, message: &str) {
+    assert_eq!(answer.status.as_u16(), 422, "{}", answer.body);
+    assert_eq!(answer.code(), "invalid_request");
+    assert_eq!(
+        answer
+            .body
+            .get("error")
+            .and_then(|error| error.get("message"))
+            .and_then(Value::as_str),
+        Some(message)
+    );
+}
+
+/// Seed the admin and the pending template, and read the show route of the
+/// pending digest as the admin. The answer is the `200`.
+pub async fn show_pending(db: &TestDb) -> Answer {
+    let app = app(db);
+    seed_admin(db).await;
+    seed_pending(db).await;
+    let answer = admin_get(&app, SHOW_PATH).await;
+    assert_eq!(answer.status.as_u16(), 200, "{}", answer.body);
+    answer
+}
+
+/// Seed the admin and the pending template, and read the queue as the admin.
+pub async fn list_after_pending(db: &TestDb) -> Answer {
+    let app = app(db);
+    seed_admin(db).await;
+    seed_pending(db).await;
+    admin_get(&app, LIST_PATH).await
+}
+
+/// The checks of an instruction document on the show route: its `kind`, no
+/// instance, no gate, and `summary`.
+pub fn assert_instruction_document(answer: &Answer, kind: &str, summary: &str) {
+    assert_eq!(answer.body.get("kind"), Some(&json!(kind)));
+    assert_eq!(answer.body.get("instances"), Some(&json!([])));
+    assert_eq!(answer.body.get("gate"), Some(&Value::Null));
+    assert_eq!(answer.body.get("summary"), Some(&json!(summary)));
+}

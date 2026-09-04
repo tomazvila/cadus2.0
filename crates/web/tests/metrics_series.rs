@@ -20,24 +20,21 @@
 //! `crates/web/tests/grade_route.rs` holds the counter half of the acceptance:
 //! the five `result` labels, counted over HTTP by the grade route.
 
-#![allow(
-    clippy::unwrap_used,
-    clippy::expect_used,
-    clippy::panic,
-    clippy::todo,
-    clippy::unimplemented
-)]
+#![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
+
+mod common;
+
+use common::scrape;
 
 use axum::Router;
 use axum::body::Body;
-use axum::http::{Request, StatusCode};
+use axum::http::Request;
 use cadus_core::event::WorkQuality;
 use cadus_store::test_support::TestDb;
 use cadus_store::{DEFAULT_CLIENT_TIMEOUT_MS, Db};
 use cadus_web::grade::Grade;
 use cadus_web::metrics::{LedgerTotals, PurposeTotals, grade_result, render_ledger};
 use cadus_web::{AppState, create_app};
-use http_body_util::BodyExt;
 use sqlx::PgPool;
 use sqlx::postgres::PgPoolOptions;
 use sqlx::types::Uuid;
@@ -57,19 +54,6 @@ fn offline_app() -> Router {
         .connect_lazy("postgresql://nobody@127.0.0.1:1/nodb")
         .expect("a lazy pool needs no server");
     create_app(AppState::new(Db::new(pool, DEFAULT_CLIENT_TIMEOUT_MS)))
-}
-
-/// Read `/metrics` and return the exposition text.
-async fn scrape(app: &Router) -> String {
-    let request = Request::builder()
-        .method("GET")
-        .uri("/metrics")
-        .body(Body::empty())
-        .unwrap();
-    let response = app.clone().oneshot(request).await.unwrap();
-    assert_eq!(response.status(), StatusCode::OK);
-    let bytes = response.into_body().collect().await.unwrap().to_bytes();
-    String::from_utf8(bytes.to_vec()).unwrap()
 }
 
 /// Assert that `text` holds `line`, and print the whole scrape when it does not.
