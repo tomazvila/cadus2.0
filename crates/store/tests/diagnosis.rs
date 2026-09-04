@@ -37,6 +37,11 @@ async fn the_enqueue_is_idempotent_and_the_read_is_tenant_scoped() {
         assert_eq!(row.result, None);
         assert_eq!(job(&mut *tx, Uuid::new_v4()).await.unwrap(), None);
         tx.commit().await.unwrap();
+        // The superuser pool reads the row outside a tenant transaction.
+        assert_eq!(
+            job(&db.admin, first).await.unwrap().map(|row| row.id),
+            Some(first)
+        );
 
         let mut tx = begin_tenant(&db.app, bob).await.unwrap();
         assert_eq!(job(&mut *tx, first).await.unwrap(), None);
