@@ -295,6 +295,40 @@ async fn shutdown_wins_over_a_diagnosis_pass_that_waits_for_the_model() {
     .await;
 }
 
+/// A refill pass and a diagnosis pass that both answer run on the same tick:
+/// the pool takes its rows, the row settles, and the loop counts the tick.
+#[tokio::test]
+async fn both_passes_answer_on_one_tick() {
+    TestDb::with(|db| async move {
+        let user = seed_squares_pair(&db).await;
+        let id = enqueue(&db.admin, user, "task-1", &payload(None)).await;
+        let server = FakeModel::start(vec![diagnosis_reply(
+            "{\"error_tags\":[],\"prose\":\"Try again.\"}",
+        )])
+        .await;
+        let mut job = server.diagnosis_job(0);
+        let curriculum = arena();
+        let refill = RefillJob::new(&curriculum);
+
+        let ticks = run_for(&handle(&db), Some(&refill), Some(&mut job), 300).await;
+
+        assert!(
+            ticks >= 1,
+            "the loop must tick at least once in 300 ms, it reached {ticks}"
+        );
+        assert_eq!(row_of(&db.admin, id).await.0, "done");
+        assert_eq!(server.call_count(), 1);
+        assert!(
+            cadus_store::pool::unclaimed_depth(&db.admin, user, SQUARES)
+                .await
+                .unwrap()
+                > 0,
+            "the refill pass wrote rows"
+        );
+    })
+    .await;
+}
+
 /// A refill pass or a diagnosis pass that fails is news, not a fatal error: the
 /// loop logs the failure and takes the next tick.
 ///

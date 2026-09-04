@@ -33,7 +33,7 @@ pub use fake::{
     golden_spec, good_arguments, handle, missing_low_edge, named_reply, proof_spec, reply, slots,
     squares_spec, the_one_decline, tool_reply,
 };
-pub use fault::{closed_handle, with_grants};
+pub use fault::{closed_handle, with_granted_role, with_grants};
 pub use pool::{
     ADDING, Refill, SQUARES, SQUARES_BODY, SQUARES_DIGEST, USER_ID, arena, fixture_curriculum,
     pool_rows, refill_job, refill_pass, seed_approved_template, seed_drained_pair, seed_fixed_user,

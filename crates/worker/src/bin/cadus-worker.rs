@@ -208,14 +208,36 @@ fn init_tracing() {
         .init();
 }
 
+/// Run the tick loop behind the stop signals, or stop at the install.
+///
+/// The install runs before the connect. The handlers exist from this point, so
+/// a SIGTERM during the connect gives exit code 0 instead of a kill by signal
+/// (finding #39).
 async fn run() -> Result<u64, WorkerError> {
+    serve_behind(Shutdown::install(), serve).await
+}
+
+/// Run `serve` behind the installed stop signals, or return the error of an
+/// install that failed.
+///
+/// The install is a parameter, so a test injects the error of a handler that
+/// does not register: the process reaches no database on that path.
+async fn serve_behind<F, Fut>(
+    installed: Result<Shutdown, WorkerError>,
+    serve: F,
+) -> Result<u64, WorkerError>
+where
+    F: FnOnce(Shutdown) -> Fut,
+    Fut: Future<Output = Result<u64, WorkerError>>,
+{
+    serve(installed?).await
+}
+
+/// Read the configuration, open the pool, and run the tick loop until a stop
+/// signal.
+async fn serve(mut shutdown: Shutdown) -> Result<u64, WorkerError> {
     let db_cfg = DbConfig::from_env()?;
     let cfg = WorkerConfig::from_env()?;
-
-    // Install the stop signals before the connect. The handlers exist from this
-    // point, so a SIGTERM during the connect gives exit code 0 instead of a kill
-    // by signal (finding #39).
-    let mut shutdown = Shutdown::install()?;
 
     // The curriculum load runs BEFORE the connect, so a deployment with no
     // curriculum tree fails at once and needs no database to say so.
@@ -344,9 +366,33 @@ async fn close_within<F: Future<Output = ()>>(deadline: Duration, close: F) {
 
 #[cfg(test)]
 mod tests {
+    use std::future::Future;
+    use std::pin::Pin;
     use std::time::{Duration, Instant};
 
-    /// `close_within` returns at its deadline, even when the close never ends.
+    use cadus_worker::WorkerError;
+
+    use super::{Shutdown, serve_behind};
+
+    /// A close future behind one pointer type, so the two calls of a test run
+    /// the same instantiation of `close_within`.
+    type Close = Pin<Box<dyn Future<Output = ()>>>;
+
+    /// The loop runs behind the installed signals, and the error of an install
+    /// that failed ends the run before the loop.
+    #[tokio::test]
+    async fn the_loop_runs_behind_the_install_or_stops_at_its_error() {
+        let serve = |_shutdown: Shutdown| async { Ok(7) };
+        let installed = Shutdown::install().expect("SIGTERM and SIGINT register");
+        assert_eq!(serve_behind(Ok(installed), serve).await.unwrap(), 7);
+
+        let refused = Err(WorkerError::Signal("the SIGTERM handler failed".to_owned()));
+        let err = serve_behind(refused, serve).await.unwrap_err();
+        assert_eq!(err.to_string(), "signal error: the SIGTERM handler failed");
+    }
+
+    /// `close_within` returns at its deadline, even when the close never ends,
+    /// and it returns at once when the close ends first.
     ///
     /// `PgPool::close` waits for every checked-out connection, so a database
     /// that answers nothing makes the plain call run without end (finding #6).
@@ -354,10 +400,14 @@ mod tests {
     /// of 5 s fails the test when the bound is gone.
     #[tokio::test]
     async fn close_within_returns_at_the_deadline() {
+        let ready: Close = Box::pin(std::future::ready(()));
+        super::close_within(Duration::from_millis(200), ready).await;
+
+        let never: Close = Box::pin(std::future::pending());
         let start = Instant::now();
         let outcome = tokio::time::timeout(
             Duration::from_secs(5),
-            super::close_within(Duration::from_millis(200), std::future::pending::<()>()),
+            super::close_within(Duration::from_millis(200), never),
         )
         .await;
         let elapsed = start.elapsed();

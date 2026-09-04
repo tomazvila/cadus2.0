@@ -75,7 +75,9 @@ fn first_reason(err: &LoadError) -> String {
 
 #[cfg(test)]
 mod tests {
-    use cadus_core::curriculum::{CurriculumError, Finding, LoadError};
+    use std::path::PathBuf;
+
+    use cadus_core::curriculum::{CurriculumError, Finding, LoadError, ParseError};
 
     use super::first_reason;
 
@@ -83,6 +85,13 @@ mod tests {
     /// gives its own text.
     #[test]
     fn the_first_finding_names_the_file_the_operator_must_fix() {
+        let missing = LoadError::Parse(ParseError::CurriculumNotFound {
+            path: PathBuf::from("/no/such/tree"),
+        });
+        assert_eq!(
+            first_reason(&missing),
+            "no courses.yaml under /no/such/tree"
+        );
         let fatal = LoadError::Curriculum(CurriculumError::FatalFindings {
             findings: vec![
                 Finding::new("E001", "the first one"),

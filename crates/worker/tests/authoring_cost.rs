@@ -31,8 +31,8 @@ use serde_json::{Value, json};
 use sqlx::PgPool;
 
 use common::{
-    FakeModel, SQUARES_KEY as KP_KEY, STORED_DIGEST, author_expect, good_arguments, handle,
-    ledger_shape, missing_low_edge, reply, squares_spec as spec,
+    FakeModel, SQUARES_KEY as KP_KEY, STORED_DIGEST, author_expect, closed_handle, good_arguments,
+    handle, ledger_shape, missing_low_edge, reply, squares_spec as spec,
 };
 
 /// The three prices of the three-attempt pass, in the order the calls run.
@@ -185,6 +185,19 @@ async fn a_three_attempt_knowledge_point_stays_quiet() {
         assert!(!report.alert, "three attempts are inside the T3 bound");
         assert_eq!(accounting(&db.admin, KP_KEY).await.0, 3);
         assert!(alerting(&handle(&db)).await.unwrap().is_empty());
+    })
+    .await;
+}
+
+/// The operator list is a store read, so a closed pool fails it.
+#[tokio::test]
+async fn the_alert_list_fails_on_a_closed_pool() {
+    TestDb::with(|db| async move {
+        let err = alerting(&closed_handle(&db).await)
+            .await
+            .unwrap_err()
+            .to_string();
+        assert!(err.starts_with("store error: "), "{err}");
     })
     .await;
 }

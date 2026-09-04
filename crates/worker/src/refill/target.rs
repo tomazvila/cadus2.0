@@ -2,8 +2,8 @@
 
 use cadus_core::curriculum::{Exemplar, KnowledgePoint};
 use cadus_core::pool::{
-    Batch, ExemplarSource, FillError, PoolAnswer, PoolProblem, ProblemSource, REFUSAL_FLAG_PERCENT,
-    Source, TemplateSource,
+    Batch, ExemplarSource, PoolAnswer, PoolProblem, ProblemSource, REFUSAL_FLAG_PERCENT, Source,
+    TemplateSource,
 };
 use cadus_core::template::{GateSpec, TemplateDoc, from_body, gate};
 use cadus_store::Db;
@@ -125,10 +125,11 @@ async fn fill_from_exemplars(
             "refill: the exemplar count is under the anti-repeat ring (A6)"
         );
     }
-    let batch = match source.fill(&target.kp_id, need, seed) {
-        Ok(batch) => batch,
-        Err(FillError::NoExemplar) => return Ok(Filled::NoSource),
-        Err(err) => return Err(refill_error(err)),
+    // The source fills the knowledge point it was built for, so the one refusal
+    // it gives is `FillError::NoExemplar`: no exemplar has an answer the checker
+    // decides. That pair has no source.
+    let Ok(batch) = source.fill(&target.kp_id, need, seed) else {
+        return Ok(Filled::NoSource);
     };
     write_batch(db, target, &batch, Source::Exemplar, None, seed).await
 }
@@ -276,10 +277,45 @@ async fn insert(
 #[cfg(test)]
 mod tests {
     use super::insert;
-    use cadus_core::pool::Source;
+    use cadus_core::curriculum::Exemplar;
+    use cadus_core::pool::{ExemplarSource, ProblemSource, Source};
     use cadus_store::Db;
     use cadus_store::pool::PoolTarget;
+    use cadus_store::test_support::TestDb;
     use sqlx::postgres::PgPoolOptions;
+    use sqlx::types::Uuid;
+
+    /// The serving key of the pair under test.
+    const KP: &str = "perfect-squares/kp1";
+
+    /// The pair of this learner, with no unclaimed row.
+    fn target(user_id: Uuid) -> PoolTarget {
+        PoolTarget {
+            user_id,
+            kp_id: KP.to_owned(),
+            depth: 0,
+        }
+    }
+
+    /// One batch of one exemplar instance.
+    fn one_instance() -> cadus_core::pool::Batch {
+        let exemplars = [Exemplar {
+            problem: "Compute $7^2$.".to_owned(),
+            answer: "49".to_owned(),
+            solution_sketch: None,
+        }];
+        ExemplarSource::new(KP, &exemplars)
+            .fill(KP, 1, 0)
+            .expect("the exemplar fills")
+    }
+
+    /// A `Db` over a lazy pool that points at a closed port.
+    fn closed_port() -> Db {
+        let pool = PgPoolOptions::new()
+            .connect_lazy("postgresql://nobody@127.0.0.1:1/nodb")
+            .expect("a lazy pool needs no server");
+        Db::new(pool, 100)
+    }
 
     /// An empty batch writes no row and opens no connection.
     ///
@@ -287,18 +323,54 @@ mod tests {
     /// reached the database would fail here.
     #[tokio::test]
     async fn an_empty_batch_writes_nothing() {
-        let pool = PgPoolOptions::new()
-            .connect_lazy("postgresql://nobody@127.0.0.1:1/nodb")
-            .expect("a lazy pool needs no server");
-        let db = Db::new(pool, 100);
-        let target = PoolTarget {
-            user_id: sqlx::types::Uuid::nil(),
-            kp_id: "perfect-squares/kp1".to_owned(),
-            depth: 0,
-        };
-        let inserted = insert(&db, &target, &[], Source::Exemplar, None, 0)
-            .await
-            .expect("an empty batch is not an error");
+        let inserted = insert(
+            &closed_port(),
+            &target(Uuid::nil()),
+            &[],
+            Source::Exemplar,
+            None,
+            0,
+        )
+        .await
+        .expect("an empty batch is not an error");
         assert_eq!(inserted, 0);
+    }
+
+    /// A batch with one instance writes one row, and the write fails when the
+    /// database does not answer.
+    #[tokio::test]
+    async fn a_batch_writes_its_rows_or_fails_with_the_store() {
+        let batch = one_instance();
+        let err = insert(
+            &closed_port(),
+            &target(Uuid::nil()),
+            batch.instances(),
+            Source::Exemplar,
+            None,
+            0,
+        )
+        .await
+        .expect_err("a closed port answers no write");
+        assert!(
+            err.to_string().starts_with("store error: "),
+            "the error names the store: {err}"
+        );
+
+        TestDb::with(|db| async move {
+            let user = db.seed_user("insert@example.test").await;
+            let db_handle = Db::new(db.admin.clone(), 100);
+            let inserted = insert(
+                &db_handle,
+                &target(user),
+                one_instance().instances(),
+                Source::Exemplar,
+                None,
+                0,
+            )
+            .await
+            .expect("the batch writes");
+            assert_eq!(inserted, 1);
+        })
+        .await;
     }
 }

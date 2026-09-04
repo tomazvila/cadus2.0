@@ -126,8 +126,9 @@ async fn the_sweep_stops_at_the_lease_reset_the_role_cannot_run() {
 
 /// Every end state of a claimed row is one UPDATE, and each one is the
 /// statement the pass stops at when the role cannot write the result: the
-/// dead letter of an unreadable payload, the cap, the diagnosis, and the dead
-/// letter of a third failure.
+/// dead letter of an unreadable payload, the dead letter of a payload version
+/// this worker does not know, the cap, the diagnosis, and the dead letter of a
+/// third failure.
 #[tokio::test]
 async fn every_end_state_stops_at_the_settle_the_role_cannot_run() {
     TestDb::with(|db| async move {
@@ -139,6 +140,9 @@ async fn every_end_state_stops_at_the_settle_the_role_cannot_run() {
             &json!({"v": 1, "nonsense": true}),
         )
         .await;
+        let mut unknown_version = payload(None);
+        unknown_version["v"] = json!(2);
+        enqueue(&db.admin, user, "task-5", &unknown_version).await;
         enqueue_as(
             &db.admin,
             user,
@@ -170,6 +174,7 @@ async fn every_end_state_stops_at_the_settle_the_role_cannot_run() {
                 let mut job = server.diagnosis_job(1);
 
                 for (row, calls) in [
+                    (None, 0),
                     (None, 0),
                     (Some(capped), 0),
                     (Some(done), 1),

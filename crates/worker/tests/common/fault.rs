@@ -22,6 +22,25 @@ where
     F: FnOnce(Arc<TestDb>, Db) -> Fut + Send + 'static,
     Fut: Future<Output = ()> + Send + 'static,
 {
+    with_granted_role(db, statements, move |db, _role, pool| {
+        body(db, Db::new(pool, DEFAULT_CLIENT_TIMEOUT_MS))
+    })
+    .await;
+}
+
+/// Run `body` with the name of a fresh role that holds exactly the privileges
+/// these statements grant, and a pool connected as that role.
+///
+/// [`with_grants`] wraps the pool in a `Db` handle. A test that starts the
+/// worker process takes the name instead, and builds the DSN of the role.
+pub async fn with_granted_role<F, Fut>(
+    db: &Arc<TestDb>,
+    statements: &'static [&'static str],
+    body: F,
+) where
+    F: FnOnce(Arc<TestDb>, String, PgPool) -> Fut + Send + 'static,
+    Fut: Future<Output = ()> + Send + 'static,
+{
     TestDb::with_role(
         db,
         "fault",
@@ -35,8 +54,7 @@ where
                     .unwrap_or_else(|e| panic!("{text}: {e}"));
             }
             trace();
-            let handle = Db::new(pool, DEFAULT_CLIENT_TIMEOUT_MS);
-            let outcome = tokio::spawn(body(Arc::clone(&db), handle)).await;
+            let outcome = tokio::spawn(body(Arc::clone(&db), role.clone(), pool)).await;
             // A role that still holds a privilege cannot be dropped, so the grants
             // go first, whatever the body did.
             sqlx::query(AssertSqlSafe(format!("DROP OWNED BY \"{role}\"")))

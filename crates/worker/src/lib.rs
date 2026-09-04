@@ -447,10 +447,11 @@ mod tests {
     /// with any variant, so this one names the variant too.
     #[test]
     fn an_empty_value_gives_the_config_variant() {
-        let outcome = WorkerConfig::from_raw("");
-        assert!(
-            matches!(outcome, Err(WorkerError::Config(_))),
-            "the parse must give WorkerError::Config, it gave {outcome:?}"
+        let err = WorkerConfig::from_raw("").expect_err("an empty value does not parse");
+        assert_eq!(
+            std::mem::discriminant(&err),
+            std::mem::discriminant(&WorkerError::Config(String::new())),
+            "the parse must give WorkerError::Config, it gave {err:?}"
         );
     }
 

@@ -22,7 +22,9 @@ mod common;
 use cadus_core::curriculum::{AnswerKind, Exemplar};
 use cadus_core::template::{GateSpec, gate_body};
 use cadus_store::test_support::TestDb;
-use cadus_worker::authoring::job::{Outcome, authoring_vocabulary, verify};
+use cadus_worker::authoring::job::{
+    NO_ARGUMENTS, Outcome, authoring_vocabulary, verify, verify_diagnosis,
+};
 use cadus_worker::authoring::prompt::{AuthoringSpec, Kind, tool_schema};
 use serde_json::{Value, json};
 
@@ -393,4 +395,22 @@ fn the_template_drop_runs_before_the_gate() {
         rejection.message,
         "parameters ['b'] are declared but never used"
     );
+}
+
+/// A tool call with no arguments object is refused on the template gate and
+/// on the diagnosis gate alike, before either gate reads a field.
+#[test]
+fn arguments_that_are_not_an_object_are_refused_on_both_gates() {
+    let spec = template_spec();
+    let refusals = [
+        verify(&spec, &json!("emit_template")),
+        verify_diagnosis(&spec, &json!("emit_distractors")),
+    ];
+    for refusal in refusals {
+        let rejection = refusal.expect_err("a string is not an arguments object");
+        assert_eq!(
+            (rejection.code, rejection.message),
+            ("tool-arguments", NO_ARGUMENTS.to_owned())
+        );
+    }
 }
