@@ -178,10 +178,11 @@ describe('useCall', () => {
 
 describe('useCall, before the first effect', () => {
   it('reads its deps from a call made in a child effect, which runs before its own', async () => {
+    // The throw is SYNCHRONOUS, so the catch reads the deps before any effect ran.
     const onUnauthorized = vi.fn();
     function Child({ call }: { call: Call }) {
       useEffect(() => {
-        void call(async () => { throw new ApiError(401, 'unauthorized', 'No session.'); });
+        void call(() => { throw new ApiError(401, 'unauthorized', 'No session.'); });
       }, [call]);
       return null;
     }

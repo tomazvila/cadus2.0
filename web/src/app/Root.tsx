@@ -39,7 +39,7 @@
  * screens sit inside the signed-in branch, so a signed-out visitor to either path is asked
  * to sign in and reaches no admin call at all.
  */
-import { useCallback, useEffect, useState, type Dispatch, type SetStateAction } from 'react';
+import { useEffect, useState, type Dispatch, type SetStateAction } from 'react';
 import { App } from './App';
 import { adminRouteFor, type AdminRoute } from './routes';
 import { Auth } from '@/views/Auth';
@@ -141,49 +141,58 @@ export function Root({
   }, []);
 
   /**
-   * Move the location and the state together. Nothing else writes `path`.
-   *
-   * The push happens OUTSIDE the state updater on purpose: React invokes an updater twice
-   * under StrictMode, and a `pushState` written there would add two history entries per
-   * navigation, so one Back press would land on the page the operator just left.
+   * The three moves, created ONCE per mount. Each reads state setters alone, and a setter is
+   * stable, so the three hold for the life of the root and every dependency array they land
+   * in holds with them.
    */
-  const navigate = useCallback((next: string) => {
-    if (window.location.pathname !== next) {
-      try {
-        window.history.pushState({}, '', next);
-      } catch {
-        /* a non-browser host, or a blocked history write */
+  const [{ navigate, goHome, onUnauthorized }] = useState(() => {
+    /**
+     * Move the location and the state together. Nothing else writes `path`.
+     *
+     * The push happens OUTSIDE the state updater on purpose: React invokes an updater twice
+     * under StrictMode, and a `pushState` written there would add two history entries per
+     * navigation, so one Back press would land on the page the operator just left.
+     */
+    const navigate = (next: string): void => {
+      if (window.location.pathname !== next) {
+        try {
+          window.history.pushState({}, '', next);
+        } catch {
+          /* a non-browser host, or a blocked history write */
+        }
       }
-    }
-    setPath(next);
-  }, []);
+      setPath(next);
+    };
 
-  /**
-   * The boot screen: the dashboard, on the dashboard's path.
-   *
-   * ONE move, and three callers share it — the topbar brand, sign-out, and the 401. Each of
-   * the three has to drop the screen AND the operator path, or the screen the caller left
-   * comes straight back.
-   */
-  const goHome = useCallback(() => {
-    navigate(HOME_PATH);
-    setView(HOME);
-  }, [navigate]);
+    /**
+     * The boot screen: the dashboard, on the dashboard's path.
+     *
+     * ONE move, and three callers share it — the topbar brand, sign-out, and the 401. Each
+     * of the three has to drop the screen AND the operator path, or the screen the caller
+     * left comes straight back.
+     */
+    const goHome = (): void => {
+      navigate(HOME_PATH);
+      setView(HOME);
+    };
 
-  /**
-   * The session-expired path every screen shares.
-   *
-   * IT RETURNS HOME AS WELL AS DROPPING THE ACCOUNT (M6-review-1, F21). The quiz view holds
-   * the whole `PlanTask`, not a task id. A 401 that dropped the account and kept the screen
-   * left that task in state, so the next sign-in on the same browser re-mounted the quiz of
-   * the account that just left and posted a serve against a task id the new account does not
-   * own. `useCall` raises the toast that says the session expired, so this must not raise a
-   * second one.
-   */
-  const onUnauthorized = useCallback(() => {
-    setUser(null);
-    goHome();
-  }, [goHome]);
+    /**
+     * The session-expired path every screen shares.
+     *
+     * IT RETURNS HOME AS WELL AS DROPPING THE ACCOUNT (M6-review-1, F21). The quiz view
+     * holds the whole `PlanTask`, not a task id. A 401 that dropped the account and kept the
+     * screen left that task in state, so the next sign-in on the same browser re-mounted the
+     * quiz of the account that just left and posted a serve against a task id the new
+     * account does not own. `useCall` raises the toast that says the session expired, so
+     * this must not raise a second one.
+     */
+    const onUnauthorized = (): void => {
+      setUser(null);
+      goHome();
+    };
+
+    return { navigate, goHome, onUnauthorized };
+  });
 
   /**
    * Drop the session locally whatever the service says.

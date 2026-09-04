@@ -300,6 +300,16 @@ describe('the reset card, while a session is still open', () => {
     expect(onResetTokenTaken).not.toHaveBeenCalled();
   });
 
+  it('takes no token from a reset card that has none', async () => {
+    const onResetTokenTaken = vi.fn();
+    render(
+      <Root api={adminApi()} initialUser={null} authMode="reset" onResetTokenTaken={onResetTokenTaken} />,
+      { container: view() },
+    );
+    await waitFor(() => expect(screen.getByText('choose a new password')).toBeTruthy());
+    expect(onResetTokenTaken).not.toHaveBeenCalled();
+  });
+
   it('shows the card with nobody to tell', async () => {
     render(
       <Root api={adminApi()} initialUser={null} authMode="reset" resetToken="reset-9" />,

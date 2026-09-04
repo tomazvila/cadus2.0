@@ -30,7 +30,7 @@
  * with all of the machinery above deleted.
  */
 import {
-  createContext, useCallback, useContext, useEffect, useMemo, useRef, useState,
+  createContext, useContext, useEffect, useRef, useState,
 } from 'react';
 import { createPortal } from 'react-dom';
 
@@ -65,8 +65,9 @@ export function DialogProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => () => { currentRef.current?.resolve(null); currentRef.current = null; }, []);
 
-  const open = useCallback(<T,>(render: (resolve: Resolver<T>) => React.ReactNode) =>
-    new Promise<T | null>((resolvePromise) => {
+  // ONE context value per mount: `open` reads a ref and a setter, and both are stable.
+  const [value] = useState<Dialogs>(() => ({
+    open: <T,>(render: (resolve: Resolver<T>) => React.ReactNode) => new Promise<T | null>((resolvePromise) => {
       const resolve = (value: T | null) => {
         if (currentRef.current !== entry) return;
         currentRef.current = null;
@@ -84,9 +85,8 @@ export function DialogProvider({ children }: { children: React.ReactNode }) {
       };
       currentRef.current = entry;
       setCurrent(entry);
-    }), []);
-
-  const value = useMemo<Dialogs>(() => ({ open }), [open]);
+    }),
+  }));
 
   return (
     <DialogContext.Provider value={value}>

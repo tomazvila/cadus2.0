@@ -40,7 +40,7 @@
  * It is generic over the union of each view. The diagnostic has an `intro` phase the others
  * do not, so there is no one shared `Phase` type.
  */
-import { useMemo, useState, useSyncExternalStore } from 'react';
+import { useState, useSyncExternalStore } from 'react';
 
 /** One phase, a set of them, or a predicate. */
 type Guard<P extends string> = P | readonly P[] | ((p: P) => boolean);
@@ -108,12 +108,13 @@ export function usePhase<P extends string>(initial: P): readonly [P, Gate<P>] {
   // Tear-free: React re-reads a torn render and discards it.
   const phase = useSyncExternalStore(store.subscribe, store.get, store.get);
 
-  const gate = useMemo<Gate<P>>(() => ({
+  // One gate per store, and one store per mount.
+  const [gate] = useState<Gate<P>>(() => ({
     peek: store.get,
     is: (guard) => match(store.get(), guard),
     enter: store.enter,
     tryEnter: store.tryEnter,
-  }), [store]);
+  }));
 
   return [phase, gate] as const;
 }

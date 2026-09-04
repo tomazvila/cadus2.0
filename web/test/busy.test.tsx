@@ -6,7 +6,7 @@
  * that against a real button; this file pins the handler contract itself.
  */
 import { describe, expect, it, vi } from 'vitest';
-import { act, renderHook } from '@testing-library/react';
+import { act, render, renderHook, screen } from '@testing-library/react';
 import { useBusy } from '@/hooks/useBusy';
 
 describe('useBusy', () => {
@@ -49,5 +49,45 @@ describe('useBusy', () => {
     await act(async () => { result.current.run('go', fn); });
     expect(fn).toHaveBeenCalledTimes(1);
     expect(result.current.is('go')).toBe(false);
+  });
+});
+
+describe('useBusy on screen', () => {
+  function Button({ handler }: { handler: () => Promise<void> | void }) {
+    const busy = useBusy();
+    return (
+      <button
+        type="button"
+        disabled={busy.is('k')}
+        className={busy.cls('k', 'btn')}
+        // `run` rethrows a synchronous throw; the hook test above pins that. Here the screen
+        // is the subject, so the throw stops at the button.
+        onClick={() => { try { busy.run('k', handler); } catch { /* pinned elsewhere */ } }}
+      >
+        go
+      </button>
+    );
+  }
+
+  it('disables the control while the handler runs, and frees it after', async () => {
+    let finish!: () => void;
+    render(<Button handler={() => new Promise<void>((resolve) => { finish = resolve; })} />);
+    const button = screen.getByRole<HTMLButtonElement>('button');
+
+    await act(async () => { button.click(); });
+    expect(button.disabled).toBe(true);
+    expect(button.className).toBe('btn is-busy');
+
+    await act(async () => { finish(); });
+    expect(button.disabled).toBe(false);
+    expect(button.className).toBe('btn');
+  });
+
+  it('frees the control when the handler throws before its first await', async () => {
+    render(<Button handler={() => { throw new Error('threw before its first await'); }} />);
+    const button = screen.getByRole<HTMLButtonElement>('button');
+
+    await act(async () => { button.click(); });
+    expect(button.disabled).toBe(false);
   });
 });

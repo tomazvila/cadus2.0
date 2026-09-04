@@ -67,7 +67,7 @@ export function AnswerField({
     value: () => inputRef.current?.value.trim() ?? '',
     clear: () => { if (inputRef.current) inputRef.current.value = ''; },
     focus: () => inputRef.current?.focus(),
-  }), []);
+  }));
 
   return (
     <div className="answer-field">

@@ -98,9 +98,9 @@ export function createLifetime(): LifetimeInternal {
     },
 
     clearTimer(id) {
-      // 0 and undefined name no timer, and the browser ignores both.
+      // The browser gives timeouts and intervals one id space and one clear, so this stops
+      // either kind. 0 and undefined name no timer, and the browser ignores both.
       clearTimeout(id);
-      clearInterval(id);   // the browser gives the two one id space
       timeouts.delete(id!);
       intervals.delete(id!);
     },

@@ -33,7 +33,7 @@
  * never through captured render state. The external store of `usePhase` satisfies the rule
  * for the phase; the rest belongs to the call site.
  */
-import { useCallback, useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { ApiError } from '@/api';
 import { toast } from '@/app/toast';
 
@@ -97,11 +97,12 @@ export function useCall({ demo, onUnauthorized }: CallDeps): Call {
   const depsRef = useRef({ demo, onUnauthorized });
   useEffect(() => { depsRef.current = { demo, onUnauthorized }; }, [demo, onUnauthorized]);
 
-  return useCallback(
-    <T, R>(fn: () => Promise<T>, onOk?: (value: T) => R, opts?: CallOptions) =>
+  // ONE function per mount, so a dependency array that holds it holds.
+  const [call] = useState<Call>(
+    () => <T, R>(fn: () => Promise<T>, onOk?: (value: T) => R, opts?: CallOptions) =>
       run(fn, onOk, depsRef, opts),
-    [],
   );
+  return call;
 }
 
 type DepsRef = { current: CallDeps };
