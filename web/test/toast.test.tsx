@@ -112,6 +112,14 @@ describe('the toast store', () => {
     expect(notices).toBe(1);
   });
 
+  it('fires nothing for an id that no toast carries', () => {
+    const onAction = vi.fn();
+    toast('One.', { label: 'Retry', onAction });
+    fireToastAction(999);
+    expect(onAction).not.toHaveBeenCalled();
+    expect(toasts().length).toBe(1);
+  });
+
   it('is a no-op when a dismissed id is dismissed again', () => {
     let notices = 0;
     toast('One.');
@@ -151,6 +159,20 @@ describe('the toast host', () => {
 
     act(() => { retry.click(); });
     expect(onAction).toHaveBeenCalledTimes(1);
+    expect(screen.queryByRole('status')).toBeNull();
+  });
+
+  it('names an unlabelled action Retry', () => {
+    render(<ToastHost />);
+    act(() => { toast('Failed.', { onAction: vi.fn() }); });
+    expect(screen.getByRole('button', { name: 'Retry' })).toBeTruthy();
+  });
+
+  it('renders nothing at all when the live region is missing', () => {
+    // A host that returns null must not throw: the region is not the reason to lose the page.
+    document.getElementById('toasts')!.remove();
+    expect(() => render(<ToastHost />)).not.toThrow();
+    act(() => { toast('Failed.'); });
     expect(screen.queryByRole('status')).toBeNull();
   });
 

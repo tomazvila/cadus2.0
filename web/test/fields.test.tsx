@@ -163,6 +163,18 @@ describe('AnswerField: the caret contract', () => {
     expect(input.value).toBe('∞');
   });
 
+  it('appends at the end when the browser reports no caret', () => {
+    // A host that answers null for the selection — the shape of an input type with no
+    // selection API — still takes the symbol, at the end of the value.
+    const m = mount(<AnswerField />);
+    const input = m.find<HTMLInputElement>('.answer-input');
+    input.value = '12';
+    Object.defineProperty(input, 'selectionStart', { get: () => null });
+    Object.defineProperty(input, 'selectionEnd', { get: () => null });
+    act(() => { m.all('.sym-key')[0].click(); });
+    expect(input.value).toBe('12∞');
+  });
+
   it('suppresses mousedown so the caret survives the tap', () => {
     const m = mount(<AnswerField />);
     const ev = new MouseEvent('mousedown', { bubbles: true, cancelable: true });
@@ -212,6 +224,17 @@ describe('AnswerField: the handle and accessibility', () => {
     expect(ref.current!.value()).toBe('');
   });
 
+  it('reads an empty value once the field is gone', () => {
+    // A continuation that kept the handle past the unmount reads nothing, not a throw.
+    const ref = createRef<AnswerFieldHandle>();
+    const m = mount(<AnswerField ref={ref} />);
+    const handle = ref.current!;
+    m.find<HTMLInputElement>('.answer-input').value = '5';
+    m.unmount();
+    expect(handle.value()).toBe('');
+    expect(() => { handle.clear(); handle.focus(); }).not.toThrow();
+  });
+
   it('focuses the input through the handle, for a fresh problem', () => {
     const ref = createRef<AnswerFieldHandle>();
     const m = mount(<AnswerField ref={ref} />);
@@ -258,6 +281,29 @@ describe('WorkField', () => {
     const shifted = keydown(area, 'Enter', { shiftKey: true });
     expect(onSubmit).toHaveBeenCalledTimes(1);
     expect(shifted.defaultPrevented).toBe(false);
+  });
+
+  it('Enter is inert while the area is disabled or readOnly', () => {
+    const onSubmit = vi.fn();
+    const m = mount(<WorkField onSubmit={onSubmit} />);
+    const area = m.find<HTMLTextAreaElement>('.work-input');
+
+    area.disabled = true;
+    keydown(area, 'Enter');
+    area.disabled = false;
+    area.readOnly = true;
+    keydown(area, 'Enter');
+
+    expect(onSubmit).not.toHaveBeenCalled();
+  });
+
+  it('reads an empty working once the area is gone', () => {
+    const ref = createRef<WorkFieldHandle>();
+    const m = mount(<WorkField ref={ref} />);
+    const handle = ref.current!;
+    m.find<HTMLTextAreaElement>('.work-input').value = 'LCD';
+    m.unmount();
+    expect(handle.value()).toBe('');
   });
 
   it('starts collapsed inside a NATIVE <details>', () => {

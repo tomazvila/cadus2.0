@@ -129,7 +129,7 @@ export function dispositionFilename(header: string | null): string | null {
   const name = match?.[1]?.trim();
   if (!name) return null;
   // A server-named path separator would write outside the download directory.
-  return name.replace(/[/\\]/g, '_') || null;
+  return name.replace(/[/\\]/g, '_');
 }
 
 /**

@@ -78,6 +78,32 @@ describe('the KaTeX string idiom', () => {
     expect(renderMathToHtml('$x+1$')).toBe('$x+1$');
   });
 
+  it('shows the escaped source when the renderer throws', () => {
+    // A renderer that throws must not throw INTO a React render: the learner reads the raw
+    // text instead of a blank problem.
+    vi.stubGlobal('renderMathInElement', () => { throw new Error('katex exploded'); });
+    expect(renderMathToHtml('<b>$x$</b>')).toBe('&lt;b&gt;$x$&lt;/b&gt;');
+  });
+
+  it('holds sixty-four renders and re-renders the oldest after that', () => {
+    const spy = vi.fn(renderMathInElement);
+    vi.stubGlobal('renderMathInElement', spy);
+    for (let i = 0; i < 64; i += 1) renderMathToHtml(`$x_{${i}}$`);
+    expect(spy).toHaveBeenCalledTimes(64);
+    // Every one of the sixty-four is still cached.
+    renderMathToHtml('$x_{0}$');
+    expect(spy).toHaveBeenCalledTimes(64);
+    // The sixty-fifth evicts the oldest, and the oldest renders again.
+    renderMathToHtml('$x_{64}$');
+    renderMathToHtml('$x_{0}$');
+    expect(spy).toHaveBeenCalledTimes(66);
+    // That render evicted the next oldest in turn; the one after it is still there.
+    renderMathToHtml('$x_{2}$');
+    expect(spy).toHaveBeenCalledTimes(66);
+    renderMathToHtml('$x_{1}$');
+    expect(spy).toHaveBeenCalledTimes(67);
+  });
+
   it('renders one source string once, across a remount as well', () => {
     const spy = vi.fn(renderMathInElement);
     vi.stubGlobal('renderMathInElement', spy);

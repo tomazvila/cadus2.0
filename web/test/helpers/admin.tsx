@@ -83,7 +83,7 @@ export const QUEUE: ReviewListResponse = {
 };
 
 /** The queue as the second read sees it: `d2` is decided and gone. */
-export function queueWithout(digest: string): ReviewListResponse {
+function queueWithout(digest: string): ReviewListResponse {
   return { ...QUEUE, items: QUEUE.items.filter((i) => i.digest !== digest) };
 }
 
@@ -95,7 +95,7 @@ export function listThenWithout(digest: string) {
     .mockResolvedValue(queueWithout(digest));
 }
 
-export const DOC: ReviewDocument = {
+const DOC: ReviewDocument = {
   ...item({ digest: 'd2', authoring_attempts: 4, authoring_cost_usd: '0.0300' }),
   approved_at: null,
   review_reason: null,

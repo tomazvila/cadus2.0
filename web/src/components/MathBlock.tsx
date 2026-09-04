@@ -29,7 +29,7 @@ export const MathBlock = memo(function MathBlock({
   className = 'problem-text',
 }: MathBlockProps) {
   // React diffs the OBJECT identity, so it must stay stable across renders.
-  const markup = useMemo(() => ({ __html: renderMathToHtml(children ?? '') }), [children]);
+  const markup = useMemo(() => ({ __html: renderMathToHtml(children) }), [children]);
 
   // `renderMathToHtml` escapes the source through the `textContent` of a detached node before
   // KaTeX sees it, so model-authored markup arrives here as text. This is not the injection

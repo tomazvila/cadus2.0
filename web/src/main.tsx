@@ -176,10 +176,7 @@ export async function bootWith(
   return root;
 }
 
+/** Boot against the live client and the URL of the page. `index.tsx` calls it once. */
 export function boot(): Promise<ReactRoot> {
   return bootWith(resolveApi(location.search), location.pathname, location.search);
 }
-
-// The guard keeps the module importable by the suite: a test drives `bootWith()` and
-// `readBootParams()` directly, against its own DOM.
-if (import.meta.env.MODE !== 'test') void boot();

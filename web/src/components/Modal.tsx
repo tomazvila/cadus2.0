@@ -72,7 +72,7 @@ export function DialogProvider({ children }: { children: React.ReactNode }) {
         if (settled) return;
         settled = true;
         if (currentRef.current?.id === id) currentRef.current = null;
-        setCurrent((c) => (c?.id === id ? null : c));
+        setCurrent(null);
         resolvePromise(value);
       };
 
@@ -125,11 +125,13 @@ function Modal({ children, onCancel }: {
   useEffect(() => {
     const previouslyFocused = document.activeElement as HTMLElement | null;
 
+    // The overlay is on the page for the life of this effect, so the ref is never null here.
+    const overlay = ref.current!;
     const focusable = () => Array.from(
-      ref.current?.querySelectorAll<HTMLElement>(
+      overlay.querySelectorAll<HTMLElement>(
         'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]),'
         + ' textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
-      ) ?? [],
+      ),
     );
 
     const onKey = (e: KeyboardEvent) => {
@@ -143,10 +145,10 @@ function Modal({ children, onCancel }: {
       const active = document.activeElement;
 
       // Wrap at both ends, and pull focus back in when it is already outside.
-      if (e.shiftKey && (active === first || !ref.current?.contains(active))) {
+      if (e.shiftKey && (active === first || !overlay.contains(active))) {
         e.preventDefault();
         last.focus();
-      } else if (!e.shiftKey && (active === last || !ref.current?.contains(active))) {
+      } else if (!e.shiftKey && (active === last || !overlay.contains(active))) {
         e.preventDefault();
         first.focus();
       }
@@ -162,9 +164,6 @@ function Modal({ children, onCancel }: {
     };
     // Mount and unmount only.
   }, []);
-
-  const host = typeof document === 'undefined' ? null : document.body;
-  if (!host) return null;
 
   return createPortal(
     <div
@@ -185,6 +184,6 @@ function Modal({ children, onCancel }: {
       */}
       {children}
     </div>,
-    host,
+    document.body,
   );
 }

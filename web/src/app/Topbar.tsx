@@ -28,7 +28,7 @@ export interface TopbarProps {
 }
 
 export function Topbar({ user, demo, onHome, onMap, onLogout }: TopbarProps) {
-  const host = typeof document === 'undefined' ? null : document.getElementById('topbar');
+  const host = document.getElementById('topbar');
   if (!host) return null;
 
   // The quiet Map affordance — offered while signed in, and in demo.

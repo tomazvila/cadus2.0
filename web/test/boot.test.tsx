@@ -15,8 +15,9 @@ import { act, fireEvent, screen, waitFor } from '@testing-library/react';
 import type { Root as ReactRoot } from 'react-dom/client';
 import { ApiError, createDemoApi } from '@/api';
 import type { ApiClient, User } from '@/api';
-import { authModeFor, bootWith, readBootParams } from '@/main';
+import { authModeFor, bootWith, readBootParams, stripBootTokens } from '@/main';
 import { resetToasts, toastStore } from '@/app/toast';
+import { setSearch } from './setup';
 
 const USER: User = {
   id: 'u1',
@@ -115,6 +116,20 @@ describe('the boot tokens', () => {
     expect(window.location.search).toBe('');
   });
 
+  it('toasts a generic line when the verify call fails for another reason', async () => {
+    const verifyEmail = vi.fn(async () => { throw new Error('offline'); });
+
+    await boot(stub({ verifyEmail, me: SIGNED_OUT }), '/', '?verify=tok-2');
+
+    expect(messages()).toEqual(['Could not verify your email.']);
+    expect(screen.getByRole('button', { name: 'Sign in' })).toBeTruthy();
+  });
+
+  it('survives a blocked history write when it strips a token', () => {
+    vi.spyOn(history, 'replaceState').mockImplementation(() => { throw new Error('blocked'); });
+    expect(() => stripBootTokens('/verify')).not.toThrow();
+  });
+
   it('toasts an expired ?verify= link and still boots to the sign-in card', async () => {
     const verifyEmail = vi.fn(async () => {
       throw new ApiError(400, 'invalid_token', 'Token spent.');
@@ -173,6 +188,19 @@ describe('the boot tokens', () => {
     expect(resetPassword).not.toHaveBeenCalled();
     expect(messages()).toEqual([]);
     expect(screen.getByText('sign in')).toBeTruthy();
+  });
+});
+
+describe('the entry', () => {
+  it('boots the live page once, against the client the URL names', async () => {
+    // `?demo=1` hands the entry the demo client, so the boot needs no service: the demo
+    // account is signed in and the dashboard is the first screen.
+    setSearch('?demo=1');
+    const { started } = await import('@/index');
+    await act(async () => { root = await started; });
+
+    await waitFor(() => expect(screen.getByText('Continue studying')).toBeTruthy());
+    expect(screen.getByText('DEMO')).toBeTruthy();
   });
 });
 

@@ -99,8 +99,7 @@ export function resetMathCache(): void {
  * visible. That is the degradation `throwOnError: false` asks for: the learner reads
  * `$\dfrac{1}{2}$` and works on, where a throw gives a blank problem.
  */
-export function renderMathToHtml(text: string): string {
-  const source = text ?? '';
+export function renderMathToHtml(source: string): string {
   const hit = CACHE.get(source);
   if (hit !== undefined) return hit;
 

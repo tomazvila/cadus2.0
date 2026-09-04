@@ -21,7 +21,7 @@ export function ToastHost() {
     toastStore.getSnapshot,
   );
 
-  const host = typeof document === 'undefined' ? null : document.getElementById('toasts');
+  const host = document.getElementById('toasts');
   if (!host) return null;
 
   return createPortal(

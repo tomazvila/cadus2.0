@@ -217,6 +217,52 @@ describe('the router', () => {
     expect(view().querySelector('.progress-count')!.textContent).toBe('1 / 8');
   });
 
+  it('opens the quiz from the dashboard and gives the dashboard back when it ends', async () => {
+    // Quiz now from the quiet menu carries the plan task, and a quiz opened from the
+    // dashboard has no session to return to: Done lands on the dashboard.
+    const api = createDemoApi();
+    const quiz = quizTask('demo-quiz');
+    vi.spyOn(api, 'getPlan').mockResolvedValue({
+      session: 'demo-session',
+      tasks: [quiz],
+      quiz_due: true,
+      constraints: {
+        lesson_ratio_ok: true, lesson_ratio: 0.5, throttle_ok: true, reviews: 0, lessons: 0,
+      },
+      course_complete: false,
+      frontier_blocked_until: null,
+    });
+    vi.spyOn(api, 'taskServe').mockResolvedValue({
+      problem_id: 'demo-q1', index: 1, total: 1, text: 'Solve $x + 3 = 10$ for $x$.',
+      kp: null, time_budget_secs: 120, countdown: false,
+    });
+    vi.spyOn(api, 'taskAnswer').mockResolvedValue({ accepted: true, remaining: 0, quiz_complete: true });
+
+    const user = userEvent.setup();
+    await reachDashboard(api);
+    await user.click(view().querySelector('.more-menu summary')!);
+    await user.click(screen.getByRole('button', { name: 'Quiz now' }));
+    await waitFor(() => expect(view().querySelector('.view-quiz')).not.toBeNull());
+
+    await user.click(view().querySelector('.answer-input')!);
+    await user.keyboard('7');
+    await user.click(screen.getByRole('button', { name: 'Submit answer' }));
+    await waitFor(() => expect(screen.getByText('Quiz complete')).toBeTruthy());
+    await user.click(screen.getByRole('button', { name: 'Back to dashboard' }));
+    await waitFor(() => expect(view().querySelector('.view-dashboard')).not.toBeNull());
+  });
+
+  it('opens the map from the quiet menu and gives the dashboard back', async () => {
+    const user = userEvent.setup();
+    await reachDashboard(createDemoApi());
+    await user.click(view().querySelector('.more-menu summary')!);
+    await user.click(screen.getByRole('button', { name: 'Curriculum map' }));
+    await waitFor(() => expect(screen.getByLabelText(MAP_CANVAS_LABEL)).toBeTruthy());
+
+    await user.click(screen.getByRole('button', { name: 'Done' }));
+    await waitFor(() => expect(view().querySelector('.view-dashboard')).not.toBeNull());
+  });
+
   it('sends the learner home on sign-out', async () => {
     // A sign-in that landed back on the quiz of the account that just left would read the
     // previous learner's task.

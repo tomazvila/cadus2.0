@@ -11,6 +11,7 @@
  * region. `test/setup.ts` seeds all three. A test that mounts into a bare `<div>` instead
  * would report a clean axe run while the real page has no landmarks at all.
  */
+import { useState } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 import { act, render, screen } from '@testing-library/react';
 import { axe } from 'vitest-axe';
@@ -124,6 +125,39 @@ describe('the app shell', () => {
   it('reports zero axe violations in demo mode', async () => {
     mount(<App demo />);
     expect(await axe(document.body, AXE_IN_JSDOM)).toHaveNoViolations();
+  });
+
+  it('takes the bar presses in its stride when no caller wired them', () => {
+    // The S4 shell mounts with no router above it: every control still has a handler.
+    mount(<App user={USER} />);
+    expect(() => {
+      act(() => { screen.getByRole('button', { name: 'Cadus' }).click(); });
+      act(() => { screen.getByRole('button', { name: 'Map' }).click(); });
+      act(() => { screen.getByRole('button', { name: 'Log out' }).click(); });
+    }).not.toThrow();
+    expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('Cadus');
+  });
+
+  it('builds a fresh boundary on Try again, so the screen renders once more', () => {
+    allowConsoleError(/view crashed/);
+    allowConsoleError(/The above error occurred/);
+    allowConsoleError(/An error occurred in/);
+
+    let throws = true;
+    function Flaky() {
+      const [, force] = useState(0);
+      if (throws) throw new Error('the render threw');
+      return <button type="button" onClick={() => force((n) => n + 1)}>the view</button>;
+    }
+    mount(<App user={USER}><Flaky /></App>);
+    expect(screen.getByRole('alert')).toBeTruthy();
+
+    // The fault is fixed, the generation moves, the key changes, and the NEW boundary
+    // renders the child again.
+    throws = false;
+    act(() => { screen.getByRole('button', { name: 'Try again' }).click(); });
+    expect(screen.queryByRole('alert')).toBeNull();
+    expect(screen.getByRole('button', { name: 'the view' })).toBeTruthy();
   });
 
   it('keeps the bar while a screen crashes, and offers the way back', () => {

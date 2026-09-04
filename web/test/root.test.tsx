@@ -112,6 +112,31 @@ describe('the operator route and the topbar', () => {
     await waitFor(() => expect(view().querySelector('.view-dashboard')).not.toBeNull());
   });
 
+  it('still moves the screen when the history write is blocked', async () => {
+    // A non-browser host, or a blocked write: the state moves anyway, so the learner is
+    // not stuck on an operator screen because the address bar refused to change.
+    vi.spyOn(window.history, 'pushState').mockImplementation(() => { throw new Error('blocked'); });
+    await leaveOpsThroughBrand();
+    expect(view().querySelector('.view-ops')).toBeNull();
+  });
+
+  it('keeps the map, and where it came from, when Map is pressed twice', async () => {
+    const person = userEvent.setup();
+    render(<Root api={adminApi()} initialUser={USER} initialView={{ name: 'session' }} />, {
+      container: view(),
+    });
+    await waitFor(() => expect(view().querySelector('.view-session')).not.toBeNull());
+
+    await person.click(screen.getByRole('button', { name: 'Map' }));
+    await waitFor(() => expect(screen.getByLabelText(MAP_CANVAS_LABEL)).toBeTruthy());
+    await person.click(screen.getByRole('button', { name: 'Map' }));
+    await waitFor(() => expect(screen.getByLabelText(MAP_CANVAS_LABEL)).toBeTruthy());
+
+    // Done gives the SESSION back: a second press did not wrap the map around itself.
+    await person.click(screen.getByRole('button', { name: 'Done' }));
+    await waitFor(() => expect(view().querySelector('.view-session')).not.toBeNull());
+  });
+
   it('gives /ops back when the browser goes Back', async () => {
     // The push has to be a real history entry, or Back leaves the app and the operator
     // reaches a blank tab instead of the page they came from.

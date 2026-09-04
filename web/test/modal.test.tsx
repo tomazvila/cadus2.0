@@ -176,6 +176,31 @@ describe('Modal', () => {
     return expect(promise).resolves.toBeNull();
   });
 
+  it('pulls focus back to the LAST control on a Shift+Tab from outside', () => {
+    const d = mountDialogs();
+    const promise = d.open();
+    d.opener.focus();
+    fireEvent.keyDown(document, { key: 'Tab', shiftKey: true });
+    expect(document.activeElement).toBe(screen.getByRole('button', { name: 'Cancel' }));
+    d.unmount();
+    return expect(promise).resolves.toBeNull();
+  });
+
+  it('leaves a Tab alone when the dialog holds no control at all', () => {
+    const d = mountDialogs();
+    const promise = d.open(() => (
+      <div className="modal" role="dialog" aria-modal="true" aria-label="Note"><p>Read me.</p></div>
+    ));
+    // Nothing to focus, so nothing was focused and the Tab is not swallowed.
+    expect(document.activeElement).toBe(d.opener);
+    const tab = new KeyboardEvent('keydown', { key: 'Tab', bubbles: true, cancelable: true });
+    document.dispatchEvent(tab);
+    expect(tab.defaultPrevented).toBe(false);
+    expect(document.activeElement).toBe(d.opener);
+    d.unmount();
+    return expect(promise).resolves.toBeNull();
+  });
+
   it('pulls focus back in when it is already outside the dialog', () => {
     const d = mountDialogs();
     const promise = d.open();
