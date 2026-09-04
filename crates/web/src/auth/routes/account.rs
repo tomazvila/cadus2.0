@@ -14,10 +14,10 @@ use serde_json::json;
 use sqlx::types::Uuid;
 use sqlx::types::chrono::Utc;
 
+use super::support::*;
 use super::{
     INVALID_LOGIN_MESSAGE, Public, VERIFICATION_REQUIRED, VERIFICATION_REQUIRED_MESSAGE,
-    WRONG_CURRENT_PASSWORD_MESSAGE, bind, checked_hash, clearing_cookie, commit, dummy_verify,
-    hash_new, mint_token, ok_answer, sign_in, user_public, with_cookie,
+    WRONG_CURRENT_PASSWORD_MESSAGE,
 };
 use crate::AppState;
 use crate::auth::guard::{Authed, current_user};

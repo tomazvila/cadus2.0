@@ -386,8 +386,8 @@ pub async fn callback(
     query: Result<Query<HashMap<String, String>>, QueryRejection>,
     headers: HeaderMap,
 ) -> Result<Response, ApiError> {
-    let (provider, credentials) = served_provider(&state, &name)?;
     let params = params(query);
+    let (provider, credentials) = served_provider(&state, &name)?;
     let (handshake, code) = spent_handshake(provider, &params, &headers)?;
     let base = redirect_base(&state, &headers)?;
     let identity =
