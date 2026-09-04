@@ -265,9 +265,15 @@ async fn every_refill_read_reports_a_closed_pool() {
             template.map(|row| row.digest),
             Some("t-approved".to_string())
         );
+        // A knowledge point with a template document but no claimed pool row
+        // reads `last_source = None`.
+        seed_template(&db.admin, "t-other", "other/kp2", "pending", "Compute $z$.").await;
         let flags = operator_flags(&db.admin).await.unwrap();
-        assert_eq!(flags.len(), 1);
-        assert_eq!(flags[0].last_source, Some(Source::Template));
+        assert_eq!(flags.len(), 2);
+        let other = flags.iter().find(|flag| flag.kp_id == "other/kp2").unwrap();
+        assert_eq!(other.last_source, None);
+        let served = flags.iter().find(|flag| flag.kp_id == KP).unwrap();
+        assert_eq!(served.last_source, Some(Source::Template));
     })
     .await;
 }

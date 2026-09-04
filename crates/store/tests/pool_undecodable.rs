@@ -227,3 +227,13 @@ async fn a_skipped_pair_leaves_the_target_list_and_frees_its_slot() {
     })
     .await;
 }
+
+/// A refill target read on a closed pool is the error of the statement.
+#[tokio::test]
+async fn a_refill_target_read_on_a_closed_pool_is_an_error() {
+    TestDb::with(|db| async move {
+        let pool = common::fault::closed_pool(&db).await;
+        assert!(refill_targets_skipping(&pool, 8, 10, &[]).await.is_err());
+    })
+    .await;
+}
