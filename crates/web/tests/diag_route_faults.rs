@@ -9,6 +9,8 @@
 
 mod common;
 
+use common::lesson_problem;
+
 use cadus_core::learner::LearnerModel;
 use cadus_web::state::WebState;
 use common::placement::app;
@@ -207,6 +209,38 @@ async fn a_state_write_that_fails_is_500_on_the_finish() {
         started(&app, user).await;
         fail_writes(&db, "web_states", "true").await;
         assert_internal(&app, Method::POST, "/api/diag/finish", user, None).await;
+    })
+    .await;
+}
+
+/// A live probe with no topic, and one whose topic left the universe, are
+/// both `409 no_diagnostic`: the document drifted under the open diagnostic.
+#[tokio::test]
+async fn a_probe_that_names_no_topic_of_the_universe_is_409_no_diagnostic() {
+    TestDb::with(|db| async move {
+        let app = app(&db);
+        let user = learner(&db, "diag-drift@example.com").await;
+        let problem_id = started(&app, user).await;
+        for topic in [None, Some("ghost".to_string())] {
+            let mut probe = lesson_problem(0.0, "kp1", Vec::new());
+            probe.problem_id.clone_from(&problem_id);
+            probe.task_id = "diag".to_string();
+            probe.topic = topic;
+            let mut scratch = WebState::for_session(SESSION);
+            scratch.served.insert("diag".to_string(), probe);
+            put_state(&db, user, &scratch).await;
+
+            let (status, body) = call(
+                &app,
+                Method::POST,
+                "/api/diag/answer",
+                Some(user),
+                answer_body(&problem_id),
+            )
+            .await;
+            assert_eq!(status.as_u16(), 409, "{body}");
+            assert_eq!(parse(&body)["error"]["code"], "no_diagnostic");
+        }
     })
     .await;
 }
