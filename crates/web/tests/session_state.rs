@@ -198,7 +198,7 @@ fn a_session_drift_resets_the_document() {
     state.active_secs = 42.0;
     state.record_served("addition", "s_2026-01-01a-review-addition", "h1");
 
-    let doc = state.to_doc().unwrap();
+    let doc = state.to_doc();
     let read = WebState::from_doc(&doc).unwrap();
     assert_eq!(read, state);
 
@@ -354,9 +354,7 @@ async fn a_second_tab_answering_a_closed_task_gets_409_task_complete() {
             },
         );
         let mut tx = begin_tenant(handle.pool(), user).await.unwrap();
-        save_web_state(&mut tx, user, &open.to_doc().unwrap())
-            .await
-            .unwrap();
+        save_web_state(&mut tx, user, &open.to_doc()).await.unwrap();
         tx.commit().await.unwrap();
 
         // Tab B snapshots the OPEN task. Its snapshot says the answer is legal.
@@ -385,7 +383,7 @@ async fn a_second_tab_answering_a_closed_task_gets_409_task_complete() {
                 current_kp: None,
             },
         );
-        save_web_state(&mut a, user, &a_state.to_doc().unwrap())
+        save_web_state(&mut a, user, &a_state.to_doc())
             .await
             .unwrap();
         a.commit().await.unwrap();
@@ -425,7 +423,7 @@ async fn the_document_round_trips_through_the_web_states_column() {
 
         let mut tx = begin_tenant(handle.pool(), user).await.unwrap();
         lock_web_state(&mut tx, user).await.unwrap();
-        save_web_state(&mut tx, user, &state.to_doc().unwrap())
+        save_web_state(&mut tx, user, &state.to_doc())
             .await
             .unwrap();
         tx.commit().await.unwrap();

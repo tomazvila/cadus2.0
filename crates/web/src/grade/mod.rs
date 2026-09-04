@@ -80,8 +80,6 @@
 //! `diagnosis` and starts no job — a quiz reveals nothing before its batch
 //! reveal (trap W7), and the reveal unit is the one that hands the prose out.
 
-use std::future::Future;
-
 use axum::Json;
 use axum::extract::State;
 use axum::http::StatusCode;
@@ -97,7 +95,6 @@ use cadus_core::selector::{
     REMEDIATION_LESSON_FAIL, REMEDIATION_REPEAT_FAIL, Task, remediation_for_repeat_fail,
 };
 use cadus_core::xp::{is_rushing, task_xp};
-use cadus_store::StoreError;
 use cadus_store::state::{
     EventRow, SessionView, append_event, load_session_view, project_and_save,
 };
@@ -111,7 +108,8 @@ use crate::error::ApiError;
 use crate::metrics;
 use crate::path::ApiPath;
 use crate::serve::{Open, find, install_next, open, progress_for, unix_seconds};
-use crate::session::{bound, content, failed, now_pair, projection_input, write_state};
+use crate::session::{content, now_pair, projection_input, write_state};
+pub(crate) use crate::session::{db_failed, store};
 use crate::state::{
     Content, INVALID_REQUEST, STATE_UNAVAILABLE, ServedProblem, TaskProgress, Tenant, WebState,
 };
@@ -125,7 +123,6 @@ mod verdict;
 use advance::*;
 use reply::*;
 pub use route::answer;
-pub(crate) use route::{db_failed, store};
 use submission::*;
 use verdict::round2;
 pub use verdict::{deterministic_grade, measure_secs, reference_assisted};

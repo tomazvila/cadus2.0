@@ -3,25 +3,6 @@
 
 use super::*;
 
-/// Run one store call under the client-side query bound (L1, R4), and map its
-/// failure onto the envelope.
-pub(crate) async fn store<T>(
-    state: &AppState,
-    call: impl Future<Output = Result<T, StoreError>>,
-) -> Result<T, ApiError> {
-    bound(&state.db, call).await.map_err(store_failed)
-}
-
-/// The envelope of a store failure.
-fn store_failed(err: StoreError) -> ApiError {
-    failed(&err)
-}
-
-/// The envelope of a commit or a rollback that failed.
-pub(crate) fn db_failed(err: sqlx::Error) -> ApiError {
-    failed(&err.into())
-}
-
 /// The authored solve time of the served problem's topic, when the arena holds
 /// the topic.
 fn expected_time(graph: &Curriculum, served: &ServedProblem) -> Option<i64> {

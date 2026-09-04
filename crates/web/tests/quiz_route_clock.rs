@@ -160,7 +160,7 @@ async fn an_open_quiz_with_no_stamp_starts_its_clock_at_the_next_serve() {
             .or_default()
             .answers
             .push(json!({"problem_id": PROBLEM_ID, "correct": true}));
-        let mut doc = scratch.to_doc().unwrap();
+        let mut doc = scratch.to_doc();
         let removed = doc["quizzes"][QUIZ]
             .as_object_mut()
             .unwrap()

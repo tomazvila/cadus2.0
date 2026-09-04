@@ -415,7 +415,7 @@ async fn listing_the_plan_writes_nothing() {
         sqlx::query!(
             "INSERT INTO web_states (user_id, doc) VALUES ($1, $2)",
             user,
-            scratch.to_doc().unwrap()
+            scratch.to_doc()
         )
         .execute(&db.admin)
         .await
@@ -529,7 +529,7 @@ async fn progress_done_is_true_for_a_recomposed_failed_review() {
         sqlx::query!(
             "INSERT INTO web_states (user_id, doc) VALUES ($1, $2)",
             user,
-            scratch.to_doc().unwrap()
+            scratch.to_doc()
         )
         .execute(&db.admin)
         .await
@@ -689,7 +689,7 @@ async fn enroll_refuses_a_missing_or_unknown_course_and_clears_the_scratch() {
         sqlx::query!(
             "INSERT INTO web_states (user_id, doc) VALUES ($1, $2)",
             user,
-            WebState::for_session(SESSION).to_doc().unwrap()
+            WebState::for_session(SESSION).to_doc()
         )
         .execute(&db.admin)
         .await

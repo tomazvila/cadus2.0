@@ -313,7 +313,7 @@ async fn put_state(db: &TestDb, user: Uuid, scratch: &WebState) {
         ON CONFLICT (user_id) DO UPDATE SET doc = excluded.doc
         "#,
         user,
-        scratch.to_doc().unwrap()
+        scratch.to_doc()
     )
     .execute(&db.admin)
     .await
