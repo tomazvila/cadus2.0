@@ -167,7 +167,7 @@ fn serve_deaf(mut stream: TcpStream, query_seen: &AtomicBool) -> std::io::Result
 mod tests {
     use std::io::Write;
     use std::net::{Shutdown, TcpListener, TcpStream};
-    use std::sync::atomic::AtomicBool;
+    use std::sync::atomic::{AtomicBool, Ordering};
 
     use super::{READY_FOR_QUERY, answer_until_deaf, handshake, serve_deaf, startup_reply};
 
@@ -250,5 +250,27 @@ mod tests {
         client.write_all(&SYNC).unwrap();
         server.shutdown(Shutdown::Write).unwrap();
         assert!(answer_until_deaf(&mut server, &seen).is_err());
+    }
+
+    /// A finished handshake answers the liveness ping, goes deaf on the first
+    /// query, ignores a second ping and an unknown message, and returns on the
+    /// terminate.
+    #[test]
+    fn a_finished_handshake_answers_the_ping_then_goes_deaf() {
+        let seen = AtomicBool::new(false);
+        let (mut client, mut server) = pair();
+        let parts: [&[u8]; 5] = [
+            &SYNC,
+            &[b'P', 0, 0, 0, 4],
+            &SYNC,
+            &[b'D', 0, 0, 0, 4],
+            &[b'X', 0, 0, 0, 4],
+        ];
+        for part in parts {
+            client.write_all(part).unwrap();
+        }
+        assert!(answer_until_deaf(&mut server, &seen).is_ok());
+        assert!(seen.load(Ordering::SeqCst));
+        drop(client);
     }
 }
