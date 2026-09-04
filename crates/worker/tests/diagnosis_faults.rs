@@ -24,9 +24,10 @@ use common::{
 /// The schema, so the role reaches the tables at all.
 const SCHEMA: &str = "GRANT USAGE ON SCHEMA public TO {role}";
 
-/// Every privilege the claim needs on the queue.
-const CLAIM: &str =
-    "GRANT SELECT, UPDATE (status, claimed_at, attempts) ON diagnosis_jobs TO {role}";
+/// Every privilege the sweep and the claim need on the queue, and not the
+/// `result` column, so every settle fails at its UPDATE.
+const CLAIM: &str = "GRANT SELECT, UPDATE (status, claimed_at, attempts, finished_at) \
+                     ON diagnosis_jobs TO {role}";
 
 /// A constraint trigger that fires at COMMIT on every update of the queue, so
 /// the transaction that settles a row fails at its commit and nowhere before.
@@ -138,10 +139,18 @@ async fn every_end_state_stops_at_the_settle_the_role_cannot_run() {
             &json!({"v": 1, "nonsense": true}),
         )
         .await;
-        enqueue_as(&db.admin, user, "task-0", "done", 1).await;
+        enqueue_as(
+            &db.admin,
+            user,
+            "task-0",
+            &payload(Some("session-1")),
+            "done",
+            1,
+        )
+        .await;
         let capped = enqueue(&db.admin, user, "task-2", &payload(Some("session-1"))).await;
         let done = enqueue(&db.admin, user, "task-3", &payload(None)).await;
-        let dead = enqueue_as(&db.admin, user, "task-4", "pending", 2).await;
+        let dead = enqueue_as(&db.admin, user, "task-4", &payload(None), "pending", 2).await;
 
         with_grants(
             &db,

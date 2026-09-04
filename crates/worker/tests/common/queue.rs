@@ -54,10 +54,11 @@ pub async fn enqueue_as(
     pool: &PgPool,
     user: Uuid,
     attempt: &str,
+    body: &Value,
     status: &str,
     attempts: i32,
 ) -> Uuid {
-    let id = enqueue(pool, user, attempt, &payload(Some("session-1"))).await;
+    let id = enqueue(pool, user, attempt, body).await;
     sqlx::query("UPDATE diagnosis_jobs SET status = $2, attempts = $3 WHERE id = $1")
         .bind(id)
         .bind(status)
@@ -106,7 +107,15 @@ pub async fn diagnose_to(
 pub async fn session_with_spent(db: &TestDb, email: &str, spent: u32) -> (Uuid, Uuid) {
     let user = db.seed_user(email).await;
     for index in 0..spent {
-        enqueue_as(&db.admin, user, &format!("old-{index}"), "done", 1).await;
+        enqueue_as(
+            &db.admin,
+            user,
+            &format!("old-{index}"),
+            &payload(Some("session-1")),
+            "done",
+            1,
+        )
+        .await;
     }
     let id = enqueue(&db.admin, user, "task-1", &payload(Some("session-1"))).await;
     (user, id)
