@@ -379,17 +379,26 @@ mod tests {
             pair(DbConfig::new("postgresql://h/d")),
             ("postgresql://h/d".to_string(), DEFAULT_CLIENT_TIMEOUT_MS)
         );
-        // The statement timeout is off, so a long migration never hits it.
-        if let Ok(cfg) = migrate_config() {
-            assert_eq!(cfg.statement_timeout_ms, 0);
-        }
-        // Everything else reads as `from_env` reads it.
+        // `migrate_config` reads everything but the statement timeout as
+        // `from_env` reads it. `pair` keeps the URL and the client timeout.
         assert_eq!(
             migrate_config().map(pair).map_err(|err| err.to_string()),
             DbConfig::from_env()
                 .map(pair)
                 .map_err(|err| err.to_string()),
         );
+        // The override sets `statement_timeout_ms` to 0 and keeps the rest.
+        let base = DbConfig {
+            statement_timeout_ms: 7,
+            ..DbConfig::new("postgresql://h/d")
+        };
+        let migrated = DbConfig {
+            statement_timeout_ms: 0,
+            ..base.clone()
+        };
+        assert_eq!(migrated.statement_timeout_ms, 0);
+        assert_eq!(migrated.client_timeout_ms, base.client_timeout_ms);
+        assert_eq!(migrated.database_url, base.database_url);
     }
 
     /// A handler that did not register is a configuration error that names
