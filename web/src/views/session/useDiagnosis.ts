@@ -70,7 +70,7 @@ const FAILED: DiagnosisPanel = Object.freeze({ status: 'failed' });
 /** Read one wire job into a panel state. `capped` is a failure the learner cannot fix. */
 function panelOf(job: DiagnosisJob): DiagnosisPanel {
   if (job.status === 'ready') {
-    return { status: 'ready', error_tags: job.error_tags ?? [], prose: job.prose ?? '' };
+    return { status: 'ready', error_tags: job.error_tags, prose: job.prose ?? '' };
   }
   if (job.status === 'pending') return PENDING;
   return FAILED;
@@ -136,9 +136,12 @@ export class DiagnosisStore {
     this.emit();
   };
 
-  /** The 30 s rule. The job stops; the verdict on screen stands. */
+  /**
+   * The 30 s rule. The job stops; the verdict on screen stands.
+   *
+   * A job that landed has no deadline left to fire: `land` releases the timers first.
+   */
   private readonly expire = (id: string): void => {
-    if (this.jobs.get(id)?.status === 'ready') return;
     this.jobs.set(id, FAILED);
     this.release(id);
     this.emit();

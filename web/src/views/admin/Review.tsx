@@ -206,6 +206,7 @@ export function ReviewScreen({ api, demo = false, onUnauthorized }: ReviewScreen
   // value would paint one frame of the decided row, live Approve and Reject buttons and
   // all, over a queue that no longer contains it.
   const active = selected !== null && order.includes(selected) ? selected : (order[0] ?? null);
+  // The row the walk stands on. Null exactly while the queue is empty, which renders no pane.
   const selectedItem = items.find((item) => item.digest === active) ?? null;
 
   // The document a decision may name: the selected row, and only while the pane has the body
@@ -238,8 +239,6 @@ export function ReviewScreen({ api, demo = false, onUnauthorized }: ReviewScreen
       } finally {
         dialogOpen.current = false;
       }
-      // The dialog settles on provider unmount too, so the view may already be gone.
-      if (!life.alive()) return;
 
       const res = await call(() =>
         kind === 'approve' ? api.approveContent(item.digest) : api.rejectContent(item.digest, reason!),
@@ -378,46 +377,41 @@ export function ReviewScreen({ api, demo = false, onUnauthorized }: ReviewScreen
           </nav>
 
           <div className="review-pane card">
-            {selectedItem ? (
-              <>
-                <div className="review-actions">
-                  <button
-                    type="button"
-                    className={busy.cls(DECIDE_KEY, 'btn btn-primary')}
-                    disabled={busy.is(DECIDE_KEY) || decidable === null}
-                    onClick={() => {
-                      if (decidable) busy.run(DECIDE_KEY, () => decide('approve', decidable));
-                    }}
-                  >
-                    Approve
-                  </button>
-                  <button
-                    type="button"
-                    className={busy.cls(DECIDE_KEY, 'btn')}
-                    disabled={busy.is(DECIDE_KEY) || decidable === null}
-                    onClick={() => {
-                      if (decidable) busy.run(DECIDE_KEY, () => decide('reject', decidable));
-                    }}
-                  >
-                    Reject
-                  </button>
-                  {decidable === null ? (
-                    <p className="muted small review-unread">{REVIEW_UNREAD}</p>
-                  ) : null}
-                </div>
-                {/* Keyed by digest: a new digest builds a new pane. See its module note. */}
-                <ReviewDocumentPane
-                  key={selectedItem.digest}
-                  api={api}
-                  digest={selectedItem.digest}
-                  demo={demo}
-                  onUnauthorized={onUnauthorized}
-                  onLoaded={setReadDigest}
-                />
-              </>
-            ) : (
-              <p className="muted">Select a document to review it.</p>
-            )}
+            <div className="review-actions">
+              <button
+                type="button"
+                className={busy.cls(DECIDE_KEY, 'btn btn-primary')}
+                disabled={busy.is(DECIDE_KEY) || decidable === null}
+                onClick={() => {
+                  if (decidable) busy.run(DECIDE_KEY, () => decide('approve', decidable));
+                }}
+              >
+                Approve
+              </button>
+              <button
+                type="button"
+                className={busy.cls(DECIDE_KEY, 'btn')}
+                disabled={busy.is(DECIDE_KEY) || decidable === null}
+                onClick={() => {
+                  if (decidable) busy.run(DECIDE_KEY, () => decide('reject', decidable));
+                }}
+              >
+                Reject
+              </button>
+              {decidable === null ? (
+                <p className="muted small review-unread">{REVIEW_UNREAD}</p>
+              ) : null}
+            </div>
+            {/* Keyed by digest: a new digest builds a new pane. See its module note. The
+                queue holds a row, so the walk stands on one. */}
+            <ReviewDocumentPane
+              key={selectedItem!.digest}
+              api={api}
+              digest={selectedItem!.digest}
+              demo={demo}
+              onUnauthorized={onUnauthorized}
+              onLoaded={setReadDigest}
+            />
           </div>
         </div>
       )}

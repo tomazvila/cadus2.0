@@ -99,14 +99,14 @@ export function PlacementDone({ summary, homeRef, onExit }: PlacementDoneProps) 
     );
   }
 
-  const frontier = summary.frontier ?? [];
+  const { frontier } = summary;
   return (
     <section className="view-diagnostic">
       <div className="card summary-card">
         <h2>Placement complete</h2>
         <div className="stat-grid">
-          <Stat value={String(summary.placed?.length ?? 0)} label="topics placed" className="accent" />
-          <Stat value={String(summary.conditional?.length ?? 0)} label="conditional" />
+          <Stat value={String(summary.placed.length)} label="topics placed" className="accent" />
+          <Stat value={String(summary.conditional.length)} label="conditional" />
           <Stat value={String(frontier.length)} label="frontier topics" />
         </div>
         {frontier.length ? (

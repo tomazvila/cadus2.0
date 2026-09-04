@@ -5,14 +5,16 @@
  * `test/helpers/admin.tsx`.
  */
 import { describe, expect, it, vi } from 'vitest';
-import { screen } from '@testing-library/react';
+import { act, screen } from '@testing-library/react';
 import { axe } from 'vitest-axe';
 import { ApiError } from '@/api';
 import { BILL_MAX_PAGES, BILL_TRUNCATED, COST_UNAVAILABLE } from '@/views/admin/Ops';
 import { FORBIDDEN_TITLE, UNAVAILABLE_TITLE } from '@/views/admin/adminLoad';
 import { AXE_IN_JSDOM } from './axe';
-import { QUEUE, costTable, forbidden, mountOps, mountReview, page, stubApi } from './helpers/admin';
-import type { ContentFilter } from '@/api/types';
+import {
+  FLAGS, QUEUE, costTable, forbidden, mountOps, mountReview, page, stubApi,
+} from './helpers/admin';
+import type { ContentFilter, ReviewListResponse } from '@/api/types';
 
 /** The rows of one table, as text. */
 const rowsOf = (table: Element) =>
@@ -111,6 +113,40 @@ describe('the operator screen', () => {
 
     expect(screen.getByText(UNAVAILABLE_TITLE)).toBeTruthy();
     expect(screen.queryByText(FORBIDDEN_TITLE)).toBeNull();
+  });
+
+  it('renders a null source as a dash and an exhausted source as its own chip', async () => {
+    await mountOps(stubApi({
+      getOperatorFlags: async () => ({
+        ...FLAGS,
+        flags: [{ ...FLAGS.flags[0], last_source: null, needs_template: false, source_exhausted: true }],
+      }),
+    }));
+    expect(document.querySelector('.admin-table tbody tr')!.textContent)
+      .toBe('algebra:linear112—source exhausted');
+  });
+
+  it('says the gate read was truncated when the service says so', async () => {
+    await mountOps(stubApi({ getOperatorFlags: async () => ({ ...FLAGS, gate: [], gate_truncated: true }) }));
+    expect(screen.getByText('Truncated: more approved templates exist than this read gated.')).toBeTruthy();
+    expect(screen.getByText('No approved template was gated by this read.')).toBeTruthy();
+  });
+
+  it('shows the bill loading beside the flags, then re-reads both on Refresh', async () => {
+    let release!: (q: ReviewListResponse) => void;
+    const listContent = vi.fn(() => new Promise<ReviewListResponse>((r) => { release = r; }));
+    const getOperatorFlags = vi.fn(async () => FLAGS);
+    await mountOps(stubApi({ listContent, getOperatorFlags }));
+
+    expect(screen.getByText('Serving health')).toBeTruthy();
+    expect(screen.getByText('Loading the authoring bill…')).toBeTruthy();
+    await act(async () => { release(QUEUE); });
+    expect(screen.queryByText('Loading the authoring bill…')).toBeNull();
+
+    await act(async () => { screen.getByRole('button', { name: 'Refresh' }).click(); });
+    await act(async () => { release(QUEUE); });
+    expect(getOperatorFlags).toHaveBeenCalledTimes(2);
+    expect(listContent).toHaveBeenCalledTimes(2);
   });
 
   it('has no accessibility violation axe can see in jsdom', async () => {

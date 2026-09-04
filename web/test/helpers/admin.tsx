@@ -116,7 +116,7 @@ const DOC: ReviewDocument = {
   sample_instances: 8,
 };
 
-const FLAGS: OperatorFlagsResponse = {
+export const FLAGS: OperatorFlagsResponse = {
   flags: [
     {
       kp_id: 'algebra:linear',

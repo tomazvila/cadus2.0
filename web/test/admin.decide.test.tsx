@@ -9,9 +9,10 @@ import { act, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { ApiError } from '@/api';
 import { REVIEW_UNREAD } from '@/views/admin/Review';
+import { toastStore } from '@/app/toast';
 import { REASON_REQUIRED, REASON_TOO_LONG, usableReason } from '@/views/admin/reason';
 import {
-  dialogButton, docOf, listThenWithout, mountReview, rejectWith, rowButtons, stubApi,
+  QUEUE, dialogButton, docOf, listThenWithout, mountReview, rejectWith, rowButtons, stubApi,
   writeButton,
 } from './helpers/admin';
 import type { ReviewDocument } from '@/api/types';
@@ -144,6 +145,62 @@ describe('Approve', () => {
     expect(reject).toHaveBeenCalledTimes(1);
   });
 
+  it('selects nothing after the last row is approved, and the reload starts the walk over', async () => {
+    const user = userEvent.setup();
+    const approve = approving();
+    const list = listThenWithout('d4');
+    await mountReview(stubApi({ listContent: list, approveContent: approve }));
+
+    // Down to the last row, and approve it.
+    await user.keyboard('jjj');
+    expect(await screen.findByText('d4 instance 1: Solve $5x = 20$ for $x$.')).toBeTruthy();
+    await waitFor(() => expect(writeButton('Approve').disabled).toBe(false));
+    await user.click(writeButton('Approve'));
+    await user.click(dialogButton('Approve'));
+
+    await waitFor(() => expect(approve).toHaveBeenCalledWith('d4'));
+    await waitFor(() => expect(rowButtons()).toHaveLength(3));
+    // Nothing followed the last row, so the walk restarts at the top.
+    expect(document.querySelector('.review-row.is-selected')!.textContent)
+      .toContain('Solve $5x = 20$ for $x$.');
+  });
+
+  it('keeps the row and the selection when the write is refused', async () => {
+    const user = userEvent.setup();
+    const approve = vi.fn(async () => { throw new ApiError(500, 'server_error', 'Down.'); });
+    const list = vi.fn(async () => QUEUE);
+    await mountReview(stubApi({ listContent: list, approveContent: approve }));
+
+    await user.click(writeButton('Approve'));
+    await user.click(dialogButton('Approve'));
+
+    await waitFor(() => expect(approve).toHaveBeenCalledTimes(1));
+    // No reload, and the row still stands: the failure is toasted with a Retry.
+    expect(list).toHaveBeenCalledTimes(1);
+    expect(rowButtons()).toHaveLength(4);
+    expect(toastStore.getSnapshot()[0].label).toBe('Retry');
+  });
+
+  it('moves nothing when the write lands after the screen left', async () => {
+    const user = userEvent.setup();
+    let release!: () => void;
+    const approve = vi.fn(async () => {
+      await new Promise<void>((r) => { release = r; });
+      return { digest: 'd2', status: 'approved', approved_at: null };
+    });
+    const list = vi.fn(async () => QUEUE);
+    const view = await mountReview(stubApi({ listContent: list, approveContent: approve }));
+
+    await user.click(writeButton('Approve'));
+    await user.click(dialogButton('Approve'));
+    await waitFor(() => expect(approve).toHaveBeenCalledTimes(1));
+
+    view.unmount();
+    await act(async () => { release(); });
+    expect(list).toHaveBeenCalledTimes(1);
+    expect(toastStore.getSnapshot()).toEqual([]);
+  });
+
   it('posts nothing when the confirmation is cancelled', async () => {
     const user = userEvent.setup();
     const approve = vi.fn();
@@ -173,6 +230,21 @@ describe('REVIEW-reason: Reject requires a reason', () => {
     expect(screen.getByRole('alert').textContent).toBe(REASON_REQUIRED);
     // The dialog stays open, so the reviewer can act on the line they were just given.
     expect(screen.getByRole('dialog')).toBeTruthy();
+  });
+
+  it('REVIEW-reason: the rule clears as soon as the reviewer types, and Cancel posts nothing', async () => {
+    const user = userEvent.setup();
+    const reject = vi.fn();
+    await mountReview(stubApi({ rejectContent: reject }));
+
+    await rejectWith(user, '');
+    expect(screen.getByRole('alert')).toBeTruthy();
+    await user.type(screen.getByLabelText('Reason'), 'a');
+    expect(screen.queryByRole('alert')).toBeNull();
+
+    await user.click(dialogButton('Cancel'));
+    await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull());
+    expect(reject).not.toHaveBeenCalled();
   });
 
   it('REVIEW-reason: a box of spaces alone is no reason either', async () => {
@@ -244,6 +316,48 @@ describe('the review keyboard', () => {
     await user.keyboard('a');
     expect(screen.getByText('Approve this document?')).toBeTruthy();
     expect(approve).not.toHaveBeenCalled();
+  });
+
+  it('opens the rejection prompt with r', async () => {
+    const user = userEvent.setup();
+    await mountReview();
+    await user.keyboard('r');
+    expect(screen.getByText('Reject this document?')).toBeTruthy();
+  });
+
+  it('leaves the letters to the browser under a modifier, and to a field that has focus', async () => {
+    const user = userEvent.setup();
+    await mountReview();
+    const selected = () => document.querySelector('.review-row.is-selected')!.textContent;
+    const first = selected();
+
+    await user.keyboard('{Control>}j{/Control}');
+    await user.keyboard('{Meta>}j{/Meta}');
+    await user.keyboard('{Alt>}j{/Alt}');
+    expect(selected()).toBe(first);
+
+    // A text input and an editable region both own their letters.
+    const input = document.createElement('input');
+    document.body.append(input);
+    input.focus();
+    await user.keyboard('j');
+    expect(selected()).toBe(first);
+
+    const editable = document.createElement('div');
+    editable.setAttribute('contenteditable', 'true');
+    Object.defineProperty(editable, 'isContentEditable', { get: () => true });
+    document.body.append(editable);
+    editable.focus();
+    await user.keyboard('a');
+    expect(screen.queryByRole('dialog')).toBeNull();
+    expect(selected()).toBe(first);
+  });
+
+  it('moves nothing on j when the queue is empty', async () => {
+    const user = userEvent.setup();
+    await mountReview(stubApi({ listContent: async () => ({ ...QUEUE, items: [] }) }));
+    await user.keyboard('j');
+    expect(document.querySelector('.review-row.is-selected')).toBeNull();
   });
 
   it('ignores the letters while a reason is being typed', async () => {

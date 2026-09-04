@@ -420,6 +420,144 @@ describe('the dashboard', () => {
     await waitFor(() => expect(enroll).toHaveBeenCalledWith('proofs'));
   });
 
+  it('F9: Cancel leaves the picker and enrolls in nothing', async () => {
+    const { user, enroll } = await openPicker();
+    await user.click(within(screen.getByRole('dialog')).getByRole('button', { name: 'Cancel' }));
+    await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull());
+    expect(enroll).not.toHaveBeenCalled();
+  });
+
+  it('names one review and one lesson in the singular, and a drill', async () => {
+    await mount({
+      api: stubApi({ getStatus: async () => status({ due_reviews: 1, frontier: 1, drill_due: true }) }),
+    });
+    expect(screen.getByText('Up next: 1 review · 1 new lesson · a drill.')).toBeTruthy();
+  });
+
+  it('says practice is ready when only a nearly-due review is scheduled', async () => {
+    await mount({
+      api: stubApi({ getStatus: async () => status({ ...EMPTY_PLAN, nearly_due: 1 }) }),
+    });
+    expect(screen.getByText('Practice is ready.')).toBeTruthy();
+    expect(primaries()[0].textContent).toBe('▶ Continue studying');
+  });
+
+  it('draws an empty ring on a goal of zero, and names no course arc without courses', async () => {
+    await mount({
+      api: stubApi({
+        getStatus: async () => status({
+          xp: { total: 0, today: 5, goal: 0, streak_days: 0 },
+          courses: [],
+          course: { id: null, name: null },
+        }),
+      }),
+    });
+    expect(screen.getByRole('heading', { name: '5 / 0 XP today' })).toBeTruthy();
+    expect(document.querySelector('.ring-label strong')!.textContent).toBe('0%');
+    expect(document.querySelector('.course-arc')).toBeNull();
+    expect(screen.getByText('your course · 18% complete')).toBeTruthy();
+  });
+
+  it('keeps the newer status when an older read lands last', async () => {
+    // Two reads in flight: the learner pressed Try again while the first was still out.
+    const replies: Array<(s: StatusResponse) => void> = [];
+    const getStatus = vi.fn(() => new Promise<StatusResponse>((r) => { replies.push(r); }));
+    await mount({ api: stubApi({ getStatus }) });
+    expect(screen.getByText('Loading your dashboard…')).toBeTruthy();
+
+    // The first read fails, which paints Try again; the press starts the second read.
+    await act(async () => { replies[0]!(status({ due_reviews: 9 })); });
+    expect(screen.getByRole('heading', { name: '12 / 40 XP today' })).toBeTruthy();
+    expect(getStatus).toHaveBeenCalledTimes(1);
+  });
+
+  it('ignores a stale reply and a stale failure behind a newer generation', async () => {
+    let attempt = 0;
+    const held: Array<{ resolve: (s: StatusResponse) => void; reject: (e: Error) => void }> = [];
+    const getStatus = vi.fn(() => {
+      attempt += 1;
+      return new Promise<StatusResponse>((resolve, reject) => { held.push({ resolve, reject }); });
+    });
+    await mount({ api: stubApi({ getStatus }) });
+
+    // The first read fails: Try again is on screen, and a press starts read two.
+    await act(async () => { held[0]!.reject(new ApiError(500, 'server_error', 'Down.')); });
+    expect(screen.getByText('Could not load your dashboard.')).toBeTruthy();
+    await userEvent.click(screen.getByRole('button', { name: 'Try again' }));
+    expect(attempt).toBe(2);
+    // The Retry of the FIRST failure re-runs its request: that is read three, generation 0.
+    await act(async () => { toastStore.getSnapshot()[0].onAction?.(); });
+    expect(attempt).toBe(3);
+
+    // Read two lands with 2 due; the stale read three lands with 9 and changes nothing.
+    await act(async () => { held[1]!.resolve(status({ due_reviews: 2 })); });
+    await act(async () => { held[2]!.resolve(status({ due_reviews: 9 })); });
+    expect(screen.getByText('Up next: 2 reviews · 4 new lessons.')).toBeTruthy();
+  });
+
+  it('keeps the card when a stale read fails behind a newer failure', async () => {
+    const held: Array<{ resolve: (s: StatusResponse) => void; reject: (e: Error) => void }> = [];
+    const getStatus = vi.fn(() => new Promise<StatusResponse>((resolve, reject) => {
+      held.push({ resolve, reject });
+    }));
+    await mount({ api: stubApi({ getStatus }) });
+    await act(async () => { held[0]!.reject(new ApiError(500, 'server_error', 'Down.')); });
+    await userEvent.click(screen.getByRole('button', { name: 'Try again' }));
+    await act(async () => { toastStore.getSnapshot()[0].onAction?.(); });
+
+    // Generation 1 fails, then the stale generation 0 fails again: one failure card, and the
+    // failed generation stays at 1.
+    await act(async () => { held[1]!.reject(new ApiError(500, 'server_error', 'Down.')); });
+    await act(async () => { held[2]!.reject(new ApiError(500, 'server_error', 'Down.')); });
+    expect(screen.getByText('Could not load your dashboard.')).toBeTruthy();
+    // The next successful read still paints, so the failed generation did not run ahead.
+    await userEvent.click(screen.getByRole('button', { name: 'Try again' }));
+    await act(async () => { held[3]!.resolve(status()); });
+    expect(screen.getByRole('heading', { name: '12 / 40 XP today' })).toBeTruthy();
+  });
+
+  it('F-F2-2: a session start or a quiz read that lands after the screen left moves nothing', async () => {
+    let release!: () => void;
+    const gate = new Promise<void>((r) => { release = r; });
+    const demo = createDemoApi();
+    const sessionStart = vi.fn(async () => { await gate; return demo.sessionStart(); });
+    const view = await mount({ api: stubApi({ sessionStart }) });
+    await userEvent.click(screen.getByText('More'));
+    await userEvent.click(screen.getByRole('button', { name: 'Quiz now' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Continue studying' }));
+    expect(sessionStart).toHaveBeenCalledTimes(2);
+
+    view.unmount();
+    await act(async () => { release(); await gate; });
+    expect(view.onSession).not.toHaveBeenCalled();
+    expect(view.onQuiz).not.toHaveBeenCalled();
+  });
+
+  it('F-F2-2: a plan that lands after the screen left opens no quiz', async () => {
+    let release!: () => void;
+    const gate = new Promise<void>((r) => { release = r; });
+    const demo = createDemoApi();
+    const getPlan = vi.fn(async () => { await gate; return demo.getPlan(); });
+    const view = await mount({ api: stubApi({ getPlan }) });
+    await userEvent.click(screen.getByText('More'));
+    await userEvent.click(screen.getByRole('button', { name: 'Quiz now' }));
+    await waitFor(() => expect(getPlan).toHaveBeenCalledTimes(1));
+
+    view.unmount();
+    await act(async () => { release(); await gate; });
+    expect(view.onQuiz).not.toHaveBeenCalled();
+    expect(toastStore.getSnapshot()).toEqual([]);
+  });
+
+  it('DEP-3: a refused export with no message toasts the generic line', async () => {
+    await mount({ api: stubApi({ downloadExport: async () => { throw new Error(''); } }) });
+    await userEvent.click(screen.getByText('More'));
+    await userEvent.click(screen.getByRole('button', { name: 'Export my data (JSONL)' }));
+
+    await waitFor(() => expect(toastStore.getSnapshot().length).toBe(1));
+    expect(toastStore.getSnapshot()[0].message).toBe('Could not export your data.');
+  });
+
   it('reports zero axe violations', async () => {
     const view = await mount();
     expect(await axe(view.container, AXE_IN_JSDOM)).toHaveNoViolations();

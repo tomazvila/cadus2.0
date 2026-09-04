@@ -77,20 +77,22 @@ export function useGrade({
   countdown, elapsed, phase,
 }: GradeDeps): Grade {
   const submit = useCallback((opts: { timedOut?: boolean } = {}) => {
-    const current = problemRef.current;
-    const task = taskRef.current;
-    if (!current || !task) return;
+    // Every submit path starts from a problem on screen, so both refs name one, and the
+    // two fields are mounted beside it.
+    const current = problemRef.current!;
+    const task = taskRef.current!;
+    const field = answerRef.current!;
 
-    const answer = answerRef.current?.value() ?? '';
+    const answer = field.value();
     // A timed-out drill submits whatever is there, blank included — an honest miss.
     // Otherwise an empty answer only refocuses.
-    if (!answer && !opts.timedOut) { answerRef.current?.focus(); return; }
+    if (!answer && !opts.timedOut) { field.focus(); return; }
 
     // THE GATE (F-37-1c). Synchronous, before the first await, so two events inside the
     // grading window can never both post this `problem_id`.
     if (!gate.tryEnter('ready', 'submitting')) return;
 
-    const work = workRef.current?.value() ?? '';
+    const work = workRef.current!.value();
     void call(
       () => api.taskAnswer(task.task_id, {
         problem_id: current.problem_id,
@@ -123,7 +125,7 @@ export function useGrade({
           // permanent miss in an append-only log.
           setRework(reply);
           setElapsed(0);
-          answerRef.current?.clear();
+          field.clear();
           gate.enter('ready');
           return;
         }
@@ -174,9 +176,8 @@ export function useGrade({
     // The same gate: no hint is fired at a problem already being graded. The `H` key reaches
     // here while the buttons are disabled.
     if (!gate.is('ready')) return;
-    const current = problemRef.current;
-    const task = taskRef.current;
-    if (!current || !task) return;
+    const current = problemRef.current!;
+    const task = taskRef.current!;
 
     void call(() => api.taskHint(task.task_id, current.problem_id), (h) => {
       if (!life.alive()) return;

@@ -42,13 +42,13 @@ export function Teach({ task, instruction, onContinue }: TeachProps) {
         {/* NOT `.problem-text`: the concept is prose, and borrowing the problem class made
             a 1.0 test assert a problem card against a lesson that never reached one. */}
         <div className="teach-concept">
-          <MathBlock className="teach-concept-text">{String(instruction.concept ?? '')}</MathBlock>
+          <MathBlock className="teach-concept-text">{instruction.concept}</MathBlock>
         </div>
         <div className="teach-example">
           <div className="teach-label">Example</div>
-          <MathBlock className="teach-problem">{String(example?.problem ?? '')}</MathBlock>
+          <MathBlock className="teach-problem">{example.problem}</MathBlock>
           <div className="teach-label">Solution</div>
-          <MathBlock className="teach-steps">{String(example?.steps ?? '')}</MathBlock>
+          <MathBlock className="teach-steps">{example.steps}</MathBlock>
         </div>
         <button ref={buttonRef} type="button" className="btn btn-primary" onClick={onContinue}>
           I&apos;ve got it — practice ▸

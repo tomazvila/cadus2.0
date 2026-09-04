@@ -307,9 +307,9 @@ function MapList({ nodes }: { nodes: GraphNode[] }) {
   );
 }
 
-/** The legend label of one state. */
+/** The legend label of one state. `STATES` names every `TopicStatus`, so the find holds. */
 function labelOf(status: TopicStatus): string {
-  return STATES.find((s) => s.id === status)?.label ?? status;
+  return STATES.find((s) => s.id === status)!.label;
 }
 
 /** The one number the 2.0 payload carries per topic. */

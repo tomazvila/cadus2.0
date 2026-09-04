@@ -46,8 +46,8 @@ export interface SessionPlan {
 }
 
 /** Tasks still owed: not done on the server, and not finished in this mount. */
-function openTasks(plan: SessionPlanResponse | null, done: Set<string>): PlanTask[] {
-  return (plan?.tasks ?? []).filter((t) => !t.progress?.done && !done.has(t.task_id));
+function openTasks(plan: SessionPlanResponse, done: Set<string>): PlanTask[] {
+  return plan.tasks.filter((t) => !t.progress.done && !done.has(t.task_id));
 }
 
 export function useSessionPlan(): SessionPlan {
@@ -68,7 +68,7 @@ export function useSessionPlan(): SessionPlan {
     setIndex(0);
     // "Nothing was due" and "everything planned is already finished" are two different
     // sentences to a learner, and a reload after the last answer lands on the second one.
-    setAllDone(open.length === 0 && (incoming.tasks ?? []).length > 0);
+    setAllDone(open.length === 0 && incoming.tasks.length > 0);
     return open.length > 0;
   }, []);
 

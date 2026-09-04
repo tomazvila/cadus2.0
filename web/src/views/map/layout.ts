@@ -70,16 +70,17 @@ export function layerOf(nodes: GraphNode[], edges: GraphEdge[]): Map<string, num
     const list = outgoing.get(edge.from);
     if (list) list.push(edge.to);
     else outgoing.set(edge.from, [edge.to]);
-    indegree.set(edge.to, (indegree.get(edge.to) ?? 0) + 1);
+    // Every in-scope node was seeded above, so the two maps hold every id read below.
+    indegree.set(edge.to, indegree.get(edge.to)! + 1);
   }
 
   const queue = nodes.filter((n) => indegree.get(n.id) === 0).map((n) => n.id);
   for (let head = 0; head < queue.length; head += 1) {
     const id = queue[head];
-    const here = depth.get(id) ?? 0;
+    const here = depth.get(id)!;
     for (const next of outgoing.get(id) ?? []) {
-      if ((depth.get(next) ?? 0) < here + 1) depth.set(next, here + 1);
-      const left = (indegree.get(next) ?? 0) - 1;
+      if (depth.get(next)! < here + 1) depth.set(next, here + 1);
+      const left = indegree.get(next)! - 1;
       indegree.set(next, left);
       if (left === 0) queue.push(next);
     }
@@ -103,7 +104,7 @@ export function positionsOf(
   const depth = layerOf(nodes, edges);
   const layers = new Map<number, GraphNode[]>();
   for (const node of nodes) {
-    const at = depth.get(node.id) ?? 0;
+    const at = depth.get(node.id)!;
     const row = layers.get(at);
     if (row) row.push(node);
     else layers.set(at, [node]);
@@ -146,7 +147,7 @@ export function toElements(nodes: GraphNode[], edges: GraphEdge[]): MapElement[]
     // The state rides as a CLASS, not as node data: a Cytoscape stylesheet selects on
     // classes, and a `data(state)` mapper cannot pick a color per value.
     classes: `st-${node.status}`,
-    position: positions.get(node.id) ?? { x: 0, y: 0 },
+    position: positions.get(node.id)!,
   }));
 
   for (const edge of edges) {

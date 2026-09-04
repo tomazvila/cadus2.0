@@ -177,8 +177,8 @@ export function Session({
 
   const serveThenShow = useCallback(() => {
     gate.enter('loading');
-    const task = taskRef.current;
-    if (!task) return;
+    // A serve is asked for by a task on screen, so the ref names one.
+    const task = taskRef.current!;
     void call(() => api.taskServe(task.task_id), (served) => {
       if (!life.alive()) return;
       // Drop the worked example, or the teach branch keeps winning the render and the
@@ -191,10 +191,9 @@ export function Session({
   }, [api, call, clearForProblem, gate, life, setLive]);
 
   const startTask = useCallback(() => {
-    const task = taskRef.current;
-    if (!task) return;
+    // The ref is written before the effect that starts a task runs, so it names one.
+    const task = taskRef.current!;
     gate.enter('loading');
-    setTeaching(null);
     taughtKp.current = null;
 
     // The quiz has its own screen, its own clock and its own reveal rules. Hand it over

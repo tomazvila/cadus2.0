@@ -23,7 +23,9 @@ import { SAMPLED_LINE } from '@/views/admin/GateBlock';
 import { ATTEMPT_ALERT, alerts, costByKp, usd } from '@/views/admin/cost';
 import { groupByKp, step, walkOrder } from '@/views/admin/groups';
 import { AXE_IN_JSDOM } from './axe';
-import { QUEUE, forbidden, item, mountOps, mountReview, rowButtons, stubApi } from './helpers/admin';
+import {
+  QUEUE, docOf, forbidden, item, mountOps, mountReview, rowButtons, stubApi,
+} from './helpers/admin';
 import type { User } from '@/api/types';
 
 /** A signed-in account. The service, not the SPA, knows whether it is an operator. */
@@ -195,6 +197,34 @@ describe('the review queue', () => {
     expect(screen.getByText('the envelope check sampled 64 of 4096 tuples')).toBeTruthy();
   });
 
+  it('says the queue is capped when the page is full', async () => {
+    await mountReview(stubApi({ listContent: async () => ({ ...QUEUE, limit: 4 }) }));
+    expect(screen.getByText(/The queue is capped at 4 rows/)).toBeTruthy();
+  });
+
+  it('renders the refusal, the note of an empty instance list, and no gate', async () => {
+    await mountReview(stubApi({
+      getContent: async (digest) => ({
+        ...docOf(digest),
+        review_reason: 'the hint names the answer',
+        instances: [],
+        instances_note: 'the body does not compile',
+        gate: null,
+      }),
+    }));
+    expect(screen.getByText('Refused: the hint names the answer')).toBeTruthy();
+    expect(screen.getByText('Rendered instances (0 of 8)')).toBeTruthy();
+    expect(screen.getByText('the body does not compile')).toBeTruthy();
+    expect(screen.queryByText('Gate')).toBeNull();
+  });
+
+  it('says a kind renders no instance when the service sends no note either', async () => {
+    await mountReview(stubApi({
+      getContent: async (digest) => ({ ...docOf(digest), instances: [], instances_note: null }),
+    }));
+    expect(screen.getByText('This document renders no instance.')).toBeTruthy();
+  });
+
   it('has no accessibility violation axe can see in jsdom', async () => {
     const view = await mountReview();
     expect(await axe(view.container, AXE_IN_JSDOM)).toHaveNoViolations();
@@ -228,14 +258,33 @@ describe('the roll-up and the grouping', () => {
   it('renders an unknown cost as an em dash and a known zero as zero', () => {
     expect(usd(null)).toBe('—');
     expect(usd('')).toBe('—');
+    expect(usd('abc')).toBe('—');
+    expect(usd(undefined)).toBe('—');
     expect(usd('0')).toBe('$0.0000');
     expect(usd('0.0300')).toBe('$0.0300');
+    expect(usd(2.5)).toBe('$2.5000');
+  });
+
+  it('breaks a tie on cost by knowledge point id', () => {
+    const rolled = costByKp([
+      item({ digest: 'a', kp_id: 'b:kp', authoring_cost_usd: '0.0100' }),
+      item({ digest: 'b', kp_id: 'a:kp', authoring_cost_usd: '0.0100' }),
+    ]);
+    expect(rolled.map((r) => r.kp_id)).toEqual(['a:kp', 'b:kp']);
   });
 
   it('orders the groups by id and the rows newest first', () => {
     const groups = groupByKp(QUEUE.items);
     expect(groups.map((g) => g.kp_id)).toEqual(['algebra:linear', 'arith:borrow']);
     expect(walkOrder(groups)).toEqual(['d2', 'd1', 'd3', 'd4']);
+  });
+
+  it('breaks a tie on the timestamp by digest', () => {
+    const groups = groupByKp([
+      item({ digest: 'z', created_at: '2026-08-30T10:00:00+00:00' }),
+      item({ digest: 'a', created_at: '2026-08-30T10:00:00+00:00' }),
+    ]);
+    expect(walkOrder(groups)).toEqual(['a', 'z']);
   });
 
   it('stops the walk at both ends and starts it at the top', () => {

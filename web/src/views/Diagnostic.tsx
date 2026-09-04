@@ -144,9 +144,9 @@ export function Diagnostic({ diag, demo = false, onUnauthorized, onExit }: Diagn
 
   const send = useCallback((answer: string, skipped: boolean) => {
     // THE REF, never the render value: a Retry re-enters this closure renders later, and a
-    // captured probe is the stale one by then.
-    const current = probeRef.current;
-    if (!current) return;
+    // captured probe is the stale one by then. Submit and Skip render beside a probe, so the
+    // ref names one.
+    const current = probeRef.current!;
     // THE gate, for every entry point — Submit, Skip, and the Enter key, which bypasses the
     // disabled button entirely. Synchronous, before the first await.
     if (!gate.tryEnter('ready', 'submitting')) return;
@@ -209,9 +209,10 @@ export function Diagnostic({ diag, demo = false, onUnauthorized, onExit }: Diagn
   }, [phase, result, life, gate]);
 
   const submitTyped = useCallback(() => {
-    const answer = answerRef.current?.value() ?? '';
+    const field = answerRef.current!;
+    const answer = field.value();
     // A blank Submit only refocuses. The honest way past a probe is Skip.
-    if (!answer) { answerRef.current?.focus(); return; }
+    if (!answer) { field.focus(); return; }
     send(answer, false);
   }, [send]);
 

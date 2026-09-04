@@ -167,8 +167,8 @@ function CyCanvas({ nodes, edges, handleRef, onSelect, onRetry }: CyCanvasProps)
   // The canvas is sized by CSS, and Cytoscape reads pixels at construction, so a container
   // that changes size needs an explicit resize.
   useEffect(() => {
-    const host = hostRef.current;
-    if (!host) return undefined;
+    // The host div is on the page for the life of this effect, so the ref is never null.
+    const host = hostRef.current!;
     const observer = new ResizeObserver(() => {
       // `hidden` in list mode: a resize against a zero box leaves the canvas blank on the
       // way back, so skip it and let the mode switch resize instead.
