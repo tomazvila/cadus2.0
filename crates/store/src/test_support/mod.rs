@@ -397,7 +397,9 @@ async fn drop_database_at(options: &PgConnectOptions, name: &str) -> Result<(), 
 mod tests {
     use std::env::VarError;
 
-    use super::{dsn_for, dsn_from, or_stop, resume};
+    use sqlx::postgres::PgConnectOptions;
+
+    use super::{drop_database_at, dsn_for, dsn_from, or_stop, resume};
 
     /// `or_stop` gives the value back, or panics with the two parts.
     #[test]
@@ -472,5 +474,15 @@ mod tests {
             message.downcast_ref::<String>().map(String::as_str),
             Some("CADUS_TEST_DATABASE_URL carries no database path segment: no-slash")
         );
+    }
+
+    /// A best-effort drop against an endpoint that answers nothing reports the
+    /// connect error and drops nothing.
+    #[tokio::test]
+    async fn a_drop_of_a_database_on_a_dead_endpoint_is_an_error() {
+        let options: PgConnectOptions = "postgresql://x@127.0.0.1:1/x"
+            .parse()
+            .expect("the DSN parses");
+        assert!(drop_database_at(&options, "cadus2_t_none").await.is_err());
     }
 }
