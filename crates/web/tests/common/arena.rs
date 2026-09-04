@@ -49,10 +49,19 @@ pub fn kp(id: &str, exemplars: Vec<Exemplar>) -> KnowledgePoint {
 
 /// One exemplar whose sketch names its answer.
 pub fn exemplar(problem: &str, answer: &str) -> Exemplar {
+    exemplar_with_solution(
+        problem,
+        answer,
+        &format!("Add the parts to reach {answer}."),
+    )
+}
+
+/// One exemplar with the solution its author wrote.
+pub fn exemplar_with_solution(problem: &str, answer: &str, solution: &str) -> Exemplar {
     Exemplar {
         problem: problem.to_string(),
         answer: answer.to_string(),
-        solution_sketch: Some(format!("Add the parts to reach {answer}.")),
+        solution_sketch: Some(solution.to_string()),
     }
 }
 

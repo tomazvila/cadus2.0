@@ -64,28 +64,44 @@ pub async fn answer_task(
     task_id: &str,
     body: Value,
 ) -> (StatusCode, Value) {
-    let (status, raw) = call(
+    let (status, raw) = answer_raw(app, user, task_id, body).await;
+    (status, parse(&raw))
+}
+
+/// `POST /api/task/{task_id}/answer` as `user`, with `body`, and the RAW reply
+/// text.
+pub async fn answer_raw(
+    app: &Router,
+    user: Uuid,
+    task_id: &str,
+    body: Value,
+) -> (StatusCode, String) {
+    call(
         app,
         Method::POST,
         &format!("/api/task/{task_id}/answer"),
         Some(user),
         Some(body),
     )
-    .await;
-    (status, parse(&raw))
+    .await
 }
 
 /// `POST /api/task/{task_id}/serve` as `user`.
 pub async fn serve_task(app: &Router, user: Uuid, task_id: &str) -> (StatusCode, Value) {
-    let (status, raw) = call(
+    let (status, raw) = serve_raw(app, user, task_id).await;
+    (status, parse(&raw))
+}
+
+/// `POST /api/task/{task_id}/serve` as `user`, and the RAW reply text.
+pub async fn serve_raw(app: &Router, user: Uuid, task_id: &str) -> (StatusCode, String) {
+    call(
         app,
         Method::POST,
         &format!("/api/task/{task_id}/serve"),
         Some(user),
         None,
     )
-    .await;
-    (status, parse(&raw))
+    .await
 }
 
 /// `POST /api/enroll` as `user`, for `course`.

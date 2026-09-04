@@ -237,19 +237,13 @@ mod tests {
 
     /// A `counting/kp1` template whose sketch is `sketch`.
     fn body(sketch: &str) -> String {
-        json!({
-            "v": 1,
-            "topic_id": "counting",
-            "answer_kind": "numeric",
-            "statement": "Count on from {a} by {b}.",
-            "params": {
-                "a": {"kind": "int", "low": 1, "high": 12},
-                "b": {"kind": "int", "low": -9, "high": -1}
-            },
-            "answer_expr": "a + b",
-            "solution_sketch": sketch
-        })
-        .to_string()
+        let mut doc = json!({"v": 1, "topic_id": "counting", "answer_kind": "numeric"});
+        doc["statement"] = json!("Step {b} from {a}.");
+        doc["params"] = json!({"b": {"kind": "int", "low": -9, "high": -1}});
+        doc["params"]["a"] = json!({"kind": "int", "low": 1, "high": 12});
+        doc["answer_expr"] = json!("a + b");
+        doc["solution_sketch"] = json!(sketch);
+        doc.to_string()
     }
 
     #[test]
