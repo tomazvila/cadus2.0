@@ -17,29 +17,13 @@
  *
  * `test/call.test.tsx` owns the rest of the hook's contract.
  */
-import { StrictMode } from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { renderHook, waitFor } from '@testing-library/react';
-import { ApiError } from '@/api';
-import { RETRY_STALE_MESSAGE, useCall, type CallDeps } from '@/hooks/useCall';
-import { TOAST_TIMEOUT_MS, fireToastAction, resetToasts, toastStore } from '@/app/toast';
-
-function mountCall(deps: Partial<CallDeps> = {}) {
-  const onUnauthorized = vi.fn();
-  const view = renderHook(
-    (props: CallDeps) => useCall(props),
-    {
-      wrapper: StrictMode,
-      initialProps: { demo: false, onUnauthorized, ...deps },
-    },
-  );
-  return { ...view, onUnauthorized };
-}
-
-const toasts = () => toastStore.getSnapshot();
-
-/** A rejection the Retry path handles, as opposed to the 401 that routes to sign-in. */
-const busy = () => new ApiError(503, 'unavailable', 'The service is busy.');
+import { waitFor } from '@testing-library/react';
+import { RETRY_STALE_MESSAGE } from '@/hooks/useCall';
+import { TOAST_TIMEOUT_MS, fireToastAction, resetToasts } from '@/app/toast';
+import { busy } from './helpers/api';
+import { flakyAttempts, mountCall } from './helpers/call';
+import { expectRefusalOnly, toasts } from './helpers/toasts';
 
 beforeEach(() => {
   resetToasts();
@@ -49,23 +33,18 @@ describe('useCall: the Retry gate', () => {
   it('runs the request and its continuation again when the gate admits the Retry', async () => {
     const { result } = mountCall();
     const seen: string[] = [];
-    let attempts = 0;
-    const fn = vi.fn(async () => {
-      attempts += 1;
-      if (attempts === 1) throw busy();
-      return `attempt-${attempts}`;
-    });
+    const fn = flakyAttempts();
     const retryGate = vi.fn(() => true);
 
     await result.current(fn, (v: string) => { seen.push(v); }, { retryGate });
 
     expect(toasts()[0].label).toBe('Retry');
     fireToastAction(toasts()[0].id);
-
     expect(retryGate).toHaveBeenCalledTimes(1);
-    await waitFor(() => { expect(seen).toEqual(['attempt-2']); });
-    expect(fn).toHaveBeenCalledTimes(2);
-    expect(toasts()).toEqual([]);
+
+    // The request ran again AND the continuation ran with the retried value; the action
+    // dismissed its own toast first.
+    await waitFor(() => { expect([seen, fn.mock.calls.length, toasts()]).toEqual([['attempt-2'], 2, []]); });
   });
 
   it('sends nothing when the gate refuses the Retry, and says so once', async () => {
@@ -84,11 +63,7 @@ describe('useCall: the Retry gate', () => {
     expect(fn).toHaveBeenCalledTimes(1);
     expect(seen).toEqual([]);
     // One toast: the refusal, and it carries no action of its own.
-    expect(toasts().length).toBe(1);
-    expect(toasts()[0].message).toBe(RETRY_STALE_MESSAGE);
-    expect(toasts()[0].kind).toBe('info');
-    expect(toasts()[0].label).toBeUndefined();
-    expect(toasts()[0].onAction).toBeUndefined();
+    expectRefusalOnly();
   });
 
   it('lets the refusal toast expire, because a refusal is not a way back', async () => {

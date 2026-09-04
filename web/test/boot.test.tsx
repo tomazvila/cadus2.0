@@ -50,6 +50,18 @@ async function boot(client: ApiClient, pathname: string, search: string): Promis
 
 const messages = () => toastStore.getSnapshot().map((t) => t.message);
 
+/** Type a new password into the reset card, press Set, and wait for the post. */
+async function setNewPassword(resetPassword: ReturnType<typeof vi.fn>, token: string) {
+  fireEvent.change(screen.getByLabelText('New password'), {
+    target: { value: 'hunter2hunter2' },
+  });
+  fireEvent.click(screen.getByRole('button', { name: 'Set new password' }));
+
+  await waitFor(() => {
+    expect(resetPassword).toHaveBeenCalledWith(token, 'hunter2hunter2');
+  });
+}
+
 beforeEach(() => {
   resetToasts();
   // `stripBootTokens` writes the real history, and the write outlives the test.
@@ -126,14 +138,7 @@ describe('the boot tokens', () => {
     expect(window.location.pathname).toBe('/reset');
     expect(window.location.search).toBe('');
 
-    fireEvent.change(screen.getByLabelText('New password'), {
-      target: { value: 'hunter2hunter2' },
-    });
-    fireEvent.click(screen.getByRole('button', { name: 'Set new password' }));
-
-    await waitFor(() => {
-      expect(resetPassword).toHaveBeenCalledWith('reset-3', 'hunter2hunter2');
-    });
+    await setNewPassword(resetPassword, 'reset-3');
   });
 
   it('opens the reset card for a learner who still holds a session', async () => {
@@ -152,14 +157,7 @@ describe('the boot tokens', () => {
     // The session is never read on this path, so nothing can outrank the card.
     expect(me).not.toHaveBeenCalled();
 
-    fireEvent.change(screen.getByLabelText('New password'), {
-      target: { value: 'hunter2hunter2' },
-    });
-    fireEvent.click(screen.getByRole('button', { name: 'Set new password' }));
-
-    await waitFor(() => {
-      expect(resetPassword).toHaveBeenCalledWith('reset-9', 'hunter2hunter2');
-    });
+    await setNewPassword(resetPassword, 'reset-9');
     // The card took the token, so the URL no longer carries it.
     expect(window.location.pathname).toBe('/reset');
     expect(window.location.search).toBe('');

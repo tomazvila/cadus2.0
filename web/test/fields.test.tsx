@@ -17,21 +17,12 @@ import { resolve } from 'node:path';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { AnswerField, type AnswerFieldHandle } from '@/components/AnswerField';
 import { WorkField, type WorkFieldHandle } from '@/components/WorkField';
+import { mountRoot } from './helpers/react';
 
 const roots: Array<() => void> = [];
 afterEach(() => { roots.splice(0).forEach((fn) => { fn(); }); });
 
-function mount(node: React.ReactElement) {
-  const container = document.createElement('div');
-  document.body.append(container);
-  const root = createRoot(container);
-  act(() => { root.render(node); });
-  roots.push(() => { act(() => { root.unmount(); }); container.remove(); });
-  return {
-    find: <T extends HTMLElement>(s: string) => container.querySelector<T>(s)!,
-    all: (s: string) => Array.from(container.querySelectorAll<HTMLElement>(s)),
-  };
-}
+const mount = (node: React.ReactElement) => mountRoot(node, roots);
 
 /** A raw keydown. user-event refuses to dispatch to a disabled element, so it proves nothing. */
 function keydown(node: HTMLElement, key: string, init: KeyboardEventInit = {}): KeyboardEvent {

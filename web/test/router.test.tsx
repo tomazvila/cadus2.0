@@ -21,14 +21,8 @@ import { Root, adminOr } from '@/app/Root';
 import { createDemoApi } from '@/api';
 import { MAP_CANVAS_LABEL } from '@/views/map/Map';
 import { DIAG_DEFAULT_CAP } from '@/views/Diagnostic';
-import type { ApiClient, PlanTask, User } from '@/api/types';
-
-const USER: User = {
-  id: 'u1',
-  email: 'learner@example.com',
-  email_verified: true,
-  created_at: '2026-08-30T00:00:00Z',
-};
+import { USER, quizTask } from './helpers/fixtures';
+import type { ApiClient, User } from '@/api/types';
 
 /** Mount into the `<main>` the shell actually uses, so the topbar portal has its host. */
 const mountRoot = (api: ApiClient, user: User | null = USER) =>
@@ -191,20 +185,7 @@ describe('the router', () => {
     // id alone would have to re-read the plan, and a re-plan between the two calls hands it
     // a different task.
     const api = createDemoApi();
-    const quiz: PlanTask = {
-      task_id: 'demo-quiz',
-      task_type: 'quiz',
-      topic: { id: 'fractions', name: 'Fractions', module: 'Arithmetic' },
-      kp: null,
-      start_at_kp: null,
-      n_problems: 8,
-      mix: null,
-      component_topics: null,
-      time_budget_secs: 480,
-      difficulty_target: 0.7,
-      why: 'Quiz due.',
-      progress: { answered: 0, done: false },
-    };
+    const quiz = quizTask('demo-quiz');
     vi.spyOn(api, 'getPlan').mockResolvedValue({
       session: 'demo-session',
       tasks: [quiz],

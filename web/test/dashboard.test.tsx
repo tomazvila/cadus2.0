@@ -11,7 +11,7 @@
  * a course progress of 0.18 is 18 percent.
  */
 import { describe, expect, it, vi } from 'vitest';
-import { act, render, screen, waitFor, within } from '@testing-library/react';
+import { act, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { axe } from 'vitest-axe';
 import { ApiError, api as realApi, createDemoApi } from '@/api';
@@ -20,6 +20,7 @@ import { Dashboard, hasScheduledWork, type DashboardProps } from '@/views/Dashbo
 import { resetToasts, toastStore } from '@/app/toast';
 import { AXE_IN_JSDOM } from './axe';
 import { downloads, objectUrls } from './setup';
+import { renderInView } from './helpers/render';
 import type { ApiClient, StatusResponse } from '@/api/types';
 
 const STATUS: StatusResponse = {
@@ -81,21 +82,38 @@ async function mount(over: Partial<DashboardProps> = {}) {
   resetToasts();
   const handlers = nav();
   const props: DashboardProps = { api: stubApi(), ...handlers, ...over };
-  let view!: ReturnType<typeof render>;
-  await act(async () => {
-    view = render(
-      <DialogProvider>
-        <Dashboard {...props} />
-      </DialogProvider>,
-      { container: document.getElementById('view')! },
-    );
-  });
+  const view = await renderInView(
+    <DialogProvider>
+      <Dashboard {...props} />
+    </DialogProvider>,
+  );
   return { ...view, ...handlers };
 }
 
 const primaries = () => document.querySelectorAll('.view-dashboard .btn-primary');
 const actionBlock = () =>
   document.querySelector<HTMLElement>('.primary-action, .onboard-card')!;
+
+/**
+ * Press the diagnostic control in the OPEN — in the action block, never inside the quiet
+ * disclosure — and count the navigations it made.
+ */
+async function pressInTheOpen(name: string, onDiagnostic: ReturnType<typeof vi.fn>) {
+  const cta = within(actionBlock()).getByRole('button', { name });
+  const insideDetails = cta.closest('details') !== null;
+  await userEvent.click(cta);
+  return { insideDetails, calls: onDiagnostic.mock.calls.length };
+}
+
+/** Open the quiet menu and the course picker behind "Switch course". */
+async function openPicker() {
+  const user = userEvent.setup();
+  const enroll = vi.fn(createDemoApi().enroll);
+  await mount({ api: stubApi({ enroll }) });
+  await user.click(screen.getByText('More'));
+  await user.click(screen.getByRole('button', { name: 'Switch course' }));
+  return { user, enroll };
+}
 
 describe('the dashboard', () => {
   it('waits with a labelled block, then paints the status card', async () => {
@@ -183,30 +201,24 @@ describe('the dashboard', () => {
 
     // In the open, not inside the quiet disclosure: the learner must not open a menu to
     // find the one thing left to do.
-    const cta = within(actionBlock()).getByRole('button', { name: 'Re-check where you are' });
-    expect(cta.closest('details')).toBeNull();
-    await userEvent.click(cta);
-    expect(view.onDiagnostic).toHaveBeenCalledTimes(1);
+    expect(await pressInTheOpen('Re-check where you are', view.onDiagnostic))
+      .toEqual({ insideDetails: false, calls: 1 });
   });
 
   it('W-C3: an empty plan with a next course still offers the diagnostic beside it', async () => {
     const view = await mount({ api: stubApi({ getStatus: async () => status(EMPTY_PLAN) }) });
-    const cta = within(actionBlock()).getByRole('button', { name: 'Re-check where you are' });
-    expect(cta.closest('details')).toBeNull();
-    await userEvent.click(cta);
-    expect(view.onDiagnostic).toHaveBeenCalledTimes(1);
+    expect(await pressInTheOpen('Re-check where you are', view.onDiagnostic))
+      .toEqual({ insideDetails: false, calls: 1 });
   });
 
   it('W-C3: an unplaced account gets the placement and no other action', async () => {
     const view = await mount({
       api: stubApi({ getStatus: async () => status({ placed: false }) }),
     });
-    const cta = within(actionBlock()).getByRole('button', { name: 'Start placement' });
-    expect(cta.closest('details')).toBeNull();
     // One action only. A wall of buttons here asks the learner to plan the placement.
     expect(document.querySelectorAll('.view-dashboard button').length).toBe(1);
-    await userEvent.click(cta);
-    expect(view.onDiagnostic).toHaveBeenCalledTimes(1);
+    expect(await pressInTheOpen('Start placement', view.onDiagnostic))
+      .toEqual({ insideDetails: false, calls: 1 });
   });
 
   // --- DEP-3 --------------------------------------------------------------
@@ -376,11 +388,7 @@ describe('the dashboard', () => {
   });
 
   it('F9: the course picker is a dialog, on a modal surface, and Esc leaves it', async () => {
-    const user = userEvent.setup();
-    const enroll = vi.fn(createDemoApi().enroll);
-    await mount({ api: stubApi({ enroll }) });
-    await user.click(screen.getByText('More'));
-    await user.click(screen.getByRole('button', { name: 'Switch course' }));
+    const { user, enroll } = await openPicker();
 
     const picker = screen.getByRole('dialog');
     // `aria-modal` is what tells a screen reader the page behind is inert, and the focus
@@ -405,11 +413,7 @@ describe('the dashboard', () => {
   });
 
   it('F9: the picker enrolls in the course the learner names', async () => {
-    const user = userEvent.setup();
-    const enroll = vi.fn(createDemoApi().enroll);
-    await mount({ api: stubApi({ enroll }) });
-    await user.click(screen.getByText('More'));
-    await user.click(screen.getByRole('button', { name: 'Switch course' }));
+    const { user, enroll } = await openPicker();
 
     await user.click(within(screen.getByRole('dialog')).getByRole('button', { name: 'Proofs' }));
 

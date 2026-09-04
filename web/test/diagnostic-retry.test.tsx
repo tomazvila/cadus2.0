@@ -15,72 +15,23 @@
  * continuation onto the next probe.
  */
 import { describe, expect, it, vi, type Mock } from 'vitest';
-import { act, fireEvent, render, screen } from '@testing-library/react';
-import { ApiError } from '@/api';
-import { Diagnostic, DIAG_BEAT_MS, type DiagnosticProps } from '@/views/Diagnostic';
-import { RETRY_STALE_MESSAGE } from '@/hooks/useCall';
-import { fireToastAction, resetToasts, toastStore, TOAST_TIMEOUT_MS } from '@/app/toast';
-import type {
-  DiagFinishResponse,
-  DiagProbe,
-  DiagStartResponse,
-  DiagnosticApi,
-} from '@/api/diag';
+import { act, screen } from '@testing-library/react';
+import { DIAG_BEAT_MS } from '@/views/Diagnostic';
+import { fireToastAction, TOAST_TIMEOUT_MS } from '@/app/toast';
+import { appendOnlyGrade, busy } from './helpers/api';
+import { tick } from './helpers/timers';
+import { expectRefusalOnly, expectRetryArmed } from './helpers/toasts';
+import {
+  answer, begin, mount, probe, probeText, progressCount, stubDiag, submitButton, toasts,
+} from './helpers/placement';
+import type { DiagnosticApi } from '@/api/diag';
 
 // ---------------------------------------------------------------------------
-// Fixtures — the frozen payloads of the three `/api/diag/*` rows.
+// Fixtures — the second and third probes of the three `/api/diag/*` rows.
 // ---------------------------------------------------------------------------
 
-const D1: DiagProbe = { problem_id: 'd1', topic: 'Adding integers', text: 'Probe one.' };
-const D2: DiagProbe = { problem_id: 'd2', topic: 'Fractions', text: 'Probe two.' };
-const D3: DiagProbe = { problem_id: 'd3', topic: 'Ratios', text: 'Probe three.' };
-
-const START: DiagStartResponse = { probe: D1, asked: 0, cap: 40 };
-const SUMMARY: DiagFinishResponse = { placed: ['a'], conditional: [], frontier: ['c'] };
-
-function stubDiag(over: Partial<DiagnosticApi> = {}): DiagnosticApi {
-  return {
-    diagStart: async () => START,
-    diagAnswer: async () => ({ correct: true, next_probe: { done: true } }),
-    diagFinish: async () => SUMMARY,
-    ...over,
-  };
-}
-
-async function mount(over: Partial<DiagnosticProps> = {}) {
-  resetToasts();
-  const handlers = { onUnauthorized: vi.fn(), onExit: vi.fn() };
-  const props: DiagnosticProps = { diag: stubDiag(), ...handlers, ...over };
-  let view!: ReturnType<typeof render>;
-  await act(async () => {
-    view = render(<Diagnostic {...props} />, { container: document.getElementById('view')! });
-  });
-  return { ...view, ...handlers };
-}
-
-const answerInput = () => screen.getByLabelText('Answer') as HTMLInputElement;
-const submitButton = () => screen.getByRole('button', { name: 'Submit' });
-const probeText = () => document.querySelector('.problem-text')!.textContent;
-const progressCount = () => document.querySelector('.progress-count')!.textContent;
-const toasts = () => toastStore.getSnapshot();
-
-/** Move the clock and let every continuation the move released settle. */
-async function tick(ms: number): Promise<void> {
-  await act(async () => { await vi.advanceTimersByTimeAsync(ms); });
-}
-
-/** Press Begin and let the start settle. */
-async function begin(): Promise<void> {
-  await act(async () => {
-    fireEvent.click(screen.getByRole('button', { name: 'Begin placement' }));
-  });
-}
-
-/** Answer the probe on screen. */
-async function answer(text: string): Promise<void> {
-  fireEvent.change(answerInput(), { target: { value: text } });
-  await act(async () => { fireEvent.click(submitButton()); });
-}
+const D2 = probe({ problem_id: 'd2', topic: 'Fractions', text: 'Probe two.' });
+const D3 = probe({ problem_id: 'd3', topic: 'Ratios', text: 'Probe three.' });
 
 /** The `problem_id` values the placement posted, in order. */
 const postedIds = (fn: Mock<DiagnosticApi['diagAnswer']>): string[] =>
@@ -97,19 +48,17 @@ describe('the stale Retry on placement', () => {
     // placement onto its own `next_probe` and skipped the probe on screen.
     const diagAnswer = vi.fn<DiagnosticApi['diagAnswer']>(async () => {
       attempts += 1;
-      if (attempts === 1) throw new ApiError(503, 'unavailable', 'The service is busy.');
+      if (attempts === 1) throw busy();
       if (attempts === 2) return { correct: true, next_probe: D2 };
       return { correct: false, next_probe: D3 };
     });
     await mount({ diag: stubDiag({ diagAnswer }) });
     await begin();
-    expect(probeText()).toBe('Probe one.');
+    expect(probeText()).toBe('Work out $-7 + 12$.');
 
     // The answer fails. The probe comes back to the learner with a Retry armed.
     await answer('12');
-    expect(toasts().length).toBe(1);
-    expect(toasts()[0].label).toBe('Retry');
-    expect(submitButton().hasAttribute('disabled')).toBe(false);
+    expectRetryArmed(submitButton);
 
     // The learner answers again instead, and THAT attempt is graded. Probe 2 arrives after
     // the 750 ms beat.
@@ -137,17 +86,8 @@ describe('the stale Retry on placement', () => {
     vi.useFakeTimers();
     // The append-only log of the service: a post of a spent probe is `404 unknown_problem`,
     // and that failure armed another actionable Retry, which never expires either.
-    const spent = new Set<string>();
-    let attempts = 0;
-    const diagAnswer = vi.fn<DiagnosticApi['diagAnswer']>(async ({ problem_id }) => {
-      attempts += 1;
-      if (attempts === 1) throw new ApiError(503, 'unavailable', 'The service is busy.');
-      if (spent.has(problem_id)) {
-        throw new ApiError(404, 'unknown_problem', 'That problem is no longer open.');
-      }
-      spent.add(problem_id);
-      return { correct: true, next_probe: D2 };
-    });
+    const grade = appendOnlyGrade(() => ({ correct: true, next_probe: D2 }));
+    const diagAnswer = vi.fn<DiagnosticApi['diagAnswer']>(async ({ problem_id }) => grade(problem_id));
     await mount({ diag: stubDiag({ diagAnswer }) });
     await begin();
 
@@ -166,15 +106,10 @@ describe('the stale Retry on placement', () => {
     await act(async () => { fireToastAction(stale.id); });
 
     expect(diagAnswer).toHaveBeenCalledTimes(2);
-    expect(toasts().length).toBe(1);
-    expect(toasts()[0].message).toBe(RETRY_STALE_MESSAGE);
-    expect(toasts()[0].kind).toBe('info');
-    expect(toasts()[0].label).toBeUndefined();
-    expect(toasts()[0].onAction).toBeUndefined();
+    expectRefusalOnly();
 
     // A plain toast expires, so no Retry survives on the screen.
     await tick(TOAST_TIMEOUT_MS + 1000);
-    expect(toasts()).toEqual([]);
-    expect(diagAnswer).toHaveBeenCalledTimes(2);
+    expect([toasts(), diagAnswer.mock.calls.length]).toEqual([[], 2]);
   });
 });

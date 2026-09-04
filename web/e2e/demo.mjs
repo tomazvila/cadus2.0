@@ -13,7 +13,9 @@
  * `BASE` names the origin the server is on. `SHOTS` is where the screenshots land.
  */
 import { chromium } from 'playwright';
-import { Run, checkMathRendered, checkNotBlank, checkSameProblem } from './checks.mjs';
+import {
+  Run, checkMathRendered, checkNotBlank, checkSameProblem, finishWalk,
+} from './checks.mjs';
 
 const BASE = process.env.BASE ?? 'http://127.0.0.1:4173';
 const SHOTS = process.env.SHOTS ?? './shots';
@@ -176,14 +178,4 @@ async function main() {
   if (overflow > 2) run.fail(`the page scrolls horizontally at 390px (${overflow}px)`);
 }
 
-try {
-  await main();
-} catch (e) {
-  // The whole call log, not its first line: Playwright's retry reason — the element
-  // it waited for, and what intercepted the pointer — lives in the lines after it.
-  run.fail(`THREW: ${String(e).split('\n').slice(0, 12).join(' | ').slice(0, 700)}`);
-  await run.snap('failure');
-}
-
-await browser.close();
-process.exit(run.report());
+await finishWalk(main, run, browser);

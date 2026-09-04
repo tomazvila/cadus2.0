@@ -25,39 +25,14 @@ import { Root } from '@/app/Root';
 import { ApiError, createDemoApi } from '@/api';
 import { OPS_TITLE } from '@/views/admin/Ops';
 import { MAP_CANVAS_LABEL } from '@/views/map/Map';
-import type {
-  ApiClient,
-  OperatorFlagsResponse,
-  PlanTask,
-  ReviewListResponse,
-  User,
-} from '@/api/types';
-
-const USER: User = {
-  id: 'u1',
-  email: 'learner@example.com',
-  email_verified: true,
-  created_at: '2026-08-30T00:00:00Z',
-};
+import { USER, quizTask } from './helpers/fixtures';
+import type { ApiClient, OperatorFlagsResponse, ReviewListResponse, User } from '@/api/types';
 
 /** The account that signs in AFTER the 401. A different id, so the mix-up is visible. */
 const NEXT_USER: User = { ...USER, id: 'u2', email: 'second@example.com' };
 
 /** One quiz task, held by the view. The 401 must drop it. */
-const QUIZ_TASK: PlanTask = {
-  task_id: 'task-of-account-one',
-  task_type: 'quiz',
-  topic: { id: 'fractions', name: 'Fractions', module: 'Arithmetic' },
-  kp: null,
-  start_at_kp: null,
-  n_problems: 8,
-  mix: null,
-  component_topics: null,
-  time_budget_secs: 480,
-  difficulty_target: 0.7,
-  why: 'Quiz due.',
-  progress: { answered: 0, done: false },
-};
+const QUIZ_TASK = quizTask('task-of-account-one');
 
 /** An operator deployment with nothing in the pool. The screen renders; the rows are empty. */
 const FLAGS: OperatorFlagsResponse = {
@@ -90,6 +65,20 @@ function adminApi(over: Partial<ApiClient> = {}): ApiClient {
 const topbar = () => document.getElementById('topbar')!;
 const view = () => document.getElementById('view')!;
 
+/** Open `/ops` signed in, press the brand, and land on the dashboard. */
+async function leaveOpsThroughBrand(): Promise<ReturnType<typeof userEvent.setup>> {
+  history.replaceState({}, '', '/ops');
+  const person = userEvent.setup();
+  render(<Root api={adminApi()} initialUser={USER} pathname="/ops" />, { container: view() });
+  await waitFor(() => expect(screen.getByText(OPS_TITLE)).toBeTruthy());
+  expect(view().querySelector('.view-ops')).not.toBeNull();
+
+  await person.click(topbar().querySelector('.brand')!);
+
+  await waitFor(() => expect(view().querySelector('.view-dashboard')).not.toBeNull());
+  return person;
+}
+
 beforeEach(() => {
   // `navigate` writes the real history, and the write outlives the test.
   history.replaceState({}, '', '/');
@@ -99,16 +88,7 @@ describe('the operator route and the topbar', () => {
   it('leaves /ops for the dashboard when the brand is pressed', async () => {
     // F8. The route was a prop boot fixed once and it beat the view name, so Home moved the
     // state and the operator screen stayed on screen.
-    history.replaceState({}, '', '/ops');
-    const person = userEvent.setup();
-    render(<Root api={adminApi()} initialUser={USER} pathname="/ops" />, { container: view() });
-
-    await waitFor(() => expect(screen.getByText(OPS_TITLE)).toBeTruthy());
-    expect(view().querySelector('.view-ops')).not.toBeNull();
-
-    await person.click(topbar().querySelector('.brand')!);
-
-    await waitFor(() => expect(view().querySelector('.view-dashboard')).not.toBeNull());
+    await leaveOpsThroughBrand();
     expect(view().querySelector('.view-ops')).toBeNull();
     // The location moved with the screen. One source, and this is it.
     expect(window.location.pathname).toBe('/');
@@ -135,13 +115,7 @@ describe('the operator route and the topbar', () => {
   it('gives /ops back when the browser goes Back', async () => {
     // The push has to be a real history entry, or Back leaves the app and the operator
     // reaches a blank tab instead of the page they came from.
-    history.replaceState({}, '', '/ops');
-    const person = userEvent.setup();
-    render(<Root api={adminApi()} initialUser={USER} pathname="/ops" />, { container: view() });
-    await waitFor(() => expect(screen.getByText(OPS_TITLE)).toBeTruthy());
-
-    await person.click(topbar().querySelector('.brand')!);
-    await waitFor(() => expect(view().querySelector('.view-dashboard')).not.toBeNull());
+    await leaveOpsThroughBrand();
 
     await act(async () => {
       history.back();

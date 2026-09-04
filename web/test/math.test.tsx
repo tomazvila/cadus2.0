@@ -11,12 +11,12 @@
  */
 import { useEffect, useState } from 'react';
 import { act } from 'react';
-import { createRoot } from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import katex from 'katex';
 import renderMathInElement from 'katex/contrib/auto-render';
 import { MathBlock } from '@/components/MathBlock';
 import { DELIMITERS, renderMathToHtml } from '@/lib/katex';
+import { mountRoot } from './helpers/react';
 
 declare global {
   // The flag the hostile markup below tries to set. Nothing declares it, so a read is the
@@ -26,19 +26,7 @@ declare global {
 
 const roots: Array<() => void> = [];
 
-function mount(node: React.ReactElement) {
-  const container = document.createElement('div');
-  document.body.append(container);
-  const root = createRoot(container);
-  act(() => { root.render(node); });
-  const unmount = () => { act(() => { root.unmount(); }); container.remove(); };
-  roots.push(unmount);
-  return {
-    container,
-    find: (s: string) => container.querySelector<HTMLElement>(s),
-    unmount,
-  };
-}
+const mount = (node: React.ReactElement) => mountRoot(node, roots);
 
 beforeEach(() => {
   // The real thing, in place of the recording stub of `setup.ts`.

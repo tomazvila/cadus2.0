@@ -14,7 +14,7 @@
  * `EMAIL` and `PASS` name an account `run.mjs` seeded. `BASE` names the origin.
  */
 import { chromium } from 'playwright';
-import { Run, checkNotBlank } from './checks.mjs';
+import { Run, checkNotBlank, finishWalk } from './checks.mjs';
 
 const BASE = process.env.BASE ?? 'http://127.0.0.1:4173';
 const SHOTS = process.env.SHOTS ?? './shots';
@@ -149,14 +149,4 @@ async function main() {
   await run.snap('signed-out');
 }
 
-try {
-  await main();
-} catch (e) {
-  // The whole call log, not its first line: Playwright's retry reason — the element
-  // it waited for, and what intercepted the pointer — lives in the lines after it.
-  run.fail(`THREW: ${String(e).split('\n').slice(0, 12).join(' | ').slice(0, 700)}`);
-  await run.snap('failure');
-}
-
-await browser.close();
-process.exit(run.report());
+await finishWalk(main, run, browser);

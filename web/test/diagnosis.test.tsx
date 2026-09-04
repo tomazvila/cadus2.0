@@ -24,43 +24,23 @@ import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import { describe, expect, it, vi } from 'vitest';
-import { act, fireEvent, render, screen } from '@testing-library/react';
+import { act, fireEvent, screen } from '@testing-library/react';
 import { axe } from 'vitest-axe';
 import { createDemoApi } from '@/api';
-import { Session, type SessionProps } from '@/views/session/Session';
 import { DIAGNOSIS_DEADLINE_MS, DIAGNOSIS_POLL_MS } from '@/views/session/useDiagnosis';
 import { DIAGNOSIS_FAILED, DIAGNOSIS_WAIT } from '@/views/session/Diagnosis';
-import { resetToasts, toastStore } from '@/app/toast';
+import { toastStore } from '@/app/toast';
 import { AXE_IN_JSDOM } from './axe';
 import { eventSources, lastEventSource } from './setup';
-import type {
-  AnswerResponse,
-  ApiClient,
-  DiagnosisJob,
-  PlanTask,
-  ServedProblem,
-  SessionPlanResponse,
-} from '@/api/types';
+import { REVIEW, mount as mountSession, planOf } from './helpers/session';
+import { tick } from './helpers/timers';
+import type { AnswerResponse, ApiClient, DiagnosisJob, ServedProblem } from '@/api/types';
+import type { SessionProps } from '@/views/session/Session';
 
 // ---------------------------------------------------------------------------
 // Fixtures — a one-task plan whose single problem is answered wrong, because a miss is the
 // only shape that owes a diagnosis at all.
 // ---------------------------------------------------------------------------
-
-const REVIEW: PlanTask = {
-  task_id: 't-review',
-  task_type: 'review',
-  topic: { id: 'fractions', name: 'Fractions', module: 'Arithmetic' },
-  kp: 'kp-simplify',
-  start_at_kp: null,
-  n_problems: 2,
-  mix: null,
-  component_topics: null,
-  time_budget_secs: 600,
-  difficulty_target: 0.6,
-  why: 'due for review',
-  progress: { answered: 0, done: false },
-};
 
 const P = (n: number): ServedProblem => ({
   problem_id: `p${n}`,
@@ -72,14 +52,7 @@ const P = (n: number): ServedProblem => ({
   countdown: false,
 });
 
-const PLAN: SessionPlanResponse = {
-  session: 's-1',
-  tasks: [REVIEW],
-  quiz_due: false,
-  constraints: { lesson_ratio_ok: true, lesson_ratio: 0.5, throttle_ok: true, reviews: 1, lessons: 0 },
-  course_complete: false,
-  frontier_blocked_until: null,
-};
+const PLAN = planOf({ ...REVIEW, n_problems: 2 });
 
 const JOB_ID = '9f1d6f0e-0000-4000-8000-000000000001';
 
@@ -121,21 +94,8 @@ function stubApi(over: Partial<ApiClient> = {}): ApiClient {
   };
 }
 
-async function mount(over: Partial<SessionProps> = {}) {
-  resetToasts();
-  const handlers = {
-    onUnauthorized: vi.fn(),
-    onExit: vi.fn(),
-    onQuiz: vi.fn(),
-    onDiagnostic: vi.fn(),
-  };
-  const props: SessionProps = { api: stubApi(), plan: PLAN, ...handlers, ...over };
-  let view!: ReturnType<typeof render>;
-  await act(async () => {
-    view = render(<Session {...props} />, { container: document.getElementById('view')! });
-  });
-  return { ...view, ...handlers };
-}
+const mount = (over: Partial<SessionProps> = {}) =>
+  mountSession({ api: stubApi(), plan: PLAN, ...over });
 
 /** Answer the served problem wrong and land on the feedback panel. */
 async function answerWrong(): Promise<void> {
@@ -143,14 +103,21 @@ async function answerWrong(): Promise<void> {
   await act(async () => { fireEvent.click(screen.getByRole('button', { name: 'Submit' })); });
 }
 
+/**
+ * On a fake clock, mount over a poll route that answers `job`, answer wrong, and hand back
+ * the poll route so the test counts its reads.
+ */
+async function answerWrongOver(job: DiagnosisJob) {
+  vi.useFakeTimers();
+  const getDiagnosis = vi.fn<ApiClient['getDiagnosis']>(async () => job);
+  await mount({ api: stubApi({ getDiagnosis }) });
+  await answerWrong();
+  return getDiagnosis;
+}
+
 const panel = () => document.querySelector('.diagnosis');
 const noteText = () => document.querySelector('.diagnosis-note')?.textContent ?? '';
 const proseText = () => document.querySelector('.diagnosis-prose')?.textContent ?? '';
-
-/** Move the clock and let every continuation that the move released settle. */
-async function tick(ms: number): Promise<void> {
-  await act(async () => { await vi.advanceTimersByTimeAsync(ms); });
-}
 
 // ---------------------------------------------------------------------------
 
@@ -198,10 +165,7 @@ describe('the async diagnosis panel', () => {
   });
 
   it('lands the pushed frame and never polls at all', async () => {
-    vi.useFakeTimers();
-    const getDiagnosis = vi.fn<ApiClient['getDiagnosis']>(async () => PENDING_JOB);
-    await mount({ api: stubApi({ getDiagnosis }) });
-    await answerWrong();
+    const getDiagnosis = await answerWrongOver(PENDING_JOB);
 
     // Inside the service's 250 ms notify-to-flush budget, so the 2 s poll never ticks.
     await tick(200);
@@ -216,10 +180,7 @@ describe('the async diagnosis panel', () => {
   });
 
   it('DIAG-poll: an SSE drop falls back to the 2 s poll and the prose still lands', async () => {
-    vi.useFakeTimers();
-    const getDiagnosis = vi.fn<ApiClient['getDiagnosis']>(async () => READY_JOB);
-    await mount({ api: stubApi({ getDiagnosis }) });
-    await answerWrong();
+    const getDiagnosis = await answerWrongOver(READY_JOB);
 
     // The connection dies and writes nothing ever again.
     act(() => { lastEventSource().drop(); });
@@ -259,10 +220,7 @@ describe('the async diagnosis panel', () => {
   });
 
   it('DIAG-30s: a job pending past 30 s reads as failed and the verdict stands', async () => {
-    vi.useFakeTimers();
-    const getDiagnosis = vi.fn<ApiClient['getDiagnosis']>(async () => PENDING_JOB);
-    await mount({ api: stubApi({ getDiagnosis }) });
-    await answerWrong();
+    const getDiagnosis = await answerWrongOver(PENDING_JOB);
 
     await tick(DIAGNOSIS_DEADLINE_MS - DIAGNOSIS_POLL_MS);
     expect(panel()!.getAttribute('data-status')).toBe('pending');
@@ -335,10 +293,7 @@ describe('the async diagnosis panel', () => {
   });
 
   it('drops a frame that is not JSON and lets the poll behind it land the prose', async () => {
-    vi.useFakeTimers();
-    const getDiagnosis = vi.fn<ApiClient['getDiagnosis']>(async () => READY_JOB);
-    await mount({ api: stubApi({ getDiagnosis }) });
-    await answerWrong();
+    await answerWrongOver(READY_JOB);
 
     await act(async () => { lastEventSource().emitRaw('{"id":"9f1d6f0e-0000-40'); });
     expect(panel()!.getAttribute('data-status')).toBe('pending');
@@ -414,10 +369,7 @@ describe('the diagnosis timing literals', () => {
   });
 
   it('reads nothing at 1999 ms, reads once at 2000 ms, and reads again at 4000 ms', async () => {
-    vi.useFakeTimers();
-    const getDiagnosis = vi.fn<ApiClient['getDiagnosis']>(async () => PENDING_JOB);
-    await mount({ api: stubApi({ getDiagnosis }) });
-    await answerWrong();
+    const getDiagnosis = await answerWrongOver(PENDING_JOB);
 
     await tick(1999);
     expect(getDiagnosis).toHaveBeenCalledTimes(0);

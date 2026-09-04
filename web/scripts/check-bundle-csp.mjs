@@ -23,9 +23,10 @@
  * 1.0's first `data:` check reported FAIL on a passing build, because a shell pipeline's
  * exit status comes from its LAST command.
  */
-import { readFileSync, readdirSync, statSync, existsSync } from 'node:fs';
+import { readFileSync, existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { join, dirname, extname } from 'node:path';
+import { walk } from './lib/walk.mjs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const dist = join(root, 'dist');
@@ -121,16 +122,6 @@ const RULES = {
   '.css': DATA_URI,
   '.html': [...DATA_URI, ...INLINE_SCRIPT],
 };
-
-function walk(dir) {
-  const out = [];
-  for (const entry of readdirSync(dir)) {
-    const p = join(dir, entry);
-    if (statSync(p).isDirectory()) out.push(...walk(p));
-    else out.push(p);
-  }
-  return out;
-}
 
 /** Does one rule fire on this text? A rule carries a `pattern` OR a `find`. */
 function fires(rule, text) {

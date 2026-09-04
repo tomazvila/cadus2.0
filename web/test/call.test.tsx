@@ -8,31 +8,13 @@
  * The 401 branch and the demo branch are here too, because both decide whether a learner
  * keeps the screen they are on.
  */
-import { StrictMode } from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { renderHook, waitFor } from '@testing-library/react';
+import { waitFor } from '@testing-library/react';
 import { ApiError, NETWORK_MESSAGE } from '@/api';
-import {
-  GENERIC_FAILURE_MESSAGE,
-  SESSION_EXPIRED_MESSAGE,
-  useCall,
-  type CallDeps,
-} from '@/hooks/useCall';
-import { fireToastAction, resetToasts, toastStore } from '@/app/toast';
-
-function mountCall(deps: Partial<CallDeps> = {}) {
-  const onUnauthorized = vi.fn();
-  const view = renderHook(
-    (props: CallDeps) => useCall(props),
-    {
-      wrapper: StrictMode,
-      initialProps: { demo: false, onUnauthorized, ...deps },
-    },
-  );
-  return { ...view, onUnauthorized };
-}
-
-const toasts = () => toastStore.getSnapshot();
+import { GENERIC_FAILURE_MESSAGE, SESSION_EXPIRED_MESSAGE } from '@/hooks/useCall';
+import { fireToastAction, resetToasts } from '@/app/toast';
+import { flakyAttempts, mountCall } from './helpers/call';
+import { toasts } from './helpers/toasts';
 
 beforeEach(() => {
   // The store is a module-level singleton by design, so nothing may survive a test.
@@ -68,13 +50,7 @@ describe('useCall', () => {
   it('F-36-1: a Retry re-runs the request AND its continuation', async () => {
     const { result } = mountCall();
     const seen: string[] = [];
-    let attempts = 0;
-
-    const fn = vi.fn(async () => {
-      attempts += 1;
-      if (attempts === 1) throw new ApiError(503, 'unavailable', 'The service is busy.');
-      return `attempt-${attempts}`;
-    });
+    const fn = flakyAttempts();
 
     const first = await result.current(fn, (v: string) => { seen.push(v); });
     expect(first).toBeUndefined();

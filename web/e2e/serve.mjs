@@ -21,11 +21,8 @@
 import { createServer } from 'node:http';
 import { createReadStream, existsSync, statSync } from 'node:fs';
 import { extname, join, normalize, resolve } from 'node:path';
+import { arg } from './args.mjs';
 
-const arg = (name, fallback) => {
-  const hit = process.argv.find((a) => a.startsWith(`--${name}=`));
-  return hit ? hit.slice(name.length + 3) : fallback;
-};
 
 const root = resolve(arg('root', 'dist'));
 const port = Number(arg('port', '4173'));
