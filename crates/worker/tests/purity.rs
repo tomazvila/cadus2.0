@@ -34,13 +34,7 @@
 //! same on both tiers. Guard 2 stops a hand-written `hyper_util::client` call:
 //! the crate that writes it must first put `hyper-util` in its own manifest.
 
-#![allow(
-    clippy::unwrap_used,
-    clippy::expect_used,
-    clippy::panic,
-    clippy::todo,
-    clippy::unimplemented
-)]
+#![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
 
 use std::collections::{BTreeMap, BTreeSet};
 use std::path::{Path, PathBuf};

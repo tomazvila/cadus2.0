@@ -11,264 +11,40 @@
 //!
 //! The rest of the file holds the checks the loop needs beside those three: the
 //! T6 ledger of an authoring call, the stored row's own columns, a `rejected`
-//! row that does not occupy a slot, a duplicate body, an endpoint that refuses
-//! every attempt, and a batch that keeps going past one decline.
-//!
-//! The M6 review adds three checks of the `content_store` key (findings F1 and
-//! F6): one body under two knowledge points stores two rows, a duplicate is
-//! counted as a duplicate and never as a store, and a pass that reproduces a
-//! body a reviewer refused declines with the reviewer's reason.
-//!
-//! The verification round adds the prompt stamp of a collision (finding V3): a
-//! re-author that reproduces the body of a STALE row stamps the current prompt
-//! on that row, so the row leaves the stale set and the pass after it makes no
-//! model call.
+//! row that does not occupy a slot, an endpoint that refuses every attempt, and
+//! a batch that keeps going past one decline. `authoring_job_key.rs`,
+//! `authoring_job_served.rs` and `authoring_job_stamp.rs` hold the checks the
+//! M6 review added.
 //!
 //! Every expected value is a LITERAL: a literal rejection sentence, a literal
 //! digest, a literal row count, a literal status. Nothing is read back from the
 //! code under test.
 //!
-//! The endpoint is a fake OpenAI-compatible server in this file. No test reaches
-//! a real provider.
+//! The endpoint is a fake OpenAI-compatible server (`common::FakeModel`). No
+//! test reaches a real provider.
 
-#![allow(
-    clippy::unwrap_used,
-    clippy::expect_used,
-    clippy::panic,
-    clippy::todo,
-    clippy::unimplemented
-)]
+#![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
 
-use std::sync::{Arc, Mutex};
-use std::time::Duration;
+mod common;
 
-use cadus_core::curriculum::{AnswerKind, Exemplar};
-use cadus_core::instruction::ServedInstance;
-use cadus_model_client::{Client, ModelConfig};
-use cadus_store::content::{Admin, approve};
 use cadus_store::test_support::TestDb;
-use cadus_store::{DEFAULT_CLIENT_TIMEOUT_MS, Db};
-use cadus_worker::authoring::job::{
-    AuthoringJob, Outcome, author_one, bank_target, render_stale, run_batch, served_instances,
-    slots_taken, stale_rows, stale_slots,
-};
-use cadus_worker::authoring::prompt::{AuthoringSpec, KINDS, Kind, prompt_digest};
+use cadus_worker::authoring::job::{Outcome, bank_target, slots_taken};
+use cadus_worker::authoring::prompt::{AuthoringSpec, Kind};
 use serde_json::{Value, json};
-use sqlx::PgPool;
-use tokio::io::{AsyncReadExt, AsyncWriteExt};
-use tokio::net::TcpListener;
 
-// --------------------------------------------------------------------------- //
-// The literals of this file
-// --------------------------------------------------------------------------- //
+use common::{
+    FakeModel, LOW_EDGE, RETRY_HEADER, SQUARES_KEY as KP_KEY, STORED_DIGEST, assert_batch,
+    assert_one_row, author, author_expect, author_within_expect, batch, content_rows,
+    good_arguments, handle, ledger_shape, missing_low_edge, proof_spec, seed_content,
+    squares_spec as spec, the_one_decline, tool_reply,
+};
 
-/// The gate's edge-coverage sentence for the low end of `a`
-/// (`crates/core/src/template/gate.rs`, row "edge coverage").
-const LOW_EDGE: &str = "no worked sample uses the low end of a (1) — the edges are where an \
-expression stops being right";
-
-/// The first line of the retry block (1.0 `prompts.py:767-769`).
-const RETRY_HEADER: &str = "YOUR PREVIOUS ATTEMPT WAS REFUSED. The server's exact reason was:";
-
-/// The serving key of the knowledge point under test, `"<topic_id>/<kp_id>"`.
-const KP_KEY: &str = "perfect-squares/squares";
-
-/// The body the loop stores for [`good_arguments`], character for character.
+/// The body the loop stores for `good_arguments`, character for character.
 ///
 /// The three server-side fields lead it, the gate's `space_size` closes it, and
 /// the model's `constraints` and `distractors` are absent because both are empty
 /// and the document skips an empty list.
 const STORED_BODY: &str = r#"{"v":1,"topic_id":"perfect-squares","answer_kind":"numeric","statement":"Compute ${a}^{{2}}$.","params":{"a":{"kind":"int","low":1,"high":12}},"answer_expr":"a**2","solution_sketch":"${a} \\times {a}$ gives the answer.","hints":["What does squaring a number mean?"],"samples":[{"params":{"a":1},"expected":"1"},{"params":{"a":12},"expected":"144"}],"space_size":12}"#;
-
-/// The digest of [`STORED_BODY`] under [`KP_KEY`] and kind `template`.
-///
-/// The key of `content_store` is the knowledge point, the kind AND the body, so
-/// the material is `KP_KEY`, one NUL byte, `template`, one NUL byte, and the
-/// body. Computed outside this tree with
-///
-/// ```sh
-/// printf 'perfect-squares/squares\0template\0%s' '<STORED_BODY>' | sha256sum
-/// # fbed1683b615cbc029d86252b22400070c4ac4c30680d8bc71c0cfff23608f17
-/// ```
-///
-/// The value changes when the stored body changes, which is the point: C6 binds
-/// the approval to it. It changes with the knowledge point too, so two
-/// knowledge points that earn one body store two rows (M6 review finding F1).
-const STORED_DIGEST: &str = "sha256:fbed1683b615cbc0";
-
-// --------------------------------------------------------------------------- //
-// The fake OpenAI-compatible server
-// --------------------------------------------------------------------------- //
-
-/// A local endpoint that answers a fixed list of replies, in order. A call past
-/// the end of the list gets `500` with an empty body.
-struct FakeModel {
-    base_url: String,
-    calls: Arc<Mutex<Vec<Value>>>,
-}
-
-impl FakeModel {
-    async fn start(replies: Vec<(u16, String)>) -> FakeModel {
-        let listener = TcpListener::bind("127.0.0.1:0").await.unwrap();
-        let port = listener.local_addr().unwrap().port();
-        let calls = Arc::new(Mutex::new(Vec::new()));
-        let record = Arc::clone(&calls);
-
-        tokio::spawn(async move {
-            let mut index = 0_usize;
-            loop {
-                let Ok((mut socket, _)) = listener.accept().await else {
-                    return;
-                };
-                let mut raw: Vec<u8> = Vec::new();
-                let mut buffer = [0_u8; 4096];
-                let request = loop {
-                    let read = socket.read(&mut buffer).await.unwrap_or(0);
-                    if read == 0 {
-                        break String::from_utf8_lossy(&raw).to_string();
-                    }
-                    raw.extend_from_slice(&buffer[..read]);
-                    let text = String::from_utf8_lossy(&raw).to_string();
-                    if let Some(split) = text.find("\r\n\r\n") {
-                        let length: usize = text[..split]
-                            .to_lowercase()
-                            .split("\r\n")
-                            .find_map(|line| line.strip_prefix("content-length:"))
-                            .and_then(|value| value.trim().parse().ok())
-                            .unwrap_or(0);
-                        if text.len() >= split + 4 + length {
-                            break text;
-                        }
-                    }
-                };
-                let split = request.find("\r\n\r\n").unwrap_or(request.len());
-                let body: Value = serde_json::from_str(request.get(split + 4..).unwrap_or(""))
-                    .unwrap_or(Value::Null);
-                record.lock().unwrap().push(body);
-
-                let (status, payload) = replies
-                    .get(index)
-                    .cloned()
-                    .unwrap_or_else(|| (500, String::new()));
-                index += 1;
-                let reply = format!(
-                    "HTTP/1.1 {status} X\r\ncontent-type: application/json\r\ncontent-length: {}\r\nconnection: close\r\n\r\n{payload}",
-                    payload.len()
-                );
-                let _ = socket.write_all(reply.as_bytes()).await;
-                let _ = socket.flush().await;
-            }
-        });
-
-        FakeModel {
-            base_url: format!("http://127.0.0.1:{port}/v1"),
-            calls,
-        }
-    }
-
-    /// The request bodies the endpoint received, in order.
-    fn calls(&self) -> Vec<Value> {
-        self.calls.lock().unwrap().clone()
-    }
-
-    /// The user message of the call at this position.
-    fn user_message(&self, index: usize) -> String {
-        let calls = self.calls();
-        let call = calls
-            .get(index)
-            .unwrap_or_else(|| panic!("the endpoint saw no call {index}"));
-        call["messages"][1]["content"]
-            .as_str()
-            .expect("the user message is a string")
-            .to_owned()
-    }
-
-    /// An authoring job pointed at this endpoint, with the shipped bound.
-    fn job(&self) -> AuthoringJob {
-        AuthoringJob::new(self.client())
-    }
-
-    /// An authoring job with another attempt bound.
-    fn job_with_attempts(&self, attempts: u32) -> AuthoringJob {
-        AuthoringJob::with_attempts(self.client(), attempts)
-    }
-
-    fn client(&self) -> Client {
-        let cfg = ModelConfig {
-            base_url: self.base_url.clone(),
-            api_key: "test-key".to_owned(),
-            model: "qwen3.6".to_owned(),
-            output_tokens: 2_048,
-            reasoning_max_tokens: 600,
-            provider_order: Vec::new(),
-            timeout: Duration::from_secs(5),
-        };
-        Client::new(cfg).unwrap()
-    }
-}
-
-/// A reply that carries a complete `emit_template` call with these arguments.
-fn tool_reply(arguments: &Value) -> (u16, String) {
-    let payload = json!({
-        "id": "gen-1",
-        "choices": [{"finish_reason": "tool_calls", "message": {"tool_calls": [{"function": {
-            "name": "emit_template", "arguments": arguments.to_string()
-        }}]}}],
-        "usage": {"prompt_tokens": 900, "completion_tokens": 300}
-    });
-    (200, payload.to_string())
-}
-
-// --------------------------------------------------------------------------- //
-// The fixtures
-// --------------------------------------------------------------------------- //
-
-/// The tool arguments of a template the gate accepts.
-///
-/// It is the 1.0 perfect-squares template in the 2.0 document shape
-/// (`docs/reference/serving-1.0-spec.md` section 2.1), with the samples that
-/// cover both ends of `a`.
-fn good_arguments() -> Value {
-    json!({
-        "statement": "Compute ${a}^{{2}}$.",
-        "params": {"a": {"kind": "int", "low": 1, "high": 12}},
-        "constraints": [],
-        "answer_expr": "a**2",
-        "solution_sketch": "${a} \\times {a}$ gives the answer.",
-        "hints": ["What does squaring a number mean?"],
-        "distractors": [],
-        "samples": [
-            {"params": {"a": 1}, "expected": "1"},
-            {"params": {"a": 12}, "expected": "144"}
-        ]
-    })
-}
-
-/// The same template with the low-end sample missing. The gate refuses it with
-/// [`LOW_EDGE`].
-fn missing_low_edge() -> Value {
-    let mut arguments = good_arguments();
-    arguments["samples"] = json!([{"params": {"a": 12}, "expected": "144"}]);
-    arguments
-}
-
-/// The knowledge point every test authors for.
-fn spec() -> AuthoringSpec {
-    AuthoringSpec {
-        kp_id: "squares".to_owned(),
-        kp_name: "Squares of one-digit and two-digit numbers".to_owned(),
-        topic_id: "perfect-squares".to_owned(),
-        topic_name: "Perfect squares".to_owned(),
-        answer_kind: AnswerKind::Numeric,
-        difficulty_target: None,
-        constraints: None,
-        exemplars: vec![Exemplar {
-            problem: "Compute $7^2$.".to_owned(),
-            answer: "49".to_owned(),
-            solution_sketch: None,
-        }],
-    }
-}
 
 /// A second knowledge point, for the batch test.
 fn other_spec() -> AuthoringSpec {
@@ -279,61 +55,35 @@ fn other_spec() -> AuthoringSpec {
     }
 }
 
-// --------------------------------------------------------------------------- //
-// Database helpers
-// --------------------------------------------------------------------------- //
-
-/// Seed one `content_store` row of `kind = 'template'` with this status.
-async fn seed_row(pool: &PgPool, digest: &str, kp_id: &str, status: &str) {
-    sqlx::query(
-        "INSERT INTO content_store (digest, kp_id, kind, body, status)
-         VALUES ($1, $2, 'template', '{}'::jsonb, $3)",
-    )
-    .bind(digest)
-    .bind(kp_id)
-    .bind(status)
-    .execute(pool)
-    .await
-    .unwrap();
+/// Five refusals of the low edge, the shape of a doomed knowledge point.
+fn five_refusals() -> Vec<(u16, String)> {
+    (0..5).map(|_| tool_reply(&missing_low_edge())).collect()
 }
 
-/// Seed one `content_store` row a reviewer refused, with the reason.
-async fn seed_rejected(pool: &PgPool, digest: &str, kp_id: &str, kind: &str, reason: &str) {
-    sqlx::query(
-        "INSERT INTO content_store (digest, kp_id, kind, body, status, review_reason)
-         VALUES ($1, $2, $3, '{}'::jsonb, 'rejected', $4)",
-    )
-    .bind(digest)
-    .bind(kp_id)
-    .bind(kind)
-    .bind(reason)
-    .execute(pool)
-    .await
-    .unwrap();
-}
-
-/// Every `content_store` row of one knowledge point, as
-/// `(digest, status, authoring_attempts, body)`.
-async fn rows_of(pool: &PgPool, kp_id: &str) -> Vec<(String, String, i32, Value)> {
-    sqlx::query_as::<_, (String, String, i32, Value)>(
-        "SELECT digest, status, authoring_attempts, body FROM content_store
-          WHERE kp_id = $1 ORDER BY digest",
-    )
-    .bind(kp_id)
-    .fetch_all(pool)
-    .await
-    .unwrap()
+/// One refusal of the low edge, then the template the gate accepts, authored:
+/// the rescue on attempt 2, with its endpoint and its report.
+async fn rescued_on_attempt_two(db: &TestDb) -> (FakeModel, cadus_worker::AuthoringReport) {
+    let fake = FakeModel::start(vec![
+        tool_reply(&missing_low_edge()),
+        tool_reply(&good_arguments()),
+    ])
+    .await;
+    let report = author_expect(db, &fake, Kind::Template, &spec(), Outcome::Stored, 2).await;
+    (fake, report)
 }
 
 /// The `model_call_log` rows of `purpose = 'authoring'`, as
 /// `(count, non-NULL user ids)`.
-async fn ledger(pool: &PgPool) -> (i64, i64) {
-    sqlx::query_as::<_, (i64, i64)>(
-        "SELECT count(*), count(user_id) FROM model_call_log WHERE purpose = 'authoring'",
-    )
-    .fetch_one(pool)
-    .await
-    .unwrap()
+async fn ledger(db: &TestDb) -> (i64, i64) {
+    ledger_shape(&db.admin, "authoring").await
+}
+
+/// Seed `count` template rows of this status under the knowledge point.
+async fn seed_templates(db: &TestDb, status: &str, count: u32) {
+    for index in 0..count {
+        let digest = format!("sha256:{status}-{index}");
+        seed_content(&db.admin, &digest, KP_KEY, "template", status).await;
+    }
 }
 
 // --------------------------------------------------------------------------- //
@@ -349,19 +99,8 @@ async fn ledger(pool: &PgPool) -> (i64, i64) {
 #[tokio::test]
 async fn a_missing_low_edge_is_re_prompted_verbatim_and_rescued_on_attempt_two() {
     TestDb::with(|db| async move {
-        let fake = FakeModel::start(vec![
-            tool_reply(&missing_low_edge()),
-            tool_reply(&good_arguments()),
-        ])
-        .await;
-        let handle = Db::new(db.admin.clone(), DEFAULT_CLIENT_TIMEOUT_MS);
+        let (fake, report) = rescued_on_attempt_two(&db).await;
 
-        let report = author_one(&handle, &fake.job(), Kind::Template, &spec())
-            .await
-            .unwrap();
-
-        assert_eq!(report.outcome, Outcome::Stored);
-        assert_eq!(report.attempts, 2);
         assert_eq!(report.kp_id, KP_KEY);
         assert_eq!(report.digest.as_deref(), Some(STORED_DIGEST));
         assert!(report.decline.is_none());
@@ -380,14 +119,10 @@ async fn a_missing_low_edge_is_re_prompted_verbatim_and_rescued_on_attempt_two()
             second.contains(&format!("{RETRY_HEADER}\n    {LOW_EDGE}\n")),
             "attempt 2 must quote the rejection verbatim, it read:\n{second}"
         );
-        assert_eq!(fake.calls().len(), 2);
+        assert_eq!(fake.call_count(), 2);
 
         // One row, `pending`, with the attempt count on it (T3).
-        let rows = rows_of(&db.admin, KP_KEY).await;
-        assert_eq!(rows.len(), 1);
-        assert_eq!(rows[0].0, STORED_DIGEST);
-        assert_eq!(rows[0].1, "pending");
-        assert_eq!(rows[0].2, 2);
+        assert_one_row(&db.admin, KP_KEY, "template", STORED_DIGEST, "pending", 2).await;
     })
     .await;
 }
@@ -400,15 +135,11 @@ async fn a_missing_low_edge_is_re_prompted_verbatim_and_rescued_on_attempt_two()
 async fn the_stored_body_carries_the_server_fields_and_the_gate_space_size() {
     TestDb::with(|db| async move {
         let fake = FakeModel::start(vec![tool_reply(&good_arguments())]).await;
-        let handle = Db::new(db.admin.clone(), DEFAULT_CLIENT_TIMEOUT_MS);
 
-        author_one(&handle, &fake.job(), Kind::Template, &spec())
-            .await
-            .unwrap();
+        author(&db, &fake, Kind::Template, &spec()).await;
 
-        let rows = rows_of(&db.admin, KP_KEY).await;
-        assert_eq!(rows.len(), 1);
-        let body = &rows[0].3;
+        let row = assert_one_row(&db.admin, KP_KEY, "template", STORED_DIGEST, "pending", 1).await;
+        let body = &row.body;
         assert_eq!(
             body,
             &serde_json::from_str::<Value>(STORED_BODY).expect("the literal body reads")
@@ -419,7 +150,6 @@ async fn the_stored_body_carries_the_server_fields_and_the_gate_space_size() {
         assert_eq!(body["space_size"], json!(12));
         assert_eq!(body["statement"], json!("Compute ${a}^{{2}}$."));
         assert_eq!(body["answer_expr"], json!("a**2"));
-        assert_eq!(rows[0].2, 1);
     })
     .await;
 }
@@ -432,19 +162,10 @@ async fn the_stored_body_carries_the_server_fields_and_the_gate_space_size() {
 #[tokio::test]
 async fn every_authoring_call_writes_its_own_ledger_row() {
     TestDb::with(|db| async move {
-        let fake = FakeModel::start(vec![
-            tool_reply(&missing_low_edge()),
-            tool_reply(&good_arguments()),
-        ])
-        .await;
-        let handle = Db::new(db.admin.clone(), DEFAULT_CLIENT_TIMEOUT_MS);
-
-        let report = author_one(&handle, &fake.job(), Kind::Template, &spec())
-            .await
-            .unwrap();
+        let (_fake, report) = rescued_on_attempt_two(&db).await;
 
         assert_eq!(report.http_attempts.len(), 2);
-        assert_eq!(ledger(&db.admin).await, (2, 0));
+        assert_eq!(ledger(&db).await, (2, 0));
     })
     .await;
 }
@@ -458,31 +179,19 @@ async fn every_authoring_call_writes_its_own_ledger_row() {
 #[tokio::test]
 async fn five_refusals_write_no_row_and_one_decline_record() {
     TestDb::with(|db| async move {
-        let refusals: Vec<(u16, String)> =
-            (0..5).map(|_| tool_reply(&missing_low_edge())).collect();
-        let fake = FakeModel::start(refusals).await;
-        let handle = Db::new(db.admin.clone(), DEFAULT_CLIENT_TIMEOUT_MS);
+        let fake = FakeModel::start(five_refusals()).await;
 
-        let batch = run_batch(&handle, &fake.job(), Kind::Template, &[spec()])
-            .await
-            .unwrap();
+        let batch = batch(&db, &fake, Kind::Template, &[spec()]).await;
 
-        assert_eq!(batch.declined, 1);
-        assert_eq!(batch.stored, 0);
-        assert_eq!(batch.calls, 5);
-        assert_eq!(batch.declines.len(), 1);
-
-        let decline = &batch.declines[0];
-        assert_eq!(decline.kp_id, KP_KEY);
-        assert_eq!(decline.kind, Kind::Template);
-        assert_eq!(decline.attempts, 5);
+        assert_batch(&batch, [0, 0, 0, 1, 5]);
+        let decline = the_one_decline(&batch, KP_KEY, Kind::Template, 5);
         assert_eq!(decline.reasons.len(), 5);
         for reason in &decline.reasons {
             assert_eq!(reason, &format!("edge-coverage: {LOW_EDGE}"));
         }
 
-        assert_eq!(fake.calls().len(), 5);
-        assert!(rows_of(&db.admin, KP_KEY).await.is_empty());
+        assert_eq!(fake.call_count(), 5);
+        assert!(content_rows(&db.admin, KP_KEY).await.is_empty());
     })
     .await;
 }
@@ -496,24 +205,23 @@ async fn five_refusals_write_no_row_and_one_decline_record() {
 async fn an_undecidable_answer_kind_declines_with_no_call() {
     TestDb::with(|db| async move {
         let fake = FakeModel::start(vec![tool_reply(&good_arguments())]).await;
-        let handle = Db::new(db.admin.clone(), DEFAULT_CLIENT_TIMEOUT_MS);
-        let spec = AuthoringSpec {
-            answer_kind: AnswerKind::Proof,
-            ..spec()
-        };
 
-        let report = author_one(&handle, &fake.job(), Kind::Template, &spec)
-            .await
-            .unwrap();
+        let report = author_expect(
+            &db,
+            &fake,
+            Kind::Template,
+            &proof_spec(),
+            Outcome::Declined,
+            0,
+        )
+        .await;
 
-        assert_eq!(report.outcome, Outcome::Declined);
-        assert_eq!(report.attempts, 0);
         assert_eq!(
             report.decline.expect("a decline record").reasons,
             vec!["answer kind proof is not symbolically decidable".to_owned()]
         );
-        assert_eq!(fake.calls().len(), 0);
-        assert!(rows_of(&db.admin, KP_KEY).await.is_empty());
+        assert_eq!(fake.call_count(), 0);
+        assert!(content_rows(&db.admin, KP_KEY).await.is_empty());
     })
     .await;
 }
@@ -530,17 +238,10 @@ async fn an_undecidable_answer_kind_declines_with_no_call() {
 async fn an_undecidable_answer_kind_declines_with_no_call_for_every_gated_kind() {
     TestDb::with(|db| async move {
         let fake = FakeModel::start(vec![tool_reply(&good_arguments())]).await;
-        let handle = Db::new(db.admin.clone(), DEFAULT_CLIENT_TIMEOUT_MS);
-        let spec = AuthoringSpec {
-            answer_kind: AnswerKind::Proof,
-            ..spec()
-        };
 
         for kind in [Kind::Template, Kind::Diagnosis] {
-            let report = author_one(&handle, &fake.job(), kind, &spec).await.unwrap();
+            let report = author_expect(&db, &fake, kind, &proof_spec(), Outcome::Declined, 0).await;
 
-            assert_eq!(report.outcome, Outcome::Declined);
-            assert_eq!(report.attempts, 0);
             let decline = report.decline.expect("a decline record");
             assert_eq!(decline.kp_id, KP_KEY);
             assert_eq!(decline.kind, kind);
@@ -551,8 +252,8 @@ async fn an_undecidable_answer_kind_declines_with_no_call_for_every_gated_kind()
             );
         }
 
-        assert_eq!(fake.calls().len(), 0);
-        assert!(rows_of(&db.admin, KP_KEY).await.is_empty());
+        assert_eq!(fake.call_count(), 0);
+        assert!(content_rows(&db.admin, KP_KEY).await.is_empty());
     })
     .await;
 }
@@ -569,14 +270,9 @@ async fn an_endpoint_that_refuses_every_attempt_declines() {
             .map(|_| (400, json!({"error": "no such model"}).to_string()))
             .collect();
         let fake = FakeModel::start(refusals).await;
-        let handle = Db::new(db.admin.clone(), DEFAULT_CLIENT_TIMEOUT_MS);
 
-        let report = author_one(&handle, &fake.job(), Kind::Template, &spec())
-            .await
-            .unwrap();
+        let report = author_expect(&db, &fake, Kind::Template, &spec(), Outcome::Declined, 5).await;
 
-        assert_eq!(report.outcome, Outcome::Declined);
-        assert_eq!(report.attempts, 5);
         let decline = report.decline.expect("a decline record");
         assert_eq!(decline.reasons.len(), 5);
         assert_eq!(
@@ -591,8 +287,8 @@ async fn an_endpoint_that_refuses_every_attempt_declines() {
                 "a transport failure is not authoring feedback, call {index} read:\n{message}"
             );
         }
-        assert!(rows_of(&db.admin, KP_KEY).await.is_empty());
-        assert_eq!(ledger(&db.admin).await, (5, 0));
+        assert!(content_rows(&db.admin, KP_KEY).await.is_empty());
+        assert_eq!(ledger(&db).await, (5, 0));
     })
     .await;
 }
@@ -601,28 +297,19 @@ async fn an_endpoint_that_refuses_every_attempt_declines() {
 #[tokio::test]
 async fn a_decline_does_not_stop_the_batch() {
     TestDb::with(|db| async move {
-        let mut replies: Vec<(u16, String)> =
-            (0..5).map(|_| tool_reply(&missing_low_edge())).collect();
+        let mut replies = five_refusals();
         replies.push(tool_reply(&good_arguments()));
         let fake = FakeModel::start(replies).await;
-        let handle = Db::new(db.admin.clone(), DEFAULT_CLIENT_TIMEOUT_MS);
 
-        let batch = run_batch(
-            &handle,
-            &fake.job(),
-            Kind::Template,
-            &[spec(), other_spec()],
-        )
-        .await
-        .unwrap();
+        let batch = batch(&db, &fake, Kind::Template, &[spec(), other_spec()]).await;
 
-        assert_eq!(batch.declined, 1);
-        assert_eq!(batch.stored, 1);
-        assert_eq!(batch.calls, 6);
-        assert_eq!(batch.declines.len(), 1);
-        assert_eq!(batch.declines[0].kp_id, KP_KEY);
-        assert!(rows_of(&db.admin, KP_KEY).await.is_empty());
-        assert_eq!(rows_of(&db.admin, "perfect-cubes/cubes").await.len(), 1);
+        assert_batch(&batch, [1, 0, 0, 1, 6]);
+        the_one_decline(&batch, KP_KEY, Kind::Template, 5);
+        assert!(content_rows(&db.admin, KP_KEY).await.is_empty());
+        assert_eq!(
+            content_rows(&db.admin, "perfect-cubes/cubes").await.len(),
+            1
+        );
     })
     .await;
 }
@@ -640,30 +327,17 @@ async fn a_decline_does_not_stop_the_batch() {
 async fn an_approved_knowledge_point_costs_zero_calls() {
     TestDb::with(|db| async move {
         let fake = FakeModel::start(vec![tool_reply(&good_arguments())]).await;
-        let handle = Db::new(db.admin.clone(), DEFAULT_CLIENT_TIMEOUT_MS);
-        for index in 0..3 {
-            seed_row(
-                &db.admin,
-                &format!("sha256:approved-{index}"),
-                KP_KEY,
-                "approved",
-            )
-            .await;
-        }
+        seed_templates(&db, "approved", 3).await;
 
-        let report = author_one(&handle, &fake.job(), Kind::Template, &spec())
-            .await
-            .unwrap();
+        let report = author_expect(&db, &fake, Kind::Template, &spec(), Outcome::Skipped, 0).await;
 
-        assert_eq!(report.outcome, Outcome::Skipped);
-        assert_eq!(report.attempts, 0);
         assert!(report.digest.is_none());
-        assert_eq!(fake.calls().len(), 0);
-        assert_eq!(ledger(&db.admin).await, (0, 0));
+        assert_eq!(fake.call_count(), 0);
+        assert_eq!(ledger(&db).await, (0, 0));
         // The seeded rows are untouched: three rows, all `approved`.
-        let rows = rows_of(&db.admin, KP_KEY).await;
+        let rows = content_rows(&db.admin, KP_KEY).await;
         assert_eq!(rows.len(), 3);
-        assert!(rows.iter().all(|row| row.1 == "approved"));
+        assert!(rows.iter().all(|row| row.status == "approved"));
     })
     .await;
 }
@@ -676,23 +350,20 @@ async fn an_approved_knowledge_point_costs_zero_calls() {
 async fn a_pending_slot_is_occupied_and_costs_zero_calls() {
     TestDb::with(|db| async move {
         let fake = FakeModel::start(vec![tool_reply(&good_arguments())]).await;
-        let handle = Db::new(db.admin.clone(), DEFAULT_CLIENT_TIMEOUT_MS);
-        seed_row(&db.admin, "sha256:approved-0", KP_KEY, "approved").await;
-        seed_row(&db.admin, "sha256:pending-0", KP_KEY, "pending").await;
-        seed_row(&db.admin, "sha256:pending-1", KP_KEY, "pending").await;
+        seed_templates(&db, "approved", 1).await;
+        seed_templates(&db, "pending", 2).await;
 
         assert_eq!(
-            slots_taken(&handle, KP_KEY, Kind::Template).await.unwrap(),
+            slots_taken(&handle(&db), KP_KEY, Kind::Template)
+                .await
+                .unwrap(),
             3
         );
         assert_eq!(bank_target(Kind::Template), 3);
 
-        let report = author_one(&handle, &fake.job(), Kind::Template, &spec())
-            .await
-            .unwrap();
+        author_expect(&db, &fake, Kind::Template, &spec(), Outcome::Skipped, 0).await;
 
-        assert_eq!(report.outcome, Outcome::Skipped);
-        assert_eq!(fake.calls().len(), 0);
+        assert_eq!(fake.call_count(), 0);
     })
     .await;
 }
@@ -703,29 +374,19 @@ async fn a_pending_slot_is_occupied_and_costs_zero_calls() {
 async fn a_rejected_row_does_not_occupy_a_slot() {
     TestDb::with(|db| async move {
         let fake = FakeModel::start(vec![tool_reply(&good_arguments())]).await;
-        let handle = Db::new(db.admin.clone(), DEFAULT_CLIENT_TIMEOUT_MS);
-        for index in 0..3 {
-            seed_row(
-                &db.admin,
-                &format!("sha256:rejected-{index}"),
-                KP_KEY,
-                "rejected",
-            )
-            .await;
-        }
+        seed_templates(&db, "rejected", 3).await;
 
         assert_eq!(
-            slots_taken(&handle, KP_KEY, Kind::Template).await.unwrap(),
+            slots_taken(&handle(&db), KP_KEY, Kind::Template)
+                .await
+                .unwrap(),
             0
         );
 
-        let report = author_one(&handle, &fake.job(), Kind::Template, &spec())
-            .await
-            .unwrap();
+        author_expect(&db, &fake, Kind::Template, &spec(), Outcome::Stored, 1).await;
 
-        assert_eq!(report.outcome, Outcome::Stored);
-        assert_eq!(fake.calls().len(), 1);
-        assert_eq!(rows_of(&db.admin, KP_KEY).await.len(), 4);
+        assert_eq!(fake.call_count(), 1);
+        assert_eq!(content_rows(&db.admin, KP_KEY).await.len(), 4);
     })
     .await;
 }
@@ -739,233 +400,21 @@ async fn a_rejected_row_does_not_occupy_a_slot() {
 async fn a_rejected_body_is_not_resurrected_as_pending() {
     TestDb::with(|db| async move {
         let fake = FakeModel::start(vec![tool_reply(&good_arguments())]).await;
-        let handle = Db::new(db.admin.clone(), DEFAULT_CLIENT_TIMEOUT_MS);
-        seed_row(&db.admin, STORED_DIGEST, KP_KEY, "rejected").await;
+        seed_content(&db.admin, STORED_DIGEST, KP_KEY, "template", "rejected").await;
 
-        let report = author_one(&handle, &fake.job(), Kind::Template, &spec())
-            .await
-            .unwrap();
+        let report = author_expect(
+            &db,
+            &fake,
+            Kind::Template,
+            &spec(),
+            Outcome::Rejected { same_body: true },
+            1,
+        )
+        .await;
 
-        assert_eq!(report.outcome, Outcome::Rejected { same_body: true });
         assert_eq!(report.digest.as_deref(), Some(STORED_DIGEST));
-        let rows = rows_of(&db.admin, KP_KEY).await;
-        assert_eq!(rows.len(), 1);
-        assert_eq!(rows[0].1, "rejected");
-        assert_eq!(rows[0].3, json!({}));
-    })
-    .await;
-}
-
-// --------------------------------------------------------------------------- //
-// M6 review: the key of one document (F1) and the refused body (F6)
-// --------------------------------------------------------------------------- //
-
-/// F1: two knowledge points that earn ONE teach page store TWO rows.
-///
-/// A teach page carries no knowledge-point field: the serve reader of L4 refuses
-/// an unknown field, so the stored body of `perfect-squares/squares` and the
-/// stored body of `perfect-cubes/cubes` are the same bytes. The key of the table
-/// covers the knowledge point, so the two documents are two rows, both `pending`
-/// and both counted.
-///
-/// A key of the body alone gave both rows one digest: the second insert vanished
-/// under `ON CONFLICT (digest) DO NOTHING`, the batch counted two stores, and
-/// the second knowledge point held no document at all.
-#[tokio::test]
-async fn one_teach_body_under_two_knowledge_points_stores_two_rows() {
-    TestDb::with(|db| async move {
-        let fake = FakeModel::start(vec![
-            named_reply("emit_teach", &teach_arguments()),
-            named_reply("emit_teach", &teach_arguments()),
-        ])
-        .await;
-        let handle = Db::new(db.admin.clone(), DEFAULT_CLIENT_TIMEOUT_MS);
-
-        let batch = run_batch(&handle, &fake.job(), Kind::Teach, &[spec(), other_spec()])
-            .await
-            .unwrap();
-
-        assert_eq!(batch.stored, 2);
-        assert_eq!(batch.duplicate, 0);
-        assert_eq!(batch.declined, 0);
-        assert_eq!(batch.calls, 2);
-
-        // One row per knowledge point, with its own digest.
-        let squares = rows_of_kind(&db.admin, KP_KEY, "teach").await;
-        assert_eq!(squares.len(), 1);
-        assert_eq!(squares[0].0, STORED_TEACH_DIGEST);
-        assert_eq!(squares[0].1, "pending");
-
-        let cubes = rows_of_kind(&db.admin, "perfect-cubes/cubes", "teach").await;
-        assert_eq!(cubes.len(), 1);
-        assert_eq!(cubes[0].0, OTHER_TEACH_DIGEST);
-        assert_eq!(cubes[0].1, "pending");
-
-        // The two rows hold the same body and two different keys.
-        assert_eq!(squares[0].3, cubes[0].3);
-        assert_ne!(squares[0].0, cubes[0].0);
-
-        // The second knowledge point holds its slot now, so the next pass makes
-        // no call for it.
-        assert_eq!(
-            slots_taken(&handle, "perfect-cubes/cubes", Kind::Teach)
-                .await
-                .unwrap(),
-            1
-        );
-    })
-    .await;
-}
-
-/// F1: a document the table already holds is a DUPLICATE, never a store.
-///
-/// The bank target of `template` is 3, so a knowledge point with one `pending`
-/// row is authored again. The model answers the same arguments, the body is the
-/// same, and the digest is the same: the insert writes nothing. The operator
-/// reads one store and one duplicate, and the table holds one row.
-#[tokio::test]
-async fn a_repeated_body_is_counted_as_a_duplicate_and_never_as_a_store() {
-    TestDb::with(|db| async move {
-        let fake = FakeModel::start(vec![
-            tool_reply(&good_arguments()),
-            tool_reply(&good_arguments()),
-        ])
-        .await;
-        let handle = Db::new(db.admin.clone(), DEFAULT_CLIENT_TIMEOUT_MS);
-
-        let batch = run_batch(&handle, &fake.job(), Kind::Template, &[spec(), spec()])
-            .await
-            .unwrap();
-
-        assert_eq!(batch.stored, 1);
-        assert_eq!(batch.duplicate, 1);
-        assert_eq!(batch.declined, 0);
-        assert_eq!(batch.skipped, 0);
-        assert_eq!(batch.calls, 2);
-        assert!(batch.declines.is_empty());
-
-        let rows = rows_of(&db.admin, KP_KEY).await;
-        assert_eq!(rows.len(), 1);
-        assert_eq!(rows[0].0, STORED_DIGEST);
-        assert_eq!(rows[0].1, "pending");
-        // The row keeps the accounting of the pass that WROTE it.
-        assert_eq!(rows[0].2, 1);
-    })
-    .await;
-}
-
-/// F6: a pass that reproduces a refused body declines, with the reviewer's own
-/// reason in the decline record (C6).
-///
-/// A `rejected` row occupies no slot, so the knowledge point is authored again.
-/// The model answers the body the reviewer refused, the digest is the refused
-/// digest, and the insert writes nothing. The pass therefore stores nothing, and
-/// the batch counts a decline and not a store.
-#[tokio::test]
-async fn a_re_author_of_a_refused_body_declines_with_the_reviewer_reason() {
-    TestDb::with(|db| async move {
-        let fake = FakeModel::start(vec![tool_reply(&good_arguments())]).await;
-        let handle = Db::new(db.admin.clone(), DEFAULT_CLIENT_TIMEOUT_MS);
-        seed_rejected(
-            &db.admin,
-            STORED_DIGEST,
-            KP_KEY,
-            "template",
-            "the statement asks for two answers",
-        )
-        .await;
-
-        assert_eq!(
-            slots_taken(&handle, KP_KEY, Kind::Template).await.unwrap(),
-            0,
-            "a rejected row occupies no slot, so the pass runs"
-        );
-
-        let batch = run_batch(&handle, &fake.job(), Kind::Template, &[spec()])
-            .await
-            .unwrap();
-
-        assert_eq!(batch.stored, 0);
-        assert_eq!(batch.duplicate, 0);
-        assert_eq!(batch.declined, 1);
-        assert_eq!(batch.calls, 1);
-        assert_eq!(batch.declines.len(), 1);
-
-        let decline = &batch.declines[0];
-        assert_eq!(decline.kp_id, KP_KEY);
-        assert_eq!(decline.kind, Kind::Template);
-        assert_eq!(decline.attempts, 1);
-        assert_eq!(
-            decline.reasons,
-            vec![
-                "a reviewer refused this exact body already: the statement asks for two answers"
-                    .to_owned()
-            ]
-        );
-
-        // The refused row is untouched: one row, still `rejected`, still with
-        // the reviewer's reason.
-        let rows = sqlx::query_as::<_, (String, String, Option<String>)>(
-            "SELECT digest, status, review_reason FROM content_store WHERE kp_id = $1",
-        )
-        .bind(KP_KEY)
-        .fetch_all(&db.admin)
-        .await
-        .unwrap();
-        assert_eq!(rows.len(), 1);
-        assert_eq!(rows[0].0, STORED_DIGEST);
-        assert_eq!(rows[0].1, "rejected");
-        assert_eq!(
-            rows[0].2.as_deref(),
-            Some("the statement asks for two answers")
-        );
-    })
-    .await;
-}
-
-/// F6: the same pass through `author_one`, with the report of one knowledge
-/// point.
-///
-/// The outcome names the reproduced body, the report carries the refused digest,
-/// and the decline record is the one the batch collects.
-#[tokio::test]
-async fn a_refused_teach_page_reports_the_rejection_and_stores_nothing() {
-    TestDb::with(|db| async move {
-        let fake = FakeModel::start(vec![named_reply("emit_teach", &teach_arguments())]).await;
-        let handle = Db::new(db.admin.clone(), DEFAULT_CLIENT_TIMEOUT_MS);
-        seed_rejected(
-            &db.admin,
-            STORED_TEACH_DIGEST,
-            KP_KEY,
-            "teach",
-            "the worked example skips the last step",
-        )
-        .await;
-
-        let report = author_one(&handle, &fake.job(), Kind::Teach, &spec())
-            .await
-            .unwrap();
-
-        assert_eq!(report.outcome, Outcome::Rejected { same_body: true });
-        assert_eq!(report.attempts, 1);
-        assert_eq!(report.digest.as_deref(), Some(STORED_TEACH_DIGEST));
-        assert_eq!(report.cost_usd, None);
-        let decline = report
-            .decline
-            .expect("a rejection carries a decline record");
-        assert_eq!(decline.kp_id, KP_KEY);
-        assert_eq!(
-            decline.reasons,
-            vec![
-                "a reviewer refused this exact body already: the worked example skips the last step"
-                    .to_owned()
-            ]
-        );
-
-        // Nothing new reached the table, and the verdict stands.
-        let rows = rows_of_kind(&db.admin, KP_KEY, "teach").await;
-        assert_eq!(rows.len(), 1);
-        assert_eq!(rows[0].1, "rejected");
+        let row = assert_one_row(&db.admin, KP_KEY, "template", STORED_DIGEST, "rejected", 1).await;
+        assert_eq!(row.body, json!({}));
     })
     .await;
 }
@@ -979,24 +428,19 @@ async fn a_refused_teach_page_reports_the_rejection_and_stores_nothing() {
 async fn a_full_bank_makes_no_call_for_every_kind() {
     TestDb::with(|db| async move {
         let fake = FakeModel::start(vec![tool_reply(&good_arguments())]).await;
-        let handle = Db::new(db.admin.clone(), DEFAULT_CLIENT_TIMEOUT_MS);
         for (digest, kind) in [
             ("sha256:aa11", Kind::Teach),
             ("sha256:bb22", Kind::HintLadder),
             ("sha256:cc33", Kind::Diagnosis),
         ] {
-            seed_kind_row(&db.admin, digest, KP_KEY, kind.as_str(), "approved").await;
+            seed_content(&db.admin, digest, KP_KEY, kind.as_str(), "approved").await;
         }
 
         for kind in [Kind::Teach, Kind::HintLadder, Kind::Diagnosis] {
-            let report = author_one(&handle, &fake.job(), kind, &spec())
-                .await
-                .unwrap();
-            assert_eq!(report.outcome, Outcome::Skipped);
-            assert_eq!(report.attempts, 0);
+            author_expect(&db, &fake, kind, &spec(), Outcome::Skipped, 0).await;
         }
 
-        assert_eq!(fake.calls().len(), 0);
+        assert_eq!(fake.call_count(), 0);
     })
     .await;
 }
@@ -1006,922 +450,10 @@ async fn a_full_bank_makes_no_call_for_every_kind() {
 async fn an_attempt_bound_of_zero_makes_no_call() {
     TestDb::with(|db| async move {
         let fake = FakeModel::start(vec![tool_reply(&good_arguments())]).await;
-        let handle = Db::new(db.admin.clone(), DEFAULT_CLIENT_TIMEOUT_MS);
 
-        let report = author_one(&handle, &fake.job_with_attempts(0), Kind::Template, &spec())
-            .await
-            .unwrap();
+        author_within_expect(&db, &fake, 0, Kind::Template, &spec(), Outcome::Declined, 0).await;
 
-        assert_eq!(report.outcome, Outcome::Declined);
-        assert_eq!(report.attempts, 0);
-        assert_eq!(fake.calls().len(), 0);
-    })
-    .await;
-}
-
-// --------------------------------------------------------------------------- //
-// Unit R6: the teach page (L4) and the hint ladder (L5) reach the table
-// --------------------------------------------------------------------------- //
-
-/// The tool arguments of a teach page the gate accepts.
-fn teach_arguments() -> Value {
-    json!({
-        "concept": "Squaring a number multiplies it by itself.",
-        "worked_example": {
-            "problem": "Compute $6^2$.",
-            "steps": ["Write $6^2$ as $6 \\times 6$.", "Multiply: $6 \\times 6 = 36$."]
-        }
-    })
-}
-
-/// The tool arguments of a hint ladder the gate accepts. No rung names 49.
-fn ladder_arguments() -> Value {
-    json!({
-        "hints": [
-            "What does the small 2 above the number ask you to do?",
-            "A square is the number multiplied by itself.",
-            "Write the base twice with a multiplication sign between them, then multiply."
-        ]
-    })
-}
-
-/// The same ladder with the last rung stating the answer of the exemplar.
-fn ladder_that_names_the_answer() -> Value {
-    json!({
-        "hints": [
-            "What does the small 2 above the number ask you to do?",
-            "A square is the number multiplied by itself, so $7^2$ is 49."
-        ]
-    })
-}
-
-/// A reply that calls a NAMED tool with these arguments.
-fn named_reply(tool: &str, arguments: &Value) -> (u16, String) {
-    let payload = json!({
-        "id": "gen-1",
-        "choices": [{"finish_reason": "tool_calls", "message": {"tool_calls": [{"function": {
-            "name": tool, "arguments": arguments.to_string()
-        }}]}}],
-        "usage": {"prompt_tokens": 900, "completion_tokens": 300}
-    });
-    (200, payload.to_string())
-}
-
-/// Seed one `content_store` row of any kind.
-async fn seed_kind_row(pool: &PgPool, digest: &str, kp_id: &str, kind: &str, status: &str) {
-    sqlx::query(
-        "INSERT INTO content_store (digest, kp_id, kind, body, status)
-         VALUES ($1, $2, $3, '{}'::jsonb, $4)",
-    )
-    .bind(digest)
-    .bind(kp_id)
-    .bind(kind)
-    .bind(status)
-    .execute(pool)
-    .await
-    .unwrap();
-}
-
-/// Every `content_store` row of one knowledge point and kind, as
-/// `(digest, status, authoring_attempts, body)`.
-async fn rows_of_kind(pool: &PgPool, kp_id: &str, kind: &str) -> Vec<(String, String, i32, Value)> {
-    sqlx::query_as::<_, (String, String, i32, Value)>(
-        "SELECT digest, status, authoring_attempts, body FROM content_store
-          WHERE kp_id = $1 AND kind = $2 ORDER BY digest",
-    )
-    .bind(kp_id)
-    .bind(kind)
-    .fetch_all(pool)
-    .await
-    .unwrap()
-}
-
-/// The body the loop stores for [`teach_arguments`], character for character.
-///
-/// The stored text is the GATED document, so the field order is the document's
-/// and no spare field survives. It carries no knowledge-point field at all,
-/// which is why the digest below covers the knowledge point and the kind beside
-/// the body (M6 review finding F1). Computed outside this tree with
-///
-/// ```sh
-/// printf 'perfect-squares/squares\0teach\0%s' '<STORED_TEACH_BODY>' | sha256sum
-/// # fc031ed7deaa7d60283410d81fe87f114375d02356f9ba5fe315fb9af1a362c2
-/// ```
-const STORED_TEACH_BODY: &str = r#"{"concept":"Squaring a number multiplies it by itself.","worked_example":{"problem":"Compute $6^2$.","steps":["Write $6^2$ as $6 \\times 6$.","Multiply: $6 \\times 6 = 36$."]}}"#;
-
-/// The digest of [`STORED_TEACH_BODY`] under [`KP_KEY`] and kind `teach`.
-const STORED_TEACH_DIGEST: &str = "sha256:fc031ed7deaa7d60";
-
-/// The digest of [`STORED_TEACH_BODY`] under the SECOND knowledge point,
-/// `perfect-cubes/cubes`, and kind `teach`.
-///
-/// ```sh
-/// printf 'perfect-cubes/cubes\0teach\0%s' '<STORED_TEACH_BODY>' | sha256sum
-/// # 642bb7b9c96c3add8a9d5536215f271fd914f47ecf0d5c18fdd4822a1841d5a0
-/// ```
-const OTHER_TEACH_DIGEST: &str = "sha256:642bb7b9c96c3add";
-
-/// The body the loop stores for [`ladder_arguments`], character for character.
-///
-/// ```sh
-/// printf 'perfect-squares/squares\0hint_ladder\0%s' '<STORED_LADDER_BODY>' | sha256sum
-/// # 5c235ad773e2b639164134d43addb74700535dc11aa9973f494ff79b78853e5b
-/// ```
-const STORED_LADDER_BODY: &str = r#"{"hints":["What does the small 2 above the number ask you to do?","A square is the number multiplied by itself.","Write the base twice with a multiplication sign between them, then multiply."]}"#;
-
-/// The digest of [`STORED_LADDER_BODY`] under [`KP_KEY`] and kind
-/// `hint_ladder`.
-const STORED_LADDER_DIGEST: &str = "sha256:5c235ad773e2b639";
-
-/// The gate's give-away sentence for the last rung of
-/// [`ladder_that_names_the_answer`] (`crates/core/src/instruction.rs`).
-const NAMES_THE_ANSWER: &str = "rung 1 reads 'A square is the number multiplied by itself, so \
-$7^2$ is 49.', which names the answer '49' this knowledge point serves — a hint is a question, \
-never the final step (Hard Rule 3)";
-
-/// A gated teach page reaches `content_store` as one `pending` row (L4, C6).
-#[tokio::test]
-async fn a_teach_page_is_gated_and_stored_pending() {
-    TestDb::with(|db| async move {
-        let fake = FakeModel::start(vec![named_reply("emit_teach", &teach_arguments())]).await;
-        let handle = Db::new(db.admin.clone(), DEFAULT_CLIENT_TIMEOUT_MS);
-
-        let report = author_one(&handle, &fake.job(), Kind::Teach, &spec())
-            .await
-            .unwrap();
-
-        assert_eq!(report.outcome, Outcome::Stored);
-        assert_eq!(report.attempts, 1);
-        assert_eq!(report.digest.as_deref(), Some(STORED_TEACH_DIGEST));
-
-        let rows = rows_of_kind(&db.admin, KP_KEY, "teach").await;
-        assert_eq!(rows.len(), 1);
-        assert_eq!(rows[0].0, STORED_TEACH_DIGEST);
-        assert_eq!(rows[0].1, "pending");
-        assert_eq!(rows[0].2, 1);
-        assert_eq!(
-            rows[0].3,
-            serde_json::from_str::<Value>(STORED_TEACH_BODY).unwrap()
-        );
-
-        // The call is the teach call: the forced tool is the teach tool.
-        assert_eq!(fake.calls().len(), 1);
-        assert_eq!(
-            fake.calls()[0]["tool_choice"]["function"]["name"],
-            json!("emit_teach")
-        );
-    })
-    .await;
-}
-
-/// The tool arguments of a teach page with no `worked_example.steps`.
-///
-/// The concept and the worked problem are both there, so only the missing
-/// solution earns the refusal.
-fn teach_without_steps() -> Value {
-    json!({
-        "concept": "Squaring a number multiplies it by itself.",
-        "worked_example": {"problem": "Compute $6^2$."}
-    })
-}
-
-/// The gate's sentence for [`teach_without_steps`]
-/// (`crates/core/src/instruction.rs`).
-const NO_STEPS: &str = "a teach page needs 'worked_example.steps': the complete solution, one \
-step per entry, ending with the final answer — a concept with no worked solution teaches nothing";
-
-/// ACCEPTANCE, at the loop. A teach body with no `worked_example.steps` is
-/// refused, the LITERAL sentence reaches attempt 2, and the complete page is
-/// stored (L4, spec section 7 row R6).
-///
-/// The gate test in `crates/core/tests/instruction_gate.rs` proves the rule. This
-/// test proves the LOOP runs that gate for `teach`: a loop that stored the tool
-/// arguments unread would store this page on attempt 1, with one call and a body
-/// no route can serve.
-#[tokio::test]
-async fn a_teach_page_with_no_steps_is_re_prompted_and_rescued() {
-    TestDb::with(|db| async move {
-        let fake = FakeModel::start(vec![
-            named_reply("emit_teach", &teach_without_steps()),
-            named_reply("emit_teach", &teach_arguments()),
-        ])
-        .await;
-        let handle = Db::new(db.admin.clone(), DEFAULT_CLIENT_TIMEOUT_MS);
-
-        let report = author_one(&handle, &fake.job(), Kind::Teach, &spec())
-            .await
-            .unwrap();
-
-        assert_eq!(report.outcome, Outcome::Stored);
-        assert_eq!(report.attempts, 2);
-        assert_eq!(report.digest.as_deref(), Some(STORED_TEACH_DIGEST));
-
-        // The retry block carries the gate's own words, indented under the
-        // header.
-        let second = fake.user_message(1);
-        assert!(
-            second.contains(&format!("{RETRY_HEADER}\n    {NO_STEPS}\n")),
-            "the retry block did not carry the literal sentence: {second}"
-        );
-
-        // Attempt 1 stored nothing: the table holds the rescued page alone.
-        let rows = rows_of_kind(&db.admin, KP_KEY, "teach").await;
-        assert_eq!(rows.len(), 1);
-        assert_eq!(rows[0].0, STORED_TEACH_DIGEST);
-        assert_eq!(rows[0].1, "pending");
-        assert_eq!(rows[0].2, 2);
-        assert_eq!(
-            rows[0].3,
-            serde_json::from_str::<Value>(STORED_TEACH_BODY).unwrap()
-        );
-    })
-    .await;
-}
-
-/// A ladder whose last rung names the answer is refused, the LITERAL sentence
-/// reaches attempt 2, and the clean ladder is stored (L5, Hard Rule 3).
-#[tokio::test]
-async fn a_ladder_that_names_the_answer_is_re_prompted_and_rescued() {
-    TestDb::with(|db| async move {
-        let fake = FakeModel::start(vec![
-            named_reply("emit_hint_ladder", &ladder_that_names_the_answer()),
-            named_reply("emit_hint_ladder", &ladder_arguments()),
-        ])
-        .await;
-        let handle = Db::new(db.admin.clone(), DEFAULT_CLIENT_TIMEOUT_MS);
-
-        let report = author_one(&handle, &fake.job(), Kind::HintLadder, &spec())
-            .await
-            .unwrap();
-
-        assert_eq!(report.outcome, Outcome::Stored);
-        assert_eq!(report.attempts, 2);
-        assert_eq!(report.digest.as_deref(), Some(STORED_LADDER_DIGEST));
-
-        // The retry block carries the gate's own words, indented under the
-        // header.
-        let second = fake.user_message(1);
-        assert!(
-            second.contains(&format!("{RETRY_HEADER}\n    {NAMES_THE_ANSWER}\n")),
-            "the retry block did not carry the literal sentence: {second}"
-        );
-
-        let rows = rows_of_kind(&db.admin, KP_KEY, "hint_ladder").await;
-        assert_eq!(rows.len(), 1);
-        assert_eq!(rows[0].0, STORED_LADDER_DIGEST);
-        assert_eq!(rows[0].1, "pending");
-        assert_eq!(rows[0].2, 2);
-        assert_eq!(
-            rows[0].3,
-            serde_json::from_str::<Value>(STORED_LADDER_BODY).unwrap()
-        );
-    })
-    .await;
-}
-
-/// One approved teach page fills the bank of that kind, so the next pass makes
-/// ZERO calls: `teach` and `hint_ladder` keep one document per knowledge point.
-#[tokio::test]
-async fn an_approved_teach_page_fills_the_bank_of_one() {
-    TestDb::with(|db| async move {
-        let fake = FakeModel::start(vec![named_reply("emit_teach", &teach_arguments())]).await;
-        let handle = Db::new(db.admin.clone(), DEFAULT_CLIENT_TIMEOUT_MS);
-        seed_kind_row(&db.admin, "digest-teach", KP_KEY, "teach", "approved").await;
-
-        assert_eq!(bank_target(Kind::Teach), 1);
-        assert_eq!(slots_taken(&handle, KP_KEY, Kind::Teach).await.unwrap(), 1);
-
-        let report = author_one(&handle, &fake.job(), Kind::Teach, &spec())
-            .await
-            .unwrap();
-
-        assert_eq!(report.outcome, Outcome::Skipped);
-        assert_eq!(report.attempts, 0);
-        assert_eq!(fake.calls().len(), 0);
-        assert_eq!(rows_of_kind(&db.admin, KP_KEY, "teach").await.len(), 1);
-    })
-    .await;
-}
-
-/// A knowledge point whose answer kind no checker decides still gets a teach
-/// page: only the TEMPLATE gate reads the answer kind.
-#[tokio::test]
-async fn an_undecidable_answer_kind_still_gets_a_teach_page() {
-    TestDb::with(|db| async move {
-        let fake = FakeModel::start(vec![named_reply("emit_teach", &teach_arguments())]).await;
-        let handle = Db::new(db.admin.clone(), DEFAULT_CLIENT_TIMEOUT_MS);
-        let mut proof = spec();
-        proof.answer_kind = AnswerKind::Proof;
-
-        let template = author_one(&handle, &fake.job(), Kind::Template, &proof)
-            .await
-            .unwrap();
-        assert_eq!(template.outcome, Outcome::Declined);
-        assert_eq!(template.attempts, 0);
-
-        let teach = author_one(&handle, &fake.job(), Kind::Teach, &proof)
-            .await
-            .unwrap();
-        assert_eq!(teach.outcome, Outcome::Stored);
-        assert_eq!(teach.attempts, 1);
-        assert_eq!(fake.calls().len(), 1);
-    })
-    .await;
-}
-
-// --------------------------------------------------------------------------- //
-// M6 review, findings F2 and F15: the ladder is judged against the material the
-// knowledge point actually serves
-// --------------------------------------------------------------------------- //
-
-/// The `content_store` body of an approved template of [`KP_KEY`].
-///
-/// It is [`STORED_BODY`]: the perfect-squares template, `a` over 1 to 12, answer
-/// `a**2`. The serve path renders it, so its instance answers are answers a
-/// learner reads.
-async fn seed_approved_template(pool: &PgPool, digest: &str, kp_id: &str, body: &str) {
-    sqlx::query(
-        "INSERT INTO content_store (digest, kp_id, kind, body, status)
-         VALUES ($1, $2, 'template', $3::jsonb, 'approved')",
-    )
-    .bind(digest)
-    .bind(kp_id)
-    .bind(body)
-    .execute(pool)
-    .await
-    .unwrap();
-}
-
-/// Move one stored row to another review status.
-async fn set_status(pool: &PgPool, digest: &str, status: &str) {
-    sqlx::query("UPDATE content_store SET status = $2 WHERE digest = $1")
-        .bind(digest)
-        .bind(status)
-        .execute(pool)
-        .await
-        .unwrap();
-}
-
-/// The tool arguments of a teach page that works a problem OUTSIDE the parameter
-/// space of the template: `a` runs 1 to 12, so no instance asks for $15^2$ and no
-/// served answer is 225.
-fn teach_outside_the_bank() -> Value {
-    json!({
-        "concept": "Squaring a number multiplies it by itself.",
-        "worked_example": {
-            "problem": "Compute $15^2$.",
-            "steps": [
-                "Write the base twice with a multiplication sign between them.",
-                "The product is 225."
-            ]
-        }
-    })
-}
-
-/// A ladder whose last rung states 81, which is the answer of the instance
-/// `Compute $9^2$.` and is NOT the answer of any exemplar.
-fn ladder_that_names_an_instance_answer() -> Value {
-    json!({
-        "hints": [
-            "What does the small 2 above the number ask you to do?",
-            "For a base of 9 the product is 81."
-        ]
-    })
-}
-
-/// The instances `served_instances` reads off the perfect-squares template, in
-/// order: the two worked samples first (`a = 1` and `a = 12`), then the eight
-/// instances drawn from the fixed gate seed, each pair once.
-///
-/// Eight draws over `a` in 1 to 12 repeat, so seven pairs stand here. The list is
-/// a function of the document and the seed alone, so it is the same list on every
-/// run.
-const SERVED_INSTANCES: [(&str, &str); 7] = [
-    ("Compute $1^{2}$.", "1"),
-    ("Compute $12^{2}$.", "144"),
-    ("Compute $9^{2}$.", "81"),
-    ("Compute $6^{2}$.", "36"),
-    ("Compute $11^{2}$.", "121"),
-    ("Compute $7^{2}$.", "49"),
-    ("Compute $10^{2}$.", "100"),
-];
-
-/// [`SERVED_INSTANCES`] as the type the gate reads.
-fn served_list() -> Vec<ServedInstance> {
-    SERVED_INSTANCES
-        .iter()
-        .map(|(problem, answer)| ServedInstance {
-            problem: (*problem).to_owned(),
-            answer: (*answer).to_owned(),
-        })
-        .collect()
-}
-
-/// The gate's give-away sentence for the last rung of
-/// [`ladder_that_names_an_instance_answer`].
-const NAMES_AN_INSTANCE_ANSWER: &str = "rung 1 reads 'For a base of 9 the product is 81.', which \
-names the answer '81' this knowledge point serves — a hint is a question, never the final step \
-(Hard Rule 3)";
-
-/// FIX2-M6-A, finding V1. The templates the gates read are the `approved` rows
-/// AND the `pending` ones.
-///
-/// `cadus-worker author` writes all four kinds in ONE process, template first,
-/// and every kind enters `content_store` as `pending`. A read of the approved
-/// rows alone therefore answered an EMPTY list for every knowledge point of a
-/// fresh curriculum, and the hint gate of that pass judged the ladder against the
-/// exemplars alone. A `rejected` template still contributes nothing: a human
-/// refused that body, and it serves nobody.
-#[tokio::test]
-async fn the_served_instances_are_the_instances_of_the_stored_templates() {
-    TestDb::with(|db| async move {
-        let handle = Db::new(db.admin.clone(), DEFAULT_CLIENT_TIMEOUT_MS);
-
-        // No template row at all: A6 serves the exemplars, and nothing else.
-        assert_eq!(
-            served_instances(&handle, KP_KEY).await.unwrap(),
-            Vec::<ServedInstance>::new()
-        );
-
-        // A PENDING template is the material the reviewer is about to approve,
-        // so its instances gate the page and the ladder of the same pass.
-        seed_approved_template(&db.admin, "sha256:pending-one", KP_KEY, STORED_BODY).await;
-        set_status(&db.admin, "sha256:pending-one", "pending").await;
-        assert_eq!(
-            served_instances(&handle, KP_KEY).await.unwrap(),
-            served_list()
-        );
-
-        // A second row with the same body adds no pair: the list holds each
-        // problem and answer once.
-        seed_approved_template(&db.admin, STORED_DIGEST, KP_KEY, STORED_BODY).await;
-        assert_eq!(
-            served_instances(&handle, KP_KEY).await.unwrap(),
-            served_list()
-        );
-
-        // A REJECTED template serves nothing, so it contributes nothing (C6).
-        set_status(&db.admin, "sha256:pending-one", "rejected").await;
-        set_status(&db.admin, STORED_DIGEST, "rejected").await;
-        assert_eq!(
-            served_instances(&handle, KP_KEY).await.unwrap(),
-            Vec::<ServedInstance>::new()
-        );
-
-        // The template of ANOTHER knowledge point is not read.
-        set_status(&db.admin, STORED_DIGEST, "approved").await;
-        assert_eq!(
-            served_instances(&handle, "perfect-cubes/cubes")
-                .await
-                .unwrap(),
-            Vec::<ServedInstance>::new()
-        );
-    })
-    .await;
-}
-
-/// Findings F2 and F15. A rung that states the answer of a rendered instance of
-/// an approved template is refused, and the LITERAL message reaches the next
-/// attempt as its feedback. The exemplar answer is 49; the rung names 81, which
-/// only the template serves.
-#[tokio::test]
-async fn a_rung_that_names_a_template_instance_answer_is_refused() {
-    TestDb::with(|db| async move {
-        let fake = FakeModel::start(vec![
-            named_reply("emit_hint_ladder", &ladder_that_names_an_instance_answer()),
-            named_reply("emit_hint_ladder", &ladder_arguments()),
-        ])
-        .await;
-        let handle = Db::new(db.admin.clone(), DEFAULT_CLIENT_TIMEOUT_MS);
-        seed_approved_template(&db.admin, STORED_DIGEST, KP_KEY, STORED_BODY).await;
-
-        let report = author_one(&handle, &fake.job(), Kind::HintLadder, &spec())
-            .await
-            .unwrap();
-
-        // Attempt 1 is refused, attempt 2 carries the gate's own sentence and is
-        // stored.
-        assert_eq!(report.outcome, Outcome::Stored);
-        assert_eq!(report.attempts, 2);
-        assert_eq!(report.digest.as_deref(), Some(STORED_LADDER_DIGEST));
-
-        let second = fake.user_message(1);
-        assert!(
-            second.contains(&format!("{RETRY_HEADER}\n    {NAMES_AN_INSTANCE_ANSWER}\n")),
-            "the retry block did not carry the literal sentence: {second}"
-        );
-
-        let rows = rows_of_kind(&db.admin, KP_KEY, "hint_ladder").await;
-        assert_eq!(rows.len(), 1);
-        assert_eq!(rows[0].0, STORED_LADDER_DIGEST);
-        assert_eq!(rows[0].1, "pending");
-    })
-    .await;
-}
-
-/// The same rung passes when the knowledge point serves no template: 81 is then
-/// no answer of the served material, so the gate has nothing to refuse. The
-/// approved template is what makes the difference, and this test is the control.
-#[tokio::test]
-async fn the_same_rung_passes_when_no_template_is_approved() {
-    TestDb::with(|db| async move {
-        let fake = FakeModel::start(vec![named_reply(
-            "emit_hint_ladder",
-            &ladder_that_names_an_instance_answer(),
-        )])
-        .await;
-        let handle = Db::new(db.admin.clone(), DEFAULT_CLIENT_TIMEOUT_MS);
-
-        let report = author_one(&handle, &fake.job(), Kind::HintLadder, &spec())
-            .await
-            .unwrap();
-
-        assert_eq!(report.outcome, Outcome::Stored);
-        assert_eq!(report.attempts, 1);
-        assert_eq!(
-            rows_of_kind(&db.admin, KP_KEY, "hint_ladder").await.len(),
-            1
-        );
-    })
-    .await;
-}
-
-// --------------------------------------------------------------------------- //
-// M6 review 2, finding V1: one process authors all four kinds
-// --------------------------------------------------------------------------- //
-
-/// FIX2-M6-A, finding V1. ACCEPTANCE, end to end.
-///
-/// `cadus-worker author` authors the four kinds in ONE process, template first,
-/// and every document enters `content_store` as `pending` (C6). Before this fix
-/// the two instruction gates read the APPROVED templates alone, so the ladder of
-/// a fresh curriculum was judged with an empty instance set and a rung that
-/// stated a rendered answer was stored `pending`. One click then served it.
-///
-/// The pass here is that pass: a template, a teach page, and a give-away ladder,
-/// in the order of `prompt::KINDS`. The template is `pending` the whole time, and
-/// the ladder is refused against it. The reviewer then approves the template, and
-/// the ladder is still not in the table: it was never stored, so nothing serves
-/// it.
-#[tokio::test]
-async fn one_pass_gates_the_ladder_against_the_pending_template_of_the_same_pass() {
-    TestDb::with(|db| async move {
-        let fake = FakeModel::start(vec![
-            named_reply("emit_template", &good_arguments()),
-            named_reply("emit_teach", &teach_outside_the_bank()),
-            named_reply("emit_hint_ladder", &ladder_that_names_an_instance_answer()),
-        ])
-        .await;
-        let handle = Db::new(db.admin.clone(), DEFAULT_CLIENT_TIMEOUT_MS);
-
-        // Kind 1 of the pass. The row is `pending`: no human has read it yet.
-        let template = author_one(&handle, &fake.job(), Kind::Template, &spec())
-            .await
-            .unwrap();
-        assert_eq!(template.outcome, Outcome::Stored);
-        assert_eq!(template.digest.as_deref(), Some(STORED_DIGEST));
-        let rows = rows_of_kind(&db.admin, KP_KEY, "template").await;
-        assert_eq!(rows.len(), 1);
-        assert_eq!(rows[0].1, "pending");
-
-        // Kind 2. The page works $15^2$, which the template never renders, so no
-        // served answer stands in its last step.
-        let teach = author_one(&handle, &fake.job(), Kind::Teach, &spec())
-            .await
-            .unwrap();
-        assert_eq!(teach.outcome, Outcome::Stored);
-        assert_eq!(teach.attempts, 1);
-
-        // Kind 3. The rung states 81, which no exemplar answers and the PENDING
-        // template renders. One attempt, so the pass declines with the gate's own
-        // sentence and stores nothing.
-        let ladder = author_one(
-            &handle,
-            &fake.job_with_attempts(1),
-            Kind::HintLadder,
-            &spec(),
-        )
-        .await
-        .unwrap();
-        assert_eq!(ladder.outcome, Outcome::Declined);
-        assert_eq!(ladder.attempts, 1);
-        assert_eq!(ladder.digest, None);
-        assert_eq!(
-            ladder.decline.expect("a decline record").reasons,
-            vec![format!("hint-answer: {NAMES_AN_INSTANCE_ANSWER}")]
-        );
-        assert_eq!(
-            rows_of_kind(&db.admin, KP_KEY, "hint_ladder").await.len(),
-            0
-        );
-
-        // The reviewer approves the template. The give-away ladder is still not in
-        // the table, so the L5 route has nothing to serve for this knowledge point.
-        let decision = approve(Admin::new(&handle), STORED_DIGEST, None)
-            .await
-            .unwrap();
-        assert_eq!(decision.status, "approved");
-        assert_eq!(
-            rows_of_kind(&db.admin, KP_KEY, "hint_ladder").await.len(),
-            0
-        );
-        assert_eq!(
-            rows_of_kind(&db.admin, KP_KEY, "template").await[0].1,
-            "approved"
-        );
-    })
-    .await;
-}
-
-// --------------------------------------------------------------------------- //
-// V3: a re-author that reproduces the same body stamps the current prompt
-// --------------------------------------------------------------------------- //
-
-/// A prompt digest that is NOT the digest of any current kind.
-///
-/// It stands for the prompt an operator has since edited (spec section 2.2,
-/// "Prompt digest"). It is 16 hex characters, as every prompt digest is.
-const OLD_PROMPT: &str = "0000000000000000";
-
-/// The `--stale` listing of an empty stale set, character for character
-/// (`render_stale`).
-const NO_STALE_ROWS: &str = "stale documents\nkp_id kind digest prompt_digest\nstale: rows 0\n";
-
-/// Seed the teach row of [`STORED_TEACH_BODY`] as `approved`, with the prompt
-/// stamp of an EDITED prompt.
-///
-/// The digest is the digest the pass computes for that body, so a re-author that
-/// reproduces the body collides with this row.
-async fn seed_stale_teach(pool: &PgPool) {
-    sqlx::query(
-        "INSERT INTO content_store
-             (digest, kp_id, kind, body, status, prompt_digest)
-         VALUES ($1, $2, 'teach', $3::jsonb, 'approved', $4)",
-    )
-    .bind(STORED_TEACH_DIGEST)
-    .bind(KP_KEY)
-    .bind(STORED_TEACH_BODY)
-    .bind(OLD_PROMPT)
-    .execute(pool)
-    .await
-    .unwrap();
-}
-
-/// Every `content_store` row of one knowledge point and kind, as
-/// `(digest, status, body, prompt_digest)`.
-async fn stamped_rows(
-    pool: &PgPool,
-    kp_id: &str,
-    kind: &str,
-) -> Vec<(String, String, Value, Option<String>)> {
-    sqlx::query_as::<_, (String, String, Value, Option<String>)>(
-        "SELECT digest, status, body, prompt_digest FROM content_store
-          WHERE kp_id = $1 AND kind = $2 ORDER BY digest",
-    )
-    .bind(kp_id)
-    .bind(kind)
-    .fetch_all(pool)
-    .await
-    .unwrap()
-}
-
-/// V3, the acceptance check: two passes after a prompt edit make ONE model call,
-/// and the stale set is empty after the first pass.
-///
-/// The seeded row is the row an EDITED prompt marked: it is `approved`, it holds
-/// the body the model reproduces, and it names an older prompt. The pass
-/// therefore re-authors the knowledge point, and the model answers the same
-/// document.
-///
-/// The insert writes nothing, because the digest is the digest of that row. The
-/// pass stamps the CURRENT prompt on the row instead, so
-///
-/// - the outcome is [`Outcome::Refreshed`],
-/// - the row leaves the stale set and `--stale` lists nothing,
-/// - the SECOND pass makes no call, and
-/// - the approval, the body and the digest stand (C6).
-///
-/// Before the fix the row kept the old stamp: every pass counted it as stale,
-/// re-authored it, and paid for one model call, forever.
-#[tokio::test]
-async fn a_re_author_of_the_same_body_stamps_the_current_prompt_and_the_loop_stops() {
-    TestDb::with(|db| async move {
-        let fake = FakeModel::start(vec![named_reply("emit_teach", &teach_arguments())]).await;
-        let handle = Db::new(db.admin.clone(), DEFAULT_CLIENT_TIMEOUT_MS);
-        seed_stale_teach(&db.admin).await;
-
-        // The bank of `teach` is 1, the row holds the slot, and the slot is
-        // stale: the pass re-authors it.
-        assert_eq!(slots_taken(&handle, KP_KEY, Kind::Teach).await.unwrap(), 1);
-        assert_eq!(stale_slots(&handle, KP_KEY, Kind::Teach).await.unwrap(), 1);
-        assert_eq!(
-            render_stale(&stale_rows(&handle, &KINDS).await.unwrap()),
-            "stale documents\n\
-             kp_id kind digest prompt_digest\n\
-             perfect-squares/squares teach sha256:fc031ed7deaa7d60 0000000000000000\n\
-             stale: rows 1\n"
-        );
-
-        let first = author_one(&handle, &fake.job_with_attempts(1), Kind::Teach, &spec())
-            .await
-            .unwrap();
-
-        assert_eq!(first.outcome, Outcome::Refreshed);
-        assert_eq!(first.attempts, 1);
-        assert_eq!(first.digest.as_deref(), Some(STORED_TEACH_DIGEST));
-        assert!(first.decline.is_none());
-        assert_eq!(fake.calls().len(), 1);
-
-        // The row left the stale set, and the operator's listing is empty.
-        assert_eq!(stale_slots(&handle, KP_KEY, Kind::Teach).await.unwrap(), 0);
-        assert_eq!(
-            render_stale(&stale_rows(&handle, &KINDS).await.unwrap()),
-            NO_STALE_ROWS
-        );
-
-        // C6: the approval, the digest and the body stand. The stamp is the
-        // only column the pass wrote.
-        let rows = stamped_rows(&db.admin, KP_KEY, "teach").await;
-        assert_eq!(rows.len(), 1);
-        assert_eq!(rows[0].0, STORED_TEACH_DIGEST);
-        assert_eq!(rows[0].1, "approved");
-        assert_eq!(
-            rows[0].2,
-            serde_json::from_str::<Value>(STORED_TEACH_BODY).expect("the literal body reads")
-        );
-        assert_ne!(rows[0].3.as_deref(), Some(OLD_PROMPT));
-        assert_eq!(rows[0].3.as_deref().unwrap_or_default().len(), 16);
-        assert_eq!(rows[0].3, Some(prompt_digest(Kind::Teach)));
-
-        // The second pass makes no call: the bank is full and nothing is stale.
-        let second = author_one(&handle, &fake.job_with_attempts(1), Kind::Teach, &spec())
-            .await
-            .unwrap();
-
-        assert_eq!(second.outcome, Outcome::Skipped);
-        assert_eq!(second.attempts, 0);
-        assert_eq!(
-            fake.calls().len(),
-            1,
-            "the two passes together pay for ONE model call"
-        );
-        assert_eq!(rows_of_kind(&db.admin, KP_KEY, "teach").await.len(), 1);
-    })
-    .await;
-}
-
-/// V3: the batch counts a refresh where it counts a duplicate, and the summary
-/// prints the count.
-///
-/// The pass paid for its call and wrote no document, so the count stands beside
-/// `stored` and never inside it (M6 review finding F1).
-#[tokio::test]
-async fn a_refreshed_row_is_counted_as_a_duplicate_and_never_as_a_store() {
-    TestDb::with(|db| async move {
-        let fake = FakeModel::start(vec![named_reply("emit_teach", &teach_arguments())]).await;
-        let handle = Db::new(db.admin.clone(), DEFAULT_CLIENT_TIMEOUT_MS);
-        seed_stale_teach(&db.admin).await;
-
-        let batch = run_batch(&handle, &fake.job(), Kind::Teach, &[spec()])
-            .await
-            .unwrap();
-
-        assert_eq!(batch.stored, 0);
-        assert_eq!(batch.duplicate, 1);
-        assert_eq!(batch.skipped, 0);
-        assert_eq!(batch.declined, 0);
-        assert_eq!(batch.calls, 1);
-        assert!(batch.declines.is_empty());
-
-        assert_eq!(stale_slots(&handle, KP_KEY, Kind::Teach).await.unwrap(), 0);
-        assert_eq!(rows_of_kind(&db.admin, KP_KEY, "teach").await.len(), 1);
-    })
-    .await;
-}
-
-/// V3: a collision with a row that ALREADY names the current prompt is a
-/// duplicate, not a refresh.
-///
-/// The bank target of `template` is 3, so a knowledge point with one `pending`
-/// row is authored again. The first pass wrote that row with the current stamp,
-/// so the second pass has no stamp to write: the outcome names the duplicate,
-/// and a pass that reported a refresh here would count a write it did not make.
-#[tokio::test]
-async fn a_collision_with_the_current_prompt_stamp_stays_a_duplicate() {
-    TestDb::with(|db| async move {
-        let fake = FakeModel::start(vec![
-            tool_reply(&good_arguments()),
-            tool_reply(&good_arguments()),
-        ])
-        .await;
-        let handle = Db::new(db.admin.clone(), DEFAULT_CLIENT_TIMEOUT_MS);
-
-        let first = author_one(&handle, &fake.job_with_attempts(1), Kind::Template, &spec())
-            .await
-            .unwrap();
-        let second = author_one(&handle, &fake.job_with_attempts(1), Kind::Template, &spec())
-            .await
-            .unwrap();
-
-        assert_eq!(first.outcome, Outcome::Stored);
-        assert_eq!(second.outcome, Outcome::Duplicate);
-        assert_eq!(fake.calls().len(), 2);
-
-        let rows = stamped_rows(&db.admin, KP_KEY, "template").await;
-        assert_eq!(rows.len(), 1);
-        assert_eq!(rows[0].0, STORED_DIGEST);
-        assert_eq!(rows[0].1, "pending");
-        assert_eq!(rows[0].3, Some(prompt_digest(Kind::Template)));
-        assert_eq!(
-            stale_slots(&handle, KP_KEY, Kind::Template).await.unwrap(),
-            0
-        );
-    })
-    .await;
-}
-
-/// V3 and F6: a row a reviewer REFUSED keeps its old stamp.
-///
-/// A `rejected` row occupies no slot and is never stale, so it drives no
-/// re-author and there is nothing to clear. The pass declines with the
-/// reviewer's reason, and it writes no column of that row.
-#[tokio::test]
-async fn a_refused_row_keeps_the_prompt_stamp_it_has() {
-    TestDb::with(|db| async move {
-        let fake = FakeModel::start(vec![named_reply("emit_teach", &teach_arguments())]).await;
-        let handle = Db::new(db.admin.clone(), DEFAULT_CLIENT_TIMEOUT_MS);
-        sqlx::query(
-            "INSERT INTO content_store
-                 (digest, kp_id, kind, body, status, review_reason, prompt_digest)
-             VALUES ($1, $2, 'teach', $3::jsonb, 'rejected', $4, $5)",
-        )
-        .bind(STORED_TEACH_DIGEST)
-        .bind(KP_KEY)
-        .bind(STORED_TEACH_BODY)
-        .bind("the worked example skips the last step")
-        .bind(OLD_PROMPT)
-        .execute(&db.admin)
-        .await
-        .unwrap();
-
-        let report = author_one(&handle, &fake.job_with_attempts(1), Kind::Teach, &spec())
-            .await
-            .unwrap();
-
-        assert_eq!(report.outcome, Outcome::Rejected { same_body: true });
-        assert_eq!(report.attempts, 1);
-
-        let rows = stamped_rows(&db.admin, KP_KEY, "teach").await;
-        assert_eq!(rows.len(), 1);
-        assert_eq!(rows[0].1, "rejected");
-        assert_eq!(rows[0].3.as_deref(), Some(OLD_PROMPT));
-    })
-    .await;
-}
-
-/// V3: a stale row that WAITS for a reviewer is stamped as well.
-///
-/// [`stale_slots`] counts `approved` AND `pending` rows, so a `pending` row an
-/// older prompt wrote drives a re-author exactly as an approved row does. The
-/// stamp therefore covers both, and the row stays `pending`: the reviewer reads
-/// the body, and the prompt stamp is not a verdict (C6).
-///
-/// A stamp that named `approved` alone left this row stale, and the pass paid
-/// for one model call per run until a reviewer read the queue.
-#[tokio::test]
-async fn a_stale_row_that_waits_for_a_reviewer_is_stamped_and_stays_pending() {
-    TestDb::with(|db| async move {
-        let fake = FakeModel::start(vec![named_reply("emit_teach", &teach_arguments())]).await;
-        let handle = Db::new(db.admin.clone(), DEFAULT_CLIENT_TIMEOUT_MS);
-        sqlx::query(
-            "INSERT INTO content_store
-                 (digest, kp_id, kind, body, status, prompt_digest)
-             VALUES ($1, $2, 'teach', $3::jsonb, 'pending', $4)",
-        )
-        .bind(STORED_TEACH_DIGEST)
-        .bind(KP_KEY)
-        .bind(STORED_TEACH_BODY)
-        .bind(OLD_PROMPT)
-        .execute(&db.admin)
-        .await
-        .unwrap();
-
-        assert_eq!(stale_slots(&handle, KP_KEY, Kind::Teach).await.unwrap(), 1);
-
-        let report = author_one(&handle, &fake.job_with_attempts(1), Kind::Teach, &spec())
-            .await
-            .unwrap();
-
-        assert_eq!(report.outcome, Outcome::Refreshed);
-        assert_eq!(report.attempts, 1);
-        assert_eq!(fake.calls().len(), 1);
-        assert_eq!(stale_slots(&handle, KP_KEY, Kind::Teach).await.unwrap(), 0);
-
-        let rows = stamped_rows(&db.admin, KP_KEY, "teach").await;
-        assert_eq!(rows.len(), 1);
-        assert_eq!(rows[0].0, STORED_TEACH_DIGEST);
-        assert_eq!(rows[0].1, "pending");
-        assert_eq!(rows[0].3, Some(prompt_digest(Kind::Teach)));
+        assert_eq!(fake.call_count(), 0);
     })
     .await;
 }

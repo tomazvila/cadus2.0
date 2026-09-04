@@ -16,44 +16,24 @@
 //! Every expected value is a LITERAL: a literal money text, a literal row count,
 //! a literal attempt count. Nothing is read back from the code under test.
 //!
-//! The endpoint is a fake OpenAI-compatible server in this file, as in
-//! `authoring_job.rs` and `diagnosis.rs`. No test reaches a real provider.
+//! The endpoint is a fake OpenAI-compatible server (`common::FakeModel`). No
+//! test reaches a real provider.
 
-#![allow(
-    clippy::unwrap_used,
-    clippy::expect_used,
-    clippy::panic,
-    clippy::todo,
-    clippy::unimplemented
-)]
+#![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
 
-use std::sync::Arc;
-use std::sync::atomic::{AtomicUsize, Ordering};
-use std::time::Duration;
+mod common;
 
-use cadus_core::curriculum::{AnswerKind, Exemplar};
-use cadus_model_client::{Client, ModelConfig};
 use cadus_store::test_support::TestDb;
-use cadus_store::{DEFAULT_CLIENT_TIMEOUT_MS, Db};
 use cadus_worker::authoring::cost::{ATTEMPT_ALERT, alerting};
-use cadus_worker::authoring::job::{AuthoringJob, Outcome, author_one, store_pending};
-use cadus_worker::authoring::prompt::{AuthoringSpec, Kind};
+use cadus_worker::authoring::job::{Outcome, store_pending};
+use cadus_worker::authoring::prompt::Kind;
 use serde_json::{Value, json};
 use sqlx::PgPool;
-use tokio::io::{AsyncReadExt, AsyncWriteExt};
-use tokio::net::TcpListener;
 
-// --------------------------------------------------------------------------- //
-// The literals of this file
-// --------------------------------------------------------------------------- //
-
-/// The serving key of the knowledge point under test, `"<topic_id>/<kp_id>"`.
-const KP_KEY: &str = "perfect-squares/squares";
-
-/// The digest of the body every accepted reply of this file stores.
-///
-/// `authoring_job.rs` pins the same value beside the body text it covers.
-const STORED_DIGEST: &str = "sha256:fbed1683b615cbc0";
+use common::{
+    FakeModel, SQUARES_KEY as KP_KEY, STORED_DIGEST, author_expect, good_arguments, handle,
+    ledger_shape, missing_low_edge, reply, squares_spec as spec,
+};
 
 /// The three prices of the three-attempt pass, in the order the calls run.
 const PRICES: [f64; 3] = [0.001234, 0.0002, 0.5];
@@ -63,106 +43,9 @@ const PRICES: [f64; 3] = [0.001234, 0.0002, 0.5];
 /// Worked by hand: 0.001234 + 0.000200 + 0.500000 = 0.501434.
 const PRICE_SUM: &str = "0.501434";
 
-// --------------------------------------------------------------------------- //
-// The fake OpenAI-compatible server
-// --------------------------------------------------------------------------- //
-
-/// A local endpoint that answers a fixed list of replies, in order. A call past
-/// the end of the list gets `500` with an empty body.
-struct FakeModel {
-    base_url: String,
-    calls: Arc<AtomicUsize>,
-}
-
-impl FakeModel {
-    async fn start(replies: Vec<(u16, String)>) -> FakeModel {
-        let listener = TcpListener::bind("127.0.0.1:0").await.unwrap();
-        let port = listener.local_addr().unwrap().port();
-        let calls = Arc::new(AtomicUsize::new(0));
-        let count = Arc::clone(&calls);
-
-        tokio::spawn(async move {
-            loop {
-                let Ok((mut socket, _)) = listener.accept().await else {
-                    return;
-                };
-                let mut raw: Vec<u8> = Vec::new();
-                let mut buffer = [0_u8; 4096];
-                loop {
-                    let read = socket.read(&mut buffer).await.unwrap_or(0);
-                    if read == 0 {
-                        break;
-                    }
-                    raw.extend_from_slice(&buffer[..read]);
-                    let text = String::from_utf8_lossy(&raw).to_string();
-                    if let Some(split) = text.find("\r\n\r\n") {
-                        let length: usize = text[..split]
-                            .to_lowercase()
-                            .split("\r\n")
-                            .find_map(|line| line.strip_prefix("content-length:"))
-                            .and_then(|value| value.trim().parse().ok())
-                            .unwrap_or(0);
-                        if text.len() >= split + 4 + length {
-                            break;
-                        }
-                    }
-                }
-                let index = count.fetch_add(1, Ordering::SeqCst);
-                let (status, payload) = replies
-                    .get(index)
-                    .cloned()
-                    .unwrap_or_else(|| (500, String::new()));
-                let reply = format!(
-                    "HTTP/1.1 {status} X\r\ncontent-type: application/json\r\ncontent-length: {}\r\nconnection: close\r\n\r\n{payload}",
-                    payload.len()
-                );
-                let _ = socket.write_all(reply.as_bytes()).await;
-                let _ = socket.flush().await;
-            }
-        });
-
-        FakeModel {
-            base_url: format!("http://127.0.0.1:{port}/v1"),
-            calls,
-        }
-    }
-
-    /// How many requests the endpoint answered.
-    fn call_count(&self) -> usize {
-        self.calls.load(Ordering::SeqCst)
-    }
-
-    /// An authoring job pointed at this endpoint, with the shipped bound.
-    fn job(&self) -> AuthoringJob {
-        AuthoringJob::new(self.client())
-    }
-
-    fn client(&self) -> Client {
-        let cfg = ModelConfig {
-            base_url: self.base_url.clone(),
-            api_key: "test-key".to_owned(),
-            model: "qwen3.6".to_owned(),
-            output_tokens: 2_048,
-            reasoning_max_tokens: 600,
-            provider_order: Vec::new(),
-            timeout: Duration::from_secs(5),
-        };
-        Client::new(cfg).unwrap()
-    }
-}
-
 /// A reply that carries an `emit_template` call and this `usage` block.
 fn reply_with_usage(arguments: &Value, usage: Option<Value>) -> (u16, String) {
-    let mut payload = json!({
-        "id": "gen-1",
-        "choices": [{"finish_reason": "tool_calls", "message": {"tool_calls": [{"function": {
-            "name": "emit_template", "arguments": arguments.to_string()
-        }}]}}]
-    });
-    if let Some(usage) = usage {
-        payload["usage"] = usage;
-    }
-    (200, payload.to_string())
+    reply("emit_template", &arguments.to_string(), usage)
 }
 
 /// A `usage` block that reports these tokens and this price.
@@ -170,55 +53,24 @@ fn usage(cost: f64) -> Value {
     json!({"prompt_tokens": 900, "completion_tokens": 300, "cost": cost})
 }
 
-// --------------------------------------------------------------------------- //
-// The fixtures
-// --------------------------------------------------------------------------- //
-
-/// The tool arguments of a template the gate accepts.
-fn good_arguments() -> Value {
-    json!({
-        "statement": "Compute ${a}^{{2}}$.",
-        "params": {"a": {"kind": "int", "low": 1, "high": 12}},
-        "constraints": [],
-        "answer_expr": "a**2",
-        "solution_sketch": "${a} \\times {a}$ gives the answer.",
-        "hints": ["What does squaring a number mean?"],
-        "distractors": [],
-        "samples": [
-            {"params": {"a": 1}, "expected": "1"},
-            {"params": {"a": 12}, "expected": "144"}
-        ]
-    })
+/// A refusal of the low edge, priced at one thousandth.
+fn priced_refusal() -> (u16, String) {
+    reply_with_usage(&missing_low_edge(), Some(usage(0.001)))
 }
 
-/// The same template with the low-end sample missing. The gate refuses it.
-fn missing_low_edge() -> Value {
-    let mut arguments = good_arguments();
-    arguments["samples"] = json!([{"params": {"a": 12}, "expected": "144"}]);
-    arguments
+/// `refusals` priced refusals, then the accepted template priced the same,
+/// authored: the endpoint and the report.
+async fn refusals_then_store(
+    db: &TestDb,
+    refusals: usize,
+) -> (FakeModel, cadus_worker::AuthoringReport) {
+    let mut replies: Vec<(u16, String)> = (0..refusals).map(|_| priced_refusal()).collect();
+    replies.push(reply_with_usage(&good_arguments(), Some(usage(0.001))));
+    let fake = FakeModel::start(replies).await;
+    let spent = u32::try_from(refusals).unwrap() + 1;
+    let report = author_expect(db, &fake, Kind::Template, &spec(), Outcome::Stored, spent).await;
+    (fake, report)
 }
-
-/// The knowledge point every test authors for.
-fn spec() -> AuthoringSpec {
-    AuthoringSpec {
-        kp_id: "squares".to_owned(),
-        kp_name: "Squares of one-digit and two-digit numbers".to_owned(),
-        topic_id: "perfect-squares".to_owned(),
-        topic_name: "Perfect squares".to_owned(),
-        answer_kind: AnswerKind::Numeric,
-        difficulty_target: None,
-        constraints: None,
-        exemplars: vec![Exemplar {
-            problem: "Compute $7^2$.".to_owned(),
-            answer: "49".to_owned(),
-            solution_sketch: None,
-        }],
-    }
-}
-
-// --------------------------------------------------------------------------- //
-// Database helpers
-// --------------------------------------------------------------------------- //
 
 /// The `(authoring_attempts, authoring_cost_usd)` of the one row of a knowledge
 /// point.
@@ -253,13 +105,8 @@ async fn ledger_sum(pool: &PgPool) -> Option<String> {
 }
 
 /// The count of authoring call rows, and how many of them name a tenant.
-async fn ledger_shape(pool: &PgPool) -> (i64, i64) {
-    sqlx::query_as::<_, (i64, i64)>(
-        "SELECT count(*), count(user_id) FROM model_call_log WHERE purpose = 'authoring'",
-    )
-    .fetch_one(pool)
-    .await
-    .unwrap()
+async fn authoring_ledger(pool: &PgPool) -> (i64, i64) {
+    ledger_shape(pool, "authoring").await
 }
 
 /// Seed one `content_store` row with this attempt count and price.
@@ -278,6 +125,15 @@ async fn seed_row(pool: &PgPool, digest: &str, kp_id: &str, attempts: i32, cost:
     .unwrap();
 }
 
+/// Store the empty body under the knowledge point with this attempt count and
+/// this spend, through the loop's own write.
+async fn store(db: &TestDb, attempts: u32, spend: &[&str]) -> cadus_worker::AuthoringStored {
+    let spend: Vec<String> = spend.iter().map(|text| (*text).to_owned()).collect();
+    store_pending(&handle(db), KP_KEY, Kind::Template, "{}", attempts, &spend)
+        .await
+        .unwrap()
+}
+
 // --------------------------------------------------------------------------- //
 // 1. The four-attempt alert
 // --------------------------------------------------------------------------- //
@@ -291,21 +147,8 @@ async fn seed_row(pool: &PgPool, digest: &str, kp_id: &str, attempts: i32, cost:
 #[tokio::test]
 async fn a_four_attempt_knowledge_point_alerts_and_the_row_says_four() {
     TestDb::with(|db| async move {
-        let fake = FakeModel::start(vec![
-            reply_with_usage(&missing_low_edge(), Some(usage(0.001))),
-            reply_with_usage(&missing_low_edge(), Some(usage(0.001))),
-            reply_with_usage(&missing_low_edge(), Some(usage(0.001))),
-            reply_with_usage(&good_arguments(), Some(usage(0.001))),
-        ])
-        .await;
-        let handle = Db::new(db.admin.clone(), DEFAULT_CLIENT_TIMEOUT_MS);
+        let (fake, report) = refusals_then_store(&db, 3).await;
 
-        let report = author_one(&handle, &fake.job(), Kind::Template, &spec())
-            .await
-            .unwrap();
-
-        assert_eq!(report.outcome, Outcome::Stored);
-        assert_eq!(report.attempts, 4);
         assert!(report.alert, "four attempts must raise the T3 alert");
         assert_eq!(fake.call_count(), 4);
 
@@ -315,7 +158,7 @@ async fn a_four_attempt_knowledge_point_alerts_and_the_row_says_four() {
         assert_eq!(cost.as_deref(), Some("0.004000"));
 
         // The operator list names the knowledge point, once.
-        let alerts = alerting(&handle).await.unwrap();
+        let alerts = alerting(&handle(&db)).await.unwrap();
         assert_eq!(alerts.len(), 1);
         assert_eq!(alerts[0].kp_id, KP_KEY);
         assert_eq!(alerts[0].kind, "template");
@@ -324,7 +167,7 @@ async fn a_four_attempt_knowledge_point_alerts_and_the_row_says_four() {
         assert_eq!(alerts[0].cost_usd.as_deref(), Some("0.004000"));
 
         // T6: one ledger row per HTTP attempt, and no tenant on an offline call.
-        assert_eq!(ledger_shape(&db.admin).await, (4, 0));
+        assert_eq!(authoring_ledger(&db.admin).await, (4, 0));
     })
     .await;
 }
@@ -336,23 +179,12 @@ async fn a_four_attempt_knowledge_point_alerts_and_the_row_says_four() {
 #[tokio::test]
 async fn a_three_attempt_knowledge_point_stays_quiet() {
     TestDb::with(|db| async move {
-        let fake = FakeModel::start(vec![
-            reply_with_usage(&missing_low_edge(), Some(usage(0.001))),
-            reply_with_usage(&missing_low_edge(), Some(usage(0.001))),
-            reply_with_usage(&good_arguments(), Some(usage(0.001))),
-        ])
-        .await;
-        let handle = Db::new(db.admin.clone(), DEFAULT_CLIENT_TIMEOUT_MS);
+        let (_fake, report) = refusals_then_store(&db, 2).await;
 
-        let report = author_one(&handle, &fake.job(), Kind::Template, &spec())
-            .await
-            .unwrap();
-
-        assert_eq!(report.attempts, 3);
         assert_eq!(ATTEMPT_ALERT, 3);
         assert!(!report.alert, "three attempts are inside the T3 bound");
         assert_eq!(accounting(&db.admin, KP_KEY).await.0, 3);
-        assert!(alerting(&handle).await.unwrap().is_empty());
+        assert!(alerting(&handle(&db)).await.unwrap().is_empty());
     })
     .await;
 }
@@ -364,23 +196,16 @@ async fn a_three_attempt_knowledge_point_stays_quiet() {
 #[tokio::test]
 async fn a_declined_knowledge_point_alerts_and_stores_no_row() {
     TestDb::with(|db| async move {
-        let refusal = || reply_with_usage(&missing_low_edge(), Some(usage(0.001)));
-        let fake =
-            FakeModel::start(vec![refusal(), refusal(), refusal(), refusal(), refusal()]).await;
-        let handle = Db::new(db.admin.clone(), DEFAULT_CLIENT_TIMEOUT_MS);
+        let fake = FakeModel::start((0..5).map(|_| priced_refusal()).collect()).await;
 
-        let report = author_one(&handle, &fake.job(), Kind::Template, &spec())
-            .await
-            .unwrap();
+        let report = author_expect(&db, &fake, Kind::Template, &spec(), Outcome::Declined, 5).await;
 
-        assert_eq!(report.outcome, Outcome::Declined);
-        assert_eq!(report.attempts, 5);
         assert!(report.alert);
         assert_eq!(report.cost_usd, None);
         assert_eq!(row_count(&db.admin, KP_KEY).await, 0);
-        assert_eq!(ledger_shape(&db.admin).await, (5, 0));
+        assert_eq!(authoring_ledger(&db.admin).await, (5, 0));
         assert_eq!(ledger_sum(&db.admin).await.as_deref(), Some("0.005000"));
-        assert!(alerting(&handle).await.unwrap().is_empty());
+        assert!(alerting(&handle(&db)).await.unwrap().is_empty());
     })
     .await;
 }
@@ -400,12 +225,8 @@ async fn a_declined_knowledge_point_alerts_and_stores_no_row() {
 async fn a_reply_with_no_usage_block_writes_a_zeros_row_with_a_null_cost() {
     TestDb::with(|db| async move {
         let fake = FakeModel::start(vec![reply_with_usage(&good_arguments(), None)]).await;
-        let handle = Db::new(db.admin.clone(), DEFAULT_CLIENT_TIMEOUT_MS);
 
-        let report = author_one(&handle, &fake.job(), Kind::Template, &spec())
-            .await
-            .unwrap();
-        assert_eq!(report.outcome, Outcome::Stored);
+        let report = author_expect(&db, &fake, Kind::Template, &spec(), Outcome::Stored, 1).await;
         assert_eq!(report.cost_usd, None);
 
         let row =
@@ -424,7 +245,7 @@ async fn a_reply_with_no_usage_block_writes_a_zeros_row_with_a_null_cost() {
         assert_eq!(row.4, 0);
         assert_eq!(row.5, None);
         assert_eq!(row.6.as_deref(), Some("qwen3.6"));
-        assert_eq!(ledger_shape(&db.admin).await, (1, 0));
+        assert_eq!(authoring_ledger(&db.admin).await, (1, 0));
 
         // The document is stored, with no money on it and an exact count.
         assert_eq!(accounting(&db.admin, KP_KEY).await, (1, None));
@@ -451,14 +272,9 @@ async fn the_cost_on_the_row_is_the_sum_of_that_knowledge_points_call_rows() {
             reply_with_usage(&good_arguments(), Some(usage(PRICES[2]))),
         ])
         .await;
-        let handle = Db::new(db.admin.clone(), DEFAULT_CLIENT_TIMEOUT_MS);
 
-        let report = author_one(&handle, &fake.job(), Kind::Template, &spec())
-            .await
-            .unwrap();
+        let report = author_expect(&db, &fake, Kind::Template, &spec(), Outcome::Stored, 3).await;
 
-        assert_eq!(report.outcome, Outcome::Stored);
-        assert_eq!(report.attempts, 3);
         assert_eq!(report.cost_usd.as_deref(), Some(PRICE_SUM));
 
         let (attempts, cost) = accounting(&db.admin, KP_KEY).await;
@@ -466,7 +282,7 @@ async fn the_cost_on_the_row_is_the_sum_of_that_knowledge_points_call_rows() {
         assert_eq!(cost.as_deref(), Some("0.501434"));
 
         // The same number, read from the ledger rows of those three calls.
-        assert_eq!(ledger_shape(&db.admin).await, (3, 0));
+        assert_eq!(authoring_ledger(&db.admin).await, (3, 0));
         assert_eq!(ledger_sum(&db.admin).await.as_deref(), Some("0.501434"));
         assert_eq!(cost, ledger_sum(&db.admin).await);
     })
@@ -482,12 +298,7 @@ async fn the_cost_on_the_row_is_the_sum_of_that_knowledge_points_call_rows() {
 #[tokio::test]
 async fn the_sum_rounds_every_term_the_way_a_ledger_row_does() {
     TestDb::with(|db| async move {
-        let handle = Db::new(db.admin.clone(), DEFAULT_CLIENT_TIMEOUT_MS);
-        let spend = vec!["0.0000005".to_owned(), "0.0000005".to_owned()];
-
-        let stored = store_pending(&handle, KP_KEY, Kind::Template, "{}", 2, &spend)
-            .await
-            .unwrap();
+        let stored = store(&db, 2, &["0.0000005", "0.0000005"]).await;
 
         assert!(stored.inserted);
         assert_eq!(stored.cost_usd.as_deref(), Some("0.000002"));
@@ -506,11 +317,7 @@ async fn the_sum_rounds_every_term_the_way_a_ledger_row_does() {
 #[tokio::test]
 async fn a_pass_with_no_price_stores_a_null_cost_and_an_exact_count() {
     TestDb::with(|db| async move {
-        let handle = Db::new(db.admin.clone(), DEFAULT_CLIENT_TIMEOUT_MS);
-
-        let stored = store_pending(&handle, KP_KEY, Kind::Template, "{}", 2, &[])
-            .await
-            .unwrap();
+        let stored = store(&db, 2, &[]).await;
 
         assert!(stored.inserted);
         assert_eq!(stored.cost_usd, None);
@@ -527,12 +334,7 @@ async fn a_pass_with_no_price_stores_a_null_cost_and_an_exact_count() {
 #[tokio::test]
 async fn a_total_the_money_column_cannot_hold_is_null() {
     TestDb::with(|db| async move {
-        let handle = Db::new(db.admin.clone(), DEFAULT_CLIENT_TIMEOUT_MS);
-        let spend = vec!["999999".to_owned(), "999999".to_owned()];
-
-        let stored = store_pending(&handle, KP_KEY, Kind::Template, "{}", 1, &spend)
-            .await
-            .unwrap();
+        let stored = store(&db, 1, &["999999", "999999"]).await;
 
         assert!(stored.inserted);
         assert_eq!(stored.cost_usd, None);
@@ -545,13 +347,12 @@ async fn a_total_the_money_column_cannot_hold_is_null() {
 #[tokio::test]
 async fn alerting_lists_the_documents_above_the_bound_dearest_first() {
     TestDb::with(|db| async move {
-        let handle = Db::new(db.admin.clone(), DEFAULT_CLIENT_TIMEOUT_MS);
         seed_row(&db.admin, "sha256:aaaa", "t/one", 1, Some("0.1")).await;
         seed_row(&db.admin, "sha256:bbbb", "t/two", 3, Some("0.2")).await;
         seed_row(&db.admin, "sha256:cccc", "t/three", 4, Some("0.3")).await;
         seed_row(&db.admin, "sha256:dddd", "t/four", 5, None).await;
 
-        let alerts = alerting(&handle).await.unwrap();
+        let alerts = alerting(&handle(&db)).await.unwrap();
 
         assert_eq!(alerts.len(), 2);
         assert_eq!(alerts[0].kp_id, "t/four");
@@ -572,29 +373,10 @@ async fn alerting_lists_the_documents_above_the_bound_dearest_first() {
 #[tokio::test]
 async fn a_duplicate_body_leaves_the_first_bill_alone() {
     TestDb::with(|db| async move {
-        let handle = Db::new(db.admin.clone(), DEFAULT_CLIENT_TIMEOUT_MS);
-        let first = store_pending(
-            &handle,
-            KP_KEY,
-            Kind::Template,
-            "{}",
-            1,
-            &["0.25".to_owned()],
-        )
-        .await
-        .unwrap();
+        let first = store(&db, 1, &["0.25"]).await;
         assert!(first.inserted);
 
-        let second = store_pending(
-            &handle,
-            KP_KEY,
-            Kind::Template,
-            "{}",
-            4,
-            &["0.75".to_owned()],
-        )
-        .await
-        .unwrap();
+        let second = store(&db, 4, &["0.75"]).await;
 
         assert!(!second.inserted);
         assert_eq!(second.cost_usd, None);
@@ -602,6 +384,40 @@ async fn a_duplicate_body_leaves_the_first_bill_alone() {
             accounting(&db.admin, KP_KEY).await,
             (1, Some("0.250000".to_owned()))
         );
+    })
+    .await;
+}
+
+/// A body that does not read as JSON is a configuration error, and a spend text
+/// the money cast cannot read is the error of the statement that sums it.
+///
+/// Neither one reaches the table: the pass hands the loop a verified body and a
+/// spend of decimal texts, so both errors name a defect of the caller.
+#[tokio::test]
+async fn an_unreadable_body_and_an_unreadable_spend_are_errors() {
+    TestDb::with(|db| async move {
+        let unreadable = store_pending(&handle(&db), KP_KEY, Kind::Template, "{", 1, &[])
+            .await
+            .unwrap_err()
+            .to_string();
+        assert!(
+            unreadable.starts_with("configuration error: the verified body does not read: "),
+            "{unreadable}"
+        );
+
+        let unpriced = store_pending(
+            &handle(&db),
+            KP_KEY,
+            Kind::Template,
+            "{}",
+            1,
+            &["free".to_owned()],
+        )
+        .await
+        .unwrap_err()
+        .to_string();
+        assert!(unpriced.starts_with("store error: "), "{unpriced}");
+        assert_eq!(row_count(&db.admin, KP_KEY).await, 0);
     })
     .await;
 }
