@@ -224,7 +224,17 @@ fn first_reason(err: &LoadError) -> String {
 /// value that is empty or not valid Unicode is a start error, because a silent
 /// fallback would leave the review writes closed with no word to the operator.
 pub(super) fn admin_dsn() -> Result<Option<DbConfig>, Fatal> {
-    let raw = match std::env::var(ADMIN_DSN_VAR) {
+    admin_dsn_from(std::env::var(ADMIN_DSN_VAR))
+}
+
+/// The admin configuration from the raw lookup of `CADUS_ADMIN_DATABASE_URL`.
+///
+/// The function takes the lookup instead of reading the environment, so a unit
+/// test drives the empty, the absent, and the not-Unicode branch with no live
+/// environment. The present branch reads the two bounds from `DbConfig::from_env`
+/// and replaces the connection string.
+fn admin_dsn_from(raw: Result<String, std::env::VarError>) -> Result<Option<DbConfig>, Fatal> {
+    let raw = match raw {
         Ok(url) if url.is_empty() => {
             return Err(Fatal::Startup(format!("{ADMIN_DSN_VAR} is empty")));
         }
@@ -288,4 +298,74 @@ fn deadline_secs(trimmed: &str) -> Result<u64, Fatal> {
         )));
     }
     Ok(secs)
+}
+
+#[cfg(test)]
+mod tests {
+    use cadus_core::curriculum::{CurriculumError, Finding, LoadError};
+
+    use super::{Fatal, admin_dsn_from, deadline_secs, first_reason};
+
+    /// The text a `Fatal::Startup` carries.
+    fn startup_text(fatal: Fatal) -> String {
+        match fatal {
+            Fatal::Startup(message) => message,
+            Fatal::RlsBypass { .. } => panic!("expected a startup error"),
+        }
+    }
+
+    /// The reason of a call that must fail with a startup error.
+    fn err_text<T>(outcome: Result<T, Fatal>) -> String {
+        match outcome {
+            Ok(_) => panic!("expected a startup error"),
+            Err(fatal) => startup_text(fatal),
+        }
+    }
+
+    /// An absent admin DSN is no admin path; an empty one and a not-Unicode one
+    /// are start errors.
+    #[test]
+    fn the_admin_dsn_reads_the_three_no_database_branches() {
+        assert!(matches!(
+            admin_dsn_from(Err(std::env::VarError::NotPresent)),
+            Ok(None)
+        ));
+        assert!(err_text(admin_dsn_from(Ok(String::new()))).contains("is empty"));
+        assert!(
+            err_text(admin_dsn_from(Err(std::env::VarError::NotUnicode(
+                std::ffi::OsString::from("x"),
+            ))))
+            .contains("not valid Unicode")
+        );
+    }
+
+    /// The deadline reader takes a positive whole number and refuses an empty,
+    /// a non-number, and a zero value.
+    #[test]
+    fn the_deadline_reader_takes_a_positive_whole_number() {
+        assert!(matches!(deadline_secs("7"), Ok(7)));
+        assert!(err_text(deadline_secs("")).contains("is empty"));
+        assert!(err_text(deadline_secs("many")).contains("whole number of seconds"));
+        assert!(err_text(deadline_secs("0")).contains("1 or more"));
+    }
+
+    /// The first reason names the first finding of a fatal-findings error, and
+    /// prints an empty-findings error and any other load error whole.
+    #[test]
+    fn the_first_reason_names_the_first_finding_or_the_error() {
+        let named = LoadError::Curriculum(CurriculumError::FatalFindings {
+            findings: vec![Finding::new("schema", "the field is missing")],
+        });
+        assert_eq!(first_reason(&named), "[schema] the field is missing");
+
+        let empty = LoadError::Curriculum(CurriculumError::FatalFindings {
+            findings: Vec::new(),
+        });
+        assert_eq!(first_reason(&empty), empty.to_string());
+
+        let other = LoadError::Curriculum(CurriculumError::DuplicateTopicId {
+            id: "addition".into(),
+        });
+        assert_eq!(first_reason(&other), other.to_string());
+    }
 }
