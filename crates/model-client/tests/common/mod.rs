@@ -3,18 +3,85 @@
 //!
 //! The endpoint is one `TcpListener` on `127.0.0.1`, a hand-written HTTP/1.1
 //! reply per call, and a record of every request it received. No test reaches
-//! a real provider. Every test binary compiles this module, and no binary uses
-//! every helper, so the dead-code lint is off for the module.
-
-#![allow(dead_code)]
+//! a real provider. The `tests/client` binary is the one user of the module.
 
 use std::sync::{Arc, Mutex};
 use std::time::Duration;
 
 use cadus_model_client::{Call, ChatRequest, Client, ModelConfig, ToolSpec};
+use rustls::crypto::CryptoProvider;
+use rustls::pki_types::pem::PemObject;
+use rustls::pki_types::{CertificateDer, PrivateKeyDer};
+use rustls::{RootCertStore, ServerConfig};
 use serde_json::{Value, json};
-use tokio::io::{AsyncReadExt, AsyncWriteExt};
-use tokio::net::{TcpListener, TcpStream};
+use tokio::io::{AsyncRead, AsyncReadExt, AsyncWrite, AsyncWriteExt};
+use tokio::net::TcpListener;
+use tokio_rustls::TlsAcceptor;
+
+/// The certificate authority of the TLS tests: ECDSA P-256, self-signed,
+/// valid for one hundred years.
+const TEST_CA_PEM: &str = "-----BEGIN CERTIFICATE-----
+MIIBlzCCAT2gAwIBAgIUJATafsztSj1novMFd+V0BCvF5d4wCgYIKoZIzj0EAwIw
+GDEWMBQGA1UEAwwNY2FkdXMgdGVzdCBDQTAgFw0yNjA5MDQwNTU1NDBaGA8yMTI2
+MDgxMTA1NTU0MFowGDEWMBQGA1UEAwwNY2FkdXMgdGVzdCBDQTBZMBMGByqGSM49
+AgEGCCqGSM49AwEHA0IABATEQ+/c/swx0/X3nU90QtNCw4CbIhBskaI33zt0iyrT
+VJ+Y6ZG3IQAY9ErQvnQqZNarMsjm9/zRMJXPx942NjSjYzBhMB0GA1UdDgQWBBTE
+5qHalbligEBE3JC5lK99j1RcfjAfBgNVHSMEGDAWgBTE5qHalbligEBE3JC5lK99
+j1RcfjAPBgNVHRMBAf8EBTADAQH/MA4GA1UdDwEB/wQEAwICBDAKBggqhkjOPQQD
+AgNIADBFAiAN2mRQoQq0ZG596HHm7zq+rGjnf88t7N5OHN5bhCQXVwIhAIXbTOvz
+JpEDGM3tfjP3AidDZhZPyj0mUPzZi4fjvKAB
+-----END CERTIFICATE-----
+";
+
+/// The server certificate of `127.0.0.1`, signed by the test authority.
+const TEST_LEAF_PEM: &str = "-----BEGIN CERTIFICATE-----
+MIIBsjCCAVegAwIBAgIUJl4Q7cPIiCEJ00Ek094KXiX+kcswCgYIKoZIzj0EAwIw
+GDEWMBQGA1UEAwwNY2FkdXMgdGVzdCBDQTAgFw0yNjA5MDQwNTU1NDBaGA8yMTI2
+MDgxMTA1NTU0MFowFDESMBAGA1UEAwwJMTI3LjAuMC4xMFkwEwYHKoZIzj0CAQYI
+KoZIzj0DAQcDQgAElYEUuDbeo7LGWJWq0Fjr5FezQP1SbB8b8PzYR+RCcGdPvj18
+F2zA9q9XcCvAe/6QphWOfURzuaB720T7k5IP6qOBgDB+MA8GA1UdEQQIMAaHBH8A
+AAEwCQYDVR0TBAIwADALBgNVHQ8EBAMCB4AwEwYDVR0lBAwwCgYIKwYBBQUHAwEw
+HQYDVR0OBBYEFAx7asq13RRO7K01wPZRi4zmcHI9MB8GA1UdIwQYMBaAFMTmodqV
+uWKAQETckLmUr32PVFx+MAoGCCqGSM49BAMCA0kAMEYCIQDB2k+3V8TR/XFG7eK/
+zYgYh42Ly+QixQvkeM1Oyv0rngIhAKbssKfPigxSeb+qekk17afYAYaCubVQskTp
++GBynX79
+-----END CERTIFICATE-----
+";
+
+/// The PKCS#8 private key of the server certificate.
+const TEST_LEAF_KEY_PEM: &str = "-----BEGIN PRIVATE KEY-----
+MIGHAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBG0wawIBAQQgoppw70+dnnS4wiWC
+NKKYGWIISISVNj/ieGWc8nRrBUOhRANCAASVgRS4Nt6jssZYlarQWOvkV7NA/VJs
+Hxvw/NhH5EJwZ0++PXwXbMD2r1dwK8B7/pCmFY59RHO5oHvbRPuTkg/q
+-----END PRIVATE KEY-----
+";
+
+/// The `ring` crypto provider.
+pub fn ring_provider() -> Arc<CryptoProvider> {
+    Arc::new(rustls::crypto::ring::default_provider())
+}
+
+/// A trust store that holds the test authority alone.
+pub fn test_roots() -> RootCertStore {
+    let mut roots = RootCertStore::empty();
+    roots
+        .add(CertificateDer::from_pem_slice(TEST_CA_PEM.as_bytes()).unwrap())
+        .unwrap();
+    roots
+}
+
+/// The TLS acceptor of the fake server: the server certificate over `ring`.
+fn acceptor() -> TlsAcceptor {
+    let cert = CertificateDer::from_pem_slice(TEST_LEAF_PEM.as_bytes()).unwrap();
+    let key = PrivateKeyDer::from_pem_slice(TEST_LEAF_KEY_PEM.as_bytes()).unwrap();
+    let config = ServerConfig::builder_with_provider(ring_provider())
+        .with_safe_default_protocol_versions()
+        .unwrap()
+        .with_no_client_auth()
+        .with_single_cert(vec![cert], key)
+        .unwrap();
+    TlsAcceptor::from(Arc::new(config))
+}
 
 /// One request the fake server received.
 #[derive(Debug, Clone)]
@@ -44,7 +111,7 @@ pub struct FakeModel {
 
 /// Read one HTTP request from `socket`: the head, then the body that
 /// `content-length` names.
-async fn read_request(socket: &mut TcpStream) -> String {
+async fn read_request<S: AsyncRead + Unpin>(socket: &mut S) -> String {
     let mut raw: Vec<u8> = Vec::new();
     let mut buffer = [0_u8; 4096];
     loop {
@@ -80,6 +147,25 @@ fn reply_bytes(reply: Reply) -> Option<String> {
     }
 }
 
+/// Read one request from `socket`, record it in `record`, and send `reply`.
+async fn answer<S: AsyncRead + AsyncWrite + Unpin>(
+    mut socket: S,
+    record: &Mutex<Vec<Seen>>,
+    reply: Reply,
+) {
+    let request = read_request(&mut socket).await;
+    let split = request.find("\r\n\r\n").unwrap_or(request.len());
+    let head = request[..split].to_lowercase();
+    let body: Value =
+        serde_json::from_str(request.get(split + 4..).unwrap_or("")).unwrap_or(Value::Null);
+    record.lock().unwrap().push(Seen { head, body });
+
+    if let Some(bytes) = reply_bytes(reply) {
+        let _ = socket.write_all(bytes.as_bytes()).await;
+        let _ = socket.flush().await;
+    }
+}
+
 impl FakeModel {
     /// Bind `127.0.0.1:0` and serve `replies` in order, one connection each.
     ///
@@ -97,38 +183,48 @@ impl FakeModel {
 
     /// `start` with any reply shape.
     pub async fn start_with(replies: Vec<Reply>) -> FakeModel {
+        Self::serve(replies, None).await
+    }
+
+    /// `start_with` behind TLS: the endpoint is `https`, and the server
+    /// presents the certificate that [`test_roots`] trusts.
+    pub async fn start_tls(replies: Vec<Reply>) -> FakeModel {
+        Self::serve(replies, Some(acceptor())).await
+    }
+
+    /// Bind `127.0.0.1:0`, with `tls` in front of every connection when it is
+    /// given, and serve `replies` in order.
+    async fn serve(replies: Vec<Reply>, tls: Option<TlsAcceptor>) -> FakeModel {
         let listener = TcpListener::bind("127.0.0.1:0").await.unwrap();
         let port = listener.local_addr().unwrap().port();
+        let scheme = if tls.is_some() { "https" } else { "http" };
         let seen = Arc::new(Mutex::new(Vec::new()));
         let record = Arc::clone(&seen);
 
         tokio::spawn(async move {
             let mut index = 0_usize;
             loop {
-                let Ok((mut socket, _)) = listener.accept().await else {
+                let Ok((socket, _)) = listener.accept().await else {
                     return;
                 };
-                let request = read_request(&mut socket).await;
-                let split = request.find("\r\n\r\n").unwrap_or(request.len());
-                let head = request[..split].to_lowercase();
-                let body: Value = serde_json::from_str(request.get(split + 4..).unwrap_or(""))
-                    .unwrap_or(Value::Null);
-                record.lock().unwrap().push(Seen { head, body });
-
                 let reply = replies
                     .get(index)
                     .cloned()
                     .unwrap_or_else(|| Reply::Status(500, String::new()));
                 index += 1;
-                if let Some(bytes) = reply_bytes(reply) {
-                    let _ = socket.write_all(bytes.as_bytes()).await;
-                    let _ = socket.flush().await;
+                match &tls {
+                    None => answer(socket, &record, reply).await,
+                    Some(acceptor) => {
+                        if let Ok(stream) = acceptor.accept(socket).await {
+                            answer(stream, &record, reply).await;
+                        }
+                    }
                 }
             }
         });
 
         FakeModel {
-            base_url: format!("http://127.0.0.1:{port}/v1"),
+            base_url: format!("{scheme}://127.0.0.1:{port}/v1"),
             seen,
         }
     }

@@ -4,14 +4,10 @@
 //! Every expected value is a LITERAL. Nothing is read back from the code under
 //! test.
 
-#![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
-
-mod common;
-
 use std::time::Duration;
 
+use crate::common::{chat_request, local_config};
 use cadus_model_client::{ModelConfig, request_body};
-use common::{chat_request, local_config};
 use serde_json::json;
 
 // --------------------------------------------------------------------------- //

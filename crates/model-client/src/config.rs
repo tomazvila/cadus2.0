@@ -282,16 +282,21 @@ mod tests {
             "model configuration error: DIAGNOSIS_OUTPUT_TOKENS must be a whole number, not \
              \"six hundred\""
         );
-        let authoring = [
-            ("OPENAI_API_KEY", "key"),
-            ("OPENAI_BASE_URL", "http://10.8.0.3:8080/v1"),
+        for (name, value) in [
+            ("DIAGNOSIS_REASONING_MAX_TOKENS", "6e2"),
+            ("AUTHORING_OUTPUT_TOKENS", "4k"),
             ("AUTHORING_REASONING_MAX_TOKENS", "-1"),
-        ];
-        assert_eq!(
-            message(ModelConfig::authoring_from_reads(&reads(&authoring))),
-            "model configuration error: AUTHORING_REASONING_MAX_TOKENS must be a whole number, \
-             not \"-1\""
-        );
+        ] {
+            let vars = [
+                ("OPENAI_API_KEY", "key"),
+                ("OPENAI_BASE_URL", "http://10.8.0.3:8080/v1"),
+                (name, value),
+            ];
+            assert_eq!(
+                message(ModelConfig::authoring_from_reads(&reads(&vars))),
+                format!("model configuration error: {name} must be a whole number, not {value:?}")
+            );
+        }
     }
 
     /// The two environment constructors are the reader constructors over the

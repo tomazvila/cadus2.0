@@ -5,14 +5,10 @@
 //! Every expected value is a LITERAL. Nothing is read back from the code under
 //! test.
 
-#![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
-
-mod common;
-
 use std::time::Duration;
 
+use crate::common::{FakeModel, call_with, chat_request, good_reply, local_config};
 use cadus_model_client::{ChatRequest, Client, ModelError, ToolSpec};
-use common::{FakeModel, call_with, chat_request, good_reply, local_config};
 use serde_json::json;
 use tokio::net::TcpListener;
 

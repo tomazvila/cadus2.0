@@ -4,12 +4,8 @@
 //! Every expected value is a LITERAL: a literal `max_tokens`, a literal status,
 //! a literal request count. Nothing is read back from the code under test.
 
-#![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
-
-mod common;
-
+use crate::common::{FakeModel, call_with, good_reply, widened_retry};
 use cadus_model_client::ModelError;
-use common::{FakeModel, call_with, good_reply, widened_retry};
 use serde_json::json;
 
 /// The acceptance literal: `finish_reason: "length"` with no tool call retries

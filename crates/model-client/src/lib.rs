@@ -203,6 +203,7 @@ pub struct Call {
 }
 
 /// What one attempt decided.
+#[derive(Debug)]
 enum Verdict {
     /// The reply held the arguments of the forced tool.
     Done(Value),
@@ -418,7 +419,7 @@ pub fn request_body(cfg: &ModelConfig, request: &ChatRequest, max_tokens: u32) -
 
 #[cfg(test)]
 mod tests {
-    use super::{ModelError, Verdict, status_verdict};
+    use super::{Verdict, status_verdict};
 
     /// A 429 and every 5xx retry; every other status stops the call. The
     /// error carries at most 400 characters of the body.
@@ -436,12 +437,12 @@ mod tests {
             assert_eq!(retry, retries, "status {status}");
         }
         let long = "x".repeat(500);
-        let Verdict::Stop(ModelError::Status { status, body }) =
-            status_verdict(400, long.as_bytes())
-        else {
-            unreachable!("a 400 stops the call")
-        };
-        assert_eq!(status, 400);
-        assert_eq!(body.len(), 400);
+        assert_eq!(
+            format!("{:?}", status_verdict(400, long.as_bytes())),
+            format!(
+                "Stop(Status {{ status: 400, body: {:?} }})",
+                "x".repeat(400)
+            )
+        );
     }
 }

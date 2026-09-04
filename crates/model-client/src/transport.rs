@@ -16,6 +16,7 @@ use http_body_util::{BodyExt, Full, Limited};
 use hyper::Request;
 use hyper::header::{AUTHORIZATION, CONTENT_TYPE, HOST};
 use hyper_util::rt::TokioIo;
+use rustls::crypto::CryptoProvider;
 use rustls::pki_types::ServerName;
 use rustls::{ClientConfig, RootCertStore};
 use serde_json::Value;
@@ -67,20 +68,37 @@ pub struct HttpClient {
 }
 
 impl HttpClient {
-    /// Parse the base URL and build the TLS setup once.
+    /// Parse the base URL and build the TLS setup once, with the webpki trust
+    /// anchors and the `ring` provider.
+    ///
+    /// # Errors
+    ///
+    /// Returns every [`TransportError`] of [`HttpClient::with_trust`].
+    pub fn new(base_url: &str) -> Result<Self, TransportError> {
+        let mut roots = RootCertStore::empty();
+        roots.extend(webpki_roots::TLS_SERVER_ROOTS.iter().cloned());
+        let provider = Arc::new(rustls::crypto::ring::default_provider());
+        Self::with_trust(base_url, provider, roots)
+    }
+
+    /// [`HttpClient::new`] over a given crypto provider and trust store.
+    ///
+    /// A test gives a trust store that holds its own certificate authority,
+    /// and a provider with no cipher suite to reach the TLS setup error.
     ///
     /// # Errors
     ///
     /// Returns [`TransportError`] when the base URL does not parse, names no
     /// host, carries an unsupported scheme, names an `https` host that is not
-    /// a TLS server name, or when the trust store does not build.
-    pub fn new(base_url: &str) -> Result<Self, TransportError> {
+    /// a TLS server name, or when the TLS protocol versions of `provider` do
+    /// not build.
+    pub fn with_trust(
+        base_url: &str,
+        provider: Arc<CryptoProvider>,
+        roots: RootCertStore,
+    ) -> Result<Self, TransportError> {
         let base = Url::parse(base_url).map_err(|err| why("the base URL does not parse", &err))?;
-        let endpoint = Url::parse(&format!(
-            "{}{COMPLETIONS_PATH}",
-            base.as_str().trim_end_matches('/')
-        ))
-        .map_err(|err| why("the endpoint URL does not parse", &err))?;
+        let endpoint = endpoint_of(&base);
         let Some(host) = endpoint.host_str() else {
             return Err(TransportError("the base URL names no host".to_owned()));
         };
@@ -90,7 +108,7 @@ impl HttpClient {
             "https" => {
                 let name = ServerName::try_from(host.clone())
                     .map_err(|err| why("the host is not a TLS server name", &err))?;
-                (Some((tls_config()?, name)), 443)
+                (Some((tls_config(provider, roots)?, name)), 443)
             }
             other => {
                 return Err(TransportError(format!(
@@ -179,9 +197,12 @@ async fn exchange<I>(io: I, request: Request<Full<Bytes>>) -> Result<(u16, Vec<u
 where
     I: hyper::rt::Read + hyper::rt::Write + Send + Unpin + 'static,
 {
+    // The HTTP/1 handshake of hyper builds the sender and the connection in
+    // memory. It reads no byte of the stream, so it does not fail.
+    #[allow(clippy::expect_used)]
     let (mut sender, connection) = hyper::client::conn::http1::handshake(io)
         .await
-        .map_err(|err| why("the HTTP handshake failed", &err))?;
+        .expect("the HTTP/1 handshake of hyper builds in memory");
 
     // The connection future drives the socket while the request is in flight.
     // It ends when the response is read and the stream closes, so the task does
@@ -204,11 +225,31 @@ where
     Ok((status, collected.to_bytes().to_vec()))
 }
 
-/// The TLS setup: the webpki trust anchors and the `ring` provider.
-fn tls_config() -> Result<Arc<ClientConfig>, TransportError> {
-    let mut roots = RootCertStore::empty();
-    roots.extend(webpki_roots::TLS_SERVER_ROOTS.iter().cloned());
-    let provider = Arc::new(rustls::crypto::ring::default_provider());
+/// The endpoint of `base`: [`COMPLETIONS_PATH`] after the last character of
+/// `base` that is not a slash.
+///
+/// The text of `base` ends with its fragment, else with its query, else with
+/// its path, so the path lands on that part.
+fn endpoint_of(base: &Url) -> Url {
+    let mut endpoint = base.clone();
+    match (base.fragment(), base.query()) {
+        (Some(fragment), _) => endpoint.set_fragment(Some(&with_path(fragment))),
+        (None, Some(query)) => endpoint.set_query(Some(&with_path(query))),
+        (None, None) => endpoint.set_path(&with_path(base.path())),
+    }
+    endpoint
+}
+
+/// `tail` without its trailing slashes, then [`COMPLETIONS_PATH`].
+fn with_path(tail: &str) -> String {
+    format!("{}{COMPLETIONS_PATH}", tail.trim_end_matches('/'))
+}
+
+/// The TLS setup: the trust anchors of `roots` over `provider`.
+fn tls_config(
+    provider: Arc<CryptoProvider>,
+    roots: RootCertStore,
+) -> Result<Arc<ClientConfig>, TransportError> {
     let config = ClientConfig::builder_with_provider(provider)
         .with_safe_default_protocol_versions()
         .map_err(|err| why("the TLS protocol versions did not build", &err))?
