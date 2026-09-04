@@ -4,7 +4,7 @@
 use cadus_core::config::Config;
 use cadus_core::curriculum::{Catalog, Curriculum, RawCurriculum};
 use cadus_core::event::{
-    Event, Regraded, SchemaVersion, SessionStart, Slug, Timestamp, WorkQuality,
+    Event, Regraded, ReviewResult, SchemaVersion, SessionStart, Slug, Timestamp, WorkQuality,
 };
 use cadus_core::learner::LearnerModel;
 use cadus_core::projector::ProjectionInput;
@@ -103,6 +103,35 @@ fn an_absent_view_folds_from_the_whole_log() {
     let projection = fold_forward(&cache, rows, &input).unwrap();
     assert!(!projection.replayed);
     assert_eq!(projection.through_seq, 2);
+}
+
+/// Branch 2 reports the error of the projector when the incremental fold
+/// refuses the new events.
+#[test]
+fn a_projector_error_stops_the_forward_fold() {
+    let graph = graph();
+    let cfg = Config::default();
+    let input = ProjectionInput::new(&graph, &cfg, Timestamp::from_micros(0));
+    let cache = cache_at_one(Some(SessionView::default()), config_hash_of(&input));
+    let rows = vec![
+        started(1, "s_1970-01-01a"),
+        EventRow {
+            seq: 2,
+            event: Event::ReviewResult(ReviewResult {
+                ts: Timestamp::from_micros(2),
+                session: Some("s_1970-01-01a".to_string()),
+                v: SchemaVersion,
+                topic: Slug::new("addition").unwrap(),
+                passed: true,
+                weighted_score: 1.0,
+                xp: -1e308,
+                quality_tier: WorkQuality::Perfect,
+                assisted: false,
+                task_id: Some("s_1970-01-01a-review-addition".to_string()),
+            }),
+        },
+    ];
+    assert!(fold_forward(&cache, rows, &input).is_err());
 }
 
 /// A stored view of another shape or another version reads as absent.
