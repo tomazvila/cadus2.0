@@ -48,8 +48,19 @@ impl std::error::Error for EntropyError {}
 /// This is the raw secret. Store only [`hash_token`] of it, and never write it
 /// to a log.
 pub fn generate_token() -> Result<String, EntropyError> {
+    generate_token_with(getrandom::getrandom)
+}
+
+/// Draw a fresh token, but take the entropy source as an argument.
+///
+/// `generate_token` calls it with `getrandom::getrandom`. A unit test passes a
+/// fill that refuses, so the entropy-failure arm is reached without a live
+/// kernel that gives no entropy.
+fn generate_token_with(
+    fill: impl FnOnce(&mut [u8]) -> Result<(), getrandom::Error>,
+) -> Result<String, EntropyError> {
     let mut bytes = [0u8; TOKEN_BYTES];
-    getrandom::getrandom(&mut bytes).map_err(|error| EntropyError {
+    fill(&mut bytes).map_err(|error| EntropyError {
         reason: error.to_string(),
     })?;
     Ok(Base64UrlUnpadded::encode_string(&bytes))
@@ -85,4 +96,39 @@ pub fn tokens_equal(left: &str, right: &str) -> bool {
         return false;
     }
     left.ct_eq(right).into()
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    /// The entropy error prints the reason of the underlying `getrandom` error.
+    #[test]
+    fn the_entropy_error_names_the_reason() {
+        let err = EntropyError {
+            reason: "the source is unavailable".to_string(),
+        };
+        assert_eq!(
+            err.to_string(),
+            "the operating system gave no entropy: the source is unavailable"
+        );
+    }
+
+    /// A fill that refuses gives the entropy-failure arm and no token.
+    #[test]
+    fn a_refused_entropy_fill_is_an_entropy_error() {
+        let outcome = generate_token_with(|_| Err(getrandom::Error::UNSUPPORTED));
+        assert!(outcome.is_err(), "the draw must fail when the fill refuses");
+    }
+
+    /// A fill that answers gives a token of the documented length.
+    #[test]
+    fn a_full_fill_gives_a_token_of_the_documented_length() {
+        let token = generate_token_with(|buf| {
+            buf.fill(0);
+            Ok(())
+        })
+        .expect("a full fill gives a token");
+        assert_eq!(token.len(), TOKEN_CHARS);
+    }
 }

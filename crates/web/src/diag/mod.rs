@@ -184,3 +184,18 @@ async fn save_diagnostic(
     store(state, save_diag_state(tx, user_id, &json!(diag))).await?;
     write_state(&state.db, tx, user_id, scratch).await
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    /// A deterministic checker exists for numeric and expression kinds, and for
+    /// no other kind.
+    #[test]
+    fn only_the_checked_kinds_are_deterministic() {
+        assert!(deterministic(AnswerKind::Numeric));
+        assert!(deterministic(AnswerKind::Expression));
+        assert!(!deterministic(AnswerKind::MultiStep));
+        assert!(!deterministic(AnswerKind::Proof));
+    }
+}

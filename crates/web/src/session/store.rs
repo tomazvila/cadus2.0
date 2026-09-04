@@ -435,3 +435,17 @@ pub(crate) async fn view_for_open_session(
     forget_own_drills(view, &events, session);
     Ok(events)
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    /// The `invalid` mapper carries the core message into a `422`.
+    #[test]
+    fn the_invalid_mapper_is_a_422_that_carries_the_message() {
+        let err = invalid("the slug is empty");
+        assert_eq!(err.status, StatusCode::UNPROCESSABLE_ENTITY);
+        assert_eq!(err.code, INVALID_REQUEST);
+        assert_eq!(err.message, "the slug is empty");
+    }
+}

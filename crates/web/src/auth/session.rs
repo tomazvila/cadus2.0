@@ -247,3 +247,39 @@ pub fn clear_session_cookie(posture: CookiePosture) -> Result<HeaderValue, Cooki
 pub fn read_session_credential<'h>(headers: &'h HeaderMap, name: &str) -> Option<&'h str> {
     read_bearer_token(headers).or_else(|| read_session_cookie(headers, name))
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    /// Each cookie-write error prints the offending part and nothing secret.
+    #[test]
+    fn the_cookie_write_errors_print_their_reason() {
+        assert!(
+            CookieWriteError::HostPrefixAtPath {
+                name: "__Host-x".to_string(),
+                path: "/scoped".to_string(),
+            }
+            .to_string()
+            .contains("/scoped")
+        );
+        assert_eq!(
+            CookieWriteError::BadName {
+                name: "bad name".to_string(),
+            }
+            .to_string(),
+            "cookie name \"bad name\" is not an HTTP token"
+        );
+        assert_eq!(
+            CookieWriteError::BadValue.to_string(),
+            "the cookie value holds a byte Set-Cookie cannot carry"
+        );
+        assert_eq!(
+            CookieWriteError::BadPath {
+                path: "no-slash".to_string(),
+            }
+            .to_string(),
+            "cookie path \"no-slash\" is not a legal Set-Cookie path"
+        );
+    }
+}

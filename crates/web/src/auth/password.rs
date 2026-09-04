@@ -244,8 +244,21 @@ pub fn validate_password(password: &str) -> Result<(), WeakPassword> {
 /// The salt is 16 fresh bytes from the operating system. This function does NOT
 /// apply the policy; call [`validate_password`] first.
 pub fn hash_password(profile: Argon2Profile, password: &str) -> Result<String, PasswordError> {
+    hash_password_with(getrandom::getrandom, profile, password)
+}
+
+/// Hash `password` under `profile`, but take the salt source as an argument.
+///
+/// [`hash_password`] calls it with `getrandom::getrandom`. A unit test passes a
+/// fill that refuses, so the entropy-failure arm is reached without a live
+/// kernel that gives no entropy.
+fn hash_password_with(
+    fill: impl FnOnce(&mut [u8]) -> Result<(), getrandom::Error>,
+    profile: Argon2Profile,
+    password: &str,
+) -> Result<String, PasswordError> {
     let mut salt_bytes = [0u8; SALT_BYTES];
-    getrandom::getrandom(&mut salt_bytes).map_err(|error| PasswordError::Entropy {
+    fill(&mut salt_bytes).map_err(|error| PasswordError::Entropy {
         reason: error.to_string(),
     })?;
     let salt = SaltString::encode_b64(&salt_bytes).map_err(|error| PasswordError::Hashing {
@@ -307,4 +320,88 @@ pub fn needs_rehash(profile: Argon2Profile, hashed: &str) -> bool {
     params.m_cost() != profile.memory_cost_kib
         || params.t_cost() != profile.time_cost
         || params.p_cost() != profile.parallelism
+}
+
+#[cfg(test)]
+mod cov_tests {
+    use super::*;
+
+    /// Every hashing-error variant prints its own reason.
+    #[test]
+    fn every_password_error_prints_its_reason() {
+        assert!(
+            PasswordError::UnknownProfile {
+                value: Some("prd".to_string()),
+            }
+            .to_string()
+            .contains("prd")
+        );
+        assert_eq!(
+            PasswordError::UnknownProfile { value: None }.to_string(),
+            format!("{ARGON2_PROFILE_VAR} is not valid Unicode")
+        );
+        assert_eq!(
+            PasswordError::Parameters {
+                profile: "prod",
+                reason: "too small".to_string(),
+            }
+            .to_string(),
+            "the prod Argon2 profile is not legal: too small"
+        );
+        assert_eq!(
+            PasswordError::Entropy {
+                reason: "no pool".to_string(),
+            }
+            .to_string(),
+            "the operating system gave no entropy: no pool"
+        );
+        assert_eq!(
+            PasswordError::Hashing {
+                reason: "refused".to_string(),
+            }
+            .to_string(),
+            "Argon2 refused to hash: refused"
+        );
+    }
+
+    /// A profile whose numbers are not a legal Argon2 parameter set is a
+    /// `Parameters` error, at the hash and at the `hasher` call.
+    #[test]
+    fn an_illegal_profile_is_a_parameters_error() {
+        let illegal = Argon2Profile {
+            name: "illegal",
+            time_cost: 0,
+            memory_cost_kib: 1,
+            parallelism: 4,
+        };
+        assert!(matches!(
+            hash_password(illegal, "correct horse battery staple"),
+            Err(PasswordError::Parameters {
+                profile: "illegal",
+                ..
+            })
+        ));
+    }
+
+    /// A salt fill that refuses is an entropy error and no hash.
+    #[test]
+    fn a_refused_salt_fill_is_an_entropy_error() {
+        let outcome = hash_password_with(
+            |_| Err(getrandom::Error::UNSUPPORTED),
+            Argon2Profile::TEST,
+            "correct horse battery staple",
+        );
+        assert!(matches!(outcome, Err(PasswordError::Entropy { .. })));
+    }
+
+    /// A hash written under one profile needs a rehash under another, and a
+    /// string that does not parse needs one too.
+    #[test]
+    fn a_hash_of_another_profile_needs_a_rehash() {
+        let stored = hash_password(Argon2Profile::TEST, "correct horse battery staple")
+            .expect("the test profile hashes");
+        assert!(needs_rehash(Argon2Profile::PROD, &stored));
+        assert!(!needs_rehash(Argon2Profile::TEST, &stored));
+        assert!(needs_rehash(Argon2Profile::PROD, "not a phc string"));
+    }
 }

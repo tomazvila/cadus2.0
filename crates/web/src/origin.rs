@@ -280,3 +280,52 @@ pub async fn csrf_origin_layer(
         CsrfVerdict::Allow => next.run(request).await,
     }
 }
+
+#[cfg(test)]
+mod origin_tests {
+    use super::*;
+
+    /// The not-Unicode error names the variable.
+    #[test]
+    fn the_not_unicode_error_names_the_variable() {
+        assert_eq!(
+            OriginPolicyError::NotUnicode.to_string(),
+            format!("{PUBLIC_ORIGIN_VAR} is not valid Unicode")
+        );
+    }
+
+    /// An empty value gives the fallback policy, and a value that is not valid
+    /// Unicode is a start error.
+    #[test]
+    fn from_env_handles_the_empty_and_the_non_unicode_value() {
+        use std::ffi::OsString;
+
+        assert_eq!(
+            OriginPolicy::from_env(Some(OsString::from("   "))),
+            Ok(OriginPolicy::default())
+        );
+
+        #[cfg(unix)]
+        {
+            use std::os::unix::ffi::OsStringExt;
+            let raw = OsString::from_vec(vec![0x68, 0xff]);
+            assert_eq!(
+                OriginPolicy::from_env(Some(raw)),
+                Err(OriginPolicyError::NotUnicode)
+            );
+        }
+    }
+
+    /// The own origin needs a `Host` header, and a blank one gives none.
+    #[test]
+    fn the_own_origin_needs_a_host_header() {
+        use axum::http::{HeaderMap, HeaderValue};
+
+        let policy = OriginPolicy::default();
+        assert_eq!(own_origin(&policy, &HeaderMap::new()), None);
+
+        let mut blank = HeaderMap::new();
+        blank.insert("host", HeaderValue::from_static("   "));
+        assert_eq!(own_origin(&policy, &blank), None);
+    }
+}
