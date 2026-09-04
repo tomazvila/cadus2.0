@@ -273,10 +273,16 @@ pub struct PoolTarget {
 /// may depend on it: the anti-repeat rule of D5 decides which row a learner sees,
 /// not the position of a row in its batch.
 ///
+/// # The two documents
+///
+/// `to_body` serializes a document of plain fields and never fails. The
+/// empty text stands in for that impossible failure, and the `::jsonb` cast
+/// of the statement refuses it, so that case ends as the error of the
+/// statement.
+///
 /// # Errors
 ///
-/// Returns [`StoreError::Body`] when a document does not serialize, and
-/// [`StoreError::Db`] when the statement fails.
+/// Returns [`StoreError::Db`] when the statement fails.
 pub async fn insert_batch<'e, E>(
     executor: E,
     user_id: Uuid,
@@ -298,8 +304,8 @@ where
     for row in rows {
         sources.push(row.source.as_str().to_string());
         digests.push(row.content_digest.clone());
-        problems.push(row.problem.to_body()?);
-        answers.push(row.expected_answer.to_body()?);
+        problems.push(row.problem.to_body().unwrap_or_default());
+        answers.push(row.expected_answer.to_body().unwrap_or_default());
         hashes.push(row.instance_hash.clone());
     }
 
