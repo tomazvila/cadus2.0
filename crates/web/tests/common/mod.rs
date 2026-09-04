@@ -33,6 +33,7 @@ mod http;
 mod live;
 mod oauth;
 mod oauth_url;
+pub mod placement;
 mod plan;
 mod process;
 mod quiz;
