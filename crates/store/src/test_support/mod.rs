@@ -396,10 +396,98 @@ async fn drop_database_at(options: &PgConnectOptions, name: &str) -> Result<(), 
 #[cfg(test)]
 mod tests {
     use std::env::VarError;
+    use std::sync::Arc;
 
     use sqlx::postgres::PgConnectOptions;
+    use sqlx::{Connection, PgConnection};
 
-    use super::{drop_database_at, dsn_for, dsn_from, or_stop, resume};
+    use super::{TestDb, drop_database_at, dsn_for, dsn_from, or_stop, resume};
+
+    /// Open a throwaway database with `role` as its app role, and answer the
+    /// database name.
+    async fn open_as(role: &'static str) -> String {
+        TestDb::with_app_role(role, |db| async move { db.name.clone() }).await
+    }
+
+    /// Open a pool as a fresh role of `attributes`, and answer the role name.
+    async fn pool_as_fresh_role(db: &Arc<TestDb>, attributes: &str) -> String {
+        TestDb::with_role(
+            db,
+            "cadus2_t_role",
+            attributes,
+            |_, role, _| async move { role },
+        )
+        .await
+    }
+
+    /// Report whether the cluster holds the database `name`.
+    async fn database_exists(name: &str) -> bool {
+        let mut conn = PgConnection::connect_with(&TestDb::maintenance_options())
+            .await
+            .unwrap();
+        let found: bool =
+            sqlx::query_scalar("SELECT exists(SELECT 1 FROM pg_database WHERE datname = $1)")
+                .bind(name)
+                .fetch_one(&mut conn)
+                .await
+                .unwrap();
+        let _ = conn.close().await;
+        found
+    }
+
+    /// Report whether the cluster holds the role `name`.
+    async fn role_exists(db: &TestDb, name: &str) -> bool {
+        sqlx::query_scalar("SELECT exists(SELECT 1 FROM pg_roles WHERE rolname = $1)")
+            .bind(name)
+            .fetch_one(&db.admin)
+            .await
+            .unwrap()
+    }
+
+    /// The message of a panic payload that `or_stop` raised.
+    fn panic_message(payload: Box<dyn std::any::Any + Send>) -> String {
+        payload.downcast_ref::<String>().unwrap().clone()
+    }
+
+    /// A setup that works runs the body. A setup that fails drops the
+    /// database and raises the panic of the setup again (finding #10).
+    #[tokio::test]
+    async fn a_failed_setup_drops_the_database_and_raises_its_panic() {
+        let name = open_as("cadus_app").await;
+        assert!(name.starts_with("cadus2_t_"), "{name}");
+        assert!(!database_exists(&name).await);
+
+        let failed = tokio::spawn(open_as("cadus2_t_no_such_role"))
+            .await
+            .unwrap_err();
+        let message = panic_message(failed.into_panic());
+        assert!(message.starts_with("app pool for cadus2_t_"), "{message}");
+        let name = message.split(' ').nth(3).unwrap();
+        assert!(!database_exists(name).await, "{message}");
+    }
+
+    /// A pool that opens gives the body its role. A pool that does not open
+    /// drops the role and raises the panic of the open again (finding #9).
+    #[tokio::test]
+    async fn a_pool_that_does_not_open_drops_the_role_and_raises_its_panic() {
+        TestDb::with(|db| async move {
+            let role = pool_as_fresh_role(&db, "LOGIN").await;
+            assert!(role.starts_with("cadus2_t_role_"), "{role}");
+            assert!(!role_exists(&db, &role).await);
+
+            let failed = {
+                let db = Arc::clone(&db);
+                tokio::spawn(async move { pool_as_fresh_role(&db, "NOLOGIN").await })
+            }
+            .await
+            .unwrap_err();
+            let message = panic_message(failed.into_panic());
+            assert!(message.starts_with("pool as cadus2_t_role_"), "{message}");
+            let role = message.split(' ').nth(2).unwrap();
+            assert!(!role_exists(&db, role).await, "{message}");
+        })
+        .await;
+    }
 
     /// `or_stop` gives the value back, or panics with the two parts.
     #[test]
