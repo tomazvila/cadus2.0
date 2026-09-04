@@ -46,6 +46,15 @@ fn chain() -> Curriculum {
     graph(chain_topics())
 }
 
+/// Two leaves under one root, in one module: each is a sibling of the other.
+fn two_leaves() -> Curriculum {
+    graph(vec![
+        with_exemplar(plain_topic("root", &[])),
+        with_exemplar(plain_topic("left", &[("root", 1.0, true)])),
+        with_exemplar(plain_topic("right", &[("root", 1.0, true)])),
+    ])
+}
+
 /// The same topic, with a diagnostic exemplar the probe set needs.
 fn with_exemplar(mut topic: Topic) -> Topic {
     topic.diagnostic_exemplar = Some(Exemplar {
@@ -208,12 +217,7 @@ fn an_incorrect_answer_debits_the_topic_and_every_descendant() {
 
 #[test]
 fn a_leaf_answer_carries_its_sign_to_its_sibling_leaves() {
-    // Two leaves under one root, in one module: each is a sibling of the other.
-    let graph = graph(vec![
-        with_exemplar(plain_topic("root", &[])),
-        with_exemplar(plain_topic("left", &[("root", 1.0, true)])),
-        with_exemplar(plain_topic("right", &[("root", 1.0, true)])),
-    ]);
+    let graph = two_leaves();
     let cfg = Config::default();
     assert!(is_leaf(&graph, graph.idx_of("left").unwrap()));
     assert!(!is_leaf(&graph, graph.idx_of("root").unwrap()));
@@ -228,6 +232,18 @@ fn a_leaf_answer_carries_its_sign_to_its_sibling_leaves() {
     apply_answer(&mut missed, &graph, "left", false, 1.0, &cfg);
     assert_eq!(missed.balances["left"], -1.0);
     assert_eq!(missed.balances["right"], -cfg.diag.sibling_credit);
+}
+
+#[test]
+fn a_sibling_leaf_takes_the_credit_share_of_the_weight() {
+    // The lateral signal is `sibling_credit` TIMES the weight: a half-weight
+    // answer moves the sibling by a quarter, not by the full credit.
+    let graph = two_leaves();
+    let cfg = Config::default();
+    let mut state = state_over(&["root", "left", "right"]);
+    apply_answer(&mut state, &graph, "left", true, 0.5, &cfg);
+    assert_eq!(state.balances["left"], 0.5);
+    assert_eq!(state.balances["right"], 0.25);
 }
 
 #[test]
@@ -281,6 +297,30 @@ fn the_next_probe_settles_the_most_and_a_tie_takes_the_lowest_id() {
     let wide = common::graph(topics);
     let wide_state = state_over(&["a", "b", "c", "d", "e"]);
     assert_eq!(next_probe(&wide_state, &wide, &cfg).as_deref(), Some("a"));
+}
+
+#[test]
+fn a_later_probe_with_a_higher_score_beats_the_first_one() {
+    // The root `z` sorts last but settles two topics, while each leaf settles
+    // one. The score decides, not the position in the probe set.
+    let graph = graph(vec![
+        with_exemplar(plain_topic("z", &[])),
+        with_exemplar(plain_topic("a", &[("z", 1.0, true)])),
+        with_exemplar(plain_topic("b", &[("z", 1.0, true)])),
+    ]);
+    let cfg = Config::default();
+    let state = state_over(&["a", "b", "z"]);
+    assert_eq!(next_probe(&state, &graph, &cfg).as_deref(), Some("z"));
+}
+
+#[test]
+fn a_tie_takes_the_lowest_id_whatever_the_order_of_the_probe_set() {
+    // A stored document lists the probes in any order. In a chain all four
+    // score 3, and the lowest id wins even when it comes last.
+    let graph = chain();
+    let cfg = Config::default();
+    let state = state_over(&["d", "c", "b", "a"]);
+    assert_eq!(next_probe(&state, &graph, &cfg).as_deref(), Some("a"));
 }
 
 #[test]
