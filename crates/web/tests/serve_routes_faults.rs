@@ -150,3 +150,15 @@ async fn a_state_read_that_fails_is_500_on_the_serve() {
     })
     .await;
 }
+
+/// A tenant bind that fails stops the serve at its first statement, and the
+/// serve records nothing.
+#[tokio::test]
+async fn a_tenant_bind_that_fails_is_500_on_the_serve() {
+    TestDb::with(|db| async move {
+        let user = drill_learner(&db, "fault-tenant-bind@example.com").await;
+        common::fail_tenant_bind(&db).await;
+        assert_serve_rolls_back(&db, user).await;
+    })
+    .await;
+}
