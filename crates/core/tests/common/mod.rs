@@ -332,17 +332,28 @@ pub fn mini_curriculum() -> Curriculum {
         "testcourse",
     )
 }
+pub mod answer;
 pub mod arena_view;
 pub mod bench;
+pub mod check;
+pub mod divergence;
+pub mod domain_edges;
 pub mod dump;
+pub mod eval_nodes;
 pub mod events;
 pub mod fire;
+pub mod fixtures;
+pub mod fuzz;
+pub mod gate;
 pub mod instruction_fixtures;
 pub mod lint_view;
+pub mod oracle;
 pub mod parity;
+pub mod parse;
 pub mod parsed;
 pub mod paths;
 pub mod pool_fixtures;
 pub mod scratch;
 pub mod selector;
+pub mod template;
 pub mod xp_states;

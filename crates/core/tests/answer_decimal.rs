@@ -24,31 +24,10 @@
 )]
 
 use cadus_core::answer::check::notation_note;
-use cadus_core::answer::{Outcome, Verdict, check};
-use cadus_core::curriculum::AnswerKind;
 
-/// The `numeric` answer kind.
-const N: AnswerKind = AnswerKind::Numeric;
-/// The `expression` answer kind.
-const E: AnswerKind = AnswerKind::Expression;
+mod common;
 
-/// The outcome of a decided check.
-fn decided(correct: bool, notation: bool) -> Outcome {
-    Outcome::Decided(Verdict { correct, notation })
-}
-
-/// The outcome of a correct answer that carries the notation tag.
-fn rounded() -> Outcome {
-    decided(true, true)
-}
-
-/// Fail the test unless the check refuses the pair with `reason`.
-fn assert_undecidable(expected: &str, learner: &str, kind: AnswerKind, reason: &str) {
-    match check(expected, learner, kind) {
-        Outcome::Undecidable(refusal) => assert_eq!(refusal.reason, reason),
-        other => panic!("{expected:?} against {learner:?} gave {other:?}"),
-    }
-}
+use common::answer::*;
 
 // ---------------------------------------------------------------------------
 // A rational expected value

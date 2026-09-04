@@ -54,6 +54,9 @@ def crap_scores(export, complexity, limit):
         if not regions or not func["filenames"]:
             continue
         path = os.path.relpath(func["filenames"][0], REPO)
+        if "/src/" not in path:
+            # Coverage measures src/ only. Test and bench functions are the instrument.
+            continue
         start = min(region[0] for region in regions)
         covered = sum(1 for region in regions if region[4] > 0)
         cov = covered / len(regions)

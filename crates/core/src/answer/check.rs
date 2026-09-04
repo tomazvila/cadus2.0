@@ -40,6 +40,9 @@
 //! - The check never panics and never raises. Every refusal is an
 //!   [`Outcome::Undecidable`] and every miss is `correct = false`.
 
+use num_bigint::BigInt;
+use num_rational::BigRational;
+
 use crate::curriculum::AnswerKind;
 
 use super::Undecidable;
@@ -191,7 +194,7 @@ fn decide(expected: &str, learner: &str, kind: AnswerKind) -> (Outcome, Option<F
         return (Outcome::notation(), Some(Form::DotThousands));
     }
     // Rung 5. The learner side alone may carry a rounding (ruling `D6-dec`).
-    match rounding_variant(&expected_value, &learner_tree, &learner_value) {
+    match rounding_variant(&expected_value, &learner_tree) {
         Rounding::Same => return (Outcome::notation(), Some(Form::Rounding)),
         Rounding::Refused(reason) => {
             return (Outcome::Undecidable(Undecidable::new(reason)), None);
@@ -210,28 +213,34 @@ fn decide(expected: &str, learner: &str, kind: AnswerKind) -> (Outcome, Option<F
 ///
 /// A label falls away on both sides, which is the rule [`same_answer`] holds for
 /// a one-sided label.
-fn rounding_variant(expected: &Canon, learner_tree: &Ast, learner_value: &Canon) -> Rounding {
-    let Some(scale) = typed_scale(learner_tree) else {
+fn rounding_variant(expected: &Canon, learner_tree: &Ast) -> Rounding {
+    let Some((value, scale)) = typed_decimal(learner_tree) else {
         return Rounding::NotANumber;
     };
-    let Canon::Rational(value) = unlabeled(learner_value) else {
-        return Rounding::NotANumber;
-    };
-    rounds_to(unlabeled(expected), value, scale)
+    rounds_to(unlabeled(expected), &value, scale)
 }
 
-/// The count of digits after the point the learner typed, when the learner
-/// answer is one decimal literal.
+/// The exact value and the count of digits after the point the learner typed,
+/// when the learner answer is one decimal literal.
 ///
 /// A scale of zero is not a decimal: the normalizer strips a trailing period
 /// (V4), so `2.` is the integer 2 and it names no digit after the point. The
 /// walk is a loop and not a recursion, so a run of sign tokens costs no stack.
-fn typed_scale(tree: &Ast) -> Option<u32> {
+fn typed_decimal(tree: &Ast) -> Option<(BigRational, u32)> {
     let mut node = tree;
+    let mut negative = false;
     loop {
         match node {
-            Ast::Decimal { scale, .. } => return (*scale >= 1).then_some(*scale),
-            Ast::Neg(inner) => node = inner,
+            Ast::Decimal { mantissa, scale } => {
+                let magnitude =
+                    BigRational::new(mantissa.clone(), BigInt::from(10_u32).pow(*scale));
+                let value = if negative { -magnitude } else { magnitude };
+                return (*scale >= 1).then_some((value, *scale));
+            }
+            Ast::Neg(inner) => {
+                negative = !negative;
+                node = inner;
+            }
             _ => return None,
         }
     }
@@ -305,10 +314,7 @@ fn dot_thousands_variant(expected: &Canon, learner_key: &str) -> bool {
         return false;
     }
     let digits: String = learner_key.chars().filter(|c| *c != '.').collect();
-    match canonical(&digits) {
-        Ok(value) => same_answer(expected, &value),
-        Err(_) => false,
-    }
+    canonical(&digits).is_ok_and(|value| same_answer(expected, &value))
 }
 
 /// Whether the whole string is `-?[1-9]\d{0,2}(\.\d{3})+` (1.0 `_DOT_GROUPS_RE`).
