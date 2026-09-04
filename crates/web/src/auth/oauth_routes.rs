@@ -67,7 +67,7 @@ use axum::routing::get;
 use axum::{Json, Router};
 use cadus_store::Db;
 use cadus_store::auth::{
-    AuthUser, SignUp, clear_password_hash, delete_all_sessions, insert_oauth_account,
+    AuthUser, NewSession, SignUp, clear_password_hash, delete_all_sessions, insert_oauth_account,
     insert_session, mark_email_verified, oauth_account_user, sign_up, user_by_email, user_by_id,
 };
 use serde_json::json;
@@ -76,17 +76,20 @@ use sqlx::types::chrono::Utc;
 use crate::AppState;
 use crate::auth::guard::plus_secs;
 use crate::auth::oauth::{
-    HANDSHAKE_COOKIE, HANDSHAKE_PATH, Handshake, Identity, authorize_url, callback_redirect_uri,
-    decode_handshake, encode_handshake, exchange_and_fetch_identity, safe_next,
+    Credentials, HANDSHAKE_COOKIE, HANDSHAKE_PATH, Handshake, Identity, OAuthFailure, Provider,
+    authorize_url, callback_redirect_uri, decode_handshake, encode_handshake,
+    exchange_and_fetch_identity, safe_next,
 };
 use crate::auth::rate::client_ip;
-use crate::auth::routes::{ClientAddr, bind, commit, new_session_row, user_agent};
+use crate::auth::routes::{
+    ClientAddr, bind, commit, cookie_failed, new_session_row, new_token, session_window, user_agent,
+};
 use crate::auth::session::{
-    OAUTH_HANDSHAKE_TTL_SECS, SESSION_IDLE_SECS, clear_auth_cookie, set_auth_cookie,
-    set_session_cookie,
+    CookieWriteError, OAUTH_HANDSHAKE_TTL_SECS, SESSION_IDLE_SECS, clear_auth_cookie,
+    set_auth_cookie, set_session_cookie,
 };
 use crate::auth::store_call;
-use crate::auth::token::{hash_token, tokens_equal};
+use crate::auth::token::{EntropyError, hash_token, tokens_equal};
 use crate::cookie::read_session_cookie;
 use crate::error::ApiError;
 use crate::origin::own_origin;
@@ -141,6 +144,12 @@ fn value<'p>(params: &'p HashMap<String, String>, key: &str) -> Option<&'p str> 
         .filter(|found| !found.is_empty())
 }
 
+/// The `500` of a deployment with no redirect base.
+fn no_redirect_base() -> ApiError {
+    tracing::error!("auth: the OAuth redirect_uri has no base; set OAUTH_REDIRECT_BASE_URL");
+    ApiError::internal("oauth redirect base")
+}
+
 /// The external origin the `redirect_uri` is built on.
 ///
 /// `OAUTH_REDIRECT_BASE_URL` wins. Without it the origin comes from the same
@@ -152,12 +161,13 @@ fn redirect_base(state: &AppState, headers: &HeaderMap) -> Result<String, ApiErr
         .redirect_base
         .clone()
         .or_else(|| own_origin(&state.origin, headers))
-        .ok_or_else(|| {
-            tracing::error!(
-                "auth: the OAuth redirect_uri has no base; set OAUTH_REDIRECT_BASE_URL"
-            );
-            ApiError::internal("oauth redirect base")
-        })
+        .ok_or_else(no_redirect_base)
+}
+
+/// The `500` of a redirect target that is not a header value.
+fn bad_redirect(err: axum::http::header::InvalidHeaderValue) -> ApiError {
+    tracing::error!(error = %err, "auth: the OAuth redirect target is not a header value");
+    ApiError::internal("oauth redirect")
 }
 
 /// A `302` to `location` that carries `cookies`.
@@ -165,10 +175,7 @@ fn redirect_base(state: &AppState, headers: &HeaderMap) -> Result<String, ApiErr
 /// The status is 302 and not 303: the provider handshake is what 1.0 serves, and
 /// both hops are `GET` either way.
 fn redirect(location: &str, cookies: Vec<HeaderValue>) -> Result<Response, ApiError> {
-    let target = HeaderValue::from_str(location).map_err(|err| {
-        tracing::error!(error = %err, "auth: the OAuth redirect target is not a header value");
-        ApiError::internal("oauth redirect")
-    })?;
+    let target = HeaderValue::from_str(location).map_err(bad_redirect)?;
     let mut response = StatusCode::FOUND.into_response();
     response.headers_mut().insert(header::LOCATION, target);
     for cookie in cookies {
@@ -189,6 +196,28 @@ pub async fn providers(State(state): State<AppState>) -> Response {
         .into_response()
 }
 
+/// The `500` of an OAuth handshake that did not build.
+fn handshake_failed(err: EntropyError) -> ApiError {
+    tracing::error!(error = %err, "auth: the OAuth handshake draw failed");
+    ApiError::internal("oauth handshake")
+}
+
+/// The `500` of a handshake cookie that did not build.
+fn handshake_cookie_failed(err: CookieWriteError) -> ApiError {
+    tracing::error!(error = %err, "auth: the OAuth handshake cookie did not build");
+    ApiError::internal("oauth handshake cookie")
+}
+
+/// The provider and its credentials, or the `404` of one this deployment does
+/// not serve.
+fn served_provider(state: &AppState, name: &str) -> Result<(Provider, Credentials), ApiError> {
+    state
+        .oauth
+        .enabled(name)
+        .map(|(provider, credentials)| (provider, credentials.clone()))
+        .ok_or_else(|| ApiError::oauth_not_found(PROVIDER_NOT_ENABLED_MESSAGE))
+}
+
 /// `GET /api/auth/oauth/{provider}/start` — mint a handshake and send the
 /// browser to the provider.
 pub async fn start(
@@ -197,20 +226,15 @@ pub async fn start(
     query: Result<Query<HashMap<String, String>>, QueryRejection>,
     headers: HeaderMap,
 ) -> Result<Response, ApiError> {
-    let Some((provider, credentials)) = state.oauth.enabled(&name) else {
-        return Err(ApiError::oauth_not_found(PROVIDER_NOT_ENABLED_MESSAGE));
-    };
+    let (provider, credentials) = served_provider(&state, &name)?;
     let params = params(query);
     let next = safe_next(value(&params, "next"));
-    let handshake = Handshake::fresh(provider.name, &next).map_err(|err| {
-        tracing::error!(error = %err, "auth: the OAuth handshake draw failed");
-        ApiError::internal("oauth handshake")
-    })?;
+    let handshake = Handshake::fresh(provider.name, &next).map_err(handshake_failed)?;
 
     let base = redirect_base(&state, &headers)?;
     let target = authorize_url(
         provider,
-        credentials,
+        &credentials,
         &callback_redirect_uri(provider.name, &base),
         &handshake,
     );
@@ -221,31 +245,22 @@ pub async fn start(
         OAUTH_HANDSHAKE_TTL_SECS,
         HANDSHAKE_PATH,
     )
-    .map_err(|err| {
-        tracing::error!(error = %err, "auth: the OAuth handshake cookie did not build");
-        ApiError::internal("oauth handshake cookie")
-    })?;
+    .map_err(handshake_cookie_failed)?;
 
     redirect(&target, vec![cookie])
 }
 
-/// `GET /api/auth/oauth/{provider}/callback` — spend the handshake, read the
-/// provider-verified identity, open a session, and send the browser back.
-pub async fn callback(
-    State(state): State<AppState>,
-    ApiPath(name): ApiPath<String>,
-    ClientAddr(peer): ClientAddr,
-    query: Result<Query<HashMap<String, String>>, QueryRejection>,
-    headers: HeaderMap,
-) -> Result<Response, ApiError> {
-    let Some((provider, credentials)) = state.oauth.enabled(&name) else {
-        return Err(ApiError::oauth_not_found(PROVIDER_NOT_ENABLED_MESSAGE));
-    };
-    let Some(transport) = state.oauth.transport.as_deref() else {
-        return Err(ApiError::oauth_not_found(PROVIDER_NOT_ENABLED_MESSAGE));
-    };
-    let params = params(query);
-    if let Some(reported) = value(&params, "error") {
+/// The handshake the callback spends and the `code` it exchanges.
+///
+/// The three refusals are `400 oauth_error`: a provider-reported failure, a
+/// callback with no handshake cookie, no `code` or no `state`, and a `state`
+/// or a provider name that does not match the handshake.
+fn spent_handshake(
+    provider: Provider,
+    params: &HashMap<String, String>,
+    headers: &HeaderMap,
+) -> Result<(Handshake, String), ApiError> {
+    if let Some(reported) = value(params, "error") {
         tracing::info!(
             provider = provider.name,
             error = reported,
@@ -253,13 +268,12 @@ pub async fn callback(
         );
         return Err(ApiError::oauth_error(OAUTH_CANCELLED_MESSAGE));
     }
-
     // `read_session_cookie` reads ANY cookie by name; the session cookie is one
     // caller of it and this is another. One reader keeps the multi-header walk
     // of HTTP/2 in one place.
-    let handshake = decode_handshake(read_session_cookie(&headers, HANDSHAKE_COOKIE));
+    let handshake = decode_handshake(read_session_cookie(headers, HANDSHAKE_COOKIE));
     let (Some(handshake), Some(code), Some(returned)) =
-        (handshake, value(&params, "code"), value(&params, "state"))
+        (handshake, value(params, "code"), value(params, "state"))
     else {
         return Err(ApiError::oauth_error(OAUTH_HANDSHAKE_MESSAGE));
     };
@@ -268,67 +282,73 @@ pub async fn callback(
     if handshake.provider != provider.name || !tokens_equal(&handshake.state, returned) {
         return Err(ApiError::oauth_error(OAUTH_REJECTED_MESSAGE));
     }
+    Ok((handshake, code.to_owned()))
+}
 
-    let base = redirect_base(&state, &headers)?;
+/// The `400 oauth_error` of an exchange the provider refused.
+fn exchange_failed(err: &OAuthFailure, provider: Provider) -> ApiError {
+    tracing::warn!(provider = provider.name, error = %err.reason, "auth: the OAuth exchange failed");
+    ApiError::oauth_error(OAUTH_EXCHANGE_MESSAGE)
+}
+
+/// The provider-verified identity behind `code`, or the `400` of an exchange
+/// that failed or an address the provider did not verify.
+///
+/// Link only on a provider-verified address. Without the test, a provider that
+/// lets an account claim any address takes over every account of this service
+/// that shares one.
+async fn verified_identity(
+    state: &AppState,
+    provider: Provider,
+    credentials: &Credentials,
+    base: &str,
+    code: &str,
+    handshake: &Handshake,
+) -> Result<Identity, ApiError> {
+    let Some(transport) = state.oauth.transport.as_deref() else {
+        return Err(ApiError::oauth_not_found(PROVIDER_NOT_ENABLED_MESSAGE));
+    };
     let identity = exchange_and_fetch_identity(
         transport,
         provider,
         credentials,
-        &callback_redirect_uri(provider.name, &base),
+        &callback_redirect_uri(provider.name, base),
         code,
-        &handshake,
+        handshake,
     )
     .await
-    .map_err(|err| {
-        tracing::warn!(provider = provider.name, error = %err.reason, "auth: the OAuth exchange failed");
-        ApiError::oauth_error(OAUTH_EXCHANGE_MESSAGE)
-    })?;
-    // Link only on a provider-verified address. Without this test, a provider
-    // that lets an account claim any address takes over every account of this
-    // service that shares one.
+    .map_err(|err| exchange_failed(&err, provider))?;
     if identity.email.is_empty() || !identity.email_verified {
         return Err(ApiError::oauth_error(OAUTH_UNVERIFIED_MESSAGE));
     }
+    Ok(identity)
+}
 
-    let (user, linked) = resolve_account(&state.db, &identity).await?;
-    // THE guard. Nothing above it wrote more than a fresh, enabled account, and
-    // nothing below it runs for a refused one.
-    if user.disabled_at.is_some() {
-        return Err(ApiError::oauth_error(OAUTH_REJECTED_MESSAGE));
-    }
-
-    let raw = crate::auth::token::generate_token().map_err(|err| {
-        tracing::error!(error = %err, "auth: the token draw failed");
-        ApiError::internal("token draw")
-    })?;
-    let now = Utc::now();
-    let expires_at =
-        plus_secs(now, SESSION_IDLE_SECS).ok_or_else(|| ApiError::internal("session window"))?;
-    let token_hash = hash_token(&raw);
-    let ip = client_ip(&headers, peer);
-    let session = new_session_row(&token_hash, now, expires_at, &ip, user_agent(&headers));
-
-    let mut tx = bind(&state.db, user.id).await?;
+/// The writes of one federated sign-in, in ONE transaction: the first-sign-in
+/// stamp, the link row, and the session row.
+///
+/// The stamp removes the ONE reason login refuses a password on an unverified
+/// account, so every credential that predates the stamp goes first. Sign-up
+/// asks for no proof of the address, so the password and the sessions of an
+/// unverified account have an unproven source. The order is fixed — clear,
+/// delete, then stamp — and the three writes share this transaction, so no
+/// window opens in which the address is verified and the old password still
+/// signs in. The session row of THIS sign-in goes in last, after the deletion.
+async fn write_sign_in(
+    db: &Db,
+    user: &AuthUser,
+    linked: bool,
+    identity: &Identity,
+    session: &NewSession<'_>,
+) -> Result<(), ApiError> {
+    let mut tx = bind(db, user.id).await?;
     if user.email_verified_at.is_none() {
-        // The stamp removes the ONE reason login refuses a password on an
-        // unverified account, so every credential that predates the stamp goes
-        // first. Sign-up asks for no proof of the address, so the password and
-        // the sessions of an unverified account have an unproven source. The
-        // order is fixed — clear, delete, then stamp — and the three writes
-        // share this transaction, so no window opens in which the address is
-        // verified and the old password still signs in. The session row of THIS
-        // sign-in goes in below, after the deletion.
-        store_call(
-            &state.db,
-            "password clear",
-            clear_password_hash(&mut *tx, user.id),
-        )
-        .await?;
-        store_call(&state.db, "session sweep", delete_all_sessions(&mut *tx)).await?;
+        store_call(db, "password clear", clear_password_hash(&mut *tx, user.id)).await?;
+        store_call(db, "session sweep", delete_all_sessions(&mut *tx)).await?;
         // The provider just proved the address, which is what the verification
         // link proves.
         store_call(
-            &state.db,
+            db,
             "verification stamp",
             mark_email_verified(&mut *tx, user.id),
         )
@@ -336,7 +356,7 @@ pub async fn callback(
     }
     if !linked {
         store_call(
-            &state.db,
+            db,
             "oauth link",
             insert_oauth_account(
                 &mut *tx,
@@ -349,22 +369,48 @@ pub async fn callback(
         .await?;
     }
     store_call(
-        &state.db,
+        db,
         "session insert",
-        insert_session(&mut *tx, user.id, &session),
+        insert_session(&mut *tx, user.id, session),
     )
     .await?;
-    commit(&state.db, tx, "session insert").await?;
+    commit(db, tx, "session insert").await
+}
 
-    let session_cookie = set_session_cookie(state.posture, &raw).map_err(|err| {
-        tracing::error!(error = %err, "auth: the session cookie did not build");
-        ApiError::internal("session cookie")
-    })?;
-    let spent =
-        clear_auth_cookie(state.posture, HANDSHAKE_COOKIE, HANDSHAKE_PATH).map_err(|err| {
-            tracing::error!(error = %err, "auth: the handshake deletion did not build");
-            ApiError::internal("oauth handshake cookie")
-        })?;
+/// `GET /api/auth/oauth/{provider}/callback` — spend the handshake, read the
+/// provider-verified identity, open a session, and send the browser back.
+pub async fn callback(
+    State(state): State<AppState>,
+    ApiPath(name): ApiPath<String>,
+    ClientAddr(peer): ClientAddr,
+    query: Result<Query<HashMap<String, String>>, QueryRejection>,
+    headers: HeaderMap,
+) -> Result<Response, ApiError> {
+    let (provider, credentials) = served_provider(&state, &name)?;
+    let params = params(query);
+    let (handshake, code) = spent_handshake(provider, &params, &headers)?;
+    let base = redirect_base(&state, &headers)?;
+    let identity =
+        verified_identity(&state, provider, &credentials, &base, &code, &handshake).await?;
+
+    let (user, linked) = resolve_account(&state.db, &identity).await?;
+    // THE guard. Nothing above it wrote more than a fresh, enabled account, and
+    // nothing below it runs for a refused one.
+    if user.disabled_at.is_some() {
+        return Err(ApiError::oauth_error(OAUTH_REJECTED_MESSAGE));
+    }
+
+    let raw = new_token()?;
+    let now = Utc::now();
+    let expires_at = plus_secs(now, SESSION_IDLE_SECS).ok_or_else(session_window)?;
+    let token_hash = hash_token(&raw);
+    let ip = client_ip(&headers, peer);
+    let session = new_session_row(&token_hash, now, expires_at, &ip, user_agent(&headers));
+    write_sign_in(&state.db, &user, linked, &identity, &session).await?;
+
+    let session_cookie = set_session_cookie(state.posture, &raw).map_err(cookie_failed)?;
+    let spent = clear_auth_cookie(state.posture, HANDSHAKE_COOKIE, HANDSHAKE_PATH)
+        .map_err(handshake_cookie_failed)?;
     // `safe_next` runs again HERE, on the value read from the cookie. That
     // second pass is what lets the handshake cookie stay unsigned; do not
     // demote it to a write-time check.
