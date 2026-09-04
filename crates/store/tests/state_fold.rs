@@ -219,6 +219,24 @@ async fn stored_view(db: &TestDb, user: Uuid) -> Value {
     .unwrap()
 }
 
+/// Save the first session of a fresh user, then write a failure the log does
+/// not hold straight into the cached view. Return the scene and the user.
+async fn saved_view_with_hand_failure(db: &TestDb, email: &str) -> (Scene, Uuid) {
+    let user = db.seed_user(email).await;
+    let scene = Scene::new(db);
+    let input = scene.input();
+    let mut tx = open_first_session(&scene.handle, user).await;
+    let saved = project_and_save(&mut tx, user, &input, None).await.unwrap();
+    assert_eq!(saved.through_seq, 2);
+    assert_eq!(saved.view.lesson_failures.len(), 0);
+    tx.commit().await.unwrap();
+
+    let mut doc = stored_view(db, user).await;
+    doc["lesson_failures"] = json!({"fractions": ["kp9"]});
+    put_view(db, user, &doc).await;
+    (scene, user)
+}
+
 /// Overwrite the stored `session_view` document of `user`.
 async fn put_view(db: &TestDb, user: Uuid, doc: &Value) {
     sqlx::query!(
@@ -241,19 +259,7 @@ async fn put_view(db: &TestDb, user: Uuid, doc: &Value) {
 #[tokio::test]
 async fn the_failure_map_resumes_from_the_stored_view() {
     TestDb::with(|db| async move {
-        let user = db.seed_user("resume-view@example.com").await;
-        let scene = Scene::new(&db);
-        let input = scene.input();
-        let mut tx = open_first_session(&scene.handle, user).await;
-        let saved = project_and_save(&mut tx, user, &input, None).await.unwrap();
-        assert_eq!(saved.through_seq, 2);
-        assert_eq!(saved.view.lesson_failures.len(), 0);
-        tx.commit().await.unwrap();
-
-        // A failure the LOG does not hold, written straight into the cache.
-        let mut doc = stored_view(&db, user).await;
-        doc["lesson_failures"] = json!({"fractions": ["kp9"]});
-        put_view(&db, user, &doc).await;
+        let (scene, user) = saved_view_with_hand_failure(&db, "resume-view@example.com").await;
 
         let mut tx = open_locked(&scene.handle, user).await;
         append_all(&mut tx, user, &[(&end("s_2026-01-01a"), None)]).await;
@@ -276,18 +282,7 @@ async fn the_failure_map_resumes_from_the_stored_view() {
 #[tokio::test]
 async fn a_regraded_above_the_cursor_rebuilds_the_view_from_the_log() {
     TestDb::with(|db| async move {
-        let user = db.seed_user("regraded-view@example.com").await;
-        let scene = Scene::new(&db);
-        let input = scene.input();
-        let mut tx = open_first_session(&scene.handle, user).await;
-        let saved = project_and_save(&mut tx, user, &input, None).await.unwrap();
-        assert_eq!(saved.through_seq, 2);
-        tx.commit().await.unwrap();
-
-        // A failure the LOG does not hold, written straight into the cache.
-        let mut doc = stored_view(&db, user).await;
-        doc["lesson_failures"] = json!({"fractions": ["kp9"]});
-        put_view(&db, user, &doc).await;
+        let (scene, user) = saved_view_with_hand_failure(&db, "regraded-view@example.com").await;
 
         // A `regraded` above the cursor makes the window refuse the resume.
         let mut tx = open_locked(&scene.handle, user).await;

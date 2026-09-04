@@ -32,6 +32,33 @@ fn slug(id: &str) -> Slug {
     Slug::new(id).expect("the fixture slug is valid")
 }
 
+/// One correct lesson attempt of `adding-integers` at `ts`.
+fn attempt_event(ts: Timestamp, session: Option<&str>, attempt_id: &str, task_id: &str) -> Event {
+    Event::Attempt(Attempt {
+        ts,
+        session: session.map(str::to_string),
+        v: SchemaVersion,
+        attempt_id: attempt_id.to_string(),
+        task_id: task_id.to_string(),
+        topic: slug("adding-integers"),
+        kp: None,
+        task_type: TaskType::Lesson,
+        problem: AttemptProblem {
+            text: "Compute $1 + 1$.".to_string(),
+            expected: "2".to_string(),
+        },
+        given_answer: "2".to_string(),
+        work: None,
+        answer_kind: None,
+        correct: true,
+        secs: Secs::new(9).expect("nine seconds"),
+        error_tags: Vec::new(),
+        work_quality: WorkQuality::NearlyPerfect,
+        grader_note: None,
+        assisted: false,
+    })
+}
+
 /// A log that touches every branch of [`SessionView::apply`].
 fn sample_log() -> Vec<EventRow> {
     vec![
@@ -71,29 +98,12 @@ fn sample_log() -> Vec<EventRow> {
         ),
         row(
             4,
-            Event::Attempt(Attempt {
-                ts: at(3),
-                session: Some("s_2026-01-01a".to_string()),
-                v: SchemaVersion,
-                attempt_id: "s_2026-01-01a-lesson-adding-integers-1".to_string(),
-                task_id: "s_2026-01-01a-lesson-adding-integers".to_string(),
-                topic: slug("adding-integers"),
-                kp: None,
-                task_type: TaskType::Lesson,
-                problem: AttemptProblem {
-                    text: "Compute $1 + 1$.".to_string(),
-                    expected: "2".to_string(),
-                },
-                given_answer: "2".to_string(),
-                work: None,
-                answer_kind: None,
-                correct: true,
-                secs: Secs::new(9).expect("nine seconds"),
-                error_tags: Vec::new(),
-                work_quality: WorkQuality::NearlyPerfect,
-                grader_note: None,
-                assisted: false,
-            }),
+            attempt_event(
+                at(3),
+                Some("s_2026-01-01a"),
+                "s_2026-01-01a-lesson-adding-integers-1",
+                "s_2026-01-01a-lesson-adding-integers",
+            ),
         ),
         row(
             5,
@@ -410,29 +420,7 @@ fn an_unrepresentable_attempt_and_an_ignored_event_change_nothing() {
     let mut view = SessionView::default();
     view.apply(
         1,
-        &Event::Attempt(Attempt {
-            ts: Timestamp::from_micros(i64::MAX),
-            session: None,
-            v: SchemaVersion,
-            attempt_id: "a1".to_string(),
-            task_id: "t1".to_string(),
-            topic: slug("adding-integers"),
-            kp: None,
-            task_type: TaskType::Lesson,
-            problem: AttemptProblem {
-                text: "Compute $1 + 1$.".to_string(),
-                expected: "2".to_string(),
-            },
-            given_answer: "2".to_string(),
-            work: None,
-            answer_kind: None,
-            correct: true,
-            secs: Secs::new(9).expect("nine seconds"),
-            error_tags: Vec::new(),
-            work_quality: WorkQuality::NearlyPerfect,
-            grader_note: None,
-            assisted: false,
-        }),
+        &attempt_event(Timestamp::from_micros(i64::MAX), None, "a1", "t1"),
     );
     assert!(view.study_days().is_empty());
 
