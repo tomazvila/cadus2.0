@@ -17,7 +17,7 @@ use cadus_core::event::{TopicStatus, WorkQuality};
 use cadus_core::fire::{
     ASSISTED_CREDIT, INTERVAL_CAP_DAYS, NEARLY_DUE_THRESHOLD, PASS_QUALITY_THRESHOLD, QUALITY_Q,
     ReviewState, TEST_PREP_DUE_THRESHOLD, decay_for, interval_for, is_pass_quality, memory_at,
-    quality_q, raw_delta, review_state, speed_for,
+    py_max, py_min, quality_q, raw_delta, review_state, speed_for,
 };
 use cadus_core::learner::TopicState;
 use common::{Learned, T_US, assert_approx, days, learned};
@@ -262,6 +262,32 @@ fn interval_table_interpolation_and_cap() {
     assert_eq!(interval_for(7.0, &cfg), 480.0);
     assert_eq!(interval_for(20.0, &cfg), 480.0);
     assert_eq!(interval_for(-4.0, &cfg), 2.0);
+}
+
+#[test]
+fn interval_table_interpolates_between_two_unequal_entries() {
+    // Between the entries 4.5 and 10.0 a half step is 7.25, and the position is
+    // the fraction of the step, not the whole rep number.
+    let cfg = Config::default();
+    assert_eq!(interval_for(1.5, &cfg), 7.25);
+}
+
+// --------------------------------------------------------------------------- //
+// The Python min and max of two floats
+// --------------------------------------------------------------------------- //
+
+#[test]
+fn py_max_keeps_the_first_of_two_equal_zeros() {
+    // CPython returns `a` unless `b > a`, and `-0.0 > 0.0` is false.
+    assert_eq!(py_max(0.0, -0.0).to_bits(), 0.0f64.to_bits());
+    assert_eq!(py_max(-0.0, 0.0).to_bits(), (-0.0f64).to_bits());
+}
+
+#[test]
+fn py_min_keeps_the_first_of_two_equal_zeros() {
+    // CPython returns `a` unless `b < a`, and `0.0 < -0.0` is false.
+    assert_eq!(py_min(-0.0, 0.0).to_bits(), (-0.0f64).to_bits());
+    assert_eq!(py_min(0.0, -0.0).to_bits(), 0.0f64.to_bits());
 }
 
 // --------------------------------------------------------------------------- //
