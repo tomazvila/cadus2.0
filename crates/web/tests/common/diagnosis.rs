@@ -13,11 +13,8 @@ use cadus_core::template::{GateSpec, gate_diagnosis_body};
 use cadus_store::diagnosis::JobRow;
 use cadus_store::{DEFAULT_CLIENT_TIMEOUT_MS, Db};
 use cadus_web::diagnosis::{DiagnosisHub, job_view, match_distractor};
-use cadus_web::state::{Content, ServedProblem, TaskProgress, WebState};
+use cadus_web::state::{Content, ServedProblem, WebState};
 use cadus_web::{AppState, create_app};
-use http_body_util::BodyExt;
-use sqlx::types::chrono::{DateTime, Utc};
-use tower::ServiceExt;
 
 pub use super::prelude::*;
 use super::*;

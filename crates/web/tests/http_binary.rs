@@ -16,7 +16,6 @@ use std::time::{Duration, Instant};
 use cadus_store::test_support::DeafPostgres;
 use cadus_store::{Db, DbConfig, connect_options};
 use cadus_web::{AppState, create_app};
-use http_body_util::BodyExt;
 use sqlx::postgres::PgPoolOptions;
 use tower::ServiceExt;
 
@@ -36,16 +35,7 @@ use tower::ServiceExt;
 #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
 async fn binary_exits_zero_with_a_half_sent_request_open() {
     TestDb::with(|db| async move {
-        let dsn = dsn_for(&db.name, Some("cadus_app"));
-        let port = free_port();
-        let address = format!("127.0.0.1:{port}");
-
-        let mut child = spawn_web(
-            web_command()
-                .env("DATABASE_URL", &dsn)
-                .env("BIND_ADDR", &address)
-                .env("SHUTDOWN_DEADLINE_SECS", "2"),
-        );
+        let (mut child, address) = web_on_free_port(&db, &[("SHUTDOWN_DEADLINE_SECS", "2")]);
 
         let (code, _body) = wait_until_healthy(child.as_mut(), &address);
         assert_eq!(code, 200);
@@ -264,9 +254,7 @@ async fn ready_returns_503_when_the_database_answers_nothing() {
         .unwrap();
     let elapsed = start.elapsed();
 
-    assert_eq!(response.status(), StatusCode::SERVICE_UNAVAILABLE);
-    let body = response.into_body().collect().await.unwrap().to_bytes();
-    assert_eq!(&body[..], READY_DOWN);
+    assert_ready_down(response).await;
     assert!(
         elapsed < Duration::from_secs(2),
         "the readiness probe took {elapsed:?}, so the client-side bound did not apply"

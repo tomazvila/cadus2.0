@@ -10,11 +10,9 @@ use cadus_core::curriculum::{
 use cadus_core::event::{Event, SchemaVersion, SessionStart, Timestamp, TopicStatus};
 use cadus_core::learner::{LearnerModel, TopicState};
 use cadus_store::{DEFAULT_CLIENT_TIMEOUT_MS, Db};
-use cadus_web::state::{Content, TaskProgress, WebState};
+use cadus_web::state::{Content, WebState};
 use cadus_web::{AppState, create_app};
-use http_body_util::BodyExt;
 use sqlx::types::chrono::{DateTime, Utc};
-use tower::ServiceExt;
 
 pub use super::prelude::*;
 use super::*;

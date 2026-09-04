@@ -155,15 +155,7 @@ async fn binary_exits_3_with_a_superuser_dsn() {
 #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
 async fn binary_serves_health_and_stops_on_sigterm() {
     TestDb::with(|db| async move {
-        let dsn = dsn_for(&db.name, Some("cadus_app"));
-        let port = free_port();
-        let address = format!("127.0.0.1:{port}");
-
-        let mut child = spawn_web(
-            web_command()
-                .env("DATABASE_URL", &dsn)
-                .env("BIND_ADDR", &address),
-        );
+        let (mut child, address) = web_on_free_port(&db, &[]);
 
         let (code, body) = wait_until_healthy(child.as_mut(), &address);
         assert_eq!(code, 200);
@@ -200,11 +192,7 @@ async fn ready_returns_503_on_a_closed_pool() {
     TestDb::with(|db| async move {
         let pool = db.app.clone();
         pool.close().await;
-        let response = ready_response(pool).await;
-
-        assert_eq!(response.status(), StatusCode::SERVICE_UNAVAILABLE);
-        let body = response.into_body().collect().await.unwrap().to_bytes();
-        assert_eq!(&body[..], READY_DOWN);
+        assert_ready_down(ready_response(pool).await).await;
     })
     .await;
 }

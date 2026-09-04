@@ -258,3 +258,24 @@ pub async fn ready_response(pool: PgPool) -> axum::response::Response {
 /// The `503` body of a readiness probe with the database down.
 pub const READY_DOWN: &[u8] =
     b"{\"db\":\"down\",\"ok\":false,\"worker\":{\"claim_age_secs\":null,\"stale\":false}}";
+
+/// Start the binary on a free port against the app role of `db`, with `extra`
+/// variables. The answer is the child and the address it serves.
+pub fn web_on_free_port(db: &TestDb, extra: &[(&str, &str)]) -> (KillOnDrop, String) {
+    let dsn = dsn_for(&db.name, Some("cadus_app"));
+    let address = format!("127.0.0.1:{}", free_port());
+    let mut command = web_command();
+    command.env("DATABASE_URL", &dsn).env("BIND_ADDR", &address);
+    for (name, value) in extra {
+        command.env(name, value);
+    }
+    (spawn_web(&mut command), address)
+}
+
+/// Fail the test when `response` is not the `503` of a readiness probe with
+/// the database down.
+pub async fn assert_ready_down(response: axum::response::Response) {
+    assert_eq!(response.status(), StatusCode::SERVICE_UNAVAILABLE);
+    let body = response.into_body().collect().await.unwrap().to_bytes();
+    assert_eq!(&body[..], READY_DOWN);
+}
