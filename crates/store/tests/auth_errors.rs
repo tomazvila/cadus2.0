@@ -16,7 +16,7 @@ use cadus_store::auth::{
 };
 use cadus_store::test_support::TestDb;
 use cadus_store::{StoreError, begin_tenant};
-use common::fault::{bound_session_pool, closed_pool, fail_commit_on, revoke};
+use common::fault::{bound_session_pool, closed_pool, die_after, fail_commit_on, revoke};
 use common::store_sqlstate;
 use sqlx::types::chrono::Utc;
 use uuid::Uuid;
@@ -84,6 +84,68 @@ async fn every_statement_reports_a_closed_pool() {
                 .await
                 .is_err()
         );
+    })
+    .await;
+}
+
+/// Every bound write runs through a pool executor too. The session-bound app
+/// pool writes the rows of the bound account and reports the row counts.
+#[tokio::test]
+async fn every_bound_write_runs_through_a_pool() {
+    TestDb::with(|db| async move {
+        let alice = db.seed_user("alice@example.test").await;
+        let bound = bound_session_pool(&db, alice).await;
+        let expires = Utc::now() + std::time::Duration::from_secs(3600);
+        insert_session(&bound, alice, &session("h1")).await.unwrap();
+        assert_eq!(touch_last_seen(&bound, "h1").await.unwrap(), 1);
+        assert_eq!(delete_other_sessions(&bound, "h1").await.unwrap(), 0);
+        assert_eq!(delete_session(&bound, "h1").await.unwrap(), 1);
+        assert_eq!(delete_all_sessions(&bound).await.unwrap(), 0);
+        insert_token(&bound, alice, "t1", PURPOSE_RESET, expires)
+            .await
+            .unwrap();
+        assert_eq!(
+            delete_tokens_for_purpose(&bound, PURPOSE_RESET)
+                .await
+                .unwrap(),
+            1
+        );
+        assert_eq!(clear_password_hash(&bound, alice).await.unwrap(), 1);
+    })
+    .await;
+}
+
+/// A sign-up whose lookup is refused after the INSERT wrote the row is the
+/// error of the lookup, and the row stays.
+#[tokio::test]
+async fn a_sign_up_whose_lookup_is_refused_is_the_error_of_the_lookup() {
+    TestDb::with(|db| async move {
+        revoke(&db, "EXECUTE", "FUNCTION auth_user_by_email(citext)").await;
+        let err = sign_up(&db.app, "carol@example.test", None)
+            .await
+            .unwrap_err();
+        assert_eq!(store_sqlstate(&err), "42501");
+        assert!(
+            user_by_email(&db.admin, "carol@example.test")
+                .await
+                .unwrap()
+                .is_some()
+        );
+    })
+    .await;
+}
+
+/// The token order reports a session that ends after the UPDATE: the
+/// rollback of an already-spent token fails on the closed connection.
+#[tokio::test]
+async fn the_token_order_reports_a_rollback_on_a_closed_session() {
+    TestDb::with(|db| async move {
+        let alice = db.seed_user("alice@example.test").await;
+        die_after(&db, "UPDATE", "auth_tokens").await;
+        let err = consume_token_tx(&db.app, alice, "spent", TokenEffect::EmailVerify)
+            .await
+            .unwrap_err();
+        assert!(matches!(err, StoreError::Db(_)), "{err}");
     })
     .await;
 }
