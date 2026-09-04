@@ -106,6 +106,9 @@ fn read_startup_packet(stream: &mut TcpStream) -> std::io::Result<Vec<u8>> {
 
 /// (a) The startup phase: decline TLS with `N` and take the next packet as the
 /// startup message.
+///
+/// A `TcpStream` write goes to the socket at once, so no write here needs a
+/// flush.
 fn handshake(stream: &mut TcpStream) -> std::io::Result<()> {
     loop {
         let body = read_startup_packet(stream)?;
@@ -113,22 +116,24 @@ fn handshake(stream: &mut TcpStream) -> std::io::Result<()> {
             return Ok(());
         }
         stream.write_all(b"N")?;
-        stream.flush()?;
     }
 }
 
-/// (b) Report a finished start-up: AuthenticationOk, one ParameterStatus,
+/// The bytes of a finished start-up: AuthenticationOk, one ParameterStatus,
 /// BackendKeyData, ReadyForQuery.
-fn announce_ready(stream: &mut TcpStream) -> std::io::Result<()> {
-    stream.write_all(&[b'R', 0, 0, 0, 8, 0, 0, 0, 0])?;
+fn startup_reply() -> Vec<u8> {
     let payload = b"server_version\x0016.0\x00";
-    let mut status = vec![b'S'];
-    status.extend_from_slice(&(payload.len() as u32 + 4).to_be_bytes());
-    status.extend_from_slice(payload);
-    stream.write_all(&status)?;
-    stream.write_all(&[b'K', 0, 0, 0, 12, 0, 0, 0, 1, 0, 0, 0, 1])?;
-    stream.write_all(&READY_FOR_QUERY)?;
-    stream.flush()
+    let mut reply = vec![b'R', 0, 0, 0, 8, 0, 0, 0, 0, b'S'];
+    reply.extend_from_slice(&(payload.len() as u32 + 4).to_be_bytes());
+    reply.extend_from_slice(payload);
+    reply.extend_from_slice(&[b'K', 0, 0, 0, 12, 0, 0, 0, 1, 0, 0, 0, 1]);
+    reply.extend_from_slice(&READY_FOR_QUERY);
+    reply
+}
+
+/// (b) Report a finished start-up in one write.
+fn announce_ready(stream: &mut TcpStream) -> std::io::Result<()> {
+    stream.write_all(&startup_reply())
 }
 
 /// (c) Answer the pool liveness ping (a bare `Sync`), then go deaf on the
@@ -145,10 +150,7 @@ fn answer_until_deaf(stream: &mut TcpStream, query_seen: &AtomicBool) -> std::io
                 deaf = true;
                 query_seen.store(true, Ordering::SeqCst);
             }
-            b'S' if !deaf => {
-                stream.write_all(&READY_FOR_QUERY)?;
-                stream.flush()?;
-            }
+            b'S' if !deaf => stream.write_all(&READY_FOR_QUERY)?,
             _ => {}
         }
     }
@@ -159,4 +161,94 @@ fn serve_deaf(mut stream: TcpStream, query_seen: &AtomicBool) -> std::io::Result
     handshake(&mut stream)?;
     announce_ready(&mut stream)?;
     answer_until_deaf(&mut stream, query_seen)
+}
+
+#[cfg(test)]
+mod tests {
+    use std::io::Write;
+    use std::net::{Shutdown, TcpListener, TcpStream};
+    use std::sync::atomic::AtomicBool;
+
+    use super::{READY_FOR_QUERY, answer_until_deaf, handshake, serve_deaf, startup_reply};
+
+    /// The `SSLRequest` packet: length 8, code 80877103.
+    const SSL_REQUEST: [u8; 8] = [0, 0, 0, 8, 4, 210, 22, 47];
+
+    /// A startup message with no parameter: length 8, protocol 3.0.
+    const STARTUP: [u8; 8] = [0, 0, 0, 8, 0, 3, 0, 0];
+
+    /// A bare `Sync`: the liveness ping of the pool.
+    const SYNC: [u8; 5] = [b'S', 0, 0, 0, 4];
+
+    /// One connected pair on the loopback: the client end and the server end.
+    fn pair() -> (TcpStream, TcpStream) {
+        let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+        let client = TcpStream::connect(listener.local_addr().unwrap()).unwrap();
+        let (server, _) = listener.accept().unwrap();
+        (client, server)
+    }
+
+    /// The server end of a pair whose client wrote `bytes` and closed.
+    fn server_after(bytes: &[&[u8]]) -> TcpStream {
+        let (mut client, server) = pair();
+        for part in bytes {
+            client.write_all(part).unwrap();
+        }
+        client.shutdown(Shutdown::Both).unwrap();
+        drop(client);
+        server
+    }
+
+    /// The start-up reply opens with AuthenticationOk and ends with
+    /// ReadyForQuery.
+    #[test]
+    fn the_startup_reply_runs_from_authentication_ok_to_ready_for_query() {
+        let reply = startup_reply();
+        assert_eq!(&reply[..9], &[b'R', 0, 0, 0, 8, 0, 0, 0, 0]);
+        assert!(reply.ends_with(&READY_FOR_QUERY));
+    }
+
+    /// A client that closes early is a read error at the read that meets the
+    /// end: the startup header, the startup body, the message kind, the
+    /// message header, and the message body.
+    #[test]
+    fn a_client_that_closes_early_is_a_read_error() {
+        let seen = AtomicBool::new(false);
+        let closed_in_startup: [&[&[u8]]; 2] = [&[], &[&[0, 0, 0, 12]]];
+        for bytes in closed_in_startup {
+            assert!(serve_deaf(server_after(bytes), &seen).is_err());
+        }
+        let closed_in_answer: [&[&[u8]]; 3] = [
+            &[&STARTUP],
+            &[&STARTUP, b"S"],
+            &[&STARTUP, &[b'S', 0, 0, 0, 8]],
+        ];
+        for bytes in closed_in_answer {
+            assert!(serve_deaf(server_after(bytes), &seen).is_err());
+        }
+        assert!(!seen.load(std::sync::atomic::Ordering::SeqCst));
+    }
+
+    /// A server end whose write side is shut reports the error at the write:
+    /// the `N` of the TLS probe, the start-up reply, and the answer to the
+    /// liveness ping.
+    #[test]
+    fn a_shut_write_side_is_a_write_error() {
+        let seen = AtomicBool::new(false);
+
+        let (mut client, mut server) = pair();
+        client.write_all(&SSL_REQUEST).unwrap();
+        server.shutdown(Shutdown::Write).unwrap();
+        assert!(handshake(&mut server).is_err());
+
+        let (mut client, server) = pair();
+        client.write_all(&STARTUP).unwrap();
+        server.shutdown(Shutdown::Write).unwrap();
+        assert!(serve_deaf(server, &seen).is_err());
+
+        let (mut client, mut server) = pair();
+        client.write_all(&SYNC).unwrap();
+        server.shutdown(Shutdown::Write).unwrap();
+        assert!(answer_until_deaf(&mut server, &seen).is_err());
+    }
 }
