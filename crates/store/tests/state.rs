@@ -15,153 +15,22 @@
 //!
 //! Every test takes its own throwaway database.
 
-#![allow(
-    clippy::unwrap_used,
-    clippy::expect_used,
-    clippy::panic,
-    clippy::todo,
-    clippy::unimplemented
-)]
+#![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
 
-use std::collections::BTreeMap;
+mod common;
 
-use cadus_core::config::Config;
-use cadus_core::curriculum::{Catalog, Course, Curriculum, RawCurriculum, RawUnit, Topic, Unit};
-use cadus_core::event::{
-    AnswerKind, Attempt, AttemptProblem, Event, LessonResult, Regraded, RegradedAttempt,
-    SchemaVersion, Secs, SessionEnd, SessionStart, Slug, TaskType, Timestamp, TopicStatus,
-    WorkQuality,
-};
-use cadus_core::learner::TopicState;
-use cadus_core::projector::ProjectionInput;
+use cadus_core::event::Event;
+use cadus_store::begin_tenant;
 use cadus_store::state::{
-    WEB_STATE_LOCK_NAMESPACE, append_event, clear_web_state, load_events, load_learner_model,
-    load_session_view, load_web_state, lock_web_state, project_and_save, project_current,
+    WEB_STATE_LOCK_NAMESPACE, append_event, clear_web_state, load_web_state, lock_web_state,
     save_web_state, web_state_lock_key,
 };
 use cadus_store::test_support::TestDb;
-use cadus_store::{DEFAULT_CLIENT_TIMEOUT_MS, Db, begin_tenant};
-use serde_json::{Value, json};
+use common::app_db as app;
+use common::events::{attempt, end, start};
+use common::state::{open_locked, read_log};
+use serde_json::json;
 use uuid::Uuid;
-
-/// The Unix microsecond instant of 2026-01-01T00:00:00Z.
-const BASE_US: i64 = 1_767_225_600_000_000;
-
-/// One micro-curriculum: one course `c`, one module `M`, two topics.
-fn graph() -> Curriculum {
-    let topics: Vec<Topic> = ["addition", "fractions"]
-        .iter()
-        .map(|id| Topic {
-            id: cadus_core::curriculum::Slug::new(*id).unwrap(),
-            name: (*id).to_string(),
-            core: true,
-            difficulty: 0.3,
-            drill: false,
-            answer_kind: cadus_core::curriculum::AnswerKind::Numeric,
-            expected_time_secs: 30,
-            prerequisites: Vec::new(),
-            encompassings_extra: Vec::new(),
-            knowledge_points: Vec::new(),
-            diagnostic_exemplar: None,
-            anki_seeds: Vec::new(),
-        })
-        .collect();
-    Curriculum::build(RawCurriculum {
-        catalog: Catalog {
-            courses: vec![Course {
-                id: cadus_core::curriculum::Slug::new("c").unwrap(),
-                name: "c".to_string(),
-                order: 0,
-                mastery_floor: Vec::new(),
-                mastery_floor_course: None,
-            }],
-        },
-        units: vec![RawUnit {
-            course_id: "c".to_string(),
-            file_name: "00-M.yaml".to_string(),
-            unit: Unit {
-                unit: "M".to_string(),
-                course: cadus_core::curriculum::Slug::new("c").unwrap(),
-                module: "M".to_string(),
-                topics,
-            },
-            first_load_index: 0,
-        }],
-    })
-    .unwrap()
-}
-
-/// A `session_start` at `BASE_US`.
-fn start(session: &str) -> Event {
-    Event::SessionStart(SessionStart {
-        ts: Timestamp::from_micros(BASE_US),
-        session: Some(session.to_string()),
-        v: SchemaVersion,
-    })
-}
-
-/// A `session_end` at `BASE_US`.
-fn end(session: &str) -> Event {
-    Event::SessionEnd(SessionEnd {
-        ts: Timestamp::from_micros(BASE_US),
-        session: Some(session.to_string()),
-        v: SchemaVersion,
-        xp_earned: 0.0,
-        minutes: 0.0,
-    })
-}
-
-/// One graded attempt on `addition`.
-fn attempt(attempt_id: &str) -> Event {
-    Event::Attempt(Attempt {
-        ts: Timestamp::from_micros(BASE_US),
-        session: Some("s_2026-01-01a".to_string()),
-        v: SchemaVersion,
-        attempt_id: attempt_id.to_string(),
-        task_id: "s_2026-01-01a-review-addition".to_string(),
-        topic: Slug::new("addition").unwrap(),
-        kp: None,
-        task_type: TaskType::Review,
-        problem: AttemptProblem {
-            text: "Compute $8 - 5$.".to_string(),
-            expected: "3".to_string(),
-        },
-        given_answer: "3".to_string(),
-        work: None,
-        answer_kind: Some(AnswerKind::Numeric),
-        correct: true,
-        secs: Secs::new(12).unwrap(),
-        error_tags: Vec::new(),
-        work_quality: WorkQuality::NearlyPerfect,
-        grader_note: Some("deterministic".to_string()),
-        assisted: false,
-    })
-}
-
-/// One correction of the attempt above.
-fn regraded(attempt_id: &str) -> Event {
-    Event::Regraded(Regraded {
-        ts: Timestamp::from_micros(BASE_US),
-        session: Some("s_2026-01-01a".to_string()),
-        v: SchemaVersion,
-        task_id: "s_2026-01-01a-review-addition".to_string(),
-        topic: Slug::new("addition").unwrap(),
-        attempts: vec![RegradedAttempt {
-            attempt_id: attempt_id.to_string(),
-            work_quality: WorkQuality::Poor,
-            error_tags: vec!["arithmetic-slip".to_string()],
-            grader_note: Some("operator repair".to_string()),
-        }],
-        quality_tier: None,
-        xp: None,
-        reason: "an operator repair".to_string(),
-    })
-}
-
-/// A `Db` on the app pool of `db`, with the shipped client-side bound.
-fn app(db: &TestDb) -> Db {
-    Db::new(db.app.clone(), DEFAULT_CLIENT_TIMEOUT_MS)
-}
 
 // --------------------------------------------------------------------------- //
 // The advisory lock
@@ -317,8 +186,7 @@ async fn the_log_numbers_densely_and_dedups_a_repeated_attempt_id() {
         let other = db.seed_user("other@example.com").await;
         let handle = app(&db);
 
-        let mut tx = begin_tenant(handle.pool(), user).await.unwrap();
-        lock_web_state(&mut tx, user).await.unwrap();
+        let mut tx = open_locked(&handle, user).await;
         assert_eq!(
             append_event(&mut tx, user, &start("s_2026-01-01a"), None)
                 .await
@@ -357,9 +225,7 @@ async fn the_log_numbers_densely_and_dedups_a_repeated_attempt_id() {
         );
         tx.commit().await.unwrap();
 
-        let mut tx = begin_tenant(handle.pool(), user).await.unwrap();
-        let rows = load_events(&mut tx, user).await.unwrap();
-        tx.rollback().await.unwrap();
+        let rows = read_log(&handle, user).await;
         assert_eq!(rows.len(), 3);
         assert_eq!(
             rows.iter().map(|row| row.seq).collect::<Vec<_>>(),
@@ -384,8 +250,7 @@ async fn every_stored_event_round_trips_through_the_event_reader() {
         let handle = app(&db);
         let written = vec![start("s_2026-01-01a"), attempt("t-1"), end("s_2026-01-01a")];
 
-        let mut tx = begin_tenant(handle.pool(), user).await.unwrap();
-        lock_web_state(&mut tx, user).await.unwrap();
+        let mut tx = open_locked(&handle, user).await;
         for event in &written {
             let attempt_id = match event {
                 Event::Attempt(body) => Some(body.attempt_id.as_str()),
@@ -397,341 +262,13 @@ async fn every_stored_event_round_trips_through_the_event_reader() {
         }
         tx.commit().await.unwrap();
 
-        let mut tx = begin_tenant(handle.pool(), user).await.unwrap();
-        let rows = load_events(&mut tx, user).await.unwrap();
-        tx.rollback().await.unwrap();
+        let rows = read_log(&handle, user).await;
 
         for (row, original) in rows.iter().zip(&written) {
             let line = row.event.to_canonical_json().unwrap();
             let parsed = Event::from_json(&line).unwrap();
             assert_eq!(&parsed, original, "the export line did not round-trip");
         }
-    })
-    .await;
-}
-
-// --------------------------------------------------------------------------- //
-// The fold
-// --------------------------------------------------------------------------- //
-
-/// `project_and_save` writes the cursor; `project_current` writes nothing.
-/// A `regraded` in the events after the cursor forces the FULL REPLAY branch,
-/// and an ordinary event does not (spec section 4.3, `projector-1.0-spec.md:299`).
-#[tokio::test]
-async fn a_regraded_event_forces_the_full_replay_branch() {
-    TestDb::with(|db| async move {
-        let user = db.seed_user("fold@example.com").await;
-        let handle = app(&db);
-        let arena = graph();
-        let cfg = Config::default();
-        let input = ProjectionInput::new(&arena, &cfg, Timestamp::from_micros(BASE_US));
-
-        let mut tx = begin_tenant(handle.pool(), user).await.unwrap();
-        lock_web_state(&mut tx, user).await.unwrap();
-        append_event(&mut tx, user, &start("s_2026-01-01a"), None)
-            .await
-            .unwrap();
-        append_event(&mut tx, user, &attempt("t-1"), Some("t-1"))
-            .await
-            .unwrap();
-        // The first fold has no cache, so it replays by definition.
-        let first = project_and_save(&mut tx, user, &input, None).await.unwrap();
-        assert!(first.replayed);
-        assert_eq!(first.through_seq, 2);
-        tx.commit().await.unwrap();
-
-        let saved: (i64, i32) = sqlx::query!(
-            r#"
-            SELECT through_seq AS "through_seq!", projector_version AS "projector_version!"
-            FROM learner_models WHERE user_id = $1
-            "#,
-            user
-        )
-        .fetch_one(&db.admin)
-        .await
-        .map(|row| (row.through_seq, row.projector_version))
-        .unwrap();
-        assert_eq!(saved, (2, 3));
-
-        // One ordinary event after the cursor: the fold goes incremental.
-        let mut tx = begin_tenant(handle.pool(), user).await.unwrap();
-        lock_web_state(&mut tx, user).await.unwrap();
-        append_event(&mut tx, user, &end("s_2026-01-01a"), None)
-            .await
-            .unwrap();
-        let incremental = project_current(&mut tx, user, &input).await.unwrap();
-        assert!(
-            !incremental.replayed,
-            "an ordinary event must not force a replay"
-        );
-        assert_eq!(incremental.through_seq, 3);
-        // The read wrote nothing: the row still stands at the old cursor.
-        let cursor: i64 = sqlx::query_scalar!(
-            r#"SELECT through_seq AS "n!" FROM learner_models WHERE user_id = $1"#,
-            user
-        )
-        .fetch_one(&mut *tx)
-        .await
-        .unwrap();
-        assert_eq!(cursor, 2, "project_current wrote the learner model");
-        project_and_save(&mut tx, user, &input, None).await.unwrap();
-        tx.commit().await.unwrap();
-
-        // A `regraded` after the cursor forces the full replay.
-        let mut tx = begin_tenant(handle.pool(), user).await.unwrap();
-        lock_web_state(&mut tx, user).await.unwrap();
-        append_event(&mut tx, user, &regraded("t-1"), None)
-            .await
-            .unwrap();
-        let replayed = project_current(&mut tx, user, &input).await.unwrap();
-        assert!(
-            replayed.replayed,
-            "a regraded event must force the full replay"
-        );
-        assert_eq!(replayed.through_seq, 4);
-        tx.rollback().await.unwrap();
-    })
-    .await;
-}
-
-/// A `config_hash` that drifted forces the full replay too, and the cached model
-/// comes back with its `through_seq` filled in (D4).
-#[tokio::test]
-async fn a_config_drift_forces_the_full_replay() {
-    TestDb::with(|db| async move {
-        let user = db.seed_user("drift@example.com").await;
-        let handle = app(&db);
-        let arena = graph();
-        let cfg = Config::default();
-        let input = ProjectionInput::new(&arena, &cfg, Timestamp::from_micros(BASE_US));
-
-        let mut tx = begin_tenant(handle.pool(), user).await.unwrap();
-        lock_web_state(&mut tx, user).await.unwrap();
-        append_event(&mut tx, user, &start("s_2026-01-01a"), None)
-            .await
-            .unwrap();
-        project_and_save(&mut tx, user, &input, Some("curriculum-hash"))
-            .await
-            .unwrap();
-        tx.commit().await.unwrap();
-
-        // A default config hashes to this literal (`config.rs`, trap T16).
-        let stored: String = sqlx::query_scalar!(
-            r#"SELECT config_hash AS "hash!" FROM learner_models WHERE user_id = $1"#,
-            user
-        )
-        .fetch_one(&db.admin)
-        .await
-        .unwrap();
-        assert_eq!(stored, "797575e985c12149");
-
-        // Rewrite the drift fields the way a config change would.
-        sqlx::query!(
-            "UPDATE learner_models SET config_hash = 'deadbeefdeadbeef' WHERE user_id = $1",
-            user
-        )
-        .execute(&db.admin)
-        .await
-        .unwrap();
-
-        let mut tx = begin_tenant(handle.pool(), user).await.unwrap();
-        let cached = load_learner_model(&mut tx, user).await.unwrap().unwrap();
-        assert_eq!(cached.through_seq, 1);
-        assert_eq!(cached.model.through_seq, Some(1));
-        assert_eq!(cached.config_hash, "deadbeefdeadbeef");
-
-        let after = project_current(&mut tx, user, &input).await.unwrap();
-        assert!(after.replayed, "a config drift must force the full replay");
-        tx.rollback().await.unwrap();
-    })
-    .await;
-}
-
-/// The fold reads the topic states the row carries. A learner model written by
-/// hand comes back through `load_learner_model` field for field.
-#[tokio::test]
-async fn the_cached_model_reads_back_field_for_field() {
-    TestDb::with(|db| async move {
-        let user = db.seed_user("cache@example.com").await;
-        let handle = app(&db);
-
-        let mut topics: BTreeMap<String, TopicState> = BTreeMap::new();
-        topics.insert(
-            "addition".to_string(),
-            TopicState {
-                status: TopicStatus::Learning,
-                rep_num: 1.0,
-                memory_base: 1.0,
-                t0: Some(Timestamp::from_micros(BASE_US)),
-                interval_days: 2.0,
-                ability: 0.62,
-                ..TopicState::default()
-            },
-        );
-        let model = cadus_core::learner::LearnerModel {
-            topics,
-            ..cadus_core::learner::LearnerModel::default()
-        };
-        sqlx::query!(
-            r#"
-            INSERT INTO learner_models
-                (user_id, model, through_seq, projector_version, config_hash)
-            VALUES ($1, $2, 7, 3, '797575e985c12149')
-            "#,
-            user,
-            serde_json::to_value(&model).unwrap()
-        )
-        .execute(&db.admin)
-        .await
-        .unwrap();
-
-        let mut tx = begin_tenant(handle.pool(), user).await.unwrap();
-        let cached = load_learner_model(&mut tx, user).await.unwrap().unwrap();
-        tx.rollback().await.unwrap();
-
-        assert_eq!(cached.through_seq, 7);
-        assert_eq!(cached.projector_version, 3);
-        let state = cached.model.topics.get("addition").unwrap();
-        assert_eq!(state.status, TopicStatus::Learning);
-        assert_eq!(state.rep_num, 1.0);
-        assert_eq!(state.memory_base, 1.0);
-        assert_eq!(state.interval_days, 2.0);
-        assert_eq!(state.ability, 0.62);
-    })
-    .await;
-}
-
-// --------------------------------------------------------------------------- //
-// The session view alone (M5 review 2, finding V2)
-// --------------------------------------------------------------------------- //
-
-/// One lesson that FAILED `topic` at `kp`.
-fn lesson_failure(topic: &str, kp: &str) -> Event {
-    Event::LessonResult(LessonResult {
-        ts: Timestamp::from_micros(BASE_US),
-        session: Some("s_2026-01-01a".to_string()),
-        v: SchemaVersion,
-        topic: Slug::new(topic).unwrap(),
-        passed: false,
-        failed_at_kp: Some(Slug::new(kp).unwrap()),
-        xp: 0.0,
-        quality_tier: WorkQuality::NearlyPassable,
-        assisted: false,
-    })
-}
-
-/// The stored `session_view` document of `user`.
-async fn stored_view(db: &TestDb, user: Uuid) -> Value {
-    sqlx::query_scalar!(
-        r#"SELECT session_view AS "session_view!" FROM learner_models WHERE user_id = $1"#,
-        user
-    )
-    .fetch_one(&db.admin)
-    .await
-    .unwrap()
-}
-
-/// Overwrite the stored `session_view` document of `user`.
-async fn put_view(db: &TestDb, user: Uuid, doc: &Value) {
-    sqlx::query!(
-        "UPDATE learner_models SET session_view = $2 WHERE user_id = $1",
-        user,
-        doc
-    )
-    .execute(&db.admin)
-    .await
-    .unwrap();
-}
-
-/// V2. `load_session_view` resumes from the STORED document and folds the events
-/// above the cursor into it.
-///
-/// The stored document names a failure the log does not hold, so a fold that
-/// replayed the log instead of resuming loses it. The `session_end` appended
-/// after the save is above the cursor, so the answer proves the forward fold ran
-/// too.
-#[tokio::test]
-async fn the_failure_map_resumes_from_the_stored_view() {
-    TestDb::with(|db| async move {
-        let user = db.seed_user("resume-view@example.com").await;
-        let handle = app(&db);
-        let arena = graph();
-        let cfg = Config::default();
-        let input = ProjectionInput::new(&arena, &cfg, Timestamp::from_micros(BASE_US));
-
-        let mut tx = begin_tenant(handle.pool(), user).await.unwrap();
-        lock_web_state(&mut tx, user).await.unwrap();
-        append_event(&mut tx, user, &start("s_2026-01-01a"), None)
-            .await
-            .unwrap();
-        append_event(&mut tx, user, &attempt("t-1"), Some("t-1"))
-            .await
-            .unwrap();
-        let saved = project_and_save(&mut tx, user, &input, None).await.unwrap();
-        assert_eq!(saved.through_seq, 2);
-        assert_eq!(saved.view.lesson_failures.len(), 0);
-        tx.commit().await.unwrap();
-
-        // A failure the LOG does not hold, written straight into the cache.
-        let mut doc = stored_view(&db, user).await;
-        doc["lesson_failures"] = json!({"fractions": ["kp9"]});
-        put_view(&db, user, &doc).await;
-
-        let mut tx = begin_tenant(handle.pool(), user).await.unwrap();
-        lock_web_state(&mut tx, user).await.unwrap();
-        append_event(&mut tx, user, &end("s_2026-01-01a"), None)
-            .await
-            .unwrap();
-        let view = load_session_view(&mut tx, user).await.unwrap();
-        tx.rollback().await.unwrap();
-
-        assert_eq!(view.lesson_failures.len(), 1);
-        assert!(view.already_failed("fractions", Some("kp9")));
-        // The `session_end` of line 3 folded forward into the resumed document.
-        assert_eq!(view.current_session, None);
-    })
-    .await;
-}
-
-/// V2, and the reason migration 0010 needs no backfill: a stored document that
-/// carries no `lesson_failures` map does not read back, so the fold rebuilds the
-/// whole view from the log.
-#[tokio::test]
-async fn a_stored_view_without_the_failure_map_is_rebuilt_from_the_log() {
-    TestDb::with(|db| async move {
-        let user = db.seed_user("old-view@example.com").await;
-        let handle = app(&db);
-        let arena = graph();
-        let cfg = Config::default();
-        let input = ProjectionInput::new(&arena, &cfg, Timestamp::from_micros(BASE_US));
-
-        let mut tx = begin_tenant(handle.pool(), user).await.unwrap();
-        lock_web_state(&mut tx, user).await.unwrap();
-        append_event(&mut tx, user, &start("s_2026-01-01a"), None)
-            .await
-            .unwrap();
-        append_event(&mut tx, user, &lesson_failure("addition", "kp1"), None)
-            .await
-            .unwrap();
-        let saved = project_and_save(&mut tx, user, &input, None).await.unwrap();
-        assert_eq!(saved.through_seq, 2);
-        assert!(saved.view.already_failed("addition", Some("kp1")));
-        tx.commit().await.unwrap();
-
-        // The document of a row written before the map: every other key, and no
-        // `lesson_failures`.
-        let mut doc = stored_view(&db, user).await;
-        doc.as_object_mut().unwrap().remove("lesson_failures");
-        assert!(doc.get("lesson_failures").is_none());
-        put_view(&db, user, &doc).await;
-
-        let mut tx = begin_tenant(handle.pool(), user).await.unwrap();
-        let view = load_session_view(&mut tx, user).await.unwrap();
-        tx.rollback().await.unwrap();
-
-        assert_eq!(view.lesson_failures.len(), 1);
-        assert!(view.already_failed("addition", Some("kp1")));
-        assert_eq!(view.current_session.as_deref(), Some("s_2026-01-01a"));
     })
     .await;
 }

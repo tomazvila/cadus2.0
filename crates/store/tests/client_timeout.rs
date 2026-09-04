@@ -15,13 +15,7 @@
 //! test `the_client_timeout_reads_the_same_three_rules` in `src/lib.rs` pins
 //! that step, so this test sets the field and touches no process environment.
 
-#![allow(
-    clippy::unwrap_used,
-    clippy::expect_used,
-    clippy::panic,
-    clippy::todo,
-    clippy::unimplemented
-)]
+#![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
 
 use std::time::{Duration, Instant};
 
