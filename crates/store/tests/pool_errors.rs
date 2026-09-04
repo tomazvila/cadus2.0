@@ -19,7 +19,9 @@ use cadus_store::{StoreError, begin_tenant};
 use common::fault::{
     closed_pool, dead_pool, drop_checks, fail_commit_on, fail_on, revoke, skip_updates_on,
 };
-use common::{KP, new_instance, seed_pool_row, seed_pool_rows, sqlstate_in_tx, store_sqlstate};
+use common::{
+    KP, new_instance, seed_pool_row, seed_pool_rows, seed_template, sqlstate_in_tx, store_sqlstate,
+};
 use sqlx::PgPool;
 use uuid::Uuid;
 
@@ -116,33 +118,44 @@ async fn a_failed_commit_after_the_insert_is_the_error_of_the_commit() {
     .await;
 }
 
-/// The pop reports a refused read, a refused claim, and a refused retire of
-/// an undecodable row; the transaction wrapper reports a closed pool and a
-/// failed commit.
+/// The pop reports a refused claim, a refused retire of an undecodable row,
+/// and a refused read; the transaction wrapper reports a closed pool.
+///
+/// The claim and the retire fail through a trigger, because `FOR UPDATE`
+/// needs the UPDATE privilege and a revoke stops the read first.
 #[tokio::test]
 async fn the_pop_reports_every_failed_statement() {
     TestDb::with(|db| async move {
         let user = db.seed_user("pop@example.test").await;
         seed_pool_rows(&db.admin, user, KP, 2).await;
+        let bob = db.seed_user("bob@example.test").await;
+        let broken = seed_pool_row(&db.admin, bob, KP, 0, Source::Template).await;
+        sqlx::query("UPDATE serving_pool SET problem = '{}'::jsonb WHERE id = $1")
+            .bind(broken)
+            .execute(&db.admin)
+            .await
+            .unwrap();
 
         let closed = closed_pool(&db).await;
         assert_eq!(pop_sqlstate(&closed, user).await, "none");
+
+        fail_on(&db, "UPDATE", "serving_pool").await;
+        assert_eq!(
+            pop_tx_sqlstate(&db, user).await,
+            "P0001",
+            "the claim is refused"
+        );
+        assert_eq!(
+            pop_tx_sqlstate(&db, bob).await,
+            "P0001",
+            "the retire is refused"
+        );
 
         revoke(&db, "UPDATE", "serving_pool").await;
         assert_eq!(
             pop_tx_sqlstate(&db, user).await,
             "42501",
-            "the claim is refused"
-        );
-
-        sqlx::query("UPDATE serving_pool SET problem = '{}'::jsonb")
-            .execute(&db.admin)
-            .await
-            .unwrap();
-        assert_eq!(
-            pop_tx_sqlstate(&db, user).await,
-            "42501",
-            "the retire is refused"
+            "the FOR UPDATE read is refused"
         );
 
         revoke(&db, "SELECT", "serving_pool").await;
@@ -217,7 +230,9 @@ async fn the_rotation_reports_a_refused_read_and_a_refused_restamp() {
     .await;
 }
 
-/// Every refill read reports a closed pool.
+/// Every refill read reports a closed pool, and answers on the open superuser
+/// pool: one retired row of a pending digest, the depth, the one target, the
+/// approved template, and the one flag row.
 #[tokio::test]
 async fn every_refill_read_reports_a_closed_pool() {
     TestDb::with(|db| async move {
@@ -227,6 +242,32 @@ async fn every_refill_read_reports_a_closed_pool() {
         assert!(refill_targets(&pool, 8, 8).await.is_err());
         assert!(approved_template(&pool, KP).await.is_err());
         assert!(operator_flags(&pool).await.is_err());
+
+        let user = db.seed_user("refill@example.test").await;
+        let ids = seed_pool_rows(&db.admin, user, KP, 2).await;
+        seed_template(&db.admin, "t-pending", KP, "pending", "Compute $x$.").await;
+        seed_template(&db.admin, "t-approved", KP, "approved", "Compute $y$.").await;
+        sqlx::query("UPDATE serving_pool SET content_digest = 't-pending' WHERE id = $1")
+            .bind(ids[0])
+            .execute(&db.admin)
+            .await
+            .unwrap();
+
+        let retired = retire_unapproved(&db.admin).await.unwrap();
+        assert_eq!(retired.len(), 1);
+        assert_eq!(retired[0].status, "pending");
+        assert_eq!(unclaimed_depth(&db.admin, user, KP).await.unwrap(), 1);
+        let targets = refill_targets(&db.admin, 8, 8).await.unwrap();
+        assert_eq!(targets.len(), 1);
+        assert_eq!(targets[0].depth, 1);
+        let template = approved_template(&db.admin, KP).await.unwrap();
+        assert_eq!(
+            template.map(|row| row.digest),
+            Some("t-approved".to_string())
+        );
+        let flags = operator_flags(&db.admin).await.unwrap();
+        assert_eq!(flags.len(), 1);
+        assert_eq!(flags[0].last_source, Some(Source::Template));
     })
     .await;
 }
