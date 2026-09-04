@@ -54,6 +54,8 @@ use rand_chacha::ChaCha8Rng;
 use rand_core::{RngCore, SeedableRng};
 
 use super::constraint::{Constraint, ConstraintError, all_hold};
+use std::collections::BTreeMap;
+
 use super::domain::{Bindings, DomainError, EXHAUSTIVE_SPACE_LIMIT, Params, Value, enumerate};
 
 /// The count of independent draws above [`EXHAUSTIVE_SPACE_LIMIT`] (1.0 `RESAMPLE_ATTEMPTS`).
@@ -131,11 +133,7 @@ impl DrawPlan {
     pub fn new(params: &Params) -> Result<Self, DomainError> {
         let mut columns = Vec::with_capacity(params.len());
         for (name, domain) in params {
-            let values = domain.values(name)?;
-            if values.is_empty() {
-                return Err(DomainError::EmptyChoice);
-            }
-            columns.push((name.clone(), values));
+            columns.push((name.clone(), domain.values(name)?));
         }
         Ok(Self { columns })
     }
@@ -150,6 +148,17 @@ impl DrawPlan {
         product
     }
 
+    /// Build the plan from value lists the caller validated, in name order.
+    ///
+    /// The gate reads every domain once for its own checks and builds the plan
+    /// from those lists, so no domain is read twice.
+    #[must_use]
+    pub fn from_columns(columns: BTreeMap<String, Vec<Value>>) -> Self {
+        Self {
+            columns: columns.into_iter().collect(),
+        }
+    }
+
     /// Draw one tuple, with no constraint applied.
     ///
     /// Every column draws uniformly over its distinct values.
@@ -159,9 +168,7 @@ impl DrawPlan {
         for (name, values) in &self.columns {
             let width = u64::try_from(values.len()).unwrap_or(u64::MAX);
             let index = usize::try_from(below(rng, width)).unwrap_or(0);
-            if let Some(value) = values.get(index) {
-                bindings.insert(name.clone(), value.clone());
-            }
+            bindings.extend(values.get(index).map(|value| (name.clone(), value.clone())));
         }
         bindings
     }
@@ -233,17 +240,28 @@ pub fn candidates(
     constraints: &[Constraint],
     rng: &mut ChaCha8Rng,
 ) -> Result<Vec<Bindings>, DrawError> {
-    let plan = DrawPlan::new(params)?;
-    if plan.declared_space() <= EXHAUSTIVE_SPACE_LIMIT {
-        let mut satisfying = Vec::new();
-        for tuple in enumerate(params, EXHAUSTIVE_SPACE_LIMIT)? {
-            if all_hold(constraints, &tuple)? {
-                satisfying.push(tuple);
-            }
+    let every_tuple = match enumerate(params, EXHAUSTIVE_SPACE_LIMIT) {
+        Ok(tuples) => tuples,
+        Err(DomainError::TooLarge { .. }) => return sampled_candidates(params, constraints, rng),
+        Err(other) => return Err(DrawError::Domain(other)),
+    };
+    let mut satisfying = Vec::new();
+    for tuple in every_tuple {
+        if all_hold(constraints, &tuple)? {
+            satisfying.push(tuple);
         }
-        shuffle(&mut satisfying, rng);
-        return Ok(satisfying);
     }
+    shuffle(&mut satisfying, rng);
+    Ok(satisfying)
+}
+
+/// The candidate stream above the exhaustive limit: independent draws.
+fn sampled_candidates(
+    params: &Params,
+    constraints: &[Constraint],
+    rng: &mut ChaCha8Rng,
+) -> Result<Vec<Bindings>, DrawError> {
+    let plan = DrawPlan::new(params)?;
     let mut out = Vec::with_capacity(RESAMPLE_ATTEMPTS);
     for _ in 0..RESAMPLE_ATTEMPTS {
         match plan.draw_satisfying(constraints, rng) {
@@ -271,9 +289,8 @@ pub fn shuffle<T>(items: &mut [T], rng: &mut ChaCha8Rng) {
     while at > 1 {
         at -= 1;
         let bound = u64::try_from(at + 1).unwrap_or(1);
+        // `pick` is at most `at`, and `at` is below the length.
         let pick = usize::try_from(below(rng, bound)).unwrap_or(0);
-        if at < length && pick < length {
-            items.swap(at, pick);
-        }
+        items.swap(at, pick);
     }
 }

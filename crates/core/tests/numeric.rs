@@ -21,8 +21,8 @@ use chrono::NaiveDate;
 use cadus_core::config::Config;
 use cadus_core::learner::problem_text_hash;
 use cadus_core::numeric::{
-    TimeError, days_between, local_day, neumaier_sum, resolve_timezone, round_dp, round_half_even,
-    round_half_even_i64, round_half_even_i64_saturating,
+    TimeError, days_between, local_day, local_day_in, neumaier_sum, resolve_timezone, round_dp,
+    round_half_even, round_half_even_i64, round_half_even_i64_saturating,
 };
 
 // --------------------------------------------------------------------------- //
@@ -436,4 +436,12 @@ fn the_config_tree_round_trips_through_its_own_preimage() {
 fn the_config_tree_rejects_an_unknown_key() {
     let text = CONFIG_HASH_PREIMAGE.replace(r#""timezone":null"#, r#""timezone":null,"nope":1"#);
     assert!(serde_json::from_str::<Config>(&text).is_err());
+}
+
+#[test]
+fn a_local_day_of_an_instant_outside_the_range_is_an_error() {
+    assert_eq!(
+        local_day_in(i64::MAX, chrono_tz::Tz::UTC),
+        Err(TimeError::TimestampOutOfRange(i64::MAX))
+    );
 }
