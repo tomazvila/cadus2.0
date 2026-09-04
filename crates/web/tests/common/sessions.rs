@@ -200,3 +200,25 @@ pub async fn storage_snapshot(db: &TestDb, user: Uuid) -> StorageSnapshot {
         cursor: row.cursor,
     }
 }
+
+/// Every route of unit U6, with the method it takes.
+pub const U6_ROUTES: [(Method, &str); 8] = [
+    (Method::GET, "/api/status"),
+    (Method::GET, "/api/graph"),
+    (Method::GET, "/api/modules"),
+    (Method::GET, "/api/export"),
+    (Method::POST, "/api/enroll"),
+    (Method::POST, "/api/session/start"),
+    (Method::POST, "/api/session/end"),
+    (Method::GET, "/api/session/plan"),
+];
+
+/// A learner with an open session, a cached model at the head of the log, and
+/// an empty D-S6 row.
+pub async fn cached_learner(db: &TestDb, email: &str) -> Uuid {
+    let user = seed_learner(db, email).await;
+    seed_open_session(db, user).await;
+    seed_cached_model(db, user, &LearnerModel::default(), 1).await;
+    put_state(db, user, &WebState::for_session(SESSION)).await;
+    user
+}

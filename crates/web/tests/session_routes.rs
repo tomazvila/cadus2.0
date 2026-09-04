@@ -39,17 +39,7 @@ use common::sessions::*;
 async fn every_u6_route_without_a_tenant_is_401_unauthorized() {
     TestDb::with(|db| async move {
         let app = app(&db);
-        let routes = [
-            (Method::GET, "/api/status"),
-            (Method::GET, "/api/graph"),
-            (Method::GET, "/api/modules"),
-            (Method::GET, "/api/export"),
-            (Method::POST, "/api/enroll"),
-            (Method::POST, "/api/session/start"),
-            (Method::POST, "/api/session/end"),
-            (Method::GET, "/api/session/plan"),
-        ];
-        for (method, uri) in routes {
+        for (method, uri) in U6_ROUTES {
             let (status, _, body) = call(&app, method.clone(), uri, None, None).await;
             assert_eq!(status, StatusCode::UNAUTHORIZED, "{method} {uri}: {body}");
             let value = parse(&body);

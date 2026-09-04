@@ -11,24 +11,14 @@ mod common;
 
 use common::lesson_problem;
 
-use cadus_core::learner::LearnerModel;
 use cadus_web::state::WebState;
 use common::placement::app;
+use common::sessions::cached_learner;
 use common::{
     Method, Router, SESSION, TestDb, Uuid, Value, assert_internal, call, events_of_type,
     fail_deletes, fail_reads, fail_writes, hold_state_lock, json, parse, put_state,
-    seed_cached_model, seed_learner, seed_open_session, seed_unreadable_diagnostic,
+    seed_unreadable_diagnostic,
 };
-
-/// A learner with an open session, a cached model at the head of the log, and
-/// an empty D-S6 row.
-async fn learner(db: &TestDb, email: &str) -> Uuid {
-    let user = seed_learner(db, email).await;
-    seed_open_session(db, user).await;
-    seed_cached_model(db, user, &LearnerModel::default(), 1).await;
-    put_state(db, user, &WebState::for_session(SESSION)).await;
-    user
-}
 
 /// Open a diagnostic of course `c1` for `user`, and read the first probe id.
 async fn started(app: &Router, user: Uuid) -> String {
@@ -70,7 +60,7 @@ async fn assert_answer_and_finish_fail(app: &Router, user: Uuid, problem_id: &st
 async fn a_held_lock_is_500_on_the_answer_and_the_finish() {
     TestDb::with(|db| async move {
         let app = app(&db);
-        let user = learner(&db, "diag-fault-lock@example.com").await;
+        let user = cached_learner(&db, "diag-fault-lock@example.com").await;
         let problem_id = started(&app, user).await;
         let held = hold_state_lock(&db, user).await;
         assert_answer_and_finish_fail(&app, user, &problem_id).await;
@@ -84,7 +74,7 @@ async fn a_held_lock_is_500_on_the_answer_and_the_finish() {
 async fn a_diagnostic_read_that_fails_is_500_on_the_answer_and_the_finish() {
     TestDb::with(|db| async move {
         let app = app(&db);
-        let user = learner(&db, "diag-fault-read@example.com").await;
+        let user = cached_learner(&db, "diag-fault-read@example.com").await;
         let problem_id = started(&app, user).await;
         fail_reads(&db, "diag_states", "FROM diag_states WHERE").await;
         assert_answer_and_finish_fail(&app, user, &problem_id).await;
@@ -97,7 +87,7 @@ async fn a_diagnostic_read_that_fails_is_500_on_the_answer_and_the_finish() {
 async fn a_diagnostic_document_that_does_not_read_is_409_no_diagnostic() {
     TestDb::with(|db| async move {
         let app = app(&db);
-        let user = learner(&db, "diag-fault-doc@example.com").await;
+        let user = cached_learner(&db, "diag-fault-doc@example.com").await;
         seed_unreadable_diagnostic(&db, user).await;
         let (status, body) = call(&app, Method::POST, "/api/diag/finish", Some(user), None).await;
         assert_eq!(status.as_u16(), 409, "{body}");
@@ -111,7 +101,7 @@ async fn a_diagnostic_document_that_does_not_read_is_409_no_diagnostic() {
 async fn a_state_read_that_fails_is_500_on_the_three_calls() {
     TestDb::with(|db| async move {
         let app = app(&db);
-        let user = learner(&db, "diag-fault-state@example.com").await;
+        let user = cached_learner(&db, "diag-fault-state@example.com").await;
         let problem_id = started(&app, user).await;
         fail_reads(&db, "web_states", "FROM web_states WHERE").await;
         assert_internal(&app, Method::POST, "/api/diag/start", user, None).await;
@@ -125,7 +115,7 @@ async fn a_state_read_that_fails_is_500_on_the_three_calls() {
 async fn a_model_read_that_fails_is_500_on_the_three_calls() {
     TestDb::with(|db| async move {
         let app = app(&db);
-        let user = learner(&db, "diag-fault-model@example.com").await;
+        let user = cached_learner(&db, "diag-fault-model@example.com").await;
         let problem_id = started(&app, user).await;
         fail_reads(&db, "learner_models", "SELECT model AS").await;
         assert_internal(&app, Method::POST, "/api/diag/start", user, None).await;
@@ -141,11 +131,11 @@ async fn a_model_read_that_fails_is_500_on_the_three_calls() {
 async fn an_event_append_that_fails_is_500_on_the_three_calls() {
     TestDb::with(|db| async move {
         let app = app(&db);
-        let user = learner(&db, "diag-fault-append@example.com").await;
+        let user = cached_learner(&db, "diag-fault-append@example.com").await;
         let problem_id = started(&app, user).await;
         // A first run names no course and has none enrolled, so the start
         // appends `enrolled` first.
-        let fresh = learner(&db, "diag-fault-append-first@example.com").await;
+        let fresh = cached_learner(&db, "diag-fault-append-first@example.com").await;
         fail_writes(&db, "events", "true").await;
         assert_answer_and_finish_fail(&app, user, &problem_id).await;
         assert_eq!(
@@ -167,7 +157,7 @@ async fn an_event_append_that_fails_is_500_on_the_three_calls() {
 async fn a_diagnostic_write_that_fails_is_500_on_the_start_and_the_answer() {
     TestDb::with(|db| async move {
         let app = app(&db);
-        let user = learner(&db, "diag-fault-write@example.com").await;
+        let user = cached_learner(&db, "diag-fault-write@example.com").await;
         let problem_id = started(&app, user).await;
         fail_writes(&db, "diag_states", "true").await;
         assert_internal(&app, Method::POST, "/api/diag/start", user, None).await;
@@ -188,7 +178,7 @@ async fn a_diagnostic_write_that_fails_is_500_on_the_start_and_the_answer() {
 async fn a_diagnostic_clear_that_fails_is_500_on_the_finish() {
     TestDb::with(|db| async move {
         let app = app(&db);
-        let user = learner(&db, "diag-fault-clear@example.com").await;
+        let user = cached_learner(&db, "diag-fault-clear@example.com").await;
         started(&app, user).await;
         fail_deletes(&db, "diag_states", "true").await;
         assert_internal(&app, Method::POST, "/api/diag/finish", user, None).await;
@@ -205,7 +195,7 @@ async fn a_diagnostic_clear_that_fails_is_500_on_the_finish() {
 async fn a_state_write_that_fails_is_500_on_the_finish() {
     TestDb::with(|db| async move {
         let app = app(&db);
-        let user = learner(&db, "diag-fault-state-write@example.com").await;
+        let user = cached_learner(&db, "diag-fault-state-write@example.com").await;
         started(&app, user).await;
         fail_writes(&db, "web_states", "true").await;
         assert_internal(&app, Method::POST, "/api/diag/finish", user, None).await;
@@ -219,7 +209,7 @@ async fn a_state_write_that_fails_is_500_on_the_finish() {
 async fn a_probe_that_names_no_topic_of_the_universe_is_409_no_diagnostic() {
     TestDb::with(|db| async move {
         let app = app(&db);
-        let user = learner(&db, "diag-drift@example.com").await;
+        let user = cached_learner(&db, "diag-drift@example.com").await;
         let problem_id = started(&app, user).await;
         for topic in [None, Some("ghost".to_string())] {
             let mut probe = lesson_problem(0.0, "kp1", Vec::new());

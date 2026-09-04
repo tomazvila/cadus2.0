@@ -11,36 +11,27 @@
 
 mod common;
 
-use cadus_core::learner::LearnerModel;
-use cadus_web::state::WebState;
-use common::sessions::app;
+use common::sessions::{U6_ROUTES, app, cached_learner};
 use common::{
-    Method, SESSION, TestDb, Uuid, assert_internal, events_of_type, fail_deletes, fail_reads,
-    fail_rows, fail_tenant_bind, fail_writes, hold_state_lock, json, put_state, seed_cached_model,
-    seed_learner, seed_open_session, seed_unreadable_state,
+    Method, Router, TestDb, Uuid, assert_internal, events_of_type, fail_deletes, fail_reads,
+    fail_rows, fail_tenant_bind, fail_writes, hold_state_lock, json, seed_learner,
+    seed_open_session, seed_unreadable_state,
 };
 
-/// A learner with an open session, a cached model at the head of the log, and
-/// an empty D-S6 row.
-async fn learner(db: &TestDb, email: &str) -> Uuid {
-    let user = seed_learner(db, email).await;
-    seed_open_session(db, user).await;
-    seed_cached_model(db, user, &LearnerModel::default(), 1).await;
-    put_state(db, user, &WebState::for_session(SESSION)).await;
-    user
+/// Fail the test when the enroll and the session end of `user` are not `500`,
+/// or when the enroll left an `enrolled` event behind.
+async fn assert_enroll_and_end_fail(db: &TestDb, app: &Router, user: Uuid) {
+    assert_internal(
+        app,
+        Method::POST,
+        "/api/enroll",
+        user,
+        body_of("/api/enroll"),
+    )
+    .await;
+    assert_internal(app, Method::POST, "/api/session/end", user, None).await;
+    assert_eq!(events_of_type(db, user, "enrolled").await.len(), 0);
 }
-
-/// Every route of the module, with the body its write takes.
-const ROUTES: [(Method, &str); 8] = [
-    (Method::GET, "/api/status"),
-    (Method::GET, "/api/graph"),
-    (Method::GET, "/api/modules"),
-    (Method::GET, "/api/export"),
-    (Method::POST, "/api/enroll"),
-    (Method::POST, "/api/session/start"),
-    (Method::POST, "/api/session/end"),
-    (Method::GET, "/api/session/plan"),
-];
 
 /// The body of `path`, when the route reads one.
 fn body_of(path: &str) -> Option<serde_json::Value> {
@@ -52,9 +43,9 @@ fn body_of(path: &str) -> Option<serde_json::Value> {
 async fn a_tenant_bind_that_fails_is_500_on_every_route() {
     TestDb::with(|db| async move {
         let app = app(&db);
-        let user = learner(&db, "fault-bind@example.com").await;
+        let user = cached_learner(&db, "fault-bind@example.com").await;
         fail_tenant_bind(&db).await;
-        for (method, path) in ROUTES {
+        for (method, path) in U6_ROUTES {
             assert_internal(&app, method, path, user, body_of(path)).await;
         }
     })
@@ -66,9 +57,9 @@ async fn a_tenant_bind_that_fails_is_500_on_every_route() {
 async fn a_model_read_that_fails_is_500_on_every_folding_route() {
     TestDb::with(|db| async move {
         let app = app(&db);
-        let user = learner(&db, "fault-model@example.com").await;
+        let user = cached_learner(&db, "fault-model@example.com").await;
         fail_reads(&db, "learner_models", "SELECT model AS").await;
-        for (method, path) in ROUTES
+        for (method, path) in U6_ROUTES
             .into_iter()
             .filter(|(_, path)| *path != "/api/export")
         {
@@ -83,7 +74,7 @@ async fn a_model_read_that_fails_is_500_on_every_folding_route() {
 async fn a_held_lock_is_500_on_the_session_start() {
     TestDb::with(|db| async move {
         let app = app(&db);
-        let user = learner(&db, "fault-lock@example.com").await;
+        let user = cached_learner(&db, "fault-lock@example.com").await;
         let held = hold_state_lock(&db, user).await;
         assert_internal(&app, Method::POST, "/api/session/start", user, None).await;
         drop(held);
@@ -97,7 +88,7 @@ async fn a_held_lock_is_500_on_the_session_start() {
 async fn an_event_read_that_fails_is_500_on_the_window_readers() {
     TestDb::with(|db| async move {
         let app = app(&db);
-        let user = learner(&db, "fault-events@example.com").await;
+        let user = cached_learner(&db, "fault-events@example.com").await;
         // The enroll appends line 2 and folds the model to it, so the fold of
         // the next request reads line 2 alone and the window read of the open
         // session is the first to touch line 1.
@@ -123,7 +114,7 @@ async fn an_event_read_that_fails_is_500_on_the_window_readers() {
 async fn a_state_read_that_fails_is_500_on_the_state_readers() {
     TestDb::with(|db| async move {
         let app = app(&db);
-        let user = learner(&db, "fault-state-read@example.com").await;
+        let user = cached_learner(&db, "fault-state-read@example.com").await;
         fail_reads(&db, "web_states", "FROM web_states WHERE").await;
         assert_internal(&app, Method::POST, "/api/session/start", user, None).await;
         assert_internal(&app, Method::POST, "/api/session/end", user, None).await;
@@ -153,18 +144,9 @@ async fn a_state_row_that_does_not_read_is_500_state_unavailable() {
 async fn an_event_append_that_fails_is_500_on_every_write() {
     TestDb::with(|db| async move {
         let app = app(&db);
-        let user = learner(&db, "fault-append@example.com").await;
+        let user = cached_learner(&db, "fault-append@example.com").await;
         fail_writes(&db, "events", "true").await;
-        assert_internal(
-            &app,
-            Method::POST,
-            "/api/enroll",
-            user,
-            body_of("/api/enroll"),
-        )
-        .await;
-        assert_internal(&app, Method::POST, "/api/session/end", user, None).await;
-        assert_eq!(events_of_type(&db, user, "enrolled").await.len(), 0);
+        assert_enroll_and_end_fail(&db, &app, user).await;
         assert_eq!(events_of_type(&db, user, "session_end").await.len(), 0);
 
         // A start with no open session appends `session_start`.
@@ -180,7 +162,7 @@ async fn an_event_append_that_fails_is_500_on_every_write() {
 async fn a_fold_save_that_fails_is_500_on_the_session_start() {
     TestDb::with(|db| async move {
         let app = app(&db);
-        let user = learner(&db, "fault-fold@example.com").await;
+        let user = cached_learner(&db, "fault-fold@example.com").await;
         fail_writes(&db, "learner_models", "true").await;
         assert_internal(&app, Method::POST, "/api/session/start", user, None).await;
     })
@@ -192,7 +174,7 @@ async fn a_fold_save_that_fails_is_500_on_the_session_start() {
 async fn a_state_write_that_fails_is_500_on_the_session_start() {
     TestDb::with(|db| async move {
         let app = app(&db);
-        let user = learner(&db, "fault-state-write@example.com").await;
+        let user = cached_learner(&db, "fault-state-write@example.com").await;
         fail_writes(&db, "web_states", "true").await;
         assert_internal(&app, Method::POST, "/api/session/start", user, None).await;
     })
@@ -204,18 +186,9 @@ async fn a_state_write_that_fails_is_500_on_the_session_start() {
 async fn a_state_clear_that_fails_is_500_on_the_enroll_and_the_end() {
     TestDb::with(|db| async move {
         let app = app(&db);
-        let user = learner(&db, "fault-clear@example.com").await;
+        let user = cached_learner(&db, "fault-clear@example.com").await;
         fail_deletes(&db, "web_states", "true").await;
-        assert_internal(
-            &app,
-            Method::POST,
-            "/api/enroll",
-            user,
-            body_of("/api/enroll"),
-        )
-        .await;
-        assert_internal(&app, Method::POST, "/api/session/end", user, None).await;
-        assert_eq!(events_of_type(&db, user, "enrolled").await.len(), 0);
+        assert_enroll_and_end_fail(&db, &app, user).await;
     })
     .await;
 }
