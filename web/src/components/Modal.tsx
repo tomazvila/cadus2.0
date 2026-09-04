@@ -110,7 +110,7 @@ export function DialogProvider({ children }: { children: React.ReactNode }) {
  * page is inert, and a Tab that walks out to the page behind makes that a lie. A 1.0 version
  * claimed a trap in three comments and bound Escape alone.
  */
-export function Modal({ children, onCancel }: {
+function Modal({ children, onCancel }: {
   children: React.ReactNode;
   onCancel: (value: null) => void;
 }) {

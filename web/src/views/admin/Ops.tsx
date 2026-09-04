@@ -36,13 +36,13 @@ import type { ApiClient, ReviewItem } from '@/api/types';
 export const OPS_TITLE = 'Operator';
 
 /** The line of a deployment whose pool holds no knowledge point at all. */
-export const OPS_EMPTY = 'The pool holds no knowledge point yet.';
+const OPS_EMPTY = 'The pool holds no knowledge point yet.';
 
 /** The line of the cost panel when the review queue could not be read. */
 export const COST_UNAVAILABLE = 'The authoring bill could not be read.';
 
 /** The line of a queue that priced nothing. */
-export const COST_EMPTY = 'No authored document carries a bill yet.';
+const COST_EMPTY = 'No authored document carries a bill yet.';
 
 /**
  * The pages one bill reads, at most.
@@ -83,7 +83,7 @@ export interface Bill {
  * The pages before it are a part of the bill, and a part of a bill on screen under the word
  * Total is a number that reads as the whole one.
  */
-export async function readBill(api: ApiClient): Promise<Bill> {
+async function readBill(api: ApiClient): Promise<Bill> {
   const items: ReviewItem[] = [];
   const seen = new Set<string>();
   for (let page = 0; page < BILL_MAX_PAGES; page += 1) {

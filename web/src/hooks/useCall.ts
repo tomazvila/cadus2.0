@@ -46,9 +46,9 @@ export const GENERIC_FAILURE_MESSAGE = 'Something went wrong.';
 /** The line a Retry gets when the screen moved past the request it would re-send. */
 export const RETRY_STALE_MESSAGE = 'That retry came too late. Continue from the screen.';
 
-export type Call = <T>(
+export type Call = <T, R = void>(
   fn: () => Promise<T>,
-  onOk?: (value: T) => unknown,
+  onOk?: (value: T) => R,
   opts?: CallOptions,
 ) => Promise<T | undefined>;
 
@@ -61,7 +61,7 @@ export type Call = <T>(
  * service answers `404 unknown_problem`. Both fields are optional, and a call that omits
  * them behaves exactly as it did before.
  */
-export interface CallOptions {
+interface CallOptions {
   /**
    * The Retry gate, called SYNCHRONOUSLY when the learner presses Retry. It re-takes the
    * caller's lock and answers whether the request is still valid. False refuses the retry
@@ -98,7 +98,7 @@ export function useCall({ demo, onUnauthorized }: CallDeps): Call {
   useEffect(() => { depsRef.current = { demo, onUnauthorized }; }, [demo, onUnauthorized]);
 
   return useCallback(
-    <T,>(fn: () => Promise<T>, onOk?: (value: T) => unknown, opts?: CallOptions) =>
+    <T, R>(fn: () => Promise<T>, onOk?: (value: T) => R, opts?: CallOptions) =>
       run(fn, onOk, depsRef, opts),
     [],
   );
@@ -106,9 +106,9 @@ export function useCall({ demo, onUnauthorized }: CallDeps): Call {
 
 type DepsRef = { current: CallDeps };
 
-async function run<T>(
+async function run<T, R>(
   fn: () => Promise<T>,
-  onOk: ((value: T) => unknown) | undefined,
+  onOk: ((value: T) => R) | undefined,
   deps: DepsRef,
   opts?: CallOptions,
 ): Promise<T | undefined> {

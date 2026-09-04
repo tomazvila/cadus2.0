@@ -33,9 +33,15 @@ export function readTokens(): MapTokens {
   };
 }
 
+/** One rule of a Cytoscape stylesheet: a selector and the properties it paints. */
+export interface MapStyleRule {
+  selector: string;
+  style: Record<string, string | number>;
+}
+
 /** The stylesheet, rebuilt whenever the color scheme flips. */
-export function buildStyle(tokens: MapTokens): unknown[] {
-  const style: unknown[] = [
+export function buildStyle(tokens: MapTokens): MapStyleRule[] {
+  const style: MapStyleRule[] = [
     {
       selector: 'node',
       style: {

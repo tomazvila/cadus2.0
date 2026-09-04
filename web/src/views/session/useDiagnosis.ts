@@ -49,7 +49,7 @@ export const DIAGNOSIS_POLL_MS = 2000;
 export const DIAGNOSIS_DEADLINE_MS = 30_000;
 
 /** The `event:` name of every frame the stream writes (`crates/web/src/diagnosis.rs`). */
-export const DIAGNOSIS_EVENT = 'diagnosis';
+const DIAGNOSIS_EVENT = 'diagnosis';
 
 /** What the panel paints for one grade reply. */
 export type DiagnosisPanel =
@@ -68,7 +68,7 @@ const PENDING: DiagnosisPanel = Object.freeze({ status: 'pending' });
 const FAILED: DiagnosisPanel = Object.freeze({ status: 'failed' });
 
 /** Read one wire job into a panel state. `capped` is a failure the learner cannot fix. */
-export function panelOf(job: DiagnosisJob): DiagnosisPanel {
+function panelOf(job: DiagnosisJob): DiagnosisPanel {
   if (job.status === 'ready') {
     return { status: 'ready', error_tags: job.error_tags ?? [], prose: job.prose ?? '' };
   }

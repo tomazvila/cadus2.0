@@ -40,8 +40,7 @@ describe('scaffold: jsdom stubs', () => {
     expect(typeof window.open).toBe('function');
     expect(typeof window.scrollTo).toBe('function');
     // A UMD global from the vendored tree. Absent, the render idiom returns the raw text.
-    expect(typeof (window as unknown as { renderMathInElement: unknown }).renderMathInElement)
-      .toBe('function');
+    expect(typeof window.renderMathInElement).toBe('function');
   });
 
   it('hands out and records object URLs', () => {
@@ -78,8 +77,7 @@ describe('scaffold: jsdom stubs', () => {
   it('configures the React act() environment', () => {
     // Without this React warns and does not schedule reliably, so a React test passes for
     // the wrong reason — worse than a test that fails.
-    expect((globalThis as unknown as { IS_REACT_ACT_ENVIRONMENT: boolean }).IS_REACT_ACT_ENVIRONMENT)
-      .toBe(true);
+    expect(globalThis.IS_REACT_ACT_ENVIRONMENT).toBe(true);
   });
 });
 

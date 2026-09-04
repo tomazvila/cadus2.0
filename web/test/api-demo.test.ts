@@ -7,11 +7,15 @@
  */
 import { describe, expect, it, vi } from 'vitest';
 import { ApiError, ROUTES, api, createDemoApi, resolveApi } from '@/api';
+import type { ApiClient } from '@/api';
 
 describe('the demo client', () => {
   it('F-F6-1: implements every method the route table names', () => {
-    const demo = createDemoApi() as unknown as Record<string, unknown>;
-    const named = ROUTES.filter((r) => r.via !== 'none').map((r) => String(r.client));
+    const demo = createDemoApi();
+    const named = ROUTES
+      .filter((r) => r.via !== 'none')
+      .map((r) => r.client)
+      .filter((member): member is keyof ApiClient => member !== null);
     // 33 until the three `/api/diag/*` placement rows landed.
     expect(named.length).toBe(36);
     for (const member of named) {

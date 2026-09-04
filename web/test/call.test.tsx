@@ -152,7 +152,7 @@ describe('useCall', () => {
     // the call goes stale. Here the demo flag flips between the call and its rejection.
     const { result, rerender, onUnauthorized } = mountCall({ demo: true });
 
-    let reject: ((e: unknown) => void) | undefined;
+    let reject: ((e: ApiError) => void) | undefined;
     const pending = result.current(
       () => new Promise<string>((_, rej) => { reject = rej; }),
     );

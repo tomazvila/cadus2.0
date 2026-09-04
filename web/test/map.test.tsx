@@ -39,11 +39,8 @@ import {
   sizeOf,
   toElements,
 } from '@/views/map/layout';
-import {
-  loadCytoscape,
-  resetCytoscapeLoader,
-  type CytoscapeFactory,
-} from '@/views/map/cytoscape-loader';
+import { loadCytoscape, resetCytoscapeLoader } from '@/views/map/cytoscape-loader';
+import { createDemoApi } from '@/api';
 import { resetToasts, toastStore } from '@/app/toast';
 import { AXE_IN_JSDOM } from './axe';
 import cytoscape, { instances, resetCytoscape } from './mocks/cytoscape';
@@ -92,12 +89,12 @@ function graph(over: Partial<GraphResponse> = {}): GraphResponse {
   };
 }
 
-function stubApi(over: Record<string, unknown> = {}): ApiClient {
-  return { demo: false, getGraph: async () => graph(), ...over } as unknown as ApiClient;
+function stubApi(over: Partial<ApiClient> = {}): ApiClient {
+  return { ...createDemoApi(), demo: false, getGraph: async () => graph(), ...over };
 }
 
 /** The importer that hands over the double, as the vendored module would. */
-const okImport = () => Promise.resolve({ default: cytoscape as unknown as CytoscapeFactory });
+const okImport = () => Promise.resolve({ default: cytoscape });
 
 /** An importer whose promise the test releases by hand. */
 function deferredImport() {
@@ -321,7 +318,7 @@ describe('the map view — the instance lifecycle', () => {
   it('builds the instance with preset positions and no layout extension', async () => {
     resetCytoscapeLoader(okImport);
     const view = await mount();
-    const options = last().options as { layout: { name: string }; elements: unknown[] };
+    const { options } = last();
     // Every Cytoscape layout extension needs eval or a blob worker, and the CSP grants
     // neither: the coordinates come from `layout.ts` and the layout is `preset`.
     expect(options.layout.name).toBe('preset');
@@ -493,7 +490,7 @@ describe('the map view — the payload on screen', () => {
     resetCytoscapeLoader(okImport);
     let release!: (g: GraphResponse) => void;
     const slow = new Promise<GraphResponse>((r) => { release = r; });
-    const getGraph = vi.fn()
+    const getGraph = vi.fn<ApiClient['getGraph']>()
       .mockImplementationOnce(async () => graph())
       .mockImplementationOnce(() => slow)
       .mockImplementation(async () => graph({ scope: 'all', counts: { nodes: 1, edges: 0, mastered: 0 } }));

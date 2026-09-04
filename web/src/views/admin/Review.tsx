@@ -50,13 +50,13 @@ import { num } from '@/lib/format';
 import type { ApiClient, ReviewItem } from '@/api/types';
 
 /** The heading, and the string the click-through of S13 looks for. */
-export const REVIEW_TITLE = 'Review queue';
+const REVIEW_TITLE = 'Review queue';
 
 /** The line of an empty queue. It is good news, and it says so. */
 export const REVIEW_EMPTY = 'Nothing is waiting for review.';
 
 /** The status the queue reads. The screen shows the pending work and nothing else. */
-export const PENDING = 'pending';
+const PENDING = 'pending';
 
 /** The line under the two disabled writes. It names the condition that opens them. */
 export const REVIEW_UNREAD = 'Approve and Reject open when the body of this digest is on screen.';
@@ -74,7 +74,7 @@ const DECIDE_KEY = 'decide';
  * It restates the digest, because approval binds to the digest and to nothing else, and a
  * reviewer who confirms the wrong row has approved a body they did not read.
  */
-export function ApproveConfirm({
+function ApproveConfirm({
   item,
   onDone,
 }: {
@@ -111,7 +111,7 @@ export function ApproveConfirm({
  * beside it is a dead end: the reviewer presses it, nothing happens, and the screen has not
  * said why. It stays pressable, and pressing it with an empty box renders the rule.
  */
-export function RejectPrompt({
+function RejectPrompt({
   item,
   onDone,
 }: {

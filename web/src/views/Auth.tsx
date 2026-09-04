@@ -25,7 +25,7 @@ import type { ApiClient, User } from '@/api';
 export type AuthMode = 'login' | 'signup' | 'forgot' | 'reset' | 'check-email' | 'sent';
 
 /** The shortest password the service accepts. Checked here to save a round trip. */
-export const MIN_PASSWORD_LENGTH = 8;
+const MIN_PASSWORD_LENGTH = 8;
 
 const TAGLINE = 'Practice, on cadence — learn by doing, one problem at a time.';
 
@@ -45,8 +45,7 @@ const MODE_TITLE: Record<AuthMode, string> = {
  * says so. A code this list does not name falls back to the server's own message, so a new
  * code reaches the learner as prose instead of as silence.
  */
-export function messageFor(e: unknown): string {
-  const err = e as { code?: string; message?: string } | null;
+export function messageFor(err: AuthFailure | null): string {
   switch (err?.code) {
     case 'invalid_credentials':
       return 'Incorrect email or password.';
@@ -61,6 +60,12 @@ export function messageFor(e: unknown): string {
     default:
       return err?.message || 'Something went wrong. Please try again.';
   }
+}
+
+/** What a failed auth call carries: an `ApiError`, or a foreign throw with a message. */
+interface AuthFailure {
+  code?: string | undefined;
+  message?: string | undefined;
 }
 
 /** `google` reads as `Google` on the button. The service names the provider in lower case. */
@@ -171,7 +176,7 @@ export function Auth({ api, mode: initialMode = 'login', token = '', onSignedIn 
         }
       } catch (err) {
         // AUTH-inline: the line lands beside the field. Nothing routes anywhere.
-        setError(messageFor(err));
+        setError(messageFor(err as AuthFailure));
         passwordRef.current?.focus();
       }
     });
@@ -193,7 +198,7 @@ export function Auth({ api, mode: initialMode = 'login', token = '', onSignedIn 
         setSentTo(address);
         setMode('sent');
       } catch (err) {
-        setError(messageFor(err));
+        setError(messageFor(err as AuthFailure));
       }
     });
   }
@@ -213,7 +218,7 @@ export function Auth({ api, mode: initialMode = 'login', token = '', onSignedIn 
         setPassword('');
         setMode('login');
       } catch (err) {
-        setError(messageFor(err));
+        setError(messageFor(err as AuthFailure));
         passwordRef.current?.focus();
       }
     });

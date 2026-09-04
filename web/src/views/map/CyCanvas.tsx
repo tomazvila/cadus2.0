@@ -21,43 +21,13 @@ import { useEffect, useRef, useState } from 'react';
 import { useLifetime } from '@/hooks/useLifetime';
 import { LoadingBlock } from '@/components/primitives';
 import { toast } from '@/app/toast';
-import { loadCytoscape } from './cytoscape-loader';
+import { loadCytoscape, type CyLike } from './cytoscape-loader';
 import { buildStyle, readTokens } from './mapStyle';
 import { toElements } from './layout';
 import type { GraphEdge, GraphNode } from '@/api/types';
 
 /** The line the learner reads when the renderer will not load. */
 export const MAP_RENDERER_FAILED = 'Could not load the map renderer.';
-
-/**
- * The slice of Cytoscape this island calls, hand-written.
- *
- * The library is a runtime `/vendor/` import with no package entry, so `@types/cytoscape`
- * would be a dependency the build cannot see. Narrow on purpose: anything absent here is
- * something the map does not call, which gives the double in `test/mocks/cytoscape.ts` a
- * closed set to implement.
- */
-export interface CyCollection {
-  id: () => string;
-  empty: () => boolean;
-  addClass: (name: string) => CyCollection;
-  removeClass: (name: string) => CyCollection;
-}
-
-export interface CyLike {
-  destroy: () => void;
-  resize: () => void;
-  style: (sheet: unknown) => void;
-  zoom: (arg?: unknown) => number;
-  minZoom: (value: number) => number;
-  maxZoom: (value: number) => number;
-  fit: (...args: unknown[]) => void;
-  center: (...args: unknown[]) => void;
-  panBy: (delta: { x: number; y: number }) => void;
-  on: (event: string, a?: unknown, b?: unknown) => void;
-  elements: () => CyCollection;
-  getElementById: (id: string) => CyCollection;
-}
 
 /** Everything `<Map>` drives imperatively, instead of reaching for the instance. */
 export interface CyHandle {
@@ -68,7 +38,7 @@ export interface CyHandle {
   pick: (id: string | null) => void;
 }
 
-export interface CyCanvasProps {
+interface CyCanvasProps {
   nodes: GraphNode[];
   edges: GraphEdge[];
   /** Filled once the instance exists, and cleared on teardown. */
@@ -79,7 +49,7 @@ export interface CyCanvasProps {
   onRetry: () => void;
 }
 
-export function CyCanvas({ nodes, edges, handleRef, onSelect, onRetry }: CyCanvasProps) {
+function CyCanvas({ nodes, edges, handleRef, onSelect, onRetry }: CyCanvasProps) {
   const life = useLifetime();
   const cyRef = useRef<CyLike | null>(null);
   // Cytoscape's OWN container, never shared with React. Handing it the wrapper that React
@@ -121,7 +91,7 @@ export function CyCanvas({ nodes, edges, handleRef, onSelect, onRetry }: CyCanva
           hideEdgesOnViewport: big,
           textureOnViewport: big,
           motionBlur: false,
-        }) as CyLike;
+        });
         cyRef.current = cy;
         setLoading(false);
 
@@ -131,10 +101,10 @@ export function CyCanvas({ nodes, edges, handleRef, onSelect, onRetry }: CyCanva
         cy.minZoom(Math.max(fitZoom * 0.6, 0.02));
         cy.maxZoom(2.5);
 
-        cy.on('tap', 'node', (evt: { target: CyCollection }) => {
+        cy.on('tap', 'node', (evt) => {
           cb.current.onSelect(evt.target.id());
         });
-        cy.on('tap', (evt: { target: unknown }) => {
+        cy.on('tap', (evt) => {
           if (evt.target === cy) cb.current.onSelect(null);
         });
 

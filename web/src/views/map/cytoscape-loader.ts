@@ -14,8 +14,74 @@
  * awaits the promise the first one started (F-38-1).
  */
 
+import type { MapElement } from './layout';
+import type { MapStyleRule } from './mapStyle';
+
+/**
+ * The slice of Cytoscape the map calls, hand-written.
+ *
+ * The library is a runtime `/vendor/` import with no package entry, so `@types/cytoscape`
+ * would be a dependency the build cannot see. Narrow on purpose: anything absent here is
+ * something the map does not call, which gives the double in `test/mocks/cytoscape.ts` a
+ * closed set to implement.
+ */
+export interface CyCollection {
+  id: () => string;
+  empty: () => boolean;
+  addClass: (name: string) => CyCollection;
+  removeClass: (name: string) => CyCollection;
+}
+
+/** A tap anywhere. The target is the instance on the background, or the node under it. */
+interface CyTapEvent {
+  target: CyLike | CyCollection;
+}
+
+/** A tap bound through a `node` selector. The target is always the node. */
+interface CyNodeTapEvent {
+  target: CyCollection;
+}
+
+export type CyTapHandler = (evt: CyTapEvent) => void;
+export type CyNodeTapHandler = (evt: CyNodeTapEvent) => void;
+
+export interface CyLike {
+  destroy: () => void;
+  resize: () => void;
+  style: (sheet: MapStyleRule[]) => void;
+  /** Read the level, or set it when `level` is given. */
+  zoom: (level?: number) => number;
+  minZoom: (value: number) => number;
+  maxZoom: (value: number) => number;
+  fit: () => void;
+  center: (target: CyCollection) => void;
+  panBy: (delta: { x: number; y: number }) => void;
+  /** Bind a handler to every element (`selector` absent) or to the ones it names. */
+  on: {
+    (event: string, handler: CyTapHandler): void;
+    (event: string, selector: 'node', handler: CyNodeTapHandler): void;
+  };
+  elements: () => CyCollection;
+  getElementById: (id: string) => CyCollection;
+}
+
+/** What the map hands the factory. Every key is read by the island or by its double. */
+export interface CytoscapeOptions {
+  container: HTMLElement;
+  elements: MapElement[];
+  style: MapStyleRule[];
+  layout: { name: string; fit: boolean; padding: number };
+  boxSelectionEnabled: boolean;
+  autoungrabify: boolean;
+  autounselectify: boolean;
+  pixelRatio: number | 'auto';
+  hideEdgesOnViewport: boolean;
+  textureOnViewport: boolean;
+  motionBlur: boolean;
+}
+
 /** The `cytoscape` factory. The library's sole export is `default`. */
-export type CytoscapeFactory = (opts: Record<string, unknown>) => unknown;
+export type CytoscapeFactory = (opts: CytoscapeOptions) => CyLike;
 
 /** What the loader awaits. The test seam replaces it; production never does. */
 export type CytoscapeImporter = () => Promise<{ default: CytoscapeFactory }>;
@@ -29,7 +95,7 @@ export type CytoscapeImporter = () => Promise<{ default: CytoscapeFactory }>;
  * when `dist/vendor/cytoscape/cytoscape.esm.min.mjs` is absent — the 1.0 failure where six
  * views worked, the map was dead, and every gate stayed green.
  */
-export const CYTOSCAPE_URL = '/vendor/cytoscape/cytoscape.esm.min.mjs';
+const CYTOSCAPE_URL = '/vendor/cytoscape/cytoscape.esm.min.mjs';
 
 /**
  * The one production importer.
@@ -52,7 +118,7 @@ export function loadCytoscape(): Promise<CytoscapeFactory> {
   if (!pending) {
     pending = importer()
       .then((module) => module.default)
-      .catch((err: unknown) => {
+      .catch((err: Error) => {
         // A rejected promise is still truthy. Keeping it makes every later retry await the
         // same dead promise, which is the failure `React.lazy` has and this file does not.
         pending = null;

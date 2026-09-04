@@ -308,11 +308,11 @@ function MapList({ nodes }: { nodes: GraphNode[] }) {
 }
 
 /** The legend label of one state. */
-export function labelOf(status: TopicStatus): string {
+function labelOf(status: TopicStatus): string {
   return STATES.find((s) => s.id === status)?.label ?? status;
 }
 
 /** The one number the 2.0 payload carries per topic. */
-export function abilityLine(node: GraphNode): string {
+function abilityLine(node: GraphNode): string {
   return `ability ${String(pct(node.ability))}%`;
 }

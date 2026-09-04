@@ -20,10 +20,10 @@
  */
 
 /** The operator screen: the A6 flags and the T3 cost per knowledge point. */
-export const OPS_PATH = '/ops';
+const OPS_PATH = '/ops';
 
 /** The review screen: the C6 queue of spec section 3.2. */
-export const REVIEW_PATH = '/review';
+const REVIEW_PATH = '/review';
 
 /** Which operator screen a path asks for. */
 export type AdminRoute = 'ops' | 'review';

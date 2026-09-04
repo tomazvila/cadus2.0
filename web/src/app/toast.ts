@@ -14,7 +14,7 @@
  * A plain toast still expires.
  */
 
-export type ToastKind = 'error' | 'info' | 'success';
+type ToastKind = 'error' | 'info' | 'success';
 
 export interface ToastOptions {
   label?: string;

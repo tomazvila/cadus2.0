@@ -15,9 +15,8 @@ import { afterEach, beforeEach, expect, vi } from 'vitest';
 import { cleanup } from '@testing-library/react';
 import * as axeMatchers from 'vitest-axe/matchers';
 import 'vitest-axe/extend-expect';
-import { TextDecoder, TextEncoder } from 'node:util';
-import { TransformStream } from 'node:stream/web';
 import { resetMathCache } from '@/lib/katex';
+import type { DiagnosisJob } from '@/api/types';
 
 expect.extend(axeMatchers);
 
@@ -28,7 +27,12 @@ expect.extend(axeMatchers);
 // support act(...)" and does not schedule reliably. A test then passes for the WRONG
 // reason, which is worse than a test that fails.
 // ---------------------------------------------------------------------------
-(globalThis as unknown as { IS_REACT_ACT_ENVIRONMENT: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
+declare global {
+  // The flag React's `act()` reads off the global. `vitest-axe` and React declare it nowhere.
+  var IS_REACT_ACT_ENVIRONMENT: boolean;
+}
+
+globalThis.IS_REACT_ACT_ENVIRONMENT = true;
 
 // ---------------------------------------------------------------------------
 // matchMedia — `prefers-color-scheme` selects the theme and `prefers-reduced-motion`
@@ -49,7 +53,7 @@ export function setMedia(query: string, matches: boolean): void {
  * a test that dispatches on its own handle reaches nobody, and the assertion fails as if
  * the component never subscribed.
  */
-const mediaListeners = new Map<string, Set<(e: MediaQueryListEvent) => void>>();
+const mediaListeners = new Map<string, Set<EventListenerOrEventListenerObject>>();
 
 /**
  * How many live listeners a query has.
@@ -62,25 +66,38 @@ export function mediaListenerCount(query: string): number {
   return mediaListeners.get(query)?.size ?? 0;
 }
 
-if (!window.matchMedia) {
-  window.matchMedia = ((query: string) => {
+/** The legacy `addListener` callback shape of `MediaQueryList`. */
+type MediaListener = ((this: MediaQueryList, ev: MediaQueryListEvent) => void) | null;
+
+/** One live `MediaQueryList`, over the shared listener set of its query. */
+class MediaQueryListStub implements MediaQueryList {
+  readonly media: string;
+  onchange: MediaListener = null;
+  private readonly listeners: Set<EventListenerOrEventListenerObject>;
+
+  constructor(query: string) {
+    this.media = query;
     if (!mediaListeners.has(query)) mediaListeners.set(query, new Set());
-    const listeners = mediaListeners.get(query)!;
-    const mql = {
-      get matches() { return mediaState.get(query) ?? false; },
-      media: query,
-      onchange: null,
-      addEventListener: (_: string, fn: (e: MediaQueryListEvent) => void) => { listeners.add(fn); },
-      removeEventListener: (_: string, fn: (e: MediaQueryListEvent) => void) => { listeners.delete(fn); },
-      addListener: (fn: (e: MediaQueryListEvent) => void) => { listeners.add(fn); },
-      removeListener: (fn: (e: MediaQueryListEvent) => void) => { listeners.delete(fn); },
-      dispatchEvent: (e: Event) => {
-        listeners.forEach((fn) => fn(e as MediaQueryListEvent));
-        return true;
-      },
-    };
-    return mql as unknown as MediaQueryList;
-  }) as typeof window.matchMedia;
+    this.listeners = mediaListeners.get(query)!;
+  }
+
+  get matches(): boolean { return mediaState.get(this.media) ?? false; }
+  addEventListener(_type: string, fn: EventListenerOrEventListenerObject): void {
+    this.listeners.add(fn);
+  }
+  removeEventListener(_type: string, fn: EventListenerOrEventListenerObject): void {
+    this.listeners.delete(fn);
+  }
+  addListener(fn: MediaListener): void { if (fn) this.listeners.add(fn as EventListener); }
+  removeListener(fn: MediaListener): void { if (fn) this.listeners.delete(fn as EventListener); }
+  dispatchEvent(e: Event): boolean {
+    this.listeners.forEach((fn) => { if (typeof fn === 'function') fn(e); else fn.handleEvent(e); });
+    return true;
+  }
+}
+
+if (!window.matchMedia) {
+  window.matchMedia = (query: string) => new MediaQueryListStub(query);
 }
 
 // ---------------------------------------------------------------------------
@@ -93,8 +110,7 @@ if (!('ResizeObserver' in globalThis)) {
     unobserve(): void {}
     disconnect(): void {}
   }
-  (globalThis as unknown as { ResizeObserver: typeof ResizeObserverStub }).ResizeObserver =
-    ResizeObserverStub;
+  Object.assign(globalThis, { ResizeObserver: ResizeObserverStub });
 }
 
 // ---------------------------------------------------------------------------
@@ -108,7 +124,14 @@ if (!('ResizeObserver' in globalThis)) {
 /** Every EventSource the code under test opened, in order. */
 export const eventSources: EventSourceStub[] = [];
 
-export class EventSourceStub {
+/** The slice of `EventSource` the session subscription drives. */
+interface DiagnosisStream {
+  addEventListener(type: string, fn: (e: Event) => void): void;
+  removeEventListener(type: string, fn: (e: Event) => void): void;
+  close(): void;
+}
+
+export class EventSourceStub implements DiagnosisStream {
   static readonly CONNECTING = 0;
   static readonly OPEN = 1;
   static readonly CLOSED = 2;
@@ -142,7 +165,7 @@ export class EventSourceStub {
   }
 
   /** One `event: diagnosis` frame, exactly as `crates/web/src/diagnosis.rs` writes it. */
-  emit(body: unknown): void {
+  emit(body: DiagnosisJob): void {
     this.dispatch(new MessageEvent('diagnosis', { data: JSON.stringify(body) }));
   }
 
@@ -166,8 +189,7 @@ export function lastEventSource(): EventSourceStub {
 }
 
 if (!('EventSource' in globalThis)) {
-  (globalThis as unknown as { EventSource: typeof EventSourceStub }).EventSource =
-    EventSourceStub;
+  Object.assign(globalThis, { EventSource: EventSourceStub });
 }
 
 // ---------------------------------------------------------------------------
@@ -267,12 +289,6 @@ Object.defineProperty(window, 'location', {
 });
 
 // ---------------------------------------------------------------------------
-// MSW v2 needs these Node globals restored under jsdom.
-// ---------------------------------------------------------------------------
-if (!globalThis.TextEncoder) Object.assign(globalThis, { TextEncoder, TextDecoder });
-if (!('TransformStream' in globalThis)) Object.assign(globalThis, { TransformStream });
-
-// ---------------------------------------------------------------------------
 // React errors and warnings FAIL the test.
 //
 // 1.0 spent a whole commit issuing a network POST from React's render phase. React said so
@@ -282,6 +298,9 @@ if (!('TransformStream' in globalThis)) Object.assign(globalThis, { TransformStr
 //
 // Anything genuinely expected must be declared with `allowConsoleError` in its own test.
 // ---------------------------------------------------------------------------
+/** What React and the boundary pass to `console.error`: prose, an error, or a stack. */
+type LogArg = string | number | boolean | object | null | undefined;
+
 const consoleErrors: string[] = [];
 let allowed: RegExp[] = [];
 
@@ -297,7 +316,7 @@ export function allowConsoleError(pattern: RegExp): void {
 }
 
 function trapConsole(): void {
-  vi.spyOn(console, 'error').mockImplementation((...args: unknown[]) => {
+  vi.spyOn(console, 'error').mockImplementation((...args: LogArg[]) => {
     consoleErrors.push(args.map(String).join(' '));
   });
 }

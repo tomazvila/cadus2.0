@@ -18,6 +18,12 @@ import renderMathInElement from 'katex/contrib/auto-render';
 import { MathBlock } from '@/components/MathBlock';
 import { DELIMITERS, renderMathToHtml } from '@/lib/katex';
 
+declare global {
+  // The flag the hostile markup below tries to set. Nothing declares it, so a read is the
+  // proof that nothing ran.
+  var __pwned: boolean | undefined;
+}
+
 const roots: Array<() => void> = [];
 
 function mount(node: React.ReactElement) {
@@ -197,7 +203,7 @@ describe('problem text is model output, and is escaped', () => {
       <MathBlock>{'<img src=x onerror="globalThis.__pwned = true">'}</MathBlock>,
     );
     expect(m.container.querySelector('img')).toBeNull();
-    expect((globalThis as Record<string, unknown>).__pwned).toBeUndefined();
+    expect(globalThis.__pwned).toBeUndefined();
   });
 
   it('escapes hostile markup that sits beside real math', () => {

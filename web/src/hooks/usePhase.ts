@@ -43,7 +43,7 @@
 import { useMemo, useState, useSyncExternalStore } from 'react';
 
 /** One phase, a set of them, or a predicate. */
-export type Guard<P extends string> = P | readonly P[] | ((p: P) => boolean);
+type Guard<P extends string> = P | readonly P[] | ((p: P) => boolean);
 
 function match<P extends string>(value: P, guard: Guard<P>): boolean {
   if (typeof guard === 'function') return guard(value);

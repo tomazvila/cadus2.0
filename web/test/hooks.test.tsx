@@ -74,7 +74,7 @@ describe('useCall: the Retry gate', () => {
     const fn = vi.fn(async () => { throw busy(); });
     const retryGate = vi.fn(() => false);
 
-    await result.current(fn, (v: unknown) => { seen.push(String(v)); }, { retryGate });
+    await result.current(fn, (v: string) => { seen.push(v); }, { retryGate });
 
     expect(toasts().length).toBe(1);
     fireToastAction(toasts()[0].id);

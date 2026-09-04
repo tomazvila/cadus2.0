@@ -14,7 +14,7 @@
  * The tests use fake timers, because the 750 ms beat (DIAG-750) is what carries the stale
  * continuation onto the next probe.
  */
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi, type Mock } from 'vitest';
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import { ApiError } from '@/api';
 import { Diagnostic, DIAG_BEAT_MS, type DiagnosticProps } from '@/views/Diagnostic';
@@ -83,8 +83,8 @@ async function answer(text: string): Promise<void> {
 }
 
 /** The `problem_id` values the placement posted, in order. */
-const postedIds = (fn: { mock: { calls: unknown[][] } }): string[] =>
-  fn.mock.calls.map((c) => (c[0] as { problem_id: string }).problem_id);
+const postedIds = (fn: Mock<DiagnosticApi['diagAnswer']>): string[] =>
+  fn.mock.calls.map(([body]) => body.problem_id);
 
 // ---------------------------------------------------------------------------
 

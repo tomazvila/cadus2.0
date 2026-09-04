@@ -16,42 +16,35 @@
  * box as 0, so anything that depends on rendered geometry is covered as a pure function
  * (`layout.ts`) rather than pretended at here.
  */
+import type {
+  CyCollection,
+  CyLike,
+  CyNodeTapHandler,
+  CyTapHandler,
+  CytoscapeOptions,
+} from '@/views/map/cytoscape-loader';
+import type { MapStyleRule } from '@/views/map/mapStyle';
 
-export interface CyElementStub {
-  id: () => string;
-  empty: () => boolean;
+interface CyElementStub extends CyCollection {
   classes: Set<string>;
-  addClass: (name: string) => CyElementStub;
-  removeClass: (name: string) => CyElementStub;
 }
 
-export interface CyStub {
+/** The instance the island drives, plus what the tests read off it. */
+export interface CyStub extends CyLike {
   /** The options the island constructed it with. */
-  readonly options: Record<string, unknown>;
+  readonly options: CytoscapeOptions;
   destroyed: boolean;
   /** Instances still alive at the moment this one was built. It must always be 0. */
   readonly aliveAtBuild: number;
   /** Every `cy.resize()` call. */
   resizes: number;
   /** Every stylesheet handed over, the constructor's included. */
-  readonly styles: unknown[];
-  zoom: (arg?: unknown) => number;
-  minZoom: (v: number) => number;
-  maxZoom: (v: number) => number;
-  fit: () => void;
-  center: (target?: unknown) => void;
-  panBy: (delta: { x: number; y: number }) => void;
+  readonly styles: MapStyleRule[][];
   pans: Array<{ x: number; y: number }>;
   fits: number;
   centered: string[];
-  resize: () => void;
-  destroy: () => void;
-  style: (sheet: unknown) => void;
-  on: (event: string, a?: unknown, b?: unknown) => void;
-  elements: () => CyElementStub;
-  getElementById: (id: string) => CyElementStub;
   /** Test affordance: fire a handler bound through `cy.on`. */
-  emit: (event: string, target?: unknown) => void;
+  emit: (event: string, target?: CyCollection | CyStub) => void;
   /** Test affordance: the classes one element carries. */
   classesOf: (id: string) => string[];
 }
@@ -64,11 +57,9 @@ export function resetCytoscape(): void {
   instances.length = 0;
 }
 
-interface Handler {
-  event: string;
-  selector: string | null;
-  fn: (evt: { target: unknown }) => void;
-}
+type Handler =
+  | { event: string; selector: 'node'; fn: CyNodeTapHandler }
+  | { event: string; selector: null; fn: CyTapHandler };
 
 /**
  * One element, or a collection standing in for several.
@@ -89,15 +80,10 @@ function element(id: string, sets: Array<Set<string>>, present: boolean): CyElem
 }
 
 /** The `cytoscape` factory, exactly as the library exports it: one default function. */
-export default function cytoscape(options: Record<string, unknown>): CyStub {
-  const elements = (options.elements ?? []) as Array<{
-    group?: string;
-    data?: { id?: string };
-    classes?: string;
-  }>;
+export default function cytoscape(options: CytoscapeOptions): CyStub {
   const classes = new Map<string, Set<string>>();
-  for (const el of elements) {
-    const id = String(el.data?.id ?? '');
+  for (const el of options.elements) {
+    const id = String(el.data.id ?? '');
     classes.set(id, new Set((el.classes ?? '').split(' ').filter(Boolean)));
   }
 
@@ -114,27 +100,22 @@ export default function cytoscape(options: Record<string, unknown>): CyStub {
     fits: 0,
     centered: [],
 
-    zoom: (arg?: unknown) => {
-      if (typeof arg === 'number') zoomLevel = arg;
+    zoom: (level?: number) => {
+      if (typeof level === 'number') zoomLevel = level;
       return zoomLevel;
     },
     minZoom: (v) => v,
     maxZoom: (v) => v,
     fit: () => { cy.fits += 1; },
-    center: (target?: unknown) => {
-      cy.centered.push(typeof target === 'object' && target !== null && 'id' in target
-        ? (target as CyElementStub).id()
-        : '');
-    },
+    center: (target) => { cy.centered.push(target.id()); },
     panBy: (delta) => { cy.pans.push(delta); },
     resize: () => { cy.resizes += 1; },
     destroy: () => { cy.destroyed = true; },
     style: (sheet) => { cy.styles.push(sheet); },
 
-    on: (event, a, b) => {
-      const selector = typeof a === 'string' ? a : null;
-      const fn = (typeof a === 'function' ? a : b) as Handler['fn'];
-      handlers.push({ event, selector, fn });
+    on: (event: string, a: 'node' | CyTapHandler, b?: CyNodeTapHandler) => {
+      if (typeof a === 'string' && b) handlers.push({ event, selector: 'node', fn: b });
+      if (typeof a === 'function') handlers.push({ event, selector: null, fn: a });
     },
 
     elements: () => element('', [...classes.values()], true),
@@ -148,10 +129,10 @@ export default function cytoscape(options: Record<string, unknown>): CyStub {
       // how the island tells the two taps apart. A tap on a NODE fires both the selective
       // and the unselective handler, as the library does — so an island that forgot the
       // `evt.target === cy` guard clears its own selection here, and a test sees it.
-      const isNode = target !== undefined && target !== cy;
+      const node = target !== undefined && target !== cy ? (target as CyCollection) : null;
       for (const h of handlers) {
         if (h.event !== event) continue;
-        if (h.selector === 'node' && !isNode) continue;
+        if (h.selector === 'node') { if (node) h.fn({ target: node }); continue; }
         h.fn({ target: target ?? cy });
       }
     },

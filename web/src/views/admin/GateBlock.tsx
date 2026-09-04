@@ -23,10 +23,10 @@ import type { OperatorGateNote } from '@/api/types';
 export const SAMPLED_LINE = 'Sampled: the gate checked a draw of the space, not all of it.';
 
 /** The line an exhaustive gate run carries. */
-export const EXHAUSTIVE_LINE = 'Exhaustive: the gate walked every satisfying tuple.';
+const EXHAUSTIVE_LINE = 'Exhaustive: the gate walked every satisfying tuple.';
 
 /** The line of a knowledge point the curriculum does not name. */
-export const NOT_GATED_LINE = 'Not gated.';
+const NOT_GATED_LINE = 'Not gated.';
 
 /** Shorten a digest for a heading. The full digest stays reachable through `title`. */
 export function shortDigest(digest: string): string {

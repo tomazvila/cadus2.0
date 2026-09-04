@@ -15,7 +15,7 @@
  * each assertion is a literal a reader checks by hand: the clock `10:00`, the count
  * `2 remaining`, the posted pairs of `problem_id` and `answer`.
  */
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi, type Mock } from 'vitest';
 import { act, cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { axe } from 'vitest-axe';
 import { ApiError, createDemoApi } from '@/api';
@@ -24,6 +24,7 @@ import { RETRY_STALE_MESSAGE } from '@/hooks/useCall';
 import { fireToastAction, resetToasts, toastStore, TOAST_TIMEOUT_MS } from '@/app/toast';
 import { AXE_IN_JSDOM } from './axe';
 import type {
+  AnswerResponse,
   ApiClient,
   PlanTask,
   QuizReceiptResponse,
@@ -109,11 +110,8 @@ async function tick(ms: number): Promise<void> {
 }
 
 /** The `[problem_id, answer]` pairs the quiz posted, in order. */
-const posted = (fn: { mock: { calls: unknown[][] } }): [string, string][] =>
-  fn.mock.calls.map((c) => {
-    const body = c[1] as { problem_id: string; answer: string };
-    return [body.problem_id, body.answer];
-  });
+const posted = (fn: Mock<ApiClient['taskAnswer']>): [string, string][] =>
+  fn.mock.calls.map(([, body]) => [body.problem_id, body.answer]);
 
 // ---------------------------------------------------------------------------
 
@@ -294,9 +292,12 @@ describe('QUIZ-reveal: silence until the last answer', () => {
   it('QUIZ-reveal: an accepted answer shows a count and nothing about correctness', async () => {
     // The reply carries `correct` — a service that grew the field, or a defect. Rendering
     // it defeats the batch reveal, so the screen renders none of it.
-    const taskAnswer = vi.fn<ApiClient['taskAnswer']>(
-      async () => ({ ...receipt(), correct: true, solution: 'Divide by two.' }) as unknown as TaskAnswerResponse,
-    );
+    const leaky: QuizReceiptResponse & Partial<AnswerResponse> = {
+      ...receipt(),
+      correct: true,
+      solution: 'Divide by two.',
+    };
+    const taskAnswer = vi.fn<ApiClient['taskAnswer']>(async () => leaky);
     await mount({
       api: stubApi({
         taskServe: vi.fn<ApiClient['taskServe']>()
@@ -360,9 +361,12 @@ describe('QUIZ-reveal: silence until the last answer', () => {
   it('QUIZ-reveal: a grade reply that is not a receipt ends the quiz revealing nothing', async () => {
     // A verdict payload on a quiz route is a service defect. The honest response is to end
     // the quiz, never to paint a verdict this screen is not allowed to show.
-    const taskAnswer = vi.fn<ApiClient['taskAnswer']>(
-      async () => ({ correct: false, solution: 'Divide by two.', error_tags: ['sign-error'] }) as unknown as TaskAnswerResponse,
-    );
+    const verdict: Partial<AnswerResponse> = {
+      correct: false,
+      solution: 'Divide by two.',
+      error_tags: ['sign-error'],
+    };
+    const taskAnswer = vi.fn<ApiClient['taskAnswer']>(async () => verdict as TaskAnswerResponse);
     await mount({ api: stubApi({ taskAnswer }) });
 
     typeAnswer('7/12');

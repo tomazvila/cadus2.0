@@ -40,7 +40,7 @@ export interface DiagnosticApi {
 export const ROUTE_ABSENT_CODE = 'not_found';
 
 /** The live adapter: the three client methods, same cookie and same envelope. */
-export const diagApi: DiagnosticApi = {
+const diagApi: DiagnosticApi = {
   diagStart: (course) => api.diagStart(course),
   diagAnswer: (body) => api.diagAnswer(body),
   diagFinish: () => api.diagFinish(),

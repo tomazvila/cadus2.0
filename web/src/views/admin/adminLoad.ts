@@ -48,10 +48,10 @@ export const FORBIDDEN_MESSAGE =
 export const UNAVAILABLE_TITLE = 'The review writes are closed';
 
 /** The fallback line of a read that failed for no reason the envelope named. */
-export const GENERIC_FAILURE_MESSAGE = 'Could not load this screen.';
+const GENERIC_FAILURE_MESSAGE = 'Could not load this screen.';
 
 /** Classify one thrown value. Only the envelope code decides a refusal. */
-export function classify(e: unknown): AdminFailure {
+function classify(e: Error): AdminFailure {
   // On the CODE, never on the status alone. The CSRF layer answers `403
   // cross_origin_rejected`, which is a transport fault and not a statement about the
   // account; reading 403 as "not an operator" would tell an operator they are not one.
@@ -61,8 +61,8 @@ export function classify(e: unknown): AdminFailure {
 }
 
 /** The message of one thrown value, or the generic line. */
-export function messageOf(e: unknown): string {
-  return (e as { message?: string } | null)?.message || GENERIC_FAILURE_MESSAGE;
+function messageOf(e: Error): string {
+  return e.message || GENERIC_FAILURE_MESSAGE;
 }
 
 export interface AdminLoad<T> {
@@ -121,7 +121,9 @@ export function useAdminLoad<T>({ load, demo, onUnauthorized }: AdminLoadDeps<T>
       let data: T;
       try {
         data = await load();
-      } catch (e) {
+      } catch (thrown) {
+        // A `load` rejects with an `ApiError` or with a foreign `Error`; neither is void.
+        const e = thrown as Error;
         const deps = depsRef.current;
         if (e instanceof ApiError && e.sessionExpired && !deps.demo) {
           if (life.alive()) deps.onUnauthorized();

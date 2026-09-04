@@ -125,7 +125,8 @@ export function positionsOf(
 /** One Cytoscape element. `position` is absent on an edge. */
 export interface MapElement {
   group: 'nodes' | 'edges';
-  data: Record<string, unknown>;
+  /** The node id, name, module and size, or the edge id, source and target. */
+  data: Record<string, string | number>;
   classes: string;
   position?: { x: number; y: number };
 }

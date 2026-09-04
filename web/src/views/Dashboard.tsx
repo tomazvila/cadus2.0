@@ -97,7 +97,7 @@ const INITIAL: State = { gen: 0, status: null, loadedGen: -1, failedGen: -1 };
  * `GET /api/status` calls in flight. Without the comparison the older reply lands last and
  * overwrites fresh data, or fails last and replaces a good card with "Could not load".
  */
-export function reduce(state: State, action: Action): State {
+function reduce(state: State, action: Action): State {
   switch (action.type) {
     case 'reload':
       return { ...state, gen: state.gen + 1 };

@@ -26,7 +26,7 @@ function stubFetch(...responses: Response[]): ReturnType<typeof vi.fn> {
 }
 
 /** The rejection of a promise, as the error it carried. */
-async function rejection(promise: Promise<unknown>): Promise<ApiError> {
+async function rejection<T>(promise: Promise<T>): Promise<ApiError> {
   try {
     await promise;
   } catch (err) {

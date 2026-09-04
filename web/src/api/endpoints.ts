@@ -41,7 +41,7 @@ import type {
 const seg = (value: string) => encodeURIComponent(value);
 
 /** The name the export falls back to when the service sends no `Content-Disposition`. */
-export const EXPORT_FALLBACK_NAME = 'cadus-export.jsonl';
+const EXPORT_FALLBACK_NAME = 'cadus-export.jsonl';
 
 export const api: ApiClient = {
   demo: false,
@@ -103,7 +103,7 @@ export const api: ApiClient = {
   // field whose type it does not expect. TypeScript's excess-property check fires on
   // object LITERALS only, so a caller passing a variable would put extra keys on the wire.
   taskAnswer: (taskId, { problem_id, answer, work, assisted }) => {
-    const body: Record<string, unknown> = { problem_id, answer };
+    const body: Record<string, string | boolean> = { problem_id, answer };
     if (work != null) body.work = work;
     if (assisted != null) body.assisted = assisted;
     return request<TaskAnswerResponse>('POST', `/task/${seg(taskId)}/answer`, body);

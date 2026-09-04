@@ -74,7 +74,7 @@ import { useDiagnosisStream } from './useDiagnosis';
 type Phase = 'loading' | 'ready' | 'submitting' | 'feedback' | 'done';
 
 /** The auto-advance window, in milliseconds. The 1.0 literal. */
-export const AUTO_ADVANCE_MS = 1400;
+const AUTO_ADVANCE_MS = 1400;
 
 export interface SessionProps {
   api: ApiClient;

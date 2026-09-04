@@ -23,7 +23,7 @@ import { useCallback, useRef, useState } from 'react';
 
 export interface Busy {
   /** Run an async handler under `key`. A re-entrant call is dropped, never queued. */
-  run: (key: string, fn: () => Promise<unknown> | unknown) => void;
+  run: (key: string, fn: () => Promise<void> | void) => void;
   /** True while `key` runs. It drives `disabled`. */
   is: (key: string) => boolean;
   /** The `className` for a button, with `is-busy` appended while `key` runs. */
@@ -34,7 +34,7 @@ export function useBusy(): Busy {
   const running = useRef(new Set<string>());
   const [, force] = useState(0);
 
-  const run = useCallback((key: string, fn: () => Promise<unknown> | unknown) => {
+  const run = useCallback((key: string, fn: () => Promise<void> | void) => {
     // The synchronous check and set. A second click inside the same tick — or any time
     // before React commits the disabled attribute — finds the key present and drops.
     if (running.current.has(key)) return;
@@ -44,7 +44,7 @@ export function useBusy(): Busy {
     // Called synchronously, not through a microtask: the handler's own first state updates
     // then land in the same batch as the click, and not one tick outside the caller's
     // `act()`.
-    let result: unknown;
+    let result: Promise<void> | void;
     try {
       result = fn();
     } catch (e) {

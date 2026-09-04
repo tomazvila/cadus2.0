@@ -69,10 +69,10 @@ export type View =
   | { name: 'map'; back: View };
 
 /** The dashboard, which is where every exit path ends. */
-export const HOME: View = { name: 'dashboard' };
+const HOME: View = { name: 'dashboard' };
 
 /** The path every learner screen renders on. The two operator paths are `app/routes.ts`. */
-export const HOME_PATH = '/';
+const HOME_PATH = '/';
 
 export interface RootProps {
   api: ApiClient;

@@ -105,7 +105,7 @@ function secsTo(end: number): number {
 }
 
 /** The clock turns red in the last minute. The 1.0 quiz literal (`quiz.js:46`). */
-export const QUIZ_URGENT_SECS = 60;
+const QUIZ_URGENT_SECS = 60;
 
 /** The line under the answer field, for the whole quiz. */
 export const QUIZ_SILENCE_NOTE = 'No feedback until the end.';

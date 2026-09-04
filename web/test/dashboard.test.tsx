@@ -213,7 +213,7 @@ describe('the dashboard', () => {
   it('DEP-3: the export downloads through the cookie, not a token', async () => {
     const getItem = vi.spyOn(Storage.prototype, 'getItem');
     const setItem = vi.spyOn(Storage.prototype, 'setItem');
-    const fetchMock = vi.fn(
+    const fetchMock = vi.fn<(url: string, init: RequestInit) => Promise<Response>>(
       async () =>
         new Response('{"event":"answered"}\n{"event":"session_end"}\n', {
           status: 200,
@@ -228,7 +228,7 @@ describe('the dashboard', () => {
 
     await waitFor(() => expect(downloads.length).toBe(1));
     expect(fetchMock).toHaveBeenCalledTimes(1);
-    const [url, init] = fetchMock.mock.calls[0] as unknown as [string, RequestInit];
+    const [url, init] = fetchMock.mock.calls[0];
     expect(url).toBe('/api/export');
     // The whole point: the browser attaches the HttpOnly cookie, and the URL carries no
     // credential of any kind.

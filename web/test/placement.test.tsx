@@ -197,14 +197,13 @@ describe('P3 and R15: the ground rules before probe 1', () => {
 
 describe('DIAG-nosol: placement reveals nothing', () => {
   it('DIAG-nosol: renders a tick or a cross only, even when the payload carries a solution', async () => {
-    const diagAnswer = vi.fn<DiagnosticApi['diagAnswer']>(
-      async () => ({
-        correct: false,
-        solution: 'The answer is 5.',
-        expected: '5',
-        next_probe: probe({ problem_id: 'd2' }),
-      }) as unknown as DiagAnswerResponse,
-    );
+    const leaky: DiagAnswerResponse & { solution: string; expected: string } = {
+      correct: false,
+      solution: 'The answer is 5.',
+      expected: '5',
+      next_probe: probe({ problem_id: 'd2' }),
+    };
+    const diagAnswer = vi.fn<DiagnosticApi['diagAnswer']>(async () => leaky);
     await mount({ diag: stubDiag({ diagAnswer }) });
     await begin();
     await answer('9');

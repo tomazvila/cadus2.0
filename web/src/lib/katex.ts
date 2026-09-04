@@ -49,6 +49,13 @@ type AutoRender = (
   opts: { delimiters: readonly KatexDelimiter[]; throwOnError: boolean },
 ) => void;
 
+declare global {
+  interface Window {
+    /** The vendored `auto-render.min.js` writes it. Absent until that script ran. */
+    renderMathInElement?: AutoRender;
+  }
+}
+
 /**
  * The auto-render extension, read off the window at call time.
  *
@@ -57,7 +64,7 @@ type AutoRender = (
  * before the deferred vendor scripts, and every problem then shows raw LaTeX forever.
  */
 function autoRender(): AutoRender | null {
-  const fn = (window as unknown as { renderMathInElement?: AutoRender }).renderMathInElement;
+  const fn = window.renderMathInElement;
   return typeof fn === 'function' ? fn : null;
 }
 

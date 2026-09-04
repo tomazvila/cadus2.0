@@ -5,7 +5,7 @@
  * `endpoints` or `demo` directly, so `?demo=1` stays a one-object swap.
  */
 export { ApiError, NETWORK_MESSAGE, dispositionFilename, downloadFile, request } from './client';
-export { EXPORT_FALLBACK_NAME, api } from './endpoints';
+export { api } from './endpoints';
 export { createDemoApi } from './demo';
 export * from './types';
 

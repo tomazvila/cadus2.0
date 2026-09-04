@@ -37,10 +37,10 @@ import { num } from '@/lib/format';
 import type { ApiClient } from '@/api/types';
 
 /** The heading above the rendered instances. */
-export const INSTANCES_TITLE = 'Rendered instances';
+const INSTANCES_TITLE = 'Rendered instances';
 
 /** The line of a kind that renders no instance and carries no note either. */
-export const NO_INSTANCES = 'This document renders no instance.';
+const NO_INSTANCES = 'This document renders no instance.';
 
 export interface ReviewDocumentPaneProps {
   api: ApiClient;

@@ -11,7 +11,9 @@
  * `tsconfig.json` maps it to the double in `test/mocks/cytoscape.ts`.
  *
  * The signature is narrow on purpose, not `any`: the loader's whole job is to hand back
- * something callable, and `CyCanvas.tsx` declares the surface the map actually uses.
+ * something callable, and `cytoscape-loader.ts` declares the surface the map calls.
  */
-declare const cytoscape: (opts: Record<string, unknown>) => unknown;
+import type { CytoscapeFactory } from './views/map/cytoscape-loader';
+
+declare const cytoscape: CytoscapeFactory;
 export default cytoscape;
