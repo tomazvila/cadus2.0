@@ -17,7 +17,7 @@
  * `oauthProviders()`. An unconfigured provider is absent from that list, the list is empty,
  * and no third-party button reaches the page.
  */
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { toast } from '@/app/toast';
 import { BrandMark } from '@/components/primitives';
 import type { ApiClient, User } from '@/api';
@@ -25,7 +25,7 @@ import type { ApiClient, User } from '@/api';
 export type AuthMode = 'login' | 'signup' | 'forgot' | 'reset' | 'check-email' | 'sent';
 
 /** The shortest password the service accepts. Checked here to save a round trip. */
-export const MIN_PASSWORD_LENGTH = 8;
+const MIN_PASSWORD_LENGTH = 8;
 
 const TAGLINE = 'Practice, on cadence — learn by doing, one problem at a time.';
 
@@ -45,8 +45,7 @@ const MODE_TITLE: Record<AuthMode, string> = {
  * says so. A code this list does not name falls back to the server's own message, so a new
  * code reaches the learner as prose instead of as silence.
  */
-export function messageFor(e: unknown): string {
-  const err = e as { code?: string; message?: string } | null;
+export function messageFor(err: AuthFailure | null): string {
   switch (err?.code) {
     case 'invalid_credentials':
       return 'Incorrect email or password.';
@@ -63,6 +62,12 @@ export function messageFor(e: unknown): string {
   }
 }
 
+/** What a failed auth call carries: an `ApiError`, or a foreign throw with a message. */
+interface AuthFailure {
+  code?: string | undefined;
+  message?: string | undefined;
+}
+
 /** `google` reads as `Google` on the button. The service names the provider in lower case. */
 export function providerLabel(id: string): string {
   return id.charAt(0).toUpperCase() + id.slice(1);
@@ -73,20 +78,21 @@ export interface AuthProps {
   api: ApiClient;
   /** `reset` arrives from a `?reset=<token>` email link; the rest from the route. */
   mode?: AuthMode;
-  /** The single-use reset token, for `reset` mode. */
-  token?: string;
+  /** The single-use reset token, for `reset` mode. Absent, or undefined, in the others. */
+  token?: string | undefined;
   /** Called with the account after a successful sign-in. */
-  onSignedIn?: (user: User) => void;
+  onSignedIn: (user: User) => void;
 }
 
-export function Auth({ api, mode: initialMode = 'login', token = '', onSignedIn }: AuthProps) {
+export function Auth({ api, mode: initialMode = 'login', token, onSignedIn }: AuthProps) {
   const [mode, setMode] = useState<AuthMode>(initialMode);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
   const [providers, setProviders] = useState<string[]>([]);
-  const [sentTo, setSentTo] = useState('');
+  // The address a mail went to. Set before either card that shows it is on.
+  const [sentTo, setSentTo] = useState<string | null>(null);
 
   const emailRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
@@ -95,64 +101,68 @@ export function Auth({ api, mode: initialMode = 'login', token = '', onSignedIn 
   // while the learner toggles between sign-in and sign-up. A failure leaves the list empty
   // and the page keeps email and password, which is the correct degradation.
   useEffect(() => {
-    let cancelled = false;
+    // A reply that lands after the view left writes state nobody renders, and a body the
+    // wrapper could not parse is a probe that failed: the catch below covers both.
     void api
       .oauthProviders()
       .then((res) => {
-        if (cancelled) return;
-        const list = res?.providers;
+        const list = res.providers;
         if (Array.isArray(list) && list.length) setProviders(list);
       })
       .catch(() => {
         /* no providers — email and password only */
       });
-    return () => {
-      cancelled = true;
-    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Focus the field the learner still has to fill. Only on a mode change: per keystroke it
   // would fight the caret.
   useEffect(() => {
+    // Each card renders the field its mode focuses, so the refs name one.
     if (mode === 'reset') {
-      passwordRef.current?.focus();
+      passwordRef.current!.focus();
       return;
     }
     if (mode === 'login' || mode === 'signup') {
-      (email ? passwordRef : emailRef).current?.focus();
+      (email ? passwordRef : emailRef).current!.focus();
       return;
     }
-    if (mode === 'forgot') emailRef.current?.focus();
+    if (mode === 'forgot') emailRef.current!.focus();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mode]);
 
-  const run = useCallback(async (fn: () => Promise<void>) => {
+  const run = async (fn: () => Promise<void>): Promise<void> => {
     setBusy(true);
     try {
       await fn();
     } finally {
       setBusy(false);
     }
-  }, []);
+  };
+
+  /** The trimmed address a submit posts, or null once the empty-field line is on screen. */
+  function takeEmail(e: React.FormEvent): string | null {
+    e.preventDefault();
+    // The email input sanitizes its value, so no space is left to trim.
+    const address = email;
+    setError('');
+    if (address) return address;
+    setError('Enter your email.');
+    emailRef.current!.focus();
+    return null;
+  }
 
   function submitCredentials(e: React.FormEvent) {
-    e.preventDefault();
-    const address = email.trim();
-    setError('');
-    if (!address) {
-      setError('Enter your email.');
-      emailRef.current?.focus();
-      return;
-    }
+    const address = takeEmail(e);
+    if (!address) return;
     if (!password) {
       setError('Enter your password.');
-      passwordRef.current?.focus();
+      passwordRef.current!.focus();
       return;
     }
     if (mode === 'signup' && password.length < MIN_PASSWORD_LENGTH) {
       setError('Password must be at least 8 characters.');
-      passwordRef.current?.focus();
+      passwordRef.current!.focus();
       return;
     }
 
@@ -160,7 +170,7 @@ export function Auth({ api, mode: initialMode = 'login', token = '', onSignedIn 
       try {
         if (mode === 'login') {
           const res = await api.login(address, password);
-          onSignedIn?.(res.user);
+          onSignedIn(res.user);
         } else {
           // Sign-up is non-enumerable: it signs nobody in and it answers the same object
           // for a new address and a registered one. The emailed link activates the account,
@@ -171,21 +181,15 @@ export function Auth({ api, mode: initialMode = 'login', token = '', onSignedIn 
         }
       } catch (err) {
         // AUTH-inline: the line lands beside the field. Nothing routes anywhere.
-        setError(messageFor(err));
-        passwordRef.current?.focus();
+        setError(messageFor(err as AuthFailure));
+        passwordRef.current!.focus();
       }
     });
   }
 
   function submitForgot(e: React.FormEvent) {
-    e.preventDefault();
-    const address = email.trim();
-    setError('');
-    if (!address) {
-      setError('Enter your email.');
-      emailRef.current?.focus();
-      return;
-    }
+    const address = takeEmail(e);
+    if (!address) return;
     void run(async () => {
       try {
         await api.forgotPassword(address);
@@ -193,7 +197,7 @@ export function Auth({ api, mode: initialMode = 'login', token = '', onSignedIn 
         setSentTo(address);
         setMode('sent');
       } catch (err) {
-        setError(messageFor(err));
+        setError(messageFor(err as AuthFailure));
       }
     });
   }
@@ -203,18 +207,19 @@ export function Auth({ api, mode: initialMode = 'login', token = '', onSignedIn 
     setError('');
     if (password.length < MIN_PASSWORD_LENGTH) {
       setError('Password must be at least 8 characters.');
-      passwordRef.current?.focus();
+      passwordRef.current!.focus();
       return;
     }
     void run(async () => {
       try {
-        await api.resetPassword(token, password);
+        // The reset card is on because a link carried a token, so the prop names one.
+        await api.resetPassword(token!, password);
         toast('Password updated — sign in with your new password.', { kind: 'info' });
         setPassword('');
         setMode('login');
       } catch (err) {
-        setError(messageFor(err));
-        passwordRef.current?.focus();
+        setError(messageFor(err as AuthFailure));
+        passwordRef.current!.focus();
       }
     });
   }
@@ -294,7 +299,7 @@ export function Auth({ api, mode: initialMode = 'login', token = '', onSignedIn 
             onClick={() =>
               void run(async () => {
                 try {
-                  await api.resendVerification(sentTo);
+                  await api.resendVerification(sentTo!);
                   toast('Verification email re-sent.', { kind: 'success' });
                 } catch {
                   toast('Could not resend right now — please try again shortly.', { kind: 'info' });

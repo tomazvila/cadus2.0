@@ -10,22 +10,13 @@
  * Exit 0 = every covered tag has a test. Exit 1 = a tag lost its test, a pending tag gained
  * one, or a retirement does not hold up.
  */
-import { readFileSync, readdirSync, statSync } from 'node:fs';
+import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { join, dirname } from 'node:path';
+import { walk } from './lib/walk.mjs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const manifestPath = join(root, 'test/invariants.json');
-
-function walk(dir) {
-  const out = [];
-  for (const entry of readdirSync(dir)) {
-    const p = join(dir, entry);
-    if (statSync(p).isDirectory()) out.push(...walk(p));
-    else if (/\.test\.(ts|tsx)$/.test(entry)) out.push(p);
-  }
-  return out;
-}
 
 /**
  * Collect TEST TITLES only — the string argument of describe/it/test.
@@ -190,7 +181,7 @@ if (process.argv.includes('--selftest')) {
 }
 
 const manifest = JSON.parse(readFileSync(manifestPath, 'utf8'));
-const files = walk(join(root, 'test'));
+const files = walk(join(root, 'test'), (entry) => /\.test\.(ts|tsx)$/.test(entry));
 const titles = files.flatMap((f) => titlesIn(stripComments(readFileSync(f, 'utf8'))));
 
 const { claimed, missing, pending, retired, unretired } = classify(manifest.tags, titles);

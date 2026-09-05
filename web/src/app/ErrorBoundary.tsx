@@ -10,14 +10,13 @@
  * strictly worse. This boundary restores a way out.
  *
  * The mount point gives it `key={route}`, so one broken screen does not poison the next: a
- * new key builds a new boundary with `error: null`.
+ * new key builds a new boundary with `error: null`. Try again clears the error in place, and
+ * React mounts the screen once more under the same boundary.
  */
 import { Component, type ErrorInfo, type ReactNode } from 'react';
 
 interface Props {
   children: ReactNode;
-  /** Return the app to a screen that works. The boundary clears its own error first. */
-  onReset: () => void;
 }
 
 interface State {
@@ -39,7 +38,7 @@ export class ErrorBoundary extends Component<Props, State> {
 
   override render(): ReactNode {
     const { error } = this.state;
-    if (!error) return this.props.children;
+    if (error === null) return this.props.children;
 
     return (
       <section className="empty" role="alert">
@@ -48,10 +47,7 @@ export class ErrorBoundary extends Component<Props, State> {
         <button
           type="button"
           className="btn btn-primary"
-          onClick={() => {
-            this.setState({ error: null });
-            this.props.onReset();
-          }}
+          onClick={() => { this.setState({ error: null }); }}
         >
           Try again
         </button>

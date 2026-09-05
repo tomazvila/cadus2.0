@@ -17,21 +17,12 @@ import { resolve } from 'node:path';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { AnswerField, type AnswerFieldHandle } from '@/components/AnswerField';
 import { WorkField, type WorkFieldHandle } from '@/components/WorkField';
+import { mountRoot } from './helpers/react';
 
 const roots: Array<() => void> = [];
 afterEach(() => { roots.splice(0).forEach((fn) => { fn(); }); });
 
-function mount(node: React.ReactElement) {
-  const container = document.createElement('div');
-  document.body.append(container);
-  const root = createRoot(container);
-  act(() => { root.render(node); });
-  roots.push(() => { act(() => { root.unmount(); }); container.remove(); });
-  return {
-    find: <T extends HTMLElement>(s: string) => container.querySelector<T>(s)!,
-    all: (s: string) => Array.from(container.querySelectorAll<HTMLElement>(s)),
-  };
-}
+const mount = (node: React.ReactElement) => mountRoot(node, roots);
 
 /** A raw keydown. user-event refuses to dispatch to a disabled element, so it proves nothing. */
 function keydown(node: HTMLElement, key: string, init: KeyboardEventInit = {}): KeyboardEvent {
@@ -117,9 +108,11 @@ describe('AnswerField: the keyboard contract', () => {
     const m = mount(<AnswerField onHint={onHint} />);
     const input = m.find<HTMLInputElement>('.answer-input');
 
-    keydown(input, 'h');
+    const lower = keydown(input, 'h');
     keydown(input, 'H');
     expect(onHint).toHaveBeenCalledTimes(2);
+    // The keypress is spent on the hint, so no letter lands in the field.
+    expect(lower.defaultPrevented).toBe(true);
 
     // Once the learner types an answer, `h` is a letter: `sqrt` contains one.
     input.value = 'sq';
@@ -146,6 +139,30 @@ describe('AnswerField: the keyboard contract', () => {
 // The caret contract.
 // ---------------------------------------------------------------------------
 
+describe('AnswerField: the field itself', () => {
+  it('asks for an answer, and spells nothing for the learner', () => {
+    const m = mount(<AnswerField />);
+    const input = m.find<HTMLInputElement>('.answer-input');
+    expect(input.placeholder).toBe('Your answer');
+    expect(input.getAttribute('spellcheck')).toBe('false');
+  });
+
+  it('takes an Enter with nobody to tell', () => {
+    const m = mount(<AnswerField />);
+    expect(() => keydown(m.find('.answer-input'), 'Enter')).not.toThrow();
+  });
+
+  it('gives the input the focus back after a symbol key', () => {
+    const m = mount(<AnswerField />);
+    const input = m.find<HTMLInputElement>('.answer-input');
+    document.body.focus();
+    expect(document.activeElement).not.toBe(input);
+
+    act(() => { m.find('.sym-key').click(); });
+    expect(document.activeElement).toBe(input);
+  });
+});
+
 describe('AnswerField: the caret contract', () => {
   it('inserts a symbol AT the caret and leaves the caret after it', () => {
     const m = mount(<AnswerField />);
@@ -170,6 +187,18 @@ describe('AnswerField: the caret contract', () => {
     input.setSelectionRange(0, 3);
     act(() => { m.all('.sym-key')[0].click(); });
     expect(input.value).toBe('∞');
+  });
+
+  it('appends at the end when the browser reports no caret', () => {
+    // A host that answers null for the selection — the shape of an input type with no
+    // selection API — still takes the symbol, at the end of the value.
+    const m = mount(<AnswerField />);
+    const input = m.find<HTMLInputElement>('.answer-input');
+    input.value = '12';
+    Object.defineProperty(input, 'selectionStart', { get: () => null });
+    Object.defineProperty(input, 'selectionEnd', { get: () => null });
+    act(() => { m.all('.sym-key')[0].click(); });
+    expect(input.value).toBe('12∞');
   });
 
   it('suppresses mousedown so the caret survives the tap', () => {
@@ -221,6 +250,17 @@ describe('AnswerField: the handle and accessibility', () => {
     expect(ref.current!.value()).toBe('');
   });
 
+  it('reads an empty value once the field is gone', () => {
+    // A continuation that kept the handle past the unmount reads nothing, not a throw.
+    const ref = createRef<AnswerFieldHandle>();
+    const m = mount(<AnswerField ref={ref} />);
+    const handle = ref.current!;
+    m.find<HTMLInputElement>('.answer-input').value = '5';
+    m.unmount();
+    expect(handle.value()).toBe('');
+    expect(() => { handle.clear(); handle.focus(); }).not.toThrow();
+  });
+
   it('focuses the input through the handle, for a fresh problem', () => {
     const ref = createRef<AnswerFieldHandle>();
     const m = mount(<AnswerField ref={ref} />);
@@ -267,6 +307,42 @@ describe('WorkField', () => {
     const shifted = keydown(area, 'Enter', { shiftKey: true });
     expect(onSubmit).toHaveBeenCalledTimes(1);
     expect(shifted.defaultPrevented).toBe(false);
+  });
+
+  it('leaves every other key to the textarea', () => {
+    const onSubmit = vi.fn();
+    const m = mount(<WorkField onSubmit={onSubmit} />);
+    const letter = keydown(m.find('.work-input'), 'a');
+    expect(onSubmit).not.toHaveBeenCalled();
+    expect(letter.defaultPrevented).toBe(false);
+  });
+
+  it('takes an Enter with nobody to tell', () => {
+    const m = mount(<WorkField />);
+    expect(() => keydown(m.find('.work-input'), 'Enter')).not.toThrow();
+  });
+
+  it('Enter is inert while the area is disabled or readOnly', () => {
+    const onSubmit = vi.fn();
+    const m = mount(<WorkField onSubmit={onSubmit} />);
+    const area = m.find<HTMLTextAreaElement>('.work-input');
+
+    area.disabled = true;
+    keydown(area, 'Enter');
+    area.disabled = false;
+    area.readOnly = true;
+    keydown(area, 'Enter');
+
+    expect(onSubmit).not.toHaveBeenCalled();
+  });
+
+  it('reads an empty working once the area is gone', () => {
+    const ref = createRef<WorkFieldHandle>();
+    const m = mount(<WorkField ref={ref} />);
+    const handle = ref.current!;
+    m.find<HTMLTextAreaElement>('.work-input').value = 'LCD';
+    m.unmount();
+    expect(handle.value()).toBe('');
   });
 
   it('starts collapsed inside a NATIVE <details>', () => {

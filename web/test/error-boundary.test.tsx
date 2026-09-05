@@ -32,7 +32,7 @@ function Boom({ fail }: { fail: boolean }) {
 describe('ErrorBoundary', () => {
   it('renders its children while nothing throws', () => {
     render(
-      <ErrorBoundary onReset={vi.fn()}>
+      <ErrorBoundary>
         <Boom fail={false} />
       </ErrorBoundary>,
     );
@@ -42,7 +42,7 @@ describe('ErrorBoundary', () => {
   it('catches a view throw, names it, and offers a way out', async () => {
     allowBoundaryLogs();
     const { container } = render(
-      <ErrorBoundary onReset={vi.fn()}>
+      <ErrorBoundary>
         <Boom fail />
       </ErrorBoundary>,
     );
@@ -58,24 +58,31 @@ describe('ErrorBoundary', () => {
     allowBoundaryLogs();
     const spy = vi.spyOn(console, 'error');
     render(
-      <ErrorBoundary onReset={vi.fn()}>
+      <ErrorBoundary>
         <Boom fail />
       </ErrorBoundary>,
     );
     expect(spy.mock.calls.some((args) => String(args[0]).includes('view crashed'))).toBe(true);
   });
 
-  it('clears its own error and asks the mount point for a way back', () => {
+  it('clears its own error on Try again, and mounts the screen once more', () => {
     allowBoundaryLogs();
-    const onReset = vi.fn();
+    let fail = true;
+    function Flaky() {
+      if (fail) throw new Error('the render threw');
+      return <p>the view</p>;
+    }
     render(
-      <ErrorBoundary onReset={onReset}>
-        <Boom fail />
+      <ErrorBoundary>
+        <Flaky />
       </ErrorBoundary>,
     );
+    expect(screen.getByRole('alert')).toBeTruthy();
 
+    fail = false;
     act(() => { screen.getByRole('button', { name: 'Try again' }).click(); });
-    expect(onReset).toHaveBeenCalledTimes(1);
+    expect(screen.getByText('the view')).toBeTruthy();
+    expect(screen.queryByRole('alert')).toBeNull();
   });
 
   it('a new key builds a fresh boundary, so one broken screen does not poison the next', () => {
@@ -84,22 +91,53 @@ describe('ErrorBoundary', () => {
     function Host() {
       const [route, setRoute] = useState('broken');
       return (
-        <ErrorBoundary key={route} onReset={() => setRoute('dashboard')}>
-          <Boom fail={route === 'broken'} />
-        </ErrorBoundary>
+        <>
+          <button type="button" onClick={() => { setRoute('dashboard'); }}>Dashboard</button>
+          <ErrorBoundary key={route}>
+            <Boom fail={route === 'broken'} />
+          </ErrorBoundary>
+        </>
       );
     }
 
     render(<Host />);
     expect(screen.getByRole('alert')).toBeTruthy();
 
-    act(() => { screen.getByRole('button', { name: 'Try again' }).click(); });
+    act(() => { screen.getByRole('button', { name: 'Dashboard' }).click(); });
     expect(screen.getByText('the view')).toBeTruthy();
     expect(screen.queryByRole('alert')).toBeNull();
+  });
+
+  it('keeps its error under the same key, so a re-render alone is no way back', () => {
+    allowBoundaryLogs();
+    const { rerender } = render(
+      <ErrorBoundary key="session">
+        <Boom fail />
+      </ErrorBoundary>,
+    );
+    rerender(
+      <ErrorBoundary key="session">
+        <Boom fail={false} />
+      </ErrorBoundary>,
+    );
+    expect(screen.getByRole('alert')).toBeTruthy();
   });
 });
 
 describe('the app root', () => {
+  it('builds a new boundary for a new route key, and keeps the old one for the same key', () => {
+    allowBoundaryLogs();
+    const { rerender } = render(<App routeKey="session"><Boom fail /></App>);
+    expect(screen.getByRole('alert')).toBeTruthy();
+
+    rerender(<App routeKey="session"><Boom fail={false} /></App>);
+    expect(screen.getByRole('alert')).toBeTruthy();
+
+    rerender(<App routeKey="dashboard"><Boom fail={false} /></App>);
+    expect(screen.queryByRole('alert')).toBeNull();
+    expect(screen.getByText('the view')).toBeTruthy();
+  });
+
   it('mounts the boundary and the toast host around the view', () => {
     render(<App />);
     expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('Cadus');

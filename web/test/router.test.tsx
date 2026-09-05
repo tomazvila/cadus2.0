@@ -21,14 +21,9 @@ import { Root, adminOr } from '@/app/Root';
 import { createDemoApi } from '@/api';
 import { MAP_CANVAS_LABEL } from '@/views/map/Map';
 import { DIAG_DEFAULT_CAP } from '@/views/Diagnostic';
-import type { ApiClient, PlanTask, User } from '@/api/types';
-
-const USER: User = {
-  id: 'u1',
-  email: 'learner@example.com',
-  email_verified: true,
-  created_at: '2026-08-30T00:00:00Z',
-};
+import { USER, quizTask } from './helpers/fixtures';
+import { instances } from './mocks/cytoscape';
+import type { ApiClient, ServedProblem, User } from '@/api/types';
 
 /** Mount into the `<main>` the shell actually uses, so the topbar portal has its host. */
 const mountRoot = (api: ApiClient, user: User | null = USER) =>
@@ -50,6 +45,55 @@ async function reachFirstProblem(user: ReturnType<typeof userEvent.setup>): Prom
   await waitFor(() => expect(view().querySelector('.teach-card')).not.toBeNull());
   await user.click(screen.getByRole('button', { name: /practice/ }));
   await waitFor(() => expect(view().querySelector('.progress-count')).not.toBeNull());
+}
+
+/** A quiz served by the service: the plan holds `quiz`, and the serve answers `problem`. */
+function serveQuiz(api: ApiClient, problem: Partial<ServedProblem> = {}): void {
+  vi.spyOn(api, 'getPlan').mockResolvedValue({
+    session: 'demo-session',
+    tasks: [quizTask('demo-quiz')],
+    quiz_due: true,
+    constraints: {
+      lesson_ratio_ok: true, lesson_ratio: 0.5, throttle_ok: true, reviews: 0, lessons: 0,
+    },
+    course_complete: false,
+    frontier_blocked_until: null,
+  });
+  // The serve value is 120 seconds, and it is NOT the quiz clock.
+  vi.spyOn(api, 'taskServe').mockResolvedValue({
+    problem_id: 'demo-q1',
+    index: 1,
+    total: 8,
+    text: 'Solve $x + 3 = 10$ for $x$.',
+    kp: 'kp-linear-one-step',
+    time_budget_secs: 120,
+    countdown: false,
+    ...problem,
+  });
+  vi.spyOn(api, 'taskAnswer').mockResolvedValue({ accepted: true, remaining: 0, quiz_complete: true });
+}
+
+/** Answer the one question of a served quiz and reach its end screen. */
+async function finishQuiz(user: ReturnType<typeof userEvent.setup>): Promise<void> {
+  await user.click(view().querySelector('.answer-input')!);
+  await user.keyboard('7');
+  await user.click(screen.getByRole('button', { name: 'Submit answer' }));
+  await waitFor(() => expect(screen.getByText('Quiz complete')).toBeTruthy());
+}
+
+/** Open the map from the topbar, then leave it through Done. */
+async function openMapAndReturn(user: ReturnType<typeof userEvent.setup>): Promise<void> {
+  await user.click(screen.getByRole('button', { name: 'Map' }));
+  await waitFor(() => expect(screen.getByLabelText(MAP_CANVAS_LABEL)).toBeTruthy());
+  // The vendored renderer, reached through the real loader, drew the map.
+  await waitFor(() => expect(instances.filter((i) => !i.destroyed)).toHaveLength(1));
+  await user.click(screen.getByRole('button', { name: 'Done' }));
+}
+
+/** Open the quiet menu of the dashboard and press one of its buttons. */
+async function pressInMenu(user: ReturnType<typeof userEvent.setup>, name: string): Promise<void> {
+  await user.click(view().querySelector('.more-menu summary')!);
+  await user.click(screen.getByRole('button', { name }));
 }
 
 describe('the router', () => {
@@ -142,10 +186,7 @@ describe('the router', () => {
     await reachDashboard(createDemoApi());
     await reachFirstProblem(user);
 
-    await user.click(screen.getByRole('button', { name: 'Map' }));
-    await waitFor(() => expect(screen.getByLabelText(MAP_CANVAS_LABEL)).toBeTruthy());
-
-    await user.click(screen.getByRole('button', { name: 'Done' }));
+    await openMapAndReturn(user);
     // The session comes back and remounts, so it teaches again before it practises. The
     // dashboard would be the wrong answer: the lesson underneath would be gone.
     await waitFor(() => expect(view().querySelector('.view-session')).not.toBeNull());
@@ -166,8 +207,7 @@ describe('the router', () => {
     await waitFor(() => expect(screen.getByText('Continue studying')).toBeTruthy());
 
     // `More` is a native <summary>, not a button: the disclosure is the browser's.
-    await user.click(view().querySelector('.more-menu summary')!);
-    await user.click(screen.getByRole('button', { name: 'Re-run the placement' }));
+    await pressInMenu(user, 'Re-run the placement');
     await waitFor(() => expect(view().querySelector('.view-diagnostic')).not.toBeNull());
     expect(view().querySelector('.intro-rules')!.querySelectorAll('li')).toHaveLength(3);
 
@@ -191,49 +231,50 @@ describe('the router', () => {
     // id alone would have to re-read the plan, and a re-plan between the two calls hands it
     // a different task.
     const api = createDemoApi();
-    const quiz: PlanTask = {
-      task_id: 'demo-quiz',
-      task_type: 'quiz',
-      topic: { id: 'fractions', name: 'Fractions', module: 'Arithmetic' },
-      kp: null,
-      start_at_kp: null,
-      n_problems: 8,
-      mix: null,
-      component_topics: null,
-      time_budget_secs: 480,
-      difficulty_target: 0.7,
-      why: 'Quiz due.',
-      progress: { answered: 0, done: false },
-    };
-    vi.spyOn(api, 'getPlan').mockResolvedValue({
-      session: 'demo-session',
-      tasks: [quiz],
-      quiz_due: true,
-      constraints: {
-        lesson_ratio_ok: true, lesson_ratio: 0.5, throttle_ok: true, reviews: 0, lessons: 0,
-      },
-      course_complete: false,
-      frontier_blocked_until: null,
-    });
-    // The serve value is 120 seconds, and it is NOT the quiz clock.
-    vi.spyOn(api, 'taskServe').mockResolvedValue({
-      problem_id: 'demo-q1',
-      index: 1,
-      total: 8,
-      text: 'Solve $x + 3 = 10$ for $x$.',
-      kp: 'kp-linear-one-step',
-      time_budget_secs: 120,
-      countdown: false,
-    });
+    serveQuiz(api);
 
     const user = userEvent.setup();
     await reachDashboard(api);
     await user.click(screen.getByText('Continue studying'));
     await waitFor(() => expect(view().querySelector('.view-quiz')).not.toBeNull());
+    // The plan the session reads back after the quiz is the demo's own lesson.
+    vi.spyOn(api, 'getPlan').mockRestore();
     // 480 seconds is the TASK budget. The serve answers 120, so a clock that read the serve
     // value would start at 2:00.
     await waitFor(() => expect(view().querySelector('.timer')!.textContent).toBe('8:00'));
     expect(view().querySelector('.progress-count')!.textContent).toBe('1 / 8');
+
+    // The quiz came from the session, so its end gives the SESSION back, not the dashboard.
+    await finishQuiz(user);
+    await user.click(screen.getByRole('button', { name: 'Continue session' }));
+    await waitFor(() => expect(view().querySelector('.view-session')).not.toBeNull());
+    expect(view().querySelector('.view-dashboard')).toBeNull();
+  });
+
+  it('opens the quiz from the dashboard and gives the dashboard back when it ends', async () => {
+    // Quiz now from the quiet menu carries the plan task, and a quiz opened from the
+    // dashboard has no session to return to: Done lands on the dashboard.
+    const api = createDemoApi();
+    serveQuiz(api, { total: 1, kp: null });
+
+    const user = userEvent.setup();
+    await reachDashboard(api);
+    await pressInMenu(user, 'Quiz now');
+    await waitFor(() => expect(view().querySelector('.view-quiz')).not.toBeNull());
+
+    await finishQuiz(user);
+    await user.click(screen.getByRole('button', { name: 'Back to dashboard' }));
+    await waitFor(() => expect(view().querySelector('.view-dashboard')).not.toBeNull());
+  });
+
+  it('opens the map from the quiet menu and gives the dashboard back', async () => {
+    const user = userEvent.setup();
+    await reachDashboard(createDemoApi());
+    await pressInMenu(user, 'Curriculum map');
+    await waitFor(() => expect(screen.getByLabelText(MAP_CANVAS_LABEL)).toBeTruthy());
+
+    await user.click(screen.getByRole('button', { name: 'Done' }));
+    await waitFor(() => expect(view().querySelector('.view-dashboard')).not.toBeNull());
   });
 
   it('sends the learner home on sign-out', async () => {

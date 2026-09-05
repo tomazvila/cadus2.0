@@ -16,7 +16,7 @@ export function vendorTags(): Plugin {
   return {
     name: 'cadus-vendor-tags',
     transformIndexHtml() {
-      return VENDOR_TAGS as unknown as Array<{ tag: string }>;
+      return [...VENDOR_TAGS];
     },
   };
 }

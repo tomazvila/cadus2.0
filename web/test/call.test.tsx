@@ -8,31 +8,14 @@
  * The 401 branch and the demo branch are here too, because both decide whether a learner
  * keeps the screen they are on.
  */
-import { StrictMode } from 'react';
+import { useEffect } from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { renderHook, waitFor } from '@testing-library/react';
+import { render, waitFor } from '@testing-library/react';
 import { ApiError, NETWORK_MESSAGE } from '@/api';
-import {
-  GENERIC_FAILURE_MESSAGE,
-  SESSION_EXPIRED_MESSAGE,
-  useCall,
-  type CallDeps,
-} from '@/hooks/useCall';
-import { fireToastAction, resetToasts, toastStore } from '@/app/toast';
-
-function mountCall(deps: Partial<CallDeps> = {}) {
-  const onUnauthorized = vi.fn();
-  const view = renderHook(
-    (props: CallDeps) => useCall(props),
-    {
-      wrapper: StrictMode,
-      initialProps: { demo: false, onUnauthorized, ...deps },
-    },
-  );
-  return { ...view, onUnauthorized };
-}
-
-const toasts = () => toastStore.getSnapshot();
+import { GENERIC_FAILURE_MESSAGE, SESSION_EXPIRED_MESSAGE, useCall, type Call } from '@/hooks/useCall';
+import { fireToastAction, resetToasts } from '@/app/toast';
+import { flakyAttempts, mountCall } from './helpers/call';
+import { toasts } from './helpers/toasts';
 
 beforeEach(() => {
   // The store is a module-level singleton by design, so nothing may survive a test.
@@ -68,13 +51,7 @@ describe('useCall', () => {
   it('F-36-1: a Retry re-runs the request AND its continuation', async () => {
     const { result } = mountCall();
     const seen: string[] = [];
-    let attempts = 0;
-
-    const fn = vi.fn(async () => {
-      attempts += 1;
-      if (attempts === 1) throw new ApiError(503, 'unavailable', 'The service is busy.');
-      return `attempt-${attempts}`;
-    });
+    const fn = flakyAttempts();
 
     const first = await result.current(fn, (v: string) => { seen.push(v); });
     expect(first).toBeUndefined();
@@ -152,7 +129,7 @@ describe('useCall', () => {
     // the call goes stale. Here the demo flag flips between the call and its rejection.
     const { result, rerender, onUnauthorized } = mountCall({ demo: true });
 
-    let reject: ((e: unknown) => void) | undefined;
+    let reject: ((e: ApiError) => void) | undefined;
     const pending = result.current(
       () => new Promise<string>((_, rej) => { reject = rej; }),
     );
@@ -196,5 +173,29 @@ describe('useCall', () => {
     const first = result.current;
     rerender({ demo: true, onUnauthorized });
     expect(result.current).toBe(first);
+  });
+});
+
+describe('useCall, before the first effect', () => {
+  it('reads its deps from a call made in a child effect, which runs before its own', async () => {
+    // The throw is SYNCHRONOUS, so the catch reads the deps before any effect ran.
+    const onUnauthorized = vi.fn();
+    function Child({ call }: { call: Call }) {
+      useEffect(() => {
+        void call(() => { throw new ApiError(401, 'unauthorized', 'No session.'); });
+      }, [call]);
+      return null;
+    }
+    function Host() {
+      return <Child call={useCall({ demo: false, onUnauthorized })} />;
+    }
+    render(<Host />);
+    await waitFor(() => expect(onUnauthorized).toHaveBeenCalledTimes(1));
+  });
+
+  it('falls back to the generic line when the throw is not even an object', async () => {
+    const { result } = mountCall();
+    await result.current(async () => { throw null; });
+    expect(toasts()[0].message).toBe(GENERIC_FAILURE_MESSAGE);
   });
 });

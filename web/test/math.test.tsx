@@ -11,28 +11,23 @@
  */
 import { useEffect, useState } from 'react';
 import { act } from 'react';
-import { createRoot } from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { render } from '@testing-library/react';
 import katex from 'katex';
 import renderMathInElement from 'katex/contrib/auto-render';
 import { MathBlock } from '@/components/MathBlock';
 import { DELIMITERS, renderMathToHtml } from '@/lib/katex';
+import { mountRoot } from './helpers/react';
+
+declare global {
+  // The flag the hostile markup below tries to set. Nothing declares it, so a read is the
+  // proof that nothing ran.
+  var __pwned: boolean | undefined;
+}
 
 const roots: Array<() => void> = [];
 
-function mount(node: React.ReactElement) {
-  const container = document.createElement('div');
-  document.body.append(container);
-  const root = createRoot(container);
-  act(() => { root.render(node); });
-  const unmount = () => { act(() => { root.unmount(); }); container.remove(); };
-  roots.push(unmount);
-  return {
-    container,
-    find: (s: string) => container.querySelector<HTMLElement>(s),
-    unmount,
-  };
-}
+const mount = (node: React.ReactElement) => mountRoot(node, roots);
 
 beforeEach(() => {
   // The real thing, in place of the recording stub of `setup.ts`.
@@ -76,12 +71,49 @@ describe('the KaTeX string idiom', () => {
     // learner still reads the raw text.
     expect(() => renderMathToHtml('$\\badmacro{')).not.toThrow();
     expect(renderMathToHtml('$\\badmacro{')).toBeTruthy();
+    // KaTeX marks the failed expression in place. With `throwOnError: true` auto-render
+    // leaves the raw text and reports to the console instead.
+    expect(renderMathToHtml('$x^$')).toContain('katex-error');
   });
 
   it('degrades to escaped plain text when the vendored scripts are absent', () => {
     vi.stubGlobal('renderMathInElement', undefined);
     // The symptom of a failed vendor load is raw LaTeX, never an exception in a render.
     expect(renderMathToHtml('$x+1$')).toBe('$x+1$');
+  });
+
+  it('shows the escaped source when the renderer throws', () => {
+    // A renderer that throws must not throw INTO a React render: the learner reads the raw
+    // text instead of a blank problem.
+    vi.stubGlobal('renderMathInElement', () => { throw new Error('katex exploded'); });
+    expect(renderMathToHtml('<b>$x$</b>')).toBe('&lt;b&gt;$x$&lt;/b&gt;');
+  });
+
+  it('shows the escaped source, not a half-rendered host, when the renderer throws midway', () => {
+    vi.stubGlobal('renderMathInElement', (host: HTMLElement) => {
+      host.innerHTML = '<span class="katex">half</span>';
+      throw new Error('katex exploded midway');
+    });
+    expect(renderMathToHtml('<b>$x$</b>')).toBe('&lt;b&gt;$x$&lt;/b&gt;');
+  });
+
+  it('holds sixty-four renders and re-renders the oldest after that', () => {
+    const spy = vi.fn(renderMathInElement);
+    vi.stubGlobal('renderMathInElement', spy);
+    for (let i = 0; i < 64; i += 1) renderMathToHtml(`$x_{${i}}$`);
+    expect(spy).toHaveBeenCalledTimes(64);
+    // Every one of the sixty-four is still cached.
+    renderMathToHtml('$x_{0}$');
+    expect(spy).toHaveBeenCalledTimes(64);
+    // The sixty-fifth evicts the oldest, and the oldest renders again.
+    renderMathToHtml('$x_{64}$');
+    renderMathToHtml('$x_{0}$');
+    expect(spy).toHaveBeenCalledTimes(66);
+    // That render evicted the next oldest in turn; the one after it is still there.
+    renderMathToHtml('$x_{2}$');
+    expect(spy).toHaveBeenCalledTimes(66);
+    renderMathToHtml('$x_{1}$');
+    expect(spy).toHaveBeenCalledTimes(67);
   });
 
   it('renders one source string once, across a remount as well', () => {
@@ -101,14 +133,15 @@ describe('the KaTeX string idiom', () => {
   it('renders again when the source text changes', () => {
     const spy = vi.fn(renderMathInElement);
     vi.stubGlobal('renderMathInElement', spy);
-    const m = mount(<MathBlock>{'$a$'}</MathBlock>);
-    const first = m.find('.problem-text')!.innerHTML;
+    const { container, rerender } = render(<MathBlock>{'$a$'}</MathBlock>);
+    const first = container.querySelector('.problem-text')!.innerHTML;
 
-    mount(<MathBlock>{'$b$'}</MathBlock>);
+    rerender(<MathBlock>{'$b$'}</MathBlock>);
     // A memo that never invalidates is a defect, not an optimization: the next problem then
     // shows the previous problem's math.
     expect(spy).toHaveBeenCalledTimes(2);
-    expect(m.find('.problem-text')!.innerHTML).toBe(first);
+    expect(container.querySelector('.problem-text')!.innerHTML).not.toBe(first);
+    expect(container.querySelector('.problem-text')!.textContent).toContain('b');
   });
 });
 
@@ -197,7 +230,7 @@ describe('problem text is model output, and is escaped', () => {
       <MathBlock>{'<img src=x onerror="globalThis.__pwned = true">'}</MathBlock>,
     );
     expect(m.container.querySelector('img')).toBeNull();
-    expect((globalThis as Record<string, unknown>).__pwned).toBeUndefined();
+    expect(globalThis.__pwned).toBeUndefined();
   });
 
   it('escapes hostile markup that sits beside real math', () => {

@@ -16,7 +16,7 @@
  * `Accept-Session-Token: true` (D-M5-5). This client never sends that header, so the
  * service never hands it one.
  */
-import type { ApiErrorBody } from './types';
+import type { ApiErrorBody, JsonBody } from './types';
 
 /** The prefix every route of the table carries, except `/metrics`. */
 const API = '/api';
@@ -63,25 +63,28 @@ export class ApiError extends Error {
  * proxy, so the parse is defensive and falls back to the call site's own message. A caller
  * that already read the body passes it: a `Response` body reads exactly once.
  */
-async function failure(res: Response, fallback: string, data?: unknown): Promise<ApiError> {
-  let body = data;
-  if (body === undefined) {
-    body = null;
-    try {
-      const text = await res.text();
-      if (text) body = JSON.parse(text);
-    } catch { /* an empty or non-JSON body */ }
-  }
-  const err = (body as ApiErrorBody | null)?.error ?? {};
+async function failure(
+  res: Response,
+  fallback: string,
+  data?: ApiErrorBody | null,
+): Promise<ApiError> {
+  const body = data === undefined ? await readJson<ApiErrorBody>(res) : data;
+  const err = body?.error ?? {};
   return new ApiError(res.status, err.code, err.message || fallback);
 }
 
-/** Read a body once and parse it, or give `null` for an empty or non-JSON one. */
-async function readJson(res: Response): Promise<unknown> {
+/**
+ * Read a body once and parse it, or give `null` for an empty or non-JSON one.
+ *
+ * `T` names the shape the caller expects. The parse itself checks nothing: the service
+ * writes the contract of `types.ts`, and a reply outside it is a service defect. An empty
+ * body is not JSON either, so the one parse covers both.
+ */
+async function readJson<T>(res: Response): Promise<T | null> {
   const text = await res.text();
-  if (!text) return null;
   try {
-    return JSON.parse(text);
+    const parsed: T = JSON.parse(text);
+    return parsed;
   } catch {
     return null;
   }
@@ -96,7 +99,7 @@ async function readJson(res: Response): Promise<unknown> {
  * would render an error object as data. A download body is a blob, never JSON, so it gets
  * no such treatment — see `downloadFile`.
  */
-export async function request<T>(method: string, path: string, body?: unknown): Promise<T> {
+export async function request<T>(method: string, path: string, body?: JsonBody): Promise<T> {
   const headers: Record<string, string> = {};
   const opts: RequestInit = { method, credentials: 'same-origin', headers };
   if (body !== undefined) {
@@ -111,21 +114,22 @@ export async function request<T>(method: string, path: string, body?: unknown): 
     throw new ApiError(0, 'network', NETWORK_MESSAGE);
   }
 
-  const data = await readJson(res);
-  if (!res.ok || (data as ApiErrorBody | null)?.error) {
-    throw await failure(res, `Request failed (${res.status}).`, data);
+  const data = await readJson<T>(res);
+  const envelope = data as ApiErrorBody | null;
+  if (!res.ok || envelope?.error) {
+    throw await failure(res, `Request failed (${res.status}).`, envelope);
   }
   return data as T;
 }
 
 /** The `filename="…"` of a `Content-Disposition`, or null when there is none. */
 export function dispositionFilename(header: string | null): string | null {
-  if (!header) return null;
-  const match = /filename\*?=(?:UTF-8'')?"?([^";]+)"?/i.exec(header);
-  const name = match?.[1]?.trim();
+  // An absent header reads as the word `null`, which names no file.
+  const match = /filename\*?=(?:UTF-8'')?"?([^";]+)"?/i.exec(String(header));
+  const name = match?.[1].trim();
   if (!name) return null;
   // A server-named path separator would write outside the download directory.
-  return name.replace(/[/\\]/g, '_') || null;
+  return name.replace(/[/\\]/g, '_');
 }
 
 /**

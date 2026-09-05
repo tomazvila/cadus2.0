@@ -32,7 +32,7 @@
  * filter, and no buttons (REVIEW-admin). The service is the only gate there is: `is_admin`
  * is outside the runtime role's column grants, so no reply the SPA reads carries the flag.
  */
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { AdminFailureBlock } from './AdminFailure';
 import { ReviewDocumentPane } from './ReviewDocument';
 import { shortDigest } from './GateBlock';
@@ -50,13 +50,13 @@ import { num } from '@/lib/format';
 import type { ApiClient, ReviewItem } from '@/api/types';
 
 /** The heading, and the string the click-through of S13 looks for. */
-export const REVIEW_TITLE = 'Review queue';
+const REVIEW_TITLE = 'Review queue';
 
 /** The line of an empty queue. It is good news, and it says so. */
 export const REVIEW_EMPTY = 'Nothing is waiting for review.';
 
 /** The status the queue reads. The screen shows the pending work and nothing else. */
-export const PENDING = 'pending';
+const PENDING = 'pending';
 
 /** The line under the two disabled writes. It names the condition that opens them. */
 export const REVIEW_UNREAD = 'Approve and Reject open when the body of this digest is on screen.';
@@ -74,7 +74,7 @@ const DECIDE_KEY = 'decide';
  * It restates the digest, because approval binds to the digest and to nothing else, and a
  * reviewer who confirms the wrong row has approved a body they did not read.
  */
-export function ApproveConfirm({
+function ApproveConfirm({
   item,
   onDone,
 }: {
@@ -111,7 +111,7 @@ export function ApproveConfirm({
  * beside it is a dead end: the reviewer presses it, nothing happens, and the screen has not
  * said why. It stays pressable, and pressing it with an empty box renders the rule.
  */
-export function RejectPrompt({
+function RejectPrompt({
   item,
   onDone,
 }: {
@@ -148,7 +148,7 @@ export function RejectPrompt({
           setRaw(e.target.value);
           // The line clears as soon as the reviewer acts on it. A message that outlives the
           // condition it describes reads as a second, unrelated failure.
-          if (error) setError('');
+          setError('');
         }}
       />
       {error ? (
@@ -175,18 +175,26 @@ export function RejectPrompt({
 export interface ReviewScreenProps {
   api: ApiClient;
   /** Demo mode. A 401 then keeps the reader on the screen. */
-  demo?: boolean;
+  demo: boolean;
   /** The session-expired path. */
   onUnauthorized: () => void;
 }
 
-export function ReviewScreen({ api, demo = false, onUnauthorized }: ReviewScreenProps) {
+/** What one decision posts, and how the toast names it. */
+interface Decision {
+  request: () => Promise<object>;
+  verb: 'Approved' | 'Rejected';
+  kind: 'success' | 'info';
+}
+
+export function ReviewScreen({ api, demo, onUnauthorized }: ReviewScreenProps) {
   const life = useLifetime();
   const dialogs = useDialogs();
   const busy = useBusy();
   const call = useCall({ demo, onUnauthorized });
 
-  const load = useCallback(() => api.listContent({ status: PENDING }), [api]);
+  // One read per mount: the client is fixed at boot.
+  const [load] = useState(() => () => api.listContent({ status: PENDING }));
   const queue = useAdminLoad({ load, demo, onUnauthorized });
 
   const [selected, setSelected] = useState<string | null>(null);
@@ -195,7 +203,7 @@ export function ReviewScreen({ api, demo = false, onUnauthorized }: ReviewScreen
   // before the first reply, and null again on a failed read. See the module note.
   const [readDigest, setReadDigest] = useState<string | null>(null);
 
-  const groups = useMemo(() => groupByKp(queue.data?.items ?? []), [queue.data]);
+  const groups = useMemo(() => (queue.data ? groupByKp(queue.data.items) : []), [queue.data]);
   const order = useMemo(() => walkOrder(groups), [groups]);
   const items = useMemo(() => groups.flatMap((group) => group.items), [groups]);
 
@@ -205,7 +213,8 @@ export function ReviewScreen({ api, demo = false, onUnauthorized }: ReviewScreen
   // that drops it, with no second render in between: an effect that corrected the stored
   // value would paint one frame of the decided row, live Approve and Reject buttons and
   // all, over a queue that no longer contains it.
-  const active = selected !== null && order.includes(selected) ? selected : (order[0] ?? null);
+  const active = order.find((digest) => digest === selected) ?? order[0] ?? null;
+  // The row the walk stands on. Null exactly while the queue is empty, which renders no pane.
   const selectedItem = items.find((item) => item.digest === active) ?? null;
 
   // The document a decision may name: the selected row, and only while the pane has the body
@@ -218,85 +227,76 @@ export function ReviewScreen({ api, demo = false, onUnauthorized }: ReviewScreen
   // opening click in the same tick must already see it.
   const dialogOpen = useRef(false);
 
-  const decide = useCallback(
-    async (kind: 'approve' | 'reject', item: ReviewItem) => {
-      dialogOpen.current = true;
-      let reason: string | null = null;
-      try {
-        if (kind === 'approve') {
-          const ok = await dialogs.open<true>((resolve) => (
-            <ApproveConfirm item={item} onDone={resolve} />
-          ));
-          if (!ok) return;
-        } else {
-          reason = await dialogs.open<string>((resolve) => (
-            <RejectPrompt item={item} onDone={resolve} />
-          ));
-          // Cancelled, or the prompt refused the reason. Nothing is posted either way.
-          if (!reason) return;
-        }
-      } finally {
-        dialogOpen.current = false;
-      }
-      // The dialog settles on provider unmount too, so the view may already be gone.
-      if (!life.alive()) return;
+  /** Ask the dialog, and say for how long the keyboard is off. */
+  async function ask<V>(open: () => Promise<V | null>): Promise<V | null> {
+    dialogOpen.current = true;
+    try {
+      return await open();
+    } finally {
+      dialogOpen.current = false;
+    }
+  }
 
-      const res = await call(() =>
-        kind === 'approve' ? api.approveContent(item.digest) : api.rejectContent(item.digest, reason!),
-      );
-      if (!res || !life.alive()) return;
+  /** Post one decision on `item`, move the walk on, and read the queue again. */
+  async function settle(item: ReviewItem, { request, verb, kind }: Decision): Promise<void> {
+    const res = await call(request);
+    if (!res || !life.alive()) return;
 
-      // Move on before the reload, so the reviewer lands on the next row rather than at the
-      // top of a queue that is one row shorter.
-      setSelected(order[order.indexOf(item.digest) + 1] ?? null);
-      toast(
-        `${kind === 'approve' ? 'Approved' : 'Rejected'} ${shortDigest(item.digest)}.`,
-        { kind: kind === 'approve' ? 'success' : 'info' },
-      );
-      queue.reload();
-    },
-    [api, call, dialogs, life, order, queue],
-  );
+    // Move on before the reload, so the reviewer lands on the next row rather than at the
+    // top of a queue that is one row shorter.
+    setSelected(order[order.indexOf(item.digest) + 1] ?? null);
+    toast(`${verb} ${shortDigest(item.digest)}.`, { kind });
+    queue.reload();
+  }
 
-  // The live handler, read through a ref by a listener that binds once. Bound to the
-  // document rather than to a node, because the reviewer's focus is on a row button, on the
-  // pane, or nowhere at all, and the walk has to work from all three.
-  const keyRef = useRef<(e: KeyboardEvent) => void>(() => {});
+  async function approve(item: ReviewItem): Promise<void> {
+    const ok = await ask(() => dialogs.open<true>((resolve) => (
+      <ApproveConfirm item={item} onDone={resolve} />
+    )));
+    if (!ok) return;
+    await settle(item, { request: () => api.approveContent(item.digest), verb: 'Approved', kind: 'success' });
+  }
+
+  async function reject(item: ReviewItem): Promise<void> {
+    const reason = await ask(() => dialogs.open<string>((resolve) => (
+      <RejectPrompt item={item} onDone={resolve} />
+    )));
+    // Cancelled, or the prompt refused the reason. Nothing is posted either way.
+    if (!reason) return;
+    await settle(item, { request: () => api.rejectContent(item.digest, reason), verb: 'Rejected', kind: 'info' });
+  }
+
+  // Bound to the document rather than to a node, because the reviewer's focus is on a row
+  // button, on the pane, or nowhere at all, and the walk has to work from all three. Bound
+  // again after every render, so the handler reads the row and the order on screen.
   useEffect(() => {
-    keyRef.current = (e: KeyboardEvent) => {
+    const onKey = (e: KeyboardEvent) => {
       if (dialogOpen.current) return;
       if (e.metaKey || e.ctrlKey || e.altKey) return;
-      const target = e.target as HTMLElement | null;
-      const tag = target?.tagName;
-      if (tag === 'INPUT' || tag === 'TEXTAREA' || target?.isContentEditable) return;
+      // The document itself, when nothing has focus: it has no tag and is not editable.
+      const target = e.target as HTMLElement;
+      const tag = target.tagName;
+      if (tag === 'INPUT' || tag === 'TEXTAREA' || target.isContentEditable) return;
 
       if (e.key === 'j' || e.key === 'k') {
-        const next = step(order, active, e.key === 'j' ? 1 : -1);
-        if (next === null) return;
         e.preventDefault();
-        setSelected(next);
+        setSelected(step(order, active, e.key === 'j' ? 1 : -1));
         return;
       }
-      if ((e.key === 'a' || e.key === 'r') && decidable) {
+      if (decidable && (e.key === 'a' || e.key === 'r')) {
         e.preventDefault();
-        busy.run(DECIDE_KEY, () => decide(e.key === 'a' ? 'approve' : 'reject', decidable));
+        const decision = e.key === 'a' ? approve : reject;
+        busy.run(DECIDE_KEY, () => decision(decidable));
       }
     };
-  });
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => keyRef.current(e);
     document.addEventListener('keydown', onKey);
     return () => document.removeEventListener('keydown', onKey);
-  }, []);
+  });
 
-  if (queue.failure) {
+  if (queue.fault) {
     return (
       <section className="view-review">
-        <AdminFailureBlock
-          failure={queue.failure}
-          message={queue.message}
-          onRetry={queue.reload}
-        />
+        <AdminFailureBlock fault={queue.fault} onRetry={queue.reload} />
       </section>
     );
   }
@@ -378,46 +378,38 @@ export function ReviewScreen({ api, demo = false, onUnauthorized }: ReviewScreen
           </nav>
 
           <div className="review-pane card">
-            {selectedItem ? (
-              <>
-                <div className="review-actions">
-                  <button
-                    type="button"
-                    className={busy.cls(DECIDE_KEY, 'btn btn-primary')}
-                    disabled={busy.is(DECIDE_KEY) || decidable === null}
-                    onClick={() => {
-                      if (decidable) busy.run(DECIDE_KEY, () => decide('approve', decidable));
-                    }}
-                  >
-                    Approve
-                  </button>
-                  <button
-                    type="button"
-                    className={busy.cls(DECIDE_KEY, 'btn')}
-                    disabled={busy.is(DECIDE_KEY) || decidable === null}
-                    onClick={() => {
-                      if (decidable) busy.run(DECIDE_KEY, () => decide('reject', decidable));
-                    }}
-                  >
-                    Reject
-                  </button>
-                  {decidable === null ? (
-                    <p className="muted small review-unread">{REVIEW_UNREAD}</p>
-                  ) : null}
-                </div>
-                {/* Keyed by digest: a new digest builds a new pane. See its module note. */}
-                <ReviewDocumentPane
-                  key={selectedItem.digest}
-                  api={api}
-                  digest={selectedItem.digest}
-                  demo={demo}
-                  onUnauthorized={onUnauthorized}
-                  onLoaded={setReadDigest}
-                />
-              </>
-            ) : (
-              <p className="muted">Select a document to review it.</p>
-            )}
+            <div className="review-actions">
+              <button
+                type="button"
+                className={busy.cls(DECIDE_KEY, 'btn btn-primary')}
+                disabled={busy.is(DECIDE_KEY) || decidable === null}
+                // Disabled while `decidable` is null, so a press always has a document.
+                onClick={() => { busy.run(DECIDE_KEY, () => approve(decidable!)); }}
+              >
+                Approve
+              </button>
+              <button
+                type="button"
+                className={busy.cls(DECIDE_KEY, 'btn')}
+                disabled={busy.is(DECIDE_KEY) || decidable === null}
+                onClick={() => { busy.run(DECIDE_KEY, () => reject(decidable!)); }}
+              >
+                Reject
+              </button>
+              {decidable === null ? (
+                <p className="muted small review-unread">{REVIEW_UNREAD}</p>
+              ) : null}
+            </div>
+            {/* Keyed by digest: a new digest builds a new pane. See its module note. The
+                queue holds a row, so the walk stands on one. */}
+            <ReviewDocumentPane
+              key={selectedItem!.digest}
+              api={api}
+              digest={selectedItem!.digest}
+              demo={demo}
+              onUnauthorized={onUnauthorized}
+              onLoaded={setReadDigest}
+            />
           </div>
         </div>
       )}

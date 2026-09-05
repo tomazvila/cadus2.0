@@ -24,6 +24,7 @@ import { cpSync, existsSync, mkdirSync, readdirSync, rmSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { BREAKS } from './breaks.mjs';
+import { arg } from './args.mjs';
 
 const e2e = dirname(fileURLToPath(import.meta.url));
 const web = resolve(e2e, '..');
@@ -34,10 +35,6 @@ const IMAGE = 'mcr.microsoft.com/playwright:v1.62.1-noble';
 const PLAYWRIGHT = 'playwright@1.62.1';
 
 const command = process.argv[2] ?? 'demo';
-const arg = (name, fallback) => {
-  const hit = process.argv.find((a) => a.startsWith(`--${name}=`));
-  return hit ? hit.slice(name.length + 3) : fallback;
-};
 const port = Number(arg('port', '4173'));
 const api = arg('api', '');
 

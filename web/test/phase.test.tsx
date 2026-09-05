@@ -36,6 +36,14 @@ describe('usePhase', () => {
     expect(result.current[0]).toBe('ready');
   });
 
+  it('reads one phase name whole, never as a prefix of another', () => {
+    const { result } = renderHook(() => usePhase<'ready' | 'ready-set'>('ready'));
+    const gate = result.current[1];
+    expect(gate.is('ready-set')).toBe(false);
+    expect(gate.is(['ready-set'])).toBe(false);
+    expect(gate.is('ready')).toBe(true);
+  });
+
   it('tryEnter takes a guard SET, not one from-value', () => {
     const { result } = renderHook(() => usePhase<Phase>('feedback'));
     const gate = result.current[1];

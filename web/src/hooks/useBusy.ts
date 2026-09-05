@@ -19,11 +19,11 @@
  * This hook guards ONE button against ITSELF. It is not the phase gate: a view that owns a
  * study phase gates on `usePhase`, which admits one transition across the whole view.
  */
-import { useCallback, useRef, useState } from 'react';
+import { useState } from 'react';
 
 export interface Busy {
   /** Run an async handler under `key`. A re-entrant call is dropped, never queued. */
-  run: (key: string, fn: () => Promise<unknown> | unknown) => void;
+  run: (key: string, fn: () => Promise<void> | void) => void;
   /** True while `key` runs. It drives `disabled`. */
   is: (key: string) => boolean;
   /** The `className` for a button, with `is-busy` appended while `key` runs. */
@@ -31,40 +31,44 @@ export interface Busy {
 }
 
 export function useBusy(): Busy {
-  const running = useRef(new Set<string>());
-  const [, force] = useState(0);
+  // A fresh object is never the previous state, so every `force()` renders once more.
+  const [, rerender] = useState({});
 
-  const run = useCallback((key: string, fn: () => Promise<unknown> | unknown) => {
-    // The synchronous check and set. A second click inside the same tick — or any time
-    // before React commits the disabled attribute — finds the key present and drops.
-    if (running.current.has(key)) return;
-    running.current.add(key);
-    force((n) => n + 1);
+  // ONE object per mount. The set of running keys lives in its closure, and `rerender` is a
+  // stable setter, so the three functions hold for the life of the view.
+  const [busy] = useState<Busy>(() => {
+    const running = new Set<string>();
+    const force = () => { rerender({}); };
 
-    // Called synchronously, not through a microtask: the handler's own first state updates
-    // then land in the same batch as the click, and not one tick outside the caller's
-    // `act()`.
-    let result: unknown;
-    try {
-      result = fn();
-    } catch (e) {
-      running.current.delete(key);
-      force((n) => n + 1);
-      throw e;
-    }
+    return {
+      run(key, fn) {
+        // The synchronous check and set. A second click inside the same tick — or any time
+        // before React commits the disabled attribute — finds the key present and drops.
+        if (running.has(key)) return;
+        running.add(key);
+        force();
 
-    void Promise.resolve(result).finally(() => {
-      running.current.delete(key);
-      force((n) => n + 1);
-    });
-  }, []);
+        // Called synchronously, not through a microtask: the handler's own first state
+        // updates then land in the same batch as the click, and not one tick outside the
+        // caller's `act()`.
+        let result: Promise<void> | void;
+        try {
+          result = fn();
+        } catch (e) {
+          // The render `force()` asked for above has not run yet, and it reads the key gone.
+          running.delete(key);
+          throw e;
+        }
 
-  const is = useCallback((key: string) => running.current.has(key), []);
+        void Promise.resolve(result).finally(() => {
+          running.delete(key);
+          force();
+        });
+      },
+      is: (key) => running.has(key),
+      cls: (key, base) => (running.has(key) ? `${base} is-busy` : base),
+    };
+  });
 
-  const cls = useCallback(
-    (key: string, base: string) => (running.current.has(key) ? `${base} is-busy` : base),
-    [],
-  );
-
-  return { run, is, cls };
+  return busy;
 }

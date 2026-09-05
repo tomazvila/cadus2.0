@@ -25,7 +25,7 @@ export function WorkField({ onSubmit, ref }: WorkFieldProps) {
   // delicate is surface a later unit misuses.
   useImperativeHandle(ref, () => ({
     value: () => areaRef.current?.value.trim() ?? '',
-  }), []);
+  }));
 
   return (
     <details className="work">

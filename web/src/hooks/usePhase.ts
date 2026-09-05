@@ -40,10 +40,10 @@
  * It is generic over the union of each view. The diagnostic has an `intro` phase the others
  * do not, so there is no one shared `Phase` type.
  */
-import { useMemo, useState, useSyncExternalStore } from 'react';
+import { useState, useSyncExternalStore } from 'react';
 
 /** One phase, a set of them, or a predicate. */
-export type Guard<P extends string> = P | readonly P[] | ((p: P) => boolean);
+type Guard<P extends string> = P | readonly P[] | ((p: P) => boolean);
 
 function match<P extends string>(value: P, guard: Guard<P>): boolean {
   if (typeof guard === 'function') return guard(value);
@@ -64,9 +64,11 @@ class PhaseStore<P extends string> {
     return () => { this.listeners.delete(fn); };
   };
 
-  /** An unconditional set. Synchronous. */
+  /**
+   * An unconditional set. Synchronous. A set to the phase already on notifies as well;
+   * `useSyncExternalStore` compares the snapshot and renders nothing for it.
+   */
   readonly enter = (next: P): void => {
-    if (next === this.value) return;
     this.value = next;
     for (const fn of [...this.listeners]) fn();
   };
@@ -106,12 +108,13 @@ export function usePhase<P extends string>(initial: P): readonly [P, Gate<P>] {
   // Tear-free: React re-reads a torn render and discards it.
   const phase = useSyncExternalStore(store.subscribe, store.get, store.get);
 
-  const gate = useMemo<Gate<P>>(() => ({
+  // One gate per store, and one store per mount.
+  const [gate] = useState<Gate<P>>(() => ({
     peek: store.get,
     is: (guard) => match(store.get(), guard),
     enter: store.enter,
     tryEnter: store.tryEnter,
-  }), [store]);
+  }));
 
   return [phase, gate] as const;
 }

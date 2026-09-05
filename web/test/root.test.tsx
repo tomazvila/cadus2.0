@@ -25,39 +25,15 @@ import { Root } from '@/app/Root';
 import { ApiError, createDemoApi } from '@/api';
 import { OPS_TITLE } from '@/views/admin/Ops';
 import { MAP_CANVAS_LABEL } from '@/views/map/Map';
-import type {
-  ApiClient,
-  OperatorFlagsResponse,
-  PlanTask,
-  ReviewListResponse,
-  User,
-} from '@/api/types';
-
-const USER: User = {
-  id: 'u1',
-  email: 'learner@example.com',
-  email_verified: true,
-  created_at: '2026-08-30T00:00:00Z',
-};
+import { USER, quizTask } from './helpers/fixtures';
+import { instances } from './mocks/cytoscape';
+import type { ApiClient, OperatorFlagsResponse, ReviewListResponse, User } from '@/api/types';
 
 /** The account that signs in AFTER the 401. A different id, so the mix-up is visible. */
 const NEXT_USER: User = { ...USER, id: 'u2', email: 'second@example.com' };
 
 /** One quiz task, held by the view. The 401 must drop it. */
-const QUIZ_TASK: PlanTask = {
-  task_id: 'task-of-account-one',
-  task_type: 'quiz',
-  topic: { id: 'fractions', name: 'Fractions', module: 'Arithmetic' },
-  kp: null,
-  start_at_kp: null,
-  n_problems: 8,
-  mix: null,
-  component_topics: null,
-  time_budget_secs: 480,
-  difficulty_target: 0.7,
-  why: 'Quiz due.',
-  progress: { answered: 0, done: false },
-};
+const QUIZ_TASK = quizTask('task-of-account-one');
 
 /** An operator deployment with nothing in the pool. The screen renders; the rows are empty. */
 const FLAGS: OperatorFlagsResponse = {
@@ -90,6 +66,33 @@ function adminApi(over: Partial<ApiClient> = {}): ApiClient {
 const topbar = () => document.getElementById('topbar')!;
 const view = () => document.getElementById('view')!;
 
+/** Press Map in the bar, and wait for the canvas and its live renderer. */
+async function openMapFromBar(person: ReturnType<typeof userEvent.setup>): Promise<void> {
+  await person.click(screen.getByRole('button', { name: 'Map' }));
+  await waitFor(() => expect(screen.getByLabelText(MAP_CANVAS_LABEL)).toBeTruthy());
+  await waitFor(() => expect(instances.filter((i) => !i.destroyed)).toHaveLength(1));
+}
+
+/** Open `/ops` signed in, and wait for the operator screen. */
+async function openOps(): Promise<ReturnType<typeof userEvent.setup>> {
+  history.replaceState({}, '', '/ops');
+  const person = userEvent.setup();
+  render(<Root api={adminApi()} initialUser={USER} pathname="/ops" />, { container: view() });
+  await waitFor(() => expect(screen.getByText(OPS_TITLE)).toBeTruthy());
+  return person;
+}
+
+/** Open `/ops` signed in, press the brand, and land on the dashboard. */
+async function leaveOpsThroughBrand(): Promise<ReturnType<typeof userEvent.setup>> {
+  const person = await openOps();
+  expect(view().querySelector('.view-ops')).not.toBeNull();
+
+  await person.click(topbar().querySelector('.brand')!);
+
+  await waitFor(() => expect(view().querySelector('.view-dashboard')).not.toBeNull());
+  return person;
+}
+
 beforeEach(() => {
   // `navigate` writes the real history, and the write outlives the test.
   history.replaceState({}, '', '/');
@@ -99,16 +102,7 @@ describe('the operator route and the topbar', () => {
   it('leaves /ops for the dashboard when the brand is pressed', async () => {
     // F8. The route was a prop boot fixed once and it beat the view name, so Home moved the
     // state and the operator screen stayed on screen.
-    history.replaceState({}, '', '/ops');
-    const person = userEvent.setup();
-    render(<Root api={adminApi()} initialUser={USER} pathname="/ops" />, { container: view() });
-
-    await waitFor(() => expect(screen.getByText(OPS_TITLE)).toBeTruthy());
-    expect(view().querySelector('.view-ops')).not.toBeNull();
-
-    await person.click(topbar().querySelector('.brand')!);
-
-    await waitFor(() => expect(view().querySelector('.view-dashboard')).not.toBeNull());
+    await leaveOpsThroughBrand();
     expect(view().querySelector('.view-ops')).toBeNull();
     // The location moved with the screen. One source, and this is it.
     expect(window.location.pathname).toBe('/');
@@ -122,9 +116,7 @@ describe('the operator route and the topbar', () => {
 
     await waitFor(() => expect(view().querySelector('.view-review')).not.toBeNull());
 
-    await person.click(screen.getByRole('button', { name: 'Map' }));
-
-    await waitFor(() => expect(screen.getByLabelText(MAP_CANVAS_LABEL)).toBeTruthy());
+    await openMapFromBar(person);
     expect(view().querySelector('.view-review')).toBeNull();
     expect(window.location.pathname).toBe('/');
 
@@ -132,16 +124,33 @@ describe('the operator route and the topbar', () => {
     await waitFor(() => expect(view().querySelector('.view-dashboard')).not.toBeNull());
   });
 
+  it('still moves the screen when the history write is blocked', async () => {
+    // A non-browser host, or a blocked write: the state moves anyway, so the learner is
+    // not stuck on an operator screen because the address bar refused to change.
+    vi.spyOn(window.history, 'pushState').mockImplementation(() => { throw new Error('blocked'); });
+    await leaveOpsThroughBrand();
+    expect(view().querySelector('.view-ops')).toBeNull();
+  });
+
+  it('keeps the map, and where it came from, when Map is pressed twice', async () => {
+    const person = userEvent.setup();
+    render(<Root api={adminApi()} initialUser={USER} initialView={{ name: 'session' }} />, {
+      container: view(),
+    });
+    await waitFor(() => expect(view().querySelector('.view-session')).not.toBeNull());
+
+    await openMapFromBar(person);
+    await openMapFromBar(person);
+
+    // Done gives the SESSION back: a second press did not wrap the map around itself.
+    await person.click(screen.getByRole('button', { name: 'Done' }));
+    await waitFor(() => expect(view().querySelector('.view-session')).not.toBeNull());
+  });
+
   it('gives /ops back when the browser goes Back', async () => {
     // The push has to be a real history entry, or Back leaves the app and the operator
     // reaches a blank tab instead of the page they came from.
-    history.replaceState({}, '', '/ops');
-    const person = userEvent.setup();
-    render(<Root api={adminApi()} initialUser={USER} pathname="/ops" />, { container: view() });
-    await waitFor(() => expect(screen.getByText(OPS_TITLE)).toBeTruthy());
-
-    await person.click(topbar().querySelector('.brand')!);
-    await waitFor(() => expect(view().querySelector('.view-dashboard')).not.toBeNull());
+    await leaveOpsThroughBrand();
 
     await act(async () => {
       history.back();
@@ -216,12 +225,100 @@ describe('the reset card', () => {
   });
 
   it('leaves the token alone when the card is not the screen', async () => {
+    const onResetTokenTaken = await mountWithoutTheCard({ initialUser: USER });
+    expect(onResetTokenTaken).not.toHaveBeenCalled();
+  });
+});
+
+/**
+ * Mount `Root` with a token-taken callback and the props given, wait for the first screen,
+ * and give the callback back for the assertion.
+ */
+async function mountWithoutTheCard(props: { initialUser: User | null; resetToken?: string }) {
+  const onResetTokenTaken = vi.fn();
+  render(
+    <Root api={adminApi()} onResetTokenTaken={onResetTokenTaken} {...props} />,
+    { container: view() },
+  );
+  await waitFor(() => expect(view().querySelector('.view-dashboard, .auth-view')).not.toBeNull());
+  return onResetTokenTaken;
+}
+
+describe('the location', () => {
+  it('pushes one entry per move, and none for the path already on', async () => {
+    const push = vi.spyOn(window.history, 'pushState');
+    const person = await leaveOpsThroughBrand();
+    expect(push).toHaveBeenCalledTimes(1);
+    expect(push).toHaveBeenCalledWith({}, '', '/');
+
+    // Home, while home: the screen is already the dashboard, and the address bar agrees.
+    await person.click(topbar().querySelector('.brand')!);
+    await waitFor(() => expect(view().querySelector('.view-dashboard')).not.toBeNull());
+    expect(push).toHaveBeenCalledTimes(1);
+  });
+
+  it('removes its popstate listener with the view', () => {
+    const added = vi.spyOn(window, 'addEventListener');
+    const removed = vi.spyOn(window, 'removeEventListener');
+    const { unmount } = render(<Root api={adminApi()} initialUser={USER} />, { container: view() });
+    const onPop = added.mock.calls.find(([type]) => type === 'popstate')![1];
+
+    unmount();
+    expect(removed).toHaveBeenCalledWith('popstate', onPop);
+  });
+
+  it('sends the learner home from an operator path on sign-out', async () => {
+    const person = await openOps();
+    await person.click(topbar().querySelector('.logout-btn')!);
+
+    await waitFor(() => expect(view().querySelector('.auth-view')).not.toBeNull());
+    expect(window.location.pathname).toBe('/');
+  });
+});
+
+describe('the reset card, while a session is still open', () => {
+  it('waits for the sign-out, and takes the token then', async () => {
     const onResetTokenTaken = vi.fn();
+    const person = userEvent.setup();
     render(
-      <Root api={adminApi()} initialUser={USER} onResetTokenTaken={onResetTokenTaken} />,
+      <Root
+        api={adminApi()}
+        initialUser={USER}
+        authMode="reset"
+        resetToken="reset-9"
+        onResetTokenTaken={onResetTokenTaken}
+      />,
       { container: view() },
     );
     await waitFor(() => expect(view().querySelector('.view-dashboard')).not.toBeNull());
     expect(onResetTokenTaken).not.toHaveBeenCalled();
+
+    await person.click(topbar().querySelector('.logout-btn')!);
+    await waitFor(() => expect(screen.getByText('choose a new password')).toBeTruthy());
+    expect(onResetTokenTaken).toHaveBeenCalledTimes(1);
+  });
+
+  it('leaves a token alone on any other card', async () => {
+    const onResetTokenTaken = await mountWithoutTheCard({ initialUser: null, resetToken: 'reset-9' });
+    expect(screen.getByText('sign in')).toBeTruthy();
+    expect(onResetTokenTaken).not.toHaveBeenCalled();
+  });
+
+  it('takes no token from a reset card that has none', async () => {
+    const onResetTokenTaken = vi.fn();
+    render(
+      <Root api={adminApi()} initialUser={null} authMode="reset" onResetTokenTaken={onResetTokenTaken} />,
+      { container: view() },
+    );
+    await waitFor(() => expect(screen.getByText('choose a new password')).toBeTruthy());
+    expect(onResetTokenTaken).not.toHaveBeenCalled();
+  });
+
+  it('shows the card with nobody to tell', async () => {
+    render(
+      <Root api={adminApi()} initialUser={null} authMode="reset" resetToken="reset-9" />,
+      { container: view() },
+    );
+    await waitFor(() => expect(screen.getByText('choose a new password')).toBeTruthy());
   });
 });

@@ -6,96 +6,25 @@
  *   W-C3  an empty plan offers the diagnostic — no dead end;
  *   DEP-3 the JSONL export rides the session cookie and carries no token.
  *
- * The status fixture is the frozen `GET /api/status` contract of the web-service spec, so
- * every number below is a literal a reader checks by hand: 12 of 40 XP is 30 percent, and
- * a course progress of 0.18 is 18 percent.
+ * The status fixture is the frozen `GET /api/status` contract of the web-service spec
+ * (`test/helpers/dashboard.tsx`), so every number below is a literal a reader checks by
+ * hand: 12 of 40 XP is 30 percent, and a course progress of 0.18 is 18 percent. This part
+ * holds the three claims and the ways out; `dashboard.reads.test.tsx` holds the picker, the
+ * reads and the payload shapes.
  */
 import { describe, expect, it, vi } from 'vitest';
-import { act, render, screen, waitFor, within } from '@testing-library/react';
+import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { axe } from 'vitest-axe';
 import { ApiError, api as realApi, createDemoApi } from '@/api';
-import { DialogProvider } from '@/components/Modal';
-import { Dashboard, hasScheduledWork, type DashboardProps } from '@/views/Dashboard';
-import { resetToasts, toastStore } from '@/app/toast';
+import { hasScheduledWork } from '@/views/Dashboard';
+import { toastStore } from '@/app/toast';
 import { AXE_IN_JSDOM } from './axe';
 import { downloads, objectUrls } from './setup';
-import type { ApiClient, StatusResponse } from '@/api/types';
-
-const STATUS: StatusResponse = {
-  course: { id: 'foundations', name: 'Foundations' },
-  placed: true,
-  courses: [
-    { id: 'foundations', name: 'Foundations', current: true },
-    { id: 'proofs', name: 'Proofs', current: false },
-  ],
-  test_prep: null,
-  xp: { total: 340, today: 12, goal: 40, streak_days: 3 },
-  velocity: {
-    xp_per_day_28d: 21.5,
-    topics_per_week_28d: 2.25,
-    course_progress: 0.18,
-    eta: '2026-11-04',
-  },
-  quiz: { last_at: null, xp_since: 0, retake_pending: false },
-  pending_remediation: [],
-  quiz_due: false,
-  drill_due: false,
-  frontier: 4,
-  due_reviews: 2,
-  nearly_due: 1,
-};
-
-const status = (over: Partial<StatusResponse> = {}): StatusResponse => ({ ...STATUS, ...over });
-
-/** Nothing scheduled: no review, no nearly-due review, no frontier, no quiz, no drill. */
-const EMPTY_PLAN: Partial<StatusResponse> = {
-  due_reviews: 0,
-  nearly_due: 0,
-  frontier: 0,
-  quiz_due: false,
-  drill_due: false,
-};
-
-/** One course, and it is the current one — so no next course takes the primary slot. */
-const ONE_COURSE = [{ id: 'foundations', name: 'Foundations', current: true }];
-
-/**
- * A client built from the demo backend, so every method of `ApiClient` exists and a missing
- * override is a type error rather than a `not a function` inside a handler.
- */
-function stubApi(over: Partial<ApiClient> = {}): ApiClient {
-  return { ...createDemoApi(), getStatus: async () => status(), ...over };
-}
-
-const nav = () => ({
-  onUnauthorized: vi.fn(),
-  onSession: vi.fn(),
-  onQuiz: vi.fn(),
-  onDiagnostic: vi.fn(),
-  onMap: vi.fn(),
-});
-
-/** Mount into the `<main>` the shell owns, and settle the status fetch. */
-async function mount(over: Partial<DashboardProps> = {}) {
-  resetToasts();
-  const handlers = nav();
-  const props: DashboardProps = { api: stubApi(), ...handlers, ...over };
-  let view!: ReturnType<typeof render>;
-  await act(async () => {
-    view = render(
-      <DialogProvider>
-        <Dashboard {...props} />
-      </DialogProvider>,
-      { container: document.getElementById('view')! },
-    );
-  });
-  return { ...view, ...handlers };
-}
-
-const primaries = () => document.querySelectorAll('.view-dashboard .btn-primary');
-const actionBlock = () =>
-  document.querySelector<HTMLElement>('.primary-action, .onboard-card')!;
+import {
+  EMPTY_PLAN, ONE_COURSE, mount, pressInMenu, pressInTheOpen, primaries, status, stubApi,
+} from './helpers/dashboard';
+import type { StatusResponse } from '@/api/types';
 
 describe('the dashboard', () => {
   it('waits with a labelled block, then paints the status card', async () => {
@@ -183,37 +112,31 @@ describe('the dashboard', () => {
 
     // In the open, not inside the quiet disclosure: the learner must not open a menu to
     // find the one thing left to do.
-    const cta = within(actionBlock()).getByRole('button', { name: 'Re-check where you are' });
-    expect(cta.closest('details')).toBeNull();
-    await userEvent.click(cta);
-    expect(view.onDiagnostic).toHaveBeenCalledTimes(1);
+    expect(await pressInTheOpen('Re-check where you are', view.onDiagnostic))
+      .toEqual({ insideDetails: false, calls: 1 });
   });
 
   it('W-C3: an empty plan with a next course still offers the diagnostic beside it', async () => {
     const view = await mount({ api: stubApi({ getStatus: async () => status(EMPTY_PLAN) }) });
-    const cta = within(actionBlock()).getByRole('button', { name: 'Re-check where you are' });
-    expect(cta.closest('details')).toBeNull();
-    await userEvent.click(cta);
-    expect(view.onDiagnostic).toHaveBeenCalledTimes(1);
+    expect(await pressInTheOpen('Re-check where you are', view.onDiagnostic))
+      .toEqual({ insideDetails: false, calls: 1 });
   });
 
   it('W-C3: an unplaced account gets the placement and no other action', async () => {
     const view = await mount({
       api: stubApi({ getStatus: async () => status({ placed: false }) }),
     });
-    const cta = within(actionBlock()).getByRole('button', { name: 'Start placement' });
-    expect(cta.closest('details')).toBeNull();
     // One action only. A wall of buttons here asks the learner to plan the placement.
     expect(document.querySelectorAll('.view-dashboard button').length).toBe(1);
-    await userEvent.click(cta);
-    expect(view.onDiagnostic).toHaveBeenCalledTimes(1);
+    expect(await pressInTheOpen('Start placement', view.onDiagnostic))
+      .toEqual({ insideDetails: false, calls: 1 });
   });
 
   // --- DEP-3 --------------------------------------------------------------
   it('DEP-3: the export downloads through the cookie, not a token', async () => {
     const getItem = vi.spyOn(Storage.prototype, 'getItem');
     const setItem = vi.spyOn(Storage.prototype, 'setItem');
-    const fetchMock = vi.fn(
+    const fetchMock = vi.fn<(url: string, init: RequestInit) => Promise<Response>>(
       async () =>
         new Response('{"event":"answered"}\n{"event":"session_end"}\n', {
           status: 200,
@@ -223,12 +146,11 @@ describe('the dashboard', () => {
     vi.stubGlobal('fetch', fetchMock);
 
     await mount({ api: stubApi({ downloadExport: realApi.downloadExport }) });
-    await userEvent.click(screen.getByText('More'));
-    await userEvent.click(screen.getByRole('button', { name: 'Export my data (JSONL)' }));
+    await pressInMenu('Export my data (JSONL)');
 
     await waitFor(() => expect(downloads.length).toBe(1));
     expect(fetchMock).toHaveBeenCalledTimes(1);
-    const [url, init] = fetchMock.mock.calls[0] as unknown as [string, RequestInit];
+    const [url, init] = fetchMock.mock.calls[0];
     expect(url).toBe('/api/export');
     // The whole point: the browser attaches the HttpOnly cookie, and the URL carries no
     // credential of any kind.
@@ -249,8 +171,7 @@ describe('the dashboard', () => {
       throw new ApiError(403, 'forbidden', 'The demo keeps no event log to export.');
     };
     await mount({ api: stubApi({ downloadExport: failing }) });
-    await userEvent.click(screen.getByText('More'));
-    await userEvent.click(screen.getByRole('button', { name: 'Export my data (JSONL)' }));
+    await pressInMenu('Export my data (JSONL)');
 
     await waitFor(() => expect(toastStore.getSnapshot().length).toBe(1));
     expect(toastStore.getSnapshot()[0].message).toBe('The demo keeps no event log to export.');
@@ -273,6 +194,8 @@ describe('the dashboard', () => {
     const view = await mount({ api: stubApi({ sessionStart }) });
     await userEvent.click(screen.getByRole('button', { name: 'Continue studying' }));
     await waitFor(() => expect(toastStore.getSnapshot().length).toBe(1));
+    // The continuation of the refused start runs a tick after its toast.
+    await act(async () => {});
     expect(view.onSession).not.toHaveBeenCalled();
   });
 
@@ -320,8 +243,7 @@ describe('the dashboard', () => {
       return { ...plan, tasks: [...plan.tasks, quizTask] };
     };
     const view = await mount({ api: stubApi({ getPlan }) });
-    await userEvent.click(screen.getByText('More'));
-    await userEvent.click(screen.getByRole('button', { name: 'Quiz now' }));
+    await pressInMenu('Quiz now');
 
     await waitFor(() => expect(view.onQuiz).toHaveBeenCalledTimes(1));
     // The whole task: the quiz clock reads `time_budget_secs` of the task.
@@ -330,8 +252,7 @@ describe('the dashboard', () => {
 
   it('says so when no quiz is due, and goes nowhere', async () => {
     const view = await mount();
-    await userEvent.click(screen.getByText('More'));
-    await userEvent.click(screen.getByRole('button', { name: 'Quiz now' }));
+    await pressInMenu('Quiz now');
 
     await waitFor(() => expect(toastStore.getSnapshot().length).toBe(1));
     expect(toastStore.getSnapshot()[0].message).toBe('No quiz is due right now.');
@@ -373,47 +294,6 @@ describe('the dashboard', () => {
     const more = document.querySelector('details.more-menu') as HTMLDetailsElement;
     expect(more.open).toBe(false);
     expect(more.querySelectorAll('button').length).toBe(5);
-  });
-
-  it('F9: the course picker is a dialog, on a modal surface, and Esc leaves it', async () => {
-    const user = userEvent.setup();
-    const enroll = vi.fn(createDemoApi().enroll);
-    await mount({ api: stubApi({ enroll }) });
-    await user.click(screen.getByText('More'));
-    await user.click(screen.getByRole('button', { name: 'Switch course' }));
-
-    const picker = screen.getByRole('dialog');
-    // `aria-modal` is what tells a screen reader the page behind is inert, and the focus
-    // trap of `Modal` is what makes that true. Neither one works without the role.
-    expect(picker.getAttribute('aria-modal')).toBe('true');
-    expect(picker.getAttribute('aria-labelledby')).toBe('picker-h');
-    expect(document.getElementById('picker-h')!.textContent).toBe('Switch course');
-    // `.modal` is the one rule in app.css that paints a dialog surface: the background, the
-    // border, the radius, the padding, the width and the grid the rows are laid out by.
-    expect(picker.classList.contains('modal')).toBe(true);
-    expect(picker.parentElement!.classList.contains('modal-overlay')).toBe(true);
-
-    // The trap holds: focus starts inside, and Tab does not walk out to the page behind.
-    expect(picker.contains(document.activeElement)).toBe(true);
-    await user.tab();
-    await user.tab();
-    expect(picker.contains(document.activeElement)).toBe(true);
-
-    await user.keyboard('{Escape}');
-    await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull());
-    expect(enroll).not.toHaveBeenCalled();
-  });
-
-  it('F9: the picker enrolls in the course the learner names', async () => {
-    const user = userEvent.setup();
-    const enroll = vi.fn(createDemoApi().enroll);
-    await mount({ api: stubApi({ enroll }) });
-    await user.click(screen.getByText('More'));
-    await user.click(screen.getByRole('button', { name: 'Switch course' }));
-
-    await user.click(within(screen.getByRole('dialog')).getByRole('button', { name: 'Proofs' }));
-
-    await waitFor(() => expect(enroll).toHaveBeenCalledWith('proofs'));
   });
 
   it('reports zero axe violations', async () => {

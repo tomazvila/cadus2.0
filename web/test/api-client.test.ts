@@ -8,6 +8,7 @@
  */
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { ApiError, NETWORK_MESSAGE, api, dispositionFilename, downloadFile, request } from '@/api';
+import { resolveDiag } from '@/api/diag';
 import { downloads, objectUrls } from './setup';
 
 /** One stubbed `fetch` answer. The body is text, the way a real one is. */
@@ -26,7 +27,7 @@ function stubFetch(...responses: Response[]): ReturnType<typeof vi.fn> {
 }
 
 /** The rejection of a promise, as the error it carried. */
-async function rejection(promise: Promise<unknown>): Promise<ApiError> {
+async function rejection<T>(promise: Promise<T>): Promise<ApiError> {
   try {
     await promise;
   } catch (err) {
@@ -69,6 +70,16 @@ describe('the request wrapper', () => {
   it('resolves null for an empty 200 body', async () => {
     stubFetch(answer(200, ''));
     await expect(request('GET', '/health')).resolves.toBeNull();
+  });
+});
+
+describe('ApiError', () => {
+  it('falls back from the message to the code to the status', () => {
+    expect(new ApiError(404, 'unknown_task', 'No such task.').message).toBe('No such task.');
+    expect(new ApiError(404, 'unknown_task').message).toBe('unknown_task');
+    expect(new ApiError(502).message).toBe('HTTP 502');
+    expect(new ApiError(502).name).toBe('ApiError');
+    expect(new ApiError(502).code).toBeUndefined();
   });
 });
 
@@ -216,12 +227,37 @@ describe('the download helper', () => {
       }),
     );
     await downloadFile('/export', 'fallback.jsonl');
+    // Hidden, in the document at the click, and gone from it after.
     expect(downloads).toEqual([
-      { href: objectUrls[0], download: 'cadus-export-u1.jsonl' },
+      { href: objectUrls[0], download: 'cadus-export-u1.jsonl', display: 'none', connected: true },
     ]);
+    expect(document.body.querySelector('a[download]')).toBeNull();
     expect(URL.revokeObjectURL).not.toHaveBeenCalled();
     vi.runAllTimers();
     expect(URL.revokeObjectURL).toHaveBeenCalledWith(objectUrls[0]);
+  });
+
+  it('asks for the file with a GET through the cookie', async () => {
+    const fetchMock = stubFetch(answer(200, 'line\n'));
+    await downloadFile('/export', 'fallback.jsonl');
+    const [url, opts] = fetchMock.mock.calls[0] as [string, RequestInit];
+    expect([url, opts.method, opts.credentials]).toEqual(['/api/export', 'GET', 'same-origin']);
+  });
+
+  it('names a failed download by its status when the body carries no envelope', async () => {
+    stubFetch(answer(500, '<html>oops</html>', { 'Content-Type': 'text/html' }));
+    const err = await rejection(downloadFile('/export', 'x.jsonl'));
+    expect(err.message).toBe('Download failed (500).');
+    expect(err.status).toBe(500);
+  });
+
+  it('reports a download whose fetch never reached the service as code network', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new TypeError('failed to fetch')));
+    const err = await rejection(downloadFile('/export', 'x.jsonl'));
+    expect(err.status).toBe(0);
+    expect(err.code).toBe('network');
+    expect(err.message).toBe(NETWORK_MESSAGE);
+    expect(downloads).toHaveLength(0);
   });
 
   it('falls back to the caller name when the service sends no disposition', async () => {
@@ -242,6 +278,7 @@ describe('the download helper', () => {
     expect(dispositionFilename('attachment; filename="a.jsonl"')).toBe('a.jsonl');
     expect(dispositionFilename("attachment; filename*=UTF-8''b.jsonl")).toBe('b.jsonl');
     expect(dispositionFilename('attachment; filename="../../etc/passwd"')).toBe('.._.._etc_passwd');
+    expect(dispositionFilename('attachment; filename=" spaced.jsonl "')).toBe('spaced.jsonl');
     expect(dispositionFilename(null)).toBeNull();
     expect(dispositionFilename('attachment')).toBeNull();
   });
@@ -296,5 +333,38 @@ describe('the request bodies the service is strict about', () => {
 
   it('points the diagnosis stream at the one per-session subscription URL', () => {
     expect(api.diagnosisStreamUrl()).toBe('/api/diagnosis/stream');
+  });
+
+  it('sends the course on diag/start only when the caller names one', async () => {
+    const fetchMock = stubFetch(answer(200, '{"probe":null}'), answer(200, '{"probe":null}'));
+    await api.diagStart();
+    await api.diagStart('foundations');
+    const bodies = (fetchMock.mock.calls as Array<[string, RequestInit]>).map(([, o]) => o.body);
+    expect(bodies).toEqual(['{}', '{"course":"foundations"}']);
+  });
+});
+
+describe('the live placement port', () => {
+  it('posts the three placement routes through the live client', async () => {
+    const fetchMock = stubFetch(
+      answer(200, '{"probe":null}'),
+      answer(200, '{"correct":true}'),
+      answer(200, '{"placed":[],"conditional":[],"frontier":[]}'),
+    );
+    const port = resolveDiag(false);
+    await expect(port.diagStart('c1')).resolves.toEqual({ probe: null });
+    await expect(port.diagAnswer({ problem_id: 'd1', answer: '5' })).resolves.toEqual({ correct: true });
+    await expect(port.diagFinish()).resolves.toEqual({ placed: [], conditional: [], frontier: [] });
+    const calls = fetchMock.mock.calls as Array<[string, RequestInit]>;
+    expect(calls.map(([url, o]) => [url, o.body])).toEqual([
+      ['/api/diag/start', '{"course":"c1"}'],
+      ['/api/diag/answer', '{"problem_id":"d1","answer":"5"}'],
+      ['/api/diag/finish', '{}'],
+    ]);
+  });
+
+  it('hands the demo port over under the demo flag', async () => {
+    const port = resolveDiag(true);
+    expect((await port.diagStart()).cap).toBe(3);
   });
 });

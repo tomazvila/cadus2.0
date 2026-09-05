@@ -19,7 +19,7 @@
  * documents that passed the bound tells an operator whether one knowledge point is hard or
  * the whole batch is.
  */
-import { num } from '@/lib/format';
+import { num, type Numeric } from '@/lib/format';
 import type { ReviewItem } from '@/api/types';
 
 /**
@@ -74,7 +74,7 @@ export function costByKp(items: readonly ReviewItem[]): KpCost[] {
 }
 
 /** The decimals a dollar figure carries. An authoring call costs well under a cent. */
-export const COST_DECIMALS = 4;
+const COST_DECIMALS = 4;
 
 /**
  * A dollar figure for the screen.
@@ -82,8 +82,10 @@ export const COST_DECIMALS = 4;
  * A null cost is NOT rendered as `$0.0000`. The service sends null when no `model_call_log`
  * row priced the run, and "we do not know" and "it was free" are different facts.
  */
-export function usd(value: unknown): string {
-  if (value === null || value === undefined || value === '') return '—';
+export function usd(value: Numeric): string {
+  // `Number('')` is 0, so the empty string is named here; `Number(undefined)` is NaN and
+  // falls through to the dash of its own accord.
+  if (value === null || value === '') return '—';
   const n = Number(value);
   return Number.isFinite(n) ? `$${n.toFixed(COST_DECIMALS)}` : '—';
 }

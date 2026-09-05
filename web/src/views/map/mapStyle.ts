@@ -23,8 +23,9 @@ export interface MapTokens {
  * ignores an empty color, so the map still builds; a test asserts the stylesheet SHAPE, and
  * the S4 contract test asserts the palette itself against the stylesheet text.
  */
-export function readTokens(): MapTokens {
-  const style = getComputedStyle(document.documentElement);
+export function readTokens(
+  style: Pick<CSSStyleDeclaration, 'getPropertyValue'> = getComputedStyle(document.documentElement),
+): MapTokens {
   const value = (name: string) => style.getPropertyValue(name).trim();
   return {
     text: value('--text'),
@@ -33,9 +34,15 @@ export function readTokens(): MapTokens {
   };
 }
 
+/** One rule of a Cytoscape stylesheet: a selector and the properties it paints. */
+export interface MapStyleRule {
+  selector: string;
+  style: Record<string, string | number>;
+}
+
 /** The stylesheet, rebuilt whenever the color scheme flips. */
-export function buildStyle(tokens: MapTokens): unknown[] {
-  const style: unknown[] = [
+export function buildStyle(tokens: MapTokens): MapStyleRule[] {
+  const style: MapStyleRule[] = [
     {
       selector: 'node',
       style: {

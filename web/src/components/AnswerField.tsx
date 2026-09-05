@@ -67,7 +67,7 @@ export function AnswerField({
     value: () => inputRef.current?.value.trim() ?? '',
     clear: () => { if (inputRef.current) inputRef.current.value = ''; },
     focus: () => inputRef.current?.focus(),
-  }), []);
+  }));
 
   return (
     <div className="answer-field">
@@ -116,7 +116,8 @@ export function AnswerField({
             // A mousedown steals focus from the input before the click lands, and the caret
             // position goes with it. The suppression is what makes the tap survive.
             onMouseDown={(e) => { e.preventDefault(); }}
-            onClick={() => { if (inputRef.current) insertAtCursor(inputRef.current, sym); }}
+            // The input is on screen for as long as the key beside it is.
+            onClick={() => { insertAtCursor(inputRef.current!, sym); }}
           >
             {sym}
           </button>

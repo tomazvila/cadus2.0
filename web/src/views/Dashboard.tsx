@@ -35,7 +35,7 @@
  * WHAT THIS UNIT DOES NOT OWN. There is no router yet, so the four navigation callbacks
  * are props. The unit that adds URL routing (spec section 4.1) supplies the real ones.
  */
-import { Fragment, useCallback, useEffect, useReducer } from 'react';
+import { Fragment, useEffect, useReducer } from 'react';
 import { useDialogs } from '@/components/Modal';
 import { LoadingBlock, Ring, Stat } from '@/components/primitives';
 import { useBusy } from '@/hooks/useBusy';
@@ -43,12 +43,14 @@ import { useCall } from '@/hooks/useCall';
 import { useLifetime } from '@/hooks/useLifetime';
 import { num, pct } from '@/lib/format';
 import { toast } from '@/app/toast';
+import { CoursePicker } from './dashboard/CoursePicker';
+import { PrimaryAction } from './dashboard/PrimaryAction';
 import type { ApiClient, JourneyCourse, PlanTask, StatusResponse } from '@/api/types';
 
 export interface DashboardProps {
   api: ApiClient;
   /** Demo mode. A 401 then keeps the learner on the screen. */
-  demo?: boolean;
+  demo: boolean;
   /** The session-expired path of `useCall`. */
   onUnauthorized: () => void;
   /** Go to the study loop, after `POST /api/session/start` answers. */
@@ -97,7 +99,7 @@ const INITIAL: State = { gen: 0, status: null, loadedGen: -1, failedGen: -1 };
  * `GET /api/status` calls in flight. Without the comparison the older reply lands last and
  * overwrites fresh data, or fails last and replaces a good card with "Could not load".
  */
-export function reduce(state: State, action: Action): State {
+function reduce(state: State, action: Action): State {
   switch (action.type) {
     case 'reload':
       return { ...state, gen: state.gen + 1 };
@@ -110,53 +112,9 @@ export function reduce(state: State, action: Action): State {
   }
 }
 
-/**
- * The picker behind "Switch course". It resolves a course id, or null on a cancel.
- *
- * IT IS THE DIALOG SURFACE, so it carries what a dialog carries (spec section 4.5). `Modal`
- * portals this element straight into `.modal-overlay` and adds no wrapper of its own, so
- * `role="dialog"` and `aria-modal="true"` live HERE or nowhere: without them the overlay
- * traps focus in a group a screen reader still reads as part of the page behind it. The
- * `.modal` class is the one rule in `app.css` that paints a dialog surface — the background,
- * the border, the radius, the padding, the width and the `display: grid` the picker's own
- * rows are laid out by — and `.picker` alone paints nothing at all.
- */
-function CoursePicker({
-  courses,
-  onDone,
-}: {
-  courses: JourneyCourse[];
-  onDone: (id: string | null) => void;
-}) {
-  return (
-    <div className="modal picker" role="dialog" aria-modal="true" aria-labelledby="picker-h">
-      <h2 id="picker-h">Switch course</h2>
-      <p className="muted small">Your progress in every course is kept.</p>
-      <div className="picker-list">
-        {courses.map((c) => (
-          <button
-            key={c.id}
-            type="button"
-            className="btn"
-            disabled={c.current}
-            onClick={() => onDone(c.id)}
-          >
-            {c.current ? `${c.name} · current` : c.name}
-          </button>
-        ))}
-      </div>
-      <div className="modal-actions">
-        <button type="button" className="btn btn-ghost" onClick={() => onDone(null)}>
-          Cancel
-        </button>
-      </div>
-    </div>
-  );
-}
-
 export function Dashboard({
   api,
-  demo = false,
+  demo,
   onUnauthorized,
   onSession,
   onQuiz,
@@ -173,36 +131,32 @@ export function Dashboard({
   useEffect(() => {
     void call(
       () => api.getStatus(),
-      (status) => {
-        if (life.alive()) dispatch({ type: 'ok', gen, status });
-      },
-    ).then((status) => {
-      if (!status && life.alive()) dispatch({ type: 'fail', gen });
-    });
-  }, [api, call, life, gen]);
+      // A reply after the view left writes state nobody renders.
+      (status) => { dispatch({ type: 'ok', gen, status }); },
+      { onFail: () => { dispatch({ type: 'fail', gen }); } },
+    );
+  }, [api, call, gen]);
 
-  const reload = useCallback(() => dispatch({ type: 'reload' }), []);
+  // The moves below are plain functions, rebuilt per render, and read at event time.
+  const reload = (): void => { dispatch({ type: 'reload' }); };
 
-  const startSession = useCallback(async () => {
+  const startSession = async (): Promise<void> => {
     const started = await call(() => api.sessionStart());
     // F-F2-2: this navigation lands after an await, so the view must still own the screen.
     // Without the guard a slow `/session/start` pulls the learner out of a screen they
     // opened in the meantime.
     if (!started || !life.alive()) return;
     onSession();
-  }, [api, call, life, onSession]);
+  };
 
-  const doEnroll = useCallback(
-    async (course: JourneyCourse) => {
-      const res = await call(() => api.enroll(course.id));
-      if (!res || !life.alive()) return;
-      toast(`Enrolled in ${course.name}. Take the placement to get started.`, { kind: 'success' });
-      reload();
-    },
-    [api, call, life, reload],
-  );
+  const doEnroll = async (course: JourneyCourse): Promise<void> => {
+    const res = await call(() => api.enroll(course.id));
+    if (!res || !life.alive()) return;
+    toast(`Enrolled in ${course.name}. Take the placement to get started.`, { kind: 'success' });
+    reload();
+  };
 
-  const quizNow = useCallback(async () => {
+  const quizNow = async (): Promise<void> => {
     const started = await call(() => api.sessionStart());
     if (!started || !life.alive()) return;
     const plan = await call(() => api.getPlan());
@@ -215,29 +169,24 @@ export function Dashboard({
     // WITH the task, never the id alone: the quiz clock reads `time_budget_secs` of the
     // task, and a serve value is one question's expected time (QUIZ-budget).
     onQuiz(quiz);
-  }, [api, call, life, onQuiz]);
+  };
 
-  const switchCourse = useCallback(
-    async (courses: JourneyCourse[]) => {
-      const choice = await dialogs.open<string>((resolve) => (
-        <CoursePicker courses={courses} onDone={resolve} />
-      ));
-      const course = courses.find((c) => c.id === choice);
-      if (course) await doEnroll(course);
-    },
-    [dialogs, doEnroll],
-  );
+  const switchCourse = async (courses: JourneyCourse[]): Promise<void> => {
+    const choice = await dialogs.open<string>((resolve) => (
+      <CoursePicker courses={courses} onDone={resolve} />
+    ));
+    const course = courses.find((c) => c.id === choice);
+    if (course) await doEnroll(course);
+  };
 
   /** DEP-3. Read-only, through the cookie. See the module note above. */
-  const exportData = useCallback(async () => {
+  const exportData = async (): Promise<void> => {
     try {
       await api.downloadExport();
     } catch (e) {
-      toast((e as { message?: string } | null)?.message || 'Could not export your data.', {
-        kind: 'error',
-      });
+      toast((e as { message?: string } | null)?.message || 'Could not export your data.');
     }
-  }, [api]);
+  };
 
   // The error screen shows only while the NEWEST attempt is the failed one. The Retry of
   // the toast — the recovery path `useCall` offers — then clears it by succeeding, instead
@@ -306,17 +255,6 @@ export function Dashboard({
     );
   }
 
-  const work = hasScheduledWork(status);
-  const bits: string[] = [];
-  if (due) bits.push(`${due} review${due === 1 ? '' : 's'}`);
-  if (frontier) bits.push(`${frontier} new lesson${frontier === 1 ? '' : 's'}`);
-  if (status.quiz_due) bits.push('a quiz');
-  if (status.drill_due) bits.push('a drill');
-
-  const currentIndex = courses.findIndex((c) => c.current);
-  const nextCourse =
-    currentIndex >= 0 && currentIndex + 1 < courses.length ? courses[currentIndex + 1] : null;
-
   return (
     <section className="view-dashboard">
       {courseArc}
@@ -333,7 +271,7 @@ export function Dashboard({
         </div>
         <div className="stat-grid">
           <Stat value={`${num(status.xp.streak_days)}`} label="day streak" className="accent" />
-          <Stat value={`${due}`} label="due now" className={due > 0 ? 'warn' : ''} />
+          <Stat value={`${due}`} label="due now" className={due > 0 ? 'warn' : undefined} />
           <Stat value={`${num(status.nearly_due)}`} label="nearly due" />
           <Stat value={`${frontier}`} label="frontier" />
           <Stat value={`${pct(status.velocity.course_progress)}%`} label="course" />
@@ -342,57 +280,14 @@ export function Dashboard({
       </div>
 
       {/* W-C2: one primary action, chosen by the state of the plan. */}
-      <div className="primary-action">
-        {work ? (
-          <>
-            <button
-              type="button"
-              className={busy.cls('session', 'btn btn-primary btn-hero')}
-              disabled={busy.is('session')}
-              onClick={() => busy.run('session', startSession)}
-            >
-              <span aria-hidden="true">▶</span> Continue studying
-            </button>
-            <p className="muted primary-sub">
-              {bits.length ? `Up next: ${bits.join(' · ')}.` : 'Practice is ready.'}
-            </p>
-          </>
-        ) : (
-          <>
-            <p className="caught-up">You are all caught up — nice work.</p>
-            {nextCourse ? (
-              <>
-                <button
-                  type="button"
-                  className={busy.cls('enroll', 'btn btn-primary btn-hero')}
-                  disabled={busy.is('enroll')}
-                  onClick={() => busy.run('enroll', () => doEnroll(nextCourse))}
-                >
-                  {`Start ${nextCourse.name} `}
-                  <span aria-hidden="true">▸</span>
-                </button>
-                {/* W-C3: the diagnostic stays in the open, beside the primary — never
-                    only inside the closed disclosure below. */}
-                <button type="button" className="btn btn-ghost" onClick={onDiagnostic}>
-                  Re-check where you are
-                </button>
-              </>
-            ) : (
-              // W-C3, the empty plan with nowhere else to go: the diagnostic IS the
-              // primary action. A screen that ends here with prose alone is the dead end
-              // this invariant exists to forbid.
-              <>
-                <button type="button" className="btn btn-primary btn-hero" onClick={onDiagnostic}>
-                  Re-check where you are <span aria-hidden="true">▸</span>
-                </button>
-                <p className="muted primary-sub">
-                  A short placement finds the next thing worth your time.
-                </p>
-              </>
-            )}
-          </>
-        )}
-      </div>
+      <PrimaryAction
+        status={status}
+        work={hasScheduledWork(status)}
+        busy={busy}
+        startSession={startSession}
+        enroll={doEnroll}
+        onDiagnostic={onDiagnostic}
+      />
 
       {/* W-C5: everything else is quiet, under a native disclosure. */}
       <details className="more-menu">

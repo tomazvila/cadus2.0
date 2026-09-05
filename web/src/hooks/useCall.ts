@@ -33,7 +33,7 @@
  * never through captured render state. The external store of `usePhase` satisfies the rule
  * for the phase; the rest belongs to the call site.
  */
-import { useCallback, useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { ApiError } from '@/api';
 import { toast } from '@/app/toast';
 
@@ -46,9 +46,9 @@ export const GENERIC_FAILURE_MESSAGE = 'Something went wrong.';
 /** The line a Retry gets when the screen moved past the request it would re-send. */
 export const RETRY_STALE_MESSAGE = 'That retry came too late. Continue from the screen.';
 
-export type Call = <T>(
+export type Call = <T, R = void>(
   fn: () => Promise<T>,
-  onOk?: (value: T) => unknown,
+  onOk?: (value: T) => R,
   opts?: CallOptions,
 ) => Promise<T | undefined>;
 
@@ -61,7 +61,7 @@ export type Call = <T>(
  * service answers `404 unknown_problem`. Both fields are optional, and a call that omits
  * them behaves exactly as it did before.
  */
-export interface CallOptions {
+interface CallOptions {
   /**
    * The Retry gate, called SYNCHRONOUSLY when the learner presses Retry. It re-takes the
    * caller's lock and answers whether the request is still valid. False refuses the retry
@@ -97,18 +97,19 @@ export function useCall({ demo, onUnauthorized }: CallDeps): Call {
   const depsRef = useRef({ demo, onUnauthorized });
   useEffect(() => { depsRef.current = { demo, onUnauthorized }; }, [demo, onUnauthorized]);
 
-  return useCallback(
-    <T,>(fn: () => Promise<T>, onOk?: (value: T) => unknown, opts?: CallOptions) =>
+  // ONE function per mount, so a dependency array that holds it holds.
+  const [call] = useState<Call>(
+    () => <T, R>(fn: () => Promise<T>, onOk?: (value: T) => R, opts?: CallOptions) =>
       run(fn, onOk, depsRef, opts),
-    [],
   );
+  return call;
 }
 
 type DepsRef = { current: CallDeps };
 
-async function run<T>(
+async function run<T, R>(
   fn: () => Promise<T>,
-  onOk: ((value: T) => unknown) | undefined,
+  onOk: ((value: T) => R) | undefined,
   deps: DepsRef,
   opts?: CallOptions,
 ): Promise<T | undefined> {

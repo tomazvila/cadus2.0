@@ -67,8 +67,8 @@ export function walkOrder(groups: readonly KpGroup[]): string[] {
  */
 export function step(order: readonly string[], digest: string | null, delta: number): string | null {
   if (order.length === 0) return null;
-  const at = digest === null ? -1 : order.indexOf(digest);
-  if (at < 0) return order[0] ?? null;
-  const next = Math.min(order.length - 1, Math.max(0, at + delta));
-  return order[next] ?? null;
+  // Nothing selected, or a digest the reload dropped, stands before the first row: one step
+  // either way lands on it.
+  const at = order.findIndex((d) => d === digest);
+  return order[Math.min(order.length - 1, Math.max(0, at + delta))];
 }

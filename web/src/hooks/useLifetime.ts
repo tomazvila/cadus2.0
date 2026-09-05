@@ -55,19 +55,21 @@ export interface Lifetime {
 export interface LifetimeInternal extends Lifetime {
   revive: () => void;
   end: () => void;
+  /** How many timers the registry holds. A fired timeout leaves it; a cleared one too. */
+  pending: () => number;
 }
 
 export function createLifetime(): LifetimeInternal {
   let alive = true;
   let gen = 0;
-  const timeouts = new Set<number>();
-  const intervals = new Set<number>();
+  let timeouts = new Set<number>();
+  let intervals = new Set<number>();
 
   function clearTimers(): void {
     for (const id of timeouts) clearTimeout(id);
     for (const id of intervals) clearInterval(id);
-    timeouts.clear();
-    intervals.clear();
+    timeouts = new Set();
+    intervals = new Set();
   }
 
   return {
@@ -77,12 +79,12 @@ export function createLifetime(): LifetimeInternal {
     bump() { clearTimers(); return ++gen; },
 
     setTimeout(fn, ms) {
-      // The refusal to ARM is the strong half of F-37-1b. A refusal only to FIRE still lets a
-      // continuation that lands after teardown start a 1 Hz ticker against detached nodes.
+      // The refusal to ARM is F-37-1b. A timer that did arm is cleared by `end()`, so it never
+      // fires after teardown; a guard on the fire would be a second copy of that promise.
       if (!alive) return 0;
       const id = window.setTimeout(() => {
         timeouts.delete(id);
-        if (alive) fn();
+        fn();
       }, ms);
       timeouts.add(id);
       return id;
@@ -90,20 +92,22 @@ export function createLifetime(): LifetimeInternal {
 
     setInterval(fn, ms) {
       if (!alive) return 0;
-      const id = window.setInterval(() => { if (alive) fn(); }, ms);
+      const id = window.setInterval(fn, ms);
       intervals.add(id);
       return id;
     },
 
     clearTimer(id) {
-      if (!id) return;
+      // The browser gives timeouts and intervals one id space and one clear, so this stops
+      // either kind. 0 and undefined name no timer, and the browser ignores both.
       clearTimeout(id);
-      clearInterval(id);   // the browser gives the two one id space
-      timeouts.delete(id);
-      intervals.delete(id);
+      timeouts.delete(id!);
+      intervals.delete(id!);
     },
 
     clearTimers,
+
+    pending: () => timeouts.size + intervals.size,
 
     /**
      * Undo a StrictMode development teardown. A true first mount sees no change.

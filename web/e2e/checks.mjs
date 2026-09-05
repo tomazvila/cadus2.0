@@ -196,3 +196,24 @@ export function checkSameProblem(run, first, second) {
   );
   return false;
 }
+
+/**
+ * Run one walk to its end: the report is the exit code, and a throw is one more problem.
+ *
+ * The whole call log goes into the report, not its first line: Playwright's retry reason —
+ * the element it waited for, and what intercepted the pointer — lives in the lines after it.
+ *
+ * @param {() => Promise<void>} main
+ * @param {Run} run
+ * @param {import('playwright').Browser} browser
+ */
+export async function finishWalk(main, run, browser) {
+  try {
+    await main();
+  } catch (e) {
+    run.fail(`THREW: ${String(e).split('\n').slice(0, 12).join(' | ').slice(0, 700)}`);
+    await run.snap('failure');
+  }
+  await browser.close();
+  process.exit(run.report());
+}

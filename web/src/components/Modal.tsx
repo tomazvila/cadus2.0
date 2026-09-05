@@ -21,12 +21,16 @@
  *     the promise pending.
  *  3. The provider unmount settles whatever is open.
  *
+ * A resolve settles the dialog that is CURRENT and nothing else. Cancel then Esc, or a
+ * resolve that races the unmount, reaches a dialog already gone and does nothing; so does a
+ * stale resolver kept from a dialog a later one superseded.
+ *
  * Each one has a test that AWAITS the promise. A test that asserts the overlay left the DOM
  * proves nothing: React does that for free by unmounting the portal, so such a test passes
  * with all of the machinery above deleted.
  */
 import {
-  createContext, useCallback, useContext, useEffect, useMemo, useRef, useState,
+  createContext, useContext, useEffect, useRef, useState,
 } from 'react';
 import { createPortal } from 'react-dom';
 
@@ -61,18 +65,13 @@ export function DialogProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => () => { currentRef.current?.resolve(null); currentRef.current = null; }, []);
 
-  const open = useCallback(<T,>(render: (resolve: Resolver<T>) => React.ReactNode) =>
-    new Promise<T | null>((resolvePromise) => {
-      const id = nextId.current++;
-      let settled = false;
-
+  // ONE context value per mount: `open` reads a ref and a setter, and both are stable.
+  const [value] = useState<Dialogs>(() => ({
+    open: <T,>(render: (resolve: Resolver<T>) => React.ReactNode) => new Promise<T | null>((resolvePromise) => {
       const resolve = (value: T | null) => {
-        // Idempotent: Cancel then Esc, or a resolve that races the unmount, must not settle
-        // the same promise twice.
-        if (settled) return;
-        settled = true;
-        if (currentRef.current?.id === id) currentRef.current = null;
-        setCurrent((c) => (c?.id === id ? null : c));
+        if (currentRef.current !== entry) return;
+        currentRef.current = null;
+        setCurrent(null);
         resolvePromise(value);
       };
 
@@ -80,15 +79,14 @@ export function DialogProvider({ children }: { children: React.ReactNode }) {
       currentRef.current?.resolve(null);
 
       const entry: OpenDialog = {
-        id,
+        id: nextId.current++,
         render: render as OpenDialog['render'],
         resolve: resolve as Resolver<never>,
       };
       currentRef.current = entry;
       setCurrent(entry);
-    }), []);
-
-  const value = useMemo<Dialogs>(() => ({ open }), [open]);
+    }),
+  }));
 
   return (
     <DialogContext.Provider value={value}>
@@ -110,30 +108,32 @@ export function DialogProvider({ children }: { children: React.ReactNode }) {
  * page is inert, and a Tab that walks out to the page behind makes that a lie. A 1.0 version
  * claimed a trap in three comments and bound Escape alone.
  */
-export function Modal({ children, onCancel }: {
+function Modal({ children, onCancel }: {
   children: React.ReactNode;
   onCancel: (value: null) => void;
 }) {
   // Scoped to the OVERLAY, so the trap finds the dialog's controls wherever the caller puts
   // them.
   const ref = useRef<HTMLDivElement>(null);
-  // `onCancel`'s identity changes with every provider render, so the listener must not
-  // re-bind: a re-bind also re-runs the initial focus and steals the caret mid-interaction.
-  const cancelRef = useRef(onCancel);
-  useEffect(() => { cancelRef.current = onCancel; }, [onCancel]);
 
+  // `onCancel` is the resolver of the one dialog this keyed instance shows, so its identity
+  // holds for the life of the instance and the listener binds once. A re-bind would also
+  // re-run the initial focus and steal the caret mid-interaction.
   useEffect(() => {
-    const previouslyFocused = document.activeElement as HTMLElement | null;
+    // A document has a body, and the body is the active element when no control is.
+    const previouslyFocused = document.activeElement as HTMLElement;
 
+    // The overlay is on the page for the life of this effect, so the ref is never null here.
+    const overlay = ref.current!;
     const focusable = () => Array.from(
-      ref.current?.querySelectorAll<HTMLElement>(
+      overlay.querySelectorAll<HTMLElement>(
         'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]),'
         + ' textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
-      ) ?? [],
+      ),
     );
 
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') { e.preventDefault(); cancelRef.current(null); return; }
+      if (e.key === 'Escape') { e.preventDefault(); onCancel(null); return; }
       if (e.key !== 'Tab') return;
 
       const items = focusable();
@@ -143,10 +143,10 @@ export function Modal({ children, onCancel }: {
       const active = document.activeElement;
 
       // Wrap at both ends, and pull focus back in when it is already outside.
-      if (e.shiftKey && (active === first || !ref.current?.contains(active))) {
+      if (e.shiftKey && (active === first || !overlay.contains(active))) {
         e.preventDefault();
         last.focus();
-      } else if (!e.shiftKey && (active === last || !ref.current?.contains(active))) {
+      } else if (!e.shiftKey && (active === last || !overlay.contains(active))) {
         e.preventDefault();
         first.focus();
       }
@@ -158,13 +158,9 @@ export function Modal({ children, onCancel }: {
     return () => {
       document.removeEventListener('keydown', onKey);
       // Focus belongs back on the control that opened the dialog.
-      previouslyFocused?.focus?.();
+      previouslyFocused.focus();
     };
-    // Mount and unmount only.
-  }, []);
-
-  const host = typeof document === 'undefined' ? null : document.body;
-  if (!host) return null;
+  }, [onCancel]);
 
   return createPortal(
     <div
@@ -185,6 +181,6 @@ export function Modal({ children, onCancel }: {
       */}
       {children}
     </div>,
-    host,
+    document.body,
   );
 }

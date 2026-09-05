@@ -41,7 +41,7 @@ import type {
 const seg = (value: string) => encodeURIComponent(value);
 
 /** The name the export falls back to when the service sends no `Content-Disposition`. */
-export const EXPORT_FALLBACK_NAME = 'cadus-export.jsonl';
+const EXPORT_FALLBACK_NAME = 'cadus-export.jsonl';
 
 export const api: ApiClient = {
   demo: false,
@@ -92,7 +92,7 @@ export const api: ApiClient = {
   // Sends NO `minutes` by default, and it must stay that way: the service measures session
   // time from its own accumulator, and that value prices the XP (trap T4).
   sessionEnd: (minutes) =>
-    request<SessionEndResponse>('POST', '/session/end', minutes != null ? { minutes } : {}),
+    request<SessionEndResponse>('POST', '/session/end', minutes === undefined ? {} : { minutes }),
   getPlan: () => request<SessionPlanResponse>('GET', '/session/plan'),
   taskServe: (taskId) => request<ServedProblem>('POST', `/task/${seg(taskId)}/serve`, {}),
   taskTeach: (taskId) => request<TeachResponse>('POST', `/task/${seg(taskId)}/teach`, {}),
@@ -102,12 +102,13 @@ export const api: ApiClient = {
   // as `undefined`: those are different bytes on the wire, and the body reader refuses a
   // field whose type it does not expect. TypeScript's excess-property check fires on
   // object LITERALS only, so a caller passing a variable would put extra keys on the wire.
-  taskAnswer: (taskId, { problem_id, answer, work, assisted }) => {
-    const body: Record<string, unknown> = { problem_id, answer };
-    if (work != null) body.work = work;
-    if (assisted != null) body.assisted = assisted;
-    return request<TaskAnswerResponse>('POST', `/task/${seg(taskId)}/answer`, body);
-  },
+  taskAnswer: (taskId, { problem_id, answer, work, assisted }) =>
+    request<TaskAnswerResponse>('POST', `/task/${seg(taskId)}/answer`, {
+      problem_id,
+      answer,
+      ...(work === undefined ? {} : { work }),
+      ...(assisted === undefined ? {} : { assisted }),
+    }),
 
   // --- The placement diagnostic (spec section 2) ---------------------------
   // `start` takes the course only when the caller names one: an empty body makes the

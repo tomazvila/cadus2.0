@@ -49,16 +49,11 @@ type AutoRender = (
   opts: { delimiters: readonly KatexDelimiter[]; throwOnError: boolean },
 ) => void;
 
-/**
- * The auto-render extension, read off the window at call time.
- *
- * `index.html` loads it as a UMD global from the vendored tree, `katex.min.js` first (see
- * `vendor-tags.ts`). A read at module scope captures `undefined` when the bundle evaluates
- * before the deferred vendor scripts, and every problem then shows raw LaTeX forever.
- */
-function autoRender(): AutoRender | null {
-  const fn = (window as unknown as { renderMathInElement?: AutoRender }).renderMathInElement;
-  return typeof fn === 'function' ? fn : null;
+declare global {
+  interface Window {
+    /** The vendored `auto-render.min.js` writes it. Absent until that script ran. */
+    renderMathInElement?: AutoRender;
+  }
 }
 
 /**
@@ -92,8 +87,7 @@ export function resetMathCache(): void {
  * visible. That is the degradation `throwOnError: false` asks for: the learner reads
  * `$\dfrac{1}{2}$` and works on, where a throw gives a blank problem.
  */
-export function renderMathToHtml(text: string): string {
-  const source = text ?? '';
+export function renderMathToHtml(source: string): string {
   const hit = CACHE.get(source);
   if (hit !== undefined) return hit;
 
@@ -103,21 +97,21 @@ export function renderMathToHtml(text: string): string {
   // the model's output becomes a text node before anything parses it as markup.
   host.textContent = source;
 
-  const render = autoRender();
-  if (render) {
-    try {
-      render(host, { delimiters: DELIMITERS, throwOnError: false });
-    } catch {
-      // Put the escaped source back, rather than throw into a React render.
-      host.textContent = source;
-    }
+  // The auto-render extension is read off the window AT CALL TIME. `index.html` loads it as
+  // a UMD global from the vendored tree, `katex.min.js` first (see `vendor-tags.ts`). A read
+  // at module scope captures `undefined` when the bundle evaluates before the deferred vendor
+  // scripts, and every problem then shows raw LaTeX forever. An absent extension throws on
+  // the call, so the one catch covers the absent renderer and the failed render alike.
+  try {
+    window.renderMathInElement!(host, { delimiters: DELIMITERS, throwOnError: false });
+  } catch {
+    // Put the escaped source back, rather than throw into a React render.
+    host.textContent = source;
   }
 
   const html = host.innerHTML;
-  if (CACHE.size >= CACHE_LIMIT) {
-    const oldest = CACHE.keys().next().value;
-    if (oldest !== undefined) CACHE.delete(oldest);
-  }
+  // The cache is never empty here, so the oldest key exists.
+  if (CACHE.size >= CACHE_LIMIT) CACHE.delete(CACHE.keys().next().value!);
   CACHE.set(source, html);
   return html;
 }

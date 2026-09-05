@@ -26,7 +26,7 @@
  * previous payload stays in the hook. A reviewer who does not see the body must not decide on
  * it, so the caller gates Approve and Reject on this value.
  */
-import { useCallback, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { AdminFailureBlock } from './AdminFailure';
 import { GateBlock } from './GateBlock';
 import { alerts, usd } from './cost';
@@ -37,16 +37,16 @@ import { num } from '@/lib/format';
 import type { ApiClient } from '@/api/types';
 
 /** The heading above the rendered instances. */
-export const INSTANCES_TITLE = 'Rendered instances';
+const INSTANCES_TITLE = 'Rendered instances';
 
 /** The line of a kind that renders no instance and carries no note either. */
-export const NO_INSTANCES = 'This document renders no instance.';
+const NO_INSTANCES = 'This document renders no instance.';
 
 export interface ReviewDocumentPaneProps {
   api: ApiClient;
   /** The digest to show. The caller keys this component on it. */
   digest: string;
-  demo?: boolean;
+  demo: boolean;
   onUnauthorized: () => void;
   /**
    * The digest of the body on screen, or null while none is. It MUST be stable — a state
@@ -58,25 +58,25 @@ export interface ReviewDocumentPaneProps {
 export function ReviewDocumentPane({
   api,
   digest,
-  demo = false,
+  demo,
   onUnauthorized,
   onLoaded,
 }: ReviewDocumentPaneProps) {
-  const load = useCallback(() => api.getContent(digest), [api, digest]);
+  // One read per mount: the client is fixed at boot, and the caller keys this pane on the
+  // digest, so a new digest is a new pane.
+  const [load] = useState(() => () => api.getContent(digest));
   const doc = useAdminLoad({ load, demo, onUnauthorized });
 
   // The digest the SERVICE gave the body below, and null on every path that renders no body.
-  // A failed reload keeps the previous payload in the hook — the S11 rule — and renders the
-  // failure block over it, so the failure decides this value before the payload does.
-  const rendered = doc.failure === null ? (doc.data?.digest ?? null) : null;
+  // The pane reads again only from its own failure block, so no payload ever waits behind a
+  // fault here, and the payload alone decides.
+  const rendered = doc.data?.digest ?? null;
   useEffect(() => {
     onLoaded(rendered);
   }, [onLoaded, rendered]);
 
-  if (doc.failure) {
-    return (
-      <AdminFailureBlock failure={doc.failure} message={doc.message} onRetry={doc.reload} />
-    );
+  if (doc.fault) {
+    return <AdminFailureBlock fault={doc.fault} onRetry={doc.reload} />;
   }
   if (!doc.data) return <LoadingBlock label="Loading the document…" />;
 

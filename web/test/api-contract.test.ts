@@ -21,7 +21,7 @@
  */
 import { describe, expect, it } from 'vitest';
 import { ROUTES, SPEC_ROUTES_ABSENT, api, createDemoApi } from '@/api';
-import type { RouteRow } from '@/api';
+import type { ApiClient, RouteRow } from '@/api';
 import routeFixture from '@/api/routes.generated.json';
 
 /** `METHOD path`, the key both tables are compared on. */
@@ -31,9 +31,9 @@ const key = (row: { method: string; path: string }) => `${row.method} ${row.path
 const MOUNTED = [...routeFixture.routes].map(key).sort();
 
 const reachable = ROUTES.filter((row) => row.via !== 'none');
-const clients: Array<[string, Record<string, unknown>]> = [
-  ['the live client', api as unknown as Record<string, unknown>],
-  ['the demo client', createDemoApi() as unknown as Record<string, unknown>],
+const clients: Array<[string, ApiClient]> = [
+  ['the live client', api],
+  ['the demo client', createDemoApi()],
 ];
 
 describe('the route table mirrors create_app', () => {
@@ -94,10 +94,10 @@ describe('the route table mirrors create_app', () => {
 
 describe('every route of the table has a typed method', () => {
   it.each(reachable.map((row): [string, RouteRow] => [key(row), row]))('%s', (_label, row) => {
-    expect(row.client).not.toBeNull();
+    const member = row.client;
+    expect(member).not.toBeNull();
     for (const [name, client] of clients) {
-      const member = String(row.client);
-      expect(typeof client[member], `${name} lacks ${member}`).toBe('function');
+      expect(typeof client[member!], `${name} lacks ${String(member)}`).toBe('function');
     }
   });
 

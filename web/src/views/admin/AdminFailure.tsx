@@ -14,41 +14,43 @@
  * and a button that will fail every time is a worse dead end than no button.
  */
 import { FORBIDDEN_MESSAGE, FORBIDDEN_TITLE, UNAVAILABLE_TITLE } from './adminLoad';
-import type { AdminFailure } from './adminLoad';
+import type { AdminFault } from './adminLoad';
 
 export interface AdminFailureBlockProps {
-  failure: AdminFailure;
-  /** The message the service sent, rendered verbatim under the heading. */
-  message: string;
+  /** The refusal, with the message the service sent; the message renders verbatim. */
+  fault: AdminFault;
   /** Offered on `error` only. */
   onRetry: () => void;
 }
 
-export function AdminFailureBlock({ failure, message, onRetry }: AdminFailureBlockProps) {
-  if (failure === 'forbidden') {
-    return (
-      <div className="empty admin-refused">
-        <h2>{FORBIDDEN_TITLE}</h2>
-        <p className="muted">{FORBIDDEN_MESSAGE}</p>
-      </div>
-    );
+export function AdminFailureBlock({ fault: { failure, message }, onRetry }: AdminFailureBlockProps) {
+  // One block per failure, and no block for anything else: a failure this switch does not
+  // name renders nothing, which a test sees.
+  switch (failure) {
+    case 'forbidden':
+      return (
+        <div className="empty admin-refused">
+          <h2>{FORBIDDEN_TITLE}</h2>
+          <p className="muted">{FORBIDDEN_MESSAGE}</p>
+        </div>
+      );
+    case 'unavailable':
+      return (
+        <div className="empty admin-refused">
+          <h2>{UNAVAILABLE_TITLE}</h2>
+          {/* The service names the deployment fault; repeating it in our own words would
+              describe a configuration this build cannot see. */}
+          <p className="muted">{message}</p>
+        </div>
+      );
+    case 'error':
+      return (
+        <div className="empty">
+          <p>{message}</p>
+          <button type="button" className="btn btn-primary" onClick={onRetry}>
+            Try again
+          </button>
+        </div>
+      );
   }
-  if (failure === 'unavailable') {
-    return (
-      <div className="empty admin-refused">
-        <h2>{UNAVAILABLE_TITLE}</h2>
-        {/* The service names the deployment fault; repeating it in our own words would
-            describe a configuration this build cannot see. */}
-        <p className="muted">{message}</p>
-      </div>
-    );
-  }
-  return (
-    <div className="empty">
-      <p>{message}</p>
-      <button type="button" className="btn btn-primary" onClick={onRetry}>
-        Try again
-      </button>
-    </div>
-  );
 }

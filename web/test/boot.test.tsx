@@ -15,8 +15,9 @@ import { act, fireEvent, screen, waitFor } from '@testing-library/react';
 import type { Root as ReactRoot } from 'react-dom/client';
 import { ApiError, createDemoApi } from '@/api';
 import type { ApiClient, User } from '@/api';
-import { authModeFor, bootWith, readBootParams } from '@/main';
+import { authModeFor, bootWith, readBootParams, stripBootTokens } from '@/main';
 import { resetToasts, toastStore } from '@/app/toast';
+import { setSearch } from './setup';
 
 const USER: User = {
   id: 'u1',
@@ -50,6 +51,18 @@ async function boot(client: ApiClient, pathname: string, search: string): Promis
 
 const messages = () => toastStore.getSnapshot().map((t) => t.message);
 
+/** Type a new password into the reset card, press Set, and wait for the post. */
+async function setNewPassword(resetPassword: ReturnType<typeof vi.fn>, token: string) {
+  fireEvent.change(screen.getByLabelText('New password'), {
+    target: { value: 'hunter2hunter2' },
+  });
+  fireEvent.click(screen.getByRole('button', { name: 'Set new password' }));
+
+  await waitFor(() => {
+    expect(resetPassword).toHaveBeenCalledWith(token, 'hunter2hunter2');
+  });
+}
+
 beforeEach(() => {
   resetToasts();
   // `stripBootTokens` writes the real history, and the write outlives the test.
@@ -76,6 +89,7 @@ describe('the boot tokens', () => {
     // second read raced the verification write in 1.0 and reported the learner unverified.
     expect(me).not.toHaveBeenCalled();
     expect(messages()).toEqual(['Email verified — thanks!']);
+    expect(toastStore.getSnapshot()[0].kind).toBe('info');
     // Verified and signed in: the shell shows the account, not the auth card.
     expect(screen.getByTitle('learner@example.com')).toBeTruthy();
     expect(screen.queryByRole('button', { name: 'Sign in' })).toBeNull();
@@ -95,12 +109,40 @@ describe('the boot tokens', () => {
     // The browser is ON the email link, so the strip is observable rather than vacuous.
     history.replaceState({}, '', '/verify?token=tok-4');
     expect(window.location.search).toBe('?token=tok-4');
+    const replace = vi.spyOn(history, 'replaceState');
 
     await boot(stub({ verifyEmail: async () => ({ user: USER }) }), '/verify', '?token=tok-4');
 
     // `/verify` has no screen of its own, so the spent link lands on the dashboard.
     expect(window.location.pathname).toBe('/');
     expect(window.location.search).toBe('');
+    expect(replace).toHaveBeenCalledTimes(1);
+    expect(replace).toHaveBeenCalledWith({}, '', '/');
+  });
+
+  it('toasts a generic line when the verify call fails for another reason', async () => {
+    const verifyEmail = vi.fn(async () => { throw new Error('offline'); });
+
+    await boot(stub({ verifyEmail, me: SIGNED_OUT }), '/', '?verify=tok-2');
+
+    expect(messages()).toEqual(['Could not verify your email.']);
+    expect(screen.getByRole('button', { name: 'Sign in' })).toBeTruthy();
+  });
+
+  it('calls a link expired on invalid_token alone, not on any service refusal', async () => {
+    const verifyEmail = vi.fn(async () => {
+      throw new ApiError(503, 'unavailable', 'Later.');
+    });
+
+    await boot(stub({ verifyEmail, me: SIGNED_OUT }), '/', '?verify=tok-3');
+
+    expect(messages()).toEqual(['Could not verify your email.']);
+    expect(toastStore.getSnapshot()[0].kind).toBe('error');
+  });
+
+  it('survives a blocked history write when it strips a token', () => {
+    vi.spyOn(history, 'replaceState').mockImplementation(() => { throw new Error('blocked'); });
+    expect(() => stripBootTokens('/verify')).not.toThrow();
   });
 
   it('toasts an expired ?verify= link and still boots to the sign-in card', async () => {
@@ -126,14 +168,7 @@ describe('the boot tokens', () => {
     expect(window.location.pathname).toBe('/reset');
     expect(window.location.search).toBe('');
 
-    fireEvent.change(screen.getByLabelText('New password'), {
-      target: { value: 'hunter2hunter2' },
-    });
-    fireEvent.click(screen.getByRole('button', { name: 'Set new password' }));
-
-    await waitFor(() => {
-      expect(resetPassword).toHaveBeenCalledWith('reset-3', 'hunter2hunter2');
-    });
+    await setNewPassword(resetPassword, 'reset-3');
   });
 
   it('opens the reset card for a learner who still holds a session', async () => {
@@ -152,14 +187,7 @@ describe('the boot tokens', () => {
     // The session is never read on this path, so nothing can outrank the card.
     expect(me).not.toHaveBeenCalled();
 
-    fireEvent.change(screen.getByLabelText('New password'), {
-      target: { value: 'hunter2hunter2' },
-    });
-    fireEvent.click(screen.getByRole('button', { name: 'Set new password' }));
-
-    await waitFor(() => {
-      expect(resetPassword).toHaveBeenCalledWith('reset-9', 'hunter2hunter2');
-    });
+    await setNewPassword(resetPassword, 'reset-9');
     // The card took the token, so the URL no longer carries it.
     expect(window.location.pathname).toBe('/reset');
     expect(window.location.search).toBe('');
@@ -168,13 +196,29 @@ describe('the boot tokens', () => {
   it('spends nothing when the URL carries no token', async () => {
     const verifyEmail = vi.fn(async () => ({ user: USER }));
     const resetPassword = vi.fn(async () => ({ ok: true as const }));
+    const replace = vi.spyOn(history, 'replaceState');
 
     await boot(stub({ verifyEmail, resetPassword, me: SIGNED_OUT }), '/login', '');
 
     expect(verifyEmail).not.toHaveBeenCalled();
     expect(resetPassword).not.toHaveBeenCalled();
+    // Nothing to strip, so the address bar is not touched.
+    expect(replace).not.toHaveBeenCalled();
     expect(messages()).toEqual([]);
     expect(screen.getByText('sign in')).toBeTruthy();
+  });
+});
+
+describe('the entry', () => {
+  it('boots the live page once, against the client the URL names', async () => {
+    // `?demo=1` hands the entry the demo client, so the boot needs no service: the demo
+    // account is signed in and the dashboard is the first screen.
+    setSearch('?demo=1');
+    const { started } = await import('@/index');
+    await act(async () => { root = await started; });
+
+    await waitFor(() => expect(screen.getByText('Continue studying')).toBeTruthy());
+    expect(screen.getByText('DEMO')).toBeTruthy();
   });
 });
 

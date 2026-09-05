@@ -112,6 +112,44 @@ describe('the toast store', () => {
     expect(notices).toBe(1);
   });
 
+  it('fires nothing for an id that no toast carries', () => {
+    const onAction = vi.fn();
+    toast('One.', { label: 'Retry', onAction });
+    fireToastAction(999);
+    expect(onAction).not.toHaveBeenCalled();
+    expect(toasts().length).toBe(1);
+  });
+
+  it('numbers its toasts upward from 1', () => {
+    toast('One.');
+    toast('Two.');
+    expect(toasts().map((t) => t.id)).toEqual([1, 2]);
+  });
+
+  it('arms no timer for a timeout of 0', () => {
+    vi.useFakeTimers();
+    toast('Stays.', { timeout: 0 });
+    expect(vi.getTimerCount()).toBe(0);
+    vi.advanceTimersByTime(60_000);
+    expect(toasts().length).toBe(1);
+  });
+
+  it('dismisses a plain toast through its action slot without a throw', () => {
+    toast('One.');
+    expect(() => { fireToastAction(toasts()[0].id); }).not.toThrow();
+    expect(toasts()).toEqual([]);
+  });
+
+  it('drops every pending timer on reset', () => {
+    vi.useFakeTimers();
+    toast('One.');
+    toast('Two.');
+    expect(vi.getTimerCount()).toBe(2);
+    resetToasts();
+    expect(vi.getTimerCount()).toBe(0);
+    expect(toasts()).toEqual([]);
+  });
+
   it('is a no-op when a dismissed id is dismissed again', () => {
     let notices = 0;
     toast('One.');
@@ -151,6 +189,27 @@ describe('the toast host', () => {
 
     act(() => { retry.click(); });
     expect(onAction).toHaveBeenCalledTimes(1);
+    expect(screen.queryByRole('status')).toBeNull();
+  });
+
+  it('classes each toast by its kind', () => {
+    render(<ToastHost />);
+    act(() => { toast('Saved.', { kind: 'info' }); });
+    expect(document.getElementById('toasts')!.querySelector('[role="status"]')!.className)
+      .toBe('toast toast-info');
+  });
+
+  it('names an unlabelled action Retry', () => {
+    render(<ToastHost />);
+    act(() => { toast('Failed.', { onAction: vi.fn() }); });
+    expect(screen.getByRole('button', { name: 'Retry' })).toBeTruthy();
+  });
+
+  it('renders nothing at all when the live region is missing', () => {
+    // A host that returns null must not throw: the region is not the reason to lose the page.
+    document.getElementById('toasts')!.remove();
+    expect(() => render(<ToastHost />)).not.toThrow();
+    act(() => { toast('Failed.'); });
     expect(screen.queryByRole('status')).toBeNull();
   });
 

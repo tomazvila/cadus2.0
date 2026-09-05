@@ -103,19 +103,14 @@ export function stripBootTokens(pathname: string): void {
  * `/auth/me` after it: that second call is a round trip, and 1.0 recorded it racing the
  * verification write and reporting the just-verified learner as unverified.
  */
-export async function spendVerifyToken(client: ApiClient, token: string): Promise<User | null> {
+async function spendVerifyToken(client: ApiClient, token: string): Promise<User | null> {
   try {
     const res = await client.verifyEmail(token);
     toast('Email verified — thanks!', { kind: 'info' });
     return res.user;
   } catch (e) {
     const expired = e instanceof ApiError && e.code === 'invalid_token';
-    toast(
-      expired
-        ? 'That verification link is invalid or has expired.'
-        : 'Could not verify your email.',
-      { kind: 'error' },
-    );
+    toast(expired ? 'That verification link is invalid or has expired.' : 'Could not verify your email.');
     return null;
   }
 }
@@ -125,8 +120,9 @@ async function currentUser(client: ApiClient): Promise<User | null> {
   try {
     return (await client.me()).user;
   } catch {
-    return null;
+    /* signed out, or the service is away: the auth card is the answer to both */
   }
+  return null;
 }
 
 /**
@@ -163,7 +159,7 @@ export async function bootWith(
         api={client}
         initialUser={user}
         authMode={resetToken ? 'reset' : authModeFor(pathname)}
-        resetToken={resetToken ?? ''}
+        resetToken={resetToken ?? undefined}
         // The seed of the location the router reads (`app/Root.tsx`). Only the two operator
         // routes name a screen (`app/routes.ts`); every other path, `/verify` included,
         // renders the same signed-in branch it rendered before.
@@ -176,10 +172,7 @@ export async function bootWith(
   return root;
 }
 
+/** Boot against the live client and the URL of the page. `index.tsx` calls it once. */
 export function boot(): Promise<ReactRoot> {
   return bootWith(resolveApi(location.search), location.pathname, location.search);
 }
-
-// The guard keeps the module importable by the suite: a test drives `bootWith()` and
-// `readBootParams()` directly, against its own DOM.
-if (import.meta.env.MODE !== 'test') void boot();

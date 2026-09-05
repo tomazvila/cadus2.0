@@ -39,9 +39,9 @@
  * screens sit inside the signed-in branch, so a signed-out visitor to either path is asked
  * to sign in and reaches no admin call at all.
  */
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState, type Dispatch, type SetStateAction } from 'react';
 import { App } from './App';
-import { adminRouteFor } from './routes';
+import { adminRouteFor, type AdminRoute } from './routes';
 import { Auth } from '@/views/Auth';
 import { Dashboard } from '@/views/Dashboard';
 import { Diagnostic } from '@/views/Diagnostic';
@@ -69,10 +69,10 @@ export type View =
   | { name: 'map'; back: View };
 
 /** The dashboard, which is where every exit path ends. */
-export const HOME: View = { name: 'dashboard' };
+const HOME: View = { name: 'dashboard' };
 
 /** The path every learner screen renders on. The two operator paths are `app/routes.ts`. */
-export const HOME_PATH = '/';
+const HOME_PATH = '/';
 
 export interface RootProps {
   api: ApiClient;
@@ -80,8 +80,11 @@ export interface RootProps {
   initialUser: User | null;
   /** Which auth card the URL asked for. */
   authMode?: AuthMode;
-  /** The single-use reset token. It is still in the URL until the reset card takes it. */
-  resetToken?: string;
+  /**
+   * The single-use reset token. It is still in the URL until the reset card takes it.
+   * Absent, or undefined, on every boot that did not come from a reset link.
+   */
+  resetToken?: string | undefined;
   /**
    * The path the page loaded on.
    *
@@ -111,7 +114,7 @@ export function Root({
   api,
   initialUser,
   authMode = 'login',
-  resetToken = '',
+  resetToken,
   pathname = HOME_PATH,
   diag,
   initialView = HOME,
@@ -138,49 +141,58 @@ export function Root({
   }, []);
 
   /**
-   * Move the location and the state together. Nothing else writes `path`.
-   *
-   * The push happens OUTSIDE the state updater on purpose: React invokes an updater twice
-   * under StrictMode, and a `pushState` written there would add two history entries per
-   * navigation, so one Back press would land on the page the operator just left.
+   * The three moves, created ONCE per mount. Each reads state setters alone, and a setter is
+   * stable, so the three hold for the life of the root and every dependency array they land
+   * in holds with them.
    */
-  const navigate = useCallback((next: string) => {
-    if (window.location.pathname !== next) {
-      try {
-        window.history.pushState({}, '', next);
-      } catch {
-        /* a non-browser host, or a blocked history write */
+  const [{ navigate, goHome, onUnauthorized }] = useState(() => {
+    /**
+     * Move the location and the state together. Nothing else writes `path`.
+     *
+     * The push happens OUTSIDE the state updater on purpose: React invokes an updater twice
+     * under StrictMode, and a `pushState` written there would add two history entries per
+     * navigation, so one Back press would land on the page the operator just left.
+     */
+    const navigate = (next: string): void => {
+      if (window.location.pathname !== next) {
+        try {
+          window.history.pushState({}, '', next);
+        } catch {
+          /* a non-browser host, or a blocked history write */
+        }
       }
-    }
-    setPath(next);
-  }, []);
+      setPath(next);
+    };
 
-  /**
-   * The boot screen: the dashboard, on the dashboard's path.
-   *
-   * ONE move, and three callers share it — the topbar brand, sign-out, and the 401. Each of
-   * the three has to drop the screen AND the operator path, or the screen the caller left
-   * comes straight back.
-   */
-  const goHome = useCallback(() => {
-    navigate(HOME_PATH);
-    setView(HOME);
-  }, [navigate]);
+    /**
+     * The boot screen: the dashboard, on the dashboard's path.
+     *
+     * ONE move, and three callers share it — the topbar brand, sign-out, and the 401. Each
+     * of the three has to drop the screen AND the operator path, or the screen the caller
+     * left comes straight back.
+     */
+    const goHome = (): void => {
+      navigate(HOME_PATH);
+      setView(HOME);
+    };
 
-  /**
-   * The session-expired path every screen shares.
-   *
-   * IT RETURNS HOME AS WELL AS DROPPING THE ACCOUNT (M6-review-1, F21). The quiz view holds
-   * the whole `PlanTask`, not a task id. A 401 that dropped the account and kept the screen
-   * left that task in state, so the next sign-in on the same browser re-mounted the quiz of
-   * the account that just left and posted a serve against a task id the new account does not
-   * own. `useCall` raises the toast that says the session expired, so this must not raise a
-   * second one.
-   */
-  const onUnauthorized = useCallback(() => {
-    setUser(null);
-    goHome();
-  }, [goHome]);
+    /**
+     * The session-expired path every screen shares.
+     *
+     * IT RETURNS HOME AS WELL AS DROPPING THE ACCOUNT (M6-review-1, F21). The quiz view
+     * holds the whole `PlanTask`, not a task id. A 401 that dropped the account and kept the
+     * screen left that task in state, so the next sign-in on the same browser re-mounted the
+     * quiz of the account that just left and posted a serve against a task id the new
+     * account does not own. `useCall` raises the toast that says the session expired, so
+     * this must not raise a second one.
+     */
+    const onUnauthorized = (): void => {
+      setUser(null);
+      goHome();
+    };
+
+    return { navigate, goHome, onUnauthorized };
+  });
 
   /**
    * Drop the session locally whatever the service says.
@@ -207,7 +219,7 @@ export function Root({
   // The reset card is on. Boot holds the token in the URL until this render, and drops it
   // now (M6-review-1, F22). A second call writes the same URL, so a StrictMode remount and
   // a re-render are both harmless.
-  const resetCardOn = !user && authMode === 'reset' && resetToken !== '';
+  const resetCardOn = !user && authMode === 'reset' && resetToken !== undefined;
   useEffect(() => {
     if (resetCardOn) onResetTokenTaken?.();
   }, [resetCardOn, onResetTokenTaken]);
@@ -227,59 +239,82 @@ export function Root({
       }}
       onLogout={() => void logout()}
     >
-      {!user ? (
-        <Auth api={api} mode={authMode} token={resetToken} onSignedIn={setUser} />
-      ) : route === 'ops' ? (
-        <OperatorScreen api={api} demo={api.demo} onUnauthorized={onUnauthorized} />
-      ) : route === 'review' ? (
-        <ReviewScreen api={api} demo={api.demo} onUnauthorized={onUnauthorized} />
-      ) : view.name === 'session' ? (
-        <Session
+      {user ? (
+        <Screen
           api={api}
-          demo={api.demo}
+          route={route}
+          view={view}
+          placement={placement}
           onUnauthorized={onUnauthorized}
-          onExit={goHome}
-          onQuiz={(task) => { setView({ name: 'quiz', task, fromSession: true }); }}
-          onDiagnostic={() => { setView({ name: 'diagnostic' }); }}
-        />
-      ) : view.name === 'quiz' ? (
-        <Quiz
-          api={api}
-          task={view.task}
-          demo={api.demo}
-          fromSession={view.fromSession}
-          onUnauthorized={onUnauthorized}
-          // Back where the quiz came from. The session is still open behind it and its
-          // remaining tasks are re-served; a quiz opened from the dashboard has none.
-          onDone={() => { setView(view.fromSession ? { name: 'session' } : HOME); }}
-        />
-      ) : view.name === 'diagnostic' ? (
-        <Diagnostic
-          diag={placement}
-          demo={api.demo}
-          onUnauthorized={onUnauthorized}
-          onExit={goHome}
-        />
-      ) : view.name === 'map' ? (
-        <CurriculumMap
-          api={api}
-          demo={api.demo}
-          onUnauthorized={onUnauthorized}
-          onExit={() => { setView(view.back); }}
+          goHome={goHome}
+          setView={setView}
         />
       ) : (
-        <Dashboard
-          api={api}
-          demo={api.demo}
-          onUnauthorized={onUnauthorized}
-          onSession={() => { setView({ name: 'session' }); }}
-          onQuiz={(task) => { setView({ name: 'quiz', task, fromSession: false }); }}
-          onDiagnostic={() => { setView({ name: 'diagnostic' }); }}
-          onMap={() => { setView({ name: 'map', back: HOME }); }}
-        />
+        <Auth api={api} mode={authMode} token={resetToken} onSignedIn={setUser} />
       )}
     </App>
   );
+}
+
+interface ScreenProps {
+  api: ApiClient;
+  /** The operator screen the location names, or null on every learner path. */
+  route: AdminRoute | null;
+  view: View;
+  placement: DiagnosticApi;
+  onUnauthorized: () => void;
+  goHome: () => void;
+  setView: Dispatch<SetStateAction<View>>;
+}
+
+/**
+ * The signed-in branch: the operator paths first, then the view name.
+ *
+ * The map gives back the screen it was opened over, and the quiz gives back the session
+ * it came from: the session is still open behind it and its remaining tasks are re-served,
+ * while a quiz opened from the dashboard has none.
+ */
+function Screen({ api, route, view, placement, onUnauthorized, goHome, setView }: ScreenProps) {
+  const common = { api, demo: api.demo, onUnauthorized };
+  const openDiagnostic = () => { setView({ name: 'diagnostic' }); };
+
+  if (route === 'ops') return <OperatorScreen {...common} />;
+  if (route === 'review') return <ReviewScreen {...common} />;
+
+  switch (view.name) {
+    case 'session':
+      return (
+        <Session
+          {...common}
+          onExit={goHome}
+          onQuiz={(task) => { setView({ name: 'quiz', task, fromSession: true }); }}
+          onDiagnostic={openDiagnostic}
+        />
+      );
+    case 'quiz':
+      return (
+        <Quiz
+          {...common}
+          task={view.task}
+          fromSession={view.fromSession}
+          onDone={() => { setView(view.fromSession ? { name: 'session' } : HOME); }}
+        />
+      );
+    case 'diagnostic':
+      return <Diagnostic diag={placement} demo={api.demo} onUnauthorized={onUnauthorized} onExit={goHome} />;
+    case 'map':
+      return <CurriculumMap {...common} onExit={() => { setView(view.back); }} />;
+    default:
+      return (
+        <Dashboard
+          {...common}
+          onSession={() => { setView({ name: 'session' }); }}
+          onQuiz={(task) => { setView({ name: 'quiz', task, fromSession: false }); }}
+          onDiagnostic={openDiagnostic}
+          onMap={() => { setView({ name: 'map', back: HOME }); }}
+        />
+      );
+  }
 }
 
 /**

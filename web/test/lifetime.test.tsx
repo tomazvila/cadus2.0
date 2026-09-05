@@ -103,6 +103,42 @@ describe('createLifetime', () => {
     expect(id).not.toBe(0);
   });
 
+  it('clearTimer() stops a timeout and an interval alike', () => {
+    vi.useFakeTimers();
+    const life = createLifetime();
+    const fired: string[] = [];
+    const t = life.setTimeout(() => fired.push('t'), 10);
+    const i = life.setInterval(() => fired.push('i'), 10);
+    expect(life.pending()).toBe(2);
+
+    life.clearTimer(t);
+    life.clearTimer(i);
+    expect(life.pending()).toBe(0);
+    vi.advanceTimersByTime(100);
+    expect(fired).toEqual([]);
+    expect(vi.getTimerCount()).toBe(0);
+  });
+
+  it('forgets a timeout once it fired, and every timer once bumped or ended', () => {
+    vi.useFakeTimers();
+    const life = createLifetime();
+    life.setTimeout(() => {}, 10);
+    vi.advanceTimersByTime(10);
+    expect(life.pending()).toBe(0);
+
+    life.setTimeout(() => {}, 10);
+    life.setInterval(() => {}, 10);
+    life.bump();
+    expect(life.pending()).toBe(0);
+    expect(vi.getTimerCount()).toBe(0);
+
+    life.setTimeout(() => {}, 10);
+    life.setInterval(() => {}, 10);
+    life.end();
+    expect(life.pending()).toBe(0);
+    expect(vi.getTimerCount()).toBe(0);
+  });
+
   it('is a pure allocation, so the discarded StrictMode instance leaks no timer', () => {
     // React calls a useState initializer TWICE in StrictMode development and throws the
     // second instance away. That is safe only while the factory arms nothing.

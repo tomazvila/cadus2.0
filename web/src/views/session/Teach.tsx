@@ -20,18 +20,19 @@ export interface TeachProps {
 
 export function Teach({ task, instruction, onContinue }: TeachProps) {
   const buttonRef = useRef<HTMLButtonElement>(null);
-  const topic = task.topic ?? { id: '', name: null, module: '' };
+  const { topic } = task;
   const example = instruction.worked_example;
 
-  useEffect(() => { buttonRef.current?.focus(); }, []);
+  // The button is on screen for the life of this effect, so the ref names it.
+  useEffect(() => { buttonRef.current!.focus(); }, []);
 
   return (
     <>
       <div className="task-header">
         <div className="task-meta">
           <Chip className="chip-lesson">lesson</Chip>
-          <span className="topic-name">{topic.name || topic.id || 'Lesson'}</span>
-          {topic.module ? <span className="topic-module">{topic.module}</span> : null}
+          <span className="topic-name">{topic?.name || topic?.id || 'Lesson'}</span>
+          {topic?.module ? <span className="topic-module">{topic.module}</span> : null}
         </div>
         <div className="task-right">
           <span className="teach-badge">Worked example</span>
@@ -42,13 +43,13 @@ export function Teach({ task, instruction, onContinue }: TeachProps) {
         {/* NOT `.problem-text`: the concept is prose, and borrowing the problem class made
             a 1.0 test assert a problem card against a lesson that never reached one. */}
         <div className="teach-concept">
-          <MathBlock className="teach-concept-text">{String(instruction.concept ?? '')}</MathBlock>
+          <MathBlock className="teach-concept-text">{instruction.concept}</MathBlock>
         </div>
         <div className="teach-example">
           <div className="teach-label">Example</div>
-          <MathBlock className="teach-problem">{String(example?.problem ?? '')}</MathBlock>
+          <MathBlock className="teach-problem">{example.problem}</MathBlock>
           <div className="teach-label">Solution</div>
-          <MathBlock className="teach-steps">{String(example?.steps ?? '')}</MathBlock>
+          <MathBlock className="teach-steps">{example.steps}</MathBlock>
         </div>
         <button ref={buttonRef} type="button" className="btn btn-primary" onClick={onContinue}>
           I&apos;ve got it — practice ▸
