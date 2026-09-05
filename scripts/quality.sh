@@ -31,11 +31,14 @@ export PATH
 # store only.
 if [ -z "${LD_LIBRARY_PATH:-}" ]; then
     libdir="$(find /nix/store -maxdepth 3 -name 'libstdc++.so.6' 2>/dev/null | head -1)"
-    if [ -n "$libdir" ]; then export LD_LIBRARY_PATH="$(dirname "$libdir")"; fi
+    if [ -n "$libdir" ]; then
+        LD_LIBRARY_PATH="$(dirname "$libdir")"
+        export LD_LIBRARY_PATH
+    fi
 fi
 
 repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-cd "$repo_root"
+cd "$repo_root" || exit 2
 out="$repo_root/target/quality"
 mkdir -p "$out"
 run_rust=1
@@ -90,14 +93,14 @@ if [ "$run_rust" = 1 ]; then
 fi
 
 if [ "$run_web" = 1 ]; then
-    cd "$repo_root/web"
+    cd "$repo_root/web" || exit 2
     check web-lint npm run --silent lint
     check web-types npm run --silent types
     check web-halstead bash -c 'node scripts/halstead.mjs $(git ls-files . | grep -E "\.(ts|tsx)$" | grep -v "\.d\.ts$")'
     check web-dead npx knip --no-progress
     check web-clones ../web/node_modules/.bin/jscpd --config ../.jscpd.json src test scripts e2e
     check web-coverage bash -c "npx vitest run --coverage --coverage.provider=v8 --coverage.reporter=json --coverage.reportsDirectory='$out/webcov' --coverage.include='src/**' >/dev/null 2>&1; node scripts/web-coverage.mjs '$out/webcov/coverage-final.json'"
-    cd "$repo_root"
+    cd "$repo_root" || exit 2
 fi
 
 if [ "$failed" = 1 ]; then
