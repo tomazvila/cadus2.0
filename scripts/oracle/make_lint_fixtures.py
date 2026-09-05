@@ -92,16 +92,46 @@ def _one_course(
     return courses, units
 
 
+# --- the multi-course shorthands of this file ------------------------------ #
+
+
+def _edge(tid: str, weight: float = 0.5) -> dict[str, Any]:
+    """One prerequisite edge."""
+    return {"id": tid, "weight": weight}
+
+
+def _course(
+    cid: str,
+    order: int,
+    *,
+    name: str | None = None,
+    floor: list[str] | None = None,
+    floor_course: str | None = None,
+) -> dict[str, Any]:
+    """One catalog entry. The name is the upper-case id unless given."""
+    course: dict[str, Any] = {"id": cid, "name": name or cid.upper(), "order": order}
+    if floor is not None:
+        course["mastery_floor"] = floor
+    if floor_course is not None:
+        course["mastery_floor_course"] = floor_course
+    return course
+
+
+def _unit(unit: str, course: str, module: str, topics: list[dict[str, Any]]) -> dict[str, Any]:
+    """One unit file body."""
+    return {"unit": unit, "course": course, "module": module, "topics": topics}
+
+
+def _two_courses(floor: list[str], second_floor: list[str] | None = None) -> list[dict[str, Any]]:
+    """The two-course catalog `c1`, `c2`; `c2` declares a floor only when given."""
+    return [_course("c1", 1, floor=floor), _course("c2", 2, floor=second_floor)]
+
+
 # --- one fixture per lint code -------------------------------------------- #
 
 
-def build(base: Path) -> None:
-    # Start from an empty base, so a renamed course directory leaves no stale file
-    # behind. Every tree below is written from scratch.
-    if base.exists():
-        shutil.rmtree(base)
-    base.mkdir(parents=True)
-
+def build_single_code_trees(base: Path) -> None:
+    """Trees 1 to 16: one lint code each."""
     # 1. yaml — an unreadable unit file. Its course keeps no topic.
     root = _write(base / "yaml", *_one_course([], floor=[]))
     (root / "c" / "00.yaml").write_text('unit: "u\ncourse: c\n', encoding="utf-8")
@@ -112,28 +142,22 @@ def build(base: Path) -> None:
     # 3. weight_out_of_range — a prerequisite weight above 1.0.
     _write(
         base / "weight_out_of_range",
-        *_one_course([_topic("a"), _topic("b", prereqs=[{"id": "a", "weight": 1.5}])], floor=[]),
+        *_one_course([_topic("a"), _topic("b", prereqs=[_edge("a", 1.5)])], floor=[]),
     )
 
     # 4. missing_course_dir — a declared course with no directory (advisory).
     _write(
         base / "missing_course_dir",
-        [
-            {"id": "c", "name": "C", "order": 1, "mastery_floor": ["a"]},
-            {"id": "ghostcourse", "name": "Ghost", "order": 2},
-        ],
-        {"c/00.yaml": {"unit": "u", "course": "c", "module": "M", "topics": [_topic("a")]}},
+        [_course("c", 1, floor=["a"]), _course("ghostcourse", 2, name="Ghost")],
+        {"c/00.yaml": _unit("u", "c", "M", [_topic("a")])},
     )
 
     # 5. empty_course — a directory with no unit file (advisory). `.gitkeep` keeps
     #    the empty directory in git and stays invisible to the `*.yaml` glob.
     root = _write(
         base / "empty_course",
-        [
-            {"id": "c", "name": "C", "order": 1, "mastery_floor": ["a"]},
-            {"id": "hollowcourse", "name": "Hollow", "order": 2},
-        ],
-        {"c/00.yaml": {"unit": "u", "course": "c", "module": "M", "topics": [_topic("a")]}},
+        [_course("c", 1, floor=["a"]), _course("hollowcourse", 2, name="Hollow")],
+        {"c/00.yaml": _unit("u", "c", "M", [_topic("a")])},
     )
     (root / "hollowcourse").mkdir(exist_ok=True)
     (root / "hollowcourse" / ".gitkeep").write_text("", encoding="utf-8")
@@ -146,23 +170,10 @@ def build(base: Path) -> None:
     #    skip reports `unreachable_from_floor` here.
     _write(
         base / "duplicate_topic_id",
-        [
-            {"id": "c1", "name": "C1", "order": 1, "mastery_floor": ["a"]},
-            {"id": "c2", "name": "C2", "order": 2},
-        ],
+        _two_courses(["a"]),
         {
-            "c1/00.yaml": {
-                "unit": "u1",
-                "course": "c1",
-                "module": "M1",
-                "topics": [_topic("a"), _topic("a")],
-            },
-            "c2/00.yaml": {
-                "unit": "u2",
-                "course": "c2",
-                "module": "M2",
-                "topics": [_topic("b", prereqs=[{"id": "a", "weight": 0.5}])],
-            },
+            "c1/00.yaml": _unit("u1", "c1", "M1", [_topic("a"), _topic("a")]),
+            "c2/00.yaml": _unit("u2", "c2", "M2", [_topic("b", prereqs=[_edge("a")])]),
         },
     )
 
@@ -174,8 +185,8 @@ def build(base: Path) -> None:
                 _topic("a"),
                 _topic(
                     "b",
-                    prereqs=[{"id": "ghost", "weight": 0.5}],
-                    extra=[{"id": "phantom", "weight": 0.3}],
+                    prereqs=[_edge("ghost")],
+                    extra=[_edge("phantom", 0.3)],
                     kps=[_kp(key_prereqs=["nowhere"])],
                 ),
             ],
@@ -188,9 +199,9 @@ def build(base: Path) -> None:
         base / "cycle",
         *_one_course(
             [
-                _topic("a", prereqs=[{"id": "b", "weight": 0.5}]),
-                _topic("b", prereqs=[{"id": "c", "weight": 0.5}]),
-                _topic("c", prereqs=[{"id": "a", "weight": 0.5}]),
+                _topic("a", prereqs=[_edge("b")]),
+                _topic("b", prereqs=[_edge("c")]),
+                _topic("c", prereqs=[_edge("a")]),
             ],
             floor=[],
         ),
@@ -214,8 +225,8 @@ def build(base: Path) -> None:
         *_one_course(
             [
                 _topic("a"),
-                _topic("c", prereqs=[{"id": "a", "weight": 0.5}]),
-                _topic("b", prereqs=[{"id": "a", "weight": 0.5}], kps=[_kp(key_prereqs=["c"])]),
+                _topic("c", prereqs=[_edge("a")]),
+                _topic("b", prereqs=[_edge("a")], kps=[_kp(key_prereqs=["c"])]),
             ],
             floor=["a"],
         ),
@@ -228,8 +239,8 @@ def build(base: Path) -> None:
         *_one_course(
             [
                 _topic("base", core=False),
-                _topic("top", prereqs=[{"id": "base", "weight": 0.5}]),
-                _topic("top2", prereqs=[{"id": "base", "weight": 0.5}]),
+                _topic("top", prereqs=[_edge("base")]),
+                _topic("top2", prereqs=[_edge("base")]),
             ],
             floor=["base"],
         ),
@@ -238,18 +249,10 @@ def build(base: Path) -> None:
     # 14. module_inconsistent — one module name over two courses.
     _write(
         base / "module_inconsistent",
-        [
-            {"id": "c1", "name": "C1", "order": 1, "mastery_floor": ["a"]},
-            {"id": "c2", "name": "C2", "order": 2, "mastery_floor": ["a"]},
-        ],
+        _two_courses(["a"], ["a"]),
         {
-            "c1/00.yaml": {"unit": "u1", "course": "c1", "module": "Shared", "topics": [_topic("a")]},
-            "c2/00.yaml": {
-                "unit": "u2",
-                "course": "c2",
-                "module": "Shared",
-                "topics": [_topic("b", prereqs=[{"id": "a", "weight": 0.5}])],
-            },
+            "c1/00.yaml": _unit("u1", "c1", "Shared", [_topic("a")]),
+            "c2/00.yaml": _unit("u2", "c2", "Shared", [_topic("b", prereqs=[_edge("a")])]),
         },
     )
 
@@ -262,47 +265,31 @@ def build(base: Path) -> None:
     # 15. mastery_floor_ambiguous — a course with both floor forms.
     _write(
         base / "mastery_floor_ambiguous",
-        [
-            {"id": "c1", "name": "C1", "order": 1},
-            {
-                "id": "c2",
-                "name": "C2",
-                "order": 2,
-                "mastery_floor": ["z"],
-                "mastery_floor_course": "c1",
-            },
-        ],
+        [_course("c1", 1), _course("c2", 2, floor=["z"], floor_course="c1")],
         {
-            "c1/00.yaml": {"unit": "u1", "course": "c1", "module": "M1", "topics": [_topic("a")]},
-            "c2/00.yaml": {
-                "unit": "u2",
-                "course": "c2",
-                "module": "M2",
-                "topics": [_topic("z"), _topic("b", prereqs=[{"id": "a", "weight": 0.5}])],
-            },
+            "c1/00.yaml": _unit("u1", "c1", "M1", [_topic("a")]),
+            "c2/00.yaml": _unit(
+                "u2", "c2", "M2", [_topic("z"), _topic("b", prereqs=[_edge("a")])]
+            ),
         },
     )
 
     # 16. unreachable_from_floor — c2 declares no floor and holds no root.
     _write(
         base / "unreachable_from_floor",
-        [
-            {"id": "c1", "name": "C1", "order": 1, "mastery_floor": ["a"]},
-            {"id": "c2", "name": "C2", "order": 2},
-        ],
+        _two_courses(["a"]),
         {
-            "c1/00.yaml": {"unit": "u1", "course": "c1", "module": "M1", "topics": [_topic("a")]},
-            "c2/00.yaml": {
-                "unit": "u2",
-                "course": "c2",
-                "module": "M2",
-                "topics": [_topic("b", prereqs=[{"id": "a", "weight": 0.5}])],
-            },
+            "c1/00.yaml": _unit("u1", "c1", "M1", [_topic("a")]),
+            "c2/00.yaml": _unit("u2", "c2", "M2", [_topic("b", prereqs=[_edge("a")])]),
         },
     )
 
-    # --- multi-rule trees: authored order, and many codes in one tree ------ #
 
+# --- multi-rule trees: authored order, and many codes in one tree ------ #
+
+
+def build_multi_rule_trees(base: Path) -> None:
+    """Trees 17 to 21: an order, a tie-break, or many codes in one tree."""
     # 17. order_not_id_order — the authored topic order is NOT the id order, so
     #     every `sorted()` site of the lint changes the output. c1 authors
     #     `z`, `m`, `y`, `a`; c2 authors `x`, `b`. `z` and `m` are non-core
@@ -313,47 +300,28 @@ def build(base: Path) -> None:
     #     the two `unreachable_from_floor` findings the other way.
     _write(
         base / "order_not_id_order",
-        [
-            {"id": "c1", "name": "C1", "order": 1, "mastery_floor": ["z"]},
-            {"id": "c2", "name": "C2", "order": 2},
-        ],
+        _two_courses(["z"]),
         {
-            "c1/00.yaml": {
-                "unit": "u1",
-                "course": "c1",
-                "module": "M1",
-                "topics": [
+            "c1/00.yaml": _unit(
+                "u1",
+                "c1",
+                "M1",
+                [
                     _topic("z", core=False),
                     _topic("m", core=False),
-                    _topic(
-                        "y",
-                        prereqs=[
-                            {"id": "z", "weight": 0.5},
-                            {"id": "m", "weight": 0.5},
-                        ],
-                    ),
-                    _topic(
-                        "a",
-                        prereqs=[
-                            {"id": "z", "weight": 0.5},
-                            {"id": "m", "weight": 0.5},
-                        ],
-                    ),
+                    _topic("y", prereqs=[_edge("z"), _edge("m")]),
+                    _topic("a", prereqs=[_edge("z"), _edge("m")]),
                 ],
-            },
-            "c2/00.yaml": {
-                "unit": "u2",
-                "course": "c2",
-                "module": "M2",
-                "topics": [
-                    _topic("x", prereqs=[{"id": "m", "weight": 0.5}]),
-                    _topic(
-                        "b",
-                        prereqs=[{"id": "m", "weight": 0.5}],
-                        kps=[_kp(key_prereqs=["x"])],
-                    ),
+            ),
+            "c2/00.yaml": _unit(
+                "u2",
+                "c2",
+                "M2",
+                [
+                    _topic("x", prereqs=[_edge("m")]),
+                    _topic("b", prereqs=[_edge("m")], kps=[_kp(key_prereqs=["x"])]),
                 ],
-            },
+            ),
         },
     )
 
@@ -366,58 +334,43 @@ def build(base: Path) -> None:
     _write(
         base / "many_codes",
         [
-            {"id": "c1", "name": "C1", "order": 1, "mastery_floor": ["nbase"]},
-            {
-                "id": "c2",
-                "name": "C2",
-                "order": 2,
-                "mastery_floor": ["nbase"],
-                "mastery_floor_course": "c1",
-            },
-            {"id": "c3", "name": "C3", "order": 3},
+            _course("c1", 1, floor=["nbase"]),
+            _course("c2", 2, floor=["nbase"], floor_course="c1"),
+            _course("c3", 3),
         ],
         {
-            "c1/00.yaml": {
-                "unit": "u1",
-                "course": "c1",
-                "module": "Shared",
-                "topics": [
+            "c1/00.yaml": _unit(
+                "u1",
+                "c1",
+                "Shared",
+                [
                     _topic("nbase", core=False),
-                    _topic("zcore", prereqs=[{"id": "nbase", "weight": 0.5}], kps=[]),
-                    _topic(
-                        "acore",
-                        prereqs=[{"id": "nbase", "weight": 0.5}],
-                        kps=[_kp(exemplars=0)],
-                        diag=False,
-                    ),
+                    _topic("zcore", prereqs=[_edge("nbase")], kps=[]),
+                    _topic("acore", prereqs=[_edge("nbase")], kps=[_kp(exemplars=0)], diag=False),
                 ],
-            },
-            "c2/00.yaml": {
-                "unit": "u2",
-                "course": "c2",
-                "module": "Shared",
-                "topics": [
+            ),
+            "c2/00.yaml": _unit(
+                "u2",
+                "c2",
+                "Shared",
+                [
                     _topic(
                         "mid",
-                        prereqs=[{"id": "ghost", "weight": 0.5}],
-                        extra=[{"id": "phantom", "weight": 0.3}],
+                        prereqs=[_edge("ghost")],
+                        extra=[_edge("phantom", 0.3)],
                         kps=[_kp(key_prereqs=["nowhere"])],
                     )
                 ],
-            },
-            "c3/00.yaml": {
-                "unit": "u3",
-                "course": "c3",
-                "module": "   ",
-                "topics": [
-                    _topic(
-                        "zun",
-                        prereqs=[{"id": "acore", "weight": 0.5}],
-                        kps=[_kp(key_prereqs=["zcore"])],
-                    ),
-                    _topic("aun", prereqs=[{"id": "acore", "weight": 0.5}]),
+            ),
+            "c3/00.yaml": _unit(
+                "u3",
+                "c3",
+                "   ",
+                [
+                    _topic("zun", prereqs=[_edge("acore")], kps=[_kp(key_prereqs=["zcore"])]),
+                    _topic("aun", prereqs=[_edge("acore")]),
                 ],
-            },
+            ),
         },
     )
 
@@ -428,42 +381,25 @@ def build(base: Path) -> None:
     #     order of the rule blocks visible around the two skipped rules.
     _write(
         base / "cycle_duplicate_missing_ref",
-        [
-            {"id": "c1", "name": "C1", "order": 1, "mastery_floor": ["zdup"]},
-            {"id": "c2", "name": "C2", "order": 2},
-        ],
+        _two_courses(["zdup"]),
         {
-            "c1/00.yaml": {
-                "unit": "u1",
-                "course": "c1",
-                "module": "Shared",
-                "topics": [
+            "c1/00.yaml": _unit(
+                "u1",
+                "c1",
+                "Shared",
+                [
                     _topic("zdup"),
                     _topic("zdup"),
-                    _topic("cyc1", prereqs=[{"id": "cyc2", "weight": 0.5}]),
-                    _topic("cyc2", prereqs=[{"id": "cyc1", "weight": 0.5}]),
-                    _topic("mref", prereqs=[{"id": "ghost", "weight": 0.5}]),
+                    _topic("cyc1", prereqs=[_edge("cyc2")]),
+                    _topic("cyc2", prereqs=[_edge("cyc1")]),
+                    _topic("mref", prereqs=[_edge("ghost")]),
                     _topic("nbase", core=False),
-                    _topic("zkid", prereqs=[{"id": "nbase", "weight": 0.5}], kps=[]),
-                    _topic(
-                        "akid",
-                        prereqs=[{"id": "nbase", "weight": 0.5}],
-                        kps=[_kp(exemplars=0)],
-                        diag=False,
-                    ),
-                    _topic(
-                        "kpx",
-                        prereqs=[{"id": "zdup", "weight": 0.5}],
-                        kps=[_kp(key_prereqs=["mref"])],
-                    ),
+                    _topic("zkid", prereqs=[_edge("nbase")], kps=[]),
+                    _topic("akid", prereqs=[_edge("nbase")], kps=[_kp(exemplars=0)], diag=False),
+                    _topic("kpx", prereqs=[_edge("zdup")], kps=[_kp(key_prereqs=["mref"])]),
                 ],
-            },
-            "c2/00.yaml": {
-                "unit": "u2",
-                "course": "c2",
-                "module": "Shared",
-                "topics": [_topic("orphan", prereqs=[{"id": "zdup", "weight": 0.5}])],
-            },
+            ),
+            "c2/00.yaml": _unit("u2", "c2", "Shared", [_topic("orphan", prereqs=[_edge("zdup")])]),
         },
     )
 
@@ -473,25 +409,12 @@ def build(base: Path) -> None:
     #     module cannot show that order: a one-element walk has no order.
     _write(
         base / "module_spans_two_modules",
-        [
-            {"id": "c1", "name": "C1", "order": 1, "mastery_floor": ["a"]},
-            {"id": "c2", "name": "C2", "order": 2, "mastery_floor": ["c"]},
-        ],
+        _two_courses(["a"], ["c"]),
         {
-            "c1/00.yaml": {"unit": "u1", "course": "c1", "module": "Zeta", "topics": [_topic("a")]},
-            "c1/01.yaml": {
-                "unit": "u2",
-                "course": "c1",
-                "module": "Alpha",
-                "topics": [_topic("b", prereqs=[{"id": "a", "weight": 0.5}])],
-            },
-            "c2/00.yaml": {"unit": "u3", "course": "c2", "module": "Zeta", "topics": [_topic("c")]},
-            "c2/01.yaml": {
-                "unit": "u4",
-                "course": "c2",
-                "module": "Alpha",
-                "topics": [_topic("d", prereqs=[{"id": "c", "weight": 0.5}])],
-            },
+            "c1/00.yaml": _unit("u1", "c1", "Zeta", [_topic("a")]),
+            "c1/01.yaml": _unit("u2", "c1", "Alpha", [_topic("b", prereqs=[_edge("a")])]),
+            "c2/00.yaml": _unit("u3", "c2", "Zeta", [_topic("c")]),
+            "c2/01.yaml": _unit("u4", "c2", "Alpha", [_topic("d", prereqs=[_edge("c")])]),
         },
     )
 
@@ -504,25 +427,31 @@ def build(base: Path) -> None:
     root = _write(
         base / "course_id_repeated",
         [
-            {"id": "c1", "name": "C1", "order": 1},
-            {"id": "mid", "name": "Mid", "order": 2},
-            {"id": "c1", "name": "C1 again", "order": 3},
-            {"id": "c2", "name": "C2", "order": 4, "mastery_floor_course": "c1"},
+            _course("c1", 1),
+            _course("mid", 2, name="Mid"),
+            _course("c1", 3, name="C1 again"),
+            _course("c2", 4, floor_course="c1"),
         ],
         {
-            "mid/00.yaml": {"unit": "u1", "course": "mid", "module": "M1", "topics": [_topic("mm")]},
-            "c2/00.yaml": {
-                "unit": "u2",
-                "course": "c2",
-                "module": "M2",
-                "topics": [_topic("b", prereqs=[{"id": "mm", "weight": 0.5}])],
-            },
+            "mid/00.yaml": _unit("u1", "mid", "M1", [_topic("mm")]),
+            "c2/00.yaml": _unit("u2", "c2", "M2", [_topic("b", prereqs=[_edge("mm")])]),
         },
     )
     # `c1/` holds no unit file, so the tree reports `empty_course` once per
     # catalog entry. `.gitkeep` keeps the empty directory in git.
     (root / "c1").mkdir(exist_ok=True)
     (root / "c1" / ".gitkeep").write_text("", encoding="utf-8")
+
+
+def build(base: Path) -> None:
+    # Start from an empty base, so a renamed course directory leaves no stale file
+    # behind. Every tree below is written from scratch.
+    if base.exists():
+        shutil.rmtree(base)
+    base.mkdir(parents=True)
+
+    build_single_code_trees(base)
+    build_multi_rule_trees(base)
 
     # `empty` — no courses.yaml at all.
     root = base / "empty"

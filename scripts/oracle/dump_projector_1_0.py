@@ -26,43 +26,29 @@ Usage:
 from __future__ import annotations
 
 import argparse
-import hashlib
 import json
-import os
 import sys
-from datetime import UTC, datetime
+
+from _common import (
+    add_code_base_arguments,
+    add_goal_argument,
+    add_now_argument,
+    load_1_0,
+    parity_blob,
+    parse_now,
+    point_at_code_base,
+    sha256_of,
+)
 
 
-def canonical(obj: object) -> str:
-    """Canonical JSON: sorted keys, compact separators, UTF-8, no NaN."""
-    return json.dumps(
-        obj, sort_keys=True, separators=(",", ":"), ensure_ascii=False, allow_nan=False
-    )
+class StreamError(Exception):
+    """A line of the stream that 1.0 refuses, with its line number."""
 
 
-def main() -> int:
-    ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("stream", help="path to the JSONL event stream")
-    ap.add_argument("--curriculum", default="/home/deploy/dev/cadus2.0/curriculum")
-    ap.add_argument("--config", default="/home/deploy/dev/cadus/config.yaml")
-    ap.add_argument("--now", default="2000-01-01T00:00:00+00:00")
-    ap.add_argument("--tz", default=None)
-    ap.add_argument("--goal", type=int, default=40)
-    ap.add_argument("--keep-built-from-ts", action="store_true")
-    args = ap.parse_args()
-
-    os.environ["CADUS_CURRICULUM"] = args.curriculum
-    os.environ["CADUS_CONFIG"] = args.config
-
-    from cadus.events import validate_event
-    from cadus.loader import load_config, load_graph
-    from cadus.projector import PROJECTOR_VERSION, config_hash, project
-
-    cfg = load_config()
-    graph = load_graph()
-
+def read_stream(path: str, validate_event) -> list:
+    """The validated events of the stream. Raise `StreamError` on a bad line."""
     events = []
-    with open(args.stream, encoding="utf-8") as handle:
+    with open(path, encoding="utf-8") as handle:
         for lineno, line in enumerate(handle, 1):
             line = line.strip()
             if not line:
@@ -70,29 +56,44 @@ def main() -> int:
             try:
                 events.append(validate_event(json.loads(line)))
             except Exception as exc:  # noqa: BLE001 - surface the line number
-                print(f"{args.stream}:{lineno}: {exc}", file=sys.stderr)
-                return 2
+                raise StreamError(f"{path}:{lineno}: {exc}") from exc
+    return events
 
-    now = datetime.fromisoformat(args.now)
-    if now.tzinfo is None:
-        now = now.replace(tzinfo=UTC)
 
+def main() -> int:
+    ap = argparse.ArgumentParser(description=__doc__)
+    ap.add_argument("stream", help="path to the JSONL event stream")
+    add_code_base_arguments(ap)
+    add_now_argument(ap)
+    ap.add_argument("--tz", default=None)
+    add_goal_argument(ap)
+    ap.add_argument("--keep-built-from-ts", action="store_true")
+    args = ap.parse_args()
+    point_at_code_base(args)
+
+    from cadus.events import validate_event
+    from cadus.projector import PROJECTOR_VERSION, config_hash, project
+
+    cfg, graph = load_1_0()
+
+    try:
+        events = read_stream(args.stream, validate_event)
+    except StreamError as exc:
+        print(exc, file=sys.stderr)
+        return 2
+
+    now = parse_now(args.now)
     model = project(events, graph, cfg, now=now, tz=args.tz, goal=args.goal)
 
     # Round-trip through the pydantic JSON encoder so datetimes/dates/enums are
     # rendered exactly as 1.0 persists them, then re-canonicalize.
-    payload = json.loads(model.model_dump_json())
-    if not args.keep_built_from_ts:
-        payload.pop("built_from_ts", None)
-
-    blob = canonical(payload)
-    digest = hashlib.sha256(blob.encode("utf-8")).hexdigest()
+    blob = parity_blob(model, keep_built_from_ts=args.keep_built_from_ts)
 
     print(blob)
     print(f"events={len(events)}", file=sys.stderr)
     print(f"projector_version={PROJECTOR_VERSION}", file=sys.stderr)
     print(f"config_hash={config_hash(cfg)}", file=sys.stderr)
-    print(f"sha256={digest}", file=sys.stderr)
+    print(f"sha256={sha256_of(blob)}", file=sys.stderr)
     return 0
 
 

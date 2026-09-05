@@ -47,8 +47,9 @@ from __future__ import annotations
 
 import argparse
 import json
-import multiprocessing
 import sys
+
+from _filter import WorkerHost, send_error, serve
 
 sys.path.insert(0, "/home/deploy/dev/cadus")
 
@@ -59,9 +60,6 @@ from cadus_web.sympy_check import (  # noqa: E402
 )
 
 DEFAULT_TIMEOUT_S = 2.0
-
-# How long the parent waits for a terminated worker to go away.
-REAP_TIMEOUT_S = 5.0
 
 
 def _worker(connection) -> None:
@@ -79,9 +77,7 @@ def _worker(connection) -> None:
             equivalent = bool(answers_equivalent(expected, learner, kind))
             notation = bool(dot_thousands_variant(expected, learner, kind))
         except BaseException as exc:  # the parent decides what a 1.0 failure means
-            try:
-                connection.send(("error", f"{type(exc).__name__}: {exc}"))
-            except (BrokenPipeError, OSError):
+            if not send_error(connection, exc):
                 return
             continue
         try:
@@ -90,50 +86,11 @@ def _worker(connection) -> None:
             return
 
 
-class Oracle:
+class Oracle(WorkerHost):
     """One persistent 1.0 worker process, respawned after every timeout."""
 
     def __init__(self, timeout_s: float) -> None:
-        self.timeout_s = timeout_s
-        # `fork` inherits the SymPy import, so a respawn costs milliseconds.
-        self.context = multiprocessing.get_context("fork")
-        self.connection = None
-        self.process = None
-        self.start()
-
-    def start(self) -> None:
-        """Start a new worker process."""
-        parent_end, child_end = self.context.Pipe(duplex=True)
-        process = self.context.Process(target=_worker, args=(child_end,), daemon=True)
-        process.start()
-        # The parent drops its copy of the child end, so a dead worker gives EOF.
-        child_end.close()
-        self.connection = parent_end
-        self.process = process
-
-    def stop(self) -> None:
-        """Terminate the worker and close the pipe."""
-        process = self.process
-        connection = self.connection
-        self.process = None
-        self.connection = None
-        if connection is not None:
-            try:
-                connection.close()
-            except OSError:
-                pass
-        if process is None:
-            return
-        process.terminate()
-        process.join(REAP_TIMEOUT_S)
-        if process.is_alive():
-            process.kill()
-            process.join(REAP_TIMEOUT_S)
-
-    def restart(self) -> None:
-        """Terminate the worker and start a fresh one."""
-        self.stop()
-        self.start()
+        super().__init__(timeout_s, _worker)
 
     def verdict(self, expected: str, learner: str, kind_name: str) -> dict:
         """Return the 1.0 verdict for one pair, under the wall-clock guard."""
@@ -194,21 +151,7 @@ def main() -> int:
         help="wall-clock guard per pair, in seconds (default: 2.0)",
     )
     args = parser.parse_args()
-    oracle = Oracle(args.timeout)
-    sys.stdout.write(json.dumps({"ready": True, "timeout_s": args.timeout}) + "\n")
-    sys.stdout.flush()
-    try:
-        for line in sys.stdin:
-            if not line.strip():
-                continue
-            response = handle(line, oracle)
-            sys.stdout.write(
-                json.dumps(response, sort_keys=True, ensure_ascii=False) + "\n"
-            )
-            sys.stdout.flush()
-    finally:
-        oracle.stop()
-    return 0
+    return serve(Oracle(args.timeout), handle)
 
 
 if __name__ == "__main__":

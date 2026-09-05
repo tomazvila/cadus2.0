@@ -22,8 +22,9 @@ Usage:
 from __future__ import annotations
 
 import argparse
-import os
 from datetime import UTC, datetime, timedelta
+
+from _common import add_code_base_arguments, point_at_code_base
 
 #: `T` of the 1.0 selector tests, as an aware UTC instant (trap T8).
 T = datetime(2026, 7, 14, 12, 0, 0, tzinfo=UTC)
@@ -38,12 +39,9 @@ KNOCKOUT_TARGETS = 10
 
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("--curriculum", default="/home/deploy/dev/cadus2.0/curriculum")
-    ap.add_argument("--config", default="/home/deploy/dev/cadus/config.yaml")
+    add_code_base_arguments(ap)
     args = ap.parse_args()
-
-    os.environ["CADUS_CURRICULUM"] = args.curriculum
-    os.environ["CADUS_CONFIG"] = args.config
+    point_at_code_base(args)
 
     from cadus.events import seeded_rng
     from cadus.graph import Graph

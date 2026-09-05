@@ -17,87 +17,50 @@ Usage:
 
 from __future__ import annotations
 
-import argparse
-import hashlib
-import json
 import os
-import re
-from datetime import UTC, datetime
+
+from _common import (
+    load_1_0,
+    parity_digest,
+    parse_now,
+    parse_stream_oracle_args,
+    read_events,
+    stream_names,
+    write_index,
+)
 
 #: The zones every stream is folded in. `null` is UTC, which is 1.0's default.
 ZONES = [None, "America/New_York"]
 
-#: The fixture directory of this repository, found from this file's own path.
-FIXTURES = os.path.normpath(
-    os.path.join(
-        os.path.dirname(os.path.abspath(__file__)),
-        "..",
-        "..",
-        "crates",
-        "core",
-        "tests",
-        "fixtures",
-        "events",
-    )
-)
 
+def fold_digest(events, graph, cfg, now, zone, goal: int) -> str:
+    """The parity digest of the 1.0 fold of `events` in `zone`."""
+    from cadus.projector import project
 
-def canonical(obj: object) -> str:
-    """Canonical JSON: sorted keys, compact separators, UTF-8, no NaN."""
-    return json.dumps(
-        obj, sort_keys=True, separators=(",", ":"), ensure_ascii=False, allow_nan=False
-    )
+    return parity_digest(project(events, graph, cfg, now=now, tz=zone, goal=goal))
 
 
 def main() -> int:
-    ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("--fixtures", default=FIXTURES)
-    ap.add_argument("--out", default=None)
-    ap.add_argument("--curriculum", default="/home/deploy/dev/cadus2.0/curriculum")
-    ap.add_argument("--config", default="/home/deploy/dev/cadus/config.yaml")
-    ap.add_argument("--now", default="2000-01-01T00:00:00+00:00")
-    ap.add_argument("--goal", type=int, default=40)
-    args = ap.parse_args()
-
-    os.environ["CADUS_CURRICULUM"] = args.curriculum
-    os.environ["CADUS_CONFIG"] = args.config
+    args = parse_stream_oracle_args(__doc__)
 
     from cadus.events import validate_event
-    from cadus.loader import load_config, load_graph
-    from cadus.projector import PROJECTOR_VERSION, config_hash, project
+    from cadus.projector import PROJECTOR_VERSION, config_hash
 
-    cfg = load_config()
-    graph = load_graph()
-    now = datetime.fromisoformat(args.now)
-    if now.tzinfo is None:
-        now = now.replace(tzinfo=UTC)
-
-    names = sorted(
-        (name for name in os.listdir(args.fixtures) if re.fullmatch(r"stream_\d+\.jsonl", name)),
-        key=lambda name: int(name.removeprefix("stream_").removesuffix(".jsonl")),
-    )
+    cfg, graph = load_1_0()
+    now = parse_now(args.now)
 
     streams = []
-    for name in names:
-        events = []
-        with open(os.path.join(args.fixtures, name), encoding="utf-8") as handle:
-            for line in handle:
-                line = line.strip()
-                if line:
-                    events.append(validate_event(json.loads(line)))
-
-        def digest_of(stream_events, zone):
-            model = project(stream_events, graph, cfg, now=now, tz=zone, goal=args.goal)
-            payload = json.loads(model.model_dump_json())
-            payload.pop("built_from_ts", None)
-            return hashlib.sha256(canonical(payload).encode("utf-8")).hexdigest()
-
-        digests = {zone or "UTC": digest_of(events, zone) for zone in ZONES}
+    for name in stream_names(args.fixtures):
+        events = read_events(os.path.join(args.fixtures, name), validate_event)
+        digests = {
+            zone or "UTC": fold_digest(events, graph, cfg, now, zone, args.goal)
+            for zone in ZONES
+        }
         # The PRE-CORRECTION fold: every `regraded` event deleted from the stream.
         # `apply_regrades` works on copies, so deleting the corrections must give
         # this model back -- which pins that the corrected events stay intact.
         bare = [event for event in events if event.type != "regraded"]
-        digests["UTC_no_regrades"] = digest_of(bare, None)
+        digests["UTC_no_regrades"] = fold_digest(bare, graph, cfg, now, None, args.goal)
         streams.append(
             {
                 "stream": name,
@@ -118,10 +81,7 @@ def main() -> int:
         "zones": ["UTC", "America/New_York", "UTC_no_regrades"],
         "streams": streams,
     }
-    out = args.out or os.path.join(args.fixtures, "digests_1_0.json")
-    with open(out, "w", encoding="utf-8") as handle:
-        handle.write(json.dumps(index, indent=2, sort_keys=True) + "\n")
-    print(f"wrote {out}")
+    write_index(args.out or os.path.join(args.fixtures, "digests_1_0.json"), index)
     return 0
 
 
