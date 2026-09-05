@@ -208,3 +208,20 @@ async fn a_verification_stamp_that_fails_is_500_on_the_reset() {
     })
     .await;
 }
+
+/// A rate-counter write that fails stops the sign-up at its rate rule, before
+/// any account lookup.
+#[tokio::test]
+async fn a_rate_counter_write_that_fails_is_500_on_the_signup() {
+    TestDb::with(|db| async move {
+        let app = app_of(&db);
+        fail_writes(&db, "auth_rate_counters", "true").await;
+        assert_internal_answer(
+            &app,
+            post("/api/auth/signup", &signup_body("rate@example.com")),
+        )
+        .await;
+        assert_eq!(user_count(&db).await, 0);
+    })
+    .await;
+}

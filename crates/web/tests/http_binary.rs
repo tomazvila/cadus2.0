@@ -15,7 +15,7 @@ use std::time::{Duration, Instant};
 
 use cadus_store::test_support::DeafPostgres;
 use cadus_store::{Db, DbConfig, connect_options};
-use cadus_web::{AppState, create_app};
+use cadus_web::{AppState, boot_check, create_app};
 use sqlx::postgres::PgPoolOptions;
 use tower::ServiceExt;
 
@@ -314,4 +314,41 @@ async fn binary_exits_2_with_a_public_origin_that_is_not_an_origin() {
         stderr.contains("PUBLIC_ORIGIN"),
         "stderr does not name the variable: {stderr}"
     );
+}
+
+/// (15) L1: the C3 boot guard ends inside the client-side bound when the
+/// database accepts the socket and then answers nothing.
+///
+/// `DeafPostgres::start` answers the handshake and then no query, so the
+/// guard's role read never finishes. Only the client-side bound of
+/// `cadus_store::bounded` ends the wait, and `boot_check` then answers
+/// `StoreError::Timeout` instead of a start that never ends.
+#[tokio::test]
+async fn boot_check_times_out_when_the_database_answers_nothing() {
+    let deaf = DeafPostgres::start();
+    let cfg = DbConfig {
+        database_url: deaf.dsn(),
+        statement_timeout_ms: 0,
+        client_timeout_ms: 300,
+    };
+    let pool = PgPoolOptions::new()
+        .max_connections(1)
+        .acquire_timeout(Duration::from_secs(5))
+        .connect_lazy_with(connect_options(&cfg).expect("the deaf DSN parses"));
+    let db = Db::new(pool.clone(), cfg.client_timeout_ms);
+
+    let start = Instant::now();
+    let outcome = boot_check(&db).await;
+    let elapsed = start.elapsed();
+
+    assert!(
+        matches!(outcome, Err(cadus_store::StoreError::Timeout { .. })),
+        "boot_check must time out when the database answers nothing"
+    );
+    assert!(
+        elapsed < Duration::from_secs(2),
+        "boot_check took {elapsed:?}, so the client-side bound did not apply"
+    );
+
+    pool.close().await;
 }
