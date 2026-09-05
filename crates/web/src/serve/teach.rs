@@ -39,7 +39,9 @@ pub async fn teach(
     let key = kp_key(&topic, &kp);
 
     let doc = store(&state, approved_document(&mut *tx, &key, KIND_TEACH)).await?;
-    tx.rollback().await.map_err(db_failed)?;
+    // The transaction read one row and wrote nothing, so the drop rolls it back
+    // and the read needs no second round trip.
+    drop(tx);
 
     let page: TeachDoc = read_document(
         doc.ok_or_else(no_instruction)?,

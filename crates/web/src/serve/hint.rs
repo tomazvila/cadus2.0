@@ -54,7 +54,7 @@ pub async fn hint(
         .cloned()
         .ok_or_else(no_ladder)?;
 
-    let hint_number = push_hint(&mut scratch, &task_id, &text).ok_or_else(no_ladder)?;
+    let hint_number = push_hint(&mut scratch, &task_id, &text);
     write_state(&state.db, &mut tx, user_id, &scratch).await?;
     tx.commit().await.map_err(db_failed)?;
 
@@ -104,11 +104,13 @@ fn ladder_key(served: &ServedProblem) -> Result<(String, String, usize), ApiErro
 }
 
 /// Record one taken hint on the live problem of `task_id`, and give the count
-/// of hints taken back. A task with no live problem takes none.
-fn push_hint(scratch: &mut WebState, task_id: &str, text: &str) -> Option<usize> {
-    let live = scratch.served.get_mut(task_id)?;
-    live.hints_given.push(text.to_string());
-    Some(live.hints_given.len())
+/// of hints taken back. The section 4.2 re-check found the live problem, so the
+/// count is at least one; a task with no live problem takes none.
+fn push_hint(scratch: &mut WebState, task_id: &str, text: &str) -> usize {
+    scratch.served.get_mut(task_id).map_or(0, |live| {
+        live.hints_given.push(text.to_string());
+        live.hints_given.len()
+    })
 }
 
 /// The reference lesson of a stuck learner: the record topic and its name.
@@ -142,7 +144,7 @@ mod tests {
     #[test]
     fn a_hint_on_a_task_with_no_live_problem_is_not_recorded() {
         let mut scratch = WebState::for_session("s1");
-        assert_eq!(push_hint(&mut scratch, "t1", "One."), None);
+        assert_eq!(push_hint(&mut scratch, "t1", "One."), 0);
     }
 
     #[test]

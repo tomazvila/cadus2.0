@@ -354,3 +354,13 @@ pub async fn hide_user_by_email_first(db: &TestDb, hidden: i64) {
     )
     .await;
 }
+
+/// Rename `column` of `table`, so every statement that reads the column fails
+/// and every statement that does not read it still runs.
+pub async fn hide_column(db: &TestDb, table: &str, column: &str) {
+    run(
+        db,
+        format!("ALTER TABLE {table} RENAME COLUMN {column} TO {column}_hidden"),
+    )
+    .await;
+}
