@@ -11,6 +11,46 @@ mod common;
 
 use common::*;
 
+use cadus_store::{DEFAULT_CLIENT_TIMEOUT_MS, Db};
+use cadus_web::auth::password::Argon2Profile;
+use cadus_web::{AppState, create_app};
+
+/// Install a db-scoped tenant-bind fault: the `set_config` the tenant bind
+/// runs succeeds `passes` times and then raises. The shadow lives in a schema
+/// ahead of `pg_catalog` on this database's `cadus_app` role, so a connection
+/// opened after this picks it up. Returns a one-connection app whose single
+/// session carries the shadow.
+async fn app_whose_bind_fails_after(db: &TestDb, passes: i64) -> Router {
+    for statement in [
+        "CREATE SCHEMA fault".to_string(),
+        "CREATE SEQUENCE fault.bind_calls".to_string(),
+        format!(
+            "CREATE FUNCTION fault.set_config(text, text, boolean) RETURNS text \
+             LANGUAGE plpgsql AS $$ BEGIN \
+             IF nextval('fault.bind_calls') > {passes} THEN \
+             RAISE EXCEPTION 'injected tenant bind fault'; END IF; \
+             RETURN pg_catalog.set_config($1, $2, $3); END $$"
+        ),
+        "GRANT USAGE ON SCHEMA fault TO cadus_app".to_string(),
+        "GRANT EXECUTE ON FUNCTION fault.set_config(text, text, boolean) TO cadus_app".to_string(),
+        "GRANT USAGE, UPDATE ON SEQUENCE fault.bind_calls TO cadus_app".to_string(),
+        format!(
+            "ALTER ROLE cadus_app IN DATABASE \"{}\" \
+             SET search_path = fault, public, pg_catalog",
+            db.name
+        ),
+    ] {
+        sqlx::query(sqlx::AssertSqlSafe(statement))
+            .execute(&db.admin)
+            .await
+            .unwrap();
+    }
+    let pool = db.pool_as("cadus_app", 1).await;
+    create_app(
+        AppState::new(Db::new(pool, DEFAULT_CLIENT_TIMEOUT_MS)).with_argon2(Argon2Profile::TEST),
+    )
+}
+
 /// The userinfo fetch of the OAuth exchange fails: the provider answers the
 /// token endpoint and nothing else, so the exchange gives up and the callback
 /// is `400 oauth_error`.
@@ -108,6 +148,24 @@ async fn an_account_read_that_finds_no_row_is_401() {
         let answer = send(&app, get_bearer("/api/auth/me", &token)).await;
         assert_eq!(answer.status.as_u16(), 401, "{}", answer.body);
         assert_eq!(answer.code(), "unauthorized");
+    })
+    .await;
+}
+
+/// The tenant bind of a reset fails after the token-spend bind succeeded: the
+/// reset is `500`. The reset binds twice — once to spend the token, once to
+/// sweep the sessions — so a fault after the first bind hits the second.
+#[tokio::test]
+async fn a_session_sweep_bind_that_fails_is_500_on_the_reset() {
+    TestDb::with(|db| async move {
+        let setup = app_of(&db);
+        signup(&setup, "sweepbind@example.com", GOOD_PASSWORD).await;
+        let user = user_id(&db, "sweepbind@example.com").await;
+        seed_token(&db, user, RESET_TOKEN_ONE.1, "reset", shift(1_800)).await;
+
+        let app = app_whose_bind_fails_after(&db, 1).await;
+        let body = json!({ "token": RESET_TOKEN_ONE.0, "new_password": OTHER_PASSWORD });
+        assert_internal_answer(&app, post("/api/auth/password/reset", &body)).await;
     })
     .await;
 }
