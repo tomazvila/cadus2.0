@@ -88,17 +88,6 @@ fn decode_rows(
     (candidates, refused)
 }
 
-/// The candidate at `index`, or the typed error when the candidate rule named
-/// a position that the read of `what` did not return.
-fn chosen_row(candidates: &[PoolRow], index: usize, what: &str) -> Result<PoolRow, StoreError> {
-    candidates.get(index).cloned().ok_or_else(|| {
-        StoreError::PoolRow(format!(
-            "the candidate rule chose index {index} of {} {what}",
-            candidates.len()
-        ))
-    })
-}
-
 /// Stamp `claimed_at` on one unclaimed row and return the count of rows the
 /// statement wrote.
 async fn claim_unclaimed(tx: &mut Transaction<'_, Postgres>, id: Uuid) -> Result<u64, StoreError> {
@@ -162,7 +151,7 @@ async fn claim_unclaimed(tx: &mut Transaction<'_, Postgres>, id: Uuid) -> Result
 /// # Errors
 ///
 /// Returns [`StoreError::Db`] when a statement fails, and [`StoreError::PoolRow`]
-/// when the candidate rule names a row the pop did not read.
+/// when the claim writes no row.
 pub async fn pop_with_ring_tx(
     tx: &mut Transaction<'_, Postgres>,
     user_id: Uuid,
@@ -188,7 +177,7 @@ pub async fn pop_with_ring_tx(
     .fetch_all(&mut **tx)
     .await?;
 
-    let (candidates, refused) = decode_rows(
+    let (mut candidates, refused) = decode_rows(
         popped,
         user_id,
         kp_id,
@@ -206,7 +195,9 @@ pub async fn pop_with_ring_tx(
             undecodable,
         });
     };
-    let row = chosen_row(&candidates, chosen.index, "popped rows")?;
+    // `pick` names a position inside `candidates`, so the index is in bounds.
+    let count = candidates.len();
+    let row = candidates.swap_remove(chosen.index);
 
     if claim_unclaimed(tx, row.id).await? != 1 {
         return Err(StoreError::PoolRow(format!(
@@ -220,7 +211,7 @@ pub async fn pop_with_ring_tx(
         claimed: Some(Claimed {
             row,
             pick: chosen,
-            candidates: candidates.len(),
+            candidates: count,
         }),
         undecodable,
     })
@@ -264,8 +255,7 @@ async fn retire_row(tx: &mut Transaction<'_, Postgres>, id: Uuid) -> Result<(), 
 ///
 /// # Errors
 ///
-/// Returns [`StoreError::Db`] when a statement fails, and [`StoreError::PoolRow`]
-/// when the candidate rule names a row the read did not return.
+/// Returns [`StoreError::Db`] when a statement fails.
 pub async fn reclaim_exemplar_tx(
     tx: &mut Transaction<'_, Postgres>,
     user_id: Uuid,
@@ -290,7 +280,7 @@ pub async fn reclaim_exemplar_tx(
     .fetch_all(&mut **tx)
     .await?;
 
-    let (candidates, _) = decode_rows(
+    let (mut candidates, _) = decode_rows(
         rows,
         user_id,
         kp_id,
@@ -306,8 +296,10 @@ pub async fn reclaim_exemplar_tx(
     // [`pick`] takes the LAST candidate, which here is the row the learner saw
     // most recently. Take the first one instead: the repeat must be the oldest
     // one, or a two-exemplar knowledge point serves one statement forever.
+    // `pick` names a position inside `candidates`, so both indexes are in
+    // bounds.
     let index = if chosen.exhausted { 0 } else { chosen.index };
-    let row = chosen_row(&candidates, index, "exemplar rows")?;
+    let row = candidates.swap_remove(index);
 
     sqlx::query!(
         "UPDATE serving_pool SET claimed_at = now() WHERE id = $1",
@@ -342,43 +334,9 @@ pub async fn pop_with_ring(
 
 #[cfg(test)]
 mod tests {
-    use cadus_core::pool::{PoolAnswer, PoolProblem, Source};
     use uuid::Uuid;
 
-    use super::{PoolRow, RawRow, chosen_row};
-
-    /// One decoded candidate of the tests.
-    fn candidate() -> PoolRow {
-        PoolRow {
-            id: Uuid::nil(),
-            source: Source::Template,
-            content_digest: None,
-            problem: PoolProblem {
-                v: 1,
-                text: "Compute $1^2$.".to_string(),
-                bindings: Default::default(),
-                seed: 0,
-            },
-            expected_answer: PoolAnswer {
-                v: 1,
-                answer: "1".to_string(),
-            },
-            instance_hash: "hash-1".to_string(),
-        }
-    }
-
-    /// A position inside the list gives its row; a position past the end gives
-    /// the typed error that names the position, the count and the read.
-    #[test]
-    fn the_chosen_row_is_the_row_at_the_index_or_a_typed_error() {
-        let rows = vec![candidate()];
-        assert_eq!(chosen_row(&rows, 0, "popped rows").unwrap(), rows[0]);
-        let err = chosen_row(&rows, 1, "exemplar rows").unwrap_err();
-        assert_eq!(
-            err.to_string(),
-            "serving pool error: the candidate rule chose index 1 of 1 exemplar rows"
-        );
-    }
+    use super::RawRow;
 
     /// A source value outside the three of this build is refused with the row
     /// id in the message, and a document that does not read is refused too.

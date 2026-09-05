@@ -4,7 +4,6 @@
 use cadus_core::event::Event;
 use cadus_core::learner::LearnerModel;
 use cadus_core::projector::{PROJECTOR_VERSION, ProjectionInput, project, project_incremental};
-use serde::Serialize;
 use serde_json::Value as Json;
 use sqlx::{Postgres, Transaction};
 use uuid::Uuid;
@@ -149,17 +148,12 @@ fn holds_regraded(rows: &[EventRow]) -> bool {
 }
 
 /// The drift digest of the config of `input`.
-fn config_hash_of(input: &ProjectionInput<'_>) -> Result<String, StoreError> {
-    input
-        .cfg
-        .config_hash()
-        .map_err(|err| StoreError::Document(format!("the config does not hash: {err}")))
-}
-
-/// One stored document, or the typed error that names it.
-fn document<T: Serialize>(what: &str, value: &T) -> Result<Json, StoreError> {
-    serde_json::to_value(value)
-        .map_err(|err| StoreError::Document(format!("the {what} does not serialize: {err}")))
+///
+/// `Config::config_hash` serializes a struct of plain fields and never fails.
+/// The empty string stands in for that impossible failure: no stored row
+/// carries it, so the fold replays.
+fn config_hash_of(input: &ProjectionInput<'_>) -> String {
+    input.cfg.config_hash().unwrap_or_default()
 }
 
 /// Fold the whole log into a model and a view. The full-replay branch.
@@ -281,16 +275,15 @@ async fn replay_log(
 ///
 /// # Errors
 ///
-/// Returns [`StoreError::Document`] when the config does not hash,
-/// [`StoreError::Projector`] when the fold fails, and [`StoreError::Db`] when a
-/// statement fails.
+/// Returns [`StoreError::Projector`] when the fold fails, and [`StoreError::Db`]
+/// when a statement fails.
 pub async fn project_current(
     tx: &mut Transaction<'_, Postgres>,
     user_id: Uuid,
     input: &ProjectionInput<'_>,
 ) -> Result<Projection, StoreError> {
     let cached = load_learner_model(tx, user_id).await?;
-    let config_hash = config_hash_of(input)?;
+    let config_hash = config_hash_of(input);
 
     // The cache serves a resume only when it was built by this projector and
     // under this config. Those are the two drift rules of spec section 4.3.
@@ -377,10 +370,14 @@ pub async fn load_session_view(
 
 /// Fold the log and write the `learner_models` row (spec section 4.3 step 7).
 ///
+/// The two documents go into their `jsonb` columns through
+/// [`sqlx::types::Json`], so the serializer runs inside the encoder of the
+/// statement.
+///
 /// # Errors
 ///
-/// The errors of [`project_current`], plus [`StoreError::Db`] when the write
-/// fails.
+/// The errors of [`project_current`], plus [`StoreError::Db`] when a document
+/// does not serialize or the write fails.
 pub async fn project_and_save(
     tx: &mut Transaction<'_, Postgres>,
     user_id: Uuid,
@@ -388,9 +385,7 @@ pub async fn project_and_save(
     curriculum_hash: Option<&str>,
 ) -> Result<Projection, StoreError> {
     let projection = project_current(tx, user_id, input).await?;
-    let config_hash = config_hash_of(input)?;
-    let model = document("model", &projection.model)?;
-    let view = document("view", &projection.view)?;
+    let config_hash = config_hash_of(input);
 
     sqlx::query!(
         r#"
@@ -408,12 +403,14 @@ pub async fn project_and_save(
             built_at = now()
         "#,
         user_id,
-        model,
+        // `as _`: the macro maps a `jsonb` parameter to `serde_json::Value`,
+        // and `Json<T>` writes the same wire form.
+        sqlx::types::Json(&projection.model) as _,
         projection.through_seq,
         PROJECTOR_VERSION_I32,
         config_hash,
         curriculum_hash,
-        view
+        sqlx::types::Json(&projection.view) as _
     )
     .execute(&mut **tx)
     .await?;
@@ -422,47 +419,4 @@ pub async fn project_and_save(
 }
 
 #[cfg(test)]
-mod tests {
-    use serde::Serialize;
-
-    use super::{decode_view, document};
-
-    /// A document that refuses to serialize.
-    struct Refuses;
-
-    impl Serialize for Refuses {
-        fn serialize<S: serde::Serializer>(&self, _: S) -> Result<S::Ok, S::Error> {
-            Err(serde::ser::Error::custom("refused"))
-        }
-    }
-
-    /// The document helper names what did not serialize.
-    #[test]
-    fn a_document_that_does_not_serialize_is_a_typed_error() {
-        assert_eq!(document("view", &1).unwrap(), serde_json::json!(1));
-        let err = document("model", &Refuses).unwrap_err();
-        assert_eq!(
-            err.to_string(),
-            "document error: the model does not serialize: refused"
-        );
-    }
-
-    /// A stored view of another shape or another version reads as absent.
-    #[test]
-    fn a_view_of_another_version_or_shape_is_absent() {
-        assert!(decode_view(None).is_none());
-        assert!(decode_view(Some(serde_json::json!({"v": 1}))).is_none());
-        assert!(decode_view(Some(serde_json::json!("text"))).is_none());
-        let stale = serde_json::to_value(super::SessionView {
-            v: super::SESSION_VIEW_VERSION + 1,
-            ..Default::default()
-        })
-        .unwrap();
-        assert!(decode_view(Some(stale)).is_none());
-        let fresh = serde_json::to_value(super::SessionView::default()).unwrap();
-        assert_eq!(
-            decode_view(Some(fresh)),
-            Some(super::SessionView::default())
-        );
-    }
-}
+mod tests;

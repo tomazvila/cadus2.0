@@ -123,6 +123,29 @@ pub async fn fail_on(db: &TestDb, event: &str, table: &str) {
     .await;
 }
 
+/// End the session of the caller AFTER every statement of `event` on `table`.
+///
+/// A statement-level trigger sends `pg_terminate_backend` to its own session.
+/// The signal lands after the statement, so the statement succeeds and the
+/// next command of the session fails on the closed connection.
+pub async fn die_after(db: &TestDb, event: &str, table: &str) {
+    admin_exec(
+        db,
+        "CREATE OR REPLACE FUNCTION fault_die() RETURNS trigger LANGUAGE plpgsql AS $$ \
+         BEGIN RETURN CASE WHEN pg_terminate_backend(pg_backend_pid()) THEN NULL END; END $$"
+            .to_string(),
+    )
+    .await;
+    admin_exec(
+        db,
+        format!(
+            "CREATE TRIGGER fault_die_{event} AFTER {event} ON {table} FOR EACH STATEMENT EXECUTE \
+             FUNCTION fault_die()"
+        ),
+    )
+    .await;
+}
+
 /// Make every UPDATE of `table` write no row: a BEFORE UPDATE trigger that
 /// returns NULL skips the row, so the statement reports zero rows.
 pub async fn skip_updates_on(db: &TestDb, table: &str) {

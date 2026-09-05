@@ -34,12 +34,12 @@ const ROLE_LOCK_KEY: i64 = 7_241_001;
 pub struct RoleLock(PgConnection);
 
 impl RoleLock {
-    /// Take the lock. The call waits until every other holder gives it back.
+    /// Take the lock in `database`, the maintenance database of the cluster.
+    /// The call waits until every other holder gives it back.
     ///
     /// The connection carries `statement_timeout` 0, so the wait has no bound.
-    pub async fn acquire(cfg: &DbConfig) -> Result<RoleLock, StoreError> {
-        let database = maintenance_db()?;
-        let options = cadus_store::connect_options(cfg)?.database(&database);
+    pub async fn acquire(cfg: &DbConfig, database: &str) -> Result<RoleLock, StoreError> {
+        let options = cadus_store::connect_options(cfg)?.database(database);
         let mut conn = PgConnection::connect_with(&options).await?;
         // The key is a constant of this program, so no input reaches the text.
         // `pg_advisory_lock` returns void, which the checked macros do not map,
@@ -73,7 +73,7 @@ impl RoleLock {
 /// The name must be a database of the cluster that every run reaches.
 /// `postgres` is the name that a default PostgreSQL cluster carries. A cluster
 /// without that database gives the operator `CADUS_MAINTENANCE_DB`.
-fn maintenance_db() -> Result<String, StoreError> {
+pub fn maintenance_db() -> Result<String, StoreError> {
     maintenance_db_from(std::env::var(MAINTENANCE_DB_VAR))
 }
 
@@ -170,6 +170,7 @@ mod tests {
 
     use cadus_store::DbConfig;
     use cadus_store::test_support::TestDb;
+    use sqlx::AssertSqlSafe;
 
     use super::{
         RoleLock, alter_role_password_statement, alter_roles, maintenance_db_from,
@@ -231,10 +232,14 @@ mod tests {
     }
 
     /// A role statement on a closed pool is the error of the statement, and
-    /// the whole `alter_roles` step reports it.
+    /// the whole `alter_roles` step reports it. A statement on an open pool
+    /// runs.
     #[tokio::test]
     async fn a_role_statement_on_a_closed_pool_is_an_error() {
         TestDb::with(|db| async move {
+            run_role_statement(&db.admin, "SELECT 1".to_string())
+                .await
+                .unwrap();
             let pool = db.pool_as("cadus_app", 1).await;
             pool.close().await;
             let err = run_role_statement(&pool, "SELECT 1".to_string())
@@ -256,15 +261,54 @@ mod tests {
     /// the lock statement.
     #[tokio::test]
     async fn the_lock_fails_before_the_statement_on_a_bad_configuration() {
-        let unparsed = RoleLock::acquire(&DbConfig::new("not a url")).await.err();
+        let unparsed = RoleLock::acquire(&DbConfig::new("not a url"), "postgres")
+            .await
+            .err();
         assert!(unparsed.is_some());
-        let refused = RoleLock::acquire(&DbConfig::new("postgresql://x@127.0.0.1:1/x"))
+        let refused = RoleLock::acquire(&DbConfig::new("postgresql://x@127.0.0.1:1/x"), "postgres")
             .await
             .err();
         assert!(refused.is_some());
-        let lock = RoleLock::acquire(&DbConfig::new(TestDb::superuser_dsn_for("postgres")))
-            .await
-            .unwrap();
+        let lock = RoleLock::acquire(
+            &DbConfig::new(TestDb::superuser_dsn_for("postgres")),
+            "postgres",
+        )
+        .await
+        .unwrap();
         lock.release().await;
+    }
+
+    /// The lock statement itself fails when the maintenance database resolves
+    /// `pg_advisory_lock` to a function that raises: the database puts a
+    /// schema of its own before `pg_catalog` on the search path.
+    #[tokio::test]
+    async fn a_refused_lock_statement_is_the_error_of_the_statement() {
+        TestDb::with(|db| async move {
+            let statements = [
+                "CREATE SCHEMA shadow".to_string(),
+                "CREATE FUNCTION shadow.pg_advisory_lock(bigint) RETURNS void LANGUAGE plpgsql \
+                 AS $$ BEGIN RAISE EXCEPTION 'injected'; END $$"
+                    .to_string(),
+                format!(
+                    "ALTER DATABASE \"{}\" SET search_path = shadow, pg_catalog",
+                    db.name
+                ),
+            ];
+            for sql in statements {
+                sqlx::query(AssertSqlSafe(sql))
+                    .execute(&db.admin)
+                    .await
+                    .unwrap();
+            }
+            let refused = RoleLock::acquire(&DbConfig::new(db.superuser_dsn()), &db.name)
+                .await
+                .err()
+                .map(|err| err.to_string());
+            assert!(
+                refused.as_deref().is_some_and(|m| m.contains("injected")),
+                "{refused:?}"
+            );
+        })
+        .await;
     }
 }

@@ -52,16 +52,17 @@
 mod password;
 mod retry;
 mod roles;
+mod signals;
 
 use std::ffi::OsString;
-use std::future::Future;
 use std::process::ExitCode;
 
 use cadus_store::{DbConfig, StoreError};
 use sqlx::PgPool;
 
 use password::check_password_rule;
-use roles::{RoleLock, alter_roles};
+use roles::{RoleLock, alter_roles, maintenance_db};
+use signals::{Shutdown, until_signal};
 
 /// The usage text. An unknown argument prints it on stderr.
 const USAGE: &str = "\
@@ -123,18 +124,11 @@ async fn main() -> ExitCode {
         return ExitCode::from(2);
     }
 
-    // Install the stop signals before the connect. The handlers exist from this
-    // point, so a SIGTERM during the connect, during the migrations, or during
-    // the unbounded wait of the role lock ends the run (finding #12).
-    let mut shutdown = match Shutdown::install() {
-        Ok(shutdown) => shutdown,
-        Err(err) => {
-            eprintln!("cadus-migrate: {err}");
-            return ExitCode::from(2);
-        }
+    let outcome = match migrate_config() {
+        Ok(cfg) => start(mode, &cfg).await,
+        Err(err) => Err(err),
     };
-
-    match run(mode, &mut shutdown).await {
+    match outcome {
         Ok(Outcome::Done) => ExitCode::SUCCESS,
         Ok(Outcome::Stopped) => {
             eprintln!("{STOPPED_BY_SIGNAL}");
@@ -144,88 +138,6 @@ async fn main() -> ExitCode {
             eprintln!("cadus-migrate: {err}");
             ExitCode::from(2)
         }
-    }
-}
-
-/// The installed stop signals of the process.
-///
-/// `install` registers the handlers at once, so a signal from that moment on
-/// reaches the program. `wait` completes on the first signal. `docker stop`
-/// sends SIGTERM, so that is the normal stop path of the deployment.
-/// `cadus-web` and `cadus-worker` carry the same shape.
-struct Shutdown {
-    #[cfg(unix)]
-    terminate: tokio::signal::unix::Signal,
-    #[cfg(unix)]
-    interrupt: tokio::signal::unix::Signal,
-}
-
-impl Shutdown {
-    /// Register the handlers for `SIGTERM` and `SIGINT`.
-    #[cfg(unix)]
-    fn install() -> Result<Self, StoreError> {
-        use tokio::signal::unix::{SignalKind, signal};
-
-        Ok(Self {
-            terminate: handler("SIGTERM", signal(SignalKind::terminate()))?,
-            interrupt: handler("SIGINT", signal(SignalKind::interrupt()))?,
-        })
-    }
-
-    /// A platform without unix signals has nothing to register here.
-    #[cfg(not(unix))]
-    fn install() -> Result<Self, StoreError> {
-        Ok(Self {})
-    }
-
-    /// Complete on the first `SIGTERM` or `SIGINT`.
-    #[cfg(unix)]
-    async fn wait(&mut self) {
-        let Self {
-            terminate,
-            interrupt,
-        } = self;
-        tokio::select! {
-            _ = terminate.recv() => (),
-            _ = interrupt.recv() => (),
-        }
-    }
-
-    /// Complete on Ctrl-C. A platform without unix signals has no `SIGTERM`.
-    #[cfg(not(unix))]
-    async fn wait(&mut self) {
-        if tokio::signal::ctrl_c().await.is_err() {
-            // The handler is gone. Park here, so the run goes on instead of a
-            // stop that no operator asked for.
-            std::future::pending::<()>().await;
-        }
-    }
-}
-
-/// The registered handler of `name`, or the configuration error that names
-/// the signal.
-#[cfg(unix)]
-fn handler<T>(name: &str, registered: std::io::Result<T>) -> Result<T, StoreError> {
-    registered.map_err(|err| StoreError::Config(format!("the {name} handler failed: {err}")))
-}
-
-/// Run `work` until it ends or a stop signal arrives.
-///
-/// `Ok(None)` means the signal came first. The caller then returns
-/// `Outcome::Stopped`, and the process exits 3.
-///
-/// The drop of the work future closes its connection, so a statement that is
-/// still in flight rolls back. A stop signal is an explicit request of the
-/// operator, and a cancel is the answer to it. The `statement_timeout` of 0
-/// above covers the other case: a bound that no operator asked for.
-async fn until_signal<T>(
-    shutdown: &mut Shutdown,
-    work: impl Future<Output = Result<T, StoreError>>,
-) -> Result<Option<T>, StoreError> {
-    tokio::select! {
-        biased;
-        () = shutdown.wait() => Ok(None),
-        result = work => result.map(Some),
     }
 }
 
@@ -264,7 +176,7 @@ struct Report {
 }
 
 /// Every step of one run, in order: connect, count, migrate, count, and the
-/// role statements of `--admin-login`.
+/// role statements of `--admin-login` under the cluster-wide role lock.
 ///
 /// The report goes to stdout after the pool is closed, so a failed statement
 /// never prints a success line.
@@ -276,7 +188,7 @@ async fn apply(mode: Mode, cfg: &DbConfig) -> Result<Report, StoreError> {
 
     let mut password_roles: Vec<&'static str> = Vec::new();
     if mode == Mode::AdminLogin {
-        let lock = RoleLock::acquire(cfg).await?;
+        let lock = RoleLock::acquire(cfg, &maintenance_db()?).await?;
         let altered = alter_roles(&pool, &mut password_roles).await;
         lock.release().await;
         altered?;
@@ -290,6 +202,16 @@ async fn apply(mode: Mode, cfg: &DbConfig) -> Result<Report, StoreError> {
     })
 }
 
+/// Install the stop signals, then run every step under them.
+///
+/// The handlers exist before the connect, so a SIGTERM during the connect,
+/// during the migrations, or during the unbounded wait of the role lock ends
+/// the run (finding #12).
+async fn start(mode: Mode, cfg: &DbConfig) -> Result<Outcome, StoreError> {
+    let mut shutdown = Shutdown::install()?;
+    run(mode, cfg, &mut shutdown).await
+}
+
 /// Run every step under the stop signals, then print the report.
 ///
 /// A run that the signal ends returns here without a pool close: the process
@@ -297,9 +219,8 @@ async fn apply(mode: Mode, cfg: &DbConfig) -> Result<Report, StoreError> {
 /// wait for a database that answers nothing only delays the stop (finding
 /// #12). The drop of the role lock closes its connection, and PostgreSQL
 /// releases the advisory lock of a session that ends.
-async fn run(mode: Mode, shutdown: &mut Shutdown) -> Result<Outcome, StoreError> {
-    let cfg = migrate_config()?;
-    let Some(report) = until_signal(shutdown, apply(mode, &cfg)).await? else {
+async fn run(mode: Mode, cfg: &DbConfig, shutdown: &mut Shutdown) -> Result<Outcome, StoreError> {
+    let Some(report) = until_signal(shutdown, apply(mode, cfg)).await? else {
         return Ok(Outcome::Stopped);
     };
     println!(
@@ -341,11 +262,13 @@ mod tests {
     use std::os::unix::ffi::OsStringExt;
 
     use cadus_store::test_support::TestDb;
-    use cadus_store::{DEFAULT_CLIENT_TIMEOUT_MS, DbConfig, StoreError};
+    use cadus_store::{DEFAULT_CLIENT_TIMEOUT_MS, DbConfig};
 
-    use super::{
-        Mode, Shutdown, applied_count, apply, handler, migrate_config, parse_args, until_signal,
-    };
+    use super::signals::SIGNAL_TESTS;
+    use super::{Mode, applied_count, apply, migrate_config, parse_args, start};
+
+    /// A DSN of the loopback that no server answers.
+    const CLOSED_PORT: &str = "postgresql://x@127.0.0.1:1/x";
 
     /// Finding #13: an argument that is not valid Unicode is an unknown
     /// argument, not a panic.
@@ -401,53 +324,20 @@ mod tests {
         assert_eq!(migrated.database_url, base.database_url);
     }
 
-    /// A handler that did not register is a configuration error that names
-    /// the signal.
-    #[test]
-    fn a_handler_that_does_not_register_names_its_signal() {
-        assert_eq!(handler("SIGTERM", Ok::<u8, std::io::Error>(1)).unwrap(), 1);
-        let err = handler::<u8>("SIGINT", Err(std::io::Error::other("no driver"))).unwrap_err();
-        assert_eq!(
-            err.to_string(),
-            "configuration error: the SIGINT handler failed: no driver"
-        );
-    }
-
-    /// The signal wins over the work: an interrupt sent to this process ends
-    /// `until_signal` with `None`, and work that finishes first gives its
-    /// value.
-    #[tokio::test]
-    async fn until_signal_answers_none_on_a_signal_and_some_on_finished_work() {
-        let mut shutdown = Shutdown::install().unwrap();
-        let done = until_signal(&mut shutdown, async { Ok::<u8, StoreError>(7) })
-            .await
-            .unwrap();
-        assert_eq!(done, Some(7));
-
-        let pid = std::process::id().to_string();
-        let sent = std::process::Command::new("kill")
-            .args(["-INT", &pid])
-            .status()
-            .unwrap();
-        assert!(sent.success());
-        let stopped = until_signal(
-            &mut shutdown,
-            std::future::pending::<Result<u8, StoreError>>(),
-        )
-        .await
-        .unwrap();
-        assert_eq!(stopped, None);
-    }
-
-    /// The count is 0 before the first run, 12 after it, and an error when
-    /// the pool is closed.
+    /// The count is 0 before the first run, 12 after it, an error when the
+    /// pool is closed, and an error when the role cannot read the ledger.
     #[tokio::test]
     async fn the_applied_count_reads_the_migration_ledger() {
         TestDb::with(|db| async move {
             assert_eq!(applied_count(&db.admin).await.unwrap(), 12);
-            let closed = db.pool_as("cadus_app", 1).await;
-            closed.close().await;
-            assert!(applied_count(&closed).await.is_err());
+            let app = db.pool_as("cadus_app", 1).await;
+            sqlx::query("REVOKE SELECT ON _sqlx_migrations FROM cadus_app")
+                .execute(&db.admin)
+                .await
+                .unwrap();
+            assert!(applied_count(&app).await.is_err());
+            app.close().await;
+            assert!(applied_count(&app).await.is_err());
         })
         .await;
         let cfg = DbConfig::new(TestDb::superuser_dsn_for("postgres"));
@@ -467,22 +357,52 @@ mod tests {
         conn.close().await;
     }
 
-    /// Every failed step of `apply` is the error of that step: a connect that
-    /// fails, and a migrate-only run that connects reports the counts.
+    /// A connect that fails is the error of the first step of `apply`.
     #[tokio::test]
-    async fn apply_reports_the_counts_or_the_first_failed_step() {
-        let refused = apply(
-            Mode::MigrateOnly,
-            &DbConfig::new("postgresql://x@127.0.0.1:1/x"),
-        )
-        .await
-        .err()
-        .map(|err| err.to_string());
+    async fn apply_reports_the_first_failed_step() {
+        let refused = apply(Mode::MigrateOnly, &DbConfig::new(CLOSED_PORT))
+            .await
+            .err()
+            .map(|err| err.to_string());
         assert!(
             refused
                 .as_deref()
                 .is_some_and(|m| m.starts_with("database error: ")),
             "{refused:?}"
+        );
+    }
+
+    /// The start installs the signals, then runs the steps: a runtime whose
+    /// signal driver is gone stops it before the connect, and a runtime with
+    /// the driver reaches the connect, which refuses the DSN at once.
+    #[test]
+    fn start_installs_the_signals_and_then_runs_the_steps() {
+        let cfg = DbConfig::new("not a url");
+        let runtime = tokio::runtime::Builder::new_current_thread()
+            .enable_all()
+            .build()
+            .unwrap();
+        let _serial = runtime.block_on(SIGNAL_TESTS.lock());
+        let reached = runtime
+            .block_on(start(Mode::MigrateOnly, &cfg))
+            .err()
+            .map(|err| err.to_string());
+        assert!(
+            reached
+                .as_deref()
+                .is_some_and(|m| m.starts_with("database error: ")),
+            "{reached:?}"
+        );
+
+        let handle = runtime.handle().clone();
+        drop(runtime);
+        let stopped = handle
+            .block_on(start(Mode::MigrateOnly, &cfg))
+            .err()
+            .map(|err| err.to_string());
+        assert_eq!(
+            stopped.as_deref(),
+            Some("configuration error: the SIGTERM handler failed: signal driver gone")
         );
     }
 }

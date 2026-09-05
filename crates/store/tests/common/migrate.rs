@@ -139,6 +139,30 @@ pub fn migrate_command(dsn: &str, lock_db: Option<&str>) -> Command {
     command
 }
 
+/// The DSN of `db_name` on the test cluster as `role`, with the empty
+/// password of trust authentication.
+pub fn role_dsn(db_name: &str, role: &str) -> String {
+    let dsn = TestDb::superuser_dsn_for(db_name);
+    let (scheme, rest) = dsn.split_once("://").expect("the DSN names a scheme");
+    let host = rest.rsplit_once('@').map_or(rest, |(_, host)| host);
+    format!("{scheme}://{role}@{host}")
+}
+
+/// Run every statement of `statements`, in order, on the database `name` as
+/// the superuser.
+pub async fn exec_on(name: &str, statements: &[String]) {
+    let mut conn = PgConnection::connect(&TestDb::superuser_dsn_for(name))
+        .await
+        .unwrap_or_else(|e| panic!("the connection to {name} failed: {e}"));
+    for sql in statements {
+        sqlx::query(AssertSqlSafe(sql.clone()))
+            .execute(&mut conn)
+            .await
+            .unwrap_or_else(|e| panic!("{sql} failed: {e}"));
+    }
+    let _ = conn.close().await;
+}
+
 /// Create a database on the test cluster and return its name.
 pub async fn create_database(db: &TestDb, tag: &str) -> String {
     let name = format!(
