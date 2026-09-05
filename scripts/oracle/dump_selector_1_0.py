@@ -43,9 +43,21 @@ Usage:
 from __future__ import annotations
 
 import argparse
-import json
 import os
-from datetime import UTC, datetime
+from datetime import UTC
+
+from _common import (
+    FIXTURES,
+    add_code_base_arguments,
+    add_goal_argument,
+    add_now_argument,
+    canonical,
+    load_1_0,
+    parse_now,
+    point_at_code_base,
+    read_events,
+    write_index,
+)
 
 #: The task count `compose_session` is capped at. It is above the longest
 #: recorded plan, so the comparison covers the whole plan (finding #13).
@@ -54,25 +66,74 @@ DEFAULT_N = 40
 #: The number of seeded states: seed `k` folds `stream_k.jsonl`.
 DEFAULT_SEEDS = 10
 
-FIXTURES = os.path.normpath(
-    os.path.join(
-        os.path.dirname(os.path.abspath(__file__)),
-        "..",
-        "..",
-        "crates",
-        "core",
-        "tests",
-        "fixtures",
-        "events",
-    )
-)
+#: The recorded shape of one task row.
+TASK_SHAPE = [
+    "task_type",
+    "topic",
+    "is_remediation",
+    "nearly_due",
+    "n_problems",
+    "time_budget_secs",
+]
 
 
-def canonical(obj: object) -> str:
-    """Canonical JSON: sorted keys, compact separators, UTF-8, no NaN."""
-    return json.dumps(
-        obj, sort_keys=True, separators=(",", ":"), ensure_ascii=False, allow_nan=False
-    )
+def last_instant(events):
+    """The last event's timestamp, as an aware UTC instant.
+
+    It is the same `t_ref` the fold used, so both sides read one instant off
+    the committed stream.
+    """
+    last_ts = max(event.ts for event in events)
+    if last_ts.tzinfo is None:
+        last_ts = last_ts.replace(tzinfo=UTC)
+    return last_ts
+
+
+def enrolled_course(events):
+    """The `course` of the last `enrolled` event, or `None`."""
+    course_id = None
+    for event in events:
+        if event.type == "enrolled":
+            course_id = event.course
+    return course_id
+
+
+def is_quiz(task) -> bool:
+    """Whether the task is the sampled quiz (trap T11)."""
+    return task.task_type.value == "quiz"
+
+
+def topic_id(task) -> str | None:
+    """The task's topic id, or `None` for a quiz (trap T11) or a topicless task."""
+    if is_quiz(task) or task.topic is None:
+        return None
+    return task.topic.id
+
+
+def payload(task, value) -> int | None:
+    """A task size field, or `None` for a quiz (trap T11).
+
+    `n_problems` and `time_budget_secs` both read the sampled quiz
+    questions, so a quiz row carries neither.
+    """
+    if is_quiz(task) or value is None:
+        return None
+    return int(value)
+
+
+def task_rows(plan) -> list[list]:
+    """The plan's tasks in the `TASK_SHAPE` row shape."""
+    return [
+        [
+            task.task_type.value,
+            topic_id(task),
+            bool(task.is_remediation),
+            bool(task.nearly_due),
+            payload(task, task.n_problems),
+            payload(task, task.time_budget_secs),
+        ]
+        for task in plan.tasks
+    ]
 
 
 def main() -> int:
@@ -81,49 +142,26 @@ def main() -> int:
     ap.add_argument("--out", default=None)
     ap.add_argument("--seeds", type=int, default=DEFAULT_SEEDS)
     ap.add_argument("--n", type=int, default=DEFAULT_N)
-    ap.add_argument("--curriculum", default="/home/deploy/dev/cadus2.0/curriculum")
-    ap.add_argument("--config", default="/home/deploy/dev/cadus/config.yaml")
-    ap.add_argument("--now", default="2000-01-01T00:00:00+00:00")
-    ap.add_argument("--goal", type=int, default=40)
+    add_code_base_arguments(ap)
+    add_now_argument(ap)
+    add_goal_argument(ap)
     args = ap.parse_args()
-
-    os.environ["CADUS_CURRICULUM"] = args.curriculum
-    os.environ["CADUS_CONFIG"] = args.config
+    point_at_code_base(args)
 
     from cadus.events import seeded_rng, validate_event
-    from cadus.loader import load_config, load_graph
     from cadus.projector import PROJECTOR_VERSION, config_hash, project
     from cadus.selector import compose_session
 
-    cfg = load_config()
-    graph = load_graph()
-    now = datetime.fromisoformat(args.now)
-    if now.tzinfo is None:
-        now = now.replace(tzinfo=UTC)
+    cfg, graph = load_1_0()
+    now = parse_now(args.now)
 
     states = []
     for seed in range(1, args.seeds + 1):
         name = f"stream_{seed}.jsonl"
-        events = []
-        with open(os.path.join(args.fixtures, name), encoding="utf-8") as handle:
-            for line in handle:
-                line = line.strip()
-                if line:
-                    events.append(validate_event(json.loads(line)))
-
+        events = read_events(os.path.join(args.fixtures, name), validate_event)
         model = project(events, graph, cfg, now=now, tz=None, goal=args.goal)
-
-        # `t` is the last event's timestamp -- the same `t_ref` the fold used, so
-        # both sides read one instant off the committed stream.
-        last_ts = max(event.ts for event in events)
-        if last_ts.tzinfo is None:
-            last_ts = last_ts.replace(tzinfo=UTC)
-
-        course_id = None
-        for event in events:
-            if event.type == "enrolled":
-                course_id = event.course
-
+        last_ts = last_instant(events)
+        course_id = enrolled_course(events)
         plan = compose_session(
             model.topics,
             graph,
@@ -136,38 +174,7 @@ def main() -> int:
             quiz_state=model.quiz,
             n=args.n,
         )
-
-        def is_quiz(task) -> bool:
-            """Whether the task is the sampled quiz (trap T11)."""
-            return task.task_type.value == "quiz"
-
-        def topic_id(task) -> str | None:
-            """The task's topic id, or `None` for a quiz (trap T11) or a topicless task."""
-            if is_quiz(task) or task.topic is None:
-                return None
-            return task.topic.id
-
-        def payload(task, value) -> int | None:
-            """A task size field, or `None` for a quiz (trap T11).
-
-            `n_problems` and `time_budget_secs` both read the sampled quiz
-            questions, so a quiz row carries neither.
-            """
-            if is_quiz(task) or value is None:
-                return None
-            return int(value)
-
-        tasks = [
-            [
-                task.task_type.value,
-                topic_id(task),
-                bool(task.is_remediation),
-                bool(task.nearly_due),
-                payload(task, task.n_problems),
-                payload(task, task.time_budget_secs),
-            ]
-            for task in plan.tasks
-        ]
+        tasks = task_rows(plan)
         states.append(
             {
                 "seed": seed,
@@ -187,21 +194,11 @@ def main() -> int:
         "goal": args.goal,
         "projector_version": PROJECTOR_VERSION,
         "config_hash": config_hash(cfg),
-        "task_shape": [
-            "task_type",
-            "topic",
-            "is_remediation",
-            "nearly_due",
-            "n_problems",
-            "time_budget_secs",
-        ],
+        "task_shape": TASK_SHAPE,
         "quiz_topic_is_null": "trap T11: the quiz sample is a documented non-parity",
         "states": states,
     }
-    out = args.out or os.path.join(args.fixtures, "selector_1_0.json")
-    with open(out, "w", encoding="utf-8") as handle:
-        handle.write(json.dumps(index, indent=2, sort_keys=True) + "\n")
-    print(f"wrote {out}")
+    write_index(args.out or os.path.join(args.fixtures, "selector_1_0.json"), index)
     print(f"canonical_sha_input_len={len(canonical(index))}")
     return 0
 

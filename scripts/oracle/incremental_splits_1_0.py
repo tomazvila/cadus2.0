@@ -35,107 +35,85 @@ Usage:
 
 from __future__ import annotations
 
-import argparse
-import hashlib
-import json
 import os
-import re
-from datetime import UTC, datetime
+
+from _common import (
+    load_1_0,
+    parity_blob,
+    parse_now,
+    parse_stream_oracle_args,
+    read_events,
+    sha256_of,
+    stream_names,
+    write_index,
+)
 
 #: The streams outside the `stream_N.jsonl` family that this oracle also reads.
 EXTRA_STREAMS = ["stream_u3_coverage.jsonl"]
 
-FIXTURES = os.path.normpath(
-    os.path.join(
-        os.path.dirname(os.path.abspath(__file__)),
-        "..",
-        "..",
-        "crates",
-        "core",
-        "tests",
-        "fixtures",
-        "events",
-    )
+#: Why the incremental fold diverges, as the index records it.
+WHY = (
+    "project_incremental seeds FIRe from the cached model, so a `regraded` "
+    "event in the new half that supersedes a grade the prior half already "
+    "folded never reaches FIRe. 1.0 documents this and routes such a stream "
+    "down the full-replay path (service.py:272 -- a Regraded event or a "
+    "projector_version mismatch, and nothing else). A profile_reset is the "
+    "second class: finalize drops the reset topic's default state, so the "
+    "resume stops propagating onto it, and service.py:272 leaves such a "
+    "stream on the incremental path. The port must diverge at the SAME "
+    "splits and to the SAME model in both classes."
 )
 
 
-def canonical(obj: object) -> str:
-    """Canonical JSON: sorted keys, compact separators, UTF-8, no NaN."""
-    return json.dumps(
-        obj, sort_keys=True, separators=(",", ":"), ensure_ascii=False, allow_nan=False
-    )
-
-
-def blob_of(model: object) -> str:
-    """The parity blob: the canonical model with `built_from_ts` removed."""
-    payload = json.loads(model.model_dump_json())
-    payload.pop("built_from_ts", None)
-    return canonical(payload)
-
-
-def main() -> int:
-    ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("--fixtures", default=FIXTURES)
-    ap.add_argument("--out", default=None)
-    ap.add_argument("--curriculum", default="/home/deploy/dev/cadus2.0/curriculum")
-    ap.add_argument("--config", default="/home/deploy/dev/cadus/config.yaml")
-    ap.add_argument("--now", default="2000-01-01T00:00:00+00:00")
-    ap.add_argument("--goal", type=int, default=40)
-    args = ap.parse_args()
-
-    os.environ["CADUS_CURRICULUM"] = args.curriculum
-    os.environ["CADUS_CONFIG"] = args.config
-
-    from cadus.events import validate_event
-    from cadus.loader import load_config, load_graph
-    from cadus.projector import PROJECTOR_VERSION, config_hash, project, project_incremental
-
-    cfg = load_config()
-    graph = load_graph()
-    now = datetime.fromisoformat(args.now)
-    if now.tzinfo is None:
-        now = now.replace(tzinfo=UTC)
-
-    names = sorted(
-        (n for n in os.listdir(args.fixtures) if re.fullmatch(r"stream_\d+\.jsonl", n)),
-        key=lambda n: int(n.removeprefix("stream_").removesuffix(".jsonl")),
-    )
+def stream_list(fixtures: str) -> list[str]:
+    """The numbered streams, then every extra stream that exists."""
+    names = stream_names(fixtures)
     # The coverage stream carries the `profile_reset` divergence class, which no
     # numbered stream reaches. It sorts last, after the numbered streams.
     for extra in EXTRA_STREAMS:
-        if os.path.exists(os.path.join(args.fixtures, extra)):
+        if os.path.exists(os.path.join(fixtures, extra)):
             names.append(extra)
+    return names
+
+
+def mismatching_splits(events, full: str, graph, cfg, now, goal: int):
+    """The splits whose incremental fold leaves the full replay, with their digests."""
+    from cadus.projector import project, project_incremental
+
+    mismatching: list[int] = []
+    digests: dict[str, str] = {}
+    for split in range(len(events) + 1):
+        prior, fresh = events[:split], events[split:]
+        cached = project(prior, graph, cfg, now=now, tz=None, goal=goal)
+        model = project_incremental(
+            cached, prior, fresh, graph, cfg, now=now, tz=None, goal=goal
+        )
+        blob = parity_blob(model)
+        if blob != full:
+            mismatching.append(split)
+            digests[str(split)] = sha256_of(blob)
+    return mismatching, digests
+
+
+def main() -> int:
+    args = parse_stream_oracle_args(__doc__)
+
+    from cadus.events import validate_event
+    from cadus.projector import PROJECTOR_VERSION, config_hash, project
+
+    cfg, graph = load_1_0()
+    now = parse_now(args.now)
 
     streams = []
-    for name in names:
-        events = []
-        with open(os.path.join(args.fixtures, name), encoding="utf-8") as handle:
-            for line in handle:
-                line = line.strip()
-                if line:
-                    events.append(validate_event(json.loads(line)))
-
-        full = blob_of(project(events, graph, cfg, now=now, tz=None, goal=args.goal))
-        full_digest = hashlib.sha256(full.encode("utf-8")).hexdigest()
-
-        mismatching: list[int] = []
-        digests: dict[str, str] = {}
-        for split in range(len(events) + 1):
-            prior, fresh = events[:split], events[split:]
-            cached = project(prior, graph, cfg, now=now, tz=None, goal=args.goal)
-            model = project_incremental(
-                cached, prior, fresh, graph, cfg, now=now, tz=None, goal=args.goal
-            )
-            blob = blob_of(model)
-            if blob != full:
-                mismatching.append(split)
-                digests[str(split)] = hashlib.sha256(blob.encode("utf-8")).hexdigest()
-
+    for name in stream_list(args.fixtures):
+        events = read_events(os.path.join(args.fixtures, name), validate_event)
+        full = parity_blob(project(events, graph, cfg, now=now, tz=None, goal=args.goal))
+        mismatching, digests = mismatching_splits(events, full, graph, cfg, now, args.goal)
         streams.append(
             {
                 "stream": name,
                 "events": len(events),
-                "full_digest": full_digest,
+                "full_digest": sha256_of(full),
                 "mismatching_splits": mismatching,
                 "mismatching_digests": digests,
             }
@@ -148,23 +126,10 @@ def main() -> int:
         "goal": args.goal,
         "projector_version": PROJECTOR_VERSION,
         "config_hash": config_hash(cfg),
-        "why": (
-            "project_incremental seeds FIRe from the cached model, so a `regraded` "
-            "event in the new half that supersedes a grade the prior half already "
-            "folded never reaches FIRe. 1.0 documents this and routes such a stream "
-            "down the full-replay path (service.py:272 -- a Regraded event or a "
-            "projector_version mismatch, and nothing else). A profile_reset is the "
-            "second class: finalize drops the reset topic's default state, so the "
-            "resume stops propagating onto it, and service.py:272 leaves such a "
-            "stream on the incremental path. The port must diverge at the SAME "
-            "splits and to the SAME model in both classes."
-        ),
+        "why": WHY,
         "streams": streams,
     }
-    out = args.out or os.path.join(args.fixtures, "incremental_1_0.json")
-    with open(out, "w", encoding="utf-8") as handle:
-        handle.write(json.dumps(index, indent=2, sort_keys=True) + "\n")
-    print(f"wrote {out}")
+    write_index(args.out or os.path.join(args.fixtures, "incremental_1_0.json"), index)
     return 0
 
 

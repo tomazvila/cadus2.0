@@ -62,17 +62,15 @@ from __future__ import annotations
 
 import argparse
 import json
-import multiprocessing
 import sys
+
+from _filter import WorkerHost, send_error, serve
 
 sys.path.insert(0, "/home/deploy/dev/cadus")
 
 from cadus_web.sympy_check import _parse, to_sympy_source  # noqa: E402
 
 DEFAULT_TIMEOUT_S = 5.0
-
-# How long the parent waits for a terminated worker to go away.
-REAP_TIMEOUT_S = 5.0
 
 #: The rewrite rules, in a fixed order. Every one of them is a step a learner
 #: performs by hand: put the fractions over one denominator, split them again,
@@ -149,9 +147,7 @@ def _worker(connection) -> None:
         try:
             result = _job(request)
         except BaseException as exc:  # the parent decides what a failure means
-            try:
-                connection.send(("error", f"{type(exc).__name__}: {exc}"))
-            except (BrokenPipeError, OSError):
+            if not send_error(connection, exc):
                 return
             continue
         try:
@@ -160,50 +156,11 @@ def _worker(connection) -> None:
             return
 
 
-class Rewriter:
+class Rewriter(WorkerHost):
     """One persistent SymPy worker process, respawned after every timeout."""
 
     def __init__(self, timeout_s: float) -> None:
-        self.timeout_s = timeout_s
-        # `fork` inherits the SymPy import, so a respawn costs milliseconds.
-        self.context = multiprocessing.get_context("fork")
-        self.connection = None
-        self.process = None
-        self.start()
-
-    def start(self) -> None:
-        """Start a new worker process."""
-        parent_end, child_end = self.context.Pipe(duplex=True)
-        process = self.context.Process(target=_worker, args=(child_end,), daemon=True)
-        process.start()
-        # The parent drops its copy of the child end, so a dead worker gives EOF.
-        child_end.close()
-        self.connection = parent_end
-        self.process = process
-
-    def stop(self) -> None:
-        """Terminate the worker and close the pipe."""
-        process = self.process
-        connection = self.connection
-        self.process = None
-        self.connection = None
-        if connection is not None:
-            try:
-                connection.close()
-            except OSError:
-                pass
-        if process is None:
-            return
-        process.terminate()
-        process.join(REAP_TIMEOUT_S)
-        if process.is_alive():
-            process.kill()
-            process.join(REAP_TIMEOUT_S)
-
-    def restart(self) -> None:
-        """Terminate the worker and start a fresh one."""
-        self.stop()
-        self.start()
+        super().__init__(timeout_s, _worker)
 
     def run(self, request: dict) -> dict:
         """Return the result of one request, under the wall-clock guard."""
@@ -263,21 +220,7 @@ def main() -> int:
         help="wall-clock guard per request, in seconds (default: 5.0)",
     )
     args = parser.parse_args()
-    rewriter = Rewriter(args.timeout)
-    sys.stdout.write(json.dumps({"ready": True, "timeout_s": args.timeout}) + "\n")
-    sys.stdout.flush()
-    try:
-        for line in sys.stdin:
-            if not line.strip():
-                continue
-            response = handle(line, rewriter)
-            sys.stdout.write(
-                json.dumps(response, sort_keys=True, ensure_ascii=False) + "\n"
-            )
-            sys.stdout.flush()
-    finally:
-        rewriter.stop()
-    return 0
+    return serve(Rewriter(args.timeout), handle)
 
 
 if __name__ == "__main__":
