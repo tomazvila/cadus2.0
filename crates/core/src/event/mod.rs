@@ -253,7 +253,7 @@ mod tests {
             let event = Event::from_json(text).expect("the minimal body reads");
             assert_eq!(event.type_name(), name);
             assert_eq!(event.session(), Some("s"));
-            assert_eq!(event.v().get(), 1);
+            assert_eq!(event.v(), SchemaVersion::current());
             assert_eq!(event.ts().micros(), 1_772_442_000_000_000);
             let written = event.to_canonical_json().expect("the body writes");
             assert_eq!(Event::from_json(&written).expect("the form reads"), event);

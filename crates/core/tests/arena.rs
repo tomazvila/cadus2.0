@@ -172,6 +172,11 @@ fn a_knowledge_point_is_addressed_by_topic_and_position() {
         .kp_idx_of(topic, "kp2")
         .expect("kp2 is a knowledge point of quadratic-formula");
     assert_eq!(second, KpIdx::from_u16(1));
+    assert_eq!(second.index(), 1);
+    let third = curriculum
+        .kp_idx_of(topic, "kp3")
+        .expect("kp3 is a knowledge point of quadratic-formula");
+    assert_eq!(third.index(), 2);
     assert_eq!(
         curriculum
             .knowledge_point(topic, second)

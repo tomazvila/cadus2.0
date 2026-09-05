@@ -22,7 +22,7 @@ macro_rules! change_note {
             #[serde(default)]
             pub session: Option<String>,
             /// The schema version.
-            #[serde(default)]
+            #[serde(default = "SchemaVersion::current")]
             pub v: SchemaVersion,
             /// What changed.
             pub summary: String,
@@ -53,7 +53,7 @@ pub struct SessionStart {
     #[serde(default)]
     pub session: Option<String>,
     /// The schema version.
-    #[serde(default)]
+    #[serde(default = "SchemaVersion::current")]
     pub v: SchemaVersion,
 }
 
@@ -67,7 +67,7 @@ pub struct SessionEnd {
     #[serde(default)]
     pub session: Option<String>,
     /// The schema version.
-    #[serde(default)]
+    #[serde(default = "SchemaVersion::current")]
     pub v: SchemaVersion,
     /// The XP the session earned. The fold ignores it; `xp_events` come from results.
     #[serde(default)]
@@ -87,7 +87,7 @@ pub struct Enrolled {
     #[serde(default)]
     pub session: Option<String>,
     /// The schema version.
-    #[serde(default)]
+    #[serde(default = "SchemaVersion::current")]
     pub v: SchemaVersion,
     /// The course the learner entered.
     pub course: Slug,
@@ -109,7 +109,7 @@ pub struct RemediationTriggered {
     #[serde(default)]
     pub session: Option<String>,
     /// The schema version.
-    #[serde(default)]
+    #[serde(default = "SchemaVersion::current")]
     pub v: SchemaVersion,
     /// The kind of remediation.
     pub kind: String,
@@ -130,7 +130,7 @@ pub struct DiagnosticAnswer {
     #[serde(default)]
     pub session: Option<String>,
     /// The schema version.
-    #[serde(default)]
+    #[serde(default = "SchemaVersion::current")]
     pub v: SchemaVersion,
     /// The topic the question tested.
     pub topic: Slug,
@@ -152,7 +152,7 @@ pub struct DiagnosticPlaced {
     #[serde(default)]
     pub session: Option<String>,
     /// The schema version.
-    #[serde(default)]
+    #[serde(default = "SchemaVersion::current")]
     pub v: SchemaVersion,
     /// The placement balance per topic.
     ///
@@ -178,7 +178,7 @@ pub struct ProfileReset {
     #[serde(default)]
     pub session: Option<String>,
     /// The schema version.
-    #[serde(default)]
+    #[serde(default = "SchemaVersion::current")]
     pub v: SchemaVersion,
     /// The topics to reset. An empty list is a no-op.
     #[serde(default)]
@@ -200,7 +200,7 @@ pub struct Regraded {
     #[serde(default)]
     pub session: Option<String>,
     /// The schema version.
-    #[serde(default)]
+    #[serde(default = "SchemaVersion::current")]
     pub v: SchemaVersion,
     /// The task the correction applies to.
     pub task_id: String,
@@ -229,7 +229,7 @@ pub struct AnkiCardCreated {
     #[serde(default)]
     pub session: Option<String>,
     /// The schema version.
-    #[serde(default)]
+    #[serde(default = "SchemaVersion::current")]
     pub v: SchemaVersion,
     /// The topic the card covers.
     pub topic: Slug,

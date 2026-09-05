@@ -16,7 +16,7 @@ use cadus_core::event::TopicStatus;
 use cadus_core::fire::initial_ability;
 use cadus_core::learner::TopicState;
 use cadus_core::projector::{blob_digest, canonical_blob, kp_failed, kp_passed};
-use common::events::{assert_same_blob, fold, live_oracle_blob, stream};
+use common::events::{assert_same_blob, event, fold, live_oracle_blob, stream};
 
 // --------------------------------------------------------------------------- //
 // The boundary streams — one guard per stream, read AT equality
@@ -254,6 +254,7 @@ fn kp_passed_is_two_at_the_tail_or_three_of_the_first_four() {
     assert!(!kp_passed(&[true]));
     assert!(kp_passed(&[true, true]));
     assert!(!kp_passed(&[true, false]));
+    assert!(!kp_passed(&[false, true]));
     // A pass at the tail, not anywhere: the first two do not count once a later
     // answer stands.
     assert!(!kp_passed(&[true, true, false]));
@@ -274,4 +275,31 @@ fn kp_failed_is_five_answers_without_a_pass() {
     assert!(kp_failed(&[false, true, false, true, false], &cfg));
     // Three of the first four is a pass, so five answers do not fail it.
     assert!(!kp_failed(&[true, true, false, true, false], &cfg));
+}
+
+// --------------------------------------------------------------------------- //
+// The quiz rows that count as practice
+// --------------------------------------------------------------------------- //
+
+#[test]
+fn a_missed_quiz_row_is_not_practice_of_its_topic() {
+    // Only a CORRECT row on a curriculum topic records a practice instant
+    // (`projector.py:262-265`). A miss at the trigger instant leaves the
+    // remediation target open.
+    let events = vec![
+        event(
+            r#"{"type":"remediation_triggered","ts":"2026-05-04T09:00:00Z","kind":"quiz-miss",
+                "source_topic":"absolute-value","targets":["adding-integers"]}"#,
+        ),
+        event(
+            r#"{"type":"quiz_result","ts":"2026-05-04T09:00:00Z","quiz_id":"q1","score":0.0,
+                "per_topic":[{"topic":"adding-integers","correct":false,"secs":10}],"xp":0.0}"#,
+        ),
+    ];
+    let model = fold(&events);
+    assert_eq!(model.pending_remediation.len(), 1);
+    assert_eq!(
+        model.pending_remediation[0].targets[0].as_str(),
+        "adding-integers"
+    );
 }

@@ -408,3 +408,37 @@ fn a_teach_body_with_a_spare_field_is_rejected() {
 and nothing else"
     );
 }
+
+// --------------------------------------------------------------------------- //
+// The served answers and the step text
+// --------------------------------------------------------------------------- //
+
+#[test]
+fn the_served_answers_hold_each_answer_once_and_no_empty_answer() {
+    let exemplars = exemplars();
+    let spec = spec_with_instances(
+        &exemplars,
+        &[
+            ("Compute $7^2$ again.", "49"),
+            ("Blank.", ""),
+            ("Compute $9^2$.", "81"),
+        ],
+    );
+    assert_eq!(spec.served_answers(), vec!["49", "81"]);
+}
+
+#[test]
+fn a_blank_step_is_rejected() {
+    let exemplars = exemplars();
+    let body = r#"{
+        "concept": "Squaring a number multiplies it by itself.",
+        "worked_example": {"problem": "Compute $6^2$.", "steps": ["   "]}
+    }"#;
+    let rejection = gate_teach(body, &spec(&exemplars)).expect_err("a blank step is rejected");
+    assert_eq!(rejection.code, "teach-steps");
+    assert_eq!(
+        rejection.message,
+        "step 0 of 'worked_example.steps' is not a non-empty string — every step is one line of \
+the solution a learner reads"
+    );
+}

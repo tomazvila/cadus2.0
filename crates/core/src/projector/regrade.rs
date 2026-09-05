@@ -29,9 +29,6 @@ use crate::event::{Attempt, Event, LessonResult, Regraded, RegradedAttempt, Revi
 #[must_use]
 pub fn apply_regrades(events: &[Event]) -> Vec<Event> {
     let corrections = Corrections::collect(events);
-    if corrections.is_empty() {
-        return events.to_vec();
-    }
     // The task each topic's most recent attempt belonged to. It is the key that gives a
     // `lesson_result`, which carries no task id, the task it closes.
     let mut task_of_topic: BTreeMap<String, String> = BTreeMap::new();
@@ -68,11 +65,6 @@ impl<'a> Corrections<'a> {
             by_attempt,
             by_task,
         }
-    }
-
-    /// Whether the stream carries no correction at all.
-    fn is_empty(&self) -> bool {
-        self.by_attempt.is_empty() && self.by_task.is_empty()
     }
 
     /// The corrected form of one event, or `None` for a consumed `regraded`.

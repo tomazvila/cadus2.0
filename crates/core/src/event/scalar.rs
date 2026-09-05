@@ -30,14 +30,17 @@ macro_rules! checked_deserialize {
 /// 1.0 reads `v`, then applies `SHIMS[v]` while `v` is below `SCHEMA_VERSION`. The
 /// table is empty and `SCHEMA_VERSION` is `1`, so every other version raises there
 /// and is an error value here.
-#[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Hash, PartialOrd, Ord)]
+///
+/// The type has one value and no `Default`: an envelope with no `v` key takes
+/// [`SchemaVersion::current`] through its `serde(default)`.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub struct SchemaVersion;
 
 impl SchemaVersion {
-    /// The numeric value on the wire.
+    /// The one version this build reads and writes.
     #[must_use]
-    pub const fn get(self) -> i64 {
-        SCHEMA_VERSION
+    pub const fn current() -> Self {
+        Self
     }
 }
 
@@ -300,6 +303,7 @@ mod tests {
         assert!(PositiveSecs::new(0).is_err() && PositiveSecs::new(1).is_ok());
         assert!(Weight::new(1.5).is_err());
         assert_eq!(Weight::new(0.5).expect("in range").get(), 0.5);
-        assert_eq!(SchemaVersion.get(), SCHEMA_VERSION);
+        assert_eq!(SchemaVersion::current(), SchemaVersion);
+        assert_eq!(SCHEMA_VERSION, 1);
     }
 }

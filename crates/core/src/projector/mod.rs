@@ -42,7 +42,7 @@ use chrono_tz::Tz;
 use crate::config::Config;
 use crate::curriculum::Curriculum;
 use crate::event::{Event, Slug};
-use crate::fire::{clamp, py_min};
+use crate::fire::{clamp, py_max, py_min};
 use crate::learner::TopicState;
 use crate::numeric::{OutOfRangeError, TimeError, resolve_timezone};
 
@@ -114,11 +114,7 @@ pub enum ProjectorError {
 /// zero, so the mean pulls a stale topic DOWN.
 #[must_use]
 pub fn refreshed_repnum(old_rep: f64, balance: f64) -> f64 {
-    let refresh_rep = if balance > 0.0 {
-        py_min(balance, PLACEMENT_REPNUM_CAP)
-    } else {
-        0.0
-    };
+    let refresh_rep = py_min(py_max(0.0, balance), PLACEMENT_REPNUM_CAP);
     (old_rep + refresh_rep) / 2.0
 }
 
@@ -244,9 +240,7 @@ impl<'a> Projector<'a> {
             return;
         }
         let ts = event.ts().micros();
-        if self.last_ts.is_none_or(|last| ts > last) {
-            self.last_ts = Some(ts);
-        }
+        self.last_ts = Some(self.last_ts.map_or(ts, |last| last.max(ts)));
 
         match event {
             Event::Enrolled(body) => self.on_enrolled(body, apply_fire),

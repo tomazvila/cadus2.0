@@ -263,12 +263,14 @@ impl Projector<'_> {
                 continue;
             }
             let new_rep = refreshed_repnum(old.rep_num, balance);
+            // `on_diagnostic_answer` creates a list with its first entry, so a
+            // present list holds at least one answer.
             let ability = match diag_answers.get(&tid) {
-                Some(answers) if !answers.is_empty() => {
+                Some(answers) => {
                     let fresh = self.ability_from_answers(answers);
                     clamp01((old.ability + fresh) / 2.0)
                 }
-                _ => old.ability,
+                None => old.ability,
             };
             let mut next = old;
             next.status = TopicStatus::Placed;

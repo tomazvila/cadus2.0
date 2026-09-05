@@ -76,7 +76,7 @@ pub struct TaskServed {
     #[serde(default)]
     pub session: Option<String>,
     /// The schema version.
-    #[serde(default)]
+    #[serde(default = "SchemaVersion::current")]
     pub v: SchemaVersion,
     /// The id of the served task.
     pub task_id: String,
@@ -113,7 +113,7 @@ pub struct Attempt {
     #[serde(default)]
     pub session: Option<String>,
     /// The schema version.
-    #[serde(default)]
+    #[serde(default = "SchemaVersion::current")]
     pub v: SchemaVersion,
     /// The idempotency key of the attempt. The fold uses it for regrade matching only.
     pub attempt_id: String,
@@ -163,7 +163,7 @@ pub struct LessonResult {
     #[serde(default)]
     pub session: Option<String>,
     /// The schema version.
-    #[serde(default)]
+    #[serde(default = "SchemaVersion::current")]
     pub v: SchemaVersion,
     /// The topic the lesson taught.
     pub topic: Slug,
@@ -192,7 +192,7 @@ pub struct ReviewResult {
     #[serde(default)]
     pub session: Option<String>,
     /// The schema version.
-    #[serde(default)]
+    #[serde(default = "SchemaVersion::current")]
     pub v: SchemaVersion,
     /// The topic the review tested.
     pub topic: Slug,
@@ -223,7 +223,7 @@ pub struct QuizResult {
     #[serde(default)]
     pub session: Option<String>,
     /// The schema version.
-    #[serde(default)]
+    #[serde(default = "SchemaVersion::current")]
     pub v: SchemaVersion,
     /// The id of the quiz.
     pub quiz_id: String,

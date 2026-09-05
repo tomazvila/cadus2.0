@@ -17,7 +17,7 @@
 
 use std::collections::BTreeSet;
 
-use cadus_core::event::{Event, EventError, Slug, TaskType, Timestamp};
+use cadus_core::event::{Event, EventError, SchemaVersion, Slug, TaskType, Timestamp};
 
 /// The 47-event oracle stream, in canonical JSON, one event per line.
 const STREAM_1: &str = include_str!("fixtures/events/stream_1.jsonl");
@@ -194,7 +194,7 @@ fn a_version_other_than_one_is_an_error() {
 fn a_missing_version_defaults_to_one_and_writes_back_as_one() {
     let text = r#"{"type":"session_start","ts":"2026-03-02T09:00:00Z"}"#;
     let event = Event::from_json(text).unwrap();
-    assert_eq!(event.v().get(), 1);
+    assert_eq!(event.v(), SchemaVersion);
     assert_eq!(
         event.to_canonical_json().unwrap(),
         r#"{"session":null,"ts":"2026-03-02T09:00:00Z","type":"session_start","v":1}"#
@@ -205,7 +205,7 @@ fn a_missing_version_defaults_to_one_and_writes_back_as_one() {
 fn the_envelope_accessors_read_every_member() {
     for line in ONE_PER_TYPE.lines() {
         let event = Event::from_json(line).unwrap();
-        assert_eq!(event.v().get(), 1);
+        assert_eq!(event.v(), SchemaVersion);
         assert_eq!(event.session(), Some("s_2026-05-04a"));
         assert!(event.ts().micros() > 0);
         assert!(Event::TYPE_NAMES.contains(&event.type_name()));
