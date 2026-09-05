@@ -191,3 +191,113 @@ pub async fn assert_internal(
     assert_eq!(body["error"]["code"], "internal_error", "{raw}");
     body
 }
+
+/// Install the trigger function that makes an UPDATE a no-op: it returns
+/// `NULL`, so the row is skipped and the statement reports zero rows.
+async fn install_skip(db: &TestDb) {
+    run(
+        db,
+        "CREATE OR REPLACE FUNCTION test_fault_skip() RETURNS trigger LANGUAGE plpgsql AS $$ \
+         BEGIN RETURN NULL; END $$"
+            .to_string(),
+    )
+    .await;
+}
+
+/// Make the COMMIT of every transaction that ran `event` on a row of `table`
+/// satisfying `condition` fail. The statement itself succeeds. `condition`
+/// reads the row as `NEW` for an insert or an update, and as `OLD` for a
+/// delete.
+pub async fn fail_commit_after(db: &TestDb, table: &str, event: &str, condition: &str) {
+    install_raise(db).await;
+    run(
+        db,
+        format!(
+            "CREATE CONSTRAINT TRIGGER test_fault_commit_{} AFTER {event} ON {table} \
+             DEFERRABLE INITIALLY DEFERRED FOR EACH ROW WHEN ({condition}) \
+             EXECUTE FUNCTION test_fault_raise()",
+            event
+                .split_whitespace()
+                .next()
+                .unwrap_or("x")
+                .to_lowercase()
+        ),
+    )
+    .await;
+}
+
+/// Make every UPDATE of `table` whose old row satisfies `condition` a no-op:
+/// the statement succeeds and reports zero rows.
+pub async fn skip_updates(db: &TestDb, table: &str, condition: &str) {
+    install_skip(db).await;
+    run(
+        db,
+        format!(
+            "CREATE TRIGGER test_fault_skip BEFORE UPDATE ON {table} \
+             FOR EACH ROW WHEN ({condition}) EXECUTE FUNCTION test_fault_skip()"
+        ),
+    )
+    .await;
+}
+
+/// Install the policy function that hides a row from a query whose text holds
+/// `needle`, from its `skip`-th evaluation on. The counter is one sequence of
+/// the database, so one test installs one hide.
+async fn install_hide(db: &TestDb) {
+    run(
+        db,
+        "CREATE OR REPLACE FUNCTION test_fault_hide(needle text, skip bigint) RETURNS boolean \
+         LANGUAGE plpgsql STABLE AS $$ BEGIN \
+         IF position(needle in current_query()) = 0 THEN RETURN true; END IF; \
+         RETURN nextval('test_hide_calls') <= skip; END $$"
+            .to_string(),
+    )
+    .await;
+    run(
+        db,
+        format!("GRANT EXECUTE ON FUNCTION test_fault_hide(text, bigint) TO {APP_ROLE}"),
+    )
+    .await;
+    run(
+        db,
+        "CREATE SEQUENCE IF NOT EXISTS test_hide_calls".to_string(),
+    )
+    .await;
+    run(
+        db,
+        format!("GRANT USAGE ON SEQUENCE test_hide_calls TO {APP_ROLE}"),
+    )
+    .await;
+}
+
+/// The SQL string literal of `text`.
+fn quote(text: &str) -> String {
+    format!("'{}'", text.replace('\'', "''"))
+}
+
+/// Hide every row of `table` from the app role when the query text holds
+/// `needle`, after the first `visible` matching row reads. The read raises no
+/// error: it sees no row. The table must carry row-level security.
+pub async fn hide_rows_after(db: &TestDb, table: &str, needle: &str, visible: i64) {
+    install_hide(db).await;
+    run(
+        db,
+        format!(
+            "CREATE POLICY test_fault_hide ON {table} AS RESTRICTIVE FOR SELECT \
+             USING (test_fault_hide({}, {visible}))",
+            quote(needle)
+        ),
+    )
+    .await;
+}
+
+/// Hide every row of `table` from the app role when the query text holds
+/// `needle`. See [`hide_rows_after`].
+pub async fn hide_rows(db: &TestDb, table: &str, needle: &str) {
+    hide_rows_after(db, table, needle, 0).await;
+}
+
+/// Drop one function of the schema, so every call of it fails.
+pub async fn drop_function(db: &TestDb, signature: &str) {
+    run(db, format!("DROP FUNCTION {signature}")).await;
+}

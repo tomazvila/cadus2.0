@@ -355,3 +355,67 @@ async fn a_failed_ledger_read_never_fails_the_scrape() {
         "a read that failed must render no token series:\n{text}"
     );
 }
+
+/// Scrape `db` and read back a text that carries the request series and no
+/// ledger series.
+async fn scrape_without_ledger(db: &TestDb) -> String {
+    let text = scrape(&app_of(db)).await;
+    holds(
+        &text,
+        "cadus_deterministic_grade_total{result=\"correct\"} 0",
+    );
+    assert!(
+        !text.contains("cadus_model_call_tokens_total"),
+        "a ledger that did not read must render no token series:\n{text}"
+    );
+    text
+}
+
+/// A model-call aggregate that does not read drops the ledger series and keeps
+/// the rest of the scrape.
+#[tokio::test]
+async fn a_model_call_read_that_fails_drops_the_ledger_series() {
+    TestDb::with(|db| async move {
+        common::drop_function(&db, "model_call_totals()").await;
+        scrape_without_ledger(&db).await;
+    })
+    .await;
+}
+
+/// A job aggregate that does not read drops the ledger series too: the model
+/// calls read, the jobs did not, and a half ledger renders as no ledger.
+#[tokio::test]
+async fn a_job_read_that_fails_drops_the_ledger_series() {
+    TestDb::with(|db| async move {
+        common::drop_function(&db, "diagnosis_job_totals()").await;
+        scrape_without_ledger(&db).await;
+    })
+    .await;
+}
+
+/// A ledger read that runs past `LEDGER_READ_BOUND` drops the ledger series
+/// and the scrape still answers inside the bound of the scrape itself.
+#[tokio::test]
+async fn a_ledger_read_past_its_bound_drops_the_ledger_series() {
+    TestDb::with(|db| async move {
+        sqlx::query(
+            "CREATE OR REPLACE FUNCTION model_call_totals() \
+             RETURNS TABLE (purpose text, input_cached bigint, input_uncached bigint, \
+                            output_tokens bigint, reasoning_tokens bigint, latency_ms bigint, \
+                            calls bigint) \
+             LANGUAGE sql SECURITY DEFINER STABLE AS $$ \
+             SELECT 'diagnosis'::text, 0::bigint, 0::bigint, 0::bigint, 0::bigint, 0::bigint, \
+                    0::bigint FROM pg_sleep(3) $$",
+        )
+        .execute(&db.admin)
+        .await
+        .unwrap();
+        let started = std::time::Instant::now();
+        scrape_without_ledger(&db).await;
+        assert!(
+            started.elapsed() < std::time::Duration::from_secs(3),
+            "the scrape must give the ledger up at its 2 s bound"
+        );
+    })
+    .await;
+}
