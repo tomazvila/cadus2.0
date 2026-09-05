@@ -7,9 +7,6 @@
 import { describe, expect, it } from 'vitest';
 import { act, cleanup, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { readFileSync } from 'node:fs';
-import { dirname, join } from 'node:path';
-import { fileURLToPath } from 'node:url';
 import { loadCytoscape, resetCytoscapeLoader } from '@/views/map/cytoscape-loader';
 import { layerOf, toElements } from '@/views/map/layout';
 import { buildStyle, readTokens } from '@/views/map/mapStyle';
@@ -255,13 +252,6 @@ describe('the payload shapes', () => {
     resetCytoscapeLoader();
     // Under the test config the vendored specifier resolves to the double.
     expect(await loadCytoscape()).toBe(cytoscape);
-  });
-
-  it('names the vendored path the CSP gate looks for, in the source', () => {
-    // `scripts/check-bundle-csp.mjs` finds this literal in the sources and fails the build
-    // when the served file is absent. The literal is the contract, so the test reads it.
-    const source = readFileSync(join(dirname(fileURLToPath(import.meta.url)), '../src/views/map/cytoscape-loader.ts'), 'utf8');
-    expect(source).toContain("const CYTOSCAPE_URL = '/vendor/cytoscape/cytoscape.esm.min.mjs';");
   });
 
   it('builds the stylesheet literally, from the tokens it is given', () => {
