@@ -35,6 +35,7 @@
     )
 )]
 
+use std::convert::identity;
 use std::future::IntoFuture;
 use std::process::ExitCode;
 use std::sync::Arc;
@@ -120,7 +121,7 @@ async fn run() -> Result<(), Fatal> {
     // start.
     let hub = Arc::new(DiagnosisHub::new());
     let listener_task = spawn_listener(&hub, &db);
-    let admin = open_admin().await?;
+    let admin = open_admin(&settings.cfg).await?;
 
     let app = build_app(settings.state(db.clone()), admin.clone(), hub);
     let (result, drain_elapsed) =
@@ -183,12 +184,10 @@ async fn connect_guarded(cfg: &DbConfig, shutdown: &mut Shutdown) -> Result<Opti
 /// `bind_addr` accepted the string only after a `SocketAddr` parse, so this
 /// bind resolves the literal address and asks no name server.
 async fn bind(addr: &str) -> Result<TcpListener, Fatal> {
-    let listener = TcpListener::bind(addr)
-        .await
+    let bound = TcpListener::bind(addr).await;
+    let (listener, local) = bound
+        .and_then(|listener| listener.local_addr().map(|local| (listener, local)))
         .map_err(|err| Fatal::Startup(format!("bind {addr} failed: {err}")))?;
-    let local = listener
-        .local_addr()
-        .map_err(|err| Fatal::Startup(format!("local address of the listener failed: {err}")))?;
     // The address belongs in the message text, not in a structured field. The
     // compose comment and docs/SELF_HOST.md tell the operator to look for the
     // literal `cadus-web: listening on`, and a field renders as `address=...`
@@ -218,8 +217,8 @@ fn spawn_listener(hub: &Arc<DiagnosisHub>, db: &Db) -> JoinHandle<()> {
 /// `content_store` on this tier. It opens AFTER the C3 boot guard, and the
 /// guard never runs on it: this role bypasses row-level security by design,
 /// and no learner route takes it.
-async fn open_admin() -> Result<Option<Db>, Fatal> {
-    let Some(admin_cfg) = admin_dsn()? else {
+async fn open_admin(cfg: &DbConfig) -> Result<Option<Db>, Fatal> {
+    let Some(admin_cfg) = admin_dsn(cfg)? else {
         tracing::info!(
             "cadus-web: {ADMIN_DSN_VAR} is not set, so the review writes of \
              /api/admin/content answer 503"
@@ -272,24 +271,19 @@ async fn serve_until_stop(
             let _ = fired_tx.send(());
         })
         .into_future();
-    let mut server = std::pin::pin!(server);
+    let mut server = tokio::spawn(server);
 
-    let mut drain_elapsed = Duration::ZERO;
-    let result = tokio::select! {
-        outcome = &mut server => outcome,
-        _ = fired_rx => {
-            let started = Instant::now();
-            let outcome = match tokio::time::timeout(deadline, &mut server).await {
-                Ok(outcome) => outcome,
-                Err(_elapsed) => {
-                    tracing::info!("shutdown deadline reached; closing");
-                    Ok(())
-                }
-            };
-            drain_elapsed = started.elapsed();
-            outcome
+    // The sender lives inside the server task, so this wait ends at the stop
+    // signal, or at the end of the server, whichever comes first.
+    let _ = fired_rx.await;
+    let started = Instant::now();
+    let result = match tokio::time::timeout(deadline, &mut server).await {
+        Ok(joined) => joined.map_err(std::io::Error::other).and_then(identity),
+        Err(_elapsed) => {
+            tracing::info!("shutdown deadline reached; closing");
+            server.abort();
+            Ok(())
         }
     };
-    let result = result.map_err(|err| Fatal::Startup(format!("serve failed: {err}")));
-    (result, drain_elapsed)
+    (result.map_err(Fatal::startup), started.elapsed())
 }

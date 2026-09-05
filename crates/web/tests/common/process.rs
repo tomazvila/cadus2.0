@@ -198,8 +198,13 @@ pub fn wait_until_healthy(child: &mut Child, address: &str) -> (u16, String) {
 
 /// Send `SIGTERM` to one child process.
 pub fn send_sigterm(child: &Child) {
+    send_signal(child, "-TERM");
+}
+
+/// Send the signal `flag` names, as `kill` spells it, to one child process.
+pub fn send_signal(child: &Child, flag: &str) {
     let killed = Command::new("kill")
-        .arg("-TERM")
+        .arg(flag)
         .arg(child.id().to_string())
         .status()
         .expect("run kill");

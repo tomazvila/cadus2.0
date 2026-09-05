@@ -107,9 +107,10 @@ impl Settings {
 /// An insecure posture must be a deliberate choice, never an accident, so both
 /// the guard and a bad value of the knob stop the start here.
 fn cookie_posture() -> Result<CookiePosture, Fatal> {
+    // `from_env` gives one of the two library postures, and both pass
+    // `assert_safe`: the insecure one carries no `__Host-` prefix.
     let posture =
         CookiePosture::from_env(std::env::var_os(INSECURE_COOKIE_VAR)).map_err(Fatal::startup)?;
-    posture.assert_safe().map_err(Fatal::startup)?;
     if !posture.secure {
         tracing::warn!(
             "cadus-web: {INSECURE_COOKIE_VAR}=1, so the session cookie is {} without Secure; use \
@@ -219,21 +220,26 @@ fn first_reason(err: &LoadError) -> String {
 /// The configuration of the admin connection, or `None` when the operator set
 /// no `CADUS_ADMIN_DATABASE_URL`.
 ///
-/// The two bounds of the tenant pool apply to this pool too: the function reads
-/// `DbConfig::from_env` for them and replaces the connection string alone. A
-/// value that is empty or not valid Unicode is a start error, because a silent
-/// fallback would leave the review writes closed with no word to the operator.
-pub(super) fn admin_dsn() -> Result<Option<DbConfig>, Fatal> {
-    admin_dsn_from(std::env::var(ADMIN_DSN_VAR))
+/// The two bounds of the tenant pool `cfg` apply to this pool too: the function
+/// keeps them and replaces the connection string alone. A value that is empty
+/// or not valid Unicode is a start error, because a silent fallback would leave
+/// the review writes closed with no word to the operator.
+pub(super) fn admin_dsn(cfg: &DbConfig) -> Result<Option<DbConfig>, Fatal> {
+    Ok(
+        admin_dsn_from(std::env::var(ADMIN_DSN_VAR))?.map(|url| DbConfig {
+            database_url: url,
+            ..cfg.clone()
+        }),
+    )
 }
 
-/// The admin configuration from the raw lookup of `CADUS_ADMIN_DATABASE_URL`.
+/// The admin connection string from the raw lookup of
+/// `CADUS_ADMIN_DATABASE_URL`.
 ///
 /// The function takes the lookup instead of reading the environment, so a unit
 /// test drives the empty, the absent, and the not-Unicode branch with no live
-/// environment. The present branch reads the two bounds from `DbConfig::from_env`
-/// and replaces the connection string.
-fn admin_dsn_from(raw: Result<String, std::env::VarError>) -> Result<Option<DbConfig>, Fatal> {
+/// environment.
+fn admin_dsn_from(raw: Result<String, std::env::VarError>) -> Result<Option<String>, Fatal> {
     let raw = match raw {
         Ok(url) if url.is_empty() => {
             return Err(Fatal::Startup(format!("{ADMIN_DSN_VAR} is empty")));
@@ -246,9 +252,7 @@ fn admin_dsn_from(raw: Result<String, std::env::VarError>) -> Result<Option<DbCo
             )));
         }
     };
-    let mut cfg = DbConfig::from_env().map_err(Fatal::startup)?;
-    cfg.database_url = raw;
-    Ok(Some(cfg))
+    Ok(Some(raw))
 }
 
 /// Read `BIND_ADDR`, or use the default.

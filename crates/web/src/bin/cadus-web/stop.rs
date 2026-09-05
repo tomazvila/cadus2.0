@@ -65,10 +65,11 @@ impl Shutdown {
     pub fn install() -> Result<Self, Fatal> {
         use tokio::signal::unix::{SignalKind, signal};
 
-        let terminate = signal(SignalKind::terminate())
-            .map_err(|err| Fatal::Startup(format!("the SIGTERM handler failed: {err}")))?;
-        let interrupt = signal(SignalKind::interrupt())
-            .map_err(|err| Fatal::Startup(format!("the SIGINT handler failed: {err}")))?;
+        let handlers = signal(SignalKind::terminate()).and_then(|terminate| {
+            signal(SignalKind::interrupt()).map(|interrupt| (terminate, interrupt))
+        });
+        let (terminate, interrupt) =
+            handlers.map_err(|err| Fatal::Startup(format!("the signal handlers failed: {err}")))?;
         Ok(Self {
             terminate,
             interrupt,
