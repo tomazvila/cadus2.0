@@ -126,11 +126,13 @@ async fn run() -> Result<(), Fatal> {
     let (result, drain_elapsed) =
         serve_until_stop(listener, app, shutdown, settings.deadline).await;
 
-    // The listener holds one pooled connection, so it ends BEFORE the pool
-    // close; otherwise the close waits for a connection that never comes back.
-    listener_task.abort();
+    // The pool close ends the listener: the close event of the pool cancels
+    // its wait, the listener gives its connection back, and the close
+    // completes. The bounded wait after it is for the line the listener logs
+    // on its way out.
     let budget = close_budget(settings.deadline, drain_elapsed);
     close_within(budget, db.pool().close()).await;
+    let _ = tokio::time::timeout(Duration::from_secs(1), listener_task).await;
     if let Some(admin) = admin {
         close_within(budget, admin.pool().close()).await;
     }
