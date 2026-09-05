@@ -17,28 +17,20 @@ Usage:
 
 from __future__ import annotations
 
-import argparse
-import json
 import math
 import os
-import re
-from datetime import UTC, datetime, timedelta
+from datetime import timedelta
+
+from _common import (
+    iter_rows,
+    load_1_0,
+    parse_stream_oracle_args,
+    stream_names,
+)
+from _coverage_probes import Probe, close, install
 
 #: The non-UTC zone the streak block is designed around (spec section 9 item 9).
 COVERAGE_TZ = "America/New_York"
-
-FIXTURES = os.path.normpath(
-    os.path.join(
-        os.path.dirname(os.path.abspath(__file__)),
-        "..",
-        "..",
-        "crates",
-        "core",
-        "tests",
-        "fixtures",
-        "events",
-    )
-)
 
 #: (probe id, spec section 9 item, what the probe records).
 PROBES = [
@@ -130,231 +122,6 @@ NOOP_TYPES = frozenset(
 )
 
 
-class Probe:
-    """The measured hit set of one stream."""
-
-    def __init__(self) -> None:
-        self.hits: set[str] = set()
-
-    def hit(self, name: str) -> None:
-        self.hits.add(name)
-
-
-def close(a: float, b: float, tol: float = 1e-12) -> bool:
-    """Whether two floats agree to within ``tol`` in absolute value."""
-    return abs(a - b) <= tol
-
-
-def install(probe: Probe, cfg):
-    """Wrap the 1.0 FIRe and projector entry points with the PROBES branch probes.
-
-    Returns a no-argument ``restore`` function. The caller MUST call it after each
-    stream. Without the restore, a second ``install`` wraps the first wrapper, and
-    then every later fold also feeds the earlier stream's probe -- which reports
-    one stream's branches as another stream's coverage.
-    """
-    from cadus import fire as fire_mod
-    from cadus import projector as proj_mod
-    from cadus.model import TopicState, TopicStatus
-
-    raw_raw_delta = fire_mod.raw_delta
-    raw_decay_for = fire_mod.decay_for
-    raw_interval_for = fire_mod.interval_for
-    raw_speed_for = fire_mod.speed_for
-    raw_apply_update = fire_mod._apply_update
-    raw_apply_attempt = fire_mod.apply_attempt
-    raw_memory_at = fire_mod.memory_at
-
-    def probed_raw_delta(q, memory_now, passed, config, *, assisted=False):
-        if passed:
-            span = 1.0 - config.fire.due_threshold
-            if span <= 0.0:
-                early = 1.0
-            else:
-                early = max(config.fire.early_floor, min((1.0 - memory_now) / span, 1.0))
-            if close(early, config.fire.early_floor):
-                probe.hit("fire.early_floor")
-            elif close(early, 1.0):
-                probe.hit("fire.early_clamp_1")
-            else:
-                probe.hit("fire.early_mid")
-        elif close(q, 0.0):
-            probe.hit("fire.fail_q_0")
-        elif close(q, 0.15):
-            probe.hit("fire.fail_q_015")
-        return raw_raw_delta(q, memory_now, passed, config, assisted=assisted)
-
-    def probed_decay_for(state, t, config):
-        value = raw_decay_for(state, t, config)
-        if close(value, 1.0):
-            probe.hit("fire.decay_1")
-        elif close(value, config.fire.decay_cap):
-            probe.hit("fire.decay_cap_3")
-        else:
-            probe.hit("fire.decay_mid")
-        return value
-
-    def probed_interval_for(rep_num, config):
-        table = config.fire.interval_table
-        r = max(0.0, rep_num)
-        last = len(table) - 1
-        index = math.floor(r)
-        if r <= 0.0:
-            probe.hit("fire.interval_index_0")
-        elif index >= last:
-            probe.hit("fire.interval_last")
-        else:
-            probe.hit("fire.interval_interp")
-        value = raw_interval_for(rep_num, config)
-        if close(value, fire_mod.INTERVAL_CAP_DAYS):
-            probe.hit("fire.interval_cap_730")
-        return value
-
-    def probed_speed_for(ability, difficulty, config):
-        lo, hi = config.fire.speed_clamp
-        rate = (0.5 + ability) / (0.5 + difficulty)
-        if rate < lo:
-            probe.hit("fire.speed_clamp_lo")
-        elif rate > hi:
-            probe.hit("fire.speed_clamp_hi")
-        return raw_speed_for(ability, difficulty, config)
-
-    def probed_apply_update(state, raw, t, *, failed, cfg):
-        factor = raw_decay_for(state, t, cfg) if failed else 1.0
-        if state.repNum + state.speed * factor * raw < 0.0:
-            probe.hit("fire.repnum_floor_0")
-        if raw_memory_at(state, t) + raw < 0.0:
-            probe.hit("fire.membase_floor_0")
-        return raw_apply_update(state, raw, t, failed=failed, cfg=cfg)
-
-    def probed_apply_attempt(states, attempt_result, graph, config, t):
-        passed = attempt_result.passed
-        if attempt_result.assisted:
-            probe.hit("fire.assisted_pass" if passed else "fire.assisted_miss")
-        topic = attempt_result.topic
-        grade = fire_mod.quality_q(attempt_result.quality)
-        explicit = states.get(topic, TopicState())
-        raw = raw_raw_delta(
-            grade,
-            raw_memory_at(explicit, t),
-            passed,
-            config,
-            assisted=attempt_result.assisted,
-        )
-        # Re-walk the gates, because a DROPPED neighbor is absent from the report
-        # the real function returns and must be measured here.
-        if passed and raw > 0.0:
-            for target, weight in sorted(graph.reach_weights(topic).items()):
-                if target == topic or weight <= 0.0:
-                    continue
-                recipient = states.get(target, TopicState())
-                if recipient.speed < config.fire.explicit_speed_threshold:
-                    probe.hit("fire.forced_explicit_skip")
-                    continue
-                credit = (
-                    raw_raw_delta(
-                        grade,
-                        raw_memory_at(recipient, t),
-                        True,
-                        config,
-                        assisted=attempt_result.assisted,
-                    )
-                    * weight
-                )
-                if abs(credit) < config.fire.min_credit:
-                    probe.hit("fire.min_credit_drop")
-        elif not passed and raw < 0.0:
-            for target, weight in sorted(graph.upward_weights(topic).items()):
-                if target == topic or weight <= 0.0:
-                    continue
-                recipient = states.get(target, TopicState())
-                if recipient.t0 is None:
-                    probe.hit("fire.t0_none_penalty_skip")
-                    continue
-                if abs(raw * weight) < config.fire.min_credit:
-                    probe.hit("fire.min_credit_drop")
-        return raw_apply_attempt(states, attempt_result, graph, config, t)
-
-    fire_mod.raw_delta = probed_raw_delta
-    fire_mod.decay_for = probed_decay_for
-    fire_mod.interval_for = probed_interval_for
-    fire_mod.speed_for = probed_speed_for
-    fire_mod._apply_update = probed_apply_update
-    fire_mod.apply_attempt = probed_apply_attempt
-    proj_mod.interval_for = probed_interval_for
-    proj_mod.speed_for = probed_speed_for
-    proj_mod.apply_attempt = probed_apply_attempt
-
-    state_cls = proj_mod.Projector
-    raw_placed = state_cls._on_diagnostic_placed
-    raw_refresh = state_cls._refresh_placement
-    raw_peel = state_cls._peel_back_conditional
-    raw_reset = state_cls._on_profile_reset
-
-    def probed_placed(self, event, apply_fire):
-        probe.hit("diag.refresh" if event.refresh else "diag.initial")
-        if not event.refresh:
-            # The INITIAL placement filter is `balance > 0.0` (projector.py:340-344),
-            # a different guard from the refresh promote guard below. A `>=` port
-            # folds identically unless some row sits exactly on 0.0.
-            for tid, balance in event.balances.items():
-                if tid in self.graph.topics and balance == 0.0:
-                    probe.hit("diag.placed_balance_zero")
-        return raw_placed(self, event, apply_fire)
-
-    def probed_refresh(self, event, diag_answers):
-        for tid, balance in event.balances.items():
-            if tid not in self.graph.topics:
-                continue
-            old = self.topics.get(tid, TopicState())
-            if balance <= 0.0 and old.status is TopicStatus.untouched:
-                # The boundary is recorded apart from the strictly-negative case: a
-                # `balance < 0.0` guard folds identically to 1.0's `balance <= 0.0`
-                # guard unless some row sits exactly on 0.0.
-                probe.hit("diag.promote_guard_zero" if balance == 0.0 else "diag.promote_guard")
-        return raw_refresh(self, event, diag_answers)
-
-    def probed_peel(self, topic, t):
-        candidates = {topic} | self.graph.dependents.get(topic, set())
-        for cid in candidates:
-            state = self.topics.get(cid)
-            if state is not None and state.conditional:
-                probe.hit("diag.conditional_peel")
-        return raw_peel(self, topic, t)
-
-    def probed_reset(self, event, apply_fire):
-        if apply_fire:
-            for tid in event.topics:
-                if tid not in self.graph.topics:
-                    continue
-                if self.topics.get(tid, TopicState()) != TopicState():
-                    probe.hit("reset.applied")
-        return raw_reset(self, event, apply_fire)
-
-    state_cls._on_diagnostic_placed = probed_placed
-    state_cls._refresh_placement = probed_refresh
-    state_cls._peel_back_conditional = probed_peel
-    state_cls._on_profile_reset = probed_reset
-
-    def restore() -> None:
-        """Put the unwrapped 1.0 functions back."""
-        fire_mod.raw_delta = raw_raw_delta
-        fire_mod.decay_for = raw_decay_for
-        fire_mod.interval_for = raw_interval_for
-        fire_mod.speed_for = raw_speed_for
-        fire_mod._apply_update = raw_apply_update
-        fire_mod.apply_attempt = raw_apply_attempt
-        proj_mod.interval_for = raw_interval_for
-        proj_mod.speed_for = raw_speed_for
-        proj_mod.apply_attempt = raw_apply_attempt
-        state_cls._on_diagnostic_placed = raw_placed
-        state_cls._refresh_placement = raw_refresh
-        state_cls._peel_back_conditional = raw_peel
-        state_cls._on_profile_reset = raw_reset
-
-    return restore
-
-
 def scan_events(probe: Probe, rows: list[dict], graph) -> None:
     """Record the probes that read the raw event rows, not the fold."""
     types = {row["type"] for row in rows}
@@ -362,21 +129,29 @@ def scan_events(probe: Probe, rows: list[dict], graph) -> None:
         probe.hit("types.all_16")
     if NOOP_TYPES <= types:
         probe.hit("types.noop_6")
-
     for row in rows:
-        if row["type"] == "lesson_result" and repr(float(row["xp"])) == "8.924999999999999":
-            probe.hit("xp.raw_8_924999999999999")
-        if row["type"] in {"lesson_result", "review_result"} and close(float(row["xp"]), 8.92):
-            probe.hit("xp.rounded_8_92")
-        if row["type"] == "quiz_result":
-            probe.hit("quiz.retake_true" if row["score"] < 0.8 else "quiz.retake_false")
-            for entry in row["per_topic"]:
-                probe.hit(
-                    "quiz.row_on_curriculum"
-                    if entry["topic"] in graph.topics
-                    else "quiz.row_off_curriculum"
-                )
+        scan_row(probe, row, graph)
+    scan_corrections(probe, rows)
 
+
+def scan_row(probe: Probe, row: dict, graph) -> None:
+    """Record the XP and quiz probes of one raw event row."""
+    if row["type"] == "lesson_result" and repr(float(row["xp"])) == "8.924999999999999":
+        probe.hit("xp.raw_8_924999999999999")
+    if row["type"] in {"lesson_result", "review_result"} and close(float(row["xp"]), 8.92):
+        probe.hit("xp.rounded_8_92")
+    if row["type"] == "quiz_result":
+        probe.hit("quiz.retake_true" if row["score"] < 0.8 else "quiz.retake_false")
+        for entry in row["per_topic"]:
+            probe.hit(
+                "quiz.row_on_curriculum"
+                if entry["topic"] in graph.topics
+                else "quiz.row_off_curriculum"
+            )
+
+
+def scan_corrections(probe: Probe, rows: list[dict]) -> None:
+    """Record the `regraded` probes: count, supersession, and a missing attempt."""
     corrections = [row for row in rows if row["type"] == "regraded"]
     if len(corrections) > 1:
         probe.hit("regrade.multiple")
@@ -395,6 +170,19 @@ def scan_events(probe: Probe, rows: list[dict], graph) -> None:
             probe.hit("regrade.no_preceding_attempt")
 
 
+def scan_days(probe: Probe, daily: dict, goal: int) -> None:
+    """Record the streak and rounding probes of one zone's daily totals."""
+    for day, total in daily.items():
+        if close(total - math.floor(total), 0.5, 1e-9):
+            probe.hit("round.day_half_tie")
+        if close(total, float(goal)):
+            probe.hit("streak.day_at_goal")
+        if close(total, float(goal) - 1.0):
+            probe.hit("streak.day_one_below")
+        if day + timedelta(days=1) not in daily and day + timedelta(days=2) in daily:
+            probe.hit("streak.gap_day")
+
+
 def scan_xp(probe: Probe, state, goal: int) -> None:
     """Record the streak and rounding probes off the folded XP ledger."""
     from cadus.xp import daily_totals, local_day, xp_per_day
@@ -407,15 +195,7 @@ def scan_xp(probe: Probe, state, goal: int) -> None:
         reference_day = local_day(state.last_ts, tz)
         if close(daily.get(reference_day, 0.0), float(goal)):
             probe.hit("streak.reference_day_at_goal")
-        for day, total in daily.items():
-            if close(total - math.floor(total), 0.5, 1e-9):
-                probe.hit("round.day_half_tie")
-            if close(total, float(goal)):
-                probe.hit("streak.day_at_goal")
-            if close(total, float(goal) - 1.0):
-                probe.hit("streak.day_one_below")
-            if day + timedelta(days=1) not in daily and day + timedelta(days=2) in daily:
-                probe.hit("streak.gap_day")
+        scan_days(probe, daily, goal)
 
     if set(daily_totals(state.xp_events, None)) != set(
         daily_totals(state.xp_events, COVERAGE_TZ)
@@ -430,64 +210,44 @@ def scan_xp(probe: Probe, state, goal: int) -> None:
             probe.hit("round.velocity_tie")
 
 
-def main() -> int:
-    ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("--fixtures", default=FIXTURES)
-    ap.add_argument("--out", default=None)
-    ap.add_argument("--curriculum", default="/home/deploy/dev/cadus2.0/curriculum")
-    ap.add_argument("--config", default="/home/deploy/dev/cadus/config.yaml")
-    ap.add_argument("--now", default="2000-01-01T00:00:00+00:00")
-    ap.add_argument("--goal", type=int, default=40)
-    args = ap.parse_args()
-
-    os.environ["CADUS_CURRICULUM"] = args.curriculum
-    os.environ["CADUS_CONFIG"] = args.config
-
+def fold_stream(path: str, cfg, graph, goal: int) -> set[str]:
+    """Fold one stream under the probes and return the probes it hit."""
     from cadus.events import validate_event
-    from cadus.loader import load_config, load_graph
-    from cadus.projector import Projector, apply_regrades, config_hash
+    from cadus.projector import Projector, apply_regrades
 
-    cfg = load_config()
-    graph = load_graph()
+    rows = []
+    events = []
+    for row in iter_rows(path):
+        rows.append(row)
+        events.append(validate_event(row))
 
-    names = sorted(
-        (n for n in os.listdir(args.fixtures) if re.fullmatch(r"stream_\d+\.jsonl", n)),
-        key=lambda n: int(n.removeprefix("stream_").removesuffix(".jsonl")),
-    )
+    probe = Probe()
+    restore = install(probe, cfg)
+    try:
+        state = Projector(graph, cfg)
+        for event in apply_regrades(events):
+            state.apply(event)
+        scan_events(probe, rows, graph)
+        scan_xp(probe, state, goal)
+    finally:
+        restore()
+    # Copy the set: `probe` is discarded, but a shared reference would let a
+    # later stream's hits leak into this stream's row.
+    return set(probe.hits)
 
-    per_stream: dict[str, set[str]] = {}
-    for name in names:
-        rows = []
-        events = []
-        with open(os.path.join(args.fixtures, name), encoding="utf-8") as handle:
-            for line in handle:
-                line = line.strip()
-                if line:
-                    row = json.loads(line)
-                    rows.append(row)
-                    events.append(validate_event(row))
 
-        probe = Probe()
-        restore = install(probe, cfg)
-        try:
-            state = Projector(graph, cfg)
-            for event in apply_regrades(events):
-                state.apply(event)
-            scan_events(probe, rows, graph)
-            scan_xp(probe, state, args.goal)
-        finally:
-            restore()
-        # Copy the set: `probe` is discarded, but a shared reference would let a
-        # later stream's hits leak into this stream's row.
-        per_stream[name] = set(probe.hits)
-        print(f"{name}: {len(probe.hits)} probes hit")
+def seed_column(hitters: list[str], seeded: list[str]) -> str:
+    """The `s2..s20` cell: `all`, `none`, or the seed numbers that hit the probe."""
+    if len(hitters) == len(seeded):
+        return "all"
+    if not hitters:
+        return "none"
+    return ", ".join(n.removeprefix("stream_").removesuffix(".jsonl") for n in hitters)
 
-    covered: set[str] = set()
-    for hits in per_stream.values():
-        covered |= hits
 
-    seeded = names[1:]
-    lines = [
+def report_header(names: list[str]) -> list[str]:
+    """The lines above the coverage table."""
+    return [
         "# Stream coverage - spec `projector-1.0-spec.md` section 9",
         "",
         "Generated by `scripts/oracle/coverage_streams_1_0.py` against the live 1.0",
@@ -514,43 +274,67 @@ def main() -> int:
         "| item | probe | what it records | s1 | s2..s20 |",
         "|---|---|---|---|---|",
     ]
+
+
+def report_rows(names: list[str], per_stream: dict[str, set[str]]) -> list[str]:
+    """One table row per probe."""
+    seeded = names[1:]
+    lines = []
     for probe_id, item, text in PROBES:
         first = "yes" if probe_id in per_stream["stream_1.jsonl"] else "no"
         hitters = [n for n in seeded if probe_id in per_stream[n]]
-        if len(hitters) == len(seeded):
-            column = "all"
-        elif not hitters:
-            column = "none"
-        else:
-            column = ", ".join(
-                n.removeprefix("stream_").removesuffix(".jsonl") for n in hitters
-            )
+        column = seed_column(hitters, seeded)
         lines.append(f"| {item} | `{probe_id}` | {text} | {first} | {column} |")
+    return lines
 
+
+def report_missing(covered: set[str]) -> list[str]:
+    """The section on the probes no committed stream reaches."""
     missing = [p for p, _, _ in PROBES if p not in covered]
-    lines += ["", "## Branches no stream reaches", ""]
-    if missing:
-        lines += [
-            "No committed stream of the family above reaches these, so each one is",
-            "pinned by a test of its own:",
-            "",
-        ]
-        lines += [f"- `{p}` -- {PINNED_ELSEWHERE.get(p, 'UNPINNED: this row needs a test')}" for p in missing]
-        lines += [
-            "",
-            "`interval_for` never reaches its 730.0 cap, because the default",
-            "`interval_table` ends at 480.0 and interpolation never leaves the table.",
-            "`speed_for` never reaches either clamp, because `(0.5 + a) / (0.5 + d)` with",
-            "`a` in [0, 1] and `d` in the curriculum's [0.05, 0.75] spans [0.4, 3.0),",
-            "open at the top, so neither 0.33 nor 3.0 binds.",
-            "",
-            "The two boundary rows are reachable from a stream, and the streams that",
-            "reach them are `tests/fixtures/events/boundary/`: the seeded family emits",
-            "no balance of exactly 0.0 on the initial placement path and no reference",
-            "day exactly at the goal (M3 review round 1, findings #7 and #15).",
-        ]
-    else:
+    lines = ["", "## Branches no stream reaches", ""]
+    if not missing:
         lines.append("Every probe of spec section 9 is reached by a committed stream.")
+        return lines
+    lines += [
+        "No committed stream of the family above reaches these, so each one is",
+        "pinned by a test of its own:",
+        "",
+    ]
+    lines += [f"- `{p}` -- {PINNED_ELSEWHERE.get(p, 'UNPINNED: this row needs a test')}" for p in missing]
+    lines += [
+        "",
+        "`interval_for` never reaches its 730.0 cap, because the default",
+        "`interval_table` ends at 480.0 and interpolation never leaves the table.",
+        "`speed_for` never reaches either clamp, because `(0.5 + a) / (0.5 + d)` with",
+        "`a` in [0, 1] and `d` in the curriculum's [0.05, 0.75] spans [0.4, 3.0),",
+        "open at the top, so neither 0.33 nor 3.0 binds.",
+        "",
+        "The two boundary rows are reachable from a stream, and the streams that",
+        "reach them are `tests/fixtures/events/boundary/`: the seeded family emits",
+        "no balance of exactly 0.0 on the initial placement path and no reference",
+        "day exactly at the goal (M3 review round 1, findings #7 and #15).",
+    ]
+    return lines
+
+
+def main() -> int:
+    args = parse_stream_oracle_args(__doc__)
+
+    from cadus.projector import config_hash
+
+    cfg, graph = load_1_0()
+
+    names = stream_names(args.fixtures)
+    per_stream: dict[str, set[str]] = {}
+    for name in names:
+        per_stream[name] = fold_stream(os.path.join(args.fixtures, name), cfg, graph, args.goal)
+        print(f"{name}: {len(per_stream[name])} probes hit")
+
+    covered: set[str] = set()
+    for hits in per_stream.values():
+        covered |= hits
+
+    lines = report_header(names) + report_rows(names, per_stream) + report_missing(covered)
     lines.append("")
 
     out = args.out or os.path.join(args.fixtures, "coverage.md")
