@@ -20,7 +20,7 @@ export interface TeachProps {
 
 export function Teach({ task, instruction, onContinue }: TeachProps) {
   const buttonRef = useRef<HTMLButtonElement>(null);
-  const topic = task.topic ?? { id: '', name: null, module: '' };
+  const { topic } = task;
   const example = instruction.worked_example;
 
   // The button is on screen for the life of this effect, so the ref names it.
@@ -31,8 +31,8 @@ export function Teach({ task, instruction, onContinue }: TeachProps) {
       <div className="task-header">
         <div className="task-meta">
           <Chip className="chip-lesson">lesson</Chip>
-          <span className="topic-name">{topic.name || topic.id || 'Lesson'}</span>
-          {topic.module ? <span className="topic-module">{topic.module}</span> : null}
+          <span className="topic-name">{topic?.name || topic?.id || 'Lesson'}</span>
+          {topic?.module ? <span className="topic-module">{topic.module}</span> : null}
         </div>
         <div className="task-right">
           <span className="teach-badge">Worked example</span>

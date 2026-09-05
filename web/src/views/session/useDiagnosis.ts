@@ -197,17 +197,19 @@ export class DiagnosisStore {
   }
 }
 
-/** One wire job out of a stream frame, or null for a frame that is not one. */
+/**
+ * One wire job out of a stream frame, or null for a frame that does not parse.
+ *
+ * The parse itself checks nothing: the service writes the contract of `types.ts`, and a
+ * frame outside it lands under a job id no panel follows.
+ */
 function parseFrame(data: string): DiagnosisJob | null {
-  let parsed: DiagnosisJob | null;
   try {
-    parsed = JSON.parse(data);
+    const parsed: DiagnosisJob | null = JSON.parse(data);
+    return parsed;
   } catch {
     return null;
   }
-  // The parse itself checks nothing: `null`, a number and an array all parse. A job names
-  // itself, and nothing else does.
-  return parsed !== null && typeof parsed.id === 'string' ? parsed : null;
 }
 
 /**

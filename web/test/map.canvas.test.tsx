@@ -69,11 +69,14 @@ describe('the island under load', () => {
     const { importer, release } = deferredImport();
     resetCytoscapeLoader(importer);
     const view = await mount();
+    const host = () => document.querySelector('.map-host')!;
     expect(screen.getByText('Loading the map renderer…')).toBeTruthy();
+    expect(host().getAttribute('data-state')).toBe('loading');
     await act(async () => { release(); });
     await flush();
     expect(screen.queryByText('Loading the map renderer…')).toBeNull();
     expect(screen.queryByText(MAP_RENDERER_FAILED)).toBeNull();
+    expect(host().getAttribute('data-state')).toBe('ready');
     view.unmount();
   });
 });
@@ -100,6 +103,7 @@ describe('a renderer that fails late', () => {
     const view = await mount();
     expect(instances).toHaveLength(0);
     expect(screen.queryByText('Loading the map renderer…')).toBeNull();
+    expect(document.querySelector('.map-host')!.getAttribute('data-state')).toBe('failed');
     expect(MAP_RENDERER_FAILED).toBe('Could not load the map renderer.');
     expect(toastStore.getSnapshot()).toEqual([
       { id: 1, message: MAP_RENDERER_FAILED, kind: 'error', onAction: expect.any(Function) },

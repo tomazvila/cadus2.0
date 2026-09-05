@@ -76,6 +76,9 @@ import { useDiagnosisStream } from './useDiagnosis';
 /** The auto-advance window, in milliseconds. The 1.0 literal. */
 const AUTO_ADVANCE_MS = 1400;
 
+/** No hint yet. One array for every problem that starts, so nothing rebuilds. */
+const NO_HINTS: string[] = [];
+
 export interface SessionProps {
   api: ApiClient;
   /** Demo mode. A 401 then keeps the learner on the screen. */
@@ -115,7 +118,7 @@ export function Session({
 
   const [problem, setProblem] = useState<ServedProblem | null>(null);
   const [teaching, setTeaching] = useState<TeachResponse | null>(null);
-  const [hints, setHints] = useState<string[]>([]);
+  const [hints, setHints] = useState<string[]>(NO_HINTS);
   const [referenceLesson, setReferenceLesson] = useState<string | null>(null);
   const [result, setResult] = useState<AnswerResponse | null>(null);
   const [rework, setRework] = useState<ReworkResponse | null>(null);
@@ -165,12 +168,14 @@ export function Session({
     setElapsed(startAt);
   };
 
-  /** Everything a fresh problem clears. The re-solve keeps its panel and clears none of it. */
+  /**
+   * Everything a fresh problem clears. The re-solve keeps its panel and clears none of it.
+   * The verdict and the re-solve panel are gone already: every path here runs after a
+   * grade that replaced them, or after `advance` dropped the verdict.
+   */
   const clearForProblem = (): void => {
-    setHints([]);
+    setHints(NO_HINTS);
     setReferenceLesson(null);
-    setResult(null);
-    setRework(null);
     answerRef.current?.clear();
   };
 
@@ -206,7 +211,7 @@ export function Session({
       void call(() => api.taskTeach(task.task_id), (instruction) => {
         taughtKp.current = instruction.kp;
         setTeaching(instruction);
-        gate.enter('ready');
+        gate.enter('teaching');
       }).then((instruction) => {
         // Teach failed and was toasted with a Retry. Practice is still servable, so fall
         // through rather than strand the task on a spinner.
@@ -220,7 +225,7 @@ export function Session({
 
   /** The learner read the worked example. One press serves; a second in the same tick stops. */
   const practise = (): void => {
-    if (gate.tryEnter('ready', 'loading')) serveThenShow();
+    if (gate.tryEnter('teaching', 'loading')) serveThenShow();
   };
 
   // ---- the plan ------------------------------------------------------------
@@ -233,6 +238,7 @@ export function Session({
     closeWith(call, gate, 'done', () => api.sessionEnd(), setSummary);
   };
 
+  /** The task is over. `advance` put the phase at `loading` before it came here. */
   const advanceTask = (): void => {
     if (!session.needsReplan()) {
       // Decided HERE, not watched for in an effect: an effect that ends the session would
@@ -243,7 +249,6 @@ export function Session({
     // Fetch FIRST, then move. Advancing the cursor here starts the next planned task — a
     // problem the learner briefly sees — only for the re-plan to reset to index 0, because
     // remediation is served first.
-    gate.enter('loading');
     session.markDone();
     void call(() => api.getPlan()).then((fresh) => {
       if (!life.alive()) return;
@@ -285,7 +290,7 @@ export function Session({
     problemRef, taskRef, answerRef, workRef,
     answeredForRef: answeredFor, timedOutForRef: timedOutFor,
     setResult, setRework, setElapsed, setHints, setReferenceLesson,
-    countdown, elapsed, phase,
+    countdown, elapsed,
   });
 
   /** The ONE way out of `feedback`. A second click, or an auto-advance racing it, stops. */
@@ -328,8 +333,11 @@ export function Session({
   // registered in the lifetime, so leaving the view inside the window cancels it, and the
   // cleanup cancels it when a click advances first.
   useEffect(() => {
-    if (phase !== 'feedback' || result === null || !result.correct || !result.next) return undefined;
-    const { next } = result;
+    if (phase !== 'feedback') return undefined;
+    // A verdict is on screen in `feedback`, so the state holds one.
+    const verdict = result!;
+    if (!verdict.correct || !verdict.next) return undefined;
+    const { next } = verdict;
     const id = life.setTimeout(() => { advanceRef.current(next); }, AUTO_ADVANCE_MS);
     return () => life.clearTimer(id);
   }, [phase, result, life]);
@@ -337,12 +345,9 @@ export function Session({
   // Focus moves on every transition (spec section 4.5). Each control is on screen in the
   // phase that focuses it, so the refs name them.
   useEffect(() => {
-    switch (phase) {
-      case 'ready': answerRef.current?.focus(); break;
-      case 'feedback': continueRef.current!.focus(); break;
-      case 'done': homeRef.current!.focus(); break;
-      default: break;
-    }
+    if (phase === 'ready') answerRef.current?.focus();
+    else if (phase === 'feedback') continueRef.current!.focus();
+    else if (phase === 'done') homeRef.current!.focus();
   }, [phase, problem, result]);
 
   // ---- render --------------------------------------------------------------
@@ -369,14 +374,18 @@ export function Session({
 
   if (teaching && session.task) {
     return (
-      <section className="view-session">
+      <section className="view-session" aria-busy={phase === 'loading'}>
         <Teach task={session.task} instruction={teaching} onContinue={practise} />
       </section>
     );
   }
 
   if (!problem || !session.task) {
-    return <section className="view-session"><LoadingBlock label="Preparing your session…" /></section>;
+    return (
+      <section className="view-session" aria-busy={phase === 'loading'}>
+        <LoadingBlock label="Preparing your session…" />
+      </section>
+    );
   }
 
   const locked = phase !== 'ready';

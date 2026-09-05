@@ -13,7 +13,7 @@ import { held } from './helpers/held';
 import { pressRetry } from './helpers/toasts';
 import { allowConsoleError } from './setup';
 import {
-  LESSON, REVIEW, REWORK, TEACHING, P, answerInput, closed, graded, mount, mountDrill,
+  DRILL, LESSON, REVIEW, REWORK, TEACHING, P, answerInput, closed, graded, mount, mountDrill,
   mountStrict, planOf, press, progressCount, stubApi, submitAnswer, submitButton, timer,
   workInput,
 } from './helpers/session';
@@ -95,6 +95,49 @@ describe('what a fresh problem clears', () => {
     await press('Next problem →');
     expect(progressCount()).toBe('2 / 3');
     expect(taskServe).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe('the screens before the card', () => {
+  it('says the session is busy while the plan and the first problem load', async () => {
+    const serve = held<ServedProblem>();
+    await mount({ api: stubApi({ taskServe: () => serve.promise }) });
+    expect(screen.getByText('Preparing your session…')).toBeTruthy();
+    expect(section().getAttribute('aria-busy')).toBe('true');
+    await act(async () => { serve.release(P(1)); });
+    expect(section().getAttribute('aria-busy')).toBe('false');
+  });
+
+  it('says nothing is due for a plan with no task at all', async () => {
+    await mount({ plan: planOf() });
+    expect(screen.getByText('Nothing is due right now — enjoy the break.')).toBeTruthy();
+  });
+
+  it('marks the worked example busy once the learner asks to practise', async () => {
+    const serve = held<ServedProblem>();
+    await mount({
+      plan: planOf(LESSON),
+      api: stubApi({ taskServe: () => serve.promise, taskTeach: async () => TEACHING }),
+    });
+    expect(section().getAttribute('aria-busy')).toBe('false');
+    await press(/practice/);
+    expect(screen.getByText('Worked example')).toBeTruthy();
+    expect(section().getAttribute('aria-busy')).toBe('true');
+    await act(async () => { serve.release(P(1)); });
+    expect(progressCount()).toBe('1 / 3');
+  });
+
+  it('keeps practising a lesson when the next problem names no knowledge point', async () => {
+    const taskTeach = vi.fn<ApiClient['taskTeach']>(async () => TEACHING);
+    await mount({
+      plan: planOf(LESSON),
+      api: stubApi({ taskTeach, taskAnswer: async () => graded({ next: P(2, { kp: null }) }) }),
+    });
+    await press(/practice/);
+    await submitAnswer('3/4');
+    await press('Next problem →');
+    expect(progressCount()).toBe('2 / 3');
+    expect(taskTeach).toHaveBeenCalledTimes(1);
   });
 });
 
@@ -233,11 +276,22 @@ describe('the auto-advance', () => {
 
   it('never fires on a miss, and never for a verdict with no next problem', async () => {
     vi.useFakeTimers();
-    await mount({ api: stubApi({ taskAnswer: async () => graded({ correct: false, next: P(2) }) }) });
+    const sessionEnd = vi.fn<ApiClient['sessionEnd']>(async () => closed());
+    const taskAnswer = vi.fn<ApiClient['taskAnswer']>()
+      .mockResolvedValueOnce(graded({ correct: false, next: P(2) }))
+      .mockResolvedValue(graded({ next: null }));
+    await mount({ api: stubApi({ taskAnswer, sessionEnd }) });
     await submitAnswer('3/4');
     await act(async () => { vi.advanceTimersByTime(5000); });
     expect(progressCount()).toBe('1 / 3');
     expect(screen.getByText('Not quite')).toBeTruthy();
+
+    // A correct answer with nothing in hand waits for the learner as well.
+    await press('Next problem →');
+    await submitAnswer('1');
+    await act(async () => { vi.advanceTimersByTime(5000); });
+    expect(screen.getByText('Correct')).toBeTruthy();
+    expect(sessionEnd).not.toHaveBeenCalled();
   });
 });
 
@@ -281,6 +335,37 @@ describe('the card', () => {
     await mount();
     expect(document.querySelector('.task-meta .chip')!.className).toBe('chip chip-review');
     expect(timer().className).toBe('timer');
+  });
+
+  it('turns a drill clock urgent at three seconds, and not before', async () => {
+    vi.useFakeTimers();
+    await mount({
+      plan: planOf(DRILL),
+      api: stubApi({ taskServe: async () => P(1, { countdown: true, time_budget_secs: 5 }) }),
+    });
+    expect(timer().className).toBe('timer');
+    await act(async () => { vi.advanceTimersByTime(1000); });
+    expect(timer().className).toBe('timer');
+    await act(async () => { vi.advanceTimersByTime(1000); });
+    expect(timer().className).toBe('timer urgent');
+  });
+
+  it('stops the clock on the verdict, and restarts it with the next problem', async () => {
+    vi.useFakeTimers();
+    // A miss, so no auto-advance moves the clock on by itself.
+    await mount({ api: stubApi({ taskAnswer: async () => graded({ correct: false }) }) });
+    await act(async () => { vi.advanceTimersByTime(2500); });
+    expect(timer().textContent).toBe('0:02');
+    await submitAnswer('3/4');
+    await act(async () => { vi.advanceTimersByTime(3000); });
+    expect(timer().textContent).toBe('0:02');
+
+    // The next problem starts a fresh second: half of the old one does not carry over.
+    await press('Next problem →');
+    await act(async () => { vi.advanceTimersByTime(600); });
+    expect(timer().textContent).toBe('0:00');
+    await act(async () => { vi.advanceTimersByTime(400); });
+    expect(timer().textContent).toBe('0:01');
   });
 
   it('hands the problem back after a quiz receipt, ready for the next post', async () => {

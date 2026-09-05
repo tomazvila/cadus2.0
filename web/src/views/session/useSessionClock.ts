@@ -47,7 +47,8 @@ export function useSessionClock(
 ): SessionClock {
   const [elapsed, setElapsed] = useState(0);
   const countdown = isDrill(task, problem) && !rework;
-  const ticking = phase === 'ready' && !!problem;
+  // A problem is on screen in `ready`, and in no phase without one.
+  const ticking = phase === 'ready';
   const liveProblemId = problem?.problem_id ?? null;
 
   useEffect(() => {

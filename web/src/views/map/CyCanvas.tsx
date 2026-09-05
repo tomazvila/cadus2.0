@@ -182,7 +182,7 @@ function CyCanvas({ nodes, edges, handleRef, onSelect, onRetry }: CyCanvasProps)
 
   return (
     <>
-      <div ref={hostRef} className="map-host" />
+      <div ref={hostRef} className="map-host" data-state={island} />
       {island === 'loading' ? <LoadingBlock label="Loading the map renderer…" /> : null}
       {island === 'failed' ? (
         <div className="empty">

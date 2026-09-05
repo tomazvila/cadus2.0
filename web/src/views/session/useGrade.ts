@@ -37,7 +37,7 @@ import type { Gate } from '@/hooks/usePhase';
 import type { AnswerResponse, ApiClient, PlanTask, ReworkResponse, ServedProblem } from '@/api/types';
 import type { SessionPlan } from './useSessionPlan';
 
-export type SessionPhase = 'loading' | 'ready' | 'submitting' | 'feedback' | 'closing' | 'done';
+export type SessionPhase = 'loading' | 'teaching' | 'ready' | 'submitting' | 'feedback' | 'closing' | 'done';
 
 export interface GradeDeps {
   api: ApiClient;
@@ -62,7 +62,6 @@ export interface GradeDeps {
   /** The three values the drill auto-submit watches. */
   countdown: boolean;
   elapsed: number;
-  phase: SessionPhase;
 }
 
 export interface Grade {
@@ -74,7 +73,7 @@ export function useGrade({
   api, call, gate, life, session,
   problemRef, taskRef, answerRef, workRef, answeredForRef, timedOutForRef,
   setResult, setRework, setElapsed, setHints, setReferenceLesson,
-  countdown, elapsed, phase,
+  countdown, elapsed,
 }: GradeDeps): Grade {
   // Plain functions, rebuilt per render: `session` is a new object every render, so a memo
   // over them would hold nothing, and every consumer reads them at event time.
@@ -162,8 +161,9 @@ export function useGrade({
   // is genuinely `ready` — never on top of an in-flight grade or a feedback panel. It runs
   // after every render; the latch makes a second pass a no-op.
   useEffect(() => {
-    if (!countdown || elapsed !== 0 || phase !== 'ready') return;
-    // A countdown runs for a problem on screen, so the ref names one.
+    if (!countdown || elapsed !== 0) return;
+    // A countdown runs for a problem on screen, so the ref names one. The two latches below
+    // hold in every phase but `ready`, so the phase itself needs no check.
     const id = problemRef.current!.problem_id;
     // Two latches, one rule each: the timeout of this problem already fired, or the service
     // already answered this problem and handed it back with the clock still running.

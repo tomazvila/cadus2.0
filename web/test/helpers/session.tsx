@@ -209,7 +209,7 @@ export function typeAnswer(text: string): void {
 }
 
 /** Press one named button and let its continuations settle. */
-export async function press(name: string): Promise<void> {
+export async function press(name: string | RegExp): Promise<void> {
   await act(async () => { fireEvent.click(screen.getByRole('button', { name })); });
 }
 
