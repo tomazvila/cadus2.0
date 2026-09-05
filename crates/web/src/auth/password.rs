@@ -450,10 +450,14 @@ mod cov_tests {
     /// A PHC string whose parameters are not a legal set needs a rehash.
     #[test]
     fn a_hash_with_illegal_parameters_needs_a_rehash() {
-        assert!(needs_rehash(
-            Argon2Profile::PROD,
-            "$argon2id$v=19$m=1,t=1,p=4$c29tZXNhbHQ$AAAAAAAAAAA"
-        ));
+        // A well-formed argon2id hash whose params the library refuses: keep
+        // the salt and the digest of a real hash and name m=1, which is below
+        // the minimum, so the string parses but Params::try_from rejects it.
+        let real = hash_password(Argon2Profile::TEST, "pw").expect("the test profile hashes");
+        let digest = real.rsplit('$').next().unwrap();
+        let salt = real.rsplit('$').nth(1).unwrap();
+        let illegal = format!("$argon2id$v=19$m=1,t=1,p=1${salt}${digest}");
+        assert!(needs_rehash(Argon2Profile::PROD, &illegal));
     }
 
     /// A hash written under one profile needs a rehash under another, and a
