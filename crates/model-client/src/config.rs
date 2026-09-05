@@ -300,9 +300,15 @@ mod tests {
     }
 
     /// The two environment constructors are the reader constructors over the
-    /// process environment.
+    /// process environment, and that reader gives the value of a set variable
+    /// and `None` for an unset one.
     #[test]
     fn from_env_reads_the_process_environment() {
+        assert_eq!(
+            env_read("CARGO_PKG_NAME").as_deref(),
+            Some("cadus-model-client")
+        );
+        assert_eq!(env_read("CADUS_MODEL_CLIENT_NO_SUCH_VARIABLE"), None);
         assert_eq!(
             message(ModelConfig::from_env()),
             message(ModelConfig::from_reads(&env_read))

@@ -4,6 +4,8 @@
 //! Every expected value is a LITERAL: a literal `max_tokens`, a literal status,
 //! a literal request count. Nothing is read back from the code under test.
 
+use std::time::{Duration, Instant};
+
 use crate::common::{FakeModel, call_with, good_reply, widened_retry};
 use cadus_model_client::ModelError;
 use serde_json::json;
@@ -130,9 +132,11 @@ async fn a_rate_limit_retries_and_the_second_reply_stands() {
     assert_eq!(call.attempts[1].status, 200);
 }
 
-/// Two failures end the call. The contract is two attempts, not two retries.
+/// Two failures end the call, and the call waits the backoff before the
+/// second attempt. The contract is two attempts, not two retries.
 #[tokio::test]
 async fn two_server_errors_end_the_call() {
+    let started = Instant::now();
     let (server, call) = call_with(vec![
         (503, String::new()),
         (503, String::new()),
@@ -140,6 +144,10 @@ async fn two_server_errors_end_the_call() {
     ])
     .await;
 
+    assert!(
+        started.elapsed() >= Duration::from_millis(500),
+        "the second attempt must wait the backoff of 500 ms"
+    );
     assert_eq!(server.seen().len(), 2, "the contract is two HTTP attempts");
     assert!(call.result.is_err());
     assert_eq!(call.attempts.len(), 2);
