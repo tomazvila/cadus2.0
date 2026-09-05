@@ -14,8 +14,8 @@ mod common;
 use cadus_store::test_support::TestDb;
 
 use common::{
-    Run, SQUARES as KP_KEY, TEST_DSN_VAR, role_dsn, run_binary_with, spawn, superuser_dsn,
-    wait_output, with_granted_role, worker_command,
+    Run, SQUARES as KP_KEY, role_dsn, run_binary_with, spawn, superuser_dsn, wait_output,
+    with_granted_role, worker_command,
 };
 
 /// A closed model endpoint: no pass below makes a call.
@@ -29,11 +29,6 @@ const FTP_SENTENCE: &str = "the base URL scheme \"ftp\" is neither http nor http
 
 /// A DSN that no test reaches: the pass stops before the connect.
 const UNREACHED_DSN: &str = "postgresql://x@127.0.0.1:1/x";
-
-/// The DSN of the maintenance database of the test cluster. It holds no schema.
-fn schemaless_dsn() -> String {
-    std::env::var(TEST_DSN_VAR).unwrap_or_else(|_| panic!("{TEST_DSN_VAR} is not set"))
-}
 
 /// A DSN of the test cluster that names a database that does not exist.
 fn absent_dsn() -> String {
@@ -108,19 +103,29 @@ async fn an_author_pass_stops_at_the_database_url_or_at_the_connect() {
 }
 
 /// The stale listing and the plan both read `content_store`, so a database
-/// with no schema stops the pass at that read.
+/// without that table stops the pass at that read. The test drops the table
+/// in its own throwaway database: the maintenance database of the cluster
+/// holds a schema on some boxes and none on others.
 #[tokio::test]
 async fn an_author_pass_stops_at_a_read_of_a_table_that_is_absent() {
-    for rest in [&["--stale"][..], &["--dry-run"][..]] {
-        let run = author_fails(&schemaless_dsn(), NO_MODEL, rest, &[]).await;
-        assert!(
-            run.stderr
-                .contains("relation \"content_store\" does not exist"),
-            "{rest:?}; stderr:\n{}",
-            run.stderr
-        );
-        assert!(run.stdout.is_empty(), "{rest:?}; stdout:\n{}", run.stdout);
-    }
+    TestDb::with(|db| async move {
+        sqlx::query("DROP TABLE content_store CASCADE")
+            .execute(&db.admin)
+            .await
+            .expect("the throwaway database drops its content table");
+        let dsn = superuser_dsn(&db.name);
+        for rest in [&["--stale"][..], &["--dry-run"][..]] {
+            let run = author_fails(&dsn, NO_MODEL, rest, &[]).await;
+            assert!(
+                run.stderr
+                    .contains("relation \"content_store\" does not exist"),
+                "{rest:?}; stderr:\n{}",
+                run.stderr
+            );
+            assert!(run.stdout.is_empty(), "{rest:?}; stdout:\n{}", run.stdout);
+        }
+    })
+    .await;
 }
 
 /// A run that is not a dry run needs a model endpoint: an empty key, a token

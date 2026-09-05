@@ -4,13 +4,13 @@
 #
 # Limits (a function or a file passes when its value is on the safe side):
 #   lines per file          < 500     every tracked .rs .ts .tsx .js .mjs .py .sh file
-#   cyclomatic complexity   < 22      rust-code-analysis (Rust), ESLint `complexity` (web)
-#   cognitive complexity    < 22      rust-code-analysis (Rust), eslint-plugin-sonarjs (web)
-#   Halstead difficulty     < 80      rust-code-analysis (Rust), web/scripts/halstead.mjs
+#   cyclomatic complexity   < 22      rust-code-analysis (Rust, Python), ESLint `complexity` (web)
+#   cognitive complexity    < 22      rust-code-analysis (Rust, Python), eslint-plugin-sonarjs (web)
+#   Halstead difficulty     < 80      rust-code-analysis (Rust, Python), web/scripts/halstead.mjs
 #   test coverage           = 100%    cargo llvm-cov (Rust), Vitest v8 (web)
 #   CRAP                    < 25      cc^2 * (1 - coverage)^3 + cc, per function
 #   dead code               = 0       clippy -D warnings, unused pub items, cargo-machete, knip
-#   redundant code          = 0       jscpd, 50 tokens or 5 lines, both languages
+#   redundant code          = 0       jscpd, 50 tokens or 5 lines, every language
 #   `any` or `unknown`      = 0       ESLint, every TypeScript file, tests included
 #
 # Usage:
@@ -65,6 +65,8 @@ check() {
 source_files() {
     git ls-files crates web scripts | grep -E '\.(rs|ts|tsx|js|mjs|py|sh)$' | grep -vE '\.d\.ts$|/e2e/work/'
 }
+# `check` runs its command in a child shell; the function must reach it.
+export -f source_files
 
 check loc bash -c 'source_files | python3 scripts/quality/loc.py'
 
@@ -72,17 +74,18 @@ if [ "$run_rust" = 1 ]; then
     rca="$out/rca"
     rm -rf "$rca"
     mkdir -p "$rca"
-    rust-code-analysis-cli -m -O json -o "$rca" -p crates -j 4 >/dev/null 2>&1
+    # The tool reads Rust and Python; bash under scripts/ has the line limit only.
+    rust-code-analysis-cli -m -O json -o "$rca" -p crates -p scripts -j 4 >/dev/null 2>&1
     check rust-complexity python3 scripts/quality/rust_complexity.py "$rca"
     check rust-dead bash -c 'git ls-files crates | grep "\.rs$" | python3 scripts/quality/rust_dead.py'
     check rust-unused-deps cargo machete
     check rust-clippy cargo clippy --all-targets --workspace -- -D warnings
-    check rust-clones web/node_modules/.bin/jscpd --config .jscpd.json crates
+    check rust-clones web/node_modules/.bin/jscpd --config .jscpd.json crates scripts
     if [ -z "${CADUS_TEST_DATABASE_URL:-}" ]; then
         echo "FAIL rust-coverage: set CADUS_TEST_DATABASE_URL"
         failed=1
     else
-        check rust-coverage bash -c "cargo llvm-cov --workspace --all-targets --json --output-path '$out/rust-cov.json' >/dev/null && python3 scripts/quality/rust_coverage.py '$out/rust-cov.json' '$rca'"
+        check rust-coverage bash -c "cargo llvm-cov --workspace --all-targets --json --output-path '$out/rust-cov.json' && python3 scripts/quality/rust_coverage.py '$out/rust-cov.json' '$rca'"
     fi
 fi
 
