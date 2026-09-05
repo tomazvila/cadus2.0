@@ -159,6 +159,11 @@ mod tests {
         });
         let good = json!({"a": [], "s": "x", "o": {}, "b": true, "i": 1, "n": 1.5, "u": 0});
         assert_eq!(missing_field(&good, &schema), None);
+        for integer in [json!(-1), json!(u64::MAX)] {
+            let mut signed = good.clone();
+            signed["i"] = integer;
+            assert_eq!(missing_field(&signed, &schema), None);
+        }
         for (name, value) in [
             ("a", json!("x")),
             ("s", json!(1)),

@@ -357,7 +357,7 @@ fn web_and_worker_sources_hold_no_socket_or_process_call() {
     // returns nothing makes the check above pass on an empty set.
     for expected in [
         "crates/web/src/lib.rs",
-        "crates/web/src/bin/cadus-web.rs",
+        "crates/web/src/bin/cadus-web/main.rs",
         "crates/worker/src/lib.rs",
         "crates/worker/src/bin/cadus-worker.rs",
     ] {

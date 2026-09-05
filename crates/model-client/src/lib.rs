@@ -251,6 +251,9 @@ impl Client {
         let mut last = ModelError::Transport("no attempt ran".to_owned());
 
         for index in 0..MAX_ATTEMPTS {
+            if let Some(wait) = backoff(index) {
+                tokio::time::sleep(wait).await;
+            }
             match self
                 .attempt(index, max_tokens, request, &mut attempts)
                 .await
@@ -273,9 +276,6 @@ impl Client {
                         max_tokens = max_tokens.saturating_mul(TRUNCATION_FACTOR);
                     }
                 }
-            }
-            if !self.wait(index).await {
-                break;
             }
         }
 
@@ -332,16 +332,14 @@ impl Client {
             },
         }
     }
+}
 
-    /// Wait the backoff of `index`. Return `false` when `index` was the last
-    /// attempt, so the caller stops instead of waiting for nothing.
-    async fn wait(&self, index: u32) -> bool {
-        if index + 1 >= MAX_ATTEMPTS {
-            return false;
-        }
-        tokio::time::sleep(Duration::from_millis(BACKOFF_MS << index)).await;
-        true
-    }
+/// The wait before attempt `index`: none before the first attempt,
+/// [`BACKOFF_MS`] before the second, and twice the previous wait before each
+/// later attempt.
+fn backoff(index: u32) -> Option<Duration> {
+    let earlier = index.checked_sub(1)?;
+    Some(Duration::from_millis(BACKOFF_MS << earlier))
 }
 
 /// The verdict of a status other than 200.
@@ -419,7 +417,19 @@ pub fn request_body(cfg: &ModelConfig, request: &ChatRequest, max_tokens: u32) -
 
 #[cfg(test)]
 mod tests {
-    use super::{Verdict, status_verdict};
+    use std::time::Duration;
+
+    use super::{Verdict, backoff, status_verdict};
+
+    /// The first attempt waits for nothing, the second waits the backoff,
+    /// and each later attempt waits twice the previous wait.
+    #[test]
+    fn the_backoff_doubles_from_the_second_attempt() {
+        assert_eq!(backoff(0), None);
+        assert_eq!(backoff(1), Some(Duration::from_millis(500)));
+        assert_eq!(backoff(2), Some(Duration::from_millis(1000)));
+        assert_eq!(backoff(3), Some(Duration::from_millis(2000)));
+    }
 
     /// A 429 and every 5xx retry; every other status stops the call. The
     /// error carries at most 400 characters of the body.
