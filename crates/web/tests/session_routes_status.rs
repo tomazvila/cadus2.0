@@ -113,6 +113,17 @@ async fn get_json(app: &Router, user: Uuid, path: &str) -> Value {
     parse(&body)
 }
 
+/// Cache a model of `user` holding one topic in `state`, at `seq`.
+async fn seed_one_topic(db: &TestDb, user: Uuid, topic: &str, state: TopicState, seq: i64) {
+    let mut topics: BTreeMap<String, TopicState> = BTreeMap::new();
+    topics.insert(topic.to_string(), state);
+    let model = LearnerModel {
+        topics,
+        ..LearnerModel::default()
+    };
+    common::seed_cached_model(db, user, &model, seq).await;
+}
+
 /// `GET /api/status` reports the enrolled course, the journey, and the counts.
 #[tokio::test]
 async fn status_reports_the_enrolled_course_and_the_counts() {
@@ -243,13 +254,7 @@ async fn status_without_a_session_reads_an_untouched_model_as_not_placed() {
     TestDb::with(|db| async move {
         let user = common::seed_learner(&db, "untouched@example.com").await;
         let app = app(&db);
-        let mut topics: BTreeMap<String, TopicState> = BTreeMap::new();
-        topics.insert("addition".to_string(), TopicState::default());
-        let model = LearnerModel {
-            topics,
-            ..LearnerModel::default()
-        };
-        common::seed_cached_model(&db, user, &model, 0).await;
+        seed_one_topic(&db, user, "addition", TopicState::default(), 0).await;
 
         let value = get_json(&app, user, "/api/status").await;
         assert_eq!(value["placed"], false);
@@ -267,26 +272,18 @@ async fn status_counts_a_review_that_is_nearly_due() {
         let user = common::seed_learner(&db, "nearly@example.com").await;
         let app = app(&db);
         seed_open_session(&db, user).await;
-        let mut topics: BTreeMap<String, TopicState> = BTreeMap::new();
         // 0.9 days into a 1-day interval: the memory is 0.5^0.9, about 0.54.
         let t0 = Utc::now().timestamp_micros() - 9 * 8_640_000_000;
-        topics.insert(
-            "addition".to_string(),
-            TopicState {
-                status: TopicStatus::Learning,
-                rep_num: 1.0,
-                memory_base: 1.0,
-                t0: Some(Timestamp::from_micros(t0)),
-                interval_days: 1.0,
-                ability: 0.6,
-                ..TopicState::default()
-            },
-        );
-        let model = LearnerModel {
-            topics,
-            ..LearnerModel::default()
+        let nearly = TopicState {
+            status: TopicStatus::Learning,
+            rep_num: 1.0,
+            memory_base: 1.0,
+            t0: Some(Timestamp::from_micros(t0)),
+            interval_days: 1.0,
+            ability: 0.6,
+            ..TopicState::default()
         };
-        common::seed_cached_model(&db, user, &model, 1).await;
+        seed_one_topic(&db, user, "addition", nearly, 1).await;
 
         let value = get_json(&app, user, "/api/status").await;
         assert_eq!(value["due_reviews"], 0);
@@ -324,19 +321,11 @@ async fn status_reads_a_placed_topic_as_placed() {
         let user = common::seed_learner(&db, "placed@example.com").await;
         let app = app(&db);
         seed_open_session(&db, user).await;
-        let mut topics: BTreeMap<String, TopicState> = BTreeMap::new();
-        topics.insert(
-            "addition".to_string(),
-            TopicState {
-                status: TopicStatus::Placed,
-                ..TopicState::default()
-            },
-        );
-        let model = LearnerModel {
-            topics,
-            ..LearnerModel::default()
+        let placed = TopicState {
+            status: TopicStatus::Placed,
+            ..TopicState::default()
         };
-        common::seed_cached_model(&db, user, &model, 1).await;
+        seed_one_topic(&db, user, "addition", placed, 1).await;
 
         let value = get_json(&app, user, "/api/status").await;
         assert_eq!(value["placed"], true);
