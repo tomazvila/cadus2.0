@@ -107,12 +107,14 @@ async fn regate_after_approval(
     admin: &Db,
     digest: &str,
 ) -> Result<Vec<Regated>, StoreError> {
-    let Some(found) = content::document(state.db.pool(), digest).await? else {
+    // A digest the table no longer holds and a document of another kind give
+    // the same answer: nothing to judge again.
+    let Some(found) = content::document(state.db.pool(), digest)
+        .await?
+        .filter(|found| found.item.kind == KIND_TEMPLATE)
+    else {
         return Ok(Vec::new());
     };
-    if found.item.kind != KIND_TEMPLATE {
-        return Ok(Vec::new());
-    }
     regate_knowledge_point(
         &state.db,
         admin,

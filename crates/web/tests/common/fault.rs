@@ -364,3 +364,18 @@ pub async fn hide_column(db: &TestDb, table: &str, column: &str) {
     )
     .await;
 }
+
+/// Put `table` under row-level security with one policy that admits every row
+/// of the app role, so a later `fail_reads` on the table has a policy to
+/// restrict. The table owner keeps its bypass.
+pub async fn expose_to_policies(db: &TestDb, table: &str) {
+    run(db, format!("ALTER TABLE {table} ENABLE ROW LEVEL SECURITY")).await;
+    run(
+        db,
+        format!(
+            "CREATE POLICY test_admit_all ON {table} FOR ALL TO {APP_ROLE} USING (true) \
+             WITH CHECK (true)"
+        ),
+    )
+    .await;
+}
