@@ -139,6 +139,15 @@ fn is_rushing_detects_fast_and_wrong() {
 }
 
 #[test]
+fn a_time_at_exactly_the_rush_fraction_is_not_rushing() {
+    // The rule is STRICTLY UNDER the fraction: 50 of 100 seconds is not rushing,
+    // and 49 is.
+    assert_eq!(RUSH_TIME_FRACTION, 0.5);
+    assert!(!is_rushing(false, 50, 100));
+    assert!(is_rushing(false, 49, 100));
+}
+
+#[test]
 fn task_xp_rushing_penalty_applies_to_positive_xp() {
     let cfg = Config::default();
     let full = task_xp(TaskType::Review, WorkQuality::Passable, &cfg, 0, 0, false);

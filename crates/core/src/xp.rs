@@ -176,7 +176,9 @@ pub fn task_xp(
     }
     let base = base_xp(task_type, kp_count);
     let mut xp = base * quality_multiplier(quality, cfg, consecutive_blowoffs);
-    if rushing && xp > 0.0 {
+    // A zero XP keeps its value under the multiply, so the sign test alone
+    // selects the positive values.
+    if rushing && xp.is_sign_positive() {
         xp *= RUSH_PENALTY_MULT;
     }
     xp

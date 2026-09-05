@@ -91,8 +91,10 @@ pub fn ability_update(
     } else {
         graph.upward_weights_by_id(topic)
     };
+    // The walkers return positive weights only, so the one entry to skip is the
+    // topic itself.
     for (other, weight) in weights {
-        if other == topic || weight <= 0.0 {
+        if other == topic {
             continue;
         }
         let Some(state) = states.get(other) else {

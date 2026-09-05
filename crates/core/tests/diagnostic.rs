@@ -120,6 +120,23 @@ fn the_probe_set_is_a_valid_cover_and_holds_the_extremes() {
 }
 
 #[test]
+fn a_five_chain_at_radius_one_takes_the_greedy_four() {
+    // Each topic raises an ancestor demand and a descendant demand. At radius 1
+    // the inner topics `b`, `c`, `d` each cover four demands, and the greedy
+    // cover takes `b` first, then `d`, then the two extremes for their own
+    // demands. The set is `{a, b, d, e}` and not `{a, c, e}`.
+    let mut topics = chain_topics();
+    topics.push(with_exemplar(plain_topic("e", &[("d", 1.0, true)])));
+    let graph = common::graph(topics);
+    let probes = probe_set(&graph, Some("c"), 1);
+    let expected: BTreeSet<String> = ["a", "b", "d", "e"]
+        .iter()
+        .map(|id| (*id).to_owned())
+        .collect();
+    assert_eq!(probes, expected);
+}
+
+#[test]
 fn a_smaller_radius_never_needs_fewer_probes() {
     let graph = chain();
     let tight = probe_set(&graph, Some("c"), 1);

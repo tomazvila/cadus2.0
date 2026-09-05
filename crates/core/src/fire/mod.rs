@@ -210,13 +210,9 @@ pub fn review_state(state: &TopicState, t_us: i64, cfg: &Config, test_prep: bool
 /// [`INTERVAL_CAP_DAYS`]. An empty table gives `0.0`, the 1.0 defensive branch.
 #[must_use]
 #[expect(
-    clippy::cast_precision_loss,
-    reason = "an interval table holds a handful of entries"
-)]
-#[expect(
     clippy::cast_possible_truncation,
     clippy::cast_sign_loss,
-    reason = "the branch proves the float is finite, at least 0.0, and below the last index"
+    reason = "the floor is finite and at least 0.0; a cast past the table takes the tail"
 )]
 pub fn interval_for(rep_num: f64, cfg: &Config) -> f64 {
     let table = &cfg.fire.interval_table;
@@ -224,17 +220,12 @@ pub fn interval_for(rep_num: f64, cfg: &Config) -> f64 {
         return 0.0;
     };
     let r = py_max(0.0, rep_num);
-    let last = table.len() - 1;
     let floor = r.floor();
-    let value = if floor >= last as f64 {
-        tail
-    } else {
-        let i = floor as usize;
-        let frac = r - floor;
-        table
-            .get(i)
-            .zip(table.get(i + 1))
-            .map_or(tail, |(&low, &high)| low + frac * (high - low))
+    // A rep number at or past the last index has no pair to interpolate, so it
+    // takes the last entry.
+    let value = match table.windows(2).nth(floor as usize) {
+        Some(&[low, high]) => low + (r - floor) * (high - low),
+        _ => tail,
     };
     py_min(value, INTERVAL_CAP_DAYS)
 }
@@ -374,5 +365,20 @@ mod tests {
         assert_eq!(interval_for(1.0, &bare), 0.0);
         assert_eq!(raw_delta(1.0, 0.9, true, &bare, false), 1.0);
         assert_eq!(memory_at(&learned(0.5), T_US), 0.5);
+    }
+
+    #[test]
+    fn apply_update_reports_an_infinite_decay_factor() {
+        // A subnormal interval makes the overdue ratio infinite, and a config with
+        // no decay cap keeps the factor infinite. The memory itself is 0.0 there,
+        // so the flag comes from the factor alone.
+        let mut cfg = Config::default();
+        cfg.fire.decay_cap = f64::INFINITY;
+        let mut state = learned(0.5);
+        state.interval_days = 5e-324;
+        let (next, finite) = apply_update(&state, -0.5, T_US + 20 * DAY_US, true, &cfg);
+        assert!(!finite);
+        assert_eq!(next.rep_num, 0.0);
+        assert_eq!(next.memory_base, 0.0);
     }
 }

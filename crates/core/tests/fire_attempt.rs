@@ -17,12 +17,54 @@ use std::collections::BTreeMap;
 use cadus_core::config::Config;
 use cadus_core::event::{TopicStatus, WorkQuality};
 use cadus_core::fire::{
-    AttemptResult, apply_attempt, apply_attempt_checked, grade_review, initial_ability,
-    interval_for, knockout, memory_at, raw_delta, speed_for,
+    AttemptResult, Propagation, PropagationKind, apply_attempt, apply_attempt_checked,
+    grade_review, initial_ability, interval_for, knockout, memory_at, raw_delta, speed_for,
 };
 use cadus_core::learner::TopicState;
 use common::fire::{abilities_after, p364_states, pass_two_digit, seed_states, states_of};
 use common::{Learned, T_US, assert_approx, days, graph, learned, p364_graph, plain_topic, topic};
+
+// --------------------------------------------------------------------------- //
+// The two legs of apply_attempt and their gates
+// --------------------------------------------------------------------------- //
+
+/// The p.364 states, all learned at memory 0.5, with the given `min_credit`.
+fn p364_run(attempt: &AttemptResult, min_credit: f64) -> Vec<Propagation> {
+    let mut cfg = Config::default();
+    cfg.fire.min_credit = min_credit;
+    let states = p364_states(|| learned(0.5));
+    let (_, props) = apply_attempt(&states, attempt, &p364_graph(), &cfg, T_US);
+    props
+}
+
+#[test]
+fn a_passed_attempt_with_a_zero_raw_delta_sends_no_credit() {
+    // A blow-off that still passes earns `q = 0`, so the raw delta is 0.0 and
+    // the credit leg does not run, even with no minimum credit to drop it.
+    let attempt = AttemptResult::new("two-digit-mult", true, WorkQuality::Blowoff);
+    assert_eq!(p364_run(&attempt, 0.0), Vec::new());
+}
+
+#[test]
+fn a_missed_attempt_with_a_zero_raw_delta_sends_no_penalty() {
+    // A perfect miss earns `-(1 - 1) = -0.0`, which is not below zero, so the
+    // penalty leg does not run, even with no minimum credit to drop it.
+    let attempt = AttemptResult::new("one-digit-mult", false, WorkQuality::Perfect);
+    assert_eq!(p364_run(&attempt, 0.0), Vec::new());
+}
+
+#[test]
+fn a_penalty_at_exactly_min_credit_lands() {
+    // A blow-off miss on `one-digit-mult` sends `-1.0 x 0.8` up to
+    // `two-digit-mult`. The gate drops a penalty STRICTLY UNDER `min_credit`,
+    // so 0.8 lands when the minimum is 0.8.
+    let attempt = AttemptResult::new("one-digit-mult", false, WorkQuality::Blowoff);
+    let props = p364_run(&attempt, 0.8);
+    assert_eq!(props.len(), 1);
+    assert_eq!(props[0].topic, "two-digit-mult");
+    assert_eq!(props[0].raw_delta, -0.8);
+    assert_eq!(props[0].kind, PropagationKind::Penalty);
+}
 
 // --------------------------------------------------------------------------- //
 // initial_ability (test_fire.py:449-466)
