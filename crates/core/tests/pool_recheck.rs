@@ -22,30 +22,8 @@ use cadus_core::pool::{
     Batch, ProblemSource, REFUSAL_FLAG_PERCENT, TemplateSource, check_instance,
 };
 use cadus_core::template::{Bindings, Compiled, GateSpec, Instance, Scalar, gate};
+use cadus_testkit::fixtures::BIG_SUBTRACTION_BODY;
 use common::pool_fixtures::{bind_int, bind_two, doc_from, exemplar};
-
-/// The reviewer's template: 10,000 declared tuples, one of which breaks the
-/// envelope.
-///
-/// The declared space is above `EXHAUSTIVE_SPACE_LIMIT`, so the gate reads a
-/// 4,096-tuple sample from its constant seed and never meets `a = 100, b = 100`.
-/// That tuple answers `-1`, and every authored answer of the knowledge point is a
-/// non-negative whole number.
-fn big_subtraction_body() -> &'static str {
-    r#"{
-      "v": 1,
-      "topic_id": "big-subtraction",
-      "answer_kind": "numeric",
-      "statement": "Compute $9999 - {a} \\times {b}$.",
-      "params": {"a": {"kind": "int", "low": 1, "high": 100},
-                 "b": {"kind": "int", "low": 1, "high": 100}},
-      "answer_expr": "9999 - a*b",
-      "hints": ["What is the product first?"],
-      "samples": [{"params": {"a": 1, "b": 1}, "expected": "9998"},
-                  {"params": {"a": 100, "b": 1}, "expected": "9899"},
-                  {"params": {"a": 1, "b": 100}, "expected": "9899"}]
-    }"#
-}
 
 /// The two authored exemplars of that knowledge point.
 ///
@@ -64,7 +42,7 @@ fn big_subtraction_exemplars() -> Vec<Exemplar> {
 /// draws the one violating tuple of the 10,000. Every number below is a literal.
 #[test]
 fn the_fill_refuses_the_instance_the_gates_sample_never_read() {
-    let doc = doc_from(big_subtraction_body());
+    let doc = doc_from(BIG_SUBTRACTION_BODY);
     let exemplars = big_subtraction_exemplars();
     let source = TemplateSource::new("big-subtraction", &doc)
         .expect("the fixture compiles")
@@ -124,7 +102,7 @@ fn the_fill_refuses_the_instance_the_gates_sample_never_read() {
 /// what the fill must be given.
 #[test]
 fn a_source_without_exemplars_has_no_envelope_to_apply() {
-    let doc = doc_from(big_subtraction_body());
+    let doc = doc_from(BIG_SUBTRACTION_BODY);
     let source = TemplateSource::new("big-subtraction", &doc).expect("the fixture compiles");
 
     let batch = source
@@ -147,7 +125,7 @@ fn a_source_without_exemplars_has_no_envelope_to_apply() {
 /// The refusal counters of one batch.
 #[test]
 fn a_batch_reports_its_refusal_rate() {
-    let doc = doc_from(big_subtraction_body());
+    let doc = doc_from(BIG_SUBTRACTION_BODY);
     let exemplars = big_subtraction_exemplars();
     let source = TemplateSource::new("big-subtraction", &doc)
         .expect("the fixture compiles")
@@ -191,7 +169,7 @@ fn a_batch_reports_its_refusal_rate() {
 /// `check_instance` writes the gate's own message for each per-instance rule.
 #[test]
 fn check_instance_refuses_a_negative_answer_with_the_gate_message() {
-    let doc = doc_from(big_subtraction_body());
+    let doc = doc_from(BIG_SUBTRACTION_BODY);
     let compiled = Compiled::new(&doc).expect("the fixture compiles");
     let exemplars = big_subtraction_exemplars();
     let spec = GateSpec {

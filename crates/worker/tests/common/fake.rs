@@ -7,6 +7,7 @@ use cadus_core::curriculum::{AnswerKind, Exemplar};
 use cadus_model_client::{Client, ModelConfig};
 use cadus_store::test_support::TestDb;
 use cadus_store::{DEFAULT_CLIENT_TIMEOUT_MS, Db};
+use cadus_testkit::http::{read_request, status_reply};
 use cadus_worker::authoring::job::{
     AUTHORING_ATTEMPTS, AuthoringJob, BatchReport, Decline, Outcome, Report, author_one, run_batch,
     slots_taken,
@@ -14,7 +15,7 @@ use cadus_worker::authoring::job::{
 use cadus_worker::authoring::prompt::{AuthoringSpec, Kind};
 use cadus_worker::diagnosis::DiagnosisJob;
 use serde_json::{Value, json};
-use tokio::io::{AsyncReadExt, AsyncWriteExt};
+use tokio::io::AsyncWriteExt;
 use tokio::net::TcpListener;
 
 use super::trace;
@@ -57,10 +58,7 @@ impl FakeModel {
                     .unwrap_or_else(|| (500, String::new()));
                 index += 1;
                 tokio::time::sleep(delay).await;
-                let reply = format!(
-                    "HTTP/1.1 {status} X\r\ncontent-type: application/json\r\ncontent-length: {}\r\nconnection: close\r\n\r\n{payload}",
-                    payload.len()
-                );
+                let reply = status_reply(status, &payload);
                 let _ = socket.write_all(reply.as_bytes()).await;
                 let _ = socket.flush().await;
             }
@@ -121,31 +119,6 @@ impl FakeModel {
     /// A diagnosis job pointed at this endpoint, with this T4 cap.
     pub fn diagnosis_job(&self, calls_per_session: u32) -> DiagnosisJob {
         DiagnosisJob::new(self.client(600, 600), calls_per_session)
-    }
-}
-
-/// Read one HTTP request off the socket, headers and body.
-async fn read_request(socket: &mut tokio::net::TcpStream) -> String {
-    let mut raw: Vec<u8> = Vec::new();
-    let mut buffer = [0_u8; 4096];
-    loop {
-        let read = socket.read(&mut buffer).await.unwrap_or(0);
-        if read == 0 {
-            return String::from_utf8_lossy(&raw).to_string();
-        }
-        raw.extend_from_slice(&buffer[..read]);
-        let text = String::from_utf8_lossy(&raw).to_string();
-        if let Some(split) = text.find("\r\n\r\n") {
-            let length: usize = text[..split]
-                .to_lowercase()
-                .split("\r\n")
-                .find_map(|line| line.strip_prefix("content-length:"))
-                .and_then(|value| value.trim().parse().ok())
-                .unwrap_or(0);
-            if text.len() >= split + 4 + length {
-                return text;
-            }
-        }
     }
 }
 

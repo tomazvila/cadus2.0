@@ -70,10 +70,8 @@ mod common;
 use std::time::Instant;
 
 use cadus_store::test_support::TestDb;
-use common::bench::{
-    Percentiles, artifact_json, budget, dsn_set, release, report, rounds, timed, timed_rounds,
-    timed_step, write_artifact,
-};
+use cadus_testkit::bench::{Percentiles, benchmarks_are_on, budget, write_artifact};
+use common::bench::{artifact_json, dsn_set, release, report, rounds, timed_rounds, timed_step};
 use common::long_log::{
     BENCH_SAMPLES, BENCH_WARMUPS, COUNTING_SAMPLES, OPEN_SESSION_EVENTS, Read, SEEDED_EVENTS,
     SERVE_P95_BUDGET_NS, log_len, seed, serve_once,
@@ -147,7 +145,7 @@ async fn benchmark_long_log_serve_holds_the_l1_segment() {
                 reads[0].rows
             ),
         );
-        if timed() {
+        if benchmarks_are_on() {
             write_artifact(
                 "benchmark-b-long-log-serve.json",
                 &artifact_json(
@@ -201,7 +199,7 @@ async fn benchmark_long_log_serve_holds_the_l1_segment() {
             "the serve run grew the log by more than the one cadence line"
         );
         assert!(
-            !timed() || times.p95 < limit,
+            !benchmarks_are_on() || times.p95 < limit,
             "the p95 serve transaction over {SEEDED_EVENTS} events took {} ns, and the budget \
              is {limit} ns",
             times.p95

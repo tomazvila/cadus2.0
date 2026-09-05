@@ -9,12 +9,13 @@ use std::sync::{Arc, Mutex};
 use std::time::Duration;
 
 use cadus_model_client::{Call, ChatRequest, Client, ModelConfig, ToolSpec};
+use cadus_testkit::http::{read_request, status_reply};
 use rustls::crypto::CryptoProvider;
 use rustls::pki_types::pem::PemObject;
 use rustls::pki_types::{CertificateDer, PrivateKeyDer};
 use rustls::{RootCertStore, ServerConfig};
 use serde_json::{Value, json};
-use tokio::io::{AsyncRead, AsyncReadExt, AsyncWrite, AsyncWriteExt};
+use tokio::io::{AsyncRead, AsyncWrite, AsyncWriteExt};
 use tokio::net::TcpListener;
 use tokio_rustls::TlsAcceptor;
 
@@ -109,39 +110,10 @@ pub struct FakeModel {
     seen: Arc<Mutex<Vec<Seen>>>,
 }
 
-/// Read one HTTP request from `socket`: the head, then the body that
-/// `content-length` names.
-async fn read_request<S: AsyncRead + Unpin>(socket: &mut S) -> String {
-    let mut raw: Vec<u8> = Vec::new();
-    let mut buffer = [0_u8; 4096];
-    loop {
-        let read = socket.read(&mut buffer).await.unwrap_or(0);
-        if read == 0 {
-            return String::from_utf8_lossy(&raw).to_string();
-        }
-        raw.extend_from_slice(&buffer[..read]);
-        let text = String::from_utf8_lossy(&raw).to_string();
-        if let Some(split) = text.find("\r\n\r\n") {
-            let head = text[..split].to_lowercase();
-            let length: usize = head
-                .split("\r\n")
-                .find_map(|line| line.strip_prefix("content-length:"))
-                .and_then(|value| value.trim().parse().ok())
-                .unwrap_or(0);
-            if text.len() >= split + 4 + length {
-                return text;
-            }
-        }
-    }
-}
-
 /// The bytes of one reply.
 fn reply_bytes(reply: Reply) -> Option<String> {
     match reply {
-        Reply::Status(status, payload) => Some(format!(
-            "HTTP/1.1 {status} X\r\ncontent-type: application/json\r\ncontent-length: {}\r\nconnection: close\r\n\r\n{payload}",
-            payload.len()
-        )),
+        Reply::Status(status, payload) => Some(status_reply(status, &payload)),
         Reply::Raw(bytes) => Some(bytes),
         Reply::Hangup => None,
     }

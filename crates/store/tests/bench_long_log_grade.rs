@@ -7,9 +7,9 @@
 mod common;
 
 use cadus_store::test_support::TestDb;
+use cadus_testkit::bench::{Percentiles, benchmarks_are_on, budget, write_artifact};
 use common::bench::{
-    Percentiles, artifact_json, budget, dsn_set, report, restore, rounds, snapshot, timed,
-    timed_rounds, timed_step, write_artifact,
+    artifact_json, dsn_set, report, restore, rounds, snapshot, timed_rounds, timed_step,
 };
 use common::long_log::{
     BENCH_SAMPLES, BENCH_WARMUPS, COUNTING_SAMPLES, GRADE_P95_BUDGET_NS, OPEN_SESSION_EVENTS, Read,
@@ -66,7 +66,7 @@ async fn benchmark_long_log_grade_holds_the_l2_segment() {
                 reads[0].rows
             ),
         );
-        if timed() {
+        if benchmarks_are_on() {
             write_artifact(
                 "benchmark-b-long-log-grade.json",
                 &artifact_json(
@@ -106,7 +106,7 @@ async fn benchmark_long_log_grade_holds_the_l2_segment() {
             );
         }
         assert!(
-            !timed() || times.p95 < limit,
+            !benchmarks_are_on() || times.p95 < limit,
             "the p95 grade transaction over {SEEDED_EVENTS} events took {} ns, and the budget \
              is {limit} ns",
             times.p95

@@ -71,10 +71,12 @@ use std::time::Instant;
 
 use cadus_core::pool::{Avoid, Ring, TaskMemory};
 use cadus_core::template::rng_from_seed;
+use cadus_testkit::bench::{
+    BENCH_VAR, Percentiles, benchmarks_are_on, budget, profile, write_artifact,
+};
 use common::bench::{
-    BENCH_SEED, BENCH_VAR, BLOCKED_IN_THE_RUN, ITERATIONS, Percentiles, RING_TAIL_AFTER_THE_RUN,
-    SEQUENCE_DIGEST, TEMPLATE_COUNT, benchmarks_are_on, budget, compile_all, fixtures, profile,
-    replay, sequence_digest, write_artifact,
+    BENCH_SEED, BLOCKED_IN_THE_RUN, ITERATIONS, RING_TAIL_AFTER_THE_RUN, SEQUENCE_DIGEST,
+    TEMPLATE_COUNT, compile_all, fixtures, replay, sequence_digest,
 };
 
 // ---------------------------------------------------------------------------

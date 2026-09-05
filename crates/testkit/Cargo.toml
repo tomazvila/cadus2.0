@@ -1,0 +1,25 @@
+[package]
+name = "cadus-testkit"
+edition.workspace = true
+rust-version.workspace = true
+version.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[lib]
+name = "cadus_testkit"
+path = "src/lib.rs"
+
+# The crate is a test instrument. Every other crate lists it under
+# `[dev-dependencies]` only, so no line of it enters a runtime binary.
+[dependencies]
+# `purity` reads the resolved dependency graph of the workspace with it (R4).
+cargo_metadata = { workspace = true }
+# `fixtures::read_jsonl` decodes one row per line into the type of the caller.
+serde = { workspace = true }
+serde_json = { workspace = true }
+# `http::read_request` reads one request off any asynchronous stream.
+tokio = { workspace = true }
+
+[lints]
+workspace = true

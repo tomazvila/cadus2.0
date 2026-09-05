@@ -15,7 +15,10 @@ use std::time::Instant;
 
 use cadus_core::answer::{Outcome, canonical_form, check, normalize};
 use cadus_core::curriculum::AnswerKind;
-use common::bench::{BENCH_VAR, Percentiles, benchmarks_are_on, budget, profile, write_artifact};
+use cadus_testkit::bench::{
+    BENCH_VAR, Percentiles, benchmarks_are_on, budget, profile, write_artifact,
+};
+use cadus_testkit::fixtures::read_jsonl;
 
 /// The p95 budget of one `check`, in nanoseconds: 5 ms of the 300 ms of L2.
 const CHECK_P95_BUDGET_NS: u128 = 5_000_000;
@@ -82,13 +85,9 @@ struct CorpusRow {
 
 /// Read the 1.0 answer corpus.
 fn corpus() -> Vec<CorpusRow> {
-    let path =
-        Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/fixtures/answers/corpus_1_0.jsonl");
-    let text = std::fs::read_to_string(&path)
-        .unwrap_or_else(|err| panic!("read {}: {err}", path.display()));
-    text.lines()
-        .map(|line| serde_json::from_str(line).unwrap_or_else(|err| panic!("row {line}: {err}")))
-        .collect()
+    read_jsonl(
+        &Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/fixtures/answers/corpus_1_0.jsonl"),
+    )
 }
 
 /// The answer kind of one corpus row.

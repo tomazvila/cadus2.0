@@ -14,6 +14,7 @@ use std::time::Instant;
 use cadus_core::pool::{Avoid, PoolAnswer, Ring, TaskMemory};
 use cadus_store::pool::{pop_with_ring, unclaimed_depth};
 use cadus_store::test_support::TestDb;
+use cadus_testkit::fixtures::BIG_SUBTRACTION_BODY;
 use sqlx::PgPool;
 use sqlx::types::Uuid;
 
@@ -27,26 +28,6 @@ const BIG_SUB: &str = "big-subtraction/kp1";
 
 /// The digest of its approved template row.
 const BIG_SUB_DIGEST: &str = "template-big-sub-1";
-
-/// A template the gate accepts and one of whose 10,000 instances answers `-1`.
-///
-/// The declared space is above `EXHAUSTIVE_SPACE_LIMIT`, so the gate reads a
-/// 4,096-tuple sample from its constant seed and never meets `a = 100, b = 100`.
-/// Both authored exemplars of the knowledge point answer a non-negative whole
-/// number, so the envelope refuses that instance.
-const BIG_SUB_BODY: &str = r#"{
-    "v": 1,
-    "topic_id": "big-subtraction",
-    "answer_kind": "numeric",
-    "statement": "Compute $9999 - {a} \\times {b}$.",
-    "params": {"a": {"kind": "int", "low": 1, "high": 100},
-               "b": {"kind": "int", "low": 1, "high": 100}},
-    "answer_expr": "9999 - a*b",
-    "hints": ["What is the product first?"],
-    "samples": [{"params": {"a": 1, "b": 1}, "expected": "9998"},
-                {"params": {"a": 100, "b": 1}, "expected": "9899"},
-                {"params": {"a": 1, "b": 100}, "expected": "9899"}]
-}"#;
 
 /// The base seed whose nonce-1 batch for `USER_ID` draws the violating tuple.
 ///
@@ -84,7 +65,7 @@ async fn answers_of(admin: &PgPool, user_id: Uuid, kp_id: &str) -> Vec<String> {
 /// drained pair of it, and one pass of that pair at this depth.
 async fn big_sub_pass(db: &TestDb, depth: i64) -> (Uuid, Refill, cadus_worker::RefillReport) {
     let user = seed_fixed_user(&db.admin).await;
-    seed_approved_template(&db.admin, BIG_SUB_DIGEST, BIG_SUB, BIG_SUB_BODY).await;
+    seed_approved_template(&db.admin, BIG_SUB_DIGEST, BIG_SUB, BIG_SUBTRACTION_BODY).await;
     seed_drained_pair(&db.admin, user, BIG_SUB).await;
     let mut refill = Refill::new(depth, 32, BIG_SUB_BASE_SEED);
     let report = refill.pass(db, 1, Instant::now()).await;
@@ -172,7 +153,7 @@ async fn a_refusal_rate_above_the_limit_flags_the_pair() {
     .await;
 }
 
-/// The target depth at which the one refused corner of `BIG_SUB_BODY` is
+/// The target depth at which the one refused corner of `BIG_SUBTRACTION_BODY` is
 /// above the 10 percent limit: the corner is the ninth draw of the batch, so
 /// a batch of eight accepted instances checks nine and refuses one.
 const DEPTH_FLAGGED: i64 = 8;

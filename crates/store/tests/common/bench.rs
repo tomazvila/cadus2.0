@@ -1,9 +1,11 @@
-//! The shared harness of the benchmarks: the gating, the percentiles, the
-//! artifact, the report line, the curriculum, the pool rows, the two
-//! anti-repeat windows, and the fixture restore between samples.
+//! The harness of the store benchmarks: the cluster gate, the round counts,
+//! the report line, the artifact document, the curriculum, the pool rows, the
+//! two anti-repeat windows, and the fixture restore between samples. The
+//! percentiles, the budget, and the artifact file come from
+//! `cadus_testkit::bench`.
 
 use std::future::Future;
-use std::path::{Path, PathBuf};
+use std::path::Path;
 
 use cadus_core::curriculum::{Curriculum, load_curriculum};
 use cadus_core::event::Event;
@@ -15,6 +17,7 @@ use cadus_core::projector::ProjectionInput;
 use cadus_store::pool::{NewInstance, insert_batch, pop_with_ring_tx};
 use cadus_store::state::{Projection, append_event, project_and_save, save_web_state};
 use cadus_store::test_support::TestDb;
+use cadus_testkit::bench::{Percentiles, benchmarks_are_on, profile};
 
 use super::events::Fixture;
 use cadus_store::{StoreError, begin_tenant};
@@ -22,22 +25,8 @@ use serde_json::{Value as Json, json};
 use sqlx::{PgPool, Postgres, Transaction};
 use uuid::Uuid;
 
-/// The environment variable that turns the timing gates on.
-pub const BENCH_VAR: &str = "CADUS_BENCH";
-
-/// The environment variable that moves the artifact directory.
-pub const ARTIFACT_DIR_VAR: &str = "CADUS_BENCH_DIR";
-
 /// The environment variable that names the throwaway cluster.
 pub const TEST_DSN_VAR: &str = "CADUS_TEST_DATABASE_URL";
-
-/// How much wider a budget is in a debug build.
-pub const DEBUG_BUDGET_FACTOR: u128 = 10;
-
-/// Whether the timing gate is armed.
-pub fn timed() -> bool {
-    std::env::var_os(BENCH_VAR).is_some()
-}
 
 /// Whether the throwaway cluster is named. A run without it prints the
 /// SKIPPED line of `name` and the caller returns.
@@ -52,101 +41,15 @@ pub fn dsn_set(name: &str) -> bool {
 /// The round count of this run: `bench` under the timing gate, `counting`
 /// on a plain `cargo test`, which gates the COUNTS and not the clock.
 pub fn rounds(bench: usize, counting: usize) -> usize {
-    if timed() { bench } else { counting }
-}
-
-/// The budget of this build: the release number, ten times wider in debug.
-pub const fn budget(release_ns: u128) -> u128 {
-    if cfg!(debug_assertions) {
-        release_ns * DEBUG_BUDGET_FACTOR
-    } else {
-        release_ns
-    }
-}
-
-/// The `percent` percentile of a sorted sample, by the nearest-rank rule.
-///
-/// The rank is `ceil(percent * n / 100)`, counted from one. The arithmetic is
-/// integer arithmetic, so no float enters a reported number (D6).
-pub fn percentile(sorted: &[u128], percent: u128) -> u128 {
-    assert!(!sorted.is_empty(), "a percentile needs a sample");
-    let count = sorted.len() as u128;
-    let rank = (percent * count).div_ceil(100).max(1);
-    let index = usize::try_from(rank - 1).unwrap_or(0);
-    sorted[index.min(sorted.len() - 1)]
-}
-
-/// The p50, p95, p99, and maximum of a sample of nanosecond durations.
-pub struct Percentiles {
-    pub p50: u128,
-    pub p95: u128,
-    pub p99: u128,
-    pub max: u128,
-}
-
-impl Percentiles {
-    /// Read the percentiles of one sample. The function sorts its own copy.
-    pub fn of(samples: &[u128]) -> Self {
-        let mut sorted = samples.to_vec();
-        sorted.sort_unstable();
-        Self {
-            p50: percentile(&sorted, 50),
-            p95: percentile(&sorted, 95),
-            p99: percentile(&sorted, 99),
-            max: *sorted.last().expect("a percentile needs a sample"),
-        }
-    }
-
-    /// The JSON object of the four numbers, for the artifact.
-    pub fn json(&self) -> Json {
-        json!({
-            "p50_ns": self.p50,
-            "p95_ns": self.p95,
-            "p99_ns": self.p99,
-            "max_ns": self.max,
-        })
-    }
-}
-
-/// The name of the build profile, for the artifact.
-pub fn profile() -> &'static str {
-    if cfg!(debug_assertions) {
-        "debug"
-    } else {
-        "release"
-    }
-}
-
-/// The artifact directory: `CADUS_BENCH_DIR`, or `target/bench`.
-pub fn artifact_dir() -> PathBuf {
-    match std::env::var_os(ARTIFACT_DIR_VAR) {
-        Some(value) => PathBuf::from(value),
-        None => Path::new(env!("CARGO_MANIFEST_DIR")).join("../../target/bench"),
-    }
-}
-
-/// Write one benchmark artifact into `dir` and print its path.
-pub fn write_artifact_to(dir: &Path, name: &str, body: &str) {
-    std::fs::create_dir_all(dir).expect("the artifact directory is created");
-    let path = dir.join(name);
-    std::fs::write(&path, body).expect("the artifact is written");
-    println!("artifact: {}", path.display());
-}
-
-/// Write one benchmark artifact into the artifact directory.
-pub fn write_artifact(name: &str, body: &str) {
-    write_artifact_to(&artifact_dir(), name, body);
+    if benchmarks_are_on() { bench } else { counting }
 }
 
 /// Print the report line of one benchmark.
 pub fn report(name: &str, times: &Percentiles, count: usize, extra: &str) {
     println!(
-        "{name} ({}): p50 {} ns, p95 {} ns, p99 {} ns, max {} ns over {count} samples{extra}",
+        "{name} ({}): {} over {count} samples{extra}",
         profile(),
-        times.p50,
-        times.p95,
-        times.p99,
-        times.max,
+        times.phrase(),
     );
 }
 

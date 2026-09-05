@@ -2,6 +2,8 @@
 
 use std::time::{Duration, Instant};
 
+use cadus_testkit::process::with_role;
+
 use super::{TEST_DSN_VAR, fixture_curriculum};
 
 /// Build the superuser DSN of one throwaway database.
@@ -24,10 +26,7 @@ pub fn superuser_dsn(db_name: &str) -> String {
 ///
 /// The test cluster uses trust authentication, so the role needs no password.
 pub fn role_dsn(db_name: &str, role: &str) -> String {
-    let dsn = superuser_dsn(db_name);
-    let (scheme, rest) = dsn.split_once("://").expect("the DSN names a scheme");
-    let host = rest.rsplit_once('@').map_or(rest, |(_, host)| host);
-    format!("{scheme}://{role}@{host}")
+    with_role(&superuser_dsn(db_name), role)
 }
 
 /// A child process that never outlives the test that made it.

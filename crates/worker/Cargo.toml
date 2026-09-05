@@ -40,9 +40,9 @@ cadus-store = { workspace = true, features = ["test-support"] }
 # Test only. `tests/run.rs` sends SIGTERM to the worker process with `libc::kill`.
 # A direct system call keeps the test independent of an external `kill` program.
 libc = "0.2.189"
-# Development only. `tests/purity.rs` reads the resolved dependency graph with
-# it (R4).
-cargo_metadata = { workspace = true }
+# Development only. The fake endpoint pieces, the fixture texts, the DSN helper,
+# and the R4 purity guards that the tests share with the other crates.
+cadus-testkit = { workspace = true }
 
 [lints]
 workspace = true

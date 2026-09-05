@@ -18,7 +18,9 @@ use cadus_core::curriculum::{Curriculum, load_curriculum};
 use cadus_core::event::{Timestamp, TopicStatus};
 use cadus_core::learner::TopicState;
 use cadus_core::selector::{SeededSampler, SessionContext, SessionPlan, compose_session};
-use common::bench::{BENCH_VAR, Percentiles, benchmarks_are_on, budget, profile, write_artifact};
+use cadus_testkit::bench::{
+    BENCH_VAR, Percentiles, benchmarks_are_on, budget, profile, write_artifact,
+};
 
 // ---------------------------------------------------------------------------
 // Benchmark A, part 3 — the arena traversal and the scheduler decision (L1)

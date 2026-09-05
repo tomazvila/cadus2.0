@@ -6,6 +6,7 @@ use std::process::{Child, Command, ExitStatus, Output, Stdio};
 use std::time::{Duration, Instant};
 
 use cadus_store::test_support::TestDb;
+use cadus_testkit::process::with_role;
 use sqlx::{AssertSqlSafe, Connection, PgConnection};
 use uuid::Uuid;
 
@@ -142,10 +143,7 @@ pub fn migrate_command(dsn: &str, lock_db: Option<&str>) -> Command {
 /// The DSN of `db_name` on the test cluster as `role`, with the empty
 /// password of trust authentication.
 pub fn role_dsn(db_name: &str, role: &str) -> String {
-    let dsn = TestDb::superuser_dsn_for(db_name);
-    let (scheme, rest) = dsn.split_once("://").expect("the DSN names a scheme");
-    let host = rest.rsplit_once('@').map_or(rest, |(_, host)| host);
-    format!("{scheme}://{role}@{host}")
+    with_role(&TestDb::superuser_dsn_for(db_name), role)
 }
 
 /// Run every statement of `statements`, in order, on the database `name` as

@@ -1,6 +1,6 @@
 //! Helpers benchmark A shares across its three binaries: the template
-//! fixtures, the nearest-rank percentiles, the time budget of the profile, and
-//! the artifact file.
+//! fixtures, the pinned sequence, and its digest. The percentiles, the time
+//! budget, and the artifact file come from `cadus_testkit::bench`.
 
 #![allow(clippy::expect_used, clippy::panic)]
 
@@ -103,14 +103,6 @@ pub const PINNED_INSTANCES: [PinnedInstance; 3] = [
 /// literals held byte for byte.
 pub const SEQUENCE_DIGEST: &str = "c767c554c277";
 
-/// The debug-profile multiplier of both time budgets.
-///
-/// The exact arithmetic of the checker runs about ten times slower without
-/// optimization, and `crates/core/tests/answer_check.rs` already carries the
-/// same ten-times rule for the L2 budget. The gate runs this file in the
-/// release profile, so the 5 ms literals above are the numbers that bind.
-pub const DEBUG_SLOWDOWN: u128 = 10;
-
 /// The directory of the committed template fixtures.
 pub fn fixture_dir() -> PathBuf {
     Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/fixtures/templates")
@@ -150,94 +142,6 @@ pub fn compile_all(fixtures: &[(String, TemplateDoc)]) -> Vec<Compiled<'_>> {
             Compiled::new(doc).unwrap_or_else(|err| panic!("{name} does not compile: {err}"))
         })
         .collect()
-}
-
-/// The `percent` percentile of a sorted sample, by the nearest-rank rule.
-///
-/// The rank is `ceil(percent * n / 100)`, counted from one, and the function
-/// reads the value at that rank. The arithmetic is integer arithmetic: no float
-/// enters a reported number (D6).
-pub fn percentile(sorted: &[u128], percent: u128) -> u128 {
-    assert!(!sorted.is_empty(), "a percentile needs a sample");
-    let count = sorted.len() as u128;
-    let rank = (percent * count).div_ceil(100).max(1);
-    let index = usize::try_from(rank - 1).unwrap_or(0);
-    sorted[index.min(sorted.len() - 1)]
-}
-
-/// The p50, p95, p99, and maximum of a sample of nanosecond durations.
-pub struct Percentiles {
-    pub p50: u128,
-    pub p95: u128,
-    pub p99: u128,
-    pub max: u128,
-}
-
-impl Percentiles {
-    /// Read the percentiles of one sample. The function sorts its own copy.
-    pub fn of(samples: &[u128]) -> Self {
-        let mut sorted = samples.to_vec();
-        sorted.sort_unstable();
-        Self {
-            p50: percentile(&sorted, 50),
-            p95: percentile(&sorted, 95),
-            p99: percentile(&sorted, 99),
-            max: *sorted.last().unwrap(),
-        }
-    }
-
-    /// The JSON body of the four numbers.
-    pub fn json(&self) -> String {
-        format!(
-            "{{\"p50_ns\": {}, \"p95_ns\": {}, \"p99_ns\": {}, \"max_ns\": {}}}",
-            self.p50, self.p95, self.p99, self.max
-        )
-    }
-}
-
-/// The time budget of this build profile.
-///
-/// A release build holds the literal of the budget table. A debug build holds
-/// ten times that number, because the exact arithmetic runs about ten times
-/// slower without optimization.
-pub fn budget(release_ns: u128) -> u128 {
-    if cfg!(debug_assertions) {
-        release_ns * DEBUG_SLOWDOWN
-    } else {
-        release_ns
-    }
-}
-
-/// The name of the profile, for the artifact.
-pub fn profile() -> &'static str {
-    if cfg!(debug_assertions) {
-        "debug"
-    } else {
-        "release"
-    }
-}
-
-/// The environment variable that moves the artifact directory.
-pub const ARTIFACT_DIR_VAR: &str = "CADUS_BENCH_DIR";
-
-/// The environment variable that turns the benchmarks on.
-pub const BENCH_VAR: &str = "CADUS_BENCH";
-
-/// Whether this run asks for the benchmarks.
-pub fn benchmarks_are_on() -> bool {
-    std::env::var_os(BENCH_VAR).is_some()
-}
-
-/// Write one benchmark artifact and print its path.
-pub fn write_artifact(name: &str, body: &str) {
-    let dir = match std::env::var_os(ARTIFACT_DIR_VAR) {
-        Some(value) => PathBuf::from(value),
-        None => Path::new(env!("CARGO_MANIFEST_DIR")).join("../../target/bench"),
-    };
-    std::fs::create_dir_all(&dir).unwrap_or_else(|err| panic!("create {}: {err}", dir.display()));
-    let path = dir.join(name);
-    std::fs::write(&path, body).unwrap_or_else(|err| panic!("write {}: {err}", path.display()));
-    println!("artifact: {}", path.display());
 }
 
 /// One replayed iteration of the measured sequence.

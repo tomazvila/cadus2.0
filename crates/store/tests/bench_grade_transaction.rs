@@ -64,10 +64,10 @@ use cadus_store::state::{
 };
 use cadus_store::test_support::TestDb;
 use cadus_store::{StoreError, begin_tenant};
+use cadus_testkit::bench::{Percentiles, benchmarks_are_on, profile, write_artifact};
 use common::bench::{
-    Percentiles, Run, Snapshot, append_and_fold, artifact_json, claim_and_commit, curriculum,
-    delete_job, dsn_set, finish_seed, profile, report, restore, snapshot, timed, timed_rounds,
-    timed_step, write_artifact,
+    Run, Snapshot, append_and_fold, artifact_json, claim_and_commit, curriculum, delete_job,
+    dsn_set, finish_seed, report, restore, snapshot, timed_rounds, timed_step,
 };
 use common::events::{BASE_US, Fixture, attempt_row};
 use serde_json::{Value as Json, json};
@@ -286,7 +286,7 @@ async fn warmed(db: &TestDb, rounds: usize) -> (Run, Snapshot) {
 /// Benchmark B: 200 grade transactions hold the 150 ms segment of L2.
 #[tokio::test]
 async fn benchmark_b_grade_transaction_holds_the_l2_segment() {
-    if !timed() {
+    if !benchmarks_are_on() {
         println!("SKIPPED benchmark B (grade): CADUS_BENCH is not set");
         return;
     }

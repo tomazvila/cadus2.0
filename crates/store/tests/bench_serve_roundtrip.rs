@@ -66,10 +66,8 @@ use cadus_core::pool::{Avoid, Ring, TaskMemory};
 use cadus_store::pool::{NewInstance, POP_LIMIT, insert_batch, pop_with_ring_tx};
 use cadus_store::test_support::TestDb;
 use cadus_store::{StoreError, begin_tenant};
-use common::bench::{
-    Percentiles, artifact_json, budget, dsn_set, instance_row, release, report, rounds, timed,
-    timed_rounds, write_artifact,
-};
+use cadus_testkit::bench::{Percentiles, benchmarks_are_on, budget, write_artifact};
+use common::bench::{artifact_json, dsn_set, instance_row, release, report, rounds, timed_rounds};
 use serde_json::json;
 use sqlx::PgPool;
 use uuid::Uuid;
@@ -367,7 +365,7 @@ async fn benchmark_b_serve_round_trip_holds_the_l1_segment() {
         let times = Percentiles::of(&samples);
         let limit = budget(P95_BUDGET_NS);
         report("benchmark B serve", &times, samples.len(), "");
-        if timed() {
+        if benchmarks_are_on() {
             write_artifact(
                 "benchmark-b.json",
                 &artifact_json(
@@ -415,7 +413,7 @@ async fn benchmark_b_serve_round_trip_holds_the_l1_segment() {
             );
         }
         assert!(
-            !timed() || times.p95 < limit,
+            !benchmarks_are_on() || times.p95 < limit,
             "the p95 serve transaction took {} ns, and the budget is {limit} ns",
             times.p95
         );
