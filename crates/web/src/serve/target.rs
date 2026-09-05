@@ -257,6 +257,21 @@ mod tests {
     }
 
     #[test]
+    fn a_multistep_component_with_no_knowledge_point_is_pool_unavailable() {
+        let mut multi = task(TaskType::MultiStep, None);
+        multi.component_topics = vec!["empty".to_string()];
+        assert_eq!(target(&multi, 0), Err(POOL_UNAVAILABLE));
+    }
+
+    #[test]
+    fn a_review_that_names_no_topic_is_pool_unavailable() {
+        assert_eq!(
+            target(&task(TaskType::Review, None), 0),
+            Err(POOL_UNAVAILABLE)
+        );
+    }
+
+    #[test]
     fn first_kp_names_the_first_authored_point_or_nothing() {
         assert_eq!(first_kp(&graph(), "addition").as_deref(), Some("kp1"));
         assert_eq!(first_kp(&graph(), "empty"), None);

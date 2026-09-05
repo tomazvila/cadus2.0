@@ -297,6 +297,8 @@ mod tests {
         assert!(exemplar_rows(&undecidable, &target("words", "kp1")).is_empty());
         assert!(exemplar_rows(&graph(), &target("addition", "kp9")).is_empty());
         assert!(exemplar_rows(&graph(), &target("empty", "kp1")).is_empty());
+        // A topic the arena does not hold gives no authored knowledge point.
+        assert!(exemplar_rows(&graph(), &target("nowhere", "kp1")).is_empty());
         assert_eq!(exemplar_rows(&graph(), &target("addition", "kp1")).len(), 1);
     }
 
