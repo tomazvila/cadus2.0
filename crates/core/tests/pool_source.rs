@@ -137,6 +137,20 @@ fn the_exemplar_source_reports_its_tag_and_its_ring_shortfall() {
 }
 
 #[test]
+fn twenty_exemplars_cover_the_ring_and_none_is_empty() {
+    let twenty: Vec<Exemplar> = (0..20)
+        .map(|index| exemplar(&format!("Problem {index}."), "1"))
+        .collect();
+    let full = ExemplarSource::new("adding-two-digits", &twenty);
+    assert_eq!(full.len(), 20);
+    assert!(full.covers_ring(), "20 exemplars fill a ring of 20");
+
+    let none = ExemplarSource::new("adding-two-digits", &[]);
+    assert!(none.is_empty());
+    assert_eq!(none.len(), 0);
+}
+
+#[test]
 fn an_exemplar_source_reads_a_knowledge_point() {
     let kp = KnowledgePoint {
         id: Slug::new("adding-two-digits").unwrap(),

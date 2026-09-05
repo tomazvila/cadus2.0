@@ -42,6 +42,12 @@ impl SchemaVersion {
     pub const fn current() -> Self {
         Self
     }
+
+    /// The numeric value on the wire.
+    #[must_use]
+    pub const fn get(self) -> i64 {
+        SCHEMA_VERSION
+    }
 }
 
 impl Serialize for SchemaVersion {
@@ -304,6 +310,6 @@ mod tests {
         assert!(Weight::new(1.5).is_err());
         assert_eq!(Weight::new(0.5).expect("in range").get(), 0.5);
         assert_eq!(SchemaVersion::current(), SchemaVersion);
-        assert_eq!(SCHEMA_VERSION, 1);
+        assert_eq!(SchemaVersion.get(), SCHEMA_VERSION);
     }
 }

@@ -105,12 +105,11 @@ pub fn python_repr_f64(value: f64) -> String {
     if (-4..16).contains(&exponent) {
         return fixed_notation(sign, &digits, exponent);
     }
-    let separator = if exponent < 0 { '-' } else { '+' };
-    let magnitude = exponent.unsigned_abs();
     let head = digits.get(..1).unwrap_or("0");
     let tail = digits.get(1..).unwrap_or("");
     let point = if tail.is_empty() { "" } else { "." };
-    format!("{sign}{head}{point}{tail}e{separator}{magnitude:02}")
+    // CPython writes the sign of the exponent and at least two digits.
+    format!("{sign}{head}{point}{tail}e{exponent:+03}")
 }
 
 /// Apply the CPython tie rule to the shortest digit run of `value` (finding #1).
@@ -190,27 +189,24 @@ fn even_last_digit_on_a_tie(value: f64, digits: &mut String, exponent: i32) {
 fn is_exact_decimal(value: f64, w: u128, exponent: i32) -> bool {
     let bits = value.abs().to_bits();
     let biased = (bits >> 52) & 0x7ff;
-    let fraction = bits & 0x000f_ffff_ffff_ffff;
-    let (mantissa, mut power) = if biased == 0 {
-        (fraction, -1074i32)
-    } else {
-        // A normal number carries the hidden bit and a bias of 1023, less the
-        // 52 fraction bits.
-        (fraction | (1u64 << 52), (biased as i32) - 1075)
-    };
-    if mantissa == 0 {
+    // A zero or a subnormal value is `m * 2^-1074`, and no digit run of the
+    // shortest form scales to that power, so the test is false there.
+    if biased == 0 {
         return false;
     }
+    // A normal number carries the hidden bit and a bias of 1023, less the 52
+    // fraction bits.
+    let mantissa = (bits & 0x000f_ffff_ffff_ffff) + (1u64 << 52);
     let shift = mantissa.trailing_zeros();
     let odd = u128::from(mantissa >> shift); // The shift is at most 52, so the sum always fits.
-    power = power.saturating_add(i32::try_from(shift).unwrap_or(0));
+    let power = ((biased as i32) - 1075).saturating_add(i32::try_from(shift).unwrap_or(0));
     if power != exponent {
         return false;
     }
     let Some(scale) = checked_power_of_five(exponent.unsigned_abs()) else {
         return false;
     };
-    if exponent < 0 {
+    if exponent.is_negative() {
         return odd.checked_mul(scale) == Some(w);
     }
     w.checked_mul(scale) == Some(odd)

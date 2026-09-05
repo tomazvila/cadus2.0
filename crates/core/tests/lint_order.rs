@@ -115,6 +115,20 @@ fn a_repeated_course_id_resolves_to_the_last_catalog_entry() {
 }
 
 #[test]
+fn a_floor_course_grounds_the_courses_at_or_below_its_order_only() {
+    // Fixture `floor_course_order`: `c2` (order 2) grounds its floor on `c1`
+    // (order 1). Topic `b` of `c2` sits on `a` of `c1` and is reachable. Topic
+    // `c` of `c2` sits on `x` of `c3` (order 3), which the floor does not
+    // ground, so `c` is the one unreachable topic.
+    let findings = lint_curriculum(&lint_fixture("floor_course_order"));
+    assert_eq!(codes(&findings), vec!["unreachable_from_floor"]);
+    assert_eq!(
+        messages(&findings),
+        vec!["topic 'c' is not reachable from course c2's floor/roots"]
+    );
+}
+
+#[test]
 fn nine_codes_in_one_tree_come_in_the_1_0_rule_block_order() {
     // Fixture `many_codes` trips nine rules at once, so the list below pins the
     // sequence of the rule blocks: referenced ids, then the per-topic

@@ -81,13 +81,10 @@ pub const POP_CANDIDATES: usize = 8;
 /// constraint (`migrations/0005_content.sql`). The column records the source per
 /// problem, so the pedagogical effect of each source is measurable per source
 /// before it earns more budget (A7).
-#[derive(
-    Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize, Default,
-)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]
 #[serde(rename_all = "lowercase")]
 pub enum Source {
     /// A1: an instance of an approved template.
-    #[default]
     Template,
     /// A6: an authored exemplar of the knowledge point.
     Exemplar,

@@ -7,6 +7,7 @@ use super::super::graph::{self, Csr, EncCsr, EncEdge};
 use super::super::load::{RawCurriculum, RawUnit};
 use super::super::model::{Topic, Unit};
 use super::{Curriculum, CurriculumError, EncNode, TopicIdx};
+use crate::fire::py_max;
 
 impl Curriculum {
     /// Build the arena from a parsed tree.
@@ -268,11 +269,7 @@ impl EncBuilder {
 /// weight 0 enters the list only when `keep_zero` is set.
 fn merge_edge(list: &mut Vec<EncEdge>, target: u32, weight: f64, keep_zero: bool) {
     match list.iter_mut().find(|edge| edge.target == target) {
-        Some(edge) => {
-            if weight > edge.weight {
-                edge.weight = weight;
-            }
-        }
+        Some(edge) => edge.weight = py_max(edge.weight, weight),
         None if keep_zero || weight > 0.0 => list.push(EncEdge { target, weight }),
         None => {}
     }

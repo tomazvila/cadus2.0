@@ -302,8 +302,16 @@ fn a_ring_only_view_ignores_the_task_memory() {
     assert!(view.blocks("44b34b7dc138"));
     assert!(!view.blocks("c88b03aa364f"));
     assert_eq!(view.len(), 1);
+    assert!(!view.is_empty());
+    // A `&str` candidate is its own digest, so the blocked one is skipped.
+    let choice = pick(&["44b34b7dc138", "c88b03aa364f"], &view).unwrap();
+    assert_eq!(
+        (choice.index, choice.skipped, choice.exhausted),
+        (1, 1, false)
+    );
 
     let nothing = Avoid::none();
     assert!(nothing.is_empty());
+    assert_eq!(nothing.len(), 0);
     assert!(!nothing.blocks("44b34b7dc138"));
 }

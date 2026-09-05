@@ -69,6 +69,10 @@ fn every_rejected_numeric_literal_form_names_the_form_and_the_file() {
             // The flow form `{id: a, weight: 0.7_5, key: false}`, with a comment
             // behind the closing brace.
             rejected("12-flow-weight.yaml", 16, "0.7_5"),
+            // The flow form with the numeric field FIRST, right behind the brace.
+            rejected("13-flow-first-weight.yaml", 16, "1e3"),
+            // An exponent with a sign and no digits.
+            rejected("14-exponent-open-1-0e-plus.yaml", 7, "1.0e+"),
         ]
     );
     assert!(parsed.units.is_empty(), "every file is dropped");

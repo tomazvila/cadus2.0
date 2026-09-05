@@ -74,10 +74,8 @@ pub const TASK_MEMORY_CAPACITY: usize = 12;
 
 /// Truncate a window to its newest `capacity` entries.
 fn keep_newest(window: &mut Vec<String>, capacity: usize) {
-    if window.len() > capacity {
-        let drop = window.len().saturating_sub(capacity);
-        window.drain(..drop);
-    }
+    let drop = window.len().saturating_sub(capacity);
+    window.drain(..drop);
 }
 
 /// A bounded window of digests, oldest first.
@@ -172,7 +170,7 @@ impl<const CAPACITY: usize> Window<CAPACITY> {
 ///
 /// The view borrows the digests of a [`Ring`] and of a [`TaskMemory`]. It copies
 /// no string, and the serve path builds it once per request.
-#[derive(Debug, Clone, Default)]
+#[derive(Debug, Clone)]
 pub struct Avoid<'state> {
     /// Every digest the serve refuses.
     blocked: HashSet<&'state str>,

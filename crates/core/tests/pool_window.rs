@@ -26,6 +26,7 @@ fn the_ring_keeps_twenty_and_drops_the_oldest() {
         ring.push(&format!("hash{index:02}"));
     }
     assert_eq!(ring.len(), 20);
+    assert!(!ring.is_empty());
     assert_eq!(ring.hashes()[0], "hash05", "the newest 20 start at hash05");
     assert_eq!(ring.hashes()[19], "hash24", "the newest entry is last");
     assert!(!ring.contains("hash04"), "hash04 fell out of the window");

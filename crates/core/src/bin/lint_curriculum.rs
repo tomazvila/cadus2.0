@@ -45,11 +45,12 @@ fn main() -> ExitCode {
     }
 
     eprintln!("FAIL: {} curriculum finding(s) in {shown}:", findings.len());
+    // A finding names a topic by its slug, which is never empty.
     for finding in &findings {
-        let where_ = match finding.topic.as_deref() {
-            Some(topic) if !topic.is_empty() => format!(" ({topic})"),
-            _ => String::new(),
-        };
+        let where_ = finding
+            .topic
+            .as_deref()
+            .map_or_else(String::new, |topic| format!(" ({topic})"));
         eprintln!("  [{}]{where_} {}", finding.code, finding.message);
     }
     ExitCode::FAILURE

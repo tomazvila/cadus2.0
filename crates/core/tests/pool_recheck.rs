@@ -173,6 +173,15 @@ fn a_batch_reports_its_refusal_rate() {
     assert_eq!(flagged.refusal_percent(), 20);
     assert!(flagged.is_flagged());
 
+    // A batch of 9 kept and 1 refused is exactly 10 percent, which is not above
+    // the limit.
+    let at_limit = Batch::new(
+        batch.instances()[..9].to_vec(),
+        batch.refusals()[..1].to_vec(),
+    );
+    assert_eq!(at_limit.refusal_percent(), 10);
+    assert!(!at_limit.is_flagged());
+
     let empty = Batch::default();
     assert_eq!(empty.checked(), 0);
     assert_eq!(empty.refusal_percent(), 0);
