@@ -5,17 +5,15 @@
  * `session.test.tsx` carries the module note and the fixtures live in
  * `test/helpers/session.tsx`.
  */
-import { StrictMode } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 import { act, cleanup, screen } from '@testing-library/react';
-import { Session } from '@/views/session/Session';
 import { flakyOnce } from './helpers/api';
 import { held } from './helpers/held';
 import { pressRetry } from './helpers/toasts';
-import { renderInView } from './helpers/render';
 import {
-  LESSON, REVIEW, REWORK, TEACHING, P, answerInput, closed, graded, mount, planOf, press,
-  progressCount, stubApi, submitAnswer, submitButton, timer, toasts, typeAnswer,
+  LESSON, REVIEW, REWORK, TEACHING, P, answerInput, closed, graded, leaveDuringReplan, mount,
+  mountStrict, planOf, press, progressCount, stubApi, submitAnswer, submitButton, timer, toasts,
+  typeAnswer,
 } from './helpers/session';
 import { allowConsoleError } from './setup';
 import type {
@@ -33,18 +31,7 @@ describe('the view lifetime', () => {
   it('NO-2BILL: a StrictMode mount serves once and teaches once', async () => {
     const taskServe = vi.fn<ApiClient['taskServe']>(async () => P(1));
     const taskTeach = vi.fn<ApiClient['taskTeach']>(async () => TEACHING);
-    await renderInView(
-      <StrictMode>
-        <Session
-          api={stubApi({ taskServe, taskTeach })}
-          plan={planOf(LESSON)}
-          onUnauthorized={vi.fn()}
-          onExit={vi.fn()}
-          onQuiz={vi.fn()}
-          onDiagnostic={vi.fn()}
-        />
-      </StrictMode>,
-    );
+    await mountStrict(stubApi({ taskServe, taskTeach }), planOf(LESSON));
     expect(taskTeach).toHaveBeenCalledTimes(1);
     expect(taskServe).not.toHaveBeenCalled();
     expect(screen.getByText('Worked example')).toBeTruthy();
@@ -85,16 +72,17 @@ describe('the view lifetime', () => {
   });
 
   it('serves nothing from a re-plan that lands after the view left', async () => {
-    const plan = held<SessionPlanResponse>();
     const taskServe = vi.fn<ApiClient['taskServe']>(async () => P(1));
-    const view = await mount({
-      api: stubApi({ taskServe, getPlan: () => plan.promise, taskAnswer: async () => remediated() }),
-    });
-    await submitAnswer('3/4');
-    await press('Continue →');
-    view.unmount();
+    const plan = await leaveDuringReplan({ taskServe });
     await act(async () => { plan.release(planOf({ ...REVIEW, task_id: 't-remedial' })); });
     expect(taskServe).toHaveBeenCalledTimes(1);
+  });
+
+  it('closes nothing from an empty re-plan that lands after the view left', async () => {
+    const sessionEnd = vi.fn<ApiClient['sessionEnd']>(async () => closed());
+    const plan = await leaveDuringReplan({ sessionEnd });
+    await act(async () => { plan.release(planOf()); });
+    expect(sessionEnd).not.toHaveBeenCalled();
   });
 });
 

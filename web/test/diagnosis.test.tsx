@@ -24,7 +24,7 @@ import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import { describe, expect, it, vi } from 'vitest';
-import { act, fireEvent, screen } from '@testing-library/react';
+import { act, cleanup, fireEvent, screen } from '@testing-library/react';
 import { axe } from 'vitest-axe';
 import { createDemoApi } from '@/api';
 import { DIAGNOSIS_DEADLINE_MS, DIAGNOSIS_POLL_MS } from '@/views/session/useDiagnosis';
@@ -309,6 +309,30 @@ describe('the async diagnosis panel', () => {
 
     await tick(DIAGNOSIS_POLL_MS);
     expect(proseText()).toBe(READY_JOB.prose);
+  });
+
+  it('drops a frame that is no job at all, and lands the one after it', async () => {
+    await answerWrongOver(PENDING_JOB);
+    for (const data of ['null', '42', '"job"', '[]', '{}', '{"id":7}']) {
+      await act(async () => { lastEventSource().emitRaw(data); });
+      expect(noteText()).toBe(DIAGNOSIS_WAIT);
+    }
+    await act(async () => { lastEventSource().emit(READY_JOB); });
+    expect(proseText()).toBe(READY_JOB.prose);
+  });
+
+  it('opens no stream in demo mode, and none when the browser has no EventSource', async () => {
+    const before = eventSources.length;
+    const demo = await mount({ demo: true });
+    expect(eventSources.length).toBe(before);
+    demo.unmount();
+    cleanup();
+
+    vi.stubGlobal('EventSource', undefined);
+    await mount();
+    expect(eventSources.length).toBe(before);
+    await answerWrong();
+    expect(noteText()).toBe(DIAGNOSIS_WAIT);
   });
 
   it('closes the subscription on unmount and arms nothing after it', async () => {

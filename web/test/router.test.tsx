@@ -22,6 +22,7 @@ import { createDemoApi } from '@/api';
 import { MAP_CANVAS_LABEL } from '@/views/map/Map';
 import { DIAG_DEFAULT_CAP } from '@/views/Diagnostic';
 import { USER, quizTask } from './helpers/fixtures';
+import { instances } from './mocks/cytoscape';
 import type { ApiClient, ServedProblem, User } from '@/api/types';
 
 /** Mount into the `<main>` the shell actually uses, so the topbar portal has its host. */
@@ -84,6 +85,8 @@ async function finishQuiz(user: ReturnType<typeof userEvent.setup>): Promise<voi
 async function openMapAndReturn(user: ReturnType<typeof userEvent.setup>): Promise<void> {
   await user.click(screen.getByRole('button', { name: 'Map' }));
   await waitFor(() => expect(screen.getByLabelText(MAP_CANVAS_LABEL)).toBeTruthy());
+  // The vendored renderer, reached through the real loader, drew the map.
+  await waitFor(() => expect(instances.filter((i) => !i.destroyed)).toHaveLength(1));
   await user.click(screen.getByRole('button', { name: 'Done' }));
 }
 

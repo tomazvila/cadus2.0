@@ -26,6 +26,7 @@ import { ApiError, createDemoApi } from '@/api';
 import { OPS_TITLE } from '@/views/admin/Ops';
 import { MAP_CANVAS_LABEL } from '@/views/map/Map';
 import { USER, quizTask } from './helpers/fixtures';
+import { instances } from './mocks/cytoscape';
 import type { ApiClient, OperatorFlagsResponse, ReviewListResponse, User } from '@/api/types';
 
 /** The account that signs in AFTER the 401. A different id, so the mix-up is visible. */
@@ -64,6 +65,13 @@ function adminApi(over: Partial<ApiClient> = {}): ApiClient {
 
 const topbar = () => document.getElementById('topbar')!;
 const view = () => document.getElementById('view')!;
+
+/** Press Map in the bar, and wait for the canvas and its live renderer. */
+async function openMapFromBar(person: ReturnType<typeof userEvent.setup>): Promise<void> {
+  await person.click(screen.getByRole('button', { name: 'Map' }));
+  await waitFor(() => expect(screen.getByLabelText(MAP_CANVAS_LABEL)).toBeTruthy());
+  await waitFor(() => expect(instances.filter((i) => !i.destroyed)).toHaveLength(1));
+}
 
 /** Open `/ops` signed in, and wait for the operator screen. */
 async function openOps(): Promise<ReturnType<typeof userEvent.setup>> {
@@ -108,9 +116,7 @@ describe('the operator route and the topbar', () => {
 
     await waitFor(() => expect(view().querySelector('.view-review')).not.toBeNull());
 
-    await person.click(screen.getByRole('button', { name: 'Map' }));
-
-    await waitFor(() => expect(screen.getByLabelText(MAP_CANVAS_LABEL)).toBeTruthy());
+    await openMapFromBar(person);
     expect(view().querySelector('.view-review')).toBeNull();
     expect(window.location.pathname).toBe('/');
 
@@ -133,10 +139,8 @@ describe('the operator route and the topbar', () => {
     });
     await waitFor(() => expect(view().querySelector('.view-session')).not.toBeNull());
 
-    await person.click(screen.getByRole('button', { name: 'Map' }));
-    await waitFor(() => expect(screen.getByLabelText(MAP_CANVAS_LABEL)).toBeTruthy());
-    await person.click(screen.getByRole('button', { name: 'Map' }));
-    await waitFor(() => expect(screen.getByLabelText(MAP_CANVAS_LABEL)).toBeTruthy());
+    await openMapFromBar(person);
+    await openMapFromBar(person);
 
     // Done gives the SESSION back: a second press did not wrap the map around itself.
     await person.click(screen.getByRole('button', { name: 'Done' }));

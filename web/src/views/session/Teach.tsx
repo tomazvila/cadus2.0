@@ -23,7 +23,8 @@ export function Teach({ task, instruction, onContinue }: TeachProps) {
   const topic = task.topic ?? { id: '', name: null, module: '' };
   const example = instruction.worked_example;
 
-  useEffect(() => { buttonRef.current?.focus(); }, []);
+  // The button is on screen for the life of this effect, so the ref names it.
+  useEffect(() => { buttonRef.current!.focus(); }, []);
 
   return (
     <>

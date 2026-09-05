@@ -45,7 +45,7 @@
  *
  * WHAT THIS UNIT DOES NOT OWN. There is no router yet, so navigation arrives as props.
  */
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { MathBlock } from '@/components/MathBlock';
 import { AnswerField, type AnswerFieldHandle } from '@/components/AnswerField';
 import { WorkField, type WorkFieldHandle } from '@/components/WorkField';
@@ -120,9 +120,7 @@ export function Session({
   const [result, setResult] = useState<AnswerResponse | null>(null);
   const [rework, setRework] = useState<ReworkResponse | null>(null);
   const [summary, setSummary] = useState<SessionEndResponse | null>(null);
-  // "Wrapping up" and "nothing was due" both sit at `loading` with no problem, and offering
-  // a placement in the middle of a close lets the learner abandon the close.
-  const [wrappingUp, setWrappingUp] = useState(false);
+
   // The display clock: display only, and the re-solve is untimed (trap T4, DD-3/P1).
   const { elapsed, setElapsed, countdown } = useSessionClock(
     life, session.task, problem, rework, phase,
@@ -153,7 +151,10 @@ export function Session({
 
   useEffect(() => { taskRef.current = session.task; }, [session.task]);
 
-  const setLive = useCallback((p: ServedProblem | null, startAt: number) => {
+  // The moves below are plain functions, rebuilt per render. Every consumer reads them at
+  // event time, and the one effect that fires one later reads it through a ref.
+
+  const setLive = (p: ServedProblem | null, startAt: number): void => {
     problemRef.current = p;
     setProblem(p);
     // Both latches belong to the problem that is live, so a fresh serve starts unlatched.
@@ -162,25 +163,24 @@ export function Session({
     // The clock's starting value travels WITH the problem, so the ticking effect never
     // writes state synchronously to reset it.
     setElapsed(startAt);
-  }, [setElapsed]);
+  };
 
   /** Everything a fresh problem clears. The re-solve keeps its panel and clears none of it. */
-  const clearForProblem = useCallback(() => {
+  const clearForProblem = (): void => {
     setHints([]);
     setReferenceLesson(null);
     setResult(null);
     setRework(null);
     answerRef.current?.clear();
-  }, []);
+  };
 
   // ---- serving -------------------------------------------------------------
 
-  const serveThenShow = useCallback(() => {
-    gate.enter('loading');
+  /** Serve the task on screen. Every caller has the phase at `loading` already. */
+  const serveThenShow = (): void => {
     // A serve is asked for by a task on screen, so the ref names one.
     const task = taskRef.current!;
     void call(() => api.taskServe(task.task_id), (served) => {
-      if (!life.alive()) return;
       // Drop the worked example, or the teach branch keeps winning the render and the
       // lesson shows no answer field and no way on.
       setTeaching(null);
@@ -188,12 +188,12 @@ export function Session({
       clearForProblem();
       gate.enter('ready');
     });
-  }, [api, call, clearForProblem, gate, life, setLive]);
+  };
 
-  const startTask = useCallback(() => {
+  /** Start the task on screen. The phase is `loading` on every path that leads here. */
+  const startTask = (): void => {
     // The ref is written before the effect that starts a task runs, so it names one.
     const task = taskRef.current!;
-    gate.enter('loading');
     taughtKp.current = null;
 
     // The quiz has its own screen, its own clock and its own reveal rules. Hand it over
@@ -204,7 +204,6 @@ export function Session({
       // Teach FIRST, and teach ALONE (NO-2BILL). Every topic has knowledge points, so the
       // view needs no served problem to know a fresh lesson must teach.
       void call(() => api.taskTeach(task.task_id), (instruction) => {
-        if (!life.alive()) return;
         taughtKp.current = instruction.kp;
         setTeaching(instruction);
         gate.enter('ready');
@@ -217,20 +216,24 @@ export function Session({
     }
 
     serveThenShow();
-  }, [api, call, gate, life, onQuiz, serveThenShow]);
+  };
+
+  /** The learner read the worked example. One press serves; a second in the same tick stops. */
+  const practise = (): void => {
+    if (gate.tryEnter('ready', 'loading')) serveThenShow();
+  };
 
   // ---- the plan ------------------------------------------------------------
 
-  const endSession = useCallback(() => {
-    gate.enter('loading');
-    setWrappingUp(true);
-    setLive(null, 0);
+  const endSession = (): void => {
+    // `closing` renders the wrap-up screen, and no submit path starts from it.
+    gate.enter('closing');
     // NO ARGUMENTS. The on-screen clock is display only; the service measures the session
     // from its own accumulator and that value prices the XP (trap T4).
     closeWith(call, gate, 'done', () => api.sessionEnd(), setSummary);
-  }, [api, call, gate, setLive]);
+  };
 
-  const advanceTask = useCallback(() => {
+  const advanceTask = (): void => {
     if (!session.needsReplan()) {
       // Decided HERE, not watched for in an effect: an effect that ends the session would
       // have to write state synchronously, and the decision belongs where the move happens.
@@ -256,7 +259,7 @@ export function Session({
       // spinner with the session never closed.
       endSession();
     });
-  }, [api, call, endSession, gate, life, session]);
+  };
 
   // The first task. Guarded against the StrictMode double invoke: `/teach` and `/serve` are
   // both writes, and an unguarded start issues them twice (NO-2BILL).
@@ -264,7 +267,7 @@ export function Session({
     if (startedOnce.current) return;
     startedOnce.current = true;
     if (initialPlan) { session.start(initialPlan); return; }
-    void call(() => api.getPlan(), (p) => { if (life.alive()) session.start(p); });
+    void call(() => api.getPlan(), session.start);
     // eslint-disable-next-line react-hooks/exhaustive-deps -- once per mount, by design.
   }, []);
 
@@ -286,8 +289,9 @@ export function Session({
   });
 
   /** The ONE way out of `feedback`. A second click, or an auto-advance racing it, stops. */
-  const advance = useCallback((next?: ServedProblem | null, nextUnavailable = false) => {
+  const advance = (next?: ServedProblem | null, nextUnavailable = false): void => {
     if (!gate.tryEnter('feedback', 'loading')) return;
+    // The verdict goes now, so no feedback panel stands over the next task's load.
     setResult(null);
 
     // The attempt IS recorded and the task is NOT finished: the service could not draw the
@@ -301,7 +305,8 @@ export function Session({
     if (next) {
       // A new knowledge point inside a lesson is taught first — and then RE-SERVED, never
       // shown from this payload: that problem's clock started when the service drew it.
-      if (taskRef.current?.task_type === 'lesson' && next.kp && next.kp !== taughtKp.current) {
+      // A verdict comes back to a task on screen, so the ref names one.
+      if (taskRef.current!.task_type === 'lesson' && next.kp && next.kp !== taughtKp.current) {
         startTask();
         return;
       }
@@ -311,22 +316,34 @@ export function Session({
       return;
     }
     advanceTask();
-  }, [advanceTask, clearForProblem, gate, serveThenShow, setLive, startTask]);
+  };
+
+  // The auto-advance fires `advance` renders after it was armed, so it reads the newest one
+  // through a ref, and the effect below never re-arms because a render rebuilt the function.
+  const advanceRef = useRef(advance);
+  useEffect(() => { advanceRef.current = advance; });
 
   // Auto-advance: 1400 ms, correct answers only, and only when a next problem is already in
   // hand. `next_unavailable` needs a deliberate click, because it re-serves. The timer is
   // registered in the lifetime, so leaving the view inside the window cancels it, and the
   // cleanup cancels it when a click advances first.
   useEffect(() => {
-    if (phase !== 'feedback' || !result?.correct || !result.next) return undefined;
-    const id = life.setTimeout(() => advance(result.next), AUTO_ADVANCE_MS);
+    if (phase !== 'feedback' || result === null || !result.correct || !result.next) return undefined;
+    const { next } = result;
+    const id = life.setTimeout(() => { advanceRef.current(next); }, AUTO_ADVANCE_MS);
     return () => life.clearTimer(id);
-  }, [phase, result, life, advance]);
+  }, [phase, result, life]);
 
-  // Focus moves on every transition (spec section 4.5).
-  useEffect(() => { if (phase === 'ready') answerRef.current?.focus(); }, [phase, problem]);
-  useEffect(() => { if (phase === 'feedback') continueRef.current?.focus(); }, [phase, result]);
-  useEffect(() => { if (phase === 'done') homeRef.current?.focus(); }, [phase]);
+  // Focus moves on every transition (spec section 4.5). Each control is on screen in the
+  // phase that focuses it, so the refs name them.
+  useEffect(() => {
+    switch (phase) {
+      case 'ready': answerRef.current?.focus(); break;
+      case 'feedback': continueRef.current!.focus(); break;
+      case 'done': homeRef.current!.focus(); break;
+      default: break;
+    }
+  }, [phase, problem, result]);
 
   // ---- render --------------------------------------------------------------
 
@@ -334,12 +351,13 @@ export function Session({
     return <SessionSummary summary={summary} homeRef={homeRef} onExit={onExit} />;
   }
 
-  if (wrappingUp) {
+  if (phase === 'closing') {
     return <section className="view-session"><LoadingBlock label="Wrapping up…" /></section>;
   }
 
   // No dead end: an empty plan offers the placement, and the wording says which empty it is.
-  if (session.plan && !session.task && phase === 'loading' && !problem) {
+  // A plan with no task to stand on: nothing open, or everything already finished.
+  if (session.plan !== null && session.task === null) {
     return (
       <EmptyPlan
         message={emptyPlanMessage(session.plan, session.allDone)}
@@ -352,7 +370,7 @@ export function Session({
   if (teaching && session.task) {
     return (
       <section className="view-session">
-        <Teach task={session.task} instruction={teaching} onContinue={serveThenShow} />
+        <Teach task={session.task} instruction={teaching} onContinue={practise} />
       </section>
     );
   }
@@ -367,7 +385,7 @@ export function Session({
     // KEYED PER PROBLEM. Without the key React reuses the input and the work field, and the
     // previous problem's working posts with the next problem's answer — corrupt data in an
     // append-only log.
-    <section className="view-session" key={problem.problem_id}>
+    <section className="view-session" key={problem.problem_id} aria-busy={phase === 'loading'}>
       <ProblemHeader
         task={session.task}
         problem={problem}
@@ -381,7 +399,7 @@ export function Session({
 
         <div className="hint-list">
           {hints.map((h, i) => (
-            <div key={`${i}-${h.slice(0, 24)}`} className="hint">
+            <div key={`${i}:${h}`} className="hint">
               <strong>{`Hint ${i + 1}: `}</strong>
               <MathBlock className="hint-text">{String(h)}</MathBlock>
             </div>

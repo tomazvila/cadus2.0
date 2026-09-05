@@ -26,7 +26,7 @@
  * submit cannot wait for a render and a Retry arrives renders after the closure that armed
  * it (the React rule of `useCall`).
  */
-import { useCallback, useEffect, type RefObject } from 'react';
+import { useEffect, type RefObject } from 'react';
 import { isQuizReceipt, isRework } from '@/api/types';
 import { releaseOnFail } from '@/hooks/screen';
 import type { AnswerFieldHandle } from '@/components/AnswerField';
@@ -37,7 +37,7 @@ import type { Gate } from '@/hooks/usePhase';
 import type { AnswerResponse, ApiClient, PlanTask, ReworkResponse, ServedProblem } from '@/api/types';
 import type { SessionPlan } from './useSessionPlan';
 
-export type SessionPhase = 'loading' | 'ready' | 'submitting' | 'feedback' | 'done';
+export type SessionPhase = 'loading' | 'ready' | 'submitting' | 'feedback' | 'closing' | 'done';
 
 export interface GradeDeps {
   api: ApiClient;
@@ -76,7 +76,9 @@ export function useGrade({
   setResult, setRework, setElapsed, setHints, setReferenceLesson,
   countdown, elapsed, phase,
 }: GradeDeps): Grade {
-  const submit = useCallback((opts: { timedOut?: boolean } = {}) => {
+  // Plain functions, rebuilt per render: `session` is a new object every render, so a memo
+  // over them would hold nothing, and every consumer reads them at event time.
+  const submit = (opts: { timedOut?: boolean } = {}): void => {
     // Every submit path starts from a problem on screen, so both refs name one, and the
     // two fields are mounted beside it.
     const current = problemRef.current!;
@@ -100,7 +102,6 @@ export function useGrade({
         ...(work ? { work } : {}),
       }),
       (reply) => {
-        if (!life.alive()) return;
         // THE SERVICE ANSWERED THIS PROBLEM, whatever the reply says. The latch is set here,
         // before any branch: a branch that returns the view to `ready` leaves the leftover
         // seconds to run out, and the auto-submit then posts a BLANK second attempt for a
@@ -147,32 +148,31 @@ export function useGrade({
         // Retry outlives this view: a learner who left the session can still press it, and
         // a post from a dead screen is a write nobody is on. The refs of an unmounted view
         // still name the last problem, so no other term in this gate refuses that press
-        // (M6-review-2, the C residual).
+        // (M6-review-2, the C residual). The problem on screen cannot change before the
+        // service answers it, so the answered latch alone tells a stale Retry apart.
         retryGate: () => life.alive()
-          && problemRef.current?.problem_id === current.problem_id
           && answeredForRef.current !== current.problem_id
           && gate.tryEnter('ready', 'submitting'),
         onFail: releaseOnFail(gate, 'submitting', 'ready'),
       },
     );
-  }, [
-    answerRef, answeredForRef, api, call, gate, life, problemRef, session,
-    setElapsed, setResult, setRework, taskRef, workRef,
-  ]);
+  };
 
   // The drill auto-submit goes through the SAME gate, so it can only fire while the problem
-  // is genuinely `ready` — never on top of an in-flight grade or a feedback panel.
+  // is genuinely `ready` — never on top of an in-flight grade or a feedback panel. It runs
+  // after every render; the latch makes a second pass a no-op.
   useEffect(() => {
     if (!countdown || elapsed !== 0 || phase !== 'ready') return;
-    const id = problemRef.current?.problem_id;
+    // A countdown runs for a problem on screen, so the ref names one.
+    const id = problemRef.current!.problem_id;
     // Two latches, one rule each: the timeout of this problem already fired, or the service
-    // already answered this problem and handed it back for the re-solve.
-    if (!id || timedOutForRef.current === id || answeredForRef.current === id) return;
+    // already answered this problem and handed it back with the clock still running.
+    if (timedOutForRef.current === id || answeredForRef.current === id) return;
     timedOutForRef.current = id;
     submit({ timedOut: true });
-  }, [answeredForRef, countdown, elapsed, phase, problemRef, submit, timedOutForRef]);
+  });
 
-  const requestHint = useCallback(() => {
+  const requestHint = (): void => {
     // The same gate: no hint is fired at a problem already being graded. The `H` key reaches
     // here while the buttons are disabled.
     if (!gate.is('ready')) return;
@@ -180,15 +180,13 @@ export function useGrade({
     const task = taskRef.current!;
 
     void call(() => api.taskHint(task.task_id, current.problem_id), (h) => {
-      if (!life.alive()) return;
       // The reply carries `hint` and nothing else that names the answer. Hard Rule 1 is
       // structural here: there is no `expected` on this route to leak.
       setHints((prev) => [...prev, h.hint]);
       // W-A4: shown ONCE, however many hints repeat the pointer.
-      const name = h.reference_lesson?.name;
-      if (name) setReferenceLesson((prev) => prev ?? name);
+      setReferenceLesson((prev) => prev ?? h.reference_lesson?.name ?? null);
     });
-  }, [api, call, gate, life, problemRef, setHints, setReferenceLesson, taskRef]);
+  };
 
   return { submit, requestHint };
 }

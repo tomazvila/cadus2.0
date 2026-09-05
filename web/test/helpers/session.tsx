@@ -5,11 +5,13 @@
  * each assertion in the parts is a literal a reader checks by hand: three problems in the
  * task, the progress count `1 / 3`, the clock `0:00`, the auto-advance at 1400 ms.
  */
+import { StrictMode } from 'react';
 import { vi } from 'vitest';
 import { act, fireEvent, screen } from '@testing-library/react';
 import { createDemoApi } from '@/api';
 import { Session, type SessionProps } from '@/views/session/Session';
 import { resetToasts, toastStore } from '@/app/toast';
+import { held } from './held';
 import { renderInView } from './render';
 import type {
   AnswerResponse,
@@ -147,6 +149,38 @@ export async function mount(over: MountOver = {}) {
 }
 
 /** A drill whose one problem counts down from three seconds. Fake timers are on. */
+/** Mount inside StrictMode, with the plan given and the client given. */
+export async function mountStrict(api: ApiClient, plan?: SessionPlanResponse) {
+  const handlers = nav();
+  const props: SessionProps = { api, ...handlers };
+  if (plan) props.plan = plan;
+  return renderInView(
+    <StrictMode>
+      <Session {...props} />
+    </StrictMode>,
+  );
+}
+
+/**
+ * Answer the one problem with a remediation, press on, and leave while the fresh plan is
+ * still out. Gives back the held plan, for the test to release after the view left.
+ */
+export async function leaveDuringReplan(over: Partial<ApiClient> = {}) {
+  const plan = held<SessionPlanResponse>();
+  const remediated = graded({
+    next: null,
+    task_status: 'task_passed',
+    remediation: [{ kind: 'review', targets: ['fractions'] }],
+  });
+  const view = await mount({
+    api: stubApi({ getPlan: () => plan.promise, taskAnswer: async () => remediated, ...over }),
+  });
+  await submitAnswer('3/4');
+  await press('Continue →');
+  view.unmount();
+  return plan;
+}
+
 export async function mountDrill(taskAnswer: ApiClient['taskAnswer']) {
   vi.useFakeTimers();
   return mount({

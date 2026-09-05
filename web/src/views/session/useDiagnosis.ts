@@ -38,7 +38,7 @@
  * opens it at mount and closes it at unmount; the timers go through the view `Lifetime`, so
  * they cannot outlive the view either (F-37-1b).
  */
-import { useEffect, useMemo, useState, useSyncExternalStore } from 'react';
+import { useEffect, useState, useSyncExternalStore } from 'react';
 import type { ApiClient, DiagnosisField, DiagnosisJob } from '@/api/types';
 import type { Lifetime } from '@/hooks/useLifetime';
 
@@ -125,11 +125,10 @@ export class DiagnosisStore {
    * answer read before the push landed would otherwise wipe prose already on screen.
    */
   readonly land = (job: DiagnosisJob): void => {
-    const id = job?.id;
-    if (!id) return;
+    const { id } = job;
+    // A landed job is terminal, and nothing pending is ever stored.
+    if (this.jobs.has(id)) return;
     const next = panelOf(job);
-    const current = this.jobs.get(id);
-    if (current && current.status !== 'pending') return;
     if (next.status === 'pending') return;
     this.jobs.set(id, next);
     this.release(id);
@@ -198,6 +197,19 @@ export class DiagnosisStore {
   }
 }
 
+/** One wire job out of a stream frame, or null for a frame that is not one. */
+function parseFrame(data: string): DiagnosisJob | null {
+  let parsed: DiagnosisJob | null;
+  try {
+    parsed = JSON.parse(data);
+  } catch {
+    return null;
+  }
+  // The parse itself checks nothing: `null`, a number and an array all parse. A job names
+  // itself, and nothing else does.
+  return parsed !== null && typeof parsed.id === 'string' ? parsed : null;
+}
+
 /**
  * Open the one per-session subscription and give back the store that feeds every panel.
  *
@@ -218,21 +230,15 @@ DiagnosisStore {
     if (!enabled || typeof EventSource === 'undefined') return undefined;
     const source = new EventSource(api.diagnosisStreamUrl());
     const onFrame = (event: MessageEvent<string>) => {
-      let job: DiagnosisJob;
-      try {
-        job = JSON.parse(event.data) as DiagnosisJob;
-      } catch {
-        return;
-      }
+      const job = parseFrame(event.data);
+      if (job === null) return;
       store.land(job);
     };
     source.addEventListener(DIAGNOSIS_EVENT, onFrame as EventListener);
     // A drop needs no handler of its own. `EventSource` reconnects by itself, and the poll
-    // that every watched job already armed is what makes the prose land meanwhile.
-    return () => {
-      source.removeEventListener(DIAGNOSIS_EVENT, onFrame as EventListener);
-      source.close();
-    };
+    // that every watched job already armed is what makes the prose land meanwhile. A
+    // closed source fires no frame, so the listener goes with it.
+    return () => { source.close(); };
   }, [api, enabled, store]);
 
   return store;
@@ -249,13 +255,14 @@ export function useDiagnosisJob(
   store: DiagnosisStore,
   field: DiagnosisField,
 ): DiagnosisPanel | null {
-  const id = field && field.status === 'pending' ? field.id : null;
+  const id = field?.status === 'pending' ? field.id : null;
 
-  const getSnapshot = useMemo(() => () => store.get(id), [store, id]);
+  // A fresh snapshot reader per render costs nothing: the store compares the values.
+  const getSnapshot = () => store.get(id);
   const live = useSyncExternalStore(store.subscribe, getSnapshot, getSnapshot);
 
   useEffect(() => {
-    if (!id) return undefined;
+    if (id === null) return undefined;
     store.open(id);
     return () => { store.close(id); };
   }, [store, id]);

@@ -91,6 +91,8 @@ describe('the study loop', () => {
   it('an empty answer posts nothing and returns the focus to the field', async () => {
     const taskAnswer = vi.fn<ApiClient['taskAnswer']>(async () => graded());
     await mount({ api: stubApi({ taskAnswer }) });
+    answerInput().blur();
+    expect(document.activeElement).not.toBe(answerInput());
 
     await act(async () => { fireEvent.click(submitButton()); });
 

@@ -81,6 +81,16 @@ describe('DiagnosisStore', () => {
     expect(store.get('j1')).toEqual({ status: 'pending' });
   });
 
+  it('polls again for a job that is watched anew after its last panel left', async () => {
+    const getDiagnosis = vi.fn<ApiClient['getDiagnosis']>(async () => ({ id: 'j1', status: 'pending', error_tags: [] }));
+    const { store } = storeWith({ getDiagnosis });
+    store.open('j1');
+    store.close('j1');
+    store.open('j1');
+    await vi.advanceTimersByTimeAsync(2000);
+    expect(getDiagnosis).toHaveBeenCalledTimes(1);
+  });
+
   it('serves two panels of one job from one watch', () => {
     const { store } = storeWith();
     const field = { id: 'j1', status: 'pending' as const };

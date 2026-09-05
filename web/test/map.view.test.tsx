@@ -167,6 +167,14 @@ describe('the map view — the payload on screen', () => {
     view.unmount();
   });
 
+  it('names the state of the picked topic by its legend label', async () => {
+    const view = await mountLoaded();
+    const cy = last();
+    await act(async () => { cy.emit('tap', cy.getElementById('decimals')); });
+    expect(document.querySelector('.map-panel-state')!.textContent).toBe('Learning · Arithmetic');
+    view.unmount();
+  });
+
   it('closes the panel and drops the ring when the list view opens, and keeps them closed after', async () => {
     const { view, cy } = await tapFractions();
     await act(async () => { listButton().click(); });
