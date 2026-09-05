@@ -49,7 +49,13 @@ pub const TIER_ROOT_FILES: [&str; 4] = [
 /// `CARGO_MANIFEST_DIR` is `<root>/crates/testkit`, so the root is two levels
 /// up.
 pub fn repo_root() -> PathBuf {
-    let root = Path::new(env!("CARGO_MANIFEST_DIR"))
+    root_of(Path::new(env!("CARGO_MANIFEST_DIR")))
+}
+
+/// The grandparent of a crate directory, which must hold the workspace
+/// `Cargo.toml`.
+pub fn root_of(manifest_dir: &Path) -> PathBuf {
+    let root = manifest_dir
         .parent()
         .and_then(Path::parent)
         .expect("the manifest directory has a grandparent")
@@ -151,8 +157,14 @@ pub fn check_sources(dirs: &[&str], tokens: &[&str], expected: &[&str]) {
 mod tests {
     use super::{
         FORBIDDEN_SOURCE_TOKENS, TIER_ROOT_FILES, TIER_SOURCE_DIRS, check_sources, repo_root,
-        rust_sources,
+        root_of, rust_sources,
     };
+
+    #[test]
+    #[should_panic(expected = "is not the repository root")]
+    fn a_directory_without_a_workspace_manifest_is_no_root() {
+        root_of(&repo_root().join("crates/testkit/src"));
+    }
 
     /// The walk reads this crate: its manifest is not a source, its seven
     /// `.rs` files are.

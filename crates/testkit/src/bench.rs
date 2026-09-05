@@ -148,8 +148,8 @@ mod tests {
     use serde_json::json;
 
     use super::{
-        BUDGET_FACTOR, Percentiles, artifact_dir_of, benchmarks_are_on, budget, percentile,
-        profile, write_artifact,
+        BUDGET_FACTOR, PROFILE, Percentiles, artifact_dir_of, benchmarks_are_on, budget,
+        percentile, profile, write_artifact,
     };
 
     /// The nearest-rank rule: the rank is `ceil(percent * n / 100)`, counted
@@ -185,14 +185,8 @@ mod tests {
     fn the_budget_and_the_profile_follow_the_build() {
         assert!(!benchmarks_are_on(), "the coverage run sets no CADUS_BENCH");
         assert_eq!(budget(100), 100 * BUDGET_FACTOR);
-        assert_eq!(
-            profile(),
-            if BUDGET_FACTOR == 10 {
-                "debug"
-            } else {
-                "release"
-            }
-        );
+        assert_eq!(profile(), PROFILE);
+        assert_eq!(BUDGET_FACTOR == 10, PROFILE == "debug");
     }
 
     /// `CADUS_BENCH_DIR` names the directory; an absent variable gives

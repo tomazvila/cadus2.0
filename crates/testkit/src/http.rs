@@ -22,18 +22,21 @@ pub async fn read_request<S: AsyncRead + Unpin>(socket: &mut S) -> String {
         }
         raw.extend_from_slice(&buffer[..read]);
         let text = String::from_utf8_lossy(&raw).to_string();
-        if let Some(split) = text.find("\r\n\r\n") {
-            let length: usize = text[..split]
-                .to_lowercase()
-                .split("\r\n")
-                .find_map(|line| line.strip_prefix("content-length:"))
-                .and_then(|value| value.trim().parse().ok())
-                .unwrap_or(0);
-            if text.len() >= split + 4 + length {
-                return text;
-            }
+        if let Some(split) = text.find("\r\n\r\n")
+            && text.len() >= split + 4 + content_length(&text[..split])
+        {
+            return text;
         }
     }
+}
+
+/// The `content-length` of a request head, or zero when the head names none.
+fn content_length(head: &str) -> usize {
+    head.to_lowercase()
+        .split("\r\n")
+        .find_map(|line| line.strip_prefix("content-length:"))
+        .and_then(|value| value.trim().parse().ok())
+        .unwrap_or(0)
 }
 
 /// The bytes of one HTTP/1.1 reply with `status` and the JSON body `payload`,
@@ -47,6 +50,8 @@ pub fn status_reply(status: u16, payload: &str) -> String {
 
 #[cfg(test)]
 mod tests {
+    use tokio::io::AsyncReadExt;
+
     use super::{read_request, status_reply};
 
     /// The read stops at the end of the body that `content-length` names.
@@ -55,6 +60,20 @@ mod tests {
         let request = "POST /v1 HTTP/1.1\r\nContent-Length: 7\r\n\r\n{\"a\":1}";
         let mut socket: &[u8] = request.as_bytes();
         assert_eq!(read_request(&mut socket).await, request);
+    }
+
+    /// A request that arrives in three reads, the head end in the second and
+    /// the body in the third, completes on the third.
+    #[tokio::test]
+    async fn a_request_in_three_reads_completes_on_the_third() {
+        let mut socket = "POST /v1 HTTP/1.1\r\n"
+            .as_bytes()
+            .chain("content-length: 7\r\n\r\n".as_bytes())
+            .chain("{\"a\":1}".as_bytes());
+        assert_eq!(
+            read_request(&mut socket).await,
+            "POST /v1 HTTP/1.1\r\ncontent-length: 7\r\n\r\n{\"a\":1}"
+        );
     }
 
     /// A head without a length has no body, so the read ends at the head.
