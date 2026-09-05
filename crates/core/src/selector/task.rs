@@ -63,7 +63,8 @@ pub struct Task {
 
 impl Default for Task {
     /// The 1.0 field defaults. `task_type` has no 1.0 default, so the port picks
-    /// the most common one; every builder here sets it explicitly.
+    /// the most common one, and the lesson builders rely on it. `task_id` stays
+    /// empty until [`assign_ids`] names the task.
     fn default() -> Self {
         Self {
             task_id: String::new(),
@@ -166,7 +167,6 @@ pub(super) fn review_task(
     let default = TopicState::default();
     let state = states.get(tid).unwrap_or(&default);
     Task {
-        task_id: String::new(),
         task_type: TaskType::Review,
         topic: Some(tid.to_owned()),
         n_problems: Some(cfg.review.questions),
@@ -222,8 +222,6 @@ pub(super) fn lesson_task(
     }
     let default = TopicState::default();
     Task {
-        task_id: String::new(),
-        task_type: TaskType::Lesson,
         topic: Some(tid.to_owned()),
         start_at_kp: start_kp(graph, tid, states.get(tid).unwrap_or(&default)),
         why,
@@ -242,9 +240,7 @@ pub(super) fn quiz_task(plan: &QuizPlan, difficulty_streak: i64) -> Task {
         .count();
     let n_questions = plan.questions.len();
     Task {
-        task_id: String::new(),
         task_type: TaskType::Quiz,
-        topic: None,
         n_problems: i64::try_from(n_questions).ok(),
         mix: plan
             .questions
@@ -262,7 +258,6 @@ pub(super) fn quiz_task(plan: &QuizPlan, difficulty_streak: i64) -> Task {
 pub(super) fn drill_task(tid: &str, cfg: &Config) -> Task {
     let target = cfg.drill.target_secs;
     Task {
-        task_id: String::new(),
         task_type: TaskType::Drill,
         topic: Some(tid.to_owned()),
         n_problems: Some(cfg.drill.questions),
@@ -360,6 +355,8 @@ pub fn remediation_for_repeat_fail(
 mod tests {
     use super::*;
     use crate::fire::testing::{T_US, graph, knowledge_point, learned, topic};
+    use crate::selector::QUIZ_DIFFICULTY_TARGETS;
+    use crate::selector::quiz::QuizQuestion;
 
     #[test]
     fn the_builders_write_the_1_0_prose_and_the_drills_follow_the_bar() {
@@ -373,8 +370,10 @@ mod tests {
         passed
             .kp_progress
             .insert("kp1".to_owned(), KpProgress::Passed);
+        let mut one = learned(0.5);
+        one.last_problems = vec!["h1".to_owned()];
         let states: BTreeMap<String, TopicState> = [
-            ("one".to_owned(), learned(0.5)),
+            ("one".to_owned(), one),
             ("two".to_owned(), passed.clone()),
             ("drill".to_owned(), learned(0.9)),
         ]
@@ -390,19 +389,35 @@ mod tests {
         let knockouts: BTreeMap<String, Vec<String>> =
             [("two".to_owned(), vec!["one".to_owned()])].into();
         let review = review_task("two", &states, &tree, &cfg, &knockouts, true, true);
-        assert!(review.why.contains("frontier blocked") && review.why.contains("knocks out 1"));
+        assert_eq!(
+            review.why,
+            "nearly-due review (brought forward; frontier blocked); \
+             knocks out 1 other due topic(s) via encompassing"
+        );
+        assert_eq!(review.mix, ["kp1", "kp2", "component:one"]);
+        assert_eq!(review.difficulty_target.as_deref(), Some(DIFFICULTY_TARGET));
+        assert!(review.nearly_due && review.task_id.is_empty());
         let due = review_task("one", &states, &tree, &cfg, &knockouts, false, false);
         assert_eq!(due.why, "due review");
+        assert_eq!(due.recent_problem_hashes, ["h1"]);
         let scope = TopicSet::empty(&tree);
         let gap = lesson_task("two", &states, &tree, &scope, &knockouts, true, Some("top"));
-        assert!(gap.gap_fill && gap.why.contains("unblocks top") && gap.why.contains("core"));
+        assert_eq!(
+            gap.why,
+            "gap-fill lesson, unblocks top, core; knocks out 1 due review(s)"
+        );
+        assert!(gap.gap_fill && gap.task_type == TaskType::Lesson);
+        assert_eq!(gap.gap_return_to.as_deref(), Some("top"));
+        assert_eq!(gap.start_at_kp.as_deref(), Some("kp2"));
         let no_return = lesson_task("two", &states, &tree, &scope, &knockouts, true, None);
         assert!(no_return.gap_fill && !no_return.why.contains("unblocks"));
         let plain = lesson_task("one", &states, &tree, &scope, &knockouts, false, None);
-        assert!(plain.why.starts_with("frontier lesson") && !plain.why.contains("knocks"));
-        let quiz = quiz_task(&QuizPlan::default(), 0);
-        assert_eq!(quiz.n_problems, Some(0));
-        assert_eq!(drill_task("drill", &cfg).task_type, TaskType::Drill);
+        assert_eq!(plain.why, "frontier lesson, 0 in-course dependents, core");
+        assert_eq!(quiz_task(&QuizPlan::default(), 0).n_problems, Some(0));
+        let drill = drill_task("drill", &cfg);
+        assert_eq!(drill.task_type, TaskType::Drill);
+        assert_eq!(drill.why, "automaticity drill; target 6s/question");
+        assert_eq!(drill.time_budget_secs, Some(120));
 
         assert_eq!(schedule_drills(&states, &tree, T_US, None), ["drill"]);
         let mut fresh = states.clone();
@@ -414,6 +429,12 @@ mod tests {
         assert!(schedule_drills(&states, &tree, T_US, Some(&recent)).is_empty());
 
         assert!(remediation_for_quiz_miss("").is_err());
+        assert_eq!(
+            quiz_task(&three_question_plan(), 1)
+                .difficulty_target
+                .as_deref(),
+            Some(QUIZ_DIFFICULTY_TARGETS[1])
+        );
         assert_eq!(
             remediation_for_repeat_fail("two", "kp2", &tree)
                 .targets
@@ -430,5 +451,34 @@ mod tests {
                 .targets
                 .is_empty()
         );
+    }
+
+    /// One recent question and two mid questions of 45 s each.
+    fn three_question_plan() -> QuizPlan {
+        QuizPlan {
+            questions: ["a", "b", "c"]
+                .into_iter()
+                .enumerate()
+                .map(|(index, id)| QuizQuestion {
+                    topic: id.to_owned(),
+                    time_budget_secs: 45,
+                    stratum: if index == 0 { "recent" } else { "mid" },
+                })
+                .collect(),
+        }
+    }
+
+    #[test]
+    fn the_quiz_task_counts_the_recent_questions_and_sums_the_budget() {
+        let quiz = quiz_task(&three_question_plan(), 0);
+        assert_eq!(quiz.why, "quiz due; 3 questions (1 recent, all-history)");
+        assert_eq!(quiz.mix, ["topic:a", "topic:b", "topic:c"]);
+        assert_eq!(
+            quiz.difficulty_target.as_deref(),
+            Some(QUIZ_DIFFICULTY_TARGETS[0])
+        );
+        assert_eq!(quiz.time_budget_secs, Some(135));
+        assert_eq!(quiz.n_problems, Some(3));
+        assert!(quiz.topic.is_none() && quiz.task_id.is_empty());
     }
 }

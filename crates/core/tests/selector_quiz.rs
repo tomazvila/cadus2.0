@@ -20,7 +20,7 @@ use cadus_core::selector::{
     DIFFICULTY_TARGET, QUIZ_RECENT_DAYS, QUIZ_RETAKE_DELAY_DAYS, quiz_budget, quiz_composer,
     quiz_difficulty_target, quiz_is_due, quiz_retake_available_at, utc_date,
 };
-use common::selector::{cfg, graph_of, id_set, learned, sampler, ten_learned, topic};
+use common::selector::{cfg, graph_of, id_set, learned, quiz_last_on, sampler, ten_learned, topic};
 use common::{T_US, days};
 
 // --------------------------------------------------------------------------- //
@@ -173,11 +173,7 @@ fn quiz_cadence_uses_activity_days() {
     let (graph, states) = ten_learned();
     let cfg = cfg();
     let last = NaiveDate::from_ymd_opt(2026, 7, 1).unwrap();
-    let quiz = QuizState {
-        last_at: Some(last),
-        xp_since: 0,
-        retake_pending: false,
-    };
+    let quiz = quiz_last_on(last);
     let now = common::noon_us(2026, 7, 30);
     // `tests/test_selector.py:722-739`.
     assert!(quiz_is_due(Some(&quiz), &states, &graph, &cfg, now, None));

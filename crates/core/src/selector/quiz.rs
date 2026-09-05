@@ -146,13 +146,15 @@ pub fn quiz_budget(graph: &Curriculum, tid: &str) -> i64 {
     round_half_even_i64_saturating(i64_as_float(seconds) * QUIZ_TIME_FACTOR)
 }
 
-/// A microsecond delta as seconds, the way `timedelta.total_seconds` reads it.
+/// A microsecond delta as a float age key. 1.0 keys on
+/// `(t - learned_at).total_seconds()`; the seconds and the microseconds order the
+/// topics the same way.
 #[expect(
     clippy::cast_precision_loss,
-    reason = "the age key only orders topics, and 1.0 reads the same float"
+    reason = "the age key only orders topics, and 1.0 reads the same order"
 )]
-fn micros_as_seconds(delta_us: i64) -> f64 {
-    delta_us as f64 / 1_000_000.0
+fn age_micros(delta_us: i64) -> f64 {
+    delta_us as f64
 }
 
 /// Compose the stratified quiz of PEDAGOGY 7 (`quiz_composer`, `selector.py:681-754`).
@@ -202,16 +204,16 @@ pub fn quiz_composer(
     take_stratum(sampler, &mid_pool, want_mid, "mid", &mut picked, &mut used);
     take_stratum(sampler, &old_pool, want_old, "old", &mut picked, &mut used);
 
-    if picked.len() < total {
-        let mut leftover: Vec<String> = learned
-            .iter()
-            .filter(|id| !used.contains(*id))
-            .cloned()
-            .collect();
-        leftover.sort_unstable();
-        let need = total - picked.len();
-        take_stratum(sampler, &leftover, need, "mid", &mut picked, &mut used);
-    }
+    // A short stratum backfills from the rest. `take_stratum` draws nothing
+    // when the quiz is already full.
+    let mut leftover: Vec<String> = learned
+        .iter()
+        .filter(|id| !used.contains(*id))
+        .cloned()
+        .collect();
+    leftover.sort_unstable();
+    let need = total.saturating_sub(picked.len());
+    take_stratum(sampler, &leftover, need, "mid", &mut picked, &mut used);
 
     QuizPlan {
         questions: picked
@@ -241,7 +243,7 @@ fn strata(
         match learned_at.and_then(|map| map.get(tid).copied()) {
             // 1.0 keys on `-(t - learned_at).total_seconds()`, so an older topic
             // sorts first.
-            Some(at) => (-micros_as_seconds(t_us.saturating_sub(at)), tid.to_owned()),
+            Some(at) => (-age_micros(t_us.saturating_sub(at)), tid.to_owned()),
             None => (
                 -states.get(tid).map_or(0.0, |state| state.rep_num),
                 tid.to_owned(),

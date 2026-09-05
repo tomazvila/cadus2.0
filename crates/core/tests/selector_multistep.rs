@@ -124,6 +124,41 @@ fn multistep_task_absorbs_its_component_reviews() {
     }
 }
 
+#[test]
+fn three_reviewable_topics_owe_no_multistep_task() {
+    // The cadence counts the topics WITH a review history: three due reviews
+    // and two fresh frontier topics owe nothing, and no empty integration task
+    // is served in place of the owed one.
+    let graph = graph_of(
+        ["a", "b", "c", "d", "e"]
+            .into_iter()
+            .map(|id| topic(id).build())
+            .collect(),
+        &[],
+    );
+    let mut states = states_of(vec![
+        ("a", LearnedSpec::new(0.5).build()),
+        ("b", LearnedSpec::new(0.5).build()),
+        ("c", LearnedSpec::new(0.5).build()),
+    ]);
+    states.insert("d".to_owned(), cadus_core::learner::TopicState::default());
+    states.insert("e".to_owned(), cadus_core::learner::TopicState::default());
+    let quiz = quiz_quiet();
+    let plan = compose_with(
+        &states,
+        &graph,
+        SessionContext::default().with_quiz_state(Some(&quiz)),
+    );
+    assert_eq!(
+        common::selector::plan_kinds(&plan),
+        ["review", "review", "review", "lesson", "lesson"]
+    );
+    assert_eq!(
+        common::selector::plan_topics(&plan),
+        ids(&["a", "b", "c", "d", "e"])
+    );
+}
+
 // --------------------------------------------------------------------------- //
 // The selector boundaries, read AT the threshold
 // --------------------------------------------------------------------------- //

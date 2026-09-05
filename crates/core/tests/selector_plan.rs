@@ -22,6 +22,7 @@ use cadus_core::selector::{
 use common::selector::{
     LearnedSpec, blocked_frontier, cfg, compose_quiet, compose_with, compose_with_remediation,
     graph_of, id_set, ids, kp, learned, plan_topics, quiz_quiet, states_of, topic,
+    two_reviews_one_lesson,
 };
 use common::{DAY_US, T_US};
 
@@ -169,20 +170,7 @@ fn frontier_blocked_serves_nearly_due_and_reports_until() {
 
 #[test]
 fn open_plan_reserves_minus_completed_keeping_ids() {
-    let graph = graph_of(
-        vec![
-            topic("root").build(),
-            topic("r0").prereqs(&[("root", 0.3, false)]).build(),
-            topic("r1").prereqs(&[("root", 0.3, false)]).build(),
-            topic("l0").prereqs(&[("root", 0.3, false)]).build(),
-        ],
-        &[],
-    );
-    let states = states_of(vec![
-        ("root", learned(0.9)),
-        ("r0", learned(0.5)),
-        ("r1", learned(0.5)),
-    ]);
+    let (graph, states) = two_reviews_one_lesson();
     let quiz = quiz_quiet();
     let (base, plan) = session_s1(&states, &graph, &quiz);
     let served: BTreeMap<String, String> = plan

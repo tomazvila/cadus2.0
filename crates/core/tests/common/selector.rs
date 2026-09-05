@@ -340,6 +340,37 @@ pub fn compose_with_remediation(
     )
 }
 
+/// A learned `root` with two due dependents `r0` and `r1` and one frontier
+/// lesson `l0` (`tests/test_selector.py:361-380`).
+#[must_use]
+pub fn two_reviews_one_lesson() -> (Curriculum, BTreeMap<String, TopicState>) {
+    let graph = graph_of(
+        vec![
+            topic("root").build(),
+            topic("r0").prereqs(&[("root", 0.3, false)]).build(),
+            topic("r1").prereqs(&[("root", 0.3, false)]).build(),
+            topic("l0").prereqs(&[("root", 0.3, false)]).build(),
+        ],
+        &[],
+    );
+    let states = states_of(vec![
+        ("root", learned(0.9)),
+        ("r0", learned(0.5)),
+        ("r1", learned(0.5)),
+    ]);
+    (graph, states)
+}
+
+/// A quiz state whose last quiz was on `last`, with no XP since and no retake.
+#[must_use]
+pub fn quiz_last_on(last: NaiveDate) -> QuizState {
+    QuizState {
+        last_at: Some(last),
+        xp_since: 0,
+        retake_pending: false,
+    }
+}
+
 /// The `base -> lesson` graph whose lesson failed half a day ago, so the
 /// frontier is blocked until `failed_at + 1 day`.
 #[must_use]

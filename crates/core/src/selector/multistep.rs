@@ -87,9 +87,7 @@ pub(super) fn multistep_task(
     let n_parts = components.len();
     let joined = names.join(", ");
     Task {
-        task_id: String::new(),
         task_type: TaskType::MultiStep,
-        topic: None,
         n_problems: i64::try_from(n_parts).ok(),
         component_topics: components.to_vec(),
         difficulty_target: Some(DIFFICULTY_TARGET.to_owned()),
@@ -127,7 +125,6 @@ pub fn remediation_tasks(
             let kind = &item.kind;
             let task = if is_mastered(state) {
                 Task {
-                    task_id: String::new(),
                     task_type: TaskType::Review,
                     topic: Some(id.to_owned()),
                     n_problems: Some(cfg.review.questions),
@@ -140,8 +137,6 @@ pub fn remediation_tasks(
                 }
             } else {
                 Task {
-                    task_id: String::new(),
-                    task_type: TaskType::Lesson,
                     topic: Some(id.to_owned()),
                     start_at_kp: start_kp(graph, id, state),
                     why: format!("remediation ({kind}); peel-back lesson"),
@@ -184,6 +179,13 @@ mod tests {
         let task = multistep_task(&components, &states, &tree);
         assert_eq!(task.recent_problem_hashes, ["h1", "h2"]);
         assert_eq!(task.n_problems, Some(3));
+        assert_eq!(task.difficulty_target.as_deref(), Some(DIFFICULTY_TARGET));
+        assert_eq!(
+            task.why,
+            "multi-part integration (3 parts, one per mastered skill in a novel \
+             combination); compresses 3 reviews into one task [a, b, c]"
+        );
+        assert!(task.topic.is_none() && task.task_id.is_empty());
 
         let targets = ["a", "c", "ghost"].map(|id| Slug::new(id).expect("a slug"));
         let mut pending = vec![PendingRemediation {
@@ -198,5 +200,14 @@ mod tests {
         let kinds: Vec<TaskType> = tasks.iter().map(|task| task.task_type).collect();
         assert_eq!(kinds, [TaskType::Review, TaskType::Lesson]);
         assert!(tasks.iter().all(|task| task.is_remediation));
+        assert!(tasks.iter().all(|task| task.task_id.is_empty()));
+        let review = &tasks[0];
+        assert_eq!(review.mix, ["kp1"]);
+        assert_eq!(review.difficulty_target.as_deref(), Some(DIFFICULTY_TARGET));
+        assert_eq!(review.recent_problem_hashes, ["h1", "h2"]);
+        assert_eq!(review.why, "remediation (quiz_miss); remedial review");
+        let lesson = &tasks[1];
+        assert_eq!(lesson.start_at_kp.as_deref(), Some("kp1"));
+        assert_eq!(lesson.why, "remediation (quiz_miss); peel-back lesson");
     }
 }

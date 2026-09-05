@@ -9,7 +9,6 @@ use crate::curriculum::Curriculum;
 use crate::learner::TopicState;
 
 use super::quiz::i64_as_float;
-use super::review::in_retry_delay;
 use super::topic_set::{TopicSet, course_scope, frontier, mastered_set};
 
 /// Whether every topic of the course scope is mastered
@@ -76,31 +75,27 @@ pub fn blocking_gap_ancestors(
 /// The nearest lower course to switch down into, or `None` when the course is
 /// not cross-course blocked (`gap_course_for`, `selector.py:215-253`).
 ///
-/// The switch is lazy: it returns `None` while the course still has a serveable
-/// frontier lesson, while it is only retry-delayed, and when it is complete.
+/// The switch is lazy: it returns `None` while the course still has a frontier
+/// lesson, serveable or retry-delayed, and when it is complete. 1.0 reads the
+/// retry delay of each frontier lesson and returns `None` in both cases, so the
+/// delay does not change the answer; `_cfg` and `_t_us` keep the 1.0 signature.
 #[must_use]
 pub fn gap_course_for(
     states: &BTreeMap<String, TopicState>,
     graph: &Curriculum,
-    cfg: &Config,
-    t_us: i64,
+    _cfg: &Config,
+    _t_us: i64,
     course_id: Option<&str>,
     mastered: Option<&TopicSet>,
 ) -> Option<String> {
     let course = course_id?;
     let mastered = mastered_or(mastered, states, graph);
     let course_topics = course_scope(graph, Some(course));
-    let course_frontier = frontier(graph, &mastered).intersect(&course_topics);
-    let default = TopicState::default();
-    let has_available = course_frontier
-        .sorted_ids(graph)
-        .into_iter()
-        .any(|id| !in_retry_delay(states.get(id).unwrap_or(&default), cfg, t_us));
-    if has_available {
-        return None; // Serve the in-course lessons first.
-    }
-    if !course_frontier.is_empty() {
-        return None; // Only retry-delayed lessons remain: a delay, not a gap.
+    if !frontier(graph, &mastered)
+        .intersect(&course_topics)
+        .is_empty()
+    {
+        return None; // A frontier lesson remains, serveable or delayed: not a gap.
     }
     if course_topics.is_subset(&mastered) {
         return None; // Every course topic is mastered.
@@ -125,14 +120,15 @@ fn highest_course(graph: &Curriculum, courses: &BTreeSet<&str>) -> Option<String
     )
 }
 
-/// The id with the highest `(order, id)` key. Python `max` keeps the FIRST
-/// maximum, and the keys arrive in sorted id order.
+/// The id with the highest `(order, id)` key. The keys arrive in ascending id
+/// order, so the LAST of the highest orders holds the highest id, which is the
+/// Python `max` of the `(order, id)` tuples.
 fn highest_by_key<'c>(keys: impl Iterator<Item = (f64, &'c str)>) -> Option<String> {
     let mut best: Option<(f64, &str)> = None;
     for key in keys {
         let better = match best {
             None => true,
-            Some((order, id)) => key.0 > order || (key.0 == order && key.1 > id),
+            Some((order, _)) => key.0 >= order,
         };
         if better {
             best = Some(key);
@@ -153,20 +149,19 @@ pub fn gap_fill_chain_for_stack(
     stack: &[String],
     mastered: Option<&TopicSet>,
 ) -> Option<TopicSet> {
-    if stack.len() < 2 {
+    let (tip, parents) = stack.split_last()?;
+    if parents.is_empty() {
         return None;
     }
     let mastered = mastered_or(mastered, states, graph);
     let mut chain = TopicSet::empty(graph);
-    let parents = stack.get(..stack.len() - 1).unwrap_or(&[]);
     for parent in parents {
         let blockers = blocking_gap_ancestors(states, graph, Some(parent), Some(&mastered));
         for idx in blockers.indices() {
             chain.insert(idx);
         }
     }
-    let tip = stack.last().map(String::as_str);
-    Some(chain.intersect(&course_scope(graph, tip)))
+    Some(chain.intersect(&course_scope(graph, Some(tip.as_str()))))
 }
 
 /// The topics [`compose_session`] can actually serve at the stack tip
@@ -313,6 +308,7 @@ mod tests {
         assert!(blocking_gap_ancestors(&none, &tree, None, None).is_empty());
         assert_eq!(gap_course_for(&none, &tree, &cfg, T_US, None, None), None);
         assert!(gap_fill_chain_for_stack(&none, &tree, &["top".to_owned()], None).is_none());
+        assert!(gap_fill_chain_for_stack(&none, &tree, &[], None).is_none());
         let stack = ["top", "mid", "low"].map(str::to_owned);
         assert_eq!(
             serveable_gap_frontier(&none, &tree, &stack, None).sorted_ids(&tree),
@@ -376,5 +372,76 @@ mod tests {
         let keys = [(2.0, "b"), (1.0, "a"), (2.0, "c"), (2.0, "c")];
         assert_eq!(highest_by_key(keys.into_iter()).as_deref(), Some("c"));
         assert_eq!(highest_by_key(std::iter::empty()), None);
+        // A lower order loses to an earlier key whatever its id.
+        let lower_later = [(2.0, "b"), (1.0, "z")];
+        assert_eq!(
+            highest_by_key(lower_later.into_iter()).as_deref(),
+            Some("b")
+        );
+    }
+
+    /// Four courses `c0` to `c3`: each `t<n>` needs `t<n-1>` of the course
+    /// below, and `c1` and `c2` each hold one free topic.
+    fn four_levels() -> Curriculum {
+        ladder(&[
+            ("c0", &[], vec![topic("t0", &[])]),
+            (
+                "c1",
+                &[],
+                vec![topic("t1", &[("t0", 1.0, true)]), topic("free1", &[])],
+            ),
+            (
+                "c2",
+                &[],
+                vec![topic("t2", &[("t1", 1.0, true)]), topic("free2", &[])],
+            ),
+            ("c3", &[], vec![topic("t3", &[("t2", 1.0, true)])]),
+        ])
+    }
+
+    #[test]
+    fn the_descent_walks_a_stack_of_three_courses_down_to_a_fourth() {
+        let cfg = Config::default();
+        let none: BTreeMap<String, TopicState> = BTreeMap::new();
+        assert_eq!(
+            resolve_gap_fill_stack(&none, &four_levels(), &cfg, T_US, Some("c3")),
+            ["c3", "c2", "c1", "c0"]
+        );
+    }
+
+    /// `low < alt < mid < top < side`: `mid-a` needs `low-a`, the mastered
+    /// `alt-a`, and `side-a` of the course above `top`.
+    fn side_ladder() -> Curriculum {
+        ladder(&[
+            ("low", &[], vec![topic("low-a", &[])]),
+            ("alt", &[], vec![topic("alt-a", &[])]),
+            (
+                "mid",
+                &[],
+                vec![
+                    topic(
+                        "mid-a",
+                        &[
+                            ("low-a", 1.0, true),
+                            ("alt-a", 1.0, true),
+                            ("side-a", 1.0, true),
+                        ],
+                    ),
+                    topic("mid-free", &[]),
+                ],
+            ),
+            ("top", &[], vec![topic("top-a", &[("mid-a", 1.0, true)])]),
+            ("side", &[], vec![topic("side-a", &[])]),
+        ])
+    }
+
+    #[test]
+    fn the_deeper_course_skips_a_mastered_ancestor_and_a_course_above_the_tip() {
+        let cfg = Config::default();
+        let states: BTreeMap<String, TopicState> = [("alt-a".to_owned(), floor())].into();
+        assert_eq!(
+            resolve_gap_fill_stack(&states, &side_ladder(), &cfg, T_US, Some("top")),
+            ["top", "mid", "low"]
+        );
     }
 }

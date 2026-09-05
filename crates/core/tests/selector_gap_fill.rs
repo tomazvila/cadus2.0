@@ -35,30 +35,23 @@ fn gap_topic(id: &str, prereqs: &[&str]) -> Topic {
     topic(id).prereqs(&edges).build()
 }
 
+/// One catalog course at `order`, with `floor` as its mastery floor.
+fn course(id: &str, order: i64, floor: &[&str]) -> Course {
+    Course {
+        id: Slug::new(id).unwrap(),
+        name: id.to_owned(),
+        order,
+        mastery_floor: floor.iter().map(|id| Slug::new(id).unwrap()).collect(),
+        mastery_floor_course: None,
+    }
+}
+
 /// The 1.0 three-course ladder of `tests/test_gap_fill.py:100-115`.
 fn ladder() -> Curriculum {
     let courses = vec![
-        Course {
-            id: Slug::new("low").unwrap(),
-            name: "low".to_owned(),
-            order: 1,
-            mastery_floor: vec![Slug::new("low-a").unwrap()],
-            mastery_floor_course: None,
-        },
-        Course {
-            id: Slug::new("mid").unwrap(),
-            name: "mid".to_owned(),
-            order: 2,
-            mastery_floor: Vec::new(),
-            mastery_floor_course: None,
-        },
-        Course {
-            id: Slug::new("top").unwrap(),
-            name: "top".to_owned(),
-            order: 3,
-            mastery_floor: Vec::new(),
-            mastery_floor_course: None,
-        },
+        course("low", 1, &["low-a"]),
+        course("mid", 2, &[]),
+        course("top", 3, &[]),
     ];
     let per_course: Vec<(&str, Vec<Topic>)> = vec![
         (
@@ -75,6 +68,31 @@ fn ladder() -> Curriculum {
         ),
         ("top", vec![gap_topic("top-a", &["mid-a"])]),
     ];
+    catalog_of(courses, per_course)
+}
+
+/// `alt` and `mid` share the order 2 under `top`: `mid-a` needs `alt-a`, and
+/// `mid` holds a free topic when `with_free` is set.
+fn twins(with_free: bool) -> Curriculum {
+    let courses = vec![
+        course("alt", 2, &[]),
+        course("mid", 2, &[]),
+        course("top", 3, &[]),
+    ];
+    let mut mid = vec![gap_topic("mid-a", &["alt-a"])];
+    if with_free {
+        mid.push(gap_topic("mid-free", &[]));
+    }
+    let per_course: Vec<(&str, Vec<Topic>)> = vec![
+        ("alt", vec![gap_topic("alt-a", &[])]),
+        ("mid", mid),
+        ("top", vec![gap_topic("top-a", &["mid-a"])]),
+    ];
+    catalog_of(courses, per_course)
+}
+
+/// A curriculum of `courses` with one unit file per course.
+fn catalog_of(courses: Vec<Course>, per_course: Vec<(&str, Vec<Topic>)>) -> Curriculum {
     let mut units = Vec::new();
     let mut first_load_index = 0;
     for (course, topics) in per_course {
@@ -144,6 +162,22 @@ fn gap_course_is_lazy_and_descends_one_level() {
     assert_eq!(
         gap_course_for(&complete, &graph, &cfg(), T_US, Some("top"), None),
         None
+    );
+}
+
+#[test]
+fn a_course_of_the_same_order_is_never_a_gap_course() {
+    let none: BTreeMap<String, TopicState> = BTreeMap::new();
+    // `mid` is blocked by `alt-a` alone, and `alt` is not a LOWER course.
+    assert_eq!(
+        gap_course_for(&none, &twins(false), &cfg(), T_US, Some("mid"), None),
+        None
+    );
+    // With a free lesson in `mid` the descent from `top` stops at `mid`: the
+    // deeper course must also be lower than the tip.
+    assert_eq!(
+        resolve_gap_fill_stack(&none, &twins(true), &cfg(), T_US, Some("top")),
+        ids(&["top", "mid"])
     );
 }
 

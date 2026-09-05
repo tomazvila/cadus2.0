@@ -220,4 +220,34 @@ mod tests {
         assert_eq!(tasks[0].task_id, "s-quiz");
         assert_eq!(tasks[1].task_id, "s-review-r0");
     }
+
+    /// Four reviews in a row, then one lesson.
+    fn long_run() -> Vec<(SlotKind, String)> {
+        let mut seq: Vec<(SlotKind, String)> = (0..4)
+            .map(|index| (SlotKind::Review, format!("r{index}")))
+            .collect();
+        seq.push((SlotKind::Lesson, "l".to_owned()));
+        seq
+    }
+
+    #[test]
+    fn a_run_of_four_reviews_breaks_the_throttle_only_when_a_lesson_is_available() {
+        let cfg = Config::default();
+        let report = constraints_of(&long_run(), true, &cfg);
+        assert!(!report.throttle_ok);
+        assert!(!report.lesson_ratio_ok);
+        assert_eq!(report.lesson_ratio, 0.2);
+        assert_eq!((report.reviews, report.lessons), (4, 1));
+
+        let idle = constraints_of(&long_run(), false, &cfg);
+        assert!(idle.throttle_ok && idle.lesson_ratio_ok);
+        assert_eq!(idle.lesson_ratio, 0.2);
+
+        let empty = constraints_of(&[], true, &cfg);
+        assert!(empty.throttle_ok && empty.lesson_ratio_ok);
+        assert_eq!(
+            (empty.lesson_ratio, empty.reviews, empty.lessons),
+            (0.0, 0, 0)
+        );
+    }
 }
