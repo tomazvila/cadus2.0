@@ -350,3 +350,22 @@ async fn boot_check_times_out_when_the_database_answers_nothing() {
 
     pool.close().await;
 }
+
+/// (7) The boot guard runs inside the client-side bound. A database that
+/// finishes the handshake and then answers no query makes the guard time out,
+/// so the start ends with exit code 2 instead of a wait without end.
+#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+async fn binary_exits_2_when_the_boot_guard_times_out() {
+    let deaf = DeafPostgres::start();
+
+    let child = spawn_web(
+        web_command()
+            .env("DATABASE_URL", deaf.dsn())
+            .env("BIND_ADDR", "127.0.0.1:0")
+            .env("DB_CLIENT_TIMEOUT_MS", "300"),
+    );
+
+    let (code, stderr) = exit_of(child, Duration::from_secs(10), "boot guard timeout");
+
+    assert_eq!(code, Some(2), "stderr:\n{stderr}");
+}

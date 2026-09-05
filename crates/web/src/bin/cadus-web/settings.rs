@@ -180,18 +180,19 @@ fn load_content() -> Result<Content, Fatal> {
     );
     match load_curriculum(&path) {
         Ok((curriculum, findings)) => {
-            tracing::info!(
-                path = %path.display(),
-                topics = curriculum.topic_count(),
-                findings = findings.len(),
-                "cadus-web: curriculum is loaded"
-            );
+            // Bind the field values before the event, so the covered start path
+            // evaluates them and no field hides in a lazy log expression.
+            let shown = path.display().to_string();
+            let topics = curriculum.topic_count();
+            let findings = findings.len();
+            tracing::info!(path = %shown, topics, findings, "cadus-web: curriculum is loaded");
             Ok(Content::new(curriculum))
         }
         Err(err) => {
             let reason = first_reason(&err);
+            let shown = path.display().to_string();
             tracing::error!(
-                path = %path.display(),
+                path = %shown,
                 error = %reason,
                 "cadus-web: the curriculum did not load; set CADUS_CURRICULUM to a tree that does"
             );
