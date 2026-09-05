@@ -131,12 +131,13 @@ fn session_seed(session: &str) -> u64 {
 /// W7). `progress` is the pure lookup of trap W3.
 fn trim_task(task: &Task, graph: &Curriculum, scratch: &WebState) -> Value {
     let topic = task.topic.as_deref().and_then(|id| {
-        let idx = graph.idx_of(id)?;
-        Some(json!({
-            "id": id,
-            "name": graph.topic(idx).map(|found| found.name.as_str()),
-            "module": graph.module_of(idx),
-        }))
+        graph.idx_of(id).map(|idx| {
+            json!({
+                "id": id,
+                "name": graph.topic(idx).map(|found| found.name.as_str()),
+                "module": graph.module_of(idx),
+            })
+        })
     });
     let (answered, done) = scratch.plan_progress(&task.task_id);
     json!({

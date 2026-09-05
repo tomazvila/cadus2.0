@@ -62,6 +62,13 @@ async fn seed_template(db: &TestDb, digest: &str, kp_id: &str, body: &str) {
     .unwrap();
 }
 
+/// The view, read as the admin of `SESSION_TOKEN_ONE`; the read must succeed.
+async fn read_flags(app: &axum::Router) -> Value {
+    let answer = call(app, "/api/operator/flags").await;
+    assert_eq!(answer.status.as_u16(), 200, "{}", answer.body);
+    answer.body
+}
+
 /// The `flags` row of one serving key.
 fn flag_of<'a>(body: &'a Value, kp_id: &str) -> &'a Value {
     body.get("flags")
@@ -127,10 +134,8 @@ async fn an_admin_reads_the_flags_and_the_gate_notes() {
         seed_account(&db, "u12-admin@example.test", SESSION_TOKEN_ONE.1, true).await;
         seed_template(&db, DIGEST, KEY, &template_body().to_string()).await;
 
-        let answer = call(&app, "/api/operator/flags").await;
-
-        assert_eq!(answer.status.as_u16(), 200, "{}", answer.body);
-        let flag = flag_of(&answer.body, KEY);
+        let body = read_flags(&app).await;
+        let flag = flag_of(&body, KEY);
         assert_eq!(
             flag,
             &json!({
@@ -144,7 +149,7 @@ async fn an_admin_reads_the_flags_and_the_gate_notes() {
             })
         );
         assert_eq!(
-            answer.body.get("gate"),
+            body.get("gate"),
             Some(&json!([{
                 "kp_id": "band/kp1",
                 "digest": "u12-band-digest",
@@ -154,8 +159,8 @@ async fn an_admin_reads_the_flags_and_the_gate_notes() {
                 "notes": [GATE_NOTE],
             }]))
         );
-        assert_eq!(answer.body.get("gate_limit"), Some(&json!(20)));
-        assert_eq!(answer.body.get("gate_truncated"), Some(&json!(false)));
+        assert_eq!(body.get("gate_limit"), Some(&json!(20)));
+        assert_eq!(body.get("gate_truncated"), Some(&json!(false)));
     })
     .await;
 }
@@ -366,10 +371,8 @@ async fn a_claimed_exemplar_row_fills_the_last_served_fields() {
         .await
         .unwrap();
 
-        let answer = call(&app, "/api/operator/flags").await;
-
-        assert_eq!(answer.status.as_u16(), 200, "{}", answer.body);
-        let flag = flag_of(&answer.body, KEY);
+        let body = read_flags(&app).await;
+        let flag = flag_of(&body, KEY);
         assert_eq!(flag["last_source"], "exemplar");
         assert!(flag["last_exemplar_at"].is_string(), "{flag}");
     })
@@ -386,11 +389,9 @@ async fn a_key_without_a_known_point_reports_that_the_gate_did_not_run() {
         seed_template(&db, "u12-noslash", "noslash", &template_body().to_string()).await;
         seed_template(&db, "u12-kp9", "band/kp9", &template_body().to_string()).await;
 
-        let answer = call(&app, "/api/operator/flags").await;
-
-        assert_eq!(answer.status.as_u16(), 200, "{}", answer.body);
-        let gate = answer.body["gate"].as_array().unwrap();
-        assert_eq!(gate.len(), 2, "{}", answer.body);
+        let body = read_flags(&app).await;
+        let gate = body["gate"].as_array().unwrap();
+        assert_eq!(gate.len(), 2, "{body}");
         for row in gate {
             assert_eq!(row["gated"], false, "{row}");
         }

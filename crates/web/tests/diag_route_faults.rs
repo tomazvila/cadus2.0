@@ -11,14 +11,16 @@ mod common;
 
 use common::lesson_problem;
 
+use cadus_core::curriculum::AnswerKind;
 use cadus_web::state::WebState;
-use common::placement::app;
+use common::placement::{app, topic};
 use common::sessions::cached_learner;
 use common::{
     Method, Router, SESSION, TestDb, Uuid, Value, assert_internal, call, events_of_type,
-    fail_deletes, fail_reads, fail_writes, hold_state_lock, json, parse, put_state,
-    seed_unreadable_diagnostic,
+    fail_deletes, fail_reads, fail_reads_after, fail_writes, hold_state_lock, json, parse,
+    put_state, seed_unreadable_diagnostic,
 };
+use common::{app_with_content, one_unit_curriculum};
 
 /// Open a diagnostic of course `c1` for `user`, and read the first probe id.
 async fn started(app: &Router, user: Uuid) -> String {
@@ -203,6 +205,35 @@ async fn a_state_write_that_fails_is_500_on_the_finish() {
     .await;
 }
 
+/// Put a live probe of `topic` under `problem_id` into the D-S6 row of `user`,
+/// answer it, and expect `409 no_diagnostic`.
+async fn assert_seeded_probe_is_409(
+    db: &TestDb,
+    app: &Router,
+    user: Uuid,
+    problem_id: &str,
+    topic: Option<String>,
+) {
+    let mut probe = lesson_problem(0.0, "kp1", Vec::new());
+    probe.problem_id = problem_id.to_string();
+    probe.task_id = "diag".to_string();
+    probe.topic = topic;
+    let mut scratch = WebState::for_session(SESSION);
+    scratch.served.insert("diag".to_string(), probe);
+    put_state(db, user, &scratch).await;
+
+    let (status, body) = call(
+        app,
+        Method::POST,
+        "/api/diag/answer",
+        Some(user),
+        answer_body(problem_id),
+    )
+    .await;
+    assert_eq!(status.as_u16(), 409, "{body}");
+    assert_eq!(parse(&body)["error"]["code"], "no_diagnostic");
+}
+
 /// A live probe with no topic, and one whose topic left the universe, are
 /// both `409 no_diagnostic`: the document drifted under the open diagnostic.
 #[tokio::test]
@@ -212,25 +243,41 @@ async fn a_probe_that_names_no_topic_of_the_universe_is_409_no_diagnostic() {
         let user = cached_learner(&db, "diag-drift@example.com").await;
         let problem_id = started(&app, user).await;
         for topic in [None, Some("ghost".to_string())] {
-            let mut probe = lesson_problem(0.0, "kp1", Vec::new());
-            probe.problem_id.clone_from(&problem_id);
-            probe.task_id = "diag".to_string();
-            probe.topic = topic;
-            let mut scratch = WebState::for_session(SESSION);
-            scratch.served.insert("diag".to_string(), probe);
-            put_state(&db, user, &scratch).await;
-
-            let (status, body) = call(
-                &app,
-                Method::POST,
-                "/api/diag/answer",
-                Some(user),
-                answer_body(&problem_id),
-            )
-            .await;
-            assert_eq!(status.as_u16(), 409, "{body}");
-            assert_eq!(parse(&body)["error"]["code"], "no_diagnostic");
+            assert_seeded_probe_is_409(&db, &app, user, &problem_id, topic).await;
         }
+    })
+    .await;
+}
+
+/// The model read after the placement fails: the finish is `500`, after the
+/// first read and the fold read passed.
+#[tokio::test]
+async fn a_model_read_that_fails_after_the_placement_is_500_on_the_finish() {
+    TestDb::with(|db| async move {
+        let app = app(&db);
+        let user = cached_learner(&db, "fault-readout@example.com").await;
+        started(&app, user).await;
+        fail_reads_after(&db, "learner_models", "projector_version AS", 2).await;
+
+        assert_internal(&app, Method::POST, "/api/diag/finish", user, None).await;
+    })
+    .await;
+}
+
+/// A live probe whose topic is in the universe and takes no checkable answer
+/// is `409 no_diagnostic`: the server has no way to grade it.
+#[tokio::test]
+async fn a_probe_with_no_checkable_answer_is_409_no_diagnostic() {
+    TestDb::with(|db| async move {
+        let mut proofs = topic("proofs", Some("addition"));
+        proofs.answer_kind = AnswerKind::Proof;
+        let app = app_with_content(
+            &db,
+            one_unit_curriculum(vec![topic("addition", None), proofs]),
+        );
+        let user = cached_learner(&db, "diag-proof@example.com").await;
+        let problem_id = started(&app, user).await;
+        assert_seeded_probe_is_409(&db, &app, user, &problem_id, Some("proofs".to_string())).await;
     })
     .await;
 }

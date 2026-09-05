@@ -21,7 +21,12 @@
 
 mod common;
 
+use common::app_with_content;
 use common::placement::*;
+
+use cadus_core::curriculum::Curriculum;
+use cadus_core::curriculum::load::RawCurriculum;
+use cadus_core::curriculum::model::Catalog;
 
 use axum::Router;
 use axum::body::Body;
@@ -99,31 +104,10 @@ async fn the_placement_loop_walks_probes_and_places_the_learner() {
         let keys: Vec<&String> = probe.as_object().unwrap().keys().collect();
         assert_eq!(keys, vec!["problem_id", "text", "topic"]);
 
-        let mut problem_id = probe["problem_id"].as_str().unwrap().to_owned();
-        let mut asked = 0;
-        loop {
-            asked += 1;
-            assert!(asked < 20, "the probe list did not end");
-            let (status, body) = call(
-                &app,
-                user,
-                "/api/diag/answer",
-                &json!({ "problem_id": problem_id, "answer": ANSWER }),
-            )
-            .await;
-            assert_eq!(status, StatusCode::OK, "{body}");
-            let reply = parse(&body);
-            assert_eq!(reply["correct"], true);
-            let next = reply["next_probe"].clone();
-            if next["done"] == Value::Bool(true) {
-                break;
-            }
-            problem_id = next["problem_id"].as_str().unwrap().to_owned();
-        }
+        let problem_id = probe["problem_id"].as_str().unwrap().to_owned();
+        answer_until_done(&app, user, problem_id, ANSWER, true).await;
 
-        let (status, body) = call(&app, user, "/api/diag/finish", &json!({})).await;
-        assert_eq!(status, StatusCode::OK, "{body}");
-        let placed = parse(&body);
+        let placed = finish_ok(&app, user).await;
         // One correct answer credits the topic and every ancestor, so the whole
         // chain places.
         assert_eq!(
@@ -148,6 +132,39 @@ async fn the_placement_loop_walks_probes_and_places_the_learner() {
         assert_finish_is_no_diagnostic(&app, user).await;
     })
     .await;
+}
+
+/// Answer every probe from `problem_id` on with `given`, and expect each one
+/// graded `correct`, until the diagnostic reports `done`.
+async fn answer_until_done(app: &Router, user: Uuid, first: String, given: &str, correct: bool) {
+    let mut problem_id = first;
+    let mut asked = 0;
+    loop {
+        asked += 1;
+        assert!(asked < 20, "the probe list did not end");
+        let (status, body) = call(
+            app,
+            user,
+            "/api/diag/answer",
+            &json!({ "problem_id": problem_id, "answer": given }),
+        )
+        .await;
+        assert_eq!(status, StatusCode::OK, "{body}");
+        let reply = parse(&body);
+        assert_eq!(reply["correct"], correct);
+        let next = reply["next_probe"].clone();
+        if next["done"] == Value::Bool(true) {
+            break;
+        }
+        problem_id = next["problem_id"].as_str().unwrap().to_owned();
+    }
+}
+
+/// Close the diagnostic of `user`, which must succeed, and read the placement.
+async fn finish_ok(app: &Router, user: Uuid) -> Value {
+    let (status, body) = call(app, user, "/api/diag/finish", &json!({})).await;
+    assert_eq!(status, StatusCode::OK, "{body}");
+    parse(&body)
 }
 
 /// Fail the test when a finish for `user` is not `409 no_diagnostic`.
@@ -338,6 +355,60 @@ async fn a_stale_problem_id_is_404_unknown_problem() {
         .await;
         assert_eq!(status, StatusCode::NOT_FOUND);
         assert_eq!(code(&body), "unknown_problem");
+    })
+    .await;
+}
+
+// --------------------------------------------------------------------------- //
+// The course that is not there, the probe that cannot be checked, the frontier
+// --------------------------------------------------------------------------- //
+
+/// A curriculum with no course has no entry course to diagnose: the start is
+/// `400 no_course`.
+#[tokio::test]
+async fn a_start_with_no_course_in_the_curriculum_is_400_no_course() {
+    TestDb::with(|db| async move {
+        let empty = Curriculum::build(RawCurriculum {
+            catalog: Catalog {
+                courses: Vec::new(),
+            },
+            units: Vec::new(),
+        })
+        .unwrap();
+        let app = app_with_content(&db, empty);
+        let user = learner(&db, "no-course@example.test").await;
+
+        let (status, body) = call(&app, user, "/api/diag/start", &json!({})).await;
+        assert_eq!(status, StatusCode::BAD_REQUEST, "{body}");
+        assert_eq!(code(&body), "no_course");
+    })
+    .await;
+}
+
+/// A learner who skips every probe places nothing, and the finish reports the
+/// open frontier of the entry course.
+#[tokio::test]
+async fn a_finish_after_skipped_probes_reports_the_open_frontier() {
+    TestDb::with(|db| async move {
+        let app = app(&db);
+        let user = learner(&db, "skip-all@example.test").await;
+
+        let (status, body) = call(&app, user, "/api/diag/start", &json!({})).await;
+        assert_eq!(status, StatusCode::OK, "{body}");
+        let problem_id = parse(&body)["probe"]["problem_id"]
+            .as_str()
+            .unwrap()
+            .to_owned();
+        answer_until_done(&app, user, problem_id, "   ", false).await;
+
+        let placed = finish_ok(&app, user).await;
+        assert_eq!(placed["placed"], json!([]));
+        assert!(
+            placed["frontier"]
+                .as_array()
+                .is_some_and(|ids| !ids.is_empty()),
+            "the finish names no frontier: {placed}"
+        );
     })
     .await;
 }

@@ -61,6 +61,17 @@ async fn learner_with_live_problem(db: &TestDb, app: &axum::Router, email: &str)
     (user, problem_id)
 }
 
+/// Expect the `500` of a store fault on the hint of `problem_id` and on the
+/// teach of `LESSON`.
+async fn assert_hint_and_teach_are_500(app: &axum::Router, user: Uuid, problem_id: &str) {
+    for reply in [
+        hint_task(app, user, LESSON, problem_id).await,
+        teach_task(app, user, LESSON).await,
+    ] {
+        assert_refused(&reply, StatusCode::INTERNAL_SERVER_ERROR, "internal_error");
+    }
+}
+
 /// The pop of the pool fails: the serve is `500`.
 #[tokio::test]
 async fn a_pool_read_that_fails_is_500_on_the_serve() {
@@ -204,12 +215,7 @@ async fn a_state_read_that_fails_is_500_on_the_hint_and_the_teach() {
             learner_with_live_problem(&db, &app, "lock-hint@example.com").await;
         fail_reads(&db, "web_states", "FROM web_states WHERE").await;
 
-        for reply in [
-            hint_task(&app, user, LESSON, &problem_id).await,
-            teach_task(&app, user, LESSON).await,
-        ] {
-            assert_refused(&reply, StatusCode::INTERNAL_SERVER_ERROR, "internal_error");
-        }
+        assert_hint_and_teach_are_500(&app, user, &problem_id).await;
     })
     .await;
 }
@@ -240,12 +246,7 @@ async fn a_document_read_that_fails_is_500_on_the_hint_and_the_teach() {
         let (user, problem_id) = learner_with_live_problem(&db, &app, "doc-hint@example.com").await;
         hide_column(&db, "content_store", "body").await;
 
-        for reply in [
-            hint_task(&app, user, LESSON, &problem_id).await,
-            teach_task(&app, user, LESSON).await,
-        ] {
-            assert_refused(&reply, StatusCode::INTERNAL_SERVER_ERROR, "internal_error");
-        }
+        assert_hint_and_teach_are_500(&app, user, &problem_id).await;
     })
     .await;
 }

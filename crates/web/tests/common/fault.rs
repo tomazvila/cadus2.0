@@ -379,3 +379,46 @@ pub async fn expose_to_policies(db: &TestDb, table: &str) {
     )
     .await;
 }
+
+/// Make every SELECT of the app role on `table` fail when the query text holds
+/// `needle`, after the first `passes` rows it read. The table must carry
+/// row-level security, and the read must find a row: the policy runs per row.
+/// The counter is one sequence of the database, so one test installs one of
+/// these.
+pub async fn fail_reads_after(db: &TestDb, table: &str, needle: &str, passes: i64) {
+    run(
+        db,
+        "CREATE OR REPLACE FUNCTION test_fault_after(needle text, passes bigint) RETURNS boolean \
+         LANGUAGE plpgsql STABLE AS $$ BEGIN \
+         IF position(needle in current_query()) = 0 THEN RETURN true; END IF; \
+         IF nextval('test_after_calls') > passes THEN \
+         RAISE EXCEPTION 'injected fault: read % after %', needle, passes; END IF; \
+         RETURN true; END $$"
+            .to_string(),
+    )
+    .await;
+    run(
+        db,
+        format!("GRANT EXECUTE ON FUNCTION test_fault_after(text, bigint) TO {APP_ROLE}"),
+    )
+    .await;
+    run(
+        db,
+        "CREATE SEQUENCE IF NOT EXISTS test_after_calls".to_string(),
+    )
+    .await;
+    run(
+        db,
+        format!("GRANT USAGE ON SEQUENCE test_after_calls TO {APP_ROLE}"),
+    )
+    .await;
+    run(
+        db,
+        format!(
+            "CREATE POLICY test_fault_after ON {table} AS RESTRICTIVE FOR SELECT \
+             USING (test_fault_after({}, {passes}))",
+            quote(needle)
+        ),
+    )
+    .await;
+}
