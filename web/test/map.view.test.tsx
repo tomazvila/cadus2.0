@@ -5,18 +5,20 @@
  * `map.test.tsx` carries the module note and the fixtures live in `test/helpers/map.tsx`.
  */
 import { describe, expect, it, vi } from 'vitest';
-import { act, screen, waitFor } from '@testing-library/react';
+import { act, fireEvent, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { axe } from 'vitest-axe';
 import { MAP_CANVAS_LABEL, MAP_EMPTY, MAP_PAN_STEP } from '@/views/map/Map';
 import { MAP_RENDERER_FAILED } from '@/views/map/CyCanvas';
 import { STATES } from '@/views/map/layout';
 import { toastStore } from '@/app/toast';
+import { ApiError } from '@/api';
+import { resetCytoscapeLoader } from '@/views/map/cytoscape-loader';
 import { AXE_IN_JSDOM } from './axe';
 import { instances } from './mocks/cytoscape';
 import {
-  NODES, canvas, changeScope, failOnceImporter, flush, graph, label, last, listButton,
-  mount, mountLoaded, stubApi,
+  NODES, canvas, changeScope, deferredImport, failOnceImporter, flush, graph, label, last,
+  listButton, mount, mountLoaded, stubApi,
 } from './helpers/map';
 import type { ApiClient, GraphResponse } from '@/api/types';
 
@@ -83,10 +85,15 @@ describe('the map view — the accessible list view', () => {
     const view = await mountLoaded();
     await act(async () => { listButton().click(); });
 
-    const groups = document.querySelectorAll('.map-list-group');
+    const groups = document.querySelectorAll<HTMLDetailsElement>('.map-list-group');
     // Four states hold a topic; `placed` holds none and prints no group.
     expect(groups).toHaveLength(4);
     expect(groups[0].querySelector('summary')!.textContent).toBe('Ready to learn1');
+    // The frontier group opens by itself; the rest wait for the reader.
+    expect(Array.from(groups).map((g) => g.open)).toEqual([true, false, false, false]);
+    expect(Array.from(groups).map((g) => g.querySelector('.legend-dot')!.className)).toEqual([
+      'legend-dot ld-frontier', 'legend-dot ld-learning', 'legend-dot ld-floor', 'legend-dot ld-untouched',
+    ]);
     expect(document.querySelectorAll('.map-list-group li')).toHaveLength(NODES.length);
     expect(document.querySelector('.map-list-group li')!.textContent)
       .toBe('Fractions — Arithmetic · ability 10%');
@@ -112,6 +119,15 @@ describe('the map view — the accessible list view', () => {
   });
 });
 
+/** Mount the loaded map and tap Fractions, so its panel is open. */
+async function tapFractions() {
+  const view = await mountLoaded();
+  const cy = last();
+  await act(async () => { cy.emit('tap', cy.getElementById('fractions')); });
+  expect(document.querySelector('.map-panel')).not.toBeNull();
+  return { view, cy };
+}
+
 describe('the map view — the payload on screen', () => {
   it('reads out the counts the service sent, and derives none of them', async () => {
     const view = await mountLoaded();
@@ -124,14 +140,15 @@ describe('the map view — the payload on screen', () => {
   });
 
   it('opens the detail panel on a node tap and closes it on the background', async () => {
-    const view = await mountLoaded();
-    const cy = last();
-
-    await act(async () => { cy.emit('tap', cy.getElementById('fractions')); });
+    const { view, cy } = await tapFractions();
     expect(document.querySelector('.map-panel h2')!.textContent).toBe('Fractions');
     expect(document.querySelector('.map-panel .mono')!.textContent).toBe('fractions');
-    // The ring is a class on the instance, not a React render.
+    // The state line: the dot of the state, its legend label, and the module after a dot.
+    expect(document.querySelector('.map-panel-state')!.textContent).toBe('Ready to learn · Arithmetic');
+    expect(document.querySelector('.map-panel-state .legend-dot')!.className).toBe('legend-dot ld-frontier');
+    // The ring is a class on the instance, not a React render, and the camera moves to it.
     expect(cy.classesOf('fractions')).toEqual(['pick', 'st-frontier']);
+    expect(cy.centered).toEqual(['fractions']);
 
     await act(async () => { cy.emit('tap', cy); });
     expect(document.querySelector('.map-panel')).toBeNull();
@@ -147,6 +164,72 @@ describe('the map view — the payload on screen', () => {
     await user.keyboard('{ArrowLeft}{ArrowDown}0');
     expect(last().pans).toEqual([{ x: MAP_PAN_STEP, y: 0 }, { x: 0, y: -MAP_PAN_STEP }]);
     expect(last().fits).toBe(1);
+    view.unmount();
+  });
+
+  it('closes the panel and drops the ring when the list view opens, and keeps them closed after', async () => {
+    const { view, cy } = await tapFractions();
+    await act(async () => { listButton().click(); });
+    expect(cy.classesOf('fractions')).toEqual(['st-frontier']);
+    await act(async () => { listButton().click(); });
+    expect(document.querySelector('.map-panel')).toBeNull();
+    view.unmount();
+  });
+
+  it('closes the panel when a new payload lands', async () => {
+    const { view } = await tapFractions();
+    await changeScope('all');
+    expect(document.querySelector('.map-panel')).toBeNull();
+    view.unmount();
+  });
+
+  it('asks for the own course with no scope, and for a scope by its id', async () => {
+    const getGraph = vi.fn<ApiClient['getGraph']>(async () => graph());
+    const view = await mountLoaded({ api: stubApi({ getGraph }) });
+    await changeScope('proofs');
+    expect(getGraph.mock.calls).toEqual([[undefined], ['proofs']]);
+    view.unmount();
+  });
+
+  it('lists the own course, every course with the current one marked, and the whole curriculum', async () => {
+    const view = await mountLoaded();
+    const options = Array.from((screen.getByLabelText('Scope') as HTMLSelectElement).options);
+    expect(options.map((o) => [o.value, o.textContent])).toEqual([
+      ['', 'Your course'], ['foundations', 'Foundations ·'], ['proofs', 'Proofs'], ['all', 'Entire curriculum'],
+    ]);
+    view.unmount();
+  });
+
+  it('routes a 401 on the graph read to sign-in', async () => {
+    const view = await mountLoaded({
+      api: stubApi({ getGraph: async () => { throw new ApiError(401, 'unauthorized', 'No session.'); } }),
+    });
+    await waitFor(() => expect(view.onUnauthorized).toHaveBeenCalledTimes(1));
+    view.unmount();
+  });
+
+  it('takes the Fit control and the list toggle before the instance exists', async () => {
+    const { importer } = deferredImport();
+    resetCytoscapeLoader(importer);
+    const view = await mount();
+    await act(async () => { screen.getByRole('button', { name: 'Fit' }).click(); });
+    await act(async () => { listButton().click(); });
+    expect(document.querySelector('.map-list')).not.toBeNull();
+    view.unmount();
+  });
+
+  it('swallows a bound key on the canvas', async () => {
+    const view = await mountLoaded();
+    expect(fireEvent.keyDown(canvas(), { key: '0' })).toBe(false);
+    expect(last().fits).toBe(1);
+    view.unmount();
+  });
+
+  it('paints one legend dot per state, in the class of that state', async () => {
+    const view = await mountLoaded();
+    expect(Array.from(document.querySelectorAll('.map-legend .legend-dot')).map((d) => d.className)).toEqual([
+      'legend-dot ld-frontier', 'legend-dot ld-learning', 'legend-dot ld-placed', 'legend-dot ld-floor', 'legend-dot ld-untouched',
+    ]);
     view.unmount();
   });
 

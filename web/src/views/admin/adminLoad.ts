@@ -101,6 +101,9 @@ interface LoadState<T> {
   fault: AdminFault | null;
 }
 
+/** The state before the first attempt lands. One object serves every hook. */
+const NOTHING_LANDED: LoadState<never> = { landed: null, data: null, fault: null };
+
 /** The two deps a continuation reads after its await. */
 interface LiveDeps {
   demo: boolean;
@@ -111,7 +114,7 @@ export function useAdminLoad<T>({ load, demo, onUnauthorized }: AdminLoadDeps<T>
   const life = useLifetime();
   // One token per attempt. `reload` mints a new one, and the effect below starts on it.
   const [attempt, setAttempt] = useState<object>({});
-  const [state, setState] = useState<LoadState<T>>({ landed: null, data: null, fault: null });
+  const [state, setState] = useState<LoadState<T>>(NOTHING_LANDED);
 
   // The deps go through a ref for the reason `useCall` states: a continuation that lands
   // after an await must not run against the values of the render that started it. The write

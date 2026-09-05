@@ -7,8 +7,12 @@
 import { describe, expect, it } from 'vitest';
 import { act, cleanup, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { readFileSync } from 'node:fs';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { loadCytoscape, resetCytoscapeLoader } from '@/views/map/cytoscape-loader';
 import { layerOf, toElements } from '@/views/map/layout';
+import { buildStyle, readTokens } from '@/views/map/mapStyle';
 import { MAP_RENDERER_FAILED } from '@/views/map/CyCanvas';
 import { fireToastAction, toastStore } from '@/app/toast';
 import { mediaListenerCount, resizeObservers } from './setup';
@@ -33,10 +37,46 @@ describe('the island under load', () => {
     view.unmount();
   });
 
-  it('keeps the default pixel ratio for a small scope', async () => {
+  it('keeps the default pixel ratio for a small scope, four hundred topics included', async () => {
     const view = await mountLoaded();
     expect(last().options.pixelRatio).toBe('auto');
     expect(last().options.hideEdgesOnViewport).toBe(false);
+    view.unmount();
+    cleanup();
+
+    const four = Array.from({ length: 400 }, (_, i) => node({ id: `t${i}` }));
+    const edge = await mountLoaded({
+      api: stubApi({ getGraph: async () => graph({ nodes: four, edges: [] }) }),
+    });
+    expect(last().options.pixelRatio).toBe('auto');
+    edge.unmount();
+  });
+
+  it('builds the instance with the options the CSP and the camera need, literally', async () => {
+    const view = await mountLoaded();
+    const cy = last();
+    expect(cy.options).toMatchObject({
+      layout: { name: 'preset', fit: true, padding: 30 },
+      boxSelectionEnabled: false,
+      autoungrabify: true,
+      autounselectify: true,
+      motionBlur: false,
+    });
+    expect(cy.options.container).toBe(document.querySelector('.map-host'));
+    // A little further out than the fitted view of zoom 1, close enough in to read a label.
+    expect(cy.zoomBounds).toEqual({ min: 0.6, max: 2.5 });
+    view.unmount();
+  });
+
+  it('shows the renderer loading until the instance exists, and no longer', async () => {
+    const { importer, release } = deferredImport();
+    resetCytoscapeLoader(importer);
+    const view = await mount();
+    expect(screen.getByText('Loading the map renderer…')).toBeTruthy();
+    await act(async () => { release(); });
+    await flush();
+    expect(screen.queryByText('Loading the map renderer…')).toBeNull();
+    expect(screen.queryByText(MAP_RENDERER_FAILED)).toBeNull();
     view.unmount();
   });
 });
@@ -62,6 +102,11 @@ describe('a renderer that fails late', () => {
     failOnceImporter();
     const view = await mount();
     expect(instances).toHaveLength(0);
+    expect(screen.queryByText('Loading the map renderer…')).toBeNull();
+    expect(MAP_RENDERER_FAILED).toBe('Could not load the map renderer.');
+    expect(toastStore.getSnapshot()).toEqual([
+      { id: 1, message: MAP_RENDERER_FAILED, kind: 'error', onAction: expect.any(Function) },
+    ]);
     await act(async () => { fireToastAction(toastStore.getSnapshot()[0].id); });
     await flush();
     expect(instances).toHaveLength(1);
@@ -106,6 +151,17 @@ describe('the keys and the scheme', () => {
     await user.keyboard('x');
     expect(last().pans).toEqual([]);
     expect(last().fits).toBe(0);
+    view.unmount();
+  });
+
+  it('takes a color-scheme flip before the instance exists', async () => {
+    const { importer } = deferredImport();
+    resetCytoscapeLoader(importer);
+    const view = await mount();
+    expect(mediaListenerCount(SCHEME)).toBe(1);
+    expect(() => {
+      act(() => { window.matchMedia(SCHEME).dispatchEvent(new Event('change')); });
+    }).not.toThrow();
     view.unmount();
   });
 
@@ -182,6 +238,15 @@ describe('the payload shapes', () => {
     const depth = layerOf(NODES, [...EDGES, { from: 'whole-numbers', to: 'elsewhere' }]);
     expect(depth.get('ratios')).toBe(2);
     expect(depth.has('elsewhere')).toBe(false);
+    // An edge FROM outside the scope counts for nothing either: the topic it points at
+    // is placed by its in-scope prerequisites alone, and the topics after it follow.
+    const chain = [node({ id: 'a' }), node({ id: 'b' }), node({ id: 'c' })];
+    const fed = layerOf(chain, [
+      { from: 'elsewhere', to: 'b' },
+      { from: 'a', to: 'b' },
+      { from: 'b', to: 'c' },
+    ]);
+    expect(fed).toEqual(new Map([['a', 0], ['b', 1], ['c', 2]]));
     expect(toElements(NODES, [{ from: 'nowhere', to: 'ratios' }]).filter((e) => e.group === 'edges'))
       .toHaveLength(1);
   });
@@ -190,5 +255,69 @@ describe('the payload shapes', () => {
     resetCytoscapeLoader();
     // Under the test config the vendored specifier resolves to the double.
     expect(await loadCytoscape()).toBe(cytoscape);
+  });
+
+  it('names the vendored path the CSP gate looks for, in the source', () => {
+    // `scripts/check-bundle-csp.mjs` finds this literal in the sources and fails the build
+    // when the served file is absent. The literal is the contract, so the test reads it.
+    const source = readFileSync(join(dirname(fileURLToPath(import.meta.url)), '../src/views/map/cytoscape-loader.ts'), 'utf8');
+    expect(source).toContain("const CYTOSCAPE_URL = '/vendor/cytoscape/cytoscape.esm.min.mjs';");
+  });
+
+  it('builds the stylesheet literally, from the tokens it is given', () => {
+    const tokens = readTokens({
+      getPropertyValue: (name: string) => ({ '--text': ' #111 ', '--muted': '#888', '--accent': '#f00' })[name] ?? '',
+    });
+    expect(tokens).toEqual({
+      text: '#111',
+      muted: '#888',
+      // `untouched` reads the muted token, so it shares the edge color.
+      state: { frontier: '#f00', learning: '', placed: '', floor: '', untouched: '#888' },
+    });
+    expect(buildStyle(tokens)).toEqual([
+      {
+        selector: 'node',
+        style: {
+          width: 'data(size)',
+          height: 'data(size)',
+          label: 'data(name)',
+          color: '#111',
+          'font-size': 9,
+          'min-zoomed-font-size': 11,
+          'text-valign': 'bottom',
+          'text-halign': 'center',
+          'text-margin-y': 3,
+          'text-wrap': 'wrap',
+          'text-max-width': 110,
+          'text-opacity': 0.85,
+          'border-width': 0,
+          'overlay-opacity': 0,
+        },
+      },
+      {
+        selector: 'edge',
+        style: {
+          'curve-style': 'straight',
+          width: 1,
+          opacity: 0.25,
+          'line-color': '#888',
+          'target-arrow-color': '#888',
+          'target-arrow-shape': 'triangle',
+          'arrow-scale': 0.6,
+        },
+      },
+      { selector: '.st-frontier', style: { 'background-color': '#f00' } },
+      { selector: '.st-learning', style: { 'background-color': '' } },
+      { selector: '.st-placed', style: { 'background-color': '' } },
+      { selector: '.st-floor', style: { 'background-color': '' } },
+      { selector: '.st-untouched', style: { 'background-color': '#888' } },
+      { selector: '.st-floor', style: { 'background-opacity': 0.45 } },
+      { selector: '.st-untouched', style: { 'background-opacity': 0.5 } },
+      { selector: '.st-frontier', style: { 'border-width': 2, 'border-color': '#f00' } },
+      {
+        selector: 'node.pick',
+        style: { 'border-width': 3, 'border-color': '#111', 'text-opacity': 1, 'min-zoomed-font-size': 0 },
+      },
+    ]);
   });
 });

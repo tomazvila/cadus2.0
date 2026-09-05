@@ -104,6 +104,19 @@ describe('useAdminLoad', () => {
 });
 
 describe('useAdminLoad, driven as a hook', () => {
+  it('reads the demo flag of the render the fault lands in, not the one that started the read', async () => {
+    let reject!: (e: Error) => void;
+    const load = () => new Promise<string>((_, rej) => { reject = rej; });
+    const onUnauthorized = vi.fn();
+    const { rerender } = renderHook(
+      (props: { demo: boolean }) => useAdminLoad({ load, demo: props.demo, onUnauthorized }),
+      { initialProps: { demo: true } },
+    );
+    rerender({ demo: false });
+    await act(async () => { reject(new ApiError(401, 'unauthorized', 'No session.')); });
+    expect(onUnauthorized).toHaveBeenCalledTimes(1);
+  });
+
   it('lets a stale reply and a stale fault pass behind a newer generation', async () => {
     const held: Array<{ resolve: (v: string) => void; reject: (e: Error) => void }> = [];
     const load = vi.fn(() => new Promise<string>((resolve, reject) => { held.push({ resolve, reject }); }));

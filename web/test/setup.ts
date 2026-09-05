@@ -82,11 +82,13 @@ class MediaQueryListStub implements MediaQueryList {
   }
 
   get matches(): boolean { return mediaState.get(this.media) ?? false; }
-  addEventListener(_type: string, fn: EventListenerOrEventListenerObject): void {
-    this.listeners.add(fn);
+  // `change` is the one event a media query list fires; a listener bound to any other
+  // name never hears it, as in a browser.
+  addEventListener(type: string, fn: EventListenerOrEventListenerObject): void {
+    if (type === 'change') this.listeners.add(fn);
   }
-  removeEventListener(_type: string, fn: EventListenerOrEventListenerObject): void {
-    this.listeners.delete(fn);
+  removeEventListener(type: string, fn: EventListenerOrEventListenerObject): void {
+    if (type === 'change') this.listeners.delete(fn);
   }
   addListener(fn: MediaListener): void { if (fn) this.listeners.add(fn as EventListener); }
   removeListener(fn: MediaListener): void { if (fn) this.listeners.delete(fn as EventListener); }

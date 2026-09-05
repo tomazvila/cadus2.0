@@ -175,6 +175,13 @@ describe('the review queue', () => {
     expect(chips.find((c) => c.textContent === '4 attempts')?.className).toBe('chip chip-bad');
     expect(chips.find((c) => c.textContent === '1 attempts')?.className).toBe('chip');
     expect(document.querySelector('.review-doc .chip-bad')?.textContent).toBe('4 attempts');
+
+    // The pane of a row under the bound carries the plain chip.
+    await userEvent.setup().click(rowButtons()[2]!);
+    await waitFor(() => expect(screen.getByText('d3 instance 1: Solve $5x = 20$ for $x$.')).toBeTruthy());
+    const attempts = Array.from(document.querySelectorAll('.review-doc .chip'))
+      .find((c) => c.textContent === '1 attempts');
+    expect(attempts?.className).toBe('chip');
   });
 
   it('marks the selected row for assistive technology, and no other', async () => {

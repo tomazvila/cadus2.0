@@ -37,10 +37,10 @@ describe('the map layout — pure', () => {
   it('stacks prerequisite layers bottom to top, one step per layer', () => {
     // 2.0 sends no coordinates at all, so these numbers are the client's own.
     const depth = layerOf(NODES, EDGES);
-    expect(depth.get('whole-numbers')).toBe(0);
-    expect(depth.get('fractions')).toBe(1);
-    expect(depth.get('decimals')).toBe(1);
-    expect(depth.get('ratios')).toBe(2);
+    // Every topic and nothing else: one entry per node of the payload.
+    expect(depth).toEqual(new Map([
+      ['whole-numbers', 0], ['fractions', 1], ['decimals', 1], ['ratios', 2],
+    ]));
 
     const at = positionsOf(NODES, EDGES);
     // y is negated, so the foundation row sits at the BOTTOM of the drawing.
@@ -61,6 +61,25 @@ describe('the map layout — pure', () => {
       { from: 'a', to: 'b' },
     ]);
     expect(depth.get('b')).toBe(2);
+  });
+
+  it('walks on past a topic with two prerequisites', () => {
+    // `ratios` waits for both of its prerequisites before it is placed, and only then does
+    // the topic after it get its row.
+    const nodes = [...NODES, node({ id: 'percent' })];
+    const depth = layerOf(nodes, [...EDGES, { from: 'ratios', to: 'percent' }]);
+    expect(depth.get('percent')).toBe(3);
+  });
+
+  it('keeps a cycle fed by a root on the foundation row instead of hanging', () => {
+    const nodes = [node({ id: 'root' }), node({ id: 'a' }), node({ id: 'b' })];
+    const depth = layerOf(nodes, [
+      { from: 'root', to: 'a' },
+      { from: 'a', to: 'b' },
+      { from: 'b', to: 'a' },
+    ]);
+    // The root places `a` one row up; the pair itself is never reached, so `b` stays down.
+    expect([...depth.entries()].sort()).toEqual([['a', 1], ['b', 0], ['root', 0]]);
   });
 
   it('keeps a cyclic pair on the foundation row instead of hanging', () => {
@@ -92,6 +111,30 @@ describe('the map layout — pure', () => {
     expect(edge.data.source).toBe('whole-numbers');
     expect(edge.data.target).toBe('fractions');
     expect(edge.position).toBeUndefined();
+  });
+
+  it('builds the element list literally: two groups, one class per state, one id per edge', () => {
+    const a = node({ id: 'a', name: 'A', status: 'frontier', ability: 0.5 });
+    const b = node({ id: 'b', name: 'B', module: 'Ratio' });
+    expect(toElements([a, b], [{ from: 'a', to: 'b' }])).toEqual([
+      {
+        group: 'nodes',
+        data: { id: 'a', name: 'A', module: 'Arithmetic', size: sizeOf(0.5) },
+        classes: 'st-frontier',
+        position: { x: 0, y: 0 },
+      },
+      {
+        group: 'nodes',
+        data: { id: 'b', name: 'B', module: 'Ratio', size: sizeOf(0) },
+        classes: 'st-untouched',
+        position: { x: 0, y: -Y_STEP },
+      },
+      {
+        group: 'edges',
+        data: { id: 'a->b', source: 'a', target: 'b' },
+        classes: 'prereq',
+      },
+    ]);
   });
 
   it('counts every state, the empty ones included', () => {

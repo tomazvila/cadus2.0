@@ -213,7 +213,7 @@ export function ReviewScreen({ api, demo, onUnauthorized }: ReviewScreenProps) {
   // that drops it, with no second render in between: an effect that corrected the stored
   // value would paint one frame of the decided row, live Approve and Reject buttons and
   // all, over a queue that no longer contains it.
-  const active = selected !== null && order.includes(selected) ? selected : (order[0] ?? null);
+  const active = order.find((digest) => digest === selected) ?? order[0] ?? null;
   // The row the walk stands on. Null exactly while the queue is empty, which renders no pane.
   const selectedItem = items.find((item) => item.digest === active) ?? null;
 

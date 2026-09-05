@@ -26,6 +26,8 @@ describe('GateBlock', () => {
     const head = document.querySelector('.gate-head .mono')!;
     expect(head.textContent).toBe('abcdef012345');
     expect(head.getAttribute('title')).toBe('abcdef0123456789');
+    // One space between the digest and the knowledge point, so the two read apart.
+    expect(head.parentElement!.textContent).toBe(`abcdef012345 ${note().kp_id}`);
   });
 
   it('says a knowledge point the curriculum does not name was not gated, with its reason', () => {

@@ -33,6 +33,8 @@ interface CyElementStub extends CyCollection {
 export interface CyStub extends CyLike {
   /** The options the island constructed it with. */
   readonly options: CytoscapeOptions;
+  /** The camera bounds the island set. */
+  readonly zoomBounds: { min?: number; max?: number };
   destroyed: boolean;
   /** Instances still alive at the moment this one was built. It must always be 0. */
   readonly aliveAtBuild: number;
@@ -92,6 +94,7 @@ export default function cytoscape(options: CytoscapeOptions): CyStub {
 
   const cy: CyStub = {
     options,
+    zoomBounds: {},
     destroyed: false,
     aliveAtBuild: instances.filter((i) => !i.destroyed).length,
     resizes: 0,
@@ -104,8 +107,8 @@ export default function cytoscape(options: CytoscapeOptions): CyStub {
       if (typeof level === 'number') zoomLevel = level;
       return zoomLevel;
     },
-    minZoom: (v) => v,
-    maxZoom: (v) => v,
+    minZoom: (v) => { cy.zoomBounds.min = v; return v; },
+    maxZoom: (v) => { cy.zoomBounds.max = v; return v; },
     fit: () => { cy.fits += 1; },
     center: (target) => { cy.centered.push(target.id()); },
     panBy: (delta) => { cy.pans.push(delta); },
@@ -114,12 +117,15 @@ export default function cytoscape(options: CytoscapeOptions): CyStub {
     style: (sheet) => { cy.styles.push(sheet); },
 
     on: (event: string, a: 'node' | CyTapHandler, b?: CyNodeTapHandler) => {
-      if (typeof a === 'string' && b) handlers.push({ event, selector: 'node', fn: b });
+      // The one selector the island binds. Any other string selects nothing here.
+      if (a === 'node' && b) handlers.push({ event, selector: 'node', fn: b });
       if (typeof a === 'function') handlers.push({ event, selector: null, fn: a });
     },
 
     elements: () => element('', [...classes.values()], true),
     getElementById: (id) => {
+      // The library tolerates a non-string; the double holds the island to the declared type.
+      if (typeof id !== 'string') throw new TypeError('getElementById takes a string id');
       const own = classes.get(id);
       return element(id, own ? [own] : [], own !== undefined);
     },

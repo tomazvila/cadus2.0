@@ -61,25 +61,23 @@ export function sizeOf(ability: number): number {
  */
 export function layerOf(nodes: GraphNode[], edges: GraphEdge[]): Map<string, number> {
   const depth = new Map<string, number>(nodes.map((n) => [n.id, 0]));
-  const outgoing = new Map<string, string[]>();
+  const outgoing = new Map<string, string[]>(nodes.map((n) => [n.id, []]));
   const indegree = new Map<string, number>(nodes.map((n) => [n.id, 0]));
 
   for (const edge of edges) {
     // `from` is the prerequisite and `to` is the dependent, so the arrow reads "unlocks".
     if (!depth.has(edge.from) || !depth.has(edge.to)) continue;
-    const list = outgoing.get(edge.from);
-    if (list) list.push(edge.to);
-    else outgoing.set(edge.from, [edge.to]);
-    // Every in-scope node was seeded above, so the two maps hold every id read below.
+    // Every in-scope node was seeded above, so the three maps hold every id read below.
+    outgoing.get(edge.from)!.push(edge.to);
     indegree.set(edge.to, indegree.get(edge.to)! + 1);
   }
 
   const queue = nodes.filter((n) => indegree.get(n.id) === 0).map((n) => n.id);
-  for (let head = 0; head < queue.length; head += 1) {
-    const id = queue[head];
+  // `for..of` over an array visits the ids pushed while it runs, so the queue drains.
+  for (const id of queue) {
     const here = depth.get(id)!;
-    for (const next of outgoing.get(id) ?? []) {
-      if (depth.get(next)! < here + 1) depth.set(next, here + 1);
+    for (const next of outgoing.get(id)!) {
+      depth.set(next, Math.max(depth.get(next)!, here + 1));
       const left = indegree.get(next)! - 1;
       indegree.set(next, left);
       if (left === 0) queue.push(next);
@@ -163,8 +161,7 @@ export function toElements(nodes: GraphNode[], edges: GraphEdge[]): MapElement[]
 /** How many topics sit in each state. Every state gets a key, including the empty ones. */
 export function countByStatus(nodes: GraphNode[]): Record<TopicStatus, number> {
   const counts = Object.fromEntries(STATES.map((s) => [s.id, 0])) as Record<TopicStatus, number>;
-  for (const node of nodes) {
-    if (node.status in counts) counts[node.status] += 1;
-  }
+  // `STATES` names every `TopicStatus`, so every status has its key.
+  for (const node of nodes) counts[node.status] += 1;
   return counts;
 }

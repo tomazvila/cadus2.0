@@ -26,9 +26,8 @@
  * recurses until the stack goes. It is measured, not theoretical: the first draft of this
  * file died that way, and React reported it as "Do not call Hooks inside useEffect".
  */
-import { Suspense, lazy, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { Suspense, lazy, useEffect, useMemo, useRef, useState } from 'react';
 import { useCall } from '@/hooks/useCall';
-import { useLifetime } from '@/hooks/useLifetime';
 import { LoadingBlock } from '@/components/primitives';
 import { pct } from '@/lib/format';
 import { STATES, countByStatus } from './layout';
@@ -51,18 +50,19 @@ const CyCanvas = lazy(() => import('./CyCanvas'));
 export interface CurriculumMapProps {
   api: ApiClient;
   /** Demo mode. A 401 then keeps the learner on the screen. */
-  demo?: boolean;
+  demo: boolean;
   /** The session-expired path of `useCall`. */
   onUnauthorized: () => void;
   /** Leave the map. */
   onExit: () => void;
 }
 
-export function CurriculumMap({ api, demo = false, onUnauthorized, onExit }: CurriculumMapProps) {
-  const life = useLifetime();
+/** No payload yet. One array for every render before the first reply, so nothing rebuilds. */
+const NO_NODES: GraphNode[] = [];
+
+export function CurriculumMap({ api, demo, onUnauthorized, onExit }: CurriculumMapProps) {
   const call = useCall({ demo, onUnauthorized });
   const [data, setData] = useState<GraphResponse | null>(null);
-  const [scope, setScope] = useState('');
   const [listMode, setListMode] = useState(false);
   const [picked, setPicked] = useState<string | null>(null);
   // Bumped by a retry. It rides in the canvas key, so a retry REMOUNTS the island and the
@@ -80,35 +80,29 @@ export function CurriculumMap({ api, demo = false, onUnauthorized, onExit }: Cur
   // and read by the continuation.
   const scopeRef = useRef('');
 
-  const load = useCallback(
-    (next: string) => {
-      const generation = life.gen();
-      void call(
-        () => api.getGraph(next || undefined),
-        (payload) => {
-          // The continuation reads the lifetime and a ref, never captured render state: a
-          // Retry arrives renders later (the React rule of `useCall`).
-          if (!life.current(generation)) return;
-          // Two scope changes in flight land in either order, and the slower reply must not
-          // paint over the newer one. A retry of the scope still on screen still applies.
-          if (scopeRef.current !== next) return;
-          setData(payload);
-          setRevision((n) => n + 1);
-          setPicked(null);
-        },
-      );
-    },
-    [api, call, life],
-  );
+  // One loader per mount: it reads the client, the call and a ref, and all three hold.
+  const [load] = useState(() => (next: string) => {
+    void call(
+      () => api.getGraph(next || undefined),
+      (payload) => {
+        // The continuation reads a ref, never captured render state: a Retry arrives renders
+        // later (the React rule of `useCall`). Two scope changes in flight land in either
+        // order, and the slower reply must not paint over the newer one. A retry of the
+        // scope still on screen still applies, and a reply after the view left writes state
+        // nobody renders.
+        if (scopeRef.current !== next) return;
+        setData(payload);
+        setRevision((n) => n + 1);
+        setPicked(null);
+      },
+    );
+  });
 
   useEffect(() => { load(''); }, [load]);
 
-  // Memoized, or the two hooks below re-run on every render: `??` builds a NEW empty array
-  // each time, and a hover or a pan is a render.
-  const nodes = useMemo(() => data?.nodes ?? [], [data]);
+  const nodes = data === null ? NO_NODES : data.nodes;
   const counts = useMemo(() => countByStatus(nodes), [nodes]);
-  const byId = useMemo(() => new Map(nodes.map((n) => [n.id, n])), [nodes]);
-  const selected = picked === null ? null : byId.get(picked) ?? null;
+  const selected = nodes.find((n) => n.id === picked) ?? null;
 
   function pick(id: string | null): void {
     setPicked(id);
@@ -124,7 +118,6 @@ export function CurriculumMap({ api, demo = false, onUnauthorized, onExit }: Cur
    */
   function changeScope(next: string): void {
     scopeRef.current = next;
-    setScope(next);
     load(next);
   }
 
@@ -164,10 +157,11 @@ export function CurriculumMap({ api, demo = false, onUnauthorized, onExit }: Cur
       </div>
 
       <div className="map-controls">
+        {/* Uncontrolled: the select keeps the scope the learner picked, and the payload
+            on screen follows it through `load`. */}
         <select
           className="map-select"
           aria-label="Scope"
-          value={scope}
           onChange={(e) => { changeScope(e.target.value); }}
         >
           <option value="">Your course</option>

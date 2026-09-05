@@ -96,7 +96,7 @@ export async function mount(
   resetToasts();
   resetCytoscape();
   const handlers = { onUnauthorized: vi.fn(), onExit: vi.fn() };
-  const props = { api: stubApi(), ...handlers, ...over };
+  const props = { api: stubApi(), demo: false, ...handlers, ...over };
   const tree = <CurriculumMap {...props} />;
   const view = await renderInView(wrapper ? wrapper({ children: tree }) : tree);
   // The lazy canvas module and the library memo are two awaits, not one.
