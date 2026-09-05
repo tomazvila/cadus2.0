@@ -27,7 +27,7 @@
  *
  * WHAT THIS UNIT DOES NOT OWN. There is no router yet, so navigation arrives as props.
  */
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { MathBlock } from '@/components/MathBlock';
 import { AnswerField, type AnswerFieldHandle } from '@/components/AnswerField';
 import { Chip, LoadingBlock } from '@/components/primitives';
@@ -96,8 +96,9 @@ function deadlineOf(
  * (V6). Only a finite number is a count.
  */
 function elapsedOf(served: ServedProblem): number | null {
-  const secs = served.quiz_elapsed_secs;
-  return typeof secs === 'number' && Number.isFinite(secs) ? secs : null;
+  // `null` and an absent field both read as NaN here, and NaN is not a count.
+  const secs = served.quiz_elapsed_secs ?? Number.NaN;
+  return Number.isFinite(secs) ? secs : null;
 }
 
 /** Whole seconds from now to `end`, never below zero. */
@@ -119,7 +120,7 @@ export interface QuizProps {
   /** The plan task. Its `time_budget_secs` is the WHOLE-quiz clock (QUIZ-budget). */
   task: PlanTask;
   /** Demo mode. A 401 then keeps the learner on the screen. */
-  demo?: boolean;
+  demo: boolean;
   onUnauthorized: () => void;
   /** Leave the quiz screen. The session, if there is one, continues behind it. */
   onDone: () => void;
@@ -130,7 +131,7 @@ export interface QuizProps {
 export function Quiz({
   api,
   task,
-  demo = false,
+  demo,
   onUnauthorized,
   onDone,
   fromSession = false,
@@ -155,8 +156,6 @@ export function Quiz({
   // The end of the whole-quiz clock, in Unix milliseconds. Null until the first serve, and
   // null again once the quiz closes.
   const deadlineRef = useRef<number | null>(null);
-  // The interval of the clock, so the close can stop it before its next tick.
-  const clockRef = useRef(0);
 
   /**
    * Close the quiz. Every caller is a continuation that already checked the view is alive.
@@ -165,19 +164,14 @@ export function Quiz({
    * commit, and a tick between this call and that commit would write a number back over the
    * cleared clock and run the timeout path on a quiz that is over.
    */
-  const finish = useCallback(() => {
-    // The quiz closed, so its deadline goes with it. The service refuses a closed task with
-    // `409 task_complete`, so no later mount can spend the entry this drops. A quiz with no
-    // clock at all never wrote the entry.
+  /**
+   * The quiz is over. The done screen renders first, so nothing on the card needs clearing,
+   * and the clock effect lets go of its interval when the phase moves.
+   */
+  const finish = (): void => {
     deadlines.get(api)?.delete(task.task_id);
-    deadlineRef.current = null;
-    life.clearTimer(clockRef.current);
-    clockRef.current = 0;
-    setLeft(null);
-    setProblem(null);
-    problemRef.current = null;
     gate.enter('done');
-  }, [api, gate, life, task.task_id]);
+  };
 
   /**
    * Blank-submit whatever is left, so the service closes the quiz.
@@ -188,7 +182,7 @@ export function Quiz({
    */
   const fillBlanksRef = useRef<(guard?: number) => void>(() => {});
 
-  const fillBlanks = useCallback((guard = 0) => {
+  const fillBlanks = (guard = 0): void => {
     // The bound: a service that serves past its own count is a defect, not a loop.
     if (guard > total + 1) return;
     // Every caller stands on a live question: the timeout fires only after the first serve,
@@ -199,13 +193,15 @@ export function Quiz({
     void call(
       () => api.taskAnswer(task.task_id, { problem_id: current.problem_id, answer: '' }),
       (res) => {
+        // A view that left serves nothing more.
         if (!life.alive()) return undefined;
         if (!isQuizReceipt(res) || res.quiz_complete) { finish(); return undefined; }
         return call(() => api.taskServe(task.task_id), (next) => {
-          if (!life.alive()) return;
           // The ref only, NO `setProblem`: the end screen is next, and repainting each
           // intermediate question flashes them past the learner behind a frozen count and a
           // 0:00 clock. 1.0 makes the same choice explicitly (`quiz.js:134`).
+          // A view that left fills nothing more.
+          if (!life.alive()) return;
           problemRef.current = next;
           fillBlanksRef.current(guard + 1);
         });
@@ -217,21 +213,18 @@ export function Quiz({
         // this Retry moves the question: the one thing the gate tests is that the view is
         // still on screen (F-37-1b).
         retryGate: () => life.alive(),
-        // Every failure — the first and each retried one — leaves the card LOCKED. The
-        // clock is at zero, and a release to `ready` would let a submit post an answer
-        // after the deadline, which is the second attempt QUIZ-timeout exists to stop.
-        onFail: () => { if (life.alive() && !gate.is('done')) gate.enter('submitting'); },
       },
     );
-  }, [api, call, finish, gate, life, task.task_id, total]);
+  };
 
-  useEffect(() => { fillBlanksRef.current = fillBlanks; }, [fillBlanks]);
+  useEffect(() => { fillBlanksRef.current = fillBlanks; });
 
   /**
    * The clock ran out. Once per quiz: the effect below fires when `left` BECOMES zero, and
    * a clock read off the deadline never leaves zero again.
    */
-  const timeUp = useCallback(() => {
+  // Built ONCE: it reads the gate and two refs, and the effect that fires it holds it.
+  const [timeUp] = useState(() => (): void => {
     timedOutRef.current = true;
     toast(QUIZ_TIMEOUT_MESSAGE, { kind: 'info' });
     // QUIZ-timeout. An answer for this question is already in flight: the service has it,
@@ -239,8 +232,8 @@ export function Quiz({
     // log. Skip it. The in-flight continuation resumes the fill as soon as the next
     // question is served, so the quiz still closes.
     if (gate.is('submitting')) return;
-    fillBlanks();
-  }, [fillBlanks, gate]);
+    fillBlanksRef.current();
+  });
 
   // The first question. NO-2BILL: StrictMode runs a mount effect twice in development, and
   // `taskServe` is a write, so an unguarded serve is two writes on one mount.
@@ -248,7 +241,6 @@ export function Quiz({
     if (servedOnce.current) return;
     servedOnce.current = true;
     void call(() => api.taskServe(task.task_id), (s) => {
-      if (!life.alive()) return;
       setTotal(num(s.total));
       // The count is SERVER state. A quiz serve numbers the live question `answered + 1`
       // (`crates/web/src/serve.rs:159-164`), so the answers already in survive a re-mount
@@ -278,8 +270,11 @@ export function Quiz({
   // The updater is PURE. React runs a state updater during the RENDER phase whenever the
   // eager path is unavailable, so calling `timeUp()` from inside it issues a POST, a phase
   // write and a toast mid-render. Zero is detected in the effect below instead.
+  // The clock ticks while a budget is set and the quiz is not over. The deadline is read
+  // off the ref, so the interval survives every re-render in between.
+  const ticking = left !== null && phase !== 'done';
   useEffect(() => {
-    if (left === null || phase === 'done') return undefined;
+    if (!ticking) return undefined;
     // The clock has a value, so the deadline behind it is set: the serve wrote both.
     const end = deadlineRef.current!;
     const id = life.setInterval(() => {
@@ -287,20 +282,19 @@ export function Quiz({
       // tab, and a clock that counts ticks gives that throttled time back to the learner.
       setLeft(secsTo(end));
     }, 1000);
-    clockRef.current = id;
     return () => life.clearTimer(id);
-    // Both deps are BOOLEANS, so a tick re-render recomputes the same values and React
-    // skips the effect — the interval is armed when the clock starts, not on every second.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [left === null, phase === 'done']);
+  }, [ticking, life]);
 
   useEffect(() => { if (left === 0) timeUp(); }, [left, timeUp]);
 
   // Focus moves on every transition (spec section 4.5).
-  useEffect(() => { if (phase === 'ready') answerRef.current?.focus(); }, [phase, problem]);
-  useEffect(() => { if (phase === 'done') doneRef.current?.focus(); }, [phase]);
+  // Each control is on screen in the phase that focuses it, so the refs name them.
+  useEffect(() => {
+    if (phase === 'ready') answerRef.current!.focus();
+    else if (phase === 'done') doneRef.current!.focus();
+  }, [phase, problem]);
 
-  const submit = useCallback(() => {
+  const submit = (): void => {
     // Submit and Enter render beside a question, so the ref names one and the field is up.
     const current = problemRef.current!;
     const field = answerRef.current!;
@@ -318,15 +312,16 @@ export function Quiz({
         // defect, and the honest response to it is to end the quiz revealing NOTHING —
         // never to paint a verdict this screen is not allowed to show.
         if (!isQuizReceipt(res)) { finish(); return undefined; }
-        if (res.quiz_complete) { setRemaining(0); finish(); return undefined; }
+        // The done screen shows no count, so none is set here.
+        if (res.quiz_complete) { finish(); return undefined; }
         setRemaining(num(res.remaining));
         // A nested call, so this serve owns its own Retry. A failure here leaves the phase
         // at `submitting` — correct: there is nothing to submit until a question is up.
         return call(() => api.taskServe(task.task_id), (next) => {
+          // A view that left fills nothing more.
           if (!life.alive()) return;
           setProblem(next);
           problemRef.current = next;
-          field.clear();
           gate.enter('ready');
           // The clock ran out while this answer was in flight. Resume the fill now.
           if (timedOutRef.current) fillBlanks();
@@ -347,13 +342,13 @@ export function Quiz({
         // (F-37-1b). `timedOutRef` comes last: past the deadline the blank fill owns every
         // remaining post (QUIZ-timeout), and a retried answer is a second attempt.
         retryGate: () => life.alive()
-          && problemRef.current?.problem_id === current.problem_id
+          && problemRef.current!.problem_id === current.problem_id
           && !timedOutRef.current
           && gate.tryEnter('ready', 'submitting'),
         onFail: releaseOnFail(gate, 'submitting', 'ready'),
       },
     );
-  }, [api, call, fillBlanks, finish, gate, life, task.task_id]);
+  };
 
   if (phase === 'done') {
     return (
@@ -376,14 +371,16 @@ export function Quiz({
     );
   }
 
-  if (!problem) {
+  if (phase === 'loading') {
     return <section className="view-quiz"><LoadingBlock label="Loading the quiz…" /></section>;
   }
+  // Every phase after `loading` has a question on screen.
+  const question = problem!;
 
   return (
     // KEYED PER QUESTION. Without the key React reuses the input and the previous answer
     // pre-fills the next question.
-    <section className="view-quiz" key={problem.problem_id}>
+    <section className="view-quiz" key={question.problem_id}>
       <div className="task-header">
         <div className="task-meta">
           <Chip className="chip-quiz">quiz</Chip>
@@ -391,7 +388,7 @@ export function Quiz({
         </div>
         <div className="task-right">
           <span className="progress-count">
-            {`${num(problem.index)} / ${num(problem.total) || total}`}
+            {`${num(question.index)} / ${num(question.total) || total}`}
           </span>
           {left !== null ? (
             <span className={`timer${left <= QUIZ_URGENT_SECS ? ' urgent' : ''}`}>
@@ -402,7 +399,7 @@ export function Quiz({
       </div>
 
       <div className="card problem-card">
-        <MathBlock>{problem.text}</MathBlock>
+        <MathBlock>{question.text}</MathBlock>
 
         {/* No hint control: a hint inside a quiz is `409 no_hints_in_quiz`. */}
         <AnswerField ref={answerRef} disabled={phase !== 'ready'} onSubmit={submit} />

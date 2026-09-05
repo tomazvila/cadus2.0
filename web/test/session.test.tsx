@@ -20,6 +20,7 @@
 import { describe, expect, it, vi } from 'vitest';
 import { act, fireEvent, screen } from '@testing-library/react';
 import { networkFailure } from './helpers/api';
+import { blurThenSubmitEmpty } from './helpers/field';
 import {
   REVIEW, REWORK, P, answerInput, graded, mount, planOf, press, progressCount, stubApi,
   submitAnswer, submitButton, timer, typeAnswer, workInput,
@@ -91,13 +92,8 @@ describe('the study loop', () => {
   it('an empty answer posts nothing and returns the focus to the field', async () => {
     const taskAnswer = vi.fn<ApiClient['taskAnswer']>(async () => graded());
     await mount({ api: stubApi({ taskAnswer }) });
-    answerInput().blur();
-    expect(document.activeElement).not.toBe(answerInput());
-
-    await act(async () => { fireEvent.click(submitButton()); });
-
+    await blurThenSubmitEmpty(answerInput(), submitButton());
     expect(taskAnswer).not.toHaveBeenCalled();
-    expect(document.activeElement).toBe(answerInput());
   });
 
   it('a failed grade returns the problem to the learner instead of locking the card', async () => {

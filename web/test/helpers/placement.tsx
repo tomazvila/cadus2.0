@@ -36,7 +36,7 @@ export function stubDiag(over: Partial<DiagnosticApi> = {}): DiagnosticApi {
 /** The element the placement renders, with its two navigation spies. */
 export function placementProps(over: Partial<DiagnosticProps> = {}) {
   const handlers = { onUnauthorized: vi.fn(), onExit: vi.fn() };
-  const props: DiagnosticProps = { diag: stubDiag(), ...handlers, ...over };
+  const props: DiagnosticProps = { diag: stubDiag(), demo: false, ...handlers, ...over };
   return { props, handlers };
 }
 

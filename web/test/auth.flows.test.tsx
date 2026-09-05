@@ -19,7 +19,7 @@ beforeEach(() => {
 
 describe('the toggles', () => {
   it('moves between sign in and create account, and keeps the typed email', () => {
-    mount(<Auth api={stub()} />);
+    mount(<Auth api={stub()} onSignedIn={vi.fn()} />);
     type('Email', 'learner@example.com');
     type('Password', 'hunter2');
 
@@ -36,7 +36,7 @@ describe('the toggles', () => {
   });
 
   it('opens the forgot card from sign in, and comes back to sign in', () => {
-    mount(<Auth api={stub()} />);
+    mount(<Auth api={stub()} onSignedIn={vi.fn()} />);
     type('Password', 'hunter2');
     press('Forgot password?');
 
@@ -53,7 +53,7 @@ describe('the toggles', () => {
 describe('the field checks', () => {
   it('refuses an empty password without a request', async () => {
     const login = vi.fn(createDemoApi().login);
-    mount(<Auth api={stub({ login })} />);
+    mount(<Auth api={stub({ login })} onSignedIn={vi.fn()} />);
     type('Email', 'learner@example.com');
     press('Sign in');
 
@@ -64,7 +64,7 @@ describe('the field checks', () => {
 
   it('refuses an empty email on the forgot card without a request', async () => {
     const forgotPassword = vi.fn(async () => ({ ok: true as const }));
-    mount(<Auth api={stub({ forgotPassword })} mode="forgot" />);
+    mount(<Auth api={stub({ forgotPassword })} mode="forgot" onSignedIn={vi.fn()} />);
     press('Email me a reset link');
 
     expect(await alertText()).toBe('Enter your email.');
@@ -73,7 +73,7 @@ describe('the field checks', () => {
 
   it('renders a failed forgot request inline', async () => {
     const forgotPassword = vi.fn(async () => { throw new ApiError(429, 'rate_limited', 'Slow down.'); });
-    mount(<Auth api={stub({ forgotPassword })} mode="forgot" />);
+    mount(<Auth api={stub({ forgotPassword })} mode="forgot" onSignedIn={vi.fn()} />);
     type('Email', 'learner@example.com');
     press('Email me a reset link');
 
@@ -83,13 +83,19 @@ describe('the field checks', () => {
 
   it('refuses a short new password on the reset card without a request', async () => {
     const resetPassword = vi.fn(async () => ({ ok: true as const }));
-    mount(<Auth api={stub({ resetPassword })} mode="reset" token="t" />);
+    mount(<Auth api={stub({ resetPassword })} mode="reset" token="t" onSignedIn={vi.fn()} />);
     type('New password', 'short');
     press('Set new password');
 
     expect(await alertText()).toBe('Password must be at least 8 characters.');
     expect(document.activeElement).toBe(screen.getByLabelText('New password'));
     expect(resetPassword).not.toHaveBeenCalled();
+
+    // The line clears on the next try, which posts.
+    type('New password', 'hunter2hunter2');
+    press('Set new password');
+    await waitFor(() => expect(resetPassword).toHaveBeenCalledTimes(1));
+    expect((document.querySelector('.field-error') as HTMLElement).hidden).toBe(true);
   });
 });
 
@@ -99,7 +105,7 @@ describe('the check-email card', () => {
     mount(<Auth api={stub({
       signup: async () => ({ status: 'verification_required' as const, message: 'Check.' }),
       ...overrides,
-    })} mode="signup" />);
+    })} mode="signup" onSignedIn={vi.fn()} />);
     type('Email', 'new@example.com');
     type('Password', 'hunter2hunter2');
     press('Create account');
@@ -142,7 +148,7 @@ describe('the check-email card', () => {
 
 describe('the sent card', () => {
   it('swallows a submit of the card', async () => {
-    mount(<Auth api={stub({ forgotPassword: async () => ({ ok: true as const }) })} mode="forgot" />);
+    mount(<Auth api={stub({ forgotPassword: async () => ({ ok: true as const }) })} mode="forgot" onSignedIn={vi.fn()} />);
     type('Email', 'learner@example.com');
     press('Email me a reset link');
     const form = (await screen.findByText(/a password-reset link is on its way/)).closest('form')!;

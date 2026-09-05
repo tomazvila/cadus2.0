@@ -37,14 +37,14 @@ async function mountRebuilt(parts: Partial<DiagnosticApi>) {
   const { handlers } = placementProps();
   let view!: ReturnType<typeof render>;
   await act(async () => {
-    view = render(<Diagnostic diag={stubDiag(parts)} {...handlers} />, {
+    view = render(<Diagnostic diag={stubDiag(parts)} demo={false} {...handlers} />, {
       container: document.getElementById('view')!,
     });
   });
   await begin();
   await answer('5');
   return {
-    rerender: () => { view.rerender(<Diagnostic diag={stubDiag(parts)} {...handlers} />); },
+    rerender: () => { view.rerender(<Diagnostic diag={stubDiag(parts)} demo={false} {...handlers} />); },
   };
 }
 

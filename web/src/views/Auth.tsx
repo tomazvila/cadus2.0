@@ -17,7 +17,7 @@
  * `oauthProviders()`. An unconfigured provider is absent from that list, the list is empty,
  * and no third-party button reaches the page.
  */
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { toast } from '@/app/toast';
 import { BrandMark } from '@/components/primitives';
 import type { ApiClient, User } from '@/api';
@@ -81,10 +81,10 @@ export interface AuthProps {
   /** The single-use reset token, for `reset` mode. Absent, or undefined, in the others. */
   token?: string | undefined;
   /** Called with the account after a successful sign-in. */
-  onSignedIn?: (user: User) => void;
+  onSignedIn: (user: User) => void;
 }
 
-export function Auth({ api, mode: initialMode = 'login', token = '', onSignedIn }: AuthProps) {
+export function Auth({ api, mode: initialMode = 'login', token, onSignedIn }: AuthProps) {
   const [mode, setMode] = useState<AuthMode>(initialMode);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -100,46 +100,44 @@ export function Auth({ api, mode: initialMode = 'login', token = '', onSignedIn 
   // while the learner toggles between sign-in and sign-up. A failure leaves the list empty
   // and the page keeps email and password, which is the correct degradation.
   useEffect(() => {
-    let cancelled = false;
+    // A reply that lands after the view left writes state nobody renders, and a body the
+    // wrapper could not parse is a probe that failed: the catch below covers both.
     void api
       .oauthProviders()
       .then((res) => {
-        if (cancelled) return;
-        const list = res?.providers;
+        const list = res.providers;
         if (Array.isArray(list) && list.length) setProviders(list);
       })
       .catch(() => {
         /* no providers — email and password only */
       });
-    return () => {
-      cancelled = true;
-    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Focus the field the learner still has to fill. Only on a mode change: per keystroke it
   // would fight the caret.
   useEffect(() => {
+    // Each card renders the field its mode focuses, so the refs name one.
     if (mode === 'reset') {
-      passwordRef.current?.focus();
+      passwordRef.current!.focus();
       return;
     }
     if (mode === 'login' || mode === 'signup') {
-      (email ? passwordRef : emailRef).current?.focus();
+      (email ? passwordRef : emailRef).current!.focus();
       return;
     }
-    if (mode === 'forgot') emailRef.current?.focus();
+    if (mode === 'forgot') emailRef.current!.focus();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mode]);
 
-  const run = useCallback(async (fn: () => Promise<void>) => {
+  const run = async (fn: () => Promise<void>): Promise<void> => {
     setBusy(true);
     try {
       await fn();
     } finally {
       setBusy(false);
     }
-  }, []);
+  };
 
   /** The trimmed address a submit posts, or null once the empty-field line is on screen. */
   function takeEmail(e: React.FormEvent): string | null {
@@ -148,7 +146,7 @@ export function Auth({ api, mode: initialMode = 'login', token = '', onSignedIn 
     setError('');
     if (address) return address;
     setError('Enter your email.');
-    emailRef.current?.focus();
+    emailRef.current!.focus();
     return null;
   }
 
@@ -157,12 +155,12 @@ export function Auth({ api, mode: initialMode = 'login', token = '', onSignedIn 
     if (!address) return;
     if (!password) {
       setError('Enter your password.');
-      passwordRef.current?.focus();
+      passwordRef.current!.focus();
       return;
     }
     if (mode === 'signup' && password.length < MIN_PASSWORD_LENGTH) {
       setError('Password must be at least 8 characters.');
-      passwordRef.current?.focus();
+      passwordRef.current!.focus();
       return;
     }
 
@@ -170,7 +168,7 @@ export function Auth({ api, mode: initialMode = 'login', token = '', onSignedIn 
       try {
         if (mode === 'login') {
           const res = await api.login(address, password);
-          onSignedIn?.(res.user);
+          onSignedIn(res.user);
         } else {
           // Sign-up is non-enumerable: it signs nobody in and it answers the same object
           // for a new address and a registered one. The emailed link activates the account,
@@ -182,7 +180,7 @@ export function Auth({ api, mode: initialMode = 'login', token = '', onSignedIn 
       } catch (err) {
         // AUTH-inline: the line lands beside the field. Nothing routes anywhere.
         setError(messageFor(err as AuthFailure));
-        passwordRef.current?.focus();
+        passwordRef.current!.focus();
       }
     });
   }
@@ -207,18 +205,19 @@ export function Auth({ api, mode: initialMode = 'login', token = '', onSignedIn 
     setError('');
     if (password.length < MIN_PASSWORD_LENGTH) {
       setError('Password must be at least 8 characters.');
-      passwordRef.current?.focus();
+      passwordRef.current!.focus();
       return;
     }
     void run(async () => {
       try {
-        await api.resetPassword(token, password);
+        // The reset card is on because a link carried a token, so the prop names one.
+        await api.resetPassword(token!, password);
         toast('Password updated — sign in with your new password.', { kind: 'info' });
         setPassword('');
         setMode('login');
       } catch (err) {
         setError(messageFor(err as AuthFailure));
-        passwordRef.current?.focus();
+        passwordRef.current!.focus();
       }
     });
   }

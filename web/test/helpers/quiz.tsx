@@ -75,7 +75,7 @@ export function stubApi(over: Partial<ApiClient> = {}): ApiClient {
 export async function mount(over: Partial<QuizProps> = {}) {
   resetToasts();
   const handlers = { onUnauthorized: vi.fn(), onDone: vi.fn() };
-  const props: QuizProps = { api: stubApi(), task: QUIZ, ...handlers, ...over };
+  const props: QuizProps = { api: stubApi(), task: QUIZ, demo: false, ...handlers, ...over };
   const view = await renderInView(<Quiz {...props} />);
   return { ...view, ...handlers };
 }

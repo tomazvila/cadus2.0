@@ -181,6 +181,7 @@ describe('F-F2-2: a slow write never moves the learner', () => {
     };
     const props: DashboardProps = {
       api,
+      demo: false,
       onUnauthorized: vi.fn(),
       onSession: vi.fn(),
       onQuiz: vi.fn(),

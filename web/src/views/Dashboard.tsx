@@ -35,7 +35,7 @@
  * WHAT THIS UNIT DOES NOT OWN. There is no router yet, so the four navigation callbacks
  * are props. The unit that adds URL routing (spec section 4.1) supplies the real ones.
  */
-import { Fragment, useCallback, useEffect, useReducer } from 'react';
+import { Fragment, useEffect, useReducer } from 'react';
 import { useDialogs } from '@/components/Modal';
 import { LoadingBlock, Ring, Stat } from '@/components/primitives';
 import { useBusy } from '@/hooks/useBusy';
@@ -50,7 +50,7 @@ import type { ApiClient, JourneyCourse, PlanTask, StatusResponse } from '@/api/t
 export interface DashboardProps {
   api: ApiClient;
   /** Demo mode. A 401 then keeps the learner on the screen. */
-  demo?: boolean;
+  demo: boolean;
   /** The session-expired path of `useCall`. */
   onUnauthorized: () => void;
   /** Go to the study loop, after `POST /api/session/start` answers. */
@@ -114,7 +114,7 @@ function reduce(state: State, action: Action): State {
 
 export function Dashboard({
   api,
-  demo = false,
+  demo,
   onUnauthorized,
   onSession,
   onQuiz,
@@ -131,36 +131,33 @@ export function Dashboard({
   useEffect(() => {
     void call(
       () => api.getStatus(),
-      (status) => {
-        if (life.alive()) dispatch({ type: 'ok', gen, status });
-      },
+      // A reply after the view left writes state nobody renders.
+      (status) => { dispatch({ type: 'ok', gen, status }); },
     ).then((status) => {
-      if (!status && life.alive()) dispatch({ type: 'fail', gen });
+      if (!status) dispatch({ type: 'fail', gen });
     });
-  }, [api, call, life, gen]);
+  }, [api, call, gen]);
 
-  const reload = useCallback(() => dispatch({ type: 'reload' }), []);
+  // The moves below are plain functions, rebuilt per render, and read at event time.
+  const reload = (): void => { dispatch({ type: 'reload' }); };
 
-  const startSession = useCallback(async () => {
+  const startSession = async (): Promise<void> => {
     const started = await call(() => api.sessionStart());
     // F-F2-2: this navigation lands after an await, so the view must still own the screen.
     // Without the guard a slow `/session/start` pulls the learner out of a screen they
     // opened in the meantime.
     if (!started || !life.alive()) return;
     onSession();
-  }, [api, call, life, onSession]);
+  };
 
-  const doEnroll = useCallback(
-    async (course: JourneyCourse) => {
-      const res = await call(() => api.enroll(course.id));
-      if (!res || !life.alive()) return;
-      toast(`Enrolled in ${course.name}. Take the placement to get started.`, { kind: 'success' });
-      reload();
-    },
-    [api, call, life, reload],
-  );
+  const doEnroll = async (course: JourneyCourse): Promise<void> => {
+    const res = await call(() => api.enroll(course.id));
+    if (!res || !life.alive()) return;
+    toast(`Enrolled in ${course.name}. Take the placement to get started.`, { kind: 'success' });
+    reload();
+  };
 
-  const quizNow = useCallback(async () => {
+  const quizNow = async (): Promise<void> => {
     const started = await call(() => api.sessionStart());
     if (!started || !life.alive()) return;
     const plan = await call(() => api.getPlan());
@@ -173,29 +170,24 @@ export function Dashboard({
     // WITH the task, never the id alone: the quiz clock reads `time_budget_secs` of the
     // task, and a serve value is one question's expected time (QUIZ-budget).
     onQuiz(quiz);
-  }, [api, call, life, onQuiz]);
+  };
 
-  const switchCourse = useCallback(
-    async (courses: JourneyCourse[]) => {
-      const choice = await dialogs.open<string>((resolve) => (
-        <CoursePicker courses={courses} onDone={resolve} />
-      ));
-      const course = courses.find((c) => c.id === choice);
-      if (course) await doEnroll(course);
-    },
-    [dialogs, doEnroll],
-  );
+  const switchCourse = async (courses: JourneyCourse[]): Promise<void> => {
+    const choice = await dialogs.open<string>((resolve) => (
+      <CoursePicker courses={courses} onDone={resolve} />
+    ));
+    const course = courses.find((c) => c.id === choice);
+    if (course) await doEnroll(course);
+  };
 
   /** DEP-3. Read-only, through the cookie. See the module note above. */
-  const exportData = useCallback(async () => {
+  const exportData = async (): Promise<void> => {
     try {
       await api.downloadExport();
     } catch (e) {
-      toast((e as { message?: string } | null)?.message || 'Could not export your data.', {
-        kind: 'error',
-      });
+      toast((e as { message?: string } | null)?.message || 'Could not export your data.');
     }
-  }, [api]);
+  };
 
   // The error screen shows only while the NEWEST attempt is the failed one. The Retry of
   // the toast — the recovery path `useCall` offers — then clears it by succeeding, instead
@@ -280,7 +272,7 @@ export function Dashboard({
         </div>
         <div className="stat-grid">
           <Stat value={`${num(status.xp.streak_days)}`} label="day streak" className="accent" />
-          <Stat value={`${due}`} label="due now" className={due > 0 ? 'warn' : ''} />
+          <Stat value={`${due}`} label="due now" className={due > 0 ? 'warn' : undefined} />
           <Stat value={`${num(status.nearly_due)}`} label="nearly due" />
           <Stat value={`${frontier}`} label="frontier" />
           <Stat value={`${pct(status.velocity.course_progress)}%`} label="course" />

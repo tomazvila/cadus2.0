@@ -78,7 +78,7 @@ export function Chip({ children, className = '' }: { children: React.ReactNode; 
   return <span className={`chip ${className}`.trim()}>{children}</span>;
 }
 
-export function Stat({ value, label, className }: { value: string; label: string; className?: string }) {
+export function Stat({ value, label, className }: { value: string; label: string; className?: string | undefined }) {
   return (
     <div className={className ? `stat ${className}` : 'stat'}>
       <div className="stat-value">{value}</div>

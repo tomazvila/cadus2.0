@@ -27,7 +27,7 @@ describe('the view lifetime', () => {
     const taskServe = vi.fn<ApiClient['taskServe']>(async () => Q(1));
     await renderInView(
       <StrictMode>
-        <Quiz api={stubApi({ taskServe })} task={QUIZ} onUnauthorized={vi.fn()} onDone={vi.fn()} />
+        <Quiz api={stubApi({ taskServe })} task={QUIZ} demo={false} onUnauthorized={vi.fn()} onDone={vi.fn()} />
       </StrictMode>,
     );
     expect(taskServe).toHaveBeenCalledTimes(1);
@@ -93,13 +93,16 @@ describe('the view lifetime', () => {
   it('QUIZ-timeout: a blank fill that lands after the view left fills nothing more', async () => {
     vi.useFakeTimers();
     const grade = held<TaskAnswerResponse>();
+    const taskServe = vi.fn<ApiClient['taskServe']>(async () => Q(1));
     const taskAnswer = vi.fn<ApiClient['taskAnswer']>(() => grade.promise);
-    const view = await mount({ task: { ...QUIZ, time_budget_secs: 2 }, api: stubApi({ taskAnswer }) });
+    const view = await mount({ task: { ...QUIZ, time_budget_secs: 2 }, api: stubApi({ taskServe, taskAnswer }) });
     await tick(2000);
     expect(posted(taskAnswer)).toEqual([['q1', '']]);
 
     view.unmount();
     await act(async () => { grade.release(receipt({ remaining: 2 })); });
+    // Neither the next serve nor the next fill goes out from a view that left.
+    expect(taskServe).toHaveBeenCalledTimes(1);
     expect(posted(taskAnswer)).toEqual([['q1', '']]);
   });
 });

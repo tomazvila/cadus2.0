@@ -73,7 +73,7 @@ const nav = () => ({
 export async function mount(over: Partial<DashboardProps> = {}) {
   resetToasts();
   const handlers = nav();
-  const props: DashboardProps = { api: stubApi(), ...handlers, ...over };
+  const props: DashboardProps = { api: stubApi(), demo: false, ...handlers, ...over };
   const view = await renderInView(
     <DialogProvider>
       <Dashboard {...props} />

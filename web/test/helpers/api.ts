@@ -6,6 +6,7 @@
  * stale-Retry test starts from.
  */
 import { ApiError } from '@/api';
+import { held } from './held';
 
 /** The 503 every Retry test raises first. */
 export function busy(): ApiError {
@@ -42,6 +43,18 @@ export function appendOnlyGrade<R>(reply: () => R): (problemId: string) => R {
  * The attempt count starts at 1, so `reply(2)` is the first reply that lands. Wrap it in
  * `vi.fn<…>()` at the call site, so the mock carries the route's own signature.
  */
+/**
+ * A request that fails once with the busy line, and then waits to be released. The Retry
+ * of the first failure is what a test presses; `release` answers the retried request.
+ */
+export function failThenHold<R>() {
+  const second = held<R>();
+  const fn = vi.fn<() => Promise<R>>()
+    .mockRejectedValueOnce(busy())
+    .mockImplementation(() => second.promise);
+  return { fn, release: second.release };
+}
+
 export function flakyOnce<R>(reply: (attempt: number) => R): () => Promise<R> {
   let attempts = 0;
   return async () => {

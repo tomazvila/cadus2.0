@@ -8,7 +8,7 @@
 import { describe, expect, it, vi } from 'vitest';
 import { act, fireEvent, screen } from '@testing-library/react';
 import { ApiError } from '@/api';
-import { busy } from './helpers/api';
+import { busy, failThenHold } from './helpers/api';
 import { held } from './helpers/held';
 import { pressRetry } from './helpers/toasts';
 import { allowConsoleError } from './setup';
@@ -306,11 +306,8 @@ describe('the card', () => {
   });
 
   it('marks Submit busy while the grade is out, and on the Retry of a failed one', async () => {
-    const grade = held<TaskAnswerResponse>();
-    const taskAnswer = vi.fn<ApiClient['taskAnswer']>()
-      .mockRejectedValueOnce(busy())
-      .mockImplementation(() => grade.promise);
-    await mount({ api: stubApi({ taskAnswer }) });
+    const grade = failThenHold<TaskAnswerResponse>();
+    await mount({ api: stubApi({ taskAnswer: grade.fn }) });
 
     await submitAnswer('3/4');
     expect(submitButton().className).toBe('btn btn-primary');

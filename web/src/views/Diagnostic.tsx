@@ -30,7 +30,7 @@
  *
  * WHAT THIS UNIT DOES NOT OWN. There is no router yet, so navigation arrives as props.
  */
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { MathBlock } from '@/components/MathBlock';
 import { AnswerField, type AnswerFieldHandle } from '@/components/AnswerField';
 import { Chip, LoadingBlock } from '@/components/primitives';
@@ -51,7 +51,7 @@ import type { DiagFinishResponse, DiagProbe, DiagnosticApi } from '@/api/diag';
 
 export { DIAG_START_FAILED };
 
-type Phase = 'intro' | 'loading' | 'ready' | 'submitting' | 'feedback' | 'done';
+type Phase = 'intro' | 'loading' | 'ready' | 'submitting' | 'feedback' | 'closing' | 'done';
 
 /** The post-answer beat, in milliseconds. The 1.0 literal (`diagnostic.js:144`). */
 export const DIAG_BEAT_MS = 750;
@@ -67,13 +67,13 @@ export interface DiagnosticProps {
   /** The three placement calls. See `api/diag.ts` for why this is not on `ApiClient`. */
   diag: DiagnosticApi;
   /** Demo mode. A 401 then keeps the learner on the screen. */
-  demo?: boolean;
+  demo: boolean;
   onUnauthorized: () => void;
   /** Leave the placement. It resumes at this probe next time. */
   onExit: () => void;
 }
 
-export function Diagnostic({ diag, demo = false, onUnauthorized, onExit }: DiagnosticProps) {
+export function Diagnostic({ diag, demo, onUnauthorized, onExit }: DiagnosticProps) {
   const life = useLifetime();
   const call = useCall({ demo, onUnauthorized });
   const [phase, gate] = usePhase<Phase>('intro');
@@ -84,9 +84,6 @@ export function Diagnostic({ diag, demo = false, onUnauthorized, onExit }: Diagn
   const [result, setResult] = useState<ProbeResult | null>(null);
   const [summary, setSummary] = useState<DiagFinishResponse | null>(null);
   const [startFailed, setStartFailed] = useState(false);
-  // Tells the two `loading` moments apart. `qNum` cannot: a placement whose FIRST probe is
-  // also its last reaches the commit with `qNum` still 1.
-  const [finishing, setFinishing] = useState(false);
 
   const answerRef = useRef<AnswerFieldHandle>(null);
   const introRef = useRef<HTMLDivElement>(null);
@@ -97,33 +94,31 @@ export function Diagnostic({ diag, demo = false, onUnauthorized, onExit }: Diagn
   const probeRef = useRef<DiagProbe | null>(null);
 
   // R15: the briefing CARD holds the focus, not the CTA.
-  useEffect(() => { if (phase === 'intro') introRef.current?.focus(); }, [phase]);
-  useEffect(() => { if (phase === 'ready') answerRef.current?.focus(); }, [phase, probe]);
-  useEffect(() => { if (phase === 'done') homeRef.current?.focus(); }, [phase]);
+  // Each control is on screen in the phase that focuses it, so the refs name them.
+  useEffect(() => {
+    if (phase === 'intro') introRef.current!.focus();
+    else if (phase === 'ready') answerRef.current!.focus();
+    else if (phase === 'done') homeRef.current!.focus();
+  }, [phase, probe]);
 
-  const finish = useCallback(() => {
-    gate.enter('loading');
-    // Clear the probe, or the loading branch below (guarded on `!probe`) never runs and the
-    // learner sits on the answered question — with its tick and a live "Save & exit" —
-    // through a placement commit that takes seconds.
-    setProbe(null);
-    probeRef.current = null;
-    setResult(null);
-    setFinishing(true);
+  /** Commit the placement. `closing` renders the commit screen over the answered probe. */
+  const finish = (): void => {
+    gate.enter('closing');
     closeWith(call, gate, 'done', () => diag.diagFinish(), setSummary);
-  }, [call, diag, gate]);
+  };
 
   // `finish` is read through a ref so it stays OUT of the beat effect's dependency list. It
   // is a `useCallback` keyed on the transport, and a caller that rebuilds that object each
   // render would re-arm the beat on every re-render.
   const finishRef = useRef(finish);
-  useEffect(() => { finishRef.current = finish; }, [finish]);
+  useEffect(() => { finishRef.current = finish; });
 
-  const begin = useCallback(() => {
+  const begin = (): void => {
     // A repeated Enter or click cannot start two placements.
     if (!gate.tryEnter('intro', 'loading')) return;
     setStartFailed(false);
     void call(() => diag.diagStart(), (s) => {
+      // A view that left commits nothing.
       if (!life.alive()) return;
       // A restarted, exhausted placement answers `{"probe": null}`. Reading `.text` off
       // that blanks the screen; finishing is the honest response — there is nothing left
@@ -140,9 +135,9 @@ export function Diagnostic({ diag, demo = false, onUnauthorized, onExit }: Diagn
       // route the service does not mount would leave behind.
       if (!s && life.alive()) { setStartFailed(true); gate.enter('intro'); }
     });
-  }, [call, diag, gate, life]);
+  };
 
-  const send = useCallback((answer: string, skipped: boolean) => {
+  const send = (answer: string, skipped: boolean): void => {
     // THE REF, never the render value: a Retry re-enters this closure renders later, and a
     // captured probe is the stale one by then. Submit and Skip render beside a probe, so the
     // ref names one.
@@ -154,7 +149,6 @@ export function Diagnostic({ diag, demo = false, onUnauthorized, onExit }: Diagn
     void call(
       () => diag.diagAnswer({ problem_id: current.problem_id, answer }),
       (res) => {
-        if (!life.alive()) return;
         setResult({ res, skipped });
         gate.enter('feedback');
       },
@@ -172,12 +166,12 @@ export function Diagnostic({ diag, demo = false, onUnauthorized, onExit }: Diagn
         // so a learner who pressed "Save & exit" can still press this Retry, and DIAG-750
         // says an exit commits nothing behind their back (F-37-1b).
         retryGate: () => life.alive()
-          && probeRef.current?.problem_id === current.problem_id
+          && probeRef.current!.problem_id === current.problem_id
           && gate.tryEnter('ready', 'submitting'),
         onFail: releaseOnFail(gate, 'submitting', 'ready'),
       },
     );
-  }, [call, diag, gate, life]);
+  };
 
   /**
    * DIAG-750. The beat is armed in an EFFECT, registered in the lifetime, and cleared on
@@ -189,17 +183,19 @@ export function Diagnostic({ diag, demo = false, onUnauthorized, onExit }: Diagn
    * placement rows to an append-only log with no DELETE.
    */
   useEffect(() => {
-    if (phase !== 'feedback' || !result) return undefined;
-    const next = result.res.next_probe;
-    const isProbe = !!next && 'problem_id' in next && !!next.problem_id;
+    if (phase !== 'feedback') return undefined;
+    // A verdict is on screen in `feedback`, so the state holds one.
+    const next = result!.res.next_probe;
+    const isProbe = next != null && 'problem_id' in next && next.problem_id !== '';
 
     const id = life.setTimeout(() => {
       if (isProbe) {
-        setProbe(next as DiagProbe);
-        probeRef.current = next as DiagProbe;
+        setProbe(next);
+        probeRef.current = next;
         setResult(null);
         setQNum((n) => n + 1);
-        answerRef.current?.clear();
+        // The field is on screen under the verdict.
+        answerRef.current!.clear();
         gate.enter('ready');
       } else {
         finishRef.current();
@@ -208,13 +204,13 @@ export function Diagnostic({ diag, demo = false, onUnauthorized, onExit }: Diagn
     return () => life.clearTimer(id);
   }, [phase, result, life, gate]);
 
-  const submitTyped = useCallback(() => {
+  const submitTyped = (): void => {
     const field = answerRef.current!;
     const answer = field.value();
     // A blank Submit only refocuses. The honest way past a probe is Skip.
     if (!answer) { field.focus(); return; }
     send(answer, false);
-  }, [send]);
+  };
 
   if (phase === 'intro') {
     return <IntroCard cardRef={introRef} startFailed={startFailed} onBegin={begin} onExit={onExit} />;
@@ -224,24 +220,27 @@ export function Diagnostic({ diag, demo = false, onUnauthorized, onExit }: Diagn
     return <PlacementDone summary={summary} homeRef={homeRef} onExit={onExit} />;
   }
 
-  if (!probe) {
-    return (
-      <section className="view-diagnostic">
-        <LoadingBlock label={finishing ? 'Working out your placement…' : 'Starting the placement…'} />
-      </section>
-    );
+  if (phase === 'loading') {
+    return <section className="view-diagnostic"><LoadingBlock label="Starting the placement…" /></section>;
   }
+
+  if (phase === 'closing') {
+    return <section className="view-diagnostic"><LoadingBlock label="Working out your placement…" /></section>;
+  }
+
+  // Every phase after `loading` has a probe on screen.
+  const question = probe!;
 
   const locked = phase !== 'ready';
 
   return (
     // Keyed on the probe, so each question gets a FRESH input subtree. Without it React
     // reuses the nodes and the previous probe's answer pre-fills the next one.
-    <section className="view-diagnostic" key={probe.problem_id}>
+    <section className="view-diagnostic" key={question.problem_id}>
       <div className="task-header">
         <div className="task-meta">
           <Chip className="chip-accent">placement</Chip>
-          <span className="topic-name">{topicName(probe.topic)}</span>
+          <span className="topic-name">{topicName(question.topic)}</span>
         </div>
         <div className="task-right">
           <span className="progress-count">{`Question ${qNum} of up to ${cap}`}</span>
@@ -253,7 +252,7 @@ export function Diagnostic({ diag, demo = false, onUnauthorized, onExit }: Diagn
       </div>
 
       <div className="card problem-card">
-        <MathBlock>{probe.text}</MathBlock>
+        <MathBlock>{question.text}</MathBlock>
 
         <AnswerField ref={answerRef} disabled={locked} onSubmit={submitTyped} />
 
