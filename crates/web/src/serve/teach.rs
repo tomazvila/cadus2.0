@@ -27,10 +27,12 @@ pub async fn teach(
         ..
     } = open(&state, content, user_id, now, false).await?;
     let task = find(&plan, &task_id)?;
-    if task.task_type != TaskType::Lesson {
+    // Only a lesson teaches, and a lesson always names a topic to teach from.
+    // The one refusal covers a task of any other type; the composer never
+    // builds a lesson without a topic, so the two are one decision here.
+    let (TaskType::Lesson, Some(topic)) = (task.task_type, task.topic.clone()) else {
         return Err(no_instruction());
-    }
-    let topic = topic_or_refuse(task)?;
+    };
     let current = scratch
         .tasks
         .get(&task_id)
