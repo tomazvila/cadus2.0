@@ -26,10 +26,16 @@ use sqlx::{PgPool, Postgres, Transaction};
 use uuid::Uuid;
 
 pub mod auth;
+pub mod config;
 pub mod content;
 pub mod diagnosis;
 pub mod pool;
 pub mod state;
+
+pub use config::{
+    CLIENT_TIMEOUT_VAR, DEFAULT_CLIENT_TIMEOUT_MS, DEFAULT_STATEMENT_TIMEOUT_MS, DbConfig,
+    STATEMENT_TIMEOUT_VAR,
+};
 
 #[cfg(feature = "test-support")]
 pub mod test_support;
@@ -37,155 +43,6 @@ pub mod test_support;
 /// The migration set of the repository. `sqlx::migrate!` embeds the files at
 /// compile time, so the binaries carry the schema and need no file access.
 static MIGRATOR: sqlx::migrate::Migrator = sqlx::migrate!("../../migrations");
-
-/// The environment variable that holds the statement timeout, in milliseconds.
-pub const STATEMENT_TIMEOUT_VAR: &str = "DB_STATEMENT_TIMEOUT_MS";
-
-/// The statement timeout that applies when `DB_STATEMENT_TIMEOUT_MS` is absent.
-///
-/// `ACQUIRE_TIMEOUT` bounds the checkout of a connection and nothing after it.
-/// A database that accepts the socket and answers no query therefore holds the
-/// readiness probe of `cadus-web` and the tick of `cadus-worker` open without a
-/// bound. `statement_timeout` adds the server-side bound: the backend cancels
-/// the statement and reports SQLSTATE 57014. 5000 ms is longer than every M0
-/// query and shorter than every scrape interval in `deploy/Caddyfile`.
-pub const DEFAULT_STATEMENT_TIMEOUT_MS: u64 = 5000;
-
-/// The environment variable that holds the client-side query bound, in
-/// milliseconds.
-pub const CLIENT_TIMEOUT_VAR: &str = "DB_CLIENT_TIMEOUT_MS";
-
-/// The client-side query bound that applies when `DB_CLIENT_TIMEOUT_MS` is
-/// absent.
-///
-/// `statement_timeout` is a server-side bound: the server cancels the statement
-/// and reports SQLSTATE 57014, so that bound needs a live server. sqlx 0.9 sets
-/// no TCP keepalive, so a server that disappears in the middle of a query
-/// leaves the caller in a read that the kernel never ends. `bounded` adds the
-/// client-side bound for that case. 10000 ms is longer than
-/// `DEFAULT_STATEMENT_TIMEOUT_MS`, so a live server answers 57014 first and the
-/// client-side bound stays the last resort.
-pub const DEFAULT_CLIENT_TIMEOUT_MS: u64 = 10_000;
-
-/// The connection configuration of the store.
-#[derive(Clone)]
-pub struct DbConfig {
-    pub database_url: String,
-    /// The `statement_timeout` of every connection of the pool, in
-    /// milliseconds. 0 turns the timeout off.
-    pub statement_timeout_ms: u64,
-    /// The client-side bound of one query, in milliseconds. 0 turns the bound
-    /// off. `bounded` applies it.
-    pub client_timeout_ms: u64,
-}
-
-impl DbConfig {
-    /// Build a configuration from a connection string with the default
-    /// statement timeout.
-    pub fn new(database_url: impl Into<String>) -> Self {
-        Self {
-            database_url: database_url.into(),
-            statement_timeout_ms: DEFAULT_STATEMENT_TIMEOUT_MS,
-            client_timeout_ms: DEFAULT_CLIENT_TIMEOUT_MS,
-        }
-    }
-
-    /// Read `DATABASE_URL`, `DB_STATEMENT_TIMEOUT_MS`, and
-    /// `DB_CLIENT_TIMEOUT_MS` from the environment.
-    ///
-    /// The function returns `StoreError::Config` when `DATABASE_URL` is absent,
-    /// empty, or not valid Unicode, and when `DB_STATEMENT_TIMEOUT_MS` or
-    /// `DB_CLIENT_TIMEOUT_MS` holds anything other than a whole number of
-    /// milliseconds. An absent bound variable gives the default of that
-    /// bound.
-    pub fn from_env() -> Result<Self, StoreError> {
-        let database_url = match std::env::var("DATABASE_URL") {
-            Ok(url) if url.is_empty() => {
-                return Err(StoreError::Config("DATABASE_URL is empty".to_string()));
-            }
-            Ok(url) => url,
-            Err(std::env::VarError::NotPresent) => {
-                return Err(StoreError::Config("DATABASE_URL is not set".to_string()));
-            }
-            Err(std::env::VarError::NotUnicode(_)) => {
-                return Err(StoreError::Config(
-                    "DATABASE_URL is not valid Unicode".to_string(),
-                ));
-            }
-        };
-
-        let raw = match std::env::var(STATEMENT_TIMEOUT_VAR) {
-            Ok(value) => Some(value),
-            Err(std::env::VarError::NotPresent) => None,
-            Err(std::env::VarError::NotUnicode(_)) => {
-                return Err(StoreError::Config(format!(
-                    "{STATEMENT_TIMEOUT_VAR} is not valid Unicode"
-                )));
-            }
-        };
-
-        let raw_client = match std::env::var(CLIENT_TIMEOUT_VAR) {
-            Ok(value) => Some(value),
-            Err(std::env::VarError::NotPresent) => None,
-            Err(std::env::VarError::NotUnicode(_)) => {
-                return Err(StoreError::Config(format!(
-                    "{CLIENT_TIMEOUT_VAR} is not valid Unicode"
-                )));
-            }
-        };
-
-        Ok(Self {
-            database_url,
-            statement_timeout_ms: parse_statement_timeout(raw.as_deref())?,
-            client_timeout_ms: parse_client_timeout(raw_client.as_deref())?,
-        })
-    }
-}
-
-/// Read the statement timeout from the raw value of the variable.
-///
-/// `None` means the variable is absent, so the default applies. Every other
-/// value must be a whole number of milliseconds. A value that is not a whole
-/// number is a configuration error: the store never guesses a bound that an
-/// operator wrote by hand.
-fn parse_statement_timeout(raw: Option<&str>) -> Result<u64, StoreError> {
-    match raw {
-        None => Ok(DEFAULT_STATEMENT_TIMEOUT_MS),
-        Some(value) => value.parse::<u64>().map_err(|_| {
-            StoreError::Config(format!(
-                "{STATEMENT_TIMEOUT_VAR} must be a whole number of milliseconds, not {value:?}"
-            ))
-        }),
-    }
-}
-
-/// Read the client-side query bound from the raw value of the variable.
-///
-/// The rule is the rule of `parse_statement_timeout`: `None` gives the default,
-/// a whole number passes through, 0 turns the bound off, and every other value
-/// is a configuration error.
-fn parse_client_timeout(raw: Option<&str>) -> Result<u64, StoreError> {
-    match raw {
-        None => Ok(DEFAULT_CLIENT_TIMEOUT_MS),
-        Some(value) => value.parse::<u64>().map_err(|_| {
-            StoreError::Config(format!(
-                "{CLIENT_TIMEOUT_VAR} must be a whole number of milliseconds, not {value:?}"
-            ))
-        }),
-    }
-}
-
-/// The connection string holds the database password. Keep it out of every log
-/// line and every panic message.
-impl std::fmt::Debug for DbConfig {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        f.debug_struct("DbConfig")
-            .field("database_url", &"<redacted>")
-            .field("statement_timeout_ms", &self.statement_timeout_ms)
-            .field("client_timeout_ms", &self.client_timeout_ms)
-            .finish()
-    }
-}
 
 /// The identity and the row-level-security status of the connected role.
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -436,68 +293,7 @@ pub async fn begin_tenant(
 
 #[cfg(test)]
 mod tests {
-    use super::{
-        DEFAULT_CLIENT_TIMEOUT_MS, DEFAULT_STATEMENT_TIMEOUT_MS, DbConfig, StoreError,
-        parse_client_timeout, parse_statement_timeout,
-    };
-
-    /// R4: an absent variable gives the documented default of 5000 ms.
-    #[test]
-    fn an_absent_statement_timeout_gives_the_default() {
-        assert_eq!(parse_statement_timeout(None).unwrap(), 5000);
-        assert_eq!(DEFAULT_STATEMENT_TIMEOUT_MS, 5000);
-        assert_eq!(DbConfig::new("postgresql://h/d").statement_timeout_ms, 5000);
-    }
-
-    /// The client-side bound follows the same three rules, with a default of
-    /// 10000 ms. `DB_CLIENT_TIMEOUT_MS=300` gives the 300 ms bound that
-    /// `tests/client_timeout.rs` applies.
-    #[test]
-    fn the_client_timeout_reads_the_same_three_rules() {
-        assert_eq!(parse_client_timeout(None).unwrap(), 10000);
-        assert_eq!(DEFAULT_CLIENT_TIMEOUT_MS, 10000);
-        assert_eq!(DbConfig::new("postgresql://h/d").client_timeout_ms, 10000);
-        assert_eq!(parse_client_timeout(Some("300")).unwrap(), 300);
-        assert_eq!(parse_client_timeout(Some("0")).unwrap(), 0);
-
-        for raw in ["", "5s", "-1", "2.5", "10000ms"] {
-            let err = parse_client_timeout(Some(raw))
-                .expect_err("a value that is not a whole number must be an error");
-            let StoreError::Config(message) = err else {
-                panic!("expected StoreError::Config for {raw:?}, got {err}");
-            };
-            assert_eq!(
-                message,
-                format!("DB_CLIENT_TIMEOUT_MS must be a whole number of milliseconds, not {raw:?}")
-            );
-        }
-    }
-
-    /// A whole number passes through unchanged. 0 turns the timeout off.
-    #[test]
-    fn a_whole_number_passes_through() {
-        assert_eq!(parse_statement_timeout(Some("200")).unwrap(), 200);
-        assert_eq!(parse_statement_timeout(Some("0")).unwrap(), 0);
-    }
-
-    /// A value that is not a whole number is a configuration error. The store
-    /// stops instead of a silent fall back to the default.
-    #[test]
-    fn a_value_that_is_not_a_whole_number_is_a_configuration_error() {
-        for raw in ["", "5s", "-1", "2.5", "5000ms"] {
-            let err = parse_statement_timeout(Some(raw))
-                .expect_err("a value that is not a whole number must be an error");
-            let StoreError::Config(message) = err else {
-                panic!("expected StoreError::Config for {raw:?}, got {err}");
-            };
-            assert_eq!(
-                message,
-                format!(
-                    "DB_STATEMENT_TIMEOUT_MS must be a whole number of milliseconds, not {raw:?}"
-                )
-            );
-        }
-    }
+    use super::{DEFAULT_CLIENT_TIMEOUT_MS, DbConfig};
 
     /// The timeout reaches the startup options of the connection as the literal
     /// `-c statement_timeout=<ms>`. 0 adds no option at all.
@@ -517,5 +313,12 @@ mod tests {
             client_timeout_ms: DEFAULT_CLIENT_TIMEOUT_MS,
         };
         assert_eq!(super::connect_options(&off).unwrap().get_options(), None);
+    }
+
+    /// A connection string that does not parse is a store error, not a panic.
+    #[test]
+    fn a_connection_string_that_does_not_parse_is_an_error() {
+        let err = super::connect_options(&DbConfig::new("not a url")).unwrap_err();
+        assert!(err.to_string().starts_with("database error: "), "{err}");
     }
 }

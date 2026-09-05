@@ -18,7 +18,9 @@ def cargo(root):
     missed = [o for o in data["outcomes"] if o["summary"] == "MissedMutant"]
     for outcome in missed:
         scenario = outcome["scenario"]["Mutant"]
-        print(f"{scenario['file']}:{scenario['function']['function_name']} {scenario['genre']} survived")
+        function = scenario.get("function") or {}
+        where = function.get("function_name") or f"line {scenario.get('span', {}).get('start', {}).get('line', '?')}"
+        print(f"{scenario['file']}:{where} {scenario['genre']} survived")
     print(f"cargo mutants: {data['total_mutants']} mutants, {len(missed)} survived")
     return len(missed)
 

@@ -51,61 +51,45 @@
 //! one slow sample: a shared runner produces those, and a flaky gate blocks good
 //! work (spec section 10.2).
 
-#![allow(
-    clippy::unwrap_used,
-    clippy::expect_used,
-    clippy::panic,
-    clippy::todo,
-    clippy::unimplemented
-)]
+#![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
 
-use std::collections::BTreeMap;
-use std::path::{Path, PathBuf};
-use std::time::Instant;
+mod common;
 
-use cadus_core::config::Config;
-use cadus_core::curriculum::{Curriculum, load_curriculum};
-use cadus_core::event::{
-    AnswerKind, Attempt, AttemptProblem, Event, SchemaVersion, Secs, SessionStart, Slug, TaskType,
-    Timestamp, WorkQuality,
-};
-use cadus_core::learner::problem_text_hash;
-use cadus_core::pool::{
-    Avoid, POOL_ROW_VERSION, PoolAnswer, PoolProblem, Ring, Source, TaskMemory,
-};
+use cadus_core::event::{Event, SchemaVersion, SessionStart, Timestamp};
+use cadus_core::pool::Avoid;
 use cadus_core::projector::ProjectionInput;
 use cadus_store::diagnosis::{JobPayload, PAYLOAD_VERSION, enqueue};
-use cadus_store::pool::{NewInstance, insert_batch, pop_with_ring_tx};
 use cadus_store::state::{
     append_event, load_events, load_web_state, lock_web_state, project_and_save, project_current,
-    save_web_state,
 };
 use cadus_store::test_support::TestDb;
 use cadus_store::{StoreError, begin_tenant};
+use common::bench::{
+    Percentiles, Run, Snapshot, append_and_fold, artifact_json, claim_and_commit, curriculum,
+    delete_job, dsn_set, finish_seed, profile, report, restore, snapshot, timed, timed_rounds,
+    timed_step, write_artifact,
+};
+use common::events::{BASE_US, Fixture, attempt_row};
 use serde_json::{Value as Json, json};
 use sqlx::PgPool;
 use uuid::Uuid;
 
-/// The Unix microsecond instant of 2026-01-01T00:00:00Z.
-const BASE_US: i64 = 1_767_225_600_000_000;
-
-/// The session every seeded event belongs to.
+/// The session of every event of the fixture.
 const SESSION: &str = "s_2026-01-01a";
 
-/// The topic of every seeded attempt.
+/// The topic of every attempt of the fixture.
 const TOPIC: &str = "adding-integers";
 
 /// The serving key of the pool rows.
 const KP_ID: &str = "adding-integers/kp1";
 
-/// The task the attempts belong to.
+/// The task id of every attempt of the fixture.
 const TASK_ID: &str = "s_2026-01-01a-review-adding-integers";
 
-/// The count of attempt events the fixture log carries before the run.
+/// The attempts the fixture log carries before the first sample.
 ///
-/// A learner some weeks into a course carries a log of this order. The fold of
-/// every sample reads all of them, so the number is part of what the p95 below
-/// describes.
+/// One session of 200 graded attempts is one long session of a learner, and
+/// the fold of every sample reads them all.
 const SEEDED_ATTEMPTS: usize = 200;
 
 /// The unclaimed rows the fixture puts in the pool.
@@ -120,116 +104,21 @@ const WARMUPS: usize = 20;
 /// The timed transactions.
 const SAMPLES: usize = 200;
 
-/// The p95 budget of one grade transaction, in nanoseconds: 150 ms of the 300 ms
-/// of L2 (`docs/reference/l1-budget.md`).
+/// The p95 budget of one grade transaction, in nanoseconds: the 150 ms
+/// Postgres segment of L2 (`docs/reference/l1-budget.md` section 3).
 const P95_BUDGET_NS: u128 = 150_000_000;
-
-/// The environment variable that turns the benchmarks on.
-const BENCH_VAR: &str = "CADUS_BENCH";
-
-/// The environment variable that moves the artifact directory.
-const ARTIFACT_DIR_VAR: &str = "CADUS_BENCH_DIR";
-
-/// The environment variable that names the throwaway cluster.
-const TEST_DSN_VAR: &str = "CADUS_TEST_DATABASE_URL";
-
-// ---------------------------------------------------------------------------
-// Percentiles and the artifact
-// ---------------------------------------------------------------------------
-
-/// The `percent` percentile of a sorted sample, by the nearest-rank rule.
-///
-/// The rank is `ceil(percent * n / 100)`, counted from one. The arithmetic is
-/// integer arithmetic, so no float enters a reported number (D6).
-fn percentile(sorted: &[u128], percent: u128) -> u128 {
-    assert!(!sorted.is_empty(), "a percentile needs a sample");
-    let count = sorted.len() as u128;
-    let rank = (percent * count).div_ceil(100).max(1);
-    let index = usize::try_from(rank - 1).unwrap_or(0);
-    sorted[index.min(sorted.len() - 1)]
-}
-
-/// The p50, p95, p99, and maximum of a sample of nanosecond durations.
-struct Percentiles {
-    p50: u128,
-    p95: u128,
-    p99: u128,
-    max: u128,
-}
-
-impl Percentiles {
-    /// Read the percentiles of one sample. The function sorts its own copy.
-    fn of(samples: &[u128]) -> Self {
-        let mut sorted = samples.to_vec();
-        sorted.sort_unstable();
-        Self {
-            p50: percentile(&sorted, 50),
-            p95: percentile(&sorted, 95),
-            p99: percentile(&sorted, 99),
-            max: *sorted.last().unwrap(),
-        }
-    }
-}
-
-/// Write the benchmark artifact and print its path.
-fn write_artifact(body: &str) {
-    let dir = match std::env::var_os(ARTIFACT_DIR_VAR) {
-        Some(value) => PathBuf::from(value),
-        None => Path::new(env!("CARGO_MANIFEST_DIR")).join("../../target/bench"),
-    };
-    std::fs::create_dir_all(&dir).unwrap_or_else(|err| panic!("create {}: {err}", dir.display()));
-    let path = dir.join("benchmark-b-grade.json");
-    std::fs::write(&path, body).unwrap_or_else(|err| panic!("write {}: {err}", path.display()));
-    println!("artifact: {}", path.display());
-}
-
-/// The name of the build profile, for the artifact.
-fn profile() -> &'static str {
-    if cfg!(debug_assertions) {
-        "debug"
-    } else {
-        "release"
-    }
-}
-
-// ---------------------------------------------------------------------------
-// The fixture
-// ---------------------------------------------------------------------------
-
-/// The committed curriculum tree. The fold of every sample reads it, so the
-/// benchmark folds against the arena the deployment folds against.
-fn curriculum() -> Curriculum {
-    let root = Path::new(env!("CARGO_MANIFEST_DIR")).join("../../curriculum");
-    let (graph, _) = load_curriculum(&root)
-        .unwrap_or_else(|err| panic!("the curriculum at {} did not load: {err}", root.display()));
-    graph
-}
 
 /// One graded attempt on [`TOPIC`].
 fn attempt_event(attempt_id: &str, index: usize) -> Event {
-    Event::Attempt(Attempt {
-        ts: Timestamp::from_micros(BASE_US + (index as i64) * 60_000_000),
-        session: Some(SESSION.to_string()),
-        v: SchemaVersion,
-        attempt_id: attempt_id.to_string(),
-        task_id: TASK_ID.to_string(),
-        topic: Slug::new(TOPIC).unwrap(),
-        kp: None,
-        task_type: TaskType::Review,
-        problem: AttemptProblem {
-            text: format!("Compute ${index} + 5$."),
-            expected: (index + 5).to_string(),
-        },
-        given_answer: (index + 5).to_string(),
-        work: None,
-        answer_kind: Some(AnswerKind::Numeric),
-        correct: true,
-        secs: Secs::new(12).unwrap(),
-        error_tags: Vec::new(),
-        work_quality: WorkQuality::NearlyPerfect,
-        grader_note: Some("deterministic".to_string()),
-        assisted: false,
-    })
+    attempt_row(
+        Timestamp::from_micros(BASE_US + (index as i64) * 60_000_000),
+        SESSION,
+        TASK_ID,
+        TOPIC,
+        attempt_id,
+        format!("Compute ${index} + 5$."),
+        (index + 5).to_string(),
+    )
 }
 
 /// The A4 job document one grade enqueues (spec section 6.3).
@@ -249,46 +138,13 @@ fn job_payload(index: usize) -> Json {
     .unwrap()
 }
 
-/// Pool row `index`, in the shape the D-O4 refill inserts (D-S5).
-fn new_instance(index: usize) -> NewInstance {
-    let text = format!("Compute ${} + 11$.", index + 1);
-    let mut bindings = BTreeMap::new();
-    bindings.insert("a".to_string(), (index + 1).to_string());
-    NewInstance {
-        source: Source::Template,
-        content_digest: None,
-        instance_hash: problem_text_hash(&text),
-        problem: PoolProblem {
-            v: POOL_ROW_VERSION,
-            text,
-            bindings,
-            seed: BATCH_SEED,
-        },
-        expected_answer: PoolAnswer {
-            v: POOL_ROW_VERSION,
-            answer: (index + 12).to_string(),
-        },
-    }
-}
-
-/// The state of the fixture the run restores between samples.
-struct Snapshot {
-    /// The `learner_models` document before the first timed sample.
-    model: Json,
-    /// The `through_seq` of that row.
-    through_seq: i64,
-    /// The `projector_version` of that row.
-    projector_version: i32,
-    /// The `config_hash` of that row.
-    config_hash: String,
-}
-
 /// Seed one user, one session-start event, [`SEEDED_ATTEMPTS`] attempts, the
 /// D-S6 row, and the pool.
 ///
 /// The seeds run on the admin pool, which bypasses row-level security, exactly
 /// as the worker does with `cadus_admin` (D-O4).
-async fn seed(db: &TestDb, graph: &Curriculum, cfg: &Config) -> (Uuid, Ring, TaskMemory) {
+async fn seed(db: &TestDb) -> Run {
+    let fixture = Fixture::of(curriculum());
     let user = db.seed_user("bench-grade@example.test").await;
 
     let mut tx = begin_tenant(&db.admin, user).await.unwrap();
@@ -310,95 +166,24 @@ async fn seed(db: &TestDb, graph: &Curriculum, cfg: &Config) -> (Uuid, Ring, Tas
             .await
             .unwrap();
     }
-    let input = ProjectionInput::new(graph, cfg, Timestamp::from_micros(BASE_US));
-    project_and_save(&mut tx, user, &input, None).await.unwrap();
+    project_and_save(&mut tx, user, &fixture.input(), None)
+        .await
+        .unwrap();
     tx.commit().await.unwrap();
 
-    let rows: Vec<NewInstance> = (0..POOL_DEPTH).map(new_instance).collect();
-    let inserted = insert_batch(&db.admin, user, KP_ID, &rows).await.unwrap();
-    assert_eq!(
-        inserted, POOL_DEPTH as u64,
-        "insert_batch skipped a digest, so the pool is not the depth it claims"
-    );
-
-    let mut ring = Ring::new();
-    for filler in 0..Ring::capacity() {
-        ring.push(&problem_text_hash(&format!("An older problem {filler}.")));
-    }
-    let mut task = TaskMemory::new();
-    for filler in 0..TaskMemory::capacity() {
-        task.push(&problem_text_hash(&format!("A task problem {filler}.")));
-    }
-
-    sqlx::query!(
-        "INSERT INTO web_states (user_id, doc) VALUES ($1, $2)",
-        user,
-        json!({"served": {}, "ring": ring, "task_memory": task})
-    )
-    .execute(&db.admin)
-    .await
-    .unwrap();
-
-    (user, ring, task)
-}
-
-/// Read the `learner_models` row of `user`.
-async fn snapshot(pool: &PgPool, user: Uuid) -> Snapshot {
-    let row = sqlx::query!(
-        r#"SELECT model AS "model!", through_seq AS "through_seq!",
-                  projector_version AS "projector_version!", config_hash AS "config_hash!"
-             FROM learner_models WHERE user_id = $1"#,
-        user
-    )
-    .fetch_one(pool)
-    .await
-    .unwrap();
-    Snapshot {
-        model: row.model,
-        through_seq: row.through_seq,
-        projector_version: row.projector_version,
-        config_hash: row.config_hash,
-    }
+    finish_seed(db, fixture, user, KP_ID, POOL_DEPTH, BATCH_SEED).await
 }
 
 /// Put the fixture back the way the run found it, outside the measured window.
-async fn restore(pool: &PgPool, user: Uuid, attempt_id: &str, claimed: Uuid, snap: &Snapshot) {
-    sqlx::query!(
-        "DELETE FROM events WHERE user_id = $1 AND attempt_id = $2",
-        user,
-        attempt_id
-    )
-    .execute(pool)
-    .await
-    .unwrap();
-    sqlx::query!(
-        "DELETE FROM diagnosis_jobs WHERE user_id = $1 AND attempt_id = $2",
-        user,
-        attempt_id
-    )
-    .execute(pool)
-    .await
-    .unwrap();
-    sqlx::query!(
-        "UPDATE serving_pool SET claimed_at = NULL WHERE id = $1",
-        claimed
-    )
-    .execute(pool)
-    .await
-    .unwrap();
-    sqlx::query!(
-        "UPDATE learner_models
-            SET model = $2, through_seq = $3, projector_version = $4, config_hash = $5
-          WHERE user_id = $1",
-        user,
-        snap.model,
-        snap.through_seq,
-        snap.projector_version,
-        snap.config_hash
-    )
-    .execute(pool)
-    .await
-    .unwrap();
+async fn restore_grade(
+    pool: &PgPool,
+    user: Uuid,
+    attempt_id: &str,
+    claimed: Uuid,
+    snap: &Snapshot,
+) {
+    delete_job(pool, user, attempt_id).await;
+    restore(pool, user, attempt_id, claimed, snap).await;
 }
 
 // ---------------------------------------------------------------------------
@@ -449,21 +234,13 @@ async fn grade_once(
         .unwrap_or_else(|| json!({}));
 
     let event = attempt_event(attempt_id, index);
-    let seq = append_event(&mut tx, user, &event, Some(attempt_id))
-        .await?
-        .expect("the attempt is new, so the append returns a seq");
-    let projection = project_and_save(&mut tx, user, input, None).await?;
+    let (seq, projection) = append_and_fold(&mut tx, user, input, &event, Some(attempt_id)).await?;
     enqueue(&mut tx, user, attempt_id, &job_payload(index)).await?;
-    let claimed = pop_with_ring_tx(&mut tx, user, KP_ID, avoid)
-        .await?
-        .claimed
-        .expect("the pool holds an unclaimed row");
-    save_web_state(&mut tx, user, &doc).await?;
-    tx.commit().await?;
+    let claimed = claim_and_commit(tx, user, KP_ID, avoid, &doc).await?;
 
     Ok(Graded {
         seq,
-        claimed: claimed.row.id,
+        claimed,
         replayed: projection.replayed,
         resume_replayed: resumed.replayed,
         resumed_through: resumed.through_seq,
@@ -472,8 +249,8 @@ async fn grade_once(
     })
 }
 
-/// Run `rounds` untimed grade transactions and return the snapshot every later
-/// restore writes back.
+/// Seed the fixture and run `rounds` untimed grade transactions; return the
+/// run and the snapshot every later restore writes back.
 ///
 /// The snapshot is taken BEFORE the first grade of the run, and every restore
 /// of the run writes back that one snapshot. A snapshot taken AFTER a grade
@@ -481,24 +258,25 @@ async fn grade_once(
 /// behind, and a cursor the log does not hold sends the step-5 fold down the
 /// full-replay branch and the step-7 fold down the "nothing new" branch: the
 /// appended attempt is never folded and the row goes back unchanged (M5 review
-/// 2, finding V10).
-async fn warm_up(
-    db: &TestDb,
-    app: &PgPool,
-    user: Uuid,
-    input: &ProjectionInput<'_>,
-    avoid: &Avoid<'_>,
-    rounds: usize,
-) -> Snapshot {
-    let snap = snapshot(&db.admin, user).await;
+/// 2, finding V10). The answer checks that the cursor names the head of the
+/// restored log.
+async fn warmed(db: &TestDb, rounds: usize) -> (Run, Snapshot) {
+    let run = seed(db).await;
+    let (input, avoid) = run.views();
+    let snap = snapshot(&db.admin, run.user).await;
     for index in 0..rounds {
         let id = format!("warmup-{index}");
-        let graded = grade_once(app, user, input, &id, index, avoid)
+        let graded = grade_once(&run.app, run.user, &input, &id, index, &avoid)
             .await
             .unwrap_or_else(|err| panic!("warm-up {index} did not grade: {err}"));
-        restore(&db.admin, user, &id, graded.claimed, &snap).await;
+        restore_grade(&db.admin, run.user, &id, graded.claimed, &snap).await;
     }
-    snap
+    assert_eq!(
+        snap.through_seq,
+        SEEDED_ATTEMPTS as i64 + 1,
+        "the restored cursor must name the head of the restored log"
+    );
+    (run, snap)
 }
 
 // ---------------------------------------------------------------------------
@@ -508,108 +286,61 @@ async fn warm_up(
 /// Benchmark B: 200 grade transactions hold the 150 ms segment of L2.
 #[tokio::test]
 async fn benchmark_b_grade_transaction_holds_the_l2_segment() {
-    if std::env::var_os(BENCH_VAR).is_none() {
-        println!("SKIPPED benchmark B (grade): {BENCH_VAR} is not set");
+    if !timed() {
+        println!("SKIPPED benchmark B (grade): CADUS_BENCH is not set");
         return;
     }
-    if std::env::var_os(TEST_DSN_VAR).is_none() {
-        println!("SKIPPED benchmark B (grade): {TEST_DSN_VAR} is not set");
+    if !dsn_set("benchmark B (grade)") {
         return;
     }
     TestDb::with(|db| async move {
-        let graph = curriculum();
-        let cfg = Config::default();
-        let (user, ring, task) = seed(&db, &graph, &cfg).await;
-        let input = ProjectionInput::new(&graph, &cfg, Timestamp::from_micros(BASE_US));
-        let avoid = Avoid::new(&ring, &task);
-        // One connection, no concurrency: the benchmark measures the shape of
-        // the transaction and never the contention of a pool (spec 10.2).
-        let app = db.pool_as("cadus_app", 1).await;
-
-        let snap = warm_up(&db, &app, user, &input, &avoid, WARMUPS).await;
-        assert_eq!(
-            snap.through_seq,
-            SEEDED_ATTEMPTS as i64 + 1,
-            "the restored cursor must name the head of the restored log"
-        );
-        let mut samples: Vec<u128> = Vec::with_capacity(SAMPLES);
-        let mut graded_rows: Vec<Graded> = Vec::with_capacity(SAMPLES);
-        for index in 0..SAMPLES {
+        let (run, snap) = warmed(&db, WARMUPS).await;
+        let (input, avoid) = run.views();
+        let (samples, graded_rows) = timed_rounds(SAMPLES, |index| {
             let id = format!("sample-{index}");
-            let start = Instant::now();
-            let graded = grade_once(&app, user, &input, &id, index, &avoid)
-                .await
-                .unwrap_or_else(|err| panic!("sample {index} did not grade: {err}"));
-            samples.push(start.elapsed().as_nanos());
-            restore(&db.admin, user, &id, graded.claimed, &snap).await;
-            graded_rows.push(graded);
-        }
+            let (db, run, input, avoid, snap) = (&db, &run, &input, &avoid, &snap);
+            async move {
+                let (nanos, graded) = timed_step(
+                    format!("sample {index}"),
+                    grade_once(&run.app, run.user, input, &id, index, avoid),
+                )
+                .await;
+                restore_grade(&db.admin, run.user, &id, graded.claimed, snap).await;
+                (nanos, graded)
+            }
+        })
+        .await;
 
         let times = Percentiles::of(&samples);
-        println!(
-            "benchmark B grade ({}): p50 {} ns, p95 {} ns, p99 {} ns, max {} ns over {} samples, \
-             {} events per fold",
-            profile(),
-            times.p50,
-            times.p95,
-            times.p99,
-            times.max,
+        report(
+            "benchmark B grade",
+            &times,
             samples.len(),
-            graded_rows[0].events,
+            &format!(", {} events per fold", graded_rows[0].events),
         );
-        write_artifact(&format!(
-            "{{\n  \"benchmark\": \"B-grade\",\n  \"profile\": {:?},\n  \"seeded_attempts\": {},\n  \
-             \"log_events\": {},\n  \"pool_depth\": {},\n  \"warmups\": {},\n  \"samples\": {},\n  \
-             \"grade_ns\": {{\"p50_ns\": {}, \"p95_ns\": {}, \"p99_ns\": {}, \"max_ns\": {}}},\n  \
-             \"p95_budget_ns\": {}\n}}\n",
-            profile(),
-            SEEDED_ATTEMPTS,
-            graded_rows[0].events,
-            POOL_DEPTH,
-            WARMUPS,
-            SAMPLES,
-            times.p50,
-            times.p95,
-            times.p99,
-            times.max,
-            P95_BUDGET_NS,
-        ));
+        write_artifact(
+            "benchmark-b-grade.json",
+            &artifact_json(
+                "B-grade",
+                "grade_ns",
+                &times,
+                P95_BUDGET_NS,
+                &[
+                    ("seeded_attempts", json!(SEEDED_ATTEMPTS)),
+                    ("log_events", json!(graded_rows[0].events)),
+                    ("pool_depth", json!(POOL_DEPTH)),
+                    ("warmups", json!(WARMUPS)),
+                    ("samples", json!(SAMPLES)),
+                ],
+            ),
+        );
 
         assert_eq!(samples.len(), SAMPLES, "every sample is measured");
         // The restore puts the log back, so every sample folds the same events
         // and appends at the same `seq`. A drifting `seq` means the fixture is
         // growing and the percentiles describe a run, not a transaction.
         for (index, graded) in graded_rows.iter().enumerate() {
-            assert_eq!(
-                graded.events,
-                SEEDED_ATTEMPTS + 1,
-                "sample {index} folded a log of another length"
-            );
-            assert_eq!(
-                graded.seq,
-                SEEDED_ATTEMPTS as i64 + 2,
-                "sample {index} appended at another seq"
-            );
-            assert!(
-                !graded.replayed,
-                "sample {index} took the full-replay branch, which no grade of a fresh attempt \
-                 takes (spec section 4.3)"
-            );
-            assert!(
-                !graded.resume_replayed,
-                "sample {index} replayed the whole log BEFORE the append, which no grade of a \
-                 warm fixture takes (spec section 4.3)"
-            );
-            assert_eq!(
-                graded.resumed_through,
-                SEEDED_ATTEMPTS as i64 + 1,
-                "sample {index} resumed from a cursor that is not the head of the log"
-            );
-            assert_eq!(
-                graded.folded_through,
-                SEEDED_ATTEMPTS as i64 + 2,
-                "sample {index} did not fold the appended attempt"
-            );
+            check_graded(graded, &format!("sample {index}"));
         }
         assert!(
             times.p95 < P95_BUDGET_NS,
@@ -618,6 +349,42 @@ async fn benchmark_b_grade_transaction_holds_the_l2_segment() {
         );
     })
     .await;
+}
+
+/// The six literals every graded sample of a warm fixture holds: the log
+/// length, the appended `seq`, no replay before or after the append, and the
+/// two cursors.
+fn check_graded(graded: &Graded, who: &str) {
+    assert_eq!(
+        graded.events,
+        SEEDED_ATTEMPTS + 1,
+        "{who} folded a log of another length"
+    );
+    assert_eq!(
+        graded.seq,
+        SEEDED_ATTEMPTS as i64 + 2,
+        "{who} appended at another seq"
+    );
+    assert!(
+        !graded.replayed,
+        "{who} took the full-replay branch, which no grade of a fresh attempt takes (spec \
+         section 4.3)"
+    );
+    assert!(
+        !graded.resume_replayed,
+        "{who} replayed the whole log BEFORE the append, which no grade of a warm fixture \
+         takes (spec section 4.3)"
+    );
+    assert_eq!(
+        graded.resumed_through,
+        SEEDED_ATTEMPTS as i64 + 1,
+        "{who} resumed from a cursor that is not the head of the log"
+    );
+    assert_eq!(
+        graded.folded_through,
+        SEEDED_ATTEMPTS as i64 + 2,
+        "{who} did not fold the appended attempt"
+    );
 }
 
 /// The harness invariant: the restored fixture folds the appended attempt.
@@ -634,58 +401,21 @@ async fn benchmark_b_grade_transaction_holds_the_l2_segment() {
 /// the harness is a property of every run.
 #[tokio::test]
 async fn the_restored_fixture_folds_the_appended_attempt() {
-    if std::env::var_os(TEST_DSN_VAR).is_none() {
-        println!("SKIPPED the harness check: {TEST_DSN_VAR} is not set");
+    if !dsn_set("the harness check") {
         return;
     }
     TestDb::with(|db| async move {
-        let graph = curriculum();
-        let cfg = Config::default();
-        let (user, ring, task) = seed(&db, &graph, &cfg).await;
-        let input = ProjectionInput::new(&graph, &cfg, Timestamp::from_micros(BASE_US));
-        let avoid = Avoid::new(&ring, &task);
-        let app = db.pool_as("cadus_app", 1).await;
+        let (run, snap) = warmed(&db, 2).await;
+        let (input, avoid) = run.views();
 
-        let snap = warm_up(&db, &app, user, &input, &avoid, 2).await;
-        assert_eq!(
-            snap.through_seq,
-            SEEDED_ATTEMPTS as i64 + 1,
-            "the snapshot the run restores must name the head of the restored log"
-        );
-
-        let graded = grade_once(&app, user, &input, "check-0", 0, &avoid)
+        let graded = grade_once(&run.app, run.user, &input, "check-0", 0, &avoid)
             .await
             .unwrap_or_else(|err| panic!("the checked grade did not run: {err}"));
-        restore(&db.admin, user, "check-0", graded.claimed, &snap).await;
-
-        assert_eq!(
-            graded.events,
-            SEEDED_ATTEMPTS + 1,
-            "the grade folded a log of another length"
-        );
-        assert_eq!(
-            graded.seq,
-            SEEDED_ATTEMPTS as i64 + 2,
-            "the grade appended at another seq"
-        );
-        assert!(
-            !graded.resume_replayed,
-            "the fold before the append replayed the whole log, so the restored cursor names a \
-             line the log does not hold"
-        );
-        assert_eq!(
-            graded.resumed_through,
-            SEEDED_ATTEMPTS as i64 + 1,
-            "the fold before the append reached another seq than the head of the log"
-        );
-        assert_eq!(
-            graded.folded_through,
-            SEEDED_ATTEMPTS as i64 + 2,
-            "the fold after the append did not reach the appended attempt"
-        );
-        assert!(
-            !graded.replayed,
-            "the fold after the append replayed the whole log"
+        restore_grade(&db.admin, run.user, "check-0", graded.claimed, &snap).await;
+        check_graded(&graded, "the checked grade");
+        println!(
+            "harness check ({}): the restored fixture folds the appended attempt",
+            profile()
         );
     })
     .await;

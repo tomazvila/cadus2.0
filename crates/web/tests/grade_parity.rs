@@ -23,53 +23,17 @@
 //! The corpus file is the M2 fixture, read from its own crate, so one file
 //! serves both milestones and the two cannot drift apart.
 
-#![allow(
-    clippy::unwrap_used,
-    clippy::expect_used,
-    clippy::panic,
-    clippy::todo,
-    clippy::unimplemented
-)]
+#![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
 
-use cadus_core::curriculum::AnswerKind;
+mod common;
+
 use cadus_core::event::WorkQuality;
 use cadus_web::grade::deterministic_grade;
-
-/// How many answers the 1.0 corpus holds (`crates/core/tests/answer_check.rs`).
-const CORPUS_ROWS: usize = 3_492;
+use common::{CORPUS_ROWS, corpus, kind_of};
 
 /// A learner answer no authored answer of the corpus is. Every pair built with
 /// it is a miss.
 const SENTINEL_MISS: &str = "-987654321.125";
-
-/// One corpus row of `crates/core/tests/fixtures/answers/corpus_1_0.jsonl`.
-#[derive(serde::Deserialize)]
-struct CorpusRow {
-    /// The authored answer, as 1.0 wrote it.
-    answer: String,
-    /// The answer kind of its topic.
-    answer_kind: String,
-}
-
-/// Read the M2 answer corpus.
-fn corpus() -> Vec<CorpusRow> {
-    let path = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
-        .join("../core/tests/fixtures/answers/corpus_1_0.jsonl");
-    let text =
-        std::fs::read_to_string(&path).unwrap_or_else(|e| panic!("read {}: {e}", path.display()));
-    text.lines()
-        .map(|line| serde_json::from_str(line).unwrap_or_else(|e| panic!("row {line}: {e}")))
-        .collect()
-}
-
-/// The answer kind of a corpus row. The corpus holds verifiable kinds only.
-fn kind_of(row: &CorpusRow) -> AnswerKind {
-    match row.answer_kind.as_str() {
-        "numeric" => AnswerKind::Numeric,
-        "expression" => AnswerKind::Expression,
-        other => panic!("the corpus holds only verifiable kinds, and this row is {other}"),
-    }
-}
 
 /// Class 1. The authored answer, given back by the learner, is a pass at the
 /// NEUTRAL tier with no tag — 1.0's `CORRECT_TIER` and its empty tag list.
@@ -157,7 +121,7 @@ fn every_missed_answer_grades_nearly_passable_with_no_tag() {
 /// is a claim about form, not about the mathematics (`deterministic_grade.py:146-149`).
 #[test]
 fn the_period_grouped_reading_is_the_only_tag_a_pass_carries() {
-    let grade = deterministic_grade("7329", "7.329", AnswerKind::Numeric);
+    let grade = deterministic_grade("7329", "7.329", cadus_core::curriculum::AnswerKind::Numeric);
     assert!(grade.correct);
     assert_eq!(grade.work_quality, WorkQuality::NearlyPerfect);
     assert_eq!(grade.error_tags, vec!["notation".to_string()]);

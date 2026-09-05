@@ -9,13 +9,7 @@
 //!
 //! Every header string below is a LITERAL, written out in full.
 
-#![allow(
-    clippy::unwrap_used,
-    clippy::expect_used,
-    clippy::panic,
-    clippy::todo,
-    clippy::unimplemented
-)]
+#![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
 
 use axum::http::{HeaderMap, HeaderValue};
 use cadus_web::auth::session::{
@@ -333,13 +327,10 @@ fn the_bearer_scheme_is_case_insensitive() {
 /// `Authorization: Bearer` with an empty value selects nothing. This is the
 /// acceptance check.
 ///
-/// A bare `Bearer` authenticates nothing. If it read as "this request is
-/// bearer-authed", it would earn the CSRF exemption of spec section 3.1 and then
-/// go on to authenticate by cookie — the exact request the layer exists to
-/// refuse.
-#[test]
-fn an_empty_bearer_value_selects_nothing() {
-    for raw in ["Bearer", "Bearer ", "Bearer   ", "Bearer \t"] {
+/// Fail the test when one of the `Authorization` values in `raws` selects a
+/// credential.
+fn assert_selects_nothing(raws: &[&str]) {
+    for raw in raws {
         let mut headers = HeaderMap::new();
         headers.insert("authorization", HeaderValue::from_str(raw).unwrap());
         assert_eq!(
@@ -348,6 +339,15 @@ fn an_empty_bearer_value_selects_nothing() {
             "the header {raw:?} must select nothing"
         );
     }
+}
+
+/// A bare `Bearer` authenticates nothing. If it read as "this request is
+/// bearer-authed", it would earn the CSRF exemption of spec section 3.1 and then
+/// go on to authenticate by cookie — the exact request the layer exists to
+/// refuse.
+#[test]
+fn an_empty_bearer_value_selects_nothing() {
+    assert_selects_nothing(&["Bearer", "Bearer ", "Bearer   ", "Bearer \t"]);
 }
 
 /// An empty bearer value falls through to the cookie; it does not shadow it.
@@ -365,15 +365,7 @@ fn an_empty_bearer_value_falls_through_to_the_cookie() {
 /// Another scheme selects nothing from the header.
 #[test]
 fn another_authorization_scheme_selects_nothing() {
-    for raw in ["Basic YWRhOnNlY3JldA==", "Token tok", "Bearertok", "tok"] {
-        let mut headers = HeaderMap::new();
-        headers.insert("authorization", HeaderValue::from_str(raw).unwrap());
-        assert_eq!(
-            read_session_credential(&headers, SECURE_NAME),
-            None,
-            "the header {raw:?} must select nothing"
-        );
-    }
+    assert_selects_nothing(&["Basic YWRhOnNlY3JldA==", "Token tok", "Bearertok", "tok"]);
 }
 
 /// The cookie alone is selected when no bearer header is present.

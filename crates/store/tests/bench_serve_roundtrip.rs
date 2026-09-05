@@ -55,39 +55,35 @@
 //! sample: a shared runner produces those, and a flaky gate blocks good work
 //! (spec section 10.2). The numbers go to a JSON artifact on every run.
 
-#![allow(
-    clippy::unwrap_used,
-    clippy::expect_used,
-    clippy::panic,
-    clippy::todo,
-    clippy::unimplemented
-)]
+#![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
 
-use std::collections::BTreeMap;
-use std::path::{Path, PathBuf};
+mod common;
+
 use std::time::Instant;
 
 use cadus_core::learner::problem_text_hash;
-use cadus_core::pool::{
-    Avoid, POOL_ROW_VERSION, PoolAnswer, PoolProblem, Ring, Source, TaskMemory,
-};
+use cadus_core::pool::{Avoid, Ring, TaskMemory};
 use cadus_store::pool::{NewInstance, POP_LIMIT, insert_batch, pop_with_ring_tx};
 use cadus_store::test_support::TestDb;
 use cadus_store::{StoreError, begin_tenant};
+use common::bench::{
+    Percentiles, artifact_json, budget, dsn_set, instance_row, release, report, rounds, timed,
+    timed_rounds, write_artifact,
+};
+use serde_json::json;
 use sqlx::PgPool;
 use uuid::Uuid;
 
-/// The knowledge point of the fixture.
+/// The serving key of the fixture: `"<topic_id>/<kp_id>"`.
 const KP_ID: &str = "perfect-squares";
 
-/// The unclaimed rows the fixture puts in the pool (spec section 10.2).
+/// The unclaimed rows the fixture puts in the pool.
 const POOL_DEPTH: usize = 200;
 
-/// The count of `insert_batch` calls that write the pool.
-///
-/// The D-O4 worker refills in batches, and one batch is one statement. Two
-/// batches give the pop both halves of its `ORDER BY created_at, id`: the age
-/// order between the batches, and the tie sort inside one batch.
+/// The batches the fixture inserts. Every row of one `insert_batch` call takes
+/// the transaction instant as its `created_at`, so the pool carries this many
+/// distinct timestamps and the pop sorts a real tie inside each one (M4 review
+/// 1, finding 11).
 const BATCHES: usize = 2;
 
 /// The rows of one batch.
@@ -99,125 +95,33 @@ const BATCH_SEED: u64 = 20_260_827;
 /// The untimed transactions that warm the connection and the plan cache.
 const WARMUPS: usize = 50;
 
-/// The timed transactions (spec section 10.2).
+/// The timed transactions.
 const SAMPLES: usize = 500;
 
-/// The count of ring digests that also sit in the pool.
-///
-/// The three rows are the three the pop reads first, so the anti-repeat rule
-/// skips exactly three rows per serve.
+/// The popped rows the ring blocks. The pop reads eight candidates and the
+/// anti-repeat rule walks past this many before it serves one (D5).
 const RING_OVERLAP: usize = 3;
 
-/// The p95 budget of one serve transaction, in nanoseconds: 100 ms of the
-/// 150 ms of L1 (`docs/reference/l1-budget.md`).
+/// The p95 budget of one serve transaction, in nanoseconds: the 100 ms Postgres
+/// segment of L1 (`docs/reference/l1-budget.md` section 2).
 const P95_BUDGET_NS: u128 = 100_000_000;
-
-/// The environment variable that turns the benchmarks on.
-const BENCH_VAR: &str = "CADUS_BENCH";
-
-/// The environment variable that moves the artifact directory.
-const ARTIFACT_DIR_VAR: &str = "CADUS_BENCH_DIR";
-
-/// The environment variable that names the throwaway cluster.
-const TEST_DSN_VAR: &str = "CADUS_TEST_DATABASE_URL";
-
-// ---------------------------------------------------------------------------
-// Percentiles and the artifact
-// ---------------------------------------------------------------------------
-
-/// The `percent` percentile of a sorted sample, by the nearest-rank rule.
-///
-/// The rank is `ceil(percent * n / 100)`, counted from one. The arithmetic is
-/// integer arithmetic, so no float enters a reported number (D6).
-fn percentile(sorted: &[u128], percent: u128) -> u128 {
-    assert!(!sorted.is_empty(), "a percentile needs a sample");
-    let count = sorted.len() as u128;
-    let rank = (percent * count).div_ceil(100).max(1);
-    let index = usize::try_from(rank - 1).unwrap_or(0);
-    sorted[index.min(sorted.len() - 1)]
-}
-
-/// The p50, p95, p99, and maximum of a sample of nanosecond durations.
-struct Percentiles {
-    p50: u128,
-    p95: u128,
-    p99: u128,
-    max: u128,
-}
-
-impl Percentiles {
-    /// Read the percentiles of one sample. The function sorts its own copy.
-    fn of(samples: &[u128]) -> Self {
-        let mut sorted = samples.to_vec();
-        sorted.sort_unstable();
-        Self {
-            p50: percentile(&sorted, 50),
-            p95: percentile(&sorted, 95),
-            p99: percentile(&sorted, 99),
-            max: *sorted.last().unwrap(),
-        }
-    }
-}
-
-/// Write the benchmark artifact and print its path.
-fn write_artifact(body: &str) {
-    let dir = match std::env::var_os(ARTIFACT_DIR_VAR) {
-        Some(value) => PathBuf::from(value),
-        None => Path::new(env!("CARGO_MANIFEST_DIR")).join("../../target/bench"),
-    };
-    std::fs::create_dir_all(&dir).unwrap_or_else(|err| panic!("create {}: {err}", dir.display()));
-    let path = dir.join("benchmark-b.json");
-    std::fs::write(&path, body).unwrap_or_else(|err| panic!("write {}: {err}", path.display()));
-    println!("artifact: {}", path.display());
-}
-
-/// The name of the build profile, for the artifact.
-fn profile() -> &'static str {
-    if cfg!(debug_assertions) {
-        "debug"
-    } else {
-        "release"
-    }
-}
-
-// ---------------------------------------------------------------------------
-// The fixture
-// ---------------------------------------------------------------------------
 
 /// The statement of pool row `index`.
 fn statement(index: usize) -> String {
     format!("Compute ${}^{{2}}$.", index + 1)
 }
 
-/// The digest of pool row `index`. This is the M3 `problem_text_hash`.
-fn instance_hash(index: usize) -> String {
-    problem_text_hash(&statement(index))
-}
-
 /// Pool row `index`, in the shape the D-O4 refill inserts (D-S5).
 ///
-/// The row is a [`NewInstance`], so `insert_batch` writes the two documents with
-/// the production writers and `pop_with_ring_tx` reads them back with the
-/// production readers. The `problem` document carries the batch seed and the
-/// drawn binding, so a reviewer reproduces the instance from the row alone.
+/// The `problem` document carries the batch seed and the drawn binding, so a
+/// reviewer reproduces the instance from the row alone.
 fn new_instance(index: usize) -> NewInstance {
-    let mut bindings = BTreeMap::new();
-    bindings.insert("a".to_string(), (index + 1).to_string());
-    NewInstance {
-        source: Source::Template,
-        content_digest: None,
-        problem: PoolProblem {
-            v: POOL_ROW_VERSION,
-            text: statement(index),
-            bindings,
-            seed: BATCH_SEED,
-        },
-        expected_answer: PoolAnswer {
-            v: POOL_ROW_VERSION,
-            answer: ((index + 1) * (index + 1)).to_string(),
-        },
-        instance_hash: instance_hash(index),
-    }
+    instance_row(
+        statement(index),
+        ((index + 1) * (index + 1)).to_string(),
+        (index + 1).to_string(),
+        BATCH_SEED,
+    )
 }
 
 /// Seed one user, one learner model, one state row, and the pool.
@@ -419,30 +323,17 @@ async fn serve_once(
     })
 }
 
-/// Put the claimed row back, so the next sample reads the same pool.
-async fn release(pool: &PgPool, id: Uuid) {
-    sqlx::query!(
-        "UPDATE serving_pool SET claimed_at = NULL WHERE id = $1",
-        id
-    )
-    .execute(pool)
-    .await
-    .unwrap();
-}
-
 // ---------------------------------------------------------------------------
 // The benchmark
 // ---------------------------------------------------------------------------
 
 /// Benchmark B: 500 serve transactions hold the 100 ms segment of L1.
+///
+/// A plain `cargo test` drives one warm-up and three samples and pins every
+/// count; `CADUS_BENCH` arms the clock and the full sample count.
 #[tokio::test]
 async fn benchmark_b_serve_round_trip_holds_the_l1_segment() {
-    if std::env::var_os(BENCH_VAR).is_none() {
-        println!("SKIPPED benchmark B: {BENCH_VAR} is not set");
-        return;
-    }
-    if std::env::var_os(TEST_DSN_VAR).is_none() {
-        println!("SKIPPED benchmark B: {TEST_DSN_VAR} is not set");
+    if !dsn_set("benchmark B") {
         return;
     }
     TestDb::with(|db| async move {
@@ -451,55 +342,52 @@ async fn benchmark_b_serve_round_trip_holds_the_l1_segment() {
         // the transaction and never the contention of a pool (spec 10.2).
         let app = db.pool_as("cadus_app", 1).await;
 
-        for index in 0..WARMUPS {
+        for index in 0..rounds(WARMUPS, 1) {
             let served = serve_once(&app, user, &ring, &task)
                 .await
                 .unwrap_or_else(|err| panic!("warm-up {index} did not serve: {err}"));
             release(&db.admin, served.id).await;
         }
 
-        let mut samples: Vec<u128> = Vec::with_capacity(SAMPLES);
-        let mut served_rows: Vec<Served> = Vec::with_capacity(SAMPLES);
-        for index in 0..SAMPLES {
-            let start = Instant::now();
-            let served = serve_once(&app, user, &ring, &task)
-                .await
-                .unwrap_or_else(|err| panic!("sample {index} did not serve: {err}"));
-            samples.push(start.elapsed().as_nanos());
-            release(&db.admin, served.id).await;
-            served_rows.push(served);
-        }
+        let count = rounds(SAMPLES, 3);
+        let (samples, served_rows): (Vec<u128>, Vec<Served>) = timed_rounds(count, |index| {
+            let (db, app, ring, task) = (&db, &app, &ring, &task);
+            async move {
+                let start = Instant::now();
+                let served = serve_once(app, user, ring, task)
+                    .await
+                    .unwrap_or_else(|err| panic!("sample {index} did not serve: {err}"));
+                let nanos = start.elapsed().as_nanos();
+                release(&db.admin, served.id).await;
+                (nanos, served)
+            }
+        })
+        .await;
 
         let times = Percentiles::of(&samples);
-        println!(
-            "benchmark B serve ({}): p50 {} ns, p95 {} ns, p99 {} ns, max {} ns over {} samples",
-            profile(),
-            times.p50,
-            times.p95,
-            times.p99,
-            times.max,
-            samples.len()
-        );
-        write_artifact(&format!(
-            "{{\n  \"benchmark\": \"B\",\n  \"profile\": {:?},\n  \"pool_depth\": {},\n  \
-             \"batches\": {},\n  \"ring_overlap\": {},\n  \"pop_candidates\": {},\n  \
-             \"warmups\": {},\n  \"samples\": {},\n  \"serve_ns\": {{\"p50_ns\": {}, \
-             \"p95_ns\": {}, \"p99_ns\": {}, \"max_ns\": {}}},\n  \"p95_budget_ns\": {}\n}}\n",
-            profile(),
-            POOL_DEPTH,
-            BATCHES,
-            RING_OVERLAP,
-            POP_LIMIT,
-            WARMUPS,
-            SAMPLES,
-            times.p50,
-            times.p95,
-            times.p99,
-            times.max,
-            P95_BUDGET_NS,
-        ));
+        let limit = budget(P95_BUDGET_NS);
+        report("benchmark B serve", &times, samples.len(), "");
+        if timed() {
+            write_artifact(
+                "benchmark-b.json",
+                &artifact_json(
+                    "B",
+                    "serve_ns",
+                    &times,
+                    P95_BUDGET_NS,
+                    &[
+                        ("pool_depth", json!(POOL_DEPTH)),
+                        ("batches", json!(BATCHES)),
+                        ("ring_overlap", json!(RING_OVERLAP)),
+                        ("pop_candidates", json!(POP_LIMIT)),
+                        ("warmups", json!(WARMUPS)),
+                        ("samples", json!(SAMPLES)),
+                    ],
+                ),
+            );
+        }
 
-        assert_eq!(samples.len(), SAMPLES, "every sample is measured");
+        assert_eq!(samples.len(), count, "every sample is measured");
         // The ring blocks the three rows the pop reads first, so the pop skips
         // three and serves the fourth. A pick that skips none means the fixture
         // stopped exercising the anti-repeat rule. The two decoded fields prove
@@ -527,8 +415,8 @@ async fn benchmark_b_serve_round_trip_holds_the_l1_segment() {
             );
         }
         assert!(
-            times.p95 < P95_BUDGET_NS,
-            "the p95 serve transaction took {} ns, and the budget is {P95_BUDGET_NS} ns",
+            !timed() || times.p95 < limit,
+            "the p95 serve transaction took {} ns, and the budget is {limit} ns",
             times.p95
         );
     })

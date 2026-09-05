@@ -24,13 +24,7 @@
 //! dev-only or build-only edge, so the `cargo_metadata` dev-dependency of this
 //! test file is outside both guards.
 
-#![allow(
-    clippy::unwrap_used,
-    clippy::expect_used,
-    clippy::panic,
-    clippy::todo,
-    clippy::unimplemented
-)]
+#![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
 
 use std::collections::{BTreeMap, BTreeSet};
 
