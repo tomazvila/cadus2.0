@@ -20,6 +20,19 @@ use cadus_web::{AppState, create_app};
 /// ahead of `pg_catalog` on this database's `cadus_app` role, so a connection
 /// opened after this picks it up. Returns a one-connection app whose single
 /// session carries the shadow.
+/// Register `email`, seed a standing verification token, and post the verify
+/// route; the answer must be `400 invalid_token`. The caller sets up the
+/// account state or the fault before this posts.
+async fn assert_verify_is_invalid_token(app: &Router, token: &str) {
+    let answer = send(
+        app,
+        post("/api/auth/verify-email", &json!({ "token": token })),
+    )
+    .await;
+    assert_eq!(answer.status.as_u16(), 400, "{}", answer.body);
+    assert_eq!(answer.code(), "invalid_token");
+}
+
 async fn app_whose_bind_fails_after(db: &TestDb, passes: i64) -> Router {
     for statement in [
         "CREATE SCHEMA fault".to_string(),
@@ -119,16 +132,7 @@ async fn a_second_verification_is_invalid_token() {
             .unwrap();
         seed_token(&db, user, VERIFY_TOKEN_ONE.1, "verify", shift(86_400)).await;
 
-        let answer = send(
-            &app,
-            post(
-                "/api/auth/verify-email",
-                &json!({ "token": VERIFY_TOKEN_ONE.0 }),
-            ),
-        )
-        .await;
-        assert_eq!(answer.status.as_u16(), 400, "{}", answer.body);
-        assert_eq!(answer.code(), "invalid_token");
+        assert_verify_is_invalid_token(&app, VERIFY_TOKEN_ONE.0).await;
     })
     .await;
 }
