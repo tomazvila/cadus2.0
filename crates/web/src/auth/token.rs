@@ -64,9 +64,10 @@ thread_local! {
 /// it, sends its request on the same thread, and clears it. The kernel never
 /// refuses entropy on the build box, so this is the one way those routes reach
 /// their entropy-failure arms.
-// The setter has no production caller: the seam exists for the tests alone.
-#[allow(dead_code)]
-pub(crate) fn refuse_entropy_after(draws: Option<u32>) {
+// The setter has no production caller: the seam exists for the tests alone,
+// and it is doc-hidden so it stays out of the documented surface.
+#[doc(hidden)]
+pub fn refuse_entropy_after(draws: Option<u32>) {
     DRAWS_LEFT.with(|left| left.set(draws));
 }
 
