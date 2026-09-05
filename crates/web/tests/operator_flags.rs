@@ -19,10 +19,14 @@ mod common;
 use cadus_store::test_support::TestDb;
 use serde_json::{Value, json};
 
+use cadus_store::{DEFAULT_CLIENT_TIMEOUT_MS, Db};
+use cadus_web::{AppState, create_app};
 use common::admin::{
     KEY, admin_get as call, app_without_admin as app, assert_forbidden, seed_account, template_body,
 };
-use common::{SESSION_TOKEN_ONE, get, send};
+use common::{
+    SESSION_TOKEN_ONE, fail_reads, fail_tenant_bind, get, hide_column, seed_pool_row, send,
+};
 
 /// A second serving key, which the fixture curriculum does NOT name.
 const UNKNOWN_KEY: &str = "not-a-topic/kp9";
@@ -338,4 +342,107 @@ async fn the_gate_stops_at_the_limit_and_reports_it() {
         assert_eq!(answer.body.get("gate_truncated"), Some(&json!(true)));
     })
     .await;
+}
+
+// --------------------------------------------------------------------------- //
+// The pool fields, the key shapes, and the faults
+// --------------------------------------------------------------------------- //
+
+/// A knowledge point whose last serve was an exemplar carries the source and
+/// the time of that serve.
+#[tokio::test]
+async fn a_claimed_exemplar_row_fills_the_last_served_fields() {
+    TestDb::with(|db| async move {
+        let app = app(&db);
+        let admin = seed_account(&db, "u12-admin@example.test", SESSION_TOKEN_ONE.1, true).await;
+        sqlx::query(
+            "INSERT INTO serving_pool
+                (user_id, kp_id, source, problem, expected_answer, instance_hash, claimed_at)
+             VALUES ($1, $2, 'exemplar', '{}'::jsonb, '{}'::jsonb, 'u12-hash', now())",
+        )
+        .bind(admin)
+        .bind(KEY)
+        .execute(&db.admin)
+        .await
+        .unwrap();
+
+        let answer = call(&app, "/api/operator/flags").await;
+
+        assert_eq!(answer.status.as_u16(), 200, "{}", answer.body);
+        let flag = flag_of(&answer.body, KEY);
+        assert_eq!(flag["last_source"], "exemplar");
+        assert!(flag["last_exemplar_at"].is_string(), "{flag}");
+    })
+    .await;
+}
+
+/// A key with no slash and a key whose point the topic does not author both
+/// report `gated: false`.
+#[tokio::test]
+async fn a_key_without_a_known_point_reports_that_the_gate_did_not_run() {
+    TestDb::with(|db| async move {
+        let app = app(&db);
+        seed_account(&db, "u12-admin@example.test", SESSION_TOKEN_ONE.1, true).await;
+        seed_template(&db, "u12-noslash", "noslash", &template_body().to_string()).await;
+        seed_template(&db, "u12-kp9", "band/kp9", &template_body().to_string()).await;
+
+        let answer = call(&app, "/api/operator/flags").await;
+
+        assert_eq!(answer.status.as_u16(), 200, "{}", answer.body);
+        let gate = answer.body["gate"].as_array().unwrap();
+        assert_eq!(gate.len(), 2, "{}", answer.body);
+        for row in gate {
+            assert_eq!(row["gated"], false, "{row}");
+        }
+    })
+    .await;
+}
+
+/// Without a curriculum the view is `503 curriculum_unavailable`.
+#[tokio::test]
+async fn the_flags_without_a_curriculum_are_503() {
+    TestDb::with(|db| async move {
+        let app = create_app(AppState::new(Db::new(
+            db.app.clone(),
+            DEFAULT_CLIENT_TIMEOUT_MS,
+        )));
+        seed_account(&db, "u12-admin@example.test", SESSION_TOKEN_ONE.1, true).await;
+
+        let answer = call(&app, "/api/operator/flags").await;
+
+        assert_eq!(answer.status.as_u16(), 503, "{}", answer.body);
+        assert_eq!(answer.code(), "curriculum_unavailable");
+    })
+    .await;
+}
+
+/// The tenant bind, the flags read, and the template read each fail: the view
+/// is `500 internal_error`.
+#[tokio::test]
+async fn a_store_fault_is_500_on_the_flags() {
+    for fault in 0..3 {
+        TestDb::with(move |db| async move {
+            let app = app(&db);
+            let admin =
+                seed_account(&db, "u12-admin@example.test", SESSION_TOKEN_ONE.1, true).await;
+            seed_template(&db, DIGEST, KEY, &template_body().to_string()).await;
+            seed_pool_row(&db, admin, KEY, "Compute 1 + 1.", "2", "u12-hash").await;
+            match fault {
+                0 => fail_tenant_bind(&db).await,
+                1 => fail_reads(&db, "serving_pool", "count(*) AS depth").await,
+                _ => hide_column(&db, "content_store", "body").await,
+            }
+
+            let answer = call(&app, "/api/operator/flags").await;
+
+            assert_eq!(
+                answer.status.as_u16(),
+                500,
+                "fault {fault}: {}",
+                answer.body
+            );
+            assert_eq!(answer.code(), "internal_error");
+        })
+        .await;
+    }
 }
