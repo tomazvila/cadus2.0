@@ -115,3 +115,27 @@ async fn an_address_lookup_that_fails_is_500_on_the_callback() {
     })
     .await;
 }
+
+/// The address of a first federated sign-in is taken between the read and the
+/// insert: the sign-up reports the address is taken, and the resolve reads it
+/// back and links into it. The callback then succeeds.
+#[tokio::test]
+async fn a_sign_up_that_races_reads_the_account_back_and_links() {
+    TestDb::with(|db| async move {
+        // The verified Google identity is Learner@Example.com; seed that
+        // account so the insert conflicts, and hide it from the first lookup
+        // alone, so the resolve takes the read-it-back branch.
+        db.seed_user("learner@example.com").await;
+        let app = google_app(&db, Arc::new(google_verified()));
+        hide_user_by_email_first(&db, 1).await;
+
+        let answer = google_callback(&app, GOOGLE_QUERY).await;
+        assert_eq!(answer.status.as_u16(), 302, "{}", answer.body);
+        assert_eq!(
+            user_count(&db).await,
+            1,
+            "the race created no second account"
+        );
+    })
+    .await;
+}

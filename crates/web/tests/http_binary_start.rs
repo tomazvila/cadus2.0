@@ -310,3 +310,25 @@ async fn binary_exits_zero_on_sigint() {
     })
     .await;
 }
+
+/// A start with a valid PUBLIC_ORIGIN skips the origin-fallback note, so the
+/// origin policy pins the named origin. A healthy server then stops on
+/// SIGTERM with exit code 0.
+#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+async fn binary_pins_a_public_origin_and_stops_clean() {
+    TestDb::with(|db| async move {
+        let (mut child, address) =
+            web_on_free_port(&db, &[("PUBLIC_ORIGIN", "https://tutor.example")]);
+        let (code, _body) = wait_until_healthy(child.as_mut(), &address);
+        assert_eq!(code, 200);
+
+        send_sigterm(child.as_ref());
+        let (code, stderr) = exit_of(child, Duration::from_secs(10), "public-origin stop");
+        assert_eq!(code, Some(0), "stderr:\n{stderr}");
+        assert!(
+            !stderr.contains("PUBLIC_ORIGIN is not set"),
+            "the origin-fallback note must not print when PUBLIC_ORIGIN is set: {stderr}"
+        );
+    })
+    .await;
+}

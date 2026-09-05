@@ -315,3 +315,31 @@ async fn graph_without_a_scope_reads_the_enrolled_course() {
     })
     .await;
 }
+
+/// A topic in the placed state counts as placed on the dashboard: the Placed
+/// arm of the placement check.
+#[tokio::test]
+async fn status_reads_a_placed_topic_as_placed() {
+    TestDb::with(|db| async move {
+        let user = common::seed_learner(&db, "placed@example.com").await;
+        let app = app(&db);
+        seed_open_session(&db, user).await;
+        let mut topics: BTreeMap<String, TopicState> = BTreeMap::new();
+        topics.insert(
+            "addition".to_string(),
+            TopicState {
+                status: TopicStatus::Placed,
+                ..TopicState::default()
+            },
+        );
+        let model = LearnerModel {
+            topics,
+            ..LearnerModel::default()
+        };
+        common::seed_cached_model(&db, user, &model, 1).await;
+
+        let value = get_json(&app, user, "/api/status").await;
+        assert_eq!(value["placed"], true);
+    })
+    .await;
+}
