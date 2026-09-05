@@ -251,3 +251,46 @@ fn the_writer_brackets_by_precedence() {
         Ok("(x < 1)".to_string())
     );
 }
+
+#[test]
+fn the_writer_takes_the_level_of_the_value_a_node_writes_as() {
+    // A decimal writes as its rational node, so a fractional one is a product
+    // and a whole one is atomic, whatever the sign.
+    let decimal = |mantissa: i64| Ast::Decimal {
+        mantissa: BigInt::from(mantissa),
+        scale: 1,
+    };
+    assert_eq!(
+        write(&Ast::Pow(Box::new(decimal(15)), 2)),
+        Ok("(3/2)**2".to_string())
+    );
+    assert_eq!(
+        write(&Ast::Pow(Box::new(decimal(20)), 2)),
+        Ok("2**2".to_string())
+    );
+    // A fraction is a product, so the dividend of a quotient needs no brackets,
+    // and a negative one is a sum, so it takes them.
+    assert_eq!(
+        write(&Ast::Div(Box::new(frac(1, 2)), Box::new(var("y")))),
+        Ok("1/2/y".to_string())
+    );
+    assert_eq!(
+        write(&Ast::Div(Box::new(frac(-1, 2)), Box::new(var("y")))),
+        Ok("(-1/2)/y".to_string())
+    );
+    // A relation is the lowest level, so a minus sign brackets it.
+    let relation = Ast::Ineq {
+        var: "x".to_string(),
+        op: IneqOp::Lt,
+        bound: Box::new(int(1)),
+    };
+    assert_eq!(
+        write(&Ast::Neg(Box::new(relation))),
+        Ok("-(x < 1)".to_string())
+    );
+    // A zero exponent takes no brackets: only a negative one does.
+    assert_eq!(
+        write(&Ast::Pow(Box::new(var("x")), 0)),
+        Ok("x**0".to_string())
+    );
+}

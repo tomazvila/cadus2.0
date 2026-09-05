@@ -209,3 +209,32 @@ fn the_declared_space_is_the_product_of_the_distinct_counts() {
         }))
     );
 }
+
+#[test]
+fn the_enumeration_accepts_a_space_of_exactly_the_limit() {
+    let twelve = params(&[("a", int(1, 12))]);
+    let tuples = enumerate(&twelve, 12).expect("twelve tuples are inside a limit of twelve");
+    assert_eq!(tuples.len(), 12);
+    assert_eq!(
+        enumerate(&twelve, 11),
+        Err(DomainError::TooLarge {
+            name: "a".to_string(),
+            count: 12
+        })
+    );
+}
+
+#[test]
+fn a_decimal_domain_at_the_scale_bound_writes_nine_places() {
+    let domain = Domain::Decimal {
+        low: 1,
+        high: 2,
+        scale: 9,
+    };
+    let values = domain.values("d").expect("scale nine is inside the bound");
+    let texts: Vec<String> = values
+        .iter()
+        .map(cadus_core::template::Value::canonical_string)
+        .collect();
+    assert_eq!(texts, ["0.000000001", "0.000000002"]);
+}

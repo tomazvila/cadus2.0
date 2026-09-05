@@ -225,12 +225,9 @@ fn binomial(top: &BigInt, bottom: &BigInt) -> Result<BigInt, EvalError> {
         return Ok(BigInt::from(0u8));
     }
     let complement = top - bottom;
-    let steps = if bottom < &complement {
-        bottom
-    } else {
-        &complement
-    };
-    let steps = steps.to_u32().ok_or(EvalError::TooWide)?;
+    let steps = std::cmp::min(bottom, &complement)
+        .to_u32()
+        .ok_or(EvalError::TooWide)?;
     if steps > MAX_BINOMIAL_STEPS {
         return Err(EvalError::TooWide);
     }

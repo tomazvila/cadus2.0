@@ -232,20 +232,17 @@ pub(super) fn square_root(value: &BigRational) -> Result<Ast, EvalError> {
 
 /// Raise an exact rational to a whole power, inside the width bound.
 pub(super) fn power(base: &BigRational, exponent: i64) -> Result<BigRational, EvalError> {
-    if exponent == 0 {
-        return Ok(BigRational::from(BigInt::from(1u8)));
-    }
-    if base.is_zero() && exponent < 0 {
+    if exponent.is_negative() && base.is_zero() {
         return Err(EvalError::DivideByZero);
     }
-    let magnitude = exponent.unsigned_abs();
-    let steps = u32::try_from(magnitude).map_err(|_| EvalError::TooWide)?;
+    let steps = u32::try_from(exponent.unsigned_abs()).map_err(|_| EvalError::TooWide)?;
+    // A zero exponent runs no step, so every base raised to zero is one.
     let mut result = BigRational::from(BigInt::from(1u8));
     for _ in 0..steps {
         result *= base;
         width_ok(&result)?;
     }
-    if exponent < 0 {
+    if exponent.is_negative() {
         return Ok(result.recip());
     }
     Ok(result)
@@ -269,15 +266,16 @@ pub(super) fn rational_node(value: &BigRational) -> Ast {
 }
 
 /// Read the exact rational a node holds, when it holds one.
+///
+/// The node is an evaluated value, and [`fraction_literal`] refuses a zero
+/// denominator before one exists, so the fraction always builds.
 pub(super) fn as_rational(node: &Ast) -> Option<BigRational> {
     match node {
         Ast::Integer(value) => Some(BigRational::from(value.clone())),
         Ast::Fraction {
             numerator,
             denominator,
-        } if !denominator.is_zero() => {
-            Some(BigRational::new(numerator.clone(), denominator.clone()))
-        }
+        } => Some(BigRational::new(numerator.clone(), denominator.clone())),
         _ => None,
     }
 }

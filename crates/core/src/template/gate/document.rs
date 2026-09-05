@@ -9,7 +9,9 @@ use super::text::{is_identifier, py_str};
 use super::{FREE_SYMBOLS, GateSpec, RESERVED_NAMES, Rejection, TEMPLATABLE_KINDS};
 use crate::template::constraint::{Constraint, Term, constraint_params, term_params};
 use crate::template::document::{TEMPLATE_VERSION, TemplateDoc};
-use crate::template::domain::{Domain, MAX_CHOICES, MAX_DECIMAL_SCALE, MAX_DOMAIN_SIZE, Value};
+use crate::template::domain::{
+    Domain, DomainError, MAX_CHOICES, MAX_DECIMAL_SCALE, MAX_DOMAIN_SIZE, Value,
+};
 
 /// The document version, the answer kind, and the two required strings.
 pub(super) fn check_document(doc: &TemplateDoc, spec: &GateSpec) -> Result<(), Rejection> {
@@ -114,74 +116,68 @@ fn domain_values(name: &str, domain: &Domain) -> Result<Vec<Value>, Rejection> {
             ),
         ));
     }
-    domain.values(name).map_err(|_| domain_rejection(domain))
+    domain
+        .values(name)
+        .map_err(|error| domain_rejection(domain, &error))
 }
 
-/// The rejection a domain the value walk refused earns.
-fn domain_rejection(domain: &Domain) -> Rejection {
+/// The rejection a domain the value walk refused earns, from the error it raised.
+fn domain_rejection(domain: &Domain, error: &DomainError) -> Rejection {
     match domain {
-        Domain::Int { low, high } => {
-            if high < low {
-                return Rejection::new("int-domain", format!("int domain {low}..{high} is empty"));
+        Domain::Int { low, high } => match error {
+            DomainError::EmptyRange { .. } => {
+                Rejection::new("int-domain", format!("int domain {low}..{high} is empty"))
             }
-            Rejection::new(
+            _ => Rejection::new(
                 "domain-size",
                 format!("int domain {low}..{high} exceeds MAX_DOMAIN_SIZE"),
-            )
-        }
+            ),
+        },
         // The walk refuses a choice list for one reason only: it is empty. A
         // list past MAX_CHOICES never reaches the walk.
         Domain::Choice { .. } => Rejection::new(
             "choice-domain",
             "a choice domain needs a non-empty 'values' list".to_string(),
         ),
-        Domain::Rational { num, den } => {
-            if den.low <= 0 && den.high >= 0 {
-                return Rejection::new(
-                    "rational-domain",
-                    format!(
-                        "the denominator range {}..{} of a rational domain holds zero",
-                        den.low, den.high
-                    ),
-                );
-            }
-            if num.high < num.low || den.high < den.low {
-                return Rejection::new(
-                    "rational-domain",
-                    format!(
-                        "rational domain {}..{} over {}..{} is empty",
-                        num.low, num.high, den.low, den.high
-                    ),
-                );
-            }
-            Rejection::new(
+        Domain::Rational { num, den } => match error {
+            DomainError::ZeroDenominator { .. } => Rejection::new(
+                "rational-domain",
+                format!(
+                    "the denominator range {}..{} of a rational domain holds zero",
+                    den.low, den.high
+                ),
+            ),
+            DomainError::EmptyRange { .. } => Rejection::new(
+                "rational-domain",
+                format!(
+                    "rational domain {}..{} over {}..{} is empty",
+                    num.low, num.high, den.low, den.high
+                ),
+            ),
+            _ => Rejection::new(
                 "domain-size",
                 format!(
                     "rational domain {}..{} over {}..{} exceeds MAX_DOMAIN_SIZE ({MAX_DOMAIN_SIZE})",
                     num.low, num.high, den.low, den.high
                 ),
-            )
-        }
-        Domain::Decimal { low, high, scale } => {
-            if *scale > MAX_DECIMAL_SCALE {
-                return Rejection::new(
-                    "decimal-domain",
-                    format!(
-                        "decimal domain scale {scale} exceeds MAX_DECIMAL_SCALE ({MAX_DECIMAL_SCALE})"
-                    ),
-                );
-            }
-            if high < low {
-                return Rejection::new(
-                    "decimal-domain",
-                    format!("decimal domain {low}..{high} at scale {scale} is empty"),
-                );
-            }
-            Rejection::new(
+            ),
+        },
+        Domain::Decimal { low, high, scale } => match error {
+            DomainError::DecimalScale { .. } => Rejection::new(
+                "decimal-domain",
+                format!(
+                    "decimal domain scale {scale} exceeds MAX_DECIMAL_SCALE ({MAX_DECIMAL_SCALE})"
+                ),
+            ),
+            DomainError::EmptyRange { .. } => Rejection::new(
+                "decimal-domain",
+                format!("decimal domain {low}..{high} at scale {scale} is empty"),
+            ),
+            _ => Rejection::new(
                 "domain-size",
                 format!("decimal domain {low}..{high} exceeds MAX_DOMAIN_SIZE ({MAX_DOMAIN_SIZE})"),
-            )
-        }
+            ),
+        },
     }
 }
 

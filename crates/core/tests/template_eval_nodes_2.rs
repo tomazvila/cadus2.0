@@ -303,3 +303,67 @@ fn every_whole_number_function_refuses_a_fraction_on_either_side() {
     );
     assert_eq!(evaluate(&var("a"), &wide), Err(EvalError::TooWide));
 }
+
+/// `binomial(n, k)` by the factorial quotient, for the cases the walk computes.
+fn binomial_by_factorials(top: u32, bottom: u32) -> BigInt {
+    let factorial = |count: u32| (1..=count).fold(BigInt::from(1), |acc, step| acc * step);
+    factorial(top) / (factorial(bottom) * factorial(top - bottom))
+}
+
+#[test]
+fn a_binomial_takes_the_shorter_side_and_stops_at_the_step_bound() {
+    assert_eq!(written("binomial(5, 5)"), "1");
+    // The walk runs `min(k, n - k)` steps: one step here, not 4,999.
+    assert_eq!(written("binomial(5000, 4999)"), "5000");
+    assert_eq!(written("binomial(5000, 1)"), "5000");
+    // 2,048 steps are inside the bound; 2,049 are past it, and the value the
+    // walk refuses would fit the width bound.
+    assert_eq!(
+        eval("binomial(4096, 2048)"),
+        Ok(Ast::Integer(binomial_by_factorials(4096, 2048)))
+    );
+    assert_eq!(eval("binomial(4098, 2049)"), Err(EvalError::TooWide));
+}
+
+/// `2**exponent` as a tree. The grammar caps a literal exponent, so the tree
+/// is built by hand.
+fn two_to(exponent: i64) -> Ast {
+    Ast::Pow(Box::new(int(2)), exponent)
+}
+
+/// `binomial(top, 2)` as a tree.
+fn choose_two(top: Ast) -> Ast {
+    Ast::Func("binomial".to_string(), vec![top, int(2)])
+}
+
+#[test]
+fn a_binomial_of_exactly_the_width_bound_is_accepted() {
+    let none = Bindings::new();
+    // n = 2**2048 + 2**1024 gives n(n - 1)/2 = 2**4095 + 2**3072 - 2**1023,
+    // which has 4,096 bits: the bound itself and not past it.
+    let n = (BigInt::from(1) << 2048) + (BigInt::from(1) << 1024);
+    let expected = (&n * (&n - 1)) / 2;
+    let top = Ast::Add(vec![two_to(2048), two_to(1024)]);
+    assert_eq!(
+        evaluate(&choose_two(top), &none),
+        Ok(Ast::Integer(expected))
+    );
+    // A coefficient that passes 4,096 bits without landing on it is refused.
+    assert_eq!(
+        evaluate(&choose_two(two_to(4094)), &none),
+        Err(EvalError::TooWide)
+    );
+}
+
+#[test]
+fn a_power_of_zero_is_one_and_a_power_of_exactly_the_width_bound_is_accepted() {
+    let none = Bindings::new();
+    assert_eq!(written("0**0"), "1");
+    assert_eq!(written("2**0"), "1");
+    assert_eq!(written("2**(-2)"), "1/4");
+    assert_eq!(
+        evaluate(&two_to(4095), &none),
+        Ok(Ast::Integer(BigInt::from(1) << 4095))
+    );
+    assert_eq!(evaluate(&two_to(4096), &none), Err(EvalError::TooWide));
+}

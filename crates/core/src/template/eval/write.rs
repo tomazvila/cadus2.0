@@ -107,7 +107,8 @@ fn level(node: &Ast) -> Prec {
         Ast::Ineq { .. } | Ast::Assign { .. } | Ast::Chain { .. } => Prec::Lowest,
         Ast::Add(_) | Ast::Neg(_) | Ast::Mixed { .. } => Prec::Sum,
         Ast::Integer(value) if value.is_negative() => Prec::Sum,
-        Ast::Decimal { mantissa, .. } if mantissa.is_negative() => Prec::Sum,
+        // A decimal writes as its rational node, so it takes that node's level.
+        Ast::Decimal { mantissa, scale } => level(&rational_node(&decimal_value(mantissa, *scale))),
         Ast::Fraction { numerator, .. } if numerator.is_negative() => Prec::Sum,
         Ast::Fraction { .. } | Ast::Mul(_) | Ast::Div(_, _) => Prec::Product,
         Ast::Pow(_, _) => Prec::Power,
@@ -282,14 +283,12 @@ fn write_joined(items: &[Ast], separator: &str, need: Prec, out: &mut String) {
     }
 }
 
-/// Whether the writer may put a function name back into the answer string.
+/// Whether the writer puts a function name back into the answer string.
 ///
-/// An evaluation-only name is never writable: it must be erased, or the answer
-/// string would leave the grammar the M2 checker reads (V2). `abs` and `sqrt`
-/// are in both sets, and the M2 grammar holds them, so they are writable.
+/// An evaluation-only name is never writable: the evaluator erases it, or the
+/// answer string leaves the grammar the M2 checker reads (V2). `abs` and `sqrt`
+/// are outside [`EXTRA_FUNCTIONS`], because the M2 grammar holds them, so they
+/// are writable.
 fn is_writable_function(name: &str) -> bool {
-    if name == "abs" || name == "sqrt" {
-        return true;
-    }
     !EXTRA_FUNCTIONS.contains(&name)
 }

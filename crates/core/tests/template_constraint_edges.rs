@@ -372,3 +372,50 @@ fn the_parameter_names_of_every_term_shape() {
         names
     );
 }
+
+#[test]
+fn a_term_at_the_width_bound_is_accepted() {
+    // 2**16383 has 16,384 bits, which is the bound itself and not past it.
+    let edge = BigInt::from(2).pow(16_383);
+    let bound = bind("a", edge.clone());
+    assert_eq!(
+        eval_term(&Term::Add(vec![param("a"), lit(0)]), &bound),
+        Ok(BigRational::from_integer(edge))
+    );
+}
+
+#[test]
+fn a_digit_sum_reads_a_number_of_exactly_the_digit_bound() {
+    // 10**4095 has 4,096 digits, which is the bound itself and not past it.
+    let edge = bind("a", BigInt::from(10).pow(4_095));
+    assert_eq!(
+        eval_term(&Term::DigitSum(Box::new(param("a"))), &edge),
+        Ok(BigRational::from_integer(BigInt::from(1)))
+    );
+}
+
+#[test]
+fn a_refused_literal_writes_as_a_decimal_or_as_a_fraction() {
+    let none = Bindings::new();
+    let written = |numerator: BigInt, denominator: BigInt| {
+        let value = Term::Lit(BigRational::new(numerator, denominator));
+        match eval_term(&Term::Mod(Box::new(value), Box::new(lit(1))), &none) {
+            Err(ConstraintError::NotWhole { op: "mod", value }) => value,
+            other => panic!("the literal is not whole: {other:?}"),
+        }
+    };
+    // A denominator that is not a power of ten writes the fraction.
+    assert_eq!(written(BigInt::from(3), BigInt::from(4)), "3/4");
+    // A denominator of up to 64 powers of ten writes a decimal.
+    let sixty_four = BigInt::from(10).pow(64);
+    assert_eq!(
+        written(BigInt::from(1), sixty_four),
+        format!("0.{}1", "0".repeat(63))
+    );
+    // One more power of ten writes the fraction.
+    let sixty_five = BigInt::from(10).pow(65);
+    assert_eq!(
+        written(BigInt::from(1), sixty_five),
+        format!("1/1{}", "0".repeat(65))
+    );
+}

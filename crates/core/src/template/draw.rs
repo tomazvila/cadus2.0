@@ -94,21 +94,17 @@ pub fn rng_from_seed(seed: u64) -> ChaCha8Rng {
 /// Draw a whole number below `bound`, with no modulo bias.
 ///
 /// The method is Lemire's multiply-and-shift with a rejection threshold. A bound
-/// of zero or one has one answer, zero, so the loop never runs on it.
+/// of zero or one has one answer, zero, so the draw reads no value for it.
 pub fn below(rng: &mut ChaCha8Rng, bound: u64) -> u64 {
     if bound <= 1 {
         return 0;
     }
+    // The threshold depends on the bound alone. It counts the values at the top
+    // of the 64-bit range that make the fold uneven: `2**64 mod bound`.
+    let threshold = u64::MAX.wrapping_sub(bound).wrapping_add(1) % bound;
     let mut drawn = u128::from(rng.next_u64()) * u128::from(bound);
-    let mut low = drawn as u64;
-    if low < bound {
-        // The threshold depends on the bound alone. It counts the values at the
-        // top of the 64-bit range that would make the fold uneven.
-        let threshold = u64::MAX.wrapping_sub(bound).wrapping_add(1) % bound;
-        while low < threshold {
-            drawn = u128::from(rng.next_u64()) * u128::from(bound);
-            low = drawn as u64;
-        }
+    while (drawn as u64) < threshold {
+        drawn = u128::from(rng.next_u64()) * u128::from(bound);
     }
     (drawn >> 64) as u64
 }
@@ -284,10 +280,7 @@ fn sampled_candidates(
 /// every index through [`below`], so the permutation is uniform and reproducible
 /// from the seed.
 pub fn shuffle<T>(items: &mut [T], rng: &mut ChaCha8Rng) {
-    let length = items.len();
-    let mut at = length;
-    while at > 1 {
-        at -= 1;
+    for at in (1..items.len()).rev() {
         let bound = u64::try_from(at + 1).unwrap_or(1);
         // `pick` is at most `at`, and `at` is below the length.
         let pick = usize::try_from(below(rng, bound)).unwrap_or(0);

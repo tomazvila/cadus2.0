@@ -153,9 +153,8 @@ pub(super) fn write_rational(number: &BigRational) -> String {
         scale += 1;
     }
     if denominator.is_one() {
-        let power = ten.pow(scale);
-        let mantissa = number.numer() * (power / number.denom());
-        let text = mantissa.magnitude().to_string();
+        // The denominator is exactly `10**scale`, so the numerator is the mantissa.
+        let text = number.numer().magnitude().to_string();
         let scale_usize = scale as usize;
         let padded = if text.len() <= scale_usize {
             format!("{}{text}", "0".repeat(scale_usize - text.len() + 1))

@@ -89,9 +89,13 @@ pub const MAX_VALUE_BITS: u64 = 4_096;
 
 /// The largest count of multiplications [`binomial`] runs.
 ///
-/// The width bound stops a large coefficient on its own, and this bound stops a
-/// long walk that never builds a wide number, such as `binomial(10**9, 10**9-2)`.
-pub const MAX_BINOMIAL_STEPS: u32 = 4_096;
+/// The walk runs `min(k, n - k)` steps for `binomial(n, k)`, and the smallest
+/// coefficient of `s` steps is `binomial(2*s, s)`, which has about `2*s - 6`
+/// bits. So a walk of 2,049 to 2,051 steps builds a value inside
+/// [`MAX_VALUE_BITS`], and this bound refuses it before the width bound reads
+/// it. A longer walk always ends at the width bound, and this bound stops it at
+/// its first step.
+pub const MAX_BINOMIAL_STEPS: u32 = 2_048;
 
 /// The largest argument [`factorial`] takes.
 ///

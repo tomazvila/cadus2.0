@@ -12,31 +12,8 @@
 
 mod common;
 
-use cadus_core::answer::canonical_form;
-use cadus_core::template::{Instance, SpaceSize};
+use cadus_core::template::SpaceSize;
 use common::gate::*;
-
-/// One hand-built instance of the base document at `a`.
-fn instance(a: i64, text: &str, answer: &str) -> Instance {
-    Instance {
-        bindings: bind(&[("a", a)]),
-        text: text.to_string(),
-        answer: answer.to_string(),
-        canon: canonical_form("16").expect("16 canonicalizes"),
-        instance_hash: "digest".to_string(),
-    }
-}
-
-/// The per-instance rejection of one hand-built instance under the squares point.
-fn refuse_instance(instance: &Instance) -> Rejection {
-    let doc = doc_of(&body_with(&[]));
-    let pool = exemplars(&["49", "81"]);
-    let spec = GateSpec {
-        answer_kind: AnswerKind::Numeric,
-        exemplars: &pool,
-    };
-    check_instance(&doc, &spec, instance).expect_err("the instance is refused")
-}
 
 /// Accept the base document with `overrides`, over `a` in 1..12 and `b` in 1..2, with the four corner samples.
 fn accept_over_a_and(b: &str, overrides: &[(&str, &str)]) {
@@ -231,31 +208,31 @@ fn the_answer_expression_names_of_every_node_kind_are_read() {
 
 #[test]
 fn the_per_instance_rules_on_hand_built_instances() {
-    let rejection = refuse_instance(&instance(4, "Compute ${a}$.", "16"));
+    let rejection = refuse_instance(&hand_instance(4, "Compute ${a}$.", "16"));
     assert_eq!(rejection.code, "placeholder-left");
     assert_eq!(
         rejection.message,
         "a rendered problem still contains a placeholder"
     );
-    let rejection = refuse_instance(&instance(4, "Compute $4^{2}$.", ""));
+    let rejection = refuse_instance(&hand_instance(4, "Compute $4^{2}$.", ""));
     assert_eq!(rejection.code, "empty-answer");
     assert_eq!(
         rejection.message,
         "instantiation for {'a': 4} produced no answer"
     );
-    let rejection = refuse_instance(&instance(4, "Compute $4^{2}$.", "oo"));
+    let rejection = refuse_instance(&hand_instance(4, "Compute $4^{2}$.", "oo"));
     assert_eq!(rejection.code, "not-a-number");
     assert_eq!(
         rejection.message,
         "instance {'a': 4} answers 'oo', which is not a number (['oo'])"
     );
-    let rejection = refuse_instance(&instance(4, "Compute $4^{2}$.", "1.50"));
+    let rejection = refuse_instance(&hand_instance(4, "Compute $4^{2}$.", "1.50"));
     assert_eq!(rejection.code, "decimal-answer");
     assert_eq!(
         rejection.message,
         "instance {'a': 4} answers '1.50', which is a decimal with a trailing zero run — 2.0 answers hold exact values only (D6)"
     );
-    let rejection = refuse_instance(&instance(4, "Compute $4^{2}$.", "2*q"));
+    let rejection = refuse_instance(&hand_instance(4, "Compute $4^{2}$.", "2*q"));
     assert_eq!(rejection.code, "free-symbol");
     assert_eq!(
         rejection.message,
@@ -268,9 +245,9 @@ fn the_per_instance_rules_on_hand_built_instances() {
         answer_kind: AnswerKind::Numeric,
         exemplars: &pool,
     };
-    let shown = instance(4, "The square is 16", "16");
+    let shown = hand_instance(4, "The square is 16", "16");
     assert_eq!(check_instance(&doc, &spec, &shown), Ok(()));
-    let hidden = instance(4, "Compute $4^{2}$.", "16");
+    let hidden = hand_instance(4, "Compute $4^{2}$.", "16");
     let rejection = check_instance(&doc, &spec, &hidden).expect_err("the hint gives it away");
     assert_eq!(rejection.code, "hint-answer");
 }

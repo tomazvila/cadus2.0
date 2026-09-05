@@ -15,25 +15,10 @@ use common::gate::*;
 #[test]
 fn a_choice_domain_is_bounded_because_every_choice_must_be_sampled() {
     // `tests/test_problem_templates.py:540-556`.
-    let values: Vec<String> = (0..=MAX_CHOICES)
-        .map(|index| format!("\"{index}\""))
-        .collect();
-    let params = format!(
-        r#"{{"a": {{"kind": "int", "low": 1, "high": 9}},
-             "op": {{"kind": "choice", "values": [{}]}}}}"#,
-        values.join(", ")
-    );
-    let rejection = reject_squares(&body_with(&[
-        ("statement", r#""Compute ${a} + 1 {op}$.""#),
-        ("params", params.as_str()),
-        ("answer_expr", r#""a + 1""#),
-        ("solution_sketch", r#""Add one to ${a}$.""#),
-        ("hints", r#"["What is one more?"]"#),
-        (
-            "samples",
-            r#"[{"params": {"a": 1, "op": "0"}, "expected": "2"}]"#,
-        ),
-    ]));
+    let rejection = reject_squares(&choice_body(
+        MAX_CHOICES + 1,
+        r#"[{"params": {"a": 1, "op": "0"}, "expected": "2"}]"#,
+    ));
     assert_eq!(
         rejection.message,
         "a choice domain of 25 exceeds MAX_CHOICES (24); every choice must appear in a worked sample, so use an int domain or split the template"
@@ -224,22 +209,9 @@ fn a_stated_space_size_that_is_not_the_count_is_refused() {
 fn a_constraint_over_a_fractional_parameter_is_refused() {
     // Spec section 2.3: reject a template whose constraints read a non-integer
     // parameter under `divides`, `coprime`, `carries`, `mod`, or `digit_sum`.
-    let rejection = reject_squares(&body_with(&[
-        ("statement", r#""Compute ${a} \\times {r}$.""#),
-        (
-            "params",
-            r#"{"a": {"kind": "int", "low": 1, "high": 12},
-                "r": {"kind": "rational", "num": {"low": 1, "high": 3},
-                      "den": {"low": 2, "high": 4}}}"#,
-        ),
-        (
-            "constraints",
-            r#"[{"op": "divides", "left": "a", "right": "r"}]"#,
-        ),
-        ("answer_expr", r#""a""#),
-        ("solution_sketch", r#""Multiply ${a}$ by ${r}$.""#),
-        ("samples", r#"[]"#),
-    ]));
+    let rejection = reject_squares(&rational_r_body(
+        r#"[{"op": "divides", "left": "a", "right": "r"}]"#,
+    ));
     assert_eq!(
         rejection.message,
         "the divides constraint reads whole numbers, and parameter 'r' draws values that are not whole"

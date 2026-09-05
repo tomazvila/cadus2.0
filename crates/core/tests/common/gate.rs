@@ -299,6 +299,63 @@ pub fn decimal_choice_body() -> String {
     )
 }
 
+/// The `a + 1` template over `a` in 1..9 and the choice `op` of `count` texts, with `samples`.
+pub fn choice_body(count: usize, samples: &str) -> String {
+    let values: Vec<String> = (0..count).map(|index| format!("\"{index}\"")).collect();
+    let params = format!(
+        r#"{{"a": {{"kind": "int", "low": 1, "high": 9}},
+             "op": {{"kind": "choice", "values": [{}]}}}}"#,
+        values.join(", ")
+    );
+    body_with(&[
+        ("statement", r#""Compute ${a} + 1 {op}$.""#),
+        ("params", params.as_str()),
+        ("answer_expr", r#""a + 1""#),
+        ("solution_sketch", r#""Add one to ${a}$.""#),
+        ("hints", r#"["What is one more?"]"#),
+        ("samples", samples),
+    ])
+}
+
+/// The template `a` over `a` in 1..12 and the rational `r` in 1..3 over 2..4, with `constraints`.
+pub fn rational_r_body(constraints: &str) -> String {
+    body_with(&[
+        ("statement", r#""Compute ${a} \\times {r}$.""#),
+        (
+            "params",
+            r#"{"a": {"kind": "int", "low": 1, "high": 12},
+                "r": {"kind": "rational", "num": {"low": 1, "high": 3},
+                      "den": {"low": 2, "high": 4}}}"#,
+        ),
+        ("constraints", constraints),
+        ("answer_expr", r#""a""#),
+        ("solution_sketch", r#""Multiply ${a}$ by ${r}$.""#),
+        ("samples", r#"[]"#),
+    ])
+}
+
+/// One hand-built instance of the base document at `a`, with the canonical form of 16.
+pub fn hand_instance(a: i64, text: &str, answer: &str) -> cadus_core::template::Instance {
+    cadus_core::template::Instance {
+        bindings: bind(&[("a", a)]),
+        text: text.to_string(),
+        answer: answer.to_string(),
+        canon: canonical_form("16").expect("16 canonicalizes"),
+        instance_hash: "digest".to_string(),
+    }
+}
+
+/// The per-instance rejection of one hand-built instance under the squares point.
+pub fn refuse_instance(instance: &cadus_core::template::Instance) -> Rejection {
+    let doc = doc_of(&body_with(&[]));
+    let pool = exemplars(&["49", "81"]);
+    let spec = GateSpec {
+        answer_kind: AnswerKind::Numeric,
+        exemplars: &pool,
+    };
+    check_instance(&doc, &spec, instance).expect_err("the instance is refused")
+}
+
 /// Compile a one-parameter document and instantiate it at `a`.
 pub fn squares_instance(doc: &TemplateDoc, a: i64) -> cadus_core::template::Instance {
     Compiled::new(doc)

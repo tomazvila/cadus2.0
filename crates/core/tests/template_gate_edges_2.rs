@@ -199,3 +199,47 @@ fn the_body_read_checks_every_choice_value() {
         refusal.message
     );
 }
+
+#[test]
+fn the_body_read_takes_a_negative_number_as_an_integer() {
+    // Each body fails the typed read for a missing field, so the shape check
+    // runs, and a negative number is a whole number in every position.
+    let generic = [
+        r#"{"samples": [{"params": {"a": 1}, "expected": -4}]}"#,
+        r#"{"params": {"a": {"kind": "int", "low": -3, "high": 2}}}"#,
+        r#"{"params": {"a": {"kind": "choice", "values": [-1, 2]}}}"#,
+    ];
+    for body in generic {
+        let refusal = read_refusal(body);
+        assert!(
+            refusal
+                .message
+                .starts_with("the template body does not read: "),
+            "{body}: {}",
+            refusal.message
+        );
+    }
+}
+
+#[test]
+fn a_choice_domain_of_exactly_the_bound_passes() {
+    let mut samples: Vec<String> = (0..MAX_CHOICES)
+        .map(|index| format!(r#"{{"params": {{"a": 1, "op": "{index}"}}, "expected": "2"}}"#))
+        .collect();
+    samples.push(r#"{"params": {"a": 9, "op": "0"}, "expected": "10"}"#.to_string());
+    let body = choice_body(MAX_CHOICES, &format!("[{}]", samples.join(", ")));
+    let verified = accept(&body, AnswerKind::Numeric, &["49", "81"]);
+    assert_eq!(verified.space, SpaceSize::Exact(216));
+}
+
+#[test]
+fn a_digit_sum_inside_a_plain_comparison_needs_a_whole_parameter() {
+    let rejection = reject_squares(&rational_r_body(
+        r#"[{"op": "eq", "left": {"digit_sum": "r"}, "right": {"lit": 1}}]"#,
+    ));
+    assert_eq!(
+        rejection.message,
+        "the eq constraint reads whole numbers, and parameter 'r' draws values that are not whole"
+    );
+    assert_eq!(rejection.code, "constraint-whole");
+}
