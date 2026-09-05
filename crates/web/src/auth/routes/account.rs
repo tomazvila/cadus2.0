@@ -166,7 +166,9 @@ pub async fn me(State(state): State<AppState>, headers: HeaderMap) -> Result<Res
 async fn bound_profile(db: &Db, user_id: Uuid) -> Result<AccountProfile, ApiError> {
     let mut tx = bind(db, user_id).await?;
     let profile = store_call(db, "account read", account_profile(&mut *tx)).await?;
-    commit(db, tx, "account read").await?;
+    // The read wrote nothing, so the transaction ends with the rollback its
+    // drop runs, and the binding ends with it.
+    drop(tx);
     profile.ok_or_else(|| ApiError::unauthorized(crate::auth::guard::NO_SESSION_MESSAGE))
 }
 

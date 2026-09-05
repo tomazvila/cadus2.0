@@ -1,6 +1,8 @@
 //! The helpers the auth routes share: the body readers, the answers, the
 //! password and token plumbing, and the bound transaction.
 
+use std::time::Duration;
+
 use axum::Json;
 use axum::body::Bytes;
 use axum::http::{HeaderMap, HeaderValue, StatusCode, header};
@@ -21,7 +23,6 @@ use super::{
 };
 use crate::AppState;
 use crate::auth::email::normalize_email;
-use crate::auth::guard::plus_secs;
 use crate::auth::password::{
     Argon2Profile, PasswordError, WeakPassword, hash_password, validate_password, verify_password,
 };
@@ -108,11 +109,6 @@ pub(super) fn with_cookie(mut response: Response, cookie: HeaderValue) -> Respon
 pub(crate) fn cookie_failed(err: CookieWriteError) -> ApiError {
     tracing::error!(error = %err, "auth: a cookie header did not build");
     ApiError::internal("session cookie")
-}
-
-/// The `500` of a session window past the calendar.
-pub(crate) fn session_window() -> ApiError {
-    ApiError::internal("session window")
 }
 
 /// The `422 weak_password` of a password the policy refuses.
@@ -297,7 +293,7 @@ pub(super) async fn sign_in(
 ) -> Result<Response, ApiError> {
     let raw = new_token()?;
     let token_hash = hash_token(&raw);
-    let session = req.session_row(&token_hash, now)?;
+    let session = req.session_row(&token_hash, now);
     let profile = open_session(&req.state.db, user_id, &session, rehash).await?;
     session_answer(&req.state, &req.headers, &profile, &raw)
 }
@@ -314,7 +310,7 @@ pub(super) async fn mint_token(
     ttl_secs: u64,
 ) -> Result<String, ApiError> {
     let raw = new_token()?;
-    let expires_at = plus_secs(now, ttl_secs).ok_or_else(|| ApiError::internal("token window"))?;
+    let expires_at = now + Duration::from_secs(ttl_secs);
     let mut tx = bind(db, user_id).await?;
     store_call(
         db,
@@ -366,7 +362,6 @@ mod tests {
     fn the_defensive_mappers_answer_internal_errors() {
         let mappers = [
             cookie_failed(CookieWriteError::BadValue),
-            session_window(),
             hash_failed(PasswordError::Entropy {
                 reason: "no pool".to_string(),
             }),

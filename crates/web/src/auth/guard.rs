@@ -89,10 +89,7 @@ pub fn session_is_live(session: &SessionRow, now: DateTime<Utc>) -> bool {
 /// one write and not one per request.
 #[must_use]
 pub fn touch_is_due(session: &SessionRow, now: DateTime<Utc>) -> bool {
-    let Some(due) = plus_secs(session.last_seen_at, LAST_SEEN_TOUCH_SECS) else {
-        return false;
-    };
-    now > due
+    now > session.last_seen_at + std::time::Duration::from_secs(LAST_SEEN_TOUCH_SECS)
 }
 
 /// Resolve the identity of this request, or answer `401 unauthorized`.

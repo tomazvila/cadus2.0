@@ -68,15 +68,7 @@ async fn a_first_sign_in_write_that_fails_is_500_on_the_callback() {
     .await;
     TestDb::with(|db| async move {
         let (app, user) = google_app_with_learner(&db).await;
-        seed_session(
-            &db,
-            user,
-            SESSION_TOKEN_ONE.1,
-            shift(0),
-            shift(0),
-            shift(3600),
-        )
-        .await;
+        seed_live_session(&db, user, SESSION_TOKEN_ONE.1).await;
         fail_deletes(&db, "auth_sessions", "true").await;
         assert_callback_internal(&app).await;
     })

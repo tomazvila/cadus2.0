@@ -183,15 +183,7 @@ pub async fn refused_google_callback(db: &TestDb, provider: FakeProvider) -> Ans
 /// read back that the callback linked into that same account: `302`, one
 /// account, the same id.
 pub async fn link_existing_account(db: &TestDb, app: &Router, user: Uuid) -> Answer {
-    seed_session(
-        db,
-        user,
-        SESSION_TOKEN_ONE.1,
-        shift(0),
-        shift(0),
-        shift(3600),
-    )
-    .await;
+    seed_live_session(db, user, SESSION_TOKEN_ONE.1).await;
     let answer = google_callback(app, GOOGLE_QUERY).await;
     assert_eq!(answer.status.as_u16(), 302);
     assert_eq!(user_count(db).await, 1, "no second account was created");

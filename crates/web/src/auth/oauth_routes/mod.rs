@@ -58,6 +58,8 @@
 //! credentials the provider just proved.
 
 use std::collections::HashMap;
+use std::sync::Arc;
+use std::time::Duration;
 
 use axum::extract::rejection::QueryRejection;
 use axum::extract::{Query, State};
@@ -65,35 +67,31 @@ use axum::http::{HeaderMap, HeaderValue, StatusCode, header};
 use axum::response::{IntoResponse, Response};
 use axum::routing::get;
 use axum::{Json, Router};
-use cadus_store::Db;
-use cadus_store::auth::{
-    AuthUser, NewSession, SignUp, clear_password_hash, delete_all_sessions, insert_oauth_account,
-    insert_session, mark_email_verified, oauth_account_user, sign_up, user_by_email, user_by_id,
-};
 use serde_json::json;
 use sqlx::types::chrono::Utc;
 
 use crate::AppState;
-use crate::auth::guard::plus_secs;
 use crate::auth::oauth::{
     Credentials, HANDSHAKE_COOKIE, HANDSHAKE_PATH, Handshake, Identity, OAuthFailure, Provider,
-    authorize_url, callback_redirect_uri, decode_handshake, encode_handshake,
+    ProviderTransport, authorize_url, callback_redirect_uri, decode_handshake, encode_handshake,
     exchange_and_fetch_identity, safe_next,
 };
 use crate::auth::rate::client_ip;
-use crate::auth::routes::{
-    ClientAddr, bind, commit, cookie_failed, new_session_row, new_token, session_window, user_agent,
-};
+use crate::auth::routes::{ClientAddr, cookie_failed, new_session_row, new_token, user_agent};
 use crate::auth::session::{
-    CookieWriteError, OAUTH_HANDSHAKE_TTL_SECS, SESSION_IDLE_SECS, clear_auth_cookie,
-    set_auth_cookie, set_session_cookie,
+    OAUTH_HANDSHAKE_TTL_SECS, SESSION_IDLE_SECS, clear_auth_cookie, set_auth_cookie,
+    set_session_cookie,
 };
-use crate::auth::store_call;
 use crate::auth::token::{EntropyError, hash_token, tokens_equal};
+use crate::cookie::CookiePosture;
 use crate::cookie::read_session_cookie;
 use crate::error::ApiError;
 use crate::origin::own_origin;
 use crate::path::ApiPath;
+
+mod account;
+
+use account::{resolve_account, write_sign_in};
 
 /// The message of a provider this deployment does not serve.
 pub const PROVIDER_NOT_ENABLED_MESSAGE: &str = "This OAuth provider is not enabled.";
@@ -202,19 +200,39 @@ fn handshake_failed(err: EntropyError) -> ApiError {
     ApiError::internal("oauth handshake")
 }
 
-/// The `500` of a handshake cookie that did not build.
-fn handshake_cookie_failed(err: CookieWriteError) -> ApiError {
-    tracing::error!(error = %err, "auth: the OAuth handshake cookie did not build");
-    ApiError::internal("oauth handshake cookie")
+/// The `Set-Cookie` of the handshake cookie that carries `value`.
+///
+/// The name and the path are literals of this module and `value` is the
+/// base64url text of [`encode_handshake`], so the build cannot fail and the
+/// fallback never runs.
+fn handshake_cookie(posture: CookiePosture, value: &str) -> HeaderValue {
+    set_auth_cookie(
+        posture,
+        HANDSHAKE_COOKIE,
+        value,
+        OAUTH_HANDSHAKE_TTL_SECS,
+        HANDSHAKE_PATH,
+    )
+    .unwrap_or(HeaderValue::from_static(""))
 }
 
-/// The provider and its credentials, or the `404` of one this deployment does
-/// not serve.
-fn served_provider(state: &AppState, name: &str) -> Result<(Provider, Credentials), ApiError> {
+/// The `Set-Cookie` that ends the handshake cookie. See [`handshake_cookie`]
+/// for why the build cannot fail.
+fn spent_handshake_cookie(posture: CookiePosture) -> HeaderValue {
+    clear_auth_cookie(posture, HANDSHAKE_COOKIE, HANDSHAKE_PATH)
+        .unwrap_or(HeaderValue::from_static(""))
+}
+
+/// The provider, its credentials, and the transport that reaches it, or the
+/// `404` of a provider this deployment does not serve.
+fn served_provider(
+    state: &AppState,
+    name: &str,
+) -> Result<(Provider, Credentials, Arc<dyn ProviderTransport>), ApiError> {
     state
         .oauth
-        .enabled(name)
-        .map(|(provider, credentials)| (provider, credentials.clone()))
+        .served(name)
+        .map(|(provider, credentials, transport)| (provider, credentials.clone(), transport))
         .ok_or_else(|| ApiError::oauth_not_found(PROVIDER_NOT_ENABLED_MESSAGE))
 }
 
@@ -226,7 +244,7 @@ pub async fn start(
     query: Result<Query<HashMap<String, String>>, QueryRejection>,
     headers: HeaderMap,
 ) -> Result<Response, ApiError> {
-    let (provider, credentials) = served_provider(&state, &name)?;
+    let (provider, credentials, _transport) = served_provider(&state, &name)?;
     let params = params(query);
     let next = safe_next(value(&params, "next"));
     let handshake = Handshake::fresh(provider.name, &next).map_err(handshake_failed)?;
@@ -238,14 +256,7 @@ pub async fn start(
         &callback_redirect_uri(provider.name, &base),
         &handshake,
     );
-    let cookie = set_auth_cookie(
-        state.posture,
-        HANDSHAKE_COOKIE,
-        &encode_handshake(&handshake),
-        OAUTH_HANDSHAKE_TTL_SECS,
-        HANDSHAKE_PATH,
-    )
-    .map_err(handshake_cookie_failed)?;
+    let cookie = handshake_cookie(state.posture, &encode_handshake(&handshake));
 
     redirect(&target, vec![cookie])
 }
@@ -298,16 +309,13 @@ fn exchange_failed(err: &OAuthFailure, provider: Provider) -> ApiError {
 /// lets an account claim any address takes over every account of this service
 /// that shares one.
 async fn verified_identity(
-    state: &AppState,
+    transport: &dyn ProviderTransport,
     provider: Provider,
     credentials: &Credentials,
     base: &str,
     code: &str,
     handshake: &Handshake,
 ) -> Result<Identity, ApiError> {
-    let Some(transport) = state.oauth.transport.as_deref() else {
-        return Err(ApiError::oauth_not_found(PROVIDER_NOT_ENABLED_MESSAGE));
-    };
     let identity = exchange_and_fetch_identity(
         transport,
         provider,
@@ -324,59 +332,6 @@ async fn verified_identity(
     Ok(identity)
 }
 
-/// The writes of one federated sign-in, in ONE transaction: the first-sign-in
-/// stamp, the link row, and the session row.
-///
-/// The stamp removes the ONE reason login refuses a password on an unverified
-/// account, so every credential that predates the stamp goes first. Sign-up
-/// asks for no proof of the address, so the password and the sessions of an
-/// unverified account have an unproven source. The order is fixed — clear,
-/// delete, then stamp — and the three writes share this transaction, so no
-/// window opens in which the address is verified and the old password still
-/// signs in. The session row of THIS sign-in goes in last, after the deletion.
-async fn write_sign_in(
-    db: &Db,
-    user: &AuthUser,
-    linked: bool,
-    identity: &Identity,
-    session: &NewSession<'_>,
-) -> Result<(), ApiError> {
-    let mut tx = bind(db, user.id).await?;
-    if user.email_verified_at.is_none() {
-        store_call(db, "password clear", clear_password_hash(&mut *tx, user.id)).await?;
-        store_call(db, "session sweep", delete_all_sessions(&mut *tx)).await?;
-        // The provider just proved the address, which is what the verification
-        // link proves.
-        store_call(
-            db,
-            "verification stamp",
-            mark_email_verified(&mut *tx, user.id),
-        )
-        .await?;
-    }
-    if !linked {
-        store_call(
-            db,
-            "oauth link",
-            insert_oauth_account(
-                &mut *tx,
-                user.id,
-                &identity.provider,
-                &identity.subject,
-                &identity.email,
-            ),
-        )
-        .await?;
-    }
-    store_call(
-        db,
-        "session insert",
-        insert_session(&mut *tx, user.id, session),
-    )
-    .await?;
-    commit(db, tx, "session insert").await
-}
-
 /// `GET /api/auth/oauth/{provider}/callback` — spend the handshake, read the
 /// provider-verified identity, open a session, and send the browser back.
 pub async fn callback(
@@ -387,11 +342,18 @@ pub async fn callback(
     headers: HeaderMap,
 ) -> Result<Response, ApiError> {
     let params = params(query);
-    let (provider, credentials) = served_provider(&state, &name)?;
+    let (provider, credentials, transport) = served_provider(&state, &name)?;
     let (handshake, code) = spent_handshake(provider, &params, &headers)?;
     let base = redirect_base(&state, &headers)?;
-    let identity =
-        verified_identity(&state, provider, &credentials, &base, &code, &handshake).await?;
+    let identity = verified_identity(
+        transport.as_ref(),
+        provider,
+        &credentials,
+        &base,
+        &code,
+        &handshake,
+    )
+    .await?;
 
     let (user, linked) = resolve_account(&state.db, &identity).await?;
     // THE guard. Nothing above it wrote more than a fresh, enabled account, and
@@ -402,15 +364,14 @@ pub async fn callback(
 
     let raw = new_token()?;
     let now = Utc::now();
-    let expires_at = plus_secs(now, SESSION_IDLE_SECS).ok_or_else(session_window)?;
+    let expires_at = now + Duration::from_secs(SESSION_IDLE_SECS);
     let token_hash = hash_token(&raw);
     let ip = client_ip(&headers, peer);
     let session = new_session_row(&token_hash, now, expires_at, &ip, user_agent(&headers));
     write_sign_in(&state.db, &user, linked, &identity, &session).await?;
 
     let session_cookie = set_session_cookie(state.posture, &raw).map_err(cookie_failed)?;
-    let spent = clear_auth_cookie(state.posture, HANDSHAKE_COOKIE, HANDSHAKE_PATH)
-        .map_err(handshake_cookie_failed)?;
+    let spent = spent_handshake_cookie(state.posture);
     // `safe_next` runs again HERE, on the value read from the cookie. That
     // second pass is what lets the handshake cookie stay unsigned; do not
     // demote it to a write-time check.
@@ -420,69 +381,11 @@ pub async fn callback(
     )
 }
 
-/// Resolve the identity to an account, in the section 3.3 order.
-///
-/// The answer is the account and whether step 1 already found the
-/// `oauth_accounts` row. A `true` there means the caller writes no link row: the
-/// table's primary key is `(provider, provider_account_id)`, so a second insert
-/// of a live link is a duplicate-key error, and re-pointing a live link at
-/// another account is exactly the takeover this order prevents.
-///
-/// The guard on `disabled_at` belongs to the CALLER, not here. A resolution
-/// branch that also tests usability is a match condition, and a non-match then
-/// falls through into the next branch instead of refusing.
-async fn resolve_account(db: &Db, identity: &Identity) -> Result<(AuthUser, bool), ApiError> {
-    let linked = store_call(
-        db,
-        "oauth lookup",
-        oauth_account_user(db.pool(), &identity.provider, &identity.subject),
-    )
-    .await?;
-    if let Some(user_id) = linked {
-        // A dangling link — the account row is gone — resolves to nothing, and
-        // the walk goes on. That is the ONLY reason step 1 continues.
-        if let Some(user) = store_call(db, "account lookup", user_by_id(db.pool(), user_id)).await?
-        {
-            return Ok((user, true));
-        }
-    }
-
-    if let Some(user) = store_call(
-        db,
-        "account lookup",
-        user_by_email(db.pool(), &identity.email),
-    )
-    .await?
-    {
-        return Ok((user, false));
-    }
-
-    // A brand-new federated account: no password hash, so a password login
-    // against it is refused by the section 3.3 login order.
-    match store_call(db, "sign-up", sign_up(db.pool(), &identity.email, None)).await? {
-        SignUp::Created(user) => Ok((user, false)),
-        // Another request created the same address between the read above and
-        // this insert. Read it back and link into it instead of failing.
-        SignUp::EmailTaken => store_call(
-            db,
-            "account lookup",
-            user_by_email(db.pool(), &identity.email),
-        )
-        .await?
-        .map(|user| (user, false))
-        .ok_or_else(|| {
-            tracing::error!("auth: the OAuth sign-up raced and the address then read back empty");
-            ApiError::internal("sign-up")
-        }),
-    }
-}
-
 #[cfg(test)]
 mod tests {
     use axum::http::{HeaderValue, StatusCode};
 
-    use super::{bad_redirect, handshake_cookie_failed, handshake_failed, no_redirect_base};
-    use crate::auth::session::CookieWriteError;
+    use super::{bad_redirect, handshake_failed, no_redirect_base, redirect};
     use crate::auth::token::EntropyError;
 
     /// Every OAuth `500` mapper answers an internal error.
@@ -496,10 +399,20 @@ mod tests {
             handshake_failed(EntropyError {
                 reason: "no pool".to_string(),
             }),
-            handshake_cookie_failed(CookieWriteError::BadValue),
         ];
         for err in mappers {
             assert_eq!(err.status, StatusCode::INTERNAL_SERVER_ERROR);
         }
+    }
+
+    /// A redirect target that is not a header value is the `500` of the
+    /// mapper, and a valid one is a `302` that carries the cookies it was
+    /// given.
+    #[test]
+    fn a_redirect_target_that_is_not_a_header_value_is_500() {
+        let err = redirect("bad\nlocation", Vec::new()).expect_err("a newline is not a target");
+        assert_eq!(err.status, StatusCode::INTERNAL_SERVER_ERROR);
+        let response = redirect("/next", vec![HeaderValue::from_static("a=b")]).expect("a target");
+        assert_eq!(response.status(), StatusCode::FOUND);
     }
 }

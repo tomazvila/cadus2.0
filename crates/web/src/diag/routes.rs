@@ -99,7 +99,7 @@ pub async fn start(req: Ready, body: Option<Json<Value>>) -> Reply {
         // Bind the entry course, so the placement and the frontier readout after
         // it see one enrolled course.
         let session = projection.view.current_session.clone();
-        let event = enrolled_event(req.now, session, event_slug(&course.id)?);
+        let event = enrolled_event(req.now, session, event_slug(&course.id));
         req.append_and_fold(&mut tx, &event, &input).await?;
     }
 
@@ -261,7 +261,7 @@ pub async fn answer(req: Ready, body: Option<Json<Value>>) -> Reply {
         .store(project_current(&mut tx, req.user_id, &req.input()))
         .await?;
     let session = projection.view.current_session.clone();
-    let event = answer_event(req.now, session, event_slug(topic)?, &marked);
+    let event = answer_event(req.now, session, event_slug(topic), &marked);
     req.append(&mut tx, &event).await?;
 
     let next = deal_probe(&diag, &req.content, &mut scratch, req.now);

@@ -241,15 +241,15 @@ pub async fn skip_updates(db: &TestDb, table: &str, condition: &str) {
 }
 
 /// Install the policy function that hides a row from a query whose text holds
-/// `needle`, from its `skip`-th evaluation on. The counter is one sequence of
-/// the database, so one test installs one hide.
+/// `needle` on its first `hidden` evaluations, and shows it after them. The
+/// counter is one sequence of the database, so one test installs one hide.
 async fn install_hide(db: &TestDb) {
     run(
         db,
-        "CREATE OR REPLACE FUNCTION test_fault_hide(needle text, skip bigint) RETURNS boolean \
+        "CREATE OR REPLACE FUNCTION test_fault_hide(needle text, hidden bigint) RETURNS boolean \
          LANGUAGE plpgsql STABLE AS $$ BEGIN \
          IF position(needle in current_query()) = 0 THEN RETURN true; END IF; \
-         RETURN nextval('test_hide_calls') <= skip; END $$"
+         RETURN nextval('test_hide_calls') > hidden; END $$"
             .to_string(),
     )
     .await;
@@ -275,16 +275,16 @@ fn quote(text: &str) -> String {
     format!("'{}'", text.replace('\'', "''"))
 }
 
-/// Hide every row of `table` from the app role when the query text holds
-/// `needle`, after the first `visible` matching row reads. The read raises no
+/// Hide every row of `table` from the app role on the first `hidden` reads
+/// whose query text holds `needle`, and show it after them. The read raises no
 /// error: it sees no row. The table must carry row-level security.
-pub async fn hide_rows_after(db: &TestDb, table: &str, needle: &str, visible: i64) {
+pub async fn hide_rows_first(db: &TestDb, table: &str, needle: &str, hidden: i64) {
     install_hide(db).await;
     run(
         db,
         format!(
             "CREATE POLICY test_fault_hide ON {table} AS RESTRICTIVE FOR SELECT \
-             USING (test_fault_hide({}, {visible}))",
+             USING (test_fault_hide({}, {hidden}))",
             quote(needle)
         ),
     )
@@ -292,12 +292,65 @@ pub async fn hide_rows_after(db: &TestDb, table: &str, needle: &str, visible: i6
 }
 
 /// Hide every row of `table` from the app role when the query text holds
-/// `needle`. See [`hide_rows_after`].
+/// `needle`. See [`hide_rows_first`].
 pub async fn hide_rows(db: &TestDb, table: &str, needle: &str) {
-    hide_rows_after(db, table, needle, 0).await;
+    hide_rows_first(db, table, needle, i64::MAX).await;
 }
 
 /// Drop one function of the schema, so every call of it fails.
 pub async fn drop_function(db: &TestDb, signature: &str) {
     run(db, format!("DROP FUNCTION {signature}")).await;
+}
+
+/// Make every UPDATE of `table` whose rows satisfy `condition` fail.
+/// `condition` reads the rows as `OLD` and `NEW`.
+pub async fn fail_updates(db: &TestDb, table: &str, condition: &str) {
+    install_raise(db).await;
+    run(
+        db,
+        format!(
+            "CREATE TRIGGER test_fault_update BEFORE UPDATE ON {table} \
+             FOR EACH ROW WHEN ({condition}) EXECUTE FUNCTION test_fault_raise()"
+        ),
+    )
+    .await;
+}
+
+/// Replace the body of the SECURITY DEFINER account lookup `name` with one
+/// that reads `users u` under `where_clause`. The lookups run as their owner,
+/// so no policy of the table reaches them; the body is the one seam.
+async fn replace_user_lookup(db: &TestDb, name: &str, param: &str, where_clause: &str) {
+    run(
+        db,
+        format!(
+            "CREATE OR REPLACE FUNCTION {name}({param}) RETURNS TABLE (id uuid, \
+             password_hash text, email_verified_at timestamptz, disabled_at timestamptz, \
+             is_admin boolean) LANGUAGE sql SECURITY DEFINER SET search_path = public, pg_temp \
+             AS $$ SELECT u.id, u.password_hash, u.email_verified_at, u.disabled_at, u.is_admin \
+             FROM users u WHERE {where_clause} $$"
+        ),
+    )
+    .await;
+}
+
+/// Make the account lookup by id find no row.
+pub async fn hide_user_by_id(db: &TestDb) {
+    replace_user_lookup(db, "auth_user_by_id", "p_id uuid", "false").await;
+}
+
+/// Make the account lookup by address find no row on its first `hidden`
+/// calls, and the row after them.
+pub async fn hide_user_by_email_first(db: &TestDb, hidden: i64) {
+    run(
+        db,
+        "CREATE SEQUENCE IF NOT EXISTS test_hide_calls".to_string(),
+    )
+    .await;
+    replace_user_lookup(
+        db,
+        "auth_user_by_email",
+        "p_email citext",
+        &format!("u.email = p_email AND nextval('test_hide_calls') > {hidden}"),
+    )
+    .await;
 }

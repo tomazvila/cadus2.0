@@ -2,6 +2,7 @@
 //! whole public request with its JSON body.
 
 use std::net::SocketAddr;
+use std::time::Duration;
 
 use axum::extract::{ConnectInfo, FromRequest, FromRequestParts, Request};
 use axum::http::HeaderMap;
@@ -10,10 +11,9 @@ use cadus_store::auth::{AuthUser, NewSession, user_by_email};
 use serde_json::Value;
 use sqlx::types::chrono::{DateTime, Utc};
 
-use super::support::{email_field, field, new_session_row, object, session_window, user_agent};
+use super::support::{email_field, field, new_session_row, object, user_agent};
 use crate::AppState;
 use crate::auth::body::LimitedBody;
-use crate::auth::guard::plus_secs;
 use crate::auth::rate::{RateRule, client_ip, enforce};
 use crate::auth::session::SESSION_IDLE_SECS;
 use crate::auth::store_call;
@@ -116,18 +116,20 @@ impl Public {
     }
 
     /// The session row of a sign-in at `now`, with the token digest `token_hash`.
+    ///
+    /// The idle window is a sum of whole seconds on a calendar instant, so it
+    /// always has an answer.
     pub(super) fn session_row<'a>(
         &'a self,
         token_hash: &'a str,
         now: DateTime<Utc>,
-    ) -> Result<NewSession<'a>, ApiError> {
-        let expires_at = plus_secs(now, SESSION_IDLE_SECS).ok_or_else(session_window)?;
-        Ok(new_session_row(
+    ) -> NewSession<'a> {
+        new_session_row(
             token_hash,
             now,
-            expires_at,
+            now + Duration::from_secs(SESSION_IDLE_SECS),
             &self.ip,
             user_agent(&self.headers),
-        ))
+        )
     }
 }

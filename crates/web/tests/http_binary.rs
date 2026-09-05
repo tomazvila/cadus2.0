@@ -19,6 +19,21 @@ use cadus_web::{AppState, boot_check, create_app};
 use sqlx::postgres::PgPoolOptions;
 use tower::ServiceExt;
 
+/// A lazy one-connection pool on `deaf`, and the `Db` that bounds every query
+/// on it at `client_timeout_ms`. The pool is the caller's to close.
+fn deaf_db(deaf: &DeafPostgres, client_timeout_ms: u64) -> (sqlx::PgPool, Db) {
+    let cfg = DbConfig {
+        database_url: deaf.dsn(),
+        statement_timeout_ms: 0,
+        client_timeout_ms,
+    };
+    let pool = PgPoolOptions::new()
+        .max_connections(1)
+        .acquire_timeout(Duration::from_secs(5))
+        .connect_lazy_with(connect_options(&cfg).expect("the deaf DSN parses"));
+    (pool.clone(), Db::new(pool, client_timeout_ms))
+}
+
 /// (7) A client that holds a half-sent request does not block the stop, and the
 /// whole stop stays inside one budget.
 ///
@@ -231,16 +246,8 @@ fn kill_on_drop_ends_the_child_when_the_test_body_panics() {
 #[tokio::test]
 async fn ready_returns_503_when_the_database_answers_nothing() {
     let deaf = DeafPostgres::start_silent();
-    let cfg = DbConfig {
-        database_url: deaf.dsn(),
-        statement_timeout_ms: 0,
-        client_timeout_ms: 300,
-    };
-    let pool = PgPoolOptions::new()
-        .max_connections(1)
-        .acquire_timeout(Duration::from_secs(5))
-        .connect_lazy_with(connect_options(&cfg).expect("the deaf DSN parses"));
-    let app = create_app(AppState::new(Db::new(pool.clone(), cfg.client_timeout_ms)));
+    let (pool, db) = deaf_db(&deaf, 300);
+    let app = create_app(AppState::new(db));
 
     let start = Instant::now();
     let response = app
@@ -326,16 +333,7 @@ async fn binary_exits_2_with_a_public_origin_that_is_not_an_origin() {
 #[tokio::test]
 async fn boot_check_times_out_when_the_database_answers_nothing() {
     let deaf = DeafPostgres::start();
-    let cfg = DbConfig {
-        database_url: deaf.dsn(),
-        statement_timeout_ms: 0,
-        client_timeout_ms: 300,
-    };
-    let pool = PgPoolOptions::new()
-        .max_connections(1)
-        .acquire_timeout(Duration::from_secs(5))
-        .connect_lazy_with(connect_options(&cfg).expect("the deaf DSN parses"));
-    let db = Db::new(pool.clone(), cfg.client_timeout_ms);
+    let (pool, db) = deaf_db(&deaf, 300);
 
     let start = Instant::now();
     let outcome = boot_check(&db).await;

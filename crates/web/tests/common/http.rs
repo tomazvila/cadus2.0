@@ -113,6 +113,19 @@ pub async fn send(app: &Router, request: Request<Body>) -> Answer {
     }
 }
 
+/// Send `request` and read the `500 internal_error` envelope back.
+pub async fn assert_internal_answer(app: &Router, request: Request<Body>) -> Answer {
+    let answer = send(app, request).await;
+    assert_eq!(answer.status.as_u16(), 500, "{}", answer.body);
+    assert_eq!(answer.code(), "internal_error");
+    answer
+}
+
+/// The sign-up body of `email`, with the password every test accepts.
+pub fn signup_body(email: &str) -> Value {
+    json!({ "email": email, "password": GOOD_PASSWORD })
+}
+
 /// A `POST` of `body` to `path`, with no credential and no origin header.
 pub fn post(path: &str, body: &Value) -> Request<Body> {
     Request::builder()

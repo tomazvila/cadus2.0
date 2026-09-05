@@ -48,7 +48,42 @@ impl std::error::Error for EntropyError {}
 /// This is the raw secret. Store only [`hash_token`] of it, and never write it
 /// to a log.
 pub fn generate_token() -> Result<String, EntropyError> {
-    generate_token_with(getrandom::getrandom)
+    generate_token_with(entropy)
+}
+
+thread_local! {
+    /// The number of entropy draws this thread still answers before it refuses
+    /// one. `None` is the production state: every draw asks the kernel.
+    static DRAWS_LEFT: std::cell::Cell<Option<u32>> = const { std::cell::Cell::new(None) };
+}
+
+/// Refuse the entropy draws of this thread after `draws` more of them, or
+/// answer every draw again with `None`.
+///
+/// It is the seam of the tests of the routes that draw a token: a test sets
+/// it, sends its request on the same thread, and clears it. The kernel never
+/// refuses entropy on the build box, so this is the one way those routes reach
+/// their entropy-failure arms.
+// The setter has no production caller: the seam exists for the tests alone.
+#[allow(dead_code)]
+pub(crate) fn refuse_entropy_after(draws: Option<u32>) {
+    DRAWS_LEFT.with(|left| left.set(draws));
+}
+
+/// Fill `buf` from the kernel, unless this thread is set to refuse the draw.
+fn entropy(buf: &mut [u8]) -> Result<(), getrandom::Error> {
+    let refused = DRAWS_LEFT.with(|left| match left.get() {
+        None => false,
+        Some(0) => true,
+        Some(draws) => {
+            left.set(Some(draws - 1));
+            false
+        }
+    });
+    if refused {
+        return Err(getrandom::Error::UNSUPPORTED);
+    }
+    getrandom::getrandom(buf)
 }
 
 /// Draw a fresh token, but take the entropy source as an argument.
@@ -119,6 +154,18 @@ mod tests {
     fn a_refused_entropy_fill_is_an_entropy_error() {
         let outcome = generate_token_with(|_| Err(getrandom::Error::UNSUPPORTED));
         assert!(outcome.is_err(), "the draw must fail when the fill refuses");
+    }
+
+    /// The thread-local seam refuses the draw after the given count, and
+    /// `None` answers every draw again.
+    #[test]
+    fn the_seam_refuses_the_draw_after_the_given_count() {
+        refuse_entropy_after(Some(1));
+        assert!(generate_token().is_ok(), "the first draw is answered");
+        assert!(generate_token().is_err(), "the second draw is refused");
+        assert!(generate_token().is_err(), "the count stays at zero");
+        refuse_entropy_after(None);
+        assert!(generate_token().is_ok(), "the kernel answers again");
     }
 
     /// A fill that answers gives a token of the documented length.

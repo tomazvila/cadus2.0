@@ -63,9 +63,7 @@ mod support;
 pub use account::{change_password, login, logout, logout_all, me, signup};
 pub use public::{ClientAddr, Public};
 pub use recovery::{forgot_password, resend_verification, reset_password, verify_email};
-pub(crate) use support::{
-    bind, commit, cookie_failed, new_session_row, new_token, session_window, user_agent,
-};
+pub(crate) use support::{bind, commit, cookie_failed, new_session_row, new_token, user_agent};
 
 /// The header that asks for the raw session token in the body (D-M5-5).
 pub const ACCEPT_SESSION_TOKEN: &str = "accept-session-token";

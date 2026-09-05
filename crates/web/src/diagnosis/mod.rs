@@ -233,7 +233,7 @@ mod tests {
             job_id: Uuid::nil(),
             user_id: Uuid::nil(),
         };
-        assert_eq!(hub.publish(notice.clone()), 0);
+        assert_eq!(hub.publish(notice), 0);
         let _receiver = hub.subscribe();
         assert_eq!(hub.publish(notice), 1);
     }

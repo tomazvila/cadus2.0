@@ -9,21 +9,7 @@
 
 mod common;
 
-use axum::body::Body;
 use common::*;
-
-/// Send `request` and read the `500 internal_error` envelope back.
-async fn assert_internal_answer(app: &Router, request: Request<Body>) -> Answer {
-    let answer = send(app, request).await;
-    assert_eq!(answer.status.as_u16(), 500, "{}", answer.body);
-    assert_eq!(answer.code(), "internal_error");
-    answer
-}
-
-/// The sign-up body of `email`.
-fn signup_body(email: &str) -> Value {
-    json!({ "email": email, "password": GOOD_PASSWORD })
-}
 
 /// A user write that fails stops the sign-up at the account insert.
 #[tokio::test]
@@ -126,15 +112,7 @@ async fn a_session_delete_that_fails_is_500_on_the_session_sweeps() {
         seed_token(&db, user, RESET_TOKEN_ONE.1, "reset", shift(1_800)).await;
         fail_deletes(&db, "auth_sessions", "true").await;
         // A second session, so the sweep of the password change deletes one.
-        seed_session(
-            &db,
-            user,
-            SESSION_TOKEN_TWO.1,
-            shift(0),
-            shift(0),
-            shift(3600),
-        )
-        .await;
+        seed_live_session(&db, user, SESSION_TOKEN_TWO.1).await;
         assert_internal_answer(&app, post_bearer("/api/auth/logout", &token, &json!({}))).await;
         assert_internal_answer(
             &app,

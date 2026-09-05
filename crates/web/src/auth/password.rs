@@ -257,20 +257,45 @@ fn hash_password_with(
     profile: Argon2Profile,
     password: &str,
 ) -> Result<String, PasswordError> {
+    hash_password_via(fill, SaltString::encode_b64, hash_with, profile, password)
+}
+
+/// Run the Argon2id hash of `hasher` over `password` and `salt`, as the PHC
+/// string to store.
+fn hash_with(
+    hasher: &Argon2<'static>,
+    password: &[u8],
+    salt: &SaltString,
+) -> argon2::password_hash::Result<String> {
+    hasher
+        .hash_password(password, salt)
+        .map(|hashed| hashed.to_string())
+}
+
+/// Hash `password` with the three steps as arguments: the salt fill, the salt
+/// encoder, and the hash itself.
+///
+/// [`hash_password_with`] calls it with the kernel, the B64 encoder, and
+/// Argon2id. A 16-byte salt never fails the encoder or the hash, so a unit
+/// test passes an encoder and a hash that refuse, and the two failure arms are
+/// reached with the deployment's own steps left as they are.
+fn hash_password_via(
+    fill: impl FnOnce(&mut [u8]) -> Result<(), getrandom::Error>,
+    encode: impl FnOnce(&[u8]) -> argon2::password_hash::Result<SaltString>,
+    hash: impl FnOnce(&Argon2<'static>, &[u8], &SaltString) -> argon2::password_hash::Result<String>,
+    profile: Argon2Profile,
+    password: &str,
+) -> Result<String, PasswordError> {
     let mut salt_bytes = [0u8; SALT_BYTES];
     fill(&mut salt_bytes).map_err(|error| PasswordError::Entropy {
         reason: error.to_string(),
     })?;
-    let salt = SaltString::encode_b64(&salt_bytes).map_err(|error| PasswordError::Hashing {
+    let salt = encode(&salt_bytes).map_err(|error| PasswordError::Hashing {
         reason: error.to_string(),
     })?;
-    let hashed = profile
-        .hasher()?
-        .hash_password(password.as_bytes(), &salt)
-        .map_err(|error| PasswordError::Hashing {
-            reason: error.to_string(),
-        })?;
-    Ok(hashed.to_string())
+    hash(&profile.hasher()?, password.as_bytes(), &salt).map_err(|error| PasswordError::Hashing {
+        reason: error.to_string(),
+    })
 }
 
 /// Whether `password` matches the stored PHC string `hashed`.
@@ -391,6 +416,44 @@ mod cov_tests {
         )
         .unwrap_err();
         assert!(err.to_string().contains("gave no entropy"));
+    }
+
+    /// An encoder that refuses the salt and a hash that refuses the password are
+    /// both hashing errors.
+    #[test]
+    fn a_step_that_refuses_is_a_hashing_error() {
+        let refused = argon2::password_hash::Error::Password;
+        let encoder_refuses = hash_password_via(
+            getrandom::getrandom,
+            |_| Err(refused),
+            hash_with,
+            Argon2Profile::TEST,
+            "correct horse battery staple",
+        )
+        .unwrap_err();
+        assert!(
+            encoder_refuses
+                .to_string()
+                .contains("Argon2 refused to hash")
+        );
+        let hash_refuses = hash_password_via(
+            getrandom::getrandom,
+            SaltString::encode_b64,
+            |_, _, _| Err(refused),
+            Argon2Profile::TEST,
+            "correct horse battery staple",
+        )
+        .unwrap_err();
+        assert!(hash_refuses.to_string().contains("Argon2 refused to hash"));
+    }
+
+    /// A PHC string whose parameters are not a legal set needs a rehash.
+    #[test]
+    fn a_hash_with_illegal_parameters_needs_a_rehash() {
+        assert!(needs_rehash(
+            Argon2Profile::PROD,
+            "$argon2id$v=19$m=1,t=1,p=4$c29tZXNhbHQ$AAAAAAAAAAA"
+        ));
     }
 
     /// A hash written under one profile needs a rehash under another, and a
