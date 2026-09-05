@@ -4,6 +4,7 @@
  */
 import { describe, expect, it, vi } from 'vitest';
 import { cleanup, screen, waitFor } from '@testing-library/react';
+import { ApiError } from '@/api';
 import { Auth } from '@/views/Auth';
 import { resetToasts, toastStore } from '@/app/toast';
 import { held } from './helpers/held';
@@ -58,6 +59,49 @@ describe('the fields', () => {
     type('New password', '12345678');
     press('Set new password');
     await waitFor(() => expect(resetPassword).toHaveBeenCalledWith('t', '12345678'));
+  });
+});
+
+describe('the focus each line hands back', () => {
+  it('moves to the field the line names, from wherever the focus was', async () => {
+    const login = vi.fn(async () => { throw new ApiError(401, 'invalid_credentials', 'Wrong.'); });
+    mount(<Auth api={stub({ login })} onSignedIn={vi.fn()} />);
+
+    field('Email').blur();
+    press('Sign in');
+    expect(await alertText()).toBe('Enter your email.');
+    expect(document.activeElement).toBe(field('Email'));
+
+    type('Email', 'a@b.test');
+    field('Email').blur();
+    press('Sign in');
+    expect(await alertText()).toBe('Enter your password.');
+    expect(document.activeElement).toBe(field('Password'));
+
+    type('Password', 'hunter2hunter2');
+    field('Password').blur();
+    press('Sign in');
+    await waitFor(() => expect(login).toHaveBeenCalledTimes(1));
+    await waitFor(() => expect(alertBox().hidden).toBe(false));
+    expect(document.activeElement).toBe(field('Password'));
+  });
+
+  it('moves to the new password on the reset card, for a short one and for a refused one', async () => {
+    const resetPassword = vi.fn(async () => { throw new ApiError(400, 'invalid_token', 'Spent.'); });
+    mount(<Auth api={stub({ resetPassword })} mode="reset" token="t" onSignedIn={vi.fn()} />);
+
+    type('New password', 'short');
+    field('New password').blur();
+    press('Set new password');
+    expect(await alertText()).toBe('Password must be at least 8 characters.');
+    expect(document.activeElement).toBe(field('New password'));
+
+    type('New password', 'hunter2hunter2');
+    field('New password').blur();
+    press('Set new password');
+    await waitFor(() => expect(resetPassword).toHaveBeenCalledTimes(1));
+    await waitFor(() => expect(alertBox().textContent).toContain('invalid or has expired'));
+    expect(document.activeElement).toBe(field('New password'));
   });
 });
 

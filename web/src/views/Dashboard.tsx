@@ -133,9 +133,8 @@ export function Dashboard({
       () => api.getStatus(),
       // A reply after the view left writes state nobody renders.
       (status) => { dispatch({ type: 'ok', gen, status }); },
-    ).then((status) => {
-      if (!status) dispatch({ type: 'fail', gen });
-    });
+      { onFail: () => { dispatch({ type: 'fail', gen }); } },
+    );
   }, [api, call, gen]);
 
   // The moves below are plain functions, rebuilt per render, and read at event time.

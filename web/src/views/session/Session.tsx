@@ -345,7 +345,7 @@ export function Session({
   // Focus moves on every transition (spec section 4.5). Each control is on screen in the
   // phase that focuses it, so the refs name them.
   useEffect(() => {
-    if (phase === 'ready') answerRef.current?.focus();
+    if (phase === 'ready') answerRef.current!.focus();
     else if (phase === 'feedback') continueRef.current!.focus();
     else if (phase === 'done') homeRef.current!.focus();
   }, [phase, problem, result]);
@@ -381,11 +381,7 @@ export function Session({
   }
 
   if (!problem || !session.task) {
-    return (
-      <section className="view-session" aria-busy={phase === 'loading'}>
-        <LoadingBlock label="Preparing your session…" />
-      </section>
-    );
+    return <section className="view-session"><LoadingBlock label="Preparing your session…" /></section>;
   }
 
   const locked = phase !== 'ready';

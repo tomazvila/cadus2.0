@@ -60,7 +60,7 @@ describe('the status card', () => {
 
 describe('the primary action', () => {
   it('offers no next course after the last one, and none without a current one', async () => {
-    const last = ONE_COURSE;
+    const last = status().courses.map((c) => ({ ...c, current: c.id === 'proofs' }));
     const first = await mount({ api: stubApi({ getStatus: async () => status({ ...EMPTY_PLAN, courses: last }) }) });
     expect(screen.queryByRole('button', { name: /^Start / })).toBeNull();
     first.unmount();
@@ -99,6 +99,15 @@ describe('the primary action', () => {
     ]);
   });
 
+  it('opens no session from a start that lands after the screen left', async () => {
+    const start = held<SessionStartResponse>();
+    const view = await mount({ api: stubApi({ sessionStart: () => start.promise }) });
+    await userEvent.click(button('Continue studying'));
+    view.unmount();
+    await act(async () => { start.release(await createDemoApi().sessionStart()); });
+    expect(view.onSession).not.toHaveBeenCalled();
+  });
+
   it('toasts nothing from an enrolment that lands after the screen left', async () => {
     const enroll = held<EnrollResponse>();
     const view = await mount({ api: stubApi({ getStatus: async () => status(EMPTY_PLAN), enroll: () => enroll.promise }) });
@@ -131,6 +140,7 @@ describe('the quiet menu', () => {
     await openMenu();
     await userEvent.click(button('Switch course'));
     expect(button('Switch course').className).toBe('btn is-busy');
+    expect(button('Switch course').disabled).toBe(true);
     expect(button('Export my data (JSONL)').disabled).toBe(false);
     // The picker names the current course as such, and offers it to nobody.
     const current = within(screen.getByRole('dialog')).getByRole('button', { name: 'Foundations · current' });
@@ -152,6 +162,7 @@ describe('the quiet menu', () => {
     await openMenu();
     await userEvent.click(button('Export my data (JSONL)'));
     expect(button('Export my data (JSONL)').className).toBe('btn is-busy');
+    expect(button('Export my data (JSONL)').disabled).toBe(true);
     expect(button('Quiz now').disabled).toBe(false);
     await act(async () => { download.release(undefined); });
     expect(button('Export my data (JSONL)').className).toBe('btn');

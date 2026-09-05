@@ -27,7 +27,8 @@ function upNext(status: StatusResponse): string[] {
 /** The course after the current one, or null on the last course. */
 function nextCourseOf(courses: JourneyCourse[]): JourneyCourse | null {
   const currentIndex = courses.findIndex((c) => c.current);
-  return currentIndex >= 0 && currentIndex + 1 < courses.length ? courses[currentIndex + 1] : null;
+  // Past the last course, and with no current one, there is nothing after.
+  return currentIndex < 0 ? null : courses[currentIndex + 1] ?? null;
 }
 
 export interface PrimaryActionProps {

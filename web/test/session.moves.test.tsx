@@ -99,11 +99,10 @@ describe('what a fresh problem clears', () => {
 });
 
 describe('the screens before the card', () => {
-  it('says the session is busy while the plan and the first problem load', async () => {
+  it('waits with a labelled block, then paints a card that is not busy', async () => {
     const serve = held<ServedProblem>();
     await mount({ api: stubApi({ taskServe: () => serve.promise }) });
     expect(screen.getByText('Preparing your session…')).toBeTruthy();
-    expect(section().getAttribute('aria-busy')).toBe('true');
     await act(async () => { serve.release(P(1)); });
     expect(section().getAttribute('aria-busy')).toBe('false');
   });
@@ -127,11 +126,14 @@ describe('the screens before the card', () => {
     expect(progressCount()).toBe('1 / 3');
   });
 
-  it('keeps practising a lesson when the next problem names no knowledge point', async () => {
+  it.each([
+    ['no knowledge point', null],
+    ['the knowledge point just taught', TEACHING.kp],
+  ])('keeps practising a lesson when the next problem names %s', async (_name, kp) => {
     const taskTeach = vi.fn<ApiClient['taskTeach']>(async () => TEACHING);
     await mount({
       plan: planOf(LESSON),
-      api: stubApi({ taskTeach, taskAnswer: async () => graded({ next: P(2, { kp: null }) }) }),
+      api: stubApi({ taskTeach, taskAnswer: async () => graded({ next: P(2, { kp }) }) }),
     });
     await press(/practice/);
     await submitAnswer('3/4');

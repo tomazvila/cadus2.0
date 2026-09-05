@@ -49,7 +49,6 @@ export function useSessionClock(
   const countdown = isDrill(task, problem) && !rework;
   // A problem is on screen in `ready`, and in no phase without one.
   const ticking = phase === 'ready';
-  const liveProblemId = problem?.problem_id ?? null;
 
   useEffect(() => {
     if (!ticking) return undefined;
@@ -59,7 +58,7 @@ export function useSessionClock(
       setElapsed((v) => (countdown ? Math.max(0, v - 1) : v + 1));
     }, 1000);
     return () => life.clearTimer(id);
-  }, [ticking, liveProblemId, countdown, life]);
+  }, [ticking, countdown, life]);
 
   return { elapsed, setElapsed, countdown };
 }

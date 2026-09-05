@@ -86,6 +86,24 @@ describe('the quiz card', () => {
     expect(vi.getTimerCount()).toBe(0);
   });
 
+  it('fills nothing from a serve that lands after the view left, once the clock ran out', async () => {
+    vi.useFakeTimers();
+    const serve = held<ReturnType<typeof Q>>();
+    const taskServe = vi.fn<ApiClient['taskServe']>()
+      .mockResolvedValueOnce(Q(1))
+      .mockImplementation(() => serve.promise);
+    const taskAnswer = vi.fn<ApiClient['taskAnswer']>(async () => receipt());
+    const view = await mount({ task: { ...QUIZ, time_budget_secs: 2 }, api: stubApi({ taskServe, taskAnswer }) });
+
+    // The answer is graded; the next serve is still out when the clock runs out.
+    await submitAnswer('7');
+    expect(taskServe).toHaveBeenCalledTimes(2);
+    await tick(2000);
+    view.unmount();
+    await act(async () => { serve.release(Q(2)); });
+    expect(taskAnswer).toHaveBeenCalledTimes(1);
+  });
+
   it('serves the next question with an empty field, whatever was typed', async () => {
     const taskServe = threeQuestions();
     await mount({ api: stubApi({ taskServe }) });

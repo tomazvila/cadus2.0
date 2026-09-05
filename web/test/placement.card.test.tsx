@@ -114,14 +114,14 @@ describe('the probe card', () => {
     expect(fill().style.width).toBe('5%');
   });
 
-  it('commits when the next probe names no problem', async () => {
+  it.each([
+    ['a probe with no id', probe({ problem_id: '' })],
+    ['a null next probe', null],
+  ])('commits after %s', async (_name, next_probe) => {
     vi.useFakeTimers();
     const diagFinish = vi.fn<DiagnosticApi['diagFinish']>(async () => SUMMARY);
     await mount({
-      diag: stubDiag({
-        diagFinish,
-        diagAnswer: async () => ({ correct: true, next_probe: probe({ problem_id: '' }) }),
-      }),
+      diag: stubDiag({ diagFinish, diagAnswer: async () => ({ correct: true, next_probe }) }),
     });
     await begin();
     await answer('5');

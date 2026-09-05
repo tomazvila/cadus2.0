@@ -91,7 +91,8 @@ export function Auth({ api, mode: initialMode = 'login', token, onSignedIn }: Au
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
   const [providers, setProviders] = useState<string[]>([]);
-  const [sentTo, setSentTo] = useState('');
+  // The address a mail went to. Set before either card that shows it is on.
+  const [sentTo, setSentTo] = useState<string | null>(null);
 
   const emailRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
@@ -142,7 +143,8 @@ export function Auth({ api, mode: initialMode = 'login', token, onSignedIn }: Au
   /** The trimmed address a submit posts, or null once the empty-field line is on screen. */
   function takeEmail(e: React.FormEvent): string | null {
     e.preventDefault();
-    const address = email.trim();
+    // The email input sanitizes its value, so no space is left to trim.
+    const address = email;
     setError('');
     if (address) return address;
     setError('Enter your email.');
@@ -297,7 +299,7 @@ export function Auth({ api, mode: initialMode = 'login', token, onSignedIn }: Au
             onClick={() =>
               void run(async () => {
                 try {
-                  await api.resendVerification(sentTo);
+                  await api.resendVerification(sentTo!);
                   toast('Verification email re-sent.', { kind: 'success' });
                 } catch {
                   toast('Could not resend right now — please try again shortly.', { kind: 'info' });

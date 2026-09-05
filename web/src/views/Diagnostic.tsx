@@ -116,7 +116,7 @@ export function Diagnostic({ diag, demo, onUnauthorized, onExit }: DiagnosticPro
   const begin = (): void => {
     // A repeated Enter or click cannot start two placements.
     if (!gate.tryEnter('intro', 'loading')) return;
-    setStartFailed(false);
+    // The line of a failed start stays as it is: the intro is off screen from here on.
     void call(() => diag.diagStart(), (s) => {
       // A view that left commits nothing.
       if (!life.alive()) return;
@@ -183,25 +183,26 @@ export function Diagnostic({ diag, demo, onUnauthorized, onExit }: DiagnosticPro
    * placement rows to an append-only log with no DELETE.
    */
   useEffect(() => {
-    if (phase !== 'feedback') return undefined;
+    if (phase !== 'feedback') return;
     // A verdict is on screen in `feedback`, so the state holds one.
     const next = result!.res.next_probe;
+    // `null`, `{ done: true }` and a probe with no id all say the placement is over.
     const isProbe = next != null && 'problem_id' in next && next.problem_id !== '';
 
-    const id = life.setTimeout(() => {
+    life.setTimeout(() => {
       if (isProbe) {
         setProbe(next);
         probeRef.current = next;
         setResult(null);
         setQNum((n) => n + 1);
-        // The field is on screen under the verdict.
-        answerRef.current!.clear();
+        // No clear of the field: the card is keyed on the probe, so the next one mounts fresh.
         gate.enter('ready');
       } else {
         finishRef.current();
       }
     }, DIAG_BEAT_MS);
-    return () => life.clearTimer(id);
+    // No cleanup: the timer is registered in the lifetime, which clears it when the view
+    // leaves, and the phase moves on only when the timer itself fired.
   }, [phase, result, life, gate]);
 
   const submitTyped = (): void => {

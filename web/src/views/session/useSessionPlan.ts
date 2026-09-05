@@ -93,7 +93,8 @@ export function useSessionPlan(): SessionPlan {
     task: current,
     // "Nothing was due" and "everything planned is already finished" are two different
     // sentences to a learner, and a reload after the last answer lands on the second one.
-    allDone: plan !== null && tasks.length === 0 && plan.tasks.length > 0,
+    // Read only while no task is open, so a plan that named tasks has them all finished.
+    allDone: plan !== null && plan.tasks.length > 0,
     plan,
     next: (): PlanTask | null => {
       doneIds.current.add(current!.task_id);
