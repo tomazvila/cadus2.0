@@ -305,6 +305,23 @@ async fn the_app_role_reads_the_ledger_totals_and_no_row() {
 // The tick loop reaches the diagnosis pass (V7)
 // --------------------------------------------------------------------------- //
 
+/// A shutdown future that completes half a second after the row `id` is done.
+///
+/// The wait after the row is ten tick periods, so the loop takes a later tick
+/// against the empty queue before it stops. A row that is not done in thirty
+/// seconds fails the test.
+async fn after_the_row_is_done(pool: &PgPool, id: Uuid) {
+    let started = std::time::Instant::now();
+    while row_of(pool, id).await.0 != "done" {
+        assert!(
+            started.elapsed() < std::time::Duration::from_secs(30),
+            "the loop must finish the queued row in 30 s"
+        );
+        tokio::time::sleep(std::time::Duration::from_millis(20)).await;
+    }
+    tokio::time::sleep(std::time::Duration::from_millis(500)).await;
+}
+
 /// A `None` refill job must not skip the diagnosis pass.
 ///
 /// `run_with` read a `None` refill as a `continue`, so the tick returned to the
@@ -316,6 +333,10 @@ async fn the_app_role_reads_the_ledger_totals_and_no_row() {
 /// claims the row, calls the fake endpoint and bills one ledger row; a later
 /// tick finds the queue empty and calls nobody. Every value below is a literal:
 /// the status text, the call count, and the one ledger row.
+///
+/// The shutdown future ends half a second after the row is done, not at a
+/// fixed wall-clock time: a loaded machine stretches the first pass, and a
+/// fixed window then stops the loop before a later tick (finding #43).
 #[tokio::test]
 async fn a_none_refill_job_still_runs_the_diagnosis_pass() {
     TestDb::with(|db| async move {
@@ -331,14 +352,14 @@ async fn a_none_refill_job_still_runs_the_diagnosis_pass() {
             &cfg,
             None,
             Some(&mut job),
-            tokio::time::sleep(std::time::Duration::from_millis(400)),
+            after_the_row_is_done(&db.admin, id),
         )
         .await
         .unwrap();
 
         assert!(
             ticks >= 2,
-            "the loop must reach at least 2 ticks in 400 ms, it reached {ticks}"
+            "the loop must take a later tick after the row is done, it reached {ticks}"
         );
         let (status, attempts, result) = row_of(&db.admin, id).await;
         assert_eq!(status, "done", "the tick loop must finish the queued row");
