@@ -9,7 +9,7 @@ use sha2::{Digest, Sha256};
 /// `,` and `:`, and non-ASCII text stays unescaped. `serde_json` escapes a
 /// string the same way `json.dumps(ensure_ascii=False)` does, so a string goes
 /// through `serde_json`. A float does not: [`python_repr_f64`] writes it.
-pub(super) fn render(value: &Value, out: &mut String) {
+pub(crate) fn render(value: &Value, out: &mut String) {
     match value {
         Value::Null => out.push_str("null"),
         Value::Bool(true) => out.push_str("true"),

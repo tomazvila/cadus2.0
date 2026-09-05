@@ -29,6 +29,7 @@ use std::cmp::Ordering;
 
 use serde_json::{Map, Number, Value};
 
+pub(crate) use float::render as render_json;
 pub use float::{python_repr_f64, sha256_hex};
 
 use super::arena::{Curriculum, EncNode, TopicIdx};

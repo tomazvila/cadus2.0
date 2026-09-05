@@ -1,10 +1,8 @@
 //! The entry points of the fold, the parity blob, and the lesson
 //! knowledge-point gates (`projector.py:773-872`).
 
-use serde_json::Value;
-
 use crate::config::Config;
-use crate::curriculum::{Curriculum, python_repr_f64, sha256_hex};
+use crate::curriculum::{Curriculum, render_json, sha256_hex};
 use crate::event::{Event, Timestamp};
 use crate::learner::LearnerModel;
 
@@ -128,7 +126,7 @@ pub fn project_incremental(
 /// unescaped, and NO trailing newline. 1.0 builds the same bytes with
 /// `json.dumps(payload, sort_keys=True, separators=(",",":"), ensure_ascii=False)`.
 ///
-/// A float takes the Python `repr` text through [`python_repr_f64`], not the
+/// A float takes the Python `repr` text through [`crate::curriculum::python_repr_f64`], not the
 /// `serde_json` text: the two spell an exponent differently, so `1e-05` reads `1e-5`
 /// there and the digest diverges. A `serde_json` map is a `BTreeMap`, so its keys
 /// come out in Rust `String` order, which is byte order, which equals the Python
@@ -155,47 +153,6 @@ pub fn canonical_blob(model: &LearnerModel) -> Result<String, ProjectorError> {
 /// Returns [`ProjectorError::Serialize`] when the blob does not build.
 pub fn blob_digest(model: &LearnerModel) -> Result<String, ProjectorError> {
     Ok(sha256_hex(canonical_blob(model)?.as_bytes()))
-}
-
-/// Write one JSON value the way `json.dumps` with compact separators writes it.
-fn render_json(value: &Value, out: &mut String) {
-    match value {
-        Value::Null => out.push_str("null"),
-        Value::Bool(true) => out.push_str("true"),
-        Value::Bool(false) => out.push_str("false"),
-        Value::Number(number) => match number.as_f64().filter(|_| number.is_f64()) {
-            Some(item) => out.push_str(&python_repr_f64(item)),
-            None => out.push_str(&number.to_string()),
-        },
-        Value::String(text) => out.push_str(&json_string(text)),
-        Value::Array(items) => {
-            out.push('[');
-            for (position, item) in items.iter().enumerate() {
-                if position > 0 {
-                    out.push(',');
-                }
-                render_json(item, out);
-            }
-            out.push(']');
-        }
-        Value::Object(map) => {
-            out.push('{');
-            for (position, (key, item)) in map.iter().enumerate() {
-                if position > 0 {
-                    out.push(',');
-                }
-                out.push_str(&json_string(key));
-                out.push(':');
-                render_json(item, out);
-            }
-            out.push('}');
-        }
-    }
-}
-
-/// One JSON string, escaped the way `json.dumps(ensure_ascii=False)` escapes it.
-fn json_string(value: &str) -> String {
-    serde_json::to_string(value).unwrap_or_default()
 }
 
 // --------------------------------------------------------------------------- //

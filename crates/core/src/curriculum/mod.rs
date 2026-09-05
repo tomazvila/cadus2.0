@@ -15,6 +15,7 @@ pub mod model;
 pub use arena::{
     Curriculum, CurriculumError, EncLink, EncNode, KpIdx, LoadError, TopicIdx, load_curriculum,
 };
+pub(crate) use dump::render_json;
 pub use dump::{DUMP_SCHEMA, canonical_dump, curriculum_hash, python_repr_f64, sha256_hex};
 pub use finding::Finding;
 pub use graph::{Csr, EncCsr, EncEdge};
