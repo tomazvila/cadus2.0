@@ -169,3 +169,31 @@ async fn a_session_sweep_bind_that_fails_is_500_on_the_reset() {
     })
     .await;
 }
+
+/// A verification whose token is spent between the read and the spend is
+/// `400 invalid_token`: the D-S6 update reports zero rows. A skipped update on
+/// `auth_tokens` reproduces the race deterministically.
+#[tokio::test]
+async fn a_verification_whose_token_races_is_invalid_token() {
+    TestDb::with(|db| async move {
+        let app = app_of(&db);
+        signup(&app, "race-verify@example.com", GOOD_PASSWORD).await;
+        let user = user_id(&db, "race-verify@example.com").await;
+        seed_token(&db, user, VERIFY_TOKEN_ONE.1, "verify", shift(86_400)).await;
+        // The account stays unverified, so the pre-check passes; the spend then
+        // finds zero rows and answers as though another request won the race.
+        skip_updates(&db, "auth_tokens", "true").await;
+
+        let answer = send(
+            &app,
+            post(
+                "/api/auth/verify-email",
+                &json!({ "token": VERIFY_TOKEN_ONE.0 }),
+            ),
+        )
+        .await;
+        assert_eq!(answer.status.as_u16(), 400, "{}", answer.body);
+        assert_eq!(answer.code(), "invalid_token");
+    })
+    .await;
+}

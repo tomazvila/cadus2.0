@@ -460,10 +460,17 @@ mod cov_tests {
     /// string that does not parse needs one too.
     #[test]
     fn a_hash_of_an_older_version_needs_a_rehash() {
-        // A well-formed argon2id hash that names version 0x10 (16), not the
-        // 0x13 (19) this build writes. Every parameter otherwise matches TEST.
-        let older = "$argon2id$v=16$m=19456,t=2,p=1                     $c29tZXNhbHR2YWx1ZQ$RdescudvJCsgt3ub+b+dWRWJTmaQzwbDDLzCbbP2LS4";
-        assert!(needs_rehash(Argon2Profile::TEST, older));
+        // Take a well-formed TEST hash and name the older version 0x10 (16)
+        // instead of the 0x13 (19) this build writes. The salt and the digest
+        // stay valid, so the string parses and only the version differs.
+        let current = hash_password(Argon2Profile::TEST, "correct horse battery staple")
+            .expect("the test profile hashes");
+        assert!(
+            current.contains("v=19"),
+            "the hash names no version: {current}"
+        );
+        let older = current.replace("v=19", "v=16");
+        assert!(needs_rehash(Argon2Profile::TEST, &older));
     }
 
     #[test]
