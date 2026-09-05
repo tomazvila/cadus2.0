@@ -173,6 +173,8 @@ describe('the reads', () => {
 
     view.unmount();
     await act(async () => { release(); await gate; });
+    // The two continuations run a tick after the reply.
+    await act(async () => {});
     expect(view.onSession).not.toHaveBeenCalled();
     expect(view.onQuiz).not.toHaveBeenCalled();
   });

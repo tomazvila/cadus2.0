@@ -105,6 +105,7 @@ describe('the primary action', () => {
     await userEvent.click(button('Continue studying'));
     view.unmount();
     await act(async () => { start.release(await createDemoApi().sessionStart()); });
+    await act(async () => {});
     expect(view.onSession).not.toHaveBeenCalled();
   });
 

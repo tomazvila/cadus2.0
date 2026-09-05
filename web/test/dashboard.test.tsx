@@ -194,6 +194,8 @@ describe('the dashboard', () => {
     const view = await mount({ api: stubApi({ sessionStart }) });
     await userEvent.click(screen.getByRole('button', { name: 'Continue studying' }));
     await waitFor(() => expect(toastStore.getSnapshot().length).toBe(1));
+    // The continuation of the refused start runs a tick after its toast.
+    await act(async () => {});
     expect(view.onSession).not.toHaveBeenCalled();
   });
 

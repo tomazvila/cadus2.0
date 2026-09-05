@@ -84,6 +84,13 @@ describe('the focus each line hands back', () => {
     await waitFor(() => expect(login).toHaveBeenCalledTimes(1));
     await waitFor(() => expect(alertBox().hidden).toBe(false));
     expect(document.activeElement).toBe(field('Password'));
+
+    press('Create an account');
+    type('Password', 'short');
+    field('Password').blur();
+    press('Create account');
+    expect(await alertText()).toBe('Password must be at least 8 characters.');
+    expect(document.activeElement).toBe(field('Password'));
   });
 
   it('moves to the new password on the reset card, for a short one and for a refused one', async () => {
