@@ -119,8 +119,10 @@ fn to_source(text: &str) -> String {
 
 /// Remove one outer `$…$` pair (1.0 `sympy_check.py:40-41`).
 fn strip_dollars(s: &str) -> &str {
-    if s.len() > 1 && s.starts_with('$') && s.ends_with('$') {
+    if s.starts_with('$') && s.ends_with('$') {
         // Both delimiters are one ASCII byte, so the slice is on char boundaries.
+        // A lone `$` is its own first and last byte, and the empty range it
+        // asks for is no slice, so it stays as it is.
         s.get(1..s.len() - 1).unwrap_or(s)
     } else {
         s
@@ -194,14 +196,14 @@ fn strip_thousands_groups(s: &str) -> String {
 ///
 /// The shape is `-? d{1,3} (sep d{3})+`, which is 1.0 `_COMMA_GROUPS_RE` and
 /// `_SPACE_GROUPS_RE`.
-fn is_grouped_integer(s: &str, separators: &[char]) -> bool {
+pub(super) fn is_grouped_integer(s: &str, separators: &[char]) -> bool {
     let chars: Vec<char> = s.chars().collect();
     let mut i = 0;
     if chars.first() == Some(&'-') {
         i = 1;
     }
     let lead_start = i;
-    while i < chars.len() && matches!(chars.get(i), Some(c) if c.is_ascii_digit()) {
+    while matches!(chars.get(i), Some(c) if c.is_ascii_digit()) {
         i += 1;
     }
     let lead_len = i - lead_start;
@@ -224,5 +226,7 @@ fn is_grouped_integer(s: &str, separators: &[char]) -> bool {
         }
         groups += 1;
     }
-    groups >= 1 && i == chars.len()
+    // The loop ends at the end of the string or not at all, so the count of
+    // groups is the whole answer.
+    groups >= 1
 }

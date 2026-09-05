@@ -265,7 +265,7 @@ fn common_monomial(num: &Poly, den: &Poly) -> Monomial {
     // the right content for those two atoms. Without this line
     // `1/(sqrt(2)*(x+1))` and `1/sqrt(2) * 1/(x+1)` are two forms of one value.
     for (atom, exponent) in least_of([den]) {
-        if exponent > 0 && matches!(atom, Atom::Sqrt(_) | Atom::Exp(_)) {
+        if matches!(atom, Atom::Sqrt(_) | Atom::Exp(_)) {
             common.insert(atom, exponent);
         }
     }
@@ -303,7 +303,7 @@ fn least_powers(left: &Monomial, right: &Monomial) -> Monomial {
         if left.contains_key(atom) {
             continue;
         }
-        if *exponent < 0 {
+        if exponent.is_negative() {
             least.insert(atom.clone(), *exponent);
         }
     }

@@ -45,11 +45,9 @@ pub(super) fn letter_run(name: &str, extra: &[&str]) -> Option<(Vec<char>, char)
     if letters.len() > MAX_RUN_LETTERS {
         return None;
     }
-    if FUNCTIONS.contains(&name)
-        || extra.contains(&name)
-        || GREEK_VARIABLES.contains(&name)
-        || name == "pi"
-    {
+    // A Greek name is longer than the run bound, and `pi` holds the letter
+    // `i`, which is no run letter, so the two checks below refuse them.
+    if FUNCTIONS.contains(&name) || extra.contains(&name) {
         return None;
     }
     for (index, letter) in letters.iter().enumerate() {

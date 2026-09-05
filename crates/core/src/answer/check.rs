@@ -48,7 +48,7 @@ use crate::curriculum::AnswerKind;
 use super::Undecidable;
 use super::ast::Ast;
 use super::canon::{Canon, canon};
-use super::normalize::{MAX_ANSWER_CHARS, normalize};
+use super::normalize::{MAX_ANSWER_CHARS, is_grouped_integer, normalize};
 use super::parse::parse;
 use super::rounding::{Rounding, rounds_to};
 
@@ -110,12 +110,10 @@ pub fn check(expected: &str, learner: &str, kind: AnswerKind) -> Outcome {
 /// example. Every other outcome carries no note.
 #[must_use]
 pub fn notation_note(expected: &str, learner: &str, kind: AnswerKind) -> Option<String> {
-    match decide(expected, learner, kind) {
-        (Outcome::Decided(verdict), Some(form)) if verdict.correct && verdict.notation => {
-            Some(form.note(expected.trim(), learner.trim()))
-        }
-        _ => None,
-    }
+    // `decide` names a form for a notation verdict and for nothing else.
+    decide(expected, learner, kind)
+        .1
+        .map(|form| form.note(expected.trim(), learner.trim()))
 }
 
 /// The form a notation verdict names.
@@ -318,33 +316,10 @@ fn dot_thousands_variant(expected: &Canon, learner_key: &str) -> bool {
 }
 
 /// Whether the whole string is `-?[1-9]\d{0,2}(\.\d{3})+` (1.0 `_DOT_GROUPS_RE`).
+///
+/// The shape is the comma-grouped integer of the normalizer with a period as the
+/// separator, plus one rule of its own: the leading group starts with no zero.
 fn is_dot_grouped(text: &str) -> bool {
-    let chars: Vec<char> = text.chars().collect();
-    let mut index = 0;
-    if chars.first() == Some(&'-') {
-        index = 1;
-    }
-    if !matches!(chars.get(index), Some(c) if c.is_ascii_digit() && *c != '0') {
-        return false;
-    }
-    index += 1;
-    let mut lead = 1;
-    while lead < 3 && matches!(chars.get(index), Some(c) if c.is_ascii_digit()) {
-        index += 1;
-        lead += 1;
-    }
-    let mut groups = 0_usize;
-    while chars.get(index) == Some(&'.') {
-        index += 1;
-        let mut digits = 0;
-        while digits < 3 && matches!(chars.get(index), Some(c) if c.is_ascii_digit()) {
-            index += 1;
-            digits += 1;
-        }
-        if digits != 3 {
-            return false;
-        }
-        groups += 1;
-    }
-    groups >= 1 && index == chars.len()
+    let lead = text.strip_prefix('-').unwrap_or(text).chars().next();
+    is_grouped_integer(text, &['.']) && lead.is_some_and(|c| c != '0')
 }

@@ -7,8 +7,7 @@ use num_rational::BigRational;
 use num_traits::{One, ToPrimitive, Zero};
 
 use super::{
-    Atom, Basis, Canon, Frac, MAX_TERMS, Monomial, Poly, SQUAREFREE_CERTAIN, TRIAL_DIVISION_LIMIT,
-    Undecidable,
+    Atom, Basis, Canon, Frac, MAX_TERMS, Monomial, Poly, TRIAL_DIVISION_LIMIT, Undecidable,
 };
 
 /// Build the canonical value of one atom with exponent 1 and coefficient 1.
@@ -148,11 +147,18 @@ impl SquareSplit {
     }
 
     /// Place the remainder of trial division under the root, or outside it as a square.
+    ///
+    /// An exhausted division stopped because the next divisor was past the
+    /// square root of the remainder, so the remainder is a prime and it goes
+    /// under the root. A remainder that outlasted every divisor is at least the
+    /// square of [`TRIAL_DIVISION_LIMIT`]: a perfect square goes outside, and
+    /// every other one is a refusal, because trial division cannot prove it
+    /// squarefree.
     fn finish(&mut self, exhausted: bool) -> Result<(), Undecidable> {
         if self.remainder <= 1 {
             return Ok(());
         }
-        if exhausted || self.remainder < SQUAREFREE_CERTAIN {
+        if exhausted {
             self.radicand *= self.remainder;
             return Ok(());
         }
@@ -222,10 +228,9 @@ fn as_radical(sum: &Poly) -> Option<BTreeMap<Basis, BigRational>> {
         };
         for (atom, exponent) in monomial {
             match atom {
-                // A monomial holds one root at most. A second one is not a basis.
-                Atom::Sqrt(radicand) if *exponent == 1 && basis.radicand.is_one() => {
-                    basis.radicand = radicand.clone();
-                }
+                // A monomial holds one root at most, and that root has the
+                // exponent 1 (`Work::add_atom`), so the root is the basis.
+                Atom::Sqrt(radicand) => basis.radicand = radicand.clone(),
                 Atom::Pi => basis.pi = *exponent,
                 Atom::E => basis.e = *exponent,
                 _ => return None,

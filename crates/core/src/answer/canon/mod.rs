@@ -155,13 +155,13 @@ const MAX_DEPTH: usize = 128;
 const MAX_SCALE: u32 = 1_000;
 
 /// The largest trial divisor the radical factoring tries.
-const TRIAL_DIVISION_LIMIT: u128 = 10_000;
-
-/// Above this value a squarefree radicand needs a proof, not a trial division.
 ///
-/// Every prime factor below [`TRIAL_DIVISION_LIMIT`] is already removed, so a
-/// remainder below the square of that limit carries no square factor.
-const SQUAREFREE_CERTAIN: u128 = TRIAL_DIVISION_LIMIT * TRIAL_DIVISION_LIMIT;
+/// Trial division stops early when the next divisor is past the square root of
+/// the remainder. A remainder that stops the division that way holds no prime
+/// factor below its own square root, so it is 1 or a prime, and it needs no
+/// further proof. A remainder that outlasts every divisor is at least the
+/// square of this limit, and it needs the perfect-square test.
+const TRIAL_DIVISION_LIMIT: u128 = 10_000;
 
 /// One factor of a canonical monomial.
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]

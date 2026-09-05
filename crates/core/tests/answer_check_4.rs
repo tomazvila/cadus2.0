@@ -10,6 +10,7 @@
 
 mod common;
 
+use cadus_core::answer::MAX_ANSWER_CHARS;
 use common::check::*;
 
 #[test]
@@ -211,4 +212,25 @@ fn an_answer_past_the_input_cap_is_undecidable() {
     assert!(matches!(check(&long, "1", N), Outcome::Undecidable(_)));
     let at_cap = "1".repeat(4_000);
     assert_eq!(check(&at_cap, &at_cap, N), decided(true, false));
+}
+
+#[test]
+fn a_period_grouped_integer_takes_a_lead_of_one_to_three_digits() {
+    // The lead group holds one to three digits and no leading zero; a fourth
+    // lead digit or a zero lead is a decimal, and the value decides.
+    assert_eq!(check("1234", "1.234", N), rounded());
+    assert_eq!(check("12345", "12.345", N), rounded());
+    assert_eq!(check("123456", "123.456", N), rounded());
+    assert_eq!(check("-123456", "-123.456", N), rounded());
+    assert_eq!(check("1234567", "1234.567", N), decided(false, false));
+    assert_eq!(check("123", "0.123", N), decided(false, false));
+}
+
+#[test]
+fn the_input_cap_reads_the_raw_string_of_either_side_alone() {
+    // The cap runs before the normalizer, so the spaces the normalizer drops
+    // count, and one long side is enough.
+    let long = format!("{}1", " ".repeat(MAX_ANSWER_CHARS));
+    assert_undecidable("1", &long, N, "the answer is longer than the input cap");
+    assert_undecidable(&long, "1", N, "the answer is longer than the input cap");
 }

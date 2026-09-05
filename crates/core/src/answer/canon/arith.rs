@@ -61,7 +61,7 @@ impl Work {
         if exponent == 0 {
             return Ok(Canon::Rational(BigRational::one()));
         }
-        if exponent < 0 {
+        if exponent.is_negative() {
             let magnitude = exponent
                 .checked_neg()
                 .ok_or_else(|| Undecidable::new("an exponent past the size bound"))?;
@@ -132,16 +132,19 @@ impl Work {
         let mut result = one_poly();
         let mut square = base.clone();
         let mut left = exponent;
-        while left > 0 {
+        // Square-and-multiply. The loop squares only while a bit of the
+        // exponent is left to read, so the last square is never built for
+        // nothing.
+        loop {
             if left % 2 == 1 {
                 result = self.poly_mul(&result, &square)?;
             }
             left /= 2;
-            if left > 0 {
-                square = self.poly_mul(&square, &square)?;
+            if left == 0 {
+                return Ok(result);
             }
+            square = self.poly_mul(&square, &square)?;
         }
-        Ok(result)
     }
 
     /// Add one non-zero term into a sum, and drop a term whose coefficient cancels to zero.
@@ -324,7 +327,7 @@ impl Work {
             return Err(Undecidable::new("a number past the size bound"));
         }
         let power = base.pow(magnitude);
-        let value = if exponent > 0 {
+        let value = if exponent.is_positive() {
             BigRational::from_integer(power)
         } else {
             BigRational::new(BigInt::one(), power)

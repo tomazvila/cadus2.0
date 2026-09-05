@@ -8,6 +8,7 @@
     clippy::unimplemented
 )]
 
+use cadus_core::answer::lexer::lex;
 use cadus_core::answer::{Ast, Undecidable, normalize, parse};
 use num_bigint::BigInt;
 
@@ -170,4 +171,90 @@ fn a_refusal_inside_a_juxtaposed_argument_and_a_root_glyph_reaches_the_top() {
         refusal("√\\frac{1}{+}"),
         "the answer ends where a value belongs"
     );
+}
+
+/// `n` nested LaTeX bodies of one shape around the literal 1, as `(open, close)`.
+fn nested(n: usize, open: &str, close: &str) -> String {
+    format!("{}1{}", open.repeat(n), close.repeat(n))
+}
+
+#[test]
+fn the_lexer_reads_thirty_two_nested_bodies_and_refuses_thirty_three() {
+    // The lexer bound is 32 brace levels, and each shape descends on its own
+    // path: the root body, the numerator, and the denominator. 32 levels
+    // become one token at the top; 33 levels are a refusal at the lexer.
+    let shapes = [("\\sqrt{", "}"), ("\\frac{", "}{1}"), ("\\frac{1}{", "}")];
+    for (open, close) in shapes {
+        assert_eq!(
+            lex(&nested(32, open, close)).map(|tokens| tokens.len()),
+            Ok(1),
+            "{open}"
+        );
+        assert_eq!(
+            lex(&nested(33, open, close)).map(|tokens| tokens.len()),
+            Err(Undecidable::new("the answer nests too deeply")),
+            "{open}"
+        );
+    }
+}
+
+#[test]
+fn a_function_name_after_the_root_glyph_is_no_argument() {
+    assert_eq!(refusal("√sin(4)"), "a root with no argument");
+}
+
+#[test]
+fn an_inequality_between_two_variables_is_refused() {
+    assert_eq!(refusal("x < y"), "an inequality between two variables");
+}
+
+#[test]
+fn a_spelled_greek_name_is_a_label() {
+    assert_eq!(
+        parse("theta = 5"),
+        Ok(Ast::Assign {
+            var: "theta".to_string(),
+            value: Box::new(int(5)),
+        })
+    );
+}
+
+#[test]
+fn a_lone_zero_after_a_factor_is_a_factor_and_not_a_group() {
+    // A run of two digits or more that starts with a zero is a thousands group
+    // and refuses the product; the one digit `0` is the factor zero.
+    assert_eq!(
+        parse("x 0"),
+        Ok(Ast::Mul(vec![Ast::Var("x".to_string()), int(0)]))
+    );
+    assert_eq!(
+        refusal("x 00"),
+        "a space-grouped number stands after a factor"
+    );
+}
+
+#[test]
+fn a_function_name_of_run_letters_stays_a_function() {
+    // `tan` and `abs` hold run letters only, and a run of run letters splits
+    // into variables; the function list wins over the split.
+    let call = |name: &str, argument: Ast| Ast::Func(name.to_string(), vec![argument]);
+    assert_eq!(parse("tan(1)"), Ok(call("tan", int(1))));
+    assert_eq!(
+        parse("abs(-3)"),
+        Ok(call("abs", Ast::Neg(Box::new(int(3)))))
+    );
+}
+
+#[test]
+fn one_dollar_sign_is_no_delimiter_pair() {
+    assert_eq!(normalize("$5").source, "$5");
+    assert_eq!(normalize("5$").source, "5$");
+    assert_eq!(normalize("$").source, "$");
+    assert_eq!(normalize("$5$").source, "5");
+}
+
+#[test]
+fn a_negative_grouped_integer_with_a_two_digit_lead_loses_its_comma() {
+    assert_eq!(normalize("-12,345").source, "-12345");
+    assert_eq!(normalize("-123,456").source, "-123456");
 }

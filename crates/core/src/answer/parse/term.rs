@@ -296,7 +296,10 @@ impl Parser<'_> {
                 next: self.at + 1,
                 digit_run: false,
             }),
-            Tok::Num(numerator) if token.space_before => {
+            // Two number tokens never touch: the lexer reads glued digits as one
+            // number, so a number at the cursor after a number stands after a
+            // space, and the caller reads the token in front of it.
+            Tok::Num(numerator) => {
                 if self.peek_at(1) != Some(&Tok::Slash) {
                     return None;
                 }

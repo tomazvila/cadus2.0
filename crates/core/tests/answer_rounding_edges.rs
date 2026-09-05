@@ -117,3 +117,99 @@ fn a_coefficient_wider_than_every_refinement_is_refused() {
         Rounding::Refused("the rounding needs a finer bound than the checker builds")
     );
 }
+
+/// The rational combination `coefficient * sqrt(2)`.
+fn sqrt_two_times(coefficient: BigRational) -> Canon {
+    let mut parts = BTreeMap::new();
+    parts.insert(
+        Basis {
+            radicand: BigInt::from(2),
+            pi: 0,
+            e: 0,
+        },
+        coefficient,
+    );
+    Canon::Radical(parts)
+}
+
+/// The lower end `F` of the bracket of `sqrt(2)` at the finest refinement,
+/// 8,192 bits, and the unit `2^8192` of that bracket: `F/unit <= sqrt(2) <
+/// (F + 1)/unit`.
+fn finest_bracket() -> (BigInt, BigInt) {
+    let bits = 8_192_usize;
+    let unit = BigInt::from(1) << bits;
+    let floor = (BigInt::from(2) << (bits * 2)).sqrt();
+    (floor, unit)
+}
+
+/// The rational `numerator / denominator` of two big integers.
+fn big_ratio(numerator: BigInt, denominator: BigInt) -> BigRational {
+    BigRational::new(numerator, denominator)
+}
+
+/// The rounding of `coefficient * sqrt(2)` against the learner value 1.0.
+fn against_one(coefficient: BigRational) -> Rounding {
+    rounds_to(
+        &sqrt_two_times(coefficient),
+        &BigRational::from_integer(BigInt::from(1)),
+        1,
+    )
+}
+
+/// The refusal of a pair that no round decides.
+const NO_ROUND: Rounding =
+    Rounding::Refused("the rounding needs a finer bound than the checker builds");
+
+#[test]
+fn a_bracket_end_on_the_half_unit_bound_gives_no_verdict() {
+    // The learner value is 1.0 and the half unit is 1/20. Each coefficient
+    // puts one end of the finest bracket exactly on a bound, where the strict
+    // comparison holds nothing, so every round refuses.
+    let (floor, unit) = finest_bracket();
+    let on_bound = |numerator: i64, end: &BigInt| {
+        big_ratio(BigInt::from(numerator) * &unit, BigInt::from(20) * end)
+    };
+    // The upper end is 1 + 1/20: no `Same`.
+    assert_eq!(against_one(on_bound(21, &(&floor + 1))), NO_ROUND);
+    // The lower end is 1 - 1/20: no `Same`.
+    assert_eq!(against_one(on_bound(19, &floor)), NO_ROUND);
+    // The lower end is 1 + 1/20: no `Different`.
+    assert_eq!(against_one(on_bound(21, &floor)), NO_ROUND);
+    // The upper end is 1 - 1/20: no `Different`.
+    assert_eq!(against_one(on_bound(19, &(&floor + 1))), NO_ROUND);
+}
+
+#[test]
+fn a_bracket_as_wide_as_the_half_unit_gives_no_verdict() {
+    // The coefficient unit/20 makes the finest bracket exactly one half unit
+    // wide, and the learner value sits on its upper end: the value is under
+    // the bound above and on the bound below, which decides nothing.
+    let (floor, unit) = finest_bracket();
+    let coefficient = big_ratio(unit, BigInt::from(20));
+    let learner = big_ratio(&floor + 1, BigInt::from(20));
+    assert_eq!(
+        rounds_to(&sqrt_two_times(coefficient), &learner, 1),
+        NO_ROUND
+    );
+}
+
+#[test]
+fn a_negative_root_keeps_its_sign_and_its_size_in_the_bracket() {
+    // -sqrt(2) is -1.414...: the sign-flipped decimal, the decimal of the
+    // wrong size, and the decimal of half the size are all wrong, and only the
+    // rounding of the value itself is the notation verdict.
+    let wrong = Outcome::Decided(Verdict {
+        correct: false,
+        notation: false,
+    });
+    assert_eq!(check("-sqrt(2)", "1.41", AnswerKind::Numeric), wrong);
+    assert_eq!(check("-sqrt(2)", "0.41", AnswerKind::Numeric), wrong);
+    assert_eq!(check("-sqrt(2)", "-0.71", AnswerKind::Numeric), wrong);
+    assert_eq!(
+        check("-sqrt(2)", "-1.41", AnswerKind::Numeric),
+        Outcome::Decided(Verdict {
+            correct: true,
+            notation: true,
+        })
+    );
+}
