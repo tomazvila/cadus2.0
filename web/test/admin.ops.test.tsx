@@ -5,10 +5,10 @@
  * `test/helpers/admin.tsx`.
  */
 import { describe, expect, it, vi } from 'vitest';
-import { act, screen } from '@testing-library/react';
+import { act, cleanup, screen } from '@testing-library/react';
 import { axe } from 'vitest-axe';
 import { ApiError } from '@/api';
-import { BILL_MAX_PAGES, BILL_TRUNCATED, COST_UNAVAILABLE } from '@/views/admin/Ops';
+import { BILL_MAX_PAGES, BILL_TRUNCATED, COST_EMPTY, COST_UNAVAILABLE, OPS_EMPTY } from '@/views/admin/Ops';
 import { FORBIDDEN_TITLE, UNAVAILABLE_TITLE } from '@/views/admin/adminLoad';
 import { AXE_IN_JSDOM } from './axe';
 import {
@@ -147,6 +147,46 @@ describe('the operator screen', () => {
     await act(async () => { release(QUEUE); });
     expect(getOperatorFlags).toHaveBeenCalledTimes(2);
     expect(listContent).toHaveBeenCalledTimes(2);
+  });
+
+  it('reads one page and stops when the service names no limit', async () => {
+    const listContent = vi.fn(async () => ({ ...QUEUE, limit: 0 }));
+    await mountOps(stubApi({ listContent }));
+    expect(listContent).toHaveBeenCalledTimes(1);
+    expect(screen.queryByText(BILL_TRUNCATED)).toBeNull();
+    expect(costTable().querySelector('tfoot')!.textContent).toBe('Total4 documents$0.0450');
+  });
+
+  it('says so when the pool and the bill are empty', async () => {
+    await mountOps(stubApi({
+      getOperatorFlags: async () => ({ ...FLAGS, flags: [], gate: [] }),
+      listContent: async () => ({ ...QUEUE, items: [] }),
+    }));
+    expect(screen.getByText(OPS_EMPTY)).toBeTruthy();
+    expect(screen.getByText(COST_EMPTY)).toBeTruthy();
+    expect(document.querySelectorAll('.admin-table')).toHaveLength(0);
+  });
+
+  it('renders one block per gate note, each under its own digest', async () => {
+    const second = { ...FLAGS.gate[0]!, digest: 'e2e2e2e2e2e2e2e2', kp_id: 'arith:borrow' };
+    await mountOps(stubApi({ getOperatorFlags: async () => ({ ...FLAGS, gate: [FLAGS.gate[0]!, second] }) }));
+    const heads = Array.from(document.querySelectorAll('.gate-note .gate-head .mono'));
+    expect(heads.map((h) => h.textContent)).toEqual(['d2', 'e2e2e2e2e2e2']);
+    expect(heads.map((h) => h.getAttribute('title'))).toEqual(['d2', 'e2e2e2e2e2e2e2e2']);
+    expect(screen.queryByText('No approved template was gated by this read.')).toBeNull();
+  });
+
+  it('routes a 401 to sign-in outside demo mode, and keeps it on screen inside it', async () => {
+    const unauthorized = () => { throw new ApiError(401, 'unauthorized', 'No session.'); };
+    const out = await mountOps(stubApi({ getOperatorFlags: unauthorized }));
+    expect(out.onUnauthorized).toHaveBeenCalledTimes(1);
+    out.unmount();
+    cleanup();
+
+    const demo = await mountOps(stubApi({ getOperatorFlags: unauthorized }), true);
+    expect(demo.onUnauthorized).not.toHaveBeenCalled();
+    expect(screen.getByText('No session.')).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'Try again' })).toBeTruthy();
   });
 
   it('has no accessibility violation axe can see in jsdom', async () => {

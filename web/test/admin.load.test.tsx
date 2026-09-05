@@ -122,6 +122,6 @@ describe('useAdminLoad, driven as a hook', () => {
     await act(async () => { held[1]!.resolve('older'); });
     await act(async () => { held[0]!.reject(new ApiError(500, 'server_error', 'Down.')); });
     expect(result.current.data).toBe('newest');
-    expect(result.current.failure).toBeNull();
+    expect(result.current.fault).toBeNull();
   });
 });

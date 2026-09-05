@@ -5,10 +5,11 @@
  * `test/helpers/admin.tsx`.
  */
 import { describe, expect, it, vi } from 'vitest';
-import { act, screen, waitFor, within } from '@testing-library/react';
+import { act, fireEvent, screen, waitFor, within } from '@testing-library/react';
 import userEvent, { type UserEvent } from '@testing-library/user-event';
 import { ApiError } from '@/api';
 import { REVIEW_UNREAD } from '@/views/admin/Review';
+import { shortDigest } from '@/views/admin/GateBlock';
 import { toastStore } from '@/app/toast';
 import { REASON_REQUIRED, REASON_TOO_LONG, usableReason } from '@/views/admin/reason';
 import {
@@ -64,6 +65,32 @@ describe('Approve', () => {
     );
     expect(screen.getByText('d1 instance 1: Solve $5x = 20$ for $x$.')).toBeTruthy();
     expect(list).toHaveBeenCalledTimes(2);
+    expect(toastStore.getSnapshot()).toEqual([
+      { id: 1, message: `Approved ${shortDigest('d2')}.`, kind: 'success' },
+    ]);
+  });
+
+  it('lands on the row below the one approved, not on the top of the queue', async () => {
+    const user = userEvent.setup();
+    const approve = approving();
+    const list = listThenWithout('d1');
+    await mountReview(stubApi({ listContent: list, approveContent: approve }));
+
+    await user.click(rowButtons()[1]!);
+    await waitFor(() => expect(writeButton('Approve').disabled).toBe(false));
+    await approveSelected(user, approve);
+    expect(approve).toHaveBeenCalledWith('d1');
+
+    await waitFor(() => expect(rowButtons()).toHaveLength(3));
+    expect(document.querySelector('.review-row.is-selected')!.textContent).toContain('Borrowing');
+  });
+
+  it('routes a 401 on the write to sign-in', async () => {
+    const user = userEvent.setup();
+    const approve = vi.fn(async () => { throw new ApiError(401, 'unauthorized', 'No session.'); });
+    const view = await mountReview(stubApi({ approveContent: approve }));
+    await approveSelected(user, approve);
+    await waitFor(() => expect(view.onUnauthorized).toHaveBeenCalledTimes(1));
   });
 
   it('C6/F5: a document that did not load leaves both writes disabled', async () => {
@@ -211,6 +238,7 @@ describe('Approve', () => {
     await user.click(screen.getByRole('button', { name: 'Approve' }));
     await user.click(dialogButton('Cancel'));
 
+    expect(screen.queryByRole('dialog')).toBeNull();
     expect(approve).not.toHaveBeenCalled();
     expect(rowButtons()).toHaveLength(4);
   });
@@ -260,6 +288,14 @@ describe('REVIEW-reason: Reject requires a reason', () => {
     expect(screen.getByRole('alert').textContent).toBe(REASON_REQUIRED);
   });
 
+  it('REVIEW-reason: the prompt opens with no rule on screen', async () => {
+    const user = userEvent.setup();
+    await mountReview();
+    await user.click(screen.getByRole('button', { name: 'Reject' }));
+    expect(screen.getByRole('dialog')).toBeTruthy();
+    expect(screen.queryByRole('alert')).toBeNull();
+  });
+
   it('REVIEW-reason: a written reason posts trimmed, and the row leaves the list', async () => {
     const user = userEvent.setup();
     const reject = rejecting();
@@ -273,6 +309,9 @@ describe('REVIEW-reason: Reject requires a reason', () => {
       expect(reject).toHaveBeenCalledWith('d2', 'the answer is in the statement'),
     );
     await waitFor(() => expect(rowButtons()).toHaveLength(3));
+    expect(toastStore.getSnapshot()).toEqual([
+      { id: 1, message: `Rejected ${shortDigest('d2')}.`, kind: 'info' },
+    ]);
   });
 
   it('REVIEW-reason: the rule is one function, and it counts code points', () => {
@@ -353,6 +392,57 @@ describe('the review keyboard', () => {
     await user.keyboard('a');
     expect(screen.queryByRole('dialog')).toBeNull();
     expect(selected()).toBe(first);
+  });
+
+  it('swallows the letters it acts on, and no other', async () => {
+    await mountReview();
+    await waitFor(() => expect(writeButton('Approve').disabled).toBe(false));
+    expect(fireEvent.keyDown(document.body, { key: 'x' })).toBe(true);
+    expect(fireEvent.keyDown(document.body, { key: 'a' })).toBe(false);
+    await waitFor(() => expect(screen.getByRole('dialog')).toBeTruthy());
+    await act(async () => { dialogButton('Cancel').click(); });
+    let swallowed = false;
+    // The move loads the next pane, so the press is awaited like the click that it stands for.
+    await act(async () => { swallowed = !fireEvent.keyDown(document.body, { key: 'j' }); });
+    expect(swallowed).toBe(true);
+  });
+
+  it('leaves the letters to a text area that has focus', async () => {
+    const user = userEvent.setup();
+    await mountReview();
+    const first = document.querySelector('.review-row.is-selected')!.textContent;
+    const area = document.createElement('textarea');
+    document.body.append(area);
+    area.focus();
+    await user.keyboard('j');
+    expect(document.querySelector('.review-row.is-selected')!.textContent).toBe(first);
+  });
+
+  it('holds the walk while a dialog is open, and frees it when the dialog closes', async () => {
+    const user = userEvent.setup();
+    await mountReview();
+    const selected = () => document.querySelector('.review-row.is-selected')!.textContent;
+    const first = selected();
+
+    await user.click(screen.getByRole('button', { name: 'Approve' }));
+    await user.keyboard('j');
+    expect(selected()).toBe(first);
+    await user.keyboard('a');
+    expect(screen.getAllByRole('dialog')).toHaveLength(1);
+
+    await user.click(dialogButton('Cancel'));
+    await user.keyboard('j');
+    expect(selected()).not.toBe(first);
+  });
+
+  it('unbinds its key listener with the screen', async () => {
+    const added = vi.spyOn(document, 'addEventListener');
+    const removed = vi.spyOn(document, 'removeEventListener');
+    const view = await mountReview();
+    view.unmount();
+    const keydowns = (spy: typeof added) => spy.mock.calls.filter(([type]) => type === 'keydown');
+    expect(keydowns(added).length).toBeGreaterThan(0);
+    expect(keydowns(removed).map(([, fn]) => fn)).toEqual(keydowns(added).map(([, fn]) => fn));
   });
 
   it('moves nothing on j when the queue is empty', async () => {

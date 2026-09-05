@@ -15,10 +15,10 @@
  * The tests of the first block move the clock in units of the IMPORTED constants, which
  * reads well and pins the RATIO only: a mutant that doubles both numbers keeps every one of
  * them green (M6-review-2, finding V12). The second block is the absolute oracle. It writes
- * 2000 and 30000 as numbers, and it reads the service's own `PENDING_DEADLINE_SECS` and
- * `POLL_INTERVAL_SECS` out of `crates/web/src/diagnosis.rs`, because the client rule and the
- * service rule are ONE rule and a client that gives up first reports a failure the service
- * is still working on.
+ * 2000 and 30000 as numbers, and it reads the service's own `PENDING_DEADLINE_SECS` out of
+ * `crates/web/src/diagnosis/mod.rs`, because the client rule and the service rule are ONE
+ * rule and a client that gives up first reports a failure the service is still working on.
+ * The poll interval is the client's alone: the service names none.
  */
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
@@ -347,7 +347,7 @@ describe('the async diagnosis panel', () => {
 /** The service file that owns the same two rules. ONE rule, two implementations. */
 const DIAGNOSIS_RS = join(
   dirname(fileURLToPath(import.meta.url)),
-  '../../crates/web/src/diagnosis.rs',
+  '../../crates/web/src/diagnosis/mod.rs',
 );
 
 /**
@@ -360,7 +360,7 @@ const DIAGNOSIS_RS = join(
 function serverSecs(name: string): number {
   const source = readFileSync(DIAGNOSIS_RS, 'utf8');
   const found = new RegExp(`pub const ${name}: i64 = (\\d+);`).exec(source);
-  if (!found) throw new Error(`${name} is absent from crates/web/src/diagnosis.rs`);
+  if (!found) throw new Error(`${name} is absent from crates/web/src/diagnosis/mod.rs`);
   return Number(found[1]);
 }
 
@@ -372,9 +372,7 @@ describe('the diagnosis timing literals', () => {
 
   it('gives up at the second the service gives up at', () => {
     expect(serverSecs('PENDING_DEADLINE_SECS')).toBe(30);
-    expect(serverSecs('POLL_INTERVAL_SECS')).toBe(2);
     expect(DIAGNOSIS_DEADLINE_MS).toBe(serverSecs('PENDING_DEADLINE_SECS') * 1000);
-    expect(DIAGNOSIS_POLL_MS).toBe(serverSecs('POLL_INTERVAL_SECS') * 1000);
   });
 
   it('reads nothing at 1999 ms, reads once at 2000 ms, and reads again at 4000 ms', async () => {

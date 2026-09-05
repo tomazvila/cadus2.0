@@ -23,12 +23,12 @@
  * started under, and an older generation never overwrites a newer one — the reviewer who
  * pressed Retry twice must not end up with the first reply on screen.
  */
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { ApiError } from '@/api';
 import { useLifetime } from '@/hooks/useLifetime';
 
 /** What kind of refusal a read met. */
-export type AdminFailure =
+type AdminFailure =
   /** `403 forbidden` — the account is not an operator. This is an answer, not a fault. */
   | 'forbidden'
   /** `503 admin_path_unavailable` — this deployment configured no admin connection. */
@@ -65,13 +65,17 @@ function messageOf(e: Error): string {
   return e.message || GENERIC_FAILURE_MESSAGE;
 }
 
+/** The refusal of one attempt, and the message that came with it. */
+export interface AdminFault {
+  failure: AdminFailure;
+  message: string;
+}
+
 export interface AdminLoad<T> {
   /** The newest payload that arrived, or null before the first one. */
   data: T | null;
   /** The refusal of the newest attempt, or null when it succeeded. */
-  failure: AdminFailure | null;
-  /** The message that came with `failure`. */
-  message: string;
+  fault: AdminFault | null;
   /** True while an attempt is in flight, including the first. */
   loading: boolean;
   /** Start a new attempt. The payload on screen stays until the new one lands. */
@@ -91,32 +95,37 @@ export interface AdminLoadDeps<T> {
 }
 
 interface LoadState<T> {
-  /** The generation this state came from. `-1` is "nothing has landed". */
-  gen: number;
+  /** The attempt this state came from, or null while nothing has landed. */
+  landed: object | null;
   data: T | null;
-  failure: AdminFailure | null;
-  message: string;
+  fault: AdminFault | null;
+}
+
+/** The two deps a continuation reads after its await. */
+interface LiveDeps {
+  demo: boolean;
+  onUnauthorized: () => void;
 }
 
 export function useAdminLoad<T>({ load, demo, onUnauthorized }: AdminLoadDeps<T>): AdminLoad<T> {
   const life = useLifetime();
-  const [gen, setGen] = useState(0);
-  const [state, setState] = useState<LoadState<T>>({
-    gen: -1,
-    data: null,
-    failure: null,
-    message: '',
-  });
+  // One token per attempt. `reload` mints a new one, and the effect below starts on it.
+  const [attempt, setAttempt] = useState<object>({});
+  const [state, setState] = useState<LoadState<T>>({ landed: null, data: null, fault: null });
 
   // The deps go through a ref for the reason `useCall` states: a continuation that lands
   // after an await must not run against the values of the render that started it. The write
-  // is in an effect, never during render.
-  const depsRef = useRef({ demo, onUnauthorized });
+  // is in an effect, never during render, and that effect runs before the read below starts.
+  const depsRef = useRef<LiveDeps | null>(null);
   useEffect(() => {
     depsRef.current = { demo, onUnauthorized };
   }, [demo, onUnauthorized]);
 
+  // The newest attempt out. An older one that lands after it changes nothing.
+  const latest = useRef<object | null>(null);
+
   useEffect(() => {
+    latest.current = attempt;
     void (async () => {
       let data: T;
       try {
@@ -124,33 +133,33 @@ export function useAdminLoad<T>({ load, demo, onUnauthorized }: AdminLoadDeps<T>
       } catch (thrown) {
         // A `load` rejects with an `ApiError` or with a foreign `Error`; neither is void.
         const e = thrown as Error;
-        const deps = depsRef.current;
+        const deps = depsRef.current!;
         if (e instanceof ApiError && e.sessionExpired && !deps.demo) {
           if (life.alive()) deps.onUnauthorized();
           return;
         }
-        if (!life.alive()) return;
-        // An older attempt never overwrites a newer one, and a failure keeps the payload
-        // that is already on screen.
-        setState((prev) =>
-          gen < prev.gen ? prev : { gen, data: prev.data, failure: classify(e), message: messageOf(e) },
-        );
+        if (latest.current !== attempt) return;
+        // A failure keeps the payload that is already on screen.
+        setState((prev) => ({
+          landed: attempt,
+          data: prev.data,
+          fault: { failure: classify(e), message: messageOf(e) },
+        }));
         return;
       }
-      if (!life.alive()) return;
-      setState((prev) => (gen < prev.gen ? prev : { gen, data, failure: null, message: '' }));
+      if (latest.current !== attempt) return;
+      setState({ landed: attempt, data, fault: null });
     })();
-  }, [load, gen, life]);
+  }, [load, attempt, life]);
 
-  const reload = useCallback(() => setGen((n) => n + 1), []);
+  const [reload] = useState(() => () => { setAttempt({}); });
 
   return {
     data: state.data,
-    failure: state.failure,
-    message: state.message,
-    // Derived, not stored: an attempt is in flight exactly while no state of its generation
-    // has landed. One less flag to leave true on a path that forgot to clear it.
-    loading: state.gen < gen,
+    fault: state.fault,
+    // Derived, not stored: an attempt is in flight exactly while no state of its token has
+    // landed. One less flag to leave true on a path that forgot to clear it.
+    loading: state.landed !== attempt,
     reload,
   };
 }

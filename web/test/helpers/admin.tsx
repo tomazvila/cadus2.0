@@ -194,10 +194,12 @@ export async function mountReview(api: ApiClient = stubApi(), demo = false) {
   return { ...view, onUnauthorized };
 }
 
-export async function mountOps(api: ApiClient = stubApi()) {
+export async function mountOps(api: ApiClient = stubApi(), demo = false) {
   resetToasts();
   const onUnauthorized = vi.fn();
-  const view = await renderInView(<OperatorScreen api={api} onUnauthorized={onUnauthorized} />);
+  const view = await renderInView(
+    <OperatorScreen api={api} demo={demo} onUnauthorized={onUnauthorized} />,
+  );
   return { ...view, onUnauthorized };
 }
 

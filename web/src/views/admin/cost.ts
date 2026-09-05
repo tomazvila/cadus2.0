@@ -83,7 +83,9 @@ const COST_DECIMALS = 4;
  * row priced the run, and "we do not know" and "it was free" are different facts.
  */
 export function usd(value: Numeric): string {
-  if (value === null || value === undefined || value === '') return '—';
+  // `Number('')` is 0, so the empty string is named here; `Number(undefined)` is NaN and
+  // falls through to the dash of its own accord.
+  if (value === null || value === '') return '—';
   const n = Number(value);
   return Number.isFinite(n) ? `$${n.toFixed(COST_DECIMALS)}` : '—';
 }

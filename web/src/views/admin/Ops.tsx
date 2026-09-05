@@ -23,11 +23,11 @@
  * NOTHING HERE WRITES. The screen has no button that changes a row, so it needs no
  * confirmation step and no busy guard: a double-press of Refresh starts one more read.
  */
-import { useCallback } from 'react';
+import { useState } from 'react';
 import { AdminFailureBlock } from './AdminFailure';
 import { GateBlock } from './GateBlock';
 import { costByKp, usd } from './cost';
-import { useAdminLoad } from './adminLoad';
+import { useAdminLoad, type AdminLoad } from './adminLoad';
 import { LoadingBlock } from '@/components/primitives';
 import { num } from '@/lib/format';
 import type { ApiClient, ReviewItem } from '@/api/types';
@@ -36,13 +36,13 @@ import type { ApiClient, ReviewItem } from '@/api/types';
 export const OPS_TITLE = 'Operator';
 
 /** The line of a deployment whose pool holds no knowledge point at all. */
-const OPS_EMPTY = 'The pool holds no knowledge point yet.';
+export const OPS_EMPTY = 'The pool holds no knowledge point yet.';
 
 /** The line of the cost panel when the review queue could not be read. */
 export const COST_UNAVAILABLE = 'The authoring bill could not be read.';
 
 /** The line of a queue that priced nothing. */
-const COST_EMPTY = 'No authored document carries a bill yet.';
+export const COST_EMPTY = 'No authored document carries a bill yet.';
 
 /**
  * The pages one bill reads, at most.
@@ -99,36 +99,115 @@ async function readBill(api: ApiClient): Promise<Bill> {
   return { items, truncated: true };
 }
 
+/** The authoring bill, one row per knowledge point, or the reason there is none. */
+function CostCard({ queue }: { queue: AdminLoad<Bill> }) {
+  return (
+    <section className="card admin-card" aria-labelledby="ops-cost-h">
+      <h2 id="ops-cost-h">Authoring cost per knowledge point</h2>
+      <p className="muted small">
+        Every stored document, of every status. A rejected document still cost money.
+      </p>
+      <CostBody queue={queue} />
+    </section>
+  );
+}
+
+function CostBody({ queue }: { queue: AdminLoad<Bill> }) {
+  // A read that failed renders its own line, and the payload behind it renders nothing:
+  // the two together would name two states of one panel.
+  if (queue.fault) {
+    return (
+      <p className="muted">
+        {COST_UNAVAILABLE} {queue.fault.message}
+      </p>
+    );
+  }
+  if (!queue.data) return <LoadingBlock label="Loading the authoring bill…" />;
+
+  const bill = queue.data;
+  const costs = costByKp(bill.items);
+  const total = costs.reduce((sum, row) => sum + row.cost, 0);
+  return (
+    <>
+      {bill.truncated ? <p className="gate-line gate-warn">{BILL_TRUNCATED}</p> : null}
+      {costs.length === 0 ? (
+        <p className="muted">{COST_EMPTY}</p>
+      ) : (
+        <div className="table-scroll">
+          <table className="admin-table">
+            <caption className="visually-hidden">Authoring cost, one row per knowledge point</caption>
+            <thead>
+              <tr>
+                <th scope="col">Knowledge point</th>
+                <th scope="col">Documents</th>
+                <th scope="col">Attempts</th>
+                <th scope="col">Cost</th>
+                <th scope="col">T3</th>
+              </tr>
+            </thead>
+            <tbody>
+              {costs.map((row) => (
+                <tr key={row.kp_id}>
+                  <th scope="row" className="mono">{row.kp_id}</th>
+                  <td className="mono">{row.documents}</td>
+                  <td className="mono">{row.attempts}</td>
+                  <td className="mono">{usd(row.cost)}</td>
+                  <td>
+                    {row.alerting > 0 ? (
+                      <span className="chip chip-bad">{row.alerting} over 3 attempts</span>
+                    ) : (
+                      <span className="muted small">—</span>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+            <tfoot>
+              <tr>
+                <th scope="row">Total</th>
+                {/* The count is the documents the walk read, and it says the word: a bare
+                    number under a column head reads as a row count of the table above it,
+                    which holds one row per knowledge point and not one per document. */}
+                <td className="mono">{bill.items.length} documents</td>
+                <td />
+                <td className="mono">{usd(total)}</td>
+                <td />
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      )}
+    </>
+  );
+}
+
 export interface OperatorScreenProps {
   api: ApiClient;
   /** Demo mode. A 401 then keeps the reader on the screen. */
-  demo?: boolean;
+  demo: boolean;
   /** The session-expired path. */
   onUnauthorized: () => void;
 }
 
-export function OperatorScreen({ api, demo = false, onUnauthorized }: OperatorScreenProps) {
-  // Both reads are stable per client, so each starts exactly once per mount. An inline
-  // arrow here would be a new function on every render and a read loop.
-  const loadFlags = useCallback(() => api.getOperatorFlags(), [api]);
-  const loadQueue = useCallback(() => readBill(api), [api]);
+export function OperatorScreen({ api, demo, onUnauthorized }: OperatorScreenProps) {
+  // Both reads are built ONCE per mount, so each starts exactly once: the client is fixed
+  // at boot, and an inline arrow here would be a new function on every render and a read
+  // loop.
+  const [loadFlags] = useState(() => () => api.getOperatorFlags());
+  const [loadQueue] = useState(() => () => readBill(api));
   const flags = useAdminLoad({ load: loadFlags, demo, onUnauthorized });
   const queue = useAdminLoad({ load: loadQueue, demo, onUnauthorized });
 
-  const refresh = useCallback(() => {
+  const refresh = () => {
     flags.reload();
     queue.reload();
-  }, [flags, queue]);
+  };
 
   // The refusal owns the whole screen. See the module note.
-  if (flags.failure) {
+  if (flags.fault) {
     return (
       <section className="view-ops">
-        <AdminFailureBlock
-          failure={flags.failure}
-          message={flags.message}
-          onRetry={flags.reload}
-        />
+        <AdminFailureBlock fault={flags.fault} onRetry={flags.reload} />
       </section>
     );
   }
@@ -142,8 +221,6 @@ export function OperatorScreen({ api, demo = false, onUnauthorized }: OperatorSc
   }
 
   const { flags: rows, gate, gate_limit: gateLimit, gate_truncated: truncated } = flags.data;
-  const costs = queue.data ? costByKp(queue.data.items) : [];
-  const total = costs.reduce((sum, row) => sum + row.cost, 0);
 
   return (
     <section className="view-ops">
@@ -199,70 +276,7 @@ export function OperatorScreen({ api, demo = false, onUnauthorized }: OperatorSc
         )}
       </section>
 
-      <section className="card admin-card" aria-labelledby="ops-cost-h">
-        <h2 id="ops-cost-h">Authoring cost per knowledge point</h2>
-        <p className="muted small">
-          Every stored document, of every status. A rejected document still cost money.
-        </p>
-        {/* The line belongs to the payload on screen. A read that failed renders its own
-            line below, and the two together would name two states of one panel. */}
-        {!queue.failure && queue.data?.truncated ? (
-          <p className="gate-line gate-warn">{BILL_TRUNCATED}</p>
-        ) : null}
-        {queue.failure ? (
-          <p className="muted">
-            {COST_UNAVAILABLE} {queue.message}
-          </p>
-        ) : !queue.data ? (
-          <LoadingBlock label="Loading the authoring bill…" />
-        ) : costs.length === 0 ? (
-          <p className="muted">{COST_EMPTY}</p>
-        ) : (
-          <div className="table-scroll">
-            <table className="admin-table">
-              <caption className="visually-hidden">Authoring cost, one row per knowledge point</caption>
-              <thead>
-                <tr>
-                  <th scope="col">Knowledge point</th>
-                  <th scope="col">Documents</th>
-                  <th scope="col">Attempts</th>
-                  <th scope="col">Cost</th>
-                  <th scope="col">T3</th>
-                </tr>
-              </thead>
-              <tbody>
-                {costs.map((row) => (
-                  <tr key={row.kp_id}>
-                    <th scope="row" className="mono">{row.kp_id}</th>
-                    <td className="mono">{row.documents}</td>
-                    <td className="mono">{row.attempts}</td>
-                    <td className="mono">{usd(row.cost)}</td>
-                    <td>
-                      {row.alerting > 0 ? (
-                        <span className="chip chip-bad">{row.alerting} over 3 attempts</span>
-                      ) : (
-                        <span className="muted small">—</span>
-                      )}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-              <tfoot>
-                <tr>
-                  <th scope="row">Total</th>
-                  {/* The count is the documents the walk read, and it says the word: a bare
-                      number under a column head reads as a row count of the table above it,
-                      which holds one row per knowledge point and not one per document. */}
-                  <td className="mono">{queue.data.items.length} documents</td>
-                  <td />
-                  <td className="mono">{usd(total)}</td>
-                  <td />
-                </tr>
-              </tfoot>
-            </table>
-          </div>
-        )}
-      </section>
+      <CostCard queue={queue} />
 
       <section className="card admin-card" aria-labelledby="ops-gate-h">
         <h2 id="ops-gate-h">Gate notes</h2>

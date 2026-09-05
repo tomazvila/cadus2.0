@@ -32,7 +32,7 @@
  * filter, and no buttons (REVIEW-admin). The service is the only gate there is: `is_admin`
  * is outside the runtime role's column grants, so no reply the SPA reads carries the flag.
  */
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { AdminFailureBlock } from './AdminFailure';
 import { ReviewDocumentPane } from './ReviewDocument';
 import { shortDigest } from './GateBlock';
@@ -148,7 +148,7 @@ function RejectPrompt({
           setRaw(e.target.value);
           // The line clears as soon as the reviewer acts on it. A message that outlives the
           // condition it describes reads as a second, unrelated failure.
-          if (error) setError('');
+          setError('');
         }}
       />
       {error ? (
@@ -175,18 +175,26 @@ function RejectPrompt({
 export interface ReviewScreenProps {
   api: ApiClient;
   /** Demo mode. A 401 then keeps the reader on the screen. */
-  demo?: boolean;
+  demo: boolean;
   /** The session-expired path. */
   onUnauthorized: () => void;
 }
 
-export function ReviewScreen({ api, demo = false, onUnauthorized }: ReviewScreenProps) {
+/** What one decision posts, and how the toast names it. */
+interface Decision {
+  request: () => Promise<object>;
+  verb: 'Approved' | 'Rejected';
+  kind: 'success' | 'info';
+}
+
+export function ReviewScreen({ api, demo, onUnauthorized }: ReviewScreenProps) {
   const life = useLifetime();
   const dialogs = useDialogs();
   const busy = useBusy();
   const call = useCall({ demo, onUnauthorized });
 
-  const load = useCallback(() => api.listContent({ status: PENDING }), [api]);
+  // One read per mount: the client is fixed at boot.
+  const [load] = useState(() => () => api.listContent({ status: PENDING }));
   const queue = useAdminLoad({ load, demo, onUnauthorized });
 
   const [selected, setSelected] = useState<string | null>(null);
@@ -195,7 +203,7 @@ export function ReviewScreen({ api, demo = false, onUnauthorized }: ReviewScreen
   // before the first reply, and null again on a failed read. See the module note.
   const [readDigest, setReadDigest] = useState<string | null>(null);
 
-  const groups = useMemo(() => groupByKp(queue.data?.items ?? []), [queue.data]);
+  const groups = useMemo(() => (queue.data ? groupByKp(queue.data.items) : []), [queue.data]);
   const order = useMemo(() => walkOrder(groups), [groups]);
   const items = useMemo(() => groups.flatMap((group) => group.items), [groups]);
 
@@ -219,83 +227,76 @@ export function ReviewScreen({ api, demo = false, onUnauthorized }: ReviewScreen
   // opening click in the same tick must already see it.
   const dialogOpen = useRef(false);
 
-  const decide = useCallback(
-    async (kind: 'approve' | 'reject', item: ReviewItem) => {
-      dialogOpen.current = true;
-      let reason: string | null = null;
-      try {
-        if (kind === 'approve') {
-          const ok = await dialogs.open<true>((resolve) => (
-            <ApproveConfirm item={item} onDone={resolve} />
-          ));
-          if (!ok) return;
-        } else {
-          reason = await dialogs.open<string>((resolve) => (
-            <RejectPrompt item={item} onDone={resolve} />
-          ));
-          // Cancelled, or the prompt refused the reason. Nothing is posted either way.
-          if (!reason) return;
-        }
-      } finally {
-        dialogOpen.current = false;
-      }
+  /** Ask the dialog, and say for how long the keyboard is off. */
+  async function ask<V>(open: () => Promise<V | null>): Promise<V | null> {
+    dialogOpen.current = true;
+    try {
+      return await open();
+    } finally {
+      dialogOpen.current = false;
+    }
+  }
 
-      const res = await call(() =>
-        kind === 'approve' ? api.approveContent(item.digest) : api.rejectContent(item.digest, reason!),
-      );
-      if (!res || !life.alive()) return;
+  /** Post one decision on `item`, move the walk on, and read the queue again. */
+  async function settle(item: ReviewItem, { request, verb, kind }: Decision): Promise<void> {
+    const res = await call(request);
+    if (!res || !life.alive()) return;
 
-      // Move on before the reload, so the reviewer lands on the next row rather than at the
-      // top of a queue that is one row shorter.
-      setSelected(order[order.indexOf(item.digest) + 1] ?? null);
-      toast(
-        `${kind === 'approve' ? 'Approved' : 'Rejected'} ${shortDigest(item.digest)}.`,
-        { kind: kind === 'approve' ? 'success' : 'info' },
-      );
-      queue.reload();
-    },
-    [api, call, dialogs, life, order, queue],
-  );
+    // Move on before the reload, so the reviewer lands on the next row rather than at the
+    // top of a queue that is one row shorter.
+    setSelected(order[order.indexOf(item.digest) + 1] ?? null);
+    toast(`${verb} ${shortDigest(item.digest)}.`, { kind });
+    queue.reload();
+  }
 
-  // The live handler, read through a ref by a listener that binds once. Bound to the
-  // document rather than to a node, because the reviewer's focus is on a row button, on the
-  // pane, or nowhere at all, and the walk has to work from all three.
-  const keyRef = useRef<(e: KeyboardEvent) => void>(() => {});
+  async function approve(item: ReviewItem): Promise<void> {
+    const ok = await ask(() => dialogs.open<true>((resolve) => (
+      <ApproveConfirm item={item} onDone={resolve} />
+    )));
+    if (!ok) return;
+    await settle(item, { request: () => api.approveContent(item.digest), verb: 'Approved', kind: 'success' });
+  }
+
+  async function reject(item: ReviewItem): Promise<void> {
+    const reason = await ask(() => dialogs.open<string>((resolve) => (
+      <RejectPrompt item={item} onDone={resolve} />
+    )));
+    // Cancelled, or the prompt refused the reason. Nothing is posted either way.
+    if (!reason) return;
+    await settle(item, { request: () => api.rejectContent(item.digest, reason), verb: 'Rejected', kind: 'info' });
+  }
+
+  // Bound to the document rather than to a node, because the reviewer's focus is on a row
+  // button, on the pane, or nowhere at all, and the walk has to work from all three. Bound
+  // again after every render, so the handler reads the row and the order on screen.
   useEffect(() => {
-    keyRef.current = (e: KeyboardEvent) => {
+    const onKey = (e: KeyboardEvent) => {
       if (dialogOpen.current) return;
       if (e.metaKey || e.ctrlKey || e.altKey) return;
-      const target = e.target as HTMLElement | null;
-      const tag = target?.tagName;
-      if (tag === 'INPUT' || tag === 'TEXTAREA' || target?.isContentEditable) return;
+      // The document itself, when nothing has focus: it has no tag and is not editable.
+      const target = e.target as HTMLElement;
+      const tag = target.tagName;
+      if (tag === 'INPUT' || tag === 'TEXTAREA' || target.isContentEditable) return;
 
       if (e.key === 'j' || e.key === 'k') {
-        const next = step(order, active, e.key === 'j' ? 1 : -1);
-        if (next === null) return;
         e.preventDefault();
-        setSelected(next);
+        setSelected(step(order, active, e.key === 'j' ? 1 : -1));
         return;
       }
-      if ((e.key === 'a' || e.key === 'r') && decidable) {
+      if (decidable && (e.key === 'a' || e.key === 'r')) {
         e.preventDefault();
-        busy.run(DECIDE_KEY, () => decide(e.key === 'a' ? 'approve' : 'reject', decidable));
+        const decision = e.key === 'a' ? approve : reject;
+        busy.run(DECIDE_KEY, () => decision(decidable));
       }
     };
-  });
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => keyRef.current(e);
     document.addEventListener('keydown', onKey);
     return () => document.removeEventListener('keydown', onKey);
-  }, []);
+  });
 
-  if (queue.failure) {
+  if (queue.fault) {
     return (
       <section className="view-review">
-        <AdminFailureBlock
-          failure={queue.failure}
-          message={queue.message}
-          onRetry={queue.reload}
-        />
+        <AdminFailureBlock fault={queue.fault} onRetry={queue.reload} />
       </section>
     );
   }
@@ -382,9 +383,8 @@ export function ReviewScreen({ api, demo = false, onUnauthorized }: ReviewScreen
                 type="button"
                 className={busy.cls(DECIDE_KEY, 'btn btn-primary')}
                 disabled={busy.is(DECIDE_KEY) || decidable === null}
-                onClick={() => {
-                  if (decidable) busy.run(DECIDE_KEY, () => decide('approve', decidable));
-                }}
+                // Disabled while `decidable` is null, so a press always has a document.
+                onClick={() => { busy.run(DECIDE_KEY, () => approve(decidable!)); }}
               >
                 Approve
               </button>
@@ -392,9 +392,7 @@ export function ReviewScreen({ api, demo = false, onUnauthorized }: ReviewScreen
                 type="button"
                 className={busy.cls(DECIDE_KEY, 'btn')}
                 disabled={busy.is(DECIDE_KEY) || decidable === null}
-                onClick={() => {
-                  if (decidable) busy.run(DECIDE_KEY, () => decide('reject', decidable));
-                }}
+                onClick={() => { busy.run(DECIDE_KEY, () => reject(decidable!)); }}
               >
                 Reject
               </button>

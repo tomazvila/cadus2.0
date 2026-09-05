@@ -14,17 +14,16 @@
  * and a button that will fail every time is a worse dead end than no button.
  */
 import { FORBIDDEN_MESSAGE, FORBIDDEN_TITLE, UNAVAILABLE_TITLE } from './adminLoad';
-import type { AdminFailure } from './adminLoad';
+import type { AdminFault } from './adminLoad';
 
 export interface AdminFailureBlockProps {
-  failure: AdminFailure;
-  /** The message the service sent, rendered verbatim under the heading. */
-  message: string;
+  /** The refusal, with the message the service sent; the message renders verbatim. */
+  fault: AdminFault;
   /** Offered on `error` only. */
   onRetry: () => void;
 }
 
-export function AdminFailureBlock({ failure, message, onRetry }: AdminFailureBlockProps) {
+export function AdminFailureBlock({ fault: { failure, message }, onRetry }: AdminFailureBlockProps) {
   if (failure === 'forbidden') {
     return (
       <div className="empty admin-refused">

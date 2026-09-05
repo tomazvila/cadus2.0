@@ -12,12 +12,13 @@
  * writes and the keyboard, and `admin.ops.test.tsx` the operator screen.
  */
 import { describe, expect, it, vi } from 'vitest';
-import { act, render, screen } from '@testing-library/react';
+import { act, cleanup, render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { axe } from 'vitest-axe';
 import { createDemoApi } from '@/api';
 import { Root } from '@/app/Root';
 import { adminRouteFor } from '@/app/routes';
-import { REVIEW_EMPTY } from '@/views/admin/Review';
+import { REVIEW_EMPTY, REVIEW_UNREAD } from '@/views/admin/Review';
 import { FORBIDDEN_MESSAGE, FORBIDDEN_TITLE } from '@/views/admin/adminLoad';
 import { SAMPLED_LINE } from '@/views/admin/GateBlock';
 import { ATTEMPT_ALERT, alerts, costByKp, usd } from '@/views/admin/cost';
@@ -26,7 +27,7 @@ import { AXE_IN_JSDOM } from './axe';
 import {
   QUEUE, docOf, forbidden, item, mountOps, mountReview, rowButtons, stubApi,
 } from './helpers/admin';
-import type { User } from '@/api/types';
+import type { ReviewListResponse, User } from '@/api/types';
 
 /** A signed-in account. The service, not the SPA, knows whether it is an operator. */
 const user = (email: string): User => ({
@@ -169,6 +170,38 @@ describe('the review queue', () => {
       (c) => c.textContent,
     );
     expect(alerting).toEqual(['4 attempts']);
+    // The same chip, in the row and in the pane: the alert class on top of the plain one.
+    const chips = Array.from(document.querySelectorAll('.review-row .chip, .review-doc .chip'));
+    expect(chips.find((c) => c.textContent === '4 attempts')?.className).toBe('chip chip-bad');
+    expect(chips.find((c) => c.textContent === '1 attempts')?.className).toBe('chip');
+    expect(document.querySelector('.review-doc .chip-bad')?.textContent).toBe('4 attempts');
+  });
+
+  it('marks the selected row for assistive technology, and no other', async () => {
+    await mountReview();
+    expect(rowButtons().map((r) => r.getAttribute('aria-current'))).toEqual(['true', null, null, null]);
+  });
+
+  it('styles the two writes as the primary and the plain button', async () => {
+    await mountReview();
+    expect(screen.getByRole('button', { name: 'Approve' }).className).toBe('btn btn-primary');
+    expect(screen.getByRole('button', { name: 'Reject' }).className).toBe('btn');
+    expect(screen.queryByText(REVIEW_UNREAD)).toBeNull();
+  });
+
+  it('returns to the first row when the reload drops the selected one', async () => {
+    const user = userEvent.setup();
+    const list = vi
+      .fn<() => Promise<ReviewListResponse>>()
+      .mockResolvedValueOnce(QUEUE)
+      .mockResolvedValue({ ...QUEUE, items: QUEUE.items.filter((i) => i.digest !== 'd3') });
+    await mountReview(stubApi({ listContent: list }));
+    await user.click(rowButtons()[2]!);
+    expect(document.querySelector('.review-row.is-selected')!.textContent).toContain('Borrowing');
+
+    await user.click(screen.getByRole('button', { name: 'Refresh' }));
+    await waitFor(() => expect(rowButtons()).toHaveLength(3));
+    expect(document.querySelector('.review-row.is-selected')!.textContent).toContain('Solve $5x = 20$');
   });
 
   it('names the bank warning with the target the service sent', async () => {
@@ -197,9 +230,14 @@ describe('the review queue', () => {
     expect(screen.getByText('the envelope check sampled 64 of 4096 tuples')).toBeTruthy();
   });
 
-  it('says the queue is capped when the page is full', async () => {
-    await mountReview(stubApi({ listContent: async () => ({ ...QUEUE, limit: 4 }) }));
+  it('says the queue is capped when the page is full, and only then', async () => {
+    const full = await mountReview(stubApi({ listContent: async () => ({ ...QUEUE, limit: 4 }) }));
     expect(screen.getByText(/The queue is capped at 4 rows/)).toBeTruthy();
+    full.unmount();
+    cleanup();
+
+    await mountReview();
+    expect(screen.queryByText(/The queue is capped/)).toBeNull();
   });
 
   it('renders the refusal, the note of an empty instance list, and no gate', async () => {
@@ -277,6 +315,9 @@ describe('the roll-up and the grouping', () => {
     const groups = groupByKp(QUEUE.items);
     expect(groups.map((g) => g.kp_id)).toEqual(['algebra:linear', 'arith:borrow']);
     expect(walkOrder(groups)).toEqual(['d2', 'd1', 'd3', 'd4']);
+    // By id, not by first appearance.
+    const reversed = groupByKp([...QUEUE.items].reverse());
+    expect(reversed.map((g) => g.kp_id)).toEqual(['algebra:linear', 'arith:borrow']);
   });
 
   it('breaks a tie on the timestamp by digest', () => {
@@ -293,7 +334,12 @@ describe('the roll-up and the grouping', () => {
     expect(step(order, 'd2', -1)).toBe('d2');
     expect(step(order, 'd3', 1)).toBe('d3');
     expect(step([], 'd2', 1)).toBeNull();
+    expect(step([], null, -1)).toBeNull();
     // A digest the reload dropped restarts the walk rather than stranding it.
     expect(step(order, 'gone', 1)).toBe('d2');
+    expect(step(order, 'gone', -1)).toBe('d2');
+    expect(step(order, null, -1)).toBe('d2');
+    expect(step(order, 'd1', 1)).toBe('d3');
+    expect(step(order, 'd1', -1)).toBe('d2');
   });
 });
