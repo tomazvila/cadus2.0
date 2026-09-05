@@ -281,3 +281,57 @@ async fn a_probe_with_no_checkable_answer_is_409_no_diagnostic() {
     })
     .await;
 }
+
+/// A probe dealt for a topic that authors no diagnostic exemplar serves the
+/// placeholder statement. The diagnostic is seeded with two exemplar-free
+/// topics; answering the first deals the second, which has no exemplar.
+#[tokio::test]
+async fn a_probe_for_a_topic_with_no_exemplar_serves_the_placeholder() {
+    TestDb::with(|db| async move {
+        let app = app_with_content(
+            &db,
+            one_unit_curriculum(vec![
+                common::topic("addition", Vec::new()),
+                common::topic("subtraction", Vec::new()),
+            ]),
+        );
+        let user = cached_learner(&db, "no-exemplar@example.com").await;
+        sqlx::query("INSERT INTO diag_states (user_id, state) VALUES ($1, $2::text::jsonb)")
+            .bind(user)
+            .bind(
+                json!({
+                    "course": null,
+                    "probe_set": ["addition", "subtraction"],
+                    "balances": {"addition": 0.0, "subtraction": 0.0},
+                    "answered": [],
+                    "supplemental": false,
+                })
+                .to_string(),
+            )
+            .execute(&db.admin)
+            .await
+            .unwrap();
+        let mut probe = lesson_problem(0.0, "kp1", Vec::new());
+        probe.problem_id = "u5-live-probe".to_string();
+        probe.task_id = "diag".to_string();
+        probe.topic = Some("subtraction".to_string());
+        probe.answer_kind = Some("numeric".to_string());
+        let mut scratch = WebState::for_session(SESSION);
+        scratch.served.insert("diag".to_string(), probe);
+        put_state(&db, user, &scratch).await;
+
+        let (status, body) = call(
+            &app,
+            Method::POST,
+            "/api/diag/answer",
+            Some(user),
+            Some(json!({ "problem_id": "u5-live-probe", "answer": "3" })),
+        )
+        .await;
+        assert_eq!(status.as_u16(), 200, "{body}");
+        let next = parse(&body)["next_probe"].clone();
+        // The addition probe is dealt from a topic with no authored exemplar.
+        assert_eq!(next["topic"], "addition", "{next}");
+    })
+    .await;
+}

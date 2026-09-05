@@ -302,7 +302,7 @@ mod tests {
 
     use super::*;
 
-    /// A transport that answers nothing. The test below never calls it.
+    /// A transport that answers every request with an error.
     struct NoTransport;
 
     impl ProviderTransport for NoTransport {
@@ -334,5 +334,22 @@ mod tests {
         assert!(config.served("nope").is_none());
         assert!(config.served(GOOGLE).is_some());
         assert_eq!(config.enabled_names(), vec![GOOGLE]);
+    }
+
+    /// The stub transport answers every request with its error, and the error
+    /// names the request URL.
+    #[tokio::test]
+    async fn the_stub_transport_answers_every_request_with_an_error() {
+        let error = NoTransport
+            .fetch(ProviderRequest {
+                method: "GET",
+                url: "https://provider.example/userinfo".to_string(),
+                body: None,
+                bearer: None,
+                accept: "application/json",
+            })
+            .await
+            .unwrap_err();
+        assert!(error.reason.contains("https://provider.example/userinfo"));
     }
 }

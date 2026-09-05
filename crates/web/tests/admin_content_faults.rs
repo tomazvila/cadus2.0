@@ -20,8 +20,13 @@ const TEACH_SHOW_PATH: &str = "/api/admin/content/r5-teach-digest";
 /// The approve path of `TEACH`.
 const TEACH_APPROVE_PATH: &str = "/api/admin/content/r5-teach-digest/approve";
 
-/// The text of the re-gate read, and of no other `content_store` read.
+/// The text of the re-gate read of the pending pages, and of no other
+/// `content_store` read.
 const REGATE_NEEDLE: &str = "kind IN ($5, $6)";
+
+/// The text of the re-gate read of the approved template, and of no other
+/// `content_store` read.
+const DOCUMENT_NEEDLE: &str = "approved_templates";
 
 /// A pending teach page of `KEY` whose worked example is the authored
 /// exemplar, which the gate refuses once the point serves (Hard Rule 1).
@@ -248,17 +253,22 @@ async fn an_approval_of_a_page_judges_nothing_again() {
 /// the approval and answers `null` for the list.
 #[tokio::test]
 async fn a_regate_that_does_not_run_answers_null_and_keeps_the_approval() {
-    for fault in [0, 1] {
+    for fault in [0, 1, 2] {
         TestDb::with(move |db| async move {
             let app = app(&db);
             seed_admin(&db).await;
             seed_pending(&db).await;
             seed_row(&db, &teach_seed()).await;
-            if fault == 0 {
-                expose_to_policies(&db, "content_store").await;
-                fail_reads(&db, "content_store", REGATE_NEEDLE).await;
-            } else {
-                fail_updates(&db, "content_store", "NEW.status = 'rejected'").await;
+            match fault {
+                0 => {
+                    expose_to_policies(&db, "content_store").await;
+                    fail_reads(&db, "content_store", REGATE_NEEDLE).await;
+                }
+                1 => fail_updates(&db, "content_store", "NEW.status = 'rejected'").await,
+                _ => {
+                    expose_to_policies(&db, "content_store").await;
+                    fail_reads(&db, "content_store", DOCUMENT_NEEDLE).await;
+                }
             }
 
             let answer = admin_post(&app, APPROVE_PATH, &json!({})).await;

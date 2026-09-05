@@ -80,3 +80,38 @@ async fn a_first_sign_in_write_that_fails_is_500_on_the_callback() {
     })
     .await;
 }
+
+/// The account read behind an existing provider link fails: the callback is
+/// `500`. The link names a user, so the resolve reads that row.
+#[tokio::test]
+async fn a_linked_account_read_that_fails_is_500_on_the_callback() {
+    TestDb::with(|db| async move {
+        let user = db.seed_user("linked@example.com").await;
+        sqlx::query(
+            "INSERT INTO oauth_accounts (user_id, provider, provider_account_id, email_at_link) \
+             VALUES ($1, 'google', 'google-subject-1', 'linked@example.com')",
+        )
+        .bind(user)
+        .execute(&db.admin)
+        .await
+        .unwrap();
+        let app = google_app(&db, Arc::new(google_verified()));
+        drop_function(&db, "auth_user_by_id(uuid)").await;
+
+        assert_callback_internal(&app).await;
+    })
+    .await;
+}
+
+/// The address lookup of a first federated sign-in fails: no link exists, so
+/// the resolve reads by address, and the callback is `500`.
+#[tokio::test]
+async fn an_address_lookup_that_fails_is_500_on_the_callback() {
+    TestDb::with(|db| async move {
+        let app = google_app(&db, Arc::new(google_verified()));
+        drop_function(&db, "auth_user_by_email(citext)").await;
+
+        assert_callback_internal(&app).await;
+    })
+    .await;
+}

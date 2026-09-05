@@ -227,3 +227,23 @@ pub fn authorize_url(
     ]);
     format!("{}?{query}", provider.authorize_url)
 }
+
+#[cfg(test)]
+mod cov_tests {
+    use super::*;
+    use crate::auth::token::refuse_entropy_after;
+
+    /// A refused first draw fails the state of the handshake, and a refused
+    /// second draw fails the verifier: both give the entropy error.
+    #[test]
+    fn a_handshake_needs_entropy_for_both_the_state_and_the_verifier() {
+        // The state draws once (24 bytes), so a refusal after zero draws fails
+        // the state, and a refusal after one draw fails the verifier.
+        for draws in [0, 1] {
+            refuse_entropy_after(Some(draws));
+            let result = Handshake::fresh("google", "/next");
+            refuse_entropy_after(None);
+            assert!(result.is_err(), "draw {draws} did not refuse");
+        }
+    }
+}

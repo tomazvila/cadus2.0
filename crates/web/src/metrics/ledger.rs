@@ -47,10 +47,8 @@ pub async fn ledger_totals(db: &Db) -> Option<LedgerTotals> {
     match tokio::time::timeout(LEDGER_READ_BOUND, read_totals(db)).await {
         Ok(totals) => totals,
         Err(_) => {
-            tracing::warn!(
-                bound_ms = LEDGER_READ_BOUND.as_millis(),
-                "metrics: the ledger read ran past its bound"
-            );
+            let bound_ms = LEDGER_READ_BOUND.as_millis();
+            tracing::warn!(bound_ms, "metrics: the ledger read ran past its bound");
             None
         }
     }

@@ -459,6 +459,14 @@ mod cov_tests {
     /// A hash written under one profile needs a rehash under another, and a
     /// string that does not parse needs one too.
     #[test]
+    fn a_hash_of_an_older_version_needs_a_rehash() {
+        // A well-formed argon2id hash that names version 0x10 (16), not the
+        // 0x13 (19) this build writes. Every parameter otherwise matches TEST.
+        let older = "$argon2id$v=16$m=19456,t=2,p=1                     $c29tZXNhbHR2YWx1ZQ$RdescudvJCsgt3ub+b+dWRWJTmaQzwbDDLzCbbP2LS4";
+        assert!(needs_rehash(Argon2Profile::TEST, older));
+    }
+
+    #[test]
     fn a_hash_of_another_profile_needs_a_rehash() {
         let stored = hash_password(Argon2Profile::TEST, "correct horse battery staple")
             .expect("the test profile hashes");
