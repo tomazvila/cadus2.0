@@ -10,7 +10,6 @@ Owner request (2026-09-03): hold these limits on the whole codebase.
 | Halstead difficulty | < 80 | rust-code-analysis | `web/scripts/halstead.mjs` |
 | Test coverage | 100% | cargo llvm-cov, `src/` only | Vitest v8, `src/` only |
 | CRAP | < 25 | `rust_coverage.py` | `web-coverage.mjs` |
-| Surviving mutants | 0 | cargo-mutants | Stryker |
 | Dead code | 0 | clippy, `rust_dead.py`, cargo-machete | knip |
 | Redundant code | 0 | jscpd (50 tokens, 5 lines) | jscpd |
 | `any` or `unknown` | 0 | not applicable | ESLint `no-restricted-syntax` |
@@ -31,7 +30,6 @@ instrument, not the subject. CRAP is `cc^2 * (1 - coverage)^3 + cc` per function
 | Coverage | lines 92.1%, functions 87.7%, regions 90.6% | statements 96.4%, branches 87.2%, functions 79.1% |
 | Files below 100% coverage | 82 of 88 | 38 of 49 |
 | Functions with CRAP >= 25 | 569 | see coverage |
-| Mutants | 5,491 (a sample of 78 ran with 26 survivors) | 4,414, 1,394 survived (1,078 survived, 316 without coverage), score 64.8% |
 | `any` or `unknown` sites | not applicable | 81 |
 
 ## Units
@@ -48,5 +46,11 @@ reports before-and-after numbers. Prompts: `~/.cache/cadus2_scripts/quality/`.
 | u5-web | `crates/web` | port 55436 |
 | u6-worker | `crates/worker` | port 55434 |
 | u7-spa | `web/` | none |
-| wave 2 | cargo-mutants per crate, kill every survivor | per crate |
 | wave 3 | cross-unit clones, the full `scripts/quality.sh` | port 55434 |
+
+## Mutation testing dropped
+
+The owner dropped the mutant limit on 2026-09-05 ("Ditch mutant testing altogether"). The
+cargo-mutants and Stryker runs took 16 hours and one hour per pass on this box. The tests
+that the mutant units wrote before the stop stay in the tree: they pin exact values and
+cost nothing. The gate has no mutant check, and the tooling is removed.
