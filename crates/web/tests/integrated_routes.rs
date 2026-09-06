@@ -183,6 +183,18 @@ async fn post(app: &Router, user: Uuid, uri: &str, body: Option<Value>) -> (Stat
     call(app, Method::POST, uri, Some(user), body).await
 }
 
+/// Reveal the first person-minutes hint and require the successful receipt.
+async fn reveal_first_hint(app: &Router, user: Uuid) {
+    let (status, body) = post(
+        app,
+        user,
+        &format!("/api/task/{MULTISTEP}/integrated/hint"),
+        Some(json!({"field": "person-minutes", "index": 0})),
+    )
+    .await;
+    assert_eq!(status, StatusCode::OK, "{body}");
+}
+
 #[tokio::test]
 async fn a_multi_step_task_serves_the_integrated_item_as_one_problem() {
     TestDb::with(|db| async move {
@@ -262,14 +274,7 @@ async fn one_submission_grades_every_step_and_the_final_answer() {
     TestDb::with(|db| async move {
         let app = app(&db, IntegratedSet::from_items(vec![item()]));
         let user = learner_with_due_reviews(&db, "integrated-answer@example.com").await;
-        let (status, body) = post(
-            &app,
-            user,
-            &format!("/api/task/{MULTISTEP}/integrated/hint"),
-            Some(json!({"field": "person-minutes", "index": 0})),
-        )
-        .await;
-        assert_eq!(status, StatusCode::OK, "{body}");
+        reveal_first_hint(&app, user).await;
         let uri = format!("/api/task/{MULTISTEP}/integrated/answer");
 
         let (status, body) = post(
@@ -411,14 +416,7 @@ async fn the_submission_is_recorded_with_every_answer_and_its_contract() {
     TestDb::with(|db| async move {
         let app = app(&db, IntegratedSet::from_items(vec![item()]));
         let user = learner_with_due_reviews(&db, "integrated-record@example.com").await;
-        let (status, body) = post(
-            &app,
-            user,
-            &format!("/api/task/{MULTISTEP}/integrated/hint"),
-            Some(json!({"field": "person-minutes", "index": 0})),
-        )
-        .await;
-        assert_eq!(status, StatusCode::OK, "{body}");
+        reveal_first_hint(&app, user).await;
         let body = json!({
             "method": "person-minutes",
             "steps": [

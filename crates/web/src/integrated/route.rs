@@ -53,9 +53,7 @@ async fn resolve<'content>(
 /// The hand-off is recorded before the reply leaves, so an abandoned task and a
 /// reloaded one are both an exposure and neither reads as unseen (D-F9).
 pub async fn serve(
-    State(state): State<AppState>,
-    Tenant(user_id): Tenant,
-    ApiPath(task_id): ApiPath<String>,
+    (State(state), Tenant(user_id), ApiPath(task_id)): TaskContext,
 ) -> Result<Json<Value>, ApiError> {
     let content = content(&state)?;
     let (_, now) = now_pair();
@@ -94,14 +92,9 @@ pub async fn serve(
 /// The rungs stay on the server. The reply carries the rung the learner asked
 /// for, the count of rungs the field holds, and the count they have now opened,
 /// persisted before the reply and read again when the answer is graded.
-pub async fn hint_rung(
-    State(state): State<AppState>,
-    Tenant(user_id): Tenant,
-    ApiPath(task_id): ApiPath<String>,
-    raw: Option<Json<Value>>,
-) -> Result<Json<Value>, ApiError> {
+pub async fn hint_rung(request: TaskWithBody) -> Result<Json<Value>, ApiError> {
+    let (state, user_id, task_id, raw, now) = task_request(request);
     let content = content(&state)?;
-    let (_, now) = now_pair();
     let body = raw.ok_or_else(|| invalid("A hint request names a field."))?;
     let request: HintRequest = serde_json::from_value(body.0)
         .map_err(|_| invalid("A hint request names a field and a rung index."))?;
@@ -146,14 +139,9 @@ pub async fn hint_rung(
 /// same transaction that read the plan, and the append is idempotent per
 /// session, task and item digest: a second submission of the same item writes
 /// nothing and the reply says `recorded: false`.
-pub async fn answer(
-    State(state): State<AppState>,
-    Tenant(user_id): Tenant,
-    ApiPath(task_id): ApiPath<String>,
-    raw: Option<Json<Value>>,
-) -> Result<Json<Value>, ApiError> {
+pub async fn answer(request: TaskWithBody) -> Result<Json<Value>, ApiError> {
+    let (state, user_id, task_id, raw, now) = task_request(request);
     let content = content(&state)?;
-    let (_, now) = now_pair();
     let body = raw.ok_or_else(|| invalid("A submission carries a final answer."))?;
     let mut submission: Submission = serde_json::from_value(body.0)
         .map_err(|_| invalid("A submission carries steps and a final answer."))?;

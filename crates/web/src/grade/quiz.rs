@@ -64,14 +64,9 @@ pub(super) fn close_quiz(
 }
 
 /// Read a completed quiz; `practice` starts the fresh-skill queue after studying.
-pub async fn result(
-    Tenant(user_id): Tenant,
-    State(state): State<AppState>,
-    ApiPath(task_id): ApiPath<String>,
-    raw: Option<Json<Value>>,
-) -> Result<Json<Value>, ApiError> {
+pub async fn result(request: TaskWithBody) -> Result<Json<Value>, ApiError> {
+    let (state, user_id, task_id, raw, now) = task_request(request);
     let content = content(&state)?;
-    let (_, now) = now_pair();
     let Open {
         mut tx,
         events,

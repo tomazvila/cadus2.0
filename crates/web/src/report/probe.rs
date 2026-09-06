@@ -145,6 +145,7 @@ mod tests {
             answer_kind: None,
             correct: true,
             outcome: AttemptOutcome::Correct,
+            assisted,
             item_digest: None,
             item_source: None,
             exposure: None,
@@ -157,7 +158,6 @@ mod tests {
             work_quality: WorkQuality::NearlyPerfect,
             grader_note: None,
             feedback_practice: false,
-            assisted,
         }
     }
 

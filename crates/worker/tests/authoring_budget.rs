@@ -5,10 +5,17 @@ use cadus_store::test_support::TestDb;
 use cadus_worker::authoring::{
     budget::{Budget, usd_micros},
     cli::{Command, parse},
-    job::{AuthoringJob, author_one, run_parallel},
+    job::{AuthoringJob, Report, author_one, run_parallel},
     prompt::Kind,
 };
 use common::{FakeModel, squares_spec};
+
+async fn author_case(db: &TestDb, fake: &FakeModel, budget: &Budget) -> Report {
+    let job = AuthoringJob::new(fake.client(4000, 2000)).with_budget(budget.clone());
+    author_one(&common::handle(db), &job, Kind::Template, &squares_spec())
+        .await
+        .unwrap()
+}
 
 #[test]
 fn money_is_exact_and_parallel_reservations_never_exceed_the_cap() {
@@ -63,10 +70,7 @@ async fn transport_retry_and_author_retry_share_the_same_cap() {
     TestDb::with(|db| async move {
         let fake = FakeModel::start(vec![(500, "{}".to_owned()); 10]).await;
         let budget = Budget::new(3, 1, 16000).unwrap();
-        let job = AuthoringJob::new(fake.client(4000, 2000)).with_budget(budget.clone());
-        let report = author_one(&common::handle(&db), &job, Kind::Template, &squares_spec())
-            .await
-            .unwrap();
+        let report = author_case(&db, &fake, &budget).await;
         assert_eq!(fake.call_count(), 3);
         assert_eq!(report.http_attempts.len(), 3);
         assert_eq!(budget.reserved_micros(), 3);
@@ -78,9 +82,7 @@ async fn transport_retry_and_author_retry_share_the_same_cap() {
                 .iter()
                 .any(|reason| reason.contains("budget exhausted"))
         );
-        let again = author_one(&common::handle(&db), &job, Kind::Template, &squares_spec())
-            .await
-            .unwrap();
+        let again = author_case(&db, &fake, &budget).await;
         assert_eq!(again.attempts, 0);
         assert_eq!(fake.call_count(), 3);
     })
@@ -128,10 +130,7 @@ async fn provider_price_overrun_blocks_the_transport_retry_before_it_opens_a_soc
         let body = serde_json::json!({"usage": {"cost": 0.2}, "choices": []}).to_string();
         let fake = FakeModel::start(vec![(200, body)]).await;
         let budget = Budget::new(5_000_000, 100_000, 16000).unwrap();
-        let job = AuthoringJob::new(fake.client(4000, 2000)).with_budget(budget.clone());
-        let report = author_one(&common::handle(&db), &job, Kind::Template, &squares_spec())
-            .await
-            .unwrap();
+        let report = author_case(&db, &fake, &budget).await;
         assert_eq!(fake.call_count(), 1);
         assert_eq!(report.http_attempts.len(), 1);
         assert!(budget.breached());

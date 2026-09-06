@@ -17,7 +17,7 @@ use cadus_core::selector::{
     quiz_is_due, schedule_drills,
 };
 use cadus_core::xp::{CourseCounts, course_counts};
-use cadus_store::state::{EventRow, load_events, project_current};
+use cadus_store::state::{EventRow, load_events};
 use serde_json::{Map, Value, json};
 
 use super::EXPORT_MEDIA_TYPE;
@@ -126,11 +126,7 @@ fn ungraded_attempts(model: &LearnerModel) -> Map<String, Value> {
 ///
 /// It is a pure read: no event is appended and no row is written.
 pub async fn status(req: Ready) -> Reply {
-    let input = req.input();
-    let mut tx = req.begin().await?;
-    let projection = req
-        .store(project_current(&mut tx, req.user_id, &input))
-        .await?;
+    let (mut tx, projection) = req.begin_projection().await?;
     let model = projection.model;
     let mut view = projection.view;
     // The dashboard reads `drill_due` off the same repaired view the plan and

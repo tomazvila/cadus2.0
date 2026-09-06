@@ -88,7 +88,6 @@
 //! reveal (trap W7), and the reveal unit is the one that hands the prose out.
 
 use axum::Json;
-use axum::extract::State;
 use axum::http::StatusCode;
 use cadus_core::answer::check::{Outcome, check};
 use cadus_core::config::Config;
@@ -114,12 +113,13 @@ use crate::AppState;
 use crate::diagnosis::{self, Miss, Pending};
 use crate::error::ApiError;
 use crate::metrics;
-use crate::path::ApiPath;
+use crate::path::TaskWithBody;
+use crate::route_prelude::task_request;
 use crate::serve::{Open, find, install_next, open, progress_for, unix_seconds};
-use crate::session::{content, now_pair, projection_input, write_state};
+use crate::session::{content, projection_input, write_state};
 pub(crate) use crate::session::{db_failed, store};
 use crate::state::{
-    Content, INVALID_REQUEST, STATE_UNAVAILABLE, ServedProblem, TaskProgress, Tenant, WebState,
+    Content, INVALID_REQUEST, STATE_UNAVAILABLE, ServedProblem, TaskProgress, WebState,
 };
 
 mod advance;

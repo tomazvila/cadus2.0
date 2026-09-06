@@ -180,6 +180,16 @@ impl Ready {
         begin(&self.state, self.user_id).await
     }
 
+    /// Open a read transaction and fold the learner projection at this request's instant.
+    pub(crate) async fn begin_projection(&self) -> Result<(Tx, Projection), ApiError> {
+        let input = self.input();
+        let mut tx = self.begin().await?;
+        let projection = self
+            .store(project_current(&mut tx, self.user_id, &input))
+            .await?;
+        Ok((tx, projection))
+    }
+
     /// Open the tenant transaction and take the advisory lock. See
     /// [`open_locked`].
     pub(crate) async fn open_locked(&self) -> Result<Tx, ApiError> {

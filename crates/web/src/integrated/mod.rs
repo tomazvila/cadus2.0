@@ -45,9 +45,10 @@
 //! The reply repeats them under `reasoning` and marks `graded: false`. No rule
 //! reads the prose, and no rule corrects it (T1).
 
-use axum::Json;
-use axum::extract::State;
-use axum::http::StatusCode;
+use crate::route_prelude::*;
+use crate::serve::{Open, find, open};
+use crate::session::{content, now_pair};
+use crate::state::{Content, INVALID_REQUEST, Tenant};
 use cadus_core::event::{Event, TaskType, Timestamp};
 use cadus_core::integrated::{
     FINAL_FIELD_ID, IntegratedGrade, IntegratedItem, Submission, grade, hint, hints_available,
@@ -56,17 +57,6 @@ use cadus_core::integrated::{
 use cadus_core::selector::Task;
 use cadus_store::state::append_event;
 use serde::Deserialize;
-use serde_json::{Value, json};
-use sqlx::types::Uuid;
-use sqlx::{Postgres, Transaction};
-
-use crate::AppState;
-use crate::error::ApiError;
-use crate::grade::{db_failed, store};
-use crate::path::ApiPath;
-use crate::serve::{Open, find, open};
-use crate::session::{content, now_pair};
-use crate::state::{Content, INVALID_REQUEST, Tenant};
 
 mod assistance;
 pub(crate) mod instruction;

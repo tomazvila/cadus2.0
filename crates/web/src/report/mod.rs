@@ -29,7 +29,7 @@ pub mod probe;
 use cadus_core::retention::report::{
     IntegratedPerformance, PlacementError, RetentionReport, RetentionRow,
 };
-use cadus_store::state::{load_events, project_current};
+use cadus_store::state::load_events;
 use serde_json::{Value, json};
 
 use crate::session::{Ready, Reply, reply_read};
@@ -103,11 +103,7 @@ pub fn report_json(report: &RetentionReport, policy_digest: &str) -> Value {
 ///
 /// Returns the store envelope when the projection or the log read fails.
 pub async fn retention(req: Ready) -> Reply {
-    let input = req.input();
-    let mut tx = req.begin().await?;
-    let projection = req
-        .store(project_current(&mut tx, req.user_id, &input))
-        .await?;
+    let (mut tx, projection) = req.begin_projection().await?;
     let rows = req.store(load_events(&mut tx, req.user_id)).await?;
     let events: Vec<_> = rows.into_iter().map(|row| row.event).collect();
     let cfg = &req.content.cfg;

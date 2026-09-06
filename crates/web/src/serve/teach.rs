@@ -10,9 +10,7 @@ use super::*;
 ///
 /// D-O3: the ordinary lesson path reads one content document and writes no state.
 pub async fn teach(
-    State(state): State<AppState>,
-    Tenant(user_id): Tenant,
-    ApiPath(task_id): ApiPath<String>,
+    (State(state), Tenant(user_id), ApiPath(task_id)): crate::path::TaskContext,
 ) -> Result<Json<Value>, ApiError> {
     let content = content(&state)?;
     let (_, now) = now_pair();

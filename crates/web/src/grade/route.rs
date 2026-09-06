@@ -48,16 +48,11 @@ async fn save_and_commit(
 ///
 /// The route never calls a model and never waits for one. Section 4.3 gives the
 /// order of the steps and this function follows it top to bottom.
-pub async fn answer(
-    State(state): State<AppState>,
-    Tenant(user_id): Tenant,
-    ApiPath(task_id): ApiPath<String>,
-    raw: Option<Json<Value>>,
-) -> Result<Json<Value>, ApiError> {
+pub async fn answer(request: TaskWithBody) -> Result<Json<Value>, ApiError> {
+    let (state, user_id, task_id, raw, now) = task_request(request);
     let (content, body) = route_input(&state, raw.as_ref())?;
     let submitted = submission(body)?;
     let graph = &content.curriculum;
-    let (_, now) = now_pair();
 
     let Open {
         mut tx,

@@ -72,9 +72,15 @@
 
 use std::collections::{BTreeMap, BTreeSet};
 
-use axum::Json;
-use axum::extract::State;
-use axum::http::StatusCode;
+use crate::route_prelude::*;
+use crate::session::{
+    INTERNAL_ERROR, begin, compose_plan, content, now_pair, projection_input, read_state,
+    readiness_of, view_for_open_session, write_state,
+};
+use crate::state::Content;
+use crate::state::{
+    INVALID_REQUEST, NO_OPEN_SESSION, ServedProblem, TASK_COMPLETE, TaskProgress, Tenant, WebState,
+};
 use cadus_core::curriculum::{Curriculum, KnowledgePoint};
 use cadus_core::event::{Event, SchemaVersion, Slug, TaskServed, TaskType, Timestamp};
 use cadus_core::pool::{Avoid, ExemplarSource, ProblemSource, Source, kp_key};
@@ -88,22 +94,6 @@ use cadus_store::state::{
     EventRow, append_event, lock_web_state, project_and_save, project_current,
 };
 use serde::de::DeserializeOwned;
-use serde_json::{Value, json};
-use sqlx::types::Uuid;
-use sqlx::{Postgres, Transaction};
-
-use crate::AppState;
-use crate::error::ApiError;
-use crate::grade::{db_failed, route_input, store};
-use crate::path::ApiPath;
-use crate::session::{
-    INTERNAL_ERROR, begin, compose_plan, content, now_pair, projection_input, read_state,
-    readiness_of, view_for_open_session, write_state,
-};
-use crate::state::Content;
-use crate::state::{
-    INVALID_REQUEST, NO_OPEN_SESSION, ServedProblem, TASK_COMPLETE, TaskProgress, Tenant, WebState,
-};
 
 mod draw;
 #[cfg(test)]
