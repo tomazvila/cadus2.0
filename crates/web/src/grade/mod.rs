@@ -12,6 +12,16 @@
 //! row U8 of section 11. Rulings D-M5-2, D-M5-3, D-M5-4 and D-M5-7 of
 //! `docs/plans/M5.md` are binding.
 //!
+//! # The three outcomes (D-F2)
+//!
+//! [`deterministic_grade`] gives one of three outcomes. `correct` and `incorrect`
+//! are the two decided ones, and `correct: bool` still spells them. The third is
+//! UNGRADED: the checker had no verdict, so the reply names the reason, claims no
+//! correctness, reveals no solution, and hands back the NEXT task. The fold
+//! ignores an ungraded attempt, the lesson does not advance on one, and the A4
+//! diagnosis never fires for one (D-F4). EVERY answer kind reaches this path; a
+//! `proof` takes [`PROOF_UNGRADED`] with no checker call.
+//!
 //! # The steps, in one transaction
 //!
 //! The advisory lock, the state read, the validate, the timing, the check, the
