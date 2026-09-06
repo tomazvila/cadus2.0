@@ -140,7 +140,7 @@ fn grade_field(
     };
     let mut undecided = false;
     for expected in std::iter::once(&field.answer).chain(field.accept_also.iter()) {
-        match check_contract(expected, &response.answer, field.contract) {
+        match check_contract(expected, &response.answer, field.contract.clone()) {
             Outcome::Decided(verdict) if verdict.correct => {
                 grade.correct = true;
                 grade.notation = verdict.notation;

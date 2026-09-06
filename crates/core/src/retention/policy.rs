@@ -107,8 +107,7 @@ impl RetentionConfig {
     pub fn bucket_of(&self, delay_days: u32) -> u32 {
         self.delays()
             .into_iter()
-            .filter(|days| *days <= delay_days)
-            .next_back()
+            .rfind(|days| *days <= delay_days)
             .unwrap_or(delay_days)
     }
 }
