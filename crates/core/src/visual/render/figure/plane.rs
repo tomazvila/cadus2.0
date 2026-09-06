@@ -7,7 +7,7 @@ use super::super::{
     text_at,
 };
 use crate::visual::{
-    CoordinateFigure, CurveFigure, LabeledPoint, Scalar, Segment, ShadedHalfPlane, VisualError,
+    CoordinateFigure, LabeledPoint, PlaneAxes, Segment, ShadedHalfPlane, VisualError,
 };
 
 const LABELED_TICKS: i64 = 21;
@@ -41,17 +41,14 @@ pub(super) struct GridFrame {
 
 impl GridFrame {
     pub(super) fn new(
-        figure: &impl GridSpec,
+        figure: &impl PlaneAxes,
         options: &RenderOptions,
     ) -> Result<Self, VisualError> {
-        let (x, y) = figure.grid_axes();
+        let (x, y) = figure.plane_axes();
         let bounds = (x.0.to_f64()?, x.1.to_f64()?, y.0.to_f64()?, y.1.to_f64()?);
         Ok(Self {
             bounds,
-            ticks: (
-                crate::visual::tick_count("x", x.0, x.1, x.2)?,
-                crate::visual::tick_count("y", y.0, y.1, y.2)?,
-            ),
+            ticks: crate::visual::plane_ticks(figure)?,
             steps: (x.2.to_f64()?, y.2.to_f64()?),
             width: inner_width(options),
             height: inner_height(options),
@@ -78,27 +75,6 @@ impl GridFrame {
         );
     }
 }
-
-/// Exact bounds and tick spacing of a figure drawn on a coordinate grid.
-pub(super) trait GridSpec {
-    fn grid_axes(&self) -> ((&Scalar, &Scalar, &Scalar), (&Scalar, &Scalar, &Scalar));
-}
-
-macro_rules! grid_spec {
-    ($figure:ty) => {
-        impl GridSpec for $figure {
-            fn grid_axes(&self) -> ((&Scalar, &Scalar, &Scalar), (&Scalar, &Scalar, &Scalar)) {
-                (
-                    (&self.x_min, &self.x_max, &self.x_tick),
-                    (&self.y_min, &self.y_max, &self.y_tick),
-                )
-            }
-        }
-    };
-}
-
-grid_spec!(CoordinateFigure);
-grid_spec!(CurveFigure);
 
 /// One SVG `points` attribute from coordinates mapped into a frame.
 pub(super) fn point_list(points: &[(f64, f64)], at: &impl Fn(f64, f64) -> (f64, f64)) -> String {

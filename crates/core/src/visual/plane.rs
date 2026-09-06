@@ -5,7 +5,7 @@ use num_traits::{One, Zero};
 use serde::{Deserialize, Serialize};
 
 use super::number_line::label_of;
-use super::{Scalar, VisualError, inside, tick_count};
+use super::{Scalar, VisualError, inside, plane_ticks};
 
 /// One point of the plane.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -169,10 +169,7 @@ impl CoordinateFigure {
 
     /// The tick counts of the two axes.
     pub fn ticks(&self) -> Result<(i64, i64), VisualError> {
-        Ok((
-            tick_count("x", &self.x_min, &self.x_max, &self.x_tick)?,
-            tick_count("y", &self.y_min, &self.y_max, &self.y_tick)?,
-        ))
+        plane_ticks(self)
     }
 
     /// Whether the plane carries mathematical meaning.

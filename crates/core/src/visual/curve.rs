@@ -13,7 +13,7 @@
 use num_rational::BigRational;
 use serde::{Deserialize, Serialize};
 
-use super::{LabeledPoint, Scalar, VisualError, inside, tick_count};
+use super::{LabeledPoint, Scalar, VisualError, inside, plane_ticks};
 
 mod evaluate;
 mod helpers;
@@ -157,10 +157,7 @@ pub struct CurveFigure {
 impl CurveFigure {
     /// The tick counts of the two axes.
     pub fn ticks(&self) -> Result<(i64, i64), VisualError> {
-        Ok((
-            tick_count("x", &self.x_min, &self.x_max, &self.x_tick)?,
-            tick_count("y", &self.y_min, &self.y_max, &self.y_tick)?,
-        ))
+        plane_ticks(self)
     }
 
     /// Whether the figure carries mathematical meaning.

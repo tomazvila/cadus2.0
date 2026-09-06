@@ -25,6 +25,25 @@ pub(crate) fn probe(
     }
 }
 
+/// Record one independent first exposure for the state fixtures.
+pub(crate) fn record(
+    state: &mut RetentionState,
+    cfg: &RetentionConfig,
+    delay: u32,
+    outcome: AttemptOutcome,
+) {
+    state.apply(
+        &probe("kp1", delay, outcome, false, Some(Exposure::First)),
+        cfg,
+    );
+}
+
+/// Record the correct seven-day and incorrect thirty-day pair used by total fixtures.
+pub(crate) fn record_pair(state: &mut RetentionState, cfg: &RetentionConfig) {
+    record(state, cfg, 7, AttemptOutcome::Correct);
+    record(state, cfg, 30, AttemptOutcome::Incorrect);
+}
+
 #[test]
 fn an_empty_state_reports_empty() {
     assert!(RetentionState::default().is_empty());
@@ -34,16 +53,7 @@ fn an_empty_state_reports_empty() {
 fn an_independent_correct_probe_counts_once_everywhere() {
     let cfg = RetentionConfig::default();
     let mut state = RetentionState::default();
-    state.apply(
-        &probe(
-            "kp1",
-            7,
-            AttemptOutcome::Correct,
-            false,
-            Some(Exposure::First),
-        ),
-        &cfg,
-    );
+    record(&mut state, &cfg, 7, AttemptOutcome::Correct);
     let tally = &state.by_delay[&7];
     assert_eq!(tally.probes, 1);
     assert_eq!(tally.correct, 1);
@@ -186,26 +196,7 @@ fn the_rate_rule_counts_the_probes_of_one_session() {
 fn the_total_sums_every_delay() {
     let cfg = RetentionConfig::default();
     let mut state = RetentionState::default();
-    state.apply(
-        &probe(
-            "kp1",
-            7,
-            AttemptOutcome::Correct,
-            false,
-            Some(Exposure::First),
-        ),
-        &cfg,
-    );
-    state.apply(
-        &probe(
-            "kp1",
-            30,
-            AttemptOutcome::Incorrect,
-            false,
-            Some(Exposure::First),
-        ),
-        &cfg,
-    );
+    record_pair(&mut state, &cfg);
     let total = state.total();
     assert_eq!(total.probes, 2);
     assert_eq!(total.independent, 2);

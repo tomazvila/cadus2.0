@@ -49,6 +49,27 @@ pub use render::{RenderOptions, RenderedVisual, render, render_all};
 pub use scalar::Scalar;
 pub use special_triangle::{SpecialTriangleFigure, SpecialTriangleShape};
 
+/// Exact bounds and tick spacing of a figure drawn on a coordinate grid.
+pub(super) trait PlaneAxes {
+    fn plane_axes(&self) -> ((&Scalar, &Scalar, &Scalar), (&Scalar, &Scalar, &Scalar));
+}
+
+macro_rules! plane_axes {
+    ($figure:ty) => {
+        impl PlaneAxes for $figure {
+            fn plane_axes(&self) -> ((&Scalar, &Scalar, &Scalar), (&Scalar, &Scalar, &Scalar)) {
+                (
+                    (&self.x_min, &self.x_max, &self.x_tick),
+                    (&self.y_min, &self.y_max, &self.y_tick),
+                )
+            }
+        }
+    };
+}
+
+plane_axes!(CoordinateFigure);
+plane_axes!(CurveFigure);
+
 /// The largest number of ticks one axis draws.
 ///
 /// An axis with more ticks than this is unreadable on a screen and unreadable
@@ -260,6 +281,15 @@ fn tick_count(
         return Err(VisualError::TooManyTicks { axis, ticks });
     }
     Ok(ticks.saturating_add(1))
+}
+
+/// The tick counts of the x and y axes of a plane-based figure.
+fn plane_ticks(figure: &impl PlaneAxes) -> Result<(i64, i64), VisualError> {
+    let (x, y) = figure.plane_axes();
+    Ok((
+        tick_count("x", x.0, x.1, x.2)?,
+        tick_count("y", y.0, y.1, y.2)?,
+    ))
 }
 
 /// Whether one value sits inside the closed range, and the error if it does not.

@@ -222,9 +222,9 @@ impl RetentionReport {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::event::{AttemptOutcome, Exposure, Slug, TopicStatus};
+    use crate::event::{AttemptOutcome, Slug, TopicStatus};
     use crate::learner::TopicState;
-    use crate::retention::state::tests::probe;
+    use crate::retention::state::tests::{record, record_pair};
 
     /// A model with the named retention state.
     fn model_of(state: RetentionState) -> LearnerModel {
@@ -258,16 +258,7 @@ mod tests {
     fn a_small_sample_reports_the_rate_and_calls_it_insufficient() {
         let cfg = RetentionConfig::default();
         let mut state = RetentionState::default();
-        state.apply(
-            &probe(
-                "k1",
-                7,
-                AttemptOutcome::Correct,
-                false,
-                Some(Exposure::First),
-            ),
-            &cfg,
-        );
+        record(&mut state, &cfg, 7, AttemptOutcome::Correct);
         let report = RetentionReport::build(
             &model_of(state),
             &cfg,
@@ -284,26 +275,7 @@ mod tests {
     fn the_total_row_sums_the_delays() {
         let cfg = RetentionConfig::default();
         let mut state = RetentionState::default();
-        state.apply(
-            &probe(
-                "k1",
-                7,
-                AttemptOutcome::Correct,
-                false,
-                Some(Exposure::First),
-            ),
-            &cfg,
-        );
-        state.apply(
-            &probe(
-                "k1",
-                30,
-                AttemptOutcome::Incorrect,
-                false,
-                Some(Exposure::First),
-            ),
-            &cfg,
-        );
+        record_pair(&mut state, &cfg);
         let report = RetentionReport::build(
             &model_of(state),
             &cfg,
