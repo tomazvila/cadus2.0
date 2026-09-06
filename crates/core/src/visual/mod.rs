@@ -41,7 +41,7 @@ use thiserror::Error;
 
 pub use curve::{Asymptote, CurveFigure, CurveKind};
 pub use fraction::{FractionFigure, FractionShape};
-pub use geometry::{GeometryFigure, GeometryShape};
+pub use geometry::{AngleMark, GeometryFigure, GeometryShape};
 pub use number_line::{MarkedInterval, MarkedPoint, MarkedRay, NumberLineFigure, RayDirection};
 pub use plane::{CoordinateFigure, LabeledPoint, Segment, ShadedHalfPlane};
 pub use render::{RenderOptions, RenderedVisual, render, render_all};

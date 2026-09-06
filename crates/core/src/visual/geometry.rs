@@ -4,8 +4,27 @@ use num_rational::BigRational;
 use num_traits::{Signed, Zero};
 use serde::{Deserialize, Serialize};
 
+use super::number_line::label_of;
 use super::plane::exact_text;
 use super::{LabeledPoint, Scalar, VisualError};
+
+/// One labeled, non-right angle mark at a polygon vertex.
+///
+/// Unlike `right_angles`, this mark states no numeric angle: it names which
+/// angle a question means (`"A"`, `"θ"`, or a given measure such as `"35°"`),
+/// the same trust an author already has over a vertex or a segment label. The
+/// diagram is a reference example (D-F5), not a rendering of one random
+/// problem's numbers, so the label is never checked against the polygon's
+/// drawn shape.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct AngleMark {
+    /// The vertex index the mark sits at.
+    pub at: usize,
+    /// The text beside the arc.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub label: Option<String>,
+}
 
 /// The two figures a geometry diagram draws.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -18,6 +37,9 @@ pub enum GeometryShape {
         /// The vertex positions that carry a right-angle mark.
         #[serde(default)]
         right_angles: Vec<usize>,
+        /// The vertex positions that carry a labeled angle mark.
+        #[serde(default)]
+        angle_marks: Vec<AngleMark>,
     },
     /// A circle with a center and a radius.
     Circle {
@@ -25,6 +47,23 @@ pub enum GeometryShape {
         center: LabeledPoint,
         /// The radius.
         radius: Scalar,
+    },
+    /// An angle at a vertex, opening from one ray to another: standard
+    /// position, coterminal angles, and reference angles.
+    Angle {
+        /// Where the two rays meet.
+        vertex: LabeledPoint,
+        /// The direction of the first ray, in degrees measured
+        /// counterclockwise from the positive x-axis. Usually `0`.
+        initial_degrees: Scalar,
+        /// The direction of the second ray, in the same measure. May be
+        /// negative or beyond 360 to show a clockwise or a coterminal angle.
+        terminal_degrees: Scalar,
+        /// How far each ray is drawn from the vertex. Positive.
+        ray_length: Scalar,
+        /// The text beside the arc.
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        label: Option<String>,
     },
 }
 
@@ -47,6 +86,7 @@ impl GeometryFigure {
             figure: GeometryShape::Polygon {
                 vertices,
                 right_angles: Vec::new(),
+                angle_marks: Vec::new(),
             },
             caption: None,
         }
@@ -70,12 +110,30 @@ impl GeometryFigure {
             GeometryShape::Polygon {
                 vertices,
                 right_angles,
-            } => validate_polygon(vertices, right_angles),
+                angle_marks,
+            } => validate_polygon(vertices, right_angles, angle_marks),
             GeometryShape::Circle { center, radius } => {
                 center.value()?;
                 if !radius.value()?.is_positive() {
                     return Err(VisualError::Degenerate {
                         reason: format!("a circle has radius {radius}"),
+                    });
+                }
+                Ok(())
+            }
+            GeometryShape::Angle {
+                vertex,
+                initial_degrees,
+                terminal_degrees,
+                ray_length,
+                ..
+            } => {
+                vertex.value()?;
+                initial_degrees.value()?;
+                terminal_degrees.value()?;
+                if !ray_length.value()?.is_positive() {
+                    return Err(VisualError::Degenerate {
+                        reason: format!("an angle diagram has ray length {ray_length}"),
                     });
                 }
                 Ok(())
@@ -90,11 +148,32 @@ impl GeometryFigure {
             GeometryShape::Polygon {
                 vertices,
                 right_angles,
-            } => polygon_text(vertices, right_angles),
+                angle_marks,
+            } => polygon_text(vertices, right_angles, angle_marks),
             GeometryShape::Circle { center, radius } => format!(
                 "A circle with center at {} and radius {radius}.",
                 center.spoken()
             ),
+            GeometryShape::Angle {
+                vertex,
+                initial_degrees,
+                terminal_degrees,
+                label,
+                ..
+            } => {
+                let mut out = format!(
+                    "An angle at {} opening from {}° to {}°, measured counterclockwise \
+                     from the positive x-axis",
+                    vertex.spoken(),
+                    initial_degrees,
+                    terminal_degrees
+                );
+                if let Some(text) = label_of(label.as_deref()) {
+                    out.push_str(&format!(", labeled {text}"));
+                }
+                out.push('.');
+                out
+            }
         }
     }
 }
@@ -111,7 +190,11 @@ fn polygon_name(count: usize) -> String {
 }
 
 /// Whether a polygon has three vertices, no repeat, and an area above zero.
-fn validate_polygon(vertices: &[LabeledPoint], right_angles: &[usize]) -> Result<(), VisualError> {
+fn validate_polygon(
+    vertices: &[LabeledPoint],
+    right_angles: &[usize],
+    angle_marks: &[AngleMark],
+) -> Result<(), VisualError> {
     if vertices.len() < 3 {
         return Err(VisualError::TooFewVertices {
             count: vertices.len(),
@@ -147,6 +230,14 @@ fn validate_polygon(vertices: &[LabeledPoint], right_angles: &[usize]) -> Result
             });
         }
     }
+    for mark in angle_marks {
+        if mark.at >= vertices.len() {
+            return Err(VisualError::NoSuchVertex {
+                at: mark.at,
+                count: vertices.len(),
+            });
+        }
+    }
     Ok(())
 }
 
@@ -161,7 +252,11 @@ fn double_area(vertices: &[(BigRational, BigRational)]) -> BigRational {
 }
 
 /// The accessible equivalent of a polygon.
-fn polygon_text(vertices: &[LabeledPoint], right_angles: &[usize]) -> String {
+fn polygon_text(
+    vertices: &[LabeledPoint],
+    right_angles: &[usize],
+    angle_marks: &[AngleMark],
+) -> String {
     let spoken: Vec<String> = vertices.iter().map(LabeledPoint::spoken).collect();
     let mut out = format!(
         "{} with vertices at {}.",
@@ -175,6 +270,16 @@ fn polygon_text(vertices: &[LabeledPoint], right_angles: &[usize]) -> String {
         if let Some(vertex) = vertices.get(*at) {
             out.push_str(&format!(" A right angle at {}.", vertex.spoken()));
         }
+    }
+    for mark in angle_marks {
+        let Some(vertex) = vertices.get(mark.at) else {
+            continue;
+        };
+        out.push_str(&format!(" A marked angle at {}", vertex.spoken()));
+        if let Some(label) = label_of(mark.label.as_deref()) {
+            out.push_str(&format!(", labeled {label}"));
+        }
+        out.push('.');
     }
     out
 }
@@ -208,8 +313,8 @@ fn side_texts(vertices: &[LabeledPoint]) -> Vec<String> {
 
 #[cfg(test)]
 mod tests {
-    use super::{GeometryFigure, GeometryShape};
-    use crate::visual::{LabeledPoint, VisualError};
+    use super::{AngleMark, GeometryFigure, GeometryShape};
+    use crate::visual::{LabeledPoint, Scalar, VisualError};
 
     fn right_triangle() -> Vec<LabeledPoint> {
         vec![
@@ -225,6 +330,10 @@ mod tests {
         figure.figure = GeometryShape::Polygon {
             vertices: right_triangle(),
             right_angles: vec![0],
+            angle_marks: vec![AngleMark {
+                at: 1,
+                label: Some("θ".to_owned()),
+            }],
         };
         assert!(figure.validate().is_ok());
         let text = figure.text_equivalent();
@@ -238,7 +347,8 @@ mod tests {
             text.contains("The side from (0, 3) labeled C to (0, 0) labeled A is 3 units long.")
         );
         assert!(!text.contains("(4, 0) labeled B to (0, 3) labeled C is"));
-        assert!(text.ends_with(" A right angle at (0, 0) labeled A."));
+        assert!(text.contains(" A right angle at (0, 0) labeled A."));
+        assert!(text.ends_with(" A marked angle at (4, 0) labeled B, labeled θ."));
     }
 
     #[test]
@@ -277,12 +387,59 @@ mod tests {
             figure: GeometryShape::Polygon {
                 vertices: right_triangle(),
                 right_angles: vec![3],
+                angle_marks: vec![],
             },
             caption: None,
         };
         assert!(matches!(
             figure.validate(),
             Err(VisualError::NoSuchVertex { at: 3, count: 3 })
+        ));
+
+        let bad_mark = GeometryFigure {
+            figure: GeometryShape::Polygon {
+                vertices: right_triangle(),
+                right_angles: vec![],
+                angle_marks: vec![AngleMark { at: 9, label: None }],
+            },
+            caption: None,
+        };
+        assert!(matches!(
+            bad_mark.validate(),
+            Err(VisualError::NoSuchVertex { at: 9, count: 3 })
+        ));
+    }
+
+    #[test]
+    fn an_angle_diagram_needs_a_positive_ray_length_and_reads_both_directions() {
+        let figure = GeometryFigure {
+            figure: GeometryShape::Angle {
+                vertex: LabeledPoint::new(0_i64, 0_i64),
+                initial_degrees: Scalar::from("0"),
+                terminal_degrees: Scalar::from("60"),
+                ray_length: Scalar::from("3"),
+                label: Some("60°".to_owned()),
+            },
+            caption: None,
+        };
+        assert!(figure.validate().is_ok());
+        assert_eq!(
+            figure.text_equivalent(),
+            "An angle at (0, 0) opening from 0° to 60°, measured counterclockwise \
+             from the positive x-axis, labeled 60°."
+        );
+
+        let mut degenerate = figure;
+        degenerate.figure = GeometryShape::Angle {
+            vertex: LabeledPoint::new(0_i64, 0_i64),
+            initial_degrees: Scalar::from("0"),
+            terminal_degrees: Scalar::from("-45"),
+            ray_length: Scalar::from("0"),
+            label: None,
+        };
+        assert!(matches!(
+            degenerate.validate(),
+            Err(VisualError::Degenerate { .. })
         ));
     }
 

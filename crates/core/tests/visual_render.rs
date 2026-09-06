@@ -7,7 +7,7 @@
 #![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
 
 use cadus_core::visual::{
-    Asymptote, CoordinateFigure, CurveFigure, CurveKind, FractionFigure, GeometryFigure,
+    AngleMark, Asymptote, CoordinateFigure, CurveFigure, CurveKind, FractionFigure, GeometryFigure,
     GeometryShape, LabeledPoint, MarkedRay, NumberLineFigure, RayDirection, RenderOptions, Scalar,
     Segment, ShadedHalfPlane, VisualError, VisualSpec, render,
 };
@@ -350,17 +350,64 @@ fn the_geometry_polygon_draws_its_outline_its_labels_and_its_right_angle() {
         figure: GeometryShape::Polygon {
             vertices,
             right_angles: vec![0],
+            angle_marks: vec![AngleMark {
+                at: 1,
+                label: Some("θ".to_owned()),
+            }],
         },
         caption: Some("Right triangle".to_owned()),
     };
     let svg = render(&VisualSpec::Geometry(figure), &RenderOptions::default()).unwrap();
     assert_eq!(count(&svg, "<polygon"), 1);
     assert_eq!(count(&svg, "cadus-visual-right-angle"), 1);
+    assert_eq!(count(&svg, "cadus-visual-angle"), 1);
     for label in ["A", "B", "C"] {
         assert!(svg.contains(&format!(">{label}</text>")));
     }
+    assert!(svg.contains(">θ</text>"));
     assert!(svg.contains("<title id=\"visual-title\">Right triangle</title>"));
     assert!(svg.contains("A right angle at (0, 0) labeled A."));
+}
+
+#[test]
+fn an_angle_mark_naming_a_missing_vertex_renders_no_bytes() {
+    let figure = GeometryFigure {
+        figure: GeometryShape::Polygon {
+            vertices: vec![
+                LabeledPoint::new(0_i64, 0_i64),
+                LabeledPoint::new(4_i64, 0_i64),
+                LabeledPoint::new(0_i64, 3_i64),
+            ],
+            right_angles: vec![],
+            angle_marks: vec![AngleMark { at: 9, label: None }],
+        },
+        caption: None,
+    };
+    assert!(matches!(
+        render(&VisualSpec::Geometry(figure), &RenderOptions::default()),
+        Err(VisualError::NoSuchVertex { at: 9, count: 3 })
+    ));
+}
+
+#[test]
+fn an_angle_diagram_draws_two_rays_an_arc_and_its_label() {
+    let figure = GeometryFigure {
+        figure: GeometryShape::Angle {
+            vertex: LabeledPoint::new(0_i64, 0_i64),
+            initial_degrees: Scalar::from("0"),
+            terminal_degrees: Scalar::from("135"),
+            ray_length: Scalar::from("4"),
+            label: Some("135°".to_owned()),
+        },
+        caption: Some("Reference angle".to_owned()),
+    };
+    let svg = render(&VisualSpec::Geometry(figure), &RenderOptions::default()).unwrap();
+    assert_eq!(count(&svg, "cadus-visual-segment"), 2, "two rays");
+    assert_eq!(count(&svg, "cadus-visual-angle"), 1);
+    assert!(svg.contains(">135°</text>"));
+    assert!(
+        svg.contains("opening from 0° to 135°, measured counterclockwise from the positive x-axis")
+    );
 }
 
 #[test]

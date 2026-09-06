@@ -7,8 +7,9 @@ use super::{
     text_at,
 };
 use crate::visual::{
-    Asymptote, CoordinateFigure, CurveFigure, FractionFigure, FractionShape, GeometryFigure,
-    GeometryShape, LabeledPoint, NumberLineFigure, RayDirection, VisualError,
+    AngleMark, Asymptote, CoordinateFigure, CurveFigure, FractionFigure, FractionShape,
+    GeometryFigure, GeometryShape, LabeledPoint, NumberLineFigure, RayDirection, Scalar,
+    VisualError,
 };
 
 /// The largest tick count that still carries a printed label.
@@ -565,7 +566,22 @@ pub(super) fn geometry_body(
         GeometryShape::Polygon {
             vertices,
             right_angles,
-        } => polygon_body(vertices, right_angles, options),
+            angle_marks,
+        } => polygon_body(vertices, right_angles, angle_marks, options),
+        GeometryShape::Angle {
+            vertex,
+            initial_degrees,
+            terminal_degrees,
+            ray_length,
+            label,
+        } => angle_body(
+            vertex,
+            initial_degrees,
+            terminal_degrees,
+            ray_length,
+            label.as_deref(),
+            options,
+        ),
         GeometryShape::Circle { center, radius } => {
             let (cx, cy) = center.to_pair()?;
             let r = radius.to_f64()?;
@@ -598,10 +614,12 @@ pub(super) fn geometry_body(
     }
 }
 
-/// The polygon outline, its vertex labels, and its right-angle marks.
+/// The polygon outline, its vertex labels, its right-angle marks, and its
+/// labeled angle marks.
 fn polygon_body(
     vertices: &[LabeledPoint],
     right_angles: &[usize],
+    angle_marks: &[AngleMark],
     options: &RenderOptions,
 ) -> Result<String, VisualError> {
     let mut pairs = Vec::with_capacity(vertices.len());
@@ -629,7 +647,124 @@ fn polygon_body(
             out.push_str(&mark);
         }
     }
+    for mark in angle_marks {
+        vertex_angle_arc(&mut out, &spots, mark.at, mark.label.as_deref());
+    }
     Ok(out)
+}
+
+/// The small arc that marks one polygon vertex's angle, between the two edges
+/// that meet there.
+fn vertex_angle_arc(out: &mut String, spots: &[(f64, f64)], at: usize, label: Option<&str>) {
+    let count = spots.len();
+    let (Some(&corner), Some(&previous), Some(&next)) = (
+        spots.get(at),
+        spots.get((at + count - 1) % count),
+        spots.get((at + 1) % count),
+    ) else {
+        return;
+    };
+    let (Some(first), Some(second)) = (unit(corner, previous), unit(corner, next)) else {
+        return;
+    };
+    arc_mark(
+        out,
+        corner,
+        first,
+        second,
+        16.0,
+        "cadus-visual-angle",
+        label,
+    );
+}
+
+/// The body of a standalone angle diagram: two rays from one vertex, an arc
+/// between them, and the label.
+fn angle_body(
+    vertex: &LabeledPoint,
+    initial_degrees: &Scalar,
+    terminal_degrees: &Scalar,
+    ray_length: &Scalar,
+    label: Option<&str>,
+    options: &RenderOptions,
+) -> Result<String, VisualError> {
+    let (vx, vy) = vertex.to_pair()?;
+    let length = ray_length.to_f64()?;
+    let initial = initial_degrees.to_f64()?.to_radians();
+    let terminal = terminal_degrees.to_f64()?.to_radians();
+    let ray_end = |angle: f64| {
+        (
+            length.mul_add(angle.cos(), vx),
+            length.mul_add(angle.sin(), vy),
+        )
+    };
+    let (first_end, second_end) = (ray_end(initial), ray_end(terminal));
+    let fit = Fit::new(bounds_of(&[(vx, vy), first_end, second_end]), options);
+    let corner = fit.at(vx, vy);
+    let (first_spot, second_spot) = (
+        fit.at(first_end.0, first_end.1),
+        fit.at(second_end.0, second_end.1),
+    );
+    let mut out = String::new();
+    line_at(&mut out, corner, first_spot, "cadus-visual-segment");
+    line_at(&mut out, corner, second_spot, "cadus-visual-segment");
+    dot_at(&mut out, corner, 3.0, "cadus-visual-point");
+    let (Some(first_dir), Some(second_dir)) = (unit(corner, first_spot), unit(corner, second_spot))
+    else {
+        return Ok(out);
+    };
+    arc_mark(
+        &mut out,
+        corner,
+        first_dir,
+        second_dir,
+        20.0,
+        "cadus-visual-angle",
+        label,
+    );
+    Ok(out)
+}
+
+/// The small arc between two unit directions from `corner`, plus a label
+/// placed along their bisector.
+fn arc_mark(
+    out: &mut String,
+    corner: (f64, f64),
+    first: (f64, f64),
+    second: (f64, f64),
+    radius: f64,
+    class: &str,
+    label: Option<&str>,
+) {
+    let start = (
+        radius.mul_add(first.0, corner.0),
+        radius.mul_add(first.1, corner.1),
+    );
+    let end = (
+        radius.mul_add(second.0, corner.0),
+        radius.mul_add(second.1, corner.1),
+    );
+    let cross = first.0 * second.1 - first.1 * second.0;
+    let sweep = i32::from(cross > 0.0);
+    let _ = write!(
+        out,
+        "<path d=\"M {} {} A {r} {r} 0 0 {sweep} {} {}\" class=\"{class}\" fill=\"none\"/>",
+        px(start.0),
+        px(start.1),
+        px(end.0),
+        px(end.1),
+        r = px(radius),
+    );
+    let Some(label) = label.map(str::trim).filter(|t| !t.is_empty()) else {
+        return;
+    };
+    let bisector =
+        unit((0.0, 0.0), (first.0 + second.0, first.1 + second.1)).unwrap_or((first.0, first.1));
+    let at = (
+        (radius + 14.0).mul_add(bisector.0, corner.0),
+        (radius + 14.0).mul_add(bisector.1, corner.1),
+    );
+    text_at(out, at.0, at.1, "middle", label);
 }
 
 /// The small square that marks one right angle.
