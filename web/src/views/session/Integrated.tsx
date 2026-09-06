@@ -22,7 +22,10 @@
  * NO ANSWER IS ON THIS SCREEN before the submit. `IntegratedProblem` has no answer field
  * to render (Hard Rule 1), and the interpretation arrives with the grade.
  */
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { ApiError } from '@/api';
+import { usePhase } from '@/hooks/usePhase';
+import { useLifetime } from '@/hooks/useLifetime';
 import { MathBlock } from '@/components/MathBlock';
 import { Chip } from '@/components/primitives';
 import type {
@@ -41,6 +44,8 @@ export interface IntegratedProps {
   problem: IntegratedProblem;
   /** Called with the grade after the service returns it. */
   onGraded?: (grade: IntegratedGrade) => void;
+  onContinue?: () => void;
+  onUnauthorized?: (() => void) | undefined;
 }
 
 /** The answer text and the opened-hint count of one field. */
@@ -76,38 +81,55 @@ function VerdictRow({ label, grade }: { label: string; grade: IntegratedFieldGra
   );
 }
 
-export function Integrated({ api, taskId, problem, onGraded }: IntegratedProps) {
-  const [fields, setFields] = useState<Record<string, FieldState>>({});
+export function Integrated({ api, taskId, problem, onGraded, onContinue, onUnauthorized }: IntegratedProps) {
+  const [fields, setFields] = useState<Record<string, FieldState>>(() => Object.fromEntries(
+    Object.entries(problem.hints_used ?? {}).map(([id, hintsUsed]) => [id, { ...emptyField, hintsUsed }]),
+  ));
   const [method, setMethod] = useState<string | null>(null);
   const [reasoning, setReasoning] = useState('');
   const [grade, setGrade] = useState<IntegratedGrade | null>(null);
-  const [busy, setBusy] = useState(false);
+  const [phase, gate] = usePhase<'ready' | 'hinting' | 'submitting' | 'graded'>('ready');
+  const life = useLifetime();
+  const busy = phase === 'hinting' || phase === 'submitting';
   const [failure, setFailure] = useState<string | null>(null);
+  const finalRef = useRef<HTMLInputElement>(null);
+  const continueRef = useRef<HTMLButtonElement>(null);
+  useEffect(() => {
+    if (grade) continueRef.current?.focus();
+    else finalRef.current?.focus();
+  }, [grade]);
 
   const field = (id: string): FieldState => fields[id] ?? emptyField;
   const patch = (id: string, next: Partial<FieldState>) =>
     setFields((held) => ({ ...held, [id]: { ...(held[id] ?? emptyField), ...next } }));
 
   const askHint = async (id: string) => {
+    if (!gate.tryEnter('ready', 'hinting')) return;
     const held = field(id);
     try {
       const reply = await api.taskIntegratedHint(taskId, { field: id, index: held.hintsUsed });
+      if (!life.alive()) return;
       // A ladder that ran out answers `hint: null`, and the count then stands still: the
       // learner is not marked assisted for a rung the item does not have.
       patch(id, {
         hint: reply.hint ?? held.hint,
         hintsUsed: reply.hint === null ? held.hintsUsed : reply.hints_used,
       });
-    } catch {
+    } catch (error) {
+      if (!life.alive()) return;
+      if (error instanceof ApiError && error.sessionExpired) onUnauthorized?.();
       setFailure('The hint did not arrive. Try again.');
+    } finally {
+      if (life.alive()) gate.enter('ready');
     }
   };
 
   const submit = async () => {
-    setBusy(true);
+    if (!gate.tryEnter('ready', 'submitting')) return;
     setFailure(null);
+    let reply: IntegratedGrade;
     try {
-      const reply = await api.taskIntegratedAnswer(taskId, {
+      reply = await api.taskIntegratedAnswer(taskId, {
         method,
         steps: problem.steps.map((step) => ({
           id: step.id,
@@ -121,13 +143,17 @@ export function Integrated({ api, taskId, problem, onGraded }: IntegratedProps) 
         },
         ...(reasoning.trim() ? { reasoning } : {}),
       });
-      setGrade(reply);
-      onGraded?.(reply);
-    } catch {
+    } catch (error) {
+      if (!life.alive()) return;
+      if (error instanceof ApiError && error.sessionExpired) onUnauthorized?.();
       setFailure('The submission did not reach the service. Try again.');
-    } finally {
-      setBusy(false);
+      gate.enter('ready');
+      return;
     }
+    if (!life.alive()) return;
+    gate.enter('graded');
+    setGrade(reply);
+    onGraded?.(reply);
   };
 
   const answerBox = (id: string, ask: IntegratedProblem['final_ask'], label: string) => (
@@ -137,6 +163,7 @@ export function Integrated({ api, taskId, problem, onGraded }: IntegratedProps) 
       </label>
       <div className="integrated-entry">
         <input
+          ref={id === FINAL ? finalRef : undefined}
           id={`integrated-${id}`}
           className="answer-input"
           value={field(id).answer}
@@ -260,6 +287,7 @@ export function Integrated({ api, taskId, problem, onGraded }: IntegratedProps) 
           ) : null}
           <p className="integrated-interpretation">{grade.interpretation}</p>
 
+          {onContinue ? <button ref={continueRef} type="button" className="btn btn-primary" onClick={onContinue}>Continue</button> : null}
           <h3>Your reasoning</h3>
           <p className="integrated-reasoning-note">
             The service does not grade reasoning. It stands here beside the verdicts, and

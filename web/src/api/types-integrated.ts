@@ -45,6 +45,8 @@ export interface IntegratedMethodView {
 export interface IntegratedProblem {
   item_id: string;
   item_digest: string;
+  /** Persisted opened-rung counts; absent on older service versions. */
+  hints_used?: Record<string, number>;
   title: string;
   topic: string;
   domain: string;
