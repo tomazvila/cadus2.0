@@ -104,9 +104,9 @@ shape are two different facts, which is the evidence for D-F1.
 | `other` | 0 | 12 | 12 | 0.0 % |
 | **total** | **1,325** | **370** | **1,695** | **78.2 %** |
 
-Five shapes are complete today: `integer`, `decimal`, `fraction`,
+Seven shapes are complete today: `integer`, `decimal`, `fraction`,
 `mixed_number`, `radical`, `coordinates` and `set`. Three shapes are empty
-today: `rational_exponent`, `quotient_remainder`, `prose`.
+today: `rational_exponent`, `quotient_remainder` and `prose`.
 
 The refusal reasons, as the grammar spells them:
 
@@ -435,6 +435,7 @@ productions land in the order of the table:
 | 5 | `unit` | 58 |
 | 6 | `currency` | 65 |
 | 7 | `log_base` | 67 |
+| 8 | `quotient_remainder` | 67 |
 | 9 | `multipart` | 72 |
 | 10 | `approx_marker` | 74 |
 | 11 | `ratio` | 75 |
