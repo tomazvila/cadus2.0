@@ -36,9 +36,10 @@ deterministic 'answer_contract' the pending template needs. For a closed label, 
 parameter as answer_expr. For a flat multipart answer, write multipart(part1, part2), with arguments \
 in the same order as the contract's named parts; an argument is a mathematical expression or, for a \
 label part, one text choice parameter. For a unit contract, keep answer_expr numeric; the server \
-attaches the contract's unit. For a bounded sign split, use signcase(selector, [negative, zero, \
-positive]). The server validates every computed answer against the \
-contract before storing the document, and the row still requires human review.
+attaches the contract's unit. For an inequality-union contract, use excludepoint(variable, bound), \
+lowerbound(variable, bound), or upperbound(variable, bound), where variable is a one-value text \
+choice. For a bounded sign split, use signcase(selector, [negative, zero, positive]). The server \
+validates every computed answer against the contract before storing the document, and the row still requires human review.
 
 'samples' is how you prove it, and the server checks WHERE you prove it. Work each instance out \
 BY HAND, binding every parameter, and state the answer you get. The server evaluates answer_expr \

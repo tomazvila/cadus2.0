@@ -58,7 +58,7 @@ pub use write::write;
 /// [`parse_with_functions`] admits them for this one purpose. Every one of them
 /// is erased before the answer string exists. `signcase(x, [a, b, c])` selects
 /// the negative, zero, or positive branch without admitting general predicates.
-pub const EVAL_FUNCTIONS: [(&str, usize); 11] = [
+pub const EVAL_FUNCTIONS: [(&str, usize); 14] = [
     ("abs", 1),
     ("sqrt", 1),
     ("gcd", 2),
@@ -70,10 +70,13 @@ pub const EVAL_FUNCTIONS: [(&str, usize); 11] = [
     ("factorial", 1),
     ("binomial", 2),
     ("signcase", 2),
+    ("excludepoint", 2),
+    ("lowerbound", 2),
+    ("upperbound", 2),
 ];
 
 /// The function names [`parse_with_functions`] admits beyond the M2 grammar.
-pub const EXTRA_FUNCTIONS: [&str; 10] = [
+pub const EXTRA_FUNCTIONS: [&str; 13] = [
     "gcd",
     "lcm",
     "floor",
@@ -84,6 +87,9 @@ pub const EXTRA_FUNCTIONS: [&str; 10] = [
     "binomial",
     "multipart",
     "signcase",
+    "excludepoint",
+    "lowerbound",
+    "upperbound",
 ];
 
 /// The largest bit width of a numerator or a denominator of an intermediate.
@@ -343,8 +349,35 @@ pub fn answer_for_contract(
         Some(contract @ AnswerContract::ReducedRatio) => {
             reduced_ratio_answer(ast, bindings, contract)
         }
+        Some(contract @ AnswerContract::InequalityUnion) => {
+            inequality_union_answer(ast, bindings, contract)
+        }
         _ => answer(ast, bindings),
     }
+}
+
+fn inequality_union_answer(
+    ast: &Ast,
+    bindings: &Bindings,
+    contract: &AnswerContract,
+) -> Result<Answer, EvalError> {
+    let Ast::Func(name, args) = ast else {
+        return answer(ast, bindings);
+    };
+    if args.len() != 2 || !matches!(name.as_str(), "excludepoint" | "lowerbound" | "upperbound") {
+        return answer(ast, bindings);
+    }
+    let Some(variable) = text_binding(&args[0], bindings) else {
+        return answer(ast, bindings);
+    };
+    let bound = answer(&args[1], bindings)?.text;
+    let text = match name.as_str() {
+        "excludepoint" => format!("{variable} < {bound} or {variable} > {bound}"),
+        "lowerbound" => format!("{variable} >= {bound}"),
+        "upperbound" => format!("{variable} <= {bound}"),
+        _ => unreachable!(),
+    };
+    contracted(text, contract)
 }
 
 fn reduced_ratio_answer(

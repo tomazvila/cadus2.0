@@ -47,20 +47,20 @@ fn spec(key: &str) -> AuthoringSpec {
 #[test]
 fn all_pending_templates_exhaust_the_real_gate_and_avoid_authored_and_sibling_problems() {
     let rows = drafts();
-    assert_eq!(rows.len(), 76);
+    assert_eq!(rows.len(), 78);
     let output = root().join("target/unit08/regression");
     std::fs::create_dir_all(&output).unwrap();
     let input = output.join("drafts.json");
     std::fs::write(&input, serde_json::to_string(&rows).unwrap()).unwrap();
     let report = verify::run(&input, &output);
-    assert_eq!(report["passed"], 76, "{report}");
+    assert_eq!(report["passed"], 78, "{report}");
     let mut instances = 0;
     for row in report["rows"].as_array().unwrap() {
         assert_eq!(row["evidence"]["exhaustive"], true);
         assert_eq!(row["evidence"]["distinct_instances"], 12);
         instances += row["evidence"]["instances_checked"].as_u64().unwrap();
     }
-    assert_eq!(instances, 912);
+    assert_eq!(instances, 936);
 }
 
 #[test]
@@ -111,4 +111,27 @@ fn label_templates_reject_wrong_samples_and_hidden_answer_bindings() {
             .code,
         "hidden-parameter"
     );
+}
+
+#[test]
+fn inequality_templates_reject_wrong_samples_and_unsafe_variables() {
+    let row = drafts()
+        .into_iter()
+        .find(|r| r["kp_id"] == "domain-range/kp2")
+        .unwrap();
+    let spec = spec("domain-range/kp2");
+    let mut wrong = row["arguments"].clone();
+    wrong["samples"][0]["expected"] = json!("x >= 1");
+    assert_eq!(
+        verify_kind(Kind::Template, &spec, &wrong, &[])
+            .unwrap_err()
+            .code,
+        "sample-agreement"
+    );
+    let mut unsafe_variable = row["arguments"].clone();
+    unsafe_variable["params"]["x"]["values"] = json!(["x or y"]);
+    for sample in unsafe_variable["samples"].as_array_mut().unwrap() {
+        sample["params"]["x"] = json!("x or y");
+    }
+    assert!(verify_kind(Kind::Template, &spec, &unsafe_variable, &[]).is_err());
 }

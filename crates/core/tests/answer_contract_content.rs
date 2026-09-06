@@ -197,7 +197,7 @@ fn a_unit_template_evaluates_its_numeric_expression_before_the_suffix() {
 }
 
 #[test]
-fn the_forty_eight_inventory_topics_have_explicit_usable_exact_items() {
+fn the_fifty_one_inventory_topics_have_explicit_usable_exact_items() {
     let (raw, findings) = load_raw_curriculum(&curriculum_root()).unwrap();
     assert!(findings.is_empty(), "{findings:?}");
     let mut topics = 0;
@@ -226,8 +226,8 @@ fn the_forty_eight_inventory_topics_have_explicit_usable_exact_items() {
             items += 1;
         }
     }
-    assert_eq!(topics, 48);
-    assert_eq!(items, 435);
+    assert_eq!(topics, 51);
+    assert_eq!(items, 455);
     assert!(lint_curriculum(&curriculum_root()).is_empty());
 }
 
@@ -250,4 +250,52 @@ fn the_loader_and_lint_refuse_invalid_contracts_and_expected_values() {
             "{findings:?}"
         );
     }
+}
+
+#[test]
+fn inequality_union_templates_write_only_bounded_validated_relations() {
+    for (expression, expected) in [
+        ("excludepoint(x,c)", "x < 3 or x > 3"),
+        ("lowerbound(x,c)", "x >= 3"),
+        ("upperbound(x,c)", "x <= 3"),
+    ] {
+        let body = serde_json::json!({
+            "v":1,"topic_id":"domains","answer_kind":"multi-step",
+            "answer_contract":{"kind":"inequality_union"},
+            "statement":"State the domain in {x} with boundary {c}.",
+            "params":{
+                "x":{"kind":"choice","values":["x"]},
+                "c":{"kind":"choice","values":[3]}
+            },
+            "constraints":[],"answer_expr":expression,
+            "solution_sketch":"Apply the stated boundary.","hints":["Find the boundary."],
+            "distractors":[],"samples":[{"params":{"x":"x","c":3},"expected":expected}]
+        });
+        let doc = from_body(&body.to_string()).unwrap();
+        let item = Compiled::new(&doc)
+            .unwrap()
+            .instantiate(doc.samples[0].bindings())
+            .unwrap();
+        assert_eq!(item.answer, expected);
+    }
+
+    let unsafe_body = serde_json::json!({
+        "v":1,"topic_id":"domains","answer_kind":"multi-step",
+        "answer_contract":{"kind":"inequality_union"},
+        "statement":"State the domain in {x} with boundary {c}.",
+        "params":{
+            "x":{"kind":"choice","values":["x or y"]},
+            "c":{"kind":"choice","values":[3]}
+        },
+        "constraints":[],"answer_expr":"lowerbound(x,c)",
+        "solution_sketch":"Apply the stated boundary.","hints":["Find the boundary."],
+        "distractors":[],"samples":[{"params":{"x":"x or y","c":3},"expected":"x >= 3"}]
+    });
+    let doc = from_body(&unsafe_body.to_string()).unwrap();
+    assert!(
+        Compiled::new(&doc)
+            .unwrap()
+            .instantiate(doc.samples[0].bindings())
+            .is_err()
+    );
 }

@@ -173,7 +173,9 @@ fn template_schema() -> Value {
     contract, use one text-valued choice parameter. For a multipart contract, use \
     multipart(part1, part2) with arguments in contract part order; each argument is a mathematical \
     expression or, for a label part, one text-valued choice parameter. For a unit contract, keep \
-    this expression numeric; the server attaches the declared unit. Use \
+    this expression numeric; the server attaches the declared unit. For an inequality-union \
+    contract, use excludepoint(variable, bound), lowerbound(variable, bound), or \
+    upperbound(variable, bound), with a one-value text choice for variable. Use \
     signcase(selector, [negative, zero, positive]) for a bounded sign split.",
             },
             "solution_sketch": {
