@@ -164,6 +164,9 @@ def export_packet(api, output, source_root, workers):
     queue = api.list_pending()
     with ThreadPoolExecutor(max_workers=workers) as pool:
         documents = list(pool.map(lambda row: api.document(row["digest"]), queue))
+    after = api.list_pending()
+    if [row.get("digest") for row in after] != [row.get("digest") for row in queue]:
+        raise Refused("the pending queue changed during export")
     by_digest = {row["digest"]: row for row in queue}
     for document in documents:
         queued = by_digest.get(document.get("digest"))

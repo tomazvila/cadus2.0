@@ -38,6 +38,17 @@ class FakeApi:
         return {"digest": digest, "status": status}
 
 
+class ChangingApi(FakeApi):
+    def __init__(self, documents):
+        super().__init__(documents)
+        self.reads = 0
+
+    def list_pending(self):
+        self.reads += 1
+        rows = super().list_pending()
+        return rows if self.reads == 1 else rows[:-1]
+
+
 class PacketTest(unittest.TestCase):
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()
@@ -63,6 +74,12 @@ class PacketTest(unittest.TestCase):
         self.assertEqual(review.validate_packet(packet)["sha256:a"]["body"], {"concept": "sha256:a"})
         template = json.loads((self.root / "packet.decisions.json").read_text())
         self.assertEqual(template["decisions"], [])
+
+    def test_queue_change_during_export_fails_before_writing_a_packet(self):
+        output = self.root / "changing.json"
+        with self.assertRaisesRegex(review.Refused, "queue changed"):
+            review.export_packet(ChangingApi(list(self.api.documents.values())), output, None, 2)
+        self.assertFalse(output.exists())
 
     def test_only_explicitly_selected_digests_are_written(self):
         self.decide([{"digest": "sha256:b", "decision": "approve"}])
