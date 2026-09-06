@@ -18,18 +18,7 @@ import foundations_compute as fc
 TESTDATA = Path(__file__).parent / "testdata" / "foundations_topics.json"
 
 
-def parse_authored_answer(text: str) -> Fraction:
-    """Read an authored `answer` field of the numeric family: int, `a/b`, `w n/d`, or a decimal."""
-    text = text.strip()
-    if " " in text and "/" in text:
-        whole, frac = text.split(" ", 1)
-        num, den = frac.split("/", 1)
-        sign = -1 if whole.startswith("-") else 1
-        return sign * (abs(Fraction(whole)) + Fraction(int(num), int(den)))
-    if "/" in text:
-        num, den = text.split("/", 1)
-        return Fraction(int(num), int(den))
-    return Fraction(text)
+parse_authored_answer = fc.parse_answer_text
 
 
 def load_topics():

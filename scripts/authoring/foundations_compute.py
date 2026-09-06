@@ -207,6 +207,7 @@ def same_shape_new_operands(
     *,
     max_abs: int = 20,
     forbid_zero_result: bool = False,
+    forbid_values: frozenset[Fraction] = frozenset(),
 ) -> tuple[str, Fraction]:
     """One new expression of the identical shape as `expr`, with fresh operands.
 
@@ -215,9 +216,10 @@ def same_shape_new_operands(
     original by more than `max_abs`, and never zero when the original was
     nonzero), and the sign is kept when the original operand carried a
     leading `-`. The rewrite touches only bare integers: a decimal's digits
-    and a mixed number's whole part are left untouched by
-    [`integer_operands`]. Retries up to 200 times for a value that both
-    parses and (optionally) avoids a zero result.
+    are left untouched by [`integer_operands`]. Retries up to 200 times for a
+    value that parses, is not in `forbid_values` (so a generated worked
+    example never lands on an answer this knowledge point already serves),
+    and optionally avoids a zero result.
     """
     operands = integer_operands(expr)
     if not operands:
@@ -243,5 +245,21 @@ def same_shape_new_operands(
             continue
         if forbid_zero_result and value == 0:
             continue
+        if value in forbid_values:
+            continue
         return candidate, value
     raise NotArithmetic(f"no fresh operand set found for {expr!r} after 200 draws")
+
+
+def parse_answer_text(text: str) -> Fraction:
+    """Read an authored `answer` field of the numeric family: int, `a/b`, `w n/d`, or a decimal."""
+    text = text.strip()
+    if " " in text and "/" in text:
+        whole, frac = text.split(" ", 1)
+        num, den = frac.split("/", 1)
+        sign = -1 if whole.startswith("-") else 1
+        return sign * (abs(Fraction(whole)) + Fraction(int(num), int(den)))
+    if "/" in text:
+        num, den = text.split("/", 1)
+        return Fraction(int(num), int(den))
+    return Fraction(text)
