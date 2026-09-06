@@ -49,6 +49,7 @@ use crate::retention::state::RetentionState;
 
 mod entry;
 mod handlers;
+mod integrated;
 mod pass_rule;
 mod regrade;
 mod state;
@@ -65,7 +66,8 @@ pub use regrade::apply_regrades;
 /// A stale cache is detected with it: 1 to 2 for the methodology fixes, 2 to 3 for
 /// [`apply_regrades`], 3 to 4 for the third attempt outcome (D-F2). ANY change to the
 /// fold bumps this number, and a bump replays every model in full (D-O6).
-pub const PROJECTOR_VERSION: i64 = 5;
+/// Version 6 consumes previously recorded integrated KP evidence.
+pub const PROJECTOR_VERSION: i64 = 6;
 
 /// The neutral prior a placed topic's diagnostic answers fold onto (`projector.py:98`).
 pub const ABILITY_SEED_PRIOR: f64 = 0.5;
@@ -293,20 +295,16 @@ impl<'a> Projector<'a> {
             Event::DiagnosticPlaced(body) => self.on_diagnostic_placed(body, ts, apply_fire),
             Event::ProfileReset(body) => self.on_profile_reset(body, apply_fire),
             Event::TaskServed(body) => self.on_task_served(body),
+            Event::IntegratedAttempt(body) => self.on_integrated_attempt(body, apply_fire),
             Event::SessionStart(_)
             | Event::SessionEnd(_)
             | Event::Regraded(_)
             | Event::AnkiCardCreated(_)
             | Event::ConfigChanged(_)
             | Event::CurriculumChanged(_)
-            // D-F10. The integrated events carry their own evidence: the serve
-            // records the exposure and the attempt records every field with the
-            // contract that decided it. The fold credits no skill from them
-            // here, because only a DECIDED field may credit one and the
-            // progression path of the web tier owns that write. An undecided
-            // field must never move a topic state (D-F2).
+            // The integrated serve records exposure; its attempt above persists KP credit.
             | Event::IntegratedServed(_)
-            | Event::IntegratedAttempt(_)
+            // Hint events preserve server-owned assistance but move no learning state.
             | Event::IntegratedHintRevealed(_) => {}
             Event::RetentionProbe(body) => self.retention.apply(body, &self.cfg.retention),
         }
