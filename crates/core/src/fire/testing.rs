@@ -29,6 +29,7 @@ pub(crate) fn knowledge_point(id: &str, keys: &[&str]) -> KnowledgePoint {
         key_prerequisites: keys.iter().map(|key| slug(key)).collect(),
         exemplars: Vec::new(),
         constraints: None,
+        visuals: Vec::new(),
     }
 }
 

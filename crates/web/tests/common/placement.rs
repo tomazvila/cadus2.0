@@ -52,6 +52,7 @@ pub fn topic(id: &str, prereq: Option<&str>) -> Topic {
             key_prerequisites: Vec::new(),
             exemplars: Vec::new(),
             constraints: None,
+            visuals: Vec::new(),
         }],
         diagnostic_exemplar: Some(Exemplar {
             answer_contract: None,

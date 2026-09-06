@@ -229,9 +229,11 @@ pub struct Readiness {
     pub prerequisites_ok: bool,
     /// The topic id or its text names a visual (see [`visual_needed`]).
     pub visual_needed: bool,
-    /// A visual exists. It is `false` for every knowledge point today: no
-    /// authored visual and no renderer exists yet (unit f9).
+    /// A visual exists: the author wrote at least one
+    /// [`crate::visual::VisualSpec`] that passes its own check (unit f9).
     pub visual_present: bool,
+    /// The authored visuals the check refuses. Each one counts as absent.
+    pub broken_visuals: usize,
     /// The decidable exemplars of the knowledge point.
     pub decidable_exemplars: usize,
     /// The approved templates of the knowledge point.

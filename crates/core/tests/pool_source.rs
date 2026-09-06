@@ -158,6 +158,7 @@ fn an_exemplar_source_reads_a_knowledge_point() {
         key_prerequisites: Vec::new(),
         exemplars: exemplar_fixture(),
         constraints: None,
+        visuals: Vec::new(),
     };
     let source = ExemplarSource::from_knowledge_point(&kp);
     assert_eq!(source.kp_id(), "adding-two-digits");

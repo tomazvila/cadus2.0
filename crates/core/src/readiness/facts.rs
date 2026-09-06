@@ -27,8 +27,16 @@ pub struct KpFacts {
     pub held_out: Option<usize>,
     /// Every practice exemplar carries a `solution_sketch`.
     pub solutions: bool,
-    /// The topic text names a visual (a heuristic).
+    /// The topic text names a visual (a heuristic), or the author wrote one.
     pub visual_needed: bool,
+    /// The authored visuals that pass [`crate::visual::VisualSpec::validate`].
+    pub valid_visuals: usize,
+    /// The authored visuals that FAIL the check.
+    ///
+    /// A failed visual counts as absent, so it never clears the visual blocker.
+    /// The count reaches the report, because an author fixes a broken figure and
+    /// never writes a second one beside it.
+    pub broken_visuals: usize,
 }
 
 impl KpFacts {
@@ -196,6 +204,11 @@ fn kp_facts(topic: &Topic, kp: &KnowledgePoint) -> KpFacts {
                 .is_some_and(|sketch| !sketch.trim().is_empty())
         });
     let text = format!("{} {} {}", topic.id.as_str(), topic.name, kp.name);
+    let valid_visuals = kp
+        .visuals
+        .iter()
+        .filter(|visual| visual.validate().is_ok())
+        .count();
     KpFacts {
         kp_key: kp_key(topic.id.as_str(), kp.id.as_str()),
         topic_id: topic.id.as_str().to_owned(),
@@ -203,6 +216,8 @@ fn kp_facts(topic: &Topic, kp: &KnowledgePoint) -> KpFacts {
         decidable,
         held_out,
         solutions,
-        visual_needed: visual_needed(&text),
+        visual_needed: visual_needed(&text) || !kp.visuals.is_empty(),
+        valid_visuals,
+        broken_visuals: kp.visuals.len() - valid_visuals,
     }
 }
