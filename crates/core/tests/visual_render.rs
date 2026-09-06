@@ -9,7 +9,8 @@
 use cadus_core::visual::{
     AngleMark, Asymptote, CoordinateFigure, CurveFigure, CurveKind, FractionFigure, GeometryFigure,
     GeometryShape, LabeledPoint, MarkedRay, NumberLineFigure, RayDirection, RenderOptions, Scalar,
-    Segment, ShadedHalfPlane, VisualError, VisualSpec, render,
+    Segment, ShadedHalfPlane, SpecialTriangleFigure, SpecialTriangleShape, VisualError, VisualSpec,
+    render,
 };
 
 /// The count of one substring in one text.
@@ -418,6 +419,76 @@ fn the_geometry_circle_draws_the_radius_beside_the_center() {
     assert_eq!(count(&svg, "cadus-visual-segment"), 1);
     assert!(svg.contains(">r = 2.5</text>"));
     assert!(svg.contains("A circle with center at (1, 1) and radius 2.5."));
+}
+
+#[test]
+fn a_forty_five_special_triangle_draws_its_computed_hypotenuse_label() {
+    let figure = SpecialTriangleFigure {
+        figure: SpecialTriangleShape::FortyFiveFortyFiveNinety {
+            leg: Scalar::from("4"),
+        },
+        caption: Some("Reference: 45-45-90".to_owned()),
+    };
+    let svg = render(
+        &VisualSpec::SpecialTriangle(figure),
+        &RenderOptions::default(),
+    )
+    .unwrap();
+    assert_eq!(count(&svg, "<polygon"), 1);
+    assert_eq!(count(&svg, "cadus-visual-right-angle"), 1);
+    assert!(svg.contains(">4√2</text>"));
+    assert!(svg.contains("Reference: 45-45-90. A 45-45-90 right triangle"));
+}
+
+#[test]
+fn a_thirty_sixty_special_triangle_marks_both_acute_angles() {
+    let figure = SpecialTriangleFigure {
+        figure: SpecialTriangleShape::ThirtySixtyNinety {
+            short_leg: Scalar::from("3"),
+        },
+        caption: None,
+    };
+    let svg = render(
+        &VisualSpec::SpecialTriangle(figure),
+        &RenderOptions::default(),
+    )
+    .unwrap();
+    assert_eq!(count(&svg, "cadus-visual-angle"), 2);
+    assert!(svg.contains(">30°</text>"));
+    assert!(svg.contains(">60°</text>"));
+    assert!(svg.contains(">3√3</text>"));
+    assert!(svg.contains(">6</text>"));
+}
+
+#[test]
+fn a_sas_area_special_triangle_refuses_an_angle_with_no_exact_sine() {
+    let bad = SpecialTriangleFigure {
+        figure: SpecialTriangleShape::SasArea {
+            side_a: Scalar::from("4"),
+            side_b: Scalar::from("5"),
+            included_angle_degrees: Scalar::from("40"),
+        },
+        caption: None,
+    };
+    assert!(matches!(
+        render(&VisualSpec::SpecialTriangle(bad), &RenderOptions::default()),
+        Err(VisualError::Degenerate { .. })
+    ));
+
+    let good = SpecialTriangleFigure {
+        figure: SpecialTriangleShape::SasArea {
+            side_a: Scalar::from("4"),
+            side_b: Scalar::from("5"),
+            included_angle_degrees: Scalar::from("60"),
+        },
+        caption: None,
+    };
+    let svg = render(
+        &VisualSpec::SpecialTriangle(good),
+        &RenderOptions::default(),
+    )
+    .unwrap();
+    assert!(svg.contains("The exact area is 5√3 square units."));
 }
 
 #[test]

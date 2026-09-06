@@ -15,7 +15,10 @@ use super::{LabeledPoint, VisualError, VisualSpec};
 
 mod figure;
 
-use figure::{coordinate_body, curve_body, fraction_body, geometry_body, number_line_body};
+use figure::{
+    coordinate_body, curve_body, fraction_body, geometry_body, number_line_body,
+    special_triangle_body,
+};
 
 /// The drawing options.
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -64,6 +67,7 @@ pub fn render(spec: &VisualSpec, options: &RenderOptions) -> Result<String, Visu
         VisualSpec::Coordinate(figure) => coordinate_body(figure, options)?,
         VisualSpec::Geometry(figure) => geometry_body(figure, options)?,
         VisualSpec::Curve(figure) => curve_body(figure, options)?,
+        VisualSpec::SpecialTriangle(figure) => special_triangle_body(figure, options)?,
     };
     Ok(frame(spec, options, &body))
 }
@@ -115,6 +119,7 @@ fn title_of(spec: &VisualSpec) -> String {
             VisualSpec::Coordinate(_) => "Coordinate plane".to_owned(),
             VisualSpec::Geometry(_) => "Geometry diagram".to_owned(),
             VisualSpec::Curve(_) => "Curve".to_owned(),
+            VisualSpec::SpecialTriangle(_) => "Special right triangle".to_owned(),
         },
         ToOwned::to_owned,
     )

@@ -35,6 +35,7 @@ mod number_line;
 mod plane;
 mod render;
 mod scalar;
+mod special_triangle;
 
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
@@ -46,6 +47,7 @@ pub use number_line::{MarkedInterval, MarkedPoint, MarkedRay, NumberLineFigure, 
 pub use plane::{CoordinateFigure, LabeledPoint, Segment, ShadedHalfPlane};
 pub use render::{RenderOptions, RenderedVisual, render, render_all};
 pub use scalar::Scalar;
+pub use special_triangle::{SpecialTriangleFigure, SpecialTriangleShape};
 
 /// The largest number of ticks one axis draws.
 ///
@@ -155,6 +157,10 @@ pub enum VisualSpec {
     Geometry(GeometryFigure),
     /// A coordinate plane with one drawn curve.
     Curve(CurveFigure),
+    /// A 45-45-90 or 30-60-90 right triangle, or a two-sides-and-an-angle
+    /// triangle area, with every irrational side or area computed rather
+    /// than author-typed.
+    SpecialTriangle(SpecialTriangleFigure),
 }
 
 impl VisualSpec {
@@ -167,6 +173,7 @@ impl VisualSpec {
             Self::Coordinate(_) => "coordinate",
             Self::Geometry(_) => "geometry",
             Self::Curve(_) => "curve",
+            Self::SpecialTriangle(_) => "special_triangle",
         }
     }
 
@@ -179,6 +186,7 @@ impl VisualSpec {
             Self::Coordinate(figure) => figure.caption.as_deref(),
             Self::Geometry(figure) => figure.caption.as_deref(),
             Self::Curve(figure) => figure.caption.as_deref(),
+            Self::SpecialTriangle(figure) => figure.caption.as_deref(),
         };
         caption.filter(|text| !text.trim().is_empty())
     }
@@ -194,6 +202,7 @@ impl VisualSpec {
             Self::Coordinate(figure) => figure.validate(),
             Self::Geometry(figure) => figure.validate(),
             Self::Curve(figure) => figure.validate(),
+            Self::SpecialTriangle(figure) => figure.validate(),
         }
     }
 
@@ -210,6 +219,7 @@ impl VisualSpec {
             Self::Coordinate(figure) => figure.text_equivalent(),
             Self::Geometry(figure) => figure.text_equivalent(),
             Self::Curve(figure) => figure.text_equivalent(),
+            Self::SpecialTriangle(figure) => figure.text_equivalent(),
         };
         match self.caption() {
             Some(caption) => format!("{}. {body}", caption.trim()),
