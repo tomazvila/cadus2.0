@@ -170,17 +170,34 @@ pub(super) fn review_task(
             "; knocks out {n_ko} other due topic(s) via encompassing"
         ));
     }
+    Task {
+        nearly_due: nearly,
+        ..review_shell(tid, states, graph, cfg.review.questions, why)
+    }
+}
+
+/// The common shape of every review task: the topic, the question count, the
+/// mix, the difficulty target, and the anti-repeat digests.
+///
+/// The due review, the remedial review and the D-F6 confirmation item all build
+/// on it, and each one adds its own marker.
+pub(super) fn review_shell(
+    tid: &str,
+    states: &BTreeMap<String, TopicState>,
+    graph: &Curriculum,
+    n_problems: i64,
+    why: String,
+) -> Task {
     let default = TopicState::default();
     let state = states.get(tid).unwrap_or(&default);
     Task {
         task_type: TaskType::Review,
         topic: Some(tid.to_owned()),
-        n_problems: Some(cfg.review.questions),
+        n_problems: Some(n_problems),
         mix: review_mix(graph, tid),
         difficulty_target: Some(DIFFICULTY_TARGET.to_owned()),
         recent_problem_hashes: state.last_problems.clone(),
         why,
-        nearly_due: nearly,
         ..Task::default()
     }
 }

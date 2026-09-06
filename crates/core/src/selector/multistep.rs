@@ -9,8 +9,7 @@ use crate::event::TaskType;
 use crate::learner::{PendingRemediation, TopicState};
 use crate::xp::is_known;
 
-use super::review::review_mix;
-use super::task::{Task, start_kp};
+use super::task::{Task, review_shell, start_kp};
 use super::topic_set::TopicSet;
 use super::{
     DIFFICULTY_TARGET, MULTISTEP_CADENCE, MULTISTEP_MAX_COMPONENTS, REMEDIATION_CONFIRM_FAILED,
@@ -130,15 +129,14 @@ pub fn remediation_tasks(
             let relearn = kind == REMEDIATION_CONFIRM_FAILED;
             let task = if is_known(state) && !relearn {
                 Task {
-                    task_type: TaskType::Review,
-                    topic: Some(id.to_owned()),
-                    n_problems: Some(cfg.review.questions),
-                    mix: review_mix(graph, id),
-                    difficulty_target: Some(DIFFICULTY_TARGET.to_owned()),
-                    recent_problem_hashes: state.last_problems.clone(),
-                    why: format!("remediation ({kind}); remedial review"),
                     is_remediation: true,
-                    ..Task::default()
+                    ..review_shell(
+                        id,
+                        states,
+                        graph,
+                        cfg.review.questions,
+                        format!("remediation ({kind}); remedial review"),
+                    )
                 }
             } else {
                 Task {

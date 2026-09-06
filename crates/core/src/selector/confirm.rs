@@ -19,14 +19,12 @@ use std::collections::{BTreeMap, BTreeSet};
 
 use crate::config::Config;
 use crate::curriculum::Curriculum;
-use crate::event::TaskType;
 use crate::fire::memory_at;
 use crate::learner::TopicState;
 use crate::xp::is_inferred;
 
-use super::DIFFICULTY_TARGET;
-use super::review::{float_then_id, review_mix};
-use super::task::Task;
+use super::review::float_then_id;
+use super::task::{Task, review_shell};
 use super::topic_set::course_scope;
 
 /// The number of problems one confirmation item serves.
@@ -72,17 +70,9 @@ pub(super) fn confirm_task(
     states: &BTreeMap<String, TopicState>,
     graph: &Curriculum,
 ) -> Task {
-    let default = TopicState::default();
-    let state = states.get(tid).unwrap_or(&default);
+    let why = "confirmation; the course inferred this topic and never tested it".to_owned();
     Task {
-        task_type: TaskType::Review,
-        topic: Some(tid.to_owned()),
-        n_problems: Some(CONFIRM_PROBLEMS),
-        mix: review_mix(graph, tid),
-        difficulty_target: Some(DIFFICULTY_TARGET.to_owned()),
-        recent_problem_hashes: state.last_problems.clone(),
-        why: "confirmation; the course inferred this topic and never tested it".to_owned(),
         confirm: true,
-        ..Task::default()
+        ..review_shell(tid, states, graph, CONFIRM_PROBLEMS, why)
     }
 }
