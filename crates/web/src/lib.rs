@@ -60,6 +60,7 @@ pub mod metrics;
 pub mod operator;
 pub mod origin;
 pub mod path;
+pub mod report;
 pub mod security;
 pub mod serve;
 pub mod session;
@@ -220,6 +221,7 @@ pub fn create_app(state: AppState) -> Router {
         .route("/api/graph", get(session::graph))
         .route("/api/modules", get(session::modules))
         .route("/api/export", get(session::export))
+        .route("/api/report/retention", get(report::retention))
         .route("/api/enroll", post(session::enroll))
         .route("/api/session/start", post(session::session_start))
         .route("/api/session/end", post(session::session_end))

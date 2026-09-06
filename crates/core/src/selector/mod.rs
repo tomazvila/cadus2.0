@@ -38,6 +38,7 @@ mod multistep;
 mod plan;
 mod quiz;
 mod reserve;
+mod retention;
 mod review;
 mod task;
 mod topic_set;
@@ -56,6 +57,7 @@ pub use gap_fill::{
 pub use interleave::{SlotKind, arrange_lessons, assign_ids, interleave};
 pub use multistep::{multistep_components, multistep_is_due, remediation_tasks};
 pub use plan::{BlockedTask, Constraints, SessionPlan};
+pub use retention::retention_probe;
 pub use quiz::{
     QuizPlan, QuizQuestion, QuizSampler, SeededSampler, quiz_budget, quiz_composer,
     quiz_difficulty_target, quiz_is_due, quiz_retake_available_at, utc_date,

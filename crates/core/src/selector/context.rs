@@ -6,6 +6,7 @@ use chrono::NaiveDate;
 
 use crate::learner::{PendingRemediation, QuizState};
 use crate::readiness::ReadinessGate;
+use crate::retention::RetentionState;
 
 use super::plan::SessionPlan;
 
@@ -58,6 +59,11 @@ pub struct SessionContext<'a> {
     /// `Config::readiness::enforce` set to `false`. A caller that reads no
     /// content store therefore plans as it did before this rule.
     pub readiness: Option<&'a dyn ReadinessGate>,
+    /// What the delayed probes answered so far (D-F11).
+    ///
+    /// `None` turns the probe schedule off, so a caller that never reads the
+    /// retention state plans as it did before this rule.
+    pub retention: Option<&'a RetentionState>,
 }
 
 impl Default for SessionContext<'_> {
@@ -80,6 +86,7 @@ impl Default for SessionContext<'_> {
             open_multistep_components: None,
             n: None,
             readiness: None,
+            retention: None,
         }
     }
 }
@@ -170,7 +177,14 @@ impl<'a> SessionContext<'a> {
         self
     }
 
-    /// Set the readiness gate of the eligibility rule (D-F5).
+    /// Set the delayed-probe state of D-F11.
+    #[must_use]
+    pub const fn with_retention(mut self, retention: Option<&'a RetentionState>) -> Self {
+        self.retention = retention;
+        self
+    }
+
+    /// Set the readiness rule of D-F5.
     #[must_use]
     pub const fn with_readiness(mut self, readiness: Option<&'a dyn ReadinessGate>) -> Self {
         self.readiness = readiness;
