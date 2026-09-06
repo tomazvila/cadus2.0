@@ -47,6 +47,8 @@ USAGE:
 AUTHOR OPTIONS:
     --course <id>           author only this course, e.g. foundations.
     --template-passes <1..3> fill template families before instruction; default 1.
+    --kp-file <path>       serving keys, one per line; blank/# comment lines ignored.
+    --missing-only         fill only pairs with no pending or approved document.
     --kp <topic_id/kp_id>   author for this knowledge point; repeatable.
                             The default is every knowledge point of the tree.
     --kind <kind>           author this kind; repeatable. One of template,
@@ -104,6 +106,10 @@ pub struct ReadinessArgs {
 pub struct AuthorArgs {
     /// The serving keys the operator named. Empty means every knowledge point.
     pub kps: Vec<String>,
+    /// Additional explicit serving keys from a newline-separated file.
+    pub kp_file: Option<String>,
+    /// Skip every pair that already has pending or approved content.
+    pub missing_only: bool,
     /// Restrict every author pass to this curriculum course.
     pub course: Option<String>,
     /// Number of template bank passes before instruction; zero selects one.
@@ -183,6 +189,8 @@ pub fn parse<S: AsRef<str>>(args: &[S]) -> Result<Command, CliError> {
     while let Some(argument) = args.next() {
         match argument {
             "--dry-run" => parsed.dry_run = true,
+            "--missing-only" => parsed.missing_only = true,
+            "--kp-file" => parsed.kp_file = Some(value_of(argument, args.next())?),
             "--stale" => parsed.stale = true,
             "--portable-schema" => parsed.portable_schema = true,
             "--decline-dir" => parsed.decline_dir = Some(value_of(argument, args.next())?),

@@ -16,7 +16,24 @@ pub fn select_for(
     curriculum: &Curriculum,
     args: &AuthorArgs,
 ) -> Result<Vec<AuthoringSpec>, CliError> {
-    let specs = select(curriculum, &args.kps)?;
+    let mut keys = args.kps.clone();
+    if let Some(path) = &args.kp_file {
+        let source = std::fs::read_to_string(path)
+            .map_err(|error| CliError(format!("cannot read kp file {path}: {error}")))?;
+        keys.extend(
+            source
+                .lines()
+                .map(str::trim)
+                .filter(|line| !line.is_empty() && !line.starts_with('#'))
+                .map(str::to_owned),
+        );
+        if keys.is_empty() {
+            return Err(CliError("kp file selects no knowledge points".to_owned()));
+        }
+    }
+    let mut seen = std::collections::HashSet::new();
+    keys.retain(|key| seen.insert(key.clone()));
+    let specs = select(curriculum, &keys)?;
     let Some(course) = &args.course else {
         return Ok(specs);
     };
@@ -31,7 +48,7 @@ pub fn select_for(
                 .is_some_and(|topic| curriculum.course_of(topic) == course)
         })
         .collect();
-    if !args.kps.is_empty() && selected.len() != args.kps.len() {
+    if !keys.is_empty() && selected.len() != keys.len() {
         return Err(CliError(
             "explicit knowledge point is outside the selected course".to_owned(),
         ));

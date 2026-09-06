@@ -11,7 +11,9 @@ pub fn prepare(request: &mut ChatRequest, kind: Kind, instances: &[ServedInstanc
     request.user.push_str("\n\nTRANSPORT: emit document_json as a string containing the COMPLETE original JSON document. Do not omit any original fields. Original document schema:\n");
     request.user.push_str(&logical);
     if kind == Kind::Template {
-        request.user.push_str("\nA params dictionary must contain named domains, never {}. Example shape: {\"a\":{\"kind\":\"int\",\"low\":0,\"high\":9},\"b\":{\"kind\":\"int\",\"low\":0,\"high\":9}}. Adapt bounds and constraints to this knowledge point. Each sample.params supplies a value for EVERY declared name. Use distractors: [] when no wrong-answer expression is wrong for EVERY satisfying tuple. In particular, a-b equals a+b when b=0; such a distractor needs a constraint that excludes b=0, or omit it.");
+        request.user.push_str(TEMPLATE_RULES);
+        request.user.push_str("\nVALID COMPLETE JSON EXAMPLE (adapt the mathematics and bounds to the requested KP):\n");
+        request.user.push_str(TEMPLATE_EXAMPLE);
     }
     if kind == Kind::Teach {
         request.user.push_str("\nThe worked problem must have different operand values from every existing served problem below. Use a recognizable direct calculation when that is the target shape. Put only the final result, or one correct final equation, in the last step. Existing served problems:\n");
@@ -72,3 +74,16 @@ pub fn snapshot(
         tracing::error!(%error, "declined draft artifact did not write");
     }
 }
+
+/// Gate-compatible arithmetic example, also exercised through the fake provider.
+pub const TEMPLATE_EXAMPLE: &str = r#"{"statement":"Compute ${a}^{{2}}$.","params":{"a":{"kind":"int","low":1,"high":12}},"constraints":[],"answer_expr":"a**2","solution_sketch":"${a} \\times {a}$ gives the answer.","hints":["What does squaring a number mean?"],"distractors":[],"samples":[{"params":{"a":1},"expected":"1"},{"params":{"a":12},"expected":"144"}]}"#;
+
+const TEMPLATE_RULES: &str = r#"
+DETERMINISTIC TEMPLATE RULES:
+- params must have named domains, never {}. Use short lowercase single-letter parameter names a,b,c,f,g,h,m,p,q,s. Avoid descriptive names like base, count, dividend, exp, and reserved e/i/pi. For expression answers, k,n,r,t,theta,u,v,w,x,y,z are free unknowns and must NOT be parameter names. Every {name} placeholder and constraint variable must be declared in params.
+- answer_expr is a STRING in a restricted mathematical grammar, not Python. Use +, -, *, /, parentheses, and powers with a literal whole-number exponent (a**2, not a**b). Available evaluated functions with exact arity: abs(a), sqrt(a), gcd(a,b), lcm(a,b), floor(a), ceiling(a), min(a,b), max(a,b), factorial(a), binomial(a,b). Use floor(a/b) for integer quotient and a-b*floor(a/b) for remainder. No //, %, str(), round(), ** with a variable exponent, Python conditionals, comparisons, assignment, indexing, strings, or units in answer_expr. The answer must fit the requested numeric/expression kind; never concatenate quotient/remainder prose.
+- statement, solution_sketch, each hint, sample.expected and answer_expr are STRINGS. params and each sample.params are objects. constraints, hints, distractors and samples are arrays. Never turn answer_expr into an object.
+- Text placeholders are ONLY {a}, {b}, etc. Expressions such as {a-b} or {b**c} are invalid placeholders. Write substituted operands explicitly, e.g. ${a} - {b}$, and put calculations in answer_expr. Double every literal LaTeX brace: ${a}^{{2}}$, not ${a}^{2}$. Avoid numeric grouping braces such as {,}.
+- Samples bind EVERY declared parameter and satisfy EVERY constraint. Include each parameter's declared minimum and maximum in valid samples; for every two varying parameters include a crossed corner (one low while the other is high), whenever constraints admit it. Matching all-low/all-high samples alone miss swapped operands. Compute sample.expected exactly from the requested mathematics. Choose small domains with many satisfying tuples; do not rely on finding extremely rare tuples in huge Cartesian products.
+- Use distractors: [] unless you can prove the expression is wrong for EVERY satisfying tuple. a-b collides with a+b when b=0; zero/zero is especially unsafe. Hints ask a method question and must not state an instantiated answer. The solution sketch explains the method using declared placeholders.
+"#;

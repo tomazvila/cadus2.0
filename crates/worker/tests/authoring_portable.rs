@@ -32,7 +32,10 @@ async fn portable_dynamic_params_survive_transport_and_a_decline_snapshot_preced
         let directory = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
             .join(format!("../../target/declines-{}", db.name));
         let bad = missing_low_edge();
-        let replies = [bad.clone(), good_arguments()]
+        let example: serde_json::Value =
+            serde_json::from_str(cadus_worker::authoring::portable::TEMPLATE_EXAMPLE).unwrap();
+        assert_eq!(example, good_arguments());
+        let replies = [bad.clone(), example]
             .iter()
             .map(|arguments| common::tool_reply(&json!({"document_json": arguments.to_string()})))
             .collect();
@@ -50,6 +53,15 @@ async fn portable_dynamic_params_survive_transport_and_a_decline_snapshot_preced
         assert_eq!(schema["required"], json!(["document_json"]));
         assert_eq!(schema["properties"].as_object().unwrap().len(), 1);
         assert!(fake.user_message(0).contains("never {}"));
+        assert!(fake.user_message(0).contains("floor(a/b)"));
+        assert!(fake.user_message(0).contains("crossed corner"));
+        let no_calls = FakeModel::start(vec![]).await;
+        let repair = AuthoringJob::new(no_calls.client(4000, 2000)).with_missing_only(true);
+        let skipped = author_one(&handle(&db), &repair, Kind::Template, &squares_spec())
+            .await
+            .unwrap();
+        assert_eq!(skipped.outcome, Outcome::Skipped);
+        assert_eq!(no_calls.call_count(), 0);
         let files: Vec<_> = std::fs::read_dir(&directory).unwrap().collect();
         assert_eq!(files.len(), 1);
         let text = std::fs::read_to_string(files[0].as_ref().unwrap().path()).unwrap();

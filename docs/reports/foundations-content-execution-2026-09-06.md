@@ -96,3 +96,30 @@ Completion requires 809 ready knowledge points, no unresolved grade contracts,
 and the remaining handover acceptance evidence. Pending row counts alone do not
 meet that requirement. Deployment and live learner data remain outside these
 isolated authoring commands until the root completes integration and review.
+
+## Decline-driven repair pass
+
+The stopped Gemini draft corpus contained 139 refusal artifacts when inspected:
+55 grammar, 18 distractor, 14 unescaped-brace, 13 unknown-collision,
+10 undeclared-parameter, five parameter-collision, five edge-coverage,
+four body, four crossed-corner, three sample-constraint, two hint-placeholder,
+two no-satisfying-tuple, two hint-answer, one constraint-parameter and one
+sample-agreement. The first five categories account for 110/139 (79.1%).
+Artifacts count rejected drafts, not independent knowledge points or HTTP calls.
+
+Portable template instructions now specify a conservative executable grammar,
+safe parameter names, complete declarations, literal exponent and brace syntax,
+valid boundary/crossed-corner samples, empty optional distractors, and a complete
+JSON example exercised through the production gate in a fake-provider test.
+These instructions improve request quality; measured acceptance after this change
+is still required.
+
+For a first-coverage repair pass, add `--missing-only --kind template`.
+Each pair with at least one pending or approved document skips before model calls,
+including on subsequent rounds. This flag intentionally preserves existing stale
+content; use a separate reviewed refresh pass when needed. The dry-run target is
+one document per pair in this mode. `--kp-file /absolute/path/repair-keys.txt`
+accepts explicit serving keys, one per line, and deduplicates them with `--kp`
+arguments. Blank lines and whole-line `#` comments are ignored. An empty file
+fails closed instead of selecting the entire curriculum. Course filtering still
+validates every explicit key. Existing full-bank behavior remains the default.

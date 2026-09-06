@@ -309,6 +309,7 @@ pub struct AuthoringJob {
     endpoint_status: std::sync::atomic::AtomicU16,
     portable_schema: bool,
     decline_dir: Option<std::path::PathBuf>,
+    missing_only: bool,
 }
 
 /// The approved documents one kind keeps per knowledge point.

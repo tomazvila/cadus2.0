@@ -125,7 +125,12 @@ async fn author(args: &AuthorArgs) -> Result<(), WorkerError> {
         return Ok(());
     }
 
-    let rows = cli::plan(&db, &specs, &kinds).await?;
+    let mut rows = cli::plan(&db, &specs, &kinds).await?;
+    if args.missing_only {
+        for row in &mut rows {
+            row.target = 1;
+        }
+    }
     print!("{}", cli::render_plan(&rows, args.dry_run));
     if args.template_passes > 1 {
         let documents = cli::staged_documents(&rows, args.template_passes);
@@ -160,7 +165,8 @@ async fn author(args: &AuthorArgs) -> Result<(), WorkerError> {
     );
     let job = job
         .with_budget(budget.clone())
-        .with_transport(args.portable_schema, args.decline_dir.clone());
+        .with_transport(args.portable_schema, args.decline_dir.clone())
+        .with_missing_only(args.missing_only);
     // The order of `kinds` is the order of `prompt::KINDS`, whatever order the
     // operator named on the command line (`cli::AuthorArgs::kinds`), and
     // `template` leads it. That order is a contract of the gate and not a

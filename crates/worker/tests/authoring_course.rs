@@ -101,3 +101,29 @@ async fn three_bank_rounds_use_the_same_budget_and_store_pending_documents() {
         assert!(rows.iter().all(|row| row.status == "pending"));
     }).await;
 }
+
+#[test]
+fn explicit_kp_file_is_deduplicated_and_empty_files_never_expand_scope() {
+    let path = std::env::temp_dir().join(format!("cadus-kp-file-{}", std::process::id()));
+    std::fs::write(
+        &path,
+        "# repair queue\nperfect-squares/kp1\n\nperfect-squares/kp1\n",
+    )
+    .unwrap();
+    let root = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../../curriculum");
+    let (curriculum, _) = load_curriculum(&root).unwrap();
+    let Command::Author(args) = parse(&[
+        "author",
+        "--kp-file",
+        path.to_str().unwrap(),
+        "--missing-only",
+    ])
+    .unwrap() else {
+        unreachable!()
+    };
+    assert!(args.missing_only);
+    assert_eq!(select_for(&curriculum, &args).unwrap().len(), 1);
+    std::fs::write(&path, "# empty queue\n").unwrap();
+    assert!(select_for(&curriculum, &args).is_err());
+    std::fs::remove_file(path).unwrap();
+}

@@ -2,6 +2,13 @@
 use super::{AUTHORING_ATTEMPTS, AuthoringJob};
 use cadus_model_client::Client;
 impl AuthoringJob {
+    /// Fill only completely absent pending/approved content pairs.
+    #[must_use]
+    pub const fn with_missing_only(mut self, missing_only: bool) -> Self {
+        self.missing_only = missing_only;
+        self
+    }
+
     /// Select the provider-portable JSON-string transport and decline artifacts.
     #[must_use]
     pub fn with_transport(mut self, portable: bool, decline_dir: Option<String>) -> Self {
@@ -36,6 +43,7 @@ impl AuthoringJob {
             endpoint_status: std::sync::atomic::AtomicU16::new(0),
             portable_schema: false,
             decline_dir: None,
+            missing_only: false,
         }
     }
 
@@ -52,6 +60,7 @@ impl AuthoringJob {
             endpoint_status: std::sync::atomic::AtomicU16::new(0),
             portable_schema: false,
             decline_dir: None,
+            missing_only: false,
         }
     }
 }

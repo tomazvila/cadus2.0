@@ -201,6 +201,9 @@ pub async fn author_one(
     // other one, because it is the check that keeps T3 amortized: one knowledge
     // point is paid for once and then serves forever.
     let taken = slots_taken(db, &kp_id, kind).await?;
+    if job.missing_only && taken > 0 {
+        return Ok(Report::quiet(kp_id, kind, Outcome::Skipped));
+    }
     // Spec section 2.2, "Prompt digest": a slot an EDITED prompt wrote does not
     // fill the bank. The pass re-authors it, and the old row keeps the approval
     // it has (M6 review finding F4).
