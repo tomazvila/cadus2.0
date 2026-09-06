@@ -253,6 +253,8 @@ async fn advance_and_fold(
         review::close_review(task, recorded, events, &content.cfg)
     } else if task.task_type == TaskType::Quiz {
         quiz::close_quiz(task, recorded, events, &content.cfg)
+    } else if task.task_type == TaskType::Drill {
+        drill::close_drill(task, recorded, events)
     } else {
         advance(
             &content.curriculum,

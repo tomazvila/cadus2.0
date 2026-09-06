@@ -27,8 +27,8 @@ mod note;
 mod scalar;
 
 pub use body::{
-    Attempt, AttemptProblem, LessonResult, QuizResult, QuizTopicResult, RegradedAttempt,
-    RetentionProbe, ReviewResult, ServedProblem, TaskServed,
+    Attempt, AttemptProblem, DrillResult, LessonResult, QuizResult, QuizTopicResult,
+    RegradedAttempt, RetentionProbe, ReviewResult, ServedProblem, TaskServed,
 };
 pub use integrated::{
     IntegratedAttempt, IntegratedField, IntegratedHintRevealed, IntegratedServed,
@@ -127,6 +127,9 @@ pub enum Event {
     /// One server-confirmed hint reveal of an integrated task.
     #[serde(rename = "integrated_hint_revealed")]
     IntegratedHintRevealed(IntegratedHintRevealed),
+    /// An entire drill completed.
+    #[serde(rename = "drill_result")]
+    DrillResult(DrillResult),
 }
 
 /// Apply `body` to the inner payload of every [`Event`] member.
@@ -153,13 +156,14 @@ macro_rules! for_each_event {
             Event::IntegratedServed($inner) => $body,
             Event::IntegratedAttempt($inner) => $body,
             Event::IntegratedHintRevealed($inner) => $body,
+            Event::DrillResult($inner) => $body,
         }
     };
 }
 
 impl Event {
-    /// The 17 `type` values, in the order this module declares them.
-    pub const TYPE_NAMES: [&'static str; 17] = [
+    /// The 18 `type` values, in the order this module declares them.
+    pub const TYPE_NAMES: [&'static str; 18] = [
         "session_start",
         "session_end",
         "enrolled",
@@ -177,6 +181,7 @@ impl Event {
         "config_changed",
         "curriculum_changed",
         "retention_probe",
+        "drill_result",
     ];
 
     /// Read one event from JSON text.
@@ -252,6 +257,7 @@ impl Event {
             Self::IntegratedServed(_) => "integrated_served",
             Self::IntegratedAttempt(_) => "integrated_attempt",
             Self::IntegratedHintRevealed(_) => "integrated_hint_revealed",
+            Self::DrillResult(_) => "drill_result",
         }
     }
 
@@ -283,8 +289,8 @@ fn serialize_error(error: serde_json::Error) -> EventError {
 mod tests {
     use super::*;
 
-    /// The smallest valid body of each of the 17 types, in declaration order.
-    const MINIMAL: [&str; 17] = [
+    /// The smallest valid body of each of the 18 types, in declaration order.
+    const MINIMAL: [&str; 18] = [
         r#"{"type":"session_start","ts":"2026-03-02T09:00:00Z","session":"s"}"#,
         r#"{"type":"session_end","ts":"2026-03-02T09:00:00Z","session":"s"}"#,
         r#"{"type":"enrolled","ts":"2026-03-02T09:00:00Z","session":"s","course":"c"}"#,
@@ -302,6 +308,7 @@ mod tests {
         r#"{"type":"config_changed","ts":"2026-03-02T09:00:00Z","session":"s","summary":"m"}"#,
         r#"{"type":"curriculum_changed","ts":"2026-03-02T09:00:00Z","session":"s","summary":"m"}"#,
         r#"{"type":"retention_probe","ts":"2026-03-02T09:00:00Z","session":"s","kp":"kp1","topic":"x","delay_days":7,"outcome":"correct","secs":9}"#,
+        r#"{"type":"drill_result","ts":"2026-03-02T09:00:00Z","session":"s","task_id":"s-drill-x"}"#,
     ];
 
     #[test]

@@ -20,7 +20,7 @@ use super::{
 
 impl Projector<'_> {
     /// Count each completed task once.
-    fn complete_task(&mut self, key: String) {
+    pub(super) fn complete_task(&mut self, key: String) {
         if self.completed_task_ids.insert(key) {
             self.completed_tasks += 1;
         }

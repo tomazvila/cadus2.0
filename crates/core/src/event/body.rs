@@ -392,3 +392,19 @@ pub struct RetentionProbe {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub policy: Option<String>,
 }
+
+/// A drill completed its original batch and any required independent practice.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct DrillResult {
+    /// The server close time.
+    pub ts: Timestamp,
+    /// The session owning the task.
+    #[serde(default)]
+    pub session: Option<String>,
+    /// The event schema version.
+    #[serde(default = "SchemaVersion::current")]
+    pub v: SchemaVersion,
+    /// The stable task identity used for replay deduplication.
+    pub task_id: String,
+}

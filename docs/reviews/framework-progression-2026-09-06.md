@@ -19,7 +19,7 @@
 - Historical attempt evidence remains unchanged. New attempts identify skills with stable `topic/KP` keys.
 - Existing valid rework scratch remains readable. It supplies no fresh independent evidence.
 - The immediate feedback loop covers lessons, reviews, drills, and legacy per-component multi-step tasks. Supplemental practice stays outside the original assessment count and weighted score. The configured terminal lesson-failure rule records its failed result and remediation once; supplemental fresh practice remains open until independently answered. Quizzes retain blind receipts and provide fresh practice after their explicit batch reveal.
-- Confirmation delay counts completed lesson, review, and quiz events. A task type without a result event supplies no task-close evidence.
+- Confirmation delay counts completed lesson, review, quiz, and drill events. A task type without a result event supplies no task-close evidence.
 - This code supplies engineering evidence. It establishes no empirical retention or mastery guarantee.
 ## Verification
 - Eight core regressions cover trajectory conflict, per-KP attribution, legacy wire fields, independent confirmation, and duplicate task-close evidence.
@@ -43,3 +43,7 @@ The final original answer now appends one server-owned `QuizResult`. Receipts re
 An unknown answer makes the batch inconclusive. Its result earns zero XP and changes no FIRe, practice stamp, high-score streak or retake classification. The reveal names the pending verdict and the individual unknown answer. Historical quiz events default to a conclusive result.
 Verification: raw HTTP blind-receipt tests; close/reveal authorization gate and fresh-practice lifecycle; unchanged original result and question count after supplemental success; unknown-answer batch; historic event compatibility; core projection non-effects; quiz UI reveal/hide/practice and 40 prior clock, reveal, timeout and card regressions. Route fixture is regenerated from the live Axum router.
 Terminal lesson failure also retains a fresh-practice obligation. Its original failed result and remediation remain unchanged, and supplemental success closes the practice with no additional result or XP. The session plan restores pending practice after a reload. A focused HTTP regression verifies the original failed close, fresh same-KP item, replan recovery, one result/remediation, and no extra XP.
+
+
+## Drill completion evidence
+A dedicated `DrillResult` records the stable task ID once the original batch and required independent practice finish. It adds no XP or grading claim. Replay deduplicates completion by task ID, so three distinct completed drills satisfy the delayed-confirmation spacing and repeated event application cannot shorten that spacing. A full 20-original-item HTTP drill verifies that its final miss creates no completion, fresh independent success creates exactly one, and a repeated submission creates none. The new event follows the existing timestamp, session and schema-version readers.

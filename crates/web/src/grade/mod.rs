@@ -123,6 +123,7 @@ use crate::state::{
 };
 
 mod advance;
+mod drill;
 mod feedback;
 mod quiz;
 mod reply;

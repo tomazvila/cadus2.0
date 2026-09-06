@@ -209,3 +209,38 @@ fn inconclusive_quiz_does_not_classify_a_retake_or_change_learning_evidence() {
             .is_none()
     );
 }
+
+#[test]
+fn distinct_drill_closes_advance_delayed_confirmation_and_replay_identically() {
+    use cadus_core::{event::Timestamp, projector::Projector};
+    let (graph, cfg) = projector_inputs();
+    let mut projector = Projector::new(&graph, &cfg);
+    let mut fresh = attempt(true, "topic/kp1");
+    fresh.independent_after_feedback = true;
+    let mut log = vec![Event::Attempt(fresh)];
+    log.push(Event::from_json(r#"{"type":"lesson_result","ts":"2026-09-06T12:01:00Z","session":"s","topic":"topic","passed":true,"quality_tier":"perfect"}"#).unwrap());
+    for event in &log {
+        projector.apply(event, true);
+    }
+    for index in 0..3 {
+        assert!(projector.pending_remediation().is_empty());
+        let close = Event::from_json(&json!({"type":"drill_result","ts":format!("2026-09-06T12:0{}:00Z", index+2),"session":"s","task_id":format!("s-drill-{index}")}).to_string()).unwrap();
+        projector.apply(&close, true);
+        projector.apply(&close, true);
+        log.extend([close.clone(), close]);
+    }
+    assert_eq!(projector.pending_remediation().len(), 1);
+    let mut replay = Projector::new(&graph, &cfg);
+    for event in &log {
+        replay.apply(event, true);
+    }
+    assert_eq!(
+        replay.pending_remediation(),
+        projector.pending_remediation()
+    );
+    let now = Timestamp::from_micros(0);
+    assert_eq!(
+        replay.finalize(now).unwrap(),
+        projector.finalize(now).unwrap()
+    );
+}

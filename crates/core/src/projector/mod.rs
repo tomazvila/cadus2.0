@@ -290,6 +290,7 @@ impl<'a> Projector<'a> {
             Event::LessonResult(body) => self.on_lesson_result(body, ts, apply_fire),
             Event::ReviewResult(body) => self.on_review_result(body, ts, apply_fire),
             Event::QuizResult(body) => self.on_quiz_result(body, ts, apply_fire),
+            Event::DrillResult(body) => self.complete_task(body.task_id.clone()),
             Event::RemediationTriggered(body) => self.on_remediation(body, ts),
             Event::DiagnosticAnswer(body) => self.on_diagnostic_answer(body),
             Event::DiagnosticPlaced(body) => self.on_diagnostic_placed(body, ts, apply_fire),
