@@ -36,13 +36,13 @@ use std::process::ExitCode;
 use std::time::Duration;
 
 use cadus_model_client::{API_KEY_VAR, Client, ModelConfig};
+use cadus_store::shutdown::{Shutdown, close_within};
 use cadus_store::{Db, DbConfig, bounded};
 use cadus_worker::authoring::cli::{self, AuthorArgs, Command};
 use cadus_worker::authoring::job::{self, AuthoringJob, run_batch};
 use cadus_worker::{DiagnosisJob, RefillJob, WorkerConfig, WorkerError};
 
 use curriculum::load_arena;
-use shutdown::Shutdown;
 
 /// The bound on the pool close after the tick loop stops.
 ///
@@ -214,7 +214,7 @@ fn init_tracing() {
 /// a SIGTERM during the connect gives exit code 0 instead of a kill by signal
 /// (finding #39).
 async fn run() -> Result<u64, WorkerError> {
-    serve_behind(Shutdown::install(), serve).await
+    serve_behind(shutdown::install(), serve).await
 }
 
 /// Run `serve` behind the installed stop signals, or return the error of an
@@ -350,79 +350,22 @@ async fn role_report(db: &Db) -> Result<cadus_store::RoleInfo, cadus_store::Stor
     bounded(db, report).await?
 }
 
-/// Wait for `close` for at most `deadline`, then log the fact and give up.
-///
-/// `PgPool::close` waits for every checked-out connection to come back. A
-/// database that answers nothing never gives one back, so the plain call runs
-/// without end and the process stays alive after the stop signal until the
-/// container runtime sends SIGKILL (finding #6). The bound below keeps the exit
-/// inside the budget. The process exits 0 either way, because the open sockets
-/// end with the process.
-async fn close_within<F: Future<Output = ()>>(deadline: Duration, close: F) {
-    if tokio::time::timeout(deadline, close).await.is_err() {
-        tracing::info!("pool close deadline reached");
-    }
-}
-
 #[cfg(test)]
 mod tests {
-    use std::future::Future;
-    use std::pin::Pin;
-    use std::time::{Duration, Instant};
-
     use cadus_worker::WorkerError;
 
-    use super::{Shutdown, serve_behind};
-
-    /// A close future behind one pointer type, so the two calls of a test run
-    /// the same instantiation of `close_within`.
-    type Close = Pin<Box<dyn Future<Output = ()>>>;
+    use super::{Shutdown, serve_behind, shutdown};
 
     /// The loop runs behind the installed signals, and the error of an install
     /// that failed ends the run before the loop.
     #[tokio::test]
     async fn the_loop_runs_behind_the_install_or_stops_at_its_error() {
         let serve = |_shutdown: Shutdown| async { Ok(7) };
-        let installed = Shutdown::install().expect("SIGTERM and SIGINT register");
+        let installed = shutdown::install().expect("SIGTERM and SIGINT register");
         assert_eq!(serve_behind(Ok(installed), serve).await.unwrap(), 7);
 
         let refused = Err(WorkerError::Signal("the SIGTERM handler failed".to_owned()));
         let err = serve_behind(refused, serve).await.unwrap_err();
         assert_eq!(err.to_string(), "signal error: the SIGTERM handler failed");
-    }
-
-    /// `close_within` returns at its deadline, even when the close never ends,
-    /// and it returns at once when the close ends first.
-    ///
-    /// `PgPool::close` waits for every checked-out connection, so a database
-    /// that answers nothing makes the plain call run without end (finding #6).
-    /// The never-resolving future below stands for that case. The outer timeout
-    /// of 5 s fails the test when the bound is gone.
-    #[tokio::test]
-    async fn close_within_returns_at_the_deadline() {
-        let ready: Close = Box::pin(std::future::ready(()));
-        super::close_within(Duration::from_millis(200), ready).await;
-
-        let never: Close = Box::pin(std::future::pending());
-        let start = Instant::now();
-        let outcome = tokio::time::timeout(
-            Duration::from_secs(5),
-            super::close_within(Duration::from_millis(200), never),
-        )
-        .await;
-        let elapsed = start.elapsed();
-
-        assert!(
-            outcome.is_ok(),
-            "close_within must return within 5 s, it took {elapsed:?} or more"
-        );
-        assert!(
-            elapsed >= Duration::from_millis(200),
-            "close_within must wait for the whole deadline, it took {elapsed:?}"
-        );
-        assert!(
-            elapsed < Duration::from_secs(2),
-            "close_within must return soon after the deadline, it took {elapsed:?}"
-        );
     }
 }

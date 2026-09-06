@@ -309,7 +309,26 @@ fn deadline_secs(trimmed: &str) -> Result<u64, Fatal> {
 mod tests {
     use cadus_core::curriculum::{CurriculumError, Finding, LoadError};
 
-    use super::{Fatal, admin_dsn_from, deadline_secs, first_reason};
+    use super::{
+        DEFAULT_SHUTDOWN_DEADLINE_SECS, Fatal, admin_dsn_from, deadline_secs, first_reason,
+    };
+
+    /// The total stop time stays under the `stop_grace_period` of 20 s.
+    ///
+    /// docker-compose.yml sets `stop_grace_period: 20s` and defaults
+    /// `SHUTDOWN_DEADLINE_SECS` to 10. Drain plus close must stay below 20 s,
+    /// or the container ends with SIGKILL and exit 137 (finding #7).
+    #[test]
+    fn drain_plus_close_stays_under_the_stop_grace_period() {
+        let deadline = std::time::Duration::from_secs(DEFAULT_SHUTDOWN_DEADLINE_SECS);
+        let worst = deadline + cadus_store::shutdown::close_budget(deadline, deadline);
+
+        assert_eq!(worst, std::time::Duration::from_secs(11));
+        assert!(
+            worst < std::time::Duration::from_secs(20),
+            "the stop must end before stop_grace_period 20 s, it takes {worst:?}"
+        );
+    }
 
     impl Fatal {
         /// The text a fatal carries, for the assertions below. Both arms run.
