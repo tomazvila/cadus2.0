@@ -47,6 +47,7 @@
  */
 import { useEffect, useRef, useState } from 'react';
 import { MathBlock } from '@/components/MathBlock';
+import { MathVisuals } from '@/components/MathVisual';
 import { AnswerField, type AnswerFieldHandle } from '@/components/AnswerField';
 import { WorkField, type WorkFieldHandle } from '@/components/WorkField';
 import { LoadingBlock } from '@/components/primitives';
@@ -423,6 +424,8 @@ export function Session({
 
       <div className="card problem-card">
         <MathBlock>{problem.text}</MathBlock>
+        {/* The figures of the knowledge point, each with its text equivalent (unit f9). */}
+        <MathVisuals visuals={problem.visuals} />
 
         <div className="hint-list">
           {hints.map((h, i) => (

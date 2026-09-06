@@ -4,6 +4,7 @@
  * `types.ts` carries the conventions and the source-of-truth order. Every rule there holds
  * here.
  */
+import type { RenderedVisual } from '@/lib/visual';
 import type { Remediation, XpState } from './types';
 
 // ---------------------------------------------------------------------------
@@ -135,6 +136,15 @@ export interface ServedProblem {
    * quiz stamped by no serve yet.
    */
   quiz_elapsed_secs?: number;
+  /**
+   * The drawn figures of this knowledge point (unit f9).
+   *
+   * The server renders the SVG and the text equivalent together
+   * (`cadus_core::visual::render_all`), so the browser repeats no geometry. The key is
+   * ABSENT when the knowledge point authors no figure, and a figure the check refuses
+   * never reaches this list.
+   */
+  visuals?: RenderedVisual[];
 }
 
 /** `POST /api/task/{task_id}/teach` — the authored teach page (L4). */

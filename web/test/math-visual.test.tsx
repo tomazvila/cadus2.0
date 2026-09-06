@@ -111,3 +111,25 @@ describe('the visual component', () => {
     expect(view.all('figure')[1].dataset.kind).toBe('fraction');
   });
 });
+
+describe('the served problem', () => {
+  it('draws the figures the serve payload carries, inside the practice card', async () => {
+    const { mount: mountSession, stubApi, P } = await import('./helpers/session');
+    const view = await mountSession({
+      api: stubApi({ taskServe: async () => P(1, { visuals: [line] }) }),
+    });
+    const card = view.container.querySelector('.problem-card');
+    expect(card).not.toBeNull();
+    expect(card?.querySelector('.math-visual-number_line')).not.toBeNull();
+    expect(card?.querySelector('svg')?.getAttribute('role')).toBe('img');
+    expect(card?.textContent).toContain('A filled point at 3, labeled x.');
+    view.unmount();
+  });
+
+  it('draws no figure at all for a problem the payload sends none for', async () => {
+    const { mount: mountSession } = await import('./helpers/session');
+    const view = await mountSession();
+    expect(view.container.querySelector('.math-visuals')).toBeNull();
+    view.unmount();
+  });
+});

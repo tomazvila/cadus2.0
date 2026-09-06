@@ -46,12 +46,12 @@ export const MathVisual = memo(function MathVisual({ visual }: MathVisualProps) 
 });
 
 export interface MathVisualsProps {
-  /** Every figure of one problem, in authored order. */
-  visuals: RenderedVisual[];
+  /** Every figure of one problem, in authored order. The API omits the key for none. */
+  visuals: RenderedVisual[] | undefined;
 }
 
 /** Every figure of one problem, or nothing when the problem carries none. */
-export function MathVisuals({ visuals }: MathVisualsProps) {
+export function MathVisuals({ visuals = [] }: MathVisualsProps) {
   if (visuals.length === 0) return null;
   return (
     <div className="math-visuals">
