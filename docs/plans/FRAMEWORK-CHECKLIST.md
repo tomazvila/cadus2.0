@@ -85,7 +85,7 @@ Revision 2026-09-06 (completion pass): every row re-read against the 43 commits
 | P4.1 | Integrated tasks: scenario, quantities, constraints, method choice, intermediate reasoning, final answer and interpretation, faded hints | `cbe1543` (f16); `ed800ac`, `6c6515e`, `20f07bd`, `20888d4` (f17); `d243336` (session wiring) | `crates/core/tests/integrated_item.rs`, `integrated_grade.rs`, `crates/web/tests/integrated_routes.rs`, `web/test/integrated.test.tsx` (7), `web/test/session.integrated.test.tsx` (8) | one scenario with quantities, a method choice, steps with knowledge points, a final answer with its interpretation released after grading, and a per-field hint ladder; `integrated_served` and `integrated_attempt` are idempotent events | server-authoritative hint rungs, receipt replay on retry, and durable task completion across reload are pending integration; the projector credits nothing from `integrated_attempt` | `pending integration` |
 | P4.2 | Foundations applications: rates and units, percentages and ratios, algebraic constraints, graph interpretation, geometry | `0cedaee` (f18) | `crates/core/tests/integrated_content.rs::the_set_covers_every_area_the_plan_names`, `::the_authored_answers_grade_as_correct`, `::no_authored_answer_reaches_the_served_view` | `curriculum/foundations/integrated/01-rates-units.yaml` … `05-geometry.yaml`, one item per area, every id checked against the arena | one item per area; the set is curriculum YAML outside the `content_store` approval lifecycle; no learner has run one | `done` |
 | P4.3 | A workforce and capacity set: person-minutes, service windows, staffing lower bounds, feasibility assumptions | `0cedaee` (f18) | `crates/core/tests/integrated_content.rs::every_authored_item_is_a_scenario_and_not_a_component_drill` | `curriculum/foundations/integrated/06-workforce-clinic.yaml`, `07-workforce-support-desk.yaml`: person-minutes over a service window, a rounded-up staffing bound, and the assumption that changes feasibility | two items; same lifecycle residual as P4.2 | `done` |
-| P4.4 | Inspect the already-integrated authored questions before replacing them | `ed800ac` (the per-component path is kept, nothing replaced); `63abbf1`, `56437e1`, `316bdfb` (314 exemplars reviewed and annotated with independent recomputation) | `crates/core/tests/answer_contract_cohorts.rs::reviewed_manifest_matches_curriculum_and_rejects_other_choices` | `docs/reports/foundations-reviewed-choice-units.jsonl`, `scripts/review/foundations_choice_units.py`; `docs/reports/foundations-answer-inventory.md` §3 | the review classified answers and verified 314 of them; no statement-level inspection of the 78 `multi-step` topics as integration candidates exists, and no existing question was replaced | `open` |
+| P4.4 | Inspect the already-integrated authored questions before replacing them | `legacy_multistep.py` statement review | `crates/core/tests/legacy_statement_audit.rs::all_78_topics_and_542_statements_match_the_reviewed_classification` | `docs/reports/legacy-multistep-audit-2026-09-06.md`; pinned manifest covers all 78 topics, 464 practice and 78 diagnostic statements: 342 component, 161 coherent models, 35 linked outputs, 4 context fragments | inspection preserves existing questions; adaptation into structured IntegratedItem content is separate | `done` |
 
 ## 6. Phase 5 — validation, calibration, and operational robustness
 
@@ -133,7 +133,7 @@ Revision 2026-09-06 (completion pass): every row re-read against the 43 commits
 | A3.5 | Placement inference and direct confirmation | `3de9b18` (f14); `9b6c66f` | `crates/core/tests/selector_confirm.rs::a_passed_confirmation_moves_the_topic_to_learning`, `::a_failed_confirmation_keeps_placed_and_schedules_the_lesson`, `crates/web/tests/diag_route_outcome.rs` | `/api/report/retention` `placement` block: failed and awaiting confirmations | the scheduled lesson is blocked while no knowledge point is ready | `done` |
 | A3.6 | Learner-state persistence and replay | `38fa607`, `5dc4653` (`PROJECTOR_VERSION` 5); `6c6515e` | `crates/core/tests/retention_probe.rs::a_resume_over_a_probe_equals_the_full_replay`, `crates/core/tests/parity_events.rs::the_live_oracle_reproduces_every_committed_digest`, `crates/core/tests/projector.rs`, `crates/web/tests/grade_route_advance.rs::a_regraded_in_the_log_makes_the_grade_path_replay_the_whole_fold`, `crates/web/tests/integrated_routes.rs` (plan replay after the new rows) | — | no production replay under v5 | `done` |
 | A3.7 | Displayed mastery claims match their supporting evidence | `3de9b18` (f14); `a904a00` (retention card) | `crates/core/tests/selector_confirm.rs::the_counts_report_practice_and_inference_apart`, `web/test/dashboard.retention.test.tsx::prints "no answer yet" for a delay with no probe, and never a zero`, `web/test/dashboard.card.test.tsx`, `web/test/session.panels.test.tsx` | the dashboard shows practiced, inferred and ungraded apart; every retention rate prints its provenance | no browser check | `done` |
-| A3.8 | Historical ambiguous answers keep their uncertainty after migration | `205c5d9` (f4) | `crates/core/tests/events_outcome.rs::a_v2_ungraded_row_keeps_its_reason_and_claims_no_correctness`, `::a_v1_miss_reads_as_the_incorrect_outcome` | a v2 ungraded row keeps its reason across replay | a v1 row recorded before the third outcome holds no uncertainty to keep: a 1.0 undecidable answer was stored as a miss and reads back as `incorrect`; no scan re-checks v1 misses into the admin recovery list | `open` |
+| A3.8 | Historical ambiguous answers keep their uncertainty after migration | schema-v2 shim plus bounded historical replay audit | `crates/core/tests/legacy_uncertainty_replay.rs` | explicit v1/v2 uncertainty survives normalization and every replay split; an appended review correction restores uncertainty while original v1 bytes remain intact | genuinely historical v1 misses recorded no uncertainty; no production miss scan or recovery-list population was performed, and missing provenance remains unrecoverable | `open` |
 
 ### 7.4 Phase 4
 
@@ -151,10 +151,10 @@ Revision 2026-09-06 (completion pass): every row re-read against the 43 commits
 | Phase 1 required items | 5 | 5 | 0 | 0 |
 | Phase 2 required items | 6 | 2 | 4 | 0 |
 | Phase 3 required items | 6 | 2 | 3 | 1 |
-| Phase 4 required items | 4 | 2 | 1 | 1 |
+| Phase 4 required items | 4 | 3 | 0 | 1 |
 | Phase 5 required items | 5 | 2 | 3 | 0 |
 | acceptance checks | 24 | 19 | 3 | 2 |
-| **total** | **66** | **45** | **15** | **6** |
+| **total** | **66** | **46** | **14** | **6** |
 
 No row claims the full gate: `scripts/gate.sh`, `scripts/quality.sh`, the
 database-backed web and worker suites, and the SPA suite were run per lane (handover
@@ -162,6 +162,6 @@ database-backed web and worker suites, and the SPA suite were run per lane (hand
 
 Open rows and why: (h), P2.3, A2.2 need content approval and deployment; P2.4,
 P2.5, P2.6 need practicable content, an authored visual, or a `visual` content kind;
-P3.1, P3.3, P3.6 need the timing module wired into the grade path; P4.4 and A3.8
-need work no unit has claimed; P5.3, P5.4, P5.5 are f21, f22 and f23; A4.1 needs a
+P3.1, P3.3, P3.6 need the timing module wired into the grade path; A3.8
+retains the missing v1 uncertainty and unperformed historical-miss scan limitation; P5.3, P5.4, P5.5 are f21, f22 and f23; A4.1 needs a
 browser walk after the pending patches.
