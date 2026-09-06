@@ -51,6 +51,11 @@ AUTHOR OPTIONS:
                             teach, hint_ladder, diagnosis. The default is all
                             four.
     --dry-run               print the plan, and make no model call and no write.
+    --budget-usd <amount>   required for paid runs; hard shared reservation cap.
+    --request-reserve-usd <amount>
+                            required upper price bound for each HTTP request,
+                            including the largest truncation output and fees.
+    --concurrency <1..16>    active knowledge points; default 1. Kinds stay ordered.
     --stale                 list the approved documents an older prompt wrote,
                             and make no model call and no write.
 
@@ -105,6 +110,12 @@ pub struct AuthorArgs {
     /// for re-authoring and never unapproves one, so an operator needs a way to
     /// read the mark (M6 review finding F4).
     pub stale: bool,
+    /// Total reservation cap in millionths of a dollar.
+    pub budget_micros: Option<u64>,
+    /// Provider upper cost bound per HTTP request in millionths of a dollar.
+    pub request_reserve_micros: Option<u64>,
+    /// Active knowledge points; zero selects the default of one.
+    pub concurrency: usize,
 }
 
 impl AuthorArgs {
@@ -161,6 +172,23 @@ pub fn parse<S: AsRef<str>>(args: &[S]) -> Result<Command, CliError> {
         match argument {
             "--dry-run" => parsed.dry_run = true,
             "--stale" => parsed.stale = true,
+            "--budget-usd" | "--request-reserve-usd" => {
+                let value = value_of(argument, args.next())?;
+                let money = crate::authoring::budget::usd_micros(&value).map_err(CliError)?;
+                if argument == "--budget-usd" {
+                    parsed.budget_micros = Some(money);
+                } else {
+                    parsed.request_reserve_micros = Some(money);
+                }
+            }
+            "--concurrency" => {
+                let value = value_of(argument, args.next())?;
+                parsed.concurrency = value
+                    .parse()
+                    .ok()
+                    .filter(|n| (1..=16).contains(n))
+                    .ok_or_else(|| CliError("author concurrency must be in 1..=16".to_owned()))?;
+            }
             "--help" | "-h" => return Ok(Command::Help),
             "--kp" => parsed.kps.push(value_of("--kp", args.next())?),
             "--kind" => {
@@ -352,14 +380,17 @@ pub fn documents(rows: &[PlanRow]) -> i64 {
 ///
 /// One document takes one call when the gate accepts the first reply, and
 /// [`AUTHORING_ATTEMPTS`](crate::authoring::job::AUTHORING_ATTEMPTS) calls when
-/// every attempt is refused. The pair is the operator's bill before the pass
+/// every attempt is refused. Each author attempt also includes the transport
+/// retry bound. The pair is the operator's bill before the pass
 /// runs.
 #[must_use]
 pub fn call_bounds(rows: &[PlanRow]) -> (i64, i64) {
     let documents = documents(rows);
     (
         documents,
-        documents.saturating_mul(i64::from(AUTHORING_ATTEMPTS)),
+        documents
+            .saturating_mul(i64::from(AUTHORING_ATTEMPTS))
+            .saturating_mul(i64::from(cadus_model_client::MAX_ATTEMPTS)),
     )
 }
 

@@ -181,7 +181,13 @@ async fn an_author_pass_stops_at_a_store_read_the_role_cannot_run() {
                 "GRANT SELECT (kp_id, kind, status) ON content_store TO {role}",
             ],
             move |_db, role, _pool| async move {
-                let run = author_fails(&role_dsn(&name, &role), NO_MODEL, &[], &[]).await;
+                let run = author_fails(
+                    &role_dsn(&name, &role),
+                    NO_MODEL,
+                    &["--budget-usd", "5", "--request-reserve-usd", "0.5"],
+                    &[],
+                )
+                .await;
                 assert!(
                     run.stderr
                         .contains("permission denied for table content_store"),

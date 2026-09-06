@@ -49,7 +49,22 @@ async fn call_model(
     kp_id: &str,
 ) -> Call {
     let request = prompt::request(kind, spec, feedback);
-    let call = job.client.call(&request).await;
+    let call = job
+        .client
+        .call_guarded(
+            &request,
+            |body, max_tokens| {
+                job.budget
+                    .as_ref()
+                    .map_or(Ok(()), |budget| budget.prepare(body, max_tokens))
+            },
+            |attempt| {
+                if let Some(budget) = &job.budget {
+                    budget.observe(attempt);
+                }
+            },
+        )
+        .await;
     let record = CallRecord {
         purpose: PURPOSE_AUTHORING,
         user_id: None,
@@ -203,6 +218,14 @@ pub async fn author_one(
 
     for attempt in 1..=job.attempts {
         let call = call_model(db, job, kind, spec, feedback.as_deref(), &kp_id).await;
+        if call.attempts.is_empty() {
+            reasons.push(
+                call.result
+                    .err()
+                    .map_or_else(|| "no HTTP request".to_owned(), |e| e.to_string()),
+            );
+            break;
+        }
         spent = attempt;
         http_attempts.extend(call.attempts);
 
@@ -258,7 +281,7 @@ pub async fn author_one(
 /// # Errors
 ///
 /// Returns [`WorkerError::Store`] when a count fails or the bound expires.
-async fn stale_first<'a>(
+pub(super) async fn stale_first<'a>(
     db: &Db,
     kind: Kind,
     specs: &'a [AuthoringSpec],
@@ -278,7 +301,7 @@ async fn stale_first<'a>(
 }
 
 /// Count one report of [`author_one`] in the batch.
-fn count(batch: &mut BatchReport, report: Report) {
+pub(super) fn count(batch: &mut BatchReport, report: Report) {
     batch.calls = batch.calls.saturating_add(report.attempts);
     if report.alert {
         batch.alerts = batch.alerts.saturating_add(1);

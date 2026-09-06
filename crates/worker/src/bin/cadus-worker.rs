@@ -39,7 +39,7 @@ use cadus_model_client::{API_KEY_VAR, Client, ModelConfig};
 use cadus_store::shutdown::{Shutdown, close_within};
 use cadus_store::{Db, DbConfig, bounded};
 use cadus_worker::authoring::cli::{self, AuthorArgs, Command, ReadinessArgs};
-use cadus_worker::authoring::job::{self, AuthoringJob, run_batch};
+use cadus_worker::authoring::job::{self, AuthoringJob, run_parallel};
 use cadus_worker::{DiagnosisJob, RefillJob, WorkerConfig, WorkerError};
 
 use curriculum::load_arena;
@@ -134,6 +134,23 @@ async fn author(args: &AuthorArgs) -> Result<(), WorkerError> {
     }
 
     let job = authoring_job()?;
+    let max_tokens = cadus_model_client::ModelConfig::authoring_from_env()
+        .map_err(config_error)?
+        .output_tokens
+        .saturating_mul(cadus_model_client::TRUNCATION_FACTOR);
+    let budget = cadus_worker::authoring::budget::Budget::new(
+        args.budget_micros
+            .ok_or_else(|| config_error("a paid author pass requires --budget-usd"))?,
+        args.request_reserve_micros
+            .ok_or_else(|| config_error("a paid author pass requires --request-reserve-usd"))?,
+        max_tokens,
+    )?;
+    println!(
+        "reservation cap: {} micro-USD; request reserve: {} micro-USD; largest output: {max_tokens}",
+        args.budget_micros.unwrap_or(0),
+        args.request_reserve_micros.unwrap_or(0)
+    );
+    let job = job.with_budget(budget.clone());
     // The order of `kinds` is the order of `prompt::KINDS`, whatever order the
     // operator named on the command line (`cli::AuthorArgs::kinds`), and
     // `template` leads it. That order is a contract of the gate and not a
@@ -142,8 +159,19 @@ async fn author(args: &AuthorArgs) -> Result<(), WorkerError> {
     // stored minutes earlier gates the page and the ladder authored after it
     // (`job::served_instances`; M6 review 2, finding V1).
     for kind in kinds {
-        let report = run_batch(&db, &job, kind, &specs).await?;
+        let report = run_parallel(&db, &job, kind, &specs, args.concurrency.max(1)).await?;
         print!("{}", cli::render_batch(kind, &report));
+    }
+    println!(
+        "reserved: {} micro-USD; reported: {} micro-USD; price-bound breach: {}",
+        budget.reserved_micros(),
+        budget.reported_micros(),
+        budget.breached()
+    );
+    if budget.breached() {
+        return Err(config_error(
+            "provider price-bound breach; all later requests refused",
+        ));
     }
     close_within(POOL_CLOSE_DEADLINE, db.pool().close()).await;
     Ok(())

@@ -246,6 +246,17 @@ impl Client {
     /// order, whether the call ended in a diagnosis or in an error: T6 bills a
     /// failed attempt too.
     pub async fn call(&self, request: &ChatRequest) -> Call {
+        self.call_guarded(request, |_, _| Ok(()), |_| {}).await
+    }
+
+    /// Reserve each HTTP attempt before its socket opens, including retries.
+    /// A refusal returns with the ledger of attempts already sent.
+    pub async fn call_guarded(
+        &self,
+        request: &ChatRequest,
+        reserve: impl Fn(&mut Value, u32) -> Result<(), ModelError>,
+        observe: impl Fn(&Attempt),
+    ) -> Call {
         let mut attempts: Vec<Attempt> = Vec::new();
         let mut max_tokens = self.config.output_tokens;
         let mut last = ModelError::Transport("no attempt ran".to_owned());
@@ -254,10 +265,20 @@ impl Client {
             if let Some(wait) = backoff(index) {
                 tokio::time::sleep(wait).await;
             }
-            match self
-                .attempt(index, max_tokens, request, &mut attempts)
-                .await
-            {
+            let mut body = request_body(&self.config, request, max_tokens);
+            if let Err(error) = reserve(&mut body, max_tokens) {
+                return Call {
+                    attempts,
+                    result: Err(error),
+                };
+            }
+            let verdict = self
+                .attempt(index, max_tokens, request, &body, &mut attempts)
+                .await;
+            if let Some(attempt) = attempts.last() {
+                observe(attempt);
+            }
+            match verdict {
                 Verdict::Done(arguments) => {
                     return Call {
                         attempts,
@@ -292,11 +313,11 @@ impl Client {
         index: u32,
         max_tokens: u32,
         request: &ChatRequest,
+        body: &Value,
         attempts: &mut Vec<Attempt>,
     ) -> Verdict {
-        let body = request_body(&self.config, request, max_tokens);
         let started = Instant::now();
-        let sent = self.http.post_json(&self.config, &body).await;
+        let sent = self.http.post_json(&self.config, body).await;
         let latency_ms = u32::try_from(started.elapsed().as_millis()).unwrap_or(u32::MAX);
 
         let (status, reply) = match sent {

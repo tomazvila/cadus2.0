@@ -70,6 +70,7 @@ fn the_author_options_read() {
             kinds: vec![Kind::Teach],
             dry_run: true,
             stale: false,
+            ..AuthorArgs::default()
         })
     );
 }
@@ -86,6 +87,7 @@ fn the_stale_option_reads() {
             kinds: vec![Kind::Teach],
             dry_run: false,
             stale: true,
+            ..AuthorArgs::default()
         })
     );
     assert!(
@@ -217,7 +219,7 @@ fn the_plan_renders_one_line_per_pair() {
     let rows = vec![row(Kind::Template, 1, 3), row(Kind::Teach, 1, 1)];
 
     assert_eq!(documents(&rows), 1);
-    assert_eq!(call_bounds(&rows), (1, 5));
+    assert_eq!(call_bounds(&rows), (1, 10));
     assert_eq!(
         render_plan(&rows, false),
         "\
@@ -225,7 +227,7 @@ authoring plan
 kp_id kind taken target author
 perfect-squares/kp1 template 1 3 1
 perfect-squares/kp1 teach 1 1 0
-plan: pairs 2, documents 1, model calls 1 to 5
+plan: pairs 2, documents 1, model calls 1 to 10
 "
     );
 }

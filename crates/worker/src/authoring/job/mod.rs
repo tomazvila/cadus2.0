@@ -105,6 +105,7 @@
 //! and never unapproves it ([`stale_slots`], [`stale_rows`]; spec section 2.2,
 //! "Prompt digest"; M6 review finding F4).
 
+mod parallel;
 mod pass;
 mod store;
 mod verify;
@@ -114,6 +115,7 @@ use sha2::{Digest, Sha256};
 
 use crate::authoring::prompt::{DIGEST_CHARS, Kind};
 
+pub use parallel::run_parallel;
 pub use pass::{author_one, run_batch};
 pub use store::{
     StaleRow, Stored, render_stale, served_instances, slots_taken, stale_rows, stale_slots,
@@ -309,15 +311,24 @@ pub struct BatchReport {
 pub struct AuthoringJob {
     client: Client,
     attempts: u32,
+    budget: Option<crate::authoring::budget::Budget>,
 }
 
 impl AuthoringJob {
+    /// Share one reservation cap across every kind and concurrent request.
+    #[must_use]
+    pub fn with_budget(mut self, budget: crate::authoring::budget::Budget) -> Self {
+        self.budget = Some(budget);
+        self
+    }
+
     /// Build the job around a client, with the [`AUTHORING_ATTEMPTS`] bound.
     #[must_use]
     pub const fn new(client: Client) -> Self {
         Self {
             client,
             attempts: AUTHORING_ATTEMPTS,
+            budget: None,
         }
     }
 
@@ -327,7 +338,11 @@ impl AuthoringJob {
     /// run of unit R8 wants.
     #[must_use]
     pub const fn with_attempts(client: Client, attempts: u32) -> Self {
-        Self { client, attempts }
+        Self {
+            client,
+            attempts,
+            budget: None,
+        }
     }
 }
 

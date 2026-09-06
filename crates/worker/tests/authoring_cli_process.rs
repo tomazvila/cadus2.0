@@ -35,14 +35,22 @@ const EMPTY_TEMPLATE_PLAN: &str = "\
 authoring plan
 kp_id kind taken target author
 perfect-squares/kp1 template 0 3 1
-plan: pairs 1, documents 1, model calls 1 to 5
+plan: pairs 1, documents 1, model calls 1 to 10
 dry run: no model call and no write
 ";
 
 /// Run `author --kp perfect-squares/kp1` with these further arguments against
 /// this database and endpoint, and demand exit code 0.
 async fn author_ok(db: &TestDb, fake: &FakeModel, rest: &[&str]) -> common::Run {
-    let mut args = vec!["author", "--kp", KP_KEY];
+    let mut args = vec![
+        "author",
+        "--kp",
+        KP_KEY,
+        "--budget-usd",
+        "5",
+        "--request-reserve-usd",
+        "0.1",
+    ];
     args.extend_from_slice(rest);
     let run = run_binary(&superuser_dsn(&db.name), &fake.base_url, &args).await;
     assert_eq!(run.code, Some(0), "stderr:\n{}", run.stderr);
@@ -180,7 +188,17 @@ async fn an_authoring_call_takes_the_authoring_output_budget() {
             let run = run_binary_with(
                 &dsn,
                 &fake.base_url,
-                &["author", "--kp", KP_KEY, "--kind", "template"],
+                &[
+                    "author",
+                    "--kp",
+                    KP_KEY,
+                    "--kind",
+                    "template",
+                    "--budget-usd",
+                    "5",
+                    "--request-reserve-usd",
+                    "0.1",
+                ],
                 knobs,
             )
             .await;
