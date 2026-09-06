@@ -38,6 +38,7 @@ use common::inventory::{
     COURSE, Row, distinct_decidable_counts, knowledge_points, rows, shape_counts, verdict_counts,
 };
 use common::paths::tree;
+use common::shape::SHAPES;
 
 /// The Foundations knowledge-point count of audit finding (i).
 const KNOWLEDGE_POINTS: usize = 809;
@@ -114,6 +115,15 @@ fn every_answer_carries_one_shape_and_one_verdict() {
             "{shape} is a shape the count table does not list"
         );
     }
+    for shape in SHAPES {
+        assert!(
+            SHAPE_COUNTS
+                .iter()
+                .any(|(known, _)| *known == shape.as_str()),
+            "{} is a shape the count table forgets",
+            shape.as_str()
+        );
+    }
     let total: usize = counts.values().sum();
     assert_eq!(total, EXEMPLARS, "every exemplar carries one shape");
     print_report(&inventory);
@@ -149,6 +159,8 @@ fn dump_the_foundations_inventory_when_asked() {
 
 /// Print the shape table and the verdict table.
 fn print_report(inventory: &[Row]) {
+    let decided = inventory.iter().filter(|row| row.decided()).count();
+    println!("decided {decided} of {}", inventory.len());
     for (shape, count) in shape_counts(inventory) {
         println!("shape {shape}: {count}");
     }
