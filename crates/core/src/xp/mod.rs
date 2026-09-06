@@ -14,12 +14,19 @@
 //! - [`daily_totals`] accumulates with `+=`, so it keeps a NAIVE loop. Unifying
 //!   the two changes the fold.
 //!
-//! Rounding is Python rounding: [`round_dp`] is correctly-rounded decimal, never
-//! scale-round-divide (trap T4). The ETA takes `ceil` of a float quotient, and the
-//! quotient is computed first (trap T14).
+//! Rounding is Python rounding: [`crate::numeric::round_dp`] is correctly-rounded
+//! decimal, never scale-round-divide (trap T4). The ETA takes `ceil` of a float
+//! quotient, and the quotient is computed first (trap T14).
 //!
 //! Time zones enter only through the local DATE of an instant (trap T9), and the
 //! reference instant is always a parameter (trap T10).
+//!
+//! ## Where the course counts live
+//!
+//! The submodule `progress` holds [`CourseCounts`], [`course_counts`],
+//! [`course_progress`], [`estimate_eta`] and [`compute_velocity_state`]. D-F6
+//! gave those a second rule — a placement gives credit, and progress counts
+//! practice — so they keep their own file.
 
 use std::collections::BTreeSet;
 use std::hint::black_box;

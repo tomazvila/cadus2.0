@@ -16,8 +16,9 @@ use super::interleave::SlotKind;
 use super::multistep::remediation_tasks;
 use super::quiz::quiz_is_due;
 use super::review::in_retry_delay;
-use super::task::{SessionPlan, Task, schedule_drills};
+use super::task::{SessionPlan, Task};
 use super::topic_set::TopicSet;
+use super::trigger::schedule_drills;
 
 /// The inputs [`task_still_valid`] tests a queued task against.
 #[derive(Debug, Clone, Copy)]

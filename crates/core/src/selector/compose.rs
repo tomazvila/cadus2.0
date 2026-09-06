@@ -21,9 +21,9 @@ use super::reserve::reserve_open_plan;
 use super::review::{due_reviews, nearly_due, order_lessons_with};
 use super::task::{
     SessionPlan, Task, drill_task, knockout_count, lesson_task, quiz_task, review_task,
-    schedule_drills,
 };
 use super::topic_set::ReachCache;
+use super::trigger::schedule_drills;
 use super::{MULTISTEP_ENABLED, MULTISTEP_MIN_COMPONENTS};
 
 /// The review side of one composition: the due list, the compression, and the

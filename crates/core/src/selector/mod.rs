@@ -39,6 +39,7 @@ mod reserve;
 mod review;
 mod task;
 mod topic_set;
+mod trigger;
 
 pub use crate::xp::{is_inferred, is_known, is_practiced};
 
@@ -61,11 +62,9 @@ pub use review::{
     due_reviews, importance, in_retry_delay, nearly_due, order_lessons, retry_available_at,
     review_mix,
 };
-pub use task::{
-    Constraints, SessionPlan, Task, remediation_for_quiz_miss, remediation_for_repeat_fail,
-    schedule_drills, start_kp,
-};
+pub use task::{Constraints, SessionPlan, Task, start_kp};
 pub use topic_set::{TopicSet, course_scope, frontier, known_set, practiced_set};
+pub use trigger::{remediation_for_quiz_miss, remediation_for_repeat_fail, schedule_drills};
 
 /// One day, in microseconds.
 const DAY_US: i64 = 86_400_000_000;
