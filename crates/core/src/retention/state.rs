@@ -3,7 +3,7 @@
 //! The fold builds this state from `retention_probe` events and from NOTHING else.
 //! No log written before 2.0 carries that event type, so the state of every 1.0 log
 //! is empty and a cached model still equals a full replay. That is the whole reason
-//! [`crate::projector::PROJECTOR_VERSION`] stands at 5 after integration; the argument
+//! [`crate::projector::PROJECTOR_VERSION`] first moved to 5 for retention; the argument
 //! is the same one D-F6 makes for the `task_served` confirmation marker.
 //!
 //! Every tally keeps its PROVENANCE apart. A correct answer that used help, or that

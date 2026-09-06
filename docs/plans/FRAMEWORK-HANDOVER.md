@@ -6,10 +6,10 @@ on the box; the plan is `docs/plans/FRAMEWORK.md`, the audit is
 `docs/plans/FRAMEWORK-CHECKLIST.md`). The owner stopped the work after the first swarm
 of six units, with the instruction "do not pick up the next task, provide a handover".
 
-**Read section 7 first.** Sections 1 to 6 describe the state after the first swarm
-(`4f6ddb1`). A second pass landed 43 commits on top of it the same day; section 7
-records what they established, what remains, and supersedes the "next units" list of
-section 5 and the pending decisions of section 6.
+**Read section 8 first.** Sections 1 to 6 describe the first swarm (`4f6ddb1`), and
+section 7 records the historical `3f68d53` completion snapshot. Section 8 is the
+current integrated closure audit and supersedes the status and next-step claims in
+sections 5 to 7.
 
 ## 1. Where the code is
 
@@ -137,7 +137,7 @@ for scope and verification. It is isolated from `framework/main` and production;
 f3 and the full assignment remain open pending the remaining contracts and
 acceptance evidence.
 
-## 7. Completion pass (2026-09-06, supersedes §5 step 2 and §6)
+## 7. Historical completion snapshot (`3f68d53`, 2026-09-06)
 
 Branch `framework/completion-docs` at `3f68d53`, 43 commits after `699fa89`. The
 checklist reflects this snapshot: 45 rows `done`, 15 `open`, 6 `pending integration`.
@@ -236,3 +236,69 @@ with the hash.
    `docs/plans/CALIBRATION.md` needs real delayed outcomes.
 9. Owner decision still open from §6: whether the parity fixtures keep the 1.0 rules
    behind `readiness.enforce` and `mastery.confirm_inferred` or move to 2.0 digests.
+
+## 8. Integrated closure audit (snapshot `8d3a671`, 2026-09-06)
+This snapshot is 79 commits after `699fa89`. The reconciled checklist has 57 `done`,
+9 `open`, and zero `pending integration` rows. Counts that can change under the final
+content and visual merges are explicit placeholders in the checklist; root replaces
+them only with a post-merge audit result.
+
+### 8.1 Definitively closed since section 7
+- Integrated evidence: `d750e83` persists server-owned hint progression, immutable
+  retry receipts and durable completion; `dd5ca39` projects only explicitly credited,
+  decided-correct fields; `ee6dcac` excludes component fallback from integrated
+  performance. This closes (g), (o), P4.1, A4.2 and A4.3.
+- Progression and timing: `fe02eac` preserves a terminal lesson failure through fresh
+  practice; `8c02109` makes drill completion a distinct replayable task close;
+  `7d99be4` persists reliable ordinary and integrated timing evidence. This closes
+  P3.1, P3.2, P3.3 and P3.6. The thresholds remain uncalibrated.
+- Integrated journey: `4523fc5` adds a database-backed instruction → independent
+  integrated application → delayed, distinct unseen integrated assessment journey.
+  Restart, replay and conflicting retry retain the selected assessment and receipt.
+  This closes A4.1 at the automated acceptance level.
+- Local recovery: `da304cf` rehearses backup/restore, SIGKILL before commit,
+  transaction rollback, v6-to-v7 replay, idempotent resume and rollback-archive
+  restore over five disposable histories. This closes P5.3 locally; P5.4 owns browser
+  agreement and P5.5 owns production recovery evidence.
+- Diagnostics: `8d3a671` makes all 285 Foundations diagnostic answers decidable;
+  zero are missing or grammar-refused. P2.6 remains open because its remediation
+  requirement depends on whole-course practicable content.
+
+### 8.2 Content and visual state at this snapshot
+- `3a3ecd3` gives 35 KPs a fourth decidable, held-out exemplar and regenerates their
+  deterministic teach/hint drafts. `46a7c31` raises deterministic pending-template
+  coverage to 110 of 809 KPs; 699 remain without a pending or approved template.
+- `819f7c3` gives reviewed, deterministic, accessible curriculum visuals to 149 of
+  the 154 visual-required KPs. Five remain: one readiness-heuristic false-positive and
+  four exact `e`/`ln` curve cases.
+- Generated/imported documents remain `pending` in isolated databases. No code or
+  agent action may convert them to approved content; a human must review each digest.
+  Production content state was not inspected in this snapshot.
+- The checked-in readiness report predates the final integrated curriculum/content
+  state. Authoritative counts are established only by the final database-backed
+  readiness rerun after all content and visual merges.
+
+### 8.3 Open checklist rows and boundaries
+The open IDs are `(h)`, P2.3, P2.4, P2.5, P2.6, P5.4, P5.5, A2.2 and A3.8.
+- `(h)`, P2.3 and A2.2 require complete usable content and human approval. Pending
+  drafts prove authoring/import behavior, not serving readiness.
+- P2.4 needs wider template and held-out coverage. P2.5 has the five exact visual
+  residuals above. P2.6 needs practicable remediation coverage after P2.4.
+- A3.8 is an evidence boundary: explicit v1/v2 uncertainty survives replay, and the
+  read-only scanner builds a conservative review queue, but uncertainty absent from
+  historical v1 events cannot be reconstructed. No production miss scan ran.
+- P5.4 needs the browser/rendered-math walk. P5.5 has a runbook and local rehearsal,
+  but still needs the final integrated gate, encrypted production-backup restore,
+  restored-production replay, deploy smoke and rollback evidence.
+
+### 8.4 Verification record
+- Focused lane evidence is recorded in the reports named by the checklist. The local
+  recovery rehearsal ended `RECOVERY OK`; the integrated journey, timing, projection,
+  held-out, template and diagnostic suites passed on their owning commits.
+- A prior integrated run completed the full benchmark suite (`BENCHMARKS OK`), SQLx
+  prepare check, migration check and operations check. Curriculum changes after those
+  runs moved canonical and benchmark pins, so they are historical checkpoints.
+- Final integrated command, result and log digest: `[ROOT: attach after the final
+  content/visual merge]`.
+- Browser, human approval, production snapshot/replay, deployment, rollback execution
+  and real-data calibration remain unverified.

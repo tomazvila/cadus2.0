@@ -1006,4 +1006,3 @@ None.
 A course seeds 0 topics of this course as mastered, through `mastery_floor` or `mastery_floor_course`. A seeded topic needs two pieces of evidence: a decidable diagnostic item to CONFIRM the assumption, and a practicable knowledge point to REMEDIATE a failed confirmation.
 
 No course seeds a topic of this course as mastered.
-
