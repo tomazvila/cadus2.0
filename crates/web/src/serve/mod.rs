@@ -245,7 +245,7 @@ pub(crate) async fn open(
     // routes look a task up in is the plan `GET /api/session/plan` listed.
     let readiness = readiness_of(state, content, &mut tx).await?;
     let mut plan = compose_plan(content, &view, &projection.model, &session, now, &readiness);
-    restore_quiz_practice(&mut plan, &scratch);
+    restore_feedback_tasks(&mut plan, &scratch);
     Ok(Open {
         tx,
         events,
@@ -312,19 +312,27 @@ fn no_problem(topic_id: &str) -> ApiError {
     )
 }
 
-/// A completed quiz remains addressable while its post-reveal practice is pending.
-fn restore_quiz_practice(plan: &mut SessionPlan, scratch: &WebState) {
+/// Keep recorded quiz reveals and pending feedback addressable after replanning.
+pub(crate) fn restore_feedback_tasks(plan: &mut SessionPlan, scratch: &WebState) {
     for (id, progress) in &scratch.tasks {
-        if progress.task_type == "quiz"
-            && scratch.quizzes.contains_key(id)
-            && !plan.tasks.iter().any(|task| task.task_id == *id)
-        {
-            plan.tasks.push(Task {
-                task_id: id.clone(),
-                task_type: TaskType::Quiz,
-                n_problems: Some(progress.total),
-                ..Task::default()
-            });
+        if plan.tasks.iter().any(|task| task.task_id == *id) {
+            continue;
         }
+        let pending = scratch.feedback_practice.get(id);
+        let kind = match progress.task_type.as_str() {
+            "quiz" if scratch.quizzes.contains_key(id) => TaskType::Quiz,
+            "lesson" if pending.is_some() => TaskType::Lesson,
+            _ => continue,
+        };
+        plan.tasks.push(Task {
+            task_id: id.clone(),
+            task_type: kind,
+            n_problems: Some(progress.total),
+            topic: pending
+                .and_then(|p| p["record_topic"].as_str())
+                .map(str::to_owned),
+            start_at_kp: pending.and_then(|p| p["kp"].as_str()).map(str::to_owned),
+            ..Task::default()
+        });
     }
 }

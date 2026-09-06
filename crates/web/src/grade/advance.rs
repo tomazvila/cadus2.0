@@ -72,8 +72,14 @@ pub(super) fn advance(
     prior: &[EventRow],
     history: &SessionView,
 ) -> Advance {
-    if attempt.task_type != TaskType::Lesson || attempt.outcome.is_ungraded() || attempt.assisted {
+    if !decided_lesson_attempt(attempt) {
         return Advance::carry_on();
+    }
+    if failed_lesson_practice(attempt, prior) {
+        return Advance {
+            status: STATUS_TASK_FAILED,
+            ..Advance::carry_on()
+        };
     }
     let Some(idx) = graph.idx_of(attempt.topic.as_str()) else {
         return Advance::carry_on();
@@ -128,6 +134,17 @@ pub(super) fn advance(
         };
     }
     lesson_passed(cfg, now, attempt, prior, kp_ids.len())
+}
+
+/// A lesson advances on independent checker decisions.
+fn decided_lesson_attempt(attempt: &Attempt) -> bool {
+    attempt.task_type == TaskType::Lesson && !attempt.outcome.is_ungraded() && !attempt.assisted
+}
+
+/// A supplemental item preserves its already-recorded failed lesson result.
+fn failed_lesson_practice(attempt: &Attempt, prior: &[EventRow]) -> bool {
+    attempt.feedback_practice && prior.iter().any(|row| matches!(&row.event,
+        Event::LessonResult(result) if !result.passed && result.topic == attempt.topic && result.session == attempt.session))
 }
 
 /// The passing lesson close and its XP (`advance_task`, the pass arm).
@@ -278,7 +295,9 @@ pub(super) fn practice_progress(
     pending: bool,
 ) -> bool {
     if kind == TaskType::Lesson {
-        return task_moved_on(progress, kind, moved);
+        let closed = task_moved_on(progress, kind, moved);
+        progress.done = closed && !pending;
+        return progress.done;
     }
     if !attempt.feedback_practice {
         task_moved_on(progress, kind, moved);

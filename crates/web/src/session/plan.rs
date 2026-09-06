@@ -43,7 +43,8 @@ pub async fn session_plan(req: Ready) -> Reply {
     // The readiness of D-F5, read in the SAME transaction as the projection, so
     // the listed plan and the served plan cannot disagree.
     let readiness = req.readiness(&mut tx).await?;
-    let plan = compose_plan(&req.content, &view, &model, &session, req.now, &readiness);
+    let mut plan = compose_plan(&req.content, &view, &model, &session, req.now, &readiness);
+    crate::serve::restore_feedback_tasks(&mut plan, &scratch);
 
     let tasks: Vec<Value> = plan
         .tasks
