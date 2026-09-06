@@ -41,12 +41,14 @@ fn grade(expected: &Canon, text: &str, learner: &str, contract: &AnswerContract)
         AnswerContract::ReducedRatio => {
             return match super::notation::reduced_ratio(learner) {
                 Ok(value) => decided(&value == expected),
+                Err(_) if super::notation::recognizes_ratio(learner) => decided(false),
                 Err(reason) => Outcome::Undecidable(reason),
             };
         }
         AnswerContract::AscendingChain => {
             return match super::notation::ascending_chain(learner) {
                 Ok(value) => decided(&value == expected),
+                Err(_) if super::notation::recognizes_chain(learner) => decided(false),
                 Err(reason) => Outcome::Undecidable(reason),
             };
         }

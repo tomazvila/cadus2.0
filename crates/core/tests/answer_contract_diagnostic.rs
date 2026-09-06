@@ -20,8 +20,14 @@ fn a_reduced_ratio_keeps_order_and_requires_lowest_terms() {
     let policy = r#"{"kind":"reduced_ratio"}"#;
     assert!(correct("2:3", "2 : 3", policy));
     assert!(!correct("2:3", "3:2", policy));
+    assert!(!correct("2:3", "4:6", policy));
+    assert!(!correct("2:3", "0:3", policy));
     assert!(matches!(
-        check_contract("2:3", "4:6", contract(policy)),
+        check_contract("2:3", "ratio", contract(policy)),
+        Outcome::Undecidable(_)
+    ));
+    assert!(matches!(
+        check_contract("4:6", "2:3", contract(policy)),
         Outcome::Undecidable(_)
     ));
 }
@@ -31,8 +37,14 @@ fn an_ascending_chain_accepts_spacing_but_requires_strict_order() {
     let policy = r#"{"kind":"ascending_chain"}"#;
     assert!(correct("-9 < -2 < 5", "-9<-2<5", policy));
     assert!(!correct("-9 < -2 < 5", "-9 < 2 < 5", policy));
+    assert!(!correct("-9 < -2 < 5", "-9 < -9 < 5", policy));
+    assert!(!correct("-9 < -2 < 5", "5 < -2 < -9", policy));
     assert!(matches!(
-        check_contract("-9 < -2 < 5", "-9 < -9 < 5", contract(policy)),
+        check_contract("-9 < -2 < 5", "ascending", contract(policy)),
+        Outcome::Undecidable(_)
+    ));
+    assert!(matches!(
+        check_contract("-9 < -9 < 5", "-9 < -2 < 5", contract(policy)),
         Outcome::Undecidable(_)
     ));
 }

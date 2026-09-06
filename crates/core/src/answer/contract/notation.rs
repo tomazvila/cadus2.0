@@ -27,6 +27,15 @@ pub(super) fn reduced_ratio(text: &str) -> Result<Canon, Undecidable> {
     ]))
 }
 
+/// Whether the learner supplied exactly two integer fields separated by one colon.
+pub(super) fn recognizes_ratio(text: &str) -> bool {
+    let source = normalize(text).source;
+    let mut fields = source.split(':');
+    let recognized = fields.next().is_some_and(|field| integer(field).is_ok())
+        && fields.next().is_some_and(|field| integer(field).is_ok());
+    recognized && fields.next().is_none()
+}
+
 fn integer(text: &str) -> Result<BigInt, Undecidable> {
     text.trim().parse().map_err(|_| ratio_refusal())
 }
@@ -58,6 +67,16 @@ pub(super) fn ascending_chain(text: &str) -> Result<Canon, Undecidable> {
     Ok(Canon::List(
         values.into_iter().map(Canon::Rational).collect(),
     ))
+}
+
+/// Whether the learner supplied two to 16 exact rational fields joined by `<`.
+pub(super) fn recognizes_chain(text: &str) -> bool {
+    let source = normalize(text).source;
+    let fields: Vec<_> = source.split('<').map(str::trim).collect();
+    (2..=16).contains(&fields.len())
+        && fields
+            .iter()
+            .all(|field| matches!(canonical_form(field), Ok(Canon::Rational(_))))
 }
 
 fn chain_refusal() -> Undecidable {

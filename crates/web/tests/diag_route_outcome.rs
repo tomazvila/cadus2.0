@@ -108,3 +108,40 @@ async fn a_multi_step_diagnostic_uses_its_explicit_exact_policy() {
     })
     .await;
 }
+
+#[tokio::test]
+async fn a_recognizable_required_form_violation_is_recorded_as_incorrect() {
+    TestDb::with(|db| async move {
+        let mut item = topic("ratio", None);
+        let exemplar = item.diagnostic_exemplar.as_mut().unwrap();
+        exemplar.answer = "2:3".to_owned();
+        exemplar.answer_contract = Some(AnswerContract::ReducedRatio);
+        let app = app_with_content(&db, one_unit_curriculum(vec![item]));
+        let user = common::seed_learner(&db, "diag-required-form@example.test").await;
+        let (_, start) = call(
+            &app,
+            Method::POST,
+            "/api/diag/start",
+            Some(user),
+            Some(json!({"course":"c1"})),
+        )
+        .await;
+        let problem_id = parse(&start)["probe"]["problem_id"].clone();
+        let (status, raw) = call(
+            &app,
+            Method::POST,
+            "/api/diag/answer",
+            Some(user),
+            Some(json!({"problem_id":problem_id,"answer":"4:6"})),
+        )
+        .await;
+        assert_eq!(status.as_u16(), 200, "{raw}");
+        assert_eq!(parse(&raw)["correct"], false, "{raw}");
+        let events = events_of_type(&db, user, "diagnostic_answer").await;
+        assert_eq!(events.len(), 1);
+        assert_eq!(events[0]["correct"], false);
+        assert!(events[0].get("outcome").is_none(), "{}", events[0]);
+        assert!(events[0]["weight"].as_f64().unwrap() > 0.0, "{}", events[0]);
+    })
+    .await;
+}
