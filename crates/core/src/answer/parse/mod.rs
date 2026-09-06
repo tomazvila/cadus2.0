@@ -147,9 +147,12 @@ impl Parser<'_> {
     /// The argument counts the named function takes.
     ///
     /// `log` takes a base as its second argument. An extra name takes one or two
-    /// arguments; the caller of [`parse_with_functions`] checks the exact count.
+    /// arguments, except the template-only multipart writer (one to 16 parts).
+    /// The caller of [`parse_with_functions`] checks the exact contract count.
     fn call_arity(&self, name: &str) -> std::ops::RangeInclusive<usize> {
-        if name == "log" || self.extra.contains(&name) {
+        if name == "multipart" && self.extra.contains(&name) {
+            1..=16
+        } else if name == "log" || self.extra.contains(&name) {
             1..=2
         } else {
             1..=1

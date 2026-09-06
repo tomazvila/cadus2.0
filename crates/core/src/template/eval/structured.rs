@@ -1,6 +1,6 @@
 //! Bounded writers for structured closed-label answers.
 
-use num_traits::ToPrimitive;
+use num_traits::{Signed, ToPrimitive, Zero};
 
 use crate::answer::ast::Ast;
 use crate::answer::{AnswerContract, Canon};
@@ -19,6 +19,9 @@ pub(super) fn label_answer(
     let Ast::Func(name, args) = ast else {
         return answer(ast, bindings);
     };
+    if name == "signcase" {
+        return label_sign_case(args, bindings, contract);
+    }
     let text = match (name.as_str(), args.as_slice()) {
         ("equalitylabel", [left, right]) => {
             if answer(left, bindings)?.canon == answer(right, bindings)?.canon {
@@ -60,6 +63,33 @@ pub(super) fn label_answer(
         _ => return answer(ast, bindings),
     };
     contracted(text.to_owned(), contract)
+}
+
+/// Select a closed label using the existing three-branch signcase grammar.
+/// Branches retain their label contract; nonnumeric and malformed selectors refuse.
+fn label_sign_case(
+    args: &[Ast],
+    bindings: &Bindings,
+    contract: &AnswerContract,
+) -> Result<Answer, EvalError> {
+    let [selector, Ast::List(choices)] = args else {
+        return Err(EvalError::SignCaseShape);
+    };
+    if choices.len() != 3 {
+        return Err(EvalError::SignCaseShape);
+    }
+    let Canon::Rational(value) = answer(selector, bindings)?.canon else {
+        return Err(EvalError::NotNumber { func: "signcase" });
+    };
+    let index = if value.is_negative() {
+        0
+    } else if value.is_zero() {
+        1
+    } else {
+        2
+    };
+    let result = label_answer(&choices[index], bindings, contract)?;
+    contracted(result.text, contract)
 }
 
 fn linear_class(

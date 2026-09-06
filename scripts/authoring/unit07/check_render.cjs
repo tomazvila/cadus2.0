@@ -6,9 +6,15 @@ const root = path.resolve(__dirname, '../../..');
 const context = { module: { exports: {} }, exports: {} };
 vm.runInNewContext(fs.readFileSync(path.join(root, 'web/public/vendor/katex/katex.min.js'), 'utf8'), context);
 const katex = context.module.exports;
-const evidence = JSON.parse(fs.readFileSync(path.join(root, 'docs/reports/unit07-template-evidence.json'), 'utf8'));
-const facts = JSON.parse(fs.readFileSync(path.join(root, 'target/unit07/facts.json'), 'utf8'));
-const owned = new Set(JSON.parse(fs.readFileSync(path.join(root, 'target/unit07/candidates.json'), 'utf8')).map(row => row.kp_id));
+const complement = process.argv.includes('--complement');
+const inputs = complement
+  ? ['target/unit07-complement/production-evidence.json', 'target/unit07-complement/facts.json',
+     'docs/content-foundations/unit07-complement/templates.json', 'docs/reports/unit07-complement/render-evidence.json']
+  : ['docs/reports/unit07-template-evidence.json', 'target/unit07/facts.json',
+     'target/unit07/candidates.json', 'docs/reports/unit07-render-evidence.json'];
+const evidence = JSON.parse(fs.readFileSync(path.join(root, inputs[0]), 'utf8'));
+const facts = JSON.parse(fs.readFileSync(path.join(root, inputs[1]), 'utf8'));
+const owned = new Set(JSON.parse(fs.readFileSync(path.join(root, inputs[2]), 'utf8')).map(row => row.kp_id));
 const fields = evidence.flatMap(row => row.instances.flatMap(item => [item.problem, item.solution_sketch, ...item.hints]));
 fields.push(...facts.kps.filter(row => owned.has(row.kp_key)).flatMap(row => row.exemplars.flatMap(item => [item.problem, item.solution_sketch])));
 let formulas = 0;
@@ -23,5 +29,5 @@ for (const text of fields) {
   }
 }
 const result = { katex_version: katex.version, text_fields: fields.length, formulas, errors: 0 };
-fs.writeFileSync(path.join(root, 'docs/reports/unit07-render-evidence.json'), JSON.stringify(result, null, 2) + '\n');
+fs.writeFileSync(path.join(root, inputs[3]), JSON.stringify(result, null, 2) + '\n');
 console.log(JSON.stringify(result));
