@@ -226,8 +226,8 @@ fn the_fifty_one_inventory_topics_have_explicit_usable_exact_items() {
             items += 1;
         }
     }
-    assert_eq!(topics, 51);
-    assert_eq!(items, 455);
+    assert_eq!(topics, 49);
+    assert_eq!(items, 441);
     assert!(lint_curriculum(&curriculum_root()).is_empty());
 }
 

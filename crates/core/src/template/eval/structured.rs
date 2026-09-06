@@ -92,3 +92,93 @@ fn is_prime(number: u32) -> bool {
     }
     true
 }
+
+pub(super) fn list_answer(
+    ast: &Ast,
+    bindings: &Bindings,
+    contract: &AnswerContract,
+) -> Result<Answer, EvalError> {
+    let Ast::Func(name, args) = ast else {
+        return answer(ast, bindings);
+    };
+    let items = match (name.as_str(), args.as_slice()) {
+        ("factorlist", [number]) => factors(bounded_whole(number, bindings, "factorlist")?),
+        ("firstmultiples", [number, count]) => {
+            let number = bounded_whole(number, bindings, "firstmultiples")?;
+            let count = bounded_count(count, bindings, "firstmultiples")?;
+            (1..=count)
+                .map(|item| number.checked_mul(item).ok_or(EvalError::TooWide))
+                .collect::<Result<Vec<_>, _>>()?
+        }
+        ("primefactors", [number]) => {
+            prime_factors(bounded_whole(number, bindings, "primefactors")?)?
+        }
+        ("repeatedfactors", [number, count]) => {
+            let number = bounded_whole(number, bindings, "repeatedfactors")?;
+            let count = bounded_count(count, bindings, "repeatedfactors")?;
+            vec![number; count as usize]
+        }
+        _ => return answer(ast, bindings),
+    };
+    contracted(
+        items
+            .into_iter()
+            .map(|item| item.to_string())
+            .collect::<Vec<_>>()
+            .join(", "),
+        contract,
+    )
+}
+
+fn bounded_count(ast: &Ast, bindings: &Bindings, func: &'static str) -> Result<u32, EvalError> {
+    let count = bounded_whole(ast, bindings, func)?;
+    if (1..=32).contains(&count) {
+        Ok(count)
+    } else {
+        Err(EvalError::Domain {
+            func,
+            value: count.to_string(),
+        })
+    }
+}
+
+fn factors(number: u32) -> Vec<u32> {
+    let mut low = Vec::new();
+    let mut high = Vec::new();
+    let mut divisor = 1;
+    while divisor <= number / divisor {
+        if number % divisor == 0 {
+            low.push(divisor);
+            let partner = number / divisor;
+            if partner != divisor {
+                high.push(partner);
+            }
+        }
+        divisor += 1;
+    }
+    high.reverse();
+    low.extend(high);
+    low
+}
+
+fn prime_factors(mut number: u32) -> Result<Vec<u32>, EvalError> {
+    if number < 2 {
+        return Err(EvalError::Domain {
+            func: "primefactors",
+            value: number.to_string(),
+        });
+    }
+    let mut factors = Vec::new();
+    let mut divisor = 2;
+    while divisor <= number / divisor {
+        while number % divisor == 0 {
+            factors.push(divisor);
+            number /= divisor;
+        }
+        divisor += if divisor == 2 { 1 } else { 2 };
+    }
+    if number > 1 {
+        factors.push(number);
+    }
+    Ok(factors)
+}

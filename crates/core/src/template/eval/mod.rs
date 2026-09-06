@@ -50,7 +50,7 @@ use crate::answer::{
 };
 
 use super::domain::Bindings;
-use structured::label_answer;
+use structured::{label_answer, list_answer};
 
 pub use write::write;
 
@@ -60,7 +60,7 @@ pub use write::write;
 /// [`parse_with_functions`] admits them for this one purpose. Every one of them
 /// is erased before the answer string exists. `signcase(x, [a, b, c])` selects
 /// the negative, zero, or positive branch without admitting general predicates.
-pub const EVAL_FUNCTIONS: [(&str, usize); 18] = [
+pub const EVAL_FUNCTIONS: [(&str, usize); 22] = [
     ("abs", 1),
     ("sqrt", 1),
     ("gcd", 2),
@@ -79,10 +79,14 @@ pub const EVAL_FUNCTIONS: [(&str, usize); 18] = [
     ("divisibilitylabel", 2),
     ("equalitylabel", 2),
     ("primeclass", 1),
+    ("factorlist", 1),
+    ("firstmultiples", 2),
+    ("primefactors", 1),
+    ("repeatedfactors", 2),
 ];
 
 /// The function names [`parse_with_functions`] admits beyond the M2 grammar.
-pub const EXTRA_FUNCTIONS: [&str; 17] = [
+pub const EXTRA_FUNCTIONS: [&str; 21] = [
     "gcd",
     "lcm",
     "floor",
@@ -100,6 +104,10 @@ pub const EXTRA_FUNCTIONS: [&str; 17] = [
     "divisibilitylabel",
     "equalitylabel",
     "primeclass",
+    "factorlist",
+    "firstmultiples",
+    "primefactors",
+    "repeatedfactors",
 ];
 
 /// The largest bit width of a numerator or a denominator of an intermediate.
@@ -356,6 +364,7 @@ pub fn answer_for_contract(
             unit_answer(ast, bindings, contract, unit)
         }
         Some(AnswerContract::Multipart { parts }) => multipart_answer(ast, bindings, parts),
+        Some(contract @ AnswerContract::List { .. }) => list_answer(ast, bindings, contract),
         Some(contract @ AnswerContract::ReducedRatio) => {
             reduced_ratio_answer(ast, bindings, contract)
         }

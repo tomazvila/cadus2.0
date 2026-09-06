@@ -172,7 +172,9 @@ fn template_schema() -> Value {
     computes every instance's answer from it, so it is exact over the whole domain. For a label \
     contract, use one text-valued choice parameter, equalitylabel(left, right), divisibilitylabel(number, divisor), \
     or primeclass(number). For a quotient-and-remainder contract, use \
-    quotientremainder(quotient, remainder). For a multipart contract, use \
+    quotientremainder(quotient, remainder). For an ordered exact-list contract, use \
+    factorlist(number), firstmultiples(number, count), primefactors(number), or \
+    repeatedfactors(number, count). For a multipart contract, use \
     multipart(part1, part2) with arguments in contract part order; each argument is a mathematical \
     expression or, for a label part, one text-valued choice parameter. For a unit contract, keep \
     this expression numeric; the server attaches the declared unit. For an inequality-union \
