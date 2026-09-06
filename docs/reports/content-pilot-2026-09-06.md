@@ -160,3 +160,28 @@ Portable template instructions explicitly require named parameter domains and
 complete sample bindings. They explain the zero-boundary distractor collision
 and permit an empty distractor list. Portable teach instructions include the
 actual served problem identities and require distinct worked-example operands.
+
+## Generic local-draft import
+
+`scripts/authoring/import_local_drafts.py` stores any explicit draft set as
+pending content with zero API spend. It reads one manifest, an object with a
+`files` list or a plain draft list, and refuses a draft with a malformed serving
+key, an unknown kind, a non-object argument set, or a duplicate `(kp_id, kind)`
+key before any process starts. It serves the drafts through the loopback
+endpoint and runs `cadus-worker author` once per kind in the production kind
+order. The worker applies every content check and writes only `pending` rows.
+The helper stops its server after the worker exits, on every path, and exits 1
+when any draft declines or the worker reports a nonzero cost.
+
+```sh
+DATABASE_URL=<isolated database> python3 scripts/authoring/import_local_drafts.py \
+  --manifest docs/content-foundations/arithmetic-core/manifest.json \
+  --worker /home/deploy/.cache/cadus2_content_target/debug/cadus-worker
+```
+
+The arithmetic-core manifest names one teach page and one hint ladder for each
+of the 81 knowledge points of the unit. Against a disposable copy of the manual
+database with its 46 pending templates, the import stored 156 rows, skipped the
+6 slots the pilot already held, and declined 0. A second pass stored 0 and
+skipped 162. Every ledger row carries the model id `operator-draft-v1` and a
+cost of zero.
