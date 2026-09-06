@@ -23,14 +23,14 @@ DATA = [
   ['2x+9<=5x-3','7-3x>2x-8','4x-1>=x+11','5x+2<8x-7'],
   '2x+{a}>=5x-{b}', 'x <= (a+b)/3', [2,5,8], [43,73,103,133]),
  ('inequality-word-problems/kp1',
-  ['8x+10<=58','5x+7<=46','12x+4<=100','3x+9<=32'],
+  ['8x+10<=58','5x+7<=42','12x+4<=100','3x+9<=36'],
   '7x+{a}<={b}', 'floor((b-a)/7)', [2,9,16], [142,212,282,352]),
 ]
 CONTEXTS = [
  'Shirts cost 8 euros each with 10 euros shipping. The budget is 58 euros.',
- 'Each notebook costs 5 euros plus a 7 euro order fee. The budget is 46 euros.',
+ 'Each notebook costs 5 euros plus a 7 euro order fee. The budget is 42 euros.',
  'Tickets cost 12 euros each and booking costs 4 euros. The budget is 100 euros.',
- 'Tokens cost 3 euros each; entry costs 9 euros. The budget is 32 euros.',
+ 'Tokens cost 3 euros each; entry costs 9 euros. The budget is 36 euros.',
 ]
 
 

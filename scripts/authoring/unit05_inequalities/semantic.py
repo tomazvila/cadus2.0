@@ -52,7 +52,8 @@ def relation(text):
 
 
 def math(problem):
-    return re.findall(r'\$([^$]+)\$',problem)
+    return [s.replace(r'\le','<=').replace(r'\ge','>=').replace(r'\cdot','*')
+            for s in re.findall(r'\$([^$]+)\$',problem)]
 
 
 def reconstruct(problem):
@@ -62,8 +63,18 @@ def reconstruct(problem):
     op,bound = relation(equations[0])
     if 'maximum whole' in problem:
         assert op=='<=' and bound>=0
+        check_budget(problem,equations[0],bound)
         return str(bound.numerator//bound.denominator)
     return f'x {op} {bound}'
+
+
+def check_budget(problem,equation,bound):
+    context=problem.split('With $x$')[0]
+    price,fee,cap=map(Q,re.findall(r'(\d+) euros?',context))
+    left,op,right=re.split(r'(<=|>=|<|>)',equation)
+    assert affine(left)==(price,fee) and scalar(right)==cap
+    whole=bound.numerator//bound.denominator
+    assert price*whole+fee<=cap<price*(whole+1)+fee
 
 
 def signature(problem):

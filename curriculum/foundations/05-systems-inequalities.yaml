@@ -43,14 +43,22 @@ topics:
         name: "Test a value in an inequality"
         key_prerequisites: [evaluating-expressions]
         exemplars:
-          - problem: 'Is $x = 3$ a solution of $2x + 1 > 5$?'
+          - problem: "Is $x=3$ a solution of $2x+4\\le 11$?"
             answer: "yes"
-            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
-            solution_sketch: '$2(3) + 1 = 7 > 5$.'
-          - problem: 'Is $x = 2$ a solution of $5 - x < 3$?'
+            answer_contract: {"kind": "label", "options": [["yes"], ["no"]]}
+            solution_sketch: "Substitute the candidate in the original inequality: $10 \\le  11$ is true. Every comparison must hold for an intersection."
+          - problem: "Does $x=-2$ satisfy $7-x<8$?"
             answer: "no"
-            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
-            solution_sketch: '$5 - 2 = 3$, and $3 < 3$ is false.'
+            answer_contract: {"kind": "label", "options": [["yes"], ["no"]]}
+            solution_sketch: "Substitute the candidate in the original inequality: $9 < 8$ is false. Every comparison must hold for an intersection."
+          - problem: "Test $x=4$ in $x/2\\ge 2$. Is it a solution?"
+            answer: "yes"
+            answer_contract: {"kind": "label", "options": [["yes"], ["no"]]}
+            solution_sketch: "Substitute the candidate in the original inequality: $2 \\ge  2$ is true. Every comparison must hold for an intersection."
+          - problem: "Is $x=5$ a solution of $3x-2>14$?"
+            answer: "no"
+            answer_contract: {"kind": "label", "options": [["yes"], ["no"]]}
+            solution_sketch: "Substitute the candidate in the original inequality: $13 > 14$ is false. Every comparison must hold for an intersection."
         constraints: "substitute and compare; yes/no answers"
       - id: kp3
         name: "Boundary values and strictness"
@@ -169,10 +177,10 @@ topics:
         name: "Add or subtract on both sides"
         key_prerequisites: [one-step-equations]
         exemplars:
-          - problem: "Solve $x+8<=21$."
+          - problem: "Solve $x+8\\le 21$."
             answer: "x <= 13"
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Collect variable terms and constants: $(1)x <= 13$. Divide by $1$ and preserve the comparison. The boundary is $13$. Equality is included exactly when the comparison is inclusive."
+            solution_sketch: "Collect variable terms and constants: $(1)x \\le  13$. Divide by $1$ and preserve the comparison. The boundary is $13$. Equality is included exactly when the comparison is inclusive."
           - problem: "Solve $x-7>4$."
             answer: "x > 11"
             answer_contract: {"kind": "exact"}
@@ -181,43 +189,53 @@ topics:
             answer: "x > 11"
             answer_contract: {"kind": "exact"}
             solution_sketch: "Collect variable terms and constants: $(-1)x < -11$. Divide by $-1$ and reverse the comparison. The boundary is $11$. Equality is included exactly when the comparison is inclusive."
-          - problem: "Solve $x+5>=-3$."
+          - problem: "Solve $x+5\\ge -3$."
             answer: "x >= -8"
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Collect variable terms and constants: $(1)x >= -8$. Divide by $1$ and preserve the comparison. The boundary is $-8$. Equality is included exactly when the comparison is inclusive."
+            solution_sketch: "Collect variable terms and constants: $(1)x \\ge  -8$. Divide by $1$ and preserve the comparison. The boundary is $-8$. Equality is included exactly when the comparison is inclusive."
         constraints: "integer constants; keep the inequality direction"
       - id: kp2
         name: "Multiply or divide by a positive"
         key_prerequisites: [one-step-equations]
         exemplars:
-          - problem: "Solve $4x<=28$."
+          - problem: "Solve $4x\\le 28$."
             answer: "x <= 7"
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Collect variable terms and constants: $(4)x <= 28$. Divide by $4$ and preserve the comparison. The boundary is $7$. Equality is included exactly when the comparison is inclusive."
+            solution_sketch: "Collect variable terms and constants: $(4)x \\le  28$. Divide by $4$ and preserve the comparison. The boundary is $7$. Equality is included exactly when the comparison is inclusive."
           - problem: "Solve $x/3>5$."
             answer: "x > 15"
             answer_contract: {"kind": "exact"}
             solution_sketch: "Collect variable terms and constants: $(1/3)x > 5$. Divide by $1/3$ and preserve the comparison. The boundary is $15$. Equality is included exactly when the comparison is inclusive."
-          - problem: "Solve $21>=7x$."
+          - problem: "Solve $21\\ge 7x$."
             answer: "x <= 3"
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Collect variable terms and constants: $(-7)x >= -21$. Divide by $-7$ and reverse the comparison. The boundary is $3$. Equality is included exactly when the comparison is inclusive."
-          - problem: "Solve $x/5>=-2$."
+            solution_sketch: "Collect variable terms and constants: $(-7)x \\ge  -21$. Divide by $-7$ and reverse the comparison. The boundary is $3$. Equality is included exactly when the comparison is inclusive."
+          - problem: "Solve $x/5\\ge -2$."
             answer: "x >= -10"
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Collect variable terms and constants: $(1/5)x >= -2$. Divide by $1/5$ and preserve the comparison. The boundary is $-10$. Equality is included exactly when the comparison is inclusive."
+            solution_sketch: "Collect variable terms and constants: $(1/5)x \\ge  -2$. Divide by $1/5$ and preserve the comparison. The boundary is $-10$. Equality is included exactly when the comparison is inclusive."
         constraints: "positive coefficients only; no sign flips"
       - id: kp3
         visuals: [{"kind":"number_line","min":"-10","max":"10","tick":"1","points":[],"intervals":[],"rays":[{"from":"3","direction":"left","filled":true,"label":"x ≤ 3"}],"caption":"Reference example: solving x + 2 ≤ 5 gives x ≤ 3, a filled point at 3 with the ray extending left."}]
         name: "Solve and describe the graph"
         key_prerequisites: [graphing-inequalities-number-line]
         exemplars:
-          - problem: 'Solve $2x > 14$. On its number-line graph, is the circle at the boundary open or closed?'
-            answer: "open"
-            solution_sketch: '$x > 7$; a strict inequality excludes the boundary, so the circle is open.'
-          - problem: 'Solve $x + 6 \le 10$. On its number-line graph, does the shaded ray point left or right?'
-            answer: "left"
-            solution_sketch: '$x \le 4$; "at most" shades everything below the boundary.'
+          - problem: "Solve $2x>14$. Give boundary and graph, where graph combines open or closed with left or right (for example: boundary = 2; graph = open left)."
+            answer: "boundary = 7; graph = open right"
+            answer_contract: {"kind": "multipart", "parts": [{"name": "boundary", "contract": {"kind": "exact"}}, {"name": "graph", "contract": {"kind": "label", "options": [["open left"], ["closed left"], ["open right"], ["closed right"]]}}]}
+            solution_sketch: "Undo the single arithmetic operation to get $x > 7$. The boundary comes from equality. A strict sign gives an open point; an inclusive sign gives a closed point. Values below the boundary shade left; values above it shade right."
+          - problem: "Solve $x+6\\le 10$. Give boundary and graph, where graph combines open or closed with left or right (for example: boundary = 2; graph = open left)."
+            answer: "boundary = 4; graph = closed left"
+            answer_contract: {"kind": "multipart", "parts": [{"name": "boundary", "contract": {"kind": "exact"}}, {"name": "graph", "contract": {"kind": "label", "options": [["open left"], ["closed left"], ["open right"], ["closed right"]]}}]}
+            solution_sketch: "Undo the single arithmetic operation to get $x \\le  4$. The boundary comes from equality. A strict sign gives an open point; an inclusive sign gives a closed point. Values below the boundary shade left; values above it shade right."
+          - problem: "Solve $x/3\\ge 5$. Give boundary and graph, where graph combines open or closed with left or right (for example: boundary = 2; graph = open left)."
+            answer: "boundary = 15; graph = closed right"
+            answer_contract: {"kind": "multipart", "parts": [{"name": "boundary", "contract": {"kind": "exact"}}, {"name": "graph", "contract": {"kind": "label", "options": [["open left"], ["closed left"], ["open right"], ["closed right"]]}}]}
+            solution_sketch: "Undo the single arithmetic operation to get $x \\ge  15$. The boundary comes from equality. A strict sign gives an open point; an inclusive sign gives a closed point. Values below the boundary shade left; values above it shade right."
+          - problem: "Solve $x-7<2$. Give boundary and graph, where graph combines open or closed with left or right (for example: boundary = 2; graph = open left)."
+            answer: "boundary = 9; graph = open left"
+            answer_contract: {"kind": "multipart", "parts": [{"name": "boundary", "contract": {"kind": "exact"}}, {"name": "graph", "contract": {"kind": "label", "options": [["open left"], ["closed left"], ["open right"], ["closed right"]]}}]}
+            solution_sketch: "Undo the single arithmetic operation to get $x < 9$. The boundary comes from equality. A strict sign gives an open point; an inclusive sign gives a closed point. Values below the boundary shade left; values above it shade right."
         constraints: "pair the solution with its number-line picture"
     diagnostic_exemplar:
       problem: 'Solve $\frac{x}{4} \ge 3$.'
@@ -247,56 +265,64 @@ topics:
         name: "Two steps with a positive coefficient"
         key_prerequisites: [two-step-equations]
         exemplars:
-          - problem: "Solve $3x+4<=28$."
+          - problem: "Solve $3x+4\\le 28$."
             answer: "x <= 8"
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Collect variable terms and constants: $(3)x <= 24$. Divide by $3$ and preserve the comparison. The boundary is $8$. Equality is included exactly when the comparison is inclusive."
+            solution_sketch: "Collect variable terms and constants: $(3)x \\le  24$. Divide by $3$ and preserve the comparison. The boundary is $8$. Equality is included exactly when the comparison is inclusive."
           - problem: "Solve $2x-9>5$."
             answer: "x > 7"
             answer_contract: {"kind": "exact"}
             solution_sketch: "Collect variable terms and constants: $(2)x > 14$. Divide by $2$ and preserve the comparison. The boundary is $7$. Equality is included exactly when the comparison is inclusive."
-          - problem: "Solve $17>=4x+1$."
+          - problem: "Solve $17\\ge 4x+1$."
             answer: "x <= 4"
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Collect variable terms and constants: $(-4)x >= -16$. Divide by $-4$ and reverse the comparison. The boundary is $4$. Equality is included exactly when the comparison is inclusive."
-          - problem: "Solve $5x-3>=-18$."
+            solution_sketch: "Collect variable terms and constants: $(-4)x \\ge  -16$. Divide by $-4$ and reverse the comparison. The boundary is $4$. Equality is included exactly when the comparison is inclusive."
+          - problem: "Solve $5x-3\\ge -18$."
             answer: "x >= -3"
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Collect variable terms and constants: $(5)x >= -15$. Divide by $5$ and preserve the comparison. The boundary is $-3$. Equality is included exactly when the comparison is inclusive."
+            solution_sketch: "Collect variable terms and constants: $(5)x \\ge  -15$. Divide by $5$ and preserve the comparison. The boundary is $-3$. Equality is included exactly when the comparison is inclusive."
         constraints: "undo addition first, then division; positive coefficients"
       - id: kp2
         name: "Two steps with fractions"
         key_prerequisites: [two-step-equations]
         exemplars:
-          - problem: "Solve $x/2+5<=12$."
+          - problem: "Solve $x/2+5\\le 12$."
             answer: "x <= 14"
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Collect variable terms and constants: $(1/2)x <= 7$. Divide by $1/2$ and preserve the comparison. The boundary is $14$. Equality is included exactly when the comparison is inclusive."
+            solution_sketch: "Collect variable terms and constants: $(1/2)x \\le  7$. Divide by $1/2$ and preserve the comparison. The boundary is $14$. Equality is included exactly when the comparison is inclusive."
           - problem: "Solve $x/3-4>2$."
             answer: "x > 18"
             answer_contract: {"kind": "exact"}
             solution_sketch: "Collect variable terms and constants: $(1/3)x > 6$. Divide by $1/3$ and preserve the comparison. The boundary is $18$. Equality is included exactly when the comparison is inclusive."
-          - problem: "Solve $7>=x/4+1$."
+          - problem: "Solve $7\\ge x/4+1$."
             answer: "x <= 24"
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Collect variable terms and constants: $(-1/4)x >= -6$. Divide by $-1/4$ and reverse the comparison. The boundary is $24$. Equality is included exactly when the comparison is inclusive."
-          - problem: "Solve $x/5-2>=-6$."
+            solution_sketch: "Collect variable terms and constants: $(-1/4)x \\ge  -6$. Divide by $-1/4$ and reverse the comparison. The boundary is $24$. Equality is included exactly when the comparison is inclusive."
+          - problem: "Solve $x/5-2\\ge -6$."
             answer: "x >= -20"
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Collect variable terms and constants: $(1/5)x >= -4$. Divide by $1/5$ and preserve the comparison. The boundary is $-20$. Equality is included exactly when the comparison is inclusive."
+            solution_sketch: "Collect variable terms and constants: $(1/5)x \\ge  -4$. Divide by $1/5$ and preserve the comparison. The boundary is $-20$. Equality is included exactly when the comparison is inclusive."
         constraints: "unit-fraction coefficients; integer answers"
       - id: kp3
         name: "Solve, then check a value"
         key_prerequisites: [one-step-inequalities]
         exemplars:
-          - problem: 'Solve $5x - 2 < 13$. Is $x = 3$ a solution? (yes/no)'
-            answer: "no"
-            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
-            solution_sketch: '$5x < 15$; $x < 3$; the boundary $3$ is excluded.'
-          - problem: 'Solve $2x + 1 \ge 9$. Is $x = 4$ included? (yes/no)'
+          - problem: "Solve $3x+2\\le 14$, then test $x=4$. Is it included?"
             answer: "yes"
-            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
-            solution_sketch: '$2x \ge 8$; $x \ge 4$; the boundary $4$ is included.'
+            answer_contract: {"kind": "label", "options": [["yes"], ["no"]]}
+            solution_sketch: "Isolating x gives $x \\le  4$. Substitute the candidate in the original inequality: $14 \\le  14$ is true. Every comparison must hold for an intersection."
+          - problem: "Solve $x/2-3>1$, then test $x=8$. Is it included?"
+            answer: "no"
+            answer_contract: {"kind": "label", "options": [["yes"], ["no"]]}
+            solution_sketch: "Isolating x gives $x > 8$. Substitute the candidate in the original inequality: $1 > 1$ is false. Every comparison must hold for an intersection."
+          - problem: "Solve $4x-5\\ge 11$, then test $x=5$. Is it included?"
+            answer: "yes"
+            answer_contract: {"kind": "label", "options": [["yes"], ["no"]]}
+            solution_sketch: "Isolating x gives $x \\ge  4$. Substitute the candidate in the original inequality: $15 \\ge  11$ is true. Every comparison must hold for an intersection."
+          - problem: "Solve $2x+7<15$, then test $x=6$. Is it included?"
+            answer: "no"
+            answer_contract: {"kind": "label", "options": [["yes"], ["no"]]}
+            solution_sketch: "Isolating x gives $x < 4$. Substitute the candidate in the original inequality: $19 < 15$ is false. Every comparison must hold for an intersection."
         constraints: "check the boundary value against strictness"
     diagnostic_exemplar:
       problem: 'Solve $\frac{x}{3} + 2 \le 5$.'
@@ -328,39 +354,39 @@ topics:
         name: "Flip the sign for a negative coefficient"
         key_prerequisites: [integer-multiplication-division]
         exemplars:
-          - problem: "Solve $-3x<=18$."
+          - problem: "Solve $-3x\\le 18$."
             answer: "x >= -6"
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Collect variable terms and constants: $(-3)x <= 18$. Divide by $-3$ and reverse the comparison. The boundary is $-6$. Equality is included exactly when the comparison is inclusive."
+            solution_sketch: "Collect variable terms and constants: $(-3)x \\le  18$. Divide by $-3$ and reverse the comparison. The boundary is $-6$. Equality is included exactly when the comparison is inclusive."
           - problem: "Solve $-x+4>11$."
             answer: "x < -7"
             answer_contract: {"kind": "exact"}
             solution_sketch: "Collect variable terms and constants: $(-1)x > 7$. Divide by $-1$ and reverse the comparison. The boundary is $-7$. Equality is included exactly when the comparison is inclusive."
-          - problem: "Solve $12>=-4x$."
+          - problem: "Solve $12\\ge -4x$."
             answer: "x >= -3"
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Collect variable terms and constants: $(4)x >= -12$. Divide by $4$ and preserve the comparison. The boundary is $-3$. Equality is included exactly when the comparison is inclusive."
-          - problem: "Solve $5-x>=-3$."
+            solution_sketch: "Collect variable terms and constants: $(4)x \\ge  -12$. Divide by $4$ and preserve the comparison. The boundary is $-3$. Equality is included exactly when the comparison is inclusive."
+          - problem: "Solve $5-x\\ge -3$."
             answer: "x <= 8"
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Collect variable terms and constants: $(-1)x >= -8$. Divide by $-1$ and reverse the comparison. The boundary is $8$. Equality is included exactly when the comparison is inclusive."
+            solution_sketch: "Collect variable terms and constants: $(-1)x \\ge  -8$. Divide by $-1$ and reverse the comparison. The boundary is $8$. Equality is included exactly when the comparison is inclusive."
         constraints: "reverse the inequality when dividing/multiplying by a negative"
       - id: kp2
         name: "Multi-step inequalities"
         key_prerequisites: [multi-step-equations]
         exemplars:
-          - problem: "Solve $3(x-2)<=x+8$."
+          - problem: "Solve $3(x-2)\\le x+8$."
             answer: "x <= 7"
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Collect variable terms and constants: $(2)x <= 14$. Divide by $2$ and preserve the comparison. The boundary is $7$. Equality is included exactly when the comparison is inclusive."
+            solution_sketch: "Collect variable terms and constants: $(2)x \\le  14$. Divide by $2$ and preserve the comparison. The boundary is $7$. Equality is included exactly when the comparison is inclusive."
           - problem: "Solve $5-2(x+3)>x+2$."
             answer: "x < -1"
             answer_contract: {"kind": "exact"}
             solution_sketch: "Collect variable terms and constants: $(-3)x > 3$. Divide by $-3$ and reverse the comparison. The boundary is $-1$. Equality is included exactly when the comparison is inclusive."
-          - problem: "Solve $4(x+1)>=2x-8$."
+          - problem: "Solve $4(x+1)\\ge 2x-8$."
             answer: "x >= -6"
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Collect variable terms and constants: $(2)x >= -12$. Divide by $2$ and preserve the comparison. The boundary is $-6$. Equality is included exactly when the comparison is inclusive."
+            solution_sketch: "Collect variable terms and constants: $(2)x \\ge  -12$. Divide by $2$ and preserve the comparison. The boundary is $-6$. Equality is included exactly when the comparison is inclusive."
           - problem: "Solve $2(3-x)<5x+11$."
             answer: "x > -5/7"
             answer_contract: {"kind": "exact"}
@@ -370,18 +396,18 @@ topics:
         name: "Variables on both sides"
         key_prerequisites: [multi-step-equations]
         exemplars:
-          - problem: "Solve $2x+9<=5x-3$."
+          - problem: "Solve $2x+9\\le 5x-3$."
             answer: "x >= 4"
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Collect variable terms and constants: $(-3)x <= -12$. Divide by $-3$ and reverse the comparison. The boundary is $4$. Equality is included exactly when the comparison is inclusive."
+            solution_sketch: "Collect variable terms and constants: $(-3)x \\le  -12$. Divide by $-3$ and reverse the comparison. The boundary is $4$. Equality is included exactly when the comparison is inclusive."
           - problem: "Solve $7-3x>2x-8$."
             answer: "x < 3"
             answer_contract: {"kind": "exact"}
             solution_sketch: "Collect variable terms and constants: $(-5)x > -15$. Divide by $-5$ and reverse the comparison. The boundary is $3$. Equality is included exactly when the comparison is inclusive."
-          - problem: "Solve $4x-1>=x+11$."
+          - problem: "Solve $4x-1\\ge x+11$."
             answer: "x >= 4"
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Collect variable terms and constants: $(3)x >= 12$. Divide by $3$ and preserve the comparison. The boundary is $4$. Equality is included exactly when the comparison is inclusive."
+            solution_sketch: "Collect variable terms and constants: $(3)x \\ge  12$. Divide by $3$ and preserve the comparison. The boundary is $4$. Equality is included exactly when the comparison is inclusive."
           - problem: "Solve $5x+2<8x-7$."
             answer: "x > 3"
             answer_contract: {"kind": "exact"}
@@ -487,23 +513,43 @@ topics:
         name: "Membership in a compound solution"
         key_prerequisites: [graphing-inequalities-number-line]
         exemplars:
-          - problem: 'Is $x = 3$ in the solution set of $1 < x < 5$?'
+          - problem: "Is $x=3$ a solution of $x>1$ and $x<5$?"
             answer: "yes"
-            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
-          - problem: 'Is $x = 0$ a solution of $x < -2$ or $x > 1$?'
+            answer_contract: {"kind": "label", "options": [["yes"], ["no"]]}
+            solution_sketch: "Substitute the candidate in the original inequality: $3 > 1$ is true; $3 < 5$ is true. Every comparison must hold for an intersection."
+          - problem: "Does $x=0$ satisfy $x<-2$ or $x>4$?"
             answer: "no"
-            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
-            solution_sketch: '$0$ satisfies neither piece.'
+            answer_contract: {"kind": "label", "options": [["yes"], ["no"]]}
+            solution_sketch: "Substitute the candidate in the original inequality: $0 < -2$ is false; $0 > 4$ is false. Either comparison suffices for a union."
+          - problem: "Test $x=-3$ in $x\\le -3$ or $x\\ge 6$. Is it a solution?"
+            answer: "yes"
+            answer_contract: {"kind": "label", "options": [["yes"], ["no"]]}
+            solution_sketch: "Substitute the candidate in the original inequality: $-3 \\le  -3$ is true; $-3 \\ge  6$ is false. Either comparison suffices for a union."
+          - problem: "Is $x=7$ a solution of $x>2$ and $x\\le 7$?"
+            answer: "yes"
+            answer_contract: {"kind": "label", "options": [["yes"], ["no"]]}
+            solution_sketch: "Substitute the candidate in the original inequality: $7 > 2$ is true; $7 \\le  7$ is true. Every comparison must hold for an intersection."
         constraints: "test one value against the graph or the symbols"
       - id: kp2
         name: "'And' (between) inequalities"
         key_prerequisites: [linear-inequalities]
         exemplars:
-          - problem: 'Solve $-1 < x + 3 < 7$.'
-            answer: "-4 < x < 4"
-            solution_sketch: 'Subtract $3$ from all three parts.'
-          - problem: 'Solve $2 \le 2x \le 10$.'
-            answer: "1 <= x <= 5"
+          - problem: "Solve $-7<x+3<9$. Give the solution in interval notation."
+            answer: "(-10, 6)"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Read the lower and upper bounds. Use a square bracket at an included endpoint and a round bracket at an excluded endpoint. The boundary calculation gives $-10 < x < 6$."
+          - problem: "Solve $2\\le 3x\\le 17$. Give the solution in interval notation."
+            answer: "[2/3, 17/3]"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Read the lower and upper bounds. Use a square bracket at an included endpoint and a round bracket at an excluded endpoint. The boundary calculation gives $2/3 \\le  x \\le  17/3$."
+          - problem: "Solve $-4<x-5\\le 6$. Give the solution in interval notation."
+            answer: "(1, 11]"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Read the lower and upper bounds. Use a square bracket at an included endpoint and a round bracket at an excluded endpoint. The boundary calculation gives $1 < x \\le  11$."
+          - problem: "Solve $-3\\le x/2<8$. Give the solution in interval notation."
+            answer: "[-6, 16)"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Read the lower and upper bounds. Use a square bracket at an included endpoint and a round bracket at an excluded endpoint. The boundary calculation gives $-6 \\le  x < 16$."
         constraints: "apply each operation to all three parts; one operation needed"
       - id: kp3
         name: "'Or' inequalities"
@@ -560,12 +606,22 @@ topics:
         name: "Three-part with a negative coefficient"
         key_prerequisites: [linear-inequalities]
         exemplars:
-          - problem: 'Solve $-6 < -2x \le 4$.'
-            answer: "-2 <= x < 3"
-            solution_sketch: 'Divide by $-2$ and reverse both signs: $3 > x \ge -2$.'
-          - problem: 'Solve $1 \le 5 - x < 7$.'
-            answer: "-2 < x <= 4"
-            solution_sketch: 'Subtract $5$: $-4 \le -x < 2$; multiply by $-1$: $4 \ge x > -2$.'
+          - problem: "Solve $-8<-2x\\le 6$. Give the solution in interval notation."
+            answer: "[-3, 4)"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Read the lower and upper bounds. Use a square bracket at an included endpoint and a round bracket at an excluded endpoint. The boundary calculation gives $-3 \\le  x < 4$."
+          - problem: "Solve $1\\le 5-x<9$. Give the solution in interval notation."
+            answer: "(-4, 4]"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Read the lower and upper bounds. Use a square bracket at an included endpoint and a round bracket at an excluded endpoint. The boundary calculation gives $-4 < x \\le  4$."
+          - problem: "Solve $-7<3-2x<13$. Give the solution in interval notation."
+            answer: "(-5, 5)"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Read the lower and upper bounds. Use a square bracket at an included endpoint and a round bracket at an excluded endpoint. The boundary calculation gives $-5 < x < 5$."
+          - problem: "Solve $-4\\le -x/3\\le 6$. Give the solution in interval notation."
+            answer: "[-18, 12]"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Read the lower and upper bounds. Use a square bracket at an included endpoint and a round bracket at an excluded endpoint. The boundary calculation gives $-18 \\le  x \\le  12$."
         constraints: "both inequality signs flip; rewrite smallest-to-largest"
       - id: kp3
         name: "Multi-step 'or' unions"
@@ -616,16 +672,22 @@ topics:
         name: "Bounded intervals and endpoint membership"
         key_prerequisites: [graphing-inequalities-number-line]
         exemplars:
-          - problem: 'Write the solution of $2 \le x \le 7$ in interval notation.'
-            answer: "[2, 7]"
-            solution_sketch: 'Both endpoints are included, so both brackets are square.'
-          - problem: 'Write $0 < x \le 5$ in interval notation.'
-            answer: "(0, 5]"
-            solution_sketch: 'Strict at $0$ gives a round bracket; inclusive at $5$ gives a square one.'
-          - problem: 'Is $3$ a member of the interval $(3, 8]$?'
-            answer: "no"
-            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
-            solution_sketch: 'The round bracket at $3$ excludes the endpoint itself.'
+          - problem: "Write $-8\\le x\\le -3$ in interval notation."
+            answer: "[-8, -3]"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Read the lower and upper bounds. Use a square bracket at an included endpoint and a round bracket at an excluded endpoint. The boundary calculation gives $-8 \\le  x \\le  -3$."
+          - problem: "Write $-1<x\\le 6$ in interval notation."
+            answer: "(-1, 6]"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Read the lower and upper bounds. Use a square bracket at an included endpoint and a round bracket at an excluded endpoint. The boundary calculation gives $-1 < x \\le  6$."
+          - problem: "Write $2\\le x<9$ in interval notation."
+            answer: "[2, 9)"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Read the lower and upper bounds. Use a square bracket at an included endpoint and a round bracket at an excluded endpoint. The boundary calculation gives $2 \\le  x < 9$."
+          - problem: "Write $-7<x<4$ in interval notation."
+            answer: "(-7, 4)"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Read the lower and upper bounds. Use a square bracket at an included endpoint and a round bracket at an excluded endpoint. The boundary calculation gives $-7 < x < 4$."
         constraints: "bounded intervals only; convert inequality -> interval and test one endpoint; integer endpoints"
       - id: kp2
         name: "Unbounded intervals with infinity"
@@ -706,22 +768,22 @@ topics:
         name: "Budget (at most) problems"
         key_prerequisites: [writing-inequalities-from-statements, linear-inequalities]
         exemplars:
-          - problem: "Shirts cost 8 euros each with 10 euros shipping. The budget is 58 euros. With $x$ the number bought, solve $8x+10<=58$ and give the maximum whole count."
+          - problem: "Shirts cost 8 euros each with 10 euros shipping. The budget is 58 euros. With $x$ the number bought, solve $8x+10\\le 58$ and give the maximum whole count."
             answer: "6"
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Collect variable terms and constants: $(8)x <= 48$. Divide by $8$ and preserve the comparison. The boundary is $6$. Take the greatest whole count at or below this bound; larger counts exceed the budget."
-          - problem: "Each notebook costs 5 euros plus a 7 euro order fee. The budget is 46 euros. With $x$ the number bought, solve $5x+7<=46$ and give the maximum whole count."
+            solution_sketch: "Collect variable terms and constants: $(8)x \\le  48$. Divide by $8$ and preserve the comparison. The boundary is $6$. Take the greatest whole count at or below this bound; larger counts exceed the budget."
+          - problem: "Each notebook costs 5 euros plus a 7 euro order fee. The budget is 42 euros. With $x$ the number bought, solve $5x+7\\le 42$ and give the maximum whole count."
             answer: "7"
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Collect variable terms and constants: $(5)x <= 39$. Divide by $5$ and preserve the comparison. The boundary is $39/5$. Take the greatest whole count at or below this bound; larger counts exceed the budget."
-          - problem: "Tickets cost 12 euros each and booking costs 4 euros. The budget is 100 euros. With $x$ the number bought, solve $12x+4<=100$ and give the maximum whole count."
+            solution_sketch: "Collect variable terms and constants: $(5)x \\le  35$. Divide by $5$ and preserve the comparison. The boundary is $7$. Take the greatest whole count at or below this bound; larger counts exceed the budget."
+          - problem: "Tickets cost 12 euros each and booking costs 4 euros. The budget is 100 euros. With $x$ the number bought, solve $12x+4\\le 100$ and give the maximum whole count."
             answer: "8"
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Collect variable terms and constants: $(12)x <= 96$. Divide by $12$ and preserve the comparison. The boundary is $8$. Take the greatest whole count at or below this bound; larger counts exceed the budget."
-          - problem: "Tokens cost 3 euros each; entry costs 9 euros. The budget is 32 euros. With $x$ the number bought, solve $3x+9<=32$ and give the maximum whole count."
-            answer: "7"
+            solution_sketch: "Collect variable terms and constants: $(12)x \\le  96$. Divide by $12$ and preserve the comparison. The boundary is $8$. Take the greatest whole count at or below this bound; larger counts exceed the budget."
+          - problem: "Tokens cost 3 euros each; entry costs 9 euros. The budget is 36 euros. With $x$ the number bought, solve $3x+9\\le 36$ and give the maximum whole count."
+            answer: "9"
             answer_contract: {"kind": "exact"}
-            solution_sketch: "Collect variable terms and constants: $(3)x <= 23$. Divide by $3$ and preserve the comparison. The boundary is $23/3$. Take the greatest whole count at or below this bound; larger counts exceed the budget."
+            solution_sketch: "Collect variable terms and constants: $(3)x \\le  27$. Divide by $3$ and preserve the comparison. The boundary is $9$. Take the greatest whole count at or below this bound; larger counts exceed the budget."
         constraints: "cost model with a cap; integer boundary"
       - id: kp2
         name: "Minimum (at least) problems"
@@ -794,10 +856,22 @@ topics:
         name: "|x| < a becomes an 'and' inequality"
         key_prerequisites: [and-or-inequalities]
         exemplars:
-          - problem: 'Solve $|x| < 5$.'
-            answer: "-5 < x < 5"
-          - problem: 'Solve $|x| \le 3$.'
-            answer: "-3 <= x <= 3"
+          - problem: "Solve $|x|<7$. Give the solution in interval notation."
+            answer: "(-7, 7)"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Isolate the magnitude by subtracting $0$ and dividing by positive $1$: $|x| < 7$. Thus $-7 < x < 7$. Subtract $0$ throughout and divide by $1$, preserving both comparisons. The boundary calculation gives $-7 < x < 7$."
+          - problem: "Solve $|x|\\le 4$. Give the solution in interval notation."
+            answer: "[-4, 4]"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Isolate the magnitude by subtracting $0$ and dividing by positive $1$: $|x| \\le  4$. Thus $-4 \\le  x \\le  4$. Subtract $0$ throughout and divide by $1$, preserving both comparisons. The boundary calculation gives $-4 \\le  x \\le  4$."
+          - problem: "Solve $9>|x|$. Give the solution in interval notation."
+            answer: "(-9, 9)"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Isolate the magnitude by subtracting $0$ and dividing by positive $1$: $|x| < 9$. Thus $-9 < x < 9$. Subtract $0$ throughout and divide by $1$, preserving both comparisons. The boundary calculation gives $-9 < x < 9$."
+          - problem: "Solve $6\\ge |x|$. Give the solution in interval notation."
+            answer: "[-6, 6]"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Isolate the magnitude by subtracting $0$ and dividing by positive $1$: $|x| \\le  6$. Thus $-6 \\le  x \\le  6$. Subtract $0$ throughout and divide by $1$, preserving both comparisons. The boundary calculation gives $-6 \\le  x \\le  6$."
         constraints: "less-than gives a bounded interval"
       - id: kp2
         name: "|x| > a becomes an 'or' inequality"
@@ -853,12 +927,22 @@ topics:
         name: "|linear| < a"
         key_prerequisites: [basic-absolute-value-inequalities]
         exemplars:
-          - problem: 'Solve $|x - 2| < 6$.'
-            answer: "-4 < x < 8"
-            solution_sketch: '$-6 < x - 2 < 6$; add $2$.'
-          - problem: 'Solve $|2x - 3| \le 5$.'
-            answer: "-1 <= x <= 4"
-            solution_sketch: '$-5 \le 2x - 3 \le 5$; add $3$, divide by $2$.'
+          - problem: "Solve $|x-3|<8$. Give the solution in interval notation."
+            answer: "(-5, 11)"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Isolate the magnitude by subtracting $0$ and dividing by positive $1$: $|x-3| < 8$. Thus $-8 < x-3 < 8$. Subtract $-3$ throughout and divide by $1$, preserving both comparisons. The boundary calculation gives $-5 < x < 11$."
+          - problem: "Solve $|2x+1|\\le 7$. Give the solution in interval notation."
+            answer: "[-4, 3]"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Isolate the magnitude by subtracting $0$ and dividing by positive $1$: $|2x+1| \\le  7$. Thus $-7 \\le  2x+1 \\le  7$. Subtract $1$ throughout and divide by $2$, preserving both comparisons. The boundary calculation gives $-4 \\le  x \\le  3$."
+          - problem: "Solve $5>|3x-2|$. Give the solution in interval notation."
+            answer: "(-1, 7/3)"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Isolate the magnitude by subtracting $0$ and dividing by positive $1$: $|3x-2| < 5$. Thus $-5 < 3x-2 < 5$. Subtract $-2$ throughout and divide by $3$, preserving both comparisons. The boundary calculation gives $-1 < x < 7/3$."
+          - problem: "Solve $9\\ge |4-x|$. Give the solution in interval notation."
+            answer: "[-5, 13]"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Isolate the magnitude by subtracting $0$ and dividing by positive $1$: $|4-x| \\le  9$. Thus $-9 \\le  4-x \\le  9$. Subtract $4$ throughout and divide by $-1$, reversing both comparisons. The boundary calculation gives $-5 \\le  x \\le  13$."
         constraints: "linear inside; bounded interval answers"
       - id: kp2
         name: "|linear| > a"
@@ -874,12 +958,22 @@ topics:
         name: "Isolate the absolute value first"
         key_prerequisites: [absolute-value-equations]
         exemplars:
-          - problem: 'Solve $2|x - 1| + 3 \le 9$.'
-            answer: "-2 <= x <= 4"
-            solution_sketch: '$|x - 1| \le 3$; $-3 \le x - 1 \le 3$.'
-          - problem: 'Solve $3|x| - 5 > 7$.'
-            answer: "x < -4 or x > 4"
-            solution_sketch: '$|x| > 4$.'
+          - problem: "Solve $2|x-4|+3\\le 15$. Give the solution in interval notation."
+            answer: "[-2, 10]"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Isolate the magnitude by subtracting $3$ and dividing by positive $2$: $|x-4| \\le  6$. Thus $-6 \\le  x-4 \\le  6$. Subtract $-4$ throughout and divide by $1$, preserving both comparisons. The boundary calculation gives $-2 \\le  x \\le  10$."
+          - problem: "Solve $3|2x+1|-5<16$. Give the solution in interval notation."
+            answer: "(-4, 3)"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Isolate the magnitude by subtracting $-5$ and dividing by positive $3$: $|2x+1| < 7$. Thus $-7 < 2x+1 < 7$. Subtract $1$ throughout and divide by $2$, preserving both comparisons. The boundary calculation gives $-4 < x < 3$."
+          - problem: "Solve $19\\ge 4|x+2|+3$. Give the solution in interval notation."
+            answer: "[-6, 2]"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Isolate the magnitude by subtracting $3$ and dividing by positive $4$: $|x+2| \\le  4$. Thus $-4 \\le  x+2 \\le  4$. Subtract $2$ throughout and divide by $1$, preserving both comparisons. The boundary calculation gives $-6 \\le  x \\le  2$."
+          - problem: "Solve $5|3-x|-2<18$. Give the solution in interval notation."
+            answer: "(-1, 7)"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Isolate the magnitude by subtracting $-2$ and dividing by positive $5$: $|3-x| < 4$. Thus $-4 < 3-x < 4$. Subtract $3$ throughout and divide by $-1$, reversing both comparisons. The boundary calculation gives $-1 < x < 7$."
         constraints: "isolate the absolute value before splitting into cases"
     diagnostic_exemplar:
       problem: 'Solve $2|x - 3| - 1 \le 7$.'
@@ -952,18 +1046,26 @@ topics:
             solution_sketch: '$-1 \ge -4$ is true.'
         constraints: "substitute a test point; true -> shade that side"
       - id: kp3
-        visuals: [{"kind":"coordinate","x_min":"-6","x_max":"6","y_min":"-6","y_max":"6","x_tick":"1","y_tick":"1","points":[],"segments":[],"shaded_half_planes":[{"through_a":{"x":"1","y":"0"},"through_b":{"x":"2","y":"1"},"solid":true,"shade_toward":{"x":"0","y":"0"},"label":"y ≤ x - 1"}],"caption":"Reference example: the origin test on y ≤ x - 1 shades the side containing (0,0)."}]
+        visuals: [{"kind":"coordinate","x_min":"-6","x_max":"6","y_min":"-6","y_max":"6","x_tick":"1","y_tick":"1","points":[],"segments":[],"shaded_half_planes":[{"through_a":{"x":"1","y":"0"},"through_b":{"x":"2","y":"1"},"solid":true,"shade_toward":{"x":"0","y":"-2"},"label":"y ≤ x - 1"}],"caption":"Reference example: the origin fails y ≤ x - 1. Shade the side containing (0,-2), which satisfies the inequality."}]
         name: "Shade using the origin test"
         key_prerequisites: [linear-inequalities]
         exemplars:
-          - problem: 'For $2x + 3y \le 6$, does the shaded region include the origin?'
+          - problem: "For $2x+3y\\le 18$, does the shaded region include the origin?"
             answer: "yes"
-            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
-            solution_sketch: '$0 \le 6$ is true, so shade the side containing $(0, 0)$.'
-          - problem: 'For $y > x - 1$, does the shaded region include the origin?'
+            answer_contract: {"kind": "label", "options": [["yes"], ["no"]]}
+            solution_sketch: "Substitute both coordinates of the origin as zero: $0 \\le  18$ is true. Shade the side containing the test point precisely when the comparison is true."
+          - problem: "For $y>2x+4$, does the shaded region include the origin?"
+            answer: "no"
+            answer_contract: {"kind": "label", "options": [["yes"], ["no"]]}
+            solution_sketch: "Substitute both coordinates of the origin as zero: $0 > 4$ is false. Shade the side containing the test point precisely when the comparison is true."
+          - problem: "For $5x-y\\ge -7$, does the shaded region include the origin?"
             answer: "yes"
-            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
-            solution_sketch: '$0 > -1$ is true.'
+            answer_contract: {"kind": "label", "options": [["yes"], ["no"]]}
+            solution_sketch: "Substitute both coordinates of the origin as zero: $0 \\ge  -7$ is true. Shade the side containing the test point precisely when the comparison is true."
+          - problem: "For $3y+2x<-6$, does the shaded region include the origin?"
+            answer: "no"
+            answer_contract: {"kind": "label", "options": [["yes"], ["no"]]}
+            solution_sketch: "Substitute both coordinates of the origin as zero: $0 < -6$ is false. Shade the side containing the test point precisely when the comparison is true."
         constraints: "the origin is the easiest test point unless it is on the line"
     diagnostic_exemplar:
       problem: 'For $y > x - 1$, state whether the boundary is dashed or solid and whether $(0, 0)$ is a solution.'

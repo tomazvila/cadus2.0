@@ -6,11 +6,32 @@ from pathlib import Path
 import re
 
 from linear import populate
-from semantic import reconstruct, sketch
+from sets import populate as populate_sets
+import graphs
+from rendering import render_all
+import semantic_sets
+import semantic_labels
+from labels import populate as populate_labels, DATA as LABELS
+from semantic import reconstruct as linear_answer, sketch as linear_sketch
 
 ROOT = Path(__file__).resolve().parents[3]
 OUT = ROOT/'docs/content-foundations/unit05-inequalities'
 YAML = ROOT/'curriculum/foundations/05-systems-inequalities.yaml'
+
+
+def is_set(problem):
+    problem=problem.replace(r'\le','<=').replace(r'\ge','>=')
+    return '|' in problem or len(re.findall(r'<=|>=|<|>',problem))==2
+
+
+def reconstruct(problem):
+    if semantic_labels.is_label(problem): return semantic_labels.reconstruct(problem)
+    return semantic_sets.reconstruct(problem) if is_set(problem) else linear_answer(problem)
+
+
+def sketch(problem):
+    if semantic_labels.is_label(problem): return semantic_labels.sketch(problem)
+    return semantic_sets.sketch(problem) if is_set(problem) else linear_sketch(problem)
 
 
 def generate():
@@ -18,16 +39,42 @@ def generate():
     def add(key, authored, statement, expression, aa, bb, contract):
         exemplars[key] = [dict(problem=p, answer=reconstruct(p),
             answer_contract=contract, solution_sketch=sketch(p)) for p in authored]
-        samples = [dict(params={'a':a,'b':b}, expected=reconstruct(statement.format(a=a,b=b)))
-                   for a,b in product(aa,bb)]
+        domains={'a':aa} if bb is None else {'a':aa,'b':bb}
+        bindings=[dict(zip(domains,values)) for values in product(*domains.values())]
+        samples=[dict(params=p,expected=reconstruct(statement.format(**p))) for p in bindings]
         recipes.append(dict(kp_id=key,kind='template',status='pending',arguments=dict(
             statement=statement,answer_expr=expression,answer_contract=contract,
-            params={k:dict(kind='choice',values=v) for k,v in [('a',aa),('b',bb)]},
+            params={k:dict(kind='choice',values=v) for k,v in domains.items()},
             constraints=[],samples=samples,distractors=[],
-            solution_sketch=recipe_sketch(key),
+            solution_sketch=template_sketch(key,statement),
             hints=['Isolate the variable. Check the sign of the coefficient before dividing.'])))
     populate(add)
+    populate_sets(add)
+    populate_labels(add)
+    graph_authored,graph_recipes=graphs.generate()
+    exemplars.update(graph_authored)
+    recipes.extend(graph_recipes)
+    render_all(exemplars,recipes)
     return exemplars, recipes
+
+
+def template_sketch(key,statement):
+    if semantic_labels.is_label(statement): return next(r[-1] for r in LABELS if r[0]==key)
+    return set_sketch(statement) if is_set(statement) else recipe_sketch(key)
+
+
+def set_sketch(statement):
+    if '2|3x' in statement:
+        return 'Subtract 5 and divide by 2 to get $|3x-{a}| <= ({b}-5)/2$. Bound the inner expression on both sides, add {a} throughout, then divide by positive 3.'
+    if '|2x' in statement:
+        return 'The absolute-value bound becomes $-{b} <= 2x-{a} <= {b}$. Add {a} throughout, then divide by positive 2. Both endpoints are included.'
+    if '|' in statement:
+        return 'A magnitude below {a} places x between -{a} and {a}: $-{a} < x < {a}$. Both endpoints are excluded.'
+    if 'interval notation' in statement:
+        return 'The lower boundary is -{a} and is excluded, so use a round bracket. The upper boundary is {b} and is included, so use a square bracket.'
+    if '-3x' in statement:
+        return 'Subtract 2 throughout, then divide by -3 and reverse both comparisons: $(2-{b})/3 <= x < ({a}+2)/3$.'
+    return 'Subtract 4 from all three parts: $-{a}-4 < x < {b}-4$. Both strict comparisons exclude the endpoints.'
 
 
 def recipe_sketch(key):
@@ -63,7 +110,12 @@ def patch(exemplars):
         changes.append((i+1,j,block))
     assert len(changes)==len(exemplars)
     for i,j,block in reversed(changes): lines[i:j]=[block]
-    YAML.write_text(''.join(lines))
+    text=''.join(lines)
+    text=text.replace('\"shade_toward\":{\"x\":\"0\",\"y\":\"0\"},\"label\":\"y ≤ x - 1\"',
+                      '\"shade_toward\":{\"x\":\"0\",\"y\":\"-2\"},\"label\":\"y ≤ x - 1\"')
+    text=text.replace('the origin test on y ≤ x - 1 shades the side containing (0,0).',
+                      'the origin fails y ≤ x - 1. Shade the side containing (0,-2), which satisfies the inequality.')
+    YAML.write_text(text)
 
 
 def main():

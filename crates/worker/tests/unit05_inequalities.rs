@@ -27,7 +27,7 @@ fn all_pending_instances_pass_the_real_worker_and_match_exhaustive_samples() {
     let (curriculum, findings) = load_curriculum(&root.join("curriculum")).unwrap();
     assert!(findings.is_empty());
     let mut problems = BTreeSet::new();
-    assert_eq!(rows().len(), 8);
+    assert_eq!(rows().len(), 19);
     for row in rows() {
         assert_eq!(row["status"], "pending");
         let key = row["kp_id"].as_str().unwrap();
@@ -55,10 +55,15 @@ fn all_pending_instances_pass_the_real_worker_and_match_exhaustive_samples() {
             );
             assert!(matches!(result, Outcome::Decided(r) if r.correct));
             assert!(problems.insert(instance.text));
-            assert!(answers.insert(instance.answer), "{key}: repeated answer");
+            answers.insert(instance.answer);
+        }
+        if row["arguments"]["answer_contract"]["kind"] == "label" {
+            assert_eq!(answers, BTreeSet::from(["yes".to_owned(), "no".to_owned()]));
+        } else {
+            assert_eq!(answers.len(), 12, "{key}: collapsed exact answers");
         }
     }
-    assert_eq!(problems.len(), 96);
+    assert_eq!(problems.len(), 228);
 }
 
 #[test]

@@ -7,12 +7,26 @@ import re
 import sys
 import unittest
 
-from build import ROOT, OUT, generate
-from semantic import affine, math, reconstruct, verify
+from build import ROOT, OUT, generate, is_set, reconstruct
+from semantic import affine, math, verify as verify_linear
+import graphs
+import semantic_sets
+import semantic_labels
+from math import log2
+
+
+def verify(problem,answer,solution=None):
+    if 'Give boundary and graph' in problem: return graphs.verify(problem,answer,solution)
+    if semantic_labels.is_label(problem): return semantic_labels.verify(problem,answer,solution)
+    if is_set(problem): return semantic_sets.verify(problem,answer,solution)
+    return verify_linear(problem,answer,solution)
 
 
 def family(problem):
     """Preserve the actual task's two sides, ignoring presentation and whitespace."""
+    if 'Give boundary and graph' in problem: return ('graph',math(problem)[0])
+    if semantic_labels.is_label(problem): return semantic_labels.family(problem)
+    if is_set(problem): return ('bounded',semantic_sets.parts(problem).replace(' ',''))
     equation=next(s for s in math(problem) if re.search(r'<=|>=|<|>',s))
     left,op,right=re.split(r'(<=|>=|<|>)',equation)
     return (affine(left),op,affine(right))
@@ -20,8 +34,8 @@ def family(problem):
 
 def material(args):
     domains={k:v['values'] for k,v in args['params'].items()}
-    expected=list(product(domains['a'],domains['b']))
-    samples={tuple(s['params'][k] for k in ('a','b')):s for s in args['samples']}
+    expected=list(product(*domains.values()))
+    samples={tuple(s['params'][k] for k in domains):s for s in args['samples']}
     assert len(expected)>=12 and set(expected)==set(samples)
     answers={}
     signatures=set()
@@ -32,11 +46,33 @@ def material(args):
         assert sig not in signatures, 'Semantic collision'
         signatures.add(sig)
         answers[params]=sample['expected']
+    if args['answer_contract']['kind']=='label':
+        truth_materiality(answers,domains)
+        return signatures
     assert len(set(answers.values()))>=12, 'Collapsed answer entropy'
-    for a,b in expected:
-        assert all(answers[a,b]!=answers[other,b] for other in domains['a'] if other!=a)
-        assert all(answers[a,b]!=answers[a,other] for other in domains['b'] if other!=b)
+    for params in expected:
+        for axis,domain in enumerate(domains.values()):
+            for other in domain:
+                changed=list(params)
+                changed[axis]=other
+                if tuple(changed)!=params:
+                    assert answers[params]!=answers[tuple(changed)]
     return signatures
+
+
+def truth_materiality(answers,domains):
+    counts=Counter(answers.values())
+    assert set(counts)=={'yes','no'}, 'Constant decision family'
+    total=sum(counts.values())
+    assert -sum((n/total)*log2(n/total) for n in counts.values())>=0.8
+    for axis,domain in enumerate(domains.values()):
+        changes=[]
+        for params,answer in answers.items():
+            for other in domain:
+                changed=list(params)
+                changed[axis]=other
+                changes.append(answer!=answers[tuple(changed)])
+        assert any(changes), 'Nonmaterial decision axis'
 
 
 class SemanticTests(unittest.TestCase):
@@ -72,6 +108,14 @@ class SemanticTests(unittest.TestCase):
                             ('Solve $2x+1<7$.','x <= 3'),
                             ('Solve $x/3+2>=7$.','x >= 5')]:
             with self.assertRaises(AssertionError): verify(problem,bad)
+        for p,bad in [('Solve $-8<-2x<=6$.','-4 < x <= 3'),
+                      ('Solve $|2x+1|<=7$.','-3 <= x <= 4'),
+                      ('Write $-2<x<=5$ in interval notation.','[-2, 5]')]:
+            with self.assertRaises(AssertionError): verify(p,bad)
+        for p,bad in [('Is $x=4$ a solution of $2x+1<9$?','yes'),
+                      ('For $2x+3y<=-5$, does the shaded region include the origin?','yes'),
+                      ('Is $x=5$ a solution of $x>2$ and $x<4$?','yes')]:
+            with self.assertRaises(AssertionError): verify(p,bad)
         for bad in ['Solve $x-x<=2$.','Solve $2x+3<=2x+5$.']:
             with self.assertRaises(AssertionError): reconstruct(bad)
         args=generate()[1][0]['arguments']
