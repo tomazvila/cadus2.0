@@ -44,7 +44,7 @@ pub struct AttemptProblem {
     pub text: String,
     /// The policy captured with this item; absence preserves legacy semantics.
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub answer_contract: Option<crate::answer::AnswerContract>,
+    pub answer_contract: Option<Box<crate::answer::AnswerContract>>,
     /// The expected answer.
     pub expected: String,
 }

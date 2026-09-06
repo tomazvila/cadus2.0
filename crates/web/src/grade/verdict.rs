@@ -33,7 +33,7 @@ pub fn grade_item(
     if kind == AnswerKind::Proof {
         return ungraded_grade(PROOF_UNGRADED);
     }
-    let Some(contract) = expected.answer_contract else {
+    let Some(contract) = expected.answer_contract.clone() else {
         return deterministic_grade(&expected.answer, answer, kind);
     };
     grade_outcome(

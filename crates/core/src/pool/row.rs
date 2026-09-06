@@ -191,7 +191,7 @@ impl PoolAnswer {
         Self {
             v: POOL_ROW_VERSION,
             answer: instance.answer.clone(),
-            answer_contract: instance.answer_contract,
+            answer_contract: instance.answer_contract.clone(),
         }
     }
 }

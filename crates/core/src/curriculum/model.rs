@@ -180,7 +180,7 @@ pub struct Exemplar {
 impl Exemplar {
     /// Validate this item's authored answer under its captured policy.
     pub fn canonical_answer(&self) -> Result<crate::answer::Canon, crate::answer::Undecidable> {
-        self.answer_contract.map_or_else(
+        self.answer_contract.as_ref().map_or_else(
             || crate::answer::canonical_form(&self.answer),
             |contract| contract.validate_expected(&self.answer),
         )

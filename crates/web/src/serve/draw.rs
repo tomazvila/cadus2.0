@@ -117,7 +117,7 @@ pub(super) fn answer_of(
                 .find(|item| item.problem == row.problem.text && item.answer == answer.answer)
         })
     {
-        answer.answer_contract = exemplar.answer_contract;
+        answer.answer_contract = exemplar.answer_contract.clone();
     }
     answer
 }

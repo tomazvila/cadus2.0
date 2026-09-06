@@ -71,9 +71,9 @@ const SHAPE_COUNTS: [(&str, usize); 16] = [
 ];
 
 /// The count of knowledge points per number of distinct decidable exemplars.
-/// After the f2 productions (rational exponents, remainders, units): 8 knowledge
-/// points left 0, 6 left 1, and 1 more reached 3 (was 146, 58, 548, 57).
-const DISTINCT_DECIDABLE: [(usize, usize); 4] = [(0, 138), (1, 52), (2, 561), (3, 58)];
+/// After finite solution disjunctions: 23 knowledge points leave zero
+/// decidable exemplars. The count of points with three exemplars stays 58.
+const DISTINCT_DECIDABLE: [(usize, usize); 4] = [(0, 115), (1, 53), (2, 583), (3, 58)];
 
 #[test]
 fn the_foundations_inventory_carries_the_audited_counts() {

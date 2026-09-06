@@ -185,7 +185,7 @@ pub(super) fn build_attempt(
         kp: served.kp.as_deref().and_then(|id| Slug::new(id).ok()),
         task_type: task.task_type,
         problem: AttemptProblem {
-            answer_contract: served.expected.answer_contract,
+            answer_contract: served.expected.answer_contract.clone().map(Box::new),
             text: served.text.clone(),
             expected: served.expected.answer.clone(),
         },

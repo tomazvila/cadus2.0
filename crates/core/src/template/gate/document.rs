@@ -24,11 +24,11 @@ pub(super) fn check_document(doc: &TemplateDoc, spec: &GateSpec) -> Result<(), R
             ),
         ));
     }
-    if let Some(contract) = doc.answer_contract {
+    if let Some(contract) = &doc.answer_contract {
         contract
             .validate()
             .map_err(|reason| Rejection::new("answer-contract", reason.reason.to_owned()))?;
-        if contract == crate::answer::AnswerContract::None {
+        if contract == &crate::answer::AnswerContract::None {
             return Err(Rejection::new(
                 "answer-contract",
                 "a template requires a deterministic answer contract".to_owned(),

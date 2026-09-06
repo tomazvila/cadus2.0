@@ -158,7 +158,7 @@ impl ProblemSource for ExemplarSource<'_> {
                 continue;
             }
             out.push(Instance {
-                answer_contract: exemplar.answer_contract,
+                answer_contract: exemplar.answer_contract.clone(),
                 bindings: Bindings::new(),
                 text,
                 answer: exemplar.answer.clone(),

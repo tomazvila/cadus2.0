@@ -10,9 +10,11 @@
 
 use num_bigint::BigInt;
 use num_rational::BigRational;
+use serde::{Deserialize, Serialize};
 
 /// The kind of a measured value.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
 pub enum Quantity {
     /// A length, in centimeters.
     Length,

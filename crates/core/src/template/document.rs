@@ -263,14 +263,14 @@ impl<'doc> Compiled<'doc> {
             text: answer,
             canon,
         } = answer(&self.answer_ast, &bindings)?;
-        if let Some(contract) = self.doc.answer_contract {
+        if let Some(contract) = &self.doc.answer_contract {
             contract
                 .validate_expected(&answer)
                 .map_err(EvalError::Grammar)?;
         }
         let instance_hash = problem_text_hash(&text);
         Ok(Instance {
-            answer_contract: self.doc.answer_contract,
+            answer_contract: self.doc.answer_contract.clone(),
             bindings,
             text,
             answer,

@@ -1,29 +1,79 @@
 //! Per-item acceptance rules (D-F1, C4, D6).
 
-use num_bigint::BigInt;
-use num_rational::BigRational;
+mod evaluate;
+mod structured;
+
 use serde::{Deserialize, Serialize};
 
-use super::{Canon, MAX_ANSWER_CHARS, Outcome, Rounding, Undecidable, Verdict};
-use super::{canonical_form, rounds_to, same_answer};
+use super::{Canon, MAX_ANSWER_CHARS, Quantity, Undecidable, canonical_form};
+use structured::{label_value, multipart_values, tolerance_value, validate_shape};
+
+pub use evaluate::check_contract;
 
 /// A reviewed item's answer policy. Absence retains the historical policy.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(tag = "kind", rename_all = "snake_case", try_from = "ContractDoc")]
 pub enum AnswerContract {
-    /// Exact mathematical equivalence, with no learner-selected approximation.
+    /// Exact mathematical equivalence.
     Exact,
     /// The exact value rounded half-to-even to the authored decimal count.
     Approx { decimals: u8 },
+    /// An inclusive absolute error bound, as an exact positive rational.
+    #[serde(rename = "approx")]
+    Tolerance { tolerance: String },
+    /// A measured value; equivalent units of the same quantity are accepted.
+    Unit { quantity: Quantity, unit: String },
+    /// An integer quotient and a nonnegative integer remainder.
+    QuotientRemainder {
+        /// An optional positive divisor bounds the remainder.
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        divisor: Option<u64>,
+    },
+    /// An ordered tuple of two to four real numeric coordinates.
+    Coordinates { arity: u8 },
+    /// An unordered set; order and repeated members have no effect.
+    Set,
+    /// A closed choice vocabulary, with explicit aliases per option.
+    Label { options: Vec<Vec<String>> },
+    /// Named parts, each with its own deterministic policy.
+    Multipart { parts: Vec<AnswerPart> },
     /// The item has no deterministic assessment.
     None,
+}
+
+/// One named part of an answer, written as `name = value`.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct AnswerPart {
+    pub name: String,
+    pub contract: AnswerContract,
 }
 
 #[derive(Deserialize)]
 #[serde(tag = "kind", rename_all = "snake_case", deny_unknown_fields)]
 enum ContractDoc {
     Exact {},
-    Approx { decimals: u8 },
+    Approx {
+        decimals: Option<u8>,
+        tolerance: Option<String>,
+    },
+    Unit {
+        quantity: Quantity,
+        unit: String,
+    },
+    QuotientRemainder {
+        divisor: Option<u64>,
+    },
+    Coordinates {
+        arity: u8,
+    },
+    Set {},
+    Label {
+        options: Vec<Vec<String>>,
+    },
+    Multipart {
+        parts: Vec<AnswerPart>,
+    },
     None {},
 }
 
@@ -33,7 +83,25 @@ impl TryFrom<ContractDoc> for AnswerContract {
     fn try_from(doc: ContractDoc) -> Result<Self, Self::Error> {
         let contract = match doc {
             ContractDoc::Exact {} => Self::Exact,
-            ContractDoc::Approx { decimals } => Self::Approx { decimals },
+            ContractDoc::Approx {
+                decimals: Some(decimals),
+                tolerance: None,
+            } => Self::Approx { decimals },
+            ContractDoc::Approx {
+                decimals: None,
+                tolerance: Some(tolerance),
+            } => Self::Tolerance { tolerance },
+            ContractDoc::Approx { .. } => {
+                return Err(Undecidable::new(
+                    "choose exactly one approximate answer policy",
+                ));
+            }
+            ContractDoc::Unit { quantity, unit } => Self::Unit { quantity, unit },
+            ContractDoc::QuotientRemainder { divisor } => Self::QuotientRemainder { divisor },
+            ContractDoc::Coordinates { arity } => Self::Coordinates { arity },
+            ContractDoc::Set {} => Self::Set,
+            ContractDoc::Label { options } => Self::Label { options },
+            ContractDoc::Multipart { parts } => Self::Multipart { parts },
             ContractDoc::None {} => Self::None,
         };
         contract.validate()?;
@@ -43,88 +111,60 @@ impl TryFrom<ContractDoc> for AnswerContract {
 
 impl AnswerContract {
     /// Refuse a policy outside the bounded implementation.
-    pub fn validate(self) -> Result<(), Undecidable> {
-        if matches!(self, Self::Approx { decimals } if decimals > 18) {
-            return Err(Undecidable::new(
+    pub fn validate(&self) -> Result<(), Undecidable> {
+        match self {
+            Self::Approx { decimals } if *decimals > 18 => Err(Undecidable::new(
                 "the answer contract supports at most 18 decimal places",
-            ));
+            )),
+            Self::Tolerance { tolerance } => tolerance_value(tolerance).map(|_| ()),
+            Self::Coordinates { arity } if !(2..=4).contains(arity) => Err(Undecidable::new(
+                "coordinates require two to four dimensions",
+            )),
+            Self::QuotientRemainder { divisor: Some(0) } => Err(Undecidable::new(
+                "a quotient contract requires a positive divisor",
+            )),
+            Self::Unit { quantity, unit } => match super::unit::lookup(unit) {
+                Some(found) if found.quantity == *quantity => Ok(()),
+                _ => Err(Undecidable::new(
+                    "the contract unit does not match its quantity",
+                )),
+            },
+            Self::Label { options } => structured::validate_labels(options),
+            Self::Multipart { parts } => structured::validate_parts(parts),
+            _ => Ok(()),
         }
-        Ok(())
     }
 
     /// Validate the authored answer before the item enters the serve pool.
-    pub fn validate_expected(self, expected: &str) -> Result<Canon, Undecidable> {
+    pub fn validate_expected(&self, expected: &str) -> Result<Canon, Undecidable> {
         self.validate()?;
-        if self == Self::None {
-            return Err(Undecidable::new(
+        bounded(expected)?;
+        match self {
+            Self::None => Err(Undecidable::new(
                 "the item has no deterministic answer contract",
-            ));
+            )),
+            Self::Label { options } => label_value(options, expected).ok_or_else(|| {
+                Undecidable::new("the authored answer is outside the choice vocabulary")
+            }),
+            Self::Multipart { parts } => multipart_values(parts, expected),
+            _ => {
+                let value = canonical_form(expected)?;
+                if validate_shape(self, &value) {
+                    Ok(value)
+                } else {
+                    Err(Undecidable::new(
+                        "the authored answer does not match its contract shape",
+                    ))
+                }
+            }
         }
-        if expected.chars().count() > MAX_ANSWER_CHARS {
-            return Err(Undecidable::new("the answer is longer than the input cap"));
-        }
-        let value = canonical_form(expected)?;
-        if matches!(self, Self::Approx { .. })
-            && !matches!(value, Canon::Rational(_) | Canon::Radical(_))
-        {
-            return Err(Undecidable::new(
-                "an approximate answer contract requires a supported number",
-            ));
-        }
-        Ok(value)
     }
 }
 
-/// Decide the authored policy with exact arithmetic and bounded input.
-#[must_use]
-pub fn check_contract(expected: &str, learner: &str, contract: AnswerContract) -> Outcome {
-    let expected = match contract.validate_expected(expected) {
-        Ok(value) => value,
-        Err(reason) => return Outcome::Undecidable(reason),
-    };
-    if learner.chars().count() > MAX_ANSWER_CHARS {
-        return Outcome::Undecidable(Undecidable::new("the answer is longer than the input cap"));
-    }
-    if learner.trim().is_empty() {
-        return decided(false);
-    }
-    let learner = match canonical_form(learner) {
-        Ok(value) => value,
-        Err(reason) => return Outcome::Undecidable(reason),
-    };
-    match contract {
-        AnswerContract::Exact => decided(same_answer(&expected, &learner)),
-        AnswerContract::Approx { decimals } => approximate(&expected, &learner, decimals),
-        AnswerContract::None => Outcome::Undecidable(Undecidable::new(
-            "the item has no deterministic answer contract",
-        )),
-    }
-}
-
-fn decided(correct: bool) -> Outcome {
-    Outcome::Decided(Verdict {
-        correct,
-        notation: false,
-    })
-}
-
-fn approximate(expected: &Canon, learner: &Canon, decimals: u8) -> Outcome {
-    let Canon::Rational(value) = learner else {
-        return decided(false);
-    };
-    let scale = u32::from(decimals);
-    let grid = BigRational::from_integer(BigInt::from(10_u32).pow(scale));
-    // The rounding helper compares integral scaled values. Reject extra digits
-    // before that comparison so truncation cannot admit a nearby wrong value.
-    if !(value * grid).is_integer() {
-        return decided(false);
-    }
-    match rounds_to(expected, value, scale) {
-        Rounding::Same => decided(true),
-        Rounding::Different => decided(false),
-        Rounding::NotANumber => {
-            Outcome::Undecidable(Undecidable::new("the answer contract requires a number"))
-        }
-        Rounding::Refused(reason) => Outcome::Undecidable(Undecidable::new(reason)),
+fn bounded(text: &str) -> Result<(), Undecidable> {
+    if text.chars().count() > MAX_ANSWER_CHARS {
+        Err(Undecidable::new("the answer is longer than the input cap"))
+    } else {
+        Ok(())
     }
 }

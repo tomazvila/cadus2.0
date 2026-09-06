@@ -87,8 +87,8 @@ impl<'a> Lint<'a> {
                 .flat_map(|kp| &kp.exemplars)
                 .chain(topic.diagnostic_exemplar.iter());
             for exemplar in exemplars {
-                if let Some(contract) = exemplar.answer_contract {
-                    if contract == crate::answer::AnswerContract::None {
+                if let Some(contract) = &exemplar.answer_contract {
+                    if contract == &crate::answer::AnswerContract::None {
                         continue;
                     }
                     if let Err(reason) = exemplar.canonical_answer() {

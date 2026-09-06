@@ -40,7 +40,7 @@ pub mod unit;
 pub use ast::{Ast, Const, IneqOp};
 pub use canon::{Atom, Basis, Canon, Monomial, Poly, canon};
 pub use check::{Outcome, Verdict, canonical_form, check, notation_note, same_answer};
-pub use contract::{AnswerContract, check_contract};
+pub use contract::{AnswerContract, AnswerPart, check_contract};
 pub use normalize::{MAX_ANSWER_CHARS, Normalized, normalize};
 pub use parse::{parse, parse_with_functions};
 pub use rounding::{Rounding, rounds_to};

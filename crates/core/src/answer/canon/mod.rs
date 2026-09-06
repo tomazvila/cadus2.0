@@ -224,6 +224,8 @@ pub struct Basis {
 /// is equality of two `Canon` values.
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub enum Canon {
+    /// One option of a closed, reviewed choice vocabulary.
+    Label(String),
     /// An exact rational.
     Rational(BigRational),
     /// A rational combination of roots and constants, keyed by basis.

@@ -132,7 +132,7 @@ pub(super) fn check_samples(
             )
         })?;
         let claimed = sample.expected.text();
-        let outcome = doc.answer_contract.map_or_else(
+        let outcome = doc.answer_contract.clone().map_or_else(
             || crate::answer::check(&computed.text, &claimed, spec.answer_kind),
             |contract| crate::answer::check_contract(&computed.text, &claimed, contract),
         );

@@ -12,7 +12,7 @@ use super::*;
 /// Walk one canonical form and collect its radical atoms.
 pub fn collect_radical_atoms(canon: &Canon, out: &mut BTreeSet<String>) {
     match canon {
-        Canon::Rational(_) => {}
+        Canon::Rational(_) | Canon::Label(_) => {}
         Canon::Radical(terms) => {
             for basis in terms.keys() {
                 if !basis.radicand.is_one() {
@@ -314,7 +314,7 @@ pub fn holds_the_variable_x(answer: &str) -> bool {
 /// Collect the variable names of one canonical form.
 pub fn collect_variable_names(canon: &Canon, out: &mut BTreeSet<String>) {
     match canon {
-        Canon::Rational(_) | Canon::Radical(_) => {}
+        Canon::Rational(_) | Canon::Radical(_) | Canon::Label(_) => {}
         Canon::Poly(poly) => collect_poly_variables(poly, out),
         Canon::Value { num, den } => {
             collect_poly_variables(num, out);

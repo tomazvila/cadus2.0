@@ -26,6 +26,7 @@
 
 mod atom;
 mod build;
+mod disjunction;
 mod exponent;
 mod term;
 mod unit;
@@ -111,6 +112,9 @@ pub fn parse_with_functions(source: &str, extra: &[&str]) -> Result<Ast, Undecid
     let tokens = lex(source)?;
     if tokens.is_empty() {
         return Err(Undecidable::new("the answer is empty"));
+    }
+    if let Some(result) = disjunction::read(&tokens, extra) {
+        return result;
     }
     let mut parser = Parser {
         tokens: &tokens,

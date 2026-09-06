@@ -231,7 +231,7 @@ impl Work {
             Canon::Tuple(_) | Canon::Set(_) | Canon::List(_) | Canon::Interval { .. } => {
                 return Err(Undecidable::new("arithmetic on a collection"));
             }
-            Canon::Assign { .. } => {
+            Canon::Assign { .. } | Canon::Label(_) => {
                 return Err(Undecidable::new("arithmetic on a labeled value"));
             }
             Canon::Quantity { .. } => {
