@@ -20,7 +20,9 @@
 //!    leaves the grammar, the outcome is [`Outcome::Undecidable`] (V2). If one
 //!    side alone carries a unit, the outcome is [`Outcome::Undecidable`] with
 //!    the reason `a unit is missing` (D-F3); the contract of D-F1 decides that
-//!    pair later.
+//!    pair later. A set against a list or a tuple is [`Outcome::Undecidable`]
+//!    as well: the two shapes hold one member set, and the contract decides
+//!    the shape.
 //! 4. The learner wrote a period-grouped integer whose value matches: `correct =
 //!    true` with `notation = true` (spec section 2.4).
 //! 5. The learner typed a DECIMAL, and the decimal is the exact rounding of the
@@ -188,7 +190,7 @@ fn decide(expected: &str, learner: &str, kind: AnswerKind) -> (Outcome, Option<F
         Ok(value) => value,
         Err(reason) => return (Outcome::Undecidable(reason), None),
     };
-    if let Some(reason) = unit_gap(&expected_value, &learner_value) {
+    if let Some(reason) = shape_gap(&expected_value, &learner_value) {
         return (Outcome::Undecidable(Undecidable::new(reason)), None);
     }
     if same_answer(&expected_value, &learner_value) {
@@ -209,16 +211,25 @@ fn decide(expected: &str, learner: &str, kind: AnswerKind) -> (Outcome, Option<F
     (Outcome::decided(false), None)
 }
 
-/// The refusal of a pair where one side alone carries a unit (D-F3).
+/// The refusal of a pair whose two shapes the checker does not compare (D-F3).
 ///
-/// The contract of D-F1 decides later whether a bare number is acceptable for
-/// a measured answer; the grammar does not, so the pair gets no verdict (V2).
-fn unit_gap(expected: &Canon, learner: &Canon) -> Option<&'static str> {
-    let expected = matches!(unlabeled(expected), Canon::Quantity { .. });
-    let learner = matches!(unlabeled(learner), Canon::Quantity { .. });
-    match (expected, learner) {
-        (true, false) => Some("a unit is missing"),
-        (false, true) => Some("a unit on the learner side only"),
+/// A unit on one side alone: the contract of D-F1 decides later whether a bare
+/// number is acceptable for a measured answer; the grammar does not, so the
+/// pair gets no verdict (V2). A set against a list or a tuple: an unordered
+/// collection and an ordered one are two shapes of one member set, and the
+/// answer contract decides which shape the item asks for
+/// (`docs/reference/undecidable-answers.md`, the 2.0 productions).
+fn shape_gap(expected: &Canon, learner: &Canon) -> Option<&'static str> {
+    match (unlabeled(expected), unlabeled(learner)) {
+        (Canon::Quantity { .. }, Canon::Quantity { .. }) => None,
+        (Canon::Quantity { .. }, _) => Some("a unit is missing"),
+        (_, Canon::Quantity { .. }) => Some("a unit on the learner side only"),
+        (Canon::Set(_), Canon::List(_)) | (Canon::List(_), Canon::Set(_)) => {
+            Some("a set against a list")
+        }
+        (Canon::Set(_), Canon::Tuple(_)) | (Canon::Tuple(_), Canon::Set(_)) => {
+            Some("a set against a tuple")
+        }
         _ => None,
     }
 }
@@ -232,7 +243,7 @@ fn unit_gap(expected: &Canon, learner: &Canon) -> Option<&'static str> {
 ///
 /// A label falls away on both sides, which is the rule [`same_answer`] holds for
 /// a one-sided label. A unit stands on both sides or on neither, because
-/// [`unit_gap`] refused the one-sided pair: the rounding then reads the
+/// [`shape_gap`] refused the one-sided pair: the rounding then reads the
 /// expected value in the unit the learner typed, so `1.33 h` is the rounding of
 /// `80 min` (D-F3).
 fn rounding_variant(expected: &Canon, learner_tree: &Ast) -> Rounding {
