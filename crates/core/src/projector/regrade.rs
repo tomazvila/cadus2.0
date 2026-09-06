@@ -132,6 +132,10 @@ impl<'a> Corrections<'a> {
     /// The review result with the correction of `task_id` applied.
     fn corrected_review(&self, body: &ReviewResult, task_id: Option<&str>) -> ReviewResult {
         let mut fixed = body.clone();
+        if body.inconclusive {
+            fixed.xp = 0.0;
+            return fixed;
+        }
         apply_task_correction(
             &mut fixed.quality_tier,
             &mut fixed.xp,

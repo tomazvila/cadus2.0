@@ -3,24 +3,13 @@
 
 use super::*;
 
-/// The H3 `rework_required` reply: the solution and the authored answer, and
-/// the stock re-solve instruction (D-M5-3).
-pub(super) fn rework_reply(served: &ServedProblem) -> Value {
-    json!({
-        "rework_required": true,
-        "problem_id": served.problem_id,
-        "solution": served.solution_sketch,
-        "expected": served.expected.answer,
-        "re_solve": RE_SOLVE,
-    })
-}
-
 /// Drop every scratch entry a finished task owns (`_clear_task_scratch`).
 ///
 /// The buffers hold each question's hidden `expected` and its solution sketch,
 /// and the D-S6 row is persisted, so a closed task must not keep them.
 pub(super) fn clear_task_scratch(scratch: &mut WebState, task_id: &str) {
     scratch.served.remove(task_id);
+    scratch.feedback_practice.remove(task_id);
     scratch.quizzes.remove(task_id);
     scratch.multistep.remove(task_id);
     scratch.task_memory.remove(task_id);
@@ -62,6 +51,10 @@ pub(super) fn reply(
     // an open task with no next problem says `next_unavailable` (trap W6).
     let unavailable = !closed && next.is_none();
     let ungraded = recorded.outcome.is_ungraded();
+    let feedback_practice = !closed
+        && recorded.task_type == TaskType::Lesson
+        && !ungraded
+        && (!recorded.correct || recorded.assisted);
     let mut map = outcome_fields(recorded);
     for (key, value) in [
         ("attempt_id", json!(recorded.attempt_id)),
@@ -75,6 +68,9 @@ pub(super) fn reply(
     ] {
         map.insert(key.to_string(), value);
     }
+    if feedback_practice {
+        map.insert("feedback_practice".to_owned(), json!(true));
+    }
     // A quiz reveals nothing until its batch reveal (trap W7), so no solution
     // and no re-solve text leaves this route for one. An UNGRADED attempt reveals
     // nothing either: Hard Rule 1 holds an answer back until the learner attempts
@@ -84,8 +80,13 @@ pub(super) fn reply(
     {
         map.insert("solution".to_string(), json!(solution));
     }
-    if !recorded.correct && !ungraded {
-        map.insert("re_solve".to_string(), json!(RE_SOLVE));
+    if feedback_practice || (!recorded.correct && !ungraded) {
+        let instruction = if feedback_practice {
+            RE_SOLVE
+        } else {
+            "Review the worked solution, then continue."
+        };
+        map.insert("re_solve".to_string(), json!(instruction));
     }
     if unavailable {
         map.insert("next_unavailable".to_string(), json!(true));

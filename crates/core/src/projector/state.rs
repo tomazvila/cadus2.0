@@ -150,8 +150,11 @@ impl Projector<'_> {
             let open: Vec<Slug> = targets
                 .iter()
                 .filter(|target| {
+                    let key = kind
+                        .strip_prefix("review_confirmation:")
+                        .map_or_else(|| target.as_str().to_owned(), |kp| format!("{target}/{kp}"));
                     self.last_practice
-                        .get(target.as_str())
+                        .get(&key)
                         .is_none_or(|practiced| practiced < ts)
                 })
                 .cloned()
@@ -170,6 +173,24 @@ impl Projector<'_> {
                 kind: kind.clone(),
                 targets: open,
             });
+        }
+        for (ts, skill, due) in &self.feedback_confirmations {
+            if self.completed_tasks < *due
+                || self.last_practice.get(skill).is_some_and(|last| last > ts)
+            {
+                continue;
+            }
+            if let Some((topic, kp)) = skill.split_once('/')
+                && let Ok(topic) = Slug::new(topic)
+            {
+                let kind = format!("review_confirmation:{kp}");
+                if seen.insert((kind.clone(), vec![topic.as_str().to_owned()])) {
+                    out.push(PendingRemediation {
+                        kind,
+                        targets: vec![topic],
+                    });
+                }
+            }
         }
         out
     }
@@ -347,6 +368,7 @@ mod tests {
             assisted: false,
             task_id: None,
             inconclusive: false,
+            confirmation_skills: Vec::new(),
         })
     }
 

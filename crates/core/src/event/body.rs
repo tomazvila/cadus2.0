@@ -284,6 +284,9 @@ pub struct ReviewResult {
     /// bytes (C2).
     #[serde(default, skip_serializing_if = "is_off")]
     pub inconclusive: bool,
+    /// Skills that require one independent confirmation (D-F7).
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub confirmation_skills: Vec<String>,
 }
 
 /// A quiz closed.

@@ -165,6 +165,12 @@ pub fn assign_ids(tasks: &mut [Task], session_id: &str) {
             Some(topic) => format!("{session_id}-{kind}-{topic}"),
             None => format!("{session_id}-{kind}"),
         };
+        if task.task_type == crate::event::TaskType::Review
+            && task.is_remediation
+            && let Some(kp) = &task.start_at_kp
+        {
+            task.task_id.push_str(&format!("-confirm-{kp}"));
+        }
     }
 }
 

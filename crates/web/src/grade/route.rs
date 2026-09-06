@@ -98,7 +98,7 @@ pub async fn answer(
         kind,
         assisted,
     };
-    let (attempt, stash) = build_attempt(
+    let (attempt, _stash) = build_attempt(
         &task,
         &served,
         &submitted,
@@ -108,20 +108,26 @@ pub async fn answer(
         attempt_index(&events, &task.task_id),
     )?;
 
-    // H3 first branch: an assisted attempt that grades CORRECT is NOT recorded.
-    // It is stashed, the problem stays live, and the next submission is the
-    // unaided re-solve (`api.py:1520-1532`).
-    if stash_required(assisted, &grade, &served) {
-        scratch
-            .served
-            .entry(task_id)
-            .and_modify(|live| live.rework = Some(stash));
-        return save_and_commit(&state, tx, user_id, &scratch)
-            .await
-            .map(|()| Json(rework_reply(&served)));
+    let recorded = attempt;
+    let attempt_id = recorded.attempt_id.clone();
+    if task.task_type == TaskType::Lesson
+        && !recorded.outcome.is_ungraded()
+        && (!recorded.correct || recorded.assisted)
+    {
+        let digest = problem_text_hash(&served.text);
+        let mut digests = scratch
+            .feedback_practice
+            .get(&task_id)
+            .and_then(|value| value["digests"].as_array())
+            .cloned()
+            .unwrap_or_default();
+        digests.push(json!(digest));
+        scratch.feedback_practice.insert(task_id.clone(), json!({
+            "digest": digest, "digests": digests, "topic": served.serving_topic(), "kp": served.kp,
+        }));
+    } else if recorded.correct && !recorded.assisted {
+        scratch.feedback_practice.remove(&task_id);
     }
-
-    let (recorded, attempt_id) = recorded_attempt(&served, attempt, &grade, now, session.clone())?;
 
     // Step 6. One INSERT. Zero rows back means the attempt already stands, so
     // the fold, the advance and the state write are all skipped and the whole
@@ -154,7 +160,7 @@ pub async fn answer(
 
     // Step 7. The lesson advance, its close event, and its remediation.
     let moved =
-        advance_and_fold(&state, content, &mut tx, user_id, now, &recorded, &events).await?;
+        advance_and_fold(&state, content, &mut tx, user_id, &task, &recorded, &events).await?;
 
     // Step 8 and step 10: move the task on, draw the next problem, write the row.
     if task.task_type == TaskType::Quiz {
@@ -191,43 +197,6 @@ pub async fn answer(
     Ok(Json(reply(
         &recorded, &moved, &served, next, closed, diagnosis,
     )))
-}
-
-/// H3 first branch: an assisted attempt that grades CORRECT is stashed and not
-/// recorded, unless a stash already stands and this submission is its re-solve.
-fn stash_required(assisted: bool, grade: &Grade, served: &ServedProblem) -> bool {
-    assisted && grade.correct && served.rework.is_none()
-}
-
-/// The attempt the log records, and its id.
-///
-/// H3 second branch: when a stash stands, this submission IS the unaided
-/// re-solve. The STASHED attempt is what gets recorded, under `-rework`; a
-/// failed re-solve rewrites it to a miss and drops its `assisted` flag, so the
-/// assisted pass does not stand (`api.py:1373-1375`). With no stash, the
-/// attempt of this submission is recorded as built.
-fn recorded_attempt(
-    served: &ServedProblem,
-    attempt: Attempt,
-    grade: &Grade,
-    now: Timestamp,
-    session: Option<String>,
-) -> Result<(Attempt, String), ApiError> {
-    let Some(stash) = &served.rework else {
-        let id = attempt.attempt_id.clone();
-        return Ok((attempt, id));
-    };
-    let mut stashed: Attempt = serde_json::from_value(stash.clone())
-        .map_err(|err| broken_state(&format!("the stashed attempt did not read: {err}")))?;
-    stashed.ts = now;
-    stashed.session = session;
-    stashed.attempt_id = format!("{}-rework", attempt.attempt_id);
-    if !grade.correct {
-        stashed.correct = false;
-        stashed.assisted = false;
-    }
-    let id = stashed.attempt_id.clone();
-    Ok((stashed, id))
 }
 
 /// The reply of a request whose attempt already stands (spec section 4.3
@@ -283,19 +252,24 @@ async fn advance_and_fold(
     content: &Content,
     tx: &mut Transaction<'static, Postgres>,
     user_id: Uuid,
-    now: Timestamp,
+    task: &Task,
     recorded: &Attempt,
     events: &[EventRow],
 ) -> Result<Advance, ApiError> {
+    let now = recorded.ts;
     let history = store(state, load_session_view(tx, user_id)).await?;
-    let moved = advance(
-        &content.curriculum,
-        &content.cfg,
-        now,
-        recorded,
-        events,
-        &history,
-    );
+    let moved = if task.task_type == TaskType::Review {
+        review::close_review(task, recorded, events, &content.cfg)
+    } else {
+        advance(
+            &content.curriculum,
+            &content.cfg,
+            now,
+            recorded,
+            events,
+            &history,
+        )
+    };
     for extra in moved.events() {
         store(state, append_event(tx, user_id, &extra, None)).await?;
     }

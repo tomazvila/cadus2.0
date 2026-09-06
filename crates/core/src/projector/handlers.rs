@@ -19,6 +19,12 @@ use super::{
 };
 
 impl Projector<'_> {
+    /// Count each completed task once.
+    fn complete_task(&mut self, key: String) {
+        if self.completed_task_ids.insert(key) {
+            self.completed_tasks += 1;
+        }
+    }
     /// `enrolled` (`projector.py:197-211`): remember the course, then stamp `floor` on
     /// every still-untouched topic of its mastery floor.
     pub(super) fn on_enrolled(&mut self, event: &Enrolled, apply_fire: bool) {
@@ -62,6 +68,20 @@ impl Projector<'_> {
         if ungraded {
             self.record_ungraded(event);
         }
+        if !ungraded && event.correct && event.independent_after_feedback && !event.assisted {
+            for skill in &event.skills {
+                self.feedback_confirmations.push((
+                    event.ts.micros(),
+                    skill.clone(),
+                    self.completed_tasks.saturating_add(4),
+                ));
+            }
+        }
+        if !ungraded && !event.assisted && event.task_id.contains("-confirm-") {
+            for skill in &event.skills {
+                self.last_practice.insert(skill.clone(), event.ts.micros());
+            }
+        }
         if !apply_fire {
             return;
         }
@@ -104,6 +124,11 @@ impl Projector<'_> {
 
     /// `lesson_result` (`projector.py:226-242`).
     pub(super) fn on_lesson_result(&mut self, event: &LessonResult, ts: i64, apply_fire: bool) {
+        self.complete_task(format!(
+            "{}-lesson-{}",
+            event.session.as_deref().unwrap_or("legacy"),
+            event.topic
+        ));
         let topic = event.topic.as_str();
         self.xp_events.push((ts, event.xp));
         self.last_practice.insert(topic.to_owned(), ts);
@@ -183,6 +208,15 @@ impl Projector<'_> {
     /// D-F6 adds ONE status change: a passed confirmation item moves the topic
     /// from `Placed` or `Floor` to `Learning`. A failed one keeps the status.
     pub(super) fn on_review_result(&mut self, event: &ReviewResult, ts: i64, apply_fire: bool) {
+        self.complete_task(
+            event
+                .task_id
+                .clone()
+                .unwrap_or_else(|| format!("review-{}-{ts}", event.topic)),
+        );
+        if event.inconclusive {
+            return;
+        }
         let topic = event.topic.as_str();
         self.xp_events.push((ts, event.xp));
         self.last_practice.insert(topic.to_owned(), ts);
@@ -202,6 +236,10 @@ impl Projector<'_> {
     /// `quiz_result` (`projector.py:256-282`). Every question applies FIRe, pass or
     /// miss; a row that names a topic outside the curriculum is skipped.
     pub(super) fn on_quiz_result(&mut self, event: &QuizResult, ts: i64, apply_fire: bool) {
+        self.complete_task(format!(
+            "quiz-{}-{ts}",
+            event.session.as_deref().unwrap_or("legacy")
+        ));
         let graph = self.graph;
         self.xp_events.push((ts, event.xp));
         self.quiz_last_ts = Some(ts);

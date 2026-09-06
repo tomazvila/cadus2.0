@@ -307,7 +307,9 @@ export function Session({
   const advance = (next?: ServedProblem | null, nextUnavailable = false): void => {
     if (!gate.tryEnter('feedback', 'loading')) return;
     // The verdict goes now, so no feedback panel stands over the next task's load.
+    const restampAfterStudy = result?.feedback_practice;
     setResult(null);
+    if (restampAfterStudy) { serveThenShow(); return; }
 
     // The attempt IS recorded and the task is NOT finished: the service could not draw the
     // next problem. Re-serve the SAME task. Falling through to `advanceTask` would skip the
@@ -346,7 +348,7 @@ export function Session({
     if (phase !== 'feedback') return undefined;
     // A verdict is on screen in `feedback`, so the state holds one.
     const verdict = result!;
-    if (!verdict.correct || !verdict.next) return undefined;
+    if (verdict.feedback_practice || !verdict.correct || !verdict.next) return undefined;
     const { next } = verdict;
     const id = life.setTimeout(() => { advanceRef.current(next); }, AUTO_ADVANCE_MS);
     return () => life.clearTimer(id);

@@ -179,7 +179,16 @@ pub(crate) async fn install_next(
     // serve route already started (V6).
     let elapsed = quiz_elapsed(scratch, &task_id, task.task_type, started_at);
 
-    let target = target_of(task, index, &progress, graph)?;
+    let mut target = target_of(task, index, &progress, graph)?;
+    let feedback = scratch.feedback_practice.get(&task_id).cloned();
+    if let Some(pending) = &feedback {
+        target.serve = pending["topic"]
+            .as_str()
+            .unwrap_or(&target.serve)
+            .to_owned();
+        target.kp = pending["kp"].as_str().unwrap_or(&target.kp).to_owned();
+        target.key = cadus_core::pool::kp_key(&target.serve, &target.kp);
+    }
     // Audit finding (j), the server half. A lesson practices a knowledge point
     // only when an approved teach page exists for it: without the page the
     // learner practices a skill the service never taught. Every other task type
@@ -197,9 +206,25 @@ pub(crate) async fn install_next(
     {
         return Err(no_instruction());
     }
-    let (ring, memory) = (scratch.ring(&target.serve), scratch.memory(&task_id));
-    let avoid = Avoid::new(&ring, &memory);
-    let row = draw(state, tx, user_id, graph, &target, &avoid).await?;
+    let mut ring = scratch.ring(&target.serve);
+    let memory = scratch.memory(&task_id);
+    let mut selected = None;
+    for _ in 0..8 {
+        let avoid = Avoid::new(&ring, &memory);
+        let row = draw(state, tx, user_id, graph, &target, &avoid).await?;
+        let digest = cadus_core::learner::problem_text_hash(&row.problem.text);
+        if feedback.as_ref().is_none_or(|value| {
+            value["digest"].as_str() != Some(&digest)
+                && value["digests"]
+                    .as_array()
+                    .is_none_or(|seen| !seen.iter().any(|d| d.as_str() == Some(&digest)))
+        }) {
+            selected = Some(row);
+            break;
+        }
+        ring.push(&row.instance_hash);
+    }
+    let row = selected.ok_or_else(|| no_problem(&target.serve))?;
     let solution_sketch = solution_of(state, tx, graph, &target, &row).await?;
 
     let served = ServedProblem {
@@ -215,7 +240,7 @@ pub(crate) async fn install_next(
         started_at,
         hints_given: Vec::new(),
         index,
-        rework: None,
+        rework: feedback,
     };
     let payload = serve_payload(&served, task, graph, content.cfg.drill.target_secs, elapsed);
     scratch.record_served(&target.serve, &task_id, &row.instance_hash);

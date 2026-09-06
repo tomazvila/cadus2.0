@@ -118,6 +118,30 @@ pub fn remediation_tasks(
     for item in pending {
         for target in &item.targets {
             let id = target.as_str();
+            if let Some(kp) = item.kind.strip_prefix("review_confirmation:") {
+                let key = format!("{id}/{kp}");
+                if graph
+                    .idx_of(id)
+                    .and_then(|idx| graph.kp_idx_of(idx, kp))
+                    .is_some()
+                    && seen.insert(key)
+                {
+                    tasks.push(Task {
+                        is_remediation: true,
+                        start_at_kp: Some(kp.to_owned()),
+                        mix: Vec::new(),
+                        confirm: states.get(id).is_some_and(crate::xp::is_inferred),
+                        ..review_shell(
+                            id,
+                            states,
+                            graph,
+                            1,
+                            "Confirm this skill independently.".to_owned(),
+                        )
+                    });
+                }
+                continue;
+            }
             if seen.contains(id) || graph.idx_of(id).is_none() {
                 continue;
             }

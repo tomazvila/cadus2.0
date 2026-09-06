@@ -171,6 +171,12 @@ pub(super) fn build_attempt(
     now: Timestamp,
     index: i64,
 ) -> Result<(Attempt, Value), ApiError> {
+    if let Some(stash) = &served.rework
+        && stash.get("digest").and_then(Value::as_str).is_none()
+        && serde_json::from_value::<Attempt>(stash.clone()).is_err()
+    {
+        return Err(broken_state("the feedback state is invalid"));
+    }
     let Some(topic) = served.topic.as_deref().and_then(|id| Slug::new(id).ok()) else {
         return Err(broken_state("the served problem names no topic"));
     };
@@ -198,8 +204,18 @@ pub(super) fn build_attempt(
         item_source: None,
         exposure: None,
         timing_reliable: None,
-        skills: served.kp.iter().map(ToOwned::to_owned).collect(),
-        independent_after_feedback: false,
+        skills: served
+            .kp
+            .iter()
+            .map(|kp| format!("{}/{kp}", served.serving_topic().unwrap_or_default()))
+            .collect(),
+        independent_after_feedback: !graded.assisted
+            && served
+                .rework
+                .as_ref()
+                .and_then(|value| value.get("digest"))
+                .and_then(Value::as_str)
+                .is_some_and(|digest| digest != problem_text_hash(&served.text)),
         secs,
         error_tags: graded.error_tags.to_vec(),
         work_quality: graded.grade.work_quality,

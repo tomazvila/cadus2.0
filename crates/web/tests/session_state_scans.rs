@@ -212,6 +212,7 @@ fn closed_task_ids_reads_the_review_results() {
                 assisted: false,
                 task_id: Some("s_2026-01-01a-multi-step".to_string()),
                 inconclusive: false,
+                confirmation_skills: Vec::new(),
             }),
         ),
     ];

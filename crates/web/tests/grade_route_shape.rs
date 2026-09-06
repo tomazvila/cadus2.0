@@ -116,7 +116,7 @@ fn assert_attempt_shape(event: &Value) {
     // D-F9. `item_digest` is the 12-hex SHA-1 prefix of the problem text, and
     // `skills` names the knowledge point the item exercised.
     assert_eq!(event["item_digest"], PROBLEM_DIGEST);
-    assert_eq!(event["skills"], json!(["kp1"]));
+    assert_eq!(event["skills"], json!(["addition/kp1"]));
 }
 
 /// The recorded `attempt` event, diffed field by field against the 1.0 shape

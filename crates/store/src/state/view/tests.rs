@@ -194,6 +194,7 @@ fn sample_log() -> Vec<EventRow> {
                 assisted: false,
                 task_id: Some("s_2026-01-02a-review-adding-integers".to_string()),
                 inconclusive: false,
+                confirmation_skills: Vec::new(),
             }),
         ),
         row(
@@ -401,6 +402,7 @@ fn the_other_branches_of_the_fold_fold_nothing_or_reset() {
             assisted: false,
             task_id: None,
             inconclusive: false,
+            confirmation_skills: Vec::new(),
         }),
     );
     assert!(view.closed_task_ids.is_empty());

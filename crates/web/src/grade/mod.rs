@@ -51,7 +51,7 @@
 //! count and passed the 150 ms Postgres segment of L2 on its own.
 //! `crates/store/tests/bench_long_log.rs` is the gate.
 //!
-//! The H3 unaided re-solve takes the same id with `-rework` after it.
+//! D-F8 records the helped attempt, then serves a fresh same-skill problem.
 //!
 //! # The history read (M5 review 2, finding V2)
 //!
@@ -73,13 +73,10 @@
 //! STORED verdict and nothing appended (spec section 4.3 step 6: "reply with the
 //! state read").
 //!
-//! # What this unit does NOT do
+//! # Task close
 //!
-//! The explicit task close of 1.0 (`service.complete_task`: the `review_result`,
-//! the `quiz_result` and the multi-step closes, their weighted scores, and their
-//! XP) is not ported yet, and neither is `POST /api/task/{id}/abort`. A
-//! non-lesson task therefore reaches `done` by count parity, exactly as
-//! `api.py:1610-1614` does, but no close event stands behind it.
+//! A final review answer appends its evidence-aware review result (D-F7).
+//! Quiz and multi-step result handlers remain separate work.
 //!
 //! # The `diagnosis` field (unit U9)
 //!
@@ -127,6 +124,7 @@ use crate::state::{
 
 mod advance;
 mod reply;
+mod review;
 mod route;
 mod submission;
 mod verdict;
@@ -198,9 +196,7 @@ pub const TAG_BLANK_ANSWER: &str = "blank-answer";
 /// The verdict now ships before any prose exists, so the instruction is a
 /// constant and not model output. It is served on every miss and on every
 /// assisted-correct `rework_required` reply (L2, L3).
-pub const RE_SOLVE: &str = "Study the worked solution above until you can see why each step \
-                            follows. Then close it and solve the original problem again \
-                            yourself, from memory and unaided. Do that before you move on.";
+pub const RE_SOLVE: &str = "Study the worked solution. Select Done studying to hide it, then solve a fresh problem without help.";
 
 /// The loaded content and the JSON body of a task route that reads one.
 ///

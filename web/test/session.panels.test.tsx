@@ -17,6 +17,10 @@ import type { ApiClient, DiagnosisField } from '@/api/types';
 const feedback = () => document.querySelector('.feedback')!;
 
 describe('Feedback', () => {
+  it('shows an inconclusive review separately from the last answer', () => {
+    render(<Feedback res={graded({ task_status: 'task_inconclusive' })} hasNext={false} onContinue={vi.fn()} onEnd={vi.fn()} />);
+    expect(screen.getByText(/This review needs confirmation/)).toBeTruthy();
+  });
   it('classes the panel by the verdict, and chips the quality and the XP', () => {
     render(<Feedback res={graded({ work_quality: 'nearly_perfect' })} hasNext onContinue={vi.fn()} onEnd={vi.fn()} />);
     expect(feedback().className).toBe('feedback feedback-correct');

@@ -198,7 +198,9 @@ impl SessionView {
         if let Some(task_id) = body.task_id.as_ref() {
             self.closed_task_ids.insert(task_id.clone());
         }
-        self.credit(body.xp);
+        if !body.inconclusive {
+            self.credit(body.xp);
+        }
     }
 
     /// Credit `xp` to every session that is open at this point of the log.

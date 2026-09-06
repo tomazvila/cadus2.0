@@ -105,7 +105,8 @@ impl Validity<'_> {
     /// Whether a single-topic task still has its reason to be served.
     fn single_topic_valid(&self, task: &Task, topic_id: &str) -> bool {
         if task.is_remediation {
-            return self.ctx.pending_targets.contains(topic_id);
+            return !self.ctx.closed_task_ids.contains(&task.task_id)
+                && self.ctx.pending_targets.contains(topic_id);
         }
         match task.task_type {
             // A confirmation stands while the topic is still inferred (D-F6).

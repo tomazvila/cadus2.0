@@ -150,6 +150,12 @@ pub struct Projector<'a> {
     quiz_last_ts: Option<i64>,
     quiz_retake_pending: bool,
     remediation: Vec<(i64, String, Vec<Slug>)>,
+    /// Count of complete tasks in the event stream.
+    completed_tasks: usize,
+    /// Idempotent task-close identities for delayed confirmation.
+    completed_task_ids: BTreeSet<String>,
+    /// Independent feedback evidence and the task count that makes its probe due.
+    feedback_confirmations: Vec<(i64, String, usize)>,
     last_practice: BTreeMap<String, i64>,
     diag_answers: BTreeMap<String, Vec<(bool, f64)>>,
     ungraded: Vec<UngradedAttempt>,
@@ -191,6 +197,9 @@ impl<'a> Projector<'a> {
             quiz_last_ts: None,
             quiz_retake_pending: false,
             remediation: Vec::new(),
+            completed_tasks: 0,
+            completed_task_ids: BTreeSet::new(),
+            feedback_confirmations: Vec::new(),
             last_practice: BTreeMap::new(),
             diag_answers: BTreeMap::new(),
             ungraded: Vec::new(),

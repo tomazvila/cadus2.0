@@ -286,6 +286,9 @@ pub struct WebState {
     /// what it missed.
     #[serde(default)]
     pub pending_diagnoses: BTreeMap<String, String>,
+    /// Fresh same-skill practice owed after feedback, keyed by task.
+    #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
+    pub feedback_practice: BTreeMap<String, Json>,
     /// The server-measured active time of the session, in seconds.
     #[serde(default)]
     pub active_secs: f64,

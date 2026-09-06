@@ -173,6 +173,7 @@ type TaskStatus =
   | 'continue'
   | 'kp_advance'
   | 'task_passed'
+  | 'task_inconclusive'
   | 'task_failed'
   /** NOTHING was recorded twice: the attempt already stood. Never a normal advance. */
   | 'already_recorded';
@@ -257,6 +258,8 @@ export interface DiagnosisJob {
  * apply.
  */
 export interface AnswerResponse {
+  /** The next question confirms independent work after feedback. */
+  feedback_practice?: boolean;
   attempt_id: string;
   /**
    * The graded outcome (D-F2). `ungraded` means the checker reached no verdict.

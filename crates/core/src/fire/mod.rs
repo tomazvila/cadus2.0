@@ -33,6 +33,8 @@ use crate::numeric::days_between;
 
 mod ability;
 mod attempt;
+mod review;
+pub use review::{ReviewEvidence, assess_review};
 #[cfg(test)]
 pub(crate) mod testing;
 

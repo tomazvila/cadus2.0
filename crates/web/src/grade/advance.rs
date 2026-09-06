@@ -20,7 +20,7 @@ pub(super) struct Advance {
 
 impl Advance {
     /// The answer for every attempt that closes nothing.
-    const fn carry_on() -> Self {
+    pub(super) const fn carry_on() -> Self {
         Self {
             status: STATUS_CONTINUE,
             result: None,
@@ -72,7 +72,7 @@ pub(super) fn advance(
     prior: &[EventRow],
     history: &SessionView,
 ) -> Advance {
-    if attempt.task_type != TaskType::Lesson || attempt.outcome.is_ungraded() {
+    if attempt.task_type != TaskType::Lesson || attempt.outcome.is_ungraded() || attempt.assisted {
         return Advance::carry_on();
     }
     let Some(idx) = graph.idx_of(attempt.topic.as_str()) else {
@@ -97,6 +97,7 @@ pub(super) fn advance(
             Event::Attempt(body)
                 if body.task_id == attempt.task_id
                     && !body.outcome.is_ungraded()
+                    && !body.assisted
                     && body.kp.as_ref().map(|slug| slug.as_str().to_string()) == kp =>
             {
                 Some(body.correct)

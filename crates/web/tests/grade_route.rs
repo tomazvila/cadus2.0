@@ -10,8 +10,8 @@
 //!    [`the_fast_path_cases_decide_with_no_model_call`];
 //! 2. a replayed request appends nothing and returns `already_recorded` —
 //!    [`a_replayed_request_appends_nothing_and_returns_already_recorded`];
-//! 3. an H3 re-solve that fails rewrites the stashed pass to a miss —
-//!    [`an_h3_re_solve_that_fails_rewrites_the_stashed_pass_to_a_miss`];
+//! 3. feedback records help and requires a fresh independent answer —
+//!    [`feedback_records_assistance_then_independent_fresh_evidence`];
 //! 4. `secs` clamps at `expected_time_secs * 10` with `timing-unreliable` —
 //!    [`secs_clamps_at_ten_times_the_expected_time`].
 //!
@@ -39,9 +39,9 @@ use cadus_core::event::{AttemptOutcome, TaskType, WorkQuality};
 use cadus_store::test_support::TestDb;
 use cadus_web::grade::{Grade, deterministic_grade, reference_assisted};
 use common::{
-    EXPECTED_ANSWER, LESSON, PROBLEM_ID, SOLUTION, Verdict, answer_lesson as answer,
-    answer_lesson_ok, events_of_type, learner_with_kp1, lesson_app as app, lesson_learner,
-    lesson_problem, seed_attempt, seed_pool_row, stored_state,
+    LESSON, PROBLEM_ID, SOLUTION, Verdict, answer_lesson as answer, answer_lesson_ok,
+    events_of_type, learner_with_kp1, lesson_app as app, lesson_learner, lesson_problem,
+    seed_attempt, seed_pool_row, stored_state,
 };
 use serde_json::{Value, json};
 use sqlx::types::Uuid;
@@ -54,9 +54,7 @@ async fn hinted_learner(db: &TestDb, email: &str) -> Uuid {
 }
 
 /// The stock re-solve instruction of D-M5-3, spelled out (spec section 5.5).
-const RE_SOLVE_TEXT: &str = "Study the worked solution above until you can see why each step \
-                             follows. Then close it and solve the original problem again \
-                             yourself, from memory and unaided. Do that before you move on.";
+const RE_SOLVE_TEXT: &str = "Study the worked solution. Select Done studying to hide it, then solve a fresh problem without help.";
 
 // --------------------------------------------------------------------------- //
 // Acceptance 1: the section 10 fast-path cases
@@ -249,66 +247,51 @@ async fn a_replayed_request_appends_nothing_and_returns_already_recorded() {
 // Acceptance 3: the H3 re-solve
 // --------------------------------------------------------------------------- //
 
-/// Spec section 5.4. An assisted attempt that grades correct is NOT recorded: it
-/// is stashed and the problem stays live. The next submission is the unaided
-/// re-solve, and a re-solve that FAILS rewrites the stashed pass to a miss with
-/// its `assisted` flag dropped, under the `-rework` id.
+/// D-F8 records the helped answer and serves a fresh, unaided same-KP problem.
 #[tokio::test]
-async fn an_h3_re_solve_that_fails_rewrites_the_stashed_pass_to_a_miss() {
+async fn feedback_records_assistance_then_independent_fresh_evidence() {
     TestDb::with(|db| async move {
         let app = app(&db);
-        let user = hinted_learner(&db, "rework@example.com").await;
-
-        // The assisted pass: stashed, not recorded.
-        let (status, stash) = answer(&app, user, "13.5").await;
-        assert_eq!(status, StatusCode::OK, "{stash}");
-        assert_eq!(stash["rework_required"], true);
-        assert_eq!(stash["problem_id"], PROBLEM_ID);
-        assert_eq!(stash["solution"], SOLUTION);
-        assert_eq!(stash["expected"], EXPECTED_ANSWER);
-        assert_eq!(stash["re_solve"], RE_SOLVE_TEXT);
-        assert_eq!(events_of_type(&db, user, "attempt").await.len(), 0);
-        assert!(
-            stored_state(&db, user).await.served[LESSON]
-                .rework
-                .is_some()
+        let user = hinted_learner(&db, "fresh-after-feedback@example.com").await;
+        seed_pool_row(
+            &db,
+            user,
+            common::KEY,
+            "Compute 4 + 5.",
+            "9",
+            "fresh-answer",
+        )
+        .await;
+        let (status, feedback) = answer(&app, user, "13.5").await;
+        assert_eq!(status, StatusCode::OK, "{feedback}");
+        assert_eq!(feedback["feedback_practice"], true);
+        assert_eq!(feedback["solution"], SOLUTION);
+        let live = stored_state(&db, user).await.served[LESSON].clone();
+        assert_ne!(live.problem_id, PROBLEM_ID);
+        assert_ne!(
+            live.text,
+            events_of_type(&db, user, "attempt").await[0]["problem"]["text"]
+                .as_str()
+                .unwrap()
         );
-
-        // The unaided re-solve fails, so the assisted pass does not stand.
-        let body = answer_lesson_ok(&app, user, "14").await;
-        assert_eq!(body["attempt_id"], "s_2026-01-01a-lesson-addition-1-rework");
-        assert_eq!(body["correct"], false);
-
-        let recorded = events_of_type(&db, user, "attempt").await;
-        assert_eq!(recorded.len(), 1);
-        assert_eq!(
-            recorded[0]["attempt_id"],
-            "s_2026-01-01a-lesson-addition-1-rework"
-        );
-        assert_eq!(recorded[0]["correct"], false);
-        assert_eq!(recorded[0]["assisted"], false);
-        // The STASHED submission is what the log holds, not the failed re-solve.
-        assert_eq!(recorded[0]["given_answer"], "13.5");
-        assert_eq!(recorded[0]["work_quality"], "nearly_perfect");
-    })
-    .await;
-}
-
-/// An assisted attempt whose unaided re-solve SUCCEEDS records the stashed pass
-/// as a pass, with its `assisted` flag kept.
-#[tokio::test]
-async fn an_h3_re_solve_that_succeeds_records_the_stashed_pass() {
-    TestDb::with(|db| async move {
-        let app = app(&db);
-        let user = hinted_learner(&db, "rework-ok@example.com").await;
-
-        answer(&app, user, "13.5").await;
-        answer_lesson_ok(&app, user, "13.50").await;
-
-        let recorded = events_of_type(&db, user, "attempt").await;
-        assert_eq!(recorded.len(), 1);
-        assert_eq!(recorded[0]["correct"], true);
-        assert_eq!(recorded[0]["assisted"], true);
+        assert_eq!(live.kp.as_deref(), Some("kp1"));
+        assert!(live.hints_given.is_empty());
+        let (status, result) = common::answer_task(
+            &app,
+            user,
+            LESSON,
+            json!({
+                "problem_id": live.problem_id, "answer": live.expected.answer,
+            }),
+        )
+        .await;
+        assert_eq!(status, StatusCode::OK, "{result}");
+        let events = events_of_type(&db, user, "attempt").await;
+        assert_eq!(events.len(), 2);
+        assert_eq!(events[0]["assisted"], true);
+        assert_eq!(events[1]["assisted"], false);
+        assert_eq!(events[1]["independent_after_feedback"], true);
+        assert_ne!(events[0]["item_digest"], events[1]["item_digest"]);
     })
     .await;
 }

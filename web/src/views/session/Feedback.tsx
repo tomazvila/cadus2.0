@@ -80,6 +80,9 @@ export function Feedback({
         {res.xp != null ? <Chip className="chip-xp">{`${signed(res.xp)} XP`}</Chip> : null}
       </div>
 
+      {res.task_status === 'task_inconclusive' ? (
+        <p className="feedback-reason">This review needs confirmation. A fresh question will check each uncertain skill.</p>
+      ) : null}
       {res.reason ? <p className="feedback-reason muted">{res.reason}</p> : null}
 
       {/* Verbatim, never re-interpreted: the checker owns the vocabulary (trap T3). */}
@@ -114,7 +117,7 @@ export function Feedback({
 
       <div className="actions">
         <button ref={continueRef} type="button" className="btn btn-primary" onClick={onContinue}>
-          {hasNext ? 'Next problem →' : 'Continue →'}
+          {res.feedback_practice ? 'Done studying — try a fresh problem →' : hasNext ? 'Next problem →' : 'Continue →'}
         </button>
         {/* The way out from here is always safe: the attempt already stands, and an
             unfinished task is re-served next time. */}
