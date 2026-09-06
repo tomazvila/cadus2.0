@@ -31,6 +31,15 @@ grades the learner against the result, so it must be EXACT for every tuple in yo
 merely for a typical one. Write '**' for a power and a function from the list below for the \
 rest. Never write a decimal approximation of an exact value.
 
+STRUCTURED ANSWERS: when the exemplars do not share one reviewed answer contract, include the \
+deterministic 'answer_contract' the pending template needs. For a closed label, use a text choice \
+parameter as answer_expr. For a flat multipart answer, write multipart(part1, part2), with arguments \
+in the same order as the contract's named parts; an argument is a mathematical expression or, for a \
+label part, one text choice parameter. For a unit contract, keep answer_expr numeric; the server \
+attaches the contract's unit. For a bounded sign split, use signcase(selector, [negative, zero, \
+positive]). The server validates every computed answer against the \
+contract before storing the document, and the row still requires human review.
+
 'samples' is how you prove it, and the server checks WHERE you prove it. Work each instance out \
 BY HAND, binding every parameter, and state the answer you get. The server evaluates answer_expr \
 on the same bindings and DISCARDS the whole template if any one disagrees, so do the arithmetic \

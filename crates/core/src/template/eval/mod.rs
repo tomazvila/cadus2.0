@@ -44,7 +44,9 @@ use exact::{
 use num_rational::BigRational;
 
 use crate::answer::ast::Ast;
-use crate::answer::{Canon, Undecidable, canonical_form, parse_with_functions};
+use crate::answer::{
+    AnswerContract, AnswerPart, Canon, Undecidable, canonical_form, parse_with_functions,
+};
 
 use super::domain::Bindings;
 
@@ -52,10 +54,11 @@ pub use write::write;
 
 /// The evaluation-only functions and the argument count each one takes.
 ///
-/// `abs` and `sqrt` are in the M2 grammar already. The other eight are not, and
+/// `abs` and `sqrt` are in the M2 grammar already. The others are not, and
 /// [`parse_with_functions`] admits them for this one purpose. Every one of them
-/// is erased before the answer string exists.
-pub const EVAL_FUNCTIONS: [(&str, usize); 10] = [
+/// is erased before the answer string exists. `signcase(x, [a, b, c])` selects
+/// the negative, zero, or positive branch without admitting general predicates.
+pub const EVAL_FUNCTIONS: [(&str, usize); 11] = [
     ("abs", 1),
     ("sqrt", 1),
     ("gcd", 2),
@@ -66,10 +69,11 @@ pub const EVAL_FUNCTIONS: [(&str, usize); 10] = [
     ("max", 2),
     ("factorial", 1),
     ("binomial", 2),
+    ("signcase", 2),
 ];
 
 /// The function names [`parse_with_functions`] admits beyond the M2 grammar.
-pub const EXTRA_FUNCTIONS: [&str; 8] = [
+pub const EXTRA_FUNCTIONS: [&str; 10] = [
     "gcd",
     "lcm",
     "floor",
@@ -78,6 +82,8 @@ pub const EXTRA_FUNCTIONS: [&str; 8] = [
     "max",
     "factorial",
     "binomial",
+    "multipart",
+    "signcase",
 ];
 
 /// The largest bit width of a numerator or a denominator of an intermediate.
@@ -144,6 +150,9 @@ pub enum EvalError {
         /// The count the call writes.
         given: usize,
     },
+    /// `signcase` did not receive its bounded three-branch representation.
+    #[error("signcase needs [negative, zero, positive] as its second argument")]
+    SignCaseShape,
     /// A division by zero.
     #[error("answer_expr divides by zero")]
     DivideByZero,
@@ -311,4 +320,99 @@ pub fn answer(ast: &Ast, bindings: &Bindings) -> Result<Answer, EvalError> {
         Ok(canon) => Ok(Answer { text, canon }),
         Err(reason) => Err(EvalError::NotCanonical { text, reason }),
     }
+}
+
+/// Compute an answer under a reviewed structured policy.
+///
+/// Ordinary policies keep the mathematical evaluator. A label may select one
+/// text-valued parameter directly. A flat multipart policy uses
+/// `multipart(part_1, part_2)`, with arguments in the policy's part order; a
+/// label part may likewise be a text-valued parameter. The contract validates
+/// the final text and supplies its canonical form before anything can be stored.
+pub fn answer_for_contract(
+    ast: &Ast,
+    bindings: &Bindings,
+    contract: Option<&AnswerContract>,
+) -> Result<Answer, EvalError> {
+    match contract {
+        Some(contract @ AnswerContract::Label { .. }) => label_answer(ast, bindings, contract),
+        Some(contract @ AnswerContract::Unit { unit, .. }) => {
+            unit_answer(ast, bindings, contract, unit)
+        }
+        Some(AnswerContract::Multipart { parts }) => multipart_answer(ast, bindings, parts),
+        _ => answer(ast, bindings),
+    }
+}
+
+fn unit_answer(
+    ast: &Ast,
+    bindings: &Bindings,
+    contract: &AnswerContract,
+    unit: &str,
+) -> Result<Answer, EvalError> {
+    let value = answer(ast, bindings)?;
+    if matches!(value.canon, Canon::Quantity { .. }) {
+        return contracted(value.text, contract);
+    }
+    contracted(format!("{} {unit}", value.text), contract)
+}
+
+fn label_answer(
+    ast: &Ast,
+    bindings: &Bindings,
+    contract: &AnswerContract,
+) -> Result<Answer, EvalError> {
+    match text_binding(ast, bindings) {
+        Some(text) => contracted(text, contract),
+        None => answer(ast, bindings),
+    }
+}
+
+fn multipart_answer(
+    ast: &Ast,
+    bindings: &Bindings,
+    parts: &[AnswerPart],
+) -> Result<Answer, EvalError> {
+    let Ast::Func(name, args) = ast else {
+        return answer(ast, bindings);
+    };
+    if name != "multipart" || args.len() != parts.len() {
+        return answer(ast, bindings);
+    }
+    let fields = parts
+        .iter()
+        .zip(args)
+        .map(|(part, arg)| part_text(part, arg, bindings))
+        .collect::<Result<Vec<_>, _>>()?;
+    contracted(
+        fields.join("; "),
+        &AnswerContract::Multipart {
+            parts: parts.to_vec(),
+        },
+    )
+}
+
+fn part_text(part: &AnswerPart, ast: &Ast, bindings: &Bindings) -> Result<String, EvalError> {
+    let value = answer_for_contract(ast, bindings, Some(&part.contract))?.text;
+    Ok(format!("{} = {value}", part.name))
+}
+
+fn text_binding(ast: &Ast, bindings: &Bindings) -> Option<String> {
+    let Ast::Var(name) = ast else {
+        return None;
+    };
+    bindings
+        .get(name)
+        .filter(|value| value.as_rational().is_none())
+        .map(|value| value.canonical_string())
+}
+
+fn contracted(text: String, contract: &AnswerContract) -> Result<Answer, EvalError> {
+    contract
+        .validate_expected(&text)
+        .map(|canon| Answer {
+            text: text.clone(),
+            canon,
+        })
+        .map_err(|reason| EvalError::NotCanonical { text, reason })
 }

@@ -134,6 +134,14 @@ fn template_schema() -> Value {
             "solution_sketch", "hints", "distractors", "samples",
         ],
         "properties": {
+            "answer_contract": {
+                "type": "object",
+                "description":
+                    "A deterministic answer policy when the exemplars do not already share one. \
+    The server validates it and the document remains pending for human review. Use kind label with \
+    explicit options for a closed choice, or kind multipart with ordered named parts for a flat \
+    structured answer. A reviewed shared exemplar policy overrides this field.",
+            },
             "statement": {
                 "type": "string",
                 "description":
@@ -161,7 +169,12 @@ fn template_schema() -> Value {
                 "type": "string",
                 "description":
                     "The answer as an exact expression over the parameter names. The SERVER \
-    computes every instance's answer from it, so it is exact over the whole domain.",
+    computes every instance's answer from it, so it is exact over the whole domain. For a label \
+    contract, use one text-valued choice parameter. For a multipart contract, use \
+    multipart(part1, part2) with arguments in contract part order; each argument is a mathematical \
+    expression or, for a label part, one text-valued choice parameter. For a unit contract, keep \
+    this expression numeric; the server attaches the declared unit. Use \
+    signcase(selector, [negative, zero, positive]) for a bounded sign split.",
             },
             "solution_sketch": {
                 "type": "string",

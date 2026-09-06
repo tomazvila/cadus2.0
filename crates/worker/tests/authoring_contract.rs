@@ -9,6 +9,7 @@ use cadus_core::curriculum::AnswerKind;
 use cadus_core::pool::kp_key;
 use cadus_store::test_support::TestDb;
 use cadus_worker::authoring::job::Outcome;
+use cadus_worker::authoring::job::verify;
 use cadus_worker::authoring::prompt::Kind;
 use common::{FakeModel, author, content_rows, good_arguments, named_reply, squares_spec};
 use serde_json::json;
@@ -50,4 +51,22 @@ fn mixed_item_policies_require_an_explicit_authoring_decision() {
     second.answer_contract = Some(AnswerContract::Approx { decimals: 2 });
     spec.exemplars.push(second);
     assert_eq!(spec.template_contract(), None);
+}
+
+#[test]
+fn an_uncontracted_multi_step_spec_accepts_a_validated_pending_contract() {
+    let mut spec = squares_spec();
+    spec.answer_kind = AnswerKind::MultiStep;
+    let mut arguments = good_arguments();
+    arguments["answer_contract"] = json!({"kind":"exact"});
+    let body: serde_json::Value =
+        serde_json::from_str(&verify(&spec, &arguments).unwrap()).unwrap();
+    assert_eq!(body["answer_contract"], json!({"kind":"exact"}));
+    assert_eq!(body["answer_kind"], "multi-step");
+
+    arguments["answer_contract"] = json!({"kind":"none"});
+    assert_eq!(
+        verify(&spec, &arguments).unwrap_err().code,
+        "answer-contract"
+    );
 }

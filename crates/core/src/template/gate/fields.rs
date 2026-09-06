@@ -79,7 +79,30 @@ fn check_field(field: &str, doc: &TemplateDoc, what: &str, code: &str) -> Result
             ),
         ));
     }
+    if unmatched_math_delimiter(field) {
+        return Err(Rejection::new(
+            "math-delimiter",
+            format!("{what} has an unmatched '$' math delimiter"),
+        ));
+    }
     Ok(())
+}
+
+/// Whether an odd count of unescaped dollar signs leaves inline math open.
+fn unmatched_math_delimiter(field: &str) -> bool {
+    let mut backslashes = 0_usize;
+    let mut open = false;
+    for character in field.chars() {
+        if character == '\\' {
+            backslashes += 1;
+            continue;
+        }
+        if character == '$' && backslashes.is_multiple_of(2) {
+            open = !open;
+        }
+        backslashes = 0;
+    }
+    open
 }
 
 // --------------------------------------------------------------------------

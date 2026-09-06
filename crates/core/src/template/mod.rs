@@ -80,7 +80,7 @@ pub use draw::{
 };
 pub use eval::{
     Answer, EVAL_FUNCTIONS, EXTRA_FUNCTIONS, EvalError, MAX_FACTORIAL, MAX_VALUE_BITS, answer,
-    evaluate, parse_answer_expr, write,
+    answer_for_contract, evaluate, parse_answer_expr, write,
 };
 pub use gate::{
     Envelope, FREE_SYMBOLS, GATE_DRAW_BUDGET, GATE_SAMPLES, GATE_SEED, GateSpec, MAX_EXPONENT,

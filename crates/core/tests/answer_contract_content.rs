@@ -6,7 +6,7 @@ mod common;
 
 use cadus_core::answer::{AnswerContract, Outcome, check_contract};
 use cadus_core::curriculum::{AnswerKind, lint_curriculum, load_raw_curriculum};
-use cadus_core::template::{Compiled, GateSpec, gate, rng_from_seed};
+use cadus_core::template::{Compiled, GateSpec, from_body, gate, rng_from_seed};
 use common::gate::{body_with, doc_of, exemplars};
 use common::paths::curriculum_root;
 use common::scratch::ScratchTree;
@@ -37,6 +37,138 @@ fn a_multi_step_template_uses_its_reviewed_contract() {
     assert!(gate(&missing, &spec).is_err());
     missing.answer_contract = Some(AnswerContract::None);
     assert!(gate(&missing, &spec).is_err());
+}
+
+#[test]
+fn a_label_template_computes_a_text_choice_under_its_contract() {
+    let body = serde_json::json!({
+        "v": 1, "topic_id": "classification", "answer_kind": "expression",
+        "answer_contract": {"kind":"label","options":[["yes"],["no"]]},
+        "statement": "For case {p}, is the property {c}?",
+        "params": {
+            "c":{"kind":"choice","values":["yes","no"]},
+            "p":{"kind":"int","low":1,"high":6}
+        },
+        "constraints": [], "answer_expr": "c",
+        "solution_sketch": "Read the stated property.",
+        "hints": ["Check the definition."], "distractors": [],
+        "samples": [
+            {"params":{"c":"yes","p":1},"expected":"yes"},
+            {"params":{"c":"no","p":6},"expected":"no"}
+        ]
+    });
+    let doc = from_body(&body.to_string()).unwrap();
+    let items = exemplars(&["yes", "no"]);
+    let spec = GateSpec {
+        answer_kind: AnswerKind::Expression,
+        exemplars: &items,
+    };
+    gate(&doc, &spec).unwrap();
+    let instance = Compiled::new(&doc)
+        .unwrap()
+        .draw(&mut rng_from_seed(3))
+        .unwrap();
+    assert!(matches!(instance.answer.as_str(), "yes" | "no"));
+    assert!(matches!(
+        check_contract(
+            &instance.answer,
+            &instance.answer,
+            instance.answer_contract.unwrap()
+        ),
+        Outcome::Decided(verdict) if verdict.correct
+    ));
+}
+
+#[test]
+fn a_multipart_template_computes_named_numeric_and_label_parts() {
+    let body = serde_json::json!({
+        "v": 1, "topic_id": "vertex", "answer_kind": "multi-step",
+        "answer_contract": {"kind":"multipart","parts":[
+            {"name":"direction","contract":{"kind":"label","options":[["minimum"],["maximum"]]}},
+            {"name":"extreme_value","contract":{"kind":"exact"}}
+        ]},
+        "statement": "For case {a}, identify the {c} and its value.",
+        "params": {
+            "a":{"kind":"int","low":1,"high":6},
+            "c":{"kind":"choice","values":["minimum","maximum"]}
+        },
+        "constraints": [], "answer_expr": "multipart(c, a)",
+        "solution_sketch": "Find the vertex and classify it.",
+        "hints": ["Inspect the leading coefficient."], "distractors": [],
+        "samples": [
+            {"params":{"a":1,"c":"minimum"},"expected":"direction = minimum; extreme_value = 1"},
+            {"params":{"a":6,"c":"maximum"},"expected":"direction = maximum; extreme_value = 6"}
+        ]
+    });
+    let doc = from_body(&body.to_string()).unwrap();
+    let items = exemplars(&["direction = minimum; extreme_value = 1"]);
+    let spec = GateSpec {
+        answer_kind: AnswerKind::MultiStep,
+        exemplars: &items,
+    };
+    gate(&doc, &spec).unwrap();
+    let instance = Compiled::new(&doc)
+        .unwrap()
+        .draw(&mut rng_from_seed(4))
+        .unwrap();
+    assert!(instance.answer.starts_with("direction = "));
+    assert!(instance.answer.contains("; extreme_value = "));
+    assert!(matches!(
+        check_contract(
+            &instance.answer,
+            &instance.answer,
+            instance.answer_contract.unwrap()
+        ),
+        Outcome::Decided(verdict) if verdict.correct
+    ));
+}
+
+#[test]
+fn a_sign_case_template_covers_all_three_discriminant_outcomes() {
+    let body = serde_json::json!({
+        "v": 1, "topic_id": "discriminant", "answer_kind": "numeric",
+        "statement": "A quadratic has discriminant {p}. How many real roots does it have?",
+        "params": {"p":{"kind":"int","low":-4,"high":7}},
+        "constraints": [], "answer_expr": "signcase(p, [0, 1, 2])",
+        "solution_sketch": "Use the sign of the discriminant.",
+        "hints": ["Compare the discriminant with zero."], "distractors": [],
+        "samples": [
+            {"params":{"p":-4},"expected":0},
+            {"params":{"p":0},"expected":1},
+            {"params":{"p":7},"expected":2}
+        ]
+    });
+    let doc = from_body(&body.to_string()).unwrap();
+    let items = exemplars(&["0", "1", "2"]);
+    let spec = GateSpec {
+        answer_kind: AnswerKind::Numeric,
+        exemplars: &items,
+    };
+    gate(&doc, &spec).unwrap();
+}
+
+#[test]
+fn a_unit_template_evaluates_its_numeric_expression_before_the_suffix() {
+    let body = serde_json::json!({
+        "v": 1, "topic_id": "trig-application", "answer_kind": "multi-step",
+        "answer_contract": {"kind":"unit","quantity":"length","unit":"m"},
+        "statement": "A measured side is five times {p} metres. Find its length.",
+        "params": {"p":{"kind":"int","low":1,"high":12}},
+        "constraints": [], "answer_expr": "5*p",
+        "solution_sketch": "Multiply the scale by the measured side.",
+        "hints": ["Keep the unit in the answer."], "distractors": [],
+        "samples": [
+            {"params":{"p":1},"expected":"5 m"},
+            {"params":{"p":12},"expected":"60 m"}
+        ]
+    });
+    let doc = from_body(&body.to_string()).unwrap();
+    let items = exemplars(&["5 m", "60 m"]);
+    let spec = GateSpec {
+        answer_kind: AnswerKind::MultiStep,
+        exemplars: &items,
+    };
+    gate(&doc, &spec).unwrap();
 }
 
 #[test]

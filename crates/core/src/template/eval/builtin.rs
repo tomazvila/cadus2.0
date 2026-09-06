@@ -5,7 +5,7 @@ use num_rational::BigRational;
 use num_traits::{Signed, ToPrimitive, Zero};
 
 use super::exact::{as_rational, evaluate_all, literal, square_root};
-use super::{EvalError, MAX_BINOMIAL_STEPS, MAX_FACTORIAL, MAX_VALUE_BITS};
+use super::{EvalError, MAX_BINOMIAL_STEPS, MAX_FACTORIAL, MAX_VALUE_BITS, evaluate};
 use crate::answer::ast::Ast;
 use crate::template::domain::{Bindings, gcd_of, is_whole};
 
@@ -110,8 +110,8 @@ enum Builtin {
 
 /// The evaluation-only function a name denotes, when it denotes one.
 ///
-/// The table is [`super::EVAL_FUNCTIONS`]: the same ten names, with the same
-/// argument counts.
+/// The table is [`super::EVAL_FUNCTIONS`], except for the structured
+/// `signcase` call handled directly by [`call`].
 fn builtin(name: &str) -> Option<Builtin> {
     match name {
         "abs" => Some(Builtin::Unary(Unary::Abs)),
@@ -130,6 +130,9 @@ fn builtin(name: &str) -> Option<Builtin> {
 
 /// Evaluate one function call, erasing it when its arguments are exact.
 pub(super) fn call(name: &str, args: &[Ast], bindings: &Bindings) -> Result<Ast, EvalError> {
+    if name == "signcase" {
+        return sign_case(args, bindings);
+    }
     let values = evaluate_all(args, bindings)?;
     match builtin(name) {
         // A function of the M2 grammar that this module does not evaluate, such
@@ -139,6 +142,31 @@ pub(super) fn call(name: &str, args: &[Ast], bindings: &Bindings) -> Result<Ast,
         Some(Builtin::Unary(func)) => unary_call(func, values),
         Some(Builtin::Binary(func)) => binary_call(func, values),
     }
+}
+
+/// Select the negative, zero, or positive result from a three-item list.
+fn sign_case(args: &[Ast], bindings: &Bindings) -> Result<Ast, EvalError> {
+    let [selector, choices] = args else {
+        return Err(arity("signcase", 2, args.len()));
+    };
+    let Ast::List(choices) = choices else {
+        return Err(EvalError::SignCaseShape);
+    };
+    if choices.len() != 3 {
+        return Err(EvalError::SignCaseShape);
+    }
+    let selector = evaluate(selector, bindings)?;
+    let Some(selector) = as_rational(&selector) else {
+        return Err(EvalError::NotNumber { func: "signcase" });
+    };
+    let index = if selector.is_negative() {
+        0
+    } else if selector.is_zero() {
+        1
+    } else {
+        2
+    };
+    evaluate(&choices[index], bindings)
 }
 
 /// The error of a call with the wrong count of arguments.

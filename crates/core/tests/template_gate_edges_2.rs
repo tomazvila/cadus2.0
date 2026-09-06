@@ -137,6 +137,16 @@ fn a_stray_brace_snippet_quotes_its_escapes() {
 }
 
 #[test]
+fn an_unclosed_statement_math_delimiter_is_refused() {
+    let rejection = reject_squares(&body_with(&[("statement", r#""Compute ${a}""#)]));
+    assert_eq!(rejection.code, "math-delimiter");
+    assert_eq!(
+        rejection.message,
+        "text has an unmatched '$' math delimiter"
+    );
+}
+
+#[test]
 fn a_sample_the_sampled_walk_did_not_meet_can_still_break_a_constraint() {
     // `a` in 0..9999 and `b` in 1..2 is 20,000 tuples, so the walk samples.
     // `mod(b, a)` errors at a = 0 alone, and the seeded walk never draws it.

@@ -39,7 +39,7 @@ use crate::learner::problem_text_hash;
 use super::constraint::{Constraint, constraint_params};
 use super::domain::{Bindings, Params, Scalar, SpaceSize};
 use super::draw::{DrawError, DrawPlan};
-use super::eval::{Answer, EvalError, answer, parse_answer_expr};
+use super::eval::{Answer, EvalError, answer_for_contract, parse_answer_expr};
 use super::render::{RenderError, placeholders, render};
 
 /// The version of the 2.0 template document.
@@ -262,7 +262,11 @@ impl<'doc> Compiled<'doc> {
         let Answer {
             text: answer,
             canon,
-        } = answer(&self.answer_ast, &bindings)?;
+        } = answer_for_contract(
+            &self.answer_ast,
+            &bindings,
+            self.doc.answer_contract.as_ref(),
+        )?;
         if let Some(contract) = &self.doc.answer_contract {
             contract
                 .validate_expected(&answer)

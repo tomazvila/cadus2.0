@@ -7,7 +7,7 @@ use super::text::{py_bindings, py_list, py_str};
 use super::{GATE_SAMPLES, GateSpec, Rejection};
 use crate::template::document::{Compiled, TemplateDoc};
 use crate::template::domain::{Bindings, MIN_SPACE_SIZE, SpaceSize, walk_satisfying};
-use crate::template::eval::{answer as evaluate_answer, parse_answer_expr};
+use crate::template::eval::{answer as evaluate_answer, answer_for_contract, parse_answer_expr};
 
 /// The tuples the gate reads, and the count it stores.
 pub(super) struct Walk {
@@ -122,7 +122,12 @@ pub(super) fn check_samples(
             ));
         }
         let bindings = sample.bindings();
-        let computed = evaluate_answer(compiled.answer_ast(), &bindings).map_err(|err| {
+        let computed = answer_for_contract(
+            compiled.answer_ast(),
+            &bindings,
+            doc.answer_contract.as_ref(),
+        )
+        .map_err(|err| {
             Rejection::new(
                 "sample-eval",
                 format!(
@@ -182,7 +187,11 @@ pub(super) fn check_distractors(
             let bindings = sample.bindings();
             let (Ok(wrong_value), Ok(right_value)) = (
                 evaluate_answer(&wrong, &bindings),
-                evaluate_answer(compiled.answer_ast(), &bindings),
+                answer_for_contract(
+                    compiled.answer_ast(),
+                    &bindings,
+                    doc.answer_contract.as_ref(),
+                ),
             ) else {
                 continue;
             };

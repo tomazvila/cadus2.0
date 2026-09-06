@@ -91,10 +91,16 @@ fn unwritable(err: serde_json::Error) -> Rejection {
 /// takes the vocabulary and runs the same drop in the same place.
 fn assemble_kept(kind: Kind, spec: &AuthoringSpec, arguments: &Value) -> Result<String, Rejection> {
     let mut body = assemble_value(spec, arguments)?;
-    if kind == Kind::Template
-        && let Some(contract) = spec.template_contract()
-    {
-        body["answer_contract"] = serde_json::json!(contract);
+    if kind == Kind::Template {
+        let contract = spec
+            .template_contract()
+            .map(serde_json::to_value)
+            .transpose()
+            .map_err(unwritable)?
+            .or_else(|| arguments.get("answer_contract").cloned());
+        if let Some(contract) = contract {
+            body["answer_contract"] = contract;
+        }
     }
     let dropped = keep_known_tags(&mut body, &authoring_vocabulary());
     report_dropped(spec, kind, &dropped);
