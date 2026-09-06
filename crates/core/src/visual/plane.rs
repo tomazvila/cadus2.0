@@ -1,7 +1,7 @@
 //! The coordinate plane: two ranges, two tick steps, points, and segments.
 
 use num_rational::BigRational;
-use num_traits::One;
+use num_traits::{One, Zero};
 use serde::{Deserialize, Serialize};
 
 use super::number_line::label_of;
@@ -74,6 +74,51 @@ pub struct Segment {
     pub label: Option<String>,
 }
 
+/// One shaded half-plane: the solution set of a linear inequality in two
+/// variables.
+///
+/// The boundary is the line through `through_a` and `through_b`. An author
+/// never writes the line's equation, so there is nothing to get wrong about it:
+/// the two points fix it exactly. `shade_toward` is a point strictly on the
+/// shaded side; it is not required to sit inside the drawn range, only to sit
+/// off the boundary line, so a reader (sighted or not) can rebuild the exact
+/// inequality from three plain facts.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct ShadedHalfPlane {
+    /// One point the boundary line passes through.
+    pub through_a: LabeledPoint,
+    /// A second, distinct point the boundary line passes through.
+    pub through_b: LabeledPoint,
+    /// A solid boundary belongs to the solution set (`≤` or `≥`). A dashed
+    /// boundary does not (`<` or `>`).
+    #[serde(default = "solid")]
+    pub solid: bool,
+    /// A point strictly on the shaded side of the boundary.
+    pub shade_toward: LabeledPoint,
+    /// The text beside the shaded region.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub label: Option<String>,
+}
+
+/// The serde default of `ShadedHalfPlane::solid`.
+const fn solid() -> bool {
+    true
+}
+
+impl ShadedHalfPlane {
+    /// Twice the signed area of the triangle `through_a`, `through_b`, `point`.
+    ///
+    /// The sign says which side of the boundary line `point` sits on; zero says
+    /// `point` sits on the line.
+    fn side(&self, point: &LabeledPoint) -> Result<BigRational, VisualError> {
+        let (ax, ay) = self.through_a.value()?;
+        let (bx, by) = self.through_b.value()?;
+        let (px, py) = point.value()?;
+        Ok((bx - ax.clone()) * (py - ay.clone()) - (by - ay) * (px - ax))
+    }
+}
+
 /// A coordinate plane.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -96,6 +141,9 @@ pub struct CoordinateFigure {
     /// The drawn segments, in authored order.
     #[serde(default)]
     pub segments: Vec<Segment>,
+    /// The shaded half-planes, in authored order.
+    #[serde(default)]
+    pub shaded_half_planes: Vec<ShadedHalfPlane>,
     /// The sentence that leads the accessible equivalent.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub caption: Option<String>,
@@ -114,6 +162,7 @@ impl CoordinateFigure {
             y_tick: Scalar::from_i64(1),
             points: Vec::new(),
             segments: Vec::new(),
+            shaded_half_planes: Vec::new(),
             caption: None,
         }
     }
@@ -138,6 +187,26 @@ impl CoordinateFigure {
             if segment.from.value()? == segment.to.value()? {
                 return Err(VisualError::Degenerate {
                     reason: format!("a segment starts and ends at {}", segment.from.spoken()),
+                });
+            }
+        }
+        for region in &self.shaded_half_planes {
+            self.hold("a boundary point", &region.through_a)?;
+            self.hold("a boundary point", &region.through_b)?;
+            if region.through_a.value()? == region.through_b.value()? {
+                return Err(VisualError::Degenerate {
+                    reason: format!(
+                        "a shaded boundary line's two points both sit at {}",
+                        region.through_a.spoken()
+                    ),
+                });
+            }
+            if region.side(&region.shade_toward)?.is_zero() {
+                return Err(VisualError::Degenerate {
+                    reason: format!(
+                        "the shaded-side point {} sits on the boundary line itself",
+                        region.shade_toward.spoken()
+                    ),
                 });
             }
         }
@@ -172,6 +241,19 @@ impl CoordinateFigure {
             }
             out.push('.');
         }
+        for region in &self.shaded_half_planes {
+            let style = if region.solid { "solid" } else { "dashed" };
+            out.push_str(&format!(
+                " A {style} boundary line through {} and {}. The region containing {} is shaded",
+                region.through_a.spoken(),
+                region.through_b.spoken(),
+                region.shade_toward.spoken(),
+            ));
+            if let Some(label) = label_of(region.label.as_deref()) {
+                out.push_str(&format!(", labeled {label}"));
+            }
+            out.push('.');
+        }
         out
     }
 }
@@ -187,7 +269,7 @@ pub(super) fn exact_text(value: &BigRational) -> String {
 
 #[cfg(test)]
 mod tests {
-    use super::{CoordinateFigure, LabeledPoint, Segment};
+    use super::{CoordinateFigure, LabeledPoint, Segment, ShadedHalfPlane};
     use crate::visual::plane::exact_text;
     use crate::visual::{Scalar, VisualError};
     use num_bigint::BigInt;
@@ -265,6 +347,52 @@ mod tests {
             label: None,
         }];
         let error = plane.validate().unwrap_err();
+        assert!(matches!(error, VisualError::Degenerate { .. }));
+        assert!(error.to_string().contains("(1, 1)"));
+    }
+
+    #[test]
+    fn a_shaded_half_plane_reads_its_boundary_and_shaded_side_out_loud() {
+        let mut plane = CoordinateFigure::square(5);
+        plane.shaded_half_planes = vec![ShadedHalfPlane {
+            through_a: LabeledPoint::new(0_i64, 1_i64),
+            through_b: LabeledPoint::new(1_i64, 2_i64),
+            solid: false,
+            shade_toward: LabeledPoint::new(0_i64, 0_i64),
+            label: Some("y < x + 1".to_owned()),
+        }];
+        assert!(plane.validate().is_ok());
+        let text = plane.text_equivalent();
+        assert!(text.contains(
+            "A dashed boundary line through (0, 1) and (1, 2). \
+             The region containing (0, 0) is shaded, labeled y < x + 1."
+        ));
+    }
+
+    #[test]
+    fn a_half_plane_with_two_boundary_points_the_same_or_a_shade_point_on_the_line_is_degenerate() {
+        let mut same_point = CoordinateFigure::square(5);
+        same_point.shaded_half_planes = vec![ShadedHalfPlane {
+            through_a: LabeledPoint::new(1_i64, 1_i64),
+            through_b: LabeledPoint::new("1.0", "1"),
+            solid: true,
+            shade_toward: LabeledPoint::new(0_i64, 0_i64),
+            label: None,
+        }];
+        assert!(matches!(
+            same_point.validate(),
+            Err(VisualError::Degenerate { .. })
+        ));
+
+        let mut on_line = CoordinateFigure::square(5);
+        on_line.shaded_half_planes = vec![ShadedHalfPlane {
+            through_a: LabeledPoint::new(0_i64, 0_i64),
+            through_b: LabeledPoint::new(2_i64, 2_i64),
+            solid: true,
+            shade_toward: LabeledPoint::new(1_i64, 1_i64),
+            label: None,
+        }];
+        let error = on_line.validate().unwrap_err();
         assert!(matches!(error, VisualError::Degenerate { .. }));
         assert!(error.to_string().contains("(1, 1)"));
     }

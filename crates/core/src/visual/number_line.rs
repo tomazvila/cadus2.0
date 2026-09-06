@@ -38,6 +38,37 @@ pub struct MarkedInterval {
     pub label: Option<String>,
 }
 
+/// The direction an unbounded ray points.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum RayDirection {
+    /// The ray runs toward the drawn range's left end and beyond.
+    Left,
+    /// The ray runs toward the drawn range's right end and beyond.
+    Right,
+}
+
+/// One ray of a number line: the solution set of a one-variable inequality.
+///
+/// A ray has one drawn end, at `from`, and one end that never stops. The figure
+/// draws the open end at the frame edge with an arrowhead, so a reader never
+/// mistakes it for a bounded interval that happens to reach the edge.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct MarkedRay {
+    /// The one drawn end of the ray.
+    pub from: Scalar,
+    /// Which way the ray runs without bound.
+    pub direction: RayDirection,
+    /// A filled origin belongs to the ray (`≥` or `≤`). An open origin
+    /// does not (`>` or `<`).
+    #[serde(default = "yes")]
+    pub filled: bool,
+    /// The text beside the ray.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub label: Option<String>,
+}
+
 /// A number line.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -54,6 +85,9 @@ pub struct NumberLineFigure {
     /// The marked intervals, in authored order.
     #[serde(default)]
     pub intervals: Vec<MarkedInterval>,
+    /// The marked rays, in authored order.
+    #[serde(default)]
+    pub rays: Vec<MarkedRay>,
     /// The sentence that leads the accessible equivalent.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub caption: Option<String>,
@@ -74,6 +108,7 @@ impl NumberLineFigure {
             tick: tick.into(),
             points: Vec::new(),
             intervals: Vec::new(),
+            rays: Vec::new(),
             caption: None,
         }
     }
@@ -106,6 +141,9 @@ impl NumberLineFigure {
             if interval.to.value()? < interval.from.value()? {
                 return Err(VisualError::RangeNotAscending { axis: "line" });
             }
+        }
+        for ray in &self.rays {
+            inside("a ray origin", &self.min, &self.max, &ray.from)?;
         }
         Ok(())
     }
@@ -141,6 +179,25 @@ impl NumberLineFigure {
             }
             out.push('.');
         }
+        for ray in &self.rays {
+            let fill = if ray.filled {
+                "a filled point"
+            } else {
+                "an open point"
+            };
+            let way = match ray.direction {
+                RayDirection::Left => "left",
+                RayDirection::Right => "right",
+            };
+            out.push_str(&format!(
+                " A ray starting at {} with {fill}, extending {way} without bound",
+                ray.from
+            ));
+            if let Some(label) = label_of(ray.label.as_deref()) {
+                out.push_str(&format!(", labeled {label}"));
+            }
+            out.push('.');
+        }
         out
     }
 }
@@ -162,7 +219,7 @@ pub(super) fn label_of(label: Option<&str>) -> Option<&str> {
 
 #[cfg(test)]
 mod tests {
-    use super::{MarkedInterval, MarkedPoint, NumberLineFigure};
+    use super::{MarkedInterval, MarkedPoint, MarkedRay, NumberLineFigure, RayDirection};
     use crate::visual::{Scalar, VisualError};
 
     fn interval(from: &str, to: &str, closed_start: bool, closed_end: bool) -> MarkedInterval {
@@ -296,6 +353,45 @@ mod tests {
         let text = line.text_equivalent();
         assert!(text.contains("An open point at 2."));
         assert!(text.contains("A closed interval from 1 to 2, labeled A."));
+    }
+
+    #[test]
+    fn a_ray_reads_its_origin_fill_and_direction_and_needs_its_origin_inside() {
+        let mut line = NumberLineFigure::new(-10_i64, 10_i64, 1_i64);
+        line.rays = vec![
+            MarkedRay {
+                from: Scalar::from("3"),
+                direction: RayDirection::Right,
+                filled: true,
+                label: Some("x ≥ 3".to_owned()),
+            },
+            MarkedRay {
+                from: Scalar::from("-2"),
+                direction: RayDirection::Left,
+                filled: false,
+                label: None,
+            },
+        ];
+        assert!(line.validate().is_ok());
+        let text = line.text_equivalent();
+        assert!(text.contains(
+            "A ray starting at 3 with a filled point, extending right without bound, labeled x ≥ 3."
+        ));
+        assert!(
+            text.contains("A ray starting at -2 with an open point, extending left without bound.")
+        );
+
+        let mut outside = NumberLineFigure::new(-10_i64, 10_i64, 1_i64);
+        outside.rays = vec![MarkedRay {
+            from: Scalar::from("11"),
+            direction: RayDirection::Right,
+            filled: true,
+            label: None,
+        }];
+        assert!(matches!(
+            outside.validate(),
+            Err(VisualError::OutOfRange { .. })
+        ));
     }
 
     #[test]

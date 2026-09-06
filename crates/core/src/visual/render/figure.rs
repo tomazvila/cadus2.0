@@ -8,7 +8,7 @@ use super::{
 };
 use crate::visual::{
     CoordinateFigure, FractionFigure, FractionShape, GeometryFigure, GeometryShape, LabeledPoint,
-    NumberLineFigure, VisualError,
+    NumberLineFigure, RayDirection, VisualError,
 };
 
 /// The largest tick count that still carries a printed label.
@@ -83,7 +83,50 @@ pub(super) fn number_line_body(
             text_at(&mut out, x, baseline - 24.0, "middle", label);
         }
     }
+    for ray in &figure.rays {
+        let origin = at(ray.from.to_f64()?);
+        let edge = match ray.direction {
+            RayDirection::Left => MARGIN,
+            RayDirection::Right => MARGIN + width,
+        };
+        let track = baseline - 14.0;
+        line_at(&mut out, (origin, track), (edge, track), "cadus-visual-ray");
+        arrowhead(&mut out, edge, track, ray.direction);
+        end_cap(&mut out, origin, track, ray.filled);
+        if let Some(label) = label_of(ray.label.as_deref()) {
+            text_at(
+                &mut out,
+                origin.midpoint(edge),
+                track - 8.0,
+                "middle",
+                label,
+            );
+        }
+    }
     Ok(out)
+}
+
+/// The label text, or `None` for an absent or blank label.
+fn label_of(label: Option<&str>) -> Option<&str> {
+    label.map(str::trim).filter(|text| !text.is_empty())
+}
+
+/// The small triangle that caps a ray at the drawn frame edge.
+fn arrowhead(out: &mut String, x: f64, y: f64, direction: RayDirection) {
+    let tip = match direction {
+        RayDirection::Left => x - 7.0,
+        RayDirection::Right => x + 7.0,
+    };
+    let points = [(x, y - 5.0), (tip, y), (x, y + 5.0)];
+    let coords: Vec<String> = points
+        .iter()
+        .map(|(px_, py_)| format!("{},{}", px(*px_), px(*py_)))
+        .collect();
+    let _ = write!(
+        out,
+        "<polygon points=\"{}\" class=\"cadus-visual-ray\"/>",
+        coords.join(" ")
+    );
 }
 
 /// One end of a marked interval: a filled dot for a closed end, an open dot for
@@ -223,6 +266,48 @@ pub(super) fn coordinate_body(
         }
     }
     axes(&mut out, (x_min, x_max, y_min, y_max), width, height, &at);
+    for region in &figure.shaded_half_planes {
+        let a = region.through_a.to_pair()?;
+        let b = region.through_b.to_pair()?;
+        let toward = region.shade_toward.to_pair()?;
+        let corners = [
+            (x_min, y_min),
+            (x_max, y_min),
+            (x_max, y_max),
+            (x_min, y_max),
+        ];
+        let clipped = clip_half_plane(&corners, a, b, toward);
+        if clipped.len() >= 3 {
+            let points: Vec<String> = clipped
+                .iter()
+                .map(|(x, y)| {
+                    let (px_, py_) = at(*x, *y);
+                    format!("{},{}", px(px_), px(py_))
+                })
+                .collect();
+            let _ = write!(
+                out,
+                "<polygon points=\"{}\" class=\"cadus-visual-shaded\"/>",
+                points.join(" ")
+            );
+        }
+        let boundary_class = if region.solid {
+            "cadus-visual-boundary-solid"
+        } else {
+            "cadus-visual-boundary-dashed"
+        };
+        let (bx0, by0, bx1, by1) = extend_to_frame(a, b, (x_min, x_max, y_min, y_max));
+        line_at(&mut out, at(bx0, by0), at(bx1, by1), boundary_class);
+        if let Some(label) = region
+            .label
+            .as_deref()
+            .map(str::trim)
+            .filter(|t| !t.is_empty())
+        {
+            let mid = at(bx0.midpoint(bx1), by0.midpoint(by1));
+            text_at(&mut out, mid.0, mid.1 - 8.0, "middle", label);
+        }
+    }
     for segment in &figure.segments {
         let from = segment.from.to_pair()?;
         let to = segment.to.to_pair()?;
@@ -273,6 +358,81 @@ fn axes(
         let (_, y) = at(x_min, 0.0);
         line_at(out, (MARGIN, y), (MARGIN + width, y), "cadus-visual-axis");
     }
+}
+
+/// Twice the signed area of the triangle `a`, `b`, `p`: positive on one side of
+/// the line through `a` and `b`, negative on the other, zero on the line.
+fn cross(a: (f64, f64), b: (f64, f64), p: (f64, f64)) -> f64 {
+    (b.0 - a.0) * (p.1 - a.1) - (b.1 - a.1) * (p.0 - a.0)
+}
+
+/// The point where segment `p`-`q` crosses the line through `a` and `b`.
+fn intersect(a: (f64, f64), b: (f64, f64), p: (f64, f64), q: (f64, f64)) -> (f64, f64) {
+    let (d1, d2) = (cross(a, b, p), cross(a, b, q));
+    let t = d1 / (d1 - d2);
+    (p.0 + t * (q.0 - p.0), p.1 + t * (q.1 - p.1))
+}
+
+/// Sutherland-Hodgman clip of a convex polygon against one half-plane: the side
+/// of the line through `a` and `b` that holds `toward`.
+fn clip_half_plane(
+    subject: &[(f64, f64)],
+    a: (f64, f64),
+    b: (f64, f64),
+    toward: (f64, f64),
+) -> Vec<(f64, f64)> {
+    let toward_sign = cross(a, b, toward);
+    let inside = |p: (f64, f64)| cross(a, b, p) * toward_sign >= 0.0;
+    let count = subject.len();
+    let mut out = Vec::with_capacity(count + 1);
+    for at in 0..count {
+        let current = subject[at];
+        let previous = subject[(at + count - 1) % count];
+        let (current_in, previous_in) = (inside(current), inside(previous));
+        if current_in {
+            if !previous_in {
+                out.push(intersect(a, b, previous, current));
+            }
+            out.push(current);
+        } else if previous_in {
+            out.push(intersect(a, b, previous, current));
+        }
+    }
+    out
+}
+
+/// The two points where the infinite line through `a` and `b` crosses the
+/// drawn rectangle, given that `a` and `b` both sit inside it.
+fn extend_to_frame(
+    a: (f64, f64),
+    b: (f64, f64),
+    bounds: (f64, f64, f64, f64),
+) -> (f64, f64, f64, f64) {
+    let (x_min, x_max, y_min, y_max) = bounds;
+    let (dx, dy) = (b.0 - a.0, b.1 - a.1);
+    let (mut t0, mut t1) = (f64::NEG_INFINITY, f64::INFINITY);
+    for (p, q) in [
+        (-dx, a.0 - x_min),
+        (dx, x_max - a.0),
+        (-dy, a.1 - y_min),
+        (dy, y_max - a.1),
+    ] {
+        if p == 0.0 {
+            continue;
+        }
+        let r = q / p;
+        if p < 0.0 {
+            t0 = t0.max(r);
+        } else {
+            t1 = t1.min(r);
+        }
+    }
+    (
+        dx.mul_add(t0, a.0),
+        dy.mul_add(t0, a.1),
+        dx.mul_add(t1, a.0),
+        dy.mul_add(t1, a.1),
+    )
 }
 
 /// The body of a geometry diagram.

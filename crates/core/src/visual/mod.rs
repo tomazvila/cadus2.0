@@ -40,8 +40,8 @@ use thiserror::Error;
 
 pub use fraction::{FractionFigure, FractionShape};
 pub use geometry::{GeometryFigure, GeometryShape};
-pub use number_line::{MarkedInterval, MarkedPoint, NumberLineFigure};
-pub use plane::{CoordinateFigure, LabeledPoint, Segment};
+pub use number_line::{MarkedInterval, MarkedPoint, MarkedRay, NumberLineFigure, RayDirection};
+pub use plane::{CoordinateFigure, LabeledPoint, Segment, ShadedHalfPlane};
 pub use render::{RenderOptions, RenderedVisual, render, render_all};
 pub use scalar::Scalar;
 

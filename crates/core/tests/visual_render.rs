@@ -7,8 +7,9 @@
 #![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
 
 use cadus_core::visual::{
-    CoordinateFigure, FractionFigure, GeometryFigure, GeometryShape, LabeledPoint,
-    NumberLineFigure, RenderOptions, Scalar, Segment, VisualError, VisualSpec, render,
+    CoordinateFigure, FractionFigure, GeometryFigure, GeometryShape, LabeledPoint, MarkedRay,
+    NumberLineFigure, RayDirection, RenderOptions, Scalar, Segment, ShadedHalfPlane, VisualError,
+    VisualSpec, render,
 };
 
 /// The count of one substring in one text.
@@ -137,6 +138,51 @@ fn an_open_interval_end_draws_an_open_cap_and_a_closed_end_draws_a_filled_cap() 
 }
 
 #[test]
+fn a_ray_draws_one_end_cap_an_arrowhead_at_the_frame_edge_and_no_second_end_cap() {
+    let mut figure = NumberLineFigure::new(-5_i64, 5_i64, 1_i64);
+    figure.rays = vec![MarkedRay {
+        from: Scalar::from("2"),
+        direction: RayDirection::Right,
+        filled: true,
+        label: Some("x ≥ 2".to_owned()),
+    }];
+    let svg = render(&VisualSpec::NumberLine(figure), &RenderOptions::default()).unwrap();
+    assert_eq!(
+        count(&svg, "cadus-visual-ray"),
+        2,
+        "a line and an arrowhead"
+    );
+    assert_eq!(count(&svg, "cadus-visual-point\""), 1, "one filled origin");
+    assert_eq!(count(&svg, "cadus-visual-point-open\""), 0);
+    assert!(svg.contains("x ≥ 2"));
+
+    let mut open = NumberLineFigure::new(-5_i64, 5_i64, 1_i64);
+    open.rays = vec![MarkedRay {
+        from: Scalar::from("-2"),
+        direction: RayDirection::Left,
+        filled: false,
+        label: None,
+    }];
+    let svg = render(&VisualSpec::NumberLine(open), &RenderOptions::default()).unwrap();
+    assert_eq!(count(&svg, "cadus-visual-point-open\""), 1);
+}
+
+#[test]
+fn a_ray_origin_outside_the_drawn_range_fails_the_check() {
+    let mut figure = NumberLineFigure::new(-5_i64, 5_i64, 1_i64);
+    figure.rays = vec![MarkedRay {
+        from: Scalar::from("9"),
+        direction: RayDirection::Right,
+        filled: true,
+        label: None,
+    }];
+    assert!(matches!(
+        render(&VisualSpec::NumberLine(figure), &RenderOptions::default()),
+        Err(VisualError::OutOfRange { .. })
+    ));
+}
+
+#[test]
 fn the_fraction_bar_shades_the_numerator_and_leaves_the_rest_plain() {
     let spec = VisualSpec::Fraction(FractionFigure::bar(3, 4));
     let svg = render(&spec, &RenderOptions::default()).unwrap();
@@ -186,6 +232,53 @@ fn the_coordinate_plane_draws_both_axes_only_when_it_holds_zero() {
     shifted.y_max = Scalar::from("4");
     let away = render(&VisualSpec::Coordinate(shifted), &RenderOptions::default()).unwrap();
     assert_eq!(count(&away, "cadus-visual-axis"), 0);
+}
+
+#[test]
+fn a_shaded_half_plane_draws_a_filled_region_and_a_solid_or_dashed_boundary() {
+    let mut solid = CoordinateFigure::square(5);
+    solid.shaded_half_planes = vec![ShadedHalfPlane {
+        through_a: LabeledPoint::new(0_i64, 0_i64),
+        through_b: LabeledPoint::new(1_i64, 1_i64),
+        solid: true,
+        shade_toward: LabeledPoint::new(4_i64, 0_i64),
+        label: Some("y ≤ x".to_owned()),
+    }];
+    let svg = render(&VisualSpec::Coordinate(solid), &RenderOptions::default()).unwrap();
+    assert_eq!(count(&svg, "<polygon"), 1);
+    assert_eq!(count(&svg, "cadus-visual-boundary-solid"), 1);
+    assert_eq!(count(&svg, "cadus-visual-boundary-dashed"), 0);
+    assert!(svg.contains("y ≤ x"));
+
+    let mut dashed = CoordinateFigure::square(5);
+    dashed.shaded_half_planes = vec![ShadedHalfPlane {
+        through_a: LabeledPoint::new(0_i64, 0_i64),
+        through_b: LabeledPoint::new(1_i64, 1_i64),
+        solid: false,
+        shade_toward: LabeledPoint::new(4_i64, 0_i64),
+        label: None,
+    }];
+    let dashed_svg = render(&VisualSpec::Coordinate(dashed), &RenderOptions::default()).unwrap();
+    assert_eq!(count(&dashed_svg, "cadus-visual-boundary-dashed"), 1);
+}
+
+#[test]
+fn a_shaded_half_plane_that_sits_on_the_boundary_or_repeats_a_point_renders_no_bytes() {
+    let mut degenerate = CoordinateFigure::square(5);
+    degenerate.shaded_half_planes = vec![ShadedHalfPlane {
+        through_a: LabeledPoint::new(0_i64, 0_i64),
+        through_b: LabeledPoint::new(2_i64, 2_i64),
+        solid: true,
+        shade_toward: LabeledPoint::new(1_i64, 1_i64),
+        label: None,
+    }];
+    assert!(matches!(
+        render(
+            &VisualSpec::Coordinate(degenerate),
+            &RenderOptions::default()
+        ),
+        Err(VisualError::Degenerate { .. })
+    ));
 }
 
 #[test]
