@@ -1706,35 +1706,64 @@ topics:
         name: "Set up the amount and value equations"
         key_prerequisites: [percentages]
         exemplars:
-          - problem: 'How much pure acid is in $12$ L of a $35\%$ acid solution?'
-            answer: "4.2 L"
-            answer_contract: {"kind":"unit","quantity":"volume","unit":"L"}
-            solution_sketch: '$0.35 \times 12 = 4.2$.'
-          - problem: 'Mixing $x$ L of $25\%$ acid with $y$ L of $60\%$ acid to get $20$ L of $40\%$ acid: give both equations.'
-            answer: "x + y = 20 and 0.25x + 0.60y = 8"
-            solution_sketch: 'Amounts sum to $20$; pure acid sums to $0.40(20) = 8$.'
+          - problem: "Blend 10% and 50% acid into 16 liters at 25%. Let x and y be the amounts of the first and second ingredients. Complete $x+y=T$ and $px+qy=M$ by giving $(T,p,q,M)$; p and q are pure-substance fractions, and M is the pure amount."
+            answer: "(16,1/10,1/2,4)"
+            solution_sketch: "The liquid amounts sum to 16. Pure acid is one tenth of the first and one half of the second; the target holds $16(1/4)=4$ liters of acid."
+            answer_contract: {"kind": "coordinates", "arity": 4}
+          - problem: "Dilute pure acid (100%) with water (0%) into 9 liters at 40%. Let x and y be the amounts of the first and second ingredients. Complete $x+y=T$ and $px+qy=M$ by giving $(T,p,q,M)$; p and q are pure-substance fractions, and M is the pure amount."
+            answer: "(9,1,0,18/5)"
+            solution_sketch: "Water contributes liquid but no acid. The pure ingredient contributes its full amount; the target acid amount is $9(2/5)=18/5$ liters."
+            answer_contract: {"kind": "coordinates", "arity": 4}
+          - problem: "Combine solutions with pure fractions 1/4 and 3/4 into 14 liters with pure fraction 3/7. Let x and y be the amounts of the first and second ingredients. Complete $x+y=T$ and $px+qy=M$ by giving $(T,p,q,M)$; p and q are pure-substance fractions, and M is the pure amount."
+            answer: "(14,1/4,3/4,6)"
+            solution_sketch: "Use 14 as the total volume. The ingredient fractions multiply their volumes; the target pure volume is $14(3/7)=6$ liters."
+            answer_contract: {"kind": "coordinates", "arity": 4}
+          - problem: "Blend 30% and 80% solutions into 20 liters containing 11 liters of pure substance. Let x and y be the amounts of the first and second ingredients. Complete $x+y=T$ and $px+qy=M$ by giving $(T,p,q,M)$; p and q are pure-substance fractions, and M is the pure amount."
+            answer: "(20,3/10,4/5,11)"
+            solution_sketch: "The total-volume equation uses 20. Convert 30% and 80% to fractional multipliers; the pure-volume equation uses the stated 11 liters."
+            answer_contract: {"kind": "coordinates", "arity": 4}
         constraints: "amount equation plus concentration (pure-substance) equation"
       - id: kp2
         name: "Percent-solution mixtures"
         key_prerequisites: [systems-money-problems]
         exemplars:
-          - problem: 'How many liters of $20\%$ acid and $50\%$ acid make $30$ L of $30\%$ acid?'
-            answer: "20 L of 20% and 10 L of 50%"
-            solution_sketch: '$x + y = 30$, $0.2x + 0.5y = 9$; $0.2x + 0.5(30 - x) = 9$; $x = 20$.'
-          - problem: 'How many liters of $10\%$ and $40\%$ saline make $12$ L of $20\%$ saline?'
-            answer: "8 L of 10% and 4 L of 40%"
-            solution_sketch: '$x + y = 12$, $0.1x + 0.4y = 2.4$; $x = 8$, $y = 4$.'
+          - problem: "Blend 10% and 40% acid into 18 liters at 20%. Give the amounts (first, second) in liters; assume volumes add."
+            answer: "(12,6)"
+            solution_sketch: "Use $x+y=18$ and $x+4y=36$ after scaling the acid balance. Subtraction gives $3y=18$. Check: $12+6=18$ and $12+4(6)=36$."
+            answer_contract: {"kind": "coordinates", "arity": 2}
+          - problem: "Dilute pure acid (100%) with water (0%) into 7 liters at 30%. Give the amounts (first, second) in liters; assume volumes add."
+            answer: "(21/10,49/10)"
+            solution_sketch: "Only the first ingredient supplies acid, so its volume is $7(3/10)=21/10$. Check: $21/10+49/10=7$ and the pure share is three tenths."
+            answer_contract: {"kind": "coordinates", "arity": 2}
+          - problem: "Combine solutions with pure fractions 1/5 and 4/5 into 15 liters with pure fraction 1/2. Give the amounts (first, second) in liters; assume volumes add."
+            answer: "(15/2,15/2)"
+            solution_sketch: "Use $x+y=15$ and $2x+8y=75$. Subtraction gives $6y=45$. Check: $15/2+15/2=15$ and $2(15/2)+8(15/2)=75$."
+            answer_contract: {"kind": "coordinates", "arity": 2}
+          - problem: "Blend 25% and 75% solutions into 24 liters containing 15 liters of pure substance. Give the amounts (first, second) in liters; assume volumes add."
+            answer: "(6,18)"
+            solution_sketch: "Use $x+y=24$ and $x+3y=60$. Subtraction gives $2y=36$. Check: $6+18=24$ and $6/4+3(18)/4=15$."
+            answer_contract: {"kind": "coordinates", "arity": 2}
         constraints: "target strength strictly between the two ingredient strengths"
       - id: kp3
         name: "Price-blend mixtures"
         key_prerequisites: [systems-money-problems]
         exemplars:
-          - problem: 'Coffee at €8/kg is blended with coffee at €12/kg to make $10$ kg worth €9/kg. How much of each?'
-            answer: "7.5 kg of €8 coffee and 2.5 kg of €12 coffee"
-            solution_sketch: '$x + y = 10$, $8x + 12y = 90$; $4y = 10$; $y = 2.5$.'
-          - problem: 'Nuts at €6/kg are mixed with raisins at €3/kg to make $9$ kg costing €36. How much of each?'
-            answer: "3 kg nuts and 6 kg raisins"
-            solution_sketch: '$n + r = 9$, $6n + 3r = 36$; $3n = 9$; $n = 3$.'
+          - problem: "Blend tea priced at 6 and 14 euros/kg into 12 kilograms worth 9 euros/kg. Give the masses (first, second) in kilograms; assume no loss."
+            answer: "(15/2,9/2)"
+            solution_sketch: "Use $x+y=12$ and $6x+14y=108$. Subtraction gives $8y=36$. Check: $15/2+9/2=12$ and $6(15/2)+14(9/2)=108$."
+            answer_contract: {"kind": "coordinates", "arity": 2}
+          - problem: "Combine nuts priced at 8 and 20 euros/kg into 10 kilograms with total value 128 euros. Give the masses (first, second) in kilograms; assume no loss."
+            answer: "(6,4)"
+            solution_sketch: "The total value is already supplied: $8x+20y=128$ with $x+y=10$. Check: $6+4=10$ and $8(6)+20(4)=128$."
+            answer_contract: {"kind": "coordinates", "arity": 2}
+          - problem: "Mix coffee priced at 1600 and 1000 cents/kg into 9 kilograms worth 12 euros/kg. Give the masses (first, second) in kilograms; assume no loss."
+            answer: "(3,6)"
+            solution_sketch: "Convert the prices to 16 and 10 euros/kg. Use $x+y=9$ and $16x+10y=108$. Check: $3+6=9$ and $16(3)+10(6)=108$."
+            answer_contract: {"kind": "coordinates", "arity": 2}
+          - problem: "Blend grain priced at 4 and 10 euros/kg into 8000 grams worth 7 euros/kg. Give the masses (first, second) in kilograms; assume no loss."
+            answer: "(4,4)"
+            solution_sketch: "Convert the total mass to 8 kilograms. Use $x+y=8$ and $4x+10y=56$. Check: $4+4=8$ and $4(4)+10(4)=56$."
+            answer_contract: {"kind": "coordinates", "arity": 2}
         constraints: "blend price between the two ingredient prices; halves allowed"
     diagnostic_exemplar:
       problem: 'How many liters each of $10\%$ and $30\%$ solution make $8$ L of $25\%$ solution?'
