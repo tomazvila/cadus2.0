@@ -1,13 +1,15 @@
-"""Generate `teach` and `hint_ladder` drafts for the pure-numeric compute family.
+"""Generate review-only `teach` and `hint_ladder` drafts for numeric content.
 
-Every draft this module writes is built from one knowledge point's OWN
+Every review draft this module writes is built from one knowledge point's own
 authored exemplars: [`foundations_compute.same_shape_new_operands`] redraws
 the operands of one authored expression, deterministically (seeded on the
 serving key), and this module's evaluator (not a guess) checks the result.
 The generated worked example always lands on a value none of the knowledge
 point's own exemplars serve, so it never hands the learner a served answer.
-No concept sentence or hint rung below names a number: every one is generic
-per detected operator family, so it can never contain a served answer token.
+No concept sentence or hint rung below names a number. Coarse operator-family
+classification is insufficient evidence for curriculum mutation, so the
+solution-sketch and held-out-exemplar helpers fail closed until a KP-specific
+recipe has been reviewed.
 """
 from __future__ import annotations
 
@@ -395,8 +397,7 @@ def solution_sketch_for(expr: str, answer_text: str) -> str:
     the exemplar's own `answer` field already serves this exact value, so
     restating it here names nothing the learner has not already been told.
     """
-    _, steps = TEACH[classify_family(expr)]
-    return f"{steps[-1]} ${expr} = {answer_text}$."
+    return f"Evaluate the written operations and simplify the exact result. ${expr} = {answer_text}$."
 
 
 def missing_solution_sketches(kp: dict) -> Optional[dict[int, str]]:
@@ -407,16 +408,11 @@ def missing_solution_sketches(kp: dict) -> Optional[dict[int, str]]:
     module's evaluator, so this module writes no sketch for any of them).
     An empty dict means every exemplar already carries an authored sketch.
     """
-    matches = pure_numeric_exemplars(kp)
-    if matches is None:
-        return None
-    out = {}
-    for index, (exemplar, match) in enumerate(zip(kp["exemplars"], matches)):
-        sketch = exemplar.get("solution_sketch")
-        if sketch and sketch.strip():
-            continue
-        out[index] = solution_sketch_for(match.group(2), exemplar["answer"])
-    return out
+    # A numeric equality proves arithmetic only. It does not prove that a
+    # generic explanation teaches the KP's declared method (borrowing, long
+    # division, powers of ten, reciprocals, and so on). Require an explicit
+    # KP-aware recipe before mutating curriculum content.
+    return None
 
 
 @dataclass(frozen=True)
@@ -445,47 +441,11 @@ def generate_held_out_exemplars(
     exemplar as held out, the last of these new exemplars becomes that
     knowledge point's held-out assessment item.
     """
-    matches = pure_numeric_exemplars(kp)
-    if matches is None:
-        return None
-    verb, base_expr = matches[-1].group(1), matches[-1].group(2)
-    family = classify_family(base_expr)
-    if family in EXCLUDED_FROM_GENERATION:
-        return None
-    needed = target - len(kp["exemplars"])
-    if needed <= 0:
-        return []
-    with_contract = kp["exemplars"][-1].get("answer_contract") is not None
-    original_served = _served_values(kp)
-    bounds_check = _within_kp_family(original_served, family)
-    ceiling = _operand_ceiling(matches)
-    prefer_decimal = family.startswith("decimal")
-    served = set(original_served)
-    rng = Random(f"{topic['id']}/{kp['id']}/held-out")
-    plans = []
-    for _ in range(needed):
-        try:
-            expr, value = fc.same_shape_new_operands(
-                base_expr,
-                rng,
-                forbid_zero_result=True,
-                forbid_values=frozenset(served),
-                extra_ok=bounds_check,
-                operand_ceiling=ceiling,
-            )
-        except fc.NotArithmetic:
-            return None
-        served.add(value)
-        answer = fc.render_answer(value, prefer_decimal=prefer_decimal)
-        plans.append(
-            NewExemplarPlan(
-                problem=f"{verb} ${expr}$.",
-                answer=answer,
-                solution_sketch=solution_sketch_for(expr, answer),
-                with_contract=with_contract,
-            )
-        )
-    return plans
+    # Same-shape operand redraws preserve syntax and arithmetic. They cannot
+    # prove semantic constraints such as like denominators, regrouping,
+    # multiplying by powers of ten, or required cancellation. A reviewed,
+    # KP-specific recipe must replace this fail-closed path.
+    return None
 
 
 def hint_draft(candidate: Candidate) -> dict:

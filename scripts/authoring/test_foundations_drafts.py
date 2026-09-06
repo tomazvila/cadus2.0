@@ -191,13 +191,9 @@ class SolutionSketchTest(unittest.TestCase):
         sketch = fd.solution_sketch_for("-7 + 4", "-3")
         self.assertIn("$-7 + 4 = -3$.", sketch)
 
-    def test_missing_solution_sketches_skips_an_already_authored_one(self):
-        # `apply_foundations_solution_sketches.py --write` has already run
-        # against the committed fixture, so single-digit-addition/kp1's
-        # exemplar 0 (authored with no sketch originally) is now filled, and
-        # asking again reports nothing left missing for this KP.
+    def test_coarse_family_never_claims_a_solution_sketch_is_semantically_complete(self):
         _, kp = find_kp("single-digit-addition", "kp1")
-        self.assertEqual(fd.missing_solution_sketches(kp), {})
+        self.assertIsNone(fd.missing_solution_sketches(kp))
 
     def test_missing_solution_sketches_is_none_for_a_non_numeric_kp(self):
         _, kp = find_kp("fraction-basics", "kp1")
@@ -221,20 +217,13 @@ class SolutionSketchTest(unittest.TestCase):
                     checked += 1
         self.assertGreater(checked, 50)
 
-    def test_the_curriculum_patch_left_no_pure_numeric_kp_missing_a_sketch(self):
-        """Regression: `apply_foundations_solution_sketches.py --write` already ran.
-
-        The committed `testdata/foundations_topics.json` is regenerated from
-        the curriculum AFTER that patch, so this must hold with zero
-        exceptions, or the patch missed a knowledge point.
-        """
-        unresolved = []
+    def test_coarse_family_never_generates_a_held_out_curriculum_item(self):
+        refused = 0
         for topic in load_topics():
             for kp in topic["knowledge_points"]:
-                missing = fd.missing_solution_sketches(kp)
-                if missing:
-                    unresolved.append((topic["id"], kp["id"], missing))
-        self.assertEqual(unresolved, [])
+                self.assertIsNone(fd.generate_held_out_exemplars(topic, kp))
+                refused += 1
+        self.assertEqual(refused, 809)
 
 
 if __name__ == "__main__":
