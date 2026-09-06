@@ -24,8 +24,10 @@
 //! One grouped read of `content_store` and pure CPU. It spends NO model token
 //! (T1) and writes no row.
 
+mod prereq_md;
 mod render;
 mod run;
 
+pub use prereq_md::render_prereq_markdown;
 pub use render::{render_json, render_markdown};
 pub use run::{ContractCheck, ReadinessRun, run};

@@ -40,7 +40,7 @@ pub use diagnosis::{DiagnosisJob, Outcome as DiagnosisOutcome, Report as Diagnos
 pub use model_log::{CallRecord, PURPOSE_AUTHORING, PURPOSE_DIAGNOSIS};
 pub use readiness::{
     ContractCheck, ReadinessRun, render_json as render_readiness_json,
-    render_markdown as render_readiness_markdown, run as readiness_run,
+    render_markdown as render_readiness_markdown, render_prereq_markdown, run as readiness_run,
 };
 pub use refill::{
     EMPTY_FILLS_BEFORE_BACKOFF, EXHAUSTED_BACKOFF, REFILL_BACKOFF, RefillConfig, RefillJob,

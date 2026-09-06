@@ -31,6 +31,7 @@
 //! reaches this module through [`ContentIndex`] and through nothing else.
 
 mod facts;
+mod prereq;
 mod report;
 mod resolve;
 mod visual;
@@ -39,6 +40,7 @@ use std::collections::BTreeMap;
 use std::fmt;
 
 pub use facts::{KpFacts, ReadinessIndex};
+pub use prereq::{CoverageCounts, DiagnosticState, FloorEvidence, PrereqCoverage, TopicCoverage};
 pub use report::{CourseReport, ReadinessReport, TopicReport};
 pub use resolve::{ReadinessGate, ReadinessSet};
 pub use visual::{VISUAL_WORDS, visual_needed};
