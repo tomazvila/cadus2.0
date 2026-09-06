@@ -18,6 +18,7 @@ pub mod diagnostic;
 pub mod event;
 pub mod fire;
 pub mod instruction;
+pub mod integrated;
 pub mod learner;
 pub mod numeric;
 pub mod pool;
