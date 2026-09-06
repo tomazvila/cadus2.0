@@ -109,10 +109,22 @@ topics:
         name: "Quadrants and axes"
         key_prerequisites: [plotting-points]
         exemplars:
-          - problem: 'In which quadrant does the point $(-3, 5)$ lie?'
-            answer: "II"
-          - problem: 'The point $(0, -6)$ lies on which axis?'
-            answer: "the y-axis"
+          - problem: "Classify two points with both coordinates nonzero: $A=(-4,-3)$ and $B=(2,5)$. Give A and B. Use codes 1,2,3,4 for quadrants I,II,III,IV; 5 for the x-axis, 6 for the y-axis, and 7 for the origin."
+            answer: "A = 3; B = 1"
+            answer_contract: {"kind": "multipart", "parts": [{"name": "A", "contract": {"kind": "label", "options": [["I", "1"], ["II", "2"], ["III", "3"], ["IV", "4"], ["x-axis", "5"], ["y-axis", "6"], ["origin", "7"]]}}, {"name": "B", "contract": {"kind": "label", "options": [["I", "1"], ["II", "2"], ["III", "3"], ["IV", "4"], ["x-axis", "5"], ["y-axis", "6"], ["origin", "7"]]}}]}
+            solution_sketch: "Read the signs of each coordinate. A zero coordinate locates an axis, and two zero coordinates locate the origin. The locations give A=3 and B=1 under the stated code mapping."
+          - problem: "These reflected points have opposite signs in both coordinates: $A=(3,-2)$ and $B=(-3,2)$. Give A and B. Use codes 1,2,3,4 for quadrants I,II,III,IV; 5 for the x-axis, 6 for the y-axis, and 7 for the origin."
+            answer: "A = 4; B = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"name": "A", "contract": {"kind": "label", "options": [["I", "1"], ["II", "2"], ["III", "3"], ["IV", "4"], ["x-axis", "5"], ["y-axis", "6"], ["origin", "7"]]}}, {"name": "B", "contract": {"kind": "label", "options": [["I", "1"], ["II", "2"], ["III", "3"], ["IV", "4"], ["x-axis", "5"], ["y-axis", "6"], ["origin", "7"]]}}]}
+            solution_sketch: "Read the signs of each coordinate. A zero coordinate locates an axis, and two zero coordinates locate the origin. The locations give A=4 and B=2 under the stated code mapping."
+          - problem: "Distinguish an axis point from the origin: $A=(-5,0)$ and $B=(0,0)$. Give A and B. Use codes 1,2,3,4 for quadrants I,II,III,IV; 5 for the x-axis, 6 for the y-axis, and 7 for the origin."
+            answer: "A = 5; B = 7"
+            answer_contract: {"kind": "multipart", "parts": [{"name": "A", "contract": {"kind": "label", "options": [["I", "1"], ["II", "2"], ["III", "3"], ["IV", "4"], ["x-axis", "5"], ["y-axis", "6"], ["origin", "7"]]}}, {"name": "B", "contract": {"kind": "label", "options": [["I", "1"], ["II", "2"], ["III", "3"], ["IV", "4"], ["x-axis", "5"], ["y-axis", "6"], ["origin", "7"]]}}]}
+            solution_sketch: "Read the signs of each coordinate. A zero coordinate locates an axis, and two zero coordinates locate the origin. The locations give A=5 and B=7 under the stated code mapping."
+          - problem: "Classify the origin and a point below it: $A=(0,0)$ and $B=(0,-6)$. Give A and B. Use codes 1,2,3,4 for quadrants I,II,III,IV; 5 for the x-axis, 6 for the y-axis, and 7 for the origin."
+            answer: "A = 7; B = 6"
+            answer_contract: {"kind": "multipart", "parts": [{"name": "A", "contract": {"kind": "label", "options": [["I", "1"], ["II", "2"], ["III", "3"], ["IV", "4"], ["x-axis", "5"], ["y-axis", "6"], ["origin", "7"]]}}, {"name": "B", "contract": {"kind": "label", "options": [["I", "1"], ["II", "2"], ["III", "3"], ["IV", "4"], ["x-axis", "5"], ["y-axis", "6"], ["origin", "7"]]}}]}
+            solution_sketch: "Read the signs of each coordinate. A zero coordinate locates an axis, and two zero coordinates locate the origin. The locations give A=7 and B=6 under the stated code mapping."
         constraints: "quadrants numbered I-IV counterclockwise; points on an axis are in no quadrant"
       - id: kp2
         visuals: [{"kind":"coordinate","x_min":"-8","x_max":"8","y_min":"-8","y_max":"8","x_tick":"1","y_tick":"1","points":[{"x":"4","y":"2","label":"A"},{"x":"-4","y":"2","label":"B"},{"x":"-4","y":"-2","label":"C"},{"x":"4","y":"-2","label":"D"}],"segments":[],"caption":"Reference example: Four independent reference points illustrate the signs of coordinates around the origin."}]
@@ -729,22 +741,44 @@ topics:
         name: "Horizontal lines have slope 0"
         key_prerequisites: [slope-from-a-graph]
         exemplars:
-          - problem: 'Find the slope of the line through $(2, 4)$ and $(7, 4)$.'
-            answer: "0"
-            solution_sketch: 'Rise is $0$, so slope is $0$ (horizontal).'
-          - problem: 'What is the slope of the line $y = 3$?'
-            answer: "0"
+          - problem: "The line through $(2,4)$ and $(7,t)$ has slope zero. Find $t$."
+            answer: "4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Slope is rise divided by run. The run is $7-2=5$, so zero slope requires zero rise. The second ordinate must equal the first ordinate, giving t=4."
+          - problem: "A horizontal line contains $(-3,-5)$ and $(6,t+2)$. Find $t$."
+            answer: "-7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Horizontal points have equal ordinates: $t+2=-5$. Subtracting two gives t=-7. Then the ordinates match while the distinct abscissas give a nonzero run."
+          - problem: "A point $(1,t-4)$ lies on the horizontal line $y=3$. Find $t$."
+            answer: "7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The equation fixes the ordinate at three, so $t-4=3$. Add four to recover t=7. Movement along this line changes only the abscissa and therefore has zero slope."
+          - problem: "A zero-slope line contains $(0,1/2)$ and $(9,2*t)$. Find $t$."
+            answer: "1/4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Zero slope with run nine requires equal ordinates: $2*t=1/2$. Dividing by two gives t=1/4. This keeps the rise zero despite the nonzero horizontal separation."
         constraints: "equal y-coordinates"
       - id: kp2
         visuals: [{"kind":"coordinate","x_min":"-8","x_max":"8","y_min":"-8","y_max":"8","x_tick":"1","y_tick":"1","points":[{"x":"2","y":"-4","label":"A"},{"x":"2","y":"4","label":"B"}],"segments":[{"from":{"x":"2","y":"-4","label":null},"to":{"x":"2","y":"4","label":null}}],"caption":"Reference example: The reference vertical line has equation x = 2 The drawn segment joins the two reference points."}]
         name: "Vertical lines have undefined slope"
         key_prerequisites: [slope-from-a-graph]
         exemplars:
-          - problem: 'Find the slope of the line through $(3, 1)$ and $(3, 6)$.'
-            answer: "undefined"
-            solution_sketch: 'Run is $0$, so slope is undefined (vertical).'
-          - problem: 'What is the slope of the line $x = -2$?'
-            answer: "undefined"
+          - problem: "The line through $(3,1)$ and $(t,6)$ has undefined slope. Find $t$."
+            answer: "3"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Undefined slope requires zero run and nonzero rise. Here the rise is five, so the two abscissas must agree; the second abscissa is therefore t=3."
+          - problem: "A vertical line contains $(-2,-4)$ and $(t+5,7)$. Find $t$."
+            answer: "-7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Vertical points share their abscissa: $t+5=-2$. Subtract five to get t=-7. The ordinates differ, so these distinct points determine a line with undefined slope."
+          - problem: "A point $(2*t,-3)$ lies on the vertical line $x=4$. Find $t$."
+            answer: "2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The vertical equation fixes the abscissa at four. Hence $2*t=4$, and dividing by two gives t=2. Any movement along this line has zero horizontal change."
+          - problem: "An undefined-slope line contains $(3/2,8)$ and $(t-1,0)$. Find $t$."
+            answer: "5/2"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The nonzero ordinate change requires equal abscissas for an undefined slope: $t-1=3/2$. Adding one gives t=5/2 and makes the run exactly zero."
         constraints: "equal x-coordinates"
       - id: kp3
         visuals: [{"kind":"coordinate","x_min":"-8","x_max":"8","y_min":"-8","y_max":"8","x_tick":"1","y_tick":"1","points":[{"x":"-4","y":"2","label":"A"},{"x":"4","y":"2","label":"B"}],"segments":[{"from":{"x":"-4","y":"2","label":null},"to":{"x":"4","y":"2","label":null}}],"caption":"Reference example: The reference horizontal line has equation y = 2 The drawn segment joins the two reference points."},{"kind":"coordinate","x_min":"-8","x_max":"8","y_min":"-8","y_max":"8","x_tick":"1","y_tick":"1","points":[{"x":"2","y":"-4","label":"A"},{"x":"2","y":"4","label":"B"}],"segments":[{"from":{"x":"2","y":"-4","label":null},"to":{"x":"2","y":"4","label":null}}],"caption":"Reference example: The reference vertical line has equation x = 2 The drawn segment joins the two reference points."}]
@@ -984,14 +1018,22 @@ topics:
         name: "Check a candidate pair"
         key_prerequisites: [evaluating-expressions]
         exemplars:
-          - problem: 'Is $(2, 5)$ a solution of $y = 3x - 1$?'
-            answer: "yes"
-            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
-            solution_sketch: '$3(2) - 1 = 5$.'
-          - problem: 'Is $(1, 4)$ a solution of $2x + y = 7$?'
-            answer: "no"
-            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
-            solution_sketch: '$2(1) + 4 = 6 \ne 7$.'
+          - problem: "Check an isolated output equation: is $(3,8)$ a solution of $y=3x-1$? Give values=(left side,right side) after substitution, then valid=yes or no."
+            answer: "values = (8, 8); valid = yes"
+            answer_contract: {"kind": "multipart", "parts": [{"name": "values", "contract": {"kind": "coordinates", "arity": 2}}, {"name": "valid", "contract": {"kind": "label", "options": [["yes"], ["no"]]}}]}
+            solution_sketch: "Substitute both coordinates into their matching variables. The left side evaluates to 8 and the right side to 8. The candidate satisfies the equation exactly when these values agree."
+          - problem: "Check a candidate in standard form: is $(1,4)$ a solution of $2x+y=7$? Give values=(left side,right side) after substitution, then valid=yes or no."
+            answer: "values = (6, 7); valid = no"
+            answer_contract: {"kind": "multipart", "parts": [{"name": "values", "contract": {"kind": "coordinates", "arity": 2}}, {"name": "valid", "contract": {"kind": "label", "options": [["yes"], ["no"]]}}]}
+            solution_sketch: "Substitute both coordinates into their matching variables. The left side evaluates to 6 and the right side to 7. The candidate satisfies the equation exactly when these values agree."
+          - problem: "Substitute a negative abscissa: is $(-2,3)$ a solution of $y=-2x-1$? Give values=(left side,right side) after substitution, then valid=yes or no."
+            answer: "values = (3, 3); valid = yes"
+            answer_contract: {"kind": "multipart", "parts": [{"name": "values", "contract": {"kind": "coordinates", "arity": 2}}, {"name": "valid", "contract": {"kind": "label", "options": [["yes"], ["no"]]}}]}
+            solution_sketch: "Substitute both coordinates into their matching variables. The left side evaluates to 3 and the right side to 3. The candidate satisfies the equation exactly when these values agree."
+          - problem: "Check a point on the vertical axis: is $(0,-4)$ a solution of $3x-2y=6$? Give values=(left side,right side) after substitution, then valid=yes or no."
+            answer: "values = (8, 6); valid = no"
+            answer_contract: {"kind": "multipart", "parts": [{"name": "values", "contract": {"kind": "coordinates", "arity": 2}}, {"name": "valid", "contract": {"kind": "label", "options": [["yes"], ["no"]]}}]}
+            solution_sketch: "Substitute both coordinates into their matching variables. The left side evaluates to 8 and the right side to 6. The candidate satisfies the equation exactly when these values agree."
         constraints: "substitute both coordinates; yes/no answers"
       - id: kp2
         name: "Find y given x"
@@ -1086,12 +1128,22 @@ topics:
         name: "Plot the rows and connect"
         key_prerequisites: [coordinate-plane]
         exemplars:
-          - problem: 'The table gives $(0, -2)$, $(1, 1)$, $(2, 4)$. Do the plotted points lie on one straight line?'
-            answer: "yes"
-            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
-            solution_sketch: '$y$ rises by a constant $3$ for each unit of $x$.'
-          - problem: 'From a table for $y = x - 3$, which point lies on the x-axis?'
-            answer: "(3, 0)"
+          - problem: "Plot the table rows and extend the connecting straight line: $(-1,-6)$ and $(2,6)$. Give the y-axis crossing as an ordered pair."
+            answer: "(0,-2)"
+            answer_contract: {"kind": "coordinates", "arity": 2}
+            solution_sketch: "Compute the rise per horizontal unit from the two rows. Extend that constant rate to input zero; the corresponding output is -2. A y-axis crossing has abscissa zero."
+          - problem: "Both table inputs are positive; extend the segment back to the y-axis: $(2,5)$ and $(6,13)$. Give the y-axis crossing as an ordered pair."
+            answer: "(0,1)"
+            answer_contract: {"kind": "coordinates", "arity": 2}
+            solution_sketch: "Compute the rise per horizontal unit from the two rows. Extend that constant rate to input zero; the corresponding output is 1. A y-axis crossing has abscissa zero."
+          - problem: "One table row is already on the y-axis: $(0,-4)$ and $(3,2)$. Give the y-axis crossing as an ordered pair."
+            answer: "(0,-4)"
+            answer_contract: {"kind": "coordinates", "arity": 2}
+            solution_sketch: "Compute the rise per horizontal unit from the two rows. Extend that constant rate to input zero; the corresponding output is -4. A y-axis crossing has abscissa zero."
+          - problem: "A descending table crosses the y-axis between its two inputs: $(-3,4)$ and $(1,-2)$. Give the y-axis crossing as an ordered pair."
+            answer: "(0,-1/2)"
+            answer_contract: {"kind": "coordinates", "arity": 2}
+            solution_sketch: "Compute the rise per horizontal unit from the two rows. Extend that constant rate to input zero; the corresponding output is -1/2. A y-axis crossing has abscissa zero."
         constraints: "constant differences confirm a line"
       - id: kp3
         visuals: [{"kind":"coordinate","x_min":"-8","x_max":"8","y_min":"-8","y_max":"8","x_tick":"1","y_tick":"1","points":[{"x":"-2","y":"-2","label":"A"},{"x":"2","y":"4","label":"B"}],"segments":[{"from":{"x":"-2","y":"-2","label":null},"to":{"x":"2","y":"4","label":null}}],"caption":"Reference example: The reference line has equation y = (3/2)x + 1 The drawn segment joins the two reference points."}]
@@ -1747,13 +1799,22 @@ topics:
         name: "Classify a pair of lines"
         key_prerequisites: [reading-slope-intercept-equations]
         exemplars:
-          - problem: 'Are $y = \frac{1}{2}x + 3$ and $y = -2x - 1$ parallel, perpendicular, or neither?'
-            answer: "perpendicular"
-            solution_sketch: '$\frac{1}{2} \cdot (-2) = -1$.'
-          - problem: 'Are $y = 3x + 2$ and $y = -3x + 2$ parallel, perpendicular, or neither?'
-            answer: "neither"
-            answer_contract: {"kind":"label","options":[["parallel"],["perpendicular"],["neither"]]}
-            solution_sketch: 'Slopes $3$ and $-3$: not equal, product $-9 \ne -1$.'
+          - problem: "Compare lines with different intercepts: $y=3x+2$ and $y=3x-4$. Give rates=(first slope,second slope); relation=1 for parallel, 2 for perpendicular, or 3 for neither."
+            answer: "rates = (3, 3); relation = 1"
+            answer_contract: {"kind": "multipart", "parts": [{"name": "rates", "contract": {"kind": "coordinates", "arity": 2}}, {"name": "relation", "contract": {"kind": "label", "options": [["parallel", "1"], ["perpendicular", "2"], ["neither", "3"]]}}]}
+            solution_sketch: "The x coefficients give slopes 3 and 3. Distinct lines with equal slopes are parallel; a slope product of negative one means perpendicular. Otherwise the relation is neither."
+          - problem: "Check the negative reciprocal relationship: $y=(2/3)x+1$ and $y=-(3/2)x+5$. Give rates=(first slope,second slope); relation=1 for parallel, 2 for perpendicular, or 3 for neither."
+            answer: "rates = (2/3, -3/2); relation = 2"
+            answer_contract: {"kind": "multipart", "parts": [{"name": "rates", "contract": {"kind": "coordinates", "arity": 2}}, {"name": "relation", "contract": {"kind": "label", "options": [["parallel", "1"], ["perpendicular", "2"], ["neither", "3"]]}}]}
+            solution_sketch: "The x coefficients give slopes 2/3 and -3/2. Distinct lines with equal slopes are parallel; a slope product of negative one means perpendicular. Otherwise the relation is neither."
+          - problem: "Compare opposite slopes with equal magnitude: $y=4x-1$ and $y=-4x+2$. Give rates=(first slope,second slope); relation=1 for parallel, 2 for perpendicular, or 3 for neither."
+            answer: "rates = (4, -4); relation = 3"
+            answer_contract: {"kind": "multipart", "parts": [{"name": "rates", "contract": {"kind": "coordinates", "arity": 2}}, {"name": "relation", "contract": {"kind": "label", "options": [["parallel", "1"], ["perpendicular", "2"], ["neither", "3"]]}}]}
+            solution_sketch: "The x coefficients give slopes 4 and -4. Distinct lines with equal slopes are parallel; a slope product of negative one means perpendicular. Otherwise the relation is neither."
+          - problem: "Read one horizontal line and one oblique line: $y=6$ and $y=-5x+3$. Give rates=(first slope,second slope); relation=1 for parallel, 2 for perpendicular, or 3 for neither."
+            answer: "rates = (0, -5); relation = 3"
+            answer_contract: {"kind": "multipart", "parts": [{"name": "rates", "contract": {"kind": "coordinates", "arity": 2}}, {"name": "relation", "contract": {"kind": "label", "options": [["parallel", "1"], ["perpendicular", "2"], ["neither", "3"]]}}]}
+            solution_sketch: "The x coefficients give slopes 0 and -5. Distinct lines with equal slopes are parallel; a slope product of negative one means perpendicular. Otherwise the relation is neither."
         constraints: "one comparison per problem; slopes readable from the equations"
     diagnostic_exemplar:
       problem: 'Are $y = \frac{2}{3}x + 1$ and $y = -\frac{3}{2}x - 4$ parallel, perpendicular, or neither?'

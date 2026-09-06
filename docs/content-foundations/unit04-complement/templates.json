@@ -709,5 +709,846 @@
       ],
       "distractors": []
     }
+  },
+  {
+    "kp_id": "coordinate-plane/kp1",
+    "kind": "template",
+    "status": "pending",
+    "arguments": {
+      "statement": "Classify $A=({a},2)$ and $B=({b},1-{b}*{b})$. Give A and B. Use codes 1,2,3,4 for quadrants I,II,III,IV; 5 for the x-axis, 6 for the y-axis, and 7 for the origin.",
+      "answer_expr": "multipart(signcase(a,[2,6,1]),signcase(b,[signcase(1-b*b,[3,5,2]),6,signcase(1-b*b,[4,5,1])]))",
+      "answer_contract": {
+        "kind": "multipart",
+        "parts": [
+          {
+            "name": "A",
+            "contract": {
+              "kind": "label",
+              "options": [
+                [
+                  "I",
+                  "1"
+                ],
+                [
+                  "II",
+                  "2"
+                ],
+                [
+                  "III",
+                  "3"
+                ],
+                [
+                  "IV",
+                  "4"
+                ],
+                [
+                  "x-axis",
+                  "5"
+                ],
+                [
+                  "y-axis",
+                  "6"
+                ],
+                [
+                  "origin",
+                  "7"
+                ]
+              ]
+            }
+          },
+          {
+            "name": "B",
+            "contract": {
+              "kind": "label",
+              "options": [
+                [
+                  "I",
+                  "1"
+                ],
+                [
+                  "II",
+                  "2"
+                ],
+                [
+                  "III",
+                  "3"
+                ],
+                [
+                  "IV",
+                  "4"
+                ],
+                [
+                  "x-axis",
+                  "5"
+                ],
+                [
+                  "y-axis",
+                  "6"
+                ],
+                [
+                  "origin",
+                  "7"
+                ]
+              ]
+            }
+          }
+        ]
+      },
+      "params": {
+        "a": {
+          "kind": "choice",
+          "values": [
+            -1,
+            0,
+            1
+          ]
+        },
+        "b": {
+          "kind": "choice",
+          "values": [
+            -2,
+            -1,
+            0,
+            2
+          ]
+        }
+      },
+      "constraints": [],
+      "solution_sketch": "For A the ordinate is positive, so the sign of ${a}$ selects quadrant II, the y-axis, or quadrant I. For B evaluate $1-{b}*{b}$ and combine its sign with the sign of ${b}$ to locate the point.",
+      "hints": [
+        "Which coordinate or ratio determines the requested property?"
+      ],
+      "samples": [
+        {
+          "params": {
+            "a": -1,
+            "b": -2
+          },
+          "expected": "A = 2; B = 3"
+        },
+        {
+          "params": {
+            "a": -1,
+            "b": -1
+          },
+          "expected": "A = 2; B = 5"
+        },
+        {
+          "params": {
+            "a": -1,
+            "b": 0
+          },
+          "expected": "A = 2; B = 6"
+        },
+        {
+          "params": {
+            "a": -1,
+            "b": 2
+          },
+          "expected": "A = 2; B = 4"
+        },
+        {
+          "params": {
+            "a": 0,
+            "b": -2
+          },
+          "expected": "A = 6; B = 3"
+        },
+        {
+          "params": {
+            "a": 0,
+            "b": -1
+          },
+          "expected": "A = 6; B = 5"
+        },
+        {
+          "params": {
+            "a": 0,
+            "b": 0
+          },
+          "expected": "A = 6; B = 6"
+        },
+        {
+          "params": {
+            "a": 0,
+            "b": 2
+          },
+          "expected": "A = 6; B = 4"
+        },
+        {
+          "params": {
+            "a": 1,
+            "b": -2
+          },
+          "expected": "A = 1; B = 3"
+        },
+        {
+          "params": {
+            "a": 1,
+            "b": -1
+          },
+          "expected": "A = 1; B = 5"
+        },
+        {
+          "params": {
+            "a": 1,
+            "b": 0
+          },
+          "expected": "A = 1; B = 6"
+        },
+        {
+          "params": {
+            "a": 1,
+            "b": 2
+          },
+          "expected": "A = 1; B = 4"
+        }
+      ],
+      "distractors": []
+    }
+  },
+  {
+    "kp_id": "horizontal-vertical-slopes/kp1",
+    "kind": "template",
+    "status": "pending",
+    "arguments": {
+      "statement": "The line through $(2,{a})$ and $(8,t+3)$ has slope zero. Find $t$.",
+      "answer_expr": "a-3",
+      "answer_contract": {
+        "kind": "exact"
+      },
+      "params": {
+        "a": {
+          "kind": "choice",
+          "values": [
+            -9,
+            -8,
+            -6,
+            -5,
+            -3,
+            -2,
+            0,
+            2,
+            4,
+            6,
+            8,
+            12
+          ]
+        }
+      },
+      "constraints": [],
+      "solution_sketch": "The horizontal separation is $8-2=6$. Zero slope forces the ordinate difference $t+3-({a})$ to vanish. Subtract three from ${a}$ to recover the missing coordinate parameter.",
+      "hints": [
+        "Which coordinate or ratio determines the requested property?"
+      ],
+      "samples": [
+        {
+          "params": {
+            "a": -9
+          },
+          "expected": "-12"
+        },
+        {
+          "params": {
+            "a": -8
+          },
+          "expected": "-11"
+        },
+        {
+          "params": {
+            "a": -6
+          },
+          "expected": "-9"
+        },
+        {
+          "params": {
+            "a": -5
+          },
+          "expected": "-8"
+        },
+        {
+          "params": {
+            "a": -3
+          },
+          "expected": "-6"
+        },
+        {
+          "params": {
+            "a": -2
+          },
+          "expected": "-5"
+        },
+        {
+          "params": {
+            "a": 0
+          },
+          "expected": "-3"
+        },
+        {
+          "params": {
+            "a": 2
+          },
+          "expected": "-1"
+        },
+        {
+          "params": {
+            "a": 4
+          },
+          "expected": "1"
+        },
+        {
+          "params": {
+            "a": 6
+          },
+          "expected": "3"
+        },
+        {
+          "params": {
+            "a": 8
+          },
+          "expected": "5"
+        },
+        {
+          "params": {
+            "a": 12
+          },
+          "expected": "9"
+        }
+      ],
+      "distractors": []
+    }
+  },
+  {
+    "kp_id": "horizontal-vertical-slopes/kp2",
+    "kind": "template",
+    "status": "pending",
+    "arguments": {
+      "statement": "The line through $({a},1)$ and $(t-2,7)$ has undefined slope. Find $t$.",
+      "answer_expr": "a+2",
+      "answer_contract": {
+        "kind": "exact"
+      },
+      "params": {
+        "a": {
+          "kind": "choice",
+          "values": [
+            -12,
+            -10,
+            -8,
+            -6,
+            -3,
+            -2,
+            3,
+            2,
+            4,
+            6,
+            8,
+            10
+          ]
+        }
+      },
+      "constraints": [],
+      "solution_sketch": "The ordinate change is $7-1=6$. Undefined slope requires zero horizontal change, so $t-2={a}$. Add two to ${a}$ to make the abscissas agree.",
+      "hints": [
+        "Which coordinate or ratio determines the requested property?"
+      ],
+      "samples": [
+        {
+          "params": {
+            "a": -12
+          },
+          "expected": "-10"
+        },
+        {
+          "params": {
+            "a": -10
+          },
+          "expected": "-8"
+        },
+        {
+          "params": {
+            "a": -8
+          },
+          "expected": "-6"
+        },
+        {
+          "params": {
+            "a": -6
+          },
+          "expected": "-4"
+        },
+        {
+          "params": {
+            "a": -3
+          },
+          "expected": "-1"
+        },
+        {
+          "params": {
+            "a": -2
+          },
+          "expected": "0"
+        },
+        {
+          "params": {
+            "a": 3
+          },
+          "expected": "5"
+        },
+        {
+          "params": {
+            "a": 2
+          },
+          "expected": "4"
+        },
+        {
+          "params": {
+            "a": 4
+          },
+          "expected": "6"
+        },
+        {
+          "params": {
+            "a": 6
+          },
+          "expected": "8"
+        },
+        {
+          "params": {
+            "a": 8
+          },
+          "expected": "10"
+        },
+        {
+          "params": {
+            "a": 10
+          },
+          "expected": "12"
+        }
+      ],
+      "distractors": []
+    }
+  },
+  {
+    "kp_id": "solutions-of-two-variable-equations/kp1",
+    "kind": "template",
+    "status": "pending",
+    "arguments": {
+      "statement": "Is $({a},{b})$ a solution of $y=2x+3$? Give values=(left side,right side) after substitution, then valid=yes or no.",
+      "answer_expr": "multipart((b,2*a+3),equalitylabel(b,2*a+3))",
+      "answer_contract": {
+        "kind": "multipart",
+        "parts": [
+          {
+            "name": "values",
+            "contract": {
+              "kind": "coordinates",
+              "arity": 2
+            }
+          },
+          {
+            "name": "valid",
+            "contract": {
+              "kind": "label",
+              "options": [
+                [
+                  "yes"
+                ],
+                [
+                  "no"
+                ]
+              ]
+            }
+          }
+        ]
+      },
+      "params": {
+        "a": {
+          "kind": "choice",
+          "values": [
+            -3,
+            1,
+            4
+          ]
+        },
+        "b": {
+          "kind": "choice",
+          "values": [
+            -3,
+            5,
+            11,
+            15
+          ]
+        }
+      },
+      "constraints": [],
+      "solution_sketch": "The left side is the candidate ordinate ${b}$. The right side is $2*{a}+3$ after replacing x by the candidate abscissa. Compare these evaluated sides to check the ordered pair.",
+      "hints": [
+        "Which coordinate or ratio determines the requested property?"
+      ],
+      "samples": [
+        {
+          "params": {
+            "a": -3,
+            "b": -3
+          },
+          "expected": "values = (-3, -3); valid = yes"
+        },
+        {
+          "params": {
+            "a": -3,
+            "b": 5
+          },
+          "expected": "values = (5, -3); valid = no"
+        },
+        {
+          "params": {
+            "a": -3,
+            "b": 11
+          },
+          "expected": "values = (11, -3); valid = no"
+        },
+        {
+          "params": {
+            "a": -3,
+            "b": 15
+          },
+          "expected": "values = (15, -3); valid = no"
+        },
+        {
+          "params": {
+            "a": 1,
+            "b": -3
+          },
+          "expected": "values = (-3, 5); valid = no"
+        },
+        {
+          "params": {
+            "a": 1,
+            "b": 5
+          },
+          "expected": "values = (5, 5); valid = yes"
+        },
+        {
+          "params": {
+            "a": 1,
+            "b": 11
+          },
+          "expected": "values = (11, 5); valid = no"
+        },
+        {
+          "params": {
+            "a": 1,
+            "b": 15
+          },
+          "expected": "values = (15, 5); valid = no"
+        },
+        {
+          "params": {
+            "a": 4,
+            "b": -3
+          },
+          "expected": "values = (-3, 11); valid = no"
+        },
+        {
+          "params": {
+            "a": 4,
+            "b": 5
+          },
+          "expected": "values = (5, 11); valid = no"
+        },
+        {
+          "params": {
+            "a": 4,
+            "b": 11
+          },
+          "expected": "values = (11, 11); valid = yes"
+        },
+        {
+          "params": {
+            "a": 4,
+            "b": 15
+          },
+          "expected": "values = (15, 11); valid = no"
+        }
+      ],
+      "distractors": []
+    }
+  },
+  {
+    "kp_id": "graphing-from-a-table/kp2",
+    "kind": "template",
+    "status": "pending",
+    "arguments": {
+      "statement": "Plot table rows $(-2,{a})$ and $(3,{b})$ and connect them with a straight line. Give its y-axis crossing as an ordered pair.",
+      "answer_expr": "(0,(3*a+2*b)/5)",
+      "answer_contract": {
+        "kind": "coordinates",
+        "arity": 2
+      },
+      "params": {
+        "a": {
+          "kind": "choice",
+          "values": [
+            -7,
+            2,
+            11
+          ]
+        },
+        "b": {
+          "kind": "choice",
+          "values": [
+            -4,
+            3,
+            8,
+            16
+          ]
+        }
+      },
+      "constraints": [],
+      "solution_sketch": "The horizontal separation is five and the rise is ${b}-({a})$. Starting at input minus two, advance two units at that rate: add $2*({b}-({a}))/5$ to ${a}$ to reach the y-axis.",
+      "hints": [
+        "Which coordinate or ratio determines the requested property?"
+      ],
+      "samples": [
+        {
+          "params": {
+            "a": -7,
+            "b": -4
+          },
+          "expected": "(0,-29/5)"
+        },
+        {
+          "params": {
+            "a": -7,
+            "b": 3
+          },
+          "expected": "(0,-3)"
+        },
+        {
+          "params": {
+            "a": -7,
+            "b": 8
+          },
+          "expected": "(0,-1)"
+        },
+        {
+          "params": {
+            "a": -7,
+            "b": 16
+          },
+          "expected": "(0,11/5)"
+        },
+        {
+          "params": {
+            "a": 2,
+            "b": -4
+          },
+          "expected": "(0,-2/5)"
+        },
+        {
+          "params": {
+            "a": 2,
+            "b": 3
+          },
+          "expected": "(0,12/5)"
+        },
+        {
+          "params": {
+            "a": 2,
+            "b": 8
+          },
+          "expected": "(0,22/5)"
+        },
+        {
+          "params": {
+            "a": 2,
+            "b": 16
+          },
+          "expected": "(0,38/5)"
+        },
+        {
+          "params": {
+            "a": 11,
+            "b": -4
+          },
+          "expected": "(0,5)"
+        },
+        {
+          "params": {
+            "a": 11,
+            "b": 3
+          },
+          "expected": "(0,39/5)"
+        },
+        {
+          "params": {
+            "a": 11,
+            "b": 8
+          },
+          "expected": "(0,49/5)"
+        },
+        {
+          "params": {
+            "a": 11,
+            "b": 16
+          },
+          "expected": "(0,13)"
+        }
+      ],
+      "distractors": []
+    }
+  },
+  {
+    "kp_id": "slopes-of-parallel-perpendicular-lines/kp3",
+    "kind": "template",
+    "status": "pending",
+    "arguments": {
+      "statement": "Classify $y={a}x+4$ and $y={b}x-6$. Give rates=(first slope,second slope); relation=1 for parallel, 2 for perpendicular, or 3 for neither.",
+      "answer_expr": "multipart((a,b),signcase(abs(a-b),[3,1,signcase(abs(a*b+1),[3,2,3])]))",
+      "answer_contract": {
+        "kind": "multipart",
+        "parts": [
+          {
+            "name": "rates",
+            "contract": {
+              "kind": "coordinates",
+              "arity": 2
+            }
+          },
+          {
+            "name": "relation",
+            "contract": {
+              "kind": "label",
+              "options": [
+                [
+                  "parallel",
+                  "1"
+                ],
+                [
+                  "perpendicular",
+                  "2"
+                ],
+                [
+                  "neither",
+                  "3"
+                ]
+              ]
+            }
+          }
+        ]
+      },
+      "params": {
+        "a": {
+          "kind": "choice",
+          "values": [
+            -2,
+            -1,
+            2
+          ]
+        },
+        "b": {
+          "kind": "choice",
+          "values": [
+            -1,
+            1,
+            2,
+            3
+          ]
+        }
+      },
+      "constraints": [],
+      "solution_sketch": "Read slopes ${a}$ and ${b}$ from the coefficients of x. Equal slopes with different intercepts give parallel lines. Otherwise test whether their product is negative one to identify perpendicular lines.",
+      "hints": [
+        "Which coordinate or ratio determines the requested property?"
+      ],
+      "samples": [
+        {
+          "params": {
+            "a": -2,
+            "b": -1
+          },
+          "expected": "rates = (-2, -1); relation = 3"
+        },
+        {
+          "params": {
+            "a": -2,
+            "b": 1
+          },
+          "expected": "rates = (-2, 1); relation = 3"
+        },
+        {
+          "params": {
+            "a": -2,
+            "b": 2
+          },
+          "expected": "rates = (-2, 2); relation = 3"
+        },
+        {
+          "params": {
+            "a": -2,
+            "b": 3
+          },
+          "expected": "rates = (-2, 3); relation = 3"
+        },
+        {
+          "params": {
+            "a": -1,
+            "b": -1
+          },
+          "expected": "rates = (-1, -1); relation = 1"
+        },
+        {
+          "params": {
+            "a": -1,
+            "b": 1
+          },
+          "expected": "rates = (-1, 1); relation = 2"
+        },
+        {
+          "params": {
+            "a": -1,
+            "b": 2
+          },
+          "expected": "rates = (-1, 2); relation = 3"
+        },
+        {
+          "params": {
+            "a": -1,
+            "b": 3
+          },
+          "expected": "rates = (-1, 3); relation = 3"
+        },
+        {
+          "params": {
+            "a": 2,
+            "b": -1
+          },
+          "expected": "rates = (2, -1); relation = 3"
+        },
+        {
+          "params": {
+            "a": 2,
+            "b": 1
+          },
+          "expected": "rates = (2, 1); relation = 3"
+        },
+        {
+          "params": {
+            "a": 2,
+            "b": 2
+          },
+          "expected": "rates = (2, 2); relation = 1"
+        },
+        {
+          "params": {
+            "a": 2,
+            "b": 3
+          },
+          "expected": "rates = (2, 3); relation = 3"
+        }
+      ],
+      "distractors": []
+    }
   }
 ]
