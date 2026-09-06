@@ -390,10 +390,18 @@ pub fn an_irrational_number(poly: &cadus_core::answer::Poly) -> bool {
         match atom {
             Atom::Var(_) => return false,
             Atom::Call(name, _) if name != "sqrt" => return false,
+            Atom::Root(base, _) if holds_a_variable(base) => return false,
             _ => irrational = true,
         }
     }
     irrational
+}
+
+/// Whether a canonical form holds a variable at any depth.
+fn holds_a_variable(canon: &Canon) -> bool {
+    let mut names = BTreeSet::new();
+    collect_variable_names(canon, &mut names);
+    !names.is_empty()
 }
 
 /// Whether the decimal expansion of an exact rational ends.

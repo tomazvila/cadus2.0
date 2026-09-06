@@ -345,6 +345,7 @@ pub mod fire;
 pub mod fixtures;
 pub mod fuzz;
 pub mod gate;
+pub mod grammar;
 pub mod instruction_fixtures;
 pub mod inventory;
 pub mod lint_view;

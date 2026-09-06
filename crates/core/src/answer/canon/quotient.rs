@@ -187,7 +187,7 @@ impl Work {
     /// # Errors
     ///
     /// Returns [`Undecidable`] for a collection: a tuple, a set, a list, a range,
-    /// and a labeled value carry no arithmetic.
+    /// a labeled value, and a quantity carry no arithmetic.
     pub(super) fn frac_of(&mut self, value: &Canon) -> Result<Frac, Undecidable> {
         let num = match value {
             Canon::Rational(number) => term(Monomial::new(), number.clone()),
@@ -233,6 +233,9 @@ impl Work {
             }
             Canon::Assign { .. } => {
                 return Err(Undecidable::new("arithmetic on a labeled value"));
+            }
+            Canon::Quantity { .. } => {
+                return Err(Undecidable::new("arithmetic on a quantity"));
             }
         };
         Ok(Frac {

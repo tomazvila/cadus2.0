@@ -7,6 +7,7 @@ use num_traits::{One, Signed, Zero};
 use super::sum::{atom_value, extract_square, from_sum, term};
 use super::{Atom, Canon, MAX_SCALE, Monomial, Undecidable, Work};
 use crate::answer::ast::{Ast, Const, IneqOp};
+use crate::answer::unit::lookup;
 
 impl Work {
     /// Canonicalize one node by its kind.
@@ -27,15 +28,18 @@ impl Work {
             Ast::Const(constant) => Ok(constant_value(*constant)),
             Ast::Sqrt(inner) => self.root(inner),
             Ast::Pow(base, exponent) => self.raised(base, *exponent),
+            Ast::RationalPow {
+                base,
+                numerator,
+                denominator,
+            } => self.rational_exponent_power(base, *numerator, *denominator),
             Ast::Neg(inner) => self.negated(inner),
-            Ast::Add(items) => self.sum(items),
-            Ast::Mul(items) => self.product(items),
+            Ast::Add(items) | Ast::Mul(items) => self.fold(ast, items),
             Ast::Div(dividend, divisor) => self.ratio(dividend, divisor),
             Ast::Func(name, arguments) => self.applied(name, arguments),
-            Ast::Tuple(items) => self.items(items).map(Canon::Tuple),
-            Ast::List(items) => self.items(items).map(Canon::List),
-            Ast::Set(items) => self.set(items),
+            Ast::Tuple(items) | Ast::List(items) | Ast::Set(items) => self.collection(ast, items),
             Ast::Assign { var, value } => self.labeled(var, value),
+            Ast::Quantity { value, unit } => self.quantity(value, unit),
             Ast::Interval {
                 lo,
                 hi,
@@ -75,6 +79,15 @@ impl Work {
         self.multiply(&minus_one, &value)
     }
 
+    /// Read a sum or a product, by the kind of the node.
+    fn fold(&mut self, ast: &Ast, items: &[Ast]) -> Result<Canon, Undecidable> {
+        if matches!(ast, Ast::Add(_)) {
+            self.sum(items)
+        } else {
+            self.product(items)
+        }
+    }
+
     /// Read a sum of terms, from zero upward.
     fn sum(&mut self, items: &[Ast]) -> Result<Canon, Undecidable> {
         let mut total = Canon::Rational(BigRational::zero());
@@ -112,10 +125,36 @@ impl Work {
         self.call(name, values)
     }
 
-    /// Read an unordered set. Repeated members collapse into one member.
-    fn set(&mut self, items: &[Ast]) -> Result<Canon, Undecidable> {
+    /// Read a tuple, a list, or a set, by the kind of the node.
+    ///
+    /// A set is unordered, and its repeated members collapse into one member.
+    fn collection(&mut self, ast: &Ast, items: &[Ast]) -> Result<Canon, Undecidable> {
         let values = self.items(items)?;
-        Ok(Canon::Set(values.into_iter().collect()))
+        Ok(match ast {
+            Ast::Tuple(_) => Canon::Tuple(values),
+            Ast::List(_) => Canon::List(values),
+            _ => Canon::Set(values.into_iter().collect()),
+        })
+    }
+
+    /// Read a number with a unit into the base unit of its kind (D-F3).
+    ///
+    /// The value must be a number: a rational or a radical. A unit outside the
+    /// table never reaches this function from the parser, and a hand-built tree
+    /// that carries one is refused.
+    fn quantity(&mut self, value: &Ast, unit: &str) -> Result<Canon, Undecidable> {
+        let value = self.node(value)?;
+        if !matches!(value, Canon::Rational(_) | Canon::Radical(_)) {
+            return Err(Undecidable::new("a quantity whose value is not a number"));
+        }
+        let Some(unit) = lookup(unit) else {
+            return Err(Undecidable::new("a unit outside the table"));
+        };
+        let scaled = self.multiply(&value, &Canon::Rational(unit.factor()))?;
+        Ok(Canon::Quantity {
+            quantity: unit.quantity,
+            value: Box::new(scaled),
+        })
     }
 
     /// Read a labeled value.
@@ -221,8 +260,14 @@ impl Work {
         let name = if name == "ln" { "log" } else { name };
         if arguments.len() == 1 {
             if name == "sqrt"
-                && let Some(Canon::Rational(value)) = arguments.first()
+                && let Some(argument) = arguments.first()
             {
+                // `sqrt(x)` and `x^(1/2)` are one value, so the root of a value
+                // that is no rational takes the root law (D-F3).
+                let Canon::Rational(value) = argument else {
+                    let argument = argument.clone();
+                    return self.root_power(&argument, 1, 2);
+                };
                 let value = value.clone();
                 return self.root_of_rational(&value, arguments);
             }
@@ -251,7 +296,7 @@ impl Work {
     /// `p/q` is in lowest terms with a positive `q`, so `p*q` is a whole number
     /// and the identity is exact. `sqrt(1/2)` therefore becomes `sqrt(2)/2` and
     /// `sqrt(4/9)` becomes `2/3`, which are the two forms 1.0 answers True for.
-    fn root_of_rational(
+    pub(super) fn root_of_rational(
         &mut self,
         value: &BigRational,
         arguments: Vec<Canon>,

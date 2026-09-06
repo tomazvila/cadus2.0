@@ -208,7 +208,8 @@ impl Work {
     /// A monomial holds at most one [`Atom::Sqrt`], and that atom always has
     /// exponent 1. `sqrt(2)**3` moves a factor 2 out, and `sqrt(2)*sqrt(3)`
     /// becomes `sqrt(6)`. A monomial holds at most one [`Atom::Exp`] too, and a
-    /// power of it moves into its argument.
+    /// power of it moves into its argument. An [`Atom::Root`] takes the root law
+    /// of [`super::root`].
     pub(super) fn add_atom(
         &mut self,
         monomial: &mut Monomial,
@@ -219,6 +220,10 @@ impl Work {
         if let Atom::Exp(inner) = atom {
             let inner = inner.as_ref().clone();
             return self.add_exp(monomial, &inner, exponent);
+        }
+        if let Atom::Root(inner, index) = atom {
+            let inner = inner.as_ref().clone();
+            return self.add_root(monomial, coefficient, &inner, *index, exponent);
         }
         let Atom::Sqrt(radicand) = atom else {
             return insert_atom(monomial, atom, exponent);
@@ -315,7 +320,11 @@ impl Work {
     }
 
     /// Raise a non-zero integer to an integer power, as an exact rational.
-    fn int_power(&mut self, base: &BigInt, exponent: i64) -> Result<BigRational, Undecidable> {
+    pub(super) fn int_power(
+        &mut self,
+        base: &BigInt,
+        exponent: i64,
+    ) -> Result<BigRational, Undecidable> {
         if exponent == 0 {
             return Ok(BigRational::one());
         }

@@ -2,7 +2,6 @@
 //!
 //! The tree holds exact values only. An integer is a `BigInt`. A decimal keeps its
 //! mantissa and its scale, so `0.7` stays `7 / 10^1` and never becomes a float.
-//! Unit-carrying answers are out of scope (spec section 8.3 residue).
 
 use num_bigint::BigInt;
 
@@ -110,8 +109,21 @@ pub enum Ast {
     /// Every root builds this node: the name `sqrt`, `\sqrt{a}`, `\sqrt a`, and
     /// the glyph `√` (review round 3, the structural ruling).
     Sqrt(Box<Ast>),
-    /// A power with an integer exponent. The grammar allows no other exponent.
+    /// A power with an integer exponent.
     Pow(Box<Ast>, i64),
+    /// A power with a rational exponent `p/q`, which reads into a root (D-F3).
+    ///
+    /// The parser reduces the exponent to lowest terms and builds [`Ast::Pow`]
+    /// for a whole exponent, so the denominator here is 2 or more. `2^(1/2)` is
+    /// `sqrt(2)`, `8^(2/3)` is 4, and `x^(1/2)` is `sqrt(x)`.
+    RationalPow {
+        /// The base.
+        base: Box<Ast>,
+        /// The numerator of the exponent, with its sign.
+        numerator: i64,
+        /// The denominator of the exponent. Always 2 or more.
+        denominator: i64,
+    },
     /// Arithmetic negation.
     Neg(Box<Ast>),
     /// A sum of two or more terms.
@@ -147,6 +159,16 @@ pub enum Ast {
         op: IneqOp,
         /// The bound.
         bound: Box<Ast>,
+    },
+    /// A number with a unit of the Foundations table, written `5 cm` (D-F3).
+    ///
+    /// The unit is the table spelling. The canonicalizer scales the value into
+    /// the base unit of its kind, so `1 m` and `100 cm` are one value.
+    Quantity {
+        /// The value, as the answer writes it.
+        value: Box<Ast>,
+        /// The unit spelling of [`crate::answer::unit`].
+        unit: &'static str,
     },
     /// A value with its label, written `x = 5` (review findings #2, #10, #16).
     ///
