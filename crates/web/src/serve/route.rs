@@ -209,39 +209,17 @@ pub(crate) async fn install_next(
     {
         return Err(no_instruction());
     }
-    let mut ring = scratch.ring(&target.serve);
-    let memory = scratch.memory(&task_id);
-    let mut selected = None;
-    for _ in 0..8 {
-        let avoid = Avoid::new(&ring, &memory);
-        let row = draw(state, tx, user_id, graph, &target, &avoid)
-            .await
-            .map_err(|error| {
-                if feedback.is_some() && error.code == POOL_UNAVAILABLE {
-                    fresh_unavailable()
-                } else {
-                    error
-                }
-            })?;
-        let digest = cadus_core::learner::problem_text_hash(&row.problem.text);
-        if feedback.as_ref().is_none_or(|value| {
-            value["digest"].as_str() != Some(&digest)
-                && value["digests"]
-                    .as_array()
-                    .is_none_or(|seen| !seen.iter().any(|d| d.as_str() == Some(&digest)))
-        }) {
-            selected = Some(row);
-            break;
-        }
-        ring.push(&row.instance_hash);
-    }
-    let row = selected.ok_or_else(|| {
-        if feedback.is_some() {
-            fresh_unavailable()
-        } else {
-            no_problem(&target.serve)
-        }
-    })?;
+    let windows = (scratch.ring(&target.serve), scratch.memory(&task_id));
+    let row = draw_fresh(
+        state,
+        tx,
+        user_id,
+        graph,
+        &target,
+        windows,
+        feedback.as_ref(),
+    )
+    .await?;
     let solution_sketch = solution_of(state, tx, graph, &target, &row).await?;
 
     let served = ServedProblem {
@@ -276,4 +254,48 @@ fn fresh_unavailable() -> ApiError {
         "fresh_practice_unavailable",
         "No fresh problem is available for this skill. Your answer is saved.",
     )
+}
+
+/// Draw within a bounded freshness window, preserving an explicit block when exhausted.
+async fn draw_fresh(
+    state: &AppState,
+    tx: &mut Transaction<'_, Postgres>,
+    user_id: Uuid,
+    graph: &Curriculum,
+    target: &Target,
+    windows: (cadus_core::pool::Ring, cadus_core::pool::TaskMemory),
+    feedback: Option<&Value>,
+) -> Result<PoolRow, ApiError> {
+    let (mut ring, memory) = windows;
+    let mut selected = None;
+    for _ in 0..8 {
+        let avoid = Avoid::new(&ring, &memory);
+        let row = draw(state, tx, user_id, graph, target, &avoid)
+            .await
+            .map_err(|error| {
+                if feedback.is_some() && error.code == POOL_UNAVAILABLE {
+                    fresh_unavailable()
+                } else {
+                    error
+                }
+            })?;
+        let digest = cadus_core::learner::problem_text_hash(&row.problem.text);
+        if feedback.is_none_or(|value| {
+            value["digest"].as_str() != Some(&digest)
+                && value["digests"]
+                    .as_array()
+                    .is_none_or(|seen| !seen.iter().any(|d| d.as_str() == Some(&digest)))
+        }) {
+            selected = Some(row);
+            break;
+        }
+        ring.push(&row.instance_hash);
+    }
+    selected.ok_or_else(|| {
+        if feedback.is_some() {
+            fresh_unavailable()
+        } else {
+            no_problem(&target.serve)
+        }
+    })
 }
