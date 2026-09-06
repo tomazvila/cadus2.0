@@ -9,6 +9,7 @@ this module made up.
 """
 import json
 import random
+import re
 import unittest
 from fractions import Fraction
 from pathlib import Path
@@ -104,6 +105,28 @@ class UnitTest(unittest.TestCase):
     def test_thousands_separator(self):
         self.assertEqual(fc.evaluate("1{,}867 + 3{,}589"), Fraction(5456))
         self.assertEqual(fc.evaluate("5{,}208 \\div 6"), Fraction(868))
+
+    def test_grouped_thousands_number_is_one_operand_not_two(self):
+        operands = fc.integer_operands("4{,}675 + 2{,}848")
+        self.assertEqual([o.value for o in operands], [4675, 2848])
+        self.assertEqual([o.text for o in operands], ["4{,}675", "2{,}848"])
+
+    def test_redrawing_a_grouped_operand_never_produces_a_malformed_group(self):
+        # A regression of a caught defect: independently redrawing the two
+        # halves of "4{,}675" (`4` and `675`) as separate operands could
+        # produce a second group that is not three digits, e.g. `8{,}80`.
+        rng = random.Random("grouped-regression")
+        for _ in range(200):
+            candidate, value = fc.same_shape_new_operands("4{,}675 + 2{,}848", rng)
+            self.assertEqual(fc.evaluate(candidate), value)
+            for group in re.findall(r"\d{1,3}(?:\{,\}\d+)+", candidate):
+                for piece in group.split("{,}")[1:]:
+                    self.assertEqual(len(piece), 3, candidate)
+
+    def test_format_operand_groups_at_1000_and_not_below(self):
+        self.assertEqual(fc._format_operand(999), "999")
+        self.assertEqual(fc._format_operand(1000), "1{,}000")
+        self.assertEqual(fc._format_operand(-12345), "-12{,}345")
 
     def test_exact_rational_exponents(self):
         self.assertEqual(fc.evaluate("25^{1/2}"), Fraction(5))

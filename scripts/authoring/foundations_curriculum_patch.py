@@ -114,12 +114,20 @@ class KpKey:
 
 @dataclass(frozen=True)
 class NewExemplar:
-    """One exemplar block to append; `with_contract` copies the sibling convention."""
+    """One exemplar block to append; `with_contract` copies the sibling convention.
+
+    `contract_override`, when given, is the exact `answer_contract` JSON
+    text to write instead (for a family such as `quotient_remainder` whose
+    contract differs exemplar to exemplar, e.g. by its own divisor) —
+    additive and optional, so every existing caller that only ever sets
+    `with_contract` is untouched.
+    """
 
     problem: str
     answer: str
     solution_sketch: str
     with_contract: bool
+    contract_override: str | None = None
 
 
 def _render_exemplar(exemplar: NewExemplar) -> list[str]:
@@ -132,7 +140,9 @@ def _render_exemplar(exemplar: NewExemplar) -> list[str]:
         f"          - problem: '{exemplar.problem}'\n",
         f'            answer: "{exemplar.answer}"\n',
     ]
-    if exemplar.with_contract:
+    if exemplar.contract_override is not None:
+        lines.append(f"            answer_contract: {exemplar.contract_override}\n")
+    elif exemplar.with_contract:
         lines.append('            answer_contract: {"kind":"exact"}\n')
     lines.append(f"            solution_sketch: '{exemplar.solution_sketch}'\n")
     return lines

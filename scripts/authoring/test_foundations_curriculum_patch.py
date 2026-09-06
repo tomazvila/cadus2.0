@@ -149,6 +149,20 @@ class InsertExemplarsTest(FixtureFileCase):
         inserted = next(i for i, l in enumerate(lines) if "-9 + 2" in l)
         self.assertNotIn("answer_contract", lines[inserted + 2])
 
+    def test_contract_override_wins_over_with_contract(self):
+        key = KpKey("adding-integers", "kp2")
+        new = NewExemplar(
+            problem="Compute $9 \\div 2$.",
+            answer="4 R1",
+            solution_sketch="sketch",
+            with_contract=True,
+            contract_override='{"kind":"quotient_remainder","divisor":2}',
+        )
+        text, _ = insert_exemplars(self.path, {key: [new]}, write=False)
+        lines = text.splitlines()
+        inserted = next(i for i, l in enumerate(lines) if "9 \\div 2" in l)
+        self.assertIn('answer_contract: {"kind":"quotient_remainder","divisor":2}', lines[inserted + 2])
+
     def test_multiple_new_exemplars_land_in_order(self):
         key = KpKey("other-topic", "kp1")
         news = [

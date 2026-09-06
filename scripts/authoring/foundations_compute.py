@@ -237,6 +237,10 @@ class Operand:
 
 
 _OPERAND = re.compile(r"(?<![\d.])-?\d+(?!\d*\.\d)")
+#: A `{,}`-grouped thousands number such as `4{,}675` or `1{,}000{,}000`: every
+#: group after the first must be exactly three digits, matching this
+#: curriculum's own LaTeX convention for a number of 1000 or more.
+_GROUPED = re.compile(r"-?\d{1,3}(?:\{,\}\d{3})+")
 
 
 def integer_operands(expr: str) -> list[Operand]:
@@ -245,13 +249,40 @@ def integer_operands(expr: str) -> list[Operand]:
     A decimal's whole part is excluded by the trailing lookahead, and a
     mixed number's whole part is excluded because [`_MIXED_SPAN`] masks it
     before the scan — a generator that only varies bare integers never
-    corrupts a decimal or a mixed number by construction.
+    corrupts a decimal or a mixed number by construction. A `{,}`-grouped
+    number is ONE operand, not one per digit group: `_OPERAND` alone would
+    see `4{,}675` as two independent operands (`4` and `675`), and a caller
+    that redraws them independently can turn a correctly grouped number into
+    a malformed one such as `8{,}80` (a second group that is not three
+    digits) — caught by an audit of this pass's own generated output.
     """
     masked = _DECIMAL.sub(lambda m: "#" * len(m.group(0)), expr)
-    return [
+    grouped = list(_GROUPED.finditer(masked))
+    masked = _GROUPED.sub(lambda m: "#" * len(m.group(0)), masked)
+    operands = [
+        Operand(m.start(), m.end(), m.group(0), int(m.group(0).replace("{,}", "")))
+        for m in grouped
+    ]
+    operands += [
         Operand(m.start(), m.end(), m.group(0), int(m.group(0)))
         for m in _OPERAND.finditer(masked)
     ]
+    operands.sort(key=lambda operand: operand.start)
+    return operands
+
+
+def _format_operand(value: int) -> str:
+    """Render a redrawn bare-integer operand, `{,}`-grouped at 1000 or more.
+
+    Matches this curriculum's own convention (`4{,}675`, `1{,}000`): a value
+    under 1000 renders as plain digits, so nothing changes for the common
+    case this function replaces.
+    """
+    sign = "-" if value < 0 else ""
+    text = f"{abs(value):,}"
+    if abs(value) >= 1000:
+        text = text.replace(",", "{,}")
+    return sign + text
 
 
 def same_shape_new_operands(
@@ -323,7 +354,8 @@ def _redraw(
         if operand_ceiling is not None:
             magnitude = min(magnitude, max(2, operand_ceiling))
         draw = rng.randint(1, magnitude)
-        pieces.append(str(-draw if operand.value < 0 else draw))
+        value = -draw if operand.value < 0 else draw
+        pieces.append(_format_operand(value))
         cursor = operand.end
     pieces.append(expr[cursor:])
     return "".join(pieces)
