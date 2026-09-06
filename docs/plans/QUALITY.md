@@ -1,4 +1,4 @@
-# Quality gate: eleven code limits on the whole tree
+# Quality gate: ten code limits on the whole tree
 
 Owner request (2026-09-03): hold these limits on the whole codebase.
 
@@ -46,7 +46,10 @@ reports before-and-after numbers. Prompts: `~/.cache/cadus2_scripts/quality/`.
 | u5-web | `crates/web` | port 55436 |
 | u6-worker | `crates/worker` | port 55434 |
 | u7-spa | `web/` | none |
-| wave 3 | cross-unit clones, the full `scripts/quality.sh` | port 55434 |
+| u8, u9 | mutant kills in core, model-client, worker, store (stopped 2026-09-05; the tests stay) | 55435 |
+| u10-scripts | `scripts/` (`check_ops.sh` split into `check_ops.d/`, the oracle scripts split and shared) | none |
+| u11-cross-clones | clones that span two crates: the `cadus-testkit` crate, `cadus_store::shutdown`, paged review | 55435 |
+| u12-store-gap | one store test that read the maintenance database's state | 55434, 55435 |
 
 ## Mutation testing dropped
 
@@ -54,3 +57,49 @@ The owner dropped the mutant limit on 2026-09-05 ("Ditch mutant testing altogeth
 cargo-mutants and Stryker runs took 16 hours and one hour per pass on this box. The tests
 that the mutant units wrote before the stop stay in the tree: they pin exact values and
 cost nothing. The gate has no mutant check, and the tooling is removed.
+
+## Result at `9f59c98` (2026-09-06)
+
+`scripts/quality.sh` with `CADUS_TEST_DATABASE_URL=postgresql://test:test@127.0.0.1:55434/cadus2_gate`
+prints `QUALITY GATE PASSED` (log `target/quality/gate-run3.txt`). The PASS lines:
+
+| Check | Line |
+|---|---|
+| loc | `loc: 723 files, 0 at or over 500 lines` |
+| rust-complexity | `rust complexity: 7745 functions, 0 over a limit` (Rust and Python) |
+| rust-dead | `rust dead code: 0 unused public items` |
+| rust-unused-deps | cargo-machete: none |
+| rust-clippy | clean at `-D warnings` |
+| rust-clones | `Found 0 clones.` over `crates` and `scripts` |
+| rust-coverage | `lines 100.00% functions 100.00% regions 100.00%; 0 files below 100%; 0 functions with CRAP >= 25` |
+| web-lint | clean: complexity, cognitive complexity, no `any`, no `unknown` |
+| web-types | clean |
+| web-halstead | `functions=2912 over_limit=0 max=25.9` |
+| web-dead | knip: none |
+| web-clones | `Found 0 clones.` |
+| web-coverage | `60 files, 0 below 100%; 0 functions with CRAP >= 25` |
+
+Before and after, whole tree:
+
+| Measure | Baseline `d740f68` | Result `9f59c98` |
+|---|---|---|
+| Source files | 268 | 723 |
+| Files at or over 500 lines | 99 | 0 |
+| Functions over a complexity limit | 45 | 0 |
+| Unused public items and knip items | 44 | 0 |
+| Clone pairs | 572 | 0 |
+| Rust coverage, lines | 92.1% | 100% |
+| Web coverage, statements | 96.4% | 100% |
+| Functions with CRAP >= 25 | 569 | 0 |
+| `any` or `unknown` sites | 81 | 0 |
+| Rust tests | 1,818 | 2,312 |
+
+New crate: `crates/testkit` (`cadus-testkit`), the shared test instruments (bench harness,
+purity guards, source scan, fake HTTP replies, process helpers), a dev-dependency of the
+five crates. New module `cadus_store::shutdown` serves both binaries. Scripts: `scripts/check_ops.d/`
+holds the parts of `check_ops.sh`; the oracle scripts share `_common` modules.
+
+Scope notes. Coverage and CRAP measure Rust `src/` and web `src/`; `scripts/` has no test
+harness, so the line, complexity (Python) and clone limits apply there and coverage does
+not. Bash has the line and shellcheck limits only. The tests are the instrument and are
+held to the line, complexity, dead-code and clone limits, not to coverage.

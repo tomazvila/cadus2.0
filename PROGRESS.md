@@ -2,6 +2,28 @@
 
 One entry per milestone cycle (HANDOVER.md §2). Newest first.
 
+## Q — quality gate: ten code limits on the whole tree (2026-09-03 to 2026-09-06, closed)
+
+Owner request (2026-09-03): lines per file < 500, cyclomatic and cognitive complexity < 22, Halstead
+difficulty < 80, test coverage 100%, CRAP < 25, dead code 0, redundant code 0, `any`/`unknown` 0, on the
+whole code base. Mutation testing was in the list and the owner dropped it on 2026-09-05. Plan and
+result: `docs/plans/QUALITY.md`. Gate: `scripts/quality.sh` (one PASS/FAIL line per check, logs under
+`target/quality/`). Branch `quality/gate`, 12 units in worktrees (`quality/u1-…` to `quality/u12-…`),
+183 commits, 804 files changed.
+
+Result at `9f59c98`: `QUALITY GATE PASSED`. 723 source files, 0 at or over 500 lines; 7,745 Rust and
+Python functions, 0 over a limit; 0 unused public items; 0 clones across `crates`, `scripts` and `web`;
+Rust coverage 100% of lines, functions and regions on every `src/` file of the six crates; web
+coverage 100% on all 60 `src/` files; 0 `any`/`unknown`; 2,312 Rust tests. Baseline at `d740f68`:
+99 long files, 45 complexity hits, 572 clone pairs, Rust coverage 92.1%, 569 CRAP hits, 81 `any`/`unknown`.
+
+Method: every large file became a directory module; every complex function a set of one-decision
+helpers; every clone a shared helper (`crates/testkit` for the test instruments, `cadus_store::shutdown`
+for the two binaries); every uncovered region a test through a seam, a fault double, a child process,
+or a deletion of a branch no input reaches. Traps recorded in `docs/plans/QUALITY.md` and in the
+per-unit reports: llvm-cov's file summary takes the best single build per function; a child process
+started from a test writes its own profile; stale `.profraw` data needs `cargo llvm-cov clean`.
+
 ## M6 — offline authoring pipeline, review tooling, React + TypeScript SPA (2026-08-30 to 2026-08-31, closed)
 
 Requirement IDs: A2, C6, T2, T3, T5, T6, C5, C1, L4, L5, O3. Plan: `docs/plans/M6.md`. Spec:
