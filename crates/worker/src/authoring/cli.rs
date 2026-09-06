@@ -31,6 +31,9 @@ use crate::authoring::prompt::{AuthoringSpec, KINDS, Kind};
 /// The subcommand name of one authoring pass.
 pub const AUTHOR: &str = "author";
 
+/// The subcommand name of one readiness audit (D-F5).
+pub const READINESS: &str = "readiness";
+
 /// The text `--help` prints.
 pub const HELP: &str = "\
 cadus-worker — the Cadus background worker
@@ -38,6 +41,7 @@ cadus-worker — the Cadus background worker
 USAGE:
     cadus-worker                    run the tick loop (refill, diagnosis)
     cadus-worker author [OPTIONS]   run one authoring pass
+    cadus-worker readiness [OPTS]   audit the content and write the report
     cadus-worker --help             print this text
 
 AUTHOR OPTIONS:
@@ -49,6 +53,11 @@ AUTHOR OPTIONS:
     --dry-run               print the plan, and make no model call and no write.
     --stale                 list the approved documents an older prompt wrote,
                             and make no model call and no write.
+
+READINESS OPTIONS:
+    --course <id>           audit this course only. The default is every course.
+    --json <path>           write the JSON report to this file.
+    --md <path>             write the Markdown report to this file.
 
 ENVIRONMENT:
     DATABASE_URL       the connection the pass reads and writes (cadus_admin).
@@ -66,6 +75,19 @@ pub enum Command {
     Help,
     /// Run one authoring pass.
     Author(AuthorArgs),
+    /// Run one readiness audit (D-F5).
+    Readiness(ReadinessArgs),
+}
+
+/// The options of one `readiness` subcommand.
+#[derive(Debug, Clone, PartialEq, Eq, Default)]
+pub struct ReadinessArgs {
+    /// The course the audit covers. `None` covers every course.
+    pub course: Option<String>,
+    /// The file the JSON report goes to.
+    pub json: Option<String>,
+    /// The file the Markdown report goes to.
+    pub md: Option<String>,
 }
 
 /// The options of one `author` subcommand.
@@ -125,6 +147,9 @@ pub fn parse<S: AsRef<str>>(args: &[S]) -> Result<Command, CliError> {
     if first == "--help" || first == "-h" {
         return Ok(Command::Help);
     }
+    if first == READINESS {
+        return parse_readiness(args);
+    }
     if first != AUTHOR {
         return Err(CliError(format!(
             "unknown argument `{first}` — run `cadus-worker --help`"
@@ -155,6 +180,29 @@ pub fn parse<S: AsRef<str>>(args: &[S]) -> Result<Command, CliError> {
         }
     }
     Ok(Command::Author(parsed))
+}
+
+/// Read the options of the `readiness` subcommand.
+///
+/// # Errors
+///
+/// Returns [`CliError`] for an unknown option and for an option with no value.
+fn parse_readiness<'a>(mut args: impl Iterator<Item = &'a str>) -> Result<Command, CliError> {
+    let mut parsed = ReadinessArgs::default();
+    while let Some(argument) = args.next() {
+        match argument {
+            "--help" | "-h" => return Ok(Command::Help),
+            "--course" => parsed.course = Some(value_of("--course", args.next())?),
+            "--json" => parsed.json = Some(value_of("--json", args.next())?),
+            "--md" => parsed.md = Some(value_of("--md", args.next())?),
+            other => {
+                return Err(CliError(format!(
+                    "unknown option `{other}` — run `cadus-worker --help`"
+                )));
+            }
+        }
+    }
+    Ok(Command::Readiness(parsed))
 }
 
 /// The value of one option, or the refusal an option with no value earns.

@@ -98,7 +98,7 @@ use crate::grade::{db_failed, route_input, store};
 use crate::path::ApiPath;
 use crate::session::{
     INTERNAL_ERROR, begin, compose_plan, content, now_pair, projection_input, read_state,
-    view_for_open_session, write_state,
+    readiness_of, view_for_open_session, write_state,
 };
 use crate::state::Content;
 use crate::state::{
@@ -241,7 +241,10 @@ pub(crate) async fn open(
     let events = view_for_open_session(state, &mut tx, user_id, &mut view, &session).await?;
     let mut scratch = read_state(&state.db, &mut tx, user_id).await?;
     scratch.bind(&session);
-    let plan = compose_plan(content, &view, &projection.model, &session, now);
+    // The readiness of D-F5, read in the SAME transaction: the plan these three
+    // routes look a task up in is the plan `GET /api/session/plan` listed.
+    let readiness = readiness_of(state, content, &mut tx).await?;
+    let plan = compose_plan(content, &view, &projection.model, &session, now, &readiness);
     Ok(Open {
         tx,
         events,

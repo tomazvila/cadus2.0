@@ -9,6 +9,9 @@ import { Chip, Stat } from '@/components/primitives';
 import { fmtClock, num, signed } from '@/lib/format';
 import type { PlanTask, ServedProblem, SessionEndResponse, SessionPlanResponse } from '@/api/types';
 
+/** The one sentence a lesson with no approved teach page says (audit finding j). */
+export const NO_INSTRUCTION_MESSAGE = 'No instruction yet for this lesson';
+
 export interface SummaryProps {
   summary: SessionEndResponse | null;
   homeRef: React.Ref<HTMLButtonElement>;
@@ -41,6 +44,11 @@ export function SessionSummary({ summary, homeRef, onExit }: SummaryProps) {
 /** The one line an empty plan says, and it says which empty it is. */
 export function emptyPlanMessage(plan: SessionPlanResponse, allDone: boolean): string {
   if (plan.course_complete) return 'Course complete. Enroll in your next course to keep going.';
+  // D-F5: the plan is empty because the content is not ready, and not because the
+  // learner is done. The count says so rather than leaving a silent gap.
+  if (!plan.tasks.length && plan.blocked.length) {
+    return `${num(plan.blocked.length)} topic(s) wait on content that is not written yet.`;
+  }
   if (plan.frontier_blocked_until) {
     return `New lessons are on a retry delay until ${plan.frontier_blocked_until}.`;
   }
@@ -68,6 +76,40 @@ export function EmptyPlan({ message, onDiagnostic, onExit }: EmptyPlanProps) {
         </button>
       </div>
     </section>
+  );
+}
+
+export interface NoInstructionProps {
+  task: PlanTask;
+  onSkip: () => void;
+  onExit: () => void;
+}
+
+/**
+ * The lesson the service cannot teach (audit finding j).
+ *
+ * The service serves a worked example before it serves practice. With no
+ * approved teach page it has none, so this card stands in place of the practice
+ * the older build served here. There is one way on: the next task.
+ */
+export function NoInstruction({ task, onSkip, onExit }: NoInstructionProps) {
+  const topic = task.topic;
+  return (
+    <div className="card no-instruction-card">
+      <h2>{NO_INSTRUCTION_MESSAGE}</h2>
+      <p className="muted">
+        {`The worked example for ${topic?.name || topic?.id || 'this topic'} is not written yet. `}
+        The service does not serve practice it cannot teach first.
+      </p>
+      <div className="actions">
+        <button type="button" className="btn btn-primary" onClick={onSkip}>
+          Skip to the next task
+        </button>
+        <button type="button" className="btn btn-ghost" onClick={onExit}>
+          Exit
+        </button>
+      </div>
+    </div>
   );
 }
 

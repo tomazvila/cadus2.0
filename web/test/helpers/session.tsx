@@ -67,6 +67,7 @@ export const planOf = (...tasks: PlanTask[]): SessionPlanResponse => ({
   quiz_due: false,
   constraints: { lesson_ratio_ok: true, lesson_ratio: 0.5, throttle_ok: true, reviews: 1, lessons: 0 },
   course_complete: false,
+  blocked: [],
   frontier_blocked_until: null,
 });
 

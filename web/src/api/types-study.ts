@@ -72,12 +72,31 @@ interface PlanConstraints {
 }
 
 /** `GET /api/session/plan`. */
+/**
+ * One planned task the readiness rule of D-F5 stopped.
+ *
+ * The service plans a lesson only where an approved teach page, three practice
+ * items and one held-out item exist. A task it stops is NOT hidden: it stands
+ * here with the conditions the content does not meet, so the learner reads why
+ * the topic is absent instead of finding a silent gap.
+ */
+export interface BlockedTask {
+  task_type: TaskType;
+  topic: string;
+  /** The knowledge point of a blocked lesson, or null. */
+  kp: string | null;
+  /** `teachable`, `practicable`, `assessable`, and the rest of the seven. */
+  blockers: string[];
+}
+
 export interface SessionPlanResponse {
   session: string;
   tasks: PlanTask[];
   quiz_due: boolean;
   constraints: PlanConstraints;
   course_complete: boolean;
+  /** The planned tasks the readiness rule stopped. */
+  blocked: BlockedTask[];
   /** RFC 3339, or null when nothing blocks the frontier. */
   frontier_blocked_until: string | null;
 }

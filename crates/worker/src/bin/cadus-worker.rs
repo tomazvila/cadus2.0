@@ -38,7 +38,7 @@ use std::time::Duration;
 use cadus_model_client::{API_KEY_VAR, Client, ModelConfig};
 use cadus_store::shutdown::{Shutdown, close_within};
 use cadus_store::{Db, DbConfig, bounded};
-use cadus_worker::authoring::cli::{self, AuthorArgs, Command};
+use cadus_worker::authoring::cli::{self, AuthorArgs, Command, ReadinessArgs};
 use cadus_worker::authoring::job::{self, AuthoringJob, run_batch};
 use cadus_worker::{DiagnosisJob, RefillJob, WorkerConfig, WorkerError};
 
@@ -73,6 +73,10 @@ async fn main() -> ExitCode {
             Err(err) => fail(&err.to_string()),
         },
         Command::Author(author_args) => match author(&author_args).await {
+            Ok(()) => ExitCode::SUCCESS,
+            Err(err) => fail(&err.to_string()),
+        },
+        Command::Readiness(args) => match readiness(&args).await {
             Ok(()) => ExitCode::SUCCESS,
             Err(err) => fail(&err.to_string()),
         },
@@ -143,6 +147,79 @@ async fn author(args: &AuthorArgs) -> Result<(), WorkerError> {
     }
     close_within(POOL_CLOSE_DEADLINE, db.pool().close()).await;
     Ok(())
+}
+
+/// Run one readiness audit and write its reports (D-F5).
+///
+/// The order is fixed: read the curriculum, open the pool, run the audit, print
+/// the summary, write the files the operator named. The audit spends NO model
+/// token and writes no database row: it reads `content_store` once and does
+/// pure CPU work over the arena.
+///
+/// The summary goes to stdout, because it is the operator's output; the log
+/// stays on stderr.
+///
+/// # Errors
+///
+/// Returns [`WorkerError::Config`] for a curriculum that does not load and for
+/// a report file that does not write, and the error of the store for a read
+/// that fails.
+async fn readiness(args: &ReadinessArgs) -> Result<(), WorkerError> {
+    let curriculum = load_arena()?;
+    let db_cfg = DbConfig::from_env()?;
+    let db = Db::connect(&db_cfg).await?;
+    let run = cadus_worker::readiness_run(&db, &curriculum, args.course.as_deref()).await;
+    close_within(POOL_CLOSE_DEADLINE, db.pool().close()).await;
+    let run = run?;
+
+    let (ready, blocked) = run.report.totals();
+    let course = args.course.as_deref().unwrap_or("every course");
+    println!(
+        "readiness {course}: knowledge points ready {ready}, blocked {blocked},          contract failures {}",
+        run.contract_failures().len()
+    );
+    for blocker in cadus_core::readiness::Blocker::every() {
+        let count = run.report.histogram().get(&blocker).copied().unwrap_or(0);
+        println!("blocker {} {count}", blocker.as_str());
+    }
+
+    if let Some(path) = &args.md {
+        let text = cadus_worker::render_readiness_markdown(&run, &report_date());
+        write_report(path, &text)?;
+        println!("wrote {path}");
+    }
+    if let Some(path) = &args.json {
+        let text = cadus_worker::render_readiness_json(&run).to_string();
+        write_report(path, &text)?;
+        println!("wrote {path}");
+    }
+    Ok(())
+}
+
+/// The UTC date of the run, as `YYYY-MM-DD`.
+///
+/// The report names the day it was made, and nothing else reads the value.
+/// `utc_date` is the same day boundary the quiz cadence reads.
+fn report_date() -> String {
+    let micros = std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .map(|since| i64::try_from(since.as_micros()).unwrap_or(0))
+        .unwrap_or(0);
+    cadus_core::selector::utc_date(micros).map_or_else(
+        || "an unknown date".to_owned(),
+        |day| day.format("%Y-%m-%d").to_string(),
+    )
+}
+
+/// Write one report file, or the error that names the path.
+///
+/// # Errors
+///
+/// Returns [`WorkerError::Config`] when the write fails. The message names the
+/// path, so an operator repairs the call without this file.
+fn write_report(path: &str, text: &str) -> Result<(), WorkerError> {
+    std::fs::write(path, text)
+        .map_err(|err| WorkerError::Config(format!("the report at {path} did not write: {err}")))
 }
 
 /// Build the authoring job from the environment.

@@ -43,6 +43,24 @@ pub mod sessions;
 pub mod skeleton;
 mod task;
 
+/// The content of a test: a fixture curriculum with the D-F5 readiness gate OFF.
+///
+/// A test database holds no approved document, so the rule would block every
+/// lesson and every serve test would plan nothing. `readiness_routes.rs` turns
+/// the rule ON and is the test of the rule itself.
+pub fn open_content(curriculum: cadus_core::curriculum::Curriculum) -> cadus_web::state::Content {
+    open_content_with(curriculum, cadus_core::config::Config::default())
+}
+
+/// The same, with the scheduler config the caller names.
+pub fn open_content_with(
+    curriculum: cadus_core::curriculum::Curriculum,
+    mut cfg: cadus_core::config::Config,
+) -> cadus_web::state::Content {
+    cfg.readiness.enforce = false;
+    cadus_web::state::Content::with_config(curriculum, cfg)
+}
+
 /// The names every test file reads: the database, the JSON value, and the
 /// request types.
 pub mod prelude {

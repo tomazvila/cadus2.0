@@ -112,6 +112,23 @@ pub fn drill_app(db: &TestDb) -> Router {
     app_with_content(db, drill_curriculum())
 }
 
+/// The same router with the D-F5 readiness rule ON.
+///
+/// Every other router of these tests turns the rule off, because a test
+/// database approves no document and the rule would then block every lesson.
+/// This one is the rule's own fixture.
+pub fn gated_app(db: &TestDb) -> Router {
+    cadus_web::create_app(
+        cadus_web::AppState::new(cadus_store::Db::new(
+            db.app.clone(),
+            cadus_store::DEFAULT_CLIENT_TIMEOUT_MS,
+        ))
+        .with_content(std::sync::Arc::new(cadus_web::state::Content::new(
+            drill_curriculum(),
+        ))),
+    )
+}
+
 /// The two-topic fixture of the component tests.
 ///
 /// `counting` is a KEY prerequisite of `addition`, so `review_mix` of `addition`

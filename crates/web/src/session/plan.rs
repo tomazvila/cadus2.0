@@ -6,8 +6,10 @@ use std::collections::BTreeSet;
 use cadus_core::curriculum::Curriculum;
 use cadus_core::event::Timestamp;
 use cadus_core::learner::LearnerModel;
+use cadus_core::readiness::{Blocker, ReadinessSet};
 use cadus_core::selector::{
-    SeededSampler, SessionContext, SessionPlan, Task, compose_session, is_course_complete,
+    BlockedTask, SeededSampler, SessionContext, SessionPlan, Task, compose_session,
+    is_course_complete,
 };
 use cadus_store::state::SessionView;
 use serde_json::{Value, json};
@@ -38,7 +40,10 @@ pub async fn session_plan(req: Ready) -> Reply {
     let graph = req.graph();
     let model = projection.model;
     let course = view.enrollment_stack.last().map(String::as_str);
-    let plan = compose_plan(&req.content, &view, &model, &session, req.now);
+    // The readiness of D-F5, read in the SAME transaction as the projection, so
+    // the listed plan and the served plan cannot disagree.
+    let readiness = req.readiness(&mut tx).await?;
+    let plan = compose_plan(&req.content, &view, &model, &session, req.now, &readiness);
 
     let tasks: Vec<Value> = plan
         .tasks
@@ -59,6 +64,7 @@ pub async fn session_plan(req: Ready) -> Reply {
             "lessons": plan.constraints.lessons,
         },
         "course_complete": complete,
+        "blocked": plan.blocked.iter().map(blocked_json).collect::<Vec<Value>>(),
         "frontier_blocked_until": plan
             .frontier_blocked_until
             .and_then(|stamp| DateTime::<Utc>::from_timestamp_micros(stamp.micros()))
@@ -84,6 +90,7 @@ pub(crate) fn compose_plan(
     model: &LearnerModel,
     session: &str,
     now: Timestamp,
+    readiness: &ReadinessSet,
 ) -> SessionPlan {
     let course = view.enrollment_stack.last().map(String::as_str);
     let days = view.study_days();
@@ -101,7 +108,8 @@ pub(crate) fn compose_plan(
         .with_active_study_days(Some(&days))
         .with_quiz_streak(view.quiz_high_score_streak)
         .with_test_prep(&no_test_prep)
-        .with_multistep(i64::try_from(closed.len()).unwrap_or(i64::MAX), closed);
+        .with_multistep(i64::try_from(closed.len()).unwrap_or(i64::MAX), closed)
+        .with_readiness(Some(readiness));
     compose_session(
         &model.topics,
         &content.curriculum,
@@ -123,6 +131,24 @@ fn session_seed(session: &str) -> u64 {
         seed = seed.wrapping_mul(256).wrapping_add(u64::from(*byte));
     }
     seed
+}
+
+/// One blocked task, as the SPA reads it (D-F5).
+///
+/// The list names the topic, the knowledge point, and the conditions the
+/// content does not meet. Nothing here is a served problem, so Hard Rule 1
+/// stands: no statement, no answer, and no solution sketch.
+fn blocked_json(task: &BlockedTask) -> Value {
+    json!({
+        "task_type": task.task_type.as_str(),
+        "topic": task.topic,
+        "kp": task.kp,
+        "blockers": task
+            .blockers
+            .iter()
+            .map(|blocker| Blocker::as_str(*blocker))
+            .collect::<Vec<&str>>(),
+    })
 }
 
 /// The client-safe view of one task (`_trim_task`, `api.py:988-1006`).

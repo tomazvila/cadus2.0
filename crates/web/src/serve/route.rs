@@ -179,6 +179,23 @@ pub(crate) async fn install_next(
     let elapsed = quiz_elapsed(scratch, &task_id, task.task_type, started_at);
 
     let target = target_of(task, index, &progress, graph)?;
+    // Audit finding (j), the server half. A lesson practices a knowledge point
+    // only when an approved teach page exists for it: without the page the
+    // learner practices a skill the service never taught. Every other task type
+    // revisits a skill the learner already met, so this reads for a lesson only
+    // and costs one indexed row (D-O3).
+    //
+    // `Config::readiness::enforce` guards it, the same switch the selector rule
+    // of D-F5 reads. The two are ONE policy: a deployment that turns the rule
+    // off plans the lesson and serves it.
+    if content.cfg.readiness.enforce
+        && task.task_type == TaskType::Lesson
+        && store(state, approved_document(&mut **tx, &target.key, KIND_TEACH))
+            .await?
+            .is_none()
+    {
+        return Err(no_instruction());
+    }
     let (ring, memory) = (scratch.ring(&target.serve), scratch.memory(&task_id));
     let avoid = Avoid::new(&ring, &memory);
     let row = draw(state, tx, user_id, graph, &target, &avoid).await?;
