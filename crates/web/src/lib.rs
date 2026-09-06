@@ -56,6 +56,7 @@ pub mod diagnosis;
 pub mod error;
 pub mod grade;
 pub mod health;
+pub mod integrated;
 pub mod metrics;
 pub mod operator;
 pub mod origin;
@@ -232,6 +233,18 @@ pub fn create_app(state: AppState) -> Router {
         .route("/api/task/{task_id}/hint", post(serve::hint))
         // Unit U8, spec section 11. The same rule: before the three layers.
         .route("/api/task/{task_id}/answer", post(grade::answer))
+        // D-F10: the integrated task. A multi-step task with an authored item
+        // serves it here as ONE problem and grades it in one submission; a task
+        // with no item answers 409 and keeps the per-component routes above.
+        .route("/api/task/{task_id}/integrated", post(integrated::serve))
+        .route(
+            "/api/task/{task_id}/integrated/hint",
+            post(integrated::hint_rung),
+        )
+        .route(
+            "/api/task/{task_id}/integrated/answer",
+            post(integrated::answer),
+        )
         // The placement diagnostic, spec section 2. It sits with the task routes
         // and before the three layers, for the same reason they do.
         .route("/api/diag/start", post(diag::start))

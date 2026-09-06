@@ -176,6 +176,20 @@ impl IntegratedSet {
     }
 }
 
+/// Read one authored item from YAML text.
+///
+/// The loader above reads files; this reads a document a caller already holds,
+/// which is what a review tool and a test fixture need. The rules of
+/// [`check_item`] are NOT applied here: the caller decides what to do with a
+/// document that parses and breaks a rule.
+///
+/// # Errors
+///
+/// The message of the parser, when the document is not one integrated item.
+pub fn parse_item(text: &str) -> Result<IntegratedItem, String> {
+    serde_norway::from_str(text).map_err(|error| error.to_string())
+}
+
 /// The entry names of `dir` in byte order, or an empty list when it cannot be
 /// read. The order makes the loaded set reproducible.
 fn sorted_names(dir: &Path) -> Vec<String> {

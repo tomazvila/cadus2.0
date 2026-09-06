@@ -37,6 +37,7 @@ use axum::http::StatusCode;
 use axum::http::request::Parts;
 use cadus_core::config::Config;
 use cadus_core::curriculum::Curriculum;
+use cadus_core::integrated::IntegratedSet;
 use cadus_core::pool::{PoolAnswer, Ring, TaskMemory};
 use cadus_core::readiness::ReadinessIndex;
 use serde::{Deserialize, Serialize};
@@ -87,6 +88,12 @@ pub struct Content {
     /// [`ReadinessIndex::resolve`](cadus_core::readiness::ReadinessIndex::resolve),
     /// which is map lookups only.
     pub readiness: ReadinessIndex,
+    /// The hand-authored integrated tasks (D-F10).
+    ///
+    /// The set is loaded beside the curriculum and shared read-only, the same
+    /// way the arena is. A deployment with no authored file holds an empty set,
+    /// and every multi-step task then keeps its per-component serve.
+    pub integrated: IntegratedSet,
 }
 
 impl Content {
@@ -104,7 +111,18 @@ impl Content {
             curriculum,
             cfg,
             readiness,
+            integrated: IntegratedSet::empty(),
         }
+    }
+
+    /// Attach the authored integrated set (D-F10).
+    ///
+    /// The boot path reads the set from the curriculum root once and hands it
+    /// over here, so no request reads a file.
+    #[must_use]
+    pub fn with_integrated(mut self, integrated: IntegratedSet) -> Self {
+        self.integrated = integrated;
+        self
     }
 }
 

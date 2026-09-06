@@ -47,7 +47,7 @@ pub use grade::{
     FINAL_FIELD_ID, FieldGrade, FieldResponse, IntegratedGrade, MethodGrade, Submission, grade,
 };
 pub use hint::{hint, hints_available};
-pub use load::{INTEGRATED_DIR, IntegratedSet};
+pub use load::{INTEGRATED_DIR, IntegratedSet, parse_item};
 pub use model::{Domain, Field, Final, Given, IntegratedItem, MethodChoice, MethodOption, Step};
 pub use validate::{check_against, check_item};
 pub use view::{IntegratedView, view_of};

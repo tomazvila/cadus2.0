@@ -7,6 +7,7 @@ use std::sync::Arc;
 use std::time::Duration;
 
 use cadus_core::curriculum::{CurriculumError, LoadError, load_curriculum};
+use cadus_core::integrated::IntegratedSet;
 use cadus_store::{Db, DbConfig};
 use cadus_web::auth::oauth::OAuthConfig;
 use cadus_web::auth::password::{ARGON2_PROFILE_VAR, Argon2Profile};
@@ -186,7 +187,19 @@ fn load_content() -> Result<Content, Fatal> {
             let topics = curriculum.topic_count();
             let findings = findings.len();
             tracing::info!(path = %shown, topics, findings, "cadus-web: curriculum is loaded");
-            Ok(Content::new(curriculum))
+            // D-F10: the authored integrated tasks live beside the units, under
+            // `<course>/integrated/`. A defect there drops the item and is
+            // logged; it never stops the boot, because every multi-step task
+            // falls back to its per-component serve.
+            let integrated = IntegratedSet::load(&path);
+            let items = integrated.items().len();
+            let refused = integrated
+                .findings()
+                .iter()
+                .filter(|finding| finding.fatal)
+                .count();
+            tracing::info!(items, refused, "cadus-web: integrated tasks are loaded");
+            Ok(Content::new(curriculum).with_integrated(integrated))
         }
         Err(err) => {
             let reason = first_reason(&err);
