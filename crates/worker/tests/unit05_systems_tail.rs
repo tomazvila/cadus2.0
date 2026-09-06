@@ -11,7 +11,7 @@ use std::{collections::BTreeSet, fs, path::Path};
 
 fn rows() -> Vec<Value> {
     let root = Path::new(env!("CARGO_MANIFEST_DIR")).join("../..");
-    ["mixtures"]
+    ["mixtures", "checking", "special", "regions"]
         .iter()
         .flat_map(|name| {
             let path = root.join(format!(
@@ -27,7 +27,7 @@ fn every_pending_instance_passes_production_gate_and_contract() {
     let root = Path::new(env!("CARGO_MANIFEST_DIR")).join("../..");
     let (curriculum, findings) = load_curriculum(&root.join("curriculum")).unwrap();
     assert!(findings.is_empty());
-    assert_eq!(rows().len(), 3);
+    assert_eq!(rows().len(), 13);
     let mut problems = BTreeSet::new();
     for row in rows() {
         assert_eq!(row["status"], "pending");
@@ -39,8 +39,8 @@ fn every_pending_instance_passes_production_gate_and_contract() {
         let compiled = Compiled::new(&doc).unwrap();
         let walk = walk_satisfying(&doc.params, &doc.constraints).unwrap();
         assert!(walk.exhaustive);
-        assert_eq!(walk.tuples.len(), 12);
-        assert_eq!(doc.samples.len(), 12);
+        assert!(walk.tuples.len() >= 12);
+        assert_eq!(doc.samples.len(), walk.tuples.len());
         for binding in walk.tuples {
             let sample = doc
                 .samples
@@ -53,6 +53,18 @@ fn every_pending_instance_passes_production_gate_and_contract() {
                 matches!(check_contract(&sample.expected.text(), &instance.answer,
                 contract.clone()), Outcome::Decided(r) if r.correct)
             );
+            let perturbed = if instance.answer.contains('(') {
+                instance.answer.replacen('(', "(1+", 1)
+            } else if instance.answer.contains("yes") {
+                instance.answer.replacen("yes", "no", 1)
+            } else {
+                instance.answer.replacen("no", "yes", 1)
+            };
+            assert!(
+                matches!(check_contract(&instance.answer, &perturbed, contract.clone()),
+                Outcome::Decided(r) if !r.correct),
+                "{key}: {perturbed}"
+            );
             for wrong in ["999", "(999,999)", "yes", "no", "none", "all points"] {
                 assert!(
                     !matches!(check_contract(&instance.answer, wrong, contract.clone()),
@@ -63,7 +75,7 @@ fn every_pending_instance_passes_production_gate_and_contract() {
             assert!(problems.insert(instance.text));
         }
     }
-    assert_eq!(problems.len(), 36);
+    assert_eq!(problems.len(), 190);
 }
 
 #[test]
@@ -73,7 +85,16 @@ fn production_gate_rejects_constant_cancelling_and_false_samples() {
     for row in rows() {
         let key = row["kp_id"].as_str().unwrap();
         let spec = select(&curriculum, &[key.to_owned()]).unwrap().remove(0);
-        for expr in ["(0,0)", "(a-a,b-b)", "(a,0)", "(-a,-b)", "a-a+b-b"] {
+        for expr in [
+            "(0,0)",
+            "(a-a,b-b)",
+            "(a,0)",
+            "(-a,-b)",
+            "a-a+b-b",
+            "multipart((a-a,b-b),equalitylabel(a,a))",
+            "multipart(equalitylabel(a,a),equalitylabel(b,b))",
+            "multipart((a-a,b-b,1),(1,1,-1))",
+        ] {
             let mut args = row["arguments"].clone();
             args["answer_expr"] = json!(expr);
             assert!(

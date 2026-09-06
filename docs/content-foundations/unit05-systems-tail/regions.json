@@ -1,0 +1,409 @@
+[
+  {
+    "kp_id": "systems-of-linear-inequalities/kp1",
+    "kind": "template",
+    "status": "pending",
+    "arguments": {
+      "answer_contract": {
+        "kind": "multipart",
+        "parts": [
+          {
+            "name": "residuals",
+            "contract": {
+              "kind": "coordinates",
+              "arity": 2
+            }
+          },
+          {
+            "name": "solution",
+            "contract": {
+              "kind": "label",
+              "options": [
+                [
+                  "yes"
+                ],
+                [
+                  "no"
+                ]
+              ]
+            }
+          }
+        ]
+      },
+      "statement": "Check $({a},{b})$ against $y>x+1$ and $y<=-x+9$. Report residuals as the ordered pair of left-side-minus-right-side differences for each inequality after substitution; report solution as yes or no.",
+      "answer_expr": "multipart((b-a-1,b+a-9),equalitylabel(signcase(b-a-1,[0,0,1])+signcase(b+a-9,[1,1,0]),2))",
+      "params": {
+        "a": {
+          "kind": "choice",
+          "values": [
+            1,
+            2,
+            3
+          ]
+        },
+        "b": {
+          "kind": "choice",
+          "values": [
+            1,
+            3,
+            5,
+            7
+          ]
+        }
+      },
+      "constraints": [],
+      "samples": [
+        {
+          "params": {
+            "a": 1,
+            "b": 1
+          },
+          "expected": "residuals = (-1,-7); solution = no"
+        },
+        {
+          "params": {
+            "a": 1,
+            "b": 3
+          },
+          "expected": "residuals = (1,-5); solution = yes"
+        },
+        {
+          "params": {
+            "a": 1,
+            "b": 5
+          },
+          "expected": "residuals = (3,-3); solution = yes"
+        },
+        {
+          "params": {
+            "a": 1,
+            "b": 7
+          },
+          "expected": "residuals = (5,-1); solution = yes"
+        },
+        {
+          "params": {
+            "a": 2,
+            "b": 1
+          },
+          "expected": "residuals = (-2,-6); solution = no"
+        },
+        {
+          "params": {
+            "a": 2,
+            "b": 3
+          },
+          "expected": "residuals = (0,-4); solution = no"
+        },
+        {
+          "params": {
+            "a": 2,
+            "b": 5
+          },
+          "expected": "residuals = (2,-2); solution = yes"
+        },
+        {
+          "params": {
+            "a": 2,
+            "b": 7
+          },
+          "expected": "residuals = (4,0); solution = yes"
+        },
+        {
+          "params": {
+            "a": 3,
+            "b": 1
+          },
+          "expected": "residuals = (-3,-5); solution = no"
+        },
+        {
+          "params": {
+            "a": 3,
+            "b": 3
+          },
+          "expected": "residuals = (-1,-3); solution = no"
+        },
+        {
+          "params": {
+            "a": 3,
+            "b": 5
+          },
+          "expected": "residuals = (1,-1); solution = yes"
+        },
+        {
+          "params": {
+            "a": 3,
+            "b": 7
+          },
+          "expected": "residuals = (3,1); solution = no"
+        }
+      ],
+      "solution_sketch": "Substitute the point into each inequality. The first left-minus-right difference must be strictly positive; the second must be nonpositive. Both conditions are required.",
+      "hints": [
+        "Translate each relationship separately, preserving the requested order."
+      ]
+    }
+  },
+  {
+    "kp_id": "systems-of-linear-inequalities/kp2",
+    "kind": "template",
+    "status": "pending",
+    "arguments": {
+      "answer_contract": {
+        "kind": "multipart",
+        "parts": [
+          {
+            "name": "solid",
+            "contract": {
+              "kind": "coordinates",
+              "arity": 3
+            }
+          },
+          {
+            "name": "dashed",
+            "contract": {
+              "kind": "coordinates",
+              "arity": 3
+            }
+          }
+        ]
+      },
+      "statement": "For $({a})y<=2x+({b})$ and $y>-x+4$, Describe the overlap by reporting solid and dashed as (m,c,d) for boundary lines in y=mx+c form. Direction d is 1 for shading above and -1 for shading below. Include the solid boundary and exclude the dashed boundary. The solution is the intersection of those two half-planes.",
+      "answer_expr": "multipart((2/a,b/a,signcase(a,[1,0,-1])),(-1,4,1))",
+      "params": {
+        "a": {
+          "kind": "choice",
+          "values": [
+            -3,
+            -1,
+            2,
+            4
+          ]
+        },
+        "b": {
+          "kind": "choice",
+          "values": [
+            -5,
+            1,
+            6
+          ]
+        }
+      },
+      "constraints": [],
+      "samples": [
+        {
+          "params": {
+            "a": -3,
+            "b": -5
+          },
+          "expected": "solid = (-2/3,5/3,1); dashed = (-1,4,1)"
+        },
+        {
+          "params": {
+            "a": -3,
+            "b": 1
+          },
+          "expected": "solid = (-2/3,-1/3,1); dashed = (-1,4,1)"
+        },
+        {
+          "params": {
+            "a": -3,
+            "b": 6
+          },
+          "expected": "solid = (-2/3,-2,1); dashed = (-1,4,1)"
+        },
+        {
+          "params": {
+            "a": -1,
+            "b": -5
+          },
+          "expected": "solid = (-2,5,1); dashed = (-1,4,1)"
+        },
+        {
+          "params": {
+            "a": -1,
+            "b": 1
+          },
+          "expected": "solid = (-2,-1,1); dashed = (-1,4,1)"
+        },
+        {
+          "params": {
+            "a": -1,
+            "b": 6
+          },
+          "expected": "solid = (-2,-6,1); dashed = (-1,4,1)"
+        },
+        {
+          "params": {
+            "a": 2,
+            "b": -5
+          },
+          "expected": "solid = (1,-5/2,-1); dashed = (-1,4,1)"
+        },
+        {
+          "params": {
+            "a": 2,
+            "b": 1
+          },
+          "expected": "solid = (1,1/2,-1); dashed = (-1,4,1)"
+        },
+        {
+          "params": {
+            "a": 2,
+            "b": 6
+          },
+          "expected": "solid = (1,3,-1); dashed = (-1,4,1)"
+        },
+        {
+          "params": {
+            "a": 4,
+            "b": -5
+          },
+          "expected": "solid = (1/2,-5/4,-1); dashed = (-1,4,1)"
+        },
+        {
+          "params": {
+            "a": 4,
+            "b": 1
+          },
+          "expected": "solid = (1/2,1/4,-1); dashed = (-1,4,1)"
+        },
+        {
+          "params": {
+            "a": 4,
+            "b": 6
+          },
+          "expected": "solid = (1/2,3/2,-1); dashed = (-1,4,1)"
+        }
+      ],
+      "solution_sketch": "Divide the first inequality by its vertical coefficient. Negative division reverses the direction, while its boundary remains solid. The second inequality is strict, so its boundary is dashed and the shaded side is above it. Intersect the two shaded sides.",
+      "hints": [
+        "Translate each relationship separately, preserving the requested order."
+      ]
+    }
+  },
+  {
+    "kp_id": "systems-of-linear-inequalities/kp3",
+    "kind": "template",
+    "status": "pending",
+    "arguments": {
+      "answer_contract": {
+        "kind": "coordinates",
+        "arity": 2
+      },
+      "statement": "Which of $({a},2({a})+1)$ or $({a},2({a})+5)$ belongs to the overlap of $y>2x+({b})$ and $y<2x+({b})+6$? Give the ordered pair.",
+      "answer_expr": "(a,2*a+signcase(b,[1,3,5]))",
+      "params": {
+        "a": {
+          "kind": "choice",
+          "values": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ]
+        },
+        "b": {
+          "kind": "choice",
+          "values": [
+            -2,
+            2
+          ]
+        }
+      },
+      "constraints": [],
+      "samples": [
+        {
+          "params": {
+            "a": 1,
+            "b": -2
+          },
+          "expected": "(1,3)"
+        },
+        {
+          "params": {
+            "a": 1,
+            "b": 2
+          },
+          "expected": "(1,7)"
+        },
+        {
+          "params": {
+            "a": 2,
+            "b": -2
+          },
+          "expected": "(2,5)"
+        },
+        {
+          "params": {
+            "a": 2,
+            "b": 2
+          },
+          "expected": "(2,9)"
+        },
+        {
+          "params": {
+            "a": 3,
+            "b": -2
+          },
+          "expected": "(3,7)"
+        },
+        {
+          "params": {
+            "a": 3,
+            "b": 2
+          },
+          "expected": "(3,11)"
+        },
+        {
+          "params": {
+            "a": 4,
+            "b": -2
+          },
+          "expected": "(4,9)"
+        },
+        {
+          "params": {
+            "a": 4,
+            "b": 2
+          },
+          "expected": "(4,13)"
+        },
+        {
+          "params": {
+            "a": 5,
+            "b": -2
+          },
+          "expected": "(5,11)"
+        },
+        {
+          "params": {
+            "a": 5,
+            "b": 2
+          },
+          "expected": "(5,15)"
+        },
+        {
+          "params": {
+            "a": 6,
+            "b": -2
+          },
+          "expected": "(6,13)"
+        },
+        {
+          "params": {
+            "a": 6,
+            "b": 2
+          },
+          "expected": "(6,17)"
+        }
+      ],
+      "solution_sketch": "Subtract twice the horizontal coordinate from the candidate height. The resulting offset must lie strictly between the lower offset and that offset plus six. Test each candidate against both bounds; neither candidate lies on a boundary.",
+      "hints": [
+        "Translate each relationship separately, preserving the requested order."
+      ]
+    }
+  }
+]

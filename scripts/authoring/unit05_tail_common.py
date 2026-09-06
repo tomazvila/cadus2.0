@@ -20,15 +20,17 @@ def exemplar(problem, answer, sketch):
     return dict(problem=problem, answer=answer, solution_sketch=sketch)
 
 
-def recipe(key, contract, statement, expr, domains, expected, sketch):
+def recipe(key, contract, statement, expr, domains, expected, sketch, constraints=(), predicate=None):
     samples = []
     for values in itertools.product(*domains.values()):
         params = dict(zip(domains, values))
+        if predicate and not predicate(**params):
+            continue
         samples.append(dict(params=params, expected=expected(**params)))
     return dict(kp_id=key, kind='template', status='pending', arguments=dict(
         answer_contract=contract, statement=statement, answer_expr=expr,
         params={k: dict(kind='choice', values=v) for k, v in domains.items()},
-        constraints=[], samples=samples, solution_sketch=sketch,
+        constraints=list(constraints), samples=samples, solution_sketch=sketch,
         hints=['Translate each relationship separately, preserving the requested order.']))
 
 

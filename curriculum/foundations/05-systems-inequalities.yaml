@@ -1098,38 +1098,64 @@ topics:
         name: "Verify a pair in both equations"
         key_prerequisites: [solutions-of-two-variable-equations]
         exemplars:
-          - problem: 'Is $(1, 4)$ the solution of the system $y = 3x + 1$ and $y = x + 3$?'
-            answer: "yes"
-            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
-            solution_sketch: '$3(1) + 1 = 4$ and $1 + 3 = 4$; both hold.'
-          - problem: 'Is $(2, 5)$ the solution of $y = x + 3$ and $y = 2x + 1$?'
-            answer: "yes"
-            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
-            solution_sketch: '$2 + 3 = 5$ and $2(2) + 1 = 5$.'
+          - problem: "Check the proposed point $(2,5)$ in $y=2x+1$ and $x+y=7$. Report residuals as the ordered pair of left-side-minus-right-side differences for each equation after substitution; report solution as yes or no."
+            answer: "residuals = (0,0); solution = yes"
+            solution_sketch: "Insert horizontal coordinate 2 and vertical coordinate 5 into each equation. The first left-minus-right difference is 0; the second is 0. Both differences vanish, so the point lies on both lines."
+            answer_contract: {"kind": "multipart", "parts": [{"name": "residuals", "contract": {"kind": "coordinates", "arity": 2}}, {"name": "solution", "contract": {"kind": "label", "options": [["yes"], ["no"]]}}]}
+          - problem: "Check the proposed point $(-1,4)$ in $3x+y=1$ and $2x-y=-7$. Report residuals as the ordered pair of left-side-minus-right-side differences for each equation after substitution; report solution as yes or no."
+            answer: "residuals = (0,1); solution = no"
+            solution_sketch: "Insert horizontal coordinate -1 and vertical coordinate 4 into each equation. The first left-minus-right difference is 0; the second is 1. A nonzero difference means that equation fails, so the pair cannot solve the system."
+            answer_contract: {"kind": "multipart", "parts": [{"name": "residuals", "contract": {"kind": "coordinates", "arity": 2}}, {"name": "solution", "contract": {"kind": "label", "options": [["yes"], ["no"]]}}]}
+          - problem: "Check the proposed point $(4,-2)$ in $x/2+y=0$ and $y-x=-6$. Report residuals as the ordered pair of left-side-minus-right-side differences for each equation after substitution; report solution as yes or no."
+            answer: "residuals = (0,0); solution = yes"
+            solution_sketch: "Insert horizontal coordinate 4 and vertical coordinate -2 into each equation. The first left-minus-right difference is 0; the second is 0. Both differences vanish, so the point lies on both lines."
+            answer_contract: {"kind": "multipart", "parts": [{"name": "residuals", "contract": {"kind": "coordinates", "arity": 2}}, {"name": "solution", "contract": {"kind": "label", "options": [["yes"], ["no"]]}}]}
+          - problem: "Check the proposed point $(3,1)$ in $x=2y+2$ and $x-y=5$. Report residuals as the ordered pair of left-side-minus-right-side differences for each equation after substitution; report solution as yes or no."
+            answer: "residuals = (-1,-3); solution = no"
+            solution_sketch: "Insert horizontal coordinate 3 and vertical coordinate 1 into each equation. The first left-minus-right difference is -1; the second is -3. A nonzero difference means that equation fails, so the pair cannot solve the system."
+            answer_contract: {"kind": "multipart", "parts": [{"name": "residuals", "contract": {"kind": "coordinates", "arity": 2}}, {"name": "solution", "contract": {"kind": "label", "options": [["yes"], ["no"]]}}]}
         constraints: "check the point in BOTH equations"
       - id: kp2
         name: "Reject a pair that fails one equation"
         key_prerequisites: [solutions-of-two-variable-equations]
         exemplars:
-          - problem: 'Is $(3, 2)$ a solution of the system $x + y = 5$ and $x - y = 2$?'
-            answer: "no"
-            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
-            solution_sketch: '$3 + 2 = 5$ holds, but $3 - 2 = 1 \ne 2$.'
-          - problem: 'Is $(2, 1)$ a solution of $2x + y = 5$ and $3x - y = 4$?'
-            answer: "no"
-            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
-            solution_sketch: '$5$ holds, but $6 - 1 = 5 \ne 4$.'
+          - problem: "Check the proposed point $(2,3)$ in $y=x+1$ and $2x+y=8$. Report residuals as the ordered pair of left-side-minus-right-side differences for each equation after substitution; report solution as yes or no."
+            answer: "residuals = (0,-1); solution = no"
+            solution_sketch: "Insert horizontal coordinate 2 and vertical coordinate 3 into each equation. The first left-minus-right difference is 0; the second is -1. A nonzero difference means that equation fails, so the pair cannot solve the system."
+            answer_contract: {"kind": "multipart", "parts": [{"name": "residuals", "contract": {"kind": "coordinates", "arity": 2}}, {"name": "solution", "contract": {"kind": "label", "options": [["yes"], ["no"]]}}]}
+          - problem: "Check the proposed point $(-2,5)$ in $3x-y=-9$ and $x+y=3$. Report residuals as the ordered pair of left-side-minus-right-side differences for each equation after substitution; report solution as yes or no."
+            answer: "residuals = (-2,0); solution = no"
+            solution_sketch: "Insert horizontal coordinate -2 and vertical coordinate 5 into each equation. The first left-minus-right difference is -2; the second is 0. A nonzero difference means that equation fails, so the pair cannot solve the system."
+            answer_contract: {"kind": "multipart", "parts": [{"name": "residuals", "contract": {"kind": "coordinates", "arity": 2}}, {"name": "solution", "contract": {"kind": "label", "options": [["yes"], ["no"]]}}]}
+          - problem: "Check the proposed point $(6,2)$ in $x/3+y=4$ and $y-x=-5$. Report residuals as the ordered pair of left-side-minus-right-side differences for each equation after substitution; report solution as yes or no."
+            answer: "residuals = (0,1); solution = no"
+            solution_sketch: "Insert horizontal coordinate 6 and vertical coordinate 2 into each equation. The first left-minus-right difference is 0; the second is 1. A nonzero difference means that equation fails, so the pair cannot solve the system."
+            answer_contract: {"kind": "multipart", "parts": [{"name": "residuals", "contract": {"kind": "coordinates", "arity": 2}}, {"name": "solution", "contract": {"kind": "label", "options": [["yes"], ["no"]]}}]}
+          - problem: "Check the proposed point $(3,-1)$ in $x=2y+4$ and $x-2y=5$. Report residuals as the ordered pair of left-side-minus-right-side differences for each equation after substitution; report solution as yes or no."
+            answer: "residuals = (1,0); solution = no"
+            solution_sketch: "Insert horizontal coordinate 3 and vertical coordinate -1 into each equation. The first left-minus-right difference is 1; the second is 0. A nonzero difference means that equation fails, so the pair cannot solve the system."
+            answer_contract: {"kind": "multipart", "parts": [{"name": "residuals", "contract": {"kind": "coordinates", "arity": 2}}, {"name": "solution", "contract": {"kind": "label", "options": [["yes"], ["no"]]}}]}
         constraints: "one equation passes, the other fails"
       - id: kp3
         name: "Pick the solution from candidates"
         key_prerequisites: [solutions-of-two-variable-equations]
         exemplars:
-          - problem: 'Which of $(1, 3)$ or $(2, 5)$ solves the system $y = 2x + 1$ and $y = x + 2$?'
-            answer: "(1, 3)"
-            solution_sketch: '$(1, 3)$ satisfies both; $(2, 5)$ fails $y = x + 2$.'
-          - problem: 'Which of $(0, 2)$ or $(4, 6)$ solves $y = x + 2$ and $x + y = 10$?'
-            answer: "(4, 6)"
-            solution_sketch: '$6 = 4 + 2$ and $4 + 6 = 10$.'
+          - problem: "Which of $(1,4)$ or $(2,6)$ satisfies both $y=2x+2$ and $x+y=5$? Give the ordered pair."
+            answer: "(1,4)"
+            solution_sketch: "The first candidate gives $4=2(1)+2$ and $1+4=5$. The second lies on the first line but its coordinate sum is eight, so it fails the other equation."
+            answer_contract: {"kind": "coordinates", "arity": 2}
+          - problem: "Which of $(3,2)$ or $(-2,1)$ satisfies both $x+3y=1$ and $2x-y=-5$? Give the ordered pair."
+            answer: "(-2,1)"
+            solution_sketch: "The second candidate gives $-2+3(1)=1$ and $2(-2)-1=-5$. The first has coordinate sum with triple height equal to nine, so it fails the first equation."
+            answer_contract: {"kind": "coordinates", "arity": 2}
+          - problem: "Which of $(4,-1)$ or $(2,1)$ satisfies both $x/2+y=1$ and $x-y=5$? Give the ordered pair."
+            answer: "(4,-1)"
+            solution_sketch: "The first candidate gives $4/2+(-1)=1$ and $4-(-1)=5$. The second gives a difference of one, so it cannot satisfy both equations."
+            answer_contract: {"kind": "coordinates", "arity": 2}
+          - problem: "Which of $(0,3)$ or $(5,2)$ satisfies both $x=3y-1$ and $x+2y=9$? Give the ordered pair."
+            answer: "(5,2)"
+            solution_sketch: "The second candidate gives $5=3(2)-1$ and $5+2(2)=9$. The first would require the horizontal coordinate to be eight, so it fails."
+            answer_contract: {"kind": "coordinates", "arity": 2}
         constraints: "two candidates; exactly one works"
     diagnostic_exemplar:
       problem: 'Which of $(1, 4)$ or $(3, 2)$ solves the system $x + y = 5$ and $2x - y = 4$?'
@@ -1206,12 +1232,22 @@ topics:
         name: "Confirm a graphical estimate algebraically"
         key_prerequisites: [checking-systems-solutions]
         exemplars:
-          - problem: 'The graphs suggest $(2, 3)$ solves $y = 2x - 1$ and $y = x + 1$. Verify.'
-            answer: "yes, it checks in both"
-            solution_sketch: '$2(2) - 1 = 3$ and $2 + 1 = 3$.'
-          - problem: 'The graphs suggest $(3, 1)$ solves $x + y = 4$ and $x - y = 1$. Verify.'
-            answer: "no; it fails x - y = 1"
-            solution_sketch: '$3 + 1 = 4$ holds, but $3 - 1 = 2 \ne 1$.'
+          - problem: "A graph suggests $(1,5)$ in $y=3x+2$ and $x+y=6$. Report residuals as the ordered pair of left-side-minus-right-side differences for each equation after substitution; report solution as yes or no."
+            answer: "residuals = (0,0); solution = yes"
+            solution_sketch: "Insert horizontal coordinate 1 and vertical coordinate 5 into each equation. The first left-minus-right difference is 0; the second is 0. Both differences vanish, so the point lies on both lines."
+            answer_contract: {"kind": "multipart", "parts": [{"name": "residuals", "contract": {"kind": "coordinates", "arity": 2}}, {"name": "solution", "contract": {"kind": "label", "options": [["yes"], ["no"]]}}]}
+          - problem: "Check this apparent graphical intersection $(3,2)$ in $2x+y=8$ and $x-y=2$. Report residuals as the ordered pair of left-side-minus-right-side differences for each equation after substitution; report solution as yes or no."
+            answer: "residuals = (0,-1); solution = no"
+            solution_sketch: "Insert horizontal coordinate 3 and vertical coordinate 2 into each equation. The first left-minus-right difference is 0; the second is -1. A nonzero difference means that equation fails, so the pair cannot solve the system."
+            answer_contract: {"kind": "multipart", "parts": [{"name": "residuals", "contract": {"kind": "coordinates", "arity": 2}}, {"name": "solution", "contract": {"kind": "label", "options": [["yes"], ["no"]]}}]}
+          - problem: "The plotted crossing is estimated at $(4,1)$ in $x/2-y=1$ and $y+x=5$. Report residuals as the ordered pair of left-side-minus-right-side differences for each equation after substitution; report solution as yes or no."
+            answer: "residuals = (0,0); solution = yes"
+            solution_sketch: "Insert horizontal coordinate 4 and vertical coordinate 1 into each equation. The first left-minus-right difference is 0; the second is 0. Both differences vanish, so the point lies on both lines."
+            answer_contract: {"kind": "multipart", "parts": [{"name": "residuals", "contract": {"kind": "coordinates", "arity": 2}}, {"name": "solution", "contract": {"kind": "label", "options": [["yes"], ["no"]]}}]}
+          - problem: "A rough sketch suggests $(-1,2)$ in $x=2y-4$ and $3x+y=-2$. Report residuals as the ordered pair of left-side-minus-right-side differences for each equation after substitution; report solution as yes or no."
+            answer: "residuals = (-1,1); solution = no"
+            solution_sketch: "Insert horizontal coordinate -1 and vertical coordinate 2 into each equation. The first left-minus-right difference is -1; the second is 1. A nonzero difference means that equation fails, so the pair cannot solve the system."
+            answer_contract: {"kind": "multipart", "parts": [{"name": "residuals", "contract": {"kind": "coordinates", "arity": 2}}, {"name": "solution", "contract": {"kind": "label", "options": [["yes"], ["no"]]}}]}
         constraints: "an estimate must be checked in both equations"
     diagnostic_exemplar:
       problem: 'Where do the lines $x + y = 6$ and $y = 2x$ intersect?'
@@ -1599,35 +1635,65 @@ topics:
         name: "Detect special cases algebraically"
         key_prerequisites: [systems-elimination]
         exemplars:
-          - problem: 'Solve the system $x + y = 3$, $x + y = 7$.'
-            answer: "no solution"
-            solution_sketch: 'Subtracting gives $0 = 4$, a contradiction.'
-          - problem: 'Solve the system $2x + 2y = 8$, $x + y = 4$.'
-            answer: "infinitely many solutions"
-            solution_sketch: 'The first is twice the second; elimination gives $0 = 0$.'
+          - problem: "Classify algebraically $3x+y=5$ and $6x+2y=14$. Classify the solution set: report infinite and none as yes/no fields, with exactly one yes."
+            answer: "infinite = no; none = yes"
+            solution_sketch: "Twice the first equation has right side ten. The second has the identical left side but right side fourteen; subtracting gives an impossible equality."
+            answer_contract: {"kind": "multipart", "parts": [{"name": "infinite", "contract": {"kind": "label", "options": [["yes"], ["no"]]}}, {"name": "none", "contract": {"kind": "label", "options": [["yes"], ["no"]]}}]}
+          - problem: "Classify algebraically $x=2y+3$ and $2x-4y=6$. Classify the solution set: report infinite and none as yes/no fields, with exactly one yes."
+            answer: "infinite = yes; none = no"
+            solution_sketch: "Move the vertical term to the left in the first equation, then double both sides. This produces the second equation, so every point of that line solves both."
+            answer_contract: {"kind": "multipart", "parts": [{"name": "infinite", "contract": {"kind": "label", "options": [["yes"], ["no"]]}}, {"name": "none", "contract": {"kind": "label", "options": [["yes"], ["no"]]}}]}
+          - problem: "Classify algebraically $y=-3x+4$ and $3x+y=1$. Classify the solution set: report infinite and none as yes/no fields, with exactly one yes."
+            answer: "infinite = no; none = yes"
+            solution_sketch: "Rearranging the first gives the same left side as the second with right side four. The required right sides differ by three, so no point can satisfy both."
+            answer_contract: {"kind": "multipart", "parts": [{"name": "infinite", "contract": {"kind": "label", "options": [["yes"], ["no"]]}}, {"name": "none", "contract": {"kind": "label", "options": [["yes"], ["no"]]}}]}
+          - problem: "Classify algebraically $2x-3y=7$ and $-6x+9y=-21$. Classify the solution set: report infinite and none as yes/no fields, with exactly one yes."
+            answer: "infinite = yes; none = no"
+            solution_sketch: "Multiplying every term of the first equation by negative three produces the second equation. A whole nondegenerate line of points therefore satisfies both."
+            answer_contract: {"kind": "multipart", "parts": [{"name": "infinite", "contract": {"kind": "label", "options": [["yes"], ["no"]]}}, {"name": "none", "contract": {"kind": "label", "options": [["yes"], ["no"]]}}]}
         constraints: "elimination ends in a false statement (none) or 0 = 0 (infinite)"
       - id: kp2
         visuals: [{"kind":"coordinate","x_min":"-8","x_max":"8","y_min":"-8","y_max":"8","x_tick":"1","y_tick":"1","points":[],"segments":[{"from":{"x":"-2","y":"-2","label":null},"to":{"x":"2","y":"4","label":null}},{"from":{"x":"-2","y":"-5","label":null},"to":{"x":"2","y":"1","label":null}}],"caption":"Reference example: The reference lines y = (3/2)x + 1 and y = (3/2)x - 2 have equal slopes and distinct intercepts."}]
         name: "Detect special cases from slopes and graphs"
         key_prerequisites: [slope-intercept-form]
         exemplars:
-          - problem: 'How many solutions does the system $y = 2x + 1$, $y = 2x - 3$ have?'
-            answer: "none"
-            solution_sketch: 'Equal slopes, different intercepts $\to$ parallel.'
-          - problem: 'How many solutions does the system $y = x + 2$, $2y = 2x + 4$ have?'
-            answer: "infinitely many"
-            solution_sketch: 'Same line.'
+          - problem: "Read the graph geometry of $y=2x+5$ and $y=2x-1$. Classify the solution set: report one and infinite as yes/no fields. Here one means exactly one solution. Both no means no solutions; both yes is invalid."
+            answer: "one = no; infinite = no"
+            solution_sketch: "Both slopes are two, while the vertical intercepts are five and negative one. The lines are parallel and six vertical units apart, so they never intersect."
+            answer_contract: {"kind": "multipart", "parts": [{"name": "one", "contract": {"kind": "label", "options": [["yes"], ["no"]]}}, {"name": "infinite", "contract": {"kind": "label", "options": [["yes"], ["no"]]}}]}
+          - problem: "Compare slopes and intercepts of $y=-x+6$ and $2y=-2x+12$. Classify the solution set: report one and infinite as yes/no fields. Here one means exactly one solution. Both no means no solutions; both yes is invalid."
+            answer: "one = no; infinite = yes"
+            solution_sketch: "Divide the second equation by two. Both graphs then have slope negative one and vertical intercept six; they coincide, with every point shared."
+            answer_contract: {"kind": "multipart", "parts": [{"name": "one", "contract": {"kind": "label", "options": [["yes"], ["no"]]}}, {"name": "infinite", "contract": {"kind": "label", "options": [["yes"], ["no"]]}}]}
+          - problem: "Compare the vertical and sloping graphs $x=5$ and $y=3x-2$. Classify the solution set: report one and infinite as yes/no fields. Here one means exactly one solution. Both no means no solutions; both yes is invalid."
+            answer: "one = yes; infinite = no"
+            solution_sketch: "The first graph is vertical. Substituting its fixed horizontal coordinate in the second gives height thirteen, so there is exactly one crossing at (5,13)."
+            answer_contract: {"kind": "multipart", "parts": [{"name": "one", "contract": {"kind": "label", "options": [["yes"], ["no"]]}}, {"name": "infinite", "contract": {"kind": "label", "options": [["yes"], ["no"]]}}]}
+          - problem: "Interpret the graphs $2x+y=9$ and $y=4$. Classify the solution set: report one and infinite as yes/no fields. Here one means exactly one solution. Both no means no solutions; both yes is invalid."
+            answer: "one = yes; infinite = no"
+            solution_sketch: "The first line has slope negative two; the second is horizontal. Their directions differ, and substituting height four gives one horizontal coordinate, five halves."
+            answer_contract: {"kind": "multipart", "parts": [{"name": "one", "contract": {"kind": "label", "options": [["yes"], ["no"]]}}, {"name": "infinite", "contract": {"kind": "label", "options": [["yes"], ["no"]]}}]}
         constraints: "parallel -> none; same line -> infinitely many; else one"
       - id: kp3
         name: "Classify one / none / infinitely many"
         key_prerequisites: [systems-elimination]
         exemplars:
-          - problem: 'How many solutions does the system $y = 3x + 1$, $y = 2x + 1$ have?'
-            answer: "exactly one"
-            solution_sketch: 'Different slopes, so the lines cross once (at $(0, 1)$).'
-          - problem: 'How many solutions does the system $6x - 2y = 10$, $3x - y = 5$ have?'
-            answer: "infinitely many"
-            solution_sketch: 'The first is twice the second: the same line.'
+          - problem: "Classify algebraically $2x+y=3$ and $x-y=6$. Classify the solution set: report one and infinite as yes/no fields. Here one means exactly one solution. Both no means no solutions; both yes is invalid."
+            answer: "one = yes; infinite = no"
+            solution_sketch: "Adding eliminates the vertical coordinate and gives three times the horizontal coordinate equal to nine. This fixes one pair, (3,-3), so the solution is unique."
+            answer_contract: {"kind": "multipart", "parts": [{"name": "one", "contract": {"kind": "label", "options": [["yes"], ["no"]]}}, {"name": "infinite", "contract": {"kind": "label", "options": [["yes"], ["no"]]}}]}
+          - problem: "Classify algebraically $y=4x-7$ and $2y=8x-10$. Classify the solution set: report one and infinite as yes/no fields. Here one means exactly one solution. Both no means no solutions; both yes is invalid."
+            answer: "one = no; infinite = no"
+            solution_sketch: "Halve the second equation. Its slope is four with intercept negative five; the first intercept is negative seven. Equal slopes and unequal intercepts give no intersection."
+            answer_contract: {"kind": "multipart", "parts": [{"name": "one", "contract": {"kind": "label", "options": [["yes"], ["no"]]}}, {"name": "infinite", "contract": {"kind": "label", "options": [["yes"], ["no"]]}}]}
+          - problem: "Classify algebraically $x/2+y=3$ and $x+2y=6$. Classify the solution set: report one and infinite as yes/no fields. Here one means exactly one solution. Both no means no solutions; both yes is invalid."
+            answer: "one = no; infinite = yes"
+            solution_sketch: "Double every term of the first equation to obtain the second. The two equations impose the same line condition, leaving infinitely many possible points."
+            answer_contract: {"kind": "multipart", "parts": [{"name": "one", "contract": {"kind": "label", "options": [["yes"], ["no"]]}}, {"name": "infinite", "contract": {"kind": "label", "options": [["yes"], ["no"]]}}]}
+          - problem: "Classify algebraically $x=2y-5$ and $3x+y=13$. Classify the solution set: report one and infinite as yes/no fields. Here one means exactly one solution. Both no means no solutions; both yes is invalid."
+            answer: "one = yes; infinite = no"
+            solution_sketch: "Substitute the first expression for the horizontal coordinate in the second. Seven times the vertical coordinate equals twenty-eight, giving the unique pair (3,4)."
+            answer_contract: {"kind": "multipart", "parts": [{"name": "one", "contract": {"kind": "label", "options": [["yes"], ["no"]]}}, {"name": "infinite", "contract": {"kind": "label", "options": [["yes"], ["no"]]}}]}
         constraints: "mix all three cases across generated problems"
     diagnostic_exemplar:
       problem: 'How many solutions does the system $4x - 2y = 6$, $2x - y = 3$ have?'
@@ -1658,35 +1724,64 @@ topics:
         name: "Check a point against both inequalities"
         key_prerequisites: [graphing-linear-inequalities]
         exemplars:
-          - problem: 'Is $(1, 1)$ a solution of the system $y \le x + 2$ and $y > -x$?'
-            answer: "yes"
-            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
-            solution_sketch: '$1 \le 3$ and $1 > -1$ both hold.'
-          - problem: 'Is $(0, 4)$ a solution of the system $y < 2x + 1$ and $y \ge x$?'
-            answer: "no"
-            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
-            solution_sketch: '$4 < 1$ fails.'
+          - problem: "Check $(1,2)$ against $y>x$ and $y<=-x+4$. Report residuals as the ordered pair of left-side-minus-right-side differences for each inequality after substitution; report solution as yes or no."
+            answer: "residuals = (1,-1); solution = yes"
+            solution_sketch: "The first difference is positive one, so the strict lower condition holds. The second difference is negative one, so the inclusive upper condition holds too."
+            answer_contract: {"kind": "multipart", "parts": [{"name": "residuals", "contract": {"kind": "coordinates", "arity": 2}}, {"name": "solution", "contract": {"kind": "label", "options": [["yes"], ["no"]]}}]}
+          - problem: "Check $(2,3)$ against $2x+y<7$ and $y>=x-2$. Report residuals as the ordered pair of left-side-minus-right-side differences for each inequality after substitution; report solution as yes or no."
+            answer: "residuals = (0,3); solution = no"
+            solution_sketch: "The first left side reaches the boundary value seven. A strict inequality excludes that boundary, even though the second difference is positive and satisfies its condition."
+            answer_contract: {"kind": "multipart", "parts": [{"name": "residuals", "contract": {"kind": "coordinates", "arity": 2}}, {"name": "solution", "contract": {"kind": "label", "options": [["yes"], ["no"]]}}]}
+          - problem: "Check $(-1,4)$ against $-2y<=x-3$ and $y<x+7$. Report residuals as the ordered pair of left-side-minus-right-side differences for each inequality after substitution; report solution as yes or no."
+            answer: "residuals = (-4,-2); solution = yes"
+            solution_sketch: "The first difference is negative four, which meets its nonpositive condition. The second difference is negative two, which meets the strict negative condition."
+            answer_contract: {"kind": "multipart", "parts": [{"name": "residuals", "contract": {"kind": "coordinates", "arity": 2}}, {"name": "solution", "contract": {"kind": "label", "options": [["yes"], ["no"]]}}]}
+          - problem: "Check $(3,-1)$ against $x-2y>=6$ and $y<=2x+1$. Report residuals as the ordered pair of left-side-minus-right-side differences for each inequality after substitution; report solution as yes or no."
+            answer: "residuals = (-1,-8); solution = no"
+            solution_sketch: "The first left side is five, short of the required six. Its negative difference fails the nonnegative condition, so the overlap excludes this point despite the second passing."
+            answer_contract: {"kind": "multipart", "parts": [{"name": "residuals", "contract": {"kind": "coordinates", "arity": 2}}, {"name": "solution", "contract": {"kind": "label", "options": [["yes"], ["no"]]}}]}
         constraints: "the point must satisfy BOTH inequalities"
       - id: kp2
         name: "Boundary styles and the overlap region"
         key_prerequisites: [graphing-linear-inequalities]
         exemplars:
-          - problem: 'For the system $y \le 2x + 1$, $y > -x + 4$, which boundary line is dashed?'
-            answer: "y = -x + 4 (the strict one)"
-          - problem: 'What is the solution region of a system of two linear inequalities?'
-            answer: "the overlap (intersection) of the two shaded half-planes"
+          - problem: "For $y<=2x+3$ and $y>-x+1$, Describe the overlap by reporting solid and dashed as (m,c,d) for boundary lines in y=mx+c form. Direction d is 1 for shading above and -1 for shading below. Include the solid boundary and exclude the dashed boundary. The solution is the intersection of those two half-planes."
+            answer: "solid = (2,3,-1); dashed = (-1,1,1)"
+            solution_sketch: "The inclusive first inequality has a solid boundary with slope two and intercept three, shading below. The strict second has slope negative one and intercept one, shading above."
+            answer_contract: {"kind": "multipart", "parts": [{"name": "solid", "contract": {"kind": "coordinates", "arity": 3}}, {"name": "dashed", "contract": {"kind": "coordinates", "arity": 3}}]}
+          - problem: "For $y<3x-2$ and $y>=x+4$, Describe the overlap by reporting solid and dashed as (m,c,d) for boundary lines in y=mx+c form. Direction d is 1 for shading above and -1 for shading below. Include the solid boundary and exclude the dashed boundary. The solution is the intersection of those two half-planes."
+            answer: "solid = (1,4,1); dashed = (3,-2,-1)"
+            solution_sketch: "The second inequality supplies the solid boundary, slope one and intercept four, with shading above. The first supplies the dashed boundary, slope three and intercept negative two, shading below."
+            answer_contract: {"kind": "multipart", "parts": [{"name": "solid", "contract": {"kind": "coordinates", "arity": 3}}, {"name": "dashed", "contract": {"kind": "coordinates", "arity": 3}}]}
+          - problem: "For $-2y<=4x-6$ and $3y>3x+12$, Describe the overlap by reporting solid and dashed as (m,c,d) for boundary lines in y=mx+c form. Direction d is 1 for shading above and -1 for shading below. Include the solid boundary and exclude the dashed boundary. The solution is the intersection of those two half-planes."
+            answer: "solid = (-2,3,1); dashed = (1,4,1)"
+            solution_sketch: "Divide the first inequality by negative two and reverse its direction: shade above its solid line with slope negative two and intercept three. Divide the second by three; shade above its dashed line."
+            answer_contract: {"kind": "multipart", "parts": [{"name": "solid", "contract": {"kind": "coordinates", "arity": 3}}, {"name": "dashed", "contract": {"kind": "coordinates", "arity": 3}}]}
+          - problem: "For $x+2y>=8$ and $-y>x-5$, Describe the overlap by reporting solid and dashed as (m,c,d) for boundary lines in y=mx+c form. Direction d is 1 for shading above and -1 for shading below. Include the solid boundary and exclude the dashed boundary. The solution is the intersection of those two half-planes."
+            answer: "solid = (-1/2,4,1); dashed = (-1,5,-1)"
+            solution_sketch: "Isolate height in the first: its solid line has slope negative one half and intercept four, with shading above. Negative division in the second reverses direction, shading below its dashed line."
+            answer_contract: {"kind": "multipart", "parts": [{"name": "solid", "contract": {"kind": "coordinates", "arity": 3}}, {"name": "dashed", "contract": {"kind": "coordinates", "arity": 3}}]}
         constraints: "one strict and one inclusive inequality per problem"
       - id: kp3
         name: "Locate a point in the solution region"
         key_prerequisites: [graphing-linear-inequalities]
         exemplars:
-          - problem: 'Which of $(0, 2)$ or $(2, 0)$ satisfies both $y > x$ and $y < x + 4$?'
-            answer: "(0, 2)"
-            solution_sketch: '$2 > 0$ and $2 < 4$; the other point fails $y > x$.'
-          - problem: 'Does the origin satisfy the system $y \ge x - 3$ and $y \le -x + 5$?'
-            answer: "yes"
-            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
-            solution_sketch: '$0 \ge -3$ and $0 \le 5$.'
+          - problem: "Which of $(1,3)$ or $(2,1)$ belongs to the overlap of $y>x+1$ and $y<x+5$? Give the ordered pair."
+            answer: "(1,3)"
+            solution_sketch: "At the first candidate the height exceeds the lower line by one and is three below the upper line. The second candidate lies below its lower bound, so only the first is in the strip."
+            answer_contract: {"kind": "coordinates", "arity": 2}
+          - problem: "Which of $(0,7)$ or $(2,3)$ belongs to the overlap of $x+y<6$ and $y>=x$? Give the ordered pair."
+            answer: "(2,3)"
+            solution_sketch: "The first candidate has coordinate sum seven, so it fails the strict upper condition. The second has sum five and height three above horizontal coordinate two, so it meets both conditions."
+            answer_contract: {"kind": "coordinates", "arity": 2}
+          - problem: "Which of $(-1,3)$ or $(1,-2)$ belongs to the overlap of $-2y<x$ and $y<=x+6$? Give the ordered pair."
+            answer: "(-1,3)"
+            solution_sketch: "For the first point, negative six is less than negative one and three is at most five. For the second, four is not less than one, so it fails the strict condition."
+            answer_contract: {"kind": "coordinates", "arity": 2}
+          - problem: "Which of $(3,6)$ or $(2,4)$ belongs to the overlap of $y>2x-1$ and $y<-x+8$? Give the ordered pair."
+            answer: "(2,4)"
+            solution_sketch: "The first point fails the upper bound because six exceeds five. The second height is above three and below six, so it satisfies both strict inequalities."
+            answer_contract: {"kind": "coordinates", "arity": 2}
         constraints: "candidate points off the boundary lines"
     diagnostic_exemplar:
       problem: 'Is $(2, 3)$ a solution of the system $y > x$ and $y \le 2x$?'
