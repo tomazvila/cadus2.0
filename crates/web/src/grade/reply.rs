@@ -26,6 +26,25 @@ pub(super) fn clear_task_scratch(scratch: &mut WebState, task_id: &str) {
     scratch.task_memory.remove(task_id);
 }
 
+/// The outcome keys of a reply (D-F2).
+///
+/// A decided attempt names `outcome` and `correct`. An UNGRADED attempt names
+/// `outcome` and `reason` and claims NO correctness: the `correct` key is absent,
+/// because a claim of `false` reads as a miss and an ungraded attempt is not one.
+pub(super) fn outcome_fields(recorded: &Attempt) -> Map<String, Value> {
+    let mut map = Map::new();
+    map.insert("outcome".to_string(), json!(recorded.outcome.as_str()));
+    match recorded.outcome.reason() {
+        Some(reason) => {
+            map.insert("reason".to_string(), json!(reason));
+        }
+        None => {
+            map.insert("correct".to_string(), json!(recorded.correct));
+        }
+    }
+    map
+}
+
 /// The client reply of section 2.1.
 ///
 /// It names every field it emits. `solution` is revealed only after the attempt
@@ -42,9 +61,10 @@ pub(super) fn reply(
     // A bare `next: null` on an open task reads as "task over" (trap W5), so
     // an open task with no next problem says `next_unavailable` (trap W6).
     let unavailable = !closed && next.is_none();
-    let mut map: Map<String, Value> = [
+    let ungraded = recorded.outcome.is_ungraded();
+    let mut map = outcome_fields(recorded);
+    for (key, value) in [
         ("attempt_id", json!(recorded.attempt_id)),
-        ("correct", json!(recorded.correct)),
         ("work_quality", json!(recorded.work_quality)),
         ("error_tags", json!(recorded.error_tags)),
         ("secs", json!(recorded.secs.get())),
@@ -52,16 +72,19 @@ pub(super) fn reply(
         ("remediation", json!(moved.remediation_view())),
         ("next", json!(next)),
         ("diagnosis", diagnosis),
-    ]
-    .into_iter()
-    .map(|(key, value)| (key.to_string(), value))
-    .collect();
+    ] {
+        map.insert(key.to_string(), value);
+    }
     // A quiz reveals nothing until its batch reveal (trap W7), so no solution
-    // and no re-solve text leaves this route for one.
-    if let Some(solution) = &served.solution_sketch {
+    // and no re-solve text leaves this route for one. An UNGRADED attempt reveals
+    // nothing either: Hard Rule 1 holds an answer back until the learner attempts
+    // the problem, and an ungraded attempt is not a miss (D-F2).
+    if let Some(solution) = &served.solution_sketch
+        && !ungraded
+    {
         map.insert("solution".to_string(), json!(solution));
     }
-    if !recorded.correct {
+    if !recorded.correct && !ungraded {
         map.insert("re_solve".to_string(), json!(RE_SOLVE));
     }
     if unavailable {

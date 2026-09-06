@@ -17,7 +17,7 @@ use cadus_core::selector::{
     schedule_drills,
 };
 use cadus_store::state::{EventRow, load_events, project_current};
-use serde_json::{Value, json};
+use serde_json::{Map, Value, json};
 
 use super::EXPORT_MEDIA_TYPE;
 use super::store::{Ready, Reply, begin, json_of, reply_read, store, unknown_course};
@@ -78,6 +78,19 @@ fn is_placed(topic: &TopicState) -> bool {
     matches!(topic.status, TopicStatus::Placed | TopicStatus::Learning)
 }
 
+/// The ungraded-attempt count of each topic that has one (D-F2).
+///
+/// A topic with no ungraded attempt is absent, so the map holds only what the
+/// learner and the operator need to see.
+fn ungraded_attempts(model: &LearnerModel) -> Map<String, Value> {
+    model
+        .topics
+        .iter()
+        .filter(|(_, state)| state.ungraded_attempts > 0)
+        .map(|(tid, state)| (tid.clone(), json!(state.ungraded_attempts)))
+        .collect()
+}
+
 // --------------------------------------------------------------------------- //
 // GET /api/status
 // --------------------------------------------------------------------------- //
@@ -134,6 +147,8 @@ pub async fn status(req: Ready) -> Reply {
         "frontier": frontier_count,
         "due_reviews": due_count,
         "nearly_due": nearly_count,
+        "ungraded_attempts": ungraded_attempts(&model),
+        "ungraded": model.ungraded.len(),
     });
     reply_read(tx, body).await
 }

@@ -23,6 +23,7 @@ import type {
   OkResponse,
   OperatorFlagsResponse,
   ReadyResponse,
+  RegradeResponse,
   RejectResponse,
   ReviewDocument,
   ReviewListResponse,
@@ -35,6 +36,7 @@ import type {
   StatusResponse,
   TaskAnswerResponse,
   TeachResponse,
+  UngradedListResponse,
 } from './types';
 
 /** A path segment. A task id or a provider name reaches the URL escaped. */
@@ -158,4 +160,7 @@ export const api: ApiClient = {
     request<ApproveResponse>('POST', `/admin/content/${seg(digest)}/approve`, {}),
   rejectContent: (digest, reason) =>
     request<RejectResponse>('POST', `/admin/content/${seg(digest)}/reject`, { reason }),
+  listUngraded: () => request<UngradedListResponse>('GET', '/admin/ungraded'),
+  regradeUngraded: (attemptId, outcome) =>
+    request<RegradeResponse>('POST', `/admin/ungraded/${seg(attemptId)}/regrade`, { outcome }),
 };

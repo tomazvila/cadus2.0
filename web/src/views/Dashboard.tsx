@@ -221,6 +221,7 @@ export function Dashboard({
   const fraction = goal ? today / goal : 0;
   const due = num(status.due_reviews);
   const frontier = num(status.frontier);
+  const ungraded = num(status.ungraded);
 
   const courseArc = courses.length ? (
     <div className="course-arc">
@@ -276,6 +277,11 @@ export function Dashboard({
           <Stat value={`${frontier}`} label="frontier" />
           <Stat value={`${pct(status.velocity.course_progress)}%`} label="course" />
           <Stat value={status.velocity.eta ?? '—'} label="ETA" />
+          {/* D-F2: the attempts nobody graded. The tile appears only when one waits,
+              so a learner with none reads the same six tiles as before. */}
+          {ungraded > 0 ? (
+            <Stat value={`${ungraded}`} label="not marked" className="warn" />
+          ) : null}
         </div>
       </div>
 

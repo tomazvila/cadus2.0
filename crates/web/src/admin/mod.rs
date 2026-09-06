@@ -14,6 +14,8 @@
 //! | `GET /api/admin/content/{digest}` | the body, the gate notes, and [`SAMPLE_INSTANCES`] rendered instances |
 //! | `POST /api/admin/content/{digest}/approve` | `{digest, status, approved_at, rejected_documents}` |
 //! | `POST /api/admin/content/{digest}/reject` | `{digest, status}`, and the reason is required |
+//! | `GET /api/admin/ungraded` | the ungraded attempts of the learner (D-F2) |
+//! | `POST /api/admin/ungraded/{attempt_id}/regrade` | the human verdict of one ungraded attempt |
 //!
 //! # The admin gate
 //!
@@ -72,9 +74,11 @@ use crate::operator::{FORBIDDEN, FORBIDDEN_MESSAGE};
 
 mod queue;
 mod review;
+mod ungraded;
 
 pub use queue::{list, show};
 pub use review::{Regated, approve, reject};
+pub use ungraded::{list_ungraded, regrade_ungraded};
 
 /// The count of instances the show route renders (1.0 `SAMPLE_INSTANCES`,
 /// `scripts/review_templates.py:52`).
@@ -233,6 +237,15 @@ fn admin_path(state: &AppState) -> Result<&Db, ApiError> {
             ADMIN_PATH_MESSAGE,
         )
     })
+}
+
+/// The answer of an attempt id the log does not hold as an ungraded attempt.
+fn unknown_ungraded() -> ApiError {
+    ApiError::new(
+        StatusCode::NOT_FOUND,
+        crate::error::NOT_FOUND,
+        ungraded::NOT_UNGRADED_MESSAGE,
+    )
 }
 
 /// The answer of a digest the table does not hold.

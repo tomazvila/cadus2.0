@@ -13,9 +13,11 @@ use super::*;
 ///   threshold of 0.7, so a wrong answer is never priced as a pass.
 /// - a blank: `poor`, which is the tier of 1.0's `blank_answer_grade`.
 ///
-/// An answer the checker refuses ([`Outcome::Undecidable`]: the input cap, or an
-/// exit from the grammar) is a deterministic MISS with no tag, which is the
-/// section 5.1 rule. It is never a model verdict and never a pass.
+/// An answer the checker refuses ([`Outcome::Undecidable`]: the input cap, an
+/// exit from the grammar, or a kind no checker decides) is UNGRADED (D-F2). It is
+/// not a miss: the outcome carries the refusal reason, the fold ignores the
+/// attempt, and the tier stays `nearly_passable` on the row while no grade reads
+/// it. It is never a model verdict and never a pass.
 #[must_use]
 pub fn deterministic_grade(expected: &str, answer: &str, kind: AnswerKind) -> Grade {
     if answer.trim().is_empty() {
@@ -37,12 +39,30 @@ pub fn deterministic_grade(expected: &str, answer: &str, kind: AnswerKind) -> Gr
                 Vec::new()
             },
         },
-        Outcome::Decided(_) | Outcome::Undecidable(_) => Grade {
+        Outcome::Decided(_) => Grade {
             correct: false,
             outcome: AttemptOutcome::Incorrect,
             work_quality: WorkQuality::NearlyPassable,
             error_tags: Vec::new(),
         },
+        Outcome::Undecidable(refusal) => ungraded_grade(refusal.reason),
+    }
+}
+
+/// The grade of an answer with no deterministic verdict (D-F2).
+///
+/// `reason` names why in one phrase, and the client shows it. The tier stays
+/// `nearly_passable` on the row, and the fold reads neither the tier nor
+/// `correct` of an ungraded attempt.
+#[must_use]
+pub fn ungraded_grade(reason: &str) -> Grade {
+    Grade {
+        correct: false,
+        outcome: AttemptOutcome::Ungraded {
+            reason: reason.to_owned(),
+        },
+        work_quality: WorkQuality::NearlyPassable,
+        error_tags: Vec::new(),
     }
 }
 

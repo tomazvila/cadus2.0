@@ -130,13 +130,15 @@ fn the_three_deterministic_tiers_are_the_d_m5_2_ruling() {
             error_tags: Vec::new(),
         }
     );
-    // An answer outside the grammar is a MISS, never a pass and never a model
-    // verdict (spec section 5.1).
+    // An answer outside the grammar is UNGRADED, never a pass, never a miss, and
+    // never a model verdict (D-F2, audit finding c).
     assert_eq!(
         deterministic_grade("13.5", "about thirteen and a half", AnswerKind::Numeric),
         Grade {
             correct: false,
-            outcome: AttemptOutcome::of_correct(false),
+            outcome: AttemptOutcome::Ungraded {
+                reason: "a name that is not a function or variable".to_owned(),
+            },
             work_quality: WorkQuality::NearlyPassable,
             error_tags: Vec::new(),
         }

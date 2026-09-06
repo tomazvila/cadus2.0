@@ -177,6 +177,7 @@ pub fn regraded(attempt_id: &str) -> Event {
         topic: Slug::new("addition").unwrap(),
         attempts: vec![RegradedAttempt {
             attempt_id: attempt_id.to_string(),
+            outcome: None,
             work_quality: WorkQuality::Poor,
             error_tags: vec!["arithmetic-slip".to_string()],
             grader_note: Some("operator repair".to_string()),

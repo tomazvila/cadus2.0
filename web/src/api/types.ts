@@ -198,6 +198,14 @@ export interface StatusResponse {
   frontier: number;
   due_reviews: number;
   nearly_due: number;
+  /**
+   * The ungraded-attempt count of each topic that has one (D-F2).
+   *
+   * A topic with none is absent, so an empty object means nothing is waiting.
+   */
+  ungraded_attempts: Record<string, number>;
+  /** The count of ungraded attempts the recovery list holds. */
+  ungraded: number;
 }
 
 /** The mastery state of one topic (`core::event::TopicStatus`). */

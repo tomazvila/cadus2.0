@@ -60,13 +60,19 @@ pub struct QuizTopicResult {
 
 /// The replacement grade fields for one superseded `attempt`.
 ///
-/// `correct` is deliberately absent: a correction restates how well the work was
-/// done, never whether the answer was right (C4).
+/// `correct` is absent: a correction restates how well the work was done, and the
+/// checker owns whether the answer was right (C4). The one exception is
+/// `outcome`, and it exists because an UNGRADED attempt has NO checker verdict to
+/// own (D-F2): a human is then the only grader, and the recovery path gives the
+/// attempt the verdict the checker could not reach.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct RegradedAttempt {
     /// The attempt this correction supersedes.
     pub attempt_id: String,
+    /// The replacement outcome. `None` leaves the recorded outcome standing.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub outcome: Option<AttemptOutcome>,
     /// The replacement work-quality tier.
     pub work_quality: WorkQuality,
     /// The replacement error tags. They replace the whole list, in order.

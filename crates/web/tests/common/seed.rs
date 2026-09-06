@@ -134,11 +134,15 @@ pub async fn seed_cached_model(db: &TestDb, user: Uuid, model: &LearnerModel, th
         r#"
         INSERT INTO learner_models
             (user_id, model, through_seq, projector_version, config_hash)
-        VALUES ($1, $2, $3, 3, $4)
+        VALUES ($1, $2, $3, $4, $5)
         "#,
         user,
         serde_json::to_value(model).unwrap(),
         through_seq,
+        // The seeded cache must be a VALID cache, so it carries the version this
+        // build folds with. A stale version forces the full replay and the test
+        // then measures the replay it did not mean to measure.
+        i32::try_from(cadus_core::projector::PROJECTOR_VERSION).unwrap(),
         Config::default().config_hash().unwrap()
     )
     .execute(&db.admin)

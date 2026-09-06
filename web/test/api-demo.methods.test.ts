@@ -226,6 +226,8 @@ describe('the demo payloads, literally', () => {
       frontier: 4,
       due_reviews: 2,
       nearly_due: 1,
+      ungraded_attempts: {},
+      ungraded: 0,
     });
   });
 
@@ -301,6 +303,7 @@ describe('the demo payloads, literally', () => {
     });
     expect(await settle(demo.taskAnswer('demo-lesson', { problem_id: 'demo-p1', answer: ' 3 / 4 ' }))).toEqual({
       attempt_id: 'demo-lesson-1',
+      outcome: 'correct',
       correct: true,
       work_quality: 'perfect',
       error_tags: [],

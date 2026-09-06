@@ -60,6 +60,10 @@ impl Advance {
 /// Only a lesson advances here. A review, a drill, a quiz and a multi-step task
 /// close explicitly, because their pass rule is order-sensitive over the whole
 /// question set, so every non-lesson attempt is [`STATUS_CONTINUE`].
+///
+/// An UNGRADED attempt advances nothing (D-F2). It is not in the knowledge-point
+/// sequence, it closes no lesson, and it earns no XP, because the checker gave no
+/// verdict to count. The learner still takes the next problem.
 pub(super) fn advance(
     graph: &Curriculum,
     cfg: &Config,
@@ -68,7 +72,7 @@ pub(super) fn advance(
     prior: &[EventRow],
     history: &SessionView,
 ) -> Advance {
-    if attempt.task_type != TaskType::Lesson {
+    if attempt.task_type != TaskType::Lesson || attempt.outcome.is_ungraded() {
         return Advance::carry_on();
     }
     let Some(idx) = graph.idx_of(attempt.topic.as_str()) else {
@@ -88,8 +92,11 @@ pub(super) fn advance(
     let mut sequence: Vec<bool> = prior
         .iter()
         .filter_map(|row| match &row.event {
+            // An ungraded prior attempt is not evidence, so it never enters the
+            // sequence the pass rule reads (D-F2).
             Event::Attempt(body)
                 if body.task_id == attempt.task_id
+                    && !body.outcome.is_ungraded()
                     && body.kp.as_ref().map(|slug| slug.as_str().to_string()) == kp =>
             {
                 Some(body.correct)

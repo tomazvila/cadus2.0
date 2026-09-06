@@ -126,18 +126,18 @@ use reply::*;
 pub use route::answer;
 use submission::*;
 use verdict::round2;
-pub use verdict::{deterministic_grade, measure_secs, reference_assisted};
+pub use verdict::{deterministic_grade, measure_secs, reference_assisted, ungraded_grade};
 
 /// The code of an answer or a work field over its cap (`api.py:1292-1293`).
 pub const ANSWER_TOO_LARGE: &str = "answer_too_large";
 
-/// The code of an answer whose kind the checker never decides.
+/// The reason a `proof` answer carries no deterministic verdict (V2, D-F1).
 ///
-/// Spec section 5.1: a `multi-step` or a `proof` answer gets NO synchronous
-/// verdict. V2 keeps both kinds out of the serving pool, so this refusal guards
-/// a state the M5 routes cannot reach. It exists so that no path can fabricate a
-/// `correct` the checker did not decide (C4), and it enqueues nothing.
-pub const UNDECIDABLE_KIND: &str = "undecidable_kind";
+/// No checker decides a proof, so the grade path spends no work on one: it names
+/// this reason and records the UNGRADED outcome. The route no longer refuses the
+/// kind with a `409`, because a refusal left the learner with no outcome at all
+/// (audit 3a).
+pub const PROOF_UNGRADED: &str = "no deterministic verdict for a proof";
 
 /// The task is open and the learner owes it more problems.
 pub const STATUS_CONTINUE: &str = "continue";

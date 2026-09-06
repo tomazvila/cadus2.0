@@ -254,6 +254,13 @@ pub fn create_app(state: AppState) -> Router {
         .route("/api/admin/content/{digest}", get(admin::show))
         .route("/api/admin/content/{digest}/approve", post(admin::approve))
         .route("/api/admin/content/{digest}/reject", post(admin::reject))
+        // f4-outcome: the recovery path of the third outcome (D-F2). Both
+        // refuse an account that is not an admin.
+        .route("/api/admin/ungraded", get(admin::list_ungraded))
+        .route(
+            "/api/admin/ungraded/{attempt_id}/regrade",
+            post(admin::regrade_ungraded),
+        )
         // axum's own fallbacks answer with an empty body, so both of them
         // return the envelope instead (spec section 2).
         .fallback(error::not_found)
