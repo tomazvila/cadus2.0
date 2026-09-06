@@ -55,6 +55,8 @@ AUTHOR OPTIONS:
     --request-reserve-usd <amount>
                             required upper price bound for each HTTP request,
                             including the largest truncation output and fees.
+    --portable-schema       wrap draft JSON in one provider-portable string field.
+    --decline-dir <path>     save declined draft arguments; no credentials.
     --concurrency <1..64>    active knowledge points; default 1. Kinds stay ordered.
     --stale                 list the approved documents an older prompt wrote,
                             and make no model call and no write.
@@ -116,6 +118,10 @@ pub struct AuthorArgs {
     pub request_reserve_micros: Option<u64>,
     /// Active knowledge points; zero selects the default of one.
     pub concurrency: usize,
+    /// Use one JSON-string tool argument for providers with limited JSON schema support.
+    pub portable_schema: bool,
+    /// Save declined draft arguments and refusal facts in this directory.
+    pub decline_dir: Option<String>,
 }
 
 impl AuthorArgs {
@@ -172,6 +178,8 @@ pub fn parse<S: AsRef<str>>(args: &[S]) -> Result<Command, CliError> {
         match argument {
             "--dry-run" => parsed.dry_run = true,
             "--stale" => parsed.stale = true,
+            "--portable-schema" => parsed.portable_schema = true,
+            "--decline-dir" => parsed.decline_dir = Some(value_of(argument, args.next())?),
             "--budget-usd" | "--request-reserve-usd" => {
                 let value = value_of(argument, args.next())?;
                 let money = crate::authoring::budget::usd_micros(&value).map_err(CliError)?;

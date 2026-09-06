@@ -17,5 +17,6 @@ pub mod budget;
 pub mod cli;
 pub mod cost;
 pub mod job;
+pub mod portable;
 pub mod prompt;
 pub mod repair;

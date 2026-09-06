@@ -150,7 +150,9 @@ async fn author(args: &AuthorArgs) -> Result<(), WorkerError> {
         args.budget_micros.unwrap_or(0),
         args.request_reserve_micros.unwrap_or(0)
     );
-    let job = job.with_budget(budget.clone());
+    let job = job
+        .with_budget(budget.clone())
+        .with_transport(args.portable_schema, args.decline_dir.clone());
     // The order of `kinds` is the order of `prompt::KINDS`, whatever order the
     // operator named on the command line (`cli::AuthorArgs::kinds`), and
     // `template` leads it. That order is a contract of the gate and not a

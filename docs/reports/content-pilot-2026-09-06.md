@@ -140,3 +140,23 @@ job after the first observed rejection. Concurrent requests already in flight
 finish their ledger writes. The CLI returns exit 2 for a permanent endpoint
 failure, any reservation denial or an all-declined paid pass, and prints the
 stored and declined counts. Content-gate repair retries remain available.
+
+## Provider-portable schema and decline artifacts
+
+For providers that emit empty dynamic dictionaries, add these options:
+
+```sh
+--portable-schema --decline-dir /home/deploy/.cache/cadus2_orchestration/declines
+```
+
+The wire tool then has one required string field, `document_json`. Its string
+contains the complete original document JSON, with the original logical schema
+supplied as text. The worker decodes it and applies the same production gates.
+The logical authoring schema retains its prompt digest; this option changes the
+provider transport envelope. Draft artifacts record the decoded arguments, key,
+kind, attempt and gate refusal. They contain no client configuration or API key.
+
+Portable template instructions explicitly require named parameter domains and
+complete sample bindings. They explain the zero-boundary distractor collision
+and permit an empty distractor list. Portable teach instructions include the
+actual served problem identities and require distinct worked-example operands.

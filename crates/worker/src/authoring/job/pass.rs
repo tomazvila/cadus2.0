@@ -47,9 +47,13 @@ async fn call_model(
     spec: &AuthoringSpec,
     feedback: Option<&str>,
     kp_id: &str,
+    instances: &[ServedInstance],
 ) -> Call {
-    let request = prompt::request(kind, spec, feedback);
-    let call = job
+    let mut request = prompt::request(kind, spec, feedback);
+    if job.portable_schema {
+        crate::authoring::portable::prepare(&mut request, kind, instances);
+    }
+    let mut call = job
         .client
         .call_guarded(
             &request,
@@ -75,6 +79,9 @@ async fn call_model(
     {
         job.endpoint_status
             .store(*status, std::sync::atomic::Ordering::SeqCst);
+    }
+    if job.portable_schema {
+        call.result = call.result.and_then(crate::authoring::portable::unpack);
     }
     let record = CallRecord {
         purpose: PURPOSE_AUTHORING,
@@ -228,7 +235,16 @@ pub async fn author_one(
     let mut spent = 0_u32;
 
     for attempt in 1..=job.attempts {
-        let call = call_model(db, job, kind, spec, feedback.as_deref(), &kp_id).await;
+        let call = call_model(
+            db,
+            job,
+            kind,
+            spec,
+            feedback.as_deref(),
+            &kp_id,
+            &instance_answers,
+        )
+        .await;
         if call.attempts.is_empty() {
             reasons.push(
                 call.result
@@ -251,6 +267,11 @@ pub async fn author_one(
                         .await;
                 }
                 Err(rejection) => {
+                    if let Some(directory) = &job.decline_dir {
+                        crate::authoring::portable::snapshot(
+                            directory, &kp_id, kind, attempt, &arguments, &rejection,
+                        );
+                    }
                     // The LITERAL message becomes the next attempt's feedback.
                     feedback = Some(rejection.message.clone());
                     format!("{}: {}", rejection.code, rejection.message)
