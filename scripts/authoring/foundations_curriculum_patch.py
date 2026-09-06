@@ -24,6 +24,8 @@ _KP_ID = re.compile(r"^      - id: (kp\d+)\n$")
 _PROBLEM = re.compile(r"^          - problem: ")
 _EXEMPLAR_FIELD = re.compile(r"^            \w+:")
 _SOLUTION_SKETCH = re.compile(r"^            solution_sketch:")
+_ANSWER = re.compile(r"^            answer: ")
+_ANSWER_CONTRACT = re.compile(r"^            answer_contract:")
 
 
 class Rejection(ValueError):
@@ -52,6 +54,39 @@ class ExemplarKey:
     exemplar_index: int
 
 
+def _exemplar_blocks(lines: list[str]) -> dict[ExemplarKey, tuple[int, int]]:
+    """Map every exemplar to its half-open field range after `problem:`."""
+    blocks = {}
+    topic_id = None
+    kp_id = None
+    exemplar_index = -1
+    for index, line in enumerate(lines):
+        previous_kp_id = kp_id
+        topic_id, kp_id = _track_topic_kp(line, topic_id, kp_id)
+        if kp_id != previous_kp_id:
+            exemplar_index = -1
+        elif _PROBLEM.match(line):
+            exemplar_index += 1
+        if not _PROBLEM.match(line) or topic_id is None or kp_id is None:
+            continue
+        end = index + 1
+        while end < len(lines) and _EXEMPLAR_FIELD.match(lines[end]):
+            end += 1
+        blocks[ExemplarKey(topic_id, kp_id, exemplar_index)] = (index + 1, end)
+    return blocks
+
+
+def _insert_lines(lines: list[str], insertions: dict[int, str]) -> str:
+    output = []
+    for index, line in enumerate(lines):
+        if index in insertions:
+            output.append(insertions[index])
+        output.append(line)
+    if len(lines) in insertions:
+        output.append(insertions[len(lines)])
+    return "".join(output)
+
+
 def apply_solution_sketches(
     path: Path, sketches: dict[ExemplarKey, str], *, write: bool
 ) -> tuple[str, list[ExemplarKey]]:
@@ -63,44 +98,19 @@ def apply_solution_sketches(
     did not itself write (an author-written sketch is never replaced).
     """
     lines = path.read_text().splitlines(keepends=True)
-    topic_id = None
-    kp_id = None
-    exemplar_index = -1
-    output: list[str] = []
     applied: list[ExemplarKey] = []
     remaining = dict(sketches)
-    index = 0
-    while index < len(lines):
-        line = lines[index]
-        previous_kp_id = kp_id
-        topic_id, kp_id = _track_topic_kp(line, topic_id, kp_id)
-        if kp_id != previous_kp_id:
-            exemplar_index = -1
-        elif _PROBLEM.match(line):
-            exemplar_index += 1
-        output.append(line)
-        index += 1
-        if not _PROBLEM.match(line) or topic_id is None or kp_id is None:
-            continue
-        key = ExemplarKey(topic_id, kp_id, exemplar_index)
+    insertions = {}
+    for key, (start, end) in _exemplar_blocks(lines).items():
         if key not in remaining:
             continue
-        block_has_sketch = False
-        cursor = index
-        while cursor < len(lines) and _EXEMPLAR_FIELD.match(lines[cursor]):
-            if _SOLUTION_SKETCH.match(lines[cursor]):
-                block_has_sketch = True
-            cursor += 1
-        if block_has_sketch:
+        if any(_SOLUTION_SKETCH.match(line) for line in lines[start:end]):
             raise Rejection(f"{key} already carries an authored solution_sketch")
-        while index < cursor:
-            output.append(lines[index])
-            index += 1
-        output.append(f"            solution_sketch: {_quoted(remaining.pop(key))}\n")
+        insertions[end] = f"            solution_sketch: {_quoted(remaining.pop(key))}\n"
         applied.append(key)
     if remaining:
         raise Rejection(f"never found in {path}: {sorted(remaining)}")
-    text = "".join(output)
+    text = _insert_lines(lines, insertions)
     if write:
         path.write_text(text)
     return text, applied
@@ -189,6 +199,38 @@ def insert_exemplars(
     if remaining:
         raise Rejection(f"never found in {path}: {sorted(remaining)}")
     text = "".join(output)
+    if write:
+        path.write_text(text)
+    return text, applied
+
+
+def insert_answer_contracts(
+    path: Path, contracts: dict[ExemplarKey, str], *, write: bool
+) -> tuple[str, list[ExemplarKey]]:
+    """Insert an `answer_contract:` line right after `answer:` for every key.
+
+    Each value of `contracts` is the exact JSON text to write. Raises
+    [`Rejection`] and touches no line at all when any key is absent from the
+    file, or when a key that needs a contract already carries one this
+    module did not itself write (an authored contract is never replaced).
+    """
+    lines = path.read_text().splitlines(keepends=True)
+    applied: list[ExemplarKey] = []
+    remaining = dict(contracts)
+    insertions = {}
+    for key, (start, end) in _exemplar_blocks(lines).items():
+        if key not in remaining:
+            continue
+        if any(_ANSWER_CONTRACT.match(line) for line in lines[start:end]):
+            raise Rejection(f"{key} already carries an authored answer_contract")
+        answer = next((index for index in range(start, end) if _ANSWER.match(lines[index])), None)
+        if answer is None:
+            raise Rejection(f"{key} has no answer field")
+        insertions[answer + 1] = f"            answer_contract: {remaining.pop(key)}\n"
+        applied.append(key)
+    if remaining:
+        raise Rejection(f"never found in {path}: {sorted(remaining)}")
+    text = _insert_lines(lines, insertions)
     if write:
         path.write_text(text)
     return text, applied

@@ -61,6 +61,12 @@ class FoundationsContentAuditTest(unittest.TestCase):
         self.assertIn("generic_order_of_operations", generic["evidence"][0]["markers"])
         self.assertIn("tautological_answer_restatement", tautology["evidence"][0]["markers"])
 
+    def test_reflexive_equality_is_marked_but_a_real_computation_is_not(self):
+        marker = audit._markers("$6 \\times 7 = 42$; $42 = 42$.", "42")
+        control = audit._markers("$6 \\times 7 = 42$.", "42")
+        self.assertIn("tautological_reflexive_equality", marker)
+        self.assertNotIn("tautological_reflexive_equality", control)
+
     def test_orphan_template_key_keeps_report_failed(self):
         templates = {**self.templates, "ghost/kp1": []}
         report = audit.build_report(self.facts, templates)

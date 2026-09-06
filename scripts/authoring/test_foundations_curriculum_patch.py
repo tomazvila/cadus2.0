@@ -9,6 +9,7 @@ from foundations_curriculum_patch import (
     NewExemplar,
     Rejection,
     apply_solution_sketches,
+    insert_answer_contracts,
     insert_exemplars,
 )
 
@@ -195,6 +196,64 @@ class InsertExemplarsTest(FixtureFileCase):
         lines = text.splitlines()
         kp1_constraints = next(i for i, l in enumerate(lines) if "small integers" in l)
         self.assertNotIn("-5 + 5", "\n".join(lines[: kp1_constraints + 1]))
+
+
+class InsertAnswerContractsTest(FixtureFileCase):
+    def assert_contract_rejected(self, key):
+        before = self.path.read_text()
+        with self.assertRaises(Rejection):
+            insert_answer_contracts(self.path, {key: '{"kind":"exact"}'}, write=True)
+        self.assertEqual(self.path.read_text(), before)
+
+    def test_inserts_a_contract_right_after_answer(self):
+        key = ExemplarKey("adding-integers", "kp2", 0)
+        text, applied = insert_answer_contracts(
+            self.path, {key: '{"kind":"exact"}'}, write=False
+        )
+        self.assertEqual(applied, [key])
+        lines = text.splitlines()
+        answer_line = next(i for i, l in enumerate(lines) if 'answer: "-3"' in l)
+        self.assertIn('answer_contract: {"kind":"exact"}', lines[answer_line + 1])
+
+    def test_lands_before_an_existing_solution_sketch(self):
+        # kp1/1 already has answer_contract (exact); use a fresh row with a
+        # sketch but no contract instead, to test ordering against a sketch.
+        text = FIXTURE.replace(
+            '          - problem: \'Compute $-7 + 4$.\'\n            answer: "-3"\n',
+            '          - problem: \'Compute $-7 + 4$.\'\n            answer: "-3"\n'
+            "            solution_sketch: 'existing'\n",
+        )
+        self.path.write_text(text)
+        key = ExemplarKey("adding-integers", "kp2", 0)
+        new_text, applied = insert_answer_contracts(
+            self.path, {key: '{"kind":"exact"}'}, write=False
+        )
+        self.assertEqual(applied, [key])
+        lines = new_text.splitlines()
+        answer_line = next(i for i, l in enumerate(lines) if 'answer: "-3"' in l)
+        self.assertIn("answer_contract", lines[answer_line + 1])
+        self.assertIn("solution_sketch: 'existing'", lines[answer_line + 2])
+
+    def test_write_true_persists_the_change(self):
+        key = ExemplarKey("other-topic", "kp1", 0)
+        insert_answer_contracts(self.path, {key: '{"kind":"exact"}'}, write=True)
+        self.assertIn('answer_contract: {"kind":"exact"}', self.path.read_text())
+
+    def test_refuses_an_already_contracted_exemplar_and_writes_nothing(self):
+        key = ExemplarKey("adding-integers", "kp1", 0)
+        self.assert_contract_rejected(key)
+
+    def test_refuses_an_unknown_key_and_writes_nothing(self):
+        key = ExemplarKey("adding-integers", "kp1", 9)
+        self.assert_contract_rejected(key)
+
+    def test_refuses_an_exemplar_without_an_answer_and_writes_nothing(self):
+        self.path.write_text(FIXTURE.replace('            answer: "-3"\n', ""))
+        key = ExemplarKey("adding-integers", "kp2", 0)
+        before = self.path.read_text()
+        with self.assertRaisesRegex(Rejection, "has no answer field"):
+            insert_answer_contracts(self.path, {key: '{"kind":"exact"}'}, write=True)
+        self.assertEqual(self.path.read_text(), before)
 
 
 if __name__ == "__main__":

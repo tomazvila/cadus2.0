@@ -22,6 +22,7 @@ CODES = (
 )
 NUMBER = re.compile(r"(?<![A-Za-z])[-+]?\d+(?:\.\d+)?(?:/\d+)?")
 SPACE = re.compile(r"\s+")
+REFLEXIVE_EQUALITY = re.compile(r"(?<![\w.])([-+]?\d+(?:\.\d+)?)\s*=\s*\1(?![\w.])")
 GENERIC = (
     ("generic_order_of_operations", "evaluate grouped expressions first"),
     ("generic_appropriate_rule", "use the appropriate rule"),
@@ -173,6 +174,8 @@ def _markers(sketch: str, answer: str | None) -> list[str]:
     markers = [name for name, phrase in GENERIC if phrase in lowered]
     if _tautology(sketch, answer):
         markers.append("tautological_answer_restatement")
+    if REFLEXIVE_EQUALITY.search(lowered):
+        markers.append("tautological_reflexive_equality")
     return markers
 
 
