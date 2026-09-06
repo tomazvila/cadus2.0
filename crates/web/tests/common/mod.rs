@@ -21,7 +21,6 @@
 
 pub mod admin;
 mod arena;
-mod bench;
 mod callback;
 mod corpus;
 pub mod csrf;
@@ -58,7 +57,6 @@ pub mod prelude {
 }
 
 pub use arena::*;
-pub use bench::*;
 pub use callback::*;
 pub use corpus::*;
 pub use db::*;
