@@ -42,6 +42,7 @@ fn attempt() -> IntegratedAttempt {
         skills_credited: vec!["a/kp1".into(), "a/kp2".into(), "b/kp1".into()],
         solved: false,
         assisted: false,
+        grade: None,
         reasoning_ungraded: Some("ungraded prose".into()),
     }
 }
