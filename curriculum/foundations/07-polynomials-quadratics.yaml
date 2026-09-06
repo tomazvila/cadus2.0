@@ -30,14 +30,14 @@ topics:
           - problem: 'State the degree of $5x^2 - 2x^4 + 1$.'
             answer: "4"
             solution_sketch: 'The highest power present is $x^4$.'
-          - problem: 'State the degree and leading coefficient of $6x^5 - 3x^2 + x$.'
+          - problem: 'A coefficient table lists powers $5,2,1$ with coefficients $6,-3,1$. State the degree and leading coefficient.'
             answer: "degree = 5; leading_coefficient = 6"
             answer_contract: {kind: multipart, parts: [{name: degree, contract: {kind: exact}}, {name: leading_coefficient, contract: {kind: exact}}]}
             solution_sketch: 'The highest power present is $x^5$, with coefficient $6$.'
-          - problem: 'State the degree and leading coefficient of $-2x^4 + 7x^3 - 1$.'
+          - problem: 'After simplifying $3x^5-2x^4+7x^3-3x^5-1$, state the degree and leading coefficient.'
             answer: "degree = 4; leading_coefficient = -2"
             answer_contract: {kind: multipart, parts: [{name: degree, contract: {kind: exact}}, {name: leading_coefficient, contract: {kind: exact}}]}
-            solution_sketch: 'The highest power present is $x^4$, with coefficient $-2$.'
+            solution_sketch: 'The two $x^5$ terms cancel. The highest remaining term is $-2x^4$, so the degree is $4$ and its coefficient is $-2$.'
         constraints: "degree <= 5; integer coefficients"
       - id: kp2
         name: Classify by number of terms
@@ -46,19 +46,19 @@ topics:
           - problem: 'Classify $3x^2 - 5x$ as a monomial, binomial, or trinomial.'
             answer: "binomial"
             answer_contract: {kind: label, options: [["monomial"], ["binomial"], ["trinomial"]]}
-            solution_sketch: 'Two terms separated by subtraction make a binomial.'
-          - problem: 'Classify $x^2 + 2x + 1$ as a monomial, binomial, or trinomial.'
+            solution_sketch: 'The nonzero terms are $3x^2$ and $-5x$. Two terms make a binomial.'
+          - problem: 'After combining like terms in $x^2+5x-3x+1$, classify the result as a monomial, binomial, or trinomial.'
             answer: "trinomial"
             answer_contract: {kind: label, options: [["monomial"], ["binomial"], ["trinomial"]]}
-            solution_sketch: 'Three terms separated by addition make a trinomial.'
-          - problem: 'Classify $7x^4$ as a monomial, binomial, or trinomial.'
+            solution_sketch: 'The linear terms combine to $2x$. The remaining terms $x^2$, $2x$, and $1$ give a trinomial.'
+          - problem: 'An algebra-tile model contains seven positive $x^4$ pieces and no other pieces. Classify its polynomial as a monomial, binomial, or trinomial.'
             answer: "monomial"
             answer_contract: {kind: label, options: [["monomial"], ["binomial"], ["trinomial"]]}
-            solution_sketch: 'A single term with no addition or subtraction is a monomial.'
-          - problem: 'Classify $x^2 - 5x + 6$ as a monomial, binomial, or trinomial.'
+            solution_sketch: 'All seven pieces represent one like-term group, $7x^4$, so the polynomial is a monomial.'
+          - problem: 'A coefficient table has nonzero entries $1,-5,6$ at powers $2,1,0$. Classify the polynomial as a monomial, binomial, or trinomial.'
             answer: "trinomial"
             answer_contract: {kind: label, options: [["monomial"], ["binomial"], ["trinomial"]]}
-            solution_sketch: 'Three terms separated by addition or subtraction make a trinomial.'
+            solution_sketch: 'Each nonzero coefficient contributes a term: $x^2$, $-5x$, and $6$. Three terms give a trinomial.'
         constraints: "one to three terms"
       - id: kp3
         name: Write polynomials in standard form
@@ -70,12 +70,12 @@ topics:
           - problem: 'Simplify and write in standard form: $2x + x^3 + 4x - 1$.'
             answer: "x^3 + 6x - 1"
             solution_sketch: 'Combine $2x + 4x$; order by descending degree.'
-          - problem: 'Write $4x^2 - 7 + x^2 + 3x$ in standard form.'
+          - problem: 'An algebra-tile inventory contains five positive square tiles, three positive $x$ tiles, and seven negative unit tiles. Write its polynomial in descending powers.'
             answer: "5x^2 + 3x - 7"
-            solution_sketch: 'Combine $4x^2 + x^2 = 5x^2$; order by descending degree.'
-          - problem: 'Simplify and write in standard form: $5 - x^3 + 2x - 3x^3$.'
+            solution_sketch: 'The tile groups represent $5x^2$, $3x$, and $-7$; descending powers are $2,1,0$.'
+          - problem: 'A coefficient list gives the constant $5$, the $x$ coefficient $2$, and two cubic contributions $-1$ and $-3$. Write the polynomial in standard form.'
             answer: "-4x^3 + 2x + 5"
-            solution_sketch: 'Combine $-x^3 - 3x^3 = -4x^3$; order by descending degree.'
+            solution_sketch: 'The cubic contributions add to $-4$; the coefficient of $x^2$ is zero. Descending order gives $-4x^3+2x+5$.'
         constraints: "descending powers; combine like terms first"
     diagnostic_exemplar:
       problem: 'State the degree and leading coefficient of $7 + 2x - 5x^3$.'
@@ -114,13 +114,13 @@ topics:
           - problem: 'Evaluate $x^2 + 3x - 2$ at $x = 2$.'
             answer: "8"
             solution_sketch: '$4 + 6 - 2 = 8$.'
-          - problem: 'Evaluate $2x^3 - x$ at $x = 3$.'
+          - problem: 'Use Horner form $p(x)=x(2x^2-1)$ to find $p(3)$.'
             answer: "51"
-            solution_sketch: '$54 - 3 = 51$.'
-          - problem: 'Evaluate $x^2 - 5x + 4$ at $x = 3$.'
+            solution_sketch: 'Work inside out: $2(3)^2-1=17$, then $3(17)=51$.'
+          - problem: 'Complete the output entry for input $3$ in the function table for $p(x)=x^2-5x+4$.'
             answer: "-2"
             solution_sketch: '$9 - 15 + 4 = -2$.'
-          - problem: 'Evaluate $3x^2 + x - 1$ at $x = 4$.'
+          - problem: 'A machine maps a positive integer $x$ to $3x^2+x-1$. What output corresponds to input $4$?'
             answer: "51"
             solution_sketch: '$48 + 4 - 1 = 51$.'
         constraints: "degree <= 3; small positive inputs"
@@ -131,15 +131,15 @@ topics:
           - problem: 'Evaluate $x^2 - 4x + 1$ at $x = -2$.'
             answer: "13"
             solution_sketch: '$(-2)^2 = 4$; $4 + 8 + 1 = 13$.'
-          - problem: 'Evaluate $-x^2 + 5$ at $x = -3$.'
+          - problem: 'A student obtains $14$ for $p(-3)$ when $p(x)=-x^2+5$ by squaring the minus sign with the input. Give the correct output.'
             answer: "-4"
-            solution_sketch: '$-(9) + 5 = -4$.'
-          - problem: 'Evaluate $x^2 + 3x - 5$ at $x = -4$.'
+            solution_sketch: 'Only the input is squared: $-(-3)^2+5=-9+5=-4$.'
+          - problem: 'Complete the output entry at input $-4$ in a table for $p(x)=x(x+3)-5$.'
             answer: "-1"
-            solution_sketch: '$(-4)^2 = 16$; $16 - 12 - 5 = -1$.'
-          - problem: 'Evaluate $-2x^2 + 3$ at $x = -2$.'
+            solution_sketch: 'Horner form gives $(-4)(-4+3)-5=4-5=-1$.'
+          - problem: 'For the even polynomial $p(x)=-2x^2+3$, the table gives $p(2)=-5$. Find $p(-2)$ using symmetry.'
             answer: "-5"
-            solution_sketch: '$-2(4) + 3 = -5$.'
+            solution_sketch: 'An even power has the same value at opposite inputs. Substituting $-2$ therefore gives the stated table value, $-5$.'
         constraints: "watch (-a)^2 vs -a^2"
       - id: kp3
         name: Evaluate formula-style polynomials
@@ -152,7 +152,7 @@ topics:
             answer: "40"
             solution_sketch: '$25 + 15 = 40$.'
           - problem: 'The area of a square garden in square metres is $A = s^2$. Find $A$ at $s = 6$.'
-            answer: "6"
+            answer: '36'
             solution_sketch: '$6^2 = 36$.'
           - problem: 'For $C = 2n^2 - n$, find $C$ at $n = 4$.'
             answer: "28"
@@ -190,8 +190,16 @@ topics:
         exemplars:
           - problem: 'Add $(2x + 9) + (5x - 3)$.'
             answer: "7x + 6"
-          - problem: 'Add $(4x - 7) + (x + 2)$.'
+            solution_sketch: '$2x + 5x = 7x$; $9 - 3 = 6$.'
+          - problem: 'Two consecutive path sections have lengths $4x-7$ and $x+2$, with $x>2$. Write their total length in standard form.'
             answer: "5x - 5"
+            solution_sketch: '$4x + x = 5x$; $-7 + 2 = -5$.'
+          - problem: 'Add coefficient rows $(3,4)$ and $(2,-10)$, ordered as $(x,1)$. Write the resulting linear polynomial.'
+            answer: "5x - 6"
+            solution_sketch: '$3x + 2x = 5x$; $4 - 10 = -6$.'
+          - problem: 'A student adds $(6x-1)+(-2x+5)$ and writes $8x+4$. Correct the polynomial.'
+            answer: "4x + 4"
+            solution_sketch: 'The second $x$ coefficient is negative: $6+(-2)=4$. The constants give $-1+5=4$.'
         constraints: "degree 1; integer coefficients"
       - id: kp2
         name: Add quadratics term by term
@@ -200,8 +208,15 @@ topics:
           - problem: 'Add $(3x^2 + 2x - 5) + (x^2 - 4x + 7)$.'
             answer: "4x^2 - 2x + 2"
             solution_sketch: '$3x^2 + x^2 = 4x^2$; $2x - 4x = -2x$; $-5 + 7 = 2$.'
-          - problem: 'Add $(x^2 - 3x) + (2x^2 + x - 4)$.'
+          - problem: 'An algebra-tile tray represents $x^2-3x$ and another $2x^2+x-4$. Write the polynomial represented when the trays are combined.'
             answer: "3x^2 - 2x - 4"
+            solution_sketch: '$x^2 + 2x^2 = 3x^2$; $-3x + x = -2x$.'
+          - problem: 'Add coefficient rows $(4,-1,2)$ and $(2,3,-5)$ in columns $(x^2,x,1)$. Write the resulting polynomial.'
+            answer: "6x^2 + 2x - 3"
+            solution_sketch: '$4x^2 + 2x^2 = 6x^2$; $-x + 3x = 2x$; $2 - 5 = -3$.'
+          - problem: 'Two garden plots have areas $x^2+5x$ and $3x^2-2x+6$ square metres, with $x>1$. Write the total area polynomial.'
+            answer: "4x^2 + 3x + 6"
+            solution_sketch: '$x^2 + 3x^2 = 4x^2$; $5x - 2x = 3x$.'
         constraints: "degree 2; line up like terms"
       - id: kp3
         name: Add with missing terms
@@ -210,8 +225,15 @@ topics:
           - problem: 'Add $(x^3 + 2x - 1) + (x^2 - 2x + 4)$.'
             answer: "x^3 + x^2 + 3"
             solution_sketch: '$2x - 2x = 0$; no other like terms overlap.'
-          - problem: 'Add $(2x^3 - x) + (x^3 + 5)$.'
+          - problem: 'Add coefficient rows $(2,0,-1,0)$ and $(1,0,0,5)$ in columns $(x^3,x^2,x,1)$. Write the sum in standard form.'
             answer: "3x^3 - x + 5"
+            solution_sketch: '$2x^3 + x^3 = 3x^3$; no other like terms overlap.'
+          - problem: 'Two volume contributions are $x^3-4x$ and $2x^2+4x-3$, for $x>3$. Write their total as a polynomial and combine the cancelling terms.'
+            answer: "x^3 + 2x^2 - 3"
+            solution_sketch: '$-4x + 4x = 0$; combine the remaining terms.'
+          - problem: 'A student adds $(3x^3+2x^2)+(x^3-2x^2+7)$ and keeps $4x^2$ in the answer. Correct the sum.'
+            answer: "4x^3 + 7"
+            solution_sketch: '$2x^2 - 2x^2 = 0$; $3x^3 + x^3 = 4x^3$.'
         constraints: "some powers absent; keep standard form"
     diagnostic_exemplar:
       problem: 'Add $(2x^3 + x - 5) + (x^2 - 3x + 2)$.'
@@ -249,8 +271,15 @@ topics:
           - problem: 'Subtract $(5x^2 - 3x + 4) - (2x^2 + x - 6)$.'
             answer: "3x^2 - 4x + 10"
             solution_sketch: 'Distribute the minus: $5x^2 - 2x^2 = 3x^2$; $-3x - x = -4x$; $4 - (-6) = 10$.'
-          - problem: 'Subtract $(7x - 2) - (3x - 8)$.'
+          - problem: 'A length $3x-8$ is cut from a bar of length $7x-2$, with $x>3$. Write the remaining length as a polynomial.'
             answer: "4x + 6"
+            solution_sketch: 'Distribute the minus: $7x - 3x = 4x$; $-2 - (-8) = 6$.'
+          - problem: 'Subtract coefficient row $(3,4,-1)$ from $(6,-2,5)$ in columns $(x^2,x,1)$. Write the resulting polynomial.'
+            answer: "3x^2 - 6x + 6"
+            solution_sketch: 'Distribute the minus: $6x^2 - 3x^2 = 3x^2$; $-2x - 4x = -6x$; $5 - (-1) = 6$.'
+          - problem: 'A student writes $(4x-9)-(x-2)=3x-11$. Correct the result by distributing the subtraction sign.'
+            answer: "3x - 7"
+            solution_sketch: 'Distribute the minus: $4x - x = 3x$; $-9 - (-2) = -7$.'
       - id: kp2
         name: Subtract with missing terms and cancellation
         key_prerequisites: [adding-polynomials, distributive-property]
@@ -260,6 +289,13 @@ topics:
             solution_sketch: '$x^3$ cancels; $+x^2$; $2x - 2x = 0$; $-1 + 4 = 3$.'
           - problem: 'Simplify $(2x^2 + 5) - (x^2 + 3x)$.'
             answer: "x^2 - 3x + 5"
+            solution_sketch: 'Distribute the minus: $2x^2 - x^2 = x^2$; the $-3x$ carries through.'
+          - problem: 'Find $P-Q$ from coefficient rows $P=(1,0,3,0)$ and $Q=(1,-2,1,-4)$ in columns $(x^3,x^2,x,1)$.'
+            answer: "2x^2 + 2x + 4"
+            solution_sketch: '$x^3$ cancels; $+2x^2$; $3x - x = 2x$; $0 - (-4) = 4$.'
+          - problem: 'A tile tray represents $3x^2+2x$. Removing a tray representing $x^2+2x-6$ uses zero pairs for the negative units. What polynomial remains?'
+            answer: "2x^2 + 6"
+            solution_sketch: '$3x^2 - x^2 = 2x^2$; $2x - 2x = 0$; $0 - (-6) = 6$.'
         constraints: 'some powers absent from one polynomial; terms may cancel completely; degree <= 3'
       - id: kp3
         name: Combine three polynomials
@@ -267,8 +303,16 @@ topics:
         exemplars:
           - problem: 'Simplify $(4x^2 - 1) + (x^2 + 6x) - (2x^2 - 3)$.'
             answer: "3x^2 + 6x + 2"
+            solution_sketch: '$4x^2 + x^2 - 2x^2 = 3x^2$; the $6x$ carries; $-1 - (-3) = 2$.'
           - problem: 'Simplify $(x^2 + 2x) + (3x^2 - x) - (2x^2 + 4)$.'
             answer: "2x^2 + x - 4"
+            solution_sketch: 'Combine the $x^2$ coefficients $1 + 3 - 2$ to get $2x^2$; the $x$ terms give $2x - x = x$; the constants give $0 - 4 = -4$.'
+          - problem: 'A stock model starts at $2x^2+x$, receives $x^2-5$, and dispatches $x^2-3x$, with $x>5$. Write the net stock polynomial.'
+            answer: "2x^2 + 4x - 5"
+            solution_sketch: '$2x^2 + x^2 - x^2 = 2x^2$; $x - (-3x) = 4x$; $0 - 5 = -5$.'
+          - problem: 'Compute $P+Q-R$ using coefficient rows $P=(1,0,-4)$, $Q=(2,1,0)$, $R=(1,-2,1)$ in columns $(x^2,x,1)$.'
+            answer: "2x^2 + 3x - 5"
+            solution_sketch: '$1 + 2 - 1 = 2$ for $x^2$; $x - (-2x) = 3x$; $-4 - 1 = -5$.'
         constraints: 'three polynomials, at least one subtracted; degree <= 2; answer in standard form'
     diagnostic_exemplar:
       problem: 'Simplify $(3x^2 + 5) + (x^2 - 2x) - (2x^2 + 3)$.'
@@ -306,8 +350,15 @@ topics:
           - problem: 'Multiply $(3x^2)(5x^4)$.'
             answer: "15x^6"
             solution_sketch: '$3 \cdot 5 = 15$; $2 + 4 = 6$.'
-          - problem: 'Multiply $(-2x)(4x^3)$.'
+          - problem: 'Write $(-2x)(4x^3)$ as a single monomial using repeated factors $x\cdot x\cdot x\cdot x$.'
             answer: "-8x^4"
+            solution_sketch: '$-2 \cdot 4 = -8$; $1 + 3 = 4$.'
+          - problem: 'A rectangular garden bed has length $4x^3$ and width $2x^2$. Write its area as a monomial.'
+            answer: "8x^5"
+            solution_sketch: 'Area is length times width: multiply the coefficients $4 \cdot 2 = 8$ and add the exponents $3 + 2 = 5$.'
+          - problem: 'A student multiplies $(-3x^2)(5x)$ and reports $-15x^2$. Correct the product.'
+            answer: "-15x^3"
+            solution_sketch: 'The coefficients give $-15$; the variable factors are $x\cdot x\cdot x=x^3$.'
         constraints: "single-variable monomials; integer coefficients"
       - id: kp2
         name: Monomial times a binomial or trinomial
@@ -315,9 +366,16 @@ topics:
         exemplars:
           - problem: 'Expand $3x(2x^2 - 4x + 5)$.'
             answer: "6x^3 - 12x^2 + 15x"
-            solution_sketch: 'Distribute $3x$ to each term.'
+            solution_sketch: 'The three products are $3x(2x^2)=6x^3$, $3x(-4x)=-12x^2$, and $3x(5)=15x$.'
           - problem: 'Expand $2x(x + 7)$.'
             answer: "2x^2 + 14x"
+            solution_sketch: 'Multiply $2x$ by each term: $2x(x)=2x^2$ and $2x(7)=14x$.'
+          - problem: 'A multiplication grid has row label $4x$ and column labels $3x^2,-x,2$. Add the three cell products and write the polynomial.'
+            answer: "12x^3 - 4x^2 + 8x"
+            solution_sketch: 'The cells are $12x^3$, $-4x^2$, and $8x$; they have different powers and remain separate.'
+          - problem: 'A rectangle has width $5x$ and length $(x + 3)$. Write its area as a polynomial in standard form.'
+            answer: "5x^2 + 15x"
+            solution_sketch: 'Area is width times length: distribute $5x$ over $(x + 3)$ to get $5x \cdot x + 5x \cdot 3$.'
         constraints: "positive monomial in front"
       - id: kp3
         name: Negative monomials
@@ -328,6 +386,13 @@ topics:
             solution_sketch: 'Both products flip sign: $-2x^3$, $+6x^2$.'
           - problem: 'Expand $-4x(x^2 - 2x - 1)$.'
             answer: "-4x^3 + 8x^2 + 4x"
+            solution_sketch: 'Every product flips sign: $-4x^3$, $+8x^2$, $+4x$.'
+          - problem: 'Use the distributive property to expand $-3x^2(x - 4)$, listing each signed product separately.'
+            answer: "-3x^3 + 12x^2"
+            solution_sketch: 'List each product with its sign: $(-3x^2)(x)$ gives $-3x^3$ and $(-3x^2)(-4)$ gives $12x^2$.'
+          - problem: 'Correct the expansion $-5x(x^2-3x+2)=-5x^3-15x^2-10x$.'
+            answer: "-5x^3 + 15x^2 - 10x"
+            solution_sketch: 'The middle product is $(-5x)(-3x)=15x^2$; the other products are $-5x^3$ and $-10x$.'
         constraints: "leading negative; track every sign"
     diagnostic_exemplar:
       problem: 'Expand $-3x(x^2 - 2x + 4)$.'
@@ -362,8 +427,15 @@ topics:
           - problem: 'Expand $(x + 3)(x + 5)$.'
             answer: "x^2 + 8x + 15"
             solution_sketch: '$x^2 + 5x + 3x + 15 = x^2 + 8x + 15$.'
-          - problem: 'Expand $(x - 4)(x + 6)$.'
+          - problem: 'A $2$ by $2$ product grid has row labels $x,-4$ and column labels $x,6$. Write the sum of its four cell products in standard form.'
             answer: "x^2 + 2x - 24"
+            solution_sketch: '$x^2 + 6x - 4x - 24 = x^2 + 2x - 24$.'
+          - problem: 'A rectangle has length $(x + 2)$ and width $(x + 9)$. Write its area as a polynomial in standard form.'
+            answer: "x^2 + 11x + 18"
+            solution_sketch: 'Multiply length by width using FOIL: $x \cdot x + x \cdot 9 + 2 \cdot x + 2 \cdot 9$, then combine.'
+          - problem: 'Correct the proposed expansion $(x-5)(x+8)=x^2+13x-40$.'
+            answer: "x^2 + 3x - 40"
+            solution_sketch: 'The cross-products are $8x$ and $-5x$, whose sum is $3x$; the constant product is $-40$.'
         constraints: "leading coefficient 1; integer constants"
       - id: kp2
         name: One leading coefficient
@@ -372,8 +444,15 @@ topics:
           - problem: 'Expand $(2x - 1)(x + 4)$.'
             answer: "2x^2 + 7x - 4"
             solution_sketch: '$2x^2 + 8x - x - 4$.'
-          - problem: 'Expand $(3x + 2)(x - 5)$.'
+          - problem: 'Use a product grid with row labels $3x,2$ and column labels $x,-5$ to write the expanded polynomial.'
             answer: "3x^2 - 13x - 10"
+            solution_sketch: '$3x^2 - 15x + 2x - 10 = 3x^2 - 13x - 10$.'
+          - problem: 'A rectangle has length $(4x - 3)$ cm and width $(x + 2)$ cm. Write its area as a polynomial.'
+            answer: "4x^2 + 5x - 6"
+            solution_sketch: 'Area is length times width: $4x \cdot x + 4x \cdot 2 - 3 \cdot x - 3 \cdot 2$, then combine like terms.'
+          - problem: 'Correct the proposed expansion $(2x+5)(x-3)=2x^2+2x-15$.'
+            answer: "2x^2 - x - 15"
+            solution_sketch: 'The cross-products are $-6x$ and $5x$, which add to $-x$, not $2x$.'
         constraints: "one binomial has coefficient > 1"
       - id: kp3
         name: Both leading coefficients greater than 1
@@ -382,13 +461,13 @@ topics:
           - problem: 'Expand $(3x - 2)(2x + 5)$.'
             answer: "6x^2 + 11x - 10"
             solution_sketch: '$6x^2 + 15x - 4x - 10$.'
-          - problem: 'Expand $(2x - 3)(2x - 1)$.'
+          - problem: 'A rectangle has side lengths $2x-3$ and $2x-1$, for $x>2$. Write its area polynomial.'
             answer: "4x^2 - 8x + 3"
             solution_sketch: '$4x^2 - 2x - 6x + 3 = 4x^2 - 8x + 3$.'
-          - problem: 'Expand $(3x + 4)(2x - 1)$.'
+          - problem: 'A product grid uses row labels $3x,4$ and column labels $2x,-1$. Combine its four cells into a polynomial.'
             answer: "6x^2 + 5x - 4"
             solution_sketch: '$6x^2 - 3x + 8x - 4 = 6x^2 + 5x - 4$.'
-          - problem: 'Expand $(2x - 5)(3x + 2)$.'
+          - problem: 'Correct $(2x-5)(3x+2)=6x^2+19x-10$ by checking both cross-products.'
             answer: "6x^2 - 11x - 10"
             solution_sketch: '$6x^2 + 4x - 15x - 10 = 6x^2 - 11x - 10$.'
         constraints: "small coefficients; all four sign patterns"
@@ -430,10 +509,10 @@ topics:
           - problem: 'Expand $(2x - 1)(x^2 + x - 3)$.'
             answer: "2x^3 + x^2 - 7x + 3"
             solution_sketch: '$2x(x^2 + x - 3) - 1(x^2 + x - 3)$, then combine.'
-          - problem: 'Expand $(x - 3)(x^2 + 2x + 4)$.'
+          - problem: 'A rectangular prism has one dimension $x-3$ and cross-sectional area $x^2+2x+4$, with $x>3$. Write its volume polynomial.'
             answer: "x^3 - x^2 - 2x - 12"
             solution_sketch: '$x(x^2 + 2x + 4) - 3(x^2 + 2x + 4)$, then combine.'
-          - problem: 'Expand $(x + 4)(x^2 - x + 2)$.'
+          - problem: 'A product grid has rows $x,4$ and columns $x^2,-x,2$. Sum its six cells in standard form.'
             answer: "x^3 + 3x^2 - 2x + 8"
             solution_sketch: '$x(x^2 - x + 2) + 4(x^2 - x + 2)$, then combine.'
         constraints: "six products, then combine like terms"
@@ -447,12 +526,12 @@ topics:
           - problem: 'Expand $x(x - 2)(x + 5)$.'
             answer: "x^3 + 3x^2 - 10x"
             solution_sketch: '$(x-2)(x+5) = x^2 + 3x - 10$; distribute $x$.'
-          - problem: 'Expand $(x + 2)(x - 3)(x + 1)$.'
+          - problem: 'A box has dimensions $x+2$, $x-3$, and $x+1$, with $x>3$. Write its volume in standard form.'
             answer: "x^3 - 7x - 6"
             solution_sketch: '$(x+2)(x-3) = x^2 - x - 6$; multiply by $(x+1)$.'
-          - problem: 'Expand $x(x + 3)(x - 4)$.'
+          - problem: 'A student expands $x(x+3)(x-4)$ as $x^3-x^2-12$. Correct the product.'
             answer: "x^3 - x^2 - 12x"
-            solution_sketch: '$(x+3)(x-4) = x^2 - x - 12$; distribute $x$.'
+            solution_sketch: 'The binomials give $x^2-x-12$; multiplication by the outside $x$ gives $x^3-x^2-12x$.'
         constraints: "multiply two factors first, then the third"
       - id: kp3
         name: Larger products with many like terms
@@ -463,13 +542,13 @@ topics:
             solution_sketch: 'Nine products; the $x^2$ terms cancel: $3 - 2 - 1 = 0$.'
           - problem: 'Expand $(x^2 + x + 1)(x^2 - x + 1)$.'
             answer: "x^4 + x^2 + 1"
-            solution_sketch: 'Nine products; the odd-degree terms cancel.'
-          - problem: 'Expand $(x^2 - x + 2)(x^2 + x - 1)$.'
+            solution_sketch: 'Group as $((x^2+1)+x)((x^2+1)-x)=(x^2+1)^2-x^2=x^4+x^2+1$; the odd powers cancel.'
+          - problem: 'A $3$ by $3$ grid has rows $x^2,-x,2$ and columns $x^2,x,-1$. Sum all nine products, including cancellations.'
             answer: "x^4 + 3x - 2"
-            solution_sketch: 'Nine products; combine the like powers carefully.'
-          - problem: 'Expand $(x^2 + 3x - 2)(x^2 - 2x + 1)$.'
+            solution_sketch: 'The cubic terms cancel. Quadratic coefficients sum to $-1-1+2=0$; linear terms give $x+2x=3x$, and the constant is $-2$. The result is $x^4+3x-2$.'
+          - problem: 'Two polynomial factors represent a rectangle''s sides: $x^2+3x-2$ and $x^2-2x+1$, with $x>2$. Write its area in standard form.'
             answer: "x^4 + x^3 - 7x^2 + 7x - 2"
-            solution_sketch: 'Nine products; combine the like powers carefully.'
+            solution_sketch: 'Collect the nine products by degree: cubic coefficients $-2+3=1$, quadratic coefficients $1-6-2=-7$, linear coefficients $3+4=7$, and constant $-2$.'
         constraints: "trinomial times trinomial; watch cancellation"
     diagnostic_exemplar:
       problem: 'Expand $(x + 3)(x^2 - 2x + 4)$.'
@@ -503,8 +582,15 @@ topics:
           - problem: 'Expand $(x + 5)^2$.'
             answer: "x^2 + 10x + 25"
             solution_sketch: '$a^2 + 2ab + b^2$ with $a = x$, $b = 5$.'
-          - problem: 'Expand $(x - 4)^2$.'
+          - problem: 'Correct the proposed square $(x-4)^2=x^2+16$ by restoring the cross-product term.'
             answer: "x^2 - 8x + 16"
+            solution_sketch: '$a^2 - 2ab + b^2$ with $a = x$, $b = 4$.'
+          - problem: 'A square has side length $(x + 6)$. Write its area as a polynomial.'
+            answer: "x^2 + 12x + 36"
+            solution_sketch: 'Area of a square is side squared: $(x + 6)^2 = x^2 + 2(6)x + 36$.'
+          - problem: 'Use the pattern $a^2 - 2ab + b^2$ to expand $(x - 9)^2$, showing the middle term explicitly.'
+            answer: "x^2 - 18x + 81"
+            solution_sketch: 'With $a = x$ and $b = 9$: $x^2 - 2(x)(9) + 9^2$ gives $x^2 - 18x + 81$.'
         constraints: "(a ± b)^2 = a^2 ± 2ab + b^2; never just a^2 + b^2"
       - id: kp2
         name: Product of conjugates
@@ -512,9 +598,16 @@ topics:
         exemplars:
           - problem: 'Expand $(x + 7)(x - 7)$.'
             answer: "x^2 - 49"
-            solution_sketch: 'Middle terms cancel: $a^2 - b^2$.'
-          - problem: 'Expand $(2x + 3)(2x - 3)$.'
+            solution_sketch: 'The cross-products are $-7x$ and $7x$, so they cancel. The remaining terms are $x^2$ and $-49$.'
+          - problem: 'A product grid has rows $2x,3$ and columns $2x,-3$. Use cancellation to write its total as a polynomial.'
             answer: "4x^2 - 9"
+            solution_sketch: 'Middle terms cancel: $a^2 - b^2$ with $a = 2x$, $b = 3$.'
+          - problem: 'A rectangular field has sides $x+10$ and $x-10$ metres, with $x>10$. Write its area polynomial.'
+            answer: "x^2 - 100"
+            solution_sketch: 'The two measurements are conjugates, so the outer and inner products cancel: $a^2 - b^2$ with $a = x$, $b = 10$.'
+          - problem: 'A student writes $(3x+1)(3x-1)=9x^2+1$. Correct the constant term and give the polynomial.'
+            answer: "9x^2 - 1"
+            solution_sketch: 'Outer $3x \cdot (-1)$ and inner $1 \cdot 3x$ cancel, leaving $(3x)^2 - 1^2$.'
         constraints: "(a + b)(a - b) = a^2 - b^2"
       - id: kp3
         name: Special products with coefficients
@@ -523,8 +616,15 @@ topics:
           - problem: 'Expand $(3x - 4)^2$.'
             answer: "9x^2 - 24x + 16"
             solution_sketch: '$(3x)^2 - 2(3x)(4) + 4^2$.'
-          - problem: 'Expand $(2x + 5)^2$.'
+          - problem: 'Correct $(2x+5)^2=4x^2+10x+25$ by recomputing the middle term.'
             answer: "4x^2 + 20x + 25"
+            solution_sketch: '$(2x)^2 + 2(2x)(5) + 5^2$.'
+          - problem: 'A square tile has side length $(5x - 2)$. Write its area as a polynomial.'
+            answer: "25x^2 - 20x + 4"
+            solution_sketch: 'Area of a square is side squared: $(5x)^2 - 2(5x)(2) + 2^2$.'
+          - problem: 'Use the pattern $a^2 + 2ab + b^2$ to expand $(4x + 3)^2$, showing the middle term explicitly.'
+            answer: "16x^2 + 24x + 9"
+            solution_sketch: 'With $a = 4x$ and $b = 3$: $(4x)^2 + 2(4x)(3) + 3^2$ gives $16x^2 + 24x + 9$.'
         constraints: "a = coefficient times x; compute 2ab carefully"
     diagnostic_exemplar:
       problem: 'Expand $(2x - 5)^2$.'
@@ -562,8 +662,15 @@ topics:
           - problem: 'Expand $(x + 5)^3$.'
             answer: "x^3 + 15x^2 + 75x + 125"
             solution_sketch: '$(x+5)^2 = x^2 + 10x + 25$; multiply by $(x+5)$.'
-          - problem: 'Expand $(x + 1)^3$.'
+          - problem: 'A cube has edge length $(x + 1)$. Write its volume as a polynomial in standard form.'
             answer: "x^3 + 3x^2 + 3x + 1"
+            solution_sketch: 'Volume is edge cubed: $(x+1)^2 = x^2 + 2x + 1$; multiply by $(x+1)$.'
+          - problem: 'A product grid has rows $x,2$ and columns $x^2,4x,4$, the terms of $(x+2)^2$. Sum all cells to expand $(x+2)^3$.'
+            answer: "x^3 + 6x^2 + 12x + 8"
+            solution_sketch: 'With $a = x$, $b = 2$: $x^3 + 3(x^2)(2) + 3(x)(4) + 8$.'
+          - problem: 'A student expands $(x+3)^3$ as $x^3+9x^2+9x+27$. Correct it by multiplying $(x+3)^2$ by $(x+3)$.'
+            answer: "x^3 + 9x^2 + 27x + 27"
+            solution_sketch: 'The square is $x^2+6x+9$. The linear terms in the next product are $18x+9x=27x$, giving $x^3+9x^2+27x+27$.'
         constraints: "square first, then multiply by the remaining factor"
       - id: kp2
         name: Cubes of differences
@@ -571,10 +678,16 @@ topics:
         exemplars:
           - problem: 'Expand $(x - 3)^3$.'
             answer: "x^3 - 9x^2 + 27x - 27"
-            solution_sketch: 'Signs alternate: $+, -, +, -$.'
-          - problem: 'Expand $(x - 2)^3$.'
+            solution_sketch: 'First square to obtain $x^2-6x+9$. Multiply by $x-3$: the quadratic terms total $-9x^2$, linear terms total $27x$, and the constant is $-27$.'
+          - problem: 'A cube has edge length $(x - 2)$. Write its volume as a polynomial in standard form.'
             answer: "x^3 - 6x^2 + 12x - 8"
-            solution_sketch: '$(x-2)^2 = x^2 - 4x + 4$; multiply by $(x-2)$.'
+            solution_sketch: 'Volume is edge cubed: $(x-2)^2 = x^2 - 4x + 4$; multiply by $(x-2)$.'
+          - problem: 'Use the binomial-cube pattern $a^3 - 3a^2b + 3ab^2 - b^3$ to expand $(x - 4)^3$.'
+            answer: "x^3 - 12x^2 + 48x - 64"
+            solution_sketch: 'With $a = x$, $b = 4$: $x^3 - 3(x^2)(4) + 3(x)(16) - 64$.'
+          - problem: 'Correct the sign error in $(x-5)^3=x^3-15x^2-75x-125$ by multiplying $(x-5)^2$ by $(x-5)$.'
+            answer: "x^3 - 15x^2 + 75x - 125"
+            solution_sketch: 'The square is $x^2-10x+25$. The linear products are $50x+25x=75x$; the constant is $-125$.'
         constraints: "alternating signs in the expansion"
       - id: kp3
         name: Use the formula a^3 ± 3a^2b + 3ab^2 ± b^3
@@ -583,8 +696,15 @@ topics:
           - problem: 'Expand $(2x + 1)^3$ using the binomial-cube pattern.'
             answer: "8x^3 + 12x^2 + 6x + 1"
             solution_sketch: '$a = 2x$, $b = 1$: $8x^3 + 3(4x^2) + 3(2x) + 1$.'
-          - problem: 'Expand $(x + 4)^3$ using the binomial-cube pattern.'
+          - problem: 'A cube has side $x+4$. Use coefficients $1,3,3,1$ to write its volume polynomial.'
             answer: "x^3 + 12x^2 + 48x + 64"
+            solution_sketch: '$a = x$, $b = 4$: $x^3 + 3(4x^2) + 3(16x) + 64$.'
+          - problem: 'In a binomial-cube coefficient table, substitute $a=3x$, $b=1$ into columns $a^3,3a^2b,3ab^2,b^3$. Write their sum.'
+            answer: "27x^3 + 27x^2 + 9x + 1"
+            solution_sketch: '$a = 3x$, $b = 1$: $27x^3 + 3(9x^2) + 3(3x) + 1$.'
+          - problem: 'Correct $(x+5)^3=x^3+15x^2+15x+125$ using the binomial-cube formula.'
+            answer: "x^3 + 15x^2 + 75x + 125"
+            solution_sketch: '$a = x$, $b = 5$: $x^3 + 3(5x^2) + 3(25x) + 125$.'
         constraints: "coefficients 1-3-3-1 with powers stepping down"
     diagnostic_exemplar:
       problem: 'Expand $(2x - 1)^3$.'
@@ -618,9 +738,16 @@ topics:
         exemplars:
           - problem: 'Divide $\frac{6x^3 - 9x^2 + 3x}{3x}$.'
             answer: "2x^2 - 3x + 1"
-            solution_sketch: 'Divide each term by $3x$.'
+            solution_sketch: 'The three quotients are $6x^3/(3x)=2x^2$, $-9x^2/(3x)=-3x$, and $3x/(3x)=1$. Add them.'
           - problem: 'Divide $\frac{8x^4 + 4x^2}{4x^2}$.'
             answer: "2x^2 + 1"
+            solution_sketch: 'Divide each term: $8x^4/(4x^2)=2x^2$ and $4x^2/(4x^2)=1$. The quotient is $2x^2+1$.'
+          - problem: 'A rectangle has area $15x^4-5x^2$ and width $5x^2$, for $x>1$. Write its length polynomial.'
+            answer: "3x^2 - 1"
+            solution_sketch: 'Length is area divided by width. The term quotients are $15x^4/(5x^2)=3x^2$ and $-5x^2/(5x^2)=-1$.'
+          - problem: 'A quotient table divides terms $6x^5$ and $-9x^3$ by $3x^2$. Combine the two quotients.'
+            answer: "2x^3 - 3x"
+            solution_sketch: 'Divide coefficients and subtract the divisor''s exponent: $6x^5/(3x^2)=2x^3$ and $-9x^3/(3x^2)=-3x$.'
         constraints: "every term divisible; positive coefficients on the divisor"
       - id: kp2
         name: Negative coefficients and signs
@@ -631,6 +758,13 @@ topics:
             solution_sketch: '$-10/5 = -2$; $5/5 = 1$.'
           - problem: 'Divide $\frac{12x^5 - 8x^3}{-4x^2}$.'
             answer: "-3x^3 + 2x"
+            solution_sketch: '$12/-4 = -3$; $-8/-4 = 2$.'
+          - problem: 'Correct $(-6x^4+9x^3)/(3x^2)=-2x^2+3x^3$ by checking the exponent subtraction.'
+            answer: "-2x^2 + 3x"
+            solution_sketch: 'Each term divides by $3x^2$: $-6x^4$ gives $-2x^2$ and $9x^3$ gives $3x$.'
+          - problem: 'Divide $\frac{-20x^4 + 15x^3 - 5x^2}{-5x^2}$.'
+            answer: "4x^2 - 3x + 1"
+            solution_sketch: 'Divide all three terms by $-5x^2$: $-20x^4$ gives $4x^2$, $15x^3$ gives $-3x$, and $-5x^2$ gives $1$.'
         constraints: "track the sign of each quotient term"
       - id: kp3
         name: Two variables
@@ -638,9 +772,16 @@ topics:
         exemplars:
           - problem: 'Divide $\frac{9x^2y^3 + 6xy^2}{3xy}$.'
             answer: "3xy^2 + 2y"
-            solution_sketch: 'Divide coefficients and subtract exponents per variable.'
+            solution_sketch: 'The quotients are $9x^2y^3/(3xy)=3xy^2$ and $6xy^2/(3xy)=2y$, found by subtracting the exponents of each variable.'
           - problem: 'Divide $\frac{4a^3b - 2a^2b^2}{2a^2b}$.'
             answer: "2a - b"
+            solution_sketch: 'Divide $4a^3b$ by $2a^2b$ to get $2a$. Divide $-2a^2b^2$ by the same divisor to get $-b$. Add the two quotients.'
+          - problem: 'For nonzero $x,y$, a product equals $15x^3y^2+10x^2y^3$ and one factor is $5x^2y$. Find the other polynomial factor.'
+            answer: "3xy + 2y^2"
+            solution_sketch: 'Divide coefficients and subtract exponents per variable: $3xy$ and $2y^2$.'
+          - problem: 'Correct $(8a^2b^3-4ab^2)/(4ab)=2ab^2-1$ by dividing the second term in both variables.'
+            answer: "2ab^2 - b"
+            solution_sketch: 'Divide coefficients and subtract exponents per variable: $2ab^2$ and $-b$.'
         constraints: "each variable handled separately"
     diagnostic_exemplar:
       problem: 'Divide $\frac{9x^3y^2 - 6x^2y}{-3x^2y}$.'
@@ -677,9 +818,16 @@ topics:
         exemplars:
           - problem: 'Divide $\frac{x^2 + 5x + 6}{x + 2}$.'
             answer: "x + 3"
-            solution_sketch: '$(x+2)(x+3) = x^2 + 5x + 6$.'
+            solution_sketch: 'The leading quotient is $x$. Subtract $x(x+2)$ to leave $3x+6$; then divide by $x+2$ to get $3$. The quotient is $x+3$ with remainder zero.'
           - problem: 'Divide $\frac{x^2 - 7x + 12}{x - 3}$.'
             answer: "x - 4"
+            solution_sketch: 'The leading quotient is $x$. Subtract $x(x-3)$ to leave $-4x+12$; the next quotient term is $-4$, leaving no remainder.'
+          - problem: 'Use long division to find the missing polynomial $Q$ in $x^2+x-6=(x-2)Q$.'
+            answer: "x + 3"
+            solution_sketch: 'Long division starts with $x$. Subtract $x(x-2)$ from the dividend to leave $3x-6$; dividing once more gives $3$ and zero remainder.'
+          - problem: 'A rectangle has area $x^2-x-20$ and width $x+4$, with $x>5$. Use long division to find its length.'
+            answer: "x - 5"
+            solution_sketch: 'Length is the area divided by $x+4$. The first quotient term $x$ leaves $-5x-20$ after subtraction; the next term $-5$ leaves remainder zero.'
         constraints: "quadratic over linear; exact division"
       - id: kp2
         name: Long division with a remainder
@@ -690,6 +838,13 @@ topics:
             solution_sketch: '$(x+1)(x+2) = x^2 + 3x + 2$; $5 - 2 = 3$ remainder.'
           - problem: 'Divide $\frac{2x^2 - x - 1}{x - 2}$.'
             answer: "2x + 3 remainder 5"
+            solution_sketch: '$(x-2)(2x+3) = 2x^2 - x - 6$; $-1 - (-6) = 5$.'
+          - problem: 'Find $Q$ and $R$ in $x^2+5x+8=(x+2)Q+R$, where $R$ is constant, using long division.'
+            answer: "x + 3 remainder 2"
+            solution_sketch: '$(x+2)(x+3) = x^2 + 5x + 6$; $8 - 6 = 2$ remainder.'
+          - problem: 'A student divides $3x^2-x+4$ by $x-1$ and proposes quotient $3x+2$ and remainder $2$. Correct the quotient-remainder result.'
+            answer: "3x + 2 remainder 6"
+            solution_sketch: '$(x-1)(3x+2) = 3x^2 - x - 2$; $4 - (-2) = 6$ remainder.'
         constraints: "state quotient and remainder separately"
       - id: kp3
         name: Missing terms in the dividend
@@ -697,9 +852,16 @@ topics:
         exemplars:
           - problem: 'Divide $\frac{x^3 - 8}{x - 2}$.'
             answer: "x^2 + 2x + 4"
-            solution_sketch: 'Insert $0x^2 + 0x$ placeholders before dividing.'
+            solution_sketch: 'Use dividend coefficients $1,0,0,-8$. Subtract $x^2(x-2)$ to leave $2x^2-8$, then $2x(x-2)$ to leave $4x-8$, and finally $4(x-2)$. The quotient is $x^2+2x+4$.'
           - problem: 'Divide $\frac{x^3 + 1}{x + 1}$.'
             answer: "x^2 - x + 1"
+            solution_sketch: 'Use $x^3+0x^2+0x+1$. Quotient terms $x^2$, $-x$, and $1$ successively leave remainders $-x^2+1$, $x+1$, and $0$.'
+          - problem: 'A coefficient row for the dividend is $(1,0,0,-27)$ in descending cubic order. Divide by $x-3$ using long division and write the quotient.'
+            answer: "x^2 + 3x + 9"
+            solution_sketch: 'Use $x^3+0x^2+0x-27$. Successive quotient terms $x^2$, $3x$, and $9$ leave $3x^2-27$, then $9x-27$, then zero.'
+          - problem: 'Use long division with zero placeholders to find $Q$ in $x^3+8=(x+2)Q$.'
+            answer: "x^2 - 2x + 4"
+            solution_sketch: 'Use $x^3+0x^2+0x+8$. The quotient terms $x^2$, $-2x$, and $4$ leave $-2x^2+8$, then $4x+8$, then zero.'
         constraints: "write 0-coefficient placeholders for absent powers"
     diagnostic_exemplar:
       problem: 'Divide $\frac{x^3 + 5}{x - 1}$. Give quotient and remainder.'
@@ -740,10 +902,10 @@ topics:
           - problem: 'Use synthetic division to divide $x^3 - 6x^2 + 11x - 6$ by $x - 1$.'
             answer: "x^2 - 5x + 6"
             solution_sketch: '$c = 1$; $1, -5, 6, 0$.'
-          - problem: 'Use synthetic division to divide $x^2 - x - 6$ by $x - 3$.'
+          - problem: 'The dividend coefficient row is $(1,-1,-6)$. Use synthetic value $3$ to find the quotient polynomial.'
             answer: "x + 2"
             solution_sketch: '$c = 3$; row $1, -1, -6$ gives $1, 2, 0$.'
-          - problem: 'Use synthetic division to divide $x^3 - 3x^2 - 4x + 12$ by $x - 2$.'
+          - problem: 'Use synthetic division to find $Q$ in $x^3-3x^2-4x+12=(x-2)Q$.'
             answer: "x^2 - x - 6"
             solution_sketch: '$c = 2$; row $1, -3, -4, 12$ gives $1, -1, -6, 0$.'
         constraints: "linear divisor with leading coefficient 1; remainder 0"
@@ -757,10 +919,10 @@ topics:
           - problem: 'Use synthetic division to divide $2x^3 - 3x + 1$ by $x - 2$. Give quotient and remainder.'
             answer: "2x^2 + 4x + 5 remainder 11"
             solution_sketch: 'Insert $0$ for the missing $x^2$: $2, 4, 5, 11$.'
-          - problem: 'Use synthetic division to divide $x^2 + x + 4$ by $x - 1$. Give quotient and remainder.'
+          - problem: 'The coefficient row $(1,1,4)$ is divided using synthetic value $1$. Give the quotient polynomial and remainder.'
             answer: "x + 2 remainder 6"
             solution_sketch: '$c = 1$; row $1, 1, 4$ gives $1, 2, 6$.'
-          - problem: 'Use synthetic division to divide $2x^3 - x + 5$ by $x - 1$. Give quotient and remainder.'
+          - problem: 'A student uses coefficient row $(2,-1,5)$ for $(2x^3-x+5)/(x-1)$. Restore the missing-power placeholder and give the correct quotient and remainder.'
             answer: "2x^2 + 2x + 1 remainder 6"
             solution_sketch: 'Insert $0$ for the missing $x^2$: $2, 2, 1, 6$.'
         constraints: "include 0 placeholders for missing powers"
@@ -774,12 +936,12 @@ topics:
           - problem: 'Without dividing, find the remainder when $x^3 - 2x^2 + x - 5$ is divided by $x - 2$.'
             answer: "-3"
             solution_sketch: '$p(2) = 8 - 8 + 2 - 5 = -3$.'
-          - problem: 'Without dividing, find the remainder when $x^2 + 3x - 1$ is divided by $x - 2$.'
+          - problem: 'A division identity reads $x^2+3x-1=(x-2)Q(x)+R$. Find the constant $R$ by substitution, without finding $Q$.'
             answer: "9"
             solution_sketch: '$p(2) = 4 + 6 - 1 = 9$.'
-          - problem: 'Without dividing, find the remainder when $x^3 + x^2 - 5$ is divided by $x - 1$.'
+          - problem: 'A polynomial evaluator reports $p(1)=-3$ for $p(x)=x^3+x^2-5$. What remainder must division by $x-1$ leave?'
             answer: "-3"
-            solution_sketch: '$p(1) = 1 + 1 - 5 = -3$.'
+            solution_sketch: 'At $x=1$, the term $(x-1)Q(x)$ vanishes, so the division identity gives $R=p(1)=-3$.'
         constraints: "remainder on division by x - c equals p(c)"
     diagnostic_exemplar:
       problem: 'Use synthetic division to divide $x^3 - 4x + 6$ by $x + 2$. Give quotient and remainder.'
@@ -817,8 +979,15 @@ topics:
           - problem: 'Find the GCF of $28$ and $42$.'
             answer: "14"
             solution_sketch: '$28 = 2^2 \cdot 7$, $42 = 2 \cdot 3 \cdot 7$; take $2 \cdot 7$.'
-          - problem: 'Find the GCF of $18$ and $45$.'
+          - problem: 'Two prime-factor lists are $2\cdot3^2$ and $3^2\cdot5$. Find their greatest common factor.'
             answer: "9"
+            solution_sketch: '$18 = 2 \cdot 3^2$, $45 = 3^2 \cdot 5$; take $3^2 = 9$.'
+          - problem: 'A florist has $24$ roses and $36$ lilies. What is the greatest number of identical bouquets using every flower?'
+            answer: "12"
+            solution_sketch: 'The bouquet count must divide both totals. Their prime factors share $2^2\cdot3=12$, so twelve bouquets are possible.'
+          - problem: 'A student claims the GCF of $16$ and $40$ is $4$. Give the largest common factor.'
+            answer: "8"
+            solution_sketch: 'Both numbers divide by $8$: $16=2(8)$ and $40=5(8)$. Since $2$ and $5$ are coprime, no larger common factor exists.'
         constraints: "two-digit integers"
       - id: kp2
         name: GCF of one-variable monomials
@@ -827,8 +996,15 @@ topics:
           - problem: 'Find the GCF of $12x^3$ and $18x^2$.'
             answer: "6x^2"
             solution_sketch: '$\text{GCF}(12, 18) = 6$; lowest power of $x$ is $x^2$.'
-          - problem: 'Find the GCF of $8x^2$ and $20x$.'
+          - problem: 'A monomial table lists coefficient/exponent pairs $(8,2)$ and $(20,1)$ for the variable $x$. Find the GCF monomial.'
             answer: "4x"
+            solution_sketch: '$\text{GCF}(8, 20) = 4$; lowest power of $x$ is $x^1$.'
+          - problem: 'A student proposes $5x^4$ as the GCF of $15x^4$ and $25x^2$. Correct the monomial.'
+            answer: "5x^2"
+            solution_sketch: '$\text{GCF}(15, 25) = 5$; lowest power of $x$ is $x^2$.'
+          - problem: 'A common monomial factor must divide both terms of $9x^3+6x$. Find the greatest such monomial.'
+            answer: "3x"
+            solution_sketch: '$\text{GCF}(9, 6) = 3$; lowest power of $x$ is $x^1$.'
         constraints: "take the lowest power of the shared variable"
       - id: kp3
         name: GCF with two variables or three monomials
@@ -839,6 +1015,13 @@ topics:
             solution_sketch: 'Coefficient GCF $6$; lowest powers $x$ and $y^3$.'
           - problem: 'Find the GCF of $6x^3$, $9x^2$, and $12x$.'
             answer: "3x"
+            solution_sketch: 'Coefficient GCF $3$; lowest power $x^1$.'
+          - problem: 'Exponent-table rows $(10,3,2)$ and $(15,1,4)$ list coefficient, $x$ exponent, and $y$ exponent. Find the GCF of the represented monomials.'
+            answer: "5xy^2"
+            solution_sketch: 'Coefficient GCF $5$; lowest powers $x^1$ and $y^2$.'
+          - problem: 'A student proposes $4x^2y^2$ as the common monomial factor of $8x^2y$, $12xy^2$, and $20xy$. Correct the GCF.'
+            answer: "4xy"
+            solution_sketch: 'Coefficient GCF $4$; lowest powers $x^1$ and $y^1$.'
         constraints: "lowest power of each shared variable"
     diagnostic_exemplar:
       problem: 'Find the GCF of $12x^3y^2$ and $18x^2y^4$.'
@@ -875,8 +1058,15 @@ topics:
           - problem: 'Factor $6x^2 + 9x$.'
             answer: "3x(2x + 3)"
             solution_sketch: 'GCF is $3x$; $\frac{6x^2}{3x} = 2x$, $\frac{9x}{3x} = 3$.'
-          - problem: 'Factor $10x^3 - 15x^2 + 5x$.'
+          - problem: 'A design model has volume $10x^3 - 15x^2 + 5x$ for $x>20$. Write this model as a product of integer-coefficient polynomial factors by extracting its GCF.'
             answer: "5x(2x^2 - 3x + 1)"
+            solution_sketch: 'The coefficient GCF is $5$ and every term contains $x$. Dividing by $5x$ gives $2x^2$, $-3x$, and $1$, so extract $5x$.'
+          - problem: 'A polynomial has the following nonzero coefficients: power $2$: coefficient $8$; power $1$: coefficient $12$. Reconstruct it and write its factored form over the integers.'
+            answer: '4*x*(2*x + 3)'
+            solution_sketch: 'GCF is $4x$; $\frac{8x^2}{4x} = 2x$, $\frac{12x}{4x} = 3$.'
+          - problem: 'A learner extracts $3x$ from $9x^3-6x^2+3x$ but writes $3x(3x^2-2x)$. Correct the factored expression.'
+            answer: '3*x*(3*x^2 - 2*x + 1)'
+            solution_sketch: 'GCF is $3x$; $\frac{9x^3}{3x} = 3x^2$, $\frac{-6x^2}{3x} = -2x$, $\frac{3x}{3x} = 1$.'
         constraints: "verify by redistributing"
       - id: kp2
         name: Factor out a negative or higher-power GCF
@@ -885,8 +1075,15 @@ topics:
           - problem: 'Factor $-4x^2 - 8x$.'
             answer: "-4x(x + 2)"
             solution_sketch: 'Factor out $-4x$ so the leading sign is positive inside.'
-          - problem: 'Factor $14x^4 + 21x^3 - 7x^2$.'
+          - problem: 'A design model has volume $14x^4 + 21x^3 - 7x^2$ for $x>20$. Write this model as a product of integer-coefficient polynomial factors by extracting its GCF.'
             answer: "7x^2(2x^2 + 3x - 1)"
+            solution_sketch: 'Coefficients share $7$ and the smallest exponent is $2$. Divide by $7x^2$: the remaining terms are $2x^2$, $3x$, and $-1$.'
+          - problem: 'Extract a negative GCF from $-6x^2-9x$, leaving a positive leading coefficient inside the bracket.'
+            answer: '-3*x*(2*x + 3)'
+            solution_sketch: 'Factor out $-3x$ so the leading sign is positive inside.'
+          - problem: 'A learner proposes $4x^2(3x^2-2x)$ for $12x^4-8x^3+4x^2$. Restore the missing term and give the factored expression.'
+            answer: '4*x^2*(3*x^2 - 2*x + 1)'
+            solution_sketch: 'GCF is $4x^2$; $\frac{12x^4}{4x^2} = 3x^2$, $\frac{-8x^3}{4x^2} = -2x$, $\frac{4x^2}{4x^2} = 1$.'
         constraints: "watch the leftover 1 when a term equals the GCF"
       - id: kp3
         name: Factor out a common binomial
@@ -895,8 +1092,15 @@ topics:
           - problem: 'Factor $3x(x + 2) + 5(x + 2)$.'
             answer: "(x + 2)(3x + 5)"
             solution_sketch: 'The binomial $(x + 2)$ is the common factor.'
-          - problem: 'Factor $x(x - 4) + 3(x - 4)$.'
+          - problem: 'Two adjacent rectangles share width $x-4$ and have lengths $x$ and $3$, with $x>4$. Their total area is $x(x-4)+3(x-4)$. Write it as one product.'
             answer: "(x - 4)(x + 3)"
+            solution_sketch: 'The binomial $(x - 4)$ is the common factor.'
+          - problem: 'A factor table lists two products: $4x$ times $(x+5)$, and $3$ times $(x+5)$. Factor their sum without expanding the common binomial.'
+            answer: '(x + 5)*(4*x + 3)'
+            solution_sketch: 'The binomial $(x + 5)$ is the common factor.'
+          - problem: 'Correct the incomplete extraction $2x(x-1)-5(x-1)=(x-1)(2x)$.'
+            answer: '(x - 1)*(2*x - 5)'
+            solution_sketch: 'Both summands contain $(x-1)$. Their remaining factors are $2x$ and $-5$, so the second bracket is $2x-5$.'
         constraints: "common factor is a binomial; sets up factoring by grouping"
     diagnostic_exemplar:
       problem: 'Factor completely: $4x(x + 1) - 8(x + 1)$.'
@@ -937,8 +1141,15 @@ topics:
           - problem: 'Factor $x^3 + 2x^2 + 3x + 6$.'
             answer: "(x + 2)(x^2 + 3)"
             solution_sketch: '$x^2(x+2) + 3(x+2) = (x+2)(x^2+3)$.'
-          - problem: 'Factor $x^3 - 4x^2 + 2x - 8$.'
+          - problem: 'A design model has volume $x^3 - 4x^2 + 2x - 8$ for $x>20$. Write this model as a product of integer-coefficient polynomial factors, factoring completely over the integers.'
             answer: "(x - 4)(x^2 + 2)"
+            solution_sketch: '$x^2(x - 4) + 2(x - 4) = (x - 4)(x^2 + 2)$.'
+          - problem: 'A polynomial has the following nonzero coefficients: power $3$: coefficient $1$; power $2$: coefficient $-5$; power $1$: coefficient $3$; power $0$: coefficient $-15$. Reconstruct it and write its factored form over the integers.'
+            answer: '(x - 5)*(x^2 + 3)'
+            solution_sketch: '$x^2(x - 5) + 3(x - 5) = (x - 5)(x^2 + 3)$.'
+          - problem: 'A learner groups $x^3-2x^2+7x-14$ as $x^2(x-2)+7(x-2)$ and stops. Complete the factorization.'
+            answer: '(x - 2)*(x^2 + 7)'
+            solution_sketch: 'Both groups contain $x-2$. Extract it to obtain $(x-2)(x^2+7)$; the quadratic has no integer factors.'
         constraints: 'four terms with leading coefficient 1; group the first two and the last two; integer coefficients'
       - id: kp2
         name: Grouping with a common binomial factor
@@ -947,8 +1158,15 @@ topics:
           - problem: 'Factor $6x^2 + 3x + 4x + 2$.'
             answer: "(2x + 1)(3x + 2)"
             solution_sketch: '$3x(2x+1) + 2(2x+1) = (2x+1)(3x+2)$.'
-          - problem: 'Factor $2x^3 - x^2 - 6x + 3$.'
+          - problem: 'A design model has volume $2x^3 - x^2 - 6x + 3$ for $x>20$. Write this model as a product of integer-coefficient polynomial factors, factoring completely over the integers.'
             answer: "(2x - 1)(x^2 - 3)"
+            solution_sketch: '$x^2(2x - 1) - 3(2x - 1) = (2x - 1)(x^2 - 3)$.'
+          - problem: 'A polynomial has the following nonzero coefficients: power $3$: coefficient $3$; power $2$: coefficient $-2$; power $1$: coefficient $12$; power $0$: coefficient $-8$. Reconstruct it and write its factored form over the integers.'
+            answer: '(3*x - 2)*(x^2 + 4)'
+            solution_sketch: '$x^2(3x - 2) + 4(3x - 2) = (3x - 2)(x^2 + 4)$.'
+          - problem: 'Correct the grouped factorization $2x^3-5x^2+6x-15=(2x-5)(x^2+6)$.'
+            answer: '(2*x - 5)*(x^2 + 3)'
+            solution_sketch: 'The groups are $x^2(2x-5)$ and $3(2x-5)$. The second bracket must be $x^2+3$.'
         constraints: 'leading coefficient may exceed 1; both groups must leave the same binomial factor'
     diagnostic_exemplar:
       problem: 'Factor $2x^3 + 3x^2 - 10x - 15$.'
@@ -990,8 +1208,15 @@ topics:
           - problem: 'Factor $x^2 + 7x + 12$.'
             answer: "(x + 3)(x + 4)"
             solution_sketch: '$3 \cdot 4 = 12$ and $3 + 4 = 7$.'
-          - problem: 'Factor $x^2 + 9x + 20$.'
+          - problem: 'A design model has area $x^2 + 9x + 20$ for $x>20$. Write this model as a product of integer-coefficient polynomial factors, factoring completely over the integers.'
             answer: "(x + 4)(x + 5)"
+            solution_sketch: '$4 \cdot 5 = 20$ and $4 + 5 = 9$.'
+          - problem: 'A polynomial has the following nonzero coefficients: power $2$: coefficient $1$; power $1$: coefficient $8$; power $0$: coefficient $12$. Reconstruct it and write its factored form over the integers.'
+            answer: '(x + 2)*(x + 6)'
+            solution_sketch: '$6 \cdot 2 = 12$ and $6 + 2 = 8$.'
+          - problem: 'A learner proposes $(x+1)(x+21)$ for $x^2+10x+21$. Replace it with the correct factorization.'
+            answer: '(x + 3)*(x + 7)'
+            solution_sketch: 'The proposed constants multiply to $21$ but add to $22$. The pair $3,7$ has product $21$ and sum $10$.'
       - id: kp2
         name: Negative constant term
         key_prerequisites: [integer-multiplication-division, integer-addition-subtraction]
@@ -1000,8 +1225,15 @@ topics:
           - problem: 'Factor $x^2 + 2x - 15$.'
             answer: "(x + 5)(x - 3)"
             solution_sketch: '$5 \cdot (-3) = -15$ and $5 - 3 = 2$.'
-          - problem: 'Factor $x^2 - 3x - 10$.'
+          - problem: 'A design model has area $x^2 - 3x - 10$ for $x>20$. Write this model as a product of integer-coefficient polynomial factors, factoring completely over the integers.'
             answer: "(x - 5)(x + 2)"
+            solution_sketch: '$-5 \cdot 2 = -10$ and $-5 + 2 = -3$.'
+          - problem: 'A polynomial has the following nonzero coefficients: power $2$: coefficient $1$; power $1$: coefficient $4$; power $0$: coefficient $-21$. Reconstruct it and write its factored form over the integers.'
+            answer: '(x - 3)*(x + 7)'
+            solution_sketch: '$7 \cdot (-3) = -21$ and $7 - 3 = 4$.'
+          - problem: 'A learner proposes $(x-5)(x+8)$ for $x^2-3x-40$. Correct the signs in the factorization.'
+            answer: '(x - 8)*(x + 5)'
+            solution_sketch: 'The constants must multiply to $-40$ and add to $-3$: use $-8$ and $5$.'
       - id: kp3
         name: Negative middle term, positive constant
         key_prerequisites: [integer-multiplication-division, integer-addition-subtraction]
@@ -1010,8 +1242,15 @@ topics:
           - problem: 'Factor $x^2 - 5x + 6$.'
             answer: "(x - 2)(x - 3)"
             solution_sketch: '$(-2)(-3) = 6$ and $-2 - 3 = -5$.'
-          - problem: 'Factor $x^2 - 9x + 14$.'
+          - problem: 'A design model has area $x^2 - 9x + 14$ for $x>20$. Write this model as a product of integer-coefficient polynomial factors, factoring completely over the integers.'
             answer: "(x - 2)(x - 7)"
+            solution_sketch: '$(-2)(-7) = 14$ and $-2 - 7 = -9$.'
+          - problem: 'A polynomial has the following nonzero coefficients: power $2$: coefficient $1$; power $1$: coefficient $-7$; power $0$: coefficient $12$. Reconstruct it and write its factored form over the integers.'
+            answer: '(x - 4)*(x - 3)'
+            solution_sketch: '$(-3)(-4) = 12$ and $-3 - 4 = -7$.'
+          - problem: 'Correct $(x+4)(x+5)$ as a factorization of $x^2-9x+20$.'
+            answer: '(x - 5)*(x - 4)'
+            solution_sketch: 'The positive product and negative sum require two negative constants: $-4-5=-9$ and $(-4)(-5)=20$.'
     diagnostic_exemplar:
       problem: 'Factor $x^2 - 2x - 24$.'
       answer: '(x - 6)(x + 4)'
@@ -1055,8 +1294,15 @@ topics:
           - problem: 'Factor $2x^2 + 7x + 3$.'
             answer: "(2x + 1)(x + 3)"
             solution_sketch: '$ac = 6$; split $7x$ as $6x + x$; group.'
-          - problem: 'Factor $3x^2 - 10x + 8$.'
+          - problem: 'A design model has area $3x^2 - 10x + 8$ for $x>20$. Write this model as a product of integer-coefficient polynomial factors, factoring completely over the integers.'
             answer: "(3x - 4)(x - 2)"
+            solution_sketch: '$ac = 24$; split $-10x$ as $-6x - 4x$; group.'
+          - problem: 'A polynomial has the following nonzero coefficients: power $2$: coefficient $2$; power $1$: coefficient $5$; power $0$: coefficient $3$. Reconstruct it and write its factored form over the integers.'
+            answer: '(x + 1)*(2*x + 3)'
+            solution_sketch: '$ac = 6$; split $5x$ as $2x + 3x$; group.'
+          - problem: 'The $ac$ method splits $3x^2+7x+2$ into $3x^2+6x+x+2$. Finish the factorization by grouping.'
+            answer: '(x + 2)*(3*x + 1)'
+            solution_sketch: 'Group as $3x(x+2)+1(x+2)$, then extract the shared $x+2$.'
       - id: kp2
         name: Non-monic trinomials with negative constants
         key_prerequisites: [factoring-monic-trinomials, factoring-by-grouping]
@@ -1064,8 +1310,15 @@ topics:
           - problem: 'Factor $6x^2 + x - 2$.'
             answer: "(3x + 2)(2x - 1)"
             solution_sketch: '$ac = -12$; split $x$ as $4x - 3x$; group.'
-          - problem: 'Factor $4x^2 - 4x - 3$.'
+          - problem: 'A design model has area $4x^2 - 4x - 3$ for $x>20$. Write this model as a product of integer-coefficient polynomial factors, factoring completely over the integers.'
             answer: "(2x - 3)(2x + 1)"
+            solution_sketch: '$ac = -12$; split $-4x$ as $-6x + 2x$; group.'
+          - problem: 'A polynomial has the following nonzero coefficients: power $2$: coefficient $5$; power $1$: coefficient $3$; power $0$: coefficient $-2$. Reconstruct it and write its factored form over the integers.'
+            answer: '(x + 1)*(5*x - 2)'
+            solution_sketch: '$ac = -10$; split $3x$ as $5x - 2x$; group.'
+          - problem: 'The middle term of $6x^2+5x-4$ is split as $8x-3x$. Finish the $ac$-method factorization.'
+            answer: '(2*x - 1)*(3*x + 4)'
+            solution_sketch: 'Write $2x(3x+4)-1(3x+4)$ and extract $3x+4$.'
         constraints: 'leading coefficient > 1 and negative constant term; the split pair has opposite signs'
       - id: kp3
         name: Factor out a GCF first, then the trinomial
@@ -1074,9 +1327,15 @@ topics:
           - problem: 'Factor $2x^2 + 10x + 12$.'
             answer: "2(x + 2)(x + 3)"
             solution_sketch: '$2(x^2 + 5x + 6) = 2(x+2)(x+3)$.'
-          - problem: 'Factor $6x^2 - 15x - 9$.'
+          - problem: 'A design model has area $6x^2 - 15x - 9$ for $x>20$. Write this model as a product of integer-coefficient polynomial factors, factoring completely over the integers.'
             answer: "3(2x + 1)(x - 3)"
-            solution_sketch: '$3(2x^2 - 5x - 3)$; then the ac-method.'
+            solution_sketch: 'Extract $3$, leaving $2x^2-5x-3$. Split $-5x$ as $-6x+x$, group as $2x(x-3)+(x-3)$, and obtain $3(2x+1)(x-3)$.'
+          - problem: 'A polynomial has the following nonzero coefficients: power $2$: coefficient $2$; power $1$: coefficient $12$; power $0$: coefficient $10$. Reconstruct it and write its factored form over the integers.'
+            answer: '2*(x + 1)*(x + 5)'
+            solution_sketch: '$2(x^2 + 6x + 5) = 2(x+1)(x+5)$.'
+          - problem: 'A learner stops at $2(2x^2+2x-12)$ while factoring $4x^2+4x-24$. Complete the factorization.'
+            answer: '4*(x - 2)*(x + 3)'
+            solution_sketch: 'Extract the remaining $2$ to get $4(x^2+x-6)$. The constants $3,-2$ multiply to $-6$ and add to $1$.'
         constraints: 'integer GCF 2-3 common to all three terms; factor it out before the ac-method'
     diagnostic_exemplar:
       problem: 'Factor $6x^2 + 9x - 6$.'
@@ -1112,8 +1371,16 @@ topics:
         exemplars:
           - problem: 'Factor $x^2 - 9$.'
             answer: "(x + 3)(x - 3)"
-          - problem: 'Factor $x^2 - 49$.'
+            solution_sketch: '$x^2 - 3^2 = (x + 3)(x - 3)$.'
+          - problem: 'A design model has area $x^2 - 49$ for $x>20$. Write this model as a product of integer-coefficient polynomial factors, factoring completely over the integers.'
             answer: "(x + 7)(x - 7)"
+            solution_sketch: '$x^2 - 7^2 = (x + 7)(x - 7)$.'
+          - problem: 'A polynomial has the following nonzero coefficients: power $2$: coefficient $1$; power $0$: coefficient $-25$. Reconstruct it and write its factored form over the integers.'
+            answer: '(x - 5)*(x + 5)'
+            solution_sketch: '$x^2 - 5^2 = (x + 5)(x - 5)$.'
+          - problem: 'A learner writes $x^2-100=(x-10)^2$. Correct the factorization.'
+            answer: '(x-10)*(x+10)'
+            solution_sketch: 'The squares are $x^2$ and $10^2$. Opposite signs cancel the cross terms: $(x-10)(x+10)=x^2-100$.'
         constraints: 'monic square minus a perfect-square constant up to 100; no GCF to remove'
       - id: kp2
         name: Coefficients and higher even powers
@@ -1122,8 +1389,15 @@ topics:
           - problem: 'Factor $4x^2 - 25$.'
             answer: "(2x + 5)(2x - 5)"
             solution_sketch: '$(2x)^2 - 5^2$.'
-          - problem: 'Factor $9x^4 - 16$.'
+          - problem: 'A design model has volume $9x^4 - 16$ for $x>20$. Write this model as a product of integer-coefficient polynomial factors, factoring completely over the integers.'
             answer: "(3x^2 + 4)(3x^2 - 4)"
+            solution_sketch: '$(3x^2)^2 - 4^2$.'
+          - problem: 'A polynomial has the following nonzero coefficients: power $2$: coefficient $16$; power $0$: coefficient $-9$. Reconstruct it and write its factored form over the integers.'
+            answer: '(4*x - 3)*(4*x + 3)'
+            solution_sketch: '$(4x)^2 - 3^2$.'
+          - problem: 'Correct $(5x-2)(5x+2)$ as a factorization of $25x^4-4$.'
+            answer: '(5*x^2 - 2)*(5*x^2 + 2)'
+            solution_sketch: 'The square root of $25x^4$ is $5x^2$. The conjugate factors are therefore $5x^2-2$ and $5x^2+2$.'
         constraints: 'perfect-square coefficients; even powers up to 4'
       - id: kp3
         name: Factor a GCF first, or factor repeatedly
@@ -1131,9 +1405,16 @@ topics:
         exemplars:
           - problem: 'Factor $2x^2 - 18$.'
             answer: "2(x + 3)(x - 3)"
-            solution_sketch: '$2(x^2 - 9)$.'
-          - problem: 'Factor $x^4 - 16$.'
+            solution_sketch: 'Extract the coefficient GCF $2$, leaving $x^2-9=x^2-3^2$. The conjugate factors are $x-3$ and $x+3$.'
+          - problem: 'A design model has volume $x^4 - 16$ for $x>20$. Write this model as a product of integer-coefficient polynomial factors, factoring completely over the integers.'
             answer: "(x^2 + 4)(x + 2)(x - 2)"
+            solution_sketch: '$x^4 - 16 = (x^2 + 4)(x^2 - 4)$, and $x^2 - 4$ splits again.'
+          - problem: 'A polynomial has the following nonzero coefficients: power $2$: coefficient $3$; power $0$: coefficient $-27$. Reconstruct it and write its factored form over the integers.'
+            answer: '3*(x - 3)*(x + 3)'
+            solution_sketch: 'The coefficients reconstruct $3x^2-27$. Extract $3$ to leave $x^2-9$; its square roots give factors $x-3$ and $x+3$.'
+          - problem: 'A learner stops at $(x^2-9)(x^2+9)$ when factoring $x^4-81$. Complete the factorization over the integers.'
+            answer: '(x - 3)*(x + 3)*(x^2 + 9)'
+            solution_sketch: 'The factor $x^2-9$ is another difference of squares, $(x-3)(x+3)$; $x^2+9$ remains irreducible over the integers.'
         constraints: 'an integer GCF or a factor that is itself a difference of squares; factor completely'
     diagnostic_exemplar:
       problem: 'Factor completely: $x^4 - 1$.'
@@ -1172,6 +1453,13 @@ topics:
             answer: "no"
             answer_contract: {"kind":"label","options":[["yes"],["no"]]}
             solution_sketch: 'The middle term would need to be $2 \cdot 5x = 10x$.'
+          - problem: 'An area model has one $x^2$ square, two strips of area $4x$, and a corner of area $16$. Write the total area as a squared binomial.'
+            answer: '(x + 4)^2'
+            solution_sketch: 'The strips total $8x=2(x)(4)$ and the corner is $4^2$, so the assembled square has side $x+4$.'
+          - problem: 'A student calls $x^2+4x+16$ a perfect-square trinomial because its end terms are squares. Is the claim valid? Answer yes or no.'
+            answer: "no"
+            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
+            solution_sketch: 'The end terms would require $a=x$ and $b=4$, so the middle term must be $2ab=8x$. The actual $4x$ fails that test.'
         constraints: "check the middle term against 2ab"
       - id: kp2
         name: Factor monic perfect squares
@@ -1179,9 +1467,16 @@ topics:
         exemplars:
           - problem: 'Factor $x^2 + 10x + 25$.'
             answer: "(x + 5)^2"
-          - problem: 'Factor $x^2 - 12x + 36$.'
+            solution_sketch: '$25 = 5^2$ and $10x = 2 \cdot 5 \cdot x$.'
+          - problem: 'A design model has area $x^2 - 12x + 36$ for $x>20$. Write this model as a product of integer-coefficient polynomial factors, factoring completely over the integers.'
             answer: "(x - 6)^2"
-            solution_sketch: 'Minus middle term means $(x - b)^2$.'
+            solution_sketch: 'The constant is $36=6^2$ and the middle term is $-12x=-2(x)(6)$. These match the square $(x-6)^2$.'
+          - problem: 'A polynomial has the following nonzero coefficients: power $2$: coefficient $1$; power $1$: coefficient $14$; power $0$: coefficient $49$. Reconstruct it and write its factored form over the integers.'
+            answer: '(x + 7)^2'
+            solution_sketch: '$49 = 7^2$ and $14x = 2 \cdot 7 \cdot x$.'
+          - problem: 'Correct $(x+8)^2$ as a factorization of $x^2-16x+64$.'
+            answer: '(x - 8)^2'
+            solution_sketch: 'Since $64=8^2$ and the middle term is $-2(x)(8)$, the binomial is $x-8$.'
         constraints: "constant is a perfect square; sign follows the middle term"
       - id: kp3
         name: Perfect squares with leading coefficients
@@ -1190,8 +1485,15 @@ topics:
           - problem: 'Factor $4x^2 - 12x + 9$.'
             answer: "(2x - 3)^2"
             solution_sketch: '$(2x)^2$, $3^2$, and $12x = 2 \cdot 2x \cdot 3$.'
-          - problem: 'Factor $9x^2 + 30x + 25$.'
+          - problem: 'A design model has area $9x^2 + 30x + 25$ for $x>20$. Write this model as a product of integer-coefficient polynomial factors, factoring completely over the integers.'
             answer: "(3x + 5)^2"
+            solution_sketch: '$(3x)^2$, $5^2$, and $30x = 2 \cdot 3x \cdot 5$.'
+          - problem: 'A polynomial has the following nonzero coefficients: power $2$: coefficient $16$; power $1$: coefficient $-24$; power $0$: coefficient $9$. Reconstruct it and write its factored form over the integers.'
+            answer: '(4*x - 3)^2'
+            solution_sketch: '$(4x)^2$, $3^2$, and $24x = 2 \cdot 4x \cdot 3$.'
+          - problem: 'Correct $(5x+4)^2$ as a factorization of $25x^2+20x+4$.'
+            answer: '(5*x + 2)^2'
+            solution_sketch: 'The end terms are $(5x)^2$ and $2^2$. The middle term $2(5x)(2)=20x$ confirms $(5x+2)^2$.'
         constraints: "both end terms perfect squares; verify 2ab"
     diagnostic_exemplar:
       problem: 'Factor $9x^2 - 24x + 16$.'
@@ -1227,8 +1529,15 @@ topics:
           - problem: 'Factor $x^3 - 8$.'
             answer: "(x - 2)(x^2 + 2x + 4)"
             solution_sketch: '$a = x$, $b = 2$: $(a - b)(a^2 + ab + b^2)$.'
-          - problem: 'Factor $x^3 - 27$.'
+          - problem: 'A design model has volume $x^3 - 27$ for $x>20$. Write this model as a product of integer-coefficient polynomial factors, factoring completely over the integers.'
             answer: "(x - 3)(x^2 + 3x + 9)"
+            solution_sketch: '$a = x$, $b = 3$: $(a - b)(a^2 + ab + b^2)$.'
+          - problem: 'A polynomial has the following nonzero coefficients: power $3$: coefficient $1$; power $0$: coefficient $-64$. Reconstruct it and write its factored form over the integers.'
+            answer: '(x - 4)*(x^2 + 4*x + 16)'
+            solution_sketch: '$a = x$, $b = 4$: $(a - b)(a^2 + ab + b^2)$.'
+          - problem: 'Correct $(x-5)(x^2-5x+25)$ as a factorization of $x^3-125$.'
+            answer: '(x - 5)*(x^2 + 5*x + 25)'
+            solution_sketch: 'For a cube difference the quadratic cross term is positive: $x^2+5x+25$. Multiplication cancels the two middle powers.'
         constraints: "b is a small perfect cube root"
       - id: kp2
         name: Sum of cubes a^3 + b^3
@@ -1237,8 +1546,15 @@ topics:
           - problem: 'Factor $x^3 + 1$.'
             answer: "(x + 1)(x^2 - x + 1)"
             solution_sketch: '$(a + b)(a^2 - ab + b^2)$ with $b = 1$.'
-          - problem: 'Factor $x^3 + 64$.'
+          - problem: 'A design model has volume $x^3 + 64$ for $x>20$. Write this model as a product of integer-coefficient polynomial factors, factoring completely over the integers.'
             answer: "(x + 4)(x^2 - 4x + 16)"
+            solution_sketch: '$(a + b)(a^2 - ab + b^2)$ with $b = 4$.'
+          - problem: 'A polynomial has the following nonzero coefficients: power $3$: coefficient $1$; power $0$: coefficient $8$. Reconstruct it and write its factored form over the integers.'
+            answer: '(x + 2)*(x^2 - 2*x + 4)'
+            solution_sketch: '$(a + b)(a^2 - ab + b^2)$ with $b = 2$.'
+          - problem: 'Correct $(x+5)(x^2+5x+25)$ as a factorization of $x^3+125$.'
+            answer: '(x + 5)*(x^2 - 5*x + 25)'
+            solution_sketch: 'For a cube sum the quadratic middle term has the opposite sign: $x^2-5x+25$.'
         constraints: "middle sign of the trinomial is opposite the binomial sign"
       - id: kp3
         name: Cubes with coefficients
@@ -1246,9 +1562,16 @@ topics:
         exemplars:
           - problem: 'Factor $8x^3 - 27$.'
             answer: "(2x - 3)(4x^2 + 6x + 9)"
-            solution_sketch: '$a = 2x$, $b = 3$.'
-          - problem: 'Factor $27x^3 + 1$.'
+            solution_sketch: 'The cube roots are $2x$ and $3$. Use $a-b$ and $a^2+ab+b^2$ to obtain $(2x-3)(4x^2+6x+9)$.'
+          - problem: 'A design model has volume $27x^3 + 1$ for $x>20$. Write this model as a product of integer-coefficient polynomial factors, factoring completely over the integers.'
             answer: "(3x + 1)(9x^2 - 3x + 1)"
+            solution_sketch: 'The cube roots are $3x$ and $1$. A cube sum factors into $a+b$ and $a^2-ab+b^2$, giving $(3x+1)(9x^2-3x+1)$.'
+          - problem: 'A polynomial has the following nonzero coefficients: power $3$: coefficient $8$; power $0$: coefficient $-1$. Reconstruct it and write its factored form over the integers.'
+            answer: '(2*x - 1)*(4*x^2 + 2*x + 1)'
+            solution_sketch: 'Reconstruct $8x^3-1=(2x)^3-1^3$. A cube difference gives $(2x-1)((2x)^2+2x+1)$.'
+          - problem: 'The cube roots of $64x^3$ and $27$ are $4x$ and $3$. A learner uses $(4x+3)(16x^2+12x+9)$. Correct the sum-of-cubes factorization.'
+            answer: '(4*x + 3)*(16*x^2 - 12*x + 9)'
+            solution_sketch: 'The linear factor is $4x+3$; the quadratic is $(4x)^2-(4x)(3)+3^2=16x^2-12x+9$.'
         constraints: "a = (coefficient root) x; trinomial never factors further over the integers"
     diagnostic_exemplar:
       problem: 'Factor $27x^3 - 8$.'
@@ -1286,8 +1609,15 @@ topics:
           - problem: 'Factor $x^4 + 5x^2 + 6$.'
             answer: "(x^2 + 2)(x^2 + 3)"
             solution_sketch: 'Let $u = x^2$: $u^2 + 5u + 6 = (u+2)(u+3)$.'
-          - problem: 'Factor $x^4 - 7x^2 + 10$.'
+          - problem: 'A design model has volume $x^4 - 7x^2 + 10$ for $x>20$. Write this model as a product of integer-coefficient polynomial factors, factoring completely over the integers.'
             answer: "(x^2 - 2)(x^2 - 5)"
+            solution_sketch: 'Let $u = x^2$: $u^2 - 7u + 10 = (u - 2)(u - 5)$.'
+          - problem: 'A polynomial has the following nonzero coefficients: power $4$: coefficient $1$; power $2$: coefficient $6$; power $0$: coefficient $8$. Reconstruct it and write its factored form over the integers.'
+            answer: '(x^2 + 2)*(x^2 + 4)'
+            solution_sketch: 'Let $u = x^2$: $u^2 + 6u + 8 = (u+2)(u+4)$.'
+          - problem: 'The substitution $u=x^2$ changes $x^4-8x^2+15$ into $(u-3)(u-5)$. Return to $x$ and give the integer factorization.'
+            answer: '(x^2 - 5)*(x^2 - 3)'
+            solution_sketch: 'Replace each $u$ by $x^2$, obtaining $(x^2-3)(x^2-5)$. Neither constant is a perfect square, so neither factor splits over the integers.'
         constraints: "trinomials in x^2; factors do not split further over the integers"
       - id: kp2
         name: Factor completely when the pieces split further
@@ -1296,8 +1626,15 @@ topics:
           - problem: 'Factor $x^4 - 5x^2 + 4$ completely.'
             answer: "(x - 1)(x + 1)(x - 2)(x + 2)"
             solution_sketch: '$(x^2 - 1)(x^2 - 4)$; each is a difference of squares.'
-          - problem: 'Factor $x^4 - 13x^2 + 36$ completely.'
+          - problem: 'An area model has polynomial $x^4-13x^2+36$, with $x>3$. Use $u=x^2$, then differences of squares, to write the area as a product of integer linear factors.'
             answer: "(x - 2)(x + 2)(x - 3)(x + 3)"
+            solution_sketch: '$(x^2 - 4)(x^2 - 9)$; each is a difference of squares.'
+          - problem: 'A polynomial has the following nonzero coefficients: power $4$: coefficient $1$; power $2$: coefficient $-17$; power $0$: coefficient $16$. Reconstruct it and write its factored form over the integers.'
+            answer: '(x - 4)*(x - 1)*(x + 1)*(x + 4)'
+            solution_sketch: '$(x^2 - 1)(x^2 - 16)$; each is a difference of squares.'
+          - problem: 'A learner stops at $(x^2-9)(x^2-16)$ for $x^4-25x^2+144$. Finish factoring every factor over the integers.'
+            answer: '(x - 4)*(x - 3)*(x + 3)*(x + 4)'
+            solution_sketch: 'Each factor is a difference of squares: $x^2-9=(x-3)(x+3)$ and $x^2-16=(x-4)(x+4)$.'
         constraints: "check every factor for a further difference of squares"
       - id: kp3
         name: Sixth powers and non-monic quadratic form
@@ -1306,8 +1643,15 @@ topics:
           - problem: 'Factor $x^6 + 5x^3 + 6$.'
             answer: "(x^3 + 2)(x^3 + 3)"
             solution_sketch: 'Let $u = x^3$: $u^2 + 5u + 6 = (u+2)(u+3)$; both cubic factors are irreducible over the integers.'
-          - problem: 'Factor $2x^4 + 5x^2 + 2$.'
+          - problem: 'A design model has volume $2x^4 + 5x^2 + 2$ for $x>20$. Write this model as a product of integer-coefficient polynomial factors, factoring completely over the integers.'
             answer: "(2x^2 + 1)(x^2 + 2)"
+            solution_sketch: 'Let $u = x^2$: $ac = 4$; split $5u$ as $4u + u$.'
+          - problem: 'A polynomial has the following nonzero coefficients: power $6$: coefficient $1$; power $3$: coefficient $7$; power $0$: coefficient $12$. Reconstruct it and write its factored form over the integers.'
+            answer: '(x^3 + 3)*(x^3 + 4)'
+            solution_sketch: 'Let $u = x^3$: $u^2 + 7u + 12 = (u+3)(u+4)$; both cubic factors are irreducible over the integers.'
+          - problem: 'The substitution $u=x^2$ gives $3u^2+7u+2=(3u+1)(u+2)$. Write the factorization of $3x^4+7x^2+2$ in $x$.'
+            answer: '(x^2 + 2)*(3*x^2 + 1)'
+            solution_sketch: 'Replace $u$ with $x^2$ in both brackets: $(3x^2+1)(x^2+2)$; each quadratic remains irreducible over the integers.'
         constraints: "u-substitution with u = x^3 or non-monic in u"
     diagnostic_exemplar:
       problem: 'Factor $x^4 - 10x^2 + 9$ completely.'
@@ -1356,6 +1700,12 @@ topics:
           - problem: 'Identify the pattern in $x^2 - 16x + 64$ and factor it.'
             answer: "(x - 8)^2"
             solution_sketch: 'Perfect square trinomial: $64 = 8^2$ and $16x = 2 \cdot 8 \cdot x$.'
+          - problem: 'For $3x^2-27$, first check a common coefficient, then the remaining two-term pattern. Write the complete factorization.'
+            answer: '3*(x - 3)*(x + 3)'
+            solution_sketch: 'All coefficients share $3$, leaving $x^2-9$. Factor the difference of squares as $(x-3)(x+3)$.'
+          - problem: 'A learner selects difference of squares for $x^2+20x+100$. Correct the choice by writing the polynomial in its matching factored pattern.'
+            answer: '(x + 10)^2'
+            solution_sketch: 'There are three terms and the middle one is $2(x)(10)$, so the perfect-square pattern gives $(x+10)^2$.'
         constraints: "GCF first, then count terms, then match a pattern"
       - id: kp2
         name: Factor completely in two steps
@@ -1364,9 +1714,15 @@ topics:
           - problem: 'Factor $2x^3 - 8x$ completely.'
             answer: "2x(x + 2)(x - 2)"
             solution_sketch: '$2x(x^2 - 4)$; then difference of squares.'
-          - problem: 'Factor $3x^2 + 12x + 12$ completely.'
+          - problem: 'A design model has area $3x^2 + 12x + 12$ for $x>20$. Write this model as a product of integer-coefficient polynomial factors, factoring completely over the integers.'
             answer: "3(x + 2)^2"
             solution_sketch: '$3(x^2 + 4x + 4)$; perfect square inside.'
+          - problem: 'A polynomial has the following nonzero coefficients: power $3$: coefficient $3$; power $1$: coefficient $-12$. Reconstruct it and write its factored form over the integers.'
+            answer: '3*x*(x - 2)*(x + 2)'
+            solution_sketch: '$3x(x^2 - 4)$; then difference of squares.'
+          - problem: 'A learner extracts $2$ from $2x^2+20x+50$ and stops at $2(x^2+10x+25)$. Complete the factorization.'
+            answer: '2*(x + 5)^2'
+            solution_sketch: 'The inner trinomial has end terms $x^2$ and $5^2$ and middle term $2(x)(5)$, so it is $(x+5)^2$.'
         constraints: "GCF plus one pattern"
       - id: kp3
         name: Mixed multi-step factoring
@@ -1375,9 +1731,15 @@ topics:
           - problem: 'Factor $x^4 - 81$ completely.'
             answer: "(x^2 + 9)(x + 3)(x - 3)"
             solution_sketch: 'Difference of squares twice; $x^2 + 9$ stays prime.'
-          - problem: 'Factor $x^3 + 3x^2 - 4x - 12$ completely.'
+          - problem: 'A design model has volume $x^3 + 3x^2 - 4x - 12$ for $x>20$. Write this model as a product of integer-coefficient polynomial factors, factoring completely over the integers.'
             answer: "(x + 3)(x + 2)(x - 2)"
             solution_sketch: 'Group: $x^2(x+3) - 4(x+3)$; then difference of squares.'
+          - problem: 'A polynomial has the following nonzero coefficients: power $4$: coefficient $1$; power $0$: coefficient $-16$. Reconstruct it and write its factored form over the integers.'
+            answer: '(x - 2)*(x + 2)*(x^2 + 4)'
+            solution_sketch: 'Difference of squares twice; $x^2 + 4$ stays prime.'
+          - problem: 'A learner groups $x^3+2x^2-9x-18$ into $(x+2)(x^2-9)$. Complete the integer factorization.'
+            answer: '(x - 3)*(x + 2)*(x + 3)'
+            solution_sketch: 'The second factor is $(x-3)(x+3)$. The complete product is $(x+2)(x-3)(x+3)$.'
         constraints: "up to three steps; state prime factors as-is"
     diagnostic_exemplar:
       problem: 'Factor $2x^4 - 32$ completely.'
@@ -1414,9 +1776,20 @@ topics:
         exemplars:
           - problem: 'Solve $(x - 3)(x + 5) = 0$.'
             answer: "x = 3 or x = -5"
-            solution_sketch: 'Each factor equals zero.'
-          - problem: 'Solve $x(x - 4) = 0$.'
+            answer_contract: {kind: exact}
+            solution_sketch: 'The factors give $x-3=0$ or $x+5=0$. Solving the linear equations gives $x=3$ or $x=-5$.'
+          - problem: 'The graph $y=x(x-4)$ meets the horizontal axis where a factor vanishes. Find all corresponding $x$ values.'
             answer: "x = 0 or x = 4"
+            answer_contract: {kind: exact}
+            solution_sketch: 'At an axis intersection the product is zero. The factors $x$ and $x-4$ give $x=0$ and $x=4$.'
+          - problem: 'A student keeps only $x=6$ from $(x-6)(x+2)=0$. Give the complete solution set.'
+            answer: "x = 6 or x = -2"
+            answer_contract: {kind: exact}
+            solution_sketch: 'The second factor also can vanish: $x+2=0$ gives $-2$. Together with $x-6=0$, the full root set is $6,-2$.'
+          - problem: 'A rectangular model has signed area $A=x(x+9)$. Find every real parameter $x$ for which this algebraic area is zero.'
+            answer: "x = 0 or x = -9"
+            answer_contract: {kind: exact}
+            solution_sketch: 'The area product vanishes at $x=0$ or $x+9=0$. Both are allowed real parameters, giving $0,-9$.'
         constraints: "already factored; integer roots"
       - id: kp2
         name: Factors with coefficients
@@ -1424,9 +1797,20 @@ topics:
         exemplars:
           - problem: 'Solve $(2x - 1)(3x + 4) = 0$.'
             answer: "x = 1/2 or x = -4/3"
+            answer_contract: {kind: exact}
             solution_sketch: '$2x = 1$ or $3x = -4$.'
-          - problem: 'Solve $(5x + 2)(x - 6) = 0$.'
+          - problem: 'The graph $y=(5x+2)(x-6)$ meets the horizontal axis. Find both $x$ coordinates from the factors.'
             answer: "x = -2/5 or x = 6"
+            answer_contract: {kind: exact}
+            solution_sketch: '$5x = -2$ or $x = 6$.'
+          - problem: 'A learner obtains $x=2$ or $x=-5$ from $(3x-2)(2x+5)=0$. Correct the solutions.'
+            answer: "x = 2/3 or x = -5/2"
+            answer_contract: {kind: exact}
+            solution_sketch: '$3x = 2$ or $2x = -5$.'
+          - problem: 'A signed product model is $P=(4x+1)(x-3)$. Find all real parameters giving $P=0$.'
+            answer: "x = -1/4 or x = 3"
+            answer_contract: {kind: exact}
+            solution_sketch: '$4x = -1$ or $x = 3$.'
         constraints: "linear factors with small coefficients; fractional roots allowed"
       - id: kp3
         name: Three factors
@@ -1434,9 +1818,20 @@ topics:
         exemplars:
           - problem: 'Solve $x(x - 2)(x + 7) = 0$.'
             answer: "x = 0 or x = 2 or x = -7"
-          - problem: 'Solve $2x(x + 1)(x - 5) = 0$.'
+            answer_contract: {kind: exact}
+            solution_sketch: 'Set each variable factor to zero: $x=0$, $x-2=0$, or $x+7=0$. The roots are $0,2,-7$.'
+          - problem: 'Find all horizontal-axis crossing values of $y=2x(x+1)(x-5)$ using the zero-product property.'
             answer: "x = 0 or x = -1 or x = 5"
+            answer_contract: {kind: exact}
             solution_sketch: 'The constant 2 is never zero; three variable factors.'
+          - problem: 'A student cancels $x$ in $x(x-3)(x+4)=0$ and loses a root. Give the complete solution set.'
+            answer: "x = 0 or x = 3 or x = -4"
+            answer_contract: {kind: exact}
+            solution_sketch: 'The factor $x$ contributes zero; cancelling it would lose that root. The other equations $x-3=0$ and $x+4=0$ give $3$ and $-4$.'
+          - problem: 'The signed volume model $V=3x(x+1)(x-6)$ vanishes. Find every real parameter value that makes any variable factor zero.'
+            answer: "x = 0 or x = -1 or x = 6"
+            answer_contract: {kind: exact}
+            solution_sketch: 'The constant 3 is never zero; three variable factors.'
         constraints: "one root per variable factor"
     diagnostic_exemplar:
       problem: 'Solve $x(2x - 5)(x + 3) = 0$.'
@@ -1475,9 +1870,20 @@ topics:
         exemplars:
           - problem: 'Solve $x^2 + 7x + 12 = 0$.'
             answer: "x = -3 or x = -4"
+            answer_contract: {kind: exact}
             solution_sketch: '$(x+3)(x+4) = 0$.'
-          - problem: 'Solve $x^2 - 5x - 14 = 0$.'
+          - problem: 'Find all horizontal-axis crossing values of $y=x^2-5x-14$ by factoring its quadratic.'
             answer: "x = 7 or x = -2"
+            answer_contract: {kind: exact}
+            solution_sketch: '$(x-7)(x+2) = 0$.'
+          - problem: 'A learner proposes roots $-4$ and $9$ for $x^2+5x-36=0$. Correct both roots by factoring.'
+            answer: "x = 4 or x = -9"
+            answer_contract: {kind: exact}
+            solution_sketch: '$(x-4)(x+9) = 0$.'
+          - problem: 'A quadratic''s coefficient row is $(1,9,18)$ in descending order. Set the polynomial equal to zero and solve by factoring.'
+            answer: "x = -3 or x = -6"
+            answer_contract: {kind: exact}
+            solution_sketch: '$(x+3)(x+6) = 0$.'
         constraints: 'monic trinomial already equal to 0; integer roots'
       - id: kp2
         name: Rearrange to standard form first
@@ -1485,10 +1891,20 @@ topics:
         exemplars:
           - problem: 'Solve $x^2 + 6x = -8$.'
             answer: "x = -2 or x = -4"
+            answer_contract: {kind: exact}
             solution_sketch: '$x^2 + 6x + 8 = 0$; $(x+2)(x+4) = 0$.'
-          - problem: 'Solve $3x^2 = 12x$.'
+          - problem: 'Find the $x$ coordinates where the curves $y=3x^2$ and $y=12x$ intersect. Rearrange and solve by factoring.'
             answer: "x = 0 or x = 4"
+            answer_contract: {kind: exact}
             solution_sketch: '$3x^2 - 12x = 0$; $3x(x - 4) = 0$. Never divide by $x$.'
+          - problem: 'A learner rearranges $x^2+4x=21$ as $x^2+4x+21=0$. Correct the rearrangement and give all roots by factoring.'
+            answer: "x = 3 or x = -7"
+            answer_contract: {kind: exact}
+            solution_sketch: '$x^2 + 4x - 21 = 0$; $(x+7)(x-3) = 0$.'
+          - problem: 'A signed-area model equates $5x^2$ and $20x$. Move the terms to one side and find every real solution, including zero.'
+            answer: "x = 4 or x = 0"
+            answer_contract: {kind: exact}
+            solution_sketch: '$5x^2 - 20x = 0$; $5x(x - 4) = 0$. Never divide by $x$.'
         constraints: 'terms on both sides; collect into standard form before factoring; integer roots'
       - id: kp3
         name: Non-monic quadratics and special patterns
@@ -1496,10 +1912,20 @@ topics:
         exemplars:
           - problem: 'Solve $2x^2 - 5x - 3 = 0$.'
             answer: "x = 3 or x = -1/2"
+            answer_contract: {kind: exact}
             solution_sketch: '$(2x + 1)(x - 3) = 0$.'
-          - problem: 'Solve $x^2 - 25 = 0$.'
+          - problem: 'Find the horizontal-axis crossing values of $y=x^2-25$ by factoring a difference of squares.'
             answer: "x = 5 or x = -5"
+            answer_contract: {kind: exact}
             solution_sketch: 'Difference of squares: $(x+5)(x-5) = 0$.'
+          - problem: 'A learner factors $3x^2+5x-2$ as $(3x-1)(x+2)$ but reports $x=1,-2$. Correct the solution set.'
+            answer: "x = 1/3 or x = -2"
+            answer_contract: {kind: exact}
+            solution_sketch: '$(3x - 1)(x + 2) = 0$.'
+          - problem: 'A quadratic''s coefficient row is $(1,0,-64)$. Set it equal to zero and solve by factoring the special pattern.'
+            answer: "x = 8 or x = -8"
+            answer_contract: {kind: exact}
+            solution_sketch: 'Difference of squares: $(x+8)(x-8) = 0$.'
         constraints: 'leading coefficient > 1 or a difference-of-squares pattern; roots may be fractions'
     diagnostic_exemplar:
       problem: 'Solve $2x^2 + 7x = -3$.'
@@ -1533,20 +1959,41 @@ topics:
         exemplars:
           - problem: 'Solve $x^2 = 49$.'
             answer: "x = 7 or x = -7"
+            answer_contract: {kind: exact}
             solution_sketch: 'Both square roots: $x = \pm 7$.'
-          - problem: 'Solve $x^2 = 100$.'
+          - problem: 'The graph $y=x^2$ intersects the horizontal line $y=100$. Find both $x$ coordinates using square roots.'
             answer: "x = 10 or x = -10"
+            answer_contract: {kind: exact}
+            solution_sketch: 'Both square roots: $x = \pm 10$.'
+          - problem: 'A student concludes $x=9$ from $x^2=81$. Give the complete real solution set.'
+            answer: "x = 9 or x = -9"
+            answer_contract: {kind: exact}
+            solution_sketch: 'Both square roots: $x = \pm 9$.'
+          - problem: 'On a number line, the squared distance of $x$ from zero is $144$. Find all signed coordinates $x$.'
+            answer: "x = 12 or x = -12"
+            answer_contract: {kind: exact}
+            solution_sketch: 'Distance is $\sqrt{144}=12$, so the two coordinates are $12$ and $-12$.'
         constraints: "perfect-square k; always two roots"
       - id: kp2
         name: Isolate the square first
         key_prerequisites: [two-step-equations, square-roots]
         exemplars:
-          - problem: 'Solve $3x^2 - 27 = 0$.'
-            answer: "x = 3 or x = -3"
-            solution_sketch: '$x^2 = 9$; $x = \pm 3$.'
-          - problem: 'Solve $(x - 3)^2 = 16$.'
+          - problem: 'Solve $3(x-1)^2-27=0$ by first isolating the square.'
+            answer: 'x = 4 or x = -2'
+            answer_contract: {kind: exact}
+            solution_sketch: 'Divide by $3$ after adding $27$: $(x-1)^2=9$. Thus $x-1=3$ or $x-1=-3$, giving $4$ and $-2$.'
+          - problem: 'The parabola $y=(x-3)^2$ meets the line $y=16$. Find both $x$ coordinates using the square-root property.'
             answer: "x = 7 or x = -1"
+            answer_contract: {kind: exact}
             solution_sketch: '$x - 3 = \pm 4$.'
+          - problem: 'Correct a learner''s single solution $x=6$ for $2(x-2)^2-32=0$. Give all real solutions.'
+            answer: 'x = 6 or x = -2'
+            answer_contract: {kind: exact}
+            solution_sketch: 'Isolate $(x-2)^2=16$, then use both signs: $x-2=\pm4$. The roots are $6$ and $-2$.'
+          - problem: 'A number-line coordinate has squared distance $25$ from $-2$. Find all coordinates using $(x+2)^2=25$.'
+            answer: "x = 3 or x = -7"
+            answer_contract: {kind: exact}
+            solution_sketch: '$x + 2 = \pm 5$.'
         constraints: "shifted squares (x - h)^2 = k with perfect-square k"
       - id: kp3
         name: Irrational solutions
@@ -1554,9 +2001,20 @@ topics:
         exemplars:
           - problem: 'Solve $x^2 = 12$. Give exact answers.'
             answer: "x = 2*sqrt(3) or x = -2*sqrt(3)"
+            answer_contract: {kind: exact}
             solution_sketch: '$\pm\sqrt{12} = \pm 2\sqrt{3}$.'
-          - problem: 'Solve $(x + 1)^2 = 5$. Give exact answers.'
+          - problem: 'Find the $x$ coordinates where $y=(x+1)^2$ meets $y=5$. Keep both answers exact.'
             answer: "x = -1 + sqrt(5) or x = -1 - sqrt(5)"
+            answer_contract: {kind: exact}
+            solution_sketch: '$x + 1 = \pm\sqrt{5}$.'
+          - problem: 'A student writes $x=\pm10$ for $x^2=20$. Give the corrected real solutions with simplified radicals.'
+            answer: "x = 2*sqrt(5) or x = -2*sqrt(5)"
+            answer_contract: {kind: exact}
+            solution_sketch: '$\pm\sqrt{20} = \pm 2\sqrt{5}$.'
+          - problem: 'A coordinate has squared distance $8$ from $2$ on a number line. Find all such coordinates in exact radical form.'
+            answer: "x = 2 + 2*sqrt(2) or x = 2 - 2*sqrt(2)"
+            answer_contract: {kind: exact}
+            solution_sketch: '$x - 2 = \pm\sqrt{8} = \pm 2\sqrt{2}$.'
         constraints: "simplify the radical; exact form, no decimals"
     diagnostic_exemplar:
       problem: 'Solve $(x + 3)^2 = 7$. Give exact answers.'
@@ -1590,9 +2048,20 @@ topics:
         exemplars:
           - problem: 'Write a monic quadratic equation with roots $3$ and $-5$.'
             answer: "x^2 + 2x - 15 = 0"
+            answer_contract: {kind: polynomial_relation}
             solution_sketch: '$(x - 3)(x + 5) = 0$; expand.'
-          - problem: 'Write a monic quadratic equation with roots $2$ and $4$.'
+          - problem: 'A monic parabola crosses the horizontal axis at $(2,0)$ and $(4,0)$. Write its zero equation in expanded standard form.'
             answer: "x^2 - 6x + 8 = 0"
+            answer_contract: {kind: polynomial_relation}
+            solution_sketch: '$(x - 2)(x - 4) = 0$; expand.'
+          - problem: 'A learner uses $(x+5)(x-2)=0$ for roots $5,-2$. Correct the signs and write the monic equation in expanded standard form.'
+            answer: "x^2 - 3x - 10 = 0"
+            answer_contract: {kind: polynomial_relation}
+            solution_sketch: '$(x - 5)(x + 2) = 0$; expand.'
+          - problem: 'A root table contains $-4$ and $-7$, each once. Build and expand the monic quadratic equation.'
+            answer: "x^2 + 11x + 28 = 0"
+            answer_contract: {kind: polynomial_relation}
+            solution_sketch: '$(x + 4)(x + 7) = 0$; expand.'
         constraints: "monic; reverse the factoring"
       - id: kp2
         name: Repeated and zero roots
@@ -1600,10 +2069,20 @@ topics:
         exemplars:
           - problem: 'Write a monic quadratic equation whose only root is $x = 4$.'
             answer: "x^2 - 8x + 16 = 0"
+            answer_contract: {kind: polynomial_relation}
             solution_sketch: '$(x - 4)^2 = 0$.'
-          - problem: 'Write a monic quadratic equation with roots $0$ and $-6$.'
+          - problem: 'A monic parabola crosses the horizontal axis at the origin and at $(-6,0)$. Write its quadratic zero equation.'
             answer: "x^2 + 6x = 0"
+            answer_contract: {kind: polynomial_relation}
             solution_sketch: '$x(x + 6) = 0$.'
+          - problem: 'A learner writes $x^2-9=0$ for a quadratic whose only root is $-3$. Write the correct monic quadratic equation.'
+            answer: "x^2 + 6x + 9 = 0"
+            answer_contract: {kind: polynomial_relation}
+            solution_sketch: '$(x + 3)^2 = 0$.'
+          - problem: 'A factor record says one root is zero and the other is $5$. Build and expand the monic quadratic zero equation.'
+            answer: "x^2 - 5x = 0"
+            answer_contract: {kind: polynomial_relation}
+            solution_sketch: '$x(x - 5) = 0$.'
         constraints: "double root -> perfect square; root 0 -> factor x"
       - id: kp3
         name: Fractional roots with integer coefficients
@@ -1613,10 +2092,18 @@ topics:
             answer: "2x^2 + 5x - 3 = 0"
             answer_contract: {kind: polynomial_relation}
             solution_sketch: '$(2x - 1)(x + 3) = 0$; expand.'
-          - problem: 'Write a quadratic equation with integer coefficients whose roots are $\frac{2}{3}$ and $1$.'
+          - problem: 'A parabola has horizontal-axis intercepts $(2/3,0)$ and $(1,0)$. Write its quadratic zero equation with the smallest positive integer leading coefficient.'
             answer: "3x^2 - 5x + 2 = 0"
             answer_contract: {kind: polynomial_relation}
             solution_sketch: '$(3x - 2)(x - 1) = 0$.'
+          - problem: 'A learner chooses $x-4$ for the root $1/4$ and $x+2$ for the root $-2$. Correct the first factor and expand a quadratic zero equation with integer coefficients.'
+            answer: "4x^2 + 7x - 2 = 0"
+            answer_contract: {kind: polynomial_relation}
+            solution_sketch: '$(4x - 1)(x + 2) = 0$; expand.'
+          - problem: 'A root table lists $3/5$ and $1$. Clear the denominator in the linear factor for the fractional root and write the expanded quadratic zero equation.'
+            answer: "5x^2 - 8x + 3 = 0"
+            answer_contract: {kind: polynomial_relation}
+            solution_sketch: '$(5x - 3)(x - 1) = 0$; expand.'
         constraints: "clear the fraction into the leading coefficient"
     diagnostic_exemplar:
       problem: 'Write a quadratic equation with integer coefficients whose roots are $\frac{1}{3}$ and $-2$.'
@@ -1659,19 +2146,38 @@ topics:
             answer: "constant = 16; perfect_square = (x + 4)^2"
             answer_contract: {kind: multipart, parts: [{name: constant, contract: {kind: exact}}, {name: perfect_square, contract: {kind: exact}}]}
             solution_sketch: '$(8/2)^2 = 16$.'
-          - problem: 'Complete the square for $x^2 - 6x$.'
+          - problem: 'An area layout contains $x^2$ with two signed strips totalling $-6x$. State the missing corner constant and the completed squared binomial.'
             answer: "constant = 9; perfect_square = (x - 3)^2"
             answer_contract: {kind: multipart, parts: [{name: constant, contract: {kind: exact}}, {name: perfect_square, contract: {kind: exact}}]}
             solution_sketch: '$(-6/2)^2 = 9$.'
+          - problem: 'A learner adds $10$ to $x^2+10x$ and claims a perfect square. Give the correct added constant and squared-binomial form.'
+            answer: "constant = 25; perfect_square = (x + 5)^2"
+            answer_contract: {kind: multipart, parts: [{name: constant, contract: {kind: exact}}, {name: perfect_square, contract: {kind: exact}}]}
+            solution_sketch: '$(10/2)^2 = 25$.'
+          - problem: 'Fill the missing constant in $x^2-4x+\square$ so that it is a perfect square. Report both the constant and the squared binomial.'
+            answer: "constant = 4; perfect_square = (x - 2)^2"
+            answer_contract: {kind: multipart, parts: [{name: constant, contract: {kind: exact}}, {name: perfect_square, contract: {kind: exact}}]}
+            solution_sketch: '$(-4/2)^2 = 4$.'
       - id: kp2
         name: Solve a quadratic by completing the square (rational roots)
         key_prerequisites: [square-root-property]
         exemplars:
           - problem: 'Solve $x^2 + 6x + 5 = 0$ by completing the square.'
             answer: "x = -1 or x = -5"
+            answer_contract: {kind: exact}
             solution_sketch: '$x^2 + 6x = -5$; add $9$: $(x+3)^2 = 4$; $x + 3 = \pm 2$.'
-          - problem: 'Solve $x^2 - 4x - 12 = 0$ by completing the square.'
+          - problem: 'Find the horizontal-axis crossing values of $y=x^2-4x-12$ by completing the square.'
             answer: "x = 6 or x = -2"
+            answer_contract: {kind: exact}
+            solution_sketch: '$x^2 - 4x = 12$; add $4$: $(x-2)^2 = 16$; $x - 2 = \pm 4$.'
+          - problem: 'A learner changes $x^2+8x+7=0$ into $(x+4)^2=-7$. Repair the square-completion step and give all roots.'
+            answer: "x = -1 or x = -7"
+            answer_contract: {kind: exact}
+            solution_sketch: 'Move $7$, then add $16$ to both sides: $(x+4)^2=9$. Thus $x=-4\pm3$, giving $-1,-7$.'
+          - problem: 'A monic quadratic has coefficient row $(1,-10,16)$. Set it equal to zero and solve by completing the square.'
+            answer: "x = 8 or x = 2"
+            answer_contract: {kind: exact}
+            solution_sketch: '$x^2 - 10x = -16$; add $25$: $(x-5)^2 = 9$; $x - 5 = \pm 3$.'
         constraints: 'monic with even b; the completed square leaves a perfect square, so roots are rational'
       - id: kp3
         name: Irrational roots requiring a radical
@@ -1679,9 +2185,20 @@ topics:
         exemplars:
           - problem: 'Solve $x^2 + 2x - 4 = 0$ by completing the square.'
             answer: "x = -1 + √5 or x = -1 - √5"
+            answer_contract: {kind: exact}
             solution_sketch: '$(x+1)^2 = 5$; $x = -1 \pm \sqrt{5}$.'
-          - problem: 'Solve $x^2 - 8x + 5 = 0$ by completing the square.'
+          - problem: 'Find the horizontal-axis crossing values of $y=x^2-8x+5$ by completing the square. Keep exact radicals.'
             answer: "x = 4 + √11 or x = 4 - √11"
+            answer_contract: {kind: exact}
+            solution_sketch: '$(x-4)^2 = 11$.'
+          - problem: 'A learner rewrites $x^2+4x-1=0$ as $(x+2)^2=1$. Correct the completed square and give both exact roots.'
+            answer: "x = -2 + sqrt(5) or x = -2 - sqrt(5)"
+            answer_contract: {kind: exact}
+            solution_sketch: '$(x+2)^2 = 5$; $x = -2 \pm \sqrt{5}$.'
+          - problem: 'A monic quadratic''s coefficient row is $(1,-2,-6)$. Set it equal to zero and complete the square to find both exact roots.'
+            answer: "x = 1 + sqrt(7) or x = 1 - sqrt(7)"
+            answer_contract: {kind: exact}
+            solution_sketch: '$(x-1)^2 = 7$; $x = 1 \pm \sqrt{7}$.'
         constraints: 'monic with even b; the completed square leaves a non-square, so answers keep an exact radical'
     diagnostic_exemplar:
       problem: 'Solve $x^2 - 6x + 2 = 0$ by completing the square.'
@@ -1715,10 +2232,20 @@ topics:
         exemplars:
           - problem: 'Solve $2x^2 + 8x - 10 = 0$ by completing the square.'
             answer: "x = 1 or x = -5"
+            answer_contract: {kind: exact}
             solution_sketch: 'Divide by 2: $x^2 + 4x - 5 = 0$; $(x+2)^2 = 9$.'
-          - problem: 'Solve $3x^2 - 6x - 9 = 0$ by completing the square.'
+          - problem: 'Find the horizontal-axis crossing values of $y=3x^2-6x-9$ by dividing through by the leading coefficient and completing the square.'
             answer: "x = 3 or x = -1"
+            answer_contract: {kind: exact}
             solution_sketch: 'Divide by 3: $x^2 - 2x - 3 = 0$; $(x-1)^2 = 4$.'
+          - problem: 'A learner divides $2x^2-4x-6=0$ by $2$ but keeps the constant $-6$. Correct this and finish solving by completing the square.'
+            answer: "x = 3 or x = -1"
+            answer_contract: {kind: exact}
+            solution_sketch: 'Divide by 2: $x^2 - 2x - 3 = 0$; $(x-1)^2 = 4$.'
+          - problem: 'A quadratic has coefficient row $(3,9,-30)$. Set it equal to zero, divide by its leading coefficient, and complete the square to find both roots.'
+            answer: "x = 2 or x = -5"
+            answer_contract: {kind: exact}
+            solution_sketch: 'Divide by 3: $x^2 + 3x - 10 = 0$; $(x + 1.5)^2 = 12.25$.'
         constraints: "a divides every coefficient; rational roots"
       - id: kp2
         name: Fractions appear after dividing
@@ -1726,10 +2253,20 @@ topics:
         exemplars:
           - problem: 'Solve $2x^2 - 4x - 3 = 0$ by completing the square.'
             answer: "x = (2 + √10)/2 or x = (2 - √10)/2"
+            answer_contract: {kind: exact}
             solution_sketch: '$x^2 - 2x = \frac{3}{2}$; $(x-1)^2 = \frac{5}{2}$; $x = 1 \pm \frac{\sqrt{10}}{2}$.'
-          - problem: 'Solve $2x^2 + 6x + 1 = 0$ by completing the square.'
+          - problem: 'Find the horizontal-axis crossing values of $y=2x^2+6x+1$ by completing the square after division. Keep exact fractions and radicals.'
             answer: "x = (-3 + √7)/2 or x = (-3 - √7)/2"
+            answer_contract: {kind: exact}
             solution_sketch: 'Divide by 2: $x^2 + 3x = -\frac{1}{2}$; $(x + \frac{3}{2})^2 = \frac{7}{4}$.'
+          - problem: 'A learner gets $x^2-4x-5=0$ after dividing $2x^2-8x-5=0$ by $2$. Correct the constant and solve by completing the square.'
+            answer: "x = (4 + sqrt(26))/2 or x = (4 - sqrt(26))/2"
+            answer_contract: {kind: exact}
+            solution_sketch: '$x^2 - 4x = \frac{5}{2}$; $(x-2)^2 = \frac{13}{2}$.'
+          - problem: 'A quadratic has coefficient row $(2,10,1)$. Set it equal to zero, divide by $2$, and complete the square. Give exact roots.'
+            answer: "x = (-5 + sqrt(23))/2 or x = (-5 - sqrt(23))/2"
+            answer_contract: {kind: exact}
+            solution_sketch: 'Divide by 2: $x^2 + 5x = -\frac{1}{2}$; $(x + \frac{5}{2})^2 = \frac{23}{4}$.'
         constraints: "odd b or non-dividing constants; exact radical answers"
       - id: kp3
         name: Odd middle coefficients
@@ -1737,10 +2274,20 @@ topics:
         exemplars:
           - problem: 'Solve $x^2 + 5x + 3 = 0$ by completing the square.'
             answer: "x = (-5 + √13)/2 or x = (-5 - √13)/2"
+            answer_contract: {kind: exact}
             solution_sketch: '$(x + \frac{5}{2})^2 = \frac{25}{4} - 3 = \frac{13}{4}$.'
-          - problem: 'Solve $x^2 - x - 1 = 0$ by completing the square.'
+          - problem: 'Find the horizontal-axis crossing values of $y=x^2-x-1$ by completing the square with a fractional half-coefficient.'
             answer: "x = (1 + √5)/2 or x = (1 - √5)/2"
+            answer_contract: {kind: exact}
             solution_sketch: '$(x - \frac{1}{2})^2 = \frac{5}{4}$.'
+          - problem: 'A learner adds $49$ to complete the square for $x^2+7x+2=0$. Correct the added amount and solve exactly by completing the square.'
+            answer: "x = (-7 + sqrt(41))/2 or x = (-7 - sqrt(41))/2"
+            answer_contract: {kind: exact}
+            solution_sketch: '$(x + \frac{7}{2})^2 = \frac{49}{4} - 2 = \frac{41}{4}$.'
+          - problem: 'A monic quadratic has coefficient row $(1,-3,-3)$. Set it equal to zero and complete the square using the exact half of the middle coefficient.'
+            answer: "x = (3 + sqrt(21))/2 or x = (3 - sqrt(21))/2"
+            answer_contract: {kind: exact}
+            solution_sketch: '$(x - \frac{3}{2})^2 = \frac{9}{4} + 3 = \frac{21}{4}$.'
         constraints: "half of odd b is a fraction; keep exact arithmetic"
     diagnostic_exemplar:
       problem: 'Solve $2x^2 - 8x + 1 = 0$ by completing the square.'
@@ -1779,8 +2326,17 @@ topics:
             answer_contract: {kind: multipart, parts: [{name: a, contract: {kind: exact}}, {name: b, contract: {kind: exact}}, {name: c, contract: {kind: exact}}]}
             solution_sketch: 'Read the coefficients directly off the standard form $3x^2 - 5x + 2 = 0$.'
           - problem: 'Rewrite $x^2 = 4x - 3$ in standard form and state $a$, $b$, $c$.'
-            answer: "x^2 - 4x + 3 = 0; a = 1, b = -4, c = 3"
+            answer: "a = 1; b = -4; c = 3"
+            answer_contract: {kind: multipart, parts: [{name: a, contract: {kind: exact}}, {name: b, contract: {kind: exact}}, {name: c, contract: {kind: exact}}]}
             solution_sketch: 'Move every term to one side: $x^2 - 4x + 3 = 0$, so $a = 1$, $b = -4$, $c = 3$.'
+          - problem: 'A coefficient table lists powers $2,1,0$ with entries $4,3,-1$. State $a,b,c$ for the quadratic formula.'
+            answer: "a = 4; b = 3; c = -1"
+            answer_contract: {kind: multipart, parts: [{name: a, contract: {kind: exact}}, {name: b, contract: {kind: exact}}, {name: c, contract: {kind: exact}}]}
+            solution_sketch: 'Read the coefficients directly off the standard form $4x^2 + 3x - 1 = 0$.'
+          - problem: 'A learner identifies $b=3$ from $x^2+5=3x$. Move all terms to the left and state the correct $a,b,c$.'
+            answer: "a = 1; b = -3; c = 5"
+            answer_contract: {kind: multipart, parts: [{name: a, contract: {kind: exact}}, {name: b, contract: {kind: exact}}, {name: c, contract: {kind: exact}}]}
+            solution_sketch: 'Move every term to one side: $x^2 - 3x + 5 = 0$.'
         constraints: "include rearrangement into standard form; signs matter"
       - id: kp2
         name: Rational roots from the formula
@@ -1788,10 +2344,20 @@ topics:
         exemplars:
           - problem: 'Solve $x^2 + 5x + 6 = 0$ using the quadratic formula.'
             answer: "x = -2 or x = -3"
+            answer_contract: {kind: exact}
             solution_sketch: '$a = 1$, $b = 5$, $c = 6$; disc $= 1$; $x = \frac{-5 \pm 1}{2}$.'
-          - problem: 'Solve $2x^2 - 7x + 3 = 0$ using the quadratic formula.'
+          - problem: 'Find the horizontal-axis crossing values of $y=2x^2-7x+3$ using the quadratic formula.'
             answer: "x = 3 or x = 1/2"
+            answer_contract: {kind: exact}
             solution_sketch: 'disc $= 25$; $x = \frac{7 \pm 5}{4}$.'
+          - problem: 'A learner uses $-2$ in place of $-b$ for $x^2-2x-8=0$. Correct the formula substitution and give both roots.'
+            answer: "x = 4 or x = -2"
+            answer_contract: {kind: exact}
+            solution_sketch: 'disc $= 4 + 32 = 36$; $x = \frac{2 \pm 6}{2}$.'
+          - problem: 'A quadratic has coefficient row $(3,-5,2)$. Set it equal to zero and find both roots using the quadratic formula.'
+            answer: "x = 1 or x = 2/3"
+            answer_contract: {kind: exact}
+            solution_sketch: 'disc $= 25 - 24 = 1$; $x = \frac{5 \pm 1}{6}$.'
         constraints: "perfect-square discriminant"
       - id: kp3
         name: Perfect-square discriminants with a > 1
@@ -1799,10 +2365,20 @@ topics:
         exemplars:
           - problem: 'Solve $6x^2 + x - 2 = 0$ using the quadratic formula.'
             answer: "x = 1/2 or x = -2/3"
+            answer_contract: {kind: exact}
             solution_sketch: 'disc $= 1 + 48 = 49$; $x = \frac{-1 \pm 7}{12}$.'
-          - problem: 'Solve $4x^2 - 4x - 3 = 0$ using the quadratic formula.'
+          - problem: 'Find the horizontal-axis crossing values of $y=4x^2-4x-3$ using the quadratic formula; reduce both fractions.'
             answer: "x = 3/2 or x = -1/2"
+            answer_contract: {kind: exact}
             solution_sketch: 'disc $= 16 + 48 = 64$; $x = \frac{4 \pm 8}{8}$.'
+          - problem: 'A learner uses denominator $4$ in the formula for $4x^2+11x-3=0$. Correct the denominator and solve with reduced fractions.'
+            answer: "x = 1/4 or x = -3"
+            answer_contract: {kind: exact}
+            solution_sketch: 'disc $= 121 + 48 = 169$; $x = \frac{-11 \pm 13}{8}$.'
+          - problem: 'A quadratic has coefficient row $(9,-6,-8)$. Set it equal to zero and use the quadratic formula, reducing both roots fully.'
+            answer: "x = 4/3 or x = -2/3"
+            answer_contract: {kind: exact}
+            solution_sketch: 'disc $= 36 + 288 = 324$; $x = \frac{6 \pm 18}{18}$.'
         constraints: "fractional roots reduce to lowest terms"
     diagnostic_exemplar:
       problem: 'Solve $3x^2 + 7x + 2 = 0$ using the quadratic formula.'
@@ -1839,9 +2415,20 @@ topics:
         exemplars:
           - problem: 'Solve $x^2 - 4x + 1 = 0$ using the quadratic formula.'
             answer: "x = 2 + √3 or x = 2 - √3"
+            answer_contract: {kind: exact}
             solution_sketch: 'disc $= 12$; $\sqrt{12} = 2\sqrt{3}$; $x = \frac{4 \pm 2\sqrt{3}}{2} = 2 \pm \sqrt{3}$.'
-          - problem: 'Solve $x^2 + 6x + 4 = 0$ using the quadratic formula.'
+          - problem: 'Find the horizontal-axis crossing values of $y=x^2+6x+4$ with the quadratic formula. Simplify the discriminant''s radical.'
             answer: "x = -3 + √5 or x = -3 - √5"
+            answer_contract: {kind: exact}
+            solution_sketch: 'disc $= 20$; $\sqrt{20} = 2\sqrt{5}$; $x = \frac{-6 \pm 2\sqrt{5}}{2} = -3 \pm \sqrt{5}$.'
+          - problem: 'A learner obtains $(2\pm\sqrt{12})/2$ from $x^2-2x-2=0$. Finish simplifying and give both roots separately.'
+            answer: "x = 1 + sqrt(3) or x = 1 - sqrt(3)"
+            answer_contract: {kind: exact}
+            solution_sketch: 'disc $= 4 + 8 = 12$; $\sqrt{12} = 2\sqrt{3}$; $x = \frac{2 \pm 2\sqrt{3}}{2} = 1 \pm \sqrt{3}$.'
+          - problem: 'A quadratic has coefficient row $(1,8,13)$. Set it equal to zero, use the quadratic formula, and simplify the radical and fraction.'
+            answer: "x = -4 + sqrt(3) or x = -4 - sqrt(3)"
+            answer_contract: {kind: exact}
+            solution_sketch: 'disc $= 64 - 52 = 12$; $\sqrt{12} = 2\sqrt{3}$; $x = \frac{-8 \pm 2\sqrt{3}}{2} = -4 \pm \sqrt{3}$.'
         constraints: "discriminant has a perfect-square factor; fraction reduces fully"
       - id: kp2
         name: Radical results over a denominator
@@ -1849,10 +2436,20 @@ topics:
         exemplars:
           - problem: 'Solve $2x^2 + 4x - 3 = 0$ using the quadratic formula.'
             answer: "x = (-2 + √10)/2 or x = (-2 - √10)/2"
+            answer_contract: {kind: exact}
             solution_sketch: 'disc $= 40$; $\frac{-4 \pm 2\sqrt{10}}{4} = \frac{-2 \pm \sqrt{10}}{2}$.'
-          - problem: 'Solve $3x^2 - 2x - 2 = 0$ using the quadratic formula.'
+          - problem: 'Find the horizontal-axis crossing values of $y=3x^2-2x-2$ using the quadratic formula. Cancel the common numerator-denominator factor.'
             answer: "x = (1 + √7)/3 or x = (1 - √7)/3"
+            answer_contract: {kind: exact}
             solution_sketch: 'disc $= 28$; $\frac{2 \pm 2\sqrt{7}}{6} = \frac{1 \pm \sqrt{7}}{3}$.'
+          - problem: 'A learner stops at $(2\pm\sqrt{44})/4$ for $2x^2-2x-5=0$. Give both roots in fully reduced radical form.'
+            answer: "x = (1 + sqrt(11))/2 or x = (1 - sqrt(11))/2"
+            answer_contract: {kind: exact}
+            solution_sketch: 'disc $= 4 + 40 = 44$; $\frac{2 \pm 2\sqrt{11}}{4} = \frac{1 \pm \sqrt{11}}{2}$.'
+          - problem: 'A quadratic has coefficient row $(3,4,-2)$. Set it equal to zero and use the quadratic formula, reducing the final fractions.'
+            answer: "x = (-2 + sqrt(10))/3 or x = (-2 - sqrt(10))/3"
+            answer_contract: {kind: exact}
+            solution_sketch: 'disc $= 16 + 24 = 40$; $\frac{-4 \pm 2\sqrt{10}}{6} = \frac{-2 \pm \sqrt{10}}{3}$.'
         constraints: "cancel the common factor between numerator and denominator"
       - id: kp3
         name: Reduce fully and spot no-real-solution cases
@@ -1860,10 +2457,20 @@ topics:
         exemplars:
           - problem: 'Solve $2x^2 + 6x + 3 = 0$ using the quadratic formula.'
             answer: "x = (-3 + √3)/2 or x = (-3 - √3)/2"
+            answer_contract: {kind: exact}
             solution_sketch: 'disc $= 12$; $\frac{-6 \pm 2\sqrt{3}}{4} = \frac{-3 \pm \sqrt{3}}{2}$.'
           - problem: 'How many real solutions does $x^2 + 2x + 5 = 0$ have?'
             answer: "0"
+            answer_contract: {kind: exact}
             solution_sketch: 'disc $= 4 - 20 = -16 < 0$.'
+          - problem: 'A learner stops at $(-4\pm\sqrt{24})/4$ for $2x^2+4x-1=0$. Give both fully reduced exact roots.'
+            answer: "x = (-2 + sqrt(6))/2 or x = (-2 - sqrt(6))/2"
+            answer_contract: {kind: exact}
+            solution_sketch: 'disc $= 16 + 8 = 24$; $\frac{-4 \pm 2\sqrt{6}}{4} = \frac{-2 \pm \sqrt{6}}{2}$.'
+          - problem: 'A learner replaces the negative discriminant of $x^2+4x+8=0$ with its absolute value. How many real roots does the actual quadratic have?'
+            answer: "0"
+            answer_contract: {kind: exact}
+            solution_sketch: 'The discriminant is $4^2-4(1)(8)=-16$. A negative discriminant has no real square root, so the real-root count is $0$.'
         constraints: "negative discriminant means no real roots; state it, do not invent decimals"
     diagnostic_exemplar:
       problem: 'Solve $2x^2 - 6x + 1 = 0$ using the quadratic formula.'
@@ -1897,13 +2504,13 @@ topics:
           - problem: 'Find the discriminant of $x^2 + 3x + 2$.'
             answer: "1"
             solution_sketch: '$3^2 - 4(1)(2) = 9 - 8 = 1$.'
-          - problem: 'Find the discriminant of $2x^2 - 4x + 5$.'
+          - problem: 'A coefficient table gives $a=2,b=-4,c=5$. Calculate $b^2-4ac$.'
             answer: "-24"
             solution_sketch: '$(-4)^2 - 4(2)(5) = 16 - 40 = -24$.'
-          - problem: 'Find the discriminant of $x^2 - 6x + 5$.'
+          - problem: 'A learner uses $-36$ for $b^2$ in $x^2-6x+5=0$. Correct the discriminant.'
             answer: "16"
             solution_sketch: '$(-6)^2 - 4(1)(5) = 36 - 20 = 16$.'
-          - problem: 'Find the discriminant of $3x^2 + 5x + 1$.'
+          - problem: 'For the intersection equation $3x^2+5x=-1$, calculate the discriminant after moving the constant left.'
             answer: "13"
             solution_sketch: '$5^2 - 4(3)(1) = 25 - 12 = 13$.'
         constraints: 'integer a, b, c with coefficients at most 6 in size; answer is the signed value of b^2 - 4ac'
@@ -1914,13 +2521,13 @@ topics:
           - problem: 'How many real solutions does $x^2 - 6x + 9 = 0$ have? Use the discriminant.'
             answer: "1"
             solution_sketch: 'disc $= 36 - 36 = 0$: exactly one repeated real root.'
-          - problem: 'How many real solutions does $x^2 + x + 1 = 0$ have?'
+          - problem: 'How many horizontal-axis intersection points does $y=x^2+x+1$ have? Decide from the discriminant.'
             answer: "0"
             solution_sketch: 'disc $= 1 - 4 = -3 < 0$: no real roots.'
-          - problem: 'How many real solutions does $x^2 - 5x + 2 = 0$ have?'
+          - problem: 'A quadratic''s coefficient row is $(1,-5,2)$. Use its discriminant to give the number of distinct real zeros.'
             answer: "2"
             solution_sketch: 'disc $= 25 - 8 = 17 > 0$: two distinct real roots.'
-          - problem: 'How many real solutions does $2x^2 - 3x + 5 = 0$ have?'
+          - problem: 'A learner claims two real zeros for $2x^2-3x+5$ because it is quadratic. Give the actual number using the discriminant.'
             answer: "0"
             solution_sketch: 'disc $= 9 - 40 = -31 < 0$: no real roots.'
         constraints: 'answer is the count 0, 1, or 2; cover all three cases across problems'
@@ -1958,15 +2565,15 @@ topics:
             answer: "(3, 4)"
             answer_contract: {kind: exact}
             solution_sketch: 'Vertex form gives $h = 3$, $k = 4$ directly.'
-          - problem: 'Give the vertex of $y = (x + 2)^2 - 5$.'
+          - problem: 'Starting with $y=x^2$, shift the graph left $2$ and down $5$, giving $y=(x+2)^2-5$. State the vertex.'
             answer: "(-2, -5)"
             answer_contract: {kind: exact}
             solution_sketch: '$x + 2 = x - (-2)$, so $h = -2$.'
-          - problem: 'Give the vertex of $y = (x - 5)^2 - 2$.'
+          - problem: 'A learner reads the vertex of $y=(x-5)^2-2$ as $(-5,-2)$. Correct the point.'
             answer: "(5, -2)"
             answer_contract: {kind: exact}
             solution_sketch: 'Vertex form gives $h = 5$, $k = -2$.'
-          - problem: 'Give the vertex of $y = (x + 6)^2 + 1$.'
+          - problem: 'For $y=(x+6)^2+1$, locate the point where the squared term is zero. Give the vertex as a coordinate pair.'
             answer: "(-6, 1)"
             answer_contract: {kind: exact}
             solution_sketch: '$x + 6 = x - (-6)$, so $h = -6$.'
@@ -1979,15 +2586,15 @@ topics:
             answer: "direction = downward; extreme_value = 3"
             answer_contract: {kind: multipart, parts: [{name: direction, contract: {kind: label, options: [[upward], [downward]]}}, {name: extreme_value, contract: {kind: exact}}]}
             solution_sketch: '$a = -2 < 0$; the vertex $y$-value is the max.'
-          - problem: 'Does $y = (x + 4)^2 - 1$ open upward or downward, and what is its maximum or minimum value?'
+          - problem: 'Translate $y=x^2$ left $4$ and down $1$, giving $y=(x+4)^2-1$. State its opening direction and extreme $y$ value.'
             answer: "direction = upward; extreme_value = -1"
             answer_contract: {kind: multipart, parts: [{name: direction, contract: {kind: label, options: [[upward], [downward]]}}, {name: extreme_value, contract: {kind: exact}}]}
             solution_sketch: '$a = 1 > 0$; the vertex $y$-value is the min.'
-          - problem: 'Does $y = 3(x - 2)^2 - 4$ open upward or downward, and what is its maximum or minimum value?'
+          - problem: 'A learner calls $-4$ a maximum for $y=3(x-2)^2-4$. Give the correct opening direction and extreme value.'
             answer: "direction = upward; extreme_value = -4"
             answer_contract: {kind: multipart, parts: [{name: direction, contract: {kind: label, options: [[upward], [downward]]}}, {name: extreme_value, contract: {kind: exact}}]}
             solution_sketch: '$a = 3 > 0$; the vertex $y$-value is the min.'
-          - problem: 'Does $y = -(x + 5)^2 + 2$ open upward or downward, and what is its maximum or minimum value?'
+          - problem: 'A model $y=-(x+5)^2+2$ subtracts a nonnegative square from $2$. State its opening direction and extreme value.'
             answer: "direction = downward; extreme_value = 2"
             answer_contract: {kind: multipart, parts: [{name: direction, contract: {kind: label, options: [[upward], [downward]]}}, {name: extreme_value, contract: {kind: exact}}]}
             solution_sketch: '$a = -1 < 0$; the vertex $y$-value is the max.'
@@ -2001,18 +2608,18 @@ topics:
             answer: "x = 2; y = 3"
             answer_contract: {kind: multipart, parts: [{name: x, contract: {kind: exact}}, {name: y, contract: {kind: exact}}]}
             solution_sketch: 'Axis through the vertex; $(0-2)^2 - 1 = 3$.'
-          - problem: 'For $y = -(x + 1)^2 + 4$, find $y$ at $x = 1$.'
+          - problem: 'Complete the output entry at $x=1$ in a table for the vertex-form graph $y=-(x+1)^2+4$.'
             answer: "0"
             answer_contract: {kind: exact}
             solution_sketch: '$-(2)^2 + 4 = 0$.'
-          - problem: 'For $y = (x - 1)^2 + 2$, give the axis of symmetry and the $y$-value at $x = 3$.'
+          - problem: 'For $y=(x-1)^2+2$, a learner gives axis $x=-1$. Correct the axis and also give the ordinate at $x=3$.'
             answer: "x = 1; y = 6"
             answer_contract: {kind: multipart, parts: [{name: x, contract: {kind: exact}}, {name: y, contract: {kind: exact}}]}
             solution_sketch: 'Axis through the vertex; $(3-1)^2 + 2 = 6$.'
-          - problem: 'For $y = -(x - 2)^2 + 5$, find $y$ at $x = 4$.'
+          - problem: 'On $y=-(x-2)^2+5$, the point $(0,1)$ is reflected across the symmetry axis. Find the $y$ value at the reflected input $x=4$.'
             answer: "1"
             answer_contract: {kind: exact}
-            solution_sketch: '$-(2)^2 + 5 = 1$.'
+            solution_sketch: 'The axis is $x=2$. Inputs $0$ and $4$ are equally far from it, so they share the ordinate $1$.'
         constraints: "evaluate one or two points besides the vertex"
     diagnostic_exemplar:
       problem: 'Does $y = -3(x + 2)^2 + 5$ open upward or downward, and what is its maximum or minimum value?'
@@ -2056,9 +2663,20 @@ topics:
         exemplars:
           - problem: 'Find the vertex of $y = x^2 - 6x + 5$.'
             answer: "(3, -4)"
+            answer_contract: {kind: exact}
             solution_sketch: '$x = \frac{6}{2} = 3$; $y = 9 - 18 + 5 = -4$.'
-          - problem: 'Find the vertex of $y = x^2 + 4x + 1$.'
+          - problem: 'A standard-form coefficient table gives $(a,b,c)=(1,4,1)$. Use $x=-b/(2a)$ and evaluate $y$ to find the vertex.'
             answer: "(-2, -3)"
+            answer_contract: {kind: exact}
+            solution_sketch: '$x = \frac{4}{2} = -2$; $y = 4 - 8 + 1 = -3$.'
+          - problem: 'A learner reports the vertex of $y=x^2-8x+10$ as $(-4,58)$. Correct the sign in $x=-b/(2a)$ and give the vertex.'
+            answer: "(4, -6)"
+            answer_contract: {kind: exact}
+            solution_sketch: '$x = \frac{8}{2} = 4$; $y = 16 - 32 + 10 = -6$.'
+          - problem: 'A parabolic cross-section is modelled by $y=x^2+2x-5$. Locate its lowest point using the standard-form coefficients.'
+            answer: "(-1, -6)"
+            answer_contract: {kind: exact}
+            solution_sketch: '$x = \frac{-2}{2} = -1$; $y = 1 - 2 - 5 = -6$.'
         constraints: 'monic standard form with even b; vertex has integer coordinates'
       - id: kp2
         visuals: [{"kind":"curve","x_min":"-4","x_max":"6","y_min":"-6","y_max":"6","x_tick":"1","y_tick":"1","curve":{"family":"polynomial","coefficients":["-3","-2","1"]},"key_points":[{"x":"1","y":"-4","label":"vertex"},{"x":"-1","y":"0"},{"x":"3","y":"0"},{"x":"0","y":"-3"}],"asymptotes":[],"caption":"Reference example: y = x² - 2x - 3 has vertex (1,-4), axis of symmetry x = 1, and intercepts (-1,0), (3,0), (0,-3)."}]
@@ -2072,6 +2690,15 @@ topics:
           - problem: 'Find the vertex and $y$-intercept of $y = x^2 + 2x - 8$.'
             answer: "vertex = (-1, -9); y_intercept = (0, -8)"
             answer_contract: {kind: multipart, parts: [{name: vertex, contract: {kind: coordinates, arity: 2}}, {name: y_intercept, contract: {kind: coordinates, arity: 2}}]}
+            solution_sketch: '$x = \frac{-2}{2} = -1$; $y = 1 - 2 - 8 = -9$.'
+          - problem: 'A coefficient table for a monic parabola gives $(1,-6,8)$. Find its left and right $x$-intercept points and its vertex.'
+            answer: "left_intercept = (2, 0); right_intercept = (4, 0); vertex = (3, -1)"
+            answer_contract: {kind: multipart, parts: [{name: left_intercept, contract: {kind: coordinates, arity: 2}}, {name: right_intercept, contract: {kind: coordinates, arity: 2}}, {name: vertex, contract: {kind: coordinates, arity: 2}}]}
+            solution_sketch: '$(x-2)(x-4)$; axis $x = 3$, $y = -1$.'
+          - problem: 'A learner gives $(0,3)$ as the $y$-intercept of $y=x^2-2x-3$. Correct that point and also find the vertex.'
+            answer: "vertex = (1, -4); y_intercept = (0, -3)"
+            answer_contract: {kind: multipart, parts: [{name: vertex, contract: {kind: coordinates, arity: 2}}, {name: y_intercept, contract: {kind: coordinates, arity: 2}}]}
+            solution_sketch: '$x = \frac{2}{2} = 1$; $y = 1 - 2 - 3 = -4$.'
         constraints: 'monic and factorable over the integers; give intercepts as points'
       - id: kp3
         visuals: [{"kind":"curve","x_min":"-4","x_max":"6","y_min":"-6","y_max":"6","x_tick":"1","y_tick":"1","curve":{"family":"polynomial","coefficients":["-3","-2","1"]},"key_points":[{"x":"1","y":"-4","label":"vertex"},{"x":"-1","y":"0"},{"x":"3","y":"0"},{"x":"0","y":"-3"}],"asymptotes":[],"caption":"Reference example: y = x² - 2x - 3 has vertex (1,-4), axis of symmetry x = 1, and intercepts (-1,0), (3,0), (0,-3)."}]
@@ -2082,10 +2709,18 @@ topics:
             answer: "direction = upward; vertex = (1, -4); left_intercept = (-1, 0); right_intercept = (3, 0); y_intercept = (0, -3)"
             answer_contract: {kind: multipart, parts: [{name: direction, contract: {kind: label, options: [[upward], [downward]]}}, {name: vertex, contract: {kind: coordinates, arity: 2}}, {name: left_intercept, contract: {kind: coordinates, arity: 2}}, {name: right_intercept, contract: {kind: coordinates, arity: 2}}, {name: y_intercept, contract: {kind: coordinates, arity: 2}}]}
             solution_sketch: '$(x+1)(x-3)$; axis $x = 1$; $y(1) = -4$.'
-          - problem: 'For $y = -x^2 + 4x$, give the direction of opening, vertex, and $x$-intercepts.'
+          - problem: 'A parabolic arch has signed-height model $y=-x^2+4x$. Give its opening direction, vertex, and left and right horizontal-axis intercepts.'
             answer: "direction = downward; vertex = (2, 4); left_intercept = (0, 0); right_intercept = (4, 0)"
             answer_contract: {kind: multipart, parts: [{name: direction, contract: {kind: label, options: [[upward], [downward]]}}, {name: vertex, contract: {kind: coordinates, arity: 2}}, {name: left_intercept, contract: {kind: coordinates, arity: 2}}, {name: right_intercept, contract: {kind: coordinates, arity: 2}}]}
             solution_sketch: '$-x(x - 4)$; axis $x = 2$; $y(2) = 4$.'
+          - problem: 'A parabola''s coefficient row is $(1,2,-8)$. Give its opening direction, vertex, both $x$-intercept points, and its $y$-intercept point.'
+            answer: "direction = upward; vertex = (-1, -9); left_intercept = (-4, 0); right_intercept = (2, 0); y_intercept = (0, -8)"
+            answer_contract: {kind: multipart, parts: [{name: direction, contract: {kind: label, options: [[upward], [downward]]}}, {name: vertex, contract: {kind: coordinates, arity: 2}}, {name: left_intercept, contract: {kind: coordinates, arity: 2}}, {name: right_intercept, contract: {kind: coordinates, arity: 2}}, {name: y_intercept, contract: {kind: coordinates, arity: 2}}]}
+            solution_sketch: '$(x+4)(x-2)$; axis $x = -1$; $y(-1) = -9$.'
+          - problem: 'A learner marks $(3,-9)$ as the vertex of $y=-x^2+6x$. Correct the graph summary: opening direction, vertex, and both $x$-intercept points.'
+            answer: "direction = downward; vertex = (3, 9); left_intercept = (0, 0); right_intercept = (6, 0)"
+            answer_contract: {kind: multipart, parts: [{name: direction, contract: {kind: label, options: [[upward], [downward]]}}, {name: vertex, contract: {kind: coordinates, arity: 2}}, {name: left_intercept, contract: {kind: coordinates, arity: 2}}, {name: right_intercept, contract: {kind: coordinates, arity: 2}}]}
+            solution_sketch: '$-x(x-6)$; axis $x = 3$; $y(3) = 9$.'
         constraints: 'leading coefficient 1 or -1; ask for opening direction, vertex and intercepts together'
     diagnostic_exemplar:
       problem: 'Find the vertex and $x$-intercepts of $y = x^2 - 2x - 8$.'
@@ -2120,9 +2755,20 @@ topics:
         exemplars:
           - problem: 'Write $y = x^2 + 6x + 5$ in vertex form.'
             answer: "y = (x + 3)^2 - 4"
+            answer_contract: {kind: exact}
             solution_sketch: 'Add and subtract $9$: $(x^2 + 6x + 9) - 9 + 5$.'
-          - problem: 'Write $y = x^2 - 4x + 7$ in vertex form.'
+          - problem: 'An area-square completion for $x^2-4x+7$ isolates $x^2-4x+4$ and a remainder. Write the equation $y=x^2-4x+7$ in vertex form.'
             answer: "y = (x - 2)^2 + 3"
+            answer_contract: {kind: exact}
+            solution_sketch: 'Add and subtract $4$: $(x^2 - 4x + 4) - 4 + 7$.'
+          - problem: 'A learner rewrites $y=x^2+8x+10$ as $y=(x+4)^2+10$. Correct the vertex-form equation.'
+            answer: "y = (x + 4)^2 - 6"
+            answer_contract: {kind: exact}
+            solution_sketch: 'Add and subtract $16$: $(x^2 + 8x + 16) - 16 + 10$.'
+          - problem: 'A monic quadratic''s coefficient row is $(1,-10,21)$. Write its $y$ equation in vertex form by completing the square.'
+            answer: "y = (x - 5)^2 - 4"
+            answer_contract: {kind: exact}
+            solution_sketch: 'Add and subtract $25$: $(x^2 - 10x + 25) - 25 + 21$.'
         constraints: "monic; even middle coefficient"
       - id: kp2
         name: Factor out a leading coefficient first
@@ -2130,10 +2776,20 @@ topics:
         exemplars:
           - problem: 'Write $y = 2x^2 - 8x + 3$ in vertex form.'
             answer: "y = 2(x - 2)^2 - 5"
+            answer_contract: {kind: exact}
             solution_sketch: '$2(x^2 - 4x) + 3 = 2((x-2)^2 - 4) + 3$.'
-          - problem: 'Write $y = -x^2 + 2x + 3$ in vertex form.'
+          - problem: 'Rewrite the arch model $y=-x^2+2x+3$ in vertex form, extracting the leading coefficient from the $x$ terms first.'
             answer: "y = -(x - 1)^2 + 4"
+            answer_contract: {kind: exact}
             solution_sketch: '$-(x^2 - 2x) + 3 = -((x-1)^2 - 1) + 3$.'
+          - problem: 'A learner rewrites $y=3x^2-12x+5$ as $y=3(x-2)^2+1$. Correct the outside constant.'
+            answer: "y = 3(x - 2)^2 - 7"
+            answer_contract: {kind: exact}
+            solution_sketch: '$3(x^2 - 4x) + 5 = 3((x-2)^2 - 4) + 5$.'
+          - problem: 'A quadratic''s coefficient row is $(-2,-8,1)$. Write its $y$ equation in vertex form, factoring the leading coefficient out of the $x$ terms.'
+            answer: "y = -2(x + 2)^2 + 9"
+            answer_contract: {kind: exact}
+            solution_sketch: '$-2(x^2 + 4x) + 1 = -2((x+2)^2 - 4) + 1$.'
         constraints: "factor a out of the x-terms only"
       - id: kp3
         name: Read the vertex and extreme value from the result
@@ -2142,11 +2798,19 @@ topics:
           - problem: 'Convert $y = x^2 + 10x + 30$ to vertex form and give the minimum value of $y$.'
             answer: "vertex_form = (x + 5)^2 + 5; minimum = 5"
             answer_contract: {kind: multipart, parts: [{name: vertex_form, contract: {kind: exact}}, {name: minimum, contract: {kind: exact}}]}
-            solution_sketch: 'Vertex $(-5, 5)$; opens upward.'
+            solution_sketch: 'Add and subtract $25$: $y=(x+5)^2+30-25=(x+5)^2+5$. The square''s minimum is zero, so the minimum output is $5$.'
           - problem: 'Convert $y = 3x^2 + 6x + 1$ to vertex form and give the vertex.'
             answer: "vertex_form = 3(x + 1)^2 - 2; vertex = (-1, -2)"
             answer_contract: {kind: multipart, parts: [{name: vertex_form, contract: {kind: exact}}, {name: vertex, contract: {kind: coordinates, arity: 2}}]}
             solution_sketch: '$3(x^2 + 2x) + 1 = 3((x+1)^2 - 1) + 1$.'
+          - problem: 'A parabolic cross-section has equation $y=x^2+12x+40$. Complete the square to express its vertex form and give the minimum height.'
+            answer: "vertex_form = (x + 6)^2 + 4; minimum = 4"
+            answer_contract: {kind: multipart, parts: [{name: vertex_form, contract: {kind: exact}}, {name: minimum, contract: {kind: exact}}]}
+            solution_sketch: 'Add and subtract $36$: $y=(x+6)^2+40-36=(x+6)^2+4$. The square is nonnegative, so the minimum height is $4$.'
+          - problem: 'A learner rewrites $y=2x^2+4x+5$ as $2(x+1)^2+5$. Correct the vertex-form expression and give the vertex.'
+            answer: "vertex_form = 2(x + 1)^2 + 3; vertex = (-1, 3)"
+            answer_contract: {kind: multipart, parts: [{name: vertex_form, contract: {kind: exact}}, {name: vertex, contract: {kind: coordinates, arity: 2}}]}
+            solution_sketch: '$2(x^2 + 2x) + 5 = 2((x+1)^2 - 1) + 5$.'
         constraints: "conversion plus one interpretive question"
     diagnostic_exemplar:
       problem: 'Write $y = 2x^2 + 8x + 3$ in vertex form.'
@@ -2183,11 +2847,20 @@ topics:
         exemplars:
           - problem: 'A rectangle''s length is $3$ more than its width and its area is $40$. Find the width.'
             answer: "5"
+            answer_contract: {kind: exact}
             solution_sketch: '$w(w+3) = 40$; $w^2 + 3w - 40 = 0$; $(w+8)(w-5) = 0$; $w = 5$.'
           - problem: 'The product of two consecutive positive integers is $56$. Find them.'
             answer: "smaller = 7; larger = 8"
             answer_contract: {kind: multipart, parts: [{name: smaller, contract: {kind: exact}}, {name: larger, contract: {kind: exact}}]}
             solution_sketch: '$n(n+1) = 56$; $n^2 + n - 56 = 0$; $(n+8)(n-7) = 0$; $n = 7$, so the integers are $7$ and $8$.'
+          - problem: 'A rectangle has area $45$ square units and length $4$ more than its width. A learner accepts width $-9$ from the quadratic model. Find the admissible width.'
+            answer: "5"
+            answer_contract: {kind: exact}
+            solution_sketch: 'The width satisfies $w(w+4)=45$, or $(w+9)(w-5)=0$. Positive dimensions require $w=5$.'
+          - problem: 'An array has $90$ cells and one more column than rows. Find the row and column counts, reported as smaller and larger.'
+            answer: "smaller = 9; larger = 10"
+            answer_contract: {kind: multipart, parts: [{name: smaller, contract: {kind: exact}}, {name: larger, contract: {kind: exact}}]}
+            solution_sketch: 'If the row count is $n$, then $n(n+1)=90$, so $(n-9)(n+10)=0$. Counts are positive, giving $9$ rows and $10$ columns.'
         constraints: 'area or consecutive-integer setups; the quadratic factors over the integers; discard the negative root'
       - id: kp2
         name: Projectile height and maximum-value problems
@@ -2200,6 +2873,15 @@ topics:
           - problem: 'For $h = -5t^2 + 30t$ (metres), find the maximum height.'
             answer: "45 m"
             answer_contract: {"kind":"unit","quantity":"length","unit":"m"}
+            solution_sketch: 'The vertex sits at $t = \frac{-b}{2a} = 3$, where $h = -45 + 90 = 45$.'
+          - problem: 'For the flight model $h=-5t^2+20t$ metres, a learner selects $t=0$ as the landing time. Find the positive time when the ball returns to ground level, with units.'
+            answer: "4 s"
+            answer_contract: {"kind":"unit","quantity":"time","unit":"s"}
+            solution_sketch: '$-5t(t-4) = 0$; $t = 4$.'
+          - problem: 'A flight record gives $h(t)=-5t^2+40t$ metres. Locate the vertex to find the peak height, with units.'
+            answer: "80 m"
+            answer_contract: {"kind":"unit","quantity":"length","unit":"m"}
+            solution_sketch: 'The vertex sits at $t = \frac{-b}{2a} = 4$, where $h = -80 + 160 = 80$.'
         constraints: 'height models h = -5t^2 + bt with b a multiple of 5; answer the landing time or the maximum height, with units'
     diagnostic_exemplar:
       problem: 'A ball''s height in metres is $h = -5t^2 + 20t$. What is the maximum height it reaches?'
