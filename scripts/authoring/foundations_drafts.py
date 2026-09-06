@@ -15,7 +15,7 @@ import re
 from dataclasses import dataclass
 from fractions import Fraction
 from random import Random
-from typing import Optional
+from typing import Callable, Optional
 
 import foundations_compute as fc
 
@@ -225,6 +225,50 @@ def _served_values(kp: dict) -> frozenset[Fraction]:
     return frozenset(values)
 
 
+_IMPROPER_MIXED = re.compile(r"(\d+)\\frac\{(\d+)\}\{(\d+)\}")
+
+
+def _within_kp_family(served: frozenset[Fraction]) -> Callable[[str, Fraction], bool]:
+    """A same-shape candidate check bounding a new draw to the KP's own authored band.
+
+    Three rules a random operand redraw cannot see on its own: the result
+    stays within the range this knowledge point's OWN exemplars already
+    span (never an easier or a harder item than the author already picked);
+    the result stays an exact integer when every authored exemplar of this
+    knowledge point already is one (a "divides evenly" or "whole number"
+    knowledge point never gains a fractional held-out item); and a mixed
+    number's own fractional part stays proper (numerator below denominator),
+    so a redraw never turns `2\\frac{1}{2}` into a malformed `2\\frac{4}{4}`.
+    """
+    lo, hi = min(served), max(served)
+    integer_required = all(value.denominator == 1 for value in served)
+
+    def check(candidate: str, value: Fraction) -> bool:
+        if not lo <= value <= hi:
+            return False
+        if integer_required and value.denominator != 1:
+            return False
+        for whole, num, den in _IMPROPER_MIXED.findall(candidate):
+            if int(num) >= int(den):
+                return False
+        return True
+
+    return check
+
+
+def _operand_ceiling(matches: list[re.Match]) -> int:
+    """The largest bare-integer operand size ANY of the KP's own exemplars uses.
+
+    A generated operand never exceeds this, so a fraction's denominator (or
+    any other operand) never drifts past what the knowledge point's own
+    author already authored somewhere in it.
+    """
+    sizes = [
+        abs(operand.value) for match in matches for operand in fc.integer_operands(match.group(2))
+    ]
+    return max(sizes, default=2)
+
+
 def pure_numeric_exemplars(kp: dict) -> Optional[list[re.Match]]:
     """Every exemplar's `(verb, expr)` match, or `None` if any exemplar disqualifies the KP.
 
@@ -261,7 +305,12 @@ def classify_kp(topic: dict, kp: dict, rng: Random) -> Optional[Candidate]:
     served = _served_values(kp)
     try:
         candidate_expr, value = fc.same_shape_new_operands(
-            base_expr, rng, forbid_zero_result=True, forbid_values=served
+            base_expr,
+            rng,
+            forbid_zero_result=True,
+            forbid_values=served,
+            extra_ok=_within_kp_family(served),
+            operand_ceiling=_operand_ceiling(matches),
         )
     except fc.NotArithmetic:
         return None
@@ -329,6 +378,71 @@ def missing_solution_sketches(kp: dict) -> Optional[dict[int, str]]:
             continue
         out[index] = solution_sketch_for(match.group(2), exemplar["answer"])
     return out
+
+
+@dataclass(frozen=True)
+class NewExemplarPlan:
+    """One generated exemplar, ready for `foundations_curriculum_patch.NewExemplar`."""
+
+    problem: str
+    answer: str
+    solution_sketch: str
+    with_contract: bool
+
+
+def generate_held_out_exemplars(
+    topic: dict, kp: dict, target: int = 4
+) -> Optional[list[NewExemplarPlan]]:
+    """New exemplars to raise `kp` to `target` decidable exemplars, or `None`.
+
+    `None` means the knowledge point is out of scope (not pure-numeric) or a
+    fresh operand draw ran out before reaching `target`. An empty list means
+    `kp` already holds `target` or more. Every new exemplar's expression
+    reuses the shape of the KP's OWN last authored exemplar
+    (`same_shape_new_operands`), lands on a value none of the knowledge
+    point's exemplars — authored OR already generated this call — serve, and
+    carries its own solution sketch. Once curriculum readiness
+    (`crates/core/src/readiness/facts.rs`) treats the LAST decidable
+    exemplar as held out, the last of these new exemplars becomes that
+    knowledge point's held-out assessment item.
+    """
+    matches = pure_numeric_exemplars(kp)
+    if matches is None:
+        return None
+    needed = target - len(kp["exemplars"])
+    if needed <= 0:
+        return []
+    verb, base_expr = matches[-1].group(1), matches[-1].group(2)
+    with_contract = kp["exemplars"][-1].get("answer_contract") is not None
+    original_served = _served_values(kp)
+    bounds_check = _within_kp_family(original_served)
+    ceiling = _operand_ceiling(matches)
+    served = set(original_served)
+    rng = Random(f"{topic['id']}/{kp['id']}/held-out")
+    plans = []
+    for _ in range(needed):
+        try:
+            expr, value = fc.same_shape_new_operands(
+                base_expr,
+                rng,
+                forbid_zero_result=True,
+                forbid_values=frozenset(served),
+                extra_ok=bounds_check,
+                operand_ceiling=ceiling,
+            )
+        except fc.NotArithmetic:
+            return None
+        served.add(value)
+        answer = fc.render_answer(value)
+        plans.append(
+            NewExemplarPlan(
+                problem=f"{verb} ${expr}$.",
+                answer=answer,
+                solution_sketch=solution_sketch_for(expr, answer),
+                with_contract=with_contract,
+            )
+        )
+    return plans
 
 
 def hint_draft(candidate: Candidate) -> dict:

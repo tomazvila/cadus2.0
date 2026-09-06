@@ -30,6 +30,15 @@ class Rejection(ValueError):
     """The patch refuses before any line is written."""
 
 
+def _track_topic_kp(line: str, topic_id: str | None, kp_id: str | None) -> tuple[str | None, str | None]:
+    """The `(topic_id, kp_id)` state after reading one more line of the file."""
+    if match := _TOPIC_ID.match(line):
+        return match.group(1), None
+    if match := _KP_ID.match(line):
+        return topic_id, match.group(1)
+    return topic_id, kp_id
+
+
 def _quoted(text: str) -> str:
     if "'" in text:
         raise Rejection(f"generated sketch holds a literal quote, unescaped: {text!r}")
@@ -63,11 +72,9 @@ def apply_solution_sketches(
     index = 0
     while index < len(lines):
         line = lines[index]
-        if match := _TOPIC_ID.match(line):
-            topic_id = match.group(1)
-            kp_id = None
-        elif match := _KP_ID.match(line):
-            kp_id = match.group(1)
+        previous_kp_id = kp_id
+        topic_id, kp_id = _track_topic_kp(line, topic_id, kp_id)
+        if kp_id != previous_kp_id:
             exemplar_index = -1
         elif _PROBLEM.match(line):
             exemplar_index += 1
@@ -90,6 +97,84 @@ def apply_solution_sketches(
             output.append(lines[index])
             index += 1
         output.append(f"            solution_sketch: {_quoted(remaining.pop(key))}\n")
+        applied.append(key)
+    if remaining:
+        raise Rejection(f"never found in {path}: {sorted(remaining)}")
+    text = "".join(output)
+    if write:
+        path.write_text(text)
+    return text, applied
+
+
+@dataclass(frozen=True)
+class KpKey:
+    topic_id: str
+    kp_id: str
+
+
+@dataclass(frozen=True)
+class NewExemplar:
+    """One exemplar block to append; `with_contract` copies the sibling convention."""
+
+    problem: str
+    answer: str
+    solution_sketch: str
+    with_contract: bool
+
+
+def _render_exemplar(exemplar: NewExemplar) -> list[str]:
+    for text in (exemplar.problem, exemplar.solution_sketch):
+        if "'" in text:
+            raise Rejection(f"generated exemplar text holds a literal quote: {text!r}")
+    if '"' in exemplar.answer:
+        raise Rejection(f"generated answer holds a literal quote: {exemplar.answer!r}")
+    lines = [
+        f"          - problem: '{exemplar.problem}'\n",
+        f'            answer: "{exemplar.answer}"\n',
+    ]
+    if exemplar.with_contract:
+        lines.append('            answer_contract: {"kind":"exact"}\n')
+    lines.append(f"            solution_sketch: '{exemplar.solution_sketch}'\n")
+    return lines
+
+
+def insert_exemplars(
+    path: Path, additions: dict[KpKey, list[NewExemplar]], *, write: bool
+) -> tuple[str, list[KpKey]]:
+    """Append every one of `additions[key]` right after that KP's last exemplar.
+
+    The KP's own last exemplar decides whether `answer_contract` is written
+    for the new ones too (`NewExemplar.with_contract` is set by the caller to
+    match). Raises [`Rejection`] and touches no line at all when any key of
+    `additions` is never found.
+    """
+    lines = path.read_text().splitlines(keepends=True)
+    topic_id = None
+    kp_id = None
+    output: list[str] = []
+    applied: list[KpKey] = []
+    remaining = dict(additions)
+    index = 0
+    while index < len(lines):
+        line = lines[index]
+        topic_id, kp_id = _track_topic_kp(line, topic_id, kp_id)
+        output.append(line)
+        index += 1
+        if not _PROBLEM.match(line) or topic_id is None or kp_id is None:
+            continue
+        cursor = index
+        while cursor < len(lines) and _EXEMPLAR_FIELD.match(lines[cursor]):
+            cursor += 1
+        while index < cursor:
+            output.append(lines[index])
+            index += 1
+        if cursor < len(lines) and _PROBLEM.match(lines[cursor]):
+            continue  # not this KP's last exemplar yet
+        key = KpKey(topic_id, kp_id)
+        if key not in remaining:
+            continue
+        for exemplar in remaining.pop(key):
+            output.extend(_render_exemplar(exemplar))
         applied.append(key)
     if remaining:
         raise Rejection(f"never found in {path}: {sorted(remaining)}")

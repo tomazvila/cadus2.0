@@ -38,15 +38,19 @@ no rung can ever name a served answer because no rung names a digit.
 
 ## What this lane generated
 
-55 new knowledge points gained one `teach` and one `hint_ladder` draft each
-(110 documents), under `docs/content-foundations/<unit>/`:
+47 new knowledge points gained one `teach` and one `hint_ladder` draft each
+(94 documents), under `docs/content-foundations/<unit>/`:
 
 | unit | knowledge points |
 | --- | --- |
-| `integers-negatives` | 27 |
-| `fractions-decimals` | 22 |
-| `exponents-radicals` | 5 |
+| `integers-negatives` | 21 |
+| `fractions-decimals` | 21 |
+| `exponents-radicals` | 4 |
 | `rational-trig` | 1 |
+
+(An earlier pass of this same generator shipped 55 KPs with a wider,
+unbounded operand search; see "A caught defect" below for why the count
+dropped to 47 and why that is the correct outcome, not a regression.)
 
 `arithmetic-core` (81 KPs) already holds hand-authored drafts from
 `framework/content-batch` and is left untouched by this generator
@@ -65,10 +69,10 @@ no rung can ever name a served answer because no rung names a digit.
 - `crates/worker/tests/authoring_heldout_import.rs` (1 test): imports all
   four manifests into a disposable `TestDb` through
   `scripts/authoring/import_local_drafts.py` and the real `cadus-worker
-  author` binary. First pass stores 110, second pass stores 0 skips 110.
-  Model cost reported: 0 micro-USD for both passes. `content_store` ends at
-  110 rows, all `pending`, 0 `approved`. `model_call_log` holds 110 rows, all
-  at `cost_usd = 0` and `model_id = 'operator-draft-v1'`.
+  author` binary. First pass stores 94, second pass stores 0 skips 94. Model
+  cost reported: 0 micro-USD for both passes. `content_store` ends at 94
+  rows, all `pending`, 0 `approved`. `model_call_log` holds 94 rows, all at
+  `cost_usd = 0` and `model_id = 'operator-draft-v1'`.
 - `cargo fmt --all -- --check` and `cargo clippy -p cadus-worker --tests -- -D
   warnings`: clean. `jscpd` over the new files: 0 clones.
 - No production or manual database was written. `CADUS_TEST_DATABASE_URL`
@@ -87,7 +91,7 @@ for `<unit>` in `integers-negatives`, `fractions-decimals`,
 `exponents-radicals`, `rational-trig`. Every row lands `pending`; nothing here
 approves a row.
 
-## Exact residual: 673 Foundations knowledge points not drafted by this pass
+## Exact residual: 681 Foundations knowledge points not drafted by this pass
 
 | unit | residual KPs |
 | --- | --- |
@@ -95,11 +99,11 @@ approves a row.
 | `rational-trig` | 102 |
 | `functions-exponentials` | 92 |
 | `systems-inequalities` | 75 |
-| `exponents-radicals` | 73 |
+| `exponents-radicals` | 74 |
+| `fractions-decimals` | 69 |
 | `linear-graphs` | 69 |
-| `fractions-decimals` | 68 |
 | `expressions-equations` | 67 |
-| `integers-negatives` | 19 |
+| `integers-negatives` | 25 |
 | `measurement-units` | 6 |
 
 Full per-KP list: `scripts/authoring/generate_foundations_drafts.py
@@ -119,9 +123,11 @@ committed generator and curriculum). By reason:
 - **60 KPs**: an exemplar names a LaTeX construct outside the whitelist —
   almost entirely `\sqrt{}` (radicals proper, as opposed to the rational
   exponents this lane's evaluator does support) and a few percent/pi forms.
-- **5 KPs**: `same_shape_new_operands` exhausted 200 draws without landing on
-  a value distinct from every served answer (small, tightly constrained
-  answer ranges).
+- **13 KPs**: `same_shape_new_operands` exhausted its draws without landing
+  on a value both distinct from every served answer AND inside the range
+  those served answers already span (a knowledge point whose few exemplars
+  already densely cover their whole authored band correctly declines rather
+  than manufacturing an out-of-band item — see "A caught defect" below).
 - **3 KPs**: an authored answer is not a plain number, a fraction or a
   decimal (for example, a spelled-out scientific-notation answer).
 
@@ -150,6 +156,46 @@ knowledge points; and
 `crates/core/tests/foundations_heldout_solutions.rs` loads the REAL
 curriculum through the REAL `ReadinessIndex` (production code, not this
 lane's own classifier) and asserts `facts.solutions` now holds for all 92.
+
+## A caught defect: a same-shape redraw needs a bounded band, not just a distinct answer
+
+The first version of `same_shape_new_operands` redrew every bare operand up
+to twice its original size and only forbade landing on an ALREADY-served
+answer. An audit that additionally checked "does the new answer stay within
+the range this knowledge point's own exemplars already span" caught 65 of
+the 87 candidates it had accepted across the whole curriculum failing that
+check — including committed regressions such as
+`dividing-integers/kp1` turning a "divides evenly" knowledge point's worked
+example into `19 \div (-8) = -19/8` (not an integer), and
+`mixed-numbers/kp1` producing the malformed mixed number `2\frac{4}{4}`
+(numerator not below denominator). Distinct-from-served is necessary but not
+sufficient: nothing stopped a redraw from being easier, harder, or outright
+malformed relative to the knowledge point's own authored band.
+
+The fix adds two checks the operand redraw alone cannot make on its own,
+both supplied by the caller and checked by `same_shape_new_operands` on
+every draw: `extra_ok` bounds the final value to `[min(served), max(served)]`
+and, when every served answer is already an integer, requires the new one to
+be one too; `operand_ceiling` caps every drawn operand's SIZE at the largest
+bare-integer operand size any of the knowledge point's OWN exemplars already
+use anywhere (so a fraction's denominator, for example, never drifts past
+every denominator its siblings ever used). A knowledge point whose served
+answers already densely cover its whole authored band (for example
+`single-digit-addition/kp1`, whose three exemplars are 7, 8 and 9 with no
+integer left between them) now correctly declines rather than manufacturing
+an out-of-band item. Applied to the whole curriculum this dropped the
+teach/hint_ladder count from 55 to 47 knowledge points — the 8 lost
+candidates all had no honest way to reach a new value in the same authored
+band. `crates/worker/tests/authoring_heldout_drafts.rs` and
+`authoring_heldout_import.rs` were re-run against the regenerated,
+now-bounded drafts and stay green;
+`scripts/authoring/test_foundations_drafts.py` gained a regression assertion
+that no returned candidate ever crosses its knowledge point's own served
+range or turns an all-integer knowledge point fractional.
+
+The `solution_sketch` patch (the section above) never used
+`same_shape_new_operands` at all — it only restates an exemplar's own
+already-authored numbers — so it needed no rework and no re-import.
 
 ## Untouched by this lane: `practicable` and `assessable`
 

@@ -21,7 +21,7 @@ import random
 import re
 from dataclasses import dataclass
 from fractions import Fraction
-from typing import Optional
+from typing import Callable, Optional
 
 PROBLEM_RE = re.compile(r"^(Compute|Calculate|Evaluate|Simplify) \$(.+)\$\.$")
 _LETTER_OK = re.compile(r"\\(frac|dfrac|times|div|cdot|left|right)\b")
@@ -205,31 +205,50 @@ def same_shape_new_operands(
     expr: str,
     rng: random.Random,
     *,
-    max_abs: int = 20,
     forbid_zero_result: bool = False,
     forbid_values: frozenset[Fraction] = frozenset(),
+    extra_ok: Optional[Callable[[str, Fraction], bool]] = None,
+    operand_ceiling: Optional[int] = None,
+    attempts: int = 500,
 ) -> tuple[str, Fraction]:
     """One new expression of the identical shape as `expr`, with fresh operands.
 
-    Every bare integer literal is redrawn, independently, from a small
-    deterministic range around the original magnitude (never larger than the
-    original by more than `max_abs`, and never zero when the original was
-    nonzero), and the sign is kept when the original operand carried a
-    leading `-`. The rewrite touches only bare integers: a decimal's digits
-    are left untouched by [`integer_operands`]. Retries up to 200 times for a
-    value that parses, is not in `forbid_values` (so a generated worked
-    example never lands on an answer this knowledge point already serves),
-    and optionally avoids a zero result.
+    Every bare integer literal is redrawn, independently, from a range no
+    more than three times the original operand's own size (so the search has
+    room to satisfy `extra_ok` below), and the sign is kept when the
+    original operand carried a leading `-`. The rewrite touches only bare
+    integers: a decimal's digits are left untouched by [`integer_operands`].
+
+    `extra_ok`, when given, is a further caller-supplied check on the
+    candidate text and its value — the caller's tool for a rule this module
+    cannot see on its own, such as "the value must stay inside the range
+    this knowledge point already serves" or "this shape divides evenly". It
+    is this module's real defense against a bigger or smaller item than the
+    knowledge point's author intended, NOT the operand range, which stays
+    wide on purpose so a tight `extra_ok` still has room to be satisfied.
+    `operand_ceiling`, when given, additionally caps every drawn operand's
+    SIZE (never its sign) — the caller's way to stop, for example, a
+    fraction's denominator from drifting past every denominator its
+    knowledge point's own exemplars ever used, a shape `extra_ok` alone
+    cannot see since it only reads the final value. Retries up to `attempts`
+    times for a value that parses (never raising
+    `ZeroDivisionError` out of this function; a redraw that divides by zero
+    is just one more failed attempt), is not in `forbid_values` (so a
+    generated worked example never lands on an answer this knowledge point
+    already serves), optionally avoids a zero result, and satisfies
+    `extra_ok`.
     """
     operands = integer_operands(expr)
     if not operands:
         raise NotArithmetic("no bare integer operand to vary")
-    for _ in range(200):
+    for _ in range(attempts):
         pieces = []
         cursor = 0
         for operand in operands:
             pieces.append(expr[cursor : operand.start])
-            magnitude = min(max_abs, max(2, abs(operand.value) * 2))
+            magnitude = max(2, abs(operand.value) * 3)
+            if operand_ceiling is not None:
+                magnitude = min(magnitude, max(2, operand_ceiling))
             draw = rng.randint(1, magnitude)
             if operand.value < 0:
                 draw = -draw
@@ -241,14 +260,16 @@ def same_shape_new_operands(
             continue
         try:
             value = evaluate(candidate)
-        except NotArithmetic:
+        except (NotArithmetic, ZeroDivisionError):
             continue
         if forbid_zero_result and value == 0:
             continue
         if value in forbid_values:
             continue
+        if extra_ok is not None and not extra_ok(candidate, value):
+            continue
         return candidate, value
-    raise NotArithmetic(f"no fresh operand set found for {expr!r} after 200 draws")
+    raise NotArithmetic(f"no fresh operand set found for {expr!r} after {attempts} draws")
 
 
 def parse_answer_text(text: str) -> Fraction:

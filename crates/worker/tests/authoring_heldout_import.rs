@@ -8,9 +8,9 @@ use cadus_store::test_support::TestDb;
 
 /// Unit id to the number of knowledge points its manifest names (so drafts = 2x).
 const UNITS: &[(&str, i64)] = &[
-    ("fractions-decimals", 22),
-    ("integers-negatives", 27),
-    ("exponents-radicals", 5),
+    ("fractions-decimals", 21),
+    ("integers-negatives", 21),
+    ("exponents-radicals", 4),
     ("rational-trig", 1),
 ];
 

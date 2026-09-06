@@ -45,16 +45,25 @@ class ClassifyFamilyTest(unittest.TestCase):
 
 class ClassifyKpTest(unittest.TestCase):
     def test_arithmetic_kp_is_a_candidate(self):
-        topic, kp = find_kp("single-digit-addition", "kp1")
+        # kp1's three exemplars densely cover 7, 8 and 9: no fourth in-band
+        # integer is left, so kp1 correctly declines. kp2 (12, 15, 12) still
+        # has 13 and 14 free.
+        topic, kp = find_kp("single-digit-addition", "kp2")
         rng = random.Random(f"{topic['id']}/{kp['id']}")
         candidate = fd.classify_kp(topic, kp, rng)
         self.assertIsNotNone(candidate)
-        self.assertEqual(candidate.kp_key, "single-digit-addition/kp1")
+        self.assertEqual(candidate.kp_key, "single-digit-addition/kp2")
         self.assertEqual(fc.evaluate(candidate.candidate_expr), candidate.answer)
         served = {fc.parse_answer_text(e["answer"]) for e in kp["exemplars"]}
         self.assertNotIn(candidate.answer, served)
+        self.assertTrue(min(served) <= candidate.answer <= max(served))
         for exemplar in kp["exemplars"]:
             self.assertNotEqual(f"Compute ${candidate.candidate_expr}$.", exemplar["problem"])
+
+    def test_a_densely_served_kp_correctly_declines(self):
+        topic, kp = find_kp("single-digit-addition", "kp1")
+        rng = random.Random(f"{topic['id']}/{kp['id']}")
+        self.assertIsNone(fd.classify_kp(topic, kp, rng))
 
     def test_word_problem_kp_is_not_a_candidate(self):
         topic, kp = find_kp("fraction-basics", "kp1")
@@ -80,7 +89,12 @@ class ClassifyKpTest(unittest.TestCase):
                 served = {fc.parse_answer_text(e["answer"]) for e in kp["exemplars"]}
                 self.assertNotIn(candidate.answer, served)
                 self.assertIn(candidate.family, fd.FAMILIES)
-        self.assertGreater(checked, 50)
+                # the candidate never asks for an easier or a harder item
+                # than this knowledge point's own author already authored
+                self.assertTrue(min(served) <= candidate.answer <= max(served), kp["id"])
+                if all(value.denominator == 1 for value in served):
+                    self.assertEqual(candidate.answer.denominator, 1, kp["id"])
+        self.assertGreater(checked, 20)
 
 
 class DraftShapeTest(unittest.TestCase):

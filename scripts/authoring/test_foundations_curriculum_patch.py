@@ -3,7 +3,14 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from foundations_curriculum_patch import ExemplarKey, Rejection, apply_solution_sketches
+from foundations_curriculum_patch import (
+    ExemplarKey,
+    KpKey,
+    NewExemplar,
+    Rejection,
+    apply_solution_sketches,
+    insert_exemplars,
+)
 
 FIXTURE = """\
 topics:
@@ -38,7 +45,9 @@ topics:
 """
 
 
-class ApplyTest(unittest.TestCase):
+class FixtureFileCase(unittest.TestCase):
+    """A fresh copy of `FIXTURE` at `self.path`, for one test."""
+
     def setUp(self):
         self.dir = tempfile.TemporaryDirectory()
         self.path = Path(self.dir.name) / "fixture.yaml"
@@ -47,6 +56,8 @@ class ApplyTest(unittest.TestCase):
     def tearDown(self):
         self.dir.cleanup()
 
+
+class ApplyTest(FixtureFileCase):
     def test_inserts_a_missing_sketch_after_the_last_field(self):
         key = ExemplarKey("adding-integers", "kp1", 0)
         text, applied = apply_solution_sketches(
@@ -103,6 +114,73 @@ class ApplyTest(unittest.TestCase):
         lines = text.splitlines()
         kp2_line = next(i for i, l in enumerate(lines) if "'Compute $-7 + 4$.'" in l)
         self.assertNotIn("Sketch for the unrelated topic", lines[kp2_line + 1])
+
+
+class InsertExemplarsTest(FixtureFileCase):
+    def test_appends_after_the_kps_last_exemplar_with_contract(self):
+        key = KpKey("adding-integers", "kp1")
+        new = NewExemplar(
+            problem="Compute $-1 + (-1)$.",
+            answer="-2",
+            solution_sketch="Same sign: add the sizes, keep the sign. $-1 + (-1) = -2$.",
+            with_contract=True,
+        )
+        text, applied = insert_exemplars(self.path, {key: [new]}, write=False)
+        self.assertEqual(applied, [key])
+        lines = text.splitlines()
+        inserted = next(i for i, l in enumerate(lines) if "-1 + (-1)" in l)
+        self.assertIn("answer: \"-2\"", lines[inserted + 1])
+        self.assertIn('answer_contract: {"kind":"exact"}', lines[inserted + 2])
+        self.assertIn("solution_sketch:", lines[inserted + 3])
+        # it lands before kp1's constraints line, i.e. still inside kp1
+        constraints_line = next(i for i, l in enumerate(lines) if "small integers" in l)
+        self.assertLess(inserted, constraints_line)
+
+    def test_appends_without_contract_when_the_kp_has_none(self):
+        key = KpKey("adding-integers", "kp2")
+        new = NewExemplar(
+            problem="Compute $-9 + 2$.",
+            answer="-7",
+            solution_sketch="Take the difference of the sizes: $-9 + 2 = -7$.",
+            with_contract=False,
+        )
+        text, _ = insert_exemplars(self.path, {key: [new]}, write=False)
+        lines = text.splitlines()
+        inserted = next(i for i, l in enumerate(lines) if "-9 + 2" in l)
+        self.assertNotIn("answer_contract", lines[inserted + 2])
+
+    def test_multiple_new_exemplars_land_in_order(self):
+        key = KpKey("other-topic", "kp1")
+        news = [
+            NewExemplar("Compute $2 + 2$.", "4", "Add: $2 + 2 = 4$.", False),
+            NewExemplar("Compute $3 + 3$.", "6", "Add: $3 + 3 = 6$.", False),
+        ]
+        text, _ = insert_exemplars(self.path, {key: news}, write=False)
+        first = text.index("2 + 2")
+        second = text.index("3 + 3")
+        self.assertLess(first, second)
+
+    def test_write_true_persists_the_change(self):
+        key = KpKey("other-topic", "kp1")
+        new = NewExemplar("Compute $9 + 9$.", "18", "Add: $9 + 9 = 18$.", False)
+        insert_exemplars(self.path, {key: [new]}, write=True)
+        self.assertIn("9 + 9", self.path.read_text())
+
+    def test_refuses_an_unknown_key_and_writes_nothing(self):
+        key = KpKey("adding-integers", "kp9")
+        before = self.path.read_text()
+        new = NewExemplar("Compute $1 + 1$.", "2", "sketch", False)
+        with self.assertRaises(Rejection):
+            insert_exemplars(self.path, {key: [new]}, write=True)
+        self.assertEqual(self.path.read_text(), before)
+
+    def test_kp2_addition_does_not_leak_into_kp1(self):
+        key = KpKey("adding-integers", "kp2")
+        new = NewExemplar("Compute $-5 + 5$.", "0", "sketch text", False)
+        text, _ = insert_exemplars(self.path, {key: [new]}, write=False)
+        lines = text.splitlines()
+        kp1_constraints = next(i for i, l in enumerate(lines) if "small integers" in l)
+        self.assertNotIn("-5 + 5", "\n".join(lines[: kp1_constraints + 1]))
 
 
 if __name__ == "__main__":
