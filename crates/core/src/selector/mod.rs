@@ -28,6 +28,7 @@
 
 mod compose;
 mod compress;
+mod confirm;
 mod context;
 mod frontier;
 mod gap_fill;
@@ -43,6 +44,7 @@ pub use crate::xp::{is_inferred, is_known, is_practiced};
 
 pub use compose::compose_session;
 pub use compress::{Compression, compress};
+pub use confirm::{CONFIRM_PROBLEMS, confirmations};
 pub use context::SessionContext;
 pub use gap_fill::{
     blocking_gap_ancestors, gap_course_for, gap_fill_chain_for_stack, is_course_complete,
@@ -110,6 +112,12 @@ pub const REMEDIATION_REPEAT_FAIL: &str = "repeat_fail";
 
 /// The remediation kind of a lesson failure.
 pub const REMEDIATION_LESSON_FAIL: &str = "lesson_fail";
+
+/// The remediation kind of a failed confirmation item (D-F6).
+///
+/// The target keeps its `Placed` status and the plan serves its LESSON, which is
+/// the peel-back the book asks for at p.377.
+pub const REMEDIATION_CONFIRM_FAILED: &str = "confirm_failed";
 
 /// The fewest components a multi-step task needs (`selector.py:139`).
 pub const MULTISTEP_MIN_COMPONENTS: usize = 3;

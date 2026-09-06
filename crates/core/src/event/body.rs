@@ -97,6 +97,17 @@ pub struct TaskServed {
     /// The seed the composer used.
     #[serde(default)]
     pub seed: Option<i64>,
+    /// Whether the task confirms an inferred topic (D-F6). NEW IN 2.0.
+    ///
+    /// The writer SKIPS a false value, so every event written before D-F6 keeps
+    /// its canonical bytes and its digest.
+    #[serde(default, skip_serializing_if = "is_not_set")]
+    pub confirm: bool,
+}
+
+/// Whether a boolean field stays at its default. The canonical writer skips it.
+const fn is_not_set(flag: &bool) -> bool {
+    !*flag
 }
 
 /// One graded problem attempt. It is the load-bearing event.

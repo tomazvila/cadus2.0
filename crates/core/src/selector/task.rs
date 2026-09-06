@@ -59,6 +59,11 @@ pub struct Task {
     pub is_remediation: bool,
     /// Whether a review is served before its due date.
     pub nearly_due: bool,
+    /// Whether the review confirms an inferred topic (D-F6).
+    ///
+    /// The serve route copies the marker onto `task_served`, and the fold reads
+    /// it back to move a passed topic to `Learning`.
+    pub confirm: bool,
 }
 
 impl Default for Task {
@@ -82,6 +87,7 @@ impl Default for Task {
             component_topics: Vec::new(),
             is_remediation: false,
             nearly_due: false,
+            confirm: false,
         }
     }
 }

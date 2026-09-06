@@ -94,6 +94,7 @@ fn sample_log() -> Vec<EventRow> {
                 problems: Vec::new(),
                 component_topics: Vec::new(),
                 seed: None,
+                confirm: false,
             }),
         ),
         row(
@@ -372,6 +373,7 @@ fn the_other_branches_of_the_fold_fold_nothing_or_reset() {
             problems: Vec::new(),
             component_topics: Vec::new(),
             seed: None,
+            confirm: false,
         }),
     );
     assert!(view.last_drill_at.is_empty());

@@ -6,7 +6,7 @@ use std::collections::{BTreeMap, BTreeSet};
 use crate::event::TaskType;
 use crate::fire::{ReviewState, review_state};
 use crate::learner::TopicState;
-use crate::xp::is_known;
+use crate::xp::{is_inferred, is_known};
 use crate::{config::Config, curriculum::Curriculum};
 
 use super::context::SessionContext;
@@ -106,6 +106,10 @@ impl Validity<'_> {
             return self.ctx.pending_targets.contains(topic_id);
         }
         match task.task_type {
+            // A confirmation stands while the topic is still inferred (D-F6).
+            // The review band never opens for a placed topic, so the band test
+            // would drop the item on the first re-serve.
+            TaskType::Review if task.confirm => self.states.get(topic_id).is_some_and(is_inferred),
             TaskType::Review => self.review_valid(task, topic_id),
             TaskType::Lesson => self.lesson_valid(topic_id),
             TaskType::Drill => self.ctx.drill_eligible.contains(topic_id),
@@ -153,8 +157,7 @@ pub fn reserve_open_plan(
     ctx: &SessionContext<'_>,
 ) -> SessionPlan {
     let front = Frontier::new(states, graph, cfg, t_us, ctx.course_id, None);
-    let course_complete =
-        is_course_complete(states, graph, cfg, ctx.course_id, Some(&front.known));
+    let course_complete = is_course_complete(states, graph, cfg, ctx.course_id, Some(&front.known));
 
     let pending_targets: BTreeSet<String> = ctx
         .pending_remediation

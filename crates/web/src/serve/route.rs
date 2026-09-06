@@ -74,6 +74,7 @@ async fn record_first_serve(
             .filter_map(slug_of)
             .collect(),
         seed: None,
+        confirm: task.confirm,
     });
     store(state, append_event(tx, user_id, &event, None)).await?;
     Ok(true)

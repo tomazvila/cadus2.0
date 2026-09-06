@@ -12,7 +12,9 @@ use crate::xp::is_known;
 use super::review::review_mix;
 use super::task::{Task, start_kp};
 use super::topic_set::TopicSet;
-use super::{DIFFICULTY_TARGET, MULTISTEP_CADENCE, MULTISTEP_MAX_COMPONENTS};
+use super::{
+    DIFFICULTY_TARGET, MULTISTEP_CADENCE, MULTISTEP_MAX_COMPONENTS, REMEDIATION_CONFIRM_FAILED,
+};
 
 /// Whether the periodic multi-step cadence fires
 /// (`multistep_is_due`, `selector.py:1050-1068`).
@@ -123,7 +125,10 @@ pub fn remediation_tasks(
             seen.insert(id.to_owned());
             let state = states.get(id).unwrap_or(&default);
             let kind = &item.kind;
-            let task = if is_known(state) {
+            // A failed confirmation always peels back to the LESSON: the topic
+            // is known by inference only, and the inference just failed (D-F6).
+            let relearn = kind == REMEDIATION_CONFIRM_FAILED;
+            let task = if is_known(state) && !relearn {
                 Task {
                     task_type: TaskType::Review,
                     topic: Some(id.to_owned()),

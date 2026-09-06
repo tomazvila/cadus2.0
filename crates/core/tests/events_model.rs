@@ -65,7 +65,9 @@ fn fold(stream: &str) -> Result<LearnerModel, ProjectorError> {
         .filter(|line| !line.is_empty())
         .map(|line| Event::from_json(line).unwrap_or_else(|error| panic!("{line}: {error}")))
         .collect();
-    let cfg = Config::default();
+    // The 1.0 progress rule, because the digest below is a 1.0 digest (D-F6).
+    let mut cfg = Config::default();
+    cfg.mastery.confirm_inferred = false;
     let input = ProjectionInput::new(tree(), &cfg, Timestamp::parse(NOW).unwrap()).with_goal(GOAL);
     project(&events, &input)
 }

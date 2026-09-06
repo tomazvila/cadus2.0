@@ -45,10 +45,19 @@ pub fn tree() -> &'static Curriculum {
     })
 }
 
-/// The default config, built once for the whole test binary.
+/// The 1.0 parity config, built once for the whole test binary.
+///
+/// `mastery.confirm_inferred` is OFF (D-F6): the 1.0 oracle counts a placed and
+/// a floor topic as progress, and every digest in `digests_1_0.json` carries
+/// that rule. With the flag ON the fold is a 2.0 behavior, and the tests of
+/// `crates/core/tests/selector_confirm.rs` pin it.
 pub fn cfg() -> &'static Config {
     static CFG: OnceLock<Config> = OnceLock::new();
-    CFG.get_or_init(Config::default)
+    CFG.get_or_init(|| {
+        let mut cfg = Config::default();
+        cfg.mastery.confirm_inferred = false;
+        cfg
+    })
 }
 
 /// The regrade graph of `tests/test_regrade.py:54-65`: one topic, two knowledge points.

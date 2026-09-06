@@ -268,7 +268,7 @@ pub fn resolve_gap_fill_stack(
 mod tests {
     use super::*;
     use crate::event::{KpProgress, Timestamp, TopicStatus};
-    use crate::fire::testing::{T_US, ladder, topic};
+    use crate::fire::testing::{T_US, ladder, learned, topic};
 
     /// The three-course ladder of the 1.0 gap-fill tests.
     fn tree() -> Curriculum {
@@ -316,7 +316,7 @@ mod tests {
             ["top", "mid", "low"]
         );
         assert!(resolve_gap_fill_stack(&none, &tree, &cfg, T_US, None).is_empty());
-        assert!(!is_course_complete(&none, &tree, Some("nope"), None));
+        assert!(!is_course_complete(&none, &tree, &cfg, Some("nope"), None));
         assert!(blocking_gap_ancestors(&none, &tree, None, None).is_empty());
         assert_eq!(gap_course_for(&none, &tree, &cfg, T_US, None, None), None);
         assert!(gap_fill_chain_for_stack(&none, &tree, &["top".to_owned()], None).is_none());
@@ -372,7 +372,24 @@ mod tests {
             .iter()
             .map(|item| (item.id.as_str().to_owned(), floor()))
             .collect();
-        assert!(is_course_complete(&all, &tree, Some("top"), None));
+        // D-F6: a course of floor topics alone is NOT complete, because the
+        // learner practiced none of them. With the flag off the 1.0 rule stands.
+        assert!(!is_course_complete(&all, &tree, &cfg, Some("top"), None));
+        let mut old_rule = Config::default();
+        old_rule.mastery.confirm_inferred = false;
+        assert!(is_course_complete(
+            &all,
+            &tree,
+            &old_rule,
+            Some("top"),
+            None
+        ));
+        let learned: BTreeMap<String, TopicState> = tree
+            .topics()
+            .iter()
+            .map(|item| (item.id.as_str().to_owned(), learned(0.9)))
+            .collect();
+        assert!(is_course_complete(&learned, &tree, &cfg, Some("top"), None));
         assert_eq!(
             gap_course_for(&all, &tree, &cfg, T_US, Some("top"), None),
             None

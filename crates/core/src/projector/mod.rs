@@ -35,7 +35,7 @@
 //! [`crate::event::Event::from_json`] rejects it with an error value first; an event
 //! that names a topic outside the curriculum is skipped exactly where 1.0 skips it.
 
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, BTreeSet};
 
 use chrono_tz::Tz;
 
@@ -150,6 +150,13 @@ pub struct Projector<'a> {
     diag_answers: BTreeMap<String, Vec<(bool, f64)>>,
     last_ts: Option<i64>,
 
+    /// The task ids of the OPEN confirmation items (D-F6). A `task_served` with
+    /// `confirm` set opens one, and the review result of the topic closes it.
+    confirm_tasks: BTreeSet<String>,
+    /// The topics of the OPEN confirmation items. A `review_result` with no
+    /// `task_id` binds through the topic instead.
+    confirm_topics: BTreeSet<String>,
+
     /// The count of the events the fold applied. It is also the 0-based index of the
     /// event the fold applies now.
     applied: usize,
@@ -179,6 +186,8 @@ impl<'a> Projector<'a> {
             last_practice: BTreeMap::new(),
             diag_answers: BTreeMap::new(),
             last_ts: None,
+            confirm_tasks: BTreeSet::new(),
+            confirm_topics: BTreeSet::new(),
             applied: 0,
             failure: None,
         }
@@ -228,9 +237,15 @@ impl<'a> Projector<'a> {
     /// its light indices without running FIRe again.
     ///
     /// A `regraded` event never arrives here: [`apply_regrades`] consumes it ahead of
-    /// the fold and hands the corrected events over instead. `task_served`,
-    /// `session_start`, `session_end`, `anki_card_created`, `config_changed`, and
+    /// the fold and hands the corrected events over instead. `session_start`,
+    /// `session_end`, `anki_card_created`, `config_changed`, and
     /// `curriculum_changed` carry no derived state, so they are no-ops.
+    ///
+    /// `task_served` is a no-op too, EXCEPT for the D-F6 confirmation marker: a
+    /// served confirmation opens the item that the topic's review result closes.
+    /// The path is unreachable for every log written before D-F6, because no
+    /// such log carries the field. [`PROJECTOR_VERSION`] therefore stands: every
+    /// cached model of an earlier log still equals a full replay.
     ///
     /// After a failed event the fold applies NOTHING more, and
     /// [`Projector::finalize`] reports the failure. A 1.0 exception ends the 1.0 fold
@@ -252,9 +267,9 @@ impl<'a> Projector<'a> {
             Event::DiagnosticAnswer(body) => self.on_diagnostic_answer(body),
             Event::DiagnosticPlaced(body) => self.on_diagnostic_placed(body, ts, apply_fire),
             Event::ProfileReset(body) => self.on_profile_reset(body, apply_fire),
+            Event::TaskServed(body) => self.on_task_served(body),
             Event::SessionStart(_)
             | Event::SessionEnd(_)
-            | Event::TaskServed(_)
             | Event::Regraded(_)
             | Event::AnkiCardCreated(_)
             | Event::ConfigChanged(_)
