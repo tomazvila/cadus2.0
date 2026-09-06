@@ -38,6 +38,11 @@ import type {
   TeachResponse,
   UngradedListResponse,
 } from './types';
+import type {
+  IntegratedGrade,
+  IntegratedHintResponse,
+  IntegratedProblem,
+} from './types-integrated';
 
 /** A path segment. A task id or a provider name reaches the URL escaped. */
 const seg = (value: string) => encodeURIComponent(value);
@@ -110,6 +115,31 @@ export const api: ApiClient = {
       answer,
       ...(work === undefined ? {} : { work }),
       ...(assisted === undefined ? {} : { assisted }),
+    }),
+
+  // The integrated task (D-F10). Every one of the three resolves the item from the TASK,
+  // so no path here names an item id the learner could change.
+  taskIntegrated: (taskId) =>
+    request<IntegratedProblem>('POST', `/task/${seg(taskId)}/integrated`, {}),
+  taskIntegratedHint: (taskId, { field, index }) =>
+    request<IntegratedHintResponse>('POST', `/task/${seg(taskId)}/integrated/hint`, {
+      field,
+      index,
+    }),
+  // A WHITELIST, the same rule the graded answer above keeps: an absent method and an
+  // absent note are OMITTED, never sent as `undefined`.
+  taskIntegratedAnswer: (taskId, { method, steps, final_answer, reasoning }) =>
+    request<IntegratedGrade>('POST', `/task/${seg(taskId)}/integrated/answer`, {
+      ...(method === undefined || method === null ? {} : { method }),
+      // The whitelist runs per field too: a step object is rebuilt key by key, so a
+      // caller's extra property never reaches the wire.
+      steps: steps.map(({ id, answer, hints_used }) => ({ id, answer, hints_used })),
+      final_answer: {
+        id: final_answer.id,
+        answer: final_answer.answer,
+        hints_used: final_answer.hints_used,
+      },
+      ...(reasoning === undefined ? {} : { reasoning }),
     }),
 
   // --- The placement diagnostic (spec section 2) ---------------------------

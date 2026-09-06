@@ -281,4 +281,5 @@ export interface EnrollResponse {
 
 export * from './types-study';
 export * from './types-review';
+export * from './types-integrated';
 export * from './contract';

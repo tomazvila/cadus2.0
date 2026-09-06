@@ -112,6 +112,9 @@ function demoTask(answered: number): PlanTask {
 /** The message the four review routes refuse a demo caller with (C6). */
 const DEMO_ADMIN_ONLY = 'This route serves an admin account only.';
 
+/** The refusal of a task that has no authored integrated item (D-F10). */
+const DEMO_NO_INTEGRATED = 'This task has no integrated problem; serve it part by part.';
+
 /** A refusal the demo cannot honestly answer. Same shape as a served one. */
 function refuse(status: number, code: string, message: string): never {
   throw new ApiError(status, code, message);
@@ -337,6 +340,13 @@ export function createDemoApi(): ApiClient {
       };
       return reply(reply_);
     },
+
+    // D-F10. The demo plans one lesson and authors no integrated item, so these three
+    // answer what the service answers for a task with no item: the caller then serves the
+    // task part by part, which is the path the demo does run.
+    taskIntegrated: async () => refuse(409, 'no_integrated_item', DEMO_NO_INTEGRATED),
+    taskIntegratedHint: async () => refuse(409, 'no_integrated_item', DEMO_NO_INTEGRATED),
+    taskIntegratedAnswer: async () => refuse(409, 'no_integrated_item', DEMO_NO_INTEGRATED),
 
     diagStart: placement.diagStart,
     diagAnswer: placement.diagAnswer,

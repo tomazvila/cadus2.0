@@ -41,6 +41,12 @@ import type {
   ReviewListResponse,
   UngradedListResponse,
 } from './types-review';
+import type {
+  IntegratedGrade,
+  IntegratedHintResponse,
+  IntegratedProblem,
+  IntegratedSubmission,
+} from './types-integrated';
 
 // ---------------------------------------------------------------------------
 // The client surface
@@ -93,6 +99,15 @@ export interface ApiClient {
     taskId: string,
     body: { problem_id: string; answer: string; work?: string; assisted?: boolean },
   ): Promise<TaskAnswerResponse>;
+
+  // The integrated task of D-F10. The serve carries no answer, the hint carries one rung,
+  // and the answer route grades every step and the final answer in ONE submission.
+  taskIntegrated(taskId: string): Promise<IntegratedProblem>;
+  taskIntegratedHint(
+    taskId: string,
+    body: { field: string; index: number },
+  ): Promise<IntegratedHintResponse>;
+  taskIntegratedAnswer(taskId: string, body: IntegratedSubmission): Promise<IntegratedGrade>;
 
   // The placement diagnostic (spec section 2). The verdict is deterministic and the
   // reply carries no expected answer, so a screen cannot leak one.
@@ -175,6 +190,9 @@ export const ROUTES: readonly RouteRow[] = [
   { method: 'POST', path: '/api/task/{task_id}/teach', auth: 'S', via: 'method', client: 'taskTeach' },
   { method: 'POST', path: '/api/task/{task_id}/hint', auth: 'S', via: 'method', client: 'taskHint' },
   { method: 'POST', path: '/api/task/{task_id}/answer', auth: 'S', via: 'method', client: 'taskAnswer' },
+  { method: 'POST', path: '/api/task/{task_id}/integrated', auth: 'S', via: 'method', client: 'taskIntegrated' },
+  { method: 'POST', path: '/api/task/{task_id}/integrated/hint', auth: 'S', via: 'method', client: 'taskIntegratedHint' },
+  { method: 'POST', path: '/api/task/{task_id}/integrated/answer', auth: 'S', via: 'method', client: 'taskIntegratedAnswer' },
 
   { method: 'POST', path: '/api/auth/signup', auth: 'P', via: 'method', client: 'signup' },
   { method: 'POST', path: '/api/auth/login', auth: 'P', via: 'method', client: 'login' },
