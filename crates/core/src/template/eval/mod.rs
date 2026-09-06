@@ -60,7 +60,7 @@ pub use write::write;
 /// [`parse_with_functions`] admits them for this one purpose. Every one of them
 /// is erased before the answer string exists. `signcase(x, [a, b, c])` selects
 /// the negative, zero, or positive branch without admitting general predicates.
-pub const EVAL_FUNCTIONS: [(&str, usize); 17] = [
+pub const EVAL_FUNCTIONS: [(&str, usize); 18] = [
     ("abs", 1),
     ("sqrt", 1),
     ("gcd", 2),
@@ -77,11 +77,12 @@ pub const EVAL_FUNCTIONS: [(&str, usize); 17] = [
     ("upperbound", 2),
     ("quotientremainder", 2),
     ("divisibilitylabel", 2),
+    ("equalitylabel", 2),
     ("primeclass", 1),
 ];
 
 /// The function names [`parse_with_functions`] admits beyond the M2 grammar.
-pub const EXTRA_FUNCTIONS: [&str; 16] = [
+pub const EXTRA_FUNCTIONS: [&str; 17] = [
     "gcd",
     "lcm",
     "floor",
@@ -97,6 +98,7 @@ pub const EXTRA_FUNCTIONS: [&str; 16] = [
     "upperbound",
     "quotientremainder",
     "divisibilitylabel",
+    "equalitylabel",
     "primeclass",
 ];
 

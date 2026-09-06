@@ -170,7 +170,7 @@ fn template_schema() -> Value {
                 "description":
                     "The answer as an exact expression over the parameter names. The SERVER \
     computes every instance's answer from it, so it is exact over the whole domain. For a label \
-    contract, use one text-valued choice parameter, divisibilitylabel(number, divisor), \
+    contract, use one text-valued choice parameter, equalitylabel(left, right), divisibilitylabel(number, divisor), \
     or primeclass(number). For a quotient-and-remainder contract, use \
     quotientremainder(quotient, remainder). For a multipart contract, use \
     multipart(part1, part2) with arguments in contract part order; each argument is a mathematical \

@@ -20,6 +20,13 @@ pub(super) fn label_answer(
         return answer(ast, bindings);
     };
     let text = match (name.as_str(), args.as_slice()) {
+        ("equalitylabel", [left, right]) => {
+            if answer(left, bindings)?.canon == answer(right, bindings)?.canon {
+                "yes"
+            } else {
+                "no"
+            }
+        }
         ("divisibilitylabel", [number, divisor]) => {
             let number = bounded_whole(number, bindings, "divisibilitylabel")?;
             let divisor = bounded_whole(divisor, bindings, "divisibilitylabel")?;

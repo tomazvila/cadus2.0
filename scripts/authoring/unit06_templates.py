@@ -58,9 +58,9 @@ def geometry(r):
       "Subtract leg square from hypotenuse square: $(169-25){a}^2=144{a}^2$. The positive length is $12\\cdot{a}$ cm.", lambda a: str(12*a))
     r("pythagorean-theorem/kp3", "An isosceles right triangle has two legs of length {a}. Find its exact hypotenuse.", "a*sqrt(2)",
       "The two leg squares total $2{a}^2$. Taking the positive root gives ${a}\\sqrt2$.", lambda a: f"{a}*sqrt(2)")
-    r("pythagorean-converse/kp1", "A triangle has sides $5\\cdot{a}$, $12\\cdot{a}$, and $13\\cdot{a}$. Is it right? Enter $1$ for yes or $0$ for no.", "yes",
+    r("pythagorean-converse/kp1", "A triangle has sides $5\\cdot{a}$, $12\\cdot{a}$, and $13\\cdot{a}$. Is it right?", "equalitylabel((5*a)**2+(12*a)**2,(13*a)**2)",
       "The largest side has square $169{a}^2$; the other squares sum to $(25+144){a}^2=169{a}^2$, so yes.", lambda a: "yes")
-    r("pythagorean-converse/kp2", "A triangle has sides $3\\cdot{a}$, $4\\cdot{a}$, and $6\\cdot{a}$. Is it right? Enter $1$ for yes or $0$ for no.", "no",
+    r("pythagorean-converse/kp2", "A triangle has sides $3\\cdot{a}$, $4\\cdot{a}$, and $6\\cdot{a}$. Is it right?", "equalitylabel((3*a)**2+(4*a)**2,(6*a)**2)",
       "The longest side has square $36{a}^2$ but the other squares total $25{a}^2$. Their inequality proves the triangle is not right.", lambda a: "no")
     r("pythagorean-converse/kp3", "Classify a triangle with sides $4\\cdot{a}$, $5\\cdot{a}$, and $6\\cdot{a}$. Enter $1$ for acute, $2$ for right, or $3$ for obtuse.", "acute",
       "The sum of the smaller squares is $41{a}^2$, greater than the largest square $36{a}^2$, so all its angles are acute.", lambda a: "acute")
@@ -83,8 +83,6 @@ def generate():
                          constraints=[], hints=[HINTS[key.split("/")[0]]],
                          distractors=[], samples=samples)
         encoded_labels = {
-            "pythagorean-converse/kp1": "1",
-            "pythagorean-converse/kp2": "0",
             "pythagorean-converse/kp3": "1",
             "radical-equations-basic/kp3": "0",
         }

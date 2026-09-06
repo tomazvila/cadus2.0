@@ -304,6 +304,18 @@ fn inequality_union_templates_write_only_bounded_validated_relations() {
 fn bounded_number_theory_writers_compute_closed_labels() {
     for (expression, value, expected, options) in [
         (
+            "equalitylabel(a,18)",
+            18,
+            "yes",
+            vec![vec!["yes"], vec!["no"]],
+        ),
+        (
+            "equalitylabel(a,18)",
+            19,
+            "no",
+            vec![vec!["yes"], vec!["no"]],
+        ),
+        (
             "divisibilitylabel(a,6)",
             18,
             "yes",
@@ -395,6 +407,10 @@ fn structured_writers_refuse_invalid_domains_and_contract_outputs() {
         (
             serde_json::json!({"kind":"label","options":[["yes"],["no"]]}),
             "primeclass(a)",
+        ),
+        (
+            serde_json::json!({"kind":"label","options":[["prime"],["composite"]]}),
+            "equalitylabel(a,2)",
         ),
     ] {
         let body = serde_json::json!({
