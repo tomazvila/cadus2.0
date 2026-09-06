@@ -108,8 +108,13 @@ impl Validity<'_> {
         match task.task_type {
             // A confirmation stands while the topic is still inferred (D-F6).
             // The review band never opens for a placed topic, so the band test
-            // would drop the item on the first re-serve.
-            TaskType::Review if task.confirm => self.states.get(topic_id).is_some_and(is_inferred),
+            // would drop the item on the first re-serve. A CLOSED item goes,
+            // pass or fail: a failed one leaves the peel-back lesson behind it,
+            // and a second try in the same session is not a confirmation.
+            TaskType::Review if task.confirm => {
+                !self.ctx.closed_task_ids.contains(&task.task_id)
+                    && self.states.get(topic_id).is_some_and(is_inferred)
+            }
             TaskType::Review => self.review_valid(task, topic_id),
             TaskType::Lesson => self.lesson_valid(topic_id),
             TaskType::Drill => self.ctx.drill_eligible.contains(topic_id),

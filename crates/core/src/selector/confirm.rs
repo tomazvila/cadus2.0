@@ -36,6 +36,11 @@ pub const CONFIRM_PROBLEMS: i64 = 1;
 /// `busy` holds the topics the plan already serves; a topic serves one task per
 /// session, so a busy topic waits. An empty answer means the course owes no
 /// confirmation, and `mastery.confirm_inferred` off always answers empty.
+///
+/// A FAILED confirmation leaves the topic inferred, so the topic comes back
+/// here. It waits behind its own peel-back lesson: the failure queues the
+/// `confirm_failed` remediation, and `compose_session` puts every remediation
+/// topic in `busy`.
 #[must_use]
 pub fn confirmations(
     states: &BTreeMap<String, TopicState>,

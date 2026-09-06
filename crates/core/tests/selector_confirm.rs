@@ -291,6 +291,29 @@ fn a_failed_confirmation_keeps_placed_and_schedules_the_lesson() {
     assert!(first.is_remediation);
     assert_eq!(first.task_type, TaskType::Lesson);
     assert_eq!(first.topic.as_deref(), Some("p"));
+    // The topic waits behind its own lesson: no second confirmation this session.
+    assert!(confirm_tasks(&plan).is_empty());
+}
+
+#[test]
+fn a_closed_confirmation_leaves_the_re_served_plan() {
+    let (graph, states) = four_placed();
+    let cfg = Config::default();
+    let open = compose(&states, &graph, &cfg);
+    assert_eq!(confirm_tasks(&open).len(), 2);
+
+    // The learner answered `s1-review-p1`, so the item is closed and the
+    // re-serve drops it. `p2` is still open and keeps its place and its id.
+    let closed: BTreeSet<String> = ["s1-review-p1".to_owned()].into();
+    let ctx = SessionContext::default()
+        .with_session_id("s1")
+        .with_course(Some("c"))
+        .with_open_plan(Some(&open))
+        .with_multistep(0, &closed);
+    let again = compose_session(&states, &graph, &cfg, T_US, &mut sampler(1), &ctx);
+    let kept = confirm_tasks(&again);
+    assert_eq!(kept.len(), 1);
+    assert_eq!(kept[0].task_id, "s1-review-p2");
 }
 
 #[test]
