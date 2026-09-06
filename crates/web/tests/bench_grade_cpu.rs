@@ -77,7 +77,7 @@ const WRONG_ROWS: usize = 350;
 const RESPELLED_ROWS: usize = 2_792;
 
 /// The count of grades that come back `correct`.
-const CORRECT_GRADES: usize = 2_393;
+const CORRECT_GRADES: usize = 2_390;
 
 /// The count of grades that come back `poor`.
 ///
@@ -86,7 +86,7 @@ const CORRECT_GRADES: usize = 2_393;
 const POOR_GRADES: usize = 350;
 
 /// The count of grades that come back `nearly_passable`.
-const NEARLY_PASSABLE_GRADES: usize = 749;
+const NEARLY_PASSABLE_GRADES: usize = 752;
 
 /// The count of grades that carry the `blank-answer` tag.
 const BLANK_TAGS: usize = 350;
