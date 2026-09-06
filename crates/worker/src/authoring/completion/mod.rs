@@ -98,6 +98,19 @@ pub fn generate(spec: &AuthoringSpec, served: &[ServedInstance]) -> Proposals {
             else {
                 continue;
             };
+            let candidates: Vec<_> = variants
+                .iter()
+                .filter(|(_, calculation)| {
+                    let problem = format!("Compute ${}$.", calculation.expression);
+                    spec.exemplars
+                        .iter()
+                        .all(|exemplar| exemplar.problem.trim() != problem.trim())
+                })
+                .take(12)
+                .collect();
+            if candidates.len() < 12 {
+                continue;
+            }
             let formula = format!(
                 "{}{parameter}{}",
                 &source.expression[..start],
@@ -108,8 +121,8 @@ pub fn generate(spec: &AuthoringSpec, served: &[ServedInstance]) -> Proposals {
                 expression::escape(&source.expression[..start]),
                 expression::escape(&source.expression[end..])
             );
-            let values: Vec<i64> = variants.iter().take(12).map(|(value, _)| *value).collect();
-            let samples: Vec<Value> = variants.iter().take(12).map(|(value,calc)|json!({"params":{parameter.to_string():value},"expected":calc.answer})).collect();
+            let values: Vec<i64> = candidates.iter().map(|(value, _)| *value).collect();
+            let samples: Vec<Value> = candidates.iter().map(|(value,calc)|json!({"params":{parameter.to_string():value},"expected":calc.answer})).collect();
             let arguments = json!({"statement":statement,"params":{parameter.to_string():{"kind":"choice","values":values}},"constraints":[],"answer_expr":formula,"solution_sketch":method::rule(spec),"hints":[method::rule(spec)],"distractors":[],"samples":samples});
             practice = keep(&mut out, spec, Kind::Template, arguments, served);
         }

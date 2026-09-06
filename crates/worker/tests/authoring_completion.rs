@@ -56,3 +56,46 @@ fn word_problem_models_are_never_guessed_and_hint_leaks_remain_refused() {
             .any(|reason| reason.contains("hint-answer"))
     );
 }
+
+#[test]
+fn practice_template_excludes_a_sibling_exemplar_problem() {
+    let mut spec = common::squares_spec();
+    spec.topic_id = "perfect-square-roots".to_owned();
+    spec.topic_name = "Perfect Squares and Their Roots".to_owned();
+    spec.kp_id = "kp1".to_owned();
+    spec.kp_name = "Squares of 1 through 15".to_owned();
+    spec.constraints = Some("bases 1-15".to_owned());
+    spec.exemplars = vec![
+        cadus_core::curriculum::Exemplar {
+            problem: "Compute $13^2$.".to_owned(),
+            answer: "169".to_owned(),
+            solution_sketch: None,
+            answer_contract: None,
+        },
+        cadus_core::curriculum::Exemplar {
+            problem: "Compute $15^2$.".to_owned(),
+            answer: "225".to_owned(),
+            solution_sketch: None,
+            answer_contract: None,
+        },
+    ];
+
+    let proposals = generate(&spec, &[]);
+    let draft = proposals
+        .drafts
+        .iter()
+        .find(|row| row["kind"] == "template")
+        .unwrap();
+    let body = verify_kind(Kind::Template, &spec, &draft["arguments"], &[]).unwrap();
+    let instances = cadus_core::instruction::template_instances(&body);
+    assert!(instances.len() >= 12);
+    for instance in instances {
+        assert!(
+            spec.exemplars
+                .iter()
+                .all(|exemplar| exemplar.problem.trim() != instance.problem.trim()),
+            "practice repeated sibling exemplar: {}",
+            instance.problem
+        );
+    }
+}
