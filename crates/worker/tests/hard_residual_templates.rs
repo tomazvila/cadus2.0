@@ -40,6 +40,7 @@ fn exhaustive_pending_families_pass_and_wrong_samples_fail() {
     assert_eq!(report["passed"], rows.len(), "{report}");
     let (curriculum, findings) = load_curriculum(&root().join("curriculum")).unwrap();
     assert!(findings.is_empty());
+    assert_eq!(rows.len(), 5);
     for row in rows {
         assert_eq!(row["status"], "pending");
         let spec = select_for(

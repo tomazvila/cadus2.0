@@ -33,7 +33,10 @@
 //! a panic.
 
 mod builtin;
+mod equation;
 mod exact;
+mod functions;
+mod inverse;
 mod structured;
 mod write;
 
@@ -52,66 +55,8 @@ use crate::answer::{
 use super::domain::Bindings;
 use structured::{label_answer, list_answer};
 
+pub use functions::{EVAL_FUNCTIONS, EXTRA_FUNCTIONS};
 pub use write::write;
-
-/// The evaluation-only functions and the argument count each one takes.
-///
-/// `abs` and `sqrt` are in the M2 grammar already. The others are not, and
-/// [`parse_with_functions`] admits them for this one purpose and erases them
-/// before the answer string exists.
-pub const EVAL_FUNCTIONS: [(&str, usize); 24] = [
-    ("abs", 1),
-    ("sqrt", 1),
-    ("gcd", 2),
-    ("lcm", 2),
-    ("floor", 1),
-    ("ceiling", 1),
-    ("min", 2),
-    ("max", 2),
-    ("factorial", 1),
-    ("binomial", 2),
-    ("signcase", 2),
-    ("powerform", 2),
-    ("excludepoint", 2),
-    ("lowerbound", 2),
-    ("upperbound", 2),
-    ("quotientremainder", 2),
-    ("divisibilitylabel", 2),
-    ("equalitylabel", 2),
-    ("linearclass", 2),
-    ("primeclass", 1),
-    ("factorlist", 1),
-    ("firstmultiples", 2),
-    ("primefactors", 1),
-    ("repeatedfactors", 2),
-];
-
-/// The function names [`parse_with_functions`] admits beyond the M2 grammar.
-pub const EXTRA_FUNCTIONS: [&str; 23] = [
-    "gcd",
-    "lcm",
-    "floor",
-    "ceiling",
-    "min",
-    "max",
-    "factorial",
-    "binomial",
-    "multipart",
-    "signcase",
-    "powerform",
-    "excludepoint",
-    "lowerbound",
-    "upperbound",
-    "quotientremainder",
-    "divisibilitylabel",
-    "equalitylabel",
-    "linearclass",
-    "primeclass",
-    "factorlist",
-    "firstmultiples",
-    "primefactors",
-    "repeatedfactors",
-];
 
 /// The largest bit width of a numerator or a denominator of an intermediate.
 ///
@@ -361,8 +306,15 @@ pub fn answer_for_contract(
     bindings: &Bindings,
     contract: Option<&AnswerContract>,
 ) -> Result<Answer, EvalError> {
-    if matches!(ast, Ast::Func(name, _) if name == "powerform") {
-        return structured::power_form(ast, bindings, contract);
+    if let Ast::Func(name, args) = ast {
+        match name.as_str() {
+            "powerform" => return structured::power_form(ast, bindings, contract),
+            "logequation" | "expequation" => {
+                return equation::write(name, args, bindings, contract);
+            }
+            "atandeg" => return inverse::degrees(args, bindings, contract),
+            _ => {}
+        }
     }
     match contract {
         Some(contract @ AnswerContract::Label { .. }) => label_answer(ast, bindings, contract),

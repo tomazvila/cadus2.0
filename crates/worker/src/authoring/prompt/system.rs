@@ -36,7 +36,10 @@ deterministic 'answer_contract' the pending template needs. For a closed label, 
 parameter as answer_expr, equalitylabel(left, right) for exact equality, divisibilitylabel(number, divisor) for yes/no divisibility, linearclass((a,b),(c,d)) for the solution-count class of ax+b=cx+d, or \
 primeclass(number) for prime/composite/neither. For a quotient-and-remainder contract, write \
 quotientremainder(quotient, remainder). To preserve an unevaluated exact power, use \
-powerform(coefficient, [base, exponent]). For an ordered exact list, use factorlist(number), \
+powerform(coefficient, [base, exponent]). To convert a proved integer power identity under a \
+closed label contract, use logequation(base, [exponent, result]) or \
+expequation(base, [exponent, result]). For a one-decimal inverse-tangent angle under an \
+approximate contract, use atandeg(ratio). For an ordered exact list, use factorlist(number), \
 firstmultiples(number, count), primefactors(number), or repeatedfactors(number, count). For a flat multipart answer, write multipart(part1, part2), with arguments \
 in the same order as the contract's named parts; an argument is a mathematical expression or, for a \
 label part, one text choice parameter. For a unit contract, keep answer_expr numeric; the server \
