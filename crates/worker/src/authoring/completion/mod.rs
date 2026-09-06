@@ -1,6 +1,7 @@
 //! Zero-model proposal generation. Production gates validate drafts; humans approve them.
 mod expression;
 mod method;
+mod templates;
 
 use crate::authoring::{
     job::verify_kind,
@@ -112,6 +113,9 @@ pub fn generate(spec: &AuthoringSpec, served: &[ServedInstance]) -> Proposals {
             let arguments = json!({"statement":statement,"params":{parameter.to_string():{"kind":"choice","values":values}},"constraints":[],"answer_expr":formula,"solution_sketch":method::rule(spec),"hints":[method::rule(spec)],"distractors":[],"samples":samples});
             practice = keep(&mut out, spec, Kind::Template, arguments, served);
         }
+    }
+    if !practice && let Some(arguments) = templates::special(spec) {
+        practice = keep(&mut out, spec, Kind::Template, arguments, served);
     }
     if !teaching {
         out.refusals.push(
