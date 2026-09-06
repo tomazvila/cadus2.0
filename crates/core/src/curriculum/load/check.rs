@@ -247,7 +247,8 @@ impl<'a> Checker<'a> {
     }
 
     fn check_course(&mut self, value: &Value) {
-        const FIELDS: [&str; 5] = [
+        const FIELDS: [&str; 6] = [
+            "visuals",
             "id",
             "name",
             "order",
@@ -344,7 +345,8 @@ impl<'a> Checker<'a> {
     }
 
     fn check_knowledge_point(&mut self, value: &Value) {
-        const FIELDS: [&str; 5] = [
+        const FIELDS: [&str; 6] = [
+            "visuals",
             "id",
             "name",
             "key_prerequisites",
@@ -361,6 +363,13 @@ impl<'a> Checker<'a> {
         });
         self.field(map, "exemplars", false, |checker, value| {
             checker.each(value, Self::check_exemplar);
+        });
+        self.field(map, "visuals", false, |checker, value| {
+            checker.each(value, |checker, visual| {
+                if let Err(error) = crate::visual::VisualSpec::deserialize(visual.clone()) {
+                    checker.report(&error.to_string());
+                }
+            });
         });
         self.field(map, "constraints", false, |checker, value| {
             if !value.is_null() {

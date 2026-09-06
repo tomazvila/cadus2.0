@@ -247,6 +247,9 @@ fn kp_value(kp: &KnowledgePoint) -> Value {
         ),
     );
     map.insert("name".to_owned(), text(&kp.name));
+    if !kp.visuals.is_empty() {
+        map.insert("visuals".to_owned(), serde_json::json!(kp.visuals));
+    }
     Value::Object(map)
 }
 
