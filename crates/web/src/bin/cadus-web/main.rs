@@ -103,12 +103,16 @@ fn init_tracing() {
 
 /// The start sequence of the module note, then the serve, then the stop.
 async fn run() -> Result<(), Fatal> {
-    let settings = Settings::read()?;
-
-    // Install the stop signals before the connect. The handlers exist from this
-    // point, so a SIGTERM during the connect gives exit code 0 instead of a kill
-    // by signal (finding #39).
-    let mut shutdown = Shutdown::install().map_err(Fatal::startup)?;
+    // Read the settings, then install the stop signals before the connect. The
+    // handlers exist from this point, so a SIGTERM during the connect gives exit
+    // code 0 instead of a kill by signal (finding #39). The two steps share one
+    // refusal: a setting that does not read stops the start the same way a
+    // handler that does not register would.
+    let (settings, mut shutdown) = Settings::read().and_then(|settings| {
+        Shutdown::install()
+            .map_err(Fatal::startup)
+            .map(|shutdown| (settings, shutdown))
+    })?;
     let Some(db) = connect_guarded(&settings.cfg, &mut shutdown).await? else {
         return Ok(());
     };
