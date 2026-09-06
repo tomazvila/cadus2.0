@@ -20,13 +20,13 @@
 
 use std::fmt::Write as _;
 
-use cadus_core::curriculum::{Curriculum, KnowledgePoint, Topic};
-use cadus_core::pool::{kp_key, split_kp_key};
+use cadus_core::pool::kp_key;
 use cadus_store::Db;
 
 use crate::WorkerError;
 use crate::authoring::job::{AUTHORING_ATTEMPTS, bank_target, slots_taken};
 use crate::authoring::prompt::{AuthoringSpec, KINDS, Kind};
+pub use crate::authoring::selection::{select, select_for};
 
 /// The subcommand name of one authoring pass.
 pub const AUTHOR: &str = "author";
@@ -45,6 +45,8 @@ USAGE:
     cadus-worker --help             print this text
 
 AUTHOR OPTIONS:
+    --course <id>           author only this course, e.g. foundations.
+    --template-passes <1..3> fill template families before instruction; default 1.
     --kp <topic_id/kp_id>   author for this knowledge point; repeatable.
                             The default is every knowledge point of the tree.
     --kind <kind>           author this kind; repeatable. One of template,
@@ -102,6 +104,10 @@ pub struct ReadinessArgs {
 pub struct AuthorArgs {
     /// The serving keys the operator named. Empty means every knowledge point.
     pub kps: Vec<String>,
+    /// Restrict every author pass to this curriculum course.
+    pub course: Option<String>,
+    /// Number of template bank passes before instruction; zero selects one.
+    pub template_passes: usize,
     /// The kinds the operator named. Empty means every kind of [`KINDS`].
     pub kinds: Vec<Kind>,
     /// Print the plan and make no call.
@@ -199,6 +205,14 @@ pub fn parse<S: AsRef<str>>(args: &[S]) -> Result<Command, CliError> {
             }
             "--help" | "-h" => return Ok(Command::Help),
             "--kp" => parsed.kps.push(value_of("--kp", args.next())?),
+            "--course" => parsed.course = Some(value_of(argument, args.next())?),
+            "--template-passes" => {
+                parsed.template_passes = value_of(argument, args.next())?
+                    .parse()
+                    .ok()
+                    .filter(|n| (1..=3).contains(n))
+                    .ok_or_else(|| CliError("template passes must be in 1..=3".to_owned()))?;
+            }
             "--kind" => {
                 let raw = value_of("--kind", args.next())?;
                 let kind = Kind::from_wire(&raw).ok_or_else(|| {
@@ -250,76 +264,6 @@ fn value_of(option: &str, value: Option<&str>) -> Result<String, CliError> {
     match value {
         Some(text) if !text.starts_with("--") => Ok(text.to_owned()),
         _ => Err(CliError(format!("the option `{option}` needs a value"))),
-    }
-}
-
-/// The authoring specs of the knowledge points the operator named.
-///
-/// An empty `keys` list selects EVERY knowledge point of the tree, in curriculum
-/// order. A named key selects one, and the answer keeps the order the operator
-/// wrote.
-///
-/// Every spec states no difficulty target. The curriculum carries a topic
-/// difficulty number, not the sentence the prompt asks for, so the prompt takes
-/// `prompt::DEFAULT_DIFFICULTY`.
-///
-/// # Errors
-///
-/// Returns [`CliError`] naming a key the curriculum does not hold.
-pub fn select(curriculum: &Curriculum, keys: &[String]) -> Result<Vec<AuthoringSpec>, CliError> {
-    if keys.is_empty() {
-        return Ok(every_spec(curriculum));
-    }
-    let mut specs = Vec::with_capacity(keys.len());
-    for key in keys {
-        specs.push(one_spec(curriculum, key)?);
-    }
-    Ok(specs)
-}
-
-/// Every knowledge point of the tree, in curriculum order.
-fn every_spec(curriculum: &Curriculum) -> Vec<AuthoringSpec> {
-    let mut specs = Vec::new();
-    for topic in curriculum.topics() {
-        for kp in &topic.knowledge_points {
-            specs.push(spec_of(topic, kp));
-        }
-    }
-    specs
-}
-
-/// The spec of one serving key, or the refusal an unknown key earns.
-fn one_spec(curriculum: &Curriculum, key: &str) -> Result<AuthoringSpec, CliError> {
-    let Some((topic_id, kp_id)) = split_kp_key(key) else {
-        return Err(CliError(format!(
-            "the knowledge point `{key}` is not a serving key — write it as `<topic_id>/<kp_id>`"
-        )));
-    };
-    curriculum
-        .topics()
-        .iter()
-        .find(|topic| topic.id.as_str() == topic_id)
-        .and_then(|topic| {
-            topic
-                .knowledge_points
-                .iter()
-                .find(|kp| kp.id.as_str() == kp_id)
-                .map(|kp| spec_of(topic, kp))
-        })
-        .ok_or_else(|| CliError(format!("the curriculum holds no knowledge point `{key}`")))
-}
-
-/// One curriculum knowledge point, as the spec the prompt reads.
-fn spec_of(topic: &Topic, kp: &KnowledgePoint) -> AuthoringSpec {
-    AuthoringSpec {
-        kp_id: kp.id.as_str().to_owned(),
-        kp_name: kp.name.clone(),
-        topic_id: topic.id.as_str().to_owned(),
-        topic_name: topic.name.clone(),
-        answer_kind: topic.answer_kind,
-        difficulty_target: None,
-        constraints: kp.constraints.clone(),
-        exemplars: kp.exemplars.clone(),
     }
 }
 
@@ -382,6 +326,21 @@ pub async fn plan(
 #[must_use]
 pub fn documents(rows: &[PlanRow]) -> i64 {
     rows.iter().map(PlanRow::to_author).sum()
+}
+
+/// Documents the requested stages attempt, after occupied bank slots.
+#[must_use]
+pub fn staged_documents(rows: &[PlanRow], template_rounds: usize) -> i64 {
+    rows.iter()
+        .map(|row| {
+            let rounds = if row.kind == Kind::Template {
+                i64::try_from(template_rounds.max(1)).unwrap_or(i64::MAX)
+            } else {
+                1
+            };
+            (row.target - row.taken).max(0).min(rounds)
+        })
+        .sum()
 }
 
 /// The model calls the plan spends: the floor and the ceiling (T3).

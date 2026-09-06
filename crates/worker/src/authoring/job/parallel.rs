@@ -42,12 +42,24 @@ pub async fn run_parallel(
     }
     let ordered = stale_first(db, kind, specs).await?;
     let mut report = BatchReport::default();
-    for chunk in ordered.chunks(concurrency) {
+    let mut cursor = 0;
+    while cursor < ordered.len() {
+        let width = job.budget.as_ref().map_or(concurrency, |budget| {
+            budget.available_slots().max(1).min(concurrency)
+        });
+        let end = (cursor + width).min(ordered.len());
+        let chunk = &ordered[cursor..end];
         let futures = chunk.iter().map(|spec| author_one(db, job, kind, spec));
         for result in wave(futures).await {
             count(&mut report, result?);
         }
-        if job.endpoint_failure().is_some() {
+        cursor = end;
+        if job.endpoint_failure().is_some()
+            || job
+                .budget
+                .as_ref()
+                .is_some_and(crate::authoring::budget::Budget::refused)
+        {
             break;
         }
     }

@@ -12,7 +12,7 @@ The empty bank needs 18 documents: nine templates, three teach pages, three hint
 ladders and three diagnosis sets. One pass requests 12 documents. Two later
 `--kind template` passes fill the remaining six template slots. Every accepted
 body stays `pending` and needs human digest approval before use (C6).
-The entire arithmetic unit contains 137 knowledge points; it exceeds this pilot.
+The entire arithmetic unit contains 81 knowledge points; it exceeds this pilot.
 
 ## Command
 

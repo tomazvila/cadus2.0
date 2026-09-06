@@ -146,6 +146,13 @@ impl Budget {
         }
     }
 
+    /// Fresh HTTP request slots after prior waves have drained.
+    #[must_use]
+    pub fn available_slots(&self) -> usize {
+        usize::try_from(self.limit.saturating_sub(self.reserved_micros()) / self.per_request)
+            .unwrap_or(usize::MAX)
+    }
+
     /// Whether any request exhausted the reservation balance.
     #[must_use]
     pub fn refused(&self) -> bool {

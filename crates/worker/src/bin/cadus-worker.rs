@@ -39,7 +39,7 @@ use cadus_model_client::{API_KEY_VAR, Client, ModelConfig};
 use cadus_store::shutdown::{Shutdown, close_within};
 use cadus_store::{Db, DbConfig, bounded};
 use cadus_worker::authoring::cli::{self, AuthorArgs, Command, ReadinessArgs};
-use cadus_worker::authoring::job::{self, AuthoringJob, run_parallel};
+use cadus_worker::authoring::job::{self, AuthoringJob};
 use cadus_worker::{DiagnosisJob, RefillJob, WorkerConfig, WorkerError};
 
 use curriculum::load_arena;
@@ -109,7 +109,7 @@ fn fail(reason: &str) -> ExitCode {
 async fn author(args: &AuthorArgs) -> Result<(), WorkerError> {
     let curriculum = load_arena()?;
     let specs =
-        cli::select(&curriculum, &args.kps).map_err(|err| WorkerError::Config(err.to_string()))?;
+        cli::select_for(&curriculum, args).map_err(|err| WorkerError::Config(err.to_string()))?;
     let kinds = args.kinds();
 
     let db_cfg = DbConfig::from_env()?;
@@ -127,6 +127,14 @@ async fn author(args: &AuthorArgs) -> Result<(), WorkerError> {
 
     let rows = cli::plan(&db, &specs, &kinds).await?;
     print!("{}", cli::render_plan(&rows, args.dry_run));
+    if args.template_passes > 1 {
+        let documents = cli::staged_documents(&rows, args.template_passes);
+        println!(
+            "staged plan: {} template rounds; {documents} documents; at most {} HTTP attempts before budget limits",
+            args.template_passes,
+            documents * 10
+        );
+    }
 
     if args.dry_run {
         close_within(POOL_CLOSE_DEADLINE, db.pool().close()).await;
@@ -160,18 +168,8 @@ async fn author(args: &AuthorArgs) -> Result<(), WorkerError> {
     // knowledge point, `approved` AND `pending`, so a template this same process
     // stored minutes earlier gates the page and the ladder authored after it
     // (`job::served_instances`; M6 review 2, finding V1).
-    let mut stored = 0_u32;
-    let mut declined = 0_u32;
-    for kind in kinds {
-        let report = run_parallel(&db, &job, kind, &specs, args.concurrency.max(1)).await?;
-        stored += report.stored;
-        declined += report.declined;
-        print!("{}", cli::render_batch(kind, &report));
-        if job.endpoint_failure().is_some() {
-            break;
-        }
-    }
-    let result = cadus_worker::authoring::budget::finish(&budget, &job, stored, declined);
+    let result =
+        cadus_worker::authoring::execution::run(&db, &job, &budget, &specs, &kinds, args).await;
     close_within(POOL_CLOSE_DEADLINE, db.pool().close()).await;
     result
 }
