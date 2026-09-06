@@ -105,7 +105,7 @@ pub fn attempt_event(
         .steps
         .iter()
         .zip(item.steps.iter())
-        .map(|(verdict, step)| field_of(verdict, answer_of(&verdict.id), step.ask.contract))
+        .map(|(verdict, step)| field_of(verdict, answer_of(&verdict.id), step.ask.contract.clone()))
         .collect();
     IntegratedAttempt {
         ts: now,
@@ -125,7 +125,7 @@ pub fn attempt_event(
         final_field: field_of(
             &grade.final_grade,
             &submission.final_answer.answer,
-            item.final_answer.ask.contract,
+            item.final_answer.ask.contract.clone(),
         ),
         skills_credited: grade.skills_credited.clone(),
         solved: grade.solved,
