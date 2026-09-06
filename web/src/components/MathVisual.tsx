@@ -25,8 +25,8 @@ export const MathVisual = memo(function MathVisual({ visual }: MathVisualProps) 
   const holder = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const node = holder.current;
-    if (node === null) return;
+    // The unconditional frame is attached before this component's effect runs.
+    const node = holder.current!;
     node.replaceChildren();
     const figure = sanitizeVisualSvg(visual.svg);
     if (figure !== null) node.appendChild(figure);

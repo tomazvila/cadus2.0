@@ -82,7 +82,7 @@ function rebuild(source: Element, doc: Document): SVGElement | null {
   }
   for (const child of Array.from(source.childNodes)) {
     if (child.nodeType === Node.TEXT_NODE) {
-      copy.appendChild(doc.createTextNode(child.nodeValue ?? ''));
+      copy.appendChild(doc.createTextNode((child as Text).data));
       continue;
     }
     if (child.nodeType !== Node.ELEMENT_NODE) return null;
