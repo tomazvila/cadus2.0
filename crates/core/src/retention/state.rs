@@ -25,6 +25,17 @@ use super::policy::RetentionConfig;
 /// rule only asks about the session the selector composes now.
 pub const SESSION_WINDOW: usize = 16;
 
+/// The key of one knowledge point inside the `done` map.
+///
+/// A knowledge point id is unique inside its topic and NOT across the tree: the
+/// checked-in Foundations tree spells `kp1` under many topics. The key therefore
+/// carries the topic, or one probe of `kp1` would silently close another topic's
+/// `kp1`.
+#[must_use]
+pub fn kp_key(topic: &str, kp: &str) -> String {
+    format!("{topic}/{kp}")
+}
+
 /// The number of probed item digests the state remembers.
 ///
 /// The unseen rule reads it, so a probe never serves an item an earlier probe used.
@@ -134,7 +145,7 @@ pub struct RetentionState {
     /// The tallies, keyed by the configured delay in days.
     #[serde(default)]
     pub by_delay: BTreeMap<u32, RetentionTally>,
-    /// The delays already probed, per knowledge point, sorted.
+    /// The delays already probed, keyed by [`kp_key`], sorted.
     #[serde(default)]
     pub done: BTreeMap<String, Vec<u32>>,
     /// The ids of the sessions that carried a probe, oldest first, at most
@@ -164,7 +175,8 @@ impl RetentionState {
         let bucket = cfg.bucket_of(probe.delay_days);
         self.by_delay.entry(bucket).or_default().record(probe);
 
-        let done = self.done.entry(probe.kp.as_str().to_owned()).or_default();
+        let key = kp_key(probe.topic.as_str(), probe.kp.as_str());
+        let done = self.done.entry(key).or_default();
         if let Err(at) = done.binary_search(&probe.delay_days) {
             done.insert(at, probe.delay_days);
         }
@@ -182,11 +194,12 @@ impl RetentionState {
         self.sessions.iter().filter(|id| *id == session).count()
     }
 
-    /// Whether `kp` already carried a probe at `delay_days`.
+    /// Whether the knowledge point `kp` of `topic` already carried a probe at
+    /// `delay_days`.
     #[must_use]
-    pub fn is_done(&self, kp: &str, delay_days: u32) -> bool {
+    pub fn is_done(&self, topic: &str, kp: &str, delay_days: u32) -> bool {
         self.done
-            .get(kp)
+            .get(&kp_key(topic, kp))
             .is_some_and(|done| done.binary_search(&delay_days).is_ok())
     }
 
@@ -280,7 +293,8 @@ pub(crate) mod tests {
         assert_eq!(tally.assistance_dependence(), Some(0.0));
         assert_eq!(tally.mean_independent_secs(), Some(12.0));
         assert!(!state.is_empty());
-        assert!(state.is_done("kp1", 7));
+        assert!(state.is_done("t1", "kp1", 7));
+        assert!(!state.is_done("t2", "kp1", 7), "another topic keeps its own kp1");
     }
 
     #[test]
@@ -378,7 +392,7 @@ pub(crate) mod tests {
             &cfg,
         );
         assert_eq!(state.by_delay[&30].probes, 1);
-        assert!(state.is_done("kp1", 45));
+        assert!(state.is_done("t1", "kp1", 45));
     }
 
     #[test]

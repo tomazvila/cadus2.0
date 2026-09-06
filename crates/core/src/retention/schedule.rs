@@ -91,7 +91,7 @@ pub fn due_probe(
             let Some(delay) = delays
                 .iter()
                 .copied()
-                .find(|delay| *delay <= elapsed && !retention.is_done(id, *delay))
+                .find(|delay| *delay <= elapsed && !retention.is_done(topic, id, *delay))
             else {
                 continue;
             };
