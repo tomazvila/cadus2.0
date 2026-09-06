@@ -1,9 +1,6 @@
 //! Exact template recipes for closed families that need coordinated operands.
 use crate::authoring::prompt::AuthoringSpec;
 use cadus_core::template::{Bindings, Scalar, answer, parse_answer_expr};
-#[path = "accepted.rs"]
-mod accepted;
-
 use serde_json::{Map, Value, json};
 
 struct Recipe {
@@ -205,5 +202,5 @@ fn arguments(recipe: Recipe, rule: &str) -> Option<Value> {
 /// Return an exact recipe for an audited closed family.
 pub(super) fn special(spec: &AuthoringSpec) -> Option<Value> {
     let key = format!("{}/{}", spec.topic_id, spec.kp_id);
-    accepted::arguments(&key).or_else(|| arguments(recipe(&key)?, super::method::rule(spec)))
+    arguments(recipe(&key)?, super::method::rule(spec))
 }
