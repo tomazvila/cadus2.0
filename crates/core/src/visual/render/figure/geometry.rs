@@ -2,9 +2,8 @@
 
 use std::fmt::Write as _;
 
-use super::super::{
-    MARGIN, RenderOptions, dot_at, inner_height, inner_width, line_at, point_label, px, text_at,
-};
+use super::super::{RenderOptions, dot_at, line_at, point_label, px, text_at};
+use super::Fit;
 use crate::visual::{AngleMark, GeometryFigure, GeometryShape, LabeledPoint, Scalar, VisualError};
 
 pub(in crate::visual::render) fn geometry_body(
@@ -274,38 +273,4 @@ pub(super) fn bounds_of(pairs: &[(f64, f64)]) -> (f64, f64, f64, f64) {
         bounds.3 = bounds.3.max(*y);
     }
     bounds
-}
-
-/// The map from figure coordinates to pixels that keeps the aspect ratio.
-struct Fit {
-    x_min: f64,
-    y_max: f64,
-    scale: f64,
-    left: f64,
-    top: f64,
-}
-
-impl Fit {
-    fn new(bounds: (f64, f64, f64, f64), options: &RenderOptions) -> Self {
-        let (x_min, x_max, y_min, y_max) = bounds;
-        let width = inner_width(options);
-        let height = inner_height(options);
-        let x_span = (x_max - x_min).max(f64::EPSILON);
-        let y_span = (y_max - y_min).max(f64::EPSILON);
-        let scale = (width / x_span).min(height / y_span);
-        Self {
-            x_min,
-            y_max,
-            scale,
-            left: MARGIN + (width - x_span * scale) / 2.0,
-            top: MARGIN + (height - y_span * scale) / 2.0,
-        }
-    }
-
-    fn at(&self, x: f64, y: f64) -> (f64, f64) {
-        (
-            (x - self.x_min).mul_add(self.scale, self.left),
-            (self.y_max - y).mul_add(self.scale, self.top),
-        )
-    }
 }

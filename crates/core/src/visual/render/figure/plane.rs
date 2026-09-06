@@ -6,7 +6,9 @@ use super::super::{
     MARGIN, RenderOptions, dot_at, inner_height, inner_width, line_at, num_text, point_label, px,
     text_at,
 };
-use crate::visual::{CoordinateFigure, LabeledPoint, Segment, ShadedHalfPlane, VisualError};
+use crate::visual::{
+    CoordinateFigure, CurveFigure, LabeledPoint, Scalar, Segment, ShadedHalfPlane, VisualError,
+};
 
 const LABELED_TICKS: i64 = 21;
 
@@ -14,38 +16,100 @@ pub(in crate::visual::render) fn coordinate_body(
     figure: &CoordinateFigure,
     options: &RenderOptions,
 ) -> Result<String, VisualError> {
-    let (x_min, x_max) = (figure.x_min.to_f64()?, figure.x_max.to_f64()?);
-    let (y_min, y_max) = (figure.y_min.to_f64()?, figure.y_max.to_f64()?);
-    let (x_ticks, y_ticks) = figure.ticks()?;
-    let (x_step, y_step) = (figure.x_tick.to_f64()?, figure.y_tick.to_f64()?);
-    let width = inner_width(options);
-    let height = inner_height(options);
-    let at = |x: f64, y: f64| {
-        (
-            MARGIN + (x - x_min) / (x_max - x_min) * width,
-            MARGIN + (y_max - y) / (y_max - y_min) * height,
-        )
-    };
-
+    let frame = GridFrame::new(figure, options)?;
     let mut out = String::new();
-    grid_and_axes(
-        &mut out,
-        (x_min, x_max, y_min, y_max),
-        (x_ticks, y_ticks),
-        (x_step, y_step),
-        width,
-        height,
-        &at,
-    );
+    frame.draw(&mut out);
     draw_regions(
         &mut out,
         &figure.shaded_half_planes,
-        (x_min, x_max, y_min, y_max),
-        &at,
+        frame.bounds,
+        &|x, y| frame.at(x, y),
     )?;
-    draw_segments(&mut out, &figure.segments, &at)?;
-    draw_points(&mut out, &figure.points, &at)?;
+    draw_segments(&mut out, &figure.segments, &|x, y| frame.at(x, y))?;
+    draw_points(&mut out, &figure.points, &|x, y| frame.at(x, y))?;
     Ok(out)
+}
+
+/// A validated coordinate frame shared by coordinate-plane and curve figures.
+pub(super) struct GridFrame {
+    pub(super) bounds: (f64, f64, f64, f64),
+    ticks: (i64, i64),
+    steps: (f64, f64),
+    width: f64,
+    height: f64,
+}
+
+impl GridFrame {
+    pub(super) fn new(
+        figure: &impl GridSpec,
+        options: &RenderOptions,
+    ) -> Result<Self, VisualError> {
+        let (x, y) = figure.grid_axes();
+        let bounds = (x.0.to_f64()?, x.1.to_f64()?, y.0.to_f64()?, y.1.to_f64()?);
+        Ok(Self {
+            bounds,
+            ticks: (
+                crate::visual::tick_count("x", x.0, x.1, x.2)?,
+                crate::visual::tick_count("y", y.0, y.1, y.2)?,
+            ),
+            steps: (x.2.to_f64()?, y.2.to_f64()?),
+            width: inner_width(options),
+            height: inner_height(options),
+        })
+    }
+
+    pub(super) fn at(&self, x: f64, y: f64) -> (f64, f64) {
+        let (x_min, x_max, y_min, y_max) = self.bounds;
+        (
+            MARGIN + (x - x_min) / (x_max - x_min) * self.width,
+            MARGIN + (y_max - y) / (y_max - y_min) * self.height,
+        )
+    }
+
+    pub(super) fn draw(&self, out: &mut String) {
+        grid_and_axes(
+            out,
+            self.bounds,
+            self.ticks,
+            self.steps,
+            self.width,
+            self.height,
+            &|x, y| self.at(x, y),
+        );
+    }
+}
+
+/// Exact bounds and tick spacing of a figure drawn on a coordinate grid.
+pub(super) trait GridSpec {
+    fn grid_axes(&self) -> ((&Scalar, &Scalar, &Scalar), (&Scalar, &Scalar, &Scalar));
+}
+
+macro_rules! grid_spec {
+    ($figure:ty) => {
+        impl GridSpec for $figure {
+            fn grid_axes(&self) -> ((&Scalar, &Scalar, &Scalar), (&Scalar, &Scalar, &Scalar)) {
+                (
+                    (&self.x_min, &self.x_max, &self.x_tick),
+                    (&self.y_min, &self.y_max, &self.y_tick),
+                )
+            }
+        }
+    };
+}
+
+grid_spec!(CoordinateFigure);
+grid_spec!(CurveFigure);
+
+/// One SVG `points` attribute from coordinates mapped into a frame.
+pub(super) fn point_list(points: &[(f64, f64)], at: &impl Fn(f64, f64) -> (f64, f64)) -> String {
+    points
+        .iter()
+        .map(|(x, y)| {
+            let (px_, py_) = at(*x, *y);
+            format!("{},{}", px(px_), px(py_))
+        })
+        .collect::<Vec<_>>()
+        .join(" ")
 }
 
 fn draw_regions(
@@ -67,17 +131,10 @@ fn draw_regions(
         ];
         let clipped = clip_half_plane(&corners, a, b, toward);
         if clipped.len() >= 3 {
-            let points: Vec<String> = clipped
-                .iter()
-                .map(|(x, y)| {
-                    let (px_, py_) = at(*x, *y);
-                    format!("{},{}", px(px_), px(py_))
-                })
-                .collect();
             let _ = write!(
                 out,
                 "<polygon points=\"{}\" class=\"cadus-visual-shaded\"/>",
-                points.join(" ")
+                point_list(&clipped, at)
             );
         }
         let boundary_class = if region.solid {

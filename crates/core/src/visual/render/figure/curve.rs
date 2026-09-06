@@ -2,10 +2,8 @@
 
 use std::fmt::Write as _;
 
-use super::super::{
-    MARGIN, RenderOptions, dot_at, inner_height, inner_width, line_at, point_label, px, text_at,
-};
-use super::plane::grid_and_axes;
+use super::super::{RenderOptions, dot_at, line_at, point_label, text_at};
+use super::plane::{GridFrame, point_list};
 use crate::visual::{Asymptote, CurveFigure, VisualError};
 
 const CURVE_SAMPLES: usize = 121;
@@ -16,59 +14,33 @@ pub(in crate::visual::render) fn curve_body(
     figure: &CurveFigure,
     options: &RenderOptions,
 ) -> Result<String, VisualError> {
-    let (x_min, x_max) = (figure.x_min.to_f64()?, figure.x_max.to_f64()?);
-    let (y_min, y_max) = (figure.y_min.to_f64()?, figure.y_max.to_f64()?);
-    let (x_ticks, y_ticks) = figure.ticks()?;
-    let (x_step, y_step) = (figure.x_tick.to_f64()?, figure.y_tick.to_f64()?);
-    let width = inner_width(options);
-    let height = inner_height(options);
-    let at = |x: f64, y: f64| {
-        (
-            MARGIN + (x - x_min) / (x_max - x_min) * width,
-            MARGIN + (y_max - y) / (y_max - y_min) * height,
-        )
-    };
-
+    let frame = GridFrame::new(figure, options)?;
+    let (x_min, x_max, y_min, y_max) = frame.bounds;
     let mut out = String::new();
-    grid_and_axes(
-        &mut out,
-        (x_min, x_max, y_min, y_max),
-        (x_ticks, y_ticks),
-        (x_step, y_step),
-        width,
-        height,
-        &at,
-    );
+    frame.draw(&mut out);
     for asymptote in &figure.asymptotes {
         let (from, to) = match asymptote {
             Asymptote::Horizontal { at: value } => {
                 let y = value.to_f64()?;
-                (at(x_min, y), at(x_max, y))
+                (frame.at(x_min, y), frame.at(x_max, y))
             }
             Asymptote::Vertical { at: value } => {
                 let x = value.to_f64()?;
-                (at(x, y_min), at(x, y_max))
+                (frame.at(x, y_min), frame.at(x, y_max))
             }
         };
         line_at(&mut out, from, to, "cadus-visual-asymptote");
     }
     for run in curve_runs(&figure.curve, x_min, x_max, y_min, y_max) {
-        let points: Vec<String> = run
-            .iter()
-            .map(|(x, y)| {
-                let (px_, py_) = at(*x, *y);
-                format!("{},{}", px(px_), px(py_))
-            })
-            .collect();
         let _ = write!(
             out,
             "<polyline points=\"{}\" class=\"cadus-visual-curve\"/>",
-            points.join(" ")
+            point_list(&run, &|x, y| frame.at(x, y))
         );
     }
     for point in &figure.key_points {
         let pair = point.to_pair()?;
-        let spot = at(pair.0, pair.1);
+        let spot = frame.at(pair.0, pair.1);
         dot_at(&mut out, spot, 4.0, "cadus-visual-point");
         let label = point_label(point);
         if !label.is_empty() {
