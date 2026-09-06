@@ -111,6 +111,9 @@ fn check_no_other_answer(
     spec: &InstructionSpec<'_>,
 ) -> Result<(), Rejection> {
     let own_answer = compute_answer(problem);
+    let own_calculation = own_answer
+        .as_ref()
+        .is_some_and(|answer| final_calculation(last, answer));
     for (served_problem, answer) in spec.served() {
         if served_problem.trim() == problem.trim() {
             return Err(Rejection {
@@ -125,7 +128,7 @@ fn check_no_other_answer(
             .as_ref()
             .zip(canonical_form(answer).ok().as_ref())
             .is_some_and(|(own, served)| same_answer(own, served));
-        if !coincides && contains_token(last, answer) {
+        if !coincides && !own_calculation && contains_token(last, answer) {
             return Err(Rejection {
                 code: "teach-answer",
                 message: format!(
@@ -149,4 +152,15 @@ fn compute_answer(problem: &str) -> Option<crate::answer::Canon> {
         .into_iter()
         .find_map(|prefix| problem.trim().strip_prefix(prefix))?;
     canonical_form(expression.trim().trim_end_matches('.').trim()).ok()
+}
+
+/// A bare result or a verified final equation contains only the worked calculation.
+fn final_calculation(last: &str, answer: &crate::answer::Canon) -> bool {
+    let text = last.trim().trim_end_matches('.').trim().trim_matches('$');
+    let (left, right) = text.split_once('=').unwrap_or((text, text));
+    [left, right].into_iter().all(|part| {
+        canonical_form(part.trim())
+            .ok()
+            .is_some_and(|value| same_answer(answer, &value))
+    })
 }

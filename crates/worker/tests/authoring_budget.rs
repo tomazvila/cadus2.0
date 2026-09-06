@@ -54,7 +54,8 @@ fn cli_exposes_explicit_cap_and_bounded_concurrency() {
     assert_eq!(args.budget_micros, Some(5_000_000));
     assert_eq!(args.request_reserve_micros, Some(100_000));
     assert_eq!(args.concurrency, 4);
-    assert!(parse(&["author", "--concurrency", "17"]).is_err());
+    assert!(parse(&["author", "--concurrency", "64"]).is_ok());
+    assert!(parse(&["author", "--concurrency", "65"]).is_err());
 }
 
 #[tokio::test]

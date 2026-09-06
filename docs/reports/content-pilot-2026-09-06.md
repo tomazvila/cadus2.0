@@ -85,3 +85,26 @@ alone proves neither content approval nor knowledge-point readiness.
 
 Prepared command and safeguards; no real model call, live content write or
 content approval performed by this lane. Extra API cost remains $0.
+
+## Zero-cost instruction import
+
+Six explicit operator drafts live in
+`docs/content-pilot/arithmetic-instruction-drafts.json`. They pass the production
+instruction gates against the real curriculum and dense small-number answers.
+The worker still checks them against the actual pending templates at import.
+
+After the three-template pilot, set `DATABASE_URL` to the isolated pilot database:
+
+```sh
+python3 scripts/authoring/import_pilot_drafts.py \
+  --worker /home/deploy/.cache/cadus2_content_target/debug/cadus-worker
+```
+
+The helper serves only those six drafts through a loopback endpoint, overrides
+its own child credentials with a local placeholder, and runs the normal worker.
+Every reported cost is zero and the model id is `operator-draft-v1`. The worker
+applies every gate and writes only `pending` content. The helper stops its server
+after the worker exits, including on an error. It never contacts a model API.
+
+The concurrency limit supports explicit values up to 64; the pilot remains four.
+Provider costs round up to one millionth of a dollar for the reservation ledger.

@@ -19,7 +19,7 @@ use std::{
 /// Duplicate keys are rejected before any model call.
 ///
 /// # Errors
-/// Reject concurrency outside 1..=16, duplicate keys, and database failures.
+/// Reject concurrency outside 1..=64, duplicate keys, and database failures.
 pub async fn run_parallel(
     db: &Db,
     job: &AuthoringJob,
@@ -27,9 +27,9 @@ pub async fn run_parallel(
     specs: &[AuthoringSpec],
     concurrency: usize,
 ) -> Result<BatchReport, WorkerError> {
-    if !(1..=16).contains(&concurrency) {
+    if !(1..=64).contains(&concurrency) {
         return Err(WorkerError::Config(
-            "author concurrency must be in 1..=16".to_owned(),
+            "author concurrency must be in 1..=64".to_owned(),
         ));
     }
     let mut keys = std::collections::HashSet::new();

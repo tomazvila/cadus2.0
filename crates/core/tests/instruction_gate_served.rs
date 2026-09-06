@@ -156,6 +156,13 @@ fn a_distinct_addition_example_survives_an_equal_served_sum() {
         }
     }"#;
     gate_teach(body, &spec_with_instances(&exemplars, &instances)).unwrap();
+    let dense = [
+        ("Another problem with answer two", "2"),
+        ("Another problem with answer three", "3"),
+        ("Compute $4 + 1$.", "5"),
+    ];
+    let equation = body.replace("The sum is 5.", "$2 + 3 = 5$.");
+    gate_teach(&equation, &spec_with_instances(&exemplars, &dense)).unwrap();
 }
 
 /// An EARLIER step is not the answer of the page, so a numeral on the way to it

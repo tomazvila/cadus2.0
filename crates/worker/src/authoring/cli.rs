@@ -55,7 +55,7 @@ AUTHOR OPTIONS:
     --request-reserve-usd <amount>
                             required upper price bound for each HTTP request,
                             including the largest truncation output and fees.
-    --concurrency <1..16>    active knowledge points; default 1. Kinds stay ordered.
+    --concurrency <1..64>    active knowledge points; default 1. Kinds stay ordered.
     --stale                 list the approved documents an older prompt wrote,
                             and make no model call and no write.
 
@@ -186,8 +186,8 @@ pub fn parse<S: AsRef<str>>(args: &[S]) -> Result<Command, CliError> {
                 parsed.concurrency = value
                     .parse()
                     .ok()
-                    .filter(|n| (1..=16).contains(n))
-                    .ok_or_else(|| CliError("author concurrency must be in 1..=16".to_owned()))?;
+                    .filter(|n| (1..=64).contains(n))
+                    .ok_or_else(|| CliError("author concurrency must be in 1..=64".to_owned()))?;
             }
             "--help" | "-h" => return Ok(Command::Help),
             "--kp" => parsed.kps.push(value_of("--kp", args.next())?),
