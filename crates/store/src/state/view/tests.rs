@@ -64,6 +64,7 @@ fn attempt_event(ts: Timestamp, session: Option<&str>, attempt_id: &str, task_id
         work_quality: WorkQuality::NearlyPerfect,
         grader_note: None,
         assisted: false,
+        feedback_practice: false,
     })
 }
 

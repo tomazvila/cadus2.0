@@ -18,7 +18,7 @@
 - Legacy review events omit `confirmation_skills` and `inconclusive` on serialization.
 - Historical attempt evidence remains unchanged. New attempts identify skills with stable `topic/KP` keys.
 - Existing valid rework scratch remains readable. It supplies no fresh independent evidence.
-- The immediate feedback loop covers lessons. The configured terminal lesson-failure rule still closes a failed task and queues its existing remediation. Reviews use targeted confirmations; quizzes and other task types retain their current feedback flow.
+- The immediate feedback loop covers lessons, reviews, drills, and legacy per-component multi-step tasks. Supplemental practice stays outside the original assessment count and weighted score. The configured terminal lesson-failure rule still closes a failed task and queues its existing remediation. Quizzes retain blind receipts; the missing quiz close and batch-reveal flow remains a prerequisite for post-quiz practice.
 - Confirmation delay counts completed lesson, review, and quiz events. A task type without a result event supplies no task-close evidence.
 - This code supplies engineering evidence. It establishes no empirical retention or mastery guarantee.
 ## Verification
@@ -29,3 +29,11 @@
 - Source limits pass: zero clones, zero unused public items, no checked source file at 500 lines, and no function above the configured complexity limits.
 - The initial full core suite passes. The broad web run was stopped after successful completed binaries so the integration owner runs the consolidated workspace gate once.
 - No live learner data, deployment, model API call, or content approval changed.
+
+## Supplemental assessment practice
+- The server assigns `Attempt.feedback_practice` from persisted feedback metadata. Request-body fields do not assign this evidence.
+- A supplemental answer supplies no original review question or trajectory weight. The last original assessment answer determines its quality tier. A final miss holds the task open until fresh independent practice succeeds.
+- Supplemental drill questions have no countdown. The UI labels them Independent practice instead of adding them to the assessment count.
+- Exhausted pools return `fresh_practice_unavailable`. Feedback names the block and preserves a retry action and the saved answer.
+- An early targeted confirmation leaves the delayed obligation intact. Its resolution requires the specified number of distinct task closes.
+- Added checks cover original weighted score after three successful practice items, final-slot review/drill recovery, server-owned evidence, explicit unavailable/refill recovery, and blind quiz receipts.

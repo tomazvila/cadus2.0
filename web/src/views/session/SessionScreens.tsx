@@ -135,7 +135,7 @@ export function ProblemHeader({ task, problem, elapsed, countdown, onExit }: Pro
       </div>
       <div className="task-right">
         <span className="progress-count">
-          {problem.total != null
+          {problem.feedback_practice ? 'Independent practice' : problem.total != null
             ? `${num(problem.index)} / ${num(problem.total)}`
             : `${num(problem.index)}`}
         </span>

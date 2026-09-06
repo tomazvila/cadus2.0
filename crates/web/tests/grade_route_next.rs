@@ -162,6 +162,10 @@ async fn feedback_never_reuses_the_studied_problem_and_resumes_after_refill() {
         let reply = answer_lesson_ok(&app, user, "14").await;
         assert_eq!(reply["next_unavailable"], true);
         assert_eq!(reply["feedback_practice"], true);
+        assert_eq!(reply["feedback_blocked"], true);
+        let (blocked_status, blocked) = common::serve_task(&app, user, common::LESSON).await;
+        assert_eq!(blocked_status, StatusCode::CONFLICT);
+        assert_eq!(blocked["error"]["code"], "fresh_practice_unavailable");
         assert!(
             stored_state(&db, user)
                 .await

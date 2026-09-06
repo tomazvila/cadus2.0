@@ -116,6 +116,8 @@ export interface SessionPlanResponse {
  * wrong problem (trap T13, SERVE-idem).
  */
 export interface ServedProblem {
+  /** A fresh practice item outside the original assessment count. */
+  feedback_practice?: boolean;
   problem_id: string;
   /** 1-based. */
   index: number;
@@ -270,6 +272,8 @@ export interface DiagnosisJob {
 export interface AnswerResponse {
   /** The next question confirms independent work after feedback. */
   feedback_practice?: boolean;
+  /** A fresh item is unavailable; the original answer remains saved. */
+  feedback_blocked?: boolean;
   attempt_id: string;
   /**
    * The graded outcome (D-F2). `ungraded` means the checker reached no verdict.

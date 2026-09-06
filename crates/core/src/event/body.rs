@@ -205,6 +205,9 @@ pub struct Attempt {
     /// Whether the learner answered a fresh item alone after feedback (D-F8).
     #[serde(default, skip_serializing_if = "is_off")]
     pub independent_after_feedback: bool,
+    /// A server-assigned practice item after feedback, separate from assessment.
+    #[serde(default, skip_serializing_if = "is_off")]
+    pub feedback_practice: bool,
     /// The time the learner took.
     pub secs: Secs,
     /// The grader's error tags.

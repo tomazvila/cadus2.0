@@ -10,24 +10,34 @@ pub(super) fn close_review(
     prior: &[EventRow],
     cfg: &Config,
 ) -> Advance {
-    if task.task_type != TaskType::Review {
+    let needs_practice = !attempt.outcome.is_ungraded() && (!attempt.correct || attempt.assisted);
+    if task.task_type != TaskType::Review
+        || needs_practice
+        || (attempt.feedback_practice && attempt.outcome.is_ungraded())
+    {
         return Advance::carry_on();
     }
     let mut attempts: Vec<&Attempt> = prior
         .iter()
         .filter_map(|row| match &row.event {
-            Event::Attempt(body) if body.task_id == task.task_id => Some(body),
+            Event::Attempt(body) if body.task_id == task.task_id && !body.feedback_practice => {
+                Some(body)
+            }
             _ => None,
         })
         .collect();
-    attempts.push(attempt);
+    if !attempt.feedback_practice {
+        attempts.push(attempt);
+    }
     if i64::try_from(attempts.len()).unwrap_or(i64::MAX)
         < task.n_problems.unwrap_or(cfg.review.questions)
     {
         return Advance::carry_on();
     }
     let evidence = assess_review(&attempts, cfg);
-    let quality = attempt.work_quality;
+    let quality = attempts
+        .last()
+        .map_or(attempt.work_quality, |last| last.work_quality);
     let xp = if evidence.inconclusive {
         0.0
     } else {

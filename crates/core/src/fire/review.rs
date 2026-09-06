@@ -20,6 +20,12 @@ pub struct ReviewEvidence {
 /// Assess the aggregate trajectory and each exercised skill.
 #[must_use]
 pub fn assess_review(attempts: &[&Attempt], cfg: &Config) -> ReviewEvidence {
+    let originals: Vec<&Attempt> = attempts
+        .iter()
+        .copied()
+        .filter(|attempt| !attempt.feedback_practice)
+        .collect();
+    let attempts = originals.as_slice();
     let decided: Vec<bool> = attempts
         .iter()
         .filter(|a| !a.outcome.is_ungraded())

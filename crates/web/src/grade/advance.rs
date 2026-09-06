@@ -269,6 +269,24 @@ pub(super) fn task_moved_on(
     closed
 }
 
+/// Supplemental practice preserves the original assessment count.
+pub(super) fn practice_progress(
+    progress: &mut TaskProgress,
+    kind: TaskType,
+    moved: &Advance,
+    attempt: &Attempt,
+    pending: bool,
+) -> bool {
+    if kind == TaskType::Lesson {
+        return task_moved_on(progress, kind, moved);
+    }
+    if !attempt.feedback_practice {
+        task_moved_on(progress, kind, moved);
+    }
+    progress.done = !pending && progress.total > 0 && progress.answered >= progress.total;
+    progress.done
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

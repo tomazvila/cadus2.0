@@ -76,6 +76,10 @@ fn delayed_feedback_confirmation_waits_for_three_intervening_task_closes() {
     let mut fresh = attempt(true, "topic/kp1");
     fresh.independent_after_feedback = true;
     projector.apply(&Event::Attempt(fresh), true);
+    let mut early = attempt(true, "topic/kp1");
+    early.task_id = "early-review-topic-confirm-kp1".to_owned();
+    early.ts = Timestamp::from_micros(early.ts.micros() + 30_000_000);
+    projector.apply(&Event::Attempt(early), true);
     // The original task closes first, followed by three intervening tasks.
     for index in 0..4 {
         assert!(projector.pending_remediation().is_empty());
@@ -167,4 +171,16 @@ fn projector_inputs() -> (cadus_core::curriculum::Curriculum, Config) {
         graph_of(vec![topic("topic").build()], &[]),
         Config::default(),
     )
+}
+
+#[test]
+fn supplemental_practice_never_changes_the_original_review_score() {
+    let original = attempt(true, "topic/kp1");
+    let mut practice = attempt(false, "topic/kp2");
+    practice.feedback_practice = true;
+    practice.assisted = true;
+    let result = assess_review(&[&original, &practice], &Config::default());
+    assert!(result.passed && !result.inconclusive);
+    assert_eq!(result.score, 1.0);
+    assert!(result.confirmation_skills.is_empty());
 }

@@ -52,7 +52,7 @@ pub(super) fn reply(
     let unavailable = !closed && next.is_none();
     let ungraded = recorded.outcome.is_ungraded();
     let feedback_practice = !closed
-        && recorded.task_type == TaskType::Lesson
+        && recorded.task_type != TaskType::Quiz
         && !ungraded
         && (!recorded.correct || recorded.assisted);
     let mut map = outcome_fields(recorded);
@@ -70,6 +70,9 @@ pub(super) fn reply(
     }
     if feedback_practice {
         map.insert("feedback_practice".to_owned(), json!(true));
+        if unavailable {
+            map.insert("feedback_blocked".to_owned(), json!(true));
+        }
     }
     // A quiz reveals nothing until its batch reveal (trap W7), so no solution
     // and no re-solve text leaves this route for one. An UNGRADED attempt reveals

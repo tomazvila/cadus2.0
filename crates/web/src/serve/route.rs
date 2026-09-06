@@ -179,16 +179,19 @@ pub(crate) async fn install_next(
     // serve route already started (V6).
     let elapsed = quiz_elapsed(scratch, &task_id, task.task_type, started_at);
 
-    let mut target = target_of(task, index, &progress, graph)?;
     let feedback = scratch.feedback_practice.get(&task_id).cloned();
-    if let Some(pending) = &feedback {
-        target.serve = pending["topic"]
-            .as_str()
-            .unwrap_or(&target.serve)
-            .to_owned();
-        target.kp = pending["kp"].as_str().unwrap_or(&target.kp).to_owned();
-        target.key = cadus_core::pool::kp_key(&target.serve, &target.kp);
-    }
+    let target = match feedback.as_ref() {
+        Some(pending) => Target::new(
+            pending["record_topic"]
+                .as_str()
+                .or(pending["topic"].as_str())
+                .unwrap_or_default()
+                .to_owned(),
+            pending["topic"].as_str().unwrap_or_default().to_owned(),
+            pending["kp"].as_str().unwrap_or_default().to_owned(),
+        ),
+        None => target_of(task, index, &progress, graph)?,
+    };
     // Audit finding (j), the server half. A lesson practices a knowledge point
     // only when an approved teach page exists for it: without the page the
     // learner practices a skill the service never taught. Every other task type
@@ -211,7 +214,15 @@ pub(crate) async fn install_next(
     let mut selected = None;
     for _ in 0..8 {
         let avoid = Avoid::new(&ring, &memory);
-        let row = draw(state, tx, user_id, graph, &target, &avoid).await?;
+        let row = draw(state, tx, user_id, graph, &target, &avoid)
+            .await
+            .map_err(|error| {
+                if feedback.is_some() && error.code == POOL_UNAVAILABLE {
+                    fresh_unavailable()
+                } else {
+                    error
+                }
+            })?;
         let digest = cadus_core::learner::problem_text_hash(&row.problem.text);
         if feedback.as_ref().is_none_or(|value| {
             value["digest"].as_str() != Some(&digest)
@@ -224,7 +235,13 @@ pub(crate) async fn install_next(
         }
         ring.push(&row.instance_hash);
     }
-    let row = selected.ok_or_else(|| no_problem(&target.serve))?;
+    let row = selected.ok_or_else(|| {
+        if feedback.is_some() {
+            fresh_unavailable()
+        } else {
+            no_problem(&target.serve)
+        }
+    })?;
     let solution_sketch = solution_of(state, tx, graph, &target, &row).await?;
 
     let served = ServedProblem {
@@ -240,12 +257,23 @@ pub(crate) async fn install_next(
         started_at,
         hints_given: Vec::new(),
         index,
-        rework: feedback,
+        rework: feedback.clone(),
     };
     let payload = serve_payload(&served, task, graph, content.cfg.drill.target_secs, elapsed);
     scratch.record_served(&target.serve, &task_id, &row.instance_hash);
     scratch.served.insert(task_id, served);
     let row = progress_for(scratch, task, graph);
-    row.served = row.served.saturating_add(1);
+    if feedback.is_none() || task.task_type == TaskType::Lesson {
+        row.served = row.served.saturating_add(1);
+    }
     Ok(payload)
+}
+
+/// An explicit block preserves the saved answer and the outstanding practice.
+fn fresh_unavailable() -> ApiError {
+    ApiError::new(
+        StatusCode::CONFLICT,
+        "fresh_practice_unavailable",
+        "No fresh problem is available for this skill. Your answer is saved.",
+    )
 }

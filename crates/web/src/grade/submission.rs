@@ -209,6 +209,12 @@ pub(super) fn build_attempt(
             .iter()
             .map(|kp| format!("{}/{kp}", served.serving_topic().unwrap_or_default()))
             .collect(),
+        feedback_practice: served
+            .rework
+            .as_ref()
+            .and_then(|value| value.get("digest"))
+            .and_then(Value::as_str)
+            .is_some(),
         independent_after_feedback: !graded.assisted
             && served
                 .rework

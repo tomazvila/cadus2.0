@@ -174,10 +174,8 @@ impl Projector<'_> {
                 targets: open,
             });
         }
-        for (ts, skill, due) in &self.feedback_confirmations {
-            if self.completed_tasks < *due
-                || self.last_practice.get(skill).is_some_and(|last| last > ts)
-            {
+        for (_, skill, due) in &self.feedback_confirmations {
+            if self.completed_tasks < *due {
                 continue;
             }
             if let Some((topic, kp)) = skill.split_once('/')

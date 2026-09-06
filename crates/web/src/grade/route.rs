@@ -110,7 +110,7 @@ pub async fn answer(
 
     let recorded = attempt;
     let attempt_id = recorded.attempt_id.clone();
-    if task.task_type == TaskType::Lesson
+    if task.task_type != TaskType::Quiz
         && !recorded.outcome.is_ungraded()
         && (!recorded.correct || recorded.assisted)
     {
@@ -123,7 +123,7 @@ pub async fn answer(
             .unwrap_or_default();
         digests.push(json!(digest));
         scratch.feedback_practice.insert(task_id.clone(), json!({
-            "digest": digest, "digests": digests, "topic": served.serving_topic(), "kp": served.kp,
+            "digest": digest, "digests": digests, "topic": served.serving_topic(), "record_topic": served.topic, "kp": served.kp,
         }));
     } else if recorded.correct && !recorded.assisted {
         scratch.feedback_practice.remove(&task_id);
@@ -177,10 +177,14 @@ pub async fn answer(
     // Step 9. The pre-authored lookup and, on a miss with none, the enqueue.
     // Both run inside THIS transaction (spec section 4.3, D-M5-1).
     let diagnosis = diagnosis::decide(&state, &mut tx, user_id, &mut scratch, &about).await?;
-    let closed = task_moved_on(
-        progress_for(&mut scratch, &task, graph),
+    let pending_practice = scratch.feedback_practice.contains_key(&task_id);
+    let progress = progress_for(&mut scratch, &task, graph);
+    let closed = practice_progress(
+        progress,
         task.task_type,
         &moved,
+        &recorded,
+        pending_practice,
     );
     let next = next_problem(
         &state,

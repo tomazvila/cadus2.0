@@ -80,6 +80,8 @@ export function Feedback({
         {res.xp != null ? <Chip className="chip-xp">{`${signed(res.xp)} XP`}</Chip> : null}
       </div>
 
+      {res.feedback_blocked ? <p role="status">Fresh practice is unavailable for this skill. Your answer is saved.</p> : null}
+      {res.task_status === 'task_failed' && res.correct ? <p>This practice answer is correct. The original assessment still needs more practice.</p> : null}
       {res.task_status === 'task_inconclusive' ? (
         <p className="feedback-reason">This review needs confirmation. A fresh question will check each uncertain skill.</p>
       ) : null}
@@ -117,7 +119,7 @@ export function Feedback({
 
       <div className="actions">
         <button ref={continueRef} type="button" className="btn btn-primary" onClick={onContinue}>
-          {res.feedback_practice ? 'Done studying — try a fresh problem →' : hasNext ? 'Next problem →' : 'Continue →'}
+          {res.feedback_blocked ? 'Check for fresh practice →' : res.feedback_practice ? 'Done studying — try a fresh problem →' : hasNext ? 'Next problem →' : 'Continue →'}
         </button>
         {/* The way out from here is always safe: the attempt already stands, and an
             unfinished task is re-served next time. */}

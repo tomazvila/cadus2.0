@@ -4,6 +4,12 @@ import type { ApiClient } from '@/api/types';
 import { P, graded, mount, press, stubApi, submitAnswer } from './helpers/session';
 
 describe('independent practice after feedback', () => {
+  it('labels supplemental work separately from the assessment count', async () => {
+    const taskServe = vi.fn<ApiClient['taskServe']>().mockResolvedValue(P(21, { total: 20, feedback_practice: true }));
+    await mount({ api: stubApi({ taskServe }) });
+    expect(screen.getByText('Independent practice')).toBeTruthy();
+    expect(screen.queryByText('21 / 20')).toBeNull();
+  });
   it('keeps the solution behind a study step and re-serves the fresh problem on that step', async () => {
     const taskServe = vi.fn<ApiClient['taskServe']>()
       .mockResolvedValueOnce(P(1)).mockResolvedValue(P(2));

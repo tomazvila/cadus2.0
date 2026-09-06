@@ -122,6 +122,7 @@ pub fn graded(attempt_id: &str, offset: i64) -> Event {
         timing_reliable: None,
         skills: Vec::new(),
         independent_after_feedback: false,
+        feedback_practice: false,
         secs: Secs::new(12).unwrap(),
         error_tags: Vec::new(),
         work_quality: WorkQuality::NearlyPerfect,

@@ -111,6 +111,14 @@ pub(super) fn serve_payload(
         "time_budget_secs": time_budget_secs,
         "countdown": countdown,
     });
+    if served
+        .rework
+        .as_ref()
+        .is_some_and(|value| value.get("digest").is_some())
+    {
+        payload["feedback_practice"] = json!(true);
+        payload["countdown"] = json!(false);
+    }
     if let Some(elapsed) = quiz_elapsed_secs {
         payload["quiz_elapsed_secs"] = json!(elapsed);
     }

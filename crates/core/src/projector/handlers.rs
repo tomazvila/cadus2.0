@@ -77,10 +77,19 @@ impl Projector<'_> {
                 ));
             }
         }
-        if !ungraded && !event.assisted && event.task_id.contains("-confirm-") {
+        if !ungraded
+            && !event.assisted
+            && !event.feedback_practice
+            && event.task_id.contains("-confirm-")
+        {
             for skill in &event.skills {
                 self.last_practice.insert(skill.clone(), event.ts.micros());
             }
+            self.feedback_confirmations.retain(|(ts, skill, due)| {
+                self.completed_tasks < *due
+                    || event.ts.micros() <= *ts
+                    || !event.skills.contains(skill)
+            });
         }
         if !apply_fire {
             return;
@@ -99,7 +108,7 @@ impl Projector<'_> {
             state.ungraded_attempts = state.ungraded_attempts.saturating_add(1);
         }
         self.topics.insert(topic.to_owned(), state);
-        if !ungraded && !event.correct {
+        if !ungraded && !event.correct && !event.feedback_practice {
             self.peel_back_conditional(topic);
         }
     }
