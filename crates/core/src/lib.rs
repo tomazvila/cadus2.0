@@ -22,6 +22,7 @@ pub mod learner;
 pub mod numeric;
 pub mod pool;
 pub mod projector;
+pub mod readiness;
 pub mod selector;
 pub mod template;
 pub mod xp;
