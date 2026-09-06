@@ -51,7 +51,7 @@ fn the_nineteen_inventory_topics_have_explicit_usable_exact_items() {
             .knowledge_points
             .iter()
             .flat_map(|kp| &kp.exemplars)
-            .filter(|item| item.answer_contract.is_some())
+            .filter(|item| item.answer_contract == Some(AnswerContract::Exact))
             .collect();
         if annotated.is_empty() {
             continue;
