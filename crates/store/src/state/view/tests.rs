@@ -57,6 +57,7 @@ fn attempt_event(ts: Timestamp, session: Option<&str>, attempt_id: &str, task_id
         item_source: None,
         exposure: None,
         timing_reliable: None,
+        timing: None,
         skills: Vec::new(),
         independent_after_feedback: false,
         secs: Secs::new(9).expect("nine seconds"),

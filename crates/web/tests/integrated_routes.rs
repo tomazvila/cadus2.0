@@ -470,3 +470,6 @@ async fn the_submission_is_recorded_with_every_answer_and_its_contract() {
 
 #[path = "integrated_routes/hint_authority.rs"]
 mod hint_authority;
+
+#[path = "integrated_routes/timing.rs"]
+mod timing;

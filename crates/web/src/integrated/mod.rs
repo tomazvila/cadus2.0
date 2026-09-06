@@ -71,6 +71,8 @@ use crate::state::{Content, INVALID_REQUEST, Tenant};
 mod assistance;
 mod record;
 mod route;
+mod timing;
+pub use timing::TimingWindow;
 
 pub use record::{attempt_event, attempt_key, served_event, served_key};
 pub use route::{answer, hint_rung, serve};

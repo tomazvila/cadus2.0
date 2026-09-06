@@ -21,6 +21,13 @@ pub(super) fn clear_task_scratch(scratch: &mut WebState, task_id: &str) {
 /// because a claim of `false` reads as a miss and an ungraded attempt is not one.
 pub(super) fn outcome_fields(recorded: &Attempt) -> Map<String, Value> {
     let mut map = Map::new();
+    if let Some(timing) = recorded.timing {
+        map.insert("timing".to_owned(), json!(timing));
+        map.insert(
+            "timing_reliable".to_owned(),
+            json!(recorded.timing_reliable),
+        );
+    }
     map.insert("outcome".to_string(), json!(recorded.outcome.as_str()));
     match recorded.outcome.reason() {
         Some(reason) => {

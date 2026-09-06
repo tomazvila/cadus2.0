@@ -119,6 +119,7 @@ pub async fn serve(
     // back (`_serve_live`, section 5.6).
     let payload = match scratch.served.get_mut(&task_id) {
         Some(live) => {
+            live.timing_interrupted = true;
             live.started_at = started_at;
             serve_payload(live, task, graph, content.cfg.drill.target_secs, elapsed)
         }
@@ -226,6 +227,7 @@ pub(crate) async fn install_next(
     let solution_sketch = solution_of(state, tx, graph, &target, &row).await?;
 
     let served = ServedProblem {
+        timing_interrupted: false,
         problem_id: Uuid::new_v4().simple().to_string(),
         task_id: task_id.clone(),
         topic: Some(target.record.clone()),

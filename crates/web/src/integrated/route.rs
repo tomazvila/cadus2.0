@@ -63,8 +63,11 @@ pub async fn serve(
         item,
         mut tx,
         session,
+        mut scratch,
         ..
     } = resolve(&state, content, user_id, &task_id, now, true).await?;
+    timing::start(&mut scratch, item, &task_id, now);
+    crate::session::write_state(&state.db, &mut tx, user_id, &scratch).await?;
     let digest = item.digest();
     let event = Event::IntegratedServed(served_event(item, &task_id, &session, now));
     let key = served_key(&session, &task_id, &digest);
@@ -167,6 +170,7 @@ pub async fn answer(
     {
         let result = assistance::replay(&record, item);
         let mut payload = answer_payload(&result, record.reasoning_ungraded.as_ref());
+        timing::payload(&mut payload, &record);
         payload["recorded"] = json!(false);
         tx.commit().await.map_err(db_failed)?;
         return Ok(Json(payload));
@@ -179,9 +183,19 @@ pub async fn answer(
     assistance::submission(&mut submission, &used);
     let mut result = grade(item, &submission);
     assistance::verdict(&mut result, &used);
-    let record = attempt_event(item, &result, &submission, &task_id, &session, now);
+    let mut record = attempt_event(item, &result, &submission, &task_id, &session, now);
+    timing::record(
+        &mut record,
+        item,
+        &content.curriculum,
+        &scratch,
+        &task_id,
+        now,
+    );
     let key = record.attempt_id.clone();
     let note = record.reasoning_ungraded.clone();
+    let timing = record.timing;
+    let reliable = record.timing_reliable;
     let event = Event::IntegratedAttempt(record);
     let seq = store(&state, append_event(&mut tx, user_id, &event, Some(&key))).await?;
     if seq.is_some() {
@@ -195,6 +209,8 @@ pub async fn answer(
     tx.commit().await.map_err(db_failed)?;
 
     let mut payload = answer_payload(&result, note.as_ref());
+    payload["timing"] = json!(timing);
+    payload["timing_reliable"] = json!(reliable);
     // `None` means the partial unique index refused a second row for this item:
     // the first submission stands, and this one credits nothing again.
     payload["recorded"] = json!(seq.is_some());

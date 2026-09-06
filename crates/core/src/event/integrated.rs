@@ -76,6 +76,15 @@ pub struct IntegratedServed {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct IntegratedAttempt {
+    /// Server-measured whole-item time; historical events have no reading.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub secs: Option<super::Secs>,
+    /// Whether this item has uninterrupted usable timing evidence.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub timing_reliable: Option<bool>,
+    /// Frozen policy reading, separate from the mathematical verdict.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub timing: Option<crate::timing::SpeedReading>,
     /// When the submission was graded.
     pub ts: Timestamp,
     /// The session id.

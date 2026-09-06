@@ -108,6 +108,9 @@ pub fn attempt_event(
         .map(|(verdict, step)| field_of(verdict, answer_of(&verdict.id), step.ask.contract.clone()))
         .collect();
     IntegratedAttempt {
+        secs: None,
+        timing_reliable: None,
+        timing: None,
         ts: now,
         session: Some(session.to_owned()),
         v: SchemaVersion::current(),

@@ -149,6 +149,7 @@ mod tests {
             item_source: None,
             exposure: None,
             timing_reliable: None,
+            timing: None,
             skills: Vec::new(),
             independent_after_feedback: false,
             secs: Secs::new(30).expect("in range"),

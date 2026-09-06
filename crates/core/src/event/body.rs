@@ -207,6 +207,9 @@ pub struct Attempt {
     /// Whether the timer of this attempt is trustworthy (D-F9). `None` on a v1 row.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub timing_reliable: Option<bool>,
+    /// Frozen policy reading; absent in historical attempts.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub timing: Option<crate::timing::SpeedReading>,
     /// The knowledge points the item exercised (D-F9).
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub skills: Vec<String>,

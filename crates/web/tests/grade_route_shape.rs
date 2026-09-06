@@ -28,11 +28,9 @@ const PROBLEM_DIGEST: &str = "8f7200f627d1";
 
 /// The sorted key list of a v2 `attempt` event (`projector-1.0-spec.md:43`, D-F9).
 ///
-/// The 1.0 list, plus `item_digest` and `skills`. `outcome` is absent because
-/// `correct` alone spells a decided outcome, and `item_source`, `exposure`,
-/// `timing_reliable` and `independent_after_feedback` are absent because this
-/// path records none of them yet.
-const ATTEMPT_KEYS: [&str; 21] = [
+/// The 1.0 list plus item identity, skills, and server-owned timing evidence.
+/// `correct` alone spells a decided outcome; optional unused evidence is omitted.
+const ATTEMPT_KEYS: [&str; 23] = [
     "answer_kind",
     "assisted",
     "attempt_id",
@@ -48,6 +46,8 @@ const ATTEMPT_KEYS: [&str; 21] = [
     "skills",
     "task_id",
     "task_type",
+    "timing",
+    "timing_reliable",
     "topic",
     "ts",
     "type",

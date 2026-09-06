@@ -159,6 +159,7 @@ pub fn now_secs() -> f64 {
 /// One live problem of the `addition` lesson, `age_secs` old, at `kp`.
 pub fn lesson_problem(age_secs: f64, kp: &str, hints: Vec<String>) -> ServedProblem {
     ServedProblem {
+        timing_interrupted: false,
         problem_id: PROBLEM_ID.to_string(),
         task_id: LESSON.to_string(),
         topic: Some("addition".to_string()),

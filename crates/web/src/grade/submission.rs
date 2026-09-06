@@ -145,6 +145,8 @@ pub(super) fn stored_attempt<'a>(events: &'a [EventRow], attempt_id: &str) -> Op
 
 /// The verdict one submission got, with the clock beside it.
 pub(super) struct Graded<'a> {
+    /// The policy reading of the server clock.
+    pub(super) timing: cadus_core::timing::SpeedReading,
     /// The deterministic verdict.
     pub(super) grade: &'a Grade,
     /// The verdict's tags and the timing tags, in that order.
@@ -203,7 +205,8 @@ pub(super) fn build_attempt(
         item_digest: Some(problem_text_hash(&served.text)),
         item_source: None,
         exposure: None,
-        timing_reliable: None,
+        timing_reliable: Some(graded.timing.ratio.is_some()),
+        timing: Some(graded.timing),
         skills: served
             .kp
             .iter()
@@ -328,6 +331,7 @@ mod tests {
             error_tags: Vec::new(),
         };
         let mut graded = Graded {
+            timing: cadus_core::timing::read(&cadus_core::timing::TimingFacts::new(0, 0, false)),
             grade: &grade,
             error_tags: &[],
             secs: -1,

@@ -84,7 +84,7 @@ pub async fn answer(
     // T6, spec section 7: one count per grade DECISION, taken with no model call.
     state.metrics.count_grade(metrics::grade_result(&grade));
     let mut error_tags = grade.error_tags.clone();
-    error_tags.extend(timing_tags);
+    error_tags.extend(timing_tags.iter().cloned());
     scratch.active_secs += elapsed_of(secs);
 
     // H3, section 5.4. `open` bound the row to the open session, so the session
@@ -95,7 +95,9 @@ pub async fn answer(
         reference_assisted(task.task_type, submitted.assisted, served.hints_given.len())
     };
     let session = scratch.session.clone();
+    let timing = timing::reading(graph, &task, &served, &grade, secs, assisted, &timing_tags);
     let graded = Graded {
+        timing,
         grade: &grade,
         error_tags: &error_tags,
         secs,

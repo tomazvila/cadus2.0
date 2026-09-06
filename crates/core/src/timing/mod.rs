@@ -29,6 +29,7 @@
 //! The two ratios are the policy of this unit and not a port of 1.0. Unit f20
 //! carries the calibration list, and both belong on it.
 
+use serde::{Deserialize, Serialize};
 use std::fmt;
 
 /// The multiple of the expected time above which a reading means nothing.
@@ -44,7 +45,8 @@ pub const FLUENT_RATIO: f64 = 0.5;
 pub const SLOW_RATIO: f64 = 2.0;
 
 /// What the clock says about one attempt.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
 pub enum SpeedOutcome {
     /// The clock reading is unusable: zero, negative, interrupted, or above
     /// [`UNRELIABLE_FACTOR`] times the expected time.
@@ -82,7 +84,8 @@ impl fmt::Display for SpeedOutcome {
 /// reasoning that took time, an answer that leaned on help, and a mathematical
 /// error. A wrong answer NEVER carries a speed claim, because the clock says
 /// nothing about why the mathematics failed.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
 pub enum SpeedClaim {
     /// The clock is unusable, so the attempt supports no speed claim.
     NotJudged,
@@ -184,7 +187,8 @@ impl TimingFacts {
 }
 
 /// What one attempt says about speed and about learning.
-#[derive(Debug, Clone, Copy, PartialEq)]
+#[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct SpeedReading {
     /// What the clock says.
     pub outcome: SpeedOutcome,
@@ -354,5 +358,25 @@ mod tests {
         assert_eq!(SpeedClaim::Independent.to_string(), "independent");
         assert_eq!(SpeedClaim::Assisted.to_string(), "assisted");
         assert_eq!(SpeedClaim::Incorrect.to_string(), "incorrect");
+    }
+}
+
+#[cfg(test)]
+mod wire_tests {
+    #![allow(clippy::unwrap_used)]
+    use super::*;
+    #[test]
+    fn persisted_readings_round_trip_without_reclassifying_reasoning() {
+        for facts in [
+            TimingFacts::new(3, 30, true).routine(),
+            TimingFacts::new(90, 30, true),
+            TimingFacts::new(3, 30, true).interrupted(),
+        ] {
+            let reading = read(&facts);
+            let value = serde_json::to_value(reading).unwrap();
+            let restored: SpeedReading = serde_json::from_value(value).unwrap();
+            assert_eq!(restored, reading);
+            assert!(!restored.claim.is_error());
+        }
     }
 }

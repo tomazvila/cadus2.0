@@ -190,6 +190,9 @@ pub struct ServedProblem {
     /// When the problem went on screen, in Unix seconds. It is re-stamped at
     /// every hand-off, a re-serve included (section 5.6).
     pub started_at: f64,
+    /// A repeated hand-off invalidates a continuous solve-time claim.
+    #[serde(default)]
+    pub timing_interrupted: bool,
     /// The hints already handed out. A non-empty list makes the attempt
     /// reference-assisted (H3, section 5.4).
     #[serde(default)]
@@ -310,6 +313,9 @@ pub struct WebState {
     /// Fresh same-skill practice owed after feedback, keyed by task.
     #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
     pub feedback_practice: BTreeMap<String, Json>,
+    /// Whole integrated-item clocks keyed by the server item identity.
+    #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
+    pub integrated_timing: BTreeMap<String, crate::integrated::TimingWindow>,
     /// The server-measured active time of the session, in seconds.
     #[serde(default)]
     pub active_secs: f64,

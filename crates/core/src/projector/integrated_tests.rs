@@ -27,6 +27,9 @@ fn field(id: &str, skill: &str, outcome: AttemptOutcome) -> IntegratedField {
 
 fn attempt() -> IntegratedAttempt {
     IntegratedAttempt {
+        secs: None,
+        timing_reliable: None,
+        timing: None,
         ts: Timestamp::from_micros(T_US),
         session: Some("s1".into()),
         v: SchemaVersion::current(),

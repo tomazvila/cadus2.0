@@ -183,6 +183,7 @@ mod tests {
     /// One live problem of `topic` at index 0, with no clock.
     fn served(topic: Option<&str>) -> ServedProblem {
         ServedProblem {
+            timing_interrupted: false,
             problem_id: "p1".to_string(),
             task_id: "t1".to_string(),
             topic: topic.map(str::to_string),

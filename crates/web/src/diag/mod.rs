@@ -100,6 +100,7 @@ fn probe_problem(
     let problem_id = Uuid::new_v4().simple().to_string();
     let text = exemplar.map_or_else(|| NO_EXEMPLAR.to_owned(), |item| item.problem.clone());
     let served = ServedProblem {
+        timing_interrupted: false,
         problem_id: problem_id.clone(),
         task_id: DIAG_TASK_ID.to_owned(),
         topic: Some(topic.to_owned()),

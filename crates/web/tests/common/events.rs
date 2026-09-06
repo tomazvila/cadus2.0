@@ -121,6 +121,7 @@ pub fn graded(attempt_id: &str, offset: i64) -> Event {
         item_source: None,
         exposure: None,
         timing_reliable: None,
+        timing: None,
         skills: Vec::new(),
         independent_after_feedback: false,
         feedback_practice: false,
@@ -150,6 +151,7 @@ pub fn quiz(score: f64, offset: i64) -> Event {
 /// of 2026.
 pub fn review_problem(task_id: &str) -> ServedProblem {
     ServedProblem {
+        timing_interrupted: false,
         problem_id: "p1".to_string(),
         task_id: task_id.to_string(),
         topic: Some("addition".to_string()),
