@@ -1,14 +1,18 @@
 //! Zero-model proposal generation. Production gates validate drafts; humans approve them.
+mod evidence;
 mod expression;
 mod method;
 mod templates;
+
+pub use evidence::diagnosis_from_templates;
 
 use crate::authoring::{
     job::verify_kind,
     prompt::{AuthoringSpec, Kind},
 };
-use cadus_core::instruction::ServedInstance;
+use cadus_core::instruction::{ServedInstance, template_instances};
 use serde_json::{Value, json};
+use std::collections::BTreeSet;
 
 /// Drafts and evidence for one knowledge point; no database mutation occurs here.
 #[derive(Debug, Default)]
@@ -128,8 +132,11 @@ pub fn generate(spec: &AuthoringSpec, served: &[ServedInstance]) -> Proposals {
         }
     }
     if !practice && let Some(arguments) = templates::special(spec) {
-        practice = keep(&mut out, spec, Kind::Template, arguments, served);
+        keep(&mut out, spec, Kind::Template, arguments, served);
     }
+    separate_candidates(&mut out, spec, served);
+    teaching = out.drafts.iter().any(|row| row["kind"] == "teach");
+    practice = out.drafts.iter().any(|row| row["kind"] == "template");
     if !teaching {
         out.refusals.push(
             "teach: no distinct, closed rational worked example passed the production gate"
@@ -146,4 +153,44 @@ pub fn generate(spec: &AuthoringSpec, served: &[ServedInstance]) -> Proposals {
         out.refusals.push("solutions: no authored closed-rational calculation could be verified; preserve existing sketches and review this objective".to_owned());
     }
     out
+}
+
+/// Keep teaching and assessment outside every authored or generated practice item.
+fn separate_candidates(out: &mut Proposals, spec: &AuthoringSpec, served: &[ServedInstance]) {
+    let mut practice = served.to_vec();
+    for draft in &out.drafts {
+        if draft["kind"] != "template" {
+            continue;
+        }
+        if let Ok(body) = verify_kind(Kind::Template, spec, &draft["arguments"], served) {
+            practice.extend(template_instances(&body));
+        }
+    }
+    let before = out.drafts.len();
+    out.drafts.retain(|draft| {
+        draft["kind"] != "teach"
+            || verify_kind(Kind::Teach, spec, &draft["arguments"], &practice).is_ok()
+    });
+    if out.drafts.len() != before {
+        out.refusals.push(
+            "teach: worked-example-collision: candidate overlaps authored or practice evidence"
+                .to_owned(),
+        );
+    }
+    let mut used: BTreeSet<String> = spec
+        .exemplars
+        .iter()
+        .map(|item| item.problem.trim().to_owned())
+        .chain(practice.iter().map(|item| item.problem.trim().to_owned()))
+        .collect();
+    for draft in &out.drafts {
+        if let Some(problem) = draft["arguments"]["worked_example"]["problem"].as_str() {
+            used.insert(problem.trim().to_owned());
+        }
+    }
+    out.assessment.retain(|candidate| {
+        candidate["problem"]
+            .as_str()
+            .is_some_and(|problem| used.insert(problem.trim().to_owned()))
+    });
 }

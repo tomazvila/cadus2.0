@@ -2,6 +2,7 @@
 use cadus_core::template::{Bindings, Scalar, answer, parse_answer_expr};
 use serde_json::{Map, Value, json};
 
+#[allow(clippy::expect_used)] // A malformed checked-in catalog is a build-time invariant failure.
 fn catalog() -> Vec<Value> {
     serde_json::from_str(include_str!("accepted_templates.json"))
         .expect("the checked-in accepted-template catalog is valid JSON")

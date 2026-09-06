@@ -2,7 +2,11 @@
 #![allow(clippy::unwrap_used)]
 mod common;
 use cadus_core::instruction::ServedInstance;
-use cadus_worker::authoring::{completion::generate, job::verify_kind, prompt::Kind};
+use cadus_worker::authoring::{
+    completion::{diagnosis_from_templates, generate},
+    job::verify_kind,
+    prompt::Kind,
+};
 
 #[test]
 fn exact_square_variants_keep_worked_and_practice_operands_separate() {
@@ -98,4 +102,31 @@ fn practice_template_excludes_a_sibling_exemplar_problem() {
             instance.problem
         );
     }
+}
+
+#[test]
+fn an_explicit_template_distractor_can_become_gated_diagnosis_evidence() {
+    let spec = common::squares_spec();
+    let values: Vec<i64> = (10..=21).collect();
+    let samples: Vec<_> = values
+        .iter()
+        .map(|value| serde_json::json!({"params":{"a":value},"expected":value * value}))
+        .collect();
+    let arguments = serde_json::json!({
+        "statement":"Compute ${a}^{{2}}$.",
+        "params":{"a":{"kind":"choice","values":values}},
+        "constraints":[], "answer_expr":"a**2",
+        "solution_sketch":"Multiply the value by itself.",
+        "hints":["What does the exponent mean?"],
+        "distractors":[{
+            "answer":"a+1", "error_tag":"arithmetic-slip",
+            "note":"Added one instead of multiplying the value by itself."
+        }],
+        "samples":samples,
+    });
+    let body = verify_kind(Kind::Template, &spec, &arguments, &[]).unwrap();
+    let draft = diagnosis_from_templates(&spec, &[body]).unwrap();
+    let stored = verify_kind(Kind::Diagnosis, &spec, &draft["arguments"], &[]).unwrap();
+    assert!(stored.contains("arithmetic-slip"));
+    assert!(stored.contains("Added one instead"));
 }
