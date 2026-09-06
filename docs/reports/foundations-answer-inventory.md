@@ -228,10 +228,24 @@ gives `none`; half or more of `value_with_unit` gives `unit`; half or more of
 `coordinates` gives `coordinates`; half or more with a `;` separator gives
 `multipart`; half or more of `set` gives `set`; the rest is `exact`.
 
-19 of the 55 `exact` topics are gradable today. 41 `exact` topics still hold at
-least one answer the grammar refuses, and section 5 names the productions that
-recover them. 4 of the 78 topics carry a contract other than `exact` and are
-therefore blocked on the contract work of f3-contract, not on the grammar.
+The proposed contract and the `exact now` column cross as follows.
+
+| proposed contract | every exemplar decides | at least one refused |
+|---|---:|---:|
+| `exact` | 14 | 41 |
+| `coordinates` | 4 | 1 |
+| `unit` | 1 | 5 |
+| `none` | 0 | 10 |
+| `approx` | 0 | 1 |
+| `multipart` | 0 | 1 |
+| **total** | **19** | **59** |
+
+The 19 topics of the left column are gradable with an `exact` contract today:
+the grammar decides every one of their authored answers, so the `exact`
+comparison of two canonical forms is enough, whatever richer contract f3 gives
+them later. The 41 refused `exact` topics wait on the grammar (section 5). 23
+topics carry a richer contract; 18 of those 23 also hold a refused answer, so
+they wait on the grammar and on f3-contract together.
 
 ### 3.2 The 19 topics that an `exact` contract unblocks today
 
