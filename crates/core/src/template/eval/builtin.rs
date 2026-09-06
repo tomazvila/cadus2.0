@@ -130,6 +130,12 @@ fn builtin(name: &str) -> Option<Builtin> {
 
 /// Evaluate one function call, erasing it when its arguments are exact.
 pub(super) fn call(name: &str, args: &[Ast], bindings: &Bindings) -> Result<Ast, EvalError> {
+    if name == "compounding" {
+        return super::compounding::factor(args, bindings);
+    }
+    if name == "quarterextremum" {
+        return super::finite_graph::extremum(args, bindings);
+    }
     if name == "signcase" {
         return sign_case(args, bindings);
     }

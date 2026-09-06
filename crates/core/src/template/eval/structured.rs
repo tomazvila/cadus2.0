@@ -23,6 +23,7 @@ pub(super) fn label_answer(
         return label_sign_case(args, bindings, contract);
     }
     let text = match (name.as_str(), args.as_slice()) {
+        ("trianglelaw", args) => super::triangle_law::choose(args, bindings)?,
         ("equalitylabel", [left, right]) => {
             if answer(left, bindings)?.canon == answer(right, bindings)?.canon {
                 "yes"

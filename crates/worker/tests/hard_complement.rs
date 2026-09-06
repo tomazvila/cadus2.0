@@ -74,3 +74,18 @@ fn corrupt_samples_hidden_inputs_small_spaces_and_wrong_contracts_fail_closed() 
         assert!(verify_kind(Kind::Template, &incompatible, arguments, &[]).is_err());
     }
 }
+
+#[path = "hard_complement/collisions.rs"]
+mod collisions;
+
+#[test]
+fn all_declared_sibling_samples_are_collision_free() {
+    let report = collisions::check(&root(), &drafts());
+    let path = root().join("target/hard-complement");
+    std::fs::create_dir_all(&path).unwrap();
+    std::fs::write(
+        path.join("collisions.json"),
+        serde_json::to_string_pretty(&report).unwrap(),
+    )
+    .unwrap();
+}

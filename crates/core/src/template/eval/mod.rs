@@ -33,11 +33,14 @@
 //! a panic.
 
 mod builtin;
+mod compounding;
 mod equation;
 mod exact;
+mod finite_graph;
 mod functions;
 mod inverse;
 mod structured;
+mod triangle_law;
 mod write;
 
 use builtin::call;

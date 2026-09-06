@@ -171,16 +171,21 @@ fn template_schema() -> Value {
                     "The answer as an exact expression over the parameter names. The SERVER \
     computes every instance's answer from it, so it is exact over the whole domain. For a label \
     contract, use one text-valued choice parameter, equalitylabel(left, right), divisibilitylabel(number, divisor), \
-    linearclass((a, b), (c, d)) for the solution-count class of ax+b=cx+d, or primeclass(number). For a quotient-and-remainder contract, use \
+    linearclass((a, b), (c, d)) for the solution-count class of ax+b=cx+d, or primeclass(number). \
+    trianglelaw(given) selects the starting law from three distinct measurements a,b,c,A,B,C and \
+    refuses AAA. For a quotient-and-remainder contract, use \
     quotientremainder(quotient, remainder). To preserve an unevaluated exact power, use \
     powerform(coefficient, [base, exponent]). Under a closed label contract, use \
     logequation(base, [exponent, result]) or expequation(base, [exponent, result]) for a proved \
     integer power identity. Under an approximate contract, use atandeg(ratio) for an \
-    inverse-tangent angle in degrees. For an ordered exact-list contract, use \
+    inverse-tangent angle in degrees. Use compounding(count) for the exact factor (1+1/n)^n \
+    with a whole count from 1 through 64. \
+    quarterextremum(curve, [lo, hi, direction]) returns the leftmost parent sine/cosine extremum \
+    as coordinates for whole quarter turns 0 <= lo < hi <= 4. For an ordered exact-list contract, use \
     factorlist(number), firstmultiples(number, count), primefactors(number), or \
     repeatedfactors(number, count). For a multipart contract, use \
     multipart(part1, part2) with arguments in contract part order; each argument is a mathematical \
-    expression or, for a label part, one text-valued choice parameter. For a unit contract, keep \
+    expression or, for a label part, a supported label expression. For a unit contract, keep \
     this expression numeric; the server attaches the declared unit. For an inequality-union \
     contract, use excludepoint(variable, bound), lowerbound(variable, bound), or \
     upperbound(variable, bound), with a one-value text choice for variable. Use \

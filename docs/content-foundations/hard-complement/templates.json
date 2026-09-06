@@ -592,5 +592,750 @@
       ],
       "distractors": []
     }
+  },
+  {
+    "kp_id": "natural-exponential-function/kp1",
+    "kind": "template",
+    "status": "pending",
+    "arguments": {
+      "statement": "Two plans both split nominal annual $100\\%$ growth equally. The first compounds {a} times per year; the second compounds {b} times. Find the ratio of the first annual multiplier to the second, as an exact fraction.",
+      "answer_expr": "compounding(a)/compounding(b)",
+      "solution_sketch": "With $n$ equal updates, each factor is $1+1/n$ and the annual factor is $(1+1/n)^n$. Evaluate that power for $n={a}$ and $n={b}$, then divide the first annual factor by the second.",
+      "hints": [
+        "How many times is the per-update factor multiplied by itself in each plan?"
+      ],
+      "params": {
+        "a": {
+          "kind": "choice",
+          "values": [
+            1,
+            2,
+            3,
+            4
+          ]
+        },
+        "b": {
+          "kind": "choice",
+          "values": [
+            1,
+            2,
+            3,
+            4
+          ]
+        }
+      },
+      "constraints": [
+        {
+          "op": "ne",
+          "left": "a",
+          "right": "b"
+        }
+      ],
+      "samples": [
+        {
+          "params": {
+            "a": 1,
+            "b": 2
+          },
+          "expected": "8/9"
+        },
+        {
+          "params": {
+            "a": 1,
+            "b": 3
+          },
+          "expected": "27/32"
+        },
+        {
+          "params": {
+            "a": 1,
+            "b": 4
+          },
+          "expected": "512/625"
+        },
+        {
+          "params": {
+            "a": 2,
+            "b": 1
+          },
+          "expected": "9/8"
+        },
+        {
+          "params": {
+            "a": 2,
+            "b": 3
+          },
+          "expected": "243/256"
+        },
+        {
+          "params": {
+            "a": 2,
+            "b": 4
+          },
+          "expected": "576/625"
+        },
+        {
+          "params": {
+            "a": 3,
+            "b": 1
+          },
+          "expected": "32/27"
+        },
+        {
+          "params": {
+            "a": 3,
+            "b": 2
+          },
+          "expected": "256/243"
+        },
+        {
+          "params": {
+            "a": 3,
+            "b": 4
+          },
+          "expected": "16384/16875"
+        },
+        {
+          "params": {
+            "a": 4,
+            "b": 1
+          },
+          "expected": "625/512"
+        },
+        {
+          "params": {
+            "a": 4,
+            "b": 2
+          },
+          "expected": "625/576"
+        },
+        {
+          "params": {
+            "a": 4,
+            "b": 3
+          },
+          "expected": "16875/16384"
+        }
+      ],
+      "distractors": []
+    }
+  },
+  {
+    "kp_id": "sine-cosine-parent-graphs/kp1",
+    "kind": "template",
+    "status": "pending",
+    "arguments": {
+      "statement": "On the sine parent graph restricted to the closed interval $[{a}\\pi/2, {b}\\pi/2]$, give the leftmost {d} point as an ordered pair.",
+      "answer_expr": "quarterextremum(0,[a,b,d])",
+      "solution_sketch": "Read the sine ordinates at consecutive quarter turns within the closed interval $[{a}\\pi/2, {b}\\pi/2]$. The curve is monotone between adjacent quarter turns. Select the {d} ordinate, breaking a tie with the smaller input, then pair that input with its ordinate.",
+      "hints": [
+        "Which quarter-turn points belong to this closed interval?"
+      ],
+      "params": {
+        "a": {
+          "kind": "choice",
+          "values": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ]
+        },
+        "b": {
+          "kind": "choice",
+          "values": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ]
+        },
+        "d": {
+          "kind": "choice",
+          "values": [
+            "highest",
+            "lowest"
+          ]
+        }
+      },
+      "constraints": [
+        {
+          "op": "lt",
+          "left": "a",
+          "right": "b"
+        }
+      ],
+      "samples": [
+        {
+          "params": {
+            "a": 0,
+            "b": 1,
+            "d": "highest"
+          },
+          "expected": "(1*pi/2, 1)"
+        },
+        {
+          "params": {
+            "a": 0,
+            "b": 1,
+            "d": "lowest"
+          },
+          "expected": "(0*pi/2, 0)"
+        },
+        {
+          "params": {
+            "a": 0,
+            "b": 2,
+            "d": "highest"
+          },
+          "expected": "(1*pi/2, 1)"
+        },
+        {
+          "params": {
+            "a": 0,
+            "b": 2,
+            "d": "lowest"
+          },
+          "expected": "(0*pi/2, 0)"
+        },
+        {
+          "params": {
+            "a": 0,
+            "b": 3,
+            "d": "highest"
+          },
+          "expected": "(1*pi/2, 1)"
+        },
+        {
+          "params": {
+            "a": 0,
+            "b": 3,
+            "d": "lowest"
+          },
+          "expected": "(3*pi/2, -1)"
+        },
+        {
+          "params": {
+            "a": 0,
+            "b": 4,
+            "d": "highest"
+          },
+          "expected": "(1*pi/2, 1)"
+        },
+        {
+          "params": {
+            "a": 0,
+            "b": 4,
+            "d": "lowest"
+          },
+          "expected": "(3*pi/2, -1)"
+        },
+        {
+          "params": {
+            "a": 1,
+            "b": 2,
+            "d": "highest"
+          },
+          "expected": "(1*pi/2, 1)"
+        },
+        {
+          "params": {
+            "a": 1,
+            "b": 2,
+            "d": "lowest"
+          },
+          "expected": "(2*pi/2, 0)"
+        },
+        {
+          "params": {
+            "a": 1,
+            "b": 3,
+            "d": "highest"
+          },
+          "expected": "(1*pi/2, 1)"
+        },
+        {
+          "params": {
+            "a": 1,
+            "b": 3,
+            "d": "lowest"
+          },
+          "expected": "(3*pi/2, -1)"
+        },
+        {
+          "params": {
+            "a": 1,
+            "b": 4,
+            "d": "highest"
+          },
+          "expected": "(1*pi/2, 1)"
+        },
+        {
+          "params": {
+            "a": 1,
+            "b": 4,
+            "d": "lowest"
+          },
+          "expected": "(3*pi/2, -1)"
+        },
+        {
+          "params": {
+            "a": 2,
+            "b": 3,
+            "d": "highest"
+          },
+          "expected": "(2*pi/2, 0)"
+        },
+        {
+          "params": {
+            "a": 2,
+            "b": 3,
+            "d": "lowest"
+          },
+          "expected": "(3*pi/2, -1)"
+        },
+        {
+          "params": {
+            "a": 2,
+            "b": 4,
+            "d": "highest"
+          },
+          "expected": "(2*pi/2, 0)"
+        },
+        {
+          "params": {
+            "a": 2,
+            "b": 4,
+            "d": "lowest"
+          },
+          "expected": "(3*pi/2, -1)"
+        },
+        {
+          "params": {
+            "a": 3,
+            "b": 4,
+            "d": "highest"
+          },
+          "expected": "(4*pi/2, 0)"
+        },
+        {
+          "params": {
+            "a": 3,
+            "b": 4,
+            "d": "lowest"
+          },
+          "expected": "(3*pi/2, -1)"
+        }
+      ],
+      "distractors": [],
+      "answer_contract": {
+        "kind": "coordinates",
+        "arity": 2
+      }
+    }
+  },
+  {
+    "kp_id": "sine-cosine-parent-graphs/kp2",
+    "kind": "template",
+    "status": "pending",
+    "arguments": {
+      "statement": "On the cosine parent graph restricted to the closed interval $[{a}\\pi/2, {b}\\pi/2]$, give the leftmost {d} point as an ordered pair.",
+      "answer_expr": "quarterextremum(1,[a,b,d])",
+      "solution_sketch": "Read the cosine ordinates at consecutive quarter turns within the closed interval $[{a}\\pi/2, {b}\\pi/2]$. The curve is monotone between adjacent quarter turns. Select the {d} ordinate, breaking a tie with the smaller input, then pair that input with its ordinate.",
+      "hints": [
+        "Which quarter-turn points belong to this closed interval?"
+      ],
+      "params": {
+        "a": {
+          "kind": "choice",
+          "values": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ]
+        },
+        "b": {
+          "kind": "choice",
+          "values": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ]
+        },
+        "d": {
+          "kind": "choice",
+          "values": [
+            "highest",
+            "lowest"
+          ]
+        }
+      },
+      "constraints": [
+        {
+          "op": "lt",
+          "left": "a",
+          "right": "b"
+        }
+      ],
+      "samples": [
+        {
+          "params": {
+            "a": 0,
+            "b": 1,
+            "d": "highest"
+          },
+          "expected": "(0*pi/2, 1)"
+        },
+        {
+          "params": {
+            "a": 0,
+            "b": 1,
+            "d": "lowest"
+          },
+          "expected": "(1*pi/2, 0)"
+        },
+        {
+          "params": {
+            "a": 0,
+            "b": 2,
+            "d": "highest"
+          },
+          "expected": "(0*pi/2, 1)"
+        },
+        {
+          "params": {
+            "a": 0,
+            "b": 2,
+            "d": "lowest"
+          },
+          "expected": "(2*pi/2, -1)"
+        },
+        {
+          "params": {
+            "a": 0,
+            "b": 3,
+            "d": "highest"
+          },
+          "expected": "(0*pi/2, 1)"
+        },
+        {
+          "params": {
+            "a": 0,
+            "b": 3,
+            "d": "lowest"
+          },
+          "expected": "(2*pi/2, -1)"
+        },
+        {
+          "params": {
+            "a": 0,
+            "b": 4,
+            "d": "highest"
+          },
+          "expected": "(0*pi/2, 1)"
+        },
+        {
+          "params": {
+            "a": 0,
+            "b": 4,
+            "d": "lowest"
+          },
+          "expected": "(2*pi/2, -1)"
+        },
+        {
+          "params": {
+            "a": 1,
+            "b": 2,
+            "d": "highest"
+          },
+          "expected": "(1*pi/2, 0)"
+        },
+        {
+          "params": {
+            "a": 1,
+            "b": 2,
+            "d": "lowest"
+          },
+          "expected": "(2*pi/2, -1)"
+        },
+        {
+          "params": {
+            "a": 1,
+            "b": 3,
+            "d": "highest"
+          },
+          "expected": "(1*pi/2, 0)"
+        },
+        {
+          "params": {
+            "a": 1,
+            "b": 3,
+            "d": "lowest"
+          },
+          "expected": "(2*pi/2, -1)"
+        },
+        {
+          "params": {
+            "a": 1,
+            "b": 4,
+            "d": "highest"
+          },
+          "expected": "(4*pi/2, 1)"
+        },
+        {
+          "params": {
+            "a": 1,
+            "b": 4,
+            "d": "lowest"
+          },
+          "expected": "(2*pi/2, -1)"
+        },
+        {
+          "params": {
+            "a": 2,
+            "b": 3,
+            "d": "highest"
+          },
+          "expected": "(3*pi/2, 0)"
+        },
+        {
+          "params": {
+            "a": 2,
+            "b": 3,
+            "d": "lowest"
+          },
+          "expected": "(2*pi/2, -1)"
+        },
+        {
+          "params": {
+            "a": 2,
+            "b": 4,
+            "d": "highest"
+          },
+          "expected": "(4*pi/2, 1)"
+        },
+        {
+          "params": {
+            "a": 2,
+            "b": 4,
+            "d": "lowest"
+          },
+          "expected": "(2*pi/2, -1)"
+        },
+        {
+          "params": {
+            "a": 3,
+            "b": 4,
+            "d": "highest"
+          },
+          "expected": "(4*pi/2, 1)"
+        },
+        {
+          "params": {
+            "a": 3,
+            "b": 4,
+            "d": "lowest"
+          },
+          "expected": "(3*pi/2, 0)"
+        }
+      ],
+      "distractors": [],
+      "answer_contract": {
+        "kind": "coordinates",
+        "arity": 2
+      }
+    }
+  },
+  {
+    "kp_id": "law-of-sines-cosines/kp1",
+    "kind": "template",
+    "status": "pending",
+    "arguments": {
+      "statement": "For two existing triangles, lowercase letters denote sides and uppercase letters denote their opposite angles. The first has known measurements {a}; the second has known measurements {b}. Choose the law that starts finding missing measurements in each triangle (use the angle sum first when needed). For side-side-angle data, find an opposite angle first; checking the number of possible triangles is a later step. Answer first = Law of Sines or Law of Cosines; second = Law of Sines or Law of Cosines.",
+      "answer_expr": "multipart(trianglelaw(a),trianglelaw(b))",
+      "solution_sketch": "For each list ({a} and {b}), count known sides and angles and check whether a known angle is included between known sides. SSS and SAS start with the cosine rule; two angles plus a side supply a sine-rule pair after the angle sum. SSA already has an opposite pair for the sine rule.",
+      "hints": [
+        "Which measurements form an opposite side-angle pair or an included angle?"
+      ],
+      "params": {
+        "a": {
+          "kind": "choice",
+          "values": [
+            "a,b,c",
+            "b,c,A",
+            "A,B,a",
+            "A,a,b"
+          ]
+        },
+        "b": {
+          "kind": "choice",
+          "values": [
+            "a,b,c",
+            "b,c,A",
+            "A,B,a",
+            "A,a,b"
+          ]
+        }
+      },
+      "constraints": [],
+      "samples": [
+        {
+          "params": {
+            "a": "a,b,c",
+            "b": "a,b,c"
+          },
+          "expected": "first = Law of Cosines; second = Law of Cosines"
+        },
+        {
+          "params": {
+            "a": "a,b,c",
+            "b": "b,c,A"
+          },
+          "expected": "first = Law of Cosines; second = Law of Cosines"
+        },
+        {
+          "params": {
+            "a": "a,b,c",
+            "b": "A,B,a"
+          },
+          "expected": "first = Law of Cosines; second = Law of Sines"
+        },
+        {
+          "params": {
+            "a": "a,b,c",
+            "b": "A,a,b"
+          },
+          "expected": "first = Law of Cosines; second = Law of Sines"
+        },
+        {
+          "params": {
+            "a": "b,c,A",
+            "b": "a,b,c"
+          },
+          "expected": "first = Law of Cosines; second = Law of Cosines"
+        },
+        {
+          "params": {
+            "a": "b,c,A",
+            "b": "b,c,A"
+          },
+          "expected": "first = Law of Cosines; second = Law of Cosines"
+        },
+        {
+          "params": {
+            "a": "b,c,A",
+            "b": "A,B,a"
+          },
+          "expected": "first = Law of Cosines; second = Law of Sines"
+        },
+        {
+          "params": {
+            "a": "b,c,A",
+            "b": "A,a,b"
+          },
+          "expected": "first = Law of Cosines; second = Law of Sines"
+        },
+        {
+          "params": {
+            "a": "A,B,a",
+            "b": "a,b,c"
+          },
+          "expected": "first = Law of Sines; second = Law of Cosines"
+        },
+        {
+          "params": {
+            "a": "A,B,a",
+            "b": "b,c,A"
+          },
+          "expected": "first = Law of Sines; second = Law of Cosines"
+        },
+        {
+          "params": {
+            "a": "A,B,a",
+            "b": "A,B,a"
+          },
+          "expected": "first = Law of Sines; second = Law of Sines"
+        },
+        {
+          "params": {
+            "a": "A,B,a",
+            "b": "A,a,b"
+          },
+          "expected": "first = Law of Sines; second = Law of Sines"
+        },
+        {
+          "params": {
+            "a": "A,a,b",
+            "b": "a,b,c"
+          },
+          "expected": "first = Law of Sines; second = Law of Cosines"
+        },
+        {
+          "params": {
+            "a": "A,a,b",
+            "b": "b,c,A"
+          },
+          "expected": "first = Law of Sines; second = Law of Cosines"
+        },
+        {
+          "params": {
+            "a": "A,a,b",
+            "b": "A,B,a"
+          },
+          "expected": "first = Law of Sines; second = Law of Sines"
+        },
+        {
+          "params": {
+            "a": "A,a,b",
+            "b": "A,a,b"
+          },
+          "expected": "first = Law of Sines; second = Law of Sines"
+        }
+      ],
+      "distractors": [],
+      "answer_contract": {
+        "kind": "multipart",
+        "parts": [
+          {
+            "name": "first",
+            "contract": {
+              "kind": "label",
+              "options": [
+                [
+                  "Law of Sines",
+                  "1"
+                ],
+                [
+                  "Law of Cosines",
+                  "2"
+                ]
+              ]
+            }
+          },
+          {
+            "name": "second",
+            "contract": {
+              "kind": "label",
+              "options": [
+                [
+                  "Law of Sines",
+                  "1"
+                ],
+                [
+                  "Law of Cosines",
+                  "2"
+                ]
+              ]
+            }
+          }
+        ]
+      }
+    }
   }
 ]
