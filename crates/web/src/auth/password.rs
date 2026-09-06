@@ -244,20 +244,58 @@ pub fn validate_password(password: &str) -> Result<(), WeakPassword> {
 /// The salt is 16 fresh bytes from the operating system. This function does NOT
 /// apply the policy; call [`validate_password`] first.
 pub fn hash_password(profile: Argon2Profile, password: &str) -> Result<String, PasswordError> {
+    hash_password_with(getrandom::getrandom, profile, password)
+}
+
+/// Hash `password` under `profile`, but take the salt source as an argument.
+///
+/// [`hash_password`] calls it with `getrandom::getrandom`. A unit test passes a
+/// fill that refuses, so the entropy-failure arm is reached without a live
+/// kernel that gives no entropy.
+fn hash_password_with(
+    fill: impl FnOnce(&mut [u8]) -> Result<(), getrandom::Error>,
+    profile: Argon2Profile,
+    password: &str,
+) -> Result<String, PasswordError> {
+    hash_password_via(fill, SaltString::encode_b64, hash_with, profile, password)
+}
+
+/// Run the Argon2id hash of `hasher` over `password` and `salt`, as the PHC
+/// string to store.
+fn hash_with(
+    hasher: &Argon2<'static>,
+    password: &[u8],
+    salt: &SaltString,
+) -> argon2::password_hash::Result<String> {
+    hasher
+        .hash_password(password, salt)
+        .map(|hashed| hashed.to_string())
+}
+
+/// Hash `password` with the three steps as arguments: the salt fill, the salt
+/// encoder, and the hash itself.
+///
+/// [`hash_password_with`] calls it with the kernel, the B64 encoder, and
+/// Argon2id. A 16-byte salt never fails the encoder or the hash, so a unit
+/// test passes an encoder and a hash that refuse, and the two failure arms are
+/// reached with the deployment's own steps left as they are.
+fn hash_password_via(
+    fill: impl FnOnce(&mut [u8]) -> Result<(), getrandom::Error>,
+    encode: impl FnOnce(&[u8]) -> argon2::password_hash::Result<SaltString>,
+    hash: impl FnOnce(&Argon2<'static>, &[u8], &SaltString) -> argon2::password_hash::Result<String>,
+    profile: Argon2Profile,
+    password: &str,
+) -> Result<String, PasswordError> {
     let mut salt_bytes = [0u8; SALT_BYTES];
-    getrandom::getrandom(&mut salt_bytes).map_err(|error| PasswordError::Entropy {
+    fill(&mut salt_bytes).map_err(|error| PasswordError::Entropy {
         reason: error.to_string(),
     })?;
-    let salt = SaltString::encode_b64(&salt_bytes).map_err(|error| PasswordError::Hashing {
+    let salt = encode(&salt_bytes).map_err(|error| PasswordError::Hashing {
         reason: error.to_string(),
     })?;
-    let hashed = profile
-        .hasher()?
-        .hash_password(password.as_bytes(), &salt)
-        .map_err(|error| PasswordError::Hashing {
-            reason: error.to_string(),
-        })?;
-    Ok(hashed.to_string())
+    hash(&profile.hasher()?, password.as_bytes(), &salt).map_err(|error| PasswordError::Hashing {
+        reason: error.to_string(),
+    })
 }
 
 /// Whether `password` matches the stored PHC string `hashed`.
@@ -308,3 +346,6 @@ pub fn needs_rehash(profile: Argon2Profile, hashed: &str) -> bool {
         || params.t_cost() != profile.time_cost
         || params.p_cost() != profile.parallelism
 }
+
+#[cfg(test)]
+mod cov_tests;

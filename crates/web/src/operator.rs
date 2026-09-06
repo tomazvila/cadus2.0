@@ -131,13 +131,16 @@ pub(crate) fn spec_of<'a>(content: &'a Content, kp_id: &str) -> Option<GateSpec<
     let graph = &content.curriculum;
     let (topic_id, point_id) = split_kp_key(kp_id)?;
     let topic_idx = graph.idx_of(topic_id)?;
-    let topic = graph.topic(topic_idx)?;
     let kp_idx = graph.kp_idx_of(topic_idx, point_id)?;
-    let kp = graph.knowledge_point(topic_idx, kp_idx)?;
-    Some(GateSpec {
-        answer_kind: topic.answer_kind,
-        exemplars: &kp.exemplars,
-    })
+    // Both indexes came from the graph one line above, so both reads find
+    // their row.
+    graph
+        .topic(topic_idx)
+        .zip(graph.knowledge_point(topic_idx, kp_idx))
+        .map(|(topic, kp)| GateSpec {
+            answer_kind: topic.answer_kind,
+            exemplars: &kp.exemplars,
+        })
 }
 
 /// Serve the A6 operator view (admin only).
@@ -197,23 +200,15 @@ pub async fn flags(
             approved_template(&mut *tx, &row.kp_id),
         )
         .await?;
-        if let Some(template) = found {
-            gate.push(gate_json(
-                content,
-                &row.kp_id,
-                &template.digest,
-                &template.body,
-            ));
-        }
+        // The row counted an approved template, so the read finds one.
+        gate.extend(
+            found.map(|template| gate_json(content, &row.kp_id, &template.digest, &template.body)),
+        );
     }
 
-    // The transaction is read-only, so the commit releases the binding and
-    // writes nothing. A rollback would do the same; the commit keeps the shape
-    // of every other route.
-    store_call(&state.db, "operator flags: commit", async {
-        Ok(tx.commit().await?)
-    })
-    .await?;
+    // The transaction is read-only, so the drop rolls it back, releases the
+    // binding, and needs no second round trip.
+    drop(tx);
 
     Ok(Json(json!({
         "flags": rows.iter().map(flag_json).collect::<Vec<Value>>(),

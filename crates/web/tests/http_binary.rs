@@ -15,9 +15,24 @@ use std::time::{Duration, Instant};
 
 use cadus_store::test_support::DeafPostgres;
 use cadus_store::{Db, DbConfig, connect_options};
-use cadus_web::{AppState, create_app};
+use cadus_web::{AppState, boot_check, create_app};
 use sqlx::postgres::PgPoolOptions;
 use tower::ServiceExt;
+
+/// A lazy one-connection pool on `deaf`, and the `Db` that bounds every query
+/// on it at `client_timeout_ms`. The pool is the caller's to close.
+fn deaf_db(deaf: &DeafPostgres, client_timeout_ms: u64) -> (sqlx::PgPool, Db) {
+    let cfg = DbConfig {
+        database_url: deaf.dsn(),
+        statement_timeout_ms: 0,
+        client_timeout_ms,
+    };
+    let pool = PgPoolOptions::new()
+        .max_connections(1)
+        .acquire_timeout(Duration::from_secs(5))
+        .connect_lazy_with(connect_options(&cfg).expect("the deaf DSN parses"));
+    (pool.clone(), Db::new(pool, client_timeout_ms))
+}
 
 /// (7) A client that holds a half-sent request does not block the stop, and the
 /// whole stop stays inside one budget.
@@ -231,16 +246,8 @@ fn kill_on_drop_ends_the_child_when_the_test_body_panics() {
 #[tokio::test]
 async fn ready_returns_503_when_the_database_answers_nothing() {
     let deaf = DeafPostgres::start_silent();
-    let cfg = DbConfig {
-        database_url: deaf.dsn(),
-        statement_timeout_ms: 0,
-        client_timeout_ms: 300,
-    };
-    let pool = PgPoolOptions::new()
-        .max_connections(1)
-        .acquire_timeout(Duration::from_secs(5))
-        .connect_lazy_with(connect_options(&cfg).expect("the deaf DSN parses"));
-    let app = create_app(AppState::new(Db::new(pool.clone(), cfg.client_timeout_ms)));
+    let (pool, db) = deaf_db(&deaf, 300);
+    let app = create_app(AppState::new(db));
 
     let start = Instant::now();
     let response = app
@@ -314,4 +321,51 @@ async fn binary_exits_2_with_a_public_origin_that_is_not_an_origin() {
         stderr.contains("PUBLIC_ORIGIN"),
         "stderr does not name the variable: {stderr}"
     );
+}
+
+/// (15) L1: the C3 boot guard ends inside the client-side bound when the
+/// database accepts the socket and then answers nothing.
+///
+/// `DeafPostgres::start` answers the handshake and then no query, so the
+/// guard's role read never finishes. Only the client-side bound of
+/// `cadus_store::bounded` ends the wait, and `boot_check` then answers
+/// `StoreError::Timeout` instead of a start that never ends.
+#[tokio::test]
+async fn boot_check_times_out_when_the_database_answers_nothing() {
+    let deaf = DeafPostgres::start();
+    let (pool, db) = deaf_db(&deaf, 300);
+
+    let start = Instant::now();
+    let outcome = boot_check(&db).await;
+    let elapsed = start.elapsed();
+
+    assert!(
+        matches!(outcome, Err(cadus_store::StoreError::Timeout { .. })),
+        "boot_check must time out when the database answers nothing"
+    );
+    assert!(
+        elapsed < Duration::from_secs(2),
+        "boot_check took {elapsed:?}, so the client-side bound did not apply"
+    );
+
+    pool.close().await;
+}
+
+/// (7) The boot guard runs inside the client-side bound. A database that
+/// finishes the handshake and then answers no query makes the guard time out,
+/// so the start ends with exit code 2 instead of a wait without end.
+#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+async fn binary_exits_2_when_the_boot_guard_times_out() {
+    let deaf = DeafPostgres::start();
+
+    let child = spawn_web(
+        web_command()
+            .env("DATABASE_URL", deaf.dsn())
+            .env("BIND_ADDR", "127.0.0.1:0")
+            .env("DB_CLIENT_TIMEOUT_MS", "300"),
+    );
+
+    let (code, stderr) = exit_of(child, Duration::from_secs(10), "boot guard timeout");
+
+    assert_eq!(code, Some(2), "stderr:\n{stderr}");
 }

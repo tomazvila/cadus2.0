@@ -4,8 +4,6 @@
 use std::future::Future;
 use std::time::Duration;
 
-use super::Fatal;
-
 /// The least time the pool close gets after the drain.
 ///
 /// A drain that spends the whole budget leaves nothing for the close. This
@@ -62,22 +60,25 @@ pub(super) struct Shutdown {
 impl Shutdown {
     /// Register the handlers for `SIGTERM` and `SIGINT`.
     #[cfg(unix)]
-    pub fn install() -> Result<Self, Fatal> {
+    ///
+    /// # Errors
+    ///
+    /// Returns the error of the operating system when a handler does not
+    /// register; the caller turns it into a start error.
+    pub fn install() -> std::io::Result<Self> {
         use tokio::signal::unix::{SignalKind, signal};
 
-        let terminate = signal(SignalKind::terminate())
-            .map_err(|err| Fatal::Startup(format!("the SIGTERM handler failed: {err}")))?;
-        let interrupt = signal(SignalKind::interrupt())
-            .map_err(|err| Fatal::Startup(format!("the SIGINT handler failed: {err}")))?;
-        Ok(Self {
-            terminate,
-            interrupt,
+        signal(SignalKind::terminate()).and_then(|terminate| {
+            signal(SignalKind::interrupt()).map(|interrupt| Self {
+                terminate,
+                interrupt,
+            })
         })
     }
 
     /// A platform without unix signals has nothing to register here.
     #[cfg(not(unix))]
-    pub fn install() -> Result<Self, Fatal> {
+    pub fn install() -> std::io::Result<Self> {
         Ok(Self {})
     }
 
@@ -169,14 +170,23 @@ mod tests {
     ///
     /// `PgPool::close` waits for every checked-out connection, so a database
     /// that answers nothing makes the plain call run without end (finding #6).
-    /// The never-resolving future below stands for that case. The outer timeout
-    /// of 5 s fails the test when the bound is gone.
+    /// The long sleep below stands for that case. The outer timeout of 5 s
+    /// fails the test when the bound is gone. A close that ends at once goes
+    /// through the same instantiation first, so one record holds both arms.
     #[tokio::test]
     async fn close_within_returns_at_the_deadline() {
+        super::close_within(
+            Duration::from_millis(200),
+            tokio::time::sleep(Duration::ZERO),
+        )
+        .await;
         let start = Instant::now();
         let outcome = tokio::time::timeout(
             Duration::from_secs(5),
-            super::close_within(Duration::from_millis(200), std::future::pending::<()>()),
+            super::close_within(
+                Duration::from_millis(200),
+                tokio::time::sleep(Duration::from_secs(3600)),
+            ),
         )
         .await;
         let elapsed = start.elapsed();

@@ -12,6 +12,7 @@ use sqlx::{Postgres, Transaction};
 use super::{KIND_DIAGNOSIS, STATUS_NOT_OFFERED, STATUS_PENDING, STATUS_READY, match_distractor};
 use crate::AppState;
 use crate::error::ApiError;
+use crate::session::json_of;
 use crate::session::{bound, failed};
 use crate::state::{ServedProblem, WebState};
 
@@ -124,10 +125,8 @@ pub(crate) async fn decide(
         given_answer: miss.answer.to_string(),
         work: miss.work.map(str::to_string),
     };
-    let document = serde_json::to_value(&payload).map_err(|err| {
-        tracing::error!(error = %err, "cadus-web: the diagnosis payload did not write");
-        ApiError::internal("diagnosis payload")
-    })?;
+    // The payload is strings and one integer, so the write cannot refuse.
+    let document = json_of(&payload);
     let id = bound(&state.db, enqueue(tx, user_id, miss.attempt_id, &document))
         .await
         .map_err(|err| failed(&err))?;

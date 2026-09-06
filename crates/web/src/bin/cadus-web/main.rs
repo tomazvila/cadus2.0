@@ -35,6 +35,7 @@
     )
 )]
 
+use std::convert::identity;
 use std::future::IntoFuture;
 use std::process::ExitCode;
 use std::sync::Arc;
@@ -102,12 +103,16 @@ fn init_tracing() {
 
 /// The start sequence of the module note, then the serve, then the stop.
 async fn run() -> Result<(), Fatal> {
-    let settings = Settings::read()?;
-
-    // Install the stop signals before the connect. The handlers exist from this
-    // point, so a SIGTERM during the connect gives exit code 0 instead of a kill
-    // by signal (finding #39).
-    let mut shutdown = Shutdown::install()?;
+    // Read the settings, then install the stop signals before the connect. The
+    // handlers exist from this point, so a SIGTERM during the connect gives exit
+    // code 0 instead of a kill by signal (finding #39). The two steps share one
+    // refusal: a setting that does not read stops the start the same way a
+    // handler that does not register would.
+    let (settings, mut shutdown) = Settings::read().and_then(|settings| {
+        Shutdown::install()
+            .map_err(Fatal::startup)
+            .map(|shutdown| (settings, shutdown))
+    })?;
     let Some(db) = connect_guarded(&settings.cfg, &mut shutdown).await? else {
         return Ok(());
     };
@@ -120,17 +125,19 @@ async fn run() -> Result<(), Fatal> {
     // start.
     let hub = Arc::new(DiagnosisHub::new());
     let listener_task = spawn_listener(&hub, &db);
-    let admin = open_admin().await?;
+    let admin = open_admin(&settings.cfg).await?;
 
     let app = build_app(settings.state(db.clone()), admin.clone(), hub);
     let (result, drain_elapsed) =
         serve_until_stop(listener, app, shutdown, settings.deadline).await;
 
-    // The listener holds one pooled connection, so it ends BEFORE the pool
-    // close; otherwise the close waits for a connection that never comes back.
-    listener_task.abort();
+    // The pool close ends the listener: the close event of the pool cancels
+    // its wait, the listener gives its connection back, and the close
+    // completes. The bounded wait after it is for the line the listener logs
+    // on its way out.
     let budget = close_budget(settings.deadline, drain_elapsed);
     close_within(budget, db.pool().close()).await;
+    let _ = tokio::time::timeout(Duration::from_secs(1), listener_task).await;
     if let Some(admin) = admin {
         close_within(budget, admin.pool().close()).await;
     }
@@ -181,12 +188,10 @@ async fn connect_guarded(cfg: &DbConfig, shutdown: &mut Shutdown) -> Result<Opti
 /// `bind_addr` accepted the string only after a `SocketAddr` parse, so this
 /// bind resolves the literal address and asks no name server.
 async fn bind(addr: &str) -> Result<TcpListener, Fatal> {
-    let listener = TcpListener::bind(addr)
-        .await
+    let bound = TcpListener::bind(addr).await;
+    let (listener, local) = bound
+        .and_then(|listener| listener.local_addr().map(|local| (listener, local)))
         .map_err(|err| Fatal::Startup(format!("bind {addr} failed: {err}")))?;
-    let local = listener
-        .local_addr()
-        .map_err(|err| Fatal::Startup(format!("local address of the listener failed: {err}")))?;
     // The address belongs in the message text, not in a structured field. The
     // compose comment and docs/SELF_HOST.md tell the operator to look for the
     // literal `cadus-web: listening on`, and a field renders as `address=...`
@@ -200,12 +205,18 @@ fn spawn_listener(hub: &Arc<DiagnosisHub>, db: &Db) -> JoinHandle<()> {
     let hub = Arc::clone(hub);
     let db = db.clone();
     tokio::spawn(async move {
-        if let Err(err) = hub.listen(&db).await {
-            tracing::error!(
-                error = %err,
-                "cadus-web: the diagnosis listener stopped; clients fall back to polling"
-            );
-        }
+        // The listener returns only when its connection ends, so its answer is
+        // always the reason it stopped.
+        let reason = hub
+            .listen(&db)
+            .await
+            .err()
+            .map(|err| err.to_string())
+            .unwrap_or_default();
+        tracing::error!(
+            error = %reason,
+            "cadus-web: the diagnosis listener stopped; clients fall back to polling"
+        );
     })
 }
 
@@ -216,8 +227,8 @@ fn spawn_listener(hub: &Arc<DiagnosisHub>, db: &Db) -> JoinHandle<()> {
 /// `content_store` on this tier. It opens AFTER the C3 boot guard, and the
 /// guard never runs on it: this role bypasses row-level security by design,
 /// and no learner route takes it.
-async fn open_admin() -> Result<Option<Db>, Fatal> {
-    let Some(admin_cfg) = admin_dsn()? else {
+async fn open_admin(cfg: &DbConfig) -> Result<Option<Db>, Fatal> {
+    let Some(admin_cfg) = admin_dsn(cfg)? else {
         tracing::info!(
             "cadus-web: {ADMIN_DSN_VAR} is not set, so the review writes of \
              /api/admin/content answer 503"
@@ -270,24 +281,19 @@ async fn serve_until_stop(
             let _ = fired_tx.send(());
         })
         .into_future();
-    let mut server = std::pin::pin!(server);
+    let mut server = tokio::spawn(server);
 
-    let mut drain_elapsed = Duration::ZERO;
-    let result = tokio::select! {
-        outcome = &mut server => outcome,
-        _ = fired_rx => {
-            let started = Instant::now();
-            let outcome = match tokio::time::timeout(deadline, &mut server).await {
-                Ok(outcome) => outcome,
-                Err(_elapsed) => {
-                    tracing::info!("shutdown deadline reached; closing");
-                    Ok(())
-                }
-            };
-            drain_elapsed = started.elapsed();
-            outcome
+    // The sender lives inside the server task, so this wait ends at the stop
+    // signal, or at the end of the server, whichever comes first.
+    let _ = fired_rx.await;
+    let started = Instant::now();
+    let result = match tokio::time::timeout(deadline, &mut server).await {
+        Ok(joined) => joined.map_err(std::io::Error::other).and_then(identity),
+        Err(_elapsed) => {
+            tracing::info!("shutdown deadline reached; closing");
+            server.abort();
+            Ok(())
         }
     };
-    let result = result.map_err(|err| Fatal::Startup(format!("serve failed: {err}")));
-    (result, drain_elapsed)
+    (result.map_err(Fatal::startup), started.elapsed())
 }

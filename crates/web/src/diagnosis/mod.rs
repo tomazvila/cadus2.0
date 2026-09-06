@@ -146,7 +146,9 @@ impl DiagnosisHub {
     ///
     /// # Errors
     ///
-    /// Returns the sqlx error when the `LISTEN` cannot be established at all.
+    /// Returns the sqlx error when the `LISTEN` cannot be established at all,
+    /// and when the pool closes under the listener: the close event of the
+    /// pool cancels the wait, which is how the process stop ends this loop.
     pub async fn listen(&self, db: &Db) -> Result<(), sqlx::Error> {
         let mut listener = sqlx::postgres::PgListener::connect_with(db.pool()).await?;
         listener
@@ -156,8 +158,11 @@ impl DiagnosisHub {
             channel = cadus_store::diagnosis::NOTIFY_CHANNEL,
             "cadus-web: the diagnosis listener is up"
         );
-        loop {
-            let notification = listener.recv().await?;
+        let error = loop {
+            let notification = match listener.recv().await {
+                Ok(notification) => notification,
+                Err(err) => break err,
+            };
             match Notice::parse(notification.payload()) {
                 Some(notice) => {
                     self.publish(notice);
@@ -167,7 +172,8 @@ impl DiagnosisHub {
                     "cadus-web: a notice payload did not read; dropping it"
                 ),
             }
-        }
+        };
+        Err(error)
     }
 }
 
@@ -210,4 +216,25 @@ pub fn router() -> Router<AppState> {
     Router::new()
         .route("/api/diagnosis/stream", get(stream))
         .route("/api/diagnosis/{id}", get(poll))
+}
+
+#[cfg(test)]
+mod tests {
+    use sqlx::types::Uuid;
+
+    use super::*;
+
+    /// The default hub is a fresh one: publishing with no subscriber reaches
+    /// nobody, and one subscriber then receives the next notice.
+    #[test]
+    fn a_hub_publishes_to_its_subscribers() {
+        let hub = DiagnosisHub::default();
+        let notice = Notice {
+            job_id: Uuid::nil(),
+            user_id: Uuid::nil(),
+        };
+        assert_eq!(hub.publish(notice), 0);
+        let _receiver = hub.subscribe();
+        assert_eq!(hub.publish(notice), 1);
+    }
 }

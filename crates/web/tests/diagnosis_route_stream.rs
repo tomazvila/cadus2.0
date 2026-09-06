@@ -9,57 +9,12 @@ use common::diagnosis::*;
 
 use std::time::Duration;
 
-use axum::http::header;
 use cadus_store::{DEFAULT_CLIENT_TIMEOUT_MS, Db};
 use cadus_web::diagnosis::DiagnosisHub;
-use http_body_util::BodyExt;
-use tower::ServiceExt;
 
 // --------------------------------------------------------------------------- //
 // Acceptance 3: a NOTIFY for tenant A never reaches tenant B's stream
 // --------------------------------------------------------------------------- //
-
-/// Read the next non-empty data frame of a streaming body, or `None`.
-async fn next_frame(body: &mut Body, within: Duration) -> Option<String> {
-    let deadline = tokio::time::Instant::now() + within;
-    loop {
-        let left = deadline.saturating_duration_since(tokio::time::Instant::now());
-        if left.is_zero() {
-            return None;
-        }
-        let frame = match tokio::time::timeout(left, body.frame()).await {
-            Ok(Some(Ok(frame))) => frame,
-            _ => return None,
-        };
-        let Some(bytes) = frame.data_ref() else {
-            continue;
-        };
-        let text = String::from_utf8_lossy(bytes).into_owned();
-        if !text.trim().is_empty() {
-            return Some(text);
-        }
-    }
-}
-
-/// Open one `/api/diagnosis/stream` as `user`.
-async fn open_stream(app: &Router, user: Uuid) -> Body {
-    let mut request = Request::builder()
-        .method(Method::GET)
-        .uri("/api/diagnosis/stream")
-        .body(Body::empty())
-        .unwrap();
-    common::present_session(request.headers_mut(), user);
-    let response = app.clone().oneshot(request).await.unwrap();
-    assert_eq!(response.status(), StatusCode::OK);
-    assert_eq!(
-        response
-            .headers()
-            .get(header::CONTENT_TYPE)
-            .and_then(|value| value.to_str().ok()),
-        Some("text/event-stream")
-    );
-    response.into_body()
-}
 
 /// Trap W14: `LISTEN/NOTIFY` carries no row-level security and no tenant
 /// binding, so the payload holds ids only and the handler re-reads the row

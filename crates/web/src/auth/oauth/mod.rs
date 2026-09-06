@@ -259,6 +259,18 @@ impl OAuthConfig {
         Some((found, credentials))
     }
 
+    /// The provider, its credentials, and the transport, when this deployment
+    /// serves `name`. It is [`Self::enabled`] with the transport in hand, so a
+    /// route that passed it never asks for the transport a second time.
+    pub(crate) fn served(
+        &self,
+        name: &str,
+    ) -> Option<(Provider, &Credentials, Arc<dyn ProviderTransport>)> {
+        let transport = Arc::clone(self.transport.as_ref()?);
+        let (provider, credentials) = self.enabled(name)?;
+        Some((provider, credentials, transport))
+    }
+
     /// The names this deployment serves, in [`PROVIDERS`] order.
     #[must_use]
     pub fn enabled_names(&self) -> Vec<&'static str> {
@@ -281,4 +293,80 @@ pub fn callback_redirect_uri(name: &str, base: &str) -> String {
         "{}{HANDSHAKE_PATH}/{name}/callback",
         base.trim_end_matches('/')
     )
+}
+
+#[cfg(test)]
+mod tests {
+    use std::future::Future;
+    use std::pin::Pin;
+
+    use super::*;
+
+    /// A transport that answers every request with an error.
+    struct NoTransport;
+
+    impl ProviderTransport for NoTransport {
+        fn fetch<'a>(
+            &'a self,
+            request: ProviderRequest,
+        ) -> Pin<Box<dyn Future<Output = Result<ProviderResponse, TransportError>> + Send + 'a>>
+        {
+            Box::pin(async move {
+                Err(TransportError {
+                    reason: format!("no transport for {}", request.url),
+                })
+            })
+        }
+    }
+
+    /// `with_transport` installs the transport, and a name that is no provider
+    /// has no credentials and is not served.
+    #[test]
+    fn with_transport_installs_the_transport_and_an_unknown_name_is_not_served() {
+        let config = OAuthConfig::from_env(|name| match name {
+            GOOGLE_ID_VAR => Some("id".to_string()),
+            GOOGLE_SECRET_VAR => Some("secret".to_string()),
+            _ => None,
+        })
+        .with_transport(Arc::new(NoTransport));
+        assert!(config.transport.is_some());
+        assert!(config.credentials("nope").is_none());
+        assert!(config.served("nope").is_none());
+        assert!(config.served(GOOGLE).is_some());
+        assert_eq!(config.enabled_names(), vec![GOOGLE]);
+    }
+
+    /// A client id with no secret, and a secret with no id, are no provider.
+    #[test]
+    fn half_a_credential_pair_is_no_provider() {
+        // One lookup closure serves every case, so the pair reader is measured
+        // as one instantiation.
+        let present = std::cell::RefCell::new(Vec::<&str>::new());
+        let get = |name: &str| present.borrow().contains(&name).then(|| "v".to_string());
+        for (names, served) in [
+            (vec![GOOGLE_ID_VAR], false),
+            (vec![GOOGLE_SECRET_VAR], false),
+            (vec![GOOGLE_ID_VAR, GOOGLE_SECRET_VAR], true),
+        ] {
+            *present.borrow_mut() = names;
+            assert_eq!(OAuthConfig::from_env(get).google.is_some(), served);
+        }
+    }
+
+    /// The stub transport answers every request with its error, and the error
+    /// names the request URL.
+    #[tokio::test]
+    async fn the_stub_transport_answers_every_request_with_an_error() {
+        let error = NoTransport
+            .fetch(ProviderRequest {
+                method: "GET",
+                url: "https://provider.example/userinfo".to_string(),
+                body: None,
+                bearer: None,
+                accept: "application/json",
+            })
+            .await
+            .unwrap_err();
+        assert!(error.reason.contains("https://provider.example/userinfo"));
+    }
 }

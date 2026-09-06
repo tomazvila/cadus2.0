@@ -280,3 +280,115 @@ pub async fn csrf_origin_layer(
         CsrfVerdict::Allow => next.run(request).await,
     }
 }
+
+#[cfg(test)]
+mod origin_tests {
+    use super::*;
+
+    /// The not-Unicode error names the variable.
+    #[test]
+    fn the_not_unicode_error_names_the_variable() {
+        assert_eq!(
+            OriginPolicyError::NotUnicode.to_string(),
+            format!("{PUBLIC_ORIGIN_VAR} is not valid Unicode")
+        );
+    }
+
+    /// The not-an-origin error prints the value and the rule.
+    #[test]
+    fn the_not_an_origin_error_prints_the_value() {
+        let text = OriginPolicyError::NotAnOrigin {
+            value: "tutor.example/".to_string(),
+        }
+        .to_string();
+        assert!(text.contains("\"tutor.example/\" is not an origin"));
+    }
+
+    /// An absent value gives the fallback policy, an origin pins itself, and a
+    /// value with a path is refused.
+    #[test]
+    fn from_env_pins_an_origin_and_refuses_a_path() {
+        use std::ffi::OsString;
+
+        assert_eq!(OriginPolicy::from_env(None), Ok(OriginPolicy::default()));
+        assert_eq!(
+            OriginPolicy::from_env(Some(OsString::from(" https://tutor.example "))),
+            Ok(OriginPolicy {
+                public_origin: Some("https://tutor.example".to_string()),
+            })
+        );
+        assert_eq!(
+            OriginPolicy::from_env(Some(OsString::from("https://tutor.example/"))),
+            Err(OriginPolicyError::NotAnOrigin {
+                value: "https://tutor.example/".to_string(),
+            })
+        );
+    }
+
+    /// A pinned origin wins over the headers; without one, the origin is the
+    /// forwarded scheme and the host, and `http` when no scheme is forwarded.
+    #[test]
+    fn the_own_origin_is_the_pin_or_the_forwarded_scheme_and_host() {
+        use axum::http::{HeaderMap, HeaderValue};
+
+        let mut headers = HeaderMap::new();
+        headers.insert("host", HeaderValue::from_static("tutor.example"));
+        let pinned = OriginPolicy {
+            public_origin: Some("https://pinned.example".to_string()),
+        };
+        assert_eq!(
+            own_origin(&pinned, &headers).as_deref(),
+            Some("https://pinned.example")
+        );
+        let policy = OriginPolicy::default();
+        assert_eq!(
+            own_origin(&policy, &headers).as_deref(),
+            Some("http://tutor.example")
+        );
+        headers.insert("x-forwarded-proto", HeaderValue::from_static("https, http"));
+        assert_eq!(
+            own_origin(&policy, &headers).as_deref(),
+            Some("https://tutor.example")
+        );
+    }
+
+    /// An empty value gives the fallback policy, and a value that is not valid
+    /// Unicode is a start error.
+    #[test]
+    fn from_env_handles_the_empty_and_the_non_unicode_value() {
+        use std::ffi::OsString;
+
+        assert_eq!(
+            OriginPolicy::from_env(Some(OsString::from("   "))),
+            Ok(OriginPolicy::default())
+        );
+
+        #[cfg(unix)]
+        {
+            use std::os::unix::ffi::OsStringExt;
+            let raw = OsString::from_vec(vec![0x68, 0xff]);
+            assert_eq!(
+                OriginPolicy::from_env(Some(raw)),
+                Err(OriginPolicyError::NotUnicode)
+            );
+        }
+    }
+
+    /// The own origin needs a `Host` header, and a blank one or one that is not
+    /// text gives none.
+    #[test]
+    fn the_own_origin_needs_a_host_header() {
+        use axum::http::{HeaderMap, HeaderValue};
+
+        let policy = OriginPolicy::default();
+        assert_eq!(own_origin(&policy, &HeaderMap::new()), None);
+
+        let mut blank = HeaderMap::new();
+        blank.insert("host", HeaderValue::from_static("   "));
+        assert_eq!(own_origin(&policy, &blank), None);
+
+        let mut not_text = HeaderMap::new();
+        not_text.insert("host", HeaderValue::from_bytes(b"h\xffst").unwrap());
+        assert_eq!(own_origin(&policy, &not_text), None);
+    }
+}

@@ -75,6 +75,20 @@ pub async fn seed_session(
     .unwrap();
 }
 
+/// Write one live `auth_sessions` row of `user`: created now, touched now, and
+/// good for an hour.
+pub async fn seed_live_session(db: &TestDb, user: Uuid, token_hash: &str) {
+    seed_session(
+        db,
+        user,
+        token_hash,
+        super::shift(0),
+        super::shift(0),
+        super::shift(3600),
+    )
+    .await;
+}
+
 /// How many session rows one account has.
 pub async fn session_count(db: &TestDb, user: Uuid) -> i64 {
     sqlx::query_scalar("SELECT count(*) FROM auth_sessions WHERE user_id = $1")

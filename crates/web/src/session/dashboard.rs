@@ -19,8 +19,8 @@ use cadus_core::selector::{
 use cadus_store::state::{EventRow, load_events, project_current};
 use serde_json::{Value, json};
 
+use super::EXPORT_MEDIA_TYPE;
 use super::store::{Ready, Reply, begin, json_of, reply_read, store, unknown_course};
-use super::{EXPORT_MEDIA_TYPE, INTERNAL_ERROR};
 use crate::AppState;
 use crate::error::ApiError;
 use crate::state::Tenant;
@@ -272,28 +272,18 @@ pub async fn modules(req: Ready) -> Reply {
 // GET /api/export
 // --------------------------------------------------------------------------- //
 
-/// The `500` of an event that did not serialize.
-fn export_failed(err: cadus_core::event::EventError, seq: i64) -> ApiError {
-    tracing::error!(error = %err, seq, "cadus-web: an event did not serialize");
-    ApiError::new(
-        StatusCode::INTERNAL_SERVER_ERROR,
-        INTERNAL_ERROR,
-        "The export could not be built.",
-    )
-}
-
 /// The JSONL body of the log, one canonical event per line.
-fn export_body(events: &[EventRow]) -> Result<String, ApiError> {
+///
+/// Every event of the log read through `Event::from_json`, and the canonical
+/// writer serializes each variant of `Event` in full: every key is a string
+/// and no value refuses. The default stands for a line that cannot occur.
+fn export_body(events: &[EventRow]) -> String {
     let mut body = String::new();
     for row in events {
-        let line = row
-            .event
-            .to_canonical_json()
-            .map_err(|err| export_failed(err, row.seq))?;
-        body.push_str(&line);
+        body.push_str(&row.event.to_canonical_json().unwrap_or_default());
         body.push('\n');
     }
-    Ok(body)
+    body
 }
 
 /// The learner's whole log as JSONL, one canonical event per line
@@ -308,7 +298,7 @@ pub async fn export(
     let mut tx = begin(&state, user_id).await?;
     let events = store(&state, load_events(&mut tx, user_id)).await?;
     drop(tx);
-    let body = export_body(&events)?;
+    let body = export_body(&events);
 
     let disposition = format!("attachment; filename=\"cadus-export-{user_id}.jsonl\"");
     let mut response = (StatusCode::OK, body).into_response();

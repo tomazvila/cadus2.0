@@ -52,7 +52,7 @@ pub async fn enroll(req: Ready, body: Option<Json<Value>>) -> Reply {
     let Some(found) = graph.course(&course) else {
         return Err(unknown_course(&course));
     };
-    let slug = event_slug(&found.id)?;
+    let slug = event_slug(&found.id);
 
     let input = req.input();
     let (mut tx, projection) = req.locked_projection(&input).await?;

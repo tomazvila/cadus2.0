@@ -170,6 +170,12 @@ mod tests {
         }
     }
 
+    /// The `code` helper names the miss when a body carries no `error.code`.
+    #[test]
+    fn the_code_helper_names_a_body_with_no_error_code() {
+        assert!(code(&json!({"ok": true})).contains("no error.code"));
+    }
+
     /// A `GET` of `path` that presents `token` in the session cookie.
     fn get_with_cookie(path: &str, token: &str) -> Request<Body> {
         Request::builder()

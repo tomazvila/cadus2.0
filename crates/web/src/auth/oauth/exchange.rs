@@ -277,3 +277,125 @@ pub async fn exchange_and_fetch_identity(
     }
     identity_from(provider, &documents)
 }
+
+#[cfg(test)]
+mod tests {
+    use serde_json::json;
+
+    use super::*;
+    use crate::auth::oauth::{GITHUB_PROVIDER, GOOGLE_PROVIDER};
+
+    /// The `Debug` of a request redacts the body and the bearer and keeps the
+    /// method, the url, and the accept.
+    #[test]
+    fn the_request_debug_redacts_the_secrets() {
+        let request = ProviderRequest {
+            method: "POST",
+            url: "https://provider.test/token".to_string(),
+            body: Some("client_secret=live".to_string()),
+            bearer: Some("live-access-token".to_string()),
+            accept: "application/json",
+        };
+        let text = format!("{request:?}");
+        assert!(text.contains("https://provider.test/token"), "{text}");
+        assert!(text.contains("<redacted>"), "{text}");
+        assert!(!text.contains("live"), "the debug leaked a secret: {text}");
+    }
+
+    /// A truth value reads from a JSON bool, from the text `"true"`, and is
+    /// false for anything else.
+    #[test]
+    fn a_truth_value_reads_a_bool_or_the_text_true() {
+        assert!(as_bool(Some(&json!(true))));
+        assert!(as_bool(Some(&json!("TRUE"))));
+        assert!(!as_bool(Some(&json!("no"))));
+        assert!(!as_bool(Some(&json!(1))));
+        assert!(!as_bool(None));
+    }
+
+    /// A string field reads a string and a number, and is empty otherwise.
+    #[test]
+    fn a_text_field_reads_a_string_or_a_number() {
+        let doc = json!({"sub": "abc", "id": 4242, "flag": true});
+        assert_eq!(text_field(&doc, "sub"), "abc");
+        assert_eq!(text_field(&doc, "id"), "4242");
+        assert_eq!(text_field(&doc, "flag"), "");
+        assert_eq!(text_field(&doc, "absent"), "");
+    }
+
+    /// The access token reads the field, and refuses a non-JSON body and a
+    /// body with no `access_token`.
+    #[test]
+    fn the_access_token_reads_the_field_or_refuses() {
+        assert_eq!(access_token(br#"{"access_token":"tok"}"#).unwrap(), "tok");
+        assert!(access_token(b"not json at all").is_err());
+        assert!(access_token(br#"{"token_type":"bearer"}"#).is_err());
+    }
+
+    /// GitHub's primary address reads the verified primary, and is empty when
+    /// the list is not an array, has no primary, or the primary has no address.
+    #[test]
+    fn the_github_primary_email_reads_the_verified_primary() {
+        let primary = json!([
+            {"email": "second@example.test", "primary": false, "verified": true},
+            {"email": "primary@example.test", "primary": true, "verified": true}
+        ]);
+        assert_eq!(
+            github_primary_email(&primary),
+            ("primary@example.test".to_string(), true)
+        );
+        assert_eq!(github_primary_email(&json!({})), (String::new(), false));
+        assert_eq!(
+            github_primary_email(&json!([{"primary": true, "verified": true}])),
+            (String::new(), false)
+        );
+        assert_eq!(
+            github_primary_email(&json!([{"email": "x@example.test", "primary": false}])),
+            (String::new(), false)
+        );
+    }
+
+    /// A Google identity reads `sub` and `email_verified`, and refuses a
+    /// document with no subject.
+    #[test]
+    fn a_google_identity_reads_the_subject_or_refuses() {
+        let good = identity_from(
+            GOOGLE_PROVIDER,
+            &[json!({"sub": "g-1", "email": "g@example.test", "email_verified": true})],
+        )
+        .expect("a subject and an address read");
+        assert_eq!(good.subject, "g-1");
+        assert_eq!(good.email, "g@example.test");
+        assert!(good.email_verified);
+
+        assert!(
+            identity_from(GOOGLE_PROVIDER, &[]).is_err(),
+            "no document is a failure"
+        );
+        assert!(
+            identity_from(GOOGLE_PROVIDER, &[json!({"email": "g@example.test"})]).is_err(),
+            "no subject is a failure"
+        );
+    }
+
+    /// A GitHub identity reads the numeric id and the address list, and refuses
+    /// a first document with no address list beside it.
+    #[test]
+    fn a_github_identity_reads_the_id_and_the_address_list() {
+        let good = identity_from(
+            GITHUB_PROVIDER,
+            &[
+                json!({"id": 777}),
+                json!([{"email": "h@example.test", "primary": true, "verified": true}]),
+            ],
+        )
+        .expect("an id and a primary address read");
+        assert_eq!(good.subject, "777");
+        assert_eq!(good.email, "h@example.test");
+
+        assert!(
+            identity_from(GITHUB_PROVIDER, &[json!({"id": 1})]).is_err(),
+            "no address list is a failure"
+        );
+    }
+}

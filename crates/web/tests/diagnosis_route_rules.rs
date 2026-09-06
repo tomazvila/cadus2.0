@@ -180,3 +180,26 @@ async fn a_preauthored_hit_counts_ready_preauthored_and_enqueues_nothing() {
     })
     .await;
 }
+
+// --------------------------------------------------------------------------- //
+// The enqueue that fails
+// --------------------------------------------------------------------------- //
+
+/// A job row that does not write fails the grade, and the log keeps no
+/// attempt of it.
+#[tokio::test]
+async fn an_enqueue_that_fails_is_500_and_writes_no_job() {
+    TestDb::with(|db| async move {
+        let app = app(&db);
+        let user = learner(&db, "u9-enqueue-fault@example.test").await;
+        seed_distractors(&db, "u9-digest-fault", &json!({"v": 1, "distractors": []})).await;
+        common::fail_writes(&db, "diagnosis_jobs", "true").await;
+
+        let (status, body) = answer(&app, user, UNKNOWN_MISS).await;
+
+        assert_eq!(status, StatusCode::INTERNAL_SERVER_ERROR, "{body}");
+        assert_eq!(body["error"]["code"], "internal_error");
+        assert_eq!(jobs_of(&db, user).await.len(), 0);
+    })
+    .await;
+}

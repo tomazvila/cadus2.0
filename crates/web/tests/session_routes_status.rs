@@ -9,8 +9,12 @@ use common::{BASE_US, SESSION, parse, seed_open_session};
 
 use common::sessions::*;
 
-use cadus_core::event::{Event, SchemaVersion, Timestamp};
+use std::collections::BTreeMap;
+
+use cadus_core::event::{Event, SchemaVersion, Timestamp, TopicStatus};
+use cadus_core::learner::{LearnerModel, TopicState};
 use cadus_web::state::WebState;
+use sqlx::types::chrono::Utc;
 
 // --------------------------------------------------------------------------- //
 // enroll, status, graph, modules
@@ -92,19 +96,42 @@ async fn enroll_refuses_a_missing_or_unknown_course_and_clears_the_scratch() {
     .await;
 }
 
+/// A learner with an open session, a due review of `addition`, and an
+/// enrollment in `c1`.
+async fn enrolled_learner(db: &TestDb, email: &str) -> Uuid {
+    let user = common::seed_learner(db, email).await;
+    seed_open_session(db, user).await;
+    seed_due_review(db, user, 1).await;
+    seed_event(db, user, 2, &enrolled_c1()).await;
+    user
+}
+
+/// One GET of `path` as `user`, which must succeed, read as JSON.
+async fn get_json(app: &Router, user: Uuid, path: &str) -> Value {
+    let (status, _, body) = call(app, Method::GET, path, Some(user), None).await;
+    assert_eq!(status, StatusCode::OK, "{body}");
+    parse(&body)
+}
+
+/// Cache a model of `user` holding one topic in `state`, at `seq`.
+async fn seed_one_topic(db: &TestDb, user: Uuid, topic: &str, state: TopicState, seq: i64) {
+    let mut topics: BTreeMap<String, TopicState> = BTreeMap::new();
+    topics.insert(topic.to_string(), state);
+    let model = LearnerModel {
+        topics,
+        ..LearnerModel::default()
+    };
+    common::seed_cached_model(db, user, &model, seq).await;
+}
+
 /// `GET /api/status` reports the enrolled course, the journey, and the counts.
 #[tokio::test]
 async fn status_reports_the_enrolled_course_and_the_counts() {
     TestDb::with(|db| async move {
-        let user = common::seed_learner(&db, "status@example.com").await;
         let app = app(&db);
-        seed_open_session(&db, user).await;
-        seed_due_review(&db, user, 1).await;
-        seed_event(&db, user, 2, &enrolled_c1()).await;
+        let user = enrolled_learner(&db, "status@example.com").await;
 
-        let (status, _, body) = call(&app, Method::GET, "/api/status", Some(user), None).await;
-        assert_eq!(status, StatusCode::OK, "{body}");
-        let value = parse(&body);
+        let value = get_json(&app, user, "/api/status").await;
 
         assert_eq!(value["course"]["id"], "c1");
         assert_eq!(value["course"]["name"], "Foundations");
@@ -212,6 +239,117 @@ async fn modules_lists_the_enrolled_course_modules() {
         assert_eq!(scoped["course"]["id"], "c2");
         assert_eq!(scoped["course"]["name"], "Proofs");
         assert_eq!(scoped["modules"], json!(["M2"]));
+    })
+    .await;
+}
+
+// --------------------------------------------------------------------------- //
+// The dashboard of a learner with no session, and the review that is nearly due
+// --------------------------------------------------------------------------- //
+
+/// A model whose one topic stands on the frontier is not placed: the
+/// placement check reads its false arm on a cached model. The fold drops a
+/// topic that equals the default state, so the state must differ from it.
+#[tokio::test]
+async fn status_reads_a_frontier_model_as_not_placed() {
+    TestDb::with(|db| async move {
+        let user = common::seed_learner(&db, "frontier@example.com").await;
+        let app = app(&db);
+        seed_open_session(&db, user).await;
+        let frontier = TopicState {
+            status: TopicStatus::Frontier,
+            ..TopicState::default()
+        };
+        seed_one_topic(&db, user, "addition", frontier, 1).await;
+
+        let value = get_json(&app, user, "/api/status").await;
+        assert_eq!(value["placed"], false);
+        assert_eq!(value["due_reviews"], 0);
+        assert_eq!(value["nearly_due"], 0);
+    })
+    .await;
+}
+
+/// A review whose memory stands between the due threshold and the nearly-due
+/// threshold counts as nearly due, and not as due.
+#[tokio::test]
+async fn status_counts_a_review_that_is_nearly_due() {
+    TestDb::with(|db| async move {
+        let user = common::seed_learner(&db, "nearly@example.com").await;
+        let app = app(&db);
+        seed_open_session(&db, user).await;
+        // 0.9 days into a 1-day interval: the memory is 0.5^0.9, about 0.54.
+        let t0 = Utc::now().timestamp_micros() - 9 * 8_640_000_000;
+        let nearly = TopicState {
+            status: TopicStatus::Learning,
+            rep_num: 1.0,
+            memory_base: 1.0,
+            t0: Some(Timestamp::from_micros(t0)),
+            interval_days: 1.0,
+            ability: 0.6,
+            ..TopicState::default()
+        };
+        seed_one_topic(&db, user, "addition", nearly, 1).await;
+
+        let value = get_json(&app, user, "/api/status").await;
+        assert_eq!(value["due_reviews"], 0);
+        assert_eq!(value["nearly_due"], 1);
+    })
+    .await;
+}
+
+/// Without a scope the graph reads the enrolled course, counts the mastered
+/// topics, and a scope whose prerequisite lies outside it draws no edge to it.
+#[tokio::test]
+async fn graph_without_a_scope_reads_the_enrolled_course() {
+    TestDb::with(|db| async move {
+        let app = app(&db);
+        let user = enrolled_learner(&db, "graph-enrolled@example.com").await;
+
+        let enrolled = get_json(&app, user, "/api/graph").await;
+        // `c1` holds two of the three topics.
+        assert_eq!(enrolled["counts"]["nodes"], 2);
+        assert_eq!(enrolled["counts"]["mastered"], 1);
+
+        let other = get_json(&app, user, "/api/graph?scope=c2").await;
+        assert_eq!(other["counts"]["nodes"], 1);
+        // `addition` is out of scope, so the edge into `fractions` is out too.
+        assert_eq!(other["counts"]["edges"], 0);
+    })
+    .await;
+}
+
+/// A topic in the placed state counts as placed on the dashboard: the Placed
+/// arm of the placement check.
+#[tokio::test]
+async fn status_reads_a_placed_topic_as_placed() {
+    TestDb::with(|db| async move {
+        let user = common::seed_learner(&db, "placed@example.com").await;
+        let app = app(&db);
+        seed_open_session(&db, user).await;
+        let placed = TopicState {
+            status: TopicStatus::Placed,
+            ..TopicState::default()
+        };
+        seed_one_topic(&db, user, "addition", placed, 1).await;
+
+        let value = get_json(&app, user, "/api/status").await;
+        assert_eq!(value["placed"], true);
+    })
+    .await;
+}
+
+/// A learner with no open session has no session window to read: the
+/// dashboard answers from the model alone.
+#[tokio::test]
+async fn status_without_a_session_reads_no_session_window() {
+    TestDb::with(|db| async move {
+        let user = common::seed_learner(&db, "no-session@example.com").await;
+        let app = app(&db);
+
+        let value = get_json(&app, user, "/api/status").await;
+        assert_eq!(value["placed"], false);
+        assert_eq!(value["drill_due"], false);
     })
     .await;
 }

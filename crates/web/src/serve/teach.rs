@@ -27,10 +27,12 @@ pub async fn teach(
         ..
     } = open(&state, content, user_id, now, false).await?;
     let task = find(&plan, &task_id)?;
-    if task.task_type != TaskType::Lesson {
+    // Only a lesson teaches, and a lesson always names a topic to teach from.
+    // The one refusal covers a task of any other type; the composer never
+    // builds a lesson without a topic, so the two are one decision here.
+    let (TaskType::Lesson, Some(topic)) = (task.task_type, task.topic.clone()) else {
         return Err(no_instruction());
-    }
-    let topic = topic_or_refuse(task)?;
+    };
     let current = scratch
         .tasks
         .get(&task_id)
@@ -39,7 +41,9 @@ pub async fn teach(
     let key = kp_key(&topic, &kp);
 
     let doc = store(&state, approved_document(&mut *tx, &key, KIND_TEACH)).await?;
-    tx.rollback().await.map_err(db_failed)?;
+    // The transaction read one row and wrote nothing, so the drop rolls it back
+    // and the read needs no second round trip.
+    drop(tx);
 
     let page: TeachDoc = read_document(
         doc.ok_or_else(no_instruction)?,

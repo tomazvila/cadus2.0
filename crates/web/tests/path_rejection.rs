@@ -149,3 +149,28 @@ async fn a_readable_path_segment_still_reaches_the_handler() {
     })
     .await;
 }
+
+/// A route whose handler reads MORE path parameters than the route declares is
+/// a fault of the service, not of the caller: `500 internal_error` in the
+/// envelope.
+///
+/// No route of `cadus_web` does this, so the test builds a router of its own to
+/// prove `ApiPath` maps the server-side path rejection onto the envelope too.
+#[tokio::test]
+async fn a_handler_that_reads_too_many_path_parameters_is_500_internal_error() {
+    use cadus_web::path::ApiPath;
+
+    async fn reads_two(ApiPath((_a, _b)): ApiPath<(String, String)>) -> String {
+        String::new()
+    }
+
+    let app: Router = Router::new().route("/one/{a}", axum::routing::get(reads_two));
+    let (status, _content_type, body) = call(&app, Method::GET, "/one/value", None).await;
+
+    assert_eq!(
+        status,
+        StatusCode::INTERNAL_SERVER_ERROR,
+        "the arity mismatch answered {status} with {body}"
+    );
+    assert_eq!(code(&body), "internal_error");
+}

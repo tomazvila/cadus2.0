@@ -25,8 +25,8 @@ use super::INTERNAL_ERROR;
 use crate::AppState;
 use crate::error::ApiError;
 use crate::state::{
-    CURRICULUM_UNAVAILABLE, Content, INVALID_REQUEST, NO_OPEN_SESSION, STATE_UNAVAILABLE, Tenant,
-    UNKNOWN_COURSE, WebState,
+    CURRICULUM_UNAVAILABLE, Content, NO_OPEN_SESSION, STATE_UNAVAILABLE, Tenant, UNKNOWN_COURSE,
+    WebState,
 };
 
 /// A tenant transaction.
@@ -297,15 +297,6 @@ pub(crate) async fn append_and_fold(
     store(state, project_and_save(tx, user_id, input, None)).await
 }
 
-/// The `422 invalid_request` of a value the core refuses.
-pub(crate) fn invalid(err: impl ToString) -> ApiError {
-    ApiError::new(
-        StatusCode::UNPROCESSABLE_ENTITY,
-        INVALID_REQUEST,
-        err.to_string(),
-    )
-}
-
 /// The `409 no_open_session` of a route that needs an open session.
 pub(crate) fn no_open_session() -> ApiError {
     ApiError::new(StatusCode::CONFLICT, NO_OPEN_SESSION, "No session is open.")
@@ -320,10 +311,12 @@ pub(crate) fn unknown_course(course: &str) -> ApiError {
     )
 }
 
-/// The event-side slug of a curriculum id. A curriculum slug is trimmed and
-/// non-empty, so the event slug always reads.
-pub(crate) fn event_slug(id: &cadus_core::curriculum::Slug) -> Result<Slug, ApiError> {
-    Slug::new(id.as_str()).map_err(invalid)
+/// The event-side slug of a curriculum id.
+///
+/// A curriculum slug is trimmed and non-empty, which is the one rule the event
+/// slug checks, so the parse always reads and the fallback never runs.
+pub(crate) fn event_slug(id: &cadus_core::curriculum::Slug) -> Slug {
+    Slug::new(id.as_str()).unwrap_or_default()
 }
 
 /// The `enrolled` event of `course`, the same append `POST /api/enroll` makes.

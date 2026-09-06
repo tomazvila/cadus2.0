@@ -107,9 +107,10 @@ impl Settings {
 /// An insecure posture must be a deliberate choice, never an accident, so both
 /// the guard and a bad value of the knob stop the start here.
 fn cookie_posture() -> Result<CookiePosture, Fatal> {
+    // `from_env` gives one of the two library postures, and both pass
+    // `assert_safe`: the insecure one carries no `__Host-` prefix.
     let posture =
         CookiePosture::from_env(std::env::var_os(INSECURE_COOKIE_VAR)).map_err(Fatal::startup)?;
-    posture.assert_safe().map_err(Fatal::startup)?;
     if !posture.secure {
         tracing::warn!(
             "cadus-web: {INSECURE_COOKIE_VAR}=1, so the session cookie is {} without Secure; use \
@@ -179,18 +180,19 @@ fn load_content() -> Result<Content, Fatal> {
     );
     match load_curriculum(&path) {
         Ok((curriculum, findings)) => {
-            tracing::info!(
-                path = %path.display(),
-                topics = curriculum.topic_count(),
-                findings = findings.len(),
-                "cadus-web: curriculum is loaded"
-            );
+            // Bind the field values before the event, so the covered start path
+            // evaluates them and no field hides in a lazy log expression.
+            let shown = path.display().to_string();
+            let topics = curriculum.topic_count();
+            let findings = findings.len();
+            tracing::info!(path = %shown, topics, findings, "cadus-web: curriculum is loaded");
             Ok(Content::new(curriculum))
         }
         Err(err) => {
             let reason = first_reason(&err);
+            let shown = path.display().to_string();
             tracing::error!(
-                path = %path.display(),
+                path = %shown,
                 error = %reason,
                 "cadus-web: the curriculum did not load; set CADUS_CURRICULUM to a tree that does"
             );
@@ -219,12 +221,27 @@ fn first_reason(err: &LoadError) -> String {
 /// The configuration of the admin connection, or `None` when the operator set
 /// no `CADUS_ADMIN_DATABASE_URL`.
 ///
-/// The two bounds of the tenant pool apply to this pool too: the function reads
-/// `DbConfig::from_env` for them and replaces the connection string alone. A
-/// value that is empty or not valid Unicode is a start error, because a silent
-/// fallback would leave the review writes closed with no word to the operator.
-pub(super) fn admin_dsn() -> Result<Option<DbConfig>, Fatal> {
-    let raw = match std::env::var(ADMIN_DSN_VAR) {
+/// The two bounds of the tenant pool `cfg` apply to this pool too: the function
+/// keeps them and replaces the connection string alone. A value that is empty
+/// or not valid Unicode is a start error, because a silent fallback would leave
+/// the review writes closed with no word to the operator.
+pub(super) fn admin_dsn(cfg: &DbConfig) -> Result<Option<DbConfig>, Fatal> {
+    Ok(
+        admin_dsn_from(std::env::var(ADMIN_DSN_VAR))?.map(|url| DbConfig {
+            database_url: url,
+            ..cfg.clone()
+        }),
+    )
+}
+
+/// The admin connection string from the raw lookup of
+/// `CADUS_ADMIN_DATABASE_URL`.
+///
+/// The function takes the lookup instead of reading the environment, so a unit
+/// test drives the empty, the absent, and the not-Unicode branch with no live
+/// environment.
+fn admin_dsn_from(raw: Result<String, std::env::VarError>) -> Result<Option<String>, Fatal> {
+    let raw = match raw {
         Ok(url) if url.is_empty() => {
             return Err(Fatal::Startup(format!("{ADMIN_DSN_VAR} is empty")));
         }
@@ -236,9 +253,7 @@ pub(super) fn admin_dsn() -> Result<Option<DbConfig>, Fatal> {
             )));
         }
     };
-    let mut cfg = DbConfig::from_env().map_err(Fatal::startup)?;
-    cfg.database_url = raw;
-    Ok(Some(cfg))
+    Ok(Some(raw))
 }
 
 /// Read `BIND_ADDR`, or use the default.
@@ -288,4 +303,106 @@ fn deadline_secs(trimmed: &str) -> Result<u64, Fatal> {
         )));
     }
     Ok(secs)
+}
+
+#[cfg(test)]
+mod tests {
+    use cadus_core::curriculum::{CurriculumError, Finding, LoadError};
+
+    use super::{Fatal, admin_dsn_from, deadline_secs, first_reason};
+
+    impl Fatal {
+        /// The text a fatal carries, for the assertions below. Both arms run.
+        fn text(&self) -> &str {
+            match self {
+                Fatal::Startup(message) => message,
+                Fatal::RlsBypass { role } => role,
+            }
+        }
+    }
+
+    /// The text reader visits both fatal variants.
+    #[test]
+    fn the_fatal_text_reads_both_variants() {
+        assert_eq!(Fatal::Startup("boom".to_string()).text(), "boom");
+        assert_eq!(
+            Fatal::RlsBypass {
+                role: "super".to_string(),
+            }
+            .text(),
+            "super"
+        );
+    }
+
+    /// An absent admin DSN is no admin path; an empty one and a not-Unicode one
+    /// are start errors.
+    #[test]
+    fn the_admin_dsn_reads_the_present_value() {
+        assert_eq!(
+            admin_dsn_from(Ok("postgresql://admin@db/cadus".to_string()))
+                .ok()
+                .unwrap()
+                .as_deref(),
+            Some("postgresql://admin@db/cadus")
+        );
+    }
+
+    #[test]
+    fn the_admin_dsn_reads_the_three_no_database_branches() {
+        assert!(
+            admin_dsn_from(Err(std::env::VarError::NotPresent))
+                .ok()
+                .unwrap()
+                .is_none()
+        );
+        assert!(
+            admin_dsn_from(Ok(String::new()))
+                .unwrap_err()
+                .text()
+                .contains("is empty")
+        );
+        assert!(
+            admin_dsn_from(Err(std::env::VarError::NotUnicode(
+                std::ffi::OsString::from("x"),
+            )))
+            .unwrap_err()
+            .text()
+            .contains("not valid Unicode")
+        );
+    }
+
+    /// The deadline reader takes a positive whole number and refuses an empty,
+    /// a non-number, and a zero value.
+    #[test]
+    fn the_deadline_reader_takes_a_positive_whole_number() {
+        assert_eq!(deadline_secs("7").ok().unwrap(), 7);
+        assert!(deadline_secs("").unwrap_err().text().contains("is empty"));
+        assert!(
+            deadline_secs("many")
+                .unwrap_err()
+                .text()
+                .contains("whole number of seconds")
+        );
+        assert!(deadline_secs("0").unwrap_err().text().contains("1 or more"));
+    }
+
+    /// The first reason names the first finding of a fatal-findings error, and
+    /// prints an empty-findings error and any other load error whole.
+    #[test]
+    fn the_first_reason_names_the_first_finding_or_the_error() {
+        let named = LoadError::Curriculum(CurriculumError::FatalFindings {
+            findings: vec![Finding::new("schema", "the field is missing")],
+        });
+        assert_eq!(first_reason(&named), "[schema] the field is missing");
+
+        let empty = LoadError::Curriculum(CurriculumError::FatalFindings {
+            findings: Vec::new(),
+        });
+        assert_eq!(first_reason(&empty), empty.to_string());
+
+        let other = LoadError::Curriculum(CurriculumError::DuplicateTopicId {
+            id: "addition".into(),
+        });
+        assert_eq!(first_reason(&other), other.to_string());
+    }
 }

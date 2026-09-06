@@ -112,10 +112,9 @@ pub async fn poll(
     let row = bound(&state.db, job(&mut *tx, id))
         .await
         .map_err(|err| failed(&err))?;
-    // The read changed nothing, so the transaction ends with a rollback.
-    if let Err(err) = tx.rollback().await {
-        tracing::warn!(error = %err, "cadus-web: the diagnosis read did not roll back");
-    }
+    // The read changed nothing, so the transaction ends with the rollback its
+    // drop runs.
+    drop(tx);
     let Some(row) = row else {
         return Err(unknown_diagnosis());
     };
@@ -135,9 +134,9 @@ pub async fn poll(
 async fn finished_frame(db: &Db, user_id: Uuid, job_id: Uuid) -> Option<SseEvent> {
     let mut tx = begin_tenant(db.pool(), user_id).await.ok()?;
     let row = job(&mut *tx, job_id).await.ok().flatten();
-    if let Err(err) = tx.rollback().await {
-        tracing::warn!(error = %err, "cadus-web: the stream read did not roll back");
-    }
+    // The read changed nothing, so the transaction ends with the rollback its
+    // drop runs.
+    drop(tx);
     let view = job_view(&row?, Utc::now());
     if view.status == STATUS_PENDING {
         return None;

@@ -199,3 +199,132 @@ pub fn read_session_cookie<'h>(headers: &'h HeaderMap, name: &str) -> Option<&'h
     }
     None
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    /// The bad-flag error prints the value, and prints the not-Unicode note
+    /// when it has none.
+    #[test]
+    fn the_bad_flag_error_prints_the_value_or_the_unicode_note() {
+        assert_eq!(
+            CookiePostureError::BadFlag {
+                value: Some("true".to_string()),
+            }
+            .to_string(),
+            format!("{INSECURE_COOKIE_VAR} must be 0 or 1, not \"true\"")
+        );
+        assert_eq!(
+            CookiePostureError::BadFlag { value: None }.to_string(),
+            format!("{INSECURE_COOKIE_VAR} is not valid Unicode")
+        );
+    }
+
+    /// The host-prefix error names the cookie and the knob.
+    #[test]
+    fn the_host_prefix_error_names_the_cookie_and_the_knob() {
+        let text = CookiePostureError::HostPrefixWithoutSecure {
+            name: "__Host-cadus_session",
+        }
+        .to_string();
+        assert!(text.contains("__Host-cadus_session cookie needs Secure"));
+        assert!(text.contains(INSECURE_COOKIE_VAR));
+    }
+
+    /// The knob reads absent, empty, `0`, and `1`, and refuses any other value.
+    #[test]
+    fn the_knob_reads_its_four_values_and_refuses_the_rest() {
+        use std::ffi::OsString;
+
+        let cases: [(Option<&str>, Result<CookiePosture, CookiePostureError>); 5] = [
+            (None, Ok(CookiePosture::SECURE)),
+            (Some(""), Ok(CookiePosture::SECURE)),
+            (Some(" 0 "), Ok(CookiePosture::SECURE)),
+            (Some("1"), Ok(CookiePosture::INSECURE)),
+            (
+                Some("yes"),
+                Err(CookiePostureError::BadFlag {
+                    value: Some("yes".to_string()),
+                }),
+            ),
+        ];
+        for (raw, expected) in cases {
+            let read = CookiePosture::from_env(raw.map(OsString::from));
+            assert_eq!(read, expected, "{raw:?}");
+        }
+    }
+
+    /// The bearer reader refuses a short value, another scheme, and an empty
+    /// token, and reads the token behind the scheme.
+    #[test]
+    fn the_bearer_reader_refuses_the_three_bad_shapes_and_reads_the_token() {
+        use axum::http::{HeaderMap, HeaderValue};
+
+        for (value, expected) in [
+            ("Bear", None),
+            ("Basic abcdefgh", None),
+            ("Bearer    ", None),
+            ("bearer  tok-1 ", Some("tok-1")),
+        ] {
+            let mut headers = HeaderMap::new();
+            headers.insert("authorization", HeaderValue::from_static(value));
+            assert_eq!(read_bearer_token(&headers), expected, "{value:?}");
+        }
+    }
+
+    /// The one knob expands into the correlated posture pair.
+    #[test]
+    fn the_flag_expands_into_the_posture_pair() {
+        assert_eq!(CookiePosture::from_flag(false), CookiePosture::SECURE);
+        assert_eq!(CookiePosture::from_flag(true), CookiePosture::INSECURE);
+    }
+
+    /// A value that is not valid Unicode is a bad-flag error with no value.
+    #[cfg(unix)]
+    #[test]
+    fn a_non_unicode_flag_is_a_bad_flag_with_no_value() {
+        use std::ffi::OsString;
+        use std::os::unix::ffi::OsStringExt;
+
+        let raw = OsString::from_vec(vec![0x31, 0xff]);
+        assert_eq!(
+            CookiePosture::from_env(Some(raw)),
+            Err(CookiePostureError::BadFlag { value: None })
+        );
+    }
+
+    /// The bearer reader answers `None` with no `Authorization` header, and a
+    /// value that is not visible ASCII.
+    #[test]
+    fn the_bearer_reader_needs_a_usable_header() {
+        use axum::http::{HeaderMap, HeaderValue};
+
+        assert_eq!(read_bearer_token(&HeaderMap::new()), None);
+        let mut headers = HeaderMap::new();
+        headers.insert(
+            "authorization",
+            HeaderValue::from_bytes(b"Bearer \xff").unwrap(),
+        );
+        assert_eq!(read_bearer_token(&headers), None);
+    }
+
+    /// The cookie reader skips a header that is not text and a pair with no
+    /// `=`, and reads the named cookie from the rest.
+    #[test]
+    fn the_cookie_reader_skips_unusable_headers_and_pairs() {
+        use axum::http::{HeaderMap, HeaderValue};
+
+        let mut headers = HeaderMap::new();
+        headers.append("cookie", HeaderValue::from_bytes(b"\xff").unwrap());
+        headers.append(
+            "cookie",
+            HeaderValue::from_static("flag; __Host-cadus_session=token-value"),
+        );
+        assert_eq!(
+            read_session_cookie(&headers, SESSION_COOKIE),
+            Some("token-value")
+        );
+        assert_eq!(read_session_cookie(&headers, "absent"), None);
+    }
+}

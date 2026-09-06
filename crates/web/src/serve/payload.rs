@@ -120,14 +120,18 @@ pub(super) fn serve_payload(
 /// The authored solve time of a topic, when the arena holds the topic.
 fn expected_time(graph: &Curriculum, topic_id: Option<&str>) -> Option<i64> {
     let idx = graph.idx_of(topic_id?)?;
-    Some(graph.topic(idx)?.expected_time_secs)
+    // `idx_of` gave the index, so `topic` is `Some`; `map` keeps that proof
+    // without a second failure edge.
+    graph.topic(idx).map(|topic| topic.expected_time_secs)
 }
 
 /// The answer kind the checker reads for a statement of this topic.
 pub(super) fn answer_kind_of(graph: &Curriculum, topic_id: &str) -> Option<String> {
     let idx = graph.idx_of(topic_id)?;
-    let topic = graph.topic(idx)?;
-    Some(topic.answer_kind.as_str().to_string())
+    // `idx_of` gave the index, so `topic` is `Some`; `map` keeps that proof.
+    graph
+        .topic(idx)
+        .map(|topic| topic.answer_kind.as_str().to_string())
 }
 
 #[cfg(test)]

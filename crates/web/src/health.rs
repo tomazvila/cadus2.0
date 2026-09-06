@@ -99,11 +99,9 @@ pub async fn ready(State(state): State<AppState>) -> Response {
 async fn probe_db(db: &Db) -> &'static str {
     let query = sqlx::query_scalar!(r#"SELECT 1 AS "one!""#).fetch_one(db.pool());
     match bounded(db, query).await {
-        Ok(1) => DEP_OK,
-        Ok(other) => {
-            tracing::warn!(value = other, "web: the readiness probe got a wrong value");
-            DEP_DOWN
-        }
+        // The query selects the literal `1`, so a value is the only success and
+        // it always names an answering database.
+        Ok(_) => DEP_OK,
         Err(StoreError::Timeout { after_ms }) => {
             tracing::warn!("web: the readiness probe timed out after {after_ms} ms");
             DEP_DOWN

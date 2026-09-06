@@ -9,8 +9,12 @@ use common::{BASE_US, SESSION, seed_open_session};
 
 use common::sessions::*;
 
-use cadus_core::event::{Event, SchemaVersion, SessionStart, Timestamp};
+use std::collections::BTreeMap;
+
+use cadus_core::event::{Event, KpProgress, SchemaVersion, SessionStart, Timestamp, TopicStatus};
+use cadus_core::learner::{LearnerModel, TopicState};
 use cadus_web::state::{TaskProgress, WebState};
+use sqlx::types::chrono::Utc;
 
 // --------------------------------------------------------------------------- //
 // Acceptance 2: listing the plan writes nothing
@@ -212,6 +216,57 @@ async fn the_export_round_trips_through_the_event_reader() {
             .await
             .unwrap();
         assert_eq!(total, 3);
+    })
+    .await;
+}
+
+// --------------------------------------------------------------------------- //
+// The blocked frontier
+// --------------------------------------------------------------------------- //
+
+/// A frontier whose every lesson waits in a retry delay reports when the first
+/// one reopens.
+#[tokio::test]
+async fn the_plan_reports_when_a_blocked_frontier_reopens() {
+    TestDb::with(|db| async move {
+        let user = common::seed_learner(&db, "blocked@example.com").await;
+        let app = app(&db);
+        seed_open_session(&db, user).await;
+        seed_event(&db, user, 2, &enrolled_c1()).await;
+        let mut topics: BTreeMap<String, TopicState> = BTreeMap::new();
+        // `addition` is on the schedule, so `subtraction` is the whole frontier
+        // of `c1`; its one point failed a moment ago, so its lesson waits.
+        topics.insert(
+            "addition".to_string(),
+            TopicState {
+                status: TopicStatus::Learning,
+                rep_num: 1.0,
+                memory_base: 1.0,
+                t0: Some(Timestamp::from_micros(BASE_US)),
+                interval_days: 400.0,
+                ability: 0.6,
+                ..TopicState::default()
+            },
+        );
+        let mut failed = TopicState {
+            t0: Some(Timestamp::from_micros(Utc::now().timestamp_micros())),
+            ..TopicState::default()
+        };
+        failed
+            .kp_progress
+            .insert("kp1".to_string(), KpProgress::FailedOnce);
+        topics.insert("subtraction".to_string(), failed);
+        let model = LearnerModel {
+            topics,
+            ..LearnerModel::default()
+        };
+        common::seed_cached_model(&db, user, &model, 2).await;
+
+        let plan = plan_of(&app, user).await;
+        assert!(
+            plan["frontier_blocked_until"].is_string(),
+            "the plan names no reopening: {plan}"
+        );
     })
     .await;
 }
