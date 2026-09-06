@@ -27,6 +27,15 @@ pub const BIG_SUBTRACTION_BODY: &str = r#"{
               {"params": {"a": 1, "b": 100}, "expected": "9899"}]
 }"#;
 
+/// The insert of one approved `content_store` template row (C6).
+///
+/// The three bind parameters are the digest, the serving key, and the template
+/// body, in that order. The row lands approved, so a reader that filters on
+/// `status` finds it.
+pub const INSERT_APPROVED_TEMPLATE: &str =
+    "INSERT INTO content_store (digest, kp_id, kind, body, status, approved_at)
+     VALUES ($1, $2, 'template', $3::text::jsonb, 'approved', now())";
+
 /// Read a JSON Lines file: one document of `T` per line, in file order.
 pub fn read_jsonl<T: DeserializeOwned>(path: &Path) -> Vec<T> {
     let text = stop_on(

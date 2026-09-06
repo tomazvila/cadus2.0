@@ -42,6 +42,7 @@ use std::sync::Arc;
 use std::time::{Duration, Instant};
 
 use axum::Router;
+use cadus_store::shutdown::{Shutdown, close_budget, close_within};
 use cadus_store::{Db, DbConfig, StoreError};
 use cadus_web::diagnosis::DiagnosisHub;
 use cadus_web::{AppState, create_app};
@@ -50,10 +51,11 @@ use tokio::task::JoinHandle;
 use tracing_subscriber::EnvFilter;
 
 mod settings;
-mod stop;
 
 use settings::{ADMIN_DSN_VAR, Settings, admin_dsn};
-use stop::{Shutdown, close_budget, close_within};
+
+/// The process name that every log line of the stop carries.
+const PROCESS: &str = "cadus-web";
 
 /// The reason that stops the start sequence.
 enum Fatal {
@@ -109,7 +111,7 @@ async fn run() -> Result<(), Fatal> {
     // refusal: a setting that does not read stops the start the same way a
     // handler that does not register would.
     let (settings, mut shutdown) = Settings::read().and_then(|settings| {
-        Shutdown::install()
+        Shutdown::install(PROCESS)
             .map_err(Fatal::startup)
             .map(|shutdown| (settings, shutdown))
     })?;

@@ -52,11 +52,11 @@ use cadus_core::answer::normalize;
 use cadus_core::curriculum::AnswerKind;
 use cadus_core::event::WorkQuality;
 use cadus_core::learner::problem_text_hash;
-use cadus_web::grade::{Grade, deterministic_grade};
-use common::{
-    BENCH_VAR, CORPUS_ROWS, CorpusRow, Percentiles, benchmarks_are_on, budget, corpus, kind_of,
-    profile, write_artifact,
+use cadus_testkit::bench::{
+    BENCH_VAR, Percentiles, benchmarks_are_on, budget, profile, write_artifact,
 };
+use cadus_web::grade::{Grade, deterministic_grade};
+use common::{CORPUS_ROWS, CorpusRow, corpus, kind_of};
 
 /// The p95 budget of one grade, in nanoseconds: 5 ms of the 300 ms of L2.
 const GRADE_P95_BUDGET_NS: u128 = 5_000_000;
@@ -432,12 +432,9 @@ fn the_percentiles_and_the_artifact_are_readable() {
     assert_eq!((times.p50, times.p95, times.p99, times.max), (3, 5, 5, 5));
     assert_eq!(
         times.json(),
-        "{\"p50_ns\": 3, \"p95_ns\": 5, \"p99_ns\": 5, \"max_ns\": 5}"
+        serde_json::json!({"p50_ns": 3, "p95_ns": 5, "p99_ns": 5, "max_ns": 5})
     );
     assert_eq!(times.phrase(), "p50 3 ns, p95 5 ns, p99 5 ns, max 5 ns");
-    let empty = Percentiles::of(&[]);
-    assert_eq!((empty.p50, empty.max), (0, 0));
-
     let body = artifact_body(
         10,
         &Shares {

@@ -225,23 +225,16 @@ mod tests {
     }
 
     /// The lesson task the served problem belongs to.
+    ///
+    /// `Task::default()` writes the other twelve fields. The default of
+    /// `task_type` is `TaskType::Lesson`, and the line below states it, because
+    /// the kind of the task is what this fixture is about.
     fn lesson() -> Task {
         Task {
             task_id: "s-lesson-addition".to_string(),
             task_type: TaskType::Lesson,
             topic: Some("addition".to_string()),
-            n_problems: None,
-            mix: Vec::new(),
-            difficulty_target: None,
-            recent_problem_hashes: Vec::new(),
-            start_at_kp: None,
-            time_budget_secs: None,
-            why: String::new(),
-            gap_fill: false,
-            gap_return_to: None,
-            component_topics: Vec::new(),
-            is_remediation: false,
-            nearly_due: false,
+            ..Task::default()
         }
     }
 

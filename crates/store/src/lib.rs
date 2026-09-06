@@ -30,6 +30,7 @@ pub mod config;
 pub mod content;
 pub mod diagnosis;
 pub mod pool;
+pub mod shutdown;
 pub mod state;
 
 pub use config::{

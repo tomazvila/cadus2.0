@@ -6,6 +6,7 @@ use cadus_core::curriculum::{Curriculum, load_curriculum};
 use cadus_core::pool::PoolProblem;
 use cadus_store::Db;
 use cadus_store::test_support::TestDb;
+use cadus_testkit::fixtures::INSERT_APPROVED_TEMPLATE;
 use cadus_worker::{
     RefillConfig, RefillJob, RefillReport, RefillState, WorkerError, refill_once_at,
 };
@@ -105,16 +106,13 @@ pub async fn seed_fixed_user(admin: &PgPool) -> Uuid {
 
 /// Insert one approved template document (C6).
 pub async fn seed_approved_template(admin: &PgPool, digest: &str, kp_id: &str, body: &str) {
-    sqlx::query(
-        "INSERT INTO content_store (digest, kp_id, kind, body, status, approved_at)
-         VALUES ($1, $2, 'template', $3::text::jsonb, 'approved', now())",
-    )
-    .bind(digest)
-    .bind(kp_id)
-    .bind(body)
-    .execute(admin)
-    .await
-    .expect("the content row inserts");
+    sqlx::query(INSERT_APPROVED_TEMPLATE)
+        .bind(digest)
+        .bind(kp_id)
+        .bind(body)
+        .execute(admin)
+        .await
+        .expect("the content row inserts");
 }
 
 /// Put one claimed row into the pool, so the `(user, kp)` pair exists.

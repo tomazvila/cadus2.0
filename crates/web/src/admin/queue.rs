@@ -8,10 +8,7 @@ use axum::Json;
 use axum::extract::{Query, State};
 use cadus_core::pool::{ProblemSource, TemplateSource};
 use cadus_core::template::{GATE_SEED, from_body};
-use cadus_store::content::{
-    self, KIND_TEMPLATE, LIST_LIMIT, ReviewFilter, ReviewItem, STATUS_APPROVED, StoredDoc,
-};
-use cadus_store::{Db, StoreError};
+use cadus_store::content::{self, KIND_TEMPLATE, LIST_LIMIT, ReviewFilter, StoredDoc};
 use serde_json::{Value, json};
 
 use super::{
@@ -25,73 +22,6 @@ use crate::operator::{gate_json, spec_of};
 use crate::path::ApiPath;
 use crate::session::content;
 use crate::state::Content;
-
-/// One page of the review queue, newest first.
-///
-/// WHY THIS STATEMENT LIVES IN THE WEB CRATE. [`content::review_list`] answers
-/// the first [`LIST_LIMIT`] rows and takes no offset, so a caller cannot reach
-/// the row after the two hundredth, and the T3 bill of the operator screen
-/// prices every stored document. The fix unit that added [`PAGE_PARAM`] (the M6
-/// review of 2026-08-30, unit FIX-M6-E) may open no file under `crates/store`,
-/// so the paged read sits beside its caller. Fold it back into
-/// [`content::review_list`] — one `offset` field on [`ReviewFilter`] — when the
-/// store is next opened, and delete this function.
-///
-/// The order is the order of [`content::review_list`]: `created_at` descending
-/// with the digest as the tie break. One order for every page is what makes the
-/// walk whole — page `n + 1` starts on the row page `n` stopped before — so this
-/// route reads every page through this one statement, page 0 included.
-///
-/// # Errors
-///
-/// Returns [`StoreError::Db`] when the statement fails.
-async fn review_page(
-    db: &Db,
-    filter: &ReviewFilter<'_>,
-    offset: i64,
-) -> Result<Vec<ReviewItem>, StoreError> {
-    let rows = sqlx::query!(
-        r#"
-        SELECT c.digest AS "digest!", c.kp_id AS "kp_id!", c.kind AS "kind!",
-               c.status AS "status!", c.authoring_attempts AS "authoring_attempts!",
-               c.authoring_cost_usd::text AS "cost_usd?",
-               c.created_at AS "created_at!", c.body AS "body!",
-               (SELECT count(*) FROM content_store a
-                 WHERE a.kp_id = c.kp_id AND a.kind = $4 AND a.status = $5)
-                 AS "approved_templates!"
-        FROM content_store c
-        WHERE ($1::text IS NULL OR c.status = $1)
-          AND ($2::text IS NULL OR c.kind = $2)
-          AND ($3::text IS NULL OR c.kp_id = $3)
-        ORDER BY c.created_at DESC, c.digest
-        LIMIT $6 OFFSET $7
-        "#,
-        filter.status,
-        filter.kind,
-        filter.kp_id,
-        KIND_TEMPLATE,
-        STATUS_APPROVED,
-        LIST_LIMIT,
-        offset,
-    )
-    .fetch_all(db.pool())
-    .await?;
-
-    Ok(rows
-        .into_iter()
-        .map(|row| ReviewItem {
-            digest: row.digest,
-            kp_id: row.kp_id,
-            kind: row.kind,
-            status: row.status,
-            authoring_attempts: row.authoring_attempts,
-            cost_usd: row.cost_usd,
-            created_at: row.created_at,
-            body: row.body,
-            approved_templates: row.approved_templates,
-        })
-        .collect())
-}
 
 /// `GET /api/admin/content` — the review queue (C6, T3).
 ///
@@ -114,16 +44,17 @@ pub async fn list(
     AdminUser(_authed): AdminUser,
     Query(params): Query<BTreeMap<String, String>>,
 ) -> Result<Json<Value>, ApiError> {
+    let page = page_of(params.get(PAGE_PARAM).map(String::as_str))?;
     let filter = ReviewFilter {
         status: params.get(STATUS_PARAM).map(String::as_str),
         kind: params.get(KIND_PARAM).map(String::as_str),
         kp_id: params.get(KP_PARAM).map(String::as_str),
+        offset: page * LIST_LIMIT,
     };
-    let page = page_of(params.get(PAGE_PARAM).map(String::as_str))?;
     let rows = store_call(
         &state.db,
         "admin content list",
-        review_page(&state.db, &filter, page * LIST_LIMIT),
+        content::review_list(state.db.pool(), &filter),
     )
     .await?;
 
