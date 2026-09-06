@@ -304,6 +304,9 @@ pub struct ReviewResult {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct QuizResult {
+    /// Unknown evidence leaves the batch verdict pending.
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub inconclusive: bool,
     /// When the event happened.
     pub ts: Timestamp,
     /// The session id.

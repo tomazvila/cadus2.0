@@ -18,7 +18,7 @@
 - Legacy review events omit `confirmation_skills` and `inconclusive` on serialization.
 - Historical attempt evidence remains unchanged. New attempts identify skills with stable `topic/KP` keys.
 - Existing valid rework scratch remains readable. It supplies no fresh independent evidence.
-- The immediate feedback loop covers lessons, reviews, drills, and legacy per-component multi-step tasks. Supplemental practice stays outside the original assessment count and weighted score. The configured terminal lesson-failure rule still closes a failed task and queues its existing remediation. Quizzes retain blind receipts; the missing quiz close and batch-reveal flow remains a prerequisite for post-quiz practice.
+- The immediate feedback loop covers lessons, reviews, drills, and legacy per-component multi-step tasks. Supplemental practice stays outside the original assessment count and weighted score. The configured terminal lesson-failure rule still closes a failed task and queues its existing remediation. Quizzes retain blind receipts and provide fresh practice after their explicit batch reveal.
 - Confirmation delay counts completed lesson, review, and quiz events. A task type without a result event supplies no task-close evidence.
 - This code supplies engineering evidence. It establishes no empirical retention or mastery guarantee.
 ## Verification
@@ -26,7 +26,7 @@
 - Twenty-nine HTTP regressions cover fresh same-KP practice, exhausted-pool recovery, pass rules, immutable event shape, real review close, and targeted follow-up events.
 - The complete frontend suite passes: 56 files, 880 tests. TypeScript and ESLint pass.
 - Clippy passes for core, store, and web across all targets. The final changed test targets also pass.
-- Source limits pass: zero clones, zero unused public items, no checked source file at 500 lines, and no function above the configured complexity limits.
+- Rust source limits pass: zero clones, zero unused public items, no checked source file at 500 lines, and no function above the configured complexity limits. The separate web clone scan reports two pre-existing fixture/object duplicates outside the quiz-practice changes.
 - The initial full core suite passes. The broad web run was stopped after successful completed binaries so the integration owner runs the consolidated workspace gate once.
 - No live learner data, deployment, model API call, or content approval changed.
 
@@ -37,3 +37,9 @@
 - Exhausted pools return `fresh_practice_unavailable`. Feedback names the block and preserves a retry action and the saved answer.
 - An early targeted confirmation leaves the delayed obligation intact. Its resolution requires the specified number of distinct task closes.
 - Added checks cover original weighted score after three successful practice items, final-slot review/drill recovery, server-owned evidence, explicit unavailable/refill recovery, and blind quiz receipts.
+
+## Quiz result and independent practice
+The final original answer now appends one server-owned `QuizResult`. Receipts remain blind three-field acknowledgements, including the final receipt. `POST /api/task/{task_id}/quiz-result` releases the recorded batch only after that event exists. The same endpoint accepts `practice: true` after studying and starts a persistent, deduplicated missed-skill queue. Each supplemental item must have a fresh text digest and carries the server-owned practice marker. Supplemental attempts leave the original quiz count, result, XP and FIRe evidence unchanged. The quiz UI hides all studied solutions during untimed practice and resumes that mode on reload.
+An unknown answer makes the batch inconclusive. Its result earns zero XP and changes no FIRe, practice stamp, high-score streak or retake classification. The reveal names the pending verdict and the individual unknown answer. Historical quiz events default to a conclusive result.
+Verification: raw HTTP blind-receipt tests; close/reveal authorization gate and fresh-practice lifecycle; unchanged original result and question count after supplemental success; unknown-answer batch; historic event compatibility; core projection non-effects; quiz UI reveal/hide/practice and 40 prior clock, reveal, timeout and card regressions. Route fixture is regenerated from the live Axum router.
+The configured terminal lesson fail-after close remains a failure with its existing remediation queue. The quiz slice does not change that separate lifecycle.

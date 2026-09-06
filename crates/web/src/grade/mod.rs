@@ -123,8 +123,11 @@ use crate::state::{
 };
 
 mod advance;
+mod feedback;
+mod quiz;
 mod reply;
 mod review;
+pub use quiz::result as quiz_result;
 mod route;
 mod submission;
 mod verdict;

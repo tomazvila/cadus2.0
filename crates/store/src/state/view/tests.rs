@@ -133,6 +133,7 @@ fn sample_log() -> Vec<EventRow> {
         row(
             6,
             Event::QuizResult(QuizResult {
+                inconclusive: false,
                 ts: at(5),
                 session: Some("s_2026-01-01a".to_string()),
                 v: SchemaVersion::current(),
@@ -412,6 +413,7 @@ fn the_other_branches_of_the_fold_fold_nothing_or_reset() {
 
     let quiz = |score| {
         Event::QuizResult(QuizResult {
+            inconclusive: false,
             ts: at(5),
             session: None,
             v: SchemaVersion::current(),

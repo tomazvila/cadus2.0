@@ -249,6 +249,9 @@ pub struct TaskProgress {
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct QuizBuffer {
+    /// Whether the post-reveal independent-practice queue was started.
+    #[serde(default)]
+    pub practice_started: bool,
     /// The answers, in serve order.
     #[serde(default)]
     pub answers: Vec<Json>,

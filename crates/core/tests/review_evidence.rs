@@ -184,3 +184,28 @@ fn supplemental_practice_never_changes_the_original_review_score() {
     assert_eq!(result.score, 1.0);
     assert!(result.confirmation_skills.is_empty());
 }
+
+#[test]
+fn inconclusive_quiz_does_not_classify_a_retake_or_change_learning_evidence() {
+    use cadus_core::{event::Timestamp, projector::Projector};
+    let (graph, cfg) = projector_inputs();
+    let mut projector = Projector::new(&graph, &cfg);
+    let now = Timestamp::from_micros(1_788_696_000_000_000);
+    let before = projector.finalize(now).unwrap();
+    let result = Event::from_json(r#"{"type":"quiz_result","ts":"2026-09-06T12:00:00Z","quiz_id":"quiz","score":0.0,"xp":100.0,"inconclusive":true,"per_topic":[{"topic":"topic","correct":false,"secs":10}]}"#).unwrap();
+    projector.apply(&result, true);
+    let after = projector.finalize(now).unwrap();
+    assert_eq!(before.topics, after.topics);
+    assert_eq!(before.quiz, after.quiz);
+    assert_eq!(before.xp, after.xp);
+    let legacy = Event::from_json(
+        r#"{"type":"quiz_result","ts":"2026-09-06T12:00:00Z","quiz_id":"old","score":1.0}"#,
+    )
+    .unwrap();
+    assert!(
+        serde_json::to_value(legacy)
+            .unwrap()
+            .get("inconclusive")
+            .is_none()
+    );
+}

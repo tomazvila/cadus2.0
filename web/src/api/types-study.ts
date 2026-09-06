@@ -357,3 +357,13 @@ export function isQuizReceipt(reply: TaskAnswerResponse): reply is QuizReceiptRe
   return (reply as QuizReceiptResponse).accepted === true;
 }
 
+
+/** Evidence released after every original quiz answer is recorded. */
+export interface QuizResultResponse {
+  inconclusive: boolean;
+  score: number;
+  xp: number;
+  practice_pending: boolean;
+  practice_available: boolean;
+  answers: { problem_id: string; text: string; given_answer: string; correct: boolean; outcome: string; reason?: string | null; solution_sketch?: string | null }[];
+}

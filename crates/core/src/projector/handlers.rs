@@ -263,6 +263,9 @@ impl Projector<'_> {
             "quiz-{}-{ts}",
             event.session.as_deref().unwrap_or("legacy")
         ));
+        if event.inconclusive {
+            return;
+        }
         let graph = self.graph;
         self.xp_events.push((ts, event.xp));
         self.quiz_last_ts = Some(ts);

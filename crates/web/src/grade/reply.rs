@@ -10,7 +10,6 @@ use super::*;
 pub(super) fn clear_task_scratch(scratch: &mut WebState, task_id: &str) {
     scratch.served.remove(task_id);
     scratch.feedback_practice.remove(task_id);
-    scratch.quizzes.remove(task_id);
     scratch.multistep.remove(task_id);
     scratch.task_memory.remove(task_id);
 }
@@ -52,7 +51,7 @@ pub(super) fn reply(
     let unavailable = !closed && next.is_none();
     let ungraded = recorded.outcome.is_ungraded();
     let feedback_practice = !closed
-        && recorded.task_type != TaskType::Quiz
+        && (recorded.task_type != TaskType::Quiz || recorded.feedback_practice)
         && !ungraded
         && (!recorded.correct || recorded.assisted);
     let mut map = outcome_fields(recorded);
@@ -118,6 +117,9 @@ pub(super) fn buffer_quiz_answer(
         .push(json!({
             "problem_id": served.problem_id,
             "topic": served.topic,
+            "kp": served.kp,
+            "outcome": recorded.outcome.as_str(),
+            "reason": recorded.outcome.reason(),
             "text": served.text,
             "given_answer": recorded.given_answer,
             "correct": recorded.correct,

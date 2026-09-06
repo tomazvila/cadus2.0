@@ -18,16 +18,14 @@
  *                 same `problem_id` writes a second attempt to an append-only log and gives
  *                 the loser `404 unknown_problem`.
  *
- * WHAT THE BATCH REVEAL SHOWS IN 2.0, and why it is short. 1.0 built a per-question
- * breakdown from the close payload (`api.py:1702-1797`). M5 mounts no close route —
- * `SPEC_ROUTES_ABSENT` in `api/types.ts` records `POST /api/task/{id}/abort` — and the
- * quiz receipt carries `accepted`, `remaining` and `quiz_complete` and nothing else. So the
- * end screen states what is true: every answer is recorded. The breakdown arrives with the
- * Rust close unit, and it belongs behind that route, not in a guess made here.
+ * The completed batch has a server-owned result and a separate reveal. Fresh practice
+ * starts only after the learner has studied that batch.
  *
  * WHAT THIS UNIT DOES NOT OWN. There is no router yet, so navigation arrives as props.
  */
 import { useEffect, useRef, useState } from 'react';
+import { ApiError } from '@/api';
+import { QuizResults } from './QuizResults';
 import { MathBlock } from '@/components/MathBlock';
 import { AnswerField, type AnswerFieldHandle } from '@/components/AnswerField';
 import { Chip, LoadingBlock } from '@/components/primitives';
@@ -145,6 +143,7 @@ export function Quiz({
   // Questions still owed. The first serve numbers it before a question is on screen.
   const [remaining, setRemaining] = useState(0);
   const [left, setLeft] = useState<number | null>(null);
+  const [resumePractice, setResumePractice] = useState(false);
 
   const answerRef = useRef<AnswerFieldHandle>(null);
   const doneRef = useRef<HTMLButtonElement>(null);
@@ -240,7 +239,15 @@ export function Quiz({
   useEffect(() => {
     if (servedOnce.current) return;
     servedOnce.current = true;
-    void call(() => api.taskServe(task.task_id), (s) => {
+    void call(() => api.taskServe(task.task_id).catch((error: Error) => {
+      if (error instanceof ApiError && error.code === 'task_complete') return null;
+      throw error;
+    }), (s) => {
+      if (!s || s.feedback_practice) {
+        setResumePractice(s?.feedback_practice === true);
+        finish();
+        return;
+      }
       setTotal(num(s.total));
       // The count is SERVER state. A quiz serve numbers the live question `answered + 1`
       // (`crates/web/src/serve.rs:159-164`), so the answers already in survive a re-mount
@@ -362,7 +369,7 @@ export function Quiz({
           </p>
           {/* No score and no per-question breakdown: the receipt carries neither, and a
               number invented here would be a lie about a recorded attempt. */}
-          <p className="muted small">Your progress is up to date on the dashboard.</p>
+          <QuizResults api={api} taskId={task.task_id} onUnauthorized={onUnauthorized} resumePractice={resumePractice} />
           <button ref={doneRef} type="button" className="btn btn-primary" onClick={onDone}>
             {fromSession ? 'Continue session' : 'Back to dashboard'}
           </button>

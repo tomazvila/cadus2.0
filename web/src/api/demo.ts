@@ -331,6 +331,7 @@ export function createDemoApi(): ApiClient {
       return reply({ hint: DEMO_HINTS[hintCount - 1], hint_number: hintCount });
     },
 
+    taskQuizResult: async () => ({ inconclusive: false, score: 0, xp: 0, answers: [], practice_pending: false, practice_available: false }),
     taskAnswer: async (taskId, body): Promise<TaskAnswerResponse> => {
       if (taskId !== DEMO_TASK_ID) refuse(404, 'unknown_task', 'The demo plans one task.');
       const problem = DEMO_PROBLEMS[cursor];

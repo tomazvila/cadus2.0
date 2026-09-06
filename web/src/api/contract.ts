@@ -29,6 +29,7 @@ import type {
   SessionPlanResponse,
   SessionStartResponse,
   TaskAnswerResponse,
+  QuizResultResponse,
   TeachResponse,
 } from './types-study';
 import type {
@@ -96,6 +97,7 @@ export interface ApiClient {
   sessionEnd(minutes?: number): Promise<SessionEndResponse>;
   getPlan(): Promise<SessionPlanResponse>;
   taskServe(taskId: string): Promise<ServedProblem>;
+  taskQuizResult(taskId: string, practice?: boolean): Promise<QuizResultResponse>;
   taskTeach(taskId: string): Promise<TeachResponse>;
   taskHint(taskId: string, problemId: string): Promise<HintResponse>;
   taskAnswer(
@@ -197,6 +199,7 @@ export const ROUTES: readonly RouteRow[] = [
   { method: 'POST', path: '/api/task/{task_id}/integrated', auth: 'S', via: 'method', client: 'taskIntegrated' },
   { method: 'POST', path: '/api/task/{task_id}/integrated/hint', auth: 'S', via: 'method', client: 'taskIntegratedHint' },
   { method: 'POST', path: '/api/task/{task_id}/integrated/answer', auth: 'S', via: 'method', client: 'taskIntegratedAnswer' },
+  { method: 'POST', path: '/api/task/{task_id}/quiz-result', auth: 'S', via: 'method', client: 'taskQuizResult' },
 
   { method: 'POST', path: '/api/auth/signup', auth: 'P', via: 'method', client: 'signup' },
   { method: 'POST', path: '/api/auth/login', auth: 'P', via: 'method', client: 'login' },
@@ -249,4 +252,3 @@ export const ROUTES: readonly RouteRow[] = [
 export const SPEC_ROUTES_ABSENT: readonly { method: string; path: string; needed_by: string }[] = [
   { method: 'POST', path: '/api/task/{task_id}/abort', needed_by: 'S8 (the exit paths)' },
 ];
-

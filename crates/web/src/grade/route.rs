@@ -89,7 +89,11 @@ pub async fn answer(
 
     // H3, section 5.4. `open` bound the row to the open session, so the session
     // stands; the field is carried as the log spells it.
-    let assisted = reference_assisted(task.task_type, submitted.assisted, served.hints_given.len());
+    let assisted = if served.rework.is_some() {
+        submitted.assisted || !served.hints_given.is_empty()
+    } else {
+        reference_assisted(task.task_type, submitted.assisted, served.hints_given.len())
+    };
     let session = scratch.session.clone();
     let graded = Graded {
         grade: &grade,
@@ -110,24 +114,7 @@ pub async fn answer(
 
     let recorded = attempt;
     let attempt_id = recorded.attempt_id.clone();
-    if task.task_type != TaskType::Quiz
-        && !recorded.outcome.is_ungraded()
-        && (!recorded.correct || recorded.assisted)
-    {
-        let digest = problem_text_hash(&served.text);
-        let mut digests = scratch
-            .feedback_practice
-            .get(&task_id)
-            .and_then(|value| value["digests"].as_array())
-            .cloned()
-            .unwrap_or_default();
-        digests.push(json!(digest));
-        scratch.feedback_practice.insert(task_id.clone(), json!({
-            "digest": digest, "digests": digests, "topic": served.serving_topic(), "record_topic": served.topic, "kp": served.kp,
-        }));
-    } else if recorded.correct && !recorded.assisted {
-        scratch.feedback_practice.remove(&task_id);
-    }
+    feedback::update_practice(&mut scratch, &task_id, &served, &recorded);
 
     // Step 6. One INSERT. Zero rows back means the attempt already stands, so
     // the fold, the advance and the state write are all skipped and the whole
@@ -163,7 +150,7 @@ pub async fn answer(
         advance_and_fold(&state, content, &mut tx, user_id, &task, &recorded, &events).await?;
 
     // Step 8 and step 10: move the task on, draw the next problem, write the row.
-    if task.task_type == TaskType::Quiz {
+    if task.task_type == TaskType::Quiz && !recorded.feedback_practice {
         let closed = task_moved_on(
             progress_for(&mut scratch, &task, graph),
             task.task_type,
@@ -264,6 +251,8 @@ async fn advance_and_fold(
     let history = store(state, load_session_view(tx, user_id)).await?;
     let moved = if task.task_type == TaskType::Review {
         review::close_review(task, recorded, events, &content.cfg)
+    } else if task.task_type == TaskType::Quiz {
+        quiz::close_quiz(task, recorded, events, &content.cfg)
     } else {
         advance(
             &content.curriculum,

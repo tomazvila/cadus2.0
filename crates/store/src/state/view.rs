@@ -115,7 +115,8 @@ impl SessionView {
             Event::Attempt(body) => self.record_attempt(body),
             Event::LessonResult(body) => self.close_lesson(body),
             Event::ReviewResult(body) => self.close_review(body),
-            Event::QuizResult(body) => {
+            Event::QuizResult(body) if !body.inconclusive => {
+                self.credit(body.xp);
                 self.quiz_high_score_streak = if body.score >= QUIZ_HIGH_SCORE {
                     self.quiz_high_score_streak.saturating_add(1)
                 } else {

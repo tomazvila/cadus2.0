@@ -102,12 +102,14 @@ describe('the curriculum and session routes', () => {
     await api.enroll('proofs');
     await api.sessionStart();
     await api.taskTeach('t 1');
+    await api.taskQuizResult('q/1', true);
     await api.getDiagnosis('j/1');
     expect(calls()).toEqual([
       ['GET', '/api/modules', null],
       ['POST', '/api/enroll', '{"course":"proofs"}'],
       ['POST', '/api/session/start', '{}'],
       ['POST', '/api/task/t%201/teach', '{}'],
+      ['POST', '/api/task/q%2F1/quiz-result', '{"practice":true}'],
       ['GET', '/api/diagnosis/j%2F1', null],
     ]);
   });

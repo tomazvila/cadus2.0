@@ -244,7 +244,8 @@ pub(crate) async fn open(
     // The readiness of D-F5, read in the SAME transaction: the plan these three
     // routes look a task up in is the plan `GET /api/session/plan` listed.
     let readiness = readiness_of(state, content, &mut tx).await?;
-    let plan = compose_plan(content, &view, &projection.model, &session, now, &readiness);
+    let mut plan = compose_plan(content, &view, &projection.model, &session, now, &readiness);
+    restore_quiz_practice(&mut plan, &scratch);
     Ok(Open {
         tx,
         events,
@@ -309,4 +310,21 @@ fn no_problem(topic_id: &str) -> ApiError {
         POOL_UNAVAILABLE,
         format!("Topic {topic_id:?} has no problem to serve."),
     )
+}
+
+/// A completed quiz remains addressable while its post-reveal practice is pending.
+fn restore_quiz_practice(plan: &mut SessionPlan, scratch: &WebState) {
+    for (id, progress) in &scratch.tasks {
+        if progress.task_type == "quiz"
+            && scratch.quizzes.contains_key(id)
+            && !plan.tasks.iter().any(|task| task.task_id == *id)
+        {
+            plan.tasks.push(Task {
+                task_id: id.clone(),
+                task_type: TaskType::Quiz,
+                n_problems: Some(progress.total),
+                ..Task::default()
+            });
+        }
+    }
 }

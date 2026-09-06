@@ -342,6 +342,7 @@ mod tests {
     /// A quiz result at `ts_us` with no question and no XP.
     fn quiz_at(ts_us: i64) -> Event {
         Event::QuizResult(QuizResult {
+            inconclusive: false,
             ts: Timestamp::from_micros(ts_us),
             session: None,
             v: SchemaVersion::current(),

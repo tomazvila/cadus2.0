@@ -36,6 +36,7 @@ import type {
   SignupResponse,
   StatusResponse,
   TaskAnswerResponse,
+  QuizResultResponse,
   TeachResponse,
   UngradedListResponse,
 } from './types';
@@ -111,6 +112,7 @@ export const api: ApiClient = {
   // as `undefined`: those are different bytes on the wire, and the body reader refuses a
   // field whose type it does not expect. TypeScript's excess-property check fires on
   // object LITERALS only, so a caller passing a variable would put extra keys on the wire.
+  taskQuizResult: (taskId, practice = false) => request<QuizResultResponse>('POST', `/task/${seg(taskId)}/quiz-result`, { practice }),
   taskAnswer: (taskId, { problem_id, answer, work, assisted }) =>
     request<TaskAnswerResponse>('POST', `/task/${seg(taskId)}/answer`, {
       problem_id,

@@ -135,6 +135,7 @@ pub fn graded(attempt_id: &str, offset: i64) -> Event {
 /// A quiz result with a score.
 pub fn quiz(score: f64, offset: i64) -> Event {
     Event::QuizResult(QuizResult {
+        inconclusive: false,
         ts: Timestamp::from_micros(BASE_US + offset),
         session: Some("s_2026-01-01a".to_string()),
         v: SchemaVersion::current(),
