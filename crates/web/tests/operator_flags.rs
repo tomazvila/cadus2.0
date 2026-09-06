@@ -17,6 +17,7 @@
 mod common;
 
 use cadus_store::test_support::TestDb;
+use cadus_testkit::fixtures::INSERT_APPROVED_TEMPLATE;
 use serde_json::{Value, json};
 
 use cadus_store::{DEFAULT_CLIENT_TIMEOUT_MS, Db};
@@ -50,16 +51,13 @@ const INSTANCES_CHECKED: u64 = 17;
 
 /// Write one approved `content_store` template row with the admin pool.
 async fn seed_template(db: &TestDb, digest: &str, kp_id: &str, body: &str) {
-    sqlx::query(
-        "INSERT INTO content_store (digest, kp_id, kind, body, status, approved_at)
-         VALUES ($1, $2, 'template', $3::text::jsonb, 'approved', now())",
-    )
-    .bind(digest)
-    .bind(kp_id)
-    .bind(body)
-    .execute(&db.admin)
-    .await
-    .unwrap();
+    sqlx::query(INSERT_APPROVED_TEMPLATE)
+        .bind(digest)
+        .bind(kp_id)
+        .bind(body)
+        .execute(&db.admin)
+        .await
+        .unwrap();
 }
 
 /// The view, read as the admin of `SESSION_TOKEN_ONE`; the read must succeed.
