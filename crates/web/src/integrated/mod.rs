@@ -68,6 +68,7 @@ use crate::serve::{Open, find, open};
 use crate::session::{content, now_pair};
 use crate::state::{Content, INVALID_REQUEST, Tenant};
 
+mod assistance;
 mod record;
 mod route;
 
@@ -136,9 +137,8 @@ fn hint_payload(item: &IntegratedItem, request: &HintRequest) -> Result<Value, A
         "index": request.index,
         "hint": text,
         "hints_available": available,
-        // The count the learner has opened is what marks the field assisted at
-        // grade time, so the client reports it back with the submission.
-        "hints_used": text.map_or(request.index, |_| request.index + 1),
+        // The route replaces this with the persisted reveal count.
+        "hints_used": 0,
     }))
 }
 

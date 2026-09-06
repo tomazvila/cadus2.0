@@ -262,6 +262,14 @@ async fn one_submission_grades_every_step_and_the_final_answer() {
     TestDb::with(|db| async move {
         let app = app(&db, IntegratedSet::from_items(vec![item()]));
         let user = learner_with_due_reviews(&db, "integrated-answer@example.com").await;
+        let (status, body) = post(
+            &app,
+            user,
+            &format!("/api/task/{MULTISTEP}/integrated/hint"),
+            Some(json!({"field": "person-minutes", "index": 0})),
+        )
+        .await;
+        assert_eq!(status, StatusCode::OK, "{body}");
         let uri = format!("/api/task/{MULTISTEP}/integrated/answer");
 
         let (status, body) = post(
@@ -403,6 +411,14 @@ async fn the_submission_is_recorded_with_every_answer_and_its_contract() {
     TestDb::with(|db| async move {
         let app = app(&db, IntegratedSet::from_items(vec![item()]));
         let user = learner_with_due_reviews(&db, "integrated-record@example.com").await;
+        let (status, body) = post(
+            &app,
+            user,
+            &format!("/api/task/{MULTISTEP}/integrated/hint"),
+            Some(json!({"field": "person-minutes", "index": 0})),
+        )
+        .await;
+        assert_eq!(status, StatusCode::OK, "{body}");
         let body = json!({
             "method": "person-minutes",
             "steps": [
@@ -452,71 +468,5 @@ async fn the_submission_is_recorded_with_every_answer_and_its_contract() {
     .await;
 }
 
-#[tokio::test]
-async fn the_log_replays_after_an_integrated_attempt() {
-    TestDb::with(|db| async move {
-        let app = app(&db, IntegratedSet::from_items(vec![item()]));
-        let user = learner_with_due_reviews(&db, "integrated-replay@example.com").await;
-        post(
-            &app,
-            user,
-            &format!("/api/task/{MULTISTEP}/integrated"),
-            None,
-        )
-        .await;
-        let (status, _) = post(
-            &app,
-            user,
-            &format!("/api/task/{MULTISTEP}/integrated/answer"),
-            Some(json!({"steps": [], "final_answer": {"id": "final", "answer": "4"}})),
-        )
-        .await;
-        assert_eq!(status, StatusCode::OK);
-
-        // The fold reads the two new rows and the plan still composes: an event
-        // kind the projector ignores must never stop a later request.
-        let task_id = multistep_task_id(&app, user).await;
-        assert_eq!(task_id, MULTISTEP);
-        let (status, body) = post(
-            &app,
-            user,
-            &format!("/api/task/{MULTISTEP}/integrated"),
-            None,
-        )
-        .await;
-        assert_eq!(status, StatusCode::OK, "{body}");
-    })
-    .await;
-}
-
-#[tokio::test]
-async fn another_learner_writes_no_row_of_this_learner() {
-    TestDb::with(|db| async move {
-        let app = app(&db, IntegratedSet::from_items(vec![item()]));
-        let owner = learner_with_due_reviews(&db, "integrated-own@example.com").await;
-        let other = seed_learner(&db, "integrated-stranger@example.com").await;
-        seed_open_session(&db, other).await;
-        let uri = format!("/api/task/{MULTISTEP}/integrated/answer");
-        let body = json!({"steps": [], "final_answer": {"id": "final", "answer": "4"}});
-
-        let (status, _) = post(&app, other, &uri, Some(body.clone())).await;
-        assert_eq!(status, StatusCode::NOT_FOUND);
-        assert!(
-            events_of(&db, owner)
-                .await
-                .iter()
-                .all(|(kind, _)| kind != "integrated_attempt"),
-            "a stranger wrote a row of the owner"
-        );
-        let (status, _) = post(&app, owner, &uri, Some(body)).await;
-        assert_eq!(status, StatusCode::OK);
-        assert!(
-            events_of(&db, other)
-                .await
-                .iter()
-                .all(|(kind, _)| kind != "integrated_attempt"),
-            "the owner wrote a row of the stranger"
-        );
-    })
-    .await;
-}
+#[path = "integrated_routes/hint_authority.rs"]
+mod hint_authority;

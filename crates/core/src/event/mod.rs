@@ -30,7 +30,9 @@ pub use body::{
     Attempt, AttemptProblem, LessonResult, QuizResult, QuizTopicResult, RegradedAttempt,
     RetentionProbe, ReviewResult, ServedProblem, TaskServed,
 };
-pub use integrated::{IntegratedAttempt, IntegratedField, IntegratedServed};
+pub use integrated::{
+    IntegratedAttempt, IntegratedField, IntegratedHintRevealed, IntegratedServed,
+};
 pub use kind::{
     AnswerKind, AttemptOutcome, EnrollReason, Exposure, ItemSource, KpProgress, TaskType,
     TopicStatus, WorkQuality,
@@ -122,6 +124,9 @@ pub enum Event {
     /// One graded submission of a whole integrated task (D-F10).
     #[serde(rename = "integrated_attempt")]
     IntegratedAttempt(IntegratedAttempt),
+    /// One server-confirmed hint reveal of an integrated task.
+    #[serde(rename = "integrated_hint_revealed")]
+    IntegratedHintRevealed(IntegratedHintRevealed),
 }
 
 /// Apply `body` to the inner payload of every [`Event`] member.
@@ -147,6 +152,7 @@ macro_rules! for_each_event {
             Event::RetentionProbe($inner) => $body,
             Event::IntegratedServed($inner) => $body,
             Event::IntegratedAttempt($inner) => $body,
+            Event::IntegratedHintRevealed($inner) => $body,
         }
     };
 }
@@ -245,6 +251,7 @@ impl Event {
             Self::RetentionProbe(_) => "retention_probe",
             Self::IntegratedServed(_) => "integrated_served",
             Self::IntegratedAttempt(_) => "integrated_attempt",
+            Self::IntegratedHintRevealed(_) => "integrated_hint_revealed",
         }
     }
 

@@ -306,7 +306,8 @@ impl<'a> Projector<'a> {
             // progression path of the web tier owns that write. An undecided
             // field must never move a topic state (D-F2).
             | Event::IntegratedServed(_)
-            | Event::IntegratedAttempt(_) => {}
+            | Event::IntegratedAttempt(_)
+            | Event::IntegratedHintRevealed(_) => {}
             Event::RetentionProbe(body) => self.retention.apply(body, &self.cfg.retention),
         }
         self.applied += 1;

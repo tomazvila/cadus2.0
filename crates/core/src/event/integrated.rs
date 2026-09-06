@@ -117,4 +117,29 @@ pub struct IntegratedAttempt {
     /// reads it. It is kept so a human reviewer can read what the learner meant.
     #[serde(default)]
     pub reasoning_ungraded: Option<String>,
+    /// Frozen server verdict for idempotent response replay; absent in older events.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub grade: Option<Box<crate::integrated::IntegratedGrade>>,
+}
+
+/// One hint rung actually revealed by the server, scoped to its served task.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct IntegratedHintRevealed {
+    /// When the server committed the reveal.
+    pub ts: Timestamp,
+    /// The session that owns the task.
+    #[serde(default)]
+    pub session: Option<String>,
+    /// The schema version.
+    #[serde(default = "SchemaVersion::current")]
+    pub v: SchemaVersion,
+    /// The task in that session.
+    pub task_id: String,
+    /// The authored item digest; edited content has separate assistance state.
+    pub item_digest: String,
+    /// The step id, or `final`.
+    pub field: String,
+    /// The zero-based rung the server returned.
+    pub index: usize,
 }

@@ -12,6 +12,8 @@ struct Resolved<'content> {
     item: &'content IntegratedItem,
     tx: Transaction<'static, Postgres>,
     session: String,
+    scratch: crate::state::WebState,
+    task: Task,
 }
 
 /// Resolve the item of `task_id` in the learner's own plan.
@@ -28,13 +30,17 @@ async fn resolve<'content>(
     now: Timestamp,
     lock: bool,
 ) -> Result<Resolved<'content>, ApiError> {
-    let Open { tx, plan, .. } = open(state, content, user_id, now, lock).await?;
-    let task = find(&plan, task_id)?;
-    let item = for_task(content, task).ok_or_else(no_item)?;
+    let Open {
+        tx, plan, scratch, ..
+    } = open(state, content, user_id, now, lock).await?;
+    let task = find(&plan, task_id)?.clone();
+    let item = for_task(content, &task).ok_or_else(no_item)?;
     Ok(Resolved {
         item,
         tx,
         session: plan.session,
+        scratch,
+        task,
     })
 }
 
@@ -57,15 +63,22 @@ pub async fn serve(
         item,
         mut tx,
         session,
+        ..
     } = resolve(&state, content, user_id, &task_id, now, true).await?;
     let digest = item.digest();
     let event = Event::IntegratedServed(served_event(item, &task_id, &session, now));
     let key = served_key(&session, &task_id, &digest);
     store(&state, append_event(&mut tx, user_id, &event, Some(&key))).await?;
+    let used = store(
+        &state,
+        cadus_store::integrated::hints_used(&mut tx, user_id, &session, &task_id, &digest),
+    )
+    .await?;
     tx.commit().await.map_err(db_failed)?;
 
-    let payload = serde_json::to_value(view_of(item))
+    let mut payload = serde_json::to_value(view_of(item))
         .map_err(|_| ApiError::internal("The integrated problem did not serialize."))?;
+    payload["hints_used"] = json!(used);
     Ok(Json(payload))
 }
 
@@ -73,7 +86,7 @@ pub async fn serve(
 ///
 /// The rungs stay on the server. The reply carries the rung the learner asked
 /// for, the count of rungs the field holds, and the count they have now opened,
-/// which the submission reports back as the assistance of that field.
+/// persisted before the reply and read again when the answer is graded.
 pub async fn hint_rung(
     State(state): State<AppState>,
     Tenant(user_id): Tenant,
@@ -85,11 +98,38 @@ pub async fn hint_rung(
     let body = raw.ok_or_else(|| invalid("A hint request names a field."))?;
     let request: HintRequest = serde_json::from_value(body.0)
         .map_err(|_| invalid("A hint request names a field and a rung index."))?;
-    let Resolved { item, tx, .. } = resolve(&state, content, user_id, &task_id, now, false).await?;
-    let payload = hint_payload(item, &request);
-    // The transaction read only, so the drop rolls it back with no round trip.
-    drop(tx);
-    Ok(Json(payload?))
+    let Resolved {
+        item,
+        mut tx,
+        session,
+        ..
+    } = resolve(&state, content, user_id, &task_id, now, true).await?;
+    let mut payload = hint_payload(item, &request)?;
+    let digest = item.digest();
+    if payload["hint"].is_string() {
+        let event = Event::IntegratedHintRevealed(cadus_core::event::IntegratedHintRevealed {
+            ts: now,
+            session: Some(session.clone()),
+            v: cadus_core::event::SchemaVersion::current(),
+            task_id: task_id.clone(),
+            item_digest: digest.clone(),
+            field: request.field.clone(),
+            index: request.index,
+        });
+        let key = format!(
+            "{session}:{task_id}:integrated-hint:{digest}:{}:{}",
+            request.field, request.index
+        );
+        store(&state, append_event(&mut tx, user_id, &event, Some(&key))).await?;
+    }
+    let used = store(
+        &state,
+        cadus_store::integrated::hints_used(&mut tx, user_id, &session, &task_id, &digest),
+    )
+    .await?;
+    payload["hints_used"] = json!(used.get(&request.field).copied().unwrap_or(0));
+    tx.commit().await.map_err(db_failed)?;
+    Ok(Json(payload))
 }
 
 /// `POST /api/task/{task_id}/integrated/answer`: grade the whole item.
@@ -108,22 +148,53 @@ pub async fn answer(
     let content = content(&state)?;
     let (_, now) = now_pair();
     let body = raw.ok_or_else(|| invalid("A submission carries a final answer."))?;
-    let submission: Submission = serde_json::from_value(body.0)
+    let mut submission: Submission = serde_json::from_value(body.0)
         .map_err(|_| invalid("A submission carries steps and a final answer."))?;
     let Resolved {
         item,
         mut tx,
         session,
+        mut scratch,
+        task,
     } = resolve(&state, content, user_id, &task_id, now, true).await?;
 
-    let result = grade(item, &submission);
+    let key = attempt_key(&session, &task_id, &item.digest());
+    if let Some(record) = store(
+        &state,
+        cadus_store::integrated::attempt(&mut tx, user_id, &key),
+    )
+    .await?
+    {
+        let result = assistance::replay(&record, item);
+        let mut payload = answer_payload(&result, record.reasoning_ungraded.as_ref());
+        payload["recorded"] = json!(false);
+        tx.commit().await.map_err(db_failed)?;
+        return Ok(Json(payload));
+    }
+    let used = store(
+        &state,
+        cadus_store::integrated::hints_used(&mut tx, user_id, &session, &task_id, &item.digest()),
+    )
+    .await?;
+    assistance::submission(&mut submission, &used);
+    let mut result = grade(item, &submission);
+    assistance::verdict(&mut result, &used);
     let record = attempt_event(item, &result, &submission, &task_id, &session, now);
     let key = record.attempt_id.clone();
+    let note = record.reasoning_ungraded.clone();
     let event = Event::IntegratedAttempt(record);
     let seq = store(&state, append_event(&mut tx, user_id, &event, Some(&key))).await?;
+    if seq.is_some() {
+        let progress = crate::serve::progress_for(&mut scratch, &task, &content.curriculum);
+        progress.total = 1;
+        progress.served = progress.served.max(1);
+        progress.answered = 1;
+        progress.done = true;
+        crate::session::write_state(&state.db, &mut tx, user_id, &scratch).await?;
+    }
     tx.commit().await.map_err(db_failed)?;
 
-    let mut payload = answer_payload(&result, submission.reasoning.as_ref());
+    let mut payload = answer_payload(&result, note.as_ref());
     // `None` means the partial unique index refused a second row for this item:
     // the first submission stands, and this one credits nothing again.
     payload["recorded"] = json!(seq.is_some());

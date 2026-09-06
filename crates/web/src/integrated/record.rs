@@ -130,6 +130,7 @@ pub fn attempt_event(
         skills_credited: grade.skills_credited.clone(),
         solved: grade.solved,
         assisted: grade.assisted,
+        grade: Some(Box::new(grade.clone())),
         reasoning_ungraded: submission
             .reasoning
             .as_ref()
