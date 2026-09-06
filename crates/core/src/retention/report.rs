@@ -11,7 +11,7 @@
 
 use std::collections::{BTreeMap, BTreeSet};
 
-use crate::event::{Event, TaskType};
+use crate::event::Event;
 use crate::learner::{LearnerModel, PendingRemediation};
 use crate::xp::is_inferred;
 
@@ -94,12 +94,11 @@ impl PlacementError {
 
 /// The integrated-task performance of D-F11.
 ///
-/// It is a tally over the log: how many multi-step tasks were served, and how the
-/// review that closed each one decided. A served task with no result yet counts as
-/// `open`, so the three closed counts always sum below `served`.
+/// It tallies whole integrated items handed off or submitted, keyed by session,
+/// task and item digest. An item with no submission counts as `open`.
 #[derive(Debug, Clone, Default, PartialEq, Eq)]
 pub struct IntegratedPerformance {
-    /// The multi-step tasks the selector served.
+    /// The whole integrated items handed off or submitted.
     pub served: u32,
     /// The served tasks the learner passed.
     pub passed: u32,
@@ -119,45 +118,48 @@ impl IntegratedPerformance {
         (decided > 0).then(|| f64::from(self.passed) / f64::from(decided))
     }
 
-    /// Tally the multi-step tasks of `events`.
-    ///
-    /// A `review_result` binds to a served task through `task_id`. A result with no
-    /// `task_id` binds to nothing here: the tally counts what the log states, and it
-    /// never guesses which task an untagged result closed.
+    /// Tally genuine integrated evidence, keeping the first submission per item.
+    /// Component-based multi-step tasks have separate review evidence.
     #[must_use]
     pub fn of_events(events: &[Event]) -> Self {
-        let mut served: BTreeSet<&str> = BTreeSet::new();
-        let mut closed = Self::default();
+        let mut items = BTreeMap::new();
         for event in events {
             match event {
-                Event::TaskServed(body) if body.task_type == TaskType::MultiStep => {
-                    served.insert(body.task_id.as_str());
+                Event::IntegratedServed(body) => {
+                    items
+                        .entry((
+                            body.session.as_deref(),
+                            body.task_id.as_str(),
+                            body.item_digest.as_str(),
+                        ))
+                        .or_insert(None);
                 }
-                Event::ReviewResult(body) => {
-                    let Some(task_id) = body.task_id.as_deref() else {
-                        continue;
-                    };
-                    if !served.contains(task_id) {
-                        continue;
-                    }
-                    if body.inconclusive {
-                        closed.inconclusive += 1;
-                    } else if body.passed {
-                        closed.passed += 1;
-                    } else {
-                        closed.failed += 1;
-                    }
+                Event::IntegratedAttempt(body) => {
+                    items
+                        .entry((
+                            body.session.as_deref(),
+                            body.task_id.as_str(),
+                            body.item_digest.as_str(),
+                        ))
+                        .or_insert(None)
+                        .get_or_insert(body);
                 }
                 _ => {}
             }
         }
-        let count = u32::try_from(served.len()).unwrap_or(u32::MAX);
-        let decided = closed.passed + closed.failed + closed.inconclusive;
-        Self {
-            served: count,
-            open: count.saturating_sub(decided),
-            ..closed
+        let mut tally = Self {
+            served: u32::try_from(items.len()).unwrap_or(u32::MAX),
+            ..Self::default()
+        };
+        for attempt in items.into_values() {
+            match attempt {
+                None => tally.open += 1,
+                Some(body) if body.final_field.outcome.is_ungraded() => tally.inconclusive += 1,
+                Some(body) if body.solved => tally.passed += 1,
+                Some(_) => tally.failed += 1,
+            }
         }
+        tally
     }
 }
 
@@ -220,10 +222,7 @@ impl RetentionReport {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::event::{
-        AttemptOutcome, Exposure, ReviewResult, SchemaVersion, Slug, TaskServed, Timestamp,
-        TopicStatus, WorkQuality,
-    };
+    use crate::event::{AttemptOutcome, Exposure, Slug, TopicStatus};
     use crate::learner::TopicState;
     use crate::retention::state::tests::probe;
 
@@ -233,42 +232,6 @@ mod tests {
             retention: state,
             ..LearnerModel::default()
         }
-    }
-
-    /// One served multi-step task `task_id`.
-    fn served(task_id: &str) -> Event {
-        Event::TaskServed(TaskServed {
-            ts: Timestamp::from_micros(0),
-            session: None,
-            v: SchemaVersion::current(),
-            task_id: task_id.to_owned(),
-            task_type: TaskType::MultiStep,
-            topic: None,
-            kp: None,
-            problems: Vec::new(),
-            component_topics: Vec::new(),
-            seed: None,
-            probe_delay_days: None,
-            confirm: false,
-        })
-    }
-
-    /// One review result that closes `task_id`.
-    fn closed(task_id: Option<&str>, passed: bool, inconclusive: bool) -> Event {
-        Event::ReviewResult(ReviewResult {
-            ts: Timestamp::from_micros(0),
-            session: None,
-            v: SchemaVersion::current(),
-            topic: Slug::new("t1").expect("a slug"),
-            passed,
-            weighted_score: 1.0,
-            xp: 0.0,
-            quality_tier: WorkQuality::NearlyPerfect,
-            assisted: false,
-            task_id: task_id.map(std::borrow::ToOwned::to_owned),
-            inconclusive,
-            confirmation_skills: Vec::new(),
-        })
     }
 
     #[test]
@@ -373,34 +336,8 @@ mod tests {
         assert_eq!(placement.failed, vec!["t2".to_owned()]);
         assert_eq!(placement.awaiting, vec!["t1".to_owned()]);
     }
-
-    #[test]
-    fn integrated_performance_tallies_the_multi_step_tasks() {
-        let events = vec![
-            served("s1-multi-step"),
-            served("s2-multi-step"),
-            served("s3-multi-step"),
-            closed(Some("s1-multi-step"), true, false),
-            closed(Some("s2-multi-step"), false, false),
-            closed(None, true, false),
-        ];
-        let integrated = IntegratedPerformance::of_events(&events);
-        assert_eq!(integrated.served, 3);
-        assert_eq!(integrated.passed, 1);
-        assert_eq!(integrated.failed, 1);
-        assert_eq!(integrated.open, 1);
-        assert_eq!(integrated.pass_rate(), Some(0.5));
-    }
-
-    #[test]
-    fn an_inconclusive_multi_step_leaves_the_pass_rate_alone() {
-        let events = vec![
-            served("s1-multi-step"),
-            closed(Some("s1-multi-step"), false, true),
-        ];
-        let integrated = IntegratedPerformance::of_events(&events);
-        assert_eq!(integrated.inconclusive, 1);
-        assert_eq!(integrated.failed, 0);
-        assert_eq!(integrated.pass_rate(), None);
-    }
 }
+
+#[cfg(test)]
+#[path = "report_integrated_tests.rs"]
+mod integrated_tests;
