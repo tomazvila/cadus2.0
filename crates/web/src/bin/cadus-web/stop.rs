@@ -68,12 +68,11 @@ impl Shutdown {
     pub fn install() -> std::io::Result<Self> {
         use tokio::signal::unix::{SignalKind, signal};
 
-        let (terminate, interrupt) = signal(SignalKind::terminate()).and_then(|terminate| {
-            signal(SignalKind::interrupt()).map(|interrupt| (terminate, interrupt))
-        })?;
-        Ok(Self {
-            terminate,
-            interrupt,
+        signal(SignalKind::terminate()).and_then(|terminate| {
+            signal(SignalKind::interrupt()).map(|interrupt| Self {
+                terminate,
+                interrupt,
+            })
         })
     }
 

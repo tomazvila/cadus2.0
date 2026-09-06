@@ -339,12 +339,18 @@ mod tests {
     /// A client id with no secret, and a secret with no id, are no provider.
     #[test]
     fn half_a_credential_pair_is_no_provider() {
-        let id_only =
-            OAuthConfig::from_env(|name| (name == GOOGLE_ID_VAR).then(|| "id".to_string()));
-        assert!(id_only.google.is_none());
-        let secret_only =
-            OAuthConfig::from_env(|name| (name == GOOGLE_SECRET_VAR).then(|| "secret".to_string()));
-        assert!(secret_only.google.is_none());
+        // One lookup closure serves every case, so the pair reader is measured
+        // as one instantiation.
+        let present = std::cell::RefCell::new(Vec::<&str>::new());
+        let get = |name: &str| present.borrow().contains(&name).then(|| "v".to_string());
+        for (names, served) in [
+            (vec![GOOGLE_ID_VAR], false),
+            (vec![GOOGLE_SECRET_VAR], false),
+            (vec![GOOGLE_ID_VAR, GOOGLE_SECRET_VAR], true),
+        ] {
+            *present.borrow_mut() = names;
+            assert_eq!(OAuthConfig::from_env(get).google.is_some(), served);
+        }
     }
 
     /// The stub transport answers every request with its error, and the error
