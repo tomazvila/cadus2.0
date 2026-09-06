@@ -90,7 +90,7 @@ async fn transport_retry_and_author_retry_share_the_same_cap() {
 #[tokio::test]
 async fn parallel_knowledge_points_share_one_cap_and_duplicate_keys_make_no_call() {
     TestDb::with(|db| async move {
-        let fake = FakeModel::start(vec![(400, "{}".to_owned()); 10]).await;
+        let fake = FakeModel::start(vec![(429, "{}".to_owned()); 10]).await;
         let budget = Budget::new(3, 1, 16000).unwrap();
         let job = AuthoringJob::new(fake.client(4000, 2000)).with_budget(budget.clone());
         let specs: Vec<_> = (0..8)

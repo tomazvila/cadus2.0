@@ -158,23 +158,20 @@ async fn author(args: &AuthorArgs) -> Result<(), WorkerError> {
     // knowledge point, `approved` AND `pending`, so a template this same process
     // stored minutes earlier gates the page and the ladder authored after it
     // (`job::served_instances`; M6 review 2, finding V1).
+    let mut stored = 0_u32;
+    let mut declined = 0_u32;
     for kind in kinds {
         let report = run_parallel(&db, &job, kind, &specs, args.concurrency.max(1)).await?;
+        stored += report.stored;
+        declined += report.declined;
         print!("{}", cli::render_batch(kind, &report));
+        if job.endpoint_failure().is_some() {
+            break;
+        }
     }
-    println!(
-        "reserved: {} micro-USD; reported: {} micro-USD; price-bound breach: {}",
-        budget.reserved_micros(),
-        budget.reported_micros(),
-        budget.breached()
-    );
-    if budget.breached() {
-        return Err(config_error(
-            "provider price-bound breach; all later requests refused",
-        ));
-    }
+    let result = cadus_worker::authoring::budget::finish(&budget, &job, stored, declined);
     close_within(POOL_CLOSE_DEADLINE, db.pool().close()).await;
-    Ok(())
+    result
 }
 
 /// Run one readiness audit and write its reports (D-F5).

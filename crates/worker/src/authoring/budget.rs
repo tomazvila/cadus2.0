@@ -18,6 +18,7 @@ use std::sync::{
 pub struct Budget {
     reserved: Arc<AtomicU64>,
     breached: Arc<AtomicBool>,
+    refused: Arc<AtomicBool>,
     reported: Arc<AtomicU64>,
     limit: u64,
     per_request: u64,
@@ -39,6 +40,7 @@ impl Budget {
         Ok(Self {
             reserved: Arc::new(AtomicU64::new(0)),
             breached: Arc::new(AtomicBool::new(false)),
+            refused: Arc::new(AtomicBool::new(false)),
             reported: Arc::new(AtomicU64::new(0)),
             limit,
             per_request,
@@ -108,6 +110,7 @@ impl Budget {
             })
             .map(|_| ())
             .map_err(|_| {
+                self.refused.store(true, Ordering::SeqCst);
                 ModelError::Config(
                     "authoring reservation budget exhausted; no HTTP request sent".to_owned(),
                 )
@@ -141,6 +144,12 @@ impl Budget {
             }
             Err(_) => self.breached.store(true, Ordering::SeqCst),
         }
+    }
+
+    /// Whether any request exhausted the reservation balance.
+    #[must_use]
+    pub fn refused(&self) -> bool {
+        self.refused.load(Ordering::SeqCst)
     }
 
     /// The sum of provider prices that fit the six-decimal ledger.
@@ -215,4 +224,39 @@ fn reported_micros(text: &str) -> Result<u64, String> {
         coefficient.div_ceil(magnitude)
     };
     u64::try_from(micros).map_err(|_| "provider price overflow".to_owned())
+}
+
+/// Report partial paid-pass results and return a nonzero CLI outcome on a failure.
+///
+/// # Errors
+/// Refuse endpoint failures, price breaches, reservation denial and all declines.
+pub fn finish(
+    budget: &Budget,
+    job: &crate::authoring::job::AuthoringJob,
+    stored: u32,
+    declined: u32,
+) -> Result<(), WorkerError> {
+    println!(
+        "reserved: {} micro-USD; reported: {} micro-USD; price-bound breach: {}; stored {stored}; declined {declined}",
+        budget.reserved_micros(),
+        budget.reported_micros(),
+        budget.breached()
+    );
+    let reason = if let Some(status) = job.endpoint_failure() {
+        Some(format!("permanent author endpoint failure HTTP {status}"))
+    } else if budget.breached() {
+        Some("provider price-bound breach".to_owned())
+    } else if budget.refused() {
+        Some("author reservation budget exhausted".to_owned())
+    } else if stored == 0 && declined > 0 {
+        Some("all requested author documents declined".to_owned())
+    } else {
+        None
+    };
+    if let Some(reason) = reason {
+        return Err(WorkerError::Config(format!(
+            "{reason}; partial result: stored {stored}, declined {declined}"
+        )));
+    }
+    Ok(())
 }

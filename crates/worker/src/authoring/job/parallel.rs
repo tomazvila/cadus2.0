@@ -47,6 +47,9 @@ pub async fn run_parallel(
         for result in wave(futures).await {
             count(&mut report, result?);
         }
+        if job.endpoint_failure().is_some() {
+            break;
+        }
     }
     Ok(report)
 }

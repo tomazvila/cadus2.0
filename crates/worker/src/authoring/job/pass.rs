@@ -54,6 +54,11 @@ async fn call_model(
         .call_guarded(
             &request,
             |body, max_tokens| {
+                if let Some(status) = job.endpoint_failure() {
+                    return Err(cadus_model_client::ModelError::Config(format!(
+                        "author endpoint rejected HTTP {status}; later requests stopped"
+                    )));
+                }
                 job.budget
                     .as_ref()
                     .map_or(Ok(()), |budget| budget.prepare(body, max_tokens))
@@ -65,6 +70,12 @@ async fn call_model(
             },
         )
         .await;
+    if let Err(cadus_model_client::ModelError::Status { status, .. }) = &call.result
+        && matches!(status, 400 | 401 | 403 | 404 | 405 | 410 | 422)
+    {
+        job.endpoint_status
+            .store(*status, std::sync::atomic::Ordering::SeqCst);
+    }
     let record = CallRecord {
         purpose: PURPOSE_AUTHORING,
         user_id: None,
@@ -249,6 +260,9 @@ pub async fn author_one(
         tracing::warn!(kp = %kp_id, kind = kind_name, attempt, reason = refusal,
                        "authoring: the attempt was refused");
         reasons.push(refusal);
+        if job.endpoint_failure().is_some() {
+            break;
+        }
     }
 
     tracing::error!(kp = %kp_id, kind = kind_name, attempts = spent,

@@ -86,13 +86,6 @@
 //! same [`Rejection`], so the retry block carries a literal message whatever the
 //! kind is.
 //!
-//! # What this unit does not do
-//!
-//! Every kind has its gate now. Unit R6 added the teach gate and the hint ladder
-//! gate (`cadus_core::instruction`); unit R7 added the diagnosis gate
-//! (`cadus_core::template::distractor`). [`verify_kind`] answers a gate for all
-//! four kinds, so no kind reaches the table unverified.
-//!
 //! # The two doors before a gate
 //!
 //! [`verify_kind`] runs `crate::authoring::repair::repair_arguments` on the
@@ -312,9 +305,19 @@ pub struct AuthoringJob {
     client: Client,
     attempts: u32,
     budget: Option<crate::authoring::budget::Budget>,
+    endpoint_status: std::sync::atomic::AtomicU16,
 }
 
 impl AuthoringJob {
+    /// The permanent HTTP rejection that stopped this shared job.
+    #[must_use]
+    pub fn endpoint_failure(&self) -> Option<u16> {
+        let status = self
+            .endpoint_status
+            .load(std::sync::atomic::Ordering::SeqCst);
+        (status != 0).then_some(status)
+    }
+
     /// Share one reservation cap across every kind and concurrent request.
     #[must_use]
     pub fn with_budget(mut self, budget: crate::authoring::budget::Budget) -> Self {
@@ -329,6 +332,7 @@ impl AuthoringJob {
             client,
             attempts: AUTHORING_ATTEMPTS,
             budget: None,
+            endpoint_status: std::sync::atomic::AtomicU16::new(0),
         }
     }
 
@@ -342,6 +346,7 @@ impl AuthoringJob {
             client,
             attempts,
             budget: None,
+            endpoint_status: std::sync::atomic::AtomicU16::new(0),
         }
     }
 }
