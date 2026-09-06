@@ -197,7 +197,7 @@ fn a_unit_template_evaluates_its_numeric_expression_before_the_suffix() {
 }
 
 #[test]
-fn the_twenty_four_inventory_topics_have_explicit_usable_exact_items() {
+fn the_forty_eight_inventory_topics_have_explicit_usable_exact_items() {
     let (raw, findings) = load_raw_curriculum(&curriculum_root()).unwrap();
     assert!(findings.is_empty(), "{findings:?}");
     let mut topics = 0;
@@ -226,8 +226,8 @@ fn the_twenty_four_inventory_topics_have_explicit_usable_exact_items() {
             items += 1;
         }
     }
-    assert_eq!(topics, 24);
-    assert_eq!(items, 194);
+    assert_eq!(topics, 48);
+    assert_eq!(items, 435);
     assert!(lint_curriculum(&curriculum_root()).is_empty());
 }
 
