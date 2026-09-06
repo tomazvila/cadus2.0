@@ -22,8 +22,9 @@ use cadus_store::{DEFAULT_CLIENT_TIMEOUT_MS, Db};
 use cadus_web::state::{Content, TaskProgress, WebState};
 use cadus_web::{AppState, create_app};
 use common::{
-    KEY, LESSON, SESSION, drill_app, exemplar, gated_app, kp, one_unit_curriculum, parse, plan_body,
-    put_state, seed_content, seed_learner, seed_open_session, serve_ok, serve_raw, topic,
+    KEY, LESSON, SESSION, drill_app, exemplar, gated_app, kp, one_unit_curriculum, parse,
+    plan_body, put_state, seed_content, seed_learner, seed_open_session, serve_ok, serve_raw,
+    topic,
 };
 use serde_json::{Value, json};
 use sqlx::types::Uuid;
