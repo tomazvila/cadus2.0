@@ -155,6 +155,7 @@ mod tests {
             error_tags: Vec::new(),
             work_quality: WorkQuality::NearlyPerfect,
             grader_note: None,
+            feedback_practice: false,
             assisted,
         }
     }
