@@ -8,14 +8,11 @@
 //! with a dense synthetic answer set, so a draft that would fail import
 //! fails here first.
 #![allow(clippy::unwrap_used)]
+mod common;
 use std::collections::BTreeMap;
 use std::path::{Path, PathBuf};
 
 use cadus_core::curriculum::load_curriculum;
-use cadus_core::instruction::ServedInstance;
-use cadus_worker::authoring::cli::select;
-use cadus_worker::authoring::job::verify_kind;
-use cadus_worker::authoring::prompt::Kind;
 use serde_json::Value;
 
 /// Unit id to its curriculum file, the units this generator has drafted.
@@ -43,32 +40,7 @@ fn manifest_dir(unit: &str) -> PathBuf {
 
 /// Every draft row of one unit's manifest, in manifest order.
 fn rows(unit: &str) -> Vec<Value> {
-    let dir = manifest_dir(unit);
-    let manifest: Value =
-        serde_json::from_str(&std::fs::read_to_string(dir.join("manifest.json")).unwrap()).unwrap();
-    let mut rows = Vec::new();
-    for file in manifest["files"].as_array().unwrap() {
-        let path = dir.join(file.as_str().unwrap());
-        let text = std::fs::read_to_string(&path).unwrap();
-        assert!(
-            text.lines().count() < MAX_LINES,
-            "{} holds {MAX_LINES} lines or more",
-            path.display()
-        );
-        let mut part: Vec<Value> = serde_json::from_str(&text).unwrap();
-        rows.append(&mut part);
-    }
-    rows
-}
-
-/// A dense set of small answers, so no hint rung can coincidentally name one.
-fn dense_instances() -> Vec<ServedInstance> {
-    (0..=1000)
-        .map(|answer| ServedInstance {
-            problem: format!("A different practice problem with answer {answer}"),
-            answer: answer.to_string(),
-        })
-        .collect()
+    common::authoring::draft_rows(&manifest_dir(unit), MAX_LINES)
 }
 
 #[test]
@@ -116,19 +88,10 @@ fn every_heldout_draft_passes_its_gate() {
     let mut refusals = Vec::new();
     for (unit, _) in UNITS {
         for draft in rows(unit) {
-            let key = draft["kp_id"].as_str().unwrap().to_owned();
-            let specs = select(&curriculum, std::slice::from_ref(&key)).unwrap();
-            let kind = Kind::from_wire(draft["kind"].as_str().unwrap()).unwrap();
-            let mut instances = Vec::new();
-            if kind == Kind::HintLadder {
-                instances.extend(dense_instances());
-            }
-            if let Err(rejection) = verify_kind(kind, &specs[0], &draft["arguments"], &instances) {
-                refusals.push(format!(
-                    "{unit} {key} {}: {}",
-                    kind.as_str(),
-                    rejection.message
-                ));
+            if let Some((key, kind, reason)) =
+                common::authoring::draft_rejection(&curriculum, &draft, Vec::new())
+            {
+                refusals.push(format!("{unit} {key} {kind}: {reason}"));
             }
         }
     }

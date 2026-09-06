@@ -14,6 +14,7 @@
     clippy::unimplemented
 )]
 
+pub mod authoring;
 pub mod content;
 pub mod fake;
 pub mod fault;

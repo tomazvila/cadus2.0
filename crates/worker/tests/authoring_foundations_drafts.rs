@@ -10,12 +10,12 @@
 //! `{kp_id, body}` template rows, the test also reads the instances those
 //! templates serve. The default run reads no file and stays deterministic.
 #![allow(clippy::unwrap_used)]
+mod common;
 use std::collections::BTreeMap;
 use std::path::{Path, PathBuf};
 
 use cadus_core::curriculum::{Curriculum, load_curriculum};
 use cadus_core::instruction::{ServedInstance, template_instances};
-use cadus_worker::authoring::{cli::select, job::verify_kind, prompt::Kind};
 use serde_json::Value;
 
 /// The unit every draft of the manifest belongs to.
@@ -34,23 +34,7 @@ fn manifest_dir() -> PathBuf {
 
 /// Every draft row the manifest names, in manifest order.
 fn rows() -> Vec<Value> {
-    let manifest: Value = serde_json::from_str(
-        &std::fs::read_to_string(manifest_dir().join("manifest.json")).unwrap(),
-    )
-    .unwrap();
-    let mut rows = Vec::new();
-    for file in manifest["files"].as_array().unwrap() {
-        let path = manifest_dir().join(file.as_str().unwrap());
-        let text = std::fs::read_to_string(&path).unwrap();
-        assert!(
-            text.lines().count() < MAX_LINES,
-            "{} holds {MAX_LINES} lines or more",
-            path.display()
-        );
-        let mut part: Vec<Value> = serde_json::from_str(&text).unwrap();
-        rows.append(&mut part);
-    }
-    rows
+    common::authoring::draft_rows(&manifest_dir(), MAX_LINES)
 }
 
 /// The serving keys of every knowledge point of the unit, in curriculum order.
@@ -87,21 +71,6 @@ fn template_served() -> BTreeMap<String, Vec<ServedInstance>> {
     served
 }
 
-/// A dense set of small answers, wider than the pilot set.
-///
-/// A hint ladder serves every instance of its knowledge point, so no rung
-/// names any small number. A teach page states its own answer in its last
-/// step, so this set judges the ladders only; the pages meet the exemplars and
-/// the optional template instances.
-fn dense_instances() -> Vec<ServedInstance> {
-    (0..=1000)
-        .map(|answer| ServedInstance {
-            problem: format!("A different practice problem with answer {answer}"),
-            answer: answer.to_string(),
-        })
-        .collect()
-}
-
 #[test]
 fn every_knowledge_point_of_the_unit_has_one_teach_page_and_one_hint_ladder() {
     let (curriculum, findings) = load_curriculum(&root().join("curriculum")).unwrap();
@@ -135,14 +104,11 @@ fn every_draft_passes_its_gate() {
     let mut refusals = Vec::new();
     for draft in rows() {
         let key = draft["kp_id"].as_str().unwrap().to_owned();
-        let specs = select(&curriculum, std::slice::from_ref(&key)).unwrap();
-        let kind = Kind::from_wire(draft["kind"].as_str().unwrap()).unwrap();
-        let mut instances = templates.get(&key).cloned().unwrap_or_default();
-        if kind == Kind::HintLadder {
-            instances.extend(dense_instances());
-        }
-        if let Err(rejection) = verify_kind(kind, &specs[0], &draft["arguments"], &instances) {
-            refusals.push(format!("{key} {}: {}", kind.as_str(), rejection.message));
+        let instances = templates.get(&key).cloned().unwrap_or_default();
+        if let Some((key, kind, reason)) =
+            common::authoring::draft_rejection(&curriculum, &draft, instances)
+        {
+            refusals.push(format!("{key} {kind}: {reason}"));
         }
     }
     assert!(refusals.is_empty(), "{}", refusals.join("\n"));

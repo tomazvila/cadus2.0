@@ -9,26 +9,9 @@ use cadus_store::test_support::TestDb;
 /// The number of drafts the arithmetic-core manifest names.
 const DRAFTS: i64 = 162;
 
-fn script() -> PathBuf {
-    Path::new(env!("CARGO_MANIFEST_DIR")).join("../../scripts/authoring/import_local_drafts.py")
-}
-
 fn manifest() -> PathBuf {
     Path::new(env!("CARGO_MANIFEST_DIR"))
         .join("../../docs/content-foundations/arithmetic-core/manifest.json")
-}
-
-async fn import(manifest: &Path, dsn: &str) -> std::process::Output {
-    tokio::process::Command::new("python3")
-        .arg(script())
-        .arg("--manifest")
-        .arg(manifest)
-        .arg("--worker")
-        .arg(env!("CARGO_BIN_EXE_cadus-worker"))
-        .env("DATABASE_URL", dsn)
-        .output()
-        .await
-        .unwrap()
 }
 
 #[tokio::test]
@@ -36,7 +19,7 @@ async fn the_import_is_pending_only_costs_nothing_and_a_second_pass_skips() {
     TestDb::with(|db| async move {
         let dsn = common::superuser_dsn(&db.name);
         for pass in 0..2 {
-            let output = import(&manifest(), &dsn).await;
+            let output = common::authoring::import_local_drafts(&manifest(), &dsn).await;
             let stdout = String::from_utf8_lossy(&output.stdout);
             assert!(output.status.success(), "{stdout}{}", String::from_utf8_lossy(&output.stderr));
             assert!(stdout.contains("model cost reported 0 micro-USD"), "{stdout}");
@@ -78,7 +61,8 @@ async fn an_invalid_manifest_is_refused_before_any_process_starts() {
             "arguments": {"hints": ["Which number do you start from?"]}
         });
         std::fs::write(&path, serde_json::json!([row, row]).to_string()).unwrap();
-        let output = import(&path, &common::superuser_dsn(&db.name)).await;
+        let output =
+            common::authoring::import_local_drafts(&path, &common::superuser_dsn(&db.name)).await;
         std::fs::remove_file(&path).unwrap();
         assert_eq!(output.status.code(), Some(2));
         let stderr = String::from_utf8_lossy(&output.stderr);

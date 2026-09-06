@@ -13,28 +13,11 @@ const UNITS: &[(&str, i64)] = &[
     ("rational-trig", 1),
 ];
 
-fn script() -> PathBuf {
-    Path::new(env!("CARGO_MANIFEST_DIR")).join("../../scripts/authoring/import_local_drafts.py")
-}
-
 fn manifest(unit: &str) -> PathBuf {
     Path::new(env!("CARGO_MANIFEST_DIR"))
         .join("../../docs/content-foundations")
         .join(unit)
         .join("manifest.json")
-}
-
-async fn import(manifest: &Path, dsn: &str) -> std::process::Output {
-    tokio::process::Command::new("python3")
-        .arg(script())
-        .arg("--manifest")
-        .arg(manifest)
-        .arg("--worker")
-        .arg(env!("CARGO_BIN_EXE_cadus-worker"))
-        .env("DATABASE_URL", dsn)
-        .output()
-        .await
-        .unwrap()
 }
 
 #[tokio::test]
@@ -44,7 +27,7 @@ async fn every_unit_imports_pending_only_at_zero_cost_and_a_second_pass_skips() 
         let total_drafts: i64 = UNITS.iter().map(|(_, kps)| kps * 2).sum();
         for pass in 0..2 {
             for (unit, kps) in UNITS {
-                let output = import(&manifest(unit), &dsn).await;
+                let output = common::authoring::import_local_drafts(&manifest(unit), &dsn).await;
                 let stdout = String::from_utf8_lossy(&output.stdout);
                 assert!(
                     output.status.success(),

@@ -6,17 +6,9 @@ use cadus_store::test_support::TestDb;
 #[tokio::test]
 async fn the_zero_cost_import_is_pending_only_and_a_second_pass_skips() {
     TestDb::with(|db| async move {
-        let script = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
-            .join("../../scripts/authoring/import_pilot_drafts.py");
+        let dsn = common::superuser_dsn(&db.name);
         for _ in 0..2 {
-            let output = tokio::process::Command::new("python3")
-                .arg(&script)
-                .arg("--worker")
-                .arg(env!("CARGO_BIN_EXE_cadus-worker"))
-                .env("DATABASE_URL", common::superuser_dsn(&db.name))
-                .output()
-                .await
-                .unwrap();
+            let output = common::authoring::import_pilot_drafts(&dsn, false).await;
             assert!(
                 output.status.success(),
                 "{}",
@@ -45,17 +37,8 @@ async fn the_zero_cost_import_is_pending_only_and_a_second_pass_skips() {
 #[tokio::test]
 async fn the_full_zero_cost_pilot_stores_three_templates_and_six_instruction_drafts() {
     TestDb::with(|db| async move {
-        let script = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
-            .join("../../scripts/authoring/import_pilot_drafts.py");
-        let output = tokio::process::Command::new("python3")
-            .arg(&script)
-            .arg("--worker")
-            .arg(env!("CARGO_BIN_EXE_cadus-worker"))
-            .arg("--include-templates")
-            .env("DATABASE_URL", common::superuser_dsn(&db.name))
-            .output()
-            .await
-            .unwrap();
+        let output =
+            common::authoring::import_pilot_drafts(&common::superuser_dsn(&db.name), true).await;
         assert!(
             output.status.success(),
             "{}",
