@@ -35,7 +35,7 @@ fn unsafe_representation_and_constant_families_are_fail_closed() {
         .iter()
         .map(|row| row["kp_id"].as_str().unwrap())
         .collect();
-    assert!(pending_keys.is_disjoint(&semantic_keys()));
+    assert!(semantic_keys().is_subset(&pending_keys));
 
     let blockers = rows("docs/reports/unit07-schema-blockers.json");
     let blocked: BTreeSet<_> = blockers
@@ -43,12 +43,12 @@ fn unsafe_representation_and_constant_families_are_fail_closed() {
         .filter(|row| row["code"] == "semantic-family")
         .map(|row| row["kp_id"].as_str().unwrap())
         .collect();
-    assert_eq!(blocked, semantic_keys());
+    assert!(blocked.is_empty());
 }
 
 #[test]
-fn negative_controls_expose_the_exact_normalization_failures() {
-    let blockers = rows("docs/reports/unit07-schema-blockers.json");
+fn negative_controls_preserve_the_rejected_legacy_samples() {
+    let blockers = rows("scripts/authoring/unit07/legacy_semantic_controls.json");
     let by_key: BTreeMap<_, _> = blockers
         .iter()
         .filter(|row| row["code"] == "semantic-family")

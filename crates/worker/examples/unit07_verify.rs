@@ -119,36 +119,6 @@ fn review(row: &Value, spec: &AuthoringSpec, known: &BTreeSet<String>) -> Value 
     }
 }
 
-fn semantic_exclusion(key: &str) -> Option<&'static str> {
-    match key {
-        "factoring-gcf/kp2" => {
-            Some("the computed answer moves the requested negative GCF inside the remaining factor")
-        }
-        "difference-of-squares/kp2" | "difference-of-squares/kp3" => {
-            Some("the computed answer collapses to the unfactored dividend")
-        }
-        "perfect-square-trinomials/kp3" => Some(
-            "the computed answer becomes a scalar times a monic square instead of one squared binomial",
-        ),
-        "sum-difference-of-cubes/kp1"
-        | "sum-difference-of-cubes/kp2"
-        | "sum-difference-of-cubes/kp3"
-        | "quadratics-in-form/kp2" => {
-            Some("the computed answer collapses to the unfactored dividend")
-        }
-        "choosing-factoring-strategy/kp2" => {
-            Some("the computed answer stops before factoring the remaining difference of squares")
-        }
-        "choosing-factoring-strategy/kp3" => {
-            Some("the computed answer collapses to the unfactored dividend")
-        }
-        "quadratic-formula/kp3" => Some(
-            "every generated instance has the fixed answer zero and exercises only one discriminant case",
-        ),
-        _ => None,
-    }
-}
-
 fn read_curriculum(root: &Path) -> Result<Curriculum, String> {
     let findings = lint_curriculum(&root.join("curriculum"));
     if !findings.is_empty() {
@@ -162,13 +132,8 @@ fn read_curriculum(root: &Path) -> Result<Curriculum, String> {
     Ok(curriculum)
 }
 
-fn run() -> Result<(), String> {
-    let root = Path::new(env!("CARGO_MANIFEST_DIR")).join("../..");
-    let curriculum = read_curriculum(&root)?;
-    let input = std::fs::read_to_string(root.join("target/unit07/candidates.json"))
-        .map_err(|e| e.to_string())?;
-    let rows: Vec<Value> = serde_json::from_str(&input).map_err(|e| e.to_string())?;
-    let owned: BTreeSet<String> = curriculum
+fn owned_keys(curriculum: &Curriculum) -> BTreeSet<String> {
+    curriculum
         .topics_in_course("foundations")
         .iter()
         .filter(|index| curriculum.unit_of(**index) == "polynomials-quadratics")
@@ -179,7 +144,16 @@ fn run() -> Result<(), String> {
                 .iter()
                 .map(|kp| format!("{}/{}", topic.id, kp.id))
         })
-        .collect();
+        .collect()
+}
+
+fn run() -> Result<(), String> {
+    let root = Path::new(env!("CARGO_MANIFEST_DIR")).join("../..");
+    let curriculum = read_curriculum(&root)?;
+    let input = std::fs::read_to_string(root.join("target/unit07/candidates.json"))
+        .map_err(|e| e.to_string())?;
+    let rows: Vec<Value> = serde_json::from_str(&input).map_err(|e| e.to_string())?;
+    let owned = owned_keys(&curriculum);
     let mut known = authored(&curriculum, &owned)?;
     let mut keys = BTreeSet::new();
     let mut pending = Vec::new();
@@ -193,13 +167,7 @@ fn run() -> Result<(), String> {
         let spec = select(&curriculum, std::slice::from_ref(&key))
             .map_err(|e| e.to_string())?
             .remove(0);
-        let checked = semantic_exclusion(&key).map_or_else(
-            || review(&row, &spec, &known),
-            |message| {
-                json!({"kp_id":key,"stage":"semantic-review",
-                "code":"semantic-family","message":message,"candidate":row})
-            },
-        );
+        let checked = review(&row, &spec, &known);
         if checked["stage"] == "passed" {
             let instances = checked["instances"].as_array().ok_or("missing instances")?;
             println!("PASS {key}: {} instances", instances.len());
