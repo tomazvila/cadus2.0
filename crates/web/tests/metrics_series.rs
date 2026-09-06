@@ -316,7 +316,7 @@ async fn a_fresh_process_ships_every_grade_label_at_zero() {
     TestDb::with(|db| async move {
         let text = scrape(&app_of(&db)).await;
 
-        for result in ["correct", "notation", "blank", "incorrect", "undecidable"] {
+        for result in ["correct", "notation", "blank", "incorrect", "ungraded"] {
             holds(
                 &text,
                 &format!("cadus_deterministic_grade_total{{result=\"{result}\"}} 0"),
