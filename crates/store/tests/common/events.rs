@@ -9,6 +9,7 @@ use cadus_core::event::{
     WorkQuality,
 };
 use cadus_core::projector::ProjectionInput;
+use serde_json::json;
 
 /// The Unix microsecond instant of 2026-01-01T00:00:00Z.
 pub const BASE_US: i64 = 1_767_225_600_000_000;
@@ -122,36 +123,25 @@ pub fn attempt_row(
     text: String,
     answer: String,
 ) -> Event {
-    Event::Attempt(Attempt {
-        ts,
-        session: Some(session.to_string()),
-        v: SchemaVersion::current(),
-        attempt_id: attempt_id.to_string(),
-        task_id: task_id.to_string(),
-        topic: Slug::new(topic).expect("the topic slug"),
-        kp: None,
-        task_type: TaskType::Review,
-        problem: AttemptProblem {
-            text,
-            expected: answer.clone(),
-        },
-        given_answer: answer,
-        work: None,
-        answer_kind: Some(AnswerKind::Numeric),
-        correct: true,
-        outcome: AttemptOutcome::Correct,
-        item_digest: None,
-        item_source: None,
-        exposure: None,
-        timing_reliable: None,
-        skills: Vec::new(),
-        independent_after_feedback: false,
-        secs: Secs::new(12).expect("twelve seconds"),
-        error_tags: Vec::new(),
-        work_quality: WorkQuality::NearlyPerfect,
-        grader_note: Some("deterministic".to_string()),
-        assisted: false,
-    })
+    // The wire form is the literal, so this helper never spells a field name the
+    // reader does not read back (the `crates/core` test idiom).
+    let body = json!({
+        "type": "attempt",
+        "ts": ts.to_wire_string().expect("the instant writes"),
+        "session": session,
+        "attempt_id": attempt_id,
+        "task_id": task_id,
+        "topic": topic,
+        "task_type": "review",
+        "problem": {"text": text, "expected": answer},
+        "given_answer": answer,
+        "answer_kind": "numeric",
+        "correct": true,
+        "secs": 12,
+        "work_quality": "nearly_perfect",
+        "grader_note": "deterministic",
+    });
+    Event::from_json(&body.to_string()).expect("the attempt reads")
 }
 
 /// One graded attempt on `addition`.

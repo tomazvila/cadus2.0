@@ -41,6 +41,19 @@ describe('the status card', () => {
     expect(stat('ETA').querySelector('.stat-value')!.textContent).toBe('—');
   });
 
+  it('shows the not-marked tile only while an ungraded attempt waits', async () => {
+    // D-F2: nothing waits, so the learner reads the same six tiles as before.
+    const first = await mount();
+    expect(stat('not marked')).toBeUndefined();
+    first.unmount();
+    cleanup();
+
+    await mount({ api: stubApi({ getStatus: async () => status({ ungraded: 2 }) }) });
+    const tile = stat('not marked');
+    expect(tile.querySelector('.stat-value')!.textContent).toBe('2');
+    expect(tile.className).toBe('stat warn');
+  });
+
   it('draws the course arc with the current course marked', async () => {
     await mount();
     const arc = Array.from(document.querySelectorAll('.arc-course'));

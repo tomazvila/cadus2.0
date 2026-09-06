@@ -11,7 +11,7 @@ import { createLifetime } from '@/hooks/useLifetime';
 import { Feedback } from '@/views/session/Feedback';
 import { DIAGNOSIS_FAILED, DIAGNOSIS_WAIT, Diagnosis } from '@/views/session/Diagnosis';
 import { DiagnosisStore } from '@/views/session/useDiagnosis';
-import { graded } from './helpers/session';
+import { graded, ungraded } from './helpers/session';
 import type { ApiClient, DiagnosisField } from '@/api/types';
 
 const feedback = () => document.querySelector('.feedback')!;
@@ -30,6 +30,34 @@ describe('Feedback', () => {
     render(<Feedback res={res} hasNext onContinue={vi.fn()} onEnd={vi.fn()} />);
     expect(feedback().className).toBe('feedback feedback-incorrect');
     expect(document.querySelector('.chip-xp')).toBeNull();
+  });
+
+  it('paints an ungraded attempt as "Not marked", with no red and no verdict wording', () => {
+    render(
+      <Feedback
+        res={ungraded()}
+        hasNext
+        onContinue={vi.fn()}
+        onEnd={vi.fn()}
+      >
+        <div className="diagnosis">the model prose</div>
+      </Feedback>,
+    );
+    // D-F2: the panel is neutral. It is not the miss panel and it carries no tier.
+    expect(feedback().className).toBe('feedback feedback-ungraded');
+    expect(document.querySelector('.chip-quality')).toBeNull();
+    expect(document.querySelector('.chip-xp')).toBeNull();
+    expect(screen.getByText('Not marked')).toBeTruthy();
+    expect(screen.queryByText('Not quite')).toBeNull();
+    // The service's own reason, and nothing this component wrote.
+    expect(document.querySelector('.feedback-reason')!.textContent)
+      .toBe('the answer left the grammar');
+    // Hard Rule 1: no answer reveal. D-F4: no model prose on an ungraded attempt.
+    expect(document.querySelector('.solution')).toBeNull();
+    expect(document.querySelector('.re-solve')).toBeNull();
+    expect(document.querySelector('.diagnosis')).toBeNull();
+    // The learner still has a way on.
+    expect(screen.getByRole('button', { name: 'Next problem →' })).toBeTruthy();
   });
 
   it('lists every follow-up as its kind and its targets', () => {

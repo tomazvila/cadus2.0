@@ -10,12 +10,10 @@
 
 mod common;
 
-use axum::Router;
-use axum::http::{Method, StatusCode};
 use cadus_store::test_support::TestDb;
 use common::{
-    LESSON, PROBLEM_ID, call, events_of_type, lesson_app as app, lesson_learner, lesson_problem,
-    parse,
+    LESSON, PROBLEM_ID, answer_task, events_of_type, lesson_app as app, lesson_learner,
+    lesson_problem,
 };
 use serde_json::{Value, json};
 use sqlx::types::Uuid;
@@ -29,17 +27,11 @@ async fn learner_of(db: &TestDb, email: &str, kind: &str, expected: &str) -> Uui
 }
 
 /// Answer the live lesson problem and read the reply body.
-async fn answer(app: &Router, user: Uuid, given: &str) -> Value {
-    let (status, raw) = call(
-        app,
-        Method::POST,
-        &format!("/api/task/{LESSON}/answer"),
-        Some(user),
-        Some(json!({"problem_id": PROBLEM_ID, "answer": given})),
-    )
-    .await;
-    assert_eq!(status, StatusCode::OK, "{raw}");
-    parse(&raw)
+async fn answer(app: &axum::Router, user: Uuid, given: &str) -> Value {
+    let body = json!({"problem_id": PROBLEM_ID, "answer": given});
+    let (status, reply) = answer_task(app, user, LESSON, body).await;
+    assert_eq!(status.as_u16(), 200, "{reply}");
+    reply
 }
 
 /// Every reply names the outcome, and every task hands back a next step.
