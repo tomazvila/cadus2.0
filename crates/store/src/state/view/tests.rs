@@ -44,6 +44,7 @@ fn attempt_event(ts: Timestamp, session: Option<&str>, attempt_id: &str, task_id
         kp: None,
         task_type: TaskType::Lesson,
         problem: AttemptProblem {
+            answer_contract: None,
             text: "Compute $1 + 1$.".to_string(),
             expected: "2".to_string(),
         },

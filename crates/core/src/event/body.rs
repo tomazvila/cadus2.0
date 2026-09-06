@@ -42,6 +42,9 @@ pub struct AttemptProblem {
     /// The problem text the learner saw. [`crate::learner::problem_text_hash`] hashes
     /// this text, with no whitespace normalization (trap T17).
     pub text: String,
+    /// The policy captured with this item; absence preserves legacy semantics.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub answer_contract: Option<crate::answer::AnswerContract>,
     /// The expected answer.
     pub expected: String,
 }

@@ -150,6 +150,7 @@ mod tests {
             answer_kind: None,
             text: "Give 7.".to_string(),
             expected: cadus_core::pool::PoolAnswer {
+                answer_contract: None,
                 v: 1,
                 answer: "7".to_string(),
             },

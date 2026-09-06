@@ -2,7 +2,7 @@
 
 use std::collections::BTreeSet;
 
-use crate::answer::{Undecidable, canonical_form};
+use crate::answer::Undecidable;
 use crate::curriculum::model::{Exemplar, KnowledgePoint};
 use crate::learner::problem_text_hash;
 use crate::template::{Bindings, Instance};
@@ -102,7 +102,7 @@ impl<'kp> ExemplarSource<'kp> {
     pub fn refusals(&self) -> Vec<ExemplarRefusal> {
         let mut out = Vec::new();
         for (index, exemplar) in self.exemplars.iter().enumerate() {
-            if let Err(reason) = canonical_form(&exemplar.answer) {
+            if let Err(reason) = exemplar.canonical_answer() {
                 out.push(ExemplarRefusal {
                     index,
                     answer: exemplar.answer.clone(),
@@ -137,7 +137,7 @@ impl ProblemSource for ExemplarSource<'_> {
         // the digest alone decides a repeat here.
         let mut seen: BTreeSet<String> = BTreeSet::new();
         for exemplar in self.exemplars {
-            let canon = match canonical_form(&exemplar.answer) {
+            let canon = match exemplar.canonical_answer() {
                 Ok(canon) => canon,
                 // An exemplar answer the checker cannot decide is skipped and
                 // counted. One broken exemplar must not take the whole knowledge
@@ -158,6 +158,7 @@ impl ProblemSource for ExemplarSource<'_> {
                 continue;
             }
             out.push(Instance {
+                answer_contract: exemplar.answer_contract,
                 bindings: Bindings::new(),
                 text,
                 answer: exemplar.answer.clone(),

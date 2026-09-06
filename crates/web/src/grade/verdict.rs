@@ -20,7 +20,30 @@ use super::*;
 /// it. It is never a model verdict and never a pass.
 #[must_use]
 pub fn deterministic_grade(expected: &str, answer: &str, kind: AnswerKind) -> Grade {
-    if answer.trim().is_empty() {
+    grade_outcome(answer, check(expected, answer, kind))
+}
+
+/// Grade the policy captured in the served item (D-F1, C2).
+#[must_use]
+pub fn grade_item(
+    expected: &cadus_core::pool::PoolAnswer,
+    answer: &str,
+    kind: AnswerKind,
+) -> Grade {
+    if kind == AnswerKind::Proof {
+        return ungraded_grade(PROOF_UNGRADED);
+    }
+    let Some(contract) = expected.answer_contract else {
+        return deterministic_grade(&expected.answer, answer, kind);
+    };
+    grade_outcome(
+        answer,
+        cadus_core::answer::check_contract(&expected.answer, answer, contract),
+    )
+}
+
+fn grade_outcome(answer: &str, outcome: Outcome) -> Grade {
+    if answer.trim().is_empty() && matches!(outcome, Outcome::Decided(_)) {
         return Grade {
             correct: false,
             outcome: AttemptOutcome::Incorrect,
@@ -28,7 +51,7 @@ pub fn deterministic_grade(expected: &str, answer: &str, kind: AnswerKind) -> Gr
             error_tags: vec![TAG_BLANK_ANSWER.to_string()],
         };
     }
-    match check(expected, answer, kind) {
+    match outcome {
         Outcome::Decided(verdict) if verdict.correct => Grade {
             correct: true,
             outcome: AttemptOutcome::Correct,

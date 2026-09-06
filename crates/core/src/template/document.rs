@@ -91,9 +91,12 @@ pub struct Distractor {
 pub struct TemplateDoc {
     /// The document version. [`TEMPLATE_VERSION`] for a current document.
     pub v: u32,
+    /// The policy captured with this item; absence preserves legacy semantics.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub answer_contract: Option<crate::answer::AnswerContract>,
     /// The topic whose exemplars the template mirrors.
     pub topic_id: String,
-    /// The answer grammar. `numeric` or `expression` only (V2).
+    /// The topic kind: numeric, expression, or contract-bearing multi-step.
     pub answer_kind: AnswerKind,
     /// The statement, with `{name}` holes and doubled literal braces.
     pub statement: String,
@@ -153,6 +156,8 @@ impl TemplateDoc {
 /// enough to matter, and the learner sees the statement (spec section 5.5).
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Instance {
+    /// The reviewed policy carried to the pool and grade transaction.
+    pub answer_contract: Option<crate::answer::AnswerContract>,
     /// The bound tuple that produced the instance.
     pub bindings: Bindings,
     /// The rendered statement, as the learner reads it.
@@ -258,8 +263,14 @@ impl<'doc> Compiled<'doc> {
             text: answer,
             canon,
         } = answer(&self.answer_ast, &bindings)?;
+        if let Some(contract) = self.doc.answer_contract {
+            contract
+                .validate_expected(&answer)
+                .map_err(EvalError::Grammar)?;
+        }
         let instance_hash = problem_text_hash(&text);
         Ok(Instance {
+            answer_contract: self.doc.answer_contract,
             bindings,
             text,
             answer,

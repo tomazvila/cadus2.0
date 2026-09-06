@@ -26,6 +26,7 @@ fn ready_kp(id: &str) -> KnowledgePoint {
     let mut point = knowledge_point(id, &[]);
     point.exemplars = (1..=4)
         .map(|n| Exemplar {
+            answer_contract: None,
             problem: format!("{n} + {n}"),
             answer: (n * 2).to_string(),
             solution_sketch: Some("add".to_owned()),
@@ -39,6 +40,7 @@ fn thin_kp(id: &str) -> KnowledgePoint {
     let mut point = knowledge_point(id, &[]);
     point.exemplars = (1..=2)
         .map(|n| Exemplar {
+            answer_contract: None,
             problem: format!("{n} x {n}"),
             answer: (n * n).to_string(),
             solution_sketch: Some("multiply".to_owned()),

@@ -210,7 +210,7 @@ pub(crate) async fn install_next(
         kp: Some(target.kp.clone()),
         answer_kind: answer_kind_of(graph, &target.serve),
         text: row.problem.text.clone(),
-        expected: row.expected_answer.clone(),
+        expected: answer_of(graph, &target, &row),
         solution_sketch,
         started_at,
         hints_given: Vec::new(),

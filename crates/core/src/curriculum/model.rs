@@ -169,9 +169,22 @@ impl fmt::Display for AnkiType {
 #[serde(deny_unknown_fields)]
 pub struct Exemplar {
     pub problem: String,
+    /// The policy captured with this item; absence preserves legacy semantics.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub answer_contract: Option<crate::answer::AnswerContract>,
     pub answer: String,
     #[serde(default)]
     pub solution_sketch: Option<String>,
+}
+
+impl Exemplar {
+    /// Validate this item's authored answer under its captured policy.
+    pub fn canonical_answer(&self) -> Result<crate::answer::Canon, crate::answer::Undecidable> {
+        self.answer_contract.map_or_else(
+            || crate::answer::canonical_form(&self.answer),
+            |contract| contract.validate_expected(&self.answer),
+        )
+    }
 }
 
 /// A declarative-recall card candidate authored on a topic.

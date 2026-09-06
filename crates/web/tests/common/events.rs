@@ -107,6 +107,7 @@ pub fn graded(attempt_id: &str, offset: i64) -> Event {
         kp: None,
         task_type: TaskType::Review,
         problem: AttemptProblem {
+            answer_contract: None,
             text: "Compute $8 - 5$.".to_string(),
             expected: "3".to_string(),
         },
@@ -154,6 +155,7 @@ pub fn review_problem(task_id: &str) -> ServedProblem {
         answer_kind: Some("numeric".to_string()),
         text: "Compute $8 - 5$.".to_string(),
         expected: PoolAnswer {
+            answer_contract: None,
             v: 1,
             answer: "3".to_string(),
         },

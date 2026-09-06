@@ -300,6 +300,7 @@ mod tests {
     /// One batch of one exemplar instance.
     fn one_instance() -> cadus_core::pool::Batch {
         let exemplars = [Exemplar {
+            answer_contract: None,
             problem: "Compute $7^2$.".to_owned(),
             answer: "49".to_owned(),
             solution_sketch: None,

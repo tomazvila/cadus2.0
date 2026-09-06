@@ -102,6 +102,7 @@ pub fn instance_row(text: String, answer: String, binding: String, seed: u64) ->
             seed,
         },
         expected_answer: PoolAnswer {
+            answer_contract: None,
             v: POOL_ROW_VERSION,
             answer,
         },

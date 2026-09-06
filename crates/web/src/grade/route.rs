@@ -23,19 +23,6 @@ fn served_kind(served: &ServedProblem) -> Result<AnswerKind, ApiError> {
     answer_kind(served).ok_or_else(|| broken_state("the served problem names no answer kind"))
 }
 
-/// Grade one submission by kind (A3, D-F1).
-///
-/// A `proof` never reaches the checker: no checker decides one, so the route
-/// spends no work on it and names the reason instead (V2). Every other kind goes
-/// to the deterministic checker, which names its own refusal reason when it has
-/// no verdict.
-fn grade_by_kind(kind: AnswerKind, expected: &str, answer: &str) -> Grade {
-    if kind == AnswerKind::Proof {
-        return ungraded_grade(PROOF_UNGRADED);
-    }
-    deterministic_grade(expected, answer, kind)
-}
-
 /// A solve time as the seconds the session clock adds up.
 fn elapsed_of(secs: i64) -> f64 {
     #[expect(
@@ -93,7 +80,7 @@ pub async fn answer(
         expected_time(graph, &served),
     );
     let kind = served_kind(&served)?;
-    let grade = grade_by_kind(kind, &served.expected.answer, &submitted.answer);
+    let grade = grade_item(&served.expected, &submitted.answer, kind);
     // T6, spec section 7: one count per grade DECISION, taken with no model call.
     state.metrics.count_grade(metrics::grade_result(&grade));
     let mut error_tags = grade.error_tags.clone();

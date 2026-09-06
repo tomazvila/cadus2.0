@@ -3,7 +3,6 @@
 
 use std::collections::{BTreeMap, BTreeSet};
 
-use crate::answer::canonical_form;
 use crate::curriculum::{Curriculum, KnowledgePoint, Topic};
 use crate::learner::problem_text_hash;
 use crate::pool::kp_key;
@@ -174,7 +173,7 @@ fn kp_facts(topic: &Topic, kp: &KnowledgePoint) -> KpFacts {
     let mut decidable: Vec<usize> = Vec::new();
     let mut seen: BTreeSet<String> = BTreeSet::new();
     for (index, exemplar) in kp.exemplars.iter().enumerate() {
-        if canonical_form(&exemplar.answer).is_err() {
+        if exemplar.canonical_answer().is_err() {
             continue;
         }
         if !seen.insert(problem_text_hash(&exemplar.problem)) {

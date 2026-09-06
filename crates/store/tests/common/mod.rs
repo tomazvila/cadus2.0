@@ -140,6 +140,7 @@ pub fn new_instance(index: usize) -> NewInstance {
             seed: 7,
         },
         expected_answer: PoolAnswer {
+            answer_contract: None,
             v: 1,
             answer: (index * index).to_string(),
         },

@@ -75,6 +75,7 @@ pub fn exemplars(answers: &[&str]) -> Vec<Exemplar> {
     answers
         .iter()
         .map(|answer| Exemplar {
+            answer_contract: None,
             problem: "Compute $7^2$.".to_string(),
             answer: (*answer).to_string(),
             solution_sketch: None,
@@ -337,6 +338,7 @@ pub fn rational_r_body(constraints: &str) -> String {
 /// One hand-built instance of the base document at `a`, with the canonical form of 16.
 pub fn hand_instance(a: i64, text: &str, answer: &str) -> cadus_core::template::Instance {
     cadus_core::template::Instance {
+        answer_contract: None,
         bindings: bind(&[("a", a)]),
         text: text.to_string(),
         answer: answer.to_string(),

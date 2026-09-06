@@ -136,7 +136,9 @@ use reply::*;
 pub use route::answer;
 use submission::*;
 use verdict::round2;
-pub use verdict::{deterministic_grade, measure_secs, reference_assisted, ungraded_grade};
+pub use verdict::{
+    deterministic_grade, grade_item, measure_secs, reference_assisted, ungraded_grade,
+};
 
 /// The code of an answer or a work field over its cap (`api.py:1292-1293`).
 pub const ANSWER_TOO_LARGE: &str = "answer_too_large";

@@ -284,6 +284,7 @@ pub async fn seed_template_row(db: &TestDb, user: Uuid, row: TemplateRow<'_>) {
         seed: 7,
     };
     let expected = PoolAnswer {
+        answer_contract: None,
         v: 1,
         answer: row.answer.to_string(),
     };

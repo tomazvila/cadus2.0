@@ -207,6 +207,21 @@ pub struct AuthoringSpec {
     pub exemplars: Vec<Exemplar>,
 }
 
+impl AuthoringSpec {
+    /// One shared deterministic policy for templates of this knowledge point.
+    #[must_use]
+    pub fn template_contract(&self) -> Option<cadus_core::answer::AnswerContract> {
+        let contract = self.exemplars.first()?.answer_contract?;
+        if contract == cadus_core::answer::AnswerContract::None {
+            return None;
+        }
+        self.exemplars
+            .iter()
+            .all(|item| item.answer_contract == Some(contract))
+            .then_some(contract)
+    }
+}
+
 /// The retry block of `prompts.py:766-774`, with the gate's literal message.
 ///
 /// The message goes in verbatim. A summarized reason is a different instruction,
@@ -229,6 +244,9 @@ pub fn render_exemplars(exemplars: &[Exemplar]) -> String {
     for (index, exemplar) in exemplars.iter().enumerate() {
         lines.push(format!("{}. Problem: {}", index + 1, exemplar.problem));
         lines.push(format!("   Answer: {}", exemplar.answer));
+        if let Some(contract) = exemplar.answer_contract {
+            lines.push(format!("   Answer contract: {}", json!(contract)));
+        }
         if let Some(sketch) = exemplar.solution_sketch.as_deref() {
             lines.push(format!("   Method: {sketch}"));
         }

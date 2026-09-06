@@ -45,7 +45,13 @@ fn assemble_value(spec: &AuthoringSpec, arguments: &Value) -> Result<Value, Reje
         return Err(no_arguments());
     };
     let mut body = fields.clone();
-    for server_side in ["v", "topic_id", "answer_kind", "space_size"] {
+    for server_side in [
+        "v",
+        "topic_id",
+        "answer_kind",
+        "space_size",
+        "answer_contract",
+    ] {
         body.remove(server_side);
     }
     body.insert("v".to_owned(), Value::from(TEMPLATE_VERSION));
@@ -85,6 +91,11 @@ fn unwritable(err: serde_json::Error) -> Rejection {
 /// takes the vocabulary and runs the same drop in the same place.
 fn assemble_kept(kind: Kind, spec: &AuthoringSpec, arguments: &Value) -> Result<String, Rejection> {
     let mut body = assemble_value(spec, arguments)?;
+    if kind == Kind::Template
+        && let Some(contract) = spec.template_contract()
+    {
+        body["answer_contract"] = serde_json::json!(contract);
+    }
     let dropped = keep_known_tags(&mut body, &authoring_vocabulary());
     report_dropped(spec, kind, &dropped);
     Ok(body.to_string())

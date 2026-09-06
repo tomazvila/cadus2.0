@@ -54,6 +54,7 @@ pub fn lint_curriculum(root: &Path) -> Vec<Finding> {
     let mut lint = Lint::new(&parsed.units, parsed.findings);
     let cycle = lint.check_cycle();
     lint.check_topics();
+    lint.check_answer_contracts();
     lint.check_core_ancestors();
     lint.check_modules();
     lint.check_mastery_floor_forms(&catalog);
@@ -77,6 +78,30 @@ struct Lint<'a> {
 }
 
 impl<'a> Lint<'a> {
+    /// Every explicit policy must accept a supported authored expected value.
+    fn check_answer_contracts(&mut self) {
+        for topic in &self.table.topics {
+            let exemplars = topic
+                .knowledge_points
+                .iter()
+                .flat_map(|kp| &kp.exemplars)
+                .chain(topic.diagnostic_exemplar.iter());
+            for exemplar in exemplars {
+                if let Some(contract) = exemplar.answer_contract {
+                    if contract == crate::answer::AnswerContract::None {
+                        continue;
+                    }
+                    if let Err(reason) = exemplar.canonical_answer() {
+                        self.findings.push(Finding::new(
+                            "answer_contract",
+                            format!("{}: {}: {}", topic.id, exemplar.problem, reason.reason),
+                        ));
+                    }
+                }
+            }
+        }
+    }
+
     /// Build the table and the adjacency, and report the duplicate ids and the
     /// missing references on the way.
     fn new(units: &'a [ParsedUnit], mut findings: Vec<Finding>) -> Self {

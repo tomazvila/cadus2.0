@@ -121,3 +121,13 @@ builds on it.
 - Whether the parity fixtures keep the 1.0 rules behind the two new flags
   (`readiness.enforce`, `mastery.confirm_inferred`) or move to the 2.0 rules with new
   digests (the merge took f4's `PROJECTOR_VERSION` 4 with the restamp helper, see §3).
+
+## Codex answer-contract milestone (2026-09-06)
+
+`framework/codex-answer-contract` contains the exact/approximate f3 slice,
+contract-aware template authoring and grading, and 108 explicit exact exemplars
+across the 19 inventory topics. See
+[`answer-contract-milestone-2026-09-06.md`](../reports/answer-contract-milestone-2026-09-06.md)
+for scope and verification. It is isolated from `framework/main` and production;
+f3 and the full assignment remain open pending the remaining contracts and
+acceptance evidence.

@@ -100,6 +100,7 @@ pub fn graph() -> Curriculum {
     let mut point = kp(
         "kp1",
         vec![Exemplar {
+            answer_contract: None,
             problem: "Compute $7 - 2$.".to_string(),
             answer: "5".to_string(),
             solution_sketch: None,

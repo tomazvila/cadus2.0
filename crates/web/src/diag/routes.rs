@@ -18,7 +18,7 @@ use super::{
     topic_kind, topic_record,
 };
 use crate::error::ApiError;
-use crate::grade::{deterministic_grade, measure_secs};
+use crate::grade::{grade_item, measure_secs};
 use crate::session::{Ready, Reply, enrolled_event, event_slug, reply_committed, unknown_course};
 use crate::state::{Content, INVALID_REQUEST, ServedProblem, UNKNOWN_PROBLEM, WebState};
 
@@ -191,7 +191,7 @@ fn mark_probe(
 ) -> Marked {
     let expected_time = topic_record(graph, topic).map(|record| record.expected_time_secs);
     let (secs, _) = measure_secs(served.started_at, now_micros, expected_time);
-    let grade = deterministic_grade(&served.expected.answer, submitted, kind);
+    let grade = grade_item(&served.expected, submitted, kind);
     let weight = diagnostic::answer_weight(
         grade.correct,
         expected_time.unwrap_or_default() as f64,

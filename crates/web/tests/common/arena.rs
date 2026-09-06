@@ -59,6 +59,7 @@ pub fn exemplar(problem: &str, answer: &str) -> Exemplar {
 /// One exemplar with the solution its author wrote.
 pub fn exemplar_with_solution(problem: &str, answer: &str, solution: &str) -> Exemplar {
     Exemplar {
+        answer_contract: None,
         problem: problem.to_string(),
         answer: answer.to_string(),
         solution_sketch: Some(solution.to_string()),

@@ -108,6 +108,7 @@ pub async fn seed_pool_row(
         seed: 7,
     };
     let expected = PoolAnswer {
+        answer_contract: None,
         v: 1,
         answer: answer.to_string(),
     };
@@ -166,6 +167,7 @@ pub fn lesson_problem(age_secs: f64, kp: &str, hints: Vec<String>) -> ServedProb
         answer_kind: Some("numeric".to_string()),
         text: PROBLEM_TEXT.to_string(),
         expected: PoolAnswer {
+            answer_contract: None,
             v: 1,
             answer: EXPECTED_ANSWER.to_string(),
         },

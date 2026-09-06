@@ -371,12 +371,25 @@ impl<'a> Checker<'a> {
     }
 
     fn check_exemplar(&mut self, value: &Value) {
-        const FIELDS: [&str; 3] = ["problem", "answer", "solution_sketch"];
+        const FIELDS: [&str; 4] = ["problem", "answer", "solution_sketch", "answer_contract"];
         let Some(map) = self.struct_map(value, "Exemplar") else {
             return;
         };
         self.field(map, "problem", true, Self::check_string);
         self.field(map, "answer", true, Self::check_string);
+        self.field(map, "answer_contract", false, |checker, value| {
+            if value.is_null() {
+                return;
+            }
+            match crate::answer::AnswerContract::deserialize(value.clone()) {
+                Ok(contract) => {
+                    if let Err(reason) = contract.validate() {
+                        checker.report(reason.reason);
+                    }
+                }
+                Err(reason) => checker.report(&reason.to_string()),
+            }
+        });
         self.field(map, "solution_sketch", false, |checker, value| {
             if !value.is_null() {
                 checker.check_string(value);

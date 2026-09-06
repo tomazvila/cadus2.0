@@ -130,6 +130,7 @@ fn an_unknown_version_is_refused() {
 #[test]
 fn the_answer_document_writes_the_literal_body() {
     let doc = PoolAnswer {
+        answer_contract: None,
         v: 1,
         answer: "49".to_string(),
     };
@@ -150,6 +151,7 @@ fn instance() -> Instance {
     bindings.insert("a".to_string(), Scalar::Int(7).value());
     bindings.insert("op".to_string(), Value::Text("\\times".to_string()));
     Instance {
+        answer_contract: None,
         bindings,
         text: "Compute $7 \\times 7$.".to_string(),
         answer: "49".to_string(),

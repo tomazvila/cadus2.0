@@ -138,12 +138,8 @@ async fn an_ungraded_reply_reveals_no_solution_and_fires_no_diagnosis() {
 // Audit finding (d): a rational exponent (unit f2 makes this one correct)
 // --------------------------------------------------------------------------- //
 
-/// `2^(1/2)` against `sqrt(2)` is UNGRADED today, and it is NOT incorrect.
-///
-/// The grammar has no rational exponent yet, so the checker refuses the answer.
-/// Unit f2 adds the production and this pair becomes `correct`. The one claim
-/// this test pins for both units is that a learner who writes a right answer in
-/// a form the grammar misses is never told it is wrong.
+/// The f2 grammar recognizes a rational exponent as an equivalent radical.
+/// The HTTP outcome must expose the successful grade.
 #[tokio::test]
 async fn a_rational_exponent_is_never_told_it_is_wrong() {
     TestDb::with(|db| async move {
@@ -158,8 +154,9 @@ async fn a_rational_exponent_is_never_told_it_is_wrong() {
         let body = answer(&app, user, "2^(1/2)").await;
         assert_ne!(body["outcome"], "incorrect", "{body}");
         assert_ne!(body["correct"], json!(false), "{body}");
-        assert_eq!(body["outcome"], "ungraded");
-        assert!(body["reason"].is_string(), "{body}");
+        assert_eq!(body["outcome"], "correct");
+        assert_eq!(body["correct"], json!(true));
+        assert!(body.get("reason").is_none(), "{body}");
     })
     .await;
 }

@@ -100,6 +100,28 @@ pub(super) fn exemplar_rows(graph: &Curriculum, target: &Target) -> Vec<NewInsta
     }
 }
 
+/// Capture the current authored policy for a newly served exemplar. Matching
+/// both statement and answer keeps changed content from borrowing a policy.
+/// Template rows retain their approved document's policy. Existing served
+/// problems bypass this function and keep their original captured policy.
+pub(super) fn answer_of(
+    graph: &Curriculum,
+    target: &Target,
+    row: &PoolRow,
+) -> cadus_core::pool::PoolAnswer {
+    let mut answer = row.expected_answer.clone();
+    if row.source == Source::Exemplar
+        && let Some(exemplar) = authored_kp(graph, &target.serve, &target.kp).and_then(|kp| {
+            kp.exemplars
+                .iter()
+                .find(|item| item.problem == row.problem.text && item.answer == answer.answer)
+        })
+    {
+        answer.answer_contract = exemplar.answer_contract;
+    }
+    answer
+}
+
 /// The authored worked solution of the drawn row, or `None`.
 ///
 /// The grade reply of unit U8 reveals it after the attempt commits, and the
@@ -314,5 +336,35 @@ mod tests {
             exemplar_sketch(&exemplar, &target("counting", "kp9"), "Give 7."),
             None
         );
+    }
+    #[test]
+    fn a_new_exemplar_serve_captures_the_matching_current_policy() {
+        use cadus_core::answer::AnswerContract;
+        let mut topic = topic_doc("counting", &[("kp1", &["7"])]);
+        topic["knowledge_points"][0]["exemplars"][0]["answer_contract"] = json!({"kind": "exact"});
+        let graph = arena(&[topic]);
+        let target = target("counting", "kp1");
+        let instance = exemplar_rows(&graph, &target).remove(0);
+        let mut row = PoolRow {
+            id: Uuid::nil(),
+            source: Source::Exemplar,
+            content_digest: None,
+            problem: instance.problem,
+            expected_answer: instance.expected_answer,
+            instance_hash: instance.instance_hash,
+        };
+        row.expected_answer.answer_contract = None;
+        let captured = answer_of(&graph, &target, &row);
+        assert_eq!(captured.answer_contract, Some(AnswerContract::Exact));
+        assert_eq!(row.expected_answer.answer_contract, None);
+        row.expected_answer.answer = "8".to_owned();
+        assert_eq!(answer_of(&graph, &target, &row).answer_contract, None);
+        row.expected_answer.answer = "7".to_owned();
+        row.problem.text = "Different question".to_owned();
+        assert_eq!(answer_of(&graph, &target, &row).answer_contract, None);
+        row.problem.text = "Give 7.".to_owned();
+        row.source = Source::Template;
+        assert_eq!(answer_of(&graph, &target, &row).answer_contract, None);
+        assert_eq!(captured.answer_contract, Some(AnswerContract::Exact));
     }
 }

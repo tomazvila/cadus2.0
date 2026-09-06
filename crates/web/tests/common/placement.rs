@@ -54,6 +54,7 @@ pub fn topic(id: &str, prereq: Option<&str>) -> Topic {
             constraints: None,
         }],
         diagnostic_exemplar: Some(Exemplar {
+            answer_contract: None,
             problem: format!("probe for {id}: what is 3 + 4?"),
             answer: ANSWER.to_owned(),
             solution_sketch: Some(SKETCH.to_owned()),

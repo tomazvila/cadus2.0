@@ -100,6 +100,7 @@ fn probe_problem(
         answer_kind: Some(record.answer_kind.as_str().to_owned()),
         text: text.clone(),
         expected: PoolAnswer {
+            answer_contract: exemplar.and_then(|item| item.answer_contract),
             v: cadus_core::pool::POOL_ROW_VERSION,
             answer: exemplar.map(|item| item.answer.clone()).unwrap_or_default(),
         },

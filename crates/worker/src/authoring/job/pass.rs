@@ -18,14 +18,15 @@ use crate::model_log::{self, CallRecord, PURPOSE_AUTHORING};
 /// The reason a knowledge point no gate can accept declines with, or `None`
 /// when the gate of `kind` reads no answer kind (T3, finding F19).
 ///
-/// The template gate AND the diagnosis gate refuse every document of an
-/// undecidable answer kind, with one message, so five calls of either kind buy
-/// five copies of one refusal. A teach page and a hint ladder carry no answer
-/// expression, so the rule is not theirs: a knowledge point nothing can grade is
-/// still a knowledge point a page teaches and a ladder supports.
+/// Contract-bearing multi-step templates use their deterministic item policy.
+/// Other unsupported template and diagnosis kinds decline before spending a
+/// model call. Teach pages and hint ladders can still support those topics.
 fn undecidable(kind: Kind, spec: &AuthoringSpec) -> Option<String> {
     let gated = matches!(kind, Kind::Template | Kind::Diagnosis);
-    if gated && !TEMPLATABLE_KINDS.contains(&spec.answer_kind) {
+    let contracted_template = kind == Kind::Template
+        && spec.answer_kind == cadus_core::curriculum::AnswerKind::MultiStep
+        && spec.template_contract().is_some();
+    if gated && !TEMPLATABLE_KINDS.contains(&spec.answer_kind) && !contracted_template {
         return Some(format!(
             "answer kind {} is not symbolically decidable",
             spec.answer_kind

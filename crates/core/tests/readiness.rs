@@ -20,6 +20,7 @@ use common::{graph, knowledge_point, plain_topic};
 /// One exemplar with a problem, an answer, and a sketch when `sketch` is true.
 fn exemplar(problem: &str, answer: &str, sketch: bool) -> Exemplar {
     Exemplar {
+        answer_contract: None,
         problem: problem.to_owned(),
         answer: answer.to_owned(),
         solution_sketch: sketch.then(|| format!("work {problem}")),

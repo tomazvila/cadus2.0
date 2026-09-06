@@ -56,6 +56,7 @@ fn pool_row_message(err: &StoreError) -> String {
 fn the_row_of_an_instance_carries_its_documents() {
     let ast = cadus_core::answer::parse::parse("4").unwrap();
     let instance = cadus_core::template::Instance {
+        answer_contract: None,
         bindings: BTreeMap::new(),
         text: "Compute $2^2$.".to_string(),
         answer: "4".to_string(),

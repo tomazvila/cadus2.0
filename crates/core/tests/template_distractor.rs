@@ -72,6 +72,7 @@ fn vocabulary() -> Vec<String> {
 /// The knowledge point every test gates for. Its authored answer is `13.5`.
 fn exemplars() -> Vec<Exemplar> {
     vec![Exemplar {
+        answer_contract: None,
         problem: "Compute $8 + 5.5$.".to_owned(),
         answer: "13.5".to_owned(),
         solution_sketch: None,

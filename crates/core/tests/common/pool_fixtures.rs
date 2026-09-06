@@ -78,6 +78,7 @@ pub const EXEMPLARS: [(&str, &str, &str); 3] = [
 #[must_use]
 pub fn exemplar(problem: &str, answer: &str) -> Exemplar {
     Exemplar {
+        answer_contract: None,
         problem: problem.to_string(),
         answer: answer.to_string(),
         solution_sketch: None,

@@ -114,6 +114,7 @@ fn spec_of(answers: &[&str]) -> Vec<Exemplar> {
     answers
         .iter()
         .map(|answer| Exemplar {
+            answer_contract: None,
             problem: "p".to_string(),
             answer: (*answer).to_string(),
             solution_sketch: None,

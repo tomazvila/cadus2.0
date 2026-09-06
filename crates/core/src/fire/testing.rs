@@ -54,6 +54,7 @@ pub(crate) fn topic(id: &str, prereqs: &[(&str, f64, bool)]) -> Topic {
         encompassings_extra: Vec::new(),
         knowledge_points: vec![knowledge_point("kp1", &[])],
         diagnostic_exemplar: Some(Exemplar {
+            answer_contract: None,
             problem: format!("probe {id}"),
             answer: "7".to_owned(),
             solution_sketch: None,

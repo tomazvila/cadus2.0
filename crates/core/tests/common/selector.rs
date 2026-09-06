@@ -28,6 +28,7 @@ pub fn cfg() -> Config {
 pub fn kp(id: &str, key_prerequisites: &[&str]) -> KnowledgePoint {
     let mut point = knowledge_point(id, key_prerequisites);
     point.exemplars = vec![Exemplar {
+        answer_contract: None,
         problem: "p".to_owned(),
         answer: "a".to_owned(),
         solution_sketch: None,

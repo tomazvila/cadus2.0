@@ -177,6 +177,9 @@ pool_body!(PoolProblem);
 pub struct PoolAnswer {
     /// [`POOL_ROW_VERSION`].
     pub v: u32,
+    /// The policy captured with this item; absence preserves legacy semantics.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub answer_contract: Option<crate::answer::AnswerContract>,
     /// The expected answer, inside the M2 grammar.
     pub answer: String,
 }
@@ -188,6 +191,7 @@ impl PoolAnswer {
         Self {
             v: POOL_ROW_VERSION,
             answer: instance.answer.clone(),
+            answer_contract: instance.answer_contract,
         }
     }
 }

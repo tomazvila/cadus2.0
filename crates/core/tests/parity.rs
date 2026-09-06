@@ -15,7 +15,10 @@
 //! The 4,052,882 bytes count the trailing newline the oracle writes;
 //! [`canonical_dump`] returns the 4,052,881 bytes before it.
 //!
-//! No expected value is derived by the code under test.
+//! D-F1 adds 108 exact policies to the 19 inventory topics. The new snapshot
+//! below was derived independently with Python: decode the original oracle JSON,
+//! add the reviewed per-exemplar policy, and encode sorted compact UTF-8 JSON.
+//! Every unannotated fixture retains the original dump bytes.
 
 mod common;
 
@@ -25,10 +28,10 @@ use cadus_core::curriculum::{
 use common::dump::tree;
 
 /// The semantic curriculum hash of the checked-in tree (spec section 3).
-const TREE_HASH: &str = "f121f9baf73f29e89679a3304c5405352f0ff47f163a0140bd0e92102a0a8b9e";
+const TREE_HASH: &str = "108352689bc43c92a9ca58fa3ed8f2d938b941839465a6f4afcb27a33216514d";
 
 /// The length of the dump in bytes, without the trailing newline.
-const DUMP_LEN: usize = 4_052_881;
+const DUMP_LEN: usize = 4_056_661;
 
 /// The `counts` object of the dump, as the oracle writes it.
 const COUNTS: &str = "\"counts\":{\"anki_seeds\":2144,\"courses\":13,\"encompassing_edges\":3200,\"exemplars\":6800,\"knowledge_points\":3138,\"prereq_edges\":3281,\"topics\":1090,\"units\":88}";
@@ -38,7 +41,7 @@ const COUNTS: &str = "\"counts\":{\"anki_seeds\":2144,\"courses\":13,\"encompass
 // --------------------------------------------------------------------------- //
 
 #[test]
-fn curriculum_hash_of_the_checked_in_tree_is_the_oracle_hash() {
+fn curriculum_hash_covers_the_reviewed_answer_contracts() {
     assert_eq!(curriculum_hash(&tree()), TREE_HASH);
 }
 

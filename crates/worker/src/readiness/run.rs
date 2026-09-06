@@ -140,6 +140,12 @@ fn one_contract(key: &str, topic: &Topic, kp: &KnowledgePoint) -> ContractCheck 
 fn grade_failures(kp: &KnowledgePoint, kind: AnswerKind) -> Vec<String> {
     let mut out = Vec::new();
     for exemplar in &kp.exemplars {
+        if exemplar.answer_contract.is_some() {
+            if let Err(reason) = exemplar.canonical_answer() {
+                out.push(format!("{}: {}", exemplar.answer, reason.reason));
+            }
+            continue;
+        }
         let reason = match check(&exemplar.answer, &exemplar.answer, kind) {
             Outcome::Decided(verdict) if verdict.correct => continue,
             Outcome::Decided(_) => "the checker marks the authored answer wrong".to_owned(),

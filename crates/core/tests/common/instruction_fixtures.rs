@@ -9,6 +9,7 @@ use cadus_core::instruction::{InstructionSpec, ServedInstance};
 #[must_use]
 pub fn exemplars() -> Vec<Exemplar> {
     vec![Exemplar {
+        answer_contract: None,
         problem: "Compute $7^2$.".to_owned(),
         answer: "49".to_owned(),
         solution_sketch: None,
