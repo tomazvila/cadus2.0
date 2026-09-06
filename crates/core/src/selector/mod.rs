@@ -28,6 +28,7 @@
 
 mod compose;
 mod compress;
+mod confirm;
 mod context;
 mod frontier;
 mod gap_fill;
@@ -38,11 +39,13 @@ mod reserve;
 mod review;
 mod task;
 mod topic_set;
+mod trigger;
 
-pub use crate::xp::is_mastered;
+pub use crate::xp::{is_inferred, is_known, is_practiced};
 
 pub use compose::compose_session;
 pub use compress::{Compression, compress};
+pub use confirm::{CONFIRM_PROBLEMS, confirmations};
 pub use context::SessionContext;
 pub use gap_fill::{
     blocking_gap_ancestors, gap_course_for, gap_fill_chain_for_stack, is_course_complete,
@@ -59,11 +62,9 @@ pub use review::{
     due_reviews, importance, in_retry_delay, nearly_due, order_lessons, retry_available_at,
     review_mix,
 };
-pub use task::{
-    Constraints, SessionPlan, Task, remediation_for_quiz_miss, remediation_for_repeat_fail,
-    schedule_drills, start_kp,
-};
-pub use topic_set::{TopicSet, course_scope, frontier, mastered_set};
+pub use task::{Constraints, SessionPlan, Task, start_kp};
+pub use topic_set::{TopicSet, course_scope, frontier, known_set, practiced_set};
+pub use trigger::{remediation_for_quiz_miss, remediation_for_repeat_fail, schedule_drills};
 
 /// One day, in microseconds.
 const DAY_US: i64 = 86_400_000_000;
@@ -110,6 +111,12 @@ pub const REMEDIATION_REPEAT_FAIL: &str = "repeat_fail";
 
 /// The remediation kind of a lesson failure.
 pub const REMEDIATION_LESSON_FAIL: &str = "lesson_fail";
+
+/// The remediation kind of a failed confirmation item (D-F6).
+///
+/// The target keeps its `Placed` status and the plan serves its LESSON, which is
+/// the peel-back the book asks for at p.377.
+pub const REMEDIATION_CONFIRM_FAILED: &str = "confirm_failed";
 
 /// The fewest components a multi-step task needs (`selector.py:139`).
 pub const MULTISTEP_MIN_COMPONENTS: usize = 3;

@@ -104,6 +104,7 @@ function demoTask(answered: number): PlanTask {
     time_budget_secs: 600,
     difficulty_target: 0.7,
     why: 'Frontier topic: fractions is ready to learn.',
+    confirm: false,
     progress: { answered, done: answered >= DEMO_PROBLEMS.length },
   };
 }
@@ -193,6 +194,7 @@ export function createDemoApi(): ApiClient {
         frontier: 4,
         due_reviews: 2,
         nearly_due: 1,
+        mastery: { practiced: 9, inferred: 6, total: 50, to_confirm: ['whole-numbers'] },
       }),
 
     getGraph: (scope) =>

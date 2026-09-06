@@ -221,6 +221,13 @@ export function Dashboard({
   const fraction = goal ? today / goal : 0;
   const due = num(status.due_reviews);
   const frontier = num(status.frontier);
+  // D-F6 — HONEST PROGRESS. The bar reads `course_progress`, which counts the topics the
+  // learner PRACTICED. These three numbers say what stands behind it: a placement gives
+  // credit, not evidence, so an inferred topic waits for one confirmation item.
+  const mastery = status.mastery;
+  const practiced = num(mastery?.practiced);
+  const inferred = num(mastery?.inferred);
+  const toConfirm = mastery?.to_confirm?.length ?? 0;
 
   const courseArc = courses.length ? (
     <div className="course-arc">
@@ -277,6 +284,17 @@ export function Dashboard({
           <Stat value={`${pct(status.velocity.course_progress)}%`} label="course" />
           <Stat value={status.velocity.eta ?? '—'} label="ETA" />
         </div>
+        {mastery ? (
+          <div className="stat-grid mastery-grid">
+            <Stat value={`${practiced}`} label="practiced" />
+            <Stat value={`${inferred}`} label="inferred from placement" />
+            <Stat
+              value={`${toConfirm}`}
+              label="to confirm"
+              className={toConfirm > 0 ? 'accent' : undefined}
+            />
+          </div>
+        ) : null}
       </div>
 
       {/* W-C2: one primary action, chosen by the state of the plan. */}

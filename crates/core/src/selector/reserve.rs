@@ -6,7 +6,7 @@ use std::collections::{BTreeMap, BTreeSet};
 use crate::event::TaskType;
 use crate::fire::{ReviewState, review_state};
 use crate::learner::TopicState;
-use crate::xp::is_mastered;
+use crate::xp::{is_inferred, is_known};
 use crate::{config::Config, curriculum::Curriculum};
 
 use super::context::SessionContext;
@@ -16,8 +16,9 @@ use super::interleave::SlotKind;
 use super::multistep::remediation_tasks;
 use super::quiz::quiz_is_due;
 use super::review::in_retry_delay;
-use super::task::{SessionPlan, Task, schedule_drills};
+use super::task::{SessionPlan, Task};
 use super::topic_set::TopicSet;
+use super::trigger::schedule_drills;
 
 /// The inputs [`task_still_valid`] tests a queued task against.
 #[derive(Debug, Clone, Copy)]
@@ -106,6 +107,15 @@ impl Validity<'_> {
             return self.ctx.pending_targets.contains(topic_id);
         }
         match task.task_type {
+            // A confirmation stands while the topic is still inferred (D-F6).
+            // The review band never opens for a placed topic, so the band test
+            // would drop the item on the first re-serve. A CLOSED item goes,
+            // pass or fail: a failed one leaves the peel-back lesson behind it,
+            // and a second try in the same session is not a confirmation.
+            TaskType::Review if task.confirm => {
+                !self.ctx.closed_task_ids.contains(&task.task_id)
+                    && self.states.get(topic_id).is_some_and(is_inferred)
+            }
             TaskType::Review => self.review_valid(task, topic_id),
             TaskType::Lesson => self.lesson_valid(topic_id),
             TaskType::Drill => self.ctx.drill_eligible.contains(topic_id),
@@ -132,7 +142,7 @@ impl Validity<'_> {
         let default = TopicState::default();
         let state = self.states.get(topic_id).unwrap_or(&default);
         self.ctx.frontier_topics.contains_id(self.graph, topic_id)
-            && !is_mastered(state)
+            && !is_known(state)
             && !in_retry_delay(state, self.cfg, self.t_us)
     }
 }
@@ -153,7 +163,7 @@ pub fn reserve_open_plan(
     ctx: &SessionContext<'_>,
 ) -> SessionPlan {
     let front = Frontier::new(states, graph, cfg, t_us, ctx.course_id, None);
-    let course_complete = is_course_complete(states, graph, ctx.course_id, Some(&front.mastered));
+    let course_complete = is_course_complete(states, graph, cfg, ctx.course_id, Some(&front.known));
 
     let pending_targets: BTreeSet<String> = ctx
         .pending_remediation

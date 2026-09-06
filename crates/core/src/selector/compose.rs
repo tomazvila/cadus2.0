@@ -10,6 +10,7 @@ use crate::fire::has_review_history;
 use crate::learner::TopicState;
 
 use super::compress::compress_with;
+use super::confirm::{confirm_task, confirmations};
 use super::context::SessionContext;
 use super::frontier::Frontier;
 use super::gap_fill::is_course_complete;
@@ -20,9 +21,9 @@ use super::reserve::reserve_open_plan;
 use super::review::{due_reviews, nearly_due, order_lessons_with};
 use super::task::{
     SessionPlan, Task, drill_task, knockout_count, lesson_task, quiz_task, review_task,
-    schedule_drills,
 };
 use super::topic_set::ReachCache;
+use super::trigger::schedule_drills;
 use super::{MULTISTEP_ENABLED, MULTISTEP_MIN_COMPONENTS};
 
 /// The review side of one composition: the due list, the compression, and the
@@ -219,7 +220,7 @@ pub fn compose_session(
     let mut cache = ReachCache::new(graph);
     let front = Frontier::new(states, graph, cfg, t_us, ctx.course_id, ctx.gap_fill_chain);
     let course_complete = ctx.gap_fill_chain.is_none()
-        && is_course_complete(states, graph, ctx.course_id, Some(&front.mastered));
+        && is_course_complete(states, graph, cfg, ctx.course_id, Some(&front.known));
 
     // Priority 1: the remediation queue. It is computed first so the review and
     // lesson lists can dedupe against it.
@@ -239,6 +240,19 @@ pub fn compose_session(
     // The multi-step integration task absorbs several due reviews.
     let multistep = multistep_plan(states, graph, ctx, &reviews.due, &mut review_topics);
 
+    // The confirmation items of D-F6. They stand after the remediation queue and
+    // before the interleaved sequence, and a topic the plan already serves waits.
+    let mut busy: BTreeSet<String> = remediation_topics.clone();
+    busy.extend(review_topics.iter().cloned());
+    busy.extend(lessons_ordered.iter().cloned());
+    if let Some(task) = multistep.as_ref() {
+        busy.extend(task.component_topics.iter().cloned());
+    }
+    let confirm: Vec<Task> = confirmations(states, graph, cfg, t_us, ctx.course_id, &busy)
+        .iter()
+        .map(|tid| confirm_task(tid, states, graph))
+        .collect();
+
     let seq = interleave(&review_topics, &lessons_ordered, cfg);
     let slots = SlotInputs {
         states,
@@ -249,6 +263,7 @@ pub fn compose_session(
         reviews: &reviews,
     };
     let mut tasks: Vec<Task> = remediation;
+    tasks.extend(confirm);
     tasks.extend(seq.iter().map(|(kind, tid)| slots.task(*kind, tid)));
     tasks.extend(multistep);
 

@@ -9,32 +9,44 @@ use crate::curriculum::Curriculum;
 use crate::learner::TopicState;
 
 use super::quiz::i64_as_float;
-use super::topic_set::{TopicSet, course_scope, frontier, mastered_set};
+use super::topic_set::{TopicSet, course_scope, frontier, known_set, practiced_set};
 
-/// Whether every topic of the course scope is mastered
-/// (`is_course_complete`, `selector.py:381-395`).
+/// Whether the learner completed every topic of the course scope
+/// (`is_course_complete`, `selector.py:381-395`, D-F6).
 ///
-/// An empty frontier with un-mastered topics left is a cross-course gap block,
-/// not completion.
+/// With `mastery.confirm_inferred` on, completion counts the PRACTICED topics:
+/// a placement alone never completes a course, and the confirmation item of
+/// [`super::confirmations`] is the step that turns inference into practice.
+/// With the flag off the 1.0 rule stands and the known set completes the course.
+///
+/// `known` is the caller's cached known set. It is read in the 1.0 branch only.
+///
+/// An empty frontier with topics left over is a cross-course gap block, not
+/// completion.
 #[must_use]
 pub fn is_course_complete(
     states: &BTreeMap<String, TopicState>,
     graph: &Curriculum,
+    cfg: &Config,
     course_id: Option<&str>,
-    mastered: Option<&TopicSet>,
+    known: Option<&TopicSet>,
 ) -> bool {
-    let mastered = mastered_or(mastered, states, graph);
+    let done: Cow<'_, TopicSet> = if cfg.mastery.confirm_inferred {
+        Cow::Owned(practiced_set(states, graph))
+    } else {
+        known.map_or_else(|| Cow::Owned(known_set(states, graph)), Cow::Borrowed)
+    };
     let course_topics = course_scope(graph, course_id);
-    !course_topics.is_empty() && course_topics.is_subset(&mastered)
+    !course_topics.is_empty() && course_topics.is_subset(&done)
 }
 
-/// The given mastered set, or the one computed from `states`.
-fn mastered_or<'m>(
+/// The given known set, or the one computed from `states`.
+fn known_or<'m>(
     given: Option<&'m TopicSet>,
     states: &BTreeMap<String, TopicState>,
     graph: &Curriculum,
 ) -> Cow<'m, TopicSet> {
-    given.map_or_else(|| Cow::Owned(mastered_set(states, graph)), Cow::Borrowed)
+    given.map_or_else(|| Cow::Owned(known_set(states, graph)), Cow::Borrowed)
 }
 
 /// The catalog `order` of a course. An unknown or unset course sorts last.
@@ -44,27 +56,30 @@ fn course_order(graph: &Curriculum, course_id: Option<&str>) -> f64 {
         .map_or(f64::INFINITY, |course| i64_as_float(course.order))
 }
 
-/// The un-mastered prerequisite ancestors of a course's un-mastered topics that
-/// lie OUTSIDE the course (`blocking_gap_ancestors`, `selector.py:186-212`).
+/// The prerequisite ancestors OUTSIDE the course that the learner does not know
+/// (`blocking_gap_ancestors`, `selector.py:186-212`).
+///
+/// D-F6 renamed the parameter: the set is the KNOWN set, and a placed or a floor
+/// topic unblocks a prerequisite the same way a practiced one does.
 #[must_use]
 pub fn blocking_gap_ancestors(
     states: &BTreeMap<String, TopicState>,
     graph: &Curriculum,
     course_id: Option<&str>,
-    mastered: Option<&TopicSet>,
+    known: Option<&TopicSet>,
 ) -> TopicSet {
     let Some(course) = course_id else {
         return TopicSet::empty(graph);
     };
-    let mastered = mastered_or(mastered, states, graph);
+    let known = known_or(known, states, graph);
     let course_topics = course_scope(graph, Some(course));
     let mut out = TopicSet::empty(graph);
     for idx in course_topics.indices() {
-        if mastered.contains(idx) {
+        if known.contains(idx) {
             continue;
         }
         for ancestor in graph.ancestors(idx) {
-            if !mastered.contains(ancestor) && !course_topics.contains(ancestor) {
+            if !known.contains(ancestor) && !course_topics.contains(ancestor) {
                 out.insert(ancestor);
             }
         }
@@ -86,21 +101,18 @@ pub fn gap_course_for(
     _cfg: &Config,
     _t_us: i64,
     course_id: Option<&str>,
-    mastered: Option<&TopicSet>,
+    known: Option<&TopicSet>,
 ) -> Option<String> {
     let course = course_id?;
-    let mastered = mastered_or(mastered, states, graph);
+    let known = known_or(known, states, graph);
     let course_topics = course_scope(graph, Some(course));
-    if !frontier(graph, &mastered)
-        .intersect(&course_topics)
-        .is_empty()
-    {
+    if !frontier(graph, &known).intersect(&course_topics).is_empty() {
         return None; // A frontier lesson remains, serveable or delayed: not a gap.
     }
-    if course_topics.is_subset(&mastered) {
-        return None; // Every course topic is mastered.
+    if course_topics.is_subset(&known) {
+        return None; // The learner knows every course topic.
     }
-    let missing = blocking_gap_ancestors(states, graph, Some(course), Some(&mastered));
+    let missing = blocking_gap_ancestors(states, graph, Some(course), Some(&known));
     let current = course_order(graph, Some(course));
     let lower: BTreeSet<&str> = missing
         .indices()
@@ -147,16 +159,16 @@ pub fn gap_fill_chain_for_stack(
     states: &BTreeMap<String, TopicState>,
     graph: &Curriculum,
     stack: &[String],
-    mastered: Option<&TopicSet>,
+    known: Option<&TopicSet>,
 ) -> Option<TopicSet> {
     let (tip, parents) = stack.split_last()?;
     if parents.is_empty() {
         return None;
     }
-    let mastered = mastered_or(mastered, states, graph);
+    let known = known_or(known, states, graph);
     let mut chain = TopicSet::empty(graph);
     for parent in parents {
-        let blockers = blocking_gap_ancestors(states, graph, Some(parent), Some(&mastered));
+        let blockers = blocking_gap_ancestors(states, graph, Some(parent), Some(&known));
         for idx in blockers.indices() {
             chain.insert(idx);
         }
@@ -171,12 +183,12 @@ pub fn serveable_gap_frontier(
     states: &BTreeMap<String, TopicState>,
     graph: &Curriculum,
     stack: &[String],
-    mastered: Option<&TopicSet>,
+    known: Option<&TopicSet>,
 ) -> TopicSet {
-    let mastered = mastered_or(mastered, states, graph);
+    let known = known_or(known, states, graph);
     let tip = stack.last().map(String::as_str);
-    let out = frontier(graph, &mastered).intersect(&course_scope(graph, tip));
-    match gap_fill_chain_for_stack(states, graph, stack, Some(&mastered)) {
+    let out = frontier(graph, &known).intersect(&course_scope(graph, tip));
+    match gap_fill_chain_for_stack(states, graph, stack, Some(&known)) {
         Some(chain) => out.intersect(&chain),
         None => out,
     }
@@ -188,21 +200,21 @@ fn deeper_gap_course(
     states: &BTreeMap<String, TopicState>,
     graph: &Curriculum,
     stack: &[String],
-    mastered: &TopicSet,
+    known: &TopicSet,
 ) -> Option<String> {
     if stack.len() < 2 {
         return None;
     }
-    if !serveable_gap_frontier(states, graph, stack, Some(mastered)).is_empty() {
+    if !serveable_gap_frontier(states, graph, stack, Some(known)).is_empty() {
         return None; // The tip can serve something.
     }
     let tip = stack.last().map(String::as_str);
-    let mut blockers = blocking_gap_ancestors(states, graph, tip, Some(mastered));
+    let mut blockers = blocking_gap_ancestors(states, graph, tip, Some(known));
     // The stack holds two courses at least, so the chain is always given.
-    let chain = gap_fill_chain_for_stack(states, graph, stack, Some(mastered));
+    let chain = gap_fill_chain_for_stack(states, graph, stack, Some(known));
     for idx in chain.iter().flat_map(TopicSet::indices) {
         for ancestor in graph.ancestors(idx) {
-            if !mastered.contains(ancestor) {
+            if !known.contains(ancestor) {
                 blockers.insert(ancestor);
             }
         }
@@ -224,7 +236,7 @@ fn deeper_gap_course(
 ///
 /// `stack[0]` is the base course and `stack[-1]` is the course to serve. The
 /// descent stops at the first course whose blocking chain holds something
-/// serveable. Switch-back is implicit: a mastered gap shortens the stack.
+/// serveable. Switch-back is implicit: a known gap shortens the stack.
 #[must_use]
 pub fn resolve_gap_fill_stack(
     states: &BTreeMap<String, TopicState>,
@@ -236,14 +248,14 @@ pub fn resolve_gap_fill_stack(
     let Some(base) = base_course else {
         return Vec::new();
     };
-    let mastered = mastered_set(states, graph);
+    let known = known_set(states, graph);
     let mut stack: Vec<String> = vec![base.to_owned()];
     // Every course pushed here has a lower order than the tip, so the descent
     // ends at the lowest course at the latest.
     loop {
         let tip = stack.last().map(String::as_str);
-        let gap = gap_course_for(states, graph, cfg, t_us, tip, Some(&mastered))
-            .or_else(|| deeper_gap_course(states, graph, &stack, &mastered));
+        let gap = gap_course_for(states, graph, cfg, t_us, tip, Some(&known))
+            .or_else(|| deeper_gap_course(states, graph, &stack, &known));
         let Some(course) = gap else {
             break;
         };
@@ -256,7 +268,7 @@ pub fn resolve_gap_fill_stack(
 mod tests {
     use super::*;
     use crate::event::{KpProgress, Timestamp, TopicStatus};
-    use crate::fire::testing::{T_US, ladder, topic};
+    use crate::fire::testing::{T_US, ladder, learned, topic};
 
     /// The three-course ladder of the 1.0 gap-fill tests.
     fn tree() -> Curriculum {
@@ -304,7 +316,7 @@ mod tests {
             ["top", "mid", "low"]
         );
         assert!(resolve_gap_fill_stack(&none, &tree, &cfg, T_US, None).is_empty());
-        assert!(!is_course_complete(&none, &tree, Some("nope"), None));
+        assert!(!is_course_complete(&none, &tree, &cfg, Some("nope"), None));
         assert!(blocking_gap_ancestors(&none, &tree, None, None).is_empty());
         assert_eq!(gap_course_for(&none, &tree, &cfg, T_US, None, None), None);
         assert!(gap_fill_chain_for_stack(&none, &tree, &["top".to_owned()], None).is_none());
@@ -337,30 +349,44 @@ mod tests {
             gap_course_for(&states, &tree, &cfg, T_US, Some("mid"), None),
             None
         );
-        // The mastered `mid-free` blocks nothing; `mid-b` waits on `low-b`.
+        // The known `mid-free` blocks nothing; `mid-b` waits on `low-b`.
         assert_eq!(
             blocking_gap_ancestors(&states, &tree, Some("mid"), None).sorted_ids(&tree),
             ["low-b"]
         );
-        // With `mid-a` mastered too the tip serves nothing, and the descent
-        // walks the chain past the mastered `low-a` down to `low`.
+        // With `mid-a` known too the tip serves nothing, and the descent
+        // walks the chain past the known `low-a` down to `low`.
         states.insert("mid-a".to_owned(), floor());
-        let mastered = mastered_set(&states, &tree);
+        let known = known_set(&states, &tree);
         let stack = ["top", "mid"].map(str::to_owned);
         assert_eq!(
-            deeper_gap_course(&states, &tree, &stack, &mastered).as_deref(),
+            deeper_gap_course(&states, &tree, &stack, &known).as_deref(),
             Some("low")
         );
-        assert_eq!(
-            deeper_gap_course(&states, &tree, &stack[..1], &mastered),
-            None
-        );
+        assert_eq!(deeper_gap_course(&states, &tree, &stack[..1], &known), None);
         let all: BTreeMap<String, TopicState> = tree
             .topics()
             .iter()
             .map(|item| (item.id.as_str().to_owned(), floor()))
             .collect();
-        assert!(is_course_complete(&all, &tree, Some("top"), None));
+        // D-F6: a course of floor topics alone is NOT complete, because the
+        // learner practiced none of them. With the flag off the 1.0 rule stands.
+        assert!(!is_course_complete(&all, &tree, &cfg, Some("top"), None));
+        let mut old_rule = Config::default();
+        old_rule.mastery.confirm_inferred = false;
+        assert!(is_course_complete(
+            &all,
+            &tree,
+            &old_rule,
+            Some("top"),
+            None
+        ));
+        let learned: BTreeMap<String, TopicState> = tree
+            .topics()
+            .iter()
+            .map(|item| (item.id.as_str().to_owned(), learned(0.9)))
+            .collect();
+        assert!(is_course_complete(&learned, &tree, &cfg, Some("top"), None));
         assert_eq!(
             gap_course_for(&all, &tree, &cfg, T_US, Some("top"), None),
             None
@@ -409,7 +435,7 @@ mod tests {
         );
     }
 
-    /// `low < alt < mid < top < side`: `mid-a` needs `low-a`, the mastered
+    /// `low < alt < mid < top < side`: `mid-a` needs `low-a`, the known
     /// `alt-a`, and `side-a` of the course above `top`.
     fn side_ladder() -> Curriculum {
         ladder(&[

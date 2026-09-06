@@ -18,7 +18,7 @@ use cadus_core::curriculum::model::{Catalog, Course, Slug, Topic, Unit};
 use cadus_core::event::{KpProgress, TopicStatus};
 use cadus_core::learner::TopicState;
 use cadus_core::selector::{
-    blocking_gap_ancestors, gap_course_for, gap_fill_chain_for_stack, in_retry_delay, mastered_set,
+    blocking_gap_ancestors, gap_course_for, gap_fill_chain_for_stack, in_retry_delay, known_set,
     nearly_due, resolve_gap_fill_stack, serveable_gap_frontier,
 };
 use common::selector::{cfg, failed_lesson, graph_of, id_set, ids, learned, states_of, topic};
@@ -268,7 +268,7 @@ fn gap_fill_terminates_and_clears_the_whole_course() {
             );
         }
     }
-    let mastered = mastered_set(&states, &graph);
+    let mastered = known_set(&states, &graph);
     // `tests/test_gap_fill.py:243-248`.
     assert!(mastered.contains_id(&graph, "top-a"));
     assert!(!mastered.contains_id(&graph, "mid-b"));

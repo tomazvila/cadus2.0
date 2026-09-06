@@ -14,14 +14,21 @@
 //! - [`daily_totals`] accumulates with `+=`, so it keeps a NAIVE loop. Unifying
 //!   the two changes the fold.
 //!
-//! Rounding is Python rounding: [`round_dp`] is correctly-rounded decimal, never
-//! scale-round-divide (trap T4). The ETA takes `ceil` of a float quotient, and the
-//! quotient is computed first (trap T14).
+//! Rounding is Python rounding: [`crate::numeric::round_dp`] is correctly-rounded
+//! decimal, never scale-round-divide (trap T4). The ETA takes `ceil` of a float
+//! quotient, and the quotient is computed first (trap T14).
 //!
 //! Time zones enter only through the local DATE of an instant (trap T9), and the
 //! reference instant is always a parameter (trap T10).
+//!
+//! ## Where the course counts live
+//!
+//! The submodule `progress` holds [`CourseCounts`], [`course_counts`],
+//! [`course_progress`], [`estimate_eta`] and [`compute_velocity_state`]. D-F6
+//! gave those a second rule — a placement gives credit, and progress counts
+//! practice — so they keep their own file.
 
-use std::collections::{BTreeMap, BTreeSet};
+use std::collections::BTreeSet;
 use std::hint::black_box;
 
 use chrono::{Days, NaiveDate, TimeDelta};
@@ -29,10 +36,16 @@ use chrono_tz::Tz;
 use indexmap::IndexMap;
 
 use crate::config::Config;
-use crate::curriculum::Curriculum;
 use crate::event::{TaskType, TopicStatus, WorkQuality};
-use crate::learner::{TopicState, VelocityState};
-use crate::numeric::{TimeError, local_day_in, neumaier_sum, round_dp};
+use crate::learner::TopicState;
+use crate::numeric::{TimeError, local_day_in, neumaier_sum};
+
+mod progress;
+
+pub use progress::{
+    CourseCounts, VelocityInput, compute_velocity_state, course_counts, course_progress,
+    estimate_eta,
+};
 
 /// The base XP of one lesson knowledge point (`xp.py:39`).
 pub const LESSON_XP_PER_KP: f64 = 3.5;
@@ -67,16 +80,54 @@ pub const VELOCITY_WINDOW_DAYS: i64 = 28;
 /// (`xp.py:60`).
 pub const DEFAULT_XP_PER_TOPIC: f64 = 12.0;
 
-/// The statuses that count as mastered for course progress (`selector.py:150`).
+/// The topic the learner practiced: the learner passed its lesson or its
+/// confirmation item (D-F6).
 ///
-/// Implicit credit alone never masters a topic; the status gate is the rule. The
-/// selector of U4 reads the same predicate.
+/// `Learning` is the only status a passed lesson or a passed confirmation
+/// writes, so it is the only practiced status. Course completion and the
+/// course-progress percentage read this predicate, because a claim of progress
+/// stands on practice, not on inference.
 #[must_use]
-pub fn is_mastered(state: &TopicState) -> bool {
+pub const fn is_practiced(state: &TopicState) -> bool {
+    matches!(state.status, TopicStatus::Learning)
+}
+
+/// The topic the scheduler treats as known: practiced, placed, or on the course
+/// floor (D-F6).
+///
+/// Selection reads this predicate — the frontier, the review set, the drill
+/// schedule, and the remediation task kind — because the course gives placement
+/// credit and floor credit the same scheduling weight 1.0 gave them
+/// (`selector.py:150`).
+#[must_use]
+pub const fn is_known(state: &TopicState) -> bool {
     matches!(
         state.status,
         TopicStatus::Learning | TopicStatus::Placed | TopicStatus::Floor
     )
+}
+
+/// The topic the course infers: known, and never practiced (D-F6).
+///
+/// A `Placed` topic came from the diagnostic and a `Floor` topic came from the
+/// course mastery floor. Neither status carries a direct answer on the topic, so
+/// [`crate::selector::confirmations`] owes each one confirmation item.
+#[must_use]
+pub const fn is_inferred(state: &TopicState) -> bool {
+    is_known(state) && !is_practiced(state)
+}
+
+/// The 1.0 mastery predicate. Use [`is_known`] or [`is_practiced`] instead.
+///
+/// It stands for one release as an alias of [`is_known`], and no caller reads it
+/// (D-F6, audit finding l).
+#[must_use]
+#[deprecated(
+    since = "2.0.0",
+    note = "D-F6 split it: call `is_known` for selection, or `is_practiced` for progress"
+)]
+pub const fn is_mastered(state: &TopicState) -> bool {
+    is_known(state)
 }
 
 /// The pre-multiplier base XP of one task (`xp.py:68-86`).
@@ -313,155 +364,4 @@ pub fn topics_per_week(
     }
     let weeks = window_days as f64 / 7.0;
     Ok(seen.len() as f64 / weeks)
-}
-
-/// The mastered and total topic counts of a course (`xp.py:229-238`).
-///
-/// A topic absent from `states` counts as a default, untouched state.
-#[must_use]
-pub fn course_counts(
-    states: &BTreeMap<String, TopicState>,
-    graph: &Curriculum,
-    course_id: &str,
-) -> (i64, i64) {
-    let course = graph.topics_in_course(course_id);
-    let total = i64::try_from(course.len()).unwrap_or(i64::MAX);
-    let default = TopicState::default();
-    let mut done: i64 = 0;
-    for &idx in course {
-        let id = graph.id_of(idx);
-        if is_mastered(states.get(id).unwrap_or(&default)) {
-            done += 1;
-        }
-    }
-    (done, total)
-}
-
-/// The fraction of the course that is mastered (`xp.py:241-247`).
-///
-/// It advances only when a NEW topic becomes mastered — a lesson completion or a
-/// diagnostic placement — never on a review or a quiz. An empty course is `0.0`.
-#[must_use]
-#[expect(
-    clippy::cast_precision_loss,
-    reason = "a course topic count is far below 2**53"
-)]
-pub fn course_progress(
-    states: &BTreeMap<String, TopicState>,
-    graph: &Curriculum,
-    course_id: &str,
-) -> f64 {
-    let (done, total) = course_counts(states, graph, course_id);
-    if total == 0 {
-        return 0.0;
-    }
-    done as f64 / total as f64
-}
-
-/// The projected completion date of a course (`xp.py:250-274`).
-///
-/// The remaining XP is the remaining topics times the average XP already spent
-/// per completed topic, falling back to [`DEFAULT_XP_PER_TOPIC`] before any topic
-/// is done. A complete course gives `today`, and no recent velocity gives `None`.
-///
-/// The day count is `ceil` of the float quotient, computed in that order
-/// (trap T14). A projected date outside the representable range gives `None`,
-/// which is the same "ETA undefined" answer; 1.0 raises `OverflowError` there.
-#[must_use]
-#[expect(
-    clippy::cast_precision_loss,
-    reason = "a course topic count is far below 2**53"
-)]
-#[expect(
-    clippy::cast_possible_truncation,
-    reason = "the saturating cast keeps an unrepresentable day count out of the date math"
-)]
-pub fn estimate_eta(
-    states: &BTreeMap<String, TopicState>,
-    graph: &Curriculum,
-    course_id: &str,
-    total_xp: f64,
-    xp_per_day_recent: f64,
-    today: NaiveDate,
-) -> Option<NaiveDate> {
-    let (done, total) = course_counts(states, graph, course_id);
-    let remaining = total - done;
-    if remaining <= 0 {
-        return Some(today);
-    }
-    if xp_per_day_recent <= 0.0 {
-        return None;
-    }
-    let per_topic = if done > 0 {
-        total_xp / done as f64
-    } else {
-        DEFAULT_XP_PER_TOPIC
-    };
-    let xp_remaining = remaining as f64 * per_topic;
-    let days = (xp_remaining / xp_per_day_recent).ceil();
-    if !days.is_finite() {
-        return None;
-    }
-    TimeDelta::try_days(days as i64).and_then(|delta| today.checked_add_signed(delta))
-}
-
-/// The inputs of [`compute_velocity_state`].
-///
-/// The 1.0 signature is one call with nine keyword arguments
-/// (`xp.py:277-314`); this struct carries the same nine.
-#[derive(Debug, Clone, Copy)]
-pub struct VelocityInput<'a> {
-    /// The topic states of the learner.
-    pub states: &'a BTreeMap<String, TopicState>,
-    /// The curriculum the course lives in.
-    pub graph: &'a Curriculum,
-    /// The enrolled course. `None` gives a default velocity with no ETA.
-    pub course_id: Option<&'a str>,
-    /// Every `(instant, xp)` record of the log.
-    pub xp_entries: &'a [(i64, f64)],
-    /// Every `(instant, topic)` mastery record of the log.
-    pub completions: &'a [(i64, String)],
-    /// The whole-log XP total the per-topic average divides.
-    pub total_xp: f64,
-    /// The reference instant: the last event's `ts`, never a wall clock.
-    pub t_us: i64,
-    /// The resolved time zone of the day boundary.
-    pub zone: Tz,
-    /// The length of the trailing window, in local days.
-    pub window_days: i64,
-}
-
-/// Assemble the derived [`VelocityState`] of the learner model (`xp.py:277-314`).
-///
-/// Each of the three rates is rounded to 4 decimal places with Python rounding
-/// (trap T4). A learner with no enrolled course gets `0.0` progress and no ETA.
-///
-/// # Errors
-///
-/// Returns [`TimeError::TimestampOutOfRange`] for an unrepresentable instant.
-pub fn compute_velocity_state(input: &VelocityInput<'_>) -> Result<VelocityState, TimeError> {
-    let today = local_day_in(input.t_us, input.zone)?;
-    let rate = xp_per_day(input.xp_entries, input.t_us, input.zone, input.window_days)?;
-    let progress = match input.course_id {
-        Some(course_id) => course_progress(input.states, input.graph, course_id),
-        None => 0.0,
-    };
-    let eta = match input.course_id {
-        Some(course_id) => estimate_eta(
-            input.states,
-            input.graph,
-            course_id,
-            input.total_xp,
-            rate,
-            today,
-        ),
-        None => None,
-    };
-    let topics = topics_per_week(input.completions, input.t_us, input.zone, input.window_days)?;
-    Ok(VelocityState {
-        xp_per_day_28d: round_dp(rate, 4),
-        topics_per_week_28d: round_dp(topics, 4),
-        course_progress: round_dp(progress, 4),
-        eta,
-    })
 }

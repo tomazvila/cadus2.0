@@ -9,7 +9,7 @@ use cadus_core::event::Slug as EventSlug;
 use cadus_core::event::{
     DiagnosticAnswer, DiagnosticPlaced, Event, SchemaVersion, Secs, Timestamp, Weight,
 };
-use cadus_core::selector::{course_scope, frontier, mastered_set};
+use cadus_core::selector::{course_scope, frontier, known_set};
 use cadus_store::state::{Projection, clear_diag_state, project_current};
 use serde_json::{Value, json};
 
@@ -298,7 +298,7 @@ fn placed_event(now: Timestamp, session: Option<String>, result: &PlacementResul
 fn frontier_readout<'a>(graph: &'a Curriculum, after: &Projection) -> Vec<&'a str> {
     let enrolled = enrolled_course(after);
     let scope = course_scope(graph, enrolled.as_deref());
-    let mastered = mastered_set(&after.model.topics, graph);
+    let mastered = known_set(&after.model.topics, graph);
     frontier(graph, &mastered)
         .sorted_ids(graph)
         .into_iter()

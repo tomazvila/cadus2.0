@@ -45,7 +45,7 @@ pub async fn session_plan(req: Ready) -> Reply {
         .iter()
         .map(|task| trim_task(task, graph, &scratch))
         .collect();
-    let complete = is_course_complete(&model.topics, graph, course, None);
+    let complete = is_course_complete(&model.topics, graph, &req.content.cfg, course, None);
 
     let body = json!({
         "session": plan.session,
@@ -152,6 +152,9 @@ fn trim_task(task: &Task, graph: &Curriculum, scratch: &WebState) -> Value {
         "time_budget_secs": task.time_budget_secs,
         "difficulty_target": task.difficulty_target,
         "why": task.why,
+        // D-F6: the client labels a confirmation item, and it never reads a
+        // scheduling decision back out of `why`.
+        "confirm": task.confirm,
         "progress": {"answered": answered, "done": done},
     })
 }

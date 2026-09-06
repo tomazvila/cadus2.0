@@ -5,10 +5,11 @@ use std::collections::BTreeSet;
 
 use crate::event::{
     Attempt, DiagnosticAnswer, DiagnosticPlaced, Enrolled, LessonResult, ProfileReset, QuizResult,
-    RemediationTriggered, ReviewResult, Slug, Timestamp, TopicStatus, WorkQuality,
+    RemediationTriggered, ReviewResult, Slug, TaskServed, Timestamp, TopicStatus, WorkQuality,
 };
 use crate::fire::{difficulty, initial_ability, interval_for, py_min, speed_for};
 use crate::learner::{LAST_PROBLEMS_WINDOW, TopicState, problem_text_hash};
+use crate::selector::REMEDIATION_CONFIRM_FAILED;
 
 use super::{
     ABILITY_SEED_PRIOR, INFERRED_SEED_BIAS, PLACEMENT_MEMORY_BASE, PLACEMENT_REPNUM_CAP, Projector,
@@ -89,16 +90,80 @@ impl Projector<'_> {
         }
     }
 
+    /// `task_served` (D-F6). It reads the confirmation marker and nothing else.
+    ///
+    /// The marker opens one confirmation item. The review result of the same
+    /// topic closes it, so a topic never carries two open items.
+    pub(super) fn on_task_served(&mut self, event: &TaskServed) {
+        if !event.confirm {
+            return;
+        }
+        self.confirm_tasks.insert(event.task_id.clone());
+        if let Some(topic) = event.topic.as_ref() {
+            self.confirm_topics.insert(topic.as_str().to_owned());
+        }
+    }
+
+    /// Close the open confirmation item of one review result, if there is one
+    /// (D-F6).
+    ///
+    /// The `task_id` binds the pair. A result with no `task_id` binds through
+    /// the topic, which is the rule `ReviewResult::task_id` already states.
+    fn take_confirmation(&mut self, event: &ReviewResult) -> bool {
+        let topic = event.topic.as_str();
+        let matched = match event.task_id.as_deref() {
+            Some(task_id) => self.confirm_tasks.remove(task_id),
+            None => self.confirm_topics.contains(topic),
+        };
+        if matched {
+            self.confirm_topics.remove(topic);
+        }
+        matched
+    }
+
+    /// The light indices of a closed confirmation item (D-F6).
+    ///
+    /// A PASSED item completes the topic, the way a passed lesson completes it.
+    /// A FAILED item queues the peel-back lesson of the book, p.377. The trigger
+    /// instant is one microsecond after the review, because the failed review
+    /// itself is practice and practice at the trigger instant closes a queue
+    /// entry.
+    fn index_confirmation(&mut self, event: &ReviewResult, ts: i64) {
+        let topic = event.topic.as_str();
+        if event.passed {
+            if !self.learned_at.contains_key(topic) {
+                self.learned_at.insert(topic.to_owned(), ts);
+                self.completions.push((ts, topic.to_owned()));
+            }
+        } else {
+            self.remediation.push((
+                ts.saturating_add(1),
+                REMEDIATION_CONFIRM_FAILED.to_owned(),
+                vec![event.topic.clone()],
+            ));
+        }
+    }
+
     /// `review_result` (`projector.py:244-254`). It changes no status: a review on an
     /// untouched topic leaves it untouched while it writes `repNum` and `t0`.
+    ///
+    /// D-F6 adds ONE status change: a passed confirmation item moves the topic
+    /// from `Placed` or `Floor` to `Learning`. A failed one keeps the status.
     pub(super) fn on_review_result(&mut self, event: &ReviewResult, ts: i64, apply_fire: bool) {
         let topic = event.topic.as_str();
         self.xp_events.push((ts, event.xp));
         self.last_practice.insert(topic.to_owned(), ts);
+        let confirmation = self.take_confirmation(event);
+        if confirmation {
+            self.index_confirmation(event, ts);
+        }
         if !apply_fire {
             return;
         }
         self.apply_fire_result(topic, event.passed, event.quality_tier, ts, event.assisted);
+        if confirmation && event.passed {
+            self.set_status(topic, TopicStatus::Learning);
+        }
     }
 
     /// `quiz_result` (`projector.py:256-282`). Every question applies FIRe, pass or

@@ -198,6 +198,22 @@ export interface StatusResponse {
   frontier: number;
   due_reviews: number;
   nearly_due: number;
+  /** D-F6: the practiced, inferred and to-confirm counts behind the progress bar. */
+  mastery?: MasteryCounts;
+}
+
+/**
+ * The three honest mastery numbers of `GET /api/status` (D-F6).
+ *
+ * `practiced` counts the topics the learner passed. `inferred` counts the placed and
+ * floor topics that carry no direct answer. `to_confirm` lists the inferred topics the
+ * next session confirms, which is at most `mastery.max_per_session` of them.
+ */
+export interface MasteryCounts {
+  practiced: number;
+  inferred: number;
+  total: number;
+  to_confirm: string[];
 }
 
 /** The mastery state of one topic (`core::event::TopicStatus`). */

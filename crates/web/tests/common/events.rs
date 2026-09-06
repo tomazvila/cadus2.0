@@ -91,6 +91,7 @@ pub fn served(task_id: &str, task_type: TaskType, topic: Option<&str>, offset: i
         problems: Vec::new(),
         component_topics: Vec::new(),
         seed: None,
+        confirm: false,
     })
 }
 
