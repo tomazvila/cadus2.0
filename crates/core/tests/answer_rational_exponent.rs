@@ -10,42 +10,27 @@
 
 mod common;
 
-use common::check::*;
-use common::parse::{ast, int, refusal};
-
-/// Build a variable node.
-fn x() -> Ast {
-    Ast::Var("x".to_string())
-}
-
-/// Build a rational-power node.
-fn root_pow(base: Ast, numerator: i64, denominator: i64) -> Ast {
-    Ast::RationalPow {
-        base: Box::new(base),
-        numerator,
-        denominator,
-    }
-}
+use common::grammar::*;
 
 // ---------------------------------------------------------------------------
 // Parse
 // ---------------------------------------------------------------------------
 #[test]
 fn a_bracketed_rational_exponent_is_one_node_in_lowest_terms() {
-    assert_eq!(ast("x^(1/2)"), root_pow(x(), 1, 2));
-    assert_eq!(ast("x^{1/2}"), root_pow(x(), 1, 2));
-    assert_eq!(ast("x**(1/2)"), root_pow(x(), 1, 2));
-    assert_eq!(ast("x^(-1/3)"), root_pow(x(), -1, 3));
-    assert_eq!(ast("x^(+5/6)"), root_pow(x(), 5, 6));
+    assert_eq!(ast("x^(1/2)"), root_pow(v("x"), 1, 2));
+    assert_eq!(ast("x^{1/2}"), root_pow(v("x"), 1, 2));
+    assert_eq!(ast("x**(1/2)"), root_pow(v("x"), 1, 2));
+    assert_eq!(ast("x^(-1/3)"), root_pow(v("x"), -1, 3));
+    assert_eq!(ast("x^(+5/6)"), root_pow(v("x"), 5, 6));
     assert_eq!(ast("2^(2/3)"), root_pow(int(2), 2, 3));
     // Lowest terms: `2/4` is `1/2`, and `4/2` is the whole exponent 2.
-    assert_eq!(ast("x^(2/4)"), root_pow(x(), 1, 2));
-    assert_eq!(ast("x^(4/2)"), Ast::Pow(Box::new(x()), 2));
-    assert_eq!(ast("x^(0/3)"), Ast::Pow(Box::new(x()), 0));
-    assert_eq!(ast("x^(3/1)"), Ast::Pow(Box::new(x()), 3));
+    assert_eq!(ast("x^(2/4)"), root_pow(v("x"), 1, 2));
+    assert_eq!(ast("x^(4/2)"), Ast::Pow(Box::new(v("x")), 2));
+    assert_eq!(ast("x^(0/3)"), Ast::Pow(Box::new(v("x")), 0));
+    assert_eq!(ast("x^(3/1)"), Ast::Pow(Box::new(v("x")), 3));
     // The written numerator carries the bound: `12/6` is the whole exponent 2.
-    assert_eq!(ast("x^(12/6)"), Ast::Pow(Box::new(x()), 2));
-    assert_eq!(ast("x^(-12/5)"), root_pow(x(), -12, 5));
+    assert_eq!(ast("x^(12/6)"), Ast::Pow(Box::new(v("x")), 2));
+    assert_eq!(ast("x^(-12/5)"), root_pow(v("x"), -12, 5));
 }
 
 #[test]
@@ -58,23 +43,23 @@ fn the_exponent_binds_to_the_atom_in_front_of_it() {
                 numerator: BigInt::from(5),
                 denominator: BigInt::from(2),
             },
-            root_pow(x(), 3, 2),
+            root_pow(v("x"), 3, 2),
         ])
     );
     // A bracketed base takes the root as a whole.
     assert_eq!(
         ast("(x + 1)^(5/2)"),
-        root_pow(Ast::Add(vec![x(), int(1)]), 5, 2)
+        root_pow(Ast::Add(vec![v("x"), int(1)]), 5, 2)
     );
     // The power of a letter run binds to the last letter, as a whole power does.
     assert_eq!(
         ast("xy^(1/2)"),
-        Ast::Mul(vec![x(), root_pow(Ast::Var("y".to_string()), 1, 2)])
+        Ast::Mul(vec![v("x"), root_pow(v("y"), 1, 2)])
     );
     // A function name takes the house spelling `sec^(1/2) x`.
     assert_eq!(
         ast("sin^(1/2) x"),
-        root_pow(Ast::Func("sin".to_string(), vec![x()]), 1, 2)
+        root_pow(Ast::Func("sin".to_string(), vec![v("x")]), 1, 2)
     );
 }
 
@@ -83,7 +68,7 @@ fn an_unbracketed_rational_exponent_keeps_the_1_0_reading() {
     // `x^1/2` is `(x^1)/2`, which is the reading 1.0 gives it.
     assert_eq!(
         ast("x^1/2"),
-        Ast::Div(Box::new(Ast::Pow(Box::new(x()), 1)), Box::new(int(2)))
+        Ast::Div(Box::new(Ast::Pow(Box::new(v("x")), 1)), Box::new(int(2)))
     );
 }
 

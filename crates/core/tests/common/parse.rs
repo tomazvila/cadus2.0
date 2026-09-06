@@ -131,7 +131,8 @@ pub fn value(text: &str) -> Canon {
 /// - The rational-exponent production of D-F3 (unit f2-grammar) then reads 14
 ///   `expression_symbolic` rows (`x^(1/2)`, `(5/2)x^(3/2)`) and one
 ///   `expression_numeric` row (`3 + 3*2^(1/3)`), so the two buckets hold 646
-///   and 229.
+///   and 229. The quotient-and-remainder production reads all 16
+///   `quotient_remainder` rows (`9 R2`, `x + 2 remainder 3`).
 pub const SHAPE_COUNTS: [(&str, usize, usize); 15] = [
     ("comma_list", 28, 15),
     ("decimal", 128, 0),
@@ -145,7 +146,7 @@ pub const SHAPE_COUNTS: [(&str, usize, usize); 15] = [
     ("ordered_tuple", 178, 0),
     ("other", 7, 0),
     ("prose_or_words", 0, 167),
-    ("quotient_remainder", 0, 16),
+    ("quotient_remainder", 16, 0),
     ("set_or_list", 5, 0),
     ("value_with_unit", 11, 1),
 ];

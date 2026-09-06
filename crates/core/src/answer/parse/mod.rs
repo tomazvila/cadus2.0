@@ -252,7 +252,8 @@ impl Parser<'_> {
         result
     }
 
-    /// Parse the whole answer: a label, a relation, a bare tuple, or one value.
+    /// Parse the whole answer: a label, a quotient with a remainder, a relation,
+    /// a bare tuple, or one value.
     fn parse_answer(&mut self) -> Result<Ast, Undecidable> {
         if let Some(var) = self.read_value_label() {
             let value = self.parse_answer()?;
@@ -262,6 +263,11 @@ impl Parser<'_> {
             });
         }
         let first = self.parse_expr()?;
+        if self.at_remainder_marker() {
+            self.bump();
+            let remainder = self.parse_expr()?;
+            return Ok(Ast::Tuple(vec![first, remainder]));
+        }
         if let Some(op) = self.peek_comparison() {
             self.bump();
             return self.parse_relation(first, op);
@@ -275,6 +281,32 @@ impl Parser<'_> {
             items.push(self.parse_expr()?);
         }
         Ok(Ast::Tuple(items))
+    }
+
+    /// Whether the cursor is on the marker of a quotient with a remainder (D-F3).
+    ///
+    /// `9 R2`, `9 R 2`, `9R2`, and `x + 2 remainder 3` all read into the tuple
+    /// `(quotient, remainder)`, which is the authored spelling `(9, 2)`. The word
+    /// `remainder` is always the marker. The letter `R` is the marker only
+    /// between two number tokens, so `2R` and `R` stay the variable `R`, and
+    /// `2 R x` stays the product. The lower-case `r` is never the marker: `9 r2`
+    /// keeps its label refusal, and `9 r 2` keeps the product reading.
+    ///
+    /// A remainder that is not smaller than the divisor is not the concern of
+    /// the grammar: no divisor is known here.
+    pub(super) fn at_remainder_marker(&self) -> bool {
+        let Some(Tok::Ident(name)) = self.peek() else {
+            return false;
+        };
+        if name == "remainder" {
+            return true;
+        }
+        if name != "R" {
+            return false;
+        }
+        let before = self.at.checked_sub(1).and_then(|at| self.tokens.get(at));
+        matches!(before.map(|token| &token.kind), Some(Tok::Num(_)))
+            && matches!(self.peek_at(1), Some(Tok::Num(_)))
     }
 
     /// Refuse a comma thousands group that the whole-answer rule did not strip.
