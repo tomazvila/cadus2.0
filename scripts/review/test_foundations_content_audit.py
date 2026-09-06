@@ -87,5 +87,37 @@ class FoundationsContentAuditTest(unittest.TestCase):
                 audit.pending_templates(root)
 
 
+    def test_incomplete_template_arguments_do_not_satisfy_pending_evidence(self):
+        complete = {
+            "statement": "Compute {a} + 1.",
+            "params": {"a": {"kind": "choice", "values": [1]}},
+            "answer_expr": "a + 1",
+            "solution_sketch": "Add one to {a}.",
+            "hints": ["Increase the value by one."],
+            "samples": [{"params": {"a": 1}, "expected": "2"}],
+        }
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            rows = [
+                {"kp_id": "valid/kp1", "kind": "template", "arguments": complete},
+                {"kp_id": "stored/kp1", "kind": "template", "body": complete},
+            ]
+            for field in complete:
+                incomplete = dict(complete)
+                del incomplete[field]
+                rows.append({
+                    "kp_id": f"missing-{field}/kp1",
+                    "kind": "template",
+                    "arguments": incomplete,
+                })
+            rows.append({
+                "kp_id": "legacy-placeholder/kp1",
+                "kind": "template",
+                "arguments": {"problem": "Compute 1 + 1.", "answer_expr": "2"},
+            })
+            (root / "templates.json").write_text(json.dumps(rows))
+            templates = audit.pending_templates(root)
+        self.assertEqual(set(templates), {"stored/kp1", "valid/kp1"})
+
 if __name__ == "__main__":
     unittest.main()

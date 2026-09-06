@@ -54,6 +54,32 @@ def _objects(value):
             yield from _objects(child)
 
 
+def _importer_shaped_template(row: dict) -> bool:
+    """Return whether a pending row carries a complete generated recipe."""
+    arguments = row.get("arguments") or row.get("body")
+    if not isinstance(arguments, dict):
+        return False
+    for name in ("statement", "answer_expr", "solution_sketch"):
+        if not isinstance(arguments.get(name), str) or not arguments[name].strip():
+            return False
+    if not isinstance(arguments.get("params"), dict):
+        return False
+    hints = arguments.get("hints")
+    if not isinstance(hints, list) or not hints or any(
+        not isinstance(hint, str) or not hint.strip() for hint in hints
+    ):
+        return False
+    samples = arguments.get("samples")
+    if not isinstance(samples, list) or not samples:
+        return False
+    return all(
+        isinstance(sample, dict)
+        and isinstance(sample.get("params"), dict)
+        and "expected" in sample
+        for sample in samples
+    )
+
+
 def pending_templates(root: Path) -> dict[str, list[dict]]:
     """Collect checked-in pending template recipes; reject unreadable evidence."""
     if not root.is_dir():
@@ -71,7 +97,12 @@ def pending_templates(root: Path) -> dict[str, list[dict]]:
         for row in _objects(value):
             key = row.get("kp_id")
             pending = row.get("status", "pending") == "pending"
-            if row.get("kind") != "template" or not isinstance(key, str) or not pending:
+            if (
+                row.get("kind") != "template"
+                or not isinstance(key, str)
+                or not pending
+                or not _importer_shaped_template(row)
+            ):
                 continue
             fingerprint = json.dumps(row, sort_keys=True, separators=(",", ":"))
             if fingerprint not in seen[key]:
