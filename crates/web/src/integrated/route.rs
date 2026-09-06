@@ -64,12 +64,16 @@ pub async fn serve(
         mut tx,
         session,
         mut scratch,
-        ..
+        task,
     } = resolve(&state, content, user_id, &task_id, now, true).await?;
+    instruction::check(content, &task, &scratch)?;
     timing::start(&mut scratch, item, &task_id, now);
     crate::session::write_state(&state.db, &mut tx, user_id, &scratch).await?;
     let digest = item.digest();
-    let event = Event::IntegratedServed(served_event(item, &task_id, &session, now));
+    let mut served = served_event(item, &task_id, &session, now);
+    served.assessment_of = task.integrated_assessment_of.clone();
+    served.assessment_delay_days = task.probe_delay_days;
+    let event = Event::IntegratedServed(served);
     let key = served_key(&session, &task_id, &digest);
     store(&state, append_event(&mut tx, user_id, &event, Some(&key))).await?;
     let used = store(
@@ -175,6 +179,7 @@ pub async fn answer(
         tx.commit().await.map_err(db_failed)?;
         return Ok(Json(payload));
     }
+    instruction::check(content, &task, &scratch)?;
     let used = store(
         &state,
         cadus_store::integrated::hints_used(&mut tx, user_id, &session, &task_id, &item.digest()),
@@ -184,6 +189,9 @@ pub async fn answer(
     let mut result = grade(item, &submission);
     assistance::verdict(&mut result, &used);
     let mut record = attempt_event(item, &result, &submission, &task_id, &session, now);
+    record.instruction_kp = scratch.integrated_instruction.get(&task_id).cloned();
+    record.assessment_of = task.integrated_assessment_of.clone();
+    record.assessment_delay_days = task.probe_delay_days;
     timing::record(
         &mut record,
         item,

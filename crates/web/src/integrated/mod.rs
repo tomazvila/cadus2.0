@@ -69,6 +69,7 @@ use crate::session::{content, now_pair};
 use crate::state::{Content, INVALID_REQUEST, Tenant};
 
 mod assistance;
+pub(crate) mod instruction;
 mod record;
 mod route;
 mod timing;
@@ -96,7 +97,10 @@ pub fn for_task<'content>(
     if task.task_type != TaskType::MultiStep {
         return None;
     }
-    content.integrated.for_components(&task.component_topics)
+    match task.integrated_item_id.as_deref() {
+        Some(id) => content.integrated.get(id),
+        None => content.integrated.for_components(&task.component_topics),
+    }
 }
 
 /// `409` for a task with no integrated item.

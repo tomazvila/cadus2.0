@@ -25,6 +25,10 @@ use super::topic_set::TopicSet;
 /// typed facts the re-serve keys on.
 #[derive(Debug, Clone, PartialEq)]
 pub struct Task {
+    /// A pinned authored whole-item assessment, resolved by the server.
+    pub integrated_item_id: Option<String>,
+    /// The earlier independent application whose delayed transfer is tested.
+    pub integrated_assessment_of: Option<String>,
     /// The content-stable id, assigned by [`assign_ids`].
     pub task_id: String,
     /// The kind of task.
@@ -76,6 +80,8 @@ impl Default for Task {
     /// empty until [`assign_ids`] names the task.
     fn default() -> Self {
         Self {
+            integrated_item_id: None,
+            integrated_assessment_of: None,
             task_id: String::new(),
             task_type: TaskType::Lesson,
             topic: None,

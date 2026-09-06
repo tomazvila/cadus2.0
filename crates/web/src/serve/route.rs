@@ -104,6 +104,12 @@ pub async fn serve(
         events,
     } = open(&state, content, user_id, now, true).await?;
     let task = find(&plan, &task_id)?;
+    if task.integrated_assessment_of.is_some() {
+        return Err(conflict(
+            "integrated_task_required",
+            "This assessment is one whole integrated scenario.",
+        ));
+    }
     if progress_for(&mut scratch, task, graph).done {
         return Err(conflict(TASK_COMPLETE, "This task is already complete."));
     }

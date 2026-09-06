@@ -161,6 +161,18 @@ export function Session({
     });
   };
 
+  const serveWholeItem = (): void => {
+    const task = taskRef.current!;
+    setLive(null, 0);
+    void call(() => serveIntegrated(api, task.task_id), (item) => {
+      if (!life.alive() || taskRef.current?.task_id !== task.task_id) return;
+      if (!item) { serveThenShow(); return; }
+      setTeaching(null);
+      setIntegrated(item);
+      gate.enter('ready');
+    }, { retryGate: () => life.alive() && gate.is('loading') && taskRef.current?.task_id === task.task_id });
+  };
+
   /** Start the task on screen. The phase is `loading` on every path that leads here. */
   const startTask = (): void => {
     // The ref is written before the effect that starts a task runs, so it names one.
@@ -171,18 +183,12 @@ export function Session({
     // BEFORE anything is served, so this view never posts a quiz answer.
     if (task.task_type === 'quiz') { onQuiz(task); return; }
 
-    if (task.task_type === 'multi-step') {
-      setLive(null, 0);
-      void call(() => serveIntegrated(api, task.task_id), (item) => {
-        if (!life.alive() || taskRef.current?.task_id !== task.task_id) return;
-        if (!item) { serveThenShow(); return; }
-        setIntegrated(item);
-        gate.enter('ready');
-      }, { retryGate: () => life.alive() && gate.is('loading') && taskRef.current?.task_id === task.task_id });
+    if (task.task_type === 'multi-step' && !task.integrated_instruction_required) {
+      serveWholeItem();
       return;
     }
 
-    if (task.task_type === 'lesson') {
+    if (task.task_type === 'lesson' || task.integrated_instruction_required) {
       // Teach FIRST, and teach ALONE (NO-2BILL). Every topic has knowledge points, so the
       // view needs no served problem to know a fresh lesson must teach.
       void call(() => api.taskTeach(task.task_id), (instruction) => {
@@ -203,7 +209,9 @@ export function Session({
 
   /** The learner read the worked example. One press serves; a second in the same tick stops. */
   const practise = (): void => {
-    if (gate.tryEnter('teaching', 'loading')) serveThenShow();
+    if (!gate.tryEnter('teaching', 'loading')) return;
+    if (taskRef.current?.task_type === 'multi-step') serveWholeItem();
+    else serveThenShow();
   };
 
   /** Leave a lesson the service cannot teach. One press advances; a second stops. */
@@ -384,6 +392,7 @@ export function Session({
 
   if (integrated) {
     return <section className="view-session">
+      <p hidden={!session.task.integrated_assessment}>Delayed application assessment</p>
       <button type="button" className="btn btn-ghost" onClick={onExit}>Exit</button>
       <Integrated key={session.task.task_id} api={api} taskId={session.task.task_id}
         problem={integrated} onUnauthorized={demo ? undefined : onUnauthorized}

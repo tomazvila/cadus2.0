@@ -284,6 +284,9 @@ pub struct MultistepBuffer {
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct WebState {
+    /// Approved instruction shown before a whole-item application, keyed by task.
+    #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
+    pub integrated_instruction: BTreeMap<String, String>,
     /// The session this scratch belongs to. A drift resets the document.
     #[serde(default)]
     pub session: Option<String>,

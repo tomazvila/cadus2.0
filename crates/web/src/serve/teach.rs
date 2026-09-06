@@ -1,16 +1,14 @@
-//! `POST /api/task/{task_id}/teach`: the authored teach page of a lesson (L4).
+//! `POST /api/task/{task_id}/teach`: approved preparation for lessons and integrated application.
 
 use super::*;
 
 /// The authored teach page of a lesson's current knowledge point (`api.py:1064-1103`).
 ///
-/// Only a lesson teaches. Every other task type is `409 no_instruction`, and so
-/// is a lesson whose knowledge point has no APPROVED teach page: in both cases
-/// the server has no worked example to give, and 2.0 never asks a model for one
-/// (L4, T1).
+/// Lessons use their current knowledge point. Integrated application uses its
+/// first credited skill and persists the instruction hand-off before practice.
+/// Both paths read an approved teach page; missing instruction returns a conflict.
 ///
-/// D-O3: one `content_store` read, no state write, and the transaction is read
-/// only.
+/// D-O3: the ordinary lesson path reads one content document and writes no state.
 pub async fn teach(
     State(state): State<AppState>,
     Tenant(user_id): Tenant,
@@ -22,14 +20,25 @@ pub async fn teach(
 
     let Open {
         mut tx,
-        scratch,
+        mut scratch,
         plan,
         ..
-    } = open(&state, content, user_id, now, false).await?;
+    } = open(&state, content, user_id, now, true).await?;
     let task = find(&plan, &task_id)?;
     // Only a lesson teaches, and a lesson always names a topic to teach from.
     // The one refusal covers a task of any other type; the composer never
     // builds a lesson without a topic, so the two are one decision here.
+    if task.task_type == TaskType::MultiStep {
+        return crate::integrated::instruction::teach(
+            &state,
+            content,
+            user_id,
+            task,
+            &mut scratch,
+            tx,
+        )
+        .await;
+    }
     let (TaskType::Lesson, Some(topic)) = (task.task_type, task.topic.clone()) else {
         return Err(no_instruction());
     };

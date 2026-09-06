@@ -49,7 +49,20 @@ pub async fn session_plan(req: Ready) -> Reply {
     let tasks: Vec<Value> = plan
         .tasks
         .iter()
-        .map(|task| trim_task(task, graph, &scratch))
+        .map(|task| {
+            let mut value = trim_task(task, graph, &scratch);
+            value["integrated_instruction_required"] =
+                json!(crate::integrated::instruction::required(&req.content, task));
+            if task
+                .integrated_assessment_of
+                .as_ref()
+                .and_then(|source| model.integrated_journey.assessments.get(source))
+                .is_some_and(|held| held.completed)
+            {
+                value["progress"]["done"] = json!(true);
+            }
+            value
+        })
         .collect();
     let complete = is_course_complete(&model.topics, graph, &req.content.cfg, course, None);
 
@@ -114,14 +127,21 @@ pub(crate) fn compose_plan(
         // f19-retention: the delayed probe of D-F11. The state is the fold's, so
         // the schedule reads the probes that already ran and never repeats one.
         .with_retention(Some(&model.retention));
-    compose_session(
+    let mut plan = compose_session(
         &model.topics,
         &content.curriculum,
         &content.cfg,
         now.micros(),
         &mut sampler,
         &ctx,
-    )
+    );
+    if let Some(task) = model
+        .integrated_journey
+        .task(&content.integrated, session, now)
+    {
+        plan.tasks.push(task);
+    }
+    plan
 }
 
 /// The quiz-sampler seed of one session (`service.py:1259`).
@@ -185,6 +205,7 @@ fn trim_task(task: &Task, graph: &Curriculum, scratch: &WebState) -> Value {
         // D-F6: the client labels a confirmation item, and it never reads a
         // scheduling decision back out of `why`.
         "confirm": task.confirm,
+        "integrated_assessment": task.integrated_assessment_of.is_some(),
         "progress": {"answered": answered, "done": done},
     })
 }

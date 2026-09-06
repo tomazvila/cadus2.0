@@ -51,6 +51,12 @@ pub struct IntegratedField {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct IntegratedServed {
+    /// The source application of this delayed assessment.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub assessment_of: Option<String>,
+    /// Actual scheduled delay, in days, for integrated retention evidence.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub assessment_delay_days: Option<u32>,
     /// When the hand-off happened.
     pub ts: Timestamp,
     /// The session id.
@@ -76,6 +82,15 @@ pub struct IntegratedServed {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct IntegratedAttempt {
+    /// Approved instruction handed off before the independent application.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub instruction_kp: Option<String>,
+    /// The source application of this delayed assessment.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub assessment_of: Option<String>,
+    /// Actual scheduled delay, in days, for integrated retention evidence.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub assessment_delay_days: Option<u32>,
     /// Server-measured whole-item time; historical events have no reading.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub secs: Option<super::Secs>,

@@ -24,6 +24,22 @@ async function click(name: string) {
 }
 
 describe('integrated tasks in the production Session', () => {
+  it('shows instruction before serving and keeps delayed assessment independent', async () => {
+    const api = integratedApi();
+    api.taskTeach = vi.fn(async () => ({ kp: 'counting/kp1', concept: 'Combine work and capacity.', worked_example: { problem: 'Two visits need ten minutes each.', steps: 'Total work is twenty minutes.' } }));
+    const delayed = { ...MULTI, task_id: 'delayed', integrated_assessment: true };
+    await mount({ api, plan: planOf({ ...MULTI, integrated_instruction_required: true }, delayed) });
+    expect(screen.getByText('Combine work and capacity.')).toBeTruthy();
+    expect(api.taskIntegrated).not.toHaveBeenCalled();
+    await click("I've got it — practice ▸");
+    expect(api.taskIntegrated).toHaveBeenCalledExactlyOnceWith(MULTI.task_id);
+    await click('Submit the whole task');
+    await click('Continue');
+    expect(api.taskIntegrated).toHaveBeenLastCalledWith('delayed');
+    expect(screen.getByText('Delayed application assessment')).toBeTruthy();
+    expect(api.taskTeach).toHaveBeenCalledTimes(1);
+  });
+
   it('renders the integrated scenario once in StrictMode without a component serve', async () => {
     const api = integratedApi();
     await mountStrict(api, planOf(MULTI));

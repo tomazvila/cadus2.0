@@ -39,6 +39,8 @@ interface TopicRef {
 
 /** One planned task (`session.rs` `trim_task`). */
 export interface PlanTask {
+  integrated_instruction_required?: boolean;
+  integrated_assessment?: boolean;
   task_id: string;
   task_type: TaskType;
   /** Null for a quiz, which mixes several topics. */

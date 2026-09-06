@@ -63,7 +63,7 @@ fn the_digest_index_holds_the_pinned_metadata() {
     assert_eq!(index.goal, GOAL);
     assert_eq!(index.projector_version, ORACLE_PROJECTOR_VERSION);
     assert_eq!(index.projector_version, 3);
-    assert_eq!(PROJECTOR_VERSION, 6);
+    assert_eq!(PROJECTOR_VERSION, 7);
     assert_eq!(index.config_hash, CONFIG_HASH);
     assert_eq!(index.zones, ["UTC", NEW_YORK, "UTC_no_regrades"]);
     assert_eq!(index.streams.len(), STREAMS);

@@ -318,6 +318,7 @@ impl Projector<'_> {
             pending_remediation: self.pending_remediation(),
             ungraded: self.ungraded.clone(),
             retention: self.retention.clone(),
+            integrated_journey: self.integrated_journey.clone(),
             config_hash: Some(config_hash),
             projector_version: Some(PROJECTOR_VERSION),
             through_seq: None,

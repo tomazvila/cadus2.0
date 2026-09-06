@@ -38,6 +38,8 @@ pub fn served_event(
     now: Timestamp,
 ) -> IntegratedServed {
     IntegratedServed {
+        assessment_of: None,
+        assessment_delay_days: None,
         ts: now,
         session: Some(session.to_owned()),
         v: SchemaVersion::current(),
@@ -108,6 +110,9 @@ pub fn attempt_event(
         .map(|(verdict, step)| field_of(verdict, answer_of(&verdict.id), step.ask.contract.clone()))
         .collect();
     IntegratedAttempt {
+        instruction_kp: None,
+        assessment_of: None,
+        assessment_delay_days: None,
         secs: None,
         timing_reliable: None,
         timing: None,

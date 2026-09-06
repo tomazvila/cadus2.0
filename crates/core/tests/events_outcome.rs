@@ -233,7 +233,7 @@ fn a_model_with_no_ungraded_attempt_keeps_the_1_0_wire_shape() {
     let blob = model.parity_blob().unwrap();
     assert!(!blob.contains("ungraded"));
     assert_eq!(model.projector_version, Some(PROJECTOR_VERSION));
-    assert_eq!(PROJECTOR_VERSION, 6);
+    assert_eq!(PROJECTOR_VERSION, 7);
 }
 
 // --------------------------------------------------------------------------- //

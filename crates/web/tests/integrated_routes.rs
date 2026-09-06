@@ -473,3 +473,6 @@ mod hint_authority;
 
 #[path = "integrated_routes/timing.rs"]
 mod timing;
+
+#[path = "integrated_routes/journey.rs"]
+mod journey;

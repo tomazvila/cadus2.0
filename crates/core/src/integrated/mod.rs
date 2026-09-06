@@ -38,6 +38,7 @@
 
 pub mod grade;
 pub mod hint;
+pub mod journey;
 pub mod load;
 pub mod model;
 pub mod validate;

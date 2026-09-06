@@ -21,6 +21,7 @@ impl Projector<'_> {
             return;
         }
         self.completed_tasks += 1;
+        self.integrated_journey.attempted(event);
         for field in event
             .steps
             .iter()

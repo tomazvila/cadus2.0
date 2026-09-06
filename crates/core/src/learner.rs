@@ -244,6 +244,12 @@ pub struct UngradedAttempt {
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct LearnerModel {
+    /// Replayable whole-item application and delayed-assessment evidence.
+    #[serde(
+        default,
+        skip_serializing_if = "crate::integrated::journey::JourneyState::is_empty"
+    )]
+    pub integrated_journey: crate::integrated::journey::JourneyState,
     /// The wall-clock `now` of the build. It is NOT a cursor, and it is excluded from
     /// every parity comparison (trap T10).
     #[serde(default)]

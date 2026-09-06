@@ -321,7 +321,7 @@ fn the_projector_version_is_stamped_on_a_minimal_fold() {
         &[regrade_attempt("a1", T0, "task-1", "blowoff", "[]")],
         &graph,
     );
-    assert_eq!(model.projector_version, Some(6));
+    assert_eq!(model.projector_version, Some(7));
 }
 
 #[test]

@@ -66,8 +66,8 @@ pub use regrade::apply_regrades;
 /// A stale cache is detected with it: 1 to 2 for the methodology fixes, 2 to 3 for
 /// [`apply_regrades`], 3 to 4 for the third attempt outcome (D-F2). ANY change to the
 /// fold bumps this number, and a bump replays every model in full (D-O6).
-/// Version 6 consumes previously recorded integrated KP evidence.
-pub const PROJECTOR_VERSION: i64 = 6;
+/// Version 7 indexes instructed application and delayed integrated assessments.
+pub const PROJECTOR_VERSION: i64 = 7;
 
 /// The neutral prior a placed topic's diagnostic answers fold onto (`projector.py:98`).
 pub const ABILITY_SEED_PRIOR: f64 = 0.5;
@@ -164,6 +164,7 @@ pub struct Projector<'a> {
     /// What the delayed probes answered (D-F11). It folds `retention_probe` and
     /// nothing else, so it is empty for every log written before 2.0.
     retention: RetentionState,
+    integrated_journey: crate::integrated::journey::JourneyState,
     last_ts: Option<i64>,
 
     /// The task ids of the OPEN confirmation items (D-F6). A `task_served` with
@@ -206,6 +207,7 @@ impl<'a> Projector<'a> {
             diag_answers: BTreeMap::new(),
             ungraded: Vec::new(),
             retention: RetentionState::default(),
+            integrated_journey: crate::integrated::journey::JourneyState::default(),
             last_ts: None,
             confirm_tasks: BTreeSet::new(),
             confirm_topics: BTreeSet::new(),
@@ -297,6 +299,7 @@ impl<'a> Projector<'a> {
             Event::ProfileReset(body) => self.on_profile_reset(body, apply_fire),
             Event::TaskServed(body) => self.on_task_served(body),
             Event::IntegratedAttempt(body) => self.on_integrated_attempt(body, apply_fire),
+            Event::IntegratedServed(body) => self.integrated_journey.served(body),
             Event::SessionStart(_)
             | Event::SessionEnd(_)
             | Event::Regraded(_)
@@ -304,7 +307,6 @@ impl<'a> Projector<'a> {
             | Event::ConfigChanged(_)
             | Event::CurriculumChanged(_)
             // The integrated serve records exposure; its attempt above persists KP credit.
-            | Event::IntegratedServed(_)
             // Hint events preserve server-owned assistance but move no learning state.
             | Event::IntegratedHintRevealed(_) => {}
             Event::RetentionProbe(body) => self.retention.apply(body, &self.cfg.retention),

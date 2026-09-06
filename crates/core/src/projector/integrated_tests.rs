@@ -27,6 +27,9 @@ fn field(id: &str, skill: &str, outcome: AttemptOutcome) -> IntegratedField {
 
 fn attempt() -> IntegratedAttempt {
     IntegratedAttempt {
+        instruction_kp: None,
+        assessment_of: None,
+        assessment_delay_days: None,
         secs: None,
         timing_reliable: None,
         timing: None,
