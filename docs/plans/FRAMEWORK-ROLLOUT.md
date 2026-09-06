@@ -4,7 +4,7 @@ This runbook is the operational gate for the framework branch. It does not autho
 ## Release facts
 - Framework 2.0 changes no migration relative to the pre-framework commit `2ff3c1f`; the latest migration remains `0012`.
 - The event log remains the source of truth. `learner_models` is a rebuildable projection cache.
-- The framework fold uses `PROJECTOR_VERSION = 6`. A cache with an older version is rebuilt from its user's event stream on the next state read.
+- The framework fold uses `PROJECTOR_VERSION = 7`. A cache with an older version is rebuilt from its user's event stream on the next state write.
 - Pending content never serves. A reviewer must approve each serving document through `/review`.
 
 ## Preflight
@@ -27,11 +27,26 @@ This runbook is the operational gate for the framework branch. It does not autho
 4. Export and retain the content review queue. Record every approved digest and verify that pending and rejected documents cannot serve.
 5. Take a database backup using the deployment's normal encrypted backup procedure. Record its location and restoration check before deployment.
 
+## Disposable recovery rehearsal
+Run the local rehearsal before the restored production snapshot check:
+```sh
+CARGO_BUILD_JOBS=1 scripts/check_recovery.sh
+```
+The script accepts only the active `cadus2-testdb` container on `127.0.0.1:55434`. It creates three `cadus2_recovery_*` databases and removes them when it stops. The rehearsal does these checks:
+1. Apply all migrations and seed five snapshot samples: empty, ordinary, review, integrated, and 258-event history.
+2. Write and read a custom-format PostgreSQL archive.
+3. Stop a projector process with `SIGKILL` after its version-7 write and before commit.
+4. Confirm that PostgreSQL rolled back the write and kept all event bytes.
+5. Retry all samples, persist projector version 7, and confirm that the second read resumes with identical model JSON.
+6. Confirm that migrations match `2ff3c1f` and restore the retained pre-replay archive into a new rollback database.
+
+This rehearsal proves the local mechanisms. The restored production snapshot check remains necessary for production event shapes, production volume, encrypted backup storage, and retained deployment images.
+
 ## Projection replay check
 The version mismatch rebuild is the production replay mechanism. Exercise it on a restored production snapshot before deployment:
 1. Start the candidate against the restored snapshot with outbound model calls disabled.
 2. Select accounts that cover an empty history, an ordinary practice history, a review history, an integrated-task history, and the largest event stream.
-3. Read each account through the normal authenticated state or serve endpoint. The read must finish successfully and persist `learner_models.projector_version = 6` through the account's event head.
+3. Read each account through the normal authenticated state or serve endpoint. The read must finish successfully and persist `learner_models.projector_version = 7` through the account's event head.
 4. Read the same accounts again. The resulting model JSON, cursor, and framework report values must match the first read byte for byte.
 5. Confirm that the event count and maximum sequence for every sampled account are unchanged. Projection replay must append or rewrite no event.
 
