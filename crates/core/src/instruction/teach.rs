@@ -1,5 +1,6 @@
 //! The gate of a teach page (L4, spec section 7 row R6).
 
+use crate::answer::{canonical_form, same_answer};
 use crate::template::gate::{Rejection, contains_token, py_str};
 
 use super::body::{object, only_known, text};
@@ -100,34 +101,31 @@ step is one line of the solution a learner reads"
     }
 }
 
-/// The last step names no answer of a served problem OTHER than the worked one.
-///
-/// Hard Rule 1. The worked example ends with its own answer, so a rule that
-/// refused every served answer refused every worked example a knowledge point
-/// with a template holds. The rule is therefore the PAIR rule: the gate reads
-/// each served problem beside its answer, it skips the served problem the page
-/// works, and it refuses the last step that names any other served answer.
-///
-/// The check reads the LAST step alone. That step is the answer of the page, and
-/// a second answer stated there is a second answer handed over. An earlier step
-/// carries the method, and a numeral inside it is arithmetic on the way to the
-/// answer.
-///
-/// The teach half of finding F15 stood open until this rule: `verify_teach`
-/// filled [`InstructionSpec::instance_answers`] and `gate_teach` read the
-/// exemplar problems alone, so no test and no mutation separated a build that
-/// carried the field from a build that dropped it (M6 review 2, findings V2 and
-/// V11).
+/// Refuse a served problem identity and additional answers from other problems.
+/// For a direct calculation, derive its own result with the deterministic checker.
+/// Equal results from different problems are ordinary arithmetic coincidences.
+/// Unsupported word problems retain the conservative answer check.
 fn check_no_other_answer(
     problem: &str,
     last: &str,
     spec: &InstructionSpec<'_>,
 ) -> Result<(), Rejection> {
+    let own_answer = compute_answer(problem);
     for (served_problem, answer) in spec.served() {
-        if answer.is_empty() || served_problem.trim() == problem.trim() {
+        if served_problem.trim() == problem.trim() {
+            return Err(Rejection {
+                code: "teach-worked-example",
+                message: "the worked example repeats a served problem; use different operands before the learner attempts it".to_owned(),
+            });
+        }
+        if answer.is_empty() {
             continue;
         }
-        if contains_token(last, answer) {
+        let coincides = own_answer
+            .as_ref()
+            .zip(canonical_form(answer).ok().as_ref())
+            .is_some_and(|(own, served)| same_answer(own, served));
+        if !coincides && contains_token(last, answer) {
             return Err(Rejection {
                 code: "teach-answer",
                 message: format!(
@@ -143,4 +141,12 @@ learner an answer before the attempt (Hard Rule 1)",
         }
     }
     Ok(())
+}
+
+/// Derive the result of a direct calculation without a language-model guess.
+fn compute_answer(problem: &str) -> Option<crate::answer::Canon> {
+    let expression = ["Compute ", "Calculate ", "Evaluate ", "Simplify "]
+        .into_iter()
+        .find_map(|prefix| problem.trim().strip_prefix(prefix))?;
+    canonical_form(expression.trim().trim_end_matches('.').trim()).ok()
 }

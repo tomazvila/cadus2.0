@@ -128,11 +128,9 @@ fn a_last_step_that_names_only_its_own_answer_is_accepted() {
     assert_eq!(page.worked_example.problem, "Compute $15^2$.");
 }
 
-/// The page works its OWN problem to its own answer, and the gate accepts that.
-/// The worked problem here is the served instance `Compute $9^2$.`, so 81 is the
-/// answer of the problem the page works and not the answer of another one.
+/// A worked example must not reveal an exact practice problem before its attempt.
 #[test]
-fn a_page_that_works_a_served_problem_states_that_answer() {
+fn a_page_that_repeats_a_served_template_problem_is_refused() {
     let exemplars = exemplars();
     let body = r#"{
         "concept": "Squaring a number multiplies it by itself.",
@@ -141,11 +139,23 @@ fn a_page_that_works_a_served_problem_states_that_answer() {
             "steps": ["Write $9$ twice.", "The product is 81."]
         }
     }"#;
+    let refusal = gate_teach(body, &spec_with_instances(&exemplars, &INSTANCES)).unwrap_err();
+    assert_eq!(refusal.code, "teach-worked-example");
+}
 
-    let page = gate_teach(body, &spec_with_instances(&exemplars, &INSTANCES))
-        .expect("81 is the answer of the problem the page works");
-
-    assert_eq!(page.worked_example.steps.len(), 2);
+/// Equal answers from distinct arithmetic problems do not disclose problem identity.
+#[test]
+fn a_distinct_addition_example_survives_an_equal_served_sum() {
+    let exemplars = [];
+    let instances = [("Compute $4 + 1$.", "5")];
+    let body = r#"{
+        "concept": "Addition combines two quantities.",
+        "worked_example": {
+            "problem": "Compute $2 + 3$.",
+            "steps": ["Start at two and count three more.", "The sum is 5."]
+        }
+    }"#;
+    gate_teach(body, &spec_with_instances(&exemplars, &instances)).unwrap();
 }
 
 /// An EARLIER step is not the answer of the page, so a numeral on the way to it
