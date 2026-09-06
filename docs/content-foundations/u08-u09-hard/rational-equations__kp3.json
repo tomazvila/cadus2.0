@@ -1,0 +1,139 @@
+[
+  {
+    "kp_id": "rational-equations/kp3",
+    "kind": "template",
+    "status": "pending",
+    "arguments": {
+      "statement": "Solve $(x^2-{a}^2)/(x-{a})={b}$. Report the valid solution and the excluded root of the cleared equation as solution = ...; excluded = ... .",
+      "params": {
+        "a": {
+          "kind": "choice",
+          "values": [
+            2,
+            3,
+            4
+          ]
+        },
+        "b": {
+          "kind": "choice",
+          "values": [
+            9,
+            10,
+            11,
+            12
+          ]
+        }
+      },
+      "answer_expr": "multipart(b-a,a)",
+      "answer_contract": {
+        "kind": "multipart",
+        "parts": [
+          {
+            "name": "solution",
+            "contract": {
+              "kind": "exact"
+            }
+          },
+          {
+            "name": "excluded",
+            "contract": {
+              "kind": "exact"
+            }
+          }
+        ]
+      },
+      "constraints": [],
+      "samples": [
+        {
+          "params": {
+            "a": 2,
+            "b": 9
+          },
+          "expected": "solution = 7; excluded = 2"
+        },
+        {
+          "params": {
+            "a": 2,
+            "b": 10
+          },
+          "expected": "solution = 8; excluded = 2"
+        },
+        {
+          "params": {
+            "a": 2,
+            "b": 11
+          },
+          "expected": "solution = 9; excluded = 2"
+        },
+        {
+          "params": {
+            "a": 2,
+            "b": 12
+          },
+          "expected": "solution = 10; excluded = 2"
+        },
+        {
+          "params": {
+            "a": 3,
+            "b": 9
+          },
+          "expected": "solution = 6; excluded = 3"
+        },
+        {
+          "params": {
+            "a": 3,
+            "b": 10
+          },
+          "expected": "solution = 7; excluded = 3"
+        },
+        {
+          "params": {
+            "a": 3,
+            "b": 11
+          },
+          "expected": "solution = 8; excluded = 3"
+        },
+        {
+          "params": {
+            "a": 3,
+            "b": 12
+          },
+          "expected": "solution = 9; excluded = 3"
+        },
+        {
+          "params": {
+            "a": 4,
+            "b": 9
+          },
+          "expected": "solution = 5; excluded = 4"
+        },
+        {
+          "params": {
+            "a": 4,
+            "b": 10
+          },
+          "expected": "solution = 6; excluded = 4"
+        },
+        {
+          "params": {
+            "a": 4,
+            "b": 11
+          },
+          "expected": "solution = 7; excluded = 4"
+        },
+        {
+          "params": {
+            "a": 4,
+            "b": 12
+          },
+          "expected": "solution = 8; excluded = 4"
+        }
+      ],
+      "solution_sketch": "The original denominator excludes $x={a}$. Clearing it and moving all terms to the left gives $(x-{a})(x+{a}-{b})=0$. Reject the first root. The other root is ${b}-{a}$; substituting it into the original quotient gives ${b}$, and it differs from ${a}$.",
+      "hints": [
+        "Which original denominator values are forbidden before clearing it?"
+      ],
+      "distractors": []
+    }
+  }
+]

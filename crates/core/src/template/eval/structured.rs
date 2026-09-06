@@ -4,7 +4,7 @@ use num_traits::ToPrimitive;
 
 use crate::answer::ast::Ast;
 use crate::answer::{AnswerContract, Canon};
-use crate::template::domain::Bindings;
+use crate::template::{MAX_EXPONENT, domain::Bindings};
 
 use super::{Answer, EvalError, answer, contracted, text_binding};
 
@@ -36,7 +36,11 @@ pub(super) fn label_answer(
                     value: divisor.to_string(),
                 });
             }
-            if number % divisor == 0 { "yes" } else { "no" }
+            if number.is_multiple_of(divisor) {
+                "yes"
+            } else {
+                "no"
+            }
         }
         ("primeclass", [number]) => {
             let number = bounded_whole(number, bindings, "primeclass")?;
@@ -80,12 +84,12 @@ fn is_prime(number: u32) -> bool {
     if number == 2 {
         return true;
     }
-    if number % 2 == 0 {
+    if number.is_multiple_of(2) {
         return false;
     }
     let mut divisor = 3;
     while divisor <= number / divisor {
-        if number % divisor == 0 {
+        if number.is_multiple_of(divisor) {
             return false;
         }
         divisor += 2;
@@ -147,7 +151,7 @@ fn factors(number: u32) -> Vec<u32> {
     let mut high = Vec::new();
     let mut divisor = 1;
     while divisor <= number / divisor {
-        if number % divisor == 0 {
+        if number.is_multiple_of(divisor) {
             low.push(divisor);
             let partner = number / divisor;
             if partner != divisor {
@@ -171,7 +175,7 @@ fn prime_factors(mut number: u32) -> Result<Vec<u32>, EvalError> {
     let mut factors = Vec::new();
     let mut divisor = 2;
     while divisor <= number / divisor {
-        while number % divisor == 0 {
+        while number.is_multiple_of(divisor) {
             factors.push(divisor);
             number /= divisor;
         }
@@ -181,4 +185,57 @@ fn prime_factors(mut number: u32) -> Result<Vec<u32>, EvalError> {
         factors.push(number);
     }
     Ok(factors)
+}
+
+/// Write `coefficient * base^exponent` without evaluating away the power.
+pub(super) fn power_form(
+    ast: &Ast,
+    bindings: &Bindings,
+    contract: Option<&AnswerContract>,
+) -> Result<Answer, EvalError> {
+    if contract != Some(&AnswerContract::Exact) {
+        return Err(EvalError::NotNumber {
+            func: "powerform requires exact contract",
+        });
+    }
+    let Ast::Func(_, args) = ast else {
+        unreachable!();
+    };
+    let [coefficient, Ast::List(parts)] = args.as_slice() else {
+        return Err(EvalError::Arity {
+            func: "powerform".to_owned(),
+            want: 2,
+            given: args.len(),
+        });
+    };
+    let [base, exponent] = parts.as_slice() else {
+        return Err(EvalError::NotNumber {
+            func: "powerform requires [base, exponent]",
+        });
+    };
+    let coefficient = numeric(coefficient, bindings)?;
+    let base = numeric(base, bindings)?;
+    let exponent = numeric(exponent, bindings)?;
+    let Canon::Rational(number) = &exponent.canon else {
+        unreachable!()
+    };
+    let power = number
+        .to_integer()
+        .to_i64()
+        .filter(|power| number.is_integer() && power.unsigned_abs() <= MAX_EXPONENT as u64)
+        .ok_or(EvalError::NotWhole {
+            func: "powerform bounded exponent",
+        })?;
+    contracted(
+        format!("({})*({})^({power})", coefficient.text, base.text),
+        &AnswerContract::Exact,
+    )
+}
+
+fn numeric(ast: &Ast, bindings: &Bindings) -> Result<Answer, EvalError> {
+    let value = answer(ast, bindings)?;
+    if !matches!(value.canon, Canon::Rational(_)) {
+        return Err(EvalError::NotNumber { func: "powerform" });
+    }
+    Ok(value)
 }

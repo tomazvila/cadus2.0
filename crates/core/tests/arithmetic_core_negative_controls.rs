@@ -23,18 +23,18 @@ fn unit() -> Unit {
     serde_norway::from_str(&text).unwrap()
 }
 
-fn exemplars_with_contract<'a>(
-    doc: &'a Unit,
+fn exemplars_with_contract(
+    doc: &Unit,
     matches: impl Fn(&AnswerContract) -> bool,
-) -> Vec<(&'a str, &'a AnswerContract)> {
+) -> Vec<(&str, &AnswerContract)> {
     let mut out = Vec::new();
     for topic in &doc.topics {
         for kp in &topic.knowledge_points {
             for ex in &kp.exemplars {
-                if let Some(contract) = ex.answer_contract.as_ref() {
-                    if matches(contract) {
-                        out.push((ex.answer.as_str(), contract));
-                    }
+                if let Some(contract) = ex.answer_contract.as_ref()
+                    && matches(contract)
+                {
+                    out.push((ex.answer.as_str(), contract));
                 }
             }
         }

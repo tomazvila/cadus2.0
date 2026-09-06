@@ -60,7 +60,7 @@ pub use write::write;
 /// [`parse_with_functions`] admits them for this one purpose. Every one of them
 /// is erased before the answer string exists. `signcase(x, [a, b, c])` selects
 /// the negative, zero, or positive branch without admitting general predicates.
-pub const EVAL_FUNCTIONS: [(&str, usize); 22] = [
+pub const EVAL_FUNCTIONS: [(&str, usize); 23] = [
     ("abs", 1),
     ("sqrt", 1),
     ("gcd", 2),
@@ -72,6 +72,7 @@ pub const EVAL_FUNCTIONS: [(&str, usize); 22] = [
     ("factorial", 1),
     ("binomial", 2),
     ("signcase", 2),
+    ("powerform", 2),
     ("excludepoint", 2),
     ("lowerbound", 2),
     ("upperbound", 2),
@@ -86,7 +87,7 @@ pub const EVAL_FUNCTIONS: [(&str, usize); 22] = [
 ];
 
 /// The function names [`parse_with_functions`] admits beyond the M2 grammar.
-pub const EXTRA_FUNCTIONS: [&str; 21] = [
+pub const EXTRA_FUNCTIONS: [&str; 22] = [
     "gcd",
     "lcm",
     "floor",
@@ -97,6 +98,7 @@ pub const EXTRA_FUNCTIONS: [&str; 21] = [
     "binomial",
     "multipart",
     "signcase",
+    "powerform",
     "excludepoint",
     "lowerbound",
     "upperbound",
@@ -358,6 +360,9 @@ pub fn answer_for_contract(
     bindings: &Bindings,
     contract: Option<&AnswerContract>,
 ) -> Result<Answer, EvalError> {
+    if matches!(ast, Ast::Func(name, _) if name == "powerform") {
+        return structured::power_form(ast, bindings, contract);
+    }
     match contract {
         Some(contract @ AnswerContract::Label { .. }) => label_answer(ast, bindings, contract),
         Some(contract @ AnswerContract::Unit { unit, .. }) => {
