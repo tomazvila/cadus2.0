@@ -17,7 +17,7 @@ def answer(request, drafts):
     topic = re.search(r"^Topic: .* \(id: ([^)]+)\)$", user, re.MULTILINE)
     kp = re.search(r"^Knowledge point: .* \(id: ([^)]+)\)$", user, re.MULTILINE)
     tool = request["tool_choice"]["function"]["name"]
-    kinds = {"emit_teach": "teach", "emit_hint_ladder": "hint_ladder"}
+    kinds = {"emit_template": "template", "emit_teach": "teach", "emit_hint_ladder": "hint_ladder"}
     key = (f"{topic.group(1)}/{kp.group(1)}", kinds[tool])
     arguments = drafts[key]
     return {

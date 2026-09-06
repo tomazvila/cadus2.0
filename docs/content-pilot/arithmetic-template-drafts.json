@@ -1,0 +1,348 @@
+[
+  {
+    "kp_id": "single-digit-addition/kp1",
+    "kind": "template",
+    "arguments": {
+      "statement": "Compute ${a} + {b}$.",
+      "params": {
+        "a": {
+          "kind": "int",
+          "low": 0,
+          "high": 9
+        },
+        "b": {
+          "kind": "int",
+          "low": 0,
+          "high": 9
+        }
+      },
+      "constraints": [
+        {
+          "op": "le",
+          "left": {
+            "add": [
+              "a",
+              "b"
+            ]
+          },
+          "right": {
+            "lit": 10
+          }
+        },
+        {
+          "op": "gt",
+          "left": {
+            "add": [
+              {
+                "abs": {
+                  "sub": [
+                    "a",
+                    {
+                      "lit": 2
+                    }
+                  ]
+                }
+              },
+              {
+                "abs": {
+                  "sub": [
+                    "b",
+                    {
+                      "lit": 3
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          "right": {
+            "lit": 0
+          }
+        },
+        {
+          "op": "gt",
+          "left": {
+            "add": [
+              {
+                "abs": {
+                  "sub": [
+                    "a",
+                    {
+                      "lit": 3
+                    }
+                  ]
+                }
+              },
+              {
+                "abs": {
+                  "sub": [
+                    "b",
+                    {
+                      "lit": 2
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          "right": {
+            "lit": 0
+          }
+        }
+      ],
+      "answer_expr": "a+b",
+      "solution_sketch": "Start at ${a}$ and count forward ${b}$ times.",
+      "hints": [
+        "Which addend will you start from?",
+        "Count forward by the other addend."
+      ],
+      "distractors": [],
+      "samples": [
+        {
+          "params": {
+            "a": 0,
+            "b": 0
+          },
+          "expected": "0"
+        },
+        {
+          "params": {
+            "a": 0,
+            "b": 9
+          },
+          "expected": "9"
+        },
+        {
+          "params": {
+            "a": 9,
+            "b": 0
+          },
+          "expected": "9"
+        },
+        {
+          "params": {
+            "a": 1,
+            "b": 9
+          },
+          "expected": "10"
+        },
+        {
+          "params": {
+            "a": 9,
+            "b": 1
+          },
+          "expected": "10"
+        }
+      ]
+    }
+  },
+  {
+    "kp_id": "single-digit-addition/kp2",
+    "kind": "template",
+    "arguments": {
+      "statement": "Compute ${a} + {b}$.",
+      "params": {
+        "a": {
+          "kind": "int",
+          "low": 2,
+          "high": 9
+        },
+        "b": {
+          "kind": "int",
+          "low": 2,
+          "high": 9
+        }
+      },
+      "constraints": [
+        {
+          "op": "ge",
+          "left": {
+            "add": [
+              "a",
+              "b"
+            ]
+          },
+          "right": {
+            "lit": 11
+          }
+        },
+        {
+          "op": "gt",
+          "left": {
+            "add": [
+              {
+                "abs": {
+                  "sub": [
+                    "a",
+                    {
+                      "lit": 8
+                    }
+                  ]
+                }
+              },
+              {
+                "abs": {
+                  "sub": [
+                    "b",
+                    {
+                      "lit": 6
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          "right": {
+            "lit": 0
+          }
+        },
+        {
+          "op": "gt",
+          "left": {
+            "add": [
+              {
+                "abs": {
+                  "sub": [
+                    "a",
+                    {
+                      "lit": 6
+                    }
+                  ]
+                }
+              },
+              {
+                "abs": {
+                  "sub": [
+                    "b",
+                    {
+                      "lit": 8
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          "right": {
+            "lit": 0
+          }
+        }
+      ],
+      "answer_expr": "a+b",
+      "solution_sketch": "Split ${b}$ so that one part takes ${a}$ to ten. Add the remaining part.",
+      "hints": [
+        "How much does the first addend need to reach ten?",
+        "Split the second addend, make ten, then add the rest."
+      ],
+      "distractors": [],
+      "samples": [
+        {
+          "params": {
+            "a": 2,
+            "b": 9
+          },
+          "expected": "11"
+        },
+        {
+          "params": {
+            "a": 9,
+            "b": 2
+          },
+          "expected": "11"
+        },
+        {
+          "params": {
+            "a": 9,
+            "b": 9
+          },
+          "expected": "18"
+        }
+      ]
+    }
+  },
+  {
+    "kp_id": "subtraction-facts/kp1",
+    "kind": "template",
+    "arguments": {
+      "statement": "Compute ${a} - {b}$.",
+      "params": {
+        "a": {
+          "kind": "int",
+          "low": 0,
+          "high": 10
+        },
+        "b": {
+          "kind": "int",
+          "low": 0,
+          "high": 10
+        }
+      },
+      "constraints": [
+        {
+          "op": "ge",
+          "left": "a",
+          "right": "b"
+        },
+        {
+          "op": "gt",
+          "left": {
+            "add": [
+              {
+                "abs": {
+                  "sub": [
+                    "a",
+                    {
+                      "lit": 8
+                    }
+                  ]
+                }
+              },
+              {
+                "abs": {
+                  "sub": [
+                    "b",
+                    {
+                      "lit": 2
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          "right": {
+            "lit": 0
+          }
+        }
+      ],
+      "answer_expr": "a-b",
+      "solution_sketch": "Start at ${a}$ and count back ${b}$ times.",
+      "hints": [
+        "Which quantity is the starting quantity?",
+        "Count back by the quantity removed."
+      ],
+      "distractors": [],
+      "samples": [
+        {
+          "params": {
+            "a": 0,
+            "b": 0
+          },
+          "expected": "0"
+        },
+        {
+          "params": {
+            "a": 10,
+            "b": 0
+          },
+          "expected": "10"
+        },
+        {
+          "params": {
+            "a": 10,
+            "b": 10
+          },
+          "expected": "0"
+        }
+      ]
+    }
+  }
+]

@@ -108,3 +108,35 @@ after the worker exits, including on an error. It never contacts a model API.
 
 The concurrency limit supports explicit values up to 64; the pilot remains four.
 Provider costs round up to one millionth of a dollar for the reservation ledger.
+
+## Complete zero-cost pilot fallback
+
+Three explicit template drafts live in
+`docs/content-pilot/arithmetic-template-drafts.json`. Their exhaustive parameter
+spaces contain 62 addition-within-ten problems, 34 bridge-ten problems and 65
+subtraction problems. Constraints exclude the corresponding worked-example
+operand pairs; addition also excludes the reversed pair. This keeps all three
+worked examples outside the practice template spaces.
+
+```sh
+python3 scripts/authoring/import_pilot_drafts.py \
+  --worker /home/deploy/.cache/cadus2_content_target/debug/cadus-worker \
+  --include-templates
+```
+
+Against an empty isolated database, the real CLI test stores nine pending rows:
+three templates, three teach pages and three hint ladders. The ledger holds nine
+local-draft calls and exactly zero API cost. All 161 satisfying template tuples
+pass deterministic validation; instruction gates also pass against each complete
+space. This supplies one template per knowledge point. Two further template
+families and the diagnosis bank remain separate work.
+
+Existing paid template drafts also participate in the instruction gate. If they
+contain a worked-example problem, the import refuses that teaching page and
+reports a partial pass. The helper preserves every existing content verdict.
+
+Permanent HTTP 400, 401, 403, 404, 405, 410 and 422 responses stop the shared author
+job after the first observed rejection. Concurrent requests already in flight
+finish their ledger writes. The CLI returns exit 2 for a permanent endpoint
+failure, any reservation denial or an all-declined paid pass, and prints the
+stored and declined counts. Content-gate repair retries remain available.

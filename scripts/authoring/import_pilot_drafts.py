@@ -15,9 +15,12 @@ from draft_endpoint import server_for
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--worker", required=True)
+    parser.add_argument("--include-templates", action="store_true")
     args = parser.parse_args()
     root = Path(__file__).resolve().parents[2]
     rows = json.loads((root / "docs/content-pilot/arithmetic-instruction-drafts.json").read_text())
+    if args.include_templates:
+        rows += json.loads((root / "docs/content-pilot/arithmetic-template-drafts.json").read_text())
     drafts = {(row["kp_id"], row["kind"]): row["arguments"] for row in rows}
     server = server_for(0, drafts)
     thread = threading.Thread(target=server.serve_forever)
@@ -32,6 +35,8 @@ def main():
         })
         command = [args.worker, "author", "--kind", "teach", "--kind", "hint_ladder",
                    "--budget-usd", "5", "--request-reserve-usd", "0.50", "--concurrency", "4"]
+        if args.include_templates:
+            command.extend(["--kind", "template"])
         for key in dict.fromkeys(row["kp_id"] for row in rows):
             command.extend(["--kp", key])
         return subprocess.run(command, env=environment, cwd=root, check=False).returncode
