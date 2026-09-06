@@ -2,7 +2,7 @@
 
 ## Scope
 
-This record covers read-only production inspection, the historical-v1 recovery scan, and an encrypted backup restore on 2026-09-06. It does not authorize or record a deployment, content approval, event correction, or production write.
+This record covers read-only production inspection, the historical-v1 recovery scan, an encrypted backup restore, and replay of the restored snapshot on 2026-09-06. It does not authorize or record a deployment, content approval, event correction, or production write.
 
 ## Content and history inventory
 
@@ -27,10 +27,20 @@ The export ran in a repeatable-read, read-only transaction with an explicit tena
 
 An initial disposable restore reproduced three default-privilege errors because the test cluster has no `postgres` role. The second restore excluded owner and privilege metadata, completed with exit status 0, and preserved all application schema/data checked above. The failed disposable database was removed.
 
+## Restored-snapshot projection replay
+
+- Candidate commit: `661d8c2c77e9c6a0fa8f3119241d947cc5458f97`.
+- Probe: `crates/web/tests/production_replay_probe.rs`, restricted to `cadus2_prodrestore_*` on `127.0.0.1:55434`. `OPENAI_API_KEY` and `ANTHROPIC_API_KEY` were empty, and the probe makes no outbound call.
+- The archive intentionally excluded privileges. Before replay, the disposable restore alone received the minimum runtime grants needed for the normal `cadus_app` state path: `SELECT` on `events` and `SELECT`, `INSERT`, `UPDATE` on `learner_models`.
+- Sole event tenant: `3ff4aa27-6ae2-4f82-87d1-91489914012a`; 36 events through sequence 36.
+- First locked `project_and_save` read: `replayed=true`; the cached projector advanced from version 3 to version 7 through sequence 36.
+- Second locked `project_and_save` read: `replayed=false`; cursor and stored projector stayed at sequence 36 and version 7.
+- The first and second stored model JSON were byte-identical: SHA-256 `a81b1c573acce94705c19645bc2decdc34517fc20213c8c00f7a00a231dd0d7e`.
+- The first and second retention/integrated report JSON were byte-identical: SHA-256 `93ad1b94e8cb2837ef11af11ea6fc4cf18387c89b5808da90ed54d6660a84e17`.
+- Before, between, and after the reads, the event fingerprint stayed `36|36|8442802e0407e6d1d9d00d074e44d0b5` (`count|max(seq)|MD5` over ordered tenant, sequence, version, and payload tuples). The replay appended, updated, and removed no event.
+
 ## Remaining release evidence
 
-- Start the final candidate against the retained restored snapshot with outbound model calls disabled.
-- Read the available production account twice, prove projector version 7 and byte-identical second-read model/report state, and prove the event fingerprint is unchanged.
 - Run the final integrated gate on the final content commit.
 - Record the human content-review decision and post-decision readiness report.
 - Obtain explicit deployment authorization, deploy through `scripts/deploy.sh`, and collect live health, readiness, latency, smoke, and rollback-image evidence.
