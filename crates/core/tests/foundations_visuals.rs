@@ -26,12 +26,12 @@ fn every_manifest_figure_is_installed_valid_accessible_and_deterministic() {
     let (curriculum, findings) = load_curriculum(&root.join("curriculum")).unwrap();
     assert!(findings.is_empty(), "{findings:?}");
     let report = ReadinessIndex::build(&curriculum).resolve(&EmptyContent);
-    assert_eq!(entries.len(), 149);
+    assert_eq!(entries.len(), 153);
     assert_eq!(
         cadus_core::curriculum::canonical_dump(&curriculum)
             .matches("\"visuals\"")
             .count(),
-        149
+        153
     );
     let mut count = 0;
     let mut families = std::collections::BTreeSet::new();
@@ -61,7 +61,7 @@ fn every_manifest_figure_is_installed_valid_accessible_and_deterministic() {
             count += 1;
         }
     }
-    assert_eq!(count, 160);
+    assert_eq!(count, 164);
     assert_eq!(families.len(), 6);
     let mut blocked = 0;
     for topic in curriculum.topics() {
@@ -73,7 +73,10 @@ fn every_manifest_figure_is_installed_valid_accessible_and_deterministic() {
             blocked += usize::from(state.visual_needed && !state.visual_present);
         }
     }
-    assert_eq!(blocked, 5);
+    assert_eq!(blocked, 0);
+    let money_setup = report.get("money-geometry-problems/kp1").unwrap();
+    assert!(!money_setup.visual_needed);
+    assert!(!money_setup.visual_present);
 }
 
 #[test]

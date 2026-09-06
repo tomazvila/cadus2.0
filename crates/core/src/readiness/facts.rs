@@ -203,12 +203,13 @@ fn kp_facts(topic: &Topic, kp: &KnowledgePoint) -> KpFacts {
                 .and_then(|exemplar| exemplar.solution_sketch.as_deref())
                 .is_some_and(|sketch| !sketch.trim().is_empty())
         });
-    let text = format!("{} {} {}", topic.id.as_str(), topic.name, kp.name);
     let valid_visuals = kp
         .visuals
         .iter()
         .filter(|visual| visual.validate().is_ok())
         .count();
+    let topic_visual_needed = topic.knowledge_points.len() == 1
+        && visual_needed(&format!("{} {}", topic.id.as_str(), topic.name));
     KpFacts {
         kp_key: kp_key(topic.id.as_str(), kp.id.as_str()),
         topic_id: topic.id.as_str().to_owned(),
@@ -216,7 +217,10 @@ fn kp_facts(topic: &Topic, kp: &KnowledgePoint) -> KpFacts {
         decidable,
         held_out,
         solutions,
-        visual_needed: visual_needed(&text) || !kp.visuals.is_empty(),
+        // A mixed topic can contain both visual and non-visual KPs, so its
+        // title cannot classify every child. A one-KP topic has no ambiguity.
+        // An authored visual remains authoritative in either case.
+        visual_needed: visual_needed(&kp.name) || topic_visual_needed || !kp.visuals.is_empty(),
         valid_visuals,
         broken_visuals: kp.visuals.len() - valid_visuals,
     }

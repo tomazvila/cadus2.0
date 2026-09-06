@@ -18,11 +18,11 @@ use common::dump::{
 };
 
 /// The semantic curriculum hash of the checked-in tree (spec section 3).
-// Includes the 322 reviewed D-F1 policies; independently derived alongside parity.rs.
-const TREE_HASH: &str = "301c8f0910dd88ffce36ba383d0033d1a6e141835d2a927c542c4903f2055569";
+// Includes the 108 D-F1 policies; independently derived alongside parity.rs.
+const TREE_HASH: &str = "0acff8bdaa0d8b78afc5cf65b62be9d76b30f7a6868da05b01f808f576732500";
 
 /// The length of the dump in bytes, without the trailing newline.
-const DUMP_LEN: usize = 4_102_847;
+const DUMP_LEN: usize = 4_137_602;
 
 /// Compare [`python_repr_f64`] with CPython `repr` over a sweep of 494,972
 /// finite floats, and require 0 mismatches.

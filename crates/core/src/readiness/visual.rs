@@ -46,8 +46,8 @@ pub const VISUAL_WORDS: [&str; 24] = [
 
 /// Whether the text of a topic names a visual (a heuristic, see [`VISUAL_WORDS`]).
 ///
-/// The caller passes the topic id and the topic name, and the audit adds the
-/// knowledge-point name. One word anywhere in that text is enough.
+/// The caller passes either one knowledge-point name or an unambiguous one-KP
+/// topic name. One word in that text is enough.
 #[must_use]
 pub fn visual_needed(text: &str) -> bool {
     let lowered = text.to_lowercase();

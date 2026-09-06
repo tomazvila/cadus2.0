@@ -14,8 +14,14 @@ use num_rational::BigRational;
 use num_traits::{One, Signed, Zero};
 use serde::{Deserialize, Serialize};
 
-use super::plane::exact_text;
 use super::{LabeledPoint, Scalar, VisualError, inside, tick_count};
+
+mod helpers;
+
+use helpers::{
+    TrigFamily, checked_pow, exact_integer, integer_log, nonzero, polynomial_text,
+    positive_and_not_one, trig_exact, trig_f64,
+};
 
 /// The largest exponent magnitude an exact check computes.
 ///
@@ -38,6 +44,19 @@ pub enum CurveKind {
         a: Scalar,
         /// The base. Positive, and never one.
         b: Scalar,
+        /// The horizontal shift.
+        h: Scalar,
+        /// The vertical shift.
+        k: Scalar,
+    },
+    /// `y = a * e^(rate * (x - h)) + k`, where `e` is the named natural
+    /// exponential constant. Exact key-point validation is available at
+    /// `x = h`, where the exponent is exactly zero.
+    NaturalExponential {
+        /// The vertical scale. Never zero.
+        a: Scalar,
+        /// The coefficient of the exponent. Never zero.
+        rate: Scalar,
         /// The horizontal shift.
         h: Scalar,
         /// The vertical shift.
@@ -230,6 +249,13 @@ impl CurveKind {
                 nonzero("the exponential scale a", &av)?;
                 positive_and_not_one("the exponential base b", &bv)
             }
+            Self::NaturalExponential { a, rate, h, k } => {
+                let (av, ratev) = (a.value()?, rate.value()?);
+                h.value()?;
+                k.value()?;
+                nonzero("the natural exponential scale a", &av)?;
+                nonzero("the natural exponential rate", &ratev)
+            }
             Self::Logarithm { a, base, h, k } => {
                 let (av, basev) = (a.value()?, base.value()?);
                 h.value()?;
@@ -294,6 +320,16 @@ impl CurveKind {
                 let n = exact_integer(&exponent)?;
                 Some(av * checked_pow(&bv, n)? + kv)
             }
+            Self::NaturalExponential { a, rate, h, k } => {
+                let (av, ratev, hv, kv) = (
+                    a.value().ok()?,
+                    rate.value().ok()?,
+                    h.value().ok()?,
+                    k.value().ok()?,
+                );
+                let exponent = ratev * (x - hv);
+                exponent.is_zero().then(|| av + kv)
+            }
             Self::Logarithm { a, base, h, k } => {
                 let (av, basev, hv, kv) = (
                     a.value().ok()?,
@@ -336,6 +372,9 @@ impl CurveKind {
             }
             Self::Exponential { a, b, h, k } => {
                 format!("y = {a} · {b}^(x - {h}) + {k}")
+            }
+            Self::NaturalExponential { a, rate, h, k } => {
+                format!("y = {a} · e^({rate} · (x - {h})) + {k}")
             }
             Self::Logarithm { a, base, h, k } => {
                 format!("y = {a} · log base {base} of (x - {h}) + {k}")
@@ -381,6 +420,15 @@ impl CurveKind {
                 );
                 Some(av * bv.powf(x - hv) + kv)
             }
+            Self::NaturalExponential { a, rate, h, k } => {
+                let (av, ratev, hv, kv) = (
+                    a.to_f64().ok()?,
+                    rate.to_f64().ok()?,
+                    h.to_f64().ok()?,
+                    k.to_f64().ok()?,
+                );
+                Some(av * (ratev * (x - hv)).exp() + kv)
+            }
             Self::Logarithm { a, base, h, k } => {
                 let (av, basev, hv, kv) = (
                     a.to_f64().ok()?,
@@ -418,403 +466,5 @@ impl CurveKind {
     }
 }
 
-/// The float approximation of a sine or cosine curve at `x`, for the render
-/// pass only.
-fn trig_f64(
-    amplitude: &Scalar,
-    period: &Scalar,
-    phase: &Scalar,
-    midline: &Scalar,
-    x: f64,
-    wave: fn(f64) -> f64,
-) -> Option<f64> {
-    let (amp, per, ph, mid) = (
-        amplitude.to_f64().ok()?,
-        period.to_f64().ok()?,
-        phase.to_f64().ok()?,
-        midline.to_f64().ok()?,
-    );
-    let angle = std::f64::consts::TAU * (x - ph) / per;
-    Some(amp * wave(angle) + mid)
-}
-
-/// Whether a trigonometric family is sine or cosine, for the shared exact
-/// quarter-period check.
-#[derive(Clone, Copy)]
-enum TrigFamily {
-    Sine,
-    Cosine,
-}
-
-/// The exact value of a sine or cosine curve at `x`, when `x` sits on a
-/// quarter of the period from the phase (the only points where the trig value
-/// is a small exact rational: `-1`, `0`, or `1`).
-fn trig_exact(
-    amplitude: &Scalar,
-    period: &Scalar,
-    phase: &Scalar,
-    midline: &Scalar,
-    x: &BigRational,
-    family: TrigFamily,
-) -> Option<BigRational> {
-    let (amp, per, ph, mid) = (
-        amplitude.value().ok()?,
-        period.value().ok()?,
-        phase.value().ok()?,
-        midline.value().ok()?,
-    );
-    let quarters = (x - ph) / per * BigRational::from_integer(4.into());
-    let n = exact_integer(&quarters)?;
-    let phase_index = n.rem_euclid(4);
-    let value: i32 = match (family, phase_index) {
-        (TrigFamily::Sine, 0) => 0,
-        (TrigFamily::Sine, 1) => 1,
-        (TrigFamily::Sine, 2) => 0,
-        (TrigFamily::Sine, _) => -1,
-        (TrigFamily::Cosine, 0) => 1,
-        (TrigFamily::Cosine, 1) => 0,
-        (TrigFamily::Cosine, 2) => -1,
-        (TrigFamily::Cosine, _) => 0,
-    };
-    Some(amp * BigRational::from_integer(value.into()) + mid)
-}
-
-/// The integer a rational equals, or `None` when it is not an integer or is
-/// larger in magnitude than [`MAX_EXPONENT`].
-fn exact_integer(value: &BigRational) -> Option<i64> {
-    if !value.is_integer() {
-        return None;
-    }
-    let n = value.numer().to_string().parse::<i64>().ok()?;
-    if n.unsigned_abs() > MAX_EXPONENT.unsigned_abs() {
-        return None;
-    }
-    Some(n)
-}
-
-/// `base` raised to the integer power `exponent`, computed exactly.
-fn checked_pow(base: &BigRational, exponent: i64) -> Option<BigRational> {
-    let magnitude = exponent.unsigned_abs();
-    if magnitude > MAX_EXPONENT.unsigned_abs() {
-        return None;
-    }
-    if base.is_zero() && exponent < 0 {
-        return None;
-    }
-    let mut result = BigRational::one();
-    for _ in 0..magnitude {
-        result *= base.clone();
-    }
-    if exponent < 0 {
-        Some(BigRational::one() / result)
-    } else {
-        Some(result)
-    }
-}
-
-/// The integer `n` with `base^n == argument`, searched exactly, or `None` when
-/// no such small integer exists.
-fn integer_log(base: &BigRational, argument: &BigRational) -> Option<i64> {
-    if !argument.is_positive() {
-        return None;
-    }
-    (-MAX_EXPONENT..=MAX_EXPONENT).find(|&n| checked_pow(base, n).as_ref() == Some(argument))
-}
-
-/// An error unless `value` is nonzero.
-fn nonzero(what: &'static str, value: &BigRational) -> Result<(), VisualError> {
-    if value.is_zero() {
-        Err(VisualError::Degenerate {
-            reason: format!("{what} is zero"),
-        })
-    } else {
-        Ok(())
-    }
-}
-
-/// An error unless `value` is positive and not one.
-fn positive_and_not_one(what: &'static str, value: &BigRational) -> Result<(), VisualError> {
-    if !value.is_positive() {
-        Err(VisualError::Degenerate {
-            reason: format!("{what} is not positive"),
-        })
-    } else if value.is_one() {
-        Err(VisualError::Degenerate {
-            reason: format!("{what} is exactly one"),
-        })
-    } else {
-        Ok(())
-    }
-}
-
-/// The polynomial written as `c0 + c1 x + c2 x^2 + ...`, dropping the terms
-/// with a zero coefficient.
-fn polynomial_text(coefficients: &[Scalar]) -> String {
-    let mut terms = Vec::new();
-    for (power, c) in coefficients.iter().enumerate() {
-        let Ok(value) = c.value() else {
-            return "an invalid polynomial".to_owned();
-        };
-        if value.is_zero() {
-            continue;
-        }
-        let variable = match power {
-            0 => String::new(),
-            1 => "x".to_owned(),
-            _ => format!("x^{power}"),
-        };
-        terms.push(if power == 0 {
-            exact_text(&value)
-        } else if value.is_one() {
-            variable
-        } else if (-&value).is_one() {
-            format!("-{variable}")
-        } else {
-            format!("{} {variable}", exact_text(&value))
-        });
-    }
-    if terms.is_empty() {
-        "0".to_owned()
-    } else {
-        terms.join(" + ")
-    }
-}
-
 #[cfg(test)]
-mod tests {
-    use super::{Asymptote, CurveFigure, CurveKind};
-    use crate::visual::{LabeledPoint, Scalar, VisualError};
-
-    fn parabola() -> CurveFigure {
-        CurveFigure {
-            x_min: Scalar::from("-5"),
-            x_max: Scalar::from("5"),
-            y_min: Scalar::from("-6"),
-            y_max: Scalar::from("10"),
-            x_tick: Scalar::from("1"),
-            y_tick: Scalar::from("2"),
-            curve: CurveKind::Polynomial {
-                coefficients: vec![Scalar::from("-4"), Scalar::from("0"), Scalar::from("1")],
-            },
-            key_points: vec![
-                LabeledPoint::labeled(0_i64, -4_i64, "vertex"),
-                LabeledPoint::new(2_i64, 0_i64),
-                LabeledPoint::new(-2_i64, 0_i64),
-            ],
-            asymptotes: Vec::new(),
-            caption: None,
-        }
-    }
-
-    #[test]
-    fn a_parabola_validates_its_exact_key_points_and_reads_its_formula() {
-        let figure = parabola();
-        assert!(figure.validate().is_ok());
-        let text = figure.text_equivalent();
-        assert!(text.contains("The curve y = -4 + x^2."));
-        assert!(text.contains("A key point at (0, -4) labeled vertex."));
-    }
-
-    #[test]
-    fn a_key_point_off_the_curve_is_refused() {
-        let mut figure = parabola();
-        figure.key_points = vec![LabeledPoint::new(1_i64, 1_i64)];
-        assert!(matches!(
-            figure.validate(),
-            Err(VisualError::KeyPointOffCurve { .. })
-        ));
-    }
-
-    #[test]
-    fn an_exponential_checks_only_integer_steps_from_its_shift() {
-        let figure = CurveFigure {
-            x_min: Scalar::from("-3"),
-            x_max: Scalar::from("3"),
-            y_min: Scalar::from("0"),
-            y_max: Scalar::from("10"),
-            x_tick: Scalar::from("1"),
-            y_tick: Scalar::from("1"),
-            curve: CurveKind::Exponential {
-                a: Scalar::from("1"),
-                b: Scalar::from("2"),
-                h: Scalar::from("0"),
-                k: Scalar::from("0"),
-            },
-            key_points: vec![
-                LabeledPoint::new(0_i64, 1_i64),
-                LabeledPoint::new(1_i64, 2_i64),
-                LabeledPoint::new(3_i64, 8_i64),
-            ],
-            asymptotes: vec![Asymptote::Horizontal {
-                at: Scalar::from("0"),
-            }],
-            caption: None,
-        };
-        assert!(figure.validate().is_ok());
-
-        let mut half_step = figure.clone();
-        half_step.key_points = vec![LabeledPoint::new("0.5", "1.414")];
-        assert!(matches!(
-            half_step.validate(),
-            Err(VisualError::KeyPointOffCurve { .. })
-        ));
-    }
-
-    #[test]
-    fn a_logarithm_checks_exact_powers_of_its_base() {
-        let figure = CurveFigure {
-            x_min: Scalar::from("0.5"),
-            x_max: Scalar::from("10"),
-            y_min: Scalar::from("-3"),
-            y_max: Scalar::from("3"),
-            x_tick: Scalar::from("1"),
-            y_tick: Scalar::from("1"),
-            curve: CurveKind::Logarithm {
-                a: Scalar::from("1"),
-                base: Scalar::from("2"),
-                h: Scalar::from("0"),
-                k: Scalar::from("0"),
-            },
-            key_points: vec![
-                LabeledPoint::new(1_i64, 0_i64),
-                LabeledPoint::new(2_i64, 1_i64),
-                LabeledPoint::new(4_i64, 2_i64),
-            ],
-            asymptotes: vec![],
-            caption: None,
-        };
-        assert!(figure.validate().is_ok());
-
-        let mut off_grid = figure.clone();
-        off_grid.key_points = vec![LabeledPoint::new("3", "1.585")];
-        assert!(matches!(
-            off_grid.validate(),
-            Err(VisualError::KeyPointOffCurve { .. })
-        ));
-    }
-
-    #[test]
-    fn a_reciprocal_refuses_a_key_point_at_its_own_asymptote() {
-        let figure = CurveFigure {
-            x_min: Scalar::from("-5"),
-            x_max: Scalar::from("5"),
-            y_min: Scalar::from("-5"),
-            y_max: Scalar::from("5"),
-            x_tick: Scalar::from("1"),
-            y_tick: Scalar::from("1"),
-            curve: CurveKind::Reciprocal {
-                a: Scalar::from("2"),
-                h: Scalar::from("0"),
-                k: Scalar::from("0"),
-            },
-            key_points: vec![LabeledPoint::new(0_i64, 0_i64)],
-            asymptotes: vec![],
-            caption: None,
-        };
-        assert!(matches!(
-            figure.validate(),
-            Err(VisualError::KeyPointOffCurve { .. })
-        ));
-    }
-
-    #[test]
-    fn a_sine_curve_checks_exact_quarter_period_points_only() {
-        let figure = CurveFigure {
-            x_min: Scalar::from("-1"),
-            x_max: Scalar::from("5"),
-            y_min: Scalar::from("-2"),
-            y_max: Scalar::from("2"),
-            x_tick: Scalar::from("1"),
-            y_tick: Scalar::from("1"),
-            curve: CurveKind::Sine {
-                amplitude: Scalar::from("1"),
-                period: Scalar::from("4"),
-                phase: Scalar::from("0"),
-                midline: Scalar::from("0"),
-            },
-            key_points: vec![
-                LabeledPoint::new(0_i64, 0_i64),
-                LabeledPoint::new(1_i64, 1_i64),
-                LabeledPoint::new(2_i64, 0_i64),
-                LabeledPoint::new(3_i64, -1_i64),
-                LabeledPoint::new(4_i64, 0_i64),
-            ],
-            asymptotes: vec![],
-            caption: None,
-        };
-        assert!(figure.validate().is_ok());
-
-        let mut wrong = figure.clone();
-        wrong.key_points = vec![LabeledPoint::new(1_i64, 0_i64)];
-        assert!(matches!(
-            wrong.validate(),
-            Err(VisualError::KeyPointOffCurve { .. })
-        ));
-    }
-
-    #[test]
-    fn degenerate_parameters_are_refused_before_any_key_point_check() {
-        let mut zero_amplitude = CurveFigure {
-            x_min: Scalar::from("-1"),
-            x_max: Scalar::from("1"),
-            y_min: Scalar::from("-1"),
-            y_max: Scalar::from("1"),
-            x_tick: Scalar::from("1"),
-            y_tick: Scalar::from("1"),
-            curve: CurveKind::Sine {
-                amplitude: Scalar::from("0"),
-                period: Scalar::from("4"),
-                phase: Scalar::from("0"),
-                midline: Scalar::from("0"),
-            },
-            key_points: vec![],
-            asymptotes: vec![],
-            caption: None,
-        };
-        assert!(matches!(
-            zero_amplitude.validate(),
-            Err(VisualError::Degenerate { .. })
-        ));
-
-        zero_amplitude.curve = CurveKind::Exponential {
-            a: Scalar::from("1"),
-            b: Scalar::from("1"),
-            h: Scalar::from("0"),
-            k: Scalar::from("0"),
-        };
-        assert!(matches!(
-            zero_amplitude.validate(),
-            Err(VisualError::Degenerate { .. })
-        ));
-    }
-
-    #[test]
-    fn an_asymptote_outside_the_drawn_range_is_refused() {
-        let mut figure = CurveFigure {
-            x_min: Scalar::from("-5"),
-            x_max: Scalar::from("5"),
-            y_min: Scalar::from("-5"),
-            y_max: Scalar::from("5"),
-            x_tick: Scalar::from("1"),
-            y_tick: Scalar::from("1"),
-            curve: CurveKind::Reciprocal {
-                a: Scalar::from("1"),
-                h: Scalar::from("0"),
-                k: Scalar::from("0"),
-            },
-            key_points: vec![],
-            asymptotes: vec![Asymptote::Horizontal {
-                at: Scalar::from("50"),
-            }],
-            caption: None,
-        };
-        assert!(matches!(
-            figure.validate(),
-            Err(VisualError::OutOfRange { .. })
-        ));
-        figure.asymptotes = vec![Asymptote::Vertical {
-            at: Scalar::from("0"),
-        }];
-        assert!(figure.validate().is_ok());
-    }
-}
+mod tests;
