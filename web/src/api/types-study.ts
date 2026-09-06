@@ -55,6 +55,8 @@ export interface PlanTask {
    * prose, so the SPA renders it verbatim and never rewrites it.
    */
   why: string | null;
+  /** D-F6: the task confirms a topic the course inferred from a placement. */
+  confirm?: boolean;
   /**
    * Server-side completion. The session view filters the WHOLE task list on
    * `progress.done`: per-mount memory left a reload restarting at a closed task and

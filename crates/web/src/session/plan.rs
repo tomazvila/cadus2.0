@@ -152,6 +152,9 @@ fn trim_task(task: &Task, graph: &Curriculum, scratch: &WebState) -> Value {
         "time_budget_secs": task.time_budget_secs,
         "difficulty_target": task.difficulty_target,
         "why": task.why,
+        // D-F6: the client labels a confirmation item, and it never reads a
+        // scheduling decision back out of `why`.
+        "confirm": task.confirm,
         "progress": {"answered": answered, "done": done},
     })
 }

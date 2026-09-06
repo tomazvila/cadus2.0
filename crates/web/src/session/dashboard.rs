@@ -13,9 +13,10 @@ use cadus_core::curriculum::{Curriculum, TopicIdx};
 use cadus_core::event::TopicStatus;
 use cadus_core::learner::{LearnerModel, TopicState};
 use cadus_core::selector::{
-    course_scope, due_reviews, frontier, is_known, known_set, nearly_due, quiz_is_due,
-    schedule_drills,
+    confirmations, course_scope, due_reviews, frontier, is_known, known_set, nearly_due,
+    quiz_is_due, schedule_drills,
 };
+use cadus_core::xp::{CourseCounts, course_counts};
 use cadus_store::state::{EventRow, load_events, project_current};
 use serde_json::{Value, json};
 
@@ -71,6 +72,32 @@ pub(super) fn due_counts(
         .filter(|id| !due_set.contains(id.as_str()))
         .count();
     (open_frontier.indices().count(), due.len(), nearly)
+}
+
+/// The three honest mastery numbers of the dashboard (D-F6).
+///
+/// `practiced` counts the topics the learner passed, `inferred` counts the
+/// placed and floor topics that carry no direct answer, and `to_confirm` lists
+/// the inferred topics the next session confirms. A learner with no enrolled
+/// course gets zeros and an empty list.
+fn mastery_view(
+    model: &LearnerModel,
+    graph: &Curriculum,
+    cfg: &Config,
+    t_us: i64,
+    course: Option<&str>,
+) -> Value {
+    let counts = course.map_or_else(CourseCounts::default, |id| {
+        course_counts(&model.topics, graph, id)
+    });
+    let busy: BTreeSet<String> = BTreeSet::new();
+    let to_confirm = confirmations(&model.topics, graph, cfg, t_us, course, &busy);
+    json!({
+        "practiced": counts.practiced,
+        "inferred": counts.inferred,
+        "total": counts.total,
+        "to_confirm": to_confirm,
+    })
 }
 
 /// Whether one topic state counts as placed on the dashboard.
@@ -134,6 +161,10 @@ pub async fn status(req: Ready) -> Reply {
         "frontier": frontier_count,
         "due_reviews": due_count,
         "nearly_due": nearly_count,
+        // D-F6: the progress bar reads `velocity.course_progress`, which counts
+        // the practiced topics alone. These three numbers say what stands
+        // behind it.
+        "mastery": mastery_view(&model, graph, cfg, t_us, course),
     });
     reply_read(tx, body).await
 }
