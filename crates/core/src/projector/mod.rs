@@ -48,6 +48,7 @@ use crate::numeric::{OutOfRangeError, TimeError, resolve_timezone};
 
 mod entry;
 mod handlers;
+mod pass_rule;
 mod regrade;
 mod state;
 
@@ -55,6 +56,7 @@ pub use entry::{
     ProjectionInput, blob_digest, canonical_blob, kp_failed, kp_passed, project,
     project_incremental,
 };
+pub use pass_rule::PassRule;
 pub use regrade::apply_regrades;
 
 /// The projection-logic version stamped into the model (`projector.py:89`).

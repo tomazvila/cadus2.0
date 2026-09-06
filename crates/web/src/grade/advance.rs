@@ -102,7 +102,7 @@ pub(super) fn advance(
     if kp_failed(&sequence, cfg) {
         return lesson_failed(graph, cfg, now, attempt, kp.as_deref(), history);
     }
-    if !kp_passed(&sequence) {
+    if !kp_passed(&sequence, cfg.lesson.pass_rule()) {
         return Advance::carry_on();
     }
     // The knowledge point passed. A lesson with a later knowledge point advances

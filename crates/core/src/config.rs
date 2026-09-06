@@ -10,9 +10,25 @@
 //! of every struct here therefore matches 1.0's declaration order, and serde writes
 //! fields in declaration order. Do not sort these fields.
 
-use serde::{Deserialize, Serialize};
+use serde::{Deserialize, Deserializer, Serialize};
+use thiserror::Error;
 
 use crate::learner::short_sha256;
+use crate::projector::PassRule;
+
+/// A configuration value the core refuses.
+#[derive(Debug, Clone, PartialEq, Eq, Error)]
+pub enum ConfigError {
+    /// `lesson.kp_pass` holds no term.
+    #[error("`lesson.kp_pass` is empty; it needs one term such as `2consec`")]
+    EmptyPassRule,
+    /// One term of `lesson.kp_pass` is outside the grammar of [`PassRule`].
+    #[error("`lesson.kp_pass` term `{term}` is not `<n>consec` or `<k>of<m>`")]
+    PassRuleTerm {
+        /// The term the parser refused.
+        term: String,
+    },
+}
 
 /// The FIRe engine constants.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -65,24 +81,88 @@ impl Default for AbilityConfig {
     }
 }
 
+/// The 1.0 default of `lesson.kp_pass` (spec section 9).
+const DEFAULT_KP_PASS: &str = "2consec|3of4";
+
 /// The lesson constants.
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-#[serde(deny_unknown_fields)]
+///
+/// `kp_pass` is private, and [`LessonConfig::new`] is the one constructor, because
+/// `pass_rule` is the parse of `kp_pass`: a writable `kp_pass` field leaves the two out
+/// of step and the gate then reads a stale rule.
+#[derive(Debug, Clone, PartialEq, Serialize)]
 pub struct LessonConfig {
     /// The rule that passes a knowledge point.
-    pub kp_pass: String,
+    kp_pass: String,
     /// The number of misses that fails a lesson.
     pub fail_after: i64,
     /// The days a failed topic waits before a retry.
     pub retry_delay_days: i64,
+    /// The parsed form of `kp_pass`, built once at construction (D-F7).
+    ///
+    /// It never serializes: the config hash preimage holds the 1.0 field set and
+    /// nothing more (trap T16).
+    #[serde(skip_serializing)]
+    pass_rule: PassRule,
+}
+
+/// The stored fields of [`LessonConfig`].
+///
+/// The [`Deserialize`] of [`LessonConfig`] reads this struct and then parses `kp_pass`,
+/// so a bad rule string fails the config load with the term named.
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+struct LessonFields {
+    kp_pass: String,
+    fail_after: i64,
+    retry_delay_days: i64,
+}
+
+impl<'de> Deserialize<'de> for LessonConfig {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        let fields = LessonFields::deserialize(deserializer)?;
+        Self::new(&fields.kp_pass, fields.fail_after, fields.retry_delay_days)
+            .map_err(serde::de::Error::custom)
+    }
+}
+
+impl LessonConfig {
+    /// Build the lesson constants and parse `kp_pass` once.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`ConfigError`] when `kp_pass` is outside the grammar of [`PassRule`].
+    pub fn new(kp_pass: &str, fail_after: i64, retry_delay_days: i64) -> Result<Self, ConfigError> {
+        Ok(Self {
+            kp_pass: kp_pass.to_owned(),
+            fail_after,
+            retry_delay_days,
+            pass_rule: PassRule::parse(kp_pass)?,
+        })
+    }
+
+    /// The rule text, as `config.yaml` spells it.
+    #[must_use]
+    pub fn kp_pass(&self) -> &str {
+        &self.kp_pass
+    }
+
+    /// The parsed rule the knowledge-point gate reads.
+    #[must_use]
+    pub const fn pass_rule(&self) -> &PassRule {
+        &self.pass_rule
+    }
 }
 
 impl Default for LessonConfig {
     fn default() -> Self {
         Self {
-            kp_pass: "2consec|3of4".to_owned(),
+            kp_pass: DEFAULT_KP_PASS.to_owned(),
             fail_after: 5,
             retry_delay_days: 1,
+            pass_rule: PassRule::default(),
         }
     }
 }

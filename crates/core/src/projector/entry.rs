@@ -6,6 +6,7 @@ use crate::curriculum::{Curriculum, render_json, sha256_hex};
 use crate::event::{Event, Timestamp};
 use crate::learner::LearnerModel;
 
+use super::pass_rule::PassRule;
 use super::state::serialize_error;
 use super::{DEFAULT_XP_GOAL, Projector, ProjectorError, apply_regrades};
 
@@ -161,22 +162,16 @@ pub fn blob_digest(model: &LearnerModel) -> Result<String, ProjectorError> {
 
 /// Whether a lesson knowledge point is mastered (`projector.py:860-867`).
 ///
-/// The rule is `lesson.kp_pass = "2consec|3of4"`: two correct answers in a row at
-/// the tail, or three correct out of the first four. 1.0 hard-codes both arms and
-/// reads the config string for neither, so this port takes no config either. A
-/// second rule spelling would need a parser in both tiers, and 1.0 has none.
+/// `rule` is the parsed `lesson.kp_pass`, which [`crate::config::LessonConfig::pass_rule`]
+/// holds (D-F7). 1.0 hard-codes the two arms of the default string and reads the config
+/// value for neither; 2.0 reads it, and the default string `"2consec|3of4"` gives the
+/// 1.0 verdicts: two correct answers in a row at the tail, or three correct out of the
+/// first four.
 ///
 /// `seq` is the answer sequence of ONE knowledge point, oldest first.
 #[must_use]
-pub fn kp_passed(seq: &[bool]) -> bool {
-    let len = seq.len();
-    if len >= 2 && seq[len - 1] && seq[len - 2] {
-        return true;
-    }
-    if len >= 4 && seq.iter().take(4).filter(|correct| **correct).count() >= 3 {
-        return true;
-    }
-    false
+pub fn kp_passed(seq: &[bool], rule: &PassRule) -> bool {
+    rule.passed(seq)
 }
 
 /// Whether a lesson knowledge point failed (`projector.py:870-872`).
@@ -185,7 +180,8 @@ pub fn kp_passed(seq: &[bool]) -> bool {
 /// [`kp_passed`] is still false.
 #[must_use]
 pub fn kp_failed(seq: &[bool], cfg: &Config) -> bool {
-    i64::try_from(seq.len()).unwrap_or(i64::MAX) >= cfg.lesson.fail_after && !kp_passed(seq)
+    i64::try_from(seq.len()).unwrap_or(i64::MAX) >= cfg.lesson.fail_after
+        && !kp_passed(seq, cfg.lesson.pass_rule())
 }
 
 #[cfg(test)]
@@ -227,9 +223,10 @@ mod tests {
     #[test]
     fn the_knowledge_point_gates_read_the_tail_and_the_first_four() {
         let cfg = Config::default();
-        assert!(kp_passed(&[false, true, true]));
-        assert!(kp_passed(&[true, false, true, true, false]));
-        assert!(!kp_passed(&[true, false]));
+        let rule = cfg.lesson.pass_rule();
+        assert!(kp_passed(&[false, true, true], rule));
+        assert!(kp_passed(&[true, false, true, true, false], rule));
+        assert!(!kp_passed(&[true, false], rule));
         assert!(kp_failed(&[false, false, false, false, false], &cfg));
         assert!(!kp_failed(&[true, true], &cfg));
     }

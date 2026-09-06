@@ -250,19 +250,21 @@ fn the_ability_seed_of_an_untouched_topic_is_a_compensated_mean() {
 /// expected value below is a literal.
 #[test]
 fn kp_passed_is_two_at_the_tail_or_three_of_the_first_four() {
-    assert!(!kp_passed(&[]));
-    assert!(!kp_passed(&[true]));
-    assert!(kp_passed(&[true, true]));
-    assert!(!kp_passed(&[true, false]));
-    assert!(!kp_passed(&[false, true]));
+    let cfg = Config::default();
+    let rule = cfg.lesson.pass_rule();
+    assert!(!kp_passed(&[], rule));
+    assert!(!kp_passed(&[true], rule));
+    assert!(kp_passed(&[true, true], rule));
+    assert!(!kp_passed(&[true, false], rule));
+    assert!(!kp_passed(&[false, true], rule));
     // A pass at the tail, not anywhere: the first two do not count once a later
     // answer stands.
-    assert!(!kp_passed(&[true, true, false]));
-    assert!(kp_passed(&[false, true, true]));
+    assert!(!kp_passed(&[true, true, false], rule));
+    assert!(kp_passed(&[false, true, true], rule));
     // Three of the first FOUR, with no pair at the tail.
-    assert!(kp_passed(&[true, false, true, true]));
-    assert!(kp_passed(&[true, true, false, true]));
-    assert!(!kp_passed(&[false, true, false, true, false]));
+    assert!(kp_passed(&[true, false, true, true], rule));
+    assert!(kp_passed(&[true, true, false, true], rule));
+    assert!(!kp_passed(&[false, true, false, true, false], rule));
 }
 
 /// `lesson.fail_after` is 5: five answers that have not passed fail the
