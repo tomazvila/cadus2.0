@@ -127,4 +127,9 @@ export interface IntegratedGrade {
   interpretation: string;
   /** The prose the learner wrote. `graded` is always false. */
   reasoning: { recorded: boolean; graded: boolean; note: string | null };
+  /**
+   * True when this submission wrote the log row. A second submission of the same item
+   * answers `false`: the first one stands, and no credit is given twice.
+   */
+  recorded: boolean;
 }

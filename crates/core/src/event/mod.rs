@@ -21,6 +21,7 @@ use serde::{Deserialize, Serialize};
 use thiserror::Error;
 
 mod body;
+mod integrated;
 mod kind;
 mod note;
 mod scalar;
@@ -29,6 +30,7 @@ pub use body::{
     Attempt, AttemptProblem, LessonResult, QuizResult, QuizTopicResult, RegradedAttempt,
     RetentionProbe, ReviewResult, ServedProblem, TaskServed,
 };
+pub use integrated::{IntegratedAttempt, IntegratedField, IntegratedServed};
 pub use kind::{
     AnswerKind, AttemptOutcome, EnrollReason, Exposure, ItemSource, KpProgress, TaskType,
     TopicStatus, WorkQuality,
@@ -114,6 +116,12 @@ pub enum Event {
     /// One delayed retention probe (D-F11).
     #[serde(rename = "retention_probe")]
     RetentionProbe(RetentionProbe),
+    /// One integrated task handed to a learner (D-F10).
+    #[serde(rename = "integrated_served")]
+    IntegratedServed(IntegratedServed),
+    /// One graded submission of a whole integrated task (D-F10).
+    #[serde(rename = "integrated_attempt")]
+    IntegratedAttempt(IntegratedAttempt),
 }
 
 /// Apply `body` to the inner payload of every [`Event`] member.
@@ -137,6 +145,8 @@ macro_rules! for_each_event {
             Event::ConfigChanged($inner) => $body,
             Event::CurriculumChanged($inner) => $body,
             Event::RetentionProbe($inner) => $body,
+            Event::IntegratedServed($inner) => $body,
+            Event::IntegratedAttempt($inner) => $body,
         }
     };
 }
@@ -233,6 +243,8 @@ impl Event {
             Self::ConfigChanged(_) => "config_changed",
             Self::CurriculumChanged(_) => "curriculum_changed",
             Self::RetentionProbe(_) => "retention_probe",
+            Self::IntegratedServed(_) => "integrated_served",
+            Self::IntegratedAttempt(_) => "integrated_attempt",
         }
     }
 

@@ -298,7 +298,15 @@ impl<'a> Projector<'a> {
             | Event::Regraded(_)
             | Event::AnkiCardCreated(_)
             | Event::ConfigChanged(_)
-            | Event::CurriculumChanged(_) => {}
+            | Event::CurriculumChanged(_)
+            // D-F10. The integrated events carry their own evidence: the serve
+            // records the exposure and the attempt records every field with the
+            // contract that decided it. The fold credits no skill from them
+            // here, because only a DECIDED field may credit one and the
+            // progression path of the web tier owns that write. An undecided
+            // field must never move a topic state (D-F2).
+            | Event::IntegratedServed(_)
+            | Event::IntegratedAttempt(_) => {}
             Event::RetentionProbe(body) => self.retention.apply(body, &self.cfg.retention),
         }
         self.applied += 1;

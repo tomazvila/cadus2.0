@@ -347,3 +347,176 @@ async fn a_task_of_another_learner_is_never_served() {
     })
     .await;
 }
+
+/// The event rows of one learner, newest last: `(type, payload)`.
+async fn events_of(db: &TestDb, user: Uuid) -> Vec<(String, Value)> {
+    // A runtime query, not the checked macro: this file reads the log as an
+    // oracle, and the oracle must not depend on the offline query cache.
+    sqlx::query_as::<_, (String, Value)>(
+        "SELECT type, payload FROM events WHERE user_id = $1 ORDER BY seq",
+    )
+    .bind(user)
+    .fetch_all(&db.admin)
+    .await
+    .unwrap()
+}
+
+#[tokio::test]
+async fn the_serve_records_the_exposure_once_however_often_it_reloads() {
+    TestDb::with(|db| async move {
+        let app = app(&db, IntegratedSet::from_items(vec![item()]));
+        let user = learner_with_due_reviews(&db, "integrated-exposure@example.com").await;
+        let uri = format!("/api/task/{MULTISTEP}/integrated");
+
+        for _ in 0..3 {
+            let (status, body) = post(&app, user, &uri, None).await;
+            assert_eq!(status, StatusCode::OK, "{body}");
+        }
+        let served: Vec<(String, Value)> = events_of(&db, user)
+            .await
+            .into_iter()
+            .filter(|(kind, _)| kind == "integrated_served")
+            .collect();
+        assert_eq!(served.len(), 1, "a reload is one exposure");
+        let payload = &served[0].1;
+        assert_eq!(payload["item_id"], "integrated-test-window");
+        assert_eq!(payload["task_id"], MULTISTEP);
+        assert_eq!(payload["topic"], "counting");
+        assert_eq!(
+            payload["skills"],
+            json!(["counting/kp1", "adding/kp1", "scaling/kp1"])
+        );
+        // Hard Rule 1 holds in the LOG too: the exposure row names no answer.
+        let raw = payload.to_string();
+        for secret in ["\"960\"", "\"240\"", "\"answer\""] {
+            assert!(
+                !raw.contains(secret),
+                "the exposure row leaked {secret}: {raw}"
+            );
+        }
+    })
+    .await;
+}
+
+#[tokio::test]
+async fn the_submission_is_recorded_with_every_answer_and_its_contract() {
+    TestDb::with(|db| async move {
+        let app = app(&db, IntegratedSet::from_items(vec![item()]));
+        let user = learner_with_due_reviews(&db, "integrated-record@example.com").await;
+        let body = json!({
+            "method": "person-minutes",
+            "steps": [
+                {"id": "person-minutes", "answer": "960", "hints_used": 2},
+                {"id": "clerk-minutes", "answer": "about four hours"}
+            ],
+            "final_answer": {"id": "final", "answer": "4"},
+            "reasoning": "I counted the work first."
+        });
+        let uri = format!("/api/task/{MULTISTEP}/integrated/answer");
+        let (status, first) = post(&app, user, &uri, Some(body.clone())).await;
+        assert_eq!(status, StatusCode::OK, "{first}");
+        assert_eq!(parse(&first)["recorded"], true);
+
+        // A second submission of the same item writes NO second row (double-credit).
+        let (status, again) = post(&app, user, &uri, Some(body)).await;
+        assert_eq!(status, StatusCode::OK, "{again}");
+        assert_eq!(parse(&again)["recorded"], false);
+
+        let rows: Vec<Value> = events_of(&db, user)
+            .await
+            .into_iter()
+            .filter(|(kind, _)| kind == "integrated_attempt")
+            .map(|(_, payload)| payload)
+            .collect();
+        assert_eq!(rows.len(), 1, "a repeat submission writes one row");
+        let row = &rows[0];
+        assert_eq!(row["item_digest"], parse(&first)["item_digest"]);
+        assert_eq!(row["method"], "person-minutes");
+        assert_eq!(row["method_correct"], true);
+        assert_eq!(row["solved"], true);
+        assert_eq!(row["assisted"], true);
+        assert_eq!(row["steps"][0]["answer"], "960");
+        assert_eq!(row["steps"][0]["outcome"], "correct");
+        assert_eq!(row["steps"][0]["contract"], json!({"kind": "exact"}));
+        assert_eq!(row["steps"][0]["assisted"], true);
+        // An answer the checker cannot read is UNGRADED, and it credits nothing.
+        assert_eq!(row["steps"][1]["answer"], "about four hours");
+        assert!(row["steps"][1]["outcome"]["ungraded"]["reason"].is_string());
+        assert_eq!(
+            row["skills_credited"],
+            json!(["counting/kp1", "scaling/kp1"])
+        );
+        // The prose is stored under a name that says it was never graded.
+        assert_eq!(row["reasoning_ungraded"], "I counted the work first.");
+    })
+    .await;
+}
+
+#[tokio::test]
+async fn the_log_replays_after_an_integrated_attempt() {
+    TestDb::with(|db| async move {
+        let app = app(&db, IntegratedSet::from_items(vec![item()]));
+        let user = learner_with_due_reviews(&db, "integrated-replay@example.com").await;
+        post(
+            &app,
+            user,
+            &format!("/api/task/{MULTISTEP}/integrated"),
+            None,
+        )
+        .await;
+        let (status, _) = post(
+            &app,
+            user,
+            &format!("/api/task/{MULTISTEP}/integrated/answer"),
+            Some(json!({"steps": [], "final_answer": {"id": "final", "answer": "4"}})),
+        )
+        .await;
+        assert_eq!(status, StatusCode::OK);
+
+        // The fold reads the two new rows and the plan still composes: an event
+        // kind the projector ignores must never stop a later request.
+        let task_id = multistep_task_id(&app, user).await;
+        assert_eq!(task_id, MULTISTEP);
+        let (status, body) = post(
+            &app,
+            user,
+            &format!("/api/task/{MULTISTEP}/integrated"),
+            None,
+        )
+        .await;
+        assert_eq!(status, StatusCode::OK, "{body}");
+    })
+    .await;
+}
+
+#[tokio::test]
+async fn another_learner_writes_no_row_of_this_learner() {
+    TestDb::with(|db| async move {
+        let app = app(&db, IntegratedSet::from_items(vec![item()]));
+        let owner = learner_with_due_reviews(&db, "integrated-own@example.com").await;
+        let other = seed_learner(&db, "integrated-stranger@example.com").await;
+        seed_open_session(&db, other).await;
+        let uri = format!("/api/task/{MULTISTEP}/integrated/answer");
+        let body = json!({"steps": [], "final_answer": {"id": "final", "answer": "4"}});
+
+        let (status, _) = post(&app, other, &uri, Some(body.clone())).await;
+        assert_eq!(status, StatusCode::NOT_FOUND);
+        assert!(
+            events_of(&db, owner)
+                .await
+                .iter()
+                .all(|(kind, _)| kind != "integrated_attempt"),
+            "a stranger wrote a row of the owner"
+        );
+        let (status, _) = post(&app, owner, &uri, Some(body)).await;
+        assert_eq!(status, StatusCode::OK);
+        assert!(
+            events_of(&db, other)
+                .await
+                .iter()
+                .all(|(kind, _)| kind != "integrated_attempt"),
+            "the owner wrote a row of the stranger"
+        );
+    })
+    .await;
+}

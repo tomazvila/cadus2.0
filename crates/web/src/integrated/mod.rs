@@ -28,12 +28,16 @@
 //! method option, and no final interpretation is in it. The interpretation
 //! arrives with the grade, after the learner has answered.
 //!
-//! # What the grade route does NOT do
+//! # What the log keeps
 //!
-//! It appends no event and writes no progress. The reply carries the whole
-//! outcome — per-step verdicts, the credited knowledge points, the assistance
-//! flag, and the item digest — and the progression path of the web lane binds
-//! that outcome to an attempt. Two owners of one write would double-count.
+//! The serve appends `integrated_served` and the answer appends
+//! `integrated_attempt`, both inside the transaction that read the plan and both
+//! keyed for idempotency on `(session, task, item digest)`. A refresh, a double
+//! click and a second tab therefore write ONE row. The attempt row holds every
+//! step answer, the contract that decided it, the outcome, the assistance, the
+//! credited knowledge points and the prose; the projector credits no topic state
+//! from it, because only a decided field may credit one and the progression path
+//! owns that write (D-F2).
 //!
 //! # Reasoning is never graded
 //!
@@ -44,23 +48,30 @@
 use axum::Json;
 use axum::extract::State;
 use axum::http::StatusCode;
-use cadus_core::event::TaskType;
+use cadus_core::event::{Event, TaskType, Timestamp};
 use cadus_core::integrated::{
-    FINAL_FIELD_ID, IntegratedItem, Submission, grade, hint, hints_available, view_of,
+    FINAL_FIELD_ID, IntegratedGrade, IntegratedItem, Submission, grade, hint, hints_available,
+    view_of,
 };
 use cadus_core::selector::Task;
+use cadus_store::state::append_event;
 use serde::Deserialize;
 use serde_json::{Value, json};
+use sqlx::types::Uuid;
+use sqlx::{Postgres, Transaction};
 
 use crate::AppState;
 use crate::error::ApiError;
+use crate::grade::{db_failed, store};
 use crate::path::ApiPath;
 use crate::serve::{Open, find, open};
 use crate::session::{content, now_pair};
 use crate::state::{Content, INVALID_REQUEST, Tenant};
 
+mod record;
 mod route;
 
+pub use record::{attempt_event, attempt_key, served_event, served_key};
 pub use route::{answer, hint_rung, serve};
 
 /// The code of a task that has no integrated item to serve.
@@ -132,8 +143,7 @@ fn hint_payload(item: &IntegratedItem, request: &HintRequest) -> Result<Value, A
 }
 
 /// The grade reply, with the correct answers kept apart from the prose.
-fn answer_payload(item: &IntegratedItem, submission: &Submission) -> Value {
-    let result = grade(item, submission);
+fn answer_payload(result: &IntegratedGrade, note: Option<&String>) -> Value {
     json!({
         "item_id": result.item_id,
         "item_digest": result.item_digest,
@@ -153,7 +163,7 @@ fn answer_payload(item: &IntegratedItem, submission: &Submission) -> Value {
         "reasoning": {
             "recorded": result.reasoning_recorded,
             "graded": false,
-            "note": submission.reasoning,
+            "note": note,
         },
     })
 }

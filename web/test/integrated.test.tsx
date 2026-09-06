@@ -69,6 +69,7 @@ function gradeReply(over: Partial<IntegratedGrade> = {}): IntegratedGrade {
     skills_credited: ['unit-rates/kp1'],
     interpretation: '7 nurses clear the window; 6 leave 12 patients unseen.',
     reasoning: { recorded: true, graded: false, note: 'I counted the work first.' },
+    recorded: true,
     ...over,
   };
 }
