@@ -42,7 +42,7 @@ pub use fraction::{FractionFigure, FractionShape};
 pub use geometry::{GeometryFigure, GeometryShape};
 pub use number_line::{MarkedInterval, MarkedPoint, NumberLineFigure};
 pub use plane::{CoordinateFigure, LabeledPoint, Segment};
-pub use render::{RenderOptions, render};
+pub use render::{RenderOptions, RenderedVisual, render, render_all};
 pub use scalar::Scalar;
 
 /// The largest number of ticks one axis draws.

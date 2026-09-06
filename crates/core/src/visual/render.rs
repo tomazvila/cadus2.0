@@ -9,6 +9,8 @@
 
 use std::fmt::Write as _;
 
+use serde::{Deserialize, Serialize};
+
 use super::{LabeledPoint, VisualError, VisualSpec};
 
 mod figure;
@@ -63,6 +65,44 @@ pub fn render(spec: &VisualSpec, options: &RenderOptions) -> Result<String, Visu
         VisualSpec::Geometry(figure) => geometry_body(figure, options)?,
     };
     Ok(frame(spec, options, &body))
+}
+
+/// One drawn figure, as the API sends it to the browser.
+///
+/// The browser never repeats the geometry: it prints these bytes and reads this
+/// text. `web/src/components/MathVisual.tsx` is the reader.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct RenderedVisual {
+    /// The family: `number_line`, `fraction`, `coordinate`, or `geometry`.
+    pub kind: String,
+    /// The SVG bytes.
+    pub svg: String,
+    /// The accessible equivalent.
+    pub text: String,
+}
+
+/// Draw every figure of one problem, and drop each figure the check refuses.
+///
+/// The drop is the safe direction: a learner reads a question with one picture
+/// short, and never a picture that states a wrong fact. The caller reports the
+/// missing figure through the readiness audit.
+///
+/// Each figure takes the prefix `<prefix>-<position>`, so two figures on one page
+/// never share the id of a `<title>`.
+#[must_use]
+pub fn render_all(specs: &[VisualSpec], prefix: &str) -> Vec<RenderedVisual> {
+    let mut out = Vec::new();
+    for (at, spec) in specs.iter().enumerate() {
+        let options = RenderOptions::with_prefix(&format!("{prefix}-{at}"));
+        if let Ok(svg) = render(spec, &options) {
+            out.push(RenderedVisual {
+                kind: spec.kind().to_owned(),
+                svg,
+                text: spec.text_equivalent(),
+            });
+        }
+    }
+    out
 }
 
 /// The title of one figure: the caption, or the family name.

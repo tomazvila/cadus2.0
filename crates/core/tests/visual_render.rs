@@ -231,3 +231,32 @@ fn the_render_escapes_the_text_an_author_wrote() {
     assert!(svg.contains("&lt;a &amp; b&gt;"));
     assert!(!svg.contains("<a &"));
 }
+
+#[test]
+fn the_payload_drops_a_refused_figure_and_gives_each_kept_one_its_own_ids() {
+    let specs = vec![
+        line_spec(),
+        VisualSpec::NumberLine(NumberLineFigure::new(5_i64, 0_i64, 1_i64)),
+        VisualSpec::Fraction(FractionFigure::bar(3, 4)),
+    ];
+    let drawn = cadus_core::visual::render_all(&specs, "p7");
+    assert_eq!(drawn.len(), 2);
+    assert_eq!(drawn[0].kind, "number_line");
+    assert_eq!(drawn[1].kind, "fraction");
+    assert!(
+        drawn[0]
+            .svg
+            .contains("aria-labelledby=\"p7-0-title p7-0-desc\"")
+    );
+    assert!(
+        drawn[1]
+            .svg
+            .contains("aria-labelledby=\"p7-2-title p7-2-desc\"")
+    );
+    assert_eq!(
+        drawn[1].text,
+        "A fraction bar divided into 4 equal parts, with 3 of them shaded. \
+         The figure shows 3/4."
+    );
+    assert!(cadus_core::visual::render_all(&[], "p7").is_empty());
+}
