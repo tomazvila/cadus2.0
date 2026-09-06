@@ -62,10 +62,10 @@ def operations(r):
 
 
 def advanced(r):
-    r("radical-exponent-conversion/kp1", "Write the {a}th root of $x$ as a power of $x$, for $x>0$.", "x**(1/a)",
-      "An index of {a} means a reciprocal exponent: raising $x^{{1/{a}}}$ to power {a} gives $x$.", lambda a: f"x^(1/{a})")
-    r("radical-exponent-conversion/kp2", "Write $\\sqrt[3]{{x^{a}}}$ as a power of $x$, for $x>0$.", "x**(a/3)",
-      "The inner power is {a} and the root index is three. Multiply the exponents to obtain $x^{{{a}/3}}$.", lambda a: f"x^({Fraction(a,3)})")
+    r("radical-exponent-conversion/kp1", "Write $\\sqrt{{{a}x}}$ using a fractional exponent, for $x>0$.", "(a*x)**(1/2)",
+      "A square-root index is the reciprocal exponent $1/2$, applied to the entire radicand ${a}x$.", lambda a: f"({a}*x)^(1/2)")
+    r("radical-exponent-conversion/kp2", "Write $\\sqrt[3]{{{a}x^2}}$ using a fractional exponent, for $x>0$.", "(a*x**2)**(1/3)",
+      "A cube-root index contributes denominator three, so raise the entire radicand ${a}x^2$ to $1/3$.", lambda a: f"({a}*x^2)^(1/3)")
     r("radical-exponent-conversion/kp3", "Evaluate the unit fractional power ${a}^{{1/2}}$.", "sqrt(a)",
       "The denominator two specifies a square root. Find positive $c$ with $c^2={a}$; then ${a}^{{1/2}}=c$.",
       lambda a: str(isqrt(a)), [a*a for a in range(2,14)])
@@ -75,5 +75,5 @@ def advanced(r):
     r("rational-exponents/kp2", "Evaluate ${a}^{{-3/2}}$ exactly.", "1/sqrt(a)**3",
       "Let $c>0$ satisfy $c^2={a}$. First cube its square root to obtain $c^3$; the negative exponent takes the reciprocal $1/c^3$.",
       lambda a: str(Fraction(1,isqrt(a)**3)), [a*a for a in range(2,14)])
-    r("rational-exponents/kp3", "Simplify $x^{{{a}/4}}x^{{1/2}}$ for $x>0$.", "x**((a+2)/4)",
-      "Use common denominator four: ${a}/4+1/2=({a}+2)/4$. This is the exponent of the product.", lambda a: f"x^({Fraction(a+2,4)})")
+    r("rational-exponents/kp3", "Simplify ${a}x^{{1/4}}x^{{1/2}}$ for $x>0$.", "a*x**(3/4)",
+      "Use common denominator four: $1/4+1/2=3/4$. Keep coefficient ${a}$ and combine the equal base $x$.", lambda a: f"{a}*x^(3/4)")
