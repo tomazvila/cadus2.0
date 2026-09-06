@@ -15,7 +15,7 @@ use cadus_core::learner::LearnerModel;
 use cadus_core::projector::{
     ProjectionInput, Projector, apply_regrades, canonical_blob, project, project_incremental,
 };
-use common::events::{assert_same_blob, event, regrade_graph, stream};
+use common::events::{assert_same_blob, event, oracle_stamp, regrade_graph, stream};
 
 /// The number of events in `stream_1.jsonl` (spec section 9).
 const STREAM_1_EVENTS: usize = 47;
@@ -295,9 +295,10 @@ fn incremental_carries_the_corrected_xp_when_the_correction_arrives_late() {
     let mut whole = prior.clone();
     whole.extend(fresh.clone());
 
-    let full = project(&whole, &input).unwrap();
+    // The two blobs below are 1.0 literals, so both models take the 1.0 stamp (D-F2).
+    let full = oracle_stamp(project(&whole, &input).unwrap());
     let cached = project(&prior, &input).unwrap();
-    let incremental = project_incremental(&cached, &prior, &fresh, &input).unwrap();
+    let incremental = oracle_stamp(project_incremental(&cached, &prior, &fresh, &input).unwrap());
     // The prior half is not inert: its result XP is tallied with FIRe off, so the
     // correction reaches both paths.
     assert_eq!(full.xp.total, 7);
@@ -320,7 +321,7 @@ fn the_projector_version_is_stamped_on_a_minimal_fold() {
         &[regrade_attempt("a1", T0, "task-1", "blowoff", "[]")],
         &graph,
     );
-    assert_eq!(model.projector_version, Some(3));
+    assert_eq!(model.projector_version, Some(4));
 }
 
 #[test]

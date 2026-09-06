@@ -324,7 +324,7 @@ pub(crate) fn enrolled_event(now: Timestamp, session: Option<String>, course: Sl
     Event::Enrolled(Enrolled {
         ts: now,
         session,
-        v: SchemaVersion,
+        v: SchemaVersion::current(),
         course,
         reason: None,
         return_to: None,

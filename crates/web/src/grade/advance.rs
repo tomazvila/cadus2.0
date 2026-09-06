@@ -144,7 +144,7 @@ fn lesson_passed(
         result: Some(Event::LessonResult(LessonResult {
             ts: now,
             session: attempt.session.clone(),
-            v: SchemaVersion,
+            v: SchemaVersion::current(),
             topic: attempt.topic.clone(),
             passed: true,
             failed_at_kp: None,
@@ -180,7 +180,7 @@ fn lesson_failed(
     let result = Event::LessonResult(LessonResult {
         ts: now,
         session: attempt.session.clone(),
-        v: SchemaVersion,
+        v: SchemaVersion::current(),
         topic: attempt.topic.clone(),
         passed: false,
         failed_at_kp: failed_at_kp.clone(),
@@ -231,7 +231,7 @@ fn triggered(
     vec![RemediationTriggered {
         ts: now,
         session: attempt.session.clone(),
-        v: SchemaVersion,
+        v: SchemaVersion::current(),
         kind: kind.to_string(),
         source_topic: attempt.topic.clone(),
         targets,

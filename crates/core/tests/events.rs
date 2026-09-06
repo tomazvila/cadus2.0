@@ -25,6 +25,9 @@ const STREAM_1: &str = include_str!("fixtures/events/stream_1.jsonl");
 /// One full instance of each of the 16 event types, in canonical JSON.
 const ONE_PER_TYPE: &str = include_str!("fixtures/events/one_per_type.jsonl");
 
+/// The one event type 2.0 adds to the 1.0 union (D-F11).
+const RETENTION_PROBE: &str = "retention_probe";
+
 /// Read every line of a fixture, check that it writes its own bytes back, and
 /// return the events in file order.
 fn round_trip(fixture: &str) -> Vec<Event> {
@@ -83,13 +86,19 @@ fn one_instance_of_every_type_round_trips_byte_for_byte() {
         .iter()
         .map(Event::type_name)
         .collect();
-    let expected: BTreeSet<&str> = Event::TYPE_NAMES.into_iter().collect();
-    assert_eq!(seen, expected, "the fixture must cover all 16 types");
+    // The fixture came from the 1.0 models, so it covers the 16 types of 1.0.
+    // `retention_probe` is new in 2.0 (D-F11) and 1.0 never wrote one.
+    let expected: BTreeSet<&str> = Event::TYPE_NAMES
+        .into_iter()
+        .filter(|name| *name != RETENTION_PROBE)
+        .collect();
+    assert_eq!(seen, expected, "the fixture must cover all 16 1.0 types");
+    assert!(Event::TYPE_NAMES.contains(&RETENTION_PROBE));
 }
 
 #[test]
-fn the_union_declares_exactly_the_sixteen_1_0_types() {
-    // Spec section 2: the 16 types of the 1.0 event union.
+fn the_union_declares_the_sixteen_1_0_types_and_the_2_0_probe() {
+    // Spec section 2: the 16 types of the 1.0 event union, plus `retention_probe`.
     assert_eq!(
         Event::TYPE_NAMES,
         [
@@ -109,10 +118,11 @@ fn the_union_declares_exactly_the_sixteen_1_0_types() {
             "anki_card_created",
             "config_changed",
             "curriculum_changed",
+            RETENTION_PROBE,
         ]
     );
     let unique: BTreeSet<&str> = Event::TYPE_NAMES.into_iter().collect();
-    assert_eq!(unique.len(), 16);
+    assert_eq!(unique.len(), 17);
 }
 
 // --------------------------------------------------------------------------- //
@@ -177,8 +187,8 @@ fn a_malformed_timestamp_is_an_error_value_not_a_panic() {
 
 #[test]
 fn a_version_other_than_one_is_an_error() {
-    // 1.0 holds an empty shim table, so only v1 reads. `v: 0` raises there.
-    for version in ["0", "2", "-1"] {
+    // 2.0 reads v1 and v2. Every other version is an error value.
+    for version in ["0", "3", "-1"] {
         let text = format!(
             r#"{{"type":"session_start","ts":"2026-03-02T09:00:00Z","session":null,"v":{version}}}"#
         );
@@ -191,13 +201,13 @@ fn a_version_other_than_one_is_an_error() {
 }
 
 #[test]
-fn a_missing_version_defaults_to_one_and_writes_back_as_one() {
+fn a_missing_version_defaults_to_the_current_one_and_writes_it_back() {
     let text = r#"{"type":"session_start","ts":"2026-03-02T09:00:00Z"}"#;
     let event = Event::from_json(text).unwrap();
-    assert_eq!(event.v(), SchemaVersion);
+    assert_eq!(event.v(), SchemaVersion::current());
     assert_eq!(
         event.to_canonical_json().unwrap(),
-        r#"{"session":null,"ts":"2026-03-02T09:00:00Z","type":"session_start","v":1}"#
+        r#"{"session":null,"ts":"2026-03-02T09:00:00Z","type":"session_start","v":2}"#
     );
 }
 
@@ -205,7 +215,7 @@ fn a_missing_version_defaults_to_one_and_writes_back_as_one() {
 fn the_envelope_accessors_read_every_member() {
     for line in ONE_PER_TYPE.lines() {
         let event = Event::from_json(line).unwrap();
-        assert_eq!(event.v(), SchemaVersion);
+        assert_eq!(event.v(), SchemaVersion::first());
         assert_eq!(event.session(), Some("s_2026-05-04a"));
         assert!(event.ts().micros() > 0);
         assert!(Event::TYPE_NAMES.contains(&event.type_name()));

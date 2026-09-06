@@ -2,9 +2,9 @@
 //! fold, the forward-fold property, the failure map, and the JSON round trip.
 
 use cadus_core::event::{
-    Attempt, AttemptProblem, DiagnosticPlaced, EnrollReason, Enrolled, Event, LessonResult,
-    QuizResult, ReviewResult, SchemaVersion, Secs, SessionEnd, SessionStart, Slug, TaskServed,
-    TaskType, Timestamp, WorkQuality,
+    Attempt, AttemptOutcome, AttemptProblem, DiagnosticPlaced, EnrollReason, Enrolled, Event,
+    LessonResult, QuizResult, ReviewResult, SchemaVersion, Secs, SessionEnd, SessionStart, Slug,
+    TaskServed, TaskType, Timestamp, WorkQuality,
 };
 
 use std::collections::BTreeSet;
@@ -37,7 +37,7 @@ fn attempt_event(ts: Timestamp, session: Option<&str>, attempt_id: &str, task_id
     Event::Attempt(Attempt {
         ts,
         session: session.map(str::to_string),
-        v: SchemaVersion,
+        v: SchemaVersion::current(),
         attempt_id: attempt_id.to_string(),
         task_id: task_id.to_string(),
         topic: slug("adding-integers"),
@@ -51,6 +51,13 @@ fn attempt_event(ts: Timestamp, session: Option<&str>, attempt_id: &str, task_id
         work: None,
         answer_kind: None,
         correct: true,
+        outcome: AttemptOutcome::Correct,
+        item_digest: None,
+        item_source: None,
+        exposure: None,
+        timing_reliable: None,
+        skills: Vec::new(),
+        independent_after_feedback: false,
         secs: Secs::new(9).expect("nine seconds"),
         error_tags: Vec::new(),
         work_quality: WorkQuality::NearlyPerfect,
@@ -67,7 +74,7 @@ fn sample_log() -> Vec<EventRow> {
             Event::Enrolled(Enrolled {
                 ts: at(0),
                 session: None,
-                v: SchemaVersion,
+                v: SchemaVersion::current(),
                 course: slug("algebra-1"),
                 reason: None,
                 return_to: None,
@@ -78,7 +85,7 @@ fn sample_log() -> Vec<EventRow> {
             Event::SessionStart(SessionStart {
                 ts: at(1),
                 session: Some("s_2026-01-01a".to_string()),
-                v: SchemaVersion,
+                v: SchemaVersion::current(),
             }),
         ),
         row(
@@ -86,7 +93,7 @@ fn sample_log() -> Vec<EventRow> {
             Event::TaskServed(TaskServed {
                 ts: at(2),
                 session: Some("s_2026-01-01a".to_string()),
-                v: SchemaVersion,
+                v: SchemaVersion::current(),
                 task_id: "s_2026-01-01a-drill-adding-integers".to_string(),
                 task_type: TaskType::Drill,
                 topic: Some(slug("adding-integers")),
@@ -110,7 +117,7 @@ fn sample_log() -> Vec<EventRow> {
             Event::LessonResult(LessonResult {
                 ts: at(4),
                 session: Some("s_2026-01-01a".to_string()),
-                v: SchemaVersion,
+                v: SchemaVersion::current(),
                 topic: slug("adding-integers"),
                 passed: true,
                 failed_at_kp: None,
@@ -124,7 +131,7 @@ fn sample_log() -> Vec<EventRow> {
             Event::QuizResult(QuizResult {
                 ts: at(5),
                 session: Some("s_2026-01-01a".to_string()),
-                v: SchemaVersion,
+                v: SchemaVersion::current(),
                 quiz_id: "q1".to_string(),
                 score: 0.95,
                 per_topic: Vec::new(),
@@ -136,7 +143,7 @@ fn sample_log() -> Vec<EventRow> {
             Event::DiagnosticPlaced(DiagnosticPlaced {
                 ts: at(6),
                 session: Some("s_2026-01-01a".to_string()),
-                v: SchemaVersion,
+                v: SchemaVersion::current(),
                 balances: Default::default(),
                 conditional: Vec::new(),
                 refresh: false,
@@ -147,7 +154,7 @@ fn sample_log() -> Vec<EventRow> {
             Event::SessionEnd(SessionEnd {
                 ts: at(7),
                 session: Some("s_2026-01-01a".to_string()),
-                v: SchemaVersion,
+                v: SchemaVersion::current(),
                 xp_earned: 5.5,
                 minutes: 7.0,
             }),
@@ -157,7 +164,7 @@ fn sample_log() -> Vec<EventRow> {
             Event::SessionStart(SessionStart {
                 ts: at(1441),
                 session: Some("s_2026-01-02a".to_string()),
-                v: SchemaVersion,
+                v: SchemaVersion::current(),
             }),
         ),
         row(
@@ -165,7 +172,7 @@ fn sample_log() -> Vec<EventRow> {
             Event::Enrolled(Enrolled {
                 ts: at(1442),
                 session: Some("s_2026-01-02a".to_string()),
-                v: SchemaVersion,
+                v: SchemaVersion::current(),
                 course: slug("pre-algebra"),
                 reason: Some(EnrollReason::GapFill),
                 return_to: None,
@@ -176,7 +183,7 @@ fn sample_log() -> Vec<EventRow> {
             Event::ReviewResult(ReviewResult {
                 ts: at(1443),
                 session: Some("s_2026-01-02a".to_string()),
-                v: SchemaVersion,
+                v: SchemaVersion::current(),
                 topic: slug("adding-integers"),
                 passed: true,
                 weighted_score: 1.0,
@@ -184,6 +191,7 @@ fn sample_log() -> Vec<EventRow> {
                 quality_tier: WorkQuality::NearlyPerfect,
                 assisted: false,
                 task_id: Some("s_2026-01-02a-review-adding-integers".to_string()),
+                inconclusive: false,
             }),
         ),
         row(
@@ -191,7 +199,7 @@ fn sample_log() -> Vec<EventRow> {
             Event::LessonResult(LessonResult {
                 ts: at(1444),
                 session: Some("s_2026-01-02a".to_string()),
-                v: SchemaVersion,
+                v: SchemaVersion::current(),
                 topic: slug("adding-integers"),
                 passed: false,
                 failed_at_kp: Some(slug("kp2")),
@@ -266,7 +274,7 @@ fn failed_lesson(topic: &str, kp: Option<&str>) -> Event {
     Event::LessonResult(LessonResult {
         ts: at(8),
         session: Some("s_2026-01-01a".to_string()),
-        v: SchemaVersion,
+        v: SchemaVersion::current(),
         topic: slug(topic),
         passed: false,
         failed_at_kp: kp.map(slug),
@@ -323,7 +331,7 @@ fn the_other_branches_of_the_fold_fold_nothing_or_reset() {
         &Event::SessionStart(SessionStart {
             ts: at(0),
             session: None,
-            v: SchemaVersion,
+            v: SchemaVersion::current(),
         }),
     );
     assert_eq!(view.current_session, None);
@@ -333,7 +341,7 @@ fn the_other_branches_of_the_fold_fold_nothing_or_reset() {
         &Event::SessionEnd(SessionEnd {
             ts: at(1),
             session: None,
-            v: SchemaVersion,
+            v: SchemaVersion::current(),
             xp_earned: 0.0,
             minutes: 1.0,
         }),
@@ -344,7 +352,7 @@ fn the_other_branches_of_the_fold_fold_nothing_or_reset() {
         Event::Enrolled(Enrolled {
             ts: at(2),
             session: None,
-            v: SchemaVersion,
+            v: SchemaVersion::current(),
             course: slug("algebra-1"),
             reason,
             return_to: None,
@@ -364,7 +372,7 @@ fn the_other_branches_of_the_fold_fold_nothing_or_reset() {
         &Event::TaskServed(TaskServed {
             ts: at(3),
             session: None,
-            v: SchemaVersion,
+            v: SchemaVersion::current(),
             task_id: "lesson".to_string(),
             task_type: TaskType::Lesson,
             topic: Some(slug("adding-integers")),
@@ -381,7 +389,7 @@ fn the_other_branches_of_the_fold_fold_nothing_or_reset() {
         &Event::ReviewResult(ReviewResult {
             ts: at(4),
             session: None,
-            v: SchemaVersion,
+            v: SchemaVersion::current(),
             topic: slug("adding-integers"),
             passed: true,
             weighted_score: 1.0,
@@ -389,6 +397,7 @@ fn the_other_branches_of_the_fold_fold_nothing_or_reset() {
             quality_tier: WorkQuality::NearlyPerfect,
             assisted: false,
             task_id: None,
+            inconclusive: false,
         }),
     );
     assert!(view.closed_task_ids.is_empty());
@@ -397,7 +406,7 @@ fn the_other_branches_of_the_fold_fold_nothing_or_reset() {
         Event::QuizResult(QuizResult {
             ts: at(5),
             session: None,
-            v: SchemaVersion,
+            v: SchemaVersion::current(),
             quiz_id: "q".to_string(),
             score,
             per_topic: Vec::new(),
@@ -429,7 +438,7 @@ fn an_unrepresentable_attempt_and_an_ignored_event_change_nothing() {
         &Event::ProfileReset(ProfileReset {
             ts: at(0),
             session: None,
-            v: SchemaVersion,
+            v: SchemaVersion::current(),
             topics: Vec::new(),
         }),
     );

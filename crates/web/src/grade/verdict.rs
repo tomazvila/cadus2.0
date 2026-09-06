@@ -21,6 +21,7 @@ pub fn deterministic_grade(expected: &str, answer: &str, kind: AnswerKind) -> Gr
     if answer.trim().is_empty() {
         return Grade {
             correct: false,
+            outcome: AttemptOutcome::Incorrect,
             work_quality: WorkQuality::Poor,
             error_tags: vec![TAG_BLANK_ANSWER.to_string()],
         };
@@ -28,6 +29,7 @@ pub fn deterministic_grade(expected: &str, answer: &str, kind: AnswerKind) -> Gr
     match check(expected, answer, kind) {
         Outcome::Decided(verdict) if verdict.correct => Grade {
             correct: true,
+            outcome: AttemptOutcome::Correct,
             work_quality: WorkQuality::NearlyPerfect,
             error_tags: if verdict.notation {
                 vec![TAG_NOTATION.to_string()]
@@ -37,6 +39,7 @@ pub fn deterministic_grade(expected: &str, answer: &str, kind: AnswerKind) -> Gr
         },
         Outcome::Decided(_) | Outcome::Undecidable(_) => Grade {
             correct: false,
+            outcome: AttemptOutcome::Incorrect,
             work_quality: WorkQuality::NearlyPassable,
             error_tags: Vec::new(),
         },

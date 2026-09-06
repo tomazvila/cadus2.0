@@ -4,8 +4,9 @@
 use cadus_core::config::Config;
 use cadus_core::curriculum::{Catalog, Course, Curriculum, RawCurriculum, RawUnit, Topic, Unit};
 use cadus_core::event::{
-    AnswerKind, Attempt, AttemptProblem, Event, Regraded, RegradedAttempt, ReviewResult,
-    SchemaVersion, Secs, SessionEnd, SessionStart, Slug, TaskType, Timestamp, WorkQuality,
+    AnswerKind, Attempt, AttemptOutcome, AttemptProblem, Event, Regraded, RegradedAttempt,
+    ReviewResult, SchemaVersion, Secs, SessionEnd, SessionStart, Slug, TaskType, Timestamp,
+    WorkQuality,
 };
 use cadus_core::projector::ProjectionInput;
 
@@ -93,7 +94,7 @@ pub fn start(session: &str) -> Event {
     Event::SessionStart(SessionStart {
         ts: Timestamp::from_micros(BASE_US),
         session: Some(session.to_string()),
-        v: SchemaVersion,
+        v: SchemaVersion::current(),
     })
 }
 
@@ -102,7 +103,7 @@ pub fn end(session: &str) -> Event {
     Event::SessionEnd(SessionEnd {
         ts: Timestamp::from_micros(BASE_US),
         session: Some(session.to_string()),
-        v: SchemaVersion,
+        v: SchemaVersion::current(),
         xp_earned: 0.0,
         minutes: 0.0,
     })
@@ -124,7 +125,7 @@ pub fn attempt_row(
     Event::Attempt(Attempt {
         ts,
         session: Some(session.to_string()),
-        v: SchemaVersion,
+        v: SchemaVersion::current(),
         attempt_id: attempt_id.to_string(),
         task_id: task_id.to_string(),
         topic: Slug::new(topic).expect("the topic slug"),
@@ -138,6 +139,13 @@ pub fn attempt_row(
         work: None,
         answer_kind: Some(AnswerKind::Numeric),
         correct: true,
+        outcome: AttemptOutcome::Correct,
+        item_digest: None,
+        item_source: None,
+        exposure: None,
+        timing_reliable: None,
+        skills: Vec::new(),
+        independent_after_feedback: false,
         secs: Secs::new(12).expect("twelve seconds"),
         error_tags: Vec::new(),
         work_quality: WorkQuality::NearlyPerfect,
@@ -164,7 +172,7 @@ pub fn regraded(attempt_id: &str) -> Event {
     Event::Regraded(Regraded {
         ts: Timestamp::from_micros(BASE_US),
         session: Some(SESSION.to_string()),
-        v: SchemaVersion,
+        v: SchemaVersion::current(),
         task_id: "s_2026-01-01a-review-addition".to_string(),
         topic: Slug::new("addition").unwrap(),
         attempts: vec![RegradedAttempt {
@@ -184,7 +192,7 @@ pub fn review(ts: Timestamp, xp: f64) -> Event {
     Event::ReviewResult(ReviewResult {
         ts,
         session: Some(SESSION.to_string()),
-        v: SchemaVersion,
+        v: SchemaVersion::current(),
         topic: Slug::new("addition").unwrap(),
         passed: true,
         weighted_score: 1.0,
@@ -192,5 +200,6 @@ pub fn review(ts: Timestamp, xp: f64) -> Event {
         quality_tier: WorkQuality::Perfect,
         assisted: false,
         task_id: Some("s_2026-01-01a-review-addition".to_string()),
+        inconclusive: false,
     })
 }

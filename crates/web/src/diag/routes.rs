@@ -217,7 +217,7 @@ fn answer_event(
     Event::DiagnosticAnswer(DiagnosticAnswer {
         ts: now,
         session,
-        v: SchemaVersion,
+        v: SchemaVersion::current(),
         topic,
         correct: marked.correct,
         secs: Secs::new(marked.secs).unwrap_or_default(),
@@ -287,7 +287,7 @@ fn placed_event(now: Timestamp, session: Option<String>, result: &PlacementResul
     Event::DiagnosticPlaced(DiagnosticPlaced {
         ts: now,
         session,
-        v: SchemaVersion,
+        v: SchemaVersion::current(),
         balances: result.event_balances(),
         conditional,
         refresh: false,

@@ -89,10 +89,28 @@ pub fn stream(name: &str) -> Vec<Event> {
         .collect()
 }
 
-/// The full replay of `events` over the checked-in tree, with the default config.
+/// The `projector_version` the 1.0 oracle stamped into every committed blob.
+///
+/// The 2.0 fold stands at `PROJECTOR_VERSION` 4 (D-F2). The stamp names the version
+/// of the FOLD, not the result of the fold, and a committed stream holds no ungraded
+/// attempt, so the two folds still agree on every other byte.
+pub const ORACLE_PROJECTOR_VERSION: i64 = 3;
+
+/// Restamp a 2.0 model with the 1.0 `projector_version` for a parity comparison.
+///
+/// This is the ONE place a parity test touches the stamp. A test that compares two
+/// 2.0 folds against each other never calls it.
+#[must_use]
+pub fn oracle_stamp(mut model: LearnerModel) -> LearnerModel {
+    model.projector_version = Some(ORACLE_PROJECTOR_VERSION);
+    model
+}
+
+/// The full replay of `events` over the checked-in tree, with the default config,
+/// restamped for the 1.0 comparison.
 #[must_use]
 pub fn fold(events: &[Event]) -> LearnerModel {
-    project(events, &input()).expect("the fold succeeds")
+    oracle_stamp(project(events, &input()).expect("the fold succeeds"))
 }
 
 /// The first differing window of two blobs, `window` bytes wide.

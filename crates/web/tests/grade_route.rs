@@ -35,7 +35,7 @@ mod common;
 
 use axum::http::StatusCode;
 use cadus_core::curriculum::AnswerKind;
-use cadus_core::event::{TaskType, WorkQuality};
+use cadus_core::event::{AttemptOutcome, TaskType, WorkQuality};
 use cadus_store::test_support::TestDb;
 use cadus_web::grade::{Grade, deterministic_grade, reference_assisted};
 use common::{
@@ -86,6 +86,7 @@ fn the_fast_path_cases_decide_with_no_model_call() {
             grade,
             Grade {
                 correct: true,
+                outcome: AttemptOutcome::of_correct(true),
                 work_quality: WorkQuality::NearlyPerfect,
                 error_tags: Vec::new(),
             },
@@ -106,6 +107,7 @@ fn the_three_deterministic_tiers_are_the_d_m5_2_ruling() {
         deterministic_grade("7329", "7.329", AnswerKind::Numeric),
         Grade {
             correct: true,
+            outcome: AttemptOutcome::of_correct(true),
             work_quality: WorkQuality::NearlyPerfect,
             error_tags: vec!["notation".to_string()],
         }
@@ -114,6 +116,7 @@ fn the_three_deterministic_tiers_are_the_d_m5_2_ruling() {
         deterministic_grade("13.5", "   ", AnswerKind::Numeric),
         Grade {
             correct: false,
+            outcome: AttemptOutcome::of_correct(false),
             work_quality: WorkQuality::Poor,
             error_tags: vec!["blank-answer".to_string()],
         }
@@ -122,6 +125,7 @@ fn the_three_deterministic_tiers_are_the_d_m5_2_ruling() {
         deterministic_grade("13.5", "14", AnswerKind::Numeric),
         Grade {
             correct: false,
+            outcome: AttemptOutcome::of_correct(false),
             work_quality: WorkQuality::NearlyPassable,
             error_tags: Vec::new(),
         }
@@ -132,6 +136,7 @@ fn the_three_deterministic_tiers_are_the_d_m5_2_ruling() {
         deterministic_grade("13.5", "about thirteen and a half", AnswerKind::Numeric),
         Grade {
             correct: false,
+            outcome: AttemptOutcome::of_correct(false),
             work_quality: WorkQuality::NearlyPassable,
             error_tags: Vec::new(),
         }

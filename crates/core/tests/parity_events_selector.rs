@@ -12,9 +12,8 @@ mod common;
 use std::collections::BTreeSet;
 
 use cadus_core::event::{Event, TaskType, Timestamp};
-use cadus_core::projector::PROJECTOR_VERSION;
 use cadus_core::selector::{SeededSampler, SessionContext, compose_session};
-use common::events::{cfg, stream, tree};
+use common::events::{ORACLE_PROJECTOR_VERSION, cfg, stream, tree};
 use common::parity::{SelectorIndex, TaskRow, fold_in, oracle_index, selector_index};
 
 /// The `config_hash` of the default config (spec section 9).
@@ -83,7 +82,7 @@ fn the_selector_index_holds_the_pinned_metadata() {
     assert_eq!(index.oracle, "scripts/oracle/dump_selector_1_0.py");
     assert_eq!(index.n, SELECTOR_N);
     assert_eq!(index.config_hash, CONFIG_HASH);
-    assert_eq!(index.projector_version, PROJECTOR_VERSION);
+    assert_eq!(index.projector_version, ORACLE_PROJECTOR_VERSION);
     assert_eq!(index.states.len(), SELECTOR_SEEDS);
     // Every section of `compose_session` reaches the comparison. Without the drill
     // and the multi-step rows the cap truncated the plan (finding #13).

@@ -198,7 +198,7 @@ fn lesson_failure(topic: &str, kp: &str) -> Event {
     Event::LessonResult(LessonResult {
         ts: Timestamp::from_micros(BASE_US),
         session: Some("s_2026-01-01a".to_string()),
-        v: SchemaVersion,
+        v: SchemaVersion::current(),
         topic: Slug::new(topic).unwrap(),
         passed: false,
         failed_at_kp: Some(Slug::new(kp).unwrap()),

@@ -108,7 +108,7 @@ async fn the_log_reports_a_bad_instant_a_refused_insert_and_a_bad_payload() {
         let far = Event::SessionStart(SessionStart {
             ts: Timestamp::from_micros(i64::MAX),
             session: None,
-            v: SchemaVersion,
+            v: SchemaVersion::current(),
         });
         let mut tx = begin_tenant(&db.app, user).await.unwrap();
         let err = append_event(&mut tx, user, &far, None).await.unwrap_err();

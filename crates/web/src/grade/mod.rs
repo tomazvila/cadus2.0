@@ -87,9 +87,10 @@ use cadus_core::answer::check::{Outcome, check};
 use cadus_core::config::Config;
 use cadus_core::curriculum::{AnswerKind, Curriculum};
 use cadus_core::event::{
-    Attempt, AttemptProblem, Event, LessonResult, RemediationTriggered, SchemaVersion, Secs, Slug,
-    TaskType, Timestamp, WorkQuality,
+    Attempt, AttemptOutcome, AttemptProblem, Event, LessonResult, RemediationTriggered,
+    SchemaVersion, Secs, Slug, TaskType, Timestamp, WorkQuality,
 };
+use cadus_core::learner::problem_text_hash;
 use cadus_core::projector::{kp_failed, kp_passed};
 use cadus_core::selector::{
     REMEDIATION_LESSON_FAIL, REMEDIATION_REPEAT_FAIL, Task, remediation_for_repeat_fail,
@@ -205,7 +206,12 @@ pub(crate) fn route_input<'a>(
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Grade {
     /// Whether the answer is the authored answer (C4).
+    ///
+    /// It equals `outcome == AttemptOutcome::Correct`.
     pub correct: bool,
+    /// The graded outcome (D-F2). An answer with no deterministic verdict is
+    /// `Ungraded`, and an ungraded attempt is NOT a miss.
+    pub outcome: AttemptOutcome,
     /// The work-quality tier (D-M5-2).
     pub work_quality: WorkQuality,
     /// The error tags the SERVER observed (D-M5-4). The diagnosis of unit U9

@@ -83,7 +83,7 @@ pub fn passed_lesson(topic: &str) -> Value {
     serde_json::to_value(Event::LessonResult(LessonResult {
         ts: Timestamp::from_micros(BASE_US),
         session: Some(SESSION.to_string()),
-        v: SchemaVersion,
+        v: SchemaVersion::current(),
         topic: Slug::new(topic).unwrap(),
         passed: true,
         failed_at_kp: None,

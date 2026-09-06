@@ -21,7 +21,7 @@ use cadus_core::learner::TopicState;
 use cadus_core::projector::{
     Projector, apply_regrades, blob_digest, canonical_blob, project, project_incremental,
 };
-use common::events::{cfg, input, labeled_difference, stream, tree};
+use common::events::{cfg, input, labeled_difference, oracle_stamp, stream, tree};
 use common::parity::{GOAL, StreamDigests, assert_folds_to, fold_in, incremental_row, row};
 
 /// The non-UTC zone the digests file carries beside UTC.
@@ -85,7 +85,7 @@ fn check_incremental(number: usize) {
     let carry = incremental_row(number);
     let events = stream(&entry.stream);
     let input = input().with_goal(GOAL);
-    let full_model = project(&events, &input).expect("the fold succeeds");
+    let full_model = oracle_stamp(project(&events, &input).expect("the fold succeeds"));
     let full = canonical_blob(&full_model).expect("the blob builds");
     assert_eq!(
         blob_digest(&full_model).expect("the digest builds"),
@@ -97,8 +97,9 @@ fn check_incremental(number: usize) {
     for split in 0..=events.len() {
         let (prior, fresh) = events.split_at(split);
         let cached = project(prior, &input).expect("the prefix folds");
-        let incremental =
-            project_incremental(&cached, prior, fresh, &input).expect("the resume folds");
+        let incremental = oracle_stamp(
+            project_incremental(&cached, prior, fresh, &input).expect("the resume folds"),
+        );
         let actual = canonical_blob(&incremental).expect("the blob builds");
 
         if let Some(expected) = carry.mismatching_digests.get(&split.to_string()) {

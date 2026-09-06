@@ -59,7 +59,7 @@ async fn record_first_serve(
     let event = Event::TaskServed(TaskServed {
         ts: now,
         session: Some(session.to_owned()),
-        v: SchemaVersion,
+        v: SchemaVersion::current(),
         task_id: task.task_id.clone(),
         task_type: task.task_type,
         // A quiz task spans many topics and names none of its own, so its event

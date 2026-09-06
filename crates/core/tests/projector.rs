@@ -20,7 +20,9 @@ use cadus_core::learner::LearnerModel;
 use cadus_core::projector::{
     PROJECTOR_VERSION, ProjectionInput, blob_digest, canonical_blob, project, project_incremental,
 };
-use common::events::{assert_same_blob, event, fixture, fold, input, live_oracle_blob, stream};
+use common::events::{
+    assert_same_blob, event, fixture, fold, input, live_oracle_blob, oracle_stamp, stream,
+};
 
 /// The 1.0 fold of `stream_1.jsonl`, as the SHA-256 of the canonical blob with
 /// `built_from_ts` removed (spec section 9).
@@ -51,11 +53,13 @@ fn for_each_split(
     input: &ProjectionInput<'_>,
     mut check: impl FnMut(usize, &LearnerModel, &LearnerModel),
 ) {
-    let full = project(events, input).unwrap();
+    // The models the check reads carry the 1.0 stamp, because the pinned digests come
+    // from the 1.0 oracle (D-F2). The cached seed keeps the 2.0 stamp.
+    let full = oracle_stamp(project(events, input).unwrap());
     for split in 0..=events.len() {
         let (prior, fresh) = events.split_at(split);
         let cached = project(prior, input).unwrap();
-        let incremental = project_incremental(&cached, prior, fresh, input).unwrap();
+        let incremental = oracle_stamp(project_incremental(&cached, prior, fresh, input).unwrap());
         check(split, &incremental, &full);
     }
 }
@@ -88,10 +92,14 @@ fn the_blob_of_stream_1_is_the_committed_model_byte_for_byte() {
 
 #[test]
 fn the_fold_stamps_the_projector_version_and_the_config_hash() {
-    assert_eq!(PROJECTOR_VERSION, 3);
-    let model = fold(&stream("stream_1.jsonl"));
-    assert_eq!(model.projector_version, Some(3));
+    // The third attempt outcome changed the fold, so the stamp moved 3 to 4 (D-F2).
+    assert_eq!(PROJECTOR_VERSION, 4);
+    let events = stream("stream_1.jsonl");
+    let model = project(&events, &input()).expect("the fold succeeds");
+    assert_eq!(model.projector_version, Some(4));
     assert_eq!(model.config_hash.as_deref(), Some(CONFIG_HASH));
+    // The parity comparison restamps the model with the 1.0 version and nothing else.
+    assert_eq!(fold(&events).projector_version, Some(3));
 }
 
 #[test]
@@ -152,7 +160,7 @@ const COVERAGE_EVENTS: usize = 33;
 
 fn coverage_fold(tz: Option<&str>) -> LearnerModel {
     let input = input().with_timezone(tz);
-    project(&stream("stream_u3_coverage.jsonl"), &input).expect("the fold succeeds")
+    oracle_stamp(project(&stream("stream_u3_coverage.jsonl"), &input).expect("the fold succeeds"))
 }
 
 #[test]

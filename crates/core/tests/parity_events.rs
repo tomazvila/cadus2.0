@@ -25,7 +25,7 @@ use std::collections::BTreeSet;
 
 use cadus_core::event::Event;
 use cadus_core::projector::PROJECTOR_VERSION;
-use common::events::{fixture, stream};
+use common::events::{ORACLE_PROJECTOR_VERSION, fixture, stream};
 use common::parity::{
     DigestIndex, GOAL, IncrementalIndex, digest_index, incremental_index, incremental_row,
     oracle_index, row,
@@ -61,8 +61,9 @@ fn the_digest_index_holds_the_pinned_metadata() {
     assert_eq!(index.generator, "scripts/oracle/gen_stream_1_0.py");
     assert_eq!(index.now, "2000-01-01T00:00:00+00:00");
     assert_eq!(index.goal, GOAL);
-    assert_eq!(index.projector_version, PROJECTOR_VERSION);
+    assert_eq!(index.projector_version, ORACLE_PROJECTOR_VERSION);
     assert_eq!(index.projector_version, 3);
+    assert_eq!(PROJECTOR_VERSION, 4);
     assert_eq!(index.config_hash, CONFIG_HASH);
     assert_eq!(index.zones, ["UTC", NEW_YORK, "UTC_no_regrades"]);
     assert_eq!(index.streams.len(), STREAMS);
@@ -88,7 +89,7 @@ fn the_incremental_index_holds_the_pinned_metadata() {
     let index = incremental_index();
     assert_eq!(index.oracle, "scripts/oracle/incremental_splits_1_0.py");
     assert_eq!(index.config_hash, CONFIG_HASH);
-    assert_eq!(index.projector_version, PROJECTOR_VERSION);
+    assert_eq!(index.projector_version, ORACLE_PROJECTOR_VERSION);
     // The 20 numbered streams and the coverage stream.
     assert_eq!(index.streams.len(), STREAMS + 1);
     assert_eq!(index.streams[STREAMS].stream, COVERAGE_STREAM);
@@ -164,7 +165,13 @@ fn the_seeded_family_reaches_every_event_type() {
         );
         seen.extend(per_stream);
     }
+    // The 1.0 generator wrote the 16 types of 1.0. `retention_probe` is new in 2.0
+    // (D-F11) and no committed 1.0 stream carries one.
     for name in Event::TYPE_NAMES {
+        if name == "retention_probe" {
+            assert!(!seen.contains(name));
+            continue;
+        }
         assert!(seen.contains(name), "no stream carries a `{name}` event");
     }
 }

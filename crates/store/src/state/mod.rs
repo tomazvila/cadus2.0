@@ -72,10 +72,10 @@ use crate::StoreError;
 
 /// The `events.v` value of every event this build writes, as the `smallint`
 /// column holds it.
-const EVENT_VERSION: i16 = SchemaVersion.get() as i16;
+const EVENT_VERSION: i16 = SchemaVersion::current().get() as i16;
 
 const _: () = assert!(
-    SchemaVersion.get() <= i16::MAX as i64,
+    SchemaVersion::current().get() <= i16::MAX as i64,
     "events.v is a smallint"
 );
 
@@ -296,9 +296,15 @@ pub async fn load_events_after(
 
     Ok(rows
         .into_iter()
-        .map(|row| EventRow {
-            seq: row.seq,
-            event: row.payload.0,
+        .map(|row| {
+            // The `jsonb` payload reaches serde directly, so the v1 shim runs here
+            // and not in `Event::from_json` (D-F2).
+            let mut event = row.payload.0;
+            event.normalize();
+            EventRow {
+                seq: row.seq,
+                event,
+            }
         })
         .collect())
 }

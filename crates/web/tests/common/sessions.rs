@@ -150,7 +150,7 @@ pub fn enrolled_c1() -> Event {
     Event::Enrolled(cadus_core::event::Enrolled {
         ts: Timestamp::from_micros(BASE_US + 1),
         session: Some(SESSION.to_string()),
-        v: SchemaVersion,
+        v: SchemaVersion::current(),
         course: cadus_core::event::Slug::new("c1").unwrap(),
         reason: None,
         return_to: None,
