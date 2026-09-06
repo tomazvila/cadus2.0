@@ -902,6 +902,32 @@ production and a `choice` answer kind. That lifts coverage from 93.4% to roughly
 A2/V2 then rejects the residue at authoring time rather than letting it claim a
 deterministic verdict it cannot support — which is precisely the 1.0 defect in §7.6.
 
+### 8.4 The 2.0 productions (2026-09-06, unit f2-grammar, decision D-F3)
+
+Five productions joined the built grammar after the M2 measure above. Every one of them
+is a finite parse and an exact canonical form; none samples a value (R3, V1).
+
+| Production | Grammar | Canonical form | Verdict rule |
+|---|---|---|---|
+| rational exponent | `atom ('^' \| '**') '(' ['-'] int '/' int ')'`, and the `^{p/q}` spelling; written `q` in 2..6, written `\|p\|` at most 12; reduced to lowest terms, a whole result is `Pow` | `Atom::Root(base, index)` under one root law: a prime base carries the exponent per prime (a half is `Atom::Sqrt`), an atom base carries it on the atom, a sum base is one opaque root | `2^(1/2)` = `sqrt(2)`, `8^(2/3)` = 4, `x^(1/2)` = `sqrt(x)`; outside the bound: `Undecidable`, `a rational exponent outside the bound` |
+| quotient and remainder | `expr 'remainder' expr`; `num 'R' num` with the number tokens on both sides of `R`, glued or spaced | `Canon::Tuple` of two, the form of the authored `(q, r)` | `9 R2` = `9 R 2` = `(9, 2)`; `9 R3` is a miss; `9 r 2` is the product |
+| value with unit | `number_expr unit`, `'$' number_expr`, `'€' number_expr`; a one-letter unit needs a space in front; the unit table of `crates/core/src/answer/unit.rs` (`mm cm m km g kg ml l L s min h m/s km/h cm^2 m^2 cm^3 m^3 € $ °`) | `Canon::Quantity { quantity, value }`, the value scaled into the base unit of its kind | same kind: by value (`1 m` = `100 cm`, `1.5 h` = `90 min`); another kind: a miss; one side alone: `Undecidable`, `a unit is missing`; a rounding reads the learner unit |
+| unordered set | `'{' expr (',' expr)* '}'` (unchanged) | `Canon::Set` (a `BTreeSet`; order and repeats fall away) | `{1, 2}` = `{2, 1}`; against a list or a tuple: `Undecidable`, `a set against a list` / `a set against a tuple` |
+| coordinates | `'(' expr ',' expr ')'` (the tuple production, unchanged) | `Canon::Tuple` | `(3, 4)` = `(3.0, 8/2)`; `(4, 3)` is a miss |
+
+The measure after the productions: 3,257 of the 3,492 corpus answers parse (93.27%) and
+235 are refused. 31 rows left the residue (15 rational exponents, 16 quotients with a
+remainder) and one joined it (`cos 70°`, a unit inside an expression, which 1.0 read as
+the cosine of 70 radians). `docs/reference/undecidable-answers.md` section 5 holds the
+counts and the refusal rules; `crates/core/tests/fixtures/answers/recovered_2_0.jsonl`
+holds the recovered rows with their production names.
+
+The oracle set of section 9 leaves the recovered rows and the quantity rows out: 1.0
+reads `9 R2` as `18*R`, refuses `x^(1/2)`, reads `5 m/s` as `5*m/s`, and deletes the
+degree sign, so no 1.0 verdict on such a pair is comparable. The productions pin their
+verdicts in their own test files: `answer_rational_exponent.rs`, `answer_remainder.rs`,
+`answer_unit.rs`, `answer_set.rs`, and `answer_coordinates.rs`.
+
 ---
 
 ## 9. A proposed fuzz oracle (V3)

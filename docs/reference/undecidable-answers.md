@@ -12,18 +12,21 @@ This document lists every curriculum answer that the 2.0 answer grammar refuses.
 the V2 input for the owner and for M6 authoring. Each group names one cause, one topic
 set, and one recommended action.
 
-Regenerate the data with:
+Regenerate the data with (the oracle tests are `answer_oracle_1.rs`,
+`answer_oracle_2.rs`, and `answer_oracle_edges.rs`; the dump test is in the second):
 
 ```sh
-CADUS_RESIDUE_DUMP=/tmp/residue.jsonl \
-    cargo test -p cadus-core --test answer_oracle dump_the_undecidable -- --nocapture
+CADUS_RESIDUE_DUMP=$HOME/.cache/residue.jsonl \
+    cargo test -p cadus-core --test answer_oracle_2 dump_the_undecidable -- --nocapture
 ```
 
 The dump writes one JSON line per refused answer: `answer`, `answer_kind`, `shape`,
 `topic_id`, `kp_id`, `exemplar_index`, `source` (the normalized parser input), and
-`reason` (the refusal of the grammar). The identity of the 265 answers is also a
+`reason` (the refusal of the grammar). The identity of the refused answers is also a
 committed fixture, `crates/core/tests/fixtures/answers/undecidable_1_0.jsonl`, and
-`crates/core/tests/answer_parse.rs` fails when the set moves.
+`crates/core/tests/answer_parse_4.rs` fails when the set moves. Section 5 holds the
+2.0 productions of 2026-09-06 and the counts after them; sections 1 to 4 are the
+measure of 2026-08-27 and they stay as the record of the 1.0 residue.
 
 ---
 
@@ -476,3 +479,102 @@ Until then, A2 must reject the 265 answers at authoring time, and it must reject
 three answers of section 3.18 as well. A topic that carries one of them claims a
 deterministic verdict the checker cannot support, and that claim is the 1.0 defect the M2
 plan set out to remove.
+
+---
+
+## 5. The 2.0 productions (2026-09-06, unit f2-grammar, decision D-F3)
+
+Unit f2-grammar of `docs/plans/FRAMEWORK.md` added five productions to the grammar.
+Each production is a finite parse and an exact canonical form; none of them samples a
+value (R3, V1). The input cap and the no-search rule stay.
+
+| # | Production | Reads | Corpus rows recovered | Test file |
+|---|---|---|---:|---|
+| 1 | rational exponent | `a^(p/q)` and `a^{p/q}`, written `q` 2 to 6 and written `\|p\|` at most 12, into the radical form. `2^(1/2)` is `sqrt(2)`, `8^(2/3)` is 4, `x^(1/2)` is `sqrt(x)`. | 15 | `answer_rational_exponent.rs` |
+| 2 | quotient and remainder | `9 R2`, `9 R 2`, `9R2`, `x + 2 remainder 3`, and the tuple `(9, 2)` into one pair. `q r r` is not the pair. | 16 | `answer_remainder.rs` |
+| 3 | value with unit | a number and one unit of the Foundations table into a quantity in the base unit of its kind. `1 m` is `100 cm`, `1.5 h` is `90 min`. | 0 (`7 L/min` is outside the table) | `answer_unit.rs` |
+| 4 | unordered set | `{a, b, c}`; the production existed, and the checker now refuses a set against a list or a tuple. | 0 | `answer_set.rs` |
+| 5 | coordinates | `(x, y)` under the tuple production; tests only. | 0 | `answer_coordinates.rs` |
+
+The recovered rows moved from `undecidable_1_0.jsonl` to
+`crates/core/tests/fixtures/answers/recovered_2_0.jsonl`, each with its production name,
+so the two fixtures together are still the 265 rows of the 1.0 residue plus the one row
+below. `crates/core/tests/answer_parse_4.rs` pins both fixtures.
+
+### 5.1 The counts
+
+| Measure | 2026-08-27 | 2026-09-06 |
+|---|---:|---:|
+| corpus answers | 3,492 | 3,492 |
+| answers inside the grammar | 3,227 (92.41%) | **3,257 (93.27%)** |
+| answers the grammar refuses | 265 (7.59%) | **235 (6.73%)** |
+| topics that hold a refused answer | 116 | 105 |
+| refused answers on `expression` topics | 198 | 178 |
+| refused answers on `numeric` topics | 67 | 57 |
+
+One row joined the residue: `cos 70°` (`complementary-angle-trig`). 1.0 read it as the
+cosine of 70 radians, which is a wrong value. The value-with-unit production reads a
+unit at the end of the answer alone, and a unit inside an expression is refused with the
+reason `a unit inside an expression`.
+
+Group 2 (a fractional or symbolic exponent) shrinks from 28 to 13: the 13 rows that stay
+hold a symbolic exponent (`2^x ln 2`, `3*2^(n-1)`, `$1/2^n$`). Group 3 (quotient and
+remainder) is empty. Group 11 (`7 L/min`) stays, because `L/min` is not in the table.
+Section 3.18 is closed for `60 km/h` and `2π cm^2`: both read as quantities now, and
+`60 h/km` and `2π m^2c` are no longer their equals. `50th` keeps the product reading.
+
+### 5.2 The refusal reason the grammar gives
+
+| Reason | n |
+|---|---:|
+| `a name that is not a function or variable` | 193 |
+| `a character outside the grammar` | 21 |
+| `an exponent that is not a whole number` | 13 |
+| `an inequality with no bare variable` | 4 |
+| `a fraction with a zero denominator` | 2 |
+| `a number glued to a name reads as a label` | 1 |
+| `a unit inside an expression` | 1 |
+
+### 5.3 Refused by rule
+
+The productions add these fixed reasons. No corpus row holds one of them.
+
+| Answer pair or answer | Reason | Rule |
+|---|---|---|
+| `x^(1/7)`, `x^(13/2)`, `x^(6/12)` | `a rational exponent outside the bound` | The bound reads the written numbers: `q` is 2 to 6 and `\|p\|` is at most 12. A written `6/12` is outside the bound although it reduces to a half. |
+| `2^50%`, `2^0.5`, `x^(1/y)` | `an exponent that is not a whole number` | Unchanged: an exponent is a whole number or a bracketed rational of two whole numbers. |
+| `5 cm` against `5` | `a unit is missing` | A unit on the expected side alone. The contract of D-F1 decides later whether a bare number is acceptable; the grammar does not. |
+| `5` against `5 cm` | `a unit on the learner side only` | The mirror case. |
+| `5 € + 3 €`, `sin(30°)`, `cos 70°` | `a unit inside an expression` | A unit stands at the end of the answer alone. |
+| `{1, 2}` against `[1, 2]` | `a set against a list` | An unordered collection and an ordered one are two shapes of one member set, and the answer contract decides the shape. 1.0 answered False. |
+| `{1, 2}` against `(1, 2)` or `1, 2` | `a set against a tuple` | The same rule for a tuple. A list against a tuple stays a decided miss. |
+| `2^(1/3)` against `1.26` | `a rounding of a higher root is not decidable` | The rounding rung brackets a square root exactly; no exact bound of the module brackets a root of index 3 or more (V2). |
+
+### 5.4 What the productions decide, and what they narrow
+
+- A prime base carries its own rational exponent, so `2^(1/3) * 4^(1/3)` is 2 and
+  `2^(-1/3)` is `2^(2/3)/2`. An atom base carries the exponent on the atom, so `x^(3/2)`
+  is `x*sqrt(x)` and `sqrt(x)*sqrt(x)` is `x`. A sum under a root is one opaque atom, so
+  `(x+1)^(3/2)` and `(x+1)*sqrt(x+1)` stay two forms: the form multiplies no sum into a
+  root, the way it takes no polynomial factor. A root of index 2 and a root of index 3 or
+  more of one number stay two atoms: `2^(1/2) * 2^(1/3)` and `2^(5/6)` are two forms.
+- The letter `R` is the remainder marker between two number tokens only; `2R`, `R`, and
+  `2 R x` keep the variable. `9 r2` keeps its label refusal, and `9 r 2` is the product
+  `18*r`.
+- A one-letter unit needs a space in front of it: `5 m` is five meters, and `5m` is the
+  product, which is the algebra spelling of the corpus (`8x`, `6w`, `-9a`). `5cm`,
+  `60km/h`, `90°`, `5€`, and `$5` read glued. The head in front of a unit is a number
+  expression; `2x + h` and `x m` keep their variables.
+- The rounding rung reads the expected value in the unit the learner typed: `1.33 h` is
+  the rounding of `80 min`, with the notation tag.
+
+### 5.5 Foundations
+
+The Foundations course holds 1,980 exemplar answers (1,695 without the diagnostic
+exemplars, `docs/reports/foundations-answer-inventory.md`). The productions read: 4
+rational exponents (`x^(1/2)`, `x^(2/3)`, `x^(3/2)`, `x^(5/6)`), 16 quotients with a
+remainder, and 49 quantities. Of the 49, twelve were refused before (`€17`, `€5000`,
+`30 L`, `4.2 L`), and 37 were decided under a reading the author did not mean: 25 angles
+(`30°`) as bare numbers, and 12 spaced units (`45 m`, `70 km`, `29.4 g`, `5√3 m`) as
+products of variables. The two largest open productions of the inventory are `label`
+(147 answers) and `disjunction` (57); this unit does not implement them.
