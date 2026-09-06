@@ -7,9 +7,9 @@
 #![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
 
 use cadus_core::visual::{
-    CoordinateFigure, FractionFigure, GeometryFigure, GeometryShape, LabeledPoint, MarkedRay,
-    NumberLineFigure, RayDirection, RenderOptions, Scalar, Segment, ShadedHalfPlane, VisualError,
-    VisualSpec, render,
+    Asymptote, CoordinateFigure, CurveFigure, CurveKind, FractionFigure, GeometryFigure,
+    GeometryShape, LabeledPoint, MarkedRay, NumberLineFigure, RayDirection, RenderOptions, Scalar,
+    Segment, ShadedHalfPlane, VisualError, VisualSpec, render,
 };
 
 /// The count of one substring in one text.
@@ -278,6 +278,64 @@ fn a_shaded_half_plane_that_sits_on_the_boundary_or_repeats_a_point_renders_no_b
             &RenderOptions::default()
         ),
         Err(VisualError::Degenerate { .. })
+    ));
+}
+
+#[test]
+fn a_curve_draws_a_broken_polyline_around_its_asymptote_and_its_key_points() {
+    let figure = CurveFigure {
+        x_min: Scalar::from("-6"),
+        x_max: Scalar::from("6"),
+        y_min: Scalar::from("-6"),
+        y_max: Scalar::from("6"),
+        x_tick: Scalar::from("1"),
+        y_tick: Scalar::from("1"),
+        curve: CurveKind::Reciprocal {
+            a: Scalar::from("4"),
+            h: Scalar::from("0"),
+            k: Scalar::from("0"),
+        },
+        key_points: vec![
+            LabeledPoint::labeled(2_i64, 2_i64, "A"),
+            LabeledPoint::new(-2_i64, -2_i64),
+        ],
+        asymptotes: vec![
+            Asymptote::Horizontal {
+                at: Scalar::from("0"),
+            },
+            Asymptote::Vertical {
+                at: Scalar::from("0"),
+            },
+        ],
+        caption: Some("Reference: y = 4/x".to_owned()),
+    };
+    let svg = render(&VisualSpec::Curve(figure), &RenderOptions::default()).unwrap();
+    assert!(svg.contains("class=\"cadus-visual cadus-visual-curve\""));
+    assert_eq!(count(&svg, "<polyline"), 2, "one run on each side of x = 0");
+    assert_eq!(count(&svg, "cadus-visual-asymptote"), 2);
+    assert_eq!(count(&svg, "cadus-visual-point\""), 2);
+    assert!(svg.contains(">A</text>"));
+}
+
+#[test]
+fn a_curve_with_a_key_point_off_the_curve_renders_no_bytes() {
+    let figure = CurveFigure {
+        x_min: Scalar::from("-5"),
+        x_max: Scalar::from("5"),
+        y_min: Scalar::from("-5"),
+        y_max: Scalar::from("5"),
+        x_tick: Scalar::from("1"),
+        y_tick: Scalar::from("1"),
+        curve: CurveKind::Polynomial {
+            coefficients: vec![Scalar::from("0"), Scalar::from("0"), Scalar::from("1")],
+        },
+        key_points: vec![LabeledPoint::new(2_i64, 5_i64)],
+        asymptotes: vec![],
+        caption: None,
+    };
+    assert!(matches!(
+        render(&VisualSpec::Curve(figure), &RenderOptions::default()),
+        Err(VisualError::KeyPointOffCurve { .. })
     ));
 }
 

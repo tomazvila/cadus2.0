@@ -28,6 +28,7 @@
 //! [`VisualSpec::validate`] counts as absent, so a broken figure keeps the
 //! knowledge point unready.
 
+mod curve;
 mod fraction;
 mod geometry;
 mod number_line;
@@ -38,6 +39,7 @@ mod scalar;
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
 
+pub use curve::{Asymptote, CurveFigure, CurveKind};
 pub use fraction::{FractionFigure, FractionShape};
 pub use geometry::{GeometryFigure, GeometryShape};
 pub use number_line::{MarkedInterval, MarkedPoint, MarkedRay, NumberLineFigure, RayDirection};
@@ -127,6 +129,13 @@ pub enum VisualError {
         /// The vertex count.
         count: usize,
     },
+    /// An authored curve key point does not sit exactly on the curve, or sits
+    /// at an `x` the family cannot check exactly.
+    #[error("the key point at {point} does not sit exactly on the curve")]
+    KeyPointOffCurve {
+        /// The point, in words.
+        point: String,
+    },
 }
 
 /// One authored mathematical visual.
@@ -144,6 +153,8 @@ pub enum VisualSpec {
     Coordinate(CoordinateFigure),
     /// A geometry diagram: a polygon or a circle.
     Geometry(GeometryFigure),
+    /// A coordinate plane with one drawn curve.
+    Curve(CurveFigure),
 }
 
 impl VisualSpec {
@@ -155,6 +166,7 @@ impl VisualSpec {
             Self::Fraction(_) => "fraction",
             Self::Coordinate(_) => "coordinate",
             Self::Geometry(_) => "geometry",
+            Self::Curve(_) => "curve",
         }
     }
 
@@ -166,6 +178,7 @@ impl VisualSpec {
             Self::Fraction(figure) => figure.caption.as_deref(),
             Self::Coordinate(figure) => figure.caption.as_deref(),
             Self::Geometry(figure) => figure.caption.as_deref(),
+            Self::Curve(figure) => figure.caption.as_deref(),
         };
         caption.filter(|text| !text.trim().is_empty())
     }
@@ -180,6 +193,7 @@ impl VisualSpec {
             Self::Fraction(figure) => figure.validate(),
             Self::Coordinate(figure) => figure.validate(),
             Self::Geometry(figure) => figure.validate(),
+            Self::Curve(figure) => figure.validate(),
         }
     }
 
@@ -195,6 +209,7 @@ impl VisualSpec {
             Self::Fraction(figure) => figure.text_equivalent(),
             Self::Coordinate(figure) => figure.text_equivalent(),
             Self::Geometry(figure) => figure.text_equivalent(),
+            Self::Curve(figure) => figure.text_equivalent(),
         };
         match self.caption() {
             Some(caption) => format!("{}. {body}", caption.trim()),

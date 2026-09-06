@@ -15,7 +15,7 @@ use super::{LabeledPoint, VisualError, VisualSpec};
 
 mod figure;
 
-use figure::{coordinate_body, fraction_body, geometry_body, number_line_body};
+use figure::{coordinate_body, curve_body, fraction_body, geometry_body, number_line_body};
 
 /// The drawing options.
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -63,6 +63,7 @@ pub fn render(spec: &VisualSpec, options: &RenderOptions) -> Result<String, Visu
         VisualSpec::Fraction(figure) => fraction_body(figure, options),
         VisualSpec::Coordinate(figure) => coordinate_body(figure, options)?,
         VisualSpec::Geometry(figure) => geometry_body(figure, options)?,
+        VisualSpec::Curve(figure) => curve_body(figure, options)?,
     };
     Ok(frame(spec, options, &body))
 }
@@ -113,6 +114,7 @@ fn title_of(spec: &VisualSpec) -> String {
             VisualSpec::Fraction(_) => "Fraction figure".to_owned(),
             VisualSpec::Coordinate(_) => "Coordinate plane".to_owned(),
             VisualSpec::Geometry(_) => "Geometry diagram".to_owned(),
+            VisualSpec::Curve(_) => "Curve".to_owned(),
         },
         ToOwned::to_owned,
     )
