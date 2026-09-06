@@ -39,7 +39,7 @@ use num_integer::Integer;
 use num_rational::BigRational;
 use num_traits::{One, Signed, Zero};
 
-use super::canon::{Basis, Canon};
+use super::canon::{Atom, Basis, Canon, Poly};
 
 /// The largest count of root terms one rounding decision reads.
 ///
@@ -80,8 +80,22 @@ pub fn rounds_to(expected: &Canon, learner: &BigRational, scale: u32) -> Roundin
     match expected {
         Canon::Rational(value) => rational_rounds_to(value, learner, scale),
         Canon::Radical(parts) => radical_rounds_to(parts, learner, scale),
+        // A number with a root of index 3 or more holds no exact bound in this
+        // module, so the pair gets no verdict (V2).
+        Canon::Poly(sum) if holds_a_number_only(sum) => {
+            Rounding::Refused("a rounding of a higher root is not decidable")
+        }
         _ => Rounding::NotANumber,
     }
+}
+
+/// Whether every atom of a sum is a root of a number, a square root, `pi`, or `e`.
+fn holds_a_number_only(sum: &Poly) -> bool {
+    sum.keys().flatten().all(|(atom, _)| match atom {
+        Atom::Root(base, _) => matches!(base.as_ref(), Canon::Rational(_)),
+        Atom::Sqrt(_) | Atom::Pi | Atom::E => true,
+        Atom::Exp(_) | Atom::Var(_) | Atom::Call(_, _) => false,
+    })
 }
 
 /// Decide the rounding of an exact rational.

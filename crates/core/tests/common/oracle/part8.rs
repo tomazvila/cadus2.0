@@ -246,10 +246,15 @@ pub const GENERATOR_COUNTS: [(&str, usize); 47] = [
 /// is correct with a notation tag, and a rounding of `pi` or `e` has no exact
 /// rational bound, so the checker refuses it (V2) and the pair leaves the
 /// comparison. Class 1 was 965, class 3 was 16,554, and class 4 was 355.
+///
+/// The rational-exponent production of D-F3 (unit f2-grammar) reads five
+/// learner spellings that were class 1 (`x**(1/2)` for `sqrt(x)`), so class 1
+/// is 1,051 and class 3 is 16,503. The 15 corpus rows the production recovers
+/// stay out of the set, because 1.0 has no comparable verdict on them.
 pub const CLASS_COUNTS: [(&str, usize); 5] = [
-    ("class 1 outside_grammar", 1056),
+    ("class 1 outside_grammar", 1051),
     ("class 2 prose_expected", 0),
-    ("class 3 comparable", 16498),
+    ("class 3 comparable", 16503),
     ("class 4 documented_divergence", 320),
     ("oracle_silent", 0),
 ];

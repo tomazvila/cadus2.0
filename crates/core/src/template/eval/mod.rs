@@ -226,16 +226,22 @@ pub fn evaluate(ast: &Ast, bindings: &Bindings) -> Result<Ast, EvalError> {
         } => mixed_literal(whole, numerator, denominator),
         Ast::Var(name) => bound_value(name, bindings),
         Ast::Const(constant) => Ok(Ast::Const(*constant)),
-        Ast::Neg(inner) => negate(inner, bindings),
+        Ast::Neg(inner) | Ast::Sqrt(inner) => unary(ast, inner, bindings),
         Ast::Add(items) => fold(items, bindings, Fold::Add),
         Ast::Mul(items) => fold(items, bindings, Fold::Mul),
         Ast::Div(left, right) => divide(left, right, bindings),
         Ast::Pow(base, exponent) => raise(base, *exponent, bindings),
-        Ast::Sqrt(inner) => root(inner, bindings),
+        Ast::RationalPow {
+            base,
+            numerator,
+            denominator,
+        } => Ok(Ast::RationalPow {
+            base: Box::new(evaluate(base, bindings)?),
+            numerator: *numerator,
+            denominator: *denominator,
+        }),
         Ast::Func(name, args) => call(name, args, bindings),
-        Ast::Tuple(items) => evaluate_all(items, bindings).map(Ast::Tuple),
-        Ast::Set(items) => evaluate_all(items, bindings).map(Ast::Set),
-        Ast::List(items) => evaluate_all(items, bindings).map(Ast::List),
+        Ast::Tuple(items) | Ast::Set(items) | Ast::List(items) => collection(ast, items, bindings),
         Ast::Interval {
             lo,
             hi,
@@ -252,6 +258,25 @@ pub fn evaluate(ast: &Ast, bindings: &Bindings) -> Result<Ast, EvalError> {
             hi,
         } => chain(lo, *lo_closed, var, *hi_closed, hi, bindings),
     }
+}
+
+/// Evaluate a negation or a root, by the kind of the node.
+fn unary(ast: &Ast, inner: &Ast, bindings: &Bindings) -> Result<Ast, EvalError> {
+    if matches!(ast, Ast::Neg(_)) {
+        negate(inner, bindings)
+    } else {
+        root(inner, bindings)
+    }
+}
+
+/// Evaluate the items of a tuple, a set, or a list, and rebuild the node.
+fn collection(ast: &Ast, items: &[Ast], bindings: &Bindings) -> Result<Ast, EvalError> {
+    let values = evaluate_all(items, bindings)?;
+    Ok(match ast {
+        Ast::Tuple(_) => Ast::Tuple(values),
+        Ast::Set(_) => Ast::Set(values),
+        _ => Ast::List(values),
+    })
 }
 
 /// Compute the answer of one bound tuple, as a string and as a canonical form.

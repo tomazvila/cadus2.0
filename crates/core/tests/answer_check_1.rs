@@ -366,13 +366,19 @@ fn a_radical_product_extracts_the_square_of_the_merged_radicand() {
 }
 
 #[test]
-fn a_radicand_that_is_not_a_rational_number_stays_a_function() {
+fn a_radicand_that_is_not_a_rational_number_is_a_root_atom() {
     // The reading changed in M2 review 3, findings 9 and 11: a RATIONAL radicand
-    // reduces now, and only a radicand outside the rationals keeps the function
-    // application. `a_rational_radicand_reduces_to_the_same_value` below owns the
-    // reduced half.
+    // reduces, and `a_rational_radicand_reduces_to_the_same_value` below owns
+    // that half. The rational-exponent production of D-F3 (unit f2-grammar)
+    // then made `sqrt(x)` the root atom of `x`, so `sqrt(x)` and `x^(1/2)` are
+    // one form.
     let x = Canon::Poly(BTreeMap::from([(monomial(&[(var("x"), 1)]), whole(1))]));
-    assert_eq!(form("sqrt(x)"), Canon::Func("sqrt".to_string(), vec![x]));
+    let root_of_x = Canon::Poly(BTreeMap::from([(
+        monomial(&[(Atom::Root(Box::new(x), 2), 1)]),
+        whole(1),
+    )]));
+    assert_eq!(form("sqrt(x)"), root_of_x);
+    assert_eq!(form("x^(1/2)"), root_of_x);
     // A negative radicand is not a real number, so it keeps its application too.
     assert_eq!(
         form("sqrt(-1/2)"),

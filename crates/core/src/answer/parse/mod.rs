@@ -26,6 +26,7 @@
 
 mod atom;
 mod build;
+mod exponent;
 mod term;
 
 use build::{is_variable_name, make_quotient, simple_inequality};

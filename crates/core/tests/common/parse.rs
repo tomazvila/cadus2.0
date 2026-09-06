@@ -128,12 +128,16 @@ pub fn value(text: &str) -> Canon {
 ///   the fix wave adds are the multi-letter runs (`3xy^2`, `$12xy$`, `4ab^3`) and
 ///   `50th`. The residue is the section 8.2 outlier set: a free or fractional
 ///   exponent, `log_b`, `dy/dx`, `n!`, `∞`, a label set, and a differential.
+/// - The rational-exponent production of D-F3 (unit f2-grammar) then reads 14
+///   `expression_symbolic` rows (`x^(1/2)`, `(5/2)x^(3/2)`) and one
+///   `expression_numeric` row (`3 + 3*2^(1/3)`), so the two buckets hold 646
+///   and 229.
 pub const SHAPE_COUNTS: [(&str, usize, usize); 15] = [
     ("comma_list", 28, 15),
     ("decimal", 128, 0),
     ("equation", 1, 0),
-    ("expression_numeric", 228, 5),
-    ("expression_symbolic", 632, 54),
+    ("expression_numeric", 229, 4),
+    ("expression_symbolic", 646, 40),
     ("fraction", 350, 2),
     ("integer", 1622, 0),
     ("interval_ineq", 29, 5),

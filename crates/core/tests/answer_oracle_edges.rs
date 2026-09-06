@@ -29,7 +29,9 @@ fn names(answer: &str) -> Vec<String> {
 
 #[test]
 fn the_radical_walk_reaches_every_canonical_shape() {
-    let sqrt_x = r#"sqrt([Poly({{Var("x"): 1}: Ratio { numer: 1, denom: 1 }})])**1"#;
+    // `sqrt(x)` is the root atom of `x` since the rational-exponent production
+    // of D-F3 (unit f2-grammar).
+    let sqrt_x = r#"root(Poly({{Var("x"): 1}: Ratio { numer: 1, denom: 1 }}), 2)**1"#;
     let cases: [(&str, &[&str]); 16] = [
         ("1/2", &[]),
         ("sqrt(2)+1", &["sqrt(2)"]),
@@ -77,8 +79,11 @@ fn the_variable_walk_reaches_every_canonical_shape() {
         assert_eq!(names(answer), want, "{answer}");
     }
     assert!(holds_the_variable_x("2*sqrt(x)"));
+    // The rational-exponent production of D-F3 reads `x^(1/2)` as the root of
+    // `x`, so the walk reaches the variable under the root atom.
+    assert!(holds_the_variable_x("x^(1/2)"));
     assert!(
-        !holds_the_variable_x("x^(1/2)"),
+        !holds_the_variable_x("x^(1/7)"),
         "a refused answer holds no variable"
     );
 }

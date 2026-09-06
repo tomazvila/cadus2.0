@@ -10,7 +10,8 @@
 //! denominator sum. A sum is a map of terms, a term is a rational coefficient and
 //! a monomial, and a monomial maps an [`Atom`] to an integer exponent. The atoms
 //! are a square root of a squarefree integer, `pi`, `e`, an exponential with an
-//! argument that is not a whole number, a variable, and a function call. One form
+//! argument that is not a whole number, a variable, a function call, and a root
+//! of index 2 or more of a prime, an atom, or an opaque value (D-F3). One form
 //! therefore holds a rational, a radical, a Laurent polynomial, a function
 //! application, and a quotient of two polynomials together.
 //!
@@ -105,6 +106,7 @@
 mod arith;
 mod quotient;
 mod read;
+mod root;
 mod sum;
 
 use std::collections::{BTreeMap, BTreeSet};
@@ -182,6 +184,13 @@ pub enum Atom {
     Var(String),
     /// An application of a whitelisted function to canonical arguments.
     Call(String, Vec<Canon>),
+    /// The root of a value, `base^(1/index)` (D-F3).
+    ///
+    /// The base is one prime, one atom, or an opaque value; the root law of
+    /// [`root`] keeps one root per base in a monomial and holds the exponent in
+    /// lowest terms. A square root of a rational never builds this atom: it is
+    /// [`Atom::Sqrt`].
+    Root(Box<Canon>, i64),
 }
 
 /// A product of atoms with integer exponents. No exponent is zero.

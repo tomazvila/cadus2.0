@@ -63,6 +63,10 @@ pub fn collect_poly_radicals(poly: &cadus_core::answer::Poly, out: &mut BTreeSet
                 }
             }
             Atom::Exp(inner) => collect_radical_atoms(inner, out),
+            Atom::Root(base, index) => {
+                out.insert(format!("root({base:?}, {index})**{exponent}"));
+                collect_radical_atoms(base, out);
+            }
             Atom::Pi | Atom::E | Atom::Var(_) => {}
         }
     }
@@ -348,7 +352,7 @@ pub fn collect_poly_variables(poly: &cadus_core::answer::Poly, out: &mut BTreeSe
                     collect_variable_names(arg, out);
                 }
             }
-            Atom::Exp(inner) => collect_variable_names(inner, out),
+            Atom::Exp(inner) | Atom::Root(inner, _) => collect_variable_names(inner, out),
             Atom::Sqrt(_) | Atom::Pi | Atom::E => {}
         }
     }

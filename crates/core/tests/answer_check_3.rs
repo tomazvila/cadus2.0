@@ -396,11 +396,12 @@ fn every_answer_the_grammar_accepts_also_canonicalizes() {
             Err(reason) => refused.push((&row.answer, reason.reason)),
         }
     }
-    // FIXM2a pins 265 answers as outside the grammar (`undecidable_1_0.jsonl`),
-    // so 3,492 - 265 = 3,227 answers parse. Every one of them canonicalizes.
+    // FIXM2a pinned 265 answers as outside the grammar. The rational-exponent
+    // production of D-F3 (unit f2-grammar) reads 15 of them (`recovered_2_0.jsonl`),
+    // so 3,492 - 250 = 3,242 answers parse. Every one of them canonicalizes.
     assert_eq!(
         canonical,
-        3_227,
+        3_242,
         "the first refusals are {:?}",
         refused.iter().take(5).collect::<Vec<_>>()
     );

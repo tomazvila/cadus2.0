@@ -44,6 +44,7 @@ fn holds_an_evaluation_only_name(node: &Ast) -> bool {
         Ast::Neg(inner) | Ast::Sqrt(inner) | Ast::Pow(inner, _) => {
             holds_an_evaluation_only_name(inner)
         }
+        Ast::RationalPow { base, .. } => holds_an_evaluation_only_name(base),
         Ast::Add(items)
         | Ast::Mul(items)
         | Ast::Tuple(items)
@@ -111,7 +112,7 @@ fn level(node: &Ast) -> Prec {
         Ast::Decimal { mantissa, scale } => level(&rational_node(&decimal_value(mantissa, *scale))),
         Ast::Fraction { numerator, .. } if numerator.is_negative() => Prec::Sum,
         Ast::Fraction { .. } | Ast::Mul(_) | Ast::Div(_, _) => Prec::Product,
-        Ast::Pow(_, _) => Prec::Power,
+        Ast::Pow(_, _) | Ast::RationalPow { .. } => Prec::Power,
         _ => Prec::Atom,
     }
 }
@@ -149,13 +150,18 @@ fn write_bare(node: &Ast, out: &mut String) {
         Ast::Neg(inner) => write_negation(inner, out),
         Ast::Sqrt(inner) => write_root(inner, out),
         Ast::Pow(base, exponent) => write_power(base, *exponent, out),
+        Ast::RationalPow {
+            base,
+            numerator,
+            denominator,
+        } => write_rational_power(base, *numerator, *denominator, out),
         Ast::Add(items) => write_joined(items, " + ", Prec::Product, out),
         Ast::Mul(items) => write_joined(items, "*", Prec::Power, out),
         Ast::Div(left, right) => write_quotient(left, right, out),
         Ast::Func(name, args) => write_call(name, args, out),
-        Ast::Tuple(items) => write_wrapped(items, ('(', ')'), out),
-        Ast::Set(items) => write_wrapped(items, ('{', '}'), out),
-        Ast::List(items) => write_wrapped(items, ('[', ']'), out),
+        Ast::Tuple(items) | Ast::Set(items) | Ast::List(items) => {
+            write_wrapped(items, delimiters(node), out);
+        }
         Ast::Interval {
             lo,
             hi,
@@ -219,6 +225,12 @@ fn write_power(base: &Ast, exponent: i64, out: &mut String) {
     }
 }
 
+/// Write a power with a rational exponent, `base**(p/q)`.
+fn write_rational_power(base: &Ast, numerator: i64, denominator: i64, out: &mut String) {
+    write_at(base, Prec::Atom, out);
+    out.push_str(&format!("**({numerator}/{denominator})"));
+}
+
 /// Write a quotient.
 fn write_quotient(left: &Ast, right: &Ast, out: &mut String) {
     write_at(left, Prec::Product, out);
@@ -230,6 +242,15 @@ fn write_quotient(left: &Ast, right: &Ast, out: &mut String) {
 fn write_call(name: &str, args: &[Ast], out: &mut String) {
     out.push_str(name);
     write_wrapped(args, ('(', ')'), out);
+}
+
+/// The delimiter pair of a tuple, a set, or a list.
+fn delimiters(node: &Ast) -> (char, char) {
+    match node {
+        Ast::Tuple(_) => ('(', ')'),
+        Ast::Set(_) => ('{', '}'),
+        _ => ('[', ']'),
+    }
 }
 
 /// Write a collection between its two delimiters.

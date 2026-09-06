@@ -237,6 +237,7 @@ fn collect_ast_names(ast: &Ast, names: &mut BTreeSet<String>) {
             }
         }
         Ast::Neg(inner) | Ast::Sqrt(inner) | Ast::Pow(inner, _) => collect_ast_names(inner, names),
+        Ast::RationalPow { base, .. } => collect_ast_names(base, names),
         Ast::Add(items)
         | Ast::Mul(items)
         | Ast::Tuple(items)
