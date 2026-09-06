@@ -109,7 +109,10 @@ pub(crate) fn compose_plan(
         .with_quiz_streak(view.quiz_high_score_streak)
         .with_test_prep(&no_test_prep)
         .with_multistep(i64::try_from(closed.len()).unwrap_or(i64::MAX), closed)
-        .with_readiness(Some(readiness));
+        .with_readiness(Some(readiness))
+        // f19-retention: the delayed probe of D-F11. The state is the fold's, so
+        // the schedule reads the probes that already ran and never repeats one.
+        .with_retention(Some(&model.retention));
     compose_session(
         &model.topics,
         &content.curriculum,
