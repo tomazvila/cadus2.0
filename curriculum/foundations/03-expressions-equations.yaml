@@ -310,12 +310,22 @@ topics:
         name: "Expression from a table of values"
         key_prerequisites: [evaluating-expressions]
         exemplars:
-          - problem: 'A table pairs $n = 1, 2, 3$ with $5, 8, 11$. Write an expression for the value at position $n$.'
+          - problem: "A table follows a linear rule and pairs $n = 1, 2, 3$ with $5, 8, 11$. Write the rule for the value at any position $n$."
             answer: "3n + 2"
-            solution_sketch: 'Values climb by $3$ each step, so $3n + c$; at $n = 1$, $3 + c = 5$ gives $c = 2$.'
-          - problem: 'A table pairs $n = 1, 2, 3$ with $6, 10, 14$. Write an expression for the value at position $n$.'
-            answer: "4n + 2"
-            solution_sketch: 'Common step $4$; $4(1) + 2 = 6$ checks.'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Values climb by $3$ each step, so $3n + c$; at $n = 1$, $3 + c = 5$ gives $c = 2$."
+          - problem: "A table follows a linear rule and has $(n,v)=(2,7),(4,13),(6,19)$. Write $v$ as an expression in $n$."
+            answer: "3n+1"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "A change of $2$ positions adds $6$, so each position adds $3$. At the first entry, $7-3(2)=1$; the rule is $3n+1$."
+          - problem: "A table starts with $(n,v)=(0,4)$ and each increase of $1$ in $n$ adds $5$ to $v$. Write the rule for $v$."
+            answer: "5n+4"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Each step contributes $5n$ from position zero, whose value is $4$. At position zero, the variable contribution vanishes, leaving the required first value $4$."
+          - problem: "A table follows a linear rule, lists $n:1,2,3$ and $v:9,11,13$, and a learner proposes $2n+9$. Correct the rule for every position."
+            answer: "2n+7"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The step is $2$, but position $1$ already includes one step. The constant is $9-2=7$, so the first value is $2(1)+7=9$."
         constraints: "linear patterns with positive integer step; check against the first entry"
       - id: kp2
         name: "Expression from a real-world rule"
@@ -430,10 +440,22 @@ topics:
         name: "Combine like terms with positive coefficients"
         key_prerequisites: [parts-of-an-expression]
         exemplars:
-          - problem: 'Simplify $3x + 5x$.'
+          - problem: "Simplify $3x + 5x$."
             answer: "8x"
-          - problem: 'Simplify $7a + 2a + a$.'
-            answer: "10a"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "$3x+5x=(3+5)x=8x$."
+          - problem: "Simplify $7a+2a+4a$."
+            answer: "13a"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "$7a+2a+4a=(7+2+4)a=13a$."
+          - problem: "A triangle has side lengths $2x$, $3x$, and $4x$. Express its perimeter as one term."
+            answer: "9x"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "The perimeter is $2x+3x+4x=(2+3+4)x=9x$."
+          - problem: "A learner claims $4y+6y=10y^2$. Correct the simplified expression."
+            answer: "10y"
+            answer_contract: {"kind": "exact"}
+            solution_sketch: "Like terms keep their common variable part: $(4+6)y=10y$, with no change to the exponent."
         constraints: "single variable; positive coefficients <= 9"
       - id: kp2
         name: "Negative coefficients and subtraction"
@@ -640,14 +662,22 @@ topics:
         name: "Decide equivalence by simplifying"
         key_prerequisites: [distributive-property, combining-like-terms]
         exemplars:
-          - problem: 'Are $2(x + 3)$ and $2x + 6$ equivalent? Answer yes or no.'
+          - problem: "Are $2(x + 3)$ and $2x + 6$ equivalent? Answer yes or no."
             answer: "yes"
-            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
-            solution_sketch: 'Expanding $2(x + 3)$ gives exactly $2x + 6$.'
-          - problem: 'Are $3x + 4x$ and $7x^2$ equivalent? Answer yes or no.'
+            answer_contract: {"kind": "label", "options": [["yes"], ["no"]]}
+            solution_sketch: "Expanding $2(x + 3)$ gives exactly $2x + 6$."
+          - problem: "Are $3x + 4x$ and $7x^2$ equivalent? Answer yes or no."
             answer: "no"
-            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
-            solution_sketch: '$3x + 4x = 7x$, not $7x^2$.'
+            answer_contract: {"kind": "label", "options": [["yes"], ["no"]]}
+            solution_sketch: "$3x + 4x = 7x$, not $7x^2$."
+          - problem: "Is $5x-2(x-3)$ equivalent to $3x+6$? Answer yes or no."
+            answer: "yes"
+            answer_contract: {"kind": "label", "options": [["yes"], ["no"]]}
+            solution_sketch: "$5x-2x+6=3x+6$, so the expressions have identical coefficients."
+          - problem: "A square has perimeter $4x$. A learner proposes $x^2$ as an equivalent expression for every $x$. Is the claim valid? Answer yes or no."
+            answer: "no"
+            answer_contract: {"kind": "label", "options": [["yes"], ["no"]]}
+            solution_sketch: "At $x=2$, the perimeter is $4(2)=8$ while the proposed expression is $2^2=4$. One counterexample disproves equivalence."
         constraints: "one expression simplifies (or fails to) into the other; single variable"
       - id: kp2
         name: "Simplify to a standard equivalent form"
