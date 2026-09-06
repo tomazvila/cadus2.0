@@ -116,10 +116,131 @@ def apply_solution_sketches(
     return text, applied
 
 
+def add_answer_contracts(
+    path: Path, contracts: dict[ExemplarKey, str], *, write: bool
+) -> tuple[str, list[ExemplarKey]]:
+    """Add explicit contracts to named exemplars that do not already have one."""
+    lines = path.read_text().splitlines(keepends=True)
+    topic_id = None
+    kp_id = None
+    exemplar_index = -1
+    output: list[str] = []
+    applied: list[ExemplarKey] = []
+    remaining = dict(contracts)
+    index = 0
+    while index < len(lines):
+        line = lines[index]
+        previous_kp_id = kp_id
+        topic_id, kp_id = _track_topic_kp(line, topic_id, kp_id)
+        if kp_id != previous_kp_id:
+            exemplar_index = -1
+        elif _PROBLEM.match(line):
+            exemplar_index += 1
+        output.append(line)
+        index += 1
+        if not _ANSWER.match(line) or topic_id is None or kp_id is None:
+            continue
+        key = ExemplarKey(topic_id, kp_id, exemplar_index)
+        if key not in remaining:
+            continue
+        if index < len(lines) and _ANSWER_CONTRACT.match(lines[index]):
+            raise Rejection(f"{key} already carries an authored answer_contract")
+        output.append(f"            answer_contract: {remaining.pop(key)}\n")
+        applied.append(key)
+    if remaining:
+        raise Rejection(f"never found in {path}: {sorted(remaining)}")
+    text = "".join(output)
+    if write:
+        path.write_text(text)
+    return text, applied
+
+
 @dataclass(frozen=True)
 class KpKey:
     topic_id: str
     kp_id: str
+
+
+@dataclass(frozen=True)
+class ExemplarPatch:
+    """Exact learner-facing replacements for one indexed exemplar."""
+
+    problem: str | None = None
+    answer: str | None = None
+    solution_sketch: str | None = None
+    answer_contract: str | None = None
+
+
+def patch_exemplars(
+    path: Path, patches: dict[ExemplarKey, ExemplarPatch], *, write: bool
+) -> tuple[str, list[ExemplarKey]]:
+    """Replace selected fields of exact indexed exemplars without reformatting YAML."""
+    lines = path.read_text().splitlines(keepends=True)
+    topic_id = None
+    kp_id = None
+    exemplar_index = -1
+    output: list[str] = []
+    applied: list[ExemplarKey] = []
+    remaining = dict(patches)
+    index = 0
+    while index < len(lines):
+        line = lines[index]
+        previous_kp_id = kp_id
+        topic_id, kp_id = _track_topic_kp(line, topic_id, kp_id)
+        if kp_id != previous_kp_id:
+            exemplar_index = -1
+        elif _PROBLEM.match(line):
+            exemplar_index += 1
+        if not _PROBLEM.match(line) or topic_id is None or kp_id is None:
+            output.append(line)
+            index += 1
+            continue
+        key = ExemplarKey(topic_id, kp_id, exemplar_index)
+        patch = remaining.pop(key, None)
+        if patch is None:
+            output.append(line)
+            index += 1
+            continue
+        cursor = index
+        block = [line]
+        while cursor + 1 < len(lines) and _EXEMPLAR_FIELD.match(lines[cursor + 1]):
+            cursor += 1
+            block.append(lines[cursor])
+        fields = {
+            "problem": patch.problem,
+            "answer": patch.answer,
+            "solution_sketch": patch.solution_sketch,
+            "answer_contract": patch.answer_contract,
+        }
+        seen: set[str] = set()
+        for block_line in block:
+            field = block_line.strip().split(":", 1)[0].removeprefix("- ")
+            value = fields.get(field)
+            if value is None:
+                output.append(block_line)
+                continue
+            seen.add(field)
+            if field == "problem":
+                output.append(f"          - problem: {_quoted(value)}\n")
+            elif field == "answer":
+                if '"' in value:
+                    raise Rejection(f"replacement answer holds a literal quote: {value!r}")
+                output.append(f'            answer: "{value}"\n')
+            elif field == "solution_sketch":
+                output.append(f"            solution_sketch: {_quoted(value)}\n")
+            else:
+                output.append(f"            answer_contract: {value}\n")
+        missing = {name for name, value in fields.items() if value is not None} - seen
+        if missing:
+            raise Rejection(f"{key} has no field(s) to replace: {sorted(missing)}")
+        applied.append(key)
+        index = cursor + 1
+    if remaining:
+        raise Rejection(f"never found in {path}: {sorted(remaining)}")
+    text = "".join(output)
+    if write:
+        path.write_text(text)
+    return text, applied
 
 
 @dataclass(frozen=True)
@@ -138,6 +259,7 @@ class NewExemplar:
     solution_sketch: str
     with_contract: bool
     contract_override: str | None = None
+    contract: str | None = None
 
 
 def _render_exemplar(exemplar: NewExemplar) -> list[str]:
@@ -150,8 +272,11 @@ def _render_exemplar(exemplar: NewExemplar) -> list[str]:
         f"          - problem: '{exemplar.problem}'\n",
         f'            answer: "{exemplar.answer}"\n',
     ]
-    if exemplar.contract_override is not None:
-        lines.append(f"            answer_contract: {exemplar.contract_override}\n")
+    if exemplar.contract_override is not None and exemplar.contract is not None:
+        raise Rejection("an exemplar cannot set both contract fields")
+    explicit_contract = exemplar.contract_override or exemplar.contract
+    if explicit_contract is not None:
+        lines.append(f"            answer_contract: {explicit_contract}\n")
     elif exemplar.with_contract:
         lines.append('            answer_contract: {"kind":"exact"}\n')
     lines.append(f"            solution_sketch: '{exemplar.solution_sketch}'\n")

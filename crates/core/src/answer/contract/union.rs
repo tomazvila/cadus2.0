@@ -14,7 +14,10 @@ struct Range {
 
 pub(super) fn read(text: &str) -> Result<Canon, Undecidable> {
     let normalized = text.split_whitespace().collect::<Vec<_>>().join(" ");
-    if normalized.contains('∪') {
+    let single_interval = normalized.contains(',')
+        && matches!(normalized.chars().next(), Some('(' | '['))
+        && matches!(normalized.chars().last(), Some(')' | ']'));
+    if normalized.contains('∪') || single_interval {
         return interval_notation(&normalized);
     }
     let branches: Vec<_> = normalized.split(" or ").collect();
@@ -67,6 +70,23 @@ fn interval_notation(text: &str) -> Result<Canon, Undecidable> {
         ranges.push(interval(branch)?);
     }
     Ok(Canon::List(canonical_ranges(merge(ranges))))
+}
+
+pub(super) fn equivalent(left: &Canon, right: &Canon) -> bool {
+    fn parts(value: &Canon) -> (Option<&str>, &Canon) {
+        match value {
+            Canon::Assign { var, value } => (Some(var.as_str()), value),
+            value => (None, value),
+        }
+    }
+    let (left_var, left_ranges) = parts(left);
+    let (right_var, right_ranges) = parts(right);
+    if let (Some(left), Some(right)) = (left_var, right_var)
+        && left != right
+    {
+        return false;
+    }
+    left_ranges == right_ranges
 }
 
 fn merge(mut ranges: Vec<Range>) -> Vec<Range> {

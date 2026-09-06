@@ -5,12 +5,14 @@ from pathlib import Path
 
 from foundations_curriculum_patch import (
     ExemplarKey,
+    ExemplarPatch,
     KpKey,
     NewExemplar,
     Rejection,
     apply_solution_sketches,
     insert_answer_contracts,
     insert_exemplars,
+    patch_exemplars,
 )
 
 FIXTURE = """\
@@ -253,6 +255,30 @@ class InsertAnswerContractsTest(FixtureFileCase):
         before = self.path.read_text()
         with self.assertRaisesRegex(Rejection, "has no answer field"):
             insert_answer_contracts(self.path, {key: '{"kind":"exact"}'}, write=True)
+        self.assertEqual(self.path.read_text(), before)
+
+
+class PatchExemplarsTest(FixtureFileCase):
+    def test_replaces_named_fields_and_preserves_the_rest(self):
+        key = ExemplarKey("adding-integers", "kp1", 1)
+        text, applied = patch_exemplars(
+            self.path,
+            {key: ExemplarPatch(problem="Compute $-8 + (-1)$.", solution_sketch="Add to get $-9$.")},
+            write=False,
+        )
+        self.assertEqual(applied, [key])
+        self.assertIn("problem: 'Compute $-8 + (-1)$.'", text)
+        self.assertIn('answer: "-9"', text)
+        self.assertIn("solution_sketch: 'Add to get $-9$.'", text)
+
+    def test_unknown_patch_is_rejected_without_writing(self):
+        before = self.path.read_text()
+        with self.assertRaises(Rejection):
+            patch_exemplars(
+                self.path,
+                {ExemplarKey("missing", "kp1", 0): ExemplarPatch(problem="No")},
+                write=True,
+            )
         self.assertEqual(self.path.read_text(), before)
 
 

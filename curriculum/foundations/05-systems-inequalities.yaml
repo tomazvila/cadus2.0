@@ -29,6 +29,15 @@ topics:
           - problem: 'True or false: $4 \ge 4$?'
             answer: "true"
             answer_contract: {"kind":"label","options":[["true"],["false"]]}
+            solution_sketch: '$4 \ge 4$ holds with equality.'
+          - problem: 'Is the statement $-7 < -2$ true or false?'
+            answer: "true"
+            answer_contract: {"kind":"label","options":[["true"],["false"]]}
+            solution_sketch: '$-7$ is to the left of $-2$ on the number line.'
+          - problem: 'True or false: $6 \ge 9$?'
+            answer: "false"
+            answer_contract: {"kind":"label","options":[["true"],["false"]]}
+            solution_sketch: '$6$ is less than $9$.'
         constraints: "integer comparisons; include negatives"
       - id: kp2
         name: "Test a value in an inequality"
@@ -42,6 +51,14 @@ topics:
             answer: "no"
             answer_contract: {"kind":"label","options":[["yes"],["no"]]}
             solution_sketch: '$5 - 2 = 3$, and $3 < 3$ is false.'
+          - problem: 'Is $x = 4$ a solution of $3x - 2 > 8$?'
+            answer: "yes"
+            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
+            solution_sketch: '$3(4) - 2 = 10 > 8$.'
+          - problem: 'Is $x = 1$ a solution of $6 - x < 4$?'
+            answer: "no"
+            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
+            solution_sketch: '$6 - 1 = 5$, and $5 < 4$ is false.'
         constraints: "substitute and compare; yes/no answers"
       - id: kp3
         name: "Boundary values and strictness"
@@ -52,6 +69,14 @@ topics:
             answer_contract: {"kind":"label","options":[["yes"],["no"]]}
             solution_sketch: '$6 \le 6$ is true.'
           - problem: 'Is $x = 4$ a solution of $x + 2 < 6$?'
+            answer: "no"
+            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
+            solution_sketch: '$6 < 6$ is false.'
+          - problem: 'Is $x = 5$ a solution of $x + 1 \le 6$?'
+            answer: "yes"
+            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
+            solution_sketch: '$6 \le 6$ is true.'
+          - problem: 'Is $x = 5$ a solution of $x + 1 < 6$?'
             answer: "no"
             answer_contract: {"kind":"label","options":[["yes"],["no"]]}
             solution_sketch: '$6 < 6$ is false.'
@@ -87,8 +112,20 @@ topics:
         exemplars:
           - problem: 'To graph $x \ge 3$, is the circle at $3$ open or closed?'
             answer: "closed"
+            answer_contract: {"kind":"label","options":[["closed"],["open"]]}
+            solution_sketch: '$\ge$ is inclusive, so the circle is closed.'
           - problem: 'To graph $x < -1$, is the circle at $-1$ open or closed?'
             answer: "open"
+            answer_contract: {"kind":"label","options":[["closed"],["open"]]}
+            solution_sketch: '$<$ is strict, so the circle is open.'
+          - problem: 'To graph $x \le 5$, is the circle at $5$ open or closed?'
+            answer: "closed"
+            answer_contract: {"kind":"label","options":[["closed"],["open"]]}
+            solution_sketch: '$\le$ is inclusive, so the circle is closed.'
+          - problem: 'To graph $x > -4$, is the circle at $-4$ open or closed?'
+            answer: "open"
+            answer_contract: {"kind":"label","options":[["closed"],["open"]]}
+            solution_sketch: '$>$ is strict, so the circle is open.'
         constraints: "closed for <= or >=; open for < or >"
       - id: kp2
         visuals: [{"kind":"number_line","min":"-10","max":"10","tick":"1","points":[],"intervals":[],"rays":[{"from":"-2","direction":"left","filled":false,"label":"x < -2"}],"caption":"Reference example: an open point at -2 with the ray extending left shows x < -2."}]
@@ -97,8 +134,20 @@ topics:
         exemplars:
           - problem: 'For $x > 2$, does the ray point left or right?'
             answer: "right"
+            answer_contract: {"kind":"label","options":[["right"],["left"]]}
+            solution_sketch: '$>$ points right.'
           - problem: 'Describe the graph of $x \le 0$.'
             answer: "closed circle at 0, ray to the left"
+            answer_contract: {"kind":"label","options":[["closed circle at 0, ray to the left"]]}
+            solution_sketch: '$\le$ is inclusive (closed) and points left (less than).'
+          - problem: 'For $x < 3$, does the ray point left or right?'
+            answer: "left"
+            answer_contract: {"kind":"label","options":[["right"],["left"]]}
+            solution_sketch: '$<$ points left.'
+          - problem: 'Describe the graph of $x \ge -2$.'
+            answer: "closed circle at -2, ray to the right"
+            answer_contract: {"kind":"label","options":[["closed circle at -2, ray to the right"]]}
+            solution_sketch: '$x \ge -2$ is inclusive (closed) and points right (greater than).'
         constraints: "> and >= point right; < and <= point left"
       - id: kp3
         visuals: [{"kind":"number_line","min":"-10","max":"10","tick":"1","points":[],"intervals":[],"rays":[{"from":"1","direction":"right","filled":true,"label":"x ≥ 1"}],"caption":"Reference example: read the graph as x ≥ 1 from the filled origin at 1 and the rightward ray."}]
@@ -107,8 +156,16 @@ topics:
         exemplars:
           - problem: 'A number line shows a closed circle at $-1$ with a ray to the left. Write the inequality.'
             answer: "x <= -1"
+            solution_sketch: 'A closed circle is inclusive; left means less than or equal.'
           - problem: 'A number line shows an open circle at $4$ with a ray to the right. Write the inequality.'
             answer: "x > 4"
+            solution_sketch: 'An open circle is strict; right means greater than.'
+          - problem: 'A number line shows a closed circle at $2$ with a ray to the right. Write the inequality.'
+            answer: "x >= 2"
+            solution_sketch: 'A closed circle is inclusive; right means greater than or equal.'
+          - problem: 'A number line shows an open circle at $-5$ with a ray to the left. Write the inequality.'
+            answer: "x < -5"
+            solution_sketch: 'An open circle is strict; left means less than.'
         constraints: "single ray; integer endpoint"
     diagnostic_exemplar:
       problem: 'A number line shows an open circle at $-3$ with a ray to the right. Write the inequality.'
@@ -142,8 +199,16 @@ topics:
         exemplars:
           - problem: 'Solve $x + 5 > 9$.'
             answer: "x > 4"
+            solution_sketch: 'Subtract $5$: $x > 4$.'
           - problem: 'Solve $x - 3 \le 2$.'
             answer: "x <= 5"
+            solution_sketch: 'Add $3$: $x \le 5$.'
+          - problem: 'Solve $x + 8 > 3$.'
+            answer: "x > -5"
+            solution_sketch: 'Subtract $8$: $x > -5$.'
+          - problem: 'Solve $x - 6 \le 1$.'
+            answer: "x <= 7"
+            solution_sketch: 'Add $6$: $x \le 7$.'
         constraints: "integer constants; keep the inequality direction"
       - id: kp2
         name: "Multiply or divide by a positive"
@@ -151,8 +216,16 @@ topics:
         exemplars:
           - problem: 'Solve $4x < 20$.'
             answer: "x < 5"
+            solution_sketch: 'Divide by $4$: $x < 5$.'
           - problem: 'Solve $\frac{x}{3} \ge 2$.'
             answer: "x >= 6"
+            solution_sketch: 'Multiply by $3$: $x \ge 6$.'
+          - problem: 'Solve $5x < 30$.'
+            answer: "x < 6"
+            solution_sketch: 'Divide by $5$: $x < 6$.'
+          - problem: 'Solve $\frac{x}{4} \ge 3$.'
+            answer: "x >= 12"
+            solution_sketch: 'Multiply by $4$: $x \ge 12$.'
         constraints: "positive coefficients only; no sign flips"
       - id: kp3
         visuals: [{"kind":"number_line","min":"-10","max":"10","tick":"1","points":[],"intervals":[],"rays":[{"from":"3","direction":"left","filled":true,"label":"x ≤ 3"}],"caption":"Reference example: solving x + 2 ≤ 5 gives x ≤ 3, a filled point at 3 with the ray extending left."}]
@@ -161,10 +234,20 @@ topics:
         exemplars:
           - problem: 'Solve $2x > 14$. On its number-line graph, is the circle at the boundary open or closed?'
             answer: "open"
+            answer_contract: {"kind":"label","options":[["closed"],["open"]]}
             solution_sketch: '$x > 7$; a strict inequality excludes the boundary, so the circle is open.'
           - problem: 'Solve $x + 6 \le 10$. On its number-line graph, does the shaded ray point left or right?'
             answer: "left"
+            answer_contract: {"kind":"label","options":[["right"],["left"]]}
             solution_sketch: '$x \le 4$; "at most" shades everything below the boundary.'
+          - problem: 'Solve $3x > 21$. On its number-line graph, is the circle at the boundary open or closed?'
+            answer: "open"
+            answer_contract: {"kind":"label","options":[["closed"],["open"]]}
+            solution_sketch: '$x > 7$; a strict inequality excludes the boundary.'
+          - problem: 'Solve $x + 4 \le 9$. On its number-line graph, does the shaded ray point left or right?'
+            answer: "left"
+            answer_contract: {"kind":"label","options":[["right"],["left"]]}
+            solution_sketch: '$x \le 5$; "at most" shades everything below the boundary.'
         constraints: "pair the solution with its number-line picture"
     diagnostic_exemplar:
       problem: 'Solve $\frac{x}{4} \ge 3$.'
@@ -199,6 +282,13 @@ topics:
             solution_sketch: '$2x \le 10$; $x \le 5$.'
           - problem: 'Solve $3x + 4 > 19$.'
             answer: "x > 5"
+            solution_sketch: '$3x > 15$; $x > 5$.'
+          - problem: 'Solve $3x - 4 \le 11$.'
+            answer: "x <= 5"
+            solution_sketch: '$3x \le 15$; $x \le 5$.'
+          - problem: 'Solve $2x + 5 > 17$.'
+            answer: "x > 6"
+            solution_sketch: '$2x > 12$; $x > 6$.'
         constraints: "undo addition first, then division; positive coefficients"
       - id: kp2
         name: "Two steps with fractions"
@@ -209,6 +299,13 @@ topics:
             solution_sketch: '$\frac{x}{2} < 5$; $x < 10$.'
           - problem: 'Solve $\frac{x}{4} - 1 \ge 1$.'
             answer: "x >= 8"
+            solution_sketch: '$\frac{x}{4} \ge 2$; $x \ge 8$.'
+          - problem: 'Solve $\frac{x}{3} + 1 < 5$.'
+            answer: "x < 12"
+            solution_sketch: '$\frac{x}{3} < 4$; $x < 12$.'
+          - problem: 'Solve $\frac{x}{5} - 2 \ge 0$.'
+            answer: "x >= 10"
+            solution_sketch: '$\frac{x}{5} \ge 2$; $x \ge 10$.'
         constraints: "unit-fraction coefficients; integer answers"
       - id: kp3
         name: "Solve, then check a value"
@@ -222,6 +319,14 @@ topics:
             answer: "yes"
             answer_contract: {"kind":"label","options":[["yes"],["no"]]}
             solution_sketch: '$2x \ge 8$; $x \ge 4$; the boundary $4$ is included.'
+          - problem: 'Solve $4x - 1 < 19$. Is $x = 5$ a solution? (yes/no)'
+            answer: "no"
+            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
+            solution_sketch: '$4x < 20$; $x < 5$; the boundary $5$ is excluded.'
+          - problem: 'Solve $3x + 2 \ge 14$. Is $x = 4$ included? (yes/no)'
+            answer: "yes"
+            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
+            solution_sketch: '$3x \ge 12$; $x \ge 4$; the boundary $4$ is included.'
         constraints: "check the boundary value against strictness"
     diagnostic_exemplar:
       problem: 'Solve $\frac{x}{3} + 2 \le 5$.'
@@ -259,6 +364,12 @@ topics:
           - problem: 'Solve $-x + 2 \ge 5$.'
             answer: "x <= -3"
             solution_sketch: '$-x \ge 3$; multiply by $-1$ and reverse: $x \le -3$.'
+          - problem: 'Solve $-4x < 20$.'
+            answer: "x > -5"
+            solution_sketch: 'Divide by $-4$ and reverse: $x > -5$.'
+          - problem: 'Solve $-x + 3 \ge 7$.'
+            answer: "x <= -4"
+            solution_sketch: '$-x \ge 4$; multiply by $-1$ and reverse.'
         constraints: "reverse the inequality when dividing/multiplying by a negative"
       - id: kp2
         name: "Multi-step inequalities"
@@ -270,6 +381,12 @@ topics:
           - problem: 'Solve $5 - 2x \le 11$.'
             answer: "x >= -3"
             solution_sketch: '$-2x \le 6$; $x \ge -3$.'
+          - problem: 'Solve $4(x - 1) > x + 8$.'
+            answer: "x > 4"
+            solution_sketch: '$4x - 4 > x + 8$; $3x > 12$; $x > 4$.'
+          - problem: 'Solve $7 - 3x \le 22$.'
+            answer: "x >= -5"
+            solution_sketch: '$-3x \le 15$; $x \ge -5$.'
         constraints: "simplify both sides first; flip only for a negative divisor"
       - id: kp3
         name: "Variables on both sides"
@@ -281,6 +398,12 @@ topics:
           - problem: 'Solve $4 - 3x \ge 2x - 6$.'
             answer: "x <= 2"
             solution_sketch: '$10 \ge 5x$; $x \le 2$.'
+          - problem: 'Solve $3x + 5 < 6x - 4$.'
+            answer: "x > 3"
+            solution_sketch: '$9 < 3x$; $x > 3$.'
+          - problem: 'Solve $6 - 2x \ge 3x - 9$.'
+            answer: "x <= 3"
+            solution_sketch: '$15 \ge 5x$; $x \le 3$.'
         constraints: "collect variables on the side that keeps the coefficient positive when possible"
     diagnostic_exemplar:
       problem: 'Solve $5 - 2x \ge x - 7$.'
@@ -314,8 +437,16 @@ topics:
         exemplars:
           - problem: 'Write an inequality: "$x$ is at least $12$".'
             answer: "x >= 12"
+            solution_sketch: '"At least" means $\ge$.'
           - problem: 'Write an inequality for the number of items $n$: "fewer than $8$ items".'
             answer: "n < 8"
+            solution_sketch: '"Fewer than" is strict: $n < 8$.'
+          - problem: 'Write an inequality: "$x$ is at most $20$".'
+            answer: "x <= 20"
+            solution_sketch: '"At most" means $\le$.'
+          - problem: 'Write an inequality for the number of items $n$: "more than $5$ items".'
+            answer: "n > 5"
+            solution_sketch: '"More than" is strict: $n > 5$.'
         constraints: "at least -> >=; at most -> <=; more/fewer than -> strict"
       - id: kp2
         name: "Translate phrases with operations"
@@ -323,8 +454,20 @@ topics:
         exemplars:
           - problem: 'Write an inequality: "$5$ more than twice $x$ is at most $17$".'
             answer: "2x + 5 <= 17"
+            answer_contract: {"kind":"label","options":[["2x + 5 <= 17"]]}
+            solution_sketch: '"At most" is $\le$; the product $2x$ comes first.'
           - problem: 'Write an inequality: "the quotient of $y$ and $3$ exceeds $6$".'
             answer: "y/3 > 6"
+            answer_contract: {"kind":"label","options":[["y/3 > 6"]]}
+            solution_sketch: '"Exceeds" is a strict $>$.'
+          - problem: 'Write an inequality: "$7$ more than three times a number is at most $28$".'
+            answer: "3x + 7 <= 28"
+            answer_contract: {"kind":"label","options":[["3x + 7 <= 28"]]}
+            solution_sketch: '"At most" is $\le$; the product $3x$ comes first.'
+          - problem: 'Write an inequality: "the quotient of $z$ and $4$ exceeds $9$".'
+            answer: "z/4 > 9"
+            answer_contract: {"kind":"label","options":[["z/4 > 9"]]}
+            solution_sketch: '"Exceeds" is a strict $>$.'
         constraints: "one or two operations; do not solve"
       - id: kp3
         name: "Interpret an inequality in context"
@@ -332,8 +475,16 @@ topics:
         exemplars:
           - problem: 'You need $n \ge 30$ points to advance. What is the fewest points that works?'
             answer: "30"
+            solution_sketch: 'The fewest value meeting $n \ge 30$ is $30$ itself.'
           - problem: 'A bag holds at most $15$ kg. Write the inequality for the weight $w$.'
             answer: "w <= 15"
+            solution_sketch: '"At most" means $\le$.'
+          - problem: 'You need at least $50$ points to qualify. What is the fewest points that works?'
+            answer: "50"
+            solution_sketch: 'The fewest value meeting $n \ge 50$ is $50$ itself.'
+          - problem: 'A crate holds at most $40$ kg. Write the inequality for the weight $w$.'
+            answer: "w <= 40"
+            solution_sketch: '"At most" means $\le$.'
         constraints: "single constraint; state units where natural"
     diagnostic_exemplar:
       problem: 'Write an inequality: "three less than a number $n$ is more than $10$".'
@@ -369,10 +520,19 @@ topics:
           - problem: 'Is $x = 3$ in the solution set of $1 < x < 5$?'
             answer: "yes"
             answer_contract: {"kind":"label","options":[["yes"],["no"]]}
+            solution_sketch: '$3$ lies between $1$ and $5$.'
           - problem: 'Is $x = 0$ a solution of $x < -2$ or $x > 1$?'
             answer: "no"
             answer_contract: {"kind":"label","options":[["yes"],["no"]]}
             solution_sketch: '$0$ satisfies neither piece.'
+          - problem: 'Is $x = 2$ in the solution set of $-1 < x < 6$?'
+            answer: "yes"
+            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
+            solution_sketch: '$2$ lies between $-1$ and $6$.'
+          - problem: 'Is $x = -3$ a solution of $x < -5$ or $x > 2$?'
+            answer: "no"
+            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
+            solution_sketch: '$-3$ satisfies neither piece.'
         constraints: "test one value against the graph or the symbols"
       - id: kp2
         name: "'And' (between) inequalities"
@@ -383,6 +543,13 @@ topics:
             solution_sketch: 'Subtract $3$ from all three parts.'
           - problem: 'Solve $2 \le 2x \le 10$.'
             answer: "1 <= x <= 5"
+            solution_sketch: 'Divide all parts by $2$.'
+          - problem: 'Solve $-2 < x + 4 < 9$.'
+            answer: "-6 < x < 5"
+            solution_sketch: 'Subtract $4$ from all three parts.'
+          - problem: 'Solve $4 \le 2x \le 16$.'
+            answer: "2 <= x <= 8"
+            solution_sketch: 'Divide all three parts by $2$.'
         constraints: "apply each operation to all three parts; one operation needed"
       - id: kp3
         name: "'Or' inequalities"
@@ -390,8 +557,20 @@ topics:
         exemplars:
           - problem: 'Solve $x - 1 < -2$ or $x - 1 > 3$.'
             answer: "x < -1 or x > 4"
+            answer_contract: {"kind":"inequality_union"}
+            solution_sketch: '$x - 1 < -2$ gives $x < -1$; $x - 1 > 3$ gives $x > 4$.'
           - problem: 'Solve $2x \le -6$ or $x + 1 > 5$.'
             answer: "x <= -3 or x > 4"
+            answer_contract: {"kind":"inequality_union"}
+            solution_sketch: '$2x \le -6$ gives $x \le -3$; $x + 1 > 5$ gives $x > 4$.'
+          - problem: 'Solve $x - 2 < -3$ or $x - 2 > 4$.'
+            answer: "x < -1 or x > 6"
+            answer_contract: {"kind":"inequality_union"}
+            solution_sketch: '$x < -1$ or $x > 6$.'
+          - problem: 'Solve $3x \le -9$ or $x + 2 > 6$.'
+            answer: "x <= -3 or x > 4"
+            answer_contract: {"kind":"inequality_union"}
+            solution_sketch: '$x \le -3$ or $x > 4$.'
         constraints: "solve each piece separately; keep the union"
     diagnostic_exemplar:
       problem: 'Solve $x + 2 < 1$ or $x - 4 \ge 1$.'
@@ -427,6 +606,13 @@ topics:
             solution_sketch: 'Add $1$: $-4 \le 2x < 8$; divide by $2$.'
           - problem: 'Solve $3 < 2x + 1 \le 11$.'
             answer: "1 < x <= 5"
+            solution_sketch: 'Subtract $1$: $2 < 2x \le 10$; divide by $2$.'
+          - problem: 'Solve $-3 \le 2x + 1 < 9$.'
+            answer: "-2 <= x < 4"
+            solution_sketch: 'Subtract $1$: $-4 \le 2x < 8$; divide by $2$.'
+          - problem: 'Solve $5 < 3x - 1 \le 14$.'
+            answer: "2 < x <= 5"
+            solution_sketch: 'Add $1$: $6 < 3x \le 15$; divide by $3$.'
         constraints: "keep operations balanced across all parts"
       - id: kp2
         name: "Three-part with a negative coefficient"
@@ -438,6 +624,12 @@ topics:
           - problem: 'Solve $1 \le 5 - x < 7$.'
             answer: "-2 < x <= 4"
             solution_sketch: 'Subtract $5$: $-4 \le -x < 2$; multiply by $-1$: $4 \ge x > -2$.'
+          - problem: 'Solve $-8 < -2x \le 6$.'
+            answer: "-3 <= x < 4"
+            solution_sketch: 'Divide by $-2$ and reverse both signs.'
+          - problem: 'Solve $2 \le 6 - x < 9$.'
+            answer: "-3 < x <= 4"
+            solution_sketch: 'Subtract $6$: $-4 \le -x < 3$; multiply by $-1$.'
         constraints: "both inequality signs flip; rewrite smallest-to-largest"
       - id: kp3
         name: "Multi-step 'or' unions"
@@ -445,10 +637,20 @@ topics:
         exemplars:
           - problem: 'Solve $3x + 1 < -5$ or $2x - 3 > 5$.'
             answer: "x < -2 or x > 4"
+            answer_contract: {"kind":"inequality_union"}
             solution_sketch: '$3x < -6$ gives $x < -2$; $2x > 8$ gives $x > 4$.'
           - problem: 'Solve $4 - x \ge 6$ or $3x \ge 6$.'
             answer: "x <= -2 or x >= 2"
+            answer_contract: {"kind":"inequality_union"}
             solution_sketch: '$-x \ge 2$ flips to $x \le -2$; $x \ge 2$.'
+          - problem: 'Solve $2x + 3 < -7$ or $3x - 1 > 8$.'
+            answer: "x < -5 or x > 3"
+            answer_contract: {"kind":"inequality_union"}
+            solution_sketch: '$2x < -10$ gives $x < -5$; $3x > 9$ gives $x > 3$.'
+          - problem: 'Solve $5 - x \ge 8$ or $2x \ge 10$.'
+            answer: "x <= -3 or x >= 5"
+            answer_contract: {"kind":"inequality_union"}
+            solution_sketch: '$-x \ge 3$ flips to $x \le -3$; $x \ge 5$.'
         constraints: "each piece takes two steps; keep the union"
     diagnostic_exemplar:
       problem: 'Solve $-4 < -2x \le 6$.'
@@ -490,14 +692,20 @@ topics:
         exemplars:
           - problem: 'Write the solution of $2 \le x \le 7$ in interval notation.'
             answer: "[2, 7]"
+            answer_contract: {"kind":"inequality_union"}
             solution_sketch: 'Both endpoints are included, so both brackets are square.'
           - problem: 'Write $0 < x \le 5$ in interval notation.'
             answer: "(0, 5]"
+            answer_contract: {"kind":"inequality_union"}
             solution_sketch: 'Strict at $0$ gives a round bracket; inclusive at $5$ gives a square one.'
-          - problem: 'Is $3$ a member of the interval $(3, 8]$?'
-            answer: "no"
-            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
-            solution_sketch: 'The round bracket at $3$ excludes the endpoint itself.'
+          - problem: 'Write $1 < x \le 6$ in interval notation.'
+            answer: "(1, 6]"
+            answer_contract: {"kind":"inequality_union"}
+            solution_sketch: 'Strict at $1$ is open; inclusive at $6$ is closed.'
+          - problem: 'Write $-3 \le x < 4$ in interval notation.'
+            answer: "[-3, 4)"
+            answer_contract: {"kind":"inequality_union"}
+            solution_sketch: 'Inclusive at $-3$ gives a square bracket; strict at $4$ gives a round bracket.'
         constraints: "bounded intervals only; convert inequality -> interval and test one endpoint; integer endpoints"
       - id: kp2
         name: "Unbounded intervals with infinity"
@@ -505,11 +713,20 @@ topics:
         exemplars:
           - problem: 'Write $x > 2$ in interval notation.'
             answer: "(2, ∞)"
+            answer_contract: {"kind":"inequality_union"}
             solution_sketch: 'A ray to the right; $\infty$ is not a number, so it always takes a round bracket.'
           - problem: 'Write $x \le -1$ in interval notation.'
             answer: "(-∞, -1]"
+            answer_contract: {"kind":"inequality_union"}
+            solution_sketch: 'Every value at or below $-1$; the round bracket at $-\infty$ never closes, and the square bracket at $-1$ includes it.'
           - problem: 'Write the interval $[4, \infty)$ as an inequality.'
             answer: "x >= 4"
+            answer_contract: {"kind":"inequality_union"}
+            solution_sketch: 'A square bracket at $4$ becomes $\ge$; the ray extends right without bound.'
+          - problem: 'Write $(-\infty, 3]$ as an inequality.'
+            answer: "x <= 3"
+            answer_contract: {"kind":"inequality_union"}
+            solution_sketch: 'The ray extends left and includes $3$.'
         constraints: "single rays both directions; infinity always gets a round bracket; convert both ways"
       - id: kp3
         name: "Unions for 'or' solutions"
@@ -517,12 +734,20 @@ topics:
         exemplars:
           - problem: 'Write the solution of $x < -2$ or $x > 4$ in interval notation.'
             answer: "(-∞, -2) ∪ (4, ∞)"
+            answer_contract: {"kind":"inequality_union"}
             solution_sketch: 'Each ray becomes an interval; the "or" is written with the union symbol $\cup$.'
           - problem: 'Solve $2x + 1 \le -3$ or $x - 3 > 0$ and give the answer in interval notation.'
             answer: "(-∞, -2] ∪ (3, ∞)"
+            answer_contract: {"kind":"inequality_union"}
             solution_sketch: '$2x \le -4$ gives $x \le -2$; the second piece gives $x > 3$.'
           - problem: 'Write $(-\infty, 1) \cup [5, \infty)$ as inequalities joined by "or".'
             answer: "x < 1 or x >= 5"
+            answer_contract: {"kind":"inequality_union"}
+            solution_sketch: 'The interval $(-\infty, 1)$ is $x < 1$; $[5, \infty)$ is $x \ge 5$.'
+          - problem: 'Solve $x + 1 \le -4$ or $2x - 3 > 5$ and give the answer in interval notation.'
+            answer: "(-∞, -5] ∪ (4, ∞)"
+            answer_contract: {"kind":"inequality_union"}
+            solution_sketch: '$x \le -5$ or $x > 4$, so $(-\infty,-5] \cup (4,\infty)$.'
         constraints: "two-piece unions from 'or' inequalities; at most two solving steps per piece; convert both ways"
     diagnostic_exemplar:
       problem: 'Solve $3x + 2 < -4$ or $x - 2 \ge 1$ and give the answer in interval notation.'
@@ -563,10 +788,20 @@ topics:
         exemplars:
           - problem: 'T-shirts cost €8 each plus a flat €10 shipping fee. You can spend at most €50. How many shirts can you buy?'
             answer: "at most 5"
+            answer_contract: {"kind":"label","options":[["at most 5"],["at least 5"],["exactly 5"]]}
             solution_sketch: '$8x + 10 \le 50$; $x \le 5$.'
           - problem: 'A taxi charges €3 plus €2 per kilometre. What distances keep the fare at most €15?'
             answer: "at most 6 km"
+            answer_contract: {"kind":"label","options":[["at most 6 km"],["at least 6 km"],["exactly 6 km"]]}
             solution_sketch: '$2k + 3 \le 15$; $k \le 6$.'
+          - problem: 'Souvenirs cost €6 each plus a flat €14 shipping fee. You can spend at most €62. How many souvenirs can you buy?'
+            answer: "at most 8"
+            answer_contract: {"kind":"label","options":[["at most 8"]]}
+            solution_sketch: '$6x + 14 \le 62$; $x \le 8$.'
+          - problem: 'A courier charges €4 plus €3 per kilometre. What distances keep the fare at most €31?'
+            answer: "at most 9 km"
+            answer_contract: {"kind":"label","options":[["at most 9 km"]]}
+            solution_sketch: '$3k + 4 \le 31$; $k \le 9$.'
         constraints: "cost model with a cap; integer boundary"
       - id: kp2
         name: "Minimum (at least) problems"
@@ -574,10 +809,20 @@ topics:
         exemplars:
           - problem: 'Your first three marks are $6$, $8$, and $7$ on the $0$–$10$ scale. What must you score on the fourth to average at least $7.5$?'
             answer: "at least 9"
+            answer_contract: {"kind":"label","options":[["at least 9"],["at most 9"],["exactly 9"]]}
             solution_sketch: '$\frac{21 + x}{4} \ge 7.5$; $21 + x \ge 30$; $x \ge 9$.'
           - problem: 'You have €60 and save €20 per week. After how many weeks will you have more than €200?'
             answer: "more than 7 weeks (so at least 8 full weeks)"
+            answer_contract: {"kind":"label","options":[["more than 7 weeks (so at least 8 full weeks)"],["at most 7 weeks"],["exactly 7 weeks"]]}
             solution_sketch: '$60 + 20w > 200$; $w > 7$.'
+          - problem: 'Your first three marks are $7$, $8$, and $9$ on the $0$-$10$ scale. What must you score on the fourth to average at least $8.5$?'
+            answer: "at least 10"
+            answer_contract: {"kind":"label","options":[["at least 10"]]}
+            solution_sketch: '$\frac{24 + x}{4} \ge 8.5$; $24 + x \ge 34$; $x \ge 10$.'
+          - problem: 'You have €80 and save €15 per week. After how many weeks will you have more than €155?'
+            answer: "more than 5 weeks (so at least 6 full weeks)"
+            answer_contract: {"kind":"label","options":[["more than 5 weeks (so at least 6 full weeks)"]]}
+            solution_sketch: '$80 + 15w > 155$; $w > 5$.'
         constraints: "at-least targets; averages or savings"
       - id: kp3
         name: "Round the boundary sensibly"
@@ -589,6 +834,12 @@ topics:
           - problem: 'A van seats at most $12$ people and $5$ seats are taken. How many more people can board?'
             answer: "7"
             solution_sketch: '$5 + n \le 12$; $n \le 7$.'
+          - problem: 'Rides cost €3 each plus €5 entry, and you have €23. How many rides can you go on?'
+            answer: "6"
+            solution_sketch: '$3r + 5 \le 23$; $r \le 6$.'
+          - problem: 'A bus seats at most $50$ people and $32$ seats are taken. How many more people can board?'
+            answer: "18"
+            solution_sketch: '$32 + n \le 50$; $n \le 18$.'
         constraints: "whole-number contexts; round down for at-most caps"
     diagnostic_exemplar:
       problem: 'Rides cost €5 each plus a €7 entry fee, and you have €30. How many rides can you go on?'
@@ -621,8 +872,16 @@ topics:
         exemplars:
           - problem: 'Solve $|x| < 5$.'
             answer: "-5 < x < 5"
+            solution_sketch: 'One bounded interval within $5$ units of $0$: $-5 < x < 5$.'
           - problem: 'Solve $|x| \le 3$.'
             answer: "-3 <= x <= 3"
+            solution_sketch: 'Inclusive at both boundaries.'
+          - problem: 'Solve $|x| < 8$.'
+            answer: "-8 < x < 8"
+            solution_sketch: 'One bounded interval within $8$ units of $0$: $-8 < x < 8$.'
+          - problem: 'Solve $|x| \le 6$.'
+            answer: "-6 <= x <= 6"
+            solution_sketch: 'Inclusive at both boundaries.'
         constraints: "less-than gives a bounded interval"
       - id: kp2
         name: "|x| > a becomes an 'or' inequality"
@@ -630,8 +889,20 @@ topics:
         exemplars:
           - problem: 'Solve $|x| > 4$.'
             answer: "x < -4 or x > 4"
+            answer_contract: {"kind":"inequality_union"}
+            solution_sketch: 'Points more than $4$ from zero.'
           - problem: 'Solve $|x| \ge 2$.'
             answer: "x <= -2 or x >= 2"
+            answer_contract: {"kind":"inequality_union"}
+            solution_sketch: 'Points at least $2$ from zero.'
+          - problem: 'Solve $|x| > 5$.'
+            answer: "x < -5 or x > 5"
+            answer_contract: {"kind":"inequality_union"}
+            solution_sketch: 'Points more than $5$ from zero.'
+          - problem: 'Solve $|x| \ge 3$.'
+            answer: "x <= -3 or x >= 3"
+            answer_contract: {"kind":"inequality_union"}
+            solution_sketch: 'Points at least $3$ from zero.'
         constraints: "greater-than gives two rays"
       - id: kp3
         name: "Degenerate cases"
@@ -639,10 +910,20 @@ topics:
         exemplars:
           - problem: 'Solve $|x| < -2$.'
             answer: "no solution"
+            answer_contract: {"kind":"label","options":[["no solution"]]}
             solution_sketch: 'An absolute value is never negative.'
           - problem: 'Solve $|x| \ge -1$.'
             answer: "all real numbers"
+            answer_contract: {"kind":"label","options":[["all real numbers"]]}
             solution_sketch: '$|x| \ge 0 > -1$ always.'
+          - problem: 'Solve $|x| \le -4$.'
+            answer: "no solution"
+            answer_contract: {"kind":"label","options":[["no solution"]]}
+            solution_sketch: 'An absolute value is never negative.'
+          - problem: 'Solve $|x| > -6$.'
+            answer: "all real numbers"
+            answer_contract: {"kind":"label","options":[["all real numbers"]]}
+            solution_sketch: '$|x| \ge 0 > -6$ always.'
         constraints: "negative right-hand side only"
     diagnostic_exemplar:
       problem: 'Solve $|x| > 3$.'
@@ -684,6 +965,12 @@ topics:
           - problem: 'Solve $|2x - 3| \le 5$.'
             answer: "-1 <= x <= 4"
             solution_sketch: '$-5 \le 2x - 3 \le 5$; add $3$, divide by $2$.'
+          - problem: 'Solve $|x - 5| < 4$.'
+            answer: "1 < x < 9"
+            solution_sketch: '$-4 < x - 5 < 4$; add $5$.'
+          - problem: 'Solve $|3x + 1| \le 10$.'
+            answer: "-11/3 <= x <= 3"
+            solution_sketch: '$-10 \le 3x + 1 \le 10$; subtract $1$, divide by $3$.'
         constraints: "linear inside; bounded interval answers"
       - id: kp2
         name: "|linear| > a"
@@ -691,9 +978,20 @@ topics:
         exemplars:
           - problem: 'Solve $|2x + 1| \ge 5$.'
             answer: "x >= 2 or x <= -3"
+            answer_contract: {"kind":"inequality_union"}
             solution_sketch: '$2x + 1 \ge 5$ or $2x + 1 \le -5$.'
           - problem: 'Solve $|x + 4| > 2$.'
             answer: "x > -2 or x < -6"
+            answer_contract: {"kind":"inequality_union"}
+            solution_sketch: '$x + 4 > 2$ or $x + 4 < -2$.'
+          - problem: 'Solve $|3x - 2| \ge 7$.'
+            answer: "x >= 3 or x <= -5/3"
+            answer_contract: {"kind":"inequality_union"}
+            solution_sketch: '$3x - 2 \ge 7$ or $3x - 2 \le -7$.'
+          - problem: 'Solve $|x + 6| > 3$.'
+            answer: "x > -3 or x < -9"
+            answer_contract: {"kind":"inequality_union"}
+            solution_sketch: '$x + 6 > 3$ or $x + 6 < -3$.'
         constraints: "two-ray answers; keep the union"
       - id: kp3
         name: "Isolate the absolute value first"
@@ -704,6 +1002,14 @@ topics:
             solution_sketch: '$|x - 1| \le 3$; $-3 \le x - 1 \le 3$.'
           - problem: 'Solve $3|x| - 5 > 7$.'
             answer: "x < -4 or x > 4"
+            answer_contract: {"kind":"inequality_union"}
+            solution_sketch: '$|x| > 4$.'
+          - problem: 'Solve $3|x - 2| + 1 \le 13$.'
+            answer: "-2 <= x <= 6"
+            solution_sketch: '$|x - 2| \le 4$; $-4 \le x - 2 \le 4$.'
+          - problem: 'Solve $2|x| - 3 > 5$.'
+            answer: "x < -4 or x > 4"
+            answer_contract: {"kind":"inequality_union"}
             solution_sketch: '$|x| > 4$.'
         constraints: "isolate the absolute value before splitting into cases"
     diagnostic_exemplar:
@@ -739,9 +1045,20 @@ topics:
         exemplars:
           - problem: 'For $y > 2x + 1$, is the boundary line solid or dashed?'
             answer: "dashed"
+            answer_contract: {"kind":"label","options":[["dashed"],["solid"]]}
             solution_sketch: 'Strict inequality ($>$) $\to$ dashed.'
           - problem: 'For $y \le -x + 3$, is the boundary line solid or dashed?'
             answer: "solid"
+            answer_contract: {"kind":"label","options":[["dashed"],["solid"]]}
+            solution_sketch: 'Inclusive inequality ($\le$) $\to$ solid.'
+          - problem: 'For $y < 3x - 2$, is the boundary line solid or dashed?'
+            answer: "dashed"
+            answer_contract: {"kind":"label","options":[["dashed"],["solid"]]}
+            solution_sketch: 'Strict inequality ($<$) $\to$ dashed.'
+          - problem: 'For $y \ge -2x + 1$, is the boundary line solid or dashed?'
+            answer: "solid"
+            answer_contract: {"kind":"label","options":[["dashed"],["solid"]]}
+            solution_sketch: 'Inclusive inequality ($\ge$) $\to$ solid.'
         constraints: "solid for <= or >=; dashed for < or >"
       - id: kp2
         visuals: [{"kind":"coordinate","x_min":"-6","x_max":"6","y_min":"-6","y_max":"6","x_tick":"1","y_tick":"1","points":[],"segments":[],"shaded_half_planes":[{"through_a":{"x":"-4","y":"-4"},"through_b":{"x":"4","y":"4"},"solid":false,"shade_toward":{"x":"4","y":"0"},"label":"y < x"}],"caption":"Reference example: testing (4,0) in y < x gives a true statement, so the region containing (4,0) is shaded."}]
@@ -756,6 +1073,14 @@ topics:
             answer: "yes"
             answer_contract: {"kind":"label","options":[["yes"],["no"]]}
             solution_sketch: '$4 \ge 2(1) + 1 = 3$ is true.'
+          - problem: 'Is $(1, 1)$ a solution of $y < 2x + 3$?'
+            answer: "yes"
+            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
+            solution_sketch: '$1 < 2 + 3 = 5$ is true.'
+          - problem: 'Is $(0, -1)$ a solution of $y \ge x - 4$?'
+            answer: "yes"
+            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
+            solution_sketch: '$-1 \ge -4$ is true.'
         constraints: "substitute a test point; true -> shade that side"
       - id: kp3
         visuals: [{"kind":"coordinate","x_min":"-6","x_max":"6","y_min":"-6","y_max":"6","x_tick":"1","y_tick":"1","points":[],"segments":[],"shaded_half_planes":[{"through_a":{"x":"1","y":"0"},"through_b":{"x":"2","y":"1"},"solid":true,"shade_toward":{"x":"0","y":"0"},"label":"y ≤ x - 1"}],"caption":"Reference example: the origin test on y ≤ x - 1 shades the side containing (0,0)."}]
@@ -770,6 +1095,14 @@ topics:
             answer: "yes"
             answer_contract: {"kind":"label","options":[["yes"],["no"]]}
             solution_sketch: '$0 > -1$ is true.'
+          - problem: 'For $3x + 2y \le 12$, does the shaded region include the origin?'
+            answer: "yes"
+            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
+            solution_sketch: '$0 \le 12$ is true.'
+          - problem: 'For $y > x + 2$, does the shaded region include the origin?'
+            answer: "no"
+            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
+            solution_sketch: '$0 > 2$ is false.'
         constraints: "the origin is the easiest test point unless it is on the line"
     diagnostic_exemplar:
       problem: 'For $y > x - 1$, state whether the boundary is dashed or solid and whether $(0, 0)$ is a solution.'
@@ -810,6 +1143,14 @@ topics:
             answer: "yes"
             answer_contract: {"kind":"label","options":[["yes"],["no"]]}
             solution_sketch: '$2 + 3 = 5$ and $2(2) + 1 = 5$.'
+          - problem: 'Is $(2, 7)$ the solution of the system $y = 2x + 3$ and $y = x + 5$?'
+            answer: "yes"
+            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
+            solution_sketch: '$2(2) + 3 = 7$ and $2 + 5 = 7$.'
+          - problem: 'Is $(3, 4)$ the solution of $y = x + 1$ and $y = 2x - 2$?'
+            answer: "yes"
+            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
+            solution_sketch: '$3 + 1 = 4$ and $2(3) - 2 = 4$.'
         constraints: "check the point in BOTH equations"
       - id: kp2
         name: "Reject a pair that fails one equation"
@@ -823,6 +1164,14 @@ topics:
             answer: "no"
             answer_contract: {"kind":"label","options":[["yes"],["no"]]}
             solution_sketch: '$5$ holds, but $6 - 1 = 5 \ne 4$.'
+          - problem: 'Is $(4, 1)$ a solution of the system $x + y = 5$ and $x - y = 2$?'
+            answer: "no"
+            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
+            solution_sketch: '$4 + 1 = 5$ holds, but $4 - 1 = 3 \ne 2$.'
+          - problem: 'Is $(3, 2)$ a solution of $2x + y = 8$ and $x - y = 2$?'
+            answer: "no"
+            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
+            solution_sketch: '$8$ holds, but $3 - 2 = 1 \ne 2$.'
         constraints: "one equation passes, the other fails"
       - id: kp3
         name: "Pick the solution from candidates"
@@ -834,6 +1183,12 @@ topics:
           - problem: 'Which of $(0, 2)$ or $(4, 6)$ solves $y = x + 2$ and $x + y = 10$?'
             answer: "(4, 6)"
             solution_sketch: '$6 = 4 + 2$ and $4 + 6 = 10$.'
+          - problem: 'Which of $(2, 5)$ or $(3, 7)$ solves the system $y = 2x + 1$ and $y = x + 4$?'
+            answer: "(3, 7)"
+            solution_sketch: '$(3, 7)$ satisfies both; $(2, 5)$ fails $y = x + 4$.'
+          - problem: 'Which of $(1, 4)$ or $(5, 8)$ solves $y = x + 3$ and $x + y = 13$?'
+            answer: "(5, 8)"
+            solution_sketch: '$8 = 5 + 3$ and $5 + 8 = 13$.'
         constraints: "two candidates; exactly one works"
     diagnostic_exemplar:
       problem: 'Which of $(1, 4)$ or $(3, 2)$ solves the system $x + y = 5$ and $2x - y = 4$?'
@@ -871,6 +1226,13 @@ topics:
             solution_sketch: '$x + 1 = -x + 5$; $2x = 4$; $x = 2$; $y = 3$.'
           - problem: 'Where do the lines $y = 2x$ and $y = x + 3$ intersect?'
             answer: "(3, 6)"
+            solution_sketch: '$2x = x + 3$; $x = 3$; $y = 6$.'
+          - problem: 'Where do the lines $y = x + 2$ and $y = -x + 8$ intersect?'
+            answer: "(3, 5)"
+            solution_sketch: '$x + 2 = -x + 8$; $2x = 6$; $x = 3$; $y = 5$.'
+          - problem: 'Where do the lines $y = 3x$ and $y = x + 6$ intersect?'
+            answer: "(3, 9)"
+            solution_sketch: '$3x = x + 6$; $x = 3$; $y = 9$.'
         constraints: "the intersection point is the solution"
       - id: kp2
         visuals: [{"kind":"coordinate","x_min":"-8","x_max":"8","y_min":"-8","y_max":"8","x_tick":"1","y_tick":"1","points":[{"x":"1","y":"3","label":"I"}],"segments":[{"from":{"x":"-2","y":"0","label":null},"to":{"x":"4","y":"6","label":null}},{"from":{"x":"-2","y":"6","label":null},"to":{"x":"4","y":"0","label":null}}],"caption":"Reference example: The reference lines y = x + 2 and y = -x + 4 intersect at I = (1,3). Only the displayed segments are drawn."}]
@@ -882,6 +1244,13 @@ topics:
             solution_sketch: '$x + (x + 2) = 4$; $x = 1$; $y = 3$.'
           - problem: 'Where do the lines $y = 3$ and $x = 2$ intersect?'
             answer: "(2, 3)"
+            solution_sketch: 'A horizontal and a vertical line meet where their fixed values pair up.'
+          - problem: 'Graph $x + y = 7$ and $y = x + 1$. Where do they intersect?'
+            answer: "(3, 4)"
+            solution_sketch: '$x + (x + 1) = 7$; $x = 3$; $y = 4$.'
+          - problem: 'Where do the lines $y = -4$ and $x = 3$ intersect?'
+            answer: "(3, -4)"
+            solution_sketch: 'A horizontal and a vertical line meet where their fixed values pair up.'
         constraints: "standard form, slope-intercept, and horizontal/vertical lines"
       - id: kp3
         visuals: [{"kind":"coordinate","x_min":"-8","x_max":"8","y_min":"-8","y_max":"8","x_tick":"1","y_tick":"1","points":[{"x":"1","y":"3","label":"I"}],"segments":[{"from":{"x":"-2","y":"0","label":null},"to":{"x":"4","y":"6","label":null}},{"from":{"x":"-2","y":"6","label":null},"to":{"x":"4","y":"0","label":null}}],"caption":"Reference example: The reference lines y = x + 2 and y = -x + 4 intersect at I = (1,3). Only the displayed segments are drawn."}]
@@ -890,10 +1259,20 @@ topics:
         exemplars:
           - problem: 'The graphs suggest $(2, 3)$ solves $y = 2x - 1$ and $y = x + 1$. Verify.'
             answer: "yes, it checks in both"
+            answer_contract: {"kind":"label","options":[["yes, it checks in both"]]}
             solution_sketch: '$2(2) - 1 = 3$ and $2 + 1 = 3$.'
           - problem: 'The graphs suggest $(3, 1)$ solves $x + y = 4$ and $x - y = 1$. Verify.'
             answer: "no; it fails x - y = 1"
+            answer_contract: {"kind":"label","options":[["no; it fails x - y = 1"]]}
             solution_sketch: '$3 + 1 = 4$ holds, but $3 - 1 = 2 \ne 1$.'
+          - problem: 'The graphs suggest $(3, 4)$ solves $y = 3x - 5$ and $y = x + 1$. Verify.'
+            answer: "yes, it checks in both"
+            answer_contract: {"kind":"label","options":[["yes, it checks in both"]]}
+            solution_sketch: '$3(3) - 5 = 4$ and $3 + 1 = 4$.'
+          - problem: 'The graphs suggest $(2, 5)$ solves $x + y = 7$ and $x - y = -2$. Verify.'
+            answer: "no; it fails x - y = -2"
+            answer_contract: {"kind":"label","options":[["no; it fails x - y = -2"]]}
+            solution_sketch: '$2 + 5 = 7$ holds, but $2 - 5 = -3 \ne -2$.'
         constraints: "an estimate must be checked in both equations"
     diagnostic_exemplar:
       problem: 'Where do the lines $x + y = 6$ and $y = 2x$ intersect?'
@@ -931,6 +1310,14 @@ topics:
             answer: "(2, 3)"
             answer_contract: {kind: exact}
             solution_sketch: '$2x + x + 1 = 7$; $3x = 6$; $x = 2$; $y = 3$.'
+          - problem: 'Solve the system $y = 3x$, $x + y = 12$.'
+            answer: "(3, 9)"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: '$x + 3x = 12$; $x = 3$; $y = 9$.'
+          - problem: 'Solve the system $y = x + 2$, $3x + y = 10$.'
+            answer: "(2, 4)"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: '$3x + x + 2 = 10$; $4x = 8$; $x = 2$; $y = 4$.'
         constraints: "one equation already solved for a variable; integer solutions"
       - id: kp2
         name: "Equal-values method"
@@ -944,6 +1331,14 @@ topics:
             answer: "(3, 15)"
             answer_contract: {kind: exact}
             solution_sketch: '$5x = 2x + 9$; $3x = 9$; $x = 3$; $y = 15$.'
+          - problem: 'Solve the system $y = 2x + 1$, $y = x + 6$.'
+            answer: "(5, 11)"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: '$2x + 1 = x + 6$; $x = 5$; $y = 11$.'
+          - problem: 'Solve the system $y = 4x$, $y = x + 9$.'
+            answer: "(3, 12)"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: '$4x = x + 9$; $3x = 9$; $x = 3$; $y = 12$.'
         constraints: "both equations solved for y; set them equal"
       - id: kp3
         name: "Back-substitute and check"
@@ -953,10 +1348,18 @@ topics:
             answer: "(5, 3)"
             answer_contract: {kind: exact}
             solution_sketch: '$x + 2(x - 2) = 11$; $3x = 15$; $x = 5$; $y = 3$; check $5 + 6 = 11$.'
-          - problem: 'Solve the system $y = 4x$, $x + y = 15$.'
+          - problem: 'Solve the system $y = 4x$, $x + y = 15$ and check your answer.'
             answer: "(3, 12)"
             answer_contract: {kind: exact}
-            solution_sketch: '$5x = 15$; $x = 3$; $y = 12$.'
+            solution_sketch: '$x + 4x = 15$; $5x = 15$; $x = 3$; $y = 12$; check $3 + 12 = 15$.'
+          - problem: 'Solve the system $y = x - 3$, $x + 2y = 9$ and check your answer.'
+            answer: "(5, 2)"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: '$x + 2(x - 3) = 9$; $3x = 15$; $x = 5$; $y = 2$; check $5 + 4 = 9$.'
+          - problem: 'Solve the system $y = 3x$, $x + y = 20$ and check your answer.'
+            answer: "(5, 15)"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: '$4x = 20$; $x = 5$; $y = 15$; check $x + y = 20$: $5 + 15 = 20$.'
         constraints: "verify the pair in the equation not used for back-substitution"
     diagnostic_exemplar:
       problem: 'Solve the system $y = 3x$ and $x + y = 12$.'
@@ -996,6 +1399,14 @@ topics:
             answer: "(5, 3)"
             answer_contract: {kind: exact}
             solution_sketch: '$(y + 2) + 2y = 11$; $3y = 9$; $y = 3$; $x = 5$.'
+          - problem: 'Solve the system $3x + y = 11$, $2x - y = 4$.'
+            answer: "(3, 2)"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: '$y = 11 - 3x$; $2x - (11 - 3x) = 4$; $5x = 15$; $x = 3$; $y = 2$.'
+          - problem: 'Solve the system $x + 3y = 14$, $x = y + 2$.'
+            answer: "(5, 3)"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: '$(y + 2) + 3y = 14$; $4y = 12$; $y = 3$; $x = 5$.'
         constraints: "solve for the variable with coefficient 1; integer solutions"
       - id: kp2
         name: "Substitution with distribution"
@@ -1009,6 +1420,14 @@ topics:
             answer: "(2, 1)"
             answer_contract: {kind: exact}
             solution_sketch: '$4x - 3(2x - 3) = 5$; $-2x + 9 = 5$; $x = 2$; $y = 1$.'
+          - problem: 'Solve the system $x = 3y - 1$, $2x - 5y = 3$.'
+            answer: "(14, 5)"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: '$2(3y - 1) - 5y = 3$; $y - 2 = 3$; $y = 5$; $x = 14$.'
+          - problem: 'Solve the system $y = 3x - 4$, $5x - 2y = 7$.'
+            answer: "(1, -1)"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: '$5x - 2(3x - 4) = 7$; $-x + 8 = 7$; $x = 1$; $y = -1$.'
         constraints: "distribute a coefficient over the substituted expression"
       - id: kp3
         name: "Careful sign handling"
@@ -1022,6 +1441,14 @@ topics:
             answer: "(5, 2)"
             answer_contract: {kind: exact}
             solution_sketch: '$x = 1 + 2y$; $2(1 + 2y) + y = 12$; $5y = 10$; $y = 2$; $x = 5$.'
+          - problem: 'Solve the system $x + y = 9$, $x - y = 3$.'
+            answer: "(6, 3)"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: '$x = 9 - y$; $(9 - y) - y = 3$; $y = 3$; $x = 6$.'
+          - problem: 'Solve the system $x - 3y = 2$, $2x + y = 11$.'
+            answer: "(5, 1)"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: '$x = 2 + 3y$; $2(2 + 3y) + y = 11$; $7y = 7$; $y = 1$; $x = 5$.'
         constraints: "subtraction of substituted expressions; integer solutions"
     diagnostic_exemplar:
       problem: 'Solve the system by substitution: $x + 3y = 13$ and $2x - y = 5$.'
@@ -1061,6 +1488,14 @@ topics:
             answer: "(3, 2)"
             answer_contract: {kind: exact}
             solution_sketch: 'Add: $5x = 15$; $x = 3$; $y = 2$.'
+          - problem: 'Solve the system $x + y = 9$, $x - y = 5$.'
+            answer: "(7, 2)"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Add: $2x = 14$; $x = 7$; $y = 2$.'
+          - problem: 'Solve the system $3x + y = 13$, $2x - y = 7$.'
+            answer: "(4, 1)"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Add: $5x = 20$; $x = 4$; $y = 1$.'
         constraints: "coefficients already opposite; integer solutions"
       - id: kp2
         name: "Subtract when coefficients are equal"
@@ -1074,6 +1509,14 @@ topics:
             answer: "(3, 2)"
             answer_contract: {kind: exact}
             solution_sketch: 'Subtract: $2x = 6$; $x = 3$; $y = 2$.'
+          - problem: 'Solve the system $x + 3y = 10$, $x + y = 6$.'
+            answer: "(4, 2)"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Subtract: $2y = 4$; $y = 2$; $x = 4$.'
+          - problem: 'Solve the system $4x + y = 15$, $x + y = 6$.'
+            answer: "(3, 3)"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Subtract: $3x = 9$; $x = 3$; $y = 3$.'
         constraints: "matching coefficients; subtract carefully"
       - id: kp3
         name: "Back-substitute and verify"
@@ -1083,10 +1526,18 @@ topics:
             answer: "(4, 2)"
             answer_contract: {kind: exact}
             solution_sketch: 'Add: $3x = 12$; $x = 4$; $y = 2$; check $8 + 2 = 10$ and $4 - 2 = 2$.'
-          - problem: 'Solve the system $x + y = 6$, $x - y = 8$.'
+          - problem: 'Solve the system $x + y = 6$, $x - y = 8$ and check.'
             answer: "(7, -1)"
             answer_contract: {kind: exact}
-            solution_sketch: 'Add: $2x = 14$; $x = 7$; $y = -1$.'
+            solution_sketch: 'Add: $2x = 14$; $x = 7$; $y = -1$; check $7 + (-1) = 6$ and $7 - (-1) = 8$.'
+          - problem: 'Solve the system $3x + y = 14$, $x - y = 2$ and check.'
+            answer: "(4, 2)"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Add: $4x = 16$; $x = 4$; $y = 2$; check $12 + 2 = 14$ and $4 - 2 = 2$.'
+          - problem: 'Solve the system $x + y = 5$, $x - y = 9$ and check.'
+            answer: "(7, -2)"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Add: $2x = 14$; $x = 7$; $y = -2$; check $7 + (-2) = 5$ and $7 - (-2) = 9$.'
         constraints: "solutions may include negatives; verify in both equations"
     diagnostic_exemplar:
       problem: 'Solve by elimination: $3x + y = 5$ and $x + y = 7$.'
@@ -1123,11 +1574,19 @@ topics:
           - problem: 'Solve the system $2x + 3y = 12$, $x + y = 5$.'
             answer: "(3, 2)"
             answer_contract: {kind: exact}
-            solution_sketch: 'Multiply 2nd by $2$: $2x + 2y = 10$; subtract: $y = 2$; $x = 3$.'
+            solution_sketch: 'Multiply 2nd by $-2$: $-2x - 2y = -10$; add: $y = 2$; $x = 3$.'
           - problem: 'Solve the system $x + 2y = 11$, $3x - y = 5$.'
             answer: "(3, 4)"
             answer_contract: {kind: exact}
-            solution_sketch: 'Multiply 1st by $3$: $3x + 6y = 33$; subtract 2nd: $7y = 28$; $y = 4$; $x = 3$.'
+            solution_sketch: 'Multiply 1st by $-3$: $-3x - 6y = -33$; add 2nd: $-7y = -28$; $y = 4$; $x = 3$.'
+          - problem: 'Solve the system $3x + 2y = 16$, $x + y = 6$.'
+            answer: "(4, 2)"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Multiply 2nd by $-2$: $-2x - 2y = -12$; add: $x = 4$; $y = 2$.'
+          - problem: 'Solve the system $x + 3y = 13$, $2x - y = 5$.'
+            answer: "(4, 3)"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Multiply 1st by $-2$: $-2x - 6y = -26$; add 2nd: $-7y = -21$; $y = 3$; $x = 4$.'
         constraints: "scale to create opposite coefficients; integer solutions"
       - id: kp2
         name: "Scale both equations"
@@ -1141,6 +1600,14 @@ topics:
             answer: "(2, 1)"
             answer_contract: {kind: exact}
             solution_sketch: '$\times 2$ and $\times 3$: $6x + 8y = 20$, $6x + 9y = 21$; subtract: $y = 1$; $x = 2$.'
+          - problem: 'Solve the system $3x + 2y = 16$, $2x + 3y = 19$.'
+            answer: "(2, 5)"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: '$\times 3$ and $\times 2$: $9x + 6y = 48$, $4x + 6y = 38$; subtract: $5x = 10$; $x = 2$; $y = 5$.'
+          - problem: 'Solve the system $2x + 3y = 16$, $3x + 2y = 19$.'
+            answer: "(5, 2)"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: '$\times 3$ and $\times 2$: $6x + 9y = 48$, $6x + 4y = 38$; subtract: $5y = 10$; $y = 2$; $x = 5$.'
         constraints: "scale both to match one variable; integer solutions"
       - id: kp3
         name: "Use a negative multiplier"
@@ -1154,6 +1621,14 @@ topics:
             answer: "(3, 2)"
             answer_contract: {kind: exact}
             solution_sketch: 'Multiply 2nd by $-3$: $-3x - 12y = -33$; add: $-10y = -20$; $y = 2$; $x = 3$.'
+          - problem: 'Solve the system $2x + 3y = 18$, $4x + 7y = 40$.'
+            answer: "(3, 4)"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Multiply 1st by $-2$: $-4x - 6y = -36$; add: $y = 4$; $x = 3$.'
+          - problem: 'Solve the system $3x + 2y = 14$, $9x + 5y = 41$.'
+            answer: "(4, 1)"
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Multiply 1st by $-3$: $-9x - 6y = -42$; add: $-y = -1$; $y = 1$; $x = 4$.'
         constraints: "negative multipliers turn subtraction into addition"
     diagnostic_exemplar:
       problem: 'Solve the system by elimination: $3x + 2y = 12$ and $2x + 3y = 13$.'
@@ -1187,10 +1662,20 @@ topics:
         exemplars:
           - problem: 'Solve the system $x + y = 3$, $x + y = 7$.'
             answer: "no solution"
+            answer_contract: {"kind":"label","options":[["no solution"]]}
             solution_sketch: 'Subtracting gives $0 = 4$, a contradiction.'
           - problem: 'Solve the system $2x + 2y = 8$, $x + y = 4$.'
             answer: "infinitely many solutions"
+            answer_contract: {"kind":"label","options":[["infinitely many solutions"]]}
             solution_sketch: 'The first is twice the second; elimination gives $0 = 0$.'
+          - problem: 'Solve the system $x + y = 5$, $x + y = 9$.'
+            answer: "no solution"
+            answer_contract: {"kind":"label","options":[["no solution"]]}
+            solution_sketch: 'Subtracting gives $0 = 4$, a contradiction.'
+          - problem: 'Solve the system $3x + 3y = 12$, $x + y = 4$.'
+            answer: "infinitely many solutions"
+            answer_contract: {"kind":"label","options":[["infinitely many solutions"]]}
+            solution_sketch: 'The first is three times the second; elimination gives $0 = 0$.'
         constraints: "elimination ends in a false statement (none) or 0 = 0 (infinite)"
       - id: kp2
         visuals: [{"kind":"coordinate","x_min":"-8","x_max":"8","y_min":"-8","y_max":"8","x_tick":"1","y_tick":"1","points":[],"segments":[{"from":{"x":"-2","y":"-2","label":null},"to":{"x":"2","y":"4","label":null}},{"from":{"x":"-2","y":"-5","label":null},"to":{"x":"2","y":"1","label":null}}],"caption":"Reference example: The reference lines y = (3/2)x + 1 and y = (3/2)x - 2 have equal slopes and distinct intercepts."}]
@@ -1199,9 +1684,19 @@ topics:
         exemplars:
           - problem: 'How many solutions does the system $y = 2x + 1$, $y = 2x - 3$ have?'
             answer: "none"
+            answer_contract: {"kind":"label","options":[["none"]]}
             solution_sketch: 'Equal slopes, different intercepts $\to$ parallel.'
           - problem: 'How many solutions does the system $y = x + 2$, $2y = 2x + 4$ have?'
             answer: "infinitely many"
+            answer_contract: {"kind":"label","options":[["infinitely many"]]}
+            solution_sketch: 'Same line.'
+          - problem: 'How many solutions does the system $y = 4x + 2$, $y = 4x - 1$ have?'
+            answer: "none"
+            answer_contract: {"kind":"label","options":[["none"]]}
+            solution_sketch: 'Equal slopes, different intercepts.'
+          - problem: 'How many solutions does the system $y = 3x - 1$, $2y = 6x - 2$ have?'
+            answer: "infinitely many"
+            answer_contract: {"kind":"label","options":[["infinitely many"]]}
             solution_sketch: 'Same line.'
         constraints: "parallel -> none; same line -> infinitely many; else one"
       - id: kp3
@@ -1210,10 +1705,20 @@ topics:
         exemplars:
           - problem: 'How many solutions does the system $y = 3x + 1$, $y = 2x + 1$ have?'
             answer: "exactly one"
+            answer_contract: {"kind":"label","options":[["exactly one"]]}
             solution_sketch: 'Different slopes, so the lines cross once (at $(0, 1)$).'
           - problem: 'How many solutions does the system $6x - 2y = 10$, $3x - y = 5$ have?'
             answer: "infinitely many"
+            answer_contract: {"kind":"label","options":[["infinitely many"]]}
             solution_sketch: 'The first is twice the second: the same line.'
+          - problem: 'How many solutions does the system $y = 2x + 5$, $y = -x + 5$ have?'
+            answer: "exactly one"
+            answer_contract: {"kind":"label","options":[["exactly one"]]}
+            solution_sketch: 'Different slopes, so the lines cross once (at $(0, 5)$).'
+          - problem: 'How many solutions does the system $y = 5x - 2$, $y = 5x + 3$ have?'
+            answer: "no solution"
+            answer_contract: {"kind":"label","options":[["no solution"]]}
+            solution_sketch: 'Equal slopes, different intercepts: the lines are parallel and never meet.'
         constraints: "mix all three cases across generated problems"
     diagnostic_exemplar:
       problem: 'How many solutions does the system $4x - 2y = 6$, $2x - y = 3$ have?'
@@ -1252,6 +1757,14 @@ topics:
             answer: "no"
             answer_contract: {"kind":"label","options":[["yes"],["no"]]}
             solution_sketch: '$4 < 1$ fails.'
+          - problem: 'Is $(2, 0)$ a solution of the system $y \le x + 1$ and $y > -x$?'
+            answer: "yes"
+            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
+            solution_sketch: '$0 \le 3$ and $0 > -2$ both hold.'
+          - problem: 'Is $(0, 5)$ a solution of the system $y < 2x + 1$ and $y \ge x$?'
+            answer: "no"
+            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
+            solution_sketch: '$5 < 1$ fails.'
         constraints: "the point must satisfy BOTH inequalities"
       - id: kp2
         name: "Boundary styles and the overlap region"
@@ -1259,8 +1772,20 @@ topics:
         exemplars:
           - problem: 'For the system $y \le 2x + 1$, $y > -x + 4$, which boundary line is dashed?'
             answer: "y = -x + 4 (the strict one)"
-          - problem: 'What is the solution region of a system of two linear inequalities?'
+            answer_contract: {"kind":"label","options":[["y = -x + 4 (the strict one)"]]}
+            solution_sketch: 'A strict inequality ($>$ or $<$) draws a dashed line.'
+          - problem: 'For the system $y \le -x + 5$, $y > 2x - 3$, what is the solution region?'
             answer: "the overlap (intersection) of the two shaded half-planes"
+            answer_contract: {"kind":"label","options":[["the overlap (intersection) of the two shaded half-planes"]]}
+            solution_sketch: 'One inclusive boundary ($\le$), one strict ($>$); a point solves the system only in the overlap.'
+          - problem: 'For the system $y \le 3x - 1$, $y > -2x + 5$, which boundary line is dashed?'
+            answer: "y = -2x + 5 (the strict one)"
+            answer_contract: {"kind":"label","options":[["y = -2x + 5 (the strict one)"]]}
+            solution_sketch: 'A strict inequality ($>$ or $<$) draws a dashed line.'
+          - problem: 'For the system $y \ge x - 2$, $y < -x + 6$, which boundary line is dashed?'
+            answer: "y = -x + 6 (the strict one)"
+            answer_contract: {"kind":"label","options":[["y = -x + 6 (the strict one)"]]}
+            solution_sketch: 'A strict inequality ($>$ or $<$) draws a dashed line.'
         constraints: "one strict and one inclusive inequality per problem"
       - id: kp3
         name: "Locate a point in the solution region"
@@ -1273,6 +1798,13 @@ topics:
             answer: "yes"
             answer_contract: {"kind":"label","options":[["yes"],["no"]]}
             solution_sketch: '$0 \ge -3$ and $0 \le 5$.'
+          - problem: 'Which of $(1, 0)$ or $(0, 1)$ satisfies both $y > x$ and $y < x + 3$?'
+            answer: "(0, 1)"
+            solution_sketch: '$1 > 0$ and $1 < 3$; the other point fails $y > x$.'
+          - problem: 'Does the origin satisfy the system $y \ge x - 5$ and $y \le -x + 6$?'
+            answer: "yes"
+            answer_contract: {"kind":"label","options":[["yes"],["no"]]}
+            solution_sketch: '$0 \ge -5$ and $0 \le 6$.'
         constraints: "candidate points off the boundary lines"
     diagnostic_exemplar:
       problem: 'Is $(2, 3)$ a solution of the system $y > x$ and $y \le 2x$?'
@@ -1307,10 +1839,20 @@ topics:
         exemplars:
           - problem: 'Adult tickets cost €8 and child tickets €5. Ten tickets sold for €68. How many of each?'
             answer: "6 adult and 4 child"
+            answer_contract: {"kind":"label","options":[["6 adult and 4 child"]]}
             solution_sketch: '$a + c = 10$, $8a + 5c = 68$; $a = 6$, $c = 4$.'
           - problem: 'A jar has $5$-cent and $10$-cent coins: $12$ coins worth $95$ cents. How many of each?'
             answer: "5 five-cent and 7 ten-cent coins"
+            answer_contract: {"kind":"label","options":[["5 five-cent and 7 ten-cent coins"]]}
             solution_sketch: '$n + d = 12$, $5n + 10d = 95$; $n = 5$, $d = 7$.'
+          - problem: 'Adult tickets cost €9 and child tickets €4. Twelve tickets sold for €78. How many of each?'
+            answer: "6 adult and 6 child"
+            answer_contract: {"kind":"label","options":[["6 adult and 6 child"]]}
+            solution_sketch: '$a + c = 12$, $9a + 4c = 78$; $a = 6$, $c = 6$.'
+          - problem: 'A jar has $5$-cent and $10$-cent coins: $10$ coins worth $70$ cents. How many of each?'
+            answer: "6 five-cent and 4 ten-cent coins"
+            answer_contract: {"kind":"label","options":[["6 five-cent and 4 ten-cent coins"]]}
+            solution_sketch: '$n + d = 10$, $5n + 10d = 70$; $n = 6$, $d = 4$.'
         constraints: "one count equation and one value equation"
       - id: kp2
         name: "Two-item purchase problems"
@@ -1318,10 +1860,20 @@ topics:
         exemplars:
           - problem: '$3$ pens and $2$ notebooks cost €12; $1$ pen and $2$ notebooks cost €8. Find each price.'
             answer: "pens €2, notebooks €3"
+            answer_contract: {"kind":"label","options":[["pens \u20ac2, notebooks \u20ac3"]]}
             solution_sketch: 'Subtract: $2p = 4$; $p = 2$; $n = 3$.'
           - problem: '$2$ burgers and $1$ portion of chips cost €11; $1$ burger and $1$ portion of chips cost €7. Find each price.'
             answer: "burgers €4, chips €3"
+            answer_contract: {"kind":"label","options":[["burgers \u20ac4, chips \u20ac3"]]}
             solution_sketch: 'Subtract: $b = 4$; $f = 3$.'
+          - problem: '$4$ pens and $3$ notebooks cost €17; $2$ pens and $3$ notebooks cost €13. Find each price.'
+            answer: "pens €2, notebooks €3"
+            answer_contract: {"kind":"label","options":[["pens \u20ac2, notebooks \u20ac3"]]}
+            solution_sketch: 'Subtract: $2p = 4$; $p = 2$; $n = 3$.'
+          - problem: '$3$ burgers and $2$ portions of chips cost €16; $1$ burger and $2$ portions of chips cost €8. Find each price.'
+            answer: "burgers €4, chips €2"
+            answer_contract: {"kind":"label","options":[["burgers \u20ac4, chips \u20ac2"]]}
+            solution_sketch: 'Subtract: $2b = 8$; $b = 4$; $f = 2$.'
         constraints: "two purchases of the same two items; elimination-friendly numbers"
       - id: kp3
         name: "Solve and verify in context"
@@ -1333,6 +1885,12 @@ topics:
           - problem: 'A purse has $20$-cent and $5$-cent coins: $9$ coins worth €1.50. How many are $20$-cent coins?'
             answer: "7"
             solution_sketch: '$t + f = 9$, $20t + 5f = 150$; $15t = 105$; $t = 7$.'
+          - problem: 'Adult tickets cost €12 and student tickets €7. Twenty tickets sold for €205. How many adult tickets?'
+            answer: "13"
+            solution_sketch: '$a + s = 20$, $12a + 7s = 205$; $5a = 65$; $a = 13$, $s = 7$, both nonnegative; check $13 + 7 = 20$ tickets and $12(13) + 7(7) = 205$.'
+          - problem: 'A purse has $25$-cent and $10$-cent coins: $12$ coins worth €2.10. How many are $25$-cent coins?'
+            answer: "6"
+            solution_sketch: '$t + f = 12$, $25t + 10f = 210$; $15t = 90$; $t = 6$, $f = 6$, both nonnegative; check $6 + 6 = 12$ coins and $25(6) + 10(6) = 210$ cents.'
         constraints: "verify counts are nonnegative integers and totals match"
     diagnostic_exemplar:
       problem: '$2$ coffees and $3$ buns cost €12; $1$ coffee and $2$ buns cost €7. What is the price of one coffee in euros?'
@@ -1364,13 +1922,22 @@ topics:
         name: "Set up the amount and value equations"
         key_prerequisites: [percentages]
         exemplars:
-          - problem: 'How much pure acid is in $12$ L of a $35\%$ acid solution?'
-            answer: "4.2 L"
-            answer_contract: {"kind":"unit","quantity":"volume","unit":"L"}
-            solution_sketch: '$0.35 \times 12 = 4.2$.'
+          - problem: 'Mixing $x$ L of $10\%$ acid with $y$ L of $50\%$ acid to get $15$ L of $30\%$ acid: give both equations.'
+            answer: "x + y = 15 and 0.10x + 0.50y = 4.5"
+            answer_contract: {"kind":"label","options":[["x + y = 15 and 0.10x + 0.50y = 4.5"],["x + y = 15 and 0.10x + 0.50y = 15"],["x + y = 4.5 and 0.10x + 0.50y = 15"]]}
+            solution_sketch: 'Amounts sum to $15$; pure acid sums to $0.30(15) = 4.5$.'
           - problem: 'Mixing $x$ L of $25\%$ acid with $y$ L of $60\%$ acid to get $20$ L of $40\%$ acid: give both equations.'
             answer: "x + y = 20 and 0.25x + 0.60y = 8"
+            answer_contract: {"kind":"label","options":[["x + y = 20 and 0.25x + 0.60y = 8"]]}
             solution_sketch: 'Amounts sum to $20$; pure acid sums to $0.40(20) = 8$.'
+          - problem: 'Mixing $x$ L of $20\%$ acid with $y$ L of $80\%$ acid to get $10$ L of $50\%$ acid: give both equations.'
+            answer: "x + y = 10 and 0.20x + 0.80y = 5"
+            answer_contract: {"kind":"label","options":[["x + y = 10 and 0.20x + 0.80y = 5"],["x + y = 10 and 0.20x + 0.80y = 10"],["x + y = 5 and 0.20x + 0.80y = 10"]]}
+            solution_sketch: 'Amounts sum to $10$; pure acid sums to $0.50(10) = 5$.'
+          - problem: 'Mixing $x$ L of $30\%$ acid with $y$ L of $70\%$ acid to get $16$ L of $50\%$ acid: give both equations.'
+            answer: "x + y = 16 and 0.30x + 0.70y = 8"
+            answer_contract: {"kind":"label","options":[["x + y = 16 and 0.30x + 0.70y = 8"]]}
+            solution_sketch: 'Amounts sum to $16$; pure acid sums to $0.50(16) = 8$.'
         constraints: "amount equation plus concentration (pure-substance) equation"
       - id: kp2
         name: "Percent-solution mixtures"
@@ -1378,10 +1945,20 @@ topics:
         exemplars:
           - problem: 'How many liters of $20\%$ acid and $50\%$ acid make $30$ L of $30\%$ acid?'
             answer: "20 L of 20% and 10 L of 50%"
+            answer_contract: {"kind":"label","options":[["20 L of 20% and 10 L of 50%"]]}
             solution_sketch: '$x + y = 30$, $0.2x + 0.5y = 9$; $0.2x + 0.5(30 - x) = 9$; $x = 20$.'
           - problem: 'How many liters of $10\%$ and $40\%$ saline make $12$ L of $20\%$ saline?'
             answer: "8 L of 10% and 4 L of 40%"
+            answer_contract: {"kind":"label","options":[["8 L of 10% and 4 L of 40%"]]}
             solution_sketch: '$x + y = 12$, $0.1x + 0.4y = 2.4$; $x = 8$, $y = 4$.'
+          - problem: 'How many liters of $10\%$ acid and $40\%$ acid make $18$ L of $20\%$ acid?'
+            answer: "12 L of 10% and 6 L of 40%"
+            answer_contract: {"kind":"label","options":[["12 L of 10% and 6 L of 40%"]]}
+            solution_sketch: '$x + y = 18$, $0.1x + 0.4y = 3.6$; $x = 12$, $y = 6$.'
+          - problem: 'How many liters of $15\%$ and $45\%$ saline make $10$ L of $30\%$ saline?'
+            answer: "5 L of 15% and 5 L of 45%"
+            answer_contract: {"kind":"label","options":[["5 L of 15% and 5 L of 45%"]]}
+            solution_sketch: '$x + y = 10$, $0.15x + 0.45y = 3$; $x = 5$, $y = 5$.'
         constraints: "target strength strictly between the two ingredient strengths"
       - id: kp3
         name: "Price-blend mixtures"
@@ -1389,10 +1966,20 @@ topics:
         exemplars:
           - problem: 'Coffee at €8/kg is blended with coffee at €12/kg to make $10$ kg worth €9/kg. How much of each?'
             answer: "7.5 kg of €8 coffee and 2.5 kg of €12 coffee"
+            answer_contract: {"kind":"label","options":[["7.5 kg of \u20ac8 coffee and 2.5 kg of \u20ac12 coffee"]]}
             solution_sketch: '$x + y = 10$, $8x + 12y = 90$; $4y = 10$; $y = 2.5$.'
           - problem: 'Nuts at €6/kg are mixed with raisins at €3/kg to make $9$ kg costing €36. How much of each?'
             answer: "3 kg nuts and 6 kg raisins"
+            answer_contract: {"kind":"label","options":[["3 kg nuts and 6 kg raisins"]]}
             solution_sketch: '$n + r = 9$, $6n + 3r = 36$; $3n = 9$; $n = 3$.'
+          - problem: 'Coffee at €6/kg is blended with coffee at €10/kg to make $8$ kg worth €7/kg. How much of each?'
+            answer: "6 kg of €6 coffee and 2 kg of €10 coffee"
+            answer_contract: {"kind":"label","options":[["6 kg of \u20ac6 coffee and 2 kg of \u20ac10 coffee"]]}
+            solution_sketch: '$x + y = 8$, $6x + 10y = 56$; $4x = 24$; $x = 6$; $y = 2$.'
+          - problem: 'Almonds at €8/kg are mixed with raisins at €4/kg to make $6$ kg costing €30. How much of each?'
+            answer: "1.5 kg almonds and 4.5 kg raisins"
+            answer_contract: {"kind":"label","options":[["1.5 kg almonds and 4.5 kg raisins"]]}
+            solution_sketch: '$n + r = 6$, $8n + 4r = 30$; $4n = 6$; $n = 1.5$; $r = 4.5$.'
         constraints: "blend price between the two ingredient prices; halves allowed"
     diagnostic_exemplar:
       problem: 'How many liters each of $10\%$ and $30\%$ solution make $8$ L of $25\%$ solution?'
@@ -1428,10 +2015,20 @@ topics:
         exemplars:
           - problem: 'A boat travels $12$ km/h downstream and $8$ km/h upstream. Find the boat speed and current speed.'
             answer: "boat 10 km/h, current 2 km/h"
+            answer_contract: {"kind":"label","options":[["boat 10 km/h, current 2 km/h"]]}
             solution_sketch: '$b + c = 12$, $b - c = 8$; $b = 10$, $c = 2$.'
           - problem: 'A plane flies $500$ km/h with the wind and $460$ km/h against it. Find the plane speed and wind speed.'
             answer: "plane 480 km/h, wind 20 km/h"
+            answer_contract: {"kind":"label","options":[["plane 480 km/h, wind 20 km/h"]]}
             solution_sketch: '$p + w = 500$, $p - w = 460$; $p = 480$, $w = 20$.'
+          - problem: 'A boat travels $15$ km/h downstream and $9$ km/h upstream. Find the boat speed and current speed.'
+            answer: "boat 12 km/h, current 3 km/h"
+            answer_contract: {"kind":"label","options":[["boat 12 km/h, current 3 km/h"]]}
+            solution_sketch: '$b + c = 15$, $b - c = 9$; $b = 12$, $c = 3$.'
+          - problem: 'A plane flies $540$ km/h with the wind and $460$ km/h against it. Find the plane speed and wind speed.'
+            answer: "plane 500 km/h, wind 40 km/h"
+            answer_contract: {"kind":"label","options":[["plane 500 km/h, wind 40 km/h"]]}
+            solution_sketch: '$p + w = 540$, $p - w = 460$; $p = 500$, $w = 40$.'
         constraints: "downstream = sum, upstream = difference of the two rates"
       - id: kp2
         name: "Compute the two speeds from d = rt first"
@@ -1439,10 +2036,20 @@ topics:
         exemplars:
           - problem: 'A kayaker paddles $12$ km downstream in $2$ h and back in $3$ h. Find the kayak and current speeds.'
             answer: "kayak 5 km/h, current 1 km/h"
+            answer_contract: {"kind":"label","options":[["kayak 5 km/h, current 1 km/h"]]}
             solution_sketch: 'Speeds $\frac{12}{2} = 6$ and $\frac{12}{3} = 4$; $b + c = 6$, $b - c = 4$.'
           - problem: 'A plane flies $1200$ km with the wind in $4$ h and back in $5$ h. Find the plane and wind speeds.'
             answer: "plane 270 km/h, wind 30 km/h"
+            answer_contract: {"kind":"label","options":[["plane 270 km/h, wind 30 km/h"]]}
             solution_sketch: 'Speeds $300$ and $240$; $p + w = 300$, $p - w = 240$.'
+          - problem: 'A kayaker paddles $20$ km downstream in $2$ h and back in $4$ h. Find the kayak and current speeds.'
+            answer: "kayak 7.5 km/h, current 2.5 km/h"
+            answer_contract: {"kind":"label","options":[["kayak 7.5 km/h, current 2.5 km/h"]]}
+            solution_sketch: 'Speeds $10$ and $5$; $b + c = 10$, $b - c = 5$.'
+          - problem: 'A plane flies $600$ km with the wind in $2$ h and back in $3$ h. Find the plane and wind speeds.'
+            answer: "plane 250 km/h, wind 50 km/h"
+            answer_contract: {"kind":"label","options":[["plane 250 km/h, wind 50 km/h"]]}
+            solution_sketch: 'Speeds $300$ and $200$; $p + w = 300$, $p - w = 200$.'
         constraints: "distances divide evenly by the times"
       - id: kp3
         name: "Two travelers"
@@ -1450,10 +2057,20 @@ topics:
         exemplars:
           - problem: 'Two cars $300$ km apart drive toward each other and meet in $3$ h. One is $20$ km/h faster. Find both speeds.'
             answer: "60 km/h and 40 km/h"
+            answer_contract: {"kind":"label","options":[["60 km/h and 40 km/h"]]}
             solution_sketch: 'Combined speed $\frac{300}{3} = 100$; $r_1 + r_2 = 100$, $r_1 - r_2 = 20$.'
           - problem: 'Two trains leave stations $450$ km apart toward each other and meet in $5$ h. Their speeds differ by $10$ km/h. Find both.'
             answer: "50 km/h and 40 km/h"
+            answer_contract: {"kind":"label","options":[["50 km/h and 40 km/h"]]}
             solution_sketch: 'Combined speed $90$; sum $90$, difference $10$.'
+          - problem: 'Two cars $280$ km apart drive toward each other and meet in $4$ h. One is $10$ km/h faster. Find both speeds.'
+            answer: "40 km/h and 30 km/h"
+            answer_contract: {"kind":"label","options":[["40 km/h and 30 km/h"]]}
+            solution_sketch: 'Combined speed $\frac{280}{4} = 70$; $r_1 + r_2 = 70$, $r_1 - r_2 = 10$.'
+          - problem: 'Two trains leave stations $440$ km apart toward each other and meet in $4$ h. Their speeds differ by $10$ km/h. Find both.'
+            answer: "60 km/h and 50 km/h"
+            answer_contract: {"kind":"label","options":[["60 km/h and 50 km/h"]]}
+            solution_sketch: 'Combined speed $110$; sum $110$, difference $10$.'
         constraints: "meeting problems: combined speed = total distance / time"
     diagnostic_exemplar:
       problem: 'A rower goes $18$ km downstream in $2$ h and returns in $3$ h. Find the rowing speed and the current speed.'
@@ -1493,10 +2110,20 @@ topics:
         exemplars:
           - problem: 'The sum of two numbers is $20$ and their difference is $6$. Find the numbers.'
             answer: "13 and 7"
+            answer_contract: {"kind":"label","options":[["13 and 7"]]}
             solution_sketch: '$x + y = 20$, $x - y = 6$; add: $x = 13$, $y = 7$.'
           - problem: 'Two numbers sum to $15$, and one is twice the other. Find them.'
             answer: "10 and 5"
+            answer_contract: {"kind":"label","options":[["10 and 5"]]}
             solution_sketch: '$x + y = 15$, $x = 2y$; $y = 5$, $x = 10$.'
+          - problem: 'The sum of two numbers is $24$ and their difference is $8$. Find the numbers.'
+            answer: "16 and 8"
+            answer_contract: {"kind":"label","options":[["16 and 8"]]}
+            solution_sketch: '$x + y = 24$, $x - y = 8$; add: $x = 16$, $y = 8$.'
+          - problem: 'Two numbers sum to $21$, and one is twice the other. Find them.'
+            answer: "14 and 7"
+            answer_contract: {"kind":"label","options":[["14 and 7"]]}
+            solution_sketch: '$x + y = 21$, $x = 2y$; $y = 7$, $x = 14$.'
         constraints: "define two variables; one relationship per sentence"
       - id: kp2
         visuals: [{"kind":"geometry","figure":{"shape":"polygon","vertices":[{"x":"0","y":"0","label":"A"},{"x":"7","y":"0","label":"B"},{"x":"7","y":"4","label":"C"},{"x":"0","y":"4","label":"D"}],"right_angles":[0,1,2,3]},"caption":"Reference example: A reference rectangle has width 7 and height 4. Coordinates give the side lengths; this diagram is an independent example."}]
@@ -1505,10 +2132,20 @@ topics:
         exemplars:
           - problem: 'A rectangle''s length is $3$ more than twice its width, and its perimeter is $36$. Find the dimensions.'
             answer: "width 5, length 13"
+            answer_contract: {"kind":"label","options":[["width 5, length 13"]]}
             solution_sketch: '$l = 2w + 3$, $2l + 2w = 36$; $6w + 6 = 36$; $w = 5$, $l = 13$.'
           - problem: 'Two angles are supplementary and one is $30^\circ$ more than the other. Find both.'
             answer: "105 and 75 degrees"
+            answer_contract: {"kind":"label","options":[["105 and 75 degrees"]]}
             solution_sketch: '$x + y = 180$, $x = y + 30$; $y = 75$, $x = 105$.'
+          - problem: 'The length of a rectangle is $4$ more than twice its width, and its perimeter is $32$. Find the dimensions.'
+            answer: "width 4, length 12"
+            answer_contract: {"kind":"label","options":[["width 4, length 12"]]}
+            solution_sketch: '$l = 2w + 4$, $2l + 2w = 32$; $6w + 8 = 32$; $w = 4$, $l = 12$.'
+          - problem: 'Two angles are complementary and one is $18^\circ$ more than the other. Find both.'
+            answer: "54 and 36 degrees"
+            answer_contract: {"kind":"label","options":[["54 and 36 degrees"]]}
+            solution_sketch: '$x + y = 90$, $x = y + 18$; $y = 36$, $x = 54$.'
         constraints: "perimeter, supplementary/complementary angles, or ages"
       - id: kp3
         name: "Multi-relationship setups"
@@ -1516,10 +2153,20 @@ topics:
         exemplars:
           - problem: 'The sum of two numbers is $25$; twice the larger minus the smaller is $20$. Find the numbers.'
             answer: "15 and 10"
+            answer_contract: {"kind":"label","options":[["15 and 10"]]}
             solution_sketch: '$x + y = 25$, $2x - y = 20$; add: $3x = 45$; $x = 15$, $y = 10$.'
-          - problem: 'Sam is $4$ years older than Tia and their ages sum to $30$. How old is each?'
-            answer: "Sam 17, Tia 13"
-            solution_sketch: '$s = t + 4$, $s + t = 30$; $2t + 4 = 30$; $t = 13$, $s = 17$.'
+          - problem: 'Sam is $3$ times as old as Tia and their ages sum to $32$. How old is each?'
+            answer: "Sam 24, Tia 8"
+            answer_contract: {"kind":"label","options":[["Sam 24, Tia 8"],["Sam 8, Tia 24"],["Sam 21, Tia 11"]]}
+            solution_sketch: '$s = 3t$, $s + t = 32$; $4t = 32$; $t = 8$, $s = 24$.'
+          - problem: 'The sum of two numbers is $30$; twice the larger minus the smaller is $24$. Find the numbers.'
+            answer: "18 and 12"
+            answer_contract: {"kind":"label","options":[["18 and 12"]]}
+            solution_sketch: '$x + y = 30$, $2x - y = 24$; add: $3x = 54$; $x = 18$, $y = 12$.'
+          - problem: 'Mia is $4$ times as old as Lee and their ages sum to $25$. How old is each?'
+            answer: "Mia 20, Lee 5"
+            answer_contract: {"kind":"label","options":[["Mia 20, Lee 5"]]}
+            solution_sketch: '$m = 4l$, $m + l = 25$; $5l = 25$; $l = 5$, $m = 20$.'
         constraints: "one scaled relationship plus one sum; integer answers"
     diagnostic_exemplar:
       problem: 'The sum of two numbers is $28$; twice the larger minus the smaller is $23$. Find the numbers.'
