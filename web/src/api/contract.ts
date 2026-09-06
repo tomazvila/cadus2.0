@@ -37,6 +37,7 @@ import type {
   OperatorFlagsResponse,
   RegradeResponse,
   RejectResponse,
+  RetentionReportResponse,
   ReviewDocument,
   ReviewListResponse,
   UngradedListResponse,
@@ -84,6 +85,8 @@ export interface ApiClient {
 
   // Dashboard and curriculum.
   getStatus(): Promise<StatusResponse>;
+  /** The delayed-retention report of D-F11. */
+  getRetentionReport(): Promise<RetentionReportResponse>;
   getGraph(scope?: string): Promise<GraphResponse>;
   listModules(): Promise<ModulesResponse>;
   enroll(course: string): Promise<EnrollResponse>;
@@ -181,6 +184,7 @@ export const ROUTES: readonly RouteRow[] = [
   { method: 'GET', path: '/api/graph', auth: 'S', via: 'method', client: 'getGraph' },
   { method: 'GET', path: '/api/modules', auth: 'S', via: 'method', client: 'listModules' },
   { method: 'GET', path: '/api/export', auth: 'S', via: 'method', client: 'downloadExport' },
+  { method: 'GET', path: '/api/report/retention', auth: 'S', via: 'method', client: 'getRetentionReport' },
   { method: 'POST', path: '/api/enroll', auth: 'S', via: 'method', client: 'enroll' },
   { method: 'POST', path: '/api/session/start', auth: 'S', via: 'method', client: 'sessionStart' },
   { method: 'POST', path: '/api/session/end', auth: 'S', via: 'method', client: 'sessionEnd' },

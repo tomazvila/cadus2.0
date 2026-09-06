@@ -277,6 +277,11 @@ async fn advance_and_fold(
     for extra in moved.events() {
         store(state, append_event(tx, user_id, &extra, None)).await?;
     }
+    // f19-retention: the attempt on a probe task is the delayed measurement, so it
+    // writes its own event with the provenance (D-F11). A plain task writes none.
+    if let Some(probe) = crate::report::probe::probe_event(&content.cfg, recorded, events, now) {
+        store(state, append_event(tx, user_id, &probe, None)).await?;
+    }
     let input = projection_input(content, now);
     store(state, project_and_save(tx, user_id, &input, None)).await?;
     Ok(moved)

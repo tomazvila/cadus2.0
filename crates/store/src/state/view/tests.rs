@@ -103,6 +103,7 @@ fn sample_log() -> Vec<EventRow> {
                 problems: Vec::new(),
                 component_topics: Vec::new(),
                 seed: None,
+                probe_delay_days: None,
                 confirm: false,
             }),
         ),
@@ -384,6 +385,7 @@ fn the_other_branches_of_the_fold_fold_nothing_or_reset() {
             problems: Vec::new(),
             component_topics: Vec::new(),
             seed: None,
+            probe_delay_days: None,
             confirm: false,
         }),
     );

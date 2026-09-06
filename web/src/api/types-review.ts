@@ -157,3 +157,67 @@ export interface RegradeResponse {
   ungraded: number;
 }
 
+
+// ---------------------------------------------------------------------------
+// f19-retention: `GET /api/report/retention` (D-F11, D-F12).
+// ---------------------------------------------------------------------------
+
+/**
+ * The counts behind one retention rate.
+ *
+ * A rate is never read without them: `correct` counts every graded right answer,
+ * and `independent` counts only the graded, unassisted, first-exposure ones.
+ */
+export interface RetentionProvenance {
+  independent: number;
+  independent_correct: number;
+  correct: number;
+  assisted: number;
+  repeated: number;
+  unknown_exposure: number;
+  ungraded: number;
+}
+
+/** One delay of the retention report. `delay_days` of 0 is the total row. */
+export interface RetentionRow {
+  delay_days: number;
+  probes: number;
+  /** `null` means no independent probe answered yet. It is never a zero. */
+  retained_accuracy: number | null;
+  assistance_dependence: number | null;
+  mean_independent_secs: number | null;
+  /** Whether the independent sample reaches `min_sample`. */
+  sufficient: boolean;
+  provenance: RetentionProvenance;
+}
+
+/** The versioned policy the numbers came from (D-F12). */
+export interface RetentionPolicy {
+  version: number;
+  label: string;
+  calibrated: boolean;
+  digest: string;
+  probe_delays_days: number[];
+  min_sample: number;
+}
+
+/** `GET /api/report/retention`. */
+export interface RetentionReportResponse {
+  policy: RetentionPolicy;
+  retention: {
+    by_delay: RetentionRow[];
+    total: RetentionRow;
+  };
+  placement: {
+    failed_confirmation: string[];
+    awaiting_confirmation: string[];
+  };
+  integrated: {
+    served: number;
+    passed: number;
+    failed: number;
+    inconclusive: number;
+    open: number;
+    pass_rate: number | null;
+  };
+}

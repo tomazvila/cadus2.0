@@ -25,6 +25,7 @@ import type {
   ReadyResponse,
   RegradeResponse,
   RejectResponse,
+  RetentionReportResponse,
   ReviewDocument,
   ReviewListResponse,
   ServedProblem,
@@ -87,6 +88,7 @@ export const api: ApiClient = {
 
   // --- Dashboard and curriculum -------------------------------------------
   getStatus: () => request<StatusResponse>('GET', '/status'),
+  getRetentionReport: () => request<RetentionReportResponse>('GET', '/report/retention'),
   // `scope` is a VIEW FILTER only. The learner whose state is joined comes from the
   // session identity, never from this parameter.
   getGraph: (scope) =>

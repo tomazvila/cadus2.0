@@ -117,6 +117,14 @@ pub struct TaskServed {
     /// The seed the composer used.
     #[serde(default)]
     pub seed: Option<i64>,
+    /// The delay, in days, of the retention probe this task serves (D-F11).
+    ///
+    /// `None` is an ordinary task. The writer SKIPS the field when it is `None`,
+    /// so every event written before D-F11 keeps its bytes (C2). The fold reads
+    /// the marker to count the probes a SESSION served, so a refresh or an
+    /// abandoned probe never buys the session a second one.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub probe_delay_days: Option<u32>,
     /// Whether the task confirms an inferred topic (D-F6). NEW IN 2.0.
     ///
     /// The writer SKIPS a false value, so every event written before D-F6 keeps
@@ -356,6 +364,12 @@ pub struct RetentionProbe {
     /// The days between the lesson pass and the probe.
     pub delay_days: u32,
     /// The digest of the probed item.
+    ///
+    /// It is a [`crate::learner::problem_text_hash`] of the rendered problem, the
+    /// SAME digest `TopicState::last_problems` and `ServedProblem::text_hash`
+    /// carry. One kind of digest is the whole point: the unseen rule compares this
+    /// value against the learner's exposure history, and two spellings would let a
+    /// seen item through.
     #[serde(default)]
     pub item_digest: Option<String>,
     /// The outcome of the probe.
@@ -368,4 +382,10 @@ pub struct RetentionProbe {
     pub exposure: Option<Exposure>,
     /// The time the learner took.
     pub secs: Secs,
+    /// The policy stamp the probe ran under: `v<N>:<policy digest>` (D-F12).
+    ///
+    /// `None` means a probe written before the stamp existed. The writer skips it,
+    /// so no earlier event changes its bytes.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub policy: Option<String>,
 }

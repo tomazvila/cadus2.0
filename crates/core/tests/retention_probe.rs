@@ -12,7 +12,7 @@ use std::collections::BTreeMap;
 
 use cadus_core::config::Config;
 use cadus_core::event::Event;
-use cadus_core::learner::TopicState;
+use cadus_core::learner::{LAST_PROBLEMS_WINDOW, TopicState, problem_text_hash};
 use cadus_core::projector::{PROJECTOR_VERSION, project, project_incremental};
 use cadus_core::retention::{RetentionState, due_probe};
 use common::events::{event, input, tree};
@@ -245,5 +245,93 @@ fn the_probe_never_repeats_an_item_the_learner_saw() {
     assert_eq!(
         cadus_core::retention::unseen_item(&candidates, &seen),
         Some("fresh-1")
+    );
+}
+
+#[test]
+fn an_item_older_than_the_recent_window_is_still_refused() {
+    // `TopicState::last_problems` keeps a bounded recent window, so a window alone
+    // cannot answer "ever seen". The lifetime exposure index of the fold does.
+    let mut lines = vec![
+        r#"{"type":"enrolled","ts":"2026-01-01T00:00:00Z","course":"foundations"}"#.to_owned(),
+    ];
+    let old_problem = "the-first-problem";
+    for index in 0..(LAST_PROBLEMS_WINDOW + 5) {
+        let text = if index == 0 {
+            old_problem.to_owned()
+        } else {
+            format!("problem-{index}")
+        };
+        lines.push(
+            format!(
+                r#"{{"type":"attempt","ts":"2026-01-01T00:0{}:00Z","attempt_id":"a{index}",
+                   "task_id":"t1","topic":"{TOPIC}","task_type":"review",
+                   "problem":{{"text":"{text}","expected":"3"}},"given_answer":"3",
+                   "correct":true,"secs":5,"work_quality":"nearly_passable"}}"#,
+                index % 10
+            )
+            .replace('\n', "")
+            .replace("                   ", ""),
+        );
+    }
+    let events: Vec<Event> = lines.iter().map(|line| event(line)).collect();
+    let model = project(&events, &input()).expect("the fold succeeds");
+    let old_digest = problem_text_hash(old_problem);
+
+    let state = &model.topics[TOPIC];
+    assert!(
+        !state.last_problems.contains(&old_digest),
+        "the recent window already forgot the item"
+    );
+    assert!(
+        model.retention.is_exposed(&old_digest),
+        "the lifetime index still holds it"
+    );
+    let seen = cadus_core::retention::seen_digests(&model.topics, &model.retention, TOPIC);
+    assert_eq!(
+        cadus_core::retention::unseen_item(std::slice::from_ref(&old_digest), &seen),
+        None,
+        "a probe never serves an item the learner met, however long ago"
+    );
+}
+
+#[test]
+fn a_served_probe_uses_up_the_session_before_any_answer() {
+    // The rate rule counts SERVES. A refresh, an abandoned probe, and a second tab
+    // therefore never buy the session a second probe.
+    let served = format!(
+        r#"{{"type":"task_served","ts":"2026-01-08T09:00:00Z","session":"s1",
+           "task_id":"s1-review-1","task_type":"review","topic":"{TOPIC}","kp":"kp1",
+           "probe_delay_days":7}}"#
+    )
+    .replace('\n', "")
+    .replace("           ", "");
+    let events = stream(&[served]);
+    let model = project(&events, &input()).expect("the fold succeeds");
+    assert_eq!(model.retention.probes_in_session("s1"), 1);
+    assert!(
+        model.retention.by_delay.is_empty(),
+        "no answer arrived, so no tally moved"
+    );
+
+    let cfg = Config::default();
+    let mut state = TopicState::default();
+    state
+        .kp_progress
+        .insert("kp1".to_owned(), cadus_core::event::KpProgress::Passed);
+    let topics = BTreeMap::from([(TOPIC.to_owned(), state)]);
+    let learned = BTreeMap::from([(TOPIC.to_owned(), LESSON_US)]);
+    assert_eq!(
+        due_probe(
+            tree(),
+            &topics,
+            &model.retention,
+            &cfg.retention,
+            &learned,
+            "s1",
+            LESSON_US + 40 * DAY_US
+        ),
+        None,
+        "the session already served its probe"
     );
 }

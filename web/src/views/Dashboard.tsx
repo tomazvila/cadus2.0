@@ -45,6 +45,7 @@ import { num, pct } from '@/lib/format';
 import { toast } from '@/app/toast';
 import { CoursePicker } from './dashboard/CoursePicker';
 import { PrimaryAction } from './dashboard/PrimaryAction';
+import { RetentionCard } from './dashboard/RetentionCard';
 import type { ApiClient, JourneyCourse, PlanTask, StatusResponse } from '@/api/types';
 
 export interface DashboardProps {
@@ -351,6 +352,8 @@ export function Dashboard({
         <p className="muted small more-caption">
           Export my data downloads your full event log — the same data a re-import consumes.
         </p>
+        {/* f19-retention: the delayed-probe report. It loads on demand (D-F11). */}
+        <RetentionCard api={api} call={call} />
       </details>
 
       {demo ? (

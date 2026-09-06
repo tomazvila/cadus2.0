@@ -18,8 +18,9 @@ describe('the demo client', () => {
       .filter((member): member is keyof ApiClient => member !== null);
     // 33 until the three `/api/diag/*` placement rows landed, 36 until the two
     // `/api/admin/ungraded*` recovery rows landed (D-F2), 38 until the three
-    // `/api/task/{task_id}/integrated*` rows landed (D-F10).
-    expect(named.length).toBe(41);
+    // `/api/task/{task_id}/integrated*` rows landed (D-F10), 41 until the
+    // `/api/report/retention` row landed (D-F11).
+    expect(named.length).toBe(42);
     for (const member of named) {
       expect(typeof demo[member], `the demo lacks ${member}`).toBe('function');
     }

@@ -248,6 +248,7 @@ mod tests {
             problems: Vec::new(),
             component_topics: Vec::new(),
             seed: None,
+            probe_delay_days: None,
             confirm: false,
         })
     }

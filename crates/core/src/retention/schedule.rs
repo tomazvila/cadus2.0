@@ -120,7 +120,11 @@ pub fn due_probe(
 
 /// The digests the learner already saw for `topic`.
 ///
-/// It is the topic's recent problems plus every digest an earlier probe used.
+/// It is the LIFETIME exposure index of the fold, plus the probed digests, plus the
+/// topic's recent problems. All three hold one kind of value, a
+/// [`crate::learner::problem_text_hash`] of the rendered problem, so the three sets
+/// union cleanly. `TopicState::last_problems` alone is a bounded window and cannot
+/// answer "ever seen"; it stays in the union because it costs nothing.
 #[must_use]
 pub fn seen_digests<'a>(
     topics: &'a BTreeMap<String, TopicState>,
@@ -128,10 +132,11 @@ pub fn seen_digests<'a>(
     topic: &str,
 ) -> BTreeSet<&'a str> {
     let mut seen: BTreeSet<&str> = retention
-        .digests
+        .exposed
         .iter()
         .map(std::string::String::as_str)
         .collect();
+    seen.extend(retention.digests.iter().map(std::string::String::as_str));
     if let Some(state) = topics.get(topic) {
         seen.extend(state.last_problems.iter().map(std::string::String::as_str));
     }

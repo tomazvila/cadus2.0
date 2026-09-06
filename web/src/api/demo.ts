@@ -23,6 +23,7 @@ import type {
   ApiClient,
   DiagnosisJob,
   PlanTask,
+  RetentionRow,
   ServedProblem,
   TaskAnswerResponse,
   User,
@@ -85,6 +86,27 @@ const norm = (value: string) => value.replace(/\s/g, '').replace(/^\+/, '');
 
 /** A short delay, so a demo screen shows its loading state the way the real one does. */
 const wait = (ms: number) => new Promise<void>((resolve) => { setTimeout(resolve, ms); });
+/** One retention row with no probe behind it. Every rate is `null`, never a zero. */
+function emptyRetentionRow(delay_days: number): RetentionRow {
+  return {
+    delay_days,
+    probes: 0,
+    retained_accuracy: null,
+    assistance_dependence: null,
+    mean_independent_secs: null,
+    sufficient: false,
+    provenance: {
+      independent: 0,
+      independent_correct: 0,
+      correct: 0,
+      assisted: 0,
+      repeated: 0,
+      unknown_exposure: 0,
+      ungraded: 0,
+    },
+  };
+}
+
 async function reply<T>(value: T, ms = 120): Promise<T> {
   await wait(ms);
   return value;
@@ -363,6 +385,27 @@ export function createDemoApi(): ApiClient {
 
     downloadExport: async () =>
       refuse(403, 'forbidden', 'The demo keeps no event log to export.'),
+
+    // f19-retention. The demo account answered no delayed probe, so every rate is
+    // `null`. That is the honest rehearsal: the card has to render "no evidence yet"
+    // for every learner who never reached the first 7-day probe.
+    getRetentionReport: () =>
+      reply({
+        policy: {
+          version: 1,
+          label: 'v1 (uncalibrated)',
+          calibrated: false,
+          digest: 'demo000000000000',
+          probe_delays_days: [7, 30, 90],
+          min_sample: 20,
+        },
+        retention: {
+          by_delay: [7, 30, 90].map((delay_days) => emptyRetentionRow(delay_days)),
+          total: emptyRetentionRow(0),
+        },
+        placement: { failed_confirmation: [], awaiting_confirmation: [] },
+        integrated: { served: 0, passed: 0, failed: 0, inconclusive: 0, open: 0, pass_rate: null },
+      }),
 
     // The review surface (C6). The demo account is NOT an admin, so every admin route
     // — the operator flags above and these six — answers the same `403 forbidden` the

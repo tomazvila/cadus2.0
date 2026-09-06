@@ -7,6 +7,7 @@ use crate::config::Config;
 use crate::curriculum::Curriculum;
 use crate::event::{KpProgress, TaskType};
 use crate::learner::TopicState;
+use crate::retention::ProbePlan;
 
 use super::DIFFICULTY_TARGET;
 use super::quiz::{QuizPlan, quiz_difficulty_target};
@@ -59,6 +60,14 @@ pub struct Task {
     /// The serve route copies the marker onto `task_served`, and the fold reads
     /// it back to move a passed topic to `Learning`.
     pub confirm: bool,
+    /// The delay, in days, of the retention probe this task serves (D-F11).
+    ///
+    /// `None` is an ordinary task. The serve route copies the marker onto
+    /// `task_served`, so the fold counts the probe of the SESSION at the serve and
+    /// not at the answer; the grade route writes the `retention_probe` event.
+    pub probe_delay_days: Option<u32>,
+    /// The knowledge point the retention probe tests (D-F11).
+    pub probe_kp: Option<String>,
 }
 
 impl Default for Task {
@@ -83,6 +92,8 @@ impl Default for Task {
             is_remediation: false,
             nearly_due: false,
             confirm: false,
+            probe_delay_days: None,
+            probe_kp: None,
         }
     }
 }
@@ -164,6 +175,33 @@ pub(super) fn review_shell(
         ..Task::default()
     }
 }
+
+/// Build one delayed retention probe (D-F11).
+///
+/// It is a review task of ONE problem, and it carries the marker the serve route
+/// and the grade route read. `recent_problem_hashes` holds the LIFETIME exposure
+/// index, so the draw refuses every item the learner ever met: a probe on a seen
+/// item measures familiarity and no delayed recall.
+pub(super) fn probe_task(
+    plan: &ProbePlan,
+    states: &BTreeMap<String, TopicState>,
+    graph: &Curriculum,
+    seen: Vec<String>,
+) -> Task {
+    let why = format!(
+        "retention probe; the lesson passed {} days ago and this item is new",
+        plan.elapsed_days
+    );
+    Task {
+        probe_delay_days: Some(plan.delay_days),
+        probe_kp: Some(plan.kp.clone()),
+        recent_problem_hashes: seen,
+        ..review_shell(&plan.topic, states, graph, PROBE_PROBLEMS, why)
+    }
+}
+
+/// The number of problems one retention probe serves.
+pub const PROBE_PROBLEMS: i64 = 1;
 
 /// Build a frontier lesson task (`_lesson_task`, `selector.py:978-1010`).
 pub(super) fn lesson_task(

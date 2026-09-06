@@ -279,6 +279,7 @@ fn task_served_event(day: usize) -> Event {
         problems: Vec::new(),
         component_topics: Vec::new(),
         seed: None,
+        probe_delay_days: None,
         confirm: false,
     })
 }

@@ -45,6 +45,15 @@ impl Default for PolicyVersion {
 }
 
 impl PolicyVersion {
+    /// The provenance stamp one probe event carries: `v<N>:<digest>`.
+    ///
+    /// A row of the report is only readable beside the policy that produced it, so
+    /// the stamp travels ON the event and not only in the report payload.
+    #[must_use]
+    pub fn stamp(&self, digest: &str) -> String {
+        format!("v{}:{digest}", self.version)
+    }
+
     /// The one-line label of the version, for a report and a dashboard card.
     #[must_use]
     pub fn label(&self) -> String {

@@ -74,6 +74,9 @@ async fn record_first_serve(
             .filter_map(slug_of)
             .collect(),
         seed: None,
+        // f19-retention: the marker the fold counts the SESSION probe by, and the
+        // grade route writes the measurement event from (D-F11).
+        probe_delay_days: task.probe_delay_days,
         confirm: task.confirm,
     });
     store(state, append_event(tx, user_id, &event, None)).await?;

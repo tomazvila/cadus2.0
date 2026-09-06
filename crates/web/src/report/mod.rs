@@ -24,6 +24,8 @@
 //! whole log for the same reason, and section 8 of `docs/reference/l1-budget.md`
 //! gives that route no p95 either. The report is an operator-rate read.
 
+pub mod probe;
+
 use cadus_core::retention::report::{
     IntegratedPerformance, PlacementError, RetentionReport, RetentionRow,
 };
@@ -163,6 +165,7 @@ mod tests {
             assisted,
             exposure: Some(exposure),
             secs: Secs::new(20).expect("in range"),
+            policy: None,
         }
     }
 

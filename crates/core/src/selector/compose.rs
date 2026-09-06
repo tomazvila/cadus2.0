@@ -8,6 +8,7 @@ use crate::curriculum::Curriculum;
 use crate::event::TaskType;
 use crate::fire::has_review_history;
 use crate::learner::TopicState;
+use crate::retention::seen_digests;
 
 use super::compress::compress_with;
 use super::confirm::{confirm_task, confirmations};
@@ -20,8 +21,11 @@ use super::multistep::{multistep_components, multistep_is_due, multistep_task, r
 use super::plan::{BlockedTask, SessionPlan};
 use super::quiz::{QuizSampler, quiz_composer, quiz_is_due};
 use super::reserve::reserve_open_plan;
+use super::retention::retention_probe;
 use super::review::{due_reviews, nearly_due, order_lessons_with};
-use super::task::{Task, drill_task, knockout_count, lesson_task, quiz_task, review_task};
+use super::task::{
+    Task, drill_task, knockout_count, lesson_task, probe_task, quiz_task, review_task,
+};
 use super::topic_set::ReachCache;
 use super::trigger::schedule_drills;
 use super::{MULTISTEP_ENABLED, MULTISTEP_MIN_COMPONENTS};
@@ -301,6 +305,21 @@ pub fn compose_session(
     }
     for tid in drills {
         tasks.push(drill_task(&tid, cfg));
+    }
+
+    // The delayed retention probe of D-F11. It stands LAST of the study tasks: a
+    // measurement never displaces the work of the session. `ctx.retention` of
+    // `None` turns the whole rule off, so every caller that never read the
+    // retention state composes the plan it composed before this unit.
+    if let Some(probe) = retention_probe(ctx, states, graph, cfg, t_us) {
+        let seen: Vec<String> = ctx
+            .retention
+            .map(|state| seen_digests(states, state, &probe.topic))
+            .unwrap_or_default()
+            .into_iter()
+            .map(std::borrow::ToOwned::to_owned)
+            .collect();
+        tasks.push(probe_task(&probe, states, graph, seen));
     }
 
     if let Some(limit) = ctx.n {

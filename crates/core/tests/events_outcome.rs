@@ -241,19 +241,25 @@ fn a_model_with_no_ungraded_attempt_keeps_the_1_0_wire_shape() {
 // --------------------------------------------------------------------------- //
 
 #[test]
-fn a_retention_probe_reads_writes_and_folds_as_a_no_op() {
+fn a_retention_probe_reads_writes_and_folds_into_the_retention_state() {
     let line = r#"{"assisted":false,"delay_days":7,"exposure":"first","item_digest":"d9","kp":"kp1","outcome":"correct","secs":12,"session":null,"topic":"absolute-value","ts":"2026-07-21T09:00:00Z","type":"retention_probe","v":2}"#;
     let event = read(line);
     assert_eq!(event.type_name(), "retention_probe");
     assert_eq!(event.v(), SchemaVersion::current());
-    assert_eq!(event.to_canonical_json().unwrap(), line);
-    // The fold ignores it until unit f19.
+    assert_eq!(
+        event.to_canonical_json().unwrap(),
+        line,
+        "the f19 fields are optional, so a probe without them keeps its bytes"
+    );
+    // Unit f19 gave the event its handler (D-F11). The tally carries the
+    // provenance, and a log with NO probe still writes the 1.0 wire shape.
     let with_probe = project(&[event], &input()).expect("the fold succeeds");
     let empty = project(&[], &input()).expect("the fold succeeds");
-    assert_eq!(
-        with_probe.parity_blob().unwrap(),
-        empty.parity_blob().unwrap()
-    );
+    let tally = &with_probe.retention.by_delay[&7];
+    assert_eq!(tally.probes, 1);
+    assert_eq!(tally.independent_correct, 1);
+    assert!(with_probe.retention.is_done(TOPIC, "kp1", 7));
+    assert!(!empty.parity_blob().unwrap().contains("retention"));
     assert!(tree().idx_of(TOPIC).is_some());
     assert!(Slug::new(TOPIC).is_ok());
 }

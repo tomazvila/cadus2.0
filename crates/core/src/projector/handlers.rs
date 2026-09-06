@@ -91,6 +91,11 @@ impl Projector<'_> {
                     || !event.skills.contains(skill)
             });
         }
+        // D-F11. The lifetime exposure index is a LIGHT index: it records the
+        // problem whether or not this pass applies FIRe, so a resume rebuilds it
+        // whole. `last_problems` below stays the bounded 1.0 window it always was.
+        self.retention
+            .expose(&problem_text_hash(&event.problem.text));
         if !apply_fire {
             return;
         }
@@ -162,6 +167,15 @@ impl Projector<'_> {
     /// The marker opens one confirmation item. The review result of the same
     /// topic closes it, so a topic never carries two open items.
     pub(super) fn on_task_served(&mut self, event: &TaskServed) {
+        // D-F11. The served problem stubs are exposure, whether the learner
+        // answered them or not, and a SERVED probe counts against the rate of the
+        // session before its answer arrives.
+        for problem in &event.problems {
+            self.retention.expose(&problem.text_hash);
+        }
+        if event.probe_delay_days.is_some() {
+            self.retention.serve(event.session.as_deref());
+        }
         if !event.confirm {
             return;
         }

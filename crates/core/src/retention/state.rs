@@ -11,7 +11,7 @@
 //! so it never enters `independent`. An ungraded probe (D-F2) enters no accuracy
 //! numerator and no accuracy denominator.
 
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, BTreeSet};
 
 use serde::{Deserialize, Serialize};
 
@@ -155,16 +155,58 @@ pub struct RetentionState {
     /// The probed item digests, oldest first, at most [`DIGEST_WINDOW`].
     #[serde(default)]
     pub digests: Vec<String>,
+    /// Every problem digest the learner met, for LIFE (D-F11).
+    ///
+    /// `TopicState::last_problems` is a bounded recent window, and a window cannot
+    /// answer "did this learner ever see this item". The unseen rule of the probe
+    /// needs the lifetime answer, so the fold keeps this set: one
+    /// [`crate::learner::problem_text_hash`] per answered problem, per served
+    /// problem stub, and per probed item.
+    ///
+    /// Serde SKIPS it. It is a LIGHT INDEX the fold rebuilds from the whole stream
+    /// on every projection, exactly like the XP tally, so it never enters the wire
+    /// shape, the parity blob, or a stored row, and [`RetentionState::is_empty`]
+    /// ignores it. A model of a 1.0 log therefore keeps its bytes.
+    #[serde(skip)]
+    pub exposed: BTreeSet<String>,
 }
 
 impl RetentionState {
     /// Whether nothing was probed. The writer skips such a state.
+    ///
+    /// It reads the PERSISTED fields only. `exposed` is a light index of every
+    /// stream, probe or not, and a state that holds nothing but exposure must
+    /// still serialize away.
     #[must_use]
     pub fn is_empty(&self) -> bool {
         self.by_delay.is_empty()
             && self.done.is_empty()
             && self.sessions.is_empty()
             && self.digests.is_empty()
+    }
+
+    /// Record one problem digest the learner met.
+    pub fn expose(&mut self, digest: &str) {
+        if !self.exposed.contains(digest) {
+            self.exposed.insert(digest.to_owned());
+        }
+    }
+
+    /// Record one probe the selector SERVED, before any answer arrives.
+    ///
+    /// The rate rule of `retention.max_per_session` counts serves, so a refresh, an
+    /// abandoned probe, and a second tab never buy the session another one. The
+    /// serve of one task id is idempotent, so this runs once per probe.
+    pub fn serve(&mut self, session: Option<&str>) {
+        if let Some(session) = session {
+            push_window(&mut self.sessions, session.to_owned(), SESSION_WINDOW);
+        }
+    }
+
+    /// Whether the learner ever met `digest`.
+    #[must_use]
+    pub fn is_exposed(&self, digest: &str) -> bool {
+        self.exposed.contains(digest)
     }
 
     /// Fold one `retention_probe` event.
@@ -180,11 +222,17 @@ impl RetentionState {
         if let Err(at) = done.binary_search(&probe.delay_days) {
             done.insert(at, probe.delay_days);
         }
-        if let Some(session) = probe.session.as_ref() {
+        // The SERVE of the probe already counted the session (`serve`). A probe
+        // that arrives without one — an import, or a client that skipped the serve
+        // marker — counts here instead, and a session counts at most once.
+        if let Some(session) = probe.session.as_ref()
+            && self.probes_in_session(session) == 0
+        {
             push_window(&mut self.sessions, session.clone(), SESSION_WINDOW);
         }
         if let Some(digest) = probe.item_digest.as_ref() {
             push_window(&mut self.digests, digest.clone(), DIGEST_WINDOW);
+            self.expose(digest);
         }
     }
 
@@ -262,6 +310,7 @@ pub(crate) mod tests {
             assisted,
             exposure,
             secs: Secs::new(12).expect("in range"),
+            policy: Some("v1:test".to_owned()),
         }
     }
 
